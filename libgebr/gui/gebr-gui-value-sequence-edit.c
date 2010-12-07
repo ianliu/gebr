@@ -211,7 +211,7 @@ GtkWidget *gebr_gui_value_sequence_edit_new(GtkWidget * widget)
 
 	list_store = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_POINTER, -1);
 
-	gebr_gui_value_sequence_edit = g_object_new(TYPE_GEBR_GUI_VALUE_SEQUENCE_EDIT,
+	gebr_gui_value_sequence_edit = g_object_new(GEBR_GUI_TYPE_VALUE_SEQUENCE_EDIT,
 						    "value-widget", widget, "list-store", list_store, NULL);
 	gebr_gui_value_sequence_edit->set_function = NULL;
 	gebr_gui_value_sequence_edit->get_function = NULL;

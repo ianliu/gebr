@@ -301,8 +301,11 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document, GebrPropertiesR
 		g_signal_connect (path_sequence_edit, "renamed",
 				  G_CALLBACK (path_renamed), NULL);
 
-		gtk_table_attach(GTK_TABLE(table), path_sequence_edit, 1, 2, 5, 6, (GtkAttachOptions)GTK_FILL, (GtkAttachOptions)GTK_FILL, 3,
-				 3);
+		gtk_table_attach (GTK_TABLE (table),
+				  path_sequence_edit, 1, 2, 5, 6,
+				  (GtkAttachOptions) (GTK_FILL | GTK_EXPAND),
+				  (GtkAttachOptions) (GTK_FILL | GTK_EXPAND),
+				  3, 3);
 	}
 
 	gtk_widget_show_all(window);

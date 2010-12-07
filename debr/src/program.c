@@ -669,7 +669,7 @@ static void program_details_update(void)
 		help_exists = strlen(help) > 0 ? TRUE : FALSE;
 		g_object_set(debr.ui_program.details.help_view, "sensitive", help_exists, NULL);
 		g_object_set(debr.ui_program.details.help_edit, "sensitive", TRUE, NULL);
-		gtk_action_set_sensitive(gtk_action_group_get_action(debr.action_group, "program_help_view"), help_exists);
+		gtk_action_set_sensitive(gtk_action_group_get_action(debr.action_group_program, "program_help_view"), help_exists);
 		validate_image_set_check_help(debr.ui_program.help_validate_image, help);
 	}
 
@@ -837,44 +837,44 @@ static GtkMenu *program_popup_menu(GtkWidget * tree_view)
 	if (program_get_selected(&iter, FALSE) == FALSE) {
 		gtk_container_add(GTK_CONTAINER(menu),
 				  gtk_action_create_menu_item(gtk_action_group_get_action
-							      (debr.action_group, "program_new")));
+							      (debr.action_group_program, "program_new")));
 		goto out;
 	}
 
 	if (gebr_gui_gtk_list_store_can_move_up(debr.ui_program.list_store, &iter) == TRUE)
 		gtk_container_add(GTK_CONTAINER(menu),
 				  gtk_action_create_menu_item(gtk_action_group_get_action
-							      (debr.action_group, "program_top")));
+							      (debr.action_group_program, "program_top")));
 	if (gebr_gui_gtk_list_store_can_move_down(debr.ui_program.list_store, &iter) == TRUE)
 		gtk_container_add(GTK_CONTAINER(menu),
 				  gtk_action_create_menu_item(gtk_action_group_get_action
-							      (debr.action_group, "program_bottom")));
+							      (debr.action_group_program, "program_bottom")));
 	if (gebr_gui_gtk_list_store_can_move_up(debr.ui_program.list_store, &iter) == TRUE
 	    || gebr_gui_gtk_list_store_can_move_down(debr.ui_program.list_store, &iter) == TRUE)
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
 
 	gtk_container_add(GTK_CONTAINER(menu),
-			  gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "program_new")));
+			  gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group_program, "program_new")));
 	gtk_container_add(GTK_CONTAINER(menu),
 			  gtk_action_create_menu_item(gtk_action_group_get_action
-						      (debr.action_group, "program_delete")));
+						      (debr.action_group_program, "program_delete")));
 	gtk_container_add(GTK_CONTAINER(menu),
 			  gtk_action_create_menu_item(gtk_action_group_get_action
-						      (debr.action_group, "program_properties")));
+						      (debr.action_group_program, "program_properties")));
 	gtk_container_add(GTK_CONTAINER(menu),
-			  gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "program_copy")));
+			  gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group_program, "program_copy")));
 	gtk_container_add(GTK_CONTAINER(menu),
-			  gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group, "program_paste")));
+			  gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group_program, "program_paste")));
 
 	/* view help */
 	gtk_container_add(GTK_CONTAINER(menu),
 			  gtk_action_create_menu_item(gtk_action_group_get_action
-						      (debr.action_group, "program_help_view")));
+						      (debr.action_group_program, "program_help_view")));
 
 	/* edit help */
 	gtk_container_add(GTK_CONTAINER(menu),
 			  gtk_action_create_menu_item(gtk_action_group_get_action
-						      (debr.action_group, "program_help_edit")));
+						      (debr.action_group_program, "program_help_edit")));
  out:	gtk_widget_show_all(menu);
 
 	return GTK_MENU(menu);

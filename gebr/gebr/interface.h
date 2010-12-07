@@ -31,6 +31,17 @@ enum {
 	MENUBAR_N
 };
 
+/* Accel Group entries */
+/* The order here are similar to the notebook pages*/
+enum {
+    ACCEL_PROJECT_AND_LINE = 0,
+    ACCEL_FLOW,
+    ACCEL_FLOW_EDITION,
+    ACCEL_JOB_CONTROL,
+    ACCEL_GENERAL,
+    ACCEL_STATUS,
+    ACCEL_N
+};
 void gebr_setup_ui(void);
 
 G_END_DECLS

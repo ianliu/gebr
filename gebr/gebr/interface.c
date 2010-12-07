@@ -57,8 +57,10 @@ static const GtkActionEntry actions_entries[] = {
 	{"help_contents", GTK_STOCK_HELP, NULL,
 		NULL, NULL, G_CALLBACK(on_help_contents_activate)},
 	{"help_about", GTK_STOCK_ABOUT, NULL,
-		NULL, NULL, G_CALLBACK(on_help_about_activate)},
+		NULL, NULL, G_CALLBACK(on_help_about_activate)}
+};
 
+static const GtkActionEntry actions_entries_project_line[] = {
 	/*
 	 * Project/Line
 	 */
@@ -67,7 +69,7 @@ static const GtkActionEntry actions_entries[] = {
 	{"project_line_new_line", "tab-new-background", N_("New Line"),
 		"<Control>L", N_("Create a new line"), G_CALLBACK(on_new_line_activate)},
 	{"project_line_delete", GTK_STOCK_DELETE, NULL,
-		NULL, N_("Delete selected project or line"), G_CALLBACK(on_project_line_delete_activate)},
+		"Delete", N_("Delete selected project or line"), G_CALLBACK(on_project_line_delete_activate)},
 	{"project_line_properties", GTK_STOCK_PROPERTIES, NULL,
 		NULL, N_("Edit project or line properties"), G_CALLBACK(on_document_properties_activate)},
 	{"project_line_dict_edit", "accessories-dictionary", N_("Parameter dictionary"),
@@ -82,13 +84,15 @@ static const GtkActionEntry actions_entries[] = {
 		NULL, N_("Edit the comments related to project/line"), G_CALLBACK(on_project_line_edit_help)},
 	{"project_line_dump", GTK_STOCK_PRINT_REPORT, N_("Line report"),
 		NULL, N_("View line report"), G_CALLBACK(on_line_detailed_report_activate)},
+};
 
+static const GtkActionEntry actions_entries_flow[] = {
 	/*
 	 * Flow
 	 */
 	{"flow_new", GTK_STOCK_NEW, NULL,
 		"<Control>F", N_("Create a new flow"), G_CALLBACK(on_new_activate)},
-	{"flow_delete", GTK_STOCK_DELETE, NULL, NULL,
+	{"flow_delete", GTK_STOCK_DELETE, NULL, "Delete",
 		N_("Delete selected flow"), G_CALLBACK(on_flow_delete_activate)},
 	{"flow_properties", GTK_STOCK_PROPERTIES, NULL,
 		NULL, N_("Edit flow properties"), G_CALLBACK(on_document_properties_activate)},
@@ -114,7 +118,9 @@ static const GtkActionEntry actions_entries[] = {
 		NULL, N_("Edit the comments related to flow"), G_CALLBACK(on_flow_browse_edit_help)},
 	{"flow_dump", GTK_STOCK_PRINT_REPORT, N_("Flow report"),
 		NULL, N_("View flow report"), G_CALLBACK(on_flow_detailed_report_activate)},
+};
 
+static const GtkActionEntry actions_entries_flow_edition[] = {
 	/*
 	 * Flow Edition
 	 */
@@ -135,8 +141,10 @@ static const GtkActionEntry actions_entries[] = {
 	{"flow_edition_bottom", GTK_STOCK_GOTO_BOTTOM, N_("Move to Bottom"),
 		"End", NULL, G_CALLBACK(on_flow_component_move_bottom)},
 	{"flow_edition_execute", GTK_STOCK_EXECUTE, NULL,
-		NULL, N_("Execute this flow"), G_CALLBACK (on_flow_component_execute)},
+		NULL, N_("Execute this flow"), G_CALLBACK (on_flow_component_execute)}
+};
 
+static const GtkActionEntry actions_entries_job_control[] = {
 	/*
 	 * Job control - Job Actions
 	 */
@@ -202,13 +210,41 @@ void gebr_setup_ui(void)
 	gtk_widget_set_size_request(gebr.window, 700, 400);
 	gtk_widget_show(gebr.window);
 
-	gebr.action_group = gtk_action_group_new("General");
-	gtk_action_group_set_translation_domain(gebr.action_group, GETTEXT_PACKAGE);
-	gtk_action_group_add_actions(gebr.action_group, actions_entries, G_N_ELEMENTS(actions_entries), NULL);
-	gtk_action_group_add_actions(gebr.action_group, status_action_entries, G_N_ELEMENTS(status_action_entries), NULL);
-	gebr.accel_group = gtk_accel_group_new();
-	gtk_window_add_accel_group(GTK_WINDOW(gebr.window), gebr.accel_group);
-	gebr_gui_gtk_action_group_set_accel_group(gebr.action_group, gebr.accel_group);
+	gebr.action_group_general = gtk_action_group_new("General");
+	gtk_action_group_set_translation_domain(gebr.action_group_general, GETTEXT_PACKAGE);
+	gtk_action_group_add_actions(gebr.action_group_general, actions_entries, G_N_ELEMENTS(actions_entries), NULL);
+	gebr.accel_group_array[ACCEL_GENERAL] = gtk_accel_group_new();
+	gebr_gui_gtk_action_group_set_accel_group(gebr.action_group_general, gebr.accel_group_array[ACCEL_GENERAL]);
+
+	gebr.action_group_project_line = gtk_action_group_new("Project and Line");
+	gtk_action_group_set_translation_domain(gebr.action_group_project_line, GETTEXT_PACKAGE);
+	gtk_action_group_add_actions(gebr.action_group_project_line, actions_entries_project_line, G_N_ELEMENTS(actions_entries_project_line), NULL);
+	gebr.accel_group_array[ACCEL_PROJECT_AND_LINE] = gtk_accel_group_new();
+	gebr_gui_gtk_action_group_set_accel_group(gebr.action_group_project_line, gebr.accel_group_array[ACCEL_PROJECT_AND_LINE]);
+
+	gebr.action_group_flow = gtk_action_group_new("Flow");
+	gtk_action_group_set_translation_domain(gebr.action_group_flow, GETTEXT_PACKAGE);
+	gtk_action_group_add_actions(gebr.action_group_flow, actions_entries_flow, G_N_ELEMENTS(actions_entries_flow), NULL);
+	gebr.accel_group_array[ACCEL_FLOW] = gtk_accel_group_new();
+	gebr_gui_gtk_action_group_set_accel_group(gebr.action_group_flow, gebr.accel_group_array[ACCEL_FLOW]);
+
+	gebr.action_group_flow_edition = gtk_action_group_new("Flow Edition");
+	gtk_action_group_set_translation_domain(gebr.action_group_flow_edition, GETTEXT_PACKAGE);
+	gtk_action_group_add_actions(gebr.action_group_flow_edition, actions_entries_flow_edition, G_N_ELEMENTS(actions_entries_flow_edition), NULL);
+	gebr.accel_group_array[ACCEL_FLOW_EDITION] = gtk_accel_group_new();
+	gebr_gui_gtk_action_group_set_accel_group(gebr.action_group_flow_edition, gebr.accel_group_array[ACCEL_FLOW_EDITION]);
+
+	gebr.action_group_job_control = gtk_action_group_new("Job Control");
+	gtk_action_group_set_translation_domain(gebr.action_group_job_control, GETTEXT_PACKAGE);
+	gtk_action_group_add_actions(gebr.action_group_job_control, actions_entries_job_control, G_N_ELEMENTS(actions_entries_job_control), NULL);
+	gebr.accel_group_array[ACCEL_JOB_CONTROL] = gtk_accel_group_new();
+	gebr_gui_gtk_action_group_set_accel_group(gebr.action_group_job_control, gebr.accel_group_array[ACCEL_JOB_CONTROL]);
+
+	gebr.action_group_status = gtk_action_group_new("Status");
+	gtk_action_group_set_translation_domain(gebr.action_group_status, GETTEXT_PACKAGE);
+	gtk_action_group_add_actions(gebr.action_group_status, status_action_entries, G_N_ELEMENTS(status_action_entries), NULL);
+	gebr.accel_group_array[ACCEL_STATUS] = gtk_accel_group_new();
+	gebr_gui_gtk_action_group_set_accel_group(gebr.action_group_status, gebr.accel_group_array[ACCEL_STATUS]);
 
 	/* Signals */
 	g_signal_connect(GTK_OBJECT(gebr.window), "delete_event", G_CALLBACK(gebr_quit), NULL);
@@ -241,6 +277,8 @@ void gebr_setup_ui(void)
 	 */
 	gebr.notebook = gtk_notebook_new();
 	gtk_box_pack_start(GTK_BOX(main_vbox), gebr.notebook, TRUE, TRUE, 0);
+	gebr.last_notebook = -1;
+	g_signal_connect(GTK_OBJECT(gebr.notebook), "switch-page", G_CALLBACK(on_notebook_switch_page), NULL);
 	gtk_widget_show(gebr.notebook);
 
 	/*
@@ -254,33 +292,33 @@ void gebr_setup_ui(void)
 
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group, "project_line_new_project"))),
+					 (gtk_action_group_get_action(gebr.action_group_project_line, "project_line_new_project"))),
 			   -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group, "project_line_new_line"))),
+					 (gtk_action_group_get_action(gebr.action_group_project_line, "project_line_new_line"))),
 			   -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group, "project_line_delete"))), -1);
+					 (gtk_action_group_get_action(gebr.action_group_project_line, "project_line_delete"))), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group, "project_line_properties"))),
+					 (gtk_action_group_get_action(gebr.action_group_project_line, "project_line_properties"))),
 			   -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group, "project_line_dict_edit"))),
+					 (gtk_action_group_get_action(gebr.action_group_project_line, "project_line_dict_edit"))),
 			   -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group, "project_line_dump"))), -1);
+					 (gtk_action_group_get_action(gebr.action_group_project_line, "project_line_dump"))), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new(), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group, "project_line_import"))), -1);
+					 (gtk_action_group_get_action(gebr.action_group_project_line, "project_line_import"))), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group, "project_line_export"))), -1);
+					 (gtk_action_group_get_action(gebr.action_group_project_line, "project_line_export"))), -1);
 
 	gebr.ui_project_line = project_line_setup_ui();
 	vbox = gtk_vbox_new(FALSE, 0);
@@ -297,23 +335,23 @@ void gebr_setup_ui(void)
 
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group, "flow_new"))), -1);
+					 (gtk_action_group_get_action(gebr.action_group_flow, "flow_new"))), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group, "flow_copy"))), -1);
+					 (gtk_action_group_get_action(gebr.action_group_flow, "flow_copy"))), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group, "flow_paste"))), -1);
+					 (gtk_action_group_get_action(gebr.action_group_flow, "flow_paste"))), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group, "flow_delete"))), -1);
+					 (gtk_action_group_get_action(gebr.action_group_flow, "flow_delete"))), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group, "flow_properties"))), -1);
+					 (gtk_action_group_get_action(gebr.action_group_flow, "flow_properties"))), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new (), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group, "flow_execute"))), -1);
+					 (gtk_action_group_get_action(gebr.action_group_flow, "flow_execute"))), -1);
 
 	menu = gtk_menu_new();
 	tool_item = gtk_menu_tool_button_new_from_stock("document-open-recent");
@@ -325,15 +363,15 @@ void gebr_setup_ui(void)
 
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group, "flow_dump"))), -1);
+					 (gtk_action_group_get_action(gebr.action_group_flow, "flow_dump"))), -1);
 
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new(), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group, "flow_import"))), -1);
+					 (gtk_action_group_get_action(gebr.action_group_flow, "flow_import"))), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group, "flow_export"))), -1);
+					 (gtk_action_group_get_action(gebr.action_group_flow, "flow_export"))), -1);
 
 	gebr.ui_flow_browse = flow_browse_setup_ui(menu);
 	vbox = gtk_vbox_new(FALSE, 0);
@@ -350,35 +388,35 @@ void gebr_setup_ui(void)
 
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group, "flow_edition_copy"))), -1);
+					 (gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_copy"))), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group, "flow_edition_paste"))), -1);
+					 (gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_paste"))), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group, "flow_edition_delete"))), -1);
+					 (gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_delete"))), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group, "flow_edition_properties"))),
+					 (gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_properties"))),
 			   -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group, "flow_dict_edit"))), -1);
+					 (gtk_action_group_get_action(gebr.action_group_flow, "flow_dict_edit"))), -1);
 
-	action = gtk_action_group_get_action(gebr.action_group, "flow_edition_status_configured");
+	action = gtk_action_group_get_action(gebr.action_group_status, "flow_edition_status_configured");
 	g_signal_connect(action, "activate", G_CALLBACK(on_flow_component_status_activate), GUINT_TO_POINTER(GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED));
 
-	action = gtk_action_group_get_action(gebr.action_group, "flow_edition_status_disabled");
+	action = gtk_action_group_get_action(gebr.action_group_status, "flow_edition_status_disabled");
 	g_signal_connect(action, "activate", G_CALLBACK(on_flow_component_status_activate), GUINT_TO_POINTER(GEBR_GEOXML_PROGRAM_STATUS_DISABLED));
 
-	action = gtk_action_group_get_action(gebr.action_group, "flow_edition_status_unconfigured");
+	action = gtk_action_group_get_action(gebr.action_group_status, "flow_edition_status_unconfigured");
 	g_signal_connect(action, "activate", G_CALLBACK(on_flow_component_status_activate), GUINT_TO_POINTER(GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED));
 
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new(), -1);
 
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group, "flow_edition_execute"))), -1);
+					 (gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_execute"))), -1);
 
 	gebr.ui_flow_edition = flow_edition_setup_ui();
 	vbox = gtk_vbox_new(FALSE, 0);
@@ -395,13 +433,13 @@ void gebr_setup_ui(void)
 
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group, "job_control_save"))), -1);
+					 (gtk_action_group_get_action(gebr.action_group_job_control, "job_control_save"))), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group, "job_control_close"))), -1);
+					 (gtk_action_group_get_action(gebr.action_group_job_control, "job_control_close"))), -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group, "job_control_stop"))), -1);
+					 (gtk_action_group_get_action(gebr.action_group_job_control, "job_control_stop"))), -1);
 
 	gebr.ui_job_control = job_control_setup_ui();
 
@@ -436,13 +474,13 @@ static void assembly_menus(GtkMenuBar * menu_bar)
 
 	gtk_container_add(GTK_CONTAINER(menu),
 			  gtk_action_create_menu_item(gtk_action_group_get_action
-						      (gebr.action_group, "actions_preferences")));
+						      (gebr.action_group_general, "actions_preferences")));
 	gtk_container_add(GTK_CONTAINER(menu),
 			  gtk_action_create_menu_item(gtk_action_group_get_action
-						      (gebr.action_group, "actions_servers")));
+						      (gebr.action_group_general, "actions_servers")));
 	gtk_container_add(GTK_CONTAINER(menu), gtk_separator_menu_item_new());
 	gtk_container_add(GTK_CONTAINER(menu),
-			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group, "actions_quit")));
+			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_general, "actions_quit")));
 
 	menu_item = gtk_menu_item_new_with_mnemonic(_("_Help"));
 	gtk_menu_bar_append(GTK_MENU_BAR(menu_bar), menu_item);
@@ -450,7 +488,7 @@ static void assembly_menus(GtkMenuBar * menu_bar)
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menu_item), menu);
 
 	gtk_container_add(GTK_CONTAINER(menu),
-			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group, "help_contents")));
+			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_general, "help_contents")));
 	gtk_container_add(GTK_CONTAINER(menu),
-			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group, "help_about")));
+			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_general, "help_about")));
 }

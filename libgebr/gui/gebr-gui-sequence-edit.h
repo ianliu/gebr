@@ -47,7 +47,13 @@ struct _GebrGuiSequenceEdit {
 	gboolean may_rename;
 };
 
+/**
+ * GebrGuiSequenceEditClass:
+ * @add: Called when 
+ * @create_tree_view: 
+ */
 struct _GebrGuiSequenceEditClass {
+	/*< private >*/
 	GtkVBoxClass parent;
 
 	/* signals */
@@ -62,7 +68,7 @@ struct _GebrGuiSequenceEditClass {
 					 const gchar *old_text,
 					 const gchar *new_text);
 
-	/* abstract methods */
+	/* Abstract methods */
 	void		(*add)		(GebrGuiSequenceEdit *self);
 
 	void		(*remove)	(GebrGuiSequenceEdit *self,
@@ -109,6 +115,45 @@ GtkTreeIter gebr_gui_sequence_edit_add (GebrGuiSequenceEdit *self,
  * #GtkListStore.
  */
 void gebr_gui_sequence_edit_clear (GebrGuiSequenceEdit *self);
+
+/**
+ * gebr_gui_sequence_edit_remove:
+ * @self: a #GebrGuiSequenceEdit widget
+ * @iter: the row to be removed
+ *
+ * Removes @iter from this sequence edit widget.
+ */
+void gebr_gui_sequence_edit_remove (GebrGuiSequenceEdit *self,
+				    GtkTreeIter *iter);
+/**
+ * gebr_gui_sequence_edit_move:
+ * @self: a #GebrGuiSequenceEdit widget
+ * @iter: a #GtkTreeIter pointing to the row to be moved
+ * @position: position to place @iter
+ * @pos: a #GtkTreeViewDropPosition
+ *
+ * Moves @iter above or below @position, depending on the value of @pos.
+ */
+void gebr_gui_sequence_edit_move (GebrGuiSequenceEdit *self,
+				  GtkTreeIter *iter,
+				  GtkTreeIter *position,
+				  GtkTreeViewDropPosition pos);
+
+/**
+ * gebr_gui_sequence_edit_move_top:
+ * @self: a #GebrGuiSequenceEdit widget
+ * @iter: the iterator to be moved to the top of the list
+ */
+void gebr_gui_sequence_edit_move_top (GebrGuiSequenceEdit *self,
+				      GtkTreeIter *iter);
+
+/**
+ * gebr_gui_sequence_edit_move_bottom:
+ * @self: a #GebrGuiSequenceEdit widget
+ * @iter: the iterator to be moved to the bottom of the list
+ */
+void gebr_gui_sequence_edit_move_bottom (GebrGuiSequenceEdit *self,
+					 GtkTreeIter *iter);
 
 G_END_DECLS
 

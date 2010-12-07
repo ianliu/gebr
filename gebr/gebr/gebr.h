@@ -65,8 +65,14 @@ struct gebr {
 	GtkWidget *menu[MENUBAR_N];
 	GtkWidget *notebook;
 	struct about about;
-	GtkAccelGroup *accel_group;
-	GtkActionGroup *action_group;
+	gint last_notebook;
+	GtkAccelGroup *accel_group_array[ACCEL_N];
+	GtkActionGroup *action_group_general;
+	GtkActionGroup *action_group_project_line;
+	GtkActionGroup *action_group_flow;
+	GtkActionGroup *action_group_flow_edition;
+	GtkActionGroup *action_group_job_control;
+	GtkActionGroup *action_group_status;
 
 	/** \deprecated This should be avoided. Use Stock icons instead. */
 	GtkWidget *invisible;			

@@ -192,5 +192,10 @@ void on_flow_detailed_report_activate (void);
 
 void on_line_detailed_report_activate (void);
 
+void on_notebook_switch_page (GtkNotebook     *notebook,
+			      GtkNotebookPage *page,
+			      guint            page_num,
+			      gpointer         user_data);
+
 G_END_DECLS
 #endif				//__CALLBACKS_H

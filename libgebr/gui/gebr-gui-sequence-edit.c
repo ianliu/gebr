@@ -18,6 +18,7 @@
 #include <string.h>
 #include <config.h>
 #include <glib/gi18n-lib.h>
+#include <gdk/gdkkeysyms.h>
 
 #include "gebr-gui-sequence-edit.h"
 #include "gebr-gui-utils.h"
@@ -72,7 +73,7 @@ static void on_edited (GtkCellRendererText *cell,
 static void gebr_gui_sequence_edit_remove_real (GebrGuiSequenceEdit *self,
 						GtkTreeIter *iter);
 
-static void gebr_gui_sequence_edit_mode_real (GebrGuiSequenceEdit *self,
+static void gebr_gui_sequence_edit_move_real (GebrGuiSequenceEdit *self,
 					      GtkTreeIter *iter,
 					      GtkTreeIter *position,
 					      GtkTreeViewDropPosition drop_position);
@@ -90,6 +91,10 @@ static void gebr_gui_sequence_edit_rename (GebrGuiSequenceEdit *self,
 static GtkWidget *gebr_gui_sequence_edit_create_tree_view_real (GebrGuiSequenceEdit *self);
 
 static gboolean gebr_sequence_edit_on_mnemonic_activate (GebrGuiSequenceEdit *self);
+
+static gboolean on_tree_view_key_release (GtkWidget *widget,
+					  GdkEventKey *event,
+					  GebrGuiSequenceEdit *self);
 
 G_DEFINE_ABSTRACT_TYPE (GebrGuiSequenceEdit, gebr_gui_sequence_edit, GTK_TYPE_VBOX);
 
@@ -110,7 +115,7 @@ static void gebr_gui_sequence_edit_set_property (GObject *object,
 		self->widget = g_value_get_pointer(value);
 		gtk_box_pack_start(GTK_BOX(self->widget_hbox), self->widget, TRUE, TRUE, 0);
 		break;
-	case LIST_STORE:{
+	case LIST_STORE: {
 			GtkWidget *scrolled_window;
 			GtkWidget *tree_view;
 
@@ -122,11 +127,15 @@ static void gebr_gui_sequence_edit_set_property (GObject *object,
 			scrolled_window = gtk_scrolled_window_new(NULL, NULL);
 			gtk_widget_show(scrolled_window);
 			gtk_box_pack_start(GTK_BOX(self), scrolled_window, TRUE, TRUE, 0);
-			gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window), GTK_POLICY_AUTOMATIC,
-						       GTK_POLICY_AUTOMATIC);
+			gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_window),
+							GTK_POLICY_AUTOMATIC,
+							GTK_POLICY_AUTOMATIC);
 
-			tree_view =
-			    GEBR_GUI_SEQUENCE_EDIT_GET_CLASS(self)->create_tree_view(self);
+			tree_view = GEBR_GUI_SEQUENCE_EDIT_GET_CLASS (self)->create_tree_view (self);
+
+			g_signal_connect (tree_view, "key-release-event",
+					  G_CALLBACK (on_tree_view_key_release), self);
+
 			gebr_gui_gtk_tree_view_set_reorder_callback(GTK_TREE_VIEW(tree_view),
 								    (GebrGuiGtkTreeViewReorderCallback)
 								    on_reorder, NULL,
@@ -138,11 +147,11 @@ static void gebr_gui_sequence_edit_set_property (GObject *object,
 								  popup_menu, self);
 
 			break;
+	}
 	case MAY_RENAME:
 			self->may_rename = g_value_get_boolean(value);
 			g_object_set(self->renderer, "editable", self->may_rename, NULL);
 			break;
-		}
 	default:
 		/*We don't have any other property... */
 		G_OBJECT_WARN_INVALID_PROPERTY_ID(self, property_id, param_spec);
@@ -186,7 +195,7 @@ static void gebr_gui_sequence_edit_class_init(GebrGuiSequenceEditClass *klass)
 	gobject_class->get_property = gebr_gui_sequence_edit_get_property;
 	klass->add = NULL;
 	klass->remove = gebr_gui_sequence_edit_remove_real;
-	klass->move = gebr_gui_sequence_edit_mode_real;
+	klass->move = gebr_gui_sequence_edit_move_real;
 	klass->move_top = gebr_gui_sequence_edit_move_top_real;
 	klass->move_bottom = gebr_gui_sequence_edit_move_bottom_real;
 	klass->rename = gebr_gui_sequence_edit_rename;
@@ -291,12 +300,17 @@ static void gebr_gui_sequence_edit_init (GebrGuiSequenceEdit *self)
 	gtk_box_pack_start(GTK_BOX(hbox), self->widget_hbox, TRUE, TRUE, 0);
 
 	button = gtk_button_new();
-	gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(GTK_STOCK_ADD, 1));
+	gtk_container_add (GTK_CONTAINER (button),
+			  gtk_image_new_from_stock (GTK_STOCK_ADD, GTK_ICON_SIZE_MENU));
 	g_object_set(G_OBJECT(button), "relief", GTK_RELIEF_NONE, NULL);
 	gtk_widget_show_all(button);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 5);
-	g_signal_connect(button, "clicked", G_CALLBACK(on_add_clicked), self);
-	g_signal_connect(self, "mnemonic-activate", G_CALLBACK(gebr_sequence_edit_on_mnemonic_activate), NULL);
+
+	g_signal_connect (button, "clicked",
+			  G_CALLBACK (on_add_clicked), self);
+
+	g_signal_connect (self, "mnemonic-activate",
+			  G_CALLBACK (gebr_sequence_edit_on_mnemonic_activate), NULL);
 }
 
 //==============================================================================
@@ -452,7 +466,7 @@ static void gebr_gui_sequence_edit_remove_real (GebrGuiSequenceEdit *self,
 	g_signal_emit(self, object_signals[CHANGED], 0);
 }
 
-static void gebr_gui_sequence_edit_mode_real (GebrGuiSequenceEdit *self,
+static void gebr_gui_sequence_edit_move_real (GebrGuiSequenceEdit *self,
 					      GtkTreeIter *iter,
 					      GtkTreeIter *position,
 					      GtkTreeViewDropPosition drop_position)
@@ -507,6 +521,70 @@ static gboolean gebr_sequence_edit_on_mnemonic_activate(GebrGuiSequenceEdit *sel
 	return TRUE;
 }
 
+static gboolean on_tree_view_key_release (GtkWidget *widget,
+					  GdkEventKey *event,
+					  GebrGuiSequenceEdit *self)
+{
+	GtkTreePath *path;
+	GtkTreeModel *model;
+	GtkTreeIter selected;
+	GtkTreeIter prev_iter;
+	GtkTreeIter next_iter;
+	GtkTreeSelection *tree_sel;
+	gboolean has_prev = FALSE;
+	gboolean has_next = FALSE;
+
+	tree_sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (self->tree_view));
+	gtk_tree_selection_get_selected (tree_sel, &model, &selected);
+
+	path = gtk_tree_model_get_path (model, &selected);
+	if (gtk_tree_path_prev (path))
+		 has_prev = gtk_tree_model_get_iter (model, &prev_iter, path);
+	gtk_tree_path_free (path);
+
+	path = gtk_tree_model_get_path (model, &selected);
+	gtk_tree_path_next (path);
+	has_next = gtk_tree_model_get_iter (model, &next_iter, path);
+	gtk_tree_path_free (path);
+
+	switch (event->keyval) {
+	case GDK_Delete:
+		gebr_gui_sequence_edit_remove (self, &selected);
+		break;
+	case GDK_Up:
+		if (!(event->state & GDK_CONTROL_MASK) || !has_prev)
+			return FALSE;
+		gebr_gui_sequence_edit_move (self, &selected, &prev_iter,
+					     GTK_TREE_VIEW_DROP_BEFORE);
+		break;
+	case GDK_Down:
+		if (!(event->state & GDK_CONTROL_MASK) || !has_next)
+			return FALSE;
+		gebr_gui_sequence_edit_move (self, &selected, &next_iter,
+					     GTK_TREE_VIEW_DROP_AFTER);
+		break;
+	case GDK_Home: {
+		if (!(event->state & GDK_CONTROL_MASK) || !has_prev)
+			return FALSE;
+		gebr_gui_sequence_edit_move_top (self, &selected);
+		break;
+	}
+	case GDK_End:
+		if (!(event->state & GDK_CONTROL_MASK) || !has_next)
+			return FALSE;
+		gebr_gui_sequence_edit_move_bottom (self, &selected);
+		break;
+	default:
+		return FALSE;
+	}
+
+	gtk_tree_selection_get_selected (tree_sel, &model, &selected);
+	path = gtk_tree_model_get_path (model, &selected);
+	gtk_tree_view_set_cursor (GTK_TREE_VIEW (self->tree_view), path, NULL, FALSE);
+
+	return !FALSE;
+}
+
 //==============================================================================
 // PUBLIC FUNCTIONS							       =
 //==============================================================================
@@ -531,4 +609,38 @@ void gebr_gui_sequence_edit_clear (GebrGuiSequenceEdit *self)
 	g_return_if_fail (GEBR_GUI_IS_SEQUENCE_EDIT (self));
 
 	gtk_list_store_clear (self->list_store);
+}
+
+void gebr_gui_sequence_edit_remove (GebrGuiSequenceEdit *self,
+				    GtkTreeIter *iter)
+{
+	g_return_if_fail (GEBR_GUI_IS_SEQUENCE_EDIT (self));
+
+	GEBR_GUI_SEQUENCE_EDIT_GET_CLASS (self)->remove (self, iter);
+}
+
+void gebr_gui_sequence_edit_move (GebrGuiSequenceEdit *self,
+				  GtkTreeIter *iter,
+				  GtkTreeIter *position,
+				  GtkTreeViewDropPosition pos)
+{
+	g_return_if_fail (GEBR_GUI_IS_SEQUENCE_EDIT (self));
+
+	GEBR_GUI_SEQUENCE_EDIT_GET_CLASS (self)->move (self, iter, position, pos);
+}
+
+void gebr_gui_sequence_edit_move_top (GebrGuiSequenceEdit *self,
+				      GtkTreeIter *iter)
+{
+	g_return_if_fail (GEBR_GUI_IS_SEQUENCE_EDIT (self));
+
+	GEBR_GUI_SEQUENCE_EDIT_GET_CLASS (self)->move_top (self, iter);
+}
+
+void gebr_gui_sequence_edit_move_bottom (GebrGuiSequenceEdit *self,
+					 GtkTreeIter *iter)
+{
+	g_return_if_fail (GEBR_GUI_IS_SEQUENCE_EDIT (self));
+
+	GEBR_GUI_SEQUENCE_EDIT_GET_CLASS (self)->move_bottom (self, iter);
 }
