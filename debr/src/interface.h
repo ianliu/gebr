@@ -35,6 +35,8 @@ enum {
     PARAMETER,
     VALIDATE,
     GENERAL,
+    COMMON,
+    PARAMETER_CHANGE_TYPE,
     ACCEL_N
 };
 /**

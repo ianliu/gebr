@@ -132,6 +132,17 @@ static const GtkActionEntry common_actions_entries[] = {
 	{"paste", GTK_STOCK_PASTE, "paste", NULL, "paste", G_CALLBACK(on_paste_activate)}
 };
 
+const GtkRadioActionEntry parameter_type_radio_actions_entries[] = {
+	{"parameter_type_real", NULL, N_("real"), NULL, NULL, GEBR_GEOXML_PARAMETER_TYPE_FLOAT},
+	{"parameter_type_integer", NULL, N_("integer"), NULL, NULL, GEBR_GEOXML_PARAMETER_TYPE_INT},
+	{"parameter_type_range", NULL, N_("range"), NULL, NULL, GEBR_GEOXML_PARAMETER_TYPE_RANGE},
+	{"parameter_type_flag", NULL, N_("flag"), NULL, NULL, GEBR_GEOXML_PARAMETER_TYPE_FLAG},
+	{"parameter_type_text", NULL, N_("text"), NULL, NULL, GEBR_GEOXML_PARAMETER_TYPE_STRING},
+	{"parameter_type_enum", NULL, N_("enum"), NULL, NULL, GEBR_GEOXML_PARAMETER_TYPE_ENUM},
+	{"parameter_type_file", NULL, N_("file"), NULL, NULL, GEBR_GEOXML_PARAMETER_TYPE_FILE},
+	{"parameter_type_group", NULL, N_("group"), NULL, NULL, GEBR_GEOXML_PARAMETER_TYPE_GROUP},
+};
+
 /*
  * Public methods
  */
@@ -225,8 +236,19 @@ void debr_setup_ui(void)
 	debr.accel_group_array[VALIDATE] = gtk_accel_group_new();
 	gebr_gui_gtk_action_group_set_accel_group(debr.action_group_validate, debr.accel_group_array[VALIDATE]);
 	
-	gtk_action_group_add_radio_actions(debr.action_group_parameter, parameter_type_radio_actions_entries,
+	common_action_group = gtk_action_group_new("Common");
+	gtk_action_group_set_translation_domain(common_action_group, GETTEXT_PACKAGE);
+	gtk_action_group_add_actions(common_action_group, common_actions_entries, G_N_ELEMENTS(common_actions_entries), NULL);
+	debr.accel_group_array[COMMON] = gtk_accel_group_new();
+	gebr_gui_gtk_action_group_set_accel_group(common_action_group, debr.accel_group_array[COMMON]);
+
+	debr.parameter_type_radio_actions_group = gtk_action_group_new("Parameter Type");
+	gtk_action_group_set_translation_domain(debr.parameter_type_radio_actions_group, GETTEXT_PACKAGE);
+	gtk_action_group_add_radio_actions(debr.parameter_type_radio_actions_group, parameter_type_radio_actions_entries,
 					   combo_type_map_size, -1, G_CALLBACK(on_parameter_type_activate), NULL);
+	debr.accel_group_array[PARAMETER_CHANGE_TYPE] = gtk_accel_group_new();
+	gebr_gui_gtk_action_group_set_accel_group(debr.parameter_type_radio_actions_group, debr.accel_group_array[PARAMETER_CHANGE_TYPE]);
+
 
 	gtk_action_disconnect_accelerator(gtk_action_group_get_action(debr.action_group_menu, "menu_new"));
 	gtk_action_disconnect_accelerator(gtk_action_group_get_action(debr.action_group_program, "program_new"));
@@ -236,11 +258,6 @@ void debr_setup_ui(void)
 	gtk_action_disconnect_accelerator(gtk_action_group_get_action(debr.action_group_program, "program_paste"));
 	gtk_action_disconnect_accelerator(gtk_action_group_get_action(debr.action_group_parameter, "parameter_paste"));
 
-	common_action_group = gtk_action_group_new("Common");
-	gtk_action_group_add_actions(common_action_group, common_actions_entries,
-				     G_N_ELEMENTS(common_actions_entries), NULL);
-	gebr_gui_gtk_action_group_set_accel_group(common_action_group, debr.accel_group);
-
 	/*
 	 * Menu: Actions
 	 */
@@ -249,7 +266,7 @@ void debr_setup_ui(void)
 	menu = gtk_menu_new();
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menu_item), menu);
 
-	child_menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_PREFERENCES, debr.accel_group);
+	child_menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_PREFERENCES, debr.accel_group_array[GENERAL]);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), child_menu_item);
 	g_signal_connect(child_menu_item, "activate", G_CALLBACK(on_configure_preferences_activate), NULL);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());

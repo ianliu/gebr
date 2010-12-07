@@ -60,8 +60,6 @@ struct debr {
 	GtkWidget *statusbar;
 	struct about about;
 	GtkWidget *invisible;
-	GtkAccelGroup *accel_group;
-	//GtkActionGroup *action_group;
 
 	gint last_notebook;
 	GtkAccelGroup *accel_group_array[ACCEL_N];
@@ -71,6 +69,7 @@ struct debr {
 	GtkActionGroup *action_group_program;
 	GtkActionGroup *action_group_parameter;
 	GtkActionGroup *action_group_validate;
+	GtkActionGroup *parameter_type_radio_actions_group;
 
 	/* 'special' tool items */
 	GtkToolItem *tool_item_new;
