@@ -41,6 +41,10 @@
 #include "flow.h"
 #include "ui_project_line.h"
 
+
+#define HTML_WINDOW_OBJECT "html-window-object"
+#define CSS_BASENAME "css-basename"
+
 //==============================================================================
 // PROTOTYPES AND STATIC VARIABLES					       =
 //==============================================================================
@@ -52,13 +56,13 @@ static void on_help_edit_window_destroy(GtkWidget * widget, gpointer user_data);
 
 static void on_title_ready(GebrGuiHelpEditWidget * widget, const gchar * title, GtkWindow * window);
 
-static void on_include_comment_activate (GtkAction *action, gpointer data);
+static void on_include_comment_activate (GtkToggleAction *action, GebrGuiHtmlViewerWindow *window);
 
-static void on_include_flows_report_activate (GtkAction *action, gpointer data);
+static void on_include_flows_report_activate (GtkToggleAction *action, GebrGuiHtmlViewerWindow *window);
 
-static void on_ptbl_changed (GtkAction *action, GtkAction *current, gpointer data);
+static void on_ptbl_changed (GtkRadioAction *action, GtkRadioAction *current, GebrGuiHtmlViewerWindow *window);
 
-static void on_style_action_changed (GtkAction *action, GtkAction *current, gpointer data);
+static void on_style_action_changed (GtkAction *action, GtkAction *current, GebrGuiHtmlViewerWindow *window);
 
 static const GtkActionEntry action_entries[] = {
 	{"SaveAction", GTK_STOCK_SAVE, NULL, NULL,
@@ -241,20 +245,85 @@ static void on_title_ready(GebrGuiHelpEditWidget * widget, const gchar * title, 
 	g_string_free (final_title, TRUE);
 }
 
-static void on_include_comment_activate (GtkAction *action, gpointer data)
+static void on_include_comment_activate (GtkToggleAction *action, GebrGuiHtmlViewerWindow *window)
 {
+	gboolean flag;
+	gchar *report;
+	GebrGeoXmlObject *object;
+	GebrGeoXmlObjectType type;
+
+	flag = gtk_toggle_action_get_active (action);
+	object = g_object_get_data (G_OBJECT (window), HTML_WINDOW_OBJECT);
+	type = gebr_geoxml_object_get_type (object);
+
+	if (type == GEBR_GEOXML_OBJECT_TYPE_FLOW)
+		gebr.config.detailed_flow_include_report = flag;
+	else
+		gebr.config.detailed_line_include_report = flag;
+
+	report = gebr_document_generate_report (GEBR_GEOXML_DOCUMENT (object));
+	gebr_gui_html_viewer_window_show_html (window, report);
+	g_free (report);
 }
 
-static void on_include_flows_report_activate (GtkAction *action, gpointer data)
+static void on_include_flows_report_activate (GtkToggleAction *action, GebrGuiHtmlViewerWindow *window)
 {
+	gchar *report;
+	gboolean flag;
+	GebrGeoXmlObject *object;
+
+	object = g_object_get_data (G_OBJECT (window), HTML_WINDOW_OBJECT);
+	flag = gtk_toggle_action_get_active (action);
+	gebr.config.detailed_line_include_flow_report = flag;
+
+	report = gebr_document_generate_report (GEBR_GEOXML_DOCUMENT (object));
+	gebr_gui_html_viewer_window_show_html (window, report);
+	g_free (report);
 }
 
-static void on_ptbl_changed (GtkAction *action, GtkAction *current, gpointer data)
+static void on_ptbl_changed (GtkRadioAction *action, GtkRadioAction *current, GebrGuiHtmlViewerWindow *window)
 {
+	gint flag;
+	gchar *report;
+	GebrGeoXmlObject *object;
+	GebrGeoXmlObjectType type;
+
+	flag = gtk_radio_action_get_current_value (current);
+	object = g_object_get_data (G_OBJECT (window), HTML_WINDOW_OBJECT);
+	type = gebr_geoxml_object_get_type (object);
+
+	if (type == GEBR_GEOXML_OBJECT_TYPE_FLOW)
+		gebr.config.detailed_flow_parameter_table = flag;
+	else
+		gebr.config.detailed_line_parameter_table = flag;
+
+	report = gebr_document_generate_report (GEBR_GEOXML_DOCUMENT (object));
+	gebr_gui_html_viewer_window_show_html (window, report);
+	g_free (report);
 }
 
-static void on_style_action_changed (GtkAction *action, GtkAction *current, gpointer data)
+static void on_style_action_changed (GtkAction *action, GtkAction *current, GebrGuiHtmlViewerWindow *window)
 {
+	gchar *fname;
+	gchar *report;
+	GebrGeoXmlObject *object;
+	GebrGeoXmlObjectType type;
+
+	object = g_object_get_data (G_OBJECT (window), HTML_WINDOW_OBJECT);
+	type = gebr_geoxml_object_get_type (object);
+	fname = g_object_get_data (G_OBJECT (current), CSS_BASENAME);
+
+	if (!fname)
+		return;
+
+	if (type == GEBR_GEOXML_OBJECT_TYPE_FLOW)
+		g_string_assign (gebr.config.detailed_flow_css, fname);
+	else
+		g_string_assign (gebr.config.detailed_line_css, fname);
+
+	report = gebr_document_generate_report (GEBR_GEOXML_DOCUMENT (object));
+	gebr_gui_html_viewer_window_show_html (window, report);
+	g_free (report);
 }
 
 //==============================================================================
@@ -268,13 +337,16 @@ void gebr_help_show_selected_program_help(void)
 	gebr_help_show(GEBR_GEOXML_OBJECT(gebr.program), FALSE);
 }
 
-void gebr_help_show(GebrGeoXmlObject * object, gboolean menu)
+void gebr_help_show(GebrGeoXmlObject *object, gboolean menu)
 {
 	const gchar * html;
 	GtkWidget * window;
 	GebrGuiHtmlViewerWidget * html_viewer_widget;
+	GebrGeoXmlObjectType type;
 
-	window = gebr_gui_html_viewer_window_new(); 
+	type = gebr_geoxml_object_get_type (object);
+	window = gebr_gui_html_viewer_window_new (); 
+	g_object_set_data (G_OBJECT (window), HTML_WINDOW_OBJECT, object);
 	gtk_window_set_modal (GTK_WINDOW (window), TRUE);
 
 	html_viewer_widget = gebr_gui_html_viewer_window_get_widget(GEBR_GUI_HTML_VIEWER_WINDOW(window));
@@ -287,7 +359,7 @@ void gebr_help_show(GebrGeoXmlObject * object, gboolean menu)
 		html = gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(object));
 		gebr_gui_html_viewer_window_show_html(GEBR_GUI_HTML_VIEWER_WINDOW(window), html);
 	}
-	else switch (gebr_geoxml_object_get_type(object)) {
+	else switch (type) {
 	case GEBR_GEOXML_OBJECT_TYPE_FLOW:
 	case GEBR_GEOXML_OBJECT_TYPE_LINE:
 	case GEBR_GEOXML_OBJECT_TYPE_PROJECT: {
@@ -304,21 +376,21 @@ void gebr_help_show(GebrGeoXmlObject * object, gboolean menu)
 		group = gtk_action_group_new ("HtmlViewerGroup");
 
 		gtk_action_group_add_actions (group, html_viewer_entries,
-					      n_html_viewer_entries, NULL);
+					      n_html_viewer_entries, window);
 
 		gtk_action_group_add_toggle_actions (group, html_viewer_toggle_entries,
-						     n_html_viewer_toggle_entries, NULL);
+						     n_html_viewer_toggle_entries, window);
 
 		gtk_action_group_add_radio_actions (group, html_viewer_radio_entries,
 						    n_html_viewer_radio_entries,
-						    0, G_CALLBACK (on_ptbl_changed), NULL);
+						    0, G_CALLBACK (on_ptbl_changed), window);
 
 		gint i = 1;
 		GtkRadioAction *radio_action;
 		GSList *style_group = NULL;
 
 		radio_action = gtk_radio_action_new ("StyleNoneAction", _("None"), NULL, NULL, 0);
-		g_signal_connect (radio_action, "changed", G_CALLBACK (on_style_action_changed), NULL);
+		g_signal_connect (radio_action, "changed", G_CALLBACK (on_style_action_changed), window);
 		gtk_radio_action_set_group (radio_action, style_group);
 		style_group = gtk_radio_action_get_group (radio_action);
 		gtk_action_group_add_action (group, GTK_ACTION (radio_action));
@@ -335,6 +407,7 @@ void gebr_help_show(GebrGeoXmlObject * object, gboolean menu)
 					gchar *action_name;
 					gchar *css_title;
 					gchar *abs_path;
+					gchar *fname_cpy;
 					
 					action_name = g_strdup_printf ("StyleAction%d", i);
 					abs_path = g_strconcat (GEBR_STYLES_DIR, "/", fname, NULL);
@@ -342,6 +415,9 @@ void gebr_help_show(GebrGeoXmlObject * object, gboolean menu)
 					radio_action = gtk_radio_action_new (action_name,
 									     css_title,
 									     NULL, NULL, i);
+					fname_cpy = g_strdup (fname);
+					g_object_set_data (G_OBJECT (radio_action), CSS_BASENAME, fname_cpy);
+					g_object_weak_ref (G_OBJECT (radio_action), (GWeakNotify)g_free, fname_cpy);
 					gtk_radio_action_set_group (radio_action, style_group);
 					style_group = gtk_radio_action_get_group (radio_action);
 					gtk_action_group_add_action (group, GTK_ACTION (radio_action));
@@ -368,7 +444,7 @@ void gebr_help_show(GebrGeoXmlObject * object, gboolean menu)
 			g_free (name);
 		}
 
-		if (gebr_geoxml_object_get_type(object) == GEBR_GEOXML_OBJECT_TYPE_LINE) {
+		if (type == GEBR_GEOXML_OBJECT_TYPE_LINE) {
 			const gchar *path;
 			const gchar *name;
 			path = "/" GEBR_GUI_HTML_VIEWER_WINDOW_MENU_BAR "/OptionsMenu/IncludeCommentAction";
