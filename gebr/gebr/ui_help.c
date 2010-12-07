@@ -52,7 +52,13 @@ static void on_help_edit_window_destroy(GtkWidget * widget, gpointer user_data);
 
 static void on_title_ready(GebrGuiHelpEditWidget * widget, const gchar * title, GtkWindow * window);
 
-static void on_include_comment_activate ();
+static void on_include_comment_activate (GtkAction *action, gpointer data);
+
+static void on_include_flows_report_activate (GtkAction *action, gpointer data);
+
+static void on_ptbl_changed (GtkAction *action, GtkAction *current, gpointer data);
+
+static void on_style_action_changed (GtkAction *action, GtkAction *current, gpointer data);
 
 static const GtkActionEntry action_entries[] = {
 	{"SaveAction", GTK_STOCK_SAVE, NULL, NULL,
@@ -63,13 +69,17 @@ static guint n_action_entries = G_N_ELEMENTS(action_entries);
 static const GtkActionEntry html_viewer_entries[] = {
 	{"OptionsMenu", NULL, N_("_Options")},
 	{"ParameterTableMenu", NULL, N_("Parameter table")},
+	{"StyleMenu", NULL, N_("_Style")},
+
 };
 static guint n_html_viewer_entries = G_N_ELEMENTS (html_viewer_entries);
 
 static const GtkToggleActionEntry html_viewer_toggle_entries[] = {
 	{"IncludeCommentAction", NULL, N_("_Include user's commentary"), NULL,
-		N_("If checked, include your commentary into the report"),
-		G_CALLBACK (on_include_comment_activate), TRUE},
+		NULL, G_CALLBACK (on_include_comment_activate), TRUE},
+
+	{"IncludeFlowsReportAction", NULL, N_("Include _flows report"), NULL,
+		NULL, G_CALLBACK (on_include_flows_report_activate), TRUE},
 };
 static guint n_html_viewer_toggle_entries = G_N_ELEMENTS (html_viewer_toggle_entries);
 
@@ -104,7 +114,11 @@ static const gchar *html_viewer_ui_def =
 "    <menuitem action='OnlyFilledAction' />"
 "    <menuitem action='AllAction' />"
 "   </menu>"
-"  <menu>"
+"   <separator />"
+"   <menu action='StyleMenu'>"
+"    <menuitem action='StyleNoneAction' />"
+"   </menu>"
+"  </menu>"
 " </menubar>"
 "</ui>";
 
@@ -234,7 +248,19 @@ static void on_title_ready(GebrGuiHelpEditWidget * widget, const gchar * title, 
 	g_string_free (final_title, TRUE);
 }
 
-static void on_include_comment_activate ()
+static void on_include_comment_activate (GtkAction *action, gpointer data)
+{
+}
+
+static void on_include_flows_report_activate (GtkAction *action, gpointer data)
+{
+}
+
+static void on_ptbl_changed (GtkAction *action, GtkAction *current, gpointer data)
+{
+}
+
+static void on_style_action_changed (GtkAction *action, GtkAction *current, gpointer data)
 {
 }
 
@@ -272,8 +298,10 @@ void gebr_help_show(GebrGeoXmlObject * object, gboolean menu)
 	case GEBR_GEOXML_OBJECT_TYPE_FLOW:
 	case GEBR_GEOXML_OBJECT_TYPE_LINE:
 	case GEBR_GEOXML_OBJECT_TYPE_PROJECT: {
+		GDir *dir;
 		gchar *str;
-		GtkWidget *manager;
+		gint merge_id;
+		GtkUIManager *manager;
 		GError *error = NULL;
 		GtkActionGroup *group;
 		GebrGuiHtmlViewerWindow *html_window;
@@ -281,6 +309,7 @@ void gebr_help_show(GebrGeoXmlObject * object, gboolean menu)
 		html_window = GEBR_GUI_HTML_VIEWER_WINDOW (window);
 		manager = gebr_gui_html_viewer_window_get_ui_manager (html_window);
 		group = gtk_action_group_new ("HtmlViewerGroup");
+
 		gtk_action_group_add_actions (group, html_viewer_entries,
 					      n_html_viewer_entries, NULL);
 
@@ -289,10 +318,71 @@ void gebr_help_show(GebrGeoXmlObject * object, gboolean menu)
 
 		gtk_action_group_add_radio_actions (group, html_viewer_radio_entries,
 						    n_html_viewer_radio_entries,
-						    0, on_ptbl_changed, NULL);
+						    0, G_CALLBACK (on_ptbl_changed), NULL);
+
+		gint i = 1;
+		GtkRadioAction *radio_action;
+		GSList *style_group = NULL;
+
+		radio_action = gtk_radio_action_new ("StyleNoneAction", _("None"), NULL, NULL, 0);
+		g_signal_connect (radio_action, "changed", G_CALLBACK (on_style_action_changed), NULL);
+		gtk_radio_action_set_group (radio_action, style_group);
+		style_group = gtk_radio_action_get_group (radio_action);
+		gtk_action_group_add_action (group, GTK_ACTION (radio_action));
+		dir = g_dir_open (GEBR_STYLES_DIR, 0, &error);
+
+		if (error) {
+			g_critical ("%s", error->message);
+			g_clear_error (&error);
+		} else {
+			const gchar *fname;
+			fname = g_dir_read_name (dir);
+			while (fname != NULL) {
+				if (fnmatch ("*.css", fname, 1) == 0) {
+					gchar *action_name;
+					gchar *css_title;
+					gchar *abs_path;
+					
+					action_name = g_strdup_printf ("StyleAction%d", i);
+					abs_path = g_strconcat (GEBR_STYLES_DIR, "/", fname, NULL);
+					css_title = gebr_document_get_css_header_field (abs_path, "title");
+					radio_action = gtk_radio_action_new (action_name,
+									     css_title,
+									     NULL, NULL, i);
+					gtk_radio_action_set_group (radio_action, style_group);
+					style_group = gtk_radio_action_get_group (radio_action);
+					gtk_action_group_add_action (group, GTK_ACTION (radio_action));
+					g_free (action_name);
+					i++;
+				}
+				fname = g_dir_read_name (dir);
+			}
+			g_dir_close (dir);
+		}
 
 		gtk_ui_manager_insert_action_group (manager, group, 0);
-		gtk_ui_manager_add_ui_from_string (manager, html_viewer_ui_def, -1, &error);
+		merge_id = gtk_ui_manager_add_ui_from_string (manager, html_viewer_ui_def, -1, &error);
+
+		// Merge style actions
+		for (int k = 1; k < i; k++) {
+			gchar *name;
+			const gchar *path;
+
+			path = "/" GEBR_GUI_HTML_VIEWER_WINDOW_MENU_BAR "/OptionsMenu/StyleMenu";
+			name = g_strdup_printf ("StyleAction%d", k);
+
+			gtk_ui_manager_add_ui (manager, merge_id, path, name, name, GTK_UI_MANAGER_MENUITEM, FALSE);
+			g_free (name);
+		}
+
+		if (gebr_geoxml_object_get_type(object) == GEBR_GEOXML_OBJECT_TYPE_LINE) {
+			const gchar *path;
+			const gchar *name;
+			path = "/" GEBR_GUI_HTML_VIEWER_WINDOW_MENU_BAR "/OptionsMenu/IncludeCommentAction";
+			name = "IncludeFlowsReportAction";
+			gtk_ui_manager_add_ui (manager, merge_id, path, name, name, GTK_UI_MANAGER_MENUITEM, FALSE);
+		}
+
 		g_object_unref (group);
 
 		if (error) {
