@@ -271,10 +271,19 @@ static void on_include_flows_report_activate (GtkToggleAction *action, GebrGuiHt
 	gchar *report;
 	gboolean flag;
 	GebrGeoXmlObject *object;
+	GtkAction *action_param_table;
+	GtkUIManager *manager;
+	const gchar *path_param_table;
 
 	object = g_object_get_data (G_OBJECT (window), HTML_WINDOW_OBJECT);
 	flag = gtk_toggle_action_get_active (action);
 	gebr.config.detailed_line_include_flow_report = flag;
+
+	manager = gebr_gui_html_viewer_window_get_ui_manager (window);
+
+	path_param_table = "/" GEBR_GUI_HTML_VIEWER_WINDOW_MENU_BAR "/OptionsMenu/ParameterTableMenu";
+	action_param_table = gtk_ui_manager_get_action(manager, path_param_table);
+	gtk_action_set_sensitive(action_param_table, gebr.config.detailed_line_include_flow_report);
 
 	report = gebr_document_generate_report (GEBR_GEOXML_DOCUMENT (object));
 	gebr_gui_html_viewer_window_show_html (window, report);
@@ -459,6 +468,13 @@ void gebr_help_show(GebrGeoXmlObject *object, gboolean menu)
 			gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), gebr.config.detailed_line_include_report);
 			action = gtk_action_group_get_action (group, "IncludeFlowsReportAction");
 			gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), gebr.config.detailed_line_include_flow_report);
+
+			const gchar *path_param_table;
+
+			path_param_table = "/" GEBR_GUI_HTML_VIEWER_WINDOW_MENU_BAR "/OptionsMenu/ParameterTableMenu";
+			action = gtk_ui_manager_get_action(manager, path_param_table);
+			gtk_action_set_sensitive(action, gebr.config.detailed_line_include_flow_report);
+
 			action = gtk_action_group_get_action (group, "NoTableAction");
 			gtk_radio_action_set_current_value (GTK_RADIO_ACTION (action), gebr.config.detailed_line_parameter_table);
 		} else if (type == GEBR_GEOXML_OBJECT_TYPE_FLOW) {
