@@ -175,7 +175,7 @@ struct ui_project_line *project_line_setup_ui(void)
 	GtkWidget * hbox;
 	hbox = gtk_hbox_new(FALSE, 0);
 	ui_project_line->info.help_view = gtk_button_new_with_label(_("View report"));
-	ui_project_line->info.help_edit = gtk_button_new_with_label(_("Edit line comments"));
+	ui_project_line->info.help_edit = gtk_button_new_with_label(_("Edit comments"));
 	gtk_box_pack_start(GTK_BOX(hbox), ui_project_line->info.help_view, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), ui_project_line->info.help_edit, TRUE, TRUE, 0);
 	g_signal_connect(GTK_OBJECT(ui_project_line->info.help_view), "clicked",

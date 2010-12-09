@@ -215,7 +215,7 @@ GebrUiFlowBrowse *flow_browse_setup_ui(GtkWidget * revisions_menu)
 	hbox = gtk_hbox_new(FALSE, 0);
 
 	ui_flow_browse->info.help_view = gtk_button_new_with_label(_("View report"));
-	ui_flow_browse->info.help_edit = gtk_button_new_with_label(_("Edit flow comments"));
+	ui_flow_browse->info.help_edit = gtk_button_new_with_label(_("Edit comments"));
 
 	gtk_box_pack_start(GTK_BOX(hbox), ui_flow_browse->info.help_view, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), ui_flow_browse->info.help_edit, TRUE, TRUE, 0);
