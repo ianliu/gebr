@@ -55,14 +55,11 @@ cd ..
 mkdir -p $GEBR_DIR/real-bin
 mv $GEBR_DIR/bin/* $GEBR_DIR/real-bin
 echo '#!/bin/sh
-if test -z $GEBR_HOME; then
-	export GEBR_HOME=$PWD/`dirname $0`/..
-	export LD_LIBRARY_PATH=$GEBR_HOME/lib:$LD_LIBRARY_PATH
-	export PATH=$GEBR_HOME/bin:$PATH
-fi
-GEBR_PROG=`basename $0`
-cd $GEBR_HOME/bin
-$GEBR_HOME/real-bin/$GEBR_PROG $*' > $GEBR_DIR/bin/script
+cd `dirname $0`
+GEBR_HOME=`dirname \`pwd\``
+export PATH=$GEBR_HOME/real-bin:$PATH
+export LD_LIBRARY_PATH=$GEBR_HOME/lib:$LD_LIBRARY_PATH
+$GEBR_HOME/real-bin/`basename $0` "$@"' > $GEBR_DIR/bin/script
 chmod +x $GEBR_DIR/bin/script
 cd $GEBR_DIR/real-bin
 for bin in *; do
