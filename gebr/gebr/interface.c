@@ -133,7 +133,7 @@ static const GtkActionEntry actions_entries_flow_edition[] = {
 	{"flow_edition_bottom", GTK_STOCK_GOTO_BOTTOM, N_("Move to Bottom"),
 		"End", NULL, G_CALLBACK(on_flow_component_move_bottom)},
 	{"flow_edition_execute", GTK_STOCK_EXECUTE, NULL,
-		NULL, N_("Execute this flow"), G_CALLBACK (on_flow_component_execute)}
+		"<Control>R", N_("Execute this flow"), G_CALLBACK (on_flow_component_execute)}
 };
 
 static const GtkActionEntry actions_entries_job_control[] = {
@@ -143,7 +143,7 @@ static const GtkActionEntry actions_entries_job_control[] = {
 	{"job_control_save", GTK_STOCK_SAVE, NULL,
 		NULL, N_("Save job information in a file"), G_CALLBACK(on_job_control_save)},
 	{"job_control_close", "gnome-fs-trash-empty", N_("Close"),
-		NULL, N_("Close job"), G_CALLBACK(on_job_control_close)},
+		"Delete", N_("Close job"), G_CALLBACK(on_job_control_close)},
 	{"job_control_stop", GTK_STOCK_STOP, N_("Cancel"),
 		NULL, N_("Ask server to cancel the job"), G_CALLBACK(on_job_control_stop)},
 	/*
