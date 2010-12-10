@@ -51,7 +51,7 @@ static const GtkActionEntry actions_entries[] = {
 	{"actions_quit", GTK_STOCK_QUIT, NULL,
 		"<Control>q", NULL, G_CALLBACK(on_quit_activate)},
 	{"help_contents", GTK_STOCK_HELP, NULL,
-		NULL, NULL, G_CALLBACK(on_help_contents_activate)},
+		"<Control>h", NULL, G_CALLBACK(on_help_contents_activate)},
 	{"help_about", GTK_STOCK_ABOUT, NULL,
 		NULL, NULL, G_CALLBACK(on_help_about_activate)}
 };
@@ -117,7 +117,7 @@ static const GtkActionEntry actions_entries_flow_edition[] = {
 	 * Flow Edition
 	 */
 	{"flow_edition_help", GTK_STOCK_HELP, NULL,
-		NULL, N_("Show program's help"), G_CALLBACK(on_flow_component_help_activate)},
+		"<Control><Shift>h" , N_("Show program's help"), G_CALLBACK(on_flow_component_help_activate)},
 	{"flow_edition_delete", GTK_STOCK_DELETE, NULL,
 		"Delete", N_("Delete program"), G_CALLBACK(on_flow_component_delete_activate)},
 	{"flow_edition_properties", GTK_STOCK_PROPERTIES, NULL,
@@ -207,6 +207,7 @@ void gebr_setup_ui(void)
 	gtk_action_group_add_actions(gebr.action_group_general, actions_entries, G_N_ELEMENTS(actions_entries), NULL);
 	gebr.accel_group_array[ACCEL_GENERAL] = gtk_accel_group_new();
 	gebr_gui_gtk_action_group_set_accel_group(gebr.action_group_general, gebr.accel_group_array[ACCEL_GENERAL]);
+	gtk_window_add_accel_group(GTK_WINDOW(gebr.window), gebr.accel_group_array[ACCEL_GENERAL]);
 
 	gebr.action_group_project_line = gtk_action_group_new("Project and Line");
 	gtk_action_group_set_translation_domain(gebr.action_group_project_line, GETTEXT_PACKAGE);
