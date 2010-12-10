@@ -504,18 +504,34 @@ static gboolean check_duplicate (GebrGuiSequenceEdit * sequence_edit, const gcha
 
 	gebr_gui_gtk_tree_model_foreach(iter, model) {
 		gchar *i_categ;
+		gchar *category_first_up;
+		gchar *i_categ_first_up;
+		gchar *categ_no_blank;
+		gchar *categ_no_mult_blank;
+
 		gtk_tree_model_get(model, &iter, 0, &i_categ, -1);
 
-		gchar * category_first_up = gebr_validate_change_first_to_upper(category);
-		gchar * i_categ_first_up = gebr_validate_change_first_to_upper(i_categ);
+		categ_no_blank = gebr_validate_change_no_blanks_at_boundaries(category);
+		categ_no_mult_blank = gebr_validate_change_multiple_blanks(categ_no_blank);
+		category_first_up = gebr_validate_change_first_to_upper(categ_no_mult_blank);
+
+		g_free(categ_no_blank);
+		g_free(categ_no_mult_blank);
+
+		categ_no_blank = gebr_validate_change_no_blanks_at_boundaries(i_categ);
+		categ_no_mult_blank = gebr_validate_change_multiple_blanks(categ_no_blank);
+		i_categ_first_up = gebr_validate_change_first_to_upper(categ_no_mult_blank);
 
 		if (!g_utf8_collate(i_categ_first_up, category_first_up)) {
 			gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(sequence_edit->tree_view), &iter);
 			retval = TRUE;
 		}
+
 		g_free(i_categ);
 		g_free(i_categ_first_up);
 		g_free(category_first_up);
+		g_free(categ_no_blank);
+		g_free(categ_no_mult_blank);
 	}
 
 	if (retval) {
