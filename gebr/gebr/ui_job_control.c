@@ -310,6 +310,7 @@ void job_control_close(void)
 
 		job_close(job, FALSE, TRUE);
 	}
+	job_control_on_cursor_changed();
 }
 
 void job_control_clear(gboolean force)
