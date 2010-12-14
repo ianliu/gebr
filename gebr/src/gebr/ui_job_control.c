@@ -228,6 +228,7 @@ void job_control_close(void)
 		return;
 
 	job_close(job, FALSE, TRUE);
+	job_control_on_cursor_changed();
 }
 
 void job_control_clear(gboolean force)
@@ -251,6 +252,7 @@ void job_control_clear(gboolean force)
 	}
 	gebr_gui_gtk_tree_model_foreach_recursive(GTK_TREE_MODEL(gebr.ui_job_control->store),
 						  (GtkTreeModelForeachFunc)job_control_clear_foreach, NULL); 
+	job_control_on_cursor_changed();
 }
 
 void job_control_stop(void)
