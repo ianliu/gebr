@@ -320,7 +320,7 @@ gboolean gebr_validate_check_no_lower_case(const gchar * sentence)
 {
 	if (!gebr_validate_check_is_not_empty(sentence))
 		return TRUE;
-	if (g_ascii_islower(sentence[0]))
+	if (g_unichar_islower(g_utf8_get_char_validated(sentence, -1)))
 		return FALSE;
 
 	return TRUE;
