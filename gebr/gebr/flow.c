@@ -651,7 +651,7 @@ void flow_program_paste(void)
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
 }
 
-static void append_parameter_row(GebrGeoXmlParameter * parameter, GString * dump, gboolean in_group, GebrGeoXmlDocumentType type)
+static void append_parameter_row(GebrGeoXmlParameter * parameter, GString * dump, gboolean in_group)
 {
 	gint i, n_instances;
 	GebrGeoXmlSequence * param;
@@ -668,11 +668,11 @@ static void append_parameter_row(GebrGeoXmlParameter * parameter, GString * dump
 		str_value = gebr_geoxml_program_parameter_get_string_value(program, FALSE);
                 default_value = gebr_geoxml_program_parameter_get_string_value(program, TRUE);
 
-		switch (type) {
-		case GEBR_GEOXML_DOCUMENT_TYPE_LINE:
+		switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook))) {
+		case NOTEBOOK_PAGE_PROJECT_LINE:
 			radio_value = gebr.config.detailed_line_parameter_table;
 			break;
-		case GEBR_GEOXML_DOCUMENT_TYPE_FLOW:
+		case NOTEBOOK_PAGE_FLOW_BROWSE:
 			radio_value = gebr.config.detailed_flow_parameter_table;
 			break;
 		default:
@@ -734,7 +734,7 @@ static void append_parameter_row(GebrGeoXmlParameter * parameter, GString * dump
 
 
 			while (param) {
-				append_parameter_row(GEBR_GEOXML_PARAMETER(param), dump, TRUE, type);
+				append_parameter_row(GEBR_GEOXML_PARAMETER(param), dump, TRUE);
 				gebr_geoxml_sequence_next(&param);
 			}
 			/*If there are no parameters returned by the dialog choice...*/
@@ -760,13 +760,11 @@ static void append_parameter_row(GebrGeoXmlParameter * parameter, GString * dump
 static gchar * gebr_program_generate_parameter_value_table (GebrGeoXmlProgram *program)
 {
 	GString * table;
-	GebrGeoXmlDocumentType type;
 	GebrGeoXmlDocument *document;
 	GebrGeoXmlParameters *parameters;
 	GebrGeoXmlSequence *sequence;
 
 	document = gebr_geoxml_object_get_owner_document (GEBR_GEOXML_OBJECT (program));
-	type = gebr_geoxml_document_get_type (document);
 
 	table = g_string_new ("");
 	parameters = gebr_geoxml_program_get_parameters (program);
@@ -794,13 +792,13 @@ static gchar * gebr_program_generate_parameter_value_table (GebrGeoXmlProgram *p
 
 		GString * initial_table = g_string_new(table->str);
 		while (sequence) {
-			append_parameter_row(GEBR_GEOXML_PARAMETER(sequence), table, FALSE, type);
+			append_parameter_row(GEBR_GEOXML_PARAMETER(sequence), table, FALSE);
 			gebr_geoxml_sequence_next (&sequence);
 		}
 
 		if (g_string_equal(initial_table, table)) {
-			switch (type) {
-			case GEBR_GEOXML_DOCUMENT_TYPE_LINE:
+			switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook))) {
+			case NOTEBOOK_PAGE_PROJECT_LINE:
 				if (gebr.config.detailed_line_parameter_table == GEBR_PARAM_TABLE_ONLY_CHANGED)
 					g_string_printf(table,
 							"<table class=\"gebr-parameter-table\" summary=\"Parameter table\">\n"
@@ -818,7 +816,7 @@ static gchar * gebr_program_generate_parameter_value_table (GebrGeoXmlProgram *p
 							translated);
 
 				break;
-			case GEBR_GEOXML_DOCUMENT_TYPE_FLOW:
+			case NOTEBOOK_PAGE_FLOW_BROWSE:
 				if (gebr.config.detailed_flow_parameter_table == GEBR_PARAM_TABLE_ONLY_CHANGED)
 					g_string_printf(table,
 							"<table class=\"gebr-parameter-table\" summary=\"Parameter table\">\n"
