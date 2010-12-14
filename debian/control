@@ -1,0 +1,127 @@
+Source: gebrproject
+Priority: extra
+Maintainer: Ricardo Biloti <biloti@gebrproject.com>
+Build-Depends: aclocal, automake, autoconf, intltool, libtool, gtk-doc-tool,
+ libglib2.0-dev, libgtk2.0-dev, libgdome2-dev, libwebkit-dev, pkg-config
+Standards-Version: 3.7.2
+
+Package: libgebr
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: GeBR library collection
+ GeBR is an environment to seismic processing based on open-source
+ technologies, designed to easily assembly and run processing flows.
+ .
+ What GeBR does:
+ .
+     * Handle projects and lines
+     * Assembly and run processing flows
+     * Act as an interface to many freely-available seismic-processing
+       packages (Seismic Unix, Madagascar, etc)
+ .
+ libgebr is the collection of libraries of GeBR:
+     * libgebr_comm deals with client-server communication
+     * libgebr_geoxml is the XML engine of GeBR
+     * libgebr_gui extends GTK+ functionalities
+     * libgebr_misc is where everything else is
+ .
+
+Package: libgebr-dev
+Section: libdevel
+Architecture: any
+Depends: libglib2.0-dev, libgtk2.0-dev, libgdome2-dev, libwebkit-dev
+Description: GeBR library collection
+ GeBR is an environment to seismic processing based on open-source
+ technologies, designed to easily assembly and run processing flows.
+ .
+ What GeBR does:
+ .
+     * Handle projects and lines
+     * Assembly and run processing flows
+     * Act as an interface to many freely-available seismic-processing
+       packages (Seismic Unix, Madagascar, etc)
+ .
+ libgebr is the collection of libraries of GeBR:
+     * libgebr_comm deals with client-server communication
+     * libgebr_geoxml is the XML engine of GeBR
+     * libgebr_gui extends GTK+ functionalities
+     * libgebr_misc is where everything else is
+ .
+ This package contains the header files, static libraries and symbolic
+ links that developers using libgebr will need.
+ .
+
+Package: libgebr-doc
+Section: doc
+Architecture: any
+Description: Document files for libgebr API
+
+Package: gebrd
+Section: science
+Architecture: amd64
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: GeBRD is server for executing flows
+ GeBR is an environment to seismic processing based on open-source
+ technologies, designed to easily assembly and run processing flows.
+ . 
+ What GeBR does:
+ . 
+     * Handle projects and lines
+     * Assembly and run processing flows
+     * Act as an interface to many freely-available seismic-processing
+       packages (Seismic Unix, Madagascar, etc)
+ .
+ GeBRD is server for executing flows
+ .
+
+Package: gebrd-doc
+Section: doc
+Architecture: any
+Description: GeBRd User Manual
+
+Package: gebr
+Section: science
+Architecture: amd64
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Suggests: debr, gebr-menus-su
+Description: Seismic processing environment
+ GeBR is an environment to seismic processing based on open-source
+ technologies, designed to easily assembly and run processing flows.
+ . 
+ What GeBR does:
+ . 
+     * Handle projects and lines
+     * Assembly and run processing flows
+     * Act as an interface to many freely-available seismic-processing
+       packages (Seismic Unix, Madagascar, etc)
+ .
+
+Package: gebr-doc
+Section: doc
+Architecture: any
+Description: GeBR User Manual
+
+Package: debr
+Section: science
+Architecture: amd64
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Menu Designer for GeBR
+ GeBR is an environment to seismic processing based on open-source
+ technologies, designed to easily assembly and run processing flows.
+ . 
+ What GeBR does:
+ . 
+     * Handle projects and lines
+     * Assembly and run processing flows
+     * Act as an interface to many freely-available seismic-processing
+       packages (Seismic Unix, Madagascar, etc)
+ .
+ DeBR is the menu designer for GeBR. Each menu adds new functionalities
+ to GeBR.
+ .
+
+Package: debr-doc
+Section: doc
+Architecture: any
+Description: DeBR User Manual
