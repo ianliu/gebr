@@ -1,0 +1,102 @@
+gebrproject (0.10.0) lenny; urgency=low
+
+  * One step closer to 1.0.
+
+ -- Fabricio Matheus Goncalves <fmatheus@gebrproject.com>  Thu, 11 Nov 2010 13:39:29 -0200
+
+gebrproject (0.9.20) lenny; urgency=low
+
+  * More bugs fixed and translations.
+
+ -- Fabricio Matheus Goncalves <fmatheus@gebrproject.com>  Wed, 10 Nov 2010 21:11:27 -0200
+
+gebrproject (0.9.19) lenny; urgency=low
+
+  * More fixes before the stable release.
+
+ -- Fabricio Matheus Goncalves <fmatheus@gebrproject.com>  Tue, 09 Nov 2010 22:12:14 -0200
+
+gebrproject (0.9.18) lenny; urgency=low
+
+  * Development release for validate fixes on freeze.
+
+ -- Fabricio Matheus Goncalves <fmatheus@gebrproject.com>  Thu, 28 Oct 2010 12:04:05 -0200
+
+gebrproject (0.9.17) lenny; urgency=low
+
+  * Release 0.9.17.
+
+ -- Fabricio Matheus Goncalves <fmatheus@gebrproject.com>  Fri, 16 Jul 2010 13:45:21 -0300
+
+gebrproject (0.9.16) lenny; urgency=low
+
+  * Moab-like cluster support, chained flows and WYSWYG help editor.
+
+ -- Fabricio Matheus Goncalves <fmatheus@gebrproject.com>  Sun, 07 Mar 2010 23:11:18 -0300
+
+gebrproject (0.9.15) lenny; urgency=low
+
+  * Release 0.9.15 (1.0.0 beta 9)
+
+ -- Ricardo Biloti <biloti@gebrproject.com>  Fri, 11 Dec 2009  23:20:00 -0300
+
+gebrproject (0.9.14) lenny; urgency=low
+
+  * Release 0.9.14 (1.0.0 beta 8)
+
+ -- Ricardo Biloti <biloti@gmail.com>  Mon, 10 Aug 2009  20:39:00 -0300
+
+gebrproject (0.9.13) lenny; urgency=low
+
+  * Release 0.9.13 (1.0.0 beta 7)
+
+ -- Ricardo Biloti <biloti@gmail.com>  Mon, 17 Jun 2009  17:04:00 -0300
+
+gebrproject (0.9.12) lenny; urgency=low
+
+  * Release 0.9.12 (1.0.0 beta 6)
+
+ -- Ricardo Biloti <biloti@gmail.com>  Mon, 02 Apr 2009  18:29:00 -0300
+
+gebrproject (0.9.11) lenny; urgency=low
+
+  * Release 0.9.11 (1.0.0 beta 5)
+
+ -- Ricardo Biloti <biloti@gmail.com>  Mon, 21 Mar 2009  20:36:00 -0300
+
+gebrproject (0.9.10) lenny; urgency=low
+
+  * Release 0.9.10 (1.0.0 beta 4)
+
+ -- Ricardo Biloti <biloti@gmail.com>  Mon, 09 Mar 2009  16:19:00 -0300
+
+gebrproject (0.9.9) lenny; urgency=low
+
+  * Release 0.9.9 (1.0.0 beta 3)
+
+ -- Ricardo Biloti <biloti@gmail.com>  Mon, 02 Mar 2009  17:03:00 -0300
+
+gebrproject (0.9.8) lenny; urgency=low
+
+  * Release 0.9.8 (1.0.0 beta 2)
+
+ -- Ricardo Biloti <biloti@gmail.com>  Fri, 30 Jan 2009  14:00:00 -0200
+
+gebrproject (0.9.7) lenny; urgency=low
+
+  * Release 0.9.7 (1.0.0 beta 1)
+
+ -- Ricardo Biloti <biloti@gmail.com>  Thu, 15 Jan 2009  14:00:00 -0200
+
+gebrproject (0.9.3) lenny; urgency=low
+
+  * Release 0.9.3 with many improvements
+
+ -- Ricardo Biloti <biloti@gmail.com>  Thu, 13 Dec 2007 14:00:00 -0200
+
+gebrproject (0.9.1-1) lenny; urgency=low
+
+  * Initial release
+
+ -- Bráulio Barros de Oliveira <brauliobo@gmail.com>  Fri, 21 Sep 2007 16:16:28 -0300
+
