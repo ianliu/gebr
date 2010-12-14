@@ -50,7 +50,7 @@ static const GtkActionEntry actions_entries[] = {
 	{"actions_quit", GTK_STOCK_QUIT, NULL,
 		"<Control>q", NULL, G_CALLBACK(on_quit_activate)},
 	{"help_contents", GTK_STOCK_HELP, NULL,
-		NULL, NULL, G_CALLBACK(on_help_contents_activate)},
+		"<Control>h", NULL, G_CALLBACK(on_help_contents_activate)},
 	{"help_about", GTK_STOCK_ABOUT, NULL,
 		NULL, NULL, G_CALLBACK(on_help_about_activate)},
 
@@ -108,7 +108,7 @@ static const GtkActionEntry actions_entries[] = {
 	 * Flow Edition
 	 */
 	{"flow_edition_help", GTK_STOCK_HELP, NULL,
-		NULL, N_("Show program's help"), G_CALLBACK(on_flow_component_help_activate)},
+		"<Control><Shift>h", N_("Show program's help"), G_CALLBACK(on_flow_component_help_activate)},
 	{"flow_edition_delete", GTK_STOCK_DELETE, NULL,
 		"Delete", N_("Delete program"), G_CALLBACK(on_flow_component_delete_activate)},
 	{"flow_edition_properties", GTK_STOCK_PROPERTIES, NULL,
