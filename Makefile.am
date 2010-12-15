@@ -15,10 +15,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 include $(top_srcdir)/Makefile.decl
 
-ACLOCAL_AMFLAGS = -I m4 --install
-DISTCHECK_CONFIGURE_FLAGS=--enable-gtk-doc
+ACLOCAL_AMFLAGS = -I m4
+DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc
 
-SUBDIRS = libgebr gebrd gebr debr
+SUBDIRS = libgebr gebrd gebr debr docs
 
 EXTRA_DIST = libgebr/po/Makefile.in.in	\
 	     gebrd/po/Makefile.in.in	\
