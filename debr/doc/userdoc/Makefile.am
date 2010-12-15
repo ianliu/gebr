@@ -18,18 +18,18 @@ include $(top_srcdir)/Makefile.decl
 HTMLDIR = $(DESTDIR)$(datadir)/doc/debr/html
 
 html:
-	if test -w $(srcdir); \
+	if test -w $(srcdir); then \
 	  (cd $(srcdir); \
 	   test -d html && rm -r html; \
-	   db2html debr.docbook -o html); \
+	   db2html debr.docbook -o html || true); \
 	fi
 
 dist-hook: html
 	cp -Rp $(srcdir)/html $(distdir)
 
-install-data-local:
+install-data-local: html
 	${INSTALL_SCRIPT} -d $(HTMLDIR)
 	${INSTALL_DATA} $(srcdir)/html/*.html $(HTMLDIR)
 
 uninstall-hook:
-	( cd $(DESTDIT)$(datadir)/doc && rm -r debr )
+	( cd $(DESTDIR)$(datadir)/doc/debr && rm -r html )

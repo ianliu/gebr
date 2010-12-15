@@ -18,14 +18,14 @@ include $(top_srcdir)/Makefile.decl
 HTMLDIR = $(DESTDIR)$(datadir)/doc/gebr/html
 
 html:
-	if test -w $(srcdir); \
+	if test -w $(srcdir); then \
 	  (cd $(srcdir); \
 	   test -d html && rm -r html; \
-	   db2html gebr-pt.docbook -o html); \
+	   db2html gebr-pt.docbook -o html || true); \
 	fi
 
 dist-hook: html
-	cp -Rp $(srcdir)/html $(distdir)
+	cp -Rp $(srcdir)/html $(srcdir)/images $(distdir)
 
 install-data-local: html
 	${INSTALL_SCRIPT} -d $(HTMLDIR)
@@ -34,4 +34,4 @@ install-data-local: html
 	${INSTALL_DATA} $(srcdir)/images/* $(HTMLDIR)/images
 
 uninstall-hook:
-	( cd $(DESTDIR)$(datadir)/doc && rm -r gebr )
+	( cd $(DESTDIR)$(datadir)/doc/gebr && rm -r html )
