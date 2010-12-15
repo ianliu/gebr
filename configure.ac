@@ -234,6 +234,9 @@ AC_SUBST(GEBR_GUI_LIBS)
 
 AC_CONFIG_FILES([
 Makefile
+docs/Makefile
+docs/gebr/Makefile
+docs/debr/Makefile
 
 libgebr/Makefile
 libgebr/comm/Makefile
@@ -285,7 +288,6 @@ gebrd/tests/Makefile
 gebr/Makefile
 gebr/data/Makefile
 gebr/data/gebr.desktop.in
-gebr/data/userdoc/Makefile
 gebr/defines.h
 gebr/gebr-client/Makefile
 gebr/gebr/Makefile
@@ -300,8 +302,6 @@ debr/Makefile
 debr/data/Makefile
 debr/data/debr.desktop.in
 debr/data/help-template.html
-debr/doc/Makefile
-debr/doc/userdoc/Makefile
 debr/packages/Makefile 
 debr/packages/rpm/debr.fedora.spec
 debr/packages/rpm/debr.mandriva.spec

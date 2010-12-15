@@ -15,9 +15,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 include $(top_srcdir)/Makefile.decl
 
-SUBDIRS = userdoc
-
-
 gebrmenudir = $(datadir)/gebr/menus/
 gebrmenu_DATA = grace.mnu sleep.mnu
 
