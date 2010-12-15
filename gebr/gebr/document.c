@@ -677,7 +677,7 @@ gchar * gebr_document_generate_report (GebrGeoXmlDocument *document)
 		header = gebr_line_generate_header(document);
 
 		if (gebr.config.detailed_line_include_report && inner_body)
-			g_string_append (content, inner_body);
+			g_string_append_printf (content, "<div class='content'>%s</div>", inner_body);
 
 		if (gebr.config.detailed_line_include_flow_report) {
 			gebr_geoxml_line_get_flow(GEBR_GEOXML_LINE(document), &line_flow, 0);
