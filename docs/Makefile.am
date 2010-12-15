@@ -1,1 +1,1 @@
-SUBDIRS = gebr debr
+SUBDIRS = gebr debr reference

@@ -237,6 +237,9 @@ Makefile
 docs/Makefile
 docs/gebr/Makefile
 docs/debr/Makefile
+docs/reference/Makefile
+docs/reference/libgebr/Makefile
+docs/reference/libgebr/version.xml
 
 libgebr/Makefile
 libgebr/comm/Makefile
@@ -245,10 +248,6 @@ libgebr/comm/socketchannel/Makefile
 libgebr/comm/tests/Makefile
 libgebr/config.h
 libgebr/defines.h
-libgebr/docs/Makefile
-libgebr/docs/reference/Makefile
-libgebr/docs/reference/libgebr/Makefile
-libgebr/docs/reference/libgebr/version.xml
 libgebr/gebr.pc
 libgebr/geoxml/Makefile
 libgebr/geoxml/data/Makefile
