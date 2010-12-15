@@ -59,7 +59,7 @@ Description: Document files for libgebr API
 
 Package: gebrd
 Section: science
-Architecture: amd64
+Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: GeBRD is server for executing flows
  GeBR is an environment to seismic processing based on open-source
@@ -77,7 +77,7 @@ Description: GeBRD is server for executing flows
 
 Package: gebr
 Section: science
-Architecture: amd64
+Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Suggests: debr, gebr-menus-su
 Description: Seismic processing environment
@@ -99,7 +99,7 @@ Description: GeBR User Manual
 
 Package: debr
 Section: science
-Architecture: amd64
+Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: Menu Designer for GeBR
  GeBR is an environment to seismic processing based on open-source
