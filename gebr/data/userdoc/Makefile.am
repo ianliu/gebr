@@ -15,6 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 include $(top_srcdir)/Makefile.decl
 
+if HAVE_DOCBOOK
 HTMLDIR = $(DESTDIR)$(datadir)/doc/gebr/html
 
 html:
@@ -35,3 +36,17 @@ install-data-local: html
 
 uninstall-hook:
 	( cd $(DESTDIR)$(datadir)/doc/gebr && rm -r html )
+else
+html:
+	echo "***"
+	echo "*** Warning: GeBR Userdoc not built"
+	echo "***"
+
+dist-hook:
+	echo "***"
+	echo "*** Warning: GeBR Userdoc not built"
+	echo "*** DISTRIBUTION IS INCOMPLETE"
+	echo "***"
+endif
+
+.PHONY: html

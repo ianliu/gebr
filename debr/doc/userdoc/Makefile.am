@@ -17,6 +17,7 @@ include $(top_srcdir)/Makefile.decl
 
 HTMLDIR = $(DESTDIR)$(datadir)/doc/debr/html
 
+if HAVE_DOCBOOK
 html:
 	if test -w $(srcdir); then \
 	  (cd $(srcdir); \
@@ -33,3 +34,17 @@ install-data-local: html
 
 uninstall-hook:
 	( cd $(DESTDIR)$(datadir)/doc/debr && rm -r html )
+else
+html:
+	echo "***"
+	echo "*** Warning: GeBR Userdoc not built"
+	echo "***"
+
+dist-hook:
+	echo "***"
+	echo "*** Warning: GeBR Userdoc not built"
+	echo "*** DISTRIBUTION IS INCOMPLETE"
+	echo "***"
+endif
+
+.PHONY: html

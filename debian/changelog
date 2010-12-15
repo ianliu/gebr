@@ -1,3 +1,9 @@
+gebrproject (0.11.0-1) lenny; urgency=low
+
+  * New era for GeBR packaging.
+
+  -- Ian Liu Rodrigues <ian.liu@gebrproject.com>  Wed, 15 Dec 2010 09:24:01 -0200
+
 gebrproject (0.10.0) lenny; urgency=low
 
   * One step closer to 1.0.
