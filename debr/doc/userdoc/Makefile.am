@@ -15,12 +15,21 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 include $(top_srcdir)/Makefile.decl
 
-userdoc:
-#	gnome-doc-tool html debr.docbook
-	echo "  " > debr.html
-*.html: userdoc
+HTMLDIR = $(DESTDIR)$(datadir)/doc/debr/html
 
-debrdocdir = $(datadir)/debr/userdoc
-debrdoc_DATA = *.html
+html:
+	if test -w $(srcdir); \
+	  (cd $(srcdir); \
+	   test -d html && rm -r html; \
+	   db2html debr.docbook -o html); \
+	fi
 
-CLEANFILES = debr.html
+dist-hook: html
+	cp -Rp $(srcdir)/html $(distdir)
+
+install-data-local:
+	${INSTALL_SCRIPT} -d $(HTMLDIR)
+	${INSTALL_DATA} $(srcdir)/html/*.html $(HTMLDIR)
+
+uninstall-hook:
+	( cd $(DESTDIT)$(datadir)/doc && rm -r debr )

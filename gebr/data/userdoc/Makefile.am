@@ -15,19 +15,23 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 include $(top_srcdir)/Makefile.decl
 
-gebrdocdir = $(DESTDIR)/$(datadir)/gebr/userdoc
-EXTRA_DIST = userdoc images
+HTMLDIR = $(DESTDIR)$(datadir)/doc/gebr/html
 
-all: userdoc-dir
+html:
+	if test -w $(srcdir); \
+	  (cd $(srcdir); \
+	   test -d html && rm -r html; \
+	   db2html gebr-pt.docbook -o html); \
+	fi
 
-userdoc-dir:
-	mkdir -p userdoc
-userdoc: userdoc-dir
-	db2html gebr-pt.docbook -o userdoc/pt || true
+dist-hook: html
+	cp -Rp $(srcdir)/html $(distdir)
 
-install-data-local: userdoc
-	find $(srcdir)/images \( ! -regex '.*/\..*' \) -type d -exec ${INSTALL_SCRIPT} -d {} ${gebrdocdir}/{} \;
-	find $(srcdir)/images \( ! -regex '.*/\..*' \) -type f -print -exec ${INSTALL_DATA} {} ${gebrdocdir}/{} \;
-	cd userdoc && find . \( ! -regex '.*/\..*' \) -type d -exec ${INSTALL_SCRIPT} -d {} ${gebrdocdir}/{} \;
-	cd userdoc && find . \( ! -regex '.*/\..*' \) -type f -print -exec ${INSTALL_DATA} {} ${gebrdocdir}/{} \;
+install-data-local: html
+	${INSTALL_SCRIPT} -d $(HTMLDIR)
+	${INSTALL_SCRIPT} -d $(HTMLDIR)/images
+	${INSTALL_DATA} $(srcdir)/html/*.html $(HTMLDIR)
+	${INSTALL_DATA} $(srcdir)/images/* $(HTMLDIR)/images
 
+uninstall-hook:
+	( cd $(DESTDIR)$(datadir)/doc && rm -r gebr )
