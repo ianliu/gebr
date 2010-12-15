@@ -609,7 +609,7 @@ gchar * gebr_document_report_get_styles_string(const gchar * report)
 	if (list)
 		string = g_string_new(list->data);
 	else
-		return NULL;
+		return g_strdup ("");
 
 	i = list->next;
 	while (i) {
