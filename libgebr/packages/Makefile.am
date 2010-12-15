@@ -17,22 +17,13 @@ include $(top_srcdir)/Makefile.decl
 
 SUBDIRS =
 
-PKG_DEBIAN = debian/changelog debian/copyright debian/info debian/libgebr-default.ex \
-	debian/libgebr.doc-base.ex debian/postrm.ex debian/README.Debian \
-	debian/compat debian/dirs debian/libgebr0.dirs debian/libgebr-dev.dirs \
-	debian/manpage.1.ex debian/preinst.ex debian/rules debian/control \
-	debian/docs debian/libgebr0.install debian/libgebr-dev.install \
-	debian/postinst.ex debian/prerm.ex debian/shlibs.local.ex
 PKG_RPM = rpm/libgebr.fedora.spec \
 	rpm/libgebr.opensuse.spec \
 	rpm/libgebr.mandriva.spec
-EXTRA_DIST = ${PKG_DEBIAN} ${PKG_RPM}
+EXTRA_DIST = ${PKG_RPM}
 
-packages: deb-package rpm-packages
+packages: rpm-packages
 rpm-packages: fedora-package opensuse-package mandriva-package
-
-deb-package:
-	cd ..; dpkg-buildpackage -kA594D681 -tc -rfakeroot; cd -
 
 rpm-structure:
 	cd ..; make dist; cd -

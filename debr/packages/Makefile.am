@@ -22,11 +22,8 @@ EXTRA_DIST = \
 	rpm/debr.opensuse.spec \
 	rpm/debr.mandriva.spec
 
-packages: deb-package rpm-packages
+packages: rpm-packages
 rpm-packages: fedora-package opensuse-package mandriva-package
-
-deb-package:
-	cd ..; dpkg-buildpackage -kA594D681 -tc -rfakeroot; cd -
 
 rpm-structure:
 	cd ..; make dist; cd -
