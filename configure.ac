@@ -117,30 +117,11 @@ dnl ============================================================================
 AC_CHECK_PROG(DB2HTML, db2html, true, false)
 AM_CONDITIONAL(HAVE_DOCBOOK, $DB2HTML)
 
+AC_PROG_INSTALL
 AC_PROG_CC
 AM_PROG_CC_STDC
 AC_PROG_LIBTOOL
 AC_HEADER_STDC
-
-dnl ============================================================================
-dnl Better install script
-dnl ============================================================================
-AC_PROG_INSTALL
-INSTALL_BIN=/usr/bin/install
-$INSTALL_BIN -C configure.ac __install_test 2>/dev/null
-if [[ $? -eq 0 \]]; then
-        rm __install_test
-        INSTALL="$INSTALL_BIN -C"
-        AC_ARG_VAR(INSTALL)
-else
-	INSTALL_BIN=`pwd`/install-sh
-	$INSTALL_BIN -C configure.ac __install_test 2>/dev/null
-	if [[ $? -eq 0 \]]; then
-        	rm __install_test
-	        INSTALL="$INSTALL_BIN -C"
-        	AC_ARG_VAR(INSTALL)
-	fi
-fi
 
 dnl ============================================================================
 dnl Gettext stuff. Don't define GETTEXT_PACKAGE since we are dealing with
