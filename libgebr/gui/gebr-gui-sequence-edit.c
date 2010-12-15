@@ -333,7 +333,7 @@ static GtkMenu *popup_menu(GtkTreeView *tree_view, GebrGuiSequenceEdit *self)
 	g_signal_connect(menu_item, "activate", G_CALLBACK(on_add_clicked), self);
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(self->tree_view));
-	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE)
+	if (!gtk_tree_selection_get_selected(selection, &model, &iter))
 		goto out;
 
 	/*Move top */
@@ -368,7 +368,8 @@ static void callback_on_selected(GebrGuiSequenceEdit *self,
 	GtkTreeIter iter;
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(self->tree_view));
-	gtk_tree_selection_get_selected(selection, &model, &iter);
+	if (!gtk_tree_selection_get_selected(selection, &model, &iter))
+		return;
 
 	button_func(self, &iter);
 }
@@ -389,7 +390,8 @@ static void on_remove_activated(GtkWidget *button, GebrGuiSequenceEdit *self)
 	gchar *old_text;
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(self->tree_view));
-	gtk_tree_selection_get_selected(selection, &model, &iter);
+	if (!gtk_tree_selection_get_selected(selection, &model, &iter))
+		return;
 	gtk_tree_model_get(GTK_TREE_MODEL(self->list_store), &iter, 0, &old_text, -1);
 
 	g_signal_emit(self, object_signals[REMOVED], 0, old_text, "");
@@ -427,7 +429,8 @@ static void on_edited(GtkCellRendererText *cell, gchar *path_string,
 	GValue retval = {0,};
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(self->tree_view));
-	gtk_tree_selection_get_selected(selection, &model, &iter);
+	if (!gtk_tree_selection_get_selected(selection, &model, &iter))
+		return;
 	gtk_tree_model_get(GTK_TREE_MODEL(self->list_store), &iter, 0, &old_text, -1);
 	
 	/*false rename */
@@ -535,7 +538,8 @@ static gboolean on_tree_view_key_release (GtkWidget *widget,
 	gboolean has_next = FALSE;
 
 	tree_sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (self->tree_view));
-	gtk_tree_selection_get_selected (tree_sel, &model, &selected);
+	if (!gtk_tree_selection_get_selected (tree_sel, &model, &selected))
+		return FALSE;
 
 	path = gtk_tree_model_get_path (model, &selected);
 	if (gtk_tree_path_prev (path))
@@ -578,11 +582,13 @@ static gboolean on_tree_view_key_release (GtkWidget *widget,
 		return FALSE;
 	}
 
-	gtk_tree_selection_get_selected (tree_sel, &model, &selected);
+	if (!gtk_tree_selection_get_selected (tree_sel, &model, &selected))
+		return FALSE;
 	path = gtk_tree_model_get_path (model, &selected);
 	gtk_tree_view_set_cursor (GTK_TREE_VIEW (self->tree_view), path, NULL, FALSE);
+	gtk_tree_path_free (path);
 
-	return !FALSE;
+	return TRUE;
 }
 
 //==============================================================================
