@@ -75,11 +75,6 @@ Description: GeBRD is server for executing flows
  GeBRD is server for executing flows
  .
 
-Package: gebrd-doc
-Section: doc
-Architecture: any
-Description: GeBRd User Manual
-
 Package: gebr
 Section: science
 Architecture: amd64
