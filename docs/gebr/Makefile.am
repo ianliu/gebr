@@ -49,4 +49,6 @@ dist-hook:
 	echo "***"
 endif
 
+EXTRA_DIST = gebr-pt.docbook
+
 .PHONY: html

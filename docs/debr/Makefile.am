@@ -47,4 +47,6 @@ dist-hook:
 	echo "***"
 endif
 
+EXTRA_DIST = debr.docbook
+
 .PHONY: html
