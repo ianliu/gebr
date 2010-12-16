@@ -432,7 +432,9 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server, gboolean parallel, g
 			struct job *job;
 			GString *queue_name;
 
-			gtk_combo_box_get_active_iter(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox), &iter);
+			if (!gtk_combo_box_get_active_iter(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox), &iter))
+				gtk_tree_model_get_iter_first(GTK_TREE_MODEL(server->queues_model), &iter);
+
 			gtk_tree_model_get(GTK_TREE_MODEL(server->queues_model), &iter,
 					   1, &internal_queue_name, 2, &job, -1);
 
@@ -507,7 +509,9 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server, gboolean parallel, g
 			struct job *job = NULL;
 
 			/* Get queue name from the queues combobox. */
-			gtk_combo_box_get_active_iter(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox), &iter);
+			if (!gtk_combo_box_get_active_iter(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox), &iter))
+				gtk_tree_model_get_iter_first(GTK_TREE_MODEL(server->queues_model), &iter);
+
 			gtk_tree_model_get(GTK_TREE_MODEL(server->queues_model), &iter, 1, &internal_queue_name, 2, &job, -1);
 
 			if (internal_queue_name && internal_queue_name[0] == 'j') {
