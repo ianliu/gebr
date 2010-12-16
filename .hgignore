@@ -36,7 +36,9 @@ debr/src/debr
 debr/src/defines.h
 depcomp
 docs/debr/*.html
+docs/debr/html
 docs/gebr/*.html
+docs/gebr/html
 docs/reference/libgebr/html
 docs/reference/libgebr/libgebr-decl-list.txt
 docs/reference/libgebr/libgebr-decl.txt
@@ -53,7 +55,6 @@ docs/reference/libgebr/version.xml
 docs/reference/libgebr/xml
 gebr.desktop
 gebr/data/gebr.desktop.in
-gebr/data/userdoc/userdoc
 gebr/defines.h
 gebr/gebr-client/gebr-client
 gebr/gebr/gebr
