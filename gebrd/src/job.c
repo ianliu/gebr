@@ -788,7 +788,7 @@ void job_run_flow(struct job *job)
 					gebr_geoxml_flow_io_get_input(job->flow));
 			g_string_append(job->issues,
 					       issue->str);
-			job_notify_status(job, JOB_STATUS_ISSUED, job->issues->str);
+			job_notify_status(job, JOB_STATUS_ISSUED, issue->str);
 			job->user_finished = TRUE;
 			job_set_status_finished(job);
 			g_string_free(issue, TRUE);
