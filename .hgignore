@@ -32,9 +32,6 @@ configure
 debr/data/debr.desktop
 debr/data/debr.desktop.in
 debr/data/help-template.html
-debr/packages/rpm/debr.fedora.spec
-debr/packages/rpm/debr.mandriva.spec
-debr/packages/rpm/debr.opensuse.spec
 debr/src/debr
 debr/src/defines.h
 depcomp
@@ -60,13 +57,7 @@ gebr/data/userdoc/userdoc
 gebr/defines.h
 gebr/gebr-client/gebr-client
 gebr/gebr/gebr
-gebr/packages/rpm/gebr.fedora.spec
-gebr/packages/rpm/gebr.mandriva.spec
-gebr/packages/rpm/gebr.opensuse.spec
 gebr/tests/test-help
-gebrd/packages/rpm/gebrd.fedora.spec
-gebrd/packages/rpm/gebrd.mandriva.spec
-gebrd/packages/rpm/gebrd.opensuse.spec
 gebrd/src/defines.h
 gebrd/src/gebrd
 gebrd/tests/test-job-queue
@@ -90,9 +81,6 @@ libgebr/geoxml/upgrade/gebr-geoxml-upgrade
 libgebr/geoxml/validate/gebr-geoxml-validate
 libgebr/gui/gebr-gui.pc
 libgebr/gui/tests/test-js
-libgebr/packages/rpm/libgebr.fedora.spec
-libgebr/packages/rpm/libgebr.mandriva.spec
-libgebr/packages/rpm/libgebr.opensuse.spec
 libtool
 ltmain.sh
 m4/gtk-doc.m4
@@ -106,5 +94,8 @@ marshalers.c
 marshalers.h
 missing
 po/.intltool-merge-cache
+rpm/gebrproject.fedora.spec
+rpm/gebrproject.mandriva.spec
+rpm/gebrproject.opensuse.spec
 stamp-it
 tags

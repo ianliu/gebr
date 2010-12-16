@@ -240,6 +240,7 @@ docs/debr/Makefile
 docs/reference/Makefile
 docs/reference/libgebr/Makefile
 docs/reference/libgebr/version.xml
+rpm/Makefile
 rpm/gebrproject.fedora.spec
 rpm/gebrproject.mandriva.spec
 rpm/gebrproject.opensuse.spec
