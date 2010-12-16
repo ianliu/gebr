@@ -2,170 +2,43 @@
 %define version @VERSION@
 %define release 1%{dist}
 
+Summary: Programs and libraries for working with seismic data
 Name: %{name}
 Version: %{version}
 Release: %{release}
-License: GPL
+License: GPLv3+
 Group: Application/Misc
-URL: http://groups.google.com/group/gebr
-Packager: Bráulio Barros de Oliveira <brauliobo@gmail.com>
+URL: http://www.gebrproject.com
+Packager: Ian Liu Rodrigues <ian.liu@gebrproject.com>
 Source: %{name}-%{version}.tar.gz
-Requires: libgebr
-BuildRequires: libgebr, gdome2-devel, WebKit-gtk-devel, gettext, intltool
-BuildRoot: /tmp/%{name}-%{version}
-Summary: Flow editor to seismic processing software.
-%description
-GeBR is an environment to seismic processing based on open-source
-technologies, designed to easily assembly and run processing flows.
-
-What GeBR does:
-
-    * Handle projects and lines
-    * Assembly and run processing flows
-    * Act as an interface to many freely-available seismic-processing
-      packages (Seismic Unix, Madagascar, etc)
-
-D�BR is the flow editor to seismic processing software.
+BuildRequires: glib2-devel gtk2-devel gdome2-devel webkitgtk-devel
+BuildRequires: automake autoconf pkgconfig
+BuildRequires: gettext intltool libtool gtk-doc
+BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 %prep
-%setup -q
-
-%configure --disable-debug
+%setup -q -n ${name}-%{version}
 
 %build
-make -j 4
+%configure --disable-debug --enable-gtk-doc
+make %{?_smp_mflags}
 
 %install
 rm -rf %{buildroot}
-mkdir -p %{buildroot}
 
-%makeinstall
-
-%clean
-rm -rf %{buildroot}
-
-%files
-%defattr(-,root,root)
-/*
-
-%changelog
-%define name @PACKAGE@
-%define version @VERSION@
-%define release 1%{dist}
-
-Name: %{name}
-Version: %{version}
-Release: %{release}
-License: GPL
-Group: Application/Misc
-URL: http://groups.google.com/group/gebr
-Packager: Bráulio Barros de Oliveira <brauliobo@gmail.com>
-Source: %{name}-%{version}.tar.gz
-Requires: libgebr
-BuildRequires: libgebr, glib2-devel >= 2.8.0, gdome2-devel, gettext, intltool
-BuildRoot: /tmp/%{name}-%{version}
-Summary: G�BRD is server for executing flows
-%description
-GeBR is an environment to seismic processing based on open-source
-technologies, designed to easily assembly and run processing flows.
-
-What GeBR does:
-
-    * Handle projects and lines
-    * Assembly and run processing flows
-    * Act as an interface to many freely-available seismic-processing
-      packages (Seismic Unix, Madagascar, etc)
-
-G�BRD is server for executing flows
-
-%prep
-%setup -q
-
-%configure --disable-debug
-
-%build
-make -j 4
-
-%install
-rm -rf %{buildroot}
-mkdir -p %{buildroot}
-
-%makeinstall
+make install DESTDIR=%{buildroot}
 
 %clean
 rm -rf %{buildroot}
+################################################################################
+#### GeBR Package
+################################################################################
+%package -n libgebr
+Requires: glib2 gtk2 gdome2 webkitgtk
+Group: System Environment/Libraries
+Summary: GeBR library collection
 
-%files
-%defattr(-,root,root)
-/*
-
-%changelog
-%define name @PACKAGE@
-%define version @VERSION@
-%define release 1%{dist}
-
-Name: %{name}
-Version: %{version}
-Release: %{release}
-License: GPL
-Group: Application/Misc
-URL: http://groups.google.com/group/gebr
-Packager: Bráulio Barros de Oliveira <brauliobo@gmail.com>
-Source: %{name}-%{version}.tar.gz
-Requires: libgebr
-BuildRequires: libgebr, gdome2-devel, WebKit-gtk-devel, gettext, intltool
-BuildRoot: /tmp/%{name}-%{version}
-Summary: Seismic processing environment
-%description
-GeBR is an environment to seismic processing based on open-source
-technologies, designed to easily assembly and run processing flows.
-
-What GeBR does:
-
-    * Handle projects and lines
-    * Assembly and run processing flows
-    * Act as an interface to many freely-available seismic-processing
-      packages (Seismic Unix, Madagascar, etc)
-
-%prep
-%setup -q
-
-%configure --disable-debug
-
-%build
-make -j 4
-
-%install
-rm -rf %{buildroot}
-mkdir -p %{buildroot}
-
-%makeinstall
-
-%clean
-rm -rf %{buildroot}
-
-%files
-%defattr(-,root,root)
-/*
-
-%changelog
-%define name @PACKAGE@
-%define version @VERSION@
-%define release 1%{dist}
-
-Name: %{name}
-Version: %{version}
-Release: %{release}
-License: GPL
-Group: Application/Misc
-URL: http://groups.google.com/group/gebr
-Packager: Bráulio Barros de Oliveira <brauliobo@gmail.com>
-Source: %{name}-%{version}.tar.gz
-Requires: glib2 >= 2.8.0, gdome2, WebKit-gtk
-BuildRequires: glib2-devel >= 2.8.0, gdome2-devel, WebKit-gtk-devel, gettext, intltool
-BuildRoot: /tmp/%{name}-%{version}
-Summary: GeBR library collecion
-%description
+%description -n libgebr
 GeBR is an environment to seismic processing based on open-source
 technologies, designed to easily assembly and run processing flows.
 
@@ -177,28 +50,99 @@ What GeBR does:
       packages (Seismic Unix, Madagascar, etc)
 
 libgebr is the collection of libraries of GeBR:
+    * libgebr_comm deals with client-server communication
     * libgebr_geoxml is the XML engine of GeBR
-    * libgebr_misc network and process classes.
+    * libgebr_gui extends GTK+ functionalities
+    * libgebr_misc is where everything else is
 
-%prep
-%setup -q
+%files
+%defattr(-, root, root)
+%doc AUTHORS COPYING NEWS README
+%{_libdir}/libgebr*
+%{_datadir}/libgebr/*
+%{_datadir}/locale/*/*/libgebr.mo
 
-%configure --disable-debug
+################################################################################
+#### GeBR Package
+################################################################################
+%package -n gebr
+Requires: glib2 gtk2 gdome2 webkitgtk libgebr
+Group: Application/Misc
+Summary: Seismic processing environment
 
-%build
-make -j 4
+%description -n gebr
+GeBR is an environment to seismic processing based on open-source
+technologies, designed to easily assembly and run processing flows.
 
-%install
-rm -rf %{buildroot}
-mkdir -p %{buildroot}
+What GeBR does:
 
-%makeinstall
+    * Handle projects and lines
+    * Assembly and run processing flows
+    * Act as an interface to many freely-available seismic-processing
+      packages (Seismic Unix, Madagascar, etc)
 
-%clean
-rm -rf %{buildroot}
+%files -n gebr
+%defattr(-, root, root)
+%doc AUTHORS COPYING NEWS README
+%{_bindir}/gebr
+%{_datadir}/gebr/menus/*
+%{_datadir}/locale/*/*/gebr.mo
+
+################################################################################
+#### GeBRd Package
+################################################################################
+%package -n gebrd
+Group: Application/Misc
+Requires: glib2 gtk2 gdome2 webkitgtk libgebr
+Summary: GeBRD is server for executing flows
+
+%description -n gebrd
+GeBR is an environment to seismic processing based on open-source
+technologies, designed to easily assembly and run processing flows.
+
+What GeBR does:
+
+    * Handle projects and lines
+    * Assembly and run processing flows
+    * Act as an interface to many freely-available seismic-processing
+      packages (Seismic Unix, Madagascar, etc)
+
+GeBRD is server for executing flows
+
+%files -n gebrd
+%defattr(-,root,root)
+%doc AUTHORS COPYING NEWS README
+%{_bindir}/gebrd
+%{_datadir}/doc/gebrd/examples/*
+%{_datadir}/locale/*/*/gebrd.mo
+
+################################################################################
+#### DeBR Package
+################################################################################
+%package -n debr
+Group: Application/Misc
+Requires: libgebr
+Summary: Menu Designer for GeBR
+
+%description -n debr
+GeBR is an environment to seismic processing based on open-source
+technologies, designed to easily assembly and run processing flows.
+
+What GeBR does:
+
+    * Handle projects and lines
+    * Assembly and run processing flows
+    * Act as an interface to many freely-available seismic-processing
+      packages (Seismic Unix, Madagascar, etc)
+
+DeBR is the menu designer for GeBR. Each menu adds new functionalities
+to GeBR.
 
 %files
 %defattr(-,root,root)
-/*
+%doc AUTHORS COPYING NEWS README
+%{_bindir}/debr
+%{_datadir}/debr/*
+%{_datadir}/locale/*/*/debr.mo
 
 %changelog
