@@ -240,6 +240,9 @@ docs/debr/Makefile
 docs/reference/Makefile
 docs/reference/libgebr/Makefile
 docs/reference/libgebr/version.xml
+rpm/gebrproject.fedora.spec
+rpm/gebrproject.mandriva.spec
+rpm/gebrproject.opensusi.spec
 
 libgebr/Makefile
 libgebr/comm/Makefile
@@ -267,18 +270,10 @@ libgebr/gui/icons/Makefile
 libgebr/gui/icons/gebr-theme/Makefile
 libgebr/gui/pixmaps/Makefile
 libgebr/gui/tests/Makefile
-libgebr/packages/Makefile
-libgebr/packages/rpm/libgebr.fedora.spec
-libgebr/packages/rpm/libgebr.mandriva.spec
-libgebr/packages/rpm/libgebr.opensuse.spec
 libgebr/po/Makefile.in
 
 gebrd/Makefile
 gebrd/doc/Makefile
-gebrd/packages/Makefile
-gebrd/packages/rpm/gebrd.fedora.spec
-gebrd/packages/rpm/gebrd.mandriva.spec
-gebrd/packages/rpm/gebrd.opensuse.spec
 gebrd/po/Makefile.in
 gebrd/src/Makefile
 gebrd/src/defines.h
@@ -290,10 +285,6 @@ gebr/data/gebr.desktop.in
 gebr/defines.h
 gebr/gebr-client/Makefile
 gebr/gebr/Makefile
-gebr/packages/Makefile
-gebr/packages/rpm/gebr.fedora.spec
-gebr/packages/rpm/gebr.mandriva.spec
-gebr/packages/rpm/gebr.opensuse.spec
 gebr/po/Makefile.in
 gebr/tests/Makefile
 
@@ -301,10 +292,6 @@ debr/Makefile
 debr/data/Makefile
 debr/data/debr.desktop.in
 debr/data/help-template.html
-debr/packages/Makefile 
-debr/packages/rpm/debr.fedora.spec
-debr/packages/rpm/debr.mandriva.spec
-debr/packages/rpm/debr.opensuse.spec
 debr/po/Makefile.in
 debr/src/Makefile
 debr/src/defines.h

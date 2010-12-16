@@ -18,4 +18,4 @@ include $(top_srcdir)/Makefile.decl
 if ENABLE_TESTS
 TESTDIR=tests
 endif
-SUBDIRS = data src packages po ${TESTDIR}
+SUBDIRS = data src po doc ${TESTDIR}
