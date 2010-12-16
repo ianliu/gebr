@@ -1,9 +1,8 @@
-%define name @PACKAGE@
-%define version @VERSION@
+%define version @PACKAGE_VERSION@
 %define release 1%{dist}
 
 Summary: Programs and libraries for working with seismic data
-Name: %{name}
+Name: @PACKAGE_NAME@
 Version: %{version}
 Release: %{release}
 License: GPLv3+
@@ -16,22 +15,11 @@ BuildRequires: automake autoconf pkgconfig
 BuildRequires: gettext intltool libtool gtk-doc
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-%prep
-%setup -q -n ${name}-%{version}
+%description
+This package provides several tools for working with seismic data.
 
-%build
-%configure --disable-debug --enable-gtk-doc
-make %{?_smp_mflags}
-
-%install
-rm -rf %{buildroot}
-
-make install DESTDIR=%{buildroot}
-
-%clean
-rm -rf %{buildroot}
 ################################################################################
-#### GeBR Package
+#### Libgebr Package
 ################################################################################
 %package -n libgebr
 Requires: glib2 gtk2 gdome2 webkitgtk
@@ -55,18 +43,49 @@ libgebr is the collection of libraries of GeBR:
     * libgebr_gui extends GTK+ functionalities
     * libgebr_misc is where everything else is
 
-%files
-%defattr(-, root, root)
-%doc AUTHORS COPYING NEWS README
-%{_libdir}/libgebr*
-%{_datadir}/libgebr/*
-%{_datadir}/locale/*/*/libgebr.mo
+################################################################################
+#### Libgebr Package
+################################################################################
+%package -n libgebr-devel
+Requires: glib2 gtk2 gdome2 webkitgtk
+Group: Development/Libraries
+Summary: GeBR library collection
+
+%description -n libgebr-devel
+GeBR is an environment to seismic processing based on open-source
+technologies, designed to easily assembly and run processing flows.
+
+What GeBR does:
+
+    * Handle projects and lines
+    * Assembly and run processing flows
+    * Act as an interface to many freely-available seismic-processing
+      packages (Seismic Unix, Madagascar, etc)
+
+libgebr is the collection of libraries of GeBR:
+    * libgebr_comm deals with client-server communication
+    * libgebr_geoxml is the XML engine of GeBR
+    * libgebr_gui extends GTK+ functionalities
+    * libgebr_misc is where everything else is
+
+This package contains the header files, static libraries and symbolic
+links that developers using libgebr will need.
+
+################################################################################
+#### Libgebr Documentation Package
+################################################################################
+%package -n libgebr-doc
+Group: Documentation
+Summary: Developer documentation for libgebr
+
+%description -n libgebr-doc
+This package contains the documentation for working with libgebr API.
 
 ################################################################################
 #### GeBR Package
 ################################################################################
 %package -n gebr
-Requires: glib2 gtk2 gdome2 webkitgtk libgebr
+Requires: glib2 gtk2 webkitgtk libgebr
 Group: Application/Misc
 Summary: Seismic processing environment
 
@@ -81,19 +100,22 @@ What GeBR does:
     * Act as an interface to many freely-available seismic-processing
       packages (Seismic Unix, Madagascar, etc)
 
-%files -n gebr
-%defattr(-, root, root)
-%doc AUTHORS COPYING NEWS README
-%{_bindir}/gebr
-%{_datadir}/gebr/menus/*
-%{_datadir}/locale/*/*/gebr.mo
+################################################################################
+#### GeBR Documentation Package
+################################################################################
+%package -n gebr-doc
+Group: Documentation
+Summary: User manual for GeBR program
+
+%description -n gebr-doc
+The user manual for GeBR program.
 
 ################################################################################
 #### GeBRd Package
 ################################################################################
 %package -n gebrd
 Group: Application/Misc
-Requires: glib2 gtk2 gdome2 webkitgtk libgebr
+Requires: glib2 gtk2 webkitgtk libgebr
 Summary: GeBRD is server for executing flows
 
 %description -n gebrd
@@ -109,19 +131,12 @@ What GeBR does:
 
 GeBRD is server for executing flows
 
-%files -n gebrd
-%defattr(-,root,root)
-%doc AUTHORS COPYING NEWS README
-%{_bindir}/gebrd
-%{_datadir}/doc/gebrd/examples/*
-%{_datadir}/locale/*/*/gebrd.mo
-
 ################################################################################
 #### DeBR Package
 ################################################################################
 %package -n debr
 Group: Application/Misc
-Requires: libgebr
+Requires: glib2 gtk2 webkitgtk libgebr
 Summary: Menu Designer for GeBR
 
 %description -n debr
@@ -138,11 +153,96 @@ What GeBR does:
 DeBR is the menu designer for GeBR. Each menu adds new functionalities
 to GeBR.
 
-%files
-%defattr(-,root,root)
+################################################################################
+#### DeBR Documentation Package
+################################################################################
+%package -n debr-doc
+Group: Documentation
+Summary: User manual for DeBR program
+
+%description -n debr-doc
+The user manual for DeBR program.
+
+################################################################################
+####
+################################################################################
+
+%prep
+%setup -q -n %{name}-%{version}
+
+%build
+%configure --disable-debug --enable-gtk-doc
+make %{?_smp_mflags}
+
+%install
+rm -rf %{buildroot}
+
+make install DESTDIR=%{buildroot}
+
+%clean
+rm -rf %{buildroot}
+
+################################################################################
+#### Files
+################################################################################
+
+%files -n libgebr
+%defattr(-, root, root)
+%doc AUTHORS COPYING NEWS README
+%{_bindir}/gebr-comm-*
+%{_bindir}/gebr-geoxml-*
+%{_libdir}/libgebr*
+%{_datadir}/libgebr/*
+%{_datadir}/locale/*/*/libgebr.mo
+
+%files -n libgebr-devel
+%defattr(-, root, root)
+%doc AUTHORS COPYING NEWS README
+%{_includedir}/*
+%{_libdir}/pkgconfig/*
+
+%files -n libgebr-doc
+%defattr(-, root, root)
+%doc AUTHORS COPYING NEWS README
+%{_datadir}/gtk-doc/html/libgebr/*
+%{_mandir}/man1/*
+
+%files -n gebr
+%defattr(-, root, root)
+%doc AUTHORS COPYING NEWS README
+%{_bindir}/gebr
+%{_bindir}/gebr-client
+%{_datadir}/gebr/menus/*
+%{_datadir}/locale/*/*/gebr.mo
+%{_datadir}/applications/gebr.desktop
+
+%files -n gebr-doc
+%defattr(-, root, root)
+%doc AUTHORS COPYING NEWS README
+%dir %{_defaultdocdir}/gebr
+%dir %{_defaultdocdir}/gebr/html
+%{_defaultdocdir}/gebr/html/*
+
+%files -n gebrd
+%defattr(-, root, root)
+%doc AUTHORS COPYING NEWS README
+%{_bindir}/gebrd
+%{_datadir}/doc/gebrd/examples/*
+%{_datadir}/locale/*/*/gebrd.mo
+
+%files -n debr
+%defattr(-, root, root)
 %doc AUTHORS COPYING NEWS README
 %{_bindir}/debr
 %{_datadir}/debr/*
 %{_datadir}/locale/*/*/debr.mo
+%{_datadir}/applications/debr.desktop
+
+%files -n debr-doc
+%defattr(-, root, root)
+%doc AUTHORS COPYING NEWS README
+%dir %{_defaultdocdir}/debr
+%dir %{_defaultdocdir}/debr/html
+%{_defaultdocdir}/debr/html/*
 
 %changelog
