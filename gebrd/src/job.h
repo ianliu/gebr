@@ -67,6 +67,7 @@ struct job {
 		JOB_STATUS_FINISHED,
 		JOB_STATUS_CANCELED,
 		JOB_STATUS_REQUEUED,
+		JOB_STATUS_ISSUED,
 	} status;
 	GString * status_string;
 };

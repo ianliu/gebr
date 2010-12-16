@@ -249,7 +249,7 @@ static void job_process_read_stderr(GebrCommProcess * process, struct job *job)
 static void job_set_status(struct job *job, enum JobStatus status)
 {
 	const gchar * enum_to_string [] = {
-		"unknown", "queued", "failed", "running", "finished", "canceled", "requeued", NULL };
+		"unknown", "queued", "failed", "running", "finished", "canceled", "requeued", "issued", NULL };
 
 	g_string_assign(job->status_string, enum_to_string[status]);
 	job->status = status;
@@ -542,6 +542,22 @@ gboolean job_new(struct job ** _job, struct client * client, GString * queue, GS
 		goto err;
 	}
 
+	/*
+	 * First program
+	 */
+	/* Start wi.hwithout stdin */
+	if (gebr_geoxml_program_get_stdin(GEBR_GEOXML_PROGRAM(program))) {
+		if (strlen(gebr_geoxml_flow_io_get_input(flow)) == 0) {
+			g_string_append_printf(job->issues, _("No input file selected.\n"));
+			goto err;
+		}
+
+		quoted = g_shell_quote(gebr_geoxml_flow_io_get_input(job->flow));
+		g_string_append_printf(job->cmd_line, "<%s ", quoted);
+		g_free(quoted);
+
+	}
+
 	/* Configure MPI */
 	const gchar * mpiname;
 	mpiname = gebr_geoxml_program_get_mpi(GEBR_GEOXML_PROGRAM(program));
@@ -745,32 +761,20 @@ void job_run_flow(struct job *job)
 
 	/* Check if there is configured programs */
 	gebr_geoxml_flow_get_program(job->flow, &program, 0);
+
 	/*
 	 * First program
 	 */
 	/* Start wi.hwithout stdin */
 	if (gebr_geoxml_program_get_stdin(GEBR_GEOXML_PROGRAM(program))) {
-		if (strlen(gebr_geoxml_flow_io_get_input(job->flow)) == 0) {
-			g_string_append_printf(job->issues, _("No input file selected.\n"));
-			//job_set_status(job, JOB_STATUS_FAILED);
-			job_notify_status(job, JOB_STATUS_FAILED, "");
-			goto err;
-		}
-
 		/* Input file */
 		if (check_for_readable_file(gebr_geoxml_flow_io_get_input(job->flow))) {
 			g_string_append_printf(job->issues,
 					       _("Input file %s not present or not accessible.\n"),
 					       gebr_geoxml_flow_io_get_input(job->flow));
-			//job_set_status(job, JOB_STATUS_FAILED);
-			job_notify_status(job, JOB_STATUS_FAILED, "");
+			job_notify_status(job, JOB_STATUS_ISSUED, job->issues->str);
 			goto err;
 		}
-
-		quoted = g_shell_quote(gebr_geoxml_flow_io_get_input(job->flow));
-		g_string_append_printf(job->cmd_line, "<%s ", quoted);
-		g_free(quoted);
-
 	}
 	/* command-line */
 	if (job->display->len) {
