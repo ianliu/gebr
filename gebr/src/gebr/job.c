@@ -360,7 +360,10 @@ void job_status_update(struct job *job, enum JobStatus status, const gchar *para
 	job_status_show(job);
 
 	if (job->status == JOB_STATUS_ISSUED){
-		g_string_assign(job->issues , parameter);
+		GtkTextIter iter;
+		g_string_append(job->issues , parameter);
+		gtk_text_buffer_get_end_iter(gebr.ui_job_control->text_buffer, &iter);
+		gtk_text_buffer_insert(gebr.ui_job_control->text_buffer, &iter, parameter, g_utf8_strlen(parameter, -1));
 		return;
 	}
 

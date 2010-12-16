@@ -753,6 +753,7 @@ void job_run_flow(struct job *job)
 	gsize bytes_written;
 	gchar * quoted;
 	gboolean may_run;
+	guint issue_number = 0;
 
 	/* initialization */
 	may_run = TRUE;
@@ -762,6 +763,17 @@ void job_run_flow(struct job *job)
 	/* Check if there is configured programs */
 	gebr_geoxml_flow_get_program(job->flow, &program, 0);
 
+	while (program != NULL &&
+	       gebr_geoxml_program_get_status(GEBR_GEOXML_PROGRAM(program)) != GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED) {
+		g_string_append_printf(job->issues, _("%u) Skipping disabled/not configured program '%s'.\n"),
+				       ++issue_number, gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(program)));
+
+		gebr_geoxml_sequence_next(&program);
+	}
+	if (program == NULL) {
+		goto err;
+	}
+
 	/*
 	 * First program
 	 */
@@ -769,10 +781,17 @@ void job_run_flow(struct job *job)
 	if (gebr_geoxml_program_get_stdin(GEBR_GEOXML_PROGRAM(program))) {
 		/* Input file */
 		if (check_for_readable_file(gebr_geoxml_flow_io_get_input(job->flow))) {
-			g_string_append_printf(job->issues,
-					       _("Input file %s not present or not accessible.\n"),
-					       gebr_geoxml_flow_io_get_input(job->flow));
+			GString * issue = g_string_new(NULL);
+			may_run = FALSE;
+			g_string_printf(issue,
+					_("Input file %s not present or not accessible.\n"),
+					gebr_geoxml_flow_io_get_input(job->flow));
+			g_string_append(job->issues,
+					       issue->str);
 			job_notify_status(job, JOB_STATUS_ISSUED, job->issues->str);
+			job->user_finished = TRUE;
+			job_set_status_finished(job);
+			g_string_free(issue, TRUE);
 			goto err;
 		}
 	}
