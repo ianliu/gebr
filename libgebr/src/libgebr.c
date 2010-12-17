@@ -27,8 +27,12 @@
 
 void gebr_libinit(const gchar * gettext_package, const gchar * argv0)
 {
-	bindtextdomain(gettext_package, PACKAGE_LOCALE_DIR);
-	bind_textdomain_codeset(gettext_package, "UTF-8");
-	if (gettext_package != NULL)
-		textdomain(gettext_package);
+	g_return_if_fail (gettext_package != NULL);
+
+	if (strcmp (gettext_package, "libgebr") != 0)
+		bindtextdomain (gettext_package, "libgebr");
+
+	bindtextdomain (gettext_package, PACKAGE_LOCALE_DIR);
+	bind_textdomain_codeset (gettext_package, "UTF-8");
+	textdomain (gettext_package);
 }
