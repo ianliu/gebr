@@ -165,10 +165,11 @@ gchar * gebr_validate_case_fix(GebrValidateCase * self, const gchar * value)
 	if (!can_fix)
 		return NULL;
 
-	gchar * gebr_validate_case_fix_aux(const gchar *value)
+	gchar * gebr_validate_case_fix_aux(const gchar *value, gboolean *has_fix)
 	{
 		gchar * tmp = NULL;
 		gchar * fix = g_strdup(value);
+		*has_fix = FALSE;
 
 		if (self->flags & GEBR_VALIDATE_CHECK_CAPIT
 		    && !gebr_validate_check_no_lower_case(fix)) {
@@ -179,6 +180,7 @@ gchar * gebr_validate_case_fix(GebrValidateCase * self, const gchar * value)
 				g_free(tmp);
 				tmp = NULL;
 			}
+			*has_fix = TRUE;
 		}
 		if (self->flags & GEBR_VALIDATE_CHECK_NOBLK
 		    && !gebr_validate_check_no_blanks_at_boundaries(fix)) {
@@ -189,6 +191,7 @@ gchar * gebr_validate_case_fix(GebrValidateCase * self, const gchar * value)
 				g_free(tmp);
 				tmp = NULL;
 			}
+			*has_fix = TRUE;
 		}
 		if (self->flags & GEBR_VALIDATE_CHECK_MTBLK
 		    && !gebr_validate_check_no_multiple_blanks(fix)) {
@@ -199,6 +202,7 @@ gchar * gebr_validate_case_fix(GebrValidateCase * self, const gchar * value)
 				g_free(tmp);
 				tmp = NULL;
 			}
+			*has_fix = TRUE;
 		}
 		if (self->flags & GEBR_VALIDATE_CHECK_NOPNT
 		    && !gebr_validate_check_no_punctuation_at_end(fix)) {
@@ -209,6 +213,7 @@ gchar * gebr_validate_case_fix(GebrValidateCase * self, const gchar * value)
 				g_free(tmp);
 				tmp = NULL;
 			}
+			*has_fix = TRUE;
 		}
 		if (self->flags & GEBR_VALIDATE_CHECK_URL
 		    && !gebr_validate_check_is_url(fix)) {
@@ -219,6 +224,7 @@ gchar * gebr_validate_case_fix(GebrValidateCase * self, const gchar * value)
 				g_free(tmp);
 				tmp = NULL;
 			}
+			*has_fix = TRUE;
 		}
 		if (self->flags & GEBR_VALIDATE_CHECK_TABS
 		    && !gebr_validate_check_tabs(fix)) {
@@ -229,8 +235,24 @@ gchar * gebr_validate_case_fix(GebrValidateCase * self, const gchar * value)
 				g_free(tmp);
 				tmp = NULL;
 			}
+			*has_fix = TRUE;
 		}
 		
+		return fix;
+	}
+
+	gchar * gebr_validate_case_fix_aux_iter(const gchar *value)
+	{
+		gchar *tmp;
+		gboolean has_fix;
+		gchar *fix = gebr_validate_case_fix_aux (value, &has_fix);
+
+		while (has_fix) {
+			tmp = fix;
+			fix = gebr_validate_case_fix_aux (fix, &has_fix);
+			g_free (tmp);
+		}
+
 		return fix;
 	}
 
@@ -238,7 +260,7 @@ gchar * gebr_validate_case_fix(GebrValidateCase * self, const gchar * value)
 		GString *fix = g_string_new("");
 		gchar **cats = g_strsplit(value, "|", 0);
 		for (int i = 0; cats[i] != NULL; i++) {
-			gchar *ifix = gebr_validate_case_fix_aux(cats[i]);
+			gchar *ifix = gebr_validate_case_fix_aux_iter(cats[i]);
 			g_string_append_printf(fix, "%s%s", ifix != NULL ? ifix : cats[i], cats[i+1] != NULL ? "|" : "");
 			if (ifix != NULL)
 				g_free(ifix);
@@ -249,7 +271,7 @@ gchar * gebr_validate_case_fix(GebrValidateCase * self, const gchar * value)
 		g_string_free(fix, FALSE);
 		return ret;
 	} else
-		return gebr_validate_case_fix_aux(value);
+		return gebr_validate_case_fix_aux_iter(value);
 }
 
 gchar *gebr_validate_case_automatic_fixes_msg(GebrValidateCase *self, const gchar * value, gboolean * can_fix)
