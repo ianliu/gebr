@@ -149,7 +149,7 @@ static void category_edit_add_request(CategoryEdit * category_edit, GtkWidget *c
 	gchar *name;
 
 	name = gtk_combo_box_get_active_text(GTK_COMBO_BOX(combo));
-	if (check_duplicate (GEBR_GUI_SEQUENCE_EDIT(category_edit), name, NULL) ||
+	if (check_duplicate (GEBR_GUI_SEQUENCE_EDIT(category_edit), name) ||
 	    __category_edit_check_text(name)) {
 		g_free(name);
 		return;
