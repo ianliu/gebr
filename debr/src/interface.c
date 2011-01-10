@@ -119,7 +119,7 @@ static const GtkActionEntry actions_entries_parameter[] = {
 };
 
 static const GtkActionEntry actions_entries_validate[] = {
-	{"validate_close", GTK_STOCK_CLOSE, NULL, "", N_("Close selected reports"),
+	{"validate_close", GTK_STOCK_CLOSE, NULL, "Delete", N_("Close selected reports"),
 	 G_CALLBACK(on_validate_close_activate)},
 	{"validate_clear", GTK_STOCK_CLEAR, NULL, NULL, N_("Close all reports"),
 	 G_CALLBACK(on_validate_clear_activate)}
