@@ -371,8 +371,7 @@ void gebr_help_show(GebrGeoXmlObject *object, gboolean menu)
 	}
 	else switch (type) {
 	case GEBR_GEOXML_OBJECT_TYPE_FLOW:
-	case GEBR_GEOXML_OBJECT_TYPE_LINE:
-	case GEBR_GEOXML_OBJECT_TYPE_PROJECT: {
+	case GEBR_GEOXML_OBJECT_TYPE_LINE: {
 		GDir *dir;
 		gchar *str;
 		gint merge_id;
@@ -502,6 +501,10 @@ void gebr_help_show(GebrGeoXmlObject *object, gboolean menu)
 		g_free (str);
 		break;
 	}
+	case GEBR_GEOXML_OBJECT_TYPE_PROJECT:
+		html = gebr_geoxml_document_get_help (GEBR_GEOXML_DOCUMENT (object));
+		gebr_gui_html_viewer_window_show_html (GEBR_GUI_HTML_VIEWER_WINDOW (window), html);
+		break;
 	case GEBR_GEOXML_OBJECT_TYPE_PROGRAM:
 		html = gebr_geoxml_program_get_help(GEBR_GEOXML_PROGRAM(object));
 		gebr_gui_html_viewer_window_show_html(GEBR_GUI_HTML_VIEWER_WINDOW(window), html);
