@@ -22,6 +22,8 @@
 
 G_BEGIN_DECLS
 
+#define ENABLE_TIDY         "@ENABLE_TIDY@"
+
 #define DATA_DIR		"@prefix@/share/"
 #define	PACKAGE_LOCALE_DIR	DATA_DIR"/locale"
 
