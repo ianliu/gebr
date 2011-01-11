@@ -244,7 +244,7 @@ gboolean flow_edition_get_selected_component(GtkTreeIter * iter, gboolean warn_u
 {
 	if (!gebr_gui_gtk_tree_view_get_selected(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view), iter)) {
 		if (warn_unselected)
-			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No menu selected."));
+			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No program selected."));
 		return FALSE;
 	}
 
