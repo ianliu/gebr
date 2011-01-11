@@ -121,9 +121,8 @@ const gchar *__gebr_geoxml_get_element_value(GdomeElement * element);
  * \internal
  *
  */
-void
-
- __gebr_geoxml_set_element_value(GdomeElement * element, const gchar * tag_value, createValueNode_function create_func);
+void __gebr_geoxml_set_element_value(GdomeElement * element, const gchar * tag_value,
+				     createValueNode_function create_func);
 
 /**
  * \internal
@@ -135,11 +134,14 @@ const gchar *__gebr_geoxml_get_tag_value(GdomeElement * parent_element, const gc
  * \internal
  *
  */
-void
+const gchar *__gebr_geoxml_get_tag_value_non_rec(GdomeElement * parent_element, const gchar * tag_name);
 
-
-__gebr_geoxml_set_tag_value(GdomeElement * parent_element, const gchar * tag_name, const gchar * tag_value,
-			    createValueNode_function create_func);
+/**
+ * \internal
+ *
+ */
+void __gebr_geoxml_set_tag_value(GdomeElement * parent_element, const gchar * tag_name, const gchar * tag_value,
+				 createValueNode_function create_func);
 
 /**
  * \internal

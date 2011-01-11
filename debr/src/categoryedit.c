@@ -501,6 +501,7 @@ GtkWidget *category_edit_new(GebrGeoXmlFlow * menu, gboolean new_menu)
 
 static gboolean check_duplicate (GebrGuiSequenceEdit * sequence_edit, const gchar * category)
 {
+	gchar *i_categ;
 	gboolean retval = FALSE;
 	GtkTreeModel *model;
 	GtkTreeIter iter;
@@ -510,29 +511,36 @@ static gboolean check_duplicate (GebrGuiSequenceEdit * sequence_edit, const gcha
 	g_object_get(G_OBJECT(sequence_edit), "list-store", &model, NULL);
 
 	gebr_gui_gtk_tree_model_foreach(iter, model) {
-		gchar *i_categ;
 		gchar *i_fix;
 		gchar *fix;
+		gchar *i_lower;
+		gchar *lower;
 
 		gtk_tree_model_get(model, &iter, 0, &i_categ, -1);
 		i_fix = gebr_validate_case_fix (validate_case, i_categ);
 		fix = gebr_validate_case_fix (validate_case, category);
+		i_lower = g_utf8_strdown (i_fix, -1);
+		lower = g_utf8_strdown (fix, -1);
 
-		if (strcmp(i_fix, fix) == 0) {
+		if (strcmp(i_lower, lower) == 0) {
 			gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(sequence_edit->tree_view), &iter);
 			retval = TRUE;
+			break;
 		}
 
-		g_free(i_categ);
 		g_free(i_fix);
 		g_free(fix);
+		g_free(i_lower);
+		g_free(lower);
+		g_free(i_categ);
 	}
 
 	if (retval) {
 		gebr_gui_message_dialog (GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
 					 _("Category already exists"),
 					 _("The category <i>%s</i> already exists in the list, the operation will be cancelled."),
-					 category);
+					 i_categ);
+		g_free(i_categ);
 	}
 
 	return retval;

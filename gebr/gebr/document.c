@@ -266,22 +266,27 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 		goto out;
 	}
 
-	const gchar *document_name;
-	if (*document == NULL)
-		document_name = _("document");
-	else switch (gebr_geoxml_document_get_type(*document)) {
-	case GEBR_GEOXML_DOCUMENT_TYPE_PROJECT:
-		document_name = _("project");
-		break;
-	case GEBR_GEOXML_DOCUMENT_TYPE_LINE:
-		document_name = _("line");
-		break;
-	case GEBR_GEOXML_DOCUMENT_TYPE_FLOW:
-		document_name = _("flow");
-		break;
-	default:
-		goto out;
+	const gchar *get_document_name(GebrGeoXmlDocument *document)
+       	{
+		const gchar *document_name;
+		if (document == NULL)
+			document_name = _("document");
+		else switch (gebr_geoxml_document_get_type(document)) {
+		case GEBR_GEOXML_DOCUMENT_TYPE_PROJECT:
+			document_name = _("project");
+			break;
+		case GEBR_GEOXML_DOCUMENT_TYPE_LINE:
+			document_name = _("line");
+			break;
+		case GEBR_GEOXML_DOCUMENT_TYPE_FLOW:
+			document_name = _("flow");
+			break;
+		default:
+			document_name = _("document");
+		}
+		return document_name;
 	}
+	const gchar *document_name = get_document_name(*document);
 
 	gchar *fname;
 	fname = g_path_get_basename(path);
@@ -303,9 +308,20 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 	g_string_prepend(string, "<span weight='bold' size='large'>");
 	g_string_append(string, "</span>");
 	gtk_message_dialog_set_markup(GTK_MESSAGE_DIALOG(dialog), string->str);
-	gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(dialog),
-						 _("The file %s could not be loaded.\n%s"),
-						 fname, gebr_geoxml_error_string((enum GEBR_GEOXML_RETV)ret));
+	if (parent_document == NULL) 
+		gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(dialog),
+							 _("The file %s could not be loaded.\n%s"),
+							 fname, gebr_geoxml_error_string((enum GEBR_GEOXML_RETV)ret));
+	else {
+		GString *title = g_string_new("");
+		if (gebr_geoxml_document_get_title(parent_document) != NULL)
+			g_string_printf(title, _(" '%s'"), gebr_geoxml_document_get_title(parent_document));
+		gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(dialog),
+							 _("The file %s from %s%s (file %s) could not be loaded.\n%s"),
+							 fname, get_document_name(parent_document), title->str,
+							 gebr_geoxml_document_get_filename(parent_document),
+							 gebr_geoxml_error_string((enum GEBR_GEOXML_RETV)ret));
+	}
 
 	/* for imported documents */
 	if (!document_path_is_at_gebr_data_dir(path)) {
