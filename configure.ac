@@ -156,6 +156,66 @@ AC_SUBST(CONFIG_SUBDIRS)
 AC_SUBST(CONFIG_GUI)
 
 dnl ============================================================================
+dnl Checking for zlib library (code extracted from gurlchecker)
+dnl ============================================================================
+
+TIDY_LIBS=''
+TIDY_FLAGS=''
+AC_MSG_CHECKING([whether to use TIDY library (HTML w3c validation)])
+if test "x$enable_tidy" != "xno"; then
+  AC_ARG_WITH(
+        [tidy],
+    AC_HELP_STRING(
+      [--with-tidy@<:@=DIR@:>@],
+      [use TIDY library located in directory DIR (if supplied) for HTML w3c validation @<:@default=yes (if present)@:>@]
+    ),
+    [
+     if test "x$withval" = "xno"; then
+       AC_MSG_RESULT([not requested])
+     elif test "x$withval" = "xyes" -o -d "$withval"; then
+       want_tidy=yes
+       want_tidy_path=$withval
+     else
+       AC_MSG_RESULT([no])
+       AC_MSG_WARN([The specified path for libtidy does not exist.])
+       want_tidy=no
+     fi
+    ],
+    [want_tidy=yes]
+  )
+else
+  AC_MSG_RESULT([not requested])
+  want_tidy=no
+fi
+if test "x$want_tidy" != "xno"; then
+  AC_MSG_RESULT([requested])
+        AC_CHECK_LIB(
+          [tidy],
+          [tidyCreate],
+          [
+           AC_CHECK_HEADERS(
+             [tidy.h tidy/tidy.h],
+             [
+              want_tidy=yes
+              TIDY_FLAGS="$TIDY_FLAGS -DHAVE_TIDY_H_IN_SUBDIR -DENABLE_TIDY"
+        TIDY_LIBS="-ltidy"
+        LDFLAGS="$LDFLAGS $want_tidy_path"
+             ],
+       [want_tidy=no]
+           )
+          ],
+          [
+           want_tidy=no
+           AC_MSG_WARN([You requested libtidy support, but it doesn't seem to be installed.])
+          ]
+        )
+else
+  AC_MSG_WARN([You are building without libtidy support. gurlchecker will not be able to do HTML validation...])
+fi
+AC_SUBST(TIDY_LIBS)
+AC_SUBST(TIDY_FLAGS)
+
+dnl ============================================================================
 dnl Checking for zlib library
 dnl ============================================================================
 AC_CHECK_LIB(z,main,,[AC_MSG_ERROR(zlib required)])
@@ -213,12 +273,12 @@ if test "$enable_gui" = "yes"; then
 fi
 
 GEBR_CFLAGS='-I$(top_srcdir) -I$(top_srcdir)/libgebr $(GLIB_CFLAGS) $(GOBJECT_CFLAGS) $(GTHREAD_CFLAGS)'
-GEBR_GEOXML_CFLAGS='-I$(top_srcdir)/libgebr/geoxml $(GDOME2_CFLAGS)'
+GEBR_GEOXML_CFLAGS='-I$(top_srcdir)/libgebr/geoxml $(GDOME2_CFLAGS) $(TIDY_FLAGS)'
 GEBR_COMM_CFLAGS='-I$(top_srcdir)/libgebr/comm'
 GEBR_GUI_CFLAGS='-I$(top_srcdir)/libgebr/gui $(GTK_CFLAGS) $(WEBKIT_CFLAGS)'
 
 GEBR_LIBS='$(top_builddir)/libgebr/libgebr.la $(GLIB_LIBS) $(GOBJECT_LIBS) $(GTHREAD_LIBS)'
-GEBR_GEOXML_LIBS='$(top_builddir)/libgebr/geoxml/libgebr_geoxml.la $(GDOME2_LIBS)'
+GEBR_GEOXML_LIBS='$(top_builddir)/libgebr/geoxml/libgebr_geoxml.la $(GDOME2_LIBS) $(TIDY_LIBS)'
 GEBR_COMM_LIBS='$(top_builddir)/libgebr/comm/libgebr_comm.la'
 GEBR_GUI_LIBS='$(top_builddir)/libgebr/gui/libgebr_gui.la $(GTK_LIBS) $(WEBKIT_LIBS)'
 
