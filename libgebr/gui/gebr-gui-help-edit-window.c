@@ -97,7 +97,7 @@ static const gchar * ui_def =
 "    <separator />"
 "    <menuitem action='PrintAction' />"
 "    <separator />"
-"    <menuitem action='QuitAction' />"
+"    <menuitem action='CloseAction' />"
 "  </menu>"
 "  <menu action='EditMenu'>"
 "   <menuitem action='PreviewAction' />"
