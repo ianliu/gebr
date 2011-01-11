@@ -25,6 +25,9 @@
 #include <gdome.h>
 #include <libxml/parser.h>
 
+#include <tidy/tidy.h>
+#include <tidy/buffio.h>
+
 #include "document.h"
 #include "document_p.h"
 #include "defines.h"
@@ -849,12 +852,33 @@ int gebr_geoxml_document_save(GebrGeoXmlDocument * document, const gchar * path)
 	gebr_geoxml_document_to_string(document, &xml);
 
 	if ((gebr_geoxml_document_get_type(document) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW) && g_str_has_suffix(path, ".mnu")) {
+                TidyBuffer output = {0};
+                TidyBuffer errbuf = {0};
+                Bool ok;
+                TidyDoc tdoc = tidyCreate();
+
 		fp = fopen(path, "w");
 
 		if (fp == NULL){
 			return GEBR_GEOXML_RETV_PERMISSION_DENIED;
 		}
-		ret = fwrite(xml, sizeof(gchar), strlen(xml) + 1, fp);
+
+                ok = tidyOptSetBool( tdoc, TidyXmlTags, yes );
+                ok = tidyOptSetValue( tdoc, TidyIndentContent, "auto");
+                ok = tidyOptSetValue( tdoc, TidyCharEncoding, "UTF8");
+
+                if ( ok )
+                        ret = tidySetErrorBuffer( tdoc, &errbuf );      // Capture diagnostics
+                if ( ret >= 0 )
+                        ret = tidyParseString( tdoc, xml );           // Parse the input
+                if ( ret >= 0 )
+                        ret = tidyCleanAndRepair( tdoc );               // Tidy it up!
+                if ( ret >= 0 )
+                        ret = tidySaveBuffer( tdoc, &output );          // Pretty Print
+                
+                if ( ret >= 0 )
+                        ret = fwrite(output.bp, sizeof(gchar), strlen(output.bp) + 1, fp);
+
 		fclose(fp);
 	} else {
 		zfp = gzopen(path, "w");
