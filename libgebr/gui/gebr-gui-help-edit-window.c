@@ -77,8 +77,8 @@ static const GtkActionEntry action_entries[] = {
 
 	{"PrintAction", GTK_STOCK_PRINT, NULL, NULL,
 		N_("Print the content of this window"), G_CALLBACK(on_print_clicked)},
-	{"QuitAction", GTK_STOCK_CLOSE, NULL, NULL,
-		N_("Quit this window"), G_CALLBACK(on_quit_clicked)},
+	{"CloseAction", GTK_STOCK_CLOSE, NULL, NULL,
+		N_("Close this window"), G_CALLBACK(on_quit_clicked)},
 };
 
 static const guint n_action_entries = G_N_ELEMENTS(action_entries);

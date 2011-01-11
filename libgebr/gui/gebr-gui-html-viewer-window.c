@@ -56,8 +56,8 @@ static GtkActionEntry actions[] = {
 		N_("Save content into file"), G_CALLBACK (on_save_activate)},
 	{"PrintAction", GTK_STOCK_PRINT, NULL, NULL,
 		N_("Print content"), G_CALLBACK (on_print_activate)},
-	{"QuitAction", GTK_STOCK_QUIT, NULL, NULL,
-		N_("Quits this window"), G_CALLBACK (on_quit_activate)}
+	{"CloseAction", GTK_STOCK_CLOSE, NULL, NULL,
+		N_("Close this window"), G_CALLBACK (on_quit_activate)}
 };
 
 static guint n_actions = G_N_ELEMENTS (actions);
@@ -70,7 +70,7 @@ static gchar * uidef =
 "   <separator />"
 "   <menuitem action='PrintAction' />"
 "   <separator />"
-"   <menuitem action='QuitAction' />"
+"   <menuitem action='CloseAction' />"
 "  </menu>"
 " </menubar>"
 "</ui>";
