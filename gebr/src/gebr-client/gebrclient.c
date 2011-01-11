@@ -48,14 +48,14 @@ void gebr_client_message(enum gebr_log_message_type type, const gchar * message,
 	string = g_strdup_vprintf(message, argp);
 	va_end(argp);
 
-#ifndef GEBR_DEBUG
+#ifndef DEBUG
 	if (type != GEBR_LOG_DEBUG) {
 #endif
 		if (type == GEBR_LOG_ERROR)
 			fprintf(stderr, "%s\n", string);
 		else
 			fprintf(stdout, "%s\n", string);
-#ifndef GEBR_DEBUG
+#ifndef DEBUG
 	}
 #endif
 
