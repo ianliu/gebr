@@ -604,7 +604,7 @@ gchar * gebr_generate_report(const gchar * title,
 		"<head>\n"
 		"  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n"
 		"  <title>%s</title>\n"
-		style ? "  %s\n":""
+		"  %s\n"
 		"</head>\n"
 		"<body>\n"
 		"<div class=\"header\">%s</div>\n"
