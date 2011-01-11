@@ -307,10 +307,10 @@ void project_line_info_update(void)
 	g_string_free(text, TRUE);
 
 	/* Info button */
-	gboolean help_exists = gebr.project_line != NULL && (strlen(gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(gebr.project_line)))? TRUE : FALSE);
-	g_object_set(gebr.ui_project_line->info.help_view, "sensitive", help_exists, NULL);
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_view"), help_exists);
-	g_object_set(gebr.ui_project_line->info.help_edit, "sensitive", TRUE, NULL);
+	if (gebr.project_line != NULL){
+		g_object_set(gebr.ui_project_line->info.help_view, "sensitive", TRUE, NULL);
+		g_object_set(gebr.ui_project_line->info.help_edit, "sensitive", TRUE, NULL);
+	}
 
 	navigation_bar_update();
 }
