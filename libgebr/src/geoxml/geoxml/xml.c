@@ -311,6 +311,11 @@ const gchar *__gebr_geoxml_get_tag_value(GdomeElement * parent_element, const gc
 	return __gebr_geoxml_get_element_value(__gebr_geoxml_get_first_element(parent_element, tag_name));
 }
 
+const gchar *__gebr_geoxml_get_tag_value_non_rec(GdomeElement * parent_element, const gchar * tag_name)
+{
+	return __gebr_geoxml_get_element_value(__gebr_geoxml_get_element_at(parent_element, tag_name, 0, FALSE));
+}
+
 void
 __gebr_geoxml_set_tag_value(GdomeElement * parent_element, const gchar * tag_name, const gchar * tag_value,
 			    createValueNode_function create_func)

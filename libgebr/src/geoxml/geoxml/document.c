@@ -977,7 +977,7 @@ const gchar *gebr_geoxml_document_get_title(GebrGeoXmlDocument * document)
 {
 	if (document == NULL)
 		return NULL;
-	return __gebr_geoxml_get_tag_value(gebr_geoxml_document_root_element(document), "title");
+	return __gebr_geoxml_get_tag_value_non_rec(gebr_geoxml_document_root_element(document), "title");
 }
 
 const gchar *gebr_geoxml_document_get_author(GebrGeoXmlDocument * document)
