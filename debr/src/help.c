@@ -627,9 +627,13 @@ static void help_edit_on_commit_request(GebrGuiHelpEditWidget * self)
 	GtkTreeIter child;
 	GtkTreeModel * model;
 
-	g_object_get(self, "geoxml-object", &object, NULL);	
+	g_object_get(self, "geoxml-object", &object, NULL);
 
-	// Searches the menu's model for 'menu', returning the corresponding help backup
+	if (gebr_geoxml_object_get_type (object) == GEBR_GEOXML_OBJECT_TYPE_PROGRAM)
+	{
+		object = GEBR_GEOXML_OBJECT (gebr_geoxml_object_get_owner_document (object));
+	}
+
 	model = GTK_TREE_MODEL (debr.ui_menu.model);
 	valid = gtk_tree_model_get_iter_first(model, &iter);
 
@@ -640,7 +644,7 @@ static void help_edit_on_commit_request(GebrGuiHelpEditWidget * self)
 			gtk_tree_model_get(model, &child,
 					   MENU_XMLPOINTER, &ptr,
 					   -1);
-			if (ptr == object){
+			if (ptr == object) {
 				interrupt = TRUE;
 				break;
 			}
