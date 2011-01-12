@@ -89,15 +89,20 @@ static void __gebr_comm_process_free(GebrCommProcess * process)
 	if (process->stdout_watch_id) {
 		if (gebr_comm_process_stdout_bytes_available(process))
 			g_signal_emit(process, object_signals[READY_READ_STDOUT], 0);
+		g_source_remove(process->stdout_watch_id);
+		process->stdout_watch_id = 0;
+	}
+	if (process->stderr_watch_id) {
 		if (gebr_comm_process_stderr_bytes_available(process))
 			g_signal_emit(process, object_signals[READY_READ_STDERR], 0);
-		g_source_remove(process->stdout_watch_id);
 		g_source_remove(process->stderr_watch_id);
-		g_source_remove(process->finish_watch_id);
-		process->stdout_watch_id = 0;
 		process->stderr_watch_id = 0;
+	}
+	if (process->finish_watch_id) {
+		g_source_remove(process->finish_watch_id);
 		process->finish_watch_id = 0;
 	}
+
 	__gebr_comm_process_io_channel_free(&process->stdin_io_channel);
 	__gebr_comm_process_io_channel_free(&process->stdout_io_channel);
 	__gebr_comm_process_io_channel_free(&process->stderr_io_channel);
