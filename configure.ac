@@ -156,64 +156,33 @@ AC_SUBST(CONFIG_SUBDIRS)
 AC_SUBST(CONFIG_GUI)
 
 dnl ============================================================================
-dnl Checking for zlib library (code extracted from gurlchecker)
+dnl Checking for tidy library
 dnl ============================================================================
+AC_ARG_WITH([tidy],
+	    [AC_HELP_STRING([--with-tidy],
+			   [use TIDY library to format XML outputs [default=yes]])],
+	    [want_tidy=${withval}],
+	    [want_tidy=yes])
 
-TIDY_LIBS=''
-TIDY_FLAGS=''
-AC_MSG_CHECKING([whether to use TIDY library (HTML w3c validation)])
-if test "x$enable_tidy" != "xno"; then
-  AC_ARG_WITH(
-        [tidy],
-    AC_HELP_STRING(
-      [--with-tidy@<:@=DIR@:>@],
-      [use TIDY library located in directory DIR (if supplied) for HTML w3c validation @<:@default=yes (if present)@:>@]
-    ),
-    [
-     if test "x$withval" = "xno"; then
-       AC_MSG_RESULT([not requested])
-     elif test "x$withval" = "xyes" -o -d "$withval"; then
-       want_tidy=yes
-       want_tidy_path=$withval
-     else
-       AC_MSG_RESULT([no])
-       AC_MSG_WARN([The specified path for libtidy does not exist.])
-       want_tidy=no
-     fi
-    ],
-    [want_tidy=yes]
-  )
-else
-  AC_MSG_RESULT([not requested])
-  want_tidy=no
+ENABLE_TIDY=0
+if test "x${want_tidy}" = xyes; then
+	AC_SEARCH_LIBS([tidyCreate], [tidy],
+		       [have_tidy=yes],
+		       [have_tidy=no])
+
+	if test "x${have_tidy}" = xyes; then
+		AC_CHECK_HEADERS([tidy/tidy.h tidy/buffio.h],
+				 [],
+				 [have_tidy=no])
+	fi
+
+	if test "x${have_tidy}" = xyes; then
+		ENABLE_TIDY=1
+	else
+		AC_MSG_WARN([You requested libtidy support, but it does not seem to be installed])
+	fi
 fi
-if test "x$want_tidy" != "xno"; then
-  AC_MSG_RESULT([requested])
-        AC_CHECK_LIB(
-          [tidy],
-          [tidyCreate],
-          [
-           AC_CHECK_HEADERS(
-             [tidy.h tidy/tidy.h],
-             [
-              want_tidy=yes
-              TIDY_FLAGS="$TIDY_FLAGS -DHAVE_TIDY_H_IN_SUBDIR -DENABLE_TIDY"
-        TIDY_LIBS="-ltidy"
-        LDFLAGS="$LDFLAGS $want_tidy_path"
-             ],
-       [want_tidy=no]
-           )
-          ],
-          [
-           want_tidy=no
-           AC_MSG_WARN([You requested libtidy support, but it doesn't seem to be installed.])
-          ]
-        )
-else
-  AC_MSG_WARN([You are building without libtidy support. gurlchecker will not be able to do HTML validation...])
-fi
-AC_SUBST(TIDY_LIBS)
-AC_SUBST(TIDY_FLAGS)
+AC_SUBST(ENABLE_TIDY)
 
 dnl ============================================================================
 dnl Checking for zlib library
@@ -361,3 +330,11 @@ debr/tests/Makefile
 ])
 
 AC_OUTPUT
+
+echo "---------------------------------------"
+echo " Configuration summary:"
+echo " "
+echo " Enable debugging messages?    $enable_debug"
+echo " Enable GUI support?           $enable_gui"
+echo " Enable Tidy support?          $have_tidy"
+echo "---------------------------------------"

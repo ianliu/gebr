@@ -843,7 +843,7 @@ int gebr_geoxml_document_save(GebrGeoXmlDocument * document, const gchar * path)
 {
 	gzFile zfp;
 	char *xml;
-	int ret;
+	int ret = 0;
 	FILE *fp;
 
 	if (document == NULL)
@@ -857,29 +857,35 @@ int gebr_geoxml_document_save(GebrGeoXmlDocument * document, const gchar * path)
 			return GEBR_GEOXML_RETV_PERMISSION_DENIED;
 		}
 
-#ifndef ENABLE_TIDY
-		ret = fwrite(xml, sizeof(gchar), strlen(xml) + 1, fp);
+#if ENABLE_TIDY
+		Bool ok;
+		TidyBuffer output;
+		TidyBuffer errbuf;
+		TidyDoc tdoc = tidyCreate ();
+
+		tidyBufInit (&output);
+		tidyBufInit (&errbuf);
+		ok = tidyOptSetBool (tdoc, TidyXmlTags, yes);
+		ok = ok && tidyOptSetValue (tdoc, TidyIndentContent, "auto");
+		ok = ok && tidyOptSetValue (tdoc, TidyCharEncoding, "UTF8");
+
+		if (ok) {
+			ret = tidySetErrorBuffer (tdoc, &errbuf);
+			if (ret >= 0)
+				ret = tidyParseString (tdoc, xml);
+			if (ret >= 0)
+				ret = tidyCleanAndRepair (tdoc);
+			if (ret >= 0)
+				ret = tidySaveBuffer (tdoc, &output);
+			if (ret >= 0)
+				ret = fwrite (output.bp, sizeof(gchar),
+					      strlen((const gchar *)output.bp) + 1, fp);
+		}
+		tidyBufFree(&output);
+		tidyBufFree(&errbuf);
+		tidyRelease(tdoc);
 #else
-                TidyBuffer output = {0};
-                TidyBuffer errbuf = {0};
-                Bool ok;
-                TidyDoc tdoc = tidyCreate();
-
-                ok = tidyOptSetBool( tdoc, TidyXmlTags, yes );
-                ok = tidyOptSetValue( tdoc, TidyIndentContent, "auto");
-                ok = tidyOptSetValue( tdoc, TidyCharEncoding, "UTF8");
-
-                if ( ok )
-                        ret = tidySetErrorBuffer( tdoc, &errbuf );      // Capture diagnostics
-                if ( ret >= 0 )
-                        ret = tidyParseString( tdoc, xml );           // Parse the input
-                if ( ret >= 0 )
-                        ret = tidyCleanAndRepair( tdoc );               // Tidy it up!
-                if ( ret >= 0 )
-                        ret = tidySaveBuffer( tdoc, &output );          // Pretty Print
-                
-                if ( ret >= 0 )
-                        ret = fwrite(output.bp, sizeof(gchar), strlen(output.bp) + 1, fp);
+		ret = fwrite(xml, sizeof(gchar), strlen(xml) + 1, fp);
 #endif
 
 		fclose(fp);
