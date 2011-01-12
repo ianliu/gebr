@@ -173,6 +173,7 @@ void flow_io_simple_setup_ui(gboolean focus_output)
 			   gebr_gui_file_entry_get_path(GEBR_GUI_FILE_ENTRY(simple->input)),
 			   gebr_gui_file_entry_get_path(GEBR_GUI_FILE_ENTRY(simple->output)),
 			   gebr_gui_file_entry_get_path(GEBR_GUI_FILE_ENTRY(simple->error)));
+	gebr_geoxml_flow_io_set_from_server(gebr.flow, gebr.flow_server);
 	flow_edition_set_io();
 	flow_browse_info_update();
 
