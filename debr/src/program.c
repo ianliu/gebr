@@ -239,7 +239,6 @@ void get_program_count(GtkTreeIter * iter, gint * count)
 	gchar * title;
 	gint title_cont = 0;
 	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_program.list_store), iter, PROGRAM_TITLE, &title, -1);
-	g_printf("Title = %s\n", title);
 
 	if (sscanf(title, _("New program %d"), &title_cont) == 1)
 	{
