@@ -234,19 +234,37 @@ void program_load_menu(void)
 		program_select_iter(iter);
 }
 
+void get_program_count(GtkTreeIter * iter, gint * count)
+{
+	gchar * title;
+	gint title_cont = 0;
+	gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_program.list_store), iter, PROGRAM_TITLE, &title, -1);
+	g_printf("Title = %s\n", title);
+
+	if (sscanf(title, _("New program %d"), &title_cont) == 1)
+	{
+		if (title_cont >= *count && title_cont > 0)
+			*count = title_cont + 1;
+	}
+}
+
 void program_new()
 {
-	static guint programs_count = 1;
+	guint programs_count = 1;
 
 	GtkTreeIter iter;
+	GtkTreeIter iter_menu;
+
 	gchar * program_title;
 	GebrGeoXmlProgram *program;
 
-	if (!menu_get_selected(NULL, TRUE))
+	if (!menu_get_selected(&iter_menu, TRUE))
 		return;
-
-	menu_archive();
-
+	gebr_gui_gtk_tree_model_foreach(iter_menu, GTK_TREE_MODEL(debr.ui_program.list_store))
+	{
+		get_program_count(&iter_menu, &programs_count);
+	}
+	menu_archive(); 
 	program = gebr_geoxml_flow_append_program(debr.menu);
 	/* default settings */
 	program_title = g_strdup_printf(_("New program %d"), programs_count++);
