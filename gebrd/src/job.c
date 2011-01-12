@@ -777,7 +777,7 @@ void job_run_flow(struct job *job)
 	/*
 	 * First program
 	 */
-	/* Start wi.hwithout stdin */
+	/* Start with/without stdin */
 	if (gebr_geoxml_program_get_stdin(GEBR_GEOXML_PROGRAM(program))) {
 		/* Input file */
 		if (check_for_readable_file(gebr_geoxml_flow_io_get_input(job->flow))) {
