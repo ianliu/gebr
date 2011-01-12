@@ -272,7 +272,14 @@ const gchar *__gebr_geoxml_get_element_value(GdomeElement * element)
 
 	if (element == NULL)
 		return NULL;
+	/* jump spaces, useful for CDATA lookup */
 	child = gdome_el_firstChild(element, &exception);
+	do {
+		GdomeNode *next = gdome_n_nextSibling(child, &exception);
+		if (next == NULL || gdome_n_nodeType(child, &exception) == GDOME_CDATA_SECTION_NODE)
+			break;
+		child = next;
+	} while (1);
 	string = gdome_n_nodeValue(child, &exception);
 	if (string == NULL)
 		return "";

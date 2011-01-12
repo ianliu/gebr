@@ -116,6 +116,11 @@ dnl Check if we have docbook
 dnl ============================================================================
 AC_CHECK_PROG(DB2HTML, db2html, true, false)
 AM_CONDITIONAL(HAVE_DOCBOOK, $DB2HTML)
+if $DB2HTML; then
+	have_docbook=yes;
+else
+	have_docbook=no;
+fi
 
 AC_PROG_INSTALL
 AC_PROG_CC
@@ -154,6 +159,35 @@ else
 fi
 AC_SUBST(CONFIG_SUBDIRS)
 AC_SUBST(CONFIG_GUI)
+
+dnl ============================================================================
+dnl Checking for tidy library
+dnl ============================================================================
+AC_ARG_WITH([tidy],
+	    [AC_HELP_STRING([--with-tidy],
+			   [use TIDY library to format XML outputs [default=yes]])],
+	    [want_tidy=${withval}],
+	    [want_tidy=yes])
+
+ENABLE_TIDY=0
+if test "x${want_tidy}" = xyes; then
+	AC_SEARCH_LIBS([tidyCreate], [tidy],
+		       [have_tidy=yes],
+		       [have_tidy=no])
+
+	if test "x${have_tidy}" = xyes; then
+		AC_CHECK_HEADERS([tidy/tidy.h tidy/buffio.h],
+				 [],
+				 [have_tidy=no])
+	fi
+
+	if test "x${have_tidy}" = xyes; then
+		ENABLE_TIDY=1
+	else
+		AC_MSG_ERROR([You requested libtidy support, but it does not seem to be installed])
+	fi
+fi
+AC_SUBST(ENABLE_TIDY)
 
 dnl ============================================================================
 dnl Checking for zlib library
@@ -213,12 +247,12 @@ if test "$enable_gui" = "yes"; then
 fi
 
 GEBR_CFLAGS='-I$(top_srcdir) -I$(top_srcdir)/libgebr $(GLIB_CFLAGS) $(GOBJECT_CFLAGS) $(GTHREAD_CFLAGS)'
-GEBR_GEOXML_CFLAGS='-I$(top_srcdir)/libgebr/geoxml $(GDOME2_CFLAGS)'
+GEBR_GEOXML_CFLAGS='-I$(top_srcdir)/libgebr/geoxml $(GDOME2_CFLAGS) $(TIDY_FLAGS)'
 GEBR_COMM_CFLAGS='-I$(top_srcdir)/libgebr/comm'
 GEBR_GUI_CFLAGS='-I$(top_srcdir)/libgebr/gui $(GTK_CFLAGS) $(WEBKIT_CFLAGS)'
 
 GEBR_LIBS='$(top_builddir)/libgebr/libgebr.la $(GLIB_LIBS) $(GOBJECT_LIBS) $(GTHREAD_LIBS)'
-GEBR_GEOXML_LIBS='$(top_builddir)/libgebr/geoxml/libgebr_geoxml.la $(GDOME2_LIBS)'
+GEBR_GEOXML_LIBS='$(top_builddir)/libgebr/geoxml/libgebr_geoxml.la $(GDOME2_LIBS) $(TIDY_LIBS)'
 GEBR_COMM_LIBS='$(top_builddir)/libgebr/comm/libgebr_comm.la'
 GEBR_GUI_LIBS='$(top_builddir)/libgebr/gui/libgebr_gui.la $(GTK_LIBS) $(WEBKIT_LIBS)'
 
@@ -301,3 +335,13 @@ debr/tests/Makefile
 ])
 
 AC_OUTPUT
+
+echo "---------------------------------------"
+echo " Configuration summary:"
+echo " "
+echo " Enable debugging messages?    $enable_debug"
+echo " Enable GUI support?           $enable_gui"
+echo " Enable Tidy support?          $have_tidy"
+echo " Has Dockbook to build user's"
+echo " documentation?                $have_docbook"
+echo "---------------------------------------"
