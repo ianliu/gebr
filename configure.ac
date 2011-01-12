@@ -116,6 +116,11 @@ dnl Check if we have docbook
 dnl ============================================================================
 AC_CHECK_PROG(DB2HTML, db2html, true, false)
 AM_CONDITIONAL(HAVE_DOCBOOK, $DB2HTML)
+if $DB2HTML; then
+	have_docbook=yes;
+else
+	have_docbook=no;
+fi
 
 AC_PROG_INSTALL
 AC_PROG_CC
@@ -337,4 +342,6 @@ echo " "
 echo " Enable debugging messages?    $enable_debug"
 echo " Enable GUI support?           $enable_gui"
 echo " Enable Tidy support?          $have_tidy"
+echo " Has Dockbook to build user's"
+echo " documentation?                $have_docbook"
 echo "---------------------------------------"
