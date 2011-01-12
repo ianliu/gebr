@@ -179,7 +179,7 @@ if test "x${want_tidy}" = xyes; then
 	if test "x${have_tidy}" = xyes; then
 		ENABLE_TIDY=1
 	else
-		AC_MSG_WARN([You requested libtidy support, but it does not seem to be installed])
+		AC_MSG_ERROR([You requested libtidy support, but it does not seem to be installed])
 	fi
 fi
 AC_SUBST(ENABLE_TIDY)
