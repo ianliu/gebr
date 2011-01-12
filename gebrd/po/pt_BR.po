@@ -8,14 +8,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebrd 0.9.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-11-09 21:19-0200\n"
-"PO-Revision-Date: 2010-10-28 11:34-0200\n"
+"POT-Creation-Date: 2011-01-12 16:28-0200\n"
+"PO-Revision-Date: 2011-01-12 16:29-0200\n"
 "Last-Translator: Alexandre Baaklini <abaaklini@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bitPlural-Forms: nplurals=2; plural=(n > 1);\n"
+"Language: \n"
 
 #: ../src/client.c:100
 #, c-format
@@ -46,9 +46,9 @@ msgstr "Tarefa '%s' não enviou a saida no formato UTF-8"
 msgid "Empty flow.\n"
 msgstr "Fluxo vazio.\n"
 
-#: ../src/job.c:535 ../src/job.c:613
+#: ../src/job.c:535 ../src/job.c:605 ../src/job.c:768
 #, c-format
-msgid "%u) Skiping disabled/unconfigured program '%s'.\n"
+msgid "%u) Skipping disabled/not configured program '%s'.\n"
 msgstr "%u) Desconsiderando programa '%s' desabilitado/não configurado.\n"
 
 #: ../src/job.c:541
@@ -61,61 +61,61 @@ msgstr "Sem programas configurados.\n"
 msgid "No input file selected.\n"
 msgstr "Sem arquivo de entrada selecionado.\n"
 
-#: ../src/job.c:558
-#, c-format
-msgid "Input file %s not present or not accessable.\n"
-msgstr "Arquivo de entrada %s não encontrado ou não acessível.\n"
-
-#: ../src/job.c:575
+#: ../src/job.c:567
 #, c-format
 msgid "Requested MPI (%s) is not supported by this server.\n"
 msgstr "MPI (%s) solicitado não é suportado pelo servidor.\n"
 
-#: ../src/job.c:597 ../src/job.c:695
+#: ../src/job.c:589 ../src/job.c:687
 #, c-format
 msgid "Write permission to %s not granted.\n"
 msgstr "Permissão de escrita para %s não concedida.\n"
 
 #. Previous does not write to stdin but current expect something
-#: ../src/job.c:644
+#: ../src/job.c:636
 #, c-format
 msgid "Broken flow before %s (no input).\n"
 msgstr "Fluxo interrompido depois de %s (sem entrada).\n"
 
 #. Previous does write to stdin but current does not carry about
-#: ../src/job.c:648
+#: ../src/job.c:640
 #, c-format
 msgid "Broken flow before %s (unexpected output).\n"
 msgstr "Fluxo interrompido antes de %s (saída inesperada).\n"
 
-#: ../src/job.c:688
+#: ../src/job.c:680
 #, c-format
 msgid "No error file selected; error output merged with standard output.\n"
 msgstr ""
 "Sem arquivo de erro selecionado; saída de erro será mesclada com a saída "
 "padrão.\n"
 
-#: ../src/job.c:691
+#: ../src/job.c:683
 #, c-format
 msgid "Proceeding without output file.\n"
 msgstr "Prosseguindo sem arquivo de saída.\n"
 
-#: ../src/job.c:814
+#: ../src/job.c:787
+#, c-format
+msgid "Input file %s not present or not accessible.\n"
+msgstr "Arquivo de entrada %s não encontrado ou não acessível.\n"
+
+#: ../src/job.c:842
 #, c-format
 msgid "Cannot submit job to MOAB server.\n"
 msgstr "Não foi possível submeter a tarefa ao servidor MOAB.\n"
 
-#: ../src/job.c:820
+#: ../src/job.c:848
 #, c-format
 msgid "Cannot submit job to MOAB server: %s.\n"
 msgstr "Não foi possível submeter a tarefa ao servidor MOAB: %s.\n"
 
-#: ../src/job.c:830
+#: ../src/job.c:858
 #, c-format
 msgid "Cannot get MOAB job id.\n"
 msgstr "Não foi possível obter a identificação da tarefa no MOAB.\n"
 
-#: ../src/job.c:994 ../src/job.c:998
+#: ../src/job.c:1022 ../src/job.c:1026
 #, c-format
 msgid "Cannot cancel job at MOAB server.\n"
 msgstr "Não foi possível cancelar a tarefa no servidor MOAB.\n"

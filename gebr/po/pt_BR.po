@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-11-11 01:21-0200\n"
-"PO-Revision-Date: 2010-11-11 01:22-0200\n"
+"POT-Creation-Date: 2011-01-12 16:25-0200\n"
+"PO-Revision-Date: 2011-01-12 16:27-0200\n"
 "Last-Translator: Alexandre Baaklini <abaaklini@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
 "MIME-Version: 1.0\n"
@@ -79,8 +79,8 @@ msgstr "Servidor '%s' informou erro '%s'."
 msgid "Immediately"
 msgstr "Imediatamente"
 
-#: ../src/gebr/client.c:86 ../src/gebr/job.c:128 ../src/gebr/job.c:374
-#: ../src/gebr/job.c:384
+#: ../src/gebr/client.c:86 ../src/gebr/job.c:128 ../src/gebr/job.c:385
+#: ../src/gebr/job.c:395
 #, c-format
 msgid "At '%s'"
 msgstr "Em '%s'"
@@ -140,26 +140,26 @@ msgstr ""
 "Não foi possível carregar o menu em %s:\n"
 "%s"
 
-#: ../src/gebr/document.c:269
+#: ../src/gebr/document.c:271 ../src/gebr/document.c:283
 msgid "document"
 msgstr "documento"
 
-#: ../src/gebr/document.c:272 ../src/gebr/ui_document.c:962
+#: ../src/gebr/document.c:274 ../src/gebr/ui_document.c:962
 #: ../src/gebr/ui_help.c:98 ../src/gebr/ui_help.c:153
 msgid "project"
 msgstr "projeto"
 
-#: ../src/gebr/document.c:275 ../src/gebr/ui_document.c:964
+#: ../src/gebr/document.c:277 ../src/gebr/ui_document.c:964
 #: ../src/gebr/ui_help.c:95 ../src/gebr/ui_help.c:157
 msgid "line"
 msgstr "linha"
 
-#: ../src/gebr/document.c:278 ../src/gebr/ui_document.c:966
+#: ../src/gebr/document.c:280 ../src/gebr/ui_document.c:966
 #: ../src/gebr/ui_help.c:92 ../src/gebr/ui_help.c:161
 msgid "flow"
 msgstr "fluxo"
 
-#: ../src/gebr/document.c:305
+#: ../src/gebr/document.c:311
 #, c-format
 msgid ""
 "The file %s could not be loaded.\n"
@@ -168,24 +168,33 @@ msgstr ""
 "O arquivo %s não pode ser carregado.\n"
 "%s"
 
-#: ../src/gebr/document.c:316
+#: ../src/gebr/document.c:318
+#, c-format
+msgid ""
+"The file %s from %s%s (file %s) could not be loaded.\n"
+"%s"
+msgstr ""
+"O arquivo %s de %s%s (arquivo %s) não pode ser carregado.\n"
+"%s"
+
+#: ../src/gebr/document.c:332
 msgid "Ignore"
 msgstr "Ignorar"
 
-#: ../src/gebr/document.c:317 ../src/gebr/interface.c:72
+#: ../src/gebr/document.c:333 ../src/gebr/interface.c:72
 #: ../src/gebr/interface.c:94
 msgid "Export"
 msgstr "Exportar"
 
-#: ../src/gebr/document.c:319
+#: ../src/gebr/document.c:335
 msgid "Delete"
 msgstr "Apagar"
 
-#: ../src/gebr/document.c:329
+#: ../src/gebr/document.c:345
 msgid "Choose filename to export"
 msgstr "Escolha o nome do arquivo para exportar"
 
-#: ../src/gebr/document.c:342
+#: ../src/gebr/document.c:358
 #, c-format
 msgid ""
 "Failed to export file '%s':\n"
@@ -194,15 +203,15 @@ msgstr ""
 "Falha ao exportar o arquivo '%s':\n"
 "%s."
 
-#: ../src/gebr/document.c:366
+#: ../src/gebr/document.c:382
 msgid "Orphans lines"
 msgstr "Linhas órfãs"
 
-#: ../src/gebr/document.c:384 ../src/gebr/document.c:398
+#: ../src/gebr/document.c:400 ../src/gebr/document.c:414
 msgid "Orphans flows"
 msgstr "Fluxos órfãos"
 
-#: ../src/gebr/document.c:444
+#: ../src/gebr/document.c:460
 #, c-format
 msgid "Failed to save document '%s' file at '%s'."
 msgstr "Falha ao salvar o documento '%s' em '%s'."
@@ -249,7 +258,7 @@ msgstr "Arquivos de fluxo (*.flw)"
 msgid "Flow '%s' imported to line '%s' from file '%s'."
 msgstr "Fluxo '%s' importado para a linha '%s' a partir do arquivo '%s'."
 
-#: ../src/gebr/flow.c:204 ../src/gebr/ui_project_line.c:543
+#: ../src/gebr/flow.c:204 ../src/gebr/ui_project_line.c:545
 #, c-format
 msgid "%s (Imported)"
 msgstr "%s (Importado)"
@@ -605,15 +614,15 @@ msgstr "Não foi possível fechar a tarefa '%s' em execução"
 msgid "Can't close queued job '%s'"
 msgstr "Não foi possível fechar a tarefa '%s' em espera"
 
-#: ../src/gebr/job.c:225 ../src/gebr/ui_flow_browse.c:290
+#: ../src/gebr/job.c:225 ../src/gebr/ui_flow_browse.c:292
 msgid "Output:"
 msgstr "Saída:"
 
-#: ../src/gebr/job.c:404 ../src/gebr/ui_job_control.c:384
+#: ../src/gebr/job.c:415 ../src/gebr/ui_job_control.c:386
 msgid "Finish date:"
 msgstr "Data de término:"
 
-#: ../src/gebr/job.c:406 ../src/gebr/ui_job_control.c:386
+#: ../src/gebr/job.c:417 ../src/gebr/ui_job_control.c:388
 msgid "Cancel date:"
 msgstr "Data de cancelamento:"
 
@@ -822,11 +831,11 @@ msgstr "Palavra-chave vazia"
 msgid "Please select a keyword."
 msgstr "Por favor, selecione uma palavra-chave."
 
-#: ../src/gebr/ui_document.c:962 ../src/gebr/ui_project_line.c:225
+#: ../src/gebr/ui_document.c:962 ../src/gebr/ui_project_line.c:227
 msgid "Project"
 msgstr "Projeto"
 
-#: ../src/gebr/ui_document.c:964 ../src/gebr/ui_project_line.c:226
+#: ../src/gebr/ui_document.c:964 ../src/gebr/ui_project_line.c:228
 msgid "Line"
 msgstr "Linha"
 
@@ -986,49 +995,49 @@ msgid "Edit report"
 msgstr "Editar relatório"
 
 #. Date labels
-#: ../src/gebr/ui_flow_browse.c:267 ../src/gebr/ui_project_line.c:251
+#: ../src/gebr/ui_flow_browse.c:269 ../src/gebr/ui_project_line.c:253
 msgid "Created:"
 msgstr "Criado:"
 
-#: ../src/gebr/ui_flow_browse.c:270 ../src/gebr/ui_project_line.c:254
+#: ../src/gebr/ui_flow_browse.c:272 ../src/gebr/ui_project_line.c:256
 msgid "Modified:"
 msgstr "Alterado:"
 
-#: ../src/gebr/ui_flow_browse.c:273
+#: ../src/gebr/ui_flow_browse.c:275
 msgid "Last run:"
 msgstr "Última execução:"
 
 #. I/O labels
-#: ../src/gebr/ui_flow_browse.c:284
+#: ../src/gebr/ui_flow_browse.c:286
 msgid "Server:"
 msgstr "Servidor:"
 
-#: ../src/gebr/ui_flow_browse.c:287
+#: ../src/gebr/ui_flow_browse.c:289
 msgid "Input:"
 msgstr "Entrada:"
 
-#: ../src/gebr/ui_flow_browse.c:293
+#: ../src/gebr/ui_flow_browse.c:295
 msgid "Error log:"
 msgstr "Log de erro:"
 
-#: ../src/gebr/ui_flow_browse.c:307 ../src/gebr/ui_flow_browse.c:313
-#: ../src/gebr/ui_flow_browse.c:319
+#: ../src/gebr/ui_flow_browse.c:309 ../src/gebr/ui_flow_browse.c:315
+#: ../src/gebr/ui_flow_browse.c:321
 msgid "(none)"
 msgstr "(nenhum)"
 
-#: ../src/gebr/ui_flow_browse.c:345
+#: ../src/gebr/ui_flow_browse.c:347
 msgid "No flow selected"
 msgstr "Nenhum fluxo selecionado"
 
-#: ../src/gebr/ui_flow_browse.c:473
+#: ../src/gebr/ui_flow_browse.c:475
 msgid "Flow report"
 msgstr "Relatório do fluxo"
 
-#: ../src/gebr/ui_flow_browse.c:576
+#: ../src/gebr/ui_flow_browse.c:578
 msgid "Backup current state?"
 msgstr "Fazer backup do estado atual?"
 
-#: ../src/gebr/ui_flow_browse.c:577
+#: ../src/gebr/ui_flow_browse.c:579
 msgid ""
 "You are about to revert to a previous state. The current flow will be lost "
 "after this action. Do you want to save the current flow state?"
@@ -1036,21 +1045,21 @@ msgstr ""
 "Você está prestes a reverter a um estado anterior. O fluxo atual será "
 "perdido depois dessa ação. Você quer salvar o estado do fluxo atual?"
 
-#: ../src/gebr/ui_flow_browse.c:588
+#: ../src/gebr/ui_flow_browse.c:590
 #, c-format
 msgid "Could not revert to state '%s' ('%s')."
 msgstr "Não foi possível reverter para o estado '%s' ('%s')."
 
-#: ../src/gebr/ui_flow_browse.c:593
+#: ../src/gebr/ui_flow_browse.c:595
 #, c-format
 msgid "Reverted to state '%s' ('%s')."
 msgstr "Revertido para o estado '%s' ('%s')."
 
-#: ../src/gebr/ui_flow_browse.c:603
+#: ../src/gebr/ui_flow_browse.c:605
 msgid "Remove this revision permanently?"
 msgstr "Remover esta revisão permanentemente?"
 
-#: ../src/gebr/ui_flow_browse.c:604
+#: ../src/gebr/ui_flow_browse.c:606
 msgid ""
 "If you choose to remove this revision, you will not be able to recover it "
 "later."
@@ -1073,14 +1082,18 @@ msgstr "Seqüência de fluxo"
 msgid "Menus"
 msgstr "Menus"
 
-#: ../src/gebr/ui_flow_edition.c:247 ../src/gebr/ui_flow_edition.c:477
-msgid "No menu selected."
-msgstr "Nenhum menu selecionado."
+#: ../src/gebr/ui_flow_edition.c:247
+msgid "No program selected."
+msgstr "Nenhum programa selecionado."
 
 #: ../src/gebr/ui_flow_edition.c:294
 #, c-format
 msgid "Configuring program '%s'."
 msgstr "Configurando programa '%s'."
+
+#: ../src/gebr/ui_flow_edition.c:477
+msgid "No menu selected."
+msgstr "Nenhum menu selecionado."
 
 #: ../src/gebr/ui_flow_edition.c:482
 msgid "Select a menu instead of a category."
@@ -1091,12 +1104,12 @@ msgid "Menu help"
 msgstr "Ajuda do menu"
 
 #: ../src/gebr/ui_flow_edition.c:735 ../src/gebr/ui_flow_edition.c:750
-#: ../src/gebr/ui_project_line.c:826 ../src/gebr/ui_project_line.c:861
+#: ../src/gebr/ui_project_line.c:828 ../src/gebr/ui_project_line.c:863
 msgid "Collapse all"
 msgstr "Colapsar todos"
 
 #: ../src/gebr/ui_flow_edition.c:738 ../src/gebr/ui_flow_edition.c:753
-#: ../src/gebr/ui_project_line.c:830 ../src/gebr/ui_project_line.c:865
+#: ../src/gebr/ui_project_line.c:832 ../src/gebr/ui_project_line.c:867
 msgid "Expand all"
 msgstr "Expandir todos"
 
@@ -1126,15 +1139,15 @@ msgstr "Relatório de %s"
 msgid "program"
 msgstr "programa"
 
-#: ../src/gebr/ui_help.c:193
+#: ../src/gebr/ui_help.c:202
 msgid "Program help"
 msgstr "Ajuda do programa"
 
-#: ../src/gebr/ui_help.c:242 ../src/gebr/ui_help.c:260
+#: ../src/gebr/ui_help.c:251 ../src/gebr/ui_help.c:269
 msgid "Unable to create temporary file."
 msgstr "Impossível escrever arquivo temporário."
 
-#: ../src/gebr/ui_help.c:251
+#: ../src/gebr/ui_help.c:260
 msgid "Error during editor execution."
 msgstr "Erro durate a execução do editor."
 
@@ -1146,7 +1159,7 @@ msgid "Jobs"
 msgstr "Tarefas"
 
 #. run file chooser
-#: ../src/gebr/ui_job_control.c:151 ../src/gebr/ui_project_line.c:636
+#: ../src/gebr/ui_job_control.c:151 ../src/gebr/ui_project_line.c:638
 msgid "Choose filename to save"
 msgstr "Escolha o nome do arquivo para salvar"
 
@@ -1163,11 +1176,11 @@ msgstr "Não foi possível escrever arquivo."
 msgid "Saved job information at '%s'."
 msgstr "Salvou informação da tarefa em '%s'."
 
-#: ../src/gebr/ui_job_control.c:193 ../src/gebr/ui_job_control.c:267
+#: ../src/gebr/ui_job_control.c:193 ../src/gebr/ui_job_control.c:269
 msgid "Job is not running."
 msgstr "A tarefa não está sendo executada."
 
-#: ../src/gebr/ui_job_control.c:197 ../src/gebr/ui_job_control.c:271
+#: ../src/gebr/ui_job_control.c:197 ../src/gebr/ui_job_control.c:273
 msgid "You are not connected to job's server."
 msgstr "Você não está conectado ao servidor da tarefa."
 
@@ -1203,84 +1216,84 @@ msgstr "Limpar tarefa"
 msgid "Are you sure you want to clear job '%s'?"
 msgstr "Tem certeza que quer limpar a tarefa '%s'?"
 
-#: ../src/gebr/ui_job_control.c:235
+#: ../src/gebr/ui_job_control.c:236
 msgid "Clear all jobs"
 msgstr "Limpar todas as tarefas"
 
-#: ../src/gebr/ui_job_control.c:236
+#: ../src/gebr/ui_job_control.c:237
 msgid "Are you sure you want to clear all jobs from all servers?"
 msgstr "Tem certeza que quer limpar todas as tarefas de todos os servidores?"
 
-#: ../src/gebr/ui_job_control.c:274
+#: ../src/gebr/ui_job_control.c:276
 msgid "Kill job"
 msgstr "Matar a tarefa"
 
-#: ../src/gebr/ui_job_control.c:274
+#: ../src/gebr/ui_job_control.c:276
 #, c-format
 msgid "Are you sure you want to kill job '%s'?"
 msgstr "Tem certeza que quer matar a tarefa '%s'?"
 
-#: ../src/gebr/ui_job_control.c:278
+#: ../src/gebr/ui_job_control.c:280
 msgid "Asking server to kill job."
 msgstr "Pedindo para o servidor matar a tarefa."
 
-#: ../src/gebr/ui_job_control.c:280
+#: ../src/gebr/ui_job_control.c:282
 #, c-format
 msgid "Asking server '%s' to kill job '%s'."
 msgstr "Pedindo para o servidor '%s' matar a tarefa '%s'."
 
-#: ../src/gebr/ui_job_control.c:283
+#: ../src/gebr/ui_job_control.c:285
 #, c-format
 msgid "Asking local server to kill job '%s'."
 msgstr "Pedindo para o servidor local matar a tarefa '%s'."
 
-#: ../src/gebr/ui_job_control.c:296
+#: ../src/gebr/ui_job_control.c:298
 msgid "Nothing selected."
 msgstr "Nada selecionado."
 
-#: ../src/gebr/ui_job_control.c:299
+#: ../src/gebr/ui_job_control.c:301
 msgid "No job selected."
 msgstr "Nenhuma tarefa selecionada."
 
-#: ../src/gebr/ui_job_control.c:302
+#: ../src/gebr/ui_job_control.c:304
 msgid "No queue selected."
 msgstr "Nenhuma fila selecionada."
 
-#: ../src/gebr/ui_job_control.c:316
+#: ../src/gebr/ui_job_control.c:318
 msgid "Please select a job."
 msgstr "Por favor, selecione uma tarefa."
 
-#: ../src/gebr/ui_job_control.c:320
+#: ../src/gebr/ui_job_control.c:322
 msgid "Please select a queue."
 msgstr "Por favor, selecione uma fila."
 
-#: ../src/gebr/ui_job_control.c:362
+#: ../src/gebr/ui_job_control.c:364
 #, c-format
 msgid "Job executed at %s (%s) by %s.\n"
 msgstr "Tarefa executada em %s (%s) por %s.\n"
 
 #. start date
-#: ../src/gebr/ui_job_control.c:367
+#: ../src/gebr/ui_job_control.c:369
 msgid "Start date:"
 msgstr "Data de início:"
 
-#: ../src/gebr/ui_job_control.c:370
+#: ../src/gebr/ui_job_control.c:372
 msgid "Issues:"
 msgstr "Informes:"
 
-#: ../src/gebr/ui_job_control.c:372
+#: ../src/gebr/ui_job_control.c:374
 msgid "Command line:"
 msgstr "Linha de comando:"
 
-#: ../src/gebr/ui_job_control.c:376
+#: ../src/gebr/ui_job_control.c:378
 msgid "Moab Job ID:"
 msgstr "Identificação da tarefa Moab:"
 
-#: ../src/gebr/ui_job_control.c:425
+#: ../src/gebr/ui_job_control.c:427
 msgid "Word-wrap"
 msgstr "Quebra de linha"
 
-#: ../src/gebr/ui_job_control.c:431
+#: ../src/gebr/ui_job_control.c:433
 msgid "Auto-scroll"
 msgstr "Auto-rolagem"
 
@@ -1373,59 +1386,59 @@ msgstr "Carregar o log das execuções anteriores"
 msgid "Index"
 msgstr "Índice"
 
-#: ../src/gebr/ui_project_line.c:241
+#: ../src/gebr/ui_project_line.c:243
 #, c-format
 msgid "This project has 1 line"
 msgstr "Este projeto tem 1 linha"
 
-#: ../src/gebr/ui_project_line.c:242
+#: ../src/gebr/ui_project_line.c:244
 #, c-format
 msgid "This project has %d lines"
 msgstr "Este projeto tem %d linhas"
 
-#: ../src/gebr/ui_project_line.c:243
+#: ../src/gebr/ui_project_line.c:245
 #, c-format
 msgid "This project has no line"
 msgstr "Este projeto não tem linhas"
 
-#: ../src/gebr/ui_project_line.c:268
+#: ../src/gebr/ui_project_line.c:270
 msgid "Paths:"
 msgstr "Caminhos:"
 
 #. There is no path, put "None"
-#: ../src/gebr/ui_project_line.c:284
+#: ../src/gebr/ui_project_line.c:286
 msgid "None"
 msgstr "Nenhum"
 
-#: ../src/gebr/ui_project_line.c:322
+#: ../src/gebr/ui_project_line.c:324
 msgid "Please select a line."
 msgstr "Por favor, selecione uma linha."
 
-#: ../src/gebr/ui_project_line.c:323
+#: ../src/gebr/ui_project_line.c:325
 msgid "Please select a project."
 msgstr "Por favor, selecione um projeto."
 
-#: ../src/gebr/ui_project_line.c:336
+#: ../src/gebr/ui_project_line.c:338
 msgid "Please select a project or a line."
 msgstr "Por favor, selecione um projeto ou linha."
 
-#: ../src/gebr/ui_project_line.c:388
+#: ../src/gebr/ui_project_line.c:390
 msgid "Choose project/line to open"
 msgstr "Escolha o projeto ou linha para abrir"
 
-#: ../src/gebr/ui_project_line.c:395
+#: ../src/gebr/ui_project_line.c:397
 msgid "Project or line (*.prjz *.lnez)"
 msgstr "Projeto ou linha (*.prjz *.lnez)"
 
-#: ../src/gebr/ui_project_line.c:412
+#: ../src/gebr/ui_project_line.c:414
 msgid "Unrecognized file type."
 msgstr "Tipo de arquivo desconhecido."
 
-#: ../src/gebr/ui_project_line.c:557
+#: ../src/gebr/ui_project_line.c:559
 msgid "Create directories"
 msgstr "Criar diretórios"
 
-#: ../src/gebr/ui_project_line.c:558
+#: ../src/gebr/ui_project_line.c:560
 #, c-format
 msgid ""
 "There are some line paths localed on your home directory that do not exist. "
@@ -1434,11 +1447,11 @@ msgstr ""
 "Existem caminhos preferenciais a serem criados no seu diretório pessoal. "
 "Gostaria de criar as seguintes pastas:%s"
 
-#: ../src/gebr/ui_project_line.c:572
+#: ../src/gebr/ui_project_line.c:574
 msgid "Could not create the directory"
 msgstr "Não foi possível criar o diretório."
 
-#: ../src/gebr/ui_project_line.c:576
+#: ../src/gebr/ui_project_line.c:578
 #, c-format
 msgid ""
 "The directory <i>%s</i> could not be created. Certify you have the rights to "
@@ -1447,43 +1460,43 @@ msgstr ""
 "O diretório <i>%s<i> não pôde ser criado. Certifique-se se há permissão de "
 "acesso para a execução dessa operação."
 
-#: ../src/gebr/ui_project_line.c:591
+#: ../src/gebr/ui_project_line.c:593
 msgid "Import successful."
 msgstr "Importação bem-sucedida."
 
-#: ../src/gebr/ui_project_line.c:595
+#: ../src/gebr/ui_project_line.c:597
 msgid "Failed to import."
 msgstr "Falha ao importar."
 
-#: ../src/gebr/ui_project_line.c:622
+#: ../src/gebr/ui_project_line.c:624
 msgid "Project (*.prjz)"
 msgstr "Projeto (*.prjz)"
 
-#: ../src/gebr/ui_project_line.c:625
+#: ../src/gebr/ui_project_line.c:627
 msgid "Make this project user-independent"
 msgstr "Tornar este projeto independente de usuário"
 
-#: ../src/gebr/ui_project_line.c:627
+#: ../src/gebr/ui_project_line.c:629
 msgid "Line (*.lnez)"
 msgstr "Linha (*.lnez)"
 
-#: ../src/gebr/ui_project_line.c:630
+#: ../src/gebr/ui_project_line.c:632
 msgid "Make this line user-independent"
 msgstr "Tornar esta linha independente de usuário"
 
-#: ../src/gebr/ui_project_line.c:702
+#: ../src/gebr/ui_project_line.c:704
 msgid "Could not export."
 msgstr "Impossível exportar."
 
-#: ../src/gebr/ui_project_line.c:704
+#: ../src/gebr/ui_project_line.c:706
 msgid "Export succesful."
 msgstr "Exportação bem-sucedida."
 
-#: ../src/gebr/ui_project_line.c:990
+#: ../src/gebr/ui_project_line.c:992
 msgid "Project report"
 msgstr "Relatório do projeto"
 
-#: ../src/gebr/ui_project_line.c:992
+#: ../src/gebr/ui_project_line.c:994
 msgid "Line report"
 msgstr "Relatório da linha"
 
@@ -1539,6 +1552,9 @@ msgstr ""
 #: ../src/gebr/ui_server.c:486
 msgid "Select server"
 msgstr "Selecione um servidor"
+
+#~ msgid " '%s'"
+#~ msgstr "Em '%s'"
 
 #~ msgid "Show component's help"
 #~ msgstr "Exibir ajuda do componente"
@@ -1733,9 +1749,6 @@ msgstr "Selecione um servidor"
 
 #~ msgid "Path to store projects, lines and flows"
 #~ msgstr "Caminho para armazenar projetos, linhas e fluxos"
-
-#~ msgid "No program selected"
-#~ msgstr "Nenhum programa selecionado"
 
 #~ msgid "Unable to create GêBR configuration directory.\n"
 #~ msgstr "Incapaz de criar o diretório de configurações da GêBR.\n"

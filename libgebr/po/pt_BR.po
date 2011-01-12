@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libgebr 0.9.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-11-10 16:52-0200\n"
+"POT-Creation-Date: 2011-01-12 16:30-0200\n"
 "PO-Revision-Date: 2010-11-10 17:14-0200\n"
 "Last-Translator: Alexandre Baaklini <abaaklini@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
@@ -533,15 +533,15 @@ msgstr "Coordenador"
 msgid "Developers"
 msgstr "Desenvolvedores"
 
-#: ../src/gui/gui/gebr-gui-about.c:56
+#: ../src/gui/gui/gebr-gui-about.c:57
 msgid "Consultants"
 msgstr "Consultores"
 
-#: ../src/gui/gui/gebr-gui-about.c:74
+#: ../src/gui/gui/gebr-gui-about.c:75
 msgid "GêBR Core Team"
 msgstr "GêBR Core Team"
 
-#: ../src/gui/gui/gebr-gui-about.c:77
+#: ../src/gui/gui/gebr-gui-about.c:78
 msgid ""
 "Copyright (C) 2007-2010 GêBR core team (http://www.gebrproject.com/)\n"
 "\n"
@@ -582,7 +582,7 @@ msgstr ""
 "abrl de 1998, e #9610, 19 de fevereiro de 1998, e é registrado no Instituto "
 "Nacional de Propriedade Industrial (INPI) sob número 70156."
 
-#: ../src/gui/gui/gebr-gui-about.c:95
+#: ../src/gui/gui/gebr-gui-about.c:96
 msgid "GêBR Home page"
 msgstr "Página da GêBR"
 
@@ -697,7 +697,7 @@ msgstr ""
 "O arquivo que você está salvando já existe. Substituí-lo irá sobrescrever "
 "seu conteúdo."
 
-#: ../src/gui/gui/gebr-gui-sequence-edit.c:427
+#: ../src/gui/gui/gebr-gui-sequence-edit.c:443
 msgid "<empty value>"
 msgstr "<valor vazio>"
 
@@ -785,15 +785,15 @@ msgstr ""
 msgid "Parameter keyword should not be empty."
 msgstr "Palavra-chave de parâmetro não deve ser vazia."
 
-#: ../src/validate.c:259
+#: ../src/validate.c:281
 msgid "<b>No automatic fix available</b>"
 msgstr "<b>Correção automática não disponível</b>"
 
-#: ../src/validate.c:261
+#: ../src/validate.c:283
 msgid "<b>Click on the icon to fix:</b>"
 msgstr "<b>Clique no ícone para corrigir:</b>"
 
-#: ../src/validate.c:263
+#: ../src/validate.c:285
 msgid ""
 "\n"
 " - Capitalize first letter"
@@ -801,7 +801,7 @@ msgstr ""
 "\n"
 " - Tornar primeira letra maiúscula"
 
-#: ../src/validate.c:265
+#: ../src/validate.c:287
 msgid ""
 "\n"
 " - Remove spaces at the beginning/end"
@@ -809,7 +809,7 @@ msgstr ""
 "\n"
 " - Remover espaços no começo/fim"
 
-#: ../src/validate.c:267
+#: ../src/validate.c:289
 msgid ""
 "\n"
 " - Remove multiples spaces"
@@ -817,7 +817,7 @@ msgstr ""
 "\n"
 " - Remover múltiplos espaços"
 
-#: ../src/validate.c:269
+#: ../src/validate.c:291
 msgid ""
 "\n"
 " - Remove final punctuation character"
@@ -825,7 +825,7 @@ msgstr ""
 "\n"
 " - Remover caracter final de pontuação"
 
-#: ../src/validate.c:271
+#: ../src/validate.c:293
 msgid ""
 "\n"
 " - Add URL scheme"
@@ -833,7 +833,7 @@ msgstr ""
 "\n"
 " - Adicionar esquema de URL"
 
-#: ../src/validate.c:273
+#: ../src/validate.c:295
 msgid ""
 "\n"
 " - Replace tabs by space"
@@ -841,11 +841,11 @@ msgstr ""
 "\n"
 " - Substituir tabulações por espaço"
 
-#: ../src/validate.c:286
+#: ../src/validate.c:308
 msgid "<b>Error(s) found:</b>"
 msgstr "<b>Erro(s) encontrado(s):</b>"
 
-#: ../src/validate.c:288
+#: ../src/validate.c:310
 msgid ""
 "\n"
 " - The field is not filled in"
@@ -853,7 +853,7 @@ msgstr ""
 "\n"
 " - O campo não está preenchido"
 
-#: ../src/validate.c:290
+#: ../src/validate.c:312
 msgid ""
 "\n"
 " - First letter should be capitalized"
@@ -861,7 +861,7 @@ msgstr ""
 "\n"
 " - Primeira letra deve ser maiúscula"
 
-#: ../src/validate.c:292
+#: ../src/validate.c:314
 msgid ""
 "\n"
 " - There are spaces at the beginning/end"
@@ -869,7 +869,7 @@ msgstr ""
 "\n"
 " - Existem espaços no começo/fim"
 
-#: ../src/validate.c:294
+#: ../src/validate.c:316
 msgid ""
 "\n"
 " - There are multiples spaces"
@@ -877,7 +877,7 @@ msgstr ""
 "\n"
 " - Existem espaços múltiplos"
 
-#: ../src/validate.c:296
+#: ../src/validate.c:318
 msgid ""
 "\n"
 " - This field should not have a final punctuation"
@@ -885,7 +885,7 @@ msgstr ""
 "\n"
 " - Este campo não deve ter uma pontuação final"
 
-#: ../src/validate.c:298
+#: ../src/validate.c:320
 msgid ""
 "\n"
 " - Invalid email address"
@@ -893,7 +893,7 @@ msgstr ""
 "\n"
 " - Endereço de email inválido"
 
-#: ../src/validate.c:300
+#: ../src/validate.c:322
 msgid ""
 "\n"
 " - Invalid menu filename"
@@ -901,7 +901,7 @@ msgstr ""
 "\n"
 " - Nome de arquivo de menu inválido"
 
-#: ../src/validate.c:302
+#: ../src/validate.c:324
 msgid ""
 "\n"
 " - Duplicated hotkey"
@@ -909,7 +909,7 @@ msgstr ""
 "\n"
 " - Atalho de teclado duplicado"
 
-#: ../src/validate.c:304
+#: ../src/validate.c:326
 msgid ""
 "\n"
 " - URL scheme is missing"
@@ -917,7 +917,7 @@ msgstr ""
 "\n"
 " - Esquema de URL está faltando"
 
-#: ../src/validate.c:306
+#: ../src/validate.c:328
 msgid ""
 "\n"
 " - There are tabs"
