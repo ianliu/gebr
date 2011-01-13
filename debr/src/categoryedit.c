@@ -138,7 +138,6 @@ G_DEFINE_TYPE(CategoryEdit, category_edit, GEBR_GUI_TYPE_SEQUENCE_EDIT);
 static void on_combo_box_entry_activate (GtkWidget *entry, CategoryEdit *self)
 {
 	category_edit_add_request(self, gtk_widget_get_parent (entry));
-	gtk_editable_select_region (GTK_EDITABLE (entry), 0, -1);
 }
 
 /**
@@ -147,7 +146,10 @@ static void on_combo_box_entry_activate (GtkWidget *entry, CategoryEdit *self)
 static void category_edit_add_request(CategoryEdit * category_edit, GtkWidget *combo)
 {
 	gchar *name;
+	GtkWidget *entry;
 
+	entry = gtk_bin_get_child (GTK_BIN (category_edit->categories_combo));
+	gtk_editable_select_region (GTK_EDITABLE (entry), 0, -1);
 	name = gtk_combo_box_get_active_text(GTK_COMBO_BOX(combo));
 	if (check_duplicate (GEBR_GUI_SEQUENCE_EDIT(category_edit), name) ||
 	    __category_edit_check_text(name)) {
@@ -484,8 +486,11 @@ GtkWidget *category_edit_new(GebrGeoXmlFlow * menu, gboolean new_menu)
 	gebr_geoxml_flow_get_category(menu, &category, 0);
 	category_edit = g_object_new(TYPE_CATEGORY_EDIT,
 				     "value-widget", hbox,
-				     "list-store", list_store, "category", category, NULL);
+				     "list-store", list_store,
+				     "category", category,
+				     NULL);
 
+	category_edit->categories_combo = categories_combo;
 	category_edit->validate_image = validate_image;
 	category_edit->menu = menu;
 	if (!new_menu)

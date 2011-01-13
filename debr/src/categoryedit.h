@@ -41,6 +41,7 @@ struct _CategoryEdit {
 	GebrGuiSequenceEdit parent;
 
 	GtkWidget *validate_image;
+	GtkWidget *categories_combo;
 	GebrGeoXmlCategory *category;
 	GebrGeoXmlFlow *menu;
 };
