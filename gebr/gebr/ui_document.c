@@ -1034,5 +1034,4 @@ void on_properties_destroy(GtkWindow * window, GebrPropertiesData * data)
 static void on_file_entry_activate (GtkEntry *entry, GebrGuiSequenceEdit *sequence_edit)
 {
 	g_signal_emit_by_name (sequence_edit, "add-request");
-	gtk_editable_select_region (GTK_EDITABLE (entry), 0, -1);
 }

@@ -73,6 +73,7 @@ void path_add(GebrGuiValueSequenceEdit * sequence_edit)
 	GebrGuiFileEntry *file_entry;
 
 	g_object_get(G_OBJECT(sequence_edit), "value-widget", &file_entry, NULL);
+	gtk_editable_select_region (GTK_EDITABLE (file_entry->entry), 0, -1);
 	path = gebr_gui_file_entry_get_path(file_entry);
 	if (!strlen(path) || check_duplicate (GEBR_GUI_SEQUENCE_EDIT(sequence_edit), path))
 		return;

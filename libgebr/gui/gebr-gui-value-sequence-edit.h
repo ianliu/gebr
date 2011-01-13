@@ -55,18 +55,15 @@ struct _GebrGuiValueSequenceEditClass {
 
 GtkWidget *gebr_gui_value_sequence_edit_new(GtkWidget * widget);
 
-void
+void gebr_gui_value_sequence_edit_add(GebrGuiValueSequenceEdit * gebr_gui_value_sequence_edit,
+				      GebrGeoXmlSequence * sequence);
 
-
-gebr_gui_value_sequence_edit_add(GebrGuiValueSequenceEdit * gebr_gui_value_sequence_edit,
-				 GebrGeoXmlSequence * sequence);
-
-void
-
-
-gebr_gui_value_sequence_edit_load(GebrGuiValueSequenceEdit * gebr_gui_value_sequence_edit,
-				  GebrGeoXmlSequence * sequence, ValueSequenceSetFunction set_function,
-				  ValueSequenceGetFunction get_function, gpointer user_data);
+void gebr_gui_value_sequence_edit_load(GebrGuiValueSequenceEdit * gebr_gui_value_sequence_edit,
+				       GebrGeoXmlSequence * sequence,
+				       ValueSequenceSetFunction set_function,
+				       ValueSequenceGetFunction get_function,
+				       gpointer user_data);
 
 G_END_DECLS
+
 #endif				//__GEBR_GUI_VALUE_SEQUENCE_EDIT_H
