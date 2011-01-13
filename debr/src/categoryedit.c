@@ -519,10 +519,14 @@ static gboolean check_duplicate (GebrGuiSequenceEdit * sequence_edit, const gcha
 		gtk_tree_model_get(model, &iter, 0, &i_categ, -1);
 		i_fix = gebr_validate_case_fix (validate_case, i_categ);
 		fix = gebr_validate_case_fix (validate_case, category);
+
+		if (fix == NULL || i_fix == NULL)
+			continue;
+
 		i_lower = g_utf8_strdown (i_fix, -1);
 		lower = g_utf8_strdown (fix, -1);
 
-		if (strcmp(i_lower, lower) == 0) {
+		if (strcmp (i_lower, lower) == 0) {
 			gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(sequence_edit->tree_view), &iter);
 			retval = TRUE;
 			break;
