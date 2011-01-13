@@ -120,6 +120,8 @@ static void enum_option_edit_add_request(EnumOptionEdit * enum_option_edit)
 {
 	GebrGeoXmlEnumOption *enum_option;
 
+	gtk_widget_grab_focus (enum_option_edit->value_entry);
+	gtk_editable_select_region (GTK_EDITABLE (enum_option_edit->value_entry), 0, -1);
 	enum_option = gebr_geoxml_program_parameter_append_enum_option(enum_option_edit->program_parameter,
 								       gebr_gui_enhanced_entry_get_text
 								       (GEBR_GUI_ENHANCED_ENTRY
@@ -278,8 +280,6 @@ static GtkWidget *__enum_option_edit_create_tree_view(EnumOptionEdit * enum_opti
 static void on_label_entry_activate (GtkEntry *entry, EnumOptionEdit *self)
 {
 	g_signal_emit_by_name (self, "add-request");
-	gtk_widget_grab_focus (self->value_entry);
-	gtk_editable_select_region (GTK_EDITABLE (self->value_entry), 0, -1);
 }
 
 static void on_value_entry_activate (GtkEntry *entry, EnumOptionEdit *self)
