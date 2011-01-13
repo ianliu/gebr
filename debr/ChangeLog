@@ -1,10 +1,37 @@
+2011-01-12  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Last i18n for 0.10.1 release
+
+2011-01-11  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Use DEBUG instead
+
+2011-01-11  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Checking for duplicate categories is now case insensitive
+	* Fixed a bug when modifying a program's help
+
+2011-01-10  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed a bug when adding duplicate categories in DeBR
+
+2010-12-14  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* On trying to add a category differing from another, only by a space
+	on the
+
+2010-11-25  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Solved the bug that makes the help/edit buttons sensitive on first
+	startup on debr and gebr.
+
 2010-11-11  Ricardo Biloti  <biloti@gebrproject.com>
 
-        * DéBR icon updated
+	* DéBR icon updated
 
 2010-11-10  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
 
-        * Updated ChangeLogs for 0.9.20 release.
+	* Updated ChangeLogs for 0.9.20 release.
 
 2010-11-10  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
 

@@ -1,10 +1,46 @@
+2011-01-12  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Last i18n for 0.10.1 release
+
+2011-01-11  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Prevent Ctrl+Shift+H to works with input and output components on
+	Flow Editions Notebook
+
+2011-01-11  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Use DEBUG instead
+	* Show parent title and filename of invalid documents
+
+2010-12-16  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* When a job failed inside a selection the following jobs are put to
+	execute
+	* Created a new state for protocol to signalize an event of flow
+	issued
+
+2010-12-14  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* The "Ctrl-H" hot key was conflicting between the GêBR and the menu
+	help file
+	* When a job is closed it details is cleaned
+
+2010-11-25  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Solved the bug that makes the help/edit buttons sensitive on first
+	startup on debr and gebr.
+
+2010-11-24  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Added WebKit version check when setting property
+
 2010-11-11  Ricardo Biloti  <biloti@gebrproject.com>
 
-        * Portuguese translation updated
+	* Portuguese translation updated
 
 2010-11-10  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
 
-        * Updated ChangeLogs for 0.9.20 release.
+	* Updated ChangeLogs for 0.9.20 release.
 
 2010-11-10  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
 
