@@ -446,7 +446,8 @@ void flow_run(struct server *server, GebrCommServerRun * config, gboolean single
 	GtkTreeIter iter;
 
 	if (single) {
-		flow_prepare_to_run (gebr.flow, config, FALSE);
+		if (!flow_prepare_to_run (gebr.flow, config, FALSE))
+			goto out;
 	} else {
 		gboolean enqueue = FALSE;
 		gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_flow_browse->view) {
