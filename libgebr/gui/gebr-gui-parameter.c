@@ -419,6 +419,11 @@ static void __on_sequence_edit_add_request(GebrGuiValueSequenceEdit * gebr_gui_v
 	GString *value;
 	GebrGeoXmlSequence *sequence;
 	GtkListStore *list_store;
+	GtkWidget *entry;
+
+	entry = g_object_get_data (G_OBJECT (parameter_widget->gebr_gui_value_sequence_edit), "activatable-entry");
+	if (entry)
+		gtk_editable_select_region (GTK_EDITABLE (entry), 0, -1);
 
 	g_object_get(gebr_gui_value_sequence_edit, "list-store", &list_store, NULL);
 	value = gebr_gui_parameter_widget_get_widget_value_full(parameter_widget, FALSE);
@@ -497,6 +502,8 @@ static gboolean __validate_on_leaving(GtkWidget * widget, GdkEventFocus * event,
  */
 static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget *parameter_widget)
 {
+	GtkEntry *activatable_entry = NULL;
+
 	gtk_container_foreach(GTK_CONTAINER(parameter_widget->widget), (GtkCallback)gtk_widget_destroy, NULL);
 
 	gboolean may_use_dict = parameter_widget->dicts != NULL && gebr_gui_parameter_widget_can_use_dict(parameter_widget);
@@ -524,6 +531,7 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 
 			parameter_widget->value_widget = entry = gtk_entry_new();
 			gtk_widget_set_size_request(entry, 90, 30);
+			activatable_entry = GTK_ENTRY (entry);
 
 			g_signal_connect (entry, "activate",
 					  G_CALLBACK (__validate_float), parameter_widget);
@@ -538,6 +546,7 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 
 			parameter_widget->value_widget = entry = gtk_entry_new();
 			gtk_widget_set_size_request(entry, 90, 30);
+			activatable_entry = GTK_ENTRY (entry);
 
 			g_signal_connect (entry, "activate",
 					  G_CALLBACK(__validate_int), parameter_widget);
@@ -549,7 +558,10 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 			break;
 		}
 	case GEBR_GEOXML_PARAMETER_TYPE_STRING:{
-			parameter_widget->value_widget = gtk_entry_new();
+			GtkWidget *entry;
+
+			parameter_widget->value_widget = entry = gtk_entry_new();
+			activatable_entry = GTK_ENTRY (entry);
 			gtk_widget_set_size_request(parameter_widget->value_widget, 140, 30);
 			g_signal_connect (parameter_widget->value_widget, "activate",
 					  G_CALLBACK (on_entry_activate_add), parameter_widget);
@@ -575,6 +587,7 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 					inc = 1.0;
 
 				parameter_widget->value_widget = spin = gtk_spin_button_new_with_range(min, max, inc);
+				activatable_entry = GTK_ENTRY (spin);
 				g_signal_connect (spin, "activate",
 						  G_CALLBACK (on_entry_activate_add), parameter_widget);
 				gtk_spin_button_set_digits(GTK_SPIN_BUTTON(spin), atoi(digits_str));
@@ -593,6 +606,7 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 			    gebr_gui_file_entry_new((GebrGuiFileEntryCustomize)
 							gebr_gui_parameter_widget_file_entry_customize_function,
 							parameter_widget);
+			activatable_entry = GTK_ENTRY (GEBR_GUI_FILE_ENTRY (file_entry)->entry);
 			g_signal_connect (GEBR_GUI_FILE_ENTRY (file_entry)->entry, "activate",
 					  G_CALLBACK (on_entry_activate_add), parameter_widget);
 			gtk_widget_set_size_request(file_entry, 220, 30);
@@ -671,6 +685,7 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 		sequence_edit = gebr_gui_value_sequence_edit_new(parameter_widget->value_widget);
 		gtk_box_pack_start(GTK_BOX(parameter_widget->widget), sequence_edit, TRUE, TRUE, 0);
 		parameter_widget->gebr_gui_value_sequence_edit = GEBR_GUI_VALUE_SEQUENCE_EDIT(sequence_edit);
+		g_object_set_data (G_OBJECT (sequence_edit), "activatable-entry", activatable_entry);
 		g_object_set(G_OBJECT(sequence_edit), "minimum-one", TRUE, NULL);
 		g_signal_connect(sequence_edit, "add-request",
 				 G_CALLBACK(__on_sequence_edit_add_request), parameter_widget);
@@ -1060,8 +1075,6 @@ void gebr_gui_parameter_widget_reconfigure(struct gebr_gui_parameter_widget *par
 
 static void on_entry_activate_add (GtkEntry *entry, struct gebr_gui_parameter_widget *parameter_widget)
 {
-	if (gebr_geoxml_program_parameter_get_is_list(parameter_widget->program_parameter)) {
+	if (gebr_geoxml_program_parameter_get_is_list(parameter_widget->program_parameter))
 		g_signal_emit_by_name (parameter_widget->gebr_gui_value_sequence_edit, "add-request");
-		gtk_editable_select_region (GTK_EDITABLE (entry), 0, -1);
-	}
 }

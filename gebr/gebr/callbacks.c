@@ -241,6 +241,46 @@ void on_flow_component_status_activate(GtkAction *action,
 void on_flow_component_execute ()
 {
 	/* not parallel, single flow execution */
+
+	const gchar *input = NULL;
+	const gchar *output = NULL;
+	GebrGeoXmlSequence *first_program;
+	gulong i = 0, max = 0;
+
+	input = gebr_geoxml_flow_server_io_get_input(gebr.flow_server);
+	output = gebr_geoxml_flow_server_io_get_output(gebr.flow_server);
+
+	gebr_geoxml_flow_get_program(gebr.flow, &first_program, 0);
+
+	if (gebr_geoxml_program_get_stdin(GEBR_GEOXML_PROGRAM(first_program)) && (input == NULL || g_strcmp0("", input) == 0))
+	{
+		gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+				       	_("Warning"),_("No input file specified for this program."));
+		return;
+	}
+
+	/*
+	 * Checking if the flow has at least one configured program
+	 */
+	max = gebr_geoxml_flow_get_programs_number(gebr.flow); 
+	gint status = 0;
+
+	for (i = 0; i < max; i++)
+	{
+		gebr_geoxml_flow_get_program(gebr.flow, &first_program, i);
+		status = gebr_geoxml_program_get_status(GEBR_GEOXML_PROGRAM(first_program));
+
+		if (status == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED)
+			break;
+	}
+
+	if (status != GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED)
+	{
+		gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+				       	_("Warning"),_("No configured or enabled programs found"));
+		return;
+	}
+
 	flow_fast_run (FALSE, TRUE);
 }
 
