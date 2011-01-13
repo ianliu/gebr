@@ -184,7 +184,14 @@ if test "x${want_tidy}" = xyes; then
 	if test "x${have_tidy}" = xyes; then
 		ENABLE_TIDY=1
 	else
-		AC_MSG_ERROR([You requested libtidy support, but it does not seem to be installed])
+		echo "----------------------------------------"
+		echo " Error: libtidy support is enabled but"
+		echo " there seems to be no libtidy installed"
+		echo " on your system. Consider installing it"
+		echo " or disabling tidy support with"
+		echo " --without-tidy flag."
+		echo "----------------------------------------"
+		(exit 1); exit 1;
 	fi
 fi
 AC_SUBST(ENABLE_TIDY)

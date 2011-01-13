@@ -15,40 +15,62 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 include $(top_srcdir)/Makefile.decl
 
-if HAVE_DOCBOOK
 HTMLDIR = $(DESTDIR)$(datadir)/doc/gebr/html
 
-html:
-	if test -w $(srcdir); then \
-	  (cd $(srcdir); \
-	   test -d html && rm -r html; \
-	   db2html gebr-pt.docbook -o html || true); \
-	fi
-
-dist-hook: html
-	cp -Rp $(srcdir)/html $(srcdir)/images $(distdir)
-
-install-data-local: html
-	${INSTALL_SCRIPT} -d $(HTMLDIR)
-	${INSTALL_SCRIPT} -d $(HTMLDIR)/images
-	${INSTALL_DATA} $(srcdir)/html/*.html $(HTMLDIR)
-	${INSTALL_DATA} $(srcdir)/images/* $(HTMLDIR)/images
-
-uninstall-hook:
-	( cd $(DESTDIR)$(datadir)/doc/gebr && rm -r html )
+if HAVE_DOCBOOK
+HTML_DEP = html-ok
+DIST_DEP = dist-ok
+INST_DEP = inst-ok
+UINST_DEP = uinst-ok
 else
-html:
-	echo "***"
-	echo "*** Warning: GeBR Userdoc not built"
-	echo "***"
-
-dist-hook:
-	echo "***"
-	echo "*** Warning: GeBR Userdoc not built"
-	echo "*** DISTRIBUTION IS INCOMPLETE"
-	echo "***"
+HTML_DEP = html-error
+DIST_DEP = dist-error
+INST_DEP =
+UINST_DEP =
 endif
 
-EXTRA_DIST = gebr-pt.docbook
+html-ok:
+	if test -w $(srcdir); then \
+	  (cd $(srcdir); \
+	   db2html gebr-pt.xml; \
+	   test -d pt_BR && rm -r pt_BR; \
+	   mv gebr-pt pt_BR); \
+	fi
+
+dist-ok: html-ok
+	cp -Rp $(srcdir)/pt_BR $(srcdir)/images $(distdir)
+
+inst-ok: html-ok
+	${INSTALL_SCRIPT} -d $(HTMLDIR)
+	${INSTALL_SCRIPT} -d $(HTMLDIR)/pt_BR
+	${INSTALL_SCRIPT} -d $(HTMLDIR)/images
+	${INSTALL_DATA} $(srcdir)/pt_BR/*.html $(HTMLDIR)/pt_BR
+	${INSTALL_DATA} $(srcdir)/images/* $(HTMLDIR)/images
+
+uinst-ok:
+	( cd $(DESTDIR)$(datadir)/doc/gebr && rm -r html )
+
+html-error:
+	echo "***"
+	echo "*** Warning: GeBR Userdoc not built"
+	echo "*** Warning: Check whether you have Docbook installed"
+	echo "***"
+
+dist-error:
+	echo "***"
+	echo "*** Warning: GeBR Userdoc not built"
+	echo "*** Warning: Check whether you have Docbook installed"
+	echo "*** DISTRIBUTION IS INCOMPLETE"
+	echo "***"
+
+html: $(HTML_DEP)
+
+dist-hook: $(DIST_DEP)
+
+install-data-local: $(INST_DEP)
+
+uninstall-hook: $(UINST_DEP)
+
+EXTRA_DIST = gebr-pt.xml
 
 .PHONY: html

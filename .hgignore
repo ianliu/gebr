@@ -35,10 +35,8 @@ debr/data/help-template.html
 debr/src/debr
 debr/src/defines.h
 depcomp
-docs/debr/*.html
-docs/debr/html
-docs/gebr/*.html
-docs/gebr/html
+docs/debr/pt_BR
+docs/gebr/pt_BR
 docs/reference/libgebr/html
 docs/reference/libgebr/libgebr-decl-list.txt
 docs/reference/libgebr/libgebr-decl.txt
