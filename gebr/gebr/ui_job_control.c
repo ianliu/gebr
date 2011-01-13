@@ -40,6 +40,7 @@ static void job_update_text_buffer(GtkTreeIter iter, struct job *job);
 
 static GtkMenu * job_control_popup_menu(GtkWidget * widget, struct ui_job_control *ui_job_control);
 
+static void job_control_queue_by_func(void (* func)(void));
 /*
  * Public functions.
  */
@@ -565,14 +566,17 @@ static void on_text_view_populate_popup(GtkTextView * text_view, GtkMenu * menu)
  */
 void job_control_queue_stop(void)
 {
+	job_control_queue_by_func(job_control_stop);
 }
 
 void job_control_queue_save(void)
 {
+	job_control_queue_by_func(job_control_save);
 }
 
 void job_control_queue_close(void)
 {
+	job_control_queue_by_func(job_control_close);
 }
 
 
@@ -629,5 +633,43 @@ static GtkMenu *job_control_popup_menu(GtkWidget * widget, struct ui_job_control
 
 	return NULL;
 
+}
+
+static void job_control_queue_by_func(void (* func)(void))
+{
+	GtkTreeIter iter_queue;
+	GtkTreeIter iter_child;
+	GtkTreeIter iter_child_first;
+	GtkTreeIter iter_child_last;
+	GtkTreePath  *path_first;
+	GtkTreePath  *path_last;
+	gboolean has_children = FALSE;
+
+	if (!job_control_get_selected(&iter_queue, JobControlDontWarnUnselection)) {
+		return;
+	}
+
+	gtk_tree_selection_unselect_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)), &iter_queue);
+
+	has_children = gtk_tree_model_iter_children (GTK_TREE_MODEL(gebr.ui_job_control->store), &iter_child, &iter_queue);
+	if (has_children){
+		iter_child_first = iter_child;
+
+		while (has_children){
+
+			iter_child_last = iter_child;
+			has_children = gtk_tree_model_iter_next (GTK_TREE_MODEL(gebr.ui_job_control->store), &iter_child);
+		}
+
+		path_first = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter_child_first);
+		path_last = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter_child_last);
+		gtk_tree_selection_select_range (gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)), path_first, path_last);
+
+		func();
+
+		gtk_tree_selection_unselect_range (gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)), path_first, path_last);
+
+		gtk_tree_selection_select_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)), &iter_queue);
+	}
 }
 
