@@ -105,6 +105,11 @@ gboolean gebr_gui_gtk_tree_store_reparent(GtkTreeStore * store, GtkTreeIter * it
 gboolean gebr_gui_gtk_tree_model_iter_equal_to(GtkTreeModel * model, GtkTreeIter * iter1, GtkTreeIter * iter2);
 
 /**
+ * Find an iterator for a string column
+ */
+gboolean gebr_gui_gtk_tree_model_find_by_column(GtkTreeModel * model, GtkTreeIter * iter, int column, const gchar *value);
+
+/**
  * \deprecated
  *
  * Checks if \p iter is valid.
@@ -297,9 +302,8 @@ GtkCellRenderer *gebr_gui_gtk_tree_view_column_get_first_renderer_with_mode(GtkT
 /**
  * Alternative to gtk_tree_model_foreach that works with removal of iter
  */
-void gebr_gui_gtk_tree_model_foreach_recursive(GtkTreeModel *tree_model, GtkTreeModelForeachFunc func, gpointer
-					       user_data);
-	     
+void gebr_gui_gtk_tree_model_foreach_recursive(GtkTreeModel *tree_model, GtkTreeModelForeachFunc func,
+					       gpointer user_data);
 
 /**
  */

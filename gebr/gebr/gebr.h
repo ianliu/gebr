@@ -117,9 +117,11 @@ struct gebr {
 		gboolean job_log_word_wrap;
 		gboolean job_log_auto_scroll;
 		gboolean native_editor;
+
+		// Selections state
 		gint current_notebook;
-		GString *project_line_string;
-		GString *flow_string;
+		GString *project_line_filename;
+		GString *flow_treepath_string;
 
 		// Configurations for flow report generation
 		GString *detailed_flow_css;

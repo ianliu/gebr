@@ -435,6 +435,26 @@ gboolean gebr_gui_gtk_tree_model_iter_equal_to(GtkTreeModel * model, GtkTreeIter
 	return ret;
 }
 
+gboolean gebr_gui_gtk_tree_model_find_by_column(GtkTreeModel * model, GtkTreeIter * iter, int column, const gchar *value)
+{
+	gboolean found = FALSE;
+	gboolean foreach(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *i, gpointer data)
+	{
+		gchar *string;
+		gtk_tree_model_get(model, i, column, &string, -1);
+		if (!strcmp(value, string)) {
+			found = TRUE;
+			*iter = *i;
+			g_free(string);
+			return TRUE;
+		}
+		g_free(string);
+		return FALSE;
+	}
+	gebr_gui_gtk_tree_model_foreach_recursive(model, foreach, NULL);
+	return found;
+}
+
 void gebr_gui_gtk_tree_model_iter_copy_values(GtkTreeModel * model, GtkTreeIter * iter, GtkTreeIter * source)
 {
 	GValue value = {0,};
