@@ -410,6 +410,18 @@ int gebr_g_key_file_load_int_key(GKeyFile * key_file, const gchar * group, const
 	return value;
 }
 
+gboolean gebr_g_key_file_has_key(GKeyFile * key_file, const gchar * group, const gchar * key)
+{
+	GError *error = NULL;
+	return g_key_file_has_key(key_file, group, key, &error);
+}
+
+gboolean gebr_g_key_file_remove_key(GKeyFile * key_file, const gchar * group, const gchar * key)
+{
+	GError *error = NULL;
+	return g_key_file_remove_key(key_file, group, key, &error);
+}
+
 /*
  * Function: gebr_validate_int
  * Validate an int parameter

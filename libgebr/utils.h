@@ -61,6 +61,8 @@ GString *gebr_g_key_file_load_string_key(GKeyFile * key_file, const gchar * grou
 gboolean gebr_g_key_file_load_boolean_key(GKeyFile * key_file, const gchar * group, const gchar * key,
 					  gboolean default_value);
 int gebr_g_key_file_load_int_key(GKeyFile * key_file, const gchar * group, const gchar * key, int default_value);
+gboolean gebr_g_key_file_has_key(GKeyFile * key_file, const gchar * group, const gchar * key);
+gboolean gebr_g_key_file_remove_key(GKeyFile * key_file, const gchar * group, const gchar * key);
 
 #define gebr_foreach_gslist_hyg(element, list, hygid) \
 	GSList * __list##hygid = list, * __i##hygid = list; \
