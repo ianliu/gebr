@@ -422,8 +422,10 @@ static void __on_sequence_edit_add_request(GebrGuiValueSequenceEdit * gebr_gui_v
 	GtkWidget *entry;
 
 	entry = g_object_get_data (G_OBJECT (parameter_widget->gebr_gui_value_sequence_edit), "activatable-entry");
-	if (entry)
+	if (entry) {
+		gtk_widget_grab_focus (entry);
 		gtk_editable_select_region (GTK_EDITABLE (entry), 0, -1);
+	}
 
 	g_object_get(gebr_gui_value_sequence_edit, "list-store", &list_store, NULL);
 	value = gebr_gui_parameter_widget_get_widget_value_full(parameter_widget, FALSE);
