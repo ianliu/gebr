@@ -84,7 +84,7 @@
       <para>Para criar um <emphasis role="bold">novo projeto</emphasis>:</para>
       <procedure>
         <step>
-          <para>Selecione a aba <guilabel>Projects and Lines</guilabel>.</para>
+          <para>Selecione a aba <guilabel>Projetos e Linhas</guilabel>.</para>
         </step>
         <step>
           <para>Clique no botão <guiicon><inlinemediaobject>
@@ -94,7 +94,7 @@
               </inlinemediaobject></guiicon></para>
         </step>
         <step>
-          <para>Na janela <guilabel>Properties for project</guilabel>, digite um
+          <para>Na janela <guilabel>Propriedades para projeto</guilabel>, digite um
               <emphasis>título</emphasis> para o projeto (por exemplo, <userinput>Meu primeiro
               projeto</userinput>).</para>
         </step>
@@ -117,9 +117,9 @@
         </mediaobject>
       </screenshot>
       <para>Depois de criado, o projeto fica acessível no lado esquerdo da janela principal da GêBR.
-        Na caixa <guilabel>Details</guilabel>, no lado direito da janela principal, são exibidas
+        Na caixa <guilabel>Detalhes</guilabel>, no lado direito da janela principal, são exibidas
         informações sobre o projeto. Você notará que algumas dessas informações foram inseridas por
-        você na janela <guilabel>Properties for project</guilabel>, no momento da criação do
+        você na janela <guilabel>Propriedades para projeto</guilabel>, no momento da criação do
         projeto. Outras, como a data da criação e a data da última modificação, são geradas
         automaticamente pela GêBR.</para>
       <screenshot>
@@ -147,7 +147,7 @@
               </inlinemediaobject></guiicon></para>
         </step>
         <step>
-          <para>Na janela <guilabel>Properties for line</guilabel>, digite um
+          <para>Na janela <guilabel>Propriedades para linha</guilabel>, digite um
               <emphasis>título</emphasis> para a linha (por exemplo, <userinput>Minha primeira
               linha</userinput>).</para>
         </step>
@@ -171,7 +171,7 @@
       </screenshot>
       <para>Depois de criar a primeira linha, sua janela da GêBR deve se parecer com a janela
         abaixo. Note que quando a linha está selecionada, as informações sobre ela são mostradas na
-        caixa <guilabel>Details</guilabel>, no lado direito da janela principal.</para>
+        caixa <guilabel>Detalhes</guilabel>, no lado direito da janela principal.</para>
       <screenshot>
         <info>
           <title/>
@@ -184,10 +184,10 @@
       </screenshot>
       <tip>
         <para>Acesse <menuchoice>
-            <guimenu>Actions</guimenu>
+            <guimenu>Ações</guimenu>
             <guimenuitem>Preferências</guimenuitem>
           </menuchoice> (no canto superior esquerdo da janela principal da GêBR) e digite seus dados
-          nos campos <guilabel>User name </guilabel>e <guilabel>Email</guilabel>. Novos projetos e
+          nos campos <guilabel>Nome de Usuário </guilabel>e <guilabel>Email</guilabel>. Novos projetos e
           linhas assumirão estes valores como padrão.</para>
       </tip>
       <para>Agora que existe uma estrutura básica de projeto e linha, você já pode <emphasis
@@ -245,30 +245,30 @@
         se faz na prática:</para>
       <procedure>
         <step>
-          <para>Na aba <guilabel>Projects and Lines</guilabel>, certifique-se de que a linha
+          <para>Na aba <guilabel>Projetos e Linhas</guilabel>, certifique-se de que a linha
               <emphasis>Minha primeira linha</emphasis>, criada anteriormente, está
             selecionada.</para>
         </step>
         <step>
-          <para>Selecione a aba <guilabel>Flows</guilabel> e, em seguida, clique no botão <guiicon><inlinemediaobject>
+          <para>Selecione a aba <guilabel>Fluxos</guilabel> e, em seguida, clique no botão <guiicon><inlinemediaobject>
                 <imageobject>
                   <imagedata fileref="../images/botao_criar_fluxo.png"/>
                 </imageobject>
               </inlinemediaobject></guiicon></para>
         </step>
         <step>
-          <para>Na janela <guilabel>Properties for flow</guilabel>, digite um
+          <para>Na janela <guilabel>Propriedade para Fluxo</guilabel>, digite um
               <emphasis>título</emphasis> para o fluxo (por exemplo, <userinput>Meu primeiro
               fluxo</userinput>). Se desejar, digite também uma breve <emphasis>descrição</emphasis>
             do fluxo, o <emphasis>autor</emphasis> e um <emphasis>e-mail</emphasis> para contato.
             Feito isso, clique <guibutton>OK</guibutton>.</para>
         </step>
         <step>
-          <para>Selecione a aba <guilabel>Flow edition</guilabel>. Em seguida, expanda a categoria
+          <para>Selecione a aba <guilabel>Edição de Fluxo</guilabel>. Em seguida, expanda a categoria
               <guimenu>Graphics</guimenu> e dê um clique duplo no componente <guimenuitem>SU Simple
               X Image</guimenuitem>. Fazendo isso você adiciona este componente ao seu fluxo (note
             que o componente <guimenuitem>SU Simple X Image</guimenuitem> agora aparece na caixa
-              <guilabel>Flow sequence</guilabel>, no lado esquerdo da janela). Neste momento, sua
+              <guilabel>Sequência de fluxo</guilabel>, no lado esquerdo da janela). Neste momento, sua
             janela deve se parecer com esta:</para>
           <screenshot>
             <info>
@@ -284,10 +284,10 @@
         <step>
           <para>Expanda a categoria <guimenu>Seismic Unix</guimenu> e dê um clique duplo no
             componente <guimenuitem>SU Plane</guimenuitem> (provavelmente você precisará rolar a
-            janela <guilabel>Flow components</guilabel> para alcançar este componente). Fazendo isso
+            janela <guilabel>Fluxos</guilabel> para alcançar este componente). Fazendo isso
             você adiciona o componente <guimenuitem>SU Plane</guimenuitem> ao fluxo. Note que
               <guimenuitem>SU Plane</guimenuitem> ficará posicionado abaixo de <guimenuitem>SU
-              Simple X Image</guimenuitem> na lista <guilabel>Flow sequence</guilabel>.</para>
+              Simple X Image</guimenuitem> na lista <guilabel>Sequência de fluxo</guilabel>.</para>
         </step>
         <step>
           <para>Para este exemplo funcionar, é necessário que <guimenuitem>SU Plane</guimenuitem>
@@ -307,7 +307,7 @@
         </step>
         <step>
           <para>Agora que o componente <guimenuitem>SU Plane</guimenuitem> está no topo da lista
-              <guilabel>Flow sequence</guilabel>, clique sobre ele com o botão direito do mouse. No
+              <guilabel>Sequência de fluxo</guilabel>, clique sobre ele com o botão direito do mouse. No
             menu que se abre, selecione a opção <guilabel>Configurado</guilabel>. Isso muda o estado
             do componente, que passa a ser sinalizado por <guiicon><inlinemediaobject>
                 <imageobject>
@@ -344,7 +344,7 @@
           </tip>
           <important>
             <para>Para este fluxo funcionar, é necessário que <emphasis role="bold">todos os
-                componentes</emphasis> listados na caixa <guilabel>Flow sequence</guilabel> estejam
+                componentes</emphasis> listados na caixa <guilabel>Sequência de fluxo</guilabel> estejam
               no estado <emphasis role="bold">Configurado</emphasis> (<guiicon><inlinemediaobject>
                   <imageobject>
                     <imagedata fileref="../images/icone_configurado.png"/>
@@ -382,16 +382,16 @@
       localizadas na parte superior da janela principal:</para>
     <itemizedlist>
       <listitem>
-        <para><guilabel><link linkend="sec_3_1">Projects and Lines</link></guilabel></para>
+        <para><guilabel><link linkend="sec_3_1">Projetos e Linhas</link></guilabel></para>
       </listitem>
       <listitem>
-        <para><guilabel><link linkend="sec_3_2">Flows</link></guilabel></para>
+        <para><guilabel><link linkend="sec_3_2">Fluxos</link></guilabel></para>
       </listitem>
       <listitem>
-        <para><guilabel><link linkend="sec_3_3">Flow edition</link></guilabel></para>
+        <para><guilabel><link linkend="sec_3_3">Edição de fluxo</link></guilabel></para>
       </listitem>
       <listitem>
-        <para><guilabel><link linkend="sec_3_4">Job control</link></guilabel></para>
+        <para><guilabel><link linkend="sec_3_4">Controle de tarefas</link></guilabel></para>
       </listitem>
     </itemizedlist>
     <para>Nas seções seguintes, veremos com detalhes as funcionalidades de cada uma delas.</para>
@@ -403,8 +403,8 @@
         prosseguir. Por razões didáticas, recorreremos àquele exemplo sempre que necessário.</para>
     </important>
     <section xml:id="sec_3_1">
-      <title>A aba <guilabel>Projects and Lines</guilabel></title>
-      <para>A aba <guilabel>Projects and Lines</guilabel> dispõe de oito botões de comando,
+      <title>A aba <guilabel>Projetos e Linhas</guilabel></title>
+      <para>A aba <guilabel>Projetos e Linhas</guilabel> dispõe de oito botões de comando,
         localizados logo abaixo da aba. Por meio deles pode-se:</para>
       <itemizedlist>
         <listitem>
@@ -449,13 +449,8 @@
         <para><emphasis role="bold">Não há limitação</emphasis> para o número de projetos na GêBR.
           Você pode criar quantos projetos quiser.</para>
         <para>Depois de criados, os projetos ficam <emphasis role="bold">visíveis no lado esquerdo
-            da janela principal</emphasis> da GêBR. A caixa <guilabel>Details</guilabel>, localizada
+            da janela principal</emphasis> da GêBR. A caixa <guilabel>Detalhes</guilabel>, localizada
           no lado direito da janela principal, exibe informações sobre o projeto selecionado.</para>
-        <tip>
-          <para>A GêBR ordena os projetos alfabeticamente. Você pode mudar a ordem (crescente ou
-            decrescente) clicando na barra <guilabel>Index</guilabel>, que fica logo abaixo dos
-            botões da aba <guilabel>Projects and Lines</guilabel>.</para>
-        </tip>
       </section>
       <section xml:id="sec_3_1_2">
         <title>Criar uma nova linha</title>
@@ -471,7 +466,7 @@
           Você pode criar quantas linhas quiser dentro de um projeto.</para>
         <para>Depois de criadas, as linhas ficam <emphasis role="bold">visíveis no lado esquerdo da
             janela principal</emphasis> da GêBR, dentro dos projetos. A caixa
-            <guilabel>Details</guilabel>, localizada no lado direito da janela principal, exibe
+            <guilabel>Detalhes</guilabel>, localizada no lado direito da janela principal, exibe
           informações sobre a linha selecionada.</para>
         <tip>
           <para>A GêBR permite <emphasis role="bold">colapsar</emphasis> ou <emphasis role="bold"
@@ -513,35 +508,34 @@
                 <imagedata fileref="../images/botao_editar_propriedades_projeto.png"/>
               </imageobject>
             </inlinemediaobject></guiicon>.</para>
-        <para>Na janela <guilabel>Properties </guilabel>(...<guilabel>for project</guilabel> ou
-            ...<guilabel>for line</guilabel>, dependendo do caso) você pode editar os campos
-            <guilabel>Title</guilabel>, <guilabel>Description</guilabel>,
-            <guilabel>Author</guilabel> e <guilabel>Email</guilabel>. Além disso, pode criar e
-          editar um relatório com informações adicionais sobre o projeto ou a linha. Para <emphasis
-            role="bold">criar ou editar um relatório</emphasis>:</para>
+        <para>Na janela <guilabel>Propriedades </guilabel>(...<guilabel>para projeto</guilabel> ou
+            ...<guilabel>para linha</guilabel>, dependendo do caso) você pode editar os campos
+            <guilabel>Título</guilabel>, <guilabel>Descrição</guilabel>,
+            <guilabel>Autor</guilabel> e <guilabel>Email</guilabel>. Além disso, pode editar comentários no relatório,
+	 atribuindo informações adicionais sobre o projeto ou sobre a linha. Para <emphasis
+            role="bold">editar um comentário</emphasis>:</para>
         <procedure>
           <step>
-            <para>Clique no botão <guibutton>Editar</guibutton>, que fica no campo
-                <guilabel>Report</guilabel>, logo abaixo de <guilabel>Description</guilabel>, na
-              janela <guilabel>Properties for project</guilabel> ou <guilabel>Properties for
-                line</guilabel>.</para>
+            <para>Clique no botão <guibutton>Editar comentários</guibutton>, que fica no campo logo abaixo
+	de <guilabel>Descrição</guilabel>, na janela <guilabel>Propriedades para projeto</guilabel>
+	 ou <guilabel>Propriedades para linha</guilabel>.</para>
           </step>
           <step>
             <para>Digite um texto no editor de textos que se abre. Quando terminar, feche o editor
-              de textos e salve seu relatório.</para>
+              de textos e salve seu comentário.</para>
           </step>
         </procedure>
         <tip>
           <para>Em <menuchoice>
-              <guimenu>Actions</guimenu>
+              <guimenu>Ações</guimenu>
               <guimenuitem>Preferências</guimenuitem>
             </menuchoice> (no canto superior esquerdo da janela principal da GêBR), você pode
             determinar o editor de textos a ser usado para editar relatórios na GêBR. O editor
             padrão é o <application>gedit</application>. Para usar outro, digite o nome do editor em
-              <guilabel>HTML editor</guilabel>.</para>
+              <guilabel>Editor HTML</guilabel>.</para>
         </tip>
         <note>
-          <para>Você pode criar <emphasis role="bold">apenas um relatório</emphasis> para cada
+          <para>Você pode criar <emphasis role="bold">apenas um comentário</emphasis> para cada
             projeto ou linha existente.</para>
         </note>
         <para>
@@ -551,14 +545,8 @@
             <itemizedlist>
               <listitem>
                 <para>Selecione o projeto ou a linha e clique no botão
-                    <guibutton>Informações</guibutton>, na parte de baixo da caixa
-                    <guilabel>Details</guilabel>, no lado direito da janela principal; ou</para>
-              </listitem>
-              <listitem>
-                <para>Quando a janela <guilabel>Properties for project</guilabel> ou
-                    <guilabel>Properties for line</guilabel> estiver aberta, clique no botão
-                    <guibutton>Abrir</guibutton>, que fica no campo <guilabel>Report</guilabel>,
-                  logo abaixo de <guilabel>Description</guilabel>.</para>
+                    <guibutton>Visualizar relatório</guibutton>, na parte de baixo da caixa
+                    <guilabel>Detalhes</guilabel>, no lado direito da janela principal.
               </listitem>
             </itemizedlist>
           </important>
@@ -575,38 +563,46 @@
           veremos que um fluxo pode estar associado a alguns arquivos de dados. Veremos também que
           essa associação pode ser feita mais facilmente se adicionarmos os chamados caminhos
           personalizados da linha.</para>
-        <para>Para editar os caminhos personalizados de uma linha, selecione a linha e clique no
-          botão <guiicon><inlinemediaobject>
+        <para>Para editar os caminhos personalizados de uma linha pode-se: </para>
+        <itemizedlist>
+          <listitem>
+            <para>Na aba Projetos e Linhas, clique sobre a linha em que se quer adicionar caminhos,
+	 selecione o botão de comando <guiicon><inlinemediaobject>
               <imageobject>
                 <imagedata fileref="../images/botao_editar_propriedades_projeto.png"/>
               </imageobject>
-            </inlinemediaobject></guiicon>.</para>
-        <para>Na janela <guilabel>Path list for line</guilabel> você pode adicionar caminhos de duas
-          maneiras:</para>
-        <itemizedlist>
-          <listitem>
-            <para>digite o caminho e clique no botão <guiicon><inlinemediaobject>
-                  <imageobject>
-                    <imagedata fileref="../images/botao_adicionar_caminho.png"/>
-                  </imageobject>
-                </inlinemediaobject></guiicon></para>
+            </inlinemediaobject></guiicon>.Na janela Propriedades para linha, no campo Caminhos, digite o caminho desejado 
+	e clique no botão<guiicon><inlinemediaobject>
+              <imageobject>
+                <imagedata fileref="../images/botao_adicionar_caminho.png"/>
+              </imageobject>
+            </inlinemediaobject></guiicon>;ou
+	 </para>
           </listitem>
           <listitem>
-            <para>clique no ícone <guiicon><inlinemediaobject>
-                  <imageobject>
-                    <imagedata fileref="../images/icone_caminho_personalizado.png"/>
-                  </imageobject>
-                </inlinemediaobject></guiicon>, escolha o diretório na janela <guilabel>Choose
-                directory</guilabel>, depois clique no botão <guiicon><inlinemediaobject>
-                  <imageobject>
-                    <imagedata fileref="../images/botao_adicionar_caminho.png"/>
-                  </imageobject>
-                </inlinemediaobject></guiicon></para>
+            <para> Utilizando o menu de contexto, clique em Propriedades e na janela Propriedades para linha, no campo Caminhos, digite
+	 o caminho desejado e clique no botão <guiicon><inlinemediaobject>
+              <imageobject>
+                <imagedata fileref="../images/botao_adicionar_caminho.png"/>
+              </imageobject>
+            </inlinemediaobject></guiicon></para>
           </listitem>
         </itemizedlist>
-        <para>Todos os caminhos adicionados são listados na janela <guilabel>Path list for
-            line</guilabel>. <emphasis role="bold">Não há limitação</emphasis> para o número de
+        <para><emphasis role="bold">Não há limitação</emphasis> para o número de
           caminhos, você pode adicionar quantos quiser.</para>
+	<tip>
+          <para>Para <emphasis role="bold">remover um caminho</emphasis> da lista, selecione-o com o
+              <emphasis role="bold">botão direito do mouse</emphasis> e clique em
+              <guimenuitem>Remover</guimenuitem> ou <guimenuitem>Delete</guimenuitem>.</para>
+        </tip>
+        <tip>
+          <para>Para <emphasis role="bold">mudar a posição</emphasis> de um caminho na lista,
+              <emphasis role="bold">arraste-o com o mouse</emphasis> para a posição desejada.</para>
+        </tip>
+	<para> Pode-se utilizar hotkeys para adicionar caminhos (<emphasis role="bold">Enter</emphasis>),
+	 mover caminhos para cima e para baixo (<emphasis role="bold">Ctrl+seta para cima/para baixo</emphasis>), 
+	tornar um caminho topo de lista (<emphasis role="bold">Ctrl Home</emphasis>)
+	e tornar um caminho fim de lista (<emphasis role="bold">Ctrl End</emphasis>).</para>
         <screenshot>
           <info>
             <title/>
@@ -617,15 +613,7 @@
             </imageobject>
           </mediaobject>
         </screenshot>
-        <tip>
-          <para>Para <emphasis role="bold">remover um caminho</emphasis> da lista, selecione-o com o
-              <emphasis role="bold">botão direito do mouse</emphasis> e clique em
-              <guimenuitem>Remover</guimenuitem>.</para>
-        </tip>
-        <tip>
-          <para>Para <emphasis role="bold">mudar a posição</emphasis> de um caminho na lista,
-              <emphasis role="bold">arraste-o com o mouse</emphasis> para a posição desejada.</para>
-        </tip>
+        
       </section>
       <section xml:id="sec_3_1_7">
         <title>Importar um projeto ou linha</title>
@@ -640,7 +628,7 @@
                 </inlinemediaobject></guiicon></para>
           </step>
           <step>
-            <para>Navegue pela janela <guilabel>Choose project/line to open</guilabel> e selecione o
+            <para>Navegue pela janela <guilabel>Escolha o projeto ou linha para abrir</guilabel> e selecione o
               projeto ou a linha que deseja importar (apenas arquivos do tipo <filename
                 class="extension">prjz</filename> ou <filename class="extension">lnez</filename>
               serão mostrados).</para>
@@ -653,7 +641,7 @@
           esquerdo da janela principal. A linha importada é adicionada às demais linhas (se
           existirem) do projeto que estiver selecionado no momento da importação. Em ambos os casos,
           o elemento importado é identificado com o sufixo <emphasis role="bold"
-          >Imported</emphasis>.</para>
+          >Importado</emphasis>.</para>
         <note>
           <para>Na GêBR, linhas só podem existir dentro de projetos (veja este conceito na <link
               linkend="sec_2"><emphasis role="bold">seção 2</emphasis></link>). Portanto, para
@@ -679,7 +667,7 @@
                 </inlinemediaobject></guiicon></para>
           </step>
           <step>
-            <para>Na janela <guilabel>Choose filename to save</guilabel>, selecione uma pasta e
+            <para>Na janela <guilabel>Escolha o nome do arquivo para salvar</guilabel>, selecione uma pasta e
               digite um nome para o arquivo (a GêBR determina automaticamente a extensão <filename
                 class="extension">prjz</filename> para projeto ou <filename class="extension"
                 >lnez</filename> para linha).</para>
@@ -691,8 +679,8 @@
       </section>
     </section>
     <section xml:id="sec_3_2">
-      <title>A aba <guilabel>Flows</guilabel></title>
-      <para>A aba <guilabel>Flows</guilabel> dispõe de doze botões de comando, localizados logo
+      <title>A aba <guilabel>Fluxos</guilabel></title>
+      <para>A aba <guilabel>Fluxos</guilabel> dispõe de oito botões de comando, localizados logo
         abaixo da aba. Por meio deles pode-se:</para>
       <itemizedlist>
         <listitem>
@@ -705,14 +693,10 @@
           <para><link linkend="sec_3_2_3">Colar fluxos da área de transferência</link></para>
         </listitem>
         <listitem>
-          <para><link linkend="sec_3_2_4">Deletar fluxos</link></para>
+          <para><link linkend="sec_3_2_4">Apagar fluxos</link></para>
         </listitem>
         <listitem>
           <para><link linkend="sec_3_2_5">Editar as propriedades de um fluxo</link></para>
-        </listitem>
-        <listitem>
-          <para><link linkend="sec_3_2_6">Editar o dicionário de parâmetros de um
-            fluxo</link></para>
         </listitem>
         <listitem>
           <para><link linkend="sec_3_2_7">Salvar o estado de um fluxo</link></para>
@@ -722,15 +706,6 @@
         </listitem>
         <listitem>
           <para><link linkend="sec_3_2_9">Exportar um fluxo</link></para>
-        </listitem>
-        <listitem>
-          <para><link linkend="sec_3_2_10">Exportar um fluxo como um menu</link></para>
-        </listitem>
-        <listitem>
-          <para><link linkend="sec_3_2_11">Editar arquivos de entrada e saída do fluxo</link></para>
-        </listitem>
-        <listitem>
-          <para><link linkend="sec_3_2_12">Executar um fluxo</link></para>
         </listitem>
       </itemizedlist>
       <tip>
@@ -743,20 +718,20 @@
       <section xml:id="sec_3_2_1">
         <title>Criar um novo fluxo</title>
         <para>Para criar um novo fluxo, primeiro certifique-se de ter <emphasis role="bold">criado e
-            selecionado uma linha</emphasis>, na aba <guilabel>Projects and Lines</guilabel>. Feito
-          isso, selecione a aba <guilabel>Flows</guilabel> e clique no botão <guiicon><inlinemediaobject>
+            selecionado uma linha</emphasis>, na aba <guilabel>Projetos e Linhas</guilabel>. Feito
+          isso, selecione a aba <guilabel>Fluxos</guilabel> e clique no botão <guiicon><inlinemediaobject>
               <imageobject>
                 <imagedata fileref="../images/botao_criar_fluxo.png"/>
               </imageobject>
-            </inlinemediaobject></guiicon>. Na janela que se abre (<guilabel>Properties for
-            flow</guilabel>), <link linkend="sec_3_2_5">edite as propriedades do fluxo</link> e
+            </inlinemediaobject></guiicon>. Na janela que se abre (<guilabel>Propriedades para fluxos
+	</guilabel>), <link linkend="sec_3_2_5">edite as propriedades do fluxo</link> e
           clique em <guibutton>OK</guibutton> (veja mais detalhes na <link linkend="sec_2_2"
               ><emphasis role="bold">seção 2.2</emphasis></link>).</para>
         <para><emphasis role="bold">Não há limitação</emphasis> para o número de fluxos na GêBR.
           Você pode criar quantos fluxos quiser dentro de uma linha.</para>
         <para>Depois de criados, os fluxos ficam <emphasis role="bold">visíveis no lado esquerdo da
-            janela principal</emphasis>, quando a aba <guilabel>Flows</guilabel> está selecionada. A
-          caixa <guilabel>Details</guilabel>, localizada no lado direito da janela principal, exibe
+            janela principal</emphasis>, quando a aba <guilabel>Fluxos</guilabel> está selecionada. A
+          caixa <guilabel>Detalhes</guilabel>, localizada no lado direito da janela principal, exibe
           informações sobre o fluxo selecionado.</para>
         <tip>
           <para>Você pode <emphasis role="bold">mudar a posição</emphasis> de um fluxo na lista
@@ -765,8 +740,8 @@
         </tip>
         <tip>
           <para>Observe a <emphasis role="bold">barra de informações</emphasis> na parte de cima da
-            janela principal, logo abaixo do menu <guimenu>Actions</guimenu>. Ela mostra a árvore
-            completa do fluxo que estiver selecionado.</para>
+            janela principal, logo abaixo do menu <guimenu>Ações</guimenu>. Ela mostra a árvore
+            completa do fluxo que estiver selecionado-------------------------------(acepted).</para>
         </tip>
       </section>
       <section xml:id="sec_3_2_2">
