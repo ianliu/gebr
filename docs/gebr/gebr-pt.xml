@@ -28,8 +28,8 @@
     </section>
     <section>
       <title>Informações técnicas</title>
-      <para>Este guia refere-se à <emphasis role="bold">versão 0.9.15</emphasis> da GêBR. As telas
-        usadas no guia foram capturadas em um sistema <emphasis role="bold">Ubuntu 9.10</emphasis>.
+      <para>Este guia refere-se à <emphasis role="bold">versão 0.12.0</emphasis> da GêBR. As telas
+        usadas no guia foram capturadas em um sistema <emphasis role="bold">Ubuntu 10.4</emphasis>.
         Por isso, podem apresentar pequenas diferenças em relação a outros sistemas operacionais.
         Para obter instruções de instalação específicas para cada sistema, visite a guia
           <guilabel>Download</guilabel>, na página oficial do projeto: <emphasis><link
@@ -352,9 +352,14 @@
                 </inlinemediaobject></guiicon>). Sem isso, o fluxo não será executado como
               esperado.</para>
           </important>
+	  <important>
+	    <para>Um estado de um fluxo ou um conjunto de fluxos pode ser alterado através da hotkey <emphasis role="bold">space</emphasis>. O status do fluxo selecionado variará na ordem
+              <emphasis role="bold">não configurado</emphasis>, <emphasis role="bold">desabilitado</emphasis> e <emphasis role="bold">configurado</emphasis>. Tal funcionalidade será mais explorada adiante.</para>
+          </important>
         </step>
       </procedure>
-      <para>Pronto. O fluxo foi criado e configurado. Para executá-lo, clique no botão <guiicon><inlinemediaobject>
+
+    <para>Pronto. O fluxo foi criado e configurado. Para executá-lo, clique no botão <guiicon><inlinemediaobject>
             <imageobject>
               <imagedata fileref="../images/botao_executar_fluxo.png"/>
             </imageobject>
@@ -409,7 +414,7 @@
           <para><link linkend="sec_3_1_2">Criar uma nova linha</link></para>
         </listitem>
         <listitem>
-          <para><link linkend="sec_3_1_3">Apagar um projeto ou uma linha</link></para>
+          <para><link linkend="sec_3_1_3">Apagar um projeto ou uma linha selecionados</link></para>
         </listitem>
         <listitem>
           <para><link linkend="sec_3_1_4">Editar as propriedades de um projeto ou
@@ -418,9 +423,6 @@
         <listitem>
           <para><link linkend="sec_3_1_5">Editar o dicionário de parâmetros do projeto ou
               linha</link></para>
-        </listitem>
-        <listitem>
-          <para><link linkend="sec_3_1_6">Editar caminhos personalizados da linha</link></para>
         </listitem>
         <listitem>
           <para><link linkend="sec_3_1_7">Importar um projeto ou linha</link></para>
@@ -576,7 +578,7 @@
         <para>Para editar os caminhos personalizados de uma linha, selecione a linha e clique no
           botão <guiicon><inlinemediaobject>
               <imageobject>
-                <imagedata fileref="../images/botao_editar_caminhos.png"/>
+                <imagedata fileref="../images/botao_editar_propriedades_projeto.png"/>
               </imageobject>
             </inlinemediaobject></guiicon>.</para>
         <para>Na janela <guilabel>Path list for line</guilabel> você pode adicionar caminhos de duas
