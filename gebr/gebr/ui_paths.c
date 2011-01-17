@@ -38,16 +38,38 @@ static gboolean check_duplicate (GebrGuiSequenceEdit * sequence_edit, const gcha
 	GtkTreeModel *model;
 	GtkTreeIter iter;
 
+	gchar *cmp_path = NULL;
+	cmp_path = g_strdup(path);
+
 	g_object_get(G_OBJECT(sequence_edit), "list-store", &model, NULL);
 
 	gebr_gui_gtk_tree_model_foreach(iter, model) {
 		gchar *i_path;
 		gtk_tree_model_get(model, &iter, 0, &i_path, -1);
-		if (!strcmp(i_path, path)) {
+	
+		if (g_str_has_suffix (cmp_path, "/")
+		    && !g_str_has_suffix (i_path, "/"))
+		{
+			gchar * i_path_mod = g_strdup(i_path);
+			g_free(i_path);
+			i_path = g_strdup_printf("%s/", i_path_mod);
+			g_free(i_path_mod);
+		}
+		else if (!g_str_has_suffix (cmp_path, "/")
+		    && g_str_has_suffix (i_path, "/"))
+		{
+			gchar * path_mod = g_strdup(cmp_path);
+			g_free(cmp_path);
+			cmp_path = g_strdup_printf("%s/", path_mod);
+			g_free(path_mod);
+		}
+
+		if (g_strcmp0(i_path, cmp_path) == 0) {
 			gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(sequence_edit->tree_view), &iter);
 			retval = TRUE;
 		}
 		g_free(i_path);
+		g_free(cmp_path);
 	}
 
 	if (retval) {
