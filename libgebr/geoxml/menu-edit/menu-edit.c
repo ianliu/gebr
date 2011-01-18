@@ -28,8 +28,6 @@ char *strptime(const char *s, const char *formato, struct tm *tm);
 #include "../../utils.h"
 #include "../../date.h"
 
-gboolean fixfname = FALSE;
-gchar *setfname = NULL;
 gchar *title = NULL;
 gchar *desc = NULL;
 gchar *author = NULL;
@@ -47,8 +45,6 @@ gboolean capt = FALSE;
 /* Command-line parameters definition */
 static GOptionEntry entries[] = {
 	{"iprog", 'i', 0, G_OPTION_ARG_INT, &iprog, "index of program to edit", NULL},
-	{"fixfname", 'f', 0, G_OPTION_ARG_NONE, &fixfname, "fix filename", NULL},
-	{"setfname", 'F', 0, G_OPTION_ARG_FILENAME, &setfname, "set filename", NULL},
 	{"title", 't', 0, G_OPTION_ARG_STRING, &title, "set title", ""},
 	{"desc", 'd', 0, G_OPTION_ARG_STRING, &desc, "set description", "one line description"},
 	{"author", 'A', 0, G_OPTION_ARG_STRING, &author, "set authors", "name"},
@@ -121,10 +117,6 @@ int main(int argc, char **argv)
 		}
 		doc = GEBR_GEOXML_DOC(flow);
 		nprog = gebr_geoxml_flow_get_programs_number(flow);
-		if (fixfname)
-			gebr_geoxml_document_set_filename(doc, menu[imenu]);
-		if (setfname != NULL)
-			gebr_geoxml_document_set_filename(doc, setfname);
 		if (author != NULL)
 			gebr_geoxml_document_set_author(doc, author);
 		if (email != NULL)
