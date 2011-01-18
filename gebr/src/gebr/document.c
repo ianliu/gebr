@@ -217,7 +217,7 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 	}
 
 	GString *string;
-	GebrGeoXmlDocument *parent_document;
+	GebrGeoXmlDocument *parent_document = NULL;
 	gboolean free_document = FALSE;
 
 	if (parent != NULL) {
@@ -321,11 +321,12 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 							 gebr_geoxml_error_string((enum GEBR_GEOXML_RETV)ret));
 	}
 
-	/* for imported documents */
+	/* for imported documents, simpler dialog is shown */
 	if (!document_path_is_at_gebr_data_dir(path)) {
 		gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_OK, 0);
 		gtk_widget_show_all(dialog);
 		gtk_dialog_run(GTK_DIALOG(dialog));
+		gtk_widget_destroy(dialog);
 		goto out;
 	}
 
