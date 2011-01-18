@@ -498,24 +498,95 @@ static void job_control_on_cursor_changed(void)
 {
 	GtkTreeIter iter;
 	struct job *job;
-	gboolean is_job;
   
-	if (!job_control_get_selected(&iter, JobControlDontWarnUnselection)) {
-		gtk_label_set_text(GTK_LABEL(gebr.ui_job_control->label), "");
-		gtk_text_buffer_set_text(gebr.ui_job_control->text_buffer, "", 0);
-		return;
+	gboolean is_job = FALSE;
+	gboolean has_finished = FALSE;
+	gboolean has_execution = FALSE;
+	gboolean has_job = FALSE;
+	GtkTreeIter iter_queue;
+	GtkTreeIter iter_child;
+	GtkTreeIter iter_child_first;
+	GtkTreeIter iter_child_last;
+	GtkTreePath  *path_first;
+	GtkTreePath  *path_last;
+	gboolean has_children = FALSE;
+	gint selected_rows = 0;
+
+	gtk_label_set_text(GTK_LABEL(gebr.ui_job_control->label), "");
+	gtk_text_buffer_set_text(gebr.ui_job_control->text_buffer, "", 0);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_close"), FALSE);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_stop"), FALSE);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_queue_close"), FALSE);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_queue_stop"), FALSE);
+
+
+	selected_rows =	gtk_tree_selection_count_selected_rows(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)));
+
+	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_job_control->view) {
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter, JC_STRUCT, &job, JC_IS_JOB, &is_job, -1);
+
+		if (is_job){
+			has_job = TRUE;
+			if ((job->status == JOB_STATUS_RUNNING || job->status == JOB_STATUS_QUEUED)) {
+				has_execution = TRUE;
+			}
+			if ((job->status == JOB_STATUS_FAILED || job->status == JOB_STATUS_FINISHED || job->status == JOB_STATUS_CANCELED)){
+				has_finished = TRUE;
+			}
+			job_update_text_buffer(iter, job);
+			job_status_show(job);
+		}
+		else if (selected_rows == 1){
+			iter_queue = iter;
+
+			has_children = gtk_tree_model_iter_children (GTK_TREE_MODEL(gebr.ui_job_control->store), &iter_child, &iter_queue);
+			if (has_children){
+				gtk_tree_selection_unselect_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)), &iter_queue);
+				iter_child_first = iter_child;
+
+				while (has_children){
+
+					iter_child_last = iter_child;
+					has_children = gtk_tree_model_iter_next (GTK_TREE_MODEL(gebr.ui_job_control->store), &iter_child);
+				}
+
+				path_first = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter_child_first);
+				path_last = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter_child_last);
+				gtk_tree_selection_select_range (gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)), path_first, path_last);
+
+				gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_job_control->view) {
+					gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter, JC_STRUCT, &job, JC_IS_JOB, &is_job, -1);
+
+					if (is_job){
+						has_job = TRUE;
+						if ((job->status == JOB_STATUS_RUNNING || job->status == JOB_STATUS_QUEUED)) {
+							has_execution = TRUE;
+						}
+						if ((job->status == JOB_STATUS_FAILED || job->status == JOB_STATUS_FINISHED || job->status == JOB_STATUS_CANCELED)){
+							has_finished = TRUE;
+						}
+					}
+				}
+
+				if (has_job){
+					gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_queue_close"), has_finished);
+					gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_queue_stop"), has_execution);
+					gtk_tree_selection_unselect_range (gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)), path_first, path_last);
+					gtk_tree_selection_select_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)), &iter_queue);
+				}
+			}
+			else{
+				gtk_text_buffer_set_text(gebr.ui_job_control->text_buffer, "", 0);
+				gtk_label_set_text(GTK_LABEL(gebr.ui_job_control->label), "");
+				//return;
+			}
+		}
 	}
-	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter, JC_STRUCT, &job, JC_IS_JOB,
-			   &is_job, -1);
-	if (!is_job) {
-		gtk_text_buffer_set_text(gebr.ui_job_control->text_buffer, "", 0);
-		gtk_label_set_text(GTK_LABEL(gebr.ui_job_control->label), "");
-		return;
+
+	if (has_job){
+		gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_close"), has_finished);
+		gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_stop"), has_execution);
 	}
-	
-	job_update_text_buffer(iter, job);
-	job_status_show(job);
- 
 }
 
 /**
@@ -588,46 +659,43 @@ static GtkMenu *job_control_popup_menu(GtkWidget * widget, struct ui_job_control
 {
 	GtkWidget *menu;
 	GtkTreeIter iter;
+	GtkTreeIter iter_child;
 	gint iter_depth = 0;
 
 	gint selected_rows = 0;
-	
-	selected_rows =	gtk_tree_selection_count_selected_rows(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)));
 
-	/* no flow, no new job possible */
-	if (gebr.flow == NULL)
-		return NULL;
+	selected_rows =	gtk_tree_selection_count_selected_rows(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)));
 
 	menu = gtk_menu_new();
 	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_job_control->view) {
-	
+
 		iter_depth = gtk_tree_store_iter_depth(gebr.ui_job_control->store, &iter);
-	
-		if (selected_rows == 1 && iter_depth == 0)
+
+		if (selected_rows == 1 && iter_depth == 0 && gtk_tree_model_iter_children (GTK_TREE_MODEL(gebr.ui_job_control->store), &iter_child, &iter))
 		{
-				gtk_container_add(GTK_CONTAINER(menu),
-						  gtk_action_create_menu_item(
-								  gtk_action_group_get_action(gebr.action_group_job_control, "job_control_queue_save")));
-				gtk_container_add(GTK_CONTAINER(menu),
-						  gtk_action_create_menu_item(
-								  gtk_action_group_get_action(gebr.action_group_job_control, "job_control_queue_close")));
-				gtk_container_add(GTK_CONTAINER(menu),
-						  gtk_action_create_menu_item(
-								  gtk_action_group_get_action(gebr.action_group_job_control, "job_control_queue_stop")));
-				gtk_widget_show_all(menu);
-				return GTK_MENU(menu);
+			gtk_container_add(GTK_CONTAINER(menu),
+					  gtk_action_create_menu_item(
+							  gtk_action_group_get_action(gebr.action_group_job_control, "job_control_queue_save")));
+			gtk_container_add(GTK_CONTAINER(menu),
+					  gtk_action_create_menu_item(
+							  gtk_action_group_get_action(gebr.action_group_job_control, "job_control_queue_close")));
+			gtk_container_add(GTK_CONTAINER(menu),
+					  gtk_action_create_menu_item(
+							  gtk_action_group_get_action(gebr.action_group_job_control, "job_control_queue_stop")));
+			gtk_widget_show_all(menu);
+			return GTK_MENU(menu);
 		}
 
-		if (iter_depth > 0 )
+		if (iter_depth > 0)
 		{
-				gtk_container_add(GTK_CONTAINER(menu),
-						  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_save")));
-				gtk_container_add(GTK_CONTAINER(menu),
-						  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_close")));
-				gtk_container_add(GTK_CONTAINER(menu),
-						  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_stop")));
-				gtk_widget_show_all(menu);
-				return GTK_MENU(menu);
+			gtk_container_add(GTK_CONTAINER(menu),
+					  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_save")));
+			gtk_container_add(GTK_CONTAINER(menu),
+					  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_close")));
+			gtk_container_add(GTK_CONTAINER(menu),
+					  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_stop")));
+			gtk_widget_show_all(menu);
+			return GTK_MENU(menu);
 		}
 	}
 
@@ -649,10 +717,10 @@ static void job_control_queue_by_func(void (* func)(void))
 		return;
 	}
 
-	gtk_tree_selection_unselect_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)), &iter_queue);
 
 	has_children = gtk_tree_model_iter_children (GTK_TREE_MODEL(gebr.ui_job_control->store), &iter_child, &iter_queue);
 	if (has_children){
+		gtk_tree_selection_unselect_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)), &iter_queue);
 		iter_child_first = iter_child;
 
 		while (has_children){
