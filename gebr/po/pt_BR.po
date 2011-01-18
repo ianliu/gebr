@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-01-13 17:53-0200\n"
-"PO-Revision-Date: 2011-01-13 17:57-0200\n"
+"POT-Creation-Date: 2011-01-18 11:39-0200\n"
+"PO-Revision-Date: 2011-01-18 11:43-0200\n"
 "Last-Translator: Rodrigo Morelatto <morelatto@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
 "MIME-Version: 1.0\n"
@@ -73,15 +73,15 @@ msgstr "O documento não é um fluxo."
 
 #: ../gebr/callbacks.c:258 ../gebr/callbacks.c:280
 msgid "Warning"
-msgstr ""
+msgstr "Aviso"
 
 #: ../gebr/callbacks.c:258
 msgid "No input file specified for this program."
-msgstr ""
+msgstr "Nenhum arquivo de entrada especificado para este programa."
 
 #: ../gebr/callbacks.c:280
 msgid "No configured or enabled programs found"
-msgstr ""
+msgstr "Nenhum program configurado ou ativado foi encontrado"
 
 #: ../gebr/callbacks.c:346
 msgid "Could not load help. Certify it was installed correctly."
@@ -186,11 +186,8 @@ msgstr ""
 "O arquivo %s não pode ser carregado.\n"
 "%s"
 
-#: ../gebr/document.c:318
-msgid " '%s'"
-msgstr " '%s'"
-
 #: ../gebr/document.c:320
+#, c-format
 msgid ""
 "The file %s from %s%s (file %s) could not be loaded.\n"
 "%s"
@@ -403,19 +400,19 @@ msgstr ""
 msgid "GêBR finalizing..."
 msgstr "GêBR finalizando..."
 
-#: ../gebr/gebr.c:305
+#: ../gebr/gebr.c:336
 msgid "GêBR initiating..."
 msgstr "GêBR iniciando..."
 
-#: ../gebr/gebr.c:442
+#: ../gebr/gebr.c:463
 msgid "Could not save configuration."
 msgstr "Não foi possível salvar a configuração."
 
-#: ../gebr/gebr.c:449
+#: ../gebr/gebr.c:470
 msgid "Configuration saved"
 msgstr "A configuração foi salva."
 
-#: ../gebr/gebr.c:616
+#: ../gebr/gebr.c:631
 #, c-format
 msgid ""
 "GêBR now stores data files on its own directory. You may now delete GêBR's "
@@ -424,7 +421,7 @@ msgstr ""
 "A GêBR agora armazena arquivos de dados em um diretório próprio. Você pode\n"
 "apagar os arquivos da GêBR em %s."
 
-#: ../gebr/gebr.c:623
+#: ../gebr/gebr.c:638
 msgid ""
 "Cannot copy data files to GêBR's directory. Please check your write "
 "permissions to your home directory."
@@ -1159,14 +1156,18 @@ msgstr "Seqüência de fluxo"
 msgid "Menus"
 msgstr "Menus"
 
-#: ../gebr/ui_flow_edition.c:250 ../gebr/ui_flow_edition.c:477
-msgid "No menu selected."
-msgstr "Nenhum menu selecionado."
+#: ../gebr/ui_flow_edition.c:250
+msgid "No program selected."
+msgstr "Nenhum programa selecionado."
 
 #: ../gebr/ui_flow_edition.c:295
 #, c-format
 msgid "Configuring program '%s'."
 msgstr "Configurando programa '%s'."
+
+#: ../gebr/ui_flow_edition.c:477
+msgid "No menu selected."
+msgstr "Nenhum menu selecionado."
 
 #: ../gebr/ui_flow_edition.c:482
 msgid "Select a menu instead of a category."
@@ -1250,15 +1251,15 @@ msgid "Report of the %s \"%s\""
 msgstr "Relatório de %s \"%s\""
 
 #. There is no path, put "None"
-#: ../gebr/ui_help.c:402 ../gebr/ui_project_line.c:288
+#: ../gebr/ui_help.c:411 ../gebr/ui_project_line.c:288
 msgid "None"
 msgstr "Nenhum"
 
-#: ../gebr/ui_help.c:540 ../gebr/ui_help.c:558
+#: ../gebr/ui_help.c:549 ../gebr/ui_help.c:567
 msgid "Unable to create temporary file."
 msgstr "Impossível escrever arquivo temporário."
 
-#: ../gebr/ui_help.c:549
+#: ../gebr/ui_help.c:558
 msgid "Error during editor execution."
 msgstr "Erro durate a execução do editor."
 
@@ -1323,19 +1324,17 @@ msgid "Asking local server to terminate job '%s'."
 msgstr "Pedindo para o servidor local terminar a tarefa '%s'."
 
 #: ../gebr/ui_job_control.c:300 ../gebr/ui_job_control.c:306
-#, fuzzy
 msgid "Close job "
-msgstr "Limpar tarefa"
+msgstr "Limpar tarefa "
 
 #: ../gebr/ui_job_control.c:300
-#, fuzzy, c-format
+#, c-format
 msgid "Are you sure you want to close job '%s'?"
 msgstr "Tem certeza que quer limpar a tarefa '%s'?"
 
 #: ../gebr/ui_job_control.c:306
-#, fuzzy
 msgid "Are you sure you want to close the selected jobs?"
-msgstr "Tem certeza que quer limpar as tarefas selecionadas"
+msgstr "Tem certeza que quer limpar as tarefas selecionadas?"
 
 #: ../gebr/ui_job_control.c:319
 msgid "Clear all jobs"
@@ -1355,9 +1354,8 @@ msgid "Are you sure you want to kill job '%s'?"
 msgstr "Tem certeza que quer matar a tarefa '%s'?"
 
 #: ../gebr/ui_job_control.c:380
-#, fuzzy
 msgid "Are you sure you want to kill the selected jobs?"
-msgstr "Tem certeza que quer apagar matar as tarefas selecionadas"
+msgstr "Tem certeza que quer apagar matar as tarefas selecionadas?"
 
 #: ../gebr/ui_job_control.c:385
 msgid "Asking server to kill job."
@@ -1443,11 +1441,11 @@ msgstr "Parâmetros"
 msgid "Default"
 msgstr "Padrão"
 
-#: ../gebr/ui_paths.c:55
+#: ../gebr/ui_paths.c:77
 msgid "Path already exists"
 msgstr "Caminho ainda existe"
 
-#: ../gebr/ui_paths.c:56
+#: ../gebr/ui_paths.c:78
 #, c-format
 msgid ""
 "The path <i>%s</i> already exists in the list, the operation will be "
@@ -1678,6 +1676,9 @@ msgstr ""
 #: ../gebr/ui_server.c:488
 msgid "Select server"
 msgstr "Selecione um servidor"
+
+#~ msgid " '%s'"
+#~ msgstr " '%s'"
 
 #~ msgid "Generate detailed report"
 #~ msgstr "Gerar relatório detalhado"
@@ -1966,9 +1967,6 @@ msgstr "Selecione um servidor"
 
 #~ msgid "Path to store projects, lines and flows"
 #~ msgstr "Caminho para armazenar projetos, linhas e fluxos"
-
-#~ msgid "No program selected"
-#~ msgstr "Nenhum programa selecionado"
 
 #~ msgid "Unable to create GêBR configuration directory.\n"
 #~ msgstr "Incapaz de criar o diretório de configurações da GêBR.\n"

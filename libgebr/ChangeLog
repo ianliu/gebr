@@ -1,14 +1,48 @@
+2011-01-12  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Last i18n for 0.10.1 release
+
+2011-01-12  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Applied patch and removed make-static-package.sh.
+
+2011-01-11  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Changes on 0.10 credits.
+
+2011-01-11  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Update issue 557
+
+2011-01-10  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed a typo when using bindtextdomain
+	* gebr_validate_case_fix now runs until idempotency
+
+2010-12-17  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed a bug with i18n in libgebr
+
+2010-12-14  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* On trying to add a category differing from another, only by a space
+	on the
+
+2010-11-25  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Ported renaming fix to 0.10.1
+
 2010-11-11  Ricardo Biloti  <biloti@gebrproject.com>
 
-        * DéBR icon updated
+	* DéBR icon updated
 
 2010-11-11  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
 
-        * Enables 'Paste' in CKEditor
+	* Enables 'Paste' in CKEditor
 
 2010-11-10  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
 
-        * Updated ChangeLogs for 0.9.20 release.
+	* Updated ChangeLogs for 0.9.20 release.
 
 2010-11-10  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
 

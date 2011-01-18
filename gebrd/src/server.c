@@ -84,9 +84,7 @@ gboolean server_init(void)
 	gebrd.run_filename = g_string_new(NULL);
 	g_string_printf(gebrd.run_filename, "%s/.gebr/run/gebrd-%s.run", g_get_home_dir(), gebrd.hostname);
 	if (g_file_test(gebrd.run_filename->str, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_REGULAR) == TRUE) {
-		/* check if server crashed by trying connecting to it
-		 * if the connection is refused, the it *probably* did
-		 */
+		/* check if server crashed by checking if the port is open */
 		guint16 port;
 		gint code;
 

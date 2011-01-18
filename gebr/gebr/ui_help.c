@@ -341,8 +341,17 @@ static void on_style_action_changed (GtkAction *action, GtkAction *current, Gebr
 //==============================================================================
 void gebr_help_show_selected_program_help(void)
 {
-	if (!flow_edition_get_selected_component(NULL, TRUE))
+	GtkTreeIter iter;
+
+	gebr_gui_gtk_tree_view_turn_to_single_selection(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view));
+	if (!flow_edition_get_selected_component(&iter, TRUE))
 		return;
+	if (gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter)) {
+		return;
+	}
+	if (gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter)) {
+		return;
+	}
 
 	gebr_help_show(GEBR_GEOXML_OBJECT(gebr.program), FALSE);
 }

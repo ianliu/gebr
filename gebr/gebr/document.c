@@ -315,7 +315,7 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 	else {
 		GString *title = g_string_new("");
 		if (gebr_geoxml_document_get_title(parent_document) != NULL)
-			g_string_printf(title, _(" '%s'"), gebr_geoxml_document_get_title(parent_document));
+			g_string_printf(title, " '%s'", gebr_geoxml_document_get_title(parent_document));
 		gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(dialog),
 							 _("The file %s from %s%s (file %s) could not be loaded.\n%s"),
 							 fname, get_document_name(parent_document), title->str,

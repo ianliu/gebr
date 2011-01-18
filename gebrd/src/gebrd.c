@@ -54,6 +54,7 @@ void gebrd_init(void)
 			close(0);
 			close(1);
 			close(2);
+			close(3);
 			i = open("/dev/null", O_RDWR);	/* open stdin */
 			dup(i);	/* stdout */
 			dup(i);	/* stderr */
