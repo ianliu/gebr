@@ -1,19 +1,19 @@
-	/*   libgebr - GeBR Library
-	 *   Copyright (C) 2007-2008  Br ulio Barros de Oliveira (brauliobo@gmail.com)
-	 *
-	 *   This program is free software: you can redistribute it and/or modify
-	 *   it under the terms of the GNU General Public License as published by
-	 *   the Free Software Foundation, either version 3 of the License, or
-	 *   (at your option) any later version.
-	 *
-	 *   This program is distributed in the hope that it will be useful,
-	 *   but WITHOUT ANY WARRANTY; without even the implied warranty of
-	 *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	 *   GNU General Public License for more details.
-	 *
-	 *   You should have received a copy of the GNU General Public License
-	 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-	 */
+/*   libgebr - GeBR Library
+ *   Copyright (C) 2007-2008  Br ulio Barros de Oliveira (brauliobo@gmail.com)
+ *
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include <stdio.h>
 #include <locale.h>
@@ -33,7 +33,7 @@ void cmdline_print_error(char **argv)
 
 int main(int argc, char **argv)
 {
-	static gchar **host_pair;
+	static gchar **host_pair = NULL;
 	static GOptionEntry entries[] = {
 		{G_OPTION_REMAINING, 0, G_OPTION_FLAG_IN_MAIN, G_OPTION_ARG_STRING_ARRAY, &host_pair, "",
 			"192.168.0.1:6010 /tmp/.X11-unix/X0"},
@@ -56,10 +56,11 @@ int main(int argc, char **argv)
 		ret = -1;
 		goto out;
 	}
-	if (g_strv_length(host_pair) != 2) {
+	if (host_pair == NULL || g_strv_length(host_pair) != 2) {
 		cmdline_print_error(argv);
 		ret = -1;
-		g_strfreev(host_pair);
+		if (host_pair != NULL)
+			g_strfreev(host_pair);
 		goto out;
 	}
 
