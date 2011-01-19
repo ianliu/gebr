@@ -22,6 +22,7 @@
 
 G_BEGIN_DECLS
 
+gchar * gebr_stripdir(gchar * dir, gchar *buf, gint maxlen);
 gboolean path_save(void);
 
 void path_add(GebrGuiValueSequenceEdit * sequence_edit);

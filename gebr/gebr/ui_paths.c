@@ -23,6 +23,7 @@
  */
 
 #include <string.h>
+#include <unistd.h>
 #include <gtk/gtk.h>
 
 #include <glib/gi18n.h>
@@ -32,51 +33,138 @@
 #include "gebr.h"
 #include "document.h"
 
+/*
+ *
+ * Function modified from the realpath program.
+ *
+ */
+
+gchar * gebr_stripdir(gchar * dir, gchar *buf, gint maxlen) {
+	gchar * in, * out;
+	gchar * last;
+	gint ldots;
+
+	in   = dir;
+	out  = buf;
+	last = buf + maxlen; 
+	ldots = 0;
+	*out  = 0;
+       	
+	
+	if (*in != '/') {
+		if (getcwd(buf, maxlen - 2) ) {
+			out = buf + strlen(buf) - 1;
+			if (*out != '/') *(++out) = '/';
+			out++;
+		}
+		else
+			return NULL;
+	}
+
+	while (out < last) {
+		*out = *in;
+
+		if (*in == '/')
+		{
+			while (*(++in) == '/') ;
+			in--;
+		}		
+
+		if (*in == '/' || !*in)
+		{
+			if (ldots == 1 || ldots == 2) {
+				while (ldots > 0 && --out > buf)
+				{
+					if (*out == '/')
+						ldots--;
+				}
+				*(out+1) = 0;
+			}
+			ldots = 0;
+			
+		} else if (*in == '.' && ldots > -1) {
+			ldots++;
+		} else {
+			ldots = -1; 
+		}
+		
+		out++;
+
+		if (!*in)
+			break;
+		
+		in++;
+	}
+
+	if (*in) {
+		return NULL;
+	}
+	
+	while (--out != buf && (*out == '/' || !*out)) *out=0;
+	return buf;
+}
 static gboolean check_duplicate (GebrGuiSequenceEdit * sequence_edit, const gchar * path)
 {
 	gboolean retval = FALSE;
 	GtkTreeModel *model;
 	GtkTreeIter iter;
+	gchar buf[2024];
+	gchar buf_i_path[2024];
+	gchar *ok = NULL;
+	gchar * orig_path = NULL;
 
-	gchar *cmp_path = NULL;
-	cmp_path = g_strdup(path);
+	orig_path = g_strdup(path);
+
+	ok = gebr_stripdir( orig_path, buf, sizeof(buf));
+
+	g_free(orig_path);
+
+	if (!ok)
+	{
+		gebr_gui_message_dialog (GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+					 _("Invalid path"),
+					 _("The path <i>%s</i> is invalid, the operation will be cancelled."),
+					 path);
+		return TRUE;
+	}
+
 
 	g_object_get(G_OBJECT(sequence_edit), "list-store", &model, NULL);
-
+	
 	gebr_gui_gtk_tree_model_foreach(iter, model) {
 		gchar *i_path;
+
 		gtk_tree_model_get(model, &iter, 0, &i_path, -1);
-	
-		if (g_str_has_suffix (cmp_path, "/")
-		    && !g_str_has_suffix (i_path, "/"))
+
+
+		ok = gebr_stripdir( i_path, buf_i_path, sizeof(buf_i_path));
+
+		if (!ok)
 		{
-			gchar * i_path_mod = g_strdup(i_path);
-			g_free(i_path);
-			i_path = g_strdup_printf("%s/", i_path_mod);
-			g_free(i_path_mod);
-		}
-		else if (!g_str_has_suffix (cmp_path, "/")
-		    && g_str_has_suffix (i_path, "/"))
-		{
-			gchar * path_mod = g_strdup(cmp_path);
-			g_free(cmp_path);
-			cmp_path = g_strdup_printf("%s/", path_mod);
-			g_free(path_mod);
+			g_warning ("Problems with path resolve function in function check_duplicate");
+			return FALSE;
 		}
 
-		if (g_strcmp0(i_path, cmp_path) == 0) {
+		if (g_strcmp0(buf, buf_i_path) == 0) 
+		{
 			gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(sequence_edit->tree_view), &iter);
 			retval = TRUE;
 		}
 		g_free(i_path);
-		g_free(cmp_path);
 	}
 
+
 	if (retval) {
-		gebr_gui_message_dialog (GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
-					 _("Path already exists"),
-					 _("The path <i>%s</i> already exists in the list, the operation will be cancelled."),
-					 path);
+		if (g_strcmp0(path,buf) == 0)
+			gebr_gui_message_dialog (GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+						 _("Path already exists"),
+						 _("The path <i>%s</i> already exists in the list, the operation will be cancelled."),
+						 path);
+		else
+			gebr_gui_message_dialog (GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+						 _("Path already exists"),
+						 _("The path <i>%s</i> already exists in the list as %s, the operation will be cancelled."),
+						 path, buf);
 	}
 
 	return retval;
@@ -92,6 +180,8 @@ gboolean path_save(void)
 void path_add(GebrGuiValueSequenceEdit * sequence_edit)
 {
 	const gchar *path;
+	gchar buf[2024];
+	gchar *ok = NULL;
 	GebrGuiFileEntry *file_entry;
 
 	g_object_get(G_OBJECT(sequence_edit), "value-widget", &file_entry, NULL);
@@ -100,8 +190,19 @@ void path_add(GebrGuiValueSequenceEdit * sequence_edit)
 	if (!strlen(path) || check_duplicate (GEBR_GUI_SEQUENCE_EDIT(sequence_edit), path))
 		return;
 
+	gchar * path_copy = NULL;
+	path_copy = g_strdup(path);
+	ok = gebr_stripdir(path_copy, buf, sizeof(buf));
+
+	g_free(path_copy);
+
+	if (!ok)
+		return;
+
+	gchar * clean_path = g_strdup_printf("%s", buf);
 	gebr_gui_value_sequence_edit_add(sequence_edit,
-					 GEBR_GEOXML_SEQUENCE(gebr_geoxml_line_append_path(gebr.line, path)));
+					 GEBR_GEOXML_SEQUENCE(gebr_geoxml_line_append_path(gebr.line, clean_path)));
+	g_free(clean_path);
 	path_save();
 }
 
