@@ -440,6 +440,7 @@ gboolean job_control_get_selected(GtkTreeIter * iter, enum JobControlSelectionTy
 static void job_update_text_buffer(GtkTreeIter iter, struct job *job)
 {
 	GString *info, *queue_info;
+	GtkTextIter iter_text_buffer;
 	
 	info = g_string_new(NULL);
 	/*
@@ -459,17 +460,15 @@ static void job_update_text_buffer(GtkTreeIter iter, struct job *job)
 
 	/* start date */
 	g_string_append_printf(info, "%s %s\n", _("Start date:"), gebr_localized_date(job->start_date->str));
-	/* issues */
-	if (job->issues->len){
-		g_string_append_printf(info, "\n%s\n%s", _("Issues:"), job->issues->str); /* command line */
-		gtk_text_buffer_set_text(gebr.ui_job_control->text_buffer, info->str, info->len);
-		GtkTextIter iter;
 
-		gtk_text_buffer_get_end_iter(gebr.ui_job_control->text_buffer, &iter);
-		gtk_text_buffer_get_iter_at_offset(gebr.ui_job_control->text_buffer, &iter, gtk_text_iter_get_offset(&iter));
-		gtk_text_buffer_create_mark(gebr.ui_job_control->text_buffer, "issue", &iter, TRUE);
-		g_string_assign(info, "");
-	}
+	/* issues */
+	g_string_append_printf(info, "\n%s\n%s", _("Issues:"), job->issues->str); /* command line */
+	gtk_text_buffer_set_text(gebr.ui_job_control->text_buffer, info->str, info->len);
+
+	gtk_text_buffer_get_end_iter(gebr.ui_job_control->text_buffer, &iter_text_buffer);
+	gtk_text_buffer_create_mark(gebr.ui_job_control->text_buffer, "issue", &iter_text_buffer, TRUE);
+	g_string_assign(info, "");
+
 	if (job->cmd_line->len)
 		g_string_append_printf(info, "\n%s\n%s\n", _("Command line:"), job->cmd_line->str);
 

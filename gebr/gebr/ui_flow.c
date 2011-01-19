@@ -354,6 +354,8 @@ static gboolean flow_io_run_dialog(GebrCommServerRun *config, struct server *ser
 		}
 	} while (!(moab_server_validated && queue_name_validated && num_processes_validated));
 
+	gebr_geoxml_flow_io_set_from_server(gebr.flow, gebr.flow_server);
+	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
 out:
 	gtk_widget_destroy(dialog);
 	return ret;
