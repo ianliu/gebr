@@ -741,7 +741,7 @@
         <tip>
           <para>Observe a <emphasis role="bold">barra de informações</emphasis> na parte de cima da
             janela principal, logo abaixo do menu <guimenu>Ações</guimenu>. Ela mostra a árvore
-            completa do fluxo que estiver selecionado-------------------------------(acepted).</para>
+            completa do fluxo que estiver selecionado.</para>
         </tip>
       </section>
       <section xml:id="sec_3_2_2">
@@ -781,8 +781,8 @@
         <tip>
           <para>O fluxo (ou conjunto de fluxos) copiado anteriormente para a área de transferência
             pode ser colado em <emphasis role="bold">qualquer linha</emphasis> existente, e não só
-            na linha de origem. Basta alternar para a aba <guilabel>Projects and Lines</guilabel>,
-            selecionar a linha desejada, voltar para a aba <guilabel>Flows</guilabel> e colar o(s)
+            na linha de origem. Basta alternar para a aba <guilabel>Projetos e Linhas</guilabel>,
+            selecionar a linha desejada, voltar para a aba <guilabel>Fluxos</guilabel> e colar o(s)
             fluxo(s).</para>
         </tip>
       </section>
@@ -810,14 +810,14 @@
                 <imagedata fileref="../images/botao_editar_propriedades_projeto.png"/>
               </imageobject>
             </inlinemediaobject></guiicon>.</para>
-        <para>Na janela <guilabel>Properties for flow</guilabel> você pode editar os campos
-            <guilabel>Title</guilabel>, <guilabel>Description</guilabel>,
-            <guilabel>Author</guilabel> e <guilabel>Email</guilabel>. Além disso, pode criar e
+        <para>Na janela <guilabel>Propriedades para Fluxo</guilabel> você pode editar os campos
+            <guilabel>Título, Descrição, Autor e Email</guilabel>, <guilabel>Descrição</guilabel>,
+            <guilabel>Autor</guilabel> e <guilabel>Email</guilabel>. Além disso, pode criar e
           editar um relatório com informações adicionais sobre o fluxo. O procedimento é idêntico ao
           usado para projetos e linhas (veja a <link linkend="sec_3_1_4"><emphasis role="bold">seção
               3.1.4</emphasis></link>). Para <emphasis role="bold">visualizar o relatório</emphasis>
-          que você criou, clique no botão <guibutton>Informações</guibutton>, na parte de baixo da
-          caixa <guilabel>Details</guilabel>, no lado direito da janela principal.</para>
+          que você criou, clique no botão <guibutton>Visualizar Relatório</guibutton>, na parte de baixo da
+          caixa <guilabel>Detalhes</guilabel>, no lado direito da janela principal.</para>
       </section>
       <section xml:id="sec_3_2_6">
         <title>Editar o dicionário de parâmetros de um fluxo</title>
@@ -845,7 +845,7 @@
                 </inlinemediaobject></guiicon></para>
           </step>
           <step>
-            <para>Se desejar, digite um comentário na janela <guilabel>Save flow state</guilabel>,
+            <para>Se desejar, digite um comentário na janela <guilabel>Salvar estado do fluxo</guilabel>,
               para identificar o estado salvo.</para>
           </step>
           <step>
@@ -865,15 +865,15 @@
                 <imagedata fileref="../images/botao_salvar_estado.png"/>
               </imageobject>
             </inlinemediaobject></guiicon>, e então selecione o estado para o qual quer retornar.
-          Sempre que você selecionar um estado salvo na lista, o diálogo <guilabel>Backup current
-            state</guilabel> será exibido. Se clicar em <guibutton>Sim</guibutton>, a janela
-            <guilabel>Save flow state</guilabel> se abrirá, e você poderá salvar um novo estado. Se
+          Sempre que você selecionar um estado salvo na lista, o diálogo <guilabel>Fazer backup do estado 
+	atual?</guilabel> será exibido. Se clicar em <guibutton>Sim</guibutton>, a janela
+            <guilabel>Salvar estado do fluxo</guilabel> se abrirá, e você poderá salvar um novo estado. Se
           clicar em <guibutton>Não</guibutton>, a GêBR apenas reverterá para o estado escolhido, sem
           salvar o atual.</para>
         <tip>
           <para>Se você tem certeza de já ter salvo o estado atual, pode clicar com segurança em
-              <guibutton>Não</guibutton>, na janela <guilabel>Backup current state</guilabel>. Isso
-            evita encher a lista com estados redundantes.</para>
+              <guibutton>Não</guibutton>, na janela <guilabel>Fazer backup do estado 
+	atual?</guilabel>. Isso evita encher a lista com estados redundantes.</para>
         </tip>
         <caution>
           <para>A GêBR preserva continuamente a lista de estados salvos. Mesmo que você desligue o
@@ -889,7 +889,7 @@
         <procedure>
           <step>
             <para>Certifique-se de ter <emphasis role="bold">criado e selecionado uma
-                linha</emphasis>, na aba <guilabel>Projects and Lines</guilabel>. Lembre-se que, na
+                linha</emphasis>, na aba <guilabel>Projetos e Linhas</guilabel>. Lembre-se que, na
               GêBR, fluxos só podem existir dentro de linhas (veja este conceito na <link
                 linkend="sec_2"><emphasis role="bold">seção 2</emphasis></link>). Portanto, para
               importar um fluxo é necessário <emphasis role="bold">selecionar uma linha
@@ -897,14 +897,14 @@
               nenhuma).</para>
           </step>
           <step>
-            <para>Selecione a aba <guilabel>Flows</guilabel> e clique no botão <guiicon><inlinemediaobject>
+            <para>Selecione a aba <guilabel>Fluxos</guilabel> e clique no botão <guiicon><inlinemediaobject>
                   <imageobject>
                     <imagedata fileref="../images/botao_importar_projeto.png"/>
                   </imageobject>
                 </inlinemediaobject></guiicon></para>
           </step>
           <step>
-            <para>Navegue pela janela <guilabel>Choose filename to open</guilabel> e selecione o
+            <para>Navegue pela janela <guilabel>Escolha arquivo para abrir</guilabel> e selecione o
               fluxo que deseja importar (apenas arquivos do tipo <filename class="extension"
                 >flw</filename> serão mostrados).</para>
           </step>
@@ -932,7 +932,7 @@
                 </inlinemediaobject></guiicon></para>
           </step>
           <step>
-            <para>Na janela <guilabel>Choose filename to save</guilabel>, selecione uma pasta e
+            <para>Na janela <guilabel>Escolha arquivo para salvar</guilabel>, selecione uma pasta e
               digite um nome para o arquivo (a GêBR determina automaticamente a extensão <filename
                 class="extension">flw</filename>).</para>
           </step>
@@ -942,7 +942,7 @@
         </procedure>
       </section>
       <section xml:id="sec_3_2_10">
-        <title>Exportar um fluxo como um menu</title>
+        <title>Importação de menus da GêBR pela DéBR</title>
         <para>Na GêBR, às vezes usa-se o termo <emphasis>menu</emphasis> para designar a
             <emphasis>especificação de um programa</emphasis> que realiza uma determinada tarefa.
           Para evitar confusão com o menu comumente usado em informática, vamos chamar essa
@@ -957,13 +957,13 @@
           feito com a <emphasis>interface para criação e edição de Menus GêBR</emphasis>, a
             <emphasis role="bold">DéBR</emphasis>.</para>
         <para>A criação e edição de <emphasis>Menus GêBR</emphasis> por meio da DéBR é um assunto
-          vasto (veja os artigos <emphasis>How porting programs to GêBR</emphasis> e
-            <emphasis>Guidelines to write menu's documentation</emphasis>, na guia
-            <emphasis>Documentation</emphasis> da página oficial da GêBR - <emphasis><link
+          vasto (veja os artigos <emphasis>Como portar programas para GêBR</emphasis> e
+            <emphasis>Guia para escrever documentação de menu</emphasis>, na guia
+            <emphasis>Documentação</emphasis> da página oficial da GêBR - <emphasis><link
               xlink:href="http:\\www.gebrproject.com">www.gebrproject.com</link></emphasis>). Por
           agora, o que importa é saber que <emphasis role="bold">um fluxo pode ser transformado em
-            um componente adicional</emphasis>. Para isso você deve exportar o fluxo como um
-            <emphasis>Menu GêBR</emphasis>, assim:</para>
+            um componente adicional</emphasis>. Para isso você deve exportar o fluxo a partir da Gêbr
+	e importá-lo através da DéBR assim:</para>
         <procedure>
           <step>
             <para>Selecione o fluxo que deseja exportar.</para>
@@ -971,51 +971,52 @@
           <step>
             <para>Clique no botão <guiicon><inlinemediaobject>
                   <imageobject>
-                    <imagedata fileref="../images/botao_exportar_menu.png"/>
+                    <imagedata fileref="../images/botao_exportar_projeto.png"/>
                   </imageobject>
                 </inlinemediaobject></guiicon></para>
           </step>
           <step>
-            <para>Na janela <guilabel>Choose filename to save</guilabel>, selecione uma pasta e
-              digite um nome para o arquivo (a GêBR determina automaticamente a extensão <filename
-                class="extension">mnu</filename>).</para>
-            <important>
-              <para>É recomendável escolher uma pasta exclusiva para salvar arquivos do tipo
-                  <filename class="extension">mnu</filename>. Você pode determinar a pasta padrão em <menuchoice>
-                  <guimenu>Actions</guimenu>
-                  <guimenuitem>Preferências</guimenuitem>
-                </menuchoice> (no canto superior esquerdo da janela principal), no campo
-                  <guilabel>User's menus directory</guilabel>.</para>
-            </important>
+            <para>Na janela <guilabel>Escolha arquivo para salvar</guilabel>, selecione uma pasta e
+              digite um nome para o arquivo.</para>
           </step>
           <step>
             <para>Clique em <guibutton>Salvar</guibutton>.</para>
+          </step>
+	</step>
+          <step>
+            <para>Em <guilabel>Menu</guilabel> da DéBR, clicar em <guilabel>Importar fluxo como menu</guilabel>,
+	 escolher o fluxo e clicar em <guilabel>Abrir</guilabel>. Esse procedimento é melhor detalhado 
+	em <guilabel>Ajuda</guilabel> na interface DéBR.</para>
           </step>
         </procedure>
       </section>
       <section xml:id="sec_3_2_11">
         <title>Editar arquivos de entrada e saída do fluxo</title>
         <para>Para facilitar o uso, este comando aparece repetidamente nas abas
-            <guilabel>Flows</guilabel> e <guilabel>Flow edition</guilabel>. Por razões didáticas,
-          entendemos que é melhor voltar a falar dele na <link linkend="sec_3_3_6"><emphasis
+            <guilabel>Projetos e linhas</guilabel> através do botão <guiicon><inlinemediaobject>
+              <imageobject>
+                <imagedata fileref="../images/botao_editar_propriedades_projeto.png"/>
+              </imageobject>
+            </inlinemediaobject></guiicon>, no diálogo Propriedades para linha e em <guilabel>Edição de fluxo</guilabel>,
+	 no campo Sequência de fluxo. Por razões didáticas, entendemos que é melhor voltar a falar dele na
+	 <link linkend="sec_3_3_6"><emphasis
               role="bold">seção 3.3.6</emphasis></link>.</para>
       </section>
       <section xml:id="sec_3_2_12">
         <title>Executar um fluxo</title>
-        <para>Para facilitar o uso, este comando aparece repetidamente nas abas
-            <guilabel>Flows</guilabel> e <guilabel>Flow edition</guilabel>. Por razões didáticas,
-          entendemos que é melhor voltar a falar dele na <link linkend="sec_3_3_7"><emphasis
+        <para>Este comando aparece repetidamente nas abas
+            <guilabel>Fluxos</guilabel> e <guilabel>Edição de fluxo</guilabel> de duas formas distintas.
+	 Por razões didáticas, entendemos que é melhor voltar a falar dele na <link linkend="sec_3_3_7"><emphasis
               role="bold">seção 3.3.7</emphasis></link>.</para>
       </section>
     </section>
     <section xml:id="sec_3_3">
-      <title>A aba <guilabel>Flow edition</guilabel></title>
+      <title>A aba <guilabel>Edição de Fluxo</guilabel></title>
       <para>Todo fluxo criado na GêBR nasce vazio, isto é, <emphasis role="bold">sem
           componentes</emphasis> que descrevam uma sequência funcional de operações. Para um fluxo
         tornar-se funcional, é preciso <emphasis role="bold">adicionar componentes</emphasis> a ele.
         Além disso, é preciso <emphasis role="bold">configurar os componentes</emphasis>, para que
-        realizem tarefas específicas. Tudo isso é feito na aba <guilabel>Flow
-        edition</guilabel>.</para>
+        realizem tarefas específicas. Tudo isso é feito na aba <guilabel>Edição de Fluxo</guilabel>.</para>
       <para>Na <emphasis role="bold"><link linkend="sec_2_2">seção 2.2</link></emphasis> vimos que
         os componentes padrão da GêBR são separados em treze categorias, listadas na caixa
           <guilabel>Flow components</guilabel>, no lado direito da janela principal:</para>
@@ -1070,12 +1071,12 @@
         procedimento:</para>
       <procedure>
         <step>
-          <para>Selecione um fluxo na aba <guilabel>Flows</guilabel>. Depois selecione a aba
-              <guilabel>Flow edition</guilabel>.</para>
+          <para>Selecione um fluxo na aba <guilabel>Fluxos</guilabel>. Depois selecione a aba
+              <guilabel>Edição de Fluxo</guilabel>.</para>
           <tip>
-            <para>Quando estiver na aba <guilabel>Flows</guilabel>, experimente dar um clique duplo
-              no fluxo. Assim você alterna mais rapidamente para a aba <guilabel>Flow
-                edition</guilabel>.</para>
+            <para>Quando estiver na aba <guilabel>Fluxos</guilabel>, experimente dar um clique duplo
+              no fluxo. Assim você alterna mais rapidamente para a aba <guilabel>Edição de fluxo.
+	</guilabel>.</para>
           </tip>
         </step>
         <step>
@@ -1173,8 +1174,8 @@
           <para>O componente (ou conjunto de componentes) copiado anteriormente para a área de
             transferência pode ser colado em <emphasis role="bold">qualquer fluxo</emphasis>
             existente, e não só no fluxo de origem. Basta alternar para a aba
-              <guilabel>Flows</guilabel>, selecionar o fluxo desejado, voltar para a aba
-              <guilabel>Flow edition</guilabel> e colar o(s) componentes(s).</para>
+              <guilabel>Fluxos</guilabel>, selecionar o fluxo desejado, voltar para a aba
+              <guilabel>Edição de fluxo</guilabel> e colar o(s) componentes(s).</para>
         </tip>
       </section>
       <section xml:id="sec_3_3_3">
@@ -1204,24 +1205,24 @@
         <para>Para editar os parâmetros de um componente:</para>
         <procedure>
           <step>
-            <para>Selecione-o na caixa <guilabel>Flow sequence</guilabel> e clique no botão <guiicon><inlinemediaobject>
+            <para>Selecione-o na caixa <guilabel>Sequência de fluxo</guilabel> e clique no botão <guiicon><inlinemediaobject>
                   <imageobject>
                     <imagedata fileref="../images/botao_editar_propriedades_projeto.png"/>
                   </imageobject>
                 </inlinemediaobject></guiicon>, ou dê um clique duplo no componente.</para>
           </step>
           <step>
-            <para>Na janela <guilabel>Parameters</guilabel>, edite os parâmetros do componente. Note
+            <para>Na janela <guilabel>Parâmetros</guilabel>, edite os parâmetros do componente. Note
               que os parâmetros variam bastante de um componente para outro, tanto em quantidade
               como em tipo.</para>
             <tip>
               <para>Clique no botão <guibutton>Ajuda</guibutton> (canto inferior esquerdo da janela
-                  <guilabel>Parameters</guilabel>) para visualizar a <emphasis role="bold"
+                  <guilabel>Parâmetros</guilabel>) para visualizar a <emphasis role="bold"
                   >documentação do componente</emphasis>. Isso pode ser útil durante a edição de
                 parâmetros.</para>
             </tip>
             <tip>
-              <para>Clique no botão <guibutton>Default</guibutton> quando quiser retornar para a
+              <para>Clique no botão <guibutton>Padrão</guibutton> quando quiser retornar para a
                 configuração padrão do componente.</para>
             </tip>
           </step>
@@ -1294,26 +1295,27 @@
         <para>Para associar arquivos de entrada, saída e erro a um fluxo:</para>
         <procedure>
           <step>
-            <para>Certifique-se de ter selecionado o fluxo e clique no botão <guiicon><inlinemediaobject>
+            <para>Certifique-se de ter selecionado o fluxo e, na aba <guilabel>Edição de fluxo</guilabel>
+	  clique no botão <guiicon><inlinemediaobject>
                   <imageobject>
                     <imagedata fileref="../images/botao_arquivos_entrada_saida.png"/>
                   </imageobject>
                 </inlinemediaobject></guiicon></para>
           </step>
           <step>
-            <para>Localize a caixa <guilabel>Input</guilabel> na parte de baixo da janela
-                <guilabel>Server and I/O setup</guilabel>. Nesta caixa, digite o caminho para o
+            <para>Localize a caixa <guilabel>Entrada</guilabel> na parte de baixo da janela
+                <guilabel>Entrada/Saída do fluxo</guilabel>. Nesta caixa, digite o caminho para o
               arquivo de <emphasis role="bold">entrada</emphasis> (incluindo o nome do arquivo) ou
               clique no ícone <guiicon><inlinemediaobject>
                   <imageobject>
                     <imagedata fileref="../images/icone_escolher_arquivo.png"/>
                   </imageobject>
-                </inlinemediaobject></guiicon> e navegue pela janela <guilabel>Choose a
-                file</guilabel>.</para>
+                </inlinemediaobject></guiicon> e navegue pela janela <guilabel>Escolha um arquivo
+	</guilabel>.</para>
             <important>
               <para>Se você adicionou <emphasis role="bold">caminhos personalizados</emphasis> à
                 linha em que está o fluxo atual, o caminho que estiver no topo da lista será a pasta
-                padrão quando a janela <guilabel>Choose a file</guilabel> for aberta. Este recurso
+                padrão quando a janela <guilabel>Escolha um arquivo</guilabel> for aberta. Este recurso
                 pode <emphasis role="bold">facilitar muito o manuseio de arquivos de
                   dados</emphasis> na GêBR. Voltando ao exemplo da <emphasis role="bold"><link
                     linkend="sec_3_1_6">seção 3.1.6</link></emphasis>, foram adicionados três
@@ -1332,21 +1334,21 @@
             </important>
             <tip>
               <para>Se você quiser que outro caminho seja usado como padrão, basta movê-lo para o
-                topo da lista na janela <guilabel>Path list for line</guilabel> (veja mais detalhes
-                na <emphasis role="bold"><link linkend="sec_3_1_6">seção
-                3.1.6</link></emphasis>).</para>
+                topo da lista na janela <guilabel>Propriedades para linha</guilabel>, no campo
+	 <guilabel>Caminhos</guilabel>(veja mais detalhes na <emphasis role="bold"><link
+	 linkend="sec_3_1_6">seção 3.1.6</link></emphasis>).</para>
             </tip>
           </step>
           <step>
-            <para>Repita o passo 2 para as caixas <guilabel>Output</guilabel> (arquivo de <emphasis
-                role="bold">saída</emphasis>) e <guilabel>Error</guilabel> (arquivo de <emphasis
+            <para>Repita o passo 2 para as caixas <guilabel>Saída</guilabel> (arquivo de <emphasis
+                role="bold">saída</emphasis>) e <guilabel>Erro</guilabel> (arquivo de <emphasis
                 role="bold">erro</emphasis>), depois clique no botão <guiicon><inlinemediaobject>
                   <imageobject>
                     <imagedata fileref="../images/botao_adicionar_caminho.png"/>
                   </imageobject>
                 </inlinemediaobject></guiicon>. Ao fazer isso, o conjunto de arquivos que você
-              definiu vai para o topo da lista, na parte de cima da janela <guilabel>Server and I/O
-                setup</guilabel>. No exemplo abaixo, adicionamos o conjunto de arquivos <filename
+              definiu vai para o topo da lista, na parte de cima da janela <guilabel>Entrada/Saída do fluxo
+	</guilabel>. No exemplo abaixo, adicionamos o conjunto de arquivos <filename
                 class="libraryfile">ent.dat</filename>, <filename class="libraryfile"
                 >sai.dat</filename> e <filename class="libraryfile">err.dat</filename>.</para>
             <screenshot>
@@ -1365,7 +1367,7 @@
               no topo da lista) e clique em <guibutton>Fechar</guibutton>.</para>
           </step>
         </procedure>
-        <para>Ao sair da janela <guilabel>Server and I/O setup</guilabel>, note que os arquivos de
+        <para>Ao sair da janela <guilabel>Entrada/Saída do fluxo</guilabel>, note que os arquivos de
           entrada e saída que você associou ao fluxo aparecem na caixa <guilabel>Flow
             sequence</guilabel>, sinalizados com os ícones <guiicon><inlinemediaobject>
               <imageobject>
@@ -1390,8 +1392,8 @@
             de entrada, saída e erro.</para>
         </tip>
         <note>
-          <para>Você pode adicionar quantos conjuntos de arquivos quiser à lista <guilabel>Server
-              and I/O setup</guilabel>. Todos os conjuntos serão mantidos na lista, mas o fluxo será
+          <para>Você pode adicionar quantos conjuntos de arquivos quiser à lista <guilabel>Entrada/Saída do fluxo
+	</guilabel>. Todos os conjuntos serão mantidos na lista, mas o fluxo será
             executado usando apenas o conjunto que você selecionar por último.</para>
           <para>Se quiser <emphasis role="bold">remover um conjunto</emphasis> da lista, selecione-o
             com o <emphasis role="bold">botão direito</emphasis> do mouse e clique em
@@ -1406,19 +1408,19 @@
               </imageobject>
             </inlinemediaobject></guiicon>.</para>
         <para>Por padrão, os fluxos são executados na máquina de origem, identificada
-          automaticamente pela GêBR como <emphasis role="bold">Local server</emphasis>. Entretanto,
+          automaticamente pela GêBR como <emphasis role="bold">Servidor local</emphasis>. Entretanto,
           a GêBR também permite <emphasis role="bold">executar fluxos em máquinas
           remotas</emphasis>. Veja mais detalhes sobre definição e seleção de servidores na
             <emphasis role="bold"><link linkend="sec_4_2">seção 4.2</link></emphasis>.</para>
         <para>No momento em que o fluxo começa a ser executado, a GêBR alterna imediatamente para a
-          aba <guilabel>Job control</guilabel>, que mostra o relatório (<emphasis>log</emphasis>) da
+          aba <guilabel>Controle de tarefas</guilabel>, que mostra o relatório (<emphasis>log</emphasis>) da
           execução.</para>
       </section>
     </section>
     <section xml:id="sec_3_4">
-      <title>A aba <guilabel>Job control</guilabel></title>
+      <title>A aba <guilabel>Controle de tarefas</guilabel></title>
       <para>Como vimos na <link linkend="sec_3_3_7"><emphasis role="bold">seção
-          3.3.7</emphasis></link>, a aba <guilabel>Job control</guilabel> é acionada toda vez que um
+          3.3.7</emphasis></link>, a aba <guilabel>Controle de tarefas</guilabel> é acionada toda vez que um
         fluxo é executado. Por meio dela pode-se <emphasis role="bold">acompanhar</emphasis> e, se
         necessário ou desejável, <emphasis role="bold">interromper</emphasis> a execução dos fluxos.
         Vejamos os comandos disponíveis:</para>
@@ -1427,39 +1429,44 @@
           <para><link linkend="sec_3_4_1">Salvar informação da tarefa em arquivo</link></para>
         </listitem>
         <listitem>
-          <para><link linkend="sec_3_4_2">Pedir para o servidor terminar a tarefa</link></para>
+          <para><link linkend="sec_3_4_2">Limpar tarefa</link></para>
         </listitem>
         <listitem>
-          <para><link linkend="sec_3_4_3">Limpar log de tarefas atual</link></para>
-        </listitem>
-        <listitem>
-          <para><link linkend="sec_3_4_4">Limpar todos os logs de tarefas inativas</link></para>
-        </listitem>
-        <listitem>
-          <para><link linkend="sec_3_4_5">Pedir para o servidor matar a tarefa</link></para>
+          <para><link linkend="sec_3_4_3">Pedir para o servidor cancelar a tarefa</link></para>
         </listitem>
       </itemizedlist>
       <section xml:id="sec_3_4_1">
         <title>Salvar informação da tarefa em arquivo</title>
-        <para>Toda vez que um fluxo é executado, surge na caixa <guilabel>Jobs</guilabel>, dentro da
-          aba <guilabel>Job control</guilabel>, uma tarefa identificada com o título do
+        <para>Toda vez que um fluxo é executado, surge na caixa <guilabel>Tarefas</guilabel>, dentro da
+          aba <guilabel>Controle de tarefas</guilabel>, uma tarefa identificada com o título do
           fluxo.</para>
         <para>Para salvar a informação da tarefa em um arquivo, selecione-a na caixa
-            <guilabel>Jobs</guilabel> e clique no botão <guiicon><inlinemediaobject>
+            <guilabel>Tarefas</guilabel> e clique no botão <guiicon><inlinemediaobject>
               <imageobject>
                 <imagedata fileref="../images/botao_salvar_log.png"/>
               </imageobject>
             </inlinemediaobject></guiicon>.</para>
       </section>
       <section xml:id="sec_3_4_2">
-        <title>Pedir para o servidor terminar a tarefa</title>
-        <para>Em geral, tarefas complexas levam algum tempo para serem executadas. Se por alguma
+        <title>Limpar tarefa</title>
+	<para>Para remover o log de uma tarefa, selecione-a na caixa <guilabel>Tarefas</guilabel> e
+          clique no botão <guiicon><inlinemediaobject>
+              <imageobject>
+                <imagedata fileref="../images/botao_limpar_log_atual.png"/>
+              </imageobject>
+            </inlinemediaobject></guiicon>.</para>
+        <para>Só podem ser excluídas as tarefas que não estiverem em execução (sinalizadas com <guiicon><inlinemediaobject>
+              <imageobject>
+        </section>
+      <section xml:id="sec_3_4_3">
+        <title>Pedir para o servidor cancelar a tarefa</title>
+	<para>Em geral, tarefas complexas levam algum tempo para serem executadas. Se por alguma
           razão for necessário forçar o término de uma tarefa antes que ela termine naturalmente,
           selecione a tarefa em execução (sinalizada com <guiicon><inlinemediaobject>
               <imageobject>
                 <imagedata fileref="../images/icone_tarefa_em_execucao.png"/>
               </imageobject>
-            </inlinemediaobject></guiicon>) na caixa <guilabel>Jobs</guilabel> e clique no botão <guiicon><inlinemediaobject>
+            </inlinemediaobject></guiicon>) na caixa <guilabel>Tarefas</guilabel> e clique no botão <guiicon><inlinemediaobject>
               <imageobject>
                 <imagedata fileref="../images/botao_terminar_tarefa.png"/>
               </imageobject>
@@ -1469,17 +1476,7 @@
                 <imagedata fileref="../images/icone_tarefa_terminada_erro.png"/>
               </imageobject>
             </inlinemediaobject></guiicon>.</para>
-      </section>
-      <section xml:id="sec_3_4_3">
-        <title>Limpar log de tarefas atual</title>
-        <para>Para remover o log de uma tarefa, selecione-a na caixa <guilabel>Jobs</guilabel> e
-          clique no botão <guiicon><inlinemediaobject>
-              <imageobject>
-                <imagedata fileref="../images/botao_limpar_log_atual.png"/>
-              </imageobject>
-            </inlinemediaobject></guiicon>.</para>
-        <para>Só podem ser excluídas as tarefas que não estiverem em execução (sinalizadas com <guiicon><inlinemediaobject>
-              <imageobject>
+        
                 <imagedata fileref="../images/icone_tarefa_concluida_sucesso.png"/>
               </imageobject>
             </inlinemediaobject></guiicon> ou <guiicon><inlinemediaobject>
@@ -1488,37 +1485,7 @@
               </imageobject>
             </inlinemediaobject></guiicon>).</para>
       </section>
-      <section xml:id="sec_3_4_4">
-        <title>Limpar todos os logs de tarefas inativas</title>
-        <para>Para remover todos os logs de tarefas inativas (aquelas sinalizadas com <guiicon><inlinemediaobject>
-              <imageobject>
-                <imagedata fileref="../images/icone_tarefa_concluida_sucesso.png"/>
-              </imageobject>
-            </inlinemediaobject></guiicon> ou <guiicon><inlinemediaobject>
-              <imageobject>
-                <imagedata fileref="../images/icone_tarefa_terminada_erro.png"/>
-              </imageobject>
-            </inlinemediaobject></guiicon>), clique no botão <guiicon><inlinemediaobject>
-              <imageobject>
-                <imagedata fileref="../images/botao_limpar_logs_inativos.png"/>
-              </imageobject>
-            </inlinemediaobject></guiicon>.</para>
-      </section>
-      <section xml:id="sec_3_4_5">
-        <title>Pedir para o servidor matar a tarefa</title>
-        <para>Algumas vezes, e por razões diversas, uma tarefa pode "travar", isto é, não termina
-          naturalmente e nem pode ser terminada pelo comando <guiicon><inlinemediaobject>
-              <imageobject>
-                <imagedata fileref="../images/botao_terminar_tarefa.png"/>
-              </imageobject>
-            </inlinemediaobject></guiicon>.</para>
-        <para>Nesses casos, o último recurso é "matar" a tarefa por meio do botão <guiicon><inlinemediaobject>
-              <imageobject>
-                <imagedata fileref="../images/botao_matar_tarefa.png"/>
-              </imageobject>
-            </inlinemediaobject></guiicon>.</para>
-      </section>
-    </section>
+     </section>
   </section>
   <section xml:id="sec_4">
     <title>Recursos adicionais</title>
@@ -1533,7 +1500,7 @@
           <para>Crie um fluxo e insira nele um componente muito simples chamado
               <guimenuitem>Sleep</guimenuitem>, cuja única função é pausar a execução do fluxo por
             um determinado tempo (você encontra este componente na categoria <guimenu>Shell
-              tools</guimenu>, na aba <guilabel>Flow edition</guilabel>).</para>
+              tools</guimenu>, na aba <guilabel>Edição de Fluxo</guilabel>).</para>
           <screenshot>
             <info>
               <title/>
@@ -1556,7 +1523,7 @@
           </screenshot>
         </step>
         <step>
-          <para>Na aba <guilabel>Flows</guilabel>, clique no botão <guiicon><inlinemediaobject>
+          <para>Na aba <guilabel>Projetos e Linhas</guilabel>, clique no botão <guiicon><inlinemediaobject>
                 <imageobject>
                   <imagedata fileref="../images/botao_dicionario_projeto.png"/>
                 </imageobject>
@@ -1564,14 +1531,14 @@
               parâmetros</emphasis>.</para>
         </step>
         <step>
-          <para>Na janela que se abre (<guilabel>Parameters' dictionary for flow</guilabel>), clique
-            duas vezes no campo <guilabel>New</guilabel>, dentro da lista
+          <para>Na janela que se abre (<guilabel>Dicionário de parâmetros para linha</guilabel>), clique
+            duas vezes no campo <guilabel>Novo</guilabel>, dentro da lista
               <guilabel>Project</guilabel>. Abre-se um menu com três opções
-              (<guimenuitem>integer</guimenuitem>, <guimenuitem>real</guimenuitem> e
+              (<guimenuitem>inteiro</guimenuitem>, <guimenuitem>real</guimenuitem> e
               <guimenuitem>string</guimenuitem>). Selecione a opção
-              <guimenuitem>integer</guimenuitem>, depois digite <userinput>Tempo</userinput> na
-            coluna <guilabel>Keyword</guilabel> e <userinput>5</userinput> na coluna
-              <guilabel>Value</guilabel>. Ao terminar, sua janela deve se parecer com a
+              <guimenuitem>inteiro</guimenuitem>, depois digite <userinput>Tempo</userinput> na
+            coluna <guilabel>Palavra-chave</guilabel> e <userinput>5</userinput> na coluna
+              <guilabel>Valor</guilabel>. Ao terminar, sua janela deve se parecer com a
             seguinte:</para>
           <screenshot>
             <info>
@@ -1585,10 +1552,10 @@
           </screenshot>
         </step>
         <step>
-          <para>Depois de fechar a janela <guilabel>Parameters' dictionary for flow</guilabel>,
-            selecione a aba <guilabel>Flow edition</guilabel> e, na caixa <guilabel>Flow
-              sequence</guilabel>, dê um clique duplo no componente <guilabel>Sleep</guilabel>. Na
-            janela que se abre (<guilabel>Parameters</guilabel>), clique com o <emphasis role="bold"
+          <para>Depois de fechar a janela <guilabel>Dicionário de parâmeros para linha</guilabel>,
+            selecione a aba <guilabel>Edição de fluxo</guilabel> e, na caixa <guilabel>Sequência de fluxo
+	</guilabel>, dê um clique duplo no componente <guilabel>Sleep</guilabel>. Na
+            janela que se abre (<guilabel>Parâmetros</guilabel>), clique com o <emphasis role="bold"
               >botão direito do mouse</emphasis> no campo <guilabel>Time to sleep</guilabel>. O
             objetivo é atribuir a variável <emphasis role="bold">Tempo=5</emphasis> ao parâmetro
               <guilabel>Time to sleep</guilabel>, como mostrado a seguir:</para>
@@ -1604,8 +1571,8 @@
           </screenshot>
         </step>
         <step>
-          <para>Depois de fechar a janela <guilabel>Parameters</guilabel>, vá para a aba
-              <guilabel>Flows</guilabel> e crie algumas cópias do fluxo, dando nomes diferentes a
+          <para>Depois de fechar a janela <guilabel>Parametros</guilabel>, vá para a aba
+              <guilabel>Fluxos</guilabel> e crie algumas cópias do fluxo, dando nomes diferentes a
             cada uma. Ao executar qualquer um destes fluxos, o resultado é uma <emphasis role="bold"
               >pausa de 5 segundos</emphasis>.</para>
           <screenshot>
@@ -1633,36 +1600,36 @@
         fluxos do exemplo, pois as cópias teriam de ser reconfiguradas uma a uma.</para>
       <important>
         <para>Você pode definir a visibilidade das variáveis, compartimentando-as nas listas
-            <guilabel>Project</guilabel>, <guilabel>Line</guilabel> e <guilabel>Flow</guilabel>.
-          Variáveis pertencentes à lista <guilabel>Project</guilabel> são visíveis para <emphasis
+            <guilabel>Projeto</guilabel>, <guilabel>Linha</guilabel> e <guilabel>Fluxo</guilabel>.
+          Variáveis pertencentes à lista <guilabel>Projeto</guilabel> são visíveis para <emphasis
             role="bold">todos os fluxos</emphasis> de todas as linhas do projeto selecionado.
-          Variáveis pertencentes à lista <guilabel>Line</guilabel> são visíveis apenas para os
+          Variáveis pertencentes à lista <guilabel>Linha</guilabel> são visíveis apenas para os
             <emphasis role="bold">fluxos da linha selecionada</emphasis>. Variáveis pertencentes à
-          lista <guilabel>Flow</guilabel> são visíveis apenas para o <emphasis role="bold">fluxo
+          lista <guilabel>Fluxo</guilabel> são visíveis apenas para o <emphasis role="bold">fluxo
             selecionado</emphasis>.</para>
       </important>
     </section>
     <section xml:id="sec_4_2">
-      <title>O menu <guimenu>Actions</guimenu></title>
-      <para>A partir do menu <guimenu>Actions</guimenu> você acessa as janelas
+      <title>O menu <guimenu>Ações</guimenu></title>
+      <para>A partir do menu <guimenu>Ações</guimenu> você acessa as janelas
           <guimenuitem>Preferências</guimenuitem> e <guimenuitem>Servidores</guimenuitem>. Se você
         leu todo o manual, provavelmente já usou quase todos os recursos disponíveis nessas duas
         janelas. De qualquer forma, segue a documentação.</para>
       <section>
         <title>Preferências</title>
-        <para>As definições que você faz na janela <guilabel>Preferences</guilabel> são adotadas
+        <para>As definições que você faz na janela <guilabel>Preferências</guilabel> são adotadas
           como padrão pela GêBR. Vejamos os detalhes:</para>
         <itemizedlist>
           <listitem>
             <para><guilabel>User name:</guilabel> Padrão adotado no campo
-                <guilabel>Author</guilabel> durante a criação de projetos, linhas e fluxos.</para>
+                <guilabel>Autor</guilabel> durante a criação de projetos, linhas e fluxos.</para>
           </listitem>
           <listitem>
             <para><guilabel>Email:</guilabel> Padrão adotado no campo <guilabel>Email</guilabel>
               durante a criação de projetos, linhas e fluxos.</para>
           </listitem>
           <listitem>
-            <para><guilabel>User's menus directory:</guilabel> Pasta padrão usada para manutenção de
+            <para><guilabel>Diretório de menus do usuário:</guilabel> Pasta padrão usada para manutenção de
                 <emphasis>Menus GêBR</emphasis> (arquivos <filename class="extension"
               >mnu</filename>).</para>
           </listitem>
@@ -1670,16 +1637,7 @@
             <para><guilabel>HTML editor:</guilabel> Editor de textos padrão adotado pela GêBR para
               criação de relatórios de informações de projetos, linhas e fluxos.</para>
           </listitem>
-          <listitem>
-            <para><guilabel>Browser:</guilabel> Navegador padrão adotado pela GêBR.</para>
-          </listitem>
-          <listitem>
-            <para><guilabel>Load past-execution log:</guilabel> Marque esta caixa se quiser que a
-              GêBR mostre o <emphasis><link linkend="sec_4_3">log de execução</link></emphasis>
-              completo, incluindo ações de datas passadas. Mantenha a caixa desmarcada se quiser que
-              mostre apenas a partir da última inicialização.</para>
-          </listitem>
-        </itemizedlist>
+          </itemizedlist>
         <screenshot>
           <info>
             <title/>
@@ -1693,14 +1651,14 @@
       </section>
       <section>
         <title>Servidores</title>
-        <para>Use a janela <guilabel>Servers configuration</guilabel> para configurar o servidor
+        <para>Use a janela <guilabel>Configuração de servidores</guilabel> para configurar o servidor
           local e os servidores remotos que você adicionar.</para>
-        <para>O servidor local, identificado como <emphasis>Local server</emphasis>, é criado e
+        <para>O servidor local, identificado como <emphasis>Servidor local</emphasis>, é criado e
           conectado automaticamente pela GêBR na inicialização. Ele é a máquina padrão usada para a
           execução dos fluxos.</para>
         <para>Servidores remotos podem ser adicionados, para execução remota dos fluxos. Para
-          adicionar um servidor, digite o endereço na parte de baixo da janela <guilabel>Servers
-            configuration</guilabel> e clique no botão <guibutton>Adicionar</guibutton>.</para>
+          adicionar um servidor, digite o endereço na parte de baixo da janela <guilabel>Configuração de servidores
+	</guilabel> e clique no botão <guibutton>Adicionar</guibutton>.</para>
         <screenshot>
           <info>
             <title/>
@@ -1712,11 +1670,11 @@
           </mediaobject>
         </screenshot>
         <important>
-          <para>Todos os servidores definidos na janela <guilabel>Servers configuration</guilabel>
-            ficam visíveis na aba <guilabel>Flow edition</guilabel> (você seleciona o servidor na
-            caixa <guilabel>Server</guilabel>, logo acima da caixa <guilabel>Flow
-              sequence</guilabel>, no lado esquerdo da janela principal) e também na janela
-              <guilabel>Server and I/O setup</guilabel> (aquela em que os arquivos de entrada e
+          <para>Todos os servidores definidos na janela <guilabel>Configuração de servidores</guilabel>
+            ficam visíveis na aba <guilabel>Edição de fluxo</guilabel> (você seleciona o servidor na
+            caixa <guilabel>Servidor</guilabel>, logo acima da caixa <guilabel>Sequência de fluxo
+	</guilabel>, no lado esquerdo da janela principal) e também na janela
+              <guilabel>Entrada/Saída do fluxo</guilabel> (aquela em que os arquivos de entrada e
             saída do fluxo são definidos).</para>
         </important>
       </section>
@@ -1739,10 +1697,10 @@
       </screenshot>
       <tip>
         <para>Em <menuchoice>
-            <guimenu>Actions</guimenu>
+            <guimenu>Ações</guimenu>
             <guimenuitem>Preferências</guimenuitem>
-          </menuchoice> (no canto superior esquerdo da janela principal), campo <guilabel>Load
-            past-execution log</guilabel>, você escolhe entre exibir o log completo, incluindo ações
+          </menuchoice> (no canto inferior da janela principal), campo <guilabel>Carregar o log das 
+	execuções anteriores</guilabel>, você escolhe entre exibir o log completo, incluindo ações
           de datas passadas, o log compacto, que mostra apenas as ações a partir da última
           inicialização.</para>
       </tip>
