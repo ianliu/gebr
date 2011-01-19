@@ -37,6 +37,15 @@
  *
  * Function modified from the realpath program.
  *
+ * Original authors credits: 
+ *
+ * realpath.c -- output the real path of a filename.
+ * $Id: realpath.c 229 2009-02-22 11:56:47Z robert $
+ *
+ * Copyright: (C) 1996 Lars Wirzenius <liw@iki.fi>
+ *            (C) 1996-1998 Jim Pick <jim@jimpick.com>
+ *            (C) 2001-2009 Robert Luberda <robert@debian.org>
+ *
  */
 
 gchar * gebr_stripdir(gchar * dir, gchar *buf, gint maxlen) {
