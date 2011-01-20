@@ -357,7 +357,7 @@ gint gebr_config_load()
 	/* NEW CONFIG? */
 	if (new_config) {
 		server_new("127.0.0.1", TRUE);
-		gebr_config_save(FALSE); //default values saved
+		//gebr_config_save(FALSE); //default values saved
 		preferences_setup_ui(TRUE);
 	} else
 		gebr_config_save(FALSE); //save config to keep updated
