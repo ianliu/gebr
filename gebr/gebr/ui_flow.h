@@ -55,19 +55,6 @@ struct ui_flow_io {
 };
 
 /**
- * The simple IO dialog.
- */
-struct ui_flow_simple {
-	GtkWidget *dialog;
-
-	gboolean focus_output;
-
-	GtkWidget *input;
-	GtkWidget *output;
-	GtkWidget *error;
-};
-
-/**
  * Fills in \p iter a reference for the selected row if there is a selection.
  * @param iter A reference to a #GtkTreeIter or #NULL.
  * @return #TRUE if there is a selection, #FALSE otherwise.
@@ -96,12 +83,6 @@ void flow_io_customized_paths_from_line(GtkFileChooser * chooser);
  * @param error Error file.
  */
 void flow_io_set_server(GtkTreeIter * server_iter, const gchar * input, const gchar * output, const gchar * error);
-
-/**
- * Creates a simple dialog that permits IO configuration for the currently selected server.
- * @param focus_output Whether to focus the output entry.
- */
-void flow_io_simple_setup_ui(gboolean focus_output);
 
 /**
  * Runs the last used IO configuration.

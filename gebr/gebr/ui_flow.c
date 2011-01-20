@@ -89,97 +89,6 @@ void flow_io_set_server(GtkTreeIter * server_iter, const gchar * input, const gc
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
 }
 
-void flow_io_simple_setup_ui(gboolean focus_output)
-{
-	struct ui_flow_simple *simple;
-	GtkWidget *dialog;
-	GtkWidget *table;
-	GtkWidget *label;
-	gchar *tmp;
-
-	GtkTreeIter server_iter;
-
-	if (!flow_browse_get_selected(NULL, TRUE))
-		return;
-
-	gtk_combo_box_get_active_iter(GTK_COMBO_BOX(gebr.ui_flow_edition->server_combobox), &server_iter);
-
-	simple = g_new(struct ui_flow_simple, 1);
-	simple->focus_output = focus_output;
-
-	dialog = gtk_dialog_new_with_buttons(_("Flow input/output"),
-					     GTK_WINDOW(gebr.window),
-					     (GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
-					     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-					     GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
-	gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK);
-	simple->dialog = dialog;
-
-	table = gtk_table_new(5, 2, FALSE);
-	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), table, TRUE, TRUE, 0);
-
-	/* Input */
-	label = gtk_label_new(_("Input file"));
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-	simple->input = gebr_gui_file_entry_new((GebrGuiFileEntryCustomize) flow_io_customized_paths_from_line,
-						    NULL);
-	gebr_gui_file_entry_set_activates_default (GEBR_GUI_FILE_ENTRY (simple->input), TRUE);
-
-	gtk_widget_set_size_request(simple->input, 140, 30);
-	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 0, 1, (GtkAttachOptions)GTK_FILL, (GtkAttachOptions)GTK_FILL, 3,
-			 3);
-	gtk_table_attach(GTK_TABLE(table), simple->input, 1, 2, 0, 1, GTK_EXPAND | (GtkAttachOptions)GTK_FILL,
-			 (GtkAttachOptions)GTK_FILL, 3, 3);
-	if ((tmp = (gchar *) gebr_geoxml_flow_server_io_get_input(gebr.flow_server)) != NULL)
-		gebr_gui_file_entry_set_path(GEBR_GUI_FILE_ENTRY(simple->input), tmp);
-	gebr_gui_file_entry_set_do_overwrite_confirmation(GEBR_GUI_FILE_ENTRY(simple->input), FALSE);
-
-	/* Output */
-	label = gtk_label_new(_("Output file"));
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-	simple->output = gebr_gui_file_entry_new((GebrGuiFileEntryCustomize) flow_io_customized_paths_from_line,
-						     NULL);
-	gebr_gui_file_entry_set_activates_default (GEBR_GUI_FILE_ENTRY (simple->output), TRUE);
-	gtk_widget_set_size_request(simple->input, 140, 30);
-	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 1, 2, (GtkAttachOptions)GTK_FILL, (GtkAttachOptions)GTK_FILL, 3, 3);
-	gtk_table_attach(GTK_TABLE(table), simple->output, 1, 2, 1, 2, GTK_EXPAND | (GtkAttachOptions)GTK_FILL,
-			 (GtkAttachOptions)GTK_FILL, 3, 3);
-	if ((tmp = (gchar *) gebr_geoxml_flow_server_io_get_output(gebr.flow_server)) != NULL)
-		gebr_gui_file_entry_set_path(GEBR_GUI_FILE_ENTRY(simple->output), tmp);
-	gebr_gui_file_entry_set_do_overwrite_confirmation(GEBR_GUI_FILE_ENTRY(simple->output), FALSE);
-
-	/* Error */
-	label = gtk_label_new(_("Error file"));
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-	simple->error = gebr_gui_file_entry_new((GebrGuiFileEntryCustomize) flow_io_customized_paths_from_line,
-						    NULL);
-	gebr_gui_file_entry_set_activates_default (GEBR_GUI_FILE_ENTRY (simple->error), TRUE);
-	gtk_widget_set_size_request(simple->input, 140, 30);
-	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 2, 3, (GtkAttachOptions)GTK_FILL, (GtkAttachOptions)GTK_FILL, 3,
-			 3);
-	gtk_table_attach(GTK_TABLE(table), simple->error, 1, 2, 2, 3, GTK_EXPAND | (GtkAttachOptions)GTK_FILL,
-			 (GtkAttachOptions)GTK_FILL, 3, 3);
-	if ((tmp = (gchar *) gebr_geoxml_flow_server_io_get_error(gebr.flow_server)) != NULL)
-		gebr_gui_file_entry_set_path(GEBR_GUI_FILE_ENTRY(simple->error), tmp);
-	gebr_gui_file_entry_set_do_overwrite_confirmation(GEBR_GUI_FILE_ENTRY(simple->error), FALSE);
-
-	gtk_widget_show_all(dialog);
-	if (focus_output)
-		gtk_widget_grab_focus(simple->output);
-	if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_OK)
-		goto out;
-
-	flow_io_set_server(&server_iter,
-			   gebr_gui_file_entry_get_path(GEBR_GUI_FILE_ENTRY(simple->input)),
-			   gebr_gui_file_entry_get_path(GEBR_GUI_FILE_ENTRY(simple->output)),
-			   gebr_gui_file_entry_get_path(GEBR_GUI_FILE_ENTRY(simple->error)));
-	gebr_geoxml_flow_io_set_from_server(gebr.flow, gebr.flow_server);
-	flow_edition_set_io();
-	flow_browse_info_update();
-
- out:	gtk_widget_destroy(dialog);
-}
-
 void flow_fast_run(gboolean parallel, gboolean single)
 {
 	flow_io_run(gebr.flow_server, parallel, single);
@@ -198,7 +107,8 @@ void flow_add_program_sequence_to_view(GebrGeoXmlSequence * program, gboolean se
 		gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &iter,
 				   FSEQ_TITLE_COLUMN, gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(program)),
 				   FSEQ_ICON_COLUMN, icon,
-				   FSEQ_GEBR_GEOXML_POINTER, program, -1);
+				   FSEQ_GEBR_GEOXML_POINTER, program,
+				   FSEQ_EDITABLE, FALSE, -1);
 
 		if (select_last)
 			flow_edition_select_component_iter(&iter);

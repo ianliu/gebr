@@ -234,7 +234,7 @@ void gebr_geoxml_flow_server_io_set_error(GebrGeoXmlFlowServer * server, const g
  *
  * If \p server is NULL returns NULL.
  *
- * \see gebr_geoxml_flow_io_set_input
+ * \see gebr_geoxml_flow_server_io_set_input
  */
 const gchar *gebr_geoxml_flow_server_io_get_input(GebrGeoXmlFlowServer * server);
 
@@ -298,7 +298,7 @@ void gebr_geoxml_flow_io_set_input(GebrGeoXmlFlow * flow, const gchar * input);
  *
  * If \p flow or \p output is NULL nothing is done.
  *
- * \see gebr_geoxml_flow_io_get_output
+ * \see gebr_geoxml_flow_server_io_get_output
  */
 void gebr_geoxml_flow_io_set_output(GebrGeoXmlFlow * flow, const gchar * output);
 
@@ -308,7 +308,7 @@ void gebr_geoxml_flow_io_set_output(GebrGeoXmlFlow * flow, const gchar * output)
  *
  * If \p flow or \p error is NULL nothing is done.
  *
- * \see gebr_geoxml_flow_io_get_error gebr_geoxml_program_set_stderr
+ * \see gebr_geoxml_flow_server_io_get_error gebr_geoxml_program_set_stderr
  */
 void gebr_geoxml_flow_io_set_error(GebrGeoXmlFlow * flow, const gchar * error);
 
@@ -317,7 +317,7 @@ void gebr_geoxml_flow_io_set_error(GebrGeoXmlFlow * flow, const gchar * error);
  *
  * If \p flow is NULL returns NULL.
  *
- * \see gebr_geoxml_flow_io_set_input
+ * \see gebr_geoxml_flow_server_io_set_input
  */
 const gchar *gebr_geoxml_flow_io_get_input(GebrGeoXmlFlow * flow);
 
@@ -326,7 +326,7 @@ const gchar *gebr_geoxml_flow_io_get_input(GebrGeoXmlFlow * flow);
  *
  * If \p flow is NULL returns NULL.
  *
- * \see gebr_geoxml_flow_io_set_output
+ * \see gebr_geoxml_flow_server_io_set_output
  */
 const gchar *gebr_geoxml_flow_io_get_output(GebrGeoXmlFlow * flow);
 
@@ -335,7 +335,7 @@ const gchar *gebr_geoxml_flow_io_get_output(GebrGeoXmlFlow * flow);
  *
  * If \p flow is NULL returns NULL.
  *
- * \see gebr_geoxml_flow_io_set_error
+ * \see gebr_geoxml_flow_server_io_set_error
  */
 const gchar *gebr_geoxml_flow_io_get_error(GebrGeoXmlFlow * flow);
 

@@ -33,6 +33,7 @@ enum {
 	FSEQ_ICON_COLUMN = 0,
 	FSEQ_TITLE_COLUMN,
 	FSEQ_GEBR_GEOXML_POINTER,
+	FSEQ_EDITABLE,
 	FSEQ_N_COLUMN
 };
 
@@ -64,6 +65,7 @@ struct ui_flow_edition {
 
 	GtkTreeIter input_iter;
 	GtkTreeIter output_iter;
+	GtkTreeIter error_iter;
 
 	/* Sequence of programs of a flow */
 	GtkListStore *fseq_store;
