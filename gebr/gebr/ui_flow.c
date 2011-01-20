@@ -108,6 +108,7 @@ void flow_add_program_sequence_to_view(GebrGeoXmlSequence * program, gboolean se
 				   FSEQ_TITLE_COLUMN, gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(program)),
 				   FSEQ_ICON_COLUMN, icon,
 				   FSEQ_GEBR_GEOXML_POINTER, program,
+				   FSEQ_ELLIPSIZE, PANGO_ELLIPSIZE_NONE,
 				   FSEQ_EDITABLE, FALSE, -1);
 
 		if (select_last)

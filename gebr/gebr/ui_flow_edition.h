@@ -34,6 +34,7 @@ enum {
 	FSEQ_TITLE_COLUMN,
 	FSEQ_GEBR_GEOXML_POINTER,
 	FSEQ_EDITABLE,
+	FSEQ_ELLIPSIZE,
 	FSEQ_N_COLUMN
 };
 
@@ -70,6 +71,7 @@ struct ui_flow_edition {
 	/* Sequence of programs of a flow */
 	GtkListStore *fseq_store;
 	GtkWidget *fseq_view;
+	GtkCellRenderer *text_renderer;
 
 	/* available system and user's menus */
 	GtkWidget *menu_view;
