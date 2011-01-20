@@ -218,7 +218,7 @@ static void preferences_actions(GtkDialog * dialog, gint arg1, struct ui_prefere
 	case GTK_RESPONSE_CANCEL:
 	default:
 		if (ui_preferences->first_run == TRUE)
-			gebr_quit();
+			gebr_quit(FALSE);
 		break;
 	}
 

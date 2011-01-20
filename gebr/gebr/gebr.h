@@ -159,7 +159,7 @@ void gebr_init(void);
 /**
  * Free memory, remove temporaries files and quit.
  */
-gboolean gebr_quit(void);
+gboolean gebr_quit(gboolean save_config);
 
 /**
  * Initialize configuration for GeBR.

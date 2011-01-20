@@ -121,11 +121,12 @@ void gebr_init(void)
 	}
 }
 
-gboolean gebr_quit(void)
+gboolean gebr_quit(gboolean save_config)
 {
 	GtkTreeIter iter;
 
-	gebr_config_save(FALSE);
+	if (save_config)
+		gebr_config_save(FALSE);
 
 	/* Free servers structs */
 	gebr_gui_gtk_tree_model_foreach_hyg(iter, GTK_TREE_MODEL(gebr.ui_server_list->common.store), 1) {

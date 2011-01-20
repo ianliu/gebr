@@ -100,7 +100,7 @@ void on_paste_activate(void)
 
 void on_quit_activate(void)
 {
-	gebr_quit();
+	gebr_quit(TRUE);
 }
 
 void on_document_properties_activate(void)

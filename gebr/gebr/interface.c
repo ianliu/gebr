@@ -240,7 +240,7 @@ void gebr_setup_ui(void)
 	gebr_gui_gtk_action_group_set_accel_group(gebr.action_group_status, gebr.accel_group_array[ACCEL_STATUS]);
 
 	/* Signals */
-	g_signal_connect(GTK_OBJECT(gebr.window), "delete_event", G_CALLBACK(gebr_quit), NULL);
+	g_signal_connect(GTK_OBJECT(gebr.window), "delete_event", G_CALLBACK(on_quit_activate), NULL);
 
 	/* Create the main vbox to hold menu, notebook and status bar */
 	main_vbox = gtk_vbox_new(FALSE, 1);
