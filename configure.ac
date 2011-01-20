@@ -283,8 +283,6 @@ docs/reference/libgebr/Makefile
 docs/reference/libgebr/version.xml
 rpm/Makefile
 rpm/gebrproject.fedora.spec
-rpm/gebrproject.mandriva.spec
-rpm/gebrproject.opensuse.spec
 
 libgebr/Makefile
 libgebr/comm/Makefile
