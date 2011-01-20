@@ -547,6 +547,7 @@
                 <para>Selecione o projeto ou a linha e clique no botão
                     <guibutton>Visualizar relatório</guibutton>, na parte de baixo da caixa
                     <guilabel>Detalhes</guilabel>, no lado direito da janela principal.
+                </para>
               </listitem>
             </itemizedlist>
           </important>
@@ -982,7 +983,6 @@
           <step>
             <para>Clique em <guibutton>Salvar</guibutton>.</para>
           </step>
-	</step>
           <step>
             <para>Em <guilabel>Menu</guilabel> da DéBR, clicar em <guilabel>Importar fluxo como menu</guilabel>,
 	 escolher o fluxo e clicar em <guilabel>Abrir</guilabel>. Esse procedimento é melhor detalhado 
@@ -1457,6 +1457,13 @@
             </inlinemediaobject></guiicon>.</para>
         <para>Só podem ser excluídas as tarefas que não estiverem em execução (sinalizadas com <guiicon><inlinemediaobject>
               <imageobject>
+                <imagedata fileref="../images/icone_tarefa_concluida_sucesso.png"/>
+              </imageobject>
+            </inlinemediaobject></guiicon> ou <guiicon><inlinemediaobject>
+              <imageobject>
+                <imagedata fileref="../images/icone_tarefa_terminada_erro.png"/>
+              </imageobject>
+            </inlinemediaobject></guiicon>).</para>
         </section>
       <section xml:id="sec_3_4_3">
         <title>Pedir para o servidor cancelar a tarefa</title>
@@ -1476,14 +1483,6 @@
                 <imagedata fileref="../images/icone_tarefa_terminada_erro.png"/>
               </imageobject>
             </inlinemediaobject></guiicon>.</para>
-        
-                <imagedata fileref="../images/icone_tarefa_concluida_sucesso.png"/>
-              </imageobject>
-            </inlinemediaobject></guiicon> ou <guiicon><inlinemediaobject>
-              <imageobject>
-                <imagedata fileref="../images/icone_tarefa_terminada_erro.png"/>
-              </imageobject>
-            </inlinemediaobject></guiicon>).</para>
       </section>
      </section>
   </section>
