@@ -584,13 +584,6 @@ gboolean job_new(struct job ** _job, struct client * client, GString * queue, GS
 		goto err;
 	/* check for error file output */
 	if (has_error_output_file && gebr_geoxml_program_get_stderr(GEBR_GEOXML_PROGRAM(program))) {
-		if (check_for_write_permission(gebr_geoxml_flow_io_get_error(flow))) {
-			g_string_append_printf(job->issues,
-					       _("Write permission to %s not granted.\n"),
-					       gebr_geoxml_flow_io_get_error(flow));
-			goto err;
-		}
-
 		g_string_append_printf(job->cmd_line, "2>> \"%s\" ", gebr_geoxml_flow_io_get_error(flow));
 	}
 
@@ -682,13 +675,6 @@ gboolean job_new(struct job ** _job, struct client * client, GString * queue, GS
 		if (strlen(gebr_geoxml_flow_io_get_output(flow)) == 0)
 			g_string_append_printf(job->issues, _("Proceeding without output file.\n"));
 		else {
-			if (check_for_write_permission(gebr_geoxml_flow_io_get_output(flow))) {
-				g_string_append_printf(job->issues,
-						       _("Write permission to %s not granted.\n"),
-						       gebr_geoxml_flow_io_get_output(flow));
-				goto err;
-			}
-
 			quoted = g_shell_quote(gebr_geoxml_flow_io_get_output(flow));
 			g_string_append_printf(job->cmd_line, ">%s", quoted);
 			g_free(quoted);
@@ -795,6 +781,41 @@ void job_run_flow(struct job *job)
 			goto err;
 		}
 	}
+
+	/* check for error file output */
+	if (gebr_geoxml_program_get_stderr(GEBR_GEOXML_PROGRAM(program))) {
+		if (check_for_write_permission(gebr_geoxml_flow_io_get_error(job->flow))) {
+			GString * issue = g_string_new(NULL);
+			g_string_printf(issue,
+					_("Write permission to %s not granted.\n"),
+					gebr_geoxml_flow_io_get_error(job->flow));
+			g_string_append(job->issues,
+					       issue->str);
+			job_notify_status(job, JOB_STATUS_ISSUED, issue->str);
+			job->user_finished = TRUE;
+			job_set_status_finished(job);
+			g_string_free(issue, TRUE);
+			goto err;
+		}
+	}
+
+	/* check for output file */
+	if (gebr_geoxml_program_get_stdout(GEBR_GEOXML_PROGRAM(program))) {
+		if (check_for_write_permission(gebr_geoxml_flow_io_get_output(job->flow))) {
+			GString * issue = g_string_new(NULL);
+			g_string_printf(issue,
+					_("Write permission to %s not granted.\n"),
+					gebr_geoxml_flow_io_get_output(job->flow));
+			g_string_append(job->issues,
+					       issue->str);
+			job_notify_status(job, JOB_STATUS_ISSUED, issue->str);
+			job->user_finished = TRUE;
+			job_set_status_finished(job);
+			g_string_free(issue, TRUE);
+			goto err;
+		}
+	}
+
 	/* command-line */
 	if (job->display->len) {
 		GString *to_quote;
