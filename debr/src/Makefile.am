@@ -28,36 +28,36 @@ debrscripts_DATA = debr-help-edit-script.js
 noinst_LIBRARIES = libdebr.a
 libdebr_a_SOURCES = \
 	callbacks.c \
+	callbacks.h \
 	categoryedit.c \
-	debr.c \
-	enumoptionedit.c \
-	help.c \
-	interface.c \
-	menu.c \
-	parameter.c \
-	parametergroup.c \
-	preferences.c \
-	program.c \
-	debr-validate.c \
+	categoryedit.h \
 	debr-help-edit-widget.c \
+	debr-help-edit-widget.h \
+	debr-tmpl.c \
+	debr-tmpl.h \
+	debr-validate.c \
+	debr-validate.h \
+	debr.c \
+	debr.h \
+	enumoptionedit.c \
+	enumoptionedit.h \
+	help.c \
+	help.h \
+	interface.c \
+	interface.h \
+	menu.c \
+	menu.h \
+	parameter.c \
+	parameter.h \
+	parametergroup.c \
+	parametergroup.h \
+	preferences.c \
+	preferences.h \
+	program.c \
+	program.h \
 	$(NULL)
 
 debr_SOURCES = main.c
-noinst_HEADERS = \
-	callbacks.h \
-	categoryedit.h \
-	debr.h \
-	enumoptionedit.h \
-	help.h \
-	interface.h \
-	menu.h \
-	parameter.h \
-	parametergroup.h \
-	preferences.h \
-	program.h \
-	debr-validate.h \
-	debr-help-edit-widget.h \
-	$(NULL)
 
 EXTRA_DIST = $(noinst_HEADERS) $(debrglade_DATA) $(debrscripts_DATA)
 
