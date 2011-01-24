@@ -39,6 +39,9 @@
       <title>Contato</title>
       <para><emphasis role="bold">GêBR Core Team:</emphasis></para>
       <itemizedlist>
+	<listitem>
+          <para>Alexandre Baaklini - <email>abaaklini@gebrproject.com</email></para>
+        </listitem>
         <listitem>
           <para>Bráulio Oliveira - <email>brauliobo@gmail.com</email></para>
         </listitem>
@@ -153,10 +156,7 @@
         </step>
         <step>
           <para>Se desejar, digite também uma breve <emphasis>descrição</emphasis> da linha, o
-              <emphasis>autor</emphasis> e um <emphasis>e-mail</emphasis> para contato.</para>
-        </step>
-        <step>
-          <para>Clique <guibutton>OK</guibutton>.</para>
+              <emphasis>autor</emphasis>, um <emphasis>e-mail</emphasis> para contato.</para>
         </step>
       </procedure>
       <screenshot>
@@ -430,6 +430,9 @@
         <listitem>
           <para><link linkend="sec_3_1_8">Exportar um projeto ou linha</link></para>
         </listitem>
+	<listitem>
+          <para><link linkend="sec_3_1_9">Editar comentário</link></para>
+        </listitem>
       </itemizedlist>
       <tip>
         <para>Experimente usar <emphasis role="bold">menus de contexto</emphasis> no lugar dos
@@ -511,46 +514,7 @@
         <para>Na janela <guilabel>Propriedades </guilabel>(...<guilabel>para projeto</guilabel> ou
             ...<guilabel>para linha</guilabel>, dependendo do caso) você pode editar os campos
             <guilabel>Título</guilabel>, <guilabel>Descrição</guilabel>,
-            <guilabel>Autor</guilabel> e <guilabel>Email</guilabel>. Além disso, pode editar comentários no relatório,
-	 atribuindo informações adicionais sobre o projeto ou sobre a linha. Para <emphasis
-            role="bold">editar um comentário</emphasis>:</para>
-        <procedure>
-          <step>
-            <para>Clique no botão <guibutton>Editar comentários</guibutton>, que fica no campo logo abaixo
-	de <guilabel>Descrição</guilabel>, na janela <guilabel>Propriedades para projeto</guilabel>
-	 ou <guilabel>Propriedades para linha</guilabel>.</para>
-          </step>
-          <step>
-            <para>Digite um texto no editor de textos que se abre. Quando terminar, feche o editor
-              de textos e salve seu comentário.</para>
-          </step>
-        </procedure>
-        <tip>
-          <para>Em <menuchoice>
-              <guimenu>Ações</guimenu>
-              <guimenuitem>Preferências</guimenuitem>
-            </menuchoice> (no canto superior esquerdo da janela principal da GêBR), você pode
-            determinar o editor de textos a ser usado para editar relatórios na GêBR. O editor
-            padrão é o <application>gedit</application>. Para usar outro, digite o nome do editor em
-              <guilabel>Editor HTML</guilabel>.</para>
-        </tip>
-        <note>
-          <para>Você pode criar <emphasis role="bold">apenas um comentário</emphasis> para cada
-            projeto ou linha existente.</para>
-        </note>
-        <para>
-          <important>
-            <para>Para <emphasis role="bold">visualizar um relatório</emphasis> criado
-              anteriormente:</para>
-            <itemizedlist>
-              <listitem>
-                <para>Selecione o projeto ou a linha e clique no botão
-                    <guibutton>Visualizar relatório</guibutton>, na parte de baixo da caixa
-                    <guilabel>Detalhes</guilabel>, no lado direito da janela principal.
-                </para>
-              </listitem>
-            </itemizedlist>
-          </important>
+            <guilabel>Autor</guilabel> e <guilabel>Email</guilabel>.
         </para>
       </section>
       <section xml:id="sec_3_1_5">
@@ -559,12 +523,12 @@
               4.1</emphasis></link>.</para>
       </section>
       <section xml:id="sec_3_1_6">
-        <title>Editar caminhos personalizados da linha</title>
+        <title>Editar caminhos preferenciais da linha</title>
         <para>Na <emphasis role="bold"><link linkend="sec_3_3_6">seção 3.3.6</link></emphasis>
           veremos que um fluxo pode estar associado a alguns arquivos de dados. Veremos também que
           essa associação pode ser feita mais facilmente se adicionarmos os chamados caminhos
-          personalizados da linha.</para>
-        <para>Para editar os caminhos personalizados de uma linha pode-se: </para>
+          preferenciais da linha.</para>
+        <para>Para editar os caminhos preferenciais de uma linha pode-se: </para>
         <itemizedlist>
           <listitem>
             <para>Na aba Projetos e Linhas, clique sobre a linha em que se quer adicionar caminhos,
@@ -589,6 +553,15 @@
             </inlinemediaobject></guiicon></para>
           </listitem>
         </itemizedlist>
+	  <para>Além disso, na janela Propriedades para linha, pode-se adicionar caminhos preferenciais de linha escolhendo-se um diretório.
+	Para isso, deve-se clicar no botão<guiicon><inlinemediaobject>
+              <imageobject>
+                <imagedata fileref="../images/icone_caminho_personalizado.png"/>
+              </imageobject>
+            </inlinemediaobject></guiicon></para>
+        <step>
+          <para>Clique <guibutton>OK</guibutton>.</para>
+        </step>
         <para><emphasis role="bold">Não há limitação</emphasis> para o número de
           caminhos, você pode adicionar quantos quiser.</para>
 	<tip>
@@ -678,7 +651,51 @@
           </step>
         </procedure>
       </section>
+     <section xml:id="sec_3_1_9">
+        <title>Edição de comentário</title>
+        <para>Pode-se editar comentários no relatório, atribuindo informações adicionais
+	 sobre o projeto ou sobre a linha. Para <emphasis
+            role="bold">editar um comentário</emphasis>:</para>
+        <procedure>
+          <step>
+            <para>Clique no botão <guibutton>Editar comentários</guibutton>, que fica no campo logo abaixo
+	de <guilabel>Detalhes</guilabel>, na janela <guilabel>Propriedades para projeto</guilabel>
+	 ou <guilabel>Propriedades para linha</guilabel>.</para>
+          </step>
+          <step>
+            <para>Digite um texto no editor de textos que se abre. Quando terminar, feche o editor
+              de textos e salve seu comentário.</para>
+          </step>
+        </procedure>
+        <tip>
+          <para>Em <menuchoice>
+              <guimenu>Ações</guimenu>
+              <guimenuitem>Preferências</guimenuitem>
+            </menuchoice> (no canto superior esquerdo da janela principal da GêBR), você pode
+            determinar o editor de textos a ser usado para editar relatórios na GêBR. O editor
+            padrão é o <application>gedit</application>. Para usar outro, digite o nome do editor em
+              <guilabel>Editor HTML</guilabel>.</para>
+        </tip>
+        <note>
+          <para>Você pode criar <emphasis role="bold">apenas um comentário</emphasis> para cada
+            projeto ou linha existente.</para>
+        </note>
+        <para>
+          <important>
+            <para>Para <emphasis role="bold">visualizar um relatório</emphasis> criado
+              anteriormente:</para>
+            <itemizedlist>
+              <listitem>
+                <para>Selecione o projeto ou a linha e clique no botão
+                    <guibutton>Visualizar relatório</guibutton>, na parte de baixo da caixa
+                    <guilabel>Detalhes</guilabel>, no lado direito da janela principal.
+                </para>
+              </listitem>
+            </itemizedlist>
+          </important>
+	   </para>
     </section>
+ </section>
     <section xml:id="sec_3_2">
       <title>A aba <guilabel>Fluxos</guilabel></title>
       <para>A aba <guilabel>Fluxos</guilabel> dispõe de oito botões de comando, localizados logo
@@ -1313,7 +1330,7 @@
                 </inlinemediaobject></guiicon> e navegue pela janela <guilabel>Escolha um arquivo
 	</guilabel>.</para>
             <important>
-              <para>Se você adicionou <emphasis role="bold">caminhos personalizados</emphasis> à
+              <para>Se você adicionou <emphasis role="bold">caminhos preferenciais</emphasis> à
                 linha em que está o fluxo atual, o caminho que estiver no topo da lista será a pasta
                 padrão quando a janela <guilabel>Escolha um arquivo</guilabel> for aberta. Este recurso
                 pode <emphasis role="bold">facilitar muito o manuseio de arquivos de
@@ -1532,7 +1549,7 @@
         <step>
           <para>Na janela que se abre (<guilabel>Dicionário de parâmetros para linha</guilabel>), clique
             duas vezes no campo <guilabel>Novo</guilabel>, dentro da lista
-              <guilabel>Project</guilabel>. Abre-se um menu com três opções
+              <guilabel>Projeto</guilabel>. Abre-se um menu com três opções
               (<guimenuitem>inteiro</guimenuitem>, <guimenuitem>real</guimenuitem> e
               <guimenuitem>string</guimenuitem>). Selecione a opção
               <guimenuitem>inteiro</guimenuitem>, depois digite <userinput>Tempo</userinput> na
@@ -1570,7 +1587,7 @@
           </screenshot>
         </step>
         <step>
-          <para>Depois de fechar a janela <guilabel>Parametros</guilabel>, vá para a aba
+          <para>Depois de fechar a janela <guilabel>Parâmetros</guilabel>, vá para a aba
               <guilabel>Fluxos</guilabel> e crie algumas cópias do fluxo, dando nomes diferentes a
             cada uma. Ao executar qualquer um destes fluxos, o resultado é uma <emphasis role="bold"
               >pausa de 5 segundos</emphasis>.</para>
@@ -1620,8 +1637,8 @@
           como padrão pela GêBR. Vejamos os detalhes:</para>
         <itemizedlist>
           <listitem>
-            <para><guilabel>User name:</guilabel> Padrão adotado no campo
-                <guilabel>Autor</guilabel> durante a criação de projetos, linhas e fluxos.</para>
+            <para><guilabel>Nome do Usuário:</guilabel> Padrão adotado no campo
+                <guilabel>Autor:</guilabel> durante a criação de projetos, linhas e fluxos.</para>
           </listitem>
           <listitem>
             <para><guilabel>Email:</guilabel> Padrão adotado no campo <guilabel>Email</guilabel>
@@ -1633,7 +1650,7 @@
               >mnu</filename>).</para>
           </listitem>
           <listitem>
-            <para><guilabel>HTML editor:</guilabel> Editor de textos padrão adotado pela GêBR para
+            <para><guilabel>editor HTML:</guilabel> Editor de textos padrão adotado pela GêBR para
               criação de relatórios de informações de projetos, linhas e fluxos.</para>
           </listitem>
           </itemizedlist>
