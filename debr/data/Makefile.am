@@ -16,7 +16,8 @@
 include $(top_srcdir)/Makefile.decl
 
 debrdatadir = $(datadir)/debr/
-debrdata_DATA = help-template.html
+debrdata_DATA = help-template.html \
+		help-template-content.html
 
 desktopdir = $(datadir)/applications
 desktop_DATA = debr.desktop
