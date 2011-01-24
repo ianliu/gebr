@@ -75,6 +75,8 @@ static void on_load_finished(WebKitWebView * view, WebKitWebFrame * frame, GebrG
 static WebKitNavigationResponse on_navigation_requested(WebKitWebView * web_view, WebKitWebFrame *frame,
 							WebKitNetworkRequest *request, GebrGuiHelpEditWidget *self);
 
+static void gebr_gui_help_edit_widget_preview_enter_real (GebrGuiHelpEditWidget *self);
+
 G_DEFINE_ABSTRACT_TYPE(GebrGuiHelpEditWidget, gebr_gui_help_edit_widget, GTK_TYPE_VBOX);
 
 //==============================================================================
@@ -88,6 +90,7 @@ static void gebr_gui_help_edit_widget_class_init(GebrGuiHelpEditWidgetClass * kl
 	gobject_class = G_OBJECT_CLASS(klass);
 	gobject_class->set_property = gebr_gui_help_edit_widget_set_property;
 	gobject_class->get_property = gebr_gui_help_edit_widget_get_property;
+	klass->preview_enter = gebr_gui_help_edit_widget_preview_enter_real;
 
 	/**
 	 * GebrGuiHelpEditWidget:editing:
@@ -260,6 +263,17 @@ static WebKitNavigationResponse on_navigation_requested(WebKitWebView * web_view
 	
 	return WEBKIT_NAVIGATION_RESPONSE_IGNORE;
 }
+
+static void gebr_gui_help_edit_widget_preview_enter_real (GebrGuiHelpEditWidget *self)
+{
+	gchar * content;
+	GebrGuiHelpEditWidgetPrivate * priv;
+	priv = GEBR_GUI_HELP_EDIT_WIDGET_GET_PRIVATE (self);
+	content = gebr_gui_help_edit_widget_get_content(self);
+	gebr_gui_html_viewer_widget_show_html(GEBR_GUI_HTML_VIEWER_WIDGET(priv->html_viewer), content);
+	g_free(content);
+}
+
 //==============================================================================
 // PUBLIC FUNCTIONS							       =
 //==============================================================================
@@ -278,12 +292,9 @@ void gebr_gui_help_edit_widget_set_editing(GebrGuiHelpEditWidget * self, gboolea
 		gtk_widget_show(priv->scrolled_window);
 		gtk_widget_hide(priv->html_viewer);
 	} else {
-		gchar * content;
-		content = gebr_gui_help_edit_widget_get_content(self);
-		gebr_gui_html_viewer_widget_show_html(GEBR_GUI_HTML_VIEWER_WIDGET(priv->html_viewer), content);
+		GEBR_GUI_HELP_EDIT_WIDGET_GET_CLASS (self)->preview_enter (self);
 		gtk_widget_show(priv->html_viewer);
 		gtk_widget_hide(priv->scrolled_window);
-		g_free(content);
 	}
 }
 
