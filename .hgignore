@@ -34,6 +34,7 @@ debr/data/debr.desktop.in
 debr/data/help-template.html
 debr/src/debr
 debr/src/defines.h
+debr/tests/test-debr-tmpl
 depcomp
 docs/debr/pt_BR
 docs/gebr/pt_BR
