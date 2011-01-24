@@ -26,6 +26,47 @@
 #include "debr-help-edit-widget.h"
 #include "defines.h"
 
+/*
+ * HTML_HOLDER:
+ * Defines the HTML containing the textarea that will load the CKEditor.
+ */
+#define HTML_HOLDER									\
+	"<html>"									\
+	"<head>"									\
+	"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />"	\
+	"<script>"									\
+	"var menu_edition = false;"							\
+	"function onCkEditorLoadFinished() {}"						\
+	"</script>"									\
+	"<script src='" GEBR_HELP_EDIT_SCRIPT_PATH "ckeditor.js'>"			\
+	"</script>"									\
+	"</head>"                                                                       \
+	"<body>"									\
+	"<textarea id=\"editor\" name=\"editor\"></textarea>"				\
+	"<script>"									\
+	"editor = CKEDITOR.replace('editor', {"						\
+	"	height:300,"								\
+	"	width:'99%%',"								\
+	"	resize_enabled:false,"							\
+	"	toolbarCanCollapse:false,"						\
+	"	toolbar:["								\
+	"		['Source'],"							\
+	"		['Bold','Italic','Underline'],"					\
+	"		['Subscript','Superscript'],"					\
+	"		['Undo','Redo'],"						\
+	"		['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],"	\
+	"		['NumberedList','BulletedList'],"				\
+	"		['Outdent','Indent','Blockquote','Styles'],"			\
+	"		['Link','Unlink'],"						\
+	"		['RemoveFormat'],"						\
+	"		['Find','Replace','Table']"					\
+	"	]"									\
+	"});"										\
+	"</script>"									\
+	"</body>"									\
+	"</html>"									\
+	""
+
 enum {
 	PROP_0,
 	PROP_OBJECT
@@ -72,9 +113,15 @@ static gboolean debr_help_edit_widget_is_content_saved(GebrGuiHelpEditWidget * s
 
 static const gchar *debr_help_edit_widget_get_uri (GebrGuiHelpEditWidget *self);
 
+static void debr_help_edit_widget_preview_enter (GebrGuiHelpEditWidget *self);
+
 static gboolean check_editor_dirty(GebrGuiHelpEditWidget * self);
 
 static void reset_editor_dirty(GebrGuiHelpEditWidget * self);
+
+static gchar *get_raw_content (GebrGuiHelpEditWidget *self);
+
+static gchar *generate_help (GebrGuiHelpEditWidget *self);
 
 G_DEFINE_TYPE(DebrHelpEditWidget, debr_help_edit_widget, GEBR_GUI_TYPE_HELP_EDIT_WIDGET);
 
@@ -98,6 +145,7 @@ static void debr_help_edit_widget_class_init(DebrHelpEditWidgetClass * klass)
 	super_class->set_content = debr_help_edit_widget_set_content;
 	super_class->is_content_saved = debr_help_edit_widget_is_content_saved;
 	super_class->get_uri = debr_help_edit_widget_get_uri;
+	super_class->preview_enter = debr_help_edit_widget_preview_enter;
 
 	/**
 	 * DebrHelpEditWidget:geoxml-object:
@@ -241,6 +289,104 @@ static void reset_editor_dirty(GebrGuiHelpEditWidget * self)
 	gebr_js_evaluate(context, "resetEditorDirty();");
 }
 
+/*
+ * Fetches the content from within the editor, not the generated help.
+ * See generate_help for fetching the hole help string.
+ */
+static gchar *get_raw_content (GebrGuiHelpEditWidget *self)
+{
+	JSContextRef context;
+	JSValueRef value;
+	GString *str;
+
+	context = gebr_gui_help_edit_widget_get_js_context (self);
+	value = gebr_js_evaluate (context, "editor.getData();");
+	str = gebr_js_value_get_string (context, value);
+	return g_string_free (str, FALSE);
+}
+
+static gchar *generate_help (GebrGuiHelpEditWidget *self)
+{
+	const gchar *tmp;
+	gchar *escaped;
+	gchar *tmpl_str;
+	GError *error = NULL;
+	GString *tmpl;
+	gboolean is_program;
+	DebrHelpEditWidgetPrivate *priv;
+	GebrGeoXmlDocument *doc = NULL;
+	GebrGeoXmlProgram *prog = NULL;
+
+	if (!g_file_get_contents (DEBR_DATA_DIR "help-template.html",
+				  &tmpl_str, NULL, &error))
+	{
+		g_warning ("Error loading template file: %s", error->message);
+		g_clear_error (&error);
+		return "";
+	}
+
+	tmpl = g_string_new (tmpl_str);
+	priv = DEBR_HELP_EDIT_WIDGET_GET_PRIVATE (self);
+
+	if (gebr_geoxml_object_get_type (priv->object) == GEBR_GEOXML_OBJECT_TYPE_PROGRAM) {
+		is_program = TRUE;
+		prog = GEBR_GEOXML_PROGRAM (priv->object);
+		doc = gebr_geoxml_object_get_owner_document (priv->object);
+	} else {
+		is_program = FALSE;
+		doc = GEBR_GEOXML_DOCUMENT (priv->object);
+	}
+
+	// Set the title!
+	tmp = is_program?
+		gebr_geoxml_program_get_title (prog)
+		:gebr_geoxml_document_get_title (doc);
+	escaped = g_markup_escape_text (tmp, -1);
+	if (strlen (escaped))
+		debr_tmpl_set (tmpl, "ttl", escaped);
+	g_free (escaped);
+
+	// Set the description!
+	tmp = is_program?
+		gebr_geoxml_program_get_description (prog)
+		:gebr_geoxml_document_get_description (doc);
+	escaped = g_markup_escape_text (tmp, -1);
+	if (strlen (escaped))
+		debr_tmpl_set (tmpl, "ttl", escaped);
+	g_free (escaped);
+
+	// Set the categories!
+	GString *catstr;
+	GebrGeoXmlSequence *cat;
+
+	catstr = g_string_new ("");
+	gebr_geoxml_flow_get_category (GEBR_GEOXML_FLOW (doc), &cat, 0);
+
+	if (cat) {
+		tmp = gebr_geoxml_value_sequence_get (GEBR_GEOXML_VALUE_SEQUENCE (cat));
+		escaped = g_markup_escape_text (tmp, -1);
+		g_string_append (catstr, escaped);
+		g_free (escaped);
+		gebr_geoxml_sequence_next (&cat);
+	}
+	while (cat) {
+		tmp = gebr_geoxml_value_sequence_get (GEBR_GEOXML_VALUE_SEQUENCE (cat));
+		escaped = g_markup_escape_text (tmp, -1);
+		g_string_append_printf (catstr, " | %s", escaped);
+		g_free (escaped);
+		gebr_geoxml_sequence_next (&cat);
+	}
+	if (catstr->len)
+		debr_tmpl_set (tmpl, "cat", catstr->str);
+	g_string_free (catstr, TRUE);
+
+	// Set the DTD!
+	tmp = gebr_geoxml_document_get_version (doc);
+	debr_tmpl_set (tmpl, "dtd", tmp);
+
+	return g_string_free (tmpl, FALSE);
+}
+
 //==============================================================================
 // IMPLEMENTATION OF ABSTRACT FUNCTIONS					       =
 //==============================================================================
@@ -321,6 +467,11 @@ static const gchar *debr_help_edit_widget_get_uri (GebrGuiHelpEditWidget *self)
 
 	priv = DEBR_HELP_EDIT_WIDGET_GET_PRIVATE (self);
 	return priv->temp_file;
+}
+
+static void debr_help_edit_widget_preview_enter (GebrGuiHelpEditWidget *self)
+{
+	// Build help and show it
 }
 
 //==============================================================================

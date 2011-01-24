@@ -6,10 +6,9 @@
   <meta http-equiv="content-type" content=
   "text/html; charset=utf-8" />
   <link rel="stylesheet" type="text/css" href="gebr.css" />
-
-  <!-- begin ttl -->
-  <title>G&ecirc;BR - Flow/Program Title</title>
-  <!-- end ttl -->
+  <title>
+    <!-- begin ttl -->G&ecirc;BR - Flow/Program Title<!-- end ttl -->
+  </title>
 </head>
 
 <body>
@@ -17,22 +16,21 @@
     <div class="inner-container">
       <div class="header">
         <div class="title">
-	  <!-- begin tt2 -->
-          <span class="flowtitle">Flow/Program Title</span>
-	  <!-- end tt2 -->
-
+          <span class="flowtitle">
+            <!-- begin tt2 -->Flow/Program Title<!-- end tt2 -->
+          </span>
           <div class="description">
-	    <!-- begin des -->
+            <!-- begin des -->
             Put here an one-line description
-	    <!-- end des -->
+            <!-- end des -->
           </div>
         </div>
       </div>
 
       <div class="category">
-	<!-- begin cat -->
+        <!-- begin cat -->
         First category | Second category | ...
-	<!-- end cat -->
+        <!-- end cat -->
       </div>
 
       <div class="main">
