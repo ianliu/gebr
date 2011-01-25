@@ -17,12 +17,12 @@
  */
 
 #include <regex.h>
-
 #include <glib/gstdio.h>
 #include <webkit/webkit.h>
-
 #include <libgebr/utils.h>
+#include <locale.h>
 
+#include "debr-tmpl.h"
 #include "debr-help-edit-widget.h"
 #include "defines.h"
 
@@ -38,7 +38,7 @@
 	"var menu_edition = false;"							\
 	"function onCkEditorLoadFinished() {}"						\
 	"</script>"									\
-	"<script src='" GEBR_HELP_EDIT_SCRIPT_PATH "ckeditor.js'>"			\
+	"<script src='" DEBR_HELP_EDIT_CKEDITOR "'>"					\
 	"</script>"									\
 	"</head>"                                                                       \
 	"<body>"									\
@@ -122,6 +122,10 @@ static void reset_editor_dirty(GebrGuiHelpEditWidget * self);
 static gchar *get_raw_content (GebrGuiHelpEditWidget *self);
 
 static gchar *generate_help (GebrGuiHelpEditWidget *self);
+
+static void add_parameter (GString *tbl, GebrGeoXmlParameter *par);
+
+static gchar *generate_parameters_list (GebrGeoXmlProgram *prog);
 
 G_DEFINE_TYPE(DebrHelpEditWidget, debr_help_edit_widget, GEBR_GUI_TYPE_HELP_EDIT_WIDGET);
 
@@ -305,6 +309,10 @@ static gchar *get_raw_content (GebrGuiHelpEditWidget *self)
 	return g_string_free (str, FALSE);
 }
 
+/*
+ * Generates the help string by composing the edited content
+ * with the informations about the menu.
+ */
 static gchar *generate_help (GebrGuiHelpEditWidget *self)
 {
 	const gchar *tmp;
@@ -384,7 +392,137 @@ static gchar *generate_help (GebrGuiHelpEditWidget *self)
 	tmp = gebr_geoxml_document_get_version (doc);
 	debr_tmpl_set (tmpl, "dtd", tmp);
 
+	// Sets the parameters!
+	if (is_program) {
+		gchar *param_list;
+		param_list = generate_parameters_list (prog);
+		g_free (param_list);
+	} else {
+		debr_tmpl_set (tmpl, "par", "");
+		debr_tmpl_set (tmpl, "mpr", "");
+	}
+
+	// Get the date in English format!
+	GDate *date;
+	gchar datestr[20];
+	gchar *oldloc;
+
+	oldloc = setlocale(LC_TIME, NULL);
+	setlocale(LC_TIME, "C");
+	date = g_date_new ();
+	g_date_set_time_t (date, time (NULL));
+	g_date_strftime (datestr, 13, "%b %d, %Y", date);
+	setlocale (LC_TIME, oldloc);
+
+	// Sets the version!
+	if (is_program) {
+		tmp = gebr_geoxml_program_get_version (prog);
+		debr_tmpl_set (tmpl, "ver", tmp);
+	} else
+		debr_tmpl_set (tmpl, "ver", datestr);
+
+	// Sets the credits!
+	if (!is_program) {
+		const gchar *author;
+		gchar *escaped_author;
+		const gchar *email;
+		gchar *escaped_email;
+		gchar *credit;
+
+		author = gebr_geoxml_document_get_author (doc);
+		email = gebr_geoxml_document_get_email (doc);
+		escaped_author = g_markup_escape_text (author, -1);
+		escaped_email = g_markup_escape_text (email, -1);
+
+		credit = g_strdup_printf ("<p>%s: writter by %s &lt;%s&lt;</p>",
+					  datestr, escaped_author, escaped_email);
+
+		g_free (escaped_author);
+		g_free (escaped_email);
+	}
+
 	return g_string_free (tmpl, FALSE);
+}
+
+/*
+ * Helper function for filling the parameters.
+ */
+static void add_parameter (GString *tbl, GebrGeoXmlParameter *par)
+{
+	GebrGeoXmlProgramParameter *ppar;
+
+	ppar = GEBR_GEOXML_PROGRAM_PARAMETER (par);
+
+	if (gebr_geoxml_program_parameter_get_required (ppar)) {
+		g_string_append_printf (tbl,
+					"<li><span class='reqlabel'>%s</span><br/>",
+					gebr_geoxml_parameter_get_label (par));
+	} else {
+		g_string_append_printf (tbl,
+					"<li><span class='label'>%s</span><br/>"
+					"detailed description comes here.",
+					gebr_geoxml_parameter_get_label (par));
+	}
+
+	if (gebr_geoxml_parameter_get_type (par) == GEBR_GEOXML_PARAMETER_TYPE_ENUM) {
+		GebrGeoXmlSequence *enum_option;
+
+		g_string_append (tbl, "<ul>");
+		gebr_geoxml_program_parameter_get_enum_option (ppar, &enum_option, 0);
+		for (; enum_option != NULL; gebr_geoxml_sequence_next(&enum_option))
+			g_string_append_printf (tbl, "<li>%s</li>",
+						gebr_geoxml_enum_option_get_label (
+								GEBR_GEOXML_ENUM_OPTION (enum_option)));
+		g_string_append (tbl, "</ul>");
+	}
+	g_string_append (tbl, "</li>");
+}
+
+/*
+ * Generates the parameters list for @prog and returns it
+ */
+static gchar *generate_parameters_list (GebrGeoXmlProgram *prog)
+{
+	GString *tbl;
+	GebrGeoXmlParameterGroup *group;
+	GebrGeoXmlParameters *template;
+	GebrGeoXmlParameters *params;
+	GebrGeoXmlParameter *param;
+	GebrGeoXmlSequence *seq;
+	GebrGeoXmlSequence *sub;
+
+	tbl = g_string_new ("<ul>");
+	params = gebr_geoxml_program_get_parameters (prog);
+	seq = gebr_geoxml_parameters_get_first_parameter (params);
+
+	while (seq) {
+		param = GEBR_GEOXML_PARAMETER (seq);
+		if (gebr_geoxml_parameter_get_is_program_parameter (param))
+			add_parameter (tbl, param);
+		else {
+			g_string_append_printf (tbl,
+						"<li class='group'>"
+						"<span class='grouplabel'>%s</span>"
+						"<br/>"
+						"detailed description comes here.",
+						gebr_geoxml_parameter_get_label (param));
+
+			g_string_append (tbl, "<ul>");
+
+			group = GEBR_GEOXML_PARAMETER_GROUP (param);
+			template = gebr_geoxml_parameter_group_get_template (group);
+			sub = gebr_geoxml_parameters_get_first_parameter (template);
+			while (sub) {
+				add_parameter (tbl, param);
+				gebr_geoxml_sequence_next (&sub);
+			}
+			g_string_append (tbl, "</ul></li>");
+		}
+		gebr_geoxml_sequence_next (&seq);
+	}
+	g_string_append (tbl, "</ul>");
+
+	return g_string_free (tbl, FALSE);
 }
 
 //==============================================================================
