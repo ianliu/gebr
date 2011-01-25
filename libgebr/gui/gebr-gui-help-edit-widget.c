@@ -401,7 +401,7 @@ gboolean gebr_gui_help_edit_widget_get_editing (GebrGuiHelpEditWidget *self)
 {
 	GebrGuiHelpEditWidgetPrivate * priv;
 
-	g_return_val_if_fail (GEBR_GUI_IS_HELP_EDIT_WIDGET (self), NULL);
+	g_return_val_if_fail (GEBR_GUI_IS_HELP_EDIT_WIDGET (self), FALSE);
 
 	priv = GEBR_GUI_HELP_EDIT_WIDGET_GET_PRIVATE (self);
 
