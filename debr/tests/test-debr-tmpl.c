@@ -49,12 +49,35 @@ void test_debr_tmpl_set (void)
 	g_string_free (str, TRUE);
 }
 
+void test_debr_tmpl_append (void)
+{
+	gchar *tag;
+	GString *str = g_string_new ("Foo <!-- begin val -->foo<!-- end val -->");
+
+	// The function must return TRUE since 'val' tag exists
+	g_assert (debr_tmpl_append (str, "val", "bar"));
+
+	// The substitution must be correct
+	g_assert_cmpstr (str->str, ==, "Foo <!-- begin val -->foobar<!-- end val -->");
+
+	// The tag must be equal too!
+	tag = debr_tmpl_get (str, "val");
+	g_assert_cmpstr (tag, ==, "foobar");
+	g_free (tag);
+
+	// The function must return FALSE since 'foo' tag doest not exists
+	g_assert (debr_tmpl_append (str, "foo", "foo") == FALSE);
+
+	g_string_free (str, TRUE);
+}
+
 int main(int argc, char *argv[])
 {
 	g_test_init (&argc, &argv, NULL);
 
 	g_test_add_func ("/debr/tmpl/get", test_debr_tmpl_get);
 	g_test_add_func ("/debr/tmpl/set", test_debr_tmpl_set);
+	g_test_add_func ("/debr/tmpl/append", test_debr_tmpl_append);
 
 	return g_test_run ();
 }
