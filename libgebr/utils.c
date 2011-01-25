@@ -509,7 +509,10 @@ gboolean gebr_paths_equal (const gchar *path1, const gchar *path2)
 gchar *gebr_str_escape (const gchar *str)
 {
 	gchar c;
-	gchar *dest = g_new (gchar, 2 * strlen(str) + 1);
+	gchar *dest = g_new (gchar, 2*strlen(str) + 1);
+	gchar *retval;
+
+	retval = dest;
 
 	c = *(str++);
 	while (c) {
@@ -557,5 +560,5 @@ gchar *gebr_str_escape (const gchar *str)
 	}
 
 	*dest = '\0'; /* Ensure nul terminator */
-	return dest;
+	return retval;
 }
