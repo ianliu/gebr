@@ -24,17 +24,15 @@
 
 G_BEGIN_DECLS
 
-#define PROTOCOL_VERSION "1.0.4"
-
-#define gebr_comm_message_def_create(str, resp) ((struct gebr_comm_message_def){g_str_hash(str), str, resp})
-
+#define gebr_comm_message_def_create(code, resp, arg_number) ((struct gebr_comm_message_def){g_str_hash(code), code, resp, arg_number})
 extern struct gebr_comm_protocol_defs gebr_comm_protocol_defs;
+#define PROTOCOL_VERSION "1.0.5"
 
 struct gebr_comm_message_def {
-	guint hash;
-	gchar *string;
-	/* does this message send return (RET) command? */
-	gboolean returns;
+	guint		code_hash;
+	const gchar *	code;
+	gboolean	returns; // does this message send return (RET) command?
+	gint		arg_number;
 };
 
 struct gebr_comm_protocol_defs {

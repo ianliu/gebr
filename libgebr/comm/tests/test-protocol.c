@@ -21,7 +21,7 @@
 void test_comm_build_message()
 {
 	GString * message;
-	struct gebr_comm_message_def msg_def = gebr_comm_message_def_create("FOO", TRUE);
+	struct gebr_comm_message_def msg_def = gebr_comm_message_def_create("FOO", TRUE, 2);
 
 	message = gebr_comm_protocol_build_message(msg_def, 2, NULL, NULL);
 	g_assert_cmpstr(message->str, ==, "FOO 5 0| 0|\n");

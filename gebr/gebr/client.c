@@ -35,7 +35,7 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, stru
 	while ((link = g_list_last(comm_server->protocol->messages)) != NULL) {
 		message = (struct gebr_comm_message *)link->data;
 
-		if (message->hash == gebr_comm_protocol_defs.err_def.hash) {
+		if (message->hash == gebr_comm_protocol_defs.err_def.code_hash) {
 			GList *arguments;
 
 			/* organize message data */
@@ -47,8 +47,8 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, stru
 
 			gebr_comm_protocol_split_free(arguments);
 
-		} else if (message->hash == gebr_comm_protocol_defs.ret_def.hash) {
-			if (comm_server->protocol->waiting_ret_hash == gebr_comm_protocol_defs.ini_def.hash) {
+		} else if (message->hash == gebr_comm_protocol_defs.ret_def.code_hash) {
+			if (comm_server->protocol->waiting_ret_hash == gebr_comm_protocol_defs.ini_def.code_hash) {
 				GList *arguments;
 				GString *hostname;
 				GString *display_port;
@@ -134,7 +134,7 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, stru
 							     gebr_comm_protocol_defs.lst_def, 0);
 
 				gebr_comm_protocol_split_free(arguments);
-			} else if (comm_server->protocol->waiting_ret_hash == gebr_comm_protocol_defs.run_def.hash) {
+			} else if (comm_server->protocol->waiting_ret_hash == gebr_comm_protocol_defs.run_def.code_hash) {
 				GList *arguments;
 				GString *jid;
 
@@ -146,10 +146,10 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, stru
 				g_string_assign(server->ran_jid, jid->str);	
 
 				gebr_comm_protocol_split_free(arguments);
-			} else if (comm_server->protocol->waiting_ret_hash == gebr_comm_protocol_defs.flw_def.hash) {
+			} else if (comm_server->protocol->waiting_ret_hash == gebr_comm_protocol_defs.flw_def.code_hash) {
 
 			}
-		} else if (message->hash == gebr_comm_protocol_defs.job_def.hash) {
+		} else if (message->hash == gebr_comm_protocol_defs.job_def.code_hash) {
 			GList *arguments;
 			GString *jid, *hostname, *status, *title, *start_date, *finish_date, *issues, *cmd_line,
 			    *output, *queue, *moab_jid;
@@ -184,7 +184,7 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, stru
 			}
 
 			gebr_comm_protocol_split_free(arguments);
-		} else if (message->hash == gebr_comm_protocol_defs.out_def.hash) {
+		} else if (message->hash == gebr_comm_protocol_defs.out_def.code_hash) {
 			GList *arguments;
 			GString *jid, *output;
 			struct job *job;
@@ -201,7 +201,7 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, stru
 			}
 
 			gebr_comm_protocol_split_free(arguments);
-		} else if (message->hash == gebr_comm_protocol_defs.sta_def.hash) {
+		} else if (message->hash == gebr_comm_protocol_defs.sta_def.code_hash) {
 			GList *arguments;
 			GString *jid, *status, *parameter;
 			struct job *job;
