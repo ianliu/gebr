@@ -194,83 +194,6 @@ static void gebr_help_edit_widget_finalize(GObject * object)
 //==============================================================================
 // PRIVATE FUNCTIONS							       =
 //==============================================================================
-
-/*
- * Escapes all backslashes and quotes in a string. It is based on glib's
- * g_strescape.
- *
- * Also adds quotes around the result.
- * Note: code based on http://stackoverflow.com/questions/3535023 by Tyler McHenry
- */
-static void expand_escapes(gchar* dest, const gchar* src) 
-{
-/* Expands escape sequences within a C-string
- *
- * src must be a C-string with a NUL terminator
- *
- * dest should be long enough to store the resulting expanded
- * string. A string of size 2 * strlen(src) + 1 will always be sufficient
- *
- * NUL characters are not expanded to \0 (otherwise how would we know when
- * the input string ends?)
- */
-  gchar c;
-
-  c = *(src++);
-  while (c) {
-    switch(c) {
-      case '\a': 
-        *(dest++) = '\\';
-        *(dest++) = 'a';
-        break;
-      case '\b': 
-        *(dest++) = '\\';
-        *(dest++) = 'b';
-        break;
-      case '\t': 
-        *(dest++) = '\\';
-        *(dest++) = 't';
-        break;
-      case '\n': 
-        *(dest++) = '\\';
-        *(dest++) = 'n';
-        break;
-      case '\v': 
-        *(dest++) = '\\';
-        *(dest++) = 'v';
-        break;
-      case '\f': 
-        *(dest++) = '\\';
-        *(dest++) = 'f';
-        break;
-      case '\r': 
-        *(dest++) = '\\';
-        *(dest++) = 'r';
-        break;
-      case '\\': 
-        *(dest++) = '\\';
-        *(dest++) = '\\';
-        break;
-      case '\"': 
-        *(dest++) = '\\';
-        *(dest++) = '\"';
-        break;
-      default:
-        *(dest++) = c;
-     }
-    c = *(src++);
-  }
-
-  *dest = '\0'; /* Ensure nul terminator */
-}
-
-static gchar* expand_escapes_alloc(const gchar* src)
-{
-   gchar* dest = g_new(gchar, 2 * strlen(src) + 1);
-   expand_escapes(dest, src);
-   return dest;
-}
-
 /*
  * pre_process_html:
  * Pre process the @html string, inserting the CSS header, javascript includes,
@@ -281,7 +204,7 @@ static gchar* expand_escapes_alloc(const gchar* src)
 static void pre_process_html(GString * html)
 {
 	gchar *escaped;
-	escaped = expand_escapes_alloc(html->str);
+	escaped = gebr_str_escape (html->str);
 	g_string_assign(html, escaped); 
 	g_free (escaped);
 }
