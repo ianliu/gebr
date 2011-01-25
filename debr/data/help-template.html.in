@@ -36,8 +36,7 @@
       <div class="main">
         <div class="content">
           <!-- begin cnt -->
-          <a name="intro" id="intro"></a>
-          <h2>Introduction</h2>
+          <h2 id="intro">Introduction</h2>
 
           <p>A short one or two paragraphs describing the purpose
           of the program or menu. In case of menu, try to comment
@@ -47,8 +46,7 @@
           <!-- begin par -->
           <div class="parameters">
 
-            <a name="par" id="par"></a>
-            <h2>Parameters</h2>
+            <h2 id="par">Parameters</h2>
 
             <p>This section should be present only for program's
             helps. You should describe each parameter the user must
@@ -75,21 +73,18 @@
           </div>
           <!-- end par -->
 
-          <a name="details" id="details"></a>
-          <h2>Description</h2>
+          <h2 id="details">Description</h2>
 
           <p>Feel free to describe each detail of the program or
           menu. However, note that the help of the menu must provide
           general information about its purpose only.</p>
 
-          <a name="notes" id="notes"></a>
-          <h2>Notes</h2>
+          <h2 id="notes">Notes</h2>
 
           <p>Any other comment or detailed information might be given
           here.</p>
 
-          <a name="ref" id="ref"></a>
-          <h2>References</h2>
+          <h2 id="ref">References</h2>
 
           <p>A list of references where the algorithm or strategy
           is published and/or described.</p>
@@ -107,8 +102,7 @@
             Geophysicists, Tulsa, 4th edition, 2002.</li>
           </ul>
 
-          <a name="credits" id="credits"></a>
-          <h2>Credits</h2>
+          <h2 id="credits">Credits</h2>
 
           <p>In case of a program, credit each developer of the
           program. In case of a flow credit the author of the
