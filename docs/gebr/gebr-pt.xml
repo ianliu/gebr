@@ -156,7 +156,9 @@
         </step>
         <step>
           <para>Se desejar, digite também uma breve <emphasis>descrição</emphasis> da linha, o
-              <emphasis>autor</emphasis>, um <emphasis>e-mail</emphasis> para contato.</para>
+              <emphasis>autor</emphasis>, um <emphasis>e-mail</emphasis> para contato.Pode-se adicionar
+	 ainda caminhos personalizados de linha, cujo detalhamento será abordado <link linkend="sec_3_1_6">
+	<emphasis role="bold">seção 3.1.6</emphasis></link> </para>
         </step>
       </procedure>
       <screenshot>
@@ -197,7 +199,7 @@
       <title>Criando fluxos</title>
       <para>Na GêBR, um <emphasis role="bold">fluxo</emphasis> é uma <emphasis role="bold">sequência
           de operações</emphasis> selecionadas pelo usuário. Estas operações, também chamadas de
-          <emphasis role="bold">componentes</emphasis> do fluxo, são separadas nas seguintes
+          <emphasis role="bold">programas</emphasis> do fluxo, são separadas nas seguintes
           <emphasis role="bold">categorias</emphasis>, de acordo com o propósito:</para>
       <itemizedlist>
         <listitem>
@@ -215,11 +217,20 @@
         <listitem>
           <para>Gain, NMO, Stack and Standard Processes</para>
         </listitem>
+	<listitem>
+          <para>GGC-UNICAMP</para>
+        </listitem>
         <listitem>
           <para>Graphics</para>
         </listitem>
         <listitem>
           <para>Import/Export</para>
+        </listitem>
+	<listitem>
+          <para>INCT-GP</para>
+        </listitem>
+	<listitem>
+          <para>LAPEG-CPGG-UFBA</para>
         </listitem>
         <listitem>
           <para>Migration and Dip Moveout</para>
@@ -236,12 +247,15 @@
         <listitem>
           <para>Simulation and Model Building</para>
         </listitem>
+	<listitem>
+          <para>ToSCo</para>
+        </listitem>
         <listitem>
           <para>Utilities</para>
         </listitem>
       </itemizedlist>
       <para><emphasis role="bold">Criar um fluxo</emphasis> significa <emphasis role="bold"
-          >selecionar e ordenar componentes</emphasis>, a partir das categorias acima. Vejamos como
+          >selecionar e ordenar programas</emphasis>, a partir das categorias acima. Vejamos como
         se faz na prática:</para>
       <procedure>
         <step>
@@ -267,7 +281,7 @@
           <para>Selecione a aba <guilabel>Edição de Fluxo</guilabel>. Em seguida, expanda a categoria
               <guimenu>Graphics</guimenu> e dê um clique duplo no componente <guimenuitem>SU Simple
               X Image</guimenuitem>. Fazendo isso você adiciona este componente ao seu fluxo (note
-            que o componente <guimenuitem>SU Simple X Image</guimenuitem> agora aparece na caixa
+            que o programa <guimenuitem>SU Simple X Image</guimenuitem> agora aparece na caixa
               <guilabel>Sequência de fluxo</guilabel>, no lado esquerdo da janela). Neste momento, sua
             janela deve se parecer com esta:</para>
           <screenshot>
@@ -285,14 +299,14 @@
           <para>Expanda a categoria <guimenu>Seismic Unix</guimenu> e dê um clique duplo no
             componente <guimenuitem>SU Plane</guimenuitem> (provavelmente você precisará rolar a
             janela <guilabel>Fluxos</guilabel> para alcançar este componente). Fazendo isso
-            você adiciona o componente <guimenuitem>SU Plane</guimenuitem> ao fluxo. Note que
+            você adiciona o programa <guimenuitem>SU Plane</guimenuitem> ao fluxo. Note que
               <guimenuitem>SU Plane</guimenuitem> ficará posicionado abaixo de <guimenuitem>SU
               Simple X Image</guimenuitem> na lista <guilabel>Sequência de fluxo</guilabel>.</para>
         </step>
         <step>
           <para>Para este exemplo funcionar, é necessário que <guimenuitem>SU Plane</guimenuitem>
             venha antes de <guimenuitem>SU Simple X Image</guimenuitem> na sequência do fluxo. Por
-            isso, você deve <emphasis role="bold">arrastar o componente </emphasis>para a posição
+            isso, você deve <emphasis role="bold">arrastar o programa </emphasis>para a posição
             desejada, como mostra a janela a seguir:</para>
           <screenshot>
             <info>
@@ -306,10 +320,10 @@
           </screenshot>
         </step>
         <step>
-          <para>Agora que o componente <guimenuitem>SU Plane</guimenuitem> está no topo da lista
+          <para>Agora que o programa <guimenuitem>SU Plane</guimenuitem> está no topo da lista
               <guilabel>Sequência de fluxo</guilabel>, clique sobre ele com o botão direito do mouse. No
             menu que se abre, selecione a opção <guilabel>Configurado</guilabel>. Isso muda o estado
-            do componente, que passa a ser sinalizado por <guiicon><inlinemediaobject>
+            do programa, que passa a ser sinalizado por <guiicon><inlinemediaobject>
                 <imageobject>
                   <imagedata fileref="../images/icone_configurado.png"/>
                 </imageobject>
@@ -317,7 +331,7 @@
                 <imageobject>
                   <imagedata fileref="../images/icone_nao_configurado.png"/>
                 </imageobject>
-              </inlinemediaobject></guiicon>. Depois faça o mesmo para o componente <guimenuitem>SU
+              </inlinemediaobject></guiicon>. Depois faça o mesmo para o programa <guimenuitem>SU
               Simple X Image</guimenuitem>.</para>
           <screenshot>
             <info>
@@ -330,13 +344,13 @@
             </mediaobject>
           </screenshot>
           <tip>
-            <para>Se você quiser mudar o estado de todos (ou de alguns) componentes simultaneamente,
+            <para>Se você quiser mudar o estado de todos (ou de alguns) programas simultaneamente,
               selecione-os usando <keycombo>
                 <keycap>Ctrl</keycap>
                 <mousebutton>Clique</mousebutton>
-              </keycombo>. Depois clique com o botão direito do mouse em um dos componentes
+              </keycombo>. Depois clique com o botão direito do mouse em um dos programas
               selecionados e, no menu que se abre, escolha a opção <guilabel>Configurado</guilabel>.
-              Todos os componentes que você selecionou serão alterados para <guiicon><inlinemediaobject>
+              Todos os programas que você selecionou serão alterados para <guiicon><inlinemediaobject>
                   <imageobject>
                     <imagedata fileref="../images/icone_configurado.png"/>
                   </imageobject>
@@ -344,7 +358,7 @@
           </tip>
           <important>
             <para>Para este fluxo funcionar, é necessário que <emphasis role="bold">todos os
-                componentes</emphasis> listados na caixa <guilabel>Sequência de fluxo</guilabel> estejam
+                programas</emphasis> listados na caixa <guilabel>Sequência de fluxo</guilabel> estejam
               no estado <emphasis role="bold">Configurado</emphasis> (<guiicon><inlinemediaobject>
                   <imageobject>
                     <imagedata fileref="../images/icone_configurado.png"/>
@@ -433,6 +447,9 @@
 	<listitem>
           <para><link linkend="sec_3_1_9">Editar comentário</link></para>
         </listitem>
+	<listitem>
+          <para><link linkend="sec_3_1_10">Visualizar Relatório</link></para>
+        </listitem>
       </itemizedlist>
       <tip>
         <para>Experimente usar <emphasis role="bold">menus de contexto</emphasis> no lugar dos
@@ -514,7 +531,9 @@
         <para>Na janela <guilabel>Propriedades </guilabel>(...<guilabel>para projeto</guilabel> ou
             ...<guilabel>para linha</guilabel>, dependendo do caso) você pode editar os campos
             <guilabel>Título</guilabel>, <guilabel>Descrição</guilabel>,
-            <guilabel>Autor</guilabel> e <guilabel>Email</guilabel>.
+            <guilabel>Autor</guilabel> e <guilabel>Email</guilabel>.Para o caso de edição de propriedades de linha,
+	 pode-se adicionar caminhos personalizados, cujo detalhamento será abordado na seção <link linkend="sec_3_1_6">
+	<emphasis role="bold">seção 3.1.6</emphasis></link> 
         </para>
       </section>
       <section xml:id="sec_3_1_5">
@@ -652,7 +671,7 @@
         </procedure>
       </section>
      <section xml:id="sec_3_1_9">
-        <title>Edição de comentário</title>
+        <title>Editar comentário</title>
         <para>Pode-se editar comentários no relatório, atribuindo informações adicionais
 	 sobre o projeto ou sobre a linha. Para <emphasis
             role="bold">editar um comentário</emphasis>:</para>
@@ -695,6 +714,14 @@
           </important>
 	   </para>
     </section>
+	<section xml:id="sec_3_1_10">
+        <title>Visualizar Relatório</title>
+        <para>Como explorado na seção acima, pode-se criar e editar um relatório com informações
+	 adicionais sobre o fluxo. O procedimento é idêntico ao usado para projetos e linhas
+	 (veja <link linkend="sec_3_1_4"><emphasis role="bold">seção 3.1.4</emphasis></link> ).
+	 Para visualizar o relatório  que você criou, clique no botão Visualizar Relatório,
+	 na parte de baixo da caixa Detalhes, no lado direito da janela principal.</para>
+      </section>
  </section>
     <section xml:id="sec_3_2">
       <title>A aba <guilabel>Fluxos</guilabel></title>
@@ -829,13 +856,7 @@
               </imageobject>
             </inlinemediaobject></guiicon>.</para>
         <para>Na janela <guilabel>Propriedades para Fluxo</guilabel> você pode editar os campos
-            <guilabel>Título, Descrição, Autor e Email</guilabel>, <guilabel>Descrição</guilabel>,
-            <guilabel>Autor</guilabel> e <guilabel>Email</guilabel>. Além disso, pode criar e
-          editar um relatório com informações adicionais sobre o fluxo. O procedimento é idêntico ao
-          usado para projetos e linhas (veja a <link linkend="sec_3_1_4"><emphasis role="bold">seção
-              3.1.4</emphasis></link>). Para <emphasis role="bold">visualizar o relatório</emphasis>
-          que você criou, clique no botão <guibutton>Visualizar Relatório</guibutton>, na parte de baixo da
-          caixa <guilabel>Detalhes</guilabel>, no lado direito da janela principal.</para>
+            <guilabel>Título, Descrição, Autor e Email</guilabel>.</para>
       </section>
       <section xml:id="sec_3_2_6">
         <title>Editar o dicionário de parâmetros de um fluxo</title>
@@ -960,7 +981,7 @@
         </procedure>
       </section>
       <section xml:id="sec_3_2_10">
-        <title>Importação de menus da GêBR pela DéBR</title>
+        <title>Criação de menus a partir de um fluxo pela DéBR</title>
         <para>Na GêBR, às vezes usa-se o termo <emphasis>menu</emphasis> para designar a
             <emphasis>especificação de um programa</emphasis> que realiza uma determinada tarefa.
           Para evitar confusão com o menu comumente usado em informática, vamos chamar essa
@@ -1001,7 +1022,7 @@
             <para>Clique em <guibutton>Salvar</guibutton>.</para>
           </step>
           <step>
-            <para>Em <guilabel>Menu</guilabel> da DéBR, clicar em <guilabel>Importar fluxo como menu</guilabel>,
+            <para>Em <guilabel>Menu</guilabel> da DéBR, clicar em <guilabel>Criar menu a partir de um fluxo</guilabel>,
 	 escolher o fluxo e clicar em <guilabel>Abrir</guilabel>. Esse procedimento é melhor detalhado 
 	em <guilabel>Ajuda</guilabel> na interface DéBR.</para>
           </step>
@@ -1030,13 +1051,13 @@
     <section xml:id="sec_3_3">
       <title>A aba <guilabel>Edição de Fluxo</guilabel></title>
       <para>Todo fluxo criado na GêBR nasce vazio, isto é, <emphasis role="bold">sem
-          componentes</emphasis> que descrevam uma sequência funcional de operações. Para um fluxo
-        tornar-se funcional, é preciso <emphasis role="bold">adicionar componentes</emphasis> a ele.
-        Além disso, é preciso <emphasis role="bold">configurar os componentes</emphasis>, para que
+          programas</emphasis> que descrevam uma sequência funcional de operações. Para um fluxo
+        tornar-se funcional, é preciso <emphasis role="bold">adicionar programas</emphasis> a ele.
+        Além disso, é preciso <emphasis role="bold">configurar os programas</emphasis>, para que
         realizem tarefas específicas. Tudo isso é feito na aba <guilabel>Edição de Fluxo</guilabel>.</para>
       <para>Na <emphasis role="bold"><link linkend="sec_2_2">seção 2.2</link></emphasis> vimos que
-        os componentes padrão da GêBR são separados em treze categorias, listadas na caixa
-          <guilabel>Flow components</guilabel>, no lado direito da janela principal:</para>
+        os componentes padrão da GêBR são separados em dezesseis categorias, listadas na caixa
+          <guilabel>Menu</guilabel>, no lado direito da janela principal:</para>
       <itemizedlist>
         <listitem>
           <para>Data Compression</para>
@@ -1059,6 +1080,12 @@
         <listitem>
           <para>Import/Export</para>
         </listitem>
+	<listitem>
+          <para>INTC-GP</para>
+        </listitem>
+	<listitem>
+          <para>LAPEG-CPGG-UFBA</para>
+        </listitem>
         <listitem>
           <para>Migration and Dip Moveout</para>
         </listitem>
@@ -1074,6 +1101,9 @@
         <listitem>
           <para>Simulation and Model Building</para>
         </listitem>
+	<listitem>
+          <para>ToSCo</para>
+        </listitem>
         <listitem>
           <para>Utilities</para>
         </listitem>
@@ -1084,7 +1114,7 @@
               <imagedata fileref="../images/icone_colapsado.png"/>
             </imageobject>
           </inlinemediaobject></guiicon> à esquerda da categoria.</para>
-      <para>Para <emphasis role="bold">adicionar um componente</emphasis> ao fluxo, siga o seguinte
+      <para>Para <emphasis role="bold">adicionar um programa</emphasis> ao fluxo, siga o seguinte
         procedimento:</para>
       <procedure>
         <step>
@@ -1098,9 +1128,9 @@
         </step>
         <step>
           <para>Expanda uma categoria e dê um clique duplo em um de seus componentes (dependendo da
-            categoria, talvez você precise rolar a janela <guilabel>Flow components</guilabel> para
-            ver todos os componentes). O componente selecionado é adicionado à caixa <guilabel>Flow
-              sequence</guilabel>, no lado esquerdo da janela principal.</para>
+            categoria, talvez você precise rolar a janela <guilabel>Menu</guilabel> para
+            ver todos os componentes). O componente selecionado é adicionado à caixa <guilabel>Sequência do fluxo
+	</guilabel> como programa(s) do fluxo, no lado esquerdo da janela principal.</para>
           <tip>
             <para>Você pode consultar a <emphasis role="bold">documentação do componente</emphasis>
               antes de adicioná-lo ao fluxo. Para isso, clique no componente com o <emphasis
@@ -1111,33 +1141,32 @@
       </procedure>
       <tip>
         <para>Observe a <emphasis role="bold">barra de informações</emphasis> na parte de cima da
-          janela principal, logo abaixo do menu <guimenu>Actions</guimenu>. Ela mostra o fluxo
-          selecionado atualmente, sem que você tenha que sair da aba <guilabel>Flow
-            edition</guilabel>.</para>
+          janela principal, logo abaixo do menu <guimenu>Ações</guimenu>. Ela mostra o fluxo
+          selecionado atualmente, sem que você tenha que sair da aba <guilabel>Edição de fluxo</guilabel>.</para>
       </tip>
       <tip>
-        <para>Você pode <emphasis role="bold">mudar a posição</emphasis> de um componente na caixa
-            <guilabel>Flow sequence</guilabel>. Para isso, <emphasis role="bold">arraste-o com o
+        <para>Você pode <emphasis role="bold">mudar a posição</emphasis> de um programa na caixa
+            <guilabel>Sequência do fluxo</guilabel>. Para isso, <emphasis role="bold">arraste-o com o
             mouse</emphasis> para a posição desejada.</para>
       </tip>
-      <para>Agora que já sabemos como adicionar componentes ao fluxo, precisamos configurá-los.
-        Vejamos então as demais ferramentas da aba <guilabel>Flow edition</guilabel>:</para>
+      <para>Agora que já sabemos como adicionar programas ao fluxo, precisamos configurá-los.
+        Vejamos então as demais ferramentas da aba <guilabel>Edição de fluxo</guilabel>:</para>
       <itemizedlist>
         <listitem>
-          <para><link linkend="sec_3_3_1">Copiar componentes para a área de
+          <para><link linkend="sec_3_3_1">Copiar programa(s) selecionado(s) para a área de
             transferência</link></para>
         </listitem>
         <listitem>
-          <para><link linkend="sec_3_3_2">Colar componentes da área de transferência</link></para>
+          <para><link linkend="sec_3_3_2">Colar programa(s) selecionado(s) da área de transferência</link></para>
         </listitem>
         <listitem>
-          <para><link linkend="sec_3_3_3">Deletar componentes</link></para>
+          <para><link linkend="sec_3_3_3">Deletar programa</link></para>
         </listitem>
         <listitem>
-          <para><link linkend="sec_3_3_4">Editar os parâmetros de um componente</link></para>
+          <para><link linkend="sec_3_3_4">Editar os parâmetros de um programa</link></para>
         </listitem>
         <listitem>
-          <para><link linkend="sec_3_3_5">Mudar o estado de um componente</link></para>
+          <para><link linkend="sec_3_3_5">Mudar o estado de um programa</link></para>
         </listitem>
         <listitem>
           <para><link linkend="sec_3_3_6">Editar arquivos de entrada e saída do fluxo</link></para>
@@ -1149,15 +1178,15 @@
       <tip>
         <para>Experimente usar <emphasis role="bold">menus de contexto</emphasis> no lugar dos
           botões de comando. Para isso, <emphasis role="bold">clique com o botão direito do
-            mouse</emphasis> nos componentes que você adicionar. Você vai notar que diversos
+            mouse</emphasis> nos programas que você adicionar. Você vai notar que diversos
           comandos podem ser acionados por este método. Em determinados casos, isso é mais <emphasis
             role="bold">fácil e rápido</emphasis> do que usar os botões.</para>
       </tip>
       <section xml:id="sec_3_3_1">
-        <title>Copiar componentes para a área de transferência</title>
+        <title>Copiar programas para a área de transferência</title>
         <para>Da mesma forma que se faz com fluxos (veja a <emphasis role="bold"><link
-              linkend="sec_3_2_2">seção 3.2.2</link></emphasis>), um componente (ou um conjunto de
-          componentes) pode ser copiado para a área de transferência por meio do botão <guiicon><inlinemediaobject>
+              linkend="sec_3_2_2">seção 3.2.2</link></emphasis>), um programa (ou um conjunto de
+          programas) pode ser copiado para a área de transferência por meio do botão <guiicon><inlinemediaobject>
               <imageobject>
                 <imagedata fileref="../images/botao_copiar_fluxo.png"/>
               </imageobject>
@@ -1166,7 +1195,7 @@
             <keycap>C</keycap>
           </keycombo>.</para>
         <tip>
-          <para>Você pode selecionar vários componentes para serem copiados simultaneamente usando <keycombo>
+          <para>Você pode selecionar vários programas para serem copiados simultaneamente usando <keycombo>
               <keycap>Ctrl</keycap>
               <mousebutton>Clique</mousebutton>
             </keycombo> ou <keycombo>
@@ -1176,9 +1205,9 @@
         </tip>
       </section>
       <section xml:id="sec_3_3_2">
-        <title>Colar componentes da área de transferência</title>
+        <title>Colar programas da área de transferência</title>
         <para>Depois de ter sido <link linkend="sec_3_3_1">copiado para a área de
-            transferência</link>, um componente (ou um conjunto de componentes) pode ser colado por
+            transferência</link>, um programa (ou um conjunto de programas) pode ser colado por
           meio do botão <guiicon><inlinemediaobject>
               <imageobject>
                 <imagedata fileref="../images/botao_colar_fluxo.png"/>
@@ -1188,23 +1217,23 @@
             <keycap>V</keycap>
           </keycombo>.</para>
         <tip>
-          <para>O componente (ou conjunto de componentes) copiado anteriormente para a área de
+          <para>O programa (ou conjunto de programas) copiado anteriormente para a área de
             transferência pode ser colado em <emphasis role="bold">qualquer fluxo</emphasis>
             existente, e não só no fluxo de origem. Basta alternar para a aba
               <guilabel>Fluxos</guilabel>, selecionar o fluxo desejado, voltar para a aba
-              <guilabel>Edição de fluxo</guilabel> e colar o(s) componentes(s).</para>
+              <guilabel>Edição de fluxo</guilabel> e colar o(s) programas(s).</para>
         </tip>
       </section>
       <section xml:id="sec_3_3_3">
-        <title>Deletar componentes</title>
-        <para>Para excluir um componente (ou um conjunto de componentes), selecione-o e clique no
+        <title>Deletar programas</title>
+        <para>Para excluir um programa (ou um conjunto de programas), selecione-o e clique no
           botão <guiicon><inlinemediaobject>
               <imageobject>
                 <imagedata fileref="../images/botao_apagar_projeto.png"/>
               </imageobject>
             </inlinemediaobject></guiicon>.</para>
         <tip>
-          <para>Você pode selecionar vários componentes para serem excluidos simultaneamente usando <keycombo>
+          <para>Você pode selecionar vários programas para serem excluidos simultaneamente usando <keycombo>
               <keycap>Ctrl</keycap>
               <mousebutton>Clique</mousebutton>
             </keycombo> ou <keycombo>
@@ -1214,33 +1243,33 @@
         </tip>
         <caution>
           <para>A GêBR <emphasis role="bold">não emite aviso</emphasis> antes de deletar
-            componentes.</para>
+            programas.</para>
         </caution>
       </section>
       <section xml:id="sec_3_3_4">
-        <title>Editar os parâmetros de um componente</title>
-        <para>Para editar os parâmetros de um componente:</para>
+        <title>Editar os parâmetros de um programa</title>
+        <para>Para editar os parâmetros de um programa:</para>
         <procedure>
           <step>
             <para>Selecione-o na caixa <guilabel>Sequência de fluxo</guilabel> e clique no botão <guiicon><inlinemediaobject>
                   <imageobject>
                     <imagedata fileref="../images/botao_editar_propriedades_projeto.png"/>
                   </imageobject>
-                </inlinemediaobject></guiicon>, ou dê um clique duplo no componente.</para>
+                </inlinemediaobject></guiicon>, ou dê um clique duplo no programa.</para>
           </step>
           <step>
-            <para>Na janela <guilabel>Parâmetros</guilabel>, edite os parâmetros do componente. Note
-              que os parâmetros variam bastante de um componente para outro, tanto em quantidade
+            <para>Na janela <guilabel>Parâmetros</guilabel>, edite os parâmetros do programa. Note
+              que os parâmetros variam bastante de um programa para outro, tanto em quantidade
               como em tipo.</para>
             <tip>
               <para>Clique no botão <guibutton>Ajuda</guibutton> (canto inferior esquerdo da janela
                   <guilabel>Parâmetros</guilabel>) para visualizar a <emphasis role="bold"
-                  >documentação do componente</emphasis>. Isso pode ser útil durante a edição de
+                  >documentação do programa</emphasis>. Isso pode ser útil durante a edição de
                 parâmetros.</para>
             </tip>
             <tip>
               <para>Clique no botão <guibutton>Padrão</guibutton> quando quiser retornar para a
-                configuração padrão do componente.</para>
+                configuração padrão do programa.</para>
             </tip>
           </step>
           <step>
@@ -1249,9 +1278,9 @@
         </procedure>
       </section>
       <section xml:id="sec_3_3_5">
-        <title>Mudar o estado de um componente</title>
+        <title>Mudar o estado de um programa</title>
         <para>Após realizar o procedimento da <emphasis role="bold"><link linkend="sec_3_3_4">seção
-              3.3.4</link></emphasis>, note que o componente passa a ser sinalizado por <guiicon><inlinemediaobject>
+              3.3.4</link></emphasis>, note que o programa passa a ser sinalizado por <guiicon><inlinemediaobject>
               <imageobject>
                 <imagedata fileref="../images/icone_configurado.png"/>
               </imageobject>
@@ -1259,9 +1288,9 @@
               <imageobject>
                 <imagedata fileref="../images/icone_nao_configurado.png"/>
               </imageobject>
-            </inlinemediaobject></guiicon>. Isso indica que o componente passou do estado <emphasis
+            </inlinemediaobject></guiicon>. Isso indica que o programa passou do estado <emphasis
             role="bold">Não configurado</emphasis> para o estado <emphasis role="bold"
-            >Configurado</emphasis>. Além desses dois estados, um componente pode assumir ainda o
+            >Configurado</emphasis>. Além desses dois estados, um programa pode assumir ainda o
           estado <emphasis role="bold">Desabilitado</emphasis> (<guiicon><inlinemediaobject>
               <imageobject>
                 <imagedata fileref="../images/icone_desabilitado.png"/>
@@ -1276,7 +1305,7 @@
               </imageobject>
             </inlinemediaobject></guiicon>.</para>
         <tip>
-          <para>Você pode mudar o estado de vários componentes simultaneamente, selecionando-os com <keycombo>
+          <para>Você pode mudar o estado de vários programas simultaneamente, selecionando-os com <keycombo>
               <keycap>Ctrl</keycap>
               <mousebutton>Clique</mousebutton>
             </keycombo> ou <keycombo>
@@ -1285,11 +1314,11 @@
             </keycombo>.</para>
         </tip>
         <tip>
-          <para>Mudar o estado do componente não altera a configuração dos parâmetros. Você pode
+          <para>Mudar o estado do programa não altera a configuração dos parâmetros. Você pode
             alternar com segurança entre os estados, os parâmetros serão preservados.</para>
         </tip>
         <important>
-          <para>Componentes <emphasis role="bold">Não configurados</emphasis> (<guiicon><inlinemediaobject>
+          <para>Programas <emphasis role="bold">Não configurados</emphasis> (<guiicon><inlinemediaobject>
                 <imageobject>
                   <imagedata fileref="../images/icone_nao_configurado.png"/>
                 </imageobject>
@@ -1394,7 +1423,7 @@
               <imageobject>
                 <imagedata fileref="../images/icone_arquivo_saida.png"/>
               </imageobject>
-            </inlinemediaobject></guiicon>, abaixo e acima dos componentes do fluxo (se houver
+            </inlinemediaobject></guiicon>, abaixo e acima dos programas do fluxo (se houver
           algum).</para>
         <tip>
           <para>Experimente dar um clique duplo em um dos arquivos sinalizados com os ícones <guiicon><inlinemediaobject>
@@ -1513,9 +1542,9 @@
         exemplo:</para>
       <procedure>
         <step>
-          <para>Crie um fluxo e insira nele um componente muito simples chamado
+          <para>Crie um fluxo e insira nele um programa muito simples chamado
               <guimenuitem>Sleep</guimenuitem>, cuja única função é pausar a execução do fluxo por
-            um determinado tempo (você encontra este componente na categoria <guimenu>Shell
+            um determinado tempo (você encontra este programa na categoria <guimenu>Shell
               tools</guimenu>, na aba <guilabel>Edição de Fluxo</guilabel>).</para>
           <screenshot>
             <info>
@@ -1570,7 +1599,7 @@
         <step>
           <para>Depois de fechar a janela <guilabel>Dicionário de parâmeros para linha</guilabel>,
             selecione a aba <guilabel>Edição de fluxo</guilabel> e, na caixa <guilabel>Sequência de fluxo
-	</guilabel>, dê um clique duplo no componente <guilabel>Sleep</guilabel>. Na
+	</guilabel>, dê um clique duplo no programa <guilabel>Sleep</guilabel>. Na
             janela que se abre (<guilabel>Parâmetros</guilabel>), clique com o <emphasis role="bold"
               >botão direito do mouse</emphasis> no campo <guilabel>Time to sleep</guilabel>. O
             objetivo é atribuir a variável <emphasis role="bold">Tempo=5</emphasis> ao parâmetro
