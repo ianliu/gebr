@@ -396,3 +396,14 @@ const gchar *gebr_gui_help_edit_widget_get_uri (GebrGuiHelpEditWidget * self)
 
 	return GEBR_GUI_HELP_EDIT_WIDGET_GET_CLASS (self)->get_uri (self);
 }
+
+gboolean gebr_gui_help_edit_widget_get_editing (GebrGuiHelpEditWidget *self)
+{
+	GebrGuiHelpEditWidgetPrivate * priv;
+
+	g_return_val_if_fail (GEBR_GUI_IS_HELP_EDIT_WIDGET (self), NULL);
+
+	priv = GEBR_GUI_HELP_EDIT_WIDGET_GET_PRIVATE (self);
+
+	return priv->is_editing;
+}
