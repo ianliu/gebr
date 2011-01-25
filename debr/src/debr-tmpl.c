@@ -80,3 +80,22 @@ gboolean debr_tmpl_set (GString *tmpl, const gchar *tag, const gchar *value)
 
 	return TRUE;
 }
+
+gboolean debr_tmpl_append (GString *tmpl, const gchar *tag, const gchar *value)
+{
+	gchar *mark;
+	gchar *ptr;
+	gsize pos;
+
+	mark = g_strconcat ("<!-- end ", tag, " -->", NULL);
+	ptr = strstr (tmpl->str, mark);
+
+	if (!ptr)
+		return FALSE;
+	else
+		pos = (ptr - tmpl->str) / sizeof (gchar);
+
+	g_string_insert (tmpl, pos, value);
+
+	return TRUE;
+}
