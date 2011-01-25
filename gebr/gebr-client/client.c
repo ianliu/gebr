@@ -66,8 +66,6 @@ gboolean client_parse_server_messages(struct gebr_comm_server *gebr_comm_server,
 //                              TODO:
 //                              job = job_add(server, jid, status, title, start_date, NULL,
 //                                      NULL, issues, cmd_line, output);
-//                              job_set_active(job);
-//                              gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), 3);
 
 				gebr_comm_protocol_split_free(arguments);
 			} else if (gebr_comm_server->protocol->waiting_ret_hash == gebr_comm_protocol_defs.flw_def.code_hash) {

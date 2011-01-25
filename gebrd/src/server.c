@@ -307,22 +307,23 @@ gboolean server_parse_client_messages(struct client *client)
 			job_list(client);
 		} else if (message->hash == gebr_comm_protocol_defs.run_def.code_hash) {
 			GList *arguments;
-			GString *xml, *account, *queue, *n_process;
+			GString *xml, *account, *queue, *n_process, *run_id;
 			struct job *job;
 			gboolean success;
 
 			/* organize message data */
-			if ((arguments = gebr_comm_protocol_split_new(message->argument, 4)) == NULL)
+			if ((arguments = gebr_comm_protocol_split_new(message->argument, 5)) == NULL)
 				goto err;
 			xml = g_list_nth_data(arguments, 0);
 			account = g_list_nth_data(arguments, 1);
 			queue = g_list_nth_data(arguments, 2);
 			n_process = g_list_nth_data(arguments, 3);
+			run_id = g_list_nth_data(arguments, 4);
 
 			/* try to run and send return */
-			success = job_new(&job, client, queue, account, xml, n_process);
+			success = job_new(&job, client, queue, account, xml, n_process, run_id);
 			gebr_comm_protocol_send_data(client->protocol, client->stream_socket,
-						     gebr_comm_protocol_defs.ret_def, 1, job->jid->str);
+						     gebr_comm_protocol_defs.ret_def, 2, job->jid->str, job->run_id->str);
 			if (success) {
 				if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_REGULAR) {
 					if (!queue->len) {

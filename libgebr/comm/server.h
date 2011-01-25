@@ -174,9 +174,10 @@ void gebr_comm_server_kill(struct gebr_comm_server *gebr_comm_server);
 gboolean gebr_comm_server_forward_x11(struct gebr_comm_server *gebr_comm_server, guint16 port);
 
 /**
- * Ask _gebr_comm_server_ to run the current _flow_
+ * Ask _gebr_comm_server_ to run the current _flow_.
+ * Returns the run_id for the first flow.
  */
-void gebr_comm_server_run_flow(struct gebr_comm_server *gebr_comm_server, GebrCommServerRun * config);
+guint gebr_comm_server_run_flow(struct gebr_comm_server *gebr_comm_server, GebrCommServerRun * config);
 
 G_END_DECLS
 #endif				//__GEBR_COMM_SERVER_H

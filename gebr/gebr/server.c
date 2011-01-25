@@ -175,7 +175,6 @@ struct server *server_new(const gchar * address, gboolean autoconnect)
 	server->type = GEBR_COMM_SERVER_TYPE_UNKNOWN;
 	server->accounts_model = gtk_list_store_new(1, G_TYPE_STRING);
 	server->queues_model = gtk_list_store_new(3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
-	server->ran_jid = g_string_new("");
 	server->comm->user_data = server;
 	gtk_list_store_set(gebr.ui_server_list->common.store, &iter,
 			   SERVER_STATUS_ICON, gebr.pixmaps.stock_disconnect,
@@ -218,7 +217,6 @@ void server_free(struct server *server)
 
 	gebr_comm_server_free(server->comm);
 	g_string_free(server->last_error, TRUE);
-	g_string_free(server->ran_jid, TRUE);
 	g_free(server);
 }
 

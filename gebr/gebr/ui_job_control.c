@@ -87,8 +87,8 @@ struct ui_job_control *job_control_setup_ui(void)
 				    GTK_SELECTION_MULTIPLE);
 
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(ui_job_control->view), FALSE);
-	g_signal_connect(GTK_OBJECT(ui_job_control->view), "cursor-changed", G_CALLBACK(job_control_on_cursor_changed),
-			 NULL);
+	g_signal_connect(GTK_OBJECT(ui_job_control->view), "cursor-changed",
+			 G_CALLBACK(job_control_on_cursor_changed), NULL);
 
 	col = gtk_tree_view_column_new();
 	gtk_tree_view_append_column(GTK_TREE_VIEW(ui_job_control->view), col);
@@ -439,24 +439,22 @@ gboolean job_control_get_selected(GtkTreeIter * iter, enum JobControlSelectionTy
 /* Updates the job text buffer */
 static void job_update_text_buffer(GtkTreeIter iter, struct job *job)
 {
-	GString *info, *queue_info;
-	GtkTextIter iter_text_buffer;
-	
-	info = g_string_new(NULL);
-	/*
-	 * Fill job information
-	 */
+	GString *info = g_string_new("");
+
 	/* who and where */
-	queue_info = g_string_new(NULL); 
-	if (job->queue->str[0] == 'j') {
+	GString *queue_info = g_string_new(NULL); 
+	if (job->queue->str[0] == 'j')
 		g_string_assign(queue_info, "unqueued");
-	}
-	else if (job->queue->str[0] == 'q') {
+	else if (job->queue->str[0] == 'q')
 		g_string_printf(queue_info, "on %s", job->queue->str+1);
-	}
 	g_string_append_printf(info, _("Job executed at %s (%s) by %s.\n"),
 			       job->server->comm->protocol->hostname->str, queue_info->str, job->hostname->str);
 	g_string_free(queue_info, TRUE);
+	if (job->waiting_server_details) {
+		g_string_append_printf(info, _("\nWaiting for more server details..."));
+		gtk_text_buffer_set_text(gebr.ui_job_control->text_buffer, info->str, info->len);
+		goto out;
+	}
 
 	/* start date */
 	g_string_append_printf(info, "%s %s\n", _("Start date:"), gebr_localized_date(job->start_date->str));
@@ -464,18 +462,17 @@ static void job_update_text_buffer(GtkTreeIter iter, struct job *job)
 	/* issues */
 	g_string_append_printf(info, "\n%s\n%s", _("Issues:"), job->issues->str); /* command line */
 	gtk_text_buffer_set_text(gebr.ui_job_control->text_buffer, info->str, info->len);
-
+	GtkTextIter iter_text_buffer;
 	gtk_text_buffer_get_end_iter(gebr.ui_job_control->text_buffer, &iter_text_buffer);
 	gtk_text_buffer_create_mark(gebr.ui_job_control->text_buffer, "issue", &iter_text_buffer, TRUE);
 	g_string_assign(info, "");
 
+	/* command-line */
 	if (job->cmd_line->len)
 		g_string_append_printf(info, "\n%s\n%s\n", _("Command line:"), job->cmd_line->str);
-
 	/* job id */
 	if (job->server->type == GEBR_COMM_SERVER_TYPE_MOAB && job->moab_jid->len)
 		g_string_append_printf(info, "\n%s\n%s\n", _("Moab Job ID:"), job->moab_jid->str);
-
 	/* output */
 	if (job->output->len)
 		g_string_append(info, job->output->str);
@@ -485,11 +482,10 @@ static void job_update_text_buffer(GtkTreeIter iter, struct job *job)
 			g_string_append_printf(info, "\n%s %s", _("Finish date:"), gebr_localized_date(job->finish_date->str));
 	if (job->status == JOB_STATUS_CANCELED)
 		g_string_append_printf(info, "\n%s %s", _("Cancel date:"), gebr_localized_date(job->finish_date->str));
-
- 	/* to view */
+	/* ...finally */
 	gtk_text_buffer_insert_at_cursor(gebr.ui_job_control->text_buffer, info->str, info->len);
 
-	/* frees */
+out:	/* frees */
 	g_string_free(info, TRUE);
 }
 

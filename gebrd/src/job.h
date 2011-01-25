@@ -37,11 +37,11 @@ struct job {
 	gboolean user_finished;
 
 	/* client stuff */
-	GString *hostname;
+	GString *hostname; // the hostname of the client that ran it
 	GString *display;
 	GebrCommServerLocation server_location;
 
-	/* the hostname of the client that ran it */
+	GString *run_id;
 	GString *jid;
 	GString *title;
 	GString *start_date;
@@ -75,7 +75,7 @@ struct job {
 /**
  */
 gboolean job_new(struct job ** _job, struct client * client, GString * queue, GString * account, GString * xml,
-		 GString * n_process);
+		 GString * n_process, GString * run_id);
 /**
  */
 void job_free(struct job *job);

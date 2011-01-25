@@ -36,6 +36,7 @@
 #include "menu.h"
 #include "document.h"
 #include "server.h"
+#include "job.h"
 #include "callbacks.h"
 #include "ui_flow.h"
 #include "ui_document.h"
@@ -461,9 +462,17 @@ void flow_run(struct server *server, GebrCommServerRun * config, gboolean single
 		}
 	}
 
+	/* Create job */
+	GString *queue_gstring = g_string_new(config->queue);
+	struct job * job = job_new_from_flow(server, config->flow, queue_gstring);
+	g_string_free(queue_gstring, TRUE);
+	job_set_active(job);
+	gebr.config.current_notebook = 3;
+	gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), gebr.config.current_notebook);
 
 	/* RUN */
-	gebr_comm_server_run_flow(server->comm, config);
+	guint head_run_id = gebr_comm_server_run_flow(server->comm, config);
+	g_string_printf(job->run_id, "%u", head_run_id);
 
 	gebr_geoxml_flow_set_date_last_run(gebr.flow, gebr_iso_date());
 	document_save(GEBR_GEOXML_DOC(gebr.flow), FALSE, TRUE);

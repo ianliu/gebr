@@ -53,8 +53,6 @@ struct server {
 	GebrCommServerType type;
 	GtkListStore * queues_model;
 	GtkListStore * accounts_model;
-
-	GString *ran_jid;
 };
 
 /**

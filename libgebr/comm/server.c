@@ -314,27 +314,37 @@ gboolean gebr_comm_server_forward_x11(struct gebr_comm_server *server, guint16 p
 	return ret;
 }
 
-void gebr_comm_server_run_flow(struct gebr_comm_server *server, GebrCommServerRun * config)
+guint gebr_comm_server_run_flow(struct gebr_comm_server *server, GebrCommServerRun * config)
 {
+	static guint run_id = 0;
+	guint head_run_id = run_id++;
+	GString *run_id_gstring = g_string_new("");
+
 	gchar *xml;
 	gebr_geoxml_document_to_string(GEBR_GEOXML_DOC(config->flow), &xml);
+	g_string_printf(run_id_gstring, "%u", head_run_id);
 	gebr_comm_protocol_send_data(server->protocol, server->stream_socket,
-				     gebr_comm_protocol_defs.run_def, 4, xml,
+				     gebr_comm_protocol_defs.run_def, 5, xml,
 				     config->account ? config->account : "",
 				     config->queue ? config->queue : "",
-				     config->num_processes ? config->num_processes : "");
+				     config->num_processes ? config->num_processes : "",
+				     run_id_gstring->str);
 	g_free(xml);
-	if (g_list_length(config->queued_flows)) {
-		for (GList *i = config->queued_flows; i != NULL; i = g_list_next(i)) {
-			gebr_geoxml_document_to_string(GEBR_GEOXML_DOC(i->data), &xml);
-			gebr_comm_protocol_send_data(server->protocol, server->stream_socket,
-						     gebr_comm_protocol_defs.run_def, 4, xml,
-						     config->account ? config->account : "",
-						     config->queue ? config->queue : "",
-						     config->num_processes ? config->num_processes : "");
-			g_free(xml);
-		}
+	for (GList *i = config->queued_flows; i != NULL; i = g_list_next(i)) {
+		gebr_geoxml_document_to_string(GEBR_GEOXML_DOC(i->data), &xml);
+		g_string_printf(run_id_gstring, "%u", run_id++);
+		gebr_comm_protocol_send_data(server->protocol, server->stream_socket,
+					     gebr_comm_protocol_defs.run_def, 5, xml,
+					     config->account ? config->account : "",
+					     config->queue ? config->queue : "",
+					     config->num_processes ? config->num_processes : "",
+					     run_id_gstring->str);
+		g_free(xml);
 	}
+
+	g_string_free(run_id_gstring, TRUE);
+
+	return head_run_id;
 }
 
 /**

@@ -27,7 +27,7 @@
 #include "gebr.h"
 #include "ui_job_control.h"
 
-struct job *job_find(GString * address, GString * jid)
+struct job *job_find(GString * address, GString * id, gboolean jid)
 {
 	struct job *job = NULL;
 
@@ -38,9 +38,9 @@ struct job *job_find(GString * address, GString * jid)
 
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), iter, JC_STRUCT, &i, JC_IS_JOB, &is_job,
 				   -1);
-		if (!is_job)
+		if (!is_job || strcmp(i->server->comm->address->str, address->str))
 			return FALSE;
-		if (!strcmp(i->server->comm->address->str, address->str) && !strcmp(i->jid->str, jid->str)) {
+		if ((jid && !strcmp(i->jid->str, id->str)) || (!jid && !strcmp(i->run_id->str, id->str))) {
 			job = i;
 			return TRUE;	
 		}
@@ -63,81 +63,31 @@ static GtkTreeIter job_add_jc_queue_iter(struct job * job)
 	return queue_jc_iter;
 }
 
-struct job *job_add(struct server *server, GString * jid,
-		    GString * _status, GString * title,
-		    GString * start_date, GString * finish_date, GString * hostname, GString * issues, GString *
-		    cmd_line, GString * output, GString * queue, GString * moab_jid)
+static struct job *job_new(struct server *server, GString * title, GString *queue)
 {
-	GtkTreeIter iter;
-	GtkTreeIter queue_jc_iter;
-
-	struct job *job;
-	enum JobStatus status;
-	gchar local_hostname[100];
-
-	gethostname(local_hostname, 100);
-	status = job_translate_status(_status);
-	job = g_new(struct job, 1);
-	job->status = status; 
+	struct job *job = g_new(struct job, 1);
 	job->server = server;
+	job->status = JOB_STATUS_UNKNOWN; 
+	job->waiting_server_details = FALSE;
+	gchar local_hostname[100];
+	gethostname(local_hostname, 100);
+	job->hostname = g_string_new(local_hostname != NULL ? local_hostname : "");
 	job->title = g_string_new(title->str);
-	job->jid = g_string_new(jid->str);
-	job->start_date = g_string_new(start_date->str);
-	job->finish_date = g_string_new(finish_date == NULL ? "" : finish_date->str);
-	job->hostname = g_string_new(hostname == NULL ? local_hostname : hostname->str);
-	job->issues = g_string_new(issues->str);
-	job->cmd_line = g_string_new(cmd_line->str);
-	job->output = g_string_new(NULL);
 	job->queue = g_string_new(queue->str); 
-	job->moab_jid = g_string_new(moab_jid->str);
+	/* use internal queue name */
+	g_string_prepend(job->queue, queue->len ? "q" : "j");
 
-	GtkTreeIter queue_iter;
-	gboolean queue_exists = server_queue_find(job->server, queue->str, &queue_iter);
-	if (server->type == GEBR_COMM_SERVER_TYPE_REGULAR) {
+	job->run_id = g_string_new("");
+	job->jid = g_string_new("");
+	job->start_date = g_string_new("");
+	job->finish_date = g_string_new("");
+	job->issues = g_string_new("");
+	job->cmd_line = g_string_new("");
+	job->output = g_string_new("");
+	job->moab_jid = g_string_new("");
 
-		if (queue->str[0] == 'j') {
-			/* If the queue name prefix is 'j', it is an internal queue, with only one job
-			 * running on it. The user did not give a name to it and does not know it exists. */
-
-			if (queue_exists && job->status != JOB_STATUS_RUNNING) { 
-				/* If the job is not running anymore, then it is not an option to start a queue.
-				 * Thus, it should not be in the combobox model. */
-
-				gtk_list_store_remove(server->queues_model, &queue_iter);
-				gtk_combo_box_set_active(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox), 0);
-			} else if (job->status == JOB_STATUS_RUNNING) {
-				GString *string = g_string_new(NULL);
-
-				g_string_printf(string, _("After '%s'"), title->str);
-
-				if (!queue_exists)
-					/* If the queue does not exist yet, then the job is a new option for enqueuing,
-					 * and should be appended to the combobox model. */
-					gtk_list_store_append(server->queues_model, &queue_iter);
-				
-				gtk_list_store_set(server->queues_model, &queue_iter, 0, string->str, 1, queue->str, 2, job, -1);
-
-				g_string_free(string, TRUE);
-			}
-		} else if (queue_exists) { /* The queue name prefix is 'q' (it has already been named by the user). */
-			GString *string = g_string_new(NULL);
-			gchar *queue_title = job->server->type == GEBR_COMM_SERVER_TYPE_REGULAR 
-				? queue->str+1 /* jump q identifier */ : queue->str;
-
-			if (job->status != JOB_STATUS_RUNNING && job->status != JOB_STATUS_QUEUED)
-				g_string_printf(string, _("At '%s'"), queue_title);
-			else
-				g_string_printf(string, _("After '%s' at '%s'"), title->str, queue_title);
-
-			gtk_list_store_set(server->queues_model, &queue_iter, 0, string->str, 1, queue->str, 2,
-					   job, -1);
-
-			g_string_free(string, TRUE);
-		}
-	}
-
-	queue_jc_iter = job_add_jc_queue_iter(job);
-	/* append to the store and select it */
+	GtkTreeIter queue_jc_iter = job_add_jc_queue_iter(job);
+	GtkTreeIter iter;
 	gtk_tree_store_append(gebr.ui_job_control->store, &iter, &queue_jc_iter); 
 	gtk_tree_store_set(gebr.ui_job_control->store, &iter,
 			   JC_SERVER_ADDRESS, job->server->comm->address->str,
@@ -147,9 +97,109 @@ struct job *job_add(struct server *server, GString * jid,
 			   JC_IS_JOB, TRUE,
 			   -1);
 	job->iter = iter;
-	job_append_output(job, output);
-	job_set_active(job);
 
+	return job;
+}
+
+struct job *job_new_from_flow(struct server *server, GebrGeoXmlFlow * flow, GString *queue)
+{
+	GString *title = g_string_new(gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(flow)));
+	struct job *job = job_new(server, title, queue);
+	g_string_free(title, TRUE);
+
+	job->waiting_server_details = TRUE;
+
+	return job;
+}
+
+void job_init_details(struct job *job, GString * _status, GString * title, GString * start_date, GString * finish_date,
+		      GString * hostname, GString * issues, GString * cmd_line, GString * output, GString * queue,
+		      GString * moab_jid)
+{
+	job->status = job_translate_status(_status); 
+	job->waiting_server_details = FALSE;
+	/* TITLE CHANGE! Shouldn't ever happen (maybe different XML parsing from client to server) */
+	if (strcmp(job->title->str, title->str)) {
+		gtk_tree_store_set(gebr.ui_job_control->store, &job->iter,
+				   JC_TITLE, title->str, -1);
+		gebr_message(GEBR_LOG_DEBUG, TRUE, TRUE, _("The title of job '%s' changed to '%s' according to the server."), job->title->str, title->str);
+	}
+	g_string_assign(job->title, title->str);
+	if (hostname != NULL) {
+		if (job->hostname->len && strcmp(job->hostname->str, hostname->str))
+			gebr_message(GEBR_LOG_WARNING, FALSE, TRUE, _("The hostname sent for job '%s' differs from this host ('%s')."), hostname->str, job->hostname->str);
+		g_string_assign(job->hostname, hostname->str);
+	}
+	g_string_assign(job->start_date, start_date->str);
+	if (finish_date != NULL)
+		g_string_assign(job->finish_date, finish_date->str);
+	g_string_assign(job->issues, issues->str);
+	g_string_assign(job->cmd_line, cmd_line->str);
+	g_string_assign(job->moab_jid, moab_jid->str);
+	/* QUEUE CHANGE!! Shouldn't ever happen */
+	if (job->queue->len > 1 && strcmp(job->queue->str, queue->str))
+		gebr_message(GEBR_LOG_DEBUG, FALSE, FALSE, _("The queue of job '%s' changed to '%s' when received from server."), job->title->str, job->queue->str);
+	/* necessary for the new job queue name */
+	gtk_tree_store_set(gebr.ui_job_control->store, &job->iter,
+			   JC_QUEUE_NAME, queue->str+1, -1);
+	g_string_assign(job->queue, queue->str); 
+
+	GtkTreeIter queue_iter;
+	gboolean queue_exists = server_queue_find(job->server, queue->str, &queue_iter);
+	if (job->server->type == GEBR_COMM_SERVER_TYPE_REGULAR) {
+		if (job->queue->str[0] == 'j') {
+			/* If the queue name prefix is 'j', it is an internal queue, with only one job
+			 * running on it. The user did not give a name to it and does not know it exists. */
+
+			if (queue_exists && job->status != JOB_STATUS_RUNNING) { 
+				/* If the job is not running anymore, then it is not an option to start a queue.
+				 * Thus, it should not be in the combobox model. */
+
+				gtk_list_store_remove(job->server->queues_model, &queue_iter);
+				gtk_combo_box_set_active(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox), 0);
+			} else if (job->status == JOB_STATUS_RUNNING) {
+				GString *string = g_string_new(NULL);
+
+				g_string_printf(string, _("After '%s'"), title->str);
+
+				if (!queue_exists)
+					/* If the queue does not exist yet, then the job is a new option for enqueuing,
+					 * and should be appended to the combobox model. */
+					gtk_list_store_append(job->server->queues_model, &queue_iter);
+				
+				gtk_list_store_set(job->server->queues_model, &queue_iter, 0, string->str, 1, job->queue->str, 2, job, -1);
+
+				g_string_free(string, TRUE);
+			}
+		} else if (queue_exists) { /* The queue name prefix is 'q' (it has already been named by the user). */
+			GString *string = g_string_new(NULL);
+			gchar *queue_title = job->server->type == GEBR_COMM_SERVER_TYPE_REGULAR 
+				? job->queue->str+1 /* jump q identifier */ : job->queue->str;
+
+			if (job->status != JOB_STATUS_RUNNING && job->status != JOB_STATUS_QUEUED)
+				g_string_printf(string, _("At '%s'"), queue_title);
+			else
+				g_string_printf(string, _("After '%s' at '%s'"), title->str, queue_title);
+
+			gtk_list_store_set(job->server->queues_model, &queue_iter, 0, string->str, 1, job->queue->str, 2,
+					   job, -1);
+
+			g_string_free(string, TRUE);
+		}
+	}
+
+	job_append_output(job, output);
+	job_status_show(job);
+	job_update(job);
+}
+
+struct job *job_new_from_jid(struct server *server, GString * jid, GString * _status, GString * title,
+			     GString * start_date, GString * finish_date, GString * hostname, GString * issues,
+			     GString * cmd_line, GString * output, GString * queue, GString * moab_jid)
+{
+	struct job *job = job_new(server, title, queue);
+	g_string_assign(job->jid, jid->str);
+	job_init_details(job, _status, title, start_date, finish_date, hostname, issues, cmd_line, output, queue, moab_jid);
 	return job;
 }
 
@@ -158,6 +208,7 @@ void job_free(struct job *job)
 	if (gtk_tree_store_remove(gebr.ui_job_control->store, &job->iter))
 		gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(gebr.ui_job_control->view), &job->iter);
 	g_string_free(job->title, TRUE);
+	g_string_free(job->run_id, TRUE);
 	g_string_free(job->jid, TRUE);
 	g_string_free(job->hostname, TRUE);
 	g_string_free(job->start_date, TRUE);
@@ -210,11 +261,8 @@ void job_set_active(struct job *job)
 
 gboolean job_is_active(struct job *job)
 {
-	GtkTreeSelection *selection;
-
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view));
-
-	return gtk_tree_selection_iter_is_selected(selection, &job->iter);
+	return gtk_tree_selection_iter_is_selected(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)),
+						   &job->iter);
 }
 
 void job_append_output(struct job *job, GString * output)
