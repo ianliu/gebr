@@ -111,5 +111,15 @@ int g_strcmp0(const char * str1, const char * str2);
  */
 gboolean gebr_paths_equal (const gchar *path1, const gchar *path2);
 
+/**
+ * gebr_str_escape:
+ * @str: the string to be escaped
+ *
+ * Escapes all backslashes and quotes in a string. It is based on glib's g_strescape.
+ *
+ * Returns: a newly allocated string.
+ */
+gchar *gebr_str_escape (const gchar *str);
+
 G_END_DECLS
 #endif				//__GEBR_UTILS_H

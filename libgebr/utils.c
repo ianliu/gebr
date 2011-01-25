@@ -229,7 +229,7 @@ gboolean gebr_dir_has_files(const gchar *dir_path)
 	if (dir == NULL)
 		return FALSE;
 
-	gboolean ret = g_dir_read_name(dir) == NULL ? FALSE : TRUE; 
+	gboolean ret = g_dir_read_name(dir) == NULL ? FALSE : TRUE;
 	g_dir_close(dir);
 	return ret;
 }
@@ -296,7 +296,7 @@ gboolean gebr_create_config_dirs(void)
 
 	/* DEPRECATED: migration from old structure */
 	g_string_printf(string, "%s/.gebr/menus", home);
-	if (g_file_test(string->str, G_FILE_TEST_IS_DIR) == TRUE && 
+	if (g_file_test(string->str, G_FILE_TEST_IS_DIR) == TRUE &&
 	    gebr_dir_has_files(string->str) == TRUE) {
 		gint ret = gebr_system("mv %s/.gebr/menus/* %s/.gebr/gebr/menus",
 				       home, home);
@@ -504,4 +504,58 @@ gboolean gebr_paths_equal (const gchar *path1, const gchar *path2)
 	}
 
 	return stat1.st_ino == stat2.st_ino;
+}
+
+gchar *gebr_str_escape (const gchar *str)
+{
+	gchar c;
+	gchar *dest = g_new (gchar, 2 * strlen(str) + 1);
+
+	c = *(str++);
+	while (c) {
+		switch(c) {
+		case '\a':
+			*(dest++) = '\\';
+			*(dest++) = 'a';
+			break;
+		case '\b':
+			*(dest++) = '\\';
+			*(dest++) = 'b';
+			break;
+		case '\t':
+			*(dest++) = '\\';
+			*(dest++) = 't';
+			break;
+		case '\n':
+			*(dest++) = '\\';
+			*(dest++) = 'n';
+			break;
+		case '\v':
+			*(dest++) = '\\';
+			*(dest++) = 'v';
+			break;
+		case '\f':
+			*(dest++) = '\\';
+			*(dest++) = 'f';
+			break;
+		case '\r':
+			*(dest++) = '\\';
+			*(dest++) = 'r';
+			break;
+		case '\\':
+			*(dest++) = '\\';
+			*(dest++) = '\\';
+			break;
+			case '\"':
+				*(dest++) = '\\';
+			*(dest++) = '\"';
+			break;
+		default:
+			*(dest++) = c;
+		}
+		c = *(str++);
+	}
+
+	*dest = '\0'; /* Ensure nul terminator */
+	return dest;
 }
