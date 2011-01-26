@@ -262,3 +262,20 @@ gebr_gui_value_sequence_edit_load(GebrGuiValueSequenceEdit * gebr_gui_value_sequ
 	for (; sequence != NULL; gebr_geoxml_sequence_next(&sequence))
 		gebr_gui_value_sequence_edit_add(gebr_gui_value_sequence_edit, sequence);
 }
+
+gboolean
+gebr_gui_value_sequence_edit_rename(GebrGuiValueSequenceEdit * gebr_gui_value_sequence_edit, const gchar * new_text)
+{
+	GtkTreeSelection *selection;
+	GtkTreeModel *model;
+	GtkTreeIter iter;
+
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(GEBR_GUI_SEQUENCE_EDIT(gebr_gui_value_sequence_edit)->tree_view));
+	if (!gtk_tree_selection_get_selected(selection, &model, &iter))
+		return FALSE;
+
+	gebr_gui_sequence_edit_rename (GEBR_GUI_SEQUENCE_EDIT(gebr_gui_value_sequence_edit), &iter, new_text);
+
+	return TRUE;
+}
+

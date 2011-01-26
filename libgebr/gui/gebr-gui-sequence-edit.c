@@ -84,7 +84,7 @@ static void gebr_gui_sequence_edit_move_top_real (GebrGuiSequenceEdit *self,
 static void gebr_gui_sequence_edit_move_bottom_real (GebrGuiSequenceEdit *self,
 						     GtkTreeIter *iter);
 
-static void gebr_gui_sequence_edit_rename (GebrGuiSequenceEdit *self,
+static void gebr_gui_sequence_edit_rename_real (GebrGuiSequenceEdit *self,
 					   GtkTreeIter *iter,
 					   const gchar *new_text);
 
@@ -198,7 +198,7 @@ static void gebr_gui_sequence_edit_class_init(GebrGuiSequenceEditClass *klass)
 	klass->move = gebr_gui_sequence_edit_move_real;
 	klass->move_top = gebr_gui_sequence_edit_move_top_real;
 	klass->move_bottom = gebr_gui_sequence_edit_move_bottom_real;
-	klass->rename = gebr_gui_sequence_edit_rename;
+	klass->rename = gebr_gui_sequence_edit_rename_real;
 	klass->create_tree_view = gebr_gui_sequence_edit_create_tree_view_real;
 
 	/**
@@ -493,7 +493,7 @@ static void gebr_gui_sequence_edit_move_bottom_real(GebrGuiSequenceEdit *self, G
 	g_signal_emit(self, object_signals[CHANGED], 0);
 }
 
-static void gebr_gui_sequence_edit_rename(GebrGuiSequenceEdit *self, GtkTreeIter *iter, const gchar *new_text)
+static void gebr_gui_sequence_edit_rename_real(GebrGuiSequenceEdit *self, GtkTreeIter *iter, const gchar *new_text)
 {
 	gtk_list_store_set(self->list_store, iter, 0, new_text, -1);
 	g_signal_emit(self, object_signals[CHANGED], 0);
@@ -649,4 +649,13 @@ void gebr_gui_sequence_edit_move_bottom (GebrGuiSequenceEdit *self,
 	g_return_if_fail (GEBR_GUI_IS_SEQUENCE_EDIT (self));
 
 	GEBR_GUI_SEQUENCE_EDIT_GET_CLASS (self)->move_bottom (self, iter);
+}
+
+void gebr_gui_sequence_edit_rename (GebrGuiSequenceEdit *self,
+					 GtkTreeIter *iter,
+					 const gchar *new_text)
+{
+	g_return_if_fail (GEBR_GUI_IS_SEQUENCE_EDIT (self));
+
+	GEBR_GUI_SEQUENCE_EDIT_GET_CLASS (self)->rename (self, iter, new_text);
 }

@@ -28,6 +28,7 @@
 
 #include <glib/gi18n.h>
 #include <libgebr/gui/gui.h>
+#include <libgebr/gui/gebr-gui-sequence-edit.h>
 
 #include "ui_paths.h"
 #include "gebr.h"
@@ -217,8 +218,26 @@ void path_add(GebrGuiValueSequenceEdit * sequence_edit)
 
 gboolean path_renamed (GebrGuiValueSequenceEdit * self, const gchar * old_text, const gchar * new_text)
 {
-	if (check_duplicate (GEBR_GUI_SEQUENCE_EDIT(self), new_text))
+	gchar *ok = NULL;
+	gchar buf[2024];
+
+
+	gchar * path_copy = NULL;
+	path_copy = g_strdup(new_text);
+	ok = gebr_stripdir(path_copy, buf, sizeof(buf));
+
+	g_free(path_copy);
+
+	if (!ok)
 		return FALSE;
 
-	return TRUE;
+	gchar * clean_path = g_strdup_printf("%s", buf);
+	if (check_duplicate (GEBR_GUI_SEQUENCE_EDIT(self), clean_path))
+		return FALSE;
+
+	if (!gebr_gui_value_sequence_edit_rename(self, &iter, clean_path))
+		return FALSE;
+
+	g_free(clean_path);
+	return FALSE;
 }

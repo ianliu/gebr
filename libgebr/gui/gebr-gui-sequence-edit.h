@@ -155,6 +155,15 @@ void gebr_gui_sequence_edit_move_top (GebrGuiSequenceEdit *self,
 void gebr_gui_sequence_edit_move_bottom (GebrGuiSequenceEdit *self,
 					 GtkTreeIter *iter);
 
+/**
+ * gebr_gui_sequence_edit_rename:
+ * @self: a #GebrGuiSequenceEdit widget
+ * @iter: the iterator to be renamed
+ * @new_text: the new value to be put on previous iterator
+ */
+void gebr_gui_sequence_edit_rename (GebrGuiSequenceEdit *self,
+					 GtkTreeIter *iter,
+					 const gchar *new_text);
 G_END_DECLS
 
 #endif				//__GEBR_GUI_SEQUENCE_EDIT_H

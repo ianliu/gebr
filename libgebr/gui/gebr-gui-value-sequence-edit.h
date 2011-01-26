@@ -64,6 +64,9 @@ void gebr_gui_value_sequence_edit_load(GebrGuiValueSequenceEdit * gebr_gui_value
 				       ValueSequenceGetFunction get_function,
 				       gpointer user_data);
 
+gboolean
+gebr_gui_value_sequence_edit_rename(GebrGuiValueSequenceEdit * gebr_gui_value_sequence_edit, const gchar * new_text);
+
 G_END_DECLS
 
 #endif				//__GEBR_GUI_VALUE_SEQUENCE_EDIT_H
