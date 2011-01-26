@@ -245,7 +245,7 @@ static void on_load_finished(WebKitWebView * view, WebKitWebFrame * frame, GebrG
 	// Disconnects ourselves to prevent subsequent load-finished calls.
 	g_signal_handlers_disconnect_by_func(view,
 					     on_load_finished,
-					     NULL);
+					     self);
 
 	content = g_object_get_data (G_OBJECT (self), "content");
 	gebr_gui_help_edit_widget_set_content (self, content);
