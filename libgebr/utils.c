@@ -23,8 +23,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
-
 #include <glib/gstdio.h>
+#include <locale.h>
 
 #include "defines.h"
 #include "utils.h"
@@ -566,7 +566,7 @@ gchar *gebr_str_escape (const gchar *str)
 gchar *gebr_date_get_localized (const gchar *format, const gchar *locale)
 {
 	gsize written;
-	gchar datestr;
+	gchar *datestr;
 	GDate *date;
 	gchar *oldloc;
 
@@ -575,7 +575,7 @@ gchar *gebr_date_get_localized (const gchar *format, const gchar *locale)
 	setlocale(LC_TIME, locale);
 	date = g_date_new ();
 	g_date_set_time_t (date, time (NULL));
-	written = g_date_strftime (datestr, len, format, date);
+	written = g_date_strftime (datestr, 1024, format, date);
 	setlocale (LC_TIME, oldloc);
 
 	if (!written) {
