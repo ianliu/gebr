@@ -61,7 +61,8 @@ static GOptionEntry entries[] = {
 	{NULL}
 };
 
-GString *help_load(const gchar * fname);
+static gchar *help_load (GebrGeoXmlObject *object, const gchar *fname);
+static gchar *help_update (GebrGeoXmlObject *object);
 
 int main(int argc, char **argv)
 {
@@ -145,17 +146,14 @@ int main(int argc, char **argv)
 				printf("To set URL, binary, or binary's version you must specify iprog\n");
 			if (helpdel)
 				gebr_geoxml_document_set_help(doc, "");
+
+			gchar *help;
 			if (fnhelp) {
-				GString *html_content;
-
-				html_content = help_load(fnhelp);
-				if (html_content == NULL) {
-					return EXIT_FAILURE;
-				}
-
-				gebr_geoxml_document_set_help(doc, html_content->str);
-
-				g_string_free(html_content, TRUE);
+				help = help_load (GEBR_GEOXML_OBJECT (doc), fnhelp);
+				gebr_geoxml_document_set_help (doc, help);
+			} else if (!helpdel) {
+				help = help_update (GEBR_GEOXML_OBJECT (doc));
+				gebr_geoxml_document_set_help (doc, help);
 			}
 		} else {
 			if (iprog > nprog) {
@@ -179,17 +177,13 @@ int main(int argc, char **argv)
 			if (helpdel)
 				gebr_geoxml_program_set_help(prog, "");
 
+			gchar *help;
 			if (fnhelp) {
-				GString *html_content;
-
-				html_content = help_load(fnhelp);
-				if (html_content == NULL) {
-					return EXIT_FAILURE;
-				}
-
-				gebr_geoxml_program_set_help(prog, html_content->str);
-
-				g_string_free(html_content, TRUE);
+				help = help_load (GEBR_GEOXML_OBJECT (prog), fnhelp);
+				gebr_geoxml_program_set_help (prog, help);
+			} else if (!helpdel) {
+				help = help_update (GEBR_GEOXML_OBJECT (prog));
+				gebr_geoxml_program_set_help (prog, help);
 			}
 		}
 
@@ -202,40 +196,72 @@ int main(int argc, char **argv)
 	return 0;
 }
 
-GString *help_load(const gchar * fname)
+static gchar *help_load (GebrGeoXmlObject *object, const gchar * fname)
 {
+	gchar *help;
+	gchar *converted;
+	gchar *content;
+	gchar *html_content;
+	GError *error = NULL;
 
-	GString *html_content;
-	FILE *fp;
-	gchar buffer[1000];
-
-	if ((fp = fopen(fnhelp, "r")) == NULL) {
-		fprintf(stderr, "Unable to open %s\n", fname);
+	if (!g_file_get_contents (fname, &html_content, NULL, &error)) {
+		g_warning ("Unable to open %s: %s", fname, error->message);
+		g_clear_error (&error);
 		return NULL;
 	}
 
-	html_content = g_string_new(NULL);
-	g_string_assign(html_content, "");
-	while (fgets(buffer, sizeof(buffer), fp))
-		g_string_append(html_content, buffer);
-	fclose(fp);
-
 	/* ensure UTF-8 encoding */
-	if (g_utf8_validate(html_content->str, -1, NULL) == FALSE) {
-		gchar *converted;
-
-		/* TODO: what else should be tried? */
-		converted = gebr_locale_to_utf8(html_content->str);
-		if (converted == NULL) {
-			g_free(converted);
-			fprintf(stderr, "Please change the help encoding to UTF-8");
-			g_string_free(html_content, TRUE);
+	if (g_utf8_validate(html_content, -1, NULL) == FALSE) {
+		converted = gebr_locale_to_utf8 (html_content);
+		g_free (html_content);
+		if (!converted) {
+			g_warning ("Please change the help encoding to UTF-8");
 			return NULL;
 		}
-
-		g_string_assign(html_content, converted);
-		g_free(converted);
 	}
 
-	return html_content;
+	GString *tmpl = g_string_new (converted);
+	content = gebr_geoxml_tmpl_get (tmpl, "cnt");
+	g_free (converted);
+
+	if (content)
+		g_string_free (tmpl, TRUE);
+	else
+		content = g_string_free (tmpl, FALSE);
+
+	help = gebr_geoxml_object_generate_help (object, content);
+	g_free (content);
+
+	return help;
+}
+
+static gchar *help_update (GebrGeoXmlObject *object)
+{
+	gchar *help;
+	const gchar *oldhelp;
+	GebrGeoXmlObjectType type;
+
+	type = gebr_geoxml_object_get_type (object);
+
+	g_return_val_if_fail (type == GEBR_GEOXML_OBJECT_TYPE_PROGRAM ||
+			      type == GEBR_GEOXML_OBJECT_TYPE_FLOW,
+			      NULL);
+
+	if (type == GEBR_GEOXML_OBJECT_TYPE_FLOW)
+		oldhelp = gebr_geoxml_document_get_help (GEBR_GEOXML_DOCUMENT (object));
+	else
+		oldhelp = gebr_geoxml_program_get_help (GEBR_GEOXML_PROGRAM (object));
+
+	GString *tmpl = g_string_new (oldhelp);
+	gchar *content = gebr_geoxml_tmpl_get (tmpl, "cnt");
+
+	if (content)
+		g_string_free (tmpl, TRUE);
+	else
+		content = g_string_free (tmpl, FALSE);
+
+	help = gebr_geoxml_object_generate_help (object, content);
+	g_free (content);
+
+	return help;
 }

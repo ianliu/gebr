@@ -18,3 +18,5 @@ test_sequence_SOURCES = test-sequence.c
 TEST_PROGS += test-program
 test_program_SOURCES = test-program.c
 
+TEST_PROGS += test-tmpl
+test_tmpl_SOURCES = test-tmpl.c

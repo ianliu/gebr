@@ -121,5 +121,14 @@ gboolean gebr_paths_equal (const gchar *path1, const gchar *path2);
  */
 gchar *gebr_str_escape (const gchar *str);
 
+/**
+ * gebr_get_english_date:
+ * @format: the date format, as seen in g_date_strftime()
+ * @locale: a string representing the locale, such as "C"
+ *
+ * Returns: a newly allocated string containing the date in english.
+ */
+gchar *gebr_date_get_localized (const gchar *format, const gchar *locale);
+
 G_END_DECLS
 #endif				//__GEBR_UTILS_H
