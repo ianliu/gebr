@@ -15,14 +15,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 include $(top_srcdir)/Makefile.decl
 
-debrdatadir = $(datadir)/debr/
-debrdata_DATA = help-template.html
-
 desktopdir = $(datadir)/applications
 desktop_DATA = debr.desktop
 
 debr.desktop:debr.desktop.in $(INTLTOOL_MERGE) $(srcdir)/../po/*.po
 	LC_ALL=C $(INTLTOOL_MERGE) -d -u -c $(builddir)/../po/.intltool-merge-cache $(srcdir)/../po $< $@
 
-EXTRA_DIST = debr.desktop.in $(debrdata_DATA)
+EXTRA_DIST = debr.desktop.in
 CLEANFILES = $(desktop_DATA)

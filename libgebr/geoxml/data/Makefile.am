@@ -15,8 +15,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 include $(top_srcdir)/Makefile.decl
 
-NULL=
-
 libgebr_geoxmldatadir=$(datadir)/libgebr/geoxml
 libgebr_geoxmldata_DATA= \
 	flow-0.1.0.dtd line-0.1.0.dtd project-0.1.0.dtd \
@@ -32,5 +30,6 @@ libgebr_geoxmldata_DATA= \
 	flow-0.3.4.dtd \
 	flow-0.3.5.dtd line-0.3.2.dtd project-0.3.2.dtd \
 	flow-0.3.6.dtd \
+	help-template.html.in \
 	$(NULL)
 EXTRA_DIST = $(libgebr_geoxmldata_DATA)
