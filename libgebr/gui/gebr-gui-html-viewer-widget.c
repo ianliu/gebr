@@ -174,8 +174,28 @@ static void create_generate_links_index_function(JSContextRef context)
 				"li.appendChild(link);"
 				"linklist.appendChild(li);"
 			"}"
+		"}"
+		"function generateNavigationIndex() {"
+			"var navbar = document.getElementsByClassName('navigation')[0];"
+			"var content = document.getElementsByClassName('content')[0];"
+			"if (!navbar || !content) return;"
+			"var headers = content.getElementsByTagName('h2');"
+			"navbar.innerHTML = '<h2>Index</h2><ul></ul>';"
+			"var navlist = navbar.getElementsByTagName('ul')[0];"
+			"for (var i = 0; i < headers.length; i++) {"
+				"var anchor = 'header_' + i;"
+				"var link = document.createElement('a');"
+				"link.setAttribute('href', '#' + anchor);"
+				"for (var j = 0; j < headers[i].childNodes.length; j++) {"
+					"var clone = headers[i].childNodes[j].cloneNode(true);"
+					"link.appendChild(clone);"
+				"}"
+				"var li = document.createElement('li');"
+				"li.appendChild(link);"
+				"navlist.appendChild(li);"
+				"headers[i].setAttribute('id', anchor);"
+			"}"
 		"}";
-
 	gebr_js_evaluate(context, script);
 }
 
@@ -185,7 +205,7 @@ static void generate_links_index(JSContextRef context, const gchar * links, gboo
 	const gchar * program;
 
 	program = is_programs_help? "true":"false";
-	script = g_strdup_printf("GenerateLinksIndex(%s,%s);", links, program);
+	script = g_strdup_printf("generateNavigationIndex(); GenerateLinksIndex(%s,%s);", links, program);
 	gebr_js_evaluate(context, script);
 	g_free(script);
 }

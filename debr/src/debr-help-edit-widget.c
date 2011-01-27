@@ -179,12 +179,18 @@ static void debr_help_edit_widget_set_property(GObject		*object,
 					       const GValue	*value,
 					       GParamSpec	*pspec)
 {
-	DebrHelpEditWidgetPrivate * priv;
-	priv = DEBR_HELP_EDIT_WIDGET_GET_PRIVATE(object);
+	GebrGuiHelpEditWidget *self;
+	DebrHelpEditWidgetPrivate *priv;
+	GebrGuiHtmlViewerWidget *html_viewer;
+
+	self = GEBR_GUI_HELP_EDIT_WIDGET (object);
+	priv = DEBR_HELP_EDIT_WIDGET_GET_PRIVATE (object);
+	html_viewer = gebr_gui_help_edit_widget_get_html_viewer (self);
 
 	switch (prop_id) {
 	case PROP_OBJECT:
-		priv->object = GEBR_GEOXML_OBJECT(g_value_get_pointer(value));
+		priv->object = GEBR_GEOXML_OBJECT (g_value_get_pointer (value));
+		gebr_gui_html_viewer_widget_generate_links (html_viewer, priv->object);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
