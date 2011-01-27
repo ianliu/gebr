@@ -74,8 +74,6 @@ static struct job *job_new(struct server *server, GString * title, GString *queu
 	job->hostname = g_string_new(local_hostname != NULL ? local_hostname : "");
 	job->title = g_string_new(title->str);
 	job->queue = g_string_new(queue->str); 
-	/* use internal queue name */
-	g_string_prepend(job->queue, queue->len ? "q" : "j");
 
 	job->run_id = g_string_new("");
 	job->jid = g_string_new("");
@@ -137,11 +135,11 @@ void job_init_details(struct job *job, GString * _status, GString * title, GStri
 	g_string_assign(job->cmd_line, cmd_line->str);
 	g_string_assign(job->moab_jid, moab_jid->str);
 	/* QUEUE CHANGE!! Shouldn't ever happen */
-	if (job->queue->len > 1 && strcmp(job->queue->str, queue->str))
+	if (job->queue->str[0] != 'j' && strcmp(job->queue->str, queue->str))
 		gebr_message(GEBR_LOG_DEBUG, FALSE, FALSE, _("The queue of job '%s' changed to '%s' when received from server."), job->title->str, job->queue->str);
 	/* necessary for the new job queue name */
 	gtk_tree_store_set(gebr.ui_job_control->store, &job->iter,
-			   JC_QUEUE_NAME, queue->str+1, -1);
+			   JC_QUEUE_NAME, queue->str, -1);
 	g_string_assign(job->queue, queue->str); 
 
 	GtkTreeIter queue_iter;
@@ -387,13 +385,7 @@ void job_status_update(struct job *job, enum JobStatus status, const gchar *para
 		GtkTreeIter iter;
 		GtkTreeIter parent = job_add_jc_queue_iter(job);
 		gtk_tree_store_append(gebr.ui_job_control->store, &iter, &parent); 
-		gtk_tree_store_set(gebr.ui_job_control->store, &iter,
-				   JC_SERVER_ADDRESS, job->server->comm->address->str,
-				   JC_QUEUE_NAME, job->queue->str,
-				   JC_TITLE, job->title->str,
-				   JC_STRUCT, job,
-				   JC_IS_JOB, TRUE,
-				   -1);
+		gebr_gui_gtk_tree_model_iter_copy_values(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter, &job->iter);
 
 		gboolean was_selected = job_is_active(job);
 		gtk_tree_store_remove(gebr.ui_job_control->store, &job->iter);

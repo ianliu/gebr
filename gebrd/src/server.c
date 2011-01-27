@@ -331,7 +331,7 @@ gboolean server_parse_client_messages(struct client *client)
 						     gebr_comm_protocol_defs.ret_def, 2, job->jid->str, job->run_id->str);
 			if (success) {
 				if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_REGULAR) {
-					if (!queue->len) {
+					if (!queue->len || queue->str[0] == 'j') {
 						g_string_printf(queue, "j%s", job->jid->str);
 						g_string_assign(job->queue, queue->str);
 					}

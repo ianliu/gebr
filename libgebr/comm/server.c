@@ -77,7 +77,7 @@ void gebr_comm_server_run_config_free(GebrCommServerRunConfig *config)
 	void free_each(GebrCommServerRunFlow * run_flow)
 	{
 		gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(run_flow->flow));
-		g_free(config);
+		g_free(run_flow);
 	}
 
 	g_list_foreach(config->flows, (GFunc)free_each, NULL);
@@ -93,6 +93,7 @@ GebrCommServerRunFlow* gebr_comm_server_run_config_add_flow(GebrCommServerRunCon
 	GebrCommServerRunFlow *run_flow = g_new(GebrCommServerRunFlow, 1);
 	run_flow->flow = GEBR_GEOXML_FLOW(gebr_geoxml_document_clone(GEBR_GEOXML_DOCUMENT(flow)));
 	run_flow->run_id = run_id++;
+	config->flows = g_list_append(config->flows, run_flow);
 	return run_flow;
 }
 
@@ -703,19 +704,18 @@ static void gebr_comm_server_socket_disconnected(GebrCommStreamSocket * stream_s
 static void gebr_comm_server_socket_read(GebrCommStreamSocket * stream_socket, struct gebr_comm_server *server)
 {
 	GString *data;
-	gchar *data_stripped;
 
 	data = gebr_comm_socket_read_string_all(GEBR_COMM_SOCKET(stream_socket));
 	gebr_comm_protocol_receive_data(server->protocol, data);
 	server->ops->parse_messages(server, server->user_data);
 
 	/* we don't want a giant output */
-	data_stripped = g_strndup(data->str, 50);
+	gchar *data_stripped = g_strndup(data->str, 50);
 	gebr_comm_server_log_message(server, GEBR_LOG_DEBUG, "Read from server '%s': %s",
-				     server->address->str, data_stripped);
+				     server->address->str, data->str);
+	g_free(data_stripped);
 
 	g_string_free(data, TRUE);
-	g_free(data_stripped);
 }
 
 /**

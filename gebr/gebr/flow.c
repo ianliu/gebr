@@ -428,6 +428,12 @@ void flow_run(struct server *server, GebrCommServerRunConfig * config, gboolean 
 			return;
 		}
 
+		/* save last run date */
+		gebr_geoxml_flow_set_date_last_run(flow, gebr_iso_date());
+		document_save(GEBR_GEOXML_DOC(flow), FALSE, TRUE);
+		flow_browse_info_update(); 
+
+		/* prepare flow and add it to config */
 		GebrGeoXmlFlow *stripped = gebr_comm_server_run_strip_flow(flow);
 		flow_copy_from_dicts(stripped);
 		GebrCommServerRunFlow *run_flow = gebr_comm_server_run_config_add_flow(config, stripped);
@@ -443,20 +449,15 @@ void flow_run(struct server *server, GebrCommServerRunConfig * config, gboolean 
 			gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), gebr.config.current_notebook);
 		}
 
-		/* save last run date */
-		gebr_geoxml_flow_set_date_last_run(run_flow->flow, gebr_iso_date());
-		document_save(GEBR_GEOXML_DOC(run_flow->flow), FALSE, TRUE);
-		flow_browse_info_update(); 
-
 		/* status and logging */
 		gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Asking server to run flow '%s'."),
-			     gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(run_flow->flow)));
+			     gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(flow)));
 		if (gebr_comm_server_is_local(server->comm) == FALSE)
 			gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Asking server '%s' to run flow '%s'."),
-				     server->comm->address->str, gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(run_flow->flow)));
+				     server->comm->address->str, gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(flow)));
 		else 
 			gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Asking local server to run flow '%s'."),
-				     gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(run_flow->flow)));
+				     gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(flow)));
 	}
 
 	/* Add flows and create jobs */

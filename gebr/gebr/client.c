@@ -146,8 +146,15 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, stru
 				run_id = g_list_nth_data(arguments, 1);
 
 				struct job * job = job_find(comm_server->address, run_id, FALSE);
-				if (job != NULL)
+				if (job != NULL) {
 					g_string_assign(job->jid, jid->str);
+
+					/* move it to the end, the right place... */
+					gboolean was_selected = job_is_active(job);
+					gebr_gui_gtk_tree_store_move_before(gebr.ui_job_control->store, &job->iter, NULL);
+					if (was_selected)
+						job_set_active(job);
+				}
 
 				gebr_comm_protocol_split_free(arguments);
 			} else if (comm_server->protocol->waiting_ret_hash == gebr_comm_protocol_defs.flw_def.code_hash) {

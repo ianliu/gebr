@@ -344,7 +344,7 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server, gboolean parallel, g
 			GtkTreeIter queue_iter;
 			gchar *internal_queue_name;
 			struct job *job;
-			GString *queue_name;
+			GString *new_internal_queue_name = g_string_new(NULL);
 
 			if (!gtk_combo_box_get_active_iter(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox), &iter))
 				gtk_tree_model_get_iter_first(GTK_TREE_MODEL(server->queues_model), &iter);
@@ -357,65 +357,57 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server, gboolean parallel, g
 			 * flow title in the selection.
 			 */
 			if (is_immediately || internal_queue_name[0] == 'j') {
-				GList *selected;
+				GString *queue_name = g_string_new(NULL);
+
+				GList *selected = gebr_gui_gtk_tree_view_get_selected_iters(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
 				GebrGeoXmlFlow *first;
 				GebrGeoXmlFlow *last;
-				GString *suffix;
-				gint queue_num = 1;
-
-				selected = gebr_gui_gtk_tree_view_get_selected_iters(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
-
 				gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store),
 						   (GtkTreeIter*)(g_list_first(selected)->data), FB_XMLPOINTER, &first, -1);
 				gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store),
 						   (GtkTreeIter*)(g_list_last(selected)->data), FB_XMLPOINTER, &last, -1);
-
 				g_list_foreach(selected, (GFunc) gtk_tree_iter_free, NULL);
 				g_list_free(selected);
 
-				suffix = g_string_new(NULL);
-				g_string_printf(suffix, _("After '%s'...'%s'"),
+				/* compose it */
+				GString *aux = g_string_new(NULL);
+				g_string_printf(aux, _("After '%s'...'%s'"),
 						gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(first)),
 						gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(last)));
-				g_string_prepend(suffix, "q");
-
-				queue_name = g_string_new(NULL);
-				g_string_assign (queue_name, suffix->str);
-
-				/* Finds a unique name for the queue.
-				 */
-				while (server_queue_find(server, queue_name->str, NULL))
-					g_string_printf (queue_name, "%s %d", suffix->str, queue_num++);
+				g_string_prepend_c(aux, 'q');
+				g_string_assign(new_internal_queue_name, aux->str);
+				/* Finds a unique name for the queue. */
+				for (gint queue_num = 1; server_queue_find(server, new_internal_queue_name->str, NULL);)
+					g_string_printf(new_internal_queue_name, "%s %d", aux->str, queue_num++);
+				g_string_assign(queue_name, new_internal_queue_name->str+1);
+				g_string_free(aux, TRUE);
 
 				if (is_immediately || (internal_queue_name[0] == 'j' && job->status != JOB_STATUS_RUNNING)) {
 					gtk_list_store_append(server->queues_model, &queue_iter);
 					iter = queue_iter;
 				}
-				gtk_list_store_set(server->queues_model, &iter, 1, queue_name->str, -1);
-				g_string_free(suffix, TRUE);
-			} else {
-				queue_name = g_string_new (internal_queue_name);
-			}
+				gtk_list_store_set(server->queues_model, &iter, 0, queue_name->str, 1, new_internal_queue_name->str, -1);
 
-			config->queue = g_string_free(queue_name, FALSE);
+				g_string_free(queue_name, TRUE);
+			} else
+				g_string_assign(new_internal_queue_name, internal_queue_name);
 
-			/* In this case, we have renamed the `internal_queue_name' to queue_name, so we must
-			 * send the request to the server.
-			 */
+			/* In this case, we have renamed the `internal_queue_name' to 'new_internal_queue_name', so we must
+			 * send the request to the server. */
 			if (!is_immediately && internal_queue_name[0] == 'j')
 				gebr_comm_protocol_send_data(server->comm->protocol, server->comm->stream_socket,
-							     gebr_comm_protocol_defs.rnq_def, 2, internal_queue_name, config->queue);
-			g_free (internal_queue_name);
+							     gebr_comm_protocol_defs.rnq_def, 2, internal_queue_name, new_internal_queue_name->str);
+
+			/* frees */
+			config->queue = g_string_free(new_internal_queue_name, FALSE);
+			g_free(internal_queue_name);
 		} else if (parallel || is_immediately) {
 			/* If the active combobox entry is the first one (index 0), then
-			 * "Immediately" is selected as queue option. */
-			config->queue = g_strdup("");
+			 * "Immediately" (a queue name starting with j) is selected as queue option. */
+			config->queue = g_strdup("j");
 
-			if (mpi_program) {
-				if (!flow_io_run_dialog(config, server, mpi_program)) {
-					goto err;
-				}
-			}
+			if (mpi_program && !flow_io_run_dialog(config, server, mpi_program))
+			    goto err;
 		} else {
 			/* Other queue option is selected: after a running job (flow) or
 			 * on a pre-existent queue. */
