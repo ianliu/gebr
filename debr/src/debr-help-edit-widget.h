@@ -73,6 +73,14 @@ GebrGuiHelpEditWidget * debr_help_edit_widget_new(GebrGeoXmlObject * object,
  */
 gboolean debr_help_edit_widget_is_content_empty(DebrHelpEditWidget * self);
 
+/**
+ * debr_help_edit_widget_refresh:
+ * @self: a #DebrHelpEditWidget
+ *
+ * Inserts parameter data and credits into the help string.
+ */
+void debr_help_edit_widget_refresh (DebrHelpEditWidget *self);
+
 G_END_DECLS
 
 #endif /* __DEBR_HELP_EDIT_WIDGET__ */

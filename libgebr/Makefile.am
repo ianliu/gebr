@@ -15,7 +15,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 include $(top_srcdir)/Makefile.decl
 
-SUBDIRS = . @CONFIG_SUBDIRS@ po
+if ENABLE_TESTS
+TESTDIR = tests
+endif
+SUBDIRS = . @CONFIG_SUBDIRS@ po ${TESTDIR}
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = gebr.pc

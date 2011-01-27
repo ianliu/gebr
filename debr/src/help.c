@@ -425,7 +425,7 @@ static void help_subst_fields(GString * help, GebrGeoXmlProgram * program, gbool
 
 		pos = strip_block(help, "tt2");
 		if (pos) {
-			g_string_printf(text, "\n         <span class=\"flowtitle\">%s</span>\n         ", escaped_content);
+			g_string_printf(text, "<span class=\"flowtitle\">%s</span>", escaped_content);
 			g_string_insert(help, pos, text->str);
 		}
 	}
@@ -894,14 +894,6 @@ void debr_help_edit(GebrGeoXmlObject * object)
 
 	if (strlen(help) <= 1)
 		help = generate_help_from_template(object);
-	
-	/* Update of help title, author, date, etc */
-	GString * help_g_string = NULL;
-	help_g_string = g_string_new(help);
-	help_subst_fields(help_g_string, program, TRUE);
-	g_free(help);
-	help = g_strdup(help_g_string->str);
-	g_string_free(help_g_string, TRUE);
 
 	/* EDIT IT */
 	if (debr.config.native_editor || !debr.config.htmleditor->len) {

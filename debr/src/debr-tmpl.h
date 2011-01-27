@@ -45,4 +45,16 @@ gchar *debr_tmpl_get (GString *tmpl, const gchar *tag);
  */
 gboolean debr_tmpl_set (GString *tmpl, const gchar *tag, const gchar *value);
 
+/**
+ * debr_tmpl_append:
+ * @tmpl: the string buffer containing the template
+ * @tag: the name of the tag to be set
+ * @value: the value that will be appended to the end of the tag
+ *
+ * Inserts @value at the end of @tag.
+ *
+ * Returns: %TRUE if @tag was found, %FALSE otherwise.
+ */
+gboolean debr_tmpl_append (GString *tmpl, const gchar *tag, const gchar *value);
+
 #endif /* __DEBR_TMPL_H__ */

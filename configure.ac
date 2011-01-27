@@ -311,6 +311,7 @@ libgebr/gui/icons/gebr-theme/Makefile
 libgebr/gui/pixmaps/Makefile
 libgebr/gui/tests/Makefile
 libgebr/po/Makefile.in
+libgebr/tests/Makefile
 
 gebrd/Makefile
 gebrd/doc/Makefile

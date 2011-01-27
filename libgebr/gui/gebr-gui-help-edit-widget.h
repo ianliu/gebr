@@ -152,6 +152,16 @@ void gebr_gui_help_edit_widget_set_loaded(GebrGuiHelpEditWidget * self);
  */
 const gchar *gebr_gui_help_edit_widget_get_uri (GebrGuiHelpEditWidget * self);
 
+/**
+ * gebr_gui_help_edit_widget_get_editing:
+ * @self:
+ *
+ * The #GebrGuiHelpEditWidget can be in edit mode or preview mode.
+ *
+ * Returns: %TRUE if @self is in editing mode, %FALSE otherwise.
+ */
+gboolean gebr_gui_help_edit_widget_get_editing (GebrGuiHelpEditWidget *self);
+
 G_END_DECLS
 
 #endif /* __GEBR_GUI_HELP_EDIT_WIDGET__ */

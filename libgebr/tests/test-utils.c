@@ -1,4 +1,4 @@
-/*   DeBR - GeBR Menu Designer
+/*   libgebr - GêBR Library
  *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
  *
  *   This program is free software: you can redistribute it and/or modify
@@ -15,19 +15,32 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __DEFINES_H
-#define __DEFINES_H
+#include <glib.h>
 
-#include <libgebr/defines.h>
+#include "../utils.h"
 
-G_BEGIN_DECLS
+void test_gebr_str_escape (void)
+{
+	gchar *escaped;
 
-#define GETTEXT_PACKAGE			"debr"
-#define DEBR_DATA_DIR			"@prefix@/share/debr/"
+	escaped = gebr_str_escape ("foo");
+	g_assert_cmpstr (escaped, ==, "foo");
+	g_free (escaped);
 
-#define DEBR_GLADE_DIR			DEBR_DATA_DIR "glade/"
-#define DEBR_HELP_EDIT_CKEDITOR		"@prefix@/share/libgebr/ckeditor/ckeditor.js"
-#define DEBR_USERDOC_HTML		DEBR_DATA_DIR "userdoc/debr.html"
+	escaped = gebr_str_escape ("foo\n");
+	g_assert_cmpstr (escaped, ==, "foo\\n");
+	g_free (escaped);
 
-G_END_DECLS
-#endif //__DEFINES_H
+	escaped = gebr_str_escape ("\"foo\"");
+	g_assert_cmpstr (escaped, ==, "\\\"foo\\\"");
+	g_free (escaped);
+}
+
+int main(int argc, char *argv[])
+{
+	g_test_init(&argc, &argv, NULL);
+
+	g_test_add_func("/libgebr/utils/gebr-str-escape", test_gebr_str_escape);
+
+	return g_test_run();
+}
