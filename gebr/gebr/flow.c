@@ -488,9 +488,7 @@ void flow_run(struct server *server, GebrCommServerRun * config, gboolean single
 	}
 
 	/* frees */
-out:	document_free(GEBR_GEOXML_DOCUMENT(config->flow));
-	g_list_foreach(config->queued_flows, (GFunc)document_free, NULL);
-	gebr_comm_server_run_free(config);
+out:	gebr_comm_server_run_free(config);
 }
 
 gboolean flow_revision_save(void)

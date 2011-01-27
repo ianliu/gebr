@@ -118,25 +118,30 @@ struct gebr_comm_server {
  * Configurations for running a flow.
  */
 typedef struct {
-	GebrGeoXmlFlow * flow;
-	GList * queued_flows;
+	typedef struct {
+		GebrGeoXmlFlow * flow;
+		guint run_id;
+	} GebrCommServerRunFlow;
+
+	GList * flows;
+
 	gboolean parallel;
 	gchar * account;
 	gchar * queue;
 	gchar * num_processes;
-} GebrCommServerRun;
+} GebrCommServerRunConfig;
 
 /**
  */
-GebrCommServerRun * gebr_comm_server_run_new(void);
+GebrCommServerRunConfig * gebr_comm_server_run_new(void);
+
+/**
+ */
+void gebr_comm_server_run_free(GebrCommServerRunConfig *run_config);
 
 /**
  */
 GebrGeoXmlFlow * gebr_comm_server_run_strip_flow(GebrGeoXmlFlow * flow);
-
-/**
- */
-void gebr_comm_server_run_free(GebrCommServerRun *run_config);
 
 /**
  */
