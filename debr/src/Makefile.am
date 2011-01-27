@@ -15,8 +15,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 include $(top_srcdir)/Makefile.decl
 
-NULL=
-
 bin_PROGRAMS = debr
 
 debrgladedir = $(datadir)/debr/glade/
