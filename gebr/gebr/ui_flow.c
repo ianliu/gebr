@@ -37,7 +37,7 @@
 
 #define GEBR_FLOW_UI_RESPONSE_EXECUTE 1
 
-static gboolean flow_io_run_dialog(GebrCommServerRun *config, struct server *server, gboolean mpi_program);
+static gboolean flow_io_run_dialog(GebrCommServerRunConfig *config, struct server *server, gboolean mpi_program);
 static void flow_io_run(GebrGeoXmlFlowServer * serve, gboolean parallel, gboolean single);
 
 gboolean flow_io_get_selected(struct ui_flow_io *ui_flow_io, GtkTreeIter * iter)
@@ -123,7 +123,7 @@ void flow_add_program_sequence_to_view(GebrGeoXmlSequence * program, gboolean se
  * @param server
  * @param mpi_program
  */
-static gboolean flow_io_run_dialog(GebrCommServerRun *config, struct server *server, gboolean mpi_program)
+static gboolean flow_io_run_dialog(GebrCommServerRunConfig *config, struct server *server, gboolean mpi_program)
 {
 	gboolean ret = TRUE;
 	GtkWidget *dialog;
@@ -282,7 +282,7 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server, gboolean parallel, g
 	GtkTreeIter iter;
 	const gchar *address;
 	struct server *server;
-	GebrCommServerRun *config;
+	GebrCommServerRunConfig *config;
 	gboolean mpi_program;
 	GtkTreeSelection *selection;
 	gboolean multiple;
@@ -302,7 +302,7 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server, gboolean parallel, g
 	}
 
 	/* initialization */
-	config = gebr_comm_server_run_new();
+	config = gebr_comm_server_run_config_new();
 	config->parallel = parallel;
 
 	/* find iter */
@@ -475,5 +475,5 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server, gboolean parallel, g
 	return;
 
 err:
-	gebr_comm_server_run_free(config);
+	gebr_comm_server_run_config_free(config);
 }

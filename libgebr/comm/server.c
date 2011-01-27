@@ -80,14 +80,14 @@ void gebr_comm_server_run_config_free(GebrCommServerRunConfig *config)
 		g_free(config);
 	}
 
-	g_list_foreach(config->flows, (GFunc)gebr_geoxml_document_free, NULL);
+	g_list_foreach(config->flows, (GFunc)free_each, NULL);
 	g_list_free(config->flows);
 	g_free(config->account);
 	g_free(config->queue);
 	g_free(config);
 }
 
-GebrCommServerRunFlow* gebr_comm_server_run_add_flow(GebrCommServerRunConfig *config, GebrGeoXmlFlow * flow)
+GebrCommServerRunFlow* gebr_comm_server_run_config_add_flow(GebrCommServerRunConfig *config, GebrGeoXmlFlow * flow)
 {
 	static guint run_id = 0;
 	GebrCommServerRunFlow *run_flow = g_new(GebrCommServerRunFlow, 1);
@@ -329,9 +329,8 @@ gboolean gebr_comm_server_forward_x11(struct gebr_comm_server *server, guint16 p
 	return ret;
 }
 
-guint gebr_comm_server_run_flow(struct gebr_comm_server *server, GebrCommServerRun * config)
+void gebr_comm_server_run_flow(struct gebr_comm_server *server, GebrCommServerRunConfig * config)
 {
-	static guint run_id = 0;
 	GString *run_id_gstring = g_string_new("");
 
 	for (GList *i = config->flows; i != NULL; i = g_list_next(i)) {
@@ -351,8 +350,6 @@ guint gebr_comm_server_run_flow(struct gebr_comm_server *server, GebrCommServerR
 	}
 
 	g_string_free(run_id_gstring, TRUE);
-
-	return head_run_id;
 }
 
 /**
