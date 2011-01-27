@@ -16,13 +16,15 @@
  */
 
 #include <string.h>
-
 #include <gdome.h>
+#include <utils.h>
+#include <defines.h>
 
 #include "object.h"
 #include "types.h"
 #include "xml.h"
 #include "document_p.h"
+#include "gebr-geoxml-tmpl.h"
 
 /*
  * internal structures and funcionts
@@ -103,6 +105,11 @@ gchar *gebr_geoxml_object_generate_help (GebrGeoXmlObject *object, const gchar *
 	GebrGeoXmlDocument *doc;
 	GebrGeoXmlProgram *prog;
 	gboolean is_program;
+	const gchar *tmp;
+	gchar *escaped;
+	gchar *tmpl_str;
+	GError *error = NULL;
+	GString *tmpl;
 
 	g_return_val_if_fail (object != NULL, NULL);
 
@@ -112,6 +119,13 @@ gchar *gebr_geoxml_object_generate_help (GebrGeoXmlObject *object, const gchar *
 			      type == GEBR_GEOXML_OBJECT_TYPE_PROGRAM,
 			      NULL);
 
+	if (!g_file_get_contents (LIBGEBR_HELP_TEMPLATE, &tmpl_str, NULL, &error))
+	{
+		g_warning ("Error loading template file: %s", error->message);
+		g_clear_error (&error);
+		return "";
+	}
+
 	if (type == GEBR_GEOXML_OBJECT_TYPE_PROGRAM) {
 		is_program = TRUE;
 		prog = GEBR_GEOXML_PROGRAM (object);
@@ -120,4 +134,68 @@ gchar *gebr_geoxml_object_generate_help (GebrGeoXmlObject *object, const gchar *
 		is_program = FALSE;
 		doc = GEBR_GEOXML_DOCUMENT (object);
 	}
+
+	tmpl = g_string_new (tmpl_str);
+
+	// Set the content!
+	gebr_geoxml_tmpl_set (tmpl, "cnt", content);
+
+	// Set the title!
+	tmp = is_program?
+		gebr_geoxml_program_get_title (prog)
+		:gebr_geoxml_document_get_title (doc);
+	escaped = g_markup_escape_text (tmp, -1);
+	if (strlen (escaped)) {
+		gebr_geoxml_tmpl_set (tmpl, "ttl", escaped);
+		gebr_geoxml_tmpl_set (tmpl, "tt2", escaped);
+	}
+	g_free (escaped);
+
+	// Set the description!
+	tmp = is_program?
+		gebr_geoxml_program_get_description (prog)
+		:gebr_geoxml_document_get_description (doc);
+	escaped = g_markup_escape_text (tmp, -1);
+	if (strlen (escaped))
+		gebr_geoxml_tmpl_set (tmpl, "des", escaped);
+	g_free (escaped);
+
+	// Set the categories!
+	GString *catstr;
+	GebrGeoXmlSequence *cat;
+
+	catstr = g_string_new ("");
+	gebr_geoxml_flow_get_category (GEBR_GEOXML_FLOW (doc), &cat, 0);
+
+	if (cat) {
+		tmp = gebr_geoxml_value_sequence_get (GEBR_GEOXML_VALUE_SEQUENCE (cat));
+		escaped = g_markup_escape_text (tmp, -1);
+		g_string_append (catstr, escaped);
+		g_free (escaped);
+		gebr_geoxml_sequence_next (&cat);
+	}
+	while (cat) {
+		tmp = gebr_geoxml_value_sequence_get (GEBR_GEOXML_VALUE_SEQUENCE (cat));
+		escaped = g_markup_escape_text (tmp, -1);
+		g_string_append_printf (catstr, " | %s", escaped);
+		g_free (escaped);
+		gebr_geoxml_sequence_next (&cat);
+	}
+	if (catstr->len)
+		gebr_geoxml_tmpl_set (tmpl, "cat", catstr->str);
+	g_string_free (catstr, TRUE);
+
+	// Set the DTD!
+	tmp = gebr_geoxml_document_get_version (doc);
+	gebr_geoxml_tmpl_set (tmpl, "dtd", tmp);
+
+	// Sets the version!
+	if (is_program) {
+		tmp = gebr_geoxml_program_get_version (prog);
+		gebr_geoxml_tmpl_set (tmpl, "ver", tmp);
+	} else
+		gebr_geoxml_tmpl_set (tmpl, "ver",
+				      gebr_date_get_localized ("%b %d, %Y", "C"));
+
+	return g_string_free (tmpl, FALSE);
 }
