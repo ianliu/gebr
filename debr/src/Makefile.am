@@ -30,8 +30,6 @@ libdebr_a_SOURCES = \
 	categoryedit.h \
 	debr-help-edit-widget.c \
 	debr-help-edit-widget.h \
-	debr-tmpl.c \
-	debr-tmpl.h \
 	debr-validate.c \
 	debr-validate.h \
 	debr.c \
