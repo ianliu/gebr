@@ -322,6 +322,11 @@ gboolean server_parse_client_messages(struct client *client)
 
 			/* try to run and send return */
 			success = job_new(&job, client, queue, account, xml, n_process, run_id);
+#ifdef DEBUG
+			gchar *env_delay = getenv("GEBRD_RUN_DELAY_SEC");
+			if (env_delay != NULL)
+				sleep(atoi(env_delay));
+#endif
 			gebr_comm_protocol_send_data(client->protocol, client->stream_socket,
 						     gebr_comm_protocol_defs.ret_def, 2, job->jid->str, job->run_id->str);
 			if (success) {

@@ -102,7 +102,7 @@ dnl Debugging options
 dnl ============================================================================
 AC_ARG_ENABLE([debug],
 	      [AC_HELP_STRING([--enable-debug], [turn on debugging])],
-	      [enable_debug=no],
+	      [enable_debug=$enableval],
 	      [enable_debug=yes])
 if test "x$enable_debug" = "xyes"; then
 	DEBUG_CFLAGS="-DDEBUG"
@@ -143,13 +143,8 @@ dnl Option to turn on GUI build or not (useful for servers).
 dnl ============================================================================
 AC_ARG_ENABLE([gui],
 	      [AC_HELP_STRING([--enable-gui], [turn on GUI build])],
-	      [enable_gui=no],
+	      [enable_gui=$enableval],
 	      [enable_gui=yes])
-
-AC_ARG_ENABLE([gui],
-	      [AC_HELP_STRING([--disable-gui], [turn off GUI elements])],
-	      [enable_gui=yes],
-	      [enable_gui=no])
 
 if test "$enable_gui" = "yes"; then
 	CONFIG_SUBDIRS="geoxml comm gui"
