@@ -352,6 +352,11 @@ gchar *gebr_locale_to_utf8(const gchar * string)
 	error = NULL;
 	output = g_locale_to_utf8(string, -1, &bytes_read, &bytes_written, &error);
 
+	if (error) {
+		g_warning ("Failed to convert string into UTF-8: %s", error->message);
+		g_clear_error (&error);
+	}
+
 	return output;
 }
 
