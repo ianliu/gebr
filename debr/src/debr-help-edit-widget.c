@@ -346,8 +346,10 @@ static gchar *generate_help (GebrGuiHelpEditWidget *self)
 		gebr_geoxml_program_get_title (prog)
 		:gebr_geoxml_document_get_title (doc);
 	escaped = g_markup_escape_text (tmp, -1);
-	if (strlen (escaped))
+	if (strlen (escaped)) {
 		debr_tmpl_set (tmpl, "ttl", escaped);
+		debr_tmpl_set (tmpl, "tt2", escaped);
+	}
 	g_free (escaped);
 
 	// Set the description!
@@ -356,7 +358,7 @@ static gchar *generate_help (GebrGuiHelpEditWidget *self)
 		:gebr_geoxml_document_get_description (doc);
 	escaped = g_markup_escape_text (tmp, -1);
 	if (strlen (escaped))
-		debr_tmpl_set (tmpl, "ttl", escaped);
+		debr_tmpl_set (tmpl, "des", escaped);
 	g_free (escaped);
 
 	// Set the categories!
