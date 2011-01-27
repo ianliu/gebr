@@ -96,3 +96,28 @@ GebrGeoXmlObject *gebr_geoxml_object_copy(GebrGeoXmlObject * object)
 
 	return (GebrGeoXmlObject *) gdome_el_cloneNode((GdomeElement *) object, TRUE, &exception);
 }
+
+gchar *gebr_geoxml_object_generate_help (GebrGeoXmlObject *object, const gchar *content)
+{
+	GebrGeoXmlObjectType type;
+	GebrGeoXmlDocument *doc;
+	GebrGeoXmlProgram *prog;
+	gboolean is_program;
+
+	g_return_val_if_fail (object != NULL, NULL);
+
+	type = gebr_geoxml_object_get_type (object);
+
+	g_return_val_if_fail (type == GEBR_GEOXML_OBJECT_TYPE_FLOW ||
+			      type == GEBR_GEOXML_OBJECT_TYPE_PROGRAM,
+			      NULL);
+
+	if (type == GEBR_GEOXML_OBJECT_TYPE_PROGRAM) {
+		is_program = TRUE;
+		prog = GEBR_GEOXML_PROGRAM (object);
+		doc = gebr_geoxml_object_get_owner_document (object);
+	} else {
+		is_program = FALSE;
+		doc = GEBR_GEOXML_DOCUMENT (object);
+	}
+}
