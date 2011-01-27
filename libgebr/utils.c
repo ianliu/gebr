@@ -562,3 +562,26 @@ gchar *gebr_str_escape (const gchar *str)
 	*dest = '\0'; /* Ensure nul terminator */
 	return retval;
 }
+
+gchar *gebr_date_get_localized (const gchar *format, const gchar *locale)
+{
+	gsize written;
+	gchar datestr;
+	GDate *date;
+	gchar *oldloc;
+
+	datestr = g_new (gchar, 1024);
+	oldloc = setlocale(LC_TIME, NULL);
+	setlocale(LC_TIME, locale);
+	date = g_date_new ();
+	g_date_set_time_t (date, time (NULL));
+	written = g_date_strftime (datestr, len, format, date);
+	setlocale (LC_TIME, oldloc);
+
+	if (!written) {
+		g_warning ("Unable to write date: buffer was too small!");
+		return NULL;
+	}
+
+	return datestr;
+}
