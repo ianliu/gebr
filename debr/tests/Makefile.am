@@ -14,6 +14,3 @@ AM_LDFLAGS = ../src/libdebr.a		\
 	     $(GEBR_LIBS)		\
 	     $(GEBR_GEOXML_LIBS)	\
 	     $(GEBR_GUI_LIBS)
-
-TEST_PROGS += test-debr-tmpl
-test_debr_tmpl_SOURCES = test-debr-tmpl.c

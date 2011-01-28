@@ -160,5 +160,6 @@
 #include <geoxml/parameter_group.h>
 #include <geoxml/clipboard.h>
 #include <geoxml/gebr-geoxml-validate.h>
+#include <geoxml/gebr-geoxml-tmpl.h>
 
 #endif				//__GEBR_GEOXML_H

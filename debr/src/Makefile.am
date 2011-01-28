@@ -15,8 +15,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 include $(top_srcdir)/Makefile.decl
 
-NULL=
-
 bin_PROGRAMS = debr
 
 debrgladedir = $(datadir)/debr/glade/
@@ -30,8 +28,6 @@ libdebr_a_SOURCES = \
 	categoryedit.h \
 	debr-help-edit-widget.c \
 	debr-help-edit-widget.h \
-	debr-tmpl.c \
-	debr-tmpl.h \
 	debr-validate.c \
 	debr-validate.h \
 	debr.c \

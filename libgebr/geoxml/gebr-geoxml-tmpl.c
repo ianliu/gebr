@@ -17,9 +17,9 @@
 
 #include <string.h>
 
-#include "debr-tmpl.h"
+#include "gebr-geoxml-tmpl.h"
 
-gchar *debr_tmpl_get (GString *tmpl, const gchar *tag)
+gchar *gebr_geoxml_tmpl_get (GString *tmpl, const gchar *tag)
 {
 	gsize pos;
 	gsize len;
@@ -50,7 +50,7 @@ gchar *debr_tmpl_get (GString *tmpl, const gchar *tag)
 	return memcpy(retval, tmpl->str + pos, len);
 }
 
-gboolean debr_tmpl_set (GString *tmpl, const gchar *tag, const gchar *value)
+gboolean gebr_geoxml_tmpl_set (GString *tmpl, const gchar *tag, const gchar *value)
 {
 	gsize pos;
 	gsize len;
@@ -81,7 +81,7 @@ gboolean debr_tmpl_set (GString *tmpl, const gchar *tag, const gchar *value)
 	return TRUE;
 }
 
-gboolean debr_tmpl_append (GString *tmpl, const gchar *tag, const gchar *value)
+gboolean gebr_geoxml_tmpl_append (GString *tmpl, const gchar *tag, const gchar *value)
 {
 	gchar *mark;
 	gchar *ptr;

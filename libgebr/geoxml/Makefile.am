@@ -24,32 +24,68 @@ pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = gebr-geoxml.pc
 
 man_MANS = gebr-geoxml.1
-EXTRA_DIST =					\
-	gebr-geoxml.pc				\
+EXTRA_DIST =			\
+	gebr-geoxml.pc		\
 	gebr-geoxml.1
 
 libgebr_geoxmlincludedir=$(includedir)/libgebr
 libgebr_geoxmlinclude_HEADERS=geoxml.h
 
 lib_LTLIBRARIES = libgebr_geoxml.la
-libgebr_geoxml_la_SOURCES = \
-	xml.c error.c object.c clipboard.c gebr-geoxml-validate.c \
-	sequence.c value_sequence.c \
-	enum_option.c program.c \
-	parameters.c parameter.c program-parameter.c parameter_group.c \
-	document.c flow.c line.c project.c
+libgebr_geoxml_la_SOURCES =	\
+	clipboard.c		\
+	document.c		\
+	enum_option.c		\
+	error.c			\
+	flow.c			\
+	gebr-geoxml-validate.c	\
+	gebr-geoxml-tmpl.c	\
+	line.c			\
+	object.c		\
+	parameter.c		\
+	parameter_group.c	\
+	parameters.c		\
+	program-parameter.c	\
+	program.c		\
+	project.c		\
+	sequence.c		\
+	value_sequence.c	\
+	xml.c			\
+	$(NULL)
 
 libgebr_geoxmlsubincludedir=$(includedir)/libgebr/geoxml
-libgebr_geoxmlsubinclude_HEADERS = \
-	error.h macros.h object.h clipboard.h gebr-geoxml-validate.h \
-	sequence.h value_sequence.h \
-	enum_option.h program.h \
-	parameters.h parameter.h program-parameter.h parameter_group.h \
-	document.h flow.h line.h project.h
-noinst_HEADERS = \
-	xml.h sequence_p.h document_p.h program_p.h \
-	parameter_p.h parameter_group_p.h program_parameter_p.h parameters_p.h \
-	types.h
+libgebr_geoxmlsubinclude_HEADERS =	\
+	clipboard.h			\
+	document.h			\
+	enum_option.h			\
+	error.h				\
+	flow.h				\
+	gebr-geoxml-validate.h		\
+	gebr-geoxml-tmpl.h		\
+	line.h				\
+	macros.h			\
+	object.h			\
+	parameter.h			\
+	parameter_group.h 		\
+	parameters.h			\
+	program-parameter.h		\
+	program.h 			\
+	project.h			\
+	sequence.h			\
+	value_sequence.h		\
+	$(NULL)
+
+noinst_HEADERS =		\
+	document_p.h		\
+	parameter_group_p.h	\
+	parameter_p.h		\
+	parameters_p.h		\
+	program_p.h		\
+	program_parameter_p.h	\
+	sequence_p.h		\
+	types.h			\
+	xml.h			\
+	$(NULL)
 
 AM_CPPFLAGS = -I$(top_srcdir)		\
 	      -I$(top_srcdir)/libgebr	\

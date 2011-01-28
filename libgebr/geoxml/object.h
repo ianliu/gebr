@@ -23,44 +23,6 @@
 G_BEGIN_DECLS
 
 /**
- * \struct GebrGeoXmlObject object.h geoxml/object.h
- * \brief
- * The base class for all GebrGeoXml.
- * \dot
- * digraph enum_option {
- * 	fontlabel = "Bitstream Vera Sans"
- * 	fontsize = 9
- * 	size = "6"
- * 	node [
- * 		color = palegreen2, style = filled
- * 		fontlabel = "Bitstream Vera Sans"
- * 		fontsize = 9
- * 		shape = record
- * 	]
- * 	edge [
- * 		fontlabel = "Bitstream Vera Sans"
- * 		fontsize = 9
- * 	]
- *
- * 	"GebrGeoXmlObject" [ URL = "\ref object.h" ];
- * 	"GebrGeoXmlSequence" [ URL = "\ref sequence.h" ];
- * 	"GebrGeoXmlDocument" [ URL = "\ref flow.h" ];
- *
- * 	edge [
- * 		arrowhead = "normal"
- * 	]
- * 	"GebrGeoXmlObject" -> "GebrGeoXmlSequence"
- * 	"GebrGeoXmlObject" -> "GebrGeoXmlDocument"
- * }
- * \enddot
- * \see object.h
- */
-
-/**
- * \file object.h
- */
-
-/**
  * Get base object class from a sequence or a document.
  */
 #define GEBR_GEOXML_OBJECT(object) ((GebrGeoXmlObject*)(object))
@@ -125,6 +87,18 @@ GebrGeoXmlDocument *gebr_geoxml_object_get_owner_document(GebrGeoXmlObject * obj
  * Returns NULL if _object_ is NULL
  */
 GebrGeoXmlObject *gebr_geoxml_object_copy(GebrGeoXmlObject * object);
+
+/**
+ * gebr_geoxml_object_generate_help:
+ * @object: either a #GebrGeoXmlFlow or a #GebrGeoXmlProgram
+ * @content: the content which the user edited
+ *
+ * Generates the help HTML from the help-template.html file by inserting
+ * some properties of @object and inserting the @content.
+ *
+ * Returns: a newly allocated c-string containing the generated help for this object.
+ */
+gchar *gebr_geoxml_object_generate_help (GebrGeoXmlObject *object, const gchar *content);
 
 G_END_DECLS
 #endif				//__GEBR_GEOXML_OBJECT_H
