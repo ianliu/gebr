@@ -382,14 +382,12 @@ gboolean flow_edition_component_key_pressed(GtkWidget *view, GdkEventKey *key)
 	GList			* listiter;
 	GList			* paths;
 	GebrGeoXmlProgram	* program;
-	GebrGeoXmlProgramStatus	  last_status;
 	GebrGeoXmlProgramStatus	  status;
 	GtkTreeIter		  iter;
 	GtkTreeModel		* model;
 	GtkTreeSelection	* selection;
 	const gchar		* icon;
 	gboolean		  has_disabled = FALSE;
-	gboolean		  is_homogeneous = TRUE;
 
 	if (key->keyval != GDK_space)
 		return FALSE;
@@ -433,9 +431,6 @@ gboolean flow_edition_component_key_pressed(GtkWidget *view, GdkEventKey *key)
 			    FSEQ_GEBR_GEOXML_POINTER, &program,
 			    -1);
 
-	last_status = gebr_geoxml_program_get_status (program);
-	has_disabled = (last_status == GEBR_GEOXML_PROGRAM_STATUS_DISABLED);
-
 	do {
 		gtk_tree_model_get_iter (model, &iter, listiter->data);
 		gtk_tree_model_get (model, &iter,
@@ -444,19 +439,17 @@ gboolean flow_edition_component_key_pressed(GtkWidget *view, GdkEventKey *key)
 
 		status = gebr_geoxml_program_get_status (program);
 
-		if (status != last_status)
-			is_homogeneous = FALSE;
-
-		if (status == GEBR_GEOXML_PROGRAM_STATUS_DISABLED)
+		if (status == GEBR_GEOXML_PROGRAM_STATUS_DISABLED ||
+				status == GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED &&
+				!parameters_check_has_required_unfilled_for_iter(&iter)) {
 			has_disabled = TRUE;
+			break;
+		}
 
-		last_status = status;
 		listiter = listiter->next;
 	} while (listiter);
 
-	if (!is_homogeneous) {
-		status = GEBR_GEOXML_PROGRAM_STATUS_DISABLED;
-	} else if (has_disabled) {
+	if (has_disabled) {
 		status = GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED;
 	} else {
 		status = GEBR_GEOXML_PROGRAM_STATUS_DISABLED;
