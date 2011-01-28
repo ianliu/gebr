@@ -23,8 +23,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
-
 #include <glib/gstdio.h>
+#include <locale.h>
 
 #include "defines.h"
 #include "utils.h"
@@ -352,6 +352,11 @@ gchar *gebr_locale_to_utf8(const gchar * string)
 	error = NULL;
 	output = g_locale_to_utf8(string, -1, &bytes_read, &bytes_written, &error);
 
+	if (error) {
+		g_warning ("Failed to convert string into UTF-8: %s", error->message);
+		g_clear_error (&error);
+	}
+
 	return output;
 }
 
@@ -561,4 +566,27 @@ gchar *gebr_str_escape (const gchar *str)
 
 	*dest = '\0'; /* Ensure nul terminator */
 	return retval;
+}
+
+gchar *gebr_date_get_localized (const gchar *format, const gchar *locale)
+{
+	gsize written;
+	gchar *datestr;
+	GDate *date;
+	gchar *oldloc;
+
+	datestr = g_new (gchar, 1024);
+	oldloc = setlocale(LC_TIME, NULL);
+	setlocale(LC_TIME, locale);
+	date = g_date_new ();
+	g_date_set_time_t (date, time (NULL));
+	written = g_date_strftime (datestr, 1024, format, date);
+	setlocale (LC_TIME, oldloc);
+
+	if (!written) {
+		g_warning ("Unable to write date: buffer was too small!");
+		return NULL;
+	}
+
+	return datestr;
 }

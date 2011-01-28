@@ -21,8 +21,8 @@
 #include <webkit/webkit.h>
 #include <libgebr/utils.h>
 #include <locale.h>
+#include <libgebr/geoxml/geoxml.h>
 
-#include "debr-tmpl.h"
 #include "debr-help-edit-widget.h"
 #include "defines.h"
 
@@ -120,8 +120,6 @@ static void reset_editor_dirty(GebrGuiHelpEditWidget * self);
 static gchar *get_raw_content (GebrGuiHelpEditWidget *self);
 
 static const gchar *get_english_date (void);
-
-static gchar *generate_help (GebrGuiHelpEditWidget *self);
 
 static void insert_parameters_list (GString *tmpl, GebrGeoXmlProgram *prog, gboolean refresh);
 
@@ -237,7 +235,7 @@ static void pre_process_html (GString *html)
 	gchar *inner;
 	gchar *escaped;
 
-	inner = debr_tmpl_get (html, "cnt");
+	inner = gebr_geoxml_tmpl_get (html, "cnt");
 	escaped = gebr_str_escape (inner);
 	g_string_assign (html, escaped); 
 	g_free (escaped);
@@ -276,7 +274,7 @@ static void reset_editor_dirty(GebrGuiHelpEditWidget * self)
 
 /*
  * Fetches the content from within the editor, not the generated help.
- * See generate_help for fetching the hole help string.
+ * See debr_help_edit_widget_get_content() for fetching the hole help string.
  */
 static gchar *get_raw_content (GebrGuiHelpEditWidget *self)
 {
@@ -304,106 +302,6 @@ static const gchar *get_english_date (void)
 	setlocale (LC_TIME, oldloc);
 
 	return datestr;
-}
-
-/*
- * Generates the help string by composing the edited content
- * with the informations about the menu.
- */
-static gchar *generate_help (GebrGuiHelpEditWidget *self)
-{
-	const gchar *tmp;
-	gchar *escaped;
-	gchar *tmpl_str;
-	GError *error = NULL;
-	GString *tmpl;
-	gboolean is_program;
-	DebrHelpEditWidgetPrivate *priv;
-	GebrGeoXmlDocument *doc = NULL;
-	GebrGeoXmlProgram *prog = NULL;
-
-	if (!g_file_get_contents (DEBR_DATA_DIR "help-template.html",
-				  &tmpl_str, NULL, &error))
-	{
-		g_warning ("Error loading template file: %s", error->message);
-		g_clear_error (&error);
-		return "";
-	}
-
-	tmpl = g_string_new (tmpl_str);
-	priv = DEBR_HELP_EDIT_WIDGET_GET_PRIVATE (self);
-
-	if (gebr_geoxml_object_get_type (priv->object) == GEBR_GEOXML_OBJECT_TYPE_PROGRAM) {
-		is_program = TRUE;
-		prog = GEBR_GEOXML_PROGRAM (priv->object);
-		doc = gebr_geoxml_object_get_owner_document (priv->object);
-	} else {
-		is_program = FALSE;
-		doc = GEBR_GEOXML_DOCUMENT (priv->object);
-	}
-
-	// Set the content!
-	gchar *content = get_raw_content (self);
-	debr_tmpl_set (tmpl, "cnt", content);
-	g_free (content);
-
-	// Set the title!
-	tmp = is_program?
-		gebr_geoxml_program_get_title (prog)
-		:gebr_geoxml_document_get_title (doc);
-	escaped = g_markup_escape_text (tmp, -1);
-	if (strlen (escaped)) {
-		debr_tmpl_set (tmpl, "ttl", escaped);
-		debr_tmpl_set (tmpl, "tt2", escaped);
-	}
-	g_free (escaped);
-
-	// Set the description!
-	tmp = is_program?
-		gebr_geoxml_program_get_description (prog)
-		:gebr_geoxml_document_get_description (doc);
-	escaped = g_markup_escape_text (tmp, -1);
-	if (strlen (escaped))
-		debr_tmpl_set (tmpl, "des", escaped);
-	g_free (escaped);
-
-	// Set the categories!
-	GString *catstr;
-	GebrGeoXmlSequence *cat;
-
-	catstr = g_string_new ("");
-	gebr_geoxml_flow_get_category (GEBR_GEOXML_FLOW (doc), &cat, 0);
-
-	if (cat) {
-		tmp = gebr_geoxml_value_sequence_get (GEBR_GEOXML_VALUE_SEQUENCE (cat));
-		escaped = g_markup_escape_text (tmp, -1);
-		g_string_append (catstr, escaped);
-		g_free (escaped);
-		gebr_geoxml_sequence_next (&cat);
-	}
-	while (cat) {
-		tmp = gebr_geoxml_value_sequence_get (GEBR_GEOXML_VALUE_SEQUENCE (cat));
-		escaped = g_markup_escape_text (tmp, -1);
-		g_string_append_printf (catstr, " | %s", escaped);
-		g_free (escaped);
-		gebr_geoxml_sequence_next (&cat);
-	}
-	if (catstr->len)
-		debr_tmpl_set (tmpl, "cat", catstr->str);
-	g_string_free (catstr, TRUE);
-
-	// Set the DTD!
-	tmp = gebr_geoxml_document_get_version (doc);
-	debr_tmpl_set (tmpl, "dtd", tmp);
-
-	// Sets the version!
-	if (is_program) {
-		tmp = gebr_geoxml_program_get_version (prog);
-		debr_tmpl_set (tmpl, "ver", tmp);
-	} else
-		debr_tmpl_set (tmpl, "ver", get_english_date());
-
-	return g_string_free (tmpl, FALSE);
 }
 
 /*
@@ -486,9 +384,9 @@ static void insert_parameters_list (GString *tmpl, GebrGeoXmlProgram *prog, gboo
 	g_string_append (tbl, "</ul>");
 
 	if (refresh)
-		retval = debr_tmpl_append (tmpl, "lst", tbl->str);
+		retval = gebr_geoxml_tmpl_append (tmpl, "lst", tbl->str);
 	else
-		retval = debr_tmpl_set (tmpl, "lst", tbl->str);
+		retval = gebr_geoxml_tmpl_set (tmpl, "lst", tbl->str);
 
 	// If 'lst' tag was not found, try to find a parameter's block
 	if (!retval) {
@@ -526,7 +424,7 @@ static void append_credits (GString *tmpl, GebrGeoXmlDocument *doc)
 				  escaped_author,
 				  escaped_email);
 
-	debr_tmpl_append (tmpl, "cpy", credit);
+	gebr_geoxml_tmpl_append (tmpl, "cpy", credit);
 
 	g_free (escaped_author);
 	g_free (escaped_email);
@@ -563,7 +461,16 @@ static void debr_help_edit_widget_commit_changes(GebrGuiHelpEditWidget * self)
 
 static gchar *debr_help_edit_widget_get_content (GebrGuiHelpEditWidget *self)
 {
-	return generate_help (self);
+	gchar *help;
+	gchar *raw;
+	DebrHelpEditWidgetPrivate *priv;
+
+	priv = DEBR_HELP_EDIT_WIDGET_GET_PRIVATE (self);
+	raw = get_raw_content (self);
+	help = gebr_geoxml_object_generate_help (priv->object, raw);
+	g_free (raw);
+
+	return help;
 }
 
 static void debr_help_edit_widget_set_content(GebrGuiHelpEditWidget * self, const gchar *content)

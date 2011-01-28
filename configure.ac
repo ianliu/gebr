@@ -289,6 +289,7 @@ libgebr/defines.h
 libgebr/gebr.pc
 libgebr/geoxml/Makefile
 libgebr/geoxml/data/Makefile
+libgebr/geoxml/data/help-template.html
 libgebr/geoxml/flow-dump/Makefile
 libgebr/geoxml/gebr-geoxml.pc
 libgebr/geoxml/menu-diff/Makefile
@@ -327,7 +328,6 @@ gebr/tests/Makefile
 debr/Makefile
 debr/data/Makefile
 debr/data/debr.desktop.in
-debr/data/help-template.html
 debr/po/Makefile.in
 debr/src/Makefile
 debr/src/defines.h

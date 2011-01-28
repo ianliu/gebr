@@ -31,10 +31,8 @@ config.sub
 configure
 debr/data/debr.desktop
 debr/data/debr.desktop.in
-debr/data/help-template.html
 debr/src/debr
 debr/src/defines.h
-debr/tests/test-debr-tmpl
 depcomp
 docs/debr/pt_BR
 docs/gebr/pt_BR
@@ -73,10 +71,12 @@ libgebr/config.h
 libgebr/defines.h
 libgebr/gebr.pc
 libgebr/geoxml/*/gebr-geoxml-*
+libgebr/geoxml/data/help-template.html
 libgebr/geoxml/gebr-geoxml.pc
 libgebr/geoxml/geoxml/defines.h
 libgebr/geoxml/tests/test-program
 libgebr/geoxml/tests/test-sequence
+libgebr/geoxml/tests/test-tmpl
 libgebr/geoxml/upgrade/gebr-geoxml-upgrade
 libgebr/geoxml/validate/gebr-geoxml-validate
 libgebr/gui/gebr-gui.pc

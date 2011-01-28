@@ -21,7 +21,7 @@
 #include <glib.h>
 
 /**
- * debr_tmpl_get:
+ * gebr_geoxml_tmpl_get:
  * @tmpl: the string buffer containing the template
  * @tag: the name of the tag to be fetched
  *
@@ -30,10 +30,10 @@
  *
  * Returns: a newly allocated c-string or %NULL if @tag was not found.
  */
-gchar *debr_tmpl_get (GString *tmpl, const gchar *tag);
+gchar *gebr_geoxml_tmpl_get (GString *tmpl, const gchar *tag);
 
 /**
- * debr_tmpl_set:
+ * gebr_geoxml_tmpl_set:
  * @tmpl: the string buffer containing the template
  * @tag: the name of the tag to be set
  * @value: the value that will replace the tag
@@ -43,10 +43,10 @@ gchar *debr_tmpl_get (GString *tmpl, const gchar *tag);
  *
  * Returns: %TRUE if @tag was found, %FALSE otherwise.
  */
-gboolean debr_tmpl_set (GString *tmpl, const gchar *tag, const gchar *value);
+gboolean gebr_geoxml_tmpl_set (GString *tmpl, const gchar *tag, const gchar *value);
 
 /**
- * debr_tmpl_append:
+ * gebr_geoxml_tmpl_append:
  * @tmpl: the string buffer containing the template
  * @tag: the name of the tag to be set
  * @value: the value that will be appended to the end of the tag
@@ -55,6 +55,6 @@ gboolean debr_tmpl_set (GString *tmpl, const gchar *tag, const gchar *value);
  *
  * Returns: %TRUE if @tag was found, %FALSE otherwise.
  */
-gboolean debr_tmpl_append (GString *tmpl, const gchar *tag, const gchar *value);
+gboolean gebr_geoxml_tmpl_append (GString *tmpl, const gchar *tag, const gchar *value);
 
 #endif /* __DEBR_TMPL_H__ */
