@@ -175,7 +175,7 @@ struct ui_flow_edition *flow_edition_setup_ui(void)
 	ui_flow_edition->text_renderer = renderer = gtk_cell_renderer_text_new();
 	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(ui_flow_edition->fseq_view), col);
-	gtk_tree_view_column_add_attribute(col, renderer, "text", FSEQ_TITLE_COLUMN);
+	gtk_tree_view_column_add_attribute(col, renderer, "markup", FSEQ_TITLE_COLUMN);
 	gtk_tree_view_column_add_attribute(col, renderer, "editable", FSEQ_EDITABLE);
 	gtk_tree_view_column_add_attribute(col, renderer, "ellipsize", FSEQ_ELLIPSIZE);
 
@@ -272,9 +272,9 @@ void flow_edition_select_component_iter(GtkTreeIter * iter)
 
 void flow_edition_set_io(void)
 {
-	const gchar *input = gebr_geoxml_flow_server_io_get_input(gebr.flow_server);
-	const gchar *output = gebr_geoxml_flow_server_io_get_output(gebr.flow_server);
-	const gchar *error = gebr_geoxml_flow_server_io_get_error(gebr.flow_server);
+	const gchar *input = (g_strcmp0(gebr_geoxml_flow_server_io_get_input(gebr.flow_server),"") ? gebr_geoxml_flow_server_io_get_input(gebr.flow_server) : "Choose input file");
+	const gchar *output = (g_strcmp0(gebr_geoxml_flow_server_io_get_output(gebr.flow_server),"") ? gebr_geoxml_flow_server_io_get_output(gebr.flow_server) : "Choose output file");
+	const gchar *error = (g_strcmp0(gebr_geoxml_flow_server_io_get_error(gebr.flow_server),"") ? gebr_geoxml_flow_server_io_get_error(gebr.flow_server) : "Choose error file");
 
 	gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->input_iter,
 			   FSEQ_ICON_COLUMN, GTK_STOCK_GO_BACK, FSEQ_TITLE_COLUMN, input, 
@@ -285,6 +285,8 @@ void flow_edition_set_io(void)
 	gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->error_iter,
 			   FSEQ_ICON_COLUMN, GTK_STOCK_GO_FORWARD, FSEQ_TITLE_COLUMN, error,
 			   FSEQ_EDITABLE, TRUE, FSEQ_ELLIPSIZE, PANGO_ELLIPSIZE_START, -1);
+
+	gebr_geoxml_flow_io_set_from_server(gebr.flow, gebr.flow_server);
 }
 
 void flow_edition_component_activated(void)
@@ -342,11 +344,24 @@ static void open_activated(GtkEntry *entry, GtkEntryIconPosition icon_pos, GdkEv
 
 static void flow_edition_component_editing_started(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path)
 {
+	GtkTreeIter iter;
 	GtkEntry *entry = GTK_ENTRY(editable);
+
 	gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_OPEN);
 	g_object_set_data(G_OBJECT(entry), "path", g_strdup(path));
 	g_object_set_data(G_OBJECT(entry), "renderer", renderer);
+
+	if (!flow_edition_get_selected_component(&iter, TRUE))
+		return;
+
+	if ((gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter) && (g_strcmp0(gebr_geoxml_flow_server_io_get_input(gebr.flow_server),"") == 0))  ||
+	    (gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter) && (g_strcmp0(gebr_geoxml_flow_server_io_get_output(gebr.flow_server),"") == 0)) ||
+	    (gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->error_iter) && (g_strcmp0(gebr_geoxml_flow_server_io_get_error(gebr.flow_server),"") == 0)))
+		gtk_entry_set_text(entry, "");
+
 	g_signal_connect(entry, "icon-release", G_CALLBACK(open_activated), NULL);
+
+	flow_edition_set_io();
 }
 
 static void flow_edition_component_edited(GtkCellRendererText *renderer, gchar *path, gchar *new_text)
