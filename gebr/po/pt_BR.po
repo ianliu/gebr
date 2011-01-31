@@ -9,14 +9,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-01-28 13:17-0200\n"
-"PO-Revision-Date: 2011-01-18 11:43-0200\n"
+"POT-Creation-Date: 2011-01-31 10:41-0200\n"
+"PO-Revision-Date: 2011-01-31 10:45-0200\n"
 "Last-Translator: Rodrigo Morelatto <morelatto@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bitPlural-Forms: nplurals=2; plural=(n > 1);\n"
+"Language: \n"
 "Fabio Azevedo <fabioaz@gebrproject.com>\n"
 
 #: ../data/gebr.desktop.in.in.h:1
@@ -328,60 +328,60 @@ msgstr "Salvar estado do fluxo"
 msgid "Make a comment for this state:"
 msgstr "Criar um comentário para este estado:"
 
-#: ../gebr/flow.c:615
+#: ../gebr/flow.c:626
 msgid "Could not paste flow. It was probably deleted."
 msgstr "Não foi possível colar o fluxo. Provavelmente ele foi apagado."
 
-#: ../gebr/flow.c:647
+#: ../gebr/flow.c:658
 msgid "Could not paste program."
 msgstr "Não foi possível colar programa."
 
-#: ../gebr/flow.c:730
+#: ../gebr/flow.c:741
 msgid "Instance"
 msgstr "Instância"
 
-#: ../gebr/flow.c:774
+#: ../gebr/flow.c:785
 #, c-format
 msgid "Parameters for %s program"
 msgstr "Parâmetros do programa %s"
 
-#: ../gebr/flow.c:792
+#: ../gebr/flow.c:803
 msgid "Parameter"
 msgstr "Parâmetros"
 
-#: ../gebr/flow.c:792 ../gebr/ui_document.c:435
+#: ../gebr/flow.c:803 ../gebr/ui_document.c:435
 msgid "Value"
 msgstr "Valor"
 
-#: ../gebr/flow.c:877
+#: ../gebr/flow.c:888
 msgid "I/O table"
 msgstr "Tabela de entrada/saída"
 
-#: ../gebr/flow.c:878
+#: ../gebr/flow.c:889
 msgid "Input"
 msgstr "Entrada"
 
-#: ../gebr/flow.c:878 ../gebr/flow.c:879 ../gebr/flow.c:880
+#: ../gebr/flow.c:889 ../gebr/flow.c:890 ../gebr/flow.c:891
 #: ../gebr/ui_flow_browse.c:336 ../gebr/ui_flow_browse.c:342
 #: ../gebr/ui_flow_browse.c:348 ../gebr/ui_flow_browse.c:354
 msgid "(none)"
 msgstr "(nenhum)"
 
-#: ../gebr/flow.c:879
+#: ../gebr/flow.c:890
 msgid "Output"
 msgstr "Saída"
 
-#: ../gebr/flow.c:880
+#: ../gebr/flow.c:891
 msgid "Error"
 msgstr "Log de erro"
 
 #. Comment for translators:
 #. "By" as in "By John McClane"
-#: ../gebr/flow.c:925 ../gebr/ui_project_line.c:1021
+#: ../gebr/flow.c:936 ../gebr/ui_project_line.c:1021
 msgid "By"
 msgstr "Por"
 
-#: ../gebr/flow.c:931
+#: ../gebr/flow.c:942
 msgid "Flow composed by the program(s):"
 msgstr "Fluxo composto pelo(s) programa(s):"
 
@@ -1145,34 +1145,49 @@ msgstr "Menus"
 msgid "No program selected."
 msgstr "Nenhum programa selecionado."
 
-#: ../gebr/ui_flow_edition.c:305
+#: ../gebr/ui_flow_edition.c:307
 #, c-format
 msgid "Configuring program '%s'."
 msgstr "Configurando programa '%s'."
 
-#: ../gebr/ui_flow_edition.c:543
+#: ../gebr/ui_flow_edition.c:551
 msgid "No menu selected."
 msgstr "Nenhum menu selecionado."
 
-#: ../gebr/ui_flow_edition.c:548
+#: ../gebr/ui_flow_edition.c:556
 msgid "Select a menu instead of a category."
 msgstr "Selecione um menu ao invés de uma categoria."
 
-#: ../gebr/ui_flow_edition.c:806 ../gebr/ui_flow_edition.c:821
+#: ../gebr/ui_flow_edition.c:814 ../gebr/ui_flow_edition.c:829
 #: ../gebr/ui_project_line.c:831 ../gebr/ui_project_line.c:866
 msgid "Collapse all"
 msgstr "Colapsar todos"
 
-#: ../gebr/ui_flow_edition.c:809 ../gebr/ui_flow_edition.c:824
+#: ../gebr/ui_flow_edition.c:817 ../gebr/ui_flow_edition.c:832
 #: ../gebr/ui_project_line.c:835 ../gebr/ui_project_line.c:870
 msgid "Expand all"
 msgstr "Expandir todos"
 
-#: ../gebr/ui_flow_edition.c:948
+#: ../gebr/ui_flow_edition.c:955
+#, c-format
+msgid "<Input log>: %s"
+msgstr "<Arquivo de Entrada>: %s"
+
+#: ../gebr/ui_flow_edition.c:959
+#, c-format
+msgid "<Output log>: %s"
+msgstr "<Arquivo de Saída>: %s"
+
+#: ../gebr/ui_flow_edition.c:963
+#, c-format
+msgid "<Error log>: %s"
+msgstr "<Arquivo de Erro>: %s"
+
+#: ../gebr/ui_flow_edition.c:970
 msgid "Required parameter unfilled"
 msgstr "Parâmetro obrigatório não preenchido"
 
-#: ../gebr/ui_flow_edition.c:950
+#: ../gebr/ui_flow_edition.c:972
 msgid "Verify parameter configuration"
 msgstr "Verifique a configuração dos parâmetros"
 
@@ -1219,7 +1234,7 @@ msgstr "Todos os parâmetros"
 #: ../gebr/ui_help.c:169
 #, c-format
 msgid "Comments of the %s \"%s\""
-msgstr "Comentários do %s \"%s\""
+msgstr "Comentários do(a) %s \"%s\""
 
 #: ../gebr/ui_help.c:171 ../gebr/ui_help.c:242
 #, c-format
@@ -1236,15 +1251,15 @@ msgid "Report of the %s \"%s\""
 msgstr "Relatório de %s \"%s\""
 
 #. There is no path, put "None"
-#: ../gebr/ui_help.c:411 ../gebr/ui_project_line.c:288
+#: ../gebr/ui_help.c:412 ../gebr/ui_project_line.c:288
 msgid "None"
 msgstr "Nenhum"
 
-#: ../gebr/ui_help.c:549 ../gebr/ui_help.c:567
+#: ../gebr/ui_help.c:550 ../gebr/ui_help.c:568
 msgid "Unable to create temporary file."
 msgstr "Impossível escrever arquivo temporário."
 
-#: ../gebr/ui_help.c:558
+#: ../gebr/ui_help.c:559
 msgid "Error during editor execution."
 msgstr "Erro durate a execução do editor."
 
@@ -1427,11 +1442,11 @@ msgstr "Parâmetros"
 msgid "Default"
 msgstr "Padrão"
 
-#: ../gebr/ui_paths.c:134
+#: ../gebr/ui_paths.c:135
 msgid "Invalid path"
 msgstr "Caminho inválido"
 
-#: ../gebr/ui_paths.c:135
+#: ../gebr/ui_paths.c:136
 #, c-format
 msgid "The path <i>%s</i> is invalid, the operation will be cancelled."
 msgstr "O caminho <i>%s</i> é inválido, a operação será cancelada."
