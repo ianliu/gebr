@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
 
-	g_test_add_func("/libgebr/utils/gebr-str-escape", test_gebr_str_escape);
+	g_test_add_func("/libgebr/utils/str-escape", test_gebr_str_escape);
 
 	return g_test_run();
 }
