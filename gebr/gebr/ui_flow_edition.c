@@ -291,6 +291,7 @@ void flow_edition_set_io(void)
 			   FSEQ_EDITABLE, TRUE, FSEQ_ELLIPSIZE, PANGO_ELLIPSIZE_START, -1);
 
 	gebr_geoxml_flow_io_set_from_server(gebr.flow, gebr.flow_server);
+	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
 
 	g_free(input_markup);
 	g_free(output_markup);
