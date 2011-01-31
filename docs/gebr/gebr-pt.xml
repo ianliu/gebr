@@ -36,9 +36,15 @@
             xlink:href="http:\\www.gebrproject.com">www.gebrproject.com</link></emphasis>.</para>
     </section>
     <section>
-      <title>Contato</title>
-      <para><emphasis role="bold">GêBR Core Team:</emphasis></para>
+      <title>GêBR Core Team</title>
+      <para><emphasis role="bold">Coordenador:</emphasis></para>
       <itemizedlist>
+	<listitem>
+          <para>Ricardo Biloti - <email>biloti@gebrproject.com</email></para>
+        </listitem>
+      </itemizedlist>
+      <para><emphasis role="bold">Desenvolvedores:</emphasis></para>
+	<itemizedlist>	
 	<listitem>
           <para>Alexandre Baaklini - <email>abaaklini@gebrproject.com</email></para>
         </listitem>
@@ -46,21 +52,48 @@
           <para>Bráulio Oliveira - <email>brauliobo@gmail.com</email></para>
         </listitem>
         <listitem>
-          <para>Eduardo Filpo - <email>efilpo@gmail.com</email></para>
-        </listitem>
-        <listitem>
-          <para>Fernando Roxo - <email>roxo@roxo.org</email></para>
-        </listitem>
-        <listitem>
           <para>Ian Liu - <email>ian.liu88@gmail.com</email></para>
         </listitem>
-        <listitem>
-          <para>Ricardo Biloti - <email>biloti@gmail.com</email></para>
+	<listitem>
+	  <para>Davi Clemente <email>davi.clemente@gebrproject.com</email></para>
+	</listitem>
+	<listitem>  
+	  <para>Fábio Azevedo <email>fabioaz@gebrproject.com</email></para>
+	</listitem>
+	<listitem>
+  	  <para>Fabrício Matheus Gonçalves <email>fmatheus@gebrproject.com</email></para>
+	</listitem>
+	<listitem>
+  	  <para>Gabriel Sobral <email>sobral@gebrproject.com</email></para>
+	</listitem>
+	<listitem>
+  	  <para>Jorge Pizzolatto <email>jorge.pzt@gebrproject.com</email></para>
+	</listitem>
+	<listitem>  
+	  <para>Luis Alberto D'Afonseca <email>luis.dafonseca@gebrproject.com</email></para>
+	</listitem>
+	<listitem>  
+	  <para>Priscila Moraes <email>pris.moraess@gebrproject.com</email></para>
+	</listitem>
+	<listitem>  
+	  <para>Renan Giarola <email>renangiarola@gebrproject.com</email></para>
+	</listitem>
+	<listitem>
+  	  <para>Rodrigo Morelatto <email>morelatto@gebrproject.com</email></para>
+	</listitem>
+      </itemizedlist>
+ 	<para><emphasis role="bold">Consultores:</emphasis></para>
+      <itemizedlist>
+	<listitem>
+          <para>Eduardo Filpo - <email>efilpo@gmail.com</email></para>
         </listitem>
-        <listitem>
+	<listitem>
+        <para>Fernando Roxo - <email>roxo@roxo.org</email></para>
+        </listitem>
+	<listitem>
           <para>Rodrigo Portugal - <email>rosoport@gmail.com</email></para>
         </listitem>
-      </itemizedlist>
+    </itemizedlist>
       <para>Muito obrigado por usar a GêBR!</para>
     </section>
   </section>
@@ -157,8 +190,8 @@
         <step>
           <para>Se desejar, digite também uma breve <emphasis>descrição</emphasis> da linha, o
               <emphasis>autor</emphasis>, um <emphasis>e-mail</emphasis> para contato.Pode-se adicionar
-	 ainda caminhos personalizados de linha, cujo detalhamento será abordado <link linkend="sec_3_1_6">
-	<emphasis role="bold">seção 3.1.6</emphasis></link> </para>
+	 ainda caminhos personalizados de linha, assunto melhor abordado na <link linkend="sec_3_1_6">
+	<emphasis role="bold">seção 3.1.6</emphasis></link></para>
         </step>
       </procedure>
       <screenshot>
@@ -418,7 +451,7 @@
     </important>
     <section xml:id="sec_3_1">
       <title>A aba <guilabel>Projetos e Linhas</guilabel></title>
-      <para>A aba <guilabel>Projetos e Linhas</guilabel> dispõe de oito botões de comando,
+      <para>A aba <guilabel>Projetos e Linhas</guilabel> dispõe de nove botões de comando,
         localizados logo abaixo da aba. Por meio deles pode-se:</para>
       <itemizedlist>
         <listitem>
@@ -445,7 +478,7 @@
           <para><link linkend="sec_3_1_8">Exportar um projeto ou linha</link></para>
         </listitem>
 	<listitem>
-          <para><link linkend="sec_3_1_9">Editar comentário</link></para>
+          <para><link linkend="sec_3_1_9">Editar comentários</link></para>
         </listitem>
 	<listitem>
           <para><link linkend="sec_3_1_10">Visualizar Relatório</link></para>
@@ -532,7 +565,7 @@
             ...<guilabel>para linha</guilabel>, dependendo do caso) você pode editar os campos
             <guilabel>Título</guilabel>, <guilabel>Descrição</guilabel>,
             <guilabel>Autor</guilabel> e <guilabel>Email</guilabel>.Para o caso de edição de propriedades de linha,
-	 pode-se adicionar caminhos personalizados, cujo detalhamento será abordado na seção <link linkend="sec_3_1_6">
+	 pode-se adicionar caminhos personalizados, cujo detalhamento será abordado na<link linkend="sec_3_1_6">
 	<emphasis role="bold">seção 3.1.6</emphasis></link> 
         </para>
       </section>
@@ -671,7 +704,7 @@
         </procedure>
       </section>
      <section xml:id="sec_3_1_9">
-        <title>Editar comentário</title>
+        <title>Editar comentários</title>
         <para>Pode-se editar comentários no relatório, atribuindo informações adicionais
 	 sobre o projeto ou sobre a linha. Para <emphasis
             role="bold">editar um comentário</emphasis>:</para>
@@ -684,8 +717,16 @@
           <step>
             <para>Digite um texto no editor de textos que se abre. Quando terminar, feche o editor
               de textos e salve seu comentário.</para>
+	    <para>Na janela que se abre, pode-se salvar, imprimir e pré-visualizar o(s) comentário(s) através dos botões ou através do menu da janela</para>
           </step>
         </procedure>
+	<step>
+            <para><guiicon><inlinemediaobject>
+                  <imageobject>
+                    <imagedata fileref="../images/janela_comentarios_de_linha.png"/>
+                  </imageobject>
+                </inlinemediaobject></guiicon></para>
+          </step>
         <tip>
           <para>Em <menuchoice>
               <guimenu>Ações</guimenu>
@@ -717,16 +758,37 @@
 	<section xml:id="sec_3_1_10">
         <title>Visualizar Relatório</title>
         <para>Como explorado na seção acima, pode-se criar e editar um relatório com informações
-	 adicionais sobre o fluxo. O procedimento é idêntico ao usado para projetos e linhas
-	 (veja <link linkend="sec_3_1_4"><emphasis role="bold">seção 3.1.4</emphasis></link> ).
+	 adicionais sobre projetos e linhas.
 	 Para visualizar o relatório  que você criou, clique no botão Visualizar Relatório,
-	 na parte de baixo da caixa Detalhes, no lado direito da janela principal.</para>
+	 na parte de baixo da caixa Detalhes, no lado direito da janela principal.
+	<para>Na janela que se abre após o usuário clicar em <guilabel>Visualizar relatório</guilabel>, em 
+	Arquivo, é possível :</para>
+	<para>* Salvar;</para>
+	<para>* Imprimir o relatório.</para>
+	
+	<para>Em Opções, ainda na janela de visualização do relatório, é possível:</para>
+	
+	<para>* Incluir os comentários do usuário;</para>
+	<para>* Incluir relatório do fluxo;</para>
+	<para>* Configurar as tabelas de parâmetros dos programas do fluxo;</para>
+	<para>* Bem como escolher o estilo de apresentação do relatório gerado,com a possibilidade de inclusão de outros estilos.</para>
+	<step>
+            <para><guiicon><inlinemediaobject>
+                  <imageobject>
+                    <imagedata fileref="../images/janela_visualizar_relatorio.png"/>
+                  </imageobject>
+                </inlinemediaobject></guiicon></para>
+          </step>
+	Na <link linkend="sec_3_2_14"><emphasis role="bold">seção 3.2.14</emphasis></link>, é detalhada a visualização de relatório
+	para um fluxo, que se dá de forma muito semelhante à visualização de relatório da linha, com a diferença que nesta é possível
+	englobar o relatório do fluxo.
+</para>
       </section>
  </section>
     <section xml:id="sec_3_2">
       <title>A aba <guilabel>Fluxos</guilabel></title>
-      <para>A aba <guilabel>Fluxos</guilabel> dispõe de oito botões de comando, localizados logo
-        abaixo da aba. Por meio deles pode-se:</para>
+      <para>A aba <guilabel>Fluxos</guilabel> dispõe de nove botões de comando, localizados logo
+        abaixo da aba, mais dois botões no campo Detalhes no canto inferior direito da tela. Por meio deles pode-se:</para>
       <itemizedlist>
         <listitem>
           <para><link linkend="sec_3_2_1">Criar um novo fluxo</link></para>
@@ -752,7 +814,19 @@
         <listitem>
           <para><link linkend="sec_3_2_9">Exportar um fluxo</link></para>
         </listitem>
-      </itemizedlist>
+ 	<listitem>
+          <para><link linkend="sec_3_2_10">Criação de menus a partir de um fluxo pela DéBR (conceito extendido da DéBR)</link></para>
+        </listitem>
+	<listitem>
+          <para><link linkend="sec_3_2_11">Executar um fluxo</link></para>
+        </listitem>
+	<listitem>
+          <para><link linkend="sec_3_2_12">Editar comentários</link></para>
+        </listitem>
+	<listitem>
+          <para><link linkend="sec_3_2_13">Visualizar relatório</link></para>
+        </listitem>
+	</itemizedlist>
       <tip>
         <para>Experimente usar <emphasis role="bold">menus de contexto</emphasis> no lugar dos
           botões de comando. Para isso, <emphasis role="bold">clique com o botão direito do
@@ -1028,24 +1102,28 @@
           </step>
         </procedure>
       </section>
-      <section xml:id="sec_3_2_11">
-        <title>Editar arquivos de entrada e saída do fluxo</title>
-        <para>Para facilitar o uso, este comando aparece repetidamente nas abas
-            <guilabel>Projetos e linhas</guilabel> através do botão <guiicon><inlinemediaobject>
-              <imageobject>
-                <imagedata fileref="../images/botao_editar_propriedades_projeto.png"/>
-              </imageobject>
-            </inlinemediaobject></guiicon>, no diálogo Propriedades para linha e em <guilabel>Edição de fluxo</guilabel>,
-	 no campo Sequência de fluxo. Por razões didáticas, entendemos que é melhor voltar a falar dele na
-	 <link linkend="sec_3_3_6"><emphasis
-              role="bold">seção 3.3.6</emphasis></link>.</para>
-      </section>
-      <section xml:id="sec_3_2_12">
+        <section xml:id="sec_3_2_11">
         <title>Executar um fluxo</title>
         <para>Este comando aparece repetidamente nas abas
             <guilabel>Fluxos</guilabel> e <guilabel>Edição de fluxo</guilabel> de duas formas distintas.
 	 Por razões didáticas, entendemos que é melhor voltar a falar dele na <link linkend="sec_3_3_7"><emphasis
               role="bold">seção 3.3.7</emphasis></link>.</para>
+      </section>
+ 	<section xml:id="sec_3_2_12">
+        <title>Editar comentários</title>
+        <para>Este comando aparece repetidamente nas abas
+            <guilabel>Projetos e Linhas</guilabel> e em <guilabel>Fluxos</guilabel>. Através dele, o usuário pode adicionar comentários à linha
+	 ou ao fluxo criados. Ver <link linkend="sec_3_1_9"><emphasis role="bold">seção 3.1.9</emphasis></link>
+	 </para>
+      </section>
+	<section xml:id="sec_3_2_13">
+        <title>Visualizar relatório</title>
+        <para>Este comando aparece repetidamente nas abas
+            <guilabel>Projetos e Linhas</guilabel> e em <guilabel>Fluxos</guilabel>. Através dele, em ambas abas, 
+	pode-se gerar/visualizar o relatório da linha ou do fluxo em questão, com a pequena diferença de que é 
+	possível englobar o relatório do fluxo no relatório da linha. As demais funcionalidades são descritas na 
+	<link linkend="sec_3_1_10"><emphasis role="bold">seção 3.1.10</emphasis></link>
+	 </para>
       </section>
     </section>
     <section xml:id="sec_3_3">
@@ -1318,11 +1396,7 @@
             alternar com segurança entre os estados, os parâmetros serão preservados.</para>
         </tip>
         <important>
-          <para>Programas <emphasis role="bold">Não configurados</emphasis> (<guiicon><inlinemediaobject>
-                <imageobject>
-                  <imagedata fileref="../images/icone_nao_configurado.png"/>
-                </imageobject>
-              </inlinemediaobject></guiicon>) ou <emphasis role="bold">Desabilitados</emphasis> (<guiicon><inlinemediaobject>
+          <para>Programas <emphasis role="bold">Desabilitados</emphasis> (<guiicon><inlinemediaobject>
                 <imageobject>
                   <imagedata fileref="../images/icone_desabilitado.png"/>
                 </imageobject>
@@ -1341,81 +1415,26 @@
         <para>Para associar arquivos de entrada, saída e erro a um fluxo:</para>
         <procedure>
           <step>
-            <para>Certifique-se de ter selecionado o fluxo e, na aba <guilabel>Edição de fluxo</guilabel>
-	  clique no botão <guiicon><inlinemediaobject>
+            <para>Certifique-se de ter selecionado o fluxo e, na aba Edição de fluxo, no campo Sequência de fluxo, 
+pode-se editar os caminhos de entrada, saída e erro através de um clique duplo nos botões
+	<guiicon><inlinemediaobject>
                   <imageobject>
-                    <imagedata fileref="../images/botao_arquivos_entrada_saida.png"/>
+                    <imagedata fileref="../images/janela_entrada_saida_arquivos.png"/>
                   </imageobject>
                 </inlinemediaobject></guiicon></para>
           </step>
           <step>
-            <para>Localize a caixa <guilabel>Entrada</guilabel> na parte de baixo da janela
-                <guilabel>Entrada/Saída do fluxo</guilabel>. Nesta caixa, digite o caminho para o
-              arquivo de <emphasis role="bold">entrada</emphasis> (incluindo o nome do arquivo) ou
-              clique no ícone <guiicon><inlinemediaobject>
+            <para>Edite os caminhos ou clique no ícone <guiicon><inlinemediaobject>
                   <imageobject>
                     <imagedata fileref="../images/icone_escolher_arquivo.png"/>
                   </imageobject>
                 </inlinemediaobject></guiicon> e navegue pela janela <guilabel>Escolha um arquivo
 	</guilabel>.</para>
-            <important>
-              <para>Se você adicionou <emphasis role="bold">caminhos preferenciais</emphasis> à
-                linha em que está o fluxo atual, o caminho que estiver no topo da lista será a pasta
-                padrão quando a janela <guilabel>Escolha um arquivo</guilabel> for aberta. Este recurso
-                pode <emphasis role="bold">facilitar muito o manuseio de arquivos de
-                  dados</emphasis> na GêBR. Voltando ao exemplo da <emphasis role="bold"><link
-                    linkend="sec_3_1_6">seção 3.1.6</link></emphasis>, foram adicionados três
-                caminhos, mas apenas o caminho <filename class="directory">/tmp</filename> será
-                usado como padrão.</para>
-              <screenshot>
-                <info>
-                  <title/>
-                </info>
-                <mediaobject>
-                  <imageobject>
-                    <imagedata fileref="../images/janela_path_list_2.png"/>
-                  </imageobject>
-                </mediaobject>
-              </screenshot>
-            </important>
-            <tip>
-              <para>Se você quiser que outro caminho seja usado como padrão, basta movê-lo para o
-                topo da lista na janela <guilabel>Propriedades para linha</guilabel>, no campo
-	 <guilabel>Caminhos</guilabel>(veja mais detalhes na <emphasis role="bold"><link
-	 linkend="sec_3_1_6">seção 3.1.6</link></emphasis>).</para>
-            </tip>
-          </step>
-          <step>
-            <para>Repita o passo 2 para as caixas <guilabel>Saída</guilabel> (arquivo de <emphasis
-                role="bold">saída</emphasis>) e <guilabel>Erro</guilabel> (arquivo de <emphasis
-                role="bold">erro</emphasis>), depois clique no botão <guiicon><inlinemediaobject>
-                  <imageobject>
-                    <imagedata fileref="../images/botao_adicionar_caminho.png"/>
-                  </imageobject>
-                </inlinemediaobject></guiicon>. Ao fazer isso, o conjunto de arquivos que você
-              definiu vai para o topo da lista, na parte de cima da janela <guilabel>Entrada/Saída do fluxo
-	</guilabel>. No exemplo abaixo, adicionamos o conjunto de arquivos <filename
-                class="libraryfile">ent.dat</filename>, <filename class="libraryfile"
-                >sai.dat</filename> e <filename class="libraryfile">err.dat</filename>.</para>
-            <screenshot>
-              <info>
-                <title/>
-              </info>
-              <mediaobject>
-                <imageobject>
-                  <imagedata fileref="../images/janela_arquivos_entrada_saida.png"/>
-                </imageobject>
-              </mediaobject>
-            </screenshot>
-          </step>
-          <step>
-            <para>Selecione o conjunto de arquivos que você acabou de definir (deve ser o conjunto
-              no topo da lista) e clique em <guibutton>Fechar</guibutton>.</para>
           </step>
         </procedure>
         <para>Ao sair da janela <guilabel>Entrada/Saída do fluxo</guilabel>, note que os arquivos de
-          entrada e saída que você associou ao fluxo aparecem na caixa <guilabel>Flow
-            sequence</guilabel>, sinalizados com os ícones <guiicon><inlinemediaobject>
+          entrada e saída que você associou ao fluxo aparecem na caixa <guilabel>Sequência de fluxo</guilabel>,
+	 sinalizados com os ícones <guiicon><inlinemediaobject>
               <imageobject>
                 <imagedata fileref="../images/icone_arquivo_entrada.png"/>
               </imageobject>
@@ -1425,22 +1444,7 @@
               </imageobject>
             </inlinemediaobject></guiicon>, abaixo e acima dos programas do fluxo (se houver
           algum).</para>
-        <tip>
-          <para>Experimente dar um clique duplo em um dos arquivos sinalizados com os ícones <guiicon><inlinemediaobject>
-                <imageobject>
-                  <imagedata fileref="../images/icone_arquivo_entrada.png"/>
-                </imageobject>
-              </inlinemediaobject></guiicon> e <guiicon><inlinemediaobject>
-                <imageobject>
-                  <imagedata fileref="../images/icone_arquivo_saida.png"/>
-                </imageobject>
-              </inlinemediaobject></guiicon>. Este é um método alternativo para definir os arquivos
-            de entrada, saída e erro.</para>
-        </tip>
-        <note>
-          <para>Você pode adicionar quantos conjuntos de arquivos quiser à lista <guilabel>Entrada/Saída do fluxo
-	</guilabel>. Todos os conjuntos serão mantidos na lista, mas o fluxo será
-            executado usando apenas o conjunto que você selecionar por último.</para>
+	<note>
           <para>Se quiser <emphasis role="bold">remover um conjunto</emphasis> da lista, selecione-o
             com o <emphasis role="bold">botão direito</emphasis> do mouse e clique em
               <guimenuitem>Excluir</guimenuitem>.</para>
@@ -1458,6 +1462,20 @@
           a GêBR também permite <emphasis role="bold">executar fluxos em máquinas
           remotas</emphasis>. Veja mais detalhes sobre definição e seleção de servidores na
             <emphasis role="bold"><link linkend="sec_4_2">seção 4.2</link></emphasis>.</para>
+	<para>Na aba Fluxos, o botão <guiicon><inlinemediaobject>
+              <imageobject>
+                <imagedata fileref="../images/botao_executar_fluxo.png"/>
+              </imageobject>
+            </inlinemediaobject></guiicon> executa vários fluxos em sequência. Na imagem abaixo, vários fluxos deverão ser executados: <guiicon><inlinemediaobject>
+                <imageobject>
+                  <imagedata fileref="../images/janela_execucao_de_fluxo.png"/>
+                </imageobject>
+              </inlinemediaobject></guiicon></para>
+	<para> Na aba Edição de fluxo, ainda que se tenha selecionado vários fluxos na aba Fluxos, ao se clicar no botão <guiicon><inlinemediaobject>
+              <imageobject>
+                <imagedata fileref="../images/botao_executar_fluxo.png"/>
+              </imageobject>
+            </inlinemediaobject></guiicon> será executado apenas o primeiro fluxo selecionado. </para>
         <para>No momento em que o fluxo começa a ser executado, a GêBR alterna imediatamente para a
           aba <guilabel>Controle de tarefas</guilabel>, que mostra o relatório (<emphasis>log</emphasis>) da
           execução.</para>
