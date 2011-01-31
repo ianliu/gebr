@@ -20,3 +20,5 @@ test_utils_SOURCES = test-utils.c
 
 TEST_PROGS += test-gebr-tar
 test_gebr_tar_SOURCES = test-gebr-tar.c
+
+EXTRA_DIST = tar-test.tar.gz
