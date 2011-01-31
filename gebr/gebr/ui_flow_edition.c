@@ -743,12 +743,8 @@ static GtkMenu *flow_edition_component_popup_menu(GtkWidget * widget, struct ui_
 
 	if (gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter) ||
 	    gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter) ||
-	    gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->error_iter)) {
-		gtk_container_add(GTK_CONTAINER(menu),
-				  gtk_action_create_menu_item(gtk_action_group_get_action
-							      (gebr.action_group_flow_edition, "flow_edition_properties")));
-		goto out;
-	}
+	    gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->error_iter)) 
+		return NULL;
 
 	/* Move top */
 	if (gebr_gui_gtk_list_store_can_move_up(ui_flow_edition->fseq_store, &iter) == TRUE) {
@@ -797,7 +793,7 @@ static GtkMenu *flow_edition_component_popup_menu(GtkWidget * widget, struct ui_
 			  gtk_action_create_menu_item(gtk_action_group_get_action
 						      (gebr.action_group_flow_edition, "flow_edition_help")));
 
- out:	gtk_widget_show_all(menu);
+ 	gtk_widget_show_all(menu);
 
 	return GTK_MENU(menu);
 }
