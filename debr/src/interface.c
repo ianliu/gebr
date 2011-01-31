@@ -210,6 +210,7 @@ void debr_setup_ui(void)
 	gtk_action_group_add_actions(debr.action_group_general, actions_entries_general, G_N_ELEMENTS(actions_entries_general), NULL);
 	debr.accel_group_array[ACCEL_GENERAL] = gtk_accel_group_new();
 	gebr_gui_gtk_action_group_set_accel_group(debr.action_group_general, debr.accel_group_array[ACCEL_GENERAL]);
+	gtk_window_add_accel_group(GTK_WINDOW(debr.window), debr.accel_group_array[ACCEL_GENERAL]);
 	
 	debr.action_group_menu = gtk_action_group_new("Menu");
 	gtk_action_group_set_translation_domain(debr.action_group_menu, GETTEXT_PACKAGE);
