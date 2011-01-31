@@ -62,6 +62,7 @@ struct ui_project_line *project_line_setup_ui(void)
 
 	GtkTreeViewColumn *col;
 	GtkCellRenderer *renderer;
+	GtkTreeSelection *selection;
 
 	GtkWidget *scrolled_window;
 	GtkWidget *hpanel;
@@ -88,6 +89,8 @@ struct ui_project_line *project_line_setup_ui(void)
 						    G_TYPE_STRING,
 						    G_TYPE_POINTER);
 	ui_project_line->view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_project_line->store));
+	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (ui_project_line->view));
+	gtk_tree_selection_set_mode (selection, GTK_SELECTION_MULTIPLE);
 	gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(ui_project_line->view),
 						  (GebrGuiGtkPopupCallback) project_line_popup_menu, ui_project_line);
 	gebr_gui_gtk_tree_view_set_reorder_callback(GTK_TREE_VIEW(ui_project_line->view),
@@ -317,24 +320,27 @@ void project_line_info_update(void)
 
 gboolean project_line_get_selected(GtkTreeIter * _iter, enum ProjectLineSelectionType check_type)
 {
-	GtkTreeIter iter;
-	GtkTreeModel *model;
+	GList *rows;
 	gboolean is_line;
-	static const gchar *no_line_selected;
-	static const gchar *no_project_selected;
+	GtkTreeIter iter;
+	GtkTreePath *path;
+	GtkTreeModel *model;
+	GtkTreeSelection *selection;
+	static const gchar *no_line_selected = N_("Please select a line.");
+	static const gchar *no_project_selected = N_("Please select a project.");
 
-	no_line_selected = _("Please select a line.");
-	no_project_selected = _("Please select a project.");
-	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_project_line->view));
-	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE) {
+	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (gebr.ui_project_line->view));
+	rows = gtk_tree_selection_get_selected_rows (selection, &model);
+
+	if (!rows) {
 		switch (check_type) {
 		case DontWarnUnselection:
 			break;
 		case ProjectSelection:
-			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, no_project_selected);
+			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _(no_project_selected));
 			break;
 		case LineSelection:
-			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, no_line_selected);
+			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _(no_line_selected));
 			break;
 		case ProjectLineSelection:
 			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Please select a project or a line."));
@@ -342,17 +348,23 @@ gboolean project_line_get_selected(GtkTreeIter * _iter, enum ProjectLineSelectio
 		}
 		return FALSE;
 	}
+
+	path = rows->data;
+	is_line = gtk_tree_path_get_depth (path) == 2 ? TRUE : FALSE;
+	gtk_tree_model_get_iter (model, &iter, path);
+	g_list_foreach (rows, (GFunc) gtk_tree_path_free, NULL);
+	g_list_free (rows);
+
 	if (_iter != NULL)
 		*_iter = iter;
-	GtkTreePath *path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter);
-	is_line = gtk_tree_path_get_depth(path) == 2 ? TRUE : FALSE;
-	gtk_tree_path_free(path);
+
 	if (check_type == LineSelection && !is_line) {
-		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, no_line_selected);
+		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _(no_line_selected));
 		return FALSE;
 	}
+
 	if (check_type == ProjectSelection && is_line) {
-		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, no_project_selected);
+		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _(no_project_selected));
 		return FALSE;
 	}
 
@@ -608,7 +620,6 @@ out3:	gtk_widget_destroy(chooser_dialog);
 
 void project_line_export(void)
 {
-	GString *filename;
 	GString *tmpdir;
 	const gchar *extension;
 	gchar *tmp;
@@ -618,11 +629,62 @@ void project_line_export(void)
 	const gchar *check_box_label;
 	GtkFileFilter *file_filter;
 
-	if (!project_line_get_selected(NULL, ProjectLineSelection))
+	GList *rows;
+	GList *lines;
+	GList *projects;
+	GtkTreeModel *model;
+	GtkTreeSelection *selection;
+
+	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (gebr.ui_project_line->view));
+	rows = gtk_tree_selection_get_selected_rows (selection, &model);
+
+	if (!rows) {
+		gebr_message (GEBR_LOG_ERROR, TRUE, FALSE,
+			      _("Please select a project or a line."));
 		return;
+	}
+
+	lines = NULL;
+	projects = NULL;
+	for (GList *i = rows; i; i = i->next) {
+		GtkTreePath *path;
+		path = i->data;
+		if (gtk_tree_path_get_depth (path) == 1)
+			projects = g_list_prepend (projects, path);
+		else
+			lines = g_list_prepend (lines, path);
+	}
+	g_list_free (rows);
+
+	if (projects != NULL) {
+		GtkTreePath *path;
+
+		for (GList *i = lines; i; i = i->next) {
+			GtkTreePath *parent;
+
+			path = i->data;
+			parent = gtk_tree_path_copy (path);
+			if (gtk_tree_path_up (parent) && !gtk_tree_selection_path_is_selected (selection, parent))
+				gtk_tree_selection_unselect_path (selection, path);
+		}
+
+		for (GList *i = projects; i; i = i->next) {
+			gboolean valid;
+			GtkTreeIter iter;
+			GtkTreeIter child;
+
+			path = i->data;
+			gtk_tree_model_get_iter (model, &iter, path);
+			valid = gtk_tree_model_iter_children (model, &child, &iter);
+			while (valid) {
+				gtk_tree_selection_select_iter (selection, &child);
+				valid = gtk_tree_model_iter_next (model, &child);
+			}
+		}
+	}
 	
 	file_filter = gtk_file_filter_new();
-	if (gebr_geoxml_document_get_type(gebr.project_line) == GEBR_GEOXML_DOCUMENT_TYPE_PROJECT) {
+	if (projects) {
 		gtk_file_filter_set_name(file_filter, _("Project (*.prjz)"));
 		gtk_file_filter_add_pattern(file_filter, "*.prjz");
 		extension = ".prjz";
@@ -635,7 +697,7 @@ void project_line_export(void)
 	}
 
 	/* run file chooser */
-	check_box = gtk_check_button_new_with_label(_(check_box_label));
+	check_box = gtk_check_button_new_with_label(check_box_label);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_box), TRUE);
 	chooser_dialog = gebr_gui_save_dialog_new(_("Choose filename to save"), GTK_WINDOW(gebr.window));
 	gebr_gui_save_dialog_set_default_extension(GEBR_GUI_SAVE_DIALOG(chooser_dialog), extension);
@@ -647,18 +709,21 @@ void project_line_export(void)
 	if (!tmp)
 		return;
 	
-	filename = g_string_new("");
 	tmpdir = gebr_temp_directory_create();
 
-	void parse_line(GebrGeoXmlLine * _line) {
+	void parse_line(GebrGeoXmlDocument * _line) {
+		gchar *filename;
 		GebrGeoXmlSequence *j;
 		GebrGeoXmlLine *line;
 
-		line = GEBR_GEOXML_LINE(gebr_geoxml_document_clone(GEBR_GEOXML_DOCUMENT(_line)));
+		line = GEBR_GEOXML_LINE (gebr_geoxml_document_clone (_line));
 
 		line_set_paths_to(line,	gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(check_box)));
-		g_string_printf(filename, "%s/%s", tmpdir->str, gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(line)));
-		document_save_at(GEBR_GEOXML_DOCUMENT(line), filename->str, FALSE, FALSE);
+		filename = g_build_path ("/", tmpdir->str,
+					 gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(line)),
+					 NULL);
+		document_save_at(GEBR_GEOXML_DOCUMENT(line), filename, FALSE, FALSE);
+		g_free (filename);
 
 		gebr_geoxml_line_get_flow(line, &j, 0);
 		for (; j != NULL; gebr_geoxml_sequence_next(&j)) {
@@ -670,34 +735,59 @@ void project_line_export(void)
 				continue;
 
 			flow_set_paths_to(flow,	gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(check_box)));
-			g_string_printf(filename, "%s/%s", tmpdir->str, flow_filename);
-			document_save_at(GEBR_GEOXML_DOCUMENT(flow), filename->str, FALSE, FALSE);
+			filename = g_build_path ("/", tmpdir->str, flow_filename, NULL);
+			document_save_at(GEBR_GEOXML_DOCUMENT(flow), filename, FALSE, FALSE);
+			g_free (filename);
 
 			document_free(GEBR_GEOXML_DOCUMENT(flow));
 		}
 
 		document_free(GEBR_GEOXML_DOCUMENT(line));
 	}
-	
-	if (gebr_geoxml_document_get_type(gebr.project_line) == GEBR_GEOXML_DOCUMENT_TYPE_PROJECT) {
-		GebrGeoXmlSequence *i;
 
-		g_string_printf(filename, "%s/%s", tmpdir->str, gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(gebr.project)));
-		document_save_at(GEBR_GEOXML_DOCUMENT(gebr.project), filename->str, FALSE, FALSE);
 
-		gebr_geoxml_project_get_line(gebr.project, &i, 0);
-		for (; i != NULL; gebr_geoxml_sequence_next(&i)) {
-			GebrGeoXmlLine *line;
+	if (!projects)
+		for (GList *i = lines; i; i = i->next) {
+			GtkTreePath *path;
+			GtkTreeIter iter;
+			GebrGeoXmlDocument *line;
 
-			if (document_load((GebrGeoXmlDocument**)(&line),
-					  gebr_geoxml_project_get_line_source(GEBR_GEOXML_PROJECT_LINE(i)), FALSE))
+			path = i->data;
+			gtk_tree_model_get_iter (model, &iter, path);
+			gtk_tree_model_get (model, &iter, PL_XMLPOINTER, &line, -1);
+			parse_line (line);
+		}
+	else for (GList *i = projects; i; i = i->next) {
+		gchar *filename;
+		GtkTreeIter iter;
+		GtkTreePath *path;
+		GebrGeoXmlDocument *prj;
+		GebrGeoXmlSequence *seq;
+
+		path = i->data;
+		gtk_tree_model_get_iter (model, &iter, path);
+		gtk_tree_model_get (model, &iter, PL_XMLPOINTER, &prj, -1);
+		filename = g_build_path ("/",
+					 tmpdir->str,
+					 gebr_geoxml_document_get_filename (prj),
+					 NULL);
+		document_save_at (prj, filename, FALSE, FALSE);
+		g_free (filename);
+
+		gebr_geoxml_project_get_line (GEBR_GEOXML_PROJECT (prj), &seq, 0);
+		for (; seq != NULL; gebr_geoxml_sequence_next (&seq)) {
+			GebrGeoXmlDocument *line;
+			GebrGeoXmlProjectLine *pl;
+
+			pl = GEBR_GEOXML_PROJECT_LINE (seq);
+
+			if (document_load (&line, gebr_geoxml_project_get_line_source (pl), FALSE))
 				continue;
 
-			parse_line(line);
-			document_free(GEBR_GEOXML_DOCUMENT(line));
+			parse_line (line);
+			document_free (line);
 		}
-	} else
-		parse_line(gebr.line);
+	}
 
 	gchar *current_dir = g_get_current_dir();
 	g_chdir(tmpdir->str);
@@ -711,7 +801,6 @@ void project_line_export(void)
 	g_free(current_dir);
 
 	g_free(tmp);
-	g_string_free(filename, TRUE);
 	gebr_temp_directory_destroy(tmpdir);
 }
 
