@@ -272,9 +272,13 @@ void flow_edition_select_component_iter(GtkTreeIter * iter)
 
 void flow_edition_set_io(void)
 {
-	const gchar *input = (g_strcmp0(gebr_geoxml_flow_server_io_get_input(gebr.flow_server),"") ? gebr_geoxml_flow_server_io_get_input(gebr.flow_server) : "Choose input file");
-	const gchar *output = (g_strcmp0(gebr_geoxml_flow_server_io_get_output(gebr.flow_server),"") ? gebr_geoxml_flow_server_io_get_output(gebr.flow_server) : "Choose output file");
-	const gchar *error = (g_strcmp0(gebr_geoxml_flow_server_io_get_error(gebr.flow_server),"") ? gebr_geoxml_flow_server_io_get_error(gebr.flow_server) : "Choose error file");
+	gchar *input_markup  = g_markup_printf_escaped("<i>%s</i>", "Choose input file");
+	gchar *output_markup = g_markup_printf_escaped("<i>%s</i>", "Choose output file");
+	gchar *error_markup  = g_markup_printf_escaped("<i>%s</i>", "Choose error file"); 
+
+	const gchar *input  = (g_strcmp0(gebr_geoxml_flow_server_io_get_input(gebr.flow_server),"")   ? gebr_geoxml_flow_server_io_get_input(gebr.flow_server)  : input_markup);
+	const gchar *output = (g_strcmp0(gebr_geoxml_flow_server_io_get_output(gebr.flow_server),"")  ? gebr_geoxml_flow_server_io_get_output(gebr.flow_server) : output_markup);
+	const gchar *error  = (g_strcmp0(gebr_geoxml_flow_server_io_get_error(gebr.flow_server),"")   ? gebr_geoxml_flow_server_io_get_error(gebr.flow_server)  : error_markup);
 
 	gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->input_iter,
 			   FSEQ_ICON_COLUMN, GTK_STOCK_GO_BACK, FSEQ_TITLE_COLUMN, input, 
@@ -287,6 +291,10 @@ void flow_edition_set_io(void)
 			   FSEQ_EDITABLE, TRUE, FSEQ_ELLIPSIZE, PANGO_ELLIPSIZE_START, -1);
 
 	gebr_geoxml_flow_io_set_from_server(gebr.flow, gebr.flow_server);
+
+	g_free(input_markup);
+	g_free(output_markup);
+	g_free(error_markup);
 }
 
 void flow_edition_component_activated(void)
@@ -439,9 +447,9 @@ gboolean flow_edition_component_key_pressed(GtkWidget *view, GdkEventKey *key)
 
 		status = gebr_geoxml_program_get_status (program);
 
-		if (status == GEBR_GEOXML_PROGRAM_STATUS_DISABLED ||
-				status == GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED &&
-				!parameters_check_has_required_unfilled_for_iter(&iter)) {
+		if ((status == GEBR_GEOXML_PROGRAM_STATUS_DISABLED) ||
+		    ((status == GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED) &&
+		     (!parameters_check_has_required_unfilled_for_iter(&iter)))) {
 			has_disabled = TRUE;
 			break;
 		}
