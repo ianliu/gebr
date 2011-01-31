@@ -272,9 +272,9 @@ void flow_edition_select_component_iter(GtkTreeIter * iter)
 
 void flow_edition_set_io(void)
 {
-	gchar *input_markup  = g_markup_printf_escaped("<i>%s</i>", "Choose input file");
-	gchar *output_markup = g_markup_printf_escaped("<i>%s</i>", "Choose output file");
-	gchar *error_markup  = g_markup_printf_escaped("<i>%s</i>", "Choose error file"); 
+	gchar *input_markup  = g_markup_printf_escaped("<i>%s</i>", _("Choose input file"));
+	gchar *output_markup = g_markup_printf_escaped("<i>%s</i>", _("Choose output file"));
+	gchar *error_markup  = g_markup_printf_escaped("<i>%s</i>", _("Choose error file")); 
 
 	const gchar *input  = (g_strcmp0(gebr_geoxml_flow_server_io_get_input(gebr.flow_server),"")   ? gebr_geoxml_flow_server_io_get_input(gebr.flow_server)  : input_markup);
 	const gchar *output = (g_strcmp0(gebr_geoxml_flow_server_io_get_output(gebr.flow_server),"")  ? gebr_geoxml_flow_server_io_get_output(gebr.flow_server) : output_markup);
