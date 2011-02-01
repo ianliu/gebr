@@ -958,7 +958,7 @@
                 </inlinemediaobject></guiicon></para>
           </step>
           <step>
-            <para>Se desejar, digite um comentário na janela <guilabel>Salvar estado do fluxo</guilabel>,
+            <para>Se desejar, digite um comentário na janela <emphasis role="bold">Salvar estado do fluxo</emphasis>,
               para identificar o estado salvo.</para>
           </step>
           <step>
@@ -978,15 +978,15 @@
                 <imagedata fileref="../images/botao_salvar_estado.png"/>
               </imageobject>
             </inlinemediaobject></guiicon>, e então selecione o estado para o qual quer retornar.
-          Sempre que você selecionar um estado salvo na lista, o diálogo <guilabel>Fazer backup do estado 
-	atual?</guilabel> será exibido. Se clicar em <guibutton>Sim</guibutton>, a janela
+          Sempre que você selecionar um estado salvo na lista, o diálogo <emphasis role="bold">Fazer backup do estado 
+	atual?</emphasis> será exibido. Se clicar em <emphasis role="bold">Sim</emphasis>, a janela
             <guilabel>Salvar estado do fluxo</guilabel> se abrirá, e você poderá salvar um novo estado. Se
-          clicar em <guibutton>Não</guibutton>, a GêBR apenas reverterá para o estado escolhido, sem
+          clicar em <emphasis role="bold">Não</emphasis>, a GêBR apenas reverterá para o estado escolhido, sem
           salvar o atual.</para>
         <tip>
           <para>Se você tem certeza de já ter salvo o estado atual, pode clicar com segurança em
-              <guibutton>Não</guibutton>, na janela <guilabel>Fazer backup do estado 
-	atual?</guilabel>. Isso evita encher a lista com estados redundantes.</para>
+              <emphasis role="bold">Não</emphasis>, na janela <emphasis role="bold">Fazer backup do estado 
+	atual?</emphasis>. Isso evita encher a lista com estados redundantes.</para>
         </tip>
         <caution>
           <para>A GêBR preserva continuamente a lista de estados salvos. Mesmo que você desligue o
