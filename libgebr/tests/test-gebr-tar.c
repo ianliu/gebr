@@ -42,16 +42,16 @@ void func (const gchar *path, gpointer data)
 	g_free (fname);
 }
 
-void test_gebr_tar_uncompress (void)
+void test_gebr_tar_extract (void)
 {
 	TarTest test;
-	GebrTar *tar = gebr_tar_new_from_file (TAR_TEST_FILE);
+	GebrTar *tar = gebr_tar_new_from_file (TEST_SRCDIR "/tar-test.tar.gz");
 
 	test.has1 = FALSE;
 	test.has2 = FALSE;
 	test.dirname = NULL;
 
-	g_assert (gebr_tar_uncompress (tar) == TRUE);
+	g_assert (gebr_tar_extract (tar) == TRUE);
 
 	gebr_tar_foreach (tar, func, &test);
 
@@ -63,11 +63,25 @@ void test_gebr_tar_uncompress (void)
 	g_assert (g_file_test (test.dirname, G_FILE_TEST_IS_DIR) == FALSE);
 }
 
+void test_gebr_tar_compact (void)
+{
+	GebrTar *tar;
+	const gchar *path = TEST_SRCDIR "/tar-create-test.tar.gz";
+
+	tar = gebr_tar_create (path);
+
+	gebr_tar_append (tar, __FILE__);
+
+	g_assert (gebr_tar_compact (tar, TEST_SRCDIR) == TRUE);
+	g_assert (g_file_test (path, G_FILE_TEST_EXISTS) == TRUE);
+}
+
 int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
 
-	g_test_add_func("/libgebr/tar/uncompress", test_gebr_tar_uncompress);
+	g_test_add_func("/libgebr/tar/extract", test_gebr_tar_extract);
+	g_test_add_func("/libgebr/tar/compact", test_gebr_tar_compact);
 
 	return g_test_run();
 }
