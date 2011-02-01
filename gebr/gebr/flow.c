@@ -488,9 +488,14 @@ gboolean flow_revision_save(void)
 	GtkWidget *label;
 	GtkWidget *entry;
 	GtkWidget *align;
+
+	GtkTreeIter iter;
 	gboolean ret = FALSE;
 
-	if (gebr.flow == NULL)
+	gchar *flow_filename;
+
+	GebrGeoXmlDocument *flow;
+	if (!flow_browse_get_selected(&iter, TRUE))
 		return FALSE;
 
 	dialog = gtk_dialog_new_with_buttons(_("Save flow state"),
@@ -517,13 +522,27 @@ gboolean flow_revision_save(void)
 	gtk_widget_show_all(dialog);
 
 	if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_OK) {
+
 		GebrGeoXmlRevision *revision;
 
-		revision = gebr_geoxml_flow_append_revision(gebr.flow, gtk_entry_get_text(GTK_ENTRY(entry)));
-		document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
-		flow_browse_load_revision(revision, TRUE);
-		flow_browse_info_update();
-		ret = TRUE;
+		gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_flow_browse->view) {
+
+			gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter, FB_FILENAME, &flow_filename, -1);
+			if (document_load((GebrGeoXmlDocument**)(&flow), flow_filename, TRUE))
+			{
+				return FALSE;
+			}
+
+			revision = gebr_geoxml_flow_append_revision(GEBR_GEOXML_FLOW(flow), 
+								    gtk_entry_get_text(GTK_ENTRY(entry)));
+			document_save(flow, TRUE, TRUE);
+			flow_browse_load_revision(revision, TRUE);
+			flow_browse_info_update();
+			ret = TRUE;
+
+			//document_free(flow);
+			g_free (flow_filename);
+		}
 	}
 
 	gtk_widget_destroy(dialog);
