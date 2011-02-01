@@ -202,7 +202,8 @@ void on_flow_component_move_top(void)
 		if (!flow_edition_get_selected_component(&iter, TRUE))
 			return;
 		if (gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter) ||
-		    gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter)) {
+		    gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter) ||
+		    gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->error_iter)) {
 			return;
 		}
 		flow_program_move_top();
@@ -210,6 +211,7 @@ void on_flow_component_move_top(void)
 	default:
 		break;
 	}
+	flow_program_check_sensitiveness();
 }
 
 void on_flow_component_move_bottom(void)
@@ -221,7 +223,8 @@ void on_flow_component_move_bottom(void)
 		if (!flow_edition_get_selected_component(&iter, TRUE))
 			return;
 		if (gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter) ||
-		    gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter)) {
+		    gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter) ||
+		    gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->error_iter)) {
 			return;
 		}
 		flow_program_move_bottom();
@@ -229,6 +232,7 @@ void on_flow_component_move_bottom(void)
 	default:
 		break;
 	}
+	flow_program_check_sensitiveness();
 }
 
 void on_flow_component_status_activate(GtkAction *action,

@@ -151,6 +151,7 @@ struct ui_flow_edition *flow_edition_setup_ui(void)
 							 G_TYPE_STRING,
 							 G_TYPE_POINTER,
 							 G_TYPE_INT,
+							 G_TYPE_BOOLEAN,
 							 G_TYPE_BOOLEAN);
 	ui_flow_edition->fseq_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_flow_edition->fseq_store));
 	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_flow_edition->fseq_view)),
@@ -178,6 +179,7 @@ struct ui_flow_edition *flow_edition_setup_ui(void)
 	gtk_tree_view_column_add_attribute(col, renderer, "markup", FSEQ_TITLE_COLUMN);
 	gtk_tree_view_column_add_attribute(col, renderer, "editable", FSEQ_EDITABLE);
 	gtk_tree_view_column_add_attribute(col, renderer, "ellipsize", FSEQ_ELLIPSIZE);
+	gtk_tree_view_column_add_attribute(col, renderer, "sensitive", FSEQ_SENSITIVE);
 
 	g_signal_connect(renderer, "edited", G_CALLBACK(flow_edition_component_edited), NULL);
 	g_signal_connect(renderer, "editing-started", G_CALLBACK(flow_edition_component_editing_started), NULL);
@@ -310,7 +312,6 @@ void flow_edition_component_activated(void)
 	if (gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter) ||
 	    gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter) ||
 	    gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->error_iter))
-		//gtk_cell_renderer_start_editing(ui_flow_edition->text_renderer, //can this be easy??
 		return;
 
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter, FSEQ_TITLE_COLUMN, &title, -1);

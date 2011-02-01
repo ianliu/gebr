@@ -96,5 +96,11 @@ void flow_fast_run(gboolean parellel, gboolean single);
  */
 void flow_add_program_sequence_to_view(GebrGeoXmlSequence * program, gboolean select_last);
 
+/**
+ * Checks if the first program has input entrance, the last one has output exit and if even one of then has error exit.
+ * If one of this is false, so the respective component are made insensitive. 
+ */
+void flow_program_check_sensitiveness (void);
+
 G_END_DECLS
 #endif				//__UI_FLOW_H
