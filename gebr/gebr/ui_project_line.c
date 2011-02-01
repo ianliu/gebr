@@ -804,6 +804,11 @@ void project_line_export(void)
 	gebr_temp_directory_destroy(tmpdir);
 }
 
+void project_line_delete(void)
+{
+	//TODO
+}
+
 void project_line_free(void)
 {
 	gebr.project_line = NULL;

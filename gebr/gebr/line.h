@@ -37,7 +37,7 @@ void line_new(void);
 /**
  * Delete the selected line.
  */
-gboolean line_delete(gboolean confirm);
+gboolean line_delete(GtkTreeIter * iter, gboolean warn_user);
 /**
  * Change all paths in \p line to relative or absolute according \p relative.
  */

@@ -57,7 +57,7 @@ void on_document_properties_activate(void);
 void on_document_dict_edit_activate(void);
 
 /**
- * Call #project_delete> from #project.c
+ * Call #project_line_delete> from #ui_project_line.c
  */
 void on_project_line_delete_activate(void);
 

@@ -39,8 +39,13 @@
 
 static void on_properties_response(gboolean accept)
 {
-	if (!accept)
-		line_delete(FALSE);
+	if (accept)
+		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("New line created."));
+	else {
+		GtkTreeIter iter;
+		if (!project_line_get_selected(&iter, DontWarnUnselection))
+			line_delete(&iter, FALSE);
+	}
 }
 
 void line_new(void)
@@ -84,65 +89,48 @@ void line_new(void)
 	document_properties_setup_ui(GEBR_GEOXML_DOCUMENT(gebr.line), on_properties_response);
 }
 
-gboolean line_delete(gboolean confirm)
+gboolean line_delete(GtkTreeIter * iter, gboolean warn_user)
 {
-	GtkTreeIter iter;
+	GebrGeoXmlLine * line;
+	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), iter,
+			   PL_XMLPOINTER, &line, -1);
+	GtkTreeIter parent;
+	gtk_tree_model_iter_parent(GTK_TREE_MODEL(gebr.ui_project_line->store), &parent, iter);
+	GebrGeoXmlProject * project;
+	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), &parent,
+			   PL_XMLPOINTER, &project, -1);
 
+	/* removes its flows */
 	GebrGeoXmlSequence *line_flow;
-	const gchar *line_filename;
-
-	if (!project_line_get_selected(&iter, LineSelection))
-		return FALSE;
-
-	if (confirm
-	    && gebr_gui_confirm_action_dialog(_("Delete line"),
-					      _("Are you sure you want to delete line '%s' and all its flows?"),
-					      gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(gebr.line))) == FALSE)
-		return FALSE;
-
-	GtkTreeIter tmpiter;
-	gpointer document;
-	gebr_gui_gtk_tree_model_foreach(tmpiter, GTK_TREE_MODEL(gebr.ui_flow_browse->store)) {
-		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &tmpiter,
-				   FB_XMLPOINTER, &document, -1);
-		gebr_remove_help_edit_window(document);
-	}
-	gebr_remove_help_edit_window(gebr.line);
-
-	/* Removes its flows */
-	gebr_geoxml_line_get_flow(gebr.line, &line_flow, 0);
-	for (; line_flow != NULL; gebr_geoxml_sequence_next(&line_flow)) {
-		GString *path;
+	for (gebr_geoxml_line_get_flow(line, &line_flow, 0); line_flow != NULL; gebr_geoxml_sequence_next(&line_flow)) {
 		const gchar *flow_source;
 
 		flow_source = gebr_geoxml_line_get_flow_source(GEBR_GEOXML_LINE_FLOW(line_flow));
-		path = document_get_path(flow_source);
+		GString *path = document_get_path(flow_source);
 		g_unlink(path->str);
 		g_string_free(path, TRUE);
 
 		/* log action */
 		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Deleting child flow '%s'."), flow_source);
 	}
-
-	/* Remove the line from its project */
-	line_filename = gebr_geoxml_document_get_filename(GEBR_GEOXML_DOC(gebr.line));
-	if (gebr_geoxml_project_remove_line(gebr.project, line_filename)) {
-		document_save(GEBR_GEOXML_DOC(gebr.project), TRUE, FALSE);
+	/* remove the line from its project */
+	const gchar *line_filename = gebr_geoxml_document_get_filename(GEBR_GEOXML_DOC(line));
+	if (gebr_geoxml_project_remove_line(project, line_filename)) {
+		document_save(GEBR_GEOXML_DOC(project), TRUE, FALSE);
 		document_delete(line_filename);
 	}
+	/* GUI */
+	gebr_remove_help_edit_window(GEBR_GEOXML_DOCUMENT(line));
+	gtk_tree_store_remove(GTK_TREE_STORE(gebr.ui_project_line->store), iter);
 
 	/* inform the user */
-	if (confirm) {
+	if (warn_user) {
 		gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Deleting line '%s'."),
-			     gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(gebr.line)));
+			     gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(line)));
 		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Deleting line '%s' from project '%s'."),
-			     gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(gebr.line)),
-			     gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(gebr.project)));
+			     gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(line)),
+			     gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(project)));
 	}
-
-	/* remove from the GUI */
-	if (gtk_tree_store_remove(GTK_TREE_STORE(gebr.ui_project_line->store), &iter))
-		project_line_select_iter(&iter);
 
 	return TRUE;
 }

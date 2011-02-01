@@ -39,8 +39,11 @@ static void on_properties_response(gboolean accept)
 {
 	if (accept)
 		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("New project created."));
-	else
-		project_delete(FALSE);
+	else {
+		GtkTreeIter iter;
+		if (!project_line_get_selected(&iter, DontWarnUnselection))
+			project_delete(&iter, FALSE);
+	}
 }
 
 void project_new(void)
@@ -61,44 +64,34 @@ void project_new(void)
 	document_properties_setup_ui(GEBR_GEOXML_DOCUMENT(gebr.project), on_properties_response);
 }
 
-gboolean project_delete(gboolean confirm)
+gboolean project_delete(GtkTreeIter * iter, gboolean warn_user)
 {
-	GtkTreeIter iter;
-	gchar *title;
+	GebrGeoXmlProject * project;
+	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), iter,
+			   PL_XMLPOINTER, &project, -1);
+
 	gchar *filename;
-	gint nlines;
-
-	if (!project_line_get_selected(&iter, ProjectSelection))
+	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), iter,
+			   PL_FILENAME, &filename, -1);
+	gint nlines = gtk_tree_model_iter_n_children(GTK_TREE_MODEL(gebr.ui_project_line->store), iter);
+	if (nlines > 0) {
+		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Project '%s' still has %i lines."),
+			     gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(project)), nlines);
+		g_free(filename);
 		return FALSE;
-
-	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter,
-			   PL_TITLE, &title, PL_FILENAME, &filename, -1);
-
-	/* TODO: If this project is not empty,
-	   prompt the user to take about erasing its lines */
-	/* Delete each line of the project */
-	if ((nlines = gtk_tree_model_iter_n_children(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter)) > 0) {
-		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Project '%s' still has %i lines."), title, nlines);
-		goto out;
 	}
+	g_free(filename);
 
-	/* message user */
-	if (confirm)
-		gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Deleting project '%s'."), title);
-
-	gebr_remove_help_edit_window(gebr.project);
-
-	/* finally, remove it from the disk */
+	gebr_remove_help_edit_window(GEBR_GEOXML_DOCUMENT(project));
 	document_delete(filename);
 	project_line_free();
 	project_line_info_update();
+	gtk_tree_store_remove(GTK_TREE_STORE(gebr.ui_project_line->store), iter);
 
-	/* Remove the project from the store (and its children) */
-	if (gtk_tree_store_remove(GTK_TREE_STORE(gebr.ui_project_line->store), &iter))
-		project_line_select_iter(&iter);
-
-out:	g_free(title);
-	g_free(filename);
+	/* message user */
+	if (warn_user)
+		gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Deleting project '%s'."),
+			     gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(project)));
 
 	return TRUE;
 }

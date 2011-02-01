@@ -115,10 +115,7 @@ void on_document_dict_edit_activate(void)
 
 void on_project_line_delete_activate(void)
 {
-	if (gebr_geoxml_document_get_type(gebr.project_line) == GEBR_GEOXML_DOCUMENT_TYPE_PROJECT)
-		project_delete(TRUE);
-	else
-		line_delete(TRUE);
+	project_line_delete();
 }
 
 void on_project_line_import_activate(void)

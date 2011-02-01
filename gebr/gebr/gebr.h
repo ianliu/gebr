@@ -197,7 +197,7 @@ void gebr_path_set_to(GString * path, gboolean relative);
  * gebr_remove_help_edit_window:
  * @document:
  */
-void gebr_remove_help_edit_window(gpointer document);
+void gebr_remove_help_edit_window(GebrGeoXmlDocument * document);
 
 G_END_DECLS
 

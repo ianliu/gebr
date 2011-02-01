@@ -508,13 +508,43 @@ void gebr_path_set_to(GString * path, gboolean relative)
 		gebr_path_resolve_home_variable(path);
 }
 
-void gebr_remove_help_edit_window(gpointer document)
+void gebr_remove_help_edit_window(GebrGeoXmlDocument * document)
 {
-	GtkWidget * window;
+	if (document == NULL)
+		return;
 
-	window = g_hash_table_lookup(gebr.help_edit_windows, document);
-	if (window)
-		gtk_widget_destroy(window);
+	void remove_window(GebrGeoXmlDocument * document)
+	{
+		if (document == NULL)
+			return;
+		GtkWidget * window = g_hash_table_lookup(gebr.help_edit_windows, document);
+		if (window)
+			gtk_widget_destroy(window);
+	}
+
+	switch (gebr_geoxml_document_get_type(document)) {
+	case GEBR_GEOXML_DOCUMENT_TYPE_PROJECT: {
+		GebrGeoXmlProject *project = GEBR_GEOXML_PROJECT(document);
+		GebrGeoXmlSequence * i;
+		for (gebr_geoxml_project_get_line(project, &i, 0); i != NULL; gebr_geoxml_sequence_next(&i))
+			gebr_remove_help_edit_window(g_hash_table_lookup(gebr.xmls_by_filename, 
+									 gebr_geoxml_project_get_line_source(GEBR_GEOXML_PROJECT_LINE(i))));
+		remove_window(document);
+		break;
+	} case GEBR_GEOXML_DOCUMENT_TYPE_LINE: {
+		GebrGeoXmlLine *line = GEBR_GEOXML_LINE(document);
+		GebrGeoXmlSequence * i;
+		for (gebr_geoxml_line_get_flow(line, &i, 0); i != NULL; gebr_geoxml_sequence_next(&i))
+			remove_window(g_hash_table_lookup(gebr.xmls_by_filename, 
+							  gebr_geoxml_line_get_flow_source(GEBR_GEOXML_LINE_FLOW(i))));
+		remove_window(document);
+		break;
+	} case GEBR_GEOXML_DOCUMENT_TYPE_FLOW:
+		remove_window(document);
+		break;
+	default:
+		break;
+	}
 }
 
 /*

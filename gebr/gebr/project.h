@@ -30,15 +30,10 @@ G_BEGIN_DECLS
 void project_new(void);
 
 /**
- * Delete the selected project.
- *
- * TODO:
- * * If a project is not empty, the user user should be
- *   warned. Besides, it should be asked about erasing
- *   all project's lines.
- * * Project's line files should be deleted as well.
+ * Delete the project at \p iter.
+ * Return TRUE if project was deleted.
  */
-gboolean project_delete(gboolean confirm);
+gboolean project_delete(GtkTreeIter * iter, gboolean warn_user);
 
 /**
  * Add \p project to the list of projects.

@@ -117,6 +117,11 @@ void project_line_import(void);
 void project_line_export(void);
 
 /**
+ * Delete selected(s) line(s) and/or project(s).
+ */
+void project_line_delete(void);
+
+/**
  * Frees memory related to project and line.
  */
 void project_line_free(void);
