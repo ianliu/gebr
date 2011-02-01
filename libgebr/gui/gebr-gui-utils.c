@@ -422,6 +422,43 @@ gboolean gebr_gui_gtk_tree_store_reparent(GtkTreeStore * store, GtkTreeIter * it
 	return TRUE;
 }
 
+gboolean gebr_gui_gtk_tree_store_move_before(GtkTreeStore * store, GtkTreeIter * iter, GtkTreeIter * before)
+{
+	GtkTreeIter _parent, *parent = &_parent;
+	if (before == NULL) {
+		if (!gtk_tree_model_iter_parent(GTK_TREE_MODEL(store), &_parent, iter))
+			parent = NULL;
+	} else if (!gtk_tree_model_iter_parent(GTK_TREE_MODEL(store), &_parent, before))
+		parent = NULL;
+
+	GtkTreeIter new_iter;
+	gtk_tree_store_insert_before(store, &new_iter, parent, before);
+	gebr_gui_gtk_tree_model_iter_copy_values(GTK_TREE_MODEL(store), &new_iter, iter);
+	gtk_tree_store_remove(store, iter);
+	*iter = new_iter;
+
+	return TRUE;
+}
+
+gboolean gebr_gui_gtk_tree_store_move_after(GtkTreeStore * store, GtkTreeIter * iter, GtkTreeIter * after)
+{
+	GtkTreeIter _parent, *parent = &_parent;
+	if (after == NULL) {
+		if (!gtk_tree_model_iter_parent(GTK_TREE_MODEL(store), &_parent, iter))
+			parent = NULL;
+	} else if (!gtk_tree_model_iter_parent(GTK_TREE_MODEL(store), &_parent, after))
+		parent = NULL;
+
+	GtkTreeIter new_iter;
+	gtk_tree_store_insert_after(store, &new_iter, parent, after);
+	gebr_gui_gtk_tree_model_iter_copy_values(GTK_TREE_MODEL(store), &new_iter, iter);
+	gtk_tree_store_remove(store, iter);
+	*iter = new_iter;
+
+	return TRUE;
+
+}
+
 gboolean gebr_gui_gtk_tree_model_iter_equal_to(GtkTreeModel * model, GtkTreeIter * iter1, GtkTreeIter * iter2)
 {
 	gchar * path1;
@@ -559,9 +596,7 @@ out:	g_list_foreach(list, (GFunc) gtk_tree_iter_free, NULL);
 
 void gebr_gui_gtk_tree_view_select_iter(GtkTreeView * tree_view, GtkTreeIter * iter)
 {
-	GtkTreeSelection *tree_selection;
-
-	tree_selection = gtk_tree_view_get_selection(tree_view);
+	GtkTreeSelection *tree_selection = gtk_tree_view_get_selection(tree_view);
 	gtk_tree_selection_unselect_all(tree_selection);
 	if (iter == NULL)
 		return;

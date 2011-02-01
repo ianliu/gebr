@@ -470,7 +470,7 @@ struct job *job_find(GString * jid)
 }
 
 gboolean job_new(struct job ** _job, struct client * client, GString * queue, GString * account, GString * xml,
-		 GString * n_process)
+		 GString * n_process, GString * run_id)
 {
 	struct job *job;
 
@@ -495,6 +495,7 @@ gboolean job_new(struct job ** _job, struct client * client, GString * queue, GS
 	job->display = g_string_new(client->display->str);
 	job->server_location = client->server_location;
 	job->status_string = g_string_new("");
+	job->run_id = g_string_new(run_id->str);
 	job->jid = job_generate_id();
 	job->title = g_string_new("");
 	job->start_date = g_string_new("");
@@ -716,6 +717,7 @@ void job_free(struct job *job)
 	gebr_geoxml_document_free(GEBR_GEOXML_DOC(job->flow));
 	g_string_free(job->hostname, TRUE);
 	g_string_free(job->status_string, TRUE);
+	g_string_free(job->run_id, TRUE);
 	g_string_free(job->jid, TRUE);
 	g_string_free(job->title, TRUE);
 	g_string_free(job->start_date, TRUE);

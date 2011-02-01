@@ -36,6 +36,7 @@
 #include "menu.h"
 #include "document.h"
 #include "server.h"
+#include "job.h"
 #include "callbacks.h"
 #include "ui_flow.h"
 #include "ui_document.h"
@@ -413,75 +414,71 @@ void flow_set_paths_to(GebrGeoXmlFlow * flow, gboolean relative)
 	g_string_free(path, TRUE);
 }
 
-/*
- * flow_prepare_to_run:
- *
- */
-static gboolean flow_prepare_to_run (GebrGeoXmlFlow *flow, GebrCommServerRun *config, gboolean enqueue)
-{
-	GebrGeoXmlSequence *i;
-	gebr_geoxml_flow_get_program(flow, &i, 0);
-	if (i == NULL) {
-		if (!enqueue)
-			gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Flow '%s' is empty."),
-				     gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(flow)));
-		else
-			gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Flow '%s' is empty, ignoring."),
-				     gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(flow)));
-		return FALSE;
-	}
-
-	GebrGeoXmlFlow *stripped = gebr_comm_server_run_strip_flow(flow);
-	flow_copy_from_dicts(stripped);
-	if (!enqueue)
-		config->flow = stripped;
-	else
-		config->queued_flows = g_list_append(config->queued_flows, stripped);
-
-	return TRUE;
-}
-
-void flow_run(struct server *server, GebrCommServerRun * config, gboolean single)
+void flow_run(struct server *server, GebrCommServerRunConfig * config, gboolean single)
 {
 	GtkTreeIter iter;
 
-	if (single) {
-		if (!flow_prepare_to_run (gebr.flow, config, FALSE))
-			goto out;
-	} else {
-		gboolean enqueue = FALSE;
-		gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_flow_browse->view) {
-			GebrGeoXmlFlow *flow;
-
-			gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
-					   FB_XMLPOINTER, &flow, -1);
-			if (!flow_prepare_to_run (flow, config, enqueue))
-				goto out;
-			enqueue = TRUE;
+	void job_create(GebrGeoXmlFlow *flow, gboolean select)
+	{
+		GebrGeoXmlSequence *i;
+		gebr_geoxml_flow_get_program(flow, &i, 0);
+		if (i == NULL) {
+			gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Flow '%s' is empty, ignoring."),
+				     gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(flow)));
+			return;
 		}
+
+		/* save last run date */
+		gebr_geoxml_flow_set_date_last_run(flow, gebr_iso_date());
+		document_save(GEBR_GEOXML_DOC(flow), FALSE, TRUE);
+		flow_browse_info_update(); 
+
+		/* prepare flow and add it to config */
+		GebrGeoXmlFlow *stripped = gebr_comm_server_run_strip_flow(flow);
+		flow_copy_from_dicts(stripped);
+		GebrCommServerRunFlow *run_flow = gebr_comm_server_run_config_add_flow(config, stripped);
+		gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(stripped));
+
+		GString *queue_gstring = g_string_new(config->queue);
+		struct job * job = job_new_from_flow(server, run_flow->flow, queue_gstring);
+		g_string_free(queue_gstring, TRUE);
+		g_string_printf(job->run_id, "%u", run_flow->run_id);
+		if (select) {
+			job_set_active(job);
+			gebr.config.current_notebook = 3;
+			gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), gebr.config.current_notebook);
+		}
+
+		/* status and logging */
+		gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Asking server to run flow '%s'."),
+			     gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(flow)));
+		if (gebr_comm_server_is_local(server->comm) == FALSE)
+			gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Asking server '%s' to run flow '%s'."),
+				     server->comm->address->str, gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(flow)));
+		else 
+			gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Asking local server to run flow '%s'."),
+				     gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(flow)));
 	}
 
+	/* Add flows and create jobs */
+	gboolean first = TRUE;
+	if (single)
+		job_create(gebr.flow, first);
+	else {
+		gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_flow_browse->view) {
+			GebrGeoXmlFlow *flow;
+			gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
+					   FB_XMLPOINTER, &flow, -1);
+			job_create(flow, first);
+			first = FALSE;
+		}
+	}
 
 	/* RUN */
 	gebr_comm_server_run_flow(server->comm, config);
 
-	gebr_geoxml_flow_set_date_last_run(gebr.flow, gebr_iso_date());
-	document_save(GEBR_GEOXML_DOC(gebr.flow), FALSE, TRUE);
-	flow_browse_info_update(); 
-	gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Asking server to run flow '%s'."),
-		     gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(config->flow)));
-	if (gebr_comm_server_is_local(server->comm) == FALSE) {
-		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Asking server '%s' to run flow '%s'."),
-			     server->comm->address->str, gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(config->flow)));
-	} else {
-		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Asking local server to run flow '%s'."),
-			     gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(config->flow)));
-	}
-
 	/* frees */
-out:	document_free(GEBR_GEOXML_DOCUMENT(config->flow));
-	g_list_foreach(config->queued_flows, (GFunc)document_free, NULL);
-	gebr_comm_server_run_free(config);
+	gebr_comm_server_run_config_free(config);
 }
 
 gboolean flow_revision_save(void)
