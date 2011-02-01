@@ -292,6 +292,7 @@ void flow_edition_set_io(void)
 			   FSEQ_ICON_COLUMN, "gebr-stderr", FSEQ_TITLE_COLUMN, error,
 			   FSEQ_EDITABLE, TRUE, FSEQ_ELLIPSIZE, PANGO_ELLIPSIZE_START, -1);
 
+	flow_program_check_sensitiveness();
 	gebr_geoxml_flow_io_set_from_server(gebr.flow, gebr.flow_server);
 	flow_browse_info_update();
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
@@ -488,6 +489,7 @@ gboolean flow_edition_component_key_pressed(GtkWidget *view, GdkEventKey *key)
 		listiter = listiter->next;
 	}
 
+	flow_program_check_sensitiveness();
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
 
 	g_list_foreach (paths, (GFunc) gtk_tree_path_free, NULL);
@@ -534,6 +536,7 @@ void flow_edition_status_changed(guint status)
 		gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &iter, FSEQ_ICON_COLUMN, icon, -1);
 	}
 
+	flow_program_check_sensitiveness();
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
 
 	gtk_tree_path_free (input_path);

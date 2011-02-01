@@ -119,42 +119,37 @@ void flow_add_program_sequence_to_view(GebrGeoXmlSequence * program, gboolean se
 void flow_program_check_sensitiveness (void)
 {
 	GebrGeoXmlSequence *program;
-	GebrGeoXmlSequence *first_program;
-	GebrGeoXmlSequence *last_program;
+	GebrGeoXmlProgram *first_program;
+	GebrGeoXmlProgram *last_program;
 	gboolean has_some_error_output = FALSE;
+	gboolean has_configured = FALSE;
 
-	gebr_geoxml_flow_get_program(gebr.flow, &first_program, 0);
-	gebr_geoxml_flow_get_program(gebr.flow, &last_program, (gebr_geoxml_flow_get_programs_number(gebr.flow) - 1));
-
-	if (!gebr_geoxml_program_get_stdin(GEBR_GEOXML_PROGRAM(first_program))){
-		gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->input_iter,
-				   FSEQ_SENSITIVE, FALSE, -1);
-	} else {
-		gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->input_iter,
-				   FSEQ_SENSITIVE, TRUE, -1);
-	}
-
-	if (!gebr_geoxml_program_get_stdout(GEBR_GEOXML_PROGRAM(last_program))){
-		gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->output_iter,
-				   FSEQ_SENSITIVE, FALSE, -1);
-	} else {
-		gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->output_iter,
-				   FSEQ_SENSITIVE, TRUE, -1);
-	}
-
-	program = first_program;
+	gebr_geoxml_flow_get_program(gebr.flow, &program, 0);
 	for (; program != NULL; gebr_geoxml_sequence_next(&program)){
-		if (gebr_geoxml_program_get_stderr(GEBR_GEOXML_PROGRAM(program))){
-			has_some_error_output = TRUE;
+		if (gebr_geoxml_program_get_status (GEBR_GEOXML_PROGRAM(program)) == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED){
+			if (!has_configured){
+				first_program = GEBR_GEOXML_PROGRAM(program);
+				has_configured = TRUE;
+			}
+			if (!has_some_error_output && gebr_geoxml_program_get_stderr(GEBR_GEOXML_PROGRAM(program))){
+				has_some_error_output = TRUE;
+			}
+			last_program = GEBR_GEOXML_PROGRAM(program);
 		}
 	}
 
-	if (!has_some_error_output){
-		gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->error_iter,
-				   FSEQ_SENSITIVE, FALSE, -1);
-	} else {
-		gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->error_iter,
-				   FSEQ_SENSITIVE, TRUE, -1);
+	if (has_configured){
+		gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->input_iter,
+				   FSEQ_SENSITIVE, gebr_geoxml_program_get_stdin(GEBR_GEOXML_PROGRAM(first_program)), -1);
+		gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->output_iter,
+				   FSEQ_SENSITIVE, gebr_geoxml_program_get_stdout(GEBR_GEOXML_PROGRAM(last_program)), -1);
+
+		if (has_some_error_output)
+			gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->error_iter,
+					   FSEQ_SENSITIVE, TRUE, -1);
+		else
+			gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->error_iter,
+					   FSEQ_SENSITIVE, FALSE, -1);
 	}
 }
 
