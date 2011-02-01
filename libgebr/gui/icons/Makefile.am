@@ -27,4 +27,7 @@ install-data-local:
 	find $(srcdir)/48x48 \( ! -regex '.*/\..*' \) -type d -exec ${INSTALL_SCRIPT} -d {} ${libgebr_gui_icons}/{} \;
 	find $(srcdir)/48x48 \( ! -regex '.*/\..*' \) -type f -print -exec ${INSTALL_DATA} {} ${libgebr_gui_icons}/{} \;
 
+uninstall-hook:
+	( cd $(DESTDIR)$(datadir)/libgebr && rm -r icons )
+
 EXTRA_DIST = 16x16 22x22 48x48

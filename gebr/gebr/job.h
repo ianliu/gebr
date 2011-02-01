@@ -31,10 +31,10 @@
 G_BEGIN_DECLS
 
 /**
- * Find the job structure for the corresponding \p jid and server \p address.
+ * Find the job structure for the corresponding \p id and server \p address.
+ * If jid is TRUE, find for jid, if FALSE then find using run_id for "incomplete".
  */
-struct job *job_find(GString * address, GString * jid);
-
+struct job *job_find(GString * address, GString * id, gboolean jid);
 
 struct job {
 	GtkTreeIter iter;
@@ -51,6 +51,8 @@ struct job {
 		JOB_STATUS_ISSUED,
 	} status;
 
+	gboolean waiting_server_details;
+	GString *run_id;
 	GString *jid;
 	GString *title;
 	/* appears in top label */
@@ -70,11 +72,18 @@ struct job {
 /**
  * Create a new job (from \p server) and add it to list of jobs
  */
-struct job *job_add(struct server *server, GString * jid,
-		    GString * status, GString * title,
-		    GString * start_date, GString * finish_date,
-		    GString * hostname, GString * issues, GString * cmd_line, GString * output, GString * queue, GString * moab_jid);
+struct job *job_new_from_flow(struct server *server, GebrGeoXmlFlow * flow, GString *queue);
 
+/**
+ * Create a new job (from \p server) and add it to list of jobs
+ */
+struct job *job_new_from_jid(struct server *server, GString * jid, GString * _status, GString * title,
+			     GString * start_date, GString * finish_date, GString * hostname, GString * issues,
+			     GString * cmd_line, GString * output, GString * queue, GString * moab_jid);
+
+void job_init_details(struct job *job, GString * _status, GString * title, GString * start_date, GString * finish_date,
+		      GString * hostname, GString * issues, GString * cmd_line, GString * output, GString * queue,
+		      GString * moab_jid);
 /**
  * Frees job structure.
  */

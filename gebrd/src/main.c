@@ -47,8 +47,11 @@ int main(int argc, char **argv)
 
 	context = g_option_context_new(_("GeBR daemon"));
 	g_option_context_set_translation_domain(context, GETTEXT_PACKAGE);
-	g_option_context_set_summary(context, _(""));
-	g_option_context_set_description(context, _(""));
+	g_option_context_set_summary(context, _("Run flows and manage jobs of GeBR."));
+	g_option_context_set_description(context, _(
+					 "Debug-compiled environment variables:\n"
+					 "  GEBRD_RUN_DELAY_SEC: delay in seconds to wait before sending response of a flow run request."
+					 ));
 	g_option_context_add_main_entries(context, entries, NULL);
 	g_option_context_set_ignore_unknown_options(context, FALSE);
 	if (g_option_context_parse(context, &argc, &argv, &error) == FALSE) {

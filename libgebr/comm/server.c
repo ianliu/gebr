@@ -63,22 +63,38 @@ static void gebr_comm_server_free_x11_forward(struct gebr_comm_server *server);
 static void gebr_comm_server_free_for_reuse(struct gebr_comm_server *server);
 
 
-GebrCommServerRun * gebr_comm_server_run_new(void)
+GebrCommServerRunConfig * gebr_comm_server_run_config_new(void)
 {
-	GebrCommServerRun *config = g_new(GebrCommServerRun, 1);
-	config->flow = NULL;
-	config->queued_flows = NULL;
+	GebrCommServerRunConfig *config = g_new(GebrCommServerRunConfig, 1);
+	config->flows = NULL;
 	config->parallel = FALSE;
 	config->account = config->queue = config->num_processes = NULL;
 	return config;
 }
 
-void gebr_comm_server_run_free(GebrCommServerRun *config)
+void gebr_comm_server_run_config_free(GebrCommServerRunConfig *config)
 {
-	g_list_free(config->queued_flows);
+	void free_each(GebrCommServerRunFlow * run_flow)
+	{
+		gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(run_flow->flow));
+		g_free(run_flow);
+	}
+
+	g_list_foreach(config->flows, (GFunc)free_each, NULL);
+	g_list_free(config->flows);
 	g_free(config->account);
 	g_free(config->queue);
 	g_free(config);
+}
+
+GebrCommServerRunFlow* gebr_comm_server_run_config_add_flow(GebrCommServerRunConfig *config, GebrGeoXmlFlow * flow)
+{
+	static guint run_id = 0;
+	GebrCommServerRunFlow *run_flow = g_new(GebrCommServerRunFlow, 1);
+	run_flow->flow = GEBR_GEOXML_FLOW(gebr_geoxml_document_clone(GEBR_GEOXML_DOCUMENT(flow)));
+	run_flow->run_id = run_id++;
+	config->flows = g_list_append(config->flows, run_flow);
+	return run_flow;
 }
 
 GebrGeoXmlFlow * gebr_comm_server_run_strip_flow(GebrGeoXmlFlow * flow)
@@ -314,27 +330,27 @@ gboolean gebr_comm_server_forward_x11(struct gebr_comm_server *server, guint16 p
 	return ret;
 }
 
-void gebr_comm_server_run_flow(struct gebr_comm_server *server, GebrCommServerRun * config)
+void gebr_comm_server_run_flow(struct gebr_comm_server *server, GebrCommServerRunConfig * config)
 {
-	gchar *xml;
-	gebr_geoxml_document_to_string(GEBR_GEOXML_DOC(config->flow), &xml);
-	gebr_comm_protocol_send_data(server->protocol, server->stream_socket,
-				     gebr_comm_protocol_defs.run_def, 4, xml,
-				     config->account ? config->account : "",
-				     config->queue ? config->queue : "",
-				     config->num_processes ? config->num_processes : "");
-	g_free(xml);
-	if (g_list_length(config->queued_flows)) {
-		for (GList *i = config->queued_flows; i != NULL; i = g_list_next(i)) {
-			gebr_geoxml_document_to_string(GEBR_GEOXML_DOC(i->data), &xml);
-			gebr_comm_protocol_send_data(server->protocol, server->stream_socket,
-						     gebr_comm_protocol_defs.run_def, 4, xml,
-						     config->account ? config->account : "",
-						     config->queue ? config->queue : "",
-						     config->num_processes ? config->num_processes : "");
-			g_free(xml);
-		}
+	GString *run_id_gstring = g_string_new("");
+
+	for (GList *i = config->flows; i != NULL; i = g_list_next(i)) {
+		gchar *xml;
+		GebrCommServerRunFlow *run_flow = (GebrCommServerRunFlow*)i->data;
+		gebr_geoxml_document_to_string(GEBR_GEOXML_DOC(run_flow->flow), &xml);
+
+		g_string_printf(run_id_gstring, "%u", run_flow->run_id);
+		gebr_comm_protocol_send_data(server->protocol, server->stream_socket,
+					     gebr_comm_protocol_defs.run_def, 5, xml,
+					     config->account ? config->account : "",
+					     config->queue ? config->queue : "",
+					     config->num_processes ? config->num_processes : "",
+					     run_id_gstring->str);
+
+		g_free(xml);
 	}
+
+	g_string_free(run_id_gstring, TRUE);
 }
 
 /**
@@ -688,19 +704,18 @@ static void gebr_comm_server_socket_disconnected(GebrCommStreamSocket * stream_s
 static void gebr_comm_server_socket_read(GebrCommStreamSocket * stream_socket, struct gebr_comm_server *server)
 {
 	GString *data;
-	gchar *data_stripped;
 
 	data = gebr_comm_socket_read_string_all(GEBR_COMM_SOCKET(stream_socket));
 	gebr_comm_protocol_receive_data(server->protocol, data);
 	server->ops->parse_messages(server, server->user_data);
 
 	/* we don't want a giant output */
-	data_stripped = g_strndup(data->str, 50);
+	gchar *data_stripped = g_strndup(data->str, 50);
 	gebr_comm_server_log_message(server, GEBR_LOG_DEBUG, "Read from server '%s': %s",
-				     server->address->str, data_stripped);
+				     server->address->str, data->str);
+	g_free(data_stripped);
 
 	g_string_free(data, TRUE);
-	g_free(data_stripped);
 }
 
 /**

@@ -100,6 +100,16 @@ gboolean gebr_gui_gtk_tree_store_move_down(GtkTreeStore * store, GtkTreeIter * i
 gboolean gebr_gui_gtk_tree_store_reparent(GtkTreeStore * store, GtkTreeIter * iter, GtkTreeIter * parent);
 
 /**
+ * Inter-level and sort resistant version gtk_tree_store_move_before
+ */
+gboolean gebr_gui_gtk_tree_store_move_before(GtkTreeStore * store, GtkTreeIter * iter, GtkTreeIter * before);
+
+/**
+ * Inter-level and sort resistant version gtk_tree_store_move_after
+ */
+gboolean gebr_gui_gtk_tree_store_move_after(GtkTreeStore * store, GtkTreeIter * iter, GtkTreeIter * after);
+
+/**
  * Compares two iterators for equality.
  */
 gboolean gebr_gui_gtk_tree_model_iter_equal_to(GtkTreeModel * model, GtkTreeIter * iter1, GtkTreeIter * iter2);
