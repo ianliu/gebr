@@ -624,18 +624,23 @@ static void help_edit_on_commit_request(GebrGuiHelpEditWidget * self)
 {
 	gboolean sensitive;
 	const gchar * help;
-	GebrGeoXmlObject *object = NULL;
 	gboolean valid;
 	gboolean interrupt = FALSE;
 	GtkTreeIter iter;
 	GtkTreeIter child;
 	GtkTreeModel * model;
+	GebrGeoXmlObject *object;
+	GebrGeoXmlProgram *prog;
+	GebrGeoXmlDocument *doc;
 
 	g_object_get(self, "geoxml-object", &object, NULL);
 
-	if (gebr_geoxml_object_get_type (object) == GEBR_GEOXML_OBJECT_TYPE_PROGRAM)
-	{
-		object = GEBR_GEOXML_OBJECT (gebr_geoxml_object_get_owner_document (object));
+	if (gebr_geoxml_object_get_type (object) == GEBR_GEOXML_OBJECT_TYPE_PROGRAM) {
+		doc = gebr_geoxml_object_get_owner_document (object);
+		prog = GEBR_GEOXML_PROGRAM (object);
+	} else {
+		doc = GEBR_GEOXML_DOCUMENT (object);
+		prog = NULL;
 	}
 
 	model = GTK_TREE_MODEL (debr.ui_menu.model);
@@ -648,7 +653,7 @@ static void help_edit_on_commit_request(GebrGuiHelpEditWidget * self)
 			gtk_tree_model_get(model, &child,
 					   MENU_XMLPOINTER, &ptr,
 					   -1);
-			if (ptr == object) {
+			if (ptr == doc) {
 				interrupt = TRUE;
 				break;
 			}
@@ -663,13 +668,13 @@ static void help_edit_on_commit_request(GebrGuiHelpEditWidget * self)
 		menu_status_set_from_iter(&iter, MENU_STATUS_UNSAVED);
 	
 
-	if (gebr_geoxml_object_get_type(object) == GEBR_GEOXML_OBJECT_TYPE_PROGRAM) {
-		help = gebr_geoxml_program_get_help(GEBR_GEOXML_PROGRAM(object));
+	if (prog) {
+		help = gebr_geoxml_program_get_help (prog);
 		sensitive = strlen(help) > 0 ? TRUE : FALSE;
 		g_object_set(debr.ui_program.details.help_view, "sensitive", sensitive, NULL);
 		validate_image_set_check_help(debr.ui_program.help_validate_image, help);
 	} else {
-		help = gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(object));
+		help = gebr_geoxml_document_get_help (doc);
 		sensitive = strlen(help) > 0 ? TRUE : FALSE;
 		g_object_set(debr.ui_menu.details.help_view, "sensitive", sensitive, NULL);
 		validate_image_set_check_help(debr.ui_menu.help_validate_image, help);
@@ -874,6 +879,15 @@ void debr_help_show(GebrGeoXmlObject * object, gboolean menu, const gchar * titl
 		html = gebr_geoxml_program_get_help(GEBR_GEOXML_PROGRAM(object));
 	else
 		html = gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(object));
+
+	gchar *content;
+	GString *tmpl;
+
+	tmpl = g_string_new (html);
+	content = gebr_geoxml_tmpl_get (tmpl, "cnt");
+	html = gebr_geoxml_object_generate_help (object, content);
+	g_string_free (tmpl, TRUE);
+	g_free (content);
 
 	gebr_gui_html_viewer_window_show_html(GEBR_GUI_HTML_VIEWER_WINDOW(window), html);
 	gtk_widget_show (window);

@@ -393,6 +393,7 @@ void gebr_help_show(GebrGeoXmlObject *object, gboolean menu)
 		html_window = GEBR_GUI_HTML_VIEWER_WINDOW (window);
 		manager = gebr_gui_html_viewer_window_get_ui_manager (html_window);
 		group = gtk_action_group_new ("HtmlViewerGroup");
+		gtk_action_group_set_translation_domain(group, GETTEXT_PACKAGE);
 
 		gtk_action_group_add_actions (group, html_viewer_entries,
 					      n_html_viewer_entries, window);

@@ -45,23 +45,22 @@ static void on_properties_response(gboolean accept)
 
 void line_new(void)
 {
-	GtkTreeSelection *selection;
-	GtkTreeIter project_iter, line_iter;
-
+	GtkTreeIter iter;
+	GtkTreeIter parent;
+	GtkTreeModel *model;
 	gchar *project_title;
-
 	GebrGeoXmlLine *line;
+	GebrGeoXmlDocument *doc;
 
-	if (!project_line_get_selected(NULL, ProjectLineSelection))
+	if (!project_line_get_selected (&parent, ProjectLineSelection))
 		return;
 
-	/* get project iter */
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_project_line->view));
-	if (gebr_geoxml_document_get_type(gebr.project_line) == GEBR_GEOXML_DOCUMENT_TYPE_PROJECT)
-		gtk_tree_selection_get_selected(selection, NULL, &project_iter);
-	else {
-		gtk_tree_selection_get_selected(selection, NULL, &line_iter);
-		gtk_tree_model_iter_parent(GTK_TREE_MODEL(gebr.ui_project_line->store), &project_iter, &line_iter);
+	model = GTK_TREE_MODEL (gebr.ui_project_line->store);
+	gtk_tree_model_get (model, &parent, PL_XMLPOINTER, &doc, -1);
+
+	if (gebr_geoxml_document_get_type (doc) == GEBR_GEOXML_DOCUMENT_TYPE_LINE) {
+		iter = parent;
+		gtk_tree_model_iter_parent (model, &parent, &iter);
 	}
 
 	/* create it */
@@ -69,9 +68,9 @@ void line_new(void)
 	gebr_geoxml_document_set_title(GEBR_GEOXML_DOC(line), _("New Line"));
 	gebr_geoxml_document_set_author(GEBR_GEOXML_DOC(line), gebr.config.username->str);
 	gebr_geoxml_document_set_email(GEBR_GEOXML_DOC(line), gebr.config.email->str);
-	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), &project_iter,
+	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), &parent,
 			   PL_TITLE, &project_title, -1);
-	line_iter = project_append_line_iter(&project_iter, line);
+	iter = project_append_line_iter(&parent, line);
 	gebr_geoxml_project_append_line(gebr.project, gebr_geoxml_document_get_filename(GEBR_GEOXML_DOC(line)));
 	document_save(GEBR_GEOXML_DOC(gebr.project), TRUE, FALSE);
 	document_save(GEBR_GEOXML_DOC(line), TRUE, FALSE);
@@ -80,7 +79,7 @@ void line_new(void)
 	gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("New line created in project '%s'."), project_title);
 	g_free(project_title);
 
-	project_line_select_iter(&line_iter);
+	project_line_select_iter(&iter);
 
 	document_properties_setup_ui(GEBR_GEOXML_DOCUMENT(gebr.line), on_properties_response);
 }

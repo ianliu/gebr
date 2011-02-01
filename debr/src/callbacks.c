@@ -649,7 +649,7 @@ gboolean on_entry_focus_out(GtkEntry * entry, GdkEventFocus * event, GebrValidat
 	GString *tooltip = g_string_new("");
 	fixes = gebr_validate_case_automatic_fixes_msg(data, gtk_entry_get_text(entry), &can_fix);
 
-	g_string_printf(tooltip, "%s\n\n%s", data->validcase_msg, fixes);
+	g_string_printf(tooltip, "%s\n\n%s", gebr_validate_case_get_message (data), fixes);
 	gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIALOG_WARNING);
 	if (can_fix) {
 		gulong *id;

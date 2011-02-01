@@ -150,6 +150,7 @@ static void category_edit_add_request(CategoryEdit * category_edit, GtkWidget *c
 
 	entry = gtk_bin_get_child (GTK_BIN (category_edit->categories_combo));
 	gtk_editable_select_region (GTK_EDITABLE (entry), 0, -1);
+	gtk_widget_grab_focus (entry);
 	name = gtk_combo_box_get_active_text(GTK_COMBO_BOX(combo));
 	if (check_duplicate (GEBR_GUI_SEQUENCE_EDIT(category_edit), name) ||
 	    __category_edit_check_text(name)) {
@@ -276,7 +277,7 @@ gboolean __category_edit_on_query_tooltip(GtkTreeView * tree_view, GtkTooltip * 
 	GString *tooltip_string = g_string_new("");
 	gboolean can_fix;
 	gchar *fixes = gebr_validate_case_automatic_fixes_msg(validate_case, name, &can_fix);
-	g_string_printf(tooltip_string, "%s\n\n%s", validate_case->validcase_msg, fixes);
+	g_string_printf(tooltip_string, "%s\n\n%s", gebr_validate_case_get_message (validate_case), fixes);
 	g_free(fixes);
 	gtk_tooltip_set_markup(tooltip, tooltip_string->str);
 	g_string_free(tooltip_string, TRUE);

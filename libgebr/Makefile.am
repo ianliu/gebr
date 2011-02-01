@@ -24,22 +24,27 @@ pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = gebr.pc
 
 lib_LTLIBRARIES = libgebr.la
-libgebr_la_SOURCES = libgebr.c	\
-		     date.c	\
-		     log.c	\
-		     version.c	\
-		     utils.c	\
-		     validate.c
+libgebr_la_SOURCES = 	\
+	date.c		\
+	gebr-tar.c	\
+	libgebr.c	\
+	log.c		\
+	utils.c		\
+	validate.c	\
+	version.c	\
+	$(NULL)
 
 libgebrincludedir = $(includedir)/libgebr
-libgebrinclude_HEADERS = date.h		\
-			 defines.h	\
-			 libgebr.h	\
-			 log.h		\
-			 utils.h	\
-			 validate.h	\
-			 version.h	\
-			 $(NULL)
+libgebrinclude_HEADERS =\
+	date.h		\
+	defines.h	\
+	gebr-tar.h	\
+	libgebr.h	\
+	log.h		\
+	utils.h		\
+	validate.h	\
+	version.h	\
+	$(NULL)
 
 noinst_HEADERS = defines.h
 

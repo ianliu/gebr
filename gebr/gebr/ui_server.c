@@ -317,6 +317,10 @@ static void on_add_clicked(GtkButton * button, struct ui_server_list *ui_server_
 	GtkEntry *entry;
 
 	g_object_get(button, "user-data", &entry, NULL);
+
+	if (g_str_equal( _("Type here [user@]serverhostname"), gtk_entry_get_text(entry)))
+		return;
+
 	on_entry_activate(entry, ui_server_list);
 }
 

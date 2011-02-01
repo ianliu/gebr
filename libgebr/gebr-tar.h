@@ -1,4 +1,4 @@
-/*   libgebr - GêBR Library
+/*   libgebr - GeBR Library
  *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
  *
  *   This program is free software: you can redistribute it and/or modify
@@ -15,32 +15,41 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef __GEBR_TAR_H__
+#define __GEBR_TAR_H__
+
 #include <glib.h>
 
-#include "../utils.h"
+G_BEGIN_DECLS
 
-void test_gebr_str_escape (void)
-{
-	gchar *escaped;
+typedef struct _GebrTar GebrTar;
+typedef void (*GebrTarFunc) (const gchar *file, gpointer data);
 
-	escaped = gebr_str_escape ("foo");
-	g_assert_cmpstr (escaped, ==, "foo");
-	g_free (escaped);
+/**
+ * gebr_tar_new:
+ */
+GebrTar *gebr_tar_new (void);
 
-	escaped = gebr_str_escape ("foo\n");
-	g_assert_cmpstr (escaped, ==, "foo\\n");
-	g_free (escaped);
+/**
+ * gebr_tar_new_from_file:
+ */
+GebrTar *gebr_tar_new_from_file (const gchar *path);
 
-	escaped = gebr_str_escape ("\"foo\"");
-	g_assert_cmpstr (escaped, ==, "\\\"foo\\\"");
-	g_free (escaped);
-}
+/**
+ * gebr_tar_uncompress:
+ */
+gboolean gebr_tar_uncompress (GebrTar *self);
 
-int main(int argc, char *argv[])
-{
-	g_test_init(&argc, &argv, NULL);
+/**
+ * gebr_tar_foreach:
+ */
+void gebr_tar_foreach (GebrTar *self, GebrTarFunc func, gpointer data);
 
-	g_test_add_func("/libgebr/utils/str-escape", test_gebr_str_escape);
+/**
+ * gebr_tar_free:
+ */
+void gebr_tar_free (GebrTar *self);
 
-	return g_test_run();
-}
+G_END_DECLS
+
+#endif /* __GEBR_TAR_H__ */

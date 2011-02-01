@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-01-18 11:39-0200\n"
-"PO-Revision-Date: 2011-01-18 11:43-0200\n"
+"POT-Creation-Date: 2011-02-01 10:48-0200\n"
+"PO-Revision-Date: 2011-02-01 10:48-0200\n"
 "Last-Translator: Rodrigo Morelatto <morelatto@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
 "MIME-Version: 1.0\n"
@@ -195,23 +195,23 @@ msgstr ""
 "O arquivo %s de %s%s (arquivo %s) não pode ser carregado.\n"
 "%s"
 
-#: ../gebr/document.c:334
+#: ../gebr/document.c:335
 msgid "Ignore"
 msgstr "Ignorar"
 
-#: ../gebr/document.c:335 ../gebr/interface.c:75 ../gebr/interface.c:99
+#: ../gebr/document.c:336 ../gebr/interface.c:75 ../gebr/interface.c:99
 msgid "Export"
 msgstr "Exportar"
 
-#: ../gebr/document.c:337
+#: ../gebr/document.c:338
 msgid "Delete"
 msgstr "Apagar"
 
-#: ../gebr/document.c:347
+#: ../gebr/document.c:348
 msgid "Choose filename to export"
 msgstr "Escolha o nome do arquivo para exportar"
 
-#: ../gebr/document.c:360
+#: ../gebr/document.c:361
 #, c-format
 msgid ""
 "Failed to export file '%s':\n"
@@ -220,15 +220,15 @@ msgstr ""
 "Falha ao exportar o arquivo '%s':\n"
 "%s."
 
-#: ../gebr/document.c:384
+#: ../gebr/document.c:385
 msgid "Orphans lines"
 msgstr "Linhas órfãs"
 
-#: ../gebr/document.c:402 ../gebr/document.c:416
+#: ../gebr/document.c:403 ../gebr/document.c:417
 msgid "Orphans flows"
 msgstr "Fluxos órfãos"
 
-#: ../gebr/document.c:462
+#: ../gebr/document.c:463
 #, c-format
 msgid "Failed to save document '%s' file at '%s'."
 msgstr "Falha ao salvar o documento '%s' em '%s'."
@@ -275,7 +275,7 @@ msgstr "Arquivos de fluxo (*.flw)"
 msgid "Flow '%s' imported to line '%s' from file '%s'."
 msgstr "Fluxo '%s' importado para a linha '%s' a partir do arquivo '%s'."
 
-#: ../gebr/flow.c:206 ../gebr/ui_project_line.c:547
+#: ../gebr/flow.c:206 ../gebr/ui_project_line.c:559
 #, c-format
 msgid "%s (Imported)"
 msgstr "%s (Importado)"
@@ -328,60 +328,60 @@ msgstr "Salvar estado do fluxo"
 msgid "Make a comment for this state:"
 msgstr "Criar um comentário para este estado:"
 
-#: ../gebr/flow.c:615
+#: ../gebr/flow.c:626
 msgid "Could not paste flow. It was probably deleted."
 msgstr "Não foi possível colar o fluxo. Provavelmente ele foi apagado."
 
-#: ../gebr/flow.c:647
+#: ../gebr/flow.c:658
 msgid "Could not paste program."
 msgstr "Não foi possível colar programa."
 
-#: ../gebr/flow.c:730
+#: ../gebr/flow.c:741
 msgid "Instance"
 msgstr "Instância"
 
-#: ../gebr/flow.c:774
+#: ../gebr/flow.c:785
 #, c-format
 msgid "Parameters for %s program"
 msgstr "Parâmetros do programa %s"
 
-#: ../gebr/flow.c:792
+#: ../gebr/flow.c:803
 msgid "Parameter"
 msgstr "Parâmetros"
 
-#: ../gebr/flow.c:792 ../gebr/ui_document.c:435
+#: ../gebr/flow.c:803 ../gebr/ui_document.c:435
 msgid "Value"
 msgstr "Valor"
 
-#: ../gebr/flow.c:877
+#: ../gebr/flow.c:888
 msgid "I/O table"
 msgstr "Tabela de entrada/saída"
 
-#: ../gebr/flow.c:878
+#: ../gebr/flow.c:889
 msgid "Input"
 msgstr "Entrada"
 
-#: ../gebr/flow.c:878 ../gebr/flow.c:879 ../gebr/flow.c:880
+#: ../gebr/flow.c:889 ../gebr/flow.c:890 ../gebr/flow.c:891
 #: ../gebr/ui_flow_browse.c:336 ../gebr/ui_flow_browse.c:342
 #: ../gebr/ui_flow_browse.c:348 ../gebr/ui_flow_browse.c:354
 msgid "(none)"
 msgstr "(nenhum)"
 
-#: ../gebr/flow.c:879
+#: ../gebr/flow.c:890
 msgid "Output"
 msgstr "Saída"
 
-#: ../gebr/flow.c:880
+#: ../gebr/flow.c:891
 msgid "Error"
 msgstr "Log de erro"
 
 #. Comment for translators:
 #. "By" as in "By John McClane"
-#: ../gebr/flow.c:925 ../gebr/ui_project_line.c:1021
+#: ../gebr/flow.c:936 ../gebr/ui_project_line.c:1110
 msgid "By"
 msgstr "Por"
 
-#: ../gebr/flow.c:931
+#: ../gebr/flow.c:942
 msgid "Flow composed by the program(s):"
 msgstr "Fluxo composto pelo(s) programa(s):"
 
@@ -396,23 +396,27 @@ msgstr ""
 "Talvez você não tenha permissão de escrita no seu\n"
 "próprio diretório ou não haja espaço no dispositivo.\n"
 
-#: ../gebr/gebr.c:172
+#: ../gebr/gebr.c:173
 msgid "GêBR finalizing..."
 msgstr "GêBR finalizando..."
 
-#: ../gebr/gebr.c:336
+#: ../gebr/gebr.c:226
 msgid "GêBR initiating..."
 msgstr "GêBR iniciando..."
 
-#: ../gebr/gebr.c:463
+#: ../gebr/gebr.c:234
+msgid "Error parsing config file; reseting it."
+msgstr "Erro ao processar o arquivo de configuração; Criando um novo."
+
+#: ../gebr/gebr.c:457
 msgid "Could not save configuration."
 msgstr "Não foi possível salvar a configuração."
 
-#: ../gebr/gebr.c:470
+#: ../gebr/gebr.c:464
 msgid "Configuration saved"
 msgstr "A configuração foi salva."
 
-#: ../gebr/gebr.c:631
+#: ../gebr/gebr.c:612
 #, c-format
 msgid ""
 "GêBR now stores data files on its own directory. You may now delete GêBR's "
@@ -421,7 +425,7 @@ msgstr ""
 "A GêBR agora armazena arquivos de dados em um diretório próprio. Você pode\n"
 "apagar os arquivos da GêBR em %s."
 
-#: ../gebr/gebr.c:638
+#: ../gebr/gebr.c:619
 msgid ""
 "Cannot copy data files to GêBR's directory. Please check your write "
 "permissions to your home directory."
@@ -445,7 +449,7 @@ msgstr "Novo Projeto"
 msgid "Create a new project"
 msgstr "Criar um novo projeto"
 
-#: ../gebr/interface.c:65 ../gebr/line.c:69
+#: ../gebr/interface.c:65 ../gebr/line.c:68
 msgid "New Line"
 msgstr "Nova Linha"
 
@@ -720,46 +724,46 @@ msgstr "Não foi possível fechar a tarefa '%s' em espera"
 msgid "Output:"
 msgstr "Saída:"
 
-#: ../gebr/job.c:423 ../gebr/ui_job_control.c:486
+#: ../gebr/job.c:423 ../gebr/ui_job_control.c:485
 msgid "Finish date:"
 msgstr "Data de término:"
 
-#: ../gebr/job.c:425 ../gebr/ui_job_control.c:488
+#: ../gebr/job.c:425 ../gebr/ui_job_control.c:487
 msgid "Cancel date:"
 msgstr "Data de cancelamento:"
 
 #. feedback
-#: ../gebr/line.c:80
+#: ../gebr/line.c:79
 #, c-format
 msgid "New line created in project '%s'."
 msgstr "Nova linha criada no projeto '%s'."
 
-#: ../gebr/line.c:99
+#: ../gebr/line.c:98
 msgid "Delete line"
 msgstr "Apagar a linha"
 
-#: ../gebr/line.c:100
+#: ../gebr/line.c:99
 #, c-format
 msgid "Are you sure you want to delete line '%s' and all its flows?"
 msgstr "Tem certeza que quer apagar a linha '%s' e todos os seus fluxos?"
 
 #. log action
-#: ../gebr/line.c:125
+#: ../gebr/line.c:124
 #, c-format
 msgid "Deleting child flow '%s'."
 msgstr "Apagando o fluxo '%s'."
 
-#: ../gebr/line.c:137
+#: ../gebr/line.c:136
 #, c-format
 msgid "Deleting line '%s'."
 msgstr "Apagando o fluxo '%s'."
 
-#: ../gebr/line.c:139
+#: ../gebr/line.c:138
 #, c-format
 msgid "Deleting line '%s' from project '%s'."
 msgstr "Apagando a linha '%s' do projeto '%s'."
 
-#: ../gebr/line.c:214
+#: ../gebr/line.c:213
 msgid "Flows loaded."
 msgstr "Fluxos carregados."
 
@@ -865,7 +869,7 @@ msgid "Title"
 msgstr "Título"
 
 #. Description
-#: ../gebr/ui_document.c:241 ../gebr/ui_flow_edition.c:222
+#: ../gebr/ui_document.c:241 ../gebr/ui_flow_edition.c:231
 msgid "Description"
 msgstr "Descrição"
 
@@ -929,15 +933,15 @@ msgstr "Palavra-chave vazia"
 msgid "Please select a keyword."
 msgstr "Por favor, selecione uma palavra-chave."
 
-#: ../gebr/ui_document.c:973 ../gebr/ui_project_line.c:229
+#: ../gebr/ui_document.c:973 ../gebr/ui_project_line.c:232
 msgid "Project"
 msgstr "Projeto"
 
-#: ../gebr/ui_document.c:975 ../gebr/ui_project_line.c:230
+#: ../gebr/ui_document.c:975 ../gebr/ui_project_line.c:233
 msgid "Line"
 msgstr "Linha"
 
-#: ../gebr/ui_document.c:977 ../gebr/ui_flow_edition.c:215
+#: ../gebr/ui_document.c:977 ../gebr/ui_flow_edition.c:224
 msgid "Flow"
 msgstr "Fluxo"
 
@@ -951,111 +955,92 @@ msgstr "Propriedades de %s '%s' atualizadas."
 msgid "Renaming %s '%s' to '%s'."
 msgstr "Renomeando %s '%s' para '%s'."
 
-#: ../gebr/ui_flow.c:110
-msgid "Flow input/output"
-msgstr "Entrada/Saída do fluxo"
-
-#. Input
-#: ../gebr/ui_flow.c:122
-msgid "Input file"
-msgstr "Arquivo de entrada"
-
-#. Output
 #: ../gebr/ui_flow.c:138
-msgid "Output file"
-msgstr "Arquivo de saída"
-
-#. Error
-#: ../gebr/ui_flow.c:152
-msgid "Error file"
-msgstr "Arquivo de log de erro"
-
-#: ../gebr/ui_flow.c:227
 msgid "Flow execution parameters"
 msgstr "Parâmetros de execução do fluxo"
 
-#: ../gebr/ui_flow.c:270 ../gebr/ui_moab.c:47
+#: ../gebr/ui_flow.c:181 ../gebr/ui_moab.c:47
 msgid "Account"
 msgstr "Conta"
 
-#: ../gebr/ui_flow.c:280
+#: ../gebr/ui_flow.c:191
 msgid "Choose the queue's name"
 msgstr "Por favor, escolha o nome da fila."
 
-#: ../gebr/ui_flow.c:288 ../gebr/ui_moab.c:55
+#: ../gebr/ui_flow.c:199 ../gebr/ui_moab.c:55
 msgid "Number of processes"
 msgstr "Número de processos"
 
-#: ../gebr/ui_flow.c:315
+#: ../gebr/ui_flow.c:226
 msgid "Empty name"
 msgstr "Nome vazio"
 
-#: ../gebr/ui_flow.c:315
+#: ../gebr/ui_flow.c:226
 msgid "Please type a queue name."
 msgstr "Por favor, entre o nome de uma fila."
 
-#: ../gebr/ui_flow.c:324
+#: ../gebr/ui_flow.c:235
 msgid "Duplicated name"
 msgstr "Nome duplicado"
 
-#: ../gebr/ui_flow.c:324
+#: ../gebr/ui_flow.c:235
 msgid "This queue name is already in use. Please give another one."
 msgstr "Este nome para fila já está em uso. Por favor, forneça outro nome."
 
-#: ../gebr/ui_flow.c:347
+#: ../gebr/ui_flow.c:258
 msgid "Empty number"
 msgstr "Número vazio"
 
-#: ../gebr/ui_flow.c:347
+#: ../gebr/ui_flow.c:258
 msgid "Please enter the number of processes to run the flow."
 msgstr "Por favor, forneça o número de processos para rodar o fluxo."
 
-#: ../gebr/ui_flow.c:378
+#: ../gebr/ui_flow.c:291
 msgid "No flow selected."
 msgstr "Nenhum fluxo selecionado"
 
 #. just happen if the current server was removed
-#: ../gebr/ui_flow.c:387
+#: ../gebr/ui_flow.c:300
 msgid "No server selected."
 msgstr "Nenhum servidor selecionado."
 
-#: ../gebr/ui_flow.c:407
+#: ../gebr/ui_flow.c:320
 msgid "You are not connected to the local server."
 msgstr "Você não está conectado ao servidor local."
 
-#: ../gebr/ui_flow.c:410
+#: ../gebr/ui_flow.c:323
 #, c-format
 msgid "You are not connected to server '%s'."
 msgstr "Você não está conectado ao servidor '%s'."
 
-#: ../gebr/ui_flow.c:424
+#: ../gebr/ui_flow.c:337
 #, c-format
 msgid "No available queue for server '%s'."
 msgstr "Nenhuma fila disponível para o servidor '%s'."
 
-#: ../gebr/ui_flow.c:464
+#: ../gebr/ui_flow.c:377
 #, c-format
 msgid "After '%s'...'%s'"
 msgstr "Depois de '%s'...'%s'"
 
-#: ../gebr/ui_flow_browse.c:118 ../gebr/ui_project_line.c:117
+#: ../gebr/ui_flow_browse.c:118 ../gebr/ui_project_line.c:120
 msgid "Details"
 msgstr "Detalhes"
 
-#: ../gebr/ui_flow_browse.c:217 ../gebr/ui_project_line.c:177
+#: ../gebr/ui_flow_browse.c:217 ../gebr/ui_project_line.c:180
 msgid "View report"
 msgstr "Visualizar relatório"
 
-#: ../gebr/ui_flow_browse.c:218 ../gebr/ui_project_line.c:178
+#: ../gebr/ui_flow_browse.c:218 ../gebr/ui_project_line.c:181
 msgid "Edit comments"
 msgstr "Editar comentários"
 
 #. Date labels
-#: ../gebr/ui_flow_browse.c:279 ../gebr/ui_project_line.c:255
+#: ../gebr/ui_flow_browse.c:279 ../gebr/ui_project_line.c:258
 msgid "Created:"
 msgstr "Criado:"
 
-#: ../gebr/ui_flow_browse.c:282 ../gebr/ui_project_line.c:258
+#: ../gebr/ui_flow_browse.c:282 ../gebr/ui_project_line.c:261
 msgid "Modified:"
 msgstr "Alterado:"
 
@@ -1137,57 +1122,84 @@ msgstr ""
 "Se você optar por remover esta revisão, você não conseguirá recuperá-la mais "
 "tarde."
 
-#: ../gebr/ui_flow_edition.c:116
+#: ../gebr/ui_flow_edition.c:118
 msgid "Server"
 msgstr "_Servidor"
 
-#: ../gebr/ui_flow_edition.c:127
+#: ../gebr/ui_flow_edition.c:129
 msgid "Queue"
 msgstr "Fila"
 
-#: ../gebr/ui_flow_edition.c:137
+#: ../gebr/ui_flow_edition.c:139
 msgid "Flow sequence"
 msgstr "Seqüência de fluxo"
 
 #.
 #. * Right side: Menu list
 #.
-#: ../gebr/ui_flow_edition.c:192
+#: ../gebr/ui_flow_edition.c:201
 msgid "Menus"
 msgstr "Menus"
 
-#: ../gebr/ui_flow_edition.c:250
+#: ../gebr/ui_flow_edition.c:260
 msgid "No program selected."
 msgstr "Nenhum programa selecionado."
 
-#: ../gebr/ui_flow_edition.c:295
+#: ../gebr/ui_flow_edition.c:275
+msgid "Choose input file"
+msgstr "Escolha o arquivo de entrada"
+
+#: ../gebr/ui_flow_edition.c:276
+msgid "Choose output file"
+msgstr "Escolha o arquivo de saída"
+
+#: ../gebr/ui_flow_edition.c:277
+msgid "Choose error file"
+msgstr "Escolha o arquivo de erro"
+
+#: ../gebr/ui_flow_edition.c:317
 #, c-format
 msgid "Configuring program '%s'."
 msgstr "Configurando programa '%s'."
 
-#: ../gebr/ui_flow_edition.c:477
+#: ../gebr/ui_flow_edition.c:561
 msgid "No menu selected."
 msgstr "Nenhum menu selecionado."
 
-#: ../gebr/ui_flow_edition.c:482
+#: ../gebr/ui_flow_edition.c:566
 msgid "Select a menu instead of a category."
 msgstr "Selecione um menu ao invés de uma categoria."
 
-#: ../gebr/ui_flow_edition.c:735 ../gebr/ui_flow_edition.c:750
-#: ../gebr/ui_project_line.c:831 ../gebr/ui_project_line.c:866
+#: ../gebr/ui_flow_edition.c:820 ../gebr/ui_flow_edition.c:835
+#: ../gebr/ui_project_line.c:920 ../gebr/ui_project_line.c:955
 msgid "Collapse all"
 msgstr "Colapsar todos"
 
-#: ../gebr/ui_flow_edition.c:738 ../gebr/ui_flow_edition.c:753
-#: ../gebr/ui_project_line.c:835 ../gebr/ui_project_line.c:870
+#: ../gebr/ui_flow_edition.c:823 ../gebr/ui_flow_edition.c:838
+#: ../gebr/ui_project_line.c:924 ../gebr/ui_project_line.c:959
 msgid "Expand all"
 msgstr "Expandir todos"
 
-#: ../gebr/ui_flow_edition.c:877
+#: ../gebr/ui_flow_edition.c:961
+#, c-format
+msgid "<Input log>: %s"
+msgstr "<Arquivo de Entrada>: %s"
+
+#: ../gebr/ui_flow_edition.c:965
+#, c-format
+msgid "<Output log>: %s"
+msgstr "<Arquivo de Saída>: %s"
+
+#: ../gebr/ui_flow_edition.c:969
+#, c-format
+msgid "<Error log>: %s"
+msgstr "<Arquivo de Erro>: %s"
+
+#: ../gebr/ui_flow_edition.c:976
 msgid "Required parameter unfilled"
 msgstr "Parâmetro obrigatório não preenchido"
 
-#: ../gebr/ui_flow_edition.c:879
+#: ../gebr/ui_flow_edition.c:978
 msgid "Verify parameter configuration"
 msgstr "Verifique a configuração dos parâmetros"
 
@@ -1234,7 +1246,7 @@ msgstr "Todos os parâmetros"
 #: ../gebr/ui_help.c:169
 #, c-format
 msgid "Comments of the %s \"%s\""
-msgstr "Comentários do %s \"%s\""
+msgstr "Comentários do(a) %s \"%s\""
 
 #: ../gebr/ui_help.c:171 ../gebr/ui_help.c:242
 #, c-format
@@ -1251,15 +1263,15 @@ msgid "Report of the %s \"%s\""
 msgstr "Relatório de %s \"%s\""
 
 #. There is no path, put "None"
-#: ../gebr/ui_help.c:411 ../gebr/ui_project_line.c:288
+#: ../gebr/ui_help.c:412 ../gebr/ui_project_line.c:291
 msgid "None"
 msgstr "Nenhum"
 
-#: ../gebr/ui_help.c:549 ../gebr/ui_help.c:567
+#: ../gebr/ui_help.c:550 ../gebr/ui_help.c:568
 msgid "Unable to create temporary file."
 msgstr "Impossível escrever arquivo temporário."
 
-#: ../gebr/ui_help.c:558
+#: ../gebr/ui_help.c:559
 msgid "Error during editor execution."
 msgstr "Erro durate a execução do editor."
 
@@ -1271,7 +1283,7 @@ msgid "Jobs"
 msgstr "Tarefas"
 
 #. run file chooser
-#: ../gebr/ui_job_control.c:165 ../gebr/ui_project_line.c:640
+#: ../gebr/ui_job_control.c:165 ../gebr/ui_project_line.c:702
 msgid "Choose filename to save"
 msgstr "Escolha o nome do arquivo para salvar"
 
@@ -1391,33 +1403,34 @@ msgstr "Por favor, selecione uma tarefa."
 msgid "Please select a queue."
 msgstr "Por favor, selecione uma fila."
 
-#: ../gebr/ui_job_control.c:456
+#: ../gebr/ui_job_control.c:457
 #, c-format
 msgid "Job executed at %s (%s) by %s.\n"
 msgstr "Tarefa executada em %s (%s) por %s.\n"
 
 #. start date
-#: ../gebr/ui_job_control.c:461
+#: ../gebr/ui_job_control.c:462
 msgid "Start date:"
 msgstr "Data de início:"
 
-#: ../gebr/ui_job_control.c:464
+#. issues
+#: ../gebr/ui_job_control.c:465
 msgid "Issues:"
 msgstr "Informes:"
 
-#: ../gebr/ui_job_control.c:474
+#: ../gebr/ui_job_control.c:473
 msgid "Command line:"
 msgstr "Linha de comando:"
 
-#: ../gebr/ui_job_control.c:478
+#: ../gebr/ui_job_control.c:477
 msgid "Moab Job ID:"
 msgstr "Identificação da tarefa Moab:"
 
-#: ../gebr/ui_job_control.c:550
+#: ../gebr/ui_job_control.c:620
 msgid "Word-wrap"
 msgstr "Quebra de linha"
 
-#: ../gebr/ui_job_control.c:556
+#: ../gebr/ui_job_control.c:626
 msgid "Auto-scroll"
 msgstr "Auto-rolagem"
 
@@ -1441,16 +1454,33 @@ msgstr "Parâmetros"
 msgid "Default"
 msgstr "Padrão"
 
-#: ../gebr/ui_paths.c:77
-msgid "Path already exists"
-msgstr "Caminho ainda existe"
+#: ../gebr/ui_paths.c:135
+msgid "Invalid path"
+msgstr "Caminho inválido"
 
-#: ../gebr/ui_paths.c:78
+#: ../gebr/ui_paths.c:136
+#, c-format
+msgid "The path <i>%s</i> is invalid, the operation will be cancelled."
+msgstr "O caminho <i>%s</i> é inválido, a operação será cancelada."
+
+#: ../gebr/ui_paths.c:169 ../gebr/ui_paths.c:174
+msgid "Path already exists"
+msgstr "Caminho já existe"
+
+#: ../gebr/ui_paths.c:170
 #, c-format
 msgid ""
 "The path <i>%s</i> already exists in the list, the operation will be "
 "cancelled."
 msgstr "O caminho <i>%s</i> ainda existe na lista, a operação será cancelada."
+
+#: ../gebr/ui_paths.c:175
+#, c-format
+msgid ""
+"The path <i>%s</i> already exists in the list as %s, the operation will be "
+"cancelled."
+msgstr ""
+"O caminho <i>%s</i> ainda existe na lista como %s, a operação será cancelada."
 
 #: ../gebr/ui_preferences.c:67
 msgid "Preferences"
@@ -1506,58 +1536,58 @@ msgstr "Um editor HTML capaz de editar arquivos de ajuda e relatórios"
 msgid "Load past-execution log"
 msgstr "Carregar o log das execuções anteriores"
 
-#: ../gebr/ui_project_line.c:103
+#: ../gebr/ui_project_line.c:106
 msgid "Index"
 msgstr "Índice"
 
-#: ../gebr/ui_project_line.c:245
+#: ../gebr/ui_project_line.c:248
 #, c-format
 msgid "This project has 1 line"
 msgstr "Este projeto tem 1 linha"
 
-#: ../gebr/ui_project_line.c:246
+#: ../gebr/ui_project_line.c:249
 #, c-format
 msgid "This project has %d lines"
 msgstr "Este projeto tem %d linhas"
 
-#: ../gebr/ui_project_line.c:247
+#: ../gebr/ui_project_line.c:250
 #, c-format
 msgid "This project has no line"
 msgstr "Este projeto não tem linhas"
 
-#: ../gebr/ui_project_line.c:272
+#: ../gebr/ui_project_line.c:275
 msgid "Paths:"
 msgstr "Caminhos:"
 
-#: ../gebr/ui_project_line.c:326
+#: ../gebr/ui_project_line.c:329
 msgid "Please select a line."
 msgstr "Por favor, selecione uma linha."
 
-#: ../gebr/ui_project_line.c:327
+#: ../gebr/ui_project_line.c:330
 msgid "Please select a project."
 msgstr "Por favor, selecione um projeto."
 
-#: ../gebr/ui_project_line.c:340
+#: ../gebr/ui_project_line.c:346 ../gebr/ui_project_line.c:643
 msgid "Please select a project or a line."
 msgstr "Por favor, selecione um projeto ou linha."
 
-#: ../gebr/ui_project_line.c:392
+#: ../gebr/ui_project_line.c:404
 msgid "Choose project/line to open"
 msgstr "Escolha o projeto ou linha para abrir"
 
-#: ../gebr/ui_project_line.c:399
+#: ../gebr/ui_project_line.c:411
 msgid "Project or line (*.prjz *.lnez)"
 msgstr "Projeto ou linha (*.prjz *.lnez)"
 
-#: ../gebr/ui_project_line.c:416
+#: ../gebr/ui_project_line.c:428
 msgid "Unrecognized file type."
 msgstr "Tipo de arquivo desconhecido."
 
-#: ../gebr/ui_project_line.c:561
+#: ../gebr/ui_project_line.c:573
 msgid "Create directories"
 msgstr "Criar diretórios"
 
-#: ../gebr/ui_project_line.c:562
+#: ../gebr/ui_project_line.c:574
 #, c-format
 msgid ""
 "There are some line paths localed on your home directory that do not exist. "
@@ -1566,11 +1596,11 @@ msgstr ""
 "Existem caminhos preferenciais a serem criados no seu diretório pessoal. "
 "Gostaria de criar as seguintes pastas:%s"
 
-#: ../gebr/ui_project_line.c:576
+#: ../gebr/ui_project_line.c:588
 msgid "Could not create the directory"
 msgstr "Não foi possível criar o diretório."
 
-#: ../gebr/ui_project_line.c:580
+#: ../gebr/ui_project_line.c:592
 #, c-format
 msgid ""
 "The directory <i>%s</i> could not be created. Certify you have the rights to "
@@ -1579,44 +1609,44 @@ msgstr ""
 "O diretório <i>%s<i> não pôde ser criado. Certifique-se se há permissão de "
 "acesso para a execução dessa operação."
 
-#: ../gebr/ui_project_line.c:595
+#: ../gebr/ui_project_line.c:607
 msgid "Import successful."
 msgstr "Importação bem-sucedida."
 
-#: ../gebr/ui_project_line.c:599
+#: ../gebr/ui_project_line.c:611
 msgid "Failed to import."
 msgstr "Falha ao importar."
 
-#: ../gebr/ui_project_line.c:626
+#: ../gebr/ui_project_line.c:688
 msgid "Project (*.prjz)"
 msgstr "Projeto (*.prjz)"
 
-#: ../gebr/ui_project_line.c:629
+#: ../gebr/ui_project_line.c:691
 msgid "Make this project user-independent"
 msgstr "Tornar este projeto independente de usuário"
 
-#: ../gebr/ui_project_line.c:631
+#: ../gebr/ui_project_line.c:693
 msgid "Line (*.lnez)"
 msgstr "Linha (*.lnez)"
 
-#: ../gebr/ui_project_line.c:634
+#: ../gebr/ui_project_line.c:696
 msgid "Make this line user-independent"
 msgstr "Tornar esta linha independente de usuário"
 
-#: ../gebr/ui_project_line.c:706
+#: ../gebr/ui_project_line.c:796
 msgid "Could not export."
 msgstr "Impossível exportar."
 
-#: ../gebr/ui_project_line.c:708
+#: ../gebr/ui_project_line.c:798
 msgid "Export succesful."
 msgstr "Exportação bem-sucedida."
 
-#: ../gebr/ui_project_line.c:1027
+#: ../gebr/ui_project_line.c:1116
 msgid "Line composed by the flow(s):"
 msgstr "Linha composta pelo(s) fluxo(s):"
 
 #. Comment for translators: HTML header for detailed report
-#: ../gebr/ui_project_line.c:1047
+#: ../gebr/ui_project_line.c:1136
 msgid "Line paths:"
 msgstr "Caminhos da linha:"
 
@@ -1646,36 +1676,48 @@ msgstr "AC"
 msgid "Address"
 msgstr "Endereço"
 
+#: ../gebr/ui_server.c:321 ../gebr/ui_server.c:410
+msgid "Type here [user@]serverhostname"
+msgstr "Digite aqui [usuário@]nomedoservidor"
+
 #. Status icon
 #. Autoconnect
 #. Server name
 #. Server pointer
-#: ../gebr/ui_server.c:385
+#: ../gebr/ui_server.c:389
 msgid "Servers configuration"
 msgstr "Configuração de servidores"
 
-#: ../gebr/ui_server.c:388
+#: ../gebr/ui_server.c:392
 msgid "Co_nnect all"
 msgstr "Co_nectar todos"
 
-#: ../gebr/ui_server.c:391
+#: ../gebr/ui_server.c:395
 msgid "_Disconnect all"
 msgstr "_Desconectar todos"
 
-#: ../gebr/ui_server.c:406
-msgid "Type here [user@]serverhostname"
-msgstr "Digite aqui [usuário@]nomedoservidor"
-
-#: ../gebr/ui_server.c:478
+#: ../gebr/ui_server.c:482
 msgid ""
 "There are no connected servers. Please configure them in Actions/Servers."
 msgstr ""
 "Não existem servidores conectados. Por favor configure-os em Ações/"
 "Servidores."
 
-#: ../gebr/ui_server.c:488
+#: ../gebr/ui_server.c:492
 msgid "Select server"
 msgstr "Selecione um servidor"
+
+#~ msgid "Flow input/output"
+#~ msgstr "Entrada/Saída do fluxo"
+
+#~ msgid "Input file"
+#~ msgstr "Arquivo de entrada"
+
+#~ msgid "Output file"
+#~ msgstr "Arquivo de saída"
+
+#~ msgid "Error file"
+#~ msgstr "Arquivo de log de erro"
 
 #~ msgid " '%s'"
 #~ msgstr " '%s'"
@@ -1734,9 +1776,6 @@ msgstr "Selecione um servidor"
 #~ msgstr ""
 #~ "Este servidor está desconectado. Para utilizá-lo, você precisa conectá-lo "
 #~ "antes."
-
-#~ msgid "Choose a file"
-#~ msgstr "Escolha um arquivo"
 
 #~ msgid "Creates a new Input/Output configuration."
 #~ msgstr "Cria uma nova configuração de Entrada/Saída"
