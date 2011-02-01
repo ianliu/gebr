@@ -32,7 +32,7 @@
     <section>
       <title>Informa��es t�cnicas</title>
       <para>Este guia refere-se � 
-      <emphasis role="bold">vers�o 0.12.0</emphasis> da G�BR. As telas usadas no guia foram capturadas em um sistema 
+      <emphasis role="bold">vers�o 0.12.0</emphasis> da G�BR. As telas usadas no guia foram capturadas em um sistema
       <emphasis role="bold">Ubuntu 10.4</emphasis>. Por isso, podem apresentar pequenas diferen�as em rela��o a outros
       sistemas operacionais. Para obter instru��es de instala��o espec�ficas para cada sistema, visite a guia 
       <guilabel>Download</guilabel>, na p�gina oficial do projeto: 
@@ -131,12 +131,12 @@
     <itemizedlist>
       <listitem>
         <para>Um 
-        <emphasis role="bold">projeto</emphasis>� um conjunto de 
+        <emphasis role="bold">projeto</emphasis> � um conjunto de 
         <emphasis role="bold">linhas</emphasis></para>
       </listitem>
       <listitem>
         <para>Uma 
-        <emphasis role="bold">linha</emphasis>� um conjunto de 
+        <emphasis role="bold">linha</emphasis> � um conjunto de 
         <emphasis role="bold">fluxos</emphasis></para>
       </listitem>
     </itemizedlist>
@@ -261,7 +261,7 @@
     <section xml:id="sec_2_2">
       <title>Criando fluxos</title>
       <para>Na G�BR, um 
-      <emphasis role="bold">fluxo</emphasis>� uma 
+      <emphasis role="bold">fluxo</emphasis> � uma 
       <emphasis role="bold">sequ�ncia de opera��es</emphasis> selecionadas pelo usu�rio. Estas opera��es, tamb�m
       chamadas de 
       <emphasis role="bold">programas</emphasis> do fluxo, s�o separadas nas seguintes 
@@ -377,7 +377,7 @@
         <step>
           <para>Para este exemplo funcionar, � necess�rio que 
           <guimenuitem>SU Plane</guimenuitem> venha antes de 
-          <guimenuitem>SU Simple X Image</guimenuitem>na sequ�ncia do fluxo. Por isso, voc� deve 
+          <guimenuitem>SU Simple X Image</guimenuitem> na sequ�ncia do fluxo. Por isso, voc� deve 
           <emphasis role="bold">arrastar o programa</emphasis> para a posi��o desejada, como mostra a janela a
           seguir:</para>
           <screenshot>
@@ -393,12 +393,14 @@
         </step>
         <step>
           <para>Agora que o programa 
-          <guimenuitem>SU Plane</guimenuitem>est� no topo da lista 
+          <guimenuitem>SU Plane</guimenuitem> est� no topo da lista 
           <guilabel>Sequ�ncia de fluxo</guilabel>, clique sobre ele com o bot�o direito do mouse. No menu que se abre,
           selecione a op��o 
           <guilabel>Configurado</guilabel>. Isso muda o estado do programa, que passa a ser sinalizado por 
-          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_configurado.png" /></imageobject></inlinemediaobject></guiicon> em vez de 
-          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_nao_configurado.png" /></imageobject></inlinemediaobject></guiicon>. Depois fa�a o mesmo para o programa 
+          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_configurado.png"
+          /></imageobject></inlinemediaobject></guiicon> em vez de
+          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_nao_configurado.png"
+          /></imageobject></inlinemediaobject></guiicon>. Depois fa�a o mesmo para o programa
           <guimenuitem>SU Simple X Image</guimenuitem>.</para>
           <screenshot>
             <info>
@@ -411,21 +413,23 @@
             </mediaobject>
           </screenshot>
           <tip>
-            <para>Se voc� quiser mudar o estado de todos (ou de alguns) programas simultaneamente, selecione-os usando 
+            <para>Se voc� quiser mudar o estado de todos (ou de alguns) programas simultaneamente, selecione-os usando
             <keycombo>
               <keycap>Ctrl</keycap>
               <mousebutton>Clique</mousebutton>
             </keycombo>. Depois clique com o bot�o direito do mouse em um dos programas selecionados e, no menu que se
             abre, escolha a op��o 
             <guilabel>Configurado</guilabel>. Todos os programas que voc� selecionou ser�o alterados para 
-            <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_configurado.png" /></imageobject></inlinemediaobject></guiicon>.</para>
+            <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_configurado.png"
+            /></imageobject></inlinemediaobject></guiicon>.</para>
           </tip>
           <important>
             <para>Para este fluxo funcionar, � necess�rio que 
             <emphasis role="bold">todos os programas</emphasis> listados na caixa 
             <guilabel>Sequ�ncia de fluxo</guilabel> estejam no estado 
-            <emphasis role="bold">Configurado</emphasis> ( 
-            <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_configurado.png" /></imageobject></inlinemediaobject></guiicon>). Sem isso, o fluxo n�o ser� executado como esperado.</para>
+            <emphasis role="bold">Configurado</emphasis>
+            (<guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_configurado.png"
+            /></imageobject></inlinemediaobject></guiicon>). Sem isso, o fluxo n�o ser� executado como esperado.</para>
           </important>
           <important>
             <para>Um estado de um fluxo ou um conjunto de fluxos pode ser alterado atrav�s da hotkey 
@@ -437,7 +441,8 @@
         </step>
       </procedure>
       <para>Pronto. O fluxo foi criado e configurado. Para execut�-lo, clique no bot�o 
-      <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_executar_fluxo.png" /></imageobject></inlinemediaobject></guiicon>. O resultado que voc� ver� � o seguinte:</para>
+      <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_executar_fluxo.png"
+      /></imageobject></inlinemediaobject></guiicon>. O resultado que voc� ver� � o seguinte:</para>
       <screenshot>
         <info>
           <title />
@@ -555,7 +560,8 @@
       <section xml:id="sec_3_1_1">
         <title>Criar um novo projeto</title>
         <para>Para criar um novo projeto, clique no bot�o 
-        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_criar_projeto.png" /></imageobject></inlinemediaobject></guiicon> (veja mais detalhes na 
+        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_criar_projeto.png"
+        /></imageobject></inlinemediaobject></guiicon> (veja mais detalhes na
         <link linkend="sec_2_1"><emphasis role="bold">se��o 2.1</emphasis></link>).</para>
         <para>
         <emphasis role="bold">N�o h� limita��o</emphasis> para o n�mero de projetos na G�BR. Voc� pode criar quantos
@@ -569,9 +575,11 @@
         <title>Criar uma nova linha</title>
         <para>Para criar uma nova linha, 
         <emphasis role="bold">selecione um projeto existente</emphasis> e clique no bot�o 
-        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_criar_linha.png" /></imageobject></inlinemediaobject></guiicon> (veja mais detalhes na 
+        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_criar_linha.png"
+        /></imageobject></inlinemediaobject></guiicon> (veja mais detalhes na
         <emphasis role="bold">
-          <link linkend="sec_2_1">se��o 2.1</link></emphasis>). A nova linha ser� criada dentro do projeto selecionado.</para>
+          <link linkend="sec_2_1">se��o 2.1</link></emphasis>). A nova linha ser� criada dentro do projeto
+          selecionado.</para>
         <para>
         <emphasis role="bold">N�o h� limita��o</emphasis> para o n�mero de linhas na G�BR. Voc� pode criar quantas
         linhas quiser dentro de um projeto.</para>
@@ -586,8 +594,10 @@
           <emphasis role="bold">expandir</emphasis> o projeto. No estado colapsado, as 
           <emphasis role="bold">linhas do projeto ficam ocultas</emphasis>. No estado expandido, as 
           <emphasis role="bold">linhas do projeto ficam vis�veis</emphasis>. Para colapsar, clique no �cone 
-          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_expandido.png" /></imageobject></inlinemediaobject></guiicon>� esquerda do nome do projeto. Para expandir, clique no �cone 
-          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_colapsado.png" /></imageobject></inlinemediaobject></guiicon>.</para>
+          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_expandido.png"
+          /></imageobject></inlinemediaobject></guiicon> � esquerda do nome do projeto. Para expandir, clique no �cone
+          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_colapsado.png"
+          /></imageobject></inlinemediaobject></guiicon>.</para>
         </tip>
       </section>
       <section xml:id="sec_3_1_3">
@@ -607,7 +617,8 @@
         <title>Editar as propriedades de um projeto ou linha</title>
         <para>Para editar as propriedades de um projeto ou de uma linha, selecione o projeto ou a linha e clique no
         bot�o 
-        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_editar_propriedades_projeto.png" /></imageobject></inlinemediaobject></guiicon>.</para>
+        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_editar_propriedades_projeto.png"
+        /></imageobject></inlinemediaobject></guiicon>.</para>
         <para>Na janela 
         <guilabel>Propriedades</guilabel> (... 
         <guilabel>para projeto</guilabel> ou ... 
@@ -628,29 +639,31 @@
         <title>Editar caminhos preferenciais da linha</title>
         <para>Na 
         <emphasis role="bold">
-          <link linkend="sec_3_3_6">se��o 3.3.6</link></emphasis> veremos que um fluxo pode estar associado a alguns arquivos de dados. Veremos tamb�m que essa
-        associa��o pode ser feita mais facilmente se adicionarmos os chamados caminhos preferenciais da linha.</para>
+          <link linkend="sec_3_3_6">se��o 3.3.6</link></emphasis> veremos que um fluxo pode estar associado a alguns
+        arquivos de dados. Veremos tamb�m que essa associa��o pode ser feita mais facilmente se adicionarmos os chamados
+        caminhos preferenciais da linha.</para>
         <para>Para editar os caminhos preferenciais de uma linha pode-se:</para>
         <itemizedlist>
           <listitem>
             <para>Na aba Projetos e Linhas, clique sobre a linha em que se quer adicionar caminhos, selecione o bot�o
             de comando 
             <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_editar_propriedades_projeto.png"
-	    /></imageobject></inlinemediaobject></guiicon>.  Na janela
-	    Propriedades para linha, no campo Caminhos, digite o
-	    caminho desejado e clique no bot�o
+	    /></imageobject></inlinemediaobject></guiicon>. Na janela Propriedades para linha, no campo Caminhos, digite
+	    o caminho desejado e clique no bot�o
             <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_adicionar_caminho.png"
             /></imageobject></inlinemediaobject></guiicon>; ou</para>
           </listitem>
           <listitem>
             <para>Utilizando o menu de contexto, clique em Propriedades e na janela Propriedades para linha, no campo
             Caminhos, digite o caminho desejado e clique no bot�o 
-            <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_adicionar_caminho.png" /></imageobject></inlinemediaobject></guiicon></para>
+            <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_adicionar_caminho.png"
+            /></imageobject></inlinemediaobject></guiicon></para>
           </listitem>
         </itemizedlist>
         <para>Al�m disso, na janela Propriedades para linha, pode-se adicionar caminhos preferenciais de linha
         escolhendo-se um diret�rio. Para isso, deve-se clicar no bot�o 
-        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_caminho_personalizado.png" /></imageobject></inlinemediaobject></guiicon></para>
+        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_caminho_personalizado.png"
+        /></imageobject></inlinemediaobject></guiicon></para>
         <procedure>
           <step>
             <para>Clique 
@@ -664,7 +677,7 @@
           <para>Para 
           <emphasis role="bold">remover um caminho</emphasis> da lista, selecione-o com o 
           <emphasis role="bold">bot�o direito do mouse</emphasis> e clique em 
-          <guimenuitem>Remover</guimenuitem>ou 
+          <guimenuitem>Remover</guimenuitem> ou 
           <guimenuitem>Delete</guimenuitem>.</para>
         </tip>
         <tip>
@@ -672,11 +685,10 @@
           <emphasis role="bold">mudar a posi��o</emphasis> de um caminho na lista, 
           <emphasis role="bold">arraste-o com o mouse</emphasis> para a posi��o desejada.</para>
         </tip>
-        <para>Pode-se utilizar hotkeys para adicionar caminhos ( 
-        <emphasis role="bold">Enter</emphasis>), mover caminhos para cima e para baixo ( 
-        <emphasis role="bold">Ctrl+seta para cima/para baixo</emphasis>), tornar um caminho topo de lista ( 
-        <emphasis role="bold">Ctrl Home</emphasis>) e tornar um caminho fim de lista ( 
-        <emphasis role="bold">Ctrl End</emphasis>).</para>
+        <para>Pode-se utilizar hotkeys para adicionar caminhos (<emphasis role="bold">Enter</emphasis>), mover caminhos
+        para cima e para baixo (<emphasis role="bold">Ctrl+seta para cima/para baixo</emphasis>), tornar um caminho topo
+        de lista (<emphasis role="bold">Ctrl Home</emphasis>) e tornar um caminho fim de lista
+        (<emphasis role="bold">Ctrl End</emphasis>).</para>
         <screenshot>
           <info>
             <title />
@@ -695,14 +707,15 @@
         <procedure>
           <step>
             <para>Clique no bot�o 
-            <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_importar_projeto.png" /></imageobject></inlinemediaobject></guiicon></para>
+            <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_importar_projeto.png"
+            /></imageobject></inlinemediaobject></guiicon></para>
           </step>
           <step>
             <para>Navegue pela janela 
             <guilabel>Escolha o projeto ou linha para abrir</guilabel> e selecione o projeto ou a linha que deseja
             importar (apenas arquivos do tipo 
-            <filename class="extension">prjz</filename>ou 
-            <filename class="extension">lnez</filename>ser�o mostrados).</para>
+            <filename class="extension">prjz</filename> ou 
+            <filename class="extension">lnez</filename> ser�o mostrados).</para>
           </step>
           <step>
             <para>Clique no bot�o 
@@ -714,8 +727,9 @@
         momento da importa��o. Em ambos os casos, o elemento importado � identificado com o sufixo 
         <emphasis role="bold">Importado</emphasis>.</para>
         <note>
-          <para>Na G�BR, linhas s� podem existir dentro de projetos (veja este conceito na 
-          <link linkend="sec_2"><emphasis role="bold">se��o 2</emphasis></link>). Portanto, para importar uma linha � necess�rio 
+          <para>Na G�BR, linhas s� podem existir dentro de projetos (veja este conceito na
+          <link linkend="sec_2"><emphasis role="bold">se��o 2</emphasis></link>). Portanto, para importar uma linha �
+          necess�rio
           <emphasis role="bold">selecionar um projeto existente</emphasis> (ou 
           <link linkend="sec_3_1_1">criar um</link>, caso n�o exista nenhum).</para>
         </note>
@@ -731,14 +745,15 @@
           </step>
           <step>
             <para>Clique no bot�o 
-            <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_exportar_projeto.png" /></imageobject></inlinemediaobject></guiicon></para>
+            <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_exportar_projeto.png"
+            /></imageobject></inlinemediaobject></guiicon></para>
           </step>
           <step>
             <para>Na janela 
             <guilabel>Escolha o nome do arquivo para salvar</guilabel>, selecione uma pasta e digite um nome para o
             arquivo (a G�BR determina automaticamente a extens�o 
-            <filename class="extension">prjz</filename>para projeto ou 
-            <filename class="extension">lnez</filename>para linha).</para>
+            <filename class="extension">prjz</filename> para projeto ou 
+            <filename class="extension">lnez</filename> para linha).</para>
           </step>
           <step>
             <para>Clique no bot�o 
@@ -769,7 +784,8 @@
         <procedure>
           <step>
             <para>
-              <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/janela_comentarios_de_linha.png" /></imageobject></inlinemediaobject></guiicon>
+              <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/janela_comentarios_de_linha.png"
+              /></imageobject></inlinemediaobject></guiicon>
             </para>
           </step>
         </procedure>
@@ -819,13 +835,15 @@
         <procedure>
           <step>
             <para>
-              <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/janela_visualizar_relatorio.png" /></imageobject></inlinemediaobject></guiicon>
+              <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/janela_visualizar_relatorio.png"
+              /></imageobject></inlinemediaobject></guiicon>
             </para>
           </step>
         </procedure>
         <para>Na 
-        <link linkend="sec_3_2_13"><emphasis role="bold">se��o 3.2.13</emphasis></link>, � detalhada a visualiza��o de relat�rio para um fluxo, que se d� de forma muito semelhante �
-        visualiza��o de relat�rio da linha, com a diferen�a que nesta � poss�vel englobar o relat�rio do fluxo.</para>
+        <link linkend="sec_3_2_13"><emphasis role="bold">se��o 3.2.13</emphasis></link>, � detalhada a visualiza��o de
+        relat�rio para um fluxo, que se d� de forma muito semelhante � visualiza��o de relat�rio da linha, com a
+        diferen�a que nesta � poss�vel englobar o relat�rio do fluxo.</para>
       </section>
     </section>
     <section xml:id="sec_3_2">
@@ -901,7 +919,7 @@
         <para>Experimente usar 
         <emphasis role="bold">menus de contexto</emphasis> no lugar dos bot�es de comando. Para isso, 
         <emphasis role="bold">clique com o bot�o direito do mouse</emphasis> nos fluxos que voc� criar. Voc� vai notar
-        que diversos comandos podem ser acionados por este m�todo. Em determinados casos, isso � mais 
+        que diversos comandos podem ser acionados por este m�todo. Em determinados casos, isso � mais
         <emphasis role="bold">f�cil e r�pido</emphasis> do que usar os bot�es.</para>
       </tip>
       <section xml:id="sec_3_2_1">
@@ -910,19 +928,19 @@
         <emphasis role="bold">criado e selecionado uma linha</emphasis>, na aba 
         <guilabel>Projetos e Linhas</guilabel>. Feito isso, selecione a aba 
         <guilabel>Fluxos</guilabel> e clique no bot�o 
-        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_criar_fluxo.png" /></imageobject></inlinemediaobject></guiicon>. Na janela que se abre ( 
-        <guilabel>Propriedades para fluxos</guilabel>), 
-        <link linkend="sec_3_2_5">edite as propriedades do fluxo</link>e clique em 
+        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_criar_fluxo.png"
+        /></imageobject></inlinemediaobject></guiicon>. Na janela que se abre (<guilabel>Propriedades para
+        fluxos</guilabel>),
+        <link linkend="sec_3_2_5">edite as propriedades do fluxo</link> e clique em 
         <guibutton>OK</guibutton> (veja mais detalhes na 
         <link linkend="sec_2_2"><emphasis role="bold">se��o 2.2</emphasis></link>).</para>
         <para>
         <emphasis role="bold">N�o h� limita��o</emphasis> para o n�mero de fluxos na G�BR. Voc� pode criar quantos
         fluxos quiser dentro de uma linha.</para>
-        <para>Depois de criados, os fluxos ficam 
-        <emphasis role="bold">vis�veis no lado esquerdo da janela principal</emphasis>, quando a aba 
-        <guilabel>Fluxos</guilabel> est� selecionada. A caixa 
-        <guilabel>Detalhes</guilabel>, localizada no lado direito da janela principal, exibe informa��es sobre o fluxo
-        selecionado.</para>
+        <para>Depois de criados, os fluxos ficam <emphasis role="bold">vis�veis no lado esquerdo da janela
+        principal</emphasis>, quando a aba <guilabel>Fluxos</guilabel> est� selecionada. A
+        caixa <guilabel>Detalhes</guilabel>, localizada no lado direito da janela principal, exibe informa��es sobre o
+        fluxo selecionado.</para>
         <tip>
           <para>Voc� pode 
           <emphasis role="bold">mudar a posi��o</emphasis> de um fluxo na lista 
@@ -931,8 +949,7 @@
         <tip>
           <para>Observe a 
           <emphasis role="bold">barra de informa��es</emphasis> na parte de cima da janela principal, logo abaixo do
-          menu 
-          <guimenu>A��es</guimenu>. Ela mostra a �rvore completa do fluxo que estiver selecionado.</para>
+          menu <guimenu>A��es</guimenu>. Ela mostra a �rvore completa do fluxo que estiver selecionado.</para>
         </tip>
       </section>
       <section xml:id="sec_3_2_2">
@@ -940,7 +957,8 @@
         <para>A �rea de transfer�ncia prov� o recurso popularmente conhecido como 
         <emphasis role="bold">copiar e colar</emphasis>. Na G�BR, um fluxo (ou um conjunto de fluxos) pode ser copiado
         para a �rea de transfer�ncia por meio do bot�o 
-        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_copiar_fluxo.png" /></imageobject></inlinemediaobject></guiicon> ou, mais pr�tico, pelo conhecido atalho 
+        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_copiar_fluxo.png"
+        /></imageobject></inlinemediaobject></guiicon> ou, mais pr�tico, pelo conhecido atalho
         <keycombo>
           <keycap>Ctrl</keycap>
           <keycap>C</keycap>
@@ -950,7 +968,7 @@
           <keycombo>
             <keycap>Ctrl</keycap>
             <mousebutton>Clique</mousebutton>
-          </keycombo>ou 
+          </keycombo> ou 
           <keycombo>
             <keycap>Shift</keycap>
             <mousebutton>Clique</mousebutton>
@@ -962,7 +980,8 @@
         <para>Depois de ter sido 
         <link linkend="sec_3_2_2">copiado para a �rea de transfer�ncia</link>, um fluxo (ou um conjunto de fluxos) pode
         ser colado por meio do bot�o 
-        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_colar_fluxo.png" /></imageobject></inlinemediaobject></guiicon> ou, mais pr�tico, pelo conhecido atalho 
+        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_colar_fluxo.png"
+        /></imageobject></inlinemediaobject></guiicon> ou, mais pr�tico, pelo conhecido atalho
         <keycombo>
           <keycap>Ctrl</keycap>
           <keycap>V</keycap>
@@ -970,21 +989,21 @@
         <tip>
           <para>O fluxo (ou conjunto de fluxos) copiado anteriormente para a �rea de transfer�ncia pode ser colado em 
           <emphasis role="bold">qualquer linha</emphasis> existente, e n�o s� na linha de origem. Basta alternar para a
-          aba 
-          <guilabel>Projetos e Linhas</guilabel>, selecionar a linha desejada, voltar para a aba 
+          aba <guilabel>Projetos e Linhas</guilabel>, selecionar a linha desejada, voltar para a aba
           <guilabel>Fluxos</guilabel> e colar o(s) fluxo(s).</para>
         </tip>
       </section>
       <section xml:id="sec_3_2_4">
         <title>Deletar fluxos</title>
         <para>Para excluir um fluxo (ou um conjunto de fluxos), selecione-o e clique no bot�o 
-        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_apagar_projeto.png" /></imageobject></inlinemediaobject></guiicon>.</para>
+        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_apagar_projeto.png"
+        /></imageobject></inlinemediaobject></guiicon>.</para>
         <tip>
           <para>Voc� pode selecionar v�rios fluxos para serem excluidos simultaneamente usando 
           <keycombo>
             <keycap>Ctrl</keycap>
             <mousebutton>Clique</mousebutton>
-          </keycombo>ou 
+          </keycombo> ou 
           <keycombo>
             <keycap>Shift</keycap>
             <mousebutton>Clique</mousebutton>
@@ -994,7 +1013,8 @@
       <section xml:id="sec_3_2_5">
         <title>Editar as propriedades de um fluxo</title>
         <para>Para editar as propriedades de um fluxo, selecione-o e clique no bot�o 
-        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_editar_propriedades_projeto.png" /></imageobject></inlinemediaobject></guiicon>.</para>
+        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_editar_propriedades_projeto.png"
+        /></imageobject></inlinemediaobject></guiicon>.</para>
         <para>Na janela 
         <guilabel>Propriedades para Fluxo</guilabel> voc� pode editar os campos 
         <guilabel>T�tulo, Descri��o, Autor e Email</guilabel>.</para>
@@ -1014,13 +1034,14 @@
         <emphasis role="bold">
           <link linkend="sec_3_2_2">se��es 3.2.2</link></emphasis> e 
         <emphasis role="bold">
-          <link linkend="sec_3_2_3">3.2.3</link></emphasis>), guardando o fluxo original e editando a c�pia. Outra forma � salvar o estado atual do fluxo, para
-        poder edit�-lo e, quando desejar, retornar ao estado inicial. Para 
+          <link linkend="sec_3_2_3">3.2.3</link></emphasis>), guardando o fluxo original e editando a c�pia. Outra forma
+        � salvar o estado atual do fluxo, para poder edit�-lo e, quando desejar, retornar ao estado inicial. Para
         <emphasis role="bold">salvar o estado</emphasis> de um fluxo:</para>
         <procedure>
           <step>
             <para>Selecione o fluxo e clique no bot�o 
-            <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_salvar_estado.png" /></imageobject></inlinemediaobject></guiicon></para>
+            <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_salvar_estado.png"
+            /></imageobject></inlinemediaobject></guiicon></para>
           </step>
           <step>
             <para>Se desejar, digite um coment�rio na janela 
@@ -1037,23 +1058,23 @@
           quiser de um fluxo.</para>
         </note>
         <para>Para abrir a lista de estados salvos, clique no bot�o 
-        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_salvar_estado_lista.png" /></imageobject></inlinemediaobject></guiicon>, � direita do bot�o 
-        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_salvar_estado.png" /></imageobject></inlinemediaobject></guiicon>, e ent�o selecione o estado para o qual quer retornar. Sempre que voc� selecionar um estado salvo na
-        lista, o di�logo 
-        <guilabel>Fazer backup do estado atual?</guilabel> ser� exibido. Se clicar em 
-        <guibutton>Sim</guibutton>, a janela 
-        <guilabel>Salvar estado do fluxo</guilabel> se abrir�, e voc� poder� salvar um novo estado. Se clicar em 
-        <guibutton>N�o</guibutton>, a G�BR apenas reverter� para o estado escolhido, sem salvar o atual.</para>
+        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_salvar_estado_lista.png"
+        /></imageobject></inlinemediaobject></guiicon>, � direita do bot�o
+        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_salvar_estado.png"
+        /></imageobject></inlinemediaobject></guiicon>, e ent�o selecione o estado para o qual quer retornar. Sempre que
+        voc� selecionar um estado salvo na lista, o di�logo <guilabel>Fazer backup do estado atual?</guilabel> ser�
+        exibido. Se clicar em <guibutton>Sim</guibutton>, a janela <guilabel>Salvar estado do fluxo</guilabel> se
+        abrir�, e voc� poder� salvar um novo estado. Se clicar em <guibutton>N�o</guibutton>, a G�BR apenas reverter�
+        para o estado escolhido, sem salvar o atual.</para>
         <tip>
           <para>Se voc� tem certeza de j� ter salvo o estado atual, pode clicar com seguran�a em 
-          <guibutton>N�o</guibutton>, na janela 
-          <guilabel>Fazer backup do estado atual?</guilabel>. Isso evita encher a lista com estados redundantes.</para>
+          <guibutton>N�o</guibutton>, na janela <guilabel>Fazer backup do estado atual?</guilabel>. Isso evita encher a
+          lista com estados redundantes.</para>
         </tip>
         <caution>
           <para>A G�BR preserva continuamente a lista de estados salvos. Mesmo que voc� desligue o computador, a lista
-          ser� recuperada quando a G�BR for aberta novamente. Por�m, se voc� 
-          <emphasis role="bold">deletar o fluxo</emphasis>, os estados salvos ser�o 
-          <emphasis role="bold">perdidos imediatamente</emphasis>.</para>
+          ser� recuperada quando a G�BR for aberta novamente. Por�m, se voc� <emphasis role="bold">deletar o
+          fluxo</emphasis>, os estados salvos ser�o <emphasis role="bold">perdidos imediatamente</emphasis>.</para>
         </caution>
       </section>
       <section xml:id="sec_3_2_8">
@@ -1065,21 +1086,20 @@
             <para>Certifique-se de ter 
             <emphasis role="bold">criado e selecionado uma linha</emphasis>, na aba 
             <guilabel>Projetos e Linhas</guilabel>. Lembre-se que, na G�BR, fluxos s� podem existir dentro de linhas
-            (veja este conceito na 
-            <link linkend="sec_2"><emphasis role="bold">se��o 2</emphasis></link>). Portanto, para importar um fluxo � necess�rio 
-            <emphasis role="bold">selecionar uma linha existente</emphasis> (ou 
+            (veja este conceito na <link linkend="sec_2"><emphasis role="bold">se��o 2</emphasis></link>). Portanto,
+            para importar um fluxo � necess�rio <emphasis role="bold">selecionar uma linha existente</emphasis> (ou
             <link linkend="sec_3_1_2">criar uma</link>, caso n�o exista nenhuma).</para>
           </step>
           <step>
             <para>Selecione a aba 
             <guilabel>Fluxos</guilabel> e clique no bot�o 
-            <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_importar_projeto.png" /></imageobject></inlinemediaobject></guiicon></para>
+            <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_importar_projeto.png"
+            /></imageobject></inlinemediaobject></guiicon></para>
           </step>
           <step>
             <para>Navegue pela janela 
             <guilabel>Escolha arquivo para abrir</guilabel> e selecione o fluxo que deseja importar (apenas arquivos do
-            tipo 
-            <filename class="extension">flw</filename>ser�o mostrados).</para>
+            tipo <filename class="extension">flw</filename> ser�o mostrados).</para>
           </step>
           <step>
             <para>Clique no bot�o 
@@ -1099,7 +1119,8 @@
           </step>
           <step>
             <para>Clique no bot�o 
-            <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_exportar_projeto.png" /></imageobject></inlinemediaobject></guiicon></para>
+            <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_exportar_projeto.png"
+            /></imageobject></inlinemediaobject></guiicon></para>
           </step>
           <step>
             <para>Na janela 
@@ -1118,34 +1139,31 @@
         <para>Na G�BR, �s vezes usa-se o termo 
         <emphasis>menu</emphasis> para designar a 
         <emphasis>especifica��o de um programa</emphasis> que realiza uma determinada tarefa. Para evitar confus�o com o
-        menu comumente usado em inform�tica, vamos chamar essa especifica��o de 
-        <emphasis>Menu G�BR</emphasis>.</para>
+        menu comumente usado em inform�tica, vamos chamar essa especifica��o de <emphasis>Menu G�BR</emphasis>.</para>
         <para>Um 
-        <emphasis>Menu G�BR</emphasis>� a implementa��o daquilo que chamamos de 
+        <emphasis>Menu G�BR</emphasis> � a implementa��o daquilo que chamamos de 
         <emphasis role="bold">componente</emphasis> do fluxo na 
-        <link linkend="sec_2_2"><emphasis role="bold">se��o 2.2</emphasis></link>. A G�BR � instalada com um conjunto padr�o de componentes, separados em 
-        <emphasis role="bold">categorias</emphasis>, conforme o prop�sito (voc� ver� mais detalhes sobre os componentes
-        e suas categorias na 
-        <link linkend="sec_3_3"><emphasis role="bold">se��o 3.3</emphasis></link>). No entanto, � poss�vel incrementar a G�BR, acrescentando mais componentes/categorias � interface.
-        Isso � feito com a 
-        <emphasis>interface para cria��o e edi��o de Menus G�BR</emphasis>, a 
-        <emphasis role="bold">D�BR</emphasis>.</para>
-        <para>A cria��o e edi��o de 
-        <emphasis>Menus G�BR</emphasis> por meio da D�BR � um assunto vasto (veja os artigos 
-        <emphasis>Como portar programas para G�BR</emphasis> e 
-        <emphasis>Guia para escrever documenta��o de menu</emphasis>, na guia 
-        <emphasis>Documenta��o</emphasis> da p�gina oficial da G�BR - 
-        <emphasis>
-          <link xlink:href="http:\\www.gebrproject.com">www.gebrproject.com</link></emphasis>). Por agora, o que importa � saber que 
-        <emphasis role="bold">um fluxo pode ser transformado em um componente adicional</emphasis>. Para isso voc� deve
-        exportar o fluxo a partir da G�br e import�-lo atrav�s da D�BR assim:</para>
+        <link linkend="sec_2_2"><emphasis role="bold">se��o 2.2</emphasis></link>. A G�BR � instalada com um conjunto
+        padr�o de componentes, separados em <emphasis role="bold">categorias</emphasis>, conforme o prop�sito (voc� ver�
+        mais detalhes sobre os componentes e suas categorias na <link linkend="sec_3_3"><emphasis role="bold">se��o
+        3.3</emphasis></link>). No entanto, � poss�vel incrementar a G�BR, acrescentando mais componentes/categorias �
+        interface.  Isso � feito com a <emphasis>interface para cria��o e edi��o de Menus G�BR</emphasis>,
+        a <emphasis role="bold">D�BR</emphasis>.</para>
+        <para>A cria��o e edi��o de <emphasis>Menus G�BR</emphasis> por meio da D�BR � um assunto vasto (veja os artigos
+        <emphasis>Como portar programas para G�BR</emphasis> e <emphasis>Guia para escrever documenta��o de
+        menu</emphasis>, na guia <emphasis>Documenta��o</emphasis> da p�gina oficial da G�BR
+        - <emphasis><link xlink:href="http://www.gebrproject.com">www.gebrproject.com</link></emphasis>). Por agora, o
+        que importa � saber que <emphasis role="bold">um fluxo pode ser transformado em um componente
+        adicional</emphasis>. Para isso voc� deve exportar o fluxo a partir da G�br e import�-lo atrav�s da D�BR
+        assim:</para>
         <procedure>
           <step>
             <para>Selecione o fluxo que deseja exportar.</para>
           </step>
           <step>
             <para>Clique no bot�o 
-            <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_exportar_projeto.png" /></imageobject></inlinemediaobject></guiicon></para>
+            <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_exportar_projeto.png"
+            /></imageobject></inlinemediaobject></guiicon></para>
           </step>
           <step>
             <para>Na janela 
@@ -1157,21 +1175,20 @@
             <guibutton>Salvar</guibutton>.</para>
           </step>
           <step>
-            <para>Em 
-            <guilabel>Menu</guilabel> da D�BR, clicar em 
-            <guilabel>Criar menu a partir de um fluxo</guilabel>, escolher o fluxo e clicar em 
-            <guilabel>Abrir</guilabel>. Esse procedimento � melhor detalhado em 
+            <para>Em <guilabel>Menu</guilabel> da D�BR, clicar em <guilabel>Criar menu a partir de um fluxo</guilabel>,
+            escolher o fluxo e clicar em <guilabel>Abrir</guilabel>. Esse procedimento � melhor detalhado em
             <guilabel>Ajuda</guilabel> na interface D�BR.</para>
           </step>
         </procedure>
       </section>
       <section xml:id="sec_3_2_11">
         <title>Executar um fluxo</title>
-        <para>Este comando aparece repetidamente nas abas 
-        <guilabel>Fluxos</guilabel> e 
-        <guilabel>Edi��o de fluxo</guilabel> de duas formas distintas. Nessa aba Fluxos, o bot�o 
-        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_executar_fluxo.png" /></imageobject></inlinemediaobject></guiicon> executa v�rios fluxos em sequ�ncia. Ver figura: 
-        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/janela_execucao_de_fluxo.png" /></imageobject></inlinemediaobject></guiicon></para>
+        <para>Este comando aparece repetidamente nas abas <guilabel>Fluxos</guilabel> e <guilabel>Edi��o de
+        fluxo</guilabel> de duas formas distintas. Nessa aba Fluxos, o
+        bot�o <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_executar_fluxo.png"
+        /></imageobject></inlinemediaobject></guiicon> executa v�rios fluxos em sequ�ncia. Ver figura:
+        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/janela_execucao_de_fluxo.png"
+        /></imageobject></inlinemediaobject></guiicon></para>
         <para>Nessa vers�o da G�BR, surge o conceito de filas, atrav�s do qual pode-se rodar um fluxo ou uma sequ�ncia
         de fluxos em diferentes filas:</para>
         <para>*Nessa aba, a cada execu��o de um fluxo ou um grupo de fluxos, � criada uma fila</para>
@@ -1190,28 +1207,23 @@
       </section>
       <section xml:id="sec_3_2_13">
         <title>Visualizar relat�rio</title>
-        <para>Este comando aparece repetidamente nas abas 
-        <guilabel>Projetos e Linhas</guilabel> e em 
+        <para>Este comando aparece repetidamente nas abas <guilabel>Projetos e Linhas</guilabel> e em 
         <guilabel>Fluxos</guilabel>. Atrav�s dele, em ambas abas, pode-se gerar/visualizar o relat�rio da linha ou do
         fluxo em quest�o, com a pequena diferen�a de que � poss�vel englobar o relat�rio do fluxo no relat�rio da
-        linha. As demais funcionalidades s�o descritas na 
-        <link linkend="sec_3_1_10"><emphasis role="bold">se��o 3.1.10</emphasis></link></para>
+        linha. As demais funcionalidades s�o descritas na <link linkend="sec_3_1_10"><emphasis role="bold">se��o
+        3.1.10</emphasis></link>.</para>
       </section>
     </section>
     <section xml:id="sec_3_3">
       <title>A aba 
       <guilabel>Edi��o de Fluxo</guilabel></title>
-      <para>Todo fluxo criado na G�BR nasce vazio, isto �, 
-      <emphasis role="bold">sem programas</emphasis> que descrevam uma sequ�ncia funcional de opera��es. Para um fluxo
-      tornar-se funcional, � preciso 
-      <emphasis role="bold">adicionar programas</emphasis> a ele. Al�m disso, � preciso 
-      <emphasis role="bold">configurar os programas</emphasis>, para que realizem tarefas espec�ficas. Tudo isso �
-      feito na aba 
-      <guilabel>Edi��o de Fluxo</guilabel>.</para>
-      <para>Na 
-      <emphasis role="bold">
-        <link linkend="sec_2_2">se��o 2.2</link></emphasis> vimos que os componentes padr�o da G�BR s�o separados em dezesseis categorias, listadas na caixa 
-      <guilabel>Menu</guilabel>, no lado direito da janela principal:</para>
+      <para>Todo fluxo criado na G�BR nasce vazio, isto �, <emphasis role="bold">sem programas</emphasis> que descrevam
+      uma sequ�ncia funcional de opera��es. Para um fluxo tornar-se funcional, � preciso <emphasis role="bold">adicionar
+      programas</emphasis> a ele. Al�m disso, � preciso <emphasis role="bold">configurar os programas</emphasis>, para
+      que realizem tarefas espec�ficas. Tudo isso � feito na aba <guilabel>Edi��o de Fluxo</guilabel>.</para>
+      <para>Na <emphasis role="bold"><link linkend="sec_2_2">se��o 2.2</link></emphasis> vimos que os componentes padr�o
+      da G�BR s�o separados em dezesseis categorias, listadas na caixa <guilabel>Menu</guilabel>, no lado direito da
+      janela principal:</para>
       <itemizedlist>
         <listitem>
           <para>Data Compression</para>
@@ -1263,52 +1275,43 @@
         </listitem>
       </itemizedlist>
       <para>Por padr�o, as categorias s�o mostradas na forma colapsada, ocultando os componentes. Para exibir os
-      componentes de uma categoria, voc� deve expand�-la clicando no �cone 
-      <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_colapsado.png" /></imageobject></inlinemediaobject></guiicon>� esquerda da categoria.</para>
-      <para>Para 
-      <emphasis role="bold">adicionar um programa</emphasis> ao fluxo, siga o seguinte procedimento:</para>
+      componentes de uma categoria, voc� deve expand�-la clicando no
+      �cone <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_colapsado.png"
+      /></imageobject></inlinemediaobject></guiicon> � esquerda da categoria.</para>
+      <para>Para <emphasis role="bold">adicionar um programa</emphasis> ao fluxo, siga o seguinte procedimento:</para>
       <procedure>
         <step>
-          <para>Selecione um fluxo na aba 
-          <guilabel>Fluxos</guilabel>. Depois selecione a aba 
-          <guilabel>Edi��o de Fluxo</guilabel>.</para>
+          <para>Selecione um fluxo na aba <guilabel>Fluxos</guilabel>. Depois selecione a aba <guilabel>Edi��o de
+          Fluxo</guilabel>.</para>
           <tip>
-            <para>Quando estiver na aba 
-            <guilabel>Fluxos</guilabel>, experimente dar um clique duplo no fluxo. Assim voc� alterna mais rapidamente
-            para a aba 
-            <guilabel>Edi��o de fluxo.</guilabel>.</para>
+            <para>Quando estiver na aba <guilabel>Fluxos</guilabel>, experimente dar um clique duplo no fluxo. Assim
+            voc� alterna mais rapidamente para a aba <guilabel>Edi��o de fluxo.</guilabel>.</para>
           </tip>
         </step>
         <step>
           <para>Expanda uma categoria e d� um clique duplo em um de seus componentes (dependendo da categoria, talvez
-          voc� precise rolar a janela 
-          <guilabel>Menu</guilabel> para ver todos os componentes). O componente selecionado � adicionado � caixa 
-          <guilabel>Sequ�ncia do fluxo</guilabel> como programa(s) do fluxo, no lado esquerdo da janela
-          principal.</para>
+          voc� precise rolar a janela <guilabel>Menu</guilabel> para ver todos os componentes). O componente selecionado
+          � adicionado � caixa <guilabel>Sequ�ncia do fluxo</guilabel> como programa(s) do fluxo, no lado esquerdo da
+          janela principal.</para>
           <tip>
-            <para>Voc� pode consultar a 
-            <emphasis role="bold">documenta��o do componente</emphasis> antes de adicion�-lo ao fluxo. Para isso, clique
-            no componente com o 
-            <emphasis role="bold">bot�o direito do mouse</emphasis> e escolha 
-            <guilabel>Ajuda</guilabel>.</para>
+            <para>Voc� pode consultar a <emphasis role="bold">documenta��o do componente</emphasis> antes de adicion�-lo
+            ao fluxo. Para isso, clique no componente com o <emphasis role="bold">bot�o direito do mouse</emphasis> e
+            escolha <guilabel>Ajuda</guilabel>.</para>
           </tip>
         </step>
       </procedure>
       <tip>
-        <para>Observe a 
-        <emphasis role="bold">barra de informa��es</emphasis> na parte de cima da janela principal, logo abaixo do menu 
-        <guimenu>A��es</guimenu>. Ela mostra o fluxo selecionado atualmente, sem que voc� tenha que sair da aba 
-        <guilabel>Edi��o de fluxo</guilabel>.</para>
+        <para>Observe a <emphasis role="bold">barra de informa��es</emphasis> na parte de cima da janela principal, logo
+        abaixo do menu <guimenu>A��es</guimenu>. Ela mostra o fluxo selecionado atualmente, sem que voc� tenha que sair
+        da aba <guilabel>Edi��o de fluxo</guilabel>.</para>
       </tip>
       <tip>
-        <para>Voc� pode 
-        <emphasis role="bold">mudar a posi��o</emphasis> de um programa na caixa 
-        <guilabel>Sequ�ncia do fluxo</guilabel>. Para isso, 
-        <emphasis role="bold">arraste-o com o mouse</emphasis> para a posi��o desejada.</para>
+        <para>Voc� pode <emphasis role="bold">mudar a posi��o</emphasis> de um programa na caixa <guilabel>Sequ�ncia do
+        fluxo</guilabel>. Para isso, <emphasis role="bold">arraste-o com o mouse</emphasis> para a posi��o
+        desejada.</para>
       </tip>
       <para>Agora que j� sabemos como adicionar programas ao fluxo, precisamos configur�-los. Vejamos ent�o as demais
-      ferramentas da aba 
-      <guilabel>Edi��o de fluxo</guilabel>:</para>
+      ferramentas da aba <guilabel>Edi��o de fluxo</guilabel>:</para>
       <itemizedlist>
         <listitem>
           <para>
@@ -1347,19 +1350,18 @@
         </listitem>
       </itemizedlist>
       <tip>
-        <para>Experimente usar 
-        <emphasis role="bold">menus de contexto</emphasis> no lugar dos bot�es de comando. Para isso, 
-        <emphasis role="bold">clique com o bot�o direito do mouse</emphasis> nos programas que voc� adicionar. Voc� vai
-        notar que diversos comandos podem ser acionados por este m�todo. Em determinados casos, isso � mais 
-        <emphasis role="bold">f�cil e r�pido</emphasis> do que usar os bot�es.</para>
+        <para>Experimente usar <emphasis role="bold">menus de contexto</emphasis> no lugar dos bot�es de comando. Para
+        isso, <emphasis role="bold">clique com o bot�o direito do mouse</emphasis> nos programas que voc�
+        adicionar. Voc� vai notar que diversos comandos podem ser acionados por este m�todo. Em determinados casos, isso
+        � mais <emphasis role="bold">f�cil e r�pido</emphasis> do que usar os bot�es.</para>
       </tip>
       <section xml:id="sec_3_3_1">
         <title>Copiar programas para a �rea de transfer�ncia</title>
-        <para>Da mesma forma que se faz com fluxos (veja a 
-        <emphasis role="bold">
-          <link linkend="sec_3_2_2">se��o 3.2.2</link></emphasis>), um programa (ou um conjunto de programas) pode ser copiado para a �rea de transfer�ncia por meio
-        do bot�o 
-        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_copiar_fluxo.png" /></imageobject></inlinemediaobject></guiicon> ou, mais pr�tico, pelo conhecido atalho 
+        <para>Da mesma forma que se faz com fluxos (veja a <emphasis role="bold"><link linkend="sec_3_2_2">se��o
+        3.2.2</link></emphasis>), um programa (ou um conjunto de programas) pode ser copiado para a �rea de
+        transfer�ncia por meio do
+        bot�o <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_copiar_fluxo.png"
+        /></imageobject></inlinemediaobject></guiicon> ou, mais pr�tico, pelo conhecido atalho
         <keycombo>
           <keycap>Ctrl</keycap>
           <keycap>C</keycap>
@@ -1369,7 +1371,7 @@
           <keycombo>
             <keycap>Ctrl</keycap>
             <mousebutton>Clique</mousebutton>
-          </keycombo>ou 
+          </keycombo> ou 
           <keycombo>
             <keycap>Shift</keycap>
             <mousebutton>Clique</mousebutton>
@@ -1378,33 +1380,32 @@
       </section>
       <section xml:id="sec_3_3_2">
         <title>Colar programas da �rea de transfer�ncia</title>
-        <para>Depois de ter sido 
-        <link linkend="sec_3_3_1">copiado para a �rea de transfer�ncia</link>, um programa (ou um conjunto de
-        programas) pode ser colado por meio do bot�o 
-        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_colar_fluxo.png" /></imageobject></inlinemediaobject></guiicon> ou, mais pr�tico, pelo conhecido atalho 
+        <para>Depois de ter sido <link linkend="sec_3_3_1">copiado para a �rea de transfer�ncia</link>, um programa (ou
+        um conjunto de programas) pode ser colado por meio do
+        bot�o <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_colar_fluxo.png"
+        /></imageobject></inlinemediaobject></guiicon> ou, mais pr�tico, pelo conhecido atalho
         <keycombo>
           <keycap>Ctrl</keycap>
           <keycap>V</keycap>
         </keycombo>.</para>
         <tip>
-          <para>O programa (ou conjunto de programas) copiado anteriormente para a �rea de transfer�ncia pode ser
-          colado em 
-          <emphasis role="bold">qualquer fluxo</emphasis> existente, e n�o s� no fluxo de origem. Basta alternar para a
-          aba 
-          <guilabel>Fluxos</guilabel>, selecionar o fluxo desejado, voltar para a aba 
-          <guilabel>Edi��o de fluxo</guilabel> e colar o(s) programas(s).</para>
+          <para>O programa (ou conjunto de programas) copiado anteriormente para a �rea de transfer�ncia pode ser colado
+          em <emphasis role="bold">qualquer fluxo</emphasis> existente, e n�o s� no fluxo de origem. Basta alternar para
+          a aba <guilabel>Fluxos</guilabel>, selecionar o fluxo desejado, voltar para a aba <guilabel>Edi��o de
+          fluxo</guilabel> e colar o(s) programas(s).</para>
         </tip>
       </section>
       <section xml:id="sec_3_3_3">
         <title>Deletar programas</title>
-        <para>Para excluir um programa (ou um conjunto de programas), selecione-o e clique no bot�o 
-        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_apagar_projeto.png" /></imageobject></inlinemediaobject></guiicon>.</para>
+        <para>Para excluir um programa (ou um conjunto de programas), selecione-o e clique no bot�o
+        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_apagar_projeto.png"
+        /></imageobject></inlinemediaobject></guiicon>.</para>
         <tip>
           <para>Voc� pode selecionar v�rios programas para serem excluidos simultaneamente usando 
           <keycombo>
             <keycap>Ctrl</keycap>
             <mousebutton>Clique</mousebutton>
-          </keycombo>ou 
+          </keycombo> ou 
           <keycombo>
             <keycap>Shift</keycap>
             <mousebutton>Clique</mousebutton>
@@ -1421,23 +1422,21 @@
         <procedure>
           <step>
             <para>Selecione-o na caixa 
-            <guilabel>Sequ�ncia de fluxo</guilabel> e clique no bot�o 
-            <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_editar_propriedades_projeto.png" /></imageobject></inlinemediaobject></guiicon>, ou d� um clique duplo no programa.</para>
+            <guilabel>Sequ�ncia de fluxo</guilabel> e clique no
+            bot�o <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_editar_propriedades_projeto.png"
+            /></imageobject></inlinemediaobject></guiicon>, ou d� um clique duplo no programa.</para>
           </step>
           <step>
-            <para>Na janela 
-            <guilabel>Par�metros</guilabel>, edite os par�metros do programa. Note que os par�metros variam bastante de
-            um programa para outro, tanto em quantidade como em tipo.</para>
+            <para>Na janela <guilabel>Par�metros</guilabel>, edite os par�metros do programa. Note que os par�metros
+            variam bastante de um programa para outro, tanto em quantidade como em tipo.</para>
             <tip>
-              <para>Clique no bot�o 
-              <guibutton>Ajuda</guibutton> (canto inferior esquerdo da janela 
-              <guilabel>Par�metros</guilabel>) para visualizar a 
-              <emphasis role="bold">documenta��o do programa</emphasis>. Isso pode ser �til durante a edi��o de
-              par�metros.</para>
+              <para>Clique no bot�o <guibutton>Ajuda</guibutton> (canto inferior esquerdo da janela
+              <guilabel>Par�metros</guilabel>) para visualizar a <emphasis role="bold">documenta��o do
+              programa</emphasis>. Isso pode ser �til durante a edi��o de par�metros.</para>
             </tip>
             <tip>
               <para>Clique no bot�o 
-              <guibutton>Padr�o</guibutton>quando quiser retornar para a configura��o padr�o do programa.</para>
+              <guibutton>Padr�o</guibutton> quando quiser retornar para a configura��o padr�o do programa.</para>
             </tip>
           </step>
           <step>
@@ -1450,15 +1449,14 @@
         <title>Mudar o estado de um programa</title>
         <para>Ap�s realizar o procedimento da 
         <emphasis role="bold">
-          <link linkend="sec_3_3_4">se��o 3.3.4</link></emphasis>, note que o programa passa a ser sinalizado por 
-        <guiicon><inlinemediaobject><imageobject><imagedata
-         fileref="../images/icone_configurado.png" /></imageobject></inlinemediaobject></guiicon> em vez de 
-        <guiicon><inlinemediaobject><imageobject><imagedata
-	fileref="../images/icone_nao_configurado.png" /></imageobject></inlinemediaobject></guiicon>. Isso indica que o programa passou do estado 
-        <emphasis role="bold">N�o configurado</emphasis> para o estado 
-        <emphasis role="bold">Configurado</emphasis>. Al�m desses dois estados, um programa pode assumir ainda o estado
-        
-        <emphasis role="bold">Desabilitado</emphasis>
+          <link linkend="sec_3_3_4">se��o 3.3.4</link></emphasis>, note que o programa passa a ser sinalizado por
+        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_configurado.png"
+         /></imageobject></inlinemediaobject></guiicon> em vez de
+        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_nao_configurado.png"
+	/></imageobject></inlinemediaobject></guiicon>. Isso indica que o programa passou do estado
+        <emphasis role="bold">N�o configurado</emphasis> para o
+	estado <emphasis role="bold">Configurado</emphasis>. Al�m desses dois estados, um programa pode assumir ainda o
+	estado <emphasis role="bold">Desabilitado</emphasis>
 	(<guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_desabilitado.png"
 	/></imageobject></inlinemediaobject></guiicon>). Voc� alterna entre estes tr�s estados clicando no bot�o
         <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_salvar_estado_lista.png"
@@ -1470,7 +1468,7 @@
           <keycombo>
             <keycap>Ctrl</keycap>
             <mousebutton>Clique</mousebutton>
-          </keycombo>ou 
+          </keycombo> ou 
           <keycombo>
             <keycap>Shift</keycap>
             <mousebutton>Clique</mousebutton>
@@ -1481,23 +1479,19 @@
           entre os estados, os par�metros ser�o preservados.</para>
         </tip>
         <important>
-          <para>Programas 
-          <emphasis role="bold">Desabilitados</emphasis>
+          <para>Programas <emphasis role="bold">Desabilitados</emphasis>
 	  (<guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_desabilitado.png"
 	  /></imageobject></inlinemediaobject></guiicon>) s�o ignorados durante a execu��o do fluxo. Dessa forma, voc�
-	  pode
-          <emphasis role="bold">habilitar ou desabilitar peda�os de um fluxo</emphasis>, conforme a
-          conveni�ncia.</para>
+	  pode <emphasis role="bold">habilitar ou desabilitar peda�os de um fluxo</emphasis>, conforme a
+	  conveni�ncia.</para>
         </important>
       </section>
       <section xml:id="sec_3_3_6">
         <title>Editar arquivos de entrada e sa�da do fluxo</title>
-        <para>No exemplo da 
-        <emphasis role="bold">
-          <link linkend="sec_2_2">se��o 2.2</link></emphasis> criamos um fluxo muito simples, que n�o precisava "ler"
-        nenhum arquivo, e que gerava como resultado uma sa�da de tela. Por�m, h� situa��es em que o fluxo precisa
-        extrair dados de um arquivo de entrada e gerar como resultado um arquivo de sa�da ou de erro, caso ocorra algum
-        problema durante a execu��o.</para>
+        <para>No exemplo da <emphasis role="bold"><link linkend="sec_2_2">se��o 2.2</link></emphasis> criamos um fluxo
+        muito simples, que n�o precisava "ler" nenhum arquivo, e que gerava como resultado uma sa�da de tela. Por�m, h�
+        situa��es em que o fluxo precisa extrair dados de um arquivo de entrada e gerar como resultado um arquivo de
+        sa�da ou de erro, caso ocorra algum problema durante a execu��o.</para>
         <para>Para associar arquivos de entrada, sa�da e erro a um fluxo:</para>
         <procedure>
           <step>
@@ -1513,58 +1507,51 @@
             <guilabel>Escolha um arquivo</guilabel>.</para>
           </step>
         </procedure>
-        <para>Ao sair da janela 
-        <guilabel>Entrada/Sa�da do fluxo</guilabel>, note que os arquivos de entrada e sa�da que voc� associou ao fluxo
-        aparecem na caixa 
+        <para>Ao sair da janela <guilabel>Entrada/Sa�da do fluxo</guilabel>, note que os arquivos de entrada e sa�da que
+        voc� associou ao fluxo aparecem na caixa
         <guilabel>Sequ�ncia de fluxo</guilabel>, sinalizados com os �cones 
         <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_arquivo_entrada.png"
         /></imageobject></inlinemediaobject></guiicon> e
         <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_arquivo_saida.png"
         /></imageobject></inlinemediaobject></guiicon>, abaixo e acima dos programas do fluxo (se houver algum).</para>
         <note>
-          <para>Se quiser 
-          <emphasis role="bold">remover um conjunto</emphasis> da lista, selecione-o com o 
-          <emphasis role="bold">bot�o direito</emphasis> do mouse e clique em 
+          <para>Se quiser <emphasis role="bold">remover um conjunto</emphasis> da lista, selecione-o com
+          o <emphasis role="bold">bot�o direito</emphasis> do mouse e clique em
           <guimenuitem>Excluir</guimenuitem>.</para>
         </note>
       </section>
       <section xml:id="sec_3_3_7">
         <title>Executar um fluxo</title>
-        <para>Para executar o fluxo atual, clique no bot�o 
-        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_executar_fluxo.png"
+        <para>Para executar o fluxo atual, clique no
+        bot�o <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_executar_fluxo.png"
         /></imageobject></inlinemediaobject></guiicon>.</para>
         <para>Por padr�o, os fluxos s�o executados na m�quina de origem, identificada automaticamente pela G�BR como 
         <emphasis role="bold">Servidor local</emphasis>. Entretanto, a G�BR tamb�m permite 
         <emphasis role="bold">executar fluxos em m�quinas remotas</emphasis>. Veja mais detalhes sobre defini��o e
-        sele��o de servidores na 
-        <emphasis role="bold">
-          <link linkend="sec_4_2">se��o 4.2</link></emphasis>.</para>
+        sele��o de servidores na <emphasis role="bold"><link linkend="sec_4_2">se��o 4.2</link></emphasis>.</para>
         <para>Na aba Edi��o de fluxo, ainda que se tenha selecionado v�rios fluxos na aba Fluxos, ao se clicar no bot�o
         
         <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_executar_fluxo.png"
         /></imageobject></inlinemediaobject></guiicon> ser� executado apenas o primeiro fluxo selecionado.</para>
         <para>Nessa vers�o da G�BR, surge o conceito de filas, conceito tamb�m abordado na 
-        <emphasis role="bold">
-          <link linkend="sec_3_2_11">se��o 3.2.11</link></emphasis>. Nessa aba � poss�vel escolher no campo Fila em qual
-        fila o fluxo ser� executado. Pode-se escolher e nomear a fila em que se quer executar um fluxo, conforme
-        figura:</para>
+        <emphasis role="bold"><link linkend="sec_3_2_11">se��o 3.2.11</link></emphasis>. Nessa aba � poss�vel escolher
+        no campo Fila em qual fila o fluxo ser� executado. Pode-se escolher e nomear a fila em que se quer executar um
+        fluxo, conforme figura:</para>
         <para>
           <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/janela_filas_edicao_de_fluxo.png"
           /></imageobject></inlinemediaobject></guiicon>
         </para>
         <para>No momento em que o fluxo come�a a ser executado, a G�BR alterna imediatamente para a aba 
-        <guilabel>Controle de tarefas</guilabel>, que mostra o relat�rio ( 
-        <emphasis>log</emphasis>) da execu��o.</para>
+        <guilabel>Controle de tarefas</guilabel>, que mostra o relat�rio (<emphasis>log</emphasis>) da execu��o.</para>
       </section>
     </section>
     <section xml:id="sec_3_4">
-      <title>A aba 
-      <guilabel>Controle de tarefas</guilabel></title>
-      <para>Como vimos na 
-      <link linkend="sec_3_3_7"><emphasis role="bold">se��o 3.3.7</emphasis></link>, a aba 
-      <guilabel>Controle de tarefas</guilabel>� acionada toda vez que um fluxo � executado. Por meio dela pode-se 
-      <emphasis role="bold">acompanhar</emphasis> e, se necess�rio ou desej�vel, 
-      <emphasis role="bold">interromper</emphasis> a execu��o dos fluxos. Vejamos os comandos dispon�veis:</para>
+      <title>A aba <guilabel>Controle de tarefas</guilabel></title>
+      <para>Como vimos na <link linkend="sec_3_3_7"><emphasis role="bold">se��o 3.3.7</emphasis></link>, a aba
+      <guilabel>Controle de tarefas</guilabel> � acionada toda vez que um fluxo � executado. Por meio dela pode-se 
+      <emphasis role="bold">acompanhar</emphasis> e, se necess�rio ou
+      desej�vel, <emphasis role="bold">interromper</emphasis> a execu��o dos fluxos. Vejamos os comandos
+      dispon�veis:</para>
       <itemizedlist>
         <listitem>
           <para>
@@ -1582,45 +1569,46 @@
           </para>
         </listitem>
       </itemizedlist>
-      <para>Vimos nas se��es 
-      <emphasis role="bold">3.2.11</emphasis> e 
-      <emphasis role="bold">3.3.7</emphasis> a abordagem do conceito de filas na G�BR nas abas 
-      <emphasis role="bold">Fluxos</emphasis> e 
-      <emphasis role="bold">Edi��o de Fluxo</emphasis>. Finalizando, na aba 
-      <emphasis role="bold">Controle de tarefas</emphasis>, � poss�vel visualizar cada fila em andamento, cada qual de
-      execu��o independente uma da outra, bem como o relat�rio (log) da execu��o de cada programa. Ver figura
-      abaixo:</para>
+      <para>Vimos nas se��es <emphasis role="bold">3.2.11</emphasis> e <emphasis role="bold">3.3.7</emphasis> a
+      abordagem do conceito de filas na G�BR nas abas <emphasis role="bold">Fluxos</emphasis> e
+      <emphasis role="bold">Edi��o de Fluxo</emphasis>. Finalizando, na aba <emphasis role="bold">Controle de
+      tarefas</emphasis>, � poss�vel visualizar cada fila em andamento, cada qual de execu��o independente uma da outra,
+      bem como o relat�rio (log) da execu��o de cada programa. Ver figura abaixo:</para>
       <para>
         <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/janela_aba_controle_de_tarefas.png" /></imageobject></inlinemediaobject></guiicon>
       </para>
       <section xml:id="sec_3_4_1">
         <title>Salvar informa��o da tarefa em arquivo</title>
-        <para>Toda vez que um fluxo � executado, surge na caixa 
-        <guilabel>Tarefas</guilabel>, dentro da aba 
-        <guilabel>Controle de tarefas</guilabel>, uma tarefa identificada com o t�tulo do fluxo.</para>
-        <para>Para salvar a informa��o da tarefa em um arquivo, selecione-a na caixa 
-        <guilabel>Tarefas</guilabel> e clique no bot�o 
-        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_salvar_log.png" /></imageobject></inlinemediaobject></guiicon>.</para>
+        <para>Toda vez que um fluxo � executado, surge na caixa <guilabel>Tarefas</guilabel>, dentro da
+        aba <guilabel>Controle de tarefas</guilabel>, uma tarefa identificada com o t�tulo do fluxo.</para>
+        <para>Para salvar a informa��o da tarefa em um arquivo, selecione-a na caixa <guilabel>Tarefas</guilabel> e
+        clique no bot�o <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_salvar_log.png"
+        /></imageobject></inlinemediaobject></guiicon>.</para>
       </section>
       <section xml:id="sec_3_4_2">
         <title>Limpar tarefa</title>
-        <para>Para remover o log de uma tarefa, selecione-a na caixa 
-        <guilabel>Tarefas</guilabel> e clique no bot�o 
-        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_limpar_log_atual.png" /></imageobject></inlinemediaobject></guiicon>.</para>
+        <para>Para remover o log de uma tarefa, selecione-a na caixa <guilabel>Tarefas</guilabel> e clique no bot�o
+        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_limpar_log_atual.png"
+        /></imageobject></inlinemediaobject></guiicon>.</para>
         <para>S� podem ser exclu�das as tarefas que n�o estiverem em execu��o (sinalizadas com 
-        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_tarefa_concluida_sucesso.png" /></imageobject></inlinemediaobject></guiicon> ou 
-        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_tarefa_terminada_erro.png" /></imageobject></inlinemediaobject></guiicon>).</para>
+        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_tarefa_concluida_sucesso.png"
+        /></imageobject></inlinemediaobject></guiicon> ou
+        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_tarefa_terminada_erro.png"
+        /></imageobject></inlinemediaobject></guiicon>).</para>
       </section>
       <section xml:id="sec_3_4_3">
         <title>Pedir para o servidor cancelar a tarefa</title>
         <para>Em geral, tarefas complexas levam algum tempo para serem executadas. Se por alguma raz�o for necess�rio
         for�ar o t�rmino de uma tarefa antes que ela termine naturalmente, selecione a tarefa em execu��o (sinalizada
         com 
-        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_tarefa_em_execucao.png" /></imageobject></inlinemediaobject></guiicon>) na caixa 
+        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_tarefa_em_execucao.png"
+        /></imageobject></inlinemediaobject></guiicon>) na caixa
         <guilabel>Tarefas</guilabel> e clique no bot�o 
-        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_terminar_tarefa.png" /></imageobject></inlinemediaobject></guiicon>.</para>
+        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_terminar_tarefa.png"
+        /></imageobject></inlinemediaobject></guiicon>.</para>
         <para>Quando terminada dessa forma, a tarefa � sinalizada com 
-        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_tarefa_terminada_erro.png" /></imageobject></inlinemediaobject></guiicon>.</para>
+        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_tarefa_terminada_erro.png"
+        /></imageobject></inlinemediaobject></guiicon>.</para>
       </section>
     </section>
   </section>
@@ -1666,18 +1654,13 @@
           <emphasis role="bold">editar o dicion�rio de par�metros</emphasis>.</para>
         </step>
         <step>
-          <para>Na janela que se abre ( 
-          <guilabel>Dicion�rio de par�metros para linha</guilabel>), clique duas vezes no campo 
-          <guilabel>Novo</guilabel>, dentro da lista 
-          <guilabel>Projeto</guilabel>. Abre-se um menu com tr�s op��es ( 
-          <guimenuitem>inteiro</guimenuitem>, 
-          <guimenuitem>real</guimenuitem>e 
-          <guimenuitem>string</guimenuitem>). Selecione a op��o 
-          <guimenuitem>inteiro</guimenuitem>, depois digite 
-          <userinput>Tempo</userinput>na coluna 
-          <guilabel>Palavra-chave</guilabel> e 
-          <userinput>5</userinput>na coluna 
-          <guilabel>Valor</guilabel>. Ao terminar, sua janela deve se parecer com a seguinte:</para>
+          <para>Na janela que se abre (<guilabel>Dicion�rio de par�metros para linha</guilabel>), clique duas vezes no
+          campo <guilabel>Novo</guilabel>, dentro da lista <guilabel>Projeto</guilabel>. Abre-se um menu com tr�s op��es
+          (<guimenuitem>inteiro</guimenuitem>, <guimenuitem>real</guimenuitem>
+          e <guimenuitem>string</guimenuitem>). Selecione a op��o <guimenuitem>inteiro</guimenuitem>, depois digite
+          <userinput>Tempo</userinput> na coluna <guilabel>Palavra-chave</guilabel> e
+          <userinput>5</userinput> na coluna <guilabel>Valor</guilabel>. Ao terminar, sua janela deve se parecer com a
+          seguinte:</para>
           <screenshot>
             <info>
               <title />
@@ -1690,16 +1673,12 @@
           </screenshot>
         </step>
         <step>
-          <para>Depois de fechar a janela 
-          <guilabel>Dicion�rio de par�meros para linha</guilabel>, selecione a aba 
-          <guilabel>Edi��o de fluxo</guilabel> e, na caixa 
-          <guilabel>Sequ�ncia de fluxo</guilabel>, d� um clique duplo no programa 
-          <guilabel>Sleep</guilabel>. Na janela que se abre ( 
-          <guilabel>Par�metros</guilabel>), clique com o 
-          <emphasis role="bold">bot�o direito do mouse</emphasis> no campo 
-          <guilabel>Time to sleep</guilabel>. O objetivo � atribuir a vari�vel 
-          <emphasis role="bold">Tempo=5</emphasis> ao par�metro 
-          <guilabel>Time to sleep</guilabel>, como mostrado a seguir:</para>
+          <para>Depois de fechar a janela <guilabel>Dicion�rio de par�meros para linha</guilabel>, selecione a aba
+          <guilabel>Edi��o de fluxo</guilabel> e, na caixa <guilabel>Sequ�ncia de fluxo</guilabel>, d� um clique duplo
+          no programa <guilabel>Sleep</guilabel>. Na janela que se abre (<guilabel>Par�metros</guilabel>), clique com o
+          <emphasis role="bold">bot�o direito do mouse</emphasis> no campo <guilabel>Time to sleep</guilabel>. O
+          objetivo � atribuir a vari�vel <emphasis role="bold">Tempo=5</emphasis> ao par�metro <guilabel>Time to
+          sleep</guilabel>, como mostrado a seguir:</para>
           <screenshot>
             <info>
               <title />
@@ -1712,11 +1691,9 @@
           </screenshot>
         </step>
         <step>
-          <para>Depois de fechar a janela 
-          <guilabel>Par�metros</guilabel>, v� para a aba 
+          <para>Depois de fechar a janela <guilabel>Par�metros</guilabel>, v� para a aba
           <guilabel>Fluxos</guilabel> e crie algumas c�pias do fluxo, dando nomes diferentes a cada uma. Ao executar
-          qualquer um destes fluxos, o resultado � uma 
-          <emphasis role="bold">pausa de 5 segundos</emphasis>.</para>
+          qualquer um destes fluxos, o resultado � uma <emphasis role="bold">pausa de 5 segundos</emphasis>.</para>
           <screenshot>
             <info>
               <title />
@@ -1729,43 +1706,35 @@
           </screenshot>
         </step>
         <step>
-          <para>Acesse novamente o dicion�rio de par�metros e digite o valor 
-          <userinput>2</userinput>no lugar do valor 
-          <userinput>5</userinput>. Isso altera o valor da vari�vel 
-          <userinput>Tempo</userinput>em todos os fluxos. Agora, ao executar qualquer um deles, o resultado � uma 
-          <emphasis role="bold">pausa de 2 segundos</emphasis>, e n�o mais de 5 segundos como antes.</para>
+          <para>Acesse novamente o dicion�rio de par�metros e digite o valor <userinput>2</userinput> no lugar do valor 
+          <userinput>5</userinput>. Isso altera o valor da vari�vel <userinput>Tempo</userinput> em todos os
+          fluxos. Agora, ao executar qualquer um deles, o resultado � uma <emphasis role="bold">pausa de 2
+          segundos</emphasis>, e n�o mais de 5 segundos como antes.</para>
         </step>
       </procedure>
-      <para>O que o exemplo tenta mostrar � que, por meio do dicion�rio de par�metros, � poss�vel 
-      <emphasis role="bold">modificar os fluxos indiretamente</emphasis>, alterando as vari�veis definidas no
+      <para>O que o exemplo tenta mostrar � que, por meio do dicion�rio de par�metros, �
+      poss�vel <emphasis role="bold">modificar os fluxos indiretamente</emphasis>, alterando as vari�veis definidas no
       dicion�rio. Sem isso, seria muito mais penoso alterar o tempo de execu��o dos fluxos do exemplo, pois as c�pias
       teriam de ser reconfiguradas uma a uma.</para>
       <important>
-        <para>Voc� pode definir a visibilidade das vari�veis, compartimentando-as nas listas 
-        <guilabel>Projeto</guilabel>, 
-        <guilabel>Linha</guilabel> e 
-        <guilabel>Fluxo</guilabel>. Vari�veis pertencentes � lista 
-        <guilabel>Projeto</guilabel> s�o vis�veis para 
-        <emphasis role="bold">todos os fluxos</emphasis> de todas as linhas do projeto selecionado. Vari�veis
-        pertencentes � lista 
-        <guilabel>Linha</guilabel> s�o vis�veis apenas para os 
-        <emphasis role="bold">fluxos da linha selecionada</emphasis>. Vari�veis pertencentes � lista 
-        <guilabel>Fluxo</guilabel> s�o vis�veis apenas para o 
-        <emphasis role="bold">fluxo selecionado</emphasis>.</para>
+        <para>Voc� pode definir a visibilidade das vari�veis, compartimentando-as nas
+        listas <guilabel>Projeto</guilabel>, <guilabel>Linha</guilabel> e <guilabel>Fluxo</guilabel>. Vari�veis pertencentes � lista 
+        <guilabel>Projeto</guilabel> s�o vis�veis para <emphasis role="bold">todos os fluxos</emphasis> de todas as
+        linhas do projeto selecionado. Vari�veis pertencentes � lista <guilabel>Linha</guilabel> s�o vis�veis apenas
+        para os <emphasis role="bold">fluxos da linha selecionada</emphasis>. Vari�veis pertencentes �
+        lista <guilabel>Fluxo</guilabel> s�o vis�veis apenas para o <emphasis role="bold">fluxo
+        selecionado</emphasis>.</para>
       </important>
     </section>
     <section xml:id="sec_4_2">
-      <title>O menu 
-      <guimenu>A��es</guimenu></title>
-      <para>A partir do menu 
-      <guimenu>A��es</guimenu>voc� acessa as janelas 
-      <guimenuitem>Prefer�ncias</guimenuitem>e 
+      <title>O menu <guimenu>A��es</guimenu></title>
+      <para>A partir do menu <guimenu>A��es</guimenu> voc� acessa as janelas <guimenuitem>Prefer�ncias</guimenuitem> e
       <guimenuitem>Servidores</guimenuitem>. Se voc� leu todo o manual, provavelmente j� usou quase todos os recursos
       dispon�veis nessas duas janelas. De qualquer forma, segue a documenta��o.</para>
       <section>
         <title>Prefer�ncias</title>
-        <para>As defini��es que voc� faz na janela 
-        <guilabel>Prefer�ncias</guilabel> s�o adotadas como padr�o pela G�BR. Vejamos os detalhes:</para>
+        <para>As defini��es que voc� faz na janela <guilabel>Prefer�ncias</guilabel> s�o adotadas como padr�o pela
+        G�BR. Vejamos os detalhes:</para>
         <itemizedlist>
           <listitem>
             <para>
@@ -1785,8 +1754,8 @@
           </listitem>
           <listitem>
             <para>
-            <guilabel>editor HTML:</guilabel> Editor de textos padr�o adotado pela G�BR para cria��o de relat�rios de
-            informa��es de projetos, linhas e fluxos.</para>
+            <guilabel>editor HTML:</guilabel> Editor de textos padr�o adotado pela G�BR para cria��o de relat�rios
+            de informa��es de projetos, linhas e fluxos.</para>
           </listitem>
         </itemizedlist>
         <screenshot>
@@ -1805,12 +1774,10 @@
         <para>Use a janela 
         <guilabel>Configura��o de servidores</guilabel> para configurar o servidor local e os servidores remotos que
         voc� adicionar.</para>
-        <para>O servidor local, identificado como 
-        <emphasis>Servidor local</emphasis>, � criado e conectado automaticamente pela G�BR na inicializa��o. Ele � a
-        m�quina padr�o usada para a execu��o dos fluxos.</para>
+        <para>O servidor local, identificado como <emphasis>Servidor local</emphasis>, � criado e conectado
+        automaticamente pela G�BR na inicializa��o. Ele � a m�quina padr�o usada para a execu��o dos fluxos.</para>
         <para>Servidores remotos podem ser adicionados, para execu��o remota dos fluxos. Para adicionar um servidor,
-        digite o endere�o na parte de baixo da janela 
-        <guilabel>Configura��o de servidores</guilabel> e clique no bot�o 
+        digite o endere�o na parte de baixo da janela <guilabel>Configura��o de servidores</guilabel> e clique no bot�o
         <guibutton>Adicionar</guibutton>.</para>
         <screenshot>
           <info>
@@ -1823,12 +1790,10 @@
           </mediaobject>
         </screenshot>
         <important>
-          <para>Todos os servidores definidos na janela 
-          <guilabel>Configura��o de servidores</guilabel> ficam vis�veis na aba 
-          <guilabel>Edi��o de fluxo</guilabel> (voc� seleciona o servidor na caixa 
-          <guilabel>Servidor</guilabel>, logo acima da caixa 
-          <guilabel>Sequ�ncia de fluxo</guilabel>, no lado esquerdo da janela principal) e tamb�m na janela 
-          <guilabel>Entrada/Sa�da do fluxo</guilabel> (aquela em que os arquivos de entrada e sa�da do fluxo s�o
+          <para>Todos os servidores definidos na janela <guilabel>Configura��o de servidores</guilabel> ficam vis�veis
+          na aba <guilabel>Edi��o de fluxo</guilabel> (voc� seleciona o servidor na caixa <guilabel>Servidor</guilabel>,
+          logo acima da caixa <guilabel>Sequ�ncia de fluxo</guilabel>, no lado esquerdo da janela principal) e tamb�m na
+          janela <guilabel>Entrada/Sa�da do fluxo</guilabel> (aquela em que os arquivos de entrada e sa�da do fluxo s�o
           definidos).</para>
         </important>
       </section>
@@ -1836,8 +1801,7 @@
     <section xml:id="sec_4_3">
       <title>O log de execu��o</title>
       <para>A G�BR grava grande parte das a��es executadas pelo usu�rio, bem como os resultados dessas a��es, no
-      chamado 
-      <emphasis>log de execu��o</emphasis>. Este log � mostrado na parte inferior da janela principal. Pode ser
+      chamado <emphasis>log de execu��o</emphasis>. Este log � mostrado na parte inferior da janela principal. Pode ser
       apresentado na forma colapsada (padr�o) ou expandida (como na janela abaixo).</para>
       <screenshot>
         <info>
