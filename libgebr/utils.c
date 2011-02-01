@@ -513,6 +513,8 @@ gboolean gebr_paths_equal (const gchar *path1, const gchar *path2)
 
 gchar *gebr_str_escape (const gchar *str)
 {
+	if (!str)
+		return NULL;
 	gchar c;
 	gchar *dest = g_new (gchar, 2*strlen(str) + 1);
 	gchar *retval;

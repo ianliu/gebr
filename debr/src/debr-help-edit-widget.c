@@ -236,7 +236,10 @@ static void pre_process_html (GString *html)
 	gchar *escaped;
 
 	inner = gebr_geoxml_tmpl_get (html, "cnt");
-	escaped = gebr_str_escape (inner);
+	if (!inner)
+		escaped = gebr_str_escape (html->str);
+	else
+		escaped = gebr_str_escape (inner);
 	g_string_assign (html, escaped); 
 	g_free (escaped);
 	g_free (inner);
