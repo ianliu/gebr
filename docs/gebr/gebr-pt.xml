@@ -1105,9 +1105,20 @@
         <section xml:id="sec_3_2_11">
         <title>Executar um fluxo</title>
         <para>Este comando aparece repetidamente nas abas
-            <guilabel>Fluxos</guilabel> e <guilabel>Edição de fluxo</guilabel> de duas formas distintas.
-	 Por razões didáticas, entendemos que é melhor voltar a falar dele na <link linkend="sec_3_3_7"><emphasis
-              role="bold">seção 3.3.7</emphasis></link>.</para>
+            <guilabel>Fluxos</guilabel> e <guilabel>Edição de fluxo</guilabel> de duas formas distintas. Nessa aba Fluxos, o botão <guiicon><inlinemediaobject>
+              <imageobject>
+                <imagedata fileref="../images/botao_executar_fluxo.png"/>
+              </imageobject>
+            </inlinemediaobject></guiicon> executa vários fluxos em sequência. Ver figura: 
+	<guiicon><inlinemediaobject>
+                <imageobject>
+                  <imagedata fileref="../images/janela_execucao_de_fluxo.png"/>
+                </imageobject>
+              </inlinemediaobject></guiicon></para>
+	<para>Nessa versão da GêBR, surge o conceito de filas, através do qual pode-se rodar um fluxo ou uma sequência de fluxos em diferentes filas:</para>
+	<para>*Nessa aba, a cada execução de um fluxo ou um grupo de fluxos, é criada uma fila</para>
+	<para>*Cada fila fica visível no campo Filas da aba Edição de fluxos conforme explicado na <link linkend="sec_3_3_7"><emphasis role="bold">seção 3.3.7</emphasis></link></para> 
+	<para>*As filas também ficam visíveis na aba Controle de tarefas. Ver <link linkend="sec_3_4"><emphasis role="bold">seção 3.4</emphasis></link></para> </para>
       </section>
  	<section xml:id="sec_3_2_12">
         <title>Editar comentários</title>
@@ -1419,7 +1430,7 @@
 pode-se editar os caminhos de entrada, saída e erro através de um clique duplo nos botões
 	<guiicon><inlinemediaobject>
                   <imageobject>
-                    <imagedata fileref="../images/janela_entrada_saida_arquivos.png"/>
+                    <imagedata fileref="../images/janela_arquivos_entrada_saida.png"/>
                   </imageobject>
                 </inlinemediaobject></guiicon></para>
           </step>
@@ -1462,21 +1473,20 @@ pode-se editar os caminhos de entrada, saída e erro através de um clique duplo n
           a GêBR também permite <emphasis role="bold">executar fluxos em máquinas
           remotas</emphasis>. Veja mais detalhes sobre definição e seleção de servidores na
             <emphasis role="bold"><link linkend="sec_4_2">seção 4.2</link></emphasis>.</para>
-	<para>Na aba Fluxos, o botão <guiicon><inlinemediaobject>
-              <imageobject>
-                <imagedata fileref="../images/botao_executar_fluxo.png"/>
-              </imageobject>
-            </inlinemediaobject></guiicon> executa vários fluxos em sequência. Na imagem abaixo, vários fluxos deverão ser executados: <guiicon><inlinemediaobject>
-                <imageobject>
-                  <imagedata fileref="../images/janela_execucao_de_fluxo.png"/>
-                </imageobject>
-              </inlinemediaobject></guiicon></para>
 	<para> Na aba Edição de fluxo, ainda que se tenha selecionado vários fluxos na aba Fluxos, ao se clicar no botão <guiicon><inlinemediaobject>
               <imageobject>
                 <imagedata fileref="../images/botao_executar_fluxo.png"/>
               </imageobject>
             </inlinemediaobject></guiicon> será executado apenas o primeiro fluxo selecionado. </para>
-        <para>No momento em que o fluxo começa a ser executado, a GêBR alterna imediatamente para a
+        <para>Nessa versão da GêBR, surge o conceito de filas, conceito também abordado na <emphasis role="bold"><link linkend="sec_3_2_11">seção
+            3.2.11</link></emphasis>. Nessa aba é possível escolher no campo Fila em qual fila o fluxo será executado. 
+	Pode-se escolher e nomear a fila em que se quer executar um fluxo, conforme figura:</para>
+	<para><guiicon><inlinemediaobject>
+              <imageobject>
+                <imagedata fileref="../images/janela_filas_edicao_de_fluxo.png"/>
+              </imageobject>
+            </inlinemediaobject></guiicon></para>
+	 <para>No momento em que o fluxo começa a ser executado, a GêBR alterna imediatamente para a
           aba <guilabel>Controle de tarefas</guilabel>, que mostra o relatório (<emphasis>log</emphasis>) da
           execução.</para>
       </section>
@@ -1499,6 +1509,15 @@ pode-se editar os caminhos de entrada, saída e erro através de um clique duplo n
           <para><link linkend="sec_3_4_3">Pedir para o servidor cancelar a tarefa</link></para>
         </listitem>
       </itemizedlist>
+	<para>Vimos nas seções <emphasis role="bold">3.2.11</emphasis> e <emphasis role="bold">3.3.7</emphasis> 
+	a abordagem do conceito de filas na GêBR nas abas <emphasis role="bold">Fluxos</emphasis> e <emphasis role="bold">Edição de Fluxo</emphasis>.
+	 Finalizando, na aba <emphasis role="bold">Controle de tarefas</emphasis>, é possível visualizar cada fila em andamento, cada qual de execução
+	 independente uma da outra, bem como o relatório (log) da execução de cada programa. Ver figura abaixo:</para>
+	<para><guiicon><inlinemediaobject>
+              <imageobject>
+                <imagedata fileref="../images/janela_aba_controle_de_tarefas.png"/>
+              </imageobject>
+            </inlinemediaobject></guiicon></para>
       <section xml:id="sec_3_4_1">
         <title>Salvar informação da tarefa em arquivo</title>
         <para>Toda vez que um fluxo é executado, surge na caixa <guilabel>Tarefas</guilabel>, dentro da
