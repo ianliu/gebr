@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-01-31 13:27-0200\n"
-"PO-Revision-Date: 2011-01-31 13:29-0200\n"
+"POT-Creation-Date: 2011-02-01 10:48-0200\n"
+"PO-Revision-Date: 2011-02-01 10:48-0200\n"
 "Last-Translator: Rodrigo Morelatto <morelatto@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
 "MIME-Version: 1.0\n"
@@ -1676,34 +1676,34 @@ msgstr "AC"
 msgid "Address"
 msgstr "Endereço"
 
+#: ../gebr/ui_server.c:321 ../gebr/ui_server.c:410
+msgid "Type here [user@]serverhostname"
+msgstr "Digite aqui [usuário@]nomedoservidor"
+
 #. Status icon
 #. Autoconnect
 #. Server name
 #. Server pointer
-#: ../gebr/ui_server.c:385
+#: ../gebr/ui_server.c:389
 msgid "Servers configuration"
 msgstr "Configuração de servidores"
 
-#: ../gebr/ui_server.c:388
+#: ../gebr/ui_server.c:392
 msgid "Co_nnect all"
 msgstr "Co_nectar todos"
 
-#: ../gebr/ui_server.c:391
+#: ../gebr/ui_server.c:395
 msgid "_Disconnect all"
 msgstr "_Desconectar todos"
 
-#: ../gebr/ui_server.c:406
-msgid "Type here [user@]serverhostname"
-msgstr "Digite aqui [usuário@]nomedoservidor"
-
-#: ../gebr/ui_server.c:478
+#: ../gebr/ui_server.c:482
 msgid ""
 "There are no connected servers. Please configure them in Actions/Servers."
 msgstr ""
 "Não existem servidores conectados. Por favor configure-os em Ações/"
 "Servidores."
 
-#: ../gebr/ui_server.c:488
+#: ../gebr/ui_server.c:492
 msgid "Select server"
 msgstr "Selecione um servidor"
 
