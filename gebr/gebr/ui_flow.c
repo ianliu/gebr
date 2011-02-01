@@ -140,15 +140,19 @@ void flow_program_check_sensitiveness (void)
 
 	if (has_configured){
 		gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->input_iter,
+				   FSEQ_EDITABLE, gebr_geoxml_program_get_stdin(GEBR_GEOXML_PROGRAM(first_program)),
 				   FSEQ_SENSITIVE, gebr_geoxml_program_get_stdin(GEBR_GEOXML_PROGRAM(first_program)), -1);
 		gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->output_iter,
+				   FSEQ_EDITABLE, gebr_geoxml_program_get_stdout(GEBR_GEOXML_PROGRAM(last_program)),
 				   FSEQ_SENSITIVE, gebr_geoxml_program_get_stdout(GEBR_GEOXML_PROGRAM(last_program)), -1);
 
 		if (has_some_error_output)
 			gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->error_iter,
+					   FSEQ_EDITABLE, TRUE,
 					   FSEQ_SENSITIVE, TRUE, -1);
 		else
 			gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->error_iter,
+					   FSEQ_EDITABLE, FALSE,
 					   FSEQ_SENSITIVE, FALSE, -1);
 	}
 }

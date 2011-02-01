@@ -21,4 +21,7 @@ install-data-local:
 	find $(srcdir)/ckeditor \( ! -regex '.*/\..*' \) -type d -exec ${INSTALL_SCRIPT} -d {} ${ckeditordirectory}/{} \;
 	find $(srcdir)/ckeditor \( ! -regex '.*/\..*' \) -type f -print -exec ${INSTALL_DATA} {} ${ckeditordirectory}/{} \;
 
+uninstall-hook:
+	( cd $(DESTDIR)$(datadir)/libgebr && rm -r ckeditor )
+
 EXTRA_DIST = ckeditor
