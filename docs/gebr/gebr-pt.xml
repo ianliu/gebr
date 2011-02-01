@@ -27,9 +27,7 @@
       geofísica no Brasil, por meio do desenvolvimento de ferramentas que facilitem a disseminação das pesquisas na
       área.</para>
       <para>Para obter mais informações, visite a página oficial do projeto: 
-      <emphasis>
-        <link xlink:href="http:\\www.gebrproject.com">www.gebrproject.com</link>
-      </emphasis>.</para>
+      <emphasis><link xlink:href="http:\\www.gebrproject.com">www.gebrproject.com</link></emphasis>.</para>
     </section>
     <section>
       <title>Informações técnicas</title>
@@ -38,9 +36,7 @@
       <emphasis role="bold">Ubuntu 10.4</emphasis>. Por isso, podem apresentar pequenas diferenças em relação a outros
       sistemas operacionais. Para obter instruções de instalação específicas para cada sistema, visite a guia 
       <guilabel>Download</guilabel>, na página oficial do projeto: 
-      <emphasis>
-        <link xlink:href="http:\\www.gebrproject.com">www.gebrproject.com</link>
-      </emphasis>.</para>
+      <emphasis><link xlink:href="http:\\www.gebrproject.com">www.gebrproject.com</link></emphasis>.</para>
     </section>
     <section>
       <title>GêBR Core Team</title>
@@ -236,9 +232,7 @@
           <emphasis>autor</emphasis>, um 
           <emphasis>e-mail</emphasis> para contato.Pode-se adicionar ainda caminhos personalizados de linha, assunto
           melhor abordado na 
-          <link linkend="sec_3_1_6">
-            <emphasis role="bold">seção 3.1.6</emphasis>
-          </link></para>
+          <link linkend="sec_3_1_6"><emphasis role="bold">seção 3.1.6</emphasis></link></para>
         </step>
       </procedure>
       <screenshot>
@@ -541,8 +535,7 @@
     <para>Nas seções seguintes, veremos com detalhes as funcionalidades de cada uma delas.</para>
     <important>
       <para>Alguns recursos que serão explicados a seguir já foram vistos na prática no exemplo da 
-      <link linkend="sec_2">
-        <emphasis role="bold">seção 2</emphasis>
+      <link linkend="sec_2"><emphasis role="bold">seção 2</emphasis>
       </link>. Além disso, o exemplo aborda alguns conceitos fundamentais por trás da GêBR. Por isso, se não o fez, é 
       <emphasis role="bold">recomendável que você leia aquela seção</emphasis> antes de prosseguir. Por razões
       didáticas, recorreremos àquele exemplo sempre que necessário.</para>
@@ -617,9 +610,7 @@
             </imageobject>
           </inlinemediaobject>
         </guiicon>(veja mais detalhes na 
-        <link linkend="sec_2_1">
-          <emphasis role="bold">seção 2.1</emphasis>
-        </link>).</para>
+        <link linkend="sec_2_1"><emphasis role="bold">seção 2.1</emphasis></link>).</para>
         <para>
         <emphasis role="bold">Não há limitação</emphasis> para o número de projetos na GêBR. Você pode criar quantos
         projetos quiser.</para>
@@ -711,16 +702,12 @@
         <guilabel>Autor</guilabel> e 
         <guilabel>Email</guilabel>.Para o caso de edição de propriedades de linha, pode-se adicionar caminhos
         personalizados, cujo detalhamento será abordado na 
-        <link linkend="sec_3_1_6">
-          <emphasis role="bold">seção 3.1.6</emphasis>
-        </link></para>
+        <link linkend="sec_3_1_6"><emphasis role="bold">seção 3.1.6</emphasis></link></para>
       </section>
       <section xml:id="sec_3_1_5">
         <title>Editar o dicionário de parâmetros do projeto ou linha</title>
         <para>Este recurso está documentado na 
-        <link linkend="sec_4_1">
-          <emphasis role="bold">seção 4.1</emphasis>
-        </link>.</para>
+        <link linkend="sec_4_1"><emphasis role="bold">seção 4.1</emphasis></link>.</para>
       </section>
       <section xml:id="sec_3_1_6">
         <title>Editar caminhos preferenciais da linha</title>
@@ -841,9 +828,7 @@
         <emphasis role="bold">Importado</emphasis>.</para>
         <note>
           <para>Na GêBR, linhas só podem existir dentro de projetos (veja este conceito na 
-          <link linkend="sec_2">
-            <emphasis role="bold">seção 2</emphasis>
-          </link>). Portanto, para importar uma linha é necessário 
+          <link linkend="sec_2"><emphasis role="bold">seção 2</emphasis></link>). Portanto, para importar uma linha é necessário 
           <emphasis role="bold">selecionar um projeto existente</emphasis>(ou 
           <link linkend="sec_3_1_1">criar um</link>, caso não exista nenhum).</para>
         </note>
@@ -970,9 +955,7 @@
           </step>
         </procedure>
         <para>Na 
-        <link linkend="sec_3_2_13">
-          <emphasis role="bold">seção 3.2.13</emphasis>
-        </link>, é detalhada a visualização de relatório para um fluxo, que se dá de forma muito semelhante à
+        <link linkend="sec_3_2_13"><emphasis role="bold">seção 3.2.13</emphasis></link>, é detalhada a visualização de relatório para um fluxo, que se dá de forma muito semelhante à
         visualização de relatório da linha, com a diferença que nesta é possível englobar o relatório do fluxo.</para>
       </section>
     </section>
@@ -1068,9 +1051,7 @@
         <guilabel>Propriedades para fluxos</guilabel>), 
         <link linkend="sec_3_2_5">edite as propriedades do fluxo</link>e clique em 
         <guibutton>OK</guibutton>(veja mais detalhes na 
-        <link linkend="sec_2_2">
-          <emphasis role="bold">seção 2.2</emphasis>
-        </link>).</para>
+        <link linkend="sec_2_2"><emphasis role="bold">seção 2.2</emphasis></link>).</para>
         <para>
         <emphasis role="bold">Não há limitação</emphasis> para o número de fluxos na GêBR. Você pode criar quantos
         fluxos quiser dentro de uma linha.</para>
@@ -1182,9 +1163,7 @@
       <section xml:id="sec_3_2_6">
         <title>Editar o dicionário de parâmetros de um fluxo</title>
         <para>Este recurso está documentado na 
-        <link linkend="sec_4_1">
-          <emphasis role="bold">seção 4.1</emphasis>
-        </link>.</para>
+        <link linkend="sec_4_1"><emphasis role="bold">seção 4.1</emphasis></link>.</para>
       </section>
       <section xml:id="sec_3_2_7">
         <title>Salvar o estado de um fluxo</title>
@@ -1268,9 +1247,7 @@
             <emphasis role="bold">criado e selecionado uma linha</emphasis>, na aba 
             <guilabel>Projetos e Linhas</guilabel>. Lembre-se que, na GêBR, fluxos só podem existir dentro de linhas
             (veja este conceito na 
-            <link linkend="sec_2">
-              <emphasis role="bold">seção 2</emphasis>
-            </link>). Portanto, para importar um fluxo é necessário 
+            <link linkend="sec_2"><emphasis role="bold">seção 2</emphasis></link>). Portanto, para importar um fluxo é necessário 
             <emphasis role="bold">selecionar uma linha existente</emphasis>(ou 
             <link linkend="sec_3_1_2">criar uma</link>, caso não exista nenhuma).</para>
           </step>
@@ -1339,14 +1316,10 @@
         <para>Um 
         <emphasis>Menu GêBR</emphasis>é a implementação daquilo que chamamos de 
         <emphasis role="bold">componente</emphasis> do fluxo na 
-        <link linkend="sec_2_2">
-          <emphasis role="bold">seção 2.2</emphasis>
-        </link>. A GêBR é instalada com um conjunto padrão de componentes, separados em 
+        <link linkend="sec_2_2"><emphasis role="bold">seção 2.2</emphasis></link>. A GêBR é instalada com um conjunto padrão de componentes, separados em 
         <emphasis role="bold">categorias</emphasis>, conforme o propósito (você verá mais detalhes sobre os componentes
         e suas categorias na 
-        <link linkend="sec_3_3">
-          <emphasis role="bold">seção 3.3</emphasis>
-        </link>). No entanto, é possível incrementar a GêBR, acrescentando mais componentes/categorias à interface.
+        <link linkend="sec_3_3"><emphasis role="bold">seção 3.3</emphasis></link>). No entanto, é possível incrementar a GêBR, acrescentando mais componentes/categorias à interface.
         Isso é feito com a 
         <emphasis>interface para criação e edição de Menus GêBR</emphasis>, a 
         <emphasis role="bold">DéBR</emphasis>.</para>
@@ -1425,9 +1398,7 @@
         <guilabel>Projetos e Linhas</guilabel> e em 
         <guilabel>Fluxos</guilabel>. Através dele, o usuário pode adicionar comentários à linha ou ao fluxo criados.
         Ver 
-        <link linkend="sec_3_1_9">
-          <emphasis role="bold">seção 3.1.9</emphasis>
-        </link></para>
+        <link linkend="sec_3_1_9"><emphasis role="bold">seção 3.1.9</emphasis></link></para>
       </section>
       <section xml:id="sec_3_2_13">
         <title>Visualizar relatório</title>
@@ -1436,9 +1407,7 @@
         <guilabel>Fluxos</guilabel>. Através dele, em ambas abas, pode-se gerar/visualizar o relatório da linha ou do
         fluxo em questão, com a pequena diferença de que é possível englobar o relatório do fluxo no relatório da
         linha. As demais funcionalidades são descritas na 
-        <link linkend="sec_3_1_10">
-          <emphasis role="bold">seção 3.1.10</emphasis>
-        </link></para>
+        <link linkend="sec_3_1_10"><emphasis role="bold">seção 3.1.10</emphasis></link></para>
       </section>
     </section>
     <section xml:id="sec_3_3">
@@ -1902,9 +1871,7 @@
       <title>A aba 
       <guilabel>Controle de tarefas</guilabel></title>
       <para>Como vimos na 
-      <link linkend="sec_3_3_7">
-        <emphasis role="bold">seção 3.3.7</emphasis>
-      </link>, a aba 
+      <link linkend="sec_3_3_7"><emphasis role="bold">seção 3.3.7</emphasis></link>, a aba 
       <guilabel>Controle de tarefas</guilabel>é acionada toda vez que um fluxo é executado. Por meio dela pode-se 
       <emphasis role="bold">acompanhar</emphasis> e, se necessário ou desejável, 
       <emphasis role="bold">interromper</emphasis> a execução dos fluxos. Vejamos os comandos disponíveis:</para>
