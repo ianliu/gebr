@@ -276,7 +276,7 @@ gboolean __category_edit_on_query_tooltip(GtkTreeView * tree_view, GtkTooltip * 
 	GString *tooltip_string = g_string_new("");
 	gboolean can_fix;
 	gchar *fixes = gebr_validate_case_automatic_fixes_msg(validate_case, name, &can_fix);
-	g_string_printf(tooltip_string, "%s\n\n%s", validate_case->validcase_msg, fixes);
+	g_string_printf(tooltip_string, "%s\n\n%s", gebr_validate_case_get_message (validate_case), fixes);
 	g_free(fixes);
 	gtk_tooltip_set_markup(tooltip, tooltip_string->str);
 	g_string_free(tooltip_string, TRUE);
