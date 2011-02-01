@@ -81,6 +81,7 @@ libgebr/geoxml/upgrade/gebr-geoxml-upgrade
 libgebr/geoxml/validate/gebr-geoxml-validate
 libgebr/gui/gebr-gui.pc
 libgebr/gui/tests/test-js
+libgebr/tests/test-gebr-tar
 libgebr/tests/test-utils
 libtool
 ltmain.sh
