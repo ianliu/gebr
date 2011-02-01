@@ -150,6 +150,7 @@ static void category_edit_add_request(CategoryEdit * category_edit, GtkWidget *c
 
 	entry = gtk_bin_get_child (GTK_BIN (category_edit->categories_combo));
 	gtk_editable_select_region (GTK_EDITABLE (entry), 0, -1);
+	gtk_widget_grab_focus (entry);
 	name = gtk_combo_box_get_active_text(GTK_COMBO_BOX(combo));
 	if (check_duplicate (GEBR_GUI_SEQUENCE_EDIT(category_edit), name) ||
 	    __category_edit_check_text(name)) {
