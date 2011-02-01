@@ -806,7 +806,44 @@ void project_line_export(void)
 
 void project_line_delete(void)
 {
-	//TODO
+	GList *selected = gebr_gui_gtk_tree_view_get_selected_iters(GTK_TREE_VIEW(gebr.ui_project_line->view));
+	if (selected == NULL) {
+		project_line_get_selected(NULL, ProjectLineSelection); //show a message to the user
+		return;
+	}
+
+	gint compare_func(GtkTreeIter * iter1, GtkTreeIter * iter2)
+	{
+		return gebr_gui_gtk_tree_model_iter_equal_to(GTK_TREE_MODEL(gebr.ui_project_line->store), iter1, iter2) == TRUE
+			? 0 : 1;
+	}
+
+	for (GList *i = selected; i != NULL; i = g_list_next(i)) {
+		GtkTreeIter * iter = (GtkTreeIter*)i->data;
+		GtkTreeIter parent;
+		gboolean is_line = gtk_tree_model_iter_parent(GTK_TREE_MODEL(gebr.ui_project_line->store), &parent, iter);
+		
+		if (!is_line) {
+			gboolean can_delete_project;
+			if (gtk_tree_model_iter_n_children(GTK_TREE_MODEL(gebr.ui_project_line->store), iter)) {
+				gboolean all_line_selected = TRUE;
+				GtkTreeIter i_iter;
+				gebr_gui_gtk_tree_model_foreach_child(i_iter, iter, GTK_TREE_MODEL(gebr.ui_project_line->store)) {
+					gboolean found = g_list_find_custom(selected, &i_iter, (GCompareFunc)compare_func) != NULL ? TRUE : FALSE;
+					if (!found) {
+						all_line_selected = FALSE;
+						break;
+					}
+				}
+				can_delete_project = all_line_selected;
+			} else 
+				can_delete_project = TRUE;
+
+			if (!can_delete_project)
+				project_delete(iter, TRUE); //will fail and show a message to the user
+		}
+
+	}
 }
 
 void project_line_free(void)

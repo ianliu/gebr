@@ -75,8 +75,9 @@ gboolean project_delete(GtkTreeIter * iter, gboolean warn_user)
 			   PL_FILENAME, &filename, -1);
 	gint nlines = gtk_tree_model_iter_n_children(GTK_TREE_MODEL(gebr.ui_project_line->store), iter);
 	if (nlines > 0) {
-		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Project '%s' still has %i lines."),
-			     gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(project)), nlines);
+		if (warn_user)
+			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Project '%s' still has %i lines."),
+				     gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(project)), nlines);
 		g_free(filename);
 		return FALSE;
 	}
