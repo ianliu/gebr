@@ -23,15 +23,44 @@
 
 struct _GebrTar {
 	gchar *tar_path;
-	gchar *uncompress_dir;
-	gchar **files;
+	gchar *extract_dir;
+	GList *files;
 };
 
-GebrTar *gebr_tar_new (void)
+GebrTar *gebr_tar_create (const gchar *path)
 {
 	GebrTar *self;
 	self = g_new0 (GebrTar, 1);
+	self->tar_path = g_strdup (path);
 	return self;
+}
+
+void gebr_tar_append (GebrTar *self, const gchar *path)
+{
+	self->files = g_list_append (self->files, g_strdup (path));
+}
+
+gboolean gebr_tar_compact (GebrTar *self, const gchar *root_dir)
+{
+	gchar *command;
+	GString *files;
+
+	files = g_string_new ("");
+	for (GList *i = self->files; i; i = i->next) {
+		gchar *file = i->data;
+		g_string_append_printf (files, "%s ", file);
+	}
+
+	command = g_strdup_printf ("tar czf %s -C %s %s",
+				   self->tar_path, root_dir, files->str);
+	g_string_free (files, TRUE);
+	if (!g_spawn_command_line_sync (command, NULL, NULL, NULL, NULL)) {
+		g_free (command);
+		return FALSE;
+	}
+
+	g_free (command);
+	return TRUE;
 }
 
 GebrTar *gebr_tar_new_from_file (const gchar *path)
@@ -42,20 +71,24 @@ GebrTar *gebr_tar_new_from_file (const gchar *path)
 	return self;
 }
 
-gboolean gebr_tar_uncompress (GebrTar *self)
+gboolean gebr_tar_extract (GebrTar *self)
 {
 	GString *tmp;
 	gchar *command;
 	gchar *output;
+	gchar **files;
 
 	g_return_val_if_fail (self->tar_path != NULL, FALSE);
 
+	if (!g_file_test (self->tar_path, G_FILE_TEST_EXISTS))
+		return FALSE;
+
 	tmp = gebr_temp_directory_create ();
-	self->uncompress_dir = g_string_free (tmp, FALSE);
+	self->extract_dir = g_string_free (tmp, FALSE);
 
 	command = g_strdup_printf ("tar zxfv %s -C %s",
 				   self->tar_path,
-				   self->uncompress_dir);
+				   self->extract_dir);
 
 	if (!g_spawn_command_line_sync (command, &output,
 					NULL, NULL, NULL)) {
@@ -63,8 +96,12 @@ gboolean gebr_tar_uncompress (GebrTar *self)
 		return FALSE;
 	}
 
-	self->files = g_strsplit (output, "\n", 0);
+	files = g_strsplit (output, "\n", 0);
+	for (int i = 0; files[i]; i++)
+		self->files = g_list_prepend (self->files, files[i]);
+	self->files = g_list_reverse (self->files);
 
+	g_free (files);
 	g_free (command);
 	g_free (output);
 	return TRUE;
@@ -75,19 +112,18 @@ void gebr_tar_foreach (GebrTar *self, GebrTarFunc func, gpointer data)
 	gchar *file;
 	gchar *abs;
 
-	if (!self->uncompress_dir)
+	if (!self->extract_dir)
 		return;
 
-	for (int i = 0; self->files[i]; i++) {
-		file = self->files[i];
+	for (GList *i = self->files; i; i = i->next) {
+		file = i->data;
 
 		if (strlen (file) == 0)
 			continue;
 
-		abs = g_build_path ("/", self->uncompress_dir, file, NULL);
+		abs = g_build_path ("/", self->extract_dir, file, NULL);
 		func (abs, data);
 		g_free (abs);
-		file = self->files[i];
 	}
 }
 
@@ -112,9 +148,12 @@ static void remove_dir (const gchar *directory)
 
 void gebr_tar_free (GebrTar *self)
 {
-	remove_dir (self->uncompress_dir);
+	if (self->extract_dir) {
+		remove_dir (self->extract_dir);
+		g_free (self->extract_dir);
+	}
+	g_list_foreach (self->files, (GFunc) g_free, NULL);
+	g_list_free (self->files);
 	g_free (self->tar_path);
-	g_free (self->uncompress_dir);
-	g_strfreev (self->files);
 	g_free (self);
 }
