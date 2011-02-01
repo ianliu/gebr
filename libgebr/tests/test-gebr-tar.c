@@ -74,6 +74,8 @@ void test_gebr_tar_compact (void)
 
 	g_assert (gebr_tar_compact (tar, TEST_SRCDIR) == TRUE);
 	g_assert (g_file_test (path, G_FILE_TEST_EXISTS) == TRUE);
+
+	gebr_tar_free (tar);
 }
 
 int main(int argc, char *argv[])
