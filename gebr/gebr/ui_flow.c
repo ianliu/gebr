@@ -119,8 +119,8 @@ void flow_add_program_sequence_to_view(GebrGeoXmlSequence * program, gboolean se
 void flow_program_check_sensitiveness (void)
 {
 	GebrGeoXmlSequence *program;
-	GebrGeoXmlProgram *first_program;
-	GebrGeoXmlProgram *last_program;
+	GebrGeoXmlProgram *first_program = NULL;
+	GebrGeoXmlProgram *last_program = NULL;
 	gboolean has_some_error_output = FALSE;
 	gboolean has_configured = FALSE;
 
@@ -135,9 +135,9 @@ void flow_program_check_sensitiveness (void)
 			   FSEQ_SENSITIVE, FALSE, -1);
 
 	gebr_geoxml_flow_get_program(gebr.flow, &program, 0);
-	for (; program != NULL; gebr_geoxml_sequence_next(&program)){
+	for (; program != NULL; gebr_geoxml_sequence_next(&program)) {
 		if (gebr_geoxml_program_get_status (GEBR_GEOXML_PROGRAM(program)) == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED){
-			if (!has_configured){
+			if (!has_configured) {
 				first_program = GEBR_GEOXML_PROGRAM(program);
 				has_configured = TRUE;
 			}
@@ -148,7 +148,7 @@ void flow_program_check_sensitiveness (void)
 		}
 	}
 
-	if (has_configured){
+	if (has_configured) {
 		gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->input_iter,
 				   FSEQ_EDITABLE, gebr_geoxml_program_get_stdin(GEBR_GEOXML_PROGRAM(first_program)),
 				   FSEQ_SENSITIVE, gebr_geoxml_program_get_stdin(GEBR_GEOXML_PROGRAM(first_program)), -1);
