@@ -779,7 +779,7 @@ static gchar * generate_help_from_template(GebrGeoXmlObject * object)
 
 	program = NULL;
 	prepared_html = g_string_new (NULL);
-	template = fopen (DEBR_DATA_DIR "help-template.html", "r");
+	template = fopen (LIBGEBR_HELP_TEMPLATE, "r");
 
 	if (!template) {
 		debr_message (GEBR_LOG_ERROR, _("Unable to open template. Please check your installation."));
