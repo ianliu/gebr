@@ -210,19 +210,22 @@ static gchar *help_load (GebrGeoXmlObject *object, const gchar * fname)
 		return NULL;
 	}
 
-	/* ensure UTF-8 encoding */
-	if (g_utf8_validate(html_content, -1, NULL) == FALSE) {
+	/*
+	 * Ensures UTF-8 encoding
+	 */
+	if (!g_utf8_validate (html_content, -1, NULL)) {
 		converted = gebr_locale_to_utf8 (html_content);
 		g_free (html_content);
 		if (!converted) {
 			g_warning ("Please change the help encoding to UTF-8");
 			return NULL;
-		}
+		} else
+			html_content = converted;
 	}
 
-	GString *tmpl = g_string_new (converted);
+	GString *tmpl = g_string_new (html_content);
 	content = gebr_geoxml_tmpl_get (tmpl, "cnt");
-	g_free (converted);
+	g_free (html_content);
 
 	if (content)
 		g_string_free (tmpl, TRUE);
