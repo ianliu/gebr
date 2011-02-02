@@ -1921,6 +1921,99 @@ void menu_help_show_clicked(void)
 }
 
 /**
+ * FIXME: is this really necessary with __gebr_geoxml_program_parameter_set_all_value available?
+ * Cleanup (if group recursively) parameters value.
+ * If _use_value_as_default_ is TRUE the value is made default
+ */
+static void flow_export_parameters_cleanup (GebrGeoXmlParameters * parameters,
+					    gboolean use_value_as_default)
+{
+	GebrGeoXmlSequence *seq;
+	GebrGeoXmlParameter *par;
+	GebrGeoXmlProgramParameter *ppar;
+
+	seq = gebr_geoxml_parameters_get_first_parameter (parameters);
+	for (; seq != NULL; gebr_geoxml_sequence_next (&seq)) {
+		par = GEBR_GEOXML_PARAMETER (seq);
+		ppar = GEBR_GEOXML_PROGRAM_PARAMETER (seq);
+
+		if (!gebr_geoxml_parameter_get_is_program_parameter (par)) {
+			GebrGeoXmlSequence *instance;
+
+			gebr_geoxml_parameter_group_get_instance(GEBR_GEOXML_PARAMETER_GROUP(seq), &instance, 0);
+			for (; instance != NULL; gebr_geoxml_sequence_next(&instance))
+				flow_export_parameters_cleanup(GEBR_GEOXML_PARAMETERS(instance), use_value_as_default);
+			return;
+		}
+
+		GebrGeoXmlSequence *value;
+
+		if (use_value_as_default) {
+			GebrGeoXmlSequence *default_value;
+
+			gebr_geoxml_program_parameter_get_value(ppar, FALSE, &value, 0);
+			gebr_geoxml_program_parameter_get_value(ppar, TRUE, &default_value, 0);
+			for (; value != NULL; gebr_geoxml_sequence_next(&value), gebr_geoxml_sequence_next(&default_value)) {
+				const gchar *value_str;
+
+				value_str = gebr_geoxml_value_sequence_get (GEBR_GEOXML_VALUE_SEQUENCE (value));
+
+				if (default_value == NULL)
+					default_value = GEBR_GEOXML_SEQUENCE(gebr_geoxml_program_parameter_append_value (ppar, TRUE));
+				gebr_geoxml_value_sequence_set(GEBR_GEOXML_VALUE_SEQUENCE(default_value), value_str);
+			}
+
+			/* remove extras default values */
+			while (default_value != NULL) {
+				GebrGeoXmlSequence *tmp;
+
+				tmp = default_value;
+				gebr_geoxml_sequence_next(&tmp);
+				gebr_geoxml_sequence_remove(default_value);
+				default_value = tmp;
+			}
+		}
+
+		gebr_geoxml_program_parameter_get_value(GEBR_GEOXML_PROGRAM_PARAMETER(seq),
+							FALSE, &value, 0);
+		for (; value != NULL; gebr_geoxml_sequence_next(&value))
+			gebr_geoxml_value_sequence_set(GEBR_GEOXML_VALUE_SEQUENCE(value), "");
+	}
+}
+
+gboolean menu_create_from_flow (const gchar *path, gboolean use_value)
+{
+	GebrGeoXmlDocument *flow;
+	GebrGeoXmlSequence *program;
+
+	if (gebr_geoxml_document_load (&flow, path, TRUE, NULL)) {
+		debr_message (GEBR_LOG_ERROR, _("Could not load flow at '%s'"), path);
+		return FALSE;
+	}
+
+	gebr_geoxml_flow_get_program (GEBR_GEOXML_FLOW (flow), &program, 0);
+	for (; program != NULL; gebr_geoxml_sequence_next(&program)) {
+		flow_export_parameters_cleanup(gebr_geoxml_program_get_parameters(GEBR_GEOXML_PROGRAM(program)),
+					       use_value);
+		gebr_geoxml_program_set_status(GEBR_GEOXML_PROGRAM(program), GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED);
+	}
+
+	gebr_geoxml_flow_io_set_input(GEBR_GEOXML_FLOW (flow), "");
+	gebr_geoxml_flow_io_set_output(GEBR_GEOXML_FLOW (flow), "");
+	gebr_geoxml_flow_io_set_error(GEBR_GEOXML_FLOW (flow), "");
+	gebr_geoxml_flow_set_date_last_run(GEBR_GEOXML_FLOW (flow), "");
+	gebr_geoxml_document_set_date_created(flow, gebr_iso_date());
+	gebr_geoxml_document_set_date_modified(flow, gebr_iso_date());
+	gebr_geoxml_document_set_help(flow, "");
+
+	menu_new_from_menu(GEBR_GEOXML_FLOW (flow), FALSE);
+	debr_message(GEBR_LOG_INFO, _("Flow '%s' imported as menu."),
+		     (gchar *)gebr_geoxml_document_get_title(flow));
+
+	return TRUE;
+}
+
+/**
  * Calls \ref debr_help_edit with menu's help.
  * After help was edited in a external browser, save it back to XML.
  */
@@ -1962,7 +2055,7 @@ static void menu_category_changed(void)
  * \internal
  * Update category list upon rename.
  */
-static gboolean
+	static gboolean
 menu_category_renamed(GebrGuiValueSequenceEdit * sequence_edit, const gchar * old_text, const gchar * new_text)
 {
 	menu_category_removed(sequence_edit, old_text);
@@ -2002,7 +2095,7 @@ static void menu_category_removed(GebrGuiValueSequenceEdit * sequence_edit, cons
  * \internal
  * Sets the tooltip for the menu entries as its path on the file system.
  */
-static gboolean
+	static gboolean
 menu_on_query_tooltip(GtkTreeView * tree_view, GtkTooltip * tooltip, GtkTreeIter * iter, GtkTreeViewColumn * column,
 		      gpointer user_data)
 {
@@ -2233,7 +2326,7 @@ static void debr_menu_sync_help_edit_window(GtkTreeIter * iter, gpointer object)
 		g_hash_table_insert(debr.help_edit_windows, object, help_edit_window);
 
 		/* Time to destroy the programs.
-		 */
+		*/
 		gebr_geoxml_flow_get_program(old_menu, &program, 0);
 		while (program) {
 			help_edit_window = g_hash_table_lookup(debr.help_edit_windows, program);
@@ -2291,8 +2384,8 @@ static void update_revert_sensitiveness(gpointer xmlpointer)
 		GtkAction * action;
 
 		path = g_strconcat (gebr_gui_help_edit_window_get_tool_bar_mark (window),
-			    "/PreviewAction",
-			    NULL);
+				    "/PreviewAction",
+				    NULL);
 		manager = gebr_gui_help_edit_window_get_ui_manager(window);
 		action = gtk_ui_manager_get_action(manager, path);
 		if (!gtk_toggle_action_get_active (GTK_TOGGLE_ACTION(action))){

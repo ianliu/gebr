@@ -22,6 +22,7 @@
 #include <glib/gi18n.h>
 #include <libgebr/date.h>
 #include <libgebr/utils.h>
+#include <libgebr/gebr-tar.h>
 #include <libgebr/gui/gui.h>
 #include <libgebr/geoxml/gebr-geoxml-validate.h>
 
@@ -287,69 +288,9 @@ void on_menu_delete_activate(void)
 
 void on_menu_create_from_flow_activate(void)
 {
-	/**
-	 * \internal
-	 * FIXME: is this really necessary with __gebr_geoxml_program_parameter_set_all_value available?
-	 * Cleanup (if group recursively) parameters value.
-	 * If _use_value_as_default_ is TRUE the value is made default
-	 */
-	void flow_export_parameters_cleanup(GebrGeoXmlParameters * parameters, gboolean use_value_as_default)
-	{
-		GebrGeoXmlSequence *parameter;
-
-		parameter = gebr_geoxml_parameters_get_first_parameter(parameters);
-		for (; parameter != NULL; gebr_geoxml_sequence_next(&parameter)) {
-			if (gebr_geoxml_parameter_get_is_program_parameter(GEBR_GEOXML_PARAMETER(parameter)) == TRUE) {
-				GebrGeoXmlSequence *value;
-
-				if (use_value_as_default == TRUE) {
-					GebrGeoXmlSequence *default_value;
-
-					gebr_geoxml_program_parameter_get_value(GEBR_GEOXML_PROGRAM_PARAMETER(parameter),
-										FALSE, &value, 0);
-					gebr_geoxml_program_parameter_get_value(GEBR_GEOXML_PROGRAM_PARAMETER(parameter),
-										TRUE, &default_value, 0);
-					for (; value != NULL; gebr_geoxml_sequence_next(&value),
-					     gebr_geoxml_sequence_next(&default_value)) {
-						if (default_value == NULL)
-							default_value =
-								GEBR_GEOXML_SEQUENCE(gebr_geoxml_program_parameter_append_value
-										     (GEBR_GEOXML_PROGRAM_PARAMETER(parameter),
-										      TRUE));
-						gebr_geoxml_value_sequence_set(GEBR_GEOXML_VALUE_SEQUENCE(default_value),
-									       gebr_geoxml_value_sequence_get
-									       (GEBR_GEOXML_VALUE_SEQUENCE(value)));
-					}
-
-					/* remove extras default values */
-					while (default_value != NULL) {
-						GebrGeoXmlSequence *tmp;
-
-						tmp = default_value;
-						gebr_geoxml_sequence_next(&tmp);
-						gebr_geoxml_sequence_remove(default_value);
-						default_value = tmp;
-					}
-				}
-
-				gebr_geoxml_program_parameter_get_value(GEBR_GEOXML_PROGRAM_PARAMETER(parameter),
-									FALSE, &value, 0);
-				for (; value != NULL; gebr_geoxml_sequence_next(&value))
-					gebr_geoxml_value_sequence_set(GEBR_GEOXML_VALUE_SEQUENCE(value), "");
-			} else {	/* a group, time for recursion! */
-				GebrGeoXmlSequence *instance;
-
-				gebr_geoxml_parameter_group_get_instance(GEBR_GEOXML_PARAMETER_GROUP(parameter), &instance, 0);
-				for (; instance != NULL; gebr_geoxml_sequence_next(&instance))
-					flow_export_parameters_cleanup(GEBR_GEOXML_PARAMETERS(instance), use_value_as_default);
-			}
-		}
-	}
-
+	gboolean use_value;
 	GtkWidget *dialog;
 	GtkFileFilter *file_filter;
-	GebrGeoXmlFlow *flow;
-	gboolean use_value;
 
 	/* 
 	 * Open flow.
@@ -358,48 +299,31 @@ void on_menu_create_from_flow_activate(void)
 					     GTK_STOCK_OPEN, GTK_RESPONSE_YES,
 					     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
 	file_filter = gtk_file_filter_new();
-	gtk_file_filter_set_name(file_filter, _("Flow files (*.flw)"));
+	gtk_file_filter_set_name(file_filter, _("Flow files (*.flw, *.flwz)"));
 	gtk_file_filter_add_pattern(file_filter, "*.flw");
+	gtk_file_filter_add_pattern(file_filter, "*.flwz");
 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), file_filter);
 	gtk_widget_show(dialog);
 	if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_YES)
 		goto out;
 
-	gchar *tmp = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
-	if (gebr_geoxml_document_load((GebrGeoXmlDocument**)&flow, tmp, TRUE, NULL)) {
-		debr_message(GEBR_LOG_ERROR, _("Could not load flow at '%s'"), tmp);
-		g_free(tmp);
-		goto out;
-	}
-	g_free(tmp);
+	use_value = gebr_gui_confirm_action_dialog(_("Default values"),
+						   _("Do you want to use your parameter's values as default values?"));
 
-	/* 
-	 * Ask if default values should be used.
-	 */
-	use_value = gebr_gui_confirm_action_dialog(_("Default values"), _("Do you want to use your parameter's values as default values?"));
+	gchar *path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
 
-	/*
-	 * Flow to menu transformations.
-	 */
-	GebrGeoXmlSequence *program;
-	gebr_geoxml_flow_get_program(flow, &program, 0);
-	for (; program != NULL; gebr_geoxml_sequence_next(&program)) {
-		flow_export_parameters_cleanup(gebr_geoxml_program_get_parameters(GEBR_GEOXML_PROGRAM(program)),
-					       use_value);
-		gebr_geoxml_program_set_status(GEBR_GEOXML_PROGRAM(program), GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED);
-	}
+	if (g_str_has_suffix (path, ".flwz")) {
+		GebrTar *tar;
+		tar = gebr_tar_new_from_file (path);
+		if (!gebr_tar_extract (tar))
+			debr_message (GEBR_LOG_ERROR, _("Could not create menu from flow file %s"), path);
+		else
+			gebr_tar_foreach (tar, (GebrTarFunc) menu_create_from_flow, GINT_TO_POINTER (use_value));
+		gebr_tar_free (tar);
+	} else if (!menu_create_from_flow (path, use_value))
+			debr_message (GEBR_LOG_ERROR, _("Could not create menu from flow file %s"), path);
 
-	gebr_geoxml_flow_io_set_input(flow, "");
-	gebr_geoxml_flow_io_set_output(flow, "");
-	gebr_geoxml_flow_io_set_error(flow, "");
-	gebr_geoxml_flow_set_date_last_run(flow, "");
-	gebr_geoxml_document_set_date_created(GEBR_GEOXML_DOC(flow), gebr_iso_date());
-	gebr_geoxml_document_set_date_modified(GEBR_GEOXML_DOC(flow), gebr_iso_date());
-	gebr_geoxml_document_set_help(GEBR_GEOXML_DOC(flow), "");
-
-	menu_new_from_menu(flow, FALSE);
-	debr_message(GEBR_LOG_INFO, _("Flow '%s' imported as menu."),
-		     (gchar *)gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(flow)));
+	g_free (path);
 
 out:
 	gtk_widget_destroy(dialog);

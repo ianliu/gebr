@@ -376,6 +376,8 @@ void menu_help_edit_clicked(void);
  */
 void menu_help_show_clicked(void);
 
+gboolean menu_create_from_flow (const gchar *path, gboolean use_value);
+
 //======================================================================================================================
 // Getters & Setters												       =
 //======================================================================================================================
