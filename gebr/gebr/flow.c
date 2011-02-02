@@ -154,20 +154,45 @@ void flow_delete(gboolean confirm)
 		flow_browse_select_iter(&iter);
 }
 
+static gboolean flow_import_single (const gchar *path)
+{
+	gchar *new_title;
+	const gchar *title;
+	GtkTreeIter iter;
+	GebrGeoXmlDocument *flow;
+	GebrGeoXmlLineFlow *line_flow;
+
+	if (document_load_path (&flow, path))
+		return FALSE;
+
+	title = gebr_geoxml_document_get_title (flow);
+
+	gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Flow '%s' imported to line '%s' from file '%s'."),
+		     title, gebr_geoxml_document_get_title (GEBR_GEOXML_DOC (gebr.line)), path);
+
+	document_import (flow);
+	line_flow = gebr_geoxml_line_append_flow (gebr.line, gebr_geoxml_document_get_filename (flow));
+	document_save(GEBR_GEOXML_DOC(gebr.line), FALSE, FALSE);
+	iter = line_append_flow_iter(GEBR_GEOXML_FLOW (flow), line_flow);
+
+	new_title = g_strdup_printf (_("%s (Imported)"), title);
+	gtk_list_store_set(gebr.ui_flow_browse->store, &iter, FB_TITLE, new_title, -1);
+	gebr_geoxml_document_set_title(flow, new_title);
+	document_save(flow, FALSE, FALSE);
+	g_free(new_title);
+
+	return TRUE;
+}
+
 void flow_import(void)
 {
+	gchar *path;
 	GtkWidget *chooser_dialog;
 	GtkFileFilter *file_filter;
-	gchar *dir;
-
-	gchar *flow_title;
-
-	GebrGeoXmlFlow *imported_flow;
 
 	if (!project_line_get_selected(NULL, LineSelection))
 		return;
 
-	/* assembly a file chooser dialog */
 	chooser_dialog = gtk_file_chooser_dialog_new(_("Choose filename to open"),
 						     GTK_WINDOW(gebr.window),
 						     GTK_FILE_CHOOSER_ACTION_OPEN,
@@ -175,46 +200,31 @@ void flow_import(void)
 						     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
 	gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(chooser_dialog), TRUE);
 	file_filter = gtk_file_filter_new();
-	gtk_file_filter_set_name(file_filter, _("Flow files (*.flw)"));
+	gtk_file_filter_set_name(file_filter, _("Flow files (*.flw, *.flwz)"));
 	gtk_file_filter_add_pattern(file_filter, "*.flw");
+	gtk_file_filter_add_pattern(file_filter, "*.flwz");
 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(chooser_dialog), file_filter);
 
-	/* show file chooser */
 	gtk_widget_show(chooser_dialog);
 	if (gtk_dialog_run(GTK_DIALOG(chooser_dialog)) != GTK_RESPONSE_YES)
 		goto out;
 
-	/* load flow */
-	dir = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser_dialog));
-	if (document_load_path((GebrGeoXmlDocument**)(&imported_flow), dir))
-		goto out2;
+	path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser_dialog));
+	if (g_str_has_suffix (path, ".flwz")) {
+		GebrTar *tar;
+		tar = gebr_tar_new_from_file (path);
+		if (!gebr_tar_extract (tar))
+			gebr_message (GEBR_LOG_ERROR, TRUE, TRUE,
+				      _("Could not import flow file %s"), path);
+		else
+			gebr_tar_foreach (tar, (GebrTarFunc) flow_import_single, NULL);
+	} else if (!flow_import_single (path))
+		gebr_message (GEBR_LOG_ERROR, TRUE, TRUE,
+			      _("Could not import flow file %s"), path);
 
-	/* initialization */
-	flow_title = (gchar*)gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(imported_flow));
-
-	/* feedback */
-	gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Flow '%s' imported to line '%s' from file '%s'."),
-		     flow_title, gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(gebr.line)), dir);
-
-	document_import(GEBR_GEOXML_DOCUMENT(imported_flow));
-	/* and add it to the line */
-	GebrGeoXmlLineFlow * line_flow = gebr_geoxml_line_append_flow(gebr.line, gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(imported_flow)));
-	document_save(GEBR_GEOXML_DOC(gebr.line), FALSE, FALSE);
-	/* and to the GUI */
-	GtkTreeIter iter = line_append_flow_iter(imported_flow, line_flow);
-	flow_browse_select_iter(&iter);
-
-	GString *new_title = g_string_new(NULL);
-	g_string_printf(new_title, _("%s (Imported)"), gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(imported_flow)));
-	gtk_list_store_set(gebr.ui_flow_browse->store, &iter, FB_TITLE, new_title->str, -1);
-	gebr_geoxml_document_set_title(GEBR_GEOXML_DOC(imported_flow), new_title->str);
-	g_string_free(new_title, TRUE);
-
-
-	document_save(GEBR_GEOXML_DOC(imported_flow), FALSE, FALSE);
-
-out2:	g_free(dir);
-out:	gtk_widget_destroy(chooser_dialog);
+	g_free(path);
+out:
+	gtk_widget_destroy(chooser_dialog);
 }
 
 void flow_export(void)
