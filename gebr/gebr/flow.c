@@ -25,10 +25,11 @@
 #include <glib/gi18n.h>
 #include <libgebr/date.h>
 #include <libgebr/utils.h>
+#include <libgebr/gebr-tar.h>
 #include <libgebr/geoxml/geoxml.h>
 #include <libgebr/comm/comm.h>
+#include <libgebr/gui/gui.h>
 #include <libgebr/gui/gebr-gui-utils.h>
-#include <libgebr/gui/gebr-gui-save-dialog.h>
 
 #include "flow.h"
 #include "line.h"
@@ -218,59 +219,127 @@ out:	gtk_widget_destroy(chooser_dialog);
 
 void flow_export(void)
 {
+	GList *rows;
+	GString *tempdir;
 	GString *title;
-	gchar *flow_filename;
-
-	GtkWidget *chooser_dialog;
-	GtkWidget *check_box;
-	GtkFileFilter *file_filter;
-	gchar *tmp;
-	gchar *filename;
-
-	GtkTreeIter iter;
 	GebrGeoXmlDocument *flow;
+	GebrTar *tar;
+	GtkFileFilter *file_filter;
+	GtkTreeModel *model;
+	GtkTreeSelection *selection;
+	GtkWidget *check_box;
+	GtkWidget *chooser_dialog;
+	gboolean active;
+	gboolean have_flow = FALSE;
+	gboolean error = FALSE;
+	gchar *filename;
+	gchar *flow_filename;
+	gchar *tmp;
+	gint len;
 
-	if (!flow_browse_get_selected(&iter, TRUE))
+	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (gebr.ui_flow_browse->view));
+	rows = gtk_tree_selection_get_selected_rows (selection, &model);
+	len = g_list_length (rows);
+
+	if (!rows) {
+		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No flow selected"));
 		return;
-	flow_browse_single_selection();
+	}
 
 	title = g_string_new(NULL);
-	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter, FB_FILENAME, &flow_filename, -1);
-	if (document_load((GebrGeoXmlDocument**)(&flow), flow_filename, FALSE))
-		goto out;
 
-	/* run file chooser */
-	g_string_printf(title, _("Choose filename to save flow '%s'"), gebr_geoxml_document_get_title(flow));
-	check_box = gtk_check_button_new_with_label(_("Make this flow user-independent."));
+	if (len > 1)
+		g_string_printf (title, "Choose filename to save selected flows");
+	else {
+		GtkTreeIter iter;
+		GtkTreePath *path = rows->data;
+
+		gtk_tree_model_get_iter (model, &iter, path);
+		gtk_tree_model_get (model, &iter, FB_FILENAME, &flow_filename, -1);
+
+		if (document_load (&flow, flow_filename, FALSE))
+			goto out;
+
+		g_string_printf (title, _("Choose filename to save flow '%s'"),
+				 gebr_geoxml_document_get_title (flow));
+
+		document_free (flow);
+	}
+
+	check_box = gtk_check_button_new_with_label(_("Make this flow user-independent"));
 	chooser_dialog = gebr_gui_save_dialog_new(title->str, GTK_WINDOW(gebr.window));
-	gebr_gui_save_dialog_set_default_extension(GEBR_GUI_SAVE_DIALOG(chooser_dialog), ".flw");
+	gebr_gui_save_dialog_set_default_extension(GEBR_GUI_SAVE_DIALOG(chooser_dialog), ".flwz");
 
 	file_filter = gtk_file_filter_new();
-	gtk_file_filter_set_name(file_filter, _("Flow files (*.flw)"));
-	gtk_file_filter_add_pattern(file_filter, "*.flw");
+	gtk_file_filter_set_name(file_filter, _("Flow files (*.flwz)"));
+	gtk_file_filter_add_pattern(file_filter, "*.flwz");
 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(chooser_dialog), file_filter);
 	gtk_file_chooser_set_extra_widget(GTK_FILE_CHOOSER(chooser_dialog), check_box);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_box), TRUE);
 
-	/* show file chooser */
 	tmp = gebr_gui_save_dialog_run(GEBR_GUI_SAVE_DIALOG(chooser_dialog));
 	if (!tmp)
 		goto out;
 
-	flow_set_paths_to(GEBR_GEOXML_FLOW(flow), gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(check_box)));
-	filename = g_path_get_basename(tmp);
+	filename = g_path_get_basename (tmp);
+	active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (check_box));
+	tempdir = gebr_temp_directory_create ();
+	tar = gebr_tar_create (tmp);
 
-	/* export current flow to disk */
-	gebr_geoxml_document_set_filename(flow, filename);
-	document_save_at(flow, tmp, FALSE, FALSE);
+	for (GList *i = rows; i; i = i->next) {
+		gchar *filepath;
+		GtkTreeIter iter;
+		GtkTreePath *path = i->data;
+		GebrGeoXmlDocument *doc;
 
-	gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Flow '%s' exported to %s."),
-		     (gchar *) gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(flow)), tmp);
+		gtk_tree_model_get_iter (model, &iter, path);
+		gtk_tree_model_get (model, &iter,
+				    FB_FILENAME, &flow_filename,
+				    FB_XMLPOINTER, &doc,
+				    -1);
 
-	/* frees */
+		flow = gebr_geoxml_document_clone (doc);
+		if (!flow) {
+			gebr_message (GEBR_LOG_ERROR, FALSE, TRUE, _("Could not clone flow %s"), flow_filename);
+			error = TRUE;
+			continue;
+		}
+
+		flow_set_paths_to(GEBR_GEOXML_FLOW(flow), active);
+		filepath = g_build_path ("/", tempdir->str, flow_filename, NULL);
+
+		if (!document_save_at (flow, filepath, FALSE, FALSE)) {
+			gebr_message (GEBR_LOG_ERROR, FALSE, TRUE,
+				      _("Could not save flow %s at %s"),
+				      flow_filename, tempdir->str);
+			error = TRUE;
+			g_free (filepath);
+			continue;
+		}
+
+		gebr_tar_append (tar, flow_filename);
+		document_free (flow);
+		have_flow = TRUE;
+		g_free (filepath);
+	}
+
+	if (have_flow && gebr_tar_compact (tar, tempdir->str)) {
+		gchar *msg;
+		if (error)
+			msg = _("Exported selected flow(s) into %s with error. See log file for more information.");
+		else
+			msg = _("Exported selected flow(s) into %s.");
+		gebr_message (GEBR_LOG_INFO, TRUE, TRUE, msg, tmp);
+	} else {
+		gebr_message (GEBR_LOG_ERROR, TRUE, TRUE,
+			      _("Could not export flow(s). See log file for more information."));
+	}
+
+	gebr_temp_directory_destroy (tempdir);
+
 	g_free(tmp);
 	g_free(filename);
-	document_free(flow);
+	gebr_tar_free (tar);
 
 out:
 	g_free(flow_filename);
