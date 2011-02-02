@@ -133,6 +133,7 @@ gchar *gebr_geoxml_object_generate_help (GebrGeoXmlObject *object, const gchar *
 	} else {
 		is_program = FALSE;
 		doc = GEBR_GEOXML_DOCUMENT (object);
+		prog = NULL;
 	}
 
 	tmpl = g_string_new (tmpl_str);
