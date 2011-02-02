@@ -249,7 +249,7 @@ void get_program_count(GtkTreeIter * iter, gint * count)
 
 void program_new()
 {
-	guint programs_count = 1;
+	gint programs_count = 1;
 
 	GtkTreeIter iter;
 	GtkTreeIter iter_menu;
