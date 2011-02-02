@@ -124,6 +124,16 @@ void flow_program_check_sensitiveness (void)
 	gboolean has_some_error_output = FALSE;
 	gboolean has_configured = FALSE;
 
+	gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->input_iter,
+			   FSEQ_EDITABLE, FALSE,
+			   FSEQ_SENSITIVE, FALSE, -1);
+	gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->output_iter,
+			   FSEQ_EDITABLE, FALSE,
+			   FSEQ_SENSITIVE, FALSE, -1);
+	gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->error_iter,
+			   FSEQ_EDITABLE, FALSE,
+			   FSEQ_SENSITIVE, FALSE, -1);
+
 	gebr_geoxml_flow_get_program(gebr.flow, &program, 0);
 	for (; program != NULL; gebr_geoxml_sequence_next(&program)){
 		if (gebr_geoxml_program_get_status (GEBR_GEOXML_PROGRAM(program)) == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED){
