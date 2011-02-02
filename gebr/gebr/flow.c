@@ -218,6 +218,7 @@ void flow_import(void)
 				      _("Could not import flow file %s"), path);
 		else
 			gebr_tar_foreach (tar, (GebrTarFunc) flow_import_single, NULL);
+		gebr_tar_free (tar);
 	} else if (!flow_import_single (path))
 		gebr_message (GEBR_LOG_ERROR, TRUE, TRUE,
 			      _("Could not import flow file %s"), path);
