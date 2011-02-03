@@ -223,15 +223,7 @@ static gchar *help_load (GebrGeoXmlObject *object, const gchar * fname)
 			html_content = converted;
 	}
 
-	GString *tmpl = g_string_new (html_content);
-	content = gebr_geoxml_tmpl_get (tmpl, "cnt");
-	g_free (html_content);
-
-	if (content)
-		g_string_free (tmpl, TRUE);
-	else
-		content = g_string_free (tmpl, FALSE);
-
+	content = gebr_geoxml_object_get_help_content_from_str (html_content);
 	help = gebr_geoxml_object_generate_help (object, content);
 	g_free (content);
 
@@ -240,31 +232,8 @@ static gchar *help_load (GebrGeoXmlObject *object, const gchar * fname)
 
 static gchar *help_update (GebrGeoXmlObject *object)
 {
-	gchar *help;
-	const gchar *oldhelp;
-	GebrGeoXmlObjectType type;
-
-	type = gebr_geoxml_object_get_type (object);
-
-	g_return_val_if_fail (type == GEBR_GEOXML_OBJECT_TYPE_PROGRAM ||
-			      type == GEBR_GEOXML_OBJECT_TYPE_FLOW,
-			      NULL);
-
-	if (type == GEBR_GEOXML_OBJECT_TYPE_FLOW)
-		oldhelp = gebr_geoxml_document_get_help (GEBR_GEOXML_DOCUMENT (object));
-	else
-		oldhelp = gebr_geoxml_program_get_help (GEBR_GEOXML_PROGRAM (object));
-
-	GString *tmpl = g_string_new (oldhelp);
-	gchar *content = gebr_geoxml_tmpl_get (tmpl, "cnt");
-
-	if (content)
-		g_string_free (tmpl, TRUE);
-	else
-		content = g_string_free (tmpl, FALSE);
-
-	help = gebr_geoxml_object_generate_help (object, content);
+	gchar *content = gebr_geoxml_object_get_help_content (object);
+	gchar *help = gebr_geoxml_object_generate_help (object, content);
 	g_free (content);
-
 	return help;
 }

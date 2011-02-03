@@ -435,11 +435,17 @@ const gchar *gebr_validate_int(const gchar * text_value, const gchar * min, cons
 {
 	static gchar number[31];
 	gdouble value;
+	gchar * endptr = NULL;
+	size_t len = 0;
 
-	if (strlen(text_value) == 0)
+	if ((len = strlen(text_value)) == 0)
 		return "";
 
-	value = g_ascii_strtod(text_value, NULL);
+	value = g_ascii_strtod(text_value, &endptr);
+
+	if (endptr - text_value	!= len)
+		return "";
+
 	g_ascii_dtostr(number, 30, round(value));
 
 	if (min != NULL && strlen(min) && value < atof(min))
