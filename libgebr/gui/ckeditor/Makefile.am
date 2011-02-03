@@ -15,13 +15,15 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 include $(top_srcdir)/Makefile.decl
 
-ckeditordirectory = $(DESTDIR)/$(datadir)/libgebr
+CKEDITORDIR = $(DESTDIR)$(datadir)/libgebr
 
 install-data-local:
-	find $(srcdir)/ckeditor \( ! -regex '.*/\..*' \) -type d -exec ${INSTALL_SCRIPT} -d {} ${ckeditordirectory}/{} \;
-	find $(srcdir)/ckeditor \( ! -regex '.*/\..*' \) -type f -print -exec ${INSTALL_DATA} {} ${ckeditordirectory}/{} \;
+	(cd $(srcdir); \
+	 find ckeditor -type d -exec ${INSTALL_SCRIPT} -d $(CKEDITORDIR)/{} \; ; \
+	 find ckeditor -type f -exec ${INSTALL_DATA} {} $(CKEDITORDIR)/{} \;)
+
+dist-hook:
+	( cp -Rp $(srcdir)/ckeditor $(distdir) )
 
 uninstall-hook:
 	( cd $(DESTDIR)$(datadir)/libgebr && rm -r ckeditor )
-
-EXTRA_DIST = ckeditor
