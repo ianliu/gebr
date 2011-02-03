@@ -100,5 +100,21 @@ GebrGeoXmlObject *gebr_geoxml_object_copy(GebrGeoXmlObject * object);
  */
 gchar *gebr_geoxml_object_generate_help (GebrGeoXmlObject *object, const gchar *content);
 
+/**
+ * gebr_geoxml_object_get_help_content:
+ * @object:
+ *
+ * Returns: A newly allocated string containing the content of @object<!-- --!>'s help.
+ */
+gchar *gebr_geoxml_object_get_help_content (GebrGeoXmlObject *object);
+
+/**
+ * gebr_geoxml_object_get_help_content_from_str:
+ * @str:
+ *
+ * Returns: A newly allocated string containing the content of @str.
+ */
+gchar *gebr_geoxml_object_get_help_content_from_str (const gchar *str);
+
 G_END_DECLS
 #endif				//__GEBR_GEOXML_OBJECT_H

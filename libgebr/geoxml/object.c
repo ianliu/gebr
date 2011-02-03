@@ -200,3 +200,54 @@ gchar *gebr_geoxml_object_generate_help (GebrGeoXmlObject *object, const gchar *
 
 	return g_string_free (tmpl, FALSE);
 }
+
+gchar *gebr_geoxml_object_get_help_content (GebrGeoXmlObject *object)
+{
+	const gchar *help;
+	GebrGeoXmlObjectType type;
+
+	g_return_val_if_fail (object != NULL, NULL);
+
+	type = gebr_geoxml_object_get_type (object);
+
+	g_return_val_if_fail (type == GEBR_GEOXML_OBJECT_TYPE_FLOW ||
+			      type == GEBR_GEOXML_OBJECT_TYPE_PROGRAM,
+			      NULL);
+
+	if (type == GEBR_GEOXML_OBJECT_TYPE_FLOW)
+		help = gebr_geoxml_document_get_help (GEBR_GEOXML_DOCUMENT (object));
+	else
+		help = gebr_geoxml_program_get_help (GEBR_GEOXML_PROGRAM (object));
+
+	return gebr_geoxml_object_get_help_content_from_str (help);
+}
+
+gchar *gebr_geoxml_object_get_help_content_from_str (const gchar *str)
+{
+	gchar *inner;
+	gchar *content;
+	GRegex *regex;
+	GMatchInfo *match;
+	GString *html;
+
+	html = g_string_new (str);
+	inner = gebr_geoxml_tmpl_get (html, "cnt");
+	if (!inner) {
+		regex = g_regex_new ("<div class=\"content\">(.*?)<\\/div>",
+				     G_REGEX_DOTALL, 0, NULL);
+
+		if (g_regex_match (regex, html->str, 0, &match)) {
+			inner = g_match_info_fetch (match, 1);
+			content = g_strdup (inner);
+			g_match_info_free (match);
+		} else
+			content = g_strdup (html->str);
+		g_regex_unref (regex);
+	} else
+		content = g_strdup (inner);
+
+	g_string_free (html, TRUE);
+	g_free (inner);
+
+	return content;
+}
