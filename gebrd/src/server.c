@@ -339,20 +339,21 @@ gboolean server_parse_client_messages(struct client *client)
 				}
 				gebrd_queues_add_job_to(queue->str, job);
 			}
-			/* send job message (job is created -promoted from waiting server response- at the client) */
-			if (success == TRUE)
-				job_send_clients_job_notify(job);
-			else
-				job_notify(job, client); 
 			/* run or queue */
 			if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_REGULAR) {
 				if (!gebrd_queues_is_queue_busy(queue->str)) {
 					gebrd_queues_set_queue_busy(queue->str, TRUE);
 					gebrd_queues_step_queue(queue->str); //will call job_run_flow for immediately jobs
 				} else
-					job_notify_status(job, JOB_STATUS_QUEUED, gebr_iso_date());
+					job_set_status(job, JOB_STATUS_QUEUED);
 			} else //moab
 				job_run_flow(job);
+			/* send job message (job is created -promoted from waiting server response- at the client)
+			 * this must be done after job_run_flow or an job status has been set */
+			if (success == TRUE)
+				job_send_clients_job_notify(job);
+			else
+				job_notify(job, client); 
 
 			/* frees */
 			gebr_comm_protocol_split_free(arguments);

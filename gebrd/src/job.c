@@ -245,18 +245,6 @@ static void job_process_read_stderr(GebrCommProcess * process, struct job *job)
 
 /**
  * \internal
- */
-static void job_set_status(struct job *job, enum JobStatus status)
-{
-	const gchar * enum_to_string [] = {
-		"unknown", "queued", "failed", "running", "finished", "canceled", "requeued", "issued", NULL };
-
-	g_string_assign(job->status_string, enum_to_string[status]);
-	job->status = status;
-}
-
-/**
- * \internal
  * Change status in \p job structure
  * \see job_notify_status
  */
@@ -732,6 +720,16 @@ void job_free(struct job *job)
 	g_free(job);
 }
 
+void job_set_status(struct job *job, enum JobStatus status)
+{
+	const gchar * enum_to_string [] = {
+		"unknown", "queued", "failed", "running", "finished", "canceled", "requeued", "issued", NULL };
+
+	g_string_assign(job->status_string, enum_to_string[status]);
+	job->status = status;
+}
+
+
 void job_run_flow(struct job *job)
 {
 	GString *cmd_line;
@@ -773,9 +771,7 @@ void job_run_flow(struct job *job)
 			g_string_printf(issue,
 					_("Input file %s not present or not accessible.\n"),
 					gebr_geoxml_flow_io_get_input(job->flow));
-			g_string_append(job->issues,
-					       issue->str);
-			job_notify_status(job, JOB_STATUS_ISSUED, issue->str);
+			g_string_append(job->issues, issue->str);
 			job->user_finished = TRUE;
 			job_set_status_finished(job);
 			g_string_free(issue, TRUE);
@@ -790,9 +786,7 @@ void job_run_flow(struct job *job)
 			g_string_printf(issue,
 					_("Write permission to %s not granted.\n"),
 					gebr_geoxml_flow_io_get_error(job->flow));
-			g_string_append(job->issues,
-					       issue->str);
-			job_notify_status(job, JOB_STATUS_ISSUED, issue->str);
+			g_string_append(job->issues, issue->str);
 			job->user_finished = TRUE;
 			job_set_status_finished(job);
 			g_string_free(issue, TRUE);
@@ -809,7 +803,6 @@ void job_run_flow(struct job *job)
 					gebr_geoxml_flow_io_get_output(job->flow));
 			g_string_append(job->issues,
 					       issue->str);
-			job_notify_status(job, JOB_STATUS_ISSUED, issue->str);
 			job->user_finished = TRUE;
 			job_set_status_finished(job);
 			g_string_free(issue, TRUE);
@@ -886,7 +879,7 @@ void job_run_flow(struct job *job)
 		gebr_comm_process_start(job->tail_process, cmd_line);
 
 		/* pool for moab status */
-		job_notify_status(job, JOB_STATUS_QUEUED, "");
+		job_set_status(job, JOB_STATUS_QUEUED);
 		g_timeout_add(1000, (GSourceFunc)job_moab_checkjob_pooling, job); 
 
 out2:		g_free(standard_output);
@@ -900,7 +893,7 @@ out:		g_free(moab_quoted);
 		g_signal_connect(job->process, "finished", G_CALLBACK(job_process_finished), job);
 
 		gebr_comm_process_start(job->process, cmd_line);
-		job_notify_status(job, JOB_STATUS_RUNNING, "");
+		job_set_status(job, JOB_STATUS_RUNNING);
 
 		/* for program that waits stdin EOF (like sfmath) */
 		gebr_geoxml_flow_get_program(job->flow, &program, 0);

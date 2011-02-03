@@ -82,6 +82,10 @@ void job_free(struct job *job);
 
 /**
  */
+void job_set_status(struct job *job, enum JobStatus status);
+/**
+ * Remember not to send any message to clients here as the job wasn't created
+ */
 void job_run_flow(struct job *job);
 
 /**
