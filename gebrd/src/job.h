@@ -59,6 +59,7 @@ struct job {
 	/* MPI stuff */
 	GString *n_process;
 	
+	/* new status should reflect on status_enum_to_string */
 	enum JobStatus {
 		JOB_STATUS_UNKNOWN = 0,
 		JOB_STATUS_QUEUED,
@@ -66,16 +67,16 @@ struct job {
 		JOB_STATUS_RUNNING,
 		JOB_STATUS_FINISHED,
 		JOB_STATUS_CANCELED,
-		JOB_STATUS_REQUEUED,
-		JOB_STATUS_ISSUED,
+		JOB_STATUS_REQUEUED, /* false status */
+		JOB_STATUS_ISSUED, /* false status */
 	} status;
 	GString * status_string;
 };
 
 /**
  */
-gboolean job_new(struct job ** _job, struct client * client, GString * queue, GString * account, GString * xml,
-		 GString * n_process, GString * run_id);
+void job_new(struct job ** _job, struct client * client, GString * queue, GString * account, GString * xml,
+	     GString * n_process, GString * run_id);
 /**
  */
 void job_free(struct job *job);

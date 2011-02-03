@@ -92,8 +92,7 @@ static gboolean job_parse_parameter(struct job *job, GebrGeoXmlParameter * param
 			value = gebr_geoxml_program_parameter_get_string_value(program_parameter, FALSE);
 
 			if (strlen(value->str) > 0) {
-				gchar *quoted;
-				quoted = g_shell_quote(value->str);
+				gchar *quoted = g_shell_quote(value->str);
 				g_string_append_printf(job->cmd_line, "%s%s ",
 						       gebr_geoxml_program_parameter_get_keyword(program_parameter),
 						       quoted);
@@ -157,21 +156,14 @@ static gboolean job_add_program_parameters(struct job *job, GebrGeoXmlProgram * 
  */
 static void job_send_clients_output(struct job *job, GString * output)
 {
-	GList *link;
-
 	/* FIXME: remove and find the real problem */
 	if (!job->jid->len)
 		return;
 
-	link = g_list_first(gebrd.clients);
-	while (link != NULL) {
-		struct client *client;
-
-		client = (struct client *)link->data;
+	for (GList *link = g_list_first(gebrd.clients); link != NULL; link = g_list_next(link)) {
+		struct client *client = (struct client *)link->data;
 		gebr_comm_protocol_send_data(client->protocol, client->stream_socket,
 					     gebr_comm_protocol_defs.out_def, 2, job->jid->str, output->str);
-
-		link = g_list_next(link);
 	}
 }
 
@@ -243,6 +235,16 @@ static void job_process_read_stderr(GebrCommProcess * process, struct job *job)
 	g_string_free(stderr, TRUE);
 }
 
+/*
+ * \internal
+ */
+static const gchar *status_enum_to_string(enum JobStatus status)
+{
+	static const gchar * enum_to_string [] = {
+		"unknown", "queued", "failed", "running", "finished", "canceled", "requeued", "issued", NULL };
+	return enum_to_string[status];
+}
+
 /**
  * \internal
  * Change status in \p job structure
@@ -250,76 +252,50 @@ static void job_process_read_stderr(GebrCommProcess * process, struct job *job)
  */
 void job_notify_status(struct job *job, enum JobStatus status, const gchar *parameter)
 {
-	GList *link;
-	enum JobStatus old_status;
-	gboolean restore_status = FALSE;
-
-	if (status == JOB_STATUS_REQUEUED)
-		restore_status = TRUE;
-	old_status = job->status;
-	job_set_status(job, status);
-
 	/* warn all client of the new status */
-	link = g_list_first(gebrd.clients);
-	while (link != NULL) {
-		struct client *client;
-
-		client = (struct client *)link->data;
+	for (GList *link = g_list_first(gebrd.clients); link != NULL; link = g_list_next(link)) {
+		struct client *client = (struct client *)link->data;
 		gebr_comm_protocol_send_data(client->protocol, client->stream_socket, gebr_comm_protocol_defs.sta_def,
-					     3, job->jid->str, job->status_string->str, parameter);
-
-		link = g_list_next(link);
+					     3, job->jid->str, status_enum_to_string(status), parameter);
 	}
 
-	if (restore_status)
-		job_set_status(job, old_status);
+	job_set_status(job, status);
 }
 
 /**
  * \internal
  */
-static gboolean job_set_status_finished(struct job *job)
+static gboolean job_notify_status_finished(struct job *job)
 {
 	if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_MOAB) {
-		if (job->tail_process != NULL){
+		if (job->tail_process != NULL) {
 			gebr_comm_process_free(job->tail_process);
 			job->tail_process = NULL;
 		} else
 			return FALSE;
 	
-		GIOChannel * file;
 		GError * error;
-		GString * output;
-		gchar * buffer;
-		gsize length;
 
-		error = NULL;
-		output = g_string_new(NULL);
+		GString * output = g_string_new(NULL);
 		g_string_printf(output, "%s/STDIN.o%s", g_get_home_dir(), job->moab_jid->str);
-		file = g_io_channel_new_file(output->str, "r", &error);
-		if (file == NULL)
-			goto out2;
-		if (g_io_channel_seek_position(file, job->output->len, G_SEEK_SET, &error) == G_IO_STATUS_EOF)
-			goto out;
-		g_io_channel_read_to_end(file, &buffer, &length, &error);
-		g_string_printf(output, "%s", buffer);
-		job_process_add_output(job, job->output, output);
-
-		g_free(buffer);
-out:		g_io_channel_shutdown(file, FALSE, &error);
-out2:		g_string_free(output, TRUE);
+		error = NULL;
+		GIOChannel * file = g_io_channel_new_file(output->str, "r", &error);
+		if (file != NULL && g_io_channel_seek_position(file, job->output->len, G_SEEK_SET, &error) == G_IO_STATUS_EOF) {
+			gchar * buffer;
+			gsize length;
+			g_io_channel_read_to_end(file, &buffer, &length, &error);
+			g_string_printf(output, "%s", buffer);
+			job_process_add_output(job, job->output, output);
+			g_free(buffer);
+		}
+		if (file != NULL)
+			g_io_channel_shutdown(file, FALSE, &error);
+		g_string_free(output, TRUE);
 	}
 
-	/* set the finish date */
 	g_string_assign(job->finish_date, gebr_iso_date());
-
 	job_notify_status(job, (job->user_finished == FALSE) ? JOB_STATUS_FINISHED : JOB_STATUS_CANCELED, job->finish_date->str);
 
-	/* Run next flow on queue */
-	if (gebrd_queues_has_next(job->queue->str)) 
-		gebrd_queues_step_queue(job->queue->str);
-	else
-		gebrd_queues_set_queue_busy(job->queue->str, FALSE);
 	return TRUE;
 }
 
@@ -328,7 +304,7 @@ out2:		g_string_free(output, TRUE);
  */
 static void job_process_finished(GebrCommProcess * process, struct job *job)
 {
-	job_set_status_finished(job);
+	job_notify_status_finished(job);
 }
 
 /**
@@ -338,7 +314,6 @@ static GString *job_generate_id(void)
 {
 	GString *jid;
 	guint32 random;
-	GList *link;
 	gboolean unique;
 
 	unique = TRUE;
@@ -348,17 +323,12 @@ static GString *job_generate_id(void)
 		g_string_printf(jid, "%u", random);
 
 		/* check if it is unique */
-		link = g_list_first(gebrd.jobs);
-		while (link != NULL) {
-			struct job *job;
-
-			job = (struct job *)link->data;
+		for (GList *link = g_list_first(gebrd.jobs); link != NULL; link = g_list_next(link)) {
+			struct job *job = (struct job *)link->data;
 			if (!strcmp(job->jid->str, jid->str)) {
 				unique = FALSE;
 				break;
 			}
-
-			link = g_list_next(link);
 		}
 	} while (!unique);
 
@@ -419,7 +389,7 @@ static gboolean job_moab_checkjob_pooling(struct job * job)
 	/* status changed */
 	if (moab_status_enum != JOB_STATUS_UNKNOWN && moab_status_enum != job->status) {
 		if (moab_status_enum == JOB_STATUS_FINISHED)
-			ret = job_set_status_finished(job);
+			ret = job_notify_status_finished(job);
 		else
 			job_notify_status(job, moab_status_enum, "");
        	}
@@ -437,45 +407,25 @@ err3:	g_string_free(cmd_line, TRUE);
 
 struct job *job_find(GString * jid)
 {
-	GList *link;
 	struct job *job;
 
 	job = NULL;
-	link = g_list_first(gebrd.jobs);
-	while (link != NULL) {
-		struct job *i;
-
-		i = (struct job *)link->data;
+	for (GList *link = g_list_first(gebrd.jobs); link != NULL; link = g_list_next(link)) {
+		struct job *i = (struct job *)link->data;
 		if (!strcmp(i->jid->str, jid->str)) {
 			job = i;
 			break;
 		}
-
-		link = g_list_next(link);
 	}
 
 	return job;
 }
 
-gboolean job_new(struct job ** _job, struct client * client, GString * queue, GString * account, GString * xml,
-		 GString * n_process, GString * run_id)
+void job_new(struct job ** _job, struct client * client, GString * queue, GString * account, GString * xml,
+	     GString * n_process, GString * run_id)
 {
-	struct job *job;
-
-	GebrGeoXmlFlow *flow;
-	GebrGeoXmlDocument *document;
-	GebrGeoXmlSequence *program;
-	GebrdMpiInterface * mpi;
-	gulong nprog;
-
-	gboolean has_error_output_file;
-	gboolean previous_stdout;
-	guint issue_number;
-	gboolean success;
-
 	/* initialization */
-	issue_number = 0;
-	job = g_new(struct job, 1);
+	struct job *job = g_new(struct job, 1);
 	job->process = gebr_comm_process_new();
 	job->flow = NULL;
 	job->user_finished = FALSE;
@@ -499,26 +449,83 @@ gboolean job_new(struct job ** _job, struct client * client, GString * queue, GS
 	*_job = job;
 	gebrd.jobs = g_list_append(gebrd.jobs, job);
 
-	int ret;
-	gchar * quoted;
-
-	ret = gebr_geoxml_document_load_buffer(&document, xml->str);
-	if (ret < 0) {
+	GebrGeoXmlDocument *document;
+	int ret = gebr_geoxml_document_load_buffer(&document, xml->str);
+	if (ret < 0)
 		g_string_append(job->issues, gebr_geoxml_error_explained_string(ret));
-		goto err;
+	job->flow = GEBR_GEOXML_FLOW(document);
+	g_string_assign(job->title, gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(job->flow)));
+	job_set_status(job, JOB_STATUS_QUEUED);
+}
+
+void job_free(struct job *job)
+{
+	gebrd_queues_remove_job_from(job->queue->str, job);
+
+	GList *link = g_list_find(gebrd.jobs, job);
+	/* job that failed to run are not added to this list */
+	if (link != NULL)
+		gebrd.jobs = g_list_delete_link(gebrd.jobs, link);
+
+	/* free data */
+	gebr_comm_process_free(job->process);
+	if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_MOAB)
+		if (job->tail_process != NULL)
+			gebr_comm_process_free(job->tail_process);
+	gebr_geoxml_document_free(GEBR_GEOXML_DOC(job->flow));
+	g_string_free(job->hostname, TRUE);
+	g_string_free(job->status_string, TRUE);
+	g_string_free(job->run_id, TRUE);
+	g_string_free(job->jid, TRUE);
+	g_string_free(job->title, TRUE);
+	g_string_free(job->start_date, TRUE);
+	g_string_free(job->finish_date, TRUE);
+	g_string_free(job->issues, TRUE);
+	g_string_free(job->cmd_line, TRUE);
+	g_string_free(job->output, TRUE);
+	g_string_free(job->moab_jid, TRUE);
+	g_string_free(job->queue, TRUE);
+	g_string_free(job->n_process, TRUE);
+	g_free(job);
+}
+
+void job_set_status(struct job *job, enum JobStatus status)
+{
+	if (status != JOB_STATUS_REQUEUED && status != JOB_STATUS_ISSUED) {
+		g_string_assign(job->status_string, status_enum_to_string(status));
+		job->status = status;
 	}
 
-	flow = GEBR_GEOXML_FLOW(document);
-	job->flow = flow;
-	has_error_output_file = strlen(gebr_geoxml_flow_io_get_error(flow)) ? TRUE : FALSE;
-	nprog = gebr_geoxml_flow_get_programs_number(flow);
+	/* Run next flow on queue */
+	if (job->status == JOB_STATUS_FAILED || job->status == JOB_STATUS_FINISHED || job->status == JOB_STATUS_CANCELED) {
+		if (gebrd_queues_has_next(job->queue->str)) 
+			gebrd_queues_step_queue(job->queue->str);
+		else
+			gebrd_queues_set_queue_busy(job->queue->str, FALSE);
+	}
+}
+
+static gboolean job_load_flow(struct job *job)
+{
+	gboolean has_error_output_file;
+	gboolean previous_stdout;
+	guint issue_number = 0;
+	GebrGeoXmlSequence *program;
+	GebrdMpiInterface * mpi;
+	gulong nprog;
+
+	if (job->flow == NULL)
+		goto err;
+
+	has_error_output_file = strlen(gebr_geoxml_flow_io_get_error(job->flow)) ? TRUE : FALSE;
+	nprog = gebr_geoxml_flow_get_programs_number(job->flow);
 	if (nprog == 0) {
 		g_string_append_printf(job->issues, _("Empty flow.\n"));
 		goto err;
 	}
 
 	/* Check if there is configured programs */
-	gebr_geoxml_flow_get_program(flow, &program, 0);
+	gebr_geoxml_flow_get_program(job->flow, &program, 0);
 	while (program != NULL &&
 	       gebr_geoxml_program_get_status(GEBR_GEOXML_PROGRAM(program)) != GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED) {
 		g_string_append_printf(job->issues, _("%u) Skipping disabled/not configured program '%s'.\n"),
@@ -534,14 +541,14 @@ gboolean job_new(struct job ** _job, struct client * client, GString * queue, GS
 	/*
 	 * First program
 	 */
-	/* Start wi.hwithout stdin */
+	/* Start without stdin */
 	if (gebr_geoxml_program_get_stdin(GEBR_GEOXML_PROGRAM(program))) {
-		if (strlen(gebr_geoxml_flow_io_get_input(flow)) == 0) {
+		if (strlen(gebr_geoxml_flow_io_get_input(job->flow)) == 0) {
 			g_string_append_printf(job->issues, _("No input file selected.\n"));
 			goto err;
 		}
 
-		quoted = g_shell_quote(gebr_geoxml_flow_io_get_input(job->flow));
+		gchar * quoted = g_shell_quote(gebr_geoxml_flow_io_get_input(job->flow));
 		g_string_append_printf(job->cmd_line, "<%s ", quoted);
 		g_free(quoted);
 
@@ -550,7 +557,7 @@ gboolean job_new(struct job ** _job, struct client * client, GString * queue, GS
 	/* Configure MPI */
 	const gchar * mpiname;
 	mpiname = gebr_geoxml_program_get_mpi(GEBR_GEOXML_PROGRAM(program));
-	mpi = job_get_mpi_impl(mpiname, n_process);
+	mpi = job_get_mpi_impl(mpiname, job->n_process);
 	if (strlen(mpiname) && !mpi) {
 		g_string_append_printf(job->issues,
 				       _("Requested MPI (%s) is not supported by this server.\n"), mpiname);
@@ -573,7 +580,7 @@ gboolean job_new(struct job ** _job, struct client * client, GString * queue, GS
 		goto err;
 	/* check for error file output */
 	if (has_error_output_file && gebr_geoxml_program_get_stderr(GEBR_GEOXML_PROGRAM(program))) {
-		g_string_append_printf(job->cmd_line, "2>> \"%s\" ", gebr_geoxml_flow_io_get_error(flow));
+		g_string_append_printf(job->cmd_line, "2>> \"%s\" ", gebr_geoxml_flow_io_get_error(job->flow));
 	}
 
 	/*
@@ -593,7 +600,7 @@ gboolean job_new(struct job ** _job, struct client * client, GString * queue, GS
 		}
 
 		mpi = job_get_mpi_impl(gebr_geoxml_program_get_mpi(GEBR_GEOXML_PROGRAM(program)),
-				       n_process);
+				       job->n_process);
 
 		/* How to connect chained programs */
 		int chain_option = gebr_geoxml_program_get_stdin(GEBR_GEOXML_PROGRAM(program)) + (previous_stdout << 1);
@@ -646,9 +653,8 @@ gboolean job_new(struct job ** _job, struct client * client, GString * queue, GS
 
 		if (job_add_program_parameters(job, GEBR_GEOXML_PROGRAM(program)) == FALSE)
 			goto err;
-		if (has_error_output_file && gebr_geoxml_program_get_stderr(GEBR_GEOXML_PROGRAM(program))){
-
-			quoted = g_shell_quote(gebr_geoxml_flow_io_get_error(flow));
+		if (has_error_output_file && gebr_geoxml_program_get_stderr(GEBR_GEOXML_PROGRAM(program))) {
+			gchar * quoted = g_shell_quote(gebr_geoxml_flow_io_get_error(job->flow));
 			g_string_append_printf(job->cmd_line, "2>> %s ", quoted);
 			g_free(quoted);
 		}
@@ -661,72 +667,21 @@ gboolean job_new(struct job ** _job, struct client * client, GString * queue, GS
 		g_string_append_printf(job->issues,
 				       _("No error file selected; error output merged with standard output.\n"));
 	if (previous_stdout) {
-		if (strlen(gebr_geoxml_flow_io_get_output(flow)) == 0)
+		if (strlen(gebr_geoxml_flow_io_get_output(job->flow)) == 0)
 			g_string_append_printf(job->issues, _("Proceeding without output file.\n"));
 		else {
-			quoted = g_shell_quote(gebr_geoxml_flow_io_get_output(flow));
+			gchar * quoted = g_shell_quote(gebr_geoxml_flow_io_get_output(job->flow));
 			g_string_append_printf(job->cmd_line, ">%s", quoted);
 			g_free(quoted);
 		}
 	}
 
 	/* success exit */
-	success = TRUE;
-	job_set_status(job, JOB_STATUS_QUEUED);
-	goto out;
+	return TRUE;
 
 err:	/* error exit */
-	job_set_status(job, JOB_STATUS_FAILED);
 	g_string_assign(job->cmd_line, "");
-	success = FALSE;
-
-out:
-	/* hostname and flow title */
-	g_string_assign(job->title, gebr_geoxml_document_get_title(document));
-	/* set the start date */
-	g_string_assign(job->start_date, gebr_iso_date());
-
-	return success;
-}
-
-void job_free(struct job *job)
-{
-	gebrd_queues_remove_job_from(job->queue->str, job);
-
-	GList *link = g_list_find(gebrd.jobs, job);
-	/* job that failed to run are not added to this list */
-	if (link != NULL)
-		gebrd.jobs = g_list_delete_link(gebrd.jobs, link);
-
-	/* free data */
-	gebr_comm_process_free(job->process);
-	if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_MOAB)
-		if (job->tail_process != NULL)
-			gebr_comm_process_free(job->tail_process);
-	gebr_geoxml_document_free(GEBR_GEOXML_DOC(job->flow));
-	g_string_free(job->hostname, TRUE);
-	g_string_free(job->status_string, TRUE);
-	g_string_free(job->run_id, TRUE);
-	g_string_free(job->jid, TRUE);
-	g_string_free(job->title, TRUE);
-	g_string_free(job->start_date, TRUE);
-	g_string_free(job->finish_date, TRUE);
-	g_string_free(job->issues, TRUE);
-	g_string_free(job->cmd_line, TRUE);
-	g_string_free(job->output, TRUE);
-	g_string_free(job->moab_jid, TRUE);
-	g_string_free(job->queue, TRUE);
-	g_string_free(job->n_process, TRUE);
-	g_free(job);
-}
-
-void job_set_status(struct job *job, enum JobStatus status)
-{
-	const gchar * enum_to_string [] = {
-		"unknown", "queued", "failed", "running", "finished", "canceled", "requeued", "issued", NULL };
-
-	g_string_assign(job->status_string, enum_to_string[status]);
-	job->status = status;
+	return FALSE;
 }
 
 
@@ -736,14 +691,14 @@ void job_run_flow(struct job *job)
 	GebrGeoXmlSequence *program;
 	gchar *locale_str;
 	gsize bytes_written;
-	gchar * quoted;
-	gboolean may_run;
 	guint issue_number = 0;
 
 	/* initialization */
-	may_run = TRUE;
 	cmd_line = g_string_new(NULL);
 	locale_str = g_filename_from_utf8(job->cmd_line->str, -1, NULL, &bytes_written, NULL);
+
+	if (!job_load_flow(job))
+		goto err;
 
 	/* Check if there is configured programs */
 	gebr_geoxml_flow_get_program(job->flow, &program, 0);
@@ -755,9 +710,8 @@ void job_run_flow(struct job *job)
 
 		gebr_geoxml_sequence_next(&program);
 	}
-	if (program == NULL) {
+	if (program == NULL)
 		goto err;
-	}
 
 	/*
 	 * First program
@@ -767,13 +721,10 @@ void job_run_flow(struct job *job)
 		/* Input file */
 		if (check_for_readable_file(gebr_geoxml_flow_io_get_input(job->flow))) {
 			GString * issue = g_string_new(NULL);
-			may_run = FALSE;
 			g_string_printf(issue,
 					_("Input file %s not present or not accessible.\n"),
 					gebr_geoxml_flow_io_get_input(job->flow));
 			g_string_append(job->issues, issue->str);
-			job->user_finished = TRUE;
-			job_set_status_finished(job);
 			g_string_free(issue, TRUE);
 			goto err;
 		}
@@ -787,8 +738,6 @@ void job_run_flow(struct job *job)
 					_("Write permission to %s not granted.\n"),
 					gebr_geoxml_flow_io_get_error(job->flow));
 			g_string_append(job->issues, issue->str);
-			job->user_finished = TRUE;
-			job_set_status_finished(job);
 			g_string_free(issue, TRUE);
 			goto err;
 		}
@@ -801,10 +750,7 @@ void job_run_flow(struct job *job)
 			g_string_printf(issue,
 					_("Write permission to %s not granted.\n"),
 					gebr_geoxml_flow_io_get_output(job->flow));
-			g_string_append(job->issues,
-					       issue->str);
-			job->user_finished = TRUE;
-			job_set_status_finished(job);
+			g_string_append(job->issues, issue->str);
 			g_string_free(issue, TRUE);
 			goto err;
 		}
@@ -817,58 +763,55 @@ void job_run_flow(struct job *job)
 		to_quote = g_string_new(NULL);
 		if (job->server_location == GEBR_COMM_SERVER_LOCATION_LOCAL){
 			g_string_printf(to_quote, "export DISPLAY=%s; %s", job->display->str, locale_str);
-			quoted = g_shell_quote(to_quote->str);
+			gchar * quoted = g_shell_quote(to_quote->str);
 			g_string_printf(cmd_line, "bash -l -c %s", quoted);
 			g_free(quoted);
 		}
 		else{
 			g_string_printf(to_quote, "export DISPLAY=127.0.0.1%s; %s", job->display->str, locale_str);
-			quoted = g_shell_quote(to_quote->str);
+			gchar * quoted = g_shell_quote(to_quote->str);
 			g_string_printf(cmd_line, "bash -l -c %s", quoted);
 			g_free(quoted);
 		}
 
 		g_string_free(to_quote, TRUE);
 	} else {
-		quoted = g_shell_quote(locale_str);
+		gchar * quoted = g_shell_quote(locale_str);
 		g_string_printf(cmd_line, "bash -l -c %s", quoted);
 		g_free(quoted);
 	}
 
 	if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_MOAB) {
-		gchar * script;
-		gchar * moab_quoted;
 		gchar * standard_output, * standard_error;
 		gint exit_status;
 		GError * error = NULL;
-		GString * moab_script;
 
-		script = g_shell_quote(cmd_line->str);
-		moab_script = g_string_new(NULL);
+		GString * moab_script = g_string_new(NULL);
+		gchar * script = g_shell_quote(cmd_line->str);
 		g_string_printf(moab_script, "echo %s | msub -A '%s' -q '%s' -k oe -j oe", script, job->moab_account->str, job->queue->str);
-		moab_quoted = g_shell_quote(moab_script->str);
+		g_free(script);
+		gchar * moab_quoted = g_shell_quote(moab_script->str);
+		g_string_free(moab_script, TRUE);
 		g_string_printf(cmd_line, "bash -l -c %s", moab_quoted);
+		g_free(moab_quoted);
 		if (!g_spawn_command_line_sync(cmd_line->str, &standard_output, &standard_error, &exit_status, &error)) {
-			may_run = FALSE;
-			job_set_status(job, JOB_STATUS_FAILED);
+			g_free(standard_error);
 			g_string_append_printf(job->issues, _("Cannot submit job to MOAB server.\n"));
-			goto out;
+			goto err;
 		}
+		g_free(standard_error);
 		if (standard_error != NULL && strlen(standard_error)) {
-			may_run = FALSE;
 			job_set_status(job, JOB_STATUS_FAILED);
 			g_string_append_printf(job->issues, _("Cannot submit job to MOAB server: %s.\n"), standard_error);
-			goto out2;
+			goto err;
 		}
-
 		/* The stdout is the {job id} from MOAB. */
 		guint moab_id = 0;
 		sscanf(standard_output, "%u", &moab_id);
+		g_free(standard_output);
 		if (!moab_id) {
-			may_run = FALSE;
-			job_set_status(job, JOB_STATUS_FAILED);
 			g_string_append_printf(job->issues, _("Cannot get MOAB job id.\n"));
-			goto out2;
+			goto err;
 		}
 		g_string_printf(job->moab_jid, "%u", moab_id);
 
@@ -881,19 +824,14 @@ void job_run_flow(struct job *job)
 		/* pool for moab status */
 		job_set_status(job, JOB_STATUS_QUEUED);
 		g_timeout_add(1000, (GSourceFunc)job_moab_checkjob_pooling, job); 
-
-out2:		g_free(standard_output);
-		g_free(standard_error);
-out:		g_free(moab_quoted);
-		g_string_free(moab_script, TRUE);
-		g_free(script);
 	} else {
 		g_signal_connect(job->process, "ready-read-stdout", G_CALLBACK(job_process_read_stdout), job);
 		g_signal_connect(job->process, "ready-read-stderr", G_CALLBACK(job_process_read_stderr), job);
 		g_signal_connect(job->process, "finished", G_CALLBACK(job_process_finished), job);
 
-		gebr_comm_process_start(job->process, cmd_line);
 		job_set_status(job, JOB_STATUS_RUNNING);
+		g_string_assign(job->start_date, gebr_iso_date());
+		gebr_comm_process_start(job->process, cmd_line);
 
 		/* for program that waits stdin EOF (like sfmath) */
 		gebr_geoxml_flow_get_program(job->flow, &program, 0);
@@ -901,12 +839,16 @@ out:		g_free(moab_quoted);
 			gebr_comm_process_close_stdin(job->process);
 	}
 
-	if (may_run)
-		gebrd_message(GEBR_LOG_DEBUG, "Client '%s' flow about to run: %s",
-			      job->hostname->str, cmd_line->str);
-	
+	/* success */
+	gebrd_message(GEBR_LOG_DEBUG, "Client '%s' flow about to run: %s",
+		      job->hostname->str, cmd_line->str);
+	goto out;
+
+err:	/* error */
+	job_set_status(job, JOB_STATUS_FAILED);
+
 	/* frees */
-err:	g_string_free(cmd_line, TRUE);
+out:	g_string_free(cmd_line, TRUE);
 	g_free(locale_str);
 }
 
@@ -962,31 +904,17 @@ void job_notify(struct job *job, struct client *client)
 
 void job_list(struct client *client)
 {
-	GList *link;
-
-	link = g_list_first(gebrd.jobs);
-	while (link != NULL) {
-		struct job *job;
-
-		job = (struct job *)link->data;
+	for (GList *link = g_list_first(gebrd.jobs); link != NULL; link = g_list_next(link)) {
+		struct job *job = (struct job *)link->data;
 		job_notify(job, client);
-
-		link = g_list_next(link);
 	}
 }
 
 void job_send_clients_job_notify(struct job *job)
 {
-	GList *link;
-
-	link = g_list_first(gebrd.clients);
-	while (link != NULL) {
-		struct client *client;
-
-		client = (struct client *)link->data;
+	for (GList *link = g_list_first(gebrd.clients); link != NULL; link = g_list_next(link)) {
+		struct client *client = (struct client *)link->data;
 		job_notify(job, client);
-
-		link = g_list_next(link);
 	}
 }
 

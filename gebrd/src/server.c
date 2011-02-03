@@ -309,7 +309,6 @@ gboolean server_parse_client_messages(struct client *client)
 			GList *arguments;
 			GString *xml, *account, *queue, *n_process, *run_id;
 			struct job *job;
-			gboolean success;
 
 			/* organize message data */
 			if ((arguments = gebr_comm_protocol_split_new(message->argument, 5)) == NULL)
@@ -321,7 +320,7 @@ gboolean server_parse_client_messages(struct client *client)
 			run_id = g_list_nth_data(arguments, 4);
 
 			/* try to run and send return */
-			success = job_new(&job, client, queue, account, xml, n_process, run_id);
+			job_new(&job, client, queue, account, xml, n_process, run_id);
 #ifdef DEBUG
 			gchar *env_delay = getenv("GEBRD_RUN_DELAY_SEC");
 			if (env_delay != NULL)
@@ -348,12 +347,8 @@ gboolean server_parse_client_messages(struct client *client)
 					job_set_status(job, JOB_STATUS_QUEUED);
 			} else //moab
 				job_run_flow(job);
-			/* send job message (job is created -promoted from waiting server response- at the client)
-			 * this must be done after job_run_flow or an job status has been set */
-			if (success == TRUE)
-				job_send_clients_job_notify(job);
-			else
-				job_notify(job, client); 
+			/* send job message (job is created -promoted from waiting server response- at the client) */
+			job_send_clients_job_notify(job);
 
 			/* frees */
 			gebr_comm_protocol_split_free(arguments);
