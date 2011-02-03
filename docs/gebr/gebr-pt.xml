@@ -1003,7 +1003,7 @@
           </step>
         </procedure>
 
-        <para>Na <link linkend="sec_3_2_13"><emphasis role="bold">seção 3.2.13</emphasis></link>, é detalhada a
+        <para>Na <link linkend="sec_3_2_12"><emphasis role="bold">seção 3.2.12</emphasis></link>, é detalhada a
           visualização de relatório para um fluxo, que se dá de forma muito semelhante à visualização de relatório da
           linha, com a diferença que nesta é possível englobar o relatório do fluxo.</para>
 
@@ -1076,29 +1076,21 @@
         <listitem>
 
           <para>
-            <link linkend="sec_3_2_10">Criação de menus a partir de um fluxo pela DéBR (conceito extendido da
-              DéBR)</link>
+            <link linkend="sec_3_2_10">Executar um fluxo</link>
           </para>
 
         </listitem>
         <listitem>
 
           <para>
-            <link linkend="sec_3_2_11">Executar um fluxo</link>
+            <link linkend="sec_3_2_11">Editar comentários</link>
           </para>
 
         </listitem>
         <listitem>
 
           <para>
-            <link linkend="sec_3_2_12">Editar comentários</link>
-          </para>
-
-        </listitem>
-        <listitem>
-
-          <para>
-            <link linkend="sec_3_2_13">Visualizar relatório</link>
+            <link linkend="sec_3_2_12">Visualizar relatório</link>
           </para>
 
         </listitem>
@@ -1363,57 +1355,6 @@
       </section>
 
       <section xml:id="sec_3_2_10">
-        <title>Criação de menus a partir de um fluxo pela DéBR</title>
-
-        <para>Na GêBR, às vezes usa-se o termo <emphasis>menu</emphasis> para designar a <emphasis>especificação de um
-          programa</emphasis> que realiza uma determinada tarefa. Para evitar confusão com o menu comumente usado em
-          informática, vamos chamar essa especificação de <emphasis>Menu GêBR</emphasis>.</para>
-
-
-        <para>Um <emphasis>Menu GêBR</emphasis> é a implementação daquilo que chamamos
-        de <emphasis role="bold">componente</emphasis> do fluxo na <link linkend="sec_2_2"><emphasis role="bold">seção
-        2.2</emphasis></link>. A GêBR é instalada com um conjunto padrão de componentes, separados
-        em <emphasis role="bold">categorias</emphasis>, conforme o propósito (você verá mais detalhes sobre os
-        componentes e suas categorias na <link linkend="sec_3_3"><emphasis role="bold">seção 3.3</emphasis></link>). No
-        entanto, é possível incrementar a GêBR, acrescentando mais componentes/categorias à interface.  Isso é feito com
-        a <emphasis>interface para criação e edição de Menus GêBR</emphasis>,
-        a <emphasis role="bold">DéBR</emphasis>.</para>
-
-
-        <para>A criação e edição de <emphasis>Menus GêBR</emphasis> por meio da DéBR é um assunto vasto (veja os
-        artigos <emphasis>Como portar programas para GêBR</emphasis> e <emphasis>Guia para escrever documentação de
-        menu</emphasis>, na guia <emphasis>Documentação</emphasis> da página oficial da GêBR
-        - <emphasis><link xlink:href="http://www.gebrproject.com">www.gebrproject.com</link></emphasis>). Por agora, o
-        que importa é saber que <emphasis role="bold">um fluxo pode ser transformado em um componente
-        adicional</emphasis>. Para isso você deve exportar o fluxo a partir da Gêbr e importá-lo através da DéBR
-        assim:</para>
-
-        <procedure>
-          <step>
-            <para>Selecione o fluxo que deseja exportar.</para>
-          </step>
-          <step>
-            <para>Clique no
-            botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_exportar_projeto.png"
-            /></imageobject></inlinemediaobject></guiicon></para>
-          </step>
-          <step>
-            <para>Na janela <guilabel>Escolha arquivo para salvar</guilabel>, selecione uma pasta e digite um nome para
-              o arquivo.</para>
-          </step>
-          <step>
-            <para>Clique em <guibutton>Salvar</guibutton>.</para>
-          </step>
-          <step>
-            <para>Em <guilabel>Menu</guilabel> da DéBR, clicar em
-              <guilabel>Criar menu a partir de um fluxo</guilabel>, escolher o fluxo e clicar em 
-              <guilabel>Abrir</guilabel>. Esse procedimento é melhor detalhado em 
-              <guilabel>Ajuda</guilabel> na interface DéBR.</para>
-          </step>
-        </procedure>
-      </section>
-
-      <section xml:id="sec_3_2_11">
         <title>Executar um fluxo</title>
 
         <para>Este comando aparece repetidamente nas abas <guilabel>Fluxos</guilabel> e
@@ -1440,7 +1381,7 @@
 
       </section>
 
-      <section xml:id="sec_3_2_12">
+      <section xml:id="sec_3_2_11">
         <title>Editar comentários</title>
 
         <para>Este comando aparece repetidamente nas abas <guilabel>Projetos e Linhas</guilabel> e em
@@ -1449,7 +1390,7 @@
 
       </section>
 
-      <section xml:id="sec_3_2_13">
+      <section xml:id="sec_3_2_12">
         <title>Visualizar relatório</title>
 
         <para>Este comando aparece repetidamente nas abas <guilabel>Projetos e Linhas</guilabel> e em
@@ -1882,7 +1823,7 @@
 
 
         <para>Nessa versão da GêBR, surge o conceito de filas, conceito também abordado
-          na <emphasis role="bold"><link linkend="sec_3_2_11">seção 3.2.11</link></emphasis>. Nessa aba é possível
+          na <emphasis role="bold"><link linkend="sec_3_2_10">seção 3.2.10</link></emphasis>. Nessa aba é possível
           escolher no campo Fila em qual fila o fluxo será executado. Pode-se escolher e nomear a fila em que se quer
           executar um fluxo, conforme figura:</para>
 
@@ -1933,7 +1874,7 @@
         </listitem>
       </itemizedlist>
 
-      <para>Vimos nas seções <emphasis role="bold">3.2.11</emphasis> e <emphasis role="bold">3.3.7</emphasis> a
+      <para>Vimos nas seções <emphasis role="bold">3.2.10</emphasis> e <emphasis role="bold">3.3.7</emphasis> a
 	abordagem do conceito de filas na GêBR nas abas <emphasis role="bold">Fluxos</emphasis>
 	e <emphasis role="bold">Edição de Fluxo</emphasis>. Finalizando, na aba <emphasis role="bold">Controle de
 	tarefas</emphasis>, é possível visualizar cada fila em andamento, cada qual de execução independente uma da
