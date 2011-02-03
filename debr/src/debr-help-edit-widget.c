@@ -234,12 +234,24 @@ static void pre_process_html (GString *html)
 {
 	gchar *inner;
 	gchar *escaped;
+	GRegex *regex;
+	GMatchInfo *match;
 
 	inner = gebr_geoxml_tmpl_get (html, "cnt");
-	if (!inner)
-		escaped = gebr_str_escape (html->str);
-	else
+	if (!inner) {
+		regex = g_regex_new ("<div class=\"content\">(.*?)<\\/div>",
+				     G_REGEX_DOTALL, 0, NULL);
+
+		if (g_regex_match (regex, html->str, 0, &match)) {
+			inner = g_match_info_fetch (match, 1);
+			escaped = gebr_str_escape (inner);
+			g_match_info_free (match);
+		} else
+			escaped = gebr_str_escape (html->str);
+		g_regex_unref (regex);
+	} else
 		escaped = gebr_str_escape (inner);
+
 	g_string_assign (html, escaped); 
 	g_free (escaped);
 	g_free (inner);
