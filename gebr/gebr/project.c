@@ -155,6 +155,10 @@ GtkTreeIter project_load_with_lines(GebrGeoXmlProject *project)
 void project_list_populate(void)
 {
 	gchar *filename;
+	gsize length;
+	gchar **key_array;
+	GError *error = NULL;
+	GebrGeoXmlProject *project;
 
 	/* free previous selection path */
 	gtk_tree_store_clear(gebr.ui_project_line->store);
@@ -163,18 +167,48 @@ void project_list_populate(void)
 
 	project_line_free();
 
+	key_array = g_key_file_get_keys(gebr.config.key_file, "ordering", &length, &error);
+
+	for (gint i = 0; key_array[i] != NULL; ++i) {
+		if (!g_str_has_prefix(key_array[i], "project_filename-"))
+			continue;
+
+		filename = g_key_file_get_string (gebr.config.key_file, "ordering", key_array[i], &error);
+
+		if (document_load((GebrGeoXmlDocument**)(&project), filename, FALSE)){
+			g_free(filename);
+			continue;
+		}
+
+		project_load_with_lines(project);
+		g_free(filename);
+	}
+
 	gebr_directory_foreach_file(filename, gebr.config.data->str) {
+		gboolean already_loaded = FALSE;
+
 		if (fnmatch("*.prj", filename, 1))
 			continue;
 
-		GebrGeoXmlProject *project;
-		if (document_load((GebrGeoXmlDocument**)(&project), filename, FALSE))
+		for (gint i = 0; key_array[i] != NULL; ++i) {
+			gchar * filename_loaded = g_key_file_get_string (gebr.config.key_file, "ordering", key_array[i], &error);
+
+			if (!g_strcmp0(filename_loaded, filename)){
+				already_loaded = TRUE;
+				g_free(filename_loaded);
+				break;
+			}
+			g_free(filename_loaded);
+		}
+
+		if (already_loaded || document_load((GebrGeoXmlDocument**)(&project), filename, FALSE))
 			continue;
 
 		project_load_with_lines(project);
 	}
 
 	project_line_info_update();
+	g_strfreev(key_array);
 }
 
 void project_line_move(const gchar * src_project, const gchar * src_line,

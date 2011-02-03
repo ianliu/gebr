@@ -450,6 +450,19 @@ void gebr_config_save(gboolean verbose)
 		}
 	}
 
+	/* Save order of projects */
+	gebr_gui_gtk_tree_model_foreach_hyg(iter, GTK_TREE_MODEL(gebr.ui_project_line->store), 1) {
+		gchar *filename = NULL;
+		gchar *title = NULL;
+		GString *compose = g_string_new(NULL);
+
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter,
+				   PL_FILENAME, &filename,
+				   PL_TITLE, &title, -1);
+		g_string_printf(compose, "project_filename-%s", title);
+		g_key_file_set_string(gebr.config.key_file, "ordering", compose->str, filename);
+	}
+	
 	error = NULL;
 	string = g_key_file_to_data(gebr.config.key_file, &length, NULL);
 	configfp = fopen(gebr.config.path->str, "w");
