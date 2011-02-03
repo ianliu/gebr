@@ -96,6 +96,8 @@ static gboolean on_tree_view_key_release (GtkWidget *widget,
 					  GdkEventKey *event,
 					  GebrGuiSequenceEdit *self);
 
+static void gebr_gui_sequence_edit_add_request (GebrGuiSequenceEdit *self);
+
 G_DEFINE_ABSTRACT_TYPE (GebrGuiSequenceEdit, gebr_gui_sequence_edit, GTK_TYPE_VBOX);
 
 //==============================================================================
@@ -142,7 +144,7 @@ static void gebr_gui_sequence_edit_set_property (GObject *object,
 								    self);
 			self->tree_view = tree_view;
 			gtk_widget_show(tree_view);
-			gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled_window), tree_view);
+			gtk_container_add (GTK_CONTAINER (scrolled_window), tree_view);
 			gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(tree_view), (GebrGuiGtkPopupCallback)
 								  popup_menu, self);
 
@@ -194,6 +196,7 @@ static void gebr_gui_sequence_edit_class_init(GebrGuiSequenceEditClass *klass)
 	gobject_class->set_property = gebr_gui_sequence_edit_set_property;
 	gobject_class->get_property = gebr_gui_sequence_edit_get_property;
 	klass->add = NULL;
+	klass->add_request = gebr_gui_sequence_edit_add_request;
 	klass->remove = gebr_gui_sequence_edit_remove_real;
 	klass->move = gebr_gui_sequence_edit_move_real;
 	klass->move_top = gebr_gui_sequence_edit_move_top_real;
@@ -589,6 +592,28 @@ static gboolean on_tree_view_key_release (GtkWidget *widget,
 	gtk_tree_path_free (path);
 
 	return TRUE;
+}
+
+static void gebr_gui_sequence_edit_add_request (GebrGuiSequenceEdit *self)
+{
+	gint n;
+	GtkTreeIter iter;
+	GtkTreePath *path;
+	GtkTreeView *tree;
+	GtkTreeModel *model;
+	GtkTreeSelection *selection;
+
+	tree = GTK_TREE_VIEW (self->tree_view);
+	model = GTK_TREE_MODEL (self->list_store);
+	selection = gtk_tree_view_get_selection (tree);
+	n = gtk_tree_model_iter_n_children (model, NULL);
+
+	if (gtk_tree_model_iter_nth_child (model, &iter, NULL, n - 1)) {
+		path = gtk_tree_model_get_path (model, &iter);
+		gtk_tree_selection_select_path (selection, path);
+		gtk_tree_view_scroll_to_cell (tree, path, NULL, TRUE, 0, 0);
+		gtk_tree_path_free (path);
+	}
 }
 
 //==============================================================================

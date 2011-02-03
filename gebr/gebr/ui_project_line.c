@@ -1034,6 +1034,10 @@ line_reorder(GtkTreeView *tree_view, GtkTreeIter *source_iter, GtkTreeIter *targ
 		gtk_tree_model_get(model, source_iter, PL_FILENAME, &source_line_filename, -1);
 		gtk_tree_model_get(model, &source_iter_parent, PL_FILENAME, &source_project_filename, -1);
 	}
+	else {
+		/* Source iter is a project. Thus, we get its filename only (line is unknown in this case). */
+		gtk_tree_model_get(model, source_iter, PL_FILENAME, &source_line_filename, -1);
+	}
 
 	if (target_is_line) {
 		gtk_tree_model_get(model, target_iter, PL_FILENAME, &target_line_filename, -1);
@@ -1044,25 +1048,32 @@ line_reorder(GtkTreeView *tree_view, GtkTreeIter *source_iter, GtkTreeIter *targ
 		gtk_tree_model_get(model, target_iter, PL_FILENAME, &target_project_filename, -1);
 	}
 
-
 	/* Drop cases: */
-	if (!source_is_line && !target_is_line) /* Source and target are lines. Nothing to do.*/
-		return TRUE;
+	if (!source_is_line && !target_is_line){ /* Source and target are Projects.*/
+		gboolean drop_before;
+		drop_before = (drop_position == GTK_TREE_VIEW_DROP_BEFORE);
 
-	GtkTreeStore *store = gebr.ui_project_line->store;
+		if (drop_before) {
+			gtk_tree_store_move_before(gebr.ui_project_line->store, source_iter, target_iter);
+		}
+		else { /* GTK_TREE_VIEW_DROP_AFTER */
+			gtk_tree_store_move_after(gebr.ui_project_line->store, source_iter, target_iter);
+		}
+		return TRUE;
+	}
 
 	if (source_is_line && target_is_line) {
 		gboolean drop_before;
 		drop_before = (drop_position == GTK_TREE_VIEW_DROP_INTO_OR_BEFORE || drop_position == GTK_TREE_VIEW_DROP_BEFORE);
 
 		if (drop_before) {
-			gtk_tree_store_insert_before(store, &new_iter, NULL, target_iter);
+			gtk_tree_store_insert_before(gebr.ui_project_line->store, &new_iter, NULL, target_iter);
 		}
 		else { /* GTK_TREE_VIEW_DROP_INTO_OR_AFTER || GTK_TREE_VIEW_DROP_AFTER */
-			gtk_tree_store_insert_after(store, &new_iter, NULL, target_iter);
+			gtk_tree_store_insert_after(gebr.ui_project_line->store, &new_iter, NULL, target_iter);
 		}
 		gebr_gui_gtk_tree_model_iter_copy_values(model, &new_iter, source_iter);
-		gtk_tree_store_remove(store, source_iter);
+		gtk_tree_store_remove(gebr.ui_project_line->store, source_iter);
 		
 		project_line_move(source_project_filename, source_line_filename, target_project_filename, target_line_filename, drop_before);
 		project_line_select_iter(&new_iter);
@@ -1071,9 +1082,9 @@ line_reorder(GtkTreeView *tree_view, GtkTreeIter *source_iter, GtkTreeIter *targ
 	}
 
 	if (source_is_line && !target_is_line) { /* Target is a project. */
-		gtk_tree_store_append(store, &new_iter, target_iter);
+		gtk_tree_store_append(gebr.ui_project_line->store, &new_iter, target_iter);
 		gebr_gui_gtk_tree_model_iter_copy_values(model, &new_iter, source_iter);
-		gtk_tree_store_remove(store, source_iter);
+		gtk_tree_store_remove(gebr.ui_project_line->store, source_iter);
 
 		project_line_move(source_project_filename, source_line_filename, target_project_filename, NULL, FALSE);
 		project_line_select_iter(&new_iter);
@@ -1110,7 +1121,9 @@ line_can_reorder(GtkTreeView *tree_view, GtkTreeIter *source_iter, GtkTreeIter *
 	if (source_is_line && !target_is_line) /* Target is a project. */
 		return drop_position == GTK_TREE_VIEW_DROP_INTO_OR_BEFORE || drop_position == GTK_TREE_VIEW_DROP_INTO_OR_AFTER;
 
-	/* Source and target are projects. */
+	if (!source_is_line && !target_is_line) /* Source and target are projects. */
+		return drop_position == GTK_TREE_VIEW_DROP_BEFORE || drop_position == GTK_TREE_VIEW_DROP_AFTER;
+
 	return FALSE;
 }
 
