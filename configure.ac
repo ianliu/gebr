@@ -134,7 +134,11 @@ AC_ARG_ENABLE([gui],
 	      [AC_HELP_STRING([--enable-gui], [turn on GUI build])],
 	      [enable_gui=$enableval],
 	      [enable_gui=yes])
-AM_CONDITIONAL(ENABLE_GUI, $enable_gui)
+if test "$enable_gui" = "yes"; then
+	AM_CONDITIONAL(ENABLE_GUI, true)
+else
+	AM_CONDITIONAL(ENABLE_GUI, false)
+fi
 
 dnl ============================================================================
 dnl Check if we have docbook

@@ -25,6 +25,7 @@
 #include <gdome.h>
 #include <libxml/parser.h>
 
+#include "defines.h"
 #if ENABLE_TIDY
 #include <tidy/tidy.h>
 #include <tidy/buffio.h>
@@ -32,7 +33,6 @@
 
 #include "document.h"
 #include "document_p.h"
-#include "defines.h"
 #include "xml.h"
 #include "types.h"
 #include "error.h"
