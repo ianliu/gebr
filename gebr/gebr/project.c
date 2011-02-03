@@ -167,13 +167,17 @@ void project_list_populate(void)
 
 	project_line_free();
 
-	key_array = g_key_file_get_keys(gebr.config.key_file, "ordering", &length, &error);
+	key_array = g_key_file_get_keys(gebr.config.key_file, "projects", &length, &error);
+
+	if (!key_array) {
+		key_array = g_strsplit("", ",", 0);
+	}
 
 	for (gint i = 0; key_array[i] != NULL; ++i) {
-		if (!g_str_has_prefix(key_array[i], "project_filename-"))
+		if (!g_str_has_prefix(key_array[i], "project-"))
 			continue;
 
-		filename = g_key_file_get_string (gebr.config.key_file, "ordering", key_array[i], &error);
+		filename = g_key_file_get_string (gebr.config.key_file, "projects", key_array[i], &error);
 
 		if (document_load((GebrGeoXmlDocument**)(&project), filename, FALSE)){
 			g_free(filename);
@@ -191,7 +195,7 @@ void project_list_populate(void)
 			continue;
 
 		for (gint i = 0; key_array[i] != NULL; ++i) {
-			gchar * filename_loaded = g_key_file_get_string (gebr.config.key_file, "ordering", key_array[i], &error);
+			gchar * filename_loaded = g_key_file_get_string (gebr.config.key_file, "projects", key_array[i], &error);
 
 			if (!g_strcmp0(filename_loaded, filename)){
 				already_loaded = TRUE;
