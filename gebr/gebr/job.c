@@ -165,7 +165,8 @@ void job_init_details(struct job *job, GString * _status, GString * title, GStri
 					 * and should be appended to the combobox model. */
 					gtk_list_store_append(job->server->queues_model, &queue_iter);
 				
-				gtk_list_store_set(job->server->queues_model, &queue_iter, 0, string->str, 1, job->queue->str, 2, job, -1);
+				gtk_list_store_set(job->server->queues_model, &queue_iter, 0, string->str,
+						   1, job->queue->str, 2, job, -1);
 
 				g_string_free(string, TRUE);
 			}
@@ -179,8 +180,8 @@ void job_init_details(struct job *job, GString * _status, GString * title, GStri
 			else
 				g_string_printf(string, _("After '%s' at '%s'"), title->str, queue_title);
 
-			gtk_list_store_set(job->server->queues_model, &queue_iter, 0, string->str, 1, job->queue->str, 2,
-					   job, -1);
+			gtk_list_store_set(job->server->queues_model, &queue_iter, 0, string->str,
+					   1, job->queue->str, 2, job, -1);
 
 			g_string_free(string, TRUE);
 		}
@@ -203,8 +204,14 @@ struct job *job_new_from_jid(struct server *server, GString * jid, GString * _st
 
 void job_free(struct job *job)
 {
+	/* UI */
 	if (gtk_tree_store_remove(gebr.ui_job_control->store, &job->iter))
 		gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(gebr.ui_job_control->view), &job->iter);
+	else {
+		gtk_text_buffer_set_text(gebr.ui_job_control->text_buffer, "", -1);
+		gtk_label_set_text(GTK_LABEL(gebr.ui_job_control->label), "");
+	}
+	/* struct */
 	g_string_free(job->title, TRUE);
 	g_string_free(job->run_id, TRUE);
 	g_string_free(job->jid, TRUE);
@@ -401,9 +408,9 @@ void job_status_update(struct job *job, enum JobStatus status, const gchar *para
 	
 	job_status_show(job);
 
-	if (job->status == JOB_STATUS_ISSUED){
+	if (job->status == JOB_STATUS_ISSUED) {
 		GtkTextIter iter;
-		g_string_append(job->issues , parameter);
+		g_string_append(job->issues, parameter);
 		gtk_text_buffer_get_iter_at_mark(gebr.ui_job_control->text_buffer, &iter, gtk_text_buffer_get_mark(gebr.ui_job_control->text_buffer, "issue"));
 		gtk_text_buffer_insert(gebr.ui_job_control->text_buffer, &iter, parameter, g_utf8_strlen(parameter, -1));
 		return;
@@ -431,7 +438,7 @@ void job_status_update(struct job *job, enum JobStatus status, const gchar *para
 
 				g_string_free(string, TRUE);
 			}
-		} else {
+		} else if (job->queue->str[0] != 'j') {
 			GString *string = g_string_new(NULL);
 
 			g_string_printf(string, _("At '%s'"), job->server->type == GEBR_COMM_SERVER_TYPE_REGULAR

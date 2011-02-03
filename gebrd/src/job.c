@@ -684,14 +684,15 @@ gboolean job_new(struct job ** _job, struct client * client, GString * queue, GS
 
 	/* success exit */
 	success = TRUE;
+	job_set_status(job, JOB_STATUS_QUEUED);
 	goto out;
 
- err:	
+err:	/* error exit */
 	job_set_status(job, JOB_STATUS_FAILED);
 	g_string_assign(job->cmd_line, "");
 	success = FALSE;
 
- out:
+out:
 	/* hostname and flow title */
 	g_string_assign(job->title, gebr_geoxml_document_get_title(document));
 	/* set the start date */
@@ -728,8 +729,6 @@ void job_free(struct job *job)
 	g_string_free(job->moab_jid, TRUE);
 	g_string_free(job->queue, TRUE);
 	g_string_free(job->n_process, TRUE);
-
-	
 	g_free(job);
 }
 
@@ -842,9 +841,6 @@ void job_run_flow(struct job *job)
 		g_string_printf(cmd_line, "bash -l -c %s", quoted);
 		g_free(quoted);
 	}
-
-	/* we don't know yet the status */
-	job_set_status(job, JOB_STATUS_UNKNOWN);
 
 	if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_MOAB) {
 		gchar * script;

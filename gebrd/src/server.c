@@ -327,33 +327,32 @@ gboolean server_parse_client_messages(struct client *client)
 			if (env_delay != NULL)
 				sleep(atoi(env_delay));
 #endif
+
+			/* run message return with the job_id and the temporary id created by the client */
 			gebr_comm_protocol_send_data(client->protocol, client->stream_socket,
 						     gebr_comm_protocol_defs.ret_def, 2, job->jid->str, job->run_id->str);
-			if (success) {
-				if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_REGULAR) {
-					if (!queue->len || queue->str[0] == 'j') {
-						g_string_printf(queue, "j%s", job->jid->str);
-						g_string_assign(job->queue, queue->str);
-					}
-					gebrd_queues_add_job_to(queue->str, job);
-					if (!gebrd_queues_is_queue_busy(queue->str)) {
-						gebrd_queues_set_queue_busy(queue->str, TRUE);
-						gebrd_queues_step_queue(queue->str);
-					} else
-						job_notify_status(job, JOB_STATUS_QUEUED, gebr_iso_date());
-				} else
-					job_run_flow(job);
-			} else if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_REGULAR) {
-				if (!queue->len) {
+			/* assign queue (only for regular, moab is already set) */
+			if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_REGULAR) {
+				if (!queue->len || queue->str[0] == 'j') {
 					g_string_printf(queue, "j%s", job->jid->str);
 					g_string_assign(job->queue, queue->str);
 				}
+				gebrd_queues_add_job_to(queue->str, job);
 			}
-
+			/* send job message (job is created -promoted from waiting server response- at the client) */
 			if (success == TRUE)
 				job_send_clients_job_notify(job);
 			else
 				job_notify(job, client); 
+			/* run or queue */
+			if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_REGULAR) {
+				if (!gebrd_queues_is_queue_busy(queue->str)) {
+					gebrd_queues_set_queue_busy(queue->str, TRUE);
+					gebrd_queues_step_queue(queue->str); //will call job_run_flow for immediately jobs
+				} else
+					job_notify_status(job, JOB_STATUS_QUEUED, gebr_iso_date());
+			} else //moab
+				job_run_flow(job);
 
 			/* frees */
 			gebr_comm_protocol_split_free(arguments);
