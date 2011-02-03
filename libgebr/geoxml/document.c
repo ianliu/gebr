@@ -25,8 +25,10 @@
 #include <gdome.h>
 #include <libxml/parser.h>
 
+#if ENABLE_TIDY
 #include <tidy/tidy.h>
 #include <tidy/buffio.h>
+#endif
 
 #include "document.h"
 #include "document_p.h"

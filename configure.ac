@@ -111,17 +111,6 @@ else
 fi
 AC_SUBST(DEBUG_CFLAGS)
 
-dnl ============================================================================
-dnl Check if we have docbook
-dnl ============================================================================
-AC_CHECK_PROG(DB2HTML, db2html, true, false)
-AM_CONDITIONAL(HAVE_DOCBOOK, $DB2HTML)
-if $DB2HTML; then
-	have_docbook=yes;
-else
-	have_docbook=no;
-fi
-
 AC_PROG_INSTALL
 AC_PROG_CC
 AM_PROG_CC_STDC
@@ -145,15 +134,23 @@ AC_ARG_ENABLE([gui],
 	      [AC_HELP_STRING([--enable-gui], [turn on GUI build])],
 	      [enable_gui=$enableval],
 	      [enable_gui=yes])
+AM_CONDITIONAL(ENABLE_GUI, $enable_gui)
 
+dnl ============================================================================
+dnl Check if we have docbook
+dnl ============================================================================
 if test "$enable_gui" = "yes"; then
-	CONFIG_SUBDIRS="geoxml comm gui"
-	CONFIG_GUI="gui/libgebr_gui.la"
+	AC_CHECK_PROG(DB2HTML, db2html, true, false)
+	AM_CONDITIONAL(HAVE_DOCBOOK, $DB2HTML)
+	if $DB2HTML; then
+		have_docbook=yes;
+	else
+		have_docbook=no;
+	fi
 else
-	CONFIG_SUBDIRS="geoxml comm"
+	have_docbook=no;
+	AM_CONDITIONAL(HAVE_DOCBOOK, false)
 fi
-AC_SUBST(CONFIG_SUBDIRS)
-AC_SUBST(CONFIG_GUI)
 
 dnl ============================================================================
 dnl Checking for tidy library
@@ -342,7 +339,7 @@ echo " Configuration summary:"
 echo " "
 echo " Enable debugging messages?    $enable_debug"
 echo " Enable GUI support?           $enable_gui"
-echo " Enable Tidy support?          $have_tidy"
+echo " Enable Tidy support?          $want_tidy"
 echo " Has Dockbook to build user's"
 echo " documentation?                $have_docbook"
 echo "---------------------------------------"

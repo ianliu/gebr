@@ -18,7 +18,10 @@ include $(top_srcdir)/Makefile.decl
 if ENABLE_TESTS
 TESTDIR = tests
 endif
-SUBDIRS = . @CONFIG_SUBDIRS@ po ${TESTDIR}
+if ENABLE_GUI
+GUIDIR=gui
+endif
+SUBDIRS = . geoxml comm ${GUIDIR} po ${TESTDIR}
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = gebr.pc

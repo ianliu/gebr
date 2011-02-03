@@ -18,7 +18,10 @@ include $(top_srcdir)/Makefile.decl
 ACLOCAL_AMFLAGS = -I m4
 DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc
 
-SUBDIRS = libgebr gebrd gebr debr docs rpm
+SUBDIRS = libgebr gebrd rpm
+if ENABLE_GUI
+SUBDIRS += gebr debr docs 
+endif
 
 EXTRA_DIST = libgebr/po/Makefile.in.in	\
 	     gebrd/po/Makefile.in.in	\

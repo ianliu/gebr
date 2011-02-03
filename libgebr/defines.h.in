@@ -42,6 +42,11 @@ G_BEGIN_DECLS
 #define GEBR_GEOXML_DOCUMENT_VERSION		"@DOCUMENT_VERSION@"
 #define GEBR_GEOXML_DTD_DIR			LIBGEBR_DATA_DIR"/geoxml" 
 
+#if !GLIB_CHECK_VERSION(2,6,0)
+#include <unistd.h>
+#define g_unlink(filename) unlink(filename)
+#endif
+
 G_END_DECLS
 
 #endif //__LIBGEBR_DEFINES_H
