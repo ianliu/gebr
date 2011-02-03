@@ -26,6 +26,10 @@ libgebrd_a_SOURCES = \
 	mpi-implementations.c \
 	mpi-interface.c
 
+touch:
+	if [ -d $(top_srcdir)/.hg ]; then touch main.c -r $(top_srcdir)/.hg; fi
+gebrd.c: touch
+
 bin_PROGRAMS = gebrd
 gebrd_SOURCES = \
 	main.c 

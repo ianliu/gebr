@@ -17,6 +17,10 @@ include $(top_srcdir)/Makefile.decl
 
 bin_PROGRAMS = gebr
 
+touch:
+	if [ -d $(top_srcdir)/.hg ]; then touch main.c -r $(top_srcdir)/.hg; fi
+client.c: touch
+
 #TODO: remove cmdline.{c,h} in future versions (remove old config format support)
 noinst_LIBRARIES = libgebr.a
 libgebr_a_SOURCES =		\
@@ -99,3 +103,5 @@ gebr_LDADD =			\
 	$(GEBR_COMM_LIBS)	\
 	$(GEBR_GUI_LIBS)	\
 	$(NULL)
+
+.PHONY: touch

@@ -24,7 +24,7 @@
     <section>
       <title>Project GêBR</title>
 
-      <para>GêBR's interface is only a part of <emphasis>Project GêBR</emphasis>. Our main objective is to unite the
+      <para>GêBR's interface is only a part of <emphasis>Project GêBR</emphasis>. Our main objective is to help bring together the
       Brazilian geophysics community, by developing tools to aid in the dissemination of research in the area.</para>
 
       <para>For more information, visit the project's official
@@ -162,56 +162,51 @@
   </section>
 
   <section xml:id="sec_2">
-    <title>Projetos, linhas e fluxos: uma visão geral</title>
+    <title>Projects, Lines and Flows: an overview</title>
 
-    <para>Na GêBR, os <emphasis role="bold">fluxos de processamento</emphasis> são organizados em unidades maiores,
-      chamadas <emphasis role="bold">linhas</emphasis>. As linhas, por sua vez, são organizadas em unidades maiores,
-      chamadas <emphasis role="bold">projetos</emphasis>. Em outras palavras:</para>
+    <para>In GêBR each <emphasis role="bold">processing Flow</emphasis> is organized into larger units called 
+<emphasis role="bold">Lines</emphasis>. Lines are grouped together into <emphasis role="bold">Projects</emphasis>. In other words:</para>
 
     <itemizedlist>
       <listitem>
 
-        <para>Um <emphasis role="bold">projeto</emphasis> é um conjunto
-          de <emphasis role="bold">linhas</emphasis></para>
+        <para>A <emphasis role="bold">Project</emphasis> is a set of <emphasis role="bold">Lines</emphasis></para>
 
       </listitem>
       <listitem>
 
-        <para>Uma <emphasis role="bold">linha</emphasis> é um conjunto de <emphasis role="bold">fluxos</emphasis></para>
+        <para>A <emphasis role="bold">Line</emphasis> is a set of <emphasis role="bold">Flows</emphasis></para>
 
       </listitem>
     </itemizedlist>
 
-    <para>Por isso, antes de montar e executar fluxos, é necessário <emphasis role="bold">criar projetos e
-	linhas</emphasis>.</para>
+    <para>Before you can organize and execute a Flow, you must first <emphasis role="bold">Create a Project and a Line</emphasis>.</para>
 
 
     <section xml:id="sec_2_1">
-      <title>Criando projetos e linhas</title>
+      <title>Creating Projects and Lines</title>
 
-      <para>Para criar um <emphasis role="bold">novo projeto</emphasis>:</para>
+      <para>In order to create a <emphasis role="bold">New Project</emphasis>:</para>
 
       <procedure>
         <step>
-          <para>Selecione a aba 
-            <guilabel>Projetos e Linhas</guilabel>.</para>
+          <para>Select the tab 
+            <guilabel>Projects and Lines</guilabel>.</para>
         </step>
         <step>
-          <para>Clique no
-            botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_criar_projeto.png"
+          <para>Click on the button <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_criar_projeto.png"
             /></imageobject></inlinemediaobject></guiicon></para>
         </step>
         <step>
-          <para>Na janela <guilabel>Propriedades para projeto</guilabel>, digite um
-            <emphasis>título</emphasis> para o projeto (por exemplo, <userinput>Meu primeiro
-              projeto</userinput>).</para>
+          <para>In the <guilabel>'New Project' properties</guilabel> dialog box, fill in the Project's
+            <emphasis>title</emphasis>, for example, <userinput>My First Project</userinput>).</para>
         </step>
         <step>
-          <para>Se desejar, digite também uma breve <emphasis>descrição</emphasis> do projeto, o
-            <emphasis>autor</emphasis> e um <emphasis>e-mail</emphasis> para contato.</para>
+          <para>You can also give a brief <emphasis>Description</emphasis> of the Project, the
+            <emphasis>Author</emphasis> and an <emphasis>e-mail</emphasis> for contact.</para>
         </step>
         <step>
-          <para>Clique <emphasis role="bold">OK</emphasis>.</para>
+          <para>Click <emphasis role="bold">OK</emphasis>.</para>
         </step>
       </procedure>
       <screenshot>
@@ -225,11 +220,9 @@
         </mediaobject>
       </screenshot>
 
-      <para>Depois de criado, o projeto fica acessível no lado esquerdo da janela principal da GêBR. Na caixa 
-	<guilabel>Detalhes</guilabel>, no lado direito da janela principal, são exibidas informações sobre o projeto.
-	Você notará que algumas dessas informações foram inseridas por você na janela
-	<guilabel>Propriedades para projeto</guilabel>, no momento da criação do projeto. Outras, como a data da criação
-	e a data da última modificação, são geradas automaticamente pela GêBR.</para>
+      <para>The Project title should have appeared on the left hand side of GêBR's main window. Information about the Project is shown in the 
+	<guilabel>Details</guilabel> box on the right hand side of GêBR's main window.
+	Notice that some of this information comes from what you inserted in the <guilabel>'New Project' properties</guilabel> dialog box when you created the Project. Details such as creation date and modified date, the date of the last change, are automatically generated by GêBR.</para>
 
       <screenshot>
         <info>
@@ -242,27 +235,25 @@
         </mediaobject>
       </screenshot>
 
-      <para>Agora que o projeto está criado, você deve <emphasis role="bold">criar linhas</emphasis> dentro dele. Para
-      criar uma <emphasis role="bold">nova linha</emphasis>:</para>
+      <para>Now that you have created a Project, you can create <emphasis role="bold">Lines</emphasis> inside this Project. To add a <emphasis role="bold">New Line</emphasis>:</para>
 
       <procedure>
         <step>
-          <para>Certifique-se de que o projeto que você criou está selecionado, como mostrado na janela acima.</para>
+          <para>Check that you have selected the Project you created, just like in the window above.</para>
         </step>
         <step>
-          <para>Clique no
-          botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_criar_linha.png"
+          <para> Click on the
+          button <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_criar_linha.png"
           /></imageobject></inlinemediaobject></guiicon></para>
         </step>
         <step>
-          <para>Na janela 
-            <guilabel>Propriedades para linha</guilabel>, digite um  <emphasis>título</emphasis> para a linha (por exemplo, 
-            <userinput>Minha primeira linha</userinput>).</para>
+          <para>In the dialog box
+            <guilabel>'New Line' properties</guilabel>, fill in the Line's <emphasis>Title</emphasis>, for example, 
+            <userinput>My First Line</userinput>).</para>
         </step>
         <step>
-          <para>Se desejar, digite também uma breve <emphasis>descrição</emphasis> da linha,
-            o <emphasis>autor</emphasis>, um <emphasis>e-mail</emphasis> para contato.Pode-se adicionar ainda caminhos
-            personalizados de linha, assunto melhor abordado na <link linkend="sec_3_1_6"><emphasis role="bold">seção
+          <para>You can also give a brief <emphasis>Description</emphasis> of the Project, the
+            <emphasis>Author</emphasis> and an <emphasis>e-mail</emphasis> for contact. You can also add paths to directorys that are relevant for this Line, this will be explained in greater detail in <link linkend="sec_3_1_6"><emphasis role="bold">Section
             3.1.6</emphasis></link></para>
         </step>
       </procedure>
@@ -277,9 +268,7 @@
         </mediaobject>
       </screenshot>
 
-      <para>Depois de criar a primeira linha, sua janela da GêBR deve se parecer com a janela abaixo. Note que quando a
-	linha está selecionada, as informações sobre ela são mostradas na caixa <guilabel>Detalhes</guilabel>, no lado
-	direito da janela principal.</para>
+      <para>After creating your first Line your GêBR window should look something like the window below. Notice that when a Line is selected the <guilabel>Details</guilabel> box, on the right of the main window, will show information about this selected Line.</para>
 
       <screenshot>
         <info>
@@ -293,25 +282,18 @@
       </screenshot>
       <tip>
 
-        <para>Acesse <menuchoice> <guimenu>Ações</guimenu> <guimenuitem>Preferências</guimenuitem> </menuchoice> (no
-        canto superior esquerdo da janela principal da GêBR) e digite seus dados nos campos <guilabel>Nome de
-        Usuário</guilabel> e <guilabel>Email</guilabel>. Novos projetos e linhas assumirão estes valores como
-        padrão.</para>
+        <para>At the top left corner, <menuchoice> <guimenu>Actions</guimenu> <guimenuitem>Preferences</guimenuitem> </menuchoice> then fill in your details in the fields <guilabel>User name</guilabel> and <guilabel>Email</guilabel>. New Projects and Lines by default will use this information.</para>
 
       </tip>
 
-      <para>Agora que existe uma estrutura básica de projeto e linha, você já pode <emphasis role="bold">criar seu
-      primeiro fluxo</emphasis>.</para>
+      <para>Now that you have the basic Project and Line structure you can <emphasis role="bold">create your first Flow</emphasis>.</para>
 
     </section>
 
     <section xml:id="sec_2_2">
-      <title>Criando fluxos</title>
+      <title>Creating Flows</title>
 
-      <para>Na GêBR, um <emphasis role="bold">fluxo</emphasis> é uma <emphasis role="bold">sequência de
-	operações</emphasis> selecionadas pelo usuário. Estas operações, também chamadas
-	de <emphasis role="bold">programas</emphasis> do fluxo, são separadas nas
-	seguintes <emphasis role="bold">categorias</emphasis>, de acordo com o propósito:</para>
+      <para>In GêBR a <emphasis role="bold">Flow</emphasis> is a <emphasis role="bold"> sequence of operations</emphasis> selected by the user. these operations, also called the Flow's <emphasis role="bold">programs</emphasis>, are organized into the following <emphasis role="bold">categories</emphasis> acording to their purpose:</para>
 
       <itemizedlist>
         <listitem>
@@ -381,8 +363,8 @@
         </listitem>
       </itemizedlist>
 
-      <para> <emphasis role="bold">Criar um fluxo</emphasis> significa <emphasis role="bold">selecionar e ordenar
-	programas</emphasis>, a partir das categorias acima. Vejamos como se faz na prática:</para>
+      <para> To <emphasis role="bold">Create a Flow</emphasis> you must <emphasis role="bold">select and order programs 
+      </emphasis> from the above categories.  Vejamos como se faz na prática:</para>
 
       <procedure>
         <step>

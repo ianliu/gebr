@@ -23,6 +23,10 @@ SUBDIRS = . @CONFIG_SUBDIRS@ po ${TESTDIR}
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = gebr.pc
 
+touch:
+	if [ -d $(top_srcdir)/.hg ]; then touch version.c -r $(top_srcdir)/.hg; fi
+date.c: touch
+
 lib_LTLIBRARIES = libgebr.la
 libgebr_la_SOURCES = 	\
 	date.c		\
@@ -61,3 +65,5 @@ libgebr_la_LIBADD = -lutil $(INTLLIBS) $(GLIB_LIBS)
 libgebr_la_LDFLAGS = -version-info @GEBR_VERSION_INFO@
 
 distcheck-hook: all
+
+.PHONY: touch
