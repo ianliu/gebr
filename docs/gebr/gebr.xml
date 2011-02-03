@@ -9,25 +9,37 @@
   <section>
     <title>What is GÍBR?</title>
 
-    <para> GÍBR is a simple graphical interface which <emphasis role="bold">facilitates geophysical data processing</emphasis>. GÍBR is <emphasis role="bold">not a package for processing</emphasis>, its designed to <emphasis role="bold">integrate</emphasis> a large variety of free processing packages, such as <emphasis>Seismic Un*x</emphasis> and <emphasis>Madagascar</emphasis>.</para>
+    <para>GÍBR is a simple graphical interface which <emphasis role="bold">facilitates geophysical data
+    processing</emphasis>. GÍBR is <emphasis role="bold">not a package for processing</emphasis>, it is designed
+    to <emphasis role="bold">integrate</emphasis> a large variety of free processing packages, such as <emphasis>Seismic
+    Un*x</emphasis> and <emphasis>Madagascar</emphasis>.</para>
 
-    <para>GÍBR can manage Projects and Lines, assemble and execute Flows, follow the results of your data processing, and everything in a simple and friendly way.</para>
+    <para>GÍBR can manage Projects and Lines, assemble and execute Flows, follow the results of your data processing,
+    and everything in a simple and friendly way.</para>
 
-  <para>Being a<emphasis role="bold">free software</emphasis>, anyone can use and customize GÍBR for free, according to the terms of the <emphasis>GNU Public License</emphasis>. Making this software very attractive for academic research and for use in courses.</para>
+    <para>Being a <emphasis role="bold">free software</emphasis>, anyone can use and customize GÍBR for free, according
+    to the terms of the <emphasis>GNU Public License</emphasis>. Making this software very attractive for academic
+    research and for use in courses.</para>
 
     <section>
       <title>Project GÍBR</title>
 
-      <para> GÍBR's interface is only a part of <emphasis>Project GÍBR</emphasis>. Our main objective is to unite the Brazilian geophysics community, by developing tools to aid in the dissemination of research in the area.</para>
+      <para>GÍBR's interface is only a part of <emphasis>Project GÍBR</emphasis>. Our main objective is to unite the
+      Brazilian geophysics community, by developing tools to aid in the dissemination of research in the area.</para>
 
-      <para>For more information, visit the project's official site: <emphasis><link xlink:href="http://www.gebrproject.com">www.gebrproject.com</link></emphasis>.</para>
+      <para>For more information, visit the project's official
+      site: <emphasis><link xlink:href="http://www.gebrproject.com">www.gebrproject.com</link></emphasis>.</para>
 
     </section>
 
     <section>
       <title>Technical Information</title>
 
-      <para>This guide is for GÍBR <emphasis role="bold">version 0.12.0</emphasis>. The images used in this guide where captured in the system <emphasis role="bold">Ubuntu 10.04</emphasis>. Therefore you may observe slight differences if you are using another operating system. For specific installation instructions for each operating system, see the guide <guilabel>Download</guilabel>, in the project's official site: <emphasis><link xlink:href="http://www.gebrproject.com">www.gebrproject.com</link></emphasis>.</para>
+      <para>This guide is for GÍBR <emphasis role="bold">version 0.12.0</emphasis>. The images used in this guide where
+      captured in the system <emphasis role="bold">Ubuntu 10.04</emphasis>. Therefore you may observe slight differences
+      if you are using another operating system. For specific installation instructions for each operating system, see
+      the <emphasis><link xlink:href="http://www.gebrproject.com/install-guide">install guide</link></emphasis>, in the
+      <emphasis><link xlink:href="http://www.gebrproject.com">project's official site</link></emphasis>.</para>
 
     </section>
 

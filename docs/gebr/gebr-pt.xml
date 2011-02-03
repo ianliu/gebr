@@ -41,8 +41,9 @@
       <para>Este guia refere-se à <emphasis role="bold">versão 0.12.0</emphasis> da GêBR. As telas usadas no guia foram
 	capturadas em um sistema <emphasis role="bold">Ubuntu 10.04</emphasis>. Por isso, podem apresentar pequenas
 	diferenças em relação a outros sistemas operacionais. Para obter instruções de instalação específicas para cada
-	sistema, visite a guia <guilabel>Download</guilabel>, na página oficial do
-	projeto: <emphasis><link xlink:href="http://www.gebrproject.com">www.gebrproject.com</link></emphasis>.</para>
+	sistema, leia o <emphasis><link xlink:href="http://www.gebrproject.com/install-guide">guia de
+	instalação</link></emphasis>, disponível na <emphasis><link xlink:href="http://www.gebrproject.com">página
+	oficial do projeto</link></emphasis>.</para>
 
     </section>
 
