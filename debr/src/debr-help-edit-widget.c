@@ -232,29 +232,13 @@ static void debr_help_edit_widget_finalize(GObject *object)
 //==============================================================================
 static void pre_process_html (GString *html)
 {
-	gchar *inner;
+	gchar *content;
 	gchar *escaped;
-	GRegex *regex;
-	GMatchInfo *match;
-
-	inner = gebr_geoxml_tmpl_get (html, "cnt");
-	if (!inner) {
-		regex = g_regex_new ("<div class=\"content\">(.*?)<\\/div>",
-				     G_REGEX_DOTALL, 0, NULL);
-
-		if (g_regex_match (regex, html->str, 0, &match)) {
-			inner = g_match_info_fetch (match, 1);
-			escaped = gebr_str_escape (inner);
-			g_match_info_free (match);
-		} else
-			escaped = gebr_str_escape (html->str);
-		g_regex_unref (regex);
-	} else
-		escaped = gebr_str_escape (inner);
-
-	g_string_assign (html, escaped); 
+	content = gebr_geoxml_object_get_help_content_from_str (html->str);
+	escaped = gebr_str_escape (content);
+	g_string_assign (html, escaped);
+	g_free (content);
 	g_free (escaped);
-	g_free (inner);
 }
 
 static void on_load_finished(WebKitWebView * view, WebKitWebFrame * frame, GebrGuiHelpEditWidget *self)

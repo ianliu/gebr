@@ -862,6 +862,7 @@ static void on_title_ready (GebrGuiHtmlViewerWidget * widget,
 //==============================================================================
 void debr_help_show(GebrGeoXmlObject * object, gboolean menu, const gchar * title)
 {
+	gchar *content;
 	const gchar * html;
 	GtkWidget * window;
 	GebrGuiHtmlViewerWidget * html_viewer_widget;
@@ -880,17 +881,13 @@ void debr_help_show(GebrGeoXmlObject * object, gboolean menu, const gchar * titl
 	else
 		html = gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(object));
 
-	gchar *content;
-	GString *tmpl;
 
-	tmpl = g_string_new (html);
-	content = gebr_geoxml_tmpl_get (tmpl, "cnt");
+	content = gebr_geoxml_object_get_help_content (object);
 	html = gebr_geoxml_object_generate_help (object, content);
-	g_string_free (tmpl, TRUE);
-	g_free (content);
-
 	gebr_gui_html_viewer_window_show_html(GEBR_GUI_HTML_VIEWER_WINDOW(window), html);
+
 	gtk_widget_show (window);
+	g_free (content);
 }
 
 void debr_help_edit(GebrGeoXmlObject * object)
