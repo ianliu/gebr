@@ -820,6 +820,7 @@ void project_line_delete(void)
 
 	GString *delete_list = g_string_new("");
 	gboolean can_delete = TRUE;
+	gint quantity_selected = 0;
 	for (GList *i = selected; i != NULL; i = g_list_next(i)) {
 		GtkTreeIter * iter = (GtkTreeIter*)i->data;
 		GtkTreeIter parent;
@@ -830,6 +831,8 @@ void project_line_delete(void)
 		
 		if (!is_line) {
 			gboolean can_delete_project;
+			quantity_selected++;
+
 			if (gtk_tree_model_iter_n_children(GTK_TREE_MODEL(gebr.ui_project_line->store), iter)) {
 				gboolean all_line_selected = TRUE;
 				GtkTreeIter i_iter;
@@ -841,8 +844,9 @@ void project_line_delete(void)
 					}
 				}
 				can_delete_project = all_line_selected;
-			} else 
+			} else {
 				can_delete_project = TRUE;
+			}
 
 			if (!can_delete_project) {
 				can_delete = FALSE;
@@ -855,8 +859,12 @@ void project_line_delete(void)
 		} else {
 			GString *tmp = g_string_new(_("empty"));
 			glong n = gebr_geoxml_line_get_flows_number(GEBR_GEOXML_LINE(document));
-			if (n > 0)
+			quantity_selected++;
+
+			if (n > 0){
 				g_string_printf(tmp, _("including %ld flow(s)"), n);
+				quantity_selected++;
+			}
 			g_string_append(delete_list, "  ");
 			g_string_append_printf(delete_list, _("Line '%s' (%s).\n"),
 					       gebr_geoxml_document_get_title(document), tmp->str);
@@ -866,11 +874,19 @@ void project_line_delete(void)
 	/* now asks the user for confirmation */
 	if (!can_delete)
 		goto out;
-	can_delete = gebr_gui_confirm_action_dialog(
-			_("Confirm multiple deletion"),
-			_("The following documents are about to be deleted. This operation can't be undone! "
-			  "Are you sure?\n%s"),
-		       	delete_list->str);
+	if (quantity_selected > 1)
+		can_delete = gebr_gui_confirm_action_dialog(
+				_("Confirm multiple deletion"),
+				_("The following documents are about to be deleted. This operation can't be undone! "
+				  "Are you sure?\n%s"),
+				delete_list->str);
+
+	else
+		can_delete = gebr_gui_confirm_action_dialog(
+				_("Confirm deletion"),
+				_("The following document is about to be deleted. This operation can't be undone! "
+				  "Are you sure?\n%s"),
+				delete_list->str);
 	if (!can_delete)
 		goto out;
 
