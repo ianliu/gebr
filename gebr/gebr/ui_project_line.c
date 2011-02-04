@@ -865,7 +865,12 @@ void project_line_delete(void)
 				g_string_printf(tmp, _("including %ld flow(s)"), n);
 				quantity_selected++;
 			}
-			g_string_append(delete_list, "  ");
+
+			GtkTreeSelection *tree_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_project_line->view));
+			
+			if (gtk_tree_selection_iter_is_selected(tree_selection, &parent))
+				g_string_append(delete_list, "  ");
+
 			g_string_append_printf(delete_list, _("Line '%s' (%s).\n"),
 					       gebr_geoxml_document_get_title(document), tmp->str);
 			g_string_free(tmp, TRUE);
