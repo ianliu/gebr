@@ -266,7 +266,6 @@ static WebKitNavigationResponse on_navigation_requested(WebKitWebView * web_view
 	const gchar * uri = webkit_network_request_get_uri(request);
 
 	if (priv->object && g_str_has_prefix(uri, "gebr://")) {
-		const gchar *help;
 		GebrGeoXmlObject *object;
 		if (!strcmp(uri, "gebr://menu")) {
 			if (gebr_geoxml_object_get_type(priv->object) == GEBR_GEOXML_OBJECT_TYPE_FLOW) {
@@ -275,7 +274,6 @@ static WebKitNavigationResponse on_navigation_requested(WebKitWebView * web_view
 				return WEBKIT_NAVIGATION_RESPONSE_IGNORE;
 			}
 			GebrGeoXmlDocument *menu = gebr_geoxml_object_get_owner_document(priv->object);
-			help = gebr_geoxml_document_get_help(menu);
 			object = GEBR_GEOXML_OBJECT(menu);
 		} else {
 			if (gebr_geoxml_object_get_type(priv->object) != GEBR_GEOXML_OBJECT_TYPE_FLOW) {
@@ -293,18 +291,20 @@ static WebKitNavigationResponse on_navigation_requested(WebKitWebView * web_view
 				return WEBKIT_NAVIGATION_RESPONSE_IGNORE;
 			}
 
-			help = gebr_geoxml_program_get_help(GEBR_GEOXML_PROGRAM(program));
 			object = GEBR_GEOXML_OBJECT(program);
 		}
 
-		if (!strlen(help)) {
-			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
-						_("No help available"), _("Sorry, the help is empty."));
-			return WEBKIT_NAVIGATION_RESPONSE_IGNORE;
-		}
+		gchar *help;
+		gchar *content;
 
+		content = gebr_geoxml_object_get_help_content (object);
+		help = gebr_geoxml_object_generate_help (object, content);
 		gebr_gui_html_viewer_widget_generate_links(self, object);
 		gebr_gui_html_viewer_widget_show_html(self, help);
+
+		g_free (help);
+		g_free (content);
+
 		return WEBKIT_NAVIGATION_RESPONSE_IGNORE;
 	}
 
