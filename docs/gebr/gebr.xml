@@ -500,17 +500,16 @@
   </section>
 
   <section xml:id="sec_3">
-    <title>Gerenciando projetos, linhas e fluxos</title>
+    <title>Managing Projects, Lines and Flows</title>
 
-    <para>Praticamente todos os recursos disponíveis na GêBR estão distribuídos em quatro abas localizadas na parte
-      superior da janela principal:</para>
+    <para>Almost all of GêBR's features can be accessed through one of the four tabs which are located close to the top of the window:</para>
 
     <itemizedlist>
       <listitem>
 
         <para>
           <guilabel>
-            <link linkend="sec_3_1">Projetos e Linhas</link>
+            <link linkend="sec_3_1">Projects and Linas</link>
           </guilabel>
         </para>
 
@@ -519,7 +518,7 @@
 
         <para>
           <guilabel>
-            <link linkend="sec_3_2">Fluxos</link>
+            <link linkend="sec_3_2">Flows</link>
           </guilabel>
         </para>
 
@@ -528,7 +527,7 @@
 
         <para>
           <guilabel>
-            <link linkend="sec_3_3">Edição de fluxo</link>
+            <link linkend="sec_3_3">Flow Editor</link>
           </guilabel>
         </para>
 
@@ -537,14 +536,14 @@
 
         <para>
           <guilabel>
-            <link linkend="sec_3_4">Controle de tarefas</link>
+            <link linkend="sec_3_4">Job Control</link>
           </guilabel>
         </para>
 
       </listitem>
     </itemizedlist>
 
-    <para>Nas seções seguintes, veremos com detalhes as funcionalidades de cada uma delas.</para>
+    <para>The following sections will explain in detail each of these pages and their features.</para>
 
     <important>
 
