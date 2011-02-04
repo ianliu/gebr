@@ -330,41 +330,27 @@ out:
  */
 static void flow_io_run(GebrGeoXmlFlowServer * flow_server, gboolean parallel, gboolean single)
 {
-	GtkTreeIter iter;
-	const gchar *address;
-	struct server *server;
-	GebrCommServerRunConfig *config;
-	gboolean mpi_program;
-	GtkTreeSelection *selection;
-	gboolean multiple;
-
+	/* FLOW: get selected */
 	if (!flow_browse_get_selected(NULL, FALSE)) {
 		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No flow selected."));
 		return;
 	}
-
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
-	multiple = !single && gtk_tree_selection_count_selected_rows(selection) > 1;
-
-	if (!gtk_combo_box_get_active_iter(GTK_COMBO_BOX(gebr.ui_flow_edition->server_combobox), &iter)) {
+	/* SERVER on combox: get selected */
+	GtkTreeIter server_iter;
+	if (!gtk_combo_box_get_active_iter(GTK_COMBO_BOX(gebr.ui_flow_edition->server_combobox), &server_iter)) {
 		//just happen if the current server was removed
 		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No server selected."));
 		return;
 	}
-
-	/* initialization */
-	config = gebr_comm_server_run_config_new();
-	config->parallel = parallel;
-
-	/* find iter */
-	address = gebr_geoxml_flow_server_get_address(flow_server);
-	if (!server_find_address(address, &iter)) {
+	/* SERVER on list of servers: find iter */
+	const gchar *address = gebr_geoxml_flow_server_get_address(flow_server);
+	if (!server_find_address(address, &server_iter)) {
 		gebr_message(GEBR_LOG_DEBUG, TRUE, TRUE, "Server should be present on list!");
-		goto err;
+		return;
 	}
-	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter, SERVER_POINTER, &server, -1);
-	
-	/* check connection */
+	struct server *server;
+	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &server_iter, SERVER_POINTER, &server, -1);
+	/* SERVER: check connection */
 	if (!gebr_comm_server_is_logged(server->comm)) {
 		if (gebr_comm_server_is_local(server->comm))
 			gebr_message(GEBR_LOG_ERROR, TRUE, TRUE,
@@ -372,44 +358,51 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server, gboolean parallel, g
 		else
 			gebr_message(GEBR_LOG_ERROR, TRUE, TRUE,
 				     _("You are not connected to server '%s'."), server->comm->address->str);
-		goto err;
+		return;
 	}
-	
-	mpi_program = (gebr_geoxml_flow_get_first_mpi_program(gebr.flow) != NULL);
 
+	/* initialization */
+	GebrCommServerRunConfig *config = gebr_comm_server_run_config_new();
+	config->queue = NULL;
+	config->parallel = parallel;
+	
 	/* SET config->queue */
+	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
+	gboolean multiple = !single && gtk_tree_selection_count_selected_rows(selection) > 1;
+	gboolean mpi_program = (gebr_geoxml_flow_get_first_mpi_program(gebr.flow) != NULL);
+	GtkTreeIter queue_iter;
 	if (server->type == GEBR_COMM_SERVER_TYPE_MOAB) {
-		if (gtk_combo_box_get_active_iter(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox), &iter)) {
-			gtk_tree_model_get(GTK_TREE_MODEL(server->queues_model), &iter, 1, &config->queue, -1);
+		if (gtk_combo_box_get_active_iter(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox), &queue_iter)) {
+			gtk_tree_model_get(GTK_TREE_MODEL(server->queues_model), &queue_iter, 
+					   SERVER_QUEUE_ID, &config->queue, -1);
 			if (!flow_io_run_dialog(config, server, mpi_program))
 				goto err;
-		}
-		else
+		} else {
 			gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("No available queue for server '%s'."), server->comm->address->str);
-
+			goto err;
+		}
 	} else {
 		/* Common servers. */
 		gboolean is_immediately = gtk_combo_box_get_active(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox)) == 0;
 
+		/* ENSURE THAT AFTER IF/ELSE CHAINS config->queue WAS INITIALIZED!
+		 * REMEMBER flow_io_run_dialog ALWAYS SET config->queue IF NULL AND TRUE RETURNED
+		 * FIXME: SIMPLIFY CONDITIONS */
 		if (multiple && !parallel) {
-			GtkTreeIter queue_iter;
-			gchar *internal_queue_name;
-			struct job *job;
+			if (!gtk_combo_box_get_active_iter(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox), &queue_iter) &&
+			    !gtk_tree_model_get_iter_first(GTK_TREE_MODEL(server->queues_model), &queue_iter))
+				goto err;
+
 			GString *new_internal_queue_name = g_string_new(NULL);
-
-			if (!gtk_combo_box_get_active_iter(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox), &iter))
-				gtk_tree_model_get_iter_first(GTK_TREE_MODEL(server->queues_model), &iter);
-
-			gtk_tree_model_get(GTK_TREE_MODEL(server->queues_model), &iter,
-					   1, &internal_queue_name, 2, &job, -1);
+			gchar *internal_queue_name;
+			gtk_tree_model_get(GTK_TREE_MODEL(server->queues_model), &queue_iter, 
+					   SERVER_QUEUE_ID, &internal_queue_name, -1);
 
 			/* If the first flow is marked to run Immediately or it has a Job Queue selected,
 			 * we must create a new queue name. The name is composed by the first and the last
 			 * flow title in the selection.
 			 */
 			if (is_immediately || internal_queue_name[0] == 'j') {
-				GString *queue_name = g_string_new(NULL);
-
 				GList *selected = gebr_gui_gtk_tree_view_get_selected_iters(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
 				GebrGeoXmlFlow *first;
 				GebrGeoXmlFlow *last;
@@ -430,84 +423,54 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server, gboolean parallel, g
 				/* Finds a unique name for the queue. */
 				for (gint queue_num = 1; server_queue_find(server, new_internal_queue_name->str, NULL);)
 					g_string_printf(new_internal_queue_name, "%s %d", aux->str, queue_num++);
-				g_string_assign(queue_name, new_internal_queue_name->str+1);
 				g_string_free(aux, TRUE);
 
-				if (is_immediately || (internal_queue_name[0] == 'j' && job->status != JOB_STATUS_RUNNING)) {
-					gtk_list_store_append(server->queues_model, &queue_iter);
-					iter = queue_iter;
-				}
-				gtk_list_store_set(server->queues_model, &iter, 0, queue_name->str, 1, new_internal_queue_name->str, -1);
-
-				g_string_free(queue_name, TRUE);
-			} else
-				g_string_assign(new_internal_queue_name, internal_queue_name);
-
-			/* In this case, we have renamed the `internal_queue_name' to 'new_internal_queue_name', so we must
-			 * send the request to the server. */
-			if (!is_immediately && internal_queue_name[0] == 'j')
+				/* In this case, we have renamed the `internal_queue_name' to 'new_internal_queue_name', so we must
+				 * send the request to the server. */
 				gebr_comm_protocol_send_data(server->comm->protocol, server->comm->stream_socket,
 							     gebr_comm_protocol_defs.rnq_def, 2, internal_queue_name, new_internal_queue_name->str);
+			} else
+				g_string_assign(new_internal_queue_name, internal_queue_name);
 
 			/* frees */
 			config->queue = g_string_free(new_internal_queue_name, FALSE);
 			g_free(internal_queue_name);
-		} else if (parallel || is_immediately) {
-			/* If the active combobox entry is the first one (index 0), then
-			 * "Immediately" (a queue name starting with j) is selected as queue option. */
-			config->queue = g_strdup("j");
+		} else if (!parallel && !is_immediately) {
+			if (!gtk_combo_box_get_active_iter(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox), &queue_iter) &&
+			    !gtk_tree_model_get_iter_first(GTK_TREE_MODEL(server->queues_model), &queue_iter))
+				goto err;
 
-			if (mpi_program && !flow_io_run_dialog(config, server, mpi_program))
-			    goto err;
-		} else {
+			gchar *internal_queue_name;
+			gtk_tree_model_get(GTK_TREE_MODEL(server->queues_model), &queue_iter, 
+					   SERVER_QUEUE_ID, &internal_queue_name, -1);
+			
 			/* Other queue option is selected: after a running job (flow) or
-			 * on a pre-existent queue. */
-			gchar *internal_queue_name = NULL;
-			struct job *job = NULL;
-
-			/* Get queue name from the queues combobox. */
-			if (!gtk_combo_box_get_active_iter(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox), &iter))
-				gtk_tree_model_get_iter_first(GTK_TREE_MODEL(server->queues_model), &iter);
-
-			gtk_tree_model_get(GTK_TREE_MODEL(server->queues_model), &iter, 1, &internal_queue_name, 2, &job, -1);
-
-			if (internal_queue_name && internal_queue_name[0] == 'j') {
+			 * on a pre-existent queue.
+			 */
+			if (internal_queue_name[0] == 'j') {
 				/* Prefix 'j' indicates a single running job. So, the user is placing a new
 				 * job behind this single one, which denotes proper enqueuing. In this case,
 				 * it is necessary to give a name to the new queue. */
 
+				/* config->queue being set here! */
 				if (!flow_io_run_dialog(config, server, mpi_program)) {
 					g_free(internal_queue_name);
 					goto err;
 				}
-
-				/* A race condition can happen if the single running job finishes before
-				 * assigning a name to the queue. We try to prevent this race condition here. */
-				/* Set the entry in the queues model accordingly. */
-				if (job->status == JOB_STATUS_RUNNING) {
-					/* The single job is still running; so, its entry in the combobox is still valid. */
-					gtk_list_store_set(server->queues_model, &iter, 1, config->queue, -1);
-				} else {
-					GtkTreeIter queue_iter;
-					gtk_list_store_append(server->queues_model, &queue_iter);
-					gtk_list_store_set(server->queues_model, &queue_iter, 1, config->queue, -1);
-				}
-
 				gebr_comm_protocol_send_data(server->comm->protocol, server->comm->stream_socket,
 							     gebr_comm_protocol_defs.rnq_def, 2, internal_queue_name, config->queue);
-
 				g_free(internal_queue_name);
-			} 
-			else {
-				if (internal_queue_name) {
-					config->queue = g_strdup(internal_queue_name);
-					if (mpi_program) {
-						if (!flow_io_run_dialog(config, server, mpi_program)) {
-							goto err;
-						}
-					}
-				}
+			} else {
+				config->queue = internal_queue_name;
+				if (mpi_program && !flow_io_run_dialog(config, server, mpi_program))
+					goto err;
 			}
+		} else {
+			/* If the active combobox entry is the first one (index 0), then
+			 * "Immediately" (a queue name starting with j) is selected as queue option. */
+			config->queue = g_strdup("j");
+			if (mpi_program && !flow_io_run_dialog(config, server, mpi_program))
+			    goto err;
 		}
 	}
 

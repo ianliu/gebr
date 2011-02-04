@@ -43,6 +43,13 @@ gboolean server_find_address(const gchar * address, GtkTreeIter * iter);
  */
 const gchar *server_get_name_from_address(const gchar * address);
 
+enum {
+	SERVER_QUEUE_TITLE, 
+	SERVER_QUEUE_ID, 
+	SERVER_QUEUE_LAST_RUNNING_JOB, 
+	SERVER_QUEUE_N_COLUMNS, 
+};
+
 struct server {
 	struct gebr_comm_server *comm;
 	GtkTreeIter iter;

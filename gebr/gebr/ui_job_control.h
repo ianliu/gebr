@@ -55,6 +55,7 @@ struct ui_job_control {
 	GtkWidget *label;
 	GtkWidget *text_view;
 	GtkTextBuffer *text_buffer;
+	GtkTextTag *issues_title_tag;
 };
 
 /**

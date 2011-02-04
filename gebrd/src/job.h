@@ -27,13 +27,10 @@ G_BEGIN_DECLS
 
 /**
  */
-struct job *job_find(GString * jid);
-
-/**
- */
 struct job {
 	GebrCommProcess *process;
 	GebrGeoXmlFlow *flow;
+	gboolean critical_error; /* the flow can't be run if TRUE! */
 	gboolean user_finished;
 
 	/* client stuff */
@@ -75,6 +72,9 @@ struct job {
 
 /**
  */
+struct job *job_find(GString * jid);
+/**
+ */
 void job_new(struct job ** _job, struct client * client, GString * queue, GString * account, GString * xml,
 	     GString * n_process, GString * run_id);
 /**
@@ -84,6 +84,10 @@ void job_free(struct job *job);
 /**
  */
 void job_set_status(struct job *job, enum JobStatus status);
+/**
+ * Change status and notify clients about it
+ */
+void job_notify_status(struct job *job, enum JobStatus status, const gchar *parameter);
 /**
  * Remember not to send any message to clients here as the job wasn't created
  */
@@ -108,15 +112,6 @@ void job_list(struct client *client);
 /**
  */
 void job_send_clients_job_notify(struct job *job);
-
-/**
- */
-gchar * job_queue_get_list();
-
-/**
- * Change status and notify clients about it
- */
-void job_notify_status(struct job *job, enum JobStatus status, const gchar *parameter);
 
 G_END_DECLS
 #endif				//__JOB_H

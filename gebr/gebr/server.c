@@ -174,7 +174,7 @@ struct server *server_new(const gchar * address, gboolean autoconnect)
 	server->last_error = g_string_new("");
 	server->type = GEBR_COMM_SERVER_TYPE_UNKNOWN;
 	server->accounts_model = gtk_list_store_new(1, G_TYPE_STRING);
-	server->queues_model = gtk_list_store_new(3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
+	server->queues_model = gtk_list_store_new(SERVER_QUEUE_N_COLUMNS, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
 	server->comm->user_data = server;
 	gtk_list_store_set(gebr.ui_server_list->common.store, &iter,
 			   SERVER_STATUS_ICON, gebr.pixmaps.stock_disconnect,
@@ -226,7 +226,7 @@ gboolean server_queue_find(struct server * server, const gchar * name, GtkTreeIt
 	gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(server->queues_model)) {
 		gchar * i_name;
 
-		gtk_tree_model_get(GTK_TREE_MODEL(server->queues_model), &iter, 1, &i_name, -1);
+		gtk_tree_model_get(GTK_TREE_MODEL(server->queues_model), &iter, SERVER_QUEUE_ID, &i_name, -1);
 		if (!strcmp(name, i_name)) {
 			if (_iter != NULL)
 				*_iter = iter;

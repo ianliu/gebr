@@ -47,11 +47,11 @@ struct job {
 		JOB_STATUS_RUNNING,
 		JOB_STATUS_FINISHED,
 		JOB_STATUS_CANCELED,
-		JOB_STATUS_REQUEUED,
-		JOB_STATUS_ISSUED,
+		JOB_STATUS_REQUEUED, /* false status */
+		JOB_STATUS_ISSUED, /* false status */
 	} status;
-
 	gboolean waiting_server_details;
+
 	GString *run_id;
 	GString *jid;
 	GString *title;
@@ -63,6 +63,7 @@ struct job {
 	GString *issues;
 	GString *cmd_line;
 	GString *output;
+	/* TODO: split in two: queue_id and queue_name */
 	GString *queue;
 	
 	/* Moab stuff */

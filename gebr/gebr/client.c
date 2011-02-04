@@ -75,7 +75,10 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, stru
 
 				if (server->type == GEBR_COMM_SERVER_TYPE_REGULAR) {
 					gtk_list_store_append(server->queues_model, &iter);
-					gtk_list_store_set(server->queues_model, &iter, 0, _("Immediately"), 1, "", -1);
+					gtk_list_store_set(server->queues_model, &iter,
+							   SERVER_QUEUE_TITLE, _("Immediately"),
+							   SERVER_QUEUE_ID, "j", 
+							   SERVER_QUEUE_LAST_RUNNING_JOB, NULL, -1);
 				}
 				for (gint i = 0; queues[i]; i++) {
 					if (strlen(queues[i])) {
@@ -87,8 +90,10 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, stru
 									server->type == GEBR_COMM_SERVER_TYPE_REGULAR
 								       	? queues[i]+1 : queues[i]);
 							gtk_list_store_append(server->queues_model, &iter);
-							gtk_list_store_set(server->queues_model, &iter, 0, string->str,
-									   1, queues[i], 2, NULL, -1);
+							gtk_list_store_set(server->queues_model, &iter,
+									   SERVER_QUEUE_TITLE, string->str,
+									   SERVER_QUEUE_ID, queues[i],
+									   SERVER_QUEUE_LAST_RUNNING_JOB, NULL, -1);
 
 							g_string_free(string, TRUE);
 						}

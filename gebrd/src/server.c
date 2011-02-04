@@ -330,25 +330,23 @@ gboolean server_parse_client_messages(struct client *client)
 			/* run message return with the job_id and the temporary id created by the client */
 			gebr_comm_protocol_send_data(client->protocol, client->stream_socket,
 						     gebr_comm_protocol_defs.ret_def, 2, job->jid->str, job->run_id->str);
-			/* assign queue (only for regular, moab is already set) */
-			if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_REGULAR) {
-				if (!queue->len || queue->str[0] == 'j') {
-					g_string_printf(queue, "j%s", job->jid->str);
-					g_string_assign(job->queue, queue->str);
-				}
-				gebrd_queues_add_job_to(queue->str, job);
+			/* assign queue name for immediately jobs (only for regular, moab is already set) */
+			if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_REGULAR &&
+			    (!queue->len || queue->str[0] == 'j')) {
+				g_string_printf(queue, "j%s", job->jid->str);
+				g_string_assign(job->queue, queue->str);
 			}
+			/* send job message (job is created -promoted from waiting server response- at the client) */
+			job_send_clients_job_notify(job);
 			/* run or queue */
+			gebrd_queues_add_job_to(queue->str, job);
 			if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_REGULAR) {
 				if (!gebrd_queues_is_queue_busy(queue->str)) {
 					gebrd_queues_set_queue_busy(queue->str, TRUE);
 					gebrd_queues_step_queue(queue->str); //will call job_run_flow for immediately jobs
-				} else
-					job_set_status(job, JOB_STATUS_QUEUED);
+				}
 			} else //moab
 				job_run_flow(job);
-			/* send job message (job is created -promoted from waiting server response- at the client) */
-			job_send_clients_job_notify(job);
 
 			/* frees */
 			gebr_comm_protocol_split_free(arguments);
