@@ -72,6 +72,6 @@ install-data-local: $(INST_DEP)
 uninstall-hook: $(UINST_DEP)
 
 EXTRA_DIST = gebr-pt.xml
-MAINTAINERCLEANFILES = html-ok
+CLEANFILES = html-ok
 
 .PHONY: html
