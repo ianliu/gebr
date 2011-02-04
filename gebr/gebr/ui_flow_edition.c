@@ -274,9 +274,9 @@ void flow_edition_select_component_iter(GtkTreeIter * iter)
 
 void flow_edition_set_io(void)
 {
-	gchar *input_markup  = g_markup_printf_escaped("<i>%s</i>", _("Choose input file"));
-	gchar *output_markup = g_markup_printf_escaped("<i>%s</i>", _("Choose output file"));
-	gchar *error_markup  = g_markup_printf_escaped("<i>%s</i>", _("Choose error file")); 
+	gchar *input_markup  = g_markup_printf_escaped("<i>%s</i>", _("Input file"));
+	gchar *output_markup = g_markup_printf_escaped("<i>%s</i>", _("Output file"));
+	gchar *error_markup  = g_markup_printf_escaped("<i>%s</i>", _("Log file")); 
 
 	const gchar *input  = (g_strcmp0(gebr_geoxml_flow_server_io_get_input(gebr.flow_server),"")   ? gebr_geoxml_flow_server_io_get_input(gebr.flow_server)  : input_markup);
 	const gchar *output = (g_strcmp0(gebr_geoxml_flow_server_io_get_output(gebr.flow_server),"")  ? gebr_geoxml_flow_server_io_get_output(gebr.flow_server) : output_markup);
@@ -954,7 +954,6 @@ on_has_required_parameter_unfilled_tooltip(GtkTreeView * treeview,
 	GtkTreeIter iter;
 	GtkTreePath *path;
 	GebrGeoXmlProgram *program;
-	GString * tooltip_log_path = g_string_new(NULL);
 
 	if (!gtk_tree_view_get_tooltip_context(treeview, &x, &y, keyboard_tip, &model, NULL, &iter))
 		return FALSE;
@@ -962,17 +961,33 @@ on_has_required_parameter_unfilled_tooltip(GtkTreeView * treeview,
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter,
 			   FSEQ_GEBR_GEOXML_POINTER, &program, -1);
 
+	gchar * message;
 	if gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter) {
-		g_string_printf(tooltip_log_path, _("<Input log>: %s"), gebr_geoxml_flow_server_io_get_input(gebr.flow_server));
-		gtk_tooltip_set_text(tooltip, tooltip_log_path->str);
+		if (g_strcmp0(gebr_geoxml_flow_server_io_get_input(gebr.flow_server),"") == 0)
+			message = g_strdup(_("Choose input file"));
+		else
+			message = g_strdup_printf(_("Input file '%s'"), gebr_geoxml_flow_server_io_get_input(gebr.flow_server));
+
+		gtk_tooltip_set_text(tooltip, message);
+		g_free(message);
 	}
 	else if gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter) {
-		g_string_printf(tooltip_log_path, _("<Output log>: %s"), gebr_geoxml_flow_server_io_get_output(gebr.flow_server));
-		gtk_tooltip_set_text(tooltip, tooltip_log_path->str);
+		if (g_strcmp0(gebr_geoxml_flow_server_io_get_output(gebr.flow_server),"") == 0)
+			message = g_strdup(_("Choose output file"));
+		else
+			message = g_strdup_printf(_("Output file '%s'"), gebr_geoxml_flow_server_io_get_output(gebr.flow_server));
+
+		gtk_tooltip_set_text(tooltip, message);
+		g_free(message);
 	}
 	else if gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->error_iter){
-		g_string_printf(tooltip_log_path, _("<Error log>: %s"), gebr_geoxml_flow_server_io_get_error(gebr.flow_server));
-		gtk_tooltip_set_text(tooltip, tooltip_log_path->str);
+		if (g_strcmp0(gebr_geoxml_flow_server_io_get_error(gebr.flow_server),"") == 0)
+			message = g_strdup(_("Choose log file"));
+		else
+			message = g_strdup_printf(_("Log file '%s'"), gebr_geoxml_flow_server_io_get_error(gebr.flow_server));
+
+		gtk_tooltip_set_text(tooltip, message);
+		g_free(message);
 	}
 	else if (gebr_geoxml_program_get_status(program) != GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED)
 		return FALSE;
@@ -984,9 +999,7 @@ on_has_required_parameter_unfilled_tooltip(GtkTreeView * treeview,
 
 	path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter);
 	gtk_tree_view_set_tooltip_row(treeview, tooltip, path);
-
 	gtk_tree_path_free(path);
-	g_string_free(tooltip_log_path, TRUE);
 
 	return TRUE;
 }
