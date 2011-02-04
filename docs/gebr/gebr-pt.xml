@@ -74,66 +74,52 @@
         </listitem>
         <listitem>
 
-          <para>Bráulio Oliveira - <email>brauliobo@gmail.com</email></para>
+          <para>Bráulio Oliveira - <email>brauliobo@gebrproject.com</email></para>
 
         </listitem>
         <listitem>
 
-          <para>Ian Liu - <email>ian.liu88@gmail.com</email></para>
+          <para>Ian Liu - <email>ian.liu88@gebrproject.com</email></para>
 
         </listitem>
         <listitem>
 
-          <para>Davi Clemente 
-            <email>davi.clemente@gebrproject.com</email></para>
+          <para>Davi Clemente - <email>davi.clemente@gebrproject.com</email></para>
 
         </listitem>
         <listitem>
 
-          <para>Fábio Azevedo 
-            <email>fabioaz@gebrproject.com</email></para>
+          <para>Fábio Azevedo - <email>fabioaz@gebrproject.com</email></para>
 
         </listitem>
         <listitem>
 
-          <para>Fabrício Matheus Gonçalves 
-            <email>fmatheus@gebrproject.com</email></para>
+          <para>Fabrício Matheus Gonçalves - <email>fmatheus@gebrproject.com</email></para>
 
         </listitem>
         <listitem>
 
-          <para>Gabriel Sobral 
-            <email>sobral@gebrproject.com</email></para>
+          <para>Gabriel Sobral - <email>sobral@gebrproject.com</email></para>
 
         </listitem>
         <listitem>
 
-          <para>Jorge Pizzolatto 
-            <email>jorge.pzt@gebrproject.com</email></para>
+          <para>Jorge Pizzolatto - <email>jorge.pzt@gebrproject.com</email></para>
 
         </listitem>
         <listitem>
 
-          <para>Luis Alberto D'Afonseca 
-            <email>luis.dafonseca@gebrproject.com</email></para>
+          <para>Priscila Moraes - <email>pris.moraess@gebrproject.com</email></para>
 
         </listitem>
         <listitem>
 
-          <para>Priscila Moraes 
-            <email>pris.moraess@gebrproject.com</email></para>
+          <para>Renan Giarola - <email>renangiarola@gebrproject.com</email></para>
 
         </listitem>
         <listitem>
 
-          <para>Renan Giarola 
-            <email>renangiarola@gebrproject.com</email></para>
-
-        </listitem>
-        <listitem>
-
-          <para>Rodrigo Morelatto 
-            <email>morelatto@gebrproject.com</email></para>
+          <para>Rodrigo Morelatto - <email>morelatto@gebrproject.com</email></para>
 
         </listitem>
       </itemizedlist>
@@ -145,17 +131,22 @@
       <itemizedlist>
         <listitem>
 
-          <para>Eduardo Filpo - <email>efilpo@gmail.com</email></para>
+          <para>Eduardo Filpo - <email>efilpo@gebrproject.com</email></para>
 
         </listitem>
         <listitem>
 
-          <para>Fernando Roxo - <email>roxo@roxo.org</email></para>
+          <para>Fernando Roxo - <email>roxo@gebrproject.com</email></para>
+
+        </listitem>
+	<listitem>
+
+          <para>Luis Alberto D'Afonseca - <email>luis.dafonseca@gebrproject.com</email></para>
 
         </listitem>
         <listitem>
 
-          <para>Rodrigo Portugal - <email>rosoport@gmail.com</email></para>
+          <para>Rodrigo Portugal - <email>rosoport@gebrproject.com</email></para>
 
         </listitem>
       </itemizedlist>
@@ -260,7 +251,7 @@
         <step>
           <para>Clique no
           botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_criar_linha.png"
-          /></imageobject></inlinemediaobject></guiicon></para>
+          /></imageobject></inlinemediaobject></guiicon>.</para>
         </step>
         <step>
           <para>Na janela 
@@ -270,8 +261,7 @@
         <step>
           <para>Se desejar, digite também uma breve <emphasis>descrição</emphasis> da linha,
             o <emphasis>autor</emphasis>, um <emphasis>e-mail</emphasis> para contato. Pode-se adicionar ainda caminhos
-            personalizados de linha, assunto melhor abordado na <link linkend="sec_3_1_6"><emphasis role="bold">seção
-            3.1.6</emphasis></link></para>
+            personalizados de linha, assunto melhor abordado na <xref linkend="editar_caminhos_preferenciais_da_linha"/>.</para>
         </step>
       </procedure>
       <screenshot>
@@ -292,11 +282,11 @@
 	direito da janela principal.</para>
 
       <screenshot>
-	<!--
-        <info>
-          <title />
-        </info>
-	-->
+       	    <!--
+            <info>
+              <title />
+            </info>
+	    -->
         <mediaobject>
           <imageobject>
             <imagedata fileref="../images/janela_principal_2.png" />
@@ -378,11 +368,6 @@
         </listitem>
         <listitem>
 
-          <para>Shell tools</para>
-
-        </listitem>
-        <listitem>
-
           <para>Simulation and Model Building</para>
 
         </listitem>
@@ -404,7 +389,7 @@
         <step>
           <para>Selecione a aba <guilabel>Fluxos</guilabel> e, em seguida, clique no
             botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_criar_fluxo.png"
-            /></imageobject></inlinemediaobject></guiicon></para>
+            /></imageobject></inlinemediaobject></guiicon>.</para>
         </step>
         <step>
           <para>Na janela <guilabel>Propriedade para Fluxo</guilabel>, digite um <emphasis>título</emphasis> para o
@@ -758,8 +743,7 @@
         (dependendo do caso) você pode editar os
         campos <guilabel>Título</guilabel>, <guilabel>Descrição</guilabel>, <guilabel>Autor</guilabel>
         e <guilabel>Email</guilabel>. Para o caso de edição de propriedades de linha, pode-se adicionar caminhos
-        personalizados, cujo detalhamento será abordado na <link linkend="sec_3_1_6"><emphasis role="bold">seção
-        3.1.6</emphasis></link></para>
+        personalizados, cujo detalhamento será abordado na <xref linkend="editar_caminhos_preferenciais_da_linha"/>.</para>
 
       </section>
 
@@ -771,7 +755,7 @@
 
       </section>
 
-      <section xml:id="sec_3_1_6">
+      <section xml:id="editar_caminhos_preferenciais_da_linha">
         <title>Editar caminhos preferenciais da linha</title>
 
         <para>Na <emphasis role="bold"><link linkend="sec_3_3_6">seção 3.3.6</link></emphasis> veremos que um fluxo pode
@@ -975,36 +959,44 @@
         <para>Na janela que se abre após o usuário clicar em <guilabel>Visualizar relatório</guilabel>, em Arquivo, é
         possível:</para>
 
+	<procedure>
 
-        <para>* Salvar;</para>
+	<step>
+        	<para> Salvar;</para>
+	</step>
 
+	<step>
+        	<para> Imprimir o relatório.</para>
+	</step>
 
-        <para>* Imprimir o relatório.</para>
-
-
-        <para>Em Opções, ainda na janela de visualização do relatório, é possível:</para>
-
-
-        <para>* Incluir os comentários do usuário;</para>
-
-
-        <para>* Incluir relatório do fluxo;</para>
+	</procedure>
 
 
-        <para>* Configurar as tabelas de parâmetros dos programas do fluxo;</para>
+       <para> Em Opções, ainda na janela de visualização do relatório, é possível:</para>
+	
+	<procedure>
+	<step>
+        	<para> Incluir os comentários do usuário;</para>
+	</step>
 
+	<step>
+        	<para> Incluir relatório do fluxo;</para>
+	</step>
 
-        <para>* Bem como escolher o estilo de apresentação do relatório gerado,com a possibilidade de inclusão de
+	<step>
+        	<para> Configurar as tabelas de parâmetros dos programas do fluxo;</para>
+	</step>
+
+	<step>
+        	<para> Bem como escolher o estilo de apresentação do relatório gerado,com a possibilidade de inclusão de
           outros estilos.</para>
-
-        <procedure>
-          <step>
-            <para><guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/janela_visualizar_relatorio.png"
+	</step>
+	</procedure>
+	<para><guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/janela_visualizar_relatorio.png"
             /></imageobject></inlinemediaobject></guiicon>
             </para>
-          </step>
-        </procedure>
-
+	
+   
         <para>Na <link linkend="sec_3_2_12"><emphasis role="bold">seção 3.2.12</emphasis></link>, é detalhada a
           visualização de relatório para um fluxo, que se dá de forma muito semelhante à visualização de relatório da
           linha, com a diferença que nesta é possível englobar o relatório do fluxo.</para>
@@ -1156,11 +1148,11 @@
           <para>Você pode selecionar vários fluxos para serem copiados simultaneamente usando 
             <keycombo>
               <keycap>Ctrl</keycap>
-              <mousebutton>Clique</mousebutton>
+              <mousebutton>Clique com botão esquerdo do mouse</mousebutton>
             </keycombo> ou 
             <keycombo>
               <keycap>Shift</keycap>
-              <mousebutton>Clique</mousebutton>
+              <mousebutton>Clique com botão esquerdo do mouse</mousebutton>
             </keycombo>.</para>
 
         </tip>
@@ -1200,11 +1192,11 @@
           <para>Você pode selecionar vários fluxos para serem excluidos simultaneamente usando 
             <keycombo>
               <keycap>Ctrl</keycap>
-              <mousebutton>Clique</mousebutton>
+              <mousebutton>Clique com botão esquerdo do mouse</mousebutton>
             </keycombo> ou 
             <keycombo>
               <keycap>Shift</keycap>
-              <mousebutton>Clique</mousebutton>
+              <mousebutton>Clique com botão esquerdo do mouse</mousebutton>
             </keycombo>.</para>
 
         </tip>
@@ -1250,7 +1242,7 @@
           <step>
             <para>Selecione o fluxo e clique no
             botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_salvar_estado.png"
-            /></imageobject></inlinemediaobject></guiicon></para>
+            /></imageobject></inlinemediaobject></guiicon>.</para>
           </step>
           <step>
             <para>Se desejar, digite um comentário na janela <guilabel>Salvar estado do fluxo</guilabel>, para
@@ -1312,7 +1304,7 @@
             <para>Selecione a aba 
               <guilabel>Fluxos</guilabel> e clique no
               botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_importar_projeto.png"
-              /></imageobject></inlinemediaobject></guiicon></para>
+              /></imageobject></inlinemediaobject></guiicon>.</para>
           </step>
           <step>
             <para>Navegue pela janela <guilabel>Escolha arquivo para abrir</guilabel> e selecione o fluxo que deseja
@@ -1342,7 +1334,7 @@
           <step>
             <para>Clique no
             botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_exportar_projeto.png"
-            /></imageobject></inlinemediaobject></guiicon></para>
+            /></imageobject></inlinemediaobject></guiicon>.</para>
           </step>
           <step>
             <para>Na janela 
@@ -1370,17 +1362,22 @@
         <para>Nessa versão da GêBR, surge o conceito de filas, através do qual pode-se rodar um fluxo ou uma sequência
           de fluxos em diferentes filas:</para>
 
+	<procedure>
+	<step>
+        	<para> Nessa aba, a cada execução de um fluxo ou um grupo de fluxos, é criada uma fila.</para>
+	</step>
 
-        <para>*Nessa aba, a cada execução de um fluxo ou um grupo de fluxos, é criada uma fila</para>
-
-
-        <para>*Cada fila fica visível no campo Filas da aba Edição de fluxos conforme explicado na 
-          <link linkend="sec_3_3_7"><emphasis role="bold">seção 3.3.7</emphasis></link></para>
-
-
-        <para>*As filas também ficam visíveis na aba Controle de tarefas. Ver 
-          <link linkend="sec_3_4"><emphasis role="bold">seção 3.4</emphasis></link></para>
-
+	<step>
+        	<para> Cada fila fica visível no campo Filas da aba Edição de fluxos conforme explicado na 
+  	<link linkend="sec_3_3_7"><emphasis role="bold">seção 3.3.7</emphasis></link>.</para>
+	</step> 
+	
+	<step>
+        	<para> As filas também ficam visíveis na aba Controle de tarefas. Ver 
+          <link linkend="sec_3_4"><emphasis role="bold">seção 3.4</emphasis></link>.</para>
+	</step>
+	
+	</procedure>
       </section>
 
       <section xml:id="sec_3_2_11">
@@ -1388,7 +1385,7 @@
 
         <para>Este comando aparece repetidamente nas abas <guilabel>Projetos e Linhas</guilabel> e em
           <guilabel>Fluxos</guilabel>. Através dele, o usuário pode adicionar comentários à linha ou ao fluxo criados.
-          Ver <link linkend="sec_3_1_9"><emphasis role="bold">seção 3.1.9</emphasis></link></para>
+          Ver <link linkend="sec_3_1_9"><emphasis role="bold">seção 3.1.9</emphasis></link>.</para>
 
       </section>
 
@@ -1399,7 +1396,7 @@
           <guilabel>Fluxos</guilabel>. Através dele, em ambas abas, pode-se gerar/visualizar o relatório da linha ou do
           fluxo em questão, com a pequena diferença de que é possível englobar o relatório do fluxo no relatório da
           linha. As demais funcionalidades são descritas na <link linkend="sec_3_1_10"><emphasis role="bold">seção
-          3.1.10</emphasis></link></para>
+          3.1.10</emphasis></link>.</para>
 
       </section>
     </section>
@@ -1417,7 +1414,7 @@
 
 
       <para>Na <emphasis role="bold"><link linkend="sec_2_2">seção 2.2</link></emphasis> vimos que os menus padrão da
-      GêBR são separados em dezesseis categorias, listadas na caixa <guilabel>Menu</guilabel>, no lado direito da janela
+      GêBR são separados em doze categorias, listadas na caixa <guilabel>Menu</guilabel>, no lado direito da janela
       principal:</para>
 
       <itemizedlist>
@@ -1774,7 +1771,8 @@
         <procedure>
           <step>
             <para>Certifique-se de ter selecionado o fluxo e, na aba Edição de fluxo, no campo Sequência de fluxo,
-              pode-se editar os caminhos de entrada, saída e erro através de um clique duplo nos botões
+              pode-se editar os caminhos de entrada, saída e erro através de um clique duplo nos botões. Ver figura: 
+
               <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/janela_arquivos_entrada_saida.png"
 								  /></imageobject></inlinemediaobject></guiicon></para>
           </step>
@@ -2089,7 +2087,7 @@
         <title>Preferências</title>
 
         <para>As definições que você faz na janela 
-          <guilabel>Preferências</guilabel> são adotadas como padrão pela GêBR. Vejamos os detalhes:</para>
+          <guimenuitem>Preferências</guimenuitem> são adotadas como padrão pela GêBR. Vejamos os detalhes:</para>
 
         <itemizedlist>
           <listitem>
