@@ -26,7 +26,7 @@ AC_PREREQ([2.59])
 
 m4_define(gebr_major_version,   [0])
 m4_define(gebr_minor_version,  [11])
-m4_define(gebr_micro_version,   [0])
+m4_define(gebr_micro_version,   [1])
 m4_define([gebr_interface_age], [0])
 m4_define([gebr_binary_age],
           [m4_eval(100 * gebr_minor_version + gebr_micro_version)])
