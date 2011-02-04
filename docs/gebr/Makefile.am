@@ -29,13 +29,13 @@ INST_DEP =
 UINST_DEP =
 endif
 
-html-ok:
+html-ok: gebr-pt.xml
 	if test -w $(srcdir); then \
 	  (cd $(srcdir); \
 	   db2html gebr-pt.xml; \
 	   test -d pt_BR && rm -r pt_BR; \
 	   mv gebr-pt pt_BR); \
-	fi
+	fi && touch html-ok
 
 dist-ok: html-ok
 	cp -Rp $(srcdir)/pt_BR $(srcdir)/images $(distdir)
@@ -72,5 +72,6 @@ install-data-local: $(INST_DEP)
 uninstall-hook: $(UINST_DEP)
 
 EXTRA_DIST = gebr-pt.xml
+MAINTAINERCLEANFILES = html-ok
 
 .PHONY: html
