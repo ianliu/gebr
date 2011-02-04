@@ -219,9 +219,11 @@
         </step>
       </procedure>
       <screenshot>
-        <info>
-          <title />
-        </info>
+	<!--
+	<info>
+          <title>Diálogo de edição das propriedades do projeto</title>
+	</info>
+	-->
         <mediaobject>
           <imageobject>
             <imagedata fileref="../images/janela_properties_project.png" />
@@ -236,9 +238,11 @@
 	e a data da última modificação, são geradas automaticamente pela GêBR.</para>
 
       <screenshot>
+	<!--
         <info>
           <title />
         </info>
+	-->
         <mediaobject>
           <imageobject>
             <imagedata fileref="../images/janela_principal_1.png" />
@@ -265,15 +269,17 @@
         </step>
         <step>
           <para>Se desejar, digite também uma breve <emphasis>descrição</emphasis> da linha,
-            o <emphasis>autor</emphasis>, um <emphasis>e-mail</emphasis> para contato.Pode-se adicionar ainda caminhos
+            o <emphasis>autor</emphasis>, um <emphasis>e-mail</emphasis> para contato. Pode-se adicionar ainda caminhos
             personalizados de linha, assunto melhor abordado na <link linkend="sec_3_1_6"><emphasis role="bold">seção
             3.1.6</emphasis></link></para>
         </step>
       </procedure>
       <screenshot>
+	<!--
         <info>
           <title />
         </info>
+	-->
         <mediaobject>
           <imageobject>
             <imagedata fileref="../images/janela_properties_line.png" />
@@ -286,9 +292,11 @@
 	direito da janela principal.</para>
 
       <screenshot>
+	<!--
         <info>
           <title />
         </info>
+	-->
         <mediaobject>
           <imageobject>
             <imagedata fileref="../images/janela_principal_2.png" />
@@ -407,15 +415,17 @@
         </step>
         <step>
           <para>Selecione a aba <guilabel>Edição de Fluxo</guilabel>. Em seguida, expanda a categoria
-            <guimenu>Graphics</guimenu> e dê um clique duplo no componente <guimenuitem>SU Simple X
-            Image</guimenuitem>. Fazendo isso você adiciona este componente ao seu fluxo (note que o programa
+            <guimenu>Graphics</guimenu> e dê um clique duplo no menu <guimenuitem>SU Simple X
+            Image</guimenuitem>. Fazendo isso você adiciona este menu ao seu fluxo (note que o programa
             <guimenuitem>SU Simple X Image</guimenuitem> agora aparece na caixa <guilabel>Sequência de fluxo</guilabel>,
             no lado esquerdo da janela). Neste momento, sua janela deve se parecer com esta:</para>
 
           <screenshot>
+	    <!--
             <info>
               <title />
             </info>
+	    -->
             <mediaobject>
               <imageobject>
                 <imagedata fileref="../images/janela_flow_edition_1.png" />
@@ -425,9 +435,9 @@
         </step>
         <step>
           <para>Expanda a categoria 
-            <guimenu>Seismic Unix</guimenu> e dê um clique duplo no componente 
+            <guimenu>Seismic Unix</guimenu> e dê um clique duplo no menu 
             <guimenuitem>SU Plane</guimenuitem> (provavelmente você precisará rolar a janela 
-            <guilabel>Fluxos</guilabel> para alcançar este componente). Fazendo isso você adiciona o programa 
+            <guilabel>Fluxos</guilabel> para alcançar este menu). Fazendo isso você adiciona o programa 
             <guimenuitem>SU Plane</guimenuitem> ao fluxo. Note que 
             <guimenuitem>SU Plane</guimenuitem> ficará posicionado abaixo de 
             <guimenuitem>SU Simple X Image</guimenuitem> na lista 
@@ -441,9 +451,11 @@
             seguir:</para>
 
           <screenshot>
+	    <!--
             <info>
               <title />
             </info>
+	    -->
             <mediaobject>
               <imageobject>
                 <imagedata fileref="../images/janela_flow_edition_2.png" />
@@ -462,9 +474,11 @@
             <guimenuitem>SU Simple X Image</guimenuitem>.</para>
 
           <screenshot>
+	    <!--
             <info>
               <title />
             </info>
+	    -->
             <mediaobject>
               <imageobject>
                 <imagedata fileref="../images/janela_flow_edition_3.png" />
@@ -509,9 +523,11 @@
 	/></imageobject></inlinemediaobject></guiicon>. O resultado que você verá é o seguinte:</para>
 
       <screenshot>
+	<!--
         <info>
           <title />
         </info>
+	-->
         <mediaobject>
           <imageobject>
             <imagedata fileref="../images/janela_ximage.png" />
@@ -706,7 +722,6 @@
           /></imageobject></inlinemediaobject></guiicon> à esquerda do nome do projeto. Para expandir, clique no
           ícone <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_colapsado.png"
           /></imageobject></inlinemediaobject></guiicon>.</para>
-
         </tip>
       </section>
 
@@ -739,16 +754,12 @@
           /></imageobject></inlinemediaobject></guiicon>.</para>
 
 
-        <para>Na janela 
-          <guilabel>Propriedades</guilabel> (... 
-          <guilabel>para projeto</guilabel> ou ... 
-          <guilabel>para linha</guilabel>, dependendo do caso) você pode editar os campos 
-          <guilabel>Título</guilabel>, 
-          <guilabel>Descrição</guilabel>, 
-          <guilabel>Autor</guilabel> e 
-          <guilabel>Email</guilabel>.Para o caso de edição de propriedades de linha, pode-se adicionar caminhos
-          personalizados, cujo detalhamento será abordado na 
-          <link linkend="sec_3_1_6"><emphasis role="bold">seção 3.1.6</emphasis></link></para>
+        <para>Na janela <guilabel>Propriedades para projeto</guilabel> ou <guilabel>Propriedades para linha</guilabel>
+        (dependendo do caso) você pode editar os
+        campos <guilabel>Título</guilabel>, <guilabel>Descrição</guilabel>, <guilabel>Autor</guilabel>
+        e <guilabel>Email</guilabel>. Para o caso de edição de propriedades de linha, pode-se adicionar caminhos
+        personalizados, cujo detalhamento será abordado na <link linkend="sec_3_1_6"><emphasis role="bold">seção
+        3.1.6</emphasis></link></para>
 
       </section>
 
@@ -767,68 +778,56 @@
           estar associado a alguns arquivos de dados. Veremos também que essa associação pode ser feita mais facilmente
           se adicionarmos os chamados caminhos preferenciais da linha.</para>
 
-
-        <para>Para editar os caminhos preferenciais de uma linha pode-se:</para>
-
-        <itemizedlist>
-          <listitem>
-
-            <para>Na aba Projetos e Linhas, clique sobre a linha em que se quer adicionar caminhos, selecione o botão de
-              comando <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_editar_propriedades_projeto.png"
-              /></imageobject></inlinemediaobject></guiicon>. Na janela Propriedades para linha, no campo Caminhos,
-              digite o caminho desejado e clique no
-              botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_adicionar_caminho.png"
-              /></imageobject></inlinemediaobject></guiicon>; ou</para>
-
-          </listitem>
-          <listitem>
-
-            <para>Utilizando o menu de contexto, clique em Propriedades e na janela Propriedades para linha, no campo
-              Caminhos, digite o caminho desejado e clique no
-              botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_adicionar_caminho.png"
-              /></imageobject></inlinemediaobject></guiicon></para>
-
-          </listitem>
-        </itemizedlist>
+        <para>Os caminhos preferenciais da linha são definidos no diálogo de <guilabel>Propriedades para
+         linha</guilabel>. Para abrir este diálogo, tenha a linha selecionada e clique sobre o
+         ícone <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_editar_propriedades_projeto.png"
+         /></imageobject></inlinemediaobject></guiicon>, na barra de ferramentas, ou utilizando o menu de contexto,
+         selecione a opção <guilabel>Propriedades</guilabel>. Na janela <guilabel>Propriedades para linha</guilabel>, no
+         campo <guilabel>Caminhos</guilabel>, digite o caminho desejado e clique no
+         botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_adicionar_caminho.png"
+         /></imageobject></inlinemediaobject></guiicon>.</para>
 
         <para>Além disso, na janela Propriedades para linha, pode-se adicionar caminhos preferenciais de linha
           escolhendo-se um diretório. Para isso, deve-se clicar no
           botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_caminho_personalizado.png"
-          /></imageobject></inlinemediaobject></guiicon></para>
+          /></imageobject></inlinemediaobject></guiicon>.</para>
 
-        <procedure>
-          <step>
-            <para>Clique 
-              <guibutton>OK</guibutton>.</para>
-          </step>
-        </procedure>
+	<para>Quando tiver concluído a edição dos caminhos preferenciais, clique em <guibutton>OK</guibutton>.</para>
 
         <para><emphasis role="bold">Não há limitação</emphasis> para o número de caminhos, você pode adicionar quantos
           quiser.</para>
+	
+	<tip>
+	  <para>O primeiro caminho preferencial da linha (aquele no topo da lista de caminhos preferenciais) será o
+	    caminho padrão aberto sempre que o usuário clicar num
+	    ícone <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_caminho_personalizado.png"
+	    /></imageobject></inlinemediaobject></guiicon> para fazer a busca por um arquivo ou diretório, durante a
+	    configuração de parâmetros do tipo de arquivo para programas incluídos em fluxos de processamento.</para>
+	</tip>
 
         <tip>
-
           <para>Para <emphasis role="bold">remover um caminho</emphasis> da lista, selecione-o com
           o <emphasis role="bold">botão direito do mouse</emphasis> e clique em <guimenuitem>Remover</guimenuitem> ou
             <guimenuitem>Delete</guimenuitem>.</para>
-
         </tip>
-        <tip>
 
+        <tip>
           <para>Para <emphasis role="bold">mudar a posição</emphasis> de um caminho na
           lista, <emphasis role="bold">arraste-o com o mouse</emphasis> para a posição desejada.</para>
-
         </tip>
 
-        <para>Pode-se utilizar hotkeys para adicionar caminhos (<emphasis role="bold">Enter</emphasis>), mover caminhos
-        para cima e para baixo (<emphasis role="bold">Ctrl+seta para cima/para baixo</emphasis>), tornar um caminho topo
-        de lista (<emphasis role="bold">Ctrl Home</emphasis>) e tornar um caminho fim de lista
-        (<emphasis role="bold">Ctrl End</emphasis>).</para>
+        <para>Pode-se utilizar hotkeys para adicionar caminhos (<keycombo><keycap>Enter</keycap></keycombo>), mover
+          caminhos para cima e para baixo (<keycombo><keycap>Ctrl</keycap><keycap>seta para cima/para
+          baixo</keycap></keycombo>), tornar um caminho topo de lista
+          (<keycombo><keycap>Ctrl</keycap><keycap>Home</keycap></keycombo>) e tornar um caminho fim de lista
+          (<keycombo><keycap>Ctrl</keycap><keycap>End</keycap></keycombo>).</para>
 
         <screenshot>
+	  <!--
           <info>
             <title />
           </info>
+	  -->
           <mediaobject>
             <imageobject>
               <imagedata fileref="../images/janela_path_list.png" />
@@ -919,23 +918,26 @@
               comentário.</para>
 
             <para>Na janela que se abre, pode-se salvar, imprimir e pré-visualizar o(s) comentário(s) através dos
-              botões ou através do menu da janela</para>
+              botões ou através do menu da janela.</para>
           </step>
         </procedure>
-        <procedure>
-          <step>
-            <para>
-              <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/janela_comentarios_de_linha.png" /></imageobject></inlinemediaobject></guiicon>
-            </para>
-          </step>
-        </procedure>
+        <screenshot>
+	  <!--
+	     <info>
+	       <title/>
+	     </info>
+	     -->
+	  <mediaobject>
+            <imageobject>
+              <imagedata fileref="../images/janela_comentarios_de_linha.png" />
+            </imageobject>
+          </mediaobject>
+        </screenshot>
         <tip>
-
           <para>Em <menuchoice><guimenu>Ações</guimenu> <guimenuitem>Preferências</guimenuitem></menuchoice> (no canto
             superior esquerdo da janela principal da GêBR), você pode determinar o editor de textos a ser usado para
             editar relatórios na GêBR. O editor padrão é o <application>gedit</application>. Para usar outro, digite o
             nome do editor em <guilabel>Editor HTML</guilabel>.</para>
-
         </tip>
         <note>
 
@@ -1414,9 +1416,9 @@
 	<guilabel>Edição de Fluxo</guilabel>.</para>
 
 
-      <para>Na <emphasis role="bold"><link linkend="sec_2_2">seção 2.2</link></emphasis> vimos que os componentes padrão
-      da GêBR são separados em dezesseis categorias, listadas na caixa
-	<guilabel>Menu</guilabel>, no lado direito da janela principal:</para>
+      <para>Na <emphasis role="bold"><link linkend="sec_2_2">seção 2.2</link></emphasis> vimos que os menus padrão da
+      GêBR são separados em dezesseis categorias, listadas na caixa <guilabel>Menu</guilabel>, no lado direito da janela
+      principal:</para>
 
       <itemizedlist>
         <listitem>
@@ -1955,9 +1957,11 @@
             <guilabel>Edição de Fluxo</guilabel>).</para>
 
           <screenshot>
+	    <!--
             <info>
               <title />
             </info>
+	    -->
             <mediaobject>
               <imageobject>
                 <imagedata fileref="../images/exemplo_dicionario_1.png" />
@@ -1965,9 +1969,11 @@
             </mediaobject>
           </screenshot>
           <screenshot>
+	    <!--
             <info>
               <title />
             </info>
+	    -->
             <mediaobject>
               <imageobject>
                 <imagedata fileref="../images/exemplo_dicionario_2.png" />
@@ -1991,9 +1997,11 @@
             seguinte:</para>
 
           <screenshot>
+	    <!--
             <info>
               <title />
             </info>
+	    -->
             <mediaobject>
               <imageobject>
                 <imagedata fileref="../images/exemplo_dicionario_3.png" />
@@ -2010,9 +2018,11 @@
             sleep</guilabel>, como mostrado a seguir:</para>
 
           <screenshot>
+	    <!--
             <info>
               <title />
             </info>
+	    -->
             <mediaobject>
               <imageobject>
                 <imagedata fileref="../images/exemplo_dicionario_4.png" />
@@ -2026,9 +2036,11 @@
             qualquer um destes fluxos, o resultado é uma  <emphasis role="bold">pausa de 5 segundos</emphasis>.</para>
 
           <screenshot>
+	    <!--
             <info>
               <title />
             </info>
+	    -->
             <mediaobject>
               <imageobject>
                 <imagedata fileref="../images/exemplo_dicionario_5.png" />
@@ -2109,9 +2121,11 @@
           </listitem>
         </itemizedlist>
         <screenshot>
+	  <!--
           <info>
             <title />
           </info>
+	  -->
           <mediaobject>
             <imageobject>
               <imagedata fileref="../images/janela_preferences.png" />
@@ -2136,9 +2150,11 @@
           botão <guibutton>Adicionar</guibutton>.</para>
 
         <screenshot>
+	  <!--
           <info>
             <title />
           </info>
+	  -->
           <mediaobject>
             <imageobject>
               <imagedata fileref="../images/janela_servers_configuration.png" />
@@ -2167,9 +2183,11 @@
 	ser apresentado na forma colapsada (padrão) ou expandida (como na janela abaixo).</para>
 
       <screenshot>
+	<!--
         <info>
           <title />
         </info>
+	-->
         <mediaobject>
           <imageobject>
             <imagedata fileref="../images/janela_log_execucao.png" />
