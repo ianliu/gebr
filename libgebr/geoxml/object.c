@@ -225,29 +225,45 @@ gchar *gebr_geoxml_object_get_help_content (GebrGeoXmlObject *object)
 gchar *gebr_geoxml_object_get_help_content_from_str (const gchar *str)
 {
 	gchar *inner;
-	gchar *content;
 	GRegex *regex;
-	GMatchInfo *match;
 	GString *html;
+	GMatchInfo *match;
 
 	html = g_string_new (str);
 	inner = gebr_geoxml_tmpl_get (html, "cnt");
-	if (!inner) {
-		regex = g_regex_new ("<div class=\"content\">(.*?)<\\/div>",
-				     G_REGEX_DOTALL, 0, NULL);
 
-		if (g_regex_match (regex, html->str, 0, &match)) {
-			inner = g_match_info_fetch (match, 1);
-			content = g_strdup (inner);
-			g_match_info_free (match);
-		} else
-			content = g_strdup (html->str);
-		g_regex_unref (regex);
-	} else
-		content = g_strdup (inner);
+	if (inner) {
+		g_string_free (html, TRUE);
+		return inner;
+	}
 
+	// We only needed 'html' for gebr_geoxml_tmpl, free it now
 	g_string_free (html, TRUE);
-	g_free (inner);
 
-	return content;
+	regex = g_regex_new ("<div class=\"content\">(.*?)<\\/div>",
+			     G_REGEX_DOTALL, 0, NULL);
+
+	if (g_regex_match (regex, html->str, 0, &match)) {
+		inner = g_match_info_fetch (match, 1);
+		g_match_info_free (match);
+		g_regex_unref (regex);
+		return inner;
+	}
+
+	g_regex_unref (regex);
+	regex = g_regex_new ("<body[^>]*>(.*?)<\\/div>",
+			     G_REGEX_DOTALL, 0, NULL);
+
+	if (g_regex_match (regex, html->str, 0, &match)) {
+		inner = g_match_info_fetch (match, 1);
+		g_match_info_free (match);
+		g_regex_unref (regex);
+		return inner;
+	}
+
+	g_regex_unref (regex);
+
+	// We could not get the 'cnt' tag, nor the '<div class="content">', nor the <body>.
+	// Return the same string we've got!
+	return g_strdup (str);
 }
