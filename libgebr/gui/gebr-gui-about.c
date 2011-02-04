@@ -51,7 +51,6 @@ struct about gebr_gui_about_setup_ui(const gchar * program, const gchar * descri
 		"  Gabriel Sobral <sobral@gebrproject.com>",
 		"  Ian Liu Rodrigues <ian.liu@gebrproject.com>",
 		"  Jorge Pizzolatto <jorge.pzt@gebrproject.com>",
-		"  Luis Alberto D'Afonseca <luis.dafonseca@gebrproject.com>",
 		"  Priscila Moraes <pris.moraess@gebrproject.com>",
 		"  Renan Giarola <renangiarola@gebrproject.com>",
 		"  Rodrigo Morelatto <morelatto@gebrproject.com>",
@@ -59,6 +58,7 @@ struct about gebr_gui_about_setup_ui(const gchar * program, const gchar * descri
 		_("Consultants"),
 		"  Eduardo Filpo <efilpo@gmail.com>",
 		"  Fernando Roxo <roxo@roxo.org>",
+		"  Luis Alberto D'Afonseca <luis.dafonseca@gebrproject.com>",
 		"  Rodrigo Portugal <rosoport@gmail.com>",
 		NULL
 	};
