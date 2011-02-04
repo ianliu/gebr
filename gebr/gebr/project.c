@@ -73,8 +73,8 @@ gboolean project_delete(GtkTreeIter * iter, gboolean warn_user)
 	gint nlines = gtk_tree_model_iter_n_children(GTK_TREE_MODEL(gebr.ui_project_line->store), iter);
 	if (nlines > 0) {
 		if (warn_user)
-			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Project '%s' is not empty. Also select all lines of it to delete."),
-				     gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(project)), nlines);
+			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Selection error:"),
+						_("Project selected is not empty.\nAlso select all lines of it to delete."));
 		return FALSE;
 	}
 
