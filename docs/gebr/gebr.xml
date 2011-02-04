@@ -547,69 +547,66 @@
 
     <important>
 
-      <para>Alguns recursos que serão explicados a seguir já foram vistos na prática no exemplo da 
-	<link linkend="sec_2"><emphasis role="bold">seção 2</emphasis></link>. Além disso, o exemplo aborda alguns
-	conceitos fundamentais por trás da GêBR. Por isso, se não o fez, é <emphasis role="bold">recomendável que você
-	leia aquela seção</emphasis> antes de prosseguir. Por razões didáticas, recorreremos àquele exemplo sempre que
-	necessário.</para>
-
+      <para>Some of the features that will be explained have already been used in the example 
+	<link linkend="sec_2"><emphasis role="bold">Section 2</emphasis></link>. Moreover, this example illustrates some
+	 of GêBR's fundamental concepts. So, if you have not done so already , we <emphasis role="bold">recommend that you
+	read that Section</emphasis> before moving on. Also, when ever necessary, we will refer to that example.</para>
     </important>
 
     <section xml:id="sec_3_1">
-      <title>A aba 
-	<guilabel>Projetos e Linhas</guilabel></title>
+      <title>The tab
+	<guilabel>Projects and Lines</guilabel></title>
 
-      <para>A aba 
-	<guilabel>Projetos e Linhas</guilabel> dispõe de nove botões de comando, localizados logo abaixo da aba. Por meio
-	deles pode-se:</para>
+      <para>The tab
+	<guilabel>Projects and Lines</guilabel> has nine command buttons just below the tab. These command buttons will allow you to:</para>
 
       <itemizedlist>
         <listitem>
 
           <para>
-            <link linkend="sec_3_1_1">Criar um novo projeto</link>
+            <link linkend="sec_3_1_1">Create a New Project</link>
           </para>
 
         </listitem>
         <listitem>
 
           <para>
-            <link linkend="sec_3_1_2">Criar uma nova linha</link>
+            <link linkend="sec_3_1_2">Create a New Line</link>
           </para>
 
         </listitem>
         <listitem>
 
           <para>
-            <link linkend="sec_3_1_3">Apagar um projeto ou uma linha selecionados</link>
+            <link linkend="sec_3_1_3">Delete a selected Project or Line</link>
           </para>
 
         </listitem>
         <listitem>
 
           <para>
-            <link linkend="sec_3_1_4">Editar as propriedades de um projeto ou linha</link>
+            <link linkend="sec_3_1_4">Edit selected Project or Lines properties</link>
           </para>
 
         </listitem>
         <listitem>
 
           <para>
-            <link linkend="sec_3_1_5">Editar o dicionário de parâmetros do projeto ou linha</link>
+            <link linkend="sec_3_1_5">Edit selected Project or Line parameter dictionary </link>
           </para>
 
         </listitem>
         <listitem>
 
           <para>
-            <link linkend="sec_3_1_7">Importar um projeto ou linha</link>
+            <link linkend="sec_3_1_7">Import a Project or a Line</link>
           </para>
 
         </listitem>
         <listitem>
 
           <para>
-            <link linkend="sec_3_1_8">Exportar um projeto ou linha</link>
+            <link linkend="sec_3_1_8">Export a Project or a Line</link>
           </para>
 
         </listitem>
@@ -630,50 +627,46 @@
       </itemizedlist>
       <tip>
 
-        <para>Experimente usar <emphasis role="bold">menus de contexto</emphasis> no lugar dos botões de comando. Para
-          isso, <emphasis role="bold">clique com o botão direito do mouse</emphasis> nos projetos e linhas que você
-          criar. Você vai notar que diversos comandos podem ser acionados por este método. Em determinados casos, isso é
-          mais <emphasis role="bold">fácil e rápido</emphasis> do que usar os botões.</para>
+        <para>Try using a <emphasis role="bold">context menu</emphasis> instead of command buttons. To do so,
+         <emphasis role="bold">click the right mouse button</emphasis> on one of the Projects or Lines you have created. 
+	Notice that many commands can be found in this context menu. For certain cases this method is
+           <emphasis role="bold">easier and faster</emphasis> then using the command buttons.</para>
 
       </tip>
 
       <section xml:id="sec_3_1_1">
-        <title>Criar um novo projeto</title>
+        <title>New Project</title>
 
-        <para>Para criar um novo projeto, clique no
-        botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_criar_projeto.png"
-        /></imageobject></inlinemediaobject></guiicon> (veja mais detalhes na
-          <link linkend="sec_2_1"><emphasis role="bold">seção 2.1</emphasis></link>).</para>
-
-
-        <para><emphasis role="bold">Não há limitação</emphasis> para o número de projetos na GêBR. Você pode criar
-          quantos projetos quiser.</para>
+        <para>To create a new Project click on the
+        button <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_criar_projeto.png"
+        /></imageobject></inlinemediaobject></guiicon>, more details are given in 
+          <link linkend="sec_2_1"><emphasis role="bold">Section 2.1</emphasis></link>.</para>
 
 
-        <para>Depois de criados, os projetos ficam <emphasis role="bold">visíveis no lado esquerdo da janela
-        principal</emphasis> da GêBR. A caixa <guilabel>Detalhes</guilabel>, localizada no lado direito da janela
-        principal, exibe informações sobre o projeto selecionado.</para>
+        <para>There is <emphasis role="bold">no limition</emphasis> on the number of Projects in GêBR. You can
+	have as many as you desire.</para>
+
+
+        <para>After creating a Project it will be <emphasis role="bold">visible on the left side of GêBR's main window</emphasis>. The <guilabel>Details</guilabel> box, on the right side of the main window, will show information about the selected Project.</para>
 
       </section>
 
       <section xml:id="sec_3_1_2">
-        <title>Criar uma nova linha</title>
+        <title>New Line</title>
 
-        <para>Para criar uma nova linha, <emphasis role="bold">selecione um projeto existente</emphasis> e clique no
-        botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_criar_linha.png"
-        /></imageobject></inlinemediaobject></guiicon> (veja mais detalhes
-        na <emphasis role="bold"><link linkend="sec_2_1">seção 2.1</link></emphasis>). A nova linha será criada dentro
-        do projeto selecionado.</para>
-
-
-        <para><emphasis role="bold">Não há limitação</emphasis> para o número de linhas na GêBR. Você pode criar quantas
-          linhas quiser dentro de um projeto.</para>
+        <para>To create a new Line, <emphasis role="bold">select an existing Project</emphasis> and click on the button
+	<guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_criar_linha.png"
+        /></imageobject></inlinemediaobject></guiicon>,  more details are given in 
+	 <emphasis role="bold"><link linkend="sec_2_1">Section 2.1</link></emphasis>. A new Line will appear in the selected Project.</para>
 
 
-        <para>Depois de criadas, as linhas ficam <emphasis role="bold">visíveis no lado esquerdo da janela
-          principal</emphasis> da GêBR, dentro dos projetos. A caixa
-          <guilabel>Detalhes</guilabel>, localizada no lado direito da janela principal, exibe informações sobre a linha
-          selecionada.</para>
+       <para> There is <emphasis role="bold">no limition</emphasis> on the number of Lines in GêBR. You can
+	have as many Lines in a Project as you desire.</para>
+
+
+        <para>After you have created a Line it will <emphasis role="bold">appear on the left side of GêBR's main window </emphasis>, 
+	in selected Project. The 
+          <guilabel>Details</guilabel> box, on the right side of the main window, will show information about the selected Project.</para>
 
         <tip>
           <para>A GêBR permite <emphasis role="bold">colapsar</emphasis> ou <emphasis role="bold">expandir</emphasis> o
