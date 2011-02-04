@@ -243,7 +243,7 @@ gchar *gebr_geoxml_object_get_help_content_from_str (const gchar *str)
 	regex = g_regex_new ("<div class=\"content\">(.*?)<\\/div>",
 			     G_REGEX_DOTALL, 0, NULL);
 
-	if (g_regex_match (regex, html->str, 0, &match)) {
+	if (g_regex_match (regex, str, 0, &match)) {
 		inner = g_match_info_fetch (match, 1);
 		g_match_info_free (match);
 		g_regex_unref (regex);
@@ -254,7 +254,7 @@ gchar *gebr_geoxml_object_get_help_content_from_str (const gchar *str)
 	regex = g_regex_new ("<body[^>]*>(.*?)<\\/div>",
 			     G_REGEX_DOTALL, 0, NULL);
 
-	if (g_regex_match (regex, html->str, 0, &match)) {
+	if (g_regex_match (regex, str, 0, &match)) {
 		inner = g_match_info_fetch (match, 1);
 		g_match_info_free (match);
 		g_regex_unref (regex);
