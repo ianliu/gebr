@@ -363,32 +363,31 @@
         </listitem>
       </itemizedlist>
 
-      <para> To <emphasis role="bold">Create a Flow</emphasis> you must <emphasis role="bold">select and order programs 
-      </emphasis> from the above categories.  Vejamos como se faz na prática:</para>
+      <para> To <emphasis role="bold">create a Flow</emphasis> you must <emphasis role="bold">select and order programs 
+      </emphasis> from the above categories. Let us see how this is done:</para>
 
       <procedure>
         <step>
-          <para>Na aba <guilabel>Projetos e Linhas</guilabel>, certifique-se de que a linha <emphasis>Minha primeira
-          linha</emphasis>, criada anteriormente, está selecionada.</para>
+          <para>In the tab <guilabel>Projects and Lines</guilabel>, check that you have selected <emphasis>My
+	First Line</emphasis>, the Line you created before.</para>
         </step>
         <step>
-          <para>Selecione a aba <guilabel>Fluxos</guilabel> e, em seguida, clique no
-            botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_criar_fluxo.png"
+          <para>Now click on the tab <guilabel>Flows</guilabel>, then click on the button
+	 <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_criar_fluxo.png"
             /></imageobject></inlinemediaobject></guiicon></para>
         </step>
         <step>
-          <para>Na janela <guilabel>Propriedade para Fluxo</guilabel>, digite um <emphasis>título</emphasis> para o
-          fluxo (por exemplo, <userinput>Meu primeiro fluxo</userinput>). Se desejar, digite também uma
-          breve <emphasis>descrição</emphasis> do fluxo, o <emphasis>autor</emphasis> e um <emphasis>e-mail</emphasis>
-          para contato. Feito isso, clique
-            <guibutton>OK</guibutton>.</para>
+          <para>The dialog box <guilabel>Flow Properties</guilabel> will appear, fill in a <emphasis>title</emphasis> 	
+	for this Flow, for example, <userinput>My First Flow</userinput>). You can also give a brief  	
+	<emphasis>description</emphasis> of the Flow, the <emphasis>author</emphasis> and an <emphasis>e-mail</emphasis>
+          for contact. If you are done filling in this Flows properties click on <guibutton>OK</guibutton>.</para>
         </step>
         <step>
-          <para>Selecione a aba <guilabel>Edição de Fluxo</guilabel>. Em seguida, expanda a categoria
-            <guimenu>Graphics</guimenu> e dê um clique duplo no componente <guimenuitem>SU Simple X
-            Image</guimenuitem>. Fazendo isso você adiciona este componente ao seu fluxo (note que o programa
-            <guimenuitem>SU Simple X Image</guimenuitem> agora aparece na caixa <guilabel>Sequência de fluxo</guilabel>,
-            no lado esquerdo da janela). Neste momento, sua janela deve se parecer com esta:</para>
+          <para>Now select the tab <guilabel>Flow Editor</guilabel>, look for the category
+            <guimenu>Graphics</guimenu> and expand its list, then click on the component <guimenuitem>SU Simple X
+            Image</guimenuitem>. You have now added this component to your Flow, note that the program
+            <guimenuitem>SU Simple X Image</guimenuitem> now appears in the box <guilabel>Flow sequence</guilabel>, on
+ 	the left side of the window. Your window should now look something like this one:</para>
 
           <screenshot>
             <info>
@@ -402,21 +401,20 @@
           </screenshot>
         </step>
         <step>
-          <para>Expanda a categoria 
-            <guimenu>Seismic Unix</guimenu> e dê um clique duplo no componente 
-            <guimenuitem>SU Plane</guimenuitem> (provavelmente você precisará rolar a janela 
-            <guilabel>Fluxos</guilabel> para alcançar este componente). Fazendo isso você adiciona o programa 
-            <guimenuitem>SU Plane</guimenuitem> ao fluxo. Note que 
-            <guimenuitem>SU Plane</guimenuitem> ficará posicionado abaixo de 
-            <guimenuitem>SU Simple X Image</guimenuitem> na lista 
-            <guilabel>Sequência de fluxo</guilabel>.</para>
+          <para> Scroll down the <guilabel>Flows</guilabel> window until you find the category
+            <guimenu>Seismic Unix</guimenu>, expand its options then double click on
+            <guimenuitem>SU Plane</guimenuitem>. You have now added the
+            <guimenuitem>SU Plane</guimenuitem> program to your Flow. Notice that
+            <guimenuitem>SU Plane</guimenuitem> is positioned in your
+            <guilabel>Flow sequence</guilabel> just below 
+            <guimenuitem>SU Simple X Image</guimenuitem>.</para>
         </step>
         <step>
-          <para>Para este exemplo funcionar, é necessário que 
-            <guimenuitem>SU Plane</guimenuitem> venha antes de 
-            <guimenuitem>SU Simple X Image</guimenuitem> na sequência do fluxo. Por isso, você
-            deve <emphasis role="bold">arrastar o programa</emphasis> para a posição desejada, como mostra a janela a
-            seguir:</para>
+          <para>For this example to work we will need 
+            <guimenuitem>SU Plane</guimenuitem> to come before 
+            <guimenuitem>SU Simple X Image</guimenuitem> in the Flow sequence. To accomplish this just
+	<emphasis role="bold">drag the program</emphasis> to the desired position, as is shown in the following
+	 window:</para>
 
           <screenshot>
             <info>
@@ -430,19 +428,21 @@
           </screenshot>
         </step>
         <step>
-          <para>Agora que o programa <guimenuitem>SU Plane</guimenuitem> está no topo da lista
-            <guilabel>Sequência de fluxo</guilabel>, clique sobre ele com o botão direito do mouse. No menu que se abre,
-            selecione a opção <guilabel>Configurado</guilabel>. Isso muda o estado do programa, que passa a ser
-            sinalizado por <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_configurado.png"
-            /></imageobject></inlinemediaobject></guiicon> em vez
-            de <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_nao_configurado.png"
-            /></imageobject></inlinemediaobject></guiicon>. Depois faça o mesmo para o programa
-            <guimenuitem>SU Simple X Image</guimenuitem>.</para>
+          <para>With the program <guimenuitem>SU Plane</guimenuitem> on the top of your
+            <guilabel>Flow sequence</guilabel> list, press the right click on <guimenuitem>SU Plane</guimenuitem>. From	
+	    the menu that has appeared select the option <guilabel>Configured</guilabel>. This configured state, represented by
+	 <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_configurado.png"
+            /></imageobject></inlinemediaobject></guiicon>, means the program is 
+        ready to be executed, contrary to the state represented by <guiicon><inlinemediaobject><imageobject><imagedata
+	 fileref="../images/icone_nao_configurado.png"/></imageobject></inlinemediaobject></guiicon>. Then do the same
+	 for <guimenuitem>SU Simple X Image</guimenuitem>.</para>
 
           <screenshot>
+	    <!--
             <info>
               <title />
             </info>
+	    -->
             <mediaobject>
               <imageobject>
                 <imagedata fileref="../images/janela_flow_edition_3.png" />
@@ -451,30 +451,28 @@
           </screenshot>
           <tip>
 
-            <para>Se você quiser mudar o estado de todos (ou de alguns) programas simultaneamente, selecione-os usando
+            <para>If you want to change all programs, or a few, to the configured state simultaneously, select them by
+	using
               <keycombo>
 		<keycap>Ctrl</keycap>
-		<mousebutton>Clique</mousebutton>
-              </keycombo>. Depois clique com o botão direito do mouse em um dos programas selecionados e, no menu que se
-              abre, escolha a opção <guilabel>Configurado</guilabel>. Todos os programas que você selecionou serão
-              alterados
-              para <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_configurado.png"
-              /></imageobject></inlinemediaobject></guiicon>.</para>
+		<mousebutton>Click</mousebutton>
+              </keycombo>. Then click the right mouse button on one of the selected programs, choose the option 
+	<guilabel>Configured</guilabel> from the menu that appeared. All the programs that where selected will be 
+	altered to the state <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_configurado.png"/></imageobject></inlinemediaobject></guiicon>.</para>
 
           </tip>
           <important>
 
-            <para>Para este fluxo funcionar, é necessário que <emphasis role="bold">todos os programas</emphasis>
-            listados na caixa <guilabel>Sequência de fluxo</guilabel> estejam no
-            estado <emphasis role="bold">Configurado</emphasis>
+            <para>To run a Flow  <emphasis role="bold">all the programs</emphasis> listed in the 
+	<guilabel>Flow sequence</guilabel> box must be <emphasis role="bold">Configured</emphasis>
             (<guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_configurado.png"
-            /></imageobject></inlinemediaobject></guiicon>). Sem isso, o fluxo não será executado como esperado.</para>
+            /></imageobject></inlinemediaobject></guiicon>). Otherwise the Flow  o fluxo não será executado como esperado.</para>
 
           </important>
           <important>
 
-            <para>Um estado de um fluxo ou um conjunto de fluxos pode ser alterado através da
-            hotkey <emphasis role="bold">space</emphasis>. O status do fluxo selecionado variará na
+            <para>The state of a Flow, or a set of Flows, can be changed by using the
+            hotkey <emphasis role="bold">spacebar</emphasis>. O status do fluxo selecionado variará na
             ordem <emphasis role="bold">não configurado</emphasis>, <emphasis role="bold">desabilitado</emphasis>
             e <emphasis role="bold">configurado</emphasis>. Tal funcionalidade será mais explorada adiante.</para>
 
@@ -664,9 +662,10 @@
 	have as many Lines in a Project as you desire.</para>
 
 
-        <para>After you have created a Line it will <emphasis role="bold">appear on the left side of GêBR's main window </emphasis>, 
-	in selected Project. The 
-          <guilabel>Details</guilabel> box, on the right side of the main window, will show information about the selected Project.</para>
+        <para>Depois de criadas, as linhas ficam <emphasis role="bold">visíveis no lado esquerdo da janela
+          principal</emphasis> da GêBR, dentro dos projetos. A caixa
+          <guilabel>Detalhes</guilabel>, localizada no lado direito da janela principal, exibe informações sobre a linha
+          selecionada.</para>
 
         <tip>
           <para>A GêBR permite <emphasis role="bold">colapsar</emphasis> ou <emphasis role="bold">expandir</emphasis> o
