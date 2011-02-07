@@ -124,7 +124,8 @@ void on_flow_component_move_top(void);
 
 void on_flow_component_move_bottom(void);
 
-void on_flow_component_execute (void);
+void on_flow_component_execute (gboolean single);
+void on_flow_component_execute_single();
 
 /**
  * on_job_control_save:

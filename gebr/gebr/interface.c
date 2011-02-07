@@ -133,7 +133,7 @@ static const GtkActionEntry actions_entries_flow_edition[] = {
 	{"flow_edition_bottom", GTK_STOCK_GOTO_BOTTOM, N_("Move to Bottom"),
 		"End", NULL, G_CALLBACK(on_flow_component_move_bottom)},
 	{"flow_edition_execute", GTK_STOCK_EXECUTE, NULL,
-		"<Control>R", N_("Execute this flow"), G_CALLBACK (on_flow_component_execute)}
+		"<Control>R", N_("Execute this flow"), G_CALLBACK (on_flow_component_execute_single)}
 };
 
 static const GtkActionEntry actions_entries_job_control[] = {
