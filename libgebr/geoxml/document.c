@@ -182,26 +182,26 @@ static int __gebr_geoxml_document_validate_doc(GdomeDocument ** document, GebrGe
 
 	int ret;
 
+	dtd_filename = g_string_new(NULL);
 	if (gdome_doc_doctype(*document, &exception) != NULL) {
 		ret = GEBR_GEOXML_RETV_DTD_SPECIFIED;
 		goto out2;
 	}
 
 	/* initialization */
-	dtd_filename = g_string_new(NULL);
 	root_element = gebr_geoxml_document_root_element(*document);
 
 	/* If there is no version attribute, the document is invalid */
 	version = gebr_geoxml_document_get_version((GebrGeoXmlDocument *) *document);
 	if (!gebr_geoxml_document_is_version_valid(version)) {
 		ret = GEBR_GEOXML_RETV_INVALID_DOCUMENT;
-		goto out;
+		goto out2;
 	}
 
 	/* Checks if the document's version is greater than GeBR's version */
 	if (!gebr_geoxml_document_check_version((GebrGeoXmlDocument*)*document, version)) {
 		ret = GEBR_GEOXML_RETV_NEWER_VERSION;
-		goto out;
+		goto out2;
 	}
 
 	/* Find the DTD spec file. If the file doesn't exists, it may mean that this document is from newer version. */
@@ -211,7 +211,7 @@ static int __gebr_geoxml_document_validate_doc(GdomeDocument ** document, GebrGe
 	if (g_file_test(dtd_filename->str, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_REGULAR) == FALSE
 	    || g_access(dtd_filename->str, R_OK) < 0) {
 		ret = GEBR_GEOXML_RETV_CANT_ACCESS_DTD;
-		goto out;
+		goto out2;
 	}
 
 	/* Inserts the document type into the xml so we can validate and specify the ID attributes and use
@@ -648,9 +648,9 @@ static int __gebr_geoxml_document_validate_doc(GdomeDocument ** document, GebrGe
 	ret = GEBR_GEOXML_RETV_SUCCESS;
 
 out:
-	g_string_free(dtd_filename, TRUE);
 	g_string_free(source, TRUE);
 out2:
+	g_string_free(dtd_filename, TRUE);
 	return ret;
 }
 
