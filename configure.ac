@@ -88,7 +88,11 @@ dnl The nano-version is the mercurial revision hash.
 dnl Notice that it is escaped so the shell expansion only occurs when `make'
 dnl is executed.
 dnl ============================================================================
-NANOVERSION='`hg parent --template "+{latesttagdistance}-{node|short}" 2> /dev/null || date ++%H%M`'
+if test "x$enable_debug" = "xyes"; then
+	NANOVERSION='`hg parent --template "+{latesttagdistance}-{node|short}" 2> /dev/null || date ++%Y%m%d.%H%M`'
+else
+	NANOVERSION=""
+fi
 AC_SUBST(NANOVERSION)
 
 dnl ============================================================================
