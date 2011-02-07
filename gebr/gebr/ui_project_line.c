@@ -822,14 +822,11 @@ void project_line_delete(void)
 	GtkTextBuffer *text_buffer;
 	gboolean can_delete = TRUE;
 	gint quantity_selected = 0;
-	GtkTextIter iter_end;
 	GtkWidget *text_view;
 	GtkWidget *dialog;
 	gint ret;
 
 	text_buffer = gtk_text_buffer_new(NULL);
-	gtk_text_buffer_get_end_iter(text_buffer, &iter_end);
-	gtk_text_buffer_create_mark(text_buffer, "end", &iter_end, FALSE);
 	text_view = gtk_text_view_new_with_buffer(text_buffer);
 	gtk_text_view_set_editable(GTK_TEXT_VIEW (text_view), FALSE);
 	gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW (text_view), FALSE);
@@ -895,39 +892,81 @@ void project_line_delete(void)
 	if (!can_delete)
 		goto out;
 	if (quantity_selected > 1){
-		dialog = gtk_message_dialog_new_with_markup(NULL,
-							    (GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
-							    GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
-							    "<span font_weight='bold' size='large'>%s</span>",
-							    _("Confirm multiple deletion"));
-		gtk_window_set_title(GTK_WINDOW(dialog), _("Confirm multiple deletion"));
+		GtkWidget *table = gtk_table_new(3, 2, FALSE);
+		GtkWidget * image = gtk_image_new_from_stock(GTK_STOCK_DIALOG_QUESTION, GTK_ICON_SIZE_DIALOG);
+		GtkWidget * title = gtk_label_new("");
+		GtkWidget * message = gtk_label_new(_("The following documents are about to be deleted.\nThis operation can't be undone! Are you sure?\n"));
+		guint row = 0;
+		char *markup = g_markup_printf_escaped("<span font_weight='bold' size='large'>%s</span>", _("Confirm multiple deletion"));
+		GtkWidget *scrolled_window;
+		scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window), GTK_POLICY_AUTOMATIC,
+					       GTK_POLICY_AUTOMATIC);
+		gtk_widget_set_size_request(scrolled_window, 400, 200);
 
-		gtk_message_dialog_format_secondary_markup(GTK_MESSAGE_DIALOG(dialog), _("The following documents are about to be deleted. This operation can't be undone! "
-											 "Are you sure?\n"));
-		gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox),text_view);
+		dialog = gtk_dialog_new_with_buttons(_("Confirm multiple deletion"), NULL,
+						     (GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
+						     GTK_STOCK_YES,
+						     GTK_RESPONSE_YES ,
+						     GTK_STOCK_NO,
+						     GTK_RESPONSE_NO,
+						     NULL);
+		gtk_label_set_markup (GTK_LABEL (title), markup);
+		g_free (markup);
+		gtk_container_add(GTK_CONTAINER(scrolled_window), text_view);
+		gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), table, TRUE, TRUE, 0);
+		gtk_table_attach(GTK_TABLE(table), image, 0, 1, row, row + 1, (GtkAttachOptions)GTK_FILL,
+				 (GtkAttachOptions)GTK_FILL, 3, 3);
+		gtk_table_attach(GTK_TABLE(table), title, 1, 2, row, row + 1, (GtkAttachOptions)GTK_FILL,
+				 (GtkAttachOptions)GTK_FILL, 3, 3), row++;
+
+		gtk_table_attach(GTK_TABLE(table), message, 1, 2, row, row + 1, (GtkAttachOptions)GTK_FILL,
+				 (GtkAttachOptions)GTK_FILL, 3, 3), row++;
+
+		gtk_table_attach(GTK_TABLE(table), scrolled_window, 1, 2, row, row + 1, (GtkAttachOptions)GTK_FILL,
+				 (GtkAttachOptions)GTK_EXPAND
+				 , 3, 3), row++;
+
 		gtk_widget_show_all(GTK_DIALOG(dialog)->vbox);
 		ret = gtk_dialog_run(GTK_DIALOG(dialog));
-		can_delete = (ret == GTK_RESPONSE_YES || ret == GTK_RESPONSE_OK) ? TRUE : FALSE;
+		can_delete = (ret == GTK_RESPONSE_YES) ? TRUE : FALSE;
 
 		gtk_widget_destroy(dialog);
 
 	} else {
-		dialog = gtk_message_dialog_new_with_markup(NULL,
-							    (GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
-							    GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
-							    "<span font_weight='bold' size='large'>%s</span>",
-							    _("Confirm deletion"));
-		gtk_window_set_title(GTK_WINDOW(dialog), _("Confirm deletion"));
+		GtkWidget *table = gtk_table_new(3, 2, FALSE);
+		GtkWidget * image = gtk_image_new_from_stock(GTK_STOCK_DIALOG_QUESTION, GTK_ICON_SIZE_DIALOG);
+		GtkWidget * title = gtk_label_new("");
+		GtkWidget * message = gtk_label_new(_("The following document is about to be deleted.\nThis operation can't be undone! Are you sure?\n"));
+		guint row = 0;
+		char *markup = g_markup_printf_escaped("<span font_weight='bold' size='large'>%s</span>", _("Confirm deletion"));
 
-		gtk_message_dialog_format_secondary_markup(GTK_MESSAGE_DIALOG(dialog), _("The following document is about to be deleted. This operation can't be undone! "
-											 "Are you sure?\n"));
-		gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox),text_view);
+		dialog = gtk_dialog_new_with_buttons(_("Confirm deletion"), NULL,
+						     (GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
+						     GTK_STOCK_YES,
+						     GTK_RESPONSE_YES ,
+						     GTK_STOCK_NO,
+						     GTK_RESPONSE_NO,
+						     NULL);
+		gtk_label_set_markup (GTK_LABEL (title), markup);
+		g_free (markup);
+
+		gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), table, TRUE, TRUE, 0);
+		gtk_table_attach(GTK_TABLE(table), image, 0, 1, row, row + 1, (GtkAttachOptions)GTK_FILL,
+				 (GtkAttachOptions)GTK_FILL, 3, 3);
+		gtk_table_attach(GTK_TABLE(table), title, 1, 2, row, row + 1, (GtkAttachOptions)GTK_FILL,
+				 (GtkAttachOptions)GTK_FILL, 3, 3), row++;
+
+		gtk_table_attach(GTK_TABLE(table), message, 1, 2, row, row + 1, (GtkAttachOptions)GTK_FILL,
+				 (GtkAttachOptions)GTK_FILL, 3, 3), row++;
+
+		gtk_table_attach(GTK_TABLE(table), text_view, 1, 2, row, row + 1, (GtkAttachOptions)GTK_FILL,
+				 (GtkAttachOptions)GTK_FILL, 3, 3), row++;
 		gtk_widget_show_all(GTK_DIALOG(dialog)->vbox);
 		ret = gtk_dialog_run(GTK_DIALOG(dialog));
-		can_delete = (ret == GTK_RESPONSE_YES || ret == GTK_RESPONSE_OK) ? TRUE : FALSE;
+		can_delete = (ret == GTK_RESPONSE_YES) ? TRUE : FALSE;
 
 		gtk_widget_destroy(dialog);
-
 	}
 	if (!can_delete)
 		goto out;
