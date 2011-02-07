@@ -19,6 +19,6 @@ AM_LDFLAGS = $(GEBR_LIBS)		\
 	     $(GEBR_COMM_LIBS)		\
 	     $(GEBR_GUI_LIBS)
 
-TEST_PROGS += test-help
-test_help_SOURCES = test-help.c
-test_help_LDADD = ../gebr/libgebr.a
+#TEST_PROGS += test-help
+#test_help_SOURCES = test-help.c
+#test_help_LDADD = ../gebr/libgebr.a
