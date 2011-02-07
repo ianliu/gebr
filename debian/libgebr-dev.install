@@ -1,2 +1,6 @@
-/usr/include/*
-/usr/lib/pkgconfig/*
+usr/lib/lib*.a
+usr/lib/lib*.so
+usr/lib/*.la
+usr/include/*
+usr/lib/pkgconfig/*.pc
+usr/share/gtk-doc

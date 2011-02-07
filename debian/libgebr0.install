@@ -1,0 +1,4 @@
+usr/bin/gebr-*
+usr/lib/libgebr*.so.*
+usr/share/libgebr/*
+usr/share/locale/*/*/libgebr.mo

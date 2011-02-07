@@ -1,11 +1,12 @@
 Source: gebrproject
 Priority: extra
 Maintainer: Ricardo Biloti <biloti@gebrproject.com>
-Build-Depends: automake, autoconf, intltool, libtool, gtk-doc-tools,
- libglib2.0-dev, libgtk2.0-dev, libgdome2-dev, libwebkit-dev, pkg-config
+Build-Depends: debhelper (>= 5), automake, libtool, intltool, gtk-doc-tools,
+ zlib1g-dev, libwebkit-dev | libgtk2.0-dev, libgdome2-dev, libtidy-dev,
+ docbook-utils
 Standards-Version: 3.7.2
 
-Package: libgebr
+Package: libgebr0
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
@@ -51,11 +52,6 @@ Description: GeBR library collection
  This package contains the header files, static libraries and symbolic
  links that developers using libgebr will need.
  .
-
-Package: libgebr-doc
-Section: doc
-Architecture: any
-Description: Document files for libgebr API
 
 Package: gebrd
 Section: science
@@ -115,8 +111,3 @@ Description: Menu Designer for GeBR
  DeBR is the menu designer for GeBR. Each menu adds new functionalities
  to GeBR.
  .
-
-Package: debr-doc
-Section: doc
-Architecture: any
-Description: DeBR User Manual
