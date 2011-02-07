@@ -819,8 +819,21 @@ void project_line_delete(void)
 	}
 
 	GString *delete_list = g_string_new("");
+	GtkTextBuffer *text_buffer;
 	gboolean can_delete = TRUE;
 	gint quantity_selected = 0;
+	GtkTextIter iter_end;
+	GtkWidget *text_view;
+	GtkWidget *dialog;
+	gint ret;
+
+	text_buffer = gtk_text_buffer_new(NULL);
+	gtk_text_buffer_get_end_iter(text_buffer, &iter_end);
+	gtk_text_buffer_create_mark(text_buffer, "end", &iter_end, FALSE);
+	text_view = gtk_text_view_new_with_buffer(text_buffer);
+	gtk_text_view_set_editable(GTK_TEXT_VIEW (text_view), FALSE);
+	gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW (text_view), FALSE);
+
 	for (GList *i = selected; i != NULL; i = g_list_next(i)) {
 		GtkTreeIter * iter = (GtkTreeIter*)i->data;
 		GtkTreeIter parent;
@@ -876,22 +889,46 @@ void project_line_delete(void)
 			g_string_free(tmp, TRUE);
 		}
 	}
+	gtk_text_buffer_insert_at_cursor(text_buffer, delete_list->str, delete_list->len);
+
 	/* now asks the user for confirmation */
 	if (!can_delete)
 		goto out;
-	if (quantity_selected > 1)
-		can_delete = gebr_gui_confirm_action_dialog(
-				_("Confirm multiple deletion"),
-				_("The following documents are about to be deleted. This operation can't be undone! "
-				  "Are you sure?\n%s"),
-				delete_list->str);
+	if (quantity_selected > 1){
+		dialog = gtk_message_dialog_new_with_markup(NULL,
+							    (GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
+							    GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
+							    "<span font_weight='bold' size='large'>%s</span>",
+							    _("Confirm multiple deletion"));
+		gtk_window_set_title(GTK_WINDOW(dialog), _("Confirm multiple deletion"));
 
-	else
-		can_delete = gebr_gui_confirm_action_dialog(
-				_("Confirm deletion"),
-				_("The following document is about to be deleted. This operation can't be undone! "
-				  "Are you sure?\n%s"),
-				delete_list->str);
+		gtk_message_dialog_format_secondary_markup(GTK_MESSAGE_DIALOG(dialog), _("The following documents are about to be deleted. This operation can't be undone! "
+											 "Are you sure?\n"));
+		gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox),text_view);
+		gtk_widget_show_all(GTK_DIALOG(dialog)->vbox);
+		ret = gtk_dialog_run(GTK_DIALOG(dialog));
+		can_delete = (ret == GTK_RESPONSE_YES || ret == GTK_RESPONSE_OK) ? TRUE : FALSE;
+
+		gtk_widget_destroy(dialog);
+
+	} else {
+		dialog = gtk_message_dialog_new_with_markup(NULL,
+							    (GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
+							    GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
+							    "<span font_weight='bold' size='large'>%s</span>",
+							    _("Confirm deletion"));
+		gtk_window_set_title(GTK_WINDOW(dialog), _("Confirm deletion"));
+
+		gtk_message_dialog_format_secondary_markup(GTK_MESSAGE_DIALOG(dialog), _("The following document is about to be deleted. This operation can't be undone! "
+											 "Are you sure?\n"));
+		gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox),text_view);
+		gtk_widget_show_all(GTK_DIALOG(dialog)->vbox);
+		ret = gtk_dialog_run(GTK_DIALOG(dialog));
+		can_delete = (ret == GTK_RESPONSE_YES || ret == GTK_RESPONSE_OK) ? TRUE : FALSE;
+
+		gtk_widget_destroy(dialog);
+
+	}
 	if (!can_delete)
 		goto out;
 
@@ -900,7 +937,7 @@ void project_line_delete(void)
 		GtkTreeIter * iter = (GtkTreeIter*)i->data;
 		GtkTreeIter parent;
 		gboolean is_line = gtk_tree_model_iter_parent(GTK_TREE_MODEL(gebr.ui_project_line->store), &parent, iter);
-		
+
 		if (is_line) {
 			line_delete(iter, TRUE);
 
