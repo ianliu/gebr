@@ -29,7 +29,7 @@ typedef struct {
 static void
 fixture_setup(Fixture * fix, gconstpointer data)
 {
-	gebr_geoxml_document_load((GebrGeoXmlDocument**)(&fix->flow), TEST_DIR"/test.mnu", TRUE, NULL);
+	gebr_geoxml_document_load((GebrGeoXmlDocument**)(&fix->flow), TEST_DIR"/test.mnu", FALSE, NULL);
 
 	g_assert(fix->flow != NULL);
 
@@ -41,7 +41,6 @@ static void
 fixture_teardown(Fixture * fix, gconstpointer data)
 {
 	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(fix->flow));
-
 	g_string_free(fix->before, TRUE);
 	g_string_free(fix->after, TRUE);
 }
