@@ -50,7 +50,7 @@ EXTRA_DIST = $(noinst_HEADERS)
 AM_CPPFLAGS = $(GEBR_CFLAGS)		\
 	      $(GEBR_COMM_CFLAGS)	\
 	      $(GEBR_GEOXML_CFLAGS)	\
-	      -DNANOVERSION=\"`hg parent --template '+{latesttagdistance}-{node|short}' 2> /dev/null || date ++%H%M`\" \
+	      -DNANOVERSION=\"$(NANOVERSION)\"\
 	      @DEBUG_CFLAGS@ 
 
 AM_CFLAGS = $(COMMON_CFLAGS)
