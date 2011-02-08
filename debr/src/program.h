@@ -141,5 +141,11 @@ gchar * debr_program_get_backup_help_from_pointer(gpointer program);
  */
 void debr_program_sync_help_backups();
 
+/**
+ * program_details_update:
+ * Load details of selected program to the details view.
+ */
+void program_details_update(void);
+
 G_END_DECLS
 #endif				//__PROGRAM_H

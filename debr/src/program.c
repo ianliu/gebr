@@ -54,7 +54,6 @@ struct program_preview_data {
 	GtkWidget *hbox;
 };
 
-static void program_details_update(void);
 static void program_load_iter(GtkTreeIter * iter);
 static void program_load_selected(void);
 static GtkTreeIter program_append_to_ui(GebrGeoXmlProgram * program);
@@ -658,15 +657,11 @@ void program_select_iter(GtkTreeIter iter)
 	program_selected();
 }
 
-/*
- * Private functions.
- */
-
 /**
  * program_details_update:
  * Load details of selected program to the details view.
  */
-static void program_details_update(void)
+void program_details_update(void)
 {
 	gchar *markup;
 	gsize parameters_count;
@@ -768,6 +763,10 @@ static void program_details_update(void)
 
 	g_object_set(G_OBJECT(debr.ui_program.details.url_button), "sensitive", strlen(uri) > 0, NULL);
 }
+
+/*
+ * Private functions.
+ */
 
 /**
  * \internal
