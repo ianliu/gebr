@@ -94,6 +94,19 @@ G_BEGIN_DECLS
  */
 typedef struct gebr_geoxml_flow GebrGeoXmlFlow;
 
+
+/**
+ *
+ */
+typedef enum {
+	GEBR_GEOXML_FLOW_ERROR_NONE = 0,
+	GEBR_GEOXML_FLOW_ERROR_NO_INPUT,
+	GEBR_GEOXML_FLOW_ERROR_NO_OUTPUT,
+	GEBR_GEOXML_FLOW_ERROR_NO_INFILE,
+	GEBR_GEOXML_FLOW_ERROR_NO_VALID_PROGRAMS
+} GebrGeoXmlFlowError;
+
+
 /**
  * The GebrGeoXmlCategory struct contains private data only, and should be accessed using the functions below.
  */
@@ -454,6 +467,12 @@ void gebr_geoxml_flow_get_revision_data(GebrGeoXmlRevision * revision, gchar ** 
  * If \p flow is NULL returns -1.
  */
 glong gebr_geoxml_flow_get_revisions_number(GebrGeoXmlFlow * flow);
+
+/**
+ * Determine if a flow can be executed or not. If it can't, return
+ * the correct type of error.
+ */
+GebrGeoXmlFlowError gebr_geoxml_flow_validade(GebrGeoXmlFlow * flow, GebrGeoXmlFlowServer * flow_server, gchar ** program_title);
 
 G_END_DECLS
 #endif				//__GEBR_GEOXML_FLOW_H

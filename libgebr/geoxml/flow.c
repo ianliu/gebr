@@ -687,3 +687,68 @@ glong gebr_geoxml_flow_get_revisions_number(GebrGeoXmlFlow * flow)
 		return -1;
 	return __gebr_geoxml_get_elements_number(gebr_geoxml_document_root_element(GEBR_GEOXML_DOC(flow)), "revision");
 }
+
+GebrGeoXmlFlowError gebr_geoxml_flow_validade(GebrGeoXmlFlow * flow, GebrGeoXmlFlowServer * flow_server, gchar ** program_title)
+{
+	const gchar *input = NULL;
+	const gchar *output = NULL;
+	GebrGeoXmlSequence *first_program;
+	gulong i = 0, max = 0;
+
+	input = gebr_geoxml_flow_server_io_get_input(flow_server);
+	output = gebr_geoxml_flow_server_io_get_output(flow_server);
+
+	/*
+	 * Checking if the flow has at least one configured program
+	 */
+	max = gebr_geoxml_flow_get_programs_number(flow); 
+	gint status = 0;
+	gboolean first_configured = TRUE;
+	gint previous_stdout = 0;
+
+	for (i = 0; i < max; i++)
+	{
+		gebr_geoxml_flow_get_program(flow, &first_program, i);
+		status = gebr_geoxml_program_get_status(GEBR_GEOXML_PROGRAM(first_program));
+
+		if (status != GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED)
+			continue;
+
+		int chain_option = gebr_geoxml_program_get_stdin(GEBR_GEOXML_PROGRAM(first_program)) 
+				   + (previous_stdout << 1);
+		if (!first_configured)
+			switch (chain_option) 
+			{
+			case 0:
+				break;
+			case 1:	/* Previous does not write to stdin but current expect something */
+				*program_title = g_strdup(gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(first_program)));
+				return GEBR_GEOXML_FLOW_ERROR_NO_INPUT;
+			case 2:	/* Previous does write to stdin but current does not carry about */
+				*program_title = g_strdup(gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(first_program)));
+				return GEBR_GEOXML_FLOW_ERROR_NO_OUTPUT;
+			default:
+				break;
+			}
+
+		else 
+			if (gebr_geoxml_program_get_stdin(GEBR_GEOXML_PROGRAM(first_program)) 
+			    && (input == NULL || g_strcmp0("", input) == 0))
+			{
+				*program_title = g_strdup(gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(first_program)));
+				return GEBR_GEOXML_FLOW_ERROR_NO_INFILE;
+			}
+		
+		previous_stdout = gebr_geoxml_program_get_stdout(GEBR_GEOXML_PROGRAM(first_program));
+		first_configured = FALSE;
+	}
+	
+	if (first_configured)
+	{
+		return GEBR_GEOXML_FLOW_ERROR_NO_VALID_PROGRAMS;
+	}
+
+	return GEBR_GEOXML_FLOW_ERROR_NONE;
+
+
+}
