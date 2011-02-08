@@ -611,14 +611,14 @@
         <listitem>
 
           <para>
-            <link linkend="sec_3_1_9">Editar comentários</link>
+            <link linkend="sec_3_1_9">Edit comments</link>
           </para>
 
         </listitem>
         <listitem>
 
           <para>
-            <link linkend="sec_3_1_10">Visualizar Relatório</link>
+            <link linkend="sec_3_1_10">Show Report</link>
           </para>
 
         </listitem>
@@ -716,62 +716,53 @@
       </section>
 
       <section xml:id="sec_3_1_5">
-        <title>Editar o dicionário de parâmetros do projeto ou linha</title>
+        <title>Editing the Project or Lines parameter dictionary</title>
 
-        <para>Este recurso está documentado na <link linkend="sec_4_1"><emphasis role="bold">seção
-        4.1</emphasis></link>.</para>
+        <para>This feature is documented in the Section <xref linkend="dicionario_de_parametros"/>.</para>
 
       </section>
 
       <section xml:id="editar_caminhos_preferenciais_da_linha">
-        <title>Editar caminhos preferenciais da linha</title>
+        <title>Editing the Line's preferred paths</title>
 
-        <para>Na <emphasis role="bold"><link linkend="sec_3_3_6">seção 3.3.6</link></emphasis> veremos que um fluxo pode
-          estar associado a alguns arquivos de dados. Veremos também que essa associação pode ser feita mais facilmente
-          se adicionarmos os chamados caminhos preferenciais da linha.</para>
+        <para>The Section <xref linkend="editar_arquivos_entrada_saida_fluxo"/> will show how a Flow can be associated to 
+	some data files, this association is simpler if we add preferred paths to the Line.</para>
 
-        <para>Os caminhos preferenciais da linha são definidos no diálogo de <guilabel>Propriedades para
-         linha</guilabel>. Para abrir este diálogo, tenha a linha selecionada e clique sobre o
-         ícone <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_editar_propriedades_projeto.png"
-         /></imageobject></inlinemediaobject></guiicon>, na barra de ferramentas, ou utilizando o menu de contexto,
-         selecione a opção <guilabel>Propriedades</guilabel>. Na janela <guilabel>Propriedades para linha</guilabel>, no
-         campo <guilabel>Caminhos</guilabel>, digite o caminho desejado e clique no
-         botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_adicionar_caminho.png"
+        <para>The Line's preferred paths are defined in the <guilabel>Line's properties</guilabel> dialog box. To open this
+	 dialog box select the Line then click on the icon
+	 <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_editar_propriedades_projeto.png"
+         /></imageobject></inlinemediaobject></guiicon>, in the tool bar, or open the popup context menu and select the option 
+	<guilabel>Properties</guilabel>. In the <guilabel>Line's properties</guilabel> window, in the field <guilabel>Paths</guilabel>, write the path to the directory you want and then click on the button
+         <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_adicionar_caminho.png"
          /></imageobject></inlinemediaobject></guiicon>.</para>
 
-        <para>Além disso, na janela Propriedades para linha, pode-se adicionar caminhos preferenciais de linha
-          escolhendo-se um diretório. Para isso, deve-se clicar no
-          botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_caminho_personalizado.png"
-          /></imageobject></inlinemediaobject></guiicon>.</para>
+        <para>You can also add preferred paths by clicking on the button <guiicon><inlinemediaobject><imageobject><imagedata
+	 fileref="../images/icone_caminho_personalizado.png"/></imageobject></inlinemediaobject></guiicon> and then choosing a
+	 directory.</para>
 
-	<para>Quando tiver concluído a edição dos caminhos preferenciais, clique em <guibutton>OK</guibutton>.</para>
+	<para>When you completed editing the preferred paths click <guibutton>OK</guibutton>.</para>
 
-        <para><emphasis role="bold">Não há limitação</emphasis> para o número de caminhos, você pode adicionar quantos
-          quiser.</para>
+        <para><emphasis role="bold">There is no Limit</emphasis> to the number of paths you can add.</para>
 	
 	<tip>
-	  <para>O primeiro caminho preferencial da linha (aquele no topo da lista de caminhos preferenciais) será o
-	    caminho padrão aberto sempre que o usuário clicar num
-	    ícone <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_caminho_personalizado.png"
-	    /></imageobject></inlinemediaobject></guiicon> para fazer a busca por um arquivo ou diretório, durante a
-	    configuração de parâmetros do tipo de arquivo para programas incluídos em fluxos de processamento.</para>
+	  <para>The path at the top of the list will be set as the standard path, which will be opened when the user
+	 clicks on the icone <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_caminho_personalizado.png"/></imageobject></inlinemediaobject></guiicon> as to search for a file or directory.</para>
 	</tip>
 
         <tip>
-          <para>Para <emphasis role="bold">remover um caminho</emphasis> da lista, selecione-o com
-          o <emphasis role="bold">botão direito do mouse</emphasis> e clique em <guimenuitem>Remover</guimenuitem> ou
+          <para>To <emphasis role="bold">remove a path</emphasis> from the list, select it with the
+          <emphasis role="bold">right mouse button</emphasis> and then click on <guimenuitem>Remove</guimenuitem> or
             <guimenuitem>Delete</guimenuitem>.</para>
         </tip>
 
         <tip>
-          <para>Para <emphasis role="bold">mudar a posição</emphasis> de um caminho na
-          lista, <emphasis role="bold">arraste-o com o mouse</emphasis> para a posição desejada.</para>
+          <para>To change a <emphasis role="bold">path's position</emphasis> in the list, with the mouse simply 
+	<emphasis role="bold">drag it </emphasis> to its new position.</para>
         </tip>
 
-        <para>Pode-se utilizar hotkeys para adicionar caminhos (<keycombo><keycap>Enter</keycap></keycombo>), mover
-          caminhos para cima e para baixo (<keycombo><keycap>Ctrl</keycap><keycap>seta para cima/para
-          baixo</keycap></keycombo>), tornar um caminho topo de lista
-          (<keycombo><keycap>Ctrl</keycap><keycap>Home</keycap></keycombo>) e tornar um caminho fim de lista
+        <para>You can also use hotkeys to add paths (<keycombo><keycap>Enter</keycap></keycombo>), move paths up and down
+	 (<keycombo><keycap>Ctrl</keycap><keycap>arrow up/down</keycap></keycombo>), make a path go to the top of the list
+          (<keycombo><keycap>Ctrl</keycap><keycap>Home</keycap></keycombo>) and make a path go to the bottom of the list
           (<keycombo><keycap>Ctrl</keycap><keycap>End</keycap></keycombo>).</para>
 
         <screenshot>
@@ -791,8 +782,8 @@
       <section xml:id="sec_3_1_7">
         <title>Importar um projeto ou linha</title>
 
-        <para>A GêBR permite importar projetos ou linhas que tenham sido 
-          <link linkend="sec_3_1_8">previamente exportados(as)</link>. Para fazer isso:</para>
+        <para>A GêBR permite importar projetos ou linhas que tenham sido previamente exportados(as) 
+          <xref linkend="exportar_um_projeto_ou_linha"/>. Para fazer isso:</para>
 
         <procedure>
           <step>
@@ -818,14 +809,14 @@
         <note>
 
           <para>Na GêBR, linhas só podem existir dentro de projetos (veja este conceito
-          na <link linkend="sec_2"><emphasis role="bold">seção 2</emphasis></link>). Portanto, para importar uma linha é
+          na seção <xref linkend="projetos_linhas_fluxo_visao_geral"/>). Portanto, para importar uma linha é
           necessário <emphasis role="bold">selecionar um projeto existente</emphasis>
-          (ou <link linkend="sec_3_1_1">criar um</link>, caso não exista nenhum).</para>
+          (ou <xref linkend="criar_novo_projeto"/>, caso não exista nenhum).</para>
 
         </note>
       </section>
 
-      <section xml:id="sec_3_1_8">
+      <section xml:id="exportar_um_projeto_ou_linha">
         <title>Exportar um projeto ou linha</title>
 
         <para>Embora a GêBR preserve continuamente todos os dados, às vezes é desejável manter os projetos e linhas em
@@ -853,7 +844,7 @@
         </procedure>
       </section>
 
-      <section xml:id="sec_3_1_9">
+      <section xml:id="editar_comentarios">
         <title>Editar comentários</title>
 
         <para>Pode-se editar comentários no relatório, atribuindo informações adicionais sobre o projeto ou sobre a
@@ -916,11 +907,11 @@
 
       </section>
 
-      <section xml:id="sec_3_1_10">
-        <title>Visualizar Relatório</title>
+      <section xml:id="visualizar_relatorio">
+        <title>Visualizar relatório</title>
 
         <para>Como explorado na seção acima, pode-se criar e editar um relatório com informações adicionais sobre
-          projetos e linhas. Para visualizar o relatório que você criou, clique no botão Visualizar Relatório, na parte
+          projetos e linhas. Para visualizar o relatório que você criou, clique no botão Visualizar relatório, na parte
           de baixo da caixa Detalhes, no lado direito da janela principal.</para>
 
 
@@ -965,7 +956,7 @@
             </para>
 	
    
-        <para>Na <link linkend="sec_3_2_12"><emphasis role="bold">seção 3.2.12</emphasis></link>, é detalhada a
+        <para>Na seção <xref linkend="visualizar_relatorio_fluxo"/>, é detalhada a
           visualização de relatório para um fluxo, que se dá de forma muito semelhante à visualização de relatório da
           linha, com a diferença que nesta é possível englobar o relatório do fluxo.</para>
 
@@ -989,14 +980,14 @@
         <listitem>
 
           <para>
-            <link linkend="sec_3_2_2">Copiar fluxos para a área de transferência</link>
+            <link linkend="copiar_fluxos_area_tranferencia">Copiar fluxos para a área de transferência</link>
           </para>
 
         </listitem>
         <listitem>
 
           <para>
-            <link linkend="sec_3_2_3">Colar fluxos da área de transferência</link>
+            <link linkend="colar_fluxos_area_tranferencia">Colar fluxos da área de transferência</link>
           </para>
 
         </listitem>
@@ -1010,7 +1001,7 @@
         <listitem>
 
           <para>
-            <link linkend="sec_3_2_5">Editar as propriedades de um fluxo</link>
+            <link linkend="editar_propriedades_fluxo">Editar as propriedades de um fluxo</link>
           </para>
 
         </listitem>
@@ -1031,14 +1022,14 @@
         <listitem>
 
           <para>
-            <link linkend="sec_3_2_9">Exportar um fluxo</link>
+            <link linkend="exportar_fluxo">Exportar um fluxo</link>
           </para>
 
         </listitem>
         <listitem>
 
           <para>
-            <link linkend="sec_3_2_10">Executar um fluxo</link>
+            <link linkend="executar_fluxo">Executar um fluxo</link>
           </para>
 
         </listitem>
@@ -1052,7 +1043,7 @@
         <listitem>
 
           <para>
-            <link linkend="sec_3_2_12">Visualizar relatório</link>
+            <link linkend="visualizar_relatorio_fluxo">Visualizar relatório</link>
           </para>
 
         </listitem>
@@ -1074,9 +1065,8 @@
           <guilabel>Fluxos</guilabel> e clique no
           botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_criar_fluxo.png"
           /></imageobject></inlinemediaobject></guiicon>. Na janela que se abre (<guilabel>Propriedades para
-          fluxos</guilabel>), <link linkend="sec_3_2_5">edite as propriedades do fluxo</link> e clique em
-          <guibutton>OK</guibutton> (veja mais detalhes na <link linkend="sec_2_2"><emphasis role="bold">seção
-          2.2</emphasis></link>).</para>
+          fluxos</guilabel>), <xref linkend="editar_propriedades_fluxo"/> e clique em
+          <guibutton>OK</guibutton> (veja mais detalhes na <link linkend="criando_fluxos"></link>).</para>
 
         <para><emphasis role="bold">Não há limitação</emphasis> para o número de fluxos na GêBR. Você pode criar quantos
           fluxos quiser dentro de uma linha.</para>
@@ -1101,7 +1091,7 @@
         </tip>
       </section>
 
-      <section xml:id="sec_3_2_2">
+      <section xml:id="copiar_fluxos_area_tranferencia">
         <title>Copiar fluxos para a área de transferência</title>
 
         <para>A área de transferência provê o recurso popularmente conhecido como <emphasis role="bold">copiar e
@@ -1126,10 +1116,10 @@
         </tip>
       </section>
 
-      <section xml:id="sec_3_2_3">
+      <section xml:id="colar_fluxos_area_tranferencia">
         <title>Colar fluxos da área de transferência</title>
 
-        <para>Depois de ter sido <link linkend="sec_3_2_2">copiado para a área de transferência</link>, um fluxo (ou um
+        <para>Depois de ter sido selecionado e copiado <xref linkend="copiar_fluxos_area_tranferencia"/>, um fluxo (ou um
           conjunto de fluxos) pode ser colado por meio do
           botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_colar_fluxo.png"
           /></imageobject></inlinemediaobject></guiicon> ou, mais prático, pelo conhecido atalho
@@ -1170,7 +1160,7 @@
         </tip>
       </section>
 
-      <section xml:id="sec_3_2_5">
+      <section xml:id="editar_propriedades_fluxo">
         <title>Editar as propriedades de um fluxo</title>
 
         <para>Para editar as propriedades de um fluxo, selecione-o e clique no
@@ -1186,8 +1176,7 @@
       <section xml:id="sec_3_2_6">
         <title>Editar o dicionário de parâmetros de um fluxo</title>
 
-        <para>Este recurso está documentado na <link linkend="sec_4_1"><emphasis role="bold">seção
-        4.1</emphasis></link>.</para>
+        <para>Este recurso está documentado na seção <xref linkend="dicionario_de_parametros"/>.</para>
 
       </section>
 
@@ -1201,8 +1190,8 @@
 
 
         <para>Uma forma de fazer isso é copiar e colar o fluxo (veja
-          as <emphasis role="bold"><link linkend="sec_3_2_2">seções 3.2.2</link></emphasis>
-          e <emphasis role="bold"><link linkend="sec_3_2_3">3.2.3</link></emphasis>), guardando o fluxo original e
+          as seções <xref linkend="copiar_fluxos_area_tranferencia"/>
+          e <xref linkend="colar_fluxos_area_tranferencia"/>), guardando o fluxo original e
           editando a cópia. Outra forma é salvar o estado atual do fluxo, para poder editá-lo e, quando desejar,
           retornar ao estado inicial. Para <emphasis role="bold">salvar o estado</emphasis> de um fluxo:</para>
 
@@ -1257,16 +1246,16 @@
       <section xml:id="sec_3_2_8">
         <title>Importar um fluxo</title>
 
-        <para>A GêBR permite importar fluxos que tenham sido 
-          <link linkend="sec_3_2_9">previamente exportados</link>. Para fazer isso:</para>
+        <para>A GêBR permite importar fluxos que tenham sido exportados
+          <xref linkend="exportar_fluxo"/>. Para fazer isso:</para>
 
         <procedure>
           <step>
             <para>Certifique-se de ter  <emphasis role="bold">criado e selecionado uma linha</emphasis>, na aba 
               <guilabel>Projetos e Linhas</guilabel>. Lembre-se que, na GêBR, fluxos só podem existir dentro de linhas
-              (veja este conceito na <link linkend="sec_2"><emphasis role="bold">seção 2</emphasis></link>). Portanto,
+              (veja este conceito na seção <xref linkend="projetos_linhas_fluxo_visao_geral"/>). Portanto,
               para importar um fluxo é necessário <emphasis role="bold">selecionar uma linha existente</emphasis> (ou
-              <link linkend="sec_3_1_2">criar uma</link>, caso não exista nenhuma).</para>
+              <xref linkend="criar_nova_linha"/>, caso não exista nenhuma).</para>
           </step>
           <step>
             <para>Selecione a aba 
@@ -1289,7 +1278,7 @@
 
       </section>
 
-      <section xml:id="sec_3_2_9">
+      <section xml:id="exportar_fluxo">
         <title>Exportar um fluxo</title>
 
         <para>Embora a GêBR preserve continuamente todos os dados, às vezes é desejável manter os fluxos em arquivos
@@ -1316,7 +1305,7 @@
         </procedure>
       </section>
 
-      <section xml:id="sec_3_2_10">
+      <section xml:id="executar_fluxo_aba_fluxos">
         <title>Executar um fluxo</title>
 
         <para>Este comando aparece repetidamente nas abas <guilabel>Fluxos</guilabel> e
@@ -1336,13 +1325,13 @@
 	</step>
 
 	<step>
-        	<para> Cada fila fica visível no campo Filas da aba Edição de fluxos conforme explicado na 
-  	<link linkend="sec_3_3_7"><emphasis role="bold">seção 3.3.7</emphasis></link>.</para>
+        	<para> Cada fila fica visível no campo Filas da aba Edição de fluxos conforme explicado na seção
+  	<xref linkend="executar_fluxo"/>.</para>
 	</step> 
 	
 	<step>
         	<para> As filas também ficam visíveis na aba Controle de tarefas. Ver 
-          <link linkend="sec_3_4"><emphasis role="bold">seção 3.4</emphasis></link>.</para>
+          <xref linkend="controle_de_tarefas"/>.</para>
 	</step>
 	
 	</procedure>
@@ -1353,18 +1342,17 @@
 
         <para>Este comando aparece repetidamente nas abas <guilabel>Projetos e Linhas</guilabel> e em
           <guilabel>Fluxos</guilabel>. Através dele, o usuário pode adicionar comentários à linha ou ao fluxo criados.
-          Ver <link linkend="sec_3_1_9"><emphasis role="bold">seção 3.1.9</emphasis></link>.</para>
+          Ver <xref linkend="editar_comentarios"/>.</para>
 
       </section>
 
-      <section xml:id="sec_3_2_12">
+      <section xml:id="visualizar_relatorio_fluxo">
         <title>Visualizar relatório</title>
 
         <para>Este comando aparece repetidamente nas abas <guilabel>Projetos e Linhas</guilabel> e em
           <guilabel>Fluxos</guilabel>. Através dele, em ambas abas, pode-se gerar/visualizar o relatório da linha ou do
           fluxo em questão, com a pequena diferença de que é possível englobar o relatório do fluxo no relatório da
-          linha. As demais funcionalidades são descritas na <link linkend="sec_3_1_10"><emphasis role="bold">seção
-          3.1.10</emphasis></link>.</para>
+          linha. As demais funcionalidades são descritas na seção <xref linkend="visualizar_relatorio"/>.</para>
 
       </section>
     </section>
@@ -1381,7 +1369,7 @@
 	<guilabel>Edição de Fluxo</guilabel>.</para>
 
 
-      <para>Na <emphasis role="bold"><link linkend="sec_2_2">seção 2.2</link></emphasis> vimos que os menus padrão da
+      <para>Na <xref linkend="criando_fluxos"/> vimos que os menus padrão da
       GêBR são separados em doze categorias, listadas na caixa <guilabel>Menu</guilabel>, no lado direito da janela
       principal:</para>
 
@@ -1508,7 +1496,7 @@
         <listitem>
 
           <para>
-            <link linkend="sec_3_3_1">Copiar programa(s) selecionado(s) para a área de transferência</link>
+            <link linkend="copiar_programa_para_area_de_transferencia">Copiar programa(s) selecionado(s) para a área de transferência</link>
           </para>
 
         </listitem>
@@ -1529,7 +1517,7 @@
         <listitem>
 
           <para>
-            <link linkend="sec_3_3_4">Editar os parâmetros de um programa</link>
+            <link linkend="editar_parametros_programa">Editar os parâmetros de um programa</link>
           </para>
 
         </listitem>
@@ -1543,14 +1531,14 @@
         <listitem>
 
           <para>
-            <link linkend="sec_3_3_6">Editar arquivos de entrada e saída do fluxo</link>
+            <link linkend="editar_arquivos_entrada_saida_fluxo">Editar arquivos de entrada e saída do fluxo</link>
           </para>
 
         </listitem>
         <listitem>
 
           <para>
-            <link linkend="sec_3_3_7">Executar um fluxo</link>
+            <link linkend="executar_fluxo">Executar um fluxo</link>
           </para>
 
         </listitem>
@@ -1564,11 +1552,10 @@
 
       </tip>
 
-      <section xml:id="sec_3_3_1">
+      <section xml:id="copiar_programa_para_area_de_transferencia">
         <title>Copiar programas para a área de transferência</title>
 
-        <para>Da mesma forma que se faz com fluxos (veja a <emphasis role="bold"><link linkend="sec_3_2_2">seção
-          3.2.2</link></emphasis>), um programa (ou um conjunto de programas) pode ser copiado para a área de
+        <para>Da mesma forma que se faz com fluxos (veja a seção <xref linkend="copiar_fluxos_area_tranferencia"/>), um programa (ou um conjunto de programas) pode ser copiado para a área de
           transferência por meio do
           botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_copiar_fluxo.png"
           /></imageobject></inlinemediaobject></guiicon> ou, mais prático, pelo conhecido atalho
@@ -1595,7 +1582,7 @@
       <section xml:id="sec_3_3_2">
         <title>Colar programas da área de transferência</title>
 
-        <para>Depois de ter sido <link linkend="sec_3_3_1">copiado para a área de transferência</link>, um programa (ou
+        <para>Depois de ter sido selecionado e copiado <xref linkend="copiar_programa_para_area_de_transferencia"/>, um programa (ou
           um conjunto de programas) pode ser colado por meio do
           botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_colar_fluxo.png"
           /></imageobject></inlinemediaobject></guiicon> ou, mais prático, pelo conhecido atalho
@@ -1641,7 +1628,7 @@
         </caution>
       </section>
 
-      <section xml:id="sec_3_3_4">
+      <section xml:id="editar_parametros_programa">
         <title>Editar os parâmetros de um programa</title>
 
         <para>Para editar os parâmetros de um programa:</para>
@@ -1679,8 +1666,7 @@
       <section xml:id="sec_3_3_5">
         <title>Mudar o estado de um programa</title>
 
-        <para>Após realizar o procedimento da <emphasis role="bold"><link linkend="sec_3_3_4">seção
-        3.3.4</link></emphasis>, note que o programa passa a ser sinalizado
+        <para>Após realizar o procedimento da seção <xref linkend="editar_parametros_programa"/>, note que o programa passa a ser sinalizado
         por <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_configurado.png"
         /></imageobject></inlinemediaobject></guiicon> em vez
         de <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_nao_configurado.png"
@@ -1725,10 +1711,10 @@
         </important>
       </section>
 
-      <section xml:id="sec_3_3_6">
+      <section xml:id="editar_arquivos_entrada_saida_fluxo">
         <title>Editar arquivos de entrada e saída do fluxo</title>
 
-        <para>No exemplo da <emphasis role="bold"><link linkend="sec_2_2">seção 2.2</link></emphasis> criamos um fluxo
+        <para>No exemplo da seção <xref linkend="criando_fluxos"/> criamos um fluxo
           muito simples, que não precisava "ler" nenhum arquivo, e que gerava como resultado uma saída de tela. Porém,
           há situações em que o fluxo precisa extrair dados de um arquivo de entrada e gerar como resultado um arquivo
           de saída ou de erro, caso ocorra algum problema durante a execução.</para>
@@ -1769,7 +1755,7 @@
         </note>
       </section>
 
-      <section xml:id="sec_3_3_7">
+      <section xml:id="executar_fluxo">
         <title>Executar um fluxo</title>
 
         <para>Para executar o fluxo atual, clique no botão 
@@ -1780,8 +1766,7 @@
         <para>Por padrão, os fluxos são executados na máquina de origem, identificada automaticamente pela GêBR
           como <emphasis role="bold">Servidor local</emphasis>. Entretanto, a GêBR também
           permite <emphasis role="bold">executar fluxos em máquinas remotas</emphasis>. Veja mais detalhes sobre
-          definição e seleção de servidores na <emphasis role="bold"><link linkend="sec_4_2">seção
-          4.2</link></emphasis>.</para>
+          definição e seleção de servidores em <xref linkend="menu"/>.</para>
 
 
         <para>Na aba Edição de fluxo, ainda que se tenha selecionado vários fluxos na aba Fluxos, ao se clicar no
@@ -1791,7 +1776,7 @@
 
 
         <para>Nessa versão da GêBR, surge o conceito de filas, conceito também abordado
-          na <emphasis role="bold"><link linkend="sec_3_2_10">seção 3.2.10</link></emphasis>. Nessa aba é possível
+          em <xref linkend="executar_fluxo_aba_fluxos"/>. Nessa aba é possível
           escolher no campo Fila em qual fila o fluxo será executado. Pode-se escolher e nomear a fila em que se quer
           executar um fluxo, conforme figura:</para>
 
@@ -1808,11 +1793,11 @@
       </section>
     </section>
 
-    <section xml:id="sec_3_4">
+    <section xml:id="controle_de_tarefas">
       <title>A aba 
 	<guilabel>Controle de tarefas</guilabel></title>
 
-      <para>Como vimos na <link linkend="sec_3_3_7"><emphasis role="bold">seção 3.3.7</emphasis></link>, a aba
+      <para>Como vimos em <xref linkend="executar_fluxo"/>, a aba
 	<guilabel>Controle de tarefas</guilabel> é acionada toda vez que um fluxo é executado. Por meio dela
 	pode-se <emphasis role="bold">acompanhar</emphasis> e, se necessário ou
 	desejável, <emphasis role="bold">interromper</emphasis> a execução dos fluxos. Vejamos os comandos
@@ -1881,7 +1866,7 @@
         <para>Só podem ser excluídas as tarefas que não estiverem em execução (sinalizadas
         com <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_tarefa_concluida_sucesso.png"
         /></imageobject></inlinemediaobject></guiicon> ou
-          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_tarefa_terminada_erro.png" /></imageobject></inlinemediaobject></guiicon>).</para>
+          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_tarefa_terminada_erro.png"/></imageobject></inlinemediaobject></guiicon>).</para>
 
       </section>
 
@@ -1907,7 +1892,7 @@
   <section xml:id="sec_4">
     <title>Recursos adicionais</title>
 
-    <section xml:id="sec_4_1">
+    <section xml:id="dicionario_de_parametros">
       <title>O dicionário de parâmetros</title>
 
       <para>O dicionário de parâmetros é uma novidade introduzida na <emphasis role="bold">versão 0.9.15 da
@@ -2040,7 +2025,7 @@
       </important>
     </section>
 
-    <section xml:id="sec_4_2">
+    <section xml:id="menu">
       <title>O menu 
 	<guimenu>Ações</guimenu></title>
 
