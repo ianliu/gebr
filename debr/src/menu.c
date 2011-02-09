@@ -283,7 +283,8 @@ void menu_new(gboolean edit)
 	g_free(title);
 }
 
-void menu_new_from_menu(GebrGeoXmlFlow *menu, gboolean edit, gchar * filename, gchar * menu_title)
+void menu_new_from_menu(GebrGeoXmlFlow *menu, gboolean edit,
+			const gchar * filename, const gchar * menu_title)
 {
 	GtkTreeIter iter;
 	GtkTreeIter target;
@@ -1979,6 +1980,8 @@ static void flow_export_parameters_cleanup (GebrGeoXmlParameters * parameters,
 
 gboolean menu_create_from_flow (const gchar *path, gboolean use_value)
 {
+	gchar *filename;
+	const gchar * title;
 	GebrGeoXmlDocument *flow;
 	GebrGeoXmlSequence *program;
 
@@ -2002,13 +2005,12 @@ gboolean menu_create_from_flow (const gchar *path, gboolean use_value)
 	gebr_geoxml_document_set_date_modified(flow, gebr_iso_date());
 	gebr_geoxml_document_set_help(flow, "");
 
-	gchar * title = g_strdup(gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(flow)));
-	gchar * filename = g_strdup_printf(_("%s.mnu"), title );
+	title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(flow));
+	filename = g_strdup_printf(_("%s.mnu"), title);
 	menu_new_from_menu(GEBR_GEOXML_FLOW (flow), FALSE, filename, title);
 	debr_message(GEBR_LOG_INFO, _("Flow '%s' imported as menu."),
 		     (gchar *)gebr_geoxml_document_get_title(flow));
 	g_free(filename);
-	g_free(title);
 	return TRUE;
 }
 

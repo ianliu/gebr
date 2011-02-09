@@ -115,7 +115,8 @@ void menu_new(gboolean edit);
 
 /**
  */
-void menu_new_from_menu(GebrGeoXmlFlow *menu, gboolean edit, gchar * filename, gchar * menu_title);
+void menu_new_from_menu(GebrGeoXmlFlow *menu, gboolean edit,
+			const gchar * filename, const gchar * menu_title);
 
 /**
  * Loads an Xml representing a menu given by \p path and returns its structure.
