@@ -39,7 +39,7 @@ void gebr_g_string_replace(GString * string, const gchar * oldtext, const gchar 
 	gssize oldtext_len = strlen(oldtext);
 
 	position = string->str;
-	while ((position = strstr(position, oldtext)) != NULL) {
+	while ((position = strstr(string->str, oldtext)) != NULL) {
 		gssize index = (position - string->str) / sizeof(gchar);
 		g_string_erase(string, index, oldtext_len);
 

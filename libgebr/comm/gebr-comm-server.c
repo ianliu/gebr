@@ -463,7 +463,7 @@ gebr_comm_ssh_parse_output(GebrCommTerminalProcess * process, struct gebr_comm_s
 	} else if (output->str[output->len - 4] == '.') {
 		GString *output_fixed = g_string_new(output->str);
 		gebr_g_string_replace(output_fixed, "\r\n", "\n");
-		g_string_erase(output, strlen(output->str)-2, 2); //last \r\n
+		g_string_erase(output, strlen(output->str)-1, 1); //last \n
 		gebr_comm_server_log_message(server, GEBR_LOG_WARNING, _("Received SSH message: %s"),
 					     output_fixed->str);
 		g_string_free(output_fixed, TRUE);
@@ -473,7 +473,7 @@ gebr_comm_ssh_parse_output(GebrCommTerminalProcess * process, struct gebr_comm_s
 		/* check for known error prefixes */
 		if (g_str_has_prefix(output->str, "ssh:") || g_str_has_prefix(output->str, "channel ")) {
 			gebr_g_string_replace(output, "\r\n", "\n");
-			g_string_erase(output, strlen(output->str)-2, 2); //last \r\n
+			g_string_erase(output, strlen(output->str)-1, 1); //last \n
 
 			gebr_comm_server_disconnected_state(server, SERVER_ERROR_SSH, 
 							    _("SSH reported the following error: \n%s"), output->str);
