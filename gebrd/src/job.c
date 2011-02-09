@@ -248,36 +248,35 @@ static const gchar *status_enum_to_string(enum JobStatus status)
 /**
  * \internal
  */
-static gboolean job_notify_status_finished(struct job *job)
+static void job_notify_status_finished(struct job *job)
 {
 	enum JobStatus new_status = (job->user_finished == FALSE) ? JOB_STATUS_FINISHED : JOB_STATUS_CANCELED;
 	if (new_status == job->status)
-		return TRUE;
+		return;
 
 	if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_MOAB) {
 		if (job->tail_process != NULL) {
-			moab_process_read_stdout(job->tail_process, job); // one more chance to get output
 			gebr_comm_process_free(job->tail_process);
 			job->tail_process = NULL;
 		}
 	
-		/* last change to get output
-		 * FIXME: still for very quick jobs we can't get moab's start and/or end end headers
-		 */
+		/* last change to get output */
 		GString * output_file = g_string_new(NULL);
 		g_string_printf(output_file, "%s/STDIN.o%s", g_get_home_dir(), job->moab_jid->str);
 		GError * error = NULL;
 		GIOChannel * file = g_io_channel_new_file(output_file->str, "r", &error);
 		g_string_free(output_file, TRUE);
 		error = NULL;
-		if (file != NULL && g_io_channel_seek_position(file, job->output->len, G_SEEK_SET, &error) == G_IO_STATUS_EOF) {
+		if (file != NULL && g_io_channel_seek_position(file, job->output->len, G_SEEK_SET, &error) == G_IO_STATUS_NORMAL) {
 			gchar * buffer;
 			gsize length;
 			g_io_channel_read_to_end(file, &buffer, &length, &error);
-			GString *buffer_gstring = g_string_new(buffer);
-			job_process_add_output(job, job->output, buffer_gstring);
-			g_string_free(buffer_gstring, TRUE);
-			g_free(buffer);
+			if (length > 0) {
+				GString *buffer_gstring = g_string_new(buffer);
+				job_process_add_output(job, job->output, buffer_gstring);
+				g_string_free(buffer_gstring, TRUE);
+				g_free(buffer);
+			}
 		}
 		if (file != NULL)
 			g_io_channel_shutdown(file, FALSE, &error);
@@ -285,12 +284,11 @@ static gboolean job_notify_status_finished(struct job *job)
 
 	g_string_assign(job->finish_date, gebr_iso_date());
 	job_notify_status(job, new_status, job->finish_date->str);
-
-	return TRUE;
 }
 
 /**
  * \internal
+ * Only for regular jobs
  */
 static void job_process_finished(GebrCommProcess * process, struct job *job)
 {
@@ -330,62 +328,74 @@ static GString *job_generate_id(void)
  */
 static gboolean job_moab_checkjob_pooling(struct job * job)
 {
-	gboolean ret = FALSE;
-	gchar *std_out = NULL;
+	gboolean keep_polling;
+	gboolean error;
 
 	/* run checkjob and retrieve XML */
 	GString *cmd_line = g_string_new("");
 	g_string_printf(cmd_line, "checkjob %s --format=xml", job->moab_jid->str);
 	gint exit_status;
 	gchar *std_err = NULL;
-	ret = g_spawn_command_line_sync(cmd_line->str, &std_out, &std_err, &exit_status, NULL);
+	gchar *std_out = NULL;
+	keep_polling = !(error = !g_spawn_command_line_sync(cmd_line->str, &std_out, &std_err, &exit_status, NULL));
 	g_string_free(cmd_line, TRUE);
 	g_free(std_err);
-	if (ret == FALSE)
+	if (error) {
+		g_free(std_out);
 		goto out;
-
+	}
 	/* read XML */
 	GdomeDOMImplementation *dom_impl = NULL;
 	dom_impl = gdome_di_mkref();
 	GdomeException exception;
 	GdomeDocument *doc = gdome_di_createDocFromMemory(dom_impl, std_out, GDOME_LOAD_PARSING, &exception);
+	g_free(std_out);
+	keep_polling = !(error = TRUE);
 	if (doc == NULL) {
 		gdome_di_unref(dom_impl, &exception);
 		goto out;
 	}
 	GdomeElement *element = gdome_doc_documentElement(doc, &exception);
 	if (element == NULL)
-		goto xmlerr;
-	if ((element = (GdomeElement *)gdome_el_firstChild(element, &exception)) == NULL) 
-		goto xmlerr;
+		goto xmlout;
+	if ((element = (GdomeElement *)gdome_el_firstChild(element, &exception)) == NULL)
+		goto xmlout;
+
+	keep_polling = !(error = FALSE);
+	/* check requeue */
+	GdomeDOMString *attribute_name = gdome_str_mkref("Class");
+	const gchar * queue = gdome_el_getAttribute(element, attribute_name, &exception)->str;
+	gdome_str_unref(attribute_name);
+	/* check for queue change */
+	if (strcmp(job->queue->str, queue)) {
+		g_string_assign(job->queue, queue);
+		job_notify_status(job, JOB_STATUS_REQUEUED, job->queue->str);
+	}
 	/* change status */
-	GdomeDOMString *attribute_name = gdome_str_mkref("EState");
+	attribute_name = gdome_str_mkref("EState");
 	const gchar *moab_status = gdome_el_getAttribute(element, attribute_name, &exception)->str;
 	gdome_str_unref(attribute_name);
-	ret = TRUE;
-	if (!strcmp(moab_status, "Completed"))
-		ret = job_notify_status_finished(job);
-	else if (!strcmp(moab_status, "Running") && job->status != JOB_STATUS_RUNNING) {
-		GdomeDOMString *attribute_name = gdome_str_mkref("Class");
-		const gchar * queue = gdome_el_getAttribute(element, attribute_name, &exception)->str;
-		gdome_str_unref(attribute_name);
-		/* check for queue change */
-		if (strcmp(job->queue->str, queue)) {
-			g_string_assign(job->queue, queue);
-			job_notify_status(job, JOB_STATUS_REQUEUED, job->queue->str);
+	if (!strcmp(moab_status, "Completed")) {
+		job_notify_status_finished(job);
+		keep_polling = FALSE;
+	} else if (!strcmp(moab_status, "Running") ) {
+		if (job->status != JOB_STATUS_RUNNING) {
+			g_string_assign(job->start_date, gebr_iso_date());
+			job_notify_status(job, JOB_STATUS_RUNNING, job->start_date->str);
 		}
-		/* change to running state */
-		g_string_assign(job->start_date, gebr_iso_date());
-		job_notify_status(job, JOB_STATUS_RUNNING, job->start_date->str);
-	}
+	} else
+		gebrd_message(GEBR_LOG_WARNING, "Untread state reported by checkjob (estate %s)", moab_status);
 
-xmlerr:
+xmlout:
 	gdome_doc_unref(doc, &exception);
 	gdome_di_unref(dom_impl, &exception);
+out:
+	if (error) {
+		job_notify_status(job, JOB_STATUS_ISSUED, job->issues->str);
+		job_notify_status(job, JOB_STATUS_FAILED, "");
+	}
 
-out:	
-	g_free(std_out);
-	return ret;
+	return keep_polling;
 }
 
 /**
