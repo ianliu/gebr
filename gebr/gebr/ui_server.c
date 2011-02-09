@@ -223,6 +223,15 @@ static void server_common_setup(struct ui_server_common *ui_server_common)
 	col = gtk_tree_view_column_new_with_attributes(_("Address"), renderer, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
 	gtk_tree_view_column_add_attribute(col, renderer, "text", SERVER_NAME);
+
+	renderer = gtk_cell_renderer_text_new();
+	g_object_set (renderer, "editable", TRUE, NULL);
+	col = gtk_tree_view_column_new_with_attributes(_("Groups"), renderer, NULL);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
+	// TODO: Remove this define when the proper enumeration is set!
+	#define SERVER_TAGS SERVER_NAME
+	gtk_tree_view_column_add_attribute(col, renderer, "text", SERVER_TAGS);
+	gtk_tree_view_column_set_expand (col, TRUE);
 }
 
 /*
