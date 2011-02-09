@@ -688,15 +688,14 @@ glong gebr_geoxml_flow_get_revisions_number(GebrGeoXmlFlow * flow)
 	return __gebr_geoxml_get_elements_number(gebr_geoxml_document_root_element(GEBR_GEOXML_DOC(flow)), "revision");
 }
 
-GebrGeoXmlFlowError gebr_geoxml_flow_validade(GebrGeoXmlFlow * flow, GebrGeoXmlFlowServer * flow_server, gchar ** program_title)
+GebrGeoXmlFlowError gebr_geoxml_flow_validade(GebrGeoXmlFlow * flow, gchar ** program_title)
 {
 	const gchar *input = NULL;
 	const gchar *output = NULL;
 	GebrGeoXmlSequence *first_program;
 	gulong i = 0, max = 0;
 
-	input = gebr_geoxml_flow_server_io_get_input(flow_server);
-	output = gebr_geoxml_flow_server_io_get_output(flow_server);
+	input = gebr_geoxml_flow_io_get_input(flow);
 
 	/*
 	 * Checking if the flow has at least one configured program

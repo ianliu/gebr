@@ -472,7 +472,7 @@ glong gebr_geoxml_flow_get_revisions_number(GebrGeoXmlFlow * flow);
  * Determine if a flow can be executed or not. If it can't, return
  * the correct type of error.
  */
-GebrGeoXmlFlowError gebr_geoxml_flow_validade(GebrGeoXmlFlow * flow, GebrGeoXmlFlowServer * flow_server, gchar ** program_title);
+GebrGeoXmlFlowError gebr_geoxml_flow_validade(GebrGeoXmlFlow * flow, gchar ** program_title);
 
 G_END_DECLS
 #endif				//__GEBR_GEOXML_FLOW_H
