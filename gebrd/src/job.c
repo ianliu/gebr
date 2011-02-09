@@ -256,28 +256,31 @@ static gboolean job_notify_status_finished(struct job *job)
 
 	if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_MOAB) {
 		if (job->tail_process != NULL) {
+			moab_process_read_stdout(job->tail_process, job); // one more chance to get output
 			gebr_comm_process_free(job->tail_process);
 			job->tail_process = NULL;
-		} else
-			return FALSE;
+		}
 	
-		GError * error;
-
-		GString * output = g_string_new(NULL);
-		g_string_printf(output, "%s/STDIN.o%s", g_get_home_dir(), job->moab_jid->str);
+		/* last change to get output
+		 * FIXME: still for very quick jobs we can't get moab's start and/or end end headers
+		 */
+		GString * output_file = g_string_new(NULL);
+		g_string_printf(output_file, "%s/STDIN.o%s", g_get_home_dir(), job->moab_jid->str);
+		GError * error = NULL;
+		GIOChannel * file = g_io_channel_new_file(output_file->str, "r", &error);
+		g_string_free(output_file, TRUE);
 		error = NULL;
-		GIOChannel * file = g_io_channel_new_file(output->str, "r", &error);
 		if (file != NULL && g_io_channel_seek_position(file, job->output->len, G_SEEK_SET, &error) == G_IO_STATUS_EOF) {
 			gchar * buffer;
 			gsize length;
 			g_io_channel_read_to_end(file, &buffer, &length, &error);
-			g_string_printf(output, "%s", buffer);
-			job_process_add_output(job, job->output, output);
+			GString *buffer_gstring = g_string_new(buffer);
+			job_process_add_output(job, job->output, buffer_gstring);
+			g_string_free(buffer_gstring, TRUE);
 			g_free(buffer);
 		}
 		if (file != NULL)
 			g_io_channel_shutdown(file, FALSE, &error);
-		g_string_free(output, TRUE);
 	}
 
 	g_string_assign(job->finish_date, gebr_iso_date());
@@ -355,20 +358,26 @@ static gboolean job_moab_checkjob_pooling(struct job * job)
 		goto xmlerr;
 	if ((element = (GdomeElement *)gdome_el_firstChild(element, &exception)) == NULL) 
 		goto xmlerr;
-	GdomeDOMString *attribute_name = gdome_str_mkref("EState");
 	/* change status */
-	GString *moab_status = g_string_new(gdome_el_getAttribute(element, attribute_name, &exception)->str);
+	GdomeDOMString *attribute_name = gdome_str_mkref("EState");
+	const gchar *moab_status = gdome_el_getAttribute(element, attribute_name, &exception)->str;
 	gdome_str_unref(attribute_name);
 	ret = TRUE;
-	if (!strcmp(moab_status->str, "Completed"))
+	if (!strcmp(moab_status, "Completed"))
 		ret = job_notify_status_finished(job);
-	else if (!strcmp(moab_status->str, "Idle")) 
-		job_notify_status(job, JOB_STATUS_QUEUED, "");
-	else if (!strcmp(moab_status->str, "Running")) {
+	else if (!strcmp(moab_status, "Running") && job->status != JOB_STATUS_RUNNING) {
+		GdomeDOMString *attribute_name = gdome_str_mkref("Class");
+		const gchar * queue = gdome_el_getAttribute(element, attribute_name, &exception)->str;
+		gdome_str_unref(attribute_name);
+		/* check for queue change */
+		if (strcmp(job->queue->str, queue)) {
+			g_string_assign(job->queue, queue);
+			job_notify_status(job, JOB_STATUS_REQUEUED, job->queue->str);
+		}
+		/* change to running state */
 		g_string_assign(job->start_date, gebr_iso_date());
 		job_notify_status(job, JOB_STATUS_RUNNING, job->start_date->str);
 	}
-	g_string_free(moab_status, TRUE);
 
 xmlerr:
 	gdome_doc_unref(doc, &exception);
@@ -655,7 +664,8 @@ void job_free(struct job *job)
 void job_set_status(struct job *job, enum JobStatus status)
 {
 	if (job->status == status) {
-		gebrd_message(GEBR_LOG_DEBUG, "Calling job_set_status without status change (status %d)", job->status);
+		//occurs frequently with netuno
+		//gebrd_message(GEBR_LOG_DEBUG, "Calling job_set_status without status change (status %d)", job->status);
 		return;
 	}
 	/* false statuses */
@@ -669,7 +679,6 @@ void job_set_status(struct job *job, enum JobStatus status)
 	/* we are leaving queued state, send issues */
 	if (old_status == JOB_STATUS_QUEUED && job->issues->len)
 		job_notify_status(job, JOB_STATUS_ISSUED, job->issues->str);
-
 	/* Run next flow on queue */
 	if (job->status == JOB_STATUS_FAILED || job->status == JOB_STATUS_FINISHED || job->status == JOB_STATUS_CANCELED) {
 		if (gebrd_queues_has_next(job->queue->str)) 
@@ -788,15 +797,19 @@ void job_run_flow(struct job *job)
 		g_string_printf(cmd_line, "bash -l -c %s", moab_quoted);
 		g_free(moab_quoted);
 		if (!g_spawn_command_line_sync(cmd_line->str, &standard_output, &standard_error, &exit_status, &error)) {
-			g_free(standard_error);
 			g_string_append(job->issues, _("Cannot submit job to MOAB server.\n"));
+
+			g_free(standard_error);
+			goto err;
+		}
+		if (standard_error != NULL && strlen(standard_error)) {
+			g_string_append_printf(job->issues, _("Cannot submit job to MOAB server: %s.\n"), standard_error);
+
+			g_free(standard_error);
 			goto err;
 		}
 		g_free(standard_error);
-		if (standard_error != NULL && strlen(standard_error)) {
-			g_string_append_printf(job->issues, _("Cannot submit job to MOAB server: %s.\n"), standard_error);
-			goto err;
-		}
+
 		/* The stdout is the {job id} from MOAB. */
 		guint moab_id = 0;
 		sscanf(standard_output, "%u", &moab_id);
