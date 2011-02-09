@@ -143,7 +143,12 @@ void on_flow_delete_activate(void)
 	flow_delete(TRUE);
 }
 
-void on_flow_execute_activate(void)
+/**
+ * Returns TRUE if all flows at "Flows" tab
+ * can be executed. If they can't, return false
+ * and pop-up a dialog with the error.
+ */
+static gboolean flows_check_before_execution(void)
 {
 	GtkTreeIter iter;
 	GebrGeoXmlFlow * flow;
@@ -170,7 +175,7 @@ void on_flow_execute_activate(void)
 						 flow_title, program_title);
 			g_free(flow_title);	
 			g_free(program_title);	
-			return;
+			return FALSE;
 
 		case GEBR_GEOXML_FLOW_ERROR_NO_OUTPUT:
 			gebr_gui_message_dialog (GTK_MESSAGE_ERROR,
@@ -180,7 +185,7 @@ void on_flow_execute_activate(void)
 						 flow_title, program_title);
 			g_free(flow_title);	
 			g_free(program_title);	
-			return;
+			return FALSE;
 
 
 		case GEBR_GEOXML_FLOW_ERROR_NO_INFILE:
@@ -190,26 +195,38 @@ void on_flow_execute_activate(void)
 						 program_title, flow_title);
 			g_free(flow_title);	
 			g_free(program_title);	
-			return;
+			return FALSE;
 
 		case GEBR_GEOXML_FLOW_ERROR_NO_VALID_PROGRAMS:
 			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
 						_("Warning"),_("No configured or enabled programs found for flow \"%s\""),
 						flow_title);
 			g_free(flow_title);	
-			return;
+			return FALSE;
 		default:
 			g_free(flow_title);	
-			return;
+			return FALSE;
 		}
 
 		g_free(flow_title);	
 	}
+	
+	return TRUE;
+}
+
+void on_flow_execute_activate(void)
+{
+	if (!flows_check_before_execution())
+		return;
+
 	flow_fast_run(FALSE, FALSE);
 }
 
 void on_flow_execute_in_parallel_activate(void)
 {
+	if (!flows_check_before_execution())
+		return;
+
 	flow_fast_run(TRUE, FALSE);
 }
 
