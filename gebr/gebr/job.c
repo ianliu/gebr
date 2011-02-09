@@ -203,6 +203,19 @@ void job_delete(struct job *job)
 	job_free(job);
 }
 
+const gchar *job_get_queue_name(struct job *job)
+{
+	const gchar *queue;
+	if (job->server->type == GEBR_COMM_SERVER_TYPE_REGULAR) {
+		if (job->queue->str[0] == 'q')
+			queue = job->queue->str+1;
+		else
+			return NULL;
+	} else
+		queue = job->queue->str;
+	return queue;
+}
+
 void job_close(struct job *job, gboolean force, gboolean verbose)
 {
 	/* Checking if passed job pointer is valid */
@@ -281,17 +294,30 @@ void job_update_label(struct job *job)
 
 	GString *label = g_string_new("");
 	if (job->waiting_server_details)
-		g_string_printf(label, _("job waiting for server details"));
-	else if (job->status == JOB_STATUS_QUEUED && job->queue->str[0] != 'j')
-		g_string_printf(label, _("job queued (%s) at %s"), job->queue->str+1, job->hostname->str);
-	else if (job->start_date->len) {
-		g_string_printf(label, _("job at %s: %s"), job->hostname->str, gebr_localized_date(job->start_date->str));
-		if (job->finish_date->len) {
-			g_string_append(label, _(" - "));
-			g_string_append(label, gebr_localized_date(job->finish_date->str));
+		g_string_printf(label, _("Job waiting for server details"));
+	else {
+		/* who and where, same at job_update_text_buffer */
+		GString *queue_info = g_string_new(NULL); 
+		const gchar *queue = job_get_queue_name(job);
+		if (queue == NULL)
+			g_string_assign(queue_info, _("unqueued"));
+		else
+			g_string_printf(queue_info, "on %s", queue);
+		g_string_append_printf(label, _("Job submitted at '%s' (%s) by %s\n"),
+				       server_get_name(job->server), queue_info->str, job->hostname->str);
+		g_string_free(queue_info, TRUE);
+
+		if (job->start_date->len) {
+			g_string_append(label, _(": "));
+			g_string_append(label, gebr_localized_date(job->start_date->str));
+			if (job->finish_date->len) {
+				g_string_append(label, _(" - "));
+				g_string_append(label, gebr_localized_date(job->finish_date->str));
+			} else
+				g_string_append(label, _(" (running)"));
 		}
-	} else
-		g_string_printf(label, _("job at %s"), job->hostname->str);
+		g_string_append(label, _("."));
+	}
 
 	gtk_label_set_text(GTK_LABEL(gebr.ui_job_control->label), label->str);
 	g_string_free(label, TRUE);
@@ -381,7 +407,6 @@ void job_status_update(struct job *job, enum JobStatus status, const gchar *para
 
 		/* We suppose the requeue always happen to a true queue */
 		if (job->status == JOB_STATUS_RUNNING) {
-			puts("here");
 			const gchar *queue_title = job->server->type == GEBR_COMM_SERVER_TYPE_REGULAR 
 				? job->queue->str+1 /* jump q identifier */ : job->queue->str;
 			GString *string = g_string_new(NULL);

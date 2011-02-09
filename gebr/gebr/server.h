@@ -77,6 +77,10 @@ struct server *server_new(const gchar * address, gboolean autoconnect);
  */
 void server_free(struct server *server);
 
+/**
+ */
+const gchar *server_get_name(struct server * server);
+
 /** 
  * Find \p server iterator and put on \p iter
  */

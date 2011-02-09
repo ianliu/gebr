@@ -91,10 +91,14 @@ void job_init_details(struct job *job, GString * _status, GString * title, GStri
 void job_free(struct job *job);
 
 /**
- * Frees job structure and delete it from list of jobs.
- * Occurs when cleaned or its server is removed.
+ * Obsolete, same as job_free
  */
 void job_delete(struct job *job);
+
+/**
+ * Return NULL if immediately
+ */
+const gchar *job_get_queue_name(struct job *job);
 
 /**
  * Remove job from the list. 

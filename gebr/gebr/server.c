@@ -189,6 +189,24 @@ struct server *server_new(const gchar * address, gboolean autoconnect)
 	return server;
 }
 
+void server_free(struct server *server)
+{
+	server_clear_jobs(server);
+
+	gtk_list_store_remove(gebr.ui_server_list->common.store, &server->iter);
+	gtk_list_store_clear(server->accounts_model);
+	gtk_list_store_clear(server->queues_model);
+
+	gebr_comm_server_free(server->comm);
+	g_string_free(server->last_error, TRUE);
+	g_free(server);
+}
+
+const gchar *server_get_name(struct server * server)
+{
+	return server_get_name_from_address(server->comm->address->str);
+}
+
 gboolean server_find(struct server * server, GtkTreeIter * iter)
 {
 	GtkTreeIter i;
@@ -205,19 +223,6 @@ gboolean server_find(struct server * server, GtkTreeIter * iter)
 	}
 
 	return FALSE;
-}
-
-void server_free(struct server *server)
-{
-	server_clear_jobs(server);
-
-	gtk_list_store_remove(gebr.ui_server_list->common.store, &server->iter);
-	gtk_list_store_clear(server->accounts_model);
-	gtk_list_store_clear(server->queues_model);
-
-	gebr_comm_server_free(server->comm);
-	g_string_free(server->last_error, TRUE);
-	g_free(server);
 }
 
 gboolean server_queue_find(struct server * server, const gchar * name, GtkTreeIter * _iter)
