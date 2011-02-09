@@ -26,38 +26,39 @@ pkgconfig_DATA = gebr-comm.pc
 EXTRA_DIST = gebr-comm.pc
 
 libcommincludedir=$(includedir)/libgebr
-libcomminclude_HEADERS=comm.h
+libcomminclude_HEADERS=gebr-comm.h
 
 lib_LTLIBRARIES = libgebr_comm.la
 libgebr_comm_la_SOURCES = \
-	socketaddress.c		\
-	hostinfo.c		\
-	socket.c		\
-	streamsocket.c		\
-	listensocket.c		\
-	channelsocket.c		\
-	process.c		\
-	terminalprocess.c	\
-	protocol.c		\
-	server.c
+	gebr-comm-socketaddress.	\
+	gebr-comm-hostinfo.c		\
+	gebr-comm-socket.c		\
+	gebr-comm-streamsocket.c	\
+	gebr-comm-listensocket.c	\
+	gebr-comm-channelsocket.c	\
+	gebr-comm-process.c		\
+	gebr-comm-terminalprocess.c	\
+	gebr-comm-protocol.c		\
+	gebr-comm-server.c
 
 libgebr_commsubincludedir = $(includedir)/libgebr/comm
 libgebr_commsubinclude_HEADERS = \
-	socketaddress.h		\
-	hostinfo.h		\
-	socket.h		\
-	streamsocket.h		\
-	listensocket.h		\
-	channelsocket.h		\
-	process.h		\
-	terminalprocess.h	\
-	protocol.h		\
-	server.h
+	gebr-comm-socketaddress.h	\
+	gebr-comm-hostinfo.h		\
+	gebr-comm-socket.h		\
+	gebr-comm-streamsocket.h	\
+	gebr-comm-listensocket.h	\
+	gebr-comm-channelsocket.h	\
+	gebr-comm-process.h		\
+	gebr-comm-terminalprocess.h	\
+	gebr-comm-protocol.h		\
+	gebr-comm-job.h			\
+	gebr-comm-server.h
 
 noinst_HEADERS = \
-	socketaddressprivate.h	\
-	socketprivate.h		\
-	streamsocketprivate.h
+	gebr-comm-socketaddressprivate.h	\
+	gebr-comm-socketprivate.h		\
+	gebr-comm-streamsocketprivate.h
 
 AM_CPPFLAGS = \
 	-I..				\
