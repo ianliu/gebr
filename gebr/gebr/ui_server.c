@@ -180,6 +180,35 @@ static GtkMenu *server_common_popup_menu(GtkWidget * widget, struct ui_server_co
 	return GTK_MENU(menu);
 }
 
+static void on_tags_edited (GtkCellRendererText *cell,
+			    gchar *path,
+			    gchar *new_text,
+			    gpointer user_data)
+{
+	GList *tags;
+	gchar **tagsv;
+	GHashTable *table;
+
+	tagsv = g_strsplit (new_text, ",", 0);
+	table = g_hash_table_new (g_str_hash, g_str_equal);
+
+	for (int i = 0; tagsv[i]; i++) {
+		if (strlen (tagsv[i]) == 0)
+			continue;
+		g_hash_table_insert (table, tagsv[i], NULL);
+	}
+
+	void prepend_tags(gchar *tag) {
+		tags = g_list_prepend (tags, tag);
+	}
+
+	g_hash_table_foreach (table, (GHFunc) prepend_tags, NULL);
+	tags = g_list_reverse (tags);
+
+	g_hash_table_unref (table);
+	g_strfreev (tagsv);
+}
+
 /* Function: server_common_setup
  * Setup common server dialogs stuff
  */
@@ -226,6 +255,7 @@ static void server_common_setup(struct ui_server_common *ui_server_common)
 
 	renderer = gtk_cell_renderer_text_new();
 	g_object_set (renderer, "editable", TRUE, NULL);
+	g_signal_connect (renderer, "edited", G_CALLBACK (on_tags_edited), NULL);
 	col = gtk_tree_view_column_new_with_attributes(_("Groups"), renderer, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
 	// TODO: Remove this define when the proper enumeration is set!
