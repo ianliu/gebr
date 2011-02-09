@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
-<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook V5.0//EN"
-	  "http://www.oasis-open.org/docbook/xml/5.0b5/dtd/docbook.dtd">
-<article version="5.0" xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+<article lang="pt_br" version="5.0" xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
   <info>
     <title>GêBR - Guia do Usuário</title>
   </info>
@@ -255,7 +253,7 @@
         <step>
           <para>Se desejar, digite também uma breve <emphasis>descrição</emphasis> da linha,
             o <emphasis>autor</emphasis>, um <emphasis>e-mail</emphasis> para contato. Pode-se adicionar ainda caminhos
-            personalizados de linha, assunto melhor abordado na seção <xref linkend="editar_caminhos_preferenciais_da_linha"/>.</para>
+            personalizados de linha, assunto melhor abordado na <xref linkend="editar_caminhos_preferenciais_da_linha"/>.</para>
         </step>
       </procedure>
       <figure>
@@ -541,7 +539,7 @@
 
     <important>
 
-      <para>Alguns recursos que serão explicados a seguir já foram vistos na prática no exemplo da seção 
+      <para>Alguns recursos que serão explicados a seguir já foram vistos na prática no exemplo da
 	<xref linkend="projetos_linhas_fluxo_visao_geral"/>. Além disso, o exemplo aborda alguns
 	conceitos fundamentais por trás da GêBR. Por isso, se não o fez, é <emphasis role="bold">recomendável que você
 	leia aquela seção</emphasis> antes de prosseguir. Por razões didáticas, recorreremos àquele exemplo sempre que
@@ -656,7 +654,7 @@
         <para>Para criar uma nova linha, <emphasis role="bold">selecione um projeto existente</emphasis> e clique no
         botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_criar_linha.png"
         /></imageobject></inlinemediaobject></guiicon> (veja mais detalhes
-        na seção <xref linkend="editar_projetos_e_linhas"/>). A nova linha será criada dentro
+        na <xref linkend="editar_projetos_e_linhas"/>). A nova linha será criada dentro
         do projeto selecionado.</para>
 
 
@@ -713,20 +711,20 @@
         (dependendo do caso) você pode editar os
         campos <guilabel>Título</guilabel>, <guilabel>Descrição</guilabel>, <guilabel>Autor</guilabel>
         e <guilabel>Email</guilabel>. Para o caso de edição de propriedades de linha, pode-se adicionar caminhos
-        personalizados, cujo detalhamento será abordado na seção <xref linkend="editar_caminhos_preferenciais_da_linha"/>.</para>
+        personalizados, cujo detalhamento será abordado na <xref linkend="editar_caminhos_preferenciais_da_linha"/>.</para>
       </section>
 
       <section xml:id="sec_3_1_5">
         <title>Editar o dicionário de parâmetros do projeto ou linha</title>
 
-        <para>Este recurso está documentado na seção <xref linkend="dicionario_de_parametros"/>.</para>
+        <para>Este recurso está documentado na <xref linkend="dicionario_de_parametros"/>.</para>
 
       </section>
 
       <section xml:id="editar_caminhos_preferenciais_da_linha">
         <title>Editar caminhos preferenciais da linha</title>
 
-        <para>Na seção <xref linkend="editar_arquivos_entrada_saida_fluxo"/> veremos que um fluxo pode
+        <para>Na <xref linkend="editar_arquivos_entrada_saida_fluxo"/> veremos que um fluxo pode
           estar associado a alguns arquivos de dados. Veremos também que essa associação pode ser feita mais facilmente
           se adicionarmos os chamados caminhos preferenciais da linha.</para>
 
@@ -787,8 +785,7 @@
       <section xml:id="sec_3_1_7">
         <title>Importar um projeto ou linha</title>
 
-        <para>A GêBR permite importar projetos ou linhas que tenham sido previamente exportados(as) 
-          <xref linkend="exportar_um_projeto_ou_linha"/>. Para fazer isso:</para>
+        <para>A GêBR permite importar projetos ou linhas que tenham sido previamente exportados(as) na <xref linkend="exportar_um_projeto_ou_linha"/>. Para fazer isso:</para>
 
         <procedure>
           <step>
@@ -814,9 +811,9 @@
         <note>
 
           <para>Na GêBR, linhas só podem existir dentro de projetos (veja este conceito
-          na seção <xref linkend="projetos_linhas_fluxo_visao_geral"/>). Portanto, para importar uma linha é
+          na <xref linkend="projetos_linhas_fluxo_visao_geral"/>). Portanto, para importar uma linha é
           necessário <emphasis role="bold">selecionar um projeto existente</emphasis>
-          (ou <xref linkend="criar_novo_projeto"/>, caso não exista nenhum).</para>
+          ou criar um novo, como vimos na <xref linkend="criar_novo_projeto"/>.</para>
 
         </note>
       </section>
@@ -911,7 +908,7 @@
       <section xml:id="visualizar_relatorio">
         <title>Visualizar relatório na aba Projetos e Linhas</title>
 
-        <para>Como explorado na seção acima, pode-se criar e editar um relatório com informações adicionais sobre
+        <para>Como explorado na <xref linkend="editar_comentarios"/>, pode-se criar e editar informações adicionais sobre
           projetos e linhas. Para visualizar o relatório que você criou, clique no botão Visualizar relatório, na parte
           de baixo da caixa Detalhes, no lado direito da janela principal.</para>
 
@@ -964,7 +961,7 @@
 	
 
    
-        <para>Na seção <xref linkend="visualizar_relatorio_fluxo"/>, é detalhada a
+        <para>Na <xref linkend="visualizar_relatorio_fluxo"/>, é detalhada a
           visualização de relatório para um fluxo, que se dá de forma muito semelhante à visualização de relatório da
           linha, com a diferença que nesta é possível englobar o relatório do fluxo.</para>
 
@@ -1184,7 +1181,7 @@
       <section xml:id="sec_3_2_6">
         <title>Editar o dicionário de parâmetros de um fluxo</title>
 
-        <para>Este recurso está documentado na seção <xref linkend="dicionario_de_parametros"/>.</para>
+        <para>Este recurso está documentado na <xref linkend="dicionario_de_parametros"/>.</para>
 
       </section>
 
@@ -1261,7 +1258,7 @@
           <step>
             <para>Certifique-se de ter  <emphasis role="bold">criado e selecionado uma linha</emphasis>, na aba 
               <guilabel>Projetos e Linhas</guilabel>. Lembre-se que, na GêBR, fluxos só podem existir dentro de linhas
-              (veja este conceito na seção <xref linkend="projetos_linhas_fluxo_visao_geral"/>). Portanto,
+              (veja este conceito na <xref linkend="projetos_linhas_fluxo_visao_geral"/>). Portanto,
               para importar um fluxo é necessário <emphasis role="bold">selecionar uma linha existente</emphasis> (ou
               <xref linkend="criar_nova_linha"/>, caso não exista nenhuma).</para>
           </step>
@@ -1337,8 +1334,7 @@
 	</step>
 
 	<step>
-        	<para> Cada fila fica visível no campo Filas da aba Edição de fluxos conforme explicado na seção
-  	<xref linkend="executar_fluxo"/>.</para>
+        	<para> Cada fila fica visível no campo Filas da aba Edição de fluxos conforme explicado na <xref linkend="executar_fluxo"/>.</para>
 	</step> 
 	
 	<step>
@@ -1364,7 +1360,7 @@
         <para>Este comando aparece repetidamente nas abas <guilabel>Projetos e Linhas</guilabel> e em
           <guilabel>Fluxos</guilabel>. Através dele, em ambas abas, pode-se gerar/visualizar o relatório da linha ou do
           fluxo em questão, com a pequena diferença de que é possível englobar o relatório do fluxo no relatório da
-          linha. As demais funcionalidades são descritas na seção <xref linkend="visualizar_relatorio"/>.</para>
+          linha. As demais funcionalidades são descritas na <xref linkend="visualizar_relatorio"/>.</para>
 
       </section>
     </section>
@@ -1567,7 +1563,7 @@
       <section xml:id="copiar_programa_para_area_de_transferencia">
         <title>Copiar programas para a área de transferência</title>
 
-        <para>Da mesma forma que se faz com fluxos (veja a seção <xref linkend="copiar_fluxos_area_tranferencia"/>), um programa (ou um conjunto de programas) pode ser copiado para a área de
+        <para>Da mesma forma que se faz com fluxos (veja a <xref linkend="copiar_fluxos_area_tranferencia"/>), um programa (ou um conjunto de programas) pode ser copiado para a área de
           transferência por meio do
           botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_copiar_fluxo.png"
           /></imageobject></inlinemediaobject></guiicon> ou, mais prático, pelo conhecido atalho
@@ -1678,7 +1674,7 @@
       <section xml:id="sec_3_3_5">
         <title>Mudar o estado de um programa</title>
 
-        <para>Após realizar o procedimento da seção <xref linkend="editar_parametros_programa"/>, note que o programa passa a ser sinalizado
+        <para>Após realizar o procedimento da <xref linkend="editar_parametros_programa"/>, note que o programa passa a ser sinalizado
         por <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_configurado.png"
         /></imageobject></inlinemediaobject></guiicon> em vez
         de <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_nao_configurado.png"
@@ -1726,7 +1722,7 @@
       <section xml:id="editar_arquivos_entrada_saida_fluxo">
         <title>Editar arquivos de entrada e saída do fluxo</title>
 
-        <para>No exemplo da seção <xref linkend="criando_fluxos"/> criamos um fluxo
+        <para>No exemplo da <xref linkend="criando_fluxos"/> criamos um fluxo
           muito simples, que não precisava "ler" nenhum arquivo, e que gerava como resultado uma saída de tela. Porém,
           há situações em que o fluxo precisa extrair dados de um arquivo de entrada e gerar como resultado um arquivo
           de saída ou de erro, caso ocorra algum problema durante a execução.</para>
