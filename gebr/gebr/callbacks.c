@@ -156,12 +156,18 @@ static gboolean flows_check_before_execution(void)
 	gchar * program_title = NULL;
 	gchar * flow_title = NULL;
 
-	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_flow_browse->view){
+	GtkTreeSelection * selection =	gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
+	GList * rows = gtk_tree_selection_get_selected_rows(selection, NULL);
+
+	for (GList * i = rows; i; i = i->next )
+	{
+
+		gtk_tree_model_get_iter(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter, i->data); 
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter, 
 				   FB_XMLPOINTER, &flow,
 				   FB_TITLE, &flow_title,
 				   -1);
-		state =	gebr_geoxml_flow_validade(flow, gebr.flow_server, &program_title);
+		state =	gebr_geoxml_flow_validade(flow, &program_title);
 		switch (state)
 		{
 		case GEBR_GEOXML_FLOW_ERROR_NONE:
@@ -323,7 +329,7 @@ void on_flow_component_execute_single()
 	if (gebr.flow == NULL || gebr.flow_server == NULL)
 		return;
 
-		state =	gebr_geoxml_flow_validade(gebr.flow, gebr.flow_server, &program_title);
+		state =	gebr_geoxml_flow_validade(gebr.flow, &program_title);
 		switch (state)
 		{
 		case GEBR_GEOXML_FLOW_ERROR_NONE:
