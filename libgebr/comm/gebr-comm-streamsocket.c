@@ -24,11 +24,11 @@
 #include <sys/socket.h>
 #include <limits.h>
 
-#include "streamsocket.h"
-#include "streamsocketprivate.h"
-#include "socketprivate.h"
-#include "hostinfo.h"
-#include "socketaddressprivate.h"
+#include "gebr-comm-streamsocket.h"
+#include "gebr-comm-streamsocketprivate.h"
+#include "gebr-comm-socketprivate.h"
+#include "gebr-comm-hostinfo.h"
+#include "gebr-comm-socketaddressprivate.h"
 
 /*
  * prototypes

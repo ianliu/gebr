@@ -18,8 +18,8 @@
 #include <stdlib.h>
 
 #include <glib/gi18n.h>
-#include <libgebr/comm/protocol.h>
-#include <libgebr/comm/server.h>
+#include <libgebr/comm/gebr-comm-protocol.h>
+#include <libgebr/comm/gebr-comm-server.h>
 #include <libgebr/gui/gebr-gui-utils.h>
 
 #include "client.h"

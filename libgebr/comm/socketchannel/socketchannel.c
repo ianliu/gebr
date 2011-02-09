@@ -19,7 +19,7 @@
 #include <glib/gi18n.h>
 
 #include "libgebr.h"
-#include "../comm/channelsocket.h"
+#include "../comm/gebr-comm-channelsocket.h"
 
 gint channel_do(const gchar * source, const gchar * destination);
 

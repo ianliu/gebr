@@ -28,9 +28,9 @@
 #include <arpa/inet.h>
 #include <errno.h>
 
-#include "socket.h"
-#include "socketprivate.h"
-#include "socketaddressprivate.h"
+#include "gebr-comm-socket.h"
+#include "gebr-comm-socketprivate.h"
+#include "gebr-comm-socketaddressprivate.h"
 
 /*
  * gobject stuff

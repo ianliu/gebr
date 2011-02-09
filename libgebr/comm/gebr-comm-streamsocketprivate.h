@@ -20,7 +20,7 @@
 #ifndef __GEBR_COMM_TCP_SOCKET_PRIVATE_H
 #define __GEBR_COMM_TCP_SOCKET_PRIVATE_H
 
-#include "streamsocket.h"
+#include "gebr-comm-streamsocket.h"
 
 G_BEGIN_DECLS
 

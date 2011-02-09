@@ -30,7 +30,7 @@ libcomminclude_HEADERS=gebr-comm.h
 
 lib_LTLIBRARIES = libgebr_comm.la
 libgebr_comm_la_SOURCES = \
-	gebr-comm-socketaddress.	\
+	gebr-comm-socketaddress.c	\
 	gebr-comm-hostinfo.c		\
 	gebr-comm-socket.c		\
 	gebr-comm-streamsocket.c	\

@@ -22,8 +22,8 @@
 
 #include <glib/gi18n.h>
 #include <libgebr/geoxml/geoxml.h>
-#include <libgebr/comm/streamsocket.h>
-#include <libgebr/comm/protocol.h>
+#include <libgebr/comm/gebr-comm-streamsocket.h>
+#include <libgebr/comm/gebr-comm-protocol.h>
 
 #include "server.h"
 #include "gebrclient.h"

@@ -27,7 +27,7 @@
 #include <sys/wait.h>
 #include <pty.h>
 
-#include "terminalprocess.h"
+#include "gebr-comm-terminalprocess.h"
 
 /*
  * Prototypes

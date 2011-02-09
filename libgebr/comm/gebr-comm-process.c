@@ -28,7 +28,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
-#include "process.h"
+#include "gebr-comm-process.h"
 
 /*
  * Prototypes

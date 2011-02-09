@@ -20,8 +20,8 @@
 
 #include <gtk/gtk.h>
 
-#include <libgebr/comm/protocol.h>
-#include <libgebr/comm/server.h>
+#include <libgebr/comm/gebr-comm-protocol.h>
+#include <libgebr/comm/gebr-comm-server.h>
 #include <libgebr/geoxml/geoxml.h>
 
 G_BEGIN_DECLS

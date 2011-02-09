@@ -16,7 +16,8 @@
  */
 
 #include <glib.h>
-#include "protocol.h"
+
+#include <gebr-comm-protocol.h>
 
 void test_comm_build_message()
 {

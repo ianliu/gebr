@@ -20,7 +20,7 @@
 
 #include <glib.h>
 
-#include "streamsocket.h"
+#include "gebr-comm-streamsocket.h"
 
 G_BEGIN_DECLS
 

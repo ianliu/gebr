@@ -21,10 +21,10 @@
 #include <netinet/in.h>
 #include <netinet/ip.h>
 
-#include "channelsocket.h"
-#include "socketprivate.h"
-#include "streamsocketprivate.h"
-#include "socketaddressprivate.h"
+#include "gebr-comm-channelsocket.h"
+#include "gebr-comm-socketprivate.h"
+#include "gebr-comm-streamsocketprivate.h"
+#include "gebr-comm-socketaddressprivate.h"
 
 /*
  * prototypes

@@ -22,7 +22,7 @@
 
 #include <glib.h>
 
-#include "socketaddress.h"
+#include "gebr-comm-socketaddress.h"
 
 G_BEGIN_DECLS
 

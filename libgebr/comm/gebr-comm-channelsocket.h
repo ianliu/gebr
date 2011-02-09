@@ -20,9 +20,9 @@
 #ifndef __GEBR_COMM_CHANNEL_SOCKET_H
 #define __GEBR_COMM_CHANNEL_SOCKET_H
 
-#include "socket.h"
-#include "streamsocket.h"
-#include "socketaddress.h"
+#include "gebr-comm-socket.h"
+#include "gebr-comm-streamsocket.h"
+#include "gebr-comm-socketaddress.h"
 
 G_BEGIN_DECLS
 

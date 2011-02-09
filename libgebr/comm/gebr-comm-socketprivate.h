@@ -20,8 +20,8 @@
 #ifndef __GEBR_COMM_SOCKETPRIVATE_H
 #define __GEBR_COMM_SOCKETPRIVATE_H
 
-#include "socket.h"
-#include "socketaddress.h"
+#include "gebr-comm-socket.h"
+#include "gebr-comm-socketaddress.h"
 
 G_BEGIN_DECLS
 

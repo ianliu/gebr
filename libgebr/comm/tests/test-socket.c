@@ -19,11 +19,11 @@
 #include <glib-object.h>
 #include <glib/gstdio.h>
 
-#include <listensocket.h>
-#include <channelsocket.h>
-#include <streamsocket.h>
-#include <socketaddress.h>
-#include <socket.h>
+#include <gebr-comm-listensocket.h>
+#include <gebr-comm-channelsocket.h>
+#include <gebr-comm-streamsocket.h>
+#include <gebr-comm-socketaddress.h>
+#include <gebr-comm-socket.h>
 
 GMainLoop *loop;
 

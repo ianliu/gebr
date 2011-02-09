@@ -16,13 +16,13 @@
  */
 
 /* include all gebr_comm library's headers. */
-#include <comm/socketaddress.h>
-#include <comm/hostinfo.h>
-#include <comm/socket.h>
-#include <comm/streamsocket.h>
-#include <comm/listensocket.h>
-#include <comm/channelsocket.h>
-#include <comm/process.h>
-#include <comm/terminalprocess.h>
-#include <comm/protocol.h>
-#include <comm/server.h>
+#include <comm/gebr-comm-socketaddress.h>
+#include <comm/gebr-comm-hostinfo.h>
+#include <comm/gebr-comm-socket.h>
+#include <comm/gebr-comm-streamsocket.h>
+#include <comm/gebr-comm-listensocket.h>
+#include <comm/gebr-comm-channelsocket.h>
+#include <comm/gebr-comm-process.h>
+#include <comm/gebr-comm-terminalprocess.h>
+#include <comm/gebr-comm-protocol.h>
+#include <comm/gebr-comm-server.h>

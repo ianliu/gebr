@@ -23,7 +23,8 @@
 #include <arpa/inet.h>
 
 #include <glib/gi18n.h>
-#include <libgebr/comm/protocol.h>
+
+#include <libgebr/comm/gebr-comm-protocol.h>
 
 #include "client.h"
 #include "gebrd.h"

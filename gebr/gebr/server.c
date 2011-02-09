@@ -20,7 +20,7 @@
 #include <gtk/gtk.h>
 
 #include <glib/gi18n.h>
-#include <libgebr/comm/streamsocket.h>
+#include <libgebr/comm/gebr-comm-streamsocket.h>
 #include <libgebr/gui/gebr-gui-utils.h>
 
 #include "server.h"

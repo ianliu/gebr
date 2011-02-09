@@ -23,11 +23,11 @@
 #include <libgebr/log.h>
 #include <libgebr/geoxml/geoxml.h>
 
-#include "streamsocket.h"
-#include "protocol.h"
-#include "terminalprocess.h"
-#include "process.h"
-#include "channelsocket.h"
+#include "gebr-comm-streamsocket.h"
+#include "gebr-comm-protocol.h"
+#include "gebr-comm-terminalprocess.h"
+#include "gebr-comm-process.h"
+#include "gebr-comm-channelsocket.h"
 
 G_BEGIN_DECLS
 

@@ -24,7 +24,7 @@ extern int h_errno;
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-#include "hostinfo.h"
+#include "gebr-comm-hostinfo.h"
 
 // PORT TO getaddrinfo
 

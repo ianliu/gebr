@@ -18,11 +18,11 @@
 #ifndef __GEBRD_H
 #define __GEBRD_H
 
-#include <libgebr/comm/listensocket.h>
-#include <libgebr/comm/server.h>
+#include <libgebr/comm/gebr-comm-listensocket.h>
+#include <libgebr/comm/gebr-comm-server.h>
 #include <libgebr/log.h>
 #include <netdb.h>
-#include <libgebr/comm/server.h>
+#include <libgebr/comm/gebr-comm-server.h>
 
 #include "mpi-interface.h"
 

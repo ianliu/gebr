@@ -21,7 +21,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-#include "protocol.h"
+#include "gebr-comm-protocol.h"
 
 /*
  * Internal variables and variables

@@ -23,10 +23,10 @@
 #include <netinet/in.h>
 #include <netinet/ip.h>
 
-#include "listensocket.h"
-#include "socketprivate.h"
-#include "streamsocketprivate.h"
-#include "socketaddressprivate.h"
+#include "gebr-comm-listensocket.h"
+#include "gebr-comm-socketprivate.h"
+#include "gebr-comm-streamsocketprivate.h"
+#include "gebr-comm-socketaddressprivate.h"
 
 /*
  * prototypes

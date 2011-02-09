@@ -20,7 +20,7 @@
 
 #include <glib.h>
 
-#include <libgebr/comm/server.h>
+#include <libgebr/comm/gebr-comm-server.h>
 
 G_BEGIN_DECLS
 

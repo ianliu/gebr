@@ -26,9 +26,9 @@
 #include <gdome.h>
 
 #include <glib/gi18n.h>
-#include <libgebr/comm/protocol.h>
-#include <libgebr/comm/streamsocket.h>
-#include <libgebr/comm/socketaddress.h>
+#include <libgebr/comm/gebr-comm-protocol.h>
+#include <libgebr/comm/gebr-comm-streamsocket.h>
+#include <libgebr/comm/gebr-comm-socketaddress.h>
 #include <libgebr/utils.h>
 #include <libgebr/date.h>
 

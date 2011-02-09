@@ -26,7 +26,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "socketaddress.h"
+#include "gebr-comm-socketaddress.h"
 
 /*
  * private functions

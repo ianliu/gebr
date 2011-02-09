@@ -13,8 +13,6 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- *   Inspired on Qt 4.3 version of QHostInfo, by Trolltech
  */
 
 #include "gebr-comm-job.h"

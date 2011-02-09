@@ -32,7 +32,7 @@
 #include <libgebr.h>
 #include <glib/gi18n.h>
 #include <libgebr/utils.h>
-#include <libgebr/comm/comm.h>
+#include <libgebr/comm/gebr-comm.h>
 #include <libgebr/geoxml/geoxml.h>
 
 #include <gdome.h>

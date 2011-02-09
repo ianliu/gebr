@@ -27,7 +27,7 @@
 #include <libgebr/utils.h>
 #include <libgebr/gebr-tar.h>
 #include <libgebr/geoxml/geoxml.h>
-#include <libgebr/comm/comm.h>
+#include <libgebr/comm/gebr-comm.h>
 #include <libgebr/gui/gui.h>
 #include <libgebr/gui/gebr-gui-utils.h>
 

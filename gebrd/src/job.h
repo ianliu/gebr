@@ -19,7 +19,7 @@
 #define __JOB_H
 
 #include <libgebr/geoxml/geoxml.h>
-#include <libgebr/comm/process.h>
+#include <libgebr/comm/gebr-comm-process.h>
 
 #include "client.h"
 

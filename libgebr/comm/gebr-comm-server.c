@@ -25,8 +25,8 @@
 #include <glib/gi18n-lib.h>
 
 #include "../defines.h"
-#include "server.h"
-#include "listensocket.h"
+#include "gebr-comm-server.h"
+#include "gebr-comm-listensocket.h"
 
 /*
  * Declarations

@@ -21,7 +21,7 @@
 
 #include <glib/gi18n.h>
 #include <libgebr/libgebr.h>
-#include <libgebr/comm/comm.h>
+#include <libgebr/comm/gebr-comm.h>
 
 #include "gebrclient.h"
 #include "../defines.h"
