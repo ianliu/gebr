@@ -303,7 +303,7 @@ void job_update_label(struct job *job)
 			g_string_assign(queue_info, _("unqueued"));
 		else
 			g_string_printf(queue_info, "on %s", queue);
-		g_string_append_printf(label, _("Job submitted at '%s' (%s) by %s\n"),
+		g_string_append_printf(label, _("Job submitted at '%s' ('%s') by %s\n"),
 				       server_get_name(job->server), queue_info->str, job->hostname->str);
 		g_string_free(queue_info, TRUE);
 
