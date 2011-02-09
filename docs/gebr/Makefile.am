@@ -30,12 +30,7 @@ UINST_DEP =
 endif
 
 html-ok: gebr-pt.xml
-	if test -w $(srcdir); then \
-	  (cd $(srcdir); \
-	   db2html gebr-pt.xml; \
-	   test -d pt_BR && rm -r pt_BR; \
-	   mv gebr-pt pt_BR); \
-	fi && touch html-ok
+	xsltproc -o $(builddir)/pt_BR/index.html $(srcdir)/gebr-guide.xsl $(srcdir)/gebr-pt.xml && touch html-ok
 
 dist-ok: html-ok
 	cp -Rp $(srcdir)/pt_BR $(srcdir)/images $(distdir)
