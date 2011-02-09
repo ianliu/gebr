@@ -618,7 +618,7 @@
         <listitem>
 
           <para>
-            <link linkend="sec_3_1_10">Show Report</link>
+            <link linkend="sec_3_1_10">View Report</link>
           </para>
 
         </listitem>
@@ -668,10 +668,10 @@
         <tip>
           <para>In GêBR you can <emphasis role="bold">collapse</emphasis> or <emphasis role="bold">expand</emphasis> a 
 	Project. When collapsed <emphasis role="bold">the Projects Lines are hidden</emphasis>, when expanded 
-	<emphasis role="bold">the Projects Lines are visible</emphasis>. To collapse click on the icone
+	<emphasis role="bold">the Projects Lines are visible</emphasis>. To collapse click on the icon
           <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_expandido.png"
           /></imageobject></inlinemediaobject></guiicon> immediately to the left of the Projects name. To expand,
-	 click on the icone <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_colapsado.png"
+	 click on the icon <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_colapsado.png"
           /></imageobject></inlinemediaobject></guiicon>.</para>
 
         </tip>
@@ -746,7 +746,7 @@
 	
 	<tip>
 	  <para>The path at the top of the list will be set as the standard path, which will be opened when the user
-	 clicks on the icone <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_caminho_personalizado.png"/></imageobject></inlinemediaobject></guiicon> as to search for a file or directory.</para>
+	 clicks on the icon <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_caminho_personalizado.png"/></imageobject></inlinemediaobject></guiicon> as to search for a file or directory.</para>
 	</tip>
 
         <tip>
@@ -761,8 +761,8 @@
         </tip>
 
         <para>You can also use hotkeys to add paths (<keycombo><keycap>Enter</keycap></keycombo>), move paths up and down
-	 (<keycombo><keycap>Ctrl</keycap><keycap>arrow up/down</keycap></keycombo>), make a path go to the top of the list
-          (<keycombo><keycap>Ctrl</keycap><keycap>Home</keycap></keycombo>) and make a path go to the bottom of the list
+	 (<keycombo><keycap>Ctrl</keycap><keycap>arrow up/down</keycap></keycombo>), send a path to the top of the list
+          (<keycombo><keycap>Ctrl</keycap><keycap>Home</keycap></keycombo>) and send a path to the bottom of the list
           (<keycombo><keycap>Ctrl</keycap><keycap>End</keycap></keycombo>).</para>
 
         <screenshot>
@@ -780,15 +780,15 @@
       </section>
 
       <section xml:id="sec_3_1_7">
-        <title>Importar um projeto ou linha</title>
+        <title>Import a Project or a Line</title>
 
-        <para>A GêBR permite importar projetos ou linhas que tenham sido previamente exportados(as) 
-          <xref linkend="exportar_um_projeto_ou_linha"/>. Para fazer isso:</para>
+        <para>In GêBR you can import Projects or Lines that where previously exported
+          <xref linkend="exportar_um_projeto_ou_linha"/>. To do so:</para>
 
         <procedure>
           <step>
-            <para>Clique no
-            botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_importar_projeto.png"
+            <para>Click on the
+            button <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_importar_projeto.png"
             /></imageobject></inlinemediaobject></guiicon></para>
           </step>
           <step>
@@ -801,23 +801,22 @@
           </step>
         </procedure>
 
-        <para>O projeto importado é adicionado aos demais projetos (se existirem) listados no lado esquerdo da janela
-          principal. A linha importada é adicionada às demais linhas (se existirem) do projeto que estiver selecionado
-          no momento da importação. Em ambos os casos, o elemento importado é identificado com o
-          sufixo <emphasis role="bold">Importado</emphasis>.</para>
+        <para>The imported project is added to the list of projects, found on the left of the main window. An imported
+	Line joins the other Lines, if they exist, of the Project that was selected when the Line was imported. In
+	 both cases the imported item is identified with the suffix <emphasis role="bold">Imported</emphasis>.</para>
 
         <note>
 
-          <para>Na GêBR, linhas só podem existir dentro de projetos (veja este conceito
-          na seção <xref linkend="projetos_linhas_fluxo_visao_geral"/>). Portanto, para importar uma linha é
-          necessário <emphasis role="bold">selecionar um projeto existente</emphasis>
-          (ou <xref linkend="criar_novo_projeto"/>, caso não exista nenhum).</para>
+          <para>In GêBR, Lines may only exist inside a Project, see this concept in the Section
+	 <xref linkend="projetos_linhas_fluxo_visao_geral"/>. Therefore to import a Line you must first <emphasis
+	 role="bold"> select an	existing Project </emphasis>. (If there does not exist one then 
+	<xref linkend="criar_novo_projeto"/> ).</para>
 
         </note>
       </section>
 
       <section xml:id="exportar_um_projeto_ou_linha">
-        <title>Exportar um projeto ou linha</title>
+        <title>Exporting a Project or a Line</title>
 
         <para>Embora a GêBR preserve continuamente todos os dados, às vezes é desejável manter os projetos e linhas em
           arquivos (para compartilhamento ou cópia de segurança, por exemplo). Para exportar um projeto ou uma
@@ -845,7 +844,7 @@
       </section>
 
       <section xml:id="editar_comentarios">
-        <title>Editar comentários</title>
+        <title>Editing comments</title>
 
         <para>Pode-se editar comentários no relatório, atribuindo informações adicionais sobre o projeto ou sobre a
           linha. Para <emphasis role="bold">editar um comentário</emphasis>:</para>
@@ -908,7 +907,7 @@
       </section>
 
       <section xml:id="visualizar_relatorio">
-        <title>Visualizar relatório</title>
+        <title>View report</title>
 
         <para>Como explorado na seção acima, pode-se criar e editar um relatório com informações adicionais sobre
           projetos e linhas. Para visualizar o relatório que você criou, clique no botão Visualizar relatório, na parte
@@ -964,7 +963,7 @@
     </section>
 
     <section xml:id="sec_3_2">
-      <title>A aba <guilabel>Fluxos</guilabel></title>
+      <title>The <guilabel>Flows</guilabel> tab</title>
 
       <para>A aba <guilabel>Fluxos</guilabel> dispõe de nove botões de comando, localizados logo abaixo da aba, mais
 	dois botões no campo Detalhes no canto inferior direito da tela. Por meio deles pode-se:</para>
@@ -1058,7 +1057,7 @@
       </tip>
 
       <section xml:id="sec_3_2_1">
-        <title>Criar um novo fluxo</title>
+        <title>Creating a new Flow</title>
 
         <para>Para criar um novo fluxo, primeiro certifique-se de ter <emphasis role="bold">criado e selecionado uma
         linha</emphasis>, na aba <guilabel>Projetos e Linhas</guilabel>. Feito isso, selecione a aba
@@ -1092,7 +1091,7 @@
       </section>
 
       <section xml:id="copiar_fluxos_area_tranferencia">
-        <title>Copiar fluxos para a área de transferência</title>
+        <title>Copying Flows to the transfer area</title>
 
         <para>A área de transferência provê o recurso popularmente conhecido como <emphasis role="bold">copiar e
           colar</emphasis>. Na GêBR, um fluxo (ou um conjunto de fluxos) pode ser copiado para a área de transferência
@@ -1117,7 +1116,7 @@
       </section>
 
       <section xml:id="colar_fluxos_area_tranferencia">
-        <title>Colar fluxos da área de transferência</title>
+        <title>Pasting Flows from the transfer area</title>
 
         <para>Depois de ter sido selecionado e copiado <xref linkend="copiar_fluxos_area_tranferencia"/>, um fluxo (ou um
           conjunto de fluxos) pode ser colado por meio do
@@ -1139,7 +1138,7 @@
       </section>
 
       <section xml:id="sec_3_2_4">
-        <title>Deletar fluxos</title>
+        <title>Deleting Flows</title>
 
         <para>Para excluir um fluxo (ou um conjunto de fluxos), selecione-o e clique no botão 
           <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_apagar_projeto.png"
@@ -1161,7 +1160,7 @@
       </section>
 
       <section xml:id="editar_propriedades_fluxo">
-        <title>Editar as propriedades de um fluxo</title>
+        <title>Editing a Flow's properties</title>
 
         <para>Para editar as propriedades de um fluxo, selecione-o e clique no
         botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_editar_propriedades_projeto.png"
@@ -1174,14 +1173,14 @@
       </section>
 
       <section xml:id="sec_3_2_6">
-        <title>Editar o dicionário de parâmetros de um fluxo</title>
+        <title>Editing the Flow's parameter dictionary</title>
 
         <para>Este recurso está documentado na seção <xref linkend="dicionario_de_parametros"/>.</para>
 
       </section>
 
       <section xml:id="sec_3_2_7">
-        <title>Salvar o estado de um fluxo</title>
+        <title>Saving a Flows state</title>
 
         <para>Ao trabalhar com fluxos na GêBR, você encontrará diversas situações em que é interessante usar um fluxo
           existente como base para a criação de novos fluxos. Por exemplo, você pode querer fazer experiências com um
@@ -1244,7 +1243,7 @@
       </section>
 
       <section xml:id="sec_3_2_8">
-        <title>Importar um fluxo</title>
+        <title>Importing a Flow</title>
 
         <para>A GêBR permite importar fluxos que tenham sido exportados
           <xref linkend="exportar_fluxo"/>. Para fazer isso:</para>
@@ -1279,7 +1278,7 @@
       </section>
 
       <section xml:id="exportar_fluxo">
-        <title>Exportar um fluxo</title>
+        <title>Exporting a Flow</title>
 
         <para>Embora a GêBR preserve continuamente todos os dados, às vezes é desejável manter os fluxos em arquivos
           (para compartilhamento ou cópia de segurança, por exemplo). Para exportar um fluxo:</para>
@@ -1306,7 +1305,7 @@
       </section>
 
       <section xml:id="executar_fluxo_aba_fluxos">
-        <title>Executar um fluxo</title>
+        <title>Executing a Flow</title>
 
         <para>Este comando aparece repetidamente nas abas <guilabel>Fluxos</guilabel> e
           <guilabel>Edição de fluxo</guilabel> de duas formas distintas. Nessa aba Fluxos, o
@@ -1338,7 +1337,7 @@
       </section>
 
       <section xml:id="sec_3_2_11">
-        <title>Editar comentários</title>
+        <title>Editing comments</title>
 
         <para>Este comando aparece repetidamente nas abas <guilabel>Projetos e Linhas</guilabel> e em
           <guilabel>Fluxos</guilabel>. Através dele, o usuário pode adicionar comentários à linha ou ao fluxo criados.
@@ -1347,7 +1346,7 @@
       </section>
 
       <section xml:id="visualizar_relatorio_fluxo">
-        <title>Visualizar relatório</title>
+        <title>View report</title>
 
         <para>Este comando aparece repetidamente nas abas <guilabel>Projetos e Linhas</guilabel> e em
           <guilabel>Fluxos</guilabel>. Através dele, em ambas abas, pode-se gerar/visualizar o relatório da linha ou do
@@ -1358,8 +1357,8 @@
     </section>
 
     <section xml:id="sec_3_3">
-      <title>A aba 
-	<guilabel>Edição de Fluxo</guilabel></title>
+      <title>The 
+	<guilabel>Flow editor</guilabel> tab</title>
 
       <para>Todo fluxo criado na GêBR nasce vazio, isto é, <emphasis role="bold">sem programas</emphasis> que descrevam
 	uma sequência funcional de operações. Para um fluxo tornar-se funcional, é
@@ -1553,7 +1552,7 @@
       </tip>
 
       <section xml:id="copiar_programa_para_area_de_transferencia">
-        <title>Copiar programas para a área de transferência</title>
+        <title>Copying programs to the transfer area</title>
 
         <para>Da mesma forma que se faz com fluxos (veja a seção <xref linkend="copiar_fluxos_area_tranferencia"/>), um programa (ou um conjunto de programas) pode ser copiado para a área de
           transferência por meio do
@@ -1580,7 +1579,7 @@
       </section>
 
       <section xml:id="sec_3_3_2">
-        <title>Colar programas da área de transferência</title>
+        <title>Pasting programs from the transfer area</title>
 
         <para>Depois de ter sido selecionado e copiado <xref linkend="copiar_programa_para_area_de_transferencia"/>, um programa (ou
           um conjunto de programas) pode ser colado por meio do
@@ -1602,7 +1601,7 @@
       </section>
 
       <section xml:id="sec_3_3_3">
-        <title>Deletar programas</title>
+        <title>Deleting programs</title>
 
         <para>Para excluir um programa (ou um conjunto de programas), selecione-o e clique no
         botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_apagar_projeto.png"
@@ -1629,7 +1628,7 @@
       </section>
 
       <section xml:id="editar_parametros_programa">
-        <title>Editar os parâmetros de um programa</title>
+        <title>Editing a program's parameters</title>
 
         <para>Para editar os parâmetros de um programa:</para>
 
@@ -1664,7 +1663,7 @@
       </section>
 
       <section xml:id="sec_3_3_5">
-        <title>Mudar o estado de um programa</title>
+        <title>Changing a programs state</title>
 
         <para>Após realizar o procedimento da seção <xref linkend="editar_parametros_programa"/>, note que o programa passa a ser sinalizado
         por <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_configurado.png"
