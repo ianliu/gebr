@@ -303,6 +303,8 @@ void on_flow_component_execute_single()
 {
 	gint state = 0;
 	gchar * program_title = NULL;
+	if (gebr.flow == NULL || gebr.flow_server == NULL)
+		return;
 
 		state =	gebr_geoxml_flow_validade(gebr.flow, gebr.flow_server, &program_title);
 		switch (state)
