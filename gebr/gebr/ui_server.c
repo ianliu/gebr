@@ -62,12 +62,17 @@ server_common_tooltip_callback(GtkTreeView * tree_view, GtkTooltip * tooltip,
 {
 	if (gtk_tree_view_get_column(tree_view, SERVER_STATUS_ICON) == column) {
 		struct server *server;
+		gboolean had_error = TRUE;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(ui->store), iter, SERVER_POINTER, &server, -1);
-		if (server->last_error->len)
+		if (server->last_error->len) //after connected state
 			gtk_tooltip_set_text(tooltip, server->last_error->str);
+		else if (server->comm->last_error->len) //before connected state
+			gtk_tooltip_set_text(tooltip, server->comm->last_error->str);
+		else
+			had_error = FALSE;
 
-		return (gboolean) server->last_error->len;
+		return had_error;
 	}
 	if (gtk_tree_view_get_column(tree_view, SERVER_AUTOCONNECT) == column) {
 		gboolean autoconnect;
@@ -437,7 +442,7 @@ void server_list_updated_status(struct server *server)
 	GdkPixbuf *status_icon;
 	GtkTreePath *path;
 
-	status_icon = (server->last_error->len)
+	status_icon = (server->last_error->len || server->comm->last_error->len)
 	    ? gebr.pixmaps.stock_warning : (server->comm->protocol->logged == TRUE)
 	    ? gebr.pixmaps.stock_connect : gebr.pixmaps.stock_disconnect;
 
