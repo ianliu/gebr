@@ -194,7 +194,7 @@
             <guilabel>Projects and Lines</guilabel>.</para>
         </step>
         <step>
-          <para>Click on the button <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_criar_projeto.png"
+          <para>left-click on <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_criar_projeto.png"
             /></imageobject></inlinemediaobject></guiicon></para>
         </step>
         <step>
@@ -372,7 +372,7 @@
 	First Line</emphasis>, the Line you created before.</para>
         </step>
         <step>
-          <para>Now click on the tab <guilabel>Flows</guilabel>, then click on the button
+          <para>Now click on the tab <guilabel>Flows</guilabel>, then left-click on
 	 <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_criar_fluxo.png"
             /></imageobject></inlinemediaobject></guiicon></para>
         </step>
@@ -480,7 +480,7 @@
         </step>
       </procedure>
 
-      <para>Your Flow is now ready to be executed, to do so click on the button
+      <para>Your Flow is now ready to be executed, to do so left-click on
 	<guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_executar_fluxo.png"
 	/></imageobject></inlinemediaobject></guiicon>. You should see the following:</para>
 
@@ -652,7 +652,7 @@
       <section xml:id="sec_3_1_2">
         <title>New Line</title>
 
-        <para>To create a new Line, <emphasis role="bold">select an existing Project</emphasis> and click on the button
+        <para>To create a new Line, <emphasis role="bold">select an existing Project</emphasis> and left-click on
 	<guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_criar_linha.png"
         /></imageobject></inlinemediaobject></guiicon>,  more details are given in 
 	 <emphasis role="bold"><link linkend="sec_2_1">Section 2.1</link></emphasis>. A new Line will appear in the selected Project.</para>
@@ -680,7 +680,7 @@
       <section xml:id="sec_3_1_3">
         <title>Deleting a Project or a Line</title>
 
-        <para>To remove a Line or Project select the Project or Line then click on the button
+        <para>To remove a Line or Project select the Project or Line then left-click on
          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_apagar_projeto.png"
         /></imageobject></inlinemediaobject></guiicon>.</para>
 
@@ -732,7 +732,7 @@
 	 dialog box select the Line then click on the icon
 	 <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_editar_propriedades_projeto.png"
          /></imageobject></inlinemediaobject></guiicon>, in the tool bar, or open the popup context menu and select the option 
-	<guilabel>Properties</guilabel>. In the <guilabel>Line's properties</guilabel> window, in the field <guilabel>Paths</guilabel>, write the path to the directory you want and then click on the button
+	<guilabel>Properties</guilabel>. In the <guilabel>Line's properties</guilabel> window, in the field <guilabel>Paths</guilabel>, write the path to the directory you want and then left-click on
          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_adicionar_caminho.png"
          /></imageobject></inlinemediaobject></guiicon>.</para>
 
@@ -826,7 +826,7 @@
             <para>Select the Line or Project you wish to save.</para>
           </step>
           <step>
-            <para>Click on the button
+            <para>left-click on
             <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_exportar_projeto.png"
             /></imageobject></inlinemediaobject></guiicon></para>
           </step>
@@ -837,7 +837,7 @@
                <filename class="extension">lnez</filename> for Lines.</para>
           </step>
           <step>
-            <para>Click on the button <guibutton>Save</guibutton>.</para>
+            <para>left-click on <guibutton>Save</guibutton>.</para>
           </step>
         </procedure>
       </section>
@@ -850,7 +850,7 @@
 
         <procedure>
           <step>
-            <para>Click on the button <guibutton>Edit comments</guibutton>, which is located just below 
+            <para>left-click on <guibutton>Edit comments</guibutton>, which is located just below 
               <guilabel>Details</guilabel>, in the <guilabel>Project's properties</guilabel> or
               <guilabel>Line's Properties</guilabel> dialog box.</para>
           </step>
@@ -905,7 +905,7 @@
         <title>View report</title>
 
 	<para>As explained in the above section, you can edit a report containing additional information about the Project or
-	 Line. To view the report click on the button View report, found at the bottom of the <guilabel>Details</guilabel> box,
+	 Line. To view the report left-click on View report, found at the bottom of the <guilabel>Details</guilabel> box,
 	 which is on the right side of the main window. </para>
 
         <para>After clicking on <guilabel>View report</guilabel>, a window will appear where you can:</para>
@@ -957,163 +957,155 @@
     <section xml:id="sec_3_2">
       <title>The <guilabel>Flows</guilabel> tab</title>
 
-      <para>A aba <guilabel>Fluxos</guilabel> dispõe de nove botões de comando, localizados logo abaixo da aba, mais
-	dois botões no campo Detalhes no canto inferior direito da tela. Por meio deles pode-se:</para>
+      <para>Just bellow the <guilabel>Flows</guilabel> tab there are nine buttons, plus two more buttons at the bottom of the
+	Details box. These buttons will allow you to:</para>
 
       <itemizedlist>
         <listitem>
 
           <para>
-            <link linkend="sec_3_2_1">Criar um novo fluxo</link>
+            <link linkend="sec_3_2_1">Create a new Flow</link>
           </para>
 
         </listitem>
         <listitem>
 
           <para>
-            <link linkend="copiar_fluxos_area_tranferencia">Copiar fluxos para a área de transferência</link>
+            <link linkend="copiar_fluxos_area_tranferencia">Copy Flows to the clipboard</link>
           </para>
 
         </listitem>
         <listitem>
 
           <para>
-            <link linkend="colar_fluxos_area_tranferencia">Colar fluxos da área de transferência</link>
+            <link linkend="colar_fluxos_area_tranferencia">Paste Flows from the clipboard</link>
           </para>
 
         </listitem>
         <listitem>
 
           <para>
-            <link linkend="sec_3_2_4">Apagar fluxos</link>
+            <link linkend="sec_3_2_4">Delete Flows</link>
           </para>
 
         </listitem>
         <listitem>
 
           <para>
-            <link linkend="editar_propriedades_fluxo">Editar as propriedades de um fluxo</link>
+            <link linkend="editar_propriedades_fluxo">Edit a Flow's properties</link>
           </para>
 
         </listitem>
         <listitem>
 
           <para>
-            <link linkend="sec_3_2_7">Salvar o estado de um fluxo</link>
+            <link linkend="sec_3_2_7">Save a Flow's state</link>
           </para>
 
         </listitem>
         <listitem>
 
           <para>
-            <link linkend="sec_3_2_8">Importar um fluxo</link>
+            <link linkend="sec_3_2_8">Import a Flow</link>
           </para>
 
         </listitem>
         <listitem>
 
           <para>
-            <link linkend="exportar_fluxo">Exportar um fluxo</link>
+            <link linkend="exportar_fluxo">Export a Flow</link>
           </para>
 
         </listitem>
         <listitem>
 
           <para>
-            <link linkend="executar_fluxo">Executar um fluxo</link>
+            <link linkend="executar_fluxo">Execute a Flow</link>
           </para>
 
         </listitem>
         <listitem>
 
           <para>
-            <link linkend="sec_3_2_11">Editar comentários</link>
+            <link linkend="sec_3_2_11">Edit comments</link>
           </para>
 
         </listitem>
         <listitem>
 
           <para>
-            <link linkend="visualizar_relatorio_fluxo">Visualizar relatório</link>
+            <link linkend="visualizar_relatorio_fluxo">View report</link>
           </para>
 
         </listitem>
       </itemizedlist>
       <tip>
 
-        <para>Experimente usar <emphasis role="bold">menus de contexto</emphasis> no lugar dos botões de comando. Para
-          isso, <emphasis role="bold">clique com o botão direito do mouse</emphasis> nos fluxos que você criar. Você vai
-          notar que diversos comandos podem ser acionados por este método. Em determinados casos, isso é
-          mais <emphasis role="bold">fácil e rápido</emphasis> do que usar os botões.</para>
+        <para>Instead of these buttons, try using the <emphasis role="bold">context menu</emphasis>. To do so, <emphasis role="bold"> click the right mouse button</emphasis> on a Flow you have created, notice that many features can be accessed through this method. For certain cases this is an <emphasis role="bold"> easier and simpler </emphasis> choice.</para>
 
       </tip>
 
       <section xml:id="sec_3_2_1">
         <title>Creating a new Flow</title>
 
-        <para>Para criar um novo fluxo, primeiro certifique-se de ter <emphasis role="bold">criado e selecionado uma
-        linha</emphasis>, na aba <guilabel>Projetos e Linhas</guilabel>. Feito isso, selecione a aba
-          <guilabel>Fluxos</guilabel> e clique no
-          botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_criar_fluxo.png"
-          /></imageobject></inlinemediaobject></guiicon>. Na janela que se abre (<guilabel>Propriedades para
-          fluxos</guilabel>), <xref linkend="editar_propriedades_fluxo"/> e clique em
-          <guibutton>OK</guibutton> (veja mais detalhes na <link linkend="criando_fluxos"></link>).</para>
+        <para>To create a new Flow first check that you have already <emphasis role="bold"> created and selected a Line
+	</emphasis> in the <guilabel>Projects e Lines</guilabel> tab. When you have done this, select the
+          <guilabel>Flows</guilabel> tab and left-click on
+	<guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_criar_fluxo.png"
+          /></imageobject></inlinemediaobject></guiicon>. In the dialog box that opens, <xref
+	 linkend="editar_propriedades_fluxo"/>, fill in the required information then click on <guibutton>OK</guibutton>. For
+	 more details see  <link linkend="criando_fluxos"></link>.</para>
 
-        <para><emphasis role="bold">Não há limitação</emphasis> para o número de fluxos na GêBR. Você pode criar quantos
-          fluxos quiser dentro de uma linha.</para>
+        <para>There is  <emphasis role="bold">No limit</emphasis> on the number of Flows you can have inside one Line or in
+	 total.</para>
 
-        <para>Depois de criados, os fluxos ficam <emphasis role="bold">visíveis no lado esquerdo da janela
-        principal</emphasis>, quando a aba <guilabel>Fluxos</guilabel> está selecionada. A caixa
-          <guilabel>Detalhes</guilabel>, localizada no lado direito da janela principal, exibe informações sobre o fluxo
-          selecionado.</para>
+        <para>After you have created a Flow it will be <emphasis role="bold">visible on the left side of the main window
+	</emphasis> when the <guilabel>Flows</guilabel> tab is selected. The <guilabel>Details</guilabel> box, found on the
+	 right side of the main window, shows information on the selected Flow .</para>
 
         <tip>
 
-          <para>Você pode <emphasis role="bold">mudar a posição</emphasis> de um fluxo na
-          lista <emphasis role="bold">arrastando-o com o mouse</emphasis> para a posição desejada.</para>
+          <para>You can alter  <emphasis role="bold">the position</emphasis> of the Flow in the list by 
+	<emphasis role="bold">dragging the Flow with the mouse</emphasis> to the desired position.</para>
 
         </tip>
         <tip>
-
-          <para>Observe a <emphasis role="bold">barra de informações</emphasis> na parte de cima da janela principal,
-            logo abaixo do menu <guimenu>Ações</guimenu>. Ela mostra a árvore completa do fluxo que estiver
-            selecionado.</para>
+          <para>Observe that the  <emphasis role="bold">information bar</emphasis> just bellow the menu 
+	<guimenu>Actions</guimenu> shows the complete Flow tree of the selected Flow.</para>
 
         </tip>
       </section>
 
       <section xml:id="copiar_fluxos_area_tranferencia">
-        <title>Copying Flows to the transfer area</title>
+        <title>Copying Flows to the clipboard</title>
 
-        <para>A área de transferência provê o recurso popularmente conhecido como <emphasis role="bold">copiar e
-          colar</emphasis>. Na GêBR, um fluxo (ou um conjunto de fluxos) pode ser copiado para a área de transferência
-          por meio do
-          botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_copiar_fluxo.png"
-          /></imageobject></inlinemediaobject></guiicon> ou, mais prático, pelo conhecido atalho
+        <para>The clipboard provides the popular set of tools known as <emphasis role="bold">copying and
+          pasting</emphasis>. In GêBR a Flow (or set of Flows) can be copied to the clipboard by using the button
+	 <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_copiar_fluxo.png"
+          /></imageobject></inlinemediaobject></guiicon> or by using the known shortcut 
           <keycombo><keycap>Ctrl</keycap> <keycap>C</keycap></keycombo>.</para>
 
         <tip>
 
-          <para>Você pode selecionar vários fluxos para serem copiados simultaneamente usando 
+          <para>You can select several Flows and then copy all of them to the clipboard by holding  
             <keycombo>
               <keycap>Ctrl</keycap>
-              <mousebutton>Clique com botão esquerdo do mouse</mousebutton>
-            </keycombo> ou 
+              <mousebutton>Left-click</mousebutton>
+            </keycombo> or 
             <keycombo>
               <keycap>Shift</keycap>
-              <mousebutton>Clique com botão esquerdo do mouse</mousebutton>
+              <mousebutton>Left-click</mousebutton>
             </keycombo>.</para>
 
         </tip>
       </section>
 
       <section xml:id="colar_fluxos_area_tranferencia">
-        <title>Pasting Flows from the transfer area</title>
+        <title>Pasting Flows from the clipboard</title>
 
-        <para>Depois de ter sido selecionado e copiado <xref linkend="copiar_fluxos_area_tranferencia"/>, um fluxo (ou um
-          conjunto de fluxos) pode ser colado por meio do
-          botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_colar_fluxo.png"
-          /></imageobject></inlinemediaobject></guiicon> ou, mais prático, pelo conhecido atalho
+        <para>After copying <xref linkend="copiar_fluxos_area_tranferencia"/>, a Flow (or a set of Flows) you can paste
+	the it by clicking on the button <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_colar_fluxo.png"
+          /></imageobject></inlinemediaobject></guiicon> or by simply using the shortcut
           <keycombo>
             <keycap>Ctrl</keycap>
             <keycap>V</keycap>
@@ -1121,10 +1113,10 @@
 
         <tip>
 
-          <para>O fluxo (ou conjunto de fluxos) copiado anteriormente para a área de transferência pode ser colado
-            em <emphasis role="bold">qualquer linha</emphasis> existente, e não só na linha de origem. Basta alternar
-            para a aba <guilabel>Projetos e Linhas</guilabel>, selecionar a linha desejada, voltar para a aba
-            <guilabel>Fluxos</guilabel> e colar o(s) fluxo(s).</para>
+          <para>Any Flow (or a set of Flows) that has been copied to the clipboard can be pasted to 
+	 <emphasis role="bold">any Line</emphasis>. Simply switch to the 
+	 <guilabel>Projects e Lines</guilabel> tab, select the desired Line, then go back to the 
+            <guilabel>Flows</guilabel> tab and paste the Flow(s).</para>
 
         </tip>
       </section>
@@ -1132,20 +1124,20 @@
       <section xml:id="sec_3_2_4">
         <title>Deleting Flows</title>
 
-        <para>Para excluir um fluxo (ou um conjunto de fluxos), selecione-o e clique no botão 
+        <para>To delete a Flow (or set of Flows), select them then click on
           <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_apagar_projeto.png"
           /></imageobject></inlinemediaobject></guiicon>.</para>
 
         <tip>
 
-          <para>Você pode selecionar vários fluxos para serem excluidos simultaneamente usando 
+          <para>You can select several Flows at once and then delete them by holding 
             <keycombo>
               <keycap>Ctrl</keycap>
-              <mousebutton>Clique com botão esquerdo do mouse</mousebutton>
-            </keycombo> ou 
+              <mousebutton>Left-click</mousebutton>
+            </keycombo> or 
             <keycombo>
               <keycap>Shift</keycap>
-              <mousebutton>Clique com botão esquerdo do mouse</mousebutton>
+              <mousebutton>Left-click</mousebutton>
             </keycombo>.</para>
 
         </tip>
@@ -1154,82 +1146,78 @@
       <section xml:id="editar_propriedades_fluxo">
         <title>Editing a Flow's properties</title>
 
-        <para>Para editar as propriedades de um fluxo, selecione-o e clique no
-        botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_editar_propriedades_projeto.png"
+        <para>To edit a Flow's properties you must first select the Flow, then left-click on <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_editar_propriedades_projeto.png"
         /></imageobject></inlinemediaobject></guiicon>.</para>
 
 
-        <para>Na janela <guilabel>Propriedades para Fluxo</guilabel> você pode editar os campos
-          <guilabel>Título, Descrição, Autor e Email</guilabel>.</para>
+        <para>In the <guilabel>Flows properties</guilabel> dialog box you can edit the fields
+          <guilabel>Title, Description, Author and Email</guilabel>.</para>
 
       </section>
 
       <section xml:id="sec_3_2_6">
         <title>Editing the Flow's parameter dictionary</title>
 
-        <para>Este recurso está documentado na seção <xref linkend="dicionario_de_parametros"/>.</para>
+        <para>This feature is documented in the section <xref linkend="dicionario_de_parametros"/>.</para>
 
       </section>
 
       <section xml:id="sec_3_2_7">
         <title>Saving a Flows state</title>
 
-        <para>Ao trabalhar com fluxos na GêBR, você encontrará diversas situações em que é interessante usar um fluxo
-          existente como base para a criação de novos fluxos. Por exemplo, você pode querer fazer experiências com um
-          fluxo sutilmente diferente de um outro que já existe, mas sem ter que descartar ou modificar o fluxo
-          original.</para>
+        <para>When working with GêBR you will encounter situations where it will be useful to use an existing Flow
+	as a basis to create new Flows. for example, you might want to experiment with Flows that are only slightly 
+	different from one another, however without having to discard or modify the original Flow.</para>
 
 
-        <para>Uma forma de fazer isso é copiar e colar o fluxo (veja
-          as seções <xref linkend="copiar_fluxos_area_tranferencia"/>
-          e <xref linkend="colar_fluxos_area_tranferencia"/>), guardando o fluxo original e
-          editando a cópia. Outra forma é salvar o estado atual do fluxo, para poder editá-lo e, quando desejar,
-          retornar ao estado inicial. Para <emphasis role="bold">salvar o estado</emphasis> de um fluxo:</para>
+        <para>One way of doing this is to copy and paste the Flow (see the section
+	 <xref linkend="copiar_fluxos_area_tranferencia"/>
+          and <xref linkend="colar_fluxos_area_tranferencia"/>), and the proceed to only edit the copies. Another way is to save 
+	the state of the original Flow, then edit it to your hearts desire, and when you wish you can return the Flow to its 
+	original state. To <emphasis role="bold">save the Flow's state</emphasis>:</para>
 
         <procedure>
           <step>
-            <para>Selecione o fluxo e clique no
-            botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_salvar_estado.png"
+            <para>Select the Flow and left-click on
+             <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_salvar_estado.png"
             /></imageobject></inlinemediaobject></guiicon>.</para>
           </step>
           <step>
-            <para>Se desejar, digite um comentário na janela <guilabel>Salvar estado do fluxo</guilabel>, para
-            identificar o estado salvo.</para>
+            <para>If you want you can write a comment on the state in the dialog box <guilabel>Save the Flow's state</guilabel>,
+	as to identify this saved state.</para>
           </step>
           <step>
-            <para>Clique em 
+            <para>Left-click on  
               <guibutton>OK</guibutton>.</para>
           </step>
         </procedure>
         <note>
 
-          <para><emphasis role="bold">Não há limitação</emphasis> para o número de estados. Você pode salvar quantos
-            estados quiser de um fluxo.</para>
+          <para>There is <emphasis role="bold">no limit</emphasis> on the number of states for each Flow.</para>
 
         </note>
 
-        <para>Para abrir a lista de estados salvos, clique no
-        botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_salvar_estado_lista.png"
-        /></imageobject></inlinemediaobject></guiicon>, à direita do
-        botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_salvar_estado.png"
-        /></imageobject></inlinemediaobject></guiicon>, e então selecione o estado para o qual quer retornar. Sempre que
-        você selecionar um estado salvo na lista, o diálogo <guilabel>Fazer backup do estado atual?</guilabel> será
-        exibido. Se clicar em <guibutton>Sim</guibutton>, a janela <guilabel>Salvar estado do fluxo</guilabel> se
-        abrirá, e você poderá salvar um novo estado. Se clicar em <guibutton>Não</guibutton>, a GêBR apenas reverterá
-        para o estado escolhido, sem salvar o atual.</para>
+        <para>To open the list of saved states left-click on
+         <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_salvar_estado_lista.png"
+        /></imageobject></inlinemediaobject></guiicon>, to the right of the button
+        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_salvar_estado.png"
+        /></imageobject></inlinemediaobject></guiicon>, then select the state you wish to recover. Whenever you select a 
+	saved state from the list, the dialog box <guilabel>Backup current state?</guilabel> will appear. If you click on
+	<guibutton>Yes</guibutton> the dialog box <guilabel>Save the Flow's state</guilabel> will appear, where you can save 
+	this new state. If you click on <guibutton>No</guibutton>, GêBR will simply revert to the chosen state without saving 
+	the current state.</para>
 
         <tip>
 
-          <para>Se você tem certeza de já ter salvo o estado atual, pode clicar com segurança
-          em <guibutton>Não</guibutton>, na janela <guilabel>Fazer backup do estado atual?</guilabel>. Isso evita encher
-          a lista com estados redundantes.</para>
+          <para>If you are sure you have saved your current state, we recommend that you click on <guibutton>No</guibutton>, 
+	in the dialog box <guilabel>Backup current state?</guilabel>, as to avoid a bloated state list.</para>
 
         </tip>
         <caution>
 
-          <para>A GêBR preserva continuamente a lista de estados salvos. Mesmo que você desligue o computador, a lista
-            será recuperada quando a GêBR for aberta novamente. Porém, se você <emphasis role="bold">deletar o
-            fluxo</emphasis>, os estados salvos serão <emphasis role="bold">perdidos imediatamente</emphasis>.</para>
+          <para>GêBR continuously saves the list of Flow states. Even if you turn off your computer this list will be recovered
+	when you open GêBR again. However, if you <emphasis role="bold">delete the Flow</emphasis> all the saved states will	
+	<emphasis role="bold">immediately disappear forever</emphasis>.</para>
 
         </caution>
       </section>
@@ -1544,7 +1532,7 @@
       </tip>
 
       <section xml:id="copiar_programa_para_area_de_transferencia">
-        <title>Copying programs to the transfer area</title>
+        <title>Copying programs to the clipboard</title>
 
         <para>Da mesma forma que se faz com fluxos (veja a seção <xref linkend="copiar_fluxos_area_tranferencia"/>), um programa (ou um conjunto de programas) pode ser copiado para a área de
           transferência por meio do
@@ -1571,7 +1559,7 @@
       </section>
 
       <section xml:id="sec_3_3_2">
-        <title>Pasting programs from the transfer area</title>
+        <title>Pasting programs from the clipboard</title>
 
         <para>Depois de ter sido selecionado e copiado <xref linkend="copiar_programa_para_area_de_transferencia"/>, um programa (ou
           um conjunto de programas) pode ser colado por meio do
