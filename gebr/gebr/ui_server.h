@@ -34,6 +34,7 @@ enum {
 	SERVER_AUTOCONNECT,
 	SERVER_NAME,
 	SERVER_POINTER,
+	SERVER_TAGS,
 	SERVER_N_COLUMN
 };
 
@@ -66,6 +67,16 @@ struct ui_server_select {
 };
 
 struct server *server_select_setup_ui(void);
+
+void ui_server_add_tag(struct server *server, const gchar * tag);
+
+void ui_server_remove_tag(struct server *server, const gchar * tag);
+
+gchar ** ui_server_list_tag(struct server *server);
+
+GList * ui_server_with_tag(struct ui_server_list *ui_server_list, const gchar * tag);
+
+
 
 G_END_DECLS
 #endif				//__UI_SERVER_H

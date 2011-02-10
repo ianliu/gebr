@@ -258,8 +258,6 @@ static void server_common_setup(struct ui_server_common *ui_server_common)
 	g_signal_connect (renderer, "edited", G_CALLBACK (on_tags_edited), NULL);
 	col = gtk_tree_view_column_new_with_attributes(_("Groups"), renderer, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
-	// TODO: Remove this define when the proper enumeration is set!
-	#define SERVER_TAGS SERVER_NAME
 	gtk_tree_view_column_add_attribute(col, renderer, "text", SERVER_TAGS);
 	gtk_tree_view_column_set_expand (col, TRUE);
 }
@@ -423,7 +421,9 @@ struct ui_server_list *server_list_setup_ui(void)
 							  GDK_TYPE_PIXBUF,	/* Status icon */
 							  G_TYPE_BOOLEAN,	/* Autoconnect */
 							  G_TYPE_STRING,	/* Server name */
-							  G_TYPE_POINTER	/* Server pointer */);
+							  G_TYPE_POINTER,	/* Server pointer */
+							  G_TYPE_STRING		/* Tag List    */
+							  );
 
 	dialog = gtk_dialog_new_with_buttons(_("Servers configuration"),
 					     GTK_WINDOW(gebr.window),
@@ -577,4 +577,79 @@ struct server *server_select_setup_ui(void)
 	g_free(ui_server_select);
 
  out:	return server;
+}
+
+void ui_server_add_tag(struct server *server, const gchar * tag){
+	gchar * server_tags;
+	gchar * appended_tag;
+	gchar ** tag_list = NULL;
+
+	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &server->iter, SERVER_TAGS, &server_tags -1);
+
+	tag_list = g_strsplit(server_tags, ",", 0);	
+	for (gint i = 0; tag_list[i] != NULL; ++i)
+		if (g_strcmp0(tag_list[i], tag) == 0)
+			return;
+
+	appended_tag = g_strdup_printf(", %s", tag);
+	g_strconcat(server_tags, appended_tag, NULL);
+	gtk_list_store_set(gebr.ui_server_list->common.store, &server->iter, SERVER_TAGS, server_tags, -1);
+
+	g_strfreev(tag_list);
+	g_free(appended_tag);
+}
+
+void ui_server_remove_tag(struct server *server, const gchar * tag){
+	gchar * server_tags;
+	gchar ** tag_list = NULL;
+	GString * new_list_tag = g_string_new(NULL);
+
+	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &server->iter, SERVER_TAGS, &server_tags -1);
+
+	tag_list = g_strsplit(server_tags, ",", 0);	
+	for (gint i = 0; tag_list[i] != NULL; ++i){
+		if (g_strcmp0(tag_list[i], tag) == 0)
+			continue;
+		else{
+			g_string_append_printf(new_list_tag, "%s, ", tag_list[i]);
+		}
+	}
+	gtk_list_store_set(gebr.ui_server_list->common.store, &server->iter, SERVER_TAGS, new_list_tag->str, -1);
+
+	g_strfreev(tag_list);
+	g_string_free(new_list_tag, TRUE);
+}
+
+gchar ** ui_server_list_tag(struct server *server){
+
+	gchar * tags;
+	gchar ** tag_list = NULL;
+
+	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &server->iter, SERVER_TAGS, &tags, -1);
+	tag_list = g_strsplit(tags, ",", 0);	
+
+	return tag_list;
+}
+
+GList * ui_server_with_tag(struct ui_server_list *ui_server_list, const gchar * tag){
+	GtkTreeIter iter;
+	GList * belong_to_tag = NULL;
+
+	gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(ui_server_list->common.store)) {
+		struct server *server;
+		gchar * server_tags;
+		gchar ** tag_list = NULL;
+
+		gtk_tree_model_get(GTK_TREE_MODEL(ui_server_list->common.store), &iter, SERVER_POINTER, &server, SERVER_TAGS, &server_tags -1);
+		tag_list = g_strsplit(server_tags, ",", 0);	
+		for (gint i = 0; tag_list[i] != NULL; ++i) {
+			if (g_strcmp0(tag_list[i], tag) == 0){
+				belong_to_tag = g_list_append(belong_to_tag, server);
+				break;
+			}
+		}
+		g_strfreev(tag_list);
+	}
+
+	return belong_to_tag;
 }
