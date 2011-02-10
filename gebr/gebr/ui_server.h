@@ -74,8 +74,9 @@ void ui_server_remove_tag(struct server *server, const gchar * tag);
 
 gchar ** ui_server_list_tag(struct server *server);
 
-GList * ui_server_with_tag(struct ui_server_list *ui_server_list, const gchar * tag);
+GList * ui_server_servers_with_tag(const gchar * tag);
 
+gboolean ui_server_has_tag(struct server *server, const gchar * tag);
 
 
 G_END_DECLS
