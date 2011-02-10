@@ -548,7 +548,7 @@
       <para>Some of the features that will be explained have already been used in the example 
 	<link linkend="sec_2"><emphasis role="bold">Section 2</emphasis></link>. Moreover, this example illustrates some
 	 of GêBR's fundamental concepts. So, if you have not done so already , we <emphasis role="bold">recommend that you
-	read that Section</emphasis> before moving on. Also, when ever necessary, we will refer to that example.</para>
+	read that Section</emphasis> before moving on. Also, whenever necessary, we will refer to that example.</para>
     </important>
 
     <section xml:id="sec_3_1">
@@ -818,27 +818,26 @@
       <section xml:id="exportar_um_projeto_ou_linha">
         <title>Exporting a Project or a Line</title>
 
-        <para>Embora a GêBR preserve continuamente todos os dados, às vezes é desejável manter os projetos e linhas em
-          arquivos (para compartilhamento ou cópia de segurança, por exemplo). Para exportar um projeto ou uma
-          linha:</para>
+        <para>Although GêBR continuously saves all data, some times it is desirable to have copies of your Project and Lines in
+	a file (for example, to share with others or to make backups). To export a Project or a Line:</para>
 
         <procedure>
           <step>
-            <para>Selecione o projeto ou a linha que deseja salvar.</para>
+            <para>Select the Line or Project you wish to save.</para>
           </step>
           <step>
-            <para>Clique no
-            botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_exportar_projeto.png"
+            <para>Click on the button
+            <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_exportar_projeto.png"
             /></imageobject></inlinemediaobject></guiicon></para>
           </step>
           <step>
-            <para>Na janela <guilabel>Escolha o nome do arquivo para salvar</guilabel>, selecione uma pasta e digite um
-              nome para o arquivo (a GêBR determina automaticamente a
-              extensão <filename class="extension">prjz</filename> para projeto
-              ou <filename class="extension">lnez</filename> para linha).</para>
+            <para>A dialog box will appear where you can <guilabel>choose the name of the file that will be saved</guilabel>;
+	 select a directory then type the file name, GêBR determines the extension automatically, 
+	<filename class="extension">prjz</filename> for Projects or
+               <filename class="extension">lnez</filename> for Lines.</para>
           </step>
           <step>
-            <para>Clique no botão <guibutton>Salvar</guibutton>.</para>
+            <para>Click on the button <guibutton>Save</guibutton>.</para>
           </step>
         </procedure>
       </section>
@@ -846,21 +845,19 @@
       <section xml:id="editar_comentarios">
         <title>Editing comments</title>
 
-        <para>Pode-se editar comentários no relatório, atribuindo informações adicionais sobre o projeto ou sobre a
-          linha. Para <emphasis role="bold">editar um comentário</emphasis>:</para>
+        <para>You can edit comments on the report to specify information about the Project or a Line. To 
+<emphasis role="bold">edit a comment</emphasis>:</para>
 
         <procedure>
           <step>
-            <para>Clique no botão <guibutton>Editar comentários</guibutton>, que fica no campo logo abaixo de
-              <guilabel>Detalhes</guilabel>, na janela <guilabel>Propriedades para projeto</guilabel> ou
-              <guilabel>Propriedades para linha</guilabel>.</para>
+            <para>Click on the button <guibutton>Edit comments</guibutton>, which is located just below 
+              <guilabel>Details</guilabel>, in the <guilabel>Project's properties</guilabel> or
+              <guilabel>Line's Properties</guilabel> dialog box.</para>
           </step>
           <step>
-            <para>Digite um texto no editor de textos que se abre. Quando terminar, feche o editor de textos e salve seu
-              comentário.</para>
+            <para>Fill in your comment in the text editor that appeared, when you have finished save your comment then close the editor.</para>
 
-            <para>Na janela que se abre, pode-se salvar, imprimir e pré-visualizar o(s) comentário(s) através dos
-              botões ou através do menu da janela.</para>
+            <para>In this editor you can save, print and pre-visualize your comment(s) by pressing one of the icons in the tool bar, or by using the editors menu.</para>
           </step>
         </procedure>
         <screenshot>
@@ -876,28 +873,26 @@
           </mediaobject>
         </screenshot>
         <tip>
-          <para>Em <menuchoice><guimenu>Ações</guimenu> <guimenuitem>Preferências</guimenuitem></menuchoice> (no canto
-            superior esquerdo da janela principal da GêBR), você pode determinar o editor de textos a ser usado para
-            editar relatórios na GêBR. O editor padrão é o <application>gedit</application>. Para usar outro, digite o
-            nome do editor em <guilabel>Editor HTML</guilabel>.</para>
+	<para>In <menuchoice><guimenu>Actions</guimenu> <guimenuitem>Preferences</guimenuitem></menuchoice> (the top left 
+	corner of GêBR's main window) you can determine the text editor that will be used to edit reports. The standard editor
+	is <application>gedit</application>. To use another editor, type the name of the editor in 
+	<guilabel>HTML Editor</guilabel>.</para>
         </tip>
         <note>
 
-          <para>Você pode criar <emphasis role="bold">apenas um comentário</emphasis> para cada projeto ou linha
-          existente.</para>
+          <para>You can only have <emphasis role="bold">one comment</emphasis> for each Project or Line.</para>
 
         </note>
 
         <para>
           <important>
 
-            <para>Para <emphasis role="bold">visualizar um relatório</emphasis> criado anteriormente:</para>
+            <para>To <emphasis role="bold">view a report</emphasis>:</para>
 
             <itemizedlist>
               <listitem>
 
-                <para>Selecione o projeto ou a linha e clique no botão <guibutton>Visualizar relatório</guibutton>, na
-                parte de baixo da caixa <guilabel>Detalhes</guilabel>, no lado direito da janela principal.</para>
+                <para>Select a Project or a Line and click the button <guibutton>View report</guibutton>, found at the bottom of 			the <guilabel>Details</guilabel> box, which is on the right side of the main window. </para>
 
               </listitem>
             </itemizedlist>
@@ -909,45 +904,42 @@
       <section xml:id="visualizar_relatorio">
         <title>View report</title>
 
-        <para>Como explorado na seção acima, pode-se criar e editar um relatório com informações adicionais sobre
-          projetos e linhas. Para visualizar o relatório que você criou, clique no botão Visualizar relatório, na parte
-          de baixo da caixa Detalhes, no lado direito da janela principal.</para>
+	<para>As explained in the above section, you can edit a report containing additional information about the Project or
+	 Line. To view the report click on the button View report, found at the bottom of the <guilabel>Details</guilabel> box,
+	 which is on the right side of the main window. </para>
 
-
-        <para>Na janela que se abre após o usuário clicar em <guilabel>Visualizar relatório</guilabel>, em Arquivo, é
-        possível:</para>
+        <para>After clicking on <guilabel>View report</guilabel>, a window will appear where you can:</para>
 
 	<procedure>
 
 	<step>
-        	<para> Salvar;</para>
+        	<para> Save;</para>
 	</step>
 
 	<step>
-        	<para> Imprimir o relatório.</para>
+        	<para>Print the report.</para>
 	</step>
 
 	</procedure>
 
 
-       <para> Em Opções, ainda na janela de visualização do relatório, é possível:</para>
+       <para>In the menu Options you can:</para>
 	
 	<procedure>
 	<step>
-        	<para> Incluir os comentários do usuário;</para>
+        	<para>Include user comments;</para>
 	</step>
 
 	<step>
-        	<para> Incluir relatório do fluxo;</para>
+        	<para>Include the Flow's report;</para>
 	</step>
 
 	<step>
-        	<para> Configurar as tabelas de parâmetros dos programas do fluxo;</para>
+        	<para>Configure the parameter table pertaining to the Flow's programs;</para>
 	</step>
 
 	<step>
-        	<para> Bem como escolher o estilo de apresentação do relatório gerado,com a possibilidade de inclusão de
-          outros estilos.</para>
+        	<para>Choose the presentation style of the report, as well as include other styles.</para>
 	</step>
 	</procedure>
 	<para><guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/janela_visualizar_relatorio.png"
@@ -955,9 +947,9 @@
             </para>
 	
    
-        <para>Na seção <xref linkend="visualizar_relatorio_fluxo"/>, é detalhada a
-          visualização de relatório para um fluxo, que se dá de forma muito semelhante à visualização de relatório da
-          linha, com a diferença que nesta é possível englobar o relatório do fluxo.</para>
+        <para> The Section <xref linkend="visualizar_relatorio_fluxo"/> explains in greater detail the View report tool 
+	for Flows, which is very similar to the Line's and Project's View report except that in this one you can add the Flow's
+	report.</para>
 
       </section>
     </section>
@@ -1663,7 +1655,7 @@
       </section>
 
       <section xml:id="sec_3_3_5">
-        <title>Changing a programs state</title>
+        <title>Changing a program's state</title>
 
         <para>Após realizar o procedimento da seção <xref linkend="editar_parametros_programa"/>, note que o programa passa a ser sinalizado
         por <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_configurado.png"
@@ -1711,7 +1703,7 @@
       </section>
 
       <section xml:id="editar_arquivos_entrada_saida_fluxo">
-        <title>Editar arquivos de entrada e saída do fluxo</title>
+        <title>Editing the Flow's input and output files</title>
 
         <para>No exemplo da seção <xref linkend="criando_fluxos"/> criamos um fluxo
           muito simples, que não precisava "ler" nenhum arquivo, e que gerava como resultado uma saída de tela. Porém,
@@ -1755,7 +1747,7 @@
       </section>
 
       <section xml:id="executar_fluxo">
-        <title>Executar um fluxo</title>
+        <title>Executing a Flow</title>
 
         <para>Para executar o fluxo atual, clique no botão 
           <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_executar_fluxo.png"
@@ -1793,8 +1785,8 @@
     </section>
 
     <section xml:id="controle_de_tarefas">
-      <title>A aba 
-	<guilabel>Controle de tarefas</guilabel></title>
+      <title>The 
+	<guilabel>Job controls</guilabel> tab</title>
 
       <para>Como vimos em <xref linkend="executar_fluxo"/>, a aba
 	<guilabel>Controle de tarefas</guilabel> é acionada toda vez que um fluxo é executado. Por meio dela
@@ -1839,7 +1831,7 @@
 
 
       <section xml:id="sec_3_4_1">
-        <title>Salvar informação da tarefa em arquivo</title>
+        <title>Saving a Job's information in a file</title>
 
         <para>Toda vez que um fluxo é executado, surge na caixa 
           <guilabel>Tarefas</guilabel>, dentro da aba 
@@ -1854,7 +1846,7 @@
       </section>
 
       <section xml:id="sec_3_4_2">
-        <title>Limpar tarefa</title>
+        <title>Clean a Job</title>
 
         <para>Para remover o log de uma tarefa, selecione-a na caixa 
           <guilabel>Tarefas</guilabel> e clique no
@@ -1870,7 +1862,7 @@
       </section>
 
       <section xml:id="sec_3_4_3">
-        <title>Pedir para o servidor cancelar a tarefa</title>
+        <title>Ask the server to cancel a Job</title>
 
         <para>Em geral, tarefas complexas levam algum tempo para serem executadas. Se por alguma razão for necessário
           forçar o término de uma tarefa antes que ela termine naturalmente, selecione a tarefa em execução (sinalizada
@@ -1889,10 +1881,10 @@
   </section>
 
   <section xml:id="sec_4">
-    <title>Recursos adicionais</title>
+    <title>Aditional features</title>
 
     <section xml:id="dicionario_de_parametros">
-      <title>O dicionário de parâmetros</title>
+      <title>The parameter dictionary</title>
 
       <para>O dicionário de parâmetros é uma novidade introduzida na <emphasis role="bold">versão 0.9.15 da
 	GêBR</emphasis>. É um recurso muito flexível, que pode ser utilizado de muitas formas diferentes e para diversos
@@ -2025,8 +2017,7 @@
     </section>
 
     <section xml:id="menu">
-      <title>O menu 
-	<guimenu>Ações</guimenu></title>
+      <title>The <guimenu>Action</guimenu> menu</title>
 
       <para>A partir do menu 
 	<guimenu>Ações</guimenu> você acessa as janelas 
@@ -2036,7 +2027,7 @@
 
 
       <section>
-        <title>Preferências</title>
+        <title>Preferences</title>
 
         <para>As definições que você faz na janela 
           <guimenuitem>Preferências</guimenuitem> são adotadas como padrão pela GêBR. Vejamos os detalhes:</para>
@@ -2085,7 +2076,7 @@
       </section>
 
       <section>
-        <title>Servidores</title>
+        <title>Servers</title>
 
         <para>Use a janela <guilabel>Configuração de servidores</guilabel> para configurar o servidor local e os
           servidores remotos que você adicionar.</para>
@@ -2126,7 +2117,7 @@
     </section>
 
     <section xml:id="sec_4_3">
-      <title>O log de execução</title>
+      <title>The execution log</title>
 
       <para>A GêBR grava grande parte das ações executadas pelo usuário, bem como os resultados dessas ações, no
 	chamado <emphasis>log de execução</emphasis>. Este log é mostrado na parte inferior da janela principal. Pode
