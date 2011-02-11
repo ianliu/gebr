@@ -670,7 +670,7 @@ void ui_server_set_tags (struct server *server, const gchar *str)
 	// Sort the array so we can remove duplicates
 	g_ptr_array_sort (array, (GCompareFunc) sort);
 
-	for (int i = 0; i < array->len - 1; i++) {
+	for (int i = 0; i < (gint)array->len - 1; i++) {
 		const gchar *tag1 = g_ptr_array_index (array, i);
 		const gchar *tag2 = g_ptr_array_index (array, i+1);
 		if (!g_str_equal (tag1, tag2))
