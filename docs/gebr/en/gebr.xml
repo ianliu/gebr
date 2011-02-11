@@ -240,8 +240,8 @@
         </step>
         <step>
           <para>You can also give a brief <emphasis>Description</emphasis> of the Project, the
-            <emphasis>Author</emphasis> and an <emphasis>e-mail</emphasis> for contact. You can also add paths to directorys that are relevant for this Line, this will be explained in greater detail in <link linkend="sec_3_1_6"><emphasis role="bold">Section
-            3.1.6</emphasis></link></para>
+            <emphasis>Author</emphasis> and an <emphasis>e-mail</emphasis> for contact. You can also add paths to directorys that are relevant for this
+            Line, this will be explained in greater detail in <xref linkend="editar_caminhos_preferenciais_da_linha"/>.</para>
         </step>
       </procedure>
       <figure>
@@ -502,7 +502,7 @@
 
         <para>
           <guilabel>
-            <link linkend="sec_3_4">Job Control</link>
+            <link linkend="controle_de_tarefas">Job Control</link>
           </guilabel>
         </para>
 
@@ -530,14 +530,14 @@
         <listitem>
 
           <para>
-            <link linkend="sec_3_1_1">Create a New Project</link>
+            <link linkend="criar_novo_projeto">Create a New Project</link>
           </para>
 
         </listitem>
         <listitem>
 
           <para>
-            <link linkend="sec_3_1_2">Create a New Line</link>
+            <link linkend="criar_nova_linha">Create a New Line</link>
           </para>
 
         </listitem>
@@ -572,21 +572,21 @@
         <listitem>
 
           <para>
-            <link linkend="sec_3_1_8">Export a Project or a Line</link>
+            <link linkend="exportar_um_projeto_ou_linha">Export a Project or a Line</link>
           </para>
 
         </listitem>
         <listitem>
 
           <para>
-            <link linkend="sec_3_1_9">Edit comments</link>
+            <link linkend="editar_comentarios">Edit comments</link>
           </para>
 
         </listitem>
         <listitem>
 
           <para>
-            <link linkend="sec_3_1_10">View Report</link>
+            <link linkend="visualizar_relatorio">View Report</link>
           </para>
 
         </listitem>
