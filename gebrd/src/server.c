@@ -336,17 +336,25 @@ gboolean server_parse_client_messages(struct client *client)
 				g_string_printf(queue, "j%s", job->jid->str);
 				g_string_assign(job->queue, queue->str);
 			}
-			/* send job message (job is created -promoted from waiting server response- at the client) */
-			job_send_clients_job_notify(job);
-			/* run or queue */
 			gebrd_queues_add_job_to(queue->str, job);
+
 			if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_REGULAR) {
+				/* send job message (job is created -promoted from waiting server response- at the client) */
+				job_send_clients_job_notify(job);
+				/* run or queue */
 				if (!gebrd_queues_is_queue_busy(queue->str)) {
 					gebrd_queues_set_queue_busy(queue->str, TRUE);
 					gebrd_queues_step_queue(queue->str); //will call job_run_flow for immediately jobs
 				}
-			} else //moab
+			} else {//moab
+				/* ask moab to run */
 				job_run_flow(job);
+				/* send job message (job is created -promoted from waiting server response- at the client)
+				 * at moab we must run the process before sending the JOB message, because at
+				 * job_run_flow moab_jid is acquired.
+				 */
+				job_send_clients_job_notify(job);
+			}
 
 			/* frees */
 			gebr_comm_protocol_split_free(arguments);

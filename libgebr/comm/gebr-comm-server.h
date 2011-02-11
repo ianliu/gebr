@@ -72,6 +72,7 @@ struct gebr_comm_server {
 	GebrCommProcess *x11_forward_unix;
 
 	enum gebr_comm_server_state {
+		SERVER_STATE_UNKNOWN,
 		SERVER_STATE_DISCONNECTED,
 		SERVER_STATE_RUN,
 		SERVER_STATE_OPEN_TUNNEL,
@@ -79,20 +80,25 @@ struct gebr_comm_server {
 		SERVER_STATE_CONNECTED,
 	} state;
 	enum gebr_comm_server_error {
+		SERVER_ERROR_UNKNOWN,
 		SERVER_ERROR_NONE,
 		SERVER_ERROR_CONNECT,
 		SERVER_ERROR_SERVER,
 		SERVER_ERROR_SSH,
 	} error;
+	GString *last_error;
+
+	/* virtual methods */
 	const struct gebr_comm_server_ops {
 		void (*log_message) (enum gebr_log_message_type type, const gchar * message);
+		void (*state_changed) (struct gebr_comm_server *server, gpointer user_data);
 		GString *(*ssh_login) (const gchar * title, const gchar * message);
 		gboolean(*ssh_question) (const gchar * title, const gchar * message);
-		void (*parse_messages) (struct gebr_comm_server * gebr_comm_server, gpointer user_data);
+		void (*parse_messages) (struct gebr_comm_server * server, gpointer user_data);
 	} *ops;
 	gpointer user_data;
 
-	/* temporary process for operations */
+	/* temporary process */
 	struct gebr_comm_server_process {
 		enum gebr_comm_server_process_use {
 			COMM_SERVER_PROCESS_NONE,

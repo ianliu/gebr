@@ -444,14 +444,15 @@ static void job_update_text_buffer(GtkTreeIter iter, struct job *job)
 	GString *info = g_string_new("");
 	GtkTextIter end_iter;
 
-	/* who and where */
+	/* who and where, same at job_update_label */
 	GString *queue_info = g_string_new(NULL); 
-	if (job->queue->str[0] == 'j')
+	const gchar *queue = job_get_queue_name(job);
+	if (queue == NULL)
 		g_string_assign(queue_info, _("unqueued"));
-	else if (job->queue->str[0] == 'q')
-		g_string_printf(queue_info, "on %s", job->queue->str+1);
-	g_string_append_printf(info, _("Job submitted at %s (%s) by %s.\n"),
-			       job->server->comm->protocol->hostname->str, queue_info->str, job->hostname->str);
+	else
+		g_string_printf(queue_info, "on %s", queue);
+	g_string_append_printf(info, _("Job submitted at '%s' ('%s') by %s.\n"),
+			       server_get_name(job->server), queue_info->str, job->hostname->str);
 	g_string_free(queue_info, TRUE);
 
 	if (job->waiting_server_details) {

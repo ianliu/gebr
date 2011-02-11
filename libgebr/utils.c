@@ -36,19 +36,15 @@
 void gebr_g_string_replace(GString * string, const gchar * oldtext, const gchar * newtext)
 {
 	gchar *position;
+	gssize oldtext_len = strlen(oldtext);
 
 	position = string->str;
-	while ((position = strstr(position, oldtext)) != NULL) {
-		gssize index;
+	while ((position = strstr(string->str, oldtext)) != NULL) {
+		gssize index = (position - string->str) / sizeof(gchar);
+		g_string_erase(string, index, oldtext_len);
 
-		index = (position - string->str) / sizeof(gchar);
-		g_string_erase(string, index, strlen(oldtext));
-
-		if (newtext != NULL) {
+		if (newtext != NULL)
 			g_string_insert(string, index, newtext);
-			position = string->str + strlen(newtext);
-		} else
-			position = string->str + index + 1;
 	}
 }
 

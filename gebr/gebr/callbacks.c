@@ -20,6 +20,7 @@
 
 #include <glib/gi18n.h>
 #include <libgebr/gui/gui.h>
+#include <locale.h>
 
 #include "callbacks.h"
 #include "../defines.h"
@@ -429,11 +430,21 @@ void on_configure_servers_activate(void)
 
 void on_help_contents_activate(void)
 {
-	GString *html_path = g_string_new("");
-	g_string_printf(html_path, "file://" GEBR_USERDOC_DIR "/pt_BR/index.html");
-	if (!gebr_gui_show_uri(html_path->str))
-		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Could not load help. Certify it was installed correctly."));
-	g_string_free(html_path, TRUE);
+	gchar *loc;
+	const gchar *path;
+
+	loc = setlocale(LC_MESSAGES, NULL);
+	g_message ("%s", loc);
+	g_message ("%s", GEBR_USERDOC_DIR);
+	if (g_str_has_prefix (loc, "pt"))
+		path = "file://" GEBR_USERDOC_DIR "/pt_BR/html/index.html";
+	else
+		path = "file://" GEBR_USERDOC_DIR "/en/html/index.html";
+
+	if (!gebr_gui_show_uri (path))
+		gebr_message (GEBR_LOG_ERROR, TRUE, TRUE,
+			      _("Could not load help. "
+				"Certify it was installed correctly."));
 }
 
 void on_help_about_activate(void)

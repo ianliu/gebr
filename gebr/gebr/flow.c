@@ -77,10 +77,16 @@ void flow_new (void)
 	line_flow = gebr_geoxml_line_append_flow(gebr.line, gebr_geoxml_document_get_filename(GEBR_GEOXML_DOC(flow)));
 	iter = line_append_flow_iter(flow, line_flow);
 
+
 	document_save(GEBR_GEOXML_DOC(gebr.line), TRUE, FALSE);
 	document_save(GEBR_GEOXML_DOC(flow), TRUE, TRUE);
 
 	flow_browse_select_iter(&iter);
+
+	gebr_geoxml_flow_server_io_set_input(gebr.flow_server, "");
+	gebr_geoxml_flow_server_io_set_output(gebr.flow_server, "");
+	gebr_geoxml_flow_server_io_set_error(gebr.flow_server, "");
+	flow_edition_set_io();
 
 	gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("New flow added to line '%s'."), line_title);
 	document_properties_setup_ui(GEBR_GEOXML_DOCUMENT(gebr.flow), on_properties_response);
