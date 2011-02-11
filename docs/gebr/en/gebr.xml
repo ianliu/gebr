@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook V5.0//EN"
-	  "http://www.oasis-open.org/docbook/xml/5.0b5/dtd/docbook.dtd">
-<article version="5.0" xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+<article lang="en" version="5.0" xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
   <info>
     <title>GêBR - User Guide</title>
   </info>
@@ -70,66 +68,52 @@
         </listitem>
         <listitem>
 
-          <para>Bráulio Oliveira - <email>brauliobo@gmail.com</email></para>
+          <para>Bráulio Oliveira - <email>brauliobo@gebrproject.com</email></para>
+
+        </listitem>
+        <listitem>
+	  
+	<para>Davi Clemente - <email>davi.clemente@gebrproject.com</email></para>
 
         </listitem>
         <listitem>
 
-          <para>Ian Liu - <email>ian.liu88@gmail.com</email></para>
+          <para>Fábio Azevedo - <email>fabioaz@gebrproject.com</email></para>
 
         </listitem>
         <listitem>
 
-          <para>Davi Clemente 
-            <email>davi.clemente@gebrproject.com</email></para>
+          <para>Fabrício Matheus Gonçalves - <email>fmatheus@gebrproject.com</email></para>
 
         </listitem>
         <listitem>
 
-          <para>Fábio Azevedo 
-            <email>fabioaz@gebrproject.com</email></para>
+          <para>Gabriel Sobral - <email>sobral@gebrproject.com</email></para>
 
         </listitem>
         <listitem>
 
-          <para>Fabrício Matheus Gonçalves 
-            <email>fmatheus@gebrproject.com</email></para>
+	 <para>Ian Liu Rodrigues- <email>ian.liu@gebrproject.com</email></para>
+          
+        </listitem>
+        <listitem>
+
+          <para>Jorge Pizzolatto - <email>jorge.pzt@gebrproject.com</email></para>
 
         </listitem>
         <listitem>
 
-          <para>Gabriel Sobral 
-            <email>sobral@gebrproject.com</email></para>
+          <para>Priscila Moraes - <email>pris.moraess@gebrproject.com</email></para>
 
         </listitem>
         <listitem>
 
-          <para>Jorge Pizzolatto 
-            <email>jorge.pzt@gebrproject.com</email></para>
+          <para>Renan Giarola - <email>renangiarola@gebrproject.com</email></para>
 
         </listitem>
         <listitem>
 
-          <para>Luis Alberto D'Afonseca 
-            <email>luis.dafonseca@gebrproject.com</email></para>
-
-        </listitem>
-        <listitem>
-
-          <para>Priscila Moraes 
-            <email>pris.moraess@gebrproject.com</email></para>
-
-        </listitem>
-        <listitem>
-
-          <para>Renan Giarola 
-            <email>renangiarola@gebrproject.com</email></para>
-
-        </listitem>
-        <listitem>
-
-          <para>Rodrigo Morelatto 
-            <email>morelatto@gebrproject.com</email></para>
+          <para>Rodrigo Morelatto - <email>morelatto@gebrproject.com</email></para>
 
         </listitem>
       </itemizedlist>
@@ -149,6 +133,11 @@
           <para>Fernando Roxo - <email>roxo@roxo.org</email></para>
 
         </listitem>
+	<listitem>
+
+          <para>Luis Alberto D'Afonseca - <email>luis.dafonseca@gebrproject.com</email></para>
+
+        </listitem>
         <listitem>
 
           <para>Rodrigo Portugal - <email>rosoport@gmail.com</email></para>
@@ -161,7 +150,7 @@
     </section>
   </section>
 
-  <section xml:id="sec_2">
+  <section xml:id="projetos_linhas_fluxo_visao_geral">
     <title>Projects, Lines and Flows: an overview</title>
 
     <para>In GêBR each <emphasis role="bold">processing Flow</emphasis> is organized into larger units called 
@@ -183,7 +172,7 @@
     <para>Before you can organize and execute a Flow, you must first <emphasis role="bold">Create a Project and a Line</emphasis>.</para>
 
 
-    <section xml:id="sec_2_1">
+    <section xml:id="editar_projetos_e_linhas">
       <title>Creating Projects and Lines</title>
 
       <para>In order to create a <emphasis role="bold">New Project</emphasis>:</para>
@@ -209,31 +198,29 @@
           <para>Click <emphasis role="bold">OK</emphasis>.</para>
         </step>
       </procedure>
-      <screenshot>
-        <info>
-          <title />
-        </info>
-        <mediaobject>
+
+
+      <figure xml:id="janela_properties_project">
+	<mediaobject>
+	<caption>Janela Propriedades do projeto em que se pode editar informações como título, descrição, autor e email.</caption>
           <imageobject>
             <imagedata fileref="../images/janela_properties_project.png" />
           </imageobject>
         </mediaobject>
-      </screenshot>
+      </figure>
 
       <para>The Project title should have appeared on the left hand side of GêBR's main window. Information about the Project is shown in the 
 	<guilabel>Details</guilabel> box on the right hand side of GêBR's main window.
 	Notice that some of this information comes from what you inserted in the <guilabel>'New Project' properties</guilabel> dialog box when you created the Project. Details such as creation date and modified date, the date of the last change, are automatically generated by GêBR.</para>
 
-      <screenshot>
-        <info>
-          <title />
-        </info>
-        <mediaobject>
+      <figure >
+	<mediaobject>
+	<caption>Aba de Fluxos da GêBR. Eemplo em que a linha possui apenas um fluxo. À esquerda vemos a lista de fluxo, enquanto que à direita vemos os detalhes do fluxo selecionado.</caption>
           <imageobject>
             <imagedata fileref="../images/janela_principal_1.png" />
           </imageobject>
         </mediaobject>
-      </screenshot>
+      </figure>
 
       <para>Now that you have created a Project, you can create <emphasis role="bold">Lines</emphasis> inside this Project. To add a <emphasis role="bold">New Line</emphasis>:</para>
 
@@ -257,29 +244,25 @@
             3.1.6</emphasis></link></para>
         </step>
       </procedure>
-      <screenshot>
-        <info>
-          <title />
-        </info>
-        <mediaobject>
+      <figure>
+	<mediaobject>
+	<caption>Janela de Propriedades da linha; além de adicionar informações sobre a linha como descrição, autor e email, é possível adicionar caminhos preferenciais no campo caminhos.</caption>	
           <imageobject>
             <imagedata fileref="../images/janela_properties_line.png" />
           </imageobject>
         </mediaobject>
-      </screenshot>
+      </figure>
 
       <para>After creating your first Line your GêBR window should look something like the window below. Notice that when a Line is selected the <guilabel>Details</guilabel> box, on the right of the main window, will show information about this selected Line.</para>
 
-      <screenshot>
-        <info>
-          <title />
-        </info>
+      <figure>	  
         <mediaobject>
+	<caption>Na aba Projetos e linhas, teremos à direita da janela em Detalhes, as informações da linha selecionada.</caption>
           <imageobject>
             <imagedata fileref="../images/janela_principal_2.png" />
           </imageobject>
         </mediaobject>
-      </screenshot>
+      </figure>
       <tip>
 
         <para>At the top left corner, <menuchoice> <guimenu>Actions</guimenu> <guimenuitem>Preferences</guimenuitem> </menuchoice> then fill in your details in the fields <guilabel>User name</guilabel> and <guilabel>Email</guilabel>. New Projects and Lines by default will use this information.</para>
@@ -290,7 +273,7 @@
 
     </section>
 
-    <section xml:id="sec_2_2">
+    <section xml:id="criando_fluxos">
       <title>Creating Flows</title>
 
       <para>In GêBR a <emphasis role="bold">Flow</emphasis> is a <emphasis role="bold"> sequence of operations</emphasis> selected by the user. these operations, also called the Flow's <emphasis role="bold">programs</emphasis>, are organized into the following <emphasis role="bold">categories</emphasis> acording to their purpose:</para>
@@ -348,11 +331,6 @@
         </listitem>
         <listitem>
 
-          <para>Shell tools</para>
-
-        </listitem>
-        <listitem>
-
           <para>Simulation and Model Building</para>
 
         </listitem>
@@ -369,18 +347,18 @@
       <procedure>
         <step>
           <para>In the tab <guilabel>Projects and Lines</guilabel>, check that you have selected <emphasis>My
-	First Line</emphasis>, the Line you created before.</para>
+          First Line</emphasis>, the Line you created before.</para>
         </step>
         <step>
           <para>Now click on the tab <guilabel>Flows</guilabel>, then left-click on
-	 <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_criar_fluxo.png"
-            /></imageobject></inlinemediaobject></guiicon></para>
+          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_criar_fluxo.png"
+          /></imageobject></inlinemediaobject></guiicon></para>
         </step>
         <step>
           <para>The dialog box <guilabel>Flow Properties</guilabel> will appear, fill in a <emphasis>title</emphasis> 	
-	for this Flow, for example, <userinput>My First Flow</userinput>). You can also give a brief  	
-	<emphasis>description</emphasis> of the Flow, the <emphasis>author</emphasis> and an <emphasis>e-mail</emphasis>
-          for contact. If you are done filling in this Flows properties click on <guibutton>OK</guibutton>.</para>
+            for this Flow, for example, <userinput>My First Flow</userinput>). You can also give a brief  	
+            <emphasis>description</emphasis> of the Flow, the <emphasis>author</emphasis> and an <emphasis>e-mail</emphasis>
+            for contact. If you are done filling in this Flows properties click on <guibutton>OK</guibutton>.</para>
         </step>
         <step>
           <para>Now select the tab <guilabel>Flow Editor</guilabel>, look for the category
@@ -389,16 +367,14 @@
             <guimenuitem>SU Simple X Image</guimenuitem> now appears in the box <guilabel>Flow sequence</guilabel>, on
  	the left side of the window. Your window should now look something like this one:</para>
 
-          <screenshot>
-            <info>
-              <title />
-            </info>
+          <figure>
             <mediaobject>
+		<caption>Na aba Edição de fluxo no campo direito da janela chamado menus, acrescenta-se um programa desejado que ficará visível para configuração no campo esquerdo da janela chamado Sequência de Fluxo.</caption>
               <imageobject>
                 <imagedata fileref="../images/janela_flow_edition_1.png" />
               </imageobject>
             </mediaobject>
-          </screenshot>
+          </figure>
         </step>
         <step>
           <para> Scroll down the <guilabel>Flows</guilabel> window until you find the category
@@ -413,42 +389,36 @@
           <para>For this example to work we will need 
             <guimenuitem>SU Plane</guimenuitem> to come before 
             <guimenuitem>SU Simple X Image</guimenuitem> in the Flow sequence. To accomplish this just
-	<emphasis role="bold">drag the program</emphasis> to the desired position, as is shown in the following
-	 window:</para>
+            <emphasis role="bold">drag the program</emphasis> to the desired position, as is shown in the following
+            window:</para>
 
-          <screenshot>
-            <info>
-              <title />
-            </info>
+          <figure>
             <mediaobject>
+		<caption>Na aba Edição de Fluxo, no canto esquerdo da janela, pode-se alterar a ordem dos programas como no exemplo.</caption>
               <imageobject>
                 <imagedata fileref="../images/janela_flow_edition_2.png" />
               </imageobject>
             </mediaobject>
-          </screenshot>
+          </figure>
         </step>
         <step>
           <para>With the program <guimenuitem>SU Plane</guimenuitem> on the top of your
             <guilabel>Flow sequence</guilabel> list, press the right click on <guimenuitem>SU Plane</guimenuitem>. From	
-	    the menu that has appeared select the option <guilabel>Configured</guilabel>. This configured state, represented by
-	 <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_configurado.png"
+            the menu that has appeared select the option <guilabel>Configured</guilabel>. This configured state, represented by
+            <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_configurado.png"
             /></imageobject></inlinemediaobject></guiicon>, means the program is 
-        ready to be executed, contrary to the state represented by <guiicon><inlinemediaobject><imageobject><imagedata
-	 fileref="../images/icone_nao_configurado.png"/></imageobject></inlinemediaobject></guiicon>. Then do the same
-	 for <guimenuitem>SU Simple X Image</guimenuitem>.</para>
+            ready to be executed, contrary to the state represented by <guiicon><inlinemediaobject><imageobject><imagedata
+            fileref="../images/icone_nao_configurado.png"/></imageobject></inlinemediaobject></guiicon>. Then do the same
+            for <guimenuitem>SU Simple X Image</guimenuitem>.</para>
 
-          <screenshot>
-	    <!--
-            <info>
-              <title />
-            </info>
-	    -->
+          <figure>
             <mediaobject>
+		<caption>Na aba Edição de Fluxo, configura-se os programas do fluxo em questão como não configurado, desabilitado e configurado através do menu de contexto.</caption>
               <imageobject>
                 <imagedata fileref="../images/janela_flow_edition_3.png" />
               </imageobject>
             </mediaobject>
-          </screenshot>
+          </figure>
           <tip>
 
             <para>If you want to change all programs, or a few, to the configured state simultaneously, select them by
@@ -484,16 +454,14 @@
 	<guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_executar_fluxo.png"
 	/></imageobject></inlinemediaobject></guiicon>. You should see the following:</para>
 
-      <screenshot>
-        <info>
-          <title />
-        </info>
+      <figure>
         <mediaobject>
+	<caption>Exemplo de fluxo em execução.</caption>
           <imageobject>
             <imagedata fileref="../images/janela_ximage.png" />
           </imageobject>
         </mediaobject>
-      </screenshot>
+      </figure>
     </section>
   </section>
 
@@ -546,7 +514,7 @@
     <important>
 
       <para>Some of the features that will be explained have already been used in the example 
-	<link linkend="sec_2"><emphasis role="bold">Section 2</emphasis></link>. Moreover, this example illustrates some
+	<xref linkend="projetos_linhas_fluxo_visao_geral"/>. Moreover, this example illustrates some
 	 of GêBR's fundamental concepts. So, if you have not done so already , we <emphasis role="bold">recommend that you
 	read that Section</emphasis> before moving on. Also, whenever necessary, we will refer to that example.</para>
     </important>
@@ -632,13 +600,13 @@
 
       </tip>
 
-      <section xml:id="sec_3_1_1">
+      <section xml:id="criar_novo_projeto">
         <title>New Project</title>
 
         <para>To create a new Project click on the
         button <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_criar_projeto.png"
         /></imageobject></inlinemediaobject></guiicon>, more details are given in 
-          <link linkend="sec_2_1"><emphasis role="bold">Section 2.1</emphasis></link>.</para>
+          <xref linkend="editar_projetos_e_linhas"/>.</para>
 
 
         <para>There is <emphasis role="bold">no limitation</emphasis> on the number of Projects in GêBR. You can
@@ -649,17 +617,18 @@
 
       </section>
 
-      <section xml:id="sec_3_1_2">
+      <section xml:id="criar_nova_linha">
         <title>New Line</title>
 
         <para>To create a new Line, <emphasis role="bold">select an existing Project</emphasis> and left-click on
-	<guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_criar_linha.png"
+        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_criar_linha.png"
         /></imageobject></inlinemediaobject></guiicon>,  more details are given in 
-	 <emphasis role="bold"><link linkend="sec_2_1">Section 2.1</link></emphasis>. A new Line will appear in the selected Project.</para>
+        <xref linkend="editar_projetos_e_linhas"/>.. A new Line will appear
+        in the selected Project.</para>
 
 
        <para> There is <emphasis role="bold">no limitation</emphasis> on the number of Lines in GêBR. You can
-	have as many Lines in a Project as you desire.</para>
+         have as many Lines in a Project as you desire.</para>
 
 
         <para>Lines that you have created will be <emphasis role="bold">visible on the left side of GêBR's main window
@@ -667,13 +636,12 @@
           <guilabel>Details</guilabel> box, localized on the right side of the main window, exhibits information on the selected Line.</para>
         <tip>
           <para>In GêBR you can <emphasis role="bold">collapse</emphasis> or <emphasis role="bold">expand</emphasis> a 
-	Project. When collapsed <emphasis role="bold">the Projects Lines are hidden</emphasis>, when expanded 
-	<emphasis role="bold">the Projects Lines are visible</emphasis>. To collapse click on the icon
+          Project. When collapsed <emphasis role="bold">the Projects Lines are hidden</emphasis>, when expanded 
+          <emphasis role="bold">the Projects Lines are visible</emphasis>. To collapse click on the icon
           <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_expandido.png"
           /></imageobject></inlinemediaobject></guiicon> immediately to the left of the Projects name. To expand,
-	 click on the icon <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_colapsado.png"
+          click on the icon <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_colapsado.png"
           /></imageobject></inlinemediaobject></guiicon>.</para>
-
         </tip>
       </section>
 
@@ -687,7 +655,7 @@
         <note>
 
           <para>To delete a Project you must first delete all of its Lines. A Project can only be deleted if it is
-	Empty.</para>
+            Empty.</para>
 
         </note>
         <caution>
@@ -706,11 +674,11 @@
 
 
         <para>In the <guilabel>Project properties</guilabel> or <guilabel>Line properties</guilabel> dialog box 
-	 you can edit the following fields
-          <guilabel>Title</guilabel>, 
-          <guilabel>Description</guilabel>, 
-          <guilabel>Author</guilabel> and 
-          <guilabel>Email</guilabel>. A Line's properties also has the option of adding a <guilabel>Path</guilabel>, 
+        you can edit the following fields
+        <guilabel>Title</guilabel>, 
+        <guilabel>Description</guilabel>, 
+        <guilabel>Author</guilabel> and 
+        <guilabel>Email</guilabel>. A Line's properties also has the option of adding a <guilabel>Path</guilabel>, 
 	which will be explained in <xref linkend="editar_caminhos_preferenciais_da_linha"/>.</para>
 
       </section>
@@ -726,13 +694,14 @@
         <title>Editing the Line's preferred paths</title>
 
         <para>The Section <xref linkend="editar_arquivos_entrada_saida_fluxo"/> will show how a Flow can be associated to 
-	some data files, this association is simpler if we add preferred paths to the Line.</para>
+          some data files, this association is simpler if we add preferred paths to 
+          the Line.</para>
 
         <para>The Line's preferred paths are defined in the <guilabel>Line's properties</guilabel> dialog box. To open this
-	 dialog box select the Line then click on the icon
-	 <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_editar_propriedades_projeto.png"
+         dialog box select the Line then click on the icon
+         <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_editar_propriedades_projeto.png"
          /></imageobject></inlinemediaobject></guiicon>, in the tool bar, or open the popup context menu and select the option 
-	<guilabel>Properties</guilabel>. In the <guilabel>Line's properties</guilabel> window, in the field <guilabel>Paths</guilabel>, write the path to the directory you want and then left-click on
+         <guilabel>Properties</guilabel>. In the <guilabel>Line's properties</guilabel> window, in the field <guilabel>Paths</guilabel>, write the path to the directory you want and then left-click on
          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_adicionar_caminho.png"
          /></imageobject></inlinemediaobject></guiicon>.</para>
 
@@ -765,18 +734,14 @@
           (<keycombo><keycap>Ctrl</keycap><keycap>Home</keycap></keycombo>) and send a path to the bottom of the list
           (<keycombo><keycap>Ctrl</keycap><keycap>End</keycap></keycombo>).</para>
 
-        <screenshot>
-	  <!--
-          <info>
-            <title />
-          </info>
-	  -->
+        <figure>
           <mediaobject>
+	  <caption>Janela de Propriedades da linha; além de adicionar informações sobre a linha como descrição, autor e email, é possível adicionar caminhos preferenciais no campo caminhos.</caption>
             <imageobject>
               <imagedata fileref="../images/janela_path_list.png" />
             </imageobject>
           </mediaobject>
-        </screenshot>
+        </figure>
       </section>
 
       <section xml:id="sec_3_1_7">
@@ -860,18 +825,14 @@
             <para>In this editor you can save, print and pre-visualize your comment(s) by pressing one of the icons in the tool bar, or by using the editors menu.</para>
           </step>
         </procedure>
-        <screenshot>
-	  <!--
-	     <info>
-	       <title/>
-	     </info>
-	     -->
+        <figure> 
 	  <mediaobject>
+	  <caption>Janela de edição de comentários.</caption>
             <imageobject>
               <imagedata fileref="../images/janela_comentarios_de_linha.png" />
             </imageobject>
           </mediaobject>
-        </screenshot>
+        </figure>
         <tip>
 	<para>In <menuchoice><guimenu>Actions</guimenu> <guimenuitem>Preferences</guimenuitem></menuchoice> (the top left 
 	corner of GêBR's main window) you can determine the text editor that will be used to edit reports. The standard editor
@@ -942,9 +903,14 @@
         	<para>Choose the presentation style of the report, as well as include other styles.</para>
 	</step>
 	</procedure>
-	<para><guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/janela_visualizar_relatorio.png"
-            /></imageobject></inlinemediaobject></guiicon>
-            </para>
+
+	<figure>
+<mediaobject>
+	<caption>Na janela de Visualização de relatório, é possivel em Arquivo: salvar e imprimir o documento. Em Opções, conforme pode-se visualizar, é possível incluir comentários do usuário, incluir relatório do fluxo, incluir tabelas de parâmetros e escolher estilos do documento.</caption>
+<imageobject>
+	<imagedata fileref="../images/janela_visualizar_relatorio.png"/></imageobject>
+	</mediaobject>
+	</figure>
 	
    
         <para> The Section <xref linkend="visualizar_relatorio_fluxo"/> explains in greater detail the View report tool 
@@ -1054,7 +1020,7 @@
 	<guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_criar_fluxo.png"
           /></imageobject></inlinemediaobject></guiicon>. In the dialog box that opens, <xref
 	 linkend="editar_propriedades_fluxo"/>, fill in the required information then click on <guibutton>OK</guibutton>. For
-	 more details see  <link linkend="criando_fluxos"></link>.</para>
+	 more details see <xref linkend="criando_fluxos"/>.</para>
 
         <para>There is  <emphasis role="bold">No limit</emphasis> on the number of Flows you can have inside one Line or in
 	 total.</para>
@@ -1291,9 +1257,13 @@
           <guilabel>Edição de fluxo</guilabel> de duas formas distintas. Nessa aba Fluxos, o
           botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_executar_fluxo.png"
           /></imageobject></inlinemediaobject></guiicon> executa vários fluxos em sequência. Ver
-          figura: <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/janela_execucao_de_fluxo.png"
-          /></imageobject></inlinemediaobject></guiicon></para>
-
+          figura: 
+	<figure>
+	<mediaobject><caption>Na aba Fluxos, entre outras funções, é possível executar vários fluxos sequencialmente selecionando os fluxos selecionados e executando-os. </caption>
+	<imageobject><imagedata fileref="../images/janela_execucao_de_fluxo.png"
+          /></imageobject>
+	</mediaobject>	
+	</figure></para>
 
         <para>Nessa versão da GêBR, surge o conceito de filas, através do qual pode-se rodar um fluxo ou uma sequência
           de fluxos em diferentes filas:</para>
@@ -1304,8 +1274,7 @@
 	</step>
 
 	<step>
-        	<para> Cada fila fica visível no campo Filas da aba Edição de fluxos conforme explicado na seção
-  	<xref linkend="executar_fluxo"/>.</para>
+        	<para> Cada fila fica visível no campo Filas da aba Edição de fluxos conforme explicado na <xref linkend="executar_fluxo"/>.</para>
 	</step> 
 	
 	<step>
@@ -1331,7 +1300,7 @@
         <para>Este comando aparece repetidamente nas abas <guilabel>Projetos e Linhas</guilabel> e em
           <guilabel>Fluxos</guilabel>. Através dele, em ambas abas, pode-se gerar/visualizar o relatório da linha ou do
           fluxo em questão, com a pequena diferença de que é possível englobar o relatório do fluxo no relatório da
-          linha. As demais funcionalidades são descritas na seção <xref linkend="visualizar_relatorio"/>.</para>
+          linha. As demais funcionalidades são descritas na <xref linkend="visualizar_relatorio"/>.</para>
 
       </section>
     </section>
@@ -1534,7 +1503,7 @@
       <section xml:id="copiar_programa_para_area_de_transferencia">
         <title>Copying programs to the clipboard</title>
 
-        <para>Da mesma forma que se faz com fluxos (veja a seção <xref linkend="copiar_fluxos_area_tranferencia"/>), um programa (ou um conjunto de programas) pode ser copiado para a área de
+        <para>Da mesma forma que se faz com fluxos (veja a <xref linkend="copiar_fluxos_area_tranferencia"/>), um programa (ou um conjunto de programas) pode ser copiado para a área de
           transferência por meio do
           botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_copiar_fluxo.png"
           /></imageobject></inlinemediaobject></guiicon> ou, mais prático, pelo conhecido atalho
@@ -1645,7 +1614,7 @@
       <section xml:id="sec_3_3_5">
         <title>Changing a program's state</title>
 
-        <para>Após realizar o procedimento da seção <xref linkend="editar_parametros_programa"/>, note que o programa passa a ser sinalizado
+        <para>Após realizar o procedimento da <xref linkend="editar_parametros_programa"/>, note que o programa passa a ser sinalizado
         por <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_configurado.png"
         /></imageobject></inlinemediaobject></guiicon> em vez
         de <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_nao_configurado.png"
@@ -1693,21 +1662,26 @@
       <section xml:id="editar_arquivos_entrada_saida_fluxo">
         <title>Editing the Flow's input and output files</title>
 
-        <para>No exemplo da seção <xref linkend="criando_fluxos"/> criamos um fluxo
+        <para>No exemplo da <xref linkend="criando_fluxos"/> criamos um fluxo
           muito simples, que não precisava "ler" nenhum arquivo, e que gerava como resultado uma saída de tela. Porém,
           há situações em que o fluxo precisa extrair dados de um arquivo de entrada e gerar como resultado um arquivo
           de saída ou de erro, caso ocorra algum problema durante a execução.</para>
 
 
         <para>Para associar arquivos de entrada, saída e erro a um fluxo:</para>
-
+	<figure> 
+	  <mediaobject>
+	  <caption>Na aba edição de fluxo, no campo Sequência de fluxo, edita-se os arquivos de entrada, saída e erro para a sequência de fluxo a ser executada.</caption>
+            <imageobject><imagedata fileref="../images/janela_arquivos_entrada_saida.png"
+								  /></imageobject>
+          </mediaobject>
+        </figure>
+ 
         <procedure>
           <step>
             <para>Certifique-se de ter selecionado o fluxo e, na aba Edição de fluxo, no campo Sequência de fluxo,
               pode-se editar os caminhos de entrada, saída e erro através de um clique duplo nos botões. Ver figura: 
-
-              <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/janela_arquivos_entrada_saida.png"
-								  /></imageobject></inlinemediaobject></guiicon></para>
+            </para>
           </step>
           <step>
             <para>Edite os caminhos ou clique no
@@ -1759,14 +1733,14 @@
           escolher no campo Fila em qual fila o fluxo será executado. Pode-se escolher e nomear a fila em que se quer
           executar um fluxo, conforme figura:</para>
 
-
-        <para>
-          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/janela_filas_edicao_de_fluxo.png"
-							      /></imageobject></inlinemediaobject></guiicon>
-        </para>
-
-
-        <para>No momento em que o fluxo começa a ser executado, a GêBR alterna imediatamente para a aba
+	<figure> 
+	  <mediaobject>
+	  <caption>Na aba edição de fluxo, no campo filas, pode-se selecionar a fila em que um determinado fluxo será executado.</caption>
+            <imageobject><imagedata fileref="../images/janela_filas_edicao_de_fluxo.png"
+							      /></imageobject>
+          </mediaobject>
+        </figure>
+      <para>No momento em que o fluxo começa a ser executado, a GêBR alterna imediatamente para a aba
           <guilabel>Controle de tarefas</guilabel>, que mostra o relatório (<emphasis>log</emphasis>) da execução.</para>
 
       </section>
@@ -1812,11 +1786,13 @@
 	tarefas</emphasis>, é possível visualizar cada fila em andamento, cada qual de execução independente uma da
 	outra, bem como o relatório (log) da execução de cada programa. Ver figura abaixo:</para>
 
-
-      <para>
-        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/janela_aba_controle_de_tarefas.png" /></imageobject></inlinemediaobject></guiicon>
-      </para>
-
+	<figure> 
+	  <mediaobject>
+	  <caption>Na aba Controle de tarefas à direita da janela podemos visualizar as listas em execução, fluxos executados, cancelados e falhos. À direita, são dadas informações de cada execução.</caption>
+            <imageobject><imagedata fileref="../images/janela_aba_controle_de_tarefas.png"/>
+            </imageobject>
+          </mediaobject>
+        </figure>
 
       <section xml:id="sec_3_4_1">
         <title>Saving a Job's information in a file</title>
@@ -1886,30 +1862,22 @@
             <guimenu>Shell tools</guimenu>, na aba 
             <guilabel>Edição de Fluxo</guilabel>).</para>
 
-          <screenshot>
-	    <!--
-            <info>
-              <title />
-            </info>
-	    -->
-            <mediaobject>
+          <figure>
+	      <mediaobject>
+		<caption>Na aba Fluxos, acrescentamos um fluxo à linha e projeto para exemplo. </caption>
               <imageobject>
                 <imagedata fileref="../images/exemplo_dicionario_1.png" />
               </imageobject>
             </mediaobject>
-          </screenshot>
-          <screenshot>
-	    <!--
-            <info>
-              <title />
-            </info>
-	    -->
+          </figure>
+          <figure>
             <mediaobject>
+		<caption>Na aba Edição de fluxos, para o exemplo, adiciona-se um programa chamado "sleep".</caption>
               <imageobject>
                 <imagedata fileref="../images/exemplo_dicionario_2.png" />
               </imageobject>
             </mediaobject>
-          </screenshot>
+          </figure>
         </step>
         <step>
           <para>Na aba <guilabel>Projetos e Linhas</guilabel>, clique no
@@ -1926,18 +1894,14 @@
             <userinput>5</userinput> na coluna <guilabel>Valor</guilabel>. Ao terminar, sua janela deve se parecer com a
             seguinte:</para>
 
-          <screenshot>
-	    <!--
-            <info>
-              <title />
-            </info>
-	    -->
+          <figure>
             <mediaobject>
+		<caption>Na janela de parâmetros de dicionário para fluxo, é possível editar parâmetros para o fluxo, para sua linha e seu projeto.</caption>
               <imageobject>
                 <imagedata fileref="../images/exemplo_dicionario_3.png" />
               </imageobject>
             </mediaobject>
-          </screenshot>
+          </figure>
         </step>
         <step>
           <para>Depois de fechar a janela <guilabel>Dicionário de parâmeros para linha</guilabel>, selecione a aba
@@ -1947,36 +1911,28 @@
             objetivo é atribuir a variável <emphasis role="bold">Tempo=5</emphasis> ao parâmetro <guilabel>Time to
             sleep</guilabel>, como mostrado a seguir:</para>
 
-          <screenshot>
-	    <!--
-            <info>
-              <title />
-            </info>
-	    -->
+          <figure>
             <mediaobject>
+		<caption>Através de um clique com o botão direito na área de edição da janela de parâmetros do programa "sleep" surge um menu de contexto em que é possível, entre outras coisas, inserir parâmetros de discionário conforme exemplo.</caption>
               <imageobject>
                 <imagedata fileref="../images/exemplo_dicionario_4.png" />
               </imageobject>
             </mediaobject>
-          </screenshot>
+          </figure>
         </step>
         <step>
           <para>Depois de fechar a janela <guilabel>Parâmetros</guilabel>, vá para a aba
             <guilabel>Fluxos</guilabel> e crie algumas cópias do fluxo, dando nomes diferentes a cada uma. Ao executar
             qualquer um destes fluxos, o resultado é uma  <emphasis role="bold">pausa de 5 segundos</emphasis>.</para>
 
-          <screenshot>
-	    <!--
-            <info>
-              <title />
-            </info>
-	    -->
+          <figure>
             <mediaobject>
+		<caption>Na aba Fluxos, conforme já abordado, pode-se fazer cópias de um fluxo. No exemplo, as cópias terão parâmetros de dicionário para os programas "sleep's" tal qual a matriz.</caption>
               <imageobject>
                 <imagedata fileref="../images/exemplo_dicionario_5.png" />
               </imageobject>
             </mediaobject>
-          </screenshot>
+          </figure>
         </step>
         <step>
           <para>Acesse novamente o dicionário de parâmetros e digite o valor 
@@ -2049,18 +2005,14 @@
 
           </listitem>
         </itemizedlist>
-        <screenshot>
-	  <!--
-          <info>
-            <title />
-          </info>
-	  -->
+        <figure>
           <mediaobject>
+	  <caption>Em Preferências, abre-se uma janela em que é possível editar informações como nome de usuário, e-mail, diretorio de menus do usuário e editor HTML.</caption>
             <imageobject>
               <imagedata fileref="../images/janela_preferences.png" />
             </imageobject>
           </mediaobject>
-        </screenshot>
+        </figure>
       </section>
 
       <section>
@@ -2078,18 +2030,14 @@
           digite o endereço na parte de baixo da janela <guilabel>Configuração de servidores</guilabel> e clique no
           botão <guibutton>Adicionar</guibutton>.</para>
 
-        <screenshot>
-	  <!--
-          <info>
-            <title />
-          </info>
-	  -->
-          <mediaobject>
+        <figure>
+	 <mediaobject>
+	  <caption>Em servidores, adiciona-se, conecta-se e desconeta-se servidores. </caption>
             <imageobject>
               <imagedata fileref="../images/janela_servers_configuration.png" />
             </imageobject>
           </mediaobject>
-        </screenshot>
+        </figure>
         <important>
 
           <para>Todos os servidores definidos na janela 
@@ -2111,18 +2059,14 @@
 	chamado <emphasis>log de execução</emphasis>. Este log é mostrado na parte inferior da janela principal. Pode
 	ser apresentado na forma colapsada (padrão) ou expandida (como na janela abaixo).</para>
 
-      <screenshot>
-	<!--
-        <info>
-          <title />
-        </info>
-	-->
-        <mediaobject>
+      <figure>
+	<mediaobject>
+	<caption>No canto inferior das janelas principais da GêBR, encontra-se o log de execução, que carrega as informações dos processamentos da GêBR.</caption>
           <imageobject>
-            <imagedata fileref="../images/janela_log_execucao.png" />
+            <imagedata fileref="../images/janela_log_execucao.png"/>
           </imageobject>
         </mediaobject>
-      </screenshot>
+      </figure>
       <tip>
 
         <para>Em 
