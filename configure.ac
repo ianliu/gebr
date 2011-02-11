@@ -277,6 +277,7 @@ AC_CONFIG_FILES([
 Makefile
 docs/Makefile
 docs/debr/Makefile
+docs/debr/pt_BR/Makefile
 docs/gebr/Makefile
 docs/gebr/en/Makefile
 docs/gebr/pt_BR/Makefile
