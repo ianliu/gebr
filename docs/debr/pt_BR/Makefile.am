@@ -40,9 +40,7 @@ dist-ok: html-ok
 
 inst-ok: html-ok
 	${INSTALL_SCRIPT} -d $(HTMLDIR)/$(LANG)/html
-	#${INSTALL_SCRIPT} -d $(HTMLDIR)/$(LANG)/images
 	${INSTALL_DATA} $(srcdir)/html/* $(HTMLDIR)/$(LANG)/html
-	#${INSTALL_DATA} $(srcdir)/images/* $(HTMLDIR)/$(LANG)/images
 
 uinst-ok:
 	( cd $(HTMLDIR) && rm -r $(LANG) )
