@@ -379,11 +379,6 @@ void on_job_control_save(void)
 	job_control_save();
 }
 
-void on_job_control_cancel(void)
-{
-	job_control_cancel();
-}
-
 void on_job_control_close(void)
 {
 	job_control_close();

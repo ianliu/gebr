@@ -214,63 +214,6 @@ void job_control_save(void)
 	g_free(path);
 }
 
-void job_control_cancel(void)
-{
-	GtkTreeIter iter;
-	struct job *job;
-	gint selected_rows = 0;
-	gboolean asked = FALSE;
-	gint iter_depth = 0;
-
-	
-	selected_rows =	gtk_tree_selection_count_selected_rows(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)));
-	
-	
-	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_job_control->view) {
-
-		iter_depth = gtk_tree_store_iter_depth(gebr.ui_job_control->store, &iter);
-
-		if (iter_depth <= 0)
-			continue;
-
-		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter, JC_STRUCT, &job, -1);
-
-		if (job->status != JOB_STATUS_RUNNING && job->status != JOB_STATUS_QUEUED) {
-			gebr_message(GEBR_LOG_WARNING, TRUE, FALSE, _("Job is not running."));
-			continue;
-		}
-		if (gebr_comm_server_is_logged(job->server->comm) == FALSE) {
-			gebr_message(GEBR_LOG_WARNING, TRUE, FALSE, _("You are not connected to job's server."));
-			continue;
-		}
-		
-		if (selected_rows == 1)
-		{
-			if (gebr_gui_confirm_action_dialog
-			    (_("Terminate job"), _("Are you sure you want to terminate job '%s'?"), job->title->str) == FALSE)
-				return;
-		}
-		else if (!asked)
-		{
-			if (gebr_gui_confirm_action_dialog
-			    (_("Terminate job"), _("Are you sure you want to terminate the selected jobs?")) == FALSE)
-				return;
-			/* Already asked to user for confirmation */
-			asked = TRUE;
-		}
-		gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Asking server to terminate job."));
-		if (gebr_comm_server_is_local(job->server->comm) == FALSE)
-			gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Asking server '%s' to terminate job '%s'."),
-				     job->server->comm->address->str, job->title->str);
-		else
-			gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Asking local server to terminate job '%s'."),
-				     job->title->str);
-
-		gebr_comm_protocol_send_data(job->server->comm->protocol, job->server->comm->stream_socket,
-					     gebr_comm_protocol_defs.end_def, 1, job->jid->str);
-	}
-}
-
 void job_control_close(void)
 {
 	GtkTreeIter iter;

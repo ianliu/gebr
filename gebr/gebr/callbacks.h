@@ -133,8 +133,6 @@ void on_flow_component_execute_single();
  */
 void on_job_control_save(void);
 
-void on_job_control_cancel(void);
-
 void on_job_control_close(void);
 
 void on_job_control_clear(void);
