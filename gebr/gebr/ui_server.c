@@ -183,30 +183,19 @@ static GtkMenu *server_common_popup_menu(GtkWidget * widget, struct ui_server_co
 static void on_tags_edited (GtkCellRendererText *cell,
 			    gchar *path,
 			    gchar *new_text,
-			    gpointer user_data)
+			    GtkTreeModel *model)
 {
-	GList *tags;
-	gchar **tagsv;
-	GHashTable *table;
+	GtkTreeIter iter;
+	struct server *server;
 
-	tagsv = g_strsplit (new_text, ",", 0);
-	table = g_hash_table_new (g_str_hash, g_str_equal);
+	if (!gtk_tree_model_get_iter_from_string (model, &iter, path))
+		return;
 
-	for (int i = 0; tagsv[i]; i++) {
-		if (strlen (tagsv[i]) == 0)
-			continue;
-		g_hash_table_insert (table, tagsv[i], NULL);
-	}
+	gtk_tree_model_get (model, &iter,
+			    SERVER_POINTER, &server,
+			    -1);
 
-	void prepend_tags(gchar *tag) {
-		tags = g_list_prepend (tags, tag);
-	}
-
-	g_hash_table_foreach (table, (GHFunc) prepend_tags, NULL);
-	tags = g_list_reverse (tags);
-
-	g_hash_table_unref (table);
-	g_strfreev (tagsv);
+	ui_server_set_tags (server, new_text);
 }
 
 /* Function: server_common_setup
@@ -255,7 +244,8 @@ static void server_common_setup(struct ui_server_common *ui_server_common)
 
 	renderer = gtk_cell_renderer_text_new();
 	g_object_set (renderer, "editable", TRUE, NULL);
-	g_signal_connect (renderer, "edited", G_CALLBACK (on_tags_edited), NULL);
+	g_signal_connect (renderer, "edited",
+			  G_CALLBACK (on_tags_edited), ui_server_common->store);
 	col = gtk_tree_view_column_new_with_attributes(_("Groups"), renderer, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
 	gtk_tree_view_column_add_attribute(col, renderer, "text", SERVER_TAGS);
@@ -579,10 +569,10 @@ struct server *server_select_setup_ui(void)
  out:	return server;
 }
 
-void ui_server_add_tag(struct server *server, const gchar * tag){
+void ui_server_add_tag(struct server *server, const gchar *tag) {
 	gchar * server_tags;
 	gchar * appended_tag;
-	gchar ** tag_list = NULL;
+	gchar ** tag_list;
 
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &server->iter, SERVER_TAGS, &server_tags -1);
 
@@ -591,7 +581,7 @@ void ui_server_add_tag(struct server *server, const gchar * tag){
 		if (g_strcmp0(tag_list[i], tag) == 0)
 			return;
 
-	appended_tag = g_strdup_printf(", %s", tag);
+	appended_tag = g_strdup_printf(",%s", tag);
 	g_strconcat(server_tags, appended_tag, NULL);
 	gtk_list_store_set(gebr.ui_server_list->common.store, &server->iter, SERVER_TAGS, server_tags, -1);
 
@@ -611,7 +601,7 @@ void ui_server_remove_tag(struct server *server, const gchar * tag){
 		if (g_strcmp0(tag_list[i], tag) == 0)
 			continue;
 		else{
-			g_string_append_printf(new_list_tag, "%s, ", tag_list[i]);
+			g_string_append_printf(new_list_tag, "%s,", tag_list[i]);
 		}
 	}
 	gtk_list_store_set(gebr.ui_server_list->common.store, &server->iter, SERVER_TAGS, new_list_tag->str, -1);
@@ -654,20 +644,61 @@ GList * ui_server_servers_with_tag(const gchar * tag){
 	return belong_to_tag;
 }
 
-gboolean ui_server_has_tag(struct server *server, const gchar * tag){
+gboolean ui_server_has_tag (struct server *server, const gchar *tag) {
 	gchar * tags;
-	gchar ** tag_list = NULL;
+	gchar ** tag_list;
 
-		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &server->iter, SERVER_TAGS, &tags, -1);
-		tag_list = g_strsplit(tags, ",", 0);	
-		for (gint i = 0; tag_list[i] != NULL; ++i) {
-			if (g_strcmp0(tag_list[i], tag) == 0){
-				if (tag_list != NULL)
-					g_strfreev(tag_list);
-				return TRUE;
-			}
+	gtk_tree_model_get (GTK_TREE_MODEL(gebr.ui_server_list->common.store), &server->iter, SERVER_TAGS, &tags, -1);
+	tag_list = g_strsplit(tags, ",", 0);	
+	for (gint i = 0; tag_list[i] != NULL; ++i) {
+		if (g_strcmp0(tag_list[i], tag) == 0) {
+			if (tag_list != NULL)
+				g_strfreev(tag_list);
+			return TRUE;
 		}
-		if (tag_list != NULL)
-			g_strfreev(tag_list);
-		return FALSE;
+	}
+	if (tag_list != NULL)
+		g_strfreev(tag_list);
+	return FALSE;
+}
+
+void ui_server_set_tags (struct server *server, const gchar *str)
+{
+	gchar **tagsv;
+	GString *tags;
+	GPtrArray *array;
+
+	tagsv = g_strsplit (str, ",", 0);
+	array = g_ptr_array_new ();
+	tags  = g_string_new ("");
+
+	for (int i = 0; tagsv[i]; i++) {
+		gchar *tag = g_strstrip (tagsv[i]);
+		if (strlen (tag) > 0)
+			g_ptr_array_add (array, tag);
+	}
+
+	int sort (gchar **v1, gchar **v2) {
+		return g_strcmp0 (*v1, *v2);
+	}
+
+	// Sort the array so we can remove duplicates
+	g_ptr_array_sort (array, (GCompareFunc) sort);
+
+	for (int i = 0; i < array->len - 1; i++) {
+		const gchar *tag1 = g_ptr_array_index (array, i);
+		const gchar *tag2 = g_ptr_array_index (array, i+1);
+		if (!g_str_equal (tag1, tag2))
+			g_string_append_printf (tags, "%s,", tag1);
+	}
+
+	if (array->len)
+		g_string_append (tags, g_ptr_array_index (array, array->len-1));
+
+	gtk_list_store_set(gebr.ui_server_list->common.store, &server->iter,
+			   SERVER_TAGS, tags->str,
+			   -1);
+
+	g_string_free (tags, TRUE);
+	g_strfreev (tagsv);
 }

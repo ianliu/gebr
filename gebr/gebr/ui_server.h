@@ -78,6 +78,8 @@ GList * ui_server_servers_with_tag(const gchar * tag);
 
 gboolean ui_server_has_tag(struct server *server, const gchar * tag);
 
+void ui_server_set_tags (struct server *server, const gchar *str);
+
 
 G_END_DECLS
 #endif				//__UI_SERVER_H
