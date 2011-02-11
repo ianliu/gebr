@@ -689,8 +689,15 @@ void job_set_status(struct job *job, enum JobStatus status)
 	/* we are leaving queued state, send issues */
 	if (old_status == JOB_STATUS_QUEUED && job->issues->len)
 		job_notify_status(job, JOB_STATUS_ISSUED, job->issues->str);
-	/* Run next flow on queue */
-	if (job->status == JOB_STATUS_FAILED || job->status == JOB_STATUS_FINISHED || job->status == JOB_STATUS_CANCELED) {
+
+	/* Run next flow on queue if it is not busy */
+	if (old_status == JOB_STATUS_QUEUED &&
+	    gebrd_queues_is_queue_busy (job->queue->str))
+		return;
+
+	if (job->status == JOB_STATUS_FAILED ||
+	    job->status == JOB_STATUS_FINISHED ||
+	    job->status == JOB_STATUS_CANCELED) {
 		if (gebrd_queues_has_next(job->queue->str)) 
 			gebrd_queues_step_queue(job->queue->str);
 		else
