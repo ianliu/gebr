@@ -574,26 +574,6 @@ struct server *server_select_setup_ui(void)
  out:	return server;
 }
 
-void ui_server_add_tag(struct server *server, const gchar *tag) {
-	gchar * server_tags;
-	gchar * appended_tag;
-	gchar ** tag_list;
-
-	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &server->iter, SERVER_TAGS, &server_tags -1);
-
-	tag_list = g_strsplit(server_tags, ",", 0);	
-	for (gint i = 0; tag_list[i] != NULL; ++i)
-		if (g_strcmp0(tag_list[i], tag) == 0)
-			return;
-
-	appended_tag = g_strdup_printf(",%s", tag);
-	g_strconcat(server_tags, appended_tag, NULL);
-	gtk_list_store_set(gebr.ui_server_list->common.store, &server->iter, SERVER_TAGS, server_tags, -1);
-
-	g_strfreev(tag_list);
-	g_free(appended_tag);
-}
-
 void ui_server_remove_tag(struct server *server, const gchar * tag){
 	gchar * server_tags;
 	gchar ** tag_list = NULL;

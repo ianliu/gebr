@@ -68,8 +68,6 @@ struct ui_server_select {
 
 struct server *server_select_setup_ui(void);
 
-void ui_server_add_tag(struct server *server, const gchar * tag);
-
 void ui_server_remove_tag(struct server *server, const gchar * tag);
 
 gchar ** ui_server_list_tag(struct server *server);
