@@ -67,17 +67,20 @@ void test_gebr_tar_extract (void)
 void test_gebr_tar_compact (void)
 {
 	GebrTar *tar;
+	gchar *fname;
 	const gchar *path = "/tmp/tar-create-test.tar.gz";
 
 	tar = gebr_tar_create (path);
 
-	gebr_tar_append (tar, __FILE__);
+	fname = g_path_get_basename(__FILE__);
+	gebr_tar_append (tar, fname);
 
 	g_assert (gebr_tar_compact (tar, TEST_SRCDIR) == TRUE);
 	g_assert (g_file_test (path, G_FILE_TEST_EXISTS) == TRUE);
 	g_unlink (path);
 
 	gebr_tar_free (tar);
+	g_free(fname);
 }
 
 int main(int argc, char *argv[])
