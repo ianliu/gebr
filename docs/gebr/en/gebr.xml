@@ -1191,61 +1191,60 @@
       <section xml:id="sec_3_2_8">
         <title>Importing a Flow</title>
 
-        <para>A GêBR permite importar fluxos que tenham sido exportados
-          <xref linkend="exportar_fluxo"/>. Para fazer isso:</para>
+        <para>GêBR allows you to import Flows that where previously exported 
+          <xref linkend="exportar_fluxo"/>. To do so:</para>
 
         <procedure>
           <step>
-            <para>Certifique-se de ter  <emphasis role="bold">criado e selecionado uma linha</emphasis>, na aba 
-              <guilabel>Projetos e Linhas</guilabel>. Lembre-se que, na GêBR, fluxos só podem existir dentro de linhas
-              (veja este conceito na seção <xref linkend="projetos_linhas_fluxo_visao_geral"/>). Portanto,
-              para importar um fluxo é necessário <emphasis role="bold">selecionar uma linha existente</emphasis> (ou
-              <xref linkend="criar_nova_linha"/>, caso não exista nenhuma).</para>
+            <para>Check that you have already <emphasis role="bold">created and selected a Line</emphasis>, in the tab 
+              <guilabel>Projects and Lines</guilabel> . Remember that Flows can only exist inside Lines
+              (see this concept in Section <xref linkend="projetos_linhas_fluxo_visao_geral"/>). To import a Flow you must first
+	  <emphasis role="bold">select a Line</emphasis> (or
+              <xref linkend="criar_nova_linha"/>, if one does not exist).</para>
           </step>
           <step>
-            <para>Selecione a aba 
-              <guilabel>Fluxos</guilabel> e clique no
-              botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_importar_projeto.png"
+            <para>Select the tab
+              <guilabel>Flows</guilabel> and left-click on 
+             <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_importar_projeto.png"
               /></imageobject></inlinemediaobject></guiicon>.</para>
           </step>
           <step>
-            <para>Navegue pela janela <guilabel>Escolha arquivo para abrir</guilabel> e selecione o fluxo que deseja
-              importar (apenas arquivos do tipo <filename class="extension">flw</filename> serão mostrados).</para>
+            <para>Navigate through the <guilabel>Choose a Flow to import</guilabel> and select a Flow you wish to import
+	 (only the file types <filename class="extension">flw</filename> will appear).</para>
           </step>
           <step>
-            <para>Clique no botão 
-              <guibutton>Abrir</guibutton>.</para>
+            <para>Left-click on the button 
+              <guibutton>Open</guibutton>.</para>
           </step>
         </procedure>
 
-        <para>O fluxo importado é adicionado aos demais fluxos (se existirem) da linha que estiver selecionada no
-          momento da importação.</para>
+        <para>The imported Flow will be listed along with any other Flows of the selected Line.</para>
 
       </section>
 
       <section xml:id="exportar_fluxo">
         <title>Exporting a Flow</title>
 
-        <para>Embora a GêBR preserve continuamente todos os dados, às vezes é desejável manter os fluxos em arquivos
-          (para compartilhamento ou cópia de segurança, por exemplo). Para exportar um fluxo:</para>
+        <para>Although GêBR maintains all your data, you still might wish to copy your Flows to file
+          (perhaps to share with others or as a backup). To export a Flow:</para>
 
         <procedure>
           <step>
-            <para>Selecione o fluxo que deseja salvar.</para>
+            <para>Select the Flow you wish to save.</para>
           </step>
           <step>
-            <para>Clique no
-            botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_exportar_projeto.png"
+            <para>Left-click on
+            <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_exportar_projeto.png"
             /></imageobject></inlinemediaobject></guiicon>.</para>
           </step>
           <step>
-            <para>Na janela 
-              <guilabel>Escolha arquivo para salvar</guilabel>, selecione uma pasta e digite um nome para o arquivo (a
-              GêBR determina automaticamente a extensão <filename class="extension">flw</filename>).</para>
+            <para>In the window 
+              <guilabel>Save Flow</guilabel>, navigate to the directory you desire and type a name for the file
+		(GêBR will automatically determine the extension <filename class="extension">flw</filename>).</para>
           </step>
           <step>
-            <para>Clique no botão 
-              <guibutton>Salvar</guibutton>.</para>
+            <para>Left-click on the button
+              <guibutton>Save</guibutton>.</para>
           </step>
         </procedure>
       </section>
@@ -1253,32 +1252,35 @@
       <section xml:id="executar_fluxo_aba_fluxos">
         <title>Executing a Flow</title>
 
-        <para>Este comando aparece repetidamente nas abas <guilabel>Fluxos</guilabel> e
-          <guilabel>Edição de fluxo</guilabel> de duas formas distintas. Nessa aba Fluxos, o
-          botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_executar_fluxo.png"
-          /></imageobject></inlinemediaobject></guiicon> executa vários fluxos em sequência. Ver
-          figura: 
+        <para>This command is present in the tab <guilabel>Flows</guilabel>  and the tab
+          <guilabel>Flow editor</guilabel>  where both work differently. In the tab Flows, the
+          button <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_executar_fluxo.png"
+          /></imageobject></inlinemediaobject></guiicon> executes several Flows in a sequence. see Figure: 
 	<figure>
-	<mediaobject><caption>Na aba Fluxos, entre outras funções, é possível executar vários fluxos sequencialmente selecionando os fluxos selecionados e executando-os. </caption>
+	<mediaobject><caption>In the tab Flows you are able to execute several Flows sequentially by first: selecting the Flows
+	you wish to use, and then left-click on 
+	<guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_executar_fluxo.png" 
+          /></imageobject></inlinemediaobject></guiicon>. </caption>
 	<imageobject><imagedata fileref="../images/janela_execucao_de_fluxo.png"
           /></imageobject>
 	</mediaobject>	
 	</figure></para>
 
-        <para>Nessa versão da GêBR, surge o conceito de filas, através do qual pode-se rodar um fluxo ou uma sequência
-          de fluxos em diferentes filas:</para>
+        <para>In this version of GêBR a concept called queues can now be employed to run a Flow, or sequence of Flows, in
+	 different queues:</para>
 
 	<procedure>
 	<step>
-        	<para> Nessa aba, a cada execução de um fluxo ou um grupo de fluxos, é criada uma fila.</para>
+        	<para> In the tab Flows, each time you execute a Flow or a set of Flows a queue is created.</para>
 	</step>
 
 	<step>
-        	<para> Cada fila fica visível no campo Filas da aba Edição de fluxos conforme explicado na <xref linkend="executar_fluxo"/>.</para>
+        	<para>Each queue will be visible in the field Queue found in the tab Flow edition, which will be better
+		 explained in <xref linkend="executar_fluxo"/>.</para>
 	</step> 
 	
 	<step>
-        	<para> As filas também ficam visíveis na aba Controle de tarefas. Ver 
+        	<para> The Queues will also be visible in the tab Job Control. See 
           <xref linkend="controle_de_tarefas"/>.</para>
 	</step>
 	
@@ -1288,19 +1290,19 @@
       <section xml:id="sec_3_2_11">
         <title>Editing comments</title>
 
-        <para>Este comando aparece repetidamente nas abas <guilabel>Projetos e Linhas</guilabel> e em
-          <guilabel>Fluxos</guilabel>. Através dele, o usuário pode adicionar comentários à linha ou ao fluxo criados.
-          Ver <xref linkend="editar_comentarios"/>.</para>
+        <para>This button appears in the <guilabel>Projects and Lines</guilabel> tab and in
+          <guilabel>Flows</guilabel> tab. This button allows the user to add comments about the selected Line or Flow.
+          See <xref linkend="editar_comentarios"/>.</para>
 
       </section>
 
       <section xml:id="visualizar_relatorio_fluxo">
         <title>View report</title>
 
-        <para>Este comando aparece repetidamente nas abas <guilabel>Projetos e Linhas</guilabel> e em
-          <guilabel>Fluxos</guilabel>. Através dele, em ambas abas, pode-se gerar/visualizar o relatório da linha ou do
-          fluxo em questão, com a pequena diferença de que é possível englobar o relatório do fluxo no relatório da
-          linha. As demais funcionalidades são descritas na <xref linkend="visualizar_relatorio"/>.</para>
+        <para>This button appears in the <guilabel>Projects and Lines</guilabel> tab and in
+          <guilabel>Flows</guilabel> tab. This button allows the user to View the report on the Line or Flow
+          in question, with the difference that the the Line's report can include the Flow's report. 
+	All other functions are described in <xref linkend="visualizar_relatorio"/>.</para>
 
       </section>
     </section>
