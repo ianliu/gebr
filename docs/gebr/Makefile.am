@@ -16,3 +16,5 @@
 include $(top_srcdir)/Makefile.decl
 
 SUBDIRS = en pt_BR
+
+EXTRA_DIST=gebr-guide.xsl

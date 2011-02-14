@@ -31,17 +31,18 @@ UINST_DEP =
 endif
 
 html-ok: gebr.xml
-	xsltproc -o $(srcdir)/html/index.html \
+	xsltproc -o $(builddir)/html/index.html \
 		$(srcdir)/../gebr-guide.xsl \
-		$(srcdir)/gebr.xml && touch html-ok
+		$(srcdir)/gebr.xml
+	touch html-ok
 
 dist-ok: html-ok
-	cp -Rp $(srcdir)/html $(srcdir)/images $(distdir)
+	cp -Rp $(builddir)/html $(srcdir)/images $(distdir)
 
 inst-ok: html-ok
 	${INSTALL_SCRIPT} -d $(HTMLDIR)/$(LANG)/html
 	${INSTALL_SCRIPT} -d $(HTMLDIR)/$(LANG)/images
-	${INSTALL_DATA} $(srcdir)/html/* $(HTMLDIR)/$(LANG)/html
+	${INSTALL_DATA} $(builddir)/html/* $(HTMLDIR)/$(LANG)/html
 	${INSTALL_DATA} $(srcdir)/images/* $(HTMLDIR)/$(LANG)/images
 
 uinst-ok:
@@ -69,6 +70,6 @@ install-data-local: $(INST_DEP)
 uninstall-hook: $(UINST_DEP)
 
 EXTRA_DIST = gebr.xml
-CLEANFILES = html-ok
+CLEANFILES = html-ok html/index.html
 
 .PHONY: html

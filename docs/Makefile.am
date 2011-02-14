@@ -16,4 +16,4 @@
 
 include $(top_srcdir)/Makefile.decl
 
-SUBDIRS = gebr debr reference
+SUBDIRS = gebr reference
