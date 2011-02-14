@@ -204,7 +204,7 @@ AC_CHECK_LIB(z,main,,[AC_MSG_ERROR(zlib required)])
 dnl ============================================================================
 dnl Checking for GtkDoc
 dnl ============================================================================
-GTK_DOC_CHECK([1.11],[--flavour no-tmpl])
+GTK_DOC_CHECK([1.10],[--flavour no-tmpl])
 
 dnl ============================================================================
 dnl Checking for Packages
