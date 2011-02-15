@@ -70,7 +70,7 @@ struct server {
  *
  * Returns: A server structure.
  */
-struct server *server_new(const gchar * address, gboolean autoconnect);
+struct server *server_new(const gchar * address, gboolean autoconnect, const gchar* tags);
 
 /** 
  * Free \p server structure

@@ -38,6 +38,12 @@ enum {
 	SERVER_N_COLUMN
 };
 
+/* Combo Store field */
+enum {
+	COMBO_TEXT = 0,
+	COMBO_N_COLUMN
+};
+
 struct ui_server_common {
 	GtkWidget *dialog;
 	GtkWidget *widget;
@@ -46,6 +52,11 @@ struct ui_server_common {
 	GtkWidget *view;
 
 	GtkWidget *add_local_button;
+
+	GtkWidget *combo;
+	GtkListStore *combo_store;
+	GtkTreeModel *filter;
+	GList * all_tags;
 };
 
 struct ui_server_list {
@@ -78,6 +89,9 @@ gboolean ui_server_has_tag(struct server *server, const gchar * tag);
 
 void ui_server_set_tags (struct server *server, const gchar *str);
 
+GList * ui_server_all_tags(void);
+
+void ui_server_append_combo(gchar * tag);
 
 G_END_DECLS
 #endif				//__UI_SERVER_H

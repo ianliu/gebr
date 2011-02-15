@@ -125,6 +125,18 @@ void gebr_init(void)
 		menu_list_create_index();
 		menu_list_populate();
 	}
+
+	gebr.ui_server_list->common.all_tags = ui_server_all_tags();
+
+	gtk_list_store_clear(gebr.ui_server_list->common.combo_store);
+	g_list_foreach(gebr.ui_server_list->common.all_tags, (GFunc) ui_server_append_combo, NULL);
+
+    for (GList * elem = g_list_first(gebr.ui_server_list->common.all_tags); elem != NULL; elem = g_list_next(elem)){
+        if (g_strcmp0((gchar *)g_list_nth_data(gebr.ui_server_list->common.all_tags, g_list_position(gebr.ui_server_list->common.all_tags, elem)), _("All Servers")) == 0){
+            gtk_combo_box_set_active(GTK_COMBO_BOX(gebr.ui_server_list->common.combo), g_list_position(gebr.ui_server_list->common.all_tags, elem));
+        }
+    }
+
 }
 
 gboolean gebr_quit(gboolean save_config)
@@ -227,6 +239,7 @@ static void gebr_config_load_servers(void)
 	GKeyFile *servers;
 	gboolean autoconnect;
 	gboolean ret;
+	GString * tags = g_string_new(NULL);
 
 	// Migrate servers from old config file to the new servers file
 	groups = g_key_file_get_groups(gebr.config.key_file, NULL);
@@ -238,7 +251,8 @@ static void gebr_config_load_servers(void)
 		if (address->len) {
 			autoconnect = gebr_g_key_file_load_boolean_key(
 					gebr.config.key_file, groups[i], "autoconnect", TRUE);
-			server_new(address->str, autoconnect);
+			g_string_assign(tags, gebr_g_key_file_load_string_key(gebr.config.key_file, groups[i], "tags", _("All Servers"))->str);
+			server_new(address->str, autoconnect, tags->str);
 		}
 		g_string_free(address, TRUE);
 		g_key_file_remove_group (gebr.config.key_file, groups[i], NULL);
@@ -255,7 +269,8 @@ static void gebr_config_load_servers(void)
 		for (int i = 0; groups[i]; i++) {
 			autoconnect = gebr_g_key_file_load_boolean_key (
 					servers, groups[i], "autoconnect", TRUE);
-			server_new(groups[i], autoconnect);
+			g_string_assign(tags, gebr_g_key_file_load_string_key(servers, groups[i], "tags", _("All Servers"))->str);
+			server_new(groups[i], autoconnect, tags->str);
 		}
 		g_key_file_free (servers);
 	}
@@ -271,6 +286,7 @@ static void gebr_config_save_servers(void)
 	struct server *server;
 	gboolean autoconnect;
 	gboolean ret;
+	gchar * tags;
 
 	model = GTK_TREE_MODEL(gebr.ui_server_list->common.store);
 	servers = g_key_file_new ();
@@ -279,11 +295,14 @@ static void gebr_config_save_servers(void)
 		gtk_tree_model_get(model, &iter,
 				   SERVER_POINTER, &server,
 				   SERVER_AUTOCONNECT, &autoconnect,
+				   SERVER_TAGS, &tags,
 				   -1);
 		g_key_file_set_string(servers, server->comm->address->str,
 				      "address", server->comm->address->str);
 		g_key_file_set_boolean(servers, server->comm->address->str,
 				       "autoconnect", autoconnect);
+		g_key_file_set_string(servers, server->comm->address->str,
+				      "tags", tags);
 	}
 
 	path = g_build_path ("/", g_get_home_dir (), SERVERS_PATH, NULL);
@@ -426,7 +445,7 @@ gint gebr_config_load()
 
 	/* NEW CONFIG? */
 	if (new_config) {
-		server_new("127.0.0.1", TRUE);
+		server_new("127.0.0.1", TRUE, _("All Servers"));
 		//gebr_config_save(FALSE); //default values saved
 		preferences_setup_ui(TRUE);
 	} else

@@ -142,7 +142,7 @@ const gchar *server_get_name_from_address(const gchar * address)
 	return !strcmp(address, "127.0.0.1") ? _("Local server") : address;
 }
 
-struct server *server_new(const gchar * address, gboolean autoconnect)
+struct server *server_new(const gchar * address, gboolean autoconnect, const gchar* tags)
 {
 	static const struct gebr_comm_server_ops ops = {
 		.log_message = server_log_message,
@@ -166,7 +166,8 @@ struct server *server_new(const gchar * address, gboolean autoconnect)
 	gtk_list_store_set(gebr.ui_server_list->common.store, &iter,
 			   SERVER_STATUS_ICON, gebr.pixmaps.stock_disconnect,
 			   SERVER_NAME, server_get_name_from_address(address),
-			   SERVER_POINTER, server, SERVER_AUTOCONNECT, autoconnect, -1);
+			   SERVER_POINTER, server, SERVER_AUTOCONNECT, autoconnect,
+			   SERVER_TAGS, tags, -1);
 
 	if (autoconnect)
 		gebr_comm_server_connect(server->comm);
