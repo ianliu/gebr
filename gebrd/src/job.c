@@ -797,8 +797,8 @@ void job_run_flow(struct job *job)
 	g_free(localized_cmd_line);
 
 	if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_MOAB) {
-		if (g_find_program_in_path("msub")) {
-			g_string_append(job->issues, _("Cannot submit job to MOAB server (msub command is not available.\n"));
+		if (!g_find_program_in_path("msub")) {
+			g_string_append(job->issues, _("Cannot submit job to MOAB server (msub command is not available).\n"));
 			goto err;
 		}
 
