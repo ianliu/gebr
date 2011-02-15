@@ -269,7 +269,7 @@ static void job_notify_status_finished(struct job *job)
 		error = NULL;
 		if (file != NULL && g_io_channel_seek_position(file, job->output->len, G_SEEK_SET, &error) == G_IO_STATUS_NORMAL) {
 			gchar * buffer;
-			gsize length;
+			gsize length = 0;
 			g_io_channel_read_to_end(file, &buffer, &length, &error);
 			if (length > 0) {
 				GString *buffer_gstring = g_string_new(buffer);
@@ -384,7 +384,7 @@ static gboolean job_moab_checkjob_pooling(struct job * job)
 			job_notify_status(job, JOB_STATUS_RUNNING, job->start_date->str);
 		}
 	} else
-		gebrd_message(GEBR_LOG_WARNING, "Untread state reported by checkjob (estate %s)", moab_status);
+		gebrd_message(GEBR_LOG_WARNING, "Untreated state reported by checkjob (estate %s)", moab_status);
 
 xmlout:
 	gdome_doc_unref(doc, &exception);
@@ -690,10 +690,10 @@ void job_set_status(struct job *job, enum JobStatus status)
 	if (old_status == JOB_STATUS_QUEUED && job->issues->len)
 		job_notify_status(job, JOB_STATUS_ISSUED, job->issues->str);
 
-	if (job->status == JOB_STATUS_FAILED
+	if (old_status == JOB_STATUS_RUNNING
+	    && (job->status == JOB_STATUS_FAILED
 	    || job->status == JOB_STATUS_FINISHED
-	    || job->status == JOB_STATUS_CANCELED
-	    && old_status == JOB_STATUS_RUNNING) {
+	    || job->status == JOB_STATUS_CANCELED)) {
 		if (gebrd_queues_has_next(job->queue->str))
 			gebrd_queues_step_queue(job->queue->str);
 		else
@@ -797,27 +797,33 @@ void job_run_flow(struct job *job)
 	g_free(localized_cmd_line);
 
 	if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_MOAB) {
-		gchar * standard_output, * standard_error;
-		gint exit_status;
-		GError * error = NULL;
+		if (g_find_program_in_path("msub")) {
+			g_string_append(job->issues, _("Cannot submit job to MOAB server (msub command is not available.\n"));
+			goto err;
+		}
 
 		GString * moab_script = g_string_new(NULL);
 		gchar * script = g_shell_quote(cmd_line->str);
-		g_string_printf(moab_script, "echo %s | msub -A '%s' -q '%s' -k oe -j oe", script, job->moab_account->str, job->queue->str);
+		g_string_printf(moab_script, "echo %s | msub -A '%s' -q '%s' -k oe -j oe",
+			       	script, job->moab_account->str, job->queue->str);
 		g_free(script);
 		gchar * moab_quoted = g_shell_quote(moab_script->str);
 		g_string_free(moab_script, TRUE);
 		g_string_printf(cmd_line, "bash -l -c %s", moab_quoted);
 		g_free(moab_quoted);
+		GError * error = NULL;
+		gint exit_status;
+		gchar * standard_output = NULL, * standard_error = NULL;
 		if (!g_spawn_command_line_sync(cmd_line->str, &standard_output, &standard_error, &exit_status, &error)) {
 			g_string_append(job->issues, _("Cannot submit job to MOAB server.\n"));
-
+			g_free(standard_output);
 			g_free(standard_error);
 			goto err;
 		}
 		if (standard_error != NULL && strlen(standard_error)) {
-			g_string_append_printf(job->issues, _("Cannot submit job to MOAB server: %s.\n"), standard_error);
-
+			g_string_append_printf(job->issues, _("Cannot submit job to MOAB server: %s.\n"),
+					       standard_error);
+			g_free(standard_output);
 			g_free(standard_error);
 			goto err;
 		}
