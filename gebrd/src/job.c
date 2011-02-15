@@ -328,19 +328,19 @@ static GString *job_generate_id(void)
  */
 static gboolean job_moab_checkjob_pooling(struct job * job)
 {
-	gboolean keep_polling;
-	gboolean error;
+	gboolean keep_polling = TRUE;
+	gboolean error = FALSE;
 
 	/* run checkjob and retrieve XML */
 	GString *cmd_line = g_string_new("");
 	g_string_printf(cmd_line, "checkjob %s --format=xml", job->moab_jid->str);
 	gint exit_status;
-	gchar *std_err = NULL;
-	gchar *std_out = NULL;
-	keep_polling = !(error = !g_spawn_command_line_sync(cmd_line->str, &std_out, &std_err, &exit_status, NULL));
+	gchar *std_err = NULL, *std_out = NULL;
+	error = !g_spawn_command_line_sync(cmd_line->str, &std_out, &std_err, &exit_status, NULL);
 	g_string_free(cmd_line, TRUE);
 	g_free(std_err);
-	if (error) {
+	if (error == TRUE) {
+		g_string_append_printf(job->issues, _("Moab's job status could not be retrieved.\n"));
 		g_free(std_out);
 		goto out;
 	}
@@ -350,30 +350,70 @@ static gboolean job_moab_checkjob_pooling(struct job * job)
 	GdomeException exception;
 	GdomeDocument *doc = gdome_di_createDocFromMemory(dom_impl, std_out, GDOME_LOAD_PARSING, &exception);
 	g_free(std_out);
-	keep_polling = !(error = TRUE);
 	if (doc == NULL) {
 		gdome_di_unref(dom_impl, &exception);
+		error = TRUE;
 		goto out;
 	}
-	GdomeElement *element = gdome_doc_documentElement(doc, &exception);
-	if (element == NULL)
+	GdomeElement *root_element = gdome_doc_documentElement(doc, &exception);
+	if (root_element == NULL) {
+		error = TRUE;
 		goto xmlout;
-	if ((element = (GdomeElement *)gdome_el_firstChild(element, &exception)) == NULL)
-		goto xmlout;
+	}
+	if (!strcmp(gdome_el_nodeName(root_element, &exception)->str, "Error")) {
+		GdomeDOMString *attribute_name = gdome_str_mkref("Code");
+		const gchar * code = gdome_el_getAttribute(root_element, attribute_name, &exception)->str;
+		gdome_str_unref(attribute_name);
+		GdomeNode *value = gdome_el_firstChild(root_element, &exception);
+		if (value)
+			g_string_append_printf(job->issues, _("Moab's job status could not be returned with error code %s (%s).\n"),
+					  code, gdome_n_nodeValue(value, &exception)->str);
 
-	keep_polling = !(error = FALSE);
+		error = TRUE;
+		goto xmlout;
+	}
+	/* check for Data root element and its job child */
+	GdomeElement *job_element = (GdomeElement *)gdome_el_firstChild(root_element, &exception);
+	GdomeElement *req_element = (GdomeElement *)gdome_el_firstChild(job_element, &exception);
+	if (!(!strcmp(gdome_el_nodeName(root_element, &exception)->str, "Data") && job_element != NULL && req_element != NULL)) {
+		g_string_append_printf(job->issues, _("Moab's job status could not be retrieved.\n"));
+
+		error = TRUE;
+		goto xmlout;
+	}
+
+	error = FALSE;
 	/* check requeue */
 	GdomeDOMString *attribute_name = gdome_str_mkref("Class");
-	const gchar * queue = gdome_el_getAttribute(element, attribute_name, &exception)->str;
+	const gchar * queue = gdome_el_getAttribute(job_element, attribute_name, &exception)->str;
 	gdome_str_unref(attribute_name);
 	/* check for queue change */
 	if (strcmp(job->queue->str, queue)) {
 		g_string_assign(job->queue, queue);
 		job_notify_status(job, JOB_STATUS_REQUEUED, job->queue->str);
 	}
+	/* check for completion code error */
+	attribute_name = gdome_str_mkref("CompletionCode");
+	const gchar *CompletionCode = gdome_el_getAttribute(job_element, attribute_name, &exception)->str;
+	gdome_str_unref(attribute_name);
+	if (strlen(CompletionCode)) {
+		error = TRUE;
+
+		gint code = atoi(CompletionCode);
+		if (code < 0) {
+			attribute_name = gdome_str_mkref("AllocNodeList");
+			const gchar *AllocNodeList = gdome_el_getAttribute(req_element, attribute_name, &exception)->str;
+			gdome_str_unref(attribute_name);
+			g_string_append_printf(job->issues, _("Moab's job returned status code %d allocatted on nodes '%s'.\n"),
+					  code, AllocNodeList);
+		} else
+			g_string_append_printf(job->issues, _("Process exited with status code %d.\n"), code);
+
+		goto xmlout;
+	}
 	/* change status */
 	attribute_name = gdome_str_mkref("EState");
-	const gchar *moab_status = gdome_el_getAttribute(element, attribute_name, &exception)->str;
+	const gchar *moab_status = gdome_el_getAttribute(job_element, attribute_name, &exception)->str;
 	gdome_str_unref(attribute_name);
 	if (!strcmp(moab_status, "Completed")) {
 		job_notify_status_finished(job);
@@ -391,7 +431,7 @@ xmlout:
 	gdome_di_unref(dom_impl, &exception);
 out:
 	if (error) {
-		job_notify_status(job, JOB_STATUS_ISSUED, job->issues->str);
+		keep_polling = FALSE;
 		job_notify_status(job, JOB_STATUS_FAILED, "");
 	}
 
@@ -602,6 +642,7 @@ void job_new(struct job ** _job, struct client * client, GString * queue, GStrin
 	/* initialization */
 	struct job *job = g_new(struct job, 1);
 	job->process = gebr_comm_process_new();
+	job->tail_process = NULL;
 	job->flow = NULL;
 	job->critical_error = FALSE;
 	job->user_finished = FALSE;
@@ -701,8 +742,13 @@ void job_set_status(struct job *job, enum JobStatus status)
 	}
 }
 
-void job_notify_status(struct job *job, enum JobStatus status, const gchar *parameter)
+void job_notify_status(struct job *job, enum JobStatus status, const gchar *_parameter, ...)
 {
+	va_list argp;
+	va_start(argp, _parameter);
+	gchar *parameter = g_strdup_vprintf(_parameter, argp);
+	va_end(argp);
+
 	job_set_status(job, status);
 
 	/* warn all clients of the new status */
@@ -711,6 +757,8 @@ void job_notify_status(struct job *job, enum JobStatus status, const gchar *para
 		gebr_comm_protocol_send_data(client->protocol, client->stream_socket, gebr_comm_protocol_defs.sta_def,
 					     3, job->jid->str, status_enum_to_string(status), parameter);
 	}
+
+	g_free(parameter);
 }
 
 void job_run_flow(struct job *job)

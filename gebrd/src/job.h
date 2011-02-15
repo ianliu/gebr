@@ -87,7 +87,7 @@ void job_set_status(struct job *job, enum JobStatus status);
 /**
  * Change status and notify clients about it
  */
-void job_notify_status(struct job *job, enum JobStatus status, const gchar *parameter);
+void job_notify_status(struct job *job, enum JobStatus status, const gchar *parameter, ...);
 /**
  * Remember not to send any message to clients here as the job wasn't created
  */

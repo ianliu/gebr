@@ -101,9 +101,7 @@ void gebrd_quit(void)
 
 void gebrd_message(enum gebr_log_message_type type, const gchar * message, ...)
 {
-	gchar *tmp;
 	gchar *string;
-	va_list argp;
 	const gchar *loglevel;
 
 #ifndef DEBUG
@@ -111,8 +109,9 @@ void gebrd_message(enum gebr_log_message_type type, const gchar * message, ...)
 		return;
 #endif
 
+	va_list argp;
 	va_start(argp, message);
-	tmp = g_strdup_vprintf(message, argp);
+	gchar *tmp = g_strdup_vprintf(message, argp);
 	va_end(argp);
 
 	loglevel = g_getenv ("GEBRD_LOG_LEVEL");
