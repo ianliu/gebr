@@ -86,3 +86,59 @@ void gebrd_cpu_info_free (GebrdCpuInfo *self)
 	g_list_free (self->cores);
 	g_free (self);
 }
+
+struct _GebrdMemInfo {
+	GHashTable *props;
+};
+
+GebrdMemInfo *gebrd_mem_info_new (void)
+{
+	FILE *fp;
+	char *line;
+	size_t length;
+	ssize_t read;
+	GebrdMemInfo *mem;
+
+	fp = fopen("/proc/meminfo", "r");
+	if (!fp)
+		return NULL;
+
+	mem = g_new(GebrdMemInfo, 1);
+	mem->props = g_hash_table_new_full(g_str_hash,
+					   g_str_equal,
+					   (GDestroyNotify)g_free,
+					   (GDestroyNotify)g_free);
+
+	read = getline(&line, &length, fp);
+	for (; read != -1; read = getline(&line, &length, fp)) {
+		char *prop;
+		char *val;
+
+		prop = line;
+		val = strchr(line, ':');
+		if (!val) {
+			g_free (line);
+			continue;
+		}
+		val[0] = '\0';
+		val++;
+		g_strstrip (prop);
+		g_strstrip (val);
+		g_hash_table_insert (mem->props, g_strdup (prop), g_strdup (val));
+		g_free (line);
+	}
+
+	return mem;
+}
+
+const gchar *gebrd_mem_info_get (GebrdMemInfo *self,
+				 const gchar *prop)
+{
+	return g_hash_table_lookup (self->props, prop);
+}
+
+void gebrd_mem_info_free (GebrdMemInfo *self)
+{
+	g_hash_table_unref (self->props);
+	g_free (self);
+}

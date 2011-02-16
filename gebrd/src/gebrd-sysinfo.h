@@ -55,4 +55,21 @@ guint gebrd_cpu_info_n_procs (GebrdCpuInfo *self);
  */
 void gebrd_cpu_info_free (GebrdCpuInfo *self);
 
+/**
+ */
+typedef struct _GebrdMemInfo GebrdMemInfo;
+
+GebrdMemInfo *gebrd_mem_info_new (void);
+
+const gchar *gebrd_mem_info_get (GebrdMemInfo *self,
+				 const gchar *prop);
+
+/**
+ * gebrd_mem_info_free:
+ *
+ * Frees the data structure pointed by @self. Note that the strings returned by
+ * gebrd_mem_info_get() are also freed.
+ */
+void gebrd_mem_info_free (GebrdMemInfo *self);
+
 #endif /* __GEBRD_SYSINFO_H__ */
