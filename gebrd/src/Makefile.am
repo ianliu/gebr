@@ -16,15 +16,17 @@
 include $(top_srcdir)/Makefile.decl
 
 noinst_LIBRARIES = libgebrd.a
-libgebrd_a_SOURCES = \
-	gebrd.c \
-	server.c \
-	client.c \
-	job.c \
-	job-queue.c \
-	queues.c \
-	mpi-implementations.c \
-	mpi-interface.c
+libgebrd_a_SOURCES =		\
+	client.c		\
+	gebrd-sysinfo.c		\
+	gebrd.c			\
+	job-queue.c		\
+	job.c			\
+	mpi-implementations.c	\
+	mpi-interface.c		\
+	queues.c		\
+	server.c		\
+	$(NULL)
 
 touch:
 	if [ -d $(top_srcdir)/.hg ]; then touch main.c -r $(top_srcdir)/.hg; fi
@@ -34,16 +36,18 @@ bin_PROGRAMS = gebrd
 gebrd_SOURCES = \
 	main.c 
 
-noinst_HEADERS = \
-	gebrd.h \
-	server.h \
-	client.h \
-	job.h \
-	macros.h \
-	job-queue.h \
-	queues.h \
-	mpi-implementations.h \
-	mpi-interface.h
+noinst_HEADERS =		\
+	client.h		\
+	gebrd-sysinfo.h		\
+	gebrd.h			\
+	job-queue.h		\
+	job.h			\
+	macros.h		\
+	mpi-implementations.h	\
+	mpi-interface.h		\
+	queues.h		\
+	server.h		\
+	$(NULL)
 
 EXTRA_DIST = $(noinst_HEADERS)
 
