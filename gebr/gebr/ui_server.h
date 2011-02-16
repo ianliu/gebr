@@ -35,6 +35,8 @@ enum {
 	SERVER_NAME,
 	SERVER_POINTER,
 	SERVER_TAGS,
+	SERVER_CPU,
+	SERVER_MEM,
 	SERVER_N_COLUMN
 };
 
@@ -56,6 +58,7 @@ struct ui_server_common {
 	GtkWidget *combo;
 	GtkListStore *combo_store;
 	GtkTreeModel *filter;
+	GtkTreeModel *sort_store;
 	GList * all_tags;
 };
 

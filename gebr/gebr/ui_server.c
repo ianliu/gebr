@@ -234,7 +234,7 @@ static void server_common_setup(struct ui_server_common *ui_server_common)
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
 				       GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 
-	view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_server_common->filter));
+	view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_server_common->sort_store));
 	gtk_container_add(GTK_CONTAINER(scrolled_window), view);
 	ui_server_common->view = view;
 	gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(view),
@@ -259,6 +259,20 @@ static void server_common_setup(struct ui_server_common *ui_server_common)
 	col = gtk_tree_view_column_new_with_attributes(_("Address"), renderer, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
 	gtk_tree_view_column_add_attribute(col, renderer, "text", SERVER_NAME);
+
+	renderer = gtk_cell_renderer_text_new();
+	col = gtk_tree_view_column_new_with_attributes(_("CPU"), renderer, NULL);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
+	gtk_tree_view_column_add_attribute(col, renderer, "text", SERVER_CPU);
+	gtk_tree_view_column_set_sort_column_id(col, SERVER_CPU);
+	gtk_tree_view_column_set_sort_indicator(col, TRUE);
+
+	renderer = gtk_cell_renderer_text_new();
+	col = gtk_tree_view_column_new_with_attributes(_("Memory"), renderer, NULL);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
+	gtk_tree_view_column_add_attribute(col, renderer, "text", SERVER_MEM);
+	gtk_tree_view_column_set_sort_column_id(col, SERVER_MEM);
+	gtk_tree_view_column_set_sort_indicator(col, TRUE);
 
 	renderer = gtk_cell_renderer_text_new();
 	g_object_set (renderer, "editable", TRUE, NULL);
@@ -455,11 +469,15 @@ struct ui_server_list *server_list_setup_ui(void)
 							  G_TYPE_BOOLEAN,	/* Autoconnect */
 							  G_TYPE_STRING,	/* Server name */
 							  G_TYPE_POINTER,	/* Server pointer */
-							  G_TYPE_STRING		/* Tag List    */
+							  G_TYPE_STRING,	/* Tag List    */
+							  G_TYPE_STRING,	/* CPU Info    */
+							  G_TYPE_STRING 	/* Memory Info */
 							 );
 
 	ui_server_list->common.filter = gtk_tree_model_filter_new(GTK_TREE_MODEL(ui_server_list->common.store), NULL);
 	gtk_tree_model_filter_set_visible_func(GTK_TREE_MODEL_FILTER(ui_server_list->common.filter), visible_func, NULL, NULL);
+
+	ui_server_list->common.sort_store = gtk_tree_model_sort_new_with_model(GTK_TREE_MODEL(ui_server_list->common.filter));
 
 	dialog = gtk_dialog_new_with_buttons(_("Servers configuration"),
 					     GTK_WINDOW(gebr.window),
