@@ -28,6 +28,7 @@ GebrdCpuInfo *gebrd_cpu_info_new (void)
 	cpuinfo->length = 0;
 	cpuinfo->cores = NULL;
 
+	line = NULL;
 	read = getline(&line, &length, fp);
 	for (; read != -1; read = getline(&line, &length, fp)) {
 		char *prop;
@@ -48,6 +49,7 @@ GebrdCpuInfo *gebrd_cpu_info_new (void)
 		val = strchr(line, ':');
 		if (!val) {
 			g_free (line);
+			line = NULL;
 			continue;
 		}
 		val[0] = '\0';
@@ -56,6 +58,7 @@ GebrdCpuInfo *gebrd_cpu_info_new (void)
 		g_strstrip (val);
 		g_hash_table_insert (tb, g_strdup (prop), g_strdup (val));
 		g_free (line);
+		line = NULL;
 	}
 
 	return cpuinfo;
@@ -109,6 +112,7 @@ GebrdMemInfo *gebrd_mem_info_new (void)
 					   (GDestroyNotify)g_free,
 					   (GDestroyNotify)g_free);
 
+	line = NULL;
 	read = getline(&line, &length, fp);
 	for (; read != -1; read = getline(&line, &length, fp)) {
 		char *prop;
@@ -118,6 +122,7 @@ GebrdMemInfo *gebrd_mem_info_new (void)
 		val = strchr(line, ':');
 		if (!val) {
 			g_free (line);
+			line = NULL;
 			continue;
 		}
 		val[0] = '\0';
@@ -126,6 +131,7 @@ GebrdMemInfo *gebrd_mem_info_new (void)
 		g_strstrip (val);
 		g_hash_table_insert (mem->props, g_strdup (prop), g_strdup (val));
 		g_free (line);
+		line = NULL;
 	}
 
 	return mem;
