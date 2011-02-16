@@ -177,8 +177,10 @@ if test "x${want_tidy}" = xyes; then
 
 	if test "x${have_tidy}" = xyes; then
 		AC_CHECK_HEADERS([tidy/tidy.h tidy/buffio.h],
-				 [],
-				 [have_tidy=no])
+				 [], 
+				 [AC_CHECK_HEADERS([tidy.h buffio.h],
+						   [],
+						   [have_tidy=no;])])
 	fi
 
 	if test "x${have_tidy}" = xyes; then
