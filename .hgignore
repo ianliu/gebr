@@ -35,6 +35,8 @@ debr/src/debr
 debr/src/defines.h
 depcomp
 docs/debr/pt_BR
+docs/gebr/en/html-ok
+docs/gebr/en/html/index.html
 docs/gebr/pt_BR
 docs/reference/libgebr/html
 docs/reference/libgebr/libgebr-decl-list.txt
