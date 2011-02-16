@@ -69,6 +69,11 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, stru
 				model_name = g_list_nth_data (arguments, 5);
 				total_memory = g_list_nth_data (arguments, 6);
 
+				gtk_list_store_set (gebr.ui_server_list->common.store, &server->iter,
+						    SERVER_CPU, model_name->str,
+						    SERVER_MEM, total_memory->str,
+						    -1);
+
 				g_message ("Model name is: %s", model_name->str);
 				g_message ("Total memory is: %s", total_memory->str);
 
