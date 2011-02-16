@@ -8,28 +8,26 @@
     <title>O que é a GêBR</title>
 
     <para>A GêBR é uma interface gráfica simples que <emphasis role="bold">facilita o processamento</emphasis> de dados
-      geofísicos. Ela <emphasis role="bold">não é um pacote de processamento</emphasis>, mas foi desenhada
-      para <emphasis role="bold">integrar</emphasis> diversos pacotes de processamento livres, como <emphasis>Seismic
-	Un*x</emphasis> e <emphasis>Madagascar</emphasis>.</para>
+    geofísicos. Ela <emphasis role="bold">não é um pacote de processamento</emphasis>, mas foi desenhada
+    para <emphasis role="bold">integrar</emphasis> diversos pacotes de processamento livres, como <emphasis>Seismic
+    Un*x</emphasis> e <emphasis>Madagascar</emphasis>.</para>
 
     <para>A GêBR permite gerenciar projetos e linhas, montar e executar fluxos, acompanhar os resultados do
-      processamento, tudo de forma simples e amigável.</para>
+    processamento, tudo de forma simples e amigável.</para>
 
     <para>Sendo um <emphasis role="bold">software livre</emphasis>, qualquer pessoa pode usar e customizar a GêBR, sem
-      custo, nos termos da <emphasis>GNU Public License</emphasis>. Isso a torna especialmente atrativa para propósitos
-      de pesquisa acadêmica e adoção em cursos.</para>
-
+    custo, nos termos da <emphasis>GNU Public License</emphasis>. Isso a torna especialmente atrativa para propósitos
+    de pesquisa acadêmica e adoção em cursos.</para>
 
     <section>
       <title>Projeto GêBR</title>
 
       <para>A interface GêBR é um dos subprojetos do <emphasis>Projeto GêBR</emphasis>. O principal objetivo deste
-	projeto é estimular a integração da comunidade geofísica no Brasil, por meio do desenvolvimento de ferramentas
-	que facilitem a disseminação das pesquisas na área.</para>
-
+      projeto é estimular a integração da comunidade geofísica no Brasil, por meio do desenvolvimento de ferramentas
+      que facilitem a disseminação das pesquisas na área.</para>
 
       <para>Para obter mais informações, visite a página oficial do
-	projeto: <emphasis><link xlink:href="http://www.gebrproject.com">www.gebrproject.com</link></emphasis>.</para>
+      projeto: <emphasis><link xlink:href="http://www.gebrproject.com">www.gebrproject.com</link></emphasis>.</para>
 
     </section>
 
@@ -379,8 +377,7 @@
           <para>Na janela <guilabel>Propriedade para Fluxo</guilabel>, digite um <emphasis>título</emphasis> para o
           fluxo (por exemplo, <userinput>Meu primeiro fluxo</userinput>). Se desejar, digite também uma
           breve <emphasis>descrição</emphasis> do fluxo, o <emphasis>autor</emphasis> e um <emphasis>e-mail</emphasis>
-          para contato. Feito isso, clique
-            <guibutton>OK</guibutton>.</para>
+          para contato. Feito isso, clique<guibutton>OK</guibutton>.</para>
         </step>
         <step>
           <para>Selecione a aba <guilabel>Edição de Fluxo</guilabel>. Em seguida, expanda a categoria
@@ -415,7 +412,7 @@
             deve <emphasis role="bold">arrastar o programa</emphasis> para a posição desejada, como mostra a janela a
             seguir:</para>
 
-          <figure>  
+          <figure>
             <mediaobject>
 		<caption>Na aba Edição de Fluxo, no canto esquerdo da janela, pode-se alterar a ordem dos programas como no exemplo.</caption>
               <imageobject>
@@ -434,7 +431,7 @@
             /></imageobject></inlinemediaobject></guiicon>. Depois faça o mesmo para o programa
             <guimenuitem>SU Simple X Image</guimenuitem>.</para>
 
-          <figure>   
+          <figure>
             <mediaobject>
 		<caption>Na aba Edição de Fluxo, configura-se os programas do fluxo em questão como não configurado, desabilitado e configurado através do menu de contexto.</caption>
               <imageobject>
@@ -1741,10 +1738,9 @@
           <step>
             <para>Certifique-se de ter selecionado o fluxo e, na aba Edição de fluxo, no campo Sequência de fluxo,
               pode-se editar os caminhos de entrada, saída e erro através de um clique duplo nos botões. Ver figura: 
-	    </para>
-          </step> 
-	
-           <step>
+            </para>
+          </step>
+          <step>
             <para>Edite os caminhos ou clique no
             ícone <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_escolher_arquivo.png"
             /></imageobject></inlinemediaobject></guiicon> e navegue pela janela <guilabel>Escolha um

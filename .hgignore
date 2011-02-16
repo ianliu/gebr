@@ -34,10 +34,8 @@ debr/data/debr.desktop.in
 debr/src/debr
 debr/src/defines.h
 depcomp
-docs/debr/pt_BR
-docs/gebr/en/html-ok
-docs/gebr/en/html/index.html
-docs/gebr/pt_BR
+docs/gebr/en/html*
+docs/gebr/pt_BR/html*
 docs/reference/libgebr/html
 docs/reference/libgebr/libgebr-decl-list.txt
 docs/reference/libgebr/libgebr-decl.txt
@@ -103,3 +101,6 @@ rpm/gebrproject.mandriva.spec
 rpm/gebrproject.opensuse.spec
 stamp-it
 tags
+
+syntax: regexp
+^build$

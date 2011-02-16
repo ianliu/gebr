@@ -1,15 +1,15 @@
 # List of source files containing translatable strings.
-comm/channelsocket.c
-comm/hostinfo.c
-comm/listensocket.c
-comm/process.c
-comm/protocol.c
-comm/server.c
-comm/socket.c
-comm/socketaddress.c
+comm/gebr-comm-channelsocket.c
+comm/gebr-comm-hostinfo.c
+comm/gebr-comm-listensocket.c
+comm/gebr-comm-process.c
+comm/gebr-comm-protocol.c
+comm/gebr-comm-server.c
+comm/gebr-comm-socket.c
+comm/gebr-comm-socketaddress.c
 comm/socketchannel/socketchannel.c
-comm/streamsocket.c
-comm/terminalprocess.c
+comm/gebr-comm-streamsocket.c
+comm/gebr-comm-terminalprocess.c
 date.c
 geoxml/document.c
 geoxml/enum_option.c

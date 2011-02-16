@@ -102,18 +102,27 @@ void gebrd_quit(void)
 void gebrd_message(enum gebr_log_message_type type, const gchar * message, ...)
 {
 	gchar *string;
-	va_list argp;
+	const gchar *loglevel;
 
 #ifndef DEBUG
 	if (type == GEBR_LOG_DEBUG)
 		return;
 #endif
 
+	va_list argp;
 	va_start(argp, message);
-	string = g_strdup_vprintf(message, argp);
+	gchar *tmp = g_strdup_vprintf(message, argp);
 	va_end(argp);
 
-	gebr_log_add_message(gebrd.log, type, string);
+	loglevel = g_getenv ("GEBRD_LOG_LEVEL");
+	if (g_strcmp0 (loglevel, "compact") == 0) {
+		string = g_strescape (tmp, "\"");
+		if (strlen (string) > 120)
+			string[120] = '\0';
+	} else
+		string = g_strdup (tmp);
+
+	gebr_log_add_message(gebrd.log, type, tmp);
 	if (gebrd.options.foreground == TRUE) {
 		if (type != GEBR_LOG_ERROR)
 			fprintf(stdout, "%s\n", string);
@@ -121,6 +130,7 @@ void gebrd_message(enum gebr_log_message_type type, const gchar * message, ...)
 			fprintf(stderr, "%s\n", string);
 	}
 
+	g_free(tmp);
 	g_free(string);
 }
 

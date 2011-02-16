@@ -177,8 +177,10 @@ if test "x${want_tidy}" = xyes; then
 
 	if test "x${have_tidy}" = xyes; then
 		AC_CHECK_HEADERS([tidy/tidy.h tidy/buffio.h],
-				 [],
-				 [have_tidy=no])
+				 [], 
+				 [AC_CHECK_HEADERS([tidy.h buffio.h],
+						   [],
+						   [have_tidy=no;])])
 	fi
 
 	if test "x${have_tidy}" = xyes; then
@@ -204,7 +206,7 @@ AC_CHECK_LIB(z,main,,[AC_MSG_ERROR(zlib required)])
 dnl ============================================================================
 dnl Checking for GtkDoc
 dnl ============================================================================
-GTK_DOC_CHECK([1.11],[--flavour no-tmpl])
+GTK_DOC_CHECK([1.10],[--flavour no-tmpl])
 
 dnl ============================================================================
 dnl Checking for Packages
@@ -276,7 +278,6 @@ AC_SUBST(GEBR_GUI_LIBS)
 AC_CONFIG_FILES([
 Makefile
 docs/Makefile
-docs/debr/Makefile
 docs/gebr/Makefile
 docs/gebr/en/Makefile
 docs/gebr/pt_BR/Makefile

@@ -92,6 +92,7 @@ AM_CPPFLAGS = -I$(top_srcdir)		\
 	      -I..			\
 	      $(GLIB_CFLAGS)		\
 	      $(GDOME2_CFLAGS)		\
+	      -I/usr/include/tidy	\
 	      @DEBUG_CFLAGS@
 
 AM_CFLAGS = $(COMMON_CFLAGS) -fPIC

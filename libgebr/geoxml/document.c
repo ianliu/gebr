@@ -27,8 +27,8 @@
 
 #include "defines.h"
 #if ENABLE_TIDY
-#include <tidy/tidy.h>
-#include <tidy/buffio.h>
+#include <tidy.h>
+#include <buffio.h>
 #endif
 
 #include "document.h"
