@@ -429,8 +429,6 @@ void on_help_contents_activate(void)
 	const gchar *path;
 
 	loc = setlocale(LC_MESSAGES, NULL);
-	g_message ("%s", loc);
-	g_message ("%s", GEBR_USERDOC_DIR);
 	if (g_str_has_prefix (loc, "pt"))
 		path = "file://" GEBR_USERDOC_DIR "/pt_BR/html/index.html";
 	else
