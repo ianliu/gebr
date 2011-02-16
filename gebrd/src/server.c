@@ -44,6 +44,7 @@
 #include "client.h"
 #include "job-queue.h"
 #include "queues.h"
+#include "gebrd-sysinfo.h"
 
 
 /*
@@ -285,12 +286,24 @@ gboolean server_parse_client_messages(struct client *client)
 			}
 
 			/* send return */
+			const gchar *model_name;
+			const gchar *total_memory;
+			GebrdCpuInfo *cpuinfo = gebrd_cpu_info_new();
+			GebrdMemInfo *meminfo = gebrd_mem_info_new();
+			model_name = gebrd_cpu_info_get (cpuinfo, 0, "model name");
+			total_memory = gebrd_mem_info_get (meminfo, "MemTotal");
 			gebr_comm_protocol_send_data(client->protocol, client->stream_socket,
-						     gebr_comm_protocol_defs.ret_def, 5,
-						     gebrd.hostname, display_port->str,
-						     queue_list->str, server_type, accounts_list->str);
+						     gebr_comm_protocol_defs.ret_def, 7,
+						     gebrd.hostname,
+						     display_port->str,
+						     queue_list->str,
+						     server_type,
+						     accounts_list->str,
+						     model_name,
+						     total_memory);
 
-			/* frees */
+			gebrd_cpu_info_free (cpuinfo);
+			gebrd_mem_info_free (meminfo);
 			gebr_comm_protocol_split_free(arguments);
 			g_string_free(display_port, TRUE);
 			g_string_free(accounts_list, TRUE);
