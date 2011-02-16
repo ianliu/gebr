@@ -125,6 +125,14 @@ static void server_common_autoconnect_changed(GtkMenuItem * menu_item, struct se
 static void server_common_remove(GtkMenuItem * menu_item, struct server *server)
 {
 	server_free(server);
+	/*Regenerate the Combo Box List*/
+	gebr.ui_server_list->common.all_tags = ui_server_all_tags();
+
+	gint last_active = gtk_combo_box_get_active(GTK_COMBO_BOX(gebr.ui_server_list->common.combo));
+	gtk_list_store_clear(gebr.ui_server_list->common.combo_store);
+
+	g_list_foreach(gebr.ui_server_list->common.all_tags, (GFunc) ui_server_append_combo, NULL);
+	gtk_combo_box_set_active(GTK_COMBO_BOX(gebr.ui_server_list->common.combo), last_active);
 }
 
 /* Function: server_common_stop
@@ -730,6 +738,7 @@ void ui_server_set_tags (struct server *server, const gchar *str)
 			   SERVER_TAGS, tags->str,
 			   -1);
 
+	/*Regenerate the Combo Box List*/
 	gebr.ui_server_list->common.all_tags = ui_server_all_tags();
 
 	gint last_active = gtk_combo_box_get_active(GTK_COMBO_BOX(gebr.ui_server_list->common.combo));

@@ -126,6 +126,7 @@ void gebr_init(void)
 		menu_list_populate();
 	}
 
+	/*Regenerate the Combo Box List*/
 	gebr.ui_server_list->common.all_tags = ui_server_all_tags();
 
 	gtk_list_store_clear(gebr.ui_server_list->common.combo_store);
