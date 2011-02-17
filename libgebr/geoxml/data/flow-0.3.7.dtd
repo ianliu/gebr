@@ -1,6 +1,6 @@
 <!ELEMENT flow (title, description, help, author, email, dict, date, category*, server, program*, revision*)>
 <!ATTLIST flow
-	version CDATA #FIXED "0.3.6">
+	version CDATA #FIXED "0.3.7">
 
 <!ELEMENT date (created, modified, lastrun)>
 <!ELEMENT lastrun (#PCDATA)>

@@ -1,8 +1,10 @@
-<!ELEMENT line (title, description, help, author, email, dict, date, path*, flow*)>
+<!ELEMENT line (title, description, help, author, email, dict, date, group, path*, flow*)>
 <!ATTLIST line
-	version CDATA #FIXED "0.3.2">
+	version CDATA #FIXED "0.3.3">
 
 <!ELEMENT date (created, modified)>
+
+<!ELEMENT group (#PCDATA)>
 
 <!-- Path for input/output/error of flows -->
 <!ELEMENT path             (#PCDATA)>
