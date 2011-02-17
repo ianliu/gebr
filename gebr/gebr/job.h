@@ -41,7 +41,7 @@ struct job {
 	struct server *server;
 
 	enum JobStatus {
-		JOB_STATUS_UNKNOWN = 0,
+		JOB_STATUS_INITIAL = 0,
 		JOB_STATUS_QUEUED,
 		JOB_STATUS_FAILED,
 		JOB_STATUS_RUNNING,
