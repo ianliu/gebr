@@ -743,11 +743,6 @@ void job_status_set(struct job *job, enum JobStatus status)
 	enum JobStatus old_status = job->status;
 	job->status = status;
 
-	if (old_status == JOB_STATUS_INITIAL) {
-		if (job->issues->len)
-			job_status_notify(job, JOB_STATUS_ISSUED, job->issues->str);
-	}
-
 	if (old_status == JOB_STATUS_RUNNING
 	    && (job->status == JOB_STATUS_FAILED
 	    || job->status == JOB_STATUS_FINISHED
@@ -978,6 +973,9 @@ void job_kill(struct job *job)
 
 void job_notify(struct job *job, struct client *client)
 {
+	if (job->status == JOB_STATUS_INITIAL)
+		job_status_set(job, JOB_STATUS_QUEUED);
+
 	gebr_comm_protocol_send_data(client->protocol, client->stream_socket, gebr_comm_protocol_defs.job_def,
 				     11, job->jid->str, job->status_string->str, job->title->str, job->start_date->str,
 				     job->finish_date->str, job->hostname->str, job->issues->str,
