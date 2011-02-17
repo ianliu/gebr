@@ -208,7 +208,6 @@ void gebrd_config_load(void)
 	    && key_file_exception(&err2, GEBRD_CONF_FILE))
 		goto out;
 
-
 	/*
 	 * Iterate over all groups starting with `mpi-', populating the
 	 * GList gebrd.mpi_flavors.

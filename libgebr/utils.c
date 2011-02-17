@@ -25,6 +25,7 @@
 #include <unistd.h>
 #include <glib/gstdio.h>
 #include <locale.h>
+#include <fcntl.h>
 
 #include "defines.h"
 #include "utils.h"
@@ -594,3 +595,37 @@ gchar *gebr_date_get_localized (const gchar *format, const gchar *locale)
 
 	return datestr;
 }
+
+gchar *gebr_id_random_create(gssize bytes)
+{
+	gchar * id = g_new(gchar, bytes+1);
+
+	for (gint i = 0; i < bytes; ++i) {
+		GTimeVal current_time;
+		g_get_current_time(&current_time);
+		g_random_set_seed(current_time.tv_usec);
+	
+		gchar c = (gchar)g_random_int_range(33, 126);
+		id[i] = c;
+	}
+	id[bytes] = '\0';
+
+	return id;
+}
+
+gint gebr_lock_file_open(const gchar *pathname)
+{
+//	struct flock fl;
+//	int fd;
+
+//	fl.l_type   = F_WRLCK;  /* F_RDLCK, F_WRLCK, F_UNLCK    */
+//	fl.l_whence = SEEK_SET; /* SEEK_SET, SEEK_CUR, SEEK_END */
+//	fl.l_start  = 0;        /* Offset from l_whence         */
+//	fl.l_len    = 0;        /* length, 0 = to EOF           */
+//	fl.l_pid    = getpid(); /* our PID                      */
+
+//	fd = open("filename", O_WRONLY);
+
+//fcntl(fd, F_SETLKW, &fl);  /* F_GETLK, F_SETLK, F_SETLKW */
+}
+
