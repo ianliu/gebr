@@ -15,8 +15,8 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "job-queue.h"
-#include "queues.h"
+#include "gebrd-job-queue.h"
+#include "gebrd-queues.h"
 
 GebrdJobQueue * gebrd_job_queue_new(const gchar * name)
 {

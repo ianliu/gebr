@@ -24,7 +24,7 @@
 #include <netdb.h>
 #include <libgebr/comm/gebr-comm-server.h>
 
-#include "mpi-interface.h"
+#include "gebrd-mpi-interface.h"
 
 G_BEGIN_DECLS
 

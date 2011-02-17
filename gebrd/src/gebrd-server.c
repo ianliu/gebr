@@ -37,13 +37,13 @@
 
 #include <gdome.h>
 
-#include "server.h"
-#include "defines.h"
+#include "gebrd-server.h"
+#include "gebrd-defines.h"
 #include "gebrd.h"
-#include "job.h"
-#include "client.h"
-#include "job-queue.h"
-#include "queues.h"
+#include "gebrd-job.h"
+#include "gebrd-client.h"
+#include "gebrd-job-queue.h"
+#include "gebrd-queues.h"
 #include "gebrd-sysinfo.h"
 
 

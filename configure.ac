@@ -321,7 +321,7 @@ gebrd/Makefile
 gebrd/doc/Makefile
 gebrd/po/Makefile.in
 gebrd/src/Makefile
-gebrd/src/defines.h
+gebrd/src/gebrd-defines.h
 gebrd/tests/Makefile
 
 gebr/Makefile

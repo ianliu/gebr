@@ -15,7 +15,22 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __MACROS_H
-#define __MACROS_H
+#ifndef __MPI_IMPLEMENTATIONS_H__
+#define __MPI_IMPLEMENTATIONS_H__
 
-#endif				//__MACROS_H
+#include "gebrd-mpi-interface.h"
+
+G_BEGIN_DECLS
+
+typedef struct _GebrdOpenMpi GebrdOpenMpi;
+
+struct _GebrdOpenMpi {
+	GebrdMpiInterface parent;
+	const GebrdMpiConfig * config;
+};
+
+GebrdMpiInterface * gebrd_open_mpi_new(const gchar * n_process, const GebrdMpiConfig * config);
+
+G_END_DECLS
+
+#endif /* __MPI_IMPLEMENTATIONS_H__ */

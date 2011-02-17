@@ -18,7 +18,7 @@
 #ifndef __SERVER_H
 #define __SERVER_H
 
-#include "client.h"
+#include "gebrd-client.h"
 
 G_BEGIN_DECLS
 

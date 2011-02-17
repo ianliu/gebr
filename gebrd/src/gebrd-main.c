@@ -26,7 +26,7 @@
 #include <libgebr/libgebr.h>
 
 #include "gebrd.h"
-#include "defines.h"
+#include "gebrd-defines.h"
 #include "version.h"
 
 int main(int argc, char **argv)

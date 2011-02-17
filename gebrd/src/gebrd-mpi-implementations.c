@@ -1,6 +1,6 @@
 #include <string.h>
 
-#include "mpi-implementations.h"
+#include "gebrd-mpi-implementations.h"
 
 /*
  * OpenMPI definition

@@ -1,4 +1,4 @@
-#include "mpi-interface.h"
+#include "gebrd-mpi-interface.h"
 
 void gebrd_mpi_config_free(GebrdMpiConfig * self)
 {

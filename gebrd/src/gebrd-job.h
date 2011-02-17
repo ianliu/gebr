@@ -21,7 +21,7 @@
 #include <libgebr/geoxml/geoxml.h>
 #include <libgebr/comm/gebr-comm-process.h>
 
-#include "client.h"
+#include "gebrd-client.h"
 
 G_BEGIN_DECLS
 

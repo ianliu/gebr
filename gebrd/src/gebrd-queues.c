@@ -16,9 +16,9 @@
  */
 
 #include "gebrd.h"
-#include "queues.h"
-#include "job-queue.h"
-#include "job.h"
+#include "gebrd-queues.h"
+#include "gebrd-job-queue.h"
+#include "gebrd-job.h"
 
 void gebrd_queues_add_job_to(const gchar * queue, struct job * job)
 {

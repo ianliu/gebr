@@ -18,7 +18,7 @@
 #ifndef __GEBRD_QUEUES_H
 #define __GEBRD_QUEUES_H
 
-#include "job.h"
+#include "gebrd-job.h"
 
 G_BEGIN_DECLS
 

@@ -16,37 +16,36 @@
 include $(top_srcdir)/Makefile.decl
 
 noinst_LIBRARIES = libgebrd.a
-libgebrd_a_SOURCES =		\
-	client.c		\
-	gebrd-sysinfo.c		\
-	gebrd.c			\
-	job-queue.c		\
-	job.c			\
-	mpi-implementations.c	\
-	mpi-interface.c		\
-	queues.c		\
-	server.c		\
+libgebrd_a_SOURCES =			\
+	gebrd-client.c			\
+	gebrd-sysinfo.c			\
+	gebrd.c				\
+	gebrd-job-queue.c		\
+	gebrd-job.c			\
+	gebrd-mpi-implementations.c	\
+	gebrd-mpi-interface.c		\
+	gebrd-queues.c			\
+	gebrd-server.c			\
 	$(NULL)
 
 touch:
-	if [ -d $(top_srcdir)/.hg ]; then touch main.c -r $(top_srcdir)/.hg; fi
+	if [ -d $(top_srcdir)/.hg ]; then touch gebrd-main.c -r $(top_srcdir)/.hg; fi
 gebrd.c: touch
 
 bin_PROGRAMS = gebrd
 gebrd_SOURCES = \
-	main.c 
+	gebrd-main.c 
 
-noinst_HEADERS =		\
-	client.h		\
-	gebrd-sysinfo.h		\
-	gebrd.h			\
-	job-queue.h		\
-	job.h			\
-	macros.h		\
-	mpi-implementations.h	\
-	mpi-interface.h		\
-	queues.h		\
-	server.h		\
+noinst_HEADERS =			\
+	gebrd-client.h			\
+	gebrd-sysinfo.h			\
+	gebrd.h				\
+	gebrd-job-queue.h		\
+	gebrd-job.h			\
+	gebrd-mpi-implementations.h	\
+	gebrd-mpi-interface.h		\
+	gebrd-queues.h			\
+	gebrd-server.h			\
 	$(NULL)
 
 EXTRA_DIST = $(noinst_HEADERS)

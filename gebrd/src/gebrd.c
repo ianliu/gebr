@@ -28,8 +28,8 @@
 #include <libgebr/utils.h>
 
 #include "gebrd.h"
-#include "server.h"
-#include "client.h"
+#include "gebrd-server.h"
+#include "gebrd-client.h"
 
 #define GEBRD_CONF_FILE "/etc/gebr/gebrd.conf"
 

@@ -26,9 +26,9 @@
 
 #include <libgebr/comm/gebr-comm-protocol.h>
 
-#include "client.h"
+#include "gebrd-client.h"
 #include "gebrd.h"
-#include "server.h"
+#include "gebrd-server.h"
 
 /*
  * Private functions

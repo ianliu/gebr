@@ -23,7 +23,7 @@
 #ifndef __JOB_QUEUE_H
 #define __JOB_QUEUE_H
 
-#include "job.h"
+#include "gebrd-job.h"
 
 G_BEGIN_DECLS
 

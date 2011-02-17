@@ -32,10 +32,10 @@
 #include <libgebr/utils.h>
 #include <libgebr/date.h>
 
-#include "job.h"
+#include "gebrd-job.h"
 #include "gebrd.h"
-#include "queues.h"
-#include "mpi-implementations.h"
+#include "gebrd-queues.h"
+#include "gebrd-mpi-implementations.h"
 
 static gboolean job_parse_parameters(struct job *job, GebrGeoXmlParameters * parameters, GebrGeoXmlProgram * program);
 
