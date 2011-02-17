@@ -130,5 +130,16 @@ gchar *gebr_str_escape (const gchar *str);
  */
 gchar *gebr_date_get_localized (const gchar *format, const gchar *locale);
 
+/*
+ * Create a random id compose of printable characters
+ * Returns: a newly allocated string containing the id
+ */
+gchar *gebr_id_random_create(gssize bytes);
+
+/*
+ * Open a file for writing and locking it. 
+ */
+gint gebr_lock_file_open(const gchar *pathname);
+
 G_END_DECLS
 #endif				//__GEBR_UTILS_H
