@@ -24,7 +24,6 @@
 #include <libgebr/comm/gebr-comm.h>
 
 #include "gebrclient.h"
-#include "../defines.h"
 
 int main(int argc, char **argv, char **env)
 {
@@ -37,7 +36,7 @@ int main(int argc, char **argv, char **env)
 	GError *error = NULL;
 	GOptionContext *context;
 
-	gebr_libinit(GETTEXT_PACKAGE, argv[0]);
+	gebr_libinit("gebr-client", argv[0]);
 
 	context = g_option_context_new(_("serveraddress command [args]}"));
 	g_option_context_set_summary(context, _("GeBR commandline client")
@@ -52,7 +51,7 @@ int main(int argc, char **argv, char **env)
 		return -1;
 	}
 	if (show_version == TRUE) {
-		gebr_client_message(GEBR_LOG_INFO, "%s", GEBR_VERSION);
+		//gebr_client_message(GEBR_LOG_INFO, "%s", GEBR_VERSION);
 		return 0;
 	}
 	if (argc < 2) {

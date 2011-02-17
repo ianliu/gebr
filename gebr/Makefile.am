@@ -15,6 +15,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 include $(top_srcdir)/Makefile.decl
 
-SUBDIRS = gebr gebr-client tests po data
+SUBDIRS = gebr tests po data
 
 noinst_HEADERS = defines.h

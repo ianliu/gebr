@@ -328,10 +328,11 @@ gebr/Makefile
 gebr/data/Makefile
 gebr/data/gebr.desktop.in
 gebr/defines.h
-gebr/gebr-client/Makefile
 gebr/gebr/Makefile
 gebr/po/Makefile.in
 gebr/tests/Makefile
+
+gebr-client/Makefile
 
 debr/Makefile
 debr/data/Makefile
