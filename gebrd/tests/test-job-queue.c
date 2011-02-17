@@ -16,8 +16,8 @@
  */
 #include <glib.h>
 
-#include "gebrd-job-queue.h"
-#include "gebrd-job.h"
+#include "job-queue.h"
+#include "job.h"
 
 /*
  * Tests for default parameters in a GebrdJobQueue.

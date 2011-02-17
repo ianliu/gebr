@@ -691,6 +691,7 @@ glong gebr_geoxml_flow_get_revisions_number(GebrGeoXmlFlow * flow)
 GebrGeoXmlFlowError gebr_geoxml_flow_validade(GebrGeoXmlFlow * flow, gchar ** program_title)
 {
 	const gchar *input = NULL;
+	const gchar *output = NULL;
 	GebrGeoXmlSequence *first_program;
 	gulong i = 0, max = 0;
 

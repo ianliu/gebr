@@ -14,8 +14,48 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 include $(top_srcdir)/Makefile.decl
- 
-if ENABLE_TESTS
-TESTSDIR=tests
-endif
-SUBDIRS = src po ${TESTSDIR} doc
+
+noinst_LIBRARIES = libgebrd.a
+libgebrd_a_SOURCES = \
+	gebrd.c \
+	server.c \
+	client.c \
+	job.c \
+	job-queue.c \
+	queues.c \
+	mpi-implementations.c \
+	mpi-interface.c
+
+touch:
+	if [ -d $(top_srcdir)/.hg ]; then touch main.c -r $(top_srcdir)/.hg; fi
+gebrd.c: touch
+
+bin_PROGRAMS = gebrd
+gebrd_SOURCES = \
+	main.c 
+
+noinst_HEADERS = \
+	gebrd.h \
+	server.h \
+	client.h \
+	job.h \
+	macros.h \
+	job-queue.h \
+	queues.h \
+	mpi-implementations.h \
+	mpi-interface.h
+
+EXTRA_DIST = $(noinst_HEADERS)
+
+AM_CPPFLAGS = $(GEBR_CFLAGS)		\
+	      $(GEBR_COMM_CFLAGS)	\
+	      $(GEBR_GEOXML_CFLAGS)	\
+	      -DNANOVERSION=\"$(NANOVERSION)\"\
+	      @DEBUG_CFLAGS@ 
+
+AM_CFLAGS = $(COMMON_CFLAGS)
+
+gebrd_LDADD = libgebrd.a	\
+	      $(GEBR_LIBS)	\
+	      $(GEBR_COMM_LIBS)	\
+	      $(GEBR_GEOXML_LIBS)

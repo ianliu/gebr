@@ -20,7 +20,7 @@ DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc
 
 SUBDIRS = libgebr gebrd rpm
 if ENABLE_GUI
-SUBDIRS += gebr gebr-client debr docs 
+SUBDIRS += gebr debr docs 
 endif
 
 EXTRA_DIST = libgebr/po/Makefile.in.in	\

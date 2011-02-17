@@ -25,8 +25,8 @@ AC_PREREQ([2.59])
 # set GEBR_BINARY_AGE and GEBR_INTERFACE_AGE to 0.
 
 m4_define(gebr_major_version,   [0])
-m4_define(gebr_minor_version,  [13])
-m4_define(gebr_micro_version,   [0])
+m4_define(gebr_minor_version,  [11])
+m4_define(gebr_micro_version,   [2])
 m4_define([gebr_interface_age], [0])
 m4_define([gebr_binary_age],
           [m4_eval(100 * gebr_minor_version + gebr_micro_version)])
@@ -320,23 +320,25 @@ libgebr/tests/Makefile
 gebrd/Makefile
 gebrd/doc/Makefile
 gebrd/po/Makefile.in
-gebrd/gebrd-defines.h
+gebrd/src/Makefile
+gebrd/src/defines.h
 gebrd/tests/Makefile
 
 gebr/Makefile
 gebr/data/Makefile
 gebr/data/gebr.desktop.in
 gebr/defines.h
+gebr/gebr-client/Makefile
+gebr/gebr/Makefile
 gebr/po/Makefile.in
 gebr/tests/Makefile
-
-gebr-client/Makefile
 
 debr/Makefile
 debr/data/Makefile
 debr/data/debr.desktop.in
 debr/po/Makefile.in
-debr/defines.h
+debr/src/Makefile
+debr/src/defines.h
 debr/tests/Makefile
 
 ])
