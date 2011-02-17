@@ -29,7 +29,7 @@
 #include <libgebr/gui/gebr-gui-utils.h>
 
 #include "menu.h"
-#include "../defines.h"
+#include "defines.h"
 #include "gebr.h"
 #include "document.h"
 

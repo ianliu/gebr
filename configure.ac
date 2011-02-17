@@ -320,15 +320,13 @@ libgebr/tests/Makefile
 gebrd/Makefile
 gebrd/doc/Makefile
 gebrd/po/Makefile.in
-gebrd/src/Makefile
-gebrd/src/gebrd-defines.h
+gebrd/gebrd-defines.h
 gebrd/tests/Makefile
 
 gebr/Makefile
 gebr/data/Makefile
 gebr/data/gebr.desktop.in
 gebr/defines.h
-gebr/gebr/Makefile
 gebr/po/Makefile.in
 gebr/tests/Makefile
 
@@ -338,8 +336,7 @@ debr/Makefile
 debr/data/Makefile
 debr/data/debr.desktop.in
 debr/po/Makefile.in
-debr/src/Makefile
-debr/src/defines.h
+debr/defines.h
 debr/tests/Makefile
 
 ])

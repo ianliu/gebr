@@ -25,7 +25,7 @@
 #include "ui_flow_edition.h"
 #include "interface.h"
 #include "gebr.h"
-#include "../defines.h"
+#include "defines.h"
 #include "flow.h"
 #include "callbacks.h"
 

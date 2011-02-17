@@ -28,7 +28,7 @@
 
 #include "ui_document.h"
 #include "gebr.h"
-#include "../defines.h"
+#include "defines.h"
 #include "flow.h"
 #include "ui_help.h"
 #include "document.h"

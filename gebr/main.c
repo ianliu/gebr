@@ -25,7 +25,7 @@
 #include <libgebr/libgebr.h>
 
 #include "gebr.h"
-#include "../defines.h"
+#include "defines.h"
 #include "version.h"
 #include "interface.h"
 

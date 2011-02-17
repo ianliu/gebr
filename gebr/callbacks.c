@@ -23,7 +23,7 @@
 #include <locale.h>
 
 #include "callbacks.h"
-#include "../defines.h"
+#include "defines.h"
 #include "gebr.h"
 #include "document.h"
 #include "project.h"
