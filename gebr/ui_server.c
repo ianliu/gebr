@@ -69,7 +69,7 @@ server_common_tooltip_callback(GtkTreeView * tree_view, GtkTooltip * tooltip,
 		struct server *server;
 		gboolean had_error = TRUE;
 
-		gtk_tree_model_get(GTK_TREE_MODEL(ui->filter), iter, SERVER_POINTER, &server, -1);
+		gtk_tree_model_get(GTK_TREE_MODEL(ui->sort_store), iter, SERVER_POINTER, &server, -1);
 		if (server->last_error->len) //after connected state
 			gtk_tooltip_set_text(tooltip, server->last_error->str);
 		else if (server->comm->last_error->len) //before connected state
@@ -82,7 +82,7 @@ server_common_tooltip_callback(GtkTreeView * tree_view, GtkTooltip * tooltip,
 	if (gtk_tree_view_get_column(tree_view, SERVER_AUTOCONNECT) == column) {
 		gboolean autoconnect;
 
-		gtk_tree_model_get(GTK_TREE_MODEL(ui->filter), iter, SERVER_AUTOCONNECT, &autoconnect, -1);
+		gtk_tree_model_get(GTK_TREE_MODEL(ui->sort_store), iter, SERVER_AUTOCONNECT, &autoconnect, -1);
 		if (autoconnect)
 			gtk_tooltip_set_text(tooltip, _("Autoconnect ON"));
 		else
