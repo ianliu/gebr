@@ -15,6 +15,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 include $(top_srcdir)/Makefile.decl
 
+SUBDIRS = . tests po data
+
 bin_PROGRAMS = gebr
 
 touch:
