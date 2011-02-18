@@ -1,15 +1,14 @@
 Source: gebrproject
 Priority: extra
-Maintainer: Ricardo Biloti <biloti@gebrproject.com>
-Build-Depends: debhelper (>= 5), automake, libtool, intltool, gtk-doc-tools,
- zlib1g-dev, libwebkit-dev | libgtk2.0-dev, libgdome2-dev, libtidy-dev,
- docbook-utils
+Maintainer: Fabricio Matheus Goncalves <fmatheus@gebrproject.com>
+Build-Depends: debhelper (>= 7), gtk-doc-tools, docbook-xsl,
+ libwebkit-dev, libgdome2-dev, libtidy-dev
 Standards-Version: 3.7.2
 
 Package: libgebr0
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: libwebkit-1.0-2 | libwebkit-1.0-1, libgdome2-0, libtidy-0.99-0
 Description: GeBR library collection
  GeBR is an environment to seismic processing based on open-source
  technologies, designed to easily assembly and run processing flows.
@@ -31,7 +30,7 @@ Description: GeBR library collection
 Package: libgebr-dev
 Section: libdevel
 Architecture: any
-Depends: libglib2.0-dev, libgtk2.0-dev, libgdome2-dev, libwebkit-dev
+Depends: libgebr0, libwebkit-dev, libgdome2-dev, libtidy-dev
 Description: GeBR library collection
  GeBR is an environment to seismic processing based on open-source
  technologies, designed to easily assembly and run processing flows.
@@ -56,7 +55,8 @@ Description: GeBR library collection
 Package: gebrd
 Section: science
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: libgebr0 (= ${binary:Version})
+Recommends: ssh-server
 Description: GeBRD is server for executing flows
  GeBR is an environment to seismic processing based on open-source
  technologies, designed to easily assembly and run processing flows.
@@ -74,8 +74,10 @@ Description: GeBRD is server for executing flows
 Package: gebr
 Section: science
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
-Suggests: debr, gebr-menus-su
+Depends: libgebr0 (= ${binary:Version})
+Recommends: gebrd (= ${binary:Version}), gebr-doc (= ${binary:Version}), ssh-client
+Conflicts: gebrd (<< ${binary:Version})
+Suggests: debr, gebr-menus-su, gebr-menus-shtools
 Description: Seismic processing environment
  GeBR is an environment to seismic processing based on open-source
  technologies, designed to easily assembly and run processing flows.
@@ -92,11 +94,17 @@ Package: gebr-doc
 Section: doc
 Architecture: any
 Description: GeBR User Manual
+ GeBR is an environment to seismic processing based on open-source
+ technologies, designed to easily assembly and run processing flows.
+ . 
+ This package provides a user guide for gebr users.
+ .
 
 Package: debr
 Section: science
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: libgebr0 (= ${binary:Version})
+Suggests: gebr-menus-su, gebr-menus-shtools
 Description: Menu Designer for GeBR
  GeBR is an environment to seismic processing based on open-source
  technologies, designed to easily assembly and run processing flows.

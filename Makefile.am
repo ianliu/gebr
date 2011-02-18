@@ -26,7 +26,8 @@ endif
 EXTRA_DIST = libgebr/po/Makefile.in.in	\
 	     gebrd/po/Makefile.in.in	\
 	     gebr/po/Makefile.in.in	\
-	     debr/po/Makefile.in.in
+	     debr/po/Makefile.in.in	\
+	     debian
 
 DISTCLEANFILES = libgebr/po/Makefile.in	\
 		 gebrd/po/Makefile.in	\

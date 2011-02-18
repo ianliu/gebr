@@ -19,5 +19,11 @@ export DH_OPTIONS
 override_dh_auto_configure:
 	dh_auto_configure -- --enable-gtk-doc --disable-debug
 
+build: build-stamp
+build-stamp: override_dh_auto_configure
+	dh build
+	touch build-stamp
+
+
 %:
 	dh $@
