@@ -319,14 +319,15 @@ gboolean server_parse_client_messages(struct client *client)
 			model_name = gebrd_cpu_info_get (cpuinfo, 0, "model name");
 			total_memory = gebrd_mem_info_get (meminfo, "MemTotal");
 			gebr_comm_protocol_send_data(client->protocol, client->stream_socket,
-						     gebr_comm_protocol_defs.ret_def, 7,
+						     gebr_comm_protocol_defs.ret_def, 8,
 						     gebrd.hostname,
 						     display_port->str,
 						     queue_list->str,
 						     server_type,
 						     accounts_list->str,
 						     model_name,
-						     total_memory);
+						     total_memory,
+						     gebrd.fs_lock->str);
 
 			gebrd_cpu_info_free (cpuinfo);
 			gebrd_mem_info_free (meminfo);
