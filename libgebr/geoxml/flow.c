@@ -57,16 +57,21 @@ struct gebr_geoxml_revision {
 GebrGeoXmlFlow *gebr_geoxml_flow_new()
 {
 	GebrGeoXmlDocument *document;
-	GdomeElement *element;
-	GdomeElement *servers;
+	GdomeElement *io;
+	GdomeElement *server;
 
 	document = gebr_geoxml_document_new("flow", GEBR_GEOXML_FLOW_VERSION);
 
-	servers = __gebr_geoxml_insert_new_element(gebr_geoxml_document_root_element(document), "servers", NULL);
-	element = __gebr_geoxml_insert_new_element(gebr_geoxml_document_root_element(document), "io", servers);
-	__gebr_geoxml_insert_new_element(element, "input", NULL);
-	__gebr_geoxml_insert_new_element(element, "output", NULL);
-	__gebr_geoxml_insert_new_element(element, "error", NULL);
+	server = __gebr_geoxml_insert_new_element(gebr_geoxml_document_root_element(document), "server", NULL);
+	__gebr_geoxml_set_attr_value (server, "address", "");
+
+	io = __gebr_geoxml_insert_new_element(server, "io", NULL);
+	__gebr_geoxml_insert_new_element(io, "input", NULL);
+	__gebr_geoxml_insert_new_element(io, "output", NULL);
+	__gebr_geoxml_insert_new_element(io, "error", NULL);
+
+	__gebr_geoxml_insert_new_element(server, "lastrun", NULL);
+
 	__gebr_geoxml_insert_new_element(__gebr_geoxml_get_first_element
 					 (gebr_geoxml_document_root_element(document), "date"), "lastrun", NULL);
 
