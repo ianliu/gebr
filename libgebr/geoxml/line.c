@@ -140,3 +140,24 @@ glong gebr_geoxml_line_get_paths_number(GebrGeoXmlLine * line)
 		return -1;
 	return __gebr_geoxml_get_elements_number(gebr_geoxml_document_root_element(GEBR_GEOXML_DOC(line)), "path");
 }
+
+void gebr_geoxml_line_set_group (GebrGeoXmlLine *line, const gchar *group)
+{
+	GdomeElement *root;
+	GdomeElement *group_el;
+
+	root = gebr_geoxml_document_root_element (line);
+	group_el = __gebr_geoxml_get_first_element (root, "group");
+	__gebr_geoxml_set_element_value (group_el, group,
+					 __gebr_geoxml_create_TextNode);
+}
+
+const gchar *gebr_geoxml_line_get_group (GebrGeoXmlLine *line)
+{
+	GdomeElement *root;
+	GdomeElement *group_el;
+
+	root = gebr_geoxml_document_root_element (line);
+	group_el = __gebr_geoxml_get_first_element (root, "group");
+	return __gebr_geoxml_get_element_value (group_el);
+}

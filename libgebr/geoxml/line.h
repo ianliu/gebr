@@ -185,5 +185,20 @@ int gebr_geoxml_line_get_path(GebrGeoXmlLine * line, GebrGeoXmlSequence ** path,
  */
 glong gebr_geoxml_line_get_paths_number(GebrGeoXmlLine * line);
 
+/**
+ * gebr_geoxml_line_set_group:
+ * @line:
+ * @group: the group of server this line will see
+ */
+void gebr_geoxml_line_set_group (GebrGeoXmlLine *line, const gchar *group);
+
+/**
+ * gebr_geoxml_line_get_group:
+ * @line:
+ *
+ * Returns: the server group associated with this line
+ */
+const gchar *gebr_geoxml_line_get_group (GebrGeoXmlLine *line);
+
 G_END_DECLS
 #endif				//__GEBR_GEOXML_LINE_H
