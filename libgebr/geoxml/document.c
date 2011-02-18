@@ -545,7 +545,15 @@ static int __gebr_geoxml_document_validate_doc(GdomeDocument ** document, GebrGe
 		// Added #IMPLIED 'version' attribute to 'program' tag.
 		if (gebr_geoxml_document_get_type(((GebrGeoXmlDocument *) *document)) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW)
 			__gebr_geoxml_set_attr_value(root_element, "version", "0.3.3");
+		else if (gebr_geoxml_document_get_type(((GebrGeoXmlDocument *) *document)) == GEBR_GEOXML_DOCUMENT_TYPE_LINE) {
+			GdomeElement *pivot;
+			pivot = __gebr_geoxml_get_first_element(root_element, "date");
+			pivot = __gebr_geoxml_next_element(pivot);
+			__gebr_geoxml_insert_new_element(root_element, "group", pivot);
+			__gebr_geoxml_set_attr_value(root_element, "version", "0.3.3");
+		}
 	}
+
 	/* flow 0.3.3 to 0.3.4 */ 
 	if (strcmp(version, "0.3.4") < 0) {
 		// Backward compatible change, nothing to be done.
@@ -620,6 +628,45 @@ static int __gebr_geoxml_document_validate_doc(GdomeDocument ** document, GebrGe
 					first_instance = FALSE;
 				}
 			}
+		}
+	}
+
+	if (strcmp(version, "0.3.7") < 0) {
+		if (gebr_geoxml_document_get_type(((GebrGeoXmlDocument *) *document)) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW) {
+			GdomeElement *io;
+			GdomeElement *el;
+			GdomeElement *new_io;
+			GdomeElement *lastrun;
+			GdomeElement *server;
+			GdomeElement *servers;
+
+			io = __gebr_geoxml_get_first_element (root_element, "io");
+			servers = __gebr_geoxml_next_element (io);
+			server = __gebr_geoxml_get_first_element (servers, "server");
+
+			if (!server) {
+				server = __gebr_geoxml_insert_new_element (root_element, "server", servers);
+				__gebr_geoxml_set_attr_value(server, "address", "127.0.0.1");
+				new_io = __gebr_geoxml_insert_new_element(server, "io", NULL);
+				el = __gebr_geoxml_insert_new_element(new_io, "input", NULL);
+				__gebr_geoxml_set_element_value(el, "", __gebr_geoxml_create_TextNode);
+				el = __gebr_geoxml_insert_new_element(new_io, "output", NULL);
+				__gebr_geoxml_set_element_value(el, "", __gebr_geoxml_create_TextNode);
+				el = __gebr_geoxml_insert_new_element(new_io, "error", NULL);
+				__gebr_geoxml_set_element_value(el, "", __gebr_geoxml_create_TextNode);
+				lastrun = __gebr_geoxml_insert_new_element(server, "lastrun", NULL);
+				__gebr_geoxml_set_element_value(lastrun, "", __gebr_geoxml_create_TextNode);
+			} else {
+				server = (GdomeElement*)gdome_el_cloneNode(server, TRUE, &exception);
+				gdome_el_insertBefore_protected(root_element,
+								(GdomeNode*)server,
+								(GdomeNode*)servers,
+								&exception);
+			}
+
+			gdome_el_removeChild(root_element, (GdomeNode*) io, &exception);
+			gdome_el_removeChild(root_element, (GdomeNode*) servers, &exception);
+			__gebr_geoxml_set_attr_value(root_element, "version", "0.3.7");
 		}
 	}
 
