@@ -743,10 +743,9 @@ void job_status_set(struct job *job, enum JobStatus status)
 	enum JobStatus old_status = job->status;
 	job->status = status;
 
-	if (old_status == JOB_STATUS_RUNNING
-	    && (job->status == JOB_STATUS_FAILED
+	if (job->status == JOB_STATUS_FAILED
 	    || job->status == JOB_STATUS_FINISHED
-	    || job->status == JOB_STATUS_CANCELED)) {
+	    || (job->status == JOB_STATUS_CANCELED && old_status == JOB_STATUS_RUNNING)) {
 		if (gebrd_queues_has_next(job->queue->str))
 			gebrd_queues_step_queue(job->queue->str);
 		else
