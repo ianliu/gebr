@@ -11,38 +11,38 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libgebr 0.9.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-01-18 11:44-0200\n"
+"POT-Creation-Date: 2011-02-17 18:06-0200\n"
 "PO-Revision-Date: 2011-01-18 11:44-0200\n"
 "Last-Translator: Alexandre Baaklini <abaaklini@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bitPlural-Forms: nplurals=2; plural=(n > 1);X-"
 "Generator: Lokalize 0.3\n"
-"Language: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../comm/server.c:186
+#: ../comm/gebr-comm-server.c:203
 #, c-format
-msgid "Launching server at %s."
+msgid "Launching server at '%s'."
 msgstr "Iniciando servidor em %s."
 
-#: ../comm/server.c:201
+#: ../comm/gebr-comm-server.c:218
 msgid "Launching local server."
 msgstr "Iniciando servidor local."
 
-#: ../comm/server.c:238
+#: ../comm/gebr-comm-server.c:254
 #, c-format
-msgid "Stoping server at %s."
+msgid "Stoping server at '%s'."
 msgstr "Parando servidor em %s."
 
 #. log
-#: ../comm/server.c:308
+#: ../comm/gebr-comm-server.c:323
 #, c-format
 msgid "Redirecting '%s' graphical output."
 msgstr "Redirecionando saída gráfica de '%s'."
 
-#: ../comm/server.c:376
+#: ../comm/gebr-comm-server.c:386
 #, c-format
 msgid ""
 "Could not launch local server: \n"
@@ -51,64 +51,84 @@ msgstr ""
 "Não foi possível executar o servidor local: \n"
 "%s"
 
-#: ../comm/server.c:424
+#: ../comm/gebr-comm-server.c:434
 #, c-format
 msgid ""
-"Server %s needs SSH login.\n"
+"Server '%s' needs SSH login.\n"
 "\n"
 "%s"
 msgstr ""
-"Servidor %s precisa de login SSH.\n"
+"Servidor '%s' precisa de login SSH.\n"
 "\n"
 "%s"
 
-#: ../comm/server.c:427
+#: ../comm/gebr-comm-server.c:437
 #, c-format
 msgid ""
-"Wrong password for server %s, please try again.\n"
+"Wrong password for server '%s', please try again.\n"
 "\n"
 "%s"
 msgstr ""
-"Senha incorreta para o servidor %s, por favor tente novamente.\n"
+"Senha incorreta para o servidor '%s', por favor tente novamente.\n"
 "\n"
 "%s"
 
-#: ../comm/server.c:430
+#: ../comm/gebr-comm-server.c:440
 msgid "SSH login:"
 msgstr "Login SSH:"
 
-#: ../comm/server.c:449
-msgid "SSH inquiry:"
-msgstr "Pergunta SSH:"
+#: ../comm/gebr-comm-server.c:444
+msgid "No password provided."
+msgstr "Nenhuma senha informada."
 
-#: ../comm/server.c:460
+#: ../comm/gebr-comm-server.c:456
+msgid "SSH host key question:"
+msgstr "Chave do servidor:"
+
+#: ../comm/gebr-comm-server.c:458
+msgid "SSH host key rejected."
+msgstr "A chave SSH do servidor foi rejeitada."
+
+#. last \n
+#: ../comm/gebr-comm-server.c:467
+#, c-format
+msgid "Received SSH message: %s"
+msgstr "Mensagem SSH recebida: %s"
+
+#: ../comm/gebr-comm-server.c:479
 #, c-format
 msgid ""
-"Received SSH message: \n"
+"SSH reported the following error: \n"
 "%s"
 msgstr ""
-"Mensagem SSH recebida: \n"
+"SSH reportou o seguinte erro:\n"
 "%s"
 
-#: ../comm/server.c:473
+#: ../comm/gebr-comm-server.c:480
 #, c-format
-msgid ""
-"Error contacting server at address %s via ssh: \n"
-"%s"
-msgstr ""
-"Erro ao contatar o servidor no endereço %s via ssh: \n"
-"%s"
+msgid "SSH reported the following error for server '%s': %s"
+msgstr "SSH reportou o seguinte erro para o servidor '%s': %s"
 
-#: ../comm/server.c:532
+#: ../comm/gebr-comm-server.c:538
+msgid "Could not run server."
+msgstr "Não foi possível executar o servidor."
+
+#: ../comm/gebr-comm-server.c:539
 #, c-format
-msgid ""
-"Could not comunicate with server %s: \n"
-"%s"
-msgstr ""
-"Não foi possível se comunicar com o servidor %s: \n"
-"%s"
+msgid "Could not run server '%s'."
+msgstr "Não foi possível executar o servidor '%s'."
 
-#: ../comm/server.c:715
+#: ../comm/gebr-comm-server.c:698
+#, c-format
+msgid "Server '%s' disconnected"
+msgstr "Servidor '%s' desconectado"
+
+#: ../comm/gebr-comm-server.c:730
+#, c-format
+msgid "Connection error '%d'."
+msgstr "Erro de conexão '%d'."
+
+#: ../comm/gebr-comm-server.c:732
 #, c-format
 msgid "Connection error '%d' on server '%s'."
 msgstr "Erro de conexão '%d' no servidor '%s'."
@@ -137,12 +157,12 @@ msgstr ""
 "Você pode usá-lo para fazer um canal para socket, e.g., à partir de uma "
 "porta hospedeira tcp para outra porta hospedeira tcp ou um socket unix"
 
-#: ../comm/socketchannel/socketchannel.c:80
+#: ../comm/socketchannel/socketchannel.c:81
 #, c-format
 msgid "Unknown source address\n"
 msgstr "Endereço origem desconhecido\n"
 
-#: ../comm/socketchannel/socketchannel.c:85
+#: ../comm/socketchannel/socketchannel.c:86
 #, c-format
 msgid "Unknown destination address\n"
 msgstr "Endereço destino desconhecido\n"
@@ -150,7 +170,7 @@ msgstr "Endereço destino desconhecido\n"
 #. fprintf(stderr, _("Could not create channel\n"));
 #. return -4;
 #. }
-#: ../comm/socketchannel/socketchannel.c:93
+#: ../comm/socketchannel/socketchannel.c:94
 #, c-format
 msgid "Channel created successful. Forwarding connections...\n"
 msgstr "Canal criado com sucesso. Encaminhando conexões...\n"
@@ -521,11 +541,11 @@ msgstr "%s válido!\n"
 msgid "GêBR Core Team:"
 msgstr "GêBR Core Team:"
 
-#: ../gui/gebr-gui-about.c:41
+#: ../gui/gebr-gui-about.c:42
 msgid "Coordinator"
 msgstr "Coordenador"
 
-#: ../gui/gebr-gui-about.c:44
+#: ../gui/gebr-gui-about.c:45
 msgid "Developers"
 msgstr "Desenvolvedores"
 
@@ -533,11 +553,11 @@ msgstr "Desenvolvedores"
 msgid "Consultants"
 msgstr "Consultores"
 
-#: ../gui/gebr-gui-about.c:76
+#: ../gui/gebr-gui-about.c:77
 msgid "GêBR Core Team"
 msgstr "GêBR Core Team"
 
-#: ../gui/gebr-gui-about.c:79
+#: ../gui/gebr-gui-about.c:80
 msgid ""
 "Copyright (C) 2007-2010 GêBR core team (http://www.gebrproject.com/)\n"
 "\n"
@@ -578,7 +598,7 @@ msgstr ""
 "abrl de 1998, e #9610, 19 de fevereiro de 1998, e é registrado no Instituto "
 "Nacional de Propriedade Industrial (INPI) sob número 70156."
 
-#: ../gui/gebr-gui-about.c:97
+#: ../gui/gebr-gui-about.c:98
 msgid "GêBR Home page"
 msgstr "Página da GêBR"
 
@@ -628,28 +648,20 @@ msgstr ""
 msgid "If you do not save the changes, they will be permanently lost."
 msgstr "Se você não salvar as mudanças, elas serão perdidas permanentemente."
 
-#: ../gui/gebr-gui-html-viewer-widget.c:254
-#: ../gui/gebr-gui-html-viewer-widget.c:263
-#: ../gui/gebr-gui-html-viewer-widget.c:272
+#: ../gui/gebr-gui-html-viewer-widget.c:273
+#: ../gui/gebr-gui-html-viewer-widget.c:281
+#: ../gui/gebr-gui-html-viewer-widget.c:290
 msgid "Invalid link"
 msgstr "Link inválido"
 
-#: ../gui/gebr-gui-html-viewer-widget.c:254
-#: ../gui/gebr-gui-html-viewer-widget.c:263
+#: ../gui/gebr-gui-html-viewer-widget.c:273
+#: ../gui/gebr-gui-html-viewer-widget.c:281
 msgid "Sorry, couldn't reach link."
 msgstr "Sinto muito, não consegui atingir o link."
 
-#: ../gui/gebr-gui-html-viewer-widget.c:272
+#: ../gui/gebr-gui-html-viewer-widget.c:290
 msgid "Sorry, couldn't find program."
 msgstr "Sinto muito, não consegui encontrar o programa."
-
-#: ../gui/gebr-gui-html-viewer-widget.c:282
-msgid "No help available"
-msgstr "Não há documento de ajuda disponível"
-
-#: ../gui/gebr-gui-html-viewer-widget.c:282
-msgid "Sorry, the help is empty."
-msgstr "Sinto muito, o arquivo de ajuda está vazio."
 
 #: ../gui/gebr-gui-html-viewer-window.c:56
 msgid "Save content into file"
@@ -714,11 +726,11 @@ msgstr ""
 "O arquivo que você está salvando já existe. Substituí-lo irá sobrescrever "
 "seu conteúdo."
 
-#: ../gui/gebr-gui-sequence-edit.c:607
+#: ../gui/gebr-gui-sequence-edit.c:632
 msgid "<empty value>"
 msgstr "<valor vazio>"
 
-#: ../gui/gebr-gui-utils.c:1165
+#: ../gui/gebr-gui-utils.c:1200
 msgid "No such file or directory:"
 msgstr "Arquivo ou diretório não encontrado:"
 
@@ -941,6 +953,29 @@ msgid ""
 msgstr ""
 "\n"
 " - Existem tabulações"
+
+#~ msgid "SSH inquiry:"
+#~ msgstr "Pergunta SSH:"
+
+#~ msgid ""
+#~ "Error contacting server at address %s via ssh: \n"
+#~ "%s"
+#~ msgstr ""
+#~ "Erro ao contatar o servidor no endereço %s via ssh: \n"
+#~ "%s"
+
+#~ msgid ""
+#~ "Could not comunicate with server %s: \n"
+#~ "%s"
+#~ msgstr ""
+#~ "Não foi possível se comunicar com o servidor %s: \n"
+#~ "%s"
+
+#~ msgid "No help available"
+#~ msgstr "Não há documento de ajuda disponível"
+
+#~ msgid "Sorry, the help is empty."
+#~ msgstr "Sinto muito, o arquivo de ajuda está vazio."
 
 #~ msgid "Quit this window"
 #~ msgstr "Sai dessa janela"
