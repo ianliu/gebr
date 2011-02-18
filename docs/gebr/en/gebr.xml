@@ -456,7 +456,7 @@
 
       <figure>
         <mediaobject>
-	<caption>Exemplo de fluxo em execução.</caption>
+	<caption>Example of a Flow being executed.</caption>
           <imageobject>
             <imagedata fileref="../images/janela_ximage.png" />
           </imageobject>
@@ -520,8 +520,7 @@
     </important>
 
     <section xml:id="sec_3_1">
-      <title>The tab
-	<guilabel>Projects and Lines</guilabel></title>
+      <title>The <guilabel>Projects and Lines</guilabel> tab</title>
 
       <para>The tab
 	<guilabel>Projects and Lines</guilabel> has nine command buttons just below the tab. These command buttons will allow you to:</para>
@@ -684,7 +683,7 @@
       </section>
 
       <section xml:id="sec_3_1_5">
-        <title>Editing the Project or Lines parameter dictionary</title>
+        <title>Editing the Project's or Line's parameter dictionary</title>
 
         <para>This feature is documented in the Section <xref linkend="dicionario_de_parametros"/>.</para>
 
@@ -919,7 +918,7 @@
 
       </section>
     </section>
-
+</section>
     <section xml:id="sec_3_2">
       <title>The <guilabel>Flows</guilabel> tab</title>
 
@@ -1149,8 +1148,8 @@
             /></imageobject></inlinemediaobject></guiicon>.</para>
           </step>
           <step>
-            <para>If you want you can write a comment on the state in the dialog box <guilabel>Save the Flow's state</guilabel>,
-	as to identify this saved state.</para>
+            <para>If you want, you can write a comment on the state in the dialog box <guilabel>Save the Flow's state</guilabel>,
+	as to identify this saved state later on.</para>
           </step>
           <step>
             <para>Left-click on  
@@ -1542,7 +1541,7 @@
           <para>A program (or set of programs) that have been copied to the clipboard can be pasted to  
 	 <emphasis role="bold">any Flow</emphasis>, and not just the Flow of origin. Simply switch to the
             <guilabel>Flows</guilabel> tab, select the desired Flow, go back to the <guilabel>
-	Flow editr</guilabel> tab and paste the program(s).</para>
+	Flow editor</guilabel> tab and paste the program(s).</para>
 
         </tip>
       </section>
@@ -1698,9 +1697,9 @@
 
         <note>
 
-          <para>Se quiser <emphasis role="bold">remover um conjunto</emphasis> da lista, selecione-o com
-          o <emphasis role="bold">botão direito</emphasis> do mouse e clique em
-            <guimenuitem>Excluir</guimenuitem>.</para>
+          <para>If you wish to <emphasis role="bold">remove a set</emphasis> from the list, select them by pressing 
+	 <emphasis role="bold"> right-click </emphasis> then click on
+            <guimenuitem>Exclude</guimenuitem>.</para>
 
         </note>
       </section>
@@ -1757,7 +1756,7 @@
           <para>
             <link linkend="sec_3_4_1">Save the Job's information in a file</link>
           </para>
-
+	</listitem>
         <listitem>
 
           <para>
@@ -1768,21 +1767,22 @@
         <listitem>
 
           <para>
-            <link linkend="sec_3_4_3">Pedir para o servidor cancelar a tarefa</link>
+            <link linkend="sec_3_4_3">Ask the server to cancel this Job</link>
           </para>
 
         </listitem>
       </itemizedlist>
 
-      <para>Vimos nas seções <emphasis role="bold">3.2.10</emphasis> e <emphasis role="bold">3.3.7</emphasis> a
-	abordagem do conceito de filas na GêBR nas abas <emphasis role="bold">Fluxos</emphasis>
-	e <emphasis role="bold">Edição de Fluxo</emphasis>. Finalizando, na aba <emphasis role="bold">Controle de
-	tarefas</emphasis>, é possível visualizar cada fila em andamento, cada qual de execução independente uma da
-	outra, bem como o relatório (log) da execução de cada programa. Ver figura abaixo:</para>
+      <para>We discussed how to use Queues in both the <emphasis role="bold">Flows</emphasis> tab and
+	 <emphasis role="bold">Flow editor</emphasis> tab in sections <emphasis role="bold">3.2.10</emphasis> and 
+	<emphasis role="bold">3.3.7</emphasis>. To finalize this subject, in the 
+	<emphasis role="bold">Job control</emphasis> tab it is possible to view how each Queue is progressing, where each one
+	 executes independently. Just as there is one report (log) for every program. See the figure below:</para>
 
 	<figure> 
 	  <mediaobject>
-	  <caption>Na aba Controle de tarefas à direita da janela podemos visualizar as listas em execução, fluxos executados, cancelados e falhos. À direita, são dadas informações de cada execução.</caption>
+	  <caption>In the Job control tab, to the right of the main menu we can view a list of Flows being carried out,
+	 already executed, cancelled and failed. To the right there will be information about each execution.</caption>
             <imageobject><imagedata fileref="../images/janela_aba_controle_de_tarefas.png"/>
             </imageobject>
           </mediaobject>
@@ -1791,30 +1791,30 @@
       <section xml:id="sec_3_4_1">
         <title>Saving a Job's information in a file</title>
 
-        <para>Toda vez que um fluxo é executado, surge na caixa 
-          <guilabel>Tarefas</guilabel>, dentro da aba 
-          <guilabel>Controle de tarefas</guilabel>, uma tarefa identificada com o título do fluxo.</para>
+        <para>Whenever a Flow is executed a Job will appear with the Flow's name in the 
+          <guilabel>Jobs</guilabel> box, inside the 
+          <guilabel>Job control</guilabel> tab.</para>
 
 
-        <para>Para salvar a informação da tarefa em um arquivo, selecione-a na caixa 
-          <guilabel>Tarefas</guilabel> e clique no
-          botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_salvar_log.png"
+        <para>To save on a file a Job's information first select it from the 
+          <guilabel>Job</guilabel> box then click on the button
+	 <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_salvar_log.png"
           /></imageobject></inlinemediaobject></guiicon>.</para>
 
       </section>
 
       <section xml:id="sec_3_4_2">
-        <title>Clean a Job</title>
+        <title>Clear a Job</title>
 
-        <para>Para remover o log de uma tarefa, selecione-a na caixa 
-          <guilabel>Tarefas</guilabel> e clique no
-          botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_limpar_log_atual.png"
+        <para>To remove a Job's log first select it from the 
+          <guilabel>Job</guilabel> box then click on the button 
+	<guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_limpar_log_atual.png"
           /></imageobject></inlinemediaobject></guiicon>.</para>
 
 
-        <para>Só podem ser excluídas as tarefas que não estiverem em execução (sinalizadas
-        com <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_tarefa_concluida_sucesso.png"
-        /></imageobject></inlinemediaobject></guiicon> ou
+        <para>You can only delete Jobs that are not being executed ( they will be marked with
+         <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_tarefa_concluida_sucesso.png"
+        /></imageobject></inlinemediaobject></guiicon> or
           <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_tarefa_terminada_erro.png"/></imageobject></inlinemediaobject></guiicon>).</para>
 
       </section>
@@ -1822,43 +1822,41 @@
       <section xml:id="sec_3_4_3">
         <title>Ask the server to cancel a Job</title>
 
-        <para>Em geral, tarefas complexas levam algum tempo para serem executadas. Se por alguma razão for necessário
-          forçar o término de uma tarefa antes que ela termine naturalmente, selecione a tarefa em execução (sinalizada
-          com <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_tarefa_em_execucao.png"
-          /></imageobject></inlinemediaobject></guiicon>) na caixa <guilabel>Tarefas</guilabel> e clique no botão
+        <para>In general complex Jobs will take some time to finish. If for some reason you wish to terminate a Job, before it 
+	runs its natural course: select the Job being executed (marked
+          with <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_tarefa_em_execucao.png"
+          /></imageobject></inlinemediaobject></guiicon>) from the <guilabel>Jobs</guilabel> box and click on the button
           <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_terminar_tarefa.png"
           /></imageobject></inlinemediaobject></guiicon>.</para>
 
 
-        <para>Quando terminada dessa forma, a tarefa é sinalizada
-        com <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_tarefa_terminada_erro.png"
+        <para>When a Job is terminated in this manner, the Job will be marked with
+	 <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_tarefa_terminada_erro.png"
         /></imageobject></inlinemediaobject></guiicon>.</para>
 
       </section>
-    </section>
   </section>
 
   <section xml:id="sec_4">
-    <title>Aditional features</title>
+    <title>Additional features</title>
 
     <section xml:id="dicionario_de_parametros">
       <title>The parameter dictionary</title>
 
-      <para>O dicionário de parâmetros é uma novidade introduzida na <emphasis role="bold">versão 0.9.15 da
-	GêBR</emphasis>. É um recurso muito flexível, que pode ser utilizado de muitas formas diferentes e para diversos
-	fins, a critério do usuário. Vamos ilustrar com um exemplo:</para>
+      <para>The parameter dictionary is a novelty introduced in  <emphasis role="bold">GêBR 0.9.15 
+	</emphasis>. It is a flexible tool that can be used in many different ways, for an array of purposes, depending
+	what the user wants. We shall illustrate with an example:</para>
 
       <procedure>
         <step>
-          <para>Crie um fluxo e insira nele um programa muito simples chamado 
-            <guimenuitem>Sleep</guimenuitem>, cuja única função é pausar a execução do fluxo por um determinado tempo
-            (você encontra este programa na categoria 
-            <guimenu>Shell tools</guimenu>, na aba 
-            <guilabel>Edição de Fluxo</guilabel>).</para>
+          <para>Create a Flow and add a simply program called
+            <guimenuitem>Sleep</guimenuitem>, whose only function is to pause the Flows execution for a predetermined amount of 
+		time (you can find this program in the category <guimenu>Shell tools</guimenu>, in the 
+            <guilabel>Flow editor</guilabel> tab).</para>
 
           <figure>
 	      <mediaobject>
-		<caption>Na aba Fluxos, acrescentamos um fluxo à linha e projeto para exemplo. </caption>
+		<caption>we added "Flow 1" to "My Line" to use in the example below. </caption>
               <imageobject>
                 <imagedata fileref="../images/exemplo_dicionario_1.png" />
               </imageobject>
@@ -1866,7 +1864,7 @@
           </figure>
           <figure>
             <mediaobject>
-		<caption>Na aba Edição de fluxos, para o exemplo, adiciona-se um programa chamado "sleep".</caption>
+		<caption>As the example states, we have added the program "Sleep" to "Flow 1".</caption>
               <imageobject>
                 <imagedata fileref="../images/exemplo_dicionario_2.png" />
               </imageobject>
@@ -1874,23 +1872,24 @@
           </figure>
         </step>
         <step>
-          <para>Na aba <guilabel>Projetos e Linhas</guilabel>, clique no
-          botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_dicionario_projeto.png"
-          /></imageobject></inlinemediaobject></guiicon> para <emphasis role="bold">editar o dicionário de
-          parâmetros</emphasis>.</para>
+          <para>In the <guilabel>Projects and Lines</guilabel> tab click on
+          button <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_dicionario_projeto.png"
+          /></imageobject></inlinemediaobject></guiicon> so as to <emphasis role="bold">edit the parameter
+	dictionary </emphasis>.</para>
         </step>
         <step>
-          <para>Na janela que se abre (<guilabel>Dicionário de parâmetros para linha</guilabel>), clique duas vezes no
-          campo <guilabel>Novo</guilabel>, dentro da lista <guilabel>Projeto</guilabel>. Abre-se um menu com três opções
-          (<guimenuitem>inteiro</guimenuitem>, <guimenuitem>real</guimenuitem> e
-            <guimenuitem>string</guimenuitem>). Selecione a opção <guimenuitem>inteiro</guimenuitem>, depois digite
-            <userinput>Tempo</userinput> na coluna <guilabel>Palavra-chave</guilabel> e
-            <userinput>5</userinput> na coluna <guilabel>Valor</guilabel>. Ao terminar, sua janela deve se parecer com a
-            seguinte:</para>
+          <para>In the <guilabel>Line's parameter dictionary</guilabel> popup window, expand the option  
+	<guilabel>Project</guilabel> then double-click on <guilabel>New</guilabel>. A menu with three options will open:
+          <guimenuitem>integer</guimenuitem>, <guimenuitem>real</guimenuitem> and
+            <guimenuitem>string</guimenuitem>. Select the option <guimenuitem>integer</guimenuitem>, then type
+            <userinput>Time</userinput> in the <guilabel>Keyword</guilabel> column and
+            <userinput>5</userinput> in the <guilabel>Value</guilabel> column. When your done, you should see something similar 
+	to the following:</para>
 
           <figure>
             <mediaobject>
-		<caption>Na janela de parâmetros de dicionário para fluxo, é possível editar parâmetros para o fluxo, para sua linha e seu projeto.</caption>
+		<caption>In the Flow's parameter dictionary you can edit parameters for the Flow, the Line or your whole 
+	Project.</caption>
               <imageobject>
                 <imagedata fileref="../images/exemplo_dicionario_3.png" />
               </imageobject>
@@ -1898,16 +1897,18 @@
           </figure>
         </step>
         <step>
-          <para>Depois de fechar a janela <guilabel>Dicionário de parâmeros para linha</guilabel>, selecione a aba
-            <guilabel>Edição de fluxo</guilabel> e, na caixa <guilabel>Sequência de fluxo</guilabel>, dê um clique duplo
-            no programa <guilabel>Sleep</guilabel>. Na janela que se abre (<guilabel>Parâmetros</guilabel>), clique com
-            o <emphasis role="bold">botão direito do mouse</emphasis> no campo <guilabel>Time to sleep</guilabel>. O
-            objetivo é atribuir a variável <emphasis role="bold">Tempo=5</emphasis> ao parâmetro <guilabel>Time to
-            sleep</guilabel>, como mostrado a seguir:</para>
+          <para>After closing the <guilabel>Line's parameter dictionary</guilabel> select the tab
+            <guilabel>Flow editor</guilabel>, then in the <guilabel>Flow sequence</guilabel> box double-click on the
+	program <guilabel>Sleep</guilabel>. In the dialog box <guilabel>Parameters</guilabel>  
+	<emphasis role="bold">right-click</emphasis> on the field <guilabel>Time to sleep</guilabel>. The objective here
+	is to attribute the variable <emphasis role="bold">Time=5</emphasis> as a parameter for <guilabel>Time to
+            sleep</guilabel>, as is shown below:</para>
 
           <figure>
             <mediaobject>
-		<caption>Através de um clique com o botão direito na área de edição da janela de parâmetros do programa "sleep" surge um menu de contexto em que é possível, entre outras coisas, inserir parâmetros de discionário conforme exemplo.</caption>
+		<caption>By pressing the right-click on the text box of Sleep's Parameters window, a context menu will appear, 
+	where, among other options, you can insert parameters from the parameter dictionary, as is done in this example
+	.</caption>
               <imageobject>
                 <imagedata fileref="../images/exemplo_dicionario_4.png" />
               </imageobject>
@@ -1915,13 +1916,14 @@
           </figure>
         </step>
         <step>
-          <para>Depois de fechar a janela <guilabel>Parâmetros</guilabel>, vá para a aba
-            <guilabel>Fluxos</guilabel> e crie algumas cópias do fluxo, dando nomes diferentes a cada uma. Ao executar
-            qualquer um destes fluxos, o resultado é uma  <emphasis role="bold">pausa de 5 segundos</emphasis>.</para>
+          <para>After closing the <guilabel>Parameters</guilabel> window, go to the
+            <guilabel>Flows</guilabel> tab and copy this Flow several times, giving each copy a different name. Whenever you
+	execute anyone of these Flows the result will be the same: <emphasis role="bold">a 5 second pause</emphasis>.</para>
 
           <figure>
             <mediaobject>
-		<caption>Na aba Fluxos, conforme já abordado, pode-se fazer cópias de um fluxo. No exemplo, as cópias terão parâmetros de dicionário para os programas "sleep's" tal qual a matriz.</caption>
+		<caption>As we have previously illustrated, in the Flows tab you can make copies of a Flow. In the above
+	 example, all the copies will have the same parameter for the program sleep, just like the original Flow.</caption>
               <imageobject>
                 <imagedata fileref="../images/exemplo_dicionario_5.png" />
               </imageobject>
@@ -1929,27 +1931,23 @@
           </figure>
         </step>
         <step>
-          <para>Acesse novamente o dicionário de parâmetros e digite o valor 
-            <userinput>2</userinput> no lugar do valor 
-            <userinput>5</userinput>. Isso altera o valor da variável
-            <userinput>Tempo</userinput> em todos os fluxos. Agora, ao executar qualquer um deles, o resultado é uma  <emphasis role="bold">pausa de 2 segundos</emphasis>, e não mais de 5 segundos como antes.</para>
+          <para>Now return to the Project's parameter dictionary and change Time's value from <userinput>5</userinput> to
+            <userinput>2</userinput>. This will change the value <userinput>Time</userinput> has in all the Flows. That is, whenever you execute anyone of these Flows the result will be the same <emphasis role="bold">a 2 second pause</emphasis>, rather then a 5 second pause.</para>
         </step>
       </procedure>
 
-      <para>O que o exemplo tenta mostrar é que, por meio do dicionário de parâmetros, é
-	possível <emphasis role="bold">modificar os fluxos indiretamente</emphasis>, alterando as variáveis definidas no
-	dicionário. Sem isso, seria muito mais penoso alterar o tempo de execução dos fluxos do exemplo, pois as cópias
-	teriam de ser reconfiguradas uma a uma.</para>
+      <para>This example attempts to demonstrate how it is possible to <emphasis role="bold">indirectly alter Flows</emphasis>
+	by using the parameter dictionary, specifically by changing variables defined in the parameter dictionary. Without
+	this tool, it would be quite tedious to alter the execution time of all the Flows one by one.</para>
 
       <important>
 
-        <para>Você pode definir a visibilidade das variáveis, compartimentando-as nas listas
-          <guilabel>Projeto</guilabel>, <guilabel>Linha</guilabel> e <guilabel>Fluxo</guilabel>. Variáveis pertencentes
-          à lista <guilabel>Projeto</guilabel> são visíveis para <emphasis role="bold">todos os fluxos</emphasis> de
-          todas as linhas do projeto selecionado. Variáveis pertencentes à lista <guilabel>Linha</guilabel> são visíveis
-          apenas para os <emphasis role="bold">fluxos da linha selecionada</emphasis>. Variáveis pertencentes à
-          lista <guilabel>Fluxo</guilabel> são visíveis apenas para o <emphasis role="bold">fluxo
-          selecionado</emphasis>.</para>
+        <para>You can restrict a variables accessibility by defining it as a
+          <guilabel>Project's</guilabel> variable, a <guilabel>Lines</guilabel> variable or a <guilabel>Flows</guilabel> 
+	variable. A <guilabel>Projects</guilabel> variable can be accessed by <emphasis role="bold">any Flow</emphasis> from 
+	any of the Lines belonging to the selected Project. A <guilabel>Line's</guilabel> variable can be accessed only
+	by the <emphasis role="bold">Flows belonging to the selected Line</emphasis>. A <guilabel>Flow's</guilabel> varialbes
+	can only be accessed by the <emphasis role="bold">selected Flow</emphasis>.</para>
 
       </important>
     </section>
@@ -1957,51 +1955,53 @@
     <section xml:id="menu">
       <title>The <guimenu>Action</guimenu> menu</title>
 
-      <para>A partir do menu 
-	<guimenu>Ações</guimenu> você acessa as janelas 
-	<guimenuitem>Preferências</guimenuitem> e 
-	<guimenuitem>Servidores</guimenuitem>. Se você leu todo o manual, provavelmente já usou quase todos os recursos
-	disponíveis nessas duas janelas. De qualquer forma, segue a documentação.</para>
+      <para>From the 
+	<guimenu>Actions</guimenu> menu you can access your
+	<guimenuitem>Preferences</guimenuitem> and configure
+	<guimenuitem>Servers</guimenuitem>. If your enthusiasm for GêBR has lead you to read the whole manual, you have probably
+	used almost all available features found in these options. But just in case, below you will find the documentation for 
+	these options.</para>
 
 
       <section>
         <title>Preferences</title>
 
-        <para>As definições que você faz na janela 
-          <guimenuitem>Preferências</guimenuitem> são adotadas como padrão pela GêBR. Vejamos os detalhes:</para>
+        <para> The details you provide in the <guimenuitem>Preferences</guimenuitem> dialog box will be adopted as the
+	default by GêBR. Specifically:</para>
 
         <itemizedlist>
           <listitem>
 
             <para>
-              <guilabel>Nome do Usuário:</guilabel> Padrão adotado no campo 
-              <guilabel>Autor:</guilabel> durante a criação de projetos, linhas e fluxos.</para>
+              <guilabel>User name:</guilabel> will be used as the default for
+              <guilabel>Author:</guilabel> when you create Projects, Lines and Flows.</para>
 
           </listitem>
           <listitem>
 
             <para>
-              <guilabel>Email:</guilabel> Padrão adotado no campo 
-              <guilabel>Email</guilabel> durante a criação de projetos, linhas e fluxos.</para>
+              <guilabel>Email:</guilabel> will be used as the default for
+              <guilabel>Email:</guilabel> when you create Projects, Lines and Flows.</para>
 
           </listitem>
           <listitem>
 
-            <para><guilabel>Diretório de menus do usuário:</guilabel> Pasta padrão usada para manutenção
-            de <emphasis>Menus GêBR</emphasis> (arquivos <filename class="extension">mnu</filename>).</para>
+            <para><guilabel>User's menus directory:</guilabel> will be the default directory where 
+	 <emphasis>GêBR's Menus</emphasis> are maintained ( <filename class="extension">mnu</filename> files).</para>
 
           </listitem>
           <listitem>
 
             <para>
-              <guilabel>editor HTML:</guilabel> Editor de textos padrão adotado pela GêBR para criação de relatórios de
-              informações de projetos, linhas e fluxos.</para>
+              <guilabel>HTML editor:</guilabel> the default text editor that GêBR will open when creating reports on 
+	Projects, Lines and Flows.</para>
 
           </listitem>
         </itemizedlist>
         <figure>
           <mediaobject>
-	  <caption>Em Preferências, abre-se uma janela em que é possível editar informações como nome de usuário, e-mail, diretorio de menus do usuário e editor HTML.</caption>
+	  <caption>Preferences menu opens a dialog box where you edit the user name, email, menu's directory and the HTML 
+	editor.</caption>
             <imageobject>
               <imagedata fileref="../images/janela_preferences.png" />
             </imageobject>
@@ -2012,21 +2012,21 @@
       <section>
         <title>Servers</title>
 
-        <para>Use a janela <guilabel>Configuração de servidores</guilabel> para configurar o servidor local e os
-          servidores remotos que você adicionar.</para>
+        <para>Use the window <guilabel>Configure servers</guilabel> to configure the local server and remote servers that you
+	have added.</para>
 
 
-        <para>O servidor local, identificado como <emphasis>Servidor local</emphasis>, é criado e conectado
-          automaticamente pela GêBR na inicialização. Ele é a máquina padrão usada para a execução dos fluxos.</para>
+        <para>The <emphasis>Local server</emphasis> is automatically defined and connected when GêBR initializes. 
+	It is used as the default machine when executing Flows.</para>
 
 
-        <para>Servidores remotos podem ser adicionados, para execução remota dos fluxos. Para adicionar um servidor,
-          digite o endereço na parte de baixo da janela <guilabel>Configuração de servidores</guilabel> e clique no
-          botão <guibutton>Adicionar</guibutton>.</para>
+        <para>Remote servers can be added to execute remote Flows. To add a server type the address in the text box at the bottom
+	 of the <guilabel>Configure server's</guilabel> window, then click on the button
+          <guibutton>Add</guibutton>.</para>
 
         <figure>
 	 <mediaobject>
-	  <caption>Em servidores, adiciona-se, conecta-se e desconeta-se servidores. </caption>
+	  <caption>In Configure servers you can: add servers, connect to them and disconnect from them. </caption>
             <imageobject>
               <imagedata fileref="../images/janela_servers_configuration.png" />
             </imageobject>
@@ -2034,13 +2034,12 @@
         </figure>
         <important>
 
-          <para>Todos os servidores definidos na janela 
-            <guilabel>Configuração de servidores</guilabel> ficam visíveis na aba 
-            <guilabel>Edição de fluxo</guilabel> (você seleciona o servidor na caixa 
-            <guilabel>Servidor</guilabel>, logo acima da caixa 
-            <guilabel>Sequência de fluxo</guilabel>, no lado esquerdo da janela principal) e também na janela 
-            <guilabel>Entrada/Saída do fluxo</guilabel> (aquela em que os arquivos de entrada e saída do fluxo são
-            definidos).</para>
+          <para>All servers you defined in the 
+            <guilabel>Configure servers</guilabel> window will be visible in the 
+            <guilabel>Flow editor</guilabel> tab ( you can select which server to use from the 
+            <guilabel>Server</guilabel> box, just above the 
+            <guilabel>Flow sequence</guilabel> box, on the left side of the main window) and also in the 
+            <guilabel>Flow's Input/Output</guilabel> window (the one where the Flow's input and output files are defined).</para>
 
         </important>
       </section>
@@ -2049,13 +2048,14 @@
     <section xml:id="sec_4_3">
       <title>The execution log</title>
 
-      <para>A GêBR grava grande parte das ações executadas pelo usuário, bem como os resultados dessas ações, no
-	chamado <emphasis>log de execução</emphasis>. Este log é mostrado na parte inferior da janela principal. Pode
-	ser apresentado na forma colapsada (padrão) ou expandida (como na janela abaixo).</para>
+      <para>GêBR remembers most of the users actions, as well as the results of these actions, in the so called 
+	 <emphasis>execution log</emphasis>. This log is shown at the bottom of the main window, which can be presented in the
+	collapsed form (default) or the expanded form like the window below.</para>
 
       <figure>
 	<mediaobject>
-	<caption>No canto inferior das janelas principais da GêBR, encontra-se o log de execução, que carrega as informações dos processamentos da GêBR.</caption>
+	<caption>At the bottom of GêBR's main window you will find the execution log, which displays information on all
+	of GêBR processes.</caption>
           <imageobject>
             <imagedata fileref="../images/janela_log_execucao.png"/>
           </imageobject>
@@ -2063,14 +2063,14 @@
       </figure>
       <tip>
 
-        <para>Em 
+        <para>In 
           <menuchoice>
-            <guimenu>Ações</guimenu>
-            <guimenuitem>Preferências</guimenuitem>
-          </menuchoice> (no canto inferior da janela principal), campo 
-          <guilabel>Carregar o log das execuções anteriores</guilabel>, você escolhe entre exibir o log completo,
-          incluindo ações de datas passadas, o log compacto, que mostra apenas as ações a partir da última
-          inicialização.</para>
+            <guimenu>Actions</guimenu>
+            <guimenuitem>Preferences</guimenuitem>
+          </menuchoice> at the bottom of the dialog box, you will the check box 
+          <guilabel>Load past-execution log</guilabel> by checking this box you are opting to exhibit the full log, including
+	actions from past dates. By leaving the box unchecked you a choosing to have a compact log, one which only shows
+	actions that have taken place since GêBR's last initialization.</para>
 
       </tip>
     </section>
