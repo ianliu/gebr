@@ -83,9 +83,6 @@ void flow_new (void)
 
 	flow_browse_select_iter(&iter);
 
-	gebr_geoxml_flow_server_io_set_input(gebr.flow_server, "");
-	gebr_geoxml_flow_server_io_set_output(gebr.flow_server, "");
-	gebr_geoxml_flow_server_io_set_error(gebr.flow_server, "");
 	flow_edition_set_io();
 
 	gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("New flow added to line '%s'."), line_title);
@@ -448,7 +445,6 @@ static void flow_paths_foreach_parameter(GebrGeoXmlParameter * parameter, gboole
 void flow_set_paths_to(GebrGeoXmlFlow * flow, gboolean relative)
 {
 	GString *path;
-	GebrGeoXmlSequence *server;
 
 	path = g_string_new(NULL);
 
@@ -462,20 +458,6 @@ void flow_set_paths_to(GebrGeoXmlFlow * flow, gboolean relative)
 	g_string_assign(path, gebr_geoxml_flow_io_get_error(flow));
 	gebr_path_set_to(path, relative);
 	gebr_geoxml_flow_io_set_error(flow, path->str);
-
-	/* servers IO */
-	gebr_geoxml_flow_get_server(flow, &server, 0);
-	for (; server != NULL; gebr_geoxml_sequence_next(&server)) {
-		g_string_assign(path, gebr_geoxml_flow_server_io_get_input(GEBR_GEOXML_FLOW_SERVER(server)));
-		gebr_path_set_to(path, relative);
-		gebr_geoxml_flow_server_io_set_input(GEBR_GEOXML_FLOW_SERVER(server), path->str);
-		g_string_assign(path, gebr_geoxml_flow_server_io_get_output(GEBR_GEOXML_FLOW_SERVER(server)));
-		gebr_path_set_to(path, relative);
-		gebr_geoxml_flow_server_io_set_output(GEBR_GEOXML_FLOW_SERVER(server), path->str);
-		g_string_assign(path, gebr_geoxml_flow_server_io_get_error(GEBR_GEOXML_FLOW_SERVER(server)));
-		gebr_path_set_to(path, relative);
-		gebr_geoxml_flow_server_io_set_error(GEBR_GEOXML_FLOW_SERVER(server), path->str);
-	}
 
 	/* all parameters */
 	gebr_geoxml_flow_foreach_parameter(flow, (GebrGeoXmlCallback)flow_paths_foreach_parameter, GINT_TO_POINTER(relative));
@@ -646,15 +628,7 @@ void flow_program_remove(void)
 		if (gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter) ||
 		    gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter) ||
 		    gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->error_iter)){
-
-			if (gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter))
-				gebr_geoxml_flow_server_io_set_input(gebr.flow_server, "");
-			if (gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter))
-				gebr_geoxml_flow_server_io_set_output(gebr.flow_server, "");
-			if (gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->error_iter))
-				gebr_geoxml_flow_server_io_set_error(gebr.flow_server, "");
 			flow_edition_set_io();
-
 		} else {
 			gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter,
 					   FSEQ_GEBR_GEOXML_POINTER, &program, -1);
@@ -966,20 +940,17 @@ static gchar * gebr_program_generate_parameter_value_table (GebrGeoXmlProgram *p
 	return g_string_free (table, FALSE);
 }
 
-gchar * gebr_flow_generate_parameter_value_table(GebrGeoXmlFlow * flow)
+gchar * gebr_flow_generate_parameter_value_table(GebrGeoXmlFlow *flow)
 {
 	GString * dump;
 	const gchar * input;
 	const gchar * output;
 	const gchar * error;
 	GebrGeoXmlSequence * sequence;
-        GebrGeoXmlFlowServer *flow_server;
 
-        flow_server = gebr_geoxml_flow_servers_get_last_run(flow);
-
-	input = gebr_geoxml_flow_server_io_get_input (flow_server);
-	output = gebr_geoxml_flow_server_io_get_output (flow_server);
-	error = gebr_geoxml_flow_server_io_get_error (flow_server);
+	input = gebr_geoxml_flow_io_get_input (flow);
+	output = gebr_geoxml_flow_io_get_output (flow);
+	error = gebr_geoxml_flow_io_get_error (flow);
         
 	dump = g_string_new(NULL);
 

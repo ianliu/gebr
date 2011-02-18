@@ -70,7 +70,6 @@ void gebr_init(void)
 	gebr.line = NULL;
 	gebr.flow = NULL;
 	gebr.program = NULL;
-	gebr.flow_server = NULL;
 	gebr.flow_clipboard = NULL;
 	gebr_comm_protocol_init();
 

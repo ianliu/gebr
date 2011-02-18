@@ -38,7 +38,7 @@
 #define GEBR_FLOW_UI_RESPONSE_EXECUTE 1
 
 static gboolean flow_io_run_dialog(GebrCommServerRunConfig *config, struct server *server, gboolean mpi_program);
-static void flow_io_run(GebrGeoXmlFlowServer * serve, gboolean parallel, gboolean single);
+static void flow_io_run(GebrGeoXmlFlow *flow, gboolean parallel, gboolean single);
 
 gboolean flow_io_get_selected(struct ui_flow_io *ui_flow_io, GtkTreeIter * iter)
 {
@@ -81,17 +81,17 @@ void flow_io_set_server(GtkTreeIter * server_iter, const gchar * input, const gc
 
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), server_iter, SERVER_POINTER, &server, -1);
 
-	gebr_geoxml_flow_server_set_address(gebr.flow_server, server->comm->address->str);
-	gebr_geoxml_flow_server_io_set_input(gebr.flow_server, input);
-	gebr_geoxml_flow_server_io_set_output(gebr.flow_server, output);
-	gebr_geoxml_flow_server_io_set_error(gebr.flow_server, error);
+	gebr_geoxml_flow_server_set_address(gebr.flow, server->comm->address->str);
+	gebr_geoxml_flow_io_set_input(gebr.flow, input);
+	gebr_geoxml_flow_io_set_output(gebr.flow, output);
+	gebr_geoxml_flow_io_set_error(gebr.flow, error);
 
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
 }
 
 void flow_fast_run(gboolean parallel, gboolean single)
 {
-	flow_io_run(gebr.flow_server, parallel, single);
+	flow_io_run(gebr.flow, parallel, single);
 }
 
 void flow_add_program_sequence_to_view(GebrGeoXmlSequence * program, gboolean select_last)
@@ -316,7 +316,6 @@ static gboolean flow_io_run_dialog(GebrCommServerRunConfig *config, struct serve
 		}
 	} while (!(moab_server_validated && queue_name_validated && num_processes_validated));
 
-	gebr_geoxml_flow_io_set_from_server(gebr.flow, gebr.flow_server);
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
 out:
 	gtk_widget_destroy(dialog);
@@ -328,7 +327,7 @@ out:
  *
  * Check for current server and if its connected, for the queue selected.
  */
-static void flow_io_run(GebrGeoXmlFlowServer * flow_server, gboolean parallel, gboolean single)
+static void flow_io_run(GebrGeoXmlFlow *flow, gboolean parallel, gboolean single)
 {
 	/* FLOW: get selected */
 	if (!flow_browse_get_selected(NULL, FALSE)) {
@@ -343,7 +342,7 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server, gboolean parallel, g
 		return;
 	}
 	/* SERVER on list of servers: find iter */
-	const gchar *address = gebr_geoxml_flow_server_get_address(flow_server);
+	const gchar *address = gebr_geoxml_flow_server_get_address(flow);
 	if (!server_find_address(address, &server_iter)) {
 		gebr_message(GEBR_LOG_DEBUG, TRUE, TRUE, "Server should be present on list!");
 		return;
@@ -474,7 +473,6 @@ static void flow_io_run(GebrGeoXmlFlowServer * flow_server, gboolean parallel, g
 		}
 	}
 
-	gebr_geoxml_flow_io_set_from_server(gebr.flow, flow_server);
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
 
 	flow_run(server, config, single);
