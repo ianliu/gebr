@@ -61,23 +61,23 @@ static const GtkActionEntry actions_entries_project_line[] = {
 	 * Project/Line
 	 */
 	{"project_line_new_project", "folder-new", N_("New Project"),
-		"<Control>J", N_("Create a new project"), G_CALLBACK(on_new_project_activate)},
+		"<Control>J", N_("New Project"), G_CALLBACK(on_new_project_activate)},
 	{"project_line_new_line", "tab-new-background", N_("New Line"),
-		"<Control>L", N_("Create a new line"), G_CALLBACK(on_new_line_activate)},
+		"<Control>L", N_("New Line"), G_CALLBACK(on_new_line_activate)},
 	{"project_line_delete", GTK_STOCK_DELETE, NULL,
-		"Delete", N_("Delete selected project or line"), G_CALLBACK(on_project_line_delete_activate)},
+		"Delete", N_("Delete selected Projects and Lines"), G_CALLBACK(on_project_line_delete_activate)},
 	{"project_line_properties", GTK_STOCK_PROPERTIES, NULL,
-		NULL, N_("Edit project or line properties"), G_CALLBACK(on_document_properties_activate)},
+		NULL, N_("Edit properties"), G_CALLBACK(on_document_properties_activate)},
 	{"project_line_dict_edit", "accessories-dictionary", N_("Parameter dictionary"),
-		NULL, N_("Edit parameter dictionary of current project or line"), G_CALLBACK(on_document_dict_edit_activate)},
+		NULL, N_("Edit parameter dictionary"), G_CALLBACK(on_document_dict_edit_activate)},
 	{"project_line_import", "document-import", N_("Import"),
-		NULL, N_("Import project or line"), G_CALLBACK(on_project_line_import_activate)},
+		NULL, N_("Import Projects or Lines"), G_CALLBACK(on_project_line_import_activate)},
 	{"project_line_export", "document-export", N_("Export"),
-		NULL, N_("Export selected project or line"), G_CALLBACK(on_project_line_export_activate)},
+		NULL, N_("Export selected Projects and Lines"), G_CALLBACK(on_project_line_export_activate)},
 	{"project_line_view", GTK_STOCK_INFO, N_("View Report"),
-		NULL, N_("View the report related to project/line"), G_CALLBACK(on_project_line_show_help)},
+		NULL, N_("View report"), G_CALLBACK(on_project_line_show_help)},
 	{"project_line_edit", GTK_STOCK_EDIT, N_("Edit Comments"),
-		NULL, N_("Edit the comments related to project/line"), G_CALLBACK(on_project_line_edit_help)},
+		NULL, N_("Edit comments"), G_CALLBACK(on_project_line_edit_help)},
 };
 
 static const GtkActionEntry actions_entries_flow[] = {
@@ -85,31 +85,31 @@ static const GtkActionEntry actions_entries_flow[] = {
 	 * Flow
 	 */
 	{"flow_new", GTK_STOCK_NEW, NULL,
-		"<Control>F", N_("Create a new flow"), G_CALLBACK(on_new_activate)},
+		"<Control>F", N_("New Flow"), G_CALLBACK(on_new_activate)},
 	{"flow_delete", GTK_STOCK_DELETE, NULL, "Delete",
-		N_("Delete selected flow"), G_CALLBACK(on_flow_delete_activate)},
+		N_("Delete selected Flows"), G_CALLBACK(on_flow_delete_activate)},
 	{"flow_properties", GTK_STOCK_PROPERTIES, NULL,
-		NULL, N_("Edit flow properties"), G_CALLBACK(on_document_properties_activate)},
+		NULL, N_("Edit properties"), G_CALLBACK(on_document_properties_activate)},
 	{"flow_dict_edit", "accessories-dictionary", N_("Parameter dictionary"),
-		NULL, N_("Edit parameter dictionary of current flow"), G_CALLBACK(on_document_dict_edit_activate)},
+		NULL, N_("Edit parameter dictionary"), G_CALLBACK(on_document_dict_edit_activate)},
 	{"flow_change_revision", "document-open-recent", N_("Saved status"),
 		NULL, NULL, NULL},
 	{"flow_import", "document-import", N_("Import"), NULL,
-		N_("Import a flow"), G_CALLBACK(on_flow_import_activate)},
+		N_("Import Flows"), G_CALLBACK(on_flow_import_activate)},
 	{"flow_export", "document-export", N_("Export"),
-		NULL, N_("Export the flow"), G_CALLBACK(on_flow_export_activate)},
+		NULL, N_("Export selected Flows"), G_CALLBACK(on_flow_export_activate)},
 	{"flow_execute", GTK_STOCK_EXECUTE, NULL,
-		"<Control>R", N_("Execute selected flow(s) sequentialy"), G_CALLBACK(on_flow_execute_activate)},
+		"<Control>R", N_("Execute selected Flows in sequence"), G_CALLBACK(on_flow_execute_activate)},
 	{"flow_execute_in_parallel", GTK_STOCK_EXECUTE, NULL,
-		"<Control><Shift>R", N_("Run selected flow(s) in parallel (all immediately)"), G_CALLBACK(on_flow_execute_in_parallel_activate)},
+		"<Control><Shift>R", N_("Execute selected Flows simultaneously"), G_CALLBACK(on_flow_execute_in_parallel_activate)},
 	{"flow_copy", GTK_STOCK_COPY, N_("Copy"),
-		NULL, N_("Copy selected flow(s) to clipboard"), G_CALLBACK(on_copy_activate)},
+		NULL, N_("Copy selected Flows to clipboard"), G_CALLBACK(on_copy_activate)},
 	{"flow_paste", GTK_STOCK_PASTE, N_("Paste"),
-		NULL, N_("Paste flow(s) from clipboard"), G_CALLBACK(on_paste_activate)},
+		NULL, N_("Paste Flows from clipboard"), G_CALLBACK(on_paste_activate)},
 	{"flow_view", GTK_STOCK_INFO, N_("View Report"),
-		NULL, N_("View the report related to flow"), G_CALLBACK(on_flow_browse_show_help)},
+		NULL, N_("View Flow report"), G_CALLBACK(on_flow_browse_show_help)},
 	{"flow_edit", GTK_STOCK_EDIT, N_("Edit Comments"),
-		NULL, N_("Edit the comments related to flow"), G_CALLBACK(on_flow_browse_edit_help)},
+		NULL, N_("Edit Flow comments"), G_CALLBACK(on_flow_browse_edit_help)},
 };
 
 static const GtkActionEntry actions_entries_flow_edition[] = {
@@ -117,23 +117,23 @@ static const GtkActionEntry actions_entries_flow_edition[] = {
 	 * Flow Edition
 	 */
 	{"flow_edition_help", GTK_STOCK_HELP, NULL,
-		"<Control><Shift>h", N_("Show program's help"), G_CALLBACK(on_flow_component_help_activate)},
+		"<Control><Shift>h", N_("Show Program's help"), G_CALLBACK(on_flow_component_help_activate)},
 	{"flow_edition_delete", GTK_STOCK_DELETE, NULL,
-		"Delete", N_("Delete program"), G_CALLBACK(on_flow_component_delete_activate)},
+		"Delete", N_("Delete Program"), G_CALLBACK(on_flow_component_delete_activate)},
 	{"flow_edition_properties", GTK_STOCK_PROPERTIES, NULL,
-		NULL, N_("Edit program parameters"), G_CALLBACK(on_flow_component_properties_activate)},
+		NULL, N_("Edit Program parameters"), G_CALLBACK(on_flow_component_properties_activate)},
 	{"flow_edition_refresh", GTK_STOCK_REFRESH, NULL,
-		NULL, N_("Refresh available menu's list"), G_CALLBACK(on_flow_component_refresh_activate)},
+		NULL, N_("Refresh available Menu's list"), G_CALLBACK(on_flow_component_refresh_activate)},
 	{"flow_edition_copy", GTK_STOCK_COPY, N_("Copy"),
-		NULL, N_("Copy selected programs(s) to clipboard"), G_CALLBACK(on_copy_activate)},
+		NULL, N_("Copy selected Programs to clipboard"), G_CALLBACK(on_copy_activate)},
 	{"flow_edition_paste", GTK_STOCK_PASTE, N_("Paste"),
-		NULL, N_("Paste program(s) from clipboard"), G_CALLBACK(on_paste_activate)},
+		NULL, N_("Paste Programs from clipboard"), G_CALLBACK(on_paste_activate)},
 	{"flow_edition_top", GTK_STOCK_GOTO_TOP, N_("Move to Top"),
 		"Home", NULL, G_CALLBACK(on_flow_component_move_top)},
 	{"flow_edition_bottom", GTK_STOCK_GOTO_BOTTOM, N_("Move to Bottom"),
 		"End", NULL, G_CALLBACK(on_flow_component_move_bottom)},
 	{"flow_edition_execute", GTK_STOCK_EXECUTE, NULL,
-		"<Control>R", N_("Execute this flow"), G_CALLBACK (on_flow_component_execute_single)}
+		"<Control>R", N_("Execute this Flow"), G_CALLBACK (on_flow_component_execute_single)}
 };
 
 static const GtkActionEntry actions_entries_job_control[] = {
@@ -141,30 +141,30 @@ static const GtkActionEntry actions_entries_job_control[] = {
 	 * Job control - Job Actions
 	 */
 	{"job_control_save", GTK_STOCK_SAVE, NULL,
-		NULL, N_("Save job information in a file"), G_CALLBACK(on_job_control_save)},
+		NULL, N_("Save Job information in a file"), G_CALLBACK(on_job_control_save)},
 	{"job_control_close", "gnome-fs-trash-empty", N_("Close"),
-		"Delete", N_("Close job"), G_CALLBACK(on_job_control_close)},
+		"Delete", N_("Clear selected Jobs"), G_CALLBACK(on_job_control_close)},
 	{"job_control_stop", GTK_STOCK_STOP, N_("Cancel"),
-		NULL, N_("Ask server to cancel the job"), G_CALLBACK(on_job_control_stop)},
+		NULL, N_("Ask server to cancel the selected Job"), G_CALLBACK(on_job_control_stop)},
 	/*
 	 * Job Control - Queue Actions
 	 */
 	{"job_control_queue_save", GTK_STOCK_SAVE, N_("Save All"),
-		NULL, N_("Ask server to save all jobs from queue"), G_CALLBACK(on_job_control_queue_save)},
+		NULL, N_("Ask server to save all Jobs from queue"), G_CALLBACK(on_job_control_queue_save)},
 	{"job_control_queue_close", "gnome-fs-trash-empty", N_("Close All"),
-		NULL, N_("Close all jobs from selected queue"), G_CALLBACK(on_job_control_queue_close)},
+		NULL, N_("Clear all Jobs from selected queue"), G_CALLBACK(on_job_control_queue_close)},
 	{"job_control_queue_stop", GTK_STOCK_STOP, N_("Cancel All"),
-		NULL, N_("Ask server to cancel all jobs from selected queue"), G_CALLBACK(on_job_control_queue_stop)}
+		NULL, N_("Ask server to cancel all Jobs from selected queue"), G_CALLBACK(on_job_control_queue_stop)}
 
 };
 
 static const GtkActionEntry status_action_entries[] = {
 	{"flow_edition_status_configured", NULL, N_("Configured"),
-		NULL, N_("Change current program status to configured"), NULL},
+		NULL, N_("Change selected Programs status to configured"), NULL},
 	{"flow_edition_status_disabled", NULL, N_("Disabled"),
-		NULL, N_("Change current program status to disabled"), NULL},
+		NULL, N_("Change selected Programs status to disabled"), NULL},
 	{"flow_edition_status_unconfigured", NULL, N_("Not configured"),
-		NULL, N_("Change current program status to not configured"), NULL}
+		NULL, N_("Change selected Programs status to not configured"), NULL}
 };
 
 /*
@@ -347,7 +347,7 @@ void gebr_setup_ui(void)
 	tool_item = gtk_menu_tool_button_new_from_stock("document-open-recent");
 	g_signal_connect(GTK_OBJECT(tool_item), "clicked", G_CALLBACK(on_flow_revision_save_activate), NULL);
 	g_signal_connect(GTK_OBJECT(tool_item), "show-menu", G_CALLBACK(on_flow_revision_show_menu), NULL);
-	gebr_gui_gtk_widget_set_tooltip(GTK_WIDGET(tool_item), _("Save flow state"));
+	gebr_gui_gtk_widget_set_tooltip(GTK_WIDGET(tool_item), _("Save or Restore a version of the selected Flows"));
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), tool_item, -1);
 	gtk_menu_tool_button_set_menu(GTK_MENU_TOOL_BUTTON(tool_item), menu);
 
@@ -408,7 +408,7 @@ void gebr_setup_ui(void)
 	vbox = gtk_vbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), gebr.ui_flow_edition->widget, TRUE, TRUE, 0);
-	gtk_notebook_append_page(GTK_NOTEBOOK(gebr.notebook), vbox, gtk_label_new(_("Flow edition")));
+	gtk_notebook_append_page(GTK_NOTEBOOK(gebr.notebook), vbox, gtk_label_new(_("Flow Editor")));
 	gtk_widget_show_all(vbox);
 
 	/*
@@ -432,7 +432,7 @@ void gebr_setup_ui(void)
 	vbox = gtk_vbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), gebr.ui_job_control->widget, TRUE, TRUE, 0);
-	gtk_notebook_append_page(GTK_NOTEBOOK(gebr.notebook), vbox, gtk_label_new(_("Job control")));
+	gtk_notebook_append_page(GTK_NOTEBOOK(gebr.notebook), vbox, gtk_label_new(_("Job Control")));
 	gtk_widget_show_all(vbox);
 
 	/*

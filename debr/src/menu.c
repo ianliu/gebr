@@ -2006,7 +2006,7 @@ gboolean menu_create_from_flow (const gchar *path, gboolean use_value)
 	gebr_geoxml_document_set_help(flow, "");
 
 	title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(flow));
-	filename = g_strdup_printf(_("%s.mnu"), title);
+	filename = g_strdup_printf("%s.mnu", title);
 	menu_new_from_menu(GEBR_GEOXML_FLOW (flow), FALSE, filename, title);
 	debr_message(GEBR_LOG_INFO, _("Flow '%s' imported as menu."),
 		     (gchar *)gebr_geoxml_document_get_title(flow));
