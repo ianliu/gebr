@@ -133,6 +133,8 @@ void on_properties_destroy(GtkWindow * window, GebrPropertiesData * data);
 
 static void on_file_entry_activate (GtkEntry *entry, GebrGuiSequenceEdit *sequence_edit);
 
+static void on_groups_combo_box_changed (GtkComboBox *combo);
+
 static const GtkActionEntry dict_actions_entries[] = {
 	{"add", GTK_STOCK_ADD, NULL, NULL, N_("Add new parameter."),
 	 G_CALLBACK(on_dict_edit_add_clicked)},
@@ -162,6 +164,7 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 				   GebrPropertiesResponseFunc func,
 				   gboolean is_new)
 {
+	int row = 0;
 	GebrPropertiesData * data;
 	GtkWidget *window;
 	GtkWidget *vbox;
@@ -179,6 +182,7 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 	GtkWidget *line_path_label;
 	GtkWidget *file_entry;
 	GtkWidget *path_sequence_edit;
+	GtkWidget *groups_combo;
 	GebrGeoXmlSequence *path_sequence;
 
 	if (document == NULL)
@@ -232,10 +236,10 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	data->title = title = gtk_entry_new();
 	gtk_entry_set_activates_default(GTK_ENTRY(title), TRUE);
-	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 0, 1, (GtkAttachOptions)GTK_FILL, (GtkAttachOptions)GTK_FILL, 3,
-			 3);
-	gtk_table_attach(GTK_TABLE(table), title, 1, 2, 0, 1, GTK_EXPAND | (GtkAttachOptions)GTK_FILL,
-			 (GtkAttachOptions)GTK_FILL, 3, 3);
+	gtk_table_attach(GTK_TABLE(table), label, 0, 1, row, row+1, GTK_FILL, GTK_FILL, 3, 3);
+	gtk_table_attach(GTK_TABLE(table), title, 1, 2, row, row+1, GTK_EXPAND | GTK_FILL, GTK_FILL, 3, 3);
+	row++;
+
 	/* read */
 	gtk_entry_set_text(GTK_ENTRY(title), gebr_geoxml_document_get_title(document));
 
@@ -244,10 +248,10 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	data->description = description = gtk_entry_new();
 	gtk_entry_set_activates_default(GTK_ENTRY(description), TRUE);
-	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 1, 2, (GtkAttachOptions)GTK_FILL, (GtkAttachOptions)GTK_FILL, 3,
-			 3);
-	gtk_table_attach(GTK_TABLE(table), description, 1, 2, 1, 2, (GtkAttachOptions)GTK_FILL,
-			 (GtkAttachOptions)GTK_FILL, 3, 3);
+	gtk_table_attach(GTK_TABLE(table), label, 0, 1, row, row+1, GTK_FILL, GTK_FILL, 3, 3);
+	gtk_table_attach(GTK_TABLE(table), description, 1, 2, row, row+1, GTK_FILL, GTK_FILL, 3, 3);
+	row++;
+
 	/* read */
 	gtk_entry_set_text(GTK_ENTRY(description), gebr_geoxml_document_get_description(document));
 
@@ -256,10 +260,10 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	data->author = author = gtk_entry_new();
 	gtk_entry_set_activates_default(GTK_ENTRY(author), TRUE);
-	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 3, 4, (GtkAttachOptions)GTK_FILL, (GtkAttachOptions)GTK_FILL, 3,
-			 3);
-	gtk_table_attach(GTK_TABLE(table), author, 1, 2, 3, 4, (GtkAttachOptions)GTK_FILL, (GtkAttachOptions)GTK_FILL,
-			 3, 3);
+	gtk_table_attach(GTK_TABLE(table), label, 0, 1, row, row+1, GTK_FILL, GTK_FILL, 3, 3);
+	gtk_table_attach(GTK_TABLE(table), author, 1, 2, row, row+1, GTK_FILL, GTK_FILL, 3, 3);
+	row++;
+
 	/* read */
 	gtk_entry_set_text(GTK_ENTRY(author), gebr_geoxml_document_get_author(document));
 
@@ -268,19 +272,49 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	data->email = email = gtk_entry_new();
 	gtk_entry_set_activates_default(GTK_ENTRY(email), TRUE);
-	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 4, 5, (GtkAttachOptions)GTK_FILL, (GtkAttachOptions)GTK_FILL, 3,
-			 3);
-	gtk_table_attach(GTK_TABLE(table), email, 1, 2, 4, 5, (GtkAttachOptions)GTK_FILL, (GtkAttachOptions)GTK_FILL, 3,
-			 3);
+	gtk_table_attach(GTK_TABLE(table), label, 0, 1, row, row+1, GTK_FILL, GTK_FILL, 3, 3);
+	gtk_table_attach(GTK_TABLE(table), email, 1, 2, row, row+1, GTK_FILL, GTK_FILL, 3, 3);
+	row++;
+
 	/* read */
 	gtk_entry_set_text(GTK_ENTRY(email), gebr_geoxml_document_get_email(document));
 
-	if (gebr_geoxml_document_get_type(document) == GEBR_GEOXML_DOCUMENT_TYPE_LINE) {
+	if (gebr_geoxml_document_get_type(document) == GEBR_GEOXML_DOCUMENT_TYPE_LINE)
+	{
+		gint pos = -1;
+		gchar **tags;
+		const gchar *curr_group;
+
+		groups_combo = gtk_combo_box_new_text ();
+		tags = ui_server_get_all_tags ();
+		curr_group = gebr_geoxml_line_get_group (GEBR_GEOXML_LINE (document));
+
+		for (int i = 0; tags[i]; i++) {
+			gtk_combo_box_append_text (GTK_COMBO_BOX (groups_combo),
+						   tags[i]);
+			if (g_str_equal (tags[i], curr_group))
+				pos = i;
+		}
+
+		if (is_new)
+			g_signal_connect (groups_combo, "changed",
+					  G_CALLBACK (on_groups_combo_box_changed), NULL);
+		else
+			gtk_combo_box_set_active (GTK_COMBO_BOX (groups_combo), pos);
+
+		gtk_widget_set_sensitive (groups_combo, is_new);
+
+		label = gtk_label_new (_("Server group"));
+		gtk_table_attach (GTK_TABLE (table), label, 0, 1, row, row+1, GTK_FILL, GTK_FILL, 3, 3);
+		gtk_table_attach (GTK_TABLE (table), groups_combo, 1, 2, row, row+1, GTK_FILL, GTK_FILL, 3, 3);
+		row++;
+		gtk_widget_show (label);
+		gtk_widget_show (groups_combo);
+
 		/* Line Path's*/
 		line_path_label = gtk_label_new(_("Path"));
 		gtk_widget_show(line_path_label);
-		gtk_table_attach(GTK_TABLE(table), line_path_label, 0, 1, 5, 6,
-				 (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (GTK_FILL), 3, 3);
+		gtk_table_attach(GTK_TABLE(table), line_path_label, 0, 1, row, row+1, GTK_FILL, GTK_FILL, 3, 3);
 		gtk_misc_set_alignment(GTK_MISC(line_path_label), 0, 0);
 
 		file_entry = gebr_gui_file_entry_new(NULL, NULL);
@@ -304,7 +338,7 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 				  G_CALLBACK (path_renamed), NULL);
 
 		gtk_table_attach (GTK_TABLE (table),
-				  path_sequence_edit, 1, 2, 5, 6,
+				  path_sequence_edit, 1, 2, row, row+1,
 				  (GtkAttachOptions) (GTK_FILL | GTK_EXPAND),
 				  (GtkAttachOptions) (GTK_FILL | GTK_EXPAND),
 				  3, 3);
@@ -1036,4 +1070,21 @@ void on_properties_destroy(GtkWindow * window, GebrPropertiesData * data)
 static void on_file_entry_activate (GtkEntry *entry, GebrGuiSequenceEdit *sequence_edit)
 {
 	g_signal_emit_by_name (sequence_edit, "add-request");
+}
+
+static void on_groups_combo_box_changed (GtkComboBox *combo)
+{
+	gchar *group;
+
+	if (!gebr.line)
+		return;
+
+	group = gtk_combo_box_get_active_text (combo);
+
+	if (!group)
+		gebr_geoxml_line_set_group (gebr.line, "");
+	else
+		gebr_geoxml_line_set_group (gebr.line, group);
+
+	g_free (group);
 }
