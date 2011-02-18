@@ -42,12 +42,6 @@
 
 static void server_list_add(struct ui_server_list *ui_server_list, const gchar * address);
 
-static void server_select_cursor_changed(GtkTreeView * tree_view, struct ui_server_select *ui_server_select);
-
-static void
-server_select_row_changed(GtkTreeModel * tree_model, GtkTreePath * path, GtkTreeIter * iter,
-			  struct ui_server_select *ui_server_select);
-
 static void on_combo_changed(gpointer user_data);
 
 static gboolean visible_func (GtkTreeModel *model,
@@ -125,14 +119,7 @@ static void server_common_autoconnect_changed(GtkMenuItem * menu_item, struct se
 static void server_common_remove(GtkMenuItem * menu_item, struct server *server)
 {
 	server_free(server);
-	/*Regenerate the Combo Box List*/
-	gebr.ui_server_list->common.all_tags = ui_server_all_tags();
-
-	gint last_active = gtk_combo_box_get_active(GTK_COMBO_BOX(gebr.ui_server_list->common.combo));
-	gtk_list_store_clear(gebr.ui_server_list->common.combo_store);
-
-	g_list_foreach(gebr.ui_server_list->common.all_tags, (GFunc) ui_server_append_combo, NULL);
-	gtk_combo_box_set_active(GTK_COMBO_BOX(gebr.ui_server_list->common.combo), last_active);
+	ui_server_update_tags_combobox ();
 }
 
 /* Function: server_common_stop
@@ -203,6 +190,7 @@ static void on_tags_edited (GtkCellRendererText *cell,
 			    gchar *new_text,
 			    GtkTreeModel *model)
 {
+	gchar *tags;
 	GtkTreeIter iter;
 	struct server *server;
 
@@ -211,9 +199,11 @@ static void on_tags_edited (GtkCellRendererText *cell,
 
 	gtk_tree_model_get (model, &iter,
 			    SERVER_POINTER, &server,
+			    SERVER_TAGS, &tags,
 			    -1);
 
-	ui_server_set_tags (server, new_text);
+	if (!g_str_equal (tags, new_text))
+		ui_server_set_tags (server, new_text);
 }
 
 /* Function: server_common_setup
@@ -383,63 +373,30 @@ static void on_add_clicked(GtkButton * button, struct ui_server_list *ui_server_
 	on_entry_activate(entry, ui_server_list);
 }
 
-/*
- * Function: server_select_cursor_changed
- * Enable OK button if we are logged into server.
- *
- */
-static void server_select_cursor_changed(GtkTreeView * tree_view, struct ui_server_select *ui_server_select)
+static void on_combo_changed (gpointer user_data)
 {
-	GtkTreeSelection *selection;
-	GtkTreeModel *model;
-	GtkTreeIter iter;
-
-	struct server *server;
-
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_server_select->common.view));
-	gtk_tree_selection_get_selected(selection, &model, &iter);
-	gtk_tree_model_get(GTK_TREE_MODEL(ui_server_select->common.store), &iter, SERVER_POINTER, &server, -1);
-
-	if (server->comm->protocol->logged == FALSE)
-		g_object_set(ui_server_select->ok_button, "sensitive", FALSE, NULL);
-	else {
-		g_object_set(ui_server_select->ok_button, "sensitive", TRUE, NULL);
-		ui_server_select->selected = server;
-	}
-}
-
-static void
-server_select_row_changed(GtkTreeModel * tree_model, GtkTreePath * path, GtkTreeIter * iter,
-			  struct ui_server_select *ui_server_select)
-{
-	/* A server may change its status and we should
-	   enable/disable OK */
-	server_select_cursor_changed(GTK_TREE_VIEW(ui_server_select->common.view), ui_server_select);
-}
-
-static void on_combo_changed(gpointer user_data){
-    gtk_tree_model_filter_refilter(GTK_TREE_MODEL_FILTER(gebr.ui_server_list->common.filter));
+	gtk_tree_model_filter_refilter (GTK_TREE_MODEL_FILTER (gebr.ui_server_list->common.filter));
 }
 
 static gboolean visible_func (GtkTreeModel *model,
                               GtkTreeIter  *iter,
 			      gpointer      data)
 {
-	gchar * tags;
-	gchar ** tag_list;
+	gchar *tag;
+	GtkTreeIter active;
+	GtkComboBox *combo;
+	struct server *server;
 
-	gtk_tree_model_get (model, iter, SERVER_TAGS, &tags, -1);
-	if (tags != NULL){
-		tag_list = g_strsplit(tags, ",", 0);	
-		for (gint i = 0; tag_list[i] != NULL; ++i) {
-			if (g_strcmp0(gtk_combo_box_get_active_text(GTK_COMBO_BOX(gebr.ui_server_list->common.combo)), tag_list[i]) == 0) {
-				g_strfreev(tag_list);
-				return TRUE;
-			}
-		}
-		g_strfreev(tag_list);
-	}
-	return FALSE;
+	combo = GTK_COMBO_BOX (gebr.ui_server_list->common.combo);
+
+	if (!gtk_combo_box_get_active_iter (combo, &active))
+		return TRUE;
+
+	gtk_tree_model_get (model, iter, SERVER_POINTER, &server, -1);
+	gtk_tree_model_get (gtk_combo_box_get_model (combo), &active,
+			    0, &tag, -1);
+
+	return ui_server_has_tag (server, tag);
 }
 
 /*
@@ -497,9 +454,7 @@ struct ui_server_list *server_list_setup_ui(void)
 	server_common_setup(&ui_server_list->common);
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), ui_server_list->common.widget, TRUE, TRUE, 0);
 
-	ui_server_list->common.combo_store = gtk_list_store_new(COMBO_N_COLUMN,
-								G_TYPE_STRING		/* Text List    */);
-
+	ui_server_list->common.combo_store = gtk_list_store_new(1, G_TYPE_STRING);
 	ui_server_list->common.combo = gtk_combo_box_new_with_model(GTK_TREE_MODEL(ui_server_list->common.combo_store));
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), ui_server_list->common.combo, FALSE, TRUE, 0);
 	gtk_combo_box_set_active(GTK_COMBO_BOX(ui_server_list->common.combo), -1);
@@ -507,7 +462,7 @@ struct ui_server_list *server_list_setup_ui(void)
 	GtkCellRenderer *renderer;
 	renderer = gtk_cell_renderer_text_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(ui_server_list->common.combo), renderer, TRUE);
-	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(ui_server_list->common.combo), renderer, "text", COMBO_TEXT);
+	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(ui_server_list->common.combo), renderer, "text", 0);
 	g_signal_connect(ui_server_list->common.combo, "changed", G_CALLBACK(on_combo_changed), NULL);
 
 	hbox = gtk_hbox_new(FALSE, 3);
@@ -554,178 +509,84 @@ void server_list_updated_status(struct server *server)
 	gtk_tree_model_row_changed(GTK_TREE_MODEL(gebr.ui_server_list->common.store), path, &server->iter);
 }
 
-/*
- * Function: server_select_setup_ui
- * Select a server to run a flow.
- * The server is build using the store at gebr.ui_server_list.store
- *
- */
-struct server *server_select_setup_ui(void)
+gchar **ui_server_list_tag (struct server *server)
 {
-	struct ui_server_select *ui_server_select;
+	gchar *tags;
+	gchar **tag_list;
+	GtkTreeModel *model;
 
-	GtkTreeIter iter;
-	gulong handler_id;
+	model = GTK_TREE_MODEL (gebr.ui_server_list->common.store);
 
-	GtkTreeIter first_connected_iter;
-	guint connected;
-	struct server *server;
-
-	/* initializations */
-	server = NULL;
-	connected = 0;
-	gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(gebr.ui_server_list->common.store)) {
-		struct server *server;
-
-		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter,
-				   SERVER_POINTER, &server, -1);
-		if (gebr_comm_server_is_logged(server->comm) == TRUE)
-			if (connected++ == 0)
-				first_connected_iter = iter;
-	}
-	if (connected == 0) {
-		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE,
-			     _("There are no connected servers. Please configure them in Actions/Servers."));
-		goto out;
-	}
-	if (connected == 1) {
-		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &first_connected_iter,
-				   SERVER_POINTER, &server, -1);
-		goto out;
-	}
-
-	ui_server_select = g_new(struct ui_server_select, 1);
-	ui_server_select->common.dialog = gtk_dialog_new_with_buttons(_("Select server"),
-								      GTK_WINDOW(gebr.window),
-								      (GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
-								      NULL);
-	ui_server_select->ok_button =
-	    gtk_dialog_add_button(GTK_DIALOG(ui_server_select->common.dialog), GTK_STOCK_OK, GTK_RESPONSE_OK);
-	gtk_dialog_add_buttons(GTK_DIALOG(ui_server_select->common.dialog), GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-			       NULL);
-	/* Take the apropriate action when a button is pressed */
-	g_signal_connect(ui_server_select->common.dialog, "response",
-			 G_CALLBACK(server_common_actions), &ui_server_select->common);
-
-	ui_server_select->common.store = gebr.ui_server_list->common.store;
-	handler_id = g_signal_connect(G_OBJECT(ui_server_select->common.store), "row-changed",
-				      G_CALLBACK(server_select_row_changed), ui_server_select);
-
-	server_common_setup(&ui_server_select->common);
-	gtk_tree_view_column_set_visible(gtk_tree_view_get_column
-					 (GTK_TREE_VIEW(ui_server_select->common.view), SERVER_AUTOCONNECT), FALSE);
-	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(ui_server_select->common.dialog)->vbox), ui_server_select->common.widget,
-			   TRUE, TRUE, 0);
-	g_signal_connect(GTK_OBJECT(ui_server_select->common.view), "cursor-changed",
-			 G_CALLBACK(server_select_cursor_changed), ui_server_select);
-
-	/* select the first running server */
-	gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(ui_server_select->common.view), &first_connected_iter);
-	server_select_cursor_changed(GTK_TREE_VIEW(ui_server_select->common.view), ui_server_select);
-
-	gtk_widget_show_all(ui_server_select->common.dialog);
-	while (1) {
-		switch (gtk_dialog_run(GTK_DIALOG(ui_server_select->common.dialog))) {
-		case GTK_RESPONSE_OK:
-			server = ui_server_select->selected;
-			break;
-		case GTK_RESPONSE_CANCEL:
-			server = NULL;
-			break;
-		default:
-			continue;
-		}
-		break;
-	}
-
-	/* frees */
-	g_signal_handler_disconnect(G_OBJECT(ui_server_select->common.store), handler_id);
-	gtk_widget_destroy(ui_server_select->common.dialog);
-	g_free(ui_server_select);
-
- out:	return server;
-}
-
-void ui_server_remove_tag(struct server *server, const gchar * tag){
-	gchar * server_tags;
-	gchar ** tag_list = NULL;
-	GString * new_list_tag = g_string_new(NULL);
-
-	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &server->iter, SERVER_TAGS, &server_tags -1);
-
-	tag_list = g_strsplit(server_tags, ",", 0);	
-	for (gint i = 0; tag_list[i] != NULL; ++i){
-		if (g_strcmp0(tag_list[i], tag) == 0)
-			continue;
-		else{
-			g_string_append_printf(new_list_tag, "%s,", tag_list[i]);
-		}
-	}
-	gtk_list_store_set(gebr.ui_server_list->common.store, &server->iter, SERVER_TAGS, new_list_tag->str, -1);
-
-	g_strfreev(tag_list);
-	g_string_free(new_list_tag, TRUE);
-}
-
-gchar ** ui_server_list_tag(struct server *server){
-
-	gchar * tags;
-	gchar ** tag_list = NULL;
-
-	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &server->iter, SERVER_TAGS, &tags, -1);
-	tag_list = g_strsplit(tags, ",", 0);	
+	gtk_tree_model_get(model, &server->iter, SERVER_TAGS, &tags, -1);
+	tag_list = g_strsplit(tags, ",", 0);
+	g_free (tags);
 
 	return tag_list;
 }
 
-GList * ui_server_servers_with_tag(const gchar * tag){
+GList *ui_server_servers_with_tag (const gchar *tag) {
+	GList *list = NULL;
 	GtkTreeIter iter;
-	GList * belong_to_tag = NULL;
+	GtkTreeModel *model;
 
-	gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(gebr.ui_server_list->common.store)) {
+	model = GTK_TREE_MODEL (gebr.ui_server_list->common.store);
+
+	gebr_gui_gtk_tree_model_foreach (iter, model) {
 		struct server *server;
-		gchar * server_tags;
-		gchar ** tag_list = NULL;
+		gchar *tags;
+		gchar **tag_list;
 
-		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter, SERVER_POINTER, &server, SERVER_TAGS, &server_tags -1);
-		tag_list = g_strsplit(server_tags, ",", 0);	
-		for (gint i = 0; tag_list[i] != NULL; ++i) {
-			if (g_strcmp0(tag_list[i], tag) == 0){
-				belong_to_tag = g_list_append(belong_to_tag, server);
+		gtk_tree_model_get(model, &iter,
+				   SERVER_POINTER, &server,
+				   SERVER_TAGS, &tags,
+				   -1);
+
+		tag_list = g_strsplit (tags, ",", 0);	
+		for (gint i = 0; tag_list[i]; i++) {
+			if (g_str_equal (tag_list[i], tag)) {
+				list = g_list_prepend (list, server);
 				break;
 			}
 		}
-		g_strfreev(tag_list);
+		g_free (tags);
+		g_strfreev (tag_list);
 	}
 
-	return belong_to_tag;
+	return g_list_reverse (list);
 }
 
-gboolean ui_server_has_tag (struct server *server, const gchar *tag) {
-	gchar * tags;
-	gchar ** tag_list;
+gboolean ui_server_has_tag (struct server *server, const gchar *tag)
+{
+	gchar *tags;
+	gchar **tag_list;
+	GtkTreeModel *model;
+	gboolean retval = FALSE;
 
-	gtk_tree_model_get (GTK_TREE_MODEL(gebr.ui_server_list->common.store), &server->iter, SERVER_TAGS, &tags, -1);
-	tag_list = g_strsplit(tags, ",", 0);	
-	for (gint i = 0; tag_list[i] != NULL; ++i) {
-		if (g_strcmp0(tag_list[i], tag) == 0) {
-			if (tag_list != NULL)
-				g_strfreev(tag_list);
-			return TRUE;
-		}
-	}
-	if (tag_list != NULL)
-		g_strfreev(tag_list);
-	return FALSE;
+	model = GTK_TREE_MODEL (gebr.ui_server_list->common.store);
+
+	gtk_tree_model_get (model, &server->iter, SERVER_TAGS, &tags, -1);
+	tag_list = g_strsplit (tags, ",", 0);
+	for (gint i = 0; !retval && tag_list[i]; i++)
+		if (g_str_equal (tag_list[i], tag))
+			retval = TRUE;
+
+	g_strfreev (tag_list);
+	g_free (tags);
+
+	return retval;
 }
 
-void ui_server_set_tags (struct server *server, const gchar *str)
+/*
+ * Sorts @tags_str and removes duplicate tags.
+ * Free the returned value with g_free().
+ */
+static gchar *sort_and_remove_doubles (const gchar *tags_str)
 {
 	gchar **tagsv;
 	GString *tags;
 	GPtrArray *array;
 
-	tagsv = g_strsplit (str, ",", 0);
+	tagsv = g_strsplit (tags_str, ",", 0);
 	array = g_ptr_array_new ();
 	tags  = g_string_new ("");
 
@@ -738,6 +599,8 @@ void ui_server_set_tags (struct server *server, const gchar *str)
 	int sort (gchar **v1, gchar **v2) {
 		return g_strcmp0 (*v1, *v2);
 	}
+
+	tags = g_string_new ("");
 
 	// Sort the array so we can remove duplicates
 	g_ptr_array_sort (array, (GCompareFunc) sort);
@@ -752,62 +615,76 @@ void ui_server_set_tags (struct server *server, const gchar *str)
 	if (array->len)
 		g_string_append (tags, g_ptr_array_index (array, array->len-1));
 
-	gtk_list_store_set(gebr.ui_server_list->common.store, &server->iter,
-			   SERVER_TAGS, tags->str,
-			   -1);
-
-	/*Regenerate the Combo Box List*/
-	gebr.ui_server_list->common.all_tags = ui_server_all_tags();
-
-	gint last_active = gtk_combo_box_get_active(GTK_COMBO_BOX(gebr.ui_server_list->common.combo));
-	gtk_list_store_clear(gebr.ui_server_list->common.combo_store);
-
-	g_list_foreach(gebr.ui_server_list->common.all_tags, (GFunc) ui_server_append_combo, NULL);
-	gtk_combo_box_set_active(GTK_COMBO_BOX(gebr.ui_server_list->common.combo), last_active);
-
-	g_string_free (tags, TRUE);
 	g_strfreev (tagsv);
+	g_ptr_array_free (array, FALSE);
+	return g_string_free (tags, FALSE);
 }
 
-GList * ui_server_all_tags(void){
-	GtkTreeIter iter;
-	GList * all_tags = NULL;
+void ui_server_set_tags (struct server *server, const gchar *str)
+{
+	gchar *tags;
 
-	gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(gebr.ui_server_list->common.store)) {
-		struct server *server;
-		gchar * server_tags;
-		gchar ** tag_list = NULL;
+	tags = sort_and_remove_doubles (str);
+	gtk_list_store_set (gebr.ui_server_list->common.store, &server->iter,
+			    SERVER_TAGS, tags,
+			    -1);
+	g_free (tags);
 
-		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter, SERVER_POINTER, &server, SERVER_TAGS, &server_tags, -1);
-		tag_list = g_strsplit(server_tags, ",", 0);	
-		for (gint i = 0; tag_list[i] != NULL; ++i) {
-
-			gboolean not_included = TRUE;
-			for (GList * elem = g_list_first(all_tags);
-			     elem != NULL;
-			     elem = g_list_next(elem)){
-				if (g_strcmp0((gchar *)g_list_nth_data(all_tags, g_list_position(all_tags, elem)), tag_list[i]) == 0){
-					not_included = FALSE;
-				}
-			}
-			if (not_included)
-				all_tags = g_list_append(all_tags, tag_list[i]);
-		}
-		g_free(tag_list);
-	}
-
-	int sort (const gchar *v1, const gchar *v2) {
-		return g_strcmp0 (v1, v2);
-	}
-
-	// Sort the array so we can remove duplicates and return it
-	return g_list_sort(all_tags, (GCompareFunc) sort);
+	ui_server_update_tags_combobox ();
 }
 
-void ui_server_append_combo(gchar * tag){
-
+gchar **ui_server_get_all_tags (void)
+{
 	GtkTreeIter iter;
+	GtkTreeModel *model;
+	GString *concat;
+	gchar *tags;
+	gchar **retval;
 
-	gtk_list_store_append(gebr.ui_server_list->common.combo_store, &iter);
-	gtk_list_store_set(gebr.ui_server_list->common.combo_store, &iter, COMBO_TEXT, tag, -1);
+	concat = g_string_new ("");
+	model = GTK_TREE_MODEL (gebr.ui_server_list->common.store);
+
+	gebr_gui_gtk_tree_model_foreach (iter, model) {
+		gtk_tree_model_get (model, &iter, SERVER_TAGS, &tags, -1);
+		g_string_append_printf (concat, "%s,", tags);
+		g_free (tags);
+	}
+
+	tags = sort_and_remove_doubles (concat->str);
+	retval =  g_strsplit (tags, ",", 0);
+
+	g_free (tags);
+	g_string_free (concat, TRUE);
+
+	return retval;
+}
+
+void ui_server_update_tags_combobox (void)
+{
+	int active = -1;
+	gchar **tags;
+	GtkTreeIter iter;
+	GtkComboBox *combo;
+	GtkTreeModel *model;
+	gchar *selected = NULL;
+
+	combo = GTK_COMBO_BOX (gebr.ui_server_list->common.combo);
+	model = GTK_TREE_MODEL (gebr.ui_server_list->common.combo_store);
+
+	if (gtk_combo_box_get_active_iter (combo, &iter))
+		gtk_tree_model_get (model, &iter, 0, &selected, -1);
+
+	gtk_list_store_clear (gebr.ui_server_list->common.combo_store);
+	tags = ui_server_get_all_tags ();
+
+	for (int i = 0; tags[i]; i++) {
+		gtk_list_store_append (gebr.ui_server_list->common.combo_store, &iter);
+		gtk_list_store_set (gebr.ui_server_list->common.combo_store,
+				    &iter, 0, tags[i], -1);
+
+		if (active == -1 && selected && g_str_equal (tags[i], selected))
+			active = i;
+	}
+
+	gtk_combo_box_set_active (combo, active);
 }

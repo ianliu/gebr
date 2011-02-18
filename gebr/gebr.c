@@ -125,19 +125,6 @@ void gebr_init(void)
 		menu_list_create_index();
 		menu_list_populate();
 	}
-
-	/*Regenerate the Combo Box List*/
-	gebr.ui_server_list->common.all_tags = ui_server_all_tags();
-
-	gtk_list_store_clear(gebr.ui_server_list->common.combo_store);
-	g_list_foreach(gebr.ui_server_list->common.all_tags, (GFunc) ui_server_append_combo, NULL);
-
-    for (GList * elem = g_list_first(gebr.ui_server_list->common.all_tags); elem != NULL; elem = g_list_next(elem)){
-        if (g_strcmp0((gchar *)g_list_nth_data(gebr.ui_server_list->common.all_tags, g_list_position(gebr.ui_server_list->common.all_tags, elem)), _("All Servers")) == 0){
-            gtk_combo_box_set_active(GTK_COMBO_BOX(gebr.ui_server_list->common.combo), g_list_position(gebr.ui_server_list->common.all_tags, elem));
-        }
-    }
-
 }
 
 gboolean gebr_quit(gboolean save_config)
@@ -162,6 +149,7 @@ gboolean gebr_quit(gboolean save_config)
 		g_list_free(gebr.flow_clipboard);
 	}
 
+	g_object_unref (gebr.ui_server_list->common.combo_store);
 	g_hash_table_destroy(gebr.help_edit_windows);
 	g_hash_table_destroy(gebr.xmls_by_filename);
 
@@ -235,7 +223,7 @@ gboolean gebr_quit(gboolean save_config)
 static void gebr_config_load_servers(void)
 {
 	gchar *path;
-       	gchar **groups;
+	gchar **groups;
 	GString *address;
 	GKeyFile *servers;
 	gboolean autoconnect;
@@ -275,6 +263,8 @@ static void gebr_config_load_servers(void)
 		}
 		g_key_file_free (servers);
 	}
+
+	ui_server_update_tags_combobox ();
 }
 
 static void gebr_config_save_servers(void)
@@ -446,7 +436,7 @@ gint gebr_config_load()
 
 	/* NEW CONFIG? */
 	if (new_config) {
-		server_new("127.0.0.1", TRUE, _("All Servers"));
+		server_new("127.0.0.1", TRUE, "");
 		//gebr_config_save(FALSE); //default values saved
 		preferences_setup_ui(TRUE);
 	} else
@@ -538,7 +528,7 @@ void gebr_config_save(gboolean verbose)
 		g_string_printf(compose, "project-%d", count++);
 		g_key_file_set_string(gebr.config.key_file, "projects", compose->str, filename);
 	}
-	
+
 	error = NULL;
 	string = g_key_file_to_data(gebr.config.key_file, &length, NULL);
 	configfp = fopen(gebr.config.path->str, "w");
@@ -553,7 +543,7 @@ void gebr_config_save(gboolean verbose)
 		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Configuration saved"));
 
 	/* frees */
- out:	g_free(string);
+out:	g_free(string);
 
 	return;
 }
@@ -718,8 +708,8 @@ static void gebr_migrate_data_dir(void)
 
 	command_line = g_string_new("");
 	gebr_directory_foreach_file(filename, gebr.config.data->str)
-	    if (!fnmatch("*.prj", filename, 1) || !fnmatch("*.lne", filename, 1) || !fnmatch("*.flw", filename, 1))
-		g_string_append_printf(command_line, "%s/%s ", gebr.config.data->str, filename);
+		if (!fnmatch("*.prj", filename, 1) || !fnmatch("*.lne", filename, 1) || !fnmatch("*.flw", filename, 1))
+			g_string_append_printf(command_line, "%s/%s ", gebr.config.data->str, filename);
 	empty = command_line->len == 0 ? TRUE : FALSE;
 	g_string_prepend(command_line, "cp ");
 	g_string_append(command_line, new_data_dir->str);
