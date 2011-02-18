@@ -196,7 +196,7 @@ void flow_import(void)
 	if (!project_line_get_selected(NULL, LineSelection))
 		return;
 
-	chooser_dialog = gtk_file_chooser_dialog_new(_("Choose filename to open"),
+	chooser_dialog = gtk_file_chooser_dialog_new(_("Choose a Flow to import"),
 						     GTK_WINDOW(gebr.window),
 						     GTK_FILE_CHOOSER_ACTION_OPEN,
 						     GTK_STOCK_OPEN, GTK_RESPONSE_YES,
@@ -256,14 +256,14 @@ void flow_export(void)
 	len = g_list_length (rows);
 
 	if (!rows) {
-		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No flow selected"));
+		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No Flow selected"));
 		return;
 	}
 
 	title = g_string_new(NULL);
 
 	if (len > 1)
-		g_string_printf (title, "Choose filename to save selected flows");
+		g_string_printf (title, "Save selected Flows as...");
 	else {
 		GtkTreeIter iter;
 		GtkTreePath *path = rows->data;
@@ -274,13 +274,13 @@ void flow_export(void)
 		if (document_load (&flow, flow_filename, FALSE))
 			goto out;
 
-		g_string_printf (title, _("Choose filename to save flow '%s'"),
+		g_string_printf (title, _("Save '%s' as..."),
 				 gebr_geoxml_document_get_title (flow));
 
 		document_free (flow);
 	}
 
-	check_box = gtk_check_button_new_with_label(_("Make this flow user-independent"));
+	check_box = gtk_check_button_new_with_label(_("Make this Flow user-independent"));
 	chooser_dialog = gebr_gui_save_dialog_new(title->str, GTK_WINDOW(gebr.window));
 	gebr_gui_save_dialog_set_default_extension(GEBR_GUI_SAVE_DIALOG(chooser_dialog), ".flwz");
 
@@ -566,7 +566,7 @@ gboolean flow_revision_save(void)
 	if (!flow_browse_get_selected(&iter, TRUE))
 		return FALSE;
 
-	dialog = gtk_dialog_new_with_buttons(_("Save flow state"),
+	dialog = gtk_dialog_new_with_buttons(_("Save selected Flows"),
 					     GTK_WINDOW(gebr.window),
 					     (GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
 					     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
@@ -581,7 +581,7 @@ gboolean flow_revision_save(void)
 	vbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(align), vbox);
 
-	label = gtk_label_new(_("Make a comment for this state:"));
+	label = gtk_label_new(_("Give a name for this version of the selected Flows:"));
 	gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 0);
 	entry = gtk_entry_new();
 	gtk_box_pack_start(GTK_BOX(vbox), entry, TRUE, TRUE, 0);
