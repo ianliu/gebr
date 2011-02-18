@@ -186,15 +186,43 @@ static GtkMenu *server_common_popup_menu(GtkWidget * widget, struct ui_server_co
 }
 
 static void on_tags_edited (GtkCellRendererText *cell,
-			    gchar *path,
+			    gchar *pathstr,
 			    gchar *new_text,
 			    GtkTreeModel *model)
 {
 	gchar *tags;
 	GtkTreeIter iter;
+	GtkTreePath *model_path;
+	GtkTreePath *filter_path;
+	GtkTreePath *sorted_path;
 	struct server *server;
+	gboolean ret;
 
-	if (!gtk_tree_model_get_iter_from_string (model, &iter, path))
+	ret = gtk_tree_model_get_iter_from_string (
+			GTK_TREE_MODEL (gebr.ui_server_list->common.sort_store),
+			&iter, pathstr);
+
+	if (!ret)
+		return;
+
+	// This code resolves the pathstr variable to the original tree model.
+	// Welcome to Hell.
+
+	sorted_path = gtk_tree_model_get_path (
+			GTK_TREE_MODEL (gebr.ui_server_list->common.sort_store),
+			&iter);
+
+	filter_path = gtk_tree_model_sort_convert_path_to_child_path (
+			GTK_TREE_MODEL_SORT (gebr.ui_server_list->common.sort_store),
+			sorted_path);
+
+	model_path = gtk_tree_model_filter_convert_path_to_child_path (
+			GTK_TREE_MODEL_FILTER (gebr.ui_server_list->common.filter),
+			filter_path);
+
+	ret = gtk_tree_model_get_iter (model, &iter, model_path);
+
+	if (!ret)
 		return;
 
 	gtk_tree_model_get (model, &iter,
