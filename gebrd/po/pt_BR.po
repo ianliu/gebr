@@ -3,21 +3,20 @@
 # This file is distributed under the same license as the debr package.
 # biloti <biloti@gebrproject.com>, 2009.
 #
-#: ../src/main.c:50 ../src/main.c:51
 msgid ""
 msgstr ""
 "Project-Id-Version: gebrd 0.9.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-01-18 11:44-0200\n"
+"POT-Creation-Date: 2011-02-18 11:45-0200\n"
 "PO-Revision-Date: 2011-01-12 16:29-0200\n"
 "Last-Translator: Alexandre Baaklini <abaaklini@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bitPlural-Forms: nplurals=2; plural=(n > 1);\n"
-"Language: \n"
 
-#: ../src/client.c:100
+#: ../src/client.c:101
 #, c-format
 msgid "Connection error '%d' on client '%s'"
 msgstr "Erro '%d' na conexão com o cliente '%s'"
@@ -26,96 +25,121 @@ msgstr "Erro '%d' na conexão com o cliente '%s'"
 msgid "Server quit."
 msgstr "Servidor finalizado."
 
-#: ../src/job.c:105
+#: ../src/job.c:104
 #, c-format
 msgid "Required parameter '%s' of program '%s' not provided.\n"
 msgstr "O parâmetro '%s' do programa '%s' não foi fornecido.\n"
 
-#: ../src/job.c:124
+#: ../src/job.c:123
 #, c-format
 msgid "Unknown parameter type.\n"
 msgstr "Tipo de parâmetro desconhecido.\n"
 
-#: ../src/job.c:194
+#: ../src/job.c:186
 #, c-format
 msgid "Job '%s' sent output not in UTF-8."
 msgstr "Tarefa '%s' não enviou a saida no formato UTF-8"
 
-#: ../src/job.c:527
+#: ../src/job.c:343 ../src/job.c:379
+#, c-format
+msgid "Moab's job status could not be retrieved.\n"
+msgstr "O estado do Job no Moab não pode ser recuperado.\n"
+
+#: ../src/job.c:369
+#, c-format
+msgid "Moab's job status could not be returned with error code %s (%s).\n"
+msgstr "O estado do Job no Moab não pode ser retornado com o erro %s (%s).\n"
+
+#: ../src/job.c:407
+#, c-format
+msgid "Moab's job returned status code %d allocatted on nodes '%s'.\n"
+msgstr "Job no Moab retornou o código de estado %d para alocação no nó '%s'.\n"
+
+#: ../src/job.c:410
+#, c-format
+msgid "Process exited with status code %d.\n"
+msgstr "Processo terminado com o código de estado %d.\n"
+
+#: ../src/job.c:459
 #, c-format
 msgid "Empty flow.\n"
 msgstr "Fluxo vazio.\n"
 
-#: ../src/job.c:535 ../src/job.c:605 ../src/job.c:768
+#: ../src/job.c:467 ../src/job.c:530 ../src/job.c:780
 #, c-format
 msgid "%u) Skipping disabled/not configured program '%s'.\n"
 msgstr "%u) Desconsiderando programa '%s' desabilitado/não configurado.\n"
 
-#: ../src/job.c:541
+#: ../src/job.c:473
 #, c-format
 msgid "No configured programs.\n"
 msgstr "Sem programas configurados.\n"
 
-#: ../src/job.c:551
+#: ../src/job.c:483
 #, c-format
 msgid "No input file selected.\n"
 msgstr "Sem arquivo de entrada selecionado.\n"
 
-#: ../src/job.c:567
+#: ../src/job.c:499
 #, c-format
 msgid "Requested MPI (%s) is not supported by this server.\n"
 msgstr "MPI (%s) solicitado não é suportado pelo servidor.\n"
 
-#: ../src/job.c:589 ../src/job.c:687
-#, c-format
-msgid "Write permission to %s not granted.\n"
-msgstr "Permissão de escrita para %s não concedida.\n"
-
 #. Previous does not write to stdin but current expect something
-#: ../src/job.c:636
+#: ../src/job.c:561
 #, c-format
 msgid "Broken flow before %s (no input).\n"
 msgstr "Fluxo interrompido depois de %s (sem entrada).\n"
 
 #. Previous does write to stdin but current does not carry about
-#: ../src/job.c:640
+#: ../src/job.c:565
 #, c-format
 msgid "Broken flow before %s (unexpected output).\n"
 msgstr "Fluxo interrompido antes de %s (saída inesperada).\n"
 
-#: ../src/job.c:680
+#: ../src/job.c:604
 #, c-format
 msgid "No error file selected; error output merged with standard output.\n"
 msgstr ""
 "Sem arquivo de erro selecionado; saída de erro será mesclada com a saída "
 "padrão.\n"
 
-#: ../src/job.c:683
+#: ../src/job.c:607
 #, c-format
 msgid "Proceeding without output file.\n"
 msgstr "Prosseguindo sem arquivo de saída.\n"
 
-#: ../src/job.c:787
+#: ../src/job.c:795
 #, c-format
 msgid "Input file %s not present or not accessible.\n"
 msgstr "Arquivo de entrada %s não encontrado ou não acessível.\n"
 
-#: ../src/job.c:842
+#: ../src/job.c:804 ../src/job.c:813
 #, c-format
+msgid "Write permission to %s not granted.\n"
+msgstr "Permissão de escrita para %s não concedida.\n"
+
+#: ../src/job.c:849
+msgid "Cannot submit job to MOAB server (msub command is not available).\n"
+msgstr ""
+"Não foi possível submeter a tarefa ao servidor MOAB (comando msub não "
+"disponível).\n"
+
+#: ../src/job.c:866
 msgid "Cannot submit job to MOAB server.\n"
 msgstr "Não foi possível submeter a tarefa ao servidor MOAB.\n"
 
-#: ../src/job.c:848
+#: ../src/job.c:872
 #, c-format
 msgid "Cannot submit job to MOAB server: %s.\n"
 msgstr "Não foi possível submeter a tarefa ao servidor MOAB: %s.\n"
 
-#: ../src/job.c:858
+#: ../src/job.c:885
 #, c-format
 msgid "Cannot get MOAB job id.\n"
 msgstr "Não foi possível obter a identificação da tarefa no MOAB.\n"
 
-#: ../src/job.c:1032 ../src/job.c:1036
+#: ../src/job.c:1040 ../src/job.c:1044
 #, c-format
 msgid "Cannot cancel job at MOAB server.\n"
 msgstr "Não foi possível cancelar a tarefa no servidor MOAB.\n"
@@ -132,12 +156,26 @@ msgstr "Exibe a versão do daemon"
 msgid "GeBR daemon"
 msgstr "Daemon GeBR"
 
-#: ../src/main.c:55
+#: ../src/main.c:50
+msgid "Run flows and manage jobs of GeBR."
+msgstr "Executa Fluxos e gerencia processos da GêBR."
+
+#: ../src/main.c:52
+msgid ""
+"Debug-compiled environment variables:\n"
+"  GEBRD_RUN_DELAY_SEC: delay in seconds to wait before sending response of a "
+"flow run request."
+msgstr ""
+"Variáveis de ambiente para debug:\n"
+"  GEBRD_RUN_DELAY_SEC: atrazo em segundos antes de enviar a resposta de um "
+"pedido de execução de Fluxo."
+
+#: ../src/main.c:58
 #, c-format
 msgid "%s: syntax error\n"
 msgstr "%s: erro de sintaxe\n"
 
-#: ../src/main.c:56
+#: ../src/main.c:59
 #, c-format
 msgid "Try %s --help\n"
 msgstr "Tente %s --help\n"
@@ -151,7 +189,7 @@ msgstr ""
 #: ../src/server.c:102
 msgid "Cannot run interactive server, GêBR daemon is already running"
 msgstr ""
-"Não é possível executar o servidor iterativavmente. Daemon GêBR já está em "
+"Não é possível executar o servidor iterativamente. Daemon GêBR já está em "
 "execução"
 
 #: ../src/server.c:123
