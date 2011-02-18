@@ -271,6 +271,7 @@ GEBR_JSON_CFLAGS='-I$(top_srcdir)/libgebr/json $(GLIB_CFLAGS) $(GOBJECT_CFLAGS) 
 GEBR_LIBS='$(top_builddir)/libgebr/libgebr.la $(GLIB_LIBS) $(GOBJECT_LIBS) $(GTHREAD_LIBS)'
 GEBR_GEOXML_LIBS='$(top_builddir)/libgebr/geoxml/libgebr_geoxml.la $(GDOME2_LIBS) $(TIDY_LIBS)'
 GEBR_COMM_LIBS='$(top_builddir)/libgebr/comm/libgebr_comm.la'
+GEBR_GUI_LIBS='$(top_srcdir)/libgebr/gui/libgebr_gui.la $(GTK_LIBS) $(WEBKIT_LIBS)'
 GEBR_JSON_LIBS='$(top_builddir)/libgebr/json/libgebr_json.la $(GLIB_LIBS) $(GOBJECT_LIBS) $(GIO_LIBS) -lm'
 
 AC_SUBST(GEBR_CFLAGS)

@@ -28,12 +28,12 @@ GebrdJobQueue * gebrd_job_queue_new(const gchar * name)
 	return job_queue;
 }
 
-void gebrd_job_queue_append_job(GebrdJobQueue * job_queue, struct job * job)
+void gebrd_job_queue_append_job(GebrdJobQueue * job_queue, GebrdJob * job)
 {
 	job_queue->jobs = g_list_append(job_queue->jobs, job);
 }
 
-void gebrd_job_queue_remove_job(GebrdJobQueue * job_queue, struct job * job)
+void gebrd_job_queue_remove_job(GebrdJobQueue * job_queue, GebrdJob * job)
 {
 	job_queue->jobs = g_list_remove(job_queue->jobs, job);
 	if (job_queue->name[0] == 'j' && !g_list_length(job_queue->jobs))
@@ -48,12 +48,12 @@ void gebrd_job_queue_free(GebrdJobQueue * job_queue)
 	g_free(job_queue);
 }
 
-struct job * gebrd_job_queue_pop(GebrdJobQueue * job_queue)
+GebrdJob * gebrd_job_queue_pop(GebrdJobQueue * job_queue)
 {
 	GList * head;
-	struct job * job;
+	GebrdJob * job;
 	head = job_queue->jobs;
-	job = (struct job*)head->data;
+	job = (GebrdJob*)head->data;
 	job_queue->jobs = g_list_delete_link(head, head);
 	return job;
 }

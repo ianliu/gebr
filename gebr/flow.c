@@ -526,9 +526,9 @@ void flow_run(struct server *server, GebrCommServerRunConfig * config, gboolean 
 		gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(stripped));
 
 		GString *queue_gstring = g_string_new(config->queue);
-		struct job * job = job_new_from_flow(server, run_flow->flow, queue_gstring);
+		GebrJob * job = job_new_from_flow(server, run_flow->flow, queue_gstring);
 		g_string_free(queue_gstring, TRUE);
-		g_string_printf(job->run_id, "%u", run_flow->run_id);
+		g_string_printf(job->parent.run_id, "%u", run_flow->run_id);
 		if (select) {
 			job_set_active(job);
 			gebr.config.current_notebook = 3;

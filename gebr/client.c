@@ -162,9 +162,9 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, stru
 				jid = g_list_nth_data(arguments, 0);
 				run_id = g_list_nth_data(arguments, 1);
 
-				struct job * job = job_find(comm_server->address, run_id, FALSE);
+				GebrJob * job = job_find(comm_server->address, run_id, FALSE);
 				if (job != NULL) {
-					g_string_assign(job->jid, jid->str);
+					g_string_assign(job->parent.jid, jid->str);
 
 					/* move it to the end, the right place... */
 					gboolean was_selected = job_is_active(job);
@@ -181,7 +181,7 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, stru
 			GList *arguments;
 			GString *jid, *hostname, *status, *title, *start_date, *finish_date, *issues, *cmd_line,
 				*output, *queue, *moab_jid;
-			struct job *job;
+			GebrJob *job;
 
 			/* organize message data */
 			if ((arguments = gebr_comm_protocol_split_new(message->argument, 11)) == NULL)
@@ -202,17 +202,17 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, stru
 			if (job == NULL)
 				job = job_new_from_jid(server, jid, status, title, start_date, finish_date,
 						       hostname, issues, cmd_line, output, queue, moab_jid);
-			else if (job->waiting_server_details)
+			else if (job->parent.status == JOB_STATUS_INITIAL)
 				job_init_details(job, status, title, start_date, finish_date,
 						 hostname, issues, cmd_line, output, queue, moab_jid);
 			else
-				gebr_message(GEBR_LOG_DEBUG, FALSE, FALSE, _("Received already listed job %s."), job->jid);
+				gebr_message(GEBR_LOG_DEBUG, FALSE, FALSE, _("Received already listed job %s."), job->parent.jid);
 
 			gebr_comm_protocol_split_free(arguments);
 		} else if (message->hash == gebr_comm_protocol_defs.out_def.code_hash) {
 			GList *arguments;
 			GString *jid, *output;
-			struct job *job;
+			GebrJob *job;
 
 			/* organize message data */
 			if ((arguments = gebr_comm_protocol_split_new(message->argument, 2)) == NULL)
@@ -229,7 +229,7 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, stru
 		} else if (message->hash == gebr_comm_protocol_defs.sta_def.code_hash) {
 			GList *arguments;
 			GString *jid, *status, *parameter;
-			struct job *job;
+			GebrJob *job;
 
 			/* organize message data */
 			if ((arguments = gebr_comm_protocol_split_new(message->argument, 3)) == NULL)
