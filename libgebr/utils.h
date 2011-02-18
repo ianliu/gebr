@@ -137,9 +137,11 @@ gchar *gebr_date_get_localized (const gchar *format, const gchar *locale);
 gchar *gebr_id_random_create(gssize bytes);
 
 /*
- * Open a file for writing and locking it. 
+ * Open a file for writing. If the file already exists, its contents is returned.
+ * If not \p new_lock_content is written to the file. 
+ * A newly allocated string with the contents of \p pathname is returned.
  */
-gint gebr_lock_file_open(const gchar *pathname);
+gchar * gebr_lock_file(const gchar *pathname, const gchar *new_lock_content, gboolean symlink);
 
 G_END_DECLS
 #endif				//__GEBR_UTILS_H

@@ -613,19 +613,47 @@ gchar *gebr_id_random_create(gssize bytes)
 	return id;
 }
 
-gint gebr_lock_file_open(const gchar *pathname)
+gchar * gebr_lock_file(const gchar *pathname, const gchar *new_lock_content, gboolean symlink)
 {
-//	struct flock fl;
-//	int fd;
+	/* TODO */
+	if (symlink)
+		return NULL;
 
-//	fl.l_type   = F_WRLCK;  /* F_RDLCK, F_WRLCK, F_UNLCK    */
-//	fl.l_whence = SEEK_SET; /* SEEK_SET, SEEK_CUR, SEEK_END */
-//	fl.l_start  = 0;        /* Offset from l_whence         */
-//	fl.l_len    = 0;        /* length, 0 = to EOF           */
-//	fl.l_pid    = getpid(); /* our PID                      */
+	gchar *contents = NULL;
 
-//	fd = open("filename", O_WRONLY);
+	struct flock fl;
+	fl.l_type = F_WRLCK;
+	fl.l_whence = SEEK_SET;
+	fl.l_start = 0;
+	fl.l_len = 0;
+	fl.l_pid = getpid();
 
-//fcntl(fd, F_SETLKW, &fl);  /* F_GETLK, F_SETLK, F_SETLKW */
+	int fd = open(pathname, O_CREAT | O_WRONLY, gebr_home_mode());
+	fcntl(fd, F_SETLKW, &fl);
+
+	GError *error = NULL;
+	gsize length = 0;
+	if (g_file_test(pathname, G_FILE_TEST_IS_REGULAR) &&
+	    g_file_get_contents(pathname, &contents, &length, &error) &&
+	    length > 0) {
+		/* file exists and could be read, make it a null-terminated string */
+		gchar * tmp = g_new(gchar, length+1);
+		strncpy(tmp, contents, length);
+		tmp[length] = '\0';
+		g_free(contents);
+		contents = tmp;
+	} else {
+		length = strlen(new_lock_content);
+		if (write(fd, new_lock_content, length) > 0)
+			contents = g_strdup(new_lock_content);
+		else
+			contents = NULL;
+	}
+
+	close(fd);
+	fl.l_type = F_UNLCK;
+	fcntl(fd, F_SETLK, &fl);
+
+	return contents;
 }
 
