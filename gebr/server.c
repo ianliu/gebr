@@ -160,6 +160,7 @@ struct server *server_new(const gchar * address, gboolean autoconnect, const gch
 	server->comm->user_data = server;
 	server->iter = iter;
 	server->last_error = g_string_new("");
+	server->nfsid = g_string_new("");
 	server->type = GEBR_COMM_SERVER_TYPE_UNKNOWN;
 	server->accounts_model = gtk_list_store_new(1, G_TYPE_STRING);
 	server->queues_model = gtk_list_store_new(SERVER_QUEUE_N_COLUMNS, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);

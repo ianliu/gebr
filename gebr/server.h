@@ -54,9 +54,11 @@ struct server {
 	struct gebr_comm_server *comm;
 	GtkTreeIter iter;
 
+
 	/* last error showed on tooltip */
 	GString *last_error;
 
+	GString *nfsid;
 	GebrCommServerType type;
 	GtkListStore * queues_model;
 	GtkListStore * accounts_model;
