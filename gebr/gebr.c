@@ -239,7 +239,7 @@ static void gebr_config_load_servers(void)
 	GKeyFile *servers;
 	gboolean autoconnect;
 	gboolean ret;
-	GString * tags = g_string_new(NULL);
+	GString *tags;
 
 	// Migrate servers from old config file to the new servers file
 	groups = g_key_file_get_groups(gebr.config.key_file, NULL);
@@ -251,8 +251,12 @@ static void gebr_config_load_servers(void)
 		if (address->len) {
 			autoconnect = gebr_g_key_file_load_boolean_key(
 					gebr.config.key_file, groups[i], "autoconnect", TRUE);
-			g_string_assign(tags, gebr_g_key_file_load_string_key(gebr.config.key_file, groups[i], "tags", _("All Servers"))->str);
-			server_new(address->str, autoconnect, tags->str);
+
+			tags = gebr_g_key_file_load_string_key(
+					gebr.config.key_file, groups[i], "tags", "");
+
+			server_new (address->str, autoconnect, tags->str);
+			g_string_free (tags, TRUE);
 		}
 		g_string_free(address, TRUE);
 		g_key_file_remove_group (gebr.config.key_file, groups[i], NULL);
@@ -269,8 +273,12 @@ static void gebr_config_load_servers(void)
 		for (int i = 0; groups[i]; i++) {
 			autoconnect = gebr_g_key_file_load_boolean_key (
 					servers, groups[i], "autoconnect", TRUE);
-			g_string_assign(tags, gebr_g_key_file_load_string_key(servers, groups[i], "tags", _("All Servers"))->str);
-			server_new(groups[i], autoconnect, tags->str);
+
+			tags = gebr_g_key_file_load_string_key(
+					servers, groups[i], "tags", "");
+
+			server_new (groups[i], autoconnect, tags->str);
+			g_string_free (tags, TRUE);
 		}
 		g_key_file_free (servers);
 	}

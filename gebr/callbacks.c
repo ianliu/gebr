@@ -106,7 +106,7 @@ void on_quit_activate(void)
 
 void on_document_properties_activate(void)
 {
-	document_properties_setup_ui(document_get_current(), NULL);
+	document_properties_setup_ui(document_get_current(), NULL, FALSE);
 }
 
 void on_document_dict_edit_activate(void)

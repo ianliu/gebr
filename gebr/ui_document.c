@@ -158,7 +158,9 @@ GebrGeoXmlDocument *document_get_current(void)
 	}
 }
 
-void document_properties_setup_ui(GebrGeoXmlDocument * document, GebrPropertiesResponseFunc func)
+void document_properties_setup_ui (GebrGeoXmlDocument * document,
+				   GebrPropertiesResponseFunc func,
+				   gboolean is_new)
 {
 	GebrPropertiesData * data;
 	GtkWidget *window;
