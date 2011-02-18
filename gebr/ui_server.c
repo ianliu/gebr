@@ -392,6 +392,10 @@ static gboolean visible_func (GtkTreeModel *model,
 	if (!gtk_combo_box_get_active_iter (combo, &active))
 		return TRUE;
 
+	// Means we selected 'All servers'
+	if (gtk_combo_box_get_active (combo) == 0)
+		return TRUE;
+
 	gtk_tree_model_get (model, iter, SERVER_POINTER, &server, -1);
 	gtk_tree_model_get (gtk_combo_box_get_model (combo), &active,
 			    0, &tag, -1);
@@ -676,6 +680,9 @@ void ui_server_update_tags_combobox (void)
 
 	gtk_list_store_clear (gebr.ui_server_list->common.combo_store);
 	tags = ui_server_get_all_tags ();
+	gtk_list_store_append (gebr.ui_server_list->common.combo_store, &iter);
+	gtk_list_store_set (gebr.ui_server_list->common.combo_store,
+			    &iter, 0, _("All Servers"), -1);
 
 	for (int i = 0; tags[i]; i++) {
 		gtk_list_store_append (gebr.ui_server_list->common.combo_store, &iter);
