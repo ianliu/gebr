@@ -58,7 +58,7 @@ struct job {
 	
 	/* new status should reflect on status_enum_to_string */
 	enum JobStatus {
-		JOB_STATUS_UNKNOWN = 0,
+		JOB_STATUS_INITIAL = 0, /* before the sending of jid to clients */
 		JOB_STATUS_QUEUED,
 		JOB_STATUS_FAILED,
 		JOB_STATUS_RUNNING,
@@ -83,11 +83,11 @@ void job_free(struct job *job);
 
 /**
  */
-void job_set_status(struct job *job, enum JobStatus status);
+void job_status_set(struct job *job, enum JobStatus status);
 /**
  * Change status and notify clients about it
  */
-void job_notify_status(struct job *job, enum JobStatus status, const gchar *parameter, ...);
+void job_status_notify(struct job *job, enum JobStatus status, const gchar *parameter, ...);
 /**
  * Remember not to send any message to clients here as the job wasn't created
  */

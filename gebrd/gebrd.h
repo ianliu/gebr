@@ -45,9 +45,12 @@ struct gebrd {
 	GList *clients;
 	GList *jobs;
 	struct gebr_log *log;
+
 	gchar hostname[256];
+	GebrCommSocketAddress socket_address;
 
 	GString *run_filename;
+	GString *fs_lock;
 	GHashTable *queues;
 
 	/**

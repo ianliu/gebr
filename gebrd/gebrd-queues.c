@@ -62,7 +62,7 @@ void gebrd_queues_rename(const gchar * queue, const gchar *newname)
 
 		if (strcmp(queue, job->queue->str) == 0) {
 			g_string_assign(job->queue, newname);
-			job_notify_status(job, JOB_STATUS_REQUEUED, newname);
+			job_status_notify(job, JOB_STATUS_REQUEUED, newname);
 		}
 
 		link = g_list_next(link);

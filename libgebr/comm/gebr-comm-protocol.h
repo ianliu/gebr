@@ -26,7 +26,7 @@ G_BEGIN_DECLS
 
 #define gebr_comm_message_def_create(code, resp, arg_number) ((struct gebr_comm_message_def){g_str_hash(code), code, resp, arg_number})
 extern struct gebr_comm_protocol_defs gebr_comm_protocol_defs;
-#define PROTOCOL_VERSION "1.0.5"
+#define PROTOCOL_VERSION "1.0.6"
 
 struct gebr_comm_message_def {
 	guint		code_hash;

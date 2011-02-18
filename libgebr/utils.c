@@ -25,6 +25,7 @@
 #include <unistd.h>
 #include <glib/gstdio.h>
 #include <locale.h>
+#include <fcntl.h>
 
 #include "defines.h"
 #include "utils.h"
@@ -594,3 +595,65 @@ gchar *gebr_date_get_localized (const gchar *format, const gchar *locale)
 
 	return datestr;
 }
+
+gchar *gebr_id_random_create(gssize bytes)
+{
+	gchar * id = g_new(gchar, bytes+1);
+
+	for (gint i = 0; i < bytes; ++i) {
+		GTimeVal current_time;
+		g_get_current_time(&current_time);
+		g_random_set_seed(current_time.tv_usec);
+	
+		gchar c = (gchar)g_random_int_range(33, 126);
+		id[i] = c;
+	}
+	id[bytes] = '\0';
+
+	return id;
+}
+
+gchar * gebr_lock_file(const gchar *pathname, const gchar *new_lock_content, gboolean symlink)
+{
+	/* TODO */
+	if (symlink)
+		return NULL;
+
+	gchar *contents = NULL;
+
+	struct flock fl;
+	fl.l_type = F_WRLCK;
+	fl.l_whence = SEEK_SET;
+	fl.l_start = 0;
+	fl.l_len = 0;
+	fl.l_pid = getpid();
+
+	int fd = open(pathname, O_CREAT | O_WRONLY, gebr_home_mode());
+	fcntl(fd, F_SETLKW, &fl);
+
+	GError *error = NULL;
+	gsize length = 0;
+	if (g_file_test(pathname, G_FILE_TEST_IS_REGULAR) &&
+	    g_file_get_contents(pathname, &contents, &length, &error) &&
+	    length > 0) {
+		/* file exists and could be read, make it a null-terminated string */
+		gchar * tmp = g_new(gchar, length+1);
+		strncpy(tmp, contents, length);
+		tmp[length] = '\0';
+		g_free(contents);
+		contents = tmp;
+	} else {
+		length = strlen(new_lock_content);
+		if (write(fd, new_lock_content, length) > 0)
+			contents = g_strdup(new_lock_content);
+		else
+			contents = NULL;
+	}
+
+	close(fd);
+	fl.l_type = F_UNLCK;
+	fcntl(fd, F_SETLK, &fl);
+
+	return contents;
+}
+

@@ -27,7 +27,7 @@
 </listAttribute>
 <mapAttribute key="org.eclipse.debug.core.environmentVariables">
 <mapEntry key="LD_LIBRARY_PATH" value="libgebr/.libs:libgebr/geoxml/.libs:libgebr/comm/.libs:libgebr/gui/.libs"/>
-<mapEntry key="PATH" value="${env_var:PATH}:gebrd/src"/>
+<mapEntry key="PATH" value="gebrd/src:${env_var:PATH}"/>
 </mapAttribute>
 <listAttribute key="org.eclipse.debug.ui.favoriteGroups">
 <listEntry value="org.eclipse.debug.ui.launchGroup.debug"/>
