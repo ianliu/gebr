@@ -49,6 +49,7 @@ struct gebr_geoxml_line_path {
 GebrGeoXmlLine *gebr_geoxml_line_new()
 {
 	GebrGeoXmlDocument *document = gebr_geoxml_document_new("line", GEBR_GEOXML_LINE_VERSION);
+	__gebr_geoxml_insert_new_element(gebr_geoxml_document_root_element(document), "server-group", NULL);
 	return GEBR_GEOXML_LINE(document);
 }
 
@@ -139,4 +140,25 @@ glong gebr_geoxml_line_get_paths_number(GebrGeoXmlLine * line)
 	if (line == NULL)
 		return -1;
 	return __gebr_geoxml_get_elements_number(gebr_geoxml_document_root_element(GEBR_GEOXML_DOC(line)), "path");
+}
+
+void gebr_geoxml_line_set_group (GebrGeoXmlLine *line, const gchar *group)
+{
+	GdomeElement *root;
+	GdomeElement *group_el;
+
+	root = gebr_geoxml_document_root_element (line);
+	group_el = __gebr_geoxml_get_first_element (root, "server-group");
+	__gebr_geoxml_set_element_value (group_el, group,
+					 __gebr_geoxml_create_TextNode);
+}
+
+const gchar *gebr_geoxml_line_get_group (GebrGeoXmlLine *line)
+{
+	GdomeElement *root;
+	GdomeElement *group_el;
+
+	root = gebr_geoxml_document_root_element (line);
+	group_el = __gebr_geoxml_get_first_element (root, "server-group");
+	return __gebr_geoxml_get_element_value (group_el);
 }

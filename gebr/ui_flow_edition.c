@@ -278,9 +278,9 @@ void flow_edition_set_io(void)
 	gchar *output_markup = g_markup_printf_escaped("<i>%s</i>", _("Output file"));
 	gchar *error_markup  = g_markup_printf_escaped("<i>%s</i>", _("Log file")); 
 
-	const gchar *input  = (g_strcmp0(gebr_geoxml_flow_server_io_get_input(gebr.flow_server),"")   ? gebr_geoxml_flow_server_io_get_input(gebr.flow_server)  : input_markup);
-	const gchar *output = (g_strcmp0(gebr_geoxml_flow_server_io_get_output(gebr.flow_server),"")  ? gebr_geoxml_flow_server_io_get_output(gebr.flow_server) : output_markup);
-	const gchar *error  = (g_strcmp0(gebr_geoxml_flow_server_io_get_error(gebr.flow_server),"")   ? gebr_geoxml_flow_server_io_get_error(gebr.flow_server)  : error_markup);
+	const gchar *input  = (g_strcmp0(gebr_geoxml_flow_io_get_input(gebr.flow),"")   ? gebr_geoxml_flow_io_get_input(gebr.flow)  : input_markup);
+	const gchar *output = (g_strcmp0(gebr_geoxml_flow_io_get_output(gebr.flow),"")  ? gebr_geoxml_flow_io_get_output(gebr.flow) : output_markup);
+	const gchar *error  = (g_strcmp0(gebr_geoxml_flow_io_get_error(gebr.flow),"")   ? gebr_geoxml_flow_io_get_error(gebr.flow)  : error_markup);
 
 	gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->input_iter,
 			   FSEQ_ICON_COLUMN, "gebr-stdin", FSEQ_TITLE_COLUMN, input, 
@@ -293,7 +293,6 @@ void flow_edition_set_io(void)
 			   FSEQ_EDITABLE, TRUE, FSEQ_ELLIPSIZE, PANGO_ELLIPSIZE_START, -1);
 
 	flow_program_check_sensitiveness();
-	gebr_geoxml_flow_io_set_from_server(gebr.flow, gebr.flow_server);
 	flow_browse_info_update();
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
 
@@ -358,6 +357,9 @@ static void flow_edition_component_editing_started(GtkCellRenderer *renderer, Gt
 {
 	GtkTreeIter iter;
 	GtkEntry *entry = GTK_ENTRY(editable);
+	const gchar *input;
+	const gchar *output;
+	const gchar *error;
 
 	gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_OPEN);
 	g_object_set_data(G_OBJECT(entry), "path", g_strdup(path));
@@ -366,9 +368,13 @@ static void flow_edition_component_editing_started(GtkCellRenderer *renderer, Gt
 	if (!flow_edition_get_selected_component(&iter, TRUE))
 		return;
 
-	if ((gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter) && (g_strcmp0(gebr_geoxml_flow_server_io_get_input(gebr.flow_server),"") == 0))  ||
-	    (gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter) && (g_strcmp0(gebr_geoxml_flow_server_io_get_output(gebr.flow_server),"") == 0)) ||
-	    (gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->error_iter) && (g_strcmp0(gebr_geoxml_flow_server_io_get_error(gebr.flow_server),"") == 0)))
+	input = gebr_geoxml_flow_io_get_input(gebr.flow);
+	output = gebr_geoxml_flow_io_get_output(gebr.flow);
+	error = gebr_geoxml_flow_io_get_error(gebr.flow);
+
+	if ((gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter) && (g_strcmp0(input, "") == 0))  ||
+	    (gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter) && (g_strcmp0(output, "") == 0)) ||
+	    (gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->error_iter) && (g_strcmp0(error, "") == 0)))
 		gtk_entry_set_text(entry, "");
 
 	g_signal_connect(entry, "icon-release", G_CALLBACK(open_activated), NULL);
@@ -379,13 +385,18 @@ static void flow_edition_component_editing_started(GtkCellRenderer *renderer, Gt
 static void flow_edition_component_edited(GtkCellRendererText *renderer, gchar *path, gchar *new_text)
 {
 	GtkTreeIter iter;
+
 	gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter, path);
+
 	if (gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter))
-		gebr_geoxml_flow_server_io_set_input(gebr.flow_server, new_text);
-	if (gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter))
-		gebr_geoxml_flow_server_io_set_output(gebr.flow_server, new_text);
-	if (gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->error_iter))
-		gebr_geoxml_flow_server_io_set_error(gebr.flow_server, new_text);
+		gebr_geoxml_flow_io_set_input(gebr.flow, new_text);
+
+	else if (gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter))
+		gebr_geoxml_flow_io_set_output(gebr.flow, new_text);
+
+	else if (gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->error_iter))
+		gebr_geoxml_flow_io_set_error(gebr.flow, new_text);
+
 	flow_edition_set_io();
 }
 
@@ -877,8 +888,6 @@ static void flow_edition_on_combobox_changed(GtkComboBox * combobox)
 	GtkWidget *queue_combobox;
 	GtkCellRenderer *renderer;
 
-	gebr.flow_server = NULL;
-
 	if (!flow_browse_get_selected(&flow_iter, TRUE))
 		return;
 
@@ -924,20 +933,6 @@ static void flow_edition_on_combobox_changed(GtkComboBox * combobox)
 	gtk_container_add(GTK_CONTAINER(gebr.ui_flow_edition->queue_bin), queue_combobox);
 	gtk_widget_show(queue_combobox);
 
-	/* select the first server entry, which is the last edited one */
-	gebr.flow_server = gebr_geoxml_flow_servers_query(gebr.flow, server->comm->address->str, NULL, NULL, NULL);
-	/* Add server if it doesn't yet exist on flow */
-	if (gebr.flow_server == NULL) {
-		gebr.flow_server = gebr_geoxml_flow_append_server(gebr.flow);
-		flow_io_set_server(&iter, "", "", "");
-	}
-
-	/*if server isn't the first one, move after and save*/
-	if (gebr_geoxml_sequence_get_index(GEBR_GEOXML_SEQUENCE(gebr.flow_server)) != 0) {
-		gebr_geoxml_sequence_move_after(GEBR_GEOXML_SEQUENCE(gebr.flow_server), NULL);
-		document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
-	}
-
 	flow_edition_set_io();
 	flow_browse_info_update();
 }
@@ -963,28 +958,28 @@ on_has_required_parameter_unfilled_tooltip(GtkTreeView * treeview,
 
 	gchar * message;
 	if gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter) {
-		if (g_strcmp0(gebr_geoxml_flow_server_io_get_input(gebr.flow_server),"") == 0)
+		if (g_strcmp0(gebr_geoxml_flow_io_get_input(gebr.flow), "") == 0)
 			message = g_strdup(_("Choose input file"));
 		else
-			message = g_strdup_printf(_("Input file '%s'"), gebr_geoxml_flow_server_io_get_input(gebr.flow_server));
+			message = g_strdup_printf(_("Input file '%s'"), gebr_geoxml_flow_io_get_input(gebr.flow));
 
 		gtk_tooltip_set_text(tooltip, message);
 		g_free(message);
 	}
 	else if gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter) {
-		if (g_strcmp0(gebr_geoxml_flow_server_io_get_output(gebr.flow_server),"") == 0)
+		if (g_strcmp0(gebr_geoxml_flow_io_get_output(gebr.flow),"") == 0)
 			message = g_strdup(_("Choose output file"));
 		else
-			message = g_strdup_printf(_("Output file '%s'"), gebr_geoxml_flow_server_io_get_output(gebr.flow_server));
+			message = g_strdup_printf(_("Output file '%s'"), gebr_geoxml_flow_io_get_output(gebr.flow));
 
 		gtk_tooltip_set_text(tooltip, message);
 		g_free(message);
 	}
 	else if gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->error_iter){
-		if (g_strcmp0(gebr_geoxml_flow_server_io_get_error(gebr.flow_server),"") == 0)
+		if (g_strcmp0(gebr_geoxml_flow_io_get_error(gebr.flow),"") == 0)
 			message = g_strdup(_("Choose log file"));
 		else
-			message = g_strdup_printf(_("Log file '%s'"), gebr_geoxml_flow_server_io_get_error(gebr.flow_server));
+			message = g_strdup_printf(_("Log file '%s'"), gebr_geoxml_flow_io_get_error(gebr.flow));
 
 		gtk_tooltip_set_text(tooltip, message);
 		g_free(message);
