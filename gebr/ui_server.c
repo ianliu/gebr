@@ -346,7 +346,7 @@ static void server_list_add(struct ui_server_list *ui_server_list, const gchar *
 	}
 
 	/* finally */
-	server_new(address, TRUE, _("All Servers"));
+	server_new(address, TRUE, "");
 }
 
 /* Function: on_add_clicked
