@@ -549,7 +549,7 @@ static int __gebr_geoxml_document_validate_doc(GdomeDocument ** document, GebrGe
 			GdomeElement *pivot;
 			pivot = __gebr_geoxml_get_first_element(root_element, "date");
 			pivot = __gebr_geoxml_next_element(pivot);
-			__gebr_geoxml_insert_new_element(root_element, "group", pivot);
+			__gebr_geoxml_insert_new_element(root_element, "server-group", pivot);
 			__gebr_geoxml_set_attr_value(root_element, "version", "0.3.3");
 		}
 	}
