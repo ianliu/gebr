@@ -1,4 +1,22 @@
-gebrproject (0.11.2) lucid; urgency=low
+gebrproject (0.11.6) lenny; urgency=low
+
+  * Translation updated.
+
+ -- Fabricio Matheus Goncalves <fmatheus@gebrproject.com>  Fri, 18 Feb 2011 14:42:12 -0200
+
+gebrproject (0.11.5) lenny; urgency=low
+
+  * Final adjusts before release.
+
+ -- Fabricio Matheus Goncalves <fmatheus@gebrproject.com>  Fri, 18 Feb 2011 09:46:55 -0200
+
+gebrproject (0.11.3) lenny; urgency=low
+
+  * Switch to dpkg-source 3.0 (native) format.
+
+ -- Fabricio Matheus Goncalves <fmatheus@gebrproject.com>  Tue, 15 Feb 2011 14:08:21 -0200
+
+gebrproject (0.11.2) lenny; urgency=low
 
   * Feature freeze before 0.12.
 

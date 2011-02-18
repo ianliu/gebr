@@ -1,3 +1,5 @@
-/usr/bin/gebr
-/usr/share/gebr/menus/*
-/usr/share/locale/*/*/gebr.mo
+usr/bin/gebr
+usr/bin/gebr-client
+usr/share/gebr/menus/*
+usr/share/locale/*/*/gebr.mo
+usr/share/applications/gebr.desktop

@@ -1,4 +1,6 @@
-usr/bin/gebr-*
+usr/bin/gebr-comm-*
+usr/bin/gebr-geoxml-*
 usr/lib/libgebr*.so.*
 usr/share/libgebr/*
 usr/share/locale/*/*/libgebr.mo
+usr/share/man
