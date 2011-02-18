@@ -115,7 +115,7 @@ void gebrd_message(enum gebr_log_message_type type, const gchar * message, ...)
 	va_end(argp);
 
 	loglevel = g_getenv ("GEBRD_LOG_LEVEL");
-	if (g_strcmp0 (loglevel, "compact") == 0) {
+	if (g_strcmp0 (loglevel, "verbose") != 0) {
 		string = g_strescape (tmp, "\"");
 		if (strlen (string) > 120)
 			string[120] = '\0';

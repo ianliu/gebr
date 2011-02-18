@@ -67,7 +67,7 @@ static struct job *job_new(struct server *server, GString * title, GString *queu
 {
 	struct job *job = g_new(struct job, 1);
 	job->server = server;
-	job->status = JOB_STATUS_UNKNOWN; 
+	job->status = JOB_STATUS_INITIAL; 
 	job->waiting_server_details = FALSE;
 	gchar local_hostname[100];
 	gethostname(local_hostname, 100);
@@ -328,7 +328,7 @@ enum JobStatus job_translate_status(GString * status)
 	enum JobStatus translated_status;
 
 	if (!strcmp(status->str, "unknown"))
-		translated_status = JOB_STATUS_UNKNOWN;
+		translated_status = JOB_STATUS_INITIAL;
 	else if (!strcmp(status->str, "queued"))
 		translated_status = JOB_STATUS_QUEUED;
 	else if (!strcmp(status->str, "failed"))
@@ -344,7 +344,7 @@ enum JobStatus job_translate_status(GString * status)
 	else if (!strcmp(status->str, "issued"))
 		translated_status = JOB_STATUS_ISSUED;
 	else
-		translated_status = JOB_STATUS_UNKNOWN;
+		translated_status = JOB_STATUS_INITIAL;
 
 	return translated_status;
 }
@@ -367,6 +367,9 @@ void job_status_show(struct job *job)
 	case JOB_STATUS_CANCELED:
 		pixbuf = gebr.pixmaps.stock_cancel;
 		break;
+	case JOB_STATUS_INITIAL:
+		pixbuf = gtk_widget_render_icon(gebr.invisible, GTK_STOCK_NETWORK, GTK_ICON_SIZE_SMALL_TOOLBAR, NULL);
+		break;
 	default:
 		pixbuf = NULL;
 		return;
@@ -378,9 +381,7 @@ void job_status_show(struct job *job)
 
 	job_update_label(job);
 	if (gebr.config.job_log_auto_scroll) {
-		GtkTextMark *mark;
-
-		mark = gtk_text_buffer_get_mark(gebr.ui_job_control->text_buffer, "end");
+		GtkTextMark *mark = gtk_text_buffer_get_mark(gebr.ui_job_control->text_buffer, "end");
 		gtk_text_view_scroll_mark_onscreen(GTK_TEXT_VIEW(gebr.ui_job_control->text_view), mark);
 	}
 }
@@ -434,7 +435,9 @@ void job_status_update(struct job *job, enum JobStatus status, const gchar *para
 		if (mark != NULL) {
 			GtkTextIter iter;
 			gtk_text_buffer_get_iter_at_mark(gebr.ui_job_control->text_buffer, &iter, mark);
-			gtk_text_buffer_insert(gebr.ui_job_control->text_buffer, &iter, job->issues->str, job->issues->len);
+			GString *parameter_gstring = g_string_new(parameter);
+			gtk_text_buffer_insert(gebr.ui_job_control->text_buffer, &iter, parameter_gstring->str, parameter_gstring->len);
+			g_string_free(parameter_gstring, TRUE);
 		} else
 			g_warning("Can't find mark \"issue\"");
 		return;

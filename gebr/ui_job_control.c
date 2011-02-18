@@ -416,7 +416,7 @@ static void job_update_text_buffer(GtkTreeIter iter, struct job *job)
 					 gebr.ui_job_control->issues_title_tag, NULL);
 	g_string_assign(info, "");
 	gtk_text_buffer_get_end_iter(gebr.ui_job_control->text_buffer, &end_iter);
-	gtk_text_buffer_create_mark(gebr.ui_job_control->text_buffer, "issue", &end_iter, TRUE);
+	gtk_text_buffer_create_mark(gebr.ui_job_control->text_buffer, "issue", &end_iter, FALSE);
 
 	if (job->status == JOB_STATUS_QUEUED)
 		goto out;
