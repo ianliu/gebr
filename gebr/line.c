@@ -68,7 +68,6 @@ void line_new(void)
 		gtk_tree_model_iter_parent (model, &parent, &iter);
 	}
 
-	/* create it */
 	line = GEBR_GEOXML_LINE(document_new(GEBR_GEOXML_DOCUMENT_TYPE_LINE));
 	gebr_geoxml_document_set_title(GEBR_GEOXML_DOC(line), _("New Line"));
 	gebr_geoxml_document_set_author(GEBR_GEOXML_DOC(line), gebr.config.username->str);
@@ -80,13 +79,12 @@ void line_new(void)
 	document_save(GEBR_GEOXML_DOC(gebr.project), TRUE, FALSE);
 	document_save(GEBR_GEOXML_DOC(line), TRUE, FALSE);
 
-	/* feedback */
 	gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("New line created in project '%s'."), project_title);
 	g_free(project_title);
 
 	project_line_select_iter(&iter);
 
-	document_properties_setup_ui(GEBR_GEOXML_DOCUMENT(gebr.line), on_properties_response);
+	document_properties_setup_ui(GEBR_GEOXML_DOCUMENT(gebr.line), on_properties_response, TRUE);
 }
 
 gboolean line_delete(GtkTreeIter * iter, gboolean warn_user)

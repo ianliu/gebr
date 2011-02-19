@@ -328,28 +328,29 @@ void flow_browse_info_update(void)
 	markup = g_markup_printf_escaped("<b>%s</b>", _("Error log:"));
 	gtk_label_set_markup(GTK_LABEL(gebr.ui_flow_browse->info.error_label), markup);
 	g_free(markup);
+
 	/* Server */
-	if (gebr.flow_server != NULL) //avoid crash on exit
-		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.server),
-				   server_get_name_from_address(gebr_geoxml_flow_server_get_address(gebr.flow_server)));
-	else
-		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.input), _("(none)"));
+	gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.server),
+			   server_get_name_from_address(gebr_geoxml_flow_server_get_address(gebr.flow)));
+
 	/* Input file */
-	if (gebr.flow_server != NULL && strlen(gebr_geoxml_flow_server_io_get_input(gebr.flow_server)))
+	if (strlen(gebr_geoxml_flow_io_get_input(gebr.flow)))
 		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.input),
-				   gebr_geoxml_flow_server_io_get_input(gebr.flow_server));
+				   gebr_geoxml_flow_io_get_input(gebr.flow));
 	else
 		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.input), _("(none)"));
+
 	/* Output file */
-	if (gebr.flow_server != NULL && strlen(gebr_geoxml_flow_server_io_get_output(gebr.flow_server)))
+	if (strlen(gebr_geoxml_flow_io_get_output(gebr.flow)))
 		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.output),
-				   gebr_geoxml_flow_server_io_get_output(gebr.flow_server));
+				   gebr_geoxml_flow_io_get_output(gebr.flow));
 	else
 		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.output), _("(none)"));
+
 	/* Error file */
-	if (gebr.flow_server != NULL && strlen(gebr_geoxml_flow_server_io_get_error(gebr.flow_server)))
+	if (strlen(gebr_geoxml_flow_io_get_error(gebr.flow)))
 		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.error),
-				   gebr_geoxml_flow_server_io_get_error(gebr.flow_server));
+				   gebr_geoxml_flow_io_get_error(gebr.flow));
 	else
 		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.error), _("(none)"));
 
@@ -439,7 +440,6 @@ static void flow_browse_load(void)
 	gchar *title;
 
 	GebrGeoXmlSequence *revision;
-	GebrGeoXmlFlowServer *flow_server;
 
 	flow_free();
 	if (!flow_browse_get_selected(&iter, FALSE))
@@ -467,31 +467,19 @@ static void flow_browse_load(void)
 	for (; revision != NULL; gebr_geoxml_sequence_next(&revision))
 		flow_browse_load_revision(GEBR_GEOXML_REVISION(revision), FALSE);
 
-	/* if there are no local servers, introduce local server */
-	if (gebr_geoxml_flow_get_servers_number(gebr.flow) == 0) {
-		flow_server = gebr_geoxml_flow_append_server(gebr.flow);
-		gebr_geoxml_flow_server_set_address(flow_server, "127.0.0.1");
-		gebr_geoxml_flow_server_io_set_input(flow_server, gebr_geoxml_flow_io_get_input(gebr.flow));
-		gebr_geoxml_flow_server_io_set_output(flow_server, gebr_geoxml_flow_io_get_output(gebr.flow));
-		gebr_geoxml_flow_server_io_set_error(flow_server, gebr_geoxml_flow_io_get_error(gebr.flow));
-		gebr_geoxml_flow_io_set_input(gebr.flow, "");
-		gebr_geoxml_flow_io_set_output(gebr.flow, "");
-		gebr_geoxml_flow_io_set_error(gebr.flow, "");
+	/* if there is no server, introduce local server */
+	if (strlen(gebr_geoxml_flow_server_get_address(gebr.flow))) {
+		gebr_geoxml_flow_server_set_address(gebr.flow, "127.0.0.1");
 		document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), FALSE, TRUE);
-	} else {
-		GebrGeoXmlSequence *first_server;
-
-		gebr_geoxml_flow_get_server(gebr.flow, &first_server, 0);
-		flow_server = GEBR_GEOXML_FLOW_SERVER(first_server);
 	}
 
 	/* select last edited server */
-	if (server_find_address(gebr_geoxml_flow_server_get_address(flow_server), &server_iter))
+	if (server_find_address(gebr_geoxml_flow_server_get_address(gebr.flow), &server_iter))
 		gtk_combo_box_set_active_iter(GTK_COMBO_BOX(gebr.ui_flow_edition->server_combobox), &server_iter);
 	else
 		gtk_combo_box_set_active(GTK_COMBO_BOX(gebr.ui_flow_edition->server_combobox), 0);
-	flow_edition_on_server_changed();
 
+	flow_edition_on_server_changed();
 	flow_browse_info_update();
 
 	g_free(filename);

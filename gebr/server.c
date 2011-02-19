@@ -160,14 +160,17 @@ struct server *server_new(const gchar * address, gboolean autoconnect, const gch
 	server->comm->user_data = server;
 	server->iter = iter;
 	server->last_error = g_string_new("");
+	server->nfsid = g_string_new("");
 	server->type = GEBR_COMM_SERVER_TYPE_UNKNOWN;
 	server->accounts_model = gtk_list_store_new(1, G_TYPE_STRING);
 	server->queues_model = gtk_list_store_new(SERVER_QUEUE_N_COLUMNS, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
 	gtk_list_store_set(gebr.ui_server_list->common.store, &iter,
 			   SERVER_STATUS_ICON, gebr.pixmaps.stock_disconnect,
-			   SERVER_NAME, server_get_name_from_address(address),
-			   SERVER_POINTER, server, SERVER_AUTOCONNECT, autoconnect,
-			   SERVER_TAGS, tags, -1);
+			   SERVER_NAME,        server_get_name_from_address(address),
+			   SERVER_POINTER,     server,
+			   SERVER_AUTOCONNECT, autoconnect,
+			   SERVER_TAGS,        tags,
+			   -1);
 
 	if (autoconnect)
 		gebr_comm_server_connect(server->comm);

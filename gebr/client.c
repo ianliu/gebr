@@ -56,10 +56,11 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, stru
 				gchar ** queues;
 				GString *model_name;
 				GString *total_memory;
+				GString *nfsid;
 				GtkTreeIter iter;
 
 				/* organize message data */
-				if ((arguments = gebr_comm_protocol_split_new(message->argument, 7)) == NULL)
+				if ((arguments = gebr_comm_protocol_split_new(message->argument, 8)) == NULL)
 					goto err;
 				hostname = g_list_nth_data(arguments, 0);
 				display_port = g_list_nth_data(arguments, 1);
@@ -68,14 +69,14 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, stru
 				accounts = g_strsplit(((GString *)g_list_nth_data(arguments, 4))->str, ",", 0);
 				model_name = g_list_nth_data (arguments, 5);
 				total_memory = g_list_nth_data (arguments, 6);
+				nfsid = g_list_nth_data (arguments, 7);
+
+				g_string_assign (server->nfsid, nfsid->str);
 
 				gtk_list_store_set (gebr.ui_server_list->common.store, &server->iter,
 						    SERVER_CPU, model_name->str,
 						    SERVER_MEM, total_memory->str,
 						    -1);
-
-				g_message ("Model name is: %s", model_name->str);
-				g_message ("Total memory is: %s", total_memory->str);
 
 				gtk_list_store_clear(server->accounts_model);
 				gtk_list_store_clear(server->queues_model);

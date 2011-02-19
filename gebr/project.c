@@ -61,7 +61,7 @@ void project_new(void)
 
 	project_line_select_iter(&iter);
 
-	document_properties_setup_ui(GEBR_GEOXML_DOCUMENT(gebr.project), on_properties_response);
+	document_properties_setup_ui(GEBR_GEOXML_DOCUMENT(gebr.project), on_properties_response, TRUE);
 }
 
 gboolean project_delete(GtkTreeIter * iter, gboolean warn_user)

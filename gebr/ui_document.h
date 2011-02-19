@@ -42,11 +42,14 @@ GebrGeoXmlDocument *document_get_current(void);
  * document_properties_setup_ui:
  * @document: The document which will have its properties modified.
  * @func: A callback function which is called when the dialog exits.
+ * @is_new: Set to %TRUE if you are creating a new document.
  *
  * Create the user interface for editing @document, which maybe a #GebrGeoXmlFlow, #GebrGeoXmlLine or
  * #GebrGeoXmlProject.
  */
-void document_properties_setup_ui(GebrGeoXmlDocument * document, GebrPropertiesResponseFunc func);
+void document_properties_setup_ui (GebrGeoXmlDocument * document,
+				   GebrPropertiesResponseFunc func,
+				   gboolean is_new);
 
 /**
  * document_dict_edit_setup_ui:
