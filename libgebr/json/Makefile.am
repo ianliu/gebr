@@ -10,6 +10,8 @@ EXTRA_DIST =
 INCLUDES = -I$(top_srcdir)
 
 AM_CPPFLAGS = \
+	-DJSON_COMPILATION \
+	-I$(top_srcdir)/libgebr \
 	-DPREFIX=\""$(prefix)"\" 	\
 	-DLIBDIR=\""$(libdir)"\" 	\
 	-DJSON_COMPILATION=1		\
@@ -71,8 +73,8 @@ libgebr_json_la_LIBADD = ../libgebr.la
 libgebr_json_la_SOURCES = $(source_c) $(source_h) $(source_h_private) $(BUILT_SOURCES)
 libgebr_json_la_LDFLAGS = $(JSON_LT_LDFLAGS) -export-dynamic -export-symbols-regex "^json.*"
 
-jsonincludedir = $(includedir)/libgebr/json/json-glib
-jsoninclude_DATA = \
+jsonincludedir = $(includedir)/libgebr/json/
+jsoninclude_HEADERS = \
 	$(source_h) 					\
 	json-enum-types.h 	\
 	json-version.h	\
@@ -80,6 +82,4 @@ jsoninclude_DATA = \
 	$(NULL)
 
 EXTRA_DIST += json-version.h.in json-glib.h
-
-
 

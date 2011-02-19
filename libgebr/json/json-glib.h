@@ -26,14 +26,14 @@
 
 #define __JSON_GLIB_INSIDE__
 
-#include <json-types.h>
-#include <json-builder.h>
-#include <json-generator.h>
-#include <json-parser.h>
-#include <json-reader.h>
-#include <json-version.h>
-#include <json-enum-types.h>
-#include <json-gobject.h>
+#include <json/json-types.h>
+#include <json/json-builder.h>
+#include <json/json-generator.h>
+#include <json/json-parser.h>
+#include <json/json-reader.h>
+#include <json/json-version.h>
+#include <json/json-enum-types.h>
+#include <json/json-gobject.h>
 
 #undef __JSON_GLIB_INSIDE__
 

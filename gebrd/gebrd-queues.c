@@ -60,8 +60,8 @@ void gebrd_queues_rename(const gchar * queue, const gchar *newname)
 	while (link) {
 		GebrdJob *job = (GebrdJob*)link->data;
 
-		if (strcmp(queue, job->parent.queue->str) == 0) {
-			g_string_assign(job->parent.queue, newname);
+		if (strcmp(queue, job->parent.queue_id->str) == 0) {
+			g_string_assign(job->parent.queue_id, newname);
 			job_status_notify(job, JOB_STATUS_REQUEUED, newname);
 		}
 

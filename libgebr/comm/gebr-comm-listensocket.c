@@ -87,9 +87,7 @@ static void gebr_comm_listen_socket_class_init(GebrCommListenSocketClass * klass
 	klass->parent.new_connection = (typeof(klass->parent.new_connection)) __gebr_comm_listen_socket_new_connection;
 
 	/* signals */
-	object_signals[NEW_CONNECTION] = g_signal_new("new-connection", GEBR_COMM_LISTEN_SOCKET_TYPE, (GSignalFlags) (G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION), G_STRUCT_OFFSET(GebrCommListenSocketClass, new_connection), NULL, NULL,	/* acumulators */
-						      g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
-
+	object_signals[NEW_CONNECTION] = g_signal_new("new-connection", GEBR_COMM_LISTEN_SOCKET_TYPE, (GSignalFlags) (G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION), G_STRUCT_OFFSET(GebrCommListenSocketClass, new_connection), NULL, NULL,	/* acumulators */ g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0); 
 	/* properties */
 	gobject_class->set_property = gebr_comm_listen_socket_set_property;
 	gobject_class->get_property = gebr_comm_listen_socket_get_property;

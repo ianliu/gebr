@@ -51,15 +51,15 @@ struct _GebrCommJob {
 	} status;
 
 	/* sent by the client */
-	GString *hostname; // the hostname of the client that ran it
-	GString *display;
+	GString *client_hostname; // the hostname of the client that ran it
+	GString *client_display;
 	GebrCommServerLocation server_location;
 	GString *run_id;
-	GString *xml;
+	GString *flow_xml;
 	GString *moab_account;
 	GString *n_process;
+	GString *queue_id;
 
-	GString *queue;
 	GString *jid;
 	GString *title;
 	/* appears in top label */
@@ -69,7 +69,6 @@ struct _GebrCommJob {
 	GString *issues;
 	GString *cmd_line;
 	GString *output;
-	/* TODO: split in two: queue_id and queue_name */
 	
 	/* Moab stuff */
 	GString *moab_jid;

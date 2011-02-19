@@ -24,7 +24,7 @@
 #ifndef __JSON_GOBJECT_H__
 #define __JSON_GOBJECT_H__
 
-#include <json-types.h>
+#include <json/json-types.h>
 #include <glib-object.h>
 
 G_BEGIN_DECLS

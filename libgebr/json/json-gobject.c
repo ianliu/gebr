@@ -498,6 +498,11 @@ json_deserialize_pspec (GValue     *value,
 
           retval = TRUE;
         }
+      else if (G_VALUE_HOLDS (value, G_TYPE_GSTRING)) {
+          g_value_copy (&node_value, value);
+          retval = TRUE;
+      }
+
       break;
 
     case JSON_NODE_VALUE:
@@ -706,6 +711,18 @@ json_serialize_pspec (const GValue *real_value,
           retval = json_node_new (JSON_NODE_ARRAY);
           json_node_take_array (retval, array);
         }
+      else if (G_VALUE_HOLDS (real_value, G_TYPE_GSTRING)) {
+	      /* strings might be NULL, so we handle it differently */
+	      GString *string = g_value_get_boxed(real_value);
+	      if (!string)
+		      retval = json_node_new (JSON_NODE_NULL);
+	      else
+	      {
+		      retval = json_node_new (JSON_NODE_VALUE);
+		      json_node_set_string (retval, string->str);
+		      break;
+	      }
+      }
       else if (json_boxed_can_serialize (G_VALUE_TYPE (real_value), &node_type))
         {
           gpointer boxed = g_value_get_boxed (real_value);

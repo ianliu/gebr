@@ -172,6 +172,7 @@ static const gchar *status_enum_to_string(enum JobStatus status)
 	return enum_to_string[status];
 }
 
+#include <libgebr/json/json-glib.h>
 /**
  * \internal
  */
@@ -211,6 +212,10 @@ static void job_status_notify_finished(GebrdJob *job)
 
 	g_string_assign(job->parent.finish_date, gebr_iso_date());
 	job_status_notify(job, new_status, job->parent.finish_date->str);
+
+	gchar *json = json_gobject_to_data (job, NULL);
+	puts (json);
+	g_free(json);
 }
 
 /**
@@ -287,9 +292,9 @@ static gboolean job_moab_checkjob_pooling(GebrdJob * job)
 	const gchar * queue = gdome_el_getAttribute(job_element, attribute_name, &exception)->str;
 	gdome_str_unref(attribute_name);
 	/* check for queue change */
-	if (strcmp(job->parent.queue->str, queue)) {
-		g_string_assign(job->parent.queue, queue);
-		job_status_notify(job, JOB_STATUS_REQUEUED, job->parent.queue->str);
+	if (strcmp(job->parent.queue_id->str, queue)) {
+		g_string_assign(job->parent.queue_id, queue);
+		job_status_notify(job, JOB_STATUS_REQUEUED, job->parent.queue_id->str);
 	}
 	/* check for completion code error */
 	attribute_name = gdome_str_mkref("CompletionCode");
@@ -364,11 +369,11 @@ void job_new(GebrdJob ** _job, struct client * client, GString * queue, GString 
 	job->critical_error = FALSE;
 	job->user_finished = FALSE;
 
-	g_string_assign(job->parent.hostname, client->protocol->hostname->str);
-	g_string_assign(job->parent.display, client->display->str);
+	g_string_assign(job->parent.client_hostname, client->protocol->hostname->str);
+	g_string_assign(job->parent.client_display, client->display->str);
 	job->parent.server_location = client->server_location;
 	g_string_assign(job->parent.run_id, run_id->str);
-	g_string_assign(job->parent.queue, queue->str);
+	g_string_assign(job->parent.queue_id, queue->str);
 	g_string_assign(job->parent.moab_account, account->str);
 	g_string_assign(job->parent.n_process, n_process->str);
 	job->parent.status = JOB_STATUS_INITIAL;
@@ -390,7 +395,7 @@ void job_new(GebrdJob ** _job, struct client * client, GString * queue, GString 
 
 void job_free(GebrdJob *job)
 {
-	gebrd_queues_remove_job_from(job->parent.queue->str, job);
+	gebrd_queues_remove_job_from(job->parent.queue_id->str, job);
 
 	GList *link = g_list_find(gebrd.jobs, job);
 	/* job that failed to run are not added to this list */
@@ -425,10 +430,10 @@ void job_status_set(GebrdJob *job, enum JobStatus status)
 	    && (job->parent.status == JOB_STATUS_FAILED
 	    || job->parent.status == JOB_STATUS_FINISHED
 	    || job->parent.status == JOB_STATUS_CANCELED)) {
-		if (gebrd_queues_has_next(job->parent.queue->str))
-			gebrd_queues_step_queue(job->parent.queue->str);
+		if (gebrd_queues_has_next(job->parent.queue_id->str))
+			gebrd_queues_step_queue(job->parent.queue_id->str);
 		else
-			gebrd_queues_set_queue_busy(job->parent.queue->str, FALSE);
+			gebrd_queues_set_queue_busy(job->parent.queue_id->str, FALSE);
 	}
 }
 
@@ -509,18 +514,18 @@ void job_run_flow(GebrdJob *job)
 	/* command-line */
 	gsize bytes_written;
 	gchar *localized_cmd_line = g_filename_from_utf8(job->parent.cmd_line->str, -1, NULL, &bytes_written, NULL);
-	if (job->parent.display->len) {
+	if (job->parent.client_display->len) {
 		GString *to_quote;
 
 		to_quote = g_string_new(NULL);
 		if (job->parent.server_location == GEBR_COMM_SERVER_LOCATION_LOCAL) {
-			g_string_printf(to_quote, "export DISPLAY=%s; %s", job->parent.display->str, localized_cmd_line);
+			g_string_printf(to_quote, "export DISPLAY=%s; %s", job->parent.client_display->str, localized_cmd_line);
 			gchar * quoted = g_shell_quote(to_quote->str);
 			g_string_printf(cmd_line, "bash -l -c %s", quoted);
 			g_free(quoted);
 		}
 		else{
-			g_string_printf(to_quote, "export DISPLAY=127.0.0.1%s; %s", job->parent.display->str, localized_cmd_line);
+			g_string_printf(to_quote, "export DISPLAY=127.0.0.1%s; %s", job->parent.client_display->str, localized_cmd_line);
 			gchar * quoted = g_shell_quote(to_quote->str);
 			g_string_printf(cmd_line, "bash -l -c %s", quoted);
 			g_free(quoted);
@@ -543,7 +548,7 @@ void job_run_flow(GebrdJob *job)
 		GString * moab_script = g_string_new(NULL);
 		gchar * script = g_shell_quote(cmd_line->str);
 		g_string_printf(moab_script, "echo %s | msub -A '%s' -q '%s' -k oe -j oe",
-			       	script, job->parent.moab_account->str, job->parent.queue->str);
+			       	script, job->parent.moab_account->str, job->parent.queue_id->str);
 		g_free(script);
 		gchar * moab_quoted = g_shell_quote(moab_script->str);
 		g_string_free(moab_script, TRUE);
@@ -602,7 +607,7 @@ void job_run_flow(GebrdJob *job)
 
 	/* success */
 	gebrd_message(GEBR_LOG_DEBUG, "Client '%s' flow about to run %s: %s",
-		      job->parent.hostname->str, job->parent.title->str, cmd_line->str);
+		      job->parent.client_hostname->str, job->parent.title->str, cmd_line->str);
 	goto out;
 
 err:	/* error */
@@ -624,7 +629,7 @@ void job_end(GebrdJob *job)
 {
 	if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_REGULAR) {
 		if (job->parent.status == JOB_STATUS_QUEUED) {
-			gebrd_queues_remove_job_from(job->parent.queue->str, job);
+			gebrd_queues_remove_job_from(job->parent.queue_id->str, job);
 			g_string_assign(job->parent.finish_date, gebr_iso_date());
 			job_status_notify(job, JOB_STATUS_CANCELED, job->parent.finish_date->str);
 		} else {
@@ -639,7 +644,7 @@ void job_kill(GebrdJob *job)
 {
 	if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_REGULAR) {
 		if (job->parent.status == JOB_STATUS_QUEUED) {
-			gebrd_queues_remove_job_from(job->parent.queue->str, job);
+			gebrd_queues_remove_job_from(job->parent.queue_id->str, job);
 			g_string_assign(job->parent.finish_date, gebr_iso_date());
 			job_status_notify(job, JOB_STATUS_CANCELED, job->parent.finish_date->str);
 		} else {
@@ -658,9 +663,9 @@ void job_notify(GebrdJob *job, struct client *client)
 	gebr_comm_protocol_send_data(client->protocol, client->stream_socket, gebr_comm_protocol_defs.job_def,
 				     11, job->parent.jid->str, status_enum_to_string(job->parent.status),
 				     job->parent.title->str, job->parent.start_date->str,
-				     job->parent.finish_date->str, job->parent.hostname->str, job->parent.issues->str,
+				     job->parent.finish_date->str, job->parent.client_hostname->str, job->parent.issues->str,
 				     job->parent.cmd_line->str, job->parent.output->str,
-				     job->parent.queue->str, job->parent.moab_jid->str);
+				     job->parent.queue_id->str, job->parent.moab_jid->str);
 }
 
 

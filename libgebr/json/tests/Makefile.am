@@ -4,7 +4,7 @@ DISTCLEANFILES =
 
 noinst_PROGRAMS = $(TEST_PROGS)
 
-INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/json-glib
+INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/libgebr
 AM_CPPFLAGS = -DJSON_DISABLE_DEPRECATED $(JSON_DEBUG_CFLAGS)
 AM_CFLAGS = $(GEBR_JSON_CFLAGS) $(MAINTAINER_CFLAGS) -std=c99
 

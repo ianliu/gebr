@@ -397,7 +397,7 @@ static void job_update_text_buffer(GtkTreeIter iter, GebrJob *job)
 	else
 		g_string_printf(queue_info, "on %s", queue);
 	g_string_append_printf(info, _("Job submitted at '%s' ('%s') by %s.\n"),
-			       server_get_name(job->server), queue_info->str, job->parent.hostname->str);
+			       server_get_name(job->server), queue_info->str, job->parent.client_hostname->str);
 	g_string_free(queue_info, TRUE);
 
 	if (job->parent.status == JOB_STATUS_INITIAL) {

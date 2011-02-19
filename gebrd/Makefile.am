@@ -53,12 +53,15 @@ EXTRA_DIST = $(noinst_HEADERS)
 AM_CPPFLAGS = $(GEBR_CFLAGS)		\
 	      $(GEBR_COMM_CFLAGS)	\
 	      $(GEBR_GEOXML_CFLAGS)	\
+	      $(GEBR_JSON_CFLAGS)	\
 	      -DNANOVERSION=\"$(NANOVERSION)\"\
 	      @DEBUG_CFLAGS@ 
 
 AM_CFLAGS = $(COMMON_CFLAGS)
 
-gebrd_LDADD = libgebrd.a	\
-	      $(GEBR_LIBS)	\
-	      $(GEBR_COMM_LIBS)	\
-	      $(GEBR_GEOXML_LIBS)
+gebrd_LDADD = libgebrd.a		\
+	      $(GEBR_LIBS)		\
+	      $(GEBR_COMM_LIBS)		\
+	      $(GEBR_GEOXML_LIBS)	\
+	      $(GEBR_JSON_LIBS)		\
+	      $(NULL)
