@@ -21,7 +21,7 @@ endif
 if ENABLE_GUI
 GUIDIR=gui
 endif
-SUBDIRS = . geoxml comm ${GUIDIR} po ${TESTDIR}
+SUBDIRS = . geoxml comm ${GUIDIR} json po ${TESTDIR}
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = gebr.pc

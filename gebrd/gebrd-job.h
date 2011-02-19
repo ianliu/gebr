@@ -20,98 +20,82 @@
 
 #include <libgebr/geoxml/geoxml.h>
 #include <libgebr/comm/gebr-comm-process.h>
+#include <libgebr/comm/gebr-comm-job.h>
 
 #include "gebrd-client.h"
 
 G_BEGIN_DECLS
 
-/**
- */
-struct job {
+GType gebrd_job_get_type(void);
+#define GEBRD_JOB_TYPE		(gebrd_job_get_type())
+#define GEBRD_JOB(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), GEBRD_JOB_TYPE, GebrdJob))
+#define GEBRD_JOB_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), GEBRD_JOB_TYPE, GebrdJobClass))
+#define GEBRD_IS_JOB(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEBRD_JOB_TYPE))
+#define GEBRD_IS_JOB_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), GEBRD_JOB_TYPE))
+#define GEBRD_JOB_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), GEBRD_JOB_TYPE, GebrdJobClass))
+
+typedef struct _GebrdJob GebrdJob;
+typedef struct _GebrdJobClass GebrdJobClass;
+
+struct _GebrdJob {
+	GebrCommJob parent;
+
 	GebrCommProcess *process;
 	GebrGeoXmlFlow *flow;
 	gboolean critical_error; /* the flow can't be run if TRUE! */
 	gboolean user_finished;
 
 	/* client stuff */
-	GString *hostname; // the hostname of the client that ran it
-	GString *display;
-	GebrCommServerLocation server_location;
 
-	GString *run_id;
-	GString *jid;
-	GString *title;
-	GString *start_date;
-	GString *finish_date;
-	GString *issues;
-	GString *cmd_line;
-	GString *output;
-	GString *queue;
-
-	/* Moab stuff */
-	GString *moab_account;
-	GString *moab_jid;
 	GebrCommProcess *tail_process;
-
-	/* MPI stuff */
-	GString *n_process;
-	
-	/* new status should reflect on status_enum_to_string */
-	enum JobStatus {
-		JOB_STATUS_INITIAL = 0, /* before the sending of jid to clients */
-		JOB_STATUS_QUEUED,
-		JOB_STATUS_FAILED,
-		JOB_STATUS_RUNNING,
-		JOB_STATUS_FINISHED,
-		JOB_STATUS_CANCELED,
-		JOB_STATUS_REQUEUED, /* false status */
-		JOB_STATUS_ISSUED, /* false status */
-	} status;
-	GString * status_string;
+};
+struct _GebrdJobClass {
+	GebrCommJobClass parent;
 };
 
 /**
  */
-struct job *job_find(GString * jid);
+GebrdJob *job_find(GString * jid);
+
 /**
  */
-void job_new(struct job ** _job, struct client * client, GString * queue, GString * account, GString * xml,
+void job_new(GebrdJob ** _job, struct client * client, GString * queue, GString * account, GString * xml,
 	     GString * n_process, GString * run_id);
 /**
  */
-void job_free(struct job *job);
+void job_free(GebrdJob *job);
 
 /**
  */
-void job_status_set(struct job *job, enum JobStatus status);
+void job_status_set(GebrdJob *job, enum JobStatus status);
 /**
  * Change status and notify clients about it
  */
-void job_status_notify(struct job *job, enum JobStatus status, const gchar *parameter, ...);
+void job_status_notify(GebrdJob *job, enum JobStatus status, const gchar *parameter, ...);
 /**
  * Remember not to send any message to clients here as the job wasn't created
  */
-void job_run_flow(struct job *job);
+void job_run_flow(GebrdJob *job);
 
 /**
  */
-void job_clear(struct job *job);
+void job_clear(GebrdJob *job);
 /**
  */
-void job_end(struct job *job);
+void job_end(GebrdJob *job);
 /**
  */
-void job_kill(struct job *job);
+void job_kill(GebrdJob *job);
 
 /**
  */
-void job_notify(struct job *job, struct client *client);
+void job_notify(GebrdJob *job, struct client *client);
 /**
  */
 void job_list(struct client *client);
 /**
  */
-void job_send_clients_job_notify(struct job *job);
+void job_send_clients_job_notify(GebrdJob *job);
 
 G_END_DECLS
 #endif				//__JOB_H

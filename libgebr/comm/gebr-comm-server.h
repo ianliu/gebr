@@ -42,6 +42,7 @@ typedef enum {
 /**
  */
 typedef enum {
+	GEBR_COMM_SERVER_LOCATION_UNKNOWN,
 	GEBR_COMM_SERVER_LOCATION_LOCAL,
 	GEBR_COMM_SERVER_LOCATION_REMOTE
 } GebrCommServerLocation;

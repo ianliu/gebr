@@ -20,7 +20,7 @@
 #include "gebrd-job-queue.h"
 #include "gebrd-job.h"
 
-void gebrd_queues_add_job_to(const gchar * queue, struct job * job)
+void gebrd_queues_add_job_to(const gchar * queue, GebrdJob * job)
 {
 	GebrdJobQueue * job_queue;
 	job_queue = g_hash_table_lookup(gebrd.queues, queue);
@@ -31,7 +31,7 @@ void gebrd_queues_add_job_to(const gchar * queue, struct job * job)
 	gebrd_job_queue_append_job(job_queue, job);
 }
 
-void gebrd_queues_remove_job_from(const gchar * queue, struct job * job)
+void gebrd_queues_remove_job_from(const gchar * queue, GebrdJob * job)
 {
 	GebrdJobQueue * job_queue;
 	job_queue = g_hash_table_lookup(gebrd.queues, queue);
@@ -58,10 +58,10 @@ void gebrd_queues_rename(const gchar * queue, const gchar *newname)
 	/* change queue name reference for all its jobs */
 	GList *link = gebrd.jobs;
 	while (link) {
-		struct job *job = (struct job*)link->data;
+		GebrdJob *job = (GebrdJob*)link->data;
 
-		if (strcmp(queue, job->queue->str) == 0) {
-			g_string_assign(job->queue, newname);
+		if (strcmp(queue, job->parent.queue_id->str) == 0) {
+			g_string_assign(job->parent.queue_id, newname);
 			job_status_notify(job, JOB_STATUS_REQUEUED, newname);
 		}
 
@@ -113,7 +113,7 @@ void gebrd_queues_step_queue(const gchar * queue)
 	job_queue = g_hash_table_lookup(gebrd.queues, queue);
 	if (!job_queue)
 		return;
-	struct job * job;
+	GebrdJob * job;
 	job = gebrd_job_queue_pop(job_queue);
 	job_run_flow(job);
 }

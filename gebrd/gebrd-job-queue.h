@@ -46,12 +46,12 @@ GebrdJobQueue * gebrd_job_queue_new(const gchar * name);
 /**
  * Appends \p job in \p job_queue.
  */
-void gebrd_job_queue_append_job(GebrdJobQueue * job_queue, struct job * job);
+void gebrd_job_queue_append_job(GebrdJobQueue * job_queue, GebrdJob * job);
 
 /**
  * Removes \p job from \p job_queue.
  */
-void gebrd_job_queue_remove_job(GebrdJobQueue * job_queue, struct job * job);
+void gebrd_job_queue_remove_job(GebrdJobQueue * job_queue, GebrdJob * job);
 
 /**
  * Frees \p job_queue structure and members.
@@ -63,7 +63,7 @@ void gebrd_job_queue_free(GebrdJobQueue * job_queue);
  * @param job_queue Queue to have its first element removed.
  * @return The first job in queue.
  */
-struct job * gebrd_job_queue_pop(GebrdJobQueue * job_queue);
+GebrdJob * gebrd_job_queue_pop(GebrdJobQueue * job_queue);
 
 G_END_DECLS
 #endif /* __JOB_QUEUE_H */

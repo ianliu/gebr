@@ -72,7 +72,7 @@ static gboolean server_run_lock(void)
 			if (gebrd.options.foreground == TRUE) {
 				gebrd_message(GEBR_LOG_ERROR,
 					      _("Cannot run interactive server, GêBR daemon is already running"));
-				goto out;
+				goto err;
 			}
 
 			gchar buffer[100];
@@ -80,7 +80,7 @@ static gboolean server_run_lock(void)
 			if (write(gebrd.finished_starting_pipe[1], buffer, strlen(buffer)+1) < 0)
 				g_warning("Failed to write in file with error code %d", errno);
 
-			goto out;
+			goto err;
 		}
 	}
 	
@@ -104,7 +104,6 @@ static gboolean server_run_lock(void)
 		goto err;
 	}
 
-out:
 	return TRUE;
 err:
 	return FALSE;
@@ -348,7 +347,7 @@ gboolean server_parse_client_messages(struct client *client)
 		} else if (message->hash == gebr_comm_protocol_defs.run_def.code_hash) {
 			GList *arguments;
 			GString *xml, *account, *queue, *n_process, *run_id;
-			struct job *job;
+			GebrdJob *job;
 
 			/* organize message data */
 			if ((arguments = gebr_comm_protocol_split_new(message->argument, 5)) == NULL)
@@ -369,12 +368,12 @@ gboolean server_parse_client_messages(struct client *client)
 
 			/* run message return with the job_id and the temporary id created by the client */
 			gebr_comm_protocol_send_data(client->protocol, client->stream_socket,
-						     gebr_comm_protocol_defs.ret_def, 2, job->jid->str, job->run_id->str);
+						     gebr_comm_protocol_defs.ret_def, 2, job->parent.jid->str, job->parent.run_id->str);
 			/* assign queue name for immediately jobs (only for regular, moab is already set) */
 			if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_REGULAR &&
 			    (!queue->len || queue->str[0] == 'j')) {
-				g_string_printf(queue, "j%s", job->jid->str);
-				g_string_assign(job->queue, queue->str);
+				g_string_printf(queue, "j%s", job->parent.jid->str);
+				g_string_assign(job->parent.queue_id, queue->str);
 			}
 			gebrd_queues_add_job_to(queue->str, job);
 
@@ -417,7 +416,7 @@ gboolean server_parse_client_messages(struct client *client)
 		} else if (message->hash == gebr_comm_protocol_defs.clr_def.code_hash) {
 			GList *arguments;
 			GString *jid;
-			struct job *job;
+			GebrdJob *job;
 
 			/* organize message data */
 			if ((arguments = gebr_comm_protocol_split_new(message->argument, 1)) == NULL)
@@ -433,7 +432,7 @@ gboolean server_parse_client_messages(struct client *client)
 		} else if (message->hash == gebr_comm_protocol_defs.end_def.code_hash) {
 			GList *arguments;
 			GString *jid;
-			struct job *job;
+			GebrdJob *job;
 
 			/* organize message data */
 			if ((arguments = gebr_comm_protocol_split_new(message->argument, 1)) == NULL)
@@ -451,7 +450,7 @@ gboolean server_parse_client_messages(struct client *client)
 		} else if (message->hash == gebr_comm_protocol_defs.kil_def.code_hash) {
 			GList *arguments;
 			GString *jid;
-			struct job *job;
+			GebrdJob *job;
 
 			/* organize message data */
 			if ((arguments = gebr_comm_protocol_split_new(message->argument, 1)) == NULL)

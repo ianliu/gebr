@@ -39,6 +39,7 @@ libgebr_comm_la_SOURCES = \
 	gebr-comm-process.c		\
 	gebr-comm-terminalprocess.c	\
 	gebr-comm-protocol.c		\
+	gebr-comm-job.c			\
 	gebr-comm-server.c
 
 libgebr_commsubincludedir = $(includedir)/libgebr/comm
