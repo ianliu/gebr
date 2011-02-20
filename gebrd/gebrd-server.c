@@ -72,7 +72,7 @@ static gboolean server_run_lock(void)
 			if (gebrd.options.foreground == TRUE) {
 				gebrd_message(GEBR_LOG_ERROR,
 					      _("Cannot run interactive server, GêBR daemon is already running"));
-				goto err;
+				goto out;
 			}
 
 			gchar buffer[100];
@@ -80,7 +80,7 @@ static gboolean server_run_lock(void)
 			if (write(gebrd.finished_starting_pipe[1], buffer, strlen(buffer)+1) < 0)
 				g_warning("Failed to write in file with error code %d", errno);
 
-			goto err;
+			goto out;
 		}
 	}
 	
@@ -104,6 +104,7 @@ static gboolean server_run_lock(void)
 		goto err;
 	}
 
+out:
 	return TRUE;
 err:
 	return FALSE;
