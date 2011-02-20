@@ -35,57 +35,93 @@
 
 struct gebrd gebrd;
 
+/*
+ * \internal
+ * References: 
+ * http://stackoverflow.com/questions/899038/getting-the-highest-allocated-file-descriptor
+ * http://anoncvs.mindrot.org/index.cgi/openssh/openbsd-compat/bsd-closefrom.c?view=markup
+ * http://git.gnome.org/browse/glib/tree/gio/libasyncns/asyncns.c?h=2.21.0#n205
+ */
+static void close_open_fds(int lowfd, int highfd)
+{
+//TODO: check for this in configure.ac
+//#if defined(HAVE_DIRFD) && defined(HAVE_PROC_PID)
+	long fd;
+#if 1
+	char fdpath[PATH_MAX], *endp;
+	struct dirent *dent;
+	DIR *dirp;
+	int len;
+
+	/* Check for a /proc/$$/fd directory. */
+	len = snprintf(fdpath, sizeof(fdpath), "/proc/%ld/fd", (long)getpid());
+	if (len > 0 && (size_t)len <= sizeof(fdpath) && (dirp = opendir(fdpath))) {
+		while (fd <= highfd && (dent = readdir(dirp)) != NULL) {
+			fd = strtol(dent->d_name, &endp, 10);
+			if (dent->d_name != endp && *endp == '\0' &&
+			    fd >= 0 && fd < INT_MAX && fd >= lowfd && fd != dirfd(dirp))
+				(void) close((int) fd);
+		}
+		(void) closedir(dirp);
+	}
+#else
+	long maxfd;
+	/*
+	 * 	 Fall back on sysconf() or getdtablesize().  We avoid checking
+	 * 	 resource limits since it is possible to open a file
+	 * 	 descriptor * and then drop the rlimit such that it is below the
+	 * 	 open fd.  */
+#ifdef HAVE_SYSCONF
+	maxfd = sysconf(_SC_OPEN_MAX);
+#else
+	maxfd = getdtablesize();
+#endif /* HAVE_SYSCONF */
+	if (maxfd < 0)
+		maxfd = OPEN_MAX;
+	for (fd = lowfd; fd <= highfd && fd < maxfd; fd++)
+		(void) close((int) fd);
+#endif /* defined(HAVE_DIRFD) && defined(HAVE_PROC_PID) */
+}
+
 void gebrd_init(void)
 {
-	gchar buffer[100];
+	if (gebrd.options.foreground) {
+		g_type_init();
+		if (server_init() == TRUE) {
+			gebrd.main_loop = g_main_loop_new(NULL, FALSE);
+			g_main_loop_run(gebrd.main_loop);
+			g_main_loop_unref(gebrd.main_loop);
+		}
+	} else {
+		if (pipe(gebrd.finished_starting_pipe) == -1)
+			g_warning("%s:%d: Error when creating pipe with error code %d",
+				  __FILE__, __LINE__, errno);
 
-	if (pipe(gebrd.finished_starting_pipe) == -1)
-		g_warning("%s:%d: Error when creating pipe with error code %d",
-			  __FILE__, __LINE__, errno);
-
-	if (gebrd.options.foreground == FALSE) {
 		if (fork() == 0) {
-			int i;
-			gboolean ret;
-
 			/* daemon stuff */
 			setsid();
 			umask(027);
 			close(0);
 			close(1);
 			close(2);
-			close(3);
-			i = open("/dev/null", O_RDWR);	/* open stdin */
+			int i = open("/dev/null", O_RDWR);	/* open stdin */
 			dup(i);	/* stdout */
 			dup(i);	/* stderr */
 			signal(SIGCHLD, SIG_IGN);
-
 			setpgrp();
-			gebrd.main_loop = g_main_loop_new(NULL, FALSE);
-			g_type_init();
 
-			ret = server_init();
-			close(gebrd.finished_starting_pipe[0]);
-			close(gebrd.finished_starting_pipe[1]);
-			if (ret == TRUE) {
+			g_type_init();
+			if (server_init()) {
+				close_open_fds(0, 3);
+				gebrd.main_loop = g_main_loop_new(NULL, FALSE);
 				g_main_loop_run(gebrd.main_loop);
 				g_main_loop_unref(gebrd.main_loop);
 			}
-
-			return;
-		}
-
-		/* wait for server_init sign that it finished */
-		read(gebrd.finished_starting_pipe[0], buffer, 10);
-
-		fprintf(stdout, "%s", buffer);
-	} else {
-		gebrd.main_loop = g_main_loop_new(NULL, FALSE);
-		g_type_init();
-
-		if (server_init() == TRUE) {
-			g_main_loop_run(gebrd.main_loop);
-			g_main_loop_unref(gebrd.main_loop);
+		} else {
+			/* wait for server_init sign that it finished */
+			gchar buffer[100];
+			read(gebrd.finished_starting_pipe[0], buffer, 10);
+			fprintf(stdout, "%s", buffer);
 		}
 	}
 }

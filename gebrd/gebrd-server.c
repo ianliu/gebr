@@ -53,8 +53,9 @@
 
 static void server_moab_read_credentials(GString *accounts, GString *queue_list);
 
-static gboolean server_run_lock(void)
+static gboolean server_run_lock(gboolean *already_running)
 {
+	*already_running = FALSE;
 	/* check if there is another daemon running for this user and hostname */
 	g_string_printf(gebrd.run_filename, "%s/.gebr/run/gebrd-%s.run", g_get_home_dir(), gebrd.hostname);
 	if (g_file_test(gebrd.run_filename->str, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_REGULAR) == TRUE) {
@@ -72,14 +73,14 @@ static gboolean server_run_lock(void)
 			if (gebrd.options.foreground == TRUE) {
 				gebrd_message(GEBR_LOG_ERROR,
 					      _("Cannot run interactive server, GêBR daemon is already running"));
-				goto out;
+			} else {
+				gchar buffer[100];
+				snprintf(buffer, sizeof(buffer), "%d\n", port);
+				if (write(gebrd.finished_starting_pipe[1], buffer, strlen(buffer)+1) < 0)
+					g_warning("Failed to write in file with error code %d", errno);
 			}
 
-			gchar buffer[100];
-			snprintf(buffer, sizeof(buffer), "%d\n", port);
-			if (write(gebrd.finished_starting_pipe[1], buffer, strlen(buffer)+1) < 0)
-				g_warning("Failed to write in file with error code %d", errno);
-
+			*already_running = TRUE;
 			goto out;
 		}
 	}
@@ -158,8 +159,11 @@ gboolean server_init(void)
 	g_string_free(log_filename, TRUE);
 
 	/* run lock */
-	if (!server_run_lock())
+	gboolean already_running;
+	if (!server_run_lock(&already_running))
 		goto err;
+	else if (already_running)
+		return FALSE;
 
 	/* fs lock */
 	if (!server_fs_lock())
@@ -175,7 +179,7 @@ gboolean server_init(void)
 	sigaction(SIGTERM, &act, NULL);
 	sigaction(SIGINT, &act, NULL);
 
-	/* success */
+	/* success, send port */
 	gebrd_message(GEBR_LOG_START, _("Server started at %u port"),
 		      gebr_comm_socket_address_get_ip_port(&gebrd.socket_address));
 	gchar buffer[100];
