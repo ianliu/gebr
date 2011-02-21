@@ -296,11 +296,8 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 				pos = i;
 		}
 
-		if (is_new)
-			g_signal_connect (groups_combo, "changed",
-					  G_CALLBACK (on_groups_combo_box_changed), NULL);
-		else
-			gtk_combo_box_set_active (GTK_COMBO_BOX (groups_combo), pos);
+		g_signal_connect (groups_combo, "changed",
+				  G_CALLBACK (on_groups_combo_box_changed), NULL);
 
 		gtk_widget_set_sensitive (groups_combo, is_new);
 
