@@ -428,6 +428,9 @@ static gboolean visible_func (GtkTreeModel *model,
 	gtk_tree_model_get (gtk_combo_box_get_model (combo), &active,
 			    0, &tag, -1);
 
+	if (!server)
+		return TRUE;
+
 	return ui_server_has_tag (server, tag);
 }
 
