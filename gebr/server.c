@@ -58,9 +58,7 @@ gebr_server_set_property (GObject         *object,
 				    -1);
 		break;
 	case PROP_AUTOCONNECT:
-		gtk_list_store_set (gebr.ui_server_list->common.store, &self->iter,
-				    SERVER_AUTOCONNECT, g_value_get_boolean (value),
-				    -1);
+		gebr_server_set_autoconnect (self, g_value_get_boolean (value));
 		break;
 	case PROP_TAGS:
 		gtk_list_store_set (gebr.ui_server_list->common.store, &self->iter,
@@ -81,7 +79,6 @@ gebr_server_get_property (GObject         *object,
 {
 	gchar *tags;
 	gchar *address;
-	gboolean autoconnect;
 	GebrServer *self = GEBR_SERVER (object);
 	GtkTreeModel *model = GTK_TREE_MODEL (gebr.ui_server_list->common.store);
 
@@ -93,10 +90,7 @@ gebr_server_get_property (GObject         *object,
 		g_value_take_string (value, address);
 		break;
 	case PROP_AUTOCONNECT:
-		gtk_tree_model_get (model, &self->iter,
-				    SERVER_AUTOCONNECT, &autoconnect,
-				    -1);
-		g_value_set_boolean (value, autoconnect);
+		g_value_set_boolean (value, gebr_server_get_autoconnect (self));
 		break;
 	case PROP_TAGS:
 		gtk_tree_model_get (model, &self->iter,
@@ -428,3 +422,28 @@ void server_queue_find_at_job_control(GebrServer * server, const gchar * name, G
 	g_string_free(title, TRUE);
 }
 
+void gebr_server_emit_initialized (GebrServer *self)
+{
+	g_signal_emit (self, signals[ RET_INI ], 0);
+}
+
+gboolean gebr_server_get_autoconnect (GebrServer *self)
+{
+	gboolean setting;
+	GtkTreeModel *model;
+
+	model = GTK_TREE_MODEL (gebr.ui_server_list->common.store);
+	gtk_tree_model_get (model, &self->iter,
+			    SERVER_AUTOCONNECT, &setting,
+			    -1);
+	return setting;
+}
+
+void gebr_server_set_autoconnect (GebrServer *self, gboolean setting)
+{
+	gtk_list_store_set (gebr.ui_server_list->common.store, &self->iter,
+			    SERVER_AUTOCONNECT, setting,
+			    -1);
+	if (setting && self->comm)
+		gebr_comm_server_connect (self->comm);
+}

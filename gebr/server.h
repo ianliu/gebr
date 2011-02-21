@@ -119,5 +119,32 @@ gboolean server_queue_find(GebrServer * server, const gchar * queue_name, GtkTre
  */
 void server_queue_find_at_job_control(GebrServer * server, const gchar * queue_name, GtkTreeIter * _iter);
 
+/**
+ * gebr_server_emit_initialized:
+ * @self:
+ *
+ * <note>
+ *   <para>Private function, do not use it!</para>
+ * </note>
+ *
+ * Emits the GebrServer::initialized signal. This should be called
+ * only when the server returns from the ini message, ie, in client.c.
+ */
+void gebr_server_emit_initialized (GebrServer *self);
+
+/**
+ * gebr_server_get_autoconnect:
+ * @self:
+ */
+gboolean gebr_server_get_autoconnect (GebrServer *self);
+
+/**
+ * gebr_server_set_autoconnect:
+ * @self:
+ * @setting:
+ */
+void gebr_server_set_autoconnect (GebrServer *self, gboolean setting);
+
 G_END_DECLS
+
 #endif				//__SERVER_H
