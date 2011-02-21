@@ -670,9 +670,9 @@
       </section>
 
       <section xml:id="sec_3_1_4">
-        <title>Editing a Projects or Lines properties</title>
+        <title>Editing a Project's or Line's properties</title>
 
-        <para>To edit a Projects or Lines properties, first select the Project of Line and then click on
+        <para>To edit a Project's or Line's properties, first select the Project of Line and then click on
           button <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_editar_propriedades_projeto.png"
           /></imageobject></inlinemediaobject></guiicon>.</para>
 
