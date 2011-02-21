@@ -80,7 +80,7 @@ static GtkTreeIter job_add_jc_queue_iter(GebrJob * job)
 	return queue_jc_iter;
 }
 
-static GebrJob *job_new(struct server *server, GString * title, GString *queue)
+static GebrJob *job_new(GebrServer *server, GString * title, GString *queue)
 {
 	GebrJob *job = GEBR_JOB(g_object_new(GEBR_JOB_TYPE, NULL, NULL));
 	job->server = server;
@@ -125,7 +125,7 @@ static GebrJob *job_new(struct server *server, GString * title, GString *queue)
 	return job;
 }
 
-GebrJob *job_new_from_flow(struct server *server, GebrGeoXmlFlow * flow, GString *queue)
+GebrJob *job_new_from_flow(GebrServer *server, GebrGeoXmlFlow * flow, GString *queue)
 {
 	GString *title = g_string_new(gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(flow)));
 	GebrJob *job = job_new(server, title, queue);
@@ -173,7 +173,7 @@ void job_init_details(GebrJob *job, GString * _status, GString * title, GString 
 	job_update(job);
 }
 
-GebrJob *job_new_from_jid(struct server *server, GString * jid, GString * _status, GString * title,
+GebrJob *job_new_from_jid(GebrServer *server, GString * jid, GString * _status, GString * title,
 			     GString * start_date, GString * finish_date, GString * hostname, GString * issues,
 			     GString * cmd_line, GString * output, GString * queue, GString * moab_jid)
 {

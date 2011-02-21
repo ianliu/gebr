@@ -135,7 +135,7 @@ gboolean gebr_quit(gboolean save_config)
 
 	/* Free servers structs */
 	gebr_gui_gtk_tree_model_foreach_hyg(iter, GTK_TREE_MODEL(gebr.ui_server_list->common.store), 1) {
-		struct server *server;
+		GebrServer *server;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter,
 				   SERVER_POINTER, &server, -1);
@@ -243,7 +243,7 @@ static void gebr_config_load_servers(void)
 			tags = gebr_g_key_file_load_string_key(
 					gebr.config.key_file, groups[i], "tags", "");
 
-			server_new (address->str, autoconnect, tags->str);
+			gebr_server_new (address->str, autoconnect, tags->str);
 			g_string_free (tags, TRUE);
 		}
 		g_string_free(address, TRUE);
@@ -265,7 +265,7 @@ static void gebr_config_load_servers(void)
 			tags = gebr_g_key_file_load_string_key(
 					servers, groups[i], "tags", "");
 
-			server_new (groups[i], autoconnect, tags->str);
+			gebr_server_new (groups[i], autoconnect, tags->str);
 			g_string_free (tags, TRUE);
 		}
 		g_key_file_free (servers);
@@ -281,7 +281,7 @@ static void gebr_config_save_servers(void)
 	GtkTreeIter iter;
 	GKeyFile *servers;
 	GtkTreeModel *model;
-	struct server *server;
+	GebrServer *server;
 	gboolean autoconnect;
 	gboolean ret;
 	gchar * tags;
@@ -443,7 +443,7 @@ gint gebr_config_load()
 
 	/* NEW CONFIG? */
 	if (new_config) {
-		server_new("127.0.0.1", TRUE, "");
+		gebr_server_new("127.0.0.1", TRUE, "");
 		//gebr_config_save(FALSE); //default values saved
 		preferences_setup_ui(TRUE);
 	} else

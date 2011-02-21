@@ -46,7 +46,7 @@ typedef struct _GebrJobClass GebrJobClass;
 struct _GebrJob {
 	GebrCommJob parent;
 	GtkTreeIter iter;
-	struct server *server;
+	GebrServer *server;
 
 };
 struct _GebrJobClass {
@@ -62,12 +62,12 @@ GebrJob *job_find(GString * address, GString * id, gboolean jid);
 /**
  * Create a new job (from \p server) and add it to list of jobs
  */
-GebrJob *job_new_from_flow(struct server *server, GebrGeoXmlFlow * flow, GString *queue);
+GebrJob *job_new_from_flow(GebrServer *server, GebrGeoXmlFlow * flow, GString *queue);
 
 /**
  * Create a new job (from \p server) and add it to list of jobs
  */
-GebrJob *job_new_from_jid(struct server *server, GString * jid, GString * _status, GString * title,
+GebrJob *job_new_from_jid(GebrServer *server, GString * jid, GString * _status, GString * title,
 			     GString * start_date, GString * finish_date, GString * hostname, GString * issues,
 			     GString * cmd_line, GString * output, GString * queue, GString * moab_jid);
 

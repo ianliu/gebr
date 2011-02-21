@@ -22,7 +22,7 @@
 
 G_BEGIN_DECLS
 
-gboolean client_parse_server_messages(struct gebr_comm_server *gebr_comm_server, struct server *server);
+gboolean client_parse_server_messages(struct gebr_comm_server *gebr_comm_server, GebrServer *server);
 
 G_END_DECLS
 #endif				//__CLIENT_H

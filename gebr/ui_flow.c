@@ -37,7 +37,7 @@
 
 #define GEBR_FLOW_UI_RESPONSE_EXECUTE 1
 
-static gboolean flow_io_run_dialog(GebrCommServerRunConfig *config, struct server *server, gboolean mpi_program);
+static gboolean flow_io_run_dialog(GebrCommServerRunConfig *config, GebrServer *server, gboolean mpi_program);
 static void flow_io_run(GebrGeoXmlFlow *flow, gboolean parallel, gboolean single);
 
 gboolean flow_io_get_selected(struct ui_flow_io *ui_flow_io, GtkTreeIter * iter)
@@ -77,7 +77,7 @@ void flow_io_customized_paths_from_line(GtkFileChooser * chooser)
 
 void flow_io_set_server(GtkTreeIter * server_iter, const gchar * input, const gchar * output, const gchar * error)
 {
-	struct server *server;
+	GebrServer *server;
 
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), server_iter, SERVER_POINTER, &server, -1);
 
@@ -174,7 +174,7 @@ void flow_program_check_sensitiveness (void)
  * @param server
  * @param mpi_program
  */
-static gboolean flow_io_run_dialog(GebrCommServerRunConfig *config, struct server *server, gboolean mpi_program)
+static gboolean flow_io_run_dialog(GebrCommServerRunConfig *config, GebrServer *server, gboolean mpi_program)
 {
 	gboolean ret = TRUE;
 	GtkWidget *dialog;
@@ -344,10 +344,11 @@ static void flow_io_run(GebrGeoXmlFlow *flow, gboolean parallel, gboolean single
 	/* SERVER on list of servers: find iter */
 	const gchar *address = gebr_geoxml_flow_server_get_address(flow);
 	if (!server_find_address(address, &server_iter)) {
-		gebr_message(GEBR_LOG_DEBUG, TRUE, TRUE, "Server should be present on list!");
+		gebr_message(GEBR_LOG_DEBUG, TRUE, TRUE, "Server %s should be present on list!",
+			     address);
 		return;
 	}
-	struct server *server;
+	GebrServer *server;
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &server_iter, SERVER_POINTER, &server, -1);
 	/* SERVER: check connection */
 	if (!gebr_comm_server_is_logged(server->comm)) {

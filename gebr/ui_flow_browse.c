@@ -468,7 +468,7 @@ static void flow_browse_load(void)
 		flow_browse_load_revision(GEBR_GEOXML_REVISION(revision), FALSE);
 
 	/* if there is no server, introduce local server */
-	if (strlen(gebr_geoxml_flow_server_get_address(gebr.flow))) {
+	if (!strlen (gebr_geoxml_flow_server_get_address(gebr.flow))) {
 		gebr_geoxml_flow_server_set_address(gebr.flow, "127.0.0.1");
 		document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), FALSE, TRUE);
 	}

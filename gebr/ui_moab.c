@@ -19,7 +19,7 @@
 #include <glib/gi18n.h>
 #include "ui_moab.h"
 
-gboolean moab_setup_ui(gchar ** char_account, struct server * server, gboolean parallel_program)
+gboolean moab_setup_ui(gchar ** char_account, GebrServer * server, gboolean parallel_program)
 {
 	gboolean ret;
 	GtkWidget * box;

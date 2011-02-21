@@ -882,7 +882,7 @@ static void flow_edition_on_combobox_changed(GtkComboBox * combobox)
 {
 	gint lstq;
 	GHashTable *last_queue_hash;
-	struct server *server;
+	GebrServer *server;
 	GtkTreeIter iter;
 	GtkTreeIter flow_iter;
 	GtkWidget *queue_combobox;
@@ -1011,13 +1011,13 @@ on_server_disconnected_set_row_insensitive(GtkCellLayout   *cell_layout,
 					   gpointer         data)
 {
 
-	struct server *server;
-	server = NULL;
+	GebrServer *server;
 
-	gtk_tree_model_get(tree_model, iter, SERVER_POINTER, &server, -1);
+	gtk_tree_model_get (tree_model, iter, SERVER_POINTER, &server, -1);
 
-	if (server != NULL)
-		g_object_set (cell, "sensitive", gebr_comm_server_is_logged(server->comm), NULL);
+	if (server && server->comm)
+		g_object_set (cell, "sensitive",
+			      gebr_comm_server_is_logged (server->comm), NULL);
 }
 
 static void on_queue_combobox_changed (GtkComboBox *combo, const gchar *addr)

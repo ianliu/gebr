@@ -27,7 +27,7 @@
 #include "server.h"
 #include "job.h"
 
-gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, struct server *server)
+gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, GebrServer *server)
 {
 	GList *link;
 	struct gebr_comm_message *message;
@@ -91,7 +91,8 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, stru
 					gtk_list_store_set(server->queues_model, &iter,
 							   SERVER_QUEUE_TITLE, _("Immediately"),
 							   SERVER_QUEUE_ID, "j", 
-							   SERVER_QUEUE_LAST_RUNNING_JOB, NULL, -1);
+							   SERVER_QUEUE_LAST_RUNNING_JOB, NULL,
+							   -1);
 				}
 				for (gint i = 0; queues[i]; i++) {
 					if (strlen(queues[i])) {

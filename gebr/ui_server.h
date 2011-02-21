@@ -63,23 +63,23 @@ struct ui_server_list *server_list_setup_ui(void);
 
 void server_list_show(struct ui_server_list *ui_server_list);
 
-void server_list_updated_status(struct server *server);
+void server_list_updated_status(GebrServer *server);
 
 struct ui_server_select {
 	struct ui_server_common common;
 
-	struct server *selected;
+	GebrServer *selected;
 
 	GtkWidget *ok_button;
 };
 
-gchar **ui_server_list_tag (struct server *server);
+gchar **ui_server_list_tag (GebrServer *server);
 
 GList *ui_server_servers_with_tag (const gchar *tag);
 
-gboolean ui_server_has_tag (struct server *server, const gchar *tag);
+gboolean ui_server_has_tag (GebrServer *server, const gchar *tag);
 
-void ui_server_set_tags (struct server *server, const gchar *str);
+void ui_server_set_tags (GebrServer *server, const gchar *str);
 
 gchar **ui_server_get_all_tags (void);
 

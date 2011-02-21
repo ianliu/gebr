@@ -60,7 +60,7 @@ server_common_tooltip_callback(GtkTreeView * tree_view, GtkTooltip * tooltip,
 			       GtkTreeIter * iter, GtkTreeViewColumn * column, struct ui_server_common *ui)
 {
 	if (gtk_tree_view_get_column(tree_view, SERVER_STATUS_ICON) == column) {
-		struct server *server;
+		GebrServer *server;
 		gboolean had_error = TRUE;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(ui->sort_store), iter, SERVER_POINTER, &server, -1);
@@ -91,7 +91,7 @@ server_common_tooltip_callback(GtkTreeView * tree_view, GtkTooltip * tooltip,
 /* Function: server_common_connect
  * Callback for popup menu action
  */
-static void server_common_connect(GtkMenuItem * menu_item, struct server *server)
+static void server_common_connect(GtkMenuItem * menu_item, GebrServer *server)
 {
 	gebr_comm_server_connect(server->comm);
 }
@@ -99,7 +99,7 @@ static void server_common_connect(GtkMenuItem * menu_item, struct server *server
 /* Function: server_common_disconnect
  * Callback for popup menu action
  */
-static void server_common_disconnect(GtkMenuItem * menu_item, struct server *server)
+static void server_common_disconnect(GtkMenuItem * menu_item, GebrServer *server)
 {
 	gebr_comm_server_disconnect(server->comm);
 }
@@ -107,7 +107,7 @@ static void server_common_disconnect(GtkMenuItem * menu_item, struct server *ser
 /* Function: server_common_autoconnect
  * Callback for popup menu action
  */
-static void server_common_autoconnect_changed(GtkMenuItem * menu_item, struct server *server)
+static void server_common_autoconnect_changed(GtkMenuItem * menu_item, GebrServer *server)
 {
 	gtk_list_store_set(gebr.ui_server_list->common.store, &server->iter,
 			   SERVER_AUTOCONNECT, gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(menu_item)), -1);
@@ -116,7 +116,7 @@ static void server_common_autoconnect_changed(GtkMenuItem * menu_item, struct se
 /* Function: server_common_remove
  * Callback for popup menu action
  */
-static void server_common_remove(GtkMenuItem * menu_item, struct server *server)
+static void server_common_remove(GtkMenuItem * menu_item, GebrServer *server)
 {
 	server_free(server);
 	ui_server_update_tags_combobox ();
@@ -125,7 +125,7 @@ static void server_common_remove(GtkMenuItem * menu_item, struct server *server)
 /* Function: server_common_stop
  * Send server command to kill daemon
  */
-static void server_common_stop(GtkMenuItem * menu_item, struct server *server)
+static void server_common_stop(GtkMenuItem * menu_item, GebrServer *server)
 {
 	gebr_comm_server_kill(server->comm);
 }
@@ -142,7 +142,7 @@ static GtkMenu *server_common_popup_menu(GtkWidget * widget, struct ui_server_co
 	GtkWidget *menu;
 	GtkWidget *menu_item;
 
-	struct server *server;
+	GebrServer *server;
 	gboolean autoconnect;
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_server_common->view));
@@ -195,7 +195,7 @@ static void on_tags_edited (GtkCellRendererText *cell,
 	GtkTreePath *model_path;
 	GtkTreePath *filter_path;
 	GtkTreePath *sorted_path;
-	struct server *server;
+	GebrServer *server;
 	gboolean ret;
 
 	ret = gtk_tree_model_get_iter_from_string (
@@ -314,7 +314,7 @@ static void server_common_actions(GtkDialog * dialog, gint arg1, struct ui_serve
 			GtkTreeIter iter;
 
 			gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(ui_server_common->store)) {
-				struct server *server;
+				GebrServer *server;
 
 				gtk_tree_model_get(GTK_TREE_MODEL(ui_server_common->store), &iter,
 						   SERVER_POINTER, &server, -1);
@@ -329,7 +329,7 @@ static void server_common_actions(GtkDialog * dialog, gint arg1, struct ui_serve
 			GtkTreeIter iter;
 
 			gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(ui_server_common->store)) {
-				struct server *server;
+				GebrServer *server;
 
 				gtk_tree_model_get(GTK_TREE_MODEL(ui_server_common->store), &iter,
 						   SERVER_POINTER, &server, -1);
@@ -366,7 +366,7 @@ static void server_list_add(struct ui_server_list *ui_server_list, const gchar *
 
 	/* check if it is already in list */
 	gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(ui_server_list->common.store)) {
-		struct server *server;
+		GebrServer *server;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(ui_server_list->common.store), &iter, SERVER_POINTER, &server, -1);
 
@@ -393,7 +393,7 @@ static void server_list_add(struct ui_server_list *ui_server_list, const gchar *
 	}
 
 	/* finally */
-	server_new(address, TRUE, "");
+	gebr_server_new(address, TRUE, "");
 }
 
 /* Function: on_add_clicked
@@ -432,7 +432,7 @@ static gboolean visible_func (GtkTreeModel *model,
 	gchar *tag;
 	GtkTreeIter active;
 	GtkComboBox *combo;
-	struct server *server;
+	GebrServer *server;
 
 	combo = GTK_COMBO_BOX (gebr.ui_server_list->common.combo);
 
@@ -547,7 +547,7 @@ void server_list_show(struct ui_server_list *ui_server_list)
  * Update status of _server_ in store
  *
  */
-void server_list_updated_status(struct server *server)
+void server_list_updated_status(GebrServer *server)
 {
 	GdkPixbuf *status_icon;
 	GtkTreePath *path;
@@ -563,7 +563,7 @@ void server_list_updated_status(struct server *server)
 	gtk_tree_model_row_changed(GTK_TREE_MODEL(gebr.ui_server_list->common.store), path, &server->iter);
 }
 
-gchar **ui_server_list_tag (struct server *server)
+gchar **ui_server_list_tag (GebrServer *server)
 {
 	gchar *tags;
 	gchar **tag_list;
@@ -586,7 +586,7 @@ GList *ui_server_servers_with_tag (const gchar *tag) {
 	model = GTK_TREE_MODEL (gebr.ui_server_list->common.store);
 
 	gebr_gui_gtk_tree_model_foreach (iter, model) {
-		struct server *server;
+		GebrServer *server;
 		gchar *tags;
 		gchar **tag_list;
 
@@ -609,7 +609,7 @@ GList *ui_server_servers_with_tag (const gchar *tag) {
 	return g_list_reverse (list);
 }
 
-gboolean ui_server_has_tag (struct server *server, const gchar *tag)
+gboolean ui_server_has_tag (GebrServer *server, const gchar *tag)
 {
 	gchar *tags;
 	gchar **tag_list;
@@ -674,7 +674,7 @@ static gchar *sort_and_remove_doubles (const gchar *tags_str)
 	return g_string_free (tags, FALSE);
 }
 
-void ui_server_set_tags (struct server *server, const gchar *str)
+void ui_server_set_tags (GebrServer *server, const gchar *str)
 {
 	gchar *tags;
 

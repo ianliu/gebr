@@ -482,7 +482,7 @@ void flow_set_paths_to(GebrGeoXmlFlow * flow, gboolean relative)
 	g_string_free(path, TRUE);
 }
 
-void flow_run(struct server *server, GebrCommServerRunConfig * config, gboolean single)
+void flow_run(GebrServer *server, GebrCommServerRunConfig * config, gboolean single)
 {
 	GtkTreeIter iter;
 

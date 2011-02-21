@@ -29,6 +29,153 @@
 #include "job.h"
 #include "callbacks.h"
 
+enum {
+	PROP_0,
+	PROP_ADDRESS,
+	PROP_AUTOCONNECT,
+	PROP_TAGS,
+};
+
+enum {
+	RET_INI,
+	LAST_SIGNAL
+};
+
+static guint signals[ LAST_SIGNAL ] = { 0, };
+
+
+static void
+gebr_server_set_property (GObject         *object,
+			 guint            prop_id,
+                         const GValue    *value,
+                         GParamSpec      *pspec)
+{
+	GebrServer *self = GEBR_SERVER (object);
+	switch (prop_id) {
+	case PROP_ADDRESS:
+		gtk_list_store_set (gebr.ui_server_list->common.store, &self->iter,
+				    SERVER_NAME, server_get_name_from_address (g_value_get_string (value)),
+				    -1);
+		break;
+	case PROP_AUTOCONNECT:
+		gtk_list_store_set (gebr.ui_server_list->common.store, &self->iter,
+				    SERVER_AUTOCONNECT, g_value_get_boolean (value),
+				    -1);
+		break;
+	case PROP_TAGS:
+		gtk_list_store_set (gebr.ui_server_list->common.store, &self->iter,
+				    SERVER_TAGS, g_value_get_string (value),
+				    -1);
+		break;
+	default:
+		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+		break;
+	}
+}
+
+static void
+gebr_server_get_property (GObject         *object,
+                         guint            prop_id,
+                         GValue          *value,
+                         GParamSpec      *pspec)
+{
+	gchar *tags;
+	gchar *address;
+	gboolean autoconnect;
+	GebrServer *self = GEBR_SERVER (object);
+	GtkTreeModel *model = GTK_TREE_MODEL (gebr.ui_server_list->common.store);
+
+	switch (prop_id) {
+	case PROP_ADDRESS:
+		gtk_tree_model_get (model, &self->iter,
+				    SERVER_NAME, &address,
+				    -1);
+		g_value_take_string (value, address);
+		break;
+	case PROP_AUTOCONNECT:
+		gtk_tree_model_get (model, &self->iter,
+				    SERVER_AUTOCONNECT, &autoconnect,
+				    -1);
+		g_value_set_boolean (value, autoconnect);
+		break;
+	case PROP_TAGS:
+		gtk_tree_model_get (model, &self->iter,
+				    SERVER_TAGS, &tags,
+				    -1);
+		g_value_take_string (value, tags);
+		break;
+	default:
+		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+		break;
+	}
+}
+
+G_DEFINE_TYPE (GebrServer, gebr_server, G_TYPE_OBJECT);
+
+static void gebr_server_class_init (GebrServerClass *klass)
+{
+	GObjectClass *gobject_class;
+	gobject_class = G_OBJECT_CLASS (klass);
+	gobject_class->set_property = gebr_server_set_property;
+	gobject_class->get_property = gebr_server_get_property;
+
+	g_object_class_install_property (gobject_class,
+					 PROP_ADDRESS,
+					 g_param_spec_string ("address",
+							      "Address",
+							      "Server address",
+							      NULL,
+							      G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
+
+	g_object_class_install_property (gobject_class,
+					 PROP_AUTOCONNECT,
+					 g_param_spec_boolean ("autoconnect",
+							       "Autoconnect",
+							       "Autoconnect server",
+							       TRUE,
+							       G_PARAM_READWRITE));
+
+	g_object_class_install_property (gobject_class,
+					 PROP_TAGS,
+					 g_param_spec_string ("tags",
+							      "Tags",
+							      "Server tags",
+							      NULL,
+							      G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
+
+	signals[ RET_INI ] =
+		g_signal_new ("initialized",
+			      G_OBJECT_CLASS_TYPE (gobject_class),
+			      G_SIGNAL_RUN_LAST,
+			      G_STRUCT_OFFSET (GebrServerClass, initialized),
+			      NULL, NULL,
+			      g_cclosure_marshal_VOID__VOID,
+			      G_TYPE_NONE, 0);
+}
+
+static void gebr_server_init (GebrServer *self)
+{
+	GtkTreeIter iter;
+
+	gtk_list_store_append (gebr.ui_server_list->common.store, &iter);
+
+	self->comm = NULL;
+	self->iter = iter;
+	self->nfsid = g_string_new ("");
+	self->last_error = g_string_new ("");
+	self->type = GEBR_COMM_SERVER_TYPE_UNKNOWN;
+	self->accounts_model = gtk_list_store_new (1, G_TYPE_STRING);
+	self->queues_model = gtk_list_store_new (SERVER_QUEUE_N_COLUMNS,
+						 G_TYPE_STRING,
+						 G_TYPE_STRING,
+						 G_TYPE_POINTER);
+
+	gtk_list_store_set (gebr.ui_server_list->common.store, &iter,
+			    SERVER_STATUS_ICON, gebr.pixmaps.stock_disconnect,
+			    SERVER_POINTER,     self,
+			    -1);
+}
+
 /**
  * \internal
  */
@@ -37,12 +184,12 @@ static void server_log_message(enum gebr_log_message_type type, const gchar * me
 	gebr_message(type, TRUE, TRUE, message);
 }
 
-static void server_clear_jobs(struct server * server);
+static void server_clear_jobs(GebrServer * server);
 
 /*
  * \internal
  */
-static void server_state_changed(struct gebr_comm_server *comm_server, struct server * server)
+static void server_state_changed(struct gebr_comm_server *comm_server, GebrServer * server)
 {
 	server_list_updated_status(server);
 	if (server->comm->state == SERVER_STATE_DISCONNECTED) {
@@ -93,7 +240,7 @@ static gboolean server_ssh_question(const gchar * title, const gchar * message)
 /**
  * \internal
  */
-static void server_clear_jobs(struct server * server)
+static void server_clear_jobs(GebrServer * server)
 {
 	gboolean server_free_foreach_job(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter)
 	{
@@ -125,7 +272,7 @@ gboolean server_find_address(const gchar * address, GtkTreeIter * iter)
 	GtkTreeIter i;
 
 	gebr_gui_gtk_tree_model_foreach(i, GTK_TREE_MODEL(gebr.ui_server_list->common.store)) {
-		struct server *server;
+		GebrServer *server;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &i, SERVER_POINTER, &server, -1);
 		if (!strcmp(address, server->comm->address->str)) {
@@ -142,45 +289,43 @@ const gchar *server_get_name_from_address(const gchar * address)
 	return !strcmp(address, "127.0.0.1") ? _("Local server") : address;
 }
 
-struct server *server_new(const gchar * address, gboolean autoconnect, const gchar* tags)
+GebrServer *gebr_server_new (const gchar * address, gboolean autoconnect, const gchar* tags)
 {
+	GebrServer *self;
+	GtkTreePath *path;
+	GtkTreeModel *model;
+
 	static const struct gebr_comm_server_ops ops = {
-		.log_message = server_log_message,
-		.state_changed = (typeof(ops.state_changed)) server_state_changed,
-		.ssh_login = server_ssh_login,
-		.ssh_question = server_ssh_question,
+		.log_message    = server_log_message,
+		.state_changed  = (typeof(ops.state_changed)) server_state_changed,
+		.ssh_login      = server_ssh_login,
+		.ssh_question   = server_ssh_question,
 		.parse_messages = (typeof(ops.parse_messages)) client_parse_server_messages
 	};
-	GtkTreeIter iter;
-	struct server *server;
 
-	gtk_list_store_append(gebr.ui_server_list->common.store, &iter);
-	server = g_new(struct server, 1);
-	server->comm = gebr_comm_server_new(address, &ops);
-	server->comm->user_data = server;
-	server->iter = iter;
-	server->last_error = g_string_new("");
-	server->nfsid = g_string_new("");
-	server->type = GEBR_COMM_SERVER_TYPE_UNKNOWN;
-	server->accounts_model = gtk_list_store_new(1, G_TYPE_STRING);
-	server->queues_model = gtk_list_store_new(SERVER_QUEUE_N_COLUMNS, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
-	gtk_list_store_set(gebr.ui_server_list->common.store, &iter,
-			   SERVER_STATUS_ICON, gebr.pixmaps.stock_disconnect,
-			   SERVER_NAME,        server_get_name_from_address(address),
-			   SERVER_POINTER,     server,
-			   SERVER_AUTOCONNECT, autoconnect,
-			   SERVER_TAGS,        tags,
-			   -1);
+	self = g_object_new (GEBR_TYPE_SERVER,
+			     "address", address,
+			     "autoconnect", autoconnect,
+			     "tags", tags,
+			     NULL);
+
+	self->comm = gebr_comm_server_new (address, &ops);
+	self->comm->user_data = self;
+
+	model = GTK_TREE_MODEL (gebr.ui_server_list->common.store);
+	path = gtk_tree_model_get_path (model, &self->iter);
+	gtk_tree_model_row_changed (model, path, &self->iter);
+	gtk_tree_path_free (path);
 
 	if (autoconnect)
-		gebr_comm_server_connect(server->comm);
+		gebr_comm_server_connect (self->comm);
 
-	return server;
+	return self;
 }
 
-void server_free(struct server *server)
+void server_free(GebrServer *server)
 {
-	server_clear_jobs(server);
+	server_clear_jobs (server);
 
 	gtk_list_store_remove(gebr.ui_server_list->common.store, &server->iter);
 	gtk_list_store_clear(server->accounts_model);
@@ -189,20 +334,21 @@ void server_free(struct server *server)
 	gebr_comm_server_free(server->comm);
 	g_string_free(server->last_error, TRUE);
 	g_string_free(server->nfsid, TRUE);
-	g_free(server);
+
+	g_object_unref (server);
 }
 
-const gchar *server_get_name(struct server * server)
+const gchar *server_get_name(GebrServer * server)
 {
 	return server_get_name_from_address(server->comm->address->str);
 }
 
-gboolean server_find(struct server * server, GtkTreeIter * iter)
+gboolean server_find(GebrServer * server, GtkTreeIter * iter)
 {
 	GtkTreeIter i;
 
 	gebr_gui_gtk_tree_model_foreach(i, GTK_TREE_MODEL(gebr.ui_server_list->common.store)) {
-		struct server *i_server;
+		GebrServer *i_server;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &i,
 				   SERVER_POINTER, &i_server, -1);
@@ -215,7 +361,7 @@ gboolean server_find(struct server * server, GtkTreeIter * iter)
 	return FALSE;
 }
 
-gboolean server_queue_find(struct server * server, const gchar * name, GtkTreeIter * _iter)
+gboolean server_queue_find(GebrServer * server, const gchar * name, GtkTreeIter * _iter)
 {
 	GtkTreeIter iter;
 	gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(server->queues_model)) {
@@ -235,7 +381,7 @@ gboolean server_queue_find(struct server * server, const gchar * name, GtkTreeIt
 	return FALSE;
 }
 
-void server_queue_find_at_job_control(struct server * server, const gchar * name, GtkTreeIter * _iter)
+void server_queue_find_at_job_control(GebrServer * server, const gchar * name, GtkTreeIter * _iter)
 {
 	GtkTreeIter iter;
 	gboolean found = FALSE;
