@@ -188,6 +188,7 @@ void server_free(struct server *server)
 
 	gebr_comm_server_free(server->comm);
 	g_string_free(server->last_error, TRUE);
+	g_string_free(server->nfsid, TRUE);
 	g_free(server);
 }
 
