@@ -153,6 +153,10 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 							     gebr_comm_protocol_defs.lst_def, 0);
 
 				gebr_comm_protocol_split_free(arguments);
+
+				// Emits the GebrServer::initialized signal
+				gebr_server_emit_initialized (server);
+
 			} else if (comm_server->protocol->waiting_ret_hash == gebr_comm_protocol_defs.run_def.code_hash) {
 				GList *arguments;
 				GString *jid;
