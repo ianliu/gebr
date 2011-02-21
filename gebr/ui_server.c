@@ -696,7 +696,7 @@ gchar **ui_server_get_all_tags (void)
 
 void ui_server_update_tags_combobox (void)
 {
-	int active = -1;
+	int active = 0;
 	gchar **tags;
 	GtkTreeIter iter;
 	GtkComboBox *combo;
@@ -720,8 +720,8 @@ void ui_server_update_tags_combobox (void)
 		gtk_list_store_set (gebr.ui_server_list->common.combo_store,
 				    &iter, 0, tags[i], -1);
 
-		if (active == -1 && selected && g_str_equal (tags[i], selected))
-			active = i;
+		if (active == 0 && selected && g_str_equal (tags[i], selected))
+			active = i + 1;
 	}
 
 	gtk_combo_box_set_active (combo, active);
