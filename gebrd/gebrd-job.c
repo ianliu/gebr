@@ -421,10 +421,9 @@ void job_status_set(GebrdJob *job, enum JobStatus status)
 	enum JobStatus old_status = job->parent.status;
 	job->parent.status = status;
 
-	if (old_status == JOB_STATUS_RUNNING
-	    && (job->parent.status == JOB_STATUS_FAILED
+	if (job->parent.status == JOB_STATUS_FAILED
 	    || job->parent.status == JOB_STATUS_FINISHED
-	    || job->parent.status == JOB_STATUS_CANCELED)) {
+	    || (job->parent.status == JOB_STATUS_CANCELED && old_status == JOB_STATUS_RUNNING)) {
 		if (gebrd_queues_has_next(job->parent.queue_id->str))
 			gebrd_queues_step_queue(job->parent.queue_id->str);
 		else
