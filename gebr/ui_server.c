@@ -359,7 +359,10 @@ static void server_common_actions(GtkDialog * dialog, gint arg1, struct ui_serve
  */
 static void server_list_add(struct ui_server_list *ui_server_list, const gchar * address)
 {
+	gboolean ret;
 	GtkTreeIter iter;
+	GtkTreeIter filter_iter;
+	GtkTreeIter sort_iter;
 
 	/* check if it is already in list */
 	gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(ui_server_list->common.store)) {
@@ -367,8 +370,24 @@ static void server_list_add(struct ui_server_list *ui_server_list, const gchar *
 
 		gtk_tree_model_get(GTK_TREE_MODEL(ui_server_list->common.store), &iter, SERVER_POINTER, &server, -1);
 
-		if (!strcmp(server->comm->address->str, address)) {
-			gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(ui_server_list->common.view), &iter);
+		if (strcmp (server->comm->address->str, address) == 0) {
+			ret = gtk_tree_model_filter_convert_child_iter_to_iter (
+					GTK_TREE_MODEL_FILTER (ui_server_list->common.filter),
+					&filter_iter, &iter);
+
+			if (!ret)
+				return;
+
+			ret = gtk_tree_model_sort_convert_child_iter_to_iter (
+					GTK_TREE_MODEL_SORT (ui_server_list->common.sort_store),
+					&sort_iter, &filter_iter);
+
+			if (!ret)
+				return;
+
+			gebr_gui_gtk_tree_view_select_iter (
+					GTK_TREE_VIEW (ui_server_list->common.view), &sort_iter);
+
 			return;
 		}
 	}
