@@ -10,6 +10,7 @@ syntax: glob
 *.lai
 *.lo
 *.o
+*.orig
 *.pc
 *.so
 *.so*
@@ -63,6 +64,8 @@ libgebr/geoxml/upgrade/gebr-geoxml-upgrade
 libgebr/geoxml/validate/gebr-geoxml-validate
 libgebr/gui/marshalers.[ch]
 libgebr/gui/tests/test-js
+libgebr/json/stamp*
+libgebr/json/tests/test-serialize-{boxed,complex,full,simple}
 libgebr/tests/test-gebr-tar
 libgebr/tests/test-utils
 libtool
