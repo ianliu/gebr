@@ -431,7 +431,7 @@
               <keycombo>
 		<keycap>Ctrl</keycap>
 		<mousebutton>Click</mousebutton>
-              </keycombo>. Then click the right mouse button on one of the selected programs, choose the option 
+              </keycombo>. Then right-click on one of the selected programs, choose the option 
 	<guilabel>Configured</guilabel> from the menu that appeared. All the programs that where selected will be 
 	altered to the state <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_configurado.png"/></imageobject></inlinemediaobject></guiicon>.</para>
 
@@ -598,7 +598,7 @@
       <tip>
 
         <para>Try using a <emphasis role="bold">context menu</emphasis> instead of command buttons. To do so,
-         <emphasis role="bold">click the right mouse button</emphasis> on one of the Projects or Lines you have created. 
+         <emphasis role="bold">right-click</emphasis> on one of the Projects or Lines you have created. 
 	Notice that many commands can be found in this context menu. For certain cases this method is
            <emphasis role="bold">easier and faster</emphasis> then using command buttons.</para>
 
@@ -1011,7 +1011,7 @@
       </itemizedlist>
       <tip>
 
-        <para>Instead of these buttons, try using the <emphasis role="bold">context menu</emphasis>. To do so, <emphasis role="bold"> click the right mouse button</emphasis> on a Flow you have created, notice that many features can be accessed through this method. For certain cases this is an <emphasis role="bold"> easier and simpler </emphasis> choice.</para>
+        <para>Instead of these buttons, try using the <emphasis role="bold">context menu</emphasis>. To do so, <emphasis role="bold">right-click</emphasis> on a Flow you have created, notice that many features can be accessed through this method. For certain cases this is an <emphasis role="bold"> easier and simpler </emphasis> choice.</para>
 
       </tip>
 
