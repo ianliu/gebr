@@ -322,6 +322,7 @@ void flow_edition_component_activated(void)
 
 static void open_activated(GtkEntry *entry, GtkEntryIconPosition icon_pos, GdkEvent *event)
 {
+	GebrGeoXmlSequence *line_path;
 	gchar *path = g_object_get_data(G_OBJECT(entry), "path");
 	GtkTreeIter iter;
 	gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter, path);
@@ -339,6 +340,21 @@ static void open_activated(GtkEntry *entry, GtkEntryIconPosition icon_pos, GdkEv
 	GtkWidget *dialog = gtk_file_chooser_dialog_new(NULL, GTK_WINDOW(gebr.window), action,
 							stock, GTK_RESPONSE_YES,
 							GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
+
+	gebr_geoxml_line_get_path(gebr.line, &line_path, 0);
+
+	if (line_path) {
+		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog),
+						    gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(line_path)));
+	}
+
+	while (line_path) {
+		const gchar *path_str;
+		path_str = gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(line_path));
+		gtk_file_chooser_add_shortcut_folder(GTK_FILE_CHOOSER(dialog), path_str, NULL);
+		gebr_geoxml_sequence_next(&line_path);
+	}
+
 	gtk_widget_show_all(dialog);
 	if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_YES) {
 		gchar *filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
