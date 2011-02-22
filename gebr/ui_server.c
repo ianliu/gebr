@@ -476,8 +476,17 @@ static void server_list_add(struct ui_server_list *ui_server_list, const gchar *
  */
 static void on_entry_activate(GtkEntry * entry, struct ui_server_list *ui_server_list)
 {
+	gchar *data = g_strdup (gtk_entry_get_text(entry));
+	g_strstrip (data);
+
+	if (!g_strcmp0 ( _("Type here [user@]serverhostname"), data) || strlen (data) == 0) {
+		g_free(data);
+		return;
+	}
+
 	server_list_add(ui_server_list, gebr_gui_enhanced_entry_get_text(GEBR_GUI_ENHANCED_ENTRY(entry)));
 	gtk_entry_set_text(entry, "");
+	g_free(data);
 }
 
 /* Function: on_add_clicked
@@ -488,11 +497,16 @@ static void on_add_clicked(GtkButton * button, struct ui_server_list *ui_server_
 	GtkEntry *entry;
 
 	g_object_get(button, "user-data", &entry, NULL);
+	gchar *data = g_strdup (gtk_entry_get_text(entry));
+	g_strstrip (data);
 
-	if (g_str_equal( _("Type here [user@]serverhostname"), gtk_entry_get_text(entry)))
+	if (!g_strcmp0 ( _("Type here [user@]serverhostname"), data) || strlen (data) == 0) {
+		g_free(data);
 		return;
+	}
 
 	on_entry_activate(entry, ui_server_list);
+	g_free(data);
 }
 
 static void on_combo_changed (gpointer user_data)
