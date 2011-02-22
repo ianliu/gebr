@@ -673,6 +673,9 @@ gboolean ui_server_has_tag (GebrServer *server, const gchar *tag)
 	model = GTK_TREE_MODEL (gebr.ui_server_list->common.store);
 
 	gtk_tree_model_get (model, &server->iter, SERVER_TAGS, &tags, -1);
+	if (!tags)
+		return FALSE;
+
 	tag_list = g_strsplit (tags, ",", 0);
 	for (gint i = 0; !retval && tag_list[i]; i++)
 		if (g_str_equal (tag_list[i], tag))
