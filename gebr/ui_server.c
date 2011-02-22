@@ -314,6 +314,11 @@ static void server_common_setup(struct ui_server_common *ui_server_common)
 	gtk_tree_view_column_set_sort_indicator(col, TRUE);
 
 	renderer = gtk_cell_renderer_text_new();
+	col = gtk_tree_view_column_new_with_attributes(_("File System"), renderer, NULL);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
+	gtk_tree_view_column_add_attribute(col, renderer, "text", SERVER_FS);
+
+	renderer = gtk_cell_renderer_text_new();
 	g_object_set (renderer, "editable", TRUE, NULL);
 	g_signal_connect (renderer, "edited",
 			  G_CALLBACK (on_tags_edited), ui_server_common->store);
@@ -565,13 +570,14 @@ struct ui_server_list *server_list_setup_ui(void)
 
 	ui_server_list = g_new(struct ui_server_list, 1);
 	ui_server_list->common.store = gtk_list_store_new(SERVER_N_COLUMN,
-							  GDK_TYPE_PIXBUF,	/* Status icon */
-							  G_TYPE_BOOLEAN,	/* Autoconnect */
-							  G_TYPE_STRING,	/* Server name */
-							  G_TYPE_POINTER,	/* Server pointer */
-							  G_TYPE_STRING,	/* Tag List    */
-							  G_TYPE_STRING,	/* CPU Info    */
-							  G_TYPE_STRING 	/* Memory Info */
+							  GDK_TYPE_PIXBUF,	/* Status icon		*/
+							  G_TYPE_BOOLEAN,	/* Auto connect		*/
+							  G_TYPE_STRING,	/* Server name		*/
+							  G_TYPE_POINTER,	/* Server pointer	*/
+							  G_TYPE_STRING,	/* Tag List		*/
+							  G_TYPE_STRING,	/* CPU Info		*/
+							  G_TYPE_STRING, 	/* Memory Info		*/
+							  G_TYPE_STRING 	/* File System Group	*/
 							 );
 
 	ui_server_list->common.filter = gtk_tree_model_filter_new(GTK_TREE_MODEL(ui_server_list->common.store), NULL);
