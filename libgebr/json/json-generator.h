@@ -28,8 +28,7 @@
 #ifndef __JSON_GENERATOR_H__
 #define __JSON_GENERATOR_H__
 
-#include <json/json-types.h>
-#include <gio/gio.h>
+#include <json-types.h>
 
 G_BEGIN_DECLS
 
@@ -77,19 +76,14 @@ struct _JsonGeneratorClass
 
 GType json_generator_get_type (void) G_GNUC_CONST;
 
-JsonGenerator *json_generator_new       (void);
-gchar *        json_generator_to_data   (JsonGenerator  *generator,
-                                         gsize          *length);
-gboolean       json_generator_to_file   (JsonGenerator  *generator,
-                                         const gchar    *filename,
-                                         GError        **error);
-gboolean       json_generator_to_stream (JsonGenerator  *generator,
-                                         GOutputStream  *stream,
-                                         GCancellable   *cancellable,
-                                         GError        **error);
-
-void           json_generator_set_root  (JsonGenerator  *generator,
-                                         JsonNode       *node);
+JsonGenerator *json_generator_new (void);
+gchar *        json_generator_to_data  (JsonGenerator  *generator,
+                                        gsize          *length);
+gboolean       json_generator_to_file  (JsonGenerator  *generator,
+                                        const gchar    *filename,
+                                        GError        **error);
+void           json_generator_set_root (JsonGenerator  *generator,
+                                        JsonNode       *node);
 
 G_END_DECLS
 

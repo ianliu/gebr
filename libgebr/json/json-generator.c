@@ -67,8 +67,7 @@ enum
 static gchar *dump_value  (JsonGenerator *generator,
                            gint           level,
                            const gchar   *name,
-                           JsonNode      *node,
-                           gsize         *length);
+                           JsonNode      *node);
 static gchar *dump_array  (JsonGenerator *generator,
                            gint           level,
                            const gchar   *name,
@@ -266,8 +265,7 @@ static gchar *
 dump_value (JsonGenerator *generator,
             gint           level,
             const gchar   *name,
-            JsonNode      *node,
-            gsize         *length)
+            JsonNode      *node)
 {
   JsonGeneratorPrivate *priv = generator->priv;
   gboolean pretty = priv->pretty;
@@ -309,11 +307,10 @@ dump_value (JsonGenerator *generator,
 
     case G_TYPE_DOUBLE:
       {
-        gchar buf[G_ASCII_DTOSTR_BUF_SIZE];
+        gchar buf[65];
 
-        g_string_append (buffer,
-                         g_ascii_dtostr (buf, sizeof (buf),
-                                         g_value_get_double (&value)));
+        g_ascii_formatd (buf, 65, "%d", g_value_get_double (&value));
+        g_string_append (buffer, buf);
       }
       break;
 
@@ -327,9 +324,6 @@ dump_value (JsonGenerator *generator,
     }
 
   g_value_unset (&value);
-
-  if (length)
-    *length = buffer->len;
 
   return g_string_free (buffer, FALSE);
 }
@@ -385,7 +379,7 @@ dump_array (JsonGenerator *generator,
           break;
 
         case JSON_NODE_VALUE:
-          value = dump_value (generator, sub_level, NULL, cur, NULL);
+          value = dump_value (generator, sub_level, NULL, cur);
           g_string_append (buffer, value);
           g_free (value);
           break;
@@ -480,7 +474,7 @@ dump_object (JsonGenerator *generator,
           break;
 
         case JSON_NODE_VALUE:
-          value = dump_value (generator, sub_level, member_name, cur, NULL);
+          value = dump_value (generator, sub_level, member_name, cur);
           g_string_append (buffer, value);
           g_free (value);
           break;
@@ -587,7 +581,7 @@ json_generator_to_data (JsonGenerator *generator,
       break;
 
     case JSON_NODE_VALUE:
-      retval = dump_value (generator, 0, NULL, root, length);
+      retval = NULL;
       break;
     }
 
@@ -619,43 +613,6 @@ json_generator_to_file (JsonGenerator  *generator,
 
   buffer = json_generator_to_data (generator, &len);
   retval = g_file_set_contents (filename, buffer, len, error);
-  g_free (buffer);
-
-  return retval;
-}
-
-/**
- * json_generator_to_stream:
- * @generator: a #JsonGenerator
- * @stream: a #GOutputStream
- * @cancellable: (allow-none): a #GCancellable, or %NULL
- * @error: return location for a #GError, or %NULL
- *
- * Outputs JSON data and streams it (synchronously) to @stream.
- *
- * Return value: %TRUE if the write operation was successful, and %FALSE
- *   on failure. In case of error, the #GError will be filled accordingly
- *
- * Since: 0.12
- */
-gboolean
-json_generator_to_stream (JsonGenerator  *generator,
-                          GOutputStream  *stream,
-                          GCancellable   *cancellable,
-                          GError        **error)
-{
-  gboolean retval;
-  gchar *buffer;
-  gsize len;
-
-  g_return_val_if_fail (JSON_IS_GENERATOR (generator), FALSE);
-  g_return_val_if_fail (G_IS_OUTPUT_STREAM (stream), FALSE);
-
-  if (g_cancellable_set_error_if_cancelled (cancellable, error))
-    return FALSE;
-
-  buffer = json_generator_to_data (generator, &len);
-  retval = g_output_stream_write (stream, buffer, len, cancellable, error);
   g_free (buffer);
 
   return retval;
