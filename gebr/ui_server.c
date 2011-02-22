@@ -313,10 +313,10 @@ static void server_common_actions(GtkDialog * dialog, gint arg1, struct ui_serve
 	case RESPONSE_CONNECT_ALL:{
 			GtkTreeIter iter;
 
-			gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(ui_server_common->store)) {
+			gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(ui_server_common->filter)) {
 				GebrServer *server;
 
-				gtk_tree_model_get(GTK_TREE_MODEL(ui_server_common->store), &iter,
+				gtk_tree_model_get(GTK_TREE_MODEL(ui_server_common->filter), &iter,
 						   SERVER_POINTER, &server, -1);
 
 				if (gebr_comm_server_is_logged(server->comm) == FALSE)
@@ -328,10 +328,10 @@ static void server_common_actions(GtkDialog * dialog, gint arg1, struct ui_serve
 	case RESPONSE_DISCONNECT_ALL:{
 			GtkTreeIter iter;
 
-			gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(ui_server_common->store)) {
+			gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(ui_server_common->filter)) {
 				GebrServer *server;
 
-				gtk_tree_model_get(GTK_TREE_MODEL(ui_server_common->store), &iter,
+				gtk_tree_model_get(GTK_TREE_MODEL(ui_server_common->filter), &iter,
 						   SERVER_POINTER, &server, -1);
 
 				if (gebr_comm_server_is_logged(server->comm) == TRUE)
