@@ -14,10 +14,6 @@ json_parser_error_get_type(void) {
     {
       static const GEnumValue values[] = {
         { JSON_PARSER_ERROR_PARSE, "JSON_PARSER_ERROR_PARSE", "parse" },
-        { JSON_PARSER_ERROR_TRAILING_COMMA, "JSON_PARSER_ERROR_TRAILING_COMMA", "trailing-comma" },
-        { JSON_PARSER_ERROR_MISSING_COMMA, "JSON_PARSER_ERROR_MISSING_COMMA", "missing-comma" },
-        { JSON_PARSER_ERROR_MISSING_COLON, "JSON_PARSER_ERROR_MISSING_COLON", "missing-colon" },
-        { JSON_PARSER_ERROR_INVALID_BAREWORD, "JSON_PARSER_ERROR_INVALID_BAREWORD", "invalid-bareword" },
         { JSON_PARSER_ERROR_UNKNOWN, "JSON_PARSER_ERROR_UNKNOWN", "unknown" },
         { 0, NULL, NULL }
       };

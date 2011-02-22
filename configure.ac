@@ -218,13 +218,6 @@ PKG_CHECK_MODULES([GLIB],
 AC_SUBST(GLIB_LIBS)
 AC_SUBST(GLIB_CFLAGS)
 
-PKG_CHECK_MODULES([GIO],
-		  [gio-2.0 >= 2.12.0],
-		  [],
-		  [AC_MSG_ERROR([Could not find gio >= 2.12.0])])
-AC_SUBST(GIO_LIBS)
-AC_SUBST(GIO_CFLAGS)
-
 PKG_CHECK_MODULES([GOBJECT],
 		  [gobject-2.0 >= 2.8],
 		  [],
@@ -266,13 +259,13 @@ GEBR_CFLAGS='-I$(top_srcdir) -I$(top_srcdir)/libgebr $(GLIB_CFLAGS) $(GOBJECT_CF
 GEBR_GEOXML_CFLAGS='-I$(top_srcdir)/libgebr/geoxml $(GDOME2_CFLAGS) $(TIDY_FLAGS)'
 GEBR_COMM_CFLAGS='-I$(top_srcdir)/libgebr/comm'
 GEBR_GUI_CFLAGS='-I$(top_srcdir)/libgebr/gui $(GTK_CFLAGS) $(WEBKIT_CFLAGS)'
-GEBR_JSON_CFLAGS='-I$(top_srcdir)/libgebr/json $(GLIB_CFLAGS) $(GOBJECT_CFLAGS) $(GIO_CFLAGS)'
+GEBR_JSON_CFLAGS='-I$(top_srcdir)/libgebr/json $(GLIB_CFLAGS) $(GOBJECT_CFLAGS)'
 
 GEBR_LIBS='$(top_builddir)/libgebr/libgebr.la $(GLIB_LIBS) $(GOBJECT_LIBS) $(GTHREAD_LIBS)'
 GEBR_GEOXML_LIBS='$(top_builddir)/libgebr/geoxml/libgebr_geoxml.la $(GDOME2_LIBS) $(TIDY_LIBS)'
 GEBR_COMM_LIBS='$(top_builddir)/libgebr/comm/libgebr_comm.la'
 GEBR_GUI_LIBS='$(top_srcdir)/libgebr/gui/libgebr_gui.la $(GTK_LIBS) $(WEBKIT_LIBS)'
-GEBR_JSON_LIBS='$(top_builddir)/libgebr/json/libgebr_json.la $(GLIB_LIBS) $(GOBJECT_LIBS) $(GIO_LIBS) -lm'
+GEBR_JSON_LIBS='$(top_builddir)/libgebr/json/libgebr_json.la $(GLIB_LIBS) $(GOBJECT_LIBS) -lm'
 
 AC_SUBST(GEBR_CFLAGS)
 AC_SUBST(GEBR_GEOXML_CFLAGS)

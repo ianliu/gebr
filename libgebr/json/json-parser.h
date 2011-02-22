@@ -29,8 +29,7 @@
 #define __JSON_PARSER_H__
 
 #include <glib-object.h>
-#include <gio/gio.h>
-#include <json/json-types.h>
+#include "json-types.h"
 
 G_BEGIN_DECLS
 
@@ -50,22 +49,12 @@ typedef struct _JsonParserClass         JsonParserClass;
 /**
  * JsonParserError:
  * @JSON_PARSER_ERROR_PARSE: parse error
- * @JSON_PARSER_ERROR_TRAILING_COMMA: unexpected trailing comma
- * @JSON_PARSER_ERROR_MISSING_COMMA: expected comma
- * @JSON_PARSER_ERROR_MISSING_COLON: expected colon
- * @JSON_PARSER_ERROR_INVALID_BAREWORD: invalid bareword
  * @JSON_PARSER_ERROR_UNKNOWN: unknown error
  *
  * Error enumeration for #JsonParser
- *
- * This enumeration can be extended at later date
  */
 typedef enum {
   JSON_PARSER_ERROR_PARSE,
-  JSON_PARSER_ERROR_TRAILING_COMMA,
-  JSON_PARSER_ERROR_MISSING_COMMA,
-  JSON_PARSER_ERROR_MISSING_COLON,
-  JSON_PARSER_ERROR_INVALID_BAREWORD,
   
   JSON_PARSER_ERROR_UNKNOWN
 } JsonParserError;
@@ -137,36 +126,24 @@ struct _JsonParserClass
   void (* _json_reserved8) (void);
 };
 
-GQuark json_parser_error_quark (void);
-GType json_parser_get_type (void) G_GNUC_CONST;
+GQuark      json_parser_error_quark      (void);
+GType       json_parser_get_type         (void) G_GNUC_CONST;
 
-JsonParser *json_parser_new                     (void);
-gboolean    json_parser_load_from_file          (JsonParser           *parser,
-                                                 const gchar          *filename,
-                                                 GError              **error);
-gboolean    json_parser_load_from_data          (JsonParser           *parser,
-                                                 const gchar          *data,
-                                                 gssize                length,
-                                                 GError              **error);
-gboolean    json_parser_load_from_stream        (JsonParser           *parser,
-                                                 GInputStream         *stream,
-                                                 GCancellable         *cancellable,
-                                                 GError              **error);
-void        json_parser_load_from_stream_async  (JsonParser           *parser,
-                                                 GInputStream         *stream,
-                                                 GCancellable         *cancellable,
-                                                 GAsyncReadyCallback   callback,
-                                                 gpointer              user_data);
-gboolean    json_parser_load_from_stream_finish (JsonParser           *parser,
-                                                 GAsyncResult         *result,
-                                                 GError              **error);
+JsonParser *json_parser_new              (void);
+gboolean    json_parser_load_from_file   (JsonParser   *parser,
+                                          const gchar  *filename,
+                                          GError      **error);
+gboolean    json_parser_load_from_data   (JsonParser   *parser,
+                                          const gchar  *data,
+                                          gssize        length,
+                                          GError      **error);
 
-JsonNode *  json_parser_get_root                (JsonParser           *parser);
+JsonNode *  json_parser_get_root         (JsonParser   *parser);
 
-guint       json_parser_get_current_line        (JsonParser           *parser);
-guint       json_parser_get_current_pos         (JsonParser           *parser);
-gboolean    json_parser_has_assignment          (JsonParser           *parser,
-                                                 gchar               **variable_name);
+guint       json_parser_get_current_line (JsonParser   *parser);
+guint       json_parser_get_current_pos  (JsonParser   *parser);
+gboolean    json_parser_has_assignment   (JsonParser   *parser,
+                                          gchar       **variable_name);
 
 G_END_DECLS
 
