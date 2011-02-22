@@ -234,6 +234,25 @@ static void on_tags_edited (GtkCellRendererText *cell,
 		ui_server_set_tags (server, new_text);
 }
 
+static void on_ac_toggled (GtkCellRendererToggle *cell_renderer,
+			   gchar *path,
+			   struct ui_server_common *ui_server_common)
+{
+	gboolean ac;
+	GebrServer *server;
+	GtkTreeIter iter;
+	GtkTreeModel *model;
+
+	model = GTK_TREE_MODEL (ui_server_common->sort_store);
+
+	if (!gtk_tree_model_get_iter_from_string (model, &iter, path))
+		return;
+
+	gtk_tree_model_get (model, &iter, SERVER_POINTER, &server, -1);
+	ac = gebr_server_get_autoconnect (server);
+	gebr_server_set_autoconnect (server, !ac);
+}
+
 /* Function: server_common_setup
  * Setup common server dialogs stuff
  */
@@ -269,6 +288,8 @@ static void server_common_setup(struct ui_server_common *ui_server_common)
 	gtk_tree_view_column_add_attribute(col, renderer, "pixbuf", SERVER_STATUS_ICON);
 
 	renderer = gtk_cell_renderer_toggle_new();
+	g_object_set (renderer, "activatable", TRUE, NULL);
+	g_signal_connect (renderer, "toggled", G_CALLBACK (on_ac_toggled), ui_server_common);
 	col = gtk_tree_view_column_new_with_attributes(_("AC"), renderer, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
 	gtk_tree_view_column_add_attribute(col, renderer, "active", SERVER_AUTOCONNECT);
