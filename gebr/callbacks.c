@@ -510,7 +510,8 @@ void on_server_common_connect(void)
 		gtk_tree_model_get (gebr.ui_server_list->common.sort_store, &iter,
 				    SERVER_POINTER, &server,
 				    -1);
-		gebr_comm_server_connect(server->comm);
+		if (!server->comm->socket->protocol->logged)
+			gebr_comm_server_connect(server->comm);
 	}
 }
 
@@ -522,7 +523,8 @@ void on_server_common_disconnect(void)
 		gtk_tree_model_get (gebr.ui_server_list->common.sort_store, &iter,
 				    SERVER_POINTER, &server,
 				    -1);
-		gebr_comm_server_disconnect(server->comm);
+		if (server->comm->socket->protocol->logged)
+			gebr_comm_server_disconnect(server->comm);
 	}
 }
 
