@@ -15,6 +15,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 include $(top_srcdir)/Makefile.decl
 
-SUBDIRS = en pt_BR
+SUBDIRS = en pt_BR common-images
 
 EXTRA_DIST=gebr-guide.xsl

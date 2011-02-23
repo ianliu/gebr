@@ -277,8 +277,10 @@ AC_SUBST(GEBR_GUI_LIBS)
 
 AC_CONFIG_FILES([
 Makefile
+
 docs/Makefile
 docs/gebr/Makefile
+docs/gebr/common-image
 docs/gebr/en/Makefile
 docs/gebr/pt_BR/Makefile
 docs/reference/Makefile
