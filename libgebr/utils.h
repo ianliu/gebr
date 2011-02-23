@@ -101,15 +101,18 @@ int g_strcmp0(const char * str1, const char * str2);
 #endif
 
 /**
- * gebr_paths_equal:
- * @dir1: the first path
- * @dir2: the second path
+ * gebr_realpath_equal:
+ * @path1: the first path
+ * @path2: the second path
  *
- * Compares the paths for equality by calling g_stat() on both of them and comparing their inode parameters.
+ * Compares if path1 and path2 resolves to the same file.
+ * The paths compared for equality by calling g_stat() on both of them
+ * and comparing their inode parameters are the same.
  *
  * Returns: %TRUE if @path1 points to the same file/directory as @path2.
+ * %FALSE otherwise, including if one or both of then does not exists in the file system.
  */
-gboolean gebr_paths_equal (const gchar *path1, const gchar *path2);
+gboolean gebr_realpath_equal (const gchar *path1, const gchar *path2);
 
 /**
  * gebr_str_escape:

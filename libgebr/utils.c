@@ -494,19 +494,17 @@ int g_strcmp0(const char * str1, const char * str2)
 }
 #endif
 
-gboolean gebr_paths_equal (const gchar *path1, const gchar *path2)
+gboolean gebr_realpath_equal (const gchar *path1, const gchar *path2)
 {
 	struct stat stat1, stat2;
 
 	if (g_stat (path1, &stat1) != 0)
 	{
-		g_warning("Impossible to do g_stat to path: %s.\n", path1);
 		return FALSE;
 	}
 
 	if (g_stat (path2, &stat2) != 0)
 	{
-		g_warning("Impossible to do g_stat to path: %s.\n", path2);
 		return FALSE;
 	}
 
