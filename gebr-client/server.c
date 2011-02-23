@@ -22,8 +22,7 @@
 
 #include <glib/gi18n.h>
 #include <libgebr/geoxml/geoxml.h>
-#include <libgebr/comm/gebr-comm-streamsocket.h>
-#include <libgebr/comm/gebr-comm-protocol.h>
+#include <libgebr/comm/gebr-comm-protocol-socket.h>
 
 #include "server.h"
 #include "gebrclient.h"
@@ -63,7 +62,7 @@ static gboolean server_ssh_question(const gchar * title, const gchar * message)
 	return FALSE;
 }
 
-static void server_disconnected(GebrCommStreamSocket * stream_socket, struct server *server)
+static void server_disconnected(GebrCommProtocolSocket  * socket, struct server *server)
 {
 //      TODO:
 
@@ -91,7 +90,7 @@ struct server *server_new(const gchar * address)
 	server->comm = gebr_comm_server_new(address, &ops);
 	server->comm->user_data = server;
 
-	g_signal_connect(server->comm->stream_socket, "disconnected", G_CALLBACK(server_disconnected), server);
+	g_signal_connect(server->comm->socket, "disconnected", G_CALLBACK(server_disconnected), server);
 
 	gebr_comm_server_connect(server->comm);
 

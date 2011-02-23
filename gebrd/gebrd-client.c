@@ -34,8 +34,8 @@
  * Private functions
  */
 
-static void client_disconnected(GebrCommStreamSocket * socket, struct client *client);
-static void client_old_parse_messages(GebrCommStreamSocket * socket, struct client *client);
+static void client_disconnected(GebrCommProtocolSocket * socket, struct client *client);
+static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct client *client);
 
 
 /*
@@ -64,7 +64,7 @@ void client_free(struct client *client)
 	g_free(client);
 }
 
-static void client_disconnected(GebrCommStreamSocket * socket, struct client *client)
+static void client_disconnected(GebrCommProtocolSocket * socket, struct client *client)
 {
 	gebrd_message(GEBR_LOG_DEBUG, "client_disconnected");
 
@@ -72,7 +72,7 @@ static void client_disconnected(GebrCommStreamSocket * socket, struct client *cl
 	client_free(client);
 }
 
-static void client_old_parse_messages(GebrCommStreamSocket * socket, struct client *client)
+static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct client *client)
 {
 	if (server_parse_client_messages(client) == FALSE)
 		client_disconnected(socket, client);
