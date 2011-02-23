@@ -74,6 +74,7 @@ struct gebr {
 	GtkActionGroup *action_group_flow_edition;
 	GtkActionGroup *action_group_job_control;
 	GtkActionGroup *action_group_status;
+	GtkActionGroup *action_group_server;
 
 	/** \deprecated This should be avoided. Use Stock icons instead. */
 	GtkWidget *invisible;			

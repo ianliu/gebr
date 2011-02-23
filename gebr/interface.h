@@ -40,6 +40,7 @@ enum {
     ACCEL_JOB_CONTROL,
     ACCEL_GENERAL,
     ACCEL_STATUS,
+    ACCEL_SERVER,
     ACCEL_N
 };
 void gebr_setup_ui(void);

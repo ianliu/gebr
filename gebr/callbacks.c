@@ -501,3 +501,68 @@ void on_notebook_switch_page (GtkNotebook     *notebook,
     gtk_window_add_accel_group(GTK_WINDOW(gebr.window), gebr.accel_group_array[page_num]);
     gebr.last_notebook = page_num;
 }
+
+void on_server_common_connect(void)
+{
+	GebrServer *server;
+	GtkTreeIter iter;
+	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_server_list->common.view) {
+		gtk_tree_model_get (gebr.ui_server_list->common.sort_store, &iter,
+				    SERVER_POINTER, &server,
+				    -1);
+		gebr_comm_server_connect(server->comm);
+	}
+}
+
+void on_server_common_disconnect(void)
+{
+	GebrServer *server;
+	GtkTreeIter iter;
+	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_server_list->common.view) {
+		gtk_tree_model_get (gebr.ui_server_list->common.sort_store, &iter,
+				    SERVER_POINTER, &server,
+				    -1);
+		gebr_comm_server_disconnect(server->comm);
+	}
+}
+
+void on_server_common_autoconnect_changed(void)
+{
+	GebrServer *server;
+	GtkTreeIter iter;
+	gboolean ac;
+
+	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_server_list->common.view) {
+		gtk_tree_model_get (gebr.ui_server_list->common.sort_store, &iter,
+				    SERVER_POINTER, &server,
+				    -1);
+		ac = gebr_server_get_autoconnect (server);
+		gebr_server_set_autoconnect (server, !ac);
+	}
+}
+
+void on_server_common_remove(void)
+{
+	GebrServer *server;
+	GtkTreeIter iter;
+	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_server_list->common.view) {
+		gtk_tree_model_get (gebr.ui_server_list->common.sort_store, &iter,
+				    SERVER_POINTER, &server,
+				    -1);
+		server_free(server);
+	}
+	ui_server_update_tags_combobox ();
+}
+
+void on_server_common_stop(void)
+{
+	GebrServer *server;
+	GtkTreeIter iter;
+	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_server_list->common.view) {
+		gtk_tree_model_get (gebr.ui_server_list->common.sort_store, &iter,
+				    SERVER_POINTER, &server,
+				    -1);
+		gebr_comm_server_kill(server->comm);
+	}
+}
+

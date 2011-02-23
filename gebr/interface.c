@@ -167,6 +167,22 @@ static const GtkActionEntry status_action_entries[] = {
 		NULL, N_("Change selected Programs status to not configured"), NULL}
 };
 
+static const GtkActionEntry actions_entries_server[] = {
+	/*
+	 *  Server Configurations
+	 */
+	{"server_connect", GTK_STOCK_CONNECT, N_("Connect"),
+		NULL, N_("Connect to the server"), G_CALLBACK(on_server_common_connect)},
+	{"server_disconnect", GTK_STOCK_DISCONNECT, N_("Disconnect"),
+		NULL, N_("Disconnect from server"), G_CALLBACK(on_server_common_disconnect)},
+	{"server_autoconnect", NULL, N_("Auto connect"),
+		NULL, N_("Connect the server at startup"), G_CALLBACK(on_server_common_autoconnect_changed)},
+	{"server_remove", GTK_STOCK_REMOVE, N_("Remove"),
+		NULL, N_("Remove server from list"), G_CALLBACK(on_server_common_remove)},
+	{"server_stop", GTK_STOCK_STOP, N_("Stop server"),
+		NULL, N_("Stop server from running"), G_CALLBACK(on_server_common_stop)},
+};
+
 /*
  * Prototypes functions
  */
@@ -238,6 +254,12 @@ void gebr_setup_ui(void)
 	gtk_action_group_add_actions(gebr.action_group_status, status_action_entries, G_N_ELEMENTS(status_action_entries), NULL);
 	gebr.accel_group_array[ACCEL_STATUS] = gtk_accel_group_new();
 	gebr_gui_gtk_action_group_set_accel_group(gebr.action_group_status, gebr.accel_group_array[ACCEL_STATUS]);
+
+	gebr.action_group_server = gtk_action_group_new("Server Configuration");
+	gtk_action_group_set_translation_domain(gebr.action_group_server, GETTEXT_PACKAGE);
+	gtk_action_group_add_actions(gebr.action_group_server, actions_entries_server, G_N_ELEMENTS(actions_entries_server), NULL);
+	gebr.accel_group_array[ACCEL_SERVER] = gtk_accel_group_new();
+	gebr_gui_gtk_action_group_set_accel_group(gebr.action_group_server, gebr.accel_group_array[ACCEL_SERVER]);
 
 	/* Signals */
 	g_signal_connect(GTK_OBJECT(gebr.window), "delete_event", G_CALLBACK(on_quit_activate), NULL);

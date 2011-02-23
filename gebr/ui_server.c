@@ -88,100 +88,27 @@ server_common_tooltip_callback(GtkTreeView * tree_view, GtkTooltip * tooltip,
 	return FALSE;
 }
 
-/* Function: server_common_connect
- * Callback for popup menu action
- */
-static void server_common_connect(GtkMenuItem * menu_item, GebrServer *server)
-{
-	gebr_comm_server_connect(server->comm);
-}
-
-/* Function: server_common_disconnect
- * Callback for popup menu action
- */
-static void server_common_disconnect(GtkMenuItem * menu_item, GebrServer *server)
-{
-	gebr_comm_server_disconnect(server->comm);
-}
-
-/* Function: server_common_autoconnect
- * Callback for popup menu action
- */
-static void server_common_autoconnect_changed(GtkMenuItem * menu_item, GebrServer *server)
-{
-	gtk_list_store_set(gebr.ui_server_list->common.store, &server->iter,
-			   SERVER_AUTOCONNECT, gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(menu_item)), -1);
-}
-
-/* Function: server_common_remove
- * Callback for popup menu action
- */
-static void server_common_remove(GtkMenuItem * menu_item, GebrServer *server)
-{
-	server_free(server);
-	ui_server_update_tags_combobox ();
-}
-
-/* Function: server_common_stop
- * Send server command to kill daemon
- */
-static void server_common_stop(GtkMenuItem * menu_item, GebrServer *server)
-{
-	gebr_comm_server_kill(server->comm);
-}
-
 /* Function; server_common_popup_menu
  * Context menu for server tree view
  */
 static GtkMenu *server_common_popup_menu(GtkWidget * widget, struct ui_server_common *ui_server_common)
 {
 	GtkTreeSelection *selection;
-	GtkTreeModel *model;
-	GtkTreeIter iter;
 
 	GtkWidget *menu;
-	GtkWidget *menu_item;
-
-	GebrServer *server;
-	gboolean autoconnect;
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_server_common->view));
-	if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE)
+	if (gtk_tree_selection_count_selected_rows(selection) < 1)
 		return NULL;
 
-	gtk_tree_model_get(model, &iter, SERVER_POINTER, &server, SERVER_AUTOCONNECT, &autoconnect, -1);
 	menu = gtk_menu_new();
-
-	/* connect */
-	if (!server->comm->socket->protocol->logged) {
-		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_CONNECT, NULL);
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-		g_signal_connect(menu_item, "activate", G_CALLBACK(server_common_connect), server);
-	} else {
-		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_DISCONNECT, NULL);
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-		g_signal_connect(menu_item, "activate", G_CALLBACK(server_common_disconnect), server);
-	}
-	/* autoconnect */
-	menu_item = gtk_check_menu_item_new_with_label(_("Autoconnect"));
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-	g_signal_connect(menu_item, "toggled", G_CALLBACK(server_common_autoconnect_changed), server);
-	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item), autoconnect);
-	/* remove */
-	if (!gebr_comm_server_is_local(server->comm)) {
-		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_REMOVE, NULL);
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-		g_signal_connect(menu_item, "activate", G_CALLBACK(server_common_remove), server);
-	}
-	/* stop server */
-	menu_item = gtk_image_menu_item_new_with_label(_("Stop server"));
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menu_item),
-				      gtk_image_new_from_stock(GTK_STOCK_STOP, GTK_ICON_SIZE_MENU));
-	g_signal_connect(menu_item, "activate", G_CALLBACK(server_common_stop), server);
+	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_server, "server_connect")));
+	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_server, "server_disconnect")));
+	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_server, "server_autoconnect")));
+	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_server, "server_remove")));
+	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_server, "server_stop")));
 
 	gtk_widget_show_all(menu);
-
 	return GTK_MENU(menu);
 }
 
@@ -192,35 +119,10 @@ static void on_tags_edited (GtkCellRendererText *cell,
 {
 	gchar *tags;
 	GtkTreeIter iter;
-	GtkTreePath *model_path;
-	GtkTreePath *filter_path;
-	GtkTreePath *sorted_path;
 	GebrServer *server;
 	gboolean ret;
 
-	ret = gtk_tree_model_get_iter_from_string (
-			GTK_TREE_MODEL (gebr.ui_server_list->common.sort_store),
-			&iter, pathstr);
-
-	if (!ret)
-		return;
-
-	// This code resolves the pathstr variable to the original tree model.
-	// Welcome to Hell.
-
-	sorted_path = gtk_tree_model_get_path (
-			GTK_TREE_MODEL (gebr.ui_server_list->common.sort_store),
-			&iter);
-
-	filter_path = gtk_tree_model_sort_convert_path_to_child_path (
-			GTK_TREE_MODEL_SORT (gebr.ui_server_list->common.sort_store),
-			sorted_path);
-
-	model_path = gtk_tree_model_filter_convert_path_to_child_path (
-			GTK_TREE_MODEL_FILTER (gebr.ui_server_list->common.filter),
-			filter_path);
-
-	ret = gtk_tree_model_get_iter (model, &iter, model_path);
+	ret = gtk_tree_model_get_iter_from_string (model, &iter, pathstr);
 
 	if (!ret)
 		return;
@@ -272,6 +174,8 @@ static void server_common_setup(struct ui_server_common *ui_server_common)
 				       GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 
 	view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_server_common->sort_store));
+	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(view)),
+				    GTK_SELECTION_MULTIPLE);
 	gtk_container_add(GTK_CONTAINER(scrolled_window), view);
 	ui_server_common->view = view;
 	gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(view),
@@ -321,7 +225,7 @@ static void server_common_setup(struct ui_server_common *ui_server_common)
 	renderer = gtk_cell_renderer_text_new();
 	g_object_set (renderer, "editable", TRUE, NULL);
 	g_signal_connect (renderer, "edited",
-			  G_CALLBACK (on_tags_edited), ui_server_common->store);
+			  G_CALLBACK (on_tags_edited), ui_server_common->sort_store);
 	col = gtk_tree_view_column_new_with_attributes(_("Groups"), renderer, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
 	gtk_tree_view_column_add_attribute(col, renderer, "text", SERVER_TAGS);
