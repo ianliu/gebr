@@ -39,6 +39,7 @@ libgebr_comm_la_SOURCES = \
 	gebr-comm-process.c		\
 	gebr-comm-terminalprocess.c	\
 	gebr-comm-protocol.c		\
+	gebr-comm-protocol-socket.c	\
 	gebr-comm-job.c			\
 	gebr-comm-server.c
 
@@ -53,10 +54,12 @@ libgebr_commsubinclude_HEADERS = \
 	gebr-comm-process.h		\
 	gebr-comm-terminalprocess.h	\
 	gebr-comm-protocol.h		\
+	gebr-comm-protocol-socket.h	\
 	gebr-comm-job.h			\
 	gebr-comm-server.h
 
 noinst_HEADERS = \
+	gebr-comm-protocol_p.h			\
 	gebr-comm-socketaddressprivate.h	\
 	gebr-comm-socketprivate.h		\
 	gebr-comm-streamsocketprivate.h

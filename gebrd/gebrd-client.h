@@ -19,7 +19,7 @@
 #define __CLIENT_H
 
 #include <glib.h>
-#include <libgebr/comm/gebr-comm-streamsocket.h>
+#include <libgebr/comm/gebr-comm-protocol-socket.h>
 #include <libgebr/comm/gebr-comm-server.h>
 
 G_BEGIN_DECLS
@@ -27,8 +27,7 @@ G_BEGIN_DECLS
 struct gebr_comm_protocol;
 
 struct client {
-	GebrCommStreamSocket *stream_socket;
-	struct gebr_comm_protocol *protocol;
+	GebrCommProtocolSocket *socket;
 	GebrCommServerLocation server_location;
 	/* x11 redirected display, if server is remote. if local this is the true display */
 	GString *display;

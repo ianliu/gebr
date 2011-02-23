@@ -235,8 +235,9 @@ void job_close(GebrJob *job, gboolean force, gboolean verbose)
 	}
 
 	if (gebr_comm_server_is_logged(job->server->comm))
-		gebr_comm_protocol_send_data(job->server->comm->protocol, job->server->comm->stream_socket,
-					     gebr_comm_protocol_defs.clr_def, 1, job->parent.jid->str);
+		gebr_comm_protocol_socket_oldmsg_send(job->server->comm->socket, FALSE,
+						      gebr_comm_protocol_defs.clr_def, 1,
+						      job->parent.jid->str);
 
 	job_delete(job);
 }

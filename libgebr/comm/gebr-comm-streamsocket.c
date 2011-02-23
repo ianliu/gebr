@@ -56,10 +56,14 @@ static void gebr_comm_stream_socket_class_init(GebrCommStreamSocketClass * class
 	class->parent.disconnected = (typeof(class->parent.disconnected)) __gebr_comm_stream_socket_disconnected;
 
 	/* signals */
-	object_signals[CONNECTED] = g_signal_new("connected", GEBR_COMM_STREAM_SOCKET_TYPE, (GSignalFlags) (G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION), G_STRUCT_OFFSET(GebrCommStreamSocketClass, connected), NULL, NULL,	/* acumulators */
-						 g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
-	object_signals[DISCONNECTED] = g_signal_new("disconnected", GEBR_COMM_STREAM_SOCKET_TYPE, (GSignalFlags) (G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION), G_STRUCT_OFFSET(GebrCommStreamSocketClass, disconnected), NULL, NULL,	/* acumulators */
-						    g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
+	object_signals[CONNECTED] = g_signal_new("connected", GEBR_COMM_STREAM_SOCKET_TYPE,
+						 (GSignalFlags) (G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
+						 G_STRUCT_OFFSET(GebrCommStreamSocketClass, connected),
+						 NULL, NULL, g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
+	object_signals[DISCONNECTED] = g_signal_new("disconnected", GEBR_COMM_STREAM_SOCKET_TYPE,
+						    (GSignalFlags) (G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
+						    G_STRUCT_OFFSET(GebrCommStreamSocketClass, disconnected), NULL,
+						    NULL, g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
 }
 
 static void gebr_comm_stream_socket_init(GebrCommStreamSocket * stream_socket)

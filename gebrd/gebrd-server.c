@@ -169,9 +169,6 @@ gboolean server_init(void)
 	if (!server_fs_lock())
 		goto err;
 
-	/* protocol */
-	gebr_comm_protocol_init();
-
 	/* connecting signal TERM */
 	struct sigaction act;
 	act.sa_sigaction = (typeof(act.sa_sigaction)) & gebrd_quit;
@@ -211,8 +208,6 @@ void server_free(void)
 	/* client */
 	g_list_foreach(gebrd.clients, (GFunc) client_free, NULL);
 	g_list_free(gebrd.clients);
-
-	gebr_comm_protocol_destroy();
 }
 
 void server_quit(void)
@@ -235,7 +230,7 @@ gboolean server_parse_client_messages(struct client *client)
 	GList *link;
 	struct gebr_comm_message *message;
 
-	while ((link = g_list_last(client->protocol->messages)) != NULL) {
+	while ((link = g_list_last(client->socket->protocol->messages)) != NULL) {
 		message = (struct gebr_comm_message *)link->data;
 
 		/* check login */
@@ -252,7 +247,7 @@ gboolean server_parse_client_messages(struct client *client)
 			queue_list = g_string_new("");
 
 			/* organize message data */
-			if ((arguments = gebr_comm_protocol_split_new(message->argument, 4)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 4)) == NULL)
 				goto err;
 			version = g_list_nth_data(arguments, 0);
 			hostname = g_list_nth_data(arguments, 1);
@@ -260,16 +255,15 @@ gboolean server_parse_client_messages(struct client *client)
 			x11 = g_list_nth_data(arguments, 3);
 
 			if (strcmp(version->str, PROTOCOL_VERSION)) {
-				gebr_comm_protocol_send_data_immediately(client->protocol, client->stream_socket,
+				gebr_comm_protocol_socket_oldmsg_send(client->socket, TRUE,
 								      gebr_comm_protocol_defs.err_def, 1,
 								      "Client/server version mismatch (GeBRd version is "GEBRD_VERSION")");
-				gebr_comm_socket_flush(GEBR_COMM_SOCKET(client->stream_socket));
 				goto err;
 			}
 
 			/* set client info */
-			client->protocol->logged = TRUE;
-			g_string_assign(client->protocol->hostname, hostname->str);
+			client->socket->protocol->logged = TRUE;
+			g_string_assign(client->socket->protocol->hostname, hostname->str);
 			if (!strcmp(place->str, "local"))
 				client->server_location = GEBR_COMM_SERVER_LOCATION_LOCAL;
 			else if (!strcmp(place->str, "remote"))
@@ -322,25 +316,21 @@ gboolean server_parse_client_messages(struct client *client)
 			GebrdMemInfo *meminfo = gebrd_mem_info_new();
 			model_name = gebrd_cpu_info_get (cpuinfo, 0, "model name");
 			total_memory = gebrd_mem_info_get (meminfo, "MemTotal");
-			gebr_comm_protocol_send_data(client->protocol, client->stream_socket,
-						     gebr_comm_protocol_defs.ret_def, 8,
-						     gebrd.hostname,
-						     display_port->str,
-						     queue_list->str,
-						     server_type,
-						     accounts_list->str,
-						     model_name,
-						     total_memory,
-						     gebrd.fs_lock->str);
+			gebr_comm_protocol_socket_oldmsg_send(client->socket, FALSE,
+							      gebr_comm_protocol_defs.ret_def, 8,
+							      gebrd.hostname, display_port->str,
+							      queue_list->str, server_type,
+							      accounts_list->str, model_name,
+							      total_memory, gebrd.fs_lock->str);
 
 			gebrd_cpu_info_free (cpuinfo);
 			gebrd_mem_info_free (meminfo);
-			gebr_comm_protocol_split_free(arguments);
+			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 			g_string_free(display_port, TRUE);
 			g_string_free(accounts_list, TRUE);
 			g_string_free(queue_list, TRUE);
 
-		} else if (client->protocol->logged == FALSE) {
+		} else if (client->socket->protocol->logged == FALSE) {
 			/* not logged! */
 			goto err;
 		} else if (message->hash == gebr_comm_protocol_defs.qut_def.code_hash) {
@@ -355,7 +345,7 @@ gboolean server_parse_client_messages(struct client *client)
 			GebrdJob *job;
 
 			/* organize message data */
-			if ((arguments = gebr_comm_protocol_split_new(message->argument, 5)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 5)) == NULL)
 				goto err;
 			xml = g_list_nth_data(arguments, 0);
 			account = g_list_nth_data(arguments, 1);
@@ -372,8 +362,9 @@ gboolean server_parse_client_messages(struct client *client)
 #endif
 
 			/* run message return with the job_id and the temporary id created by the client */
-			gebr_comm_protocol_send_data(client->protocol, client->stream_socket,
-						     gebr_comm_protocol_defs.ret_def, 2, job->parent.jid->str, job->parent.run_id->str);
+			gebr_comm_protocol_socket_oldmsg_send(client->socket, FALSE,
+							      gebr_comm_protocol_defs.ret_def, 2,
+							      job->parent.jid->str, job->parent.run_id->str);
 			/* assign queue name for immediately jobs (only for regular, moab is already set) */
 			if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_REGULAR &&
 			    (!queue->len || queue->str[0] == 'j')) {
@@ -401,13 +392,13 @@ gboolean server_parse_client_messages(struct client *client)
 			}
 
 			/* frees */
-			gebr_comm_protocol_split_free(arguments);
+			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		} else if (message->hash == gebr_comm_protocol_defs.rnq_def.code_hash) {
 			GList *arguments;
 			GString *oldname, *newname;
 
 			/* organize message data */
-			if ((arguments = gebr_comm_protocol_split_new(message->argument, 2)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
 				goto err;
 			oldname = g_list_nth_data(arguments, 0);
 			newname = g_list_nth_data(arguments, 1);
@@ -415,7 +406,7 @@ gboolean server_parse_client_messages(struct client *client)
 			gebrd_queues_rename(oldname->str, newname->str);
 
 			/* frees */
-			gebr_comm_protocol_split_free(arguments);
+			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		} else if (message->hash == gebr_comm_protocol_defs.flw_def.code_hash) {
 			/* TODO: */
 		} else if (message->hash == gebr_comm_protocol_defs.clr_def.code_hash) {
@@ -424,7 +415,7 @@ gboolean server_parse_client_messages(struct client *client)
 			GebrdJob *job;
 
 			/* organize message data */
-			if ((arguments = gebr_comm_protocol_split_new(message->argument, 1)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 1)) == NULL)
 				goto err;
 			jid = g_list_nth_data(arguments, 0);
 
@@ -433,14 +424,14 @@ gboolean server_parse_client_messages(struct client *client)
 				job_clear(job);
 
 			/* frees */
-			gebr_comm_protocol_split_free(arguments);
+			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		} else if (message->hash == gebr_comm_protocol_defs.end_def.code_hash) {
 			GList *arguments;
 			GString *jid;
 			GebrdJob *job;
 
 			/* organize message data */
-			if ((arguments = gebr_comm_protocol_split_new(message->argument, 1)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 1)) == NULL)
 				goto err;
 			jid = g_list_nth_data(arguments, 0);
 
@@ -451,14 +442,14 @@ gboolean server_parse_client_messages(struct client *client)
 			}
 
 			/* frees */
-			gebr_comm_protocol_split_free(arguments);
+			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		} else if (message->hash == gebr_comm_protocol_defs.kil_def.code_hash) {
 			GList *arguments;
 			GString *jid;
 			GebrdJob *job;
 
 			/* organize message data */
-			if ((arguments = gebr_comm_protocol_split_new(message->argument, 1)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 1)) == NULL)
 				goto err;
 			jid = g_list_nth_data(arguments, 0);
 
@@ -469,20 +460,20 @@ gboolean server_parse_client_messages(struct client *client)
 			}
 
 			/* frees */
-			gebr_comm_protocol_split_free(arguments);
+			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		} else {
 			/* unknown message! */
 			goto err;
 		}
 
 		gebr_comm_message_free(message);
-		client->protocol->messages = g_list_delete_link(client->protocol->messages, link);
+		client->socket->protocol->messages = g_list_delete_link(client->socket->protocol->messages, link);
 	}
 
 	return TRUE;
 
  err:	gebr_comm_message_free(message);
-	client->protocol->messages = g_list_delete_link(client->protocol->messages, link);
+	client->socket->protocol->messages = g_list_delete_link(client->socket->protocol->messages, link);
 	return FALSE;
 }
 

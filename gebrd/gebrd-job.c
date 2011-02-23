@@ -89,8 +89,8 @@ static void job_send_clients_output(GebrdJob *job, GString * output)
 
 	for (GList *link = gebrd.clients; link != NULL; link = g_list_next(link)) {
 		struct client *client = (struct client *)link->data;
-		gebr_comm_protocol_send_data(client->protocol, client->stream_socket,
-					     gebr_comm_protocol_defs.out_def, 2, job->parent.jid->str, output->str);
+		gebr_comm_protocol_socket_oldmsg_send(client->socket, FALSE,
+						      gebr_comm_protocol_defs.out_def, 2, job->parent.jid->str, output->str);
 	}
 }
 
@@ -364,7 +364,7 @@ void job_new(GebrdJob ** _job, struct client * client, GString * queue, GString 
 	job->critical_error = FALSE;
 	job->user_finished = FALSE;
 
-	g_string_assign(job->parent.client_hostname, client->protocol->hostname->str);
+	g_string_assign(job->parent.client_hostname, client->socket->protocol->hostname->str);
 	g_string_assign(job->parent.client_display, client->display->str);
 	job->parent.server_location = client->server_location;
 	g_string_assign(job->parent.run_id, run_id->str);
@@ -443,8 +443,9 @@ void job_status_notify(GebrdJob *job, enum JobStatus status, const gchar *_param
 	/* warn all clients of the new status */
 	for (GList *link = gebrd.clients; link != NULL; link = g_list_next(link)) {
 		struct client *client = (struct client *)link->data;
-		gebr_comm_protocol_send_data(client->protocol, client->stream_socket, gebr_comm_protocol_defs.sta_def,
-					     3, job->parent.jid->str, status_enum_to_string(status), parameter);
+		gebr_comm_protocol_socket_oldmsg_send(client->socket, FALSE,
+						      gebr_comm_protocol_defs.sta_def, 3,
+						      job->parent.jid->str, status_enum_to_string(status), parameter);
 	}
 
 	g_free(parameter);
@@ -654,12 +655,13 @@ void job_notify(GebrdJob *job, struct client *client)
 	if (job->parent.status == JOB_STATUS_INITIAL)
 		job_status_set(job, JOB_STATUS_QUEUED);
 
-	gebr_comm_protocol_send_data(client->protocol, client->stream_socket, gebr_comm_protocol_defs.job_def,
-				     11, job->parent.jid->str, status_enum_to_string(job->parent.status),
-				     job->parent.title->str, job->parent.start_date->str,
-				     job->parent.finish_date->str, job->parent.client_hostname->str, job->parent.issues->str,
-				     job->parent.cmd_line->str, job->parent.output->str,
-				     job->parent.queue_id->str, job->parent.moab_jid->str);
+	gebr_comm_protocol_socket_oldmsg_send(client->socket, FALSE,
+					      gebr_comm_protocol_defs.job_def, 11,
+					      job->parent.jid->str, status_enum_to_string(job->parent.status),
+					      job->parent.title->str, job->parent.start_date->str,
+					      job->parent.finish_date->str, job->parent.client_hostname->str, job->parent.issues->str,
+					      job->parent.cmd_line->str, job->parent.output->str,
+					      job->parent.queue_id->str, job->parent.moab_jid->str);
 }
 
 

@@ -336,8 +336,9 @@ void job_control_stop(void)
 			gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Asking local server to kill job '%s'."),
 				     job->parent.title->str);
 			
-		gebr_comm_protocol_send_data(job->server->comm->protocol, job->server->comm->stream_socket,
-					     gebr_comm_protocol_defs.kil_def, 1, job->parent.jid->str);
+		gebr_comm_protocol_socket_oldmsg_send(job->server->comm->socket, FALSE,
+						      gebr_comm_protocol_defs.kil_def, 1,
+						      job->parent.jid->str);
 	}
 }
 

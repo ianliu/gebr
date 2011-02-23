@@ -153,7 +153,7 @@ static GtkMenu *server_common_popup_menu(GtkWidget * widget, struct ui_server_co
 	menu = gtk_menu_new();
 
 	/* connect */
-	if (!server->comm->protocol->logged) {
+	if (!server->comm->socket->protocol->logged) {
 		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_CONNECT, NULL);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 		g_signal_connect(menu_item, "activate", G_CALLBACK(server_common_connect), server);
@@ -648,7 +648,7 @@ void server_list_updated_status(GebrServer *server)
 	GtkTreePath *path;
 
 	status_icon = (server->last_error->len || server->comm->last_error->len)
-	    ? gebr.pixmaps.stock_warning : (server->comm->protocol->logged == TRUE)
+	    ? gebr.pixmaps.stock_warning : (server->comm->socket->protocol->logged == TRUE)
 	    ? gebr.pixmaps.stock_connect : gebr.pixmaps.stock_disconnect;
 
 	gtk_list_store_set(gebr.ui_server_list->common.store, &server->iter, SERVER_STATUS_ICON, status_icon, -1);

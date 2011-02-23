@@ -46,7 +46,6 @@ struct _GebrdJob {
 	gboolean user_finished;
 
 	/* client stuff */
-
 	GebrCommProcess *tail_process;
 };
 struct _GebrdJobClass {

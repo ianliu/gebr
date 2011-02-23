@@ -427,8 +427,9 @@ static void flow_io_run(GebrGeoXmlFlow *flow, gboolean parallel, gboolean single
 
 				/* In this case, we have renamed the `internal_queue_name' to 'new_internal_queue_name', so we must
 				 * send the request to the server. */
-				gebr_comm_protocol_send_data(server->comm->protocol, server->comm->stream_socket,
-							     gebr_comm_protocol_defs.rnq_def, 2, internal_queue_name, new_internal_queue_name->str);
+				gebr_comm_protocol_socket_oldmsg_send(server->comm->socket, FALSE,
+								      gebr_comm_protocol_defs.rnq_def, 2,
+								      internal_queue_name, new_internal_queue_name->str);
 			} else
 				g_string_assign(new_internal_queue_name, internal_queue_name);
 
@@ -457,8 +458,8 @@ static void flow_io_run(GebrGeoXmlFlow *flow, gboolean parallel, gboolean single
 					g_free(internal_queue_name);
 					goto err;
 				}
-				gebr_comm_protocol_send_data(server->comm->protocol, server->comm->stream_socket,
-							     gebr_comm_protocol_defs.rnq_def, 2, internal_queue_name, config->queue);
+				gebr_comm_protocol_socket_oldmsg_send(server->comm->socket, FALSE,
+								      gebr_comm_protocol_defs.rnq_def, 2, internal_queue_name, config->queue);
 				g_free(internal_queue_name);
 			} else {
 				config->queue = internal_queue_name;

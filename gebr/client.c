@@ -32,23 +32,23 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 	GList *link;
 	struct gebr_comm_message *message;
 
-	while ((link = g_list_last(comm_server->protocol->messages)) != NULL) {
+	while ((link = g_list_last(comm_server->socket->protocol->messages)) != NULL) {
 		message = (struct gebr_comm_message *)link->data;
 
 		if (message->hash == gebr_comm_protocol_defs.err_def.code_hash) {
 			GList *arguments;
 
 			/* organize message data */
-			if ((arguments = gebr_comm_protocol_split_new(message->argument, 1)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 1)) == NULL)
 				goto err;
 			g_string_assign(server->last_error, ((GString *)g_list_nth_data(arguments, 0))->str);
 			gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Server '%s' reported error '%s'."),
 				     comm_server->address->str, server->last_error->str);
 
-			gebr_comm_protocol_split_free(arguments);
+			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 
 		} else if (message->hash == gebr_comm_protocol_defs.ret_def.code_hash) {
-			if (comm_server->protocol->waiting_ret_hash == gebr_comm_protocol_defs.ini_def.code_hash) {
+			if (comm_server->socket->protocol->waiting_ret_hash == gebr_comm_protocol_defs.ini_def.code_hash) {
 				GList *arguments;
 				GString *hostname;
 				GString *display_port;
@@ -60,7 +60,7 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 				GtkTreeIter iter;
 
 				/* organize message data */
-				if ((arguments = gebr_comm_protocol_split_new(message->argument, 8)) == NULL)
+				if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 8)) == NULL)
 					goto err;
 				hostname = g_list_nth_data(arguments, 0);
 				display_port = g_list_nth_data(arguments, 1);
@@ -125,9 +125,9 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 
 				/* say we are logged */
 				g_string_assign(server->last_error, "");
-				comm_server->protocol->logged = TRUE;
+				comm_server->socket->protocol->logged = TRUE;
 				server_list_updated_status(server);
-				g_string_assign(comm_server->protocol->hostname, hostname->str);
+				g_string_assign(comm_server->socket->protocol->hostname, hostname->str);
 				if (gebr_comm_server_is_local(comm_server) == TRUE)
 					gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Connected to local server."),
 						     comm_server->address->str);
@@ -148,27 +148,25 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 				}
 
 				/* request list of jobs */
-				gebr_comm_protocol_send_data(comm_server->protocol,
-							     comm_server->stream_socket,
-							     gebr_comm_protocol_defs.lst_def, 0);
+				gebr_comm_protocol_socket_oldmsg_send(comm_server->socket, FALSE,
+								      gebr_comm_protocol_defs.lst_def, 0);
 
-				gebr_comm_protocol_split_free(arguments);
+				gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 
 				// Emits the GebrServer::initialized signal
 				gebr_server_emit_initialized (server);
 
-			} else if (comm_server->protocol->waiting_ret_hash == gebr_comm_protocol_defs.run_def.code_hash) {
+			} else if (comm_server->socket->protocol->waiting_ret_hash == gebr_comm_protocol_defs.run_def.code_hash) {
 				GList *arguments;
 				GString *jid;
 				GString *run_id;
 
 				/* organize message data */
-				if ((arguments = gebr_comm_protocol_split_new(message->argument, 2)) == NULL)
+				if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
 					goto err;
 				jid = g_list_nth_data(arguments, 0);
 				run_id = g_list_nth_data(arguments, 1);
-
-				GebrJob * job = job_find(comm_server->address, run_id, FALSE);
+GebrJob * job = job_find(comm_server->address, run_id, FALSE);
 				if (job != NULL) {
 					g_string_assign(job->parent.jid, jid->str);
 
@@ -179,8 +177,8 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 						job_set_active(job);
 				}
 
-				gebr_comm_protocol_split_free(arguments);
-			} else if (comm_server->protocol->waiting_ret_hash == gebr_comm_protocol_defs.flw_def.code_hash) {
+				gebr_comm_protocol_socket_oldmsg_split_free(arguments);
+			} else if (comm_server->socket->protocol->waiting_ret_hash == gebr_comm_protocol_defs.flw_def.code_hash) {
 
 			}
 		} else if (message->hash == gebr_comm_protocol_defs.job_def.code_hash) {
@@ -190,7 +188,7 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 			GebrJob *job;
 
 			/* organize message data */
-			if ((arguments = gebr_comm_protocol_split_new(message->argument, 11)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 11)) == NULL)
 				goto err;
 			jid = g_list_nth_data(arguments, 0);
 			status = g_list_nth_data(arguments, 1);
@@ -214,14 +212,14 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 			else
 				gebr_message(GEBR_LOG_DEBUG, FALSE, FALSE, _("Received already listed job %s."), job->parent.jid);
 
-			gebr_comm_protocol_split_free(arguments);
+			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		} else if (message->hash == gebr_comm_protocol_defs.out_def.code_hash) {
 			GList *arguments;
 			GString *jid, *output;
 			GebrJob *job;
 
 			/* organize message data */
-			if ((arguments = gebr_comm_protocol_split_new(message->argument, 2)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
 				goto err;
 			jid = g_list_nth_data(arguments, 0);
 			output = g_list_nth_data(arguments, 1);
@@ -231,14 +229,14 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 				job_append_output(job, output);
 			}
 
-			gebr_comm_protocol_split_free(arguments);
+			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		} else if (message->hash == gebr_comm_protocol_defs.sta_def.code_hash) {
 			GList *arguments;
 			GString *jid, *status, *parameter;
 			GebrJob *job;
 
 			/* organize message data */
-			if ((arguments = gebr_comm_protocol_split_new(message->argument, 3)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 3)) == NULL)
 				goto err;
 			jid = g_list_nth_data(arguments, 0);
 			status = g_list_nth_data(arguments, 1);
@@ -252,17 +250,17 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 				job_status_update(job, status_enum, parameter->str);
 			}
 
-			gebr_comm_protocol_split_free(arguments);
+			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}
 
 		gebr_comm_message_free(message);
-		comm_server->protocol->messages = g_list_delete_link(comm_server->protocol->messages, link);
+		comm_server->socket->protocol->messages = g_list_delete_link(comm_server->socket->protocol->messages, link);
 	}
 
 	return TRUE;
 
 err:	gebr_comm_message_free(message);
-	comm_server->protocol->messages = g_list_delete_link(comm_server->protocol->messages, link);
+	comm_server->socket->protocol->messages = g_list_delete_link(comm_server->socket->protocol->messages, link);
 	if (gebr_comm_server_is_local(comm_server) == TRUE)
 		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Error communicating with local server. Please reconnect."));
 	else

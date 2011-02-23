@@ -71,14 +71,12 @@ void gebr_init(void)
 	gebr.flow = NULL;
 	gebr.program = NULL;
 	gebr.flow_clipboard = NULL;
-	gebr_comm_protocol_init();
 
 	/* check/create config dir */
 	if (gebr_create_config_dirs() == FALSE) {
 		fprintf(stderr, _("Unable to create GêBR configuration files.\n"
 				  "Perhaps you do not have write permission to your own\n"
 				  "home directory or there is no space left on device.\n"));
-		gebr_comm_protocol_destroy();
 		exit(-1);
 	}
 
@@ -178,7 +176,6 @@ gboolean gebr_quit(gboolean save_config)
 
 	gebr_message(GEBR_LOG_END, TRUE, TRUE, _("GêBR finalizing..."));
 	gebr_log_close(gebr.log);
-	gebr_comm_protocol_destroy();
 
 	/*
 	 * Interface frees

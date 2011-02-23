@@ -23,8 +23,7 @@
 #include <libgebr/log.h>
 #include <libgebr/geoxml/geoxml.h>
 
-#include "gebr-comm-streamsocket.h"
-#include "gebr-comm-protocol.h"
+#include "gebr-comm-protocol-socket.h"
 #include "gebr-comm-terminalprocess.h"
 #include "gebr-comm-process.h"
 #include "gebr-comm-channelsocket.h"
@@ -58,10 +57,7 @@ GebrCommServerType gebr_comm_server_get_id(const gchar * name);
 /**
  */
 struct gebr_comm_server {
-	/* the communication channel. */
-	GebrCommStreamSocket *stream_socket;
-	/* protocol parsing stuff */
-	struct gebr_comm_protocol *protocol;
+	GebrCommProtocolSocket *socket;
 	/* server address/port */
 	GString *address;
 	guint16 port;

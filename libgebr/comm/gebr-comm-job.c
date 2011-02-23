@@ -39,7 +39,7 @@ enum {
 	JID, TITLE, START_DATE, FINISH_DATE, ISSUES, CMD_LINE, OUTPUT, MOAB_JID,
 	LAST_PROPERTY
 };
-guint property_member_offset [] = {0,
+static guint property_member_offset [] = {0,
 	G_STRUCT_OFFSET(GebrCommJob, client_hostname), G_STRUCT_OFFSET(GebrCommJob, client_display),
 	G_STRUCT_OFFSET(GebrCommJob, run_id), G_STRUCT_OFFSET(GebrCommJob, flow_xml),
 	G_STRUCT_OFFSET(GebrCommJob, moab_account), G_STRUCT_OFFSET(GebrCommJob, n_process),
