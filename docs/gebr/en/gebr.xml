@@ -183,7 +183,7 @@
             <guilabel>Projects and Lines</guilabel>.</para>
         </step>
         <step>
-          <para>left-click on <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_criar_projeto.png"
+          <para>left-click on <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_criar_projeto.png"
             /></imageobject></inlinemediaobject></guiicon></para>
         </step>
         <step>
@@ -230,7 +230,7 @@
         </step>
         <step>
           <para> Click on the
-          button <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_criar_linha.png"
+            button <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_criar_linha.png"
           /></imageobject></inlinemediaobject></guiicon></para>
         </step>
         <step>
@@ -353,7 +353,7 @@
         </step>
         <step>
           <para>Now click on the tab <guilabel>Flows</guilabel>, then left-click on
-          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_criar_fluxo.png"
+            <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_criar_fluxo.png"
           /></imageobject></inlinemediaobject></guiicon>.</para>
         </step>
         <step>
@@ -409,10 +409,10 @@
           <para>With the program <guimenuitem>SU Plane</guimenuitem> on the top of your
             <guilabel>Flow sequence</guilabel> list, press the right click on <guimenuitem>SU Plane</guimenuitem>. From	
             the menu that has appeared select the option <guilabel>Configured</guilabel>. This configured state, represented by
-            <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_configurado.png"
+            <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_configurado.png"
             /></imageobject></inlinemediaobject></guiicon>, means the program is 
             ready to be executed, contrary to the state represented by <guiicon><inlinemediaobject><imageobject><imagedata
-            fileref="../images/icone_nao_configurado.png"/></imageobject></inlinemediaobject></guiicon>. Then do the same
+                    fileref="../../common-images/icone_nao_configurado.png"/></imageobject></inlinemediaobject></guiicon>. Then do the same
             for <guimenuitem>SU Simple X Image</guimenuitem>.</para>
 
           <figure>
@@ -433,14 +433,14 @@
 		<mousebutton>Click</mousebutton>
               </keycombo>. Then right-click on one of the selected programs, choose the option 
 	<guilabel>Configured</guilabel> from the menu that appeared. All the programs that where selected will be 
-	altered to the state <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_configurado.png"/></imageobject></inlinemediaobject></guiicon>.</para>
+  altered to the state <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_configurado.png"/></imageobject></inlinemediaobject></guiicon>.</para>
 
           </tip>
           <important>
 
             <para>To run a Flow  <emphasis role="bold">all the programs</emphasis> listed in the 
 	<guilabel>Flow sequence</guilabel> box must be <emphasis role="bold">Configured</emphasis>
-            (<guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_configurado.png"
+  (<guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_configurado.png"
             /></imageobject></inlinemediaobject></guiicon>). Otherwise the Flow will not be executed as expected.</para>
 
           </important>
@@ -456,7 +456,7 @@
       </procedure>
 
       <para>Your Flow is now ready to be executed, to do so left-click on
-	<guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_executar_fluxo.png"
+        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_executar_fluxo.png"
 	/></imageobject></inlinemediaobject></guiicon>. You should see the following:</para>
 
       <figure>
@@ -608,7 +608,7 @@
         <title>New Project</title>
 
         <para>To create a new Project click on the
-        button <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_criar_projeto.png"
+          button <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_criar_projeto.png"
         /></imageobject></inlinemediaobject></guiicon>, more details are given in 
           <xref linkend="editar_projetos_e_linhas"/>.</para>
 
@@ -625,7 +625,7 @@
         <title>New Line</title>
 
         <para>To create a new Line, <emphasis role="bold">select an existing Project</emphasis> and left-click on
-        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_criar_linha.png"
+          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_criar_linha.png"
         /></imageobject></inlinemediaobject></guiicon>,  more details are given in 
         <xref linkend="editar_projetos_e_linhas"/>.. A new Line will appear
         in the selected Project.</para>
@@ -642,9 +642,9 @@
           <para>In GêBR you can <emphasis role="bold">collapse</emphasis> or <emphasis role="bold">expand</emphasis> a 
           Project. When collapsed <emphasis role="bold">the Projects Lines are hidden</emphasis>, when expanded 
           <emphasis role="bold">the Project's Lines are visible</emphasis>. To collapse click on the icon
-          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_expandido.png"
+          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_expandido.png"
           /></imageobject></inlinemediaobject></guiicon> immediately to the left of the Projects name. To expand,
-          click on the icon <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_colapsado.png"
+  click on the icon <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_colapsado.png"
           /></imageobject></inlinemediaobject></guiicon>.</para>
         </tip>
       </section>
@@ -653,7 +653,7 @@
         <title>Deleting a Project or a Line</title>
 
         <para>To remove a Line or Project select the Project or Line then left-click on
-         <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_apagar_projeto.png"
+          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_apagar_projeto.png"
         /></imageobject></inlinemediaobject></guiicon>.</para>
 
         <note>
@@ -673,7 +673,7 @@
         <title>Editing a Project's or Line's properties</title>
 
         <para>To edit a Project's or Line's properties, first select the Project of Line and then click on
-          button <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_editar_propriedades_projeto.png"
+          button <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_editar_propriedades_projeto.png"
           /></imageobject></inlinemediaobject></guiicon>.</para>
 
 
@@ -703,14 +703,14 @@
 
         <para>The Line's preferred paths are defined in the <guilabel>Line's properties</guilabel> dialog box. To open this
          dialog box select the Line then click on the icon
-         <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_editar_propriedades_projeto.png"
+         <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_editar_propriedades_projeto.png"
          /></imageobject></inlinemediaobject></guiicon>, in the tool bar, or open the popup context menu and select the option 
          <guilabel>Properties</guilabel>. In the <guilabel>Line's properties</guilabel> window, in the field <guilabel>Paths</guilabel>, write the path to the directory you want and then left-click on
-         <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_adicionar_caminho.png"
+         <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_adicionar_caminho.png"
          /></imageobject></inlinemediaobject></guiicon>.</para>
 
         <para>You can also add preferred paths by clicking on the button <guiicon><inlinemediaobject><imageobject><imagedata
-	 fileref="../images/icone_caminho_personalizado.png"/></imageobject></inlinemediaobject></guiicon> and then choosing a
+                  fileref="../../common-images/icone_caminho_personalizado.png"/></imageobject></inlinemediaobject></guiicon> and then choosing a
 	 directory.</para>
 
 	<para>When you completed editing the preferred paths click <guibutton>OK</guibutton>.</para>
@@ -719,7 +719,7 @@
 	
 	<tip>
 	  <para>The path at the top of the list will be set as the standard path, which will be opened when the user
-	 clicks on the icon <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_caminho_personalizado.png"/></imageobject></inlinemediaobject></guiicon> as to search for a file or directory.</para>
+      clicks on the icon <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_caminho_personalizado.png"/></imageobject></inlinemediaobject></guiicon> as to search for a file or directory.</para>
 	</tip>
 
         <tip>
@@ -757,7 +757,7 @@
         <procedure>
           <step>
             <para>Click on the
-            button <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_importar_projeto.png"
+              button <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_importar_projeto.png"
             /></imageobject></inlinemediaobject></guiicon></para>
           </step>
           <step>
@@ -796,7 +796,7 @@
           </step>
           <step>
             <para>left-click on
-            <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_exportar_projeto.png"
+              <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_exportar_projeto.png"
             /></imageobject></inlinemediaobject></guiicon></para>
           </step>
           <step>
@@ -1021,7 +1021,7 @@
         <para>To create a new Flow first check that you have already <emphasis role="bold"> created and selected a Line
 	</emphasis> in the <guilabel>Projects e Lines</guilabel> tab. When you have done this, select the
           <guilabel>Flows</guilabel> tab and left-click on
-	<guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_criar_fluxo.png"
+          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_criar_fluxo.png"
           /></imageobject></inlinemediaobject></guiicon>. In the dialog box that opens, <xref
 	 linkend="editar_propriedades_fluxo"/>, fill in the required information then click on <guibutton>OK</guibutton>. For
 	 more details see <xref linkend="criando_fluxos"/>.</para>
@@ -1051,7 +1051,7 @@
 
         <para>The clipboard provides the popular set of tools known as <emphasis role="bold">copying and
           pasting</emphasis>. In GêBR a Flow (or set of Flows) can be copied to the clipboard by using the button
-	 <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_copiar_fluxo.png"
+        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_copiar_fluxo.png"
           /></imageobject></inlinemediaobject></guiicon> or by using the known shortcut 
           <keycombo><keycap>Ctrl</keycap> <keycap>C</keycap></keycombo>.</para>
 
@@ -1074,7 +1074,7 @@
         <title>Pasting Flows from the clipboard</title>
 
         <para>After copying <xref linkend="copiar_fluxos_area_tranferencia"/>, a Flow (or a set of Flows) you can paste
-	the it by clicking on the button <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_colar_fluxo.png"
+          the it by clicking on the button <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_colar_fluxo.png"
           /></imageobject></inlinemediaobject></guiicon> or by simply using the shortcut
           <keycombo>
             <keycap>Ctrl</keycap>
@@ -1095,7 +1095,7 @@
         <title>Deleting Flows</title>
 
         <para>To delete a Flow (or set of Flows), select them then click on
-          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_apagar_projeto.png"
+          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_apagar_projeto.png"
           /></imageobject></inlinemediaobject></guiicon>.</para>
 
         <tip>
@@ -1116,7 +1116,7 @@
       <section xml:id="editar_propriedades_fluxo">
         <title>Editing a Flow's properties</title>
 
-        <para>To edit a Flow's properties you must first select the Flow, then left-click on <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_editar_propriedades_projeto.png"
+        <para>To edit a Flow's properties you must first select the Flow, then left-click on <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_editar_propriedades_projeto.png"
         /></imageobject></inlinemediaobject></guiicon>.</para>
 
 
@@ -1149,7 +1149,7 @@
         <procedure>
           <step>
             <para>Select the Flow and left-click on
-             <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_salvar_estado.png"
+              <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_salvar_estado.png"
             /></imageobject></inlinemediaobject></guiicon>.</para>
           </step>
           <step>
@@ -1168,9 +1168,9 @@
         </note>
 
         <para>To open the list of saved states left-click on
-         <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_salvar_estado_lista.png"
+          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_salvar_estado_lista.png"
         /></imageobject></inlinemediaobject></guiicon>, to the right of the button
-        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_salvar_estado.png"
+<guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_salvar_estado.png"
         /></imageobject></inlinemediaobject></guiicon>, then select the state you wish to recover. Whenever you select a 
 	saved state from the list, the dialog box <guilabel>Backup current state?</guilabel> will appear. If you click on
 	<guibutton>Yes</guibutton> the dialog box <guilabel>Save the Flow's state</guilabel> will appear, where you can save 
@@ -1209,7 +1209,7 @@
           <step>
             <para>Select the tab
               <guilabel>Flows</guilabel> and left-click on 
-             <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_importar_projeto.png"
+              <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_importar_projeto.png"
               /></imageobject></inlinemediaobject></guiicon>.</para>
           </step>
           <step>
@@ -1238,7 +1238,7 @@
           </step>
           <step>
             <para>Left-click on
-            <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_exportar_projeto.png"
+              <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_exportar_projeto.png"
             /></imageobject></inlinemediaobject></guiicon>.</para>
           </step>
           <step>
@@ -1258,12 +1258,12 @@
 
         <para>This command is present in the tab <guilabel>Flows</guilabel>  and the tab
           <guilabel>Flow editor</guilabel>  where both work differently. In the tab Flows, the
-          button <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_executar_fluxo.png"
+          button <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_executar_fluxo.png"
           /></imageobject></inlinemediaobject></guiicon> executes several Flows in a sequence. see Figure: 
 	<figure>
 	<mediaobject><caption>In the tab Flows you are able to execute several Flows sequentially by first: selecting the Flows
 	you wish to use, and then left-click on 
-	<guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_executar_fluxo.png" 
+  <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_executar_fluxo.png" 
           /></imageobject></inlinemediaobject></guiicon>. </caption>
 	<imageobject><imagedata fileref="../images/janela_execucao_de_fluxo.png"
           /></imageobject>
@@ -1389,7 +1389,7 @@
 
       <para>By default the categories are shown in their collapsed form, concealing their components. To reveal a categories
 	components you must expand the category by clicking on the icon
-	 <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_colapsado.png"
+  <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_colapsado.png"
 	/></imageobject></inlinemediaobject></guiicon> just to the left of the category.</para>
 
 
@@ -1507,7 +1507,7 @@
 
         <para>In the same manner we copy and paste Flows (see <xref linkend="copiar_fluxos_area_tranferencia"/>), a program
 	 (or set of programs) can be copied to the clipboard by clicking
-	 <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_copiar_fluxo.png"
+   <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_copiar_fluxo.png"
           /></imageobject></inlinemediaobject></guiicon> or by using the shortcut
           <keycombo>
             <keycap>Ctrl</keycap>
@@ -1534,7 +1534,7 @@
 
         <para>After selecting and coping <xref linkend="copiar_programa_para_area_de_transferencia"/> a program (or set
 	of programs) you can then paste them by clicking on
-          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_colar_fluxo.png"
+  <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_colar_fluxo.png"
           /></imageobject></inlinemediaobject></guiicon> or by using the shortcut
           <keycombo>
             <keycap>Ctrl</keycap>
@@ -1555,7 +1555,7 @@
         <title>Deleting programs</title>
 
         <para>To remove a program (or set of programs), select them then click on
-	 <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_apagar_projeto.png"
+          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_apagar_projeto.png"
         /></imageobject></inlinemediaobject></guiicon>.</para>
 
         <tip>
@@ -1586,7 +1586,7 @@
         <procedure>
           <step>
             <para>Select the program from the <guilabel>Flow sequence</guilabel> box then click on 
-	 <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_editar_propriedades_projeto.png"
+              <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_editar_propriedades_projeto.png"
               /></imageobject></inlinemediaobject></guiicon>, or just double-click on the program.</para>
           </step>
           <step>
@@ -1617,18 +1617,18 @@
         <title>Changing a program's state</title>
 
         <para>After you have carried out process of <xref linkend="editar_parametros_programa"/> the program's mark is changed
-        to <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_configurado.png"
+          to <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_configurado.png"
         /></imageobject></inlinemediaobject></guiicon> instead of
-        de <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_nao_configurado.png"
+de <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_nao_configurado.png"
         /></imageobject></inlinemediaobject></guiicon>. This means that the program's state has gone from
 	 <emphasis role="bold">Not configured</emphasis> to the 
         <emphasis role="bold">Configured</emphasis> state. Other then these two states the program can also be set to the
 	 <emphasis role="bold">Disabled</emphasis> state
-        (<guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_desabilitado.png"
+   (<guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_desabilitado.png"
         /></imageobject></inlinemediaobject></guiicon>). You can alternate between these three states by clicking on the button 
-          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_salvar_estado_lista.png"/></imageobject></inlinemediaobject></guiicon>,
+<guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_salvar_estado_lista.png"/></imageobject></inlinemediaobject></guiicon>,
           to the right of the button
-          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_mudar_estado.png"
+          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_mudar_estado.png"
           /></imageobject></inlinemediaobject></guiicon>.</para>
 
         <tip>
@@ -1653,7 +1653,7 @@
         <important>
 
           <para><emphasis role="bold">Disabled</emphasis> programs
-	    (<guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_desabilitado.png"
+            (<guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_desabilitado.png"
 	    /></imageobject></inlinemediaobject></guiicon>) will be ignored when you execute your Flow. With this you can 
 	 <emphasis role="bold">enable and disable partes of your Flow</emphasis> as you see fit.</para>
 
@@ -1686,7 +1686,7 @@
           </step>
           <step>
             <para>Type in the path or click on the 
-            icon <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_escolher_arquivo.png"
+              icon <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_escolher_arquivo.png"
             /></imageobject></inlinemediaobject></guiicon> and browse for the in the <guilabel>Choose a file</guilabel> dialog
 	box.</para>
           </step>
@@ -1694,9 +1694,9 @@
 
         <para>When you have chosen a path for your <guilabel>Flow's input/output</guilabel> note that their file paths will
 	appear in the <guilabel>Flow sequence</guilabel> box, indicate with the marks 
-          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_arquivo_entrada.png"
+  <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_arquivo_entrada.png"
 							      /></imageobject></inlinemediaobject></guiicon> and
-          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_arquivo_saida.png"
+            <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_arquivo_saida.png"
 							      /></imageobject></inlinemediaobject></guiicon>, below and above
 	the Flow's programs (if there are any).</para>
 
@@ -1713,7 +1713,7 @@
         <title>Executing a Flow</title>
 
         <para>To execute the current Flow click on 
-          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_executar_fluxo.png"
+          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_executar_fluxo.png"
 							      /></imageobject></inlinemediaobject></guiicon>.</para>
 
 
@@ -1724,7 +1724,7 @@
 
 
         <para>In the Flow editor tab, even if you selected several Flow from the Flows tab, when you click on
-	<guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_executar_fluxo.png"/></imageobject></inlinemediaobject></guiicon> only the first selected Flow will be executed.</para>
+          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_executar_fluxo.png"/></imageobject></inlinemediaobject></guiicon> only the first selected Flow will be executed.</para>
 
 
  <para>In this version of GêBR a concept called queues can now be employed to run a Flow, or sequence of Flows, in
@@ -1803,7 +1803,7 @@
 
         <para>To save on a file a Job's information first select it from the 
           <guilabel>Job</guilabel> box then click on the button
-	 <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_salvar_log.png"
+          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_salvar_log.png"
           /></imageobject></inlinemediaobject></guiicon>.</para>
 
       </section>
@@ -1813,14 +1813,14 @@
 
         <para>To remove a Job's log first select it from the 
           <guilabel>Job</guilabel> box then click on the button 
-	<guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_limpar_log_atual.png"
+          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_limpar_log_atual.png"
           /></imageobject></inlinemediaobject></guiicon>.</para>
 
 
         <para>You can only delete Jobs that are not being executed ( they will be marked with
-         <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_tarefa_concluida_sucesso.png"
+          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_tarefa_concluida_sucesso.png"
         /></imageobject></inlinemediaobject></guiicon> or
-          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_tarefa_terminada_erro.png"/></imageobject></inlinemediaobject></guiicon>).</para>
+<guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_tarefa_terminada_erro.png"/></imageobject></inlinemediaobject></guiicon>).</para>
 
       </section>
 
@@ -1829,14 +1829,14 @@
 
         <para>In general complex Jobs will take some time to finish. If for some reason you wish to terminate a Job, before it 
 	runs its natural course: select the Job being executed (marked
-          with <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_tarefa_em_execucao.png"
+  with <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_tarefa_em_execucao.png"
           /></imageobject></inlinemediaobject></guiicon>) from the <guilabel>Jobs</guilabel> box and click on the button
-          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_terminar_tarefa.png"
+  <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_terminar_tarefa.png"
           /></imageobject></inlinemediaobject></guiicon>.</para>
 
 
         <para>When a Job is terminated in this manner, the Job will be marked with
-	 <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_tarefa_terminada_erro.png"
+          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_tarefa_terminada_erro.png"
         /></imageobject></inlinemediaobject></guiicon>.</para>
 
       </section>
@@ -1878,7 +1878,7 @@
         </step>
         <step>
           <para>In the <guilabel>Projects and Lines</guilabel> tab click on
-          button <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_dicionario_projeto.png"
+            button <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_dicionario_projeto.png"
           /></imageobject></inlinemediaobject></guiicon> so as to <emphasis role="bold">edit the parameter
 	dictionary </emphasis>.</para>
         </step>

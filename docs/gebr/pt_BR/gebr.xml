@@ -189,7 +189,7 @@
         </step>
         <step>
           <para>Clique no
-            botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_criar_projeto.png"
+                  botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_criar_projeto.png"
             /></imageobject></inlinemediaobject></guiicon></para>
         </step>
         <step>
@@ -240,7 +240,7 @@
         </step>
         <step>
           <para>Clique no
-          botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_criar_linha.png"
+                  botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_criar_linha.png"
           /></imageobject></inlinemediaobject></guiicon>.</para>
         </step>
         <step>
@@ -370,7 +370,7 @@
         </step>
         <step>
           <para>Selecione a aba <guilabel>Fluxos</guilabel> e, em seguida, clique no
-            botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_criar_fluxo.png"
+                  botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_criar_fluxo.png"
             /></imageobject></inlinemediaobject></guiicon>.</para>
         </step>
         <step>
@@ -425,9 +425,9 @@
           <para>Agora que o programa <guimenuitem>SU Plane</guimenuitem> está no topo da lista
             <guilabel>Sequência de fluxo</guilabel>, clique sobre ele com o botão direito do mouse. No menu que se abre,
             selecione a opção <guilabel>Configurado</guilabel>. Isso muda o estado do programa, que passa a ser
-            sinalizado por <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_configurado.png"
+            sinalizado por <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_configurado.png"
             /></imageobject></inlinemediaobject></guiicon> em vez
-            de <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_nao_configurado.png"
+            de <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_nao_configurado.png"
             /></imageobject></inlinemediaobject></guiicon>. Depois faça o mesmo para o programa
             <guimenuitem>SU Simple X Image</guimenuitem>.</para>
 
@@ -448,7 +448,7 @@
               </keycombo>. Depois clique com o botão direito do mouse em um dos programas selecionados e, no menu que se
               abre, escolha a opção <guilabel>Configurado</guilabel>. Todos os programas que você selecionou serão
               alterados
-              para <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_configurado.png"
+              para <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_configurado.png"
               /></imageobject></inlinemediaobject></guiicon>.</para>
 
           </tip>
@@ -457,7 +457,7 @@
             <para>Para este fluxo funcionar, é necessário que <emphasis role="bold">todos os programas</emphasis>
             listados na caixa <guilabel>Sequência de fluxo</guilabel> estejam no
             estado <emphasis role="bold">Configurado</emphasis>
-            (<guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_configurado.png"
+            (<guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_configurado.png"
             /></imageobject></inlinemediaobject></guiicon>). Sem isso, o fluxo não será executado como esperado.</para>
 
           </important>
@@ -473,7 +473,7 @@
       </procedure>
 
       <para>Pronto. O fluxo foi criado e configurado. Para executá-lo, clique no botão 
-	<guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_executar_fluxo.png"
+              <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_executar_fluxo.png"
 	/></imageobject></inlinemediaobject></guiicon>. O resultado que você verá é o seguinte:</para>
 
       <figure>
@@ -630,7 +630,7 @@
         <title>Criar um novo projeto</title>
 
         <para>Para criar um novo projeto, clique no
-        botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_criar_projeto.png"
+                botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_criar_projeto.png"
         /></imageobject></inlinemediaobject></guiicon> (veja mais detalhes na
           <xref linkend="editar_projetos_e_linhas"/>.</para>
 
@@ -649,7 +649,7 @@
         <title>Criar uma nova linha</title>
 
         <para>Para criar uma nova linha, <emphasis role="bold">selecione um projeto existente</emphasis> e clique no
-        botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_criar_linha.png"
+                botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_criar_linha.png"
         /></imageobject></inlinemediaobject></guiicon> (veja mais detalhes
         na <xref linkend="editar_projetos_e_linhas"/>). A nova linha será criada dentro
         do projeto selecionado.</para>
@@ -668,9 +668,9 @@
           <para>A GêBR permite <emphasis role="bold">colapsar</emphasis> ou <emphasis role="bold">expandir</emphasis> o
           projeto. No estado colapsado, as <emphasis role="bold">linhas do projeto ficam ocultas</emphasis>. No estado
           expandido, as <emphasis role="bold">linhas do projeto ficam visíveis</emphasis>. Para colapsar, clique no
-          ícone <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_expandido.png"
+          ícone <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_expandido.png"
           /></imageobject></inlinemediaobject></guiicon> à esquerda do nome do projeto. Para expandir, clique no
-          ícone <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_colapsado.png"
+          ícone <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_colapsado.png"
           /></imageobject></inlinemediaobject></guiicon>.</para>
         </tip>
       </section>
@@ -679,7 +679,7 @@
         <title>Apagar um projeto ou uma linha</title>
 
         <para>Para excluir um projeto ou uma linha, selecione o projeto ou a linha e clique no
-        botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_apagar_projeto.png"
+                botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_apagar_projeto.png"
         /></imageobject></inlinemediaobject></guiicon>.</para>
 
         <note>
@@ -700,7 +700,7 @@
         <title>Editar as propriedades de um projeto ou linha</title>
 
         <para>Para editar as propriedades de um projeto ou de uma linha, selecione o projeto ou a linha e clique no
-          botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_editar_propriedades_projeto.png"
+                botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_editar_propriedades_projeto.png"
           /></imageobject></inlinemediaobject></guiicon>.</para>
 
 
@@ -727,16 +727,16 @@
 
         <para>Os caminhos preferenciais da linha são definidos no diálogo de <guilabel>Propriedades para
          linha</guilabel>. Para abrir este diálogo, tenha a linha selecionada e clique sobre o
-         ícone <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_editar_propriedades_projeto.png"
+ ícone <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_editar_propriedades_projeto.png"
          /></imageobject></inlinemediaobject></guiicon>, na barra de ferramentas, ou utilizando o menu de contexto,
          selecione a opção <guilabel>Propriedades</guilabel>. Na janela <guilabel>Propriedades para linha</guilabel>, no
          campo <guilabel>Caminhos</guilabel>, digite o caminho desejado e clique no
-         botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_adicionar_caminho.png"
+         botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_adicionar_caminho.png"
          /></imageobject></inlinemediaobject></guiicon>.</para>
 
         <para>Além disso, na janela Propriedades para linha, pode-se adicionar caminhos preferenciais de linha
           escolhendo-se um diretório. Para isso, deve-se clicar no
-          botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_caminho_personalizado.png"
+          botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_caminho_personalizado.png"
           /></imageobject></inlinemediaobject></guiicon>.</para>
 
 	<para>Quando tiver concluído a edição dos caminhos preferenciais, clique em <guibutton>OK</guibutton>.</para>
@@ -747,7 +747,7 @@
 	<tip>
 	  <para>O primeiro caminho preferencial da linha (aquele no topo da lista de caminhos preferenciais) será o
 	    caminho padrão aberto sempre que o usuário clicar num
-	    ícone <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_caminho_personalizado.png"
+      ícone <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_caminho_personalizado.png"
 	    /></imageobject></inlinemediaobject></guiicon> para fazer a busca por um arquivo ou diretório, durante a
 	    configuração de parâmetros do tipo de arquivo para programas incluídos em fluxos de processamento.</para>
 	</tip>
@@ -787,7 +787,7 @@
         <procedure>
           <step>
             <para>Clique no
-            botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_importar_projeto.png"
+                    botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_importar_projeto.png"
             /></imageobject></inlinemediaobject></guiicon></para>
           </step>
           <step>
@@ -828,7 +828,7 @@
           </step>
           <step>
             <para>Clique no
-            botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_exportar_projeto.png"
+                    botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_exportar_projeto.png"
             /></imageobject></inlinemediaobject></guiicon></para>
           </step>
           <step>
@@ -1065,7 +1065,7 @@
         <para>Para criar um novo fluxo, primeiro certifique-se de ter <emphasis role="bold">criado e selecionado uma
         linha</emphasis>, na aba <guilabel>Projetos e Linhas</guilabel>. Feito isso, selecione a aba
           <guilabel>Fluxos</guilabel> e clique no
-          botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_criar_fluxo.png"
+          botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_criar_fluxo.png"
           /></imageobject></inlinemediaobject></guiicon>. Na janela que se abre (<guilabel>Propriedades para
           fluxos</guilabel>), <xref linkend="editar_propriedades_fluxo"/> e clique em
           <guibutton>OK</guibutton> (veja mais detalhes na <xref linkend="criando_fluxos"/>).</para>
@@ -1099,7 +1099,7 @@
         <para>A área de transferência provê o recurso popularmente conhecido como <emphasis role="bold">copiar e
           colar</emphasis>. Na GêBR, um fluxo (ou um conjunto de fluxos) pode ser copiado para a área de transferência
           por meio do
-          botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_copiar_fluxo.png"
+          botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_copiar_fluxo.png"
           /></imageobject></inlinemediaobject></guiicon> ou, mais prático, pelo conhecido atalho
           <keycombo><keycap>Ctrl</keycap> <keycap>C</keycap></keycombo>.</para>
 
@@ -1123,7 +1123,7 @@
 
         <para>Depois de ter sido selecionado e copiado <xref linkend="copiar_fluxos_area_tranferencia"/>, um fluxo (ou um
           conjunto de fluxos) pode ser colado por meio do
-          botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_colar_fluxo.png"
+          botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_colar_fluxo.png"
           /></imageobject></inlinemediaobject></guiicon> ou, mais prático, pelo conhecido atalho
           <keycombo>
             <keycap>Ctrl</keycap>
@@ -1144,7 +1144,7 @@
         <title>Deletar fluxos</title>
 
         <para>Para excluir um fluxo (ou um conjunto de fluxos), selecione-o e clique no botão 
-          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_apagar_projeto.png"
+                <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_apagar_projeto.png"
           /></imageobject></inlinemediaobject></guiicon>.</para>
 
         <tip>
@@ -1166,7 +1166,7 @@
         <title>Editar as propriedades de um fluxo</title>
 
         <para>Para editar as propriedades de um fluxo, selecione-o e clique no
-        botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_editar_propriedades_projeto.png"
+                botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_editar_propriedades_projeto.png"
         /></imageobject></inlinemediaobject></guiicon>.</para>
 
 
@@ -1200,7 +1200,7 @@
         <procedure>
           <step>
             <para>Selecione o fluxo e clique no
-            botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_salvar_estado.png"
+                    botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_salvar_estado.png"
             /></imageobject></inlinemediaobject></guiicon>.</para>
           </step>
           <step>
@@ -1220,9 +1220,9 @@
         </note>
 
         <para>Para abrir a lista de estados salvos, clique no
-        botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_salvar_estado_lista.png"
+                botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_salvar_estado_lista.png"
         /></imageobject></inlinemediaobject></guiicon>, à direita do
-        botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_salvar_estado.png"
+        botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_salvar_estado.png"
         /></imageobject></inlinemediaobject></guiicon>, e então selecione o estado para o qual quer retornar. Sempre que
         você selecionar um estado salvo na lista, o diálogo <guilabel>Fazer backup do estado atual?</guilabel> será
         exibido. Se clicar em <guibutton>Sim</guibutton>, a janela <guilabel>Salvar estado do fluxo</guilabel> se
@@ -1262,7 +1262,7 @@
           <step>
             <para>Selecione a aba 
               <guilabel>Fluxos</guilabel> e clique no
-              botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_importar_projeto.png"
+              botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_importar_projeto.png"
               /></imageobject></inlinemediaobject></guiicon>.</para>
           </step>
           <step>
@@ -1292,7 +1292,7 @@
           </step>
           <step>
             <para>Clique no
-            botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_exportar_projeto.png"
+                    botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_exportar_projeto.png"
             /></imageobject></inlinemediaobject></guiicon>.</para>
           </step>
           <step>
@@ -1312,7 +1312,7 @@
 
         <para>Este comando aparece repetidamente nas abas <guilabel>Fluxos</guilabel> e
           <guilabel>Edição de fluxo</guilabel> de duas formas distintas. Nessa aba Fluxos, o
-          botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_executar_fluxo.png"
+          botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_executar_fluxo.png"
           /></imageobject></inlinemediaobject></guiicon> executa vários fluxos em sequência. Ver
           figura: 
 	<figure>
@@ -1443,7 +1443,7 @@
 
       <para>Por padrão, as categorias são mostradas na forma colapsada, ocultando os componentes. Para exibir os
 	componentes de uma categoria, você deve expandí-la clicando no
-	ícone <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_colapsado.png"
+  ícone <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_colapsado.png"
 	/></imageobject></inlinemediaobject></guiicon> à esquerda da categoria.</para>
 
 
@@ -1562,7 +1562,7 @@
 
         <para>Da mesma forma que se faz com fluxos (veja a <xref linkend="copiar_fluxos_area_tranferencia"/>), um programa (ou um conjunto de programas) pode ser copiado para a área de
           transferência por meio do
-          botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_copiar_fluxo.png"
+          botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_copiar_fluxo.png"
           /></imageobject></inlinemediaobject></guiicon> ou, mais prático, pelo conhecido atalho
           <keycombo>
             <keycap>Ctrl</keycap>
@@ -1589,7 +1589,7 @@
 
         <para>Depois de ter sido selecionado e copiado <xref linkend="copiar_programa_para_area_de_transferencia"/>, um programa (ou
           um conjunto de programas) pode ser colado por meio do
-          botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_colar_fluxo.png"
+          botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_colar_fluxo.png"
           /></imageobject></inlinemediaobject></guiicon> ou, mais prático, pelo conhecido atalho
           <keycombo>
             <keycap>Ctrl</keycap>
@@ -1610,7 +1610,7 @@
         <title>Deletar programas</title>
 
         <para>Para excluir um programa (ou um conjunto de programas), selecione-o e clique no
-        botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_apagar_projeto.png"
+                botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_apagar_projeto.png"
         /></imageobject></inlinemediaobject></guiicon>.</para>
 
         <tip>
@@ -1641,7 +1641,7 @@
         <procedure>
           <step>
             <para>Selecione-o na caixa <guilabel>Sequência de fluxo</guilabel> e clique no
-              botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_editar_propriedades_projeto.png"
+                    botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_editar_propriedades_projeto.png"
               /></imageobject></inlinemediaobject></guiicon>, ou dê um clique duplo no programa.</para>
           </step>
           <step>
@@ -1672,18 +1672,18 @@
         <title>Mudar o estado de um programa</title>
 
         <para>Após realizar o procedimento da <xref linkend="editar_parametros_programa"/>, note que o programa passa a ser sinalizado
-        por <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_configurado.png"
+                por <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_configurado.png"
         /></imageobject></inlinemediaobject></guiicon> em vez
-        de <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_nao_configurado.png"
+        de <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_nao_configurado.png"
         /></imageobject></inlinemediaobject></guiicon>. Isso indica que o programa passou do
         estado <emphasis role="bold">Não configurado</emphasis> para o
         estado <emphasis role="bold">Configurado</emphasis>. Além desses dois estados, um programa pode assumir ainda o
         estado <emphasis role="bold">Desabilitado</emphasis>
-        (<guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_desabilitado.png"
+        (<guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_desabilitado.png"
         /></imageobject></inlinemediaobject></guiicon>). Você alterna entre estes três estados clicando no botão
-          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_salvar_estado_lista.png"/></imageobject></inlinemediaobject></guiicon>,
+          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_salvar_estado_lista.png"/></imageobject></inlinemediaobject></guiicon>,
           à direita do
-          botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_mudar_estado.png"
+          botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_mudar_estado.png"
           /></imageobject></inlinemediaobject></guiicon>.</para>
 
         <tip>
@@ -1708,7 +1708,7 @@
         <important>
 
           <para>Programas <emphasis role="bold">Desabilitados</emphasis>
-	    (<guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_desabilitado.png"
+                  (<guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_desabilitado.png"
 	    /></imageobject></inlinemediaobject></guiicon>) são ignorados durante a execução do fluxo. Dessa forma, você
 	    pode <emphasis role="bold">habilitar ou desabilitar pedaços de um fluxo</emphasis>, conforme a
 	    conveniência.</para>
@@ -1742,7 +1742,7 @@
           </step>
           <step>
             <para>Edite os caminhos ou clique no
-            ícone <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_escolher_arquivo.png"
+                    ícone <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_escolher_arquivo.png"
             /></imageobject></inlinemediaobject></guiicon> e navegue pela janela <guilabel>Escolha um
             arquivo</guilabel>.</para>
           </step>
@@ -1751,9 +1751,9 @@
         <para>Ao sair da janela 
           <guilabel>Entrada/Saída do fluxo</guilabel>, note que os arquivos de entrada e saída que você associou ao
           fluxo aparecem na caixa <guilabel>Sequência de fluxo</guilabel>, sinalizados com os ícones
-          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_arquivo_entrada.png"
+          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_arquivo_entrada.png"
 							      /></imageobject></inlinemediaobject></guiicon> e
-          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_arquivo_saida.png"
+          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_arquivo_saida.png"
 							      /></imageobject></inlinemediaobject></guiicon>, abaixo e acima dos programas do fluxo (se houver algum).</para>
 
         <note>
@@ -1769,7 +1769,7 @@
         <title>Executar um fluxo</title>
 
         <para>Para executar o fluxo atual, clique no botão 
-          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_executar_fluxo.png"
+                <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_executar_fluxo.png"
 							      /></imageobject></inlinemediaobject></guiicon>.</para>
 
 
@@ -1780,7 +1780,7 @@
 
 
         <para>Na aba Edição de fluxo, ainda que se tenha selecionado vários fluxos na aba Fluxos, ao se clicar no
-							      botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_executar_fluxo.png"
+                botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_executar_fluxo.png"
 							      /></imageobject></inlinemediaobject></guiicon> será
 							      executado apenas o primeiro fluxo selecionado.</para>
 
@@ -1861,7 +1861,7 @@
 
         <para>Para salvar a informação da tarefa em um arquivo, selecione-a na caixa 
           <guilabel>Tarefas</guilabel> e clique no
-          botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_salvar_log.png"
+          botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_salvar_log.png"
           /></imageobject></inlinemediaobject></guiicon>.</para>
 
       </section>
@@ -1871,14 +1871,14 @@
 
         <para>Para remover o log de uma tarefa, selecione-a na caixa 
           <guilabel>Tarefas</guilabel> e clique no
-          botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_limpar_log_atual.png"
+          botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_limpar_log_atual.png"
           /></imageobject></inlinemediaobject></guiicon>.</para>
 
 
         <para>Só podem ser excluídas as tarefas que não estiverem em execução (sinalizadas
-        com <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_tarefa_concluida_sucesso.png"
+                com <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_tarefa_concluida_sucesso.png"
         /></imageobject></inlinemediaobject></guiicon> ou
-          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_tarefa_terminada_erro.png"/></imageobject></inlinemediaobject></guiicon>).</para>
+          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_tarefa_terminada_erro.png"/></imageobject></inlinemediaobject></guiicon>).</para>
 
       </section>
 
@@ -1887,14 +1887,14 @@
 
         <para>Em geral, tarefas complexas levam algum tempo para serem executadas. Se por alguma razão for necessário
           forçar o término de uma tarefa antes que ela termine naturalmente, selecione a tarefa em execução (sinalizada
-          com <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_tarefa_em_execucao.png"
+          com <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_tarefa_em_execucao.png"
           /></imageobject></inlinemediaobject></guiicon>) na caixa <guilabel>Tarefas</guilabel> e clique no botão
-          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_terminar_tarefa.png"
+          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_terminar_tarefa.png"
           /></imageobject></inlinemediaobject></guiicon>.</para>
 
 
         <para>Quando terminada dessa forma, a tarefa é sinalizada
-        com <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/icone_tarefa_terminada_erro.png"
+                com <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_tarefa_terminada_erro.png"
         /></imageobject></inlinemediaobject></guiicon>.</para>
 
       </section>
@@ -1938,7 +1938,7 @@
         </step>
         <step>
           <para>Na aba <guilabel>Projetos e Linhas</guilabel>, clique no
-          botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../images/botao_dicionario_projeto.png"
+                  botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_dicionario_projeto.png"
           /></imageobject></inlinemediaobject></guiicon> para <emphasis role="bold">editar o dicionário de
           parâmetros</emphasis>.</para>
         </step>
