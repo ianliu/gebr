@@ -9,14 +9,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-18 12:50-0200\n"
+"POT-Creation-Date: 2011-02-23 12:12-0300\n"
 "PO-Revision-Date: 2011-02-01 10:48-0200\n"
 "Last-Translator: Rodrigo Morelatto <morelatto@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bitPlural-Forms: nplurals=2; plural=(n > 1);\n"
+"Language: \n"
 "Fabio Azevedo <fabioaz@gebrproject.com>\n"
 
 #: ../data/gebr.desktop.in.in.h:1
@@ -139,7 +139,7 @@ msgstr "Servidor '%s' informou erro '%s'."
 msgid "Immediately"
 msgstr "Imediatamente"
 
-#: ../gebr/client.c:89 ../gebr/job.c:107 ../gebr/job.c:462
+#: ../gebr/client.c:89 ../gebr/job.c:107 ../gebr/job.c:465
 #, c-format
 msgid "At '%s'"
 msgstr "Em '%s'"
@@ -821,21 +821,21 @@ msgid "."
 msgstr "."
 
 #. jump q identifier
-#: ../gebr/job.c:413 ../gebr/job.c:483
+#: ../gebr/job.c:414 ../gebr/job.c:486
 #, c-format
 msgid "After '%s' at '%s'"
 msgstr "Depois de '%s' em '%s'"
 
-#: ../gebr/job.c:479
+#: ../gebr/job.c:482
 #, c-format
 msgid "After '%s'"
 msgstr "Depois de '%s'"
 
-#: ../gebr/job.c:504 ../gebr/ui_job_control.c:441
+#: ../gebr/job.c:507 ../gebr/ui_job_control.c:441
 msgid "Finish date:"
 msgstr "Data de término:"
 
-#: ../gebr/job.c:504 ../gebr/ui_job_control.c:441
+#: ../gebr/job.c:507 ../gebr/ui_job_control.c:441
 msgid "Cancel date:"
 msgstr "Data de cancelamento:"
 
@@ -964,9 +964,9 @@ msgid "Remove current parameters."
 msgstr "Remover parâmetros atuais."
 
 #: ../gebr/ui_document.c:198
-#, c-format
-msgid "Properties for %s '%s'"
-msgstr "Propriedades para %s '%s'"
+# c-format
+msgid "%s '%s' properties"
+msgstr "%s '%s' - propriedades"
 
 #. Title
 #: ../gebr/ui_document.c:229
@@ -1259,56 +1259,56 @@ msgstr "Arquivo de log"
 msgid "Configuring program '%s'."
 msgstr "Configurando programa '%s'."
 
-#: ../gebr/ui_flow_edition.c:565
+#: ../gebr/ui_flow_edition.c:581
 msgid "No menu selected."
 msgstr "Nenhum menu selecionado."
 
-#: ../gebr/ui_flow_edition.c:570
+#: ../gebr/ui_flow_edition.c:586
 msgid "Select a menu instead of a category."
 msgstr "Selecione um menu ao invés de uma categoria."
 
-#: ../gebr/ui_flow_edition.c:825 ../gebr/ui_flow_edition.c:840
+#: ../gebr/ui_flow_edition.c:841 ../gebr/ui_flow_edition.c:856
 #: ../gebr/ui_project_line.c:1116 ../gebr/ui_project_line.c:1151
 msgid "Collapse all"
 msgstr "Colapsar todos"
 
-#: ../gebr/ui_flow_edition.c:828 ../gebr/ui_flow_edition.c:843
+#: ../gebr/ui_flow_edition.c:844 ../gebr/ui_flow_edition.c:859
 #: ../gebr/ui_project_line.c:1120 ../gebr/ui_project_line.c:1155
 msgid "Expand all"
 msgstr "Expandir todos"
 
-#: ../gebr/ui_flow_edition.c:967
+#: ../gebr/ui_flow_edition.c:983
 msgid "Choose input file"
 msgstr "Escolha o arquivo de entrada"
 
-#: ../gebr/ui_flow_edition.c:969
+#: ../gebr/ui_flow_edition.c:985
 #, c-format
 msgid "Input file '%s'"
 msgstr "Arquivo de entrada '%s'"
 
-#: ../gebr/ui_flow_edition.c:976
+#: ../gebr/ui_flow_edition.c:992
 msgid "Choose output file"
 msgstr "Escolha o arquivo de saída"
 
-#: ../gebr/ui_flow_edition.c:978
+#: ../gebr/ui_flow_edition.c:994
 #, c-format
 msgid "Output file '%s'"
 msgstr "Arquivo de saída '%s'"
 
-#: ../gebr/ui_flow_edition.c:985
+#: ../gebr/ui_flow_edition.c:1001
 msgid "Choose log file"
 msgstr "Escolha o arquivo de log"
 
-#: ../gebr/ui_flow_edition.c:987
+#: ../gebr/ui_flow_edition.c:1003
 #, c-format
 msgid "Log file '%s'"
 msgstr "Arquivo de log '%s'"
 
-#: ../gebr/ui_flow_edition.c:996
+#: ../gebr/ui_flow_edition.c:1012
 msgid "Required parameter unfilled"
 msgstr "Parâmetro obrigatório não preenchido"
 
-#: ../gebr/ui_flow_edition.c:998
+#: ../gebr/ui_flow_edition.c:1014
 msgid "Verify parameter configuration"
 msgstr "Verifique a configuração dos parâmetros"
 
@@ -1834,6 +1834,9 @@ msgstr ""
 #: ../gebr/ui_server.c:497
 msgid "Select server"
 msgstr "Selecione um servidor"
+
+#~ msgid "Properties for %s '%s'"
+#~ msgstr "Propriedades para %s '%s'"
 
 #~ msgid "Clear Job"
 #~ msgstr "Limpar Tarefas"
