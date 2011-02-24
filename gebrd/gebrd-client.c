@@ -223,7 +223,7 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 
 					/* add client magic cookie */
 					gint i = 0;
-					while (i++ < 5 && WEXITSTATUS(gebr_system("xauth add :%d . %s", display, x11->str))) {
+					while (i++ < 5 && gebr_system("xauth add :%d . %s", display, x11->str)) {
 						gebrd_message(GEBR_LOG_ERROR, "Failed to add X11 authorization.");
 						usleep(200*1000);
 					}
