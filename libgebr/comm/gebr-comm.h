@@ -25,5 +25,7 @@
 #include <comm/gebr-comm-process.h>
 #include <comm/gebr-comm-terminalprocess.h>
 #include <comm/gebr-comm-protocol.h>
+#include <comm/gebr-comm-protocol-socket.h>
+#include <comm/gebr-comm-http-msg.h>
 #include <comm/gebr-comm-job.h>
 #include <comm/gebr-comm-server.h>

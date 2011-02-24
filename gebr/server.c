@@ -290,11 +290,13 @@ GebrServer *gebr_server_new (const gchar * address, gboolean autoconnect, const 
 	GtkTreeModel *model;
 
 	static const struct gebr_comm_server_ops ops = {
-		.log_message    = server_log_message,
-		.state_changed  = (typeof(ops.state_changed)) server_state_changed,
-		.ssh_login      = server_ssh_login,
-		.ssh_question   = server_ssh_question,
-		.parse_messages = (typeof(ops.parse_messages)) client_parse_server_messages
+		.log_message      = server_log_message,
+		.state_changed    = (typeof(ops.state_changed)) server_state_changed,
+		.ssh_login        = server_ssh_login,
+		.ssh_question     = server_ssh_question,
+		.process_request  = (typeof(ops.process_request)) client_process_server_request,
+		.process_response = (typeof(ops.process_response)) client_process_server_response,
+		.parse_messages   = (typeof(ops.parse_messages)) client_parse_server_messages
 	};
 
 	self = g_object_new (GEBR_TYPE_SERVER,

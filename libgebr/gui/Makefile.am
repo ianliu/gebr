@@ -23,20 +23,13 @@ SUBDIRS = . pixmaps data icons ckeditor ${TESTSDIR}
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = gebr-gui.pc
 
-EXTRA_DIST = gebr-gui.pc marshalers.list
+EXTRA_DIST = gebr-gui.pc
 
 libgebr_guiincludedir = $(includedir)/libgebr
 libgebr_guiinclude_HEADERS = gui.h
 
-marshalers.h: marshalers.list
-	glib-genmarshal --prefix=_gebr_gui_marshal marshalers.list --header >marshalers.h
-
-marshalers.c: marshalers.h marshalers.list
-	glib-genmarshal --prefix=_gebr_gui_marshal marshalers.list --body >marshalers.c
-
 lib_LTLIBRARIES = libgebr_gui.la
 libgebr_gui_la_SOURCES = 		\
-	marshalers.c 			\
 	sexy-icon-entry.c 		\
 	gebr-gui-about.c 		\
 	gebr-gui-utils.c 		\
@@ -57,7 +50,6 @@ libgebr_gui_la_SOURCES = 		\
 
 libgebr_guisubincludedir = $(includedir)/libgebr/gui
 libgebr_guisubinclude_HEADERS = 	\
-	marshalers.h			\
 	sexy-icon-entry.h		\
 	gebr-gui-about.h		\
 	gebr-gui-utils.h		\
@@ -75,8 +67,6 @@ libgebr_guisubinclude_HEADERS = 	\
 	gebr-gui-html-viewer-widget.h	\
 	gebr-gui-html-viewer-window.h	\
 	gebr-gui-js.h
-
-noinst_HEADERS = marshalers.h
 
 AM_CPPFLAGS =				\
 	-I..				\
@@ -98,5 +88,3 @@ libgebr_gui_la_LIBADD =			\
 	$(WEBKIT_LIBS)
 
 libgebr_gui_la_LDFLAGS = -version-info @GEBR_VERSION_INFO@
-
-CLEANFILES = marshalers.c marshalers.h

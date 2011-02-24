@@ -40,6 +40,7 @@ libgebr_comm_la_SOURCES = \
 	gebr-comm-terminalprocess.c	\
 	gebr-comm-protocol.c		\
 	gebr-comm-protocol-socket.c	\
+	gebr-comm-http-msg.c 		\
 	gebr-comm-job.c			\
 	gebr-comm-server.c
 
@@ -55,6 +56,7 @@ libgebr_commsubinclude_HEADERS = \
 	gebr-comm-terminalprocess.h	\
 	gebr-comm-protocol.h		\
 	gebr-comm-protocol-socket.h	\
+	gebr-comm-http-msg.h 		\
 	gebr-comm-job.h			\
 	gebr-comm-server.h
 

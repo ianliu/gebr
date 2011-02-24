@@ -28,19 +28,30 @@
 
 G_BEGIN_DECLS
 
+GType gebrd_app_get_type(void);
+#define GEBRD_APP_TYPE		(gebrd_app_get_type())
+#define GEBRD_APP(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), GEBRD_APP_TYPE, GebrdApp))
+#define GEBRD_APP_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), GEBRD_APP_TYPE, GebrdAppClass))
+#define GEBRD_IS(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEBRD_APP_TYPE))
+#define GEBRD_IS_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), GEBRD_APP_TYPE))
+#define GEBRD_APP_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), GEBRD_APP_TYPE, GebrdAppClass))
+
+typedef struct _GebrdApp GebrdApp;
+typedef struct _GebrdAppClass GebrdAppClass;
+
 /**
  * \file gebrd.h
  * \brief Global access variable for date interchange 
  */
-
-extern struct gebrd gebrd;
-
+extern GebrdApp *gebrd;
 /**
  * \struct gebrd gebr.h
  * \brief Global access variable for date interchange 
  * \see gebrd.h
  */
-struct gebrd {
+struct _GebrdApp {
+	GObject parent;
+
 	GebrCommListenSocket *listen_socket;
 	GList *clients;
 	GList *jobs;
@@ -51,6 +62,7 @@ struct gebrd {
 
 	GString *run_filename;
 	GString *fs_lock;
+	GString *fs_nickname;
 	GHashTable *queues;
 
 	/**
@@ -65,6 +77,11 @@ struct gebrd {
 	GMainLoop *main_loop;
 	int finished_starting_pipe[2];
 };
+struct _GebrdAppClass {
+	GObjectClass parent;
+};
+
+GebrdApp *gebrd_app_new(void);
 
 /**
  * Init daemon routines.

@@ -59,6 +59,10 @@ static void gebr_comm_server_disconnected_state(struct gebr_comm_server *server,
 static void gebr_comm_server_change_state(struct gebr_comm_server *server, enum gebr_comm_server_state state);
 static void gebr_comm_server_socket_connected(GebrCommProtocolSocket * socket, struct gebr_comm_server *server);
 static void gebr_comm_server_socket_disconnected(GebrCommProtocolSocket * socket, struct gebr_comm_server *server);
+static void gebr_comm_server_socket_process_request(GebrCommProtocolSocket * socket, GebrCommHttpMsg *request,
+						    struct gebr_comm_server *server);
+static void gebr_comm_server_socket_process_response(GebrCommProtocolSocket * socket, GebrCommHttpMsg *request,
+						     GebrCommHttpMsg *response, struct gebr_comm_server *server);
 static void gebr_comm_server_socket_old_parse_messages(GebrCommProtocolSocket * socket, struct gebr_comm_server *server);
 
 static void gebr_comm_server_free_x11_forward(struct gebr_comm_server *server);
@@ -168,6 +172,10 @@ struct gebr_comm_server *gebr_comm_server_new(const gchar * _address, const stru
 			 G_CALLBACK(gebr_comm_server_socket_connected), server);
 	g_signal_connect(server->socket, "disconnected",
 			 G_CALLBACK(gebr_comm_server_socket_disconnected), server);
+	g_signal_connect(server->socket, "process-request",
+			 G_CALLBACK(gebr_comm_server_socket_process_request), server);
+	g_signal_connect(server->socket, "process-response",
+			 G_CALLBACK(gebr_comm_server_socket_process_response), server);
 	g_signal_connect(server->socket, "old-parse-messages",
 			 G_CALLBACK(gebr_comm_server_socket_old_parse_messages), server);
 
@@ -689,6 +697,24 @@ static void gebr_comm_server_socket_disconnected(GebrCommProtocolSocket * socket
 	gebr_comm_server_disconnected_state(server, SERVER_ERROR_UNKNOWN, "");
 	gebr_comm_server_log_message(server, GEBR_LOG_WARNING, _("Server '%s' disconnected"), 
 				     server->address->str);
+}
+
+/**
+ * \internal
+ */
+static void gebr_comm_server_socket_process_request(GebrCommProtocolSocket * socket, GebrCommHttpMsg *request,
+						    struct gebr_comm_server *server)
+{
+	server->ops->process_request(server, request, server->user_data);
+}
+
+/**
+ * \internal
+ */
+static void gebr_comm_server_socket_process_response(GebrCommProtocolSocket * socket, GebrCommHttpMsg *request,
+						     GebrCommHttpMsg *response, struct gebr_comm_server *server)
+{
+	server->ops->process_response(server, request, response, server->user_data);
 }
 
 /**

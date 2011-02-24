@@ -32,8 +32,9 @@
 int main(int argc, char **argv)
 {
 	gboolean show_version;
+	gboolean foreground;
 	const GOptionEntry entries[] = {
-		{"interactive", 'i', 0, G_OPTION_ARG_NONE, &gebrd.options.foreground,
+		{"interactive", 'i', 0, G_OPTION_ARG_NONE, &foreground,
 		 N_("Run server in interactive mode, not as a daemon"), NULL},
 		{"version", 0, 0, G_OPTION_ARG_NONE, &show_version,
 		 N_("Show GeBR daemon version"), NULL},
@@ -64,6 +65,10 @@ int main(int argc, char **argv)
 		fprintf(stdout, "%s (%s)\n", GEBRD_VERSION NANOVERSION, gebr_version());
 		return 0;
 	}
+
+	g_type_init();
+	gebrd = gebrd_app_new();
+	gebrd->options.foreground = foreground;
 
 	gebrd_config_load();
 	gebrd_init();

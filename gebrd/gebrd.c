@@ -26,14 +26,102 @@
 
 #include <glib/gi18n.h>
 #include <libgebr/utils.h>
+#include <libgebr/comm/gebr-comm-protocol.h>
 
 #include "gebrd.h"
 #include "gebrd-server.h"
 #include "gebrd-client.h"
+#include "gebrd-job-queue.h"
 
-#define GEBRD_CONF_FILE "/etc/gebr/gebrd.conf"
+#define GEBRD_CONF_FILE "/etc/gebr/gebrd->conf"
 
-struct gebrd gebrd;
+GebrdApp *gebrd;
+
+/* GOBJECT STUFF */
+enum {
+	PROP_0,
+	PROP_FS_NICKNAME,
+	LAST_PROPERTY
+};
+//static guint property_member_offset [] = {0,
+//};
+enum {
+	LAST_SIGNAL
+};
+//static guint object_signals[LAST_SIGNAL];
+G_DEFINE_TYPE(GebrdApp, gebrd_app, G_TYPE_OBJECT)
+static void gebrd_app_init(GebrdApp * self)
+{
+	self->run_filename = g_string_new(NULL);
+	self->fs_lock = g_string_new(NULL);
+	self->fs_nickname = g_string_new(NULL);
+	self->clients = NULL;
+	self->jobs = NULL;
+	self->queues = g_hash_table_new_full((GHashFunc)g_str_hash, (GEqualFunc)g_str_equal,
+					     (GDestroyNotify)g_free, NULL);
+	gethostname(self->hostname, 255);
+	g_random_set_seed((guint32) time(NULL));
+
+}
+static void gebrd_app_finalize(GObject * object)
+{
+	GebrdApp *self = (GebrdApp *) object;
+
+	g_string_free(self->run_filename, TRUE);
+	g_string_free(self->fs_lock, TRUE);
+	/* jobs */
+	g_list_foreach(self->jobs, (GFunc) job_free, NULL);
+	g_list_free(self->jobs);
+	/* client */
+	g_list_foreach(self->clients, (GFunc) client_free, NULL);
+	g_list_free(self->clients);
+
+	G_OBJECT_CLASS(gebrd_app_parent_class)->finalize(object);
+}
+static void
+gebrd_app_set_property(GObject * object, guint property_id, const GValue * value, GParamSpec * pspec)
+{
+	GebrdApp *self = (GebrdApp *) object;
+	switch (property_id) {
+	case PROP_FS_NICKNAME:
+		g_string_assign(self->fs_nickname, g_value_get_string(value));
+		break;
+	default:
+		G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
+		break;
+	}
+}
+static void
+gebrd_app_get_property(GObject * object, guint property_id, GValue * value, GParamSpec * pspec)
+{
+	GebrdApp *self = (GebrdApp *) object;
+	switch (property_id) {
+	case PROP_FS_NICKNAME:
+		g_value_set_string(value, self->fs_nickname->str);
+		break;
+	default:
+		G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
+		break;
+	}
+}
+static void gebrd_app_class_init(GebrdAppClass * klass)
+{ 
+	GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
+	gobject_class->finalize = gebrd_app_finalize;
+	
+	/* properties */
+	GParamSpec *spec;
+	gobject_class->set_property = gebrd_app_set_property;
+	gobject_class->get_property = gebrd_app_get_property;
+	spec =	g_param_spec_string("fs-nickname", "", "", "",
+				     (GParamFlags)(G_PARAM_READABLE | G_PARAM_WRITABLE)); 
+	g_object_class_install_property(gobject_class, PROP_FS_NICKNAME, spec);
+}
+
+GebrdApp *gebrd_app_new(void)
+{
+	return GEBRD_APP(g_object_new(GEBRD_APP_TYPE, NULL));
+}
 
 /*
  * \internal
@@ -85,15 +173,14 @@ static void close_open_fds(int lowfd, int highfd)
 
 void gebrd_init(void)
 {
-	if (gebrd.options.foreground) {
-		g_type_init();
+	if (gebrd->options.foreground) {
 		if (server_init() == TRUE) {
-			gebrd.main_loop = g_main_loop_new(NULL, FALSE);
-			g_main_loop_run(gebrd.main_loop);
-			g_main_loop_unref(gebrd.main_loop);
+			gebrd->main_loop = g_main_loop_new(NULL, FALSE);
+			g_main_loop_run(gebrd->main_loop);
+			g_main_loop_unref(gebrd->main_loop);
 		}
 	} else {
-		if (pipe(gebrd.finished_starting_pipe) == -1)
+		if (pipe(gebrd->finished_starting_pipe) == -1)
 			g_warning("%s:%d: Error when creating pipe with error code %d",
 				  __FILE__, __LINE__, errno);
 
@@ -110,17 +197,16 @@ void gebrd_init(void)
 			signal(SIGCHLD, SIG_IGN);
 			setpgrp();
 
-			g_type_init();
 			if (server_init()) {
 				close_open_fds(0, 3);
-				gebrd.main_loop = g_main_loop_new(NULL, FALSE);
-				g_main_loop_run(gebrd.main_loop);
-				g_main_loop_unref(gebrd.main_loop);
+				gebrd->main_loop = g_main_loop_new(NULL, FALSE);
+				g_main_loop_run(gebrd->main_loop);
+				g_main_loop_unref(gebrd->main_loop);
 			}
 		} else {
 			/* wait for server_init sign that it finished */
 			gchar buffer[100];
-			read(gebrd.finished_starting_pipe[0], buffer, 10);
+			read(gebrd->finished_starting_pipe[0], buffer, 10);
 			fprintf(stdout, "%s", buffer);
 		}
 	}
@@ -129,10 +215,10 @@ void gebrd_init(void)
 void gebrd_quit(void)
 {
 	gebrd_message(GEBR_LOG_END, _("Server quit."));
-	g_list_foreach(gebrd.mpi_flavors, (GFunc)gebrd_mpi_config_free, NULL);
-	g_list_free(gebrd.mpi_flavors);
+	g_list_foreach(gebrd->mpi_flavors, (GFunc)gebrd_mpi_config_free, NULL);
+	g_list_free(gebrd->mpi_flavors);
 	server_quit();
-	g_main_loop_quit(gebrd.main_loop);
+	g_main_loop_quit(gebrd->main_loop);
 }
 
 void gebrd_message(enum gebr_log_message_type type, const gchar * message, ...)
@@ -158,8 +244,8 @@ void gebrd_message(enum gebr_log_message_type type, const gchar * message, ...)
 	} else
 		string = g_strdup (tmp);
 
-	gebr_log_add_message(gebrd.log, type, tmp);
-	if (gebrd.options.foreground == TRUE) {
+	gebr_log_add_message(gebrd->log, type, tmp);
+	if (gebrd->options.foreground == TRUE) {
 		if (type != GEBR_LOG_ERROR)
 			fprintf(stdout, "%s\n", string);
 		else
@@ -212,8 +298,8 @@ void gebrd_config_load(void)
 	GError * err1, * err2;
 
 	err1 = err2 = NULL;
-	gebrd.mpi_flavors = NULL;
-	config_path = g_strdup_printf("%s/.gebr/gebrd/gebrd.conf", g_get_home_dir());
+	gebrd->mpi_flavors = NULL;
+	config_path = g_strdup_printf("%s/.gebr/gebrd/gebrd->conf", g_get_home_dir());
 	key_file = g_key_file_new();
 
 	/*
@@ -246,7 +332,7 @@ void gebrd_config_load(void)
 
 	/*
 	 * Iterate over all groups starting with `mpi-', populating the
-	 * GList gebrd.mpi_flavors.
+	 * GList gebrd->mpi_flavors.
 	 */
 	groups = g_key_file_get_groups(key_file, NULL);
 
@@ -264,7 +350,7 @@ void gebrd_config_load(void)
 		mpi_config->init_cmd = gebr_g_key_file_load_string_key(key_file, groups[i], "init_command", "");
 		mpi_config->end_cmd = gebr_g_key_file_load_string_key(key_file, groups[i], "end_command", "");
 
-		gebrd.mpi_flavors = g_list_prepend(gebrd.mpi_flavors, mpi_config);
+		gebrd->mpi_flavors = g_list_prepend(gebrd->mpi_flavors, mpi_config);
 	}
 
 out:
@@ -275,7 +361,7 @@ out:
 const GebrdMpiConfig * gebrd_get_mpi_config_by_name(const gchar * name)
 {
 	GList * iter;
-	for (iter = gebrd.mpi_flavors; iter; iter = iter->next)
+	for (iter = gebrd->mpi_flavors; iter; iter = iter->next)
 		if (g_strcmp0(((GebrdMpiConfig*)iter->data)->name->str, name) == 0)
 			return (GebrdMpiConfig*)iter->data;
 	return NULL;

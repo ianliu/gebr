@@ -42,11 +42,5 @@ void server_quit(void);
  */
 void server_new_connection(void);
 
-/**
- * Switch messages received from \p client.
- * @return #TRUE if parsing went ok, #FALSE otherwise.
- */
-gboolean server_parse_client_messages(struct client *client);
-
 G_END_DECLS
 #endif				//__SERVER_H

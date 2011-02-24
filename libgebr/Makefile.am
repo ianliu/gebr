@@ -30,8 +30,15 @@ touch:
 	if [ -d $(top_srcdir)/.hg ]; then touch version.c -r $(top_srcdir)/.hg; fi
 date.c: touch
 
+marshalers.h: marshalers.list
+	glib-genmarshal --prefix=_gebr_gui_marshal marshalers.list --header >marshalers.h
+marshalers.c: marshalers.h marshalers.list
+	glib-genmarshal --prefix=_gebr_gui_marshal marshalers.list --body >marshalers.c
+CLEANFILES = marshalers.c marshalers.h
+
 lib_LTLIBRARIES = libgebr.la
 libgebr_la_SOURCES = 	\
+	marshalers.c	\
 	date.c		\
 	gebr-tar.c	\
 	libgebr.c	\
@@ -53,9 +60,9 @@ libgebrinclude_HEADERS =\
 	version.h	\
 	$(NULL)
 
-noinst_HEADERS = defines.h
+noinst_HEADERS = defines.h marshalers.h
 
-EXTRA_DIST = ${pkgconfig_DATA} $(noinst_HEADERS) config.h.in
+EXTRA_DIST = ${pkgconfig_DATA} $(noinst_HEADERS) config.h.in marshalers.list
 DISTCLEANFILES = config.h
 
 AM_CFLAGS = $(COMMON_CFLAGS) -fPIC

@@ -22,6 +22,15 @@
 
 G_BEGIN_DECLS
 
+void client_process_server_request(struct gebr_comm_server *comm_server, GebrCommHttpMsg *request, GebrServer *server);
+
+void client_process_server_response(struct gebr_comm_server *comm_server, GebrCommHttpMsg *request,
+				   GebrCommHttpMsg *response, GebrServer *server);
+
+/**
+ * Switch messages received from \p client.
+ * @return #TRUE if parsing went ok, #FALSE otherwise.
+ */
 gboolean client_parse_server_messages(struct gebr_comm_server *gebr_comm_server, GebrServer *server);
 
 G_END_DECLS

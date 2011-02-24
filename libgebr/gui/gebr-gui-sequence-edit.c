@@ -22,7 +22,7 @@
 
 #include "gebr-gui-sequence-edit.h"
 #include "gebr-gui-utils.h"
-#include "marshalers.h"
+#include "../marshalers.h"
 
 enum {
 	PROP_0,

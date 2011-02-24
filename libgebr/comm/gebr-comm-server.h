@@ -91,6 +91,9 @@ struct gebr_comm_server {
 		void (*state_changed) (struct gebr_comm_server *server, gpointer user_data);
 		GString *(*ssh_login) (const gchar * title, const gchar * message);
 		gboolean(*ssh_question) (const gchar * title, const gchar * message);
+		void (*process_request) (struct gebr_comm_server * server, GebrCommHttpMsg * request, gpointer user_data);
+		void (*process_response) (struct gebr_comm_server * server, GebrCommHttpMsg * request,
+					  GebrCommHttpMsg * response, gpointer user_data);
 		void (*parse_messages) (struct gebr_comm_server * server, gpointer user_data);
 	} *ops;
 	gpointer user_data;

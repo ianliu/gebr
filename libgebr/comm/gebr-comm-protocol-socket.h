@@ -23,6 +23,7 @@
 
 #include <libgebr/comm/gebr-comm-socketaddress.h>
 #include <libgebr/comm/gebr-comm-protocol.h>
+#include <libgebr/comm/gebr-comm-http-msg.h>
 
 G_BEGIN_DECLS
 
@@ -42,8 +43,6 @@ struct _GebrCommProtocolSocket {
 	GObject parent;
 
 	GebrCommProtocolSocketPrivate *priv;
-
-	GList *request_fifo;
 	
 	/* deprecated */
 	struct gebr_comm_protocol *protocol;
@@ -55,6 +54,8 @@ struct _GebrCommProtocolSocketClass {
 	/* signals */
 	void (*connected)(GebrCommProtocolSocket *socket);
 	void (*disconnected)(GebrCommProtocolSocket *socket);
+	void (*process_request)(GebrCommProtocolSocket *socket, GebrCommHttpMsg * request);
+	void (*process_response)(GebrCommProtocolSocket *socket, GebrCommHttpMsg * request, GebrCommHttpMsg * response);
 	void (*old_parse_messages)(GebrCommProtocolSocket *socket);
 };
 
@@ -63,6 +64,10 @@ GebrCommProtocolSocket * gebr_comm_protocol_socket_new_from_socket(GebrCommStrea
 
 gboolean gebr_comm_protocol_socket_connect(GebrCommProtocolSocket *self, GebrCommSocketAddress * socket_address, gboolean wait);
 void gebr_comm_protocol_socket_disconnect(GebrCommProtocolSocket * self);
+
+void gebr_comm_protocol_socket_send_request(GebrCommProtocolSocket * self, GebrCommHttpRequestMethod method,
+					    const gchar *url, const gchar *content);
+void gebr_comm_protocol_socket_send_response(GebrCommProtocolSocket * self, int status_code, const gchar *content);
 
 void gebr_comm_protocol_socket_oldmsg_send(GebrCommProtocolSocket * self, gboolean blocking,
 					   struct gebr_comm_message_def gebr_comm_message_def, guint n_params, ...);

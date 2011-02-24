@@ -31,52 +31,42 @@
 
 #include <libgebr.h>
 #include <glib/gi18n.h>
-#include <libgebr/utils.h>
 #include <libgebr/comm/gebr-comm.h>
 #include <libgebr/geoxml/geoxml.h>
-
-#include <gdome.h>
 
 #include "gebrd-server.h"
 #include "gebrd-defines.h"
 #include "gebrd.h"
-#include "gebrd-job.h"
-#include "gebrd-client.h"
-#include "gebrd-job-queue.h"
-#include "gebrd-queues.h"
-#include "gebrd-sysinfo.h"
 
 
 /*
  * Private functions
  */
 
-static void server_moab_read_credentials(GString *accounts, GString *queue_list);
-
 static gboolean server_run_lock(gboolean *already_running)
 {
 	*already_running = FALSE;
 	/* check if there is another daemon running for this user and hostname */
-	g_string_printf(gebrd.run_filename, "%s/.gebr/run/gebrd-%s.run", g_get_home_dir(), gebrd.hostname);
-	if (g_file_test(gebrd.run_filename->str, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_REGULAR) == TRUE) {
+	g_string_printf(gebrd->run_filename, "%s/.gebr/run/gebrd-%s.run", g_get_home_dir(), gebrd->hostname);
+	if (g_file_test(gebrd->run_filename->str, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_REGULAR) == TRUE) {
 		gchar *contents;
 		GError *error = NULL;
-		if (!g_file_get_contents(gebrd.run_filename->str, &contents, NULL, &error))
+		if (!g_file_get_contents(gebrd->run_filename->str, &contents, NULL, &error))
 			g_warning("%s:%d: Failed to retrieve contents of '%s' file",
-				  __FILE__, __LINE__, gebrd.run_filename->str);
+				  __FILE__, __LINE__, gebrd->run_filename->str);
 		puts(contents);
 		guint16 port = atoi(contents);
 		g_free(contents);
 
 		/* is this port really being used (open)?? */
 		if (gebr_comm_listen_socket_is_local_port_available(port) == FALSE) {
-			if (gebrd.options.foreground == TRUE) {
+			if (gebrd->options.foreground == TRUE) {
 				gebrd_message(GEBR_LOG_ERROR,
 					      _("Cannot run interactive server, GêBR daemon is already running"));
 			} else {
 				gchar buffer[100];
 				snprintf(buffer, sizeof(buffer), "%d\n", port);
-				if (write(gebrd.finished_starting_pipe[1], buffer, strlen(buffer)+1) < 0)
+				if (write(gebrd->finished_starting_pipe[1], buffer, strlen(buffer)+1) < 0)
 					g_warning("Failed to write in file with error code %d", errno);
 			}
 
@@ -87,18 +77,18 @@ static gboolean server_run_lock(gboolean *already_running)
 	
 	/* init the server socket and listen */
 	GebrCommSocketAddress socket_address = gebr_comm_socket_address_ipv4_local(0);
-	gebrd.listen_socket = gebr_comm_listen_socket_new();
-	if (gebr_comm_listen_socket_listen(gebrd.listen_socket, &socket_address) == FALSE) {
+	gebrd->listen_socket = gebr_comm_listen_socket_new();
+	if (gebr_comm_listen_socket_listen(gebrd->listen_socket, &socket_address) == FALSE) {
 		gebrd_message(GEBR_LOG_ERROR, _("Could not listen for connections.\n"));
 		goto err;
 	}
-	gebrd.socket_address = gebr_comm_socket_get_address(GEBR_COMM_SOCKET(gebrd.listen_socket));
-	g_signal_connect(gebrd.listen_socket, "new-connection", G_CALLBACK(server_new_connection), NULL);
+	gebrd->socket_address = gebr_comm_socket_get_address(GEBR_COMM_SOCKET(gebrd->listen_socket));
+	g_signal_connect(gebrd->listen_socket, "new-connection", G_CALLBACK(server_new_connection), NULL);
 
 	GError *error = NULL;
 	GString *port_gstring = g_string_new("");
-	g_string_printf(port_gstring, "%d\n", gebr_comm_socket_address_get_ip_port(&gebrd.socket_address));
-	gboolean ret = g_file_set_contents(gebrd.run_filename->str, port_gstring->str, port_gstring->len, &error);
+	g_string_printf(port_gstring, "%d\n", gebr_comm_socket_address_get_ip_port(&gebrd->socket_address));
+	gboolean ret = g_file_set_contents(gebrd->run_filename->str, port_gstring->str, port_gstring->len, &error);
 	g_string_free(port_gstring, TRUE);
 	if (!ret) {
 		gebrd_message(GEBR_LOG_ERROR, _("Could not write run file."));
@@ -125,7 +115,7 @@ static gboolean server_fs_lock(void)
 		return FALSE;
 	}
 
-	g_string_assign(gebrd.fs_lock, fs_lock);
+	g_string_assign(gebrd->fs_lock, fs_lock);
 	g_free(fs_lock);
 
 	return TRUE;
@@ -137,15 +127,6 @@ static gboolean server_fs_lock(void)
 
 gboolean server_init(void)
 {
-	gebrd.run_filename = g_string_new(NULL);
-	gebrd.fs_lock = g_string_new(NULL);
-	gebrd.clients = NULL;
-	gebrd.jobs = NULL;
-	gebrd.queues = g_hash_table_new_full((GHashFunc)g_str_hash, (GEqualFunc)g_str_equal,
-					     (GDestroyNotify)g_free, NULL);
-	gethostname(gebrd.hostname, 255);
-	g_random_set_seed((guint32) time(NULL));
-
 	/* from libgebr-misc */
 	if (gebr_create_config_dirs() == FALSE) {
 		g_warning(_("%s:%d: Could not access GêBR configuration directories.\n"), __FILE__, __LINE__);
@@ -154,8 +135,8 @@ gboolean server_init(void)
 
 	/* log */
 	GString *log_filename = g_string_new(NULL);
-	g_string_printf(log_filename, "%s/.gebr/log/gebrd-%s.log", g_get_home_dir(), gebrd.hostname);
-	gebrd.log = gebr_log_open(log_filename->str);
+	g_string_printf(log_filename, "%s/.gebr/log/gebrd-%s.log", g_get_home_dir(), gebrd->hostname);
+	gebrd->log = gebr_log_open(log_filename->str);
 	g_string_free(log_filename, TRUE);
 
 	/* run lock */
@@ -178,10 +159,10 @@ gboolean server_init(void)
 
 	/* success, send port */
 	gebrd_message(GEBR_LOG_START, _("Server started at %u port"),
-		      gebr_comm_socket_address_get_ip_port(&gebrd.socket_address));
+		      gebr_comm_socket_address_get_ip_port(&gebrd->socket_address));
 	gchar buffer[100];
-	snprintf(buffer, sizeof(buffer), "%d\n", gebr_comm_socket_address_get_ip_port(&gebrd.socket_address));
-	if (write(gebrd.finished_starting_pipe[1], buffer, strlen(buffer)+1) <= 0) {
+	snprintf(buffer, sizeof(buffer), "%d\n", gebr_comm_socket_address_get_ip_port(&gebrd->socket_address));
+	if (write(gebrd->finished_starting_pipe[1], buffer, strlen(buffer)+1) <= 0) {
 		g_warning("%s:%d: Failed to write in file with error code %d", __FILE__, __LINE__, errno);
 		goto err;
 	}
@@ -189,25 +170,17 @@ gboolean server_init(void)
 	return TRUE;
 err:	
 	gebrd_message(GEBR_LOG_ERROR, _("Could not init server. Quiting..."));
-	dprintf(gebrd.finished_starting_pipe[1], "0\n");
+	dprintf(gebrd->finished_starting_pipe[1], "0\n");
 	server_free();
 	return FALSE;
 }
 
 void server_free(void)
 {
-	gebr_log_close(gebrd.log);
+	gebr_log_close(gebrd->log);
 	/* delete run lock
 	 * fs lock must not be deleted, as it can be used throught multiple sessions */
-	g_unlink(gebrd.run_filename->str);
-	g_string_free(gebrd.run_filename, TRUE);
-	g_string_free(gebrd.fs_lock, TRUE);
-	/* jobs */
-	g_list_foreach(gebrd.jobs, (GFunc) job_free, NULL);
-	g_list_free(gebrd.jobs);
-	/* client */
-	g_list_foreach(gebrd.clients, (GFunc) client_free, NULL);
-	g_list_free(gebrd.clients);
+	g_unlink(gebrd->run_filename->str);
 }
 
 void server_quit(void)
@@ -219,321 +192,9 @@ void server_new_connection(void)
 {
 	GebrCommStreamSocket *client_socket;
 
-	while ((client_socket = gebr_comm_listen_socket_get_next_pending_connection(gebrd.listen_socket)) != NULL)
+	while ((client_socket = gebr_comm_listen_socket_get_next_pending_connection(gebrd->listen_socket)) != NULL)
 		client_add(client_socket);
 
 	gebrd_message(GEBR_LOG_DEBUG, "server_new_connection");
-}
-
-gboolean server_parse_client_messages(struct client *client)
-{
-	GList *link;
-	struct gebr_comm_message *message;
-
-	while ((link = g_list_last(client->socket->protocol->messages)) != NULL) {
-		message = (struct gebr_comm_message *)link->data;
-
-		/* check login */
-		if (message->hash == gebr_comm_protocol_defs.ini_def.code_hash) {
-			GList *arguments;
-			GString *version, *hostname, *place, *x11;
-			GString *display_port;
-			GString *accounts_list;
-			GString *queue_list;
-			gchar *server_type;
-
-			display_port = g_string_new("");
-			accounts_list = g_string_new("");
-			queue_list = g_string_new("");
-
-			/* organize message data */
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 4)) == NULL)
-				goto err;
-			version = g_list_nth_data(arguments, 0);
-			hostname = g_list_nth_data(arguments, 1);
-			place = g_list_nth_data(arguments, 2);
-			x11 = g_list_nth_data(arguments, 3);
-
-			if (strcmp(version->str, PROTOCOL_VERSION)) {
-				gebr_comm_protocol_socket_oldmsg_send(client->socket, TRUE,
-								      gebr_comm_protocol_defs.err_def, 1,
-								      "Client/server version mismatch (GeBRd version is "GEBRD_VERSION")");
-				goto err;
-			}
-
-			/* set client info */
-			client->socket->protocol->logged = TRUE;
-			g_string_assign(client->socket->protocol->hostname, hostname->str);
-			if (!strcmp(place->str, "local"))
-				client->server_location = GEBR_COMM_SERVER_LOCATION_LOCAL;
-			else if (!strcmp(place->str, "remote"))
-				client->server_location = GEBR_COMM_SERVER_LOCATION_REMOTE;
-			else
-				goto err;
-
-			if (client->server_location == GEBR_COMM_SERVER_LOCATION_REMOTE) {
-				guint16 display;
-
-				/* figure out a free display */
-				display = gebrd_get_x11_redirect_display();
-				if (x11->len && display && gebrd_get_server_type() != GEBR_COMM_SERVER_TYPE_MOAB) {
-					g_string_printf(display_port, "%d", 6000 + display);
-					g_string_printf(client->display, ":%d", display);
-
-					/* add client magic cookie */
-					gint i = 0;
-					while (i++ < 5 && WEXITSTATUS(gebr_system("xauth add :%d . %s", display, x11->str))) {
-						gebrd_message(GEBR_LOG_ERROR, "Failed to add X11 authorization.");
-						usleep(200*1000);
-					}
-					/* failed to add X11 authorization */
-					if (i == 5)
-						g_string_assign(display_port, "0");
-
-					gebrd_message(GEBR_LOG_DEBUG, "xauth authorized");
-				} else
-					g_string_assign(client->display, "");
-			} else {
-				g_string_assign(client->display, x11->str);
-			}
-
-			if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_MOAB) {
-				/* Get info from the MOAB cluster */
-				server_moab_read_credentials(accounts_list, queue_list);
-				server_type = "moab";
-			} else {
-				gchar * queue_list_str;
-				queue_list_str = gebrd_queues_get_names();
-				g_string_assign(queue_list, queue_list_str);
-				g_free(queue_list_str);
-				server_type = "regular";
-			}
-
-			/* send return */
-			const gchar *model_name;
-			const gchar *total_memory;
-			GebrdCpuInfo *cpuinfo = gebrd_cpu_info_new();
-			GebrdMemInfo *meminfo = gebrd_mem_info_new();
-			model_name = gebrd_cpu_info_get (cpuinfo, 0, "model name");
-			total_memory = gebrd_mem_info_get (meminfo, "MemTotal");
-			gebr_comm_protocol_socket_oldmsg_send(client->socket, FALSE,
-							      gebr_comm_protocol_defs.ret_def, 8,
-							      gebrd.hostname, display_port->str,
-							      queue_list->str, server_type,
-							      accounts_list->str, model_name,
-							      total_memory, gebrd.fs_lock->str);
-
-			gebrd_cpu_info_free (cpuinfo);
-			gebrd_mem_info_free (meminfo);
-			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
-			g_string_free(display_port, TRUE);
-			g_string_free(accounts_list, TRUE);
-			g_string_free(queue_list, TRUE);
-
-		} else if (client->socket->protocol->logged == FALSE) {
-			/* not logged! */
-			goto err;
-		} else if (message->hash == gebr_comm_protocol_defs.qut_def.code_hash) {
-			client_free(client);
-			gebr_comm_message_free(message);
-			return TRUE;
-		} else if (message->hash == gebr_comm_protocol_defs.lst_def.code_hash) {
-			job_list(client);
-		} else if (message->hash == gebr_comm_protocol_defs.run_def.code_hash) {
-			GList *arguments;
-			GString *xml, *account, *queue, *n_process, *run_id;
-			GebrdJob *job;
-
-			/* organize message data */
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 5)) == NULL)
-				goto err;
-			xml = g_list_nth_data(arguments, 0);
-			account = g_list_nth_data(arguments, 1);
-			queue = g_list_nth_data(arguments, 2);
-			n_process = g_list_nth_data(arguments, 3);
-			run_id = g_list_nth_data(arguments, 4);
-
-			/* try to run and send return */
-			job_new(&job, client, queue, account, xml, n_process, run_id);
-#ifdef DEBUG
-			gchar *env_delay = getenv("GEBRD_RUN_DELAY_SEC");
-			if (env_delay != NULL)
-				sleep(atoi(env_delay));
-#endif
-
-			/* run message return with the job_id and the temporary id created by the client */
-			gebr_comm_protocol_socket_oldmsg_send(client->socket, FALSE,
-							      gebr_comm_protocol_defs.ret_def, 2,
-							      job->parent.jid->str, job->parent.run_id->str);
-			/* assign queue name for immediately jobs (only for regular, moab is already set) */
-			if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_REGULAR &&
-			    (!queue->len || queue->str[0] == 'j')) {
-				g_string_printf(queue, "j%s", job->parent.jid->str);
-				g_string_assign(job->parent.queue_id, queue->str);
-			}
-			gebrd_queues_add_job_to(queue->str, job);
-
-			if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_REGULAR) {
-				/* send job message (job is created -promoted from waiting server response- at the client) */
-				job_send_clients_job_notify(job);
-				/* run or queue */
-				if (!gebrd_queues_is_queue_busy(queue->str)) {
-					gebrd_queues_set_queue_busy(queue->str, TRUE);
-					gebrd_queues_step_queue(queue->str); //will call job_run_flow for immediately jobs
-				}
-			} else {//moab
-				/* ask moab to run */
-				job_run_flow(job);
-				/* send job message (job is created -promoted from waiting server response- at the client)
-				 * at moab we must run the process before sending the JOB message, because at
-				 * job_run_flow moab_jid is acquired.
-				 */
-				job_send_clients_job_notify(job);
-			}
-
-			/* frees */
-			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
-		} else if (message->hash == gebr_comm_protocol_defs.rnq_def.code_hash) {
-			GList *arguments;
-			GString *oldname, *newname;
-
-			/* organize message data */
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
-				goto err;
-			oldname = g_list_nth_data(arguments, 0);
-			newname = g_list_nth_data(arguments, 1);
-
-			gebrd_queues_rename(oldname->str, newname->str);
-
-			/* frees */
-			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
-		} else if (message->hash == gebr_comm_protocol_defs.flw_def.code_hash) {
-			/* TODO: */
-		} else if (message->hash == gebr_comm_protocol_defs.clr_def.code_hash) {
-			GList *arguments;
-			GString *jid;
-			GebrdJob *job;
-
-			/* organize message data */
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 1)) == NULL)
-				goto err;
-			jid = g_list_nth_data(arguments, 0);
-
-			job = job_find(jid);
-			if (job != NULL)
-				job_clear(job);
-
-			/* frees */
-			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
-		} else if (message->hash == gebr_comm_protocol_defs.end_def.code_hash) {
-			GList *arguments;
-			GString *jid;
-			GebrdJob *job;
-
-			/* organize message data */
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 1)) == NULL)
-				goto err;
-			jid = g_list_nth_data(arguments, 0);
-
-			/* try to run and send return */
-			job = job_find(jid);
-			if (job != NULL) {
-				job_end(job);
-			}
-
-			/* frees */
-			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
-		} else if (message->hash == gebr_comm_protocol_defs.kil_def.code_hash) {
-			GList *arguments;
-			GString *jid;
-			GebrdJob *job;
-
-			/* organize message data */
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 1)) == NULL)
-				goto err;
-			jid = g_list_nth_data(arguments, 0);
-
-			/* try to run and send return */
-			job = job_find(jid);
-			if (job != NULL) {
-				job_kill(job);
-			}
-
-			/* frees */
-			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
-		} else {
-			/* unknown message! */
-			goto err;
-		}
-
-		gebr_comm_message_free(message);
-		client->socket->protocol->messages = g_list_delete_link(client->socket->protocol->messages, link);
-	}
-
-	return TRUE;
-
- err:	gebr_comm_message_free(message);
-	client->socket->protocol->messages = g_list_delete_link(client->socket->protocol->messages, link);
-	return FALSE;
-}
-
-
-/**
- * \internal
- * Reads the list of accounts and the list of queue_list returned by the MOAB cluster
- * "mcredctl" command and places them on \p accounts and \p queue_list, respectively.
- */
-static void server_moab_read_credentials(GString *accounts, GString *queue_list)
-{
-	GString *cmd_line = NULL;
-	gchar *std_out = NULL;
-	gchar *std_err = NULL;
-	gint exit_status;
-
-	GdomeDOMImplementation *dom_impl = NULL;
-	GdomeDocument *doc = NULL;
-	GdomeElement *element = NULL;
-	GdomeException exception;
-	GdomeDOMString *attribute_name;
-
-	cmd_line = g_string_new("");
-	g_string_printf(cmd_line, "mcredctl -q accessfrom user:%s --format=xml", getenv("USER"));
-	if (g_spawn_command_line_sync(cmd_line->str, &std_out, &std_err, &exit_status, NULL) == FALSE)
-		goto err;
-
-	if ((dom_impl = gdome_di_mkref()) == NULL)
-		goto err;
-
-	if ((doc = gdome_di_createDocFromMemory(dom_impl, std_out, GDOME_LOAD_PARSING, &exception)) == NULL) {
-		gdome_di_unref(dom_impl, &exception);
-		goto err;
-	}
-
-	if ((element = gdome_doc_documentElement(doc, &exception)) == NULL) {
-		gdome_doc_unref(doc, &exception);
-		gdome_di_unref(dom_impl, &exception);
-		goto err;
-	}
-
-	if ((element = (GdomeElement *) gdome_el_firstChild(element, &exception)) == NULL) {
-		gdome_doc_unref(doc, &exception);
-		gdome_di_unref(dom_impl, &exception);
-		goto err;
-	}
-
-	attribute_name = gdome_str_mkref("AList");
-	g_string_assign(accounts, (gdome_el_getAttribute(element, attribute_name, &exception))->str);
-	gdome_str_unref(attribute_name);
-
-	attribute_name = gdome_str_mkref("CList");
-	g_string_assign(queue_list, (gdome_el_getAttribute(element, attribute_name, &exception))->str);
-	gdome_str_unref(attribute_name);
-
-	gdome_doc_unref(doc, &exception);
-	gdome_di_unref(dom_impl, &exception);
-
- err:	g_string_free(cmd_line, TRUE);
-	g_free(std_out);
-	g_free(std_err);
 }
 

@@ -87,7 +87,7 @@ static void job_send_clients_output(GebrdJob *job, GString * output)
 	if (!job->parent.jid->len)
 		return;
 
-	for (GList *link = gebrd.clients; link != NULL; link = g_list_next(link)) {
+	for (GList *link = gebrd->clients; link != NULL; link = g_list_next(link)) {
 		struct client *client = (struct client *)link->data;
 		gebr_comm_protocol_socket_oldmsg_send(client->socket, FALSE,
 						      gebr_comm_protocol_defs.out_def, 2, job->parent.jid->str, output->str);
@@ -342,7 +342,7 @@ GebrdJob *job_find(GString * jid)
 	GebrdJob *job;
 
 	job = NULL;
-	for (GList *link = gebrd.jobs; link != NULL; link = g_list_next(link)) {
+	for (GList *link = gebrd->jobs; link != NULL; link = g_list_next(link)) {
 		GebrdJob *i = (GebrdJob *)link->data;
 		if (!strcmp(i->parent.jid->str, jid->str)) {
 			job = i;
@@ -374,7 +374,7 @@ void job_new(GebrdJob ** _job, struct client * client, GString * queue, GString 
 	job->parent.status = JOB_STATUS_INITIAL;
 
 	*_job = job;
-	gebrd.jobs = g_list_append(gebrd.jobs, job);
+	gebrd->jobs = g_list_append(gebrd->jobs, job);
 
 	GebrGeoXmlDocument *document;
 	int ret = gebr_geoxml_document_load_buffer(&document, xml->str);
@@ -392,10 +392,10 @@ void job_free(GebrdJob *job)
 {
 	gebrd_queues_remove_job_from(job->parent.queue_id->str, job);
 
-	GList *link = g_list_find(gebrd.jobs, job);
+	GList *link = g_list_find(gebrd->jobs, job);
 	/* job that failed to run are not added to this list */
 	if (link != NULL)
-		gebrd.jobs = g_list_delete_link(gebrd.jobs, link);
+		gebrd->jobs = g_list_delete_link(gebrd->jobs, link);
 
 	/* free data */
 	gebr_comm_process_free(job->process);
@@ -441,7 +441,7 @@ void job_status_notify(GebrdJob *job, enum JobStatus status, const gchar *_param
 	job_status_set(job, status);
 
 	/* warn all clients of the new status */
-	for (GList *link = gebrd.clients; link != NULL; link = g_list_next(link)) {
+	for (GList *link = gebrd->clients; link != NULL; link = g_list_next(link)) {
 		struct client *client = (struct client *)link->data;
 		gebr_comm_protocol_socket_oldmsg_send(client->socket, FALSE,
 						      gebr_comm_protocol_defs.sta_def, 3,
@@ -667,7 +667,7 @@ void job_notify(GebrdJob *job, struct client *client)
 
 void job_list(struct client *client)
 {
-	for (GList *link = gebrd.jobs; link != NULL; link = g_list_next(link)) {
+	for (GList *link = gebrd->jobs; link != NULL; link = g_list_next(link)) {
 		GebrdJob *job = (GebrdJob *)link->data;
 		job_notify(job, client);
 	}
@@ -675,7 +675,7 @@ void job_list(struct client *client)
 
 void job_send_clients_job_notify(GebrdJob *job)
 {
-	for (GList *link = gebrd.clients; link != NULL; link = g_list_next(link)) {
+	for (GList *link = gebrd->clients; link != NULL; link = g_list_next(link)) {
 		struct client *client = (struct client *)link->data;
 		job_notify(job, client);
 	}

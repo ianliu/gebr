@@ -141,10 +141,9 @@ void gebr_comm_protocol_free(struct gebr_comm_protocol *protocol)
 gboolean gebr_comm_protocol_receive_data(struct gebr_comm_protocol *protocol, GString * data)
 {
 	gchar **splits;
-	gint n_tokens;
+	gboolean reached_end = FALSE;
 
-	g_string_append(protocol->data, data->str);
-	while (protocol->data->len) {
+	while (!reached_end && data->len) {
 		gsize missing;
 
 		/* if so, this is a new message; otherwise, another part
@@ -154,18 +153,14 @@ gboolean gebr_comm_protocol_receive_data(struct gebr_comm_protocol *protocol, GS
 			gint erase_len;
 			gchar *strtol_endptr;
 
-			/* minimum message size: 6 */
-			if (protocol->data->len < 6)
-				break;
-
-			splits = g_strsplit(protocol->data->str, " ", 3);
-			for (n_tokens = 0; splits[n_tokens] != NULL; n_tokens++) ;
+			splits = g_strsplit(data->str, " ", 3);
+			gint n_tokens = g_strv_length(splits);
 			if (n_tokens < 2)
 				goto err;
 
 			/* code */
 			if (g_hash_table_lookup(gebr_comm_protocol_defs.hash_table, splits[0]) == NULL) {
-				g_string_assign(protocol->data, "");
+				g_string_assign(data, "");
 				goto err;
 			}
 			protocol->message->hash = g_str_hash(splits[0]);
@@ -177,9 +172,9 @@ gboolean gebr_comm_protocol_receive_data(struct gebr_comm_protocol *protocol, GS
 
 			/* the missing bytes to complete the read of argument */
 			missing = protocol->message->argument_size;
-			/* erase code and size from protocol->data */
+			/* erase code and size from data */
 			erase_len = strlen(splits[0]) + 1 + strlen(splits[1]) + ((n_tokens == 2) ? 0 : 1);
-			g_string_erase(protocol->data, 0, erase_len);
+			g_string_erase(data, 0, erase_len);
 
 			g_strfreev(splits);
 		} else {
@@ -187,22 +182,22 @@ gboolean gebr_comm_protocol_receive_data(struct gebr_comm_protocol *protocol, GS
 		}
 
 		/* if so, protocol->message has now received its
-		 * argument entirely
-		 * using > because there must be a line break.
+		 * argument entirely using > because there must be a line feed.
 		 */
-		if (protocol->data->len > missing) {
+		reached_end = data->len > missing; 
+		if (reached_end) {
 			struct gebr_comm_message *queued;
 
-			g_string_append_len(protocol->message->argument, protocol->data->str, missing);
-			g_string_erase(protocol->data, 0, missing + 1);
+			g_string_append_len(protocol->message->argument, data->str, missing);
+			g_string_erase(data, 0, missing + 1);
 
 			/* add to the list of messages */
 			queued = protocol->message;
 			protocol->messages = g_list_prepend(protocol->messages, queued);
 			protocol->message = gebr_comm_message_new();
 		} else {
-			g_string_append(protocol->message->argument, protocol->data->str);
-			g_string_erase(protocol->data, 0, -1);
+			g_string_append(protocol->message->argument, data->str);
+			g_string_erase(data, 0, -1);
 		}
 	}
 

@@ -27,6 +27,29 @@
 #include "server.h"
 #include "job.h"
 
+void client_process_server_request(struct gebr_comm_server *comm_server, GebrCommHttpMsg *request, GebrServer *server)
+{
+}
+
+void client_process_server_response(struct gebr_comm_server *comm_server, GebrCommHttpMsg *request,
+				   GebrCommHttpMsg *response, GebrServer *server)
+{
+	/**
+	 * FIXME: Non-generic code
+	 */
+	//TODO: use g_object_class_find_property and g_object_set instead
+	if (!strcmp(request->url->str, "/fs-nickname")) {
+		if (request->method == GEBR_COMM_HTTP_METHOD_GET) {
+			if (!response->content->len)
+				gebr_comm_protocol_socket_send_request(comm_server->socket, GEBR_COMM_HTTP_METHOD_PUT,
+								       "/fs-nickname", "my nickname");
+		} else if (request->type == GEBR_COMM_HTTP_METHOD_PUT) {
+			//if (response->status_code == 200)
+		}
+		//else
+	}
+}
+
 gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, GebrServer *server)
 {
 	GList *link;
@@ -150,6 +173,9 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 				/* request list of jobs */
 				gebr_comm_protocol_socket_oldmsg_send(comm_server->socket, FALSE,
 								      gebr_comm_protocol_defs.lst_def, 0);
+				/* set out nickname */
+				gebr_comm_protocol_socket_send_request(comm_server->socket, GEBR_COMM_HTTP_METHOD_GET,
+								       "/fs-nickname", NULL);
 
 				gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 
@@ -166,7 +192,7 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 					goto err;
 				jid = g_list_nth_data(arguments, 0);
 				run_id = g_list_nth_data(arguments, 1);
-GebrJob * job = job_find(comm_server->address, run_id, FALSE);
+				GebrJob * job = job_find(comm_server->address, run_id, FALSE);
 				if (job != NULL) {
 					g_string_assign(job->parent.jid, jid->str);
 

@@ -22,11 +22,15 @@
 
 #include "gebr-comm-protocol-socket.h"
 #include "gebr-comm-protocol_p.h"
+#include "../marshalers.h"
 
 /* GOBJECT STUFF */
 #define GEBR_COMM_PROTOCOL_SOCKET_GET_PRIVATE(o) \
 	(G_TYPE_INSTANCE_GET_PRIVATE((o), GEBR_COMM_PROTOCOL_SOCKET_TYPE, GebrCommProtocolSocketPrivate))
 struct _GebrCommProtocolSocketPrivate {
+	GebrCommHttpMsg *incoming_msg;
+
+	GList *requests_fifo;
 	GebrCommStreamSocket *socket;
 };
 enum {
@@ -39,6 +43,8 @@ enum {
 enum {
 	CONNECTED,
 	DISCONNECTED,
+	PROCESS_REQUEST,
+	PROCESS_RESPONSE,
 	OLD_PARSE_MESSAGES,
 	LAST_SIGNAL
 };
@@ -55,10 +61,61 @@ static void gebr_comm_protocol_socket_disconnected(GebrCommStreamSocket *socket,
 }
 static void gebr_comm_protocol_socket_read(GebrCommStreamSocket *socket, GebrCommProtocolSocket * self)
 {
-	GString *data = gebr_comm_socket_read_string_all(GEBR_COMM_SOCKET(socket));
-	gebr_comm_protocol_receive_data(self->protocol, data);
-	//TODO: emit data received with raw string data
-	g_signal_emit(self, object_signals[OLD_PARSE_MESSAGES], 0);
+	GString *data = gebr_comm_socket_read_string_all(GEBR_COMM_SOCKET(socket)); 
+	gboolean parse_http_msg()
+	{
+		self->priv->incoming_msg = gebr_comm_http_msg_new_parsing(self->priv->incoming_msg, data);
+		if (!self->priv->incoming_msg)
+			return FALSE;
+		if (!self->priv->incoming_msg->parsed)
+			return TRUE; /* more data need... */
+
+		if (self->priv->incoming_msg->type == GEBR_COMM_HTTP_TYPE_REQUEST)
+			g_signal_emit(self, object_signals[PROCESS_REQUEST], 0, self->priv->incoming_msg);
+		else if (self->priv->incoming_msg->type == GEBR_COMM_HTTP_TYPE_RESPONSE) {
+			if (self->priv->requests_fifo != NULL) {
+				GebrCommHttpMsg *request = (GebrCommHttpMsg*)self->priv->requests_fifo->data;
+				g_signal_emit(self, object_signals[PROCESS_RESPONSE], 0, request, self->priv->incoming_msg);
+
+				self->priv->requests_fifo = g_list_remove_link(self->priv->requests_fifo, self->priv->requests_fifo);
+				gebr_comm_http_msg_free(request);
+			}
+		}
+		gebr_comm_http_msg_free(self->priv->incoming_msg);
+		self->priv->incoming_msg = NULL;
+
+		return TRUE;
+	}
+	gboolean parse_old_msg()
+	{
+		/* old non-rest protocol */
+		//TODO: emit data received with raw string data
+		gboolean ret;
+		if ((ret = gebr_comm_protocol_receive_data(self->protocol, data)))
+			g_signal_emit(self, object_signals[OLD_PARSE_MESSAGES], 0);
+
+		return ret;
+	}
+
+	while (data->len) {
+		gboolean ret;
+		if (self->protocol->message->hash)
+			ret = parse_old_msg();
+		else if (self->priv->incoming_msg != NULL)
+			ret = parse_http_msg();
+		else if (g_str_has_prefix(data->str, "HTTP/1.1 ") ||
+			 g_str_has_prefix(data->str, "GET ") ||
+			 g_str_has_prefix(data->str, "PUT ") ||
+			 g_str_has_prefix(data->str, "POST ") ||
+			 g_str_has_prefix(data->str, "DELETE "))
+			ret = parse_http_msg();
+		else
+			ret = parse_old_msg();
+
+		if (!ret)
+			break;
+	}
+
 	g_string_free(data, TRUE);
 }
 static void gebr_comm_protocol_socket_error(GebrCommProtocolSocket * self, enum GebrCommSocketError error)
@@ -69,12 +126,19 @@ static void gebr_comm_protocol_socket_init(GebrCommProtocolSocket * self)
 {
 	self->protocol = gebr_comm_protocol_new();
 	self->priv = GEBR_COMM_PROTOCOL_SOCKET_GET_PRIVATE(self);
+	self->priv->incoming_msg = NULL;
+	self->priv->requests_fifo = NULL;
 }
 static void gebr_comm_protocol_socket_finalize(GObject * object)
 {
 	GebrCommProtocolSocket *self = GEBR_COMM_PROTOCOL_SOCKET(object);
+
 	gebr_comm_protocol_free(self->protocol);
 	gebr_comm_socket_close(GEBR_COMM_SOCKET(self->priv->socket));
+	gebr_comm_http_msg_free(self->priv->incoming_msg);
+	g_list_foreach(self->priv->requests_fifo, (GFunc)gebr_comm_http_msg_free, NULL);
+	g_list_free(self->priv->requests_fifo);
+
 	G_OBJECT_CLASS(gebr_comm_protocol_socket_parent_class)->finalize(object);
 }
 static void
@@ -136,6 +200,15 @@ static void gebr_comm_protocol_socket_class_init(GebrCommProtocolSocketClass * k
 						    (GSignalFlags) (G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
 						    G_STRUCT_OFFSET(GebrCommProtocolSocketClass, disconnected), NULL,
 						    NULL, g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
+	object_signals[PROCESS_REQUEST] = g_signal_new("process-request", GEBR_COMM_PROTOCOL_SOCKET_TYPE,
+							  (GSignalFlags) (G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
+							  G_STRUCT_OFFSET(GebrCommProtocolSocketClass, process_request), NULL,
+							  NULL, g_cclosure_marshal_VOID__POINTER, G_TYPE_NONE, 1, G_TYPE_POINTER);
+	object_signals[PROCESS_RESPONSE] = g_signal_new("process-response", GEBR_COMM_PROTOCOL_SOCKET_TYPE,
+							  (GSignalFlags) (G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
+							  G_STRUCT_OFFSET(GebrCommProtocolSocketClass, process_response), NULL,
+							  NULL, _gebr_gui_marshal_VOID__POINTER_POINTER,
+							  G_TYPE_NONE, 2, G_TYPE_POINTER, G_TYPE_POINTER);
 	object_signals[OLD_PARSE_MESSAGES] = g_signal_new("old-parse-messages", GEBR_COMM_PROTOCOL_SOCKET_TYPE,
 							  (GSignalFlags) (G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
 							  G_STRUCT_OFFSET(GebrCommProtocolSocketClass, old_parse_messages), NULL,
@@ -161,6 +234,21 @@ void gebr_comm_protocol_socket_disconnect(GebrCommProtocolSocket * self)
 	gebr_comm_stream_socket_disconnect(self->priv->socket);
 }
 
+void gebr_comm_protocol_socket_send_request(GebrCommProtocolSocket * self, GebrCommHttpRequestMethod method,
+					    const gchar *url, const gchar *content)
+{
+	GebrCommHttpMsg *msg = gebr_comm_http_msg_new_request(method, url, content);
+	gebr_comm_socket_write_string(GEBR_COMM_SOCKET(self->priv->socket), msg->raw);
+	self->priv->requests_fifo = g_list_append(self->priv->requests_fifo, msg);
+}
+
+void gebr_comm_protocol_socket_send_response(GebrCommProtocolSocket * self, int status_code, const gchar *content)
+{
+	GebrCommHttpMsg *msg = gebr_comm_http_msg_new_response(status_code, content);
+	gebr_comm_socket_write_string(GEBR_COMM_SOCKET(self->priv->socket), msg->raw);
+	gebr_comm_http_msg_free(msg);
+}
+
 void gebr_comm_protocol_socket_oldmsg_send(GebrCommProtocolSocket * self, gboolean blocking,
 					   struct gebr_comm_message_def gebr_comm_message_def, guint n_params, ...)
 {
@@ -173,7 +261,6 @@ void gebr_comm_protocol_socket_oldmsg_send(GebrCommProtocolSocket * self, gboole
 	/* does this message need return? */
 	self->protocol->waiting_ret_hash = (gebr_comm_message_def.returns == TRUE) ? gebr_comm_message_def.code_hash : 0;
 	/* send it */
-
 	if (blocking)
 		gebr_comm_socket_write_string_immediately(GEBR_COMM_SOCKET(self->priv->socket), message);
 	else 
