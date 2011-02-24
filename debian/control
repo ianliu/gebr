@@ -10,17 +10,17 @@ Section: libs
 Architecture: any
 Depends: libwebkit-1.0-2 | libwebkit-1.0-1, libgdome2-0, libtidy-0.99-0
 Description: GeBR library collection
- GeBR is an environment to seismic processing based on open-source
- technologies, designed to easily assembly and run processing flows.
- .
- What GeBR does:
- .
-     * Handle projects and lines
-     * Assembly and run processing flows
+GêBR is a simple graphical interface which facilitates geophysical data processing. 
+GêBR is not a package for processing, rather it is designed to integrate a large 
+variety of free processing packages.
+
+What can GeBR do:
+     * Handle Projects and Lines
+     * Assembly and run processing sequences
      * Act as an interface to many freely-available seismic-processing
        packages (Seismic Unix, Madagascar, etc)
  .
- libgebr is the collection of libraries of GeBR:
+ libgebr is a collection of GeBR's libraries:
      * libgebr_comm deals with client-server communication
      * libgebr_geoxml is the XML engine of GeBR
      * libgebr_gui extends GTK+ functionalities
@@ -32,17 +32,17 @@ Section: libdevel
 Architecture: any
 Depends: libgebr0, libwebkit-dev, libgdome2-dev, libtidy-dev
 Description: GeBR library collection
- GeBR is an environment to seismic processing based on open-source
- technologies, designed to easily assembly and run processing flows.
+GêBR is a simple graphical interface which facilitates geophysical data processing. 
+GêBR is not a package for processing, rather it is designed to integrate a large 
+variety of free processing packages.
  .
- What GeBR does:
- .
-     * Handle projects and lines
-     * Assembly and run processing flows
+What can GeBR do:
+     * Handle Projects and Lines
+     * Assembly and run processing sequences
      * Act as an interface to many freely-available seismic-processing
        packages (Seismic Unix, Madagascar, etc)
  .
- libgebr is the collection of libraries of GeBR:
+ libgebr is a collection of GeBR's libraries:
      * libgebr_comm deals with client-server communication
      * libgebr_geoxml is the XML engine of GeBR
      * libgebr_gui extends GTK+ functionalities
@@ -57,18 +57,18 @@ Section: science
 Architecture: any
 Depends: libgebr0 (= ${binary:Version})
 Recommends: ssh-server
-Description: GeBRD is server for executing flows
- GeBR is an environment to seismic processing based on open-source
- technologies, designed to easily assembly and run processing flows.
- . 
- What GeBR does:
- . 
-     * Handle projects and lines
-     * Assembly and run processing flows
+Description: GeBRD is a server for executing flows
+GêBR is a simple graphical interface which facilitates geophysical data processing. 
+GêBR is not a package for processing, rather it is designed to integrate a large 
+variety of free processing packages.
+ .
+What can GeBR do:
+     * Handle Projects and Lines
+     * Assembly and run processing sequences
      * Act as an interface to many freely-available seismic-processing
        packages (Seismic Unix, Madagascar, etc)
  .
- GeBRD is server for executing flows
+ GeBRD is a server for executing flows
  .
 
 Package: gebr
@@ -79,13 +79,13 @@ Recommends: gebrd (= ${binary:Version}), gebr-doc (= ${binary:Version}), ssh-cli
 Conflicts: gebrd (<< ${binary:Version})
 Suggests: debr, gebr-menus-su, gebr-menus-shtools
 Description: Seismic processing environment
- GeBR is an environment to seismic processing based on open-source
- technologies, designed to easily assembly and run processing flows.
- . 
- What GeBR does:
- . 
-     * Handle projects and lines
-     * Assembly and run processing flows
+ GêBR is a simple graphical interface which facilitates geophysical data processing. 
+GêBR is not a package for processing, rather it is designed to integrate a large 
+variety of free processing packages.
+ .
+What can GeBR do:
+     * Handle Projects and Lines
+     * Assembly and run processing sequences
      * Act as an interface to many freely-available seismic-processing
        packages (Seismic Unix, Madagascar, etc)
  .
@@ -94,8 +94,9 @@ Package: gebr-doc
 Section: doc
 Architecture: any
 Description: GeBR User Manual
- GeBR is an environment to seismic processing based on open-source
- technologies, designed to easily assembly and run processing flows.
+ GêBR is a simple graphical interface which facilitates geophysical data processing. 
+GêBR is not a package for processing, rather it is designed to integrate a large 
+variety of free processing packages.
  . 
  This package provides a user guide for gebr users.
  .
@@ -106,13 +107,13 @@ Architecture: any
 Depends: libgebr0 (= ${binary:Version})
 Suggests: gebr-menus-su, gebr-menus-shtools
 Description: Menu Designer for GeBR
- GeBR is an environment to seismic processing based on open-source
- technologies, designed to easily assembly and run processing flows.
+ GêBR is a simple graphical interface which facilitates geophysical data processing. 
+GêBR is not a package for processing, rather it is designed to integrate a large 
+variety of free processing packages.
  . 
- What GeBR does:
- . 
-     * Handle projects and lines
-     * Assembly and run processing flows
+What can GeBR do:
+     * Handle Projects and Lines
+     * Assembly and run processing sequences
      * Act as an interface to many freely-available seismic-processing
        packages (Seismic Unix, Madagascar, etc)
  .
