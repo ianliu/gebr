@@ -31,8 +31,8 @@
 
 int main(int argc, char **argv)
 {
-	gboolean show_version;
-	gboolean foreground;
+	gboolean show_version = FALSE;
+	gboolean foreground = FALSE;
 	const GOptionEntry entries[] = {
 		{"interactive", 'i', 0, G_OPTION_ARG_NONE, &foreground,
 		 N_("Run server in interactive mode, not as a daemon"), NULL},
