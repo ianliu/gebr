@@ -19,10 +19,20 @@
 #define __GEBR_COMM_HTTP_MSG_H
 
 #include <glib.h>
+#include <glib-object.h>
 
 G_BEGIN_DECLS
 
-//TODO: GObjectize
+GType gebr_comm_http_msg_get_type(void);
+#define GEBR_COMM_HTTP_MSG_TYPE		(gebr_comm_http_msg_get_type())
+#define GEBR_COMM_HTTP_MSG(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), GEBR_COMM_HTTP_MSG_TYPE, GebrCommHttpMsg))
+#define GEBR_COMM_HTTP_MSG_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), GEBR_COMM_HTTP_MSG_TYPE, GebrCommHttpMsgClass))
+#define GEBR_COMM_IS_HTTP_MSG(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEBR_COMM_HTTP_MSG_TYPE))
+#define GEBR_COMM_IS_HTTP_MSG_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), GEBR_COMM_HTTP_MSG_TYPE))
+#define GEBR_COMM_HTTP_MSG_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), GEBR_COMM_HTTP_MSG_TYPE, GebrCommHttpMsgClass))
+
+typedef struct _GebrCommHttpMsg GebrCommHttpMsg;
+typedef struct _GebrCommHttpMsgClass GebrCommHttpMsgClass;
 
 typedef enum {
 	GEBR_COMM_HTTP_TYPE_UNKNOWN = 0,
@@ -36,8 +46,8 @@ typedef enum {
 	GEBR_COMM_HTTP_METHOD_POST,
 	GEBR_COMM_HTTP_METHOD_DELETE,
 } GebrCommHttpRequestMethod;
-typedef struct _GebrCommHttpMsg GebrCommHttpMsg;
 struct _GebrCommHttpMsg {
+	GObject parent;
 	GebrCommHttpRequestType type;
 	GebrCommHttpRequestMethod method;
 	/* first line */
@@ -52,6 +62,9 @@ struct _GebrCommHttpMsg {
 	GString *raw;
 	gboolean parsed;
 	gboolean parsed_headers;
+};
+struct _GebrCommHttpMsgClass {
+	GObjectClass parent;
 };
 
 GebrCommHttpMsg *gebr_comm_http_msg_new(GebrCommHttpRequestType type, GebrCommHttpRequestMethod method);

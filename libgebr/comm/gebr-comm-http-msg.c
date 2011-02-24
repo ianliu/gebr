@@ -74,12 +74,20 @@ static const gchar *method_enum_to_string [] = {NULL,
 	"GET", "PUT", "POST", "DELETE"
 };
 
-GebrCommHttpMsg *gebr_comm_http_msg_new(GebrCommHttpRequestType type, GebrCommHttpRequestMethod method)
+/* GOBJECT STUFF */
+enum {
+	PROP_0,
+	LAST_PROPERTY
+};
+static guint property_member_offset [] = {0,
+};
+enum {
+	LAST_SIGNAL
+};
+// static guint object_signals[LAST_SIGNAL];
+G_DEFINE_TYPE(GebrCommHttpMsg, gebr_comm_http_msg, G_TYPE_OBJECT)
+static void gebr_comm_http_msg_init(GebrCommHttpMsg * msg)
 {
-	GebrCommHttpMsg *msg = g_new(GebrCommHttpMsg, 1);
-
-	msg->type = type;
-	msg->method = method;
 	msg->status_code = 0;
 	msg->url = g_string_new("");
 	msg->headers = g_hash_table_new(g_str_hash, g_str_equal);
@@ -88,8 +96,61 @@ GebrCommHttpMsg *gebr_comm_http_msg_new(GebrCommHttpRequestType type, GebrCommHt
 	msg->raw = g_string_new("");
 	msg->parsed = FALSE;
 	msg->parsed_headers = FALSE;
+}
+static void gebr_comm_http_msg_finalize(GObject * object)
+{
+	GebrCommHttpMsg *msg = GEBR_COMM_HTTP_MSG(object);
+	g_string_free(msg->url, TRUE);
+	g_hash_table_unref(msg->headers);
+	g_hash_table_unref(msg->params);
+	g_string_free(msg->content, TRUE);
+	g_string_free(msg->raw, TRUE);
+	G_OBJECT_CLASS(gebr_comm_http_msg_parent_class)->finalize(object);
+}
+static void
+gebr_comm_http_msg_set_property(GObject * object, guint property_id, const GValue * value, GParamSpec * pspec)
+{
+	//GebrCommHttpMsg *self = (GebrCommHttpMsg *) object;
+	switch (property_id) {
+	default:
+		G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
+		break;
+	}
+}
+static void
+gebr_comm_http_msg_get_property(GObject * object, guint property_id, GValue * value, GParamSpec * pspec)
+{
+	//GebrCommHttpMsg *self = (GebrCommHttpMsg *) object;
+	switch (property_id) {
+	default:
+		G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
+		break;
+	}
+}
+static void gebr_comm_http_msg_class_init(GebrCommHttpMsgClass * klass)
+{ 
+	GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
+	gobject_class->finalize = gebr_comm_http_msg_finalize;
+//	GebrCommHttpMsgClass *super_class = GEBR_COMM_HTTP_MSG_GET_CLASS(klass);
 	
+	/* properties */
+	//GParamSpec *pspec;
+	gobject_class->set_property = gebr_comm_http_msg_set_property;
+	gobject_class->get_property = gebr_comm_http_msg_get_property;
+	//pspec = g_param_spec_boxed("client-hostname", "", "", G_TYPE_GSTRING, G_PARAM_READWRITE);
+	//g_object_class_install_property(gobject_class, CLIENT_HOSTNAME, pspec);
+}
+
+GebrCommHttpMsg *gebr_comm_http_msg_new(GebrCommHttpRequestType type, GebrCommHttpRequestMethod method)
+{
+	GebrCommHttpMsg *msg = GEBR_COMM_HTTP_MSG(g_object_new(GEBR_COMM_HTTP_MSG_TYPE, NULL));
+	msg->type = type;
+	msg->method = method;
 	return msg;
+}
+void gebr_comm_http_msg_free(GebrCommHttpMsg *msg)
+{
+	g_object_unref(msg);
 }
 GebrCommHttpMsg *gebr_comm_http_msg_new_parsing(GebrCommHttpMsg *partial, GString *data)
 {
@@ -213,15 +274,4 @@ GebrCommHttpMsg *gebr_comm_http_msg_new_response(gint status_code, const gchar *
 	gebr_comm_http_msg_serialize(msg);
 
 	return msg;
-}
-void gebr_comm_http_msg_free(GebrCommHttpMsg *msg)
-{
-	if (msg == NULL)
-		return;
-	g_string_free(msg->url, TRUE);
-	g_hash_table_unref(msg->headers);
-	g_hash_table_unref(msg->params);
-	g_string_free(msg->content, TRUE);
-	g_string_free(msg->raw, TRUE);
-	g_free(msg);
 }

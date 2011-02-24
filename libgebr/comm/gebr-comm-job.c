@@ -30,7 +30,6 @@ static GString *gebr_comm_job_generate_id(void)
 	return jid;
 }
 
-
 /* GOBJECT STUFF */
 enum {
 	PROP_0,
