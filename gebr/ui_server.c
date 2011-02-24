@@ -47,6 +47,9 @@ static void on_combo_changed(gpointer user_data);
 static gboolean visible_func (GtkTreeModel *model,
                               GtkTreeIter  *iter,
                               gpointer      data);
+
+static void on_cursor_changed(void);
+
 /*
  * Section: Private
  * Private functions.
@@ -176,6 +179,8 @@ static void server_common_setup(struct ui_server_common *ui_server_common)
 	view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_server_common->sort_store));
 	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(view)),
 				    GTK_SELECTION_MULTIPLE);
+	g_signal_connect(GTK_OBJECT(view), "cursor-changed",
+			 G_CALLBACK(on_cursor_changed), NULL);
 	gtk_container_add(GTK_CONTAINER(scrolled_window), view);
 	ui_server_common->view = view;
 	gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(view),
@@ -449,6 +454,26 @@ static gboolean visible_func (GtkTreeModel *model,
 		return TRUE;
 
 	return ui_server_has_tag (server, tag);
+}
+
+static void on_cursor_changed(void){
+
+	GebrServer *server;
+	GtkTreeIter iter;
+
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_server, "server_connect"), FALSE);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_server, "server_disconnect"), FALSE);
+
+
+	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_server_list->common.view) {
+		gtk_tree_model_get (gebr.ui_server_list->common.sort_store, &iter,
+				    SERVER_POINTER, &server,
+				    -1);
+		if (server->comm->socket->protocol->logged)
+			gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_server, "server_disconnect"), TRUE);
+		else
+			gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_server, "server_connect"), TRUE);
+	}
 }
 
 /*
