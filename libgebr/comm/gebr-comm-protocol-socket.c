@@ -76,10 +76,12 @@ static void gebr_comm_protocol_socket_read(GebrCommStreamSocket *socket, GebrCom
 		else if (self->priv->incoming_msg->type == GEBR_COMM_HTTP_TYPE_RESPONSE) {
 			if (self->priv->requests_fifo != NULL) {
 				GebrCommHttpMsg *request = (GebrCommHttpMsg*)self->priv->requests_fifo->data;
-				g_signal_emit(self, object_signals[PROCESS_RESPONSE], 0, request, self->priv->incoming_msg);
+				GebrCommHttpMsg *response = self->priv->incoming_msg;
+				g_signal_emit(self, object_signals[PROCESS_RESPONSE], 0, request, response);
+				gebr_comm_http_msg_response_received(request, response);
+				gebr_comm_http_msg_free(request);
 
 				self->priv->requests_fifo = g_list_remove_link(self->priv->requests_fifo, self->priv->requests_fifo);
-				gebr_comm_http_msg_free(request);
 			}
 		}
 		gebr_comm_http_msg_free(self->priv->incoming_msg);
@@ -235,8 +237,8 @@ void gebr_comm_protocol_socket_disconnect(GebrCommProtocolSocket * self)
 	gebr_comm_stream_socket_disconnect(self->priv->socket);
 }
 
-void gebr_comm_protocol_socket_send_request(GebrCommProtocolSocket * self, GebrCommHttpRequestMethod method,
-					    const gchar *url, GebrCommJsonContent *_content)
+GebrCommHttpMsg *gebr_comm_protocol_socket_send_request(GebrCommProtocolSocket * self, GebrCommHttpRequestMethod method,
+							const gchar *url, GebrCommJsonContent *_content)
 {
 	const gchar *content = _content ? _content->data->str : "";
 	GHashTable *headers = g_hash_table_new(g_str_hash, g_str_equal);
@@ -247,6 +249,8 @@ void gebr_comm_protocol_socket_send_request(GebrCommProtocolSocket * self, GebrC
 
 	gebr_comm_socket_write_string(GEBR_COMM_SOCKET(self->priv->socket), msg->raw);
 	self->priv->requests_fifo = g_list_append(self->priv->requests_fifo, msg);
+	
+	return msg;
 }
 
 void gebr_comm_protocol_socket_send_response(GebrCommProtocolSocket * self, int status_code, GebrCommJsonContent *_content)

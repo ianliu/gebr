@@ -66,8 +66,8 @@ GebrCommProtocolSocket * gebr_comm_protocol_socket_new_from_socket(GebrCommStrea
 gboolean gebr_comm_protocol_socket_connect(GebrCommProtocolSocket *self, GebrCommSocketAddress * socket_address, gboolean wait);
 void gebr_comm_protocol_socket_disconnect(GebrCommProtocolSocket * self);
 
-void gebr_comm_protocol_socket_send_request(GebrCommProtocolSocket * self, GebrCommHttpRequestMethod method,
-					    const gchar *url, GebrCommJsonContent *content);
+GebrCommHttpMsg *gebr_comm_protocol_socket_send_request(GebrCommProtocolSocket * self, GebrCommHttpRequestMethod method,
+							const gchar *url, GebrCommJsonContent *content);
 void gebr_comm_protocol_socket_send_response(GebrCommProtocolSocket * self, int status_code, GebrCommJsonContent *content);
 
 void gebr_comm_protocol_socket_oldmsg_send(GebrCommProtocolSocket * self, gboolean blocking,

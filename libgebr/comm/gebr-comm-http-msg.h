@@ -65,6 +65,8 @@ struct _GebrCommHttpMsg {
 };
 struct _GebrCommHttpMsgClass {
 	GObjectClass parent;
+
+	void (*response_received)(GebrCommHttpMsg *request, GebrCommHttpMsg *response);
 };
 
 GebrCommHttpMsg *gebr_comm_http_msg_new(GebrCommHttpRequestType type, GebrCommHttpRequestMethod method);
@@ -72,6 +74,8 @@ GebrCommHttpMsg *gebr_comm_http_msg_new_parsing(GebrCommHttpMsg *partial, GStrin
 GebrCommHttpMsg *gebr_comm_http_msg_new_request(GebrCommHttpRequestMethod method, const gchar *url, GHashTable * headers, const gchar *content);
 GebrCommHttpMsg *gebr_comm_http_msg_new_response(gint status_code, GHashTable * headers, const gchar *content);
 void gebr_comm_http_msg_free(GebrCommHttpMsg *msg);
+
+void gebr_comm_http_msg_response_received(GebrCommHttpMsg *request, GebrCommHttpMsg *response);
 
 G_END_DECLS
 

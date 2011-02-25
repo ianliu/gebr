@@ -82,9 +82,10 @@ enum {
 //static guint property_member_offset [] = {0,
 //};
 enum {
+	RESPONSE_RECEIVED,
 	LAST_SIGNAL
 };
-// static guint object_signals[LAST_SIGNAL];
+static guint object_signals[LAST_SIGNAL];
 G_DEFINE_TYPE(GebrCommHttpMsg, gebr_comm_http_msg, G_TYPE_OBJECT)
 static void gebr_comm_http_msg_init(GebrCommHttpMsg * msg)
 {
@@ -139,6 +140,12 @@ static void gebr_comm_http_msg_class_init(GebrCommHttpMsgClass * klass)
 	gobject_class->get_property = gebr_comm_http_msg_get_property;
 	//pspec = g_param_spec_boxed("client-hostname", "", "", G_TYPE_GSTRING, G_PARAM_READWRITE);
 	//g_object_class_install_property(gobject_class, CLIENT_HOSTNAME, pspec);
+	
+	/* signals */
+	object_signals[RESPONSE_RECEIVED] = g_signal_new("response-received", GEBR_COMM_HTTP_MSG_TYPE,
+							 (GSignalFlags) (G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
+							 G_STRUCT_OFFSET(GebrCommHttpMsgClass, response_received), NULL,
+							 NULL, g_cclosure_marshal_VOID__POINTER, G_TYPE_NONE, 1, G_TYPE_POINTER);
 }
 
 GebrCommHttpMsg *gebr_comm_http_msg_new(GebrCommHttpRequestType type, GebrCommHttpRequestMethod method)
@@ -288,4 +295,9 @@ GebrCommHttpMsg *gebr_comm_http_msg_new_response(gint status_code, GHashTable * 
 	gebr_comm_http_msg_serialize(msg);
 
 	return msg;
+}
+
+void gebr_comm_http_msg_response_received(GebrCommHttpMsg *request, GebrCommHttpMsg *response)
+{
+	g_signal_emit(request, object_signals[RESPONSE_RECEIVED], 0, response);
 }
