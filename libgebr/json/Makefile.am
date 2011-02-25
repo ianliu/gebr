@@ -39,10 +39,12 @@ source_h_private = \
 	json-debug.h		\
 	json-gobject-private.h	\
 	json-scanner.h 		\
+	json-marshal.h 		\
 	json-types-private.h	\
 	$(NULL)
 
 source_c = \
+	json-marshal.c 		\
 	json-array.c 		\
 	json-builder.c		\
 	json-debug.c		\
@@ -58,16 +60,11 @@ source_c = \
 	json-serializable.c	\
 	$(NULL)
 
-# glib-mkenums rules
-glib_enum_h = json-enum-types.h
-glib_enum_c = json-enum-types.c
-glib_enum_headers = $(source_h)
-include ./Makefile.am.enums
-
-# glib-genmarshal rules
-glib_marshal_list = json-marshal.list
-glib_marshal_prefix = _json_marshal
-include ./Makefile.am.marshal
+json-marshal.h: json-marshal.list
+	glib-genmarshal --prefix=_json_marshal json-marshal.list --header >json-marshal.h
+json-marshal.c: json-marshal.h json-marshal.list
+	glib-genmarshal --prefix=_json_marshal json-marshal.list --body >json-marshal.c
+CLEANFILES += json-marshal.c json-marshal.h
 
 lib_LTLIBRARIES = libgebr_json.la
 

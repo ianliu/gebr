@@ -1,4 +1,3 @@
-#include "json-marshal.h"
 
 #include	<glib-object.h>
 
@@ -50,11 +49,11 @@
 #endif /* !G_ENABLE_DEBUG */
 
 
-/* VOID:VOID (./json-marshal.list:1) */
+/* VOID:VOID (json-marshal.list:1) */
 
-/* VOID:BOXED (./json-marshal.list:2) */
+/* VOID:BOXED (json-marshal.list:2) */
 
-/* VOID:BOXED,STRING (./json-marshal.list:3) */
+/* VOID:BOXED,STRING (json-marshal.list:3) */
 void
 _json_marshal_VOID__BOXED_STRING (GClosure     *closure,
                                   GValue       *return_value G_GNUC_UNUSED,
@@ -91,7 +90,7 @@ _json_marshal_VOID__BOXED_STRING (GClosure     *closure,
             data2);
 }
 
-/* VOID:BOXED,INT (./json-marshal.list:4) */
+/* VOID:BOXED,INT (json-marshal.list:4) */
 void
 _json_marshal_VOID__BOXED_INT (GClosure     *closure,
                                GValue       *return_value G_GNUC_UNUSED,
@@ -128,5 +127,5 @@ _json_marshal_VOID__BOXED_INT (GClosure     *closure,
             data2);
 }
 
-/* VOID:POINTER (./json-marshal.list:5) */
+/* VOID:POINTER (json-marshal.list:5) */
 
