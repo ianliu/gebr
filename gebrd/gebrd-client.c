@@ -87,19 +87,29 @@ static void client_disconnected(GebrCommProtocolSocket * socket, struct client *
 static void client_process_request(GebrCommProtocolSocket * socket, GebrCommHttpMsg * request, struct client *client)
 {
 	//g_message("url '%s'. contents: %s", request->url->str, request->content->str);
-	/**
-	 * FIXME: Non-generic code
-	 */
-	//TODO: use g_object_class_find_property and g_object_set instead
-	if (!strcmp(request->url->str, "/fs-nickname")) {
-		if (request->method == GEBR_COMM_HTTP_METHOD_GET)
-			gebr_comm_protocol_socket_send_response(socket, 200, gebrd->fs_nickname->str);
-		else if (request->method == GEBR_COMM_HTTP_METHOD_PUT) {
-			gebr_comm_protocol_socket_send_response(socket, 200, NULL);
-			g_string_assign(gebrd->fs_nickname, request->content->str);
-		}
-		//else
-	}
+	
+	if (!g_str_has_prefix(request->url->str, "/"))
+		return;
+	//TODO: go into object tree to get object/property
+	//gchar **splits = g_strsplit(request->url->str+1, "/", 0);
+	//for (int i = 0; splits[i]; ++i) {
+	//}
+	GObject *object = G_OBJECT(gebrd->user);
+	const gchar *property = request->url->str+1;
+
+	if (request->method == GEBR_COMM_HTTP_METHOD_GET) {
+		GebrCommJsonContent *json = gebr_comm_json_content_new_from_property(object, property);
+		gebr_comm_protocol_socket_send_response(socket, 200, json);
+		gebr_comm_json_content_free(json);
+	} else if (request->method == GEBR_COMM_HTTP_METHOD_PUT) {
+		GebrCommJsonContent *json = gebr_comm_json_content_new(request->content->str);
+		gebr_comm_json_content_to_property(json, object, property);
+		gebr_comm_json_content_free(json);
+
+		gebr_comm_protocol_socket_send_response(socket, 200, NULL);
+	} //else
+
+	//g_strfreev(splits);
 }
 
 static void client_process_response(GebrCommProtocolSocket * socket, GebrCommHttpMsg * request,

@@ -24,6 +24,7 @@
 #include "gebr-comm-protocol_p.h"
 #include "../marshalers.h"
 
+
 /* GOBJECT STUFF */
 #define GEBR_COMM_PROTOCOL_SOCKET_GET_PRIVATE(o) \
 	(G_TYPE_INSTANCE_GET_PRIVATE((o), GEBR_COMM_PROTOCOL_SOCKET_TYPE, GebrCommProtocolSocketPrivate))
@@ -235,16 +236,28 @@ void gebr_comm_protocol_socket_disconnect(GebrCommProtocolSocket * self)
 }
 
 void gebr_comm_protocol_socket_send_request(GebrCommProtocolSocket * self, GebrCommHttpRequestMethod method,
-					    const gchar *url, const gchar *content)
+					    const gchar *url, GebrCommJsonContent *_content)
 {
-	GebrCommHttpMsg *msg = gebr_comm_http_msg_new_request(method, url, content);
+	const gchar *content = _content ? _content->data->str : "";
+	GHashTable *headers = g_hash_table_new(g_str_hash, g_str_equal);
+	if (content)
+	       g_hash_table_insert(headers, g_strdup("content-type"), g_strdup("application/json"));
+	GebrCommHttpMsg *msg = gebr_comm_http_msg_new_request(method, url, headers, content);
+	g_hash_table_unref(headers);
+
 	gebr_comm_socket_write_string(GEBR_COMM_SOCKET(self->priv->socket), msg->raw);
 	self->priv->requests_fifo = g_list_append(self->priv->requests_fifo, msg);
 }
 
-void gebr_comm_protocol_socket_send_response(GebrCommProtocolSocket * self, int status_code, const gchar *content)
+void gebr_comm_protocol_socket_send_response(GebrCommProtocolSocket * self, int status_code, GebrCommJsonContent *_content)
 {
-	GebrCommHttpMsg *msg = gebr_comm_http_msg_new_response(status_code, content);
+	const gchar *content = _content ? _content->data->str : "";
+	GHashTable *headers = g_hash_table_new(g_str_hash, g_str_equal);
+	if (content)
+	       g_hash_table_insert(headers, g_strdup("content-type"), g_strdup("application/json"));
+	GebrCommHttpMsg *msg = gebr_comm_http_msg_new_response(status_code, headers, content);
+	g_hash_table_unref(headers);
+
 	gebr_comm_socket_write_string(GEBR_COMM_SOCKET(self->priv->socket), msg->raw);
 	gebr_comm_http_msg_free(msg);
 }
@@ -276,3 +289,4 @@ void gebr_comm_protocol_socket_oldmsg_split_free(GList * split)
 {
 	gebr_comm_protocol_split_free(split);
 }
+

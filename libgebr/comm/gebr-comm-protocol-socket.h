@@ -24,6 +24,7 @@
 #include <libgebr/comm/gebr-comm-socketaddress.h>
 #include <libgebr/comm/gebr-comm-protocol.h>
 #include <libgebr/comm/gebr-comm-http-msg.h>
+#include <libgebr/comm/gebr-comm-json-content.h>
 
 G_BEGIN_DECLS
 
@@ -66,12 +67,13 @@ gboolean gebr_comm_protocol_socket_connect(GebrCommProtocolSocket *self, GebrCom
 void gebr_comm_protocol_socket_disconnect(GebrCommProtocolSocket * self);
 
 void gebr_comm_protocol_socket_send_request(GebrCommProtocolSocket * self, GebrCommHttpRequestMethod method,
-					    const gchar *url, const gchar *content);
-void gebr_comm_protocol_socket_send_response(GebrCommProtocolSocket * self, int status_code, const gchar *content);
+					    const gchar *url, GebrCommJsonContent *content);
+void gebr_comm_protocol_socket_send_response(GebrCommProtocolSocket * self, int status_code, GebrCommJsonContent *content);
 
 void gebr_comm_protocol_socket_oldmsg_send(GebrCommProtocolSocket * self, gboolean blocking,
 					   struct gebr_comm_message_def gebr_comm_message_def, guint n_params, ...);
 GList *gebr_comm_protocol_socket_oldmsg_split(GString * arguments, guint parts);
 void gebr_comm_protocol_socket_oldmsg_split_free(GList * split);
+
 G_END_DECLS
 #endif				//__GEBR_COMM_PROTOCOL_SOCKET_H

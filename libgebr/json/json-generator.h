@@ -28,7 +28,7 @@
 #ifndef __JSON_GENERATOR_H__
 #define __JSON_GENERATOR_H__
 
-#include <json-types.h>
+#include "json-types.h"
 
 G_BEGIN_DECLS
 

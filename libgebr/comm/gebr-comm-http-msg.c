@@ -79,8 +79,8 @@ enum {
 	PROP_0,
 	LAST_PROPERTY
 };
-static guint property_member_offset [] = {0,
-};
+//static guint property_member_offset [] = {0,
+//};
 enum {
 	LAST_SIGNAL
 };
@@ -231,7 +231,7 @@ void gebr_comm_http_msg_serialize(GebrCommHttpMsg *msg)
 	
 	/* headers */
 	if (msg->content->len)
-		g_hash_table_insert(msg->headers, g_strdup("content-length"), g_strdup_printf("%lu", msg->content->len));
+		g_hash_table_insert(msg->headers, g_strdup("content-length"), g_strdup_printf("%u", msg->content->len));
 	GHashTableIter iter;
 	gchar *key, *value;
 	g_hash_table_iter_init(&iter, msg->headers);
@@ -247,28 +247,42 @@ void gebr_comm_http_msg_serialize(GebrCommHttpMsg *msg)
 	msg->parsed = TRUE;
 	msg->parsed_headers = TRUE;
 }
-GebrCommHttpMsg *gebr_comm_http_msg_new_request(GebrCommHttpRequestMethod method, const gchar *url, const gchar *content)
+GebrCommHttpMsg *gebr_comm_http_msg_new_request(GebrCommHttpRequestMethod method, const gchar *url, GHashTable * headers, const gchar *content)
 {
 	GebrCommHttpMsg *msg = gebr_comm_http_msg_new(GEBR_COMM_HTTP_TYPE_REQUEST, method);
 	g_string_assign(msg->url, url);
 	gsize len;
 	if (content && (len = strlen(content))) {
 		g_string_assign(msg->content, content);
-		g_hash_table_insert(msg->headers, g_strdup("content-length"), g_strdup_printf("%lu", len));
+		g_hash_table_insert(msg->headers, g_strdup("content-length"), g_strdup_printf("%u", len));
+	}
+	if (headers) {
+		GHashTableIter iter;
+		gpointer key, value;
+		g_hash_table_iter_init(&iter, headers);
+		while (g_hash_table_iter_next(&iter, &key, &value))
+			g_hash_table_insert(msg->headers, g_strdup(key), g_strdup(value));
 	}
 
 	gebr_comm_http_msg_serialize(msg);
 
 	return msg;
 }
-GebrCommHttpMsg *gebr_comm_http_msg_new_response(gint status_code, const gchar *content)
+GebrCommHttpMsg *gebr_comm_http_msg_new_response(gint status_code, GHashTable * headers, const gchar *content)
 {
 	GebrCommHttpMsg *msg = gebr_comm_http_msg_new(GEBR_COMM_HTTP_TYPE_RESPONSE, GEBR_COMM_HTTP_METHOD_UNKNOWN);
 	msg->status_code = status_code;
 	gsize len;
 	if (content && (len = strlen(content))) {
 		g_string_assign(msg->content, content);
-		g_hash_table_insert(msg->headers, g_strdup("content-length"), g_strdup_printf("%lu", len));
+		g_hash_table_insert(msg->headers, g_strdup("content-length"), g_strdup_printf("%u", len));
+	}
+	if (headers) {
+		GHashTableIter iter;
+		gpointer key, value;
+		g_hash_table_iter_init(&iter, headers);
+		while (g_hash_table_iter_next(&iter, &key, &value))
+			g_hash_table_insert(msg->headers, g_strdup(key), g_strdup(value));
 	}
 
 	gebr_comm_http_msg_serialize(msg);

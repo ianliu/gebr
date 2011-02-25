@@ -40,9 +40,16 @@ void client_process_server_response(struct gebr_comm_server *comm_server, GebrCo
 	//TODO: use g_object_class_find_property and g_object_set instead
 	if (!strcmp(request->url->str, "/fs-nickname")) {
 		if (request->method == GEBR_COMM_HTTP_METHOD_GET) {
-			if (!response->content->len)
+			GebrCommJsonContent *json = gebr_comm_json_content_new(response->content->str);
+			GString *value = gebr_comm_json_content_to_gstring(json);
+			if (!value->len) {
+				GebrCommJsonContent *json = gebr_comm_json_content_new_from_string("my nickname");
 				gebr_comm_protocol_socket_send_request(comm_server->socket, GEBR_COMM_HTTP_METHOD_PUT,
-								       "/fs-nickname", "my nickname");
+								       "/fs-nickname", json);
+				gebr_comm_json_content_free(json);
+			}
+			g_string_free(value, TRUE);
+			gebr_comm_json_content_free(json);
 		} else if (request->type == GEBR_COMM_HTTP_METHOD_PUT) {
 			//if (response->status_code == 200)
 		}

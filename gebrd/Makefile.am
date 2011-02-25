@@ -20,6 +20,7 @@ libgebrd_a_SOURCES =			\
 	gebrd-client.c			\
 	gebrd-sysinfo.c			\
 	gebrd.c				\
+	gebrd-user.c			\
 	gebrd-job-queue.c		\
 	gebrd-job.c			\
 	gebrd-mpi-implementations.c	\
@@ -40,6 +41,7 @@ noinst_HEADERS =			\
 	gebrd-client.h			\
 	gebrd-sysinfo.h			\
 	gebrd.h				\
+	gebrd-user.h			\
 	gebrd-job-queue.h		\
 	gebrd-job.h			\
 	gebrd-mpi-implementations.h	\

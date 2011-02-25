@@ -69,8 +69,8 @@ struct _GebrCommHttpMsgClass {
 
 GebrCommHttpMsg *gebr_comm_http_msg_new(GebrCommHttpRequestType type, GebrCommHttpRequestMethod method);
 GebrCommHttpMsg *gebr_comm_http_msg_new_parsing(GebrCommHttpMsg *partial, GString *data);
-GebrCommHttpMsg *gebr_comm_http_msg_new_request(GebrCommHttpRequestMethod method, const gchar *url, const gchar *content);
-GebrCommHttpMsg *gebr_comm_http_msg_new_response(gint status_code, const gchar *content);
+GebrCommHttpMsg *gebr_comm_http_msg_new_request(GebrCommHttpRequestMethod method, const gchar *url, GHashTable * headers, const gchar *content);
+GebrCommHttpMsg *gebr_comm_http_msg_new_response(gint status_code, GHashTable * headers, const gchar *content);
 void gebr_comm_http_msg_free(GebrCommHttpMsg *msg);
 
 G_END_DECLS

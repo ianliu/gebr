@@ -342,7 +342,7 @@ GebrdJob *job_find(GString * jid)
 	GebrdJob *job;
 
 	job = NULL;
-	for (GList *link = gebrd->jobs; link != NULL; link = g_list_next(link)) {
+	for (GList *link = gebrd->user->jobs; link != NULL; link = g_list_next(link)) {
 		GebrdJob *i = (GebrdJob *)link->data;
 		if (!strcmp(i->parent.jid->str, jid->str)) {
 			job = i;
@@ -374,7 +374,7 @@ void job_new(GebrdJob ** _job, struct client * client, GString * queue, GString 
 	job->parent.status = JOB_STATUS_INITIAL;
 
 	*_job = job;
-	gebrd->jobs = g_list_append(gebrd->jobs, job);
+	gebrd->user->jobs = g_list_append(gebrd->user->jobs, job);
 
 	GebrGeoXmlDocument *document;
 	int ret = gebr_geoxml_document_load_buffer(&document, xml->str);
@@ -392,10 +392,10 @@ void job_free(GebrdJob *job)
 {
 	gebrd_queues_remove_job_from(job->parent.queue_id->str, job);
 
-	GList *link = g_list_find(gebrd->jobs, job);
+	GList *link = g_list_find(gebrd->user->jobs, job);
 	/* job that failed to run are not added to this list */
 	if (link != NULL)
-		gebrd->jobs = g_list_delete_link(gebrd->jobs, link);
+		gebrd->user->jobs = g_list_delete_link(gebrd->user->jobs, link);
 
 	/* free data */
 	gebr_comm_process_free(job->process);
@@ -667,7 +667,7 @@ void job_notify(GebrdJob *job, struct client *client)
 
 void job_list(struct client *client)
 {
-	for (GList *link = gebrd->jobs; link != NULL; link = g_list_next(link)) {
+	for (GList *link = gebrd->user->jobs; link != NULL; link = g_list_next(link)) {
 		GebrdJob *job = (GebrdJob *)link->data;
 		job_notify(job, client);
 	}

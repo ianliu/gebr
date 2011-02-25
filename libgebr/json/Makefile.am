@@ -29,6 +29,7 @@ source_h = \
 	json-builder.h		\
 	json-generator.h 	\
 	json-gobject.h 		\
+	json-utils.h 		\
 	json-parser.h 		\
 	json-reader.h		\
 	json-types.h 		\
@@ -43,16 +44,17 @@ source_h_private = \
 
 source_c = \
 	json-array.c 		\
-	json-builder.c	\
+	json-builder.c		\
 	json-debug.c		\
 	json-gboxed.c		\
 	json-generator.c 	\
-	json-gobject.c 	\
+	json-gobject.c 		\
+	json-utils.c	 	\
 	json-node.c 		\
-	json-object.c 	\
-	json-parser.c 	\
+	json-object.c 		\
+	json-parser.c 		\
 	json-reader.c		\
-	json-scanner.c 	\
+	json-scanner.c 		\
 	json-serializable.c	\
 	$(NULL)
 
@@ -74,10 +76,10 @@ libgebr_json_la_SOURCES = $(source_c) $(source_h) $(source_h_private) $(BUILT_SO
 libgebr_json_la_LDFLAGS = $(JSON_LT_LDFLAGS) -export-dynamic -export-symbols-regex "^json.*"
 
 jsonincludedir = $(includedir)/libgebr/json/
-jsoninclude_HEADERS = \
-	$(source_h) 					\
+jsoninclude_HEADERS = 		\
+	$(source_h) 		\
 	json-enum-types.h 	\
-	json-version.h	\
+	json-version.h		\
 	json-glib.h		\
 	$(NULL)
 

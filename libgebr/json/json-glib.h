@@ -34,6 +34,7 @@
 #include <json/json-version.h>
 #include <json/json-enum-types.h>
 #include <json/json-gobject.h>
+#include <json/json-utils.h>
 
 #undef __JSON_GLIB_INSIDE__
 

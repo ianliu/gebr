@@ -26,6 +26,7 @@
 
 #include <glib/gi18n.h>
 #include <libgebr/utils.h>
+#include <libgebr/json/json-glib.h>
 #include <libgebr/comm/gebr-comm-protocol.h>
 
 #include "gebrd.h"
@@ -33,14 +34,13 @@
 #include "gebrd-client.h"
 #include "gebrd-job-queue.h"
 
-#define GEBRD_CONF_FILE "/etc/gebr/gebrd->conf"
+#define GEBRD_CONF_FILE "/etc/gebr/gebrd.conf"
 
-GebrdApp *gebrd;
+GebrdApp *gebrd = NULL;
 
 /* GOBJECT STUFF */
 enum {
 	PROP_0,
-	PROP_FS_NICKNAME,
 	LAST_PROPERTY
 };
 //static guint property_member_offset [] = {0,
@@ -52,26 +52,26 @@ enum {
 G_DEFINE_TYPE(GebrdApp, gebrd_app, G_TYPE_OBJECT)
 static void gebrd_app_init(GebrdApp * self)
 {
+	self->user_data_filename = g_string_new(NULL);
+	g_string_printf(self->user_data_filename, "%s/.gebr/gebrd/user.json", g_get_home_dir());
+	self->user = GEBRD_USER(json_gobject_from_file(GEBRD_USER_TYPE, self->user_data_filename->str));
+	if (self->user == NULL)
+		self->user = GEBRD_USER(g_object_new(GEBRD_USER_TYPE, NULL));
+
 	self->run_filename = g_string_new(NULL);
 	self->fs_lock = g_string_new(NULL);
-	self->fs_nickname = g_string_new(NULL);
 	self->clients = NULL;
-	self->jobs = NULL;
-	self->queues = g_hash_table_new_full((GHashFunc)g_str_hash, (GEqualFunc)g_str_equal,
-					     (GDestroyNotify)g_free, NULL);
+
 	gethostname(self->hostname, 255);
 	g_random_set_seed((guint32) time(NULL));
-
 }
 static void gebrd_app_finalize(GObject * object)
 {
 	GebrdApp *self = (GebrdApp *) object;
 
+	g_string_free(self->user_data_filename, TRUE);
 	g_string_free(self->run_filename, TRUE);
 	g_string_free(self->fs_lock, TRUE);
-	/* jobs */
-	g_list_foreach(self->jobs, (GFunc) job_free, NULL);
-	g_list_free(self->jobs);
 	/* client */
 	g_list_foreach(self->clients, (GFunc) client_free, NULL);
 	g_list_free(self->clients);
@@ -81,11 +81,8 @@ static void gebrd_app_finalize(GObject * object)
 static void
 gebrd_app_set_property(GObject * object, guint property_id, const GValue * value, GParamSpec * pspec)
 {
-	GebrdApp *self = (GebrdApp *) object;
+	//GebrdApp *self = (GebrdApp *) object;
 	switch (property_id) {
-	case PROP_FS_NICKNAME:
-		g_string_assign(self->fs_nickname, g_value_get_string(value));
-		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
 		break;
@@ -94,11 +91,8 @@ gebrd_app_set_property(GObject * object, guint property_id, const GValue * value
 static void
 gebrd_app_get_property(GObject * object, guint property_id, GValue * value, GParamSpec * pspec)
 {
-	GebrdApp *self = (GebrdApp *) object;
+	//GebrdApp *self = (GebrdApp *) object;
 	switch (property_id) {
-	case PROP_FS_NICKNAME:
-		g_value_set_string(value, self->fs_nickname->str);
-		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
 		break;
@@ -110,12 +104,9 @@ static void gebrd_app_class_init(GebrdAppClass * klass)
 	gobject_class->finalize = gebrd_app_finalize;
 	
 	/* properties */
-	GParamSpec *spec;
+	//GParamSpec *spec;
 	gobject_class->set_property = gebrd_app_set_property;
 	gobject_class->get_property = gebrd_app_get_property;
-	spec =	g_param_spec_string("fs-nickname", "", "", "",
-				     (GParamFlags)(G_PARAM_READABLE | G_PARAM_WRITABLE)); 
-	g_object_class_install_property(gobject_class, PROP_FS_NICKNAME, spec);
 }
 
 GebrdApp *gebrd_app_new(void)
@@ -299,7 +290,7 @@ void gebrd_config_load(void)
 
 	err1 = err2 = NULL;
 	gebrd->mpi_flavors = NULL;
-	config_path = g_strdup_printf("%s/.gebr/gebrd/gebrd->conf", g_get_home_dir());
+	config_path = g_strdup_printf("%s/.gebr/gebrd/gebrd.conf", g_get_home_dir());
 	key_file = g_key_file_new();
 
 	/*
@@ -335,7 +326,6 @@ void gebrd_config_load(void)
 	 * GList gebrd->mpi_flavors.
 	 */
 	groups = g_key_file_get_groups(key_file, NULL);
-
 	for (int i = 0; groups[i]; i++) {
 		if (!g_str_has_prefix(groups[i], "mpi-"))
 			continue;
@@ -356,6 +346,15 @@ void gebrd_config_load(void)
 out:
 	g_free(config_path);
 	g_key_file_free(key_file);
+}
+
+void gebrd_user_data_save(void)
+{
+	if (gebrd == NULL)
+		return;
+	puts("save");
+	if (!json_gobject_to_file(G_OBJECT(gebrd->user), gebrd->user_data_filename->str))
+		g_warning("Could not save user data");
 }
 
 const GebrdMpiConfig * gebrd_get_mpi_config_by_name(const gchar * name)

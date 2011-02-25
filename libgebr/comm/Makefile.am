@@ -40,6 +40,7 @@ libgebr_comm_la_SOURCES = \
 	gebr-comm-terminalprocess.c	\
 	gebr-comm-protocol.c		\
 	gebr-comm-protocol-socket.c	\
+	gebr-comm-json-content.c	\
 	gebr-comm-http-msg.c 		\
 	gebr-comm-job.c			\
 	gebr-comm-server.c
@@ -56,6 +57,7 @@ libgebr_commsubinclude_HEADERS = \
 	gebr-comm-terminalprocess.h	\
 	gebr-comm-protocol.h		\
 	gebr-comm-protocol-socket.h	\
+	gebr-comm-json-content.h	\
 	gebr-comm-http-msg.h 		\
 	gebr-comm-job.h			\
 	gebr-comm-server.h
@@ -69,6 +71,7 @@ noinst_HEADERS = \
 AM_CPPFLAGS = \
 	-I..				\
 	$(GEBR_CFLAGS)			\
+	$(GEBR_JSON_CFLAGS)		\
 	$(GEBR_GEOXML_CFLAGS)		\
 	$(GOBJECT_CFLAGS)		\
 	$(GTHREAD_CFLAGS)		\
@@ -80,6 +83,7 @@ libgebr_comm_la_LIBADD = \
 	-lutil				\
 	$(INTLLIBS)			\
 	$(GEBR_LIBS)			\
+	$(GEBR_JSON_LIBS)		\
 	$(GEBR_GEOXML_LIBS)		\
 	$(GOBJECT_LIBS)			\
 	$(GTHREAD_LIBS)			

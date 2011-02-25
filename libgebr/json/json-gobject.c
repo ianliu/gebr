@@ -193,7 +193,6 @@ json_gobject_new (GType       gtype,
 
   n_members = json_object_get_size (object);
   members = json_object_get_members (object);
-  printf("json members %d\n", n_members);
   members_left = NULL;
 
   /* first pass: construct and construct-only properties; here
@@ -229,7 +228,6 @@ json_gobject_new (GType       gtype,
 
       val = json_object_get_member (object, member_name);
       res = json_deserialize_pspec (&param.value, pspec, val);
-      printf("member res: %s", res ? "true" : "false");
       if (!res)
         g_value_unset (&param.value);
       else
@@ -245,7 +243,6 @@ json_gobject_new (GType       gtype,
       members_left = g_list_prepend (members_left, l->data);
     }
 
-  printf("params %d\n", construct_params->len);
   retval = g_object_newv (gtype,
                           construct_params->len,
                           (GParameter *) construct_params->data);
@@ -323,9 +320,6 @@ json_gobject_new (GType       gtype,
        */
       if (res)
         {
-          g_message ("Calling set_property('%s', '%s')",
-                     pspec->name,
-                     g_type_name (G_VALUE_TYPE (&value)));
           g_object_set_property (retval, pspec->name, &value);
         }
 
@@ -405,8 +399,6 @@ json_deserialize_pspec (GValue     *value,
 {
   GValue node_value = { 0, };
   gboolean retval = FALSE;
-
-  g_message ("Deserializing a %s of type %s", pspec->name, g_type_name (pspec->value_type));
 
   if (G_TYPE_FUNDAMENTAL (G_VALUE_TYPE (value)) == G_TYPE_BOXED)
     {
@@ -687,7 +679,6 @@ json_serialize_pspec (const GValue *real_value,
           JsonArray *array;
 
           strv_len = strv->n_values;
-	  printf("%d\n", strv_len);
           array = json_array_sized_new (strv_len);
 
           for (i = 0; i < strv_len; i++)
