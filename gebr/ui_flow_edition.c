@@ -933,6 +933,7 @@ static void flow_edition_on_combobox_changed(GtkComboBox * combobox)
 	gtk_container_add(GTK_CONTAINER(gebr.ui_flow_edition->queue_bin), queue_combobox);
 	gtk_widget_show(queue_combobox);
 
+	gebr_geoxml_flow_server_set_address (gebr.flow, addr);
 	flow_edition_set_io();
 	flow_browse_info_update();
 }
