@@ -291,11 +291,9 @@ static void server_common_actions(GtkDialog * dialog, gint arg1, struct ui_serve
 static void on_server_initialized (GebrServer *server,
 				   GtkTreeModel *model)
 {
-	gchar *tags;
+	gchar *fs;
 	const gchar *nfs1, *nfs2;
-	const gchar *addr1, *addr2;
 	gboolean valid;
-	GtkWidget *dialog;
 	GtkTreeIter iter;
 	GebrServer *server2;
 
@@ -309,29 +307,12 @@ static void on_server_initialized (GebrServer *server,
 		nfs2 = server2->nfsid->str;
 
 		if (server2 != server && g_str_equal (nfs1, nfs2)) {
-			addr1 = server_get_name (server);
-			addr2 = server_get_name (server2);
-			dialog = gtk_message_dialog_new (GTK_WINDOW (gebr.window),
-							 GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-							 GTK_MESSAGE_QUESTION,
-							 GTK_BUTTONS_YES_NO,
-							 _("Servers %s and %s shares the same disk. "
-							   "Would you like to apply the same groups "
-							   "to those servers?"),
-							 addr1, addr2);
-
-			gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_YES);
-
-			if (gtk_dialog_run (GTK_DIALOG (dialog)) != GTK_RESPONSE_YES) {
-				gtk_widget_destroy (dialog);
-				return;
-			}
-
-			gtk_tree_model_get (model, &iter, SERVER_TAGS, &tags, -1);
+			gtk_tree_model_get (model, &iter, SERVER_FS, &fs, -1);
 			gtk_list_store_set (GTK_LIST_STORE (model), &server->iter,
-					    SERVER_TAGS, tags, -1);
-			gtk_widget_destroy (dialog);
-			g_free (tags);
+					    SERVER_FS, server2->nfsid->str, -1);
+			gtk_list_store_set (GTK_LIST_STORE (model), &iter,
+					    SERVER_FS, server2->nfsid->str, -1);
+			g_free (fs);
 			return;
 		}
 		valid = gtk_tree_model_iter_next (model, &iter);

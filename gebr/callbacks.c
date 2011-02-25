@@ -547,12 +547,38 @@ void on_server_common_remove(void)
 {
 	GebrServer *server;
 	GtkTreeIter iter;
-	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_server_list->common.view) {
-		gtk_tree_model_get (gebr.ui_server_list->common.sort_store, &iter,
-				    SERVER_POINTER, &server,
-				    -1);
-		server_free(server);
+	GtkTreePath *path;
+	GtkTreeRowReference *ref;
+	GtkTreeModel *sort_model;
+	GtkTreeSelection *selection;
+	GList *rows = NULL;
+
+	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (gebr.ui_server_list->common.view));
+	rows = gtk_tree_selection_get_selected_rows (selection, &sort_model);
+
+	for (GList *i = rows; i; i = i->next) {
+		path = i->data;
+		ref = gtk_tree_row_reference_new (sort_model, path);
+		gtk_tree_path_free (path);
+		i->data = ref;
 	}
+
+	for (GList *i = rows; i; i = i->next) {
+		ref = i->data;
+		path = gtk_tree_row_reference_get_path (ref);
+
+		if (!gtk_tree_model_get_iter (sort_model, &iter, path)) {
+			gtk_tree_path_free (path);
+			gtk_tree_row_reference_free (ref);
+			continue;
+		}
+		gtk_tree_model_get (sort_model, &iter, SERVER_POINTER, &server, -1);
+		if (server)
+			server_free (server);
+		gtk_tree_path_free (path);
+		gtk_tree_row_reference_free (ref);
+	}
+
 	ui_server_update_tags_combobox ();
 }
 
