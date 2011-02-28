@@ -16,9 +16,9 @@ Description: GeBR library collection
  .
  What can GeBR do:
      * Handle Projects and Lines
-     * Assembly and run processing sequences
+     * Assemble and run processing sequences
      * Act as an interface to many freely-available seismic-processing
-       packages (Seismic Unix, Madagascar, etc)
+       packages (such as Seismic Unix, Madagascar, etc)
  .
  libgebr is a collection of GeBR's libraries:
      * libgebr_comm deals with client-server communication
@@ -40,7 +40,7 @@ Description: GeBR library collection
      * Handle Projects and Lines
      * Assembly and run processing sequences
      * Act as an interface to many freely-available seismic-processing
-       packages (Seismic Unix, Madagascar, etc)
+       packages (such as Seismic Unix, Madagascar, etc)
  .
  libgebr is a collection of GeBR's libraries:
      * libgebr_comm deals with client-server communication
@@ -66,7 +66,7 @@ Description: GeBRD is a server for executing flows
      * Handle Projects and Lines
      * Assembly and run processing sequences
      * Act as an interface to many freely-available seismic-processing
-       packages (Seismic Unix, Madagascar, etc)
+       packages (such as Seismic Unix, Madagascar, etc)
  .
  GeBRD is a server for executing flows
  .
@@ -87,7 +87,7 @@ Description: Seismic processing environment
      * Handle Projects and Lines
      * Assembly and run processing sequences
      * Act as an interface to many freely-available seismic-processing
-       packages (Seismic Unix, Madagascar, etc)
+       packages (such as Seismic Unix, Madagascar, etc)
  .
 
 Package: gebr-doc
@@ -98,7 +98,7 @@ Description: GeBR User Manual
  GêBR is not a package for processing, rather it is designed to integrate a large 
  variety of free processing packages.
  . 
- This package provides a user guide for gebr users.
+ This package provides a user guide for GeBR users.
  .
 
 Package: debr
@@ -115,7 +115,7 @@ Description: Menu Designer for GeBR
      * Handle Projects and Lines
      * Assembly and run processing sequences
      * Act as an interface to many freely-available seismic-processing
-       packages (Seismic Unix, Madagascar, etc)
+       packages (such as Seismic Unix, Madagascar, etc)
  .
  DeBR is the menu designer for GeBR. Each menu adds new functionalities
  to GeBR.
