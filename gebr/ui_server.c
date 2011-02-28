@@ -288,37 +288,6 @@ static void server_common_actions(GtkDialog * dialog, gint arg1, struct ui_serve
 	}
 }
 
-static void on_server_initialized (GebrServer *server,
-				   GtkTreeModel *model)
-{
-	gchar *fs;
-	const gchar *nfs1, *nfs2;
-	gboolean valid;
-	GtkTreeIter iter;
-	GebrServer *server2;
-
-	valid = gtk_tree_model_get_iter_first (model, &iter);
-	while (valid) {
-		gtk_tree_model_get (model, &iter,
-				    SERVER_POINTER, &server2,
-				    -1);
-
-		nfs1 = server->nfsid->str;
-		nfs2 = server2->nfsid->str;
-
-		if (server2 != server && g_str_equal (nfs1, nfs2)) {
-			gtk_tree_model_get (model, &iter, SERVER_FS, &fs, -1);
-			gtk_list_store_set (GTK_LIST_STORE (model), &server->iter,
-					    SERVER_FS, server2->nfsid->str, -1);
-			gtk_list_store_set (GTK_LIST_STORE (model), &iter,
-					    SERVER_FS, server2->nfsid->str, -1);
-			g_free (fs);
-			return;
-		}
-		valid = gtk_tree_model_iter_next (model, &iter);
-	}
-}
-
 /*
  * Function: server_list_add
  * Callback to add a server to the server list
@@ -360,9 +329,6 @@ static void server_list_add(struct ui_server_list *ui_server_list, const gchar *
 	}
 
 	server = gebr_server_new(address, FALSE, "");
-	g_signal_connect (server, "initialized",
-			  G_CALLBACK (on_server_initialized),
-			  ui_server_list->common.store);
 	gebr_server_set_autoconnect (server, TRUE);
 }
 
