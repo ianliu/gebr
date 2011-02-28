@@ -50,6 +50,7 @@ gebr/gebr
 gebrd/gebrd
 gtk-doc.make
 install-sh
+json-enum-types.[ch]
 json-marshal.[ch]
 libgebr/comm/socketchannel/gebr-comm-socketchannel
 libgebr/comm/tests/test-protocol
