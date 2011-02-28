@@ -1625,11 +1625,9 @@ de <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-ima
         <emphasis role="bold">Configured</emphasis> state. Other then these two states the program can also be set to the
 	 <emphasis role="bold">Disabled</emphasis> state
    (<guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_desabilitado.png"
-        /></imageobject></inlinemediaobject></guiicon>). You can alternate between these three states by clicking on the button 
-<guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_salvar_estado_lista.png"/></imageobject></inlinemediaobject></guiicon>,
-          to the right of the button
-          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_mudar_estado.png"
-          /></imageobject></inlinemediaobject></guiicon>.</para>
+        /></imageobject></inlinemediaobject></guiicon>). You can alternate between these states by using two methods,
+        you can either <mousebutton>right-click</mousebutton> on the program and then select from the context menu the desired state,
+        or by using the shortcut <keycombo><keycap>Space</keycap></keycombo> to change the state(s) of the selected programs.</para>
 
         <tip>
 

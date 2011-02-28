@@ -1684,11 +1684,9 @@
         estado <emphasis role="bold">Configurado</emphasis>. Além desses dois estados, um programa pode assumir ainda o
         estado <emphasis role="bold">Desabilitado</emphasis>
         (<guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_desabilitado.png"
-        /></imageobject></inlinemediaobject></guiicon>). Você alterna entre estes três estados clicando no botão
-          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_salvar_estado_lista.png"/></imageobject></inlinemediaobject></guiicon>,
-          à direita do
-          botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_mudar_estado.png"
-          /></imageobject></inlinemediaobject></guiicon>.</para>
+        /></imageobject></inlinemediaobject></guiicon>). Você pode alternar entre estes estados de duas maneiras,
+        <mousebutton>clique com botão direito</mousebutton> sobre o programa e selecione o estado desejado a partir do menu de contexto ou
+        use o atalho <keycombo><keycap>Espaço</keycap></keycombo> para trocar entre os possíveis estados dos programas selecionados.</para>
 
         <tip>
 
