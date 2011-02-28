@@ -281,7 +281,7 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 
 	if (gebr_geoxml_document_get_type(document) == GEBR_GEOXML_DOCUMENT_TYPE_LINE)
 	{
-		gint pos = -1;
+		gint pos = 0;
 		gchar **tags;
 		const gchar *curr_group;
 
@@ -289,12 +289,16 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 		tags = ui_server_get_all_tags ();
 		curr_group = gebr_geoxml_line_get_group (GEBR_GEOXML_LINE (document));
 
+		gtk_combo_box_append_text (GTK_COMBO_BOX (groups_combo),
+					   _("All Servers"));
+
 		for (int i = 0; tags[i]; i++) {
-			gtk_combo_box_append_text (GTK_COMBO_BOX (groups_combo),
-						   tags[i]);
+			gtk_combo_box_append_text (GTK_COMBO_BOX (groups_combo), tags[i]);
 			if (g_str_equal (tags[i], curr_group))
-				pos = i;
+				pos = i + 1;
 		}
+
+		gtk_combo_box_set_active(GTK_COMBO_BOX (groups_combo), pos);
 
 		g_signal_connect (groups_combo, "changed",
 				  G_CALLBACK (on_groups_combo_box_changed), NULL);
