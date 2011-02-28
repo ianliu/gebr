@@ -400,8 +400,8 @@ msgid "Save selected Flows"
 msgstr "Salvar Fluxos selecionados"
 
 #: ../gebr/flow.c:602
-msgid "Give a name for this version of the selected Flows:"
-msgstr "Dê um nome para esta versão dos Fluxos selecionados:"
+msgid "Write a description about this version of the selected Flows:"
+msgstr "Descreva esta versão dos Fluxos selecionados:"
 
 #: ../gebr/flow.c:731
 msgid "Could not paste flow. It was probably deleted."
