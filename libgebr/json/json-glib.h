@@ -31,7 +31,6 @@
 #include <json/json-generator.h>
 #include <json/json-parser.h>
 #include <json/json-reader.h>
-#include <json/json-version.h>
 #include <json/json-enum-types.h>
 #include <json/json-gobject.h>
 #include <json/json-utils.h>

@@ -15,26 +15,36 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 include $(top_srcdir)/Makefile.decl
 
-if ENABLE_TESTS
-TESTDIR = tests
-endif
-if ENABLE_GUI
-GUIDIR=gui
-endif
-SUBDIRS = . json geoxml comm ${GUIDIR} po ${TESTDIR}
+BUILT_SOURCES =
+EXTRA_DIST =
+CLEANFILES =
+DISTCLEANFILES =
+EXTRADIR =
 
-pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = gebr.pc
+if ENABLE_GUI
+EXTRADIR += gui
+endif
+
+if ENABLE_TESTS
+EXTRADIR += tests
+endif
+
+SUBDIRS = . geoxml comm json po ${EXTRADIR}
+
+AM_CFLAGS = $(COMMON_CFLAGS) -fPIC
+
+AM_CPPFLAGS =		\
+	$(GLIB_CFLAGS)	\
+	-DNANOVERSION=\"$(NANOVERSION)\" \
+	@DEBUG_CFLAGS@	\
+	$(NULL)
+
+libgebr_la_LIBADD = -lutil $(INTLLIBS) $(GLIB_LIBS)
+libgebr_la_LDFLAGS = -version-info @GEBR_VERSION_INFO@
 
 touch:
 	if [ -d $(top_srcdir)/.hg ]; then touch version.c -r $(top_srcdir)/.hg; fi
 date.c: touch
-
-marshalers.h: marshalers.list
-	glib-genmarshal --prefix=_gebr_gui_marshal marshalers.list --header >marshalers.h
-marshalers.c: marshalers.h marshalers.list
-	glib-genmarshal --prefix=_gebr_gui_marshal marshalers.list --body >marshalers.c
-CLEANFILES = marshalers.c marshalers.h
 
 lib_LTLIBRARIES = libgebr.la
 libgebr_la_SOURCES = 	\
@@ -62,17 +72,22 @@ libgebrinclude_HEADERS =\
 
 noinst_HEADERS = defines.h marshalers.h
 
-EXTRA_DIST = ${pkgconfig_DATA} $(noinst_HEADERS) config.h.in marshalers.list
-DISTCLEANFILES = config.h
+# glib-genmarshal rules
+glib_marshal_list = marshalers.list
+glib_marshal_prefix = _gebr_gui_marshal
+include $(top_srcdir)/Makefile.am.marshal
 
-AM_CFLAGS = $(COMMON_CFLAGS) -fPIC
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = gebr.pc
 
-AM_CPPFLAGS = $(GLIB_CFLAGS)	\
-	      -DNANOVERSION=\"$(NANOVERSION)\"\
-	      @DEBUG_CFLAGS@
+EXTRA_DIST +=			\
+	${pkgconfig_DATA}	\
+	$(noinst_HEADERS)	\
+	config.h.in		\
+	marshalers.list		\
+	$(NULL)
 
-libgebr_la_LIBADD = -lutil $(INTLLIBS) $(GLIB_LIBS)
-libgebr_la_LDFLAGS = -version-info @GEBR_VERSION_INFO@
+DISTCLEANFILES += config.h
 
 distcheck-hook: all
 

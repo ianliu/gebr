@@ -27,6 +27,7 @@ aclocal.m4
 autom4te.cache
 config.*
 configure
+cscope.*
 debr/debr
 depcomp
 docs/gebr/{en,pt_BR}/html
@@ -49,6 +50,7 @@ gebr/gebr
 gebrd/gebrd
 gtk-doc.make
 install-sh
+json-marshal.[ch]
 libgebr/comm/socketchannel/gebr-comm-socketchannel
 libgebr/comm/tests/test-protocol
 libgebr/comm/tests/test-socket
@@ -76,8 +78,10 @@ m4/ltoptions.m4
 m4/ltsugar.m4
 m4/ltversion.m4
 m4/lt~obsolete.m4
+marshalers.[ch]
 missing
 rpm/gebrproject.fedora.spec
+stamp*
 stamp-it
 tags
 
