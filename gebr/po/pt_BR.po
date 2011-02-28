@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-23 12:12-0300\n"
+"POT-Creation-Date: 2011-02-23 15:31-0300\n"
 "PO-Revision-Date: 2011-02-01 10:48-0200\n"
 "Last-Translator: Rodrigo Morelatto <morelatto@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
@@ -747,7 +747,7 @@ msgstr "Fluxos"
 
 #: ../gebr/interface.c:411
 msgid "Flow Editor"
-msgstr "Edição de Fluxo"
+msgstr "Editor de Fluxo"
 
 #: ../gebr/interface.c:435
 msgid "Job Control"
@@ -963,8 +963,9 @@ msgstr "Acrescentar um novo parâmetro."
 msgid "Remove current parameters."
 msgstr "Remover parâmetros atuais."
 
-#: ../gebr/ui_document.c:198
 # c-format
+#: ../gebr/ui_document.c:198
+#, c-format
 msgid "%s '%s' properties"
 msgstr "%s '%s' - propriedades"
 
