@@ -9,14 +9,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-23 15:31-0300\n"
+"POT-Creation-Date: 2011-02-28 15:32-0300\n"
 "PO-Revision-Date: 2011-02-01 10:48-0200\n"
 "Last-Translator: Rodrigo Morelatto <morelatto@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bitPlural-Forms: nplurals=2; plural=(n > 1);\n"
-"Language: \n"
 "Fabio Azevedo <fabioaz@gebrproject.com>\n"
 
 #: ../data/gebr.desktop.in.in.h:1
@@ -400,8 +400,8 @@ msgid "Save selected Flows"
 msgstr "Salvar Fluxos selecionados"
 
 #: ../gebr/flow.c:602
-msgid "Give a name for this version of the selected Flows:"
-msgstr "Dê um nome para esta versão dos Fluxos selecionados:"
+msgid "Write a description about this version of the selected Flows:"
+msgstr "Descreva esta versão dos Fluxos selecionados:"
 
 #: ../gebr/flow.c:731
 msgid "Could not paste flow. It was probably deleted."

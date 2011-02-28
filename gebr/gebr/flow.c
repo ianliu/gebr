@@ -599,7 +599,7 @@ gboolean flow_revision_save(void)
 	vbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(align), vbox);
 
-	label = gtk_label_new(_("Give a name for this version of the selected Flows:"));
+	label = gtk_label_new(_("Write a description about this version of the selected Flows:"));
 	gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 0);
 	entry = gtk_entry_new();
 	gtk_box_pack_start(GTK_BOX(vbox), entry, TRUE, TRUE, 0);
