@@ -10,11 +10,11 @@ Section: libs
 Architecture: any
 Depends: libwebkit-1.0-2 | libwebkit-1.0-1, libgdome2-0, libtidy-0.99-0
 Description: GeBR library collection
-GêBR is a simple graphical interface which facilitates geophysical data processing. 
-GêBR is not a package for processing, rather it is designed to integrate a large 
-variety of free processing packages.
-
-What can GeBR do:
+ GêBR is a simple graphical interface which facilitates geophysical data processing. 
+ GêBR is not a package for processing, rather it is designed to integrate a large 
+ variety of free processing packages.
+ .
+ What can GeBR do:
      * Handle Projects and Lines
      * Assembly and run processing sequences
      * Act as an interface to many freely-available seismic-processing
@@ -32,11 +32,11 @@ Section: libdevel
 Architecture: any
 Depends: libgebr0, libwebkit-dev, libgdome2-dev, libtidy-dev
 Description: GeBR library collection
-GêBR is a simple graphical interface which facilitates geophysical data processing. 
-GêBR is not a package for processing, rather it is designed to integrate a large 
-variety of free processing packages.
+ GêBR is a simple graphical interface which facilitates geophysical data processing. 
+ GêBR is not a package for processing, rather it is designed to integrate a large 
+ variety of free processing packages.
  .
-What can GeBR do:
+ What can GeBR do:
      * Handle Projects and Lines
      * Assembly and run processing sequences
      * Act as an interface to many freely-available seismic-processing
@@ -58,11 +58,11 @@ Architecture: any
 Depends: libgebr0 (= ${binary:Version})
 Recommends: ssh-server
 Description: GeBRD is a server for executing flows
-GêBR is a simple graphical interface which facilitates geophysical data processing. 
-GêBR is not a package for processing, rather it is designed to integrate a large 
-variety of free processing packages.
+ GêBR is a simple graphical interface which facilitates geophysical data processing. 
+ GêBR is not a package for processing, rather it is designed to integrate a large 
+ variety of free processing packages.
  .
-What can GeBR do:
+ What can GeBR do:
      * Handle Projects and Lines
      * Assembly and run processing sequences
      * Act as an interface to many freely-available seismic-processing
@@ -80,10 +80,10 @@ Conflicts: gebrd (<< ${binary:Version})
 Suggests: debr, gebr-menus-su, gebr-menus-shtools
 Description: Seismic processing environment
  GêBR is a simple graphical interface which facilitates geophysical data processing. 
-GêBR is not a package for processing, rather it is designed to integrate a large 
-variety of free processing packages.
+ GêBR is not a package for processing, rather it is designed to integrate a large 
+ variety of free processing packages.
  .
-What can GeBR do:
+ What can GeBR do:
      * Handle Projects and Lines
      * Assembly and run processing sequences
      * Act as an interface to many freely-available seismic-processing
@@ -95,8 +95,8 @@ Section: doc
 Architecture: any
 Description: GeBR User Manual
  GêBR is a simple graphical interface which facilitates geophysical data processing. 
-GêBR is not a package for processing, rather it is designed to integrate a large 
-variety of free processing packages.
+ GêBR is not a package for processing, rather it is designed to integrate a large 
+ variety of free processing packages.
  . 
  This package provides a user guide for gebr users.
  .
@@ -108,10 +108,10 @@ Depends: libgebr0 (= ${binary:Version})
 Suggests: gebr-menus-su, gebr-menus-shtools
 Description: Menu Designer for GeBR
  GêBR is a simple graphical interface which facilitates geophysical data processing. 
-GêBR is not a package for processing, rather it is designed to integrate a large 
-variety of free processing packages.
+ GêBR is not a package for processing, rather it is designed to integrate a large 
+ variety of free processing packages.
  . 
-What can GeBR do:
+ What can GeBR do:
      * Handle Projects and Lines
      * Assembly and run processing sequences
      * Act as an interface to many freely-available seismic-processing
