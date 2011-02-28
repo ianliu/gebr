@@ -224,7 +224,7 @@
 
       <figure >
 	<mediaobject>
-	<caption>Aba de Fluxos da GêBR. Eemplo em que a linha possui apenas um fluxo. À esquerda vemos a lista de fluxo, enquanto que à direita vemos os detalhes do fluxo selecionado.</caption>
+	<caption>Um exemplo de um Projeto chamado "Meu primeiro projeto". À esquerda vemos a lista de Projetos e Linhas, enquanto que à direita vemos os detalhes do Projeto ou da Linha selecionada.</caption>
           <imageobject>
             <imagedata fileref="../images/janela_principal_1.png" />
           </imageobject>
@@ -269,7 +269,7 @@
 
       <figure>	  
         <mediaobject>
-	<caption>Na aba Projetos e linhas, teremos à direita da janela em Detalhes, as informações da linha selecionada.</caption>
+	<caption>Na aba Projetos e Linhas, teremos à direita da janela em Detalhes, as informações da Linha selecionada.</caption>
           <imageobject>
             <imagedata fileref="../images/janela_principal_2.png" />
           </imageobject>
@@ -380,7 +380,7 @@
           para contato. Feito isso, clique<guibutton>OK</guibutton>.</para>
         </step>
         <step>
-          <para>Selecione a aba <guilabel>Edição de Fluxo</guilabel>. Em seguida, expanda a categoria
+          <para>Selecione a aba <guilabel>Editor de Fluxo</guilabel>. Em seguida, expanda a categoria
             <guimenu>Graphics</guimenu> e dê um clique duplo no menu <guimenuitem>SU Simple X
             Image</guimenuitem>. Fazendo isso você adiciona este menu ao seu fluxo (note que o programa
             <guimenuitem>SU Simple X Image</guimenuitem> agora aparece na caixa <guilabel>Sequência de fluxo</guilabel>,
@@ -388,7 +388,8 @@
 
           <figure>
             <mediaobject>
-		<caption>Na aba Edição de fluxo no campo direito da janela chamado menus, acrescenta-se um programa desejado que ficará visível para configuração no campo esquerdo da janela chamado Sequência de Fluxo.</caption>
+		<caption>Na aba Editor de Fluxo no campo direito da janela chamado Menus, acrescenta-se um programa desejado
+		 que ficará visível para configuração no campo esquerdo da janela chamado Sequência de Fluxo.</caption>
               <imageobject>
                 <imagedata fileref="../images/janela_flow_edition_1.png" />
               </imageobject>
@@ -414,7 +415,7 @@
 
           <figure>
             <mediaobject>
-		<caption>Na aba Edição de Fluxo, no canto esquerdo da janela, pode-se alterar a ordem dos programas como no exemplo.</caption>
+		<caption>Na aba Editor de Fluxo, no canto esquerdo da janela, pode-se alterar a ordem dos programas como no exemplo.</caption>
               <imageobject>
                 <imagedata fileref="../images/janela_flow_edition_2.png" />
               </imageobject>
@@ -433,7 +434,7 @@
 
           <figure>
             <mediaobject>
-		<caption>Na aba Edição de Fluxo, configura-se os programas do fluxo em questão como não configurado, desabilitado e configurado através do menu de contexto.</caption>
+		<caption>Na aba Editor de Fluxo, configura-se os programas do fluxo em questão como não configurado, desabilitado e configurado através do menu de contexto.</caption>
               <imageobject>
                 <imagedata fileref="../images/janela_flow_edition_3.png" />
               </imageobject>
@@ -478,7 +479,7 @@
 
       <figure>
         <mediaobject>
-	<caption>Exemplo de fluxo em execução.</caption>
+	<caption>Exemplo de um Fluxo sendo executado.</caption>
           <imageobject>
             <imagedata fileref="../images/janela_ximage.png" />
           </imageobject>
@@ -516,7 +517,7 @@
 
         <para>
           <guilabel>
-            <link linkend="sec_3_3">Edição de fluxo</link>
+            <link linkend="sec_3_3">Editor de Fluxo</link>
           </guilabel>
         </para>
 
@@ -771,7 +772,8 @@
 
         <figure>
           <mediaobject>
-	  <caption>Janela de Propriedades da linha; além de adicionar informações sobre a linha como descrição, autor e email, é possível adicionar caminhos preferenciais no campo caminhos.</caption>
+	  <caption>Janela de Propriedades da linha; além de adicionar informações sobre a linha
+	   como descrição, autor e email, é possível adicionar caminhos preferenciais no campo Caminhos.</caption>
             <imageobject>
               <imagedata fileref="../images/janela_path_list.png" />
             </imageobject>
@@ -950,7 +952,7 @@
 
 	<figure>
 <mediaobject>
-	<caption>Na janela de Visualização de relatório, é possivel em Arquivo: salvar e imprimir o documento. Em Opções, conforme pode-se visualizar, é possível incluir comentários do usuário, incluir relatório do fluxo, incluir tabelas de parâmetros e escolher estilos do documento.</caption>
+	<caption>Na janela de Visualização de relatório, é possivel salvar ou imprimir este relatório. Em Opções, conforme pode-se visualizar, é possível incluir comentários do usuário, incluir relatório do fluxo, incluir tabelas de parâmetros e escolher estilos do documento.</caption>
 <imageobject>
 	<imagedata fileref="../images/janela_visualizar_relatorio.png"/></imageobject>
 	</mediaobject>
@@ -1311,12 +1313,14 @@
         <title>Executar vários fluxos</title>
 
         <para>Este comando aparece repetidamente nas abas <guilabel>Fluxos</guilabel> e
-          <guilabel>Edição de fluxo</guilabel> de duas formas distintas. Nessa aba Fluxos, o
+          <guilabel>Editor de Fluxo</guilabel> de duas formas distintas. Nessa aba Fluxos, o
           botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_executar_fluxo.png"
           /></imageobject></inlinemediaobject></guiicon> executa vários fluxos em sequência. Ver
           figura: 
 	<figure>
-	<mediaobject><caption>Na aba Fluxos, entre outras funções, é possível executar vários fluxos sequencialmente selecionando os fluxos selecionados e executando-os. </caption>
+	<mediaobject><caption>Na aba Fluxos, entre outras funções, é possível executar vários Fluxos sequencialmente. Primeiro selecionando os Fluxos
+	 desejados e então clicando em <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_executar_fluxo.png" 
+          /></imageobject></inlinemediaobject></guiicon>.</caption>
 	<imageobject><imagedata fileref="../images/janela_execucao_de_fluxo.png"
           /></imageobject>
 	</mediaobject>	
@@ -1331,7 +1335,7 @@
 	</step>
 
 	<step>
-        	<para> Cada fila fica visível no campo Filas da aba Edição de fluxos conforme explicado na <xref linkend="executar_fluxo"/>.</para>
+        	<para> Cada fila fica visível no campo Filas da aba Editor de Fluxos conforme explicado na <xref linkend="executar_fluxo"/>.</para>
 	</step> 
 	
 	<step>
@@ -1364,14 +1368,14 @@
 
     <section xml:id="sec_3_3">
       <title>A aba 
-	<guilabel>Edição de Fluxo</guilabel></title>
+	<guilabel>Editor de Fluxo</guilabel></title>
 
       <para>Todo fluxo criado na GêBR nasce vazio, isto é, <emphasis role="bold">sem programas</emphasis> que descrevam
 	uma sequência funcional de operações. Para um fluxo tornar-se funcional, é
 	preciso <emphasis role="bold">adicionar programas</emphasis> a ele. Além disso, é
 	preciso <emphasis role="bold">configurar os programas</emphasis>, para que realizem tarefas específicas. Tudo
 	isso é feito na aba
-	<guilabel>Edição de Fluxo</guilabel>.</para>
+	<guilabel>Editor de Fluxo</guilabel>.</para>
 
 
       <para>Na <xref linkend="criando_fluxos"/> vimos que os menus padrão da
@@ -1453,14 +1457,14 @@
         <step>
           <para>Selecione um fluxo na aba 
             <guilabel>Fluxos</guilabel>. Depois selecione a aba 
-            <guilabel>Edição de Fluxo</guilabel>.</para>
+            <guilabel>Editor de Fluxo</guilabel>.</para>
 
           <tip>
 
             <para>Quando estiver na aba 
               <guilabel>Fluxos</guilabel>, experimente dar um clique duplo no fluxo. Assim você alterna mais rapidamente
               para a aba 
-              <guilabel>Edição de fluxo.</guilabel>.</para>
+              <guilabel>Editor de Fluxo.</guilabel>.</para>
 
           </tip>
         </step>
@@ -1483,7 +1487,7 @@
 
         <para>Observe a <emphasis role="bold">barra de informações</emphasis> na parte de cima da janela principal, logo
         abaixo do menu <guimenu>Ações</guimenu>. Ela mostra o fluxo selecionado atualmente, sem que você tenha que sair
-        da aba <guilabel>Edição de fluxo</guilabel>.</para>
+        da aba <guilabel>Editor de Fluxo</guilabel>.</para>
 
       </tip>
       <tip>
@@ -1495,7 +1499,7 @@
       </tip>
 
       <para>Agora que já sabemos como adicionar programas ao fluxo, precisamos configurá-los. Vejamos então as demais
-	ferramentas da aba <guilabel>Edição de fluxo</guilabel>:</para>
+	ferramentas da aba <guilabel>Editor de Fluxo</guilabel>:</para>
 
       <itemizedlist>
         <listitem>
@@ -1600,8 +1604,8 @@
 
           <para>O programa (ou conjunto de programas) copiado anteriormente para a área de transferência pode ser colado
             em <emphasis role="bold">qualquer fluxo</emphasis> existente, e não só no fluxo de origem. Basta alternar
-            para a aba <guilabel>Fluxos</guilabel>, selecionar o fluxo desejado, voltar para a aba <guilabel>Edição de
-            fluxo</guilabel> e colar o(s) programas(s).</para>
+            para a aba <guilabel>Fluxos</guilabel>, selecionar o fluxo desejado, voltar para a aba <guilabel>Editor de
+            Fluxo</guilabel> e colar o(s) programas(s).</para>
 
         </tip>
       </section>
@@ -1728,7 +1732,8 @@
         <para>Para associar arquivos de entrada, saída e erro a um fluxo:</para>
 	<figure> 
 	  <mediaobject>
-	  <caption>Na aba edição de fluxo, no campo Sequência de fluxo, edita-se os arquivos de entrada, saída e erro para a sequência de fluxo a ser executada.</caption>
+	  <caption>Na aba Editor de Fluxo, no campo Sequência de fluxo, edita-se os arquivos de entrada, saída e log para esta
+	   sequência de Fluxo.</caption>
             <imageobject><imagedata fileref="../images/janela_arquivos_entrada_saida.png"
 								  /></imageobject>
           </mediaobject>
@@ -1736,7 +1741,7 @@
  
         <procedure>
           <step>
-            <para>Certifique-se de ter selecionado o fluxo e, na aba Edição de fluxo, no campo Sequência de fluxo,
+            <para>Certifique-se de ter selecionado o fluxo e, na aba Editor de Fluxo, no campo Sequência de fluxo,
               pode-se editar os caminhos de entrada, saída e erro através de um clique duplo nos botões. Ver figura: 
             </para>
           </step>
@@ -1779,7 +1784,7 @@
           definição e seleção de servidores em <xref linkend="menu"/>.</para>
 
 
-        <para>Na aba Edição de fluxo, ainda que se tenha selecionado vários fluxos na aba Fluxos, ao se clicar no
+        <para>Na aba Editor de Fluxo, ainda que se tenha selecionado vários fluxos na aba Fluxos, ao se clicar no
                 botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_executar_fluxo.png"
 							      /></imageobject></inlinemediaobject></guiicon> será
 							      executado apenas o primeiro fluxo selecionado.</para>
@@ -1792,7 +1797,7 @@
 
 	<figure> 
 	  <mediaobject>
-	  <caption>Na aba edição de fluxo, no campo filas, pode-se selecionar a fila em que um determinado fluxo será executado.</caption>
+	  <caption>Na aba Editor de Fluxo, no campo Fila, pode-se selecionar a fila em que este Fluxo será executado.</caption>
             <imageobject><imagedata fileref="../images/janela_filas_edicao_de_fluxo.png"
 							      /></imageobject>
           </mediaobject>
@@ -1839,13 +1844,14 @@
 
       <para>Vimos nas seções <emphasis role="bold">3.2.10</emphasis> e <emphasis role="bold">3.3.7</emphasis> a
 	abordagem do conceito de filas na GêBR nas abas <emphasis role="bold">Fluxos</emphasis>
-	e <emphasis role="bold">Edição de Fluxo</emphasis>. Finalizando, na aba <emphasis role="bold">Controle de
+	e <emphasis role="bold">Editor de Fluxo</emphasis>. Finalizando, na aba <emphasis role="bold">Controle de
 	tarefas</emphasis>, é possível visualizar cada fila em andamento, cada qual de execução independente uma da
 	outra, bem como o relatório (log) da execução de cada programa. Ver figura abaixo:</para>
 
 	<figure> 
 	  <mediaobject>
-	  <caption>Na aba Controle de tarefas à direita da janela podemos visualizar as listas em execução, fluxos executados, cancelados e falhos. À direita, são dadas informações de cada execução.</caption>
+	  <caption>Na aba Controle de Tarefas à esquerda da janela podemos visualizar uma lista das tarefas em execução, executadas, canceladas e falhas.
+	   À direita, são dadas informações detalhadas sobre a tarefa selecionada.</caption>
             <imageobject><imagedata fileref="../images/janela_aba_controle_de_tarefas.png"/>
             </imageobject>
           </mediaobject>
@@ -1917,11 +1923,11 @@
             <guimenuitem>Sleep</guimenuitem>, cuja única função é pausar a execução do fluxo por um determinado tempo
             (você encontra este programa na categoria 
             <guimenu>Shell tools</guimenu>, na aba 
-            <guilabel>Edição de Fluxo</guilabel>).</para>
+            <guilabel>Editor de Fluxo</guilabel>).</para>
 
           <figure>
 	      <mediaobject>
-		<caption>Na aba Fluxos, acrescentamos um fluxo à linha e projeto para exemplo. </caption>
+		<caption>Na aba Fluxos, acrescentamos "Fluxo 1" à "Minha linha" uso no próximo exemplo. </caption>
               <imageobject>
                 <imagedata fileref="../images/exemplo_dicionario_1.png" />
               </imageobject>
@@ -1929,7 +1935,7 @@
           </figure>
           <figure>
             <mediaobject>
-		<caption>Na aba Edição de fluxos, para o exemplo, adiciona-se um programa chamado "sleep".</caption>
+		<caption>Na aba Editor de Fluxo, adiciona-se um programa chamado "Sleep" ao "Fluxo 1".</caption>
               <imageobject>
                 <imagedata fileref="../images/exemplo_dicionario_2.png" />
               </imageobject>
@@ -1953,7 +1959,7 @@
 
           <figure>
             <mediaobject>
-		<caption>Na janela de parâmetros de dicionário para fluxo, é possível editar parâmetros para o fluxo, para sua linha e seu projeto.</caption>
+		<caption>Na janela de parâmetros de dicionário para Fluxo, é possível editar parâmetros para este Fluxo, para sua Linha ou seu Projeto.</caption>
               <imageobject>
                 <imagedata fileref="../images/exemplo_dicionario_3.png" />
               </imageobject>
@@ -1962,7 +1968,7 @@
         </step>
         <step>
           <para>Depois de fechar a janela <guilabel>Dicionário de parâmeros para linha</guilabel>, selecione a aba
-            <guilabel>Edição de fluxo</guilabel> e, na caixa <guilabel>Sequência de fluxo</guilabel>, dê um clique duplo
+            <guilabel>Editor de Fluxo</guilabel> e, na caixa <guilabel>Sequência de fluxo</guilabel>, dê um clique duplo
             no programa <guilabel>Sleep</guilabel>. Na janela que se abre (<guilabel>Parâmetros</guilabel>), clique com
             o <emphasis role="bold">botão direito do mouse</emphasis> no campo <guilabel>Time to sleep</guilabel>. O
             objetivo é atribuir a variável <emphasis role="bold">Tempo=5</emphasis> ao parâmetro <guilabel>Time to
@@ -1970,7 +1976,8 @@
 
           <figure>
             <mediaobject>
-		<caption>Através de um clique com o botão direito na área de edição da janela de parâmetros do programa "sleep" surge um menu de contexto em que é possível, entre outras coisas, inserir parâmetros de discionário conforme exemplo.</caption>
+		<caption>Através de um clique com o botão direito na área de edição da janela de parâmetros do programa "Sleep" surge um menu de contexto
+		 em que é possível, entre outras coisas, inserir parâmetros de discionário conforme exemplo.</caption>
               <imageobject>
                 <imagedata fileref="../images/exemplo_dicionario_4.png" />
               </imageobject>
@@ -1984,7 +1991,8 @@
 
           <figure>
             <mediaobject>
-		<caption>Na aba Fluxos, conforme já abordado, pode-se fazer cópias de um fluxo. No exemplo, as cópias terão parâmetros de dicionário para os programas "sleep's" tal qual a matriz.</caption>
+		<caption>Na aba Fluxos, conforme já abordado, pode-se fazer cópias de um fluxo.
+		 No exemplo, as cópias terão parâmetros de dicionário para os programas "sleep's" tal qual a matriz.</caption>
               <imageobject>
                 <imagedata fileref="../images/exemplo_dicionario_5.png" />
               </imageobject>
@@ -2066,7 +2074,7 @@
         </itemizedlist>
         <figure>
           <mediaobject>
-	  <caption>Em Preferências, abre-se uma janela em que é possível editar informações como nome de usuário, e-mail, diretorio de menus do usuário e editor HTML.</caption>
+	  <caption>Em Preferências, abre-se uma janela em que é possível editar informações como nome de usuário, e-mail, diretório de menus do usuário e editor HTML.</caption>
             <imageobject>
               <imagedata fileref="../images/janela_preferences.png" />
             </imageobject>
@@ -2101,7 +2109,7 @@
 
           <para>Todos os servidores definidos na janela 
             <guilabel>Configuração de servidores</guilabel> ficam visíveis na aba 
-            <guilabel>Edição de fluxo</guilabel> (você seleciona o servidor na caixa 
+            <guilabel>Editor de Fluxo</guilabel> (você seleciona o servidor na caixa 
             <guilabel>Servidor</guilabel>, logo acima da caixa 
             <guilabel>Sequência de fluxo</guilabel>, no lado esquerdo da janela principal) e também na janela 
             <guilabel>Entrada/Saída do fluxo</guilabel> (aquela em que os arquivos de entrada e saída do fluxo são
