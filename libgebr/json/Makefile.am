@@ -31,6 +31,7 @@ source_h = \
 	json-parser.h 		\
 	json-reader.h		\
 	json-types.h 		\
+	json-utils.h 		\
 	$(NULL)
 
 source_h_private = \
@@ -53,6 +54,7 @@ source_c = \
 	json-reader.c		\
 	json-scanner.c 		\
 	json-serializable.c	\
+	json-utils.c		\
 	$(NULL)
 
 # glib-mkenums rules
