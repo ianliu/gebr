@@ -41,6 +41,13 @@ enum {
 	SERVER_N_COLUMN
 };
 
+enum {
+	TAG_NAME,
+	TAG_ICON,
+	TAG_SEP,
+	TAG_FS
+};
+
 struct ui_server_common {
 	GtkWidget *dialog;
 	GtkWidget *widget;
@@ -87,6 +94,8 @@ gchar **ui_server_get_all_tags (void);
 void ui_server_update_tags_combobox (void);
 
 gchar **ui_server_get_all_fsid (void);
+
+GtkWidget *ui_server_create_tag_combo_box (void);
 
 G_END_DECLS
 

@@ -281,29 +281,30 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 
 	if (gebr_geoxml_document_get_type(document) == GEBR_GEOXML_DOCUMENT_TYPE_LINE)
 	{
-		gint pos = 0;
-		gchar **tags;
+		GtkTreeIter active, iter;
 		const gchar *curr_group;
+		GtkTreeModel *model;
 
-		groups_combo = gtk_combo_box_new_text ();
-		tags = ui_server_get_all_tags ();
+		model = GTK_TREE_MODEL (gebr.ui_server_list->common.combo_store);
+		groups_combo = ui_server_create_tag_combo_box ();
 		curr_group = gebr_geoxml_line_get_group (GEBR_GEOXML_LINE (document));
 
-		gtk_combo_box_append_text (GTK_COMBO_BOX (groups_combo),
-					   _("All Servers"));
-
-		for (int i = 0; tags[i]; i++) {
-			gtk_combo_box_append_text (GTK_COMBO_BOX (groups_combo), tags[i]);
-			if (g_str_equal (tags[i], curr_group))
-				pos = i + 1;
+		gebr_gui_gtk_tree_model_foreach (iter, model) {
+			gboolean is_sep;
+			gchar *name;
+			gtk_tree_model_get (model, &iter,
+					    TAG_SEP, &is_sep,
+					    TAG_NAME, &name,
+					    -1);
+			if (!is_sep && g_strcmp0 (name, curr_group) == 0)
+				active = iter;
+			g_free (name);
 		}
 
-		gtk_combo_box_set_active(GTK_COMBO_BOX (groups_combo), pos);
+		gtk_combo_box_set_active_iter (GTK_COMBO_BOX (groups_combo), &active);
 
 		g_signal_connect (groups_combo, "changed",
 				  G_CALLBACK (on_groups_combo_box_changed), NULL);
-
-		gtk_widget_set_sensitive (groups_combo, is_new);
 
 		label = gtk_label_new (_("Server group"));
 		gtk_table_attach (GTK_TABLE (table), label, 0, 1, row, row+1, GTK_FILL, GTK_FILL, 3, 3);
@@ -1076,11 +1077,17 @@ static void on_file_entry_activate (GtkEntry *entry, GebrGuiSequenceEdit *sequen
 static void on_groups_combo_box_changed (GtkComboBox *combo)
 {
 	gchar *group;
+	GtkTreeIter iter;
+	GtkTreeModel *model;
 
 	if (!gebr.line)
 		return;
 
-	group = gtk_combo_box_get_active_text (combo);
+	if (!gtk_combo_box_get_active_iter (combo, &iter))
+		return;
+
+	model = gtk_combo_box_get_model (combo);
+	gtk_tree_model_get (model, &iter, TAG_NAME, &group, -1);
 
 	if (!group)
 		gebr_geoxml_line_set_group (gebr.line, "");

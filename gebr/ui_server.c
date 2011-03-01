@@ -54,12 +54,7 @@ static gboolean groups_separator_func (GtkTreeModel *model,
 				       GtkTreeIter *iter,
 				       gpointer data);
 
-enum {
-	TAG_NAME,
-	TAG_ICON,
-	TAG_SEP,
-	TAG_FS
-};
+static GtkWidget *_ui_server_create_tag_combo_box (struct ui_server_list *server_list);
 
 /*
  * Section: Private
@@ -514,21 +509,9 @@ struct ui_server_list *server_list_setup_ui(void)
 								G_TYPE_STRING,
 								G_TYPE_BOOLEAN,
 								G_TYPE_BOOLEAN);
-	ui_server_list->common.combo = gtk_combo_box_new_with_model(GTK_TREE_MODEL(ui_server_list->common.combo_store));
-	gtk_combo_box_set_row_separator_func (
-			GTK_COMBO_BOX (ui_server_list->common.combo),
-			groups_separator_func, NULL, NULL);
+
+	ui_server_list->common.combo = _ui_server_create_tag_combo_box (ui_server_list);
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), ui_server_list->common.combo, FALSE, TRUE, 0);
-	gtk_combo_box_set_active(GTK_COMBO_BOX(ui_server_list->common.combo), -1);
-
-	GtkCellRenderer *renderer;
-	renderer = gtk_cell_renderer_text_new();
-	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(ui_server_list->common.combo), renderer, TRUE);
-	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(ui_server_list->common.combo), renderer, "text", TAG_NAME);
-
-	renderer = gtk_cell_renderer_pixbuf_new();
-	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(ui_server_list->common.combo), renderer, FALSE);
-	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(ui_server_list->common.combo), renderer, "stock-id", TAG_ICON);
 
 	g_signal_connect(ui_server_list->common.combo, "changed", G_CALLBACK(on_combo_changed), NULL);
 
@@ -870,4 +853,37 @@ static gboolean groups_separator_func (GtkTreeModel *model,
 	gboolean is_sep;
 	gtk_tree_model_get (model, iter, 2, &is_sep, -1);
 	return is_sep;
+}
+
+static GtkWidget *_ui_server_create_tag_combo_box (struct ui_server_list *server_list)
+{
+	GtkWidget *widget;
+	GtkComboBox *combo;
+	GtkCellLayout *layout;
+	GtkCellRenderer *renderer;
+
+	if (!server_list)
+		server_list = gebr.ui_server_list;
+
+	widget = gtk_combo_box_new_with_model (
+			GTK_TREE_MODEL(server_list->common.combo_store));
+	combo = GTK_COMBO_BOX (widget);
+	layout = GTK_CELL_LAYOUT(combo);
+
+	gtk_combo_box_set_row_separator_func (combo, groups_separator_func, NULL, NULL);
+
+	renderer = gtk_cell_renderer_text_new();
+	gtk_cell_layout_pack_start(layout, renderer, TRUE);
+	gtk_cell_layout_add_attribute(layout, renderer, "text", TAG_NAME);
+
+	renderer = gtk_cell_renderer_pixbuf_new();
+	gtk_cell_layout_pack_start(layout, renderer, FALSE);
+	gtk_cell_layout_add_attribute(layout, renderer, "stock-id", TAG_ICON);
+
+	return widget;
+}
+
+GtkWidget *ui_server_create_tag_combo_box (void)
+{
+	return _ui_server_create_tag_combo_box (NULL);
 }
