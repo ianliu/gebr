@@ -672,7 +672,6 @@ static void job_control_queue_by_func(void (* func)(void))
 		return;
 	}
 
-
 	has_children = gtk_tree_model_iter_children (GTK_TREE_MODEL(gebr.ui_job_control->store), &iter_child, &iter_queue);
 	if (has_children){
 		gtk_tree_selection_unselect_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)), &iter_queue);
@@ -694,5 +693,7 @@ static void job_control_queue_by_func(void (* func)(void))
 
 		gtk_tree_selection_select_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)), &iter_queue);
 	}
+	else
+		func();
 }
 
