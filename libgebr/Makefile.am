@@ -29,7 +29,7 @@ if ENABLE_TESTS
 EXTRADIR += tests
 endif
 
-SUBDIRS = . geoxml comm json po ${EXTRADIR}
+SUBDIRS = . json geoxml comm po ${EXTRADIR}
 
 AM_CFLAGS = $(COMMON_CFLAGS) -fPIC
 
@@ -38,9 +38,6 @@ AM_CPPFLAGS =		\
 	-DNANOVERSION=\"$(NANOVERSION)\" \
 	@DEBUG_CFLAGS@	\
 	$(NULL)
-
-libgebr_la_LIBADD = -lutil $(INTLLIBS) $(GLIB_LIBS)
-libgebr_la_LDFLAGS = -version-info @GEBR_VERSION_INFO@
 
 touch:
 	if [ -d $(top_srcdir)/.hg ]; then touch version.c -r $(top_srcdir)/.hg; fi
@@ -71,6 +68,9 @@ libgebrinclude_HEADERS =\
 	$(NULL)
 
 noinst_HEADERS = defines.h marshalers.h
+
+libgebr_la_LIBADD = -lutil $(INTLLIBS) $(GLIB_LIBS)
+libgebr_la_LDFLAGS = -version-info @GEBR_VERSION_INFO@
 
 # glib-genmarshal rules
 glib_marshal_list = marshalers.list
