@@ -38,7 +38,7 @@ Description: GeBR library collection
  .
  What can GeBR do:
      * Handle Projects and Lines
-     * Assembly and run processing sequences
+     * Assemble and run processing sequences
      * Act as an interface to many freely-available seismic-processing
        packages (such as Seismic Unix, Madagascar, etc)
  .
@@ -64,7 +64,7 @@ Description: GeBRD is a server for executing flows
  .
  What can GeBR do:
      * Handle Projects and Lines
-     * Assembly and run processing sequences
+     * Assemble and run processing sequences
      * Act as an interface to many freely-available seismic-processing
        packages (such as Seismic Unix, Madagascar, etc)
  .
@@ -85,7 +85,7 @@ Description: Seismic processing environment
  .
  What can GeBR do:
      * Handle Projects and Lines
-     * Assembly and run processing sequences
+     * Assemble and run processing sequences
      * Act as an interface to many freely-available seismic-processing
        packages (such as Seismic Unix, Madagascar, etc)
  .
@@ -113,7 +113,7 @@ Description: Menu Designer for GeBR
  . 
  What can GeBR do:
      * Handle Projects and Lines
-     * Assembly and run processing sequences
+     * Assemble and run processing sequences
      * Act as an interface to many freely-available seismic-processing
        packages (such as Seismic Unix, Madagascar, etc)
  .
