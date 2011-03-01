@@ -86,6 +86,8 @@ gchar **ui_server_get_all_tags (void);
 
 void ui_server_update_tags_combobox (void);
 
+gchar **ui_server_get_all_fsid (void);
+
 G_END_DECLS
 
 #endif				//__UI_SERVER_H
