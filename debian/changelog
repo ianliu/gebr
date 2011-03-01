@@ -1,3 +1,15 @@
+gebrproject (0.11.8) lenny; urgency=low
+
+  * Finished user documentation review.
+
+ -- Fabricio Matheus Goncalves <fmatheus@gebrproject.com>  Mon, 28 Feb 2011 19:05:16 -0300
+
+gebrproject (0.11.7) lenny; urgency=low
+
+  * Fixed Flow Editor and Properties translations.
+
+ -- Fabricio Matheus Goncalves <fmatheus@gebrproject.com>  Wed, 23 Feb 2011 14:57:09 -0300
+
 gebrproject (0.11.6) lenny; urgency=low
 
   * Translation updated.
