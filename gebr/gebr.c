@@ -181,6 +181,9 @@ gboolean gebr_quit(gboolean save_config)
 	 * Interface frees
 	 */
 
+	g_object_unref (gebr.ui_project_line->store);
+	g_object_unref (gebr.ui_project_line->servers_filter);
+
 	g_free(gebr.ui_project_line);
 	g_free(gebr.ui_flow_browse);
 	g_free(gebr.ui_flow_edition);

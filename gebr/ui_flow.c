@@ -343,7 +343,7 @@ static void flow_io_run(GebrGeoXmlFlow *flow, gboolean parallel, gboolean single
 	}
 	/* SERVER on list of servers: find iter */
 	const gchar *address = gebr_geoxml_flow_server_get_address(flow);
-	if (!server_find_address(address, &server_iter)) {
+	if (!server_find_address (address, &server_iter, NULL)) {
 		gebr_message(GEBR_LOG_DEBUG, TRUE, TRUE, "Server %s should be present on list!",
 			     address);
 		return;

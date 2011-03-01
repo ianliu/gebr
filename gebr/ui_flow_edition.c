@@ -100,7 +100,7 @@ struct ui_flow_edition *flow_edition_setup_ui(void)
 	left_vbox = gtk_vbox_new(FALSE, 5);
 	gtk_paned_pack1(GTK_PANED(hpanel), left_vbox, FALSE, FALSE);
 
-	combobox = gtk_combo_box_new_with_model(GTK_TREE_MODEL(gebr.ui_server_list->common.store));
+	combobox = gtk_combo_box_new_with_model(gebr.ui_project_line->servers_filter);
 	
 	renderer = gtk_cell_renderer_pixbuf_new();
 	g_object_set(renderer, "stock-size", GTK_ICON_SIZE_MENU, NULL);

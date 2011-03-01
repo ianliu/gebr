@@ -261,15 +261,23 @@ static void server_clear_jobs(GebrServer * server)
 						  (GtkTreeModelForeachFunc)server_free_foreach_job, NULL); 
 }
 
-gboolean server_find_address(const gchar * address, GtkTreeIter * iter)
+gboolean server_find_address (const gchar *address,
+			      GtkTreeIter *iter,
+			      const gchar *group)
 {
 	GtkTreeIter i;
+	GtkTreeModel *model;
 
-	gebr_gui_gtk_tree_model_foreach(i, GTK_TREE_MODEL(gebr.ui_server_list->common.store)) {
+	model = GTK_TREE_MODEL (gebr.ui_server_list->common.store);
+	gebr_gui_gtk_tree_model_foreach(i, model) {
 		GebrServer *server;
 
-		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &i, SERVER_POINTER, &server, -1);
-		if (!strcmp(address, server->comm->address->str)) {
+		gtk_tree_model_get(model, &i, SERVER_POINTER, &server, -1);
+		/* Tests if there is a server with `address' and `group'.
+		 * If `group' is NULL, then search all servers.
+		 */
+		if (!strcmp (address, server->comm->address->str)
+		    && (group == NULL || ui_server_has_tag (server, group))) {
 			*iter = i;
 			return TRUE;
 		}

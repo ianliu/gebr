@@ -60,15 +60,19 @@ struct _GebrServerClass {
 GType gebr_server_get_type (void) G_GNUC_CONST;
 
 /**
- * @p address: The server to be found.
- * @p iter: A #GtkTreeIter that will hold the corresponding iterator.
+ * server_find_address:
+ * @address: The server to be found.
+ * @iter: A #GtkTreeIter that will hold the corresponding iterator.
+ * @group: The group to find server in, or %NULL
  *
- * Searches for the @p address server and fill @p iter with the correct
+ * Searches for the @address server and fill @iter with the correct
  * iterator for the gebr.ui_server_list->common.store model.
  *
- * Returns: TRUE if the server was found, FALSE otherwise.
+ * Returns: %TRUE if the server was found, %FALSE otherwise.
  */
-gboolean server_find_address(const gchar * address, GtkTreeIter * iter);
+gboolean server_find_address (const gchar *address,
+			      GtkTreeIter *iter,
+			      const gchar *group);
 
 /**
  * Return the server name from \p address. Except for \p address 127.0.0.1,

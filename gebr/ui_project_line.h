@@ -55,6 +55,8 @@ struct ui_project_line {
 	GtkTreeStore *store;
 	GtkWidget *view;
 
+	GtkTreeModel *servers_filter;
+
 	struct ui_project_line_info {
 		GtkWidget *title;
 		GtkWidget *description;

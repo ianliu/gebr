@@ -42,19 +42,29 @@
  * Prototypes
  */
 
-static void project_line_load(void);
+static void project_line_load (void);
 
-static void project_line_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
-					  GtkTreeViewColumn * column, struct ui_project_line *ui_project_line);
+static void project_line_on_row_activated (GtkTreeView * tree_view,
+					   GtkTreePath * path,
+					   GtkTreeViewColumn * column,
+					   struct ui_project_line *ui_project_line);
 
-static GtkMenu *project_line_popup_menu(GtkWidget * widget, struct ui_project_line *ui_project_line);
+static GtkMenu *project_line_popup_menu (GtkWidget * widget,
+					 struct ui_project_line *ui_project_line);
 
-static gboolean line_reorder(GtkTreeView *tree_view, GtkTreeIter *source_iter, GtkTreeIter *target_iter,
-			     GtkTreeViewDropPosition drop_position);
+static gboolean line_reorder (GtkTreeView *tree_view,
+			      GtkTreeIter *source_iter,
+			      GtkTreeIter *target_iter,
+			      GtkTreeViewDropPosition drop_position);
 
-static gboolean line_can_reorder(GtkTreeView *tree_view, GtkTreeIter *source_iter, GtkTreeIter *target_iter,
-				 GtkTreeViewDropPosition drop_position);
+static gboolean line_can_reorder (GtkTreeView *tree_view,
+				  GtkTreeIter *source_iter,
+				  GtkTreeIter *target_iter,
+				  GtkTreeViewDropPosition drop_position);
 
+static gboolean servers_filter_visible_func (GtkTreeModel *filter,
+					     GtkTreeIter *iter,
+					     gpointer data);
 
 struct ui_project_line *project_line_setup_ui(void)
 {
@@ -71,6 +81,14 @@ struct ui_project_line *project_line_setup_ui(void)
 
 	/* alloc */
 	ui_project_line = g_new(struct ui_project_line, 1);
+
+	ui_project_line->servers_filter = gtk_tree_model_filter_new (
+			GTK_TREE_MODEL (gebr.ui_server_list->common.store),
+			NULL);
+
+	gtk_tree_model_filter_set_visible_func (
+			GTK_TREE_MODEL_FILTER (ui_project_line->servers_filter),
+			servers_filter_visible_func, NULL, NULL);
 
 	/* Create projects/lines ui_project_line->widget */
 	ui_project_line->widget = gtk_vbox_new(FALSE, 0);
@@ -1055,6 +1073,7 @@ static void project_line_load(void)
 
 		gebr.project_line = GEBR_GEOXML_DOC(gebr.line);
 		line_load_flows();
+		gtk_tree_model_filter_refilter (GTK_TREE_MODEL_FILTER (gebr.ui_project_line->servers_filter));
 	} else {
 		gebr.project_line = GEBR_GEOXML_DOC(gebr.project);
 		gebr.line = NULL;
@@ -1354,4 +1373,29 @@ gchar * gebr_line_generate_header(GebrGeoXmlDocument * document)
 
 
 	return g_string_free(dump, FALSE);
+}
+
+static gboolean servers_filter_visible_func (GtkTreeModel *filter,
+					     GtkTreeIter *iter,
+					     gpointer data)
+{
+	const gchar *group;
+	GebrServer *server;
+
+	if (!gebr.line)
+		return FALSE;
+
+	group = gebr_geoxml_line_get_group (gebr.line);
+
+	if (!group)
+		return FALSE;
+
+	gtk_tree_model_get (filter, iter,
+			    SERVER_POINTER, &server,
+			    -1);
+
+	if (!server)
+		return FALSE;
+
+	return ui_server_has_tag (server, group);
 }

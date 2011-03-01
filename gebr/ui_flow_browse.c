@@ -467,16 +467,24 @@ static void flow_browse_load(void)
 	for (; revision != NULL; gebr_geoxml_sequence_next(&revision))
 		flow_browse_load_revision(GEBR_GEOXML_REVISION(revision), FALSE);
 
-	/* if there is no server, introduce local server */
-	if (!strlen (gebr_geoxml_flow_server_get_address(gebr.flow))) {
-		gebr_geoxml_flow_server_set_address(gebr.flow, "127.0.0.1");
-		document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), FALSE, TRUE);
-	}
-
 	/* select last edited server */
-	if (server_find_address(gebr_geoxml_flow_server_get_address(gebr.flow), &server_iter))
-		gtk_combo_box_set_active_iter(GTK_COMBO_BOX(gebr.ui_flow_edition->server_combobox), &server_iter);
-	else
+	const gchar *group;
+	const gchar *address;
+
+	group = gebr_geoxml_line_get_group (gebr.line);
+	address = gebr_geoxml_flow_server_get_address (gebr.flow);
+
+	if (server_find_address (address, &server_iter, group)) {
+		GtkTreeIter filter_iter;
+
+		gtk_tree_model_filter_convert_child_iter_to_iter (
+				GTK_TREE_MODEL_FILTER (gebr.ui_project_line->servers_filter),
+				&filter_iter, &server_iter);
+
+		gtk_combo_box_set_active_iter (
+				GTK_COMBO_BOX (gebr.ui_flow_edition->server_combobox),
+				&filter_iter);
+	} else
 		gtk_combo_box_set_active(GTK_COMBO_BOX(gebr.ui_flow_edition->server_combobox), 0);
 
 	flow_edition_on_server_changed();

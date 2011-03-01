@@ -59,6 +59,7 @@ void flow_new (void)
 	const gchar *line_title;
 	const gchar *line_filename;
 
+	GebrServer *server;
 	GebrGeoXmlFlow *flow;
 	GebrGeoXmlLineFlow *line_flow;
 
@@ -74,12 +75,18 @@ void flow_new (void)
 	gebr_geoxml_document_set_author(GEBR_GEOXML_DOC(flow), gebr.config.username->str);
 	gebr_geoxml_document_set_email(GEBR_GEOXML_DOC(flow), gebr.config.email->str);
 
+	if (gtk_tree_model_get_iter_first (gebr.ui_project_line->servers_filter, &iter)) {
+		gtk_tree_model_get (gebr.ui_project_line->servers_filter, &iter,
+				    SERVER_POINTER, &server, -1);
+		if (server)
+			gebr_geoxml_flow_server_set_address (flow, server->comm->address->str);
+	}
+
 	line_flow = gebr_geoxml_line_append_flow(gebr.line, gebr_geoxml_document_get_filename(GEBR_GEOXML_DOC(flow)));
 	iter = line_append_flow_iter(flow, line_flow);
 
-
-	document_save(GEBR_GEOXML_DOC(gebr.line), TRUE, FALSE);
-	document_save(GEBR_GEOXML_DOC(flow), TRUE, TRUE);
+	document_save (GEBR_GEOXML_DOC (gebr.line), TRUE, FALSE);
+	document_save (GEBR_GEOXML_DOC (flow), TRUE, TRUE);
 
 	flow_browse_select_iter(&iter);
 
