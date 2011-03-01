@@ -49,8 +49,9 @@ void on_fs_nickname_msg(GebrCommHttpMsg *request, GebrCommHttpMsg *response, Geb
 							       	NULL);
 		gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
 
-		GtkWidget *label = gtk_label_new(_("This server is at a new filesystem. You can label this file system "
-						   "so you can identify for other servers."));
+		GtkWidget *label = gtk_label_new(_("This server is at a new file system.\n"
+						   "You can label this file system\n"
+						   "so you can group them."));
 		gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), label, FALSE, TRUE, 0);
 
 		GtkWidget *entry = gtk_entry_new();
@@ -82,8 +83,10 @@ void on_fs_nickname_msg(GebrCommHttpMsg *request, GebrCommHttpMsg *response, Geb
 			g_signal_connect(req, "response-received", G_CALLBACK(on_fs_nickname_msg), server);
 			g_string_free(nickname, TRUE);
 			gebr_comm_json_content_free(json);
-		} else
+		} else {
 			gtk_list_store_set(gebr.ui_server_list->common.store, &server->iter, SERVER_FS, value->str, -1);
+			ui_server_update_tags_combobox ();
+		}
 
 		g_string_free(value, TRUE);
 		gebr_comm_json_content_free(json);
