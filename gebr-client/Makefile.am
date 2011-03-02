@@ -17,21 +17,34 @@ include $(top_srcdir)/Makefile.decl
 
 bin_PROGRAMS = gebr-client
 
-gebr_client_SOURCES = main.c \
-	gebrclient.c \
-	server.c client.c
-noinst_HEADERS = \
-	gebrclient.h \
-	server.h client.h
+gebr_client_SOURCES =	\
+	main.c		\
+	client.c	\
+	gebrclient.c	\
+	server.c	\
+	$(NULL)
+
+noinst_HEADERS =	\
+	client.h	\
+	gebrclient.h	\
+	server.h	\
+	$(NULL)
+
 EXTRA_DIST = ${noinst_HEADERS}
 
 AM_CFLAGS = $(COMMON_CFLAGS)
 
-AM_CPPFLAGS = $(GEBR_CFLAGS)		\
-	      $(GEBR_GEOXML_CFLAGS)	\
-	      $(GEBR_COMM_CFLAGS)	\
-	      @DEBUG_CFLAGS@
+AM_CPPFLAGS =			\
+	$(GEBR_CFLAGS)		\
+	$(GEBR_JSON_CFLAGS)	\
+	$(GEBR_GEOXML_CFLAGS)	\
+	$(GEBR_COMM_CFLAGS)	\
+	@DEBUG_CFLAGS@		\
+	$(NULL)
 
-gebr_client_LDADD = $(GEBR_LIBS)	\
-		    $(GEBR_GEOXML_LIBS)	\
-		    $(GEBR_COMM_LIBS)
+gebr_client_LDADD =		\
+	$(GEBR_LIBS)		\
+	$(GEBR_JSON_LIBS)	\
+	$(GEBR_GEOXML_LIBS)	\
+	$(GEBR_COMM_LIBS)	\
+	$(NULL)
