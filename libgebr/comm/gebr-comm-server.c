@@ -460,13 +460,19 @@ gebr_comm_ssh_parse_output(GebrCommTerminalProcess * process, struct gebr_comm_s
 			g_string_assign(answer, "yes\n");
 		gebr_comm_terminal_process_write_string(process, answer);
 		g_string_free(answer, TRUE);
-	} else if (output->str[output->len - 4] == '.') {
-		GString *output_fixed = g_string_new(output->str);
-		gebr_g_string_replace(output_fixed, "\r\n", "\n");
+	} else if (g_str_has_prefix(output->str, "@@@")) {
+		gebr_g_string_replace(output, "\r\n", "\n");
 		g_string_erase(output, strlen(output->str)-1, 1); //last \n
-		gebr_comm_server_log_message(server, GEBR_LOG_WARNING, _("Received SSH message: %s"),
-					     output_fixed->str);
-		g_string_free(output_fixed, TRUE);
+
+		gebr_comm_server_disconnected_state(server, SERVER_ERROR_SSH, _("SSH error: %s"), output->str);
+		gebr_comm_server_log_message(server, GEBR_LOG_WARNING, _("Received SSH error for server '%s': %s"),
+					     server->address->str, output->str);
+	} else if (output->str[output->len - 4] == '.') {
+		gebr_g_string_replace(output, "\r\n", "\n");
+		g_string_erase(output, strlen(output->str)-1, 1); //last \n
+
+		gebr_comm_server_log_message(server, GEBR_LOG_WARNING, _("Received SSH message for server '%s': %s"),
+					     server->address->str, output->str);
 	} else if (!strcmp(output->str, "yes\r\n")) {
 		goto out;
 	} else {

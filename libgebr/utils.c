@@ -603,7 +603,11 @@ gchar *gebr_id_random_create(gssize bytes)
 		g_get_current_time(&current_time);
 		g_random_set_seed(current_time.tv_usec);
 	
-		gchar c = (gchar)g_random_int_range(33, 126);
+		//take care not to use separators as space, comma and others!
+		gchar c;
+		do
+			c = (gchar)g_random_int_range(48, 90);
+		while (c >= 58 && c <= 64); //rejected range
 		id[i] = c;
 	}
 	id[bytes] = '\0';

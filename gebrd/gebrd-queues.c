@@ -77,7 +77,7 @@ void gebrd_queues_rename(const gchar * queue, const gchar *newname)
 gchar * gebrd_queues_get_names()
 {
 	GString * string;
-	string = g_string_new(NULL);
+	string = g_string_new("");
 
 	void gebrd_queues_iter(const gchar * key, const gchar * value, GString * string) {
 		g_string_append_printf(string, "%s,", key);
