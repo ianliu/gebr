@@ -511,6 +511,7 @@ out:	g_string_free(output, TRUE);
 static void gebr_comm_ssh_finished(GebrCommTerminalProcess * process, struct gebr_comm_server *server)
 {
 	gebr_comm_server_log_message(server, GEBR_LOG_DEBUG, "gebr_comm_ssh_finished");
+	server->process.use = COMM_SERVER_PROCESS_NONE;
 	gebr_comm_terminal_process_free(process);
 }
 
