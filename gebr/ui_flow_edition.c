@@ -65,7 +65,7 @@ on_server_disconnected_set_row_insensitive(GtkCellLayout   *cell_layout,
 					   GtkTreeIter     *iter,
 					   gpointer         data);
 
-static void on_queue_combobox_changed (GtkComboBox *combo, const gchar *addr);
+static void on_queue_combobox_changed (GtkComboBox *combo, GtkComboBox *server_combo);
 
 /*
  * Public functions
@@ -101,7 +101,22 @@ struct ui_flow_edition *flow_edition_setup_ui(void)
 	gtk_paned_pack1(GTK_PANED(hpanel), left_vbox, FALSE, FALSE);
 
 	combobox = gtk_combo_box_new_with_model(gebr.ui_project_line->servers_filter);
-	
+	gebr.ui_flow_edition->queue_combobox = gtk_combo_box_new ();
+	g_signal_connect (gebr.ui_flow_edition->queue_combobox, "changed",
+			  G_CALLBACK (on_queue_combobox_changed), combobox);
+
+	renderer = gtk_cell_renderer_text_new();
+
+	gtk_cell_layout_pack_start (
+			GTK_CELL_LAYOUT (gebr.ui_flow_edition->queue_combobox),
+			renderer, TRUE);
+
+	gtk_cell_layout_add_attribute (
+			GTK_CELL_LAYOUT (gebr.ui_flow_edition->queue_combobox),
+			renderer, "text", 0);
+
+	gtk_widget_show (gebr.ui_flow_edition->queue_combobox);
+
 	renderer = gtk_cell_renderer_pixbuf_new();
 	g_object_set(renderer, "stock-size", GTK_ICON_SIZE_MENU, NULL);
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(combobox), renderer, FALSE);
@@ -129,7 +144,10 @@ struct ui_flow_edition *flow_edition_setup_ui(void)
 	label = gtk_label_new_with_mnemonic(_("Queue"));
 	gtk_alignment_set_padding(GTK_ALIGNMENT(alignment), 0, 4, 5, 5);
 	ui_flow_edition->queue_bin = GTK_BIN(alignment);
-	ui_flow_edition->queue_combobox = gtk_combo_box_new();
+
+	gtk_container_add (GTK_CONTAINER (gebr.ui_flow_edition->queue_bin),
+			   gebr.ui_flow_edition->queue_combobox);
+	
 	gtk_widget_set_sensitive(ui_flow_edition->queue_combobox, TRUE);
 	gtk_container_add(GTK_CONTAINER(ui_flow_edition->queue_bin), ui_flow_edition->queue_combobox);
 	gtk_frame_set_label_widget(GTK_FRAME(frame), label);
@@ -901,27 +919,20 @@ static void flow_edition_on_combobox_changed(GtkComboBox * combobox)
 	GebrServer *server;
 	GtkTreeIter iter;
 	GtkTreeIter flow_iter;
-	GtkWidget *queue_combobox;
-	GtkCellRenderer *renderer;
 
 	if (!flow_browse_get_selected(&flow_iter, TRUE))
 		return;
 
-	if (!gtk_combo_box_get_active_iter(combobox, &iter))
+	if (!gtk_combo_box_get_active_iter (combobox, &iter))
 		return;
 
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->servers_filter), &iter,
 			   SERVER_POINTER, &server,
 			   -1);
+	gtk_combo_box_set_model (GTK_COMBO_BOX (gebr.ui_flow_edition->queue_combobox),
+				 GTK_TREE_MODEL (server->queues_model));
 
-	gchar *addr = server->comm->address->str;
-
-	queue_combobox = gtk_combo_box_new_with_model(GTK_TREE_MODEL(server->queues_model));
-	g_signal_connect (queue_combobox, "changed", G_CALLBACK (on_queue_combobox_changed), addr);
-
-	renderer = gtk_cell_renderer_text_new();
-	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(queue_combobox), renderer, TRUE);
-	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(queue_combobox), renderer, "text", 0);
+	const gchar *addr = server->comm->address->str;
 
 	gtk_tree_model_get (GTK_TREE_MODEL (gebr.ui_flow_browse->store), &flow_iter,
 			    FB_LAST_QUEUES, &last_queue_hash,
@@ -940,14 +951,8 @@ static void flow_edition_on_combobox_changed(GtkComboBox * combobox)
 				   (GWeakNotify) g_hash_table_destroy, last_queue_hash);
 	}
 
-	gebr.ui_flow_edition->queue_combobox = queue_combobox;
 	lstq = GPOINTER_TO_INT (g_hash_table_lookup (last_queue_hash, addr));
-	gtk_combo_box_set_active(GTK_COMBO_BOX(queue_combobox), lstq);
-
-	if (gtk_bin_get_child(gebr.ui_flow_edition->queue_bin))
-		gtk_widget_destroy(gtk_bin_get_child(gebr.ui_flow_edition->queue_bin));
-	gtk_container_add(GTK_CONTAINER(gebr.ui_flow_edition->queue_bin), queue_combobox);
-	gtk_widget_show(queue_combobox);
+	gtk_combo_box_set_active(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox), lstq);
 
 	gebr_geoxml_flow_server_set_address (gebr.flow, addr);
 	flow_edition_set_io();
@@ -1037,19 +1042,32 @@ on_server_disconnected_set_row_insensitive(GtkCellLayout   *cell_layout,
 			      gebr_comm_server_is_logged (server->comm), NULL);
 }
 
-static void on_queue_combobox_changed (GtkComboBox *combo, const gchar *addr)
+static void on_queue_combobox_changed (GtkComboBox *combo, GtkComboBox *server_combo)
 {
 	gint index;
+	GebrServer *server;
 	GtkTreeIter iter;
+	GtkTreeIter server_iter;
+	GtkTreeModel *server_model;
 	GHashTable *last_queue_hash;
 
 	if (!flow_browse_get_selected (&iter, FALSE))
 		return;
+
+	if (!gtk_combo_box_get_active_iter (server_combo, &server_iter))
+		return;
+
+	server_model = gtk_combo_box_get_model (server_combo);
+	gtk_tree_model_get (server_model, &server_iter,
+			    SERVER_POINTER, &server,
+			    -1);
 
 	index = gtk_combo_box_get_active (combo);
 	gtk_tree_model_get (GTK_TREE_MODEL (gebr.ui_flow_browse->store), &iter,
 			    FB_LAST_QUEUES, &last_queue_hash,
 			    -1);
 
-	g_hash_table_insert (last_queue_hash, g_strdup (addr), GINT_TO_POINTER (index));
+	g_hash_table_insert (last_queue_hash,
+			     g_strdup (server->comm->address->str),
+			     GINT_TO_POINTER (index));
 }

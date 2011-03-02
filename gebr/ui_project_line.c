@@ -1390,12 +1390,18 @@ static gboolean servers_filter_visible_func (GtkTreeModel *filter,
 	group = gebr_geoxml_line_get_group (gebr.line, &is_fs);
 
 	if (!group)
-		return FALSE;
+		return TRUE;
+
+	/* Empty string means all servers */
+	if (strlen (group) == 0)
+		return TRUE;
+
+	g_message ("Filtering for group %s", group);
 
 	gtk_tree_model_get (filter, iter, SERVER_POINTER, &server, -1);
 
 	if (!server)
-		return FALSE;
+		return TRUE;
 
 	if (is_fs) {
 		gtk_tree_model_get (filter, iter, SERVER_FS, &fsid, -1);

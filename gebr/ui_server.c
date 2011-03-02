@@ -727,7 +727,8 @@ gchar **ui_server_get_all_fsid (void)
 
 	gebr_gui_gtk_tree_model_foreach (iter, model) {
 		gtk_tree_model_get (model, &iter, SERVER_FS, &fsid, -1);
-		g_string_append_printf (list, "%s,", fsid);
+		if (fsid)
+			g_string_append_printf (list, "%s,", fsid);
 		g_free (fsid);
 	}
 

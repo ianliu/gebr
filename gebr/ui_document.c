@@ -287,6 +287,7 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 		GtkTreeModel *model;
 
 		model = GTK_TREE_MODEL (gebr.ui_server_list->common.combo_store);
+		gtk_tree_model_get_iter_first (model, &active);
 		groups_combo = ui_server_create_tag_combo_box ();
 		curr_group = gebr_geoxml_line_get_group (GEBR_GEOXML_LINE (document), &is_fs);
 
@@ -1078,9 +1079,11 @@ static void on_file_entry_activate (GtkEntry *entry, GebrGuiSequenceEdit *sequen
 
 static void on_groups_combo_box_changed (GtkComboBox *combo)
 {
+	gint *index;
 	gchar *group;
 	gboolean is_fs;
 	GtkTreeIter iter;
+	GtkTreePath *path;
 	GtkTreeModel *model;
 
 	if (!gebr.line)
@@ -1090,17 +1093,23 @@ static void on_groups_combo_box_changed (GtkComboBox *combo)
 		return;
 
 	model = gtk_combo_box_get_model (combo);
+	path = gtk_tree_model_get_path (model, &iter);
+	index = gtk_tree_path_get_indices (path);
+
 	gtk_tree_model_get (model, &iter,
 			    TAG_NAME, &group,
 			    TAG_FS, &is_fs,
 			    -1);
 
-	if (!group)
+	/* Empty string means all servers */
+	if (!group || index[0] == 0)
 		gebr_geoxml_line_set_group (gebr.line, "", FALSE);
 	else
 		gebr_geoxml_line_set_group (gebr.line, group, is_fs);
 
 	gtk_tree_model_filter_refilter (
 			GTK_TREE_MODEL_FILTER (gebr.ui_project_line->servers_filter));
+
 	g_free (group);
+	gtk_tree_path_free (path);
 }
