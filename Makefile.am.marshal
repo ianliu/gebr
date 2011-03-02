@@ -23,7 +23,7 @@ BUILT_SOURCES += $(marshal_h) $(marshal_c)
 EXTRA_DIST += $(srcdir)/$(glib_marshal_list)
 
 stamp-marshal: $(glib_marshal_list)
-	glib-genmarshal \
+	$(AM_V_at)glib-genmarshal \
 		--prefix=$(glib_marshal_prefix) \
 		--header \
 	$(srcdir)/$(glib_marshal_list) > xgen-mh \
