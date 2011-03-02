@@ -144,10 +144,6 @@ struct ui_flow_edition *flow_edition_setup_ui(void)
 	label = gtk_label_new_with_mnemonic(_("Queue"));
 	gtk_alignment_set_padding(GTK_ALIGNMENT(alignment), 0, 4, 5, 5);
 	ui_flow_edition->queue_bin = GTK_BIN(alignment);
-
-	gtk_container_add (GTK_CONTAINER (ui_flow_edition->queue_bin),
-			   ui_flow_edition->queue_combobox);
-	
 	gtk_widget_set_sensitive(ui_flow_edition->queue_combobox, TRUE);
 	gtk_container_add(GTK_CONTAINER(ui_flow_edition->queue_bin), ui_flow_edition->queue_combobox);
 	gtk_frame_set_label_widget(GTK_FRAME(frame), label);
@@ -1066,6 +1062,9 @@ static void on_queue_combobox_changed (GtkComboBox *combo, GtkComboBox *server_c
 	gtk_tree_model_get (GTK_TREE_MODEL (gebr.ui_flow_browse->store), &iter,
 			    FB_LAST_QUEUES, &last_queue_hash,
 			    -1);
+
+	if (!last_queue_hash)
+		return;
 
 	g_hash_table_insert (last_queue_hash,
 			     g_strdup (server->comm->address->str),
