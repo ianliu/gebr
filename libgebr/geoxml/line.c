@@ -177,7 +177,8 @@ const gchar *gebr_geoxml_line_get_group (GebrGeoXmlLine *line, gboolean *is_fs)
 	} else if (g_str_has_prefix (group, "g:")) {
 		*is_fs = FALSE;
 		return group + 2;
+	} else {
+		*is_fs = FALSE;
+		return group;
 	}
-
-	g_return_val_if_reached (NULL);
 }
