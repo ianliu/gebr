@@ -428,32 +428,27 @@ void flow_copy_from_dicts(GebrGeoXmlFlow * flow)
 		flow_copy_from_dicts_parse_parameters(gebr_geoxml_program_get_parameters(GEBR_GEOXML_PROGRAM(program)));
 }
 
-/**
- * \internal
- */
-static void flow_paths_foreach_parameter(GebrGeoXmlParameter * parameter, gboolean relative)
-{
-	if (gebr_geoxml_parameter_get_type(parameter) == GEBR_GEOXML_PARAMETER_TYPE_FILE) {
-		GebrGeoXmlSequence *value;
-
-		gebr_geoxml_program_parameter_get_value(GEBR_GEOXML_PROGRAM_PARAMETER(parameter), FALSE, &value, 0);
-		for (; value != NULL; gebr_geoxml_sequence_next(&value)) {
-			GString *path;
-
-			path = g_string_new(gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(value)));
-			gebr_path_set_to(path, relative);
-			gebr_geoxml_value_sequence_set(GEBR_GEOXML_VALUE_SEQUENCE(value), path->str);
-
-			g_string_free(path, TRUE);
-		}
-	}
-}
-
 void flow_set_paths_to(GebrGeoXmlFlow * flow, gboolean relative)
 {
-	GString *path;
+	GString *path = g_string_new(NULL);
 
-	path = g_string_new(NULL);
+	void flow_paths_foreach_parameter(GebrGeoXmlParameter * parameter, gboolean relative)
+	{
+		if (gebr_geoxml_parameter_get_type(parameter) == GEBR_GEOXML_PARAMETER_TYPE_FILE) {
+			GebrGeoXmlSequence *value;
+
+			gebr_geoxml_program_parameter_get_value(GEBR_GEOXML_PROGRAM_PARAMETER(parameter), FALSE, &value, 0);
+			for (; value != NULL; gebr_geoxml_sequence_next(&value)) {
+				GString *path;
+
+				path = g_string_new(gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(value)));
+				gebr_path_set_to(path, relative);
+				gebr_geoxml_value_sequence_set(GEBR_GEOXML_VALUE_SEQUENCE(value), path->str);
+
+				g_string_free(path, TRUE);
+			}
+		}
+	}
 
 	/* flow's IO */
 	g_string_assign(path, gebr_geoxml_flow_io_get_input(flow));

@@ -68,22 +68,22 @@ struct ui_job_control *job_control_setup_ui(void);
 /**
  */
 void job_control_save(void);
-
 /**
  */
 void job_control_cancel(void);
-
 /**
  */
 void job_control_close(void);
-
 /**
  */
 void job_control_clear(gboolean force);
-
 /**
  */
 void job_control_stop(void);
+
+/*
+ */
+void job_control_selected(void);
 
 void job_control_queue_stop(void);
 void job_control_queue_save(void);

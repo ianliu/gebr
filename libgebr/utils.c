@@ -118,6 +118,14 @@ gboolean gebr_path_resolve_home_variable(GString * path)
 	return FALSE;
 }
 
+void gebr_path_set_to(GString * path, gboolean relative)
+{
+	if (relative)
+		gebr_path_use_home_variable(path);
+	else
+		gebr_path_resolve_home_variable(path);
+}
+
 /**
  * Create a file based on \p template.
  *

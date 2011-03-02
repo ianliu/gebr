@@ -378,6 +378,11 @@ gboolean job_control_get_selected(GtkTreeIter * iter, enum JobControlSelectionTy
 	return TRUE;
 }
 
+void job_control_selected(void)
+{
+	job_control_on_cursor_changed();
+}
+
 /*
  * \internal
  */
