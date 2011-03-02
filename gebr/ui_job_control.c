@@ -36,8 +36,6 @@ static void job_control_on_cursor_changed(void);
 
 static void on_text_view_populate_popup(GtkTextView * textview, GtkMenu * menu);
 
-static void job_update_text_buffer(GtkTreeIter iter, GebrJob *job);
-
 static GtkMenu * job_control_popup_menu(GtkWidget * widget, struct ui_job_control *ui_job_control);
 
 static void job_control_queue_by_func(void (* func)(void));
@@ -193,7 +191,7 @@ void job_control_save(void)
 			continue;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter, JC_STRUCT, &job, -1);
-		job_update_text_buffer(iter, job);
+		job_load_details(job);
 		
 		title = g_strdup_printf("---------- %s ---------\n", job->parent.title->str);
 		fputs(title, fp);
@@ -380,78 +378,9 @@ gboolean job_control_get_selected(GtkTreeIter * iter, enum JobControlSelectionTy
 	return TRUE;
 }
 
-/**
+/*
  * \internal
  */
-
-/* Updates the job text buffer */
-static void job_update_text_buffer(GtkTreeIter iter, GebrJob *job)
-{
-	GString *info = g_string_new("");
-	GtkTextIter end_iter;
-
-	/* who and where, same at job_update_label */
-	GString *queue_info = g_string_new(NULL); 
-	const gchar *queue = job_get_queue_name(job);
-	if (queue == NULL)
-		g_string_assign(queue_info, _("unqueued"));
-	else
-		g_string_printf(queue_info, "on %s", queue);
-	g_string_append_printf(info, _("Job submitted at '%s' ('%s') by %s.\n"),
-			       server_get_name(job->server), queue_info->str, job->parent.client_hostname->str);
-	g_string_free(queue_info, TRUE);
-
-	if (job->parent.status == JOB_STATUS_INITIAL) {
-		g_string_append_printf(info, _("\nWaiting for more server details..."));
-		goto out;
-	} 
-
-	/* moab job id */
-	if (job->server->type == GEBR_COMM_SERVER_TYPE_MOAB && job->parent.moab_jid->len)
-		g_string_append_printf(info, "\n%s\n%s\n", _("Moab Job ID:"), job->parent.moab_jid->str);
-
-	gtk_text_buffer_insert_at_cursor(gebr.ui_job_control->text_buffer, info->str, info->len);
-	/* issues title with tag and mark, for receiving issues */
-	g_object_set(gebr.ui_job_control->issues_title_tag, "invisible", TRUE, NULL);
-	g_string_assign(info, _("Issues:\n"));
-	gtk_text_buffer_get_end_iter(gebr.ui_job_control->text_buffer, &end_iter);
-	gtk_text_buffer_insert_with_tags(gebr.ui_job_control->text_buffer, &end_iter, info->str, info->len,
-					 gebr.ui_job_control->issues_title_tag, NULL);
-	g_string_assign(info, "");
-	gtk_text_buffer_get_end_iter(gebr.ui_job_control->text_buffer, &end_iter);
-	gtk_text_buffer_create_mark(gebr.ui_job_control->text_buffer, "issue", &end_iter, FALSE);
-
-	if (job->parent.status == JOB_STATUS_QUEUED)
-		goto out;
-
-	/* issues */
-	if (job->parent.issues->len) {
-		g_object_set(gebr.ui_job_control->issues_title_tag, "invisible", FALSE, NULL);
-		g_string_append(info, job->parent.issues->str);
-	}
-	/* command-line */
-	if (job->parent.cmd_line->len)
-		g_string_append_printf(info, "\n%s\n%s\n", _("Command line:"), job->parent.cmd_line->str);
-	/* start date (may have failed, never started) */
-	if (job->parent.start_date->len)
-		g_string_append_printf(info, "\n%s %s\n", _("Start date:"), gebr_localized_date(job->parent.start_date->str));
-	/* output */
-	if (job->parent.output->len)
-		g_string_append(info, job->parent.output->str);
-	/* finish date */
-	if (job->parent.finish_date->len)
-		g_string_append_printf(info, "\n%s %s",
-				       job->parent.status == JOB_STATUS_FINISHED ? _("Finish date:") : _("Cancel date:"),
-				       gebr_localized_date(job->parent.finish_date->str));
-
-out:
-	gtk_text_buffer_get_end_iter(gebr.ui_job_control->text_buffer, &end_iter);
-	gtk_text_buffer_insert(gebr.ui_job_control->text_buffer, &end_iter, info->str, info->len);
-	
-	/* frees */
-	g_string_free(info, TRUE);
-}
-
 static void job_control_on_cursor_changed(void)
 {
 	GtkTreeIter iter;
@@ -470,8 +399,6 @@ static void job_control_on_cursor_changed(void)
 	gboolean has_children = FALSE;
 	gint selected_rows = 0;
 
-	gtk_label_set_text(GTK_LABEL(gebr.ui_job_control->label), "");
-	gtk_text_buffer_set_text(gebr.ui_job_control->text_buffer, "", 0);
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_close"), FALSE);
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_stop"), FALSE);
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_queue_close"), FALSE);
@@ -492,8 +419,7 @@ static void job_control_on_cursor_changed(void)
 			    job->parent.status == JOB_STATUS_CANCELED) {
 				has_finished = TRUE;
 			}
-			job_update_text_buffer(iter, job);
-			job_status_show(job);
+			job_load_details(job);
 		}
 		else if (selected_rows == 1){
 			iter_queue = iter;
@@ -535,9 +461,7 @@ static void job_control_on_cursor_changed(void)
 				}
 			}
 			else {
-				gtk_text_buffer_set_text(gebr.ui_job_control->text_buffer, "", 0);
-				gtk_label_set_text(GTK_LABEL(gebr.ui_job_control->label), "");
-				//return;
+				job_load_details(NULL);
 			}
 		}
 	}

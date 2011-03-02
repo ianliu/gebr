@@ -126,6 +126,15 @@ enum JobStatus job_translate_status(GString * status);
  */
 void job_status_show(GebrJob *job);
 
+/*
+ * Updates the job text buffer
+ */
+void job_load_details(GebrJob *job);
+
+/**
+ */
+void job_add_issue(GebrJob *job, const gchar *issues);
+
 /**
  * Change the status of \p job according to \p status and its \p parameter.
  * Change the GtkTreeIter's icon and handling other status changes. Calls #job_status_show.

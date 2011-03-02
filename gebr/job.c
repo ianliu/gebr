@@ -280,9 +280,8 @@ void job_append_output(GebrJob *job, GString * output)
 
 void job_update(GebrJob *job)
 {
-	if (job_is_active(job) == FALSE)
-		return;
-	job_set_active(job);
+	if (job_is_active(job))
+		job_load_details(job);
 }
 
 void job_update_label(GebrJob *job)
@@ -384,6 +383,103 @@ void job_status_show(GebrJob *job)
 	}
 }
 
+void job_load_details(GebrJob *job)
+{
+	gtk_label_set_text(GTK_LABEL(gebr.ui_job_control->label), "");
+	gtk_text_buffer_set_text(gebr.ui_job_control->text_buffer, "", 0);
+	if (job == NULL)
+		return;
+
+	GString *info = g_string_new("");
+	GtkTextIter end_iter;
+
+	/* who and where, same at job_update_label */
+	GString *queue_info = g_string_new(NULL); 
+	const gchar *queue = job_get_queue_name(job);
+	if (queue == NULL)
+		g_string_assign(queue_info, _("unqueued"));
+	else
+		g_string_printf(queue_info, "on %s", queue);
+	g_string_append_printf(info, _("Job submitted at '%s' ('%s') by %s.\n"),
+			       server_get_name(job->server), queue_info->str, job->parent.client_hostname->str);
+	g_string_free(queue_info, TRUE);
+
+	if (job->parent.status == JOB_STATUS_INITIAL) {
+		g_string_append_printf(info, _("\nWaiting for more server details..."));
+		goto out;
+	} 
+
+	/* moab job id */
+	if (job->server->type == GEBR_COMM_SERVER_TYPE_MOAB && job->parent.moab_jid->len)
+		g_string_append_printf(info, "\n%s\n%s\n", _("Moab Job ID:"), job->parent.moab_jid->str);
+
+	gtk_text_buffer_insert_at_cursor(gebr.ui_job_control->text_buffer, info->str, info->len);
+	/* issues title with tag and mark, for receiving issues */
+	g_object_set(gebr.ui_job_control->issues_title_tag, "invisible", TRUE, NULL);
+	gtk_text_buffer_get_end_iter(gebr.ui_job_control->text_buffer, &end_iter);
+	g_string_assign(info, _("Issues:\n"));
+	gtk_text_buffer_insert_with_tags(gebr.ui_job_control->text_buffer, &end_iter, info->str, info->len,
+					 gebr.ui_job_control->issues_title_tag, NULL);
+	g_string_assign(info, "");
+	gtk_text_buffer_get_end_iter(gebr.ui_job_control->text_buffer, &end_iter);
+	gtk_text_buffer_create_mark(gebr.ui_job_control->text_buffer, "last-issue", &end_iter, FALSE);
+
+	if (job->parent.status == JOB_STATUS_QUEUED)
+		goto out;
+
+	/* issues */
+	if (job->parent.issues->len)
+		job_add_issue(job, job->parent.issues->str);
+	/* command-line */
+	if (job->parent.cmd_line->len)
+		g_string_append_printf(info, "\n%s\n%s\n", _("Command line:"), job->parent.cmd_line->str);
+	/* start date (may have failed, never started) */
+	if (job->parent.start_date->len)
+		g_string_append_printf(info, "\n%s %s\n", _("Start date:"), gebr_localized_date(job->parent.start_date->str));
+	/* output */
+	if (job->parent.output->len)
+		g_string_append(info, job->parent.output->str);
+	/* finish date */
+	if (job->parent.finish_date->len)
+		g_string_append_printf(info, "\n%s %s",
+				       job->parent.status == JOB_STATUS_FINISHED ? _("Finish date:") : _("Cancel date:"),
+				       gebr_localized_date(job->parent.finish_date->str));
+
+out:
+	gtk_text_buffer_get_end_iter(gebr.ui_job_control->text_buffer, &end_iter);
+	gtk_text_buffer_insert(gebr.ui_job_control->text_buffer, &end_iter, info->str, info->len);
+
+	job_status_show(job);
+
+	/* frees */
+	g_string_free(info, TRUE);
+}
+
+void job_add_issue(GebrJob *job, const gchar *_issues)
+{
+	g_object_set(gebr.ui_job_control->issues_title_tag, "invisible", FALSE, NULL);
+
+	GString *issues = g_string_new("");
+	g_string_assign(issues, _issues);
+	if (job_is_active(job) == FALSE) {
+		g_string_free(issues, TRUE);
+		return;
+	}
+	g_object_set(gebr.ui_job_control->issues_title_tag, "invisible", FALSE, NULL);
+	GtkTextMark * mark = gtk_text_buffer_get_mark(gebr.ui_job_control->text_buffer, "last-issue");
+	if (mark != NULL) {
+		GtkTextIter iter;
+		gtk_text_buffer_get_iter_at_mark(gebr.ui_job_control->text_buffer, &iter, mark);
+		gtk_text_buffer_insert_with_tags(gebr.ui_job_control->text_buffer, &iter, issues->str, issues->len,
+						 gebr.ui_job_control->issues_title_tag, NULL);
+
+		gtk_text_buffer_delete_mark(gebr.ui_job_control->text_buffer, mark);
+		gtk_text_buffer_create_mark(gebr.ui_job_control->text_buffer, "last-issue", &iter, TRUE);
+	} else
+		g_warning("Can't find mark \"issue\"");
+	g_string_free(issues, TRUE);
+}
+
 void job_status_update(GebrJob *job, enum JobStatus status, const gchar *parameter)
 {
 	GtkTreeIter queue_iter;
@@ -425,19 +521,7 @@ void job_status_update(GebrJob *job, enum JobStatus status, const gchar *paramet
 	/* false status */
 	if (status == JOB_STATUS_ISSUED) {
 		g_string_append(job->parent.issues, parameter);
-
-		if (job_is_active(job) == FALSE) 
-			return;
-		g_object_set(gebr.ui_job_control->issues_title_tag, "invisible", FALSE, NULL);
-		GtkTextMark * mark = gtk_text_buffer_get_mark(gebr.ui_job_control->text_buffer, "issue");
-		if (mark != NULL) {
-			GtkTextIter iter;
-			gtk_text_buffer_get_iter_at_mark(gebr.ui_job_control->text_buffer, &iter, mark);
-			GString *parameter_gstring = g_string_new(parameter);
-			gtk_text_buffer_insert(gebr.ui_job_control->text_buffer, &iter, parameter_gstring->str, parameter_gstring->len);
-			g_string_free(parameter_gstring, TRUE);
-		} else
-			g_warning("Can't find mark \"issue\"");
+		job_add_issue(job, parameter);
 		return;
 	}
 	
