@@ -348,6 +348,11 @@ enum JobStatus job_translate_status(GString * status)
 
 void job_status_show(GebrJob *job)
 {
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_close"), job_has_finished(job));
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_stop"), job_is_running(job));
+	if (job == NULL)
+		return;
+
 	GdkPixbuf *pixbuf;
 	
 	switch (job->parent.status) {
@@ -385,6 +390,7 @@ void job_status_show(GebrJob *job)
 
 void job_load_details(GebrJob *job)
 {
+	job_status_show(job);
 	gtk_label_set_text(GTK_LABEL(gebr.ui_job_control->label), "");
 	gtk_text_buffer_set_text(gebr.ui_job_control->text_buffer, "", 0);
 	if (job == NULL)
@@ -449,8 +455,6 @@ out:
 	gtk_text_buffer_get_end_iter(gebr.ui_job_control->text_buffer, &end_iter);
 	gtk_text_buffer_insert(gebr.ui_job_control->text_buffer, &end_iter, info->str, info->len);
 
-	job_status_show(job);
-
 	/* frees */
 	g_string_free(info, TRUE);
 }
@@ -478,6 +482,18 @@ void job_add_issue(GebrJob *job, const gchar *_issues)
 	} else
 		g_warning("Can't find mark \"issue\"");
 	g_string_free(issues, TRUE);
+}
+
+gboolean job_is_running(GebrJob *job)
+{
+	return job && (job->parent.status == JOB_STATUS_RUNNING || job->parent.status == JOB_STATUS_QUEUED);
+}
+
+gboolean job_has_finished(GebrJob *job)
+{
+	return job && (job->parent.status == JOB_STATUS_FAILED ||
+		       job->parent.status == JOB_STATUS_FINISHED ||
+		       job->parent.status == JOB_STATUS_CANCELED);
 }
 
 void job_status_update(GebrJob *job, enum JobStatus status, const gchar *parameter)

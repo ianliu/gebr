@@ -136,6 +136,14 @@ void job_load_details(GebrJob *job);
 void job_add_issue(GebrJob *job, const gchar *issues);
 
 /**
+ */
+gboolean job_is_running(GebrJob *job);
+
+/**
+ */
+gboolean job_has_finished(GebrJob *job);
+
+/**
  * Change the status of \p job according to \p status and its \p parameter.
  * Change the GtkTreeIter's icon and handling other status changes. Calls #job_status_show.
  */

@@ -383,92 +383,69 @@ gboolean job_control_get_selected(GtkTreeIter * iter, enum JobControlSelectionTy
  */
 static void job_control_on_cursor_changed(void)
 {
-	GtkTreeIter iter;
-	GebrJob *job;
-  
-	gboolean is_job = FALSE;
-	gboolean has_finished = FALSE;
-	gboolean has_execution = FALSE;
-	gboolean has_job = FALSE;
-	GtkTreeIter iter_queue;
-	GtkTreeIter iter_child;
-	GtkTreeIter iter_child_first;
-	GtkTreeIter iter_child_last;
-	GtkTreePath  *path_first;
-	GtkTreePath  *path_last;
-	gboolean has_children = FALSE;
-	gint selected_rows = 0;
-
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_close"), FALSE);
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_stop"), FALSE);
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_queue_close"), FALSE);
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_queue_stop"), FALSE);
 
+	gboolean has_finished = FALSE;
+	gboolean has_execution = FALSE;
+	gboolean has_job = FALSE;
 
-	selected_rows =	gtk_tree_selection_count_selected_rows(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)));
+	void get_state(GebrJob *job)
+	{
+		has_job = TRUE;
+		has_execution = job_is_running(job);
+		has_finished = job_has_finished(job);
+	}
 
+	gint selected_rows = gtk_tree_selection_count_selected_rows(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)));
+	GtkTreeIter iter;
 	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_job_control->view) {
+		GebrJob *job;
+		gboolean is_job;
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter, JC_STRUCT, &job, JC_IS_JOB, &is_job, -1);
 
 		if (is_job) {
-			has_job = TRUE;
-			if (job->parent.status == JOB_STATUS_RUNNING || job->parent.status == JOB_STATUS_QUEUED)
-				has_execution = TRUE;
-			if (job->parent.status == JOB_STATUS_FAILED ||
-			    job->parent.status == JOB_STATUS_FINISHED ||
-			    job->parent.status == JOB_STATUS_CANCELED) {
-				has_finished = TRUE;
-			}
+			get_state(job);
 			job_load_details(job);
-		}
-		else if (selected_rows == 1){
-			iter_queue = iter;
-
-			has_children = gtk_tree_model_iter_children (GTK_TREE_MODEL(gebr.ui_job_control->store), &iter_child, &iter_queue);
-			if (has_children){
+		} else if (selected_rows == 1) {
+			GtkTreeIter iter_queue = iter;
+			GtkTreeIter iter_child;
+			gboolean has_children = gtk_tree_model_iter_children (GTK_TREE_MODEL(gebr.ui_job_control->store), &iter_child, &iter_queue);
+			if (has_children) {
 				gtk_tree_selection_unselect_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)), &iter_queue);
-				iter_child_first = iter_child;
 
-				while (has_children){
-
+				GtkTreeIter iter_child_first = iter_child;
+				GtkTreeIter iter_child_last;
+				while (has_children) {
 					iter_child_last = iter_child;
 					has_children = gtk_tree_model_iter_next (GTK_TREE_MODEL(gebr.ui_job_control->store), &iter_child);
 				}
 
-				path_first = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter_child_first);
-				path_last = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter_child_last);
+				GtkTreePath *path_first = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter_child_first);
+				GtkTreePath *path_last = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter_child_last);
 				gtk_tree_selection_select_range (gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)), path_first, path_last);
+				gtk_tree_path_free(path_first);
+				gtk_tree_path_free(path_last);
 
+				GtkTreeIter iter;
 				gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_job_control->view) {
+					gboolean is_job;
 					gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter, JC_STRUCT, &job, JC_IS_JOB, &is_job, -1);
-
-					if (is_job){
-						has_job = TRUE;
-						if (job->parent.status == JOB_STATUS_RUNNING || job->parent.status == JOB_STATUS_QUEUED)
-							has_execution = TRUE;
-						if (job->parent.status == JOB_STATUS_FAILED ||
-						    job->parent.status == JOB_STATUS_FINISHED ||
-						    job->parent.status == JOB_STATUS_CANCELED) 
-							has_finished = TRUE;
-					}
+					if (is_job)
+						get_state(job);
 				}
 
-				if (has_job){
+				if (has_job) {
 					gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_queue_close"), has_finished);
 					gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_queue_stop"), has_execution);
 					gtk_tree_selection_unselect_range (gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)), path_first, path_last);
 					gtk_tree_selection_select_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)), &iter_queue);
 				}
-			}
-			else {
+			} else 
 				job_load_details(NULL);
-			}
 		}
-	}
-
-	if (has_job){
-		gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_close"), has_finished);
-		gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_stop"), has_execution);
 	}
 }
 
