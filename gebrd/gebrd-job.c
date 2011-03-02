@@ -239,7 +239,7 @@ static gboolean job_moab_checkjob_pooling(GebrdJob * job)
 	g_string_free(cmd_line, TRUE);
 	g_free(std_err);
 	if (error == TRUE) {
-		job_issue(job, _("Moab's job status could not be retrieved."));
+		job_issue(job, _("\nMoab's job status could not be retrieved."));
 		g_free(std_out);
 		goto out;
 	}
@@ -265,7 +265,7 @@ static gboolean job_moab_checkjob_pooling(GebrdJob * job)
 		gdome_str_unref(attribute_name);
 		GdomeNode *value = gdome_el_firstChild(root_element, &exception);
 		if (value)
-			job_issue(job, _("Moab's job status could not be returned with error code %s (%s)."),
+			job_issue(job, _("\nMoab's job status could not be returned with error code %s (%s)."),
 					       code, gdome_n_nodeValue(value, &exception)->str);
 
 		error = TRUE;
@@ -275,7 +275,7 @@ static gboolean job_moab_checkjob_pooling(GebrdJob * job)
 	GdomeElement *job_element = (GdomeElement *)gdome_el_firstChild(root_element, &exception);
 	GdomeElement *req_element = (GdomeElement *)gdome_el_firstChild(job_element, &exception);
 	if (!(!strcmp(gdome_el_nodeName(root_element, &exception)->str, "Data") && job_element != NULL && req_element != NULL)) {
-		job_issue(job, _("Moab's job status could not be retrieved."));
+		job_issue(job, _("\nMoab's job status could not be retrieved."));
 
 		error = TRUE;
 		goto xmlout;
@@ -303,10 +303,10 @@ static gboolean job_moab_checkjob_pooling(GebrdJob * job)
 			attribute_name = gdome_str_mkref("AllocNodeList");
 			const gchar *AllocNodeList = gdome_el_getAttribute(req_element, attribute_name, &exception)->str;
 			gdome_str_unref(attribute_name);
-			job_issue(job, _("Moab's job returned status code %d allocatted on nodes '%s'."),
+			job_issue(job, _("\nMoab's job returned status code %d allocatted on nodes '%s'."),
 					  code, AllocNodeList);
 		} else
-			job_issue(job, _("Process exited with status code %d."), code);
+			job_issue(job, _("\nProcess exited with status code %d."), code);
 
 		goto xmlout;
 	}
@@ -380,7 +380,7 @@ void job_new(GebrdJob ** _job, struct client * client, GString * queue, GString 
 	int ret = gebr_geoxml_document_load_buffer(&document, xml->str);
 	job->flow = GEBR_GEOXML_FLOW(document);
 	if (job->flow == NULL)
-		job_issue(job, gebr_geoxml_error_explained_string(ret));
+		job_issue(job, "\n%s", gebr_geoxml_error_explained_string(ret));
 	else
 		g_string_assign(job->parent.title, gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(job->flow)));
 
@@ -467,7 +467,7 @@ void job_run_flow(GebrdJob *job)
 	gebr_geoxml_flow_get_program(job->flow, &program, 0);
 	while (program != NULL &&
 	       gebr_geoxml_program_get_status(GEBR_GEOXML_PROGRAM(program)) != GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED) {
-		job_issue(job, _("%u) Skipping disabled/not configured program '%s'."),
+		job_issue(job, _("\n%u) Skipping disabled/not configured program '%s'."),
 			  ++issue_number, gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(program)));
 
 		gebr_geoxml_sequence_next(&program);
@@ -482,7 +482,7 @@ void job_run_flow(GebrdJob *job)
 	if (gebr_geoxml_program_get_stdin(GEBR_GEOXML_PROGRAM(program))) {
 		/* Input file */
 		if (check_for_readable_file(gebr_geoxml_flow_io_get_input(job->flow))) {
-			job_issue(job, _("Input file %s not present or not accessible."),
+			job_issue(job, _("\nInput file %s not present or not accessible."),
 				  gebr_geoxml_flow_io_get_input(job->flow));
 			goto err;
 		}
@@ -491,7 +491,7 @@ void job_run_flow(GebrdJob *job)
 	/* check for error file output */
 	if (gebr_geoxml_program_get_stderr(GEBR_GEOXML_PROGRAM(program))) {
 		if (check_for_write_permission(gebr_geoxml_flow_io_get_error(job->flow))) {
-			job_issue(job, _("Write permission to %s not granted."),
+			job_issue(job, _("\nWrite permission to %s not granted."),
 				  gebr_geoxml_flow_io_get_error(job->flow));
 			goto err;
 		}
@@ -500,7 +500,7 @@ void job_run_flow(GebrdJob *job)
 	/* check for output file */
 	if (gebr_geoxml_program_get_stdout(GEBR_GEOXML_PROGRAM(program))) {
 		if (check_for_write_permission(gebr_geoxml_flow_io_get_output(job->flow))) {
-			job_issue(job, _("Write permission to %s not granted."),
+			job_issue(job, _("\nWrite permission to %s not granted."),
 				  gebr_geoxml_flow_io_get_output(job->flow));
 			goto err;
 		}
@@ -536,7 +536,7 @@ void job_run_flow(GebrdJob *job)
 
 	if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_MOAB) {
 		if (!g_find_program_in_path("msub")) {
-			job_issue(job, _("Cannot submit job to MOAB server (msub command is not available)."));
+			job_issue(job, _("\nCannot submit job to MOAB server (msub command is not available)."));
 			goto err;
 		}
 
@@ -553,13 +553,13 @@ void job_run_flow(GebrdJob *job)
 		gint exit_status;
 		gchar * standard_output = NULL, * standard_error = NULL;
 		if (!g_spawn_command_line_sync(cmd_line->str, &standard_output, &standard_error, &exit_status, &error)) {
-			job_issue(job, _("Cannot submit job to MOAB server."));
+			job_issue(job, _("\nCannot submit job to MOAB server."));
 			g_free(standard_output);
 			g_free(standard_error);
 			goto err;
 		}
 		if (standard_error != NULL && strlen(standard_error)) {
-			job_issue(job, _("Cannot submit job to MOAB server: %s."), standard_error);
+			job_issue(job, _("\nCannot submit job to MOAB server: %s."), standard_error);
 			g_free(standard_output);
 			g_free(standard_error);
 			goto err;
@@ -571,7 +571,7 @@ void job_run_flow(GebrdJob *job)
 		sscanf(standard_output, "%u", &moab_id);
 		g_free(standard_output);
 		if (!moab_id) {
-			job_issue(job, _("Cannot get MOAB job id."));
+			job_issue(job, _("\nCannot get MOAB job id."));
 			goto err;
 		}
 		g_string_printf(job->parent.moab_jid, "%u", moab_id);
@@ -725,11 +725,11 @@ static void job_send_signal_on_moab(const char * signal, GebrdJob * job)
 	cmd_line = g_string_new("");
 	g_string_printf(cmd_line, "mjobctl -M signal=%s %s", signal, job->parent.moab_jid->str);
 	if (g_spawn_command_line_sync(cmd_line->str, &std_out, &std_err, &exit_status, NULL) == FALSE){
-		job_issue(job, _("Cannot cancel job at MOAB server."));
+		job_issue(job, _("\nCannot cancel job at MOAB server."));
 		goto err;
 	}
 	if (std_err != NULL && strlen(std_err)) {
-		job_issue(job, _("Cannot cancel job at MOAB server."));
+		job_issue(job, _("\nCannot cancel job at MOAB server."));
 		goto err1;
 	}
 	if (job->parent.status != JOB_STATUS_QUEUED)
@@ -803,10 +803,9 @@ static gboolean job_parse_parameter(GebrdJob *job, GebrGeoXmlParameter * paramet
 			} else {
 				/* Check if this is a required parameter */
 				if (gebr_geoxml_program_parameter_get_required(program_parameter)) {
-					job_issue(job,
-							       _("Required parameter '%s' of program '%s' not provided."),
-							       gebr_geoxml_parameter_get_label(parameter),
-							       gebr_geoxml_program_get_title(program));
+					job_issue(job, _("\nRequired parameter '%s' of program '%s' not provided."),
+						  gebr_geoxml_parameter_get_label(parameter),
+						  gebr_geoxml_program_get_title(program));
 
 					return FALSE;
 				}
@@ -823,7 +822,7 @@ static gboolean job_parse_parameter(GebrdJob *job, GebrGeoXmlParameter * paramet
 
 		break;
 	default:
-		job_issue(job, _("Unknown parameter type."));
+		job_issue(job, _("\nUnknown parameter type."));
 
 		return FALSE;
 	}
@@ -867,7 +866,7 @@ static void job_assembly_cmdline(GebrdJob *job)
 	has_error_output_file = strlen(gebr_geoxml_flow_io_get_error(job->flow)) ? TRUE : FALSE;
 	nprog = gebr_geoxml_flow_get_programs_number(job->flow);
 	if (nprog == 0) {
-		job_issue(job, _("Empty flow."));
+		job_issue(job, _("\nEmpty flow."));
 		goto err;
 	}
 
@@ -875,13 +874,13 @@ static void job_assembly_cmdline(GebrdJob *job)
 	gebr_geoxml_flow_get_program(job->flow, &program, 0);
 	while (program != NULL &&
 	       gebr_geoxml_program_get_status(GEBR_GEOXML_PROGRAM(program)) != GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED) {
-		job_issue(job, _("%u) Skipping disabled/not configured program '%s'."),
+		job_issue(job, _("\n%u) Skipping disabled/not configured program '%s'."),
 			  ++issue_number, gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(program)));
 
 		gebr_geoxml_sequence_next(&program);
 	}
 	if (program == NULL) {
-		job_issue(job, _("No configured programs."));
+		job_issue(job, _("\nNo configured programs."));
 		goto err;
 	}
 
@@ -891,7 +890,7 @@ static void job_assembly_cmdline(GebrdJob *job)
 	/* Start without stdin */
 	if (gebr_geoxml_program_get_stdin(GEBR_GEOXML_PROGRAM(program))) {
 		if (strlen(gebr_geoxml_flow_io_get_input(job->flow)) == 0) {
-			job_issue(job, _("No input file selected."));
+			job_issue(job, _("\nNo input file selected."));
 			goto err;
 		}
 
@@ -906,8 +905,7 @@ static void job_assembly_cmdline(GebrdJob *job)
 	mpiname = gebr_geoxml_program_get_mpi(GEBR_GEOXML_PROGRAM(program));
 	mpi = job_get_mpi_impl(mpiname, job->parent.n_process);
 	if (strlen(mpiname) && !mpi) {
-		job_issue(job,
-			  _("Requested MPI (%s) is not supported by this server."), mpiname);
+		job_issue(job, _("\nRequested MPI (%s) is not supported by this server."), mpiname);
 		goto err;
 	}
 
@@ -938,9 +936,8 @@ static void job_assembly_cmdline(GebrdJob *job)
 	while (program != NULL) {
 		/* Skipping disabled/not configured programs */
 		if (gebr_geoxml_program_get_status(GEBR_GEOXML_PROGRAM(program)) != GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED) {
-			job_issue(job, _("%u) Skipping disabled/not configured program '%s'."),
-				  ++issue_number,
-				  gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(program)));
+			job_issue(job, _("\n%u) Skipping disabled/not configured program '%s'."),
+				  ++issue_number, gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(program)));
 
 			gebr_geoxml_sequence_next(&program);
 			continue;
@@ -969,11 +966,11 @@ static void job_assembly_cmdline(GebrdJob *job)
 			break;
 		}
 		case 1:	/* Previous does not write to stdin but current expect something */
-			job_issue(job, _("Broken flow before %s (no input)."),
+			job_issue(job, _("\nBroken flow before %s (no input)."),
 				  gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(program)));
 			goto err;
 		case 2:	/* Previous does write to stdin but current does not carry about */
-			job_issue(job, _("Broken flow before %s (unexpected output)."),
+			job_issue(job, _("\nBroken flow before %s (unexpected output)."),
 				  gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(program)));
 			goto err;
 		case 3:	{
@@ -1011,11 +1008,10 @@ static void job_assembly_cmdline(GebrdJob *job)
 	}
 
 	if (has_error_output_file == FALSE)
-		job_issue(job,
-			  _("No error file selected; error output merged with standard output."));
+		job_issue(job, _("\nNo error file selected; error output merged with standard output."));
 	if (previous_stdout) {
 		if (strlen(gebr_geoxml_flow_io_get_output(job->flow)) == 0)
-			job_issue(job, _("Proceeding without output file."));
+			job_issue(job, _("\nProceeding without output file."));
 		else {
 			gchar * quoted = g_shell_quote(gebr_geoxml_flow_io_get_output(job->flow));
 			g_string_append_printf(job->parent.cmd_line, ">%s", quoted);
