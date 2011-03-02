@@ -326,7 +326,7 @@ void flow_export(void)
 			continue;
 		}
 
-		flow_set_paths_to(GEBR_GEOXML_FLOW(flow), active);
+		flow_set_paths_to_relative(GEBR_GEOXML_FLOW(flow), active);
 		filepath = g_build_path ("/", tempdir->str, flow_filename, NULL);
 
 		if (!document_save_at (flow, filepath, FALSE, FALSE)) {
@@ -428,11 +428,12 @@ void flow_copy_from_dicts(GebrGeoXmlFlow * flow)
 		flow_copy_from_dicts_parse_parameters(gebr_geoxml_program_get_parameters(GEBR_GEOXML_PROGRAM(program)));
 }
 
-void flow_set_paths_to(GebrGeoXmlFlow * flow, gboolean relative)
+typedef void (*set_path_func)(GString *path);
+static void flow_set_paths_to(GebrGeoXmlFlow * flow, set_path_func func)
 {
 	GString *path = g_string_new(NULL);
 
-	void flow_paths_foreach_parameter(GebrGeoXmlParameter * parameter, gboolean relative)
+	void flow_paths_foreach_parameter(GebrGeoXmlParameter * parameter)
 	{
 		if (gebr_geoxml_parameter_get_type(parameter) == GEBR_GEOXML_PARAMETER_TYPE_FILE) {
 			GebrGeoXmlSequence *value;
@@ -442,7 +443,7 @@ void flow_set_paths_to(GebrGeoXmlFlow * flow, gboolean relative)
 				GString *path;
 
 				path = g_string_new(gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(value)));
-				gebr_path_set_to(path, relative);
+				func(path);
 				gebr_geoxml_value_sequence_set(GEBR_GEOXML_VALUE_SEQUENCE(value), path->str);
 
 				g_string_free(path, TRUE);
@@ -452,17 +453,17 @@ void flow_set_paths_to(GebrGeoXmlFlow * flow, gboolean relative)
 
 	/* flow's IO */
 	g_string_assign(path, gebr_geoxml_flow_io_get_input(flow));
-	gebr_path_set_to(path, relative);
+	func(path);
 	gebr_geoxml_flow_io_set_input(flow, path->str);
 	g_string_assign(path, gebr_geoxml_flow_io_get_output(flow));
-	gebr_path_set_to(path, relative);
+	func(path);
 	gebr_geoxml_flow_io_set_output(flow, path->str);
 	g_string_assign(path, gebr_geoxml_flow_io_get_error(flow));
-	gebr_path_set_to(path, relative);
+	func(path);
 	gebr_geoxml_flow_io_set_error(flow, path->str);
 
 	/* all parameters */
-	gebr_geoxml_flow_foreach_parameter(flow, (GebrGeoXmlCallback)flow_paths_foreach_parameter, GINT_TO_POINTER(relative));
+	gebr_geoxml_flow_foreach_parameter(flow, (GebrGeoXmlCallback)flow_paths_foreach_parameter, NULL);
 
 	/* call recursively for each revision */
 	GebrGeoXmlSequence *revision;
@@ -472,7 +473,7 @@ void flow_set_paths_to(GebrGeoXmlFlow * flow, gboolean relative)
 		gebr_geoxml_flow_get_revision_data(GEBR_GEOXML_REVISION(revision), &xml, NULL, NULL);
 		GebrGeoXmlFlow *rev;
 		if (gebr_geoxml_document_load_buffer((GebrGeoXmlDocument **)&rev, xml) == GEBR_GEOXML_RETV_SUCCESS) {
-			flow_set_paths_to(rev, relative);
+			flow_set_paths_to(rev, func);
 			g_free(xml);
 			gebr_geoxml_document_to_string(GEBR_GEOXML_DOCUMENT(rev), &xml);
 			gebr_geoxml_flow_set_revision_data(GEBR_GEOXML_REVISION(revision), xml, NULL, NULL);
@@ -482,6 +483,22 @@ void flow_set_paths_to(GebrGeoXmlFlow * flow, gboolean relative)
 	}
 
 	g_string_free(path, TRUE);
+}
+void flow_set_paths_to_relative(GebrGeoXmlFlow * flow, gboolean relative)
+{
+	void func(GString *path)
+	{
+		gebr_path_set_to(path, relative);
+	}
+	flow_set_paths_to(flow, func);
+}
+void flow_set_paths_to_empty(GebrGeoXmlFlow * flow)
+{
+	void func(GString *path)
+	{
+		g_string_assign(path, "");
+	}
+	flow_set_paths_to(flow, func);
 }
 
 void flow_run(GebrServer *server, GebrCommServerRunConfig * config, gboolean single)

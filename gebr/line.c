@@ -133,7 +133,8 @@ gboolean line_delete(GtkTreeIter * iter, gboolean warn_user)
 	return TRUE;
 }
 
-void line_set_paths_to(GebrGeoXmlLine * line, gboolean relative)
+typedef void (*set_path_func)(GString *path);
+static void line_set_paths_to(GebrGeoXmlLine * line, set_path_func func)
 {
 	GebrGeoXmlSequence *line_path;
 	GString *path;
@@ -142,11 +143,27 @@ void line_set_paths_to(GebrGeoXmlLine * line, gboolean relative)
 	gebr_geoxml_line_get_path(line, &line_path, 0);
 	for (; line_path != NULL; gebr_geoxml_sequence_next(&line_path)) {
 		g_string_assign(path, gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(line_path)));
-		gebr_path_set_to(path, relative);
+		func(path);
 		gebr_geoxml_value_sequence_set(GEBR_GEOXML_VALUE_SEQUENCE(line_path), path->str);
 	}
 
 	g_string_free(path, TRUE);
+}
+void line_set_paths_to_relative(GebrGeoXmlLine *line, gboolean relative)
+{
+	void func(GString *path)
+	{
+		gebr_path_set_to(path, relative);
+	}
+	line_set_paths_to(line, func);
+}
+void line_set_paths_to_empty(GebrGeoXmlLine *line)
+{
+	void func(GString *path)
+	{
+		g_string_assign(path, "");
+	}
+	line_set_paths_to(line, func);
 }
 
 GtkTreeIter line_append_flow_iter(GebrGeoXmlFlow * flow, GebrGeoXmlLineFlow * line_flow)

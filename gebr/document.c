@@ -500,11 +500,11 @@ void document_import(GebrGeoXmlDocument * document)
 	switch (gebr_geoxml_document_get_type(document)) {
 	case GEBR_GEOXML_DOCUMENT_TYPE_FLOW:
 		extension = "flw";
-		flow_set_paths_to(GEBR_GEOXML_FLOW(document), FALSE);
+		flow_set_paths_to_relative(GEBR_GEOXML_FLOW(document), FALSE);
 		break;
 	case GEBR_GEOXML_DOCUMENT_TYPE_LINE:
 		extension = "lne";
-		line_set_paths_to(GEBR_GEOXML_LINE(document), FALSE);
+		line_set_paths_to_relative(GEBR_GEOXML_LINE(document), FALSE);
 		break;
 	case GEBR_GEOXML_DOCUMENT_TYPE_PROJECT:
 		extension = "prj";

@@ -736,7 +736,7 @@ void project_line_export(void)
 
 		line = GEBR_GEOXML_LINE (gebr_geoxml_document_clone (_line));
 
-		line_set_paths_to(line,	gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(check_box)));
+		line_set_paths_to_relative(line, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(check_box)));
 		filename = g_build_path ("/", tmpdir->str,
 					 gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(line)),
 					 NULL);
@@ -752,7 +752,7 @@ void project_line_export(void)
 			if (document_load((GebrGeoXmlDocument**)(&flow), flow_filename, FALSE))
 				continue;
 
-			flow_set_paths_to(flow,	gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(check_box)));
+			flow_set_paths_to_relative(flow, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(check_box)));
 			filename = g_build_path ("/", tmpdir->str, flow_filename, NULL);
 			document_save_at(GEBR_GEOXML_DOCUMENT(flow), filename, FALSE, FALSE);
 			g_free (filename);

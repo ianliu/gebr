@@ -55,7 +55,11 @@ void flow_copy_from_dicts(GebrGeoXmlFlow * flow);
 /**
  * Change all paths to relative or absolute according to \p relative.
  */
-void flow_set_paths_to(GebrGeoXmlFlow * flow, gboolean relative);
+void flow_set_paths_to_relative(GebrGeoXmlFlow * flow, gboolean relative);
+/**
+ * Clear all flow's paths
+ */
+void flow_set_paths_to_empty(GebrGeoXmlFlow * flow);
 /** 
  * Runs a flow.
  */

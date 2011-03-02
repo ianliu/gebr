@@ -41,7 +41,11 @@ gboolean line_delete(GtkTreeIter * iter, gboolean warn_user);
 /**
  * Change all paths in \p line to relative or absolute according \p relative.
  */
-void line_set_paths_to(GebrGeoXmlLine * line, gboolean relative);
+void line_set_paths_to_relative(GebrGeoXmlLine * line, gboolean relative);
+/**
+ * Clear all paths
+ */
+void line_set_paths_to_empty(GebrGeoXmlLine *flow);
 
 /** 
  * Append \p flow to flow browse and return the appended iter.
