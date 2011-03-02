@@ -910,7 +910,7 @@ static void flow_edition_on_combobox_changed(GtkComboBox * combobox)
 	if (!gtk_combo_box_get_active_iter(combobox, &iter))
 		return;
 
-	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter,
+	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->servers_filter), &iter,
 			   SERVER_POINTER, &server,
 			   -1);
 
