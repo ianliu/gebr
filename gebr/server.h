@@ -72,7 +72,8 @@ GType gebr_server_get_type (void) G_GNUC_CONST;
  */
 gboolean server_find_address (const gchar *address,
 			      GtkTreeIter *iter,
-			      const gchar *group);
+			      const gchar *group,
+			      gboolean is_fs);
 
 /**
  * Return the server name from \p address. Except for \p address 127.0.0.1,

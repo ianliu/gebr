@@ -281,13 +281,14 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 
 	if (gebr_geoxml_document_get_type(document) == GEBR_GEOXML_DOCUMENT_TYPE_LINE)
 	{
+		gboolean is_fs, is_fs2;
 		GtkTreeIter active, iter;
 		const gchar *curr_group;
 		GtkTreeModel *model;
 
 		model = GTK_TREE_MODEL (gebr.ui_server_list->common.combo_store);
 		groups_combo = ui_server_create_tag_combo_box ();
-		curr_group = gebr_geoxml_line_get_group (GEBR_GEOXML_LINE (document));
+		curr_group = gebr_geoxml_line_get_group (GEBR_GEOXML_LINE (document), &is_fs);
 
 		gebr_gui_gtk_tree_model_foreach (iter, model) {
 			gboolean is_sep;
@@ -295,8 +296,9 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 			gtk_tree_model_get (model, &iter,
 					    TAG_SEP, &is_sep,
 					    TAG_NAME, &name,
+					    TAG_FS, &is_fs2,
 					    -1);
-			if (!is_sep && g_strcmp0 (name, curr_group) == 0)
+			if (!is_sep && is_fs == is_fs2 && g_strcmp0 (name, curr_group) == 0)
 				active = iter;
 			g_free (name);
 		}
@@ -1077,6 +1079,7 @@ static void on_file_entry_activate (GtkEntry *entry, GebrGuiSequenceEdit *sequen
 static void on_groups_combo_box_changed (GtkComboBox *combo)
 {
 	gchar *group;
+	gboolean is_fs;
 	GtkTreeIter iter;
 	GtkTreeModel *model;
 
@@ -1087,12 +1090,15 @@ static void on_groups_combo_box_changed (GtkComboBox *combo)
 		return;
 
 	model = gtk_combo_box_get_model (combo);
-	gtk_tree_model_get (model, &iter, TAG_NAME, &group, -1);
+	gtk_tree_model_get (model, &iter,
+			    TAG_NAME, &group,
+			    TAG_FS, &is_fs,
+			    -1);
 
 	if (!group)
-		gebr_geoxml_line_set_group (gebr.line, "");
+		gebr_geoxml_line_set_group (gebr.line, "", FALSE);
 	else
-		gebr_geoxml_line_set_group (gebr.line, group);
+		gebr_geoxml_line_set_group (gebr.line, group, is_fs);
 
 	g_free (group);
 }

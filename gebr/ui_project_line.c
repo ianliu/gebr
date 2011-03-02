@@ -1379,23 +1379,34 @@ static gboolean servers_filter_visible_func (GtkTreeModel *filter,
 					     GtkTreeIter *iter,
 					     gpointer data)
 {
+	gchar *fsid;
+	gboolean is_fs;
 	const gchar *group;
 	GebrServer *server;
 
 	if (!gebr.line)
 		return FALSE;
 
-	group = gebr_geoxml_line_get_group (gebr.line);
+	group = gebr_geoxml_line_get_group (gebr.line, &is_fs);
 
 	if (!group)
 		return FALSE;
 
-	gtk_tree_model_get (filter, iter,
-			    SERVER_POINTER, &server,
-			    -1);
+	gtk_tree_model_get (filter, iter, SERVER_POINTER, &server, -1);
 
 	if (!server)
 		return FALSE;
+
+	if (is_fs) {
+		gtk_tree_model_get (filter, iter, SERVER_FS, &fsid, -1);
+		if (g_strcmp0 (fsid, group) == 0) {
+			g_free (fsid);
+			return TRUE;
+		} else {
+			g_free (fsid);
+			return FALSE;
+		}
+	}
 
 	return ui_server_has_tag (server, group);
 }

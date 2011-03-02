@@ -468,13 +468,14 @@ static void flow_browse_load(void)
 		flow_browse_load_revision(GEBR_GEOXML_REVISION(revision), FALSE);
 
 	/* select last edited server */
+	gboolean is_fs;
 	const gchar *group;
 	const gchar *address;
 
-	group = gebr_geoxml_line_get_group (gebr.line);
+	group = gebr_geoxml_line_get_group (gebr.line, &is_fs);
 	address = gebr_geoxml_flow_server_get_address (gebr.flow);
 
-	if (server_find_address (address, &server_iter, group)) {
+	if (server_find_address (address, &server_iter, group, is_fs)) {
 		GtkTreeIter filter_iter;
 
 		gtk_tree_model_filter_convert_child_iter_to_iter (
