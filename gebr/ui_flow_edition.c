@@ -101,21 +101,21 @@ struct ui_flow_edition *flow_edition_setup_ui(void)
 	gtk_paned_pack1(GTK_PANED(hpanel), left_vbox, FALSE, FALSE);
 
 	combobox = gtk_combo_box_new_with_model(gebr.ui_project_line->servers_filter);
-	gebr.ui_flow_edition->queue_combobox = gtk_combo_box_new ();
-	g_signal_connect (gebr.ui_flow_edition->queue_combobox, "changed",
+	ui_flow_edition->queue_combobox = gtk_combo_box_new ();
+	g_signal_connect (ui_flow_edition->queue_combobox, "changed",
 			  G_CALLBACK (on_queue_combobox_changed), combobox);
 
 	renderer = gtk_cell_renderer_text_new();
 
 	gtk_cell_layout_pack_start (
-			GTK_CELL_LAYOUT (gebr.ui_flow_edition->queue_combobox),
+			GTK_CELL_LAYOUT (ui_flow_edition->queue_combobox),
 			renderer, TRUE);
 
 	gtk_cell_layout_add_attribute (
-			GTK_CELL_LAYOUT (gebr.ui_flow_edition->queue_combobox),
+			GTK_CELL_LAYOUT (ui_flow_edition->queue_combobox),
 			renderer, "text", 0);
 
-	gtk_widget_show (gebr.ui_flow_edition->queue_combobox);
+	gtk_widget_show (ui_flow_edition->queue_combobox);
 
 	renderer = gtk_cell_renderer_pixbuf_new();
 	g_object_set(renderer, "stock-size", GTK_ICON_SIZE_MENU, NULL);
@@ -145,8 +145,8 @@ struct ui_flow_edition *flow_edition_setup_ui(void)
 	gtk_alignment_set_padding(GTK_ALIGNMENT(alignment), 0, 4, 5, 5);
 	ui_flow_edition->queue_bin = GTK_BIN(alignment);
 
-	gtk_container_add (GTK_CONTAINER (gebr.ui_flow_edition->queue_bin),
-			   gebr.ui_flow_edition->queue_combobox);
+	gtk_container_add (GTK_CONTAINER (ui_flow_edition->queue_bin),
+			   ui_flow_edition->queue_combobox);
 	
 	gtk_widget_set_sensitive(ui_flow_edition->queue_combobox, TRUE);
 	gtk_container_add(GTK_CONTAINER(ui_flow_edition->queue_bin), ui_flow_edition->queue_combobox);
