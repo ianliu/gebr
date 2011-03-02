@@ -190,15 +190,16 @@ glong gebr_geoxml_line_get_paths_number(GebrGeoXmlLine * line);
  * @line:
  * @group: the group of server this line will see
  */
-void gebr_geoxml_line_set_group (GebrGeoXmlLine *line, const gchar *group);
+void gebr_geoxml_line_set_group (GebrGeoXmlLine *line, const gchar *group, gboolean is_fs);
 
 /**
  * gebr_geoxml_line_get_group:
  * @line:
+ * @is_fs:
  *
  * Returns: the server group associated with this line
  */
-const gchar *gebr_geoxml_line_get_group (GebrGeoXmlLine *line);
+const gchar *gebr_geoxml_line_get_group (GebrGeoXmlLine *line, gboolean *is_fs);
 
 G_END_DECLS
 #endif				//__GEBR_GEOXML_LINE_H
