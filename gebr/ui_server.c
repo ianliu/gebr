@@ -336,6 +336,7 @@ static void server_list_add(struct ui_server_list *ui_server_list, const gchar *
 
 	server = gebr_server_new(address, FALSE, "");
 	gebr_server_set_autoconnect (server, TRUE);
+	gtk_tree_model_filter_refilter (GTK_TREE_MODEL_FILTER (gebr.ui_project_line->servers_filter));
 }
 
 /* Function: on_add_clicked

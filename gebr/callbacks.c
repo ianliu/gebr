@@ -580,6 +580,7 @@ void on_server_common_remove(void)
 	}
 
 	ui_server_update_tags_combobox ();
+	gtk_tree_model_filter_refilter (GTK_TREE_MODEL_FILTER (gebr.ui_project_line->servers_filter));
 }
 
 void on_server_common_stop(void)

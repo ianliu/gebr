@@ -1100,5 +1100,7 @@ static void on_groups_combo_box_changed (GtkComboBox *combo)
 	else
 		gebr_geoxml_line_set_group (gebr.line, group, is_fs);
 
+	gtk_tree_model_filter_refilter (
+			GTK_TREE_MODEL_FILTER (gebr.ui_project_line->servers_filter));
 	g_free (group);
 }
