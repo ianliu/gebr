@@ -608,6 +608,9 @@ static void gebr_gui_sequence_edit_add_request (GebrGuiSequenceEdit *self)
 	selection = gtk_tree_view_get_selection (tree);
 	n = gtk_tree_model_iter_n_children (model, NULL);
 
+	if (!n)
+		return;
+
 	if (gtk_tree_model_iter_nth_child (model, &iter, NULL, n - 1)) {
 		path = gtk_tree_model_get_path (model, &iter);
 		gtk_tree_selection_select_path (selection, path);
