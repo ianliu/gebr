@@ -439,6 +439,9 @@ static void on_cursor_changed(void){
 
 
 	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_server_list->common.view) {
+		if (!gtk_tree_model_sort_iter_is_valid(GTK_TREE_MODEL_SORT(gebr.ui_server_list->common.sort_store), &iter))
+			return;
+
 		gtk_tree_model_get (gebr.ui_server_list->common.sort_store, &iter,
 				    SERVER_POINTER, &server,
 				    -1);
