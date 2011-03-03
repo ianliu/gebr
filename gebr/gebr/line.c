@@ -43,7 +43,7 @@ static void on_properties_response(gboolean accept)
 		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("New line created."));
 	else {
 		GtkTreeIter iter;
-		if (!project_line_get_selected(&iter, DontWarnUnselection))
+		if (project_line_get_selected(&iter, DontWarnUnselection))
 			line_delete(&iter, FALSE);
 	}
 }
