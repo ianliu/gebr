@@ -41,7 +41,7 @@ static void on_properties_response(gboolean accept)
 		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("New project created."));
 	else {
 		GtkTreeIter iter;
-		if (!project_line_get_selected(&iter, DontWarnUnselection))
+		if (project_line_get_selected(&iter, DontWarnUnselection))
 			project_delete(&iter, FALSE);
 	}
 }
@@ -58,7 +58,6 @@ void project_new(void)
 	gebr_geoxml_document_set_email(project, gebr.config.email->str);
 	iter = project_append_iter(GEBR_GEOXML_PROJECT(project));
 	document_save(project, TRUE, FALSE);
-
 	project_line_select_iter(&iter);
 
 	document_properties_setup_ui(GEBR_GEOXML_DOCUMENT(gebr.project), on_properties_response, TRUE);
