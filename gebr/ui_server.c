@@ -185,8 +185,8 @@ static void server_common_setup(struct ui_server_common *ui_server_common)
 	view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_server_common->sort_store));
 	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(view)),
 				    GTK_SELECTION_MULTIPLE);
-	g_signal_connect(GTK_OBJECT(view), "cursor-changed",
-			 G_CALLBACK(on_cursor_changed), NULL);
+	//g_signal_connect(GTK_OBJECT(view), "cursor-changed",
+			 //G_CALLBACK(on_cursor_changed), NULL);
 	gtk_container_add(GTK_CONTAINER(scrolled_window), view);
 	ui_server_common->view = view;
 	gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(view),
@@ -439,9 +439,6 @@ static void on_cursor_changed(void){
 
 
 	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_server_list->common.view) {
-		if (!gtk_tree_model_sort_iter_is_valid(GTK_TREE_MODEL_SORT(gebr.ui_server_list->common.sort_store), &iter))
-			return;
-
 		gtk_tree_model_get (gebr.ui_server_list->common.sort_store, &iter,
 				    SERVER_POINTER, &server,
 				    -1);
