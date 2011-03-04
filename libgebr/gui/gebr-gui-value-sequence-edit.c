@@ -279,3 +279,10 @@ gebr_gui_value_sequence_edit_rename(GebrGuiValueSequenceEdit * gebr_gui_value_se
 	return TRUE;
 }
 
+void gebr_gui_value_sequence_edit_clear (GebrGuiValueSequenceEdit *self)
+{
+	GebrGuiSequenceEdit *super;
+
+	super = GEBR_GUI_SEQUENCE_EDIT (self);
+	gtk_list_store_clear (super->list_store);
+}
