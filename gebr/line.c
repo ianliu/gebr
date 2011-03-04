@@ -149,6 +149,7 @@ static void line_set_paths_to(GebrGeoXmlLine * line, set_path_func func)
 
 	g_string_free(path, TRUE);
 }
+
 void line_set_paths_to_relative(GebrGeoXmlLine *line, gboolean relative)
 {
 	void func(GString *path)
@@ -157,13 +158,16 @@ void line_set_paths_to_relative(GebrGeoXmlLine *line, gboolean relative)
 	}
 	line_set_paths_to(line, func);
 }
-void line_set_paths_to_empty(GebrGeoXmlLine *line)
+
+void line_set_paths_to_empty (GebrGeoXmlLine *line)
 {
-	void func(GString *path)
-	{
-		g_string_assign(path, "");
+	GebrGeoXmlSequence *seq;
+
+	gebr_geoxml_line_get_path (line, &seq, 0);
+	while (seq) {
+		gebr_geoxml_sequence_remove (seq);
+		gebr_geoxml_line_get_path (line, &seq, 0);
 	}
-	line_set_paths_to(line, func);
 }
 
 GtkTreeIter line_append_flow_iter(GebrGeoXmlFlow * flow, GebrGeoXmlLineFlow * line_flow)
