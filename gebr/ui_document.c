@@ -134,7 +134,7 @@ void on_properties_destroy(GtkWindow * window, GebrPropertiesData * data);
 
 static void on_file_entry_activate (GtkEntry *entry, GebrGuiSequenceEdit *sequence_edit);
 
-static void on_groups_combo_box_changed (GtkComboBox *combo);
+static void on_groups_combo_box_changed (GtkComboBox *combo, GebrGuiValueSequenceEdit *edit);
 
 static const GtkActionEntry dict_actions_entries[] = {
 	{"add", GTK_STOCK_ADD, NULL, NULL, N_("Add new parameter."),
@@ -307,9 +307,6 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 
 		gtk_combo_box_set_active_iter (GTK_COMBO_BOX (groups_combo), &active);
 
-		g_signal_connect (groups_combo, "changed",
-				  G_CALLBACK (on_groups_combo_box_changed), NULL);
-
 		label = gtk_label_new (_("Server group"));
 		gtk_table_attach (GTK_TABLE (table), label, 0, 1, row, row+1, GTK_FILL, GTK_FILL, 3, 3);
 		gtk_table_attach (GTK_TABLE (table), groups_combo, 1, 2, row, row+1, GTK_FILL, GTK_FILL, 3, 3);
@@ -333,6 +330,9 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 		gebr_gui_value_sequence_edit_load(GEBR_GUI_VALUE_SEQUENCE_EDIT(path_sequence_edit), path_sequence,
 						  (ValueSequenceSetFunction) gebr_geoxml_value_sequence_set,
 						  (ValueSequenceGetFunction) gebr_geoxml_value_sequence_get, NULL);
+
+		g_signal_connect (groups_combo, "changed",
+				  G_CALLBACK (on_groups_combo_box_changed), path_sequence_edit);
 
 		g_signal_connect (GEBR_GUI_FILE_ENTRY (file_entry)->entry, "activate",
 				  G_CALLBACK (on_file_entry_activate), path_sequence_edit);
@@ -1078,7 +1078,7 @@ static void on_file_entry_activate (GtkEntry *entry, GebrGuiSequenceEdit *sequen
 	g_signal_emit_by_name (sequence_edit, "add-request");
 }
 
-static void on_groups_combo_box_changed (GtkComboBox *combo)
+static void on_groups_combo_box_changed (GtkComboBox *combo, GebrGuiValueSequenceEdit *edit)
 {
 	gint *index;
 	gchar *group;
@@ -1115,6 +1115,9 @@ static void on_groups_combo_box_changed (GtkComboBox *combo)
 		}
 
 		line_set_paths_to_empty (gebr.line);
+		gebr_gui_value_sequence_edit_clear (edit);
+		flow_browse_info_update();
+		flow_edition_set_io();
 	}
 
 	model = gtk_combo_box_get_model (combo);
