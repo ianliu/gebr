@@ -34,6 +34,7 @@
 #include "document.h"
 #include "ui_project_line.h"
 #include "ui_paths.h"
+#include "line.h"
 
 enum {
 	DICT_EDIT_DOCUMENT,
@@ -1091,6 +1092,30 @@ static void on_groups_combo_box_changed (GtkComboBox *combo)
 
 	if (!gtk_combo_box_get_active_iter (combo, &iter))
 		return;
+
+	gboolean clean = gebr_gui_message_dialog (GTK_MESSAGE_QUESTION,
+						  GTK_BUTTONS_OK_CANCEL,
+						  _("Clean line and flow(s) path(s)?"),
+						  _("Do you wish to clean all paths from"
+						    " this line and its respective flows?"));
+	if (clean)
+	{
+		GebrGeoXmlDocument *flow;
+		GebrGeoXmlSequence *sequence;
+
+		gebr_geoxml_line_get_flow (gebr.line, &sequence, 0);
+
+		while (sequence)
+		{
+			const gchar *fname;
+			fname = gebr_geoxml_line_get_flow_source (GEBR_GEOXML_LINE_FLOW (sequence));
+			if (document_load (&flow, fname, TRUE) == GEBR_GEOXML_RETV_SUCCESS)
+				flow_set_paths_to_empty (GEBR_GEOXML_FLOW (flow));
+			gebr_geoxml_sequence_next (&sequence);
+		}
+
+		line_set_paths_to_empty (gebr.line);
+	}
 
 	model = gtk_combo_box_get_model (combo);
 	path = gtk_tree_model_get_path (model, &iter);
