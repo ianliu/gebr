@@ -421,6 +421,8 @@ void on_configure_preferences_activate(void)
 void on_configure_servers_activate(void)
 {
 	server_list_show(gebr.ui_server_list);
+        gtk_window_remove_accel_group(GTK_WINDOW(gebr.window), gebr.accel_group_array[gebr.last_notebook]);
+	gtk_window_add_accel_group(GTK_WINDOW(gebr.ui_server_list->common.dialog), gebr.accel_group_array[ACCEL_SERVER]);
 }
 
 void on_help_contents_activate(void)

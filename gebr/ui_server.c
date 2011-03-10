@@ -287,6 +287,8 @@ static void server_common_actions(GtkDialog * dialog, gint arg1, struct ui_serve
 			break;
 	case RESPONSE_CLOSE:	/* Only for server list */
 		gtk_widget_hide(gebr.ui_server_list->common.dialog);
+		gtk_window_remove_accel_group(GTK_WINDOW(gebr.ui_server_list->common.dialog), gebr.accel_group_array[ACCEL_SERVER]);
+		gtk_window_add_accel_group(GTK_WINDOW(gebr.window), gebr.accel_group_array[gebr.last_notebook]);
 		gebr_config_save(FALSE);
 		break;
 	default:

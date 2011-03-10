@@ -178,7 +178,7 @@ static const GtkActionEntry actions_entries_server[] = {
 	{"server_autoconnect", NULL, N_("Auto connect"),
 		NULL, N_("Connect the server at startup"), G_CALLBACK(on_server_common_autoconnect_changed)},
 	{"server_remove", GTK_STOCK_REMOVE, N_("Remove"),
-		NULL, N_("Remove server from list"), G_CALLBACK(on_server_common_remove)},
+		"Delete", N_("Remove server from list"), G_CALLBACK(on_server_common_remove)},
 	{"server_stop", GTK_STOCK_STOP, N_("Stop server"),
 		NULL, N_("Stop server from running"), G_CALLBACK(on_server_common_stop)},
 };

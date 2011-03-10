@@ -207,12 +207,14 @@ gboolean gebr_quit(gboolean save_config)
 	g_object_unref(gebr.accel_group_array[ACCEL_JOB_CONTROL]);
 	g_object_unref(gebr.accel_group_array[ACCEL_GENERAL]);
 	g_object_unref(gebr.accel_group_array[ACCEL_STATUS]);
+	g_object_unref(gebr.accel_group_array[ACCEL_SERVER]);
 	g_object_unref(gebr.action_group_general);
 	g_object_unref(gebr.action_group_project_line);
 	g_object_unref(gebr.action_group_flow);
 	g_object_unref(gebr.action_group_flow_edition);
 	g_object_unref(gebr.action_group_job_control);
 	g_object_unref(gebr.action_group_status);
+	g_object_unref(gebr.action_group_server);
 
 	gtk_main_quit();
 
