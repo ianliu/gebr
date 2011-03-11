@@ -73,6 +73,11 @@ typedef struct {
 	GtkWidget * email;
 	GtkWidget * title;
 
+	/* line stuff */
+	GtkWidget *path_sequence_edit;
+	GtkWidget *groups_combo;
+	gint previous_active_group;
+
 	GebrPropertiesResponseFunc func;
 	gboolean accept_response;
 } GebrPropertiesData;
@@ -280,6 +285,8 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 	/* read */
 	gtk_entry_set_text(GTK_ENTRY(email), gebr_geoxml_document_get_email(document));
 
+	data->previous_active_group = 0;
+	data->groups_combo = NULL;
 	if (gebr_geoxml_document_get_type(document) == GEBR_GEOXML_DOCUMENT_TYPE_LINE)
 	{
 		gboolean is_fs, is_fs2;
@@ -289,7 +296,7 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 
 		model = GTK_TREE_MODEL (gebr.ui_server_list->common.combo_store);
 		gtk_tree_model_get_iter_first (model, &active);
-		groups_combo = ui_server_create_tag_combo_box ();
+		data->groups_combo = groups_combo = ui_server_create_tag_combo_box ();
 		curr_group = gebr_geoxml_line_get_group (GEBR_GEOXML_LINE (document), &is_fs);
 
 		gebr_gui_gtk_tree_model_foreach (iter, model) {
@@ -306,6 +313,7 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 		}
 
 		gtk_combo_box_set_active_iter (GTK_COMBO_BOX (groups_combo), &active);
+		data->previous_active_group = gtk_combo_box_get_active(GTK_COMBO_BOX(groups_combo));
 
 		label = gtk_label_new (_("Server group"));
 		gtk_table_attach (GTK_TABLE (table), label, 0, 1, row, row+1, GTK_FILL, GTK_FILL, 3, 3);
@@ -326,7 +334,7 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 		gtk_widget_set_size_request(file_entry, 220, 30);
 
 		gebr_geoxml_line_get_path(gebr.line, &path_sequence, 0);
-		path_sequence_edit = gebr_gui_value_sequence_edit_new(file_entry);
+		data->path_sequence_edit = path_sequence_edit = gebr_gui_value_sequence_edit_new(file_entry);
 		gebr_gui_value_sequence_edit_load(GEBR_GUI_VALUE_SEQUENCE_EDIT(path_sequence_edit), path_sequence,
 						  (ValueSequenceSetFunction) gebr_geoxml_value_sequence_set,
 						  (ValueSequenceGetFunction) gebr_geoxml_value_sequence_get, NULL);
@@ -1041,19 +1049,45 @@ void on_response_ok(GtkButton * button, GebrPropertiesData * data)
 	/* Update title in apropriated store */
 	switch ((type = gebr_geoxml_document_get_type(data->document))) {
 	case GEBR_GEOXML_DOCUMENT_TYPE_PROJECT:
-	case GEBR_GEOXML_DOCUMENT_TYPE_LINE:
+	case GEBR_GEOXML_DOCUMENT_TYPE_LINE: {
 		project_line_get_selected(&iter, DontWarnUnselection);
 		gtk_tree_store_set(gebr.ui_project_line->store, &iter,
 				   PL_TITLE, gebr_geoxml_document_get_title(data->document), -1);
 		project_line_info_update();
+
+
+		gint current_active_group = gtk_combo_box_get_active(GTK_COMBO_BOX(data->groups_combo));
+		if (current_active_group != data->previous_active_group) {
+			gboolean clean = gebr_gui_message_dialog (GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
+								  _("Clean line and flow(s) path(s)?"),
+								  _("Do you wish to clean all paths from"
+								    " this line and its respective flows?"));
+			if (clean) {
+				GebrGeoXmlDocument *flow;
+				GebrGeoXmlSequence *sequence;
+
+				gebr_geoxml_line_get_flow (gebr.line, &sequence, 0);
+				while (sequence) {
+					const gchar *fname;
+					fname = gebr_geoxml_line_get_flow_source (GEBR_GEOXML_LINE_FLOW (sequence));
+					if (document_load (&flow, fname, TRUE) == GEBR_GEOXML_RETV_SUCCESS)
+						flow_set_paths_to_empty (GEBR_GEOXML_FLOW (flow));
+					gebr_geoxml_sequence_next (&sequence);
+				}
+
+				line_set_paths_to_empty (gebr.line);
+				gebr_gui_value_sequence_edit_clear (GEBR_GUI_VALUE_SEQUENCE_EDIT(data->path_sequence_edit));
+				flow_browse_reload_selected();
+			}
+		}
 		break;
-	case GEBR_GEOXML_DOCUMENT_TYPE_FLOW:
+	} case GEBR_GEOXML_DOCUMENT_TYPE_FLOW: {
 		flow_browse_get_selected(&iter, FALSE);
 		gtk_list_store_set(gebr.ui_flow_browse->store, &iter,
 				   FB_TITLE, gebr_geoxml_document_get_title(data->document), -1);
 		flow_browse_info_update();
 		break;
-	default:
+	} default:
 		break;
 	}
 
@@ -1092,32 +1126,6 @@ static void on_groups_combo_box_changed (GtkComboBox *combo, GebrGuiValueSequenc
 
 	if (!gtk_combo_box_get_active_iter (combo, &iter))
 		return;
-
-	gboolean clean = gebr_gui_message_dialog (GTK_MESSAGE_QUESTION,
-						  GTK_BUTTONS_YES_NO,
-						  _("Clean line and flow(s) path(s)?"),
-						  _("Do you wish to clean all paths from"
-						    " this line and its respective flows?"));
-	if (clean)
-	{
-		GebrGeoXmlDocument *flow;
-		GebrGeoXmlSequence *sequence;
-
-		gebr_geoxml_line_get_flow (gebr.line, &sequence, 0);
-
-		while (sequence)
-		{
-			const gchar *fname;
-			fname = gebr_geoxml_line_get_flow_source (GEBR_GEOXML_LINE_FLOW (sequence));
-			if (document_load (&flow, fname, TRUE) == GEBR_GEOXML_RETV_SUCCESS)
-				flow_set_paths_to_empty (GEBR_GEOXML_FLOW (flow));
-			gebr_geoxml_sequence_next (&sequence);
-		}
-
-		line_set_paths_to_empty (gebr.line);
-		gebr_gui_value_sequence_edit_clear (edit);
-		flow_browse_reload_selected();
-	}
 
 	model = gtk_combo_box_get_model (combo);
 	path = gtk_tree_model_get_path (model, &iter);
