@@ -100,7 +100,7 @@ struct ui_flow_edition *flow_edition_setup_ui(void)
 	left_vbox = gtk_vbox_new(FALSE, 5);
 	gtk_paned_pack1(GTK_PANED(hpanel), left_vbox, FALSE, FALSE);
 
-	combobox = gtk_combo_box_new_with_model(gebr.ui_project_line->servers_filter);
+	ui_flow_edition->server_combobox = combobox = gtk_combo_box_new ();
 	ui_flow_edition->queue_combobox = gtk_combo_box_new ();
 	g_signal_connect (ui_flow_edition->queue_combobox, "changed",
 			  G_CALLBACK (on_queue_combobox_changed), combobox);
@@ -132,7 +132,6 @@ struct ui_flow_edition *flow_edition_setup_ui(void)
 	alignment = gtk_alignment_new(0.5, 0.5, 1, 1);
 	label = gtk_label_new_with_mnemonic(_("Server"));
 	gtk_alignment_set_padding(GTK_ALIGNMENT(alignment), 0, 4, 5, 5);
-	ui_flow_edition->server_combobox = combobox;
 	gtk_frame_set_label_widget(GTK_FRAME(frame), label);
 	gtk_container_add(GTK_CONTAINER(frame), alignment);
 	gtk_container_add(GTK_CONTAINER(alignment), combobox);

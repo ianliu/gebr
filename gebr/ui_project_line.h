@@ -136,5 +136,9 @@ void project_line_edit_help(void);
 
 gchar * gebr_line_generate_header(GebrGeoXmlDocument * document);
 
+gboolean servers_filter_visible_func (GtkTreeModel *filter,
+				      GtkTreeIter *iter,
+				      gpointer data);
+
 G_END_DECLS
 #endif				//__UI_PROJECT_LINE_H

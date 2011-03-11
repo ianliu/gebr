@@ -40,6 +40,7 @@
 #include "callbacks.h"
 #include "document.h"
 #include "flow.h"
+#include "ui_project_line.h"
 
 /*
  * Prototypes
@@ -116,6 +117,18 @@ void gebr_init(void)
 
 	/* finally the config. file */
 	gebr_config_load();
+
+	gebr.ui_project_line->servers_filter = gtk_tree_model_filter_new (
+			GTK_TREE_MODEL (gebr.ui_server_list->common.store),
+			NULL);
+
+	gtk_tree_model_filter_set_visible_func (
+			GTK_TREE_MODEL_FILTER (gebr.ui_project_line->servers_filter),
+			servers_filter_visible_func, NULL, NULL);
+
+	gtk_combo_box_set_model (
+			GTK_COMBO_BOX (gebr.ui_flow_edition->server_combobox),
+			gebr.ui_project_line->servers_filter);
 
 	/* check for a menu list change */
 	if (menu_refresh_needed() == TRUE) {

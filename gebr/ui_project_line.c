@@ -62,10 +62,6 @@ static gboolean line_can_reorder (GtkTreeView *tree_view,
 				  GtkTreeIter *target_iter,
 				  GtkTreeViewDropPosition drop_position);
 
-static gboolean servers_filter_visible_func (GtkTreeModel *filter,
-					     GtkTreeIter *iter,
-					     gpointer data);
-
 struct ui_project_line *project_line_setup_ui(void)
 {
 	struct ui_project_line *ui_project_line;
@@ -82,13 +78,7 @@ struct ui_project_line *project_line_setup_ui(void)
 	/* alloc */
 	ui_project_line = g_new(struct ui_project_line, 1);
 
-	ui_project_line->servers_filter = gtk_tree_model_filter_new (
-			GTK_TREE_MODEL (gebr.ui_server_list->common.store),
-			NULL);
-
-	gtk_tree_model_filter_set_visible_func (
-			GTK_TREE_MODEL_FILTER (ui_project_line->servers_filter),
-			servers_filter_visible_func, NULL, NULL);
+	ui_project_line->servers_filter = NULL;
 
 	/* Create projects/lines ui_project_line->widget */
 	ui_project_line->widget = gtk_vbox_new(FALSE, 0);
@@ -1375,9 +1365,9 @@ gchar * gebr_line_generate_header(GebrGeoXmlDocument * document)
 	return g_string_free(dump, FALSE);
 }
 
-static gboolean servers_filter_visible_func (GtkTreeModel *filter,
-					     GtkTreeIter *iter,
-					     gpointer data)
+gboolean servers_filter_visible_func (GtkTreeModel *filter,
+				      GtkTreeIter *iter,
+				      gpointer data)
 {
 	gchar *fsid;
 	gboolean is_fs;
