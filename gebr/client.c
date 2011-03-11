@@ -36,6 +36,20 @@ void client_process_server_response(struct gebr_comm_server *comm_server, GebrCo
 {
 }
 
+/**
+ * This is a callback function for the "response-recived" signal.
+ * Explanation: First the client sends a message to the server,
+ * (\see gebr_comm_protocol_socket_send_request). Then, after
+ * processsing the message, the server sends an response to the
+ * client. When the client recieves this response, it will trigger
+ * the "response-recieved" signal (this signal is emitted by the 
+ * http request).
+ *
+ * @Parameters:
+ * request: This is the http-request who emitted the signal.
+ * response: This is an http-response with the data sent by the server.
+ *
+ */
 void on_fs_nickname_msg(GebrCommHttpMsg *request, GebrCommHttpMsg *response, GebrServer *server)
 {
 	if (request->method == GEBR_COMM_HTTP_METHOD_GET) 
@@ -181,6 +195,17 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 				gebr_comm_protocol_socket_oldmsg_send(comm_server->socket, FALSE,
 								      gebr_comm_protocol_defs.lst_def, 0);
 				/* set out nickname */
+				/** [Json test protocol]
+				 * Our server communicates with the client using a http-like protocol.
+				 * The variable "req" is a http-request, that gets the data via "GET"
+				 * (much like an html form).
+				 *
+				 * Then, we connect an callback on the request (req), this callback
+				 * is activated when the client recieves a server response.
+				 *
+				 * For this communication between server and client we use a json
+				 * serialized object.
+				 */
 				GebrCommHttpMsg *req = gebr_comm_protocol_socket_send_request(comm_server->socket,
 											      GEBR_COMM_HTTP_METHOD_GET,
 											      "/fs-nickname", NULL);

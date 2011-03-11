@@ -65,7 +65,22 @@ struct _GebrCommHttpMsg {
 };
 struct _GebrCommHttpMsgClass {
 	GObjectClass parent;
-
+/**
+ * This is the callback descriptor for the "response-recived" signal.
+ * Explanation: First the client sends a message to the server,
+ * (\see gebr_comm_protocol_socket_send_request). Then, after
+ * processsing the message, the server sends an response to the
+ * client. When the client recieves this response, it will trigger
+ * the "response-recieved" signal (this signal is emitted by the 
+ * http request object).
+ *
+ * @Parameters:
+ * request: This is the http-request object who emitted the signal.
+ * response:  This is an http-response message, that cames with server response data.
+ * Being this data "requested" by the http-request message. The response may contain
+ * error information.
+ *
+ */
 	void (*response_received)(GebrCommHttpMsg *request, GebrCommHttpMsg *response);
 };
 

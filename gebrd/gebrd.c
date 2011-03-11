@@ -53,7 +53,7 @@ G_DEFINE_TYPE(GebrdApp, gebrd_app, G_TYPE_OBJECT)
 static void gebrd_app_init(GebrdApp * self)
 {
 	self->user_data_filename = g_string_new(NULL);
-	g_string_printf(self->user_data_filename, "%s/.gebr/gebrd/user.json", g_get_home_dir());
+	g_string_printf(self->user_data_filename, "%s/.gebr/gebrd/fs_name.json", g_get_home_dir());
 	self->user = GEBRD_USER(json_gobject_from_file(GEBRD_USER_TYPE, self->user_data_filename->str));
 	if (self->user == NULL)
 		self->user = GEBRD_USER(g_object_new(GEBRD_USER_TYPE, NULL));
