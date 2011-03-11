@@ -434,7 +434,6 @@ void flow_browse_load_revision(GebrGeoXmlRevision * revision, gboolean new)
 static void flow_browse_load(void)
 {
 	GtkTreeIter iter;
-	GtkTreeIter server_iter;
 
 	gchar *filename;
 	gchar *title;
@@ -471,21 +470,27 @@ static void flow_browse_load(void)
 	gboolean is_fs;
 	const gchar *group;
 	const gchar *address;
+	GtkTreeModel *model;
+	gboolean found = FALSE;
 
+	model = gebr.ui_project_line->servers_filter;
 	group = gebr_geoxml_line_get_group (gebr.line, &is_fs);
 	address = gebr_geoxml_flow_server_get_address (gebr.flow);
 
-	if (server_find_address (address, &server_iter, group, is_fs)) {
-		GtkTreeIter filter_iter;
+	gebr_gui_gtk_tree_model_foreach (iter, model) {
+		GebrServer *srv;
+		gtk_tree_model_get (model, &iter, SERVER_POINTER, &srv, -1);
+		if (g_strcmp0 (srv->comm->address->str, address) == 0) {
+			found = TRUE;
+			break;
+		}
+	}
 
-		gtk_tree_model_filter_convert_child_iter_to_iter (
-				GTK_TREE_MODEL_FILTER (gebr.ui_project_line->servers_filter),
-				&filter_iter, &server_iter);
-
+	if (found)
 		gtk_combo_box_set_active_iter (
 				GTK_COMBO_BOX (gebr.ui_flow_edition->server_combobox),
-				&filter_iter);
-	} else
+				&iter);
+	else
 		gtk_combo_box_set_active(GTK_COMBO_BOX(gebr.ui_flow_edition->server_combobox), 0);
 
 	flow_edition_on_server_changed();
