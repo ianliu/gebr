@@ -241,6 +241,25 @@ GebrGeoXmlParameters *gebr_geoxml_parameter_get_parameters(GebrGeoXmlParameter *
 	return (GebrGeoXmlParameters *) gdome_n_parentNode((GdomeNode *) parameter, &exception);
 }
 
+GebrGeoXmlProgram *gebr_geoxml_parameter_get_program(GebrGeoXmlParameter * parameter)
+{
+	if (parameter == NULL)
+		return NULL;
+
+	GdomeElement *program_element = (GdomeElement*)parameter;
+	while (1) {
+		GdomeDOMString *name;
+
+		program_element = (GdomeElement *) gdome_n_parentNode((GdomeNode *) program_element, &exception);
+		name = gdome_el_nodeName(program_element, &exception);
+		if (g_strcmp0(name->str, "program") == 0)
+			break;
+	}
+
+	return (GebrGeoXmlProgram *) program_element;
+}
+
+
 gboolean gebr_geoxml_parameter_set_type(GebrGeoXmlParameter * parameter, GebrGeoXmlParameterType type)
 {
 	GdomeElement * type_element;

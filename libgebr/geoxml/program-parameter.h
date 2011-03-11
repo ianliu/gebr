@@ -122,19 +122,11 @@ typedef struct gebr_geoxml_program_parameter GebrGeoXmlProgramParameter;
  */
 typedef struct gebr_geoxml_property_value GebrGeoXmlPropertyValue;
 
+#include "sequence.h"
 #include "program-parameter.h"
-#include "program.h"
 #include "enum_option.h"
-#include "value_sequence.h"
 #include "document.h"
 #include "macros.h"
-
-/**
- * Get the program to which \p program_parameter belongs to.
- *
- * If \p program_parameter is NULL nothing is done.
- */
-GebrGeoXmlProgram *gebr_geoxml_program_parameter_program(GebrGeoXmlProgramParameter * program_parameter);
 
 /**
  * Mark \p program_parameter as required or optional to run its program.
@@ -267,8 +259,6 @@ GebrGeoXmlPropertyValue *gebr_geoxml_program_parameter_append_value(GebrGeoXmlPr
  * \see gebr_geoxml_sequence_move gebr_geoxml_sequence_move_up gebr_geoxml_sequence_move_down gebr_geoxml_sequence_remove
  */
 int
-
-
 gebr_geoxml_program_parameter_get_value(GebrGeoXmlProgramParameter * program_parameter, gboolean default_value,
 					GebrGeoXmlSequence ** property_value, gulong index);
 

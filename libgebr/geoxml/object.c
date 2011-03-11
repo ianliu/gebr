@@ -23,6 +23,7 @@
 #include "object.h"
 #include "types.h"
 #include "xml.h"
+#include "value_sequence.h"
 #include "document_p.h"
 #include "gebr-geoxml-tmpl.h"
 

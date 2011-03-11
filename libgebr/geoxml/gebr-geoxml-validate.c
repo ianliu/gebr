@@ -22,6 +22,7 @@
 #include "gebr-geoxml-validate.h"
 #include "../validate.h"
 #include "../date.h"
+#include "value_sequence.h"
 
 GebrGeoXmlValidate *gebr_geoxml_validate_new(gpointer data, GebrGeoXmlValidateOperations operations,
 					     GebrGeoXmlValidateOptions options)

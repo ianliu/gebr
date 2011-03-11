@@ -382,6 +382,11 @@ gboolean flow_browse_get_selected(GtkTreeIter * iter, gboolean warn_unselected)
 	return TRUE;
 }
 
+void flow_browse_reload_selected(void)
+{
+	flow_browse_load();
+}
+
 void flow_browse_select_iter(GtkTreeIter * iter)
 {
 	gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(gebr.ui_flow_browse->view), iter);

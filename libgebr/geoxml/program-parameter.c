@@ -27,6 +27,7 @@
 #include "parameter_p.h"
 #include "program_p.h"
 #include "sequence.h"
+#include "value_sequence.h"
 
 /*
  * internal structures and funcionts
@@ -73,25 +74,6 @@ __gebr_geoxml_program_parameter_remove_value_elements(GebrGeoXmlProgramParameter
 /*
  * library functions.
  */
-
-GebrGeoXmlProgram *gebr_geoxml_program_parameter_program(GebrGeoXmlProgramParameter * program_parameter)
-{
-	if (program_parameter == NULL)
-		return NULL;
-
-	GdomeElement *program_element;
-
-	while (1) {
-		GdomeDOMString *name;
-
-		program_element = (GdomeElement *) gdome_n_parentNode((GdomeNode *) program_parameter, &exception);
-		name = gdome_el_nodeName(program_element, &exception);
-		if (!strcmp(name->str, "program"))
-			break;
-	}
-
-	return (GebrGeoXmlProgram *) program_element;
-}
 
 void gebr_geoxml_program_parameter_set_required(GebrGeoXmlProgramParameter * program_parameter, gboolean required)
 {

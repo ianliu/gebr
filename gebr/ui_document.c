@@ -1094,7 +1094,7 @@ static void on_groups_combo_box_changed (GtkComboBox *combo, GebrGuiValueSequenc
 		return;
 
 	gboolean clean = gebr_gui_message_dialog (GTK_MESSAGE_QUESTION,
-						  GTK_BUTTONS_OK_CANCEL,
+						  GTK_BUTTONS_YES_NO,
 						  _("Clean line and flow(s) path(s)?"),
 						  _("Do you wish to clean all paths from"
 						    " this line and its respective flows?"));
@@ -1116,8 +1116,7 @@ static void on_groups_combo_box_changed (GtkComboBox *combo, GebrGuiValueSequenc
 
 		line_set_paths_to_empty (gebr.line);
 		gebr_gui_value_sequence_edit_clear (edit);
-		flow_browse_info_update();
-		flow_edition_set_io();
+		flow_browse_reload_selected();
 	}
 
 	model = gtk_combo_box_get_model (combo);

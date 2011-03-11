@@ -149,6 +149,7 @@ void __gebr_geoxml_parameter_set_label(GebrGeoXmlParameter * parameter, const gc
 #include <glib.h>
 
 #include "parameters.h"
+#include "program.h"
 
 /**
  * Get GebrGeoXmlParameters in which \p parameter is inside
@@ -156,6 +157,13 @@ void __gebr_geoxml_parameter_set_label(GebrGeoXmlParameter * parameter, const gc
  * If \p parameter is NULL returns NULL
  */
 GebrGeoXmlParameters *gebr_geoxml_parameter_get_parameters(GebrGeoXmlParameter * parameter);
+
+/**
+ * Get the program to which \p parameter belongs to.
+ *
+ * If \p parameter is NULL nothing is done.
+ */
+GebrGeoXmlProgram *gebr_geoxml_parameter_get_program(GebrGeoXmlParameter * parameter);
 
 /**
  * Change \p parameter type to \p type.
