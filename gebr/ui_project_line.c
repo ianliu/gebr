@@ -1386,8 +1386,6 @@ gboolean servers_filter_visible_func (GtkTreeModel *filter,
 	if (strlen (group) == 0)
 		return TRUE;
 
-	g_message ("Filtering for group %s", group);
-
 	gtk_tree_model_get (filter, iter, SERVER_POINTER, &server, -1);
 
 	if (!server)
