@@ -100,23 +100,52 @@ server_common_tooltip_callback(GtkTreeView * tree_view, GtkTooltip * tooltip,
  */
 static GtkMenu *server_common_popup_menu(GtkWidget * widget, struct ui_server_common *ui_server_common)
 {
+	GList *rows;
+	GtkWidget *menu;
+	GtkTreeIter iter;
+	GtkTreeModel *model;
 	GtkTreeSelection *selection;
 
-	GtkWidget *menu;
-
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_server_common->view));
-	if (gtk_tree_selection_count_selected_rows(selection) < 1)
+	rows = gtk_tree_selection_get_selected_rows (selection, &model);
+
+	if (!rows)
 		return NULL;
 
-	menu = gtk_menu_new();
-	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_server, "server_connect")));
-	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_server, "server_disconnect")));
-	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_server, "server_autoconnect")));
-	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_server, "server_remove")));
-	gtk_container_add(GTK_CONTAINER(menu), gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_server, "server_stop")));
+	menu = gtk_menu_new ();
 
-	gtk_widget_show_all(menu);
-	return GTK_MENU(menu);
+	gtk_menu_shell_append (GTK_MENU_SHELL (menu),
+			       gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_server, "server_connect")));
+
+	gtk_menu_shell_append (GTK_MENU_SHELL (menu),
+			       gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_server, "server_disconnect")));
+
+	gtk_menu_shell_append (GTK_MENU_SHELL (menu),
+			       gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_server, "server_autoconnect")));
+
+	for (GList *i = rows; i; i = i->next) {
+		GebrServer *server;
+		GtkTreePath *path = i->data;
+
+		if (!gtk_tree_model_get_iter (model, &iter, path))
+			continue;
+
+		gtk_tree_model_get (model, &iter, SERVER_POINTER, &server, -1);
+		if (g_strcmp0 (server->comm->address->str, "127.0.0.1")) {
+			gtk_menu_shell_append (GTK_MENU_SHELL (menu),
+					       gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_server, "server_remove")));
+			break;
+		}
+	}
+
+	gtk_menu_shell_append (GTK_MENU_SHELL (menu),
+			       gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_server, "server_stop")));
+
+	gtk_widget_show_all (menu);
+	g_list_foreach (rows, (GFunc) gtk_tree_path_free, NULL);
+	g_list_free (rows);
+
+	return GTK_MENU (menu);
 }
 
 static void on_tags_edited (GtkCellRendererText *cell,
