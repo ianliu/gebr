@@ -492,6 +492,8 @@ struct ui_server_list *server_list_setup_ui(void)
 	dialog = gtk_dialog_new_with_buttons(_("Servers configuration"),
 					     GTK_WINDOW(gebr.window),
 					     (GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT), NULL);
+	gtk_window_set_default_size(GTK_WINDOW(dialog), 900, -1);
+
 	button = gtk_dialog_add_button(GTK_DIALOG(dialog), _("Co_nnect all"), RESPONSE_CONNECT_ALL);
 	gtk_button_set_image(GTK_BUTTON(button),
 			     gtk_image_new_from_stock(GTK_STOCK_CONNECT, GTK_ICON_SIZE_SMALL_TOOLBAR));
