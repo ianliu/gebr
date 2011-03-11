@@ -120,9 +120,6 @@ static GtkMenu *server_common_popup_menu(GtkWidget * widget, struct ui_server_co
 	gtk_menu_shell_append (GTK_MENU_SHELL (menu),
 			       gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_server, "server_disconnect")));
 
-	gtk_menu_shell_append (GTK_MENU_SHELL (menu),
-			       gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_server, "server_autoconnect")));
-
 	for (GList *i = rows; i; i = i->next) {
 		GebrServer *server;
 		GtkTreePath *path = i->data;
@@ -361,8 +358,7 @@ static void server_list_add(struct ui_server_list *ui_server_list, const gchar *
 		}
 	}
 
-	server = gebr_server_new(address, FALSE, "");
-	gebr_server_set_autoconnect (server, TRUE);
+	server = gebr_server_new(address, TRUE, "");
 	gtk_tree_model_filter_refilter (GTK_TREE_MODEL_FILTER (gebr.ui_project_line->servers_filter));
 }
 

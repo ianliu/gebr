@@ -150,6 +150,11 @@ gboolean gebr_server_get_autoconnect (GebrServer *self);
  */
 void gebr_server_set_autoconnect (GebrServer *self, gboolean setting);
 
+/**
+ * gebr_server_connect:
+ */
+void gebr_server_connect (GebrServer *self);
+
 G_END_DECLS
 
 #endif				//__SERVER_H

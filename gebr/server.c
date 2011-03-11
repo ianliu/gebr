@@ -341,7 +341,8 @@ GebrServer *gebr_server_new (const gchar * address, gboolean autoconnect, const 
 	gtk_tree_model_row_changed (model, path, &self->iter);
 	gtk_tree_path_free (path);
 
-	gebr_comm_server_connect (self->comm);
+	if (autoconnect)
+		gebr_server_connect (self);
 
 	return self;
 }
@@ -481,4 +482,9 @@ void gebr_server_set_autoconnect (GebrServer *self, gboolean setting)
 	gtk_list_store_set (gebr.ui_server_list->common.store, &self->iter,
 			    SERVER_AUTOCONNECT, setting,
 			    -1);
+}
+
+void gebr_server_connect (GebrServer *self)
+{
+	gebr_comm_server_connect (self->comm);
 }
