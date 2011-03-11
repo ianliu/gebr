@@ -38,59 +38,17 @@ void client_process_server_response(struct gebr_comm_server *comm_server, GebrCo
 
 void on_fs_nickname_msg(GebrCommHttpMsg *request, GebrCommHttpMsg *response, GebrServer *server)
 {
-	GString *dialog(void)
-       	{
-		GString *nickname = g_string_new("");
-		GtkWidget *dialog = gtk_dialog_new_with_buttons(_("File-system label"), GTK_WINDOW(gebr.window),
-								(GtkDialogFlags)(GTK_DIALOG_MODAL |
-										 GTK_DIALOG_DESTROY_WITH_PARENT),
-								GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-							       	GTK_STOCK_OK, GTK_RESPONSE_OK,
-							       	NULL);
-		gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
-
-		GtkWidget *label = gtk_label_new(_("This server is at a new file system.\n"
-						   "You can label this file system\n"
-						   "so you can group them."));
-		gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), label, FALSE, TRUE, 0);
-
-		GtkWidget *entry = gtk_entry_new();
-		gchar *def_nickname = g_strdup_printf(_("File system of %s"), server->comm->address->str);
-		gtk_entry_set_text(GTK_ENTRY(entry), def_nickname);
-		g_free(def_nickname);
-		gtk_entry_set_activates_default(GTK_ENTRY(entry), TRUE);
-		gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), entry, FALSE, TRUE, 0);
-
-		gtk_widget_show_all(dialog);
-		gboolean confirmed = gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_OK;
-		g_string_assign(nickname, !confirmed ? "" : gtk_entry_get_text(GTK_ENTRY(entry)));
-		gtk_widget_destroy(dialog);
-
-		return nickname;
-	}
-
-	if (request->method == GEBR_COMM_HTTP_METHOD_GET) {
+	if (request->method == GEBR_COMM_HTTP_METHOD_GET) 
+	{
 		GebrCommJsonContent *json = gebr_comm_json_content_new(response->content->str);
 		GString *value = gebr_comm_json_content_to_gstring(json);
-
-		if (!value->len) {
-			GString *nickname = dialog();
-			GebrCommJsonContent *json = gebr_comm_json_content_new_from_string(nickname->str);
-			GebrCommHttpMsg *req = gebr_comm_protocol_socket_send_request(server->comm->socket,
-										      GEBR_COMM_HTTP_METHOD_PUT,
-										      "/fs-nickname", json);
-			g_object_set_data(G_OBJECT(req), "value", g_strdup(nickname->str));
-			g_signal_connect(req, "response-received", G_CALLBACK(on_fs_nickname_msg), server);
-			g_string_free(nickname, TRUE);
-			gebr_comm_json_content_free(json);
-		} else {
-			gtk_list_store_set(gebr.ui_server_list->common.store, &server->iter, SERVER_FS, value->str, -1);
-			ui_server_update_tags_combobox ();
-		}
-
+		gtk_list_store_set(gebr.ui_server_list->common.store, &server->iter, SERVER_FS, value->str, -1);
+		ui_server_update_tags_combobox ();
 		g_string_free(value, TRUE);
 		gebr_comm_json_content_free(json);
-	} else if (request->method == GEBR_COMM_HTTP_METHOD_PUT) {
+	} 
+	else if (request->method == GEBR_COMM_HTTP_METHOD_PUT) 
+	{
 		gchar *value = g_object_get_data(G_OBJECT(request), "value");
 		if (response->status_code == 200)
 			gtk_list_store_set(gebr.ui_server_list->common.store, &server->iter, SERVER_FS, value, -1);

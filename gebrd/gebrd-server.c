@@ -115,7 +115,14 @@ static gboolean server_fs_lock(void)
 		return FALSE;
 	}
 
+	gchar * fs_nickname = NULL;
 	g_string_assign(gebrd->fs_lock, fs_lock);
+	g_object_get(gebrd->user, "fs-nickname", &fs_nickname, NULL);
+	if (!strlen(fs_nickname)) {
+		fs_nickname = g_strdup_printf(_("File System of %s"), g_get_host_name());	
+		g_object_set(gebrd->user, "fs-nickname", fs_nickname, NULL);
+	}
+	g_free(fs_nickname);
 	g_free(fs_lock);
 
 	return TRUE;
