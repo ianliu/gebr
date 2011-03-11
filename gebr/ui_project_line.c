@@ -1062,8 +1062,8 @@ static void project_line_load(void)
 				   PL_XMLPOINTER, &gebr.line, -1);
 
 		gebr.project_line = GEBR_GEOXML_DOC(gebr.line);
-		line_load_flows();
 		gtk_tree_model_filter_refilter (GTK_TREE_MODEL_FILTER (gebr.ui_project_line->servers_filter));
+		line_load_flows();
 	} else {
 		gebr.project_line = GEBR_GEOXML_DOC(gebr.project);
 		gebr.line = NULL;
