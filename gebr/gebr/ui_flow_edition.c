@@ -218,6 +218,10 @@ struct ui_flow_edition *flow_edition_setup_ui(void)
 	gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(ui_flow_edition->menu_view),
 						  (GebrGuiGtkPopupCallback) flow_edition_menu_popup_menu,
 						  ui_flow_edition);
+
+	g_signal_connect(ui_flow_edition->menu_view, "key-press-event",
+			 G_CALLBACK(flow_edition_component_key_pressed), ui_flow_edition);
+
 	g_signal_connect(GTK_OBJECT(ui_flow_edition->menu_view), "row-activated", G_CALLBACK(flow_edition_menu_add),
 			 ui_flow_edition);
 	gebr_gui_gtk_tree_view_fancy_search(GTK_TREE_VIEW(ui_flow_edition->menu_view), MENU_TITLE_COLUMN);
