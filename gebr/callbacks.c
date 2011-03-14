@@ -574,7 +574,7 @@ void on_server_common_remove(void)
 			continue;
 		}
 		gtk_tree_model_get (sort_model, &iter, SERVER_POINTER, &server, -1);
-		if (server)
+		if (server && g_strcmp0 (server->comm->address->str, "127.0.0.1") != 0)
 			server_free (server);
 		gtk_tree_path_free (path);
 		gtk_tree_row_reference_free (ref);

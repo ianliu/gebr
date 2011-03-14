@@ -120,6 +120,8 @@ static GtkMenu *server_common_popup_menu(GtkWidget * widget, struct ui_server_co
 	gtk_menu_shell_append (GTK_MENU_SHELL (menu),
 			       gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_server, "server_disconnect")));
 
+	// Insert the "Remove" action if:
+	//  1. There is at least one server not equal to Local Server
 	for (GList *i = rows; i; i = i->next) {
 		GebrServer *server;
 		GtkTreePath *path = i->data;
@@ -128,7 +130,7 @@ static GtkMenu *server_common_popup_menu(GtkWidget * widget, struct ui_server_co
 			continue;
 
 		gtk_tree_model_get (model, &iter, SERVER_POINTER, &server, -1);
-		if (g_strcmp0 (server->comm->address->str, "127.0.0.1")) {
+		if (g_strcmp0 (server->comm->address->str, "127.0.0.1") != 0) {
 			gtk_menu_shell_append (GTK_MENU_SHELL (menu),
 					       gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_server, "server_remove")));
 			break;
