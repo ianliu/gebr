@@ -299,8 +299,10 @@ static void server_common_actions(GtkDialog * dialog, gint arg1, struct ui_serve
 				gtk_tree_model_get(GTK_TREE_MODEL(ui_server_common->filter), &iter,
 						   SERVER_POINTER, &server, -1);
 
-				if (gebr_comm_server_is_logged(server->comm) == TRUE)
+				if (gebr_comm_server_is_logged(server->comm) == TRUE){
 					gebr_comm_server_disconnect(server->comm);
+					ui_server_update_tags_combobox ();
+				}
 			}
 
 			break;

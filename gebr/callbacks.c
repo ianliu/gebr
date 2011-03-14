@@ -526,6 +526,7 @@ void on_server_common_disconnect(void)
 				    SERVER_POINTER, &server,
 				    -1);
 		gebr_comm_server_disconnect(server->comm);
+		ui_server_update_tags_combobox ();
 	}
 }
 
