@@ -302,3 +302,14 @@ const gchar *gebr_geoxml_program_get_url(GebrGeoXmlProgram * program)
 		return NULL;
 	return __gebr_geoxml_get_tag_value((GdomeElement *) program, "url");
 }
+
+GebrGeoXmlProgramControl gebr_geoxml_program_get_control(GebrGeoXmlProgram * program)
+{
+	if (program == NULL)
+		return GEBR_GEOXML_PROGRAM_CONTROL_UNKNOWN;
+
+	if (g_strcmp0(__gebr_geoxml_get_attr_value((GdomeElement*)program, "control"), "for") == 0)
+		return GEBR_GEOXML_PROGRAM_CONTROL_FOR;
+
+	return GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY;
+}

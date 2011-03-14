@@ -91,6 +91,11 @@ typedef enum {
 	GEBR_GEOXML_PROGRAM_STATUS_DISABLED,
 } GebrGeoXmlProgramStatus;
 
+typedef enum {
+	GEBR_GEOXML_PROGRAM_CONTROL_UNKNOWN = 0,
+	GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY,
+	GEBR_GEOXML_PROGRAM_CONTROL_FOR
+} GebrGeoXmlProgramControl;
 /**
  * Promote a sequence to a program.
  */
@@ -262,6 +267,13 @@ const gchar *gebr_geoxml_program_get_mpi(GebrGeoXmlProgram * program);
  *
  */
 const gchar *gebr_geoxml_program_get_url(GebrGeoXmlProgram * program);
+
+/**
+ * Get \p program's control attribute.
+ *
+ * If \p program is NULL returns GEBR_GEOXML_PROGRAM_CONTROL_UNKNOWN.
+ */
+GebrGeoXmlProgramControl gebr_geoxml_program_get_control(GebrGeoXmlProgram * program);
 
 G_END_DECLS
 #endif				//__GEBR_GEOXML_PROGRAM_H
