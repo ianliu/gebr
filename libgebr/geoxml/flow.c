@@ -351,7 +351,7 @@ GebrGeoXmlCategory *gebr_geoxml_flow_append_category(GebrGeoXmlFlow * flow, cons
 	category = (GebrGeoXmlCategory *)
 	    __gebr_geoxml_insert_new_element(gebr_geoxml_document_root_element(GEBR_GEOXML_DOC(flow)), "category",
 					     __gebr_geoxml_get_first_element(gebr_geoxml_document_root_element
-									     (GEBR_GEOXML_DOC(flow)), "io"));
+									     (GEBR_GEOXML_DOC(flow)), "server"));
 	gebr_geoxml_value_sequence_set(GEBR_GEOXML_VALUE_SEQUENCE(category), name);
 
 	return category;
