@@ -478,7 +478,7 @@ static void flow_browse_load(void)
 	GtkTreeModel *model;
 	gboolean found = FALSE;
 
-	model = gebr.ui_project_line->servers_filter;
+	model = gebr.ui_project_line->servers_sort;
 	group = gebr_geoxml_line_get_group (gebr.line, &is_fs);
 	address = gebr_geoxml_flow_server_get_address (gebr.flow);
 

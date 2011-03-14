@@ -79,6 +79,7 @@ struct ui_project_line *project_line_setup_ui(void)
 	ui_project_line = g_new(struct ui_project_line, 1);
 
 	ui_project_line->servers_filter = NULL;
+	ui_project_line->servers_sort = NULL;
 
 	/* Create projects/lines ui_project_line->widget */
 	ui_project_line->widget = gtk_vbox_new(FALSE, 0);
@@ -1403,4 +1404,35 @@ gboolean servers_filter_visible_func (GtkTreeModel *filter,
 	}
 
 	return ui_server_has_tag (server, group);
+}
+
+gint servers_sort_func (GtkTreeModel *model,
+			GtkTreeIter *a,
+			GtkTreeIter *b,
+			gpointer data)
+{
+	GebrServer *sa, *sb;
+	gboolean ca, cb;
+
+	gtk_tree_model_get (model, a, SERVER_POINTER, &sa, -1);
+	gtk_tree_model_get (model, b, SERVER_POINTER, &sb, -1);
+
+	if (!sa || !sb)
+		return 0;
+
+	if (!sa->comm || !sb->comm)
+		return 0;
+
+	ca = sa->comm->socket->protocol->logged;
+	cb = sb->comm->socket->protocol->logged;
+
+	// Order by Connected state first
+	if (ca != cb)
+		// Return values are:
+		//   1 if server 'a' is connected
+		//  -1 if server 'b' is connected
+		return ca ? -1:1;
+
+	// If states are equal, order alfabetically
+	return g_strcmp0 (sa->comm->address->str, sb->comm->address->str);
 }

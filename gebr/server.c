@@ -353,7 +353,7 @@ void server_free(GebrServer *server)
 
 	// WORKAROUND: A combo box with a TreeModelFilter emits a warning
 	//             when a row from the original model is deleted.
-	gtk_combo_box_set_model (GTK_COMBO_BOX (gebr.ui_flow_edition->server_combobox), NULL);
+	//gtk_combo_box_set_model (GTK_COMBO_BOX (gebr.ui_flow_edition->server_combobox), NULL);
 
 	gtk_list_store_remove(gebr.ui_server_list->common.store, &server->iter);
 	gtk_list_store_clear(server->accounts_model);
@@ -366,8 +366,8 @@ void server_free(GebrServer *server)
 	g_object_unref (server);
 
 	// WORKAROUND: Backup the model for the combo box.
-	gtk_combo_box_set_model (GTK_COMBO_BOX (gebr.ui_flow_edition->server_combobox),
-				 gebr.ui_project_line->servers_filter);
+	//gtk_combo_box_set_model (GTK_COMBO_BOX (gebr.ui_flow_edition->server_combobox),
+	//			 gebr.ui_project_line->servers_filter);
 }
 
 const gchar *server_get_name(GebrServer * server)

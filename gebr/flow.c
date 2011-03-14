@@ -75,8 +75,8 @@ void flow_new (void)
 	gebr_geoxml_document_set_author(GEBR_GEOXML_DOC(flow), gebr.config.username->str);
 	gebr_geoxml_document_set_email(GEBR_GEOXML_DOC(flow), gebr.config.email->str);
 
-	if (gtk_tree_model_get_iter_first (gebr.ui_project_line->servers_filter, &iter)) {
-		gtk_tree_model_get (gebr.ui_project_line->servers_filter, &iter,
+	if (gtk_tree_model_get_iter_first (gebr.ui_project_line->servers_sort, &iter)) {
+		gtk_tree_model_get (gebr.ui_project_line->servers_sort, &iter,
 				    SERVER_POINTER, &server, -1);
 		if (server)
 			gebr_geoxml_flow_server_set_address (flow, server->comm->address->str);

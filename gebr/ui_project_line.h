@@ -56,6 +56,7 @@ struct ui_project_line {
 	GtkWidget *view;
 
 	GtkTreeModel *servers_filter;
+	GtkTreeModel *servers_sort;
 
 	struct ui_project_line_info {
 		GtkWidget *title;
@@ -140,5 +141,11 @@ gboolean servers_filter_visible_func (GtkTreeModel *filter,
 				      GtkTreeIter *iter,
 				      gpointer data);
 
+gint servers_sort_func (GtkTreeModel *model,
+			GtkTreeIter *a,
+			GtkTreeIter *b,
+			gpointer data);
+
 G_END_DECLS
+
 #endif				//__UI_PROJECT_LINE_H
