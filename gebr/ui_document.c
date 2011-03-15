@@ -299,6 +299,7 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 		data->groups_combo = groups_combo = ui_server_create_tag_combo_box ();
 		curr_group = gebr_geoxml_line_get_group (GEBR_GEOXML_LINE (document), &is_fs);
 
+		gboolean found = FALSE;
 		gebr_gui_gtk_tree_model_foreach (iter, model) {
 			gboolean is_sep;
 			gchar *name;
@@ -307,12 +308,17 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 					    TAG_NAME, &name,
 					    TAG_FS, &is_fs2,
 					    -1);
-			if (!is_sep && is_fs == is_fs2 && g_strcmp0 (name, curr_group) == 0)
+			if (!is_sep && is_fs == is_fs2 && g_strcmp0 (name, curr_group) == 0) {
 				active = iter;
+				found = TRUE;
+			}
 			g_free (name);
 		}
 
-		gtk_combo_box_set_active_iter (GTK_COMBO_BOX (groups_combo), &active);
+		if (found)
+			gtk_combo_box_set_active_iter (GTK_COMBO_BOX (groups_combo), &active);
+		else
+			gtk_combo_box_set_active (GTK_COMBO_BOX (groups_combo), -1);
 		data->previous_active_group = gtk_combo_box_get_active(GTK_COMBO_BOX(groups_combo));
 
 		label = gtk_label_new (_("Server group"));
