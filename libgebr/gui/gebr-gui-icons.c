@@ -135,6 +135,7 @@ const gchar * gebr_gui_get_program_icon(GebrGeoXmlProgram * program)
 {
 	static gchar string[51];
 
+	GebrGeoXmlProgramControl control;
 	GString * temp;
 	const gchar * postfix;
 	GebrGeoXmlProgramStatus status;
@@ -155,16 +156,19 @@ const gchar * gebr_gui_get_program_icon(GebrGeoXmlProgram * program)
 		postfix = "";
 		break;
 	}
+
+	control = gebr_geoxml_program_get_control (program);
 	temp = g_string_new(NULL);
-	g_string_printf(temp, "pipe-%c%c-%s",
-			gebr_geoxml_program_get_stdin(program)? 'o' : 'c',
-			gebr_geoxml_program_get_stdout(program)? 'o' : 'c',
-			postfix);
+	if (control == GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY) {
+		g_string_printf(temp, "pipe-%c%c-%s",
+				gebr_geoxml_program_get_stdin(program)? 'o' : 'c',
+				gebr_geoxml_program_get_stdout(program)? 'o' : 'c',
+				postfix);
+	} else
+		g_string_printf (temp, "gebr-loop-%s", postfix);
+
 	strcpy(string, temp->str);
-	if (temp->len > 50)
-		g_error("%s:%d: Icon name length is greater than 50, report to GeBR developers", __FILE__, __LINE__);
 
 	g_string_free(temp, TRUE);
 	return string;
 }
-
