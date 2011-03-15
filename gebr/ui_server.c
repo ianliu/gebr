@@ -180,8 +180,6 @@ static void on_tags_edited (GtkCellRendererText *cell,
 
 	if (g_strcmp0(last_tags, new_tags) != 0){
 		ui_server_set_tags (server, new_tags);
-		puts(last_tags);
-		puts(new_tags);
 	}
 
 	g_free (new_tags);
