@@ -61,6 +61,8 @@ static void on_tags_editing_started (GtkCellRenderer *cell,
 
 static gchar *sort_and_remove_doubles (const gchar *tags_str);
 
+static GList *ui_server_tags_removed (const gchar *last_tags, const gchar *new_tags);
+
 /*
  * Section: Private
  * Private functions.
@@ -924,4 +926,32 @@ static void on_tags_editing_started (GtkCellRenderer *cell,
 	gtk_entry_set_icon_activatable (entry, GTK_ENTRY_ICON_SECONDARY, FALSE);
 	gtk_entry_set_icon_tooltip_text (entry, GTK_ENTRY_ICON_SECONDARY,
 					 _("Enter group names separated by comma and press ENTER to confirm."));
+}
+
+static GList *ui_server_tags_removed (const gchar *last_tags, const gchar *new_tags)
+{
+	GList *list = NULL;
+	gchar **tag_list_last;
+	gchar **tag_list_new;
+	gboolean removed;
+
+	tag_list_last = g_strsplit (last_tags, ",", 0);	
+	tag_list_new = g_strsplit (new_tags, ",", 0);	
+
+	for (gint i = 0; tag_list_last[i]; i++){
+		removed = TRUE;
+
+		for (gint j = 0; tag_list_new[j]; j++)
+			if (g_strcmp0(tag_list_last[i], tag_list_new[j]) == 0)
+				removed = FALSE;
+
+		if (removed)
+			list = g_list_append (list, tag_list_last[i]);
+
+	}
+
+	g_strfreev (tag_list_new);
+	g_strfreev (tag_list_last);
+
+	return list;
 }
