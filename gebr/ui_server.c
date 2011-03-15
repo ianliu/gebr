@@ -59,6 +59,8 @@ static void on_tags_editing_started (GtkCellRenderer *cell,
 				     gchar *path,
 				     gpointer data);
 
+static gchar *sort_and_remove_doubles (const gchar *tags_str);
+
 /*
  * Section: Private
  * Private functions.
@@ -157,10 +159,12 @@ static void on_tags_edited (GtkCellRendererText *cell,
 			    gchar *new_text,
 			    GtkTreeModel *model)
 {
-	gchar *tags;
+	gchar *last_tags;
 	GtkTreeIter iter;
 	GebrServer *server;
 	gboolean ret;
+
+	gtk_window_add_accel_group(GTK_WINDOW(gebr.ui_server_list->common.dialog), gebr.accel_group_array[ACCEL_SERVER]);
 
 	ret = gtk_tree_model_get_iter_from_string (model, &iter, pathstr);
 
@@ -169,11 +173,18 @@ static void on_tags_edited (GtkCellRendererText *cell,
 
 	gtk_tree_model_get (model, &iter,
 			    SERVER_POINTER, &server,
-			    SERVER_TAGS, &tags,
+			    SERVER_TAGS, &last_tags,
 			    -1);
 
-	if (!g_str_equal (tags, new_text))
-		ui_server_set_tags (server, new_text);
+	gchar *new_tags = sort_and_remove_doubles (new_text);
+
+	if (g_strcmp0(last_tags, new_tags) != 0){
+		ui_server_set_tags (server, new_tags);
+		puts(last_tags);
+		puts(new_tags);
+	}
+
+	g_free (new_tags);
 }
 
 static void on_ac_toggled (GtkCellRendererToggle *cell_renderer,
@@ -692,14 +703,9 @@ static gchar *sort_and_remove_doubles (const gchar *tags_str)
 
 void ui_server_set_tags (GebrServer *server, const gchar *str)
 {
-	gchar *tags;
-
-	tags = sort_and_remove_doubles (str);
 	gtk_list_store_set (gebr.ui_server_list->common.store, &server->iter,
-			    SERVER_TAGS, tags,
+			    SERVER_TAGS, str,
 			    -1);
-	g_free (tags);
-
 	ui_server_update_tags_combobox ();
 }
 
@@ -914,6 +920,8 @@ static void on_tags_editing_started (GtkCellRenderer *cell,
 				     gchar *path,
 				     gpointer data)
 {
+        gtk_window_remove_accel_group(GTK_WINDOW(gebr.ui_server_list->common.dialog), gebr.accel_group_array[ACCEL_SERVER]);
+
 	gtk_entry_set_icon_from_stock (entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_HELP);
 	gtk_entry_set_icon_activatable (entry, GTK_ENTRY_ICON_SECONDARY, FALSE);
 	gtk_entry_set_icon_tooltip_text (entry, GTK_ENTRY_ICON_SECONDARY,
