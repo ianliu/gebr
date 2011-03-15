@@ -622,7 +622,7 @@ flow_edition_may_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIte
 			 GtkTreeViewDropPosition drop_position, struct ui_flow_edition *ui_flow_edition)
 {
 	GtkTreeModel *model;
-	GebrGeoXmlSequence *program;
+	GebrGeoXmlProgram *program;
 	GebrGeoXmlProgramControl con;
 
 	if (gebr_gui_gtk_tree_iter_equal_to(iter, &ui_flow_edition->input_iter) ||
@@ -747,7 +747,24 @@ static void flow_edition_menu_add(void)
 	/* set parameters' values of menus' programs to default
 	 * note that menu changes aren't saved to disk
 	 */
+	GebrGeoXmlProgramControl c1, c2;
+	GebrGeoXmlProgram *first_prog;
+
+	gtk_tree_model_get_iter_first (GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter);
+	gtk_tree_model_get (GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter,
+			    FSEQ_GEBR_GEOXML_POINTER, &first_prog, -1);
+
 	gebr_geoxml_flow_get_program(menu, &program, 0);
+
+	c1 = gebr_geoxml_program_get_control (GEBR_GEOXML_PROGRAM (program));
+	c2 = gebr_geoxml_program_get_control (first_prog);
+
+	if (c1 != GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY && c2 != GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY) {
+		document_free(GEBR_GEOXML_DOC(menu));
+		gebr_message (GEBR_LOG_ERROR, TRUE, TRUE, _("This flow already contains a loop"));
+		goto out;
+	}
+
 	for (; program != NULL; gebr_geoxml_sequence_next(&program))
 		parameters_reset_to_default(gebr_geoxml_program_get_parameters(GEBR_GEOXML_PROGRAM(program)));
 
