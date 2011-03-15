@@ -95,7 +95,6 @@ void gebr_geoxml_flow_add_flow(GebrGeoXmlFlow * flow, GebrGeoXmlFlow * flow2)
 					  &exception);
 	n = gdome_nl_length(flow2_node_list, &exception);
 
-	/* clear each copied program help */
 	for (i = 0; i < n; ++i) {
 		GdomeNode *node;
 		GdomeNode *new_node;

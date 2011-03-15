@@ -231,8 +231,8 @@ struct ui_flow_edition *flow_edition_setup_ui(void)
 	gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(ui_flow_edition->menu_view),
 						  (GebrGuiGtkPopupCallback) flow_edition_menu_popup_menu,
 						  ui_flow_edition);
-	g_signal_connect(GTK_OBJECT(ui_flow_edition->menu_view), "row-activated", G_CALLBACK(flow_edition_menu_add),
-			 ui_flow_edition);
+	g_signal_connect(GTK_OBJECT(ui_flow_edition->menu_view), "row-activated",
+			 G_CALLBACK(flow_edition_menu_add), ui_flow_edition);
 	gebr_gui_gtk_tree_view_fancy_search(GTK_TREE_VIEW(ui_flow_edition->menu_view), MENU_TITLE_COLUMN);
 
 	renderer = gtk_cell_renderer_text_new();
@@ -621,6 +621,10 @@ static gboolean
 flow_edition_may_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * position,
 			 GtkTreeViewDropPosition drop_position, struct ui_flow_edition *ui_flow_edition)
 {
+	GtkTreeModel *model;
+	GebrGeoXmlSequence *program;
+	GebrGeoXmlProgramControl con;
+
 	if (gebr_gui_gtk_tree_iter_equal_to(iter, &ui_flow_edition->input_iter) ||
 	    gebr_gui_gtk_tree_iter_equal_to(iter, &ui_flow_edition->output_iter) ||
 	    gebr_gui_gtk_tree_iter_equal_to(iter, &ui_flow_edition->error_iter))
@@ -632,6 +636,19 @@ flow_edition_may_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIte
 	    gebr_gui_gtk_tree_iter_equal_to(position, &ui_flow_edition->output_iter))
 		return FALSE;
 	if (gebr_gui_gtk_tree_iter_equal_to(position, &ui_flow_edition->error_iter))
+		return FALSE;
+
+	/* Check if the moving iter is a control program */
+	model = gtk_tree_view_get_model (tree_view);
+	gtk_tree_model_get (model, iter, FSEQ_GEBR_GEOXML_POINTER, &program, -1);
+	con = gebr_geoxml_program_get_control (program);
+	if (con != GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY)
+		return FALSE;
+
+	/* Check if the target iter is a control program */
+	gtk_tree_model_get (model, position, FSEQ_GEBR_GEOXML_POINTER, &program, -1);
+	con = gebr_geoxml_program_get_control (program);
+	if (con != GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY)
 		return FALSE;
 
 	return TRUE;
