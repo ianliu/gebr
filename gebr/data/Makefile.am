@@ -16,7 +16,7 @@
 include $(top_srcdir)/Makefile.decl
 
 gebrmenudir = $(datadir)/gebr/menus/
-gebrmenu_DATA = grace.mnu sleep.mnu
+gebrmenu_DATA = grace.mnu sleep.mnu forloop.mnu
 
 desktopdir = $(datadir)/applications
 desktop_DATA = gebr.desktop
