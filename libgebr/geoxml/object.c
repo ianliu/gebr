@@ -240,7 +240,8 @@ gchar *gebr_geoxml_object_get_help_content_from_str (const gchar *str)
 	// We only needed 'html' for gebr_geoxml_tmpl, free it now
 	g_string_free (html, TRUE);
 
-	regex = g_regex_new ("<div class=\"content\">(.*?)<\\/div>",
+	//Old help does not have end content mark
+	regex = g_regex_new ("<div class=\"content\">(.*?<!-- end cpy -->)",
 			     G_REGEX_DOTALL, 0, NULL);
 
 	if (g_regex_match (regex, str, 0, &match)) {
