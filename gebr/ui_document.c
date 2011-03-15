@@ -315,7 +315,7 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 			g_free (name);
 		}
 
-		if (found)
+		if (found || is_new)
 			gtk_combo_box_set_active_iter (GTK_COMBO_BOX (groups_combo), &active);
 		else
 			gtk_combo_box_set_active (GTK_COMBO_BOX (groups_combo), -1);
