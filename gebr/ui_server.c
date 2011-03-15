@@ -54,6 +54,11 @@ static gboolean groups_separator_func (GtkTreeModel *model,
 
 static GtkWidget *_ui_server_create_tag_combo_box (struct ui_server_list *server_list);
 
+static void on_tags_editing_started (GtkCellRenderer *cell,
+				     GtkEntry *entry,
+				     gchar *path,
+				     gpointer data);
+
 /*
  * Section: Private
  * Private functions.
@@ -261,6 +266,8 @@ static void server_common_setup(struct ui_server_common *ui_server_common)
 	g_object_set (renderer, "editable", TRUE, NULL);
 	g_signal_connect (renderer, "edited",
 			  G_CALLBACK (on_tags_edited), ui_server_common->sort_store);
+	g_signal_connect (renderer, "editing-started",
+			  G_CALLBACK (on_tags_editing_started), ui_server_common->sort_store);
 	col = gtk_tree_view_column_new_with_attributes(_("Groups"), renderer, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
 	gtk_tree_view_column_add_attribute(col, renderer, "text", SERVER_TAGS);
@@ -900,4 +907,15 @@ static GtkWidget *_ui_server_create_tag_combo_box (struct ui_server_list *server
 GtkWidget *ui_server_create_tag_combo_box (void)
 {
 	return _ui_server_create_tag_combo_box (NULL);
+}
+
+static void on_tags_editing_started (GtkCellRenderer *cell,
+				     GtkEntry *entry,
+				     gchar *path,
+				     gpointer data)
+{
+	gtk_entry_set_icon_from_stock (entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_HELP);
+	gtk_entry_set_icon_activatable (entry, GTK_ENTRY_ICON_SECONDARY, FALSE);
+	gtk_entry_set_icon_tooltip_text (entry, GTK_ENTRY_ICON_SECONDARY,
+					 _("Enter group names separated by comma and press ENTER to confirm."));
 }
