@@ -379,6 +379,8 @@ static void flow_edition_component_editing_started(GtkCellRenderer *renderer, Gt
 	GtkTreeIter iter;
 	GtkEntry *entry = GTK_ENTRY(editable);
 
+    gtk_window_remove_accel_group(GTK_WINDOW(gebr.window), gebr.accel_group_array[gebr.last_notebook]);
+
 	gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_OPEN);
 	g_object_set_data(G_OBJECT(entry), "path", g_strdup(path));
 	g_object_set_data(G_OBJECT(entry), "renderer", renderer);
@@ -399,6 +401,9 @@ static void flow_edition_component_editing_started(GtkCellRenderer *renderer, Gt
 static void flow_edition_component_edited(GtkCellRendererText *renderer, gchar *path, gchar *new_text)
 {
 	GtkTreeIter iter;
+
+	gtk_window_add_accel_group(GTK_WINDOW(gebr.window), gebr.accel_group_array[gebr.last_notebook]);
+
 	gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter, path);
 	if (gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter))
 		gebr_geoxml_flow_server_io_set_input(gebr.flow_server, new_text);
