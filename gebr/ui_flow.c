@@ -99,32 +99,33 @@ void flow_add_program_sequence_to_view(GebrGeoXmlSequence * program, gboolean se
 	const gchar *icon;
 	GtkTreeIter iter;
 	GebrGeoXmlProgramControl control;
+	gboolean has_control;
+	GebrGeoXmlProgram *first_prog;
 
-	control = gebr_geoxml_program_get_control (GEBR_GEOXML_PROGRAM (program));
+	gtk_tree_model_get_iter_first (GTK_TREE_MODEL (gebr.ui_flow_edition->fseq_store), &iter);
+	gtk_tree_model_get (GTK_TREE_MODEL (gebr.ui_flow_edition->fseq_store), &iter,
+			    FSEQ_GEBR_GEOXML_POINTER, &first_prog, -1);
 
-	if (control != GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY) {
+	control = gebr_geoxml_program_get_control (first_prog);
+	has_control = control != GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY;
+
+	for (; program != NULL; gebr_geoxml_sequence_next(&program)) {
+		control = gebr_geoxml_program_get_control (GEBR_GEOXML_PROGRAM (program));
+
+		if (!has_control && control != GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY) {
+			gtk_list_store_insert_after (gebr.ui_flow_edition->fseq_store, &iter, NULL);
+			has_control = TRUE;
+		} else
+			gtk_list_store_insert_before(gebr.ui_flow_edition->fseq_store,
+						     &iter, &gebr.ui_flow_edition->output_iter);
+
 		icon = gebr_gui_get_program_icon(GEBR_GEOXML_PROGRAM(program));
-		gtk_list_store_insert_after (gebr.ui_flow_edition->fseq_store, &iter, NULL);
 		gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &iter,
 				   FSEQ_TITLE_COLUMN, gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(program)),
 				   FSEQ_ICON_COLUMN, icon,
 				   FSEQ_GEBR_GEOXML_POINTER, program,
 				   FSEQ_ELLIPSIZE, PANGO_ELLIPSIZE_NONE,
-				   FSEQ_EDITABLE, FALSE,
-				   FSEQ_SENSITIVE, TRUE,
-				   -1);
-	} else {
-		for (; program != NULL; gebr_geoxml_sequence_next(&program)) {
-			icon = gebr_gui_get_program_icon(GEBR_GEOXML_PROGRAM(program));
-			gtk_list_store_insert_before(gebr.ui_flow_edition->fseq_store,
-						     &iter, &gebr.ui_flow_edition->output_iter);
-			gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &iter,
-					   FSEQ_TITLE_COLUMN, gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(program)),
-					   FSEQ_ICON_COLUMN, icon,
-					   FSEQ_GEBR_GEOXML_POINTER, program,
-					   FSEQ_ELLIPSIZE, PANGO_ELLIPSIZE_NONE,
-					   FSEQ_EDITABLE, FALSE, FSEQ_SENSITIVE, TRUE, -1);
-		}
+				   FSEQ_EDITABLE, FALSE, FSEQ_SENSITIVE, TRUE, -1);
 	}
 
 	if (select_last)
