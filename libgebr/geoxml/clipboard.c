@@ -54,13 +54,17 @@ GebrGeoXmlObject *gebr_geoxml_clipboard_paste(GebrGeoXmlObject * object)
 		return NULL;
 
 	static const gchar *child_parent[][3] = {
-		{"program", "flow", ""},
-		{"parameter", "program", "parameters"},
-		{NULL, NULL, NULL}
+		/* tag name    |    container name    |    foo? */
+		{  "program",       "flow",                ""},
+		{  "parameter",     "program",             "parameters"},
+		{  NULL, NULL, NULL}
 	};
 	GdomeElement *paste_element;
 	GdomeElement *container_element;
 	GebrGeoXmlObject *first_paste = NULL;
+	GebrGeoXmlFlow *flow;
+	GebrGeoXmlProgram *prog;
+	GebrGeoXmlProgramControl cont;
 
 	container_element = gdome_n_nodeType((GdomeNode *) object, &exception) == GDOME_DOCUMENT_NODE
 	    ? gdome_doc_documentElement((GdomeDocument *) object, &exception) : (GdomeElement *) object;
@@ -73,6 +77,16 @@ GebrGeoXmlObject *gebr_geoxml_clipboard_paste(GebrGeoXmlObject * object)
 				GdomeDocument *document;
 
 				document = gdome_el_ownerDocument(container_element, &exception);
+
+				if (strcmp(child_parent[i][0], "program") == 0) {
+					flow = GEBR_GEOXML_FLOW (document);
+					prog = GEBR_GEOXML_PROGRAM (paste_element);
+					cont = gebr_geoxml_program_get_control (prog);
+					if (gebr_geoxml_flow_has_control_program (flow)
+					    && cont != GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY)
+						break;
+				}
+
 				imported = gdome_doc_importNode(document, (GdomeNode*)paste_element, TRUE, &exception);
 				if (!strlen(child_parent[i][2]))
 					gdome_el_appendChild(container_element, imported, &exception);
