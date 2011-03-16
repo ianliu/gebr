@@ -502,6 +502,12 @@ void on_notebook_switch_page (GtkNotebook     *notebook,
 
     gtk_window_add_accel_group(GTK_WINDOW(gebr.window), gebr.accel_group_array[page_num]);
     gebr.last_notebook = page_num;
+
+    if (page_num == NOTEBOOK_PAGE_FLOW_EDITION) {
+	    GtkComboBox *cb = GTK_COMBO_BOX (gebr.ui_flow_edition->server_combobox);
+	    if (gtk_combo_box_get_active (cb) == -1)
+		    gtk_combo_box_set_active (cb, 0);
+    }
 }
 
 void on_server_common_connect(void)
@@ -583,6 +589,12 @@ void on_server_common_remove(void)
 
 	ui_server_update_tags_combobox ();
 	gtk_tree_model_filter_refilter (GTK_TREE_MODEL_FILTER (gebr.ui_project_line->servers_filter));
+
+	if (gtk_notebook_get_current_page (GTK_NOTEBOOK (gebr.notebook)) == NOTEBOOK_PAGE_FLOW_EDITION) {
+		GtkComboBox *cb = GTK_COMBO_BOX (gebr.ui_flow_edition->server_combobox);
+		if (gtk_combo_box_get_active (cb) == -1)
+			gtk_combo_box_set_active (cb, 0);
+	}
 }
 
 void on_server_common_stop(void)
