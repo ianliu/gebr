@@ -181,7 +181,90 @@ static void on_tags_edited (GtkCellRendererText *cell,
 	gchar *new_tags = sort_and_remove_doubles (new_text);
 
 	if (g_strcmp0(last_tags, new_tags) != 0){
-		ui_server_set_tags (server, new_tags);
+		GList *removed = ui_server_tags_removed(last_tags, new_tags);
+		gboolean can_delete = TRUE;
+
+		if (g_list_length(removed) > 0){
+			GtkWidget *dialog;
+			GtkWidget *text_view;
+			GtkTextBuffer *text_buffer;
+			GtkWidget *label;
+			GtkWidget *message_label;
+			GtkWidget *table = gtk_table_new(3, 2, FALSE);
+			GtkWidget * image = gtk_image_new_from_stock(GTK_STOCK_DIALOG_QUESTION, GTK_ICON_SIZE_DIALOG);
+			guint row = 0;
+			char *markup = g_markup_printf_escaped("<span font_weight='bold' size='large'>%s</span>", _("Confirm group deletion"));
+			GString *message = g_string_new(_("The following groups are about to be deleted.\nThere must be lines that make reference to them!\n Are you sure?\n"));
+			gboolean empty_tag = FALSE;
+			GtkWidget *scrolled_window;
+			scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+			gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window), GTK_POLICY_AUTOMATIC,
+						       GTK_POLICY_AUTOMATIC);
+			gtk_widget_set_size_request(scrolled_window, 400, 200);
+
+			text_buffer = gtk_text_buffer_new(NULL);
+			text_view = gtk_text_view_new_with_buffer(text_buffer);
+			gtk_text_view_set_editable(GTK_TEXT_VIEW (text_view), FALSE);
+			gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW (text_view), FALSE);
+
+			while (removed){
+				GList * servers_in_tag = ui_server_servers_with_tag((gchar *)removed->data);
+
+				if (g_list_length(servers_in_tag) == 1){
+					GString * buf = g_string_new((char *)removed->data);
+					g_string_append(buf, "\n");
+					empty_tag = TRUE;
+					gtk_text_buffer_insert_at_cursor(text_buffer, buf->str, buf->len);
+					g_string_free(buf,TRUE);
+				}
+
+				g_list_free(servers_in_tag);
+				removed = removed->next;
+			}
+
+			if (empty_tag){
+				label = gtk_label_new(NULL);
+				message_label = gtk_label_new(message->str);
+				dialog = gtk_dialog_new_with_buttons(_("Confirm group deletion"), NULL,
+								     (GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
+								     GTK_STOCK_YES,
+								     GTK_RESPONSE_YES ,
+								     GTK_STOCK_NO,
+								     GTK_RESPONSE_NO,
+								     NULL);
+				gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_NO);
+				gtk_label_set_markup (GTK_LABEL (label), markup);
+				g_free (markup);
+
+
+
+				gtk_container_add(GTK_CONTAINER(scrolled_window), text_view);
+				gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), table, TRUE, TRUE, 0);
+				gtk_table_attach(GTK_TABLE(table), image, 0, 1, row, row + 1, (GtkAttachOptions)GTK_FILL,
+						 (GtkAttachOptions)GTK_FILL, 3, 3);
+				gtk_table_attach(GTK_TABLE(table), label, 1, 2, row, row + 1, (GtkAttachOptions)GTK_FILL,
+						 (GtkAttachOptions)GTK_FILL, 3, 3), row++;
+
+				gtk_table_attach(GTK_TABLE(table), message_label, 1, 2, row, row + 1, (GtkAttachOptions)GTK_FILL,
+						 (GtkAttachOptions)GTK_FILL, 3, 3), row++;
+
+				gtk_table_attach(GTK_TABLE(table), scrolled_window, 1, 2, row, row + 1, (GtkAttachOptions)GTK_FILL,
+						 (GtkAttachOptions)GTK_EXPAND
+						 , 3, 3), row++;
+
+				gtk_widget_show_all(GTK_DIALOG(dialog)->vbox);
+				ret = gtk_dialog_run(GTK_DIALOG(dialog));
+				can_delete = (ret == GTK_RESPONSE_YES) ? TRUE : FALSE;
+
+				gtk_widget_destroy(dialog);
+			}
+			g_string_free(message, TRUE);
+		}
+		if (can_delete)
+			ui_server_set_tags (server, new_tags);
+
+		g_list_foreach(removed, (GFunc)g_free, NULL);
+		g_list_free(removed);
 	}
 
 	g_free (new_tags);
@@ -951,7 +1034,6 @@ static GList *ui_server_tags_removed (const gchar *last_tags, const gchar *new_t
 	}
 
 	g_strfreev (tag_list_new);
-	g_strfreev (tag_list_last);
 
 	return list;
 }
