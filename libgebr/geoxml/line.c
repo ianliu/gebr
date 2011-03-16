@@ -16,6 +16,7 @@
  */
 
 #include <gdome.h>
+#include <glib/gi18n.h>
 
 #include "line.h"
 #include "document.h"
@@ -181,4 +182,15 @@ const gchar *gebr_geoxml_line_get_group (GebrGeoXmlLine *line, gboolean *is_fs)
 		*is_fs = FALSE;
 		return group;
 	}
+}
+
+const gchar *gebr_geoxml_line_get_group_label (GebrGeoXmlLine *line)
+{
+	gboolean is_fs;
+	const gchar *group = gebr_geoxml_line_get_group(line, &is_fs);
+
+	if(g_strcmp0(group, "") == 0) {
+		return _("All Servers");
+	}
+	return group;
 }

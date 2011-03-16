@@ -201,5 +201,10 @@ void gebr_geoxml_line_set_group (GebrGeoXmlLine *line, const gchar *group, gbool
  */
 const gchar *gebr_geoxml_line_get_group (GebrGeoXmlLine *line, gboolean *is_fs);
 
+/**
+ * Returns: the group label, if group is empty string, returns "All servers".
+ */
+const gchar *gebr_geoxml_line_get_group_label (GebrGeoXmlLine *line);
+
 G_END_DECLS
 #endif				//__GEBR_GEOXML_LINE_H

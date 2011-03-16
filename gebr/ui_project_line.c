@@ -172,15 +172,26 @@ struct ui_project_line *project_line_setup_ui(void)
 	gtk_table_attach(GTK_TABLE(table), ui_project_line->info.modified, 1, 2, 1, 2, (GtkAttachOptions)GTK_FILL,
 			 (GtkAttachOptions)GTK_FILL, 3, 3);
 
+	/* Server group */
+	ui_project_line->info.group_label = gtk_label_new("");
+	gtk_misc_set_alignment(GTK_MISC(ui_project_line->info.group_label), 0, 0);
+	gtk_table_attach(GTK_TABLE(table), ui_project_line->info.group_label, 0, 1, 2, 3, (GtkAttachOptions)GTK_FILL,
+			(GtkAttachOptions)GTK_FILL, 3, 3);
+
+	ui_project_line->info.group = gtk_label_new("");
+	gtk_misc_set_alignment(GTK_MISC(ui_project_line->info.group), 0, 0);
+	gtk_table_attach(GTK_TABLE(table), ui_project_line->info.group, 1, 2, 2, 3, (GtkAttachOptions)GTK_FILL,
+			(GtkAttachOptions)GTK_FILL, 3, 3);
+
 	/* Paths for lines */
 	ui_project_line->info.path_label = gtk_label_new("");
 	gtk_misc_set_alignment(GTK_MISC(ui_project_line->info.path_label), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), ui_project_line->info.path_label, 0, 1, 2, 3, (GtkAttachOptions)GTK_FILL,
+	gtk_table_attach(GTK_TABLE(table), ui_project_line->info.path_label, 0, 1, 3, 4, (GtkAttachOptions)GTK_FILL,
 			 (GtkAttachOptions)GTK_FILL, 3, 3);
 
 	ui_project_line->info.path = gtk_label_new("");
 	gtk_misc_set_alignment(GTK_MISC(ui_project_line->info.path), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), ui_project_line->info.path, 1, 2, 2, 3, (GtkAttachOptions)GTK_FILL,
+	gtk_table_attach(GTK_TABLE(table), ui_project_line->info.path, 1, 2, 3, 4, (GtkAttachOptions)GTK_FILL,
 			 (GtkAttachOptions)GTK_FILL, 3, 3);
 
 	/* Help */
@@ -210,16 +221,18 @@ void project_line_info_update(void)
 {
 	gchar *markup;
 	GString *text;
-
+	const gchar *group;
 	gboolean is_project;
 
-	if (!project_line_get_selected(NULL, DontWarnUnselection)) {
+	if (gebr.project_line == NULL) {
 		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.title), "");
 		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.description), "");
 		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.created_label), "");
 		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.created), "");
 		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.modified_label), "");
 		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.modified), "");
+		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.group_label), "");
+		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.group), "");
 		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path_label), "");
 		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path), "");
 		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.numberoflines), "");
@@ -277,6 +290,17 @@ void project_line_info_update(void)
 	gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.modified),
 			   gebr_localized_date(gebr_geoxml_document_get_date_modified(gebr.project_line)));
 
+	/* Line's server group */
+	if (!is_project) {
+		markup = g_markup_printf_escaped("<b>%s</b>", _("Server group:"));
+		gtk_label_set_markup(GTK_LABEL(gebr.ui_project_line->info.group_label), markup);
+		g_free(markup);
+
+		group = gebr_geoxml_line_get_group_label(GEBR_GEOXML_LINE(gebr.project_line));
+
+		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.group), group);
+	}
+
 	/* Line's paths */
 	if (!is_project) {
 		GebrGeoXmlSequence *path;
@@ -289,7 +313,7 @@ void project_line_info_update(void)
 
 		if (gebr_geoxml_line_get_path(gebr.line, &path, 0) == GEBR_GEOXML_RETV_SUCCESS){
 			while (path) {
-				const gchar * value;
+				const gchar *value;
 				value = gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(path));
 				g_string_append_printf(text, "%s\n", value);
 				gebr_geoxml_sequence_next(&path);
