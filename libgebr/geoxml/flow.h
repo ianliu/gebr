@@ -360,5 +360,17 @@ glong gebr_geoxml_flow_get_revisions_number(GebrGeoXmlFlow * flow);
  */
 GebrGeoXmlFlowError gebr_geoxml_flow_validade(GebrGeoXmlFlow * flow, gchar ** program_title);
 
+/**
+ * gebr_geoxml_flow_has_control_program:
+ * @flow:
+ *
+ * If this flow has a program marked as a control, this function returns %TRUE. Otherwise returns %FALSE.
+ * The purpose of this function is to allow only one control for each flow. It is not possible to set a
+ * program to be a control, only if you directly edit the XML file of a flow.
+ *
+ * Returns: %TRUE if @flow has a program which is a control, %FALSE otherwise.
+ */
+gboolean gebr_geoxml_flow_has_control_program (GebrGeoXmlFlow *flow);
+
 G_END_DECLS
 #endif				//__GEBR_GEOXML_FLOW_H
