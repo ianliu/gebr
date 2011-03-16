@@ -816,6 +816,11 @@ static GtkMenu *flow_edition_component_popup_menu(GtkWidget * widget, struct ui_
 	GtkWidget * menu;
 	GtkWidget * menu_item;
 	GtkAction * action;
+	GebrGeoXmlProgram *program;
+	GebrGeoXmlProgramControl control;
+	gboolean is_ordinary;
+	gboolean can_move_up;
+	gboolean can_move_down;
 
 	if (!flow_edition_get_selected_component(&iter, FALSE))
 		return NULL;
@@ -827,21 +832,29 @@ static GtkMenu *flow_edition_component_popup_menu(GtkWidget * widget, struct ui_
 	    gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->error_iter)) 
 		return NULL;
 
+	gtk_tree_model_get (GTK_TREE_MODEL (gebr.ui_flow_edition->fseq_store), &iter,
+			    FSEQ_GEBR_GEOXML_POINTER, &program,
+			    -1);
+	control = gebr_geoxml_program_get_control (program);
+
+	is_ordinary = control == GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY;
+	can_move_up = gebr_gui_gtk_list_store_can_move_up(ui_flow_edition->fseq_store, &iter);
+	can_move_down = gebr_gui_gtk_list_store_can_move_down(ui_flow_edition->fseq_store, &iter);
+
 	/* Move top */
-	if (gebr_gui_gtk_list_store_can_move_up(ui_flow_edition->fseq_store, &iter) == TRUE) {
+	if (is_ordinary && can_move_up) {
 		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_GOTO_TOP, NULL);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 		g_signal_connect(menu_item, "activate", G_CALLBACK(flow_program_move_top), NULL);
 	}
 	/* Move bottom */
-	if (gebr_gui_gtk_list_store_can_move_down(ui_flow_edition->fseq_store, &iter) == TRUE) {
+	if (is_ordinary && can_move_down) {
 		menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_GOTO_BOTTOM, NULL);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
 		g_signal_connect(menu_item, "activate", G_CALLBACK(flow_program_move_bottom), NULL);
 	}
 	/* separator */
-	if (gebr_gui_gtk_list_store_can_move_up(ui_flow_edition->fseq_store, &iter) == TRUE ||
-	    gebr_gui_gtk_list_store_can_move_down(ui_flow_edition->fseq_store, &iter) == TRUE)
+	if (is_ordinary && (can_move_up || can_move_down))
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
 
 

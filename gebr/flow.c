@@ -667,12 +667,15 @@ void flow_program_remove(void)
 void flow_program_move_top(void)
 {
 	GtkTreeIter iter;
+	GebrGeoXmlProgramControl control;
+
+	control = gebr_geoxml_program_get_control (gebr.program);
+	if (control != GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY)
+		return;
 
 	flow_edition_get_selected_component(&iter, FALSE);
-	/* Update flow */
 	gebr_geoxml_sequence_move_after(GEBR_GEOXML_SEQUENCE(gebr.program), NULL);
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
-	/* Update GUI */
 	gtk_list_store_move_after(GTK_LIST_STORE(gebr.ui_flow_edition->fseq_store),
 				  &iter, &gebr.ui_flow_edition->input_iter);
 	flow_program_check_sensitiveness();
@@ -681,12 +684,15 @@ void flow_program_move_top(void)
 void flow_program_move_bottom(void)
 {
 	GtkTreeIter iter;
+	GebrGeoXmlProgramControl control;
+
+	control = gebr_geoxml_program_get_control (gebr.program);
+	if (control != GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY)
+		return;
 
 	flow_edition_get_selected_component(&iter, FALSE);
-	/* Update flow */
 	gebr_geoxml_sequence_move_before(GEBR_GEOXML_SEQUENCE(gebr.program), NULL);
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
-	/* Update GUI */
 	gtk_list_store_move_before(GTK_LIST_STORE(gebr.ui_flow_edition->fseq_store),
 				   &iter, &gebr.ui_flow_edition->output_iter);
 	flow_program_check_sensitiveness();
