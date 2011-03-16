@@ -273,7 +273,7 @@ GebrGeoXmlProgram *gebr_geoxml_flow_get_first_mpi_program(GebrGeoXmlFlow * flow)
 
 /**
  * Creates a new category and append it to the list of categories.
- * Provided for convenience.
+ * If the category already exist, returns it.
  *
  * \see gebr_geoxml_flow_new_category
  */
