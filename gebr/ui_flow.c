@@ -151,6 +151,12 @@ void flow_program_check_sensitiveness (void)
 
 	gebr_geoxml_flow_get_program(gebr.flow, &program, 0);
 	for (; program != NULL; gebr_geoxml_sequence_next(&program)) {
+
+		GebrGeoXmlProgramControl control = gebr_geoxml_program_get_control (GEBR_GEOXML_PROGRAM (program));
+
+		if (control != GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY)
+			continue;
+
 		if (gebr_geoxml_program_get_status (GEBR_GEOXML_PROGRAM(program)) == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED){
 			if (!has_configured) {
 				first_program = GEBR_GEOXML_PROGRAM(program);
