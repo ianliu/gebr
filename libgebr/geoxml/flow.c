@@ -573,6 +573,14 @@ GebrGeoXmlFlowError gebr_geoxml_flow_validade(GebrGeoXmlFlow * flow, gchar ** pr
 	gint status = 0;
 	gboolean first_configured = TRUE;
 	gint previous_stdout = 0;
+	
+	/*
+	 * Checking if flow has only the for loop
+	 */
+
+	if (max == 1 && gebr_geoxml_flow_has_control_program (flow))
+		return GEBR_GEOXML_FLOW_ERROR_LOOP_ONLY;
+
 
 	for (i = 0; i < max; i++)
 	{
@@ -628,7 +636,7 @@ gboolean gebr_geoxml_flow_has_control_program (GebrGeoXmlFlow *flow)
 	GebrGeoXmlProgramControl cont;
 
 	gebr_geoxml_flow_get_program (flow, &seq, 0);
-	while (prog) {
+	while (seq){
 		prog = GEBR_GEOXML_PROGRAM (seq);
 		cont = gebr_geoxml_program_get_control (prog);
 		if (cont != GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY

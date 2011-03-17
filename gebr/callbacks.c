@@ -210,6 +210,13 @@ static gboolean flows_check_before_execution(void)
 						flow_title);
 			g_free(flow_title);	
 			return FALSE;
+		case GEBR_GEOXML_FLOW_ERROR_LOOP_ONLY:
+			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+						_("Warning"),_("Flow \"%s\" has only an empty loop"),
+						flow_title);
+			g_free(flow_title);	
+			return FALSE;
+
 		default:
 			g_free(flow_title);	
 			return FALSE;
@@ -366,6 +373,10 @@ void on_flow_component_execute_single()
 	case GEBR_GEOXML_FLOW_ERROR_NO_VALID_PROGRAMS:
 		gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
 					_("Warning"),_("No configured or enabled programs found"));
+		return;
+	case GEBR_GEOXML_FLOW_ERROR_LOOP_ONLY:
+		gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+					_("Warning"),_("Your flow has only an empty loop"));
 		return;
 	default:
 		return;
