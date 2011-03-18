@@ -1056,14 +1056,16 @@ void on_response_ok(GtkButton * button, GebrPropertiesData * data)
 	switch ((type = gebr_geoxml_document_get_type(data->document))) {
 	case GEBR_GEOXML_DOCUMENT_TYPE_PROJECT:
 	case GEBR_GEOXML_DOCUMENT_TYPE_LINE: {
+		GebrGeoXmlLine *line = GEBR_GEOXML_LINE(data->document);
+
 		project_line_get_selected(&iter, DontWarnUnselection);
 		gtk_tree_store_set(gebr.ui_project_line->store, &iter,
 				   PL_TITLE, gebr_geoxml_document_get_title(data->document), -1);
 		project_line_info_update();
 
-
 		gint current_active_group = gtk_combo_box_get_active(GTK_COMBO_BOX(data->groups_combo));
-		if (current_active_group != data->previous_active_group) {
+		gboolean emptyness = gebr_geoxml_line_get_paths_number(line) == 0 && gebr_geoxml_line_get_flows_number(line) == 0;
+		if (!emptyness && current_active_group != data->previous_active_group) {
 			gboolean clean = gebr_gui_message_dialog (GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
 								  _("Clean line and flow(s) path(s)?"),
 								  _("Do you wish to clean all paths from"
