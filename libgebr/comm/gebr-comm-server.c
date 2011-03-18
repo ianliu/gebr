@@ -666,13 +666,18 @@ static void gebr_comm_server_socket_connected(GebrCommProtocolSocket * socket, s
 			/* get this X session magic cookie */
 			GString *cmd_line = g_string_new(NULL);
 			g_string_printf(cmd_line, "xauth list %s | awk '{print $3}'", display_number);
+			/* WORKAROUND: if xauth is already executing it will lock
+			 * the auth file and it will fail to retrieve the m-cookie.
+			 * So, as a workaround, we try to get the m-cookie many times.
+			 */
 			for (gint try = 0;;) {
 				FILE *output_fp = popen(cmd_line->str, "r");
 				if (fscanf(output_fp, "%32s", mcookie_str) != 1) {
 					g_warning("%s:%d: Error fetching authorization code for display %s",
 						  __FILE__, __LINE__, display);
 					usleep(100*1000);
-				}
+				} else
+					break;
 				pclose(output_fp);
 
 				if (++try == 5) {
