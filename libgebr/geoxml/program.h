@@ -275,5 +275,14 @@ const gchar *gebr_geoxml_program_get_url(GebrGeoXmlProgram * program);
  */
 GebrGeoXmlProgramControl gebr_geoxml_program_get_control(GebrGeoXmlProgram * program);
 
+/**
+ * gebr_geoxml_program_control_get_n:
+ * @prog: A #GebrGeoXmlProgram
+ *
+ * Returns: 0 if @prog is %NULL or the parameter is not defined, otherwise it
+ * returns the non-negative value representing the number of iterations.
+ */
+guint gebr_geoxml_program_control_get_n (GebrGeoXmlProgram *prog);
+
 G_END_DECLS
 #endif				//__GEBR_GEOXML_PROGRAM_H

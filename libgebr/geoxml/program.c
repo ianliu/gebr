@@ -27,6 +27,7 @@
 #include "error.h"
 #include "types.h"
 #include "sequence.h"
+#include "value_sequence.h"
 
 /*
  * internal structures and funcionts
@@ -319,4 +320,25 @@ GebrGeoXmlProgramControl gebr_geoxml_program_get_control(GebrGeoXmlProgram * pro
 		return GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY;
 
 	return GEBR_GEOXML_PROGRAM_CONTROL_UNKNOWN;
+}
+
+guint gebr_geoxml_program_control_get_n (GebrGeoXmlProgram *prog)
+{
+	GebrGeoXmlProgramControl c;
+	GebrGeoXmlParameter *param;
+	GebrGeoXmlParameters *params;
+	GebrGeoXmlValueSequence *value;
+
+	if (!prog)
+		return 0;
+
+	c = gebr_geoxml_program_get_control (prog);
+
+	g_return_val_if_fail (c != GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY, 0);
+
+	params = gebr_geoxml_program_get_parameters (prog);
+	gebr_geoxml_parameters_get_parameter (params, (GebrGeoXmlSequence**)&param, 0);
+	gebr_geoxml_program_parameter_get_value (GEBR_GEOXML_PROGRAM_PARAMETER (param),
+						 FALSE, (GebrGeoXmlSequence**)&value, 0);
+	return atoi(gebr_geoxml_value_sequence_get(value));
 }
