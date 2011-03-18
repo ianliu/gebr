@@ -23,3 +23,6 @@ test_program_SOURCES = test-program.c
 
 TEST_PROGS += test-tmpl
 test_tmpl_SOURCES = test-tmpl.c
+
+TEST_PROGS += test-line
+test_line_SOURCES = test-line.c
