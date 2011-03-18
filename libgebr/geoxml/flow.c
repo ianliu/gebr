@@ -18,7 +18,7 @@
 #include <regex.h>
 #include <gdome.h>
 #include <string.h>
-
+#include <stdio.h>
 #include "../date.h"
 
 #include "flow.h"
@@ -573,6 +573,7 @@ GebrGeoXmlFlowError gebr_geoxml_flow_validade(GebrGeoXmlFlow * flow, gchar ** pr
 	gint status = 0;
 	gboolean first_configured = TRUE;
 	gint previous_stdout = 0;
+	gboolean find_control = FALSE;
 	
 	/*
 	 * Checking if flow has only the for loop
@@ -589,6 +590,11 @@ GebrGeoXmlFlowError gebr_geoxml_flow_validade(GebrGeoXmlFlow * flow, gchar ** pr
 
 		if (status != GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED)
 			continue;
+
+		if (!find_control && gebr_geoxml_program_get_control (GEBR_GEOXML_PROGRAM(first_program)) == GEBR_GEOXML_PROGRAM_CONTROL_FOR){
+			find_control = TRUE;
+			continue;
+		}
 
 		int chain_option = gebr_geoxml_program_get_stdin(GEBR_GEOXML_PROGRAM(first_program)) 
 				   + (previous_stdout << 1);

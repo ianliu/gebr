@@ -860,6 +860,8 @@ static void job_assembly_cmdline(GebrdJob *job)
 	GebrGeoXmlSequence *program;
 	GebrdMpiInterface * mpi;
 	gulong nprog;
+	gboolean has_control = FALSE;
+	guint counter = 0;
 
 	if (job->flow == NULL) 
 		goto err;
@@ -880,9 +882,32 @@ static void job_assembly_cmdline(GebrdJob *job)
 
 		gebr_geoxml_sequence_next(&program);
 	}
+
 	if (program == NULL) {
 		job_issue(job, _("No configured programs.\n"));
 		goto err;
+	}
+
+	if (gebr_geoxml_program_get_control(GEBR_GEOXML_PROGRAM(program)) != GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY &&
+	    gebr_geoxml_program_get_control(GEBR_GEOXML_PROGRAM(program)) != GEBR_GEOXML_PROGRAM_CONTROL_UNKNOWN){
+		has_control = TRUE;
+		counter = gebr_geoxml_program_control_get_n(GEBR_GEOXML_PROGRAM(program));
+
+		/* Check if there is configured programs */
+		gebr_geoxml_sequence_next(&program);
+		while (program != NULL &&
+		       gebr_geoxml_program_get_status(GEBR_GEOXML_PROGRAM(program)) != GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED) {
+			job_issue(job, _("%u) Skipping disabled/not configured program '%s'.\n"),
+				  ++issue_number, gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(program)));
+
+			gebr_geoxml_sequence_next(&program);
+		}
+
+		if (program == NULL) {
+			job_issue(job, _("No configured programs.\n"));
+			goto err;
+		}
+
 	}
 
 	/*
@@ -941,6 +966,15 @@ static void job_assembly_cmdline(GebrdJob *job)
 			job_issue(job, _("%u) Skipping disabled/not configured program '%s'.\n"),
 				  ++issue_number,
 				  gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(program)));
+
+			gebr_geoxml_sequence_next(&program);
+			continue;
+		}
+
+		if (gebr_geoxml_program_get_control(GEBR_GEOXML_PROGRAM(program)) != GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY &&
+		    gebr_geoxml_program_get_control(GEBR_GEOXML_PROGRAM(program)) != GEBR_GEOXML_PROGRAM_CONTROL_UNKNOWN){
+			has_control = TRUE;
+			counter = gebr_geoxml_program_control_get_n(GEBR_GEOXML_PROGRAM(program));
 
 			gebr_geoxml_sequence_next(&program);
 			continue;
@@ -1021,6 +1055,19 @@ static void job_assembly_cmdline(GebrdJob *job)
 			g_string_append_printf(job->parent.cmd_line, ">%s", quoted);
 			g_free(quoted);
 		}
+	}
+
+	if (has_control){
+		GString * prefix = g_string_new(NULL);
+		GString * sufix = g_string_new("\ndone");
+
+		g_string_printf(prefix, "for (( c=1; c<=%d; c++ ))\ndo\n\t",counter);
+
+		g_string_prepend(job->parent.cmd_line, prefix->str);
+		g_string_append(job->parent.cmd_line, sufix->str);
+
+		g_string_free(prefix, TRUE);
+		g_string_free(sufix, TRUE);
 	}
 
 	job->critical_error = FALSE;
