@@ -269,10 +269,6 @@ void gebr_geoxml_document_set_description(GebrGeoXmlDocument * document, const g
  * This enables rich text documentation of the document with
  * all the functionallity of html,
  * like images, tables, fonts, etc.
- * PS: Because of implementation HTML text in \p help
- * cannot contain the string ']]>', as it is stored in a
- * CDATA Section. If those strings are found they are
- * going to be replaced by ']] >'.
  *
  * If \p document is NULL nothing is done.
  *
