@@ -299,26 +299,36 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 		data->groups_combo = groups_combo = ui_server_create_tag_combo_box ();
 		curr_group = gebr_geoxml_line_get_group (GEBR_GEOXML_LINE (document), &is_fs);
 
-		gboolean found = FALSE;
-		gebr_gui_gtk_tree_model_foreach (iter, model) {
-			gboolean is_sep;
-			gchar *name;
-			gtk_tree_model_get (model, &iter,
-					    TAG_SEP, &is_sep,
-					    TAG_NAME, &name,
-					    TAG_FS, &is_fs2,
-					    -1);
-			if (!is_sep && is_fs == is_fs2 && g_strcmp0 (name, curr_group) == 0) {
-				active = iter;
-				found = TRUE;
+		/* If group is empty, select All Servers */
+		if (strlen (curr_group) == 0)
+			gtk_combo_box_set_active_iter (GTK_COMBO_BOX (groups_combo), &active);
+		else {
+			/* Otherwise, skip the first entry and search for the current group */
+			gboolean valid;
+			valid = gtk_tree_model_iter_next (model, &iter);
+			while (valid) {
+				gboolean is_sep;
+				gchar *name;
+				gtk_tree_model_get (model, &iter,
+						    TAG_SEP, &is_sep,
+						    TAG_NAME, &name,
+						    TAG_FS, &is_fs2,
+						    -1);
+				if (!is_sep && is_fs == is_fs2 && g_strcmp0 (name, curr_group) == 0) {
+					active = iter;
+					g_free (name);
+					break;
+				}
+				g_free (name);
+				valid = gtk_tree_model_iter_next (model, &iter);
 			}
-			g_free (name);
+			/* If valid = TRUE, we found the group */
+			if (valid || is_new)
+				gtk_combo_box_set_active_iter (GTK_COMBO_BOX (groups_combo), &active);
+			else
+				gtk_combo_box_set_active (GTK_COMBO_BOX (groups_combo), -1);
 		}
 
-		if (found || is_new)
-			gtk_combo_box_set_active_iter (GTK_COMBO_BOX (groups_combo), &active);
-		else
-			gtk_combo_box_set_active (GTK_COMBO_BOX (groups_combo), -1);
 		data->previous_active_group = gtk_combo_box_get_active(GTK_COMBO_BOX(groups_combo));
 
 		label = gtk_label_new (_("Server group"));
