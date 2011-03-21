@@ -1037,3 +1037,149 @@ static GList *ui_server_tags_removed (const gchar *last_tags, const gchar *new_t
 
 	return list;
 }
+
+gboolean ui_server_ask_for_tags_remove_permission (void){
+	GtkTreeIter iter;
+	gboolean result = FALSE;
+	gchar *tags;
+	GString *removed_tags = g_string_new(NULL);
+	gchar **removed_tagsv; 
+	GString *all_tags = g_string_new(NULL);
+	gchar **all_tagsv; 
+	GList *all = NULL;
+
+
+	/* Build the list with all tags not sorted nor exclusive tags*/
+	gebr_gui_gtk_tree_model_foreach (iter, GTK_TREE_MODEL (gebr.ui_server_list->common.store)) {
+		gtk_tree_model_get (GTK_TREE_MODEL (gebr.ui_server_list->common.store), &iter,
+				    SERVER_TAGS, &tags,
+				    -1);
+		g_string_append_printf (all_tags, "%s,", tags);
+		g_free (tags);
+	}
+
+	all_tagsv = g_strsplit (all_tags->str, ",", 0);
+
+	for (gint i=0; all_tagsv[i]; i++){
+		all = g_list_append(all, all_tagsv[i]);
+	}
+
+	/* Build the list with all tags REMOVED not sorted nor exclusive tags*/
+	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_server_list->common.view) {
+
+		GebrServer *server;
+		gtk_tree_model_get (gebr.ui_server_list->common.sort_store, &iter,
+				    SERVER_POINTER, &server,
+				    SERVER_TAGS, &tags,
+				    -1);
+		if (server && g_strcmp0 (server->comm->address->str, "127.0.0.1") == 0)
+			return FALSE;
+
+		g_string_append_printf (removed_tags, "%s,", tags);
+		g_free (tags);
+
+	}
+
+	removed_tagsv = g_strsplit (removed_tags->str, ",", 0);
+	for (int i = 0; removed_tagsv[i]; i++) {
+		GList *remove = g_list_find_custom (all, removed_tagsv[i], (GCompareFunc)g_strcmp0);
+		all = g_list_delete_link (all, remove);
+	}
+
+	GString *new_tags = g_string_new(NULL);
+	while (all) {
+		g_string_append_printf (new_tags, "%s,", (gchar *) all->data);
+		all = all->next;
+	}
+
+	gchar *new_tags_sorted_no_doubles = sort_and_remove_doubles (new_tags->str);
+	gchar *all_tags_sorted_no_doubles = sort_and_remove_doubles (all_tags->str);
+
+	if (g_strcmp0(all_tags_sorted_no_doubles, new_tags_sorted_no_doubles) != 0){
+
+		/* Make the difference to discover the list of removed tags*/
+		GList *removed = ui_server_tags_removed(all_tags_sorted_no_doubles, new_tags_sorted_no_doubles);
+		GtkWidget *dialog;
+		GtkWidget *text_view;
+		GtkTextBuffer *text_buffer;
+		GtkWidget *label;
+		GtkWidget *message_label;
+		GtkWidget *table = gtk_table_new(3, 2, FALSE);
+		GtkWidget * image = gtk_image_new_from_stock(GTK_STOCK_DIALOG_QUESTION, GTK_ICON_SIZE_DIALOG);
+		guint row = 0;
+		char *markup = g_markup_printf_escaped("<span font_weight='bold' size='large'>%s</span>", _("Confirm group deletion"));
+		GString *message = g_string_new(_("The following groups are about to be deleted.\nThere must be lines that make reference to them!\n Are you sure?\n"));
+		gboolean empty_tag = FALSE;
+		GtkWidget *scrolled_window;
+		gboolean ret;
+
+		scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window), GTK_POLICY_AUTOMATIC,
+					       GTK_POLICY_AUTOMATIC);
+		gtk_widget_set_size_request(scrolled_window, 400, 200);
+
+		text_buffer = gtk_text_buffer_new(NULL);
+		text_view = gtk_text_view_new_with_buffer(text_buffer);
+		gtk_text_view_set_editable(GTK_TEXT_VIEW (text_view), FALSE);
+		gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW (text_view), FALSE);
+
+		while (removed){
+			GList * servers_in_tag = ui_server_servers_with_tag((gchar *)removed->data);
+
+			if (g_list_length(servers_in_tag) == 1){
+				GString * buf = g_string_new((char *)removed->data);
+				g_string_append(buf, "\n");
+				empty_tag = TRUE;
+				gtk_text_buffer_insert_at_cursor(text_buffer, buf->str, buf->len);
+				g_string_free(buf,TRUE);
+			}
+
+			g_list_free(servers_in_tag);
+			removed = removed->next;
+		}
+
+		if (empty_tag){
+			label = gtk_label_new(NULL);
+			message_label = gtk_label_new(message->str);
+			dialog = gtk_dialog_new_with_buttons(_("Confirm group deletion"), NULL,
+							     (GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
+							     GTK_STOCK_YES,
+							     GTK_RESPONSE_YES ,
+							     GTK_STOCK_NO,
+							     GTK_RESPONSE_NO,
+							     NULL);
+			gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_NO);
+			gtk_label_set_markup (GTK_LABEL (label), markup);
+			g_free (markup);
+
+
+
+			gtk_container_add(GTK_CONTAINER(scrolled_window), text_view);
+			gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), table, TRUE, TRUE, 0);
+			gtk_table_attach(GTK_TABLE(table), image, 0, 1, row, row + 1, (GtkAttachOptions)GTK_FILL,
+					 (GtkAttachOptions)GTK_FILL, 3, 3);
+			gtk_table_attach(GTK_TABLE(table), label, 1, 2, row, row + 1, (GtkAttachOptions)GTK_FILL,
+					 (GtkAttachOptions)GTK_FILL, 3, 3), row++;
+
+			gtk_table_attach(GTK_TABLE(table), message_label, 1, 2, row, row + 1, (GtkAttachOptions)GTK_FILL,
+					 (GtkAttachOptions)GTK_FILL, 3, 3), row++;
+
+			gtk_table_attach(GTK_TABLE(table), scrolled_window, 1, 2, row, row + 1, (GtkAttachOptions)GTK_FILL,
+					 (GtkAttachOptions)GTK_EXPAND
+					 , 3, 3), row++;
+
+			gtk_widget_show_all(GTK_DIALOG(dialog)->vbox);
+			ret = gtk_dialog_run(GTK_DIALOG(dialog));
+			result = (ret == GTK_RESPONSE_YES) ? TRUE : FALSE;
+
+			gtk_widget_destroy(dialog);
+		}
+		g_string_free(message, TRUE);
+
+	}
+	else{
+		result = TRUE;
+	}
+
+	return result;
+}

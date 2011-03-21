@@ -583,6 +583,9 @@ void on_server_common_remove(void)
 	GtkTreeSelection *selection;
 	GList *rows = NULL;
 
+	if (!ui_server_ask_for_tags_remove_permission())
+		return;
+
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (gebr.ui_server_list->common.view));
 	rows = gtk_tree_selection_get_selected_rows (selection, &sort_model);
 
