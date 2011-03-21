@@ -18,6 +18,7 @@
 #include <glib.h>
 
 #include "line.h"
+#include "value_sequence.c"
 
 
 void test_gebr_geoxml_line_get_flows_number(void)
@@ -46,6 +47,10 @@ void test_gebr_geoxml_line_get_flow(void)
 	const gchar *source;
 
 	line = gebr_geoxml_line_new();
+
+	x = gebr_geoxml_line_get_flow(line, &sequence, 0);
+	g_assert_cmpint(x,==,-5);
+
 	line_flow = gebr_geoxml_line_append_flow(line, "flow1");
 	x = gebr_geoxml_line_get_flow(line, &sequence, 0);
 	g_assert_cmpint(x,==,0);
@@ -106,11 +111,24 @@ void test_gebr_geoxml_line_get_path(void)
 	GebrGeoXmlLinePath *line_path;
 	GebrGeoXmlSequence *sequence = NULL;
 	int x;
+	const gchar *path;
 
 	line = gebr_geoxml_line_new();
+
+	x = gebr_geoxml_line_get_path(line, &sequence, 0);
+	g_assert_cmpint(x,==,-5);
+
 	line_path = gebr_geoxml_line_append_path(line, "path1");
 	x = gebr_geoxml_line_get_path(line, &sequence, 0);
 	g_assert_cmpint(x,==,0);
+	path = gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(line_path));
+	g_assert_cmpstr("path1",==,path);
+
+	line_path = gebr_geoxml_line_append_path(line, "path2");
+	x = gebr_geoxml_line_get_path(line, &sequence, 1);
+	g_assert_cmpint(x,==,0);
+	path = gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(line_path));
+	g_assert_cmpstr("path2",==,path);
 }
 
 //void test_duplicate_paths(void)
@@ -133,13 +151,15 @@ void test_gebr_geoxml_line_get_path(void)
 void test_gebr_geoxml_line_get_group(void)
 {
 	GebrGeoXmlLine *line = NULL;
-	const gchar *group = "group", *receive;
+	const gchar *group = "group", *receive, *test;
 	gboolean is_fs;
 
 	line = gebr_geoxml_line_new();
 	gebr_geoxml_line_set_group(line, group, is_fs);
 	receive = gebr_geoxml_line_get_group(line, &is_fs);
 	g_assert_cmpstr(receive,==,group);
+	test = gebr_geoxml_line_get_group_label(line);
+	g_assert_cmpstr("group",==,test);
 }
 
 int main(int argc, char *argv[])
