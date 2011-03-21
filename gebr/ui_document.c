@@ -305,6 +305,7 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 		else {
 			/* Otherwise, skip the first entry and search for the current group */
 			gboolean valid;
+			iter = active;
 			valid = gtk_tree_model_iter_next (model, &iter);
 			while (valid) {
 				gboolean is_sep;
