@@ -21,13 +21,42 @@
 #include "flow.h"
 #include "line.h"
 #include "project.h"
+#include "error.h"
+
+void test_gebr_geoxml_document_load (void)
+{
+	GebrGeoXmlDocument *document;
+	int value;
+
+	value = gebr_geoxml_document_load(&document, TEST_DIR"/test.mnu", FALSE, NULL);
+	g_assert(value == GEBR_GEOXML_RETV_SUCCESS);
+	gebr_geoxml_document_free(document);
+
+	value = gebr_geoxml_document_load(&document, TEST_DIR"/x", FALSE, NULL);
+	g_assert(value == GEBR_GEOXML_RETV_FILE_NOT_FOUND);
+}
+
+void test_gebr_geoxml_document_get_version (void)
+{
+	GebrGeoXmlDocument *document = NULL;
+	const gchar *version = "";
+
+	// If \p document is NULL, returns NULL.
+	version = gebr_geoxml_document_get_version(document);
+	g_assert_cmpstr(version, ==, NULL);
+
+	gebr_geoxml_document_load(&document, TEST_DIR"/test.mnu", FALSE, NULL);
+	version = gebr_geoxml_document_get_version(document);
+	g_assert_cmpstr(version, ==, "0.3.5");
+	gebr_geoxml_document_free(document);
+}
 
 void test_gebr_geoxml_document_get_type (void)
 {
 	GebrGeoXmlDocument *document = NULL;
 	GebrGeoXmlDocumentType type;
 
-	// If document is NULL returns type FLOW
+	// If \p document is NULL returns type FLOW
 	type = gebr_geoxml_document_get_type(document);
 	g_assert(type == GEBR_GEOXML_DOCUMENT_TYPE_FLOW);
 
@@ -280,6 +309,8 @@ int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
 
+	g_test_add_func("/libgebr/geoxml/document/load", test_gebr_geoxml_document_load);
+	g_test_add_func("/libgebr/geoxml/document/get_version", test_gebr_geoxml_document_get_version);
 	g_test_add_func("/libgebr/geoxml/document/get_type", test_gebr_geoxml_document_get_type);
 	g_test_add_func("/libgebr/geoxml/document/get_filename", test_gebr_geoxml_document_get_filename);
 	g_test_add_func("/libgebr/geoxml/document/get_title", test_gebr_geoxml_document_get_title);
