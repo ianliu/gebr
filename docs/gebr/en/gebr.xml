@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <article xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" lang="en" version="5.0">
   <info>
     <title>GêBR - User Guide</title>
@@ -350,7 +350,7 @@
       <listitem>
         <para>
           <guilabel>
-            <link linkend="sec_3_1">Projects and Lines</link>
+            <link linkend="project_line">Projects and Lines</link>
           </guilabel>
         </para>
       </listitem>
@@ -383,293 +383,293 @@
 	 of GêBR's fundamental concepts. So, if you have not done so already , we <emphasis role="bold">recommend that you
 	read that Section</emphasis> before moving on. Also, whenever necessary, we will refer to that example.</para>
     </important>
-    <section xml:id="sec_3_1">
-      <title>The <guilabel>Projects and Lines</guilabel> tab</title>
-      <para>The tab
+  </section>
+  <section xml:id="project_line">
+    <title>The <guilabel>Projects and Lines</guilabel> tab</title>
+    <para>The tab
 	<guilabel>Projects and Lines</guilabel> has nine command buttons just below the tab. These command buttons will allow you to:</para>
-      <itemizedlist>
-        <listitem>
-          <para>
-            <link linkend="criar_novo_projeto">Create a New Project</link>
-          </para>
-        </listitem>
-        <listitem>
-          <para>
-            <link linkend="criar_nova_linha">Create a New Line</link>
-          </para>
-        </listitem>
-        <listitem>
-          <para>
-            <link linkend="sec_3_1_3">Delete a selected Project or Line</link>
-          </para>
-        </listitem>
-        <listitem>
-          <para>
-            <link linkend="sec_3_1_4">Edit selected Project or Lines properties</link>
-          </para>
-        </listitem>
-        <listitem>
-          <para>
-            <link linkend="sec_3_1_5">Edit selected Project or Line parameter dictionary </link>
-          </para>
-        </listitem>
-        <listitem>
-          <para>
-            <link linkend="sec_3_1_7">Import a Project or a Line</link>
-          </para>
-        </listitem>
-        <listitem>
-          <para>
-            <link linkend="exportar_um_projeto_ou_linha">Export a Project or a Line</link>
-          </para>
-        </listitem>
-        <listitem>
-          <para>
-            <link linkend="editar_comentarios">Edit comments</link>
-          </para>
-        </listitem>
-        <listitem>
-          <para>
-            <link linkend="visualizar_relatorio">View Report</link>
-          </para>
-        </listitem>
-      </itemizedlist>
-      <tip>
-        <para>Try using a <emphasis role="bold">context menu</emphasis> instead of command buttons. To do so,
+    <itemizedlist>
+      <listitem>
+        <para>
+          <link linkend="criar_novo_projeto">Create a New Project</link>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <link linkend="criar_nova_linha">Create a New Line</link>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <link linkend="sec_3_1_3">Delete a selected Project or Line</link>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <link linkend="sec_3_1_4">Edit selected Project or Lines properties</link>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <link linkend="sec_3_1_5">Edit selected Project or Line parameter dictionary </link>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <link linkend="sec_3_1_7">Import a Project or a Line</link>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <link linkend="exportar_um_projeto_ou_linha">Export a Project or a Line</link>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <link linkend="editar_comentarios">Edit comments</link>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <link linkend="visualizar_relatorio">View Report</link>
+        </para>
+      </listitem>
+    </itemizedlist>
+    <tip>
+      <para>Try using a <emphasis role="bold">context menu</emphasis> instead of command buttons. To do so,
          <emphasis role="bold">right-click</emphasis> on one of the Projects or Lines you have created. 
 	Notice that many commands can be found in this context menu. For certain cases this method is
            <emphasis role="bold">easier and faster</emphasis> then using command buttons.</para>
-      </tip>
-      <section xml:id="criar_novo_projeto">
-        <title>New Project</title>
-        <para>To create a new Project click on the
+    </tip>
+    <section xml:id="criar_novo_projeto">
+      <title>New Project</title>
+      <para>To create a new Project click on the
           button <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_criar_projeto.png"/></imageobject></inlinemediaobject></guiicon>, more details are given in 
           <xref linkend="editar_projetos_e_linhas"/>.</para>
-        <para>There is <emphasis role="bold">no limitation</emphasis> on the number of Projects in GêBR. You can
+      <para>There is <emphasis role="bold">no limitation</emphasis> on the number of Projects in GêBR. You can
 	have as many as you desire.</para>
-        <para>After creating a Project it will be <emphasis role="bold">visible on the left side of GêBR's main window</emphasis>. The <guilabel>Details</guilabel> box, on the right side of the main window, will show information about the selected Project.</para>
-      </section>
-      <section xml:id="criar_nova_linha">
-        <title>New Line</title>
-        <para>To create a new Line, <emphasis role="bold">select an existing Project</emphasis> and left-click on
+      <para>After creating a Project it will be <emphasis role="bold">visible on the left side of GêBR's main window</emphasis>. The <guilabel>Details</guilabel> box, on the right side of the main window, will show information about the selected Project.</para>
+    </section>
+    <section xml:id="criar_nova_linha">
+      <title>New Line</title>
+      <para>To create a new Line, <emphasis role="bold">select an existing Project</emphasis> and left-click on
           <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_criar_linha.png"/></imageobject></inlinemediaobject></guiicon>,  more details are given in 
         <xref linkend="editar_projetos_e_linhas"/>.. A new Line will appear
         in the selected Project.</para>
-        <para> There is <emphasis role="bold">no limitation</emphasis> on the number of Lines in GêBR. You can
+      <para> There is <emphasis role="bold">no limitation</emphasis> on the number of Lines in GêBR. You can
          have as many Lines in a Project as you desire.</para>
-        <para>Lines that you have created will be <emphasis role="bold">visible on the left side of GêBR's main window
+      <para>Lines that you have created will be <emphasis role="bold">visible on the left side of GêBR's main window
 	</emphasis> inside their respective Projects. The
           <guilabel>Details</guilabel> box, localized on the right side of the main window, exhibits information on the selected Line.</para>
-        <tip>
-          <para>In GêBR you can <emphasis role="bold">collapse</emphasis> or <emphasis role="bold">expand</emphasis> a 
+      <tip>
+        <para>In GêBR you can <emphasis role="bold">collapse</emphasis> or <emphasis role="bold">expand</emphasis> a 
           Project. When collapsed <emphasis role="bold">the Projects Lines are hidden</emphasis>, when expanded 
           <emphasis role="bold">the Project's Lines are visible</emphasis>. To collapse click on the icon
           <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_expandido.png"/></imageobject></inlinemediaobject></guiicon> immediately to the left of the Projects name. To expand,
   click on the icon <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_colapsado.png"/></imageobject></inlinemediaobject></guiicon>.</para>
-        </tip>
-      </section>
-      <section xml:id="sec_3_1_3">
-        <title>Deleting a Project or a Line</title>
-        <para>To remove a Line or Project select the Project or Line then left-click on
+      </tip>
+    </section>
+    <section xml:id="sec_3_1_3">
+      <title>Deleting a Project or a Line</title>
+      <para>To remove a Line or Project select the Project or Line then left-click on
           <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_apagar_projeto.png"/></imageobject></inlinemediaobject></guiicon>.</para>
-        <note>
-          <para>To delete a Project you must first delete all of its Lines. A Project can only be deleted if it is
+      <note>
+        <para>To delete a Project you must first delete all of its Lines. A Project can only be deleted if it is
             Empty.</para>
-        </note>
-        <caution>
-          <para>When you delete a Line you are also <emphasis role="bold">deleting all of its Flows</emphasis>.</para>
-        </caution>
-      </section>
-      <section xml:id="sec_3_1_4">
-        <title>Editing a Project's or Line's properties</title>
-        <para>To edit a Project's or Line's properties, first select the Project of Line and then click on
+      </note>
+      <caution>
+        <para>When you delete a Line you are also <emphasis role="bold">deleting all of its Flows</emphasis>.</para>
+      </caution>
+    </section>
+    <section xml:id="sec_3_1_4">
+      <title>Editing a Project's or Line's properties</title>
+      <para>To edit a Project's or Line's properties, first select the Project of Line and then click on
           button <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_editar_propriedades_projeto.png"/></imageobject></inlinemediaobject></guiicon>.</para>
-        <para>In the <guilabel>Project properties</guilabel> or <guilabel>Line properties</guilabel> dialog box 
+      <para>In the <guilabel>Project properties</guilabel> or <guilabel>Line properties</guilabel> dialog box 
         you can edit the following fields
         <guilabel>Title</guilabel>, 
         <guilabel>Description</guilabel>, 
         <guilabel>Author</guilabel> and 
         <guilabel>Email</guilabel>. A Line's properties also has the option of adding a <guilabel>Path</guilabel>, 
 	which will be explained in <xref linkend="editar_caminhos_preferenciais_da_linha"/>.</para>
-      </section>
-      <section xml:id="sec_3_1_5">
-        <title>Editing the Project's or Line's parameter dictionary</title>
-        <para>This feature is documented in the Section <xref linkend="dicionario_de_parametros"/>.</para>
-      </section>
-      <section xml:id="editar_caminhos_preferenciais_da_linha">
-        <title>Editing the Line's preferred paths</title>
-        <para>The Section <xref linkend="editar_arquivos_entrada_saida_fluxo"/> will show how a Flow can be associated to 
+    </section>
+    <section xml:id="sec_3_1_5">
+      <title>Editing the Project's or Line's parameter dictionary</title>
+      <para>This feature is documented in the Section <xref linkend="dicionario_de_parametros"/>.</para>
+    </section>
+    <section xml:id="editar_caminhos_preferenciais_da_linha">
+      <title>Editing the Line's preferred paths</title>
+      <para>The Section <xref linkend="editar_arquivos_entrada_saida_fluxo"/> will show how a Flow can be associated to 
           some data files, this association is simpler if we add preferred paths to 
           the Line.</para>
-        <para>The Line's preferred paths are defined in the <guilabel>Line's properties</guilabel> dialog box. To open this
+      <para>The Line's preferred paths are defined in the <guilabel>Line's properties</guilabel> dialog box. To open this
          dialog box select the Line then click on the icon
          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_editar_propriedades_projeto.png"/></imageobject></inlinemediaobject></guiicon>, in the tool bar, or open the popup context menu and select the option 
          <guilabel>Properties</guilabel>. In the <guilabel>Line's properties</guilabel> window, in the field <guilabel>Paths</guilabel>, write the path to the directory you want and then left-click on
          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_adicionar_caminho.png"/></imageobject></inlinemediaobject></guiicon>.</para>
-        <para>You can also add preferred paths by clicking on the button <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_caminho_personalizado.png"/></imageobject></inlinemediaobject></guiicon> and then choosing a
+      <para>You can also add preferred paths by clicking on the button <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_caminho_personalizado.png"/></imageobject></inlinemediaobject></guiicon> and then choosing a
 	 directory.</para>
-        <para>When you completed editing the preferred paths click <guibutton>OK</guibutton>.</para>
-        <para><emphasis role="bold">There is no Limit</emphasis> to the number of paths you can add.</para>
-        <tip>
-          <para>The path at the top of the list will be set as the standard path, which will be opened when the user
+      <para>When you completed editing the preferred paths click <guibutton>OK</guibutton>.</para>
+      <para><emphasis role="bold">There is no Limit</emphasis> to the number of paths you can add.</para>
+      <tip>
+        <para>The path at the top of the list will be set as the standard path, which will be opened when the user
       clicks on the icon <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_caminho_personalizado.png"/></imageobject></inlinemediaobject></guiicon> as to search for a file or directory.</para>
-        </tip>
-        <tip>
-          <para>To <emphasis role="bold">remove a path</emphasis> from the list, select it by pressing the  <emphasis role="bold">right-click </emphasis> and then left-click on <guimenuitem>Remove</guimenuitem> or
+      </tip>
+      <tip>
+        <para>To <emphasis role="bold">remove a path</emphasis> from the list, select it by pressing the  <emphasis role="bold">right-click </emphasis> and then left-click on <guimenuitem>Remove</guimenuitem> or
             <guimenuitem>Delete</guimenuitem>.</para>
-        </tip>
-        <tip>
-          <para>To change a <emphasis role="bold">path's position</emphasis> in the list, with the mouse simply 
+      </tip>
+      <tip>
+        <para>To change a <emphasis role="bold">path's position</emphasis> in the list, with the mouse simply 
 	<emphasis role="bold">drag it </emphasis> to its new position.</para>
-        </tip>
-        <para>You can also use hotkeys to add paths (<keycombo><keycap>Enter</keycap></keycombo>), move paths up and down
+      </tip>
+      <para>You can also use hotkeys to add paths (<keycombo><keycap>Enter</keycap></keycombo>), move paths up and down
 	 (<keycombo><keycap>Ctrl</keycap><keycap>arrow up/down</keycap></keycombo>), send a path to the top of the list
           (<keycombo><keycap>Ctrl</keycap><keycap>Home</keycap></keycombo>) and send a path to the bottom of the list
           (<keycombo><keycap>Ctrl</keycap><keycap>End</keycap></keycombo>).</para>
-        <figure>
-          <mediaobject>
-            <caption>In the Line's proporties dialog box, other than add useful information such as the Line's
+      <figure>
+        <mediaobject>
+          <caption>In the Line's proporties dialog box, other than add useful information such as the Line's
 	description, author and email, you can also add the Line's preferred paths in the paths text box.</caption>
-            <imageobject>
-              <imagedata fileref="../images/janela_path_list.png"/>
-            </imageobject>
-          </mediaobject>
-        </figure>
-      </section>
-      <section xml:id="sec_3_1_7">
-        <title>Import a Project or a Line</title>
-        <para>In GêBR you can import Projects or Lines that where previously exported
+          <imageobject>
+            <imagedata fileref="../images/janela_path_list.png"/>
+          </imageobject>
+        </mediaobject>
+      </figure>
+    </section>
+    <section xml:id="sec_3_1_7">
+      <title>Import a Project or a Line</title>
+      <para>In GêBR you can import Projects or Lines that where previously exported
           <xref linkend="exportar_um_projeto_ou_linha"/>. To do so:</para>
-        <procedure>
-          <step>
-            <para>Click on the
+      <procedure>
+        <step>
+          <para>Click on the
               button <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_importar_projeto.png"/></imageobject></inlinemediaobject></guiicon></para>
-          </step>
-          <step>
-            <para>Navegue pela janela <guilabel>Escolha o projeto ou linha para abrir</guilabel> e selecione o projeto
+        </step>
+        <step>
+          <para>Navegue pela janela <guilabel>Escolha o projeto ou linha para abrir</guilabel> e selecione o projeto
               ou a linha que deseja importar (apenas arquivos do tipo <filename class="extension">prjz</filename> ou
               <filename class="extension">lnez</filename> serão mostrados).</para>
-          </step>
-          <step>
-            <para>Clique no botão <guibutton>Abrir</guibutton>.</para>
-          </step>
-        </procedure>
-        <para>The imported project is added to the list of projects, found on the left of the main window. An imported
+        </step>
+        <step>
+          <para>Clique no botão <guibutton>Abrir</guibutton>.</para>
+        </step>
+      </procedure>
+      <para>The imported project is added to the list of projects, found on the left of the main window. An imported
 	Line joins the other Lines, if they exist, of the Project that was selected when the Line was imported. In
 	 both cases the imported item is identified with the suffix <emphasis role="bold">Imported</emphasis>.</para>
-        <note>
-          <para>In GêBR, Lines may only exist inside a Project, see this concept in the Section
+      <note>
+        <para>In GêBR, Lines may only exist inside a Project, see this concept in the Section
 	 <xref linkend="projetos_linhas_fluxo_visao_geral"/>. Therefore to import a Line you must first <emphasis role="bold"> select an	existing Project </emphasis>. (If there does not exist one then 
 	<xref linkend="criar_novo_projeto"/> ).</para>
-        </note>
-      </section>
-      <section xml:id="exportar_um_projeto_ou_linha">
-        <title>Exporting a Project or a Line</title>
-        <para>Although GêBR continuously saves all data, some times it is desirable to have copies of your Project and Lines in
+      </note>
+    </section>
+    <section xml:id="exportar_um_projeto_ou_linha">
+      <title>Exporting a Project or a Line</title>
+      <para>Although GêBR continuously saves all data, some times it is desirable to have copies of your Project and Lines in
 	a file (for example, to share with others or to make backups). To export a Project or a Line:</para>
-        <procedure>
-          <step>
-            <para>Select the Line or Project you wish to save.</para>
-          </step>
-          <step>
-            <para>left-click on
+      <procedure>
+        <step>
+          <para>Select the Line or Project you wish to save.</para>
+        </step>
+        <step>
+          <para>left-click on
               <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_exportar_projeto.png"/></imageobject></inlinemediaobject></guiicon></para>
-          </step>
-          <step>
-            <para>A dialog box will appear where you can <guilabel>choose the name of the file that will be saved</guilabel>;
+        </step>
+        <step>
+          <para>A dialog box will appear where you can <guilabel>choose the name of the file that will be saved</guilabel>;
 	 select a directory then type the file name, GêBR determines the extension automatically, 
 	<filename class="extension">prjz</filename> for Projects or
                <filename class="extension">lnez</filename> for Lines.</para>
-          </step>
-          <step>
-            <para>left-click on <guibutton>Save</guibutton>.</para>
-          </step>
-        </procedure>
-      </section>
-      <section xml:id="editar_comentarios">
-        <title>Editing comments</title>
-        <para>You can edit comments on the report to specify information about the Project or a Line. To 
+        </step>
+        <step>
+          <para>left-click on <guibutton>Save</guibutton>.</para>
+        </step>
+      </procedure>
+    </section>
+    <section xml:id="editar_comentarios">
+      <title>Editing comments</title>
+      <para>You can edit comments on the report to specify information about the Project or a Line. To 
 <emphasis role="bold">edit a comment</emphasis>:</para>
-        <procedure>
-          <step>
-            <para>left-click on <guibutton>Edit comments</guibutton>, which is located just below 
+      <procedure>
+        <step>
+          <para>left-click on <guibutton>Edit comments</guibutton>, which is located just below 
               <guilabel>Details</guilabel>, in the <guilabel>Project's properties</guilabel> or
               <guilabel>Line's Properties</guilabel> dialog box.</para>
-          </step>
-          <step>
-            <para>Fill in your comment in the text editor that appeared, when you have finished save your comment then close the editor.</para>
-            <para>In this editor you can save, print and pre-visualize your comment(s) by pressing one of the icons in the tool bar, or by using the editors menu.</para>
-          </step>
-        </procedure>
-        <figure>
-          <mediaobject>
-            <caption>The comment editor window.</caption>
-            <imageobject>
-              <imagedata fileref="../images/janela_comentarios_de_linha.png"/>
-            </imageobject>
-          </mediaobject>
-        </figure>
-        <tip>
-          <para>In <menuchoice><guimenu>Actions</guimenu><guimenuitem>Preferences</guimenuitem></menuchoice> (the top left 
+        </step>
+        <step>
+          <para>Fill in your comment in the text editor that appeared, when you have finished save your comment then close the editor.</para>
+          <para>In this editor you can save, print and pre-visualize your comment(s) by pressing one of the icons in the tool bar, or by using the editors menu.</para>
+        </step>
+      </procedure>
+      <figure>
+        <mediaobject>
+          <caption>The comment editor window.</caption>
+          <imageobject>
+            <imagedata fileref="../images/janela_comentarios_de_linha.png"/>
+          </imageobject>
+        </mediaobject>
+      </figure>
+      <tip>
+        <para>In <menuchoice><guimenu>Actions</guimenu><guimenuitem>Preferences</guimenuitem></menuchoice> (the top left 
 	corner of GêBR's main window) you can determine the text editor that will be used to edit reports. The standard editor
 	is <application>gedit</application>. To use another editor, type the name of the editor in 
 	<guilabel>HTML Editor</guilabel>.</para>
-        </tip>
-        <note>
-          <para>You can only have <emphasis role="bold">one comment</emphasis> for each Project or Line.</para>
-        </note>
-        <para>
-          <important>
-            <para>To <emphasis role="bold">view a report</emphasis>:</para>
-            <itemizedlist>
-              <listitem>
-                <para>Select a Project or a Line and click the button <guibutton>View report</guibutton>, found at the bottom of 			the <guilabel>Details</guilabel> box, which is on the right side of the main window. </para>
-              </listitem>
-            </itemizedlist>
-          </important>
-        </para>
-      </section>
-      <section xml:id="visualizar_relatorio">
-        <title>View report</title>
-        <para>As explained in the above section, you can edit a report containing additional information about the Project or
+      </tip>
+      <note>
+        <para>You can only have <emphasis role="bold">one comment</emphasis> for each Project or Line.</para>
+      </note>
+      <para>
+        <important>
+          <para>To <emphasis role="bold">view a report</emphasis>:</para>
+          <itemizedlist>
+            <listitem>
+              <para>Select a Project or a Line and click the button <guibutton>View report</guibutton>, found at the bottom of 			the <guilabel>Details</guilabel> box, which is on the right side of the main window. </para>
+            </listitem>
+          </itemizedlist>
+        </important>
+      </para>
+    </section>
+    <section xml:id="visualizar_relatorio">
+      <title>View report</title>
+      <para>As explained in the above section, you can edit a report containing additional information about the Project or
 	 Line. To view the report left-click on View report, found at the bottom of the <guilabel>Details</guilabel> box,
 	 which is on the right side of the main window. </para>
-        <para>After clicking on <guilabel>View report</guilabel>, a window will appear where you can:</para>
-        <procedure>
-          <step>
-            <para> Save;</para>
-          </step>
-          <step>
-            <para>Print the report.</para>
-          </step>
-        </procedure>
-        <para>In the menu Options you can:</para>
-        <procedure>
-          <step>
-            <para>Include user comments;</para>
-          </step>
-          <step>
-            <para>Include the Flow's report;</para>
-          </step>
-          <step>
-            <para>Configure the parameter table pertaining to the Flow's programs;</para>
-          </step>
-          <step>
-            <para>Choose the presentation style of the report, as well as include other styles.</para>
-          </step>
-        </procedure>
-        <figure>
-          <mediaobject>
-            <caption>In the view report window, you can print or save to a file this report. In the options menu, as is shown above, you can include: the user's comments, the Flow's report, the parameter table and choose from a few pre-defined styles for the report.</caption>
-            <imageobject>
-              <imagedata fileref="../images/janela_visualizar_relatorio.png"/>
-            </imageobject>
-          </mediaobject>
-        </figure>
-        <para><xref linkend="visualizar_relatorio_fluxo"/> explains in greater detail the View report tool 
+      <para>After clicking on <guilabel>View report</guilabel>, a window will appear where you can:</para>
+      <procedure>
+        <step>
+          <para> Save;</para>
+        </step>
+        <step>
+          <para>Print the report.</para>
+        </step>
+      </procedure>
+      <para>In the menu Options you can:</para>
+      <procedure>
+        <step>
+          <para>Include user comments;</para>
+        </step>
+        <step>
+          <para>Include the Flow's report;</para>
+        </step>
+        <step>
+          <para>Configure the parameter table pertaining to the Flow's programs;</para>
+        </step>
+        <step>
+          <para>Choose the presentation style of the report, as well as include other styles.</para>
+        </step>
+      </procedure>
+      <figure>
+        <mediaobject>
+          <caption>In the view report window, you can print or save to a file this report. In the options menu, as is shown above, you can include: the user's comments, the Flow's report, the parameter table and choose from a few pre-defined styles for the report.</caption>
+          <imageobject>
+            <imagedata fileref="../images/janela_visualizar_relatorio.png"/>
+          </imageobject>
+        </mediaobject>
+      </figure>
+      <para><xref linkend="visualizar_relatorio_fluxo"/> explains in greater detail the View report tool 
 	for Flows, which is very similar to the Line's and Project's View report except that in this one you can add the Flow's
 	report.</para>
-      </section>
     </section>
   </section>
   <section xml:id="sec_3_2">
