@@ -343,47 +343,6 @@
       </figure>
     </section>
   </section>
-  <section xml:id="sec_3">
-    <title>Managing Projects, Lines and Flows</title>
-    <para>Almost all of GêBR's features can be accessed through one of the four tabs which are located close to the top of the window:</para>
-    <itemizedlist>
-      <listitem>
-        <para>
-          <guilabel>
-            <link linkend="project_line">Projects and Lines</link>
-          </guilabel>
-        </para>
-      </listitem>
-      <listitem>
-        <para>
-          <guilabel>
-            <link linkend="sec_3_2">Flows</link>
-          </guilabel>
-        </para>
-      </listitem>
-      <listitem>
-        <para>
-          <guilabel>
-            <link linkend="sec_3_3">Flow Editor</link>
-          </guilabel>
-        </para>
-      </listitem>
-      <listitem>
-        <para>
-          <guilabel>
-            <link linkend="controle_de_tarefas">Job Control</link>
-          </guilabel>
-        </para>
-      </listitem>
-    </itemizedlist>
-    <para>The following sections will explain in detail each of these pages and their features.</para>
-    <important>
-      <para>Some of the features that will be explained have already been used in the example 
-	<xref linkend="projetos_linhas_fluxo_visao_geral"/>. Moreover, this example illustrates some
-	 of GêBR's fundamental concepts. So, if you have not done so already , we <emphasis role="bold">recommend that you
-	read that Section</emphasis> before moving on. Also, whenever necessary, we will refer to that example.</para>
-    </important>
-  </section>
   <section xml:id="project_line">
     <title>The <guilabel>Projects and Lines</guilabel> tab</title>
     <para>The tab

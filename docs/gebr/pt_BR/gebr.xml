@@ -360,49 +360,6 @@
       </figure>
     </section>
   </section>
-  <section xml:id="sec_3">
-    <title>Gerenciando projetos, linhas e fluxos</title>
-    <para>Praticamente todos os recursos disponíveis na GêBR estão distribuídos em quatro abas localizadas na parte
-      superior da janela principal:</para>
-    <itemizedlist>
-      <listitem>
-        <para>
-          <guilabel>
-            <link linkend="project_line">Projetos e Linhas</link>
-          </guilabel>
-        </para>
-      </listitem>
-      <listitem>
-        <para>
-          <guilabel>
-            <link linkend="sec_3_2">Fluxos</link>
-          </guilabel>
-        </para>
-      </listitem>
-      <listitem>
-        <para>
-          <guilabel>
-            <link linkend="sec_3_3">Editor de Fluxo</link>
-          </guilabel>
-        </para>
-      </listitem>
-      <listitem>
-        <para>
-          <guilabel>
-            <link linkend="controle_de_tarefas">Controle de tarefas</link>
-          </guilabel>
-        </para>
-      </listitem>
-    </itemizedlist>
-    <para>Nas seções seguintes, veremos com detalhes as funcionalidades de cada uma delas.</para>
-    <important>
-      <para>Alguns recursos que serão explicados a seguir já foram vistos na prática no exemplo da
-	<xref linkend="projetos_linhas_fluxo_visao_geral"/>. Além disso, o exemplo aborda alguns
-	conceitos fundamentais por trás da GêBR. Por isso, se não o fez, é <emphasis role="bold">recomendável que você
-	leia aquela seção</emphasis> antes de prosseguir. Por razões didáticas, recorreremos àquele exemplo sempre que
-	necessário.</para>
-    </important>
-  </section>
   <section xml:id="project_line">
     <title>A aba 
 	<guilabel>Projetos e Linhas</guilabel></title>
