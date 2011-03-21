@@ -1,3 +1,13 @@
+gebrproject (0.11.9) lenny; urgency=low
+
+  * Fix bug when running a remote graphic flow.
+  * Fixed a bug where executing a flow stripped its programs help.
+  * Fixed how to get help content for old helps. (Fixes issue 916)
+  * Fixed when delete key at flow I/O edition. (Fixes issue 919)
+  * Fixed segfalt when providing wrong password for remote server.
+
+ -- Fabricio Matheus Goncalves <fmatheus@gebrproject.com>  Mon, 21 Mar 2011 14:10:49 -0300
+
 gebrproject (0.11.8) lenny; urgency=low
 
   * Finished user documentation review.
