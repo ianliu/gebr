@@ -29,3 +29,6 @@ test_document_SOURCES = test-document.c
 
 TEST_PROGS += test-line
 test_line_SOURCES = test-line.c
+
+TEST_PROGS += test-project
+test_project_SOURCES = test-project.c
