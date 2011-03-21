@@ -61,6 +61,7 @@ libgebr/geoxml/menu-diff/gebr-geoxml-menu-diff
 libgebr/geoxml/menu-edit/gebr-geoxml-menu-edit
 libgebr/geoxml/menu-query/gebr-geoxml-menu-query
 libgebr/geoxml/tests/test-category
+libgebr/geoxml/tests/test-line
 libgebr/geoxml/tests/test-program
 libgebr/geoxml/tests/test-sequence
 libgebr/geoxml/tests/test-tmpl
@@ -89,6 +90,4 @@ tags
 
 syntax: regexp
 ^build$
-
-syntax: regexp
 ^libgebr/geoxml/tests/test-document$
