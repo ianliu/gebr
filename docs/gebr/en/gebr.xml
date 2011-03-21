@@ -1,190 +1,125 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<article lang="en" version="5.0" xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+<article xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" lang="en" version="5.0">
   <info>
     <title>GêBR - User Guide</title>
   </info>
-
   <section>
     <title>What is GêBR?</title>
-
     <para>GêBR is a simple graphical interface which <emphasis role="bold"> facilitates geophysical data
     processing</emphasis>. GêBR is <emphasis role="bold">not a package for processing</emphasis>, it is designed
     to <emphasis role="bold">integrate</emphasis> a large variety of free processing packages, such as <emphasis>Seismic
     Un*x</emphasis> and <emphasis>Madagascar</emphasis>.</para>
-
     <para>GêBR can manage Projects and Lines, assemble and execute Flows, follow the results of your data processing,
     and everything in a simple and friendly way.</para>
-
     <para>Being a <emphasis role="bold">free software</emphasis>, anyone can use and customize GêBR for free, according
     to the terms of the <emphasis>GNU Public License</emphasis>. Making this software very attractive for academic
     research and for use in courses.</para>
-
     <section>
       <title>Project GêBR</title>
-
       <para>GêBR's interface is only a part of <emphasis>Project GêBR</emphasis>. Our main objective is to help bring together the
       Brazilian geophysics community, by developing tools to aid in the dissemination of research in the area.</para>
-
       <para>For more information, visit the project's official
       site: <emphasis><link xlink:href="http://www.gebrproject.com">www.gebrproject.com</link></emphasis>.</para>
-
     </section>
-
     <section>
       <title>Technical Information</title>
-
       <para>This guide is for GêBR <emphasis role="bold">version 0.12.0</emphasis>. The images used in this guide where
       captured in the system <emphasis role="bold">Ubuntu 10.04</emphasis>. Therefore you may observe slight differences
       if you are using another operating system. For specific installation instructions for each operating system, see
       the <emphasis><link xlink:href="http://www.gebrproject.com/install-guide">install guide</link></emphasis>, in the
       <emphasis><link xlink:href="http://www.gebrproject.com">project's official site</link></emphasis>.</para>
-
     </section>
-
     <section>
       <title>GêBR Core Team</title>
-
       <para>
         <emphasis role="bold">Director:</emphasis>
       </para>
-
       <itemizedlist>
         <listitem>
-
           <para>Ricardo Biloti <email>biloti@gebrproject.com</email></para>
-
         </listitem>
       </itemizedlist>
-
       <para>
         <emphasis role="bold">Developers:</emphasis>
       </para>
-
       <itemizedlist>
         <listitem>
-
           <para>Alexandre Baaklini <email>abaaklini@gebrproject.com</email></para>
-
         </listitem>
         <listitem>
-
           <para>Bráulio Oliveira <email>brauliobo@gebrproject.com</email></para>
-
         </listitem>
         <listitem>
-	  
-	<para>Davi Clemente <email>davi.clemente@gebrproject.com</email></para>
-
+          <para>Davi Clemente <email>davi.clemente@gebrproject.com</email></para>
         </listitem>
         <listitem>
-
           <para>Fábio Azevedo <email>fabioaz@gebrproject.com</email></para>
-
         </listitem>
         <listitem>
-
           <para>Fabrício Matheus Gonçalves <email>fmatheus@gebrproject.com</email></para>
-
         </listitem>
         <listitem>
-
           <para>Gabriel Sobral <email>sobral@gebrproject.com</email></para>
-
         </listitem>
         <listitem>
-
-	 <para>Ian Liu Rodrigues <email>ian.liu@gebrproject.com</email></para>
-          
+          <para>Ian Liu Rodrigues <email>ian.liu@gebrproject.com</email></para>
         </listitem>
         <listitem>
-
           <para>Jorge Pizzolatto <email>jorge.pzt@gebrproject.com</email></para>
-
         </listitem>
         <listitem>
-
           <para>Priscila Moraes <email>pris.moraess@gebrproject.com</email></para>
-
         </listitem>
         <listitem>
-
           <para>Renan Giarola <email>renangiarola@gebrproject.com</email></para>
-
         </listitem>
         <listitem>
-
           <para>Rodrigo Morelatto <email>morelatto@gebrproject.com</email></para>
-
         </listitem>
       </itemizedlist>
-
       <para>
         <emphasis role="bold">Consultants:</emphasis>
       </para>
-
       <itemizedlist>
         <listitem>
-
           <para>Eduardo Filpo <email>efilpo@gmail.com</email></para>
-
         </listitem>
         <listitem>
-
           <para>Fernando Roxo <email>roxo@roxo.org</email></para>
-
-        </listitem>
-	<listitem>
-
-          <para>Luis Alberto D'Afonseca <email>luis.dafonseca@gebrproject.com</email></para>
-
         </listitem>
         <listitem>
-
+          <para>Luis Alberto D'Afonseca <email>luis.dafonseca@gebrproject.com</email></para>
+        </listitem>
+        <listitem>
           <para>Rodrigo Portugal <email>rosoport@gmail.com</email></para>
-
         </listitem>
       </itemizedlist>
-
       <para> Thank you for using GêBR!</para>
-
     </section>
   </section>
-
   <section xml:id="projetos_linhas_fluxo_visao_geral">
     <title>Projects, Lines and Flows: an overview</title>
-
     <para>In GêBR each <emphasis role="bold">processing Flow</emphasis> is organized into larger units called 
 <emphasis role="bold">Lines</emphasis>. Lines are grouped together into <emphasis role="bold">Projects</emphasis>. In other words:</para>
-
     <itemizedlist>
       <listitem>
-
         <para>A <emphasis role="bold">Project</emphasis> is a set of <emphasis role="bold">Lines</emphasis></para>
-
       </listitem>
       <listitem>
-
         <para>A <emphasis role="bold">Line</emphasis> is a set of <emphasis role="bold">Flows</emphasis></para>
-
       </listitem>
     </itemizedlist>
-
     <para>Before you can organize and execute a Flow, you must first <emphasis role="bold">Create a Project and a Line</emphasis>.</para>
-
-
     <section xml:id="editar_projetos_e_linhas">
       <title>Creating Projects and Lines</title>
-
       <para>In order to create a <emphasis role="bold">New Project</emphasis>:</para>
-
       <procedure>
         <step>
           <para>Select the tab 
             <guilabel>Projects and Lines</guilabel>.</para>
         </step>
         <step>
-          <para>left-click on <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_criar_projeto.png"
-            /></imageobject></inlinemediaobject></guiicon></para>
+          <para>left-click on <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_criar_projeto.png"/></imageobject></inlinemediaobject></guiicon></para>
         </step>
         <step>
           <para>In the <guilabel>Project 'New Project' properties</guilabel> dialog box, fill in the Project's
@@ -198,40 +133,33 @@
           <para>Click <emphasis role="bold">OK</emphasis>.</para>
         </step>
       </procedure>
-
-
       <figure xml:id="janela_properties_project">
-	<mediaobject>
-	<caption>In the Project's properties dialog box you can edit the title, description, author and email.</caption>
+        <mediaobject>
+          <caption>In the Project's properties dialog box you can edit the title, description, author and email.</caption>
           <imageobject>
-            <imagedata fileref="../images/janela_properties_project.png" />
+            <imagedata fileref="../images/janela_properties_project.png"/>
           </imageobject>
         </mediaobject>
       </figure>
-
       <para>The Project title should have appeared on the left hand side of GêBR's main window. Information about the Project is shown in the 
 	<guilabel>Details</guilabel> box on the right hand side of GêBR's main window.
 	Notice that some of this information comes from what you inserted in the <guilabel>Project 'New Project' properties</guilabel> dialog box when you created the Project. Details such as creation date and modified date, the date of the last change, are automatically generated by GêBR.</para>
-
-      <figure >
-	<mediaobject>
-	<caption>This is an example of one Project called "My first project", to the left is the list of Projects and Lines, at the moment only one Project. To the right you will see the details box which exhibits information on the currently selected Project or Line.</caption>
+      <figure>
+        <mediaobject>
+          <caption>This is an example of one Project called "My first project", to the left is the list of Projects and Lines, at the moment only one Project. To the right you will see the details box which exhibits information on the currently selected Project or Line.</caption>
           <imageobject>
-            <imagedata fileref="../images/janela_principal_1.png" />
+            <imagedata fileref="../images/janela_principal_1.png"/>
           </imageobject>
         </mediaobject>
       </figure>
-
       <para>Now that you have created a Project, you can create <emphasis role="bold">Lines</emphasis> inside this Project. To add a <emphasis role="bold">New Line</emphasis>:</para>
-
       <procedure>
         <step>
           <para>Check that you have selected the Project you created, just like in the window above.</para>
         </step>
         <step>
           <para> Click on the
-            button <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_criar_linha.png"
-          /></imageobject></inlinemediaobject></guiicon></para>
+            button <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_criar_linha.png"/></imageobject></inlinemediaobject></guiicon></para>
         </step>
         <step>
           <para>In the dialog box
@@ -245,107 +173,72 @@
         </step>
       </procedure>
       <figure>
-	<mediaobject>
-	<caption>The Line's property dialog box; not only you add information such as the Line's description, author and email,
-	but you can also add the preferred path in the path text box.</caption>	
+        <mediaobject>
+          <caption>The Line's property dialog box; not only you add information such as the Line's description, author and email,
+	but you can also add the preferred path in the path text box.</caption>
           <imageobject>
-            <imagedata fileref="../images/janela_properties_line.png" />
+            <imagedata fileref="../images/janela_properties_line.png"/>
           </imageobject>
         </mediaobject>
       </figure>
-
       <para>After creating your first Line your GêBR window should look something like the window below. Notice that when a Line is selected the <guilabel>Details</guilabel> box, on the right of the main window, will show information about this selected Line.</para>
-
-      <figure>	  
+      <figure>
         <mediaobject>
-	<caption>In the Projects and Lines tab, you will find information about the currently selected Line in the Details box on the right side
+          <caption>In the Projects and Lines tab, you will find information about the currently selected Line in the Details box on the right side
 	of the main window.</caption>
           <imageobject>
-            <imagedata fileref="../images/janela_principal_2.png" />
+            <imagedata fileref="../images/janela_principal_2.png"/>
           </imageobject>
         </mediaobject>
       </figure>
       <tip>
-
-        <para>At the top left corner, <menuchoice> <guimenu>Actions</guimenu> <guimenuitem>Preferences</guimenuitem> </menuchoice> then fill in your details in the fields <guilabel>User name</guilabel> and <guilabel>Email</guilabel>. New Projects and Lines by default will use this information.</para>
-
+        <para>At the top left corner, <menuchoice><guimenu>Actions</guimenu><guimenuitem>Preferences</guimenuitem></menuchoice> then fill in your details in the fields <guilabel>User name</guilabel> and <guilabel>Email</guilabel>. New Projects and Lines by default will use this information.</para>
       </tip>
-
       <para>Now that you have the basic Project and Line structure you can <emphasis role="bold">create your first Flow</emphasis>.</para>
-
     </section>
-
     <section xml:id="criando_fluxos">
       <title>Creating Flows</title>
-
       <para>In GêBR a <emphasis role="bold">Flow</emphasis> is a <emphasis role="bold"> sequence of operations</emphasis> defined by the user. These operations, also called the Flow's <emphasis role="bold">programs</emphasis>, are organized into the following <emphasis role="bold">categories</emphasis> according to their purpose:</para>
-
       <itemizedlist>
         <listitem>
-
           <para>Data Compression</para>
-
         </listitem>
         <listitem>
-
           <para>Editing, Sorting and Manipulation</para>
-
         </listitem>
         <listitem>
-
           <para>File tools</para>
-
         </listitem>
         <listitem>
-
           <para>Filtering, Transforms and Attributes</para>
-
         </listitem>
         <listitem>
-
           <para>Gain, NMO, Stack and Standard Processes</para>
-
         </listitem>
         <listitem>
-
           <para>Graphics</para>
-
         </listitem>
         <listitem>
-
           <para>Import/Export</para>
-
         </listitem>
         <listitem>
-
           <para>Migration and Dip Moveout</para>
-
         </listitem>
         <listitem>
-
           <para>Multiple Supression</para>
-
         </listitem>
         <listitem>
-
           <para>Seismic Unix</para>
-
         </listitem>
         <listitem>
-
           <para>Simulation and Model Building</para>
-
         </listitem>
         <listitem>
-
           <para>Utilities</para>
-
         </listitem>
       </itemizedlist>
-
       <para> To <emphasis role="bold">create a Flow</emphasis> you must <emphasis role="bold">select and order programs 
       </emphasis> from the above categories. Let us see how this is done:</para>
-
       <procedure>
         <step>
           <para>In the tab <guilabel>Projects and Lines</guilabel>, check that you have selected <emphasis>My
@@ -353,8 +246,7 @@
         </step>
         <step>
           <para>Now click on the tab <guilabel>Flows</guilabel>, then left-click on
-            <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_criar_fluxo.png"
-          /></imageobject></inlinemediaobject></guiicon>.</para>
+            <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_criar_fluxo.png"/></imageobject></inlinemediaobject></guiicon>.</para>
         </step>
         <step>
           <para>The dialog box <guilabel>Flow "New Flow" Properties</guilabel> will appear, fill in a <emphasis>title</emphasis> 	
@@ -368,13 +260,12 @@
             Image</guimenuitem>. You have now added this component to your Flow, note that the program
             <guimenuitem>SU Simple X Image</guimenuitem> now appears in the box <guilabel>Flow sequence</guilabel>, on
  	the left side of the window. Your window should now look something like this one:</para>
-
           <figure>
             <mediaobject>
-		<caption>In the Flow editor, on the ride side of the main window you will see the Menus box. From this box you 
+              <caption>In the Flow editor, on the ride side of the main window you will see the Menus box. From this box you 
 	can add programs to your Flow, which will appear in the Flow sequence box on the left side of the main window.</caption>
               <imageobject>
-                <imagedata fileref="../images/janela_flow_edition_1.png" />
+                <imagedata fileref="../images/janela_flow_edition_1.png"/>
               </imageobject>
             </mediaobject>
           </figure>
@@ -394,13 +285,12 @@
             <guimenuitem>SU Simple X Image</guimenuitem> in the Flow sequence. To accomplish this just
             <emphasis role="bold">drag the program</emphasis> to the desired position, as is shown in the following
             window:</para>
-
           <figure>
             <mediaobject>
-		<caption>In the Flow editor tab, on the left side, you can change the order of the programs in the Flow sequence 
+              <caption>In the Flow editor tab, on the left side, you can change the order of the programs in the Flow sequence 
 	box by simply dragging them with the mouse.</caption>
               <imageobject>
-                <imagedata fileref="../images/janela_flow_edition_2.png" />
+                <imagedata fileref="../images/janela_flow_edition_2.png"/>
               </imageobject>
             </mediaobject>
           </figure>
@@ -409,232 +299,164 @@
           <para>With the program <guimenuitem>SU Plane</guimenuitem> on the top of your
             <guilabel>Flow sequence</guilabel> list, press the right click on <guimenuitem>SU Plane</guimenuitem>. From	
             the menu that has appeared select the option <guilabel>Configured</guilabel>. This configured state, represented by
-            <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_configurado.png"
-            /></imageobject></inlinemediaobject></guiicon>, means the program is 
-            ready to be executed, contrary to the state represented by <guiicon><inlinemediaobject><imageobject><imagedata
-                    fileref="../../common-images/icone_nao_configurado.png"/></imageobject></inlinemediaobject></guiicon>. Then do the same
+            <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_configurado.png"/></imageobject></inlinemediaobject></guiicon>, means the program is 
+            ready to be executed, contrary to the state represented by <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_nao_configurado.png"/></imageobject></inlinemediaobject></guiicon>. Then do the same
             for <guimenuitem>SU Simple X Image</guimenuitem>.</para>
-
           <figure>
             <mediaobject>
-		<caption>You can set the state of a Flow's programs as configured, not configured and disabled, by using the
+              <caption>You can set the state of a Flow's programs as configured, not configured and disabled, by using the
 	context menu.</caption>
               <imageobject>
-                <imagedata fileref="../images/janela_flow_edition_3.png" />
+                <imagedata fileref="../images/janela_flow_edition_3.png"/>
               </imageobject>
             </mediaobject>
           </figure>
           <tip>
-
             <para>If you want to change all programs, or a few, to the configured state simultaneously, select them by
 	using
-              <keycombo>
-		<keycap>Ctrl</keycap>
-		<mousebutton>Click</mousebutton>
-              </keycombo>. Then right-click on one of the selected programs, choose the option 
+              <keycombo><keycap>Ctrl</keycap><mousebutton>Click</mousebutton></keycombo>. Then right-click on one of the selected programs, choose the option 
 	<guilabel>Configured</guilabel> from the menu that appeared. All the programs that where selected will be 
   altered to the state <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_configurado.png"/></imageobject></inlinemediaobject></guiicon>.</para>
-
           </tip>
           <important>
-
             <para>To run a Flow  <emphasis role="bold">all the programs</emphasis> listed in the 
 	<guilabel>Flow sequence</guilabel> box must be <emphasis role="bold">Configured</emphasis>
-  (<guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_configurado.png"
-            /></imageobject></inlinemediaobject></guiicon>). Otherwise the Flow will not be executed as expected.</para>
-
+  (<guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_configurado.png"/></imageobject></inlinemediaobject></guiicon>). Otherwise the Flow will not be executed as expected.</para>
           </important>
           <important>
-
             <para>The state of a Flow, or a set of Flows, can be changed by using the
             hotkey <emphasis role="bold">spacebar</emphasis>, which alters the state of the selected Flows in the order
              <emphasis role="bold">Not configured</emphasis>, <emphasis role="bold">Disabled</emphasis>
             and <emphasis role="bold">Configured</emphasis>. The meaning of these states will be further described later on.</para>
-
           </important>
         </step>
       </procedure>
-
       <para>Your Flow is now ready to be executed, to do so left-click on
-        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_executar_fluxo.png"
-	/></imageobject></inlinemediaobject></guiicon>. You should see the following:</para>
-
+        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_executar_fluxo.png"/></imageobject></inlinemediaobject></guiicon>. You should see the following:</para>
       <figure>
         <mediaobject>
-	<caption>Example of a Flow being executed.</caption>
+          <caption>Example of a Flow being executed.</caption>
           <imageobject>
-            <imagedata fileref="../images/janela_ximage.png" />
+            <imagedata fileref="../images/janela_ximage.png"/>
           </imageobject>
         </mediaobject>
       </figure>
     </section>
   </section>
-
   <section xml:id="sec_3">
     <title>Managing Projects, Lines and Flows</title>
-
     <para>Almost all of GêBR's features can be accessed through one of the four tabs which are located close to the top of the window:</para>
-
     <itemizedlist>
       <listitem>
-
         <para>
           <guilabel>
             <link linkend="sec_3_1">Projects and Lines</link>
           </guilabel>
         </para>
-
       </listitem>
       <listitem>
-
         <para>
           <guilabel>
             <link linkend="sec_3_2">Flows</link>
           </guilabel>
         </para>
-
       </listitem>
       <listitem>
-
         <para>
           <guilabel>
             <link linkend="sec_3_3">Flow Editor</link>
           </guilabel>
         </para>
-
       </listitem>
       <listitem>
-
         <para>
           <guilabel>
             <link linkend="controle_de_tarefas">Job Control</link>
           </guilabel>
         </para>
-
       </listitem>
     </itemizedlist>
-
     <para>The following sections will explain in detail each of these pages and their features.</para>
-
     <important>
-
       <para>Some of the features that will be explained have already been used in the example 
 	<xref linkend="projetos_linhas_fluxo_visao_geral"/>. Moreover, this example illustrates some
 	 of GêBR's fundamental concepts. So, if you have not done so already , we <emphasis role="bold">recommend that you
 	read that Section</emphasis> before moving on. Also, whenever necessary, we will refer to that example.</para>
     </important>
-
     <section xml:id="sec_3_1">
       <title>The <guilabel>Projects and Lines</guilabel> tab</title>
-
       <para>The tab
 	<guilabel>Projects and Lines</guilabel> has nine command buttons just below the tab. These command buttons will allow you to:</para>
-
       <itemizedlist>
         <listitem>
-
           <para>
             <link linkend="criar_novo_projeto">Create a New Project</link>
           </para>
-
         </listitem>
         <listitem>
-
           <para>
             <link linkend="criar_nova_linha">Create a New Line</link>
           </para>
-
         </listitem>
         <listitem>
-
           <para>
             <link linkend="sec_3_1_3">Delete a selected Project or Line</link>
           </para>
-
         </listitem>
         <listitem>
-
           <para>
             <link linkend="sec_3_1_4">Edit selected Project or Lines properties</link>
           </para>
-
         </listitem>
         <listitem>
-
           <para>
             <link linkend="sec_3_1_5">Edit selected Project or Line parameter dictionary </link>
           </para>
-
         </listitem>
         <listitem>
-
           <para>
             <link linkend="sec_3_1_7">Import a Project or a Line</link>
           </para>
-
         </listitem>
         <listitem>
-
           <para>
             <link linkend="exportar_um_projeto_ou_linha">Export a Project or a Line</link>
           </para>
-
         </listitem>
         <listitem>
-
           <para>
             <link linkend="editar_comentarios">Edit comments</link>
           </para>
-
         </listitem>
         <listitem>
-
           <para>
             <link linkend="visualizar_relatorio">View Report</link>
           </para>
-
         </listitem>
       </itemizedlist>
       <tip>
-
         <para>Try using a <emphasis role="bold">context menu</emphasis> instead of command buttons. To do so,
          <emphasis role="bold">right-click</emphasis> on one of the Projects or Lines you have created. 
 	Notice that many commands can be found in this context menu. For certain cases this method is
            <emphasis role="bold">easier and faster</emphasis> then using command buttons.</para>
-
       </tip>
-
       <section xml:id="criar_novo_projeto">
         <title>New Project</title>
-
         <para>To create a new Project click on the
-          button <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_criar_projeto.png"
-        /></imageobject></inlinemediaobject></guiicon>, more details are given in 
+          button <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_criar_projeto.png"/></imageobject></inlinemediaobject></guiicon>, more details are given in 
           <xref linkend="editar_projetos_e_linhas"/>.</para>
-
-
         <para>There is <emphasis role="bold">no limitation</emphasis> on the number of Projects in GêBR. You can
 	have as many as you desire.</para>
-
-
         <para>After creating a Project it will be <emphasis role="bold">visible on the left side of GêBR's main window</emphasis>. The <guilabel>Details</guilabel> box, on the right side of the main window, will show information about the selected Project.</para>
-
       </section>
-
       <section xml:id="criar_nova_linha">
         <title>New Line</title>
-
         <para>To create a new Line, <emphasis role="bold">select an existing Project</emphasis> and left-click on
-          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_criar_linha.png"
-        /></imageobject></inlinemediaobject></guiicon>,  more details are given in 
+          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_criar_linha.png"/></imageobject></inlinemediaobject></guiicon>,  more details are given in 
         <xref linkend="editar_projetos_e_linhas"/>.. A new Line will appear
         in the selected Project.</para>
-
-
-       <para> There is <emphasis role="bold">no limitation</emphasis> on the number of Lines in GêBR. You can
+        <para> There is <emphasis role="bold">no limitation</emphasis> on the number of Lines in GêBR. You can
          have as many Lines in a Project as you desire.</para>
-
-
         <para>Lines that you have created will be <emphasis role="bold">visible on the left side of GêBR's main window
 	</emphasis> inside their respective Projects. The
           <guilabel>Details</guilabel> box, localized on the right side of the main window, exhibits information on the selected Line.</para>
@@ -642,41 +464,26 @@
           <para>In GêBR you can <emphasis role="bold">collapse</emphasis> or <emphasis role="bold">expand</emphasis> a 
           Project. When collapsed <emphasis role="bold">the Projects Lines are hidden</emphasis>, when expanded 
           <emphasis role="bold">the Project's Lines are visible</emphasis>. To collapse click on the icon
-          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_expandido.png"
-          /></imageobject></inlinemediaobject></guiicon> immediately to the left of the Projects name. To expand,
-  click on the icon <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_colapsado.png"
-          /></imageobject></inlinemediaobject></guiicon>.</para>
+          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_expandido.png"/></imageobject></inlinemediaobject></guiicon> immediately to the left of the Projects name. To expand,
+  click on the icon <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_colapsado.png"/></imageobject></inlinemediaobject></guiicon>.</para>
         </tip>
       </section>
-
       <section xml:id="sec_3_1_3">
         <title>Deleting a Project or a Line</title>
-
         <para>To remove a Line or Project select the Project or Line then left-click on
-          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_apagar_projeto.png"
-        /></imageobject></inlinemediaobject></guiicon>.</para>
-
+          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_apagar_projeto.png"/></imageobject></inlinemediaobject></guiicon>.</para>
         <note>
-
           <para>To delete a Project you must first delete all of its Lines. A Project can only be deleted if it is
             Empty.</para>
-
         </note>
         <caution>
-
           <para>When you delete a Line you are also <emphasis role="bold">deleting all of its Flows</emphasis>.</para>
-
         </caution>
       </section>
-
       <section xml:id="sec_3_1_4">
         <title>Editing a Project's or Line's properties</title>
-
         <para>To edit a Project's or Line's properties, first select the Project of Line and then click on
-          button <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_editar_propriedades_projeto.png"
-          /></imageobject></inlinemediaobject></guiicon>.</para>
-
-
+          button <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_editar_propriedades_projeto.png"/></imageobject></inlinemediaobject></guiicon>.</para>
         <para>In the <guilabel>Project properties</guilabel> or <guilabel>Line properties</guilabel> dialog box 
         you can edit the following fields
         <guilabel>Title</guilabel>, 
@@ -684,81 +491,59 @@
         <guilabel>Author</guilabel> and 
         <guilabel>Email</guilabel>. A Line's properties also has the option of adding a <guilabel>Path</guilabel>, 
 	which will be explained in <xref linkend="editar_caminhos_preferenciais_da_linha"/>.</para>
-
       </section>
-
       <section xml:id="sec_3_1_5">
         <title>Editing the Project's or Line's parameter dictionary</title>
-
         <para>This feature is documented in the Section <xref linkend="dicionario_de_parametros"/>.</para>
-
       </section>
-
       <section xml:id="editar_caminhos_preferenciais_da_linha">
         <title>Editing the Line's preferred paths</title>
-
         <para>The Section <xref linkend="editar_arquivos_entrada_saida_fluxo"/> will show how a Flow can be associated to 
           some data files, this association is simpler if we add preferred paths to 
           the Line.</para>
-
         <para>The Line's preferred paths are defined in the <guilabel>Line's properties</guilabel> dialog box. To open this
          dialog box select the Line then click on the icon
-         <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_editar_propriedades_projeto.png"
-         /></imageobject></inlinemediaobject></guiicon>, in the tool bar, or open the popup context menu and select the option 
+         <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_editar_propriedades_projeto.png"/></imageobject></inlinemediaobject></guiicon>, in the tool bar, or open the popup context menu and select the option 
          <guilabel>Properties</guilabel>. In the <guilabel>Line's properties</guilabel> window, in the field <guilabel>Paths</guilabel>, write the path to the directory you want and then left-click on
-         <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_adicionar_caminho.png"
-         /></imageobject></inlinemediaobject></guiicon>.</para>
-
-        <para>You can also add preferred paths by clicking on the button <guiicon><inlinemediaobject><imageobject><imagedata
-                  fileref="../../common-images/icone_caminho_personalizado.png"/></imageobject></inlinemediaobject></guiicon> and then choosing a
+         <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_adicionar_caminho.png"/></imageobject></inlinemediaobject></guiicon>.</para>
+        <para>You can also add preferred paths by clicking on the button <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_caminho_personalizado.png"/></imageobject></inlinemediaobject></guiicon> and then choosing a
 	 directory.</para>
-
-	<para>When you completed editing the preferred paths click <guibutton>OK</guibutton>.</para>
-
+        <para>When you completed editing the preferred paths click <guibutton>OK</guibutton>.</para>
         <para><emphasis role="bold">There is no Limit</emphasis> to the number of paths you can add.</para>
-	
-	<tip>
-	  <para>The path at the top of the list will be set as the standard path, which will be opened when the user
+        <tip>
+          <para>The path at the top of the list will be set as the standard path, which will be opened when the user
       clicks on the icon <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_caminho_personalizado.png"/></imageobject></inlinemediaobject></guiicon> as to search for a file or directory.</para>
-	</tip>
-
+        </tip>
         <tip>
           <para>To <emphasis role="bold">remove a path</emphasis> from the list, select it by pressing the  <emphasis role="bold">right-click </emphasis> and then left-click on <guimenuitem>Remove</guimenuitem> or
             <guimenuitem>Delete</guimenuitem>.</para>
         </tip>
-
         <tip>
           <para>To change a <emphasis role="bold">path's position</emphasis> in the list, with the mouse simply 
 	<emphasis role="bold">drag it </emphasis> to its new position.</para>
         </tip>
-
         <para>You can also use hotkeys to add paths (<keycombo><keycap>Enter</keycap></keycombo>), move paths up and down
 	 (<keycombo><keycap>Ctrl</keycap><keycap>arrow up/down</keycap></keycombo>), send a path to the top of the list
           (<keycombo><keycap>Ctrl</keycap><keycap>Home</keycap></keycombo>) and send a path to the bottom of the list
           (<keycombo><keycap>Ctrl</keycap><keycap>End</keycap></keycombo>).</para>
-
         <figure>
           <mediaobject>
-	  <caption>In the Line's proporties dialog box, other than add useful information such as the Line's
+            <caption>In the Line's proporties dialog box, other than add useful information such as the Line's
 	description, author and email, you can also add the Line's preferred paths in the paths text box.</caption>
             <imageobject>
-              <imagedata fileref="../images/janela_path_list.png" />
+              <imagedata fileref="../images/janela_path_list.png"/>
             </imageobject>
           </mediaobject>
         </figure>
       </section>
-
       <section xml:id="sec_3_1_7">
         <title>Import a Project or a Line</title>
-
         <para>In GêBR you can import Projects or Lines that where previously exported
           <xref linkend="exportar_um_projeto_ou_linha"/>. To do so:</para>
-
         <procedure>
           <step>
             <para>Click on the
-              button <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_importar_projeto.png"
-            /></imageobject></inlinemediaobject></guiicon></para>
+              button <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_importar_projeto.png"/></imageobject></inlinemediaobject></guiicon></para>
           </step>
           <step>
             <para>Navegue pela janela <guilabel>Escolha o projeto ou linha para abrir</guilabel> e selecione o projeto
@@ -769,35 +554,26 @@
             <para>Clique no botão <guibutton>Abrir</guibutton>.</para>
           </step>
         </procedure>
-
         <para>The imported project is added to the list of projects, found on the left of the main window. An imported
 	Line joins the other Lines, if they exist, of the Project that was selected when the Line was imported. In
 	 both cases the imported item is identified with the suffix <emphasis role="bold">Imported</emphasis>.</para>
-
         <note>
-
           <para>In GêBR, Lines may only exist inside a Project, see this concept in the Section
-	 <xref linkend="projetos_linhas_fluxo_visao_geral"/>. Therefore to import a Line you must first <emphasis
-	 role="bold"> select an	existing Project </emphasis>. (If there does not exist one then 
+	 <xref linkend="projetos_linhas_fluxo_visao_geral"/>. Therefore to import a Line you must first <emphasis role="bold"> select an	existing Project </emphasis>. (If there does not exist one then 
 	<xref linkend="criar_novo_projeto"/> ).</para>
-
         </note>
       </section>
-
       <section xml:id="exportar_um_projeto_ou_linha">
         <title>Exporting a Project or a Line</title>
-
         <para>Although GêBR continuously saves all data, some times it is desirable to have copies of your Project and Lines in
 	a file (for example, to share with others or to make backups). To export a Project or a Line:</para>
-
         <procedure>
           <step>
             <para>Select the Line or Project you wish to save.</para>
           </step>
           <step>
             <para>left-click on
-              <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_exportar_projeto.png"
-            /></imageobject></inlinemediaobject></guiicon></para>
+              <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_exportar_projeto.png"/></imageobject></inlinemediaobject></guiicon></para>
           </step>
           <step>
             <para>A dialog box will appear where you can <guilabel>choose the name of the file that will be saved</guilabel>;
@@ -810,13 +586,10 @@
           </step>
         </procedure>
       </section>
-
       <section xml:id="editar_comentarios">
         <title>Editing comments</title>
-
         <para>You can edit comments on the report to specify information about the Project or a Line. To 
 <emphasis role="bold">edit a comment</emphasis>:</para>
-
         <procedure>
           <step>
             <para>left-click on <guibutton>Edit comments</guibutton>, which is located just below 
@@ -825,1059 +598,725 @@
           </step>
           <step>
             <para>Fill in your comment in the text editor that appeared, when you have finished save your comment then close the editor.</para>
-
             <para>In this editor you can save, print and pre-visualize your comment(s) by pressing one of the icons in the tool bar, or by using the editors menu.</para>
           </step>
         </procedure>
-        <figure> 
-	  <mediaobject>
-	  <caption>The comment editor window.</caption>
+        <figure>
+          <mediaobject>
+            <caption>The comment editor window.</caption>
             <imageobject>
-              <imagedata fileref="../images/janela_comentarios_de_linha.png" />
+              <imagedata fileref="../images/janela_comentarios_de_linha.png"/>
             </imageobject>
           </mediaobject>
         </figure>
         <tip>
-	<para>In <menuchoice><guimenu>Actions</guimenu> <guimenuitem>Preferences</guimenuitem></menuchoice> (the top left 
+          <para>In <menuchoice><guimenu>Actions</guimenu><guimenuitem>Preferences</guimenuitem></menuchoice> (the top left 
 	corner of GêBR's main window) you can determine the text editor that will be used to edit reports. The standard editor
 	is <application>gedit</application>. To use another editor, type the name of the editor in 
 	<guilabel>HTML Editor</guilabel>.</para>
         </tip>
         <note>
-
           <para>You can only have <emphasis role="bold">one comment</emphasis> for each Project or Line.</para>
-
         </note>
-
         <para>
           <important>
-
             <para>To <emphasis role="bold">view a report</emphasis>:</para>
-
             <itemizedlist>
               <listitem>
-
                 <para>Select a Project or a Line and click the button <guibutton>View report</guibutton>, found at the bottom of 			the <guilabel>Details</guilabel> box, which is on the right side of the main window. </para>
-
               </listitem>
             </itemizedlist>
           </important>
         </para>
-
       </section>
-
       <section xml:id="visualizar_relatorio">
         <title>View report</title>
-
-	<para>As explained in the above section, you can edit a report containing additional information about the Project or
+        <para>As explained in the above section, you can edit a report containing additional information about the Project or
 	 Line. To view the report left-click on View report, found at the bottom of the <guilabel>Details</guilabel> box,
 	 which is on the right side of the main window. </para>
-
         <para>After clicking on <guilabel>View report</guilabel>, a window will appear where you can:</para>
-
-	<procedure>
-
-	<step>
-        	<para> Save;</para>
-	</step>
-
-	<step>
-        	<para>Print the report.</para>
-	</step>
-
-	</procedure>
-
-
-       <para>In the menu Options you can:</para>
-	
-	<procedure>
-	<step>
-        	<para>Include user comments;</para>
-	</step>
-
-	<step>
-        	<para>Include the Flow's report;</para>
-	</step>
-
-	<step>
-        	<para>Configure the parameter table pertaining to the Flow's programs;</para>
-	</step>
-
-	<step>
-        	<para>Choose the presentation style of the report, as well as include other styles.</para>
-	</step>
-	</procedure>
-
-	<figure>
-<mediaobject>
-	<caption>In the view report window, you can print or save to a file this report. In the options menu, as is shown above, you can include: the user's comments, the Flow's report, the parameter table and choose from a few pre-defined styles for the report.</caption>
-<imageobject>
-	<imagedata fileref="../images/janela_visualizar_relatorio.png"/></imageobject>
-	</mediaobject>
-	</figure>
-	
-   
-        <para> <xref linkend="visualizar_relatorio_fluxo"/> explains in greater detail the View report tool 
+        <procedure>
+          <step>
+            <para> Save;</para>
+          </step>
+          <step>
+            <para>Print the report.</para>
+          </step>
+        </procedure>
+        <para>In the menu Options you can:</para>
+        <procedure>
+          <step>
+            <para>Include user comments;</para>
+          </step>
+          <step>
+            <para>Include the Flow's report;</para>
+          </step>
+          <step>
+            <para>Configure the parameter table pertaining to the Flow's programs;</para>
+          </step>
+          <step>
+            <para>Choose the presentation style of the report, as well as include other styles.</para>
+          </step>
+        </procedure>
+        <figure>
+          <mediaobject>
+            <caption>In the view report window, you can print or save to a file this report. In the options menu, as is shown above, you can include: the user's comments, the Flow's report, the parameter table and choose from a few pre-defined styles for the report.</caption>
+            <imageobject>
+              <imagedata fileref="../images/janela_visualizar_relatorio.png"/>
+            </imageobject>
+          </mediaobject>
+        </figure>
+        <para><xref linkend="visualizar_relatorio_fluxo"/> explains in greater detail the View report tool 
 	for Flows, which is very similar to the Line's and Project's View report except that in this one you can add the Flow's
 	report.</para>
-
       </section>
     </section>
-</section>
-    <section xml:id="sec_3_2">
-      <title>The <guilabel>Flows</guilabel> tab</title>
-
-      <para>Just bellow the <guilabel>Flows</guilabel> tab there are nine buttons, plus two more buttons at the bottom of the
+  </section>
+  <section xml:id="sec_3_2">
+    <title>The <guilabel>Flows</guilabel> tab</title>
+    <para>Just bellow the <guilabel>Flows</guilabel> tab there are nine buttons, plus two more buttons at the bottom of the
 	Details box. These buttons will allow you to:</para>
-
-      <itemizedlist>
-        <listitem>
-
-          <para>
-            <link linkend="sec_3_2_1">Create a new Flow</link>
-          </para>
-
-        </listitem>
-        <listitem>
-
-          <para>
-            <link linkend="copiar_fluxos_area_tranferencia">Copy Flows to the clipboard</link>
-          </para>
-
-        </listitem>
-        <listitem>
-
-          <para>
-            <link linkend="colar_fluxos_area_tranferencia">Paste Flows from the clipboard</link>
-          </para>
-
-        </listitem>
-        <listitem>
-
-          <para>
-            <link linkend="sec_3_2_4">Delete Flows</link>
-          </para>
-
-        </listitem>
-        <listitem>
-
-          <para>
-            <link linkend="editar_propriedades_fluxo">Edit a Flow's properties</link>
-          </para>
-
-        </listitem>
-        <listitem>
-
-          <para>
-            <link linkend="sec_3_2_7">Save a Flow's state</link>
-          </para>
-
-        </listitem>
-        <listitem>
-
-          <para>
-            <link linkend="sec_3_2_8">Import a Flow</link>
-          </para>
-
-        </listitem>
-        <listitem>
-
-          <para>
-            <link linkend="exportar_fluxo">Export a Flow</link>
-          </para>
-
-        </listitem>
-        <listitem>
-
-          <para>
-            <link linkend="executar_fluxo">Execute a Flow</link>
-          </para>
-
-        </listitem>
-        <listitem>
-
-          <para>
-            <link linkend="sec_3_2_11">Edit comments</link>
-          </para>
-
-        </listitem>
-        <listitem>
-
-          <para>
-            <link linkend="visualizar_relatorio_fluxo">View report</link>
-          </para>
-
-        </listitem>
-      </itemizedlist>
-      <tip>
-
-        <para>Instead of these buttons, try using the <emphasis role="bold">context menu</emphasis>. To do so, <emphasis role="bold">right-click</emphasis> on a Flow you have created, notice that many features can be accessed through this method. For certain cases this is an <emphasis role="bold"> easier and simpler </emphasis> choice.</para>
-
-      </tip>
-
-      <section xml:id="sec_3_2_1">
-        <title>Creating a new Flow</title>
-
-        <para>To create a new Flow first check that you have already <emphasis role="bold"> created and selected a Line
+    <itemizedlist>
+      <listitem>
+        <para>
+          <link linkend="sec_3_2_1">Create a new Flow</link>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <link linkend="copiar_fluxos_area_tranferencia">Copy Flows to the clipboard</link>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <link linkend="colar_fluxos_area_tranferencia">Paste Flows from the clipboard</link>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <link linkend="sec_3_2_4">Delete Flows</link>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <link linkend="editar_propriedades_fluxo">Edit a Flow's properties</link>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <link linkend="sec_3_2_7">Save a Flow's state</link>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <link linkend="sec_3_2_8">Import a Flow</link>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <link linkend="exportar_fluxo">Export a Flow</link>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <link linkend="executar_fluxo">Execute a Flow</link>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <link linkend="sec_3_2_11">Edit comments</link>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <link linkend="visualizar_relatorio_fluxo">View report</link>
+        </para>
+      </listitem>
+    </itemizedlist>
+    <tip>
+      <para>Instead of these buttons, try using the <emphasis role="bold">context menu</emphasis>. To do so, <emphasis role="bold">right-click</emphasis> on a Flow you have created, notice that many features can be accessed through this method. For certain cases this is an <emphasis role="bold"> easier and simpler </emphasis> choice.</para>
+    </tip>
+    <section xml:id="sec_3_2_1">
+      <title>Creating a new Flow</title>
+      <para>To create a new Flow first check that you have already <emphasis role="bold"> created and selected a Line
 	</emphasis> in the <guilabel>Projects e Lines</guilabel> tab. When you have done this, select the
           <guilabel>Flows</guilabel> tab and left-click on
-          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_criar_fluxo.png"
-          /></imageobject></inlinemediaobject></guiicon>. In the dialog box that opens, <xref
-	 linkend="editar_propriedades_fluxo"/>, fill in the required information then click on <guibutton>OK</guibutton>. For
+          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_criar_fluxo.png"/></imageobject></inlinemediaobject></guiicon>. In the dialog box that opens, <xref linkend="editar_propriedades_fluxo"/>, fill in the required information then click on <guibutton>OK</guibutton>. For
 	 more details see <xref linkend="criando_fluxos"/>.</para>
-
-        <para>There is  <emphasis role="bold">No limit</emphasis> on the number of Flows you can have inside one Line or in
+      <para>There is  <emphasis role="bold">No limit</emphasis> on the number of Flows you can have inside one Line or in
 	 total.</para>
-
-        <para>After you have created a Flow it will be <emphasis role="bold">visible on the left side of the main window
+      <para>After you have created a Flow it will be <emphasis role="bold">visible on the left side of the main window
 	</emphasis> when the <guilabel>Flows</guilabel> tab is selected. The <guilabel>Details</guilabel> box, found on the
 	 right side of the main window, shows information on the selected Flow .</para>
-
-        <tip>
-
-          <para>You can alter  <emphasis role="bold">the position</emphasis> of the Flow in the list by 
+      <tip>
+        <para>You can alter  <emphasis role="bold">the position</emphasis> of the Flow in the list by 
 	<emphasis role="bold">dragging the Flow with the mouse</emphasis> to the desired position.</para>
-
-        </tip>
-        <tip>
-          <para>Observe that the  <emphasis role="bold">information bar</emphasis> just bellow the menu 
+      </tip>
+      <tip>
+        <para>Observe that the  <emphasis role="bold">information bar</emphasis> just bellow the menu 
 	<guimenu>Actions</guimenu> shows the complete Flow tree of the selected Flow.</para>
-
-        </tip>
-      </section>
-
-      <section xml:id="copiar_fluxos_area_tranferencia">
-        <title>Copying Flows to the clipboard</title>
-
-        <para>The clipboard provides the popular set of tools known as <emphasis role="bold">copying and
+      </tip>
+    </section>
+    <section xml:id="copiar_fluxos_area_tranferencia">
+      <title>Copying Flows to the clipboard</title>
+      <para>The clipboard provides the popular set of tools known as <emphasis role="bold">copying and
           pasting</emphasis>. In GêBR a Flow (or set of Flows) can be copied to the clipboard by using the button
-        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_copiar_fluxo.png"
-          /></imageobject></inlinemediaobject></guiicon> or by using the known shortcut 
-          <keycombo><keycap>Ctrl</keycap> <keycap>C</keycap></keycombo>.</para>
-
-        <tip>
-
-          <para>You can select several Flows and then copy all of them to the clipboard by holding  
-            <keycombo>
-              <keycap>Ctrl</keycap>
-              <mousebutton>Left-click</mousebutton>
-            </keycombo> or 
-            <keycombo>
-              <keycap>Shift</keycap>
-              <mousebutton>Left-click</mousebutton>
-            </keycombo>.</para>
-
-        </tip>
-      </section>
-
-      <section xml:id="colar_fluxos_area_tranferencia">
-        <title>Pasting Flows from the clipboard</title>
-
-        <para>After copying <xref linkend="copiar_fluxos_area_tranferencia"/>, a Flow (or a set of Flows) you can paste
-          the it by clicking on the button <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_colar_fluxo.png"
-          /></imageobject></inlinemediaobject></guiicon> or by simply using the shortcut
-          <keycombo>
-            <keycap>Ctrl</keycap>
-            <keycap>V</keycap>
-          </keycombo>.</para>
-
-        <tip>
-
-          <para>Any Flow (or a set of Flows) that has been copied to the clipboard can be pasted to 
+        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_copiar_fluxo.png"/></imageobject></inlinemediaobject></guiicon> or by using the known shortcut 
+          <keycombo><keycap>Ctrl</keycap><keycap>C</keycap></keycombo>.</para>
+      <tip>
+        <para>You can select several Flows and then copy all of them to the clipboard by holding  
+            <keycombo><keycap>Ctrl</keycap><mousebutton>Left-click</mousebutton></keycombo> or 
+            <keycombo><keycap>Shift</keycap><mousebutton>Left-click</mousebutton></keycombo>.</para>
+      </tip>
+    </section>
+    <section xml:id="colar_fluxos_area_tranferencia">
+      <title>Pasting Flows from the clipboard</title>
+      <para>After copying <xref linkend="copiar_fluxos_area_tranferencia"/>, a Flow (or a set of Flows) you can paste
+          the it by clicking on the button <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_colar_fluxo.png"/></imageobject></inlinemediaobject></guiicon> or by simply using the shortcut
+          <keycombo><keycap>Ctrl</keycap><keycap>V</keycap></keycombo>.</para>
+      <tip>
+        <para>Any Flow (or a set of Flows) that has been copied to the clipboard can be pasted to 
 	 <emphasis role="bold">any Line</emphasis>. Simply switch to the 
 	 <guilabel>Projects e Lines</guilabel> tab, select the desired Line, then go back to the 
             <guilabel>Flows</guilabel> tab and paste the Flow(s).</para>
-
-        </tip>
-      </section>
-
-      <section xml:id="sec_3_2_4">
-        <title>Deleting Flows</title>
-
-        <para>To delete a Flow (or set of Flows), select them then click on
-          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_apagar_projeto.png"
-          /></imageobject></inlinemediaobject></guiicon>.</para>
-
-        <tip>
-
-          <para>You can select several Flows at once and then delete them by holding 
-            <keycombo>
-              <keycap>Ctrl</keycap>
-              <mousebutton>Left-click</mousebutton>
-            </keycombo> or 
-            <keycombo>
-              <keycap>Shift</keycap>
-              <mousebutton>Left-click</mousebutton>
-            </keycombo>.</para>
-
-        </tip>
-      </section>
-
-      <section xml:id="editar_propriedades_fluxo">
-        <title>Editing a Flow's properties</title>
-
-        <para>To edit a Flow's properties you must first select the Flow, then left-click on <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_editar_propriedades_projeto.png"
-        /></imageobject></inlinemediaobject></guiicon>.</para>
-
-
-        <para>In the <guilabel>Flows properties</guilabel> dialog box you can edit the fields
+      </tip>
+    </section>
+    <section xml:id="sec_3_2_4">
+      <title>Deleting Flows</title>
+      <para>To delete a Flow (or set of Flows), select them then click on
+          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_apagar_projeto.png"/></imageobject></inlinemediaobject></guiicon>.</para>
+      <tip>
+        <para>You can select several Flows at once and then delete them by holding 
+            <keycombo><keycap>Ctrl</keycap><mousebutton>Left-click</mousebutton></keycombo> or 
+            <keycombo><keycap>Shift</keycap><mousebutton>Left-click</mousebutton></keycombo>.</para>
+      </tip>
+    </section>
+    <section xml:id="editar_propriedades_fluxo">
+      <title>Editing a Flow's properties</title>
+      <para>To edit a Flow's properties you must first select the Flow, then left-click on <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_editar_propriedades_projeto.png"/></imageobject></inlinemediaobject></guiicon>.</para>
+      <para>In the <guilabel>Flows properties</guilabel> dialog box you can edit the fields
           <guilabel>Title, Description, Author and Email</guilabel>.</para>
-
-      </section>
-
-      <section xml:id="sec_3_2_6">
-        <title>Editing the Flow's parameter dictionary</title>
-
-        <para>This feature is documented in the section <xref linkend="dicionario_de_parametros"/>.</para>
-
-      </section>
-
-      <section xml:id="sec_3_2_7">
-        <title>Saving a Flows state</title>
-
-        <para>When working with GêBR you will encounter situations where it will be useful to use an existing Flow
+    </section>
+    <section xml:id="sec_3_2_6">
+      <title>Editing the Flow's parameter dictionary</title>
+      <para>This feature is documented in the section <xref linkend="dicionario_de_parametros"/>.</para>
+    </section>
+    <section xml:id="sec_3_2_7">
+      <title>Saving a Flows state</title>
+      <para>When working with GêBR you will encounter situations where it will be useful to use an existing Flow
 	as a basis to create new Flows. for example, you might want to experiment with Flows that are only slightly 
 	different from one another, however without having to discard or modify the original Flow.</para>
-
-
-        <para>One way of doing this is to copy and paste the Flow (see the section
+      <para>One way of doing this is to copy and paste the Flow (see the section
 	 <xref linkend="copiar_fluxos_area_tranferencia"/>
           and <xref linkend="colar_fluxos_area_tranferencia"/>), and the proceed to only edit the copies. Another way is to save 
 	the state of the original Flow, then edit it to your hearts desire, and when you wish you can return the Flow to its 
 	original state. To <emphasis role="bold">save the Flow's state</emphasis>:</para>
-
-        <procedure>
-          <step>
-            <para>Select the Flow and left-click on
-              <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_salvar_estado.png"
-            /></imageobject></inlinemediaobject></guiicon>.</para>
-          </step>
-          <step>
-            <para>If you want, you can write a comment on the state in the dialog box <guilabel>Save the Flow's state</guilabel>,
+      <procedure>
+        <step>
+          <para>Select the Flow and left-click on
+              <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_salvar_estado.png"/></imageobject></inlinemediaobject></guiicon>.</para>
+        </step>
+        <step>
+          <para>If you want, you can write a comment on the state in the dialog box <guilabel>Save the Flow's state</guilabel>,
 	as to identify this saved state later on.</para>
-          </step>
-          <step>
-            <para>Left-click on  
+        </step>
+        <step>
+          <para>Left-click on  
               <guibutton>OK</guibutton>.</para>
-          </step>
-        </procedure>
-        <note>
-
-          <para>There is <emphasis role="bold">no limit</emphasis> on the number of states for each Flow.</para>
-
-        </note>
-
-        <para>To open the list of saved states left-click on
-          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_salvar_estado_lista.png"
-        /></imageobject></inlinemediaobject></guiicon>, to the right of the button
-<guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_salvar_estado.png"
-        /></imageobject></inlinemediaobject></guiicon>, then select the state you wish to recover. Whenever you select a 
+        </step>
+      </procedure>
+      <note>
+        <para>There is <emphasis role="bold">no limit</emphasis> on the number of states for each Flow.</para>
+      </note>
+      <para>To open the list of saved states left-click on
+          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_salvar_estado_lista.png"/></imageobject></inlinemediaobject></guiicon>, to the right of the button
+<guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_salvar_estado.png"/></imageobject></inlinemediaobject></guiicon>, then select the state you wish to recover. Whenever you select a 
 	saved state from the list, the dialog box <guilabel>Backup current state?</guilabel> will appear. If you click on
 	<guibutton>Yes</guibutton> the dialog box <guilabel>Save the Flow's state</guilabel> will appear, where you can save 
 	this new state. If you click on <guibutton>No</guibutton>, GêBR will simply revert to the chosen state without saving 
 	the current state.</para>
-
-        <tip>
-
-          <para>If you are sure you have saved your current state, we recommend that you click on <guibutton>No</guibutton>, 
+      <tip>
+        <para>If you are sure you have saved your current state, we recommend that you click on <guibutton>No</guibutton>, 
 	in the dialog box <guilabel>Backup current state?</guilabel>, as to avoid a bloated state list.</para>
-
-        </tip>
-        <caution>
-
-          <para>GêBR continuously saves the list of Flow states. Even if you turn off your computer this list will be recovered
+      </tip>
+      <caution>
+        <para>GêBR continuously saves the list of Flow states. Even if you turn off your computer this list will be recovered
 	when you open GêBR again. However, if you <emphasis role="bold">delete the Flow</emphasis> all the saved states will	
 	<emphasis role="bold">immediately disappear forever</emphasis>.</para>
-
-        </caution>
-      </section>
-
-      <section xml:id="sec_3_2_8">
-        <title>Importing a Flow</title>
-
-        <para>GêBR allows you to import Flows that where previously exported 
+      </caution>
+    </section>
+    <section xml:id="sec_3_2_8">
+      <title>Importing a Flow</title>
+      <para>GêBR allows you to import Flows that where previously exported 
           <xref linkend="exportar_fluxo"/>. To do so:</para>
-
-        <procedure>
-          <step>
-            <para>Check that you have already <emphasis role="bold">created and selected a Line</emphasis>, in the tab 
+      <procedure>
+        <step>
+          <para>Check that you have already <emphasis role="bold">created and selected a Line</emphasis>, in the tab 
               <guilabel>Projects and Lines</guilabel> . Remember that Flows can only exist inside Lines
               (see this concept in Section <xref linkend="projetos_linhas_fluxo_visao_geral"/>). To import a Flow you must first
 	  <emphasis role="bold">select a Line</emphasis> (or
               <xref linkend="criar_nova_linha"/>, if one does not exist).</para>
-          </step>
-          <step>
-            <para>Select the tab
+        </step>
+        <step>
+          <para>Select the tab
               <guilabel>Flows</guilabel> and left-click on 
-              <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_importar_projeto.png"
-              /></imageobject></inlinemediaobject></guiicon>.</para>
-          </step>
-          <step>
-            <para>Navigate through the <guilabel>Choose a Flow to import</guilabel> and select a Flow you wish to import
+              <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_importar_projeto.png"/></imageobject></inlinemediaobject></guiicon>.</para>
+        </step>
+        <step>
+          <para>Navigate through the <guilabel>Choose a Flow to import</guilabel> and select a Flow you wish to import
 	 (only the file types <filename class="extension">flw</filename> will appear).</para>
-          </step>
-          <step>
-            <para>Left-click on the button 
+        </step>
+        <step>
+          <para>Left-click on the button 
               <guibutton>Open</guibutton>.</para>
-          </step>
-        </procedure>
-
-        <para>The imported Flow will be listed along with any other Flows of the selected Line.</para>
-
-      </section>
-
-      <section xml:id="exportar_fluxo">
-        <title>Exporting a Flow</title>
-
-        <para>Although GêBR maintains all your data, you still might wish to copy your Flows to file
+        </step>
+      </procedure>
+      <para>The imported Flow will be listed along with any other Flows of the selected Line.</para>
+    </section>
+    <section xml:id="exportar_fluxo">
+      <title>Exporting a Flow</title>
+      <para>Although GêBR maintains all your data, you still might wish to copy your Flows to file
           (perhaps to share with others or as a backup). To export a Flow:</para>
-
-        <procedure>
-          <step>
-            <para>Select the Flow you wish to save.</para>
-          </step>
-          <step>
-            <para>Left-click on
-              <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_exportar_projeto.png"
-            /></imageobject></inlinemediaobject></guiicon>.</para>
-          </step>
-          <step>
-            <para>In the window 
+      <procedure>
+        <step>
+          <para>Select the Flow you wish to save.</para>
+        </step>
+        <step>
+          <para>Left-click on
+              <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_exportar_projeto.png"/></imageobject></inlinemediaobject></guiicon>.</para>
+        </step>
+        <step>
+          <para>In the window 
               <guilabel>Save Flow</guilabel>, navigate to the directory you desire and type a name for the file
 		(GêBR will automatically determine the extension <filename class="extension">flw</filename>).</para>
-          </step>
-          <step>
-            <para>Left-click on the button
+        </step>
+        <step>
+          <para>Left-click on the button
               <guibutton>Save</guibutton>.</para>
-          </step>
-        </procedure>
-      </section>
-
-      <section xml:id="executar_fluxo_aba_fluxos">
-        <title>Executing a Flow</title>
-
-        <para>This command is present in the tab <guilabel>Flows</guilabel>  and the tab
+        </step>
+      </procedure>
+    </section>
+    <section xml:id="executar_fluxo_aba_fluxos">
+      <title>Executing a Flow</title>
+      <para>This command is present in the tab <guilabel>Flows</guilabel>  and the tab
           <guilabel>Flow editor</guilabel>  where both work differently. In the tab Flows, the
-          button <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_executar_fluxo.png"
-          /></imageobject></inlinemediaobject></guiicon> executes several Flows in a sequence. see Figure: 
-	<figure>
-	<mediaobject><caption>In the tab Flows you are able to execute several Flows sequentially by first: selecting the Flows
+          button <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_executar_fluxo.png"/></imageobject></inlinemediaobject></guiicon> executes several Flows in a sequence. see Figure: 
+	<figure><mediaobject><caption>In the tab Flows you are able to execute several Flows sequentially by first: selecting the Flows
 	you wish to use, and then left-click on 
-  <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_executar_fluxo.png" 
-          /></imageobject></inlinemediaobject></guiicon>. </caption>
-	<imageobject><imagedata fileref="../images/janela_execucao_de_fluxo.png"
-          /></imageobject>
-	</mediaobject>	
-	</figure></para>
-
-        <para>In this version of GêBR a concept called queues can now be employed to run a Flow, or sequence of Flows, in
+  <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_executar_fluxo.png"/></imageobject></inlinemediaobject></guiicon>. </caption><imageobject><imagedata fileref="../images/janela_execucao_de_fluxo.png"/></imageobject></mediaobject></figure></para>
+      <para>In this version of GêBR a concept called queues can now be employed to run a Flow, or sequence of Flows, in
 	 different queues:</para>
-
-	<procedure>
-	<step>
-        	<para> In the tab Flows, each time you execute a Flow or a set of Flows a queue is created.</para>
-	</step>
-
-	<step>
-        	<para>Each queue will be visible in the field Queue found in the tab Flow edition, which will be better
+      <procedure>
+        <step>
+          <para> In the tab Flows, each time you execute a Flow or a set of Flows a queue is created.</para>
+        </step>
+        <step>
+          <para>Each queue will be visible in the field Queue found in the tab Flow edition, which will be better
 		 explained in <xref linkend="executar_fluxo"/>.</para>
-	</step> 
-	
-	<step>
-        	<para> The Queues will also be visible in the tab Job Control. See 
+        </step>
+        <step>
+          <para> The Queues will also be visible in the tab Job Control. See 
           <xref linkend="controle_de_tarefas"/>.</para>
-	</step>
-	
-	</procedure>
-      </section>
-
-      <section xml:id="sec_3_2_11">
-        <title>Editing comments</title>
-
-        <para>This button appears in the <guilabel>Projects and Lines</guilabel> tab and in
+        </step>
+      </procedure>
+    </section>
+    <section xml:id="sec_3_2_11">
+      <title>Editing comments</title>
+      <para>This button appears in the <guilabel>Projects and Lines</guilabel> tab and in
           <guilabel>Flows</guilabel> tab. This button allows the user to add comments about the selected Line or Flow.
           See <xref linkend="editar_comentarios"/>.</para>
-
-      </section>
-
-      <section xml:id="visualizar_relatorio_fluxo">
-        <title>View report</title>
-
-        <para>This button appears in the <guilabel>Projects and Lines</guilabel> tab and in
+    </section>
+    <section xml:id="visualizar_relatorio_fluxo">
+      <title>View report</title>
+      <para>This button appears in the <guilabel>Projects and Lines</guilabel> tab and in
           <guilabel>Flows</guilabel> tab. This button allows the user to View the report on the Line or Flow
           in question, with the difference that the the Line's report can include the Flow's report. 
 	All other functions are described in <xref linkend="visualizar_relatorio"/>.</para>
-
-      </section>
     </section>
-
-    <section xml:id="sec_3_3">
-      <title>The 
+  </section>
+  <section xml:id="sec_3_3">
+    <title>The 
 	<guilabel>Flow editor</guilabel> tab</title>
-
-      <para>Every Flow is born empty, that is <emphasis role="bold">without programs</emphasis>. For a Flow to be functional you 
+    <para>Every Flow is born empty, that is <emphasis role="bold">without programs</emphasis>. For a Flow to be functional you 
 	need to <emphasis role="bold">add programs</emphasis> to it, and 
 	<emphasis role="bold">configure these programs</emphasis> to carry out specific tasks. All this can be done in the
 	<guilabel>Flow editor</guilabel> tab.</para>
-
-
-      <para>In <xref linkend="criando_fluxos"/> we saw that the Flow editor's standard Menu is divided into twelve categories, 
+    <para>In <xref linkend="criando_fluxos"/> we saw that the Flow editor's standard Menu is divided into twelve categories, 
 	listed in the <guilabel>Menu</guilabel> box to the right of the main window:</para>
-
-      <itemizedlist>
-        <listitem>
-
-          <para>Data Compression</para>
-
-        </listitem>
-        <listitem>
-
-          <para>Editing, Sorting and Manipulation</para>
-
-        </listitem>
-        <listitem>
-
-          <para>File tools</para>
-
-        </listitem>
-        <listitem>
-
-          <para>Filtering, Transforms and Attributes</para>
-
-        </listitem>
-        <listitem>
-
-          <para>Gain, NMO, Stack and Standard Processes</para>
-
-        </listitem>
-        <listitem>
-
-          <para>Graphics</para>
-
-        </listitem>
-        <listitem>
-
-          <para>Import/Export</para>
-
-        </listitem>
-        <listitem>
-
-          <para>Migration and Dip Moveout</para>
-
-        </listitem>
-        <listitem>
-
-          <para>Multiple Supression</para>
-
-        </listitem>
-        <listitem>
-
-          <para>Seismic Unix</para>
-
-        </listitem>
-        <listitem>
-
-          <para>Simulation and Model Building</para>
-
-        </listitem>
-        <listitem>
-
-          <para>Utilities</para>
-
-        </listitem>
-      </itemizedlist>
-
-      <para>By default the categories are shown in their collapsed form, concealing their components. To reveal a categories
+    <itemizedlist>
+      <listitem>
+        <para>Data Compression</para>
+      </listitem>
+      <listitem>
+        <para>Editing, Sorting and Manipulation</para>
+      </listitem>
+      <listitem>
+        <para>File tools</para>
+      </listitem>
+      <listitem>
+        <para>Filtering, Transforms and Attributes</para>
+      </listitem>
+      <listitem>
+        <para>Gain, NMO, Stack and Standard Processes</para>
+      </listitem>
+      <listitem>
+        <para>Graphics</para>
+      </listitem>
+      <listitem>
+        <para>Import/Export</para>
+      </listitem>
+      <listitem>
+        <para>Migration and Dip Moveout</para>
+      </listitem>
+      <listitem>
+        <para>Multiple Supression</para>
+      </listitem>
+      <listitem>
+        <para>Seismic Unix</para>
+      </listitem>
+      <listitem>
+        <para>Simulation and Model Building</para>
+      </listitem>
+      <listitem>
+        <para>Utilities</para>
+      </listitem>
+    </itemizedlist>
+    <para>By default the categories are shown in their collapsed form, concealing their components. To reveal a categories
 	components you must expand the category by clicking on the icon
-  <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_colapsado.png"
-	/></imageobject></inlinemediaobject></guiicon> just to the left of the category.</para>
-
-
-      <para>To <emphasis role="bold">add a program</emphasis> to a Flow follow these steps:</para>
-
-      <procedure>
-        <step>
-          <para>Select a Flow from the  
+  <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_colapsado.png"/></imageobject></inlinemediaobject></guiicon> just to the left of the category.</para>
+    <para>To <emphasis role="bold">add a program</emphasis> to a Flow follow these steps:</para>
+    <procedure>
+      <step>
+        <para>Select a Flow from the  
             <guilabel>Flows</guilabel> tab. Then select the 
             <guilabel>Flow editor</guilabel> tab.</para>
-
-          <tip>
-
-            <para>When in the 
+        <tip>
+          <para>When in the 
               <guilabel>Flows</guilabel> tab try double clicking on a Flow. This way you will have selected the Flow and already
 		find your self in the <guilabel>Flow editor</guilabel> tab.</para>
-
-          </tip>
-        </step>
-        <step>
-          <para>Expand a category and double click on one of its components (you might have to scroll down the 
+        </tip>
+      </step>
+      <step>
+        <para>Expand a category and double click on one of its components (you might have to scroll down the 
 	<guilabel>Menu</guilabel> box to see all the category's components). The selected component
             is added to the <guilabel>Flow sequence</guilabel> box, on the left side of the main window, and is now a program 	
 	of the Flow.</para>
-
-          <tip>
-
-            <para>You may consult the <emphasis role="bold">component's documentation</emphasis> before adding it to your 
+        <tip>
+          <para>You may consult the <emphasis role="bold">component's documentation</emphasis> before adding it to your 
 	Flow. To do so, <emphasis role="bold">right-click </emphasis> on the component and choose 
 	<guilabel>Help</guilabel>.</para>
-
-          </tip>
-        </step>
-      </procedure>
-      <tip>
-
-        <para>Note that the <emphasis role="bold">information bar</emphasis> just bellow the <guimenu>Actions</guimenu> menu, at
+        </tip>
+      </step>
+    </procedure>
+    <tip>
+      <para>Note that the <emphasis role="bold">information bar</emphasis> just bellow the <guimenu>Actions</guimenu> menu, at
 	 the top of the main window. Shows which Flow is currently selected at all times, in every tab.</para>
-
-      </tip>
-      <tip>
-
-        <para>You can reorder the <emphasis role="bold">positions</emphasis> of the programs in the 
+    </tip>
+    <tip>
+      <para>You can reorder the <emphasis role="bold">positions</emphasis> of the programs in the 
 	<guilabel>Flow sequence</guilabel> by simply <emphasis role="bold">dragging</emphasis> the program of your choice to the 
 	its new position.</para>
-
-      </tip>
-
-      <para>Now that we know how to add programs to the Flow let us learn how to configure these programs, and investigate the
+    </tip>
+    <para>Now that we know how to add programs to the Flow let us learn how to configure these programs, and investigate the
 	 other tools found in the 
 	<guilabel>Flow editor</guilabel> tab:</para>
-
-      <itemizedlist>
-        <listitem>
-
-          <para>
-            <link linkend="copiar_programa_para_area_de_transferencia">Copy selected program(s) to the clipboard</link>
-          </para>
-
-        </listitem>
-        <listitem>
-
-          <para>
-            <link linkend="sec_3_3_2">Paste program(s) from the clipboard</link>
-          </para>
-
-        </listitem>
-        <listitem>
-
-          <para>
-            <link linkend="sec_3_3_3">Delete program(s)</link>
-          </para>
-
-        </listitem>
-        <listitem>
-
-          <para>
-            <link linkend="editar_parametros_programa">Edit a program's parameters</link>
-          </para>
-
-        </listitem>
-        <listitem>
-
-          <para>
-            <link linkend="sec_3_3_5">Change a program's state</link>
-          </para>
-
-        </listitem>
-        <listitem>
-
-          <para>
-            <link linkend="editar_arquivos_entrada_saida_fluxo">Edit the Flow's input file and output file</link>
-          </para>
-
-        </listitem>
-        <listitem>
-
-          <para>
-            <link linkend="executar_fluxo">Execute a Flow</link>
-          </para>
-
-        </listitem>
-      </itemizedlist>
-      <tip>
-
-        <para>Instead of command buttons try using <emphasis role="bold">context menus</emphasis>. To do so
+    <itemizedlist>
+      <listitem>
+        <para>
+          <link linkend="copiar_programa_para_area_de_transferencia">Copy selected program(s) to the clipboard</link>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <link linkend="sec_3_3_2">Paste program(s) from the clipboard</link>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <link linkend="sec_3_3_3">Delete program(s)</link>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <link linkend="editar_parametros_programa">Edit a program's parameters</link>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <link linkend="sec_3_3_5">Change a program's state</link>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <link linkend="editar_arquivos_entrada_saida_fluxo">Edit the Flow's input file and output file</link>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <link linkend="executar_fluxo">Execute a Flow</link>
+        </para>
+      </listitem>
+    </itemizedlist>
+    <tip>
+      <para>Instead of command buttons try using <emphasis role="bold">context menus</emphasis>. To do so
            <emphasis role="bold">right-click</emphasis> on a program you have added. 
 	 Notice that many command can be accessed through this menu.  For certain cases this method is
            <emphasis role="bold">easier and faster</emphasis> then using command buttons.</para>
-
-      </tip>
-
-      <section xml:id="copiar_programa_para_area_de_transferencia">
-        <title>Copying programs to the clipboard</title>
-
-        <para>In the same manner we copy and paste Flows (see <xref linkend="copiar_fluxos_area_tranferencia"/>), a program
+    </tip>
+    <section xml:id="copiar_programa_para_area_de_transferencia">
+      <title>Copying programs to the clipboard</title>
+      <para>In the same manner we copy and paste Flows (see <xref linkend="copiar_fluxos_area_tranferencia"/>), a program
 	 (or set of programs) can be copied to the clipboard by clicking
-   <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_copiar_fluxo.png"
-          /></imageobject></inlinemediaobject></guiicon> or by using the shortcut
-          <keycombo>
-            <keycap>Ctrl</keycap>
-            <keycap>C</keycap>
-          </keycombo>.</para>
-
-        <tip>
-
-          <para>You can select several programs to be copied by holding 
-            <keycombo>
-              <keycap>Ctrl</keycap>
-              <mousebutton>Clique</mousebutton>
-            </keycombo> or 
-            <keycombo>
-              <keycap>Shift</keycap>
-              <mousebutton>Clique</mousebutton>
-            </keycombo>.</para>
-
-        </tip>
-      </section>
-
-      <section xml:id="sec_3_3_2">
-        <title>Pasting programs from the clipboard</title>
-
-        <para>After selecting and coping <xref linkend="copiar_programa_para_area_de_transferencia"/> a program (or set
+   <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_copiar_fluxo.png"/></imageobject></inlinemediaobject></guiicon> or by using the shortcut
+          <keycombo><keycap>Ctrl</keycap><keycap>C</keycap></keycombo>.</para>
+      <tip>
+        <para>You can select several programs to be copied by holding 
+            <keycombo><keycap>Ctrl</keycap><mousebutton>Clique</mousebutton></keycombo> or 
+            <keycombo><keycap>Shift</keycap><mousebutton>Clique</mousebutton></keycombo>.</para>
+      </tip>
+    </section>
+    <section xml:id="sec_3_3_2">
+      <title>Pasting programs from the clipboard</title>
+      <para>After selecting and coping <xref linkend="copiar_programa_para_area_de_transferencia"/> a program (or set
 	of programs) you can then paste them by clicking on
-  <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_colar_fluxo.png"
-          /></imageobject></inlinemediaobject></guiicon> or by using the shortcut
-          <keycombo>
-            <keycap>Ctrl</keycap>
-            <keycap>V</keycap>
-          </keycombo>.</para>
-
-        <tip>
-
-          <para>A program (or set of programs) that have been copied to the clipboard can be pasted to  
+  <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_colar_fluxo.png"/></imageobject></inlinemediaobject></guiicon> or by using the shortcut
+          <keycombo><keycap>Ctrl</keycap><keycap>V</keycap></keycombo>.</para>
+      <tip>
+        <para>A program (or set of programs) that have been copied to the clipboard can be pasted to  
 	 <emphasis role="bold">any Flow</emphasis>, and not just the Flow of origin. Simply switch to the
             <guilabel>Flows</guilabel> tab, select the desired Flow, go back to the <guilabel>
 	Flow editor</guilabel> tab and paste the program(s).</para>
-
-        </tip>
-      </section>
-
-      <section xml:id="sec_3_3_3">
-        <title>Deleting programs</title>
-
-        <para>To remove a program (or set of programs), select them then click on
-          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_apagar_projeto.png"
-        /></imageobject></inlinemediaobject></guiicon>.</para>
-
-        <tip>
-
-          <para>You can select several programs to be deleted by holding  
-            <keycombo>
-              <keycap>Ctrl</keycap>
-              <mousebutton>Clique</mousebutton>
-            </keycombo> or 
-            <keycombo>
-              <keycap>Shift</keycap>
-              <mousebutton>Clique</mousebutton>
-            </keycombo>.</para>
-
-        </tip>
-        <caution>
-
-          <para>GêBR <emphasis role="bold">does not issue a warning </emphasis>before deleting the selected programs.</para>
-
-        </caution>
-      </section>
-
-      <section xml:id="editar_parametros_programa">
-        <title>Editing a program's parameters</title>
-
-        <para>To edit a program's parameters:</para>
-
-        <procedure>
-          <step>
-            <para>Select the program from the <guilabel>Flow sequence</guilabel> box then click on 
-              <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_editar_propriedades_projeto.png"
-              /></imageobject></inlinemediaobject></guiicon>, or just double-click on the program.</para>
-          </step>
-          <step>
-            <para>The <guilabel>Parameters</guilabel> dialog box will appear. Notice that each program's parameters vary greatly
+      </tip>
+    </section>
+    <section xml:id="sec_3_3_3">
+      <title>Deleting programs</title>
+      <para>To remove a program (or set of programs), select them then click on
+          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_apagar_projeto.png"/></imageobject></inlinemediaobject></guiicon>.</para>
+      <tip>
+        <para>You can select several programs to be deleted by holding  
+            <keycombo><keycap>Ctrl</keycap><mousebutton>Clique</mousebutton></keycombo> or 
+            <keycombo><keycap>Shift</keycap><mousebutton>Clique</mousebutton></keycombo>.</para>
+      </tip>
+      <caution>
+        <para>GêBR <emphasis role="bold">does not issue a warning </emphasis>before deleting the selected programs.</para>
+      </caution>
+    </section>
+    <section xml:id="editar_parametros_programa">
+      <title>Editing a program's parameters</title>
+      <para>To edit a program's parameters:</para>
+      <procedure>
+        <step>
+          <para>Select the program from the <guilabel>Flow sequence</guilabel> box then click on 
+              <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_editar_propriedades_projeto.png"/></imageobject></inlinemediaobject></guiicon>, or just double-click on the program.</para>
+        </step>
+        <step>
+          <para>The <guilabel>Parameters</guilabel> dialog box will appear. Notice that each program's parameters vary greatly
 		both in size and type.</para>
-
-            <tip>
-
-              <para>Click on the <guibutton>Help</guibutton> button ( bottom left corner of the dialog box) to view the
+          <tip>
+            <para>Click on the <guibutton>Help</guibutton> button ( bottom left corner of the dialog box) to view the
 	 	<emphasis role="bold"> program's documentation</emphasis>. This will certainly be useful when your editing the
 		programs parameters.</para>
-
-            </tip>
-            <tip>
-
-              <para>Click on the <guibutton>Default</guibutton> button when you want the program to return to its default
+          </tip>
+          <tip>
+            <para>Click on the <guibutton>Default</guibutton> button when you want the program to return to its default
 		configurations.</para>
-
-            </tip>
-          </step>
-          <step>
-            <para>When your done click on the <guibutton>OK</guibutton> button.</para>
-          </step>
-        </procedure>
-      </section>
-
-      <section xml:id="sec_3_3_5">
-        <title>Changing a program's state</title>
-
-        <para>After you have carried out process of <xref linkend="editar_parametros_programa"/> the program's mark is changed
-          to <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_configurado.png"
-        /></imageobject></inlinemediaobject></guiicon> instead of
-de <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_nao_configurado.png"
-        /></imageobject></inlinemediaobject></guiicon>. This means that the program's state has gone from
+          </tip>
+        </step>
+        <step>
+          <para>When your done click on the <guibutton>OK</guibutton> button.</para>
+        </step>
+      </procedure>
+    </section>
+    <section xml:id="sec_3_3_5">
+      <title>Changing a program's state</title>
+      <para>After you have carried out process of <xref linkend="editar_parametros_programa"/> the program's mark is changed
+          to <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_configurado.png"/></imageobject></inlinemediaobject></guiicon> instead of
+de <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_nao_configurado.png"/></imageobject></inlinemediaobject></guiicon>. This means that the program's state has gone from
 	 <emphasis role="bold">Not configured</emphasis> to the 
         <emphasis role="bold">Configured</emphasis> state. Other then these two states the program can also be set to the
 	 <emphasis role="bold">Disabled</emphasis> state
-   (<guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_desabilitado.png"
-        /></imageobject></inlinemediaobject></guiicon>). You can alternate between these states by using two methods,
+   (<guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_desabilitado.png"/></imageobject></inlinemediaobject></guiicon>). You can alternate between these states by using two methods,
         you can either <mousebutton>right-click</mousebutton> on the program and then select from the context menu the desired state,
         or by using the shortcut <keycombo><keycap>Space</keycap></keycombo> to change the state(s) of the selected programs.</para>
-
-        <tip>
-
-          <para>You can select several programs whose state you wish to change by holding 
-            <keycombo>
-              <keycap>Ctrl</keycap>
-              <mousebutton>Clique</mousebutton>
-            </keycombo> or
-            <keycombo>
-              <keycap>Shift</keycap>
-              <mousebutton>Clique</mousebutton>
-            </keycombo>.</para>
-
-        </tip>
-        <tip>
-
-          <para>Changing a programs state does not alter its parameter configuration. You can safely alternate between the 
+      <tip>
+        <para>You can select several programs whose state you wish to change by holding 
+            <keycombo><keycap>Ctrl</keycap><mousebutton>Clique</mousebutton></keycombo> or
+            <keycombo><keycap>Shift</keycap><mousebutton>Clique</mousebutton></keycombo>.</para>
+      </tip>
+      <tip>
+        <para>Changing a programs state does not alter its parameter configuration. You can safely alternate between the 
 	states, for the parameters will continue the same.</para>
-
-        </tip>
-        <important>
-
-          <para><emphasis role="bold">Disabled</emphasis> programs
-            (<guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_desabilitado.png"
-	    /></imageobject></inlinemediaobject></guiicon>) will be ignored when you execute your Flow. With this you can 
+      </tip>
+      <important>
+        <para><emphasis role="bold">Disabled</emphasis> programs
+            (<guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_desabilitado.png"/></imageobject></inlinemediaobject></guiicon>) will be ignored when you execute your Flow. With this you can 
 	 <emphasis role="bold">enable and disable partes of your Flow</emphasis> as you see fit.</para>
-
-        </important>
-      </section>
-
-      <section xml:id="editar_arquivos_entrada_saida_fluxo">
-        <title>Editing the Flow's input and output files</title>
-
-        <para>In the example <xref linkend="criando_fluxos"/> we created a very simple Flow, one which did not need to 
+      </important>
+    </section>
+    <section xml:id="editar_arquivos_entrada_saida_fluxo">
+      <title>Editing the Flow's input and output files</title>
+      <para>In the example <xref linkend="criando_fluxos"/> we created a very simple Flow, one which did not need to 
 	"read" any file, and that generated a graphical result. However on many occasions in which you will need to extract
 	data from an input file and/or generate as a result an output file, or even an log file in case an error occurs.</para>
-
-
-        <para>How to associate an input, output and error file to a Flow:</para>
-	<figure> 
-	  <mediaobject>
-	  <caption>Select the Flow editor tab, in the Flow sequence box you can edit the input, output and log files for this 
+      <para>How to associate an input, output and error file to a Flow:</para>
+      <figure>
+        <mediaobject>
+          <caption>Select the Flow editor tab, in the Flow sequence box you can edit the input, output and log files for this 
 	Flow sequence.</caption>
-            <imageobject><imagedata fileref="../images/janela_arquivos_entrada_saida.png"
-								  /></imageobject>
-          </mediaobject>
-        </figure>
- 
-        <procedure>
-          <step>
-            <para>Check you have selected a Flow, then select the Flow editor tab, in the Flow sequence box you can edit 
+          <imageobject>
+            <imagedata fileref="../images/janela_arquivos_entrada_saida.png"/>
+          </imageobject>
+        </mediaobject>
+      </figure>
+      <procedure>
+        <step>
+          <para>Check you have selected a Flow, then select the Flow editor tab, in the Flow sequence box you can edit 
               the input, output and log files paths by double clicking on them. See figure: 
             </para>
-          </step>
-          <step>
-            <para>Type in the path or click on the 
-              icon <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_escolher_arquivo.png"
-            /></imageobject></inlinemediaobject></guiicon> and browse for the in the <guilabel>Choose a file</guilabel> dialog
+        </step>
+        <step>
+          <para>Type in the path or click on the 
+              icon <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_escolher_arquivo.png"/></imageobject></inlinemediaobject></guiicon> and browse for the in the <guilabel>Choose a file</guilabel> dialog
 	box.</para>
-          </step>
-        </procedure>
-
-        <para>When you have chosen a path for your <guilabel>Flow's input/output</guilabel> note that their file paths will
+        </step>
+      </procedure>
+      <para>When you have chosen a path for your <guilabel>Flow's input/output</guilabel> note that their file paths will
 	appear in the <guilabel>Flow sequence</guilabel> box, indicate with the marks 
-  <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_arquivo_entrada.png"
-							      /></imageobject></inlinemediaobject></guiicon> and
-            <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_arquivo_saida.png"
-							      /></imageobject></inlinemediaobject></guiicon>, below and above
+  <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_arquivo_entrada.png"/></imageobject></inlinemediaobject></guiicon> and
+            <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_arquivo_saida.png"/></imageobject></inlinemediaobject></guiicon>, below and above
 	the Flow's programs (if there are any).</para>
-
-        <note>
-
-          <para>If you wish to <emphasis role="bold">remove a set</emphasis> from the list, select them by pressing 
+      <note>
+        <para>If you wish to <emphasis role="bold">remove a set</emphasis> from the list, select them by pressing 
 	 <emphasis role="bold"> right-click </emphasis> then click on
             <guimenuitem>Exclude</guimenuitem>.</para>
-
-        </note>
-      </section>
-
-      <section xml:id="executar_fluxo">
-        <title>Executing a Flow</title>
-
-        <para>To execute the current Flow click on 
-          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_executar_fluxo.png"
-							      /></imageobject></inlinemediaobject></guiicon>.</para>
-
-
-        <para>By default the Flow's are executed on the machine of origin, which is identified automatically by GêBR
+      </note>
+    </section>
+    <section xml:id="executar_fluxo">
+      <title>Executing a Flow</title>
+      <para>To execute the current Flow click on 
+          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_executar_fluxo.png"/></imageobject></inlinemediaobject></guiicon>.</para>
+      <para>By default the Flow's are executed on the machine of origin, which is identified automatically by GêBR
           as <emphasis role="bold">local server</emphasis>. However, GêBR does permit that you 
 	<emphasis role="bold">execute Flows on remote machines</emphasis>. More details on the definition and selection
 	of servers can be found in <xref linkend="menu"/>.</para>
-
-
-        <para>In the Flow editor tab, even if you selected several Flow from the Flows tab, when you click on
+      <para>In the Flow editor tab, even if you selected several Flow from the Flows tab, when you click on
           <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_executar_fluxo.png"/></imageobject></inlinemediaobject></guiicon> only the first selected Flow will be executed.</para>
-
-
- <para>In this version of GêBR a concept called queues can now be employed to run a Flow, or sequence of Flows, in
+      <para>In this version of GêBR a concept called queues can now be employed to run a Flow, or sequence of Flows, in
 	 different queues, this was explained in <xref linkend="executar_fluxo_aba_fluxos"/>. In this tab you can choose from
 	the Queue fields in which queue the Flow is to be executed. You can also name this chosen queue, see figure:</para>
-
-	<figure> 
-	  <mediaobject>
-	  <caption>In the Flow editor tab, from the Queue fields you can determine in which queue a Flow will be executed.
+      <figure>
+        <mediaobject>
+          <caption>In the Flow editor tab, from the Queue fields you can determine in which queue a Flow will be executed.
 	</caption>
-            <imageobject><imagedata fileref="../images/janela_filas_edicao_de_fluxo.png"
-							      /></imageobject>
-          </mediaobject>
-        </figure>
+          <imageobject>
+            <imagedata fileref="../images/janela_filas_edicao_de_fluxo.png"/>
+          </imageobject>
+        </mediaobject>
+      </figure>
       <para>On the moment that the Flow is executed GêBR will automatically switch to the
           <guilabel>Job control</guilabel> tab, which will display a report (<emphasis>log</emphasis>) on the execution of the
 	 Flow .</para>
-
-      </section>
     </section>
-
-    <section xml:id="controle_de_tarefas">
-      <title>The 
+  </section>
+  <section xml:id="controle_de_tarefas">
+    <title>The 
 	<guilabel>Job control</guilabel> tab</title>
-
-      <para> As seen in <xref linkend="executar_fluxo"/>, GêBR switches to the
+    <para> As seen in <xref linkend="executar_fluxo"/>, GêBR switches to the
 	<guilabel>Job control</guilabel> tab whenever a Flow is executed. In this tab you can
 	 <emphasis role="bold">follow</emphasis> and, if so desired, <emphasis role="bold">interrupt</emphasis> the Flow's
 	execution. The available commands are:</para>
-
-      <itemizedlist>
-        <listitem>
-
-          <para>
-            <link linkend="sec_3_4_1">Save the Job's information in a file</link>
-          </para>
-	</listitem>
-        <listitem>
-
-          <para>
-            <link linkend="sec_3_4_2">Clear Job</link>
-          </para>
-
-        </listitem>
-        <listitem>
-
-          <para>
-            <link linkend="sec_3_4_3">Ask the server to cancel this Job</link>
-          </para>
-
-        </listitem>
-      </itemizedlist>
-
-      <para>We discussed how to use Queues in both the <emphasis role="bold">Flows</emphasis> tab and
+    <itemizedlist>
+      <listitem>
+        <para>
+          <link linkend="sec_3_4_1">Save the Job's information in a file</link>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <link linkend="sec_3_4_2">Clear Job</link>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <link linkend="sec_3_4_3">Ask the server to cancel this Job</link>
+        </para>
+      </listitem>
+    </itemizedlist>
+    <para>We discussed how to use Queues in both the <emphasis role="bold">Flows</emphasis> tab and
 	 <emphasis role="bold">Flow editor</emphasis> tab in sections <emphasis role="bold">3.2.10</emphasis> and 
 	<emphasis role="bold">3.3.7</emphasis>. To finalize this subject, in the 
 	<emphasis role="bold">Job control</emphasis> tab it is possible to view how each Queue is progressing, where each one
 	 executes independently. Just as there is one report (log) for every program. See the figure below:</para>
-
-	<figure> 
-	  <mediaobject>
-	  <caption>In the Job control tab, to the right of the main menu we can view a list of Flows being carried out,
+    <figure>
+      <mediaobject>
+        <caption>In the Job control tab, to the right of the main menu we can view a list of Flows being carried out,
 	 already executed, cancelled and failed. To the right there will be information about each execution.</caption>
-            <imageobject><imagedata fileref="../images/janela_aba_controle_de_tarefas.png"/>
-            </imageobject>
-          </mediaobject>
-        </figure>
-
-      <section xml:id="sec_3_4_1">
-        <title>Saving a Job's information in a file</title>
-
-        <para>Whenever a Flow is executed a Job will appear with the Flow's name in the 
+        <imageobject>
+          <imagedata fileref="../images/janela_aba_controle_de_tarefas.png"/>
+        </imageobject>
+      </mediaobject>
+    </figure>
+    <section xml:id="sec_3_4_1">
+      <title>Saving a Job's information in a file</title>
+      <para>Whenever a Flow is executed a Job will appear with the Flow's name in the 
           <guilabel>Jobs</guilabel> box, inside the 
           <guilabel>Job control</guilabel> tab.</para>
-
-
-        <para>To save on a file a Job's information first select it from the 
+      <para>To save on a file a Job's information first select it from the 
           <guilabel>Job</guilabel> box then click on the button
-          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_salvar_log.png"
-          /></imageobject></inlinemediaobject></guiicon>.</para>
-
-      </section>
-
-      <section xml:id="sec_3_4_2">
-        <title>Clear a Job</title>
-
-        <para>To remove a Job's log first select it from the 
+          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_salvar_log.png"/></imageobject></inlinemediaobject></guiicon>.</para>
+    </section>
+    <section xml:id="sec_3_4_2">
+      <title>Clear a Job</title>
+      <para>To remove a Job's log first select it from the 
           <guilabel>Job</guilabel> box then click on the button 
-          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_limpar_log_atual.png"
-          /></imageobject></inlinemediaobject></guiicon>.</para>
-
-
-        <para>You can only delete Jobs that are not being executed ( they will be marked with
-          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_tarefa_concluida_sucesso.png"
-        /></imageobject></inlinemediaobject></guiicon> or
+          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_limpar_log_atual.png"/></imageobject></inlinemediaobject></guiicon>.</para>
+      <para>You can only delete Jobs that are not being executed ( they will be marked with
+          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_tarefa_concluida_sucesso.png"/></imageobject></inlinemediaobject></guiicon> or
 <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_tarefa_terminada_erro.png"/></imageobject></inlinemediaobject></guiicon>).</para>
-
-      </section>
-
-      <section xml:id="sec_3_4_3">
-        <title>Ask the server to cancel a Job</title>
-
-        <para>In general complex Jobs will take some time to finish. If for some reason you wish to terminate a Job, before it 
+    </section>
+    <section xml:id="sec_3_4_3">
+      <title>Ask the server to cancel a Job</title>
+      <para>In general complex Jobs will take some time to finish. If for some reason you wish to terminate a Job, before it 
 	runs its natural course: select the Job being executed (marked
-  with <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_tarefa_em_execucao.png"
-          /></imageobject></inlinemediaobject></guiicon>) from the <guilabel>Jobs</guilabel> box and click on the button
-  <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_terminar_tarefa.png"
-          /></imageobject></inlinemediaobject></guiicon>.</para>
-
-
-        <para>When a Job is terminated in this manner, the Job will be marked with
-          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_tarefa_terminada_erro.png"
-        /></imageobject></inlinemediaobject></guiicon>.</para>
-
-      </section>
+  with <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_tarefa_em_execucao.png"/></imageobject></inlinemediaobject></guiicon>) from the <guilabel>Jobs</guilabel> box and click on the button
+  <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_terminar_tarefa.png"/></imageobject></inlinemediaobject></guiicon>.</para>
+      <para>When a Job is terminated in this manner, the Job will be marked with
+          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_tarefa_terminada_erro.png"/></imageobject></inlinemediaobject></guiicon>.</para>
+    </section>
   </section>
-
   <section xml:id="sec_4">
     <title>Additional features</title>
-
     <section xml:id="dicionario_de_parametros">
       <title>The parameter dictionary</title>
-
       <para>The parameter dictionary is a novelty introduced in  <emphasis role="bold">GêBR 0.9.15 
 	</emphasis>. It is a flexible tool that can be used in many different ways, for an array of purposes, depending
 	what the user wants. We shall illustrate with an example:</para>
-
       <procedure>
         <step>
           <para>Create a Flow and add a simply program called
             <guimenuitem>Sleep</guimenuitem>, whose only function is to pause the Flows execution for a predetermined amount of 
 		time (you can find this program in the category <guimenu>Shell tools</guimenu>, in the 
             <guilabel>Flow editor</guilabel> tab).</para>
-
           <figure>
-	      <mediaobject>
-		<caption>we added "Flow 1" to "My Line" to use in the example below. </caption>
+            <mediaobject>
+              <caption>we added "Flow 1" to "My Line" to use in the example below. </caption>
               <imageobject>
-                <imagedata fileref="../images/exemplo_dicionario_1.png" />
+                <imagedata fileref="../images/exemplo_dicionario_1.png"/>
               </imageobject>
             </mediaobject>
           </figure>
           <figure>
             <mediaobject>
-		<caption>As the example states, we have added the program "Sleep" to "Flow 1".</caption>
+              <caption>As the example states, we have added the program "Sleep" to "Flow 1".</caption>
               <imageobject>
-                <imagedata fileref="../images/exemplo_dicionario_2.png" />
+                <imagedata fileref="../images/exemplo_dicionario_2.png"/>
               </imageobject>
             </mediaobject>
           </figure>
         </step>
         <step>
           <para>In the <guilabel>Projects and Lines</guilabel> tab click on
-            button <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_dicionario_projeto.png"
-          /></imageobject></inlinemediaobject></guiicon> so as to <emphasis role="bold">edit the parameter
+            button <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_dicionario_projeto.png"/></imageobject></inlinemediaobject></guiicon> so as to <emphasis role="bold">edit the parameter
 	dictionary </emphasis>.</para>
         </step>
         <step>
@@ -1888,13 +1327,12 @@ de <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-ima
             <userinput>Time</userinput> in the <guilabel>Keyword</guilabel> column and
             <userinput>5</userinput> in the <guilabel>Value</guilabel> column. When your done, you should see something similar 
 	to the following:</para>
-
           <figure>
             <mediaobject>
-		<caption>In the Flow's parameter dictionary you can edit parameters for the Flow, the Line or your whole 
+              <caption>In the Flow's parameter dictionary you can edit parameters for the Flow, the Line or your whole 
 	Project.</caption>
               <imageobject>
-                <imagedata fileref="../images/exemplo_dicionario_3.png" />
+                <imagedata fileref="../images/exemplo_dicionario_3.png"/>
               </imageobject>
             </mediaobject>
           </figure>
@@ -1902,18 +1340,16 @@ de <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-ima
         <step>
           <para>After closing the <guilabel>Line's parameter dictionary</guilabel> select the tab
             <guilabel>Flow editor</guilabel>, then in the <guilabel>Flow sequence</guilabel> box double-click on the
-	program <guilabel>Sleep</guilabel>. In the dialog box <guilabel>Parameters</guilabel>  
-	<emphasis role="bold">right-click</emphasis> on the field <guilabel>Time to sleep</guilabel>. The objective here
+	program <guilabel>Sleep</guilabel>. In the dialog box <guilabel>Parameters</guilabel> <emphasis role="bold">right-click</emphasis> on the field <guilabel>Time to sleep</guilabel>. The objective here
 	is to attribute the variable <emphasis role="bold">Time=5</emphasis> as a parameter for <guilabel>Time to
             sleep</guilabel>, as is shown below:</para>
-
           <figure>
             <mediaobject>
-		<caption>By pressing the right-click on the text box of Sleep's Parameters window, a context menu will appear, 
+              <caption>By pressing the right-click on the text box of Sleep's Parameters window, a context menu will appear, 
 	where, among other options, you can insert parameters from the parameter dictionary, as is done in this example
 	.</caption>
               <imageobject>
-                <imagedata fileref="../images/exemplo_dicionario_4.png" />
+                <imagedata fileref="../images/exemplo_dicionario_4.png"/>
               </imageobject>
             </mediaobject>
           </figure>
@@ -1922,13 +1358,12 @@ de <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-ima
           <para>After closing the <guilabel>Parameters</guilabel> window, go to the
             <guilabel>Flows</guilabel> tab and copy this Flow several times, giving each copy a different name. Whenever you
 	execute anyone of these Flows the result will be the same: <emphasis role="bold">a 5 second pause</emphasis>.</para>
-
           <figure>
             <mediaobject>
-		<caption>As we have previously illustrated, in the Flows tab you can make copies of a Flow. In the above
+              <caption>As we have previously illustrated, in the Flows tab you can make copies of a Flow. In the above
 	 example, all the copies will have the same parameter for the program sleep, just like the original Flow.</caption>
               <imageobject>
-                <imagedata fileref="../images/exemplo_dicionario_5.png" />
+                <imagedata fileref="../images/exemplo_dicionario_5.png"/>
               </imageobject>
             </mediaobject>
           </figure>
@@ -1938,126 +1373,93 @@ de <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-ima
             <userinput>2</userinput>. This will change the value <userinput>Time</userinput> has in all the Flows. That is, whenever you execute anyone of these Flows the result will be the same <emphasis role="bold">a 2 second pause</emphasis>, rather then a 5 second pause.</para>
         </step>
       </procedure>
-
       <para>This example attempts to demonstrate how it is possible to <emphasis role="bold">indirectly alter Flows</emphasis>
 	by using the parameter dictionary, specifically by changing variables defined in the parameter dictionary. Without
 	this tool, it would be quite tedious to alter the execution time of all the Flows one by one.</para>
-
       <important>
-
         <para>You can restrict a variables accessibility by defining it as a
           <guilabel>Project's</guilabel> variable, a <guilabel>Lines</guilabel> variable or a <guilabel>Flows</guilabel> 
 	variable. A <guilabel>Projects</guilabel> variable can be accessed by <emphasis role="bold">any Flow</emphasis> from 
 	any of the Lines belonging to the selected Project. A <guilabel>Line's</guilabel> variable can be accessed only
 	by the <emphasis role="bold">Flows belonging to the selected Line</emphasis>. A <guilabel>Flow's</guilabel> varialbes
 	can only be accessed by the <emphasis role="bold">selected Flow</emphasis>.</para>
-
       </important>
     </section>
-
     <section xml:id="menu">
       <title>The <guimenu>Action</guimenu> menu</title>
-
       <para>From the 
 	<guimenu>Actions</guimenu> menu you can access your
 	<guimenuitem>Preferences</guimenuitem> and configure
 	<guimenuitem>Servers</guimenuitem>. If your enthusiasm for GêBR has lead you to read the whole manual, you have probably
 	used almost all available features found in these options. But just in case, below you will find the documentation for 
 	these options.</para>
-
-
       <section>
         <title>Preferences</title>
-
         <para> The details you provide in the <guimenuitem>Preferences</guimenuitem> dialog box will be adopted as the
 	default by GêBR. Specifically:</para>
-
         <itemizedlist>
           <listitem>
-
-            <para>
-              <guilabel>User name:</guilabel> will be used as the default for
+            <para><guilabel>User name:</guilabel> will be used as the default for
               <guilabel>Author:</guilabel> when you create Projects, Lines and Flows.</para>
-
           </listitem>
           <listitem>
-
-            <para>
-              <guilabel>Email:</guilabel> will be used as the default for
+            <para><guilabel>Email:</guilabel> will be used as the default for
               <guilabel>Email:</guilabel> when you create Projects, Lines and Flows.</para>
-
           </listitem>
           <listitem>
-
             <para><guilabel>User's menus directory:</guilabel> will be the default directory where 
 	 <emphasis>GêBR's Menus</emphasis> are maintained ( <filename class="extension">mnu</filename> files).</para>
-
           </listitem>
           <listitem>
-
-            <para>
-              <guilabel>HTML editor:</guilabel> the default text editor that GêBR will open when creating reports on 
+            <para><guilabel>HTML editor:</guilabel> the default text editor that GêBR will open when creating reports on 
 	Projects, Lines and Flows.</para>
-
           </listitem>
         </itemizedlist>
         <figure>
           <mediaobject>
-	  <caption>Preferences menu opens a dialog box where you edit the user name, email, menu's directory and the HTML 
+            <caption>Preferences menu opens a dialog box where you edit the user name, email, menu's directory and the HTML 
 	editor.</caption>
             <imageobject>
-              <imagedata fileref="../images/janela_preferences.png" />
+              <imagedata fileref="../images/janela_preferences.png"/>
             </imageobject>
           </mediaobject>
         </figure>
       </section>
-
       <section>
         <title>Servers</title>
-
         <para>Use the window <guilabel>Configure servers</guilabel> to configure the local server and remote servers that you
 	have added.</para>
-
-
         <para>The <emphasis>Local server</emphasis> is automatically defined and connected when GêBR initializes. 
 	It is used as the default machine when executing Flows.</para>
-
-
         <para>Remote servers can be added to execute remote Flows. To add a server type the address in the text box at the bottom
 	 of the <guilabel>Configure server's</guilabel> window, then click on the button
           <guibutton>Add</guibutton>.</para>
-
         <figure>
-	 <mediaobject>
-	  <caption>In Configure servers you can: add servers, connect to them and disconnect from them. </caption>
+          <mediaobject>
+            <caption>In Configure servers you can: add servers, connect to them and disconnect from them. </caption>
             <imageobject>
-              <imagedata fileref="../images/janela_servers_configuration.png" />
+              <imagedata fileref="../images/janela_servers_configuration.png"/>
             </imageobject>
           </mediaobject>
         </figure>
         <important>
-
           <para>All servers you defined in the 
             <guilabel>Configure servers</guilabel> window will be visible in the 
             <guilabel>Flow editor</guilabel> tab ( you can select which server to use from the 
             <guilabel>Server</guilabel> box, just above the 
             <guilabel>Flow sequence</guilabel> box, on the left side of the main window) and also in the 
             <guilabel>Flow's Input/Output</guilabel> window (the one where the Flow's input and output files are defined).</para>
-
         </important>
       </section>
     </section>
-
     <section xml:id="sec_4_3">
       <title>The execution log</title>
-
       <para>GêBR remembers most of the users actions, as well as the results of these actions, in the so called 
 	 <emphasis>execution log</emphasis>. This log is shown at the bottom of the main window, which can be presented in the
 	collapsed form (default) or the expanded form like the window below.</para>
-
       <figure>
-	<mediaobject>
-	<caption>At the bottom of GêBR's main window you will find the execution log, which displays information on all
+        <mediaobject>
+          <caption>At the bottom of GêBR's main window you will find the execution log, which displays information on all
 	of GêBR processes.</caption>
           <imageobject>
             <imagedata fileref="../images/janela_log_execucao.png"/>
@@ -2065,16 +1467,11 @@ de <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-ima
         </mediaobject>
       </figure>
       <tip>
-
         <para>In 
-          <menuchoice>
-            <guimenu>Actions</guimenu>
-            <guimenuitem>Preferences</guimenuitem>
-          </menuchoice> at the bottom of the dialog box, you will the check box 
+          <menuchoice><guimenu>Actions</guimenu><guimenuitem>Preferences</guimenuitem></menuchoice> at the bottom of the dialog box, you will the check box 
           <guilabel>Load past-execution log</guilabel> by checking this box you are opting to exhibit the full log, including
 	actions from past dates. By leaving the box unchecked you a choosing to have a compact log, one which only shows
 	actions that have taken place since GêBR's last initialization.</para>
-
       </tip>
     </section>
   </section>
