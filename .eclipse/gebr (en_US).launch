@@ -26,6 +26,7 @@
 <listEntry value="4"/>
 </listAttribute>
 <mapAttribute key="org.eclipse.debug.core.environmentVariables">
+<mapEntry key="LC_ALL" value="en_US.UTF-8"/>
 <mapEntry key="LD_LIBRARY_PATH" value="libgebr/.libs:libgebr/geoxml/.libs:libgebr/comm/.libs:libgebr/gui/.libs"/>
 <mapEntry key="PATH" value="gebrd/src:${env_var:PATH}"/>
 </mapAttribute>
