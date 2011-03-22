@@ -435,6 +435,7 @@ static void flow_set_paths_to(GebrGeoXmlFlow * flow, set_path_func func, gboolea
 
 	void flow_paths_foreach_parameter(GebrGeoXmlParameter * parameter)
 	{
+		gboolean cleaned = FALSE;
 		if (gebr_geoxml_parameter_get_type(parameter) == GEBR_GEOXML_PARAMETER_TYPE_FILE) {
 			GebrGeoXmlSequence *value;
 
@@ -443,11 +444,16 @@ static void flow_set_paths_to(GebrGeoXmlFlow * flow, set_path_func func, gboolea
 				GString *path;
 
 				path = g_string_new(gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(value)));
+				if (path->len == 0)
+					continue;
+				else
+					cleaned = TRUE;
+
 				func(path);
 				gebr_geoxml_value_sequence_set(GEBR_GEOXML_VALUE_SEQUENCE(value), path->str);
 				g_string_free(path, TRUE);
 			}
-			if (set_programs_unconfigured)
+			if (set_programs_unconfigured && cleaned)
 				gebr_geoxml_program_set_status (gebr_geoxml_parameter_get_program(parameter), GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED);
 		}
 	}
