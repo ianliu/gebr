@@ -1073,8 +1073,7 @@ gboolean ui_server_ask_for_tags_remove_permission (void){
 				    SERVER_TAGS, &tags,
 				    -1);
 		if (server && g_strcmp0 (server->comm->address->str, "127.0.0.1") == 0){
-			result = FALSE;
-			goto out;
+			continue;
 		}
 
 		g_string_append_printf (removed_tags, "%s,", tags);
@@ -1182,7 +1181,6 @@ gboolean ui_server_ask_for_tags_remove_permission (void){
 	g_free(new_tags_sorted_no_doubles);
 	g_free(all_tags_sorted_no_doubles);
 	g_string_free(new_tags, TRUE);
-out:
 	g_string_free(all_tags, TRUE);
 	g_string_free(removed_tags, TRUE);
 	return result;
