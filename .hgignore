@@ -45,9 +45,6 @@ docs/reference/libgebr/libgebr.prerequisites
 docs/reference/libgebr/libgebr.signals
 docs/reference/libgebr/version.xml
 docs/reference/libgebr/{html,xml}
-gebr-client/gebr-client
-gebr/gebr
-gebrd/gebrd
 gtk-doc.make
 install-sh
 json-enum-types.[ch]
@@ -91,3 +88,6 @@ tags
 syntax: regexp
 ^build$
 ^libgebr/geoxml/tests/test-document$
+
+syntax: regexp
+^libgebr/geoxml/tests/test-project$
