@@ -1072,8 +1072,10 @@ gboolean ui_server_ask_for_tags_remove_permission (void){
 				    SERVER_POINTER, &server,
 				    SERVER_TAGS, &tags,
 				    -1);
-		if (server && g_strcmp0 (server->comm->address->str, "127.0.0.1") == 0)
-			return FALSE;
+		if (server && g_strcmp0 (server->comm->address->str, "127.0.0.1") == 0){
+			result = FALSE;
+			goto out;
+		}
 
 		g_string_append_printf (removed_tags, "%s,", tags);
 		g_free (tags);
@@ -1124,17 +1126,11 @@ gboolean ui_server_ask_for_tags_remove_permission (void){
 		gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW (text_view), FALSE);
 
 		while (removed){
-			GList * servers_in_tag = ui_server_servers_with_tag((gchar *)removed->data);
-
-			if (g_list_length(servers_in_tag) == 1){
-				GString * buf = g_string_new((char *)removed->data);
-				g_string_append(buf, "\n");
-				empty_tag = TRUE;
-				gtk_text_buffer_insert_at_cursor(text_buffer, buf->str, buf->len);
-				g_string_free(buf,TRUE);
-			}
-
-			g_list_free(servers_in_tag);
+			GString * buf = g_string_new((char *)removed->data);
+			g_string_append(buf, "\n");
+			empty_tag = TRUE;
+			gtk_text_buffer_insert_at_cursor(text_buffer, buf->str, buf->len);
+			g_string_free(buf,TRUE);
 			removed = removed->next;
 		}
 
@@ -1175,11 +1171,19 @@ gboolean ui_server_ask_for_tags_remove_permission (void){
 			gtk_widget_destroy(dialog);
 		}
 		g_string_free(message, TRUE);
-
+		g_list_free(removed);
 	}
 	else{
 		result = TRUE;
 	}
-
+	g_strfreev(removed_tagsv);
+	g_strfreev(all_tagsv);
+	g_list_free(all);
+	g_free(new_tags_sorted_no_doubles);
+	g_free(all_tags_sorted_no_doubles);
+	g_string_free(new_tags, TRUE);
+out:
+	g_string_free(all_tags, TRUE);
+	g_string_free(removed_tags, TRUE);
 	return result;
 }
