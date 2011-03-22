@@ -400,8 +400,8 @@ static void job_control_on_cursor_changed(void)
 	void get_state(GebrJob *job)
 	{
 		has_job = TRUE;
-		has_execution = job_is_running(job);
-		has_finished = job_has_finished(job);
+		has_execution = has_execution || job_is_running(job);
+		has_finished = has_finished || job_has_finished(job);
 	}
 
 	gint selected_rows = gtk_tree_selection_count_selected_rows(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)));
@@ -431,8 +431,6 @@ static void job_control_on_cursor_changed(void)
 				GtkTreePath *path_first = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter_child_first);
 				GtkTreePath *path_last = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter_child_last);
 				gtk_tree_selection_select_range (gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)), path_first, path_last);
-				gtk_tree_path_free(path_first);
-				gtk_tree_path_free(path_last);
 
 				GtkTreeIter iter;
 				gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_job_control->view) {
@@ -443,11 +441,15 @@ static void job_control_on_cursor_changed(void)
 				}
 
 				if (has_job) {
+					gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_close"), has_finished);
+					gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_stop"), has_execution);
 					gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_queue_close"), has_finished);
 					gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_queue_stop"), has_execution);
 					gtk_tree_selection_unselect_range (gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)), path_first, path_last);
 					gtk_tree_selection_select_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)), &iter_queue);
 				}
+				gtk_tree_path_free(path_first);
+				gtk_tree_path_free(path_last);
 			} else 
 				job_load_details(NULL);
 		}
