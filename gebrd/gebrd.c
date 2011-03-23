@@ -125,7 +125,7 @@ static void close_open_fds(int lowfd, int highfd)
 {
 //TODO: check for this in configure.ac
 //#if defined(HAVE_DIRFD) && defined(HAVE_PROC_PID)
-	long fd;
+	long fd = lowfd;
 #if 1
 	char fdpath[PATH_MAX], *endp;
 	struct dirent *dent;
