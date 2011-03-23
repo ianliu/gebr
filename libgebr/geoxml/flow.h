@@ -178,35 +178,49 @@ void gebr_geoxml_flow_server_set_date_last_run(GebrGeoXmlFlow *flow, const gchar
 
 /**
  * Retrieve the last run date for this server.
+ * \p flow should not be passed as NULL.
  *
  * \see gebr_geoxml_flow_server_get_date_last_run
  */
 const gchar *gebr_geoxml_flow_server_get_date_last_run(GebrGeoXmlFlow *flow);
 
 /**
- * Retrieves the \p server input file path*
+ * gebr_geoxml_flow_io_set_input:
+ * @flow: a flow
+ * @input: flow's input path
  *
- * If \p server or \p input is NULL nothing is done.
+ * Set the @flow input file path to @input. The input file is
+ * the one used to gather the input sent by the last program of \p flow.
+ *
+ * If @flow or @input is NULL nothing is done.
  *
  * \see gebr_geoxml_flow_server_io_get_input
  */
 void gebr_geoxml_flow_io_set_input(GebrGeoXmlFlow * flow, const gchar * input);
 
 /**
- * Set the \p flow output file path to \p output. The output file is
- * the one used to gather the output sent by the last program of \p flow.
+ * gebr_geoxml_flow_io_set_output:
+ * @flow: a flow
+ * @output: flow's output path
  *
- * If \p flow or \p output is NULL nothing is done.
+ * Set the @flow output file path to @output. The output file is
+ * the one used to gather the output sent by the last program of @flow.
+ *
+ * If @flow or @output is NULL nothing is done.
  *
  * \see gebr_geoxml_flow_server_io_get_output
  */
 void gebr_geoxml_flow_io_set_output(GebrGeoXmlFlow * flow, const gchar * output);
 
 /**
- * Set the \p flow error file path to \p error. This should be the file
+ * gebr_geoxml_flow_io_set_error:
+ * @flow: a flow
+ * @error: flow's error path
+ *
+ * Set the @flow error file path to @error. This should be the file
  * containing the error log, which might include program's stderr
  *
- * If \p flow or \p error is NULL nothing is done.
+ * If @flow or @error is NULL nothing is done.
  *
  * \see gebr_geoxml_flow_server_io_get_error gebr_geoxml_program_set_stderr
  */

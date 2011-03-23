@@ -15,9 +15,6 @@ AM_LDFLAGS = $(GEBR_LIBS) $(GEBR_GEOXML_LIBS)
 TEST_PROGS += test-sequence
 test_sequence_SOURCES = test-sequence.c
 
-TEST_PROGS += test-category
-test_category_SOURCES = test-category.c
-
 TEST_PROGS += test-program
 test_program_SOURCES = test-program.c
 
@@ -32,3 +29,6 @@ test_line_SOURCES = test-line.c
 
 TEST_PROGS += test-project
 test_project_SOURCES = test-project.c
+
+TEST_PROGS += test-flow
+test_flow_SOURCES = test-flow.c
