@@ -124,7 +124,20 @@ void flow_edition_status_changed(guint status);
  */
 void flow_edition_on_server_changed(void);
 
-
+/**
+ * flow_edition_select_server:
+ * @flow: a flow with a server
+ * @model: the model where @flow's server will be searched
+ * @iter: return location for the found server
+ *
+ * Searches for the @flow's server in @model. All connected servers should be sorted first in the @model.
+ * If the server is not found, @iter is changed to point to the first item in @model and %FALSE is returned.
+ *
+ * Returns: %TRUE if the server was found, %FALSE otherwise.
+ */
+gboolean flow_edition_find_flow_server (GebrGeoXmlFlow *flow,
+					GtkTreeModel   *model,
+					GtkTreeIter    *iter);
 
 G_END_DECLS
 #endif				//__UI_FLOW_COMPONENT_H

@@ -1122,3 +1122,26 @@ static void on_queue_combobox_changed (GtkComboBox *combo, GtkComboBox *server_c
 			     g_strdup (server->comm->address->str),
 			     GINT_TO_POINTER (index));
 }
+
+gboolean
+flow_edition_find_flow_server (GebrGeoXmlFlow *flow,
+			       GtkTreeModel   *model,
+			       GtkTreeIter    *iter)
+{
+  const gchar *addr;
+  gboolean     valid;
+  GebrServer  *server;
+
+  addr = gebr_geoxml_flow_server_get_address (flow);
+  valid = gtk_tree_model_get_iter_first (model, iter);
+  while (valid)
+    {
+      gtk_tree_model_get (model, iter, SERVER_POINTER, &server, -1);
+      if (g_strcmp0 (server->comm->address->str, addr) == 0)
+        return TRUE;
+      valid = gtk_tree_model_iter_next (model, iter);
+    }
+
+  gtk_tree_model_get_iter_first (model, iter);
+  return FALSE;
+}
