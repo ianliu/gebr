@@ -472,31 +472,11 @@ static void flow_browse_load(void)
 		flow_browse_load_revision(GEBR_GEOXML_REVISION(revision), FALSE);
 
 	/* select last edited server */
-	gboolean is_fs;
-	const gchar *group;
-	const gchar *address;
 	GtkTreeModel *model;
-	gboolean found = FALSE;
 
 	model = gebr.ui_project_line->servers_sort;
-	group = gebr_geoxml_line_get_group (gebr.line, &is_fs);
-	address = gebr_geoxml_flow_server_get_address (gebr.flow);
-
-	gebr_gui_gtk_tree_model_foreach (iter, model) {
-		GebrServer *srv;
-		gtk_tree_model_get (model, &iter, SERVER_POINTER, &srv, -1);
-		if (g_strcmp0 (srv->comm->address->str, address) == 0) {
-			found = TRUE;
-			break;
-		}
-	}
-
-	if (found)
-		gtk_combo_box_set_active_iter (
-				GTK_COMBO_BOX (gebr.ui_flow_edition->server_combobox),
-				&iter);
-	else
-		gtk_combo_box_set_active(GTK_COMBO_BOX(gebr.ui_flow_edition->server_combobox), 0);
+	flow_edition_find_flow_server (gebr.flow, model, &iter);
+	gtk_combo_box_set_active_iter (GTK_COMBO_BOX (gebr.ui_flow_edition->server_combobox), &iter);
 
 	flow_edition_on_server_changed();
 	flow_browse_info_update();

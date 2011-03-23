@@ -519,16 +519,8 @@ void on_notebook_switch_page (GtkNotebook     *notebook,
 	if (page_num == NOTEBOOK_PAGE_FLOW_EDITION) {
 		GtkComboBox *cb = GTK_COMBO_BOX (gebr.ui_flow_edition->server_combobox);
 		GtkTreeModel *model = gtk_combo_box_get_model (cb);
-
-		if (!gtk_combo_box_get_active_iter (cb, &iter))
-			gtk_combo_box_set_active (cb, 0);
-		else {
-			gtk_tree_model_get (model, &iter,
-					    SERVER_POINTER, &server,
-					    -1);
-			if (!server->comm->socket->protocol->logged)
-				gtk_combo_box_set_active (cb, 0);
-		}
+		flow_edition_find_flow_server (gebr.flow, model, &iter);
+		gtk_combo_box_set_active_iter (cb, &iter);
 	}
 }
 
