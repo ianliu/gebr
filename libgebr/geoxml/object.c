@@ -241,7 +241,7 @@ gchar *gebr_geoxml_object_get_help_content_from_str (const gchar *str)
 	g_string_free (html, TRUE);
 
 	//Old help does not have end content mark
-	regex = g_regex_new ("<div class=\"content\">(.*?<!-- end cpy -->)",
+	regex = g_regex_new ("<div class=\"content\">(.*?)</div>[^<]*<div class=\"navigation\">",
 			     G_REGEX_DOTALL, 0, NULL);
 
 	if (g_regex_match (regex, str, 0, &match)) {
@@ -252,7 +252,7 @@ gchar *gebr_geoxml_object_get_help_content_from_str (const gchar *str)
 	}
 
 	g_regex_unref (regex);
-	regex = g_regex_new ("<body[^>]*>(.*?)<\\/div>",
+	regex = g_regex_new ("<body[^>]*>(.*?)<\\/body>",
 			     G_REGEX_DOTALL, 0, NULL);
 
 	if (g_regex_match (regex, str, 0, &match)) {
