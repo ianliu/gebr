@@ -188,6 +188,7 @@ void gebr_comm_server_free(struct gebr_comm_server *server)
 	gebr_comm_server_free_for_reuse(server);
 	g_string_free(server->address, TRUE);
 	g_string_free(server->password, TRUE);
+	g_object_unref (server->socket);
 	g_free(server);
 }
 
