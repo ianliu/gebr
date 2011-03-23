@@ -508,7 +508,6 @@ void on_notebook_switch_page (GtkNotebook     *notebook,
                               gpointer         user_data)
 {
 	GtkTreeIter iter;
-	GebrServer *server;
 
 	if (gebr.last_notebook >= 0)
 		gtk_window_remove_accel_group(GTK_WINDOW(gebr.window), gebr.accel_group_array[gebr.last_notebook]);
@@ -517,6 +516,9 @@ void on_notebook_switch_page (GtkNotebook     *notebook,
 	gebr.last_notebook = page_num;
 
 	if (page_num == NOTEBOOK_PAGE_FLOW_EDITION) {
+		if (!gebr.flow)
+			return;
+
 		GtkComboBox *cb = GTK_COMBO_BOX (gebr.ui_flow_edition->server_combobox);
 		GtkTreeModel *model = gtk_combo_box_get_model (cb);
 		flow_edition_find_flow_server (gebr.flow, model, &iter);
