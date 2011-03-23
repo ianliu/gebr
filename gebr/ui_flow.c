@@ -363,15 +363,12 @@ static void flow_io_run(GebrGeoXmlFlow *flow, gboolean parallel, gboolean single
 		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No server selected."));
 		return;
 	}
-	/* SERVER on list of servers: find iter */
-	const gchar *address = gebr_geoxml_flow_server_get_address(flow);
-	if (!server_find_address (address, &server_iter, NULL, FALSE)) {
-		gebr_message(GEBR_LOG_DEBUG, TRUE, TRUE, "Server %s should be present on list!",
-			     address);
-		return;
-	}
+
 	GebrServer *server;
-	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &server_iter, SERVER_POINTER, &server, -1);
+
+	gtk_tree_model_get (GTK_TREE_MODEL(gebr.ui_project_line->servers_sort), &server_iter,
+			    SERVER_POINTER, &server, -1);
+
 	/* SERVER: check connection */
 	if (!gebr_comm_server_is_logged(server->comm)) {
 		if (gebr_comm_server_is_local(server->comm))
