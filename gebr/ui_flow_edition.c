@@ -985,6 +985,9 @@ static void flow_edition_on_combobox_changed(GtkComboBox * combobox)
 							 g_str_equal,
 							 (GDestroyNotify) g_free,
 							 NULL);
+		g_hash_table_insert (last_queue_hash,
+				     g_strdup (addr),
+				     GINT_TO_POINTER (0));
 
 		gtk_list_store_set (gebr.ui_flow_browse->store, &flow_iter,
 				    FB_LAST_QUEUES, last_queue_hash,
@@ -1110,7 +1113,10 @@ static void on_queue_combobox_changed (GtkComboBox *combo, GtkComboBox *server_c
 			    -1);
 
 	if (!last_queue_hash)
-		return;
+		g_return_if_reached ();
+
+	if (index < 0)
+		index = 0;
 
 	g_hash_table_insert (last_queue_hash,
 			     g_strdup (server->comm->address->str),
