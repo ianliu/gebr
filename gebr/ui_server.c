@@ -577,6 +577,9 @@ struct ui_server_list *server_list_setup_ui(void)
 	GtkWidget *button;
 	GtkWidget *hbox;
 	GtkWidget *entry;
+	GtkWidget *frame;
+	GtkWidget *align;
+	GtkWidget *label;
 
 	ui_server_list = g_new(struct ui_server_list, 1);
 	ui_server_list->common.store = gtk_list_store_new(SERVER_N_COLUMN,
@@ -615,17 +618,6 @@ struct ui_server_list *server_list_setup_ui(void)
 	server_common_setup(&ui_server_list->common);
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), ui_server_list->common.widget, TRUE, TRUE, 0);
 
-	ui_server_list->common.combo_store = gtk_list_store_new(4,
-								G_TYPE_STRING,
-								G_TYPE_STRING,
-								G_TYPE_BOOLEAN,
-								G_TYPE_BOOLEAN);
-
-	ui_server_list->common.combo = _ui_server_create_tag_combo_box (ui_server_list);
-	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), ui_server_list->common.combo, FALSE, TRUE, 0);
-
-	g_signal_connect(ui_server_list->common.combo, "changed", G_CALLBACK(on_combo_changed), NULL);
-
 	hbox = gtk_hbox_new(FALSE, 3);
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), hbox, FALSE, TRUE, 0);
 
@@ -637,6 +629,30 @@ struct ui_server_list *server_list_setup_ui(void)
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(on_add_clicked), ui_server_list);
 	g_object_set(button, "user-data", entry, NULL);
+
+	ui_server_list->common.combo_store = gtk_list_store_new(4,
+								G_TYPE_STRING,
+								G_TYPE_STRING,
+								G_TYPE_BOOLEAN,
+								G_TYPE_BOOLEAN);
+
+	ui_server_list->common.combo = _ui_server_create_tag_combo_box (ui_server_list);
+	g_signal_connect(ui_server_list->common.combo, "changed", G_CALLBACK(on_combo_changed), NULL);
+
+	align = gtk_alignment_new (0, 0, 1, 1);
+	gtk_alignment_set_padding (GTK_ALIGNMENT (align), 0, 0, 10, 0);
+	gtk_container_add (GTK_CONTAINER (align), ui_server_list->common.combo);
+
+	frame = gtk_frame_new (_("<b>Filter by group</b>"));
+	gtk_container_set_border_width (GTK_CONTAINER (frame), 5);
+	gtk_frame_set_shadow_type (GTK_FRAME (frame), GTK_SHADOW_NONE);
+	gtk_container_add (GTK_CONTAINER (frame), align);
+	label = gtk_frame_get_label_widget (GTK_FRAME (frame));
+	gtk_label_set_use_markup (GTK_LABEL (label), TRUE);
+
+	hbox = gtk_hbox_new (FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), frame, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), hbox, FALSE, FALSE, 0);
 
 	return ui_server_list;
 }
