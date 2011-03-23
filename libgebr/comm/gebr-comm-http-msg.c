@@ -157,7 +157,8 @@ GebrCommHttpMsg *gebr_comm_http_msg_new(GebrCommHttpRequestType type, GebrCommHt
 }
 void gebr_comm_http_msg_free(GebrCommHttpMsg *msg)
 {
-	g_object_unref(msg);
+	if (msg)
+		g_object_unref(msg);
 }
 GebrCommHttpMsg *gebr_comm_http_msg_new_parsing(GebrCommHttpMsg *partial, GString *data)
 {
