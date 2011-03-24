@@ -1099,6 +1099,7 @@ void on_response_ok(GtkButton * button, GebrPropertiesData * data)
 				flow_browse_reload_selected();
 			}
 		}
+		project_line_info_update();
 		break;
 	} case GEBR_GEOXML_DOCUMENT_TYPE_FLOW: {
 		flow_browse_get_selected(&iter, FALSE);
