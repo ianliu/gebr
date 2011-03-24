@@ -216,6 +216,7 @@ gboolean gebr_quit(gboolean save_config)
 gint gebr_config_load()
 {
 	gboolean new_config;
+	gboolean has_local_server = FALSE;
 
 	/* the config load order must be: log, load file servers, projects/line/flows, menus.
 	 * new config check must be after all default values loaded.
@@ -297,6 +298,7 @@ gint gebr_config_load()
 
 	/* SERVERS */
        	gchar **groups = g_key_file_get_groups(gebr.config.key_file, NULL);
+
 	for (gint i = 0; groups[i] != NULL; ++i) {
 		if (!g_str_has_prefix(groups[i], "server-"))
 			continue;
@@ -304,6 +306,8 @@ gint gebr_config_load()
 		GString *address;
 
 		address = gebr_g_key_file_load_string_key(gebr.config.key_file, groups[i], "address", "");
+		if(g_strcmp0(address->str,"127.0.0.1") == 0)
+			has_local_server = TRUE;
 		if (address->len)
 			server_new(address->str,
 				   gebr_g_key_file_load_boolean_key(gebr.config.key_file, groups[i], "autoconnect",
@@ -312,6 +316,9 @@ gint gebr_config_load()
 		g_string_free(address, TRUE);
 	}
 	g_strfreev(groups);
+
+	if(!has_local_server)
+		server_new("127.0.0.1", TRUE);
 
 	/* PROJECT/LINE/FLOWS */
 	project_list_populate();
@@ -357,7 +364,6 @@ gint gebr_config_load()
 
 	/* NEW CONFIG? */
 	if (new_config) {
-		server_new("127.0.0.1", TRUE);
 		//gebr_config_save(FALSE); //default values saved
 		preferences_setup_ui(TRUE);
 	} else
