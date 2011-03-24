@@ -15,20 +15,19 @@
 <stringAttribute key="org.eclipse.cdt.launch.DEBUGGER_START_MODE" value="run"/>
 <booleanAttribute key="org.eclipse.cdt.launch.DEBUGGER_STOP_AT_MAIN" value="true"/>
 <stringAttribute key="org.eclipse.cdt.launch.DEBUGGER_STOP_AT_MAIN_SYMBOL" value="main"/>
-<stringAttribute key="org.eclipse.cdt.launch.PROGRAM_NAME" value="gebr/gebr/.libs/gebr"/>
-<stringAttribute key="org.eclipse.cdt.launch.PROJECT_ATTR" value="gebrproject"/>
+<stringAttribute key="org.eclipse.cdt.launch.PROGRAM_ARGUMENTS" value="-i"/>
+<stringAttribute key="org.eclipse.cdt.launch.PROGRAM_NAME" value="gebrd/src/.libs/gebrd"/>
+<stringAttribute key="org.eclipse.cdt.launch.PROJECT_ATTR" value="gebrproject-0.12"/>
 <stringAttribute key="org.eclipse.cdt.launch.PROJECT_BUILD_CONFIG_ID_ATTR" value=""/>
 <booleanAttribute key="org.eclipse.cdt.launch.use_terminal" value="true"/>
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
-<listEntry value="/gebrproject"/>
+<listEntry value="/gebrproject-0.12"/>
 </listAttribute>
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
 <listEntry value="4"/>
 </listAttribute>
 <mapAttribute key="org.eclipse.debug.core.environmentVariables">
-<mapEntry key="LC_ALL" value="en_US.UTF-8"/>
 <mapEntry key="LD_LIBRARY_PATH" value="libgebr/.libs:libgebr/geoxml/.libs:libgebr/comm/.libs:libgebr/gui/.libs"/>
-<mapEntry key="PATH" value="gebrd/src:${env_var:PATH}"/>
 </mapAttribute>
 <listAttribute key="org.eclipse.debug.ui.favoriteGroups">
 <listEntry value="org.eclipse.debug.ui.launchGroup.debug"/>
