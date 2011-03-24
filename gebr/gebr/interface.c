@@ -145,7 +145,7 @@ static const GtkActionEntry actions_entries_job_control[] = {
 	{"job_control_close", "gnome-fs-trash-empty", N_("Close"),
 		"Delete", N_("Clear selected Jobs"), G_CALLBACK(on_job_control_queue_close)},
 	{"job_control_stop", GTK_STOCK_STOP, N_("Cancel"),
-		NULL, N_("Ask server to cancel the selected Job"), G_CALLBACK(on_job_control_stop)},
+		NULL, N_("Ask server to cancel the selected Job"), G_CALLBACK(on_job_control_queue_stop)},
 	/*
 	 * Job Control - Queue Actions
 	 */
