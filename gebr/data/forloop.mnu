@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <flow version="0.3.7">
-  <title>For Loop</title>
+  <title>Loop</title>
   <description>Executes a flow multiple times</description>
   <help />
   <author>GêBR Team</author>
@@ -24,14 +24,14 @@
   </server>
   <program stdin="no" stdout="no" stderr="no" status="unconfigured"
   mpi="" version="0.1" control="for">
-    <title>For Loop</title>
+    <title>Loop</title>
     <binary />
     <description>Executes a flow multiple times</description>
     <help />
     <url>http://gebrproject.com</url>
     <parameters default-selection="0">
       <parameter>
-        <label>Counter</label>
+        <label>Number of iterations</label>
         <int min="1">
           <property required="yes">
             <keyword></keyword>
