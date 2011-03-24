@@ -338,12 +338,15 @@ static void server_common_setup(struct ui_server_common *ui_server_common)
 	gtk_tree_view_column_add_attribute(col, renderer, "text", SERVER_NAME);
 
 	renderer = gtk_cell_renderer_text_new();
+	g_object_set(G_OBJECT(renderer), "ellipsize", PANGO_ELLIPSIZE_END, NULL);
+	g_object_set(G_OBJECT(renderer), "ellipsize-set", TRUE, NULL);
 	col = gtk_tree_view_column_new_with_attributes(_("CPU"), renderer, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
 	gtk_tree_view_column_add_attribute(col, renderer, "text", SERVER_CPU);
 	gtk_tree_view_column_set_sort_column_id(col, SERVER_CPU);
 	gtk_tree_view_column_set_sort_indicator(col, TRUE);
-
+	gtk_tree_view_column_set_resizable(col, TRUE);
+	gtk_tree_view_column_set_min_width (col, 100);
 	renderer = gtk_cell_renderer_text_new();
 	col = gtk_tree_view_column_new_with_attributes(_("Memory"), renderer, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
@@ -601,7 +604,7 @@ struct ui_server_list *server_list_setup_ui(void)
 	dialog = gtk_dialog_new_with_buttons(_("Servers configuration"),
 					     GTK_WINDOW(gebr.window),
 					     (GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT), NULL);
-	gtk_window_set_default_size(GTK_WINDOW(dialog), 900, -1);
+	gtk_window_set_default_size(GTK_WINDOW(dialog), 800, -1);
 
 	button = gtk_dialog_add_button(GTK_DIALOG(dialog), _("Co_nnect all"), RESPONSE_CONNECT_ALL);
 	gtk_button_set_image(GTK_BUTTON(button),
