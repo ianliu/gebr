@@ -16,27 +16,27 @@
  */
 
 #include <glib.h>
-
+#include <stdlib.h>
 #include "flow.h"
 
-void test_gebr_geoxml_flow_server_get_address(void){
+void test_gebr_geoxml_flow_server_get_and_set_address(void){
 	const gchar *address;
 	GebrGeoXmlFlow *flow = NULL;
 
-	// Test if flow is created as NULL
 	address = gebr_geoxml_flow_server_get_address(flow);
 	g_assert(address == NULL);
 
-	// Test if flow get the right address passed by
 	flow = gebr_geoxml_flow_new ();
+	address = gebr_geoxml_flow_server_get_address(flow);
+	g_assert_cmpstr(address, ==, "");
+
 	gebr_geoxml_flow_server_set_address(flow, "abc/def");
 	address = gebr_geoxml_flow_server_get_address(flow);
 	g_assert_cmpstr(address, ==, "abc/def");
 
-	// Test a change of address to a empty string (not NULL)
-	gebr_geoxml_flow_server_set_address(flow, "");
+	gebr_geoxml_flow_server_set_address(flow, "asdf/fdsa");
 	address = gebr_geoxml_flow_server_get_address(flow);
-	g_assert_cmpstr(address, ==, "");
+	g_assert_cmpstr(address, ==, "asdf/fdsa");
 }
 
 void test_gebr_geoxml_flow_get_categories_number(void)
@@ -74,7 +74,7 @@ void test_duplicate_categories(void)
 	g_assert_cmpint (n, ==, 2);
 }
 
-void test_gebr_geoxml_flow_get_date_last_run(void){
+void test_gebr_geoxml_flow_get_and_set_date_last_run(void){
 	const gchar *date;
 	GebrGeoXmlFlow *flow = NULL;
 
@@ -89,14 +89,38 @@ void test_gebr_geoxml_flow_get_date_last_run(void){
 	gebr_geoxml_flow_set_date_last_run(flow, "");
 	date = gebr_geoxml_flow_get_date_last_run(flow);
 	g_assert_cmpstr(date, ==, "");
-
 }
 
-void test_gebr_geoxml_flow_server_get_date_last_run(void){
+void test_gebr_geoxml_flow_server_get_and_set_date_last_run(void){
 	const gchar *date;
 	GebrGeoXmlFlow *flow = NULL;
 
+	//Test if trying to get the date of a NULL flow will fail, as expected
+	if (g_test_trap_fork (0, G_TEST_TRAP_SILENCE_STDOUT | G_TEST_TRAP_SILENCE_STDERR)) {
+		gebr_geoxml_flow_server_get_date_last_run(NULL);
+		exit(0);
+	}
+	g_test_trap_assert_failed();
+
+	// Test if trying to set the server date of a NULL flow will fail, as expected
+	if (g_test_trap_fork (0, G_TEST_TRAP_SILENCE_STDOUT | G_TEST_TRAP_SILENCE_STDERR)) {
+		gebr_geoxml_flow_server_set_date_last_run(flow, "abc/def/ghi");
+		exit(0);
+	}
+	g_test_trap_assert_failed();
+
+	// Test if trying to set a NULL server date to a non-NULL flow will fail, as expected
+	if (g_test_trap_fork (0, G_TEST_TRAP_SILENCE_STDOUT | G_TEST_TRAP_SILENCE_STDERR)) {
+		flow = gebr_geoxml_flow_new();
+		gebr_geoxml_flow_server_set_date_last_run(flow, NULL);
+		exit(0);
+	}
+	g_test_trap_assert_failed();
+
 	flow = gebr_geoxml_flow_new ();
+	date = gebr_geoxml_flow_server_get_date_last_run(flow);
+	g_assert_cmpstr(date, ==, "");
+
 	gebr_geoxml_flow_server_set_date_last_run(flow, "23/03/2011");
 	date = gebr_geoxml_flow_server_get_date_last_run(flow);
 	g_assert_cmpstr(date, ==, "23/03/2011");
@@ -104,31 +128,61 @@ void test_gebr_geoxml_flow_server_get_date_last_run(void){
 	gebr_geoxml_flow_server_set_date_last_run(flow, "");
 	date = gebr_geoxml_flow_server_get_date_last_run(flow);
 	g_assert_cmpstr(date, ==, "");
-
 }
 
-/*
- * TODO
- * void test_gebr_geoxml_flow_io_set_input(void){
+void test_gebr_geoxml_flow_io_get_and_set_input(void){
 	const gchar *path;
 	GebrGeoXmlFlow *flow = NULL;
 
-	path = gebr_geoxml_flow_io_get_input(flow);
-	g_assert(path == NULL);
+	// Test if trying to get the input path of a NULL flow will fail, as expected
+	if (g_test_trap_fork (0, G_TEST_TRAP_SILENCE_STDOUT | G_TEST_TRAP_SILENCE_STDERR)) {
+		gebr_geoxml_flow_io_get_input(NULL);
+		exit(0);
+	}
+	g_test_trap_assert_failed();
 
-}*/
+	// Test if trying to set the input path of a NULL flow will fail, as expected
+	if (g_test_trap_fork (0, G_TEST_TRAP_SILENCE_STDOUT | G_TEST_TRAP_SILENCE_STDERR)) {
+		gebr_geoxml_flow_io_set_input(flow, "abc/def/ghi");
+		exit(0);
+	}
+	g_test_trap_assert_failed();
+
+	// Test if trying to set a NULL input path to a non-NULL flow will fail, as expected
+	if (g_test_trap_fork (0, G_TEST_TRAP_SILENCE_STDOUT | G_TEST_TRAP_SILENCE_STDERR)) {
+		flow = gebr_geoxml_flow_new();
+		gebr_geoxml_flow_io_set_input(flow, NULL);
+		exit(0);
+	}
+	g_test_trap_assert_failed();
+
+	// Test if the default path of a new flow is an empty string
+	flow = gebr_geoxml_flow_new();
+	path = gebr_geoxml_flow_io_get_input(flow);
+	g_assert_cmpstr(path, ==, "");
+
+	// Test if the path was correctly passed
+	gebr_geoxml_flow_io_set_input(flow, "abc/def/ghi");
+	path = gebr_geoxml_flow_io_get_input(flow);
+	g_assert_cmpstr(path, ==, "abc/def/ghi");
+
+	// Test if the path was correctly changed
+	gebr_geoxml_flow_io_set_input(flow, "qwerty/asdfg");
+	path = gebr_geoxml_flow_io_get_input(flow);
+	g_assert_cmpstr(path, ==, "qwerty/asdfg");
+}
 
 
 int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
 
-	g_test_add_func("/libgebr/geoxml/flow/server_get_address", test_gebr_geoxml_flow_server_get_address);
+	g_test_add_func("/libgebr/geoxml/flow/server_get_and_set_address", test_gebr_geoxml_flow_server_get_and_set_address);
 	g_test_add_func("/libgebr/geoxml/flow/get_categories_number", test_gebr_geoxml_flow_get_categories_number);
 	g_test_add_func("/libgebr/geoxml/flow/duplicate_categories", test_duplicate_categories);
-	g_test_add_func("/libgebr/geoxml/flow/flow_get_date_last_run", test_gebr_geoxml_flow_get_date_last_run);
-	g_test_add_func("/libgebr/geoxml/flow/flow_server_get_date_last_run", test_gebr_geoxml_flow_server_get_date_last_run);
-	//g_test_add_func("/libgebr/geoxml/flow/io_set_input", test_gebr_geoxml_flow_io_set_input);
+	g_test_add_func("/libgebr/geoxml/flow/flow_get_and_set_date_last_run", test_gebr_geoxml_flow_get_and_set_date_last_run);
+	g_test_add_func("/libgebr/geoxml/flow/flow_server_get_and_set_date_last_run", test_gebr_geoxml_flow_server_get_and_set_date_last_run);
+	g_test_add_func("/libgebr/geoxml/flow/io_get_and_set_input", test_gebr_geoxml_flow_io_get_and_set_input);
 
 	return g_test_run();
 }

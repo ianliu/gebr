@@ -170,15 +170,24 @@ void gebr_geoxml_flow_server_set_address(GebrGeoXmlFlow *flow, const gchar * add
 const gchar *gebr_geoxml_flow_server_get_address(GebrGeoXmlFlow *flow);
 
 /**
+ * gebr_geoxml_flow_server_set_date_last_run:
+ * @flow: a flow
+ * @date: server last run date
+ *
  * Sets the last run date for this server.
+ *
+ * @flow and @date should not be passed as NULL.
  *
  * \see gebr_geoxml_flow_server_get_date_last_run
  */
 void gebr_geoxml_flow_server_set_date_last_run(GebrGeoXmlFlow *flow, const gchar * date);
 
 /**
+ * gebr_geoxml_flow_server_get_date_last_run:
+ * @flow: a flow
+ *
  * Retrieve the last run date for this server.
- * \p flow should not be passed as NULL.
+ * @flow should not be passed as NULL.
  *
  * \see gebr_geoxml_flow_server_get_date_last_run
  */
@@ -190,9 +199,9 @@ const gchar *gebr_geoxml_flow_server_get_date_last_run(GebrGeoXmlFlow *flow);
  * @input: flow's input path
  *
  * Set the @flow input file path to @input. The input file is
- * the one used to gather the input sent by the last program of \p flow.
+ * the one used to gather the input sent by the last program of @flow.
  *
- * If @flow or @input is NULL nothing is done.
+ * @flow and @input should not be passed as NULL.
  *
  * \see gebr_geoxml_flow_server_io_get_input
  */
@@ -227,9 +236,13 @@ void gebr_geoxml_flow_io_set_output(GebrGeoXmlFlow * flow, const gchar * output)
 void gebr_geoxml_flow_io_set_error(GebrGeoXmlFlow * flow, const gchar * error);
 
 /**
- * Retrieves the input file path of \p flow.
+ * gebr_geoxml_flow_io_get_input:
+ * @flow: a flow
  *
- * If \p flow is NULL returns NULL.
+ * Retrieves the input file path of @flow.
+ * If the input file path was not set before, default will be an empty string "".
+ *
+ * @flow should not be passed as NULL.
  *
  * \see gebr_geoxml_flow_server_io_set_input
  */
