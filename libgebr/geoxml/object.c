@@ -268,3 +268,20 @@ gchar *gebr_geoxml_object_get_help_content_from_str (const gchar *str)
 	// Return the same string we've got!
 	return g_strdup (str);
 }
+
+void gebr_geoxml_object_set_help (GebrGeoXmlObject *object, const gchar *help)
+{
+	GebrGeoXmlObjectType type;
+
+	g_return_if_fail (object != NULL);
+
+	type = gebr_geoxml_object_get_type(object);
+
+	g_return_if_fail (type == GEBR_GEOXML_OBJECT_TYPE_FLOW ||
+			      type == GEBR_GEOXML_OBJECT_TYPE_PROGRAM);
+
+	if (type == GEBR_GEOXML_OBJECT_TYPE_FLOW)
+		gebr_geoxml_document_set_help(GEBR_GEOXML_DOCUMENT(object), help);
+	else
+		gebr_geoxml_program_set_help(GEBR_GEOXML_PROGRAM(object), help);
+}

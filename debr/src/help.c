@@ -956,3 +956,19 @@ out:		g_string_free(html_path, TRUE);
 		g_free(help);
 	}
 }
+
+void debr_help_update(GebrGeoXmlObject *object)
+{
+	/* Generate Help with updated info */
+	gchar *content;
+	gchar *help;
+
+	content = gebr_geoxml_object_get_help_content (object);
+	if(strlen(content) == 0)
+		return;
+	help = gebr_geoxml_object_generate_help (object, content);
+	gebr_geoxml_object_set_help(object, help);
+
+	g_free(content);
+	g_free(help);
+}
