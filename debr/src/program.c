@@ -633,6 +633,9 @@ gboolean program_dialog_setup_ui(gboolean new_program)
 		goto out;
 	}
 
+	debr_help_update (GEBR_GEOXML_OBJECT (debr.program));
+	menu_saved_status_set(MENU_STATUS_UNSAVED);
+
 out:
 	program_load_selected();
 	gtk_widget_destroy(dialog);
