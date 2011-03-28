@@ -7,10 +7,6 @@
 
 <!-- Categories to which the flow belongs to -->
 <!ELEMENT category (#PCDATA)>
-<!-- Input/Output/Erro log files -->
-<!ELEMENT input (#PCDATA)>
-<!ELEMENT output (#PCDATA)>
-<!ELEMENT error (#PCDATA)>
 
 <!-- Servers list and configuration -->
 <!ELEMENT server (io, lastrun)>
@@ -19,6 +15,15 @@
 
 <!-- Input/Output to run the flow -->
 <!ELEMENT io (input, output, error)>
+
+<!-- Input/Output/Erro log files -->
+<!ELEMENT input (#PCDATA)>
+<!ATTLIST input
+	append	(yes | no)	#IMPLIED>
+<!ELEMENT output (#PCDATA)>
+<!ATTLIST output
+	append	(yes | no)	#IMPLIED>
+<!ELEMENT error (#PCDATA)>
 
 <!ELEMENT program (title, binary, description, help, url, parameters)>
 <!ATTLIST program
@@ -85,6 +90,10 @@
 <!ELEMENT keyword (#PCDATA)>
 <!-- Actual value of a parameter -->
 <!ELEMENT value (#PCDATA)>
+<!ATTLIST value
+	dictkeyword	CDATA		#IMPLIED
+	expression	CDATA		#IMPLIED>
+
 <!-- Actual default value of a parameter -->
 <!ELEMENT default (#PCDATA)>
 
