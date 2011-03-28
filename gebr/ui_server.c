@@ -915,6 +915,8 @@ static gboolean tag_is_heterogeneous (const gchar *tag)
 		g_free (fs1);
 		g_free (fs2);
 		servers = servers->next;
+		if (!servers)
+			break;
 		srv2 = servers->data;
 	}
 
