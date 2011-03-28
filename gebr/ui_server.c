@@ -868,36 +868,57 @@ gchar **ui_server_get_all_fsid (void)
 static gboolean tag_is_heterogeneous (const gchar *tag)
 {
 	gchar *fs1, *fs2;
-	GList *servers, *list;
-	GebrServer *svr;
+	GList *servers = NULL;
+	GList *list = NULL;
+	GebrServer *svr1, *srv2;
 	GtkTreeModel *model;
 	gboolean retval = FALSE;
 
 	model = GTK_TREE_MODEL (gebr.ui_server_list->common.store);
 	list = servers = ui_server_servers_with_tag (tag);
-	svr = servers->data;
-
-	gtk_tree_model_get (model, &svr->iter, SERVER_FS, &fs1, -1);
+	svr1 = servers->data;
 
 	servers = servers->next;
+	if (!servers){
+		return retval;
+	}
+	srv2 = servers->data;
+
 	while (servers) {
-		svr = servers->data;
-		if (!gebr_comm_server_is_logged (svr->comm)){
+		if (!gebr_comm_server_is_logged (svr1->comm)){
 			servers = servers->next;
+			if (!servers)
+				break;
+
+			svr1 = servers->data;
 			continue;
 		}
-		gtk_tree_model_get (model, &svr->iter, SERVER_FS, &fs2, -1);
+
+		if (!gebr_comm_server_is_logged (srv2->comm)){
+			servers = servers->next;
+			if (!servers)
+				break;
+
+			srv2 = servers->data;
+			continue;
+		}
+
+		gtk_tree_model_get (model, &svr1->iter, SERVER_FS, &fs1, -1);
+		gtk_tree_model_get (model, &srv2->iter, SERVER_FS, &fs2, -1);
+
 		if (g_strcmp0 (fs1, fs2) != 0) {
 			retval = TRUE;
+			g_free (fs1);
 			g_free (fs2);
 			break;
 		}
+		g_free (fs1);
 		g_free (fs2);
 		servers = servers->next;
+		srv2 = servers->data;
 	}
 
 	g_list_free (list);
-	g_free (fs1);
 
 	return retval;
 }
