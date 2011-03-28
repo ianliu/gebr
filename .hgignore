@@ -97,3 +97,5 @@ syntax: regexp
 
 syntax: regexp
 ^libgebr/geoxml/tests/test-flow$
+syntax: regexp
+^libgebr/geoxml/tests/test-object$

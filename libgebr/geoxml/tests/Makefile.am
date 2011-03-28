@@ -32,3 +32,6 @@ test_project_SOURCES = test-project.c
 
 TEST_PROGS += test-flow
 test_flow_SOURCES = test-flow.c
+
+TEST_PROGS += test-object
+test_object_SOURCES = test-object.c

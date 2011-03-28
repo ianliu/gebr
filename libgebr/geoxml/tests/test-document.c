@@ -28,12 +28,15 @@ void test_gebr_geoxml_document_load (void)
 	GebrGeoXmlDocument *document;
 	int value;
 
-	value = gebr_geoxml_document_load(&document, TEST_DIR"/test.mnu", FALSE, NULL);
-	g_assert(value == GEBR_GEOXML_RETV_SUCCESS);
-	gebr_geoxml_document_free(document);
+	value = gebr_geoxml_document_load(&document, NULL, FALSE, NULL);
+	g_assert(value == GEBR_GEOXML_RETV_FILE_NOT_FOUND);
 
 	value = gebr_geoxml_document_load(&document, TEST_DIR"/x", FALSE, NULL);
 	g_assert(value == GEBR_GEOXML_RETV_FILE_NOT_FOUND);
+
+	value = gebr_geoxml_document_load(&document, TEST_DIR"/test.mnu", FALSE, NULL);
+	g_assert(value == GEBR_GEOXML_RETV_SUCCESS);
+	gebr_geoxml_document_free(document);
 }
 
 void test_gebr_geoxml_document_get_version (void)
