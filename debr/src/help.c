@@ -862,10 +862,9 @@ static void on_title_ready (GebrGuiHtmlViewerWidget * widget,
 //==============================================================================
 void debr_help_show(GebrGeoXmlObject * object, gboolean menu, const gchar * title)
 {
-	gchar *content;
-	const gchar * html;
-	GtkWidget * window;
-	GebrGuiHtmlViewerWidget * html_viewer_widget;
+	const gchar *help;
+	GtkWidget *window;
+	GebrGuiHtmlViewerWidget *html_viewer_widget;
 
 	window = gebr_gui_html_viewer_window_new(title); 
 	gtk_window_set_modal (GTK_WINDOW (window), TRUE);
@@ -877,17 +876,13 @@ void debr_help_show(GebrGeoXmlObject * object, gboolean menu, const gchar * titl
 		gebr_gui_html_viewer_widget_generate_links(html_viewer_widget, object);
 
 	if (gebr_geoxml_object_get_type(object) == GEBR_GEOXML_OBJECT_TYPE_PROGRAM)
-		html = gebr_geoxml_program_get_help(GEBR_GEOXML_PROGRAM(object));
+		help = gebr_geoxml_program_get_help(GEBR_GEOXML_PROGRAM(object));
 	else
-		html = gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(object));
+		help = gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(object));
 
-
-	content = gebr_geoxml_object_get_help_content (object);
-	html = gebr_geoxml_object_generate_help (object, content);
-	gebr_gui_html_viewer_window_show_html(GEBR_GUI_HTML_VIEWER_WINDOW(window), html);
+	gebr_gui_html_viewer_window_show_html(GEBR_GUI_HTML_VIEWER_WINDOW(window), help);
 
 	gtk_widget_show (window);
-	g_free (content);
 }
 
 void debr_help_edit(GebrGeoXmlObject * object)

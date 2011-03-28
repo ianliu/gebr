@@ -294,16 +294,17 @@ static WebKitNavigationResponse on_navigation_requested(WebKitWebView * web_view
 			object = GEBR_GEOXML_OBJECT(program);
 		}
 
-		gchar *help;
-		gchar *content;
+		const gchar *help;
+		GebrGeoXmlObjectType type;
+		type = gebr_geoxml_object_get_type(object);
 
-		content = gebr_geoxml_object_get_help_content (object);
-		help = gebr_geoxml_object_generate_help (object, content);
+		if (type == GEBR_GEOXML_OBJECT_TYPE_FLOW)
+			help = gebr_geoxml_document_get_help (GEBR_GEOXML_DOCUMENT (object));
+		else
+			help = gebr_geoxml_program_get_help (GEBR_GEOXML_PROGRAM (object));
+
 		gebr_gui_html_viewer_widget_generate_links(self, object);
 		gebr_gui_html_viewer_widget_show_html(self, help);
-
-		g_free (help);
-		g_free (content);
 
 		return WEBKIT_NAVIGATION_RESPONSE_IGNORE;
 	}

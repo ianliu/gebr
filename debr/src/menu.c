@@ -1291,6 +1291,16 @@ gboolean menu_dialog_setup_ui(gboolean new_menu)
 
 	menu_selected();
 
+	/* Generate Help with updated info */
+	gchar *content;
+	gchar *help;
+
+	content = gebr_geoxml_object_get_help_content (GEBR_GEOXML_OBJECT (debr.menu));
+	help = gebr_geoxml_object_generate_help (GEBR_GEOXML_OBJECT (debr.menu), content);
+	gebr_geoxml_document_set_help (GEBR_GEOXML_DOCUMENT (debr.menu), help);
+	g_free(content);
+	g_free(help);
+
 out:
 	gtk_widget_destroy(dialog);
 	return ret;
