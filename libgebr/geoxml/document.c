@@ -881,13 +881,13 @@ int gebr_geoxml_document_save(GebrGeoXmlDocument * document, const gchar * path)
 				ret = tidySaveBuffer (tdoc, &output);
 			if (ret >= 0)
 				ret = fwrite (output.bp, sizeof(gchar),
-					      strlen((const gchar *)output.bp) + 1, fp);
+					      strlen((const gchar *)output.bp), fp);
 		}
 		tidyBufFree(&output);
 		tidyBufFree(&errbuf);
 		tidyRelease(tdoc);
 #else
-		ret = fwrite(xml, sizeof(gchar), strlen(xml) + 1, fp);
+		ret = fwrite(xml, sizeof(gchar), strlen(xml), fp);
 #endif
 
 		fclose(fp);
@@ -897,7 +897,7 @@ int gebr_geoxml_document_save(GebrGeoXmlDocument * document, const gchar * path)
 		if (zfp == NULL || errno != 0)
 			return GEBR_GEOXML_RETV_PERMISSION_DENIED;
 
-		ret = gzwrite(zfp, xml, strlen(xml) + 1);
+		ret = gzwrite(zfp, xml, strlen(xml));
 		gzclose(zfp);
 	}
 
