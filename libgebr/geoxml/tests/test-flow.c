@@ -281,6 +281,9 @@ void test_gebr_geoxml_flow_get_programs_number(void){
 	g_assert_cmpint(number, ==, -1);
 
 	flow = gebr_geoxml_flow_new();
+	number = gebr_geoxml_flow_get_programs_number(flow);
+	g_assert_cmpint(number, ==, 0);
+
 	program = gebr_geoxml_flow_append_program(flow);
 	number = gebr_geoxml_flow_get_programs_number(flow);
 	g_assert_cmpint(number, ==, 1);
@@ -290,6 +293,64 @@ void test_gebr_geoxml_flow_get_programs_number(void){
 	g_assert_cmpint(number, ==, 2);
 
 }
+
+void test_gebr_geoxml_flow_get_category(void){
+
+	GebrGeoXmlFlow *flow = NULL;
+	GebrGeoXmlSequence *category = NULL;
+	int returned;
+
+	returned = gebr_geoxml_flow_get_category(flow, &category, 0);
+	g_assert_cmpint(returned, ==, GEBR_GEOXML_RETV_NULL_PTR);
+
+	flow = gebr_geoxml_flow_new();
+	category = (GebrGeoXmlSequence*) gebr_geoxml_flow_append_category(flow,"qwerty");
+	returned = gebr_geoxml_flow_get_category(flow, &category, 1337);
+	g_assert_cmpint(returned, ==, GEBR_GEOXML_RETV_INVALID_INDEX);
+
+	returned = gebr_geoxml_flow_get_category(flow, &category, 0);
+	g_assert_cmpint(returned, ==, GEBR_GEOXML_RETV_SUCCESS);
+
+	returned = gebr_geoxml_flow_get_category(flow, &category, 1);
+	g_assert_cmpint(returned, ==, GEBR_GEOXML_RETV_INVALID_INDEX);
+
+	category = (GebrGeoXmlSequence*) gebr_geoxml_flow_append_category(flow,"zxcvb");
+	returned = gebr_geoxml_flow_get_category(flow, &category, 1);
+	g_assert_cmpint(returned, ==, GEBR_GEOXML_RETV_SUCCESS);
+
+}
+
+void test_gebr_geoxml_flow_append_revision(void){
+	GebrGeoXmlFlow *flow = NULL;
+	GebrGeoXmlRevision *revision = NULL;
+
+	if (g_test_trap_fork (0, G_TEST_TRAP_SILENCE_STDOUT | G_TEST_TRAP_SILENCE_STDERR)) {
+		revision = gebr_geoxml_flow_append_revision(flow, "1234asdf");
+		exit(0);
+	}
+	g_test_trap_assert_failed();
+
+	if (g_test_trap_fork (0, G_TEST_TRAP_SILENCE_STDOUT | G_TEST_TRAP_SILENCE_STDERR)) {
+		flow = gebr_geoxml_flow_new();
+		revision = gebr_geoxml_flow_append_revision(flow, NULL);
+		exit(0);
+	}
+	g_test_trap_assert_failed();
+	flow = gebr_geoxml_flow_new();
+	revision = gebr_geoxml_flow_append_revision(flow, "poiuyt");
+	g_assert(revision != NULL);
+
+}
+
+/*TODO
+ * void test_gebr_geoxml_flow_change_to_revision(void){
+	GebrGeoXmlFlow *flow = NULL;
+	GebrGeoXmlRevision *revision = NULL;
+	gboolean boole;
+
+	boole = gebr_geoxml_flow_change_to_revision(flow, revision, TRUE);
+}*/
+
 
 int main(int argc, char *argv[])
 {
@@ -305,6 +366,9 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/geoxml/flow/io_get_and_set_error", test_gebr_geoxml_flow_io_get_and_set_error);
 	g_test_add_func("/libgebr/geoxml/flow/get_program", test_gebr_geoxml_flow_get_program);
 	g_test_add_func("/libgebr/geoxml/flow/get_programs_number", test_gebr_geoxml_flow_get_programs_number);
+	g_test_add_func("/libgebr/geoxml/flow/get_category", test_gebr_geoxml_flow_get_category);
+	g_test_add_func("/libgebr/geoxml/flow/append_revision", test_gebr_geoxml_flow_append_revision);
+//	g_test_add_func("/libgebr/geoxml/flow/change_to_revision", test_gebr_geoxml_flow_change_to_revision);
 
 	return g_test_run();
 }

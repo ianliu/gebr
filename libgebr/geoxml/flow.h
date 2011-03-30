@@ -320,27 +320,38 @@ glong gebr_geoxml_flow_get_programs_number(GebrGeoXmlFlow * flow);
 GebrGeoXmlProgram *gebr_geoxml_flow_get_first_mpi_program(GebrGeoXmlFlow * flow);
 
 /**
+ * gebr_geoxml_flow_append_category:
+ * @flow: a flow
+ * @name: the name for category
+ *
  * Creates a new category and append it to the list of categories.
  * If the category already exist, returns it.
  *
- * \see gebr_geoxml_flow_new_category
  */
 GebrGeoXmlCategory *gebr_geoxml_flow_append_category(GebrGeoXmlFlow * flow, const gchar * name);
 
 /**
- * Writes to \p category the \p index ieth category that belongs to \p flow.
- * If an error ocurred, the content of \p category is assigned to NULL.
+ * gebr_geoxml_flow_get_category:
+ * @flow: a flow
+ * @category: a category
+ * @index: the index of desired category
+ *
+ * Writes to @category the @index ieth category that belongs to @flow.
+ * If an error ocurred, the content of @category is assigned to NULL.
  *
  * Returns one of: GEBR_GEOXML_RETV_SUCCESS, GEBR_GEOXML_RETV_INVALID_INDEX, GEBR_GEOXML_RETV_NULL_PTR
  *
- * \see gebr_geoxml_sequence_move gebr_geoxml_sequence_move_up gebr_geoxml_sequence_move_down gebr_geoxml_sequence_remove
+ * See gebr_geoxml_sequence_move(), gebr_geoxml_sequence_move_up gebr_geoxml_sequence_move_down(), gebr_geoxml_sequence_remove().
  */
 int gebr_geoxml_flow_get_category(GebrGeoXmlFlow * flow, GebrGeoXmlSequence ** category, gulong index);
 
 /**
- * Get the number of categories that \p flow has.
+ * gebr_geoxml_flow_get_categories_number:
+ * @flow: a flow
  *
- * If \p flow is NULL returns -1.
+ * Get the number of categories that @flow has.
+ *
+ * If @flow is NULL returns -1.
  */
 glong gebr_geoxml_flow_get_categories_number(GebrGeoXmlFlow * flow);
 
