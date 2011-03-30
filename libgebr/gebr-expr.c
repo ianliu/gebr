@@ -20,6 +20,8 @@
 
 #include "gebr-expr.h"
 
+#define EVAL_COOKIE "GEBR-EVAL-COOKIE\n"
+
 /*
  * Sets an io channel to non-blocking and
  * prints error properly.
@@ -62,11 +64,6 @@ typedef struct {
 GQuark gebr_expr_error_quark (void)
 {
 	return g_quark_from_static_string ("gebr-expr-error-quark");
-}
-
-static const gchar *make_stamp (void)
-{
-	return "12345666";
 }
 
 static VarName *
@@ -192,12 +189,12 @@ gebr_expr_set_var (GebrExpr *self,
 
 	// FIXME: validate variable names?
 	//rname = var_name_get_real_name (var);
-	line = g_strdup_printf ("%s=%s ; 123", name, value);
+	line = g_strdup_printf ("%s=%s ; 0", name, value);
 
 	if (!gebr_expr_eval (self, line, &result, err))
 		return FALSE;
 
-	if (result != 123)
+	if (result != 0)
 		return FALSE;
 
 	return TRUE;
@@ -212,10 +209,8 @@ gebr_expr_eval (GebrExpr *self,
 	gchar *line;
 	GError *error = NULL;
 	GIOStatus status;
-	const gchar *stamp;
 
-	stamp = make_stamp ();
-	line = g_strdup_printf ("%s ; %s\n", expr, stamp);
+	line = g_strdup_printf ("%s ; \"%s\"\n", expr, EVAL_COOKIE);
 	status = g_io_channel_write_chars (self->in_ch, line, -1, NULL, &error);
 	g_free (line);
 
@@ -239,11 +234,10 @@ gebr_expr_eval (GebrExpr *self,
 #define FINISHED 4
 
 	gint state = READ_RESULT;
-	gsize end;
 	gchar *result_str = NULL;
 	while (state != FINISHED)
 	{
-		status = g_io_channel_read_line (self->err_ch, &line, NULL, &end, &error);
+		status = g_io_channel_read_line (self->err_ch, &line, NULL, NULL, &error);
 		if (status == G_IO_STATUS_NORMAL) {
 			// g_set_error (line);
 			g_free (line);
@@ -253,10 +247,9 @@ gebr_expr_eval (GebrExpr *self,
 		switch (state)
 		{
 		case READ_RESULT:
-			status = g_io_channel_read_line (self->out_ch, &line, NULL, &end, &error);
+			status = g_io_channel_read_line (self->out_ch, &line, NULL, NULL, &error);
 			if (status == G_IO_STATUS_NORMAL) {
-				line[end] = '\0';
-				if (g_strcmp0 (line, stamp) == 0) {
+				if (g_strcmp0 (line, EVAL_COOKIE) == 0) {
 					// Expression does not return a value
 					g_free (line);
 					return FALSE;
@@ -268,10 +261,9 @@ gebr_expr_eval (GebrExpr *self,
 			}
 			break;
 		case READ_STAMP:
-			status = g_io_channel_read_line (self->out_ch, &line, NULL, &end, &error);
+			status = g_io_channel_read_line (self->out_ch, &line, NULL, NULL, &error);
 			if (status == G_IO_STATUS_NORMAL) {
-				line[end] = '\0';
-				if (g_strcmp0 (line, stamp) == 0) {
+				if (g_strcmp0 (line, EVAL_COOKIE) == 0) {
 					state = SET_RESULT;
 				} else {
 					state = ERROR;
@@ -281,10 +273,9 @@ gebr_expr_eval (GebrExpr *self,
 			break;
 		case ERROR:
 			// TODO: Flush output and error
-			status = g_io_channel_read_line (self->out_ch, &line, NULL, &end, &error);
+			status = g_io_channel_read_line (self->out_ch, &line, NULL, NULL, &error);
 			if (status == G_IO_STATUS_NORMAL) {
-				line[end] = '\0';
-				if (g_strcmp0 (line, stamp) == 0) {
+				if (g_strcmp0 (line, EVAL_COOKIE) == 0) {
 					g_free (result_str);
 					g_free (line);
 					return FALSE;
