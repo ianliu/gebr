@@ -178,7 +178,7 @@ const gchar *gebr_geoxml_flow_server_get_address(GebrGeoXmlFlow *flow);
  *
  * @flow and @date should not be passed as NULL.
  *
- * \see gebr_geoxml_flow_server_get_date_last_run
+ * See gebr_geoxml_flow_server_get_date_last_run().
  */
 void gebr_geoxml_flow_server_set_date_last_run(GebrGeoXmlFlow *flow, const gchar * date);
 
@@ -190,7 +190,6 @@ void gebr_geoxml_flow_server_set_date_last_run(GebrGeoXmlFlow *flow, const gchar
  *
  * @flow should not be passed as NULL.
  *
- * \see gebr_geoxml_flow_server_get_date_last_run
  */
 const gchar *gebr_geoxml_flow_server_get_date_last_run(GebrGeoXmlFlow *flow);
 
@@ -204,7 +203,7 @@ const gchar *gebr_geoxml_flow_server_get_date_last_run(GebrGeoXmlFlow *flow);
  *
  * @flow and @input should not be passed as NULL.
  *
- * \see gebr_geoxml_flow_server_io_get_input
+ * See gebr_geoxml_flow_server_io_get_input().
  */
 void gebr_geoxml_flow_io_set_input(GebrGeoXmlFlow * flow, const gchar * input);
 
@@ -218,7 +217,7 @@ void gebr_geoxml_flow_io_set_input(GebrGeoXmlFlow * flow, const gchar * input);
  *
  * @flow and @input should not be passed as NULL.
  *
- * \see gebr_geoxml_flow_server_io_get_output
+ * See gebr_geoxml_flow_server_io_get_output().
  */
 void gebr_geoxml_flow_io_set_output(GebrGeoXmlFlow * flow, const gchar * output);
 
@@ -232,7 +231,7 @@ void gebr_geoxml_flow_io_set_output(GebrGeoXmlFlow * flow, const gchar * output)
  *
  * @flow and @input should not be passed as NULL.
  *
- * \see gebr_geoxml_flow_server_io_get_error gebr_geoxml_program_set_stderr
+ * See gebr_geoxml_flow_server_io_get_error gebr_geoxml_program_set_stderr().
  */
 void gebr_geoxml_flow_io_set_error(GebrGeoXmlFlow * flow, const gchar * error);
 
@@ -245,7 +244,7 @@ void gebr_geoxml_flow_io_set_error(GebrGeoXmlFlow * flow, const gchar * error);
  *
  * @flow should not be passed as NULL.
  *
- * \see gebr_geoxml_flow_server_io_set_input
+ * See gebr_geoxml_flow_server_io_set_input()
  */
 const gchar *gebr_geoxml_flow_io_get_input(GebrGeoXmlFlow * flow);
 
@@ -258,7 +257,7 @@ const gchar *gebr_geoxml_flow_io_get_input(GebrGeoXmlFlow * flow);
  *
  * @flow should not be passed as NULL.
  *
- * \see gebr_geoxml_flow_server_io_set_output
+ * See gebr_geoxml_flow_server_io_set_output().
  */
 const gchar *gebr_geoxml_flow_io_get_output(GebrGeoXmlFlow * flow);
 
@@ -271,34 +270,46 @@ const gchar *gebr_geoxml_flow_io_get_output(GebrGeoXmlFlow * flow);
  *
  * @flow should not be passed as NULL.
  *
- * \see gebr_geoxml_flow_server_io_set_error
+ * See gebr_geoxml_flow_server_io_set_error().
+ *
  */
 const gchar *gebr_geoxml_flow_io_get_error(GebrGeoXmlFlow * flow);
 
 /**
+ * gebr_geoxml_flow_append_program:
+ * @flow: a flow
+ *
  * Creates a new program associated and append to the list of programs
  * Provided for convenience
  *
- * \see gebr_geoxml_flow_new_program
  */
 GebrGeoXmlProgram *gebr_geoxml_flow_append_program(GebrGeoXmlFlow * flow);
 
 /**
- * Writes to \p program the \p index ieth category that \p flow belong.
- * If an error ocurred, the content of \p program is assigned to NULL.
+ * gebr_geoxml_flow_get_program:
+ * @flow: a flow
+ * @program: a program
+ * @index: the index of desired program
  *
- * If \p flow is NULL nothing is done.
+ * Writes to @program the @index ieth category that @flow belong.
+ * If an error ocurred, the content of @program is assigned to NULL.
+ *
+ * If @flow is NULL nothing is done.
  *
  * Returns one of: GEBR_GEOXML_RETV_SUCCESS, GEBR_GEOXML_RETV_INVALID_INDEX, GEBR_GEOXML_RETV_NULL_PTR
  *
- * \see gebr_geoxml_sequence_move gebr_geoxml_sequence_move_up gebr_geoxml_sequence_move_down gebr_geoxml_sequence_remove
+ * See gebr_geoxml_sequence_move gebr_geoxml_sequence_move_up(), gebr_geoxml_sequence_move_down(), gebr_geoxml_sequence_remove().
  */
 int gebr_geoxml_flow_get_program(GebrGeoXmlFlow * flow, GebrGeoXmlSequence ** program, gulong index);
 
 /**
- * Get the number of programs \p flow has.
+ * gebr_geoxml_flow_get_programs_number:
+ * @flow: a flow
  *
- * If \p flow is NULL returns -1.
+ * Get the number of programs @flow has.
+ *
+ * If @flow is NULL, returns -1.
+ *
  */
 glong gebr_geoxml_flow_get_programs_number(GebrGeoXmlFlow * flow);
 

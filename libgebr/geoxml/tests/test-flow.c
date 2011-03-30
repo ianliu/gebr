@@ -18,6 +18,7 @@
 #include <glib.h>
 #include <stdlib.h>
 #include "flow.h"
+#include "error.h"
 
 void test_gebr_geoxml_flow_server_get_and_set_address(void){
 	const gchar *address;
@@ -244,6 +245,52 @@ void test_gebr_geoxml_flow_io_get_and_set_error(void){
 	g_assert_cmpstr(path, ==, "qwerty/asdfg");
 }
 
+void test_gebr_geoxml_flow_get_program(void){
+
+	GebrGeoXmlFlow *flow = NULL;
+	GebrGeoXmlSequence *program = NULL;
+	int returned;
+
+	returned = gebr_geoxml_flow_get_program(flow, &program, 0);
+	g_assert_cmpint(returned, ==, GEBR_GEOXML_RETV_NULL_PTR);
+
+	flow = gebr_geoxml_flow_new();
+	program = GEBR_GEOXML_SEQUENCE(gebr_geoxml_flow_append_program(flow));
+	returned = gebr_geoxml_flow_get_program(flow, &program, 1337);
+	g_assert_cmpint(returned, ==, GEBR_GEOXML_RETV_INVALID_INDEX);
+
+	returned = gebr_geoxml_flow_get_program(flow, &program, 0);
+	g_assert_cmpint(returned, ==, GEBR_GEOXML_RETV_SUCCESS);
+
+	returned = gebr_geoxml_flow_get_program(flow, &program, 1);
+	g_assert_cmpint(returned, ==, GEBR_GEOXML_RETV_INVALID_INDEX);
+
+	program = GEBR_GEOXML_SEQUENCE(gebr_geoxml_flow_append_program(flow));
+	returned = gebr_geoxml_flow_get_program(flow, &program, 1);
+	g_assert_cmpint(returned, ==, GEBR_GEOXML_RETV_SUCCESS);
+
+}
+
+void test_gebr_geoxml_flow_get_programs_number(void){
+
+	GebrGeoXmlFlow *flow = NULL;
+	GebrGeoXmlProgram *program = NULL;
+	glong number;
+
+	number = gebr_geoxml_flow_get_programs_number(flow);
+	g_assert_cmpint(number, ==, -1);
+
+	flow = gebr_geoxml_flow_new();
+	program = gebr_geoxml_flow_append_program(flow);
+	number = gebr_geoxml_flow_get_programs_number(flow);
+	g_assert_cmpint(number, ==, 1);
+
+	program = gebr_geoxml_flow_append_program(flow);
+	number = gebr_geoxml_flow_get_programs_number(flow);
+	g_assert_cmpint(number, ==, 2);
+
+}
+
 int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
@@ -256,5 +303,8 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/geoxml/flow/io_get_and_set_input", test_gebr_geoxml_flow_io_get_and_set_input);
 	g_test_add_func("/libgebr/geoxml/flow/io_get_and_set_output", test_gebr_geoxml_flow_io_get_and_set_output);
 	g_test_add_func("/libgebr/geoxml/flow/io_get_and_set_error", test_gebr_geoxml_flow_io_get_and_set_error);
+	g_test_add_func("/libgebr/geoxml/flow/get_program", test_gebr_geoxml_flow_get_program);
+	g_test_add_func("/libgebr/geoxml/flow/get_programs_number", test_gebr_geoxml_flow_get_programs_number);
+
 	return g_test_run();
 }
