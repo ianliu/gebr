@@ -45,11 +45,12 @@ date.c: touch
 
 lib_LTLIBRARIES = libgebr.la
 libgebr_la_SOURCES = 	\
-	marshalers.c	\
 	date.c		\
+	gebr-expr.c	\
 	gebr-tar.c	\
 	libgebr.c	\
 	log.c		\
+	marshalers.c	\
 	utils.c		\
 	validate.c	\
 	version.c	\
@@ -59,6 +60,7 @@ libgebrincludedir = $(includedir)/libgebr
 libgebrinclude_HEADERS =\
 	date.h		\
 	defines.h	\
+	gebr-expr.h	\
 	gebr-tar.h	\
 	libgebr.h	\
 	log.h		\

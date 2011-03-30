@@ -1,5 +1,5 @@
 /*   libgebr - GeBR Library
- *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
+ *   Copyright (C) 2007-2011 GeBR core team (http://www.gebrproject.com/)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -24,6 +24,15 @@ G_BEGIN_DECLS
 
 typedef struct _GebrExpr GebrExpr;
 
+/* Error handling */
+#define GEBR_EXPR_ERROR gebr_expr_error_quark()
+GQuark gebr_expr_error_quark (void);
+
+typedef enum {
+	GEBR_EXPR_ERROR_SYNTAX,
+	GEBR_EXPR_ERROR_IPC
+} GebrExprError;
+
 /**
  * gebr_expr_new:
  *
@@ -38,10 +47,13 @@ GebrExpr *gebr_expr_new (void);
  * @self: a #GebrExpr
  * @name: the name of the variable
  * @value: the value of the variable
+ *
+ * Returns: %TRUE if there was no error
  */
-void gebr_expr_set_var (GebrExpr *self,
-			const gchar *name,
-			const gchar *value);
+gboolean gebr_expr_set_var (GebrExpr *self,
+			    const gchar *name,
+			    const gchar *value,
+			    GError **error);
 
 /**
  * gebr_expr_eval:
@@ -49,9 +61,11 @@ void gebr_expr_set_var (GebrExpr *self,
  * @expression: the arithmetic expression to evaluate
  * @error: return location for an error
  */
-gdouble gebr_expr_eval (GebrExpr *self,
-			const gchar *expression,
-			GError **error);
+gboolean
+gebr_expr_eval (GebrExpr *self,
+		const gchar *expr,
+		gdouble *result,
+		GError **_error);
 
 /**
  * gebr_expr_free:
