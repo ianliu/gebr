@@ -187,6 +187,7 @@ void gebr_geoxml_flow_server_set_date_last_run(GebrGeoXmlFlow *flow, const gchar
  * @flow: a flow
  *
  * Retrieve the last run date for this server.
+ *
  * @flow should not be passed as NULL.
  *
  * \see gebr_geoxml_flow_server_get_date_last_run
@@ -215,7 +216,7 @@ void gebr_geoxml_flow_io_set_input(GebrGeoXmlFlow * flow, const gchar * input);
  * Set the @flow output file path to @output. The output file is
  * the one used to gather the output sent by the last program of @flow.
  *
- * If @flow or @output is NULL nothing is done.
+ * @flow and @input should not be passed as NULL.
  *
  * \see gebr_geoxml_flow_server_io_get_output
  */
@@ -229,7 +230,7 @@ void gebr_geoxml_flow_io_set_output(GebrGeoXmlFlow * flow, const gchar * output)
  * Set the @flow error file path to @error. This should be the file
  * containing the error log, which might include program's stderr
  *
- * If @flow or @error is NULL nothing is done.
+ * @flow and @input should not be passed as NULL.
  *
  * \see gebr_geoxml_flow_server_io_get_error gebr_geoxml_program_set_stderr
  */
@@ -249,18 +250,26 @@ void gebr_geoxml_flow_io_set_error(GebrGeoXmlFlow * flow, const gchar * error);
 const gchar *gebr_geoxml_flow_io_get_input(GebrGeoXmlFlow * flow);
 
 /**
- * Retrieves the output file path of \p flow.
+ * gebr_geoxml_flow_io_get_output:
+ * @flow: a flow
  *
- * If \p flow is NULL returns NULL.
+ * Retrieves the output file path of @flow.
+ * If the output file path was not set before, default will be an empty string "".
+ *
+ * @flow should not be passed as NULL.
  *
  * \see gebr_geoxml_flow_server_io_set_output
  */
 const gchar *gebr_geoxml_flow_io_get_output(GebrGeoXmlFlow * flow);
 
 /**
- * Retrieves the error file path of \p flow.
+ * gebr_geoxml_flow_io_get_error:
+ * @flow: a flow
  *
- * If \p flow is NULL returns NULL.
+ * Retrieves the error file path of @flow.
+ * If the error file path was not set before, default will be an empty string "".
+ *
+ * @flow should not be passed as NULL.
  *
  * \see gebr_geoxml_flow_server_io_set_error
  */

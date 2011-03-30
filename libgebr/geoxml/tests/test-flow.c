@@ -172,6 +172,77 @@ void test_gebr_geoxml_flow_io_get_and_set_input(void){
 	g_assert_cmpstr(path, ==, "qwerty/asdfg");
 }
 
+void test_gebr_geoxml_flow_io_get_and_set_output(void){
+	const gchar *path;
+	GebrGeoXmlFlow *flow = NULL;
+
+	if (g_test_trap_fork (0, G_TEST_TRAP_SILENCE_STDOUT | G_TEST_TRAP_SILENCE_STDERR)) {
+		gebr_geoxml_flow_io_get_output(NULL);
+		exit(0);
+	}
+	g_test_trap_assert_failed();
+
+	if (g_test_trap_fork (0, G_TEST_TRAP_SILENCE_STDOUT | G_TEST_TRAP_SILENCE_STDERR)) {
+		gebr_geoxml_flow_io_set_output(flow, "abc/def/ghi");
+		exit(0);
+	}
+	g_test_trap_assert_failed();
+
+	if (g_test_trap_fork (0, G_TEST_TRAP_SILENCE_STDOUT | G_TEST_TRAP_SILENCE_STDERR)) {
+		flow = gebr_geoxml_flow_new();
+		gebr_geoxml_flow_io_set_output(flow, NULL);
+		exit(0);
+	}
+	g_test_trap_assert_failed();
+
+	flow = gebr_geoxml_flow_new();
+	path = gebr_geoxml_flow_io_get_output(flow);
+	g_assert_cmpstr(path, ==, "");
+
+	gebr_geoxml_flow_io_set_output(flow, "abc/def/ghi");
+	path = gebr_geoxml_flow_io_get_output(flow);
+	g_assert_cmpstr(path, ==, "abc/def/ghi");
+
+	gebr_geoxml_flow_io_set_output(flow, "qwerty/asdfg");
+	path = gebr_geoxml_flow_io_get_output(flow);
+	g_assert_cmpstr(path, ==, "qwerty/asdfg");
+}
+
+void test_gebr_geoxml_flow_io_get_and_set_error(void){
+	const gchar *path;
+	GebrGeoXmlFlow *flow = NULL;
+
+	if (g_test_trap_fork (0, G_TEST_TRAP_SILENCE_STDOUT | G_TEST_TRAP_SILENCE_STDERR)) {
+		gebr_geoxml_flow_io_get_error(NULL);
+		exit(0);
+	}
+	g_test_trap_assert_failed();
+
+	if (g_test_trap_fork (0, G_TEST_TRAP_SILENCE_STDOUT | G_TEST_TRAP_SILENCE_STDERR)) {
+		gebr_geoxml_flow_io_set_error(flow, "abc/def/ghi");
+		exit(0);
+	}
+	g_test_trap_assert_failed();
+
+	if (g_test_trap_fork (0, G_TEST_TRAP_SILENCE_STDOUT | G_TEST_TRAP_SILENCE_STDERR)) {
+		flow = gebr_geoxml_flow_new();
+		gebr_geoxml_flow_io_set_error(flow, NULL);
+		exit(0);
+	}
+	g_test_trap_assert_failed();
+
+	flow = gebr_geoxml_flow_new();
+	path = gebr_geoxml_flow_io_get_error(flow);
+	g_assert_cmpstr(path, ==, "");
+
+	gebr_geoxml_flow_io_set_error(flow, "abc/def/ghi");
+	path = gebr_geoxml_flow_io_get_error(flow);
+	g_assert_cmpstr(path, ==, "abc/def/ghi");
+
+	gebr_geoxml_flow_io_set_error(flow, "qwerty/asdfg");
+	path = gebr_geoxml_flow_io_get_error(flow);
+	g_assert_cmpstr(path, ==, "qwerty/asdfg");
+}
 
 int main(int argc, char *argv[])
 {
@@ -183,6 +254,7 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/geoxml/flow/flow_get_and_set_date_last_run", test_gebr_geoxml_flow_get_and_set_date_last_run);
 	g_test_add_func("/libgebr/geoxml/flow/flow_server_get_and_set_date_last_run", test_gebr_geoxml_flow_server_get_and_set_date_last_run);
 	g_test_add_func("/libgebr/geoxml/flow/io_get_and_set_input", test_gebr_geoxml_flow_io_get_and_set_input);
-
+	g_test_add_func("/libgebr/geoxml/flow/io_get_and_set_output", test_gebr_geoxml_flow_io_get_and_set_output);
+	g_test_add_func("/libgebr/geoxml/flow/io_get_and_set_error", test_gebr_geoxml_flow_io_get_and_set_error);
 	return g_test_run();
 }
