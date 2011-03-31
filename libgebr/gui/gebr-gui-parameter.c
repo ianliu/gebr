@@ -60,6 +60,10 @@ static void gebr_gui_parameter_widget_on_value_widget_changed(GtkWidget * widget
 
 static void on_entry_activate_add (GtkEntry *entry, struct gebr_gui_parameter_widget *parameter_widget);
 
+static void on_icon_entry_toggled (GtkEntry            *entry,
+				   GtkEntryIconPosition icon_pos,
+				   GdkEvent            *event,
+				   struct gebr_gui_parameter_widget *parameter_widget);
 
 //==============================================================================
 // PRIVATE FUNCTIONS							       =
@@ -550,12 +554,15 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 			gtk_widget_set_size_request(entry, 90, 30);
 			activatable_entry = GTK_ENTRY (entry);
 
+			gtk_entry_set_icon_from_stock(GTK_ENTRY(entry), GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_ORIENTATION_PORTRAIT);
 			g_signal_connect (entry, "activate",
 					  G_CALLBACK(__validate_int), parameter_widget);
 			g_signal_connect (entry, "activate",
 					  G_CALLBACK (on_entry_activate_add), parameter_widget);
 			g_signal_connect (entry, "focus-out-event",
 					  G_CALLBACK(__validate_on_leaving), parameter_widget);
+			g_signal_connect (entry, "icon-release",
+					  G_CALLBACK(on_icon_entry_toggled), parameter_widget);
 
 			break;
 		}
@@ -644,6 +651,26 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 	case GEBR_GEOXML_PARAMETER_TYPE_FLAG: {
 			parameter_widget->value_widget = gtk_check_button_new();
 			gtk_button_set_use_underline(GTK_BUTTON(parameter_widget->value_widget), TRUE);
+			break;
+		}
+	case GEBR_GEOXML_PARAMETER_TYPE_EXPRESSION:{
+			GtkWidget *entry;
+
+			parameter_widget->value_widget = entry = gtk_entry_new();
+			gtk_widget_set_size_request(entry, 90, 30);
+			activatable_entry = GTK_ENTRY (entry);
+
+			gtk_entry_set_icon_from_stock(GTK_ENTRY(entry), GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_ORIENTATION_REVERSE_PORTRAIT);
+			
+			g_signal_connect (entry, "activate",
+					  G_CALLBACK(__validate_int), parameter_widget);
+			g_signal_connect (entry, "activate",
+					  G_CALLBACK (on_entry_activate_add), parameter_widget);
+			g_signal_connect (entry, "focus-out-event",
+					  G_CALLBACK(__validate_on_leaving), parameter_widget);
+			g_signal_connect (entry, "icon-release",
+					  G_CALLBACK(on_icon_entry_toggled), parameter_widget);
+
 			break;
 		}
 	default:
@@ -1079,4 +1106,25 @@ static void on_entry_activate_add (GtkEntry *entry, struct gebr_gui_parameter_wi
 {
 	if (gebr_geoxml_program_parameter_get_is_list(parameter_widget->program_parameter))
 		g_signal_emit_by_name (parameter_widget->gebr_gui_value_sequence_edit, "add-request");
+}
+
+static void on_icon_entry_toggled (GtkEntry            *entry,
+				   GtkEntryIconPosition icon_pos,
+				   GdkEvent            *event,
+				   struct gebr_gui_parameter_widget *parameter_widget)
+{
+	switch (parameter_widget->parameter_type) {
+	case GEBR_GEOXML_PARAMETER_TYPE_INT:
+		gtk_entry_set_icon_from_stock(GTK_ENTRY(entry), GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_ORIENTATION_REVERSE_PORTRAIT);
+		parameter_widget->parameter_type = GEBR_GEOXML_PARAMETER_TYPE_EXPRESSION;
+		gebr_gui_parameter_widget_reconfigure(parameter_widget);
+		break;
+	case GEBR_GEOXML_PARAMETER_TYPE_EXPRESSION:
+		gtk_entry_set_icon_from_stock(GTK_ENTRY(entry), GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_ORIENTATION_PORTRAIT);
+		parameter_widget->parameter_type = GEBR_GEOXML_PARAMETER_TYPE_INT;
+		gebr_gui_parameter_widget_reconfigure(parameter_widget);
+		break;
+	default:
+		break;
+	}
 }

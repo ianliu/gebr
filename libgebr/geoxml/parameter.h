@@ -142,6 +142,11 @@ typedef enum {
 	 * then this parameter will only have its value as a difference.
 	 */
 	GEBR_GEOXML_PARAMETER_TYPE_REFERENCE,
+
+	/**
+	 * A parameter able to store an arithmetic expression.
+	 */
+	GEBR_GEOXML_PARAMETER_TYPE_EXPRESSION,
 } GebrGeoXmlParameterType;
 
 void __gebr_geoxml_parameter_set_label(GebrGeoXmlParameter * parameter, const gchar * label);
