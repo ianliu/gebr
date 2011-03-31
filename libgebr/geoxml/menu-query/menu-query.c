@@ -51,6 +51,7 @@ static GOptionEntry entries[] = {
 	{"category", 'c', 0, G_OPTION_ARG_NONE, &options.category, "show categories", NULL},
 	{"progs", 'p', 0, G_OPTION_ARG_NONE, &options.progs, "show programs", NULL},
 	{"params", 'P', 0, G_OPTION_ARG_NONE, &options.params, "show parameters", NULL},
+	{"verbose", 'v', 0, G_OPTION_ARG_NONE, &options.verbose, "show number of potential errors", NULL},
 	{"nocolors", 'C', 0, G_OPTION_ARG_NONE, &nocolors, "disable colored output", NULL},
 	{G_OPTION_REMAINING, 0, G_OPTION_FLAG_FILENAME, G_OPTION_ARG_FILENAME_ARRAY, &menu, "",
 	 "menu1.mnu menu2.mnu ..."},
@@ -89,7 +90,7 @@ int main(int argc, char **argv)
 	gebr_libinit("libgebr", argv[0]);
 
 	/* default values */
-	options.all = TRUE;
+	options.all = FALSE;
 	options.ehelp = -1;
 
 	parse_command_line(argc, argv);

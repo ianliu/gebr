@@ -43,8 +43,8 @@ GebrGeoXmlValidate *gebr_geoxml_validate_new(gpointer data, GebrGeoXmlValidateOp
 		options.category = TRUE;
 		options.mhelp = TRUE;
 		options.progs = TRUE;
-                options.url = TRUE;
-		options.params = TRUE;
+        options.url = TRUE;
+        options.verbose = TRUE;
 	}
 	validate->options = options;
 
@@ -157,8 +157,7 @@ gint gebr_geoxml_validate_report_menu(GebrGeoXmlValidate * validate, GebrGeoXmlF
 		validate->operations.append_text(validate->data, "\n");
 	}
 	if (validate->options.ehelp == 0) {
-		validate->operations.append_text(validate->data, gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(menu)));
-		goto out;
+		validate->operations.append_text(validate->data, "%s", gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(menu)));
 	}
 	if (validate->options.category) {
 		gebr_geoxml_flow_get_category(menu, &seq, 0);
@@ -173,8 +172,7 @@ gint gebr_geoxml_validate_report_menu(GebrGeoXmlValidate * validate, GebrGeoXmlF
 	gint nprog = gebr_geoxml_flow_get_programs_number(menu);
 	if (validate->options.ehelp > 0 && validate->options.ehelp <= nprog) {
 		gebr_geoxml_flow_get_program(menu, &seq, validate->options.ehelp - 1);
-		validate->operations.append_text(validate->data, gebr_geoxml_program_get_help(GEBR_GEOXML_PROGRAM(seq)));
-		goto out;
+		validate->operations.append_text(validate->data, "%s", gebr_geoxml_program_get_help(GEBR_GEOXML_PROGRAM(seq)));
 	}
 
 	if (!validate->options.progs && !validate->options.params)
@@ -238,7 +236,8 @@ gint gebr_geoxml_validate_report_menu(GebrGeoXmlValidate * validate, GebrGeoXmlF
 		}
 	}
 
-out:	validate->operations.append_text_emph(validate->data, _("%d potential error(s)\n"), validate->potential_errors);
+out:	if(validate->options.verbose)
+			validate->operations.append_text_emph(validate->data, _("%d potential error(s)\n"), validate->potential_errors);
 
 	return validate->potential_errors;
 }
@@ -273,7 +272,7 @@ static gint validate_append_check(GebrGeoXmlValidate * validate, const gchar * v
 
 	result = failed ? FALSE : TRUE;
 	if (result)
-		validate->operations.append_text(validate->data, value);
+		validate->operations.append_text(validate->data, "%s", value);
 	else {
 		if (gebr_validate_check_is_not_empty(value))
 			validate_append_text_error(validate, failed, validate_case, "%s", value);
