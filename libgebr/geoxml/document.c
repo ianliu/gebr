@@ -1007,8 +1007,8 @@ void gebr_geoxml_document_set_email(GebrGeoXmlDocument * document, const gchar *
 
 GebrGeoXmlParameters *gebr_geoxml_document_get_dict_parameters(GebrGeoXmlDocument * document)
 {
-	if (document == NULL)
-		return NULL;
+	g_return_val_if_fail (document != NULL, NULL);
+
 	return (GebrGeoXmlParameters *)
 	    __gebr_geoxml_get_first_element(__gebr_geoxml_get_first_element
 					    (gebr_geoxml_document_root_element(document), "dict"), "parameters");
@@ -1161,4 +1161,44 @@ static void gebr_geoxml_document_fix_header(GString * source, const gchar * tagn
 	g_string_erase(source, 0, c + 1);
 	g_string_prepend(source, doctype);
 	g_free(doctype);
+}
+
+void gebr_geoxml_document_merge_dict (GebrGeoXmlDocument *dst, GebrGeoXmlDocument *src)
+{
+	GebrGeoXmlParameters *dst_params;
+	GebrGeoXmlParameters *src_params;
+	GebrGeoXmlProgramParameter *param;
+	GebrGeoXmlSequence *seq;
+	GdomeNode *clone;
+	GHashTable *htable;
+	const gchar *label;
+
+	g_return_if_fail (dst != NULL);
+	g_return_if_fail (src != NULL);
+
+	dst_params = gebr_geoxml_document_get_dict_parameters (dst);
+	src_params = gebr_geoxml_document_get_dict_parameters (src);
+	htable = g_hash_table_new (g_str_hash, g_str_equal);
+
+	gebr_geoxml_parameters_get_parameter (dst_params, &seq, 0);
+	while (seq) {
+		param = GEBR_GEOXML_PROGRAM_PARAMETER (seq);
+		label = gebr_geoxml_program_parameter_get_keyword (param);
+		g_hash_table_insert (htable, (gpointer)label, GINT_TO_POINTER (1));
+		gebr_geoxml_sequence_next (&seq);
+	}
+
+	gebr_geoxml_parameters_get_parameter (src_params, &seq, 0);
+	for ( ; seq; gebr_geoxml_sequence_next (&seq)) {
+		param = GEBR_GEOXML_PROGRAM_PARAMETER (seq);
+		label = gebr_geoxml_program_parameter_get_keyword (param);
+		if (g_hash_table_lookup (htable, label))
+			continue;
+
+		clone = gdome_doc_importNode((GdomeDocument *)dst, (GdomeNode *) seq,
+					     TRUE, &exception);
+		gdome_el_appendChild((GdomeElement *)dst_params, clone, &exception);
+	}
+
+	g_hash_table_unref (htable);
 }

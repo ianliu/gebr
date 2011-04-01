@@ -229,7 +229,10 @@ void gebr_geoxml_document_set_author(GebrGeoXmlDocument * document, const gchar 
 void gebr_geoxml_document_set_email(GebrGeoXmlDocument * document, const gchar * email);
 
 /**
- * Retrieves from \p document. the parameters dictionary for use with program's parameters.
+ * gebr_geoxml_document_get_dict_parameters:
+ * @document: a #GebrGeoXmlDocument
+ *
+ * Retrieves from @document the parameters dictionary for use with program's parameters.
  *
  * If \p document is NULL returns NULL.
  */
@@ -355,6 +358,16 @@ const gchar *gebr_geoxml_document_get_description(GebrGeoXmlDocument * document)
  * \see gebr_geoxml_document_set_help
  */
 const gchar *gebr_geoxml_document_get_help(GebrGeoXmlDocument * document);
+
+/**
+ * gebr_geoxml_document_merge_dict:
+ * @dst: A #GebrGeoXmlDocument that will receive @src dictionary parameters
+ * @src: A #GebrGeoXmlDocument containing dictionary parameters to be merged in @dst
+ *
+ * Copies dictionary parameters from @src into @dst, without overwriting @dst original
+ * variables in case of name clash.
+ */
+void gebr_geoxml_document_merge_dict (GebrGeoXmlDocument *dst, GebrGeoXmlDocument *src);
 
 G_END_DECLS
 #endif				//__GEBR_GEOXML_DOCUMENT_H
