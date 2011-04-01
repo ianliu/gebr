@@ -1202,3 +1202,53 @@ void gebr_geoxml_document_merge_dict (GebrGeoXmlDocument *dst, GebrGeoXmlDocumen
 
 	g_hash_table_unref (htable);
 }
+
+static gboolean
+document_has_dictkey (GebrGeoXmlDocument *doc, const gchar *name)
+{
+	GebrGeoXmlParameters *params;
+	GebrGeoXmlProgramParameter *param;
+	GebrGeoXmlSequence *seq;
+	const gchar *label;
+
+	params = gebr_geoxml_document_get_dict_parameters (doc);
+	gebr_geoxml_parameters_get_parameter (params, &seq, 0);
+
+	while (seq) {
+		param = GEBR_GEOXML_PROGRAM_PARAMETER (seq);
+		label = gebr_geoxml_program_parameter_get_keyword (param);
+		if (g_strcmp0 (name, label) == 0)
+			return TRUE;
+		gebr_geoxml_sequence_next (&seq);
+	}
+
+	return FALSE;
+}
+
+gboolean
+gebr_geoxml_document_is_dictkey_defined (const gchar *name,
+					 GebrGeoXmlDocument *first_doc,
+					 ...)
+{
+	va_list ap;
+	GebrGeoXmlDocument *doc;
+	gboolean retval = TRUE;
+
+	g_return_val_if_fail (first_doc != NULL, FALSE);
+
+	va_start (ap, first_doc);
+	doc = first_doc;
+
+	while (!document_has_dictkey (doc, name))
+	{
+		doc = va_arg(ap, GebrGeoXmlDocument*);
+		if (!doc) {
+			retval = FALSE;
+			break;
+		}
+	}
+
+	va_end (ap);
+
+	return retval;
+}
