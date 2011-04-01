@@ -55,17 +55,6 @@ void gebr_geoxml_value_sequence_set(GebrGeoXmlValueSequence * value_sequence, co
 	__gebr_geoxml_set_element_value((GdomeElement *) value_sequence, value, __gebr_geoxml_create_TextNode);
 }
 
-// void
-// gebr_geoxml_value_sequence_set_boolean(GebrGeoXmlValueSequence * value_sequence, gboolean state)
-// {
-//      if (value_sequence == NULL)
-//              return;
-//      if (__gebr_geoxml_value_sequence_check(value_sequence) == FALSE)
-//              return;
-//      __gebr_geoxml_set_element_value((GdomeElement*)value_sequence,
-//              state == TRUE ? "on" : "off", __gebr_geoxml_create_TextNode);
-// }
-
 const gchar *gebr_geoxml_value_sequence_get(GebrGeoXmlValueSequence * value_sequence)
 {
 	if (value_sequence == NULL)
@@ -75,13 +64,30 @@ const gchar *gebr_geoxml_value_sequence_get(GebrGeoXmlValueSequence * value_sequ
 	return __gebr_geoxml_get_element_value((GdomeElement *) value_sequence);
 }
 
-// gboolean
-// gebr_geoxml_value_sequence_get_boolean(GebrGeoXmlValueSequence * value_sequence)
-// {
-//      if (value_sequence == NULL)
-//              return NULL;
-//      if (__gebr_geoxml_value_sequence_check(value_sequence) == FALSE)
-//              return NULL;
-//      return !strcmp(__gebr_geoxml_get_element_value((GdomeElement*)value_sequence), "on")
-//              ? TRUE : FALSE;
-// }
+const gchar *gebr_geoxml_value_sequence_get_expression (GebrGeoXmlValueSequence *self)
+{
+	g_return_val_if_fail (self != NULL, NULL);
+
+	return __gebr_geoxml_get_attr_value((GdomeElement*) self, "expression");
+}
+
+void gebr_geoxml_value_sequence_set_expression (GebrGeoXmlValueSequence *self, const gchar *expression)
+{
+	g_return_if_fail (self != NULL);
+
+	__gebr_geoxml_set_attr_value((GdomeElement*) self, "expression", expression);
+}
+
+const gchar *gebr_geoxml_value_sequence_get_dictkey (GebrGeoXmlValueSequence *self)
+{
+	g_return_val_if_fail (self != NULL, NULL);
+
+	return __gebr_geoxml_get_attr_value((GdomeElement*) self, "dictkeyword");
+}
+
+void gebr_geoxml_value_sequence_set_dictkey (GebrGeoXmlValueSequence *self, const gchar *dictkey)
+{
+	g_return_if_fail (self != NULL);
+
+	__gebr_geoxml_set_attr_value((GdomeElement*) self, "dictkeyword", dictkey);
+}
