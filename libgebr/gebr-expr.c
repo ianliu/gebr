@@ -349,7 +349,8 @@ gebr_expr_eval (GebrExpr *self,
 			break;
 
 		case SET_RESULT:
-			*result = g_ascii_strtod (result_str, NULL);
+			if (result != NULL)
+				*result = g_ascii_strtod (result_str, NULL);
 			g_free (result_str);
 			state = FINISHED;
 			break;

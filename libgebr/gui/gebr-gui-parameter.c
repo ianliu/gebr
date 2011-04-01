@@ -18,6 +18,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <config.h>
+
 #include <glib/gi18n-lib.h>
 
 #include "../utils.h"
@@ -304,7 +305,6 @@ static void gebr_gui_parameter_widget_report_change(struct gebr_gui_parameter_wi
 static void gebr_gui_parameter_on_list_value_widget_changed(GtkEntry * entry,
 							    struct gebr_gui_parameter_widget *parameter_widget)
 {
-
 	gebr_geoxml_program_parameter_set_parse_list_value(parameter_widget->program_parameter,
 							   parameter_widget->use_default_value,
 							   gtk_entry_get_text(entry));
@@ -1154,7 +1154,7 @@ void gebr_gui_parameter_widget_set_dicts(struct gebr_gui_parameter_widget *param
 	gebr_gui_parameter_widget_reconfigure(parameter_widget);
 }
 
-GString *parameter_widget_get_widget_value(struct gebr_gui_parameter_widget *parameter_widget)
+GString *gebr_gui_parameter_widget_get_value(struct gebr_gui_parameter_widget *parameter_widget)
 {
 	return gebr_gui_parameter_widget_get_widget_value_full(parameter_widget, TRUE);
 }
@@ -1187,7 +1187,16 @@ void gebr_gui_parameter_widget_validate(struct gebr_gui_parameter_widget *parame
 {
 	gboolean is_expression = __parameter_has_expression(parameter_widget);
 	if (is_expression) {
-		//TODO: put ian function
+		if (parameter_widget->dicts) {
+			GString *value = gebr_gui_parameter_widget_get_value(parameter_widget);
+			gboolean success = gebr_geoxml_document_validate_expr(value->str, parameter_widget->dicts->flow, parameter_widget->dicts->line, parameter_widget->dicts->project, NULL);
+
+			// FIXME don't report with a dialog
+			if (!success)
+				gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, "Error", "Not valid!");
+
+			g_string_free(value, TRUE);
+		}
 	} else if (parameter_widget->dict_parameter != NULL)
 		return;
 	else switch (parameter_widget->parameter_type) {
@@ -1243,6 +1252,8 @@ static void on_secondary_icon_release (GtkEntry            *entry,
 
 		__set_toggle_icon(parameter_widget, TRUE);
 		gebr_gui_parameter_widget_update(parameter_widget);
+
+		gebr_gui_parameter_widget_report_change(parameter_widget);
 	} else {
 		gtk_menu_popup(GTK_MENU(gebr_gui_parameter_widget_dict_popup_menu(parameter_widget)), NULL, NULL, NULL, NULL,
 			       event->button, event->time);

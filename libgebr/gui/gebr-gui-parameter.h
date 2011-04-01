@@ -72,7 +72,7 @@ gebr_gui_parameter_widget_set_dicts(struct gebr_gui_parameter_widget *parameter_
 /**
  * Return the parameter's widget value
  */
-GString *parameter_widget_get_widget_value(struct gebr_gui_parameter_widget *parameter_widget);
+GString *gebr_gui_parameter_widget_get_value(struct gebr_gui_parameter_widget *parameter_widget);
 
 /**
  *

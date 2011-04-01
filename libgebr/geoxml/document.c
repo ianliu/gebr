@@ -20,6 +20,7 @@
 #include <zlib.h>
 #include <stdio.h>
 #include <errno.h>
+#include <stdarg.h>
 
 #include <glib/gstdio.h>
 #include <gdome.h>
@@ -43,6 +44,8 @@
 #include "parameters_p.h"
 #include "parameter_p.h"
 #include "parameter_group_p.h"
+#include "value_sequence.h"
+#include "../gebr-expr.h"
 
 /* global variables */
 /**
@@ -1204,22 +1207,22 @@ void gebr_geoxml_document_merge_dict (GebrGeoXmlDocument *dst, GebrGeoXmlDocumen
 }
 
 static gboolean
-document_has_dictkey (GebrGeoXmlDocument *doc, const gchar *name)
+document_has_dictkey (GebrGeoXmlDocument *doc, const gchar *name, gchar **out_value)
 {
-	GebrGeoXmlParameters *params;
-	GebrGeoXmlProgramParameter *param;
+	GebrGeoXmlParameters *params = gebr_geoxml_document_get_dict_parameters (doc);
+
 	GebrGeoXmlSequence *seq;
-	const gchar *label;
-
-	params = gebr_geoxml_document_get_dict_parameters (doc);
 	gebr_geoxml_parameters_get_parameter (params, &seq, 0);
+	for (; seq != NULL; gebr_geoxml_sequence_next (&seq)) {
+		GebrGeoXmlProgramParameter *param = GEBR_GEOXML_PROGRAM_PARAMETER (seq);
+		const gchar *keyword = gebr_geoxml_program_parameter_get_keyword (param);
 
-	while (seq) {
-		param = GEBR_GEOXML_PROGRAM_PARAMETER (seq);
-		label = gebr_geoxml_program_parameter_get_keyword (param);
-		if (g_strcmp0 (name, label) == 0)
+		if (g_strcmp0 (name, keyword) == 0) {
+			GebrGeoXmlSequence *value;
+			gebr_geoxml_program_parameter_get_value (param, FALSE, &value, 0);
+			*out_value = (gchar *)gebr_geoxml_value_sequence_get_expression(GEBR_GEOXML_VALUE_SEQUENCE (value));
 			return TRUE;
-		gebr_geoxml_sequence_next (&seq);
+		}
 	}
 
 	return FALSE;
@@ -1227,28 +1230,70 @@ document_has_dictkey (GebrGeoXmlDocument *doc, const gchar *name)
 
 gboolean
 gebr_geoxml_document_is_dictkey_defined (const gchar *name,
+					 gchar **out_value,
 					 GebrGeoXmlDocument *first_doc,
 					 ...)
 {
-	va_list ap;
-	GebrGeoXmlDocument *doc;
-	gboolean retval = TRUE;
-
 	g_return_val_if_fail (first_doc != NULL, FALSE);
 
-	va_start (ap, first_doc);
-	doc = first_doc;
+	gboolean key_found = FALSE;
 
-	while (!document_has_dictkey (doc, name))
-	{
-		doc = va_arg(ap, GebrGeoXmlDocument*);
+	va_list args;
+	va_start (args, first_doc);
+	GebrGeoXmlDocument *doc = first_doc;
+	while (1) {
+		gchar *value;
+		if ((key_found = document_has_dictkey (doc, name, &value))) {
+			if (out_value)
+				*out_value = value;
+			break;
+		}
+
+		doc = va_arg(args, GebrGeoXmlDocument*);
 		if (!doc) {
-			retval = FALSE;
+			key_found = FALSE;
 			break;
 		}
 	}
+	va_end (args);
 
-	va_end (ap);
+	return key_found;
+}
 
-	return retval;
+gboolean
+gebr_geoxml_document_validate_expr (const gchar *expr,
+				    GebrGeoXmlDocument *flow,
+				    GebrGeoXmlDocument *line,
+				    GebrGeoXmlDocument *proj,
+				    GError **err)
+{
+	gboolean success = TRUE;
+
+	// Check if @expr is using any undefined variable
+	GList *vars = gebr_expr_extract_vars (expr);
+	for (GList *i = vars; i; i = i->next) {
+		gchar *name = i->data;
+		if (!gebr_geoxml_document_is_dictkey_defined (name, NULL, flow, line, proj, NULL)) {
+			success = FALSE;
+			goto out;
+		}
+	}
+	g_list_foreach (vars, (GFunc) g_free, NULL);
+	g_list_free (vars);
+
+	GError *error = NULL;
+	// Check if expression is well-formed
+	GebrExpr *expression = gebr_expr_new (&error);
+	if (!expression) {
+		g_propagate_error (err, error);
+		success = FALSE;
+		goto out;
+	}
+	success = gebr_expr_eval(expression, expr, NULL, &error);
+	if (!success)
+		g_propagate_error (err, error);
+	gebr_expr_free(expression);
+
+out:
+	return success;
 }
