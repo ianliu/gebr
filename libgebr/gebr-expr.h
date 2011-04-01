@@ -79,6 +79,14 @@ gebr_expr_eval (GebrExpr *self,
  */
 void gebr_expr_free (GebrExpr *self);
 
+/**
+ * gebr_expr_extract_vars:
+ * @expression:
+ *
+ * Returns: a #GList of all variables in expression
+ */
+GList *gebr_expr_extract_vars (const gchar *expression);
+
 G_END_DECLS
 
 #endif /* __GEBR_EXPR_H__ */

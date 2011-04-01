@@ -78,27 +78,10 @@ GQuark gebr_expr_error_quark (void)
 	return g_quark_from_static_string ("gebr-expr-error-quark");
 }
 
-static gboolean
-is_name_valid (const gchar *name)
+
+gboolean is_reserved_word (const gchar *name)
 {
-	if (!g_ascii_isalpha (*name) || !g_ascii_islower(*name))
-		return FALSE;
-
-	name++;
-	while (*name)
-	{
-		if (g_ascii_isdigit (*name) || *name == '_')
-			continue;
-
-		if (!g_ascii_isalpha (*name) || !g_ascii_islower(*name))
-			return FALSE;
-
-		name++;
-	}
-
-	gint RESERVED = 0;
 	gint i = 0;
-
 	const gchar *reserved_words[] = {
 	"ibase", // Reserved variables
 	"last",
@@ -119,16 +102,35 @@ is_name_valid (const gchar *name)
 	"print",
 	"quit",
 	"void",
-	"warranty"};
+	"warranty",
+	NULL};
 
-	gulong max = sizeof(reserved_words)/sizeof(gchar **);
+	while (reserved_words[i])
+		if (g_strcmp0(name, reserved_words[i++]) == 0)
+			return TRUE;
 
-	for (i = 0; i < max; i++)
-		if (g_strcmp0(name, reserved_words[i]) == RESERVED)
+	return FALSE;
+}
+
+static gboolean
+is_name_valid (const gchar *name)
+{
+	if (!g_ascii_isalpha (*name) || !g_ascii_islower(*name))
+		return FALSE;
+
+	name++;
+	while (*name)
+	{
+		if (g_ascii_isdigit (*name) || *name == '_')
+			continue;
+
+		if (!g_ascii_isalpha (*name) || !g_ascii_islower(*name))
 			return FALSE;
 
-	return TRUE;	
-	
+		name++;
+	}
+
+	return !is_reserved_word (name);
 }
 
 static VarName *
@@ -292,19 +294,12 @@ gebr_expr_eval (GebrExpr *self,
 	gchar *result_str = NULL;
 	while (state != FINISHED)
 	{
-		do
-			status = g_io_channel_read_line (self->err_ch, &line, NULL, NULL, &error);
-		while (status == G_IO_STATUS_AGAIN);
+		status = g_io_channel_read_line (self->err_ch, &line, NULL, NULL, &error);
 
 		if (status == G_IO_STATUS_NORMAL) {
 			g_set_error (err, gebr_expr_error_quark(),
 				     GEBR_EXPR_ERROR_SYNTAX, "%s", line);
 			g_free (line);
-			return FALSE;
-		}
-
-		if (error) {
-			g_propagate_error (err, error);
 			return FALSE;
 		}
 
@@ -377,4 +372,30 @@ gebr_expr_free (GebrExpr *self)
 	g_io_channel_unref (self->out_ch);
 	g_io_channel_unref (self->err_ch);
 	g_free (self);
+}
+
+GList *
+gebr_expr_extract_vars (const gchar *e)
+{
+	GList *vars = NULL;
+	GRegex *regex;
+	GMatchInfo *info;
+
+	regex = g_regex_new ("[a-z][0-9a-z_]*", 0, 0, NULL);
+	g_regex_match (regex, e, 0, &info);
+
+	while (g_match_info_matches (info))
+	{
+		gchar *word = g_match_info_fetch (info, 0);
+		if (!is_reserved_word (word))
+			vars = g_list_prepend (vars, word);
+		else
+			g_free (word);
+		g_match_info_next (info, NULL);
+	}
+
+	g_match_info_free (info);
+	g_regex_unref (regex);
+
+	return g_list_reverse (vars);
 }
