@@ -16,7 +16,7 @@ GebrdCpuInfo *gebrd_cpu_info_new (void)
 	char *line;
 	size_t length;
 	ssize_t read;
-	GHashTable *tb;
+	GHashTable *tb = NULL;
 	gboolean create = TRUE;
 	GebrdCpuInfo *cpuinfo;
 

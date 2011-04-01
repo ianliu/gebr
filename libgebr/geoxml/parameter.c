@@ -370,10 +370,10 @@ void gebr_geoxml_parameter_set_label(GebrGeoXmlParameter * parameter, const gcha
 
 const gchar *gebr_geoxml_parameter_get_label(GebrGeoXmlParameter * parameter)
 {
-	GebrGeoXmlParameter * template ;
+	GebrGeoXmlParameter *template;
 
-	if (parameter == NULL)
-		return NULL;
+	g_return_val_if_fail (parameter != NULL, NULL);
+
 	if (gebr_geoxml_parameter_get_is_reference(parameter))
 		template = gebr_geoxml_parameter_get_referencee(parameter);
 	else
