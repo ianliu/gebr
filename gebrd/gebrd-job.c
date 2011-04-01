@@ -862,6 +862,7 @@ static void job_assembly_cmdline(GebrdJob *job)
 	gulong nprog;
 	gboolean has_control = FALSE;
 	guint counter = 0;
+	gchar *step, *ini;
 
 	if (job->flow == NULL) 
 		goto err;
@@ -891,8 +892,7 @@ static void job_assembly_cmdline(GebrdJob *job)
 	if (gebr_geoxml_program_get_control(GEBR_GEOXML_PROGRAM(program)) != GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY &&
 	    gebr_geoxml_program_get_control(GEBR_GEOXML_PROGRAM(program)) != GEBR_GEOXML_PROGRAM_CONTROL_UNKNOWN){
 		has_control = TRUE;
-		counter = gebr_geoxml_program_control_get_n(GEBR_GEOXML_PROGRAM(program));
-
+		counter = gebr_geoxml_program_control_get_n(GEBR_GEOXML_PROGRAM(program), &step, &ini);
 		/* Check if there is configured programs */
 		gebr_geoxml_sequence_next(&program);
 		while (program != NULL &&
@@ -974,8 +974,7 @@ static void job_assembly_cmdline(GebrdJob *job)
 		if (gebr_geoxml_program_get_control(GEBR_GEOXML_PROGRAM(program)) != GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY &&
 		    gebr_geoxml_program_get_control(GEBR_GEOXML_PROGRAM(program)) != GEBR_GEOXML_PROGRAM_CONTROL_UNKNOWN){
 			has_control = TRUE;
-			counter = gebr_geoxml_program_control_get_n(GEBR_GEOXML_PROGRAM(program));
-
+			counter = gebr_geoxml_program_control_get_n(GEBR_GEOXML_PROGRAM(program), &step, &ini);
 			gebr_geoxml_sequence_next(&program);
 			continue;
 		}
