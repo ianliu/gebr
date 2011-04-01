@@ -97,34 +97,38 @@ is_name_valid (const gchar *name)
 	}
 
 	gint RESERVED = 0;
+	gint i = 0;
 
-	// Reserved variables
-	return g_strcmp0 (name, "ibase")	!= RESERVED;
-	return g_strcmp0 (name, "last")		!= RESERVED;
-	return g_strcmp0 (name, "obase")	!= RESERVED;
-	return g_strcmp0 (name, "scale")	!= RESERVED;
+	const gchar *reserved_words[] = {
+	"ibase", // Reserved variables
+	"last",
+	"obase",
+	"scale",
+	"length", // Reserved function
+	"read", 
+	"sqrt", 
+	"break", // Control statements
+	"continue",
+	"for",
+	"halt",
+	"return",
+	"while",
+	"auto", // Pseudo statements
+	"define",
+	"limits",
+	"print",
+	"quit",
+	"void",
+	"warranty"};
 
-	// Reserved functions
-	return g_strcmp0 (name, "length")	!= RESERVED;
-	return g_strcmp0 (name, "read")	 	!= RESERVED;
-	return g_strcmp0 (name, "sqrt")	 	!= RESERVED;
+	gulong max = sizeof(reserved_words)/sizeof(gchar **);
 
-	// Control statements
-	return g_strcmp0 (name, "break")	!= RESERVED;
-	return g_strcmp0 (name, "continue")	!= RESERVED;
-	return g_strcmp0 (name, "for")		!= RESERVED;
-	return g_strcmp0 (name, "halt")		!= RESERVED;
-	return g_strcmp0 (name, "return") 	!= RESERVED;
-	return g_strcmp0 (name, "while")	!= RESERVED;
+	for (i = 0; i < max; i++)
+		if (g_strcmp0(name, reserved_words[i]) == RESERVED)
+			return FALSE;
 
-	// Pseudo statements
-	return g_strcmp0 (name, "auto")		!= RESERVED;
-	return g_strcmp0 (name, "define")	!= RESERVED;
-	return g_strcmp0 (name, "limits")	!= RESERVED;
-	return g_strcmp0 (name, "print")	!= RESERVED;
-	return g_strcmp0 (name, "quit")		!= RESERVED;
-	return g_strcmp0 (name, "void")		!= RESERVED;
-	return g_strcmp0 (name, "warranty")	!= RESERVED;
+	return TRUE;	
+	
 }
 
 static VarName *
