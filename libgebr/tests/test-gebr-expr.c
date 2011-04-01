@@ -65,6 +65,24 @@ void test_gebr_expr_variables(void)
 	g_assert_cmpfloat (result, ==, 10 * 1.2);
 }
 
+void test_gebr_expr_extract_vars(void)
+{
+	GList *vars;
+
+	vars = gebr_expr_extract_vars ("foo * bar");
+	g_assert_cmpstr (g_list_nth_data (vars, 0), ==, "foo");
+	g_assert_cmpstr (g_list_nth_data (vars, 1), ==, "bar");
+	g_list_foreach (vars, (GFunc) g_free, NULL);
+	g_list_free (vars);
+
+	vars = gebr_expr_extract_vars ("var_underline * var0 + 03");
+	g_assert_cmpstr (g_list_nth_data (vars, 0), ==, "var_underline");
+	g_assert_cmpstr (g_list_nth_data (vars, 1), ==, "var0");
+	g_assert_cmpint (g_list_length (vars), ==, 2);
+	g_list_foreach (vars, (GFunc) g_free, NULL);
+	g_list_free (vars);
+}
+
 int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
@@ -73,6 +91,7 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/expr/simple", test_gebr_expr_simple);
 	g_test_add_func("/libgebr/expr/multi_expression", test_gebr_expr_mult_expression);
 	g_test_add_func("/libgebr/expr/variables", test_gebr_expr_variables);
+	g_test_add_func("/libgebr/expr/extract_vars", test_gebr_expr_extract_vars);
 
 	return g_test_run();
 }
