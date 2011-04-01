@@ -361,7 +361,7 @@ glong gebr_geoxml_flow_get_categories_number(GebrGeoXmlFlow * flow);
  * Be aware that all \p flow data will be lost. If you don't want that, call
  * \ref gebr_geoxml_flow_append_revision before.
  *
- * If \p flow or \p revision is NULL nothing is done.
+ * If \p flow or \p revision is NULL nothing is done, and returns FALSE.
  * If it fails because the revision could not be loaded, returns FALSE.
  * If exists reports on the revisions, the selected one was merged with the 
  * current report and deleted from the revision
@@ -380,6 +380,7 @@ GebrGeoXmlRevision *gebr_geoxml_flow_append_revision(GebrGeoXmlFlow * flow, cons
 
 /**
  *
+ * @revision shuold not be NULL.
  * If \p flow is NULL nothing is done.
  */
 void gebr_geoxml_flow_set_revision_data(GebrGeoXmlRevision * revision, const gchar * flow, const gchar * date, const gchar * comment);
@@ -398,7 +399,7 @@ int gebr_geoxml_flow_get_revision(GebrGeoXmlFlow * flow, GebrGeoXmlSequence ** r
 
 /**
  * Get information of \p revision. The flow is stored at \p flow and can be
- * loaded with gebr_geoxml_document_load_buffer. \p receive the date of creation of \p revision.
+ * loaded with gebr_geoxml_document_load_buffer. \p date receive the date of creation of \p revision.
  * A NULL value of \p flow or \p date or \p comment mean not set.
  * Any of the string should be freed.
  *

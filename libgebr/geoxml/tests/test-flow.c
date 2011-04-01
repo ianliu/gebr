@@ -19,6 +19,7 @@
 #include <stdlib.h>
 #include "flow.h"
 #include "error.h"
+#include "../../date.h"
 
 void test_gebr_geoxml_flow_server_get_and_set_address(void){
 	const gchar *address;
@@ -343,23 +344,63 @@ void test_gebr_geoxml_flow_append_revision(void){
 }
 
 void test_gebr_geoxml_flow_change_to_revision(void){
+
 	GebrGeoXmlFlow *flow = NULL;
 	GebrGeoXmlRevision *revision = NULL;
 	gboolean boole;
 
-	boole = gebr_geoxml_flow_change_to_revision(flow, revision, NULL);
+	boole = gebr_geoxml_flow_change_to_revision(NULL, revision, NULL);
 	g_assert(boole == FALSE);
 
 	flow = gebr_geoxml_flow_new();
-	boole = gebr_geoxml_flow_change_to_revision(flow, revision, NULL);
+	boole = gebr_geoxml_flow_change_to_revision(flow, NULL, NULL);
 	g_assert(boole == FALSE);
 
 	revision = gebr_geoxml_flow_append_revision(flow, "asdf");
 	boole = gebr_geoxml_flow_change_to_revision(flow, revision, NULL);
 	g_assert(boole == TRUE);
 
-}
+	revision = gebr_geoxml_flow_append_revision(flow, "kakarotto");
+	boole = gebr_geoxml_flow_change_to_revision(flow, revision, NULL);
+	g_assert(boole == TRUE);
 
+}
+void test_gebr_geoxml_flow_get_and_set_revision_data(void){
+
+	GebrGeoXmlFlow *flow = NULL;
+	GebrGeoXmlRevision *revision = NULL;
+	gchar *strdate, *strcomment, *strflow, *flow_xml, *now;
+
+	// Test if it will fail when revision is passed as NULL
+	if (g_test_trap_fork (0, G_TEST_TRAP_SILENCE_STDOUT | G_TEST_TRAP_SILENCE_STDERR)) {
+
+		gebr_geoxml_flow_set_revision_data(NULL, "theflow", "01/02/8000", "commented");
+		exit(0);
+	}
+	g_test_trap_assert_failed();
+
+	// Test if the comment passed on append is correct
+	flow = gebr_geoxml_flow_new();
+	revision = gebr_geoxml_flow_append_revision(flow, "comment");
+	gebr_geoxml_flow_get_revision_data(revision, NULL, NULL, &strcomment);
+	g_assert_cmpstr(strcomment, ==, "comment");
+
+	// Convert @flow to a string
+	gebr_geoxml_document_to_string(GEBR_GEOXML_DOCUMENT(flow), &flow_xml);
+
+	// Get date
+	now = gebr_iso_date();
+
+	gebr_geoxml_flow_set_revision_data(revision, flow_xml, now, "commented");
+	gebr_geoxml_flow_get_revision_data(revision, &strflow, &strdate, &strcomment);
+
+	g_assert_cmpstr(strflow, ==, flow_xml);
+	g_assert_cmpstr(strcomment, ==, "commented");
+
+	// Convert @now date into the correct returned style and compare it
+	g_assert_cmpstr(strdate, ==, gebr_localized_date(now));
+
+}
 
 int main(int argc, char *argv[])
 {
@@ -378,6 +419,7 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/geoxml/flow/get_category", test_gebr_geoxml_flow_get_category);
 	g_test_add_func("/libgebr/geoxml/flow/append_revision", test_gebr_geoxml_flow_append_revision);
 	g_test_add_func("/libgebr/geoxml/flow/change_to_revision", test_gebr_geoxml_flow_change_to_revision);
+	g_test_add_func("/libgebr/geoxml/flow/set_revision_data", test_gebr_geoxml_flow_get_and_set_revision_data);
 
 	return g_test_run();
 }
