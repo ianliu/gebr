@@ -521,11 +521,11 @@ void document_dict_edit_setup_ui(void)
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), add_hbox, FALSE, TRUE, 0);
 
 	int i = 0;
-	if (gebr_geoxml_document_get_type(document) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW)
-		data->documents[i++] = GEBR_GEOXML_DOCUMENT(gebr.flow);
+	data->documents[i++] = GEBR_GEOXML_DOCUMENT(gebr.project);
 	if (gebr_geoxml_document_get_type(document) != GEBR_GEOXML_DOCUMENT_TYPE_PROJECT)
 		data->documents[i++] = GEBR_GEOXML_DOCUMENT(gebr.line);
-	data->documents[i++] = GEBR_GEOXML_DOCUMENT(gebr.project);
+	if (gebr_geoxml_document_get_type(document) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW)
+		data->documents[i++] = GEBR_GEOXML_DOCUMENT(gebr.flow);
 	data->documents[i] = NULL;
 
 	for (int i = 0; data->documents[i] != NULL; ++i) {
@@ -554,7 +554,6 @@ void document_dict_edit_setup_ui(void)
 						   gebr_geoxml_program_parameter_get_keyword
 						   (GEBR_GEOXML_PROGRAM_PARAMETER(parameter)));
 		}
-
 		dict_edit_append_add_parameter(data, &document_iter);
 
 		gebr_gui_gtk_tree_view_expand_to_iter(GTK_TREE_VIEW(tree_view), &document_iter);
