@@ -28,9 +28,15 @@ typedef struct _GebrExpr GebrExpr;
 #define GEBR_EXPR_ERROR gebr_expr_error_quark()
 GQuark gebr_expr_error_quark (void);
 
+/**
+ * GebrExprError:
+ * @GEBR_EXPR_ERROR_SYNTAX: Expression is malformed
+ * @GEBR_EXPR_ERROR_NORET:  Expression should return a value
+ * @GEBR_EXPR_ERROR_MULT:   Expression returned multiple values
+ */
 typedef enum {
 	GEBR_EXPR_ERROR_SYNTAX,
-	GEBR_EXPR_ERROR_IPC
+	GEBR_EXPR_ERROR_INVALID_NAME,
 } GebrExprError;
 
 /**

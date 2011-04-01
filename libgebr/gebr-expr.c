@@ -23,18 +23,30 @@
 #define EVAL_COOKIE "GEBR-EVAL-COOKIE\n"
 
 /*
- * Sets an io channel to non-blocking and
- * prints error properly.
+ * configure_channel:
+ * @self:
+ * @channel:
+ * @err:
+ *
+ * Set @channel to non-blocking and @err if an error occured.
+ *
+ * Returns: %TRUE if no error ocurred
  */
-#define SET_NONBLOCKING(ch,error) \
-	G_STMT_START { \
-	  g_io_channel_set_flags (ch, G_IO_FLAG_NONBLOCK, &error); \
-	  if (error) { \
-	    g_critical ("Could not set NONBLOCK flag: %s", \
-			error->message); \
-	    g_clear_error (&error); \
-	  } \
-	} G_STMT_END
+static gboolean
+configure_channel (GebrExpr *self, GIOChannel *channel, GError **err)
+{
+	GError *error = NULL;
+
+	g_io_channel_set_close_on_unref (channel, TRUE);
+	g_io_channel_set_flags (channel, G_IO_FLAG_NONBLOCK, &error);
+
+	if (error) {
+		g_propagate_error (err, error);
+		return FALSE;
+	}
+
+	return TRUE;
+}
 
 /*
  * @vars: The hash table holding VarName -> Value
@@ -64,6 +76,55 @@ typedef struct {
 GQuark gebr_expr_error_quark (void)
 {
 	return g_quark_from_static_string ("gebr-expr-error-quark");
+}
+
+static gboolean
+is_name_valid (const gchar *name)
+{
+	if (!g_ascii_isalpha (*name) || !g_ascii_islower(*name))
+		return FALSE;
+
+	name++;
+	while (*name)
+	{
+		if (g_ascii_is_digit (*name) || *name == '_')
+			continue;
+
+		if (!g_ascii_isalpha (*name) || !g_ascii_islower(*name))
+			return FALSE;
+
+		name++;
+	}
+
+	gint RESERVED = 0;
+
+	// Reserved variables
+	return g_strcmp0 (name, "ibase")	!= RESERVED;
+	return g_strcmp0 (name, "last")		!= RESERVED;
+	return g_strcmp0 (name, "obase")	!= RESERVED;
+	return g_strcmp0 (name, "scale")	!= RESERVED;
+
+	// Reserved functions
+	return g_strcmp0 (name, "length")	!= RESERVED;
+	return g_strcmp0 (name, "read")	 	!= RESERVED;
+	return g_strcmp0 (name, "sqrt")	 	!= RESERVED;
+
+	// Control statements
+	return g_strcmp0 (name, "break")	!= RESERVED;
+	return g_strcmp0 (name, "continue")	!= RESERVED;
+	return g_strcmp0 (name, "for")		!= RESERVED;
+	return g_strcmp0 (name, "halt")		!= RESERVED;
+	return g_strcmp0 (name, "return") 	!= RESERVED;
+	return g_strcmp0 (name, "while")	!= RESERVED;
+
+	// Pseudo statements
+	return g_strcmp0 (name, "auto")		!= RESERVED;
+	return g_strcmp0 (name, "define")	!= RESERVED;
+	return g_strcmp0 (name, "limits")	!= RESERVED;
+	return g_strcmp0 (name, "print")	!= RESERVED;
+	return g_strcmp0 (name, "quit")		!= RESERVED;
+	return g_strcmp0 (name, "void")		!= RESERVED;
+	return g_strcmp0 (name, "warranty")	!= RESERVED;
 }
 
 static VarName *
@@ -112,29 +173,8 @@ var_name_get_real_name (VarName *var)
 	return var->rname;
 }
 
-#if 0
-/*
- * Returns: %TRUE if there was output in @channel, %FALSE otherwise
- */
-static gboolean
-flush_channel (GIOChannel *channel)
-{
-	char c;
-	gboolean had_output = FALSE;
-	GIOStatus status;
-
-	do {
-		status = g_io_channel_read_chars (channel, &c, 1, NULL, NULL);
-		if (status == G_IO_STATUS_NORMAL)
-			had_output = TRUE;
-	} while (status == G_IO_STATUS_NORMAL);
-
-	return had_output;
-}
-#endif
-
 GebrExpr *
-gebr_expr_new (void)
+gebr_expr_new (GError **err)
 {
 	const gchar *home_dir	= g_get_home_dir ();
 	gchar *argv[]		= {"bc", "-l", NULL};
@@ -149,9 +189,7 @@ gebr_expr_new (void)
 				  &error);
 
 	if (error) {
-		g_critical ("Could not run 'bc': %s",
-			    error->message);
-		g_clear_error (&error);
+		g_propagate_error (err, error);
 		return NULL;
 	}
 
@@ -160,9 +198,16 @@ gebr_expr_new (void)
 	self->out_ch = g_io_channel_unix_new (out_fd);
 	self->err_ch = g_io_channel_unix_new (err_fd);
 
-	SET_NONBLOCKING (self->in_ch, error);
-	SET_NONBLOCKING (self->out_ch, error);
-	SET_NONBLOCKING (self->err_ch, error);
+	if (!configure_channel (self, self->in_ch, err) ||
+	    !configure_channel (self, self->out_ch, err) ||
+	    !configure_channel (self, self->err_ch, err))
+	{
+		g_io_channel_unref (self->in_ch);
+		g_io_channel_unref (self->out_ch);
+		g_io_channel_unref (self->err_ch);
+		g_free (self);
+		return NULL;
+	}
 
 	self->vars = g_hash_table_new_full (var_name_hash,
 					    var_name_equal,
@@ -182,6 +227,13 @@ gebr_expr_set_var (GebrExpr *self,
 	const gchar *rname;
 	VarName *var;
 	gdouble result;
+
+	if (!is_name_valid (name)) {
+		g_set_error (err, gebr_expr_error_quark (),
+			     GEBR_EXPR_ERROR_INVALID_NAME,
+			     "Invalid variable name");
+		return FALSE;
+	}
 
 	/* Insert the striped value into the hash table */
 	var = var_name_new (name);
@@ -237,10 +289,19 @@ gebr_expr_eval (GebrExpr *self,
 	gchar *result_str = NULL;
 	while (state != FINISHED)
 	{
-		status = g_io_channel_read_line (self->err_ch, &line, NULL, NULL, &error);
+		do
+			status = g_io_channel_read_line (self->err_ch, &line, NULL, NULL, &error);
+		while (status == G_IO_STATUS_AGAIN);
+
 		if (status == G_IO_STATUS_NORMAL) {
-			// g_set_error (line);
+			g_set_error (err, gebr_expr_error_quark(),
+				     GEBR_EXPR_ERROR_SYNTAX, "%s", line);
 			g_free (line);
+			return FALSE;
+		}
+
+		if (error) {
+			g_propagate_error (err, error);
 			return FALSE;
 		}
 
@@ -250,7 +311,9 @@ gebr_expr_eval (GebrExpr *self,
 			status = g_io_channel_read_line (self->out_ch, &line, NULL, NULL, &error);
 			if (status == G_IO_STATUS_NORMAL) {
 				if (g_strcmp0 (line, EVAL_COOKIE) == 0) {
-					// Expression does not return a value
+					g_set_error (err, gebr_expr_error_quark (),
+						     GEBR_EXPR_ERROR_NORET,
+						     "Expression does not return a value");
 					g_free (line);
 					return FALSE;
 				} else {
@@ -278,6 +341,9 @@ gebr_expr_eval (GebrExpr *self,
 				if (g_strcmp0 (line, EVAL_COOKIE) == 0) {
 					g_free (result_str);
 					g_free (line);
+					g_set_error (err, gebr_expr_error_quark (),
+						     GEBR_EXPR_ERROR_MULT,
+						     "Expression returned multiple results");
 					return FALSE;
 				}
 				g_free (line);
@@ -298,6 +364,11 @@ gebr_expr_eval (GebrExpr *self,
 void
 gebr_expr_free (GebrExpr *self)
 {
+	GIOStatus status;
+	do
+		status = g_io_channel_write_chars (self->in_ch, "quit\n", -1, NULL, NULL);
+	while (status == G_IO_STATUS_AGAIN);
+
 	g_hash_table_unref (self->vars);
 	g_io_channel_unref (self->in_ch);
 	g_io_channel_unref (self->out_ch);
