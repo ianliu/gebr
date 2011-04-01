@@ -870,6 +870,7 @@ int gebr_geoxml_document_save(GebrGeoXmlDocument * document, const gchar * path)
 		ok = tidyOptSetBool (tdoc, TidyXmlTags, yes);
 		ok = ok && tidyOptSetValue (tdoc, TidyIndentContent, "auto");
 		ok = ok && tidyOptSetValue (tdoc, TidyCharEncoding, "UTF8");
+		ok = ok && tidyOptSetValue (tdoc, TidyWrapLen, "0");
 
 		if (ok) {
 			ret = tidySetErrorBuffer (tdoc, &errbuf);
