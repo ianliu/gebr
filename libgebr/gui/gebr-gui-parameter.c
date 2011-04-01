@@ -36,6 +36,8 @@ static void gebr_gui_parameter_widget_find_dict_parameter(struct gebr_gui_parame
 
 static GtkWidget *gebr_gui_parameter_widget_dict_popup_menu(struct gebr_gui_parameter_widget *widget);
 
+static GtkWidget *gebr_gui_parameter_widget_variable_popup_menu(struct gebr_gui_parameter_widget *widget);
+
 static void gebr_gui_parameter_widget_value_entry_on_populate_popup(GtkEntry * entry, GtkMenu * menu,
 								    struct gebr_gui_parameter_widget *widget);
 
@@ -918,6 +920,123 @@ static GtkWidget *gebr_gui_parameter_widget_dict_popup_menu(struct gebr_gui_para
 }
 
 /*
+ * gebr_gui_parameter_widget_variable_popup_menu:
+ * Read dictionaries variables and build a popup menu to build expressions
+ */
+static GtkWidget *gebr_gui_parameter_widget_variable_popup_menu(struct gebr_gui_parameter_widget *widget)
+{
+	GebrGeoXmlParameterType compatibles_types[5] = {
+		GEBR_GEOXML_PARAMETER_TYPE_UNKNOWN, GEBR_GEOXML_PARAMETER_TYPE_UNKNOWN,
+		GEBR_GEOXML_PARAMETER_TYPE_UNKNOWN, GEBR_GEOXML_PARAMETER_TYPE_UNKNOWN,
+		GEBR_GEOXML_PARAMETER_TYPE_UNKNOWN
+	};
+
+	GList *compatible_parameters, *cp;
+	GebrGeoXmlDocument *documents[4] = {
+		widget->dicts->project, widget->dicts->line,
+		widget->dicts->flow, NULL
+	};
+
+	GtkWidget *menu;
+	GtkWidget *menu_item;
+	GSList *group;
+
+	compatibles_types[0] = widget->parameter_type;
+	switch (widget->parameter_type) {
+	case GEBR_GEOXML_PARAMETER_TYPE_STRING:
+		compatibles_types[1] = GEBR_GEOXML_PARAMETER_TYPE_INT;
+		compatibles_types[2] = GEBR_GEOXML_PARAMETER_TYPE_FLOAT;
+		compatibles_types[3] = GEBR_GEOXML_PARAMETER_TYPE_RANGE;
+	case GEBR_GEOXML_PARAMETER_TYPE_FLOAT:
+		compatibles_types[1] = GEBR_GEOXML_PARAMETER_TYPE_INT;
+		break;
+	case GEBR_GEOXML_PARAMETER_TYPE_RANGE:
+		compatibles_types[1] = GEBR_GEOXML_PARAMETER_TYPE_INT;
+		compatibles_types[2] = GEBR_GEOXML_PARAMETER_TYPE_FLOAT;
+		break;
+	default:
+		break;
+	}
+
+	compatible_parameters = NULL;
+	for (int i = 0; documents[i] != NULL; i++) {
+		GebrGeoXmlSequence *dict_parameter;
+		GebrGeoXmlParameterType dict_parameter_type;
+
+		dict_parameter =
+		    gebr_geoxml_parameters_get_first_parameter(gebr_geoxml_document_get_dict_parameters(documents[i]));
+		for (; dict_parameter != NULL; gebr_geoxml_sequence_next(&dict_parameter)) {
+			gboolean compatible;
+			const gchar *keyword;
+
+			compatible = FALSE;
+			dict_parameter_type = gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(dict_parameter));
+			for (int j = 0; compatibles_types[j] != GEBR_GEOXML_PARAMETER_TYPE_UNKNOWN; j++) {
+				if (compatibles_types[j] == dict_parameter_type) {
+					compatible = TRUE;
+					break;
+				}
+			}
+			if (!compatible)
+				continue;
+
+			keyword =
+			    gebr_geoxml_program_parameter_get_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(dict_parameter));
+			for (cp = compatible_parameters; cp != NULL; cp = g_list_next(cp))
+				if (!strcmp
+				    (keyword,
+				     gebr_geoxml_program_parameter_get_keyword(GEBR_GEOXML_PROGRAM_PARAMETER
+									       (cp->data))))
+					compatible_parameters = g_list_remove_link(compatible_parameters, cp);
+
+			compatible_parameters = g_list_prepend(compatible_parameters, dict_parameter);
+		}
+	}
+
+	menu = gtk_menu_new();
+
+	menu_item = gtk_radio_menu_item_new_with_label(NULL, _("Do not use dictionary"));
+	g_object_set(menu_item, "user-data", NULL, NULL);
+	g_signal_connect(menu_item, "activate", G_CALLBACK(on_dict_parameter_toggled), widget);
+	group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
+	gtk_container_add(GTK_CONTAINER(menu), menu_item);
+	gtk_container_add(GTK_CONTAINER(menu), gtk_separator_menu_item_new());
+
+	compatible_parameters = g_list_sort(compatible_parameters, (GCompareFunc) compare_parameters_by_keyword);
+	for (cp = compatible_parameters; cp != NULL; cp = g_list_next(cp)) {
+		GString *label;
+		const gchar * keyword;
+		const gchar * first_value;
+		const gchar * param_label;
+
+		keyword = gebr_geoxml_program_parameter_get_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(cp->data));
+		first_value = gebr_geoxml_program_parameter_get_first_value(GEBR_GEOXML_PROGRAM_PARAMETER(cp->data), FALSE);
+		param_label = gebr_geoxml_parameter_get_label(GEBR_GEOXML_PARAMETER(cp->data));
+
+		label = g_string_new(NULL);
+		g_string_printf(label, "%s=%s", keyword, first_value);
+		if (param_label != NULL && strlen(param_label) > 0)
+			g_string_append_printf(label, " (%s)", param_label);
+
+		menu_item = gtk_radio_menu_item_new_with_label(group, label->str);
+		group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
+		g_object_set(menu_item, "user-data", cp->data, NULL);
+		g_signal_connect(menu_item, "toggled", G_CALLBACK(on_dict_parameter_toggled), widget);
+		gtk_container_add(GTK_CONTAINER(menu), menu_item);
+
+		if ((void *)widget->dict_parameter == cp->data)
+			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item), TRUE);
+
+		g_string_free(label, TRUE);
+	}
+
+	gtk_widget_show_all(menu);
+	g_list_free(compatible_parameters);
+
+	return menu;
+}
+
+/*
  * gebr_gui_parameter_widget_value_entry_on_populate_popup:
  * Add dictionary submenu into entry popup menu
  */
@@ -934,8 +1053,19 @@ static void gebr_gui_parameter_widget_value_entry_on_populate_popup(GtkEntry * e
 	gtk_widget_show(menu_item);
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menu_item), gebr_gui_parameter_widget_dict_popup_menu(widget));
 	gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), menu_item);
-}
+	
+	if (__parameter_has_expression(widget)){
+		menu_item = gtk_separator_menu_item_new();
+		gtk_widget_show(menu_item);
+		gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), menu_item);
 
+		menu_item = gtk_menu_item_new_with_label(_("Insert Variable"));
+		gtk_widget_show(menu_item);
+		gtk_menu_item_set_submenu(GTK_MENU_ITEM(menu_item), gebr_gui_parameter_widget_variable_popup_menu(widget));
+		gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), menu_item);
+	}
+
+}
 /*
  * gebr_gui_parameter_widget_can_use_dict:
  * Return TRUE if parameter is of an compatible type to use an dictionary value
