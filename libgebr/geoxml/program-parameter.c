@@ -198,8 +198,14 @@ gebr_geoxml_program_parameter_set_first_value(GebrGeoXmlProgramParameter * progr
 {
 	if (program_parameter == NULL || value == NULL)
 		return;
-	__gebr_geoxml_set_tag_value((GdomeElement *) program_parameter,
-				    default_value == FALSE ? "value" : "default", value, __gebr_geoxml_create_TextNode);
+	GebrGeoXmlSequence * property_value = NULL;
+	gebr_geoxml_program_parameter_get_value(program_parameter, FALSE, 
+						&property_value, 0);
+	if (!gebr_geoxml_value_sequence_get_use_expression(GEBR_GEOXML_VALUE_SEQUENCE(property_value)))
+		__gebr_geoxml_set_tag_value((GdomeElement *) program_parameter,
+					    default_value == FALSE ? "value" : "default", value, __gebr_geoxml_create_TextNode);
+	else
+		return gebr_geoxml_value_sequence_set_expression(GEBR_GEOXML_VALUE_SEQUENCE(property_value), value);
 }
 
 void
@@ -218,8 +224,14 @@ const gchar *gebr_geoxml_program_parameter_get_first_value(GebrGeoXmlProgramPara
 {
 	if (program_parameter == NULL)
 		return NULL;
-	return __gebr_geoxml_get_tag_value((GdomeElement *) program_parameter,
-					   default_value == FALSE ? "value" : "default");
+	GebrGeoXmlSequence * property_value = NULL;
+	gebr_geoxml_program_parameter_get_value(program_parameter, FALSE, 
+						&property_value, 0);
+	if (!gebr_geoxml_value_sequence_get_use_expression(GEBR_GEOXML_VALUE_SEQUENCE(property_value)))
+		return __gebr_geoxml_get_tag_value((GdomeElement *) program_parameter,
+						   default_value == FALSE ? "value" : "default");
+	else
+		return gebr_geoxml_value_sequence_get_expression(GEBR_GEOXML_VALUE_SEQUENCE(property_value));
 }
 
 gboolean

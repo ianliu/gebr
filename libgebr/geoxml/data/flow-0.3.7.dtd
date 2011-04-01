@@ -92,7 +92,8 @@
 <!ELEMENT value (#PCDATA)>
 <!ATTLIST value
 	dictkeyword	CDATA		#IMPLIED
-	expression	CDATA		#IMPLIED>
+	expression	CDATA		#IMPLIED
+	use_expression	(yes | no)	#IMPLIED>
 
 <!-- Actual default value of a parameter -->
 <!ELEMENT default (#PCDATA)>
