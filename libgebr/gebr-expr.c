@@ -87,7 +87,7 @@ is_name_valid (const gchar *name)
 	name++;
 	while (*name)
 	{
-		if (g_ascii_is_digit (*name) || *name == '_')
+		if (g_ascii_isdigit (*name) || *name == '_')
 			continue;
 
 		if (!g_ascii_isalpha (*name) || !g_ascii_islower(*name))
@@ -224,7 +224,6 @@ gebr_expr_set_var (GebrExpr *self,
 		   GError **err)
 {
 	gchar *line;
-	const gchar *rname;
 	VarName *var;
 	gdouble result;
 
@@ -312,7 +311,7 @@ gebr_expr_eval (GebrExpr *self,
 			if (status == G_IO_STATUS_NORMAL) {
 				if (g_strcmp0 (line, EVAL_COOKIE) == 0) {
 					g_set_error (err, gebr_expr_error_quark (),
-						     GEBR_EXPR_ERROR_NORET,
+						     GEBR_EXPR_ERROR_SYNTAX,
 						     "Expression does not return a value");
 					g_free (line);
 					return FALSE;
@@ -342,7 +341,7 @@ gebr_expr_eval (GebrExpr *self,
 					g_free (result_str);
 					g_free (line);
 					g_set_error (err, gebr_expr_error_quark (),
-						     GEBR_EXPR_ERROR_MULT,
+						     GEBR_EXPR_ERROR_SYNTAX,
 						     "Expression returned multiple results");
 					return FALSE;
 				}

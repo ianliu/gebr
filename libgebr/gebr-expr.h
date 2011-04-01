@@ -46,7 +46,7 @@ typedef enum {
  *
  * Returns: a new expression evaluator, free with gebr_expr_free()
  */
-GebrExpr *gebr_expr_new (void);
+GebrExpr *gebr_expr_new (GError **err);
 
 /**
  * gebr_expr_set_var:

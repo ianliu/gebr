@@ -24,7 +24,7 @@
 void test_gebr_expr_simple(void)
 {
 	gdouble result;
-	GebrExpr *expr = gebr_expr_new();
+	GebrExpr *expr = gebr_expr_new(NULL);
 
 	g_assert (gebr_expr_eval(expr, "2*2", &result, NULL));
 	g_assert_cmpfloat (result, ==, 4);
@@ -33,7 +33,7 @@ void test_gebr_expr_simple(void)
 void test_gebr_expr_invalid(void)
 {
 	gdouble result = 666;
-	GebrExpr *expr = gebr_expr_new();
+	GebrExpr *expr = gebr_expr_new(NULL);
 
 	g_assert (gebr_expr_eval(expr, "2*", &result, NULL) == FALSE);
 	g_assert_cmpfloat (result, ==, 666);
@@ -42,7 +42,7 @@ void test_gebr_expr_invalid(void)
 void test_gebr_expr_mult_expression(void)
 {
 	gdouble result = 666;
-	GebrExpr *expr = gebr_expr_new();
+	GebrExpr *expr = gebr_expr_new(NULL);
 
 	g_assert (gebr_expr_eval(expr, "2*2 ; 3*3", &result, NULL) == FALSE);
 	g_assert_cmpfloat (result, ==, 666);
@@ -57,7 +57,7 @@ void test_gebr_expr_mult_expression(void)
 void test_gebr_expr_variables(void)
 {
 	gdouble result = 666;
-	GebrExpr *expr = gebr_expr_new();
+	GebrExpr *expr = gebr_expr_new(NULL);
 
 	g_assert (gebr_expr_set_var (expr, "foo", "10", NULL));
 	g_assert (gebr_expr_set_var (expr, "bar", "1.2", NULL));
