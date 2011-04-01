@@ -308,6 +308,35 @@ void test_gebr_geoxml_document_get_help (void)
 	g_assert_cmpstr(help, ==, "");
 }
 
+static void test_gebr_geoxml_document_merge_dict(void)
+{
+	GebrGeoXmlDocument *line;
+	GebrGeoXmlDocument *flow;
+	GebrGeoXmlParameters *line_params;
+	GebrGeoXmlParameters *flow_params;
+	GebrGeoXmlParameter *param;
+
+	line = GEBR_GEOXML_DOCUMENT (gebr_geoxml_line_new ());
+	flow = GEBR_GEOXML_DOCUMENT (gebr_geoxml_flow_new ());
+
+	line_params = gebr_geoxml_document_get_dict_parameters (line);
+	flow_params = gebr_geoxml_document_get_dict_parameters (flow);
+
+	param = gebr_geoxml_parameters_append_parameter (line_params, GEBR_GEOXML_PARAMETER_TYPE_INT);
+	gebr_geoxml_program_parameter_set_keyword (GEBR_GEOXML_PROGRAM_PARAMETER (param), "foo");
+
+	param = gebr_geoxml_parameters_append_parameter (flow_params, GEBR_GEOXML_PARAMETER_TYPE_INT);
+	gebr_geoxml_program_parameter_set_keyword (GEBR_GEOXML_PROGRAM_PARAMETER (param), "bar");
+
+	gebr_geoxml_document_merge_dict (flow, line);
+	gebr_geoxml_parameters_get_parameter (flow_params, (GebrGeoXmlSequence **)&param, 1);
+
+	g_assert_cmpstr (gebr_geoxml_program_parameter_get_keyword (GEBR_GEOXML_PROGRAM_PARAMETER (param)), ==, "foo");
+
+	gebr_geoxml_document_merge_dict (flow, line);
+	g_assert_cmpint (gebr_geoxml_parameters_get_number (flow_params), ==, 2);
+}
+
 int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
@@ -323,6 +352,7 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/geoxml/document/get_date_modified", test_gebr_geoxml_document_get_date_modified);
 	g_test_add_func("/libgebr/geoxml/document/get_description", test_gebr_geoxml_document_get_description);
 	g_test_add_func("/libgebr/geoxml/document/get_help", test_gebr_geoxml_document_get_help);
+	g_test_add_func("/libgebr/geoxml/document/merge_dict", test_gebr_geoxml_document_merge_dict);
 
 	return g_test_run();
 }
