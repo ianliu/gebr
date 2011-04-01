@@ -98,6 +98,7 @@ AC_ARG_ENABLE([debug],
 	      [enable_debug=yes])
 if test "x$enable_debug" = "xyes"; then
 	DEBUG_CFLAGS="-DDEBUG"
+	CFLAGS="$CFLAGS -g3 -O0"
 else
 	DEBUG_CFLAGS=""
 fi
@@ -358,4 +359,5 @@ echo " Enable GUI support?           $enable_gui"
 echo " Enable Tidy support?          $want_tidy"
 echo " Has Dockbook to build user's"
 echo " documentation?                $have_docbook"
+echo " CFLAGS                        $CFLAGS"
 echo "---------------------------------------"
