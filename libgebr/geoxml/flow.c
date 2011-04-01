@@ -389,7 +389,8 @@ gboolean gebr_geoxml_flow_change_to_revision(GebrGeoXmlFlow * flow, GebrGeoXmlRe
 	GebrGeoXmlDocument *revision_flow;
 	GebrGeoXmlSequence *first_revision;
 	GdomeElement *child;
-	*report_merged = FALSE;
+	if(report_merged)
+		*report_merged = FALSE;
 
 	/* load document validating it */
 	if (gebr_geoxml_document_load_buffer(&revision_flow,
@@ -436,7 +437,8 @@ gboolean gebr_geoxml_flow_change_to_revision(GebrGeoXmlFlow * flow, GebrGeoXmlRe
 		gebr_geoxml_document_to_string (revision_flow, &revision_xml);
 		__gebr_geoxml_set_element_value((GdomeElement *) revision, revision_xml, __gebr_geoxml_create_CDATASection);
 		g_free (revision_xml);
-		*report_merged = TRUE;
+		if(report_merged)
+			*report_merged = TRUE;
 	}
 
 	gebr_geoxml_flow_get_revision(flow, &first_revision, 0);
