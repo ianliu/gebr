@@ -337,6 +337,31 @@ static void test_gebr_geoxml_document_merge_dict(void)
 	g_assert_cmpint (gebr_geoxml_parameters_get_number (flow_params), ==, 2);
 }
 
+void test_gebr_geoxml_document_is_dictkey_defined(void)
+{
+	GebrGeoXmlDocument *line;
+	GebrGeoXmlDocument *flow;
+	GebrGeoXmlParameters *line_params;
+	GebrGeoXmlParameters *flow_params;
+	GebrGeoXmlParameter *param;
+
+	line = GEBR_GEOXML_DOCUMENT (gebr_geoxml_line_new ());
+	flow = GEBR_GEOXML_DOCUMENT (gebr_geoxml_flow_new ());
+
+	line_params = gebr_geoxml_document_get_dict_parameters (line);
+	flow_params = gebr_geoxml_document_get_dict_parameters (flow);
+
+	param = gebr_geoxml_parameters_append_parameter (line_params, GEBR_GEOXML_PARAMETER_TYPE_INT);
+	gebr_geoxml_program_parameter_set_keyword (GEBR_GEOXML_PROGRAM_PARAMETER (param), "foo");
+
+	param = gebr_geoxml_parameters_append_parameter (flow_params, GEBR_GEOXML_PARAMETER_TYPE_INT);
+	gebr_geoxml_program_parameter_set_keyword (GEBR_GEOXML_PROGRAM_PARAMETER (param), "bar");
+
+	g_assert (gebr_geoxml_document_is_dictkey_defined ("foo", flow, line, NULL) == TRUE);
+	g_assert (gebr_geoxml_document_is_dictkey_defined ("bar", flow, line, NULL) == TRUE);
+	g_assert (gebr_geoxml_document_is_dictkey_defined ("baz", flow, line, NULL) == FALSE);
+}
+
 int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
@@ -353,6 +378,7 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/geoxml/document/get_description", test_gebr_geoxml_document_get_description);
 	g_test_add_func("/libgebr/geoxml/document/get_help", test_gebr_geoxml_document_get_help);
 	g_test_add_func("/libgebr/geoxml/document/merge_dict", test_gebr_geoxml_document_merge_dict);
+	g_test_add_func("/libgebr/geoxml/document/is_dictkey_defined", test_gebr_geoxml_document_is_dictkey_defined);
 
 	return g_test_run();
 }
