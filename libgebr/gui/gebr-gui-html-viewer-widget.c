@@ -230,7 +230,6 @@ static void on_load_finished(WebKitWebView * web_view, WebKitWebFrame * frame, G
 	context = webkit_web_frame_get_global_context(frame);
 
 	if (priv->object) {
-		GebrGeoXmlObject *object;
 		const gchar *help;
 
 		type = gebr_geoxml_object_get_type(priv->object);
@@ -238,10 +237,10 @@ static void on_load_finished(WebKitWebView * web_view, WebKitWebFrame * frame, G
 
 		if (type == GEBR_GEOXML_OBJECT_TYPE_PROGRAM) {
 			GebrGeoXmlDocument *menu = gebr_geoxml_object_get_owner_document(priv->object);
-			object = GEBR_GEOXML_OBJECT(menu);
-			help = gebr_geoxml_document_get_help (GEBR_GEOXML_DOCUMENT (object));
+			help = gebr_geoxml_document_get_help (menu);
 			if(strlen(help) > 0)
 				generate_links_index(context, "[['<b>Menu</b>', 'gebr://menu']]", TRUE);
+
 		} else if (type == GEBR_GEOXML_OBJECT_TYPE_FLOW) {
 			GString * list;
 			GebrGeoXmlSequence *program;
@@ -250,8 +249,7 @@ static void on_load_finished(WebKitWebView * web_view, WebKitWebFrame * frame, G
 			gebr_geoxml_flow_get_program(GEBR_GEOXML_FLOW(priv->object), &program, 0);
 
 			for (gint i = 0; program != NULL; gebr_geoxml_sequence_next(&program), ++i) {
-				object = GEBR_GEOXML_OBJECT(program);
-				help = gebr_geoxml_program_get_help (GEBR_GEOXML_PROGRAM (object));
+				 help = gebr_geoxml_program_get_help (GEBR_GEOXML_PROGRAM (program));
 				if(strlen(help) > 0)
 					g_string_append_printf(list, "%s['%s', 'gebr://prog%d']",
 						       	   i == 0? "":",",
