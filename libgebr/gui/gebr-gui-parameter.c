@@ -46,6 +46,8 @@ static gboolean gebr_gui_parameter_widget_can_use_dict(struct gebr_gui_parameter
 
 static void on_dict_parameter_toggled(GtkMenuItem * menu_item, struct gebr_gui_parameter_widget *widget);
 
+static void on_variable_parameter_activate(GtkMenuItem * menu_item, struct gebr_gui_parameter_widget *widget);
+
 static gboolean on_mnemonic_activate(GtkBox * box, gboolean cycle,
 						 struct gebr_gui_parameter_widget *widget);
 
@@ -939,7 +941,6 @@ static GtkWidget *gebr_gui_parameter_widget_variable_popup_menu(struct gebr_gui_
 
 	GtkWidget *menu;
 	GtkWidget *menu_item;
-	GSList *group;
 
 	compatibles_types[0] = widget->parameter_type;
 	switch (widget->parameter_type) {
@@ -995,12 +996,8 @@ static GtkWidget *gebr_gui_parameter_widget_variable_popup_menu(struct gebr_gui_
 
 	menu = gtk_menu_new();
 
-	menu_item = gtk_radio_menu_item_new_with_label(NULL, _("Do not use dictionary"));
+	menu_item = gtk_menu_item_new();
 	g_object_set(menu_item, "user-data", NULL, NULL);
-	g_signal_connect(menu_item, "activate", G_CALLBACK(on_dict_parameter_toggled), widget);
-	group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
-	gtk_container_add(GTK_CONTAINER(menu), menu_item);
-	gtk_container_add(GTK_CONTAINER(menu), gtk_separator_menu_item_new());
 
 	compatible_parameters = g_list_sort(compatible_parameters, (GCompareFunc) compare_parameters_by_keyword);
 	for (cp = compatible_parameters; cp != NULL; cp = g_list_next(cp)) {
@@ -1018,10 +1015,9 @@ static GtkWidget *gebr_gui_parameter_widget_variable_popup_menu(struct gebr_gui_
 		if (param_label != NULL && strlen(param_label) > 0)
 			g_string_append_printf(label, " (%s)", param_label);
 
-		menu_item = gtk_radio_menu_item_new_with_label(group, label->str);
-		group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
+		menu_item = gtk_menu_item_new_with_label(label->str);
 		g_object_set(menu_item, "user-data", cp->data, NULL);
-		g_signal_connect(menu_item, "toggled", G_CALLBACK(on_dict_parameter_toggled), widget);
+		g_signal_connect(menu_item, "activate", G_CALLBACK(on_variable_parameter_activate), widget);
 		gtk_container_add(GTK_CONTAINER(menu), menu_item);
 
 		if ((void *)widget->dict_parameter == cp->data)
@@ -1093,6 +1089,23 @@ static void on_dict_parameter_toggled(GtkMenuItem * menu_item, struct gebr_gui_p
 
 	if (!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(menu_item)))
 		return;
+
+	g_object_get(menu_item, "user-data", &dict_parameter, NULL);
+
+	gebr_geoxml_program_parameter_set_value_from_dict(widget->program_parameter, dict_parameter);
+	widget->dict_parameter = dict_parameter;
+	gebr_gui_parameter_widget_find_dict_parameter(widget);
+
+	gebr_gui_parameter_widget_update(widget);
+}
+
+/*
+ * on_variable_parameter_activate:
+ * Use value of dictionary parameter corresponding to menu_item in parameter at _widget_
+ */
+static void on_variable_parameter_activate(GtkMenuItem * menu_item, struct gebr_gui_parameter_widget *widget)
+{
+	GebrGeoXmlProgramParameter *dict_parameter;
 
 	g_object_get(menu_item, "user-data", &dict_parameter, NULL);
 
