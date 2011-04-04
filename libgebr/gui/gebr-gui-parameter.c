@@ -106,6 +106,7 @@ static void gebr_gui_parameter_widget_file_entry_customize_function(GtkFileChoos
 								    struct gebr_gui_parameter_widget *parameter_widget)
 {
 	const gchar *filter_name;
+
 	const gchar *filter_pattern;
 
 	gebr_geoxml_program_parameter_get_file_filter(parameter_widget->program_parameter,
@@ -472,33 +473,95 @@ static gboolean __parameter_has_expression(struct gebr_gui_parameter_widget *par
 	return gebr_geoxml_value_sequence_get_use_expression(GEBR_GEOXML_VALUE_SEQUENCE(property_value));
 }
 
-static void __on_activate(GtkEntry * entry, struct gebr_gui_parameter_widget *parameter_widget)
-{
-	gebr_gui_parameter_widget_validate(parameter_widget);
-}
-
 /**
  * for parameter that accepts an expression (int and float)
  */
-static void __set_toggle_icon(struct gebr_gui_parameter_widget *parameter_widget, gboolean has_focus)
+static void __set_toggle_icon(struct gebr_gui_parameter_widget *parameter_widget)
 {
+	gboolean is_expression = __parameter_has_expression(parameter_widget);
+	gboolean success = TRUE;
+	GError * validation_error = NULL;
+	GString *value = NULL;
+	gboolean has_focus = FALSE;
+	g_object_get(parameter_widget->value_widget, "has-focus", &has_focus, NULL);
+
+	if (is_expression)
+	{
+	value = gebr_gui_parameter_widget_get_value(parameter_widget);
+	success = gebr_geoxml_document_validate_expr(value->str, 
+						     parameter_widget->dicts->flow, 
+						     parameter_widget->dicts->line, 
+						     parameter_widget->dicts->project, 
+						     &validation_error);
+	}
 	if (parameter_widget->dict_parameter != NULL)
+	{
 		gtk_entry_set_icon_from_stock(GTK_ENTRY(parameter_widget->value_widget), GTK_ENTRY_ICON_SECONDARY, "accessories-dictionary");
-	else if (!has_focus)
+		gtk_entry_set_icon_tooltip_text(GTK_ENTRY(parameter_widget->value_widget), 
+						GTK_ENTRY_ICON_SECONDARY, NULL);
+	}
+	else if (!has_focus && validation_error == NULL)
+	{
 		gtk_entry_set_icon_from_stock(GTK_ENTRY(parameter_widget->value_widget), GTK_ENTRY_ICON_SECONDARY, NULL);
+		gtk_entry_set_icon_tooltip_text(GTK_ENTRY(parameter_widget->value_widget), 
+						GTK_ENTRY_ICON_SECONDARY, NULL);
+	}
 	else {
-		gboolean is_expression = __parameter_has_expression(parameter_widget);
 		if (is_expression)
-			gtk_entry_set_icon_from_stock(GTK_ENTRY(parameter_widget->value_widget), GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_ADD);
+		{
+			if (success == TRUE)
+			{
+				gtk_entry_set_icon_from_stock(GTK_ENTRY(parameter_widget->value_widget), 
+							      GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_ADD);
+				gtk_entry_set_icon_tooltip_text(GTK_ENTRY(parameter_widget->value_widget), 
+								GTK_ENTRY_ICON_SECONDARY, NULL);
+			}
+			else
+			{
+				gtk_entry_set_icon_from_stock(GTK_ENTRY(parameter_widget->value_widget), 
+							      GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIALOG_WARNING);
+				if (validation_error == NULL)
+					gtk_entry_set_icon_tooltip_text(GTK_ENTRY(parameter_widget->value_widget), 
+									GTK_ENTRY_ICON_SECONDARY, 
+									"This expression is invalid");
+				else
+				{
+					gtk_entry_set_icon_tooltip_text(GTK_ENTRY(parameter_widget->value_widget), 
+									GTK_ENTRY_ICON_SECONDARY, 
+									(const gchar *) validation_error->message);
+					puts(validation_error->message);
+				}
+
+			}
+			g_string_free(value, TRUE);
+			value = NULL;
+			if (validation_error != NULL)
+				g_error_free(validation_error);
+			validation_error = NULL;
+
+		}
 		else
-			gtk_entry_set_icon_from_stock(GTK_ENTRY(parameter_widget->value_widget), GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_ORIENTATION_PORTRAIT);
+		{
+			gtk_entry_set_icon_from_stock(GTK_ENTRY(parameter_widget->value_widget), 
+						      GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_ORIENTATION_PORTRAIT);
+			gtk_entry_set_icon_tooltip_text(GTK_ENTRY(parameter_widget->value_widget), 
+							GTK_ENTRY_ICON_SECONDARY, NULL);
+		}
 	}
 }
+
+static void __on_activate(GtkEntry * entry, struct gebr_gui_parameter_widget *parameter_widget)
+{
+	gebr_gui_parameter_widget_validate(parameter_widget);
+	__set_toggle_icon(parameter_widget);
+}
+
+
 
 static gboolean __on_focus_out_event(GtkWidget * widget, GdkEventFocus * event,
 				     struct gebr_gui_parameter_widget *parameter_widget)
 {
-	__set_toggle_icon(parameter_widget, FALSE);
+	__set_toggle_icon(parameter_widget);
 	gebr_gui_parameter_widget_validate(parameter_widget);
 	return FALSE;
 }
@@ -506,7 +569,7 @@ static gboolean __on_focus_out_event(GtkWidget * widget, GdkEventFocus * event,
 static gboolean __on_focus_in_event(GtkWidget * widget, GdkEventFocus * event,
 				    struct gebr_gui_parameter_widget *parameter_widget)
 {
-	__set_toggle_icon(parameter_widget, TRUE);
+	__set_toggle_icon(parameter_widget);
 	return FALSE;
 }
 
@@ -790,9 +853,7 @@ static void gebr_gui_parameter_widget_find_dict_parameter(struct gebr_gui_parame
 		return;
 	}
 
-	gboolean has_focus;
-	g_object_get(widget->value_widget, "has-focus", &has_focus, NULL);
-	__set_toggle_icon(widget, has_focus);
+	__set_toggle_icon(widget);
 }
 
 /*
@@ -1209,12 +1270,30 @@ void gebr_gui_parameter_widget_validate(struct gebr_gui_parameter_widget *parame
 	gboolean is_expression = __parameter_has_expression(parameter_widget);
 	if (is_expression) {
 		if (parameter_widget->dicts) {
+			GError * error = NULL;
 			GString *value = gebr_gui_parameter_widget_get_value(parameter_widget);
-			gboolean success = gebr_geoxml_document_validate_expr(value->str, parameter_widget->dicts->flow, parameter_widget->dicts->line, parameter_widget->dicts->project, NULL);
+			gboolean success = gebr_geoxml_document_validate_expr(value->str, 
+									      parameter_widget->dicts->flow, 
+									      parameter_widget->dicts->line, 
+									      parameter_widget->dicts->project, 
+									      &error);
 
-			// FIXME don't report with a dialog
+
 			if (!success)
-				gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, "Error", "Not valid!");
+			{
+				g_warning("Invalid expression\n");
+				if (error != NULL)
+				{
+					gtk_entry_set_icon_tooltip_text(GTK_ENTRY(parameter_widget->value_widget), 
+									GTK_ENTRY_ICON_SECONDARY, 
+									error->message);
+					g_error_free(error);
+				}
+				else
+					gtk_entry_set_icon_tooltip_text(GTK_ENTRY(parameter_widget->value_widget), 
+									GTK_ENTRY_ICON_SECONDARY, 
+									"This expression is invalid");
+			}
 
 			g_string_free(value, TRUE);
 		}
@@ -1270,11 +1349,9 @@ static void on_secondary_icon_release (GtkEntry            *entry,
 		gebr_geoxml_program_parameter_get_value(parameter_widget->program_parameter, FALSE, 
 							&property_value, 0);
 		gebr_geoxml_value_sequence_set_use_expression(GEBR_GEOXML_VALUE_SEQUENCE(property_value), !is_expression);
-
-		__set_toggle_icon(parameter_widget, TRUE);
 		gebr_gui_parameter_widget_update(parameter_widget);
-
 		gebr_gui_parameter_widget_report_change(parameter_widget);
+		__set_toggle_icon(parameter_widget);
 	} else {
 		gtk_menu_popup(GTK_MENU(gebr_gui_parameter_widget_dict_popup_menu(parameter_widget)), NULL, NULL, NULL, NULL,
 			       event->button, event->time);
