@@ -809,30 +809,27 @@ static gboolean job_parse_parameter(GebrdJob *job, GebrGeoXmlParameter * paramet
 							gebr_geoxml_program_parameter_get_keyword(program_parameter),
 							job->expr_count);
 				job->expr_count++;
-			}
-			
-			value = gebr_geoxml_program_parameter_get_string_value(program_parameter, FALSE);
-
-			if (strlen(value->str) > 0) {
-				gchar *quoted = g_shell_quote(value->str);
-				g_string_append_printf(job->parent.cmd_line, "%s%s ",
-						       gebr_geoxml_program_parameter_get_keyword(program_parameter),
-						       quoted);
-				g_free(quoted);
 			} else {
-				/* Check if this is a required parameter */
-				if (gebr_geoxml_program_parameter_get_required(program_parameter)) {
-					job_issue(job,
-							       _("Required parameter '%s' of program '%s' not provided.\n"),
-							       gebr_geoxml_parameter_get_label(parameter),
-							       gebr_geoxml_program_get_title(program));
+				value = gebr_geoxml_program_parameter_get_string_value(program_parameter, FALSE);
+				if (strlen(value->str) > 0) {
+					gchar *quoted = g_shell_quote(value->str);
+					g_string_append_printf(job->parent.cmd_line, "%s%s ",
+							       gebr_geoxml_program_parameter_get_keyword(program_parameter),
+							       quoted);
+					g_free(quoted);
+				} else {
+					/* Check if this is a required parameter */
+					if (gebr_geoxml_program_parameter_get_required(program_parameter)) {
+						job_issue(job,
+							  _("Required parameter '%s' of program '%s' not provided.\n"),
+							  gebr_geoxml_parameter_get_label(parameter),
+							  gebr_geoxml_program_get_title(program));
 
-					return FALSE;
+						return FALSE;
+					}
 				}
+				g_string_free(value, TRUE);
 			}
-
-			g_string_free(value, TRUE);
-
 			break;
 		}
 	case GEBR_GEOXML_PARAMETER_TYPE_FLAG:
