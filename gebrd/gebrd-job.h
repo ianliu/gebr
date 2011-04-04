@@ -47,6 +47,7 @@ struct _GebrdJob {
 
 	/* client stuff */
 	GebrCommProcess *tail_process;
+	gint expr_count;
 };
 struct _GebrdJobClass {
 	GebrCommJobClass parent;
