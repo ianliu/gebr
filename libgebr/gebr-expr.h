@@ -37,6 +37,7 @@ GQuark gebr_expr_error_quark (void);
 typedef enum {
 	GEBR_EXPR_ERROR_SYNTAX,
 	GEBR_EXPR_ERROR_INVALID_NAME,
+	GEBR_EXPR_ERROR_UNDEFINED_VAR,
 } GebrExprError;
 
 /**
