@@ -67,6 +67,8 @@ static void on_secondary_icon_release (GtkEntry            *entry,
 				       GdkEventButton      *event,
 				       struct gebr_gui_parameter_widget *parameter_widget);
 
+void __on_destroy_menu_unblock_handler(GtkMenuShell *menushell,
+				  GtkEntry            *entry);
 //==============================================================================
 // PRIVATE FUNCTIONS							       =
 //==============================================================================
@@ -1041,6 +1043,12 @@ static void gebr_gui_parameter_widget_value_entry_on_populate_popup(GtkEntry * e
 {
 	GtkWidget *menu_item;
 
+	g_signal_handlers_block_matched(G_OBJECT(entry),
+					  G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
+					  G_CALLBACK(__on_focus_out_event), widget);
+
+	g_signal_connect(GTK_MENU_SHELL(menu), "deactivate", G_CALLBACK(__on_destroy_menu_unblock_handler), entry);
+
 	menu_item = gtk_separator_menu_item_new();
 	gtk_widget_show(menu_item);
 	gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), menu_item);
@@ -1271,4 +1279,11 @@ static void on_secondary_icon_release (GtkEntry            *entry,
 		gtk_menu_popup(GTK_MENU(gebr_gui_parameter_widget_dict_popup_menu(parameter_widget)), NULL, NULL, NULL, NULL,
 			       event->button, event->time);
 	}
+}
+void __on_destroy_menu_unblock_handler(GtkMenuShell *menushell,
+				       GtkEntry            *entry)
+{
+	g_signal_handlers_unblock_matched(G_OBJECT(entry),
+					  G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
+					  G_CALLBACK(__on_focus_out_event), menushell);
 }
