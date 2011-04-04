@@ -1241,19 +1241,17 @@ gebr_geoxml_document_is_dictkey_defined (const gchar *name,
 	va_list args;
 	va_start (args, first_doc);
 	GebrGeoXmlDocument *doc = first_doc;
-	while (1) {
+
+	while (doc) {
 		gchar *value;
-		if ((key_found = document_has_dictkey (doc, name, &value))) {
+		if (document_has_dictkey (doc, name, &value)) {
+			key_found = TRUE;
 			if (out_value)
 				*out_value = value;
 			break;
 		}
 
 		doc = va_arg(args, GebrGeoXmlDocument*);
-		if (!doc) {
-			key_found = FALSE;
-			break;
-		}
 	}
 	va_end (args);
 
@@ -1268,32 +1266,69 @@ gebr_geoxml_document_validate_expr (const gchar *expr,
 				    GError **err)
 {
 	gboolean success = TRUE;
+	GHashTable *ht;
+
+	if (*expr == '\0')
+		return TRUE;
+
+	ht = g_hash_table_new_full (g_str_hash,
+				    g_str_equal,
+				    g_free,
+				    g_free);
 
 	// Check if @expr is using any undefined variable
 	GList *vars = gebr_expr_extract_vars (expr);
 	for (GList *i = vars; i; i = i->next) {
+		gchar *value;
 		gchar *name = i->data;
-		if (!gebr_geoxml_document_is_dictkey_defined (name, NULL, flow, line, proj, NULL)) {
+		if (!gebr_geoxml_document_is_dictkey_defined (name, &value,
+							      flow, line, proj,
+							      NULL))
+		{
 			success = FALSE;
+			g_set_error (err, gebr_expr_error_quark(),
+				     GEBR_EXPR_ERROR_UNDEFINED_VAR,
+				     "Undefined variable name %s", name);
 			goto out;
 		}
+
+		g_hash_table_insert (ht, g_strdup (name), g_strdup (value));
 	}
-	g_list_foreach (vars, (GFunc) g_free, NULL);
-	g_list_free (vars);
 
 	GError *error = NULL;
-	// Check if expression is well-formed
 	GebrExpr *expression = gebr_expr_new (&error);
+
+	// Check if expression is well-formed
 	if (!expression) {
 		g_propagate_error (err, error);
 		success = FALSE;
+		gebr_expr_free (expression);
 		goto out;
 	}
+
+	void f(gchar *var_name, gchar *var_value) {
+		if (error)
+			return;
+		gebr_expr_set_var (expression, var_name, var_value, &error);
+	}
+
+	g_hash_table_foreach (ht, (GHFunc) f, NULL);
+	if (error) {
+		g_propagate_error (err, error);
+		success = FALSE;
+		gebr_expr_free (expression);
+		goto out;
+	}
+
 	success = gebr_expr_eval(expression, expr, NULL, &error);
 	if (!success)
 		g_propagate_error (err, error);
 	gebr_expr_free(expression);
 
 out:
+	g_hash_table_unref (ht);
+	g_list_foreach (vars, (GFunc) g_free, NULL);
+	g_list_free (vars);
+
 	return success;
 }
