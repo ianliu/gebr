@@ -344,6 +344,7 @@ void test_gebr_geoxml_document_is_dictkey_defined(void)
 	GebrGeoXmlParameters *line_params;
 	GebrGeoXmlParameters *flow_params;
 	GebrGeoXmlParameter *param;
+	gchar *value;
 
 	line = GEBR_GEOXML_DOCUMENT (gebr_geoxml_line_new ());
 	flow = GEBR_GEOXML_DOCUMENT (gebr_geoxml_flow_new ());
@@ -353,13 +354,22 @@ void test_gebr_geoxml_document_is_dictkey_defined(void)
 
 	param = gebr_geoxml_parameters_append_parameter (line_params, GEBR_GEOXML_PARAMETER_TYPE_INT);
 	gebr_geoxml_program_parameter_set_keyword (GEBR_GEOXML_PROGRAM_PARAMETER (param), "foo");
+	gebr_geoxml_program_parameter_set_string_value (GEBR_GEOXML_PROGRAM_PARAMETER (param), FALSE, "1");
 
 	param = gebr_geoxml_parameters_append_parameter (flow_params, GEBR_GEOXML_PARAMETER_TYPE_INT);
 	gebr_geoxml_program_parameter_set_keyword (GEBR_GEOXML_PROGRAM_PARAMETER (param), "bar");
+	gebr_geoxml_program_parameter_set_string_value (GEBR_GEOXML_PROGRAM_PARAMETER (param), FALSE, "2");
 
-	g_assert (gebr_geoxml_document_is_dictkey_defined ("foo", flow, line, NULL) == TRUE);
-	g_assert (gebr_geoxml_document_is_dictkey_defined ("bar", flow, line, NULL) == TRUE);
-	g_assert (gebr_geoxml_document_is_dictkey_defined ("baz", flow, line, NULL) == FALSE);
+	g_assert (gebr_geoxml_document_is_dictkey_defined ("foo", &value, flow, line, NULL) == TRUE);
+	g_assert_cmpstr (value, ==, "1");
+	g_free (value), value = NULL;
+
+	g_assert (gebr_geoxml_document_is_dictkey_defined ("bar", &value, flow, line, NULL) == TRUE);
+	g_assert_cmpstr (value, ==, "2");
+	g_free (value), value = NULL;
+
+	g_assert (gebr_geoxml_document_is_dictkey_defined ("baz", &value, flow, line, NULL) == FALSE);
+	g_assert (value == NULL);
 }
 
 int main(int argc, char *argv[])

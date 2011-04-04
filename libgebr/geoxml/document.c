@@ -1218,9 +1218,7 @@ document_has_dictkey (GebrGeoXmlDocument *doc, const gchar *name, gchar **out_va
 		const gchar *keyword = gebr_geoxml_program_parameter_get_keyword (param);
 
 		if (g_strcmp0 (name, keyword) == 0) {
-			GebrGeoXmlSequence *value;
-			gebr_geoxml_program_parameter_get_value (param, FALSE, &value, 0);
-			*out_value = (gchar *)gebr_geoxml_value_sequence_get_expression(GEBR_GEOXML_VALUE_SEQUENCE (value));
+			*out_value = g_strdup (gebr_geoxml_program_parameter_get_first_value (param, FALSE));
 			return TRUE;
 		}
 	}
