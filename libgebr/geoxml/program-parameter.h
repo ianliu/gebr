@@ -271,15 +271,19 @@ glong
 gebr_geoxml_program_parameter_get_values_number(GebrGeoXmlProgramParameter * program_parameter, gboolean default_value);
 
 /**
- * If \p program_parameter has a list of values, call
- * \ref gebr_geoxml_program_parameter_set_parse_list_value. Otherwise
- * call \ref gebr_geoxml_program_parameter_set_first_value
+ * gebr_geoxml_program_parameter_set_string_value:
+ * @program_parameter:
+ * @default_value:
+ * @value:
  *
- * If \p program_parameter or \p value is NULL nothing is done.
+ * If @program_parameter has a list of values, call gebr_geoxml_program_parameter_set_parse_list_value(),
+ * otherwise call gebr_geoxml_program_parameter_set_first_value().
+ *
+ * If @program_parameter or @value is %NULL nothing is done.
  */
-void
-gebr_geoxml_program_parameter_set_string_value(GebrGeoXmlProgramParameter * program_parameter, gboolean default_value,
-					       const gchar * value);
+void gebr_geoxml_program_parameter_set_string_value (GebrGeoXmlProgramParameter *program_parameter,
+						     gboolean default_value,
+						     const gchar *value);
 
 /**
  * If \p program_parameter has a list of values, return them separated
