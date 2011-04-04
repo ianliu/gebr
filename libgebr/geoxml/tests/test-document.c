@@ -22,6 +22,7 @@
 #include "line.h"
 #include "project.h"
 #include "error.h"
+#include "gebr-expr.h"
 
 void test_gebr_geoxml_document_load (void)
 {
@@ -372,6 +373,53 @@ void test_gebr_geoxml_document_is_dictkey_defined(void)
 	g_assert (value == NULL);
 }
 
+void test_gebr_geoxml_document_validate_expr(void)
+{
+	GError *error = NULL;
+	GebrGeoXmlDocument *proj;
+	GebrGeoXmlDocument *line;
+	GebrGeoXmlDocument *flow;
+	GebrGeoXmlParameters *proj_params;
+	GebrGeoXmlParameters *line_params;
+	GebrGeoXmlParameters *flow_params;
+	GebrGeoXmlParameter *param;
+
+	proj = GEBR_GEOXML_DOCUMENT (gebr_geoxml_project_new ());
+	line = GEBR_GEOXML_DOCUMENT (gebr_geoxml_line_new ());
+	flow = GEBR_GEOXML_DOCUMENT (gebr_geoxml_flow_new ());
+
+	proj_params = gebr_geoxml_document_get_dict_parameters (proj);
+	line_params = gebr_geoxml_document_get_dict_parameters (line);
+	flow_params = gebr_geoxml_document_get_dict_parameters (flow);
+
+	param = gebr_geoxml_parameters_append_parameter (proj_params, GEBR_GEOXML_PARAMETER_TYPE_INT);
+	gebr_geoxml_program_parameter_set_keyword (GEBR_GEOXML_PROGRAM_PARAMETER (param), "foo");
+	gebr_geoxml_program_parameter_set_string_value (GEBR_GEOXML_PROGRAM_PARAMETER (param), FALSE, "1");
+
+	param = gebr_geoxml_parameters_append_parameter (line_params, GEBR_GEOXML_PARAMETER_TYPE_INT);
+	gebr_geoxml_program_parameter_set_keyword (GEBR_GEOXML_PROGRAM_PARAMETER (param), "bar");
+	gebr_geoxml_program_parameter_set_string_value (GEBR_GEOXML_PROGRAM_PARAMETER (param), FALSE, "2");
+
+	param = gebr_geoxml_parameters_append_parameter (flow_params, GEBR_GEOXML_PARAMETER_TYPE_INT);
+	gebr_geoxml_program_parameter_set_keyword (GEBR_GEOXML_PROGRAM_PARAMETER (param), "baz");
+	gebr_geoxml_program_parameter_set_string_value (GEBR_GEOXML_PROGRAM_PARAMETER (param), FALSE, "3");
+
+	gebr_geoxml_document_validate_expr ("foo+bar+baz", flow, line, proj, &error);
+	g_assert_no_error (error);
+
+	gebr_geoxml_document_validate_expr ("foo+bar+", flow, line, proj, &error);
+	g_assert_error (error, gebr_expr_error_quark(), GEBR_EXPR_ERROR_SYNTAX);
+	g_clear_error (&error);
+
+	gebr_geoxml_document_validate_expr ("foo+bar+bob", flow, line, proj, &error);
+	g_assert_error (error, gebr_expr_error_quark(), GEBR_EXPR_ERROR_UNDEFINED_VAR);
+	g_clear_error (&error);
+
+	gebr_geoxml_document_validate_expr ("foo+bar+bob", flow, line, proj, &error);
+	g_assert_error (error, gebr_expr_error_quark(), GEBR_EXPR_ERROR_UNDEFINED_VAR);
+	g_clear_error (&error);
+}
+
 int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
@@ -389,6 +437,7 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/geoxml/document/get_help", test_gebr_geoxml_document_get_help);
 	g_test_add_func("/libgebr/geoxml/document/merge_dict", test_gebr_geoxml_document_merge_dict);
 	g_test_add_func("/libgebr/geoxml/document/is_dictkey_defined", test_gebr_geoxml_document_is_dictkey_defined);
+	g_test_add_func("/libgebr/geoxml/document/validate_expr", test_gebr_geoxml_document_validate_expr);
 
 	return g_test_run();
 }
