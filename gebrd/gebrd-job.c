@@ -896,7 +896,7 @@ static gchar *assemble_bc_cmd_line (GebrdJob *job,
 	buf = g_string_new (NULL);
 
 	// Initiate `i' variable
-	g_string_append_printf (buf, "\tV=($(echo \"i=%s+%s*$i\"'\n",
+	g_string_append_printf (buf, "\tV=($(echo \"iter=%s+%s*$iter\"'\n",
 				ini, step);
 
 	// Insert variables definitions
@@ -1131,7 +1131,7 @@ static void job_assembly_cmdline(GebrdJob *job)
 	if (has_control) {
 		GString * prefix = g_string_new(NULL);
 
-		g_string_printf(prefix, "for (( i=1; i<=%d; i++ ))\ndo\n%s\n\t",
+		g_string_printf(prefix, "for (( iter=1; iter<=%d; iter++ ))\ndo\n%s\n\t",
 				counter, assemble_bc_cmd_line (job, ini, step, expr_buf->str));
 
 		g_string_prepend(job->parent.cmd_line, prefix->str);
