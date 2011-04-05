@@ -760,6 +760,20 @@ static void on_dict_edit_type_cell_edited(GtkCellRenderer * cell, gchar * path_s
 	}
 }
 
+static gboolean
+dict_edit_is_name_valid(const gchar *name)
+{
+	if (gebr_expr_is_name_valid (name))
+		return TRUE;
+
+	gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+				_("Invalid variable name"),
+				_("Valid names are lower case characters "
+				  "from 'a' to 'z', numbers or underscore."
+				  " Notice there are some reserved variable names."));
+	return FALSE;
+}
+
 /*
  * on_dict_edit_cell_edited:
  * Edit keyword, value and comment of parameter
@@ -779,8 +793,10 @@ static void on_dict_edit_cell_edited(GtkCellRenderer * cell, gchar * path_string
 	gtk_tree_model_get(data->tree_model, &iter, DICT_EDIT_GEBR_GEOXML_POINTER, &parameter, -1);
 	switch (index) {
 	case DICT_EDIT_KEYWORD:
-		if (!dict_edit_check_empty_keyword(new_text) ||
-		    dict_edit_check_duplicate_keyword(data, parameter, new_text, TRUE)) {
+		if (!dict_edit_check_empty_keyword(new_text)
+		    || dict_edit_check_duplicate_keyword(data, parameter, new_text, TRUE)
+		    || !dict_edit_is_name_valid(new_text))
+		{
 			dict_edit_start_keyword_editing(data, &iter);
 			return;
 		}
