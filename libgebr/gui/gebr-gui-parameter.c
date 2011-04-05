@@ -37,7 +37,8 @@ static void gebr_gui_parameter_widget_find_dict_parameter(struct gebr_gui_parame
 
 static GtkWidget *gebr_gui_parameter_widget_dict_popup_menu(struct gebr_gui_parameter_widget *widget);
 
-static GtkWidget *gebr_gui_parameter_widget_variable_popup_menu(struct gebr_gui_parameter_widget *widget);
+static GtkWidget *gebr_gui_parameter_widget_variable_popup_menu(struct gebr_gui_parameter_widget *widget,
+								GtkEntry *entry);
 
 static void gebr_gui_parameter_widget_value_entry_on_populate_popup(GtkEntry * entry, GtkMenu * menu,
 								    struct gebr_gui_parameter_widget *widget);
@@ -69,6 +70,8 @@ static void on_secondary_icon_release (GtkEntry            *entry,
 
 void __on_destroy_menu_unblock_handler(GtkMenuShell *menushell,
 				  GtkEntry            *entry);
+static gboolean __parameter_has_expression(struct gebr_gui_parameter_widget *parameter_widget);
+
 //==============================================================================
 // PRIVATE FUNCTIONS							       =
 //==============================================================================
@@ -988,7 +991,8 @@ static GtkWidget *gebr_gui_parameter_widget_dict_popup_menu(struct gebr_gui_para
  * gebr_gui_parameter_widget_variable_popup_menu:
  * Read dictionaries variables and build a popup menu to build expressions
  */
-static GtkWidget *gebr_gui_parameter_widget_variable_popup_menu(struct gebr_gui_parameter_widget *widget)
+static GtkWidget *gebr_gui_parameter_widget_variable_popup_menu(struct gebr_gui_parameter_widget *widget,
+								GtkEntry *entry)
 {
 	GebrGeoXmlParameterType compatibles_types[5] = {
 		GEBR_GEOXML_PARAMETER_TYPE_UNKNOWN, GEBR_GEOXML_PARAMETER_TYPE_UNKNOWN,
@@ -1066,25 +1070,21 @@ static GtkWidget *gebr_gui_parameter_widget_variable_popup_menu(struct gebr_gui_
 	for (cp = compatible_parameters; cp != NULL; cp = g_list_next(cp)) {
 		GString *label;
 		const gchar * keyword;
-		const gchar * first_value;
 		const gchar * param_label;
 
 		keyword = gebr_geoxml_program_parameter_get_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(cp->data));
-		first_value = gebr_geoxml_program_parameter_get_first_value(GEBR_GEOXML_PROGRAM_PARAMETER(cp->data), FALSE);
 		param_label = gebr_geoxml_parameter_get_label(GEBR_GEOXML_PARAMETER(cp->data));
 
 		label = g_string_new(NULL);
-		g_string_printf(label, "%s=%s", keyword, first_value);
+		g_string_printf(label, "%s", keyword);
 		if (param_label != NULL && strlen(param_label) > 0)
 			g_string_append_printf(label, " (%s)", param_label);
 
 		menu_item = gtk_menu_item_new_with_label(label->str);
 		g_object_set(menu_item, "user-data", cp->data, NULL);
+		g_object_set_data (G_OBJECT (menu_item), "entry-widget", entry);
 		g_signal_connect(menu_item, "activate", G_CALLBACK(on_variable_parameter_activate), widget);
 		gtk_container_add(GTK_CONTAINER(menu), menu_item);
-
-		if ((void *)widget->dict_parameter == cp->data)
-			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item), TRUE);
 
 		g_string_free(label, TRUE);
 	}
@@ -1126,7 +1126,7 @@ static void gebr_gui_parameter_widget_value_entry_on_populate_popup(GtkEntry * e
 
 		menu_item = gtk_menu_item_new_with_label(_("Insert Variable"));
 		gtk_widget_show(menu_item);
-		gtk_menu_item_set_submenu(GTK_MENU_ITEM(menu_item), gebr_gui_parameter_widget_variable_popup_menu(widget));
+		gtk_menu_item_set_submenu(GTK_MENU_ITEM(menu_item), gebr_gui_parameter_widget_variable_popup_menu(widget, entry));
 		gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), menu_item);
 	}
 
@@ -1174,15 +1174,15 @@ static void on_dict_parameter_toggled(GtkMenuItem * menu_item, struct gebr_gui_p
  */
 static void on_variable_parameter_activate(GtkMenuItem * menu_item, struct gebr_gui_parameter_widget *widget)
 {
+	GtkEntry *entry;
 	GebrGeoXmlProgramParameter *dict_parameter;
+	gint position;
 
 	g_object_get(menu_item, "user-data", &dict_parameter, NULL);
-
-	gebr_geoxml_program_parameter_set_value_from_dict(widget->program_parameter, dict_parameter);
-	widget->dict_parameter = dict_parameter;
-	gebr_gui_parameter_widget_find_dict_parameter(widget);
-
-	gebr_gui_parameter_widget_update(widget);
+	entry = g_object_get_data (G_OBJECT (menu_item), "entry-widget");
+	position = gtk_editable_get_position(GTK_EDITABLE(entry));
+	gtk_editable_insert_text(GTK_EDITABLE(entry), gebr_geoxml_program_parameter_get_keyword(dict_parameter), -1, &position);
+	gtk_editable_set_position(GTK_EDITABLE(entry), position);
 }
 
 static gboolean on_mnemonic_activate(GtkBox * box, gboolean cycle, struct gebr_gui_parameter_widget *widget)
