@@ -130,18 +130,14 @@ gebr_expr_is_name_valid (const gchar *name)
 	if (!g_ascii_isalpha (name[i]) || !g_ascii_islower(name[i]))
 		return FALSE;
 
-	i++;
-	while (name[i])
+	while (name[++i])
 	{
-		if (g_ascii_isdigit (name[i]) || *name == '_')
+		if (g_ascii_isdigit (name[i]) || name[i] == '_')
 			continue;
 
 		if (!g_ascii_isalpha (name[i]) || !g_ascii_islower(name[i]))
 			return FALSE;
-
-		i++;
 	}
-
 	return !is_reserved_word (name);
 }
 

@@ -83,6 +83,22 @@ void test_gebr_expr_extract_vars(void)
 	g_list_free (vars);
 }
 
+void test_gebr_is_name_valid(void)
+{
+	g_assert(gebr_expr_is_name_valid("var"));
+	g_assert(gebr_expr_is_name_valid("var1"));
+	g_assert(gebr_expr_is_name_valid("var1_"));
+
+	g_assert(!gebr_expr_is_name_valid("VAR"));
+	g_assert(!gebr_expr_is_name_valid("_var1"));
+	g_assert(!gebr_expr_is_name_valid("1var"));
+	g_assert(!gebr_expr_is_name_valid("vAr1"));
+	g_assert(!gebr_expr_is_name_valid("var1,2"));
+
+	g_assert(!gebr_expr_is_name_valid("iter"));
+	g_assert(!gebr_expr_is_name_valid("scale"));
+}
+
 int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
@@ -92,6 +108,7 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/expr/multi_expression", test_gebr_expr_mult_expression);
 	g_test_add_func("/libgebr/expr/variables", test_gebr_expr_variables);
 	g_test_add_func("/libgebr/expr/extract_vars", test_gebr_expr_extract_vars);
+	g_test_add_func("/libgebr/expr/name_valid", test_gebr_is_name_valid);
 
 	return g_test_run();
 }
