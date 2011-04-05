@@ -432,6 +432,8 @@ GebrGeoXmlFlowError gebr_geoxml_flow_validade(GebrGeoXmlFlow * flow, gchar ** pr
  */
 gboolean gebr_geoxml_flow_has_control_program (GebrGeoXmlFlow *flow);
 
+void gebr_geoxml_flow_remove_iter_dict (GebrGeoXmlFlow *flow);
+
 G_END_DECLS
 
 #endif				//__GEBR_GEOXML_FLOW_H

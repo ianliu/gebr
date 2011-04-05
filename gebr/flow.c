@@ -27,6 +27,7 @@
 #include <libgebr/utils.h>
 #include <libgebr/gebr-tar.h>
 #include <libgebr/geoxml/geoxml.h>
+#include <libgebr/geoxml/flow.h>
 #include <libgebr/comm/gebr-comm.h>
 #include <libgebr/gui/gui.h>
 #include <libgebr/gui/gebr-gui-utils.h>
@@ -659,6 +660,7 @@ void flow_program_remove(void)
 			gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter,
 					   FSEQ_GEBR_GEOXML_POINTER, &program, -1);
 			gebr_geoxml_sequence_remove(GEBR_GEOXML_SEQUENCE(program));
+			gebr_geoxml_flow_remove_iter_dict(gebr.flow);
 			valid = gtk_list_store_remove(GTK_LIST_STORE(gebr.ui_flow_edition->fseq_store), &iter);
 		}
 
