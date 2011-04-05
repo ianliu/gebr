@@ -19,8 +19,9 @@
 #include <gdome.h>
 #include <string.h>
 #include <stdio.h>
-#include "../date.h"
+#include <glib/gi18n.h>
 
+#include "../date.h"
 #include "flow.h"
 #include "defines.h"
 #include "xml.h"
@@ -689,7 +690,7 @@ static gboolean gebr_geoxml_flow_insert_iter_dict (GebrGeoXmlFlow *flow)
 
 	dict = gebr_geoxml_document_get_dict_parameters (GEBR_GEOXML_DOCUMENT (flow));
 	seq = gebr_geoxml_parameters_get_first_parameter (dict);
-	keyword = gebr_geoxml_program_parameter_get_keyword (GEBR_GEOXML_PROGRAM_PARAMETER (param));
+	keyword = gebr_geoxml_program_parameter_get_keyword (GEBR_GEOXML_PROGRAM_PARAMETER (seq));
 
 	if (g_strcmp0 (keyword, "iter") == 0)
 		return FALSE;
