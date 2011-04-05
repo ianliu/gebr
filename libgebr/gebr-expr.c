@@ -98,8 +98,10 @@ is_reserved_word (const gchar *name)
 		// Control statements
 		"break",
 		"continue",
+		"else",
 		"for",
 		"halt",
+		"if",
 		"return",
 		"while",
 		// Pseudo statements
@@ -123,19 +125,21 @@ is_reserved_word (const gchar *name)
 gboolean
 gebr_expr_is_name_valid (const gchar *name)
 {
-	if (!g_ascii_isalpha (*name) || !g_ascii_islower(*name))
+	gsize i = 0;
+
+	if (!g_ascii_isalpha (name[i]) || !g_ascii_islower(name[i]))
 		return FALSE;
 
-	name++;
-	while (*name)
+	i++;
+	while (name[i])
 	{
-		if (g_ascii_isdigit (*name) || *name == '_')
+		if (g_ascii_isdigit (name[i]) || *name == '_')
 			continue;
 
-		if (!g_ascii_isalpha (*name) || !g_ascii_islower(*name))
+		if (!g_ascii_isalpha (name[i]) || !g_ascii_islower(name[i]))
 			return FALSE;
 
-		name++;
+		i++;
 	}
 
 	return !is_reserved_word (name);
