@@ -35,6 +35,7 @@
 #include "ui_project_line.h"
 #include "ui_paths.h"
 #include "line.h"
+#include "gebr-expr.h"
 
 enum {
 	DICT_EDIT_DOCUMENT,
@@ -47,6 +48,7 @@ enum {
 	DICT_EDIT_IS_ADD_PARAMETER,
 	DICT_EDIT_KEYWORD_EDITABLE,
 	DICT_EDIT_EDITABLE,
+	DICT_EDIT_SENSITIVE,
 	DICT_EDIT_N_COLUMN,
 };
 
@@ -140,6 +142,12 @@ void on_properties_destroy(GtkWindow * window, GebrPropertiesData * data);
 static void on_file_entry_activate (GtkEntry *entry, GebrGuiSequenceEdit *sequence_edit);
 
 static void on_groups_combo_box_changed (GtkComboBox *combo, GebrGuiValueSequenceEdit *edit);
+
+static void on_dict_value_keyword_edited(GtkTreeViewColumn *tree_column,
+					 GtkCellRenderer *cell,
+					 GtkTreeModel *tree_model,
+					 GtkTreeIter *iter,
+					 struct dict_edit_data *data);
 
 static const GtkActionEntry dict_actions_entries[] = {
 	{"add", GTK_STOCK_ADD, NULL, NULL, N_("Add new parameter."),
@@ -476,6 +484,7 @@ void document_dict_edit_setup_ui(void)
 	g_signal_connect(cell_renderer, "edited", G_CALLBACK(on_dict_edit_type_cell_edited), data);
 	gtk_tree_view_column_add_attribute(column, cell_renderer, "markup", DICT_EDIT_TYPE);
 	gtk_tree_view_column_add_attribute(column, cell_renderer, "editable", DICT_EDIT_KEYWORD_EDITABLE);
+	gtk_tree_view_column_add_attribute(column, cell_renderer, "sensitive", DICT_EDIT_SENSITIVE);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tree_view), column);
 
 	column = gtk_tree_view_column_new();
@@ -492,6 +501,8 @@ void document_dict_edit_setup_ui(void)
 	g_signal_connect(cell_renderer, "editing-started", G_CALLBACK(on_dict_edit_renderer_editing_started), data);
 	gtk_tree_view_column_add_attribute(column, cell_renderer, "text", DICT_EDIT_KEYWORD);
 	gtk_tree_view_column_add_attribute(column, cell_renderer, "editable", DICT_EDIT_EDITABLE);
+	gtk_tree_view_column_add_attribute(column, cell_renderer, "sensitive", DICT_EDIT_SENSITIVE);
+	gtk_tree_view_column_set_cell_data_func(column, cell_renderer, (GtkTreeCellDataFunc)on_dict_value_keyword_edited, data, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tree_view), column);
 
 	cell_renderer = gtk_cell_renderer_text_new();
@@ -502,6 +513,7 @@ void document_dict_edit_setup_ui(void)
 	column = gtk_tree_view_column_new_with_attributes(_("Value"), cell_renderer, NULL);
 	gtk_tree_view_column_add_attribute(column, cell_renderer, "text", DICT_EDIT_VALUE);
 	gtk_tree_view_column_add_attribute(column, cell_renderer, "editable", DICT_EDIT_EDITABLE);
+	gtk_tree_view_column_add_attribute(column, cell_renderer, "sensitive", DICT_EDIT_SENSITIVE);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tree_view), column);
 
 	cell_renderer = gtk_cell_renderer_text_new();
@@ -512,6 +524,7 @@ void document_dict_edit_setup_ui(void)
 	column = gtk_tree_view_column_new_with_attributes(_("Comment"), cell_renderer, NULL);
 	gtk_tree_view_column_add_attribute(column, cell_renderer, "text", DICT_EDIT_COMMENT);
 	gtk_tree_view_column_add_attribute(column, cell_renderer, "editable", DICT_EDIT_EDITABLE);
+	gtk_tree_view_column_add_attribute(column, cell_renderer, "sensitive", DICT_EDIT_SENSITIVE);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tree_view), column);
 
 	/*
@@ -539,7 +552,7 @@ void document_dict_edit_setup_ui(void)
 		gtk_tree_store_set(GTK_TREE_STORE(data->tree_model), &document_iter,
 				   DICT_EDIT_DOCUMENT, document_name->str,
 				   DICT_EDIT_GEBR_GEOXML_POINTER, data->documents[i],
-				   DICT_EDIT_KEYWORD_EDITABLE, FALSE, DICT_EDIT_EDITABLE, FALSE, -1);
+				   DICT_EDIT_KEYWORD_EDITABLE, FALSE, DICT_EDIT_EDITABLE, FALSE, DICT_EDIT_SENSITIVE, FALSE, -1);
 		g_string_free(document_name, TRUE);
 
 		parameter =
@@ -632,14 +645,20 @@ static void on_dict_edit_remove_clicked(GtkButton * button, struct dict_edit_dat
 {
 	GtkTreeIter iter;
 	GebrGeoXmlSequence *parameter;
+	gboolean is_editable = FALSE;
 
 	if (!dict_edit_get_selected(data, &iter))
 		return;
 
-	gtk_tree_model_get(data->tree_model, &iter, DICT_EDIT_GEBR_GEOXML_POINTER, &parameter, -1);
+	gtk_tree_model_get(data->tree_model, &iter,
+			   DICT_EDIT_GEBR_GEOXML_POINTER, &parameter,
+			   DICT_EDIT_EDITABLE, &is_editable,
+			   -1);
 
-	gebr_geoxml_sequence_remove(parameter);
-	gtk_tree_store_remove(GTK_TREE_STORE(data->tree_model), &iter);
+	if (is_editable){
+		gebr_geoxml_sequence_remove(parameter);
+		gtk_tree_store_remove(GTK_TREE_STORE(data->tree_model), &iter);
+	}
 }
 
 static gboolean on_renderer_entry_key_press_event(GtkWidget * widget, GdkEventKey * event, struct dict_edit_data *data)
@@ -857,7 +876,7 @@ static void dict_edit_load_iter(struct dict_edit_data *data, GtkTreeIter * iter,
 									 FALSE), DICT_EDIT_COMMENT,
 			   gebr_geoxml_parameter_get_label(GEBR_GEOXML_PARAMETER(parameter)),
 			   DICT_EDIT_GEBR_GEOXML_POINTER, parameter, DICT_EDIT_IS_ADD_PARAMETER, FALSE,
-			   DICT_EDIT_KEYWORD_EDITABLE, TRUE, DICT_EDIT_EDITABLE, TRUE, -1);
+			   DICT_EDIT_KEYWORD_EDITABLE, TRUE, DICT_EDIT_EDITABLE, TRUE, DICT_EDIT_SENSITIVE, TRUE, -1);
 }
 
 /*
@@ -952,7 +971,7 @@ static void dict_edit_append_add_parameter(struct dict_edit_data *data, GtkTreeI
 	gtk_tree_store_set(GTK_TREE_STORE(data->tree_model), &iter,
 			   DICT_EDIT_TYPE, _("<i>New</i>"),
 			   DICT_EDIT_IS_ADD_PARAMETER, TRUE,
-			   DICT_EDIT_KEYWORD_EDITABLE, TRUE, DICT_EDIT_EDITABLE, FALSE, -1);
+			   DICT_EDIT_KEYWORD_EDITABLE, TRUE, DICT_EDIT_EDITABLE, FALSE, DICT_EDIT_SENSITIVE, TRUE, -1);
 }
 
 /*
@@ -1184,3 +1203,19 @@ static void on_groups_combo_box_changed (GtkComboBox *combo, GebrGuiValueSequenc
 	g_free (group);
 	gtk_tree_path_free (path);
 }
+
+static void on_dict_value_keyword_edited(GtkTreeViewColumn *tree_column,
+					 GtkCellRenderer *cell,
+					 GtkTreeModel *tree_model,
+					 GtkTreeIter *iter,
+					 struct dict_edit_data *data)
+{
+	gchar * keyword;
+	gtk_tree_model_get(data->tree_model, iter, DICT_EDIT_KEYWORD, &keyword, -1);
+
+	if (g_strcmp0(keyword, "iter") == 0)
+		gtk_tree_store_set(GTK_TREE_STORE(data->tree_model), iter, DICT_EDIT_EDITABLE, FALSE, DICT_EDIT_SENSITIVE, FALSE, -1);
+
+	g_free(keyword);
+}
+
