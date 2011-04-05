@@ -50,6 +50,8 @@ struct gebr_geoxml_revision {
 	GdomeElement *element;
 };
 
+static gboolean gebr_geoxml_flow_insert_iter_dict (GebrGeoXmlFlow *flow);
+
 /*
  * library functions.
  */
@@ -84,9 +86,20 @@ void gebr_geoxml_flow_add_flow(GebrGeoXmlFlow * flow, GebrGeoXmlFlow * flow2)
 	GdomeNodeList *flow2_node_list;
 	GdomeDOMString *string;
 	gulong i, n;
+	gboolean has_control1, has_control2;
 
 	g_return_if_fail (flow != NULL);
 	g_return_if_fail (flow2 != NULL);
+
+	has_control1 = gebr_geoxml_flow_has_control_program (flow);
+	has_control2 = gebr_geoxml_flow_has_control_program (flow2);
+
+	// We are adding a control menu into flow.
+	// Append the `iter' dictionary keyword.
+	if (!has_control1 && has_control2)
+	{
+		gebr_geoxml_flow_insert_iter_dict (flow);
+	}
 
 	/* import each program from flow2 */
 	string = gdome_str_mkref("program");
@@ -644,7 +657,7 @@ gboolean gebr_geoxml_flow_has_control_program (GebrGeoXmlFlow *flow)
 	GebrGeoXmlProgramControl cont;
 
 	gebr_geoxml_flow_get_program (flow, &seq, 0);
-	while (seq){
+	while (seq) {
 		prog = GEBR_GEOXML_PROGRAM (seq);
 		cont = gebr_geoxml_program_get_control (prog);
 		if (cont != GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY
@@ -653,4 +666,37 @@ gboolean gebr_geoxml_flow_has_control_program (GebrGeoXmlFlow *flow)
 		gebr_geoxml_sequence_next (&seq);
 	}
 	return FALSE;
+}
+
+/*
+ * gebr_geoxml_flow_insert_iter_dict:
+ * @flow: a #GebrGeoXmlFlow
+ *
+ * Inserts the `iter' keyword into @flow's dictionary if its not
+ * defined there already and @doc have a control program.
+ *
+ * Returns: %TRUE if `iter' dictionary was inserted, %FALSE otherwise.
+ */
+static gboolean gebr_geoxml_flow_insert_iter_dict (GebrGeoXmlFlow *flow)
+{
+	GebrGeoXmlSequence *seq;
+	GebrGeoXmlParameter *param;
+	GebrGeoXmlParameters *dict;
+	const gchar *keyword;
+
+	if (!gebr_geoxml_flow_has_control_program (flow))
+		return FALSE;
+
+	dict = gebr_geoxml_document_get_dict_parameters (GEBR_GEOXML_DOCUMENT (flow));
+	seq = gebr_geoxml_parameters_get_first_parameter (dict);
+	keyword = gebr_geoxml_program_parameter_get_keyword (GEBR_GEOXML_PROGRAM_PARAMETER (param));
+
+	if (g_strcmp0 (keyword, "iter") == 0)
+		return FALSE;
+
+	param = gebr_geoxml_parameters_append_parameter (dict, GEBR_GEOXML_PARAMETER_TYPE_INT);
+	gebr_geoxml_program_parameter_set_keyword (GEBR_GEOXML_PROGRAM_PARAMETER (param), "iter");
+	gebr_geoxml_parameter_set_label (param, _("Loop iterator"));
+
+	return TRUE;
 }
