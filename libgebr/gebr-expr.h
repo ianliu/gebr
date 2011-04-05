@@ -88,6 +88,14 @@ void gebr_expr_free (GebrExpr *self);
  */
 GList *gebr_expr_extract_vars (const gchar *expression);
 
+/**
+ * gebr_expr_is_name_valid:
+ * @name: a variable name
+ *
+ * Returns: %TRUE if @name is valid
+ */
+gboolean gebr_expr_is_name_valid (const gchar *name);
+
 G_END_DECLS
 
 #endif /* __GEBR_EXPR_H__ */

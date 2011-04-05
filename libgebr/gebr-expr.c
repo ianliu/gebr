@@ -79,31 +79,39 @@ GQuark gebr_expr_error_quark (void)
 }
 
 
-gboolean is_reserved_word (const gchar *name)
+static gboolean
+is_reserved_word (const gchar *name)
 {
 	gint i = 0;
 	const gchar *reserved_words[] = {
-	"ibase", // Reserved variables
-	"last",
-	"obase",
-	"scale",
-	"length", // Reserved function
-	"read", 
-	"sqrt", 
-	"break", // Control statements
-	"continue",
-	"for",
-	"halt",
-	"return",
-	"while",
-	"auto", // Pseudo statements
-	"define",
-	"limits",
-	"print",
-	"quit",
-	"void",
-	"warranty",
-	NULL};
+		// Gebr reserved variables
+		"iter",
+		// Reserved variables
+		"ibase",
+		"last",
+		"obase",
+		"scale",
+		// Reserved function
+		"length",
+		"read", 
+		"sqrt", 
+		// Control statements
+		"break",
+		"continue",
+		"for",
+		"halt",
+		"return",
+		"while",
+		// Pseudo statements
+		"auto",
+		"define",
+		"limits",
+		"print",
+		"quit",
+		"void",
+		"warranty",
+		NULL
+	};
 
 	while (reserved_words[i])
 		if (g_strcmp0(name, reserved_words[i++]) == 0)
@@ -112,8 +120,8 @@ gboolean is_reserved_word (const gchar *name)
 	return FALSE;
 }
 
-static gboolean
-is_name_valid (const gchar *name)
+gboolean
+gebr_expr_is_name_valid (const gchar *name)
 {
 	if (!g_ascii_isalpha (*name) || !g_ascii_islower(*name))
 		return FALSE;
@@ -233,7 +241,7 @@ gebr_expr_set_var (GebrExpr *self,
 	VarName *var;
 	gdouble result;
 
-	if (!is_name_valid (name)) {
+	if (!gebr_expr_is_name_valid (name)) {
 		g_set_error (err, gebr_expr_error_quark (),
 			     GEBR_EXPR_ERROR_INVALID_NAME,
 			     "Invalid variable name");
