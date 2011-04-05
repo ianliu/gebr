@@ -488,6 +488,9 @@ static void __set_toggle_icon(struct gebr_gui_parameter_widget *parameter_widget
 	gboolean has_focus = FALSE;
 	g_object_get(parameter_widget->value_widget, "has-focus", &has_focus, NULL);
 
+	if (gebr_geoxml_program_get_control(gebr_geoxml_parameter_get_program(parameter_widget->parameter)) != GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY)
+		return;
+
 	if (is_expression)
 	{
 	value = gebr_gui_parameter_widget_get_value(parameter_widget);
@@ -1137,6 +1140,9 @@ static void gebr_gui_parameter_widget_value_entry_on_populate_popup(GtkEntry * e
  */
 static gboolean gebr_gui_parameter_widget_can_use_dict(struct gebr_gui_parameter_widget *widget)
 {
+	if (gebr_geoxml_program_get_control(gebr_geoxml_parameter_get_program(widget->parameter)) != GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY)
+		return FALSE;
+
 	switch (widget->parameter_type) {
 	case GEBR_GEOXML_PARAMETER_TYPE_FLOAT:
 	case GEBR_GEOXML_PARAMETER_TYPE_INT:
