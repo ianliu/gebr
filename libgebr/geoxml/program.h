@@ -284,5 +284,10 @@ GebrGeoXmlProgramControl gebr_geoxml_program_get_control(GebrGeoXmlProgram * pro
  */
 guint gebr_geoxml_program_control_get_n (GebrGeoXmlProgram *prog, gchar **step, gchar **ini);
 
+/**
+ */
+gboolean gebr_geoxml_program_is_var_used (GebrGeoXmlProgram *self,
+					  const gchar *var_name);
+
 G_END_DECLS
 #endif				//__GEBR_GEOXML_PROGRAM_H

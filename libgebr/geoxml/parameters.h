@@ -179,5 +179,8 @@ GebrGeoXmlParameterGroup *gebr_geoxml_parameters_get_group(GebrGeoXmlParameters 
  */
 void gebr_geoxml_parameters_reset(GebrGeoXmlParameters * parameters, gboolean recursive);
 
+gboolean gebr_geoxml_parameters_is_var_used (GebrGeoXmlParameters *self,
+					     const gchar *var_name);
+
 G_END_DECLS
 #endif				//__GEBR_GEOXML_PARAMETERS_H

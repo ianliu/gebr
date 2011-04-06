@@ -354,3 +354,11 @@ guint gebr_geoxml_program_control_get_n (GebrGeoXmlProgram *prog, gchar **step, 
 	}
 	return atoi(niter);
 }
+
+gboolean gebr_geoxml_program_is_var_used (GebrGeoXmlProgram *self,
+					  const gchar *var_name)
+{
+	GebrGeoXmlParameters *params;
+	params = gebr_geoxml_program_get_parameters (self);
+	return gebr_geoxml_parameters_is_var_used (params, var_name);
+}

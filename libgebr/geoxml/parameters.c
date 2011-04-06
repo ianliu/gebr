@@ -267,3 +267,33 @@ void gebr_geoxml_parameters_reset(GebrGeoXmlParameters * parameters, gboolean re
 	for (; parameter != NULL; gebr_geoxml_sequence_next(&parameter))
 		gebr_geoxml_parameter_reset(GEBR_GEOXML_PARAMETER(parameter), recursive);
 }
+
+gboolean gebr_geoxml_parameters_is_var_used (GebrGeoXmlParameters *self,
+					     const gchar *var_name)
+{
+	GebrGeoXmlSequence *seq;
+	GebrGeoXmlParameter *p;
+
+	gebr_geoxml_parameters_get_parameter (self, &seq, 0);
+
+	while (seq) {
+		p = GEBR_GEOXML_PARAMETER (seq);
+		if (gebr_geoxml_parameter_get_is_program_parameter (p))
+			return gebr_geoxml_program_parameter_is_var_used (GEBR_GEOXML_PROGRAM_PARAMETER (seq), var_name);
+		else {
+			GebrGeoXmlSequence *params;
+
+			gebr_geoxml_parameter_group_get_instance (GEBR_GEOXML_PARAMETER_GROUP (seq),
+								  &params, 0);
+			while (params) {
+				if (gebr_geoxml_parameters_is_var_used (GEBR_GEOXML_PARAMETERS (params), var_name))
+					return TRUE;
+				gebr_geoxml_sequence_next (&params);
+			}
+		}
+
+		gebr_geoxml_sequence_next (&seq);
+	}
+
+	return FALSE;
+}
