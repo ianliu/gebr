@@ -806,6 +806,16 @@ static void flow_edition_menu_show_help(void)
 out:	g_free(menu_filename);
 }
 
+static void on_output_append_toggled (GtkCheckMenuItem *item)
+{
+	gebr_geoxml_flow_io_set_output_append (gebr.flow, !gtk_check_menu_item_get_active(item));
+}
+
+static void on_error_append_toggled (GtkCheckMenuItem *item)
+{
+	gebr_geoxml_flow_io_set_error_append (gebr.flow, !gtk_check_menu_item_get_active(item));
+}
+
 /**
  * \internal
  * Show popup menu for flow component.
@@ -825,12 +835,37 @@ static GtkMenu *flow_edition_component_popup_menu(GtkWidget * widget, struct ui_
 	if (!flow_edition_get_selected_component(&iter, FALSE))
 		return NULL;
 
+	if (gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter))
+	       return NULL;
+
 	menu = gtk_menu_new();
 
-	if (gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter) ||
-	    gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter) ||
-	    gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->error_iter)) 
-		return NULL;
+	gboolean is_file = FALSE;
+	gboolean is_append;
+	const gchar *label;
+	GCallback append_cb;
+
+	if (gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter)) {
+		is_file = TRUE;
+		label = _("Overwrite existing output file");
+		is_append = gebr_geoxml_flow_io_get_output_append (gebr.flow);
+		append_cb = G_CALLBACK (on_output_append_toggled);
+	} else
+	if (gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->error_iter)) {
+		is_file = TRUE;
+		label = _("Overwrite existing error file");
+		is_append = gebr_geoxml_flow_io_get_error_append (gebr.flow);
+		append_cb = G_CALLBACK (on_error_append_toggled);
+	}
+
+	if (is_file) {
+		menu_item = gtk_check_menu_item_new_with_label (label);
+		g_signal_connect (menu_item, "toggled", append_cb, NULL);
+		gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (menu_item), !is_append);
+		gtk_menu_shell_append (GTK_MENU_SHELL (menu), menu_item);
+		gtk_widget_show(menu_item);
+		return GTK_MENU (menu);
+	}
 
 	gtk_tree_model_get (GTK_TREE_MODEL (gebr.ui_flow_edition->fseq_store), &iter,
 			    FSEQ_GEBR_GEOXML_POINTER, &program,
