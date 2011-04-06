@@ -16,8 +16,8 @@
  */
 
 #include <string.h>
-
 #include <gdome.h>
+#include <gebr-expr.h>
 
 #include "program-parameter.h"
 #include "types.h"
@@ -733,4 +733,39 @@ glong gebr_geoxml_program_parameter_get_enum_options_number(GebrGeoXmlProgramPar
 
 	type_element = __gebr_geoxml_parameter_get_type_element(parameter);
 	return __gebr_geoxml_get_elements_number(type_element, "options");
+}
+
+gboolean gebr_geoxml_program_parameter_is_var_used (GebrGeoXmlProgramParameter *self,
+						    const gchar *var_name)
+{
+	GebrGeoXmlSequence *seq;
+	GebrGeoXmlValueSequence *value;
+	const gchar *expr;
+	gboolean retval = FALSE;
+	GList *vars;
+
+	gebr_geoxml_program_parameter_get_value (self, FALSE, &seq, 0);
+	while (seq) {
+		value = GEBR_GEOXML_VALUE_SEQUENCE (seq);
+		expr = gebr_geoxml_value_sequence_get_expression (value);
+		vars = gebr_expr_extract_vars (expr);
+
+		for (GList *i = vars; i; i = i->next) {
+			gchar *name = i->data;
+			if (g_strcmp0(name, var_name) == 0) {
+				retval = TRUE;
+				break;
+			}
+		}
+
+		g_list_foreach (vars, (GFunc) g_free, NULL);
+		g_list_free (vars);
+
+		if (retval)
+			break;
+
+		gebr_geoxml_sequence_next (&seq);
+	}
+
+	return retval;
 }

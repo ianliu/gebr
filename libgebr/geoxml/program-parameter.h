@@ -484,5 +484,11 @@ gebr_geoxml_program_parameter_get_enum_option(GebrGeoXmlProgramParameter * progr
  */
 glong gebr_geoxml_program_parameter_get_enum_options_number(GebrGeoXmlProgramParameter * program_parameter);
 
+/**
+ * gebr_geoxml_program_parameter_is_var_used:
+ */
+gboolean gebr_geoxml_program_parameter_is_var_used (GebrGeoXmlProgramParameter *self,
+						    const gchar *var_name);
+
 G_END_DECLS
 #endif				//__GEBR_GEOXML_PROGRAM_PARAMETER_H
