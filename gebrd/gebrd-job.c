@@ -881,6 +881,9 @@ static gchar *replace_quotes(gchar *str)
 	return str;
 }
 
+/*
+ * assemble_bc_cmd_line:
+ */
 static gchar *assemble_bc_cmd_line (GebrdJob *job,
 				    const gchar *ini,
 				    const gchar *step,
@@ -893,11 +896,18 @@ static gchar *assemble_bc_cmd_line (GebrdJob *job,
 	GebrGeoXmlParameters *params;
 	GebrGeoXmlProgramParameter *prog_param;
 
+	// If there are no expressions, don't bother creating the command line!
+	if (*expr == '\0')
+		return g_strdup("");
+
 	buf = g_string_new (NULL);
 
-	// Initiate `i' variable
-	g_string_append_printf (buf, "\tV=($(echo \"iter=%s+%s*$iter\"'\n",
-				ini, step);
+	// Initiate `iter' variable if we have ini and step
+	if (ini && step)
+		g_string_append_printf (buf, "\tV=($(echo \"iter=%s+%s*$iter\"'\n",
+					ini, step);
+	else
+		g_string_append (buf, "\tV=($(echo '\n");
 
 	// Insert variables definitions
 	params = gebr_geoxml_document_get_dict_parameters (GEBR_GEOXML_DOCUMENT (job->flow));
@@ -916,7 +926,7 @@ static gchar *assemble_bc_cmd_line (GebrdJob *job,
 
 	// Pipe into bc
 	g_string_append(buf, expr);
-	g_string_append(buf, "\t' | bc -l ))");
+	g_string_append(buf, "\t' | bc -l ))\n");
 
 	return g_string_free (buf, FALSE);
 }
@@ -932,7 +942,7 @@ static void job_assembly_cmdline(GebrdJob *job)
 	gboolean has_control = FALSE;
 	guint counter = 0;
 	gchar *step, *ini;
-	GString *expr_buf = g_string_new(NULL);
+	GString *expr_buf = g_string_new("");
 
 	job->expr_count = 0;
 
@@ -1128,23 +1138,32 @@ static void job_assembly_cmdline(GebrdJob *job)
 		}
 	}
 
+	gchar *bc_cmd;
+
 	if (has_control) {
 		GString * prefix = g_string_new(NULL);
 
-		g_string_printf(prefix, "for (( iter=1; iter<=%d; iter++ ))\ndo\n%s\n\t",
-				counter, assemble_bc_cmd_line (job, ini, step, expr_buf->str));
+		bc_cmd = assemble_bc_cmd_line (job, ini, step, expr_buf->str);
+		g_string_printf(prefix, "for (( iter=1; iter<=%d; iter++ ))\ndo\n%s\t",
+				counter, bc_cmd);
 
 		g_string_prepend(job->parent.cmd_line, prefix->str);
 		g_string_append(job->parent.cmd_line, "\ndone");
 
 		g_string_free(prefix, TRUE);
-		g_string_free(expr_buf, TRUE);
+	} else {
+		bc_cmd = assemble_bc_cmd_line (job, NULL, NULL, expr_buf->str);
+		g_string_prepend(job->parent.cmd_line, bc_cmd);
 	}
 
+	g_debug("cmdline: %s", job->parent.cmd_line->str);
+	g_free(bc_cmd);
+
 	job->critical_error = FALSE;
+	g_string_free(expr_buf, TRUE);
 	return;
 err:	
+	g_string_free(expr_buf, TRUE);
 	g_string_assign(job->parent.cmd_line, "");
 	job->critical_error = TRUE;
 }
-
