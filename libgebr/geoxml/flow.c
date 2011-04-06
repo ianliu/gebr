@@ -723,7 +723,6 @@ void gebr_geoxml_flow_io_set_output_append(GebrGeoXmlFlow *flow, gboolean settin
 	GdomeElement *root;
 	GdomeElement *io;
 	GdomeElement *output;
-	const gchar *setting;
 
 	g_return_if_fail (flow != NULL);
 
@@ -757,7 +756,6 @@ void gebr_geoxml_flow_io_set_error_append(GebrGeoXmlFlow *flow, gboolean setting
 	GdomeElement *root;
 	GdomeElement *io;
 	GdomeElement *error;
-	const gchar *setting;
 
 	g_return_if_fail (flow != NULL);
 
