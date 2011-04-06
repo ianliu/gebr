@@ -1151,7 +1151,7 @@ static void job_assembly_cmdline(GebrdJob *job)
 			job_issue(job, _("Proceeding without output file.\n"));
 		else {
 			gchar * quoted = g_shell_quote(gebr_geoxml_flow_io_get_output(job->flow));
-			g_string_append_printf(job->parent.cmd_line, ">%s", quoted);
+			g_string_append_printf(job->parent.cmd_line, gebr_geoxml_flow_io_get_output_append(job->flow) ? ">>%s" : ">%s", quoted);
 			g_free(quoted);
 		}
 	}
@@ -1172,6 +1172,13 @@ static void job_assembly_cmdline(GebrdJob *job)
 	} else {
 		bc_cmd = assemble_bc_cmd_line (job, NULL, NULL, expr_buf->str);
 		g_string_prepend(job->parent.cmd_line, bc_cmd);
+	}
+
+	if (has_error_output_file && !gebr_geoxml_flow_io_get_error_append(job->flow)) {
+		GString * prefix = g_string_new(NULL);
+		g_string_printf(prefix, "rm '%s'\n", gebr_geoxml_flow_io_get_error(job->flow));
+		g_string_prepend(job->parent.cmd_line, prefix->str);
+		g_string_free(prefix, TRUE);
 	}
 
 	g_free(bc_cmd);
