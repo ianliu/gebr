@@ -910,7 +910,7 @@ static gchar *assemble_bc_cmd_line (GebrdJob *job,
 
 	// Initiate `iter' variable if we have ini and step
 	if (ini && step)
-		g_string_append_printf (buf, "\tV=($(echo \"iter=%s+%s*$iter\"'\n",
+		g_string_append_printf (buf, "\tV=($(echo \"iter=%s+%s*$counter\"'\n",
 					ini, step);
 	else
 		g_string_append (buf, "\tV=($(echo '\n");
@@ -1162,7 +1162,7 @@ static void job_assembly_cmdline(GebrdJob *job)
 		GString * prefix = g_string_new(NULL);
 
 		bc_cmd = assemble_bc_cmd_line (job, ini, step, expr_buf->str);
-		g_string_printf(prefix, "for (( iter=1; iter<=%d; iter++ ))\ndo\n%s\t",
+		g_string_printf(prefix, "for (( counter=0; counter<%d; counter++ ))\ndo\n%s\t",
 				counter, bc_cmd);
 
 		g_string_prepend(job->parent.cmd_line, prefix->str);
