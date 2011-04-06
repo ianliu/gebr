@@ -99,6 +99,21 @@ void test_gebr_is_name_valid(void)
 	g_assert(!gebr_expr_is_name_valid("scale"));
 }
 
+void test_gebr_expr_side_effect(void){
+	gdouble result = 666;
+	GebrExpr *expr = gebr_expr_new(NULL);
+	GError * error = NULL;
+
+	g_assert (gebr_expr_eval(expr, "j=1;j", &result, &error) == FALSE);
+	g_assert_cmpint(error->code, ==, GEBR_EXPR_ERROR_INVALID_ASSIGNMENT);
+	g_assert_cmpfloat (result, ==, 666);
+
+	g_clear_error(&error);
+	g_assert (gebr_expr_eval(expr, "j=1", &result, &error) == FALSE);
+	g_assert_cmpint(error->code, ==, GEBR_EXPR_ERROR_INVALID_ASSIGNMENT);
+	g_assert_cmpfloat (result, ==, 666);
+}
+
 int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
@@ -109,6 +124,7 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/expr/variables", test_gebr_expr_variables);
 	g_test_add_func("/libgebr/expr/extract_vars", test_gebr_expr_extract_vars);
 	g_test_add_func("/libgebr/expr/name_valid", test_gebr_is_name_valid);
+	g_test_add_func("/libgebr/expr/side_effect", test_gebr_expr_side_effect);
 
 	return g_test_run();
 }

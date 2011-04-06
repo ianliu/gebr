@@ -22,6 +22,8 @@
 
 #define EVAL_COOKIE "GEBR-EVAL-COOKIE\n"
 
+static gboolean gebr_expr_eval_internal (GebrExpr *self, const gchar *expr, gdouble *result, GError **err);
+
 /*
  * configure_channel:
  * @self:
@@ -178,15 +180,6 @@ var_name_free (gpointer data)
 	g_free (var);
 }
 
-/*
- * Returns the name defined in 'bc'.
- */
-static const gchar *
-var_name_get_real_name (VarName *var)
-{
-	return var->rname;
-}
-
 GebrExpr *
 gebr_expr_new (GError **err)
 {
@@ -256,7 +249,7 @@ gebr_expr_set_var (GebrExpr *self,
 	//rname = var_name_get_real_name (var);
 	line = g_strdup_printf ("%s=%s ; 0", name, value);
 
-	if (!gebr_expr_eval (self, line, &result, err))
+	if (!gebr_expr_eval_internal (self, line, &result, err))
 		return FALSE;
 
 	if (result != 0)
@@ -267,6 +260,22 @@ gebr_expr_set_var (GebrExpr *self,
 
 gboolean
 gebr_expr_eval (GebrExpr *self,
+		const gchar *expr,
+		gdouble *result,
+		GError **err)
+{
+
+	if(strchr(expr, '=')){
+			g_set_error (err, gebr_expr_error_quark (),
+									     GEBR_EXPR_ERROR_INVALID_ASSIGNMENT,
+									     "Expression should not have an assignment ('=')");
+								return FALSE;
+		}
+	return gebr_expr_eval_internal(self, expr, result, err);
+}
+
+static gboolean
+gebr_expr_eval_internal (GebrExpr *self,
 		const gchar *expr,
 		gdouble *result,
 		GError **err)
