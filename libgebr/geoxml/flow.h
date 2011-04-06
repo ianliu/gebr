@@ -434,6 +434,18 @@ gboolean gebr_geoxml_flow_has_control_program (GebrGeoXmlFlow *flow);
 
 void gebr_geoxml_flow_remove_iter_dict (GebrGeoXmlFlow *flow);
 
+/**
+ * gebr_geoxml_flow_get_control_program:
+ * @flow:
+ *
+ * If this flow has a program marked as a control, this function returns %GebrGeoxmlProgram. Otherwise returns %NULL.
+ * The purpose of this function is to allow only one control for each flow. It is not possible to set a
+ * program to be a control, only if you directly edit the XML file of a flow.
+ *
+ * Returns: %GebrGeoxmlProgram if @flow has a program which is a control, %NULL otherwise.
+ */
+GebrGeoXmlProgram *gebr_geoxml_flow_get_control_program (GebrGeoXmlFlow *flow);
+
 G_END_DECLS
 
 #endif				//__GEBR_GEOXML_FLOW_H
