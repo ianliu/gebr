@@ -319,6 +319,15 @@ void test_gebr_geoxml_flow_get_category(void){
 	returned = gebr_geoxml_flow_get_category(flow, &category, 1);
 	g_assert_cmpint(returned, ==, GEBR_GEOXML_RETV_SUCCESS);
 
+	// Check if at failure (when flow is NULL), category will be set as NULL
+	returned = gebr_geoxml_flow_get_category(NULL, &category, 0);
+	g_assert_cmpint(returned, ==, GEBR_GEOXML_RETV_NULL_PTR);
+	g_assert(category == NULL);
+
+	// Check if at failure (when an invalid index is passed), category will be set as NULL
+	category = (GebrGeoXmlSequence*) gebr_geoxml_flow_append_category(flow,"zxcvb");
+	returned = gebr_geoxml_flow_get_category(flow, &category, 24957);
+	g_assert_cmpint(returned, ==, GEBR_GEOXML_RETV_INVALID_INDEX);
 }
 
 void test_gebr_geoxml_flow_append_revision(void){
@@ -402,6 +411,43 @@ void test_gebr_geoxml_flow_get_and_set_revision_data(void){
 
 }
 
+void test_gebr_geoxml_flow_get_revision(void){
+
+	GebrGeoXmlFlow *flow = NULL;
+	GebrGeoXmlSequence *revision = NULL;
+	int returned;
+
+	returned = gebr_geoxml_flow_get_revision(flow, &revision, 0);
+	g_assert_cmpint(returned, ==, GEBR_GEOXML_RETV_NULL_PTR);
+
+	flow = gebr_geoxml_flow_new();
+	returned = gebr_geoxml_flow_get_revision(flow, &revision, 0);
+	g_assert_cmpint(returned, ==, GEBR_GEOXML_RETV_INVALID_INDEX);
+
+	revision = (GebrGeoXmlSequence*) gebr_geoxml_flow_append_revision(flow,"commented");
+	returned = gebr_geoxml_flow_get_revision(flow, &revision, 0);
+	g_assert_cmpint(returned, ==, GEBR_GEOXML_RETV_SUCCESS);
+
+	revision = (GebrGeoXmlSequence*) gebr_geoxml_flow_append_revision(flow,"brbr");
+	returned = gebr_geoxml_flow_get_revision(flow, &revision, 1);
+	g_assert_cmpint(returned, ==, GEBR_GEOXML_RETV_SUCCESS);
+
+	// Checking if the last procedure didn't messed with first revision
+	returned = gebr_geoxml_flow_get_revision(flow, &revision, 0);
+	g_assert_cmpint(returned, ==, GEBR_GEOXML_RETV_SUCCESS);
+
+	// Check if at failure (when flow is NULL), revision will be set as NULL
+	returned = gebr_geoxml_flow_get_revision(NULL, &revision, 0);
+	g_assert_cmpint(returned, ==, GEBR_GEOXML_RETV_NULL_PTR);
+	g_assert(revision == NULL);
+
+	// Check if at failure (when an invalid index is passed), revision will be set as NULL
+	revision = (GebrGeoXmlSequence*) gebr_geoxml_flow_append_revision(flow,"1234pnbmns");
+	returned = gebr_geoxml_flow_get_revision(flow, &revision, 2654);
+	g_assert_cmpint(returned, ==, GEBR_GEOXML_RETV_INVALID_INDEX);
+	g_assert(revision == NULL);
+}
+
 int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
@@ -419,7 +465,8 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/geoxml/flow/get_category", test_gebr_geoxml_flow_get_category);
 	g_test_add_func("/libgebr/geoxml/flow/append_revision", test_gebr_geoxml_flow_append_revision);
 	g_test_add_func("/libgebr/geoxml/flow/change_to_revision", test_gebr_geoxml_flow_change_to_revision);
-	g_test_add_func("/libgebr/geoxml/flow/set_revision_data", test_gebr_geoxml_flow_get_and_set_revision_data);
+	g_test_add_func("/libgebr/geoxml/flow/get_and_set_revision_data", test_gebr_geoxml_flow_get_and_set_revision_data);
+	g_test_add_func("/libgebr/geoxml/flow/get_revision", test_gebr_geoxml_flow_get_revision);
 
 	return g_test_run();
 }

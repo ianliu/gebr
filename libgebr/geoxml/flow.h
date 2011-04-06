@@ -292,7 +292,8 @@ GebrGeoXmlProgram *gebr_geoxml_flow_append_program(GebrGeoXmlFlow * flow);
  * @index: the index of desired program
  *
  * Writes to @program the @index ieth category that @flow belong.
- * If an error ocurred, the content of @program is assigned to NULL.
+ * If an error occurred (either GEBR_GEOXML_RETV_INVALID_INDEX and GEBR_GEOXML_RETV_NULL_PTR)
+ * the content of @program is assigned to NULL.
  *
  * If @flow is NULL nothing is done.
  *
@@ -379,21 +380,26 @@ gboolean gebr_geoxml_flow_change_to_revision(GebrGeoXmlFlow * flow, GebrGeoXmlRe
 GebrGeoXmlRevision *gebr_geoxml_flow_append_revision(GebrGeoXmlFlow * flow, const gchar * comment);
 
 /**
- *
- * @revision shuold not be NULL.
+ * @revision should not be NULL.
  * If \p flow is NULL nothing is done.
  */
 void gebr_geoxml_flow_set_revision_data(GebrGeoXmlRevision * revision, const gchar * flow, const gchar * date, const gchar * comment);
 
 /**
- * Writes to \p revision the \p index ieth revision that \p flow has.
- * If an error ocurred, the content of \p revision is assigned to NULL.
+ * gebr_geoxml_flow_get_revision:
+ * @flow: a flow
+ * @revision: a revision
+ * @index: the index of desired program
  *
- * If \p flow is NULL nothing is done.
+ * Writes to @revision the @index ieth revision that belongs @flow.
+ * If an error occurred (either GEBR_GEOXML_RETV_INVALID_INDEX and GEBR_GEOXML_RETV_NULL_PTR)
+ * the content of @revision is assigned to NULL.
+ *
+ * If @flow is NULL nothing is done.
  *
  * Returns one of: GEBR_GEOXML_RETV_SUCCESS, GEBR_GEOXML_RETV_INVALID_INDEX, GEBR_GEOXML_RETV_NULL_PTR
  *
- * \see gebr_geoxml_sequence_move gebr_geoxml_sequence_move_up gebr_geoxml_sequence_move_down gebr_geoxml_sequence_remove
+ * See gebr_geoxml_sequence_move gebr_geoxml_sequence_move_up gebr_geoxml_sequence_move_down gebr_geoxml_sequence_remove
  */
 int gebr_geoxml_flow_get_revision(GebrGeoXmlFlow * flow, GebrGeoXmlSequence ** revision, gulong index);
 
