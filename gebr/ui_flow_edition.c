@@ -493,7 +493,7 @@ gboolean flow_edition_component_key_pressed(GtkWidget *view, GdkEventKey *key)
 
 		if ((status == GEBR_GEOXML_PROGRAM_STATUS_DISABLED) ||
 		    ((status == GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED) &&
-		     (!parameters_check_has_required_unfilled_for_iter(&iter)))) {
+		     (!validate_program_iter(&iter)))) {
 			has_disabled = TRUE;
 			break;
 		}
@@ -514,7 +514,7 @@ gboolean flow_edition_component_key_pressed(GtkWidget *view, GdkEventKey *key)
 				    FSEQ_GEBR_GEOXML_POINTER, &program,
 				    -1);
 
-		if (parameters_check_has_required_unfilled_for_iter(&iter)
+		if (validate_program_iter(&iter)
 		    && status == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED) {
 			gebr_geoxml_program_set_status (program, GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED);
 		} else {
@@ -567,7 +567,7 @@ void flow_edition_status_changed(guint status)
 
 		old_status = gebr_geoxml_program_get_status (program);
 
-		if (parameters_check_has_required_unfilled_for_iter (&iter) &&
+		if (validate_program_iter (&iter) &&
 		    status == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED)
 			status = GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED;
 
@@ -704,7 +704,7 @@ static void flow_edition_component_selected(void)
 			   FSEQ_GEBR_GEOXML_POINTER, &gebr.program, -1);
 
 	action = gtk_action_group_get_action(gebr.action_group_status, "flow_edition_status_configured");
-	gtk_action_set_sensitive(action, !parameters_check_has_required_unfilled());
+	gtk_action_set_sensitive(action, !validate_selected_program());
 
 	action = gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_help");
 	gtk_action_set_sensitive(action, strlen(gebr_geoxml_program_get_help(gebr.program)) != 0);
@@ -1054,7 +1054,7 @@ on_has_required_parameter_unfilled_tooltip(GtkTreeView * treeview,
 	else if (gebr_geoxml_program_get_status(program) != GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED)
 		return FALSE;
 	else
-		if (parameters_check_has_required_unfilled_for_iter(&iter))
+		if (validate_program_iter(&iter))
 			gtk_tooltip_set_text(tooltip, _("Required parameter unfilled"));
 		else
 			gtk_tooltip_set_text(tooltip, _("Verify parameter configuration"));

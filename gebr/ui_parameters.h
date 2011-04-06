@@ -50,13 +50,13 @@ void parameters_reset_to_default(GebrGeoXmlParameters * parameters);
  * This function checks if the selected program has a required parameter unfilled 
  * \ref parameter_required_is_unfilled
  */
-gboolean parameters_check_has_required_unfilled(void);
+gboolean validate_selected_program(void);
 
 /**
  * This function checks if the selected program has a required parameter unfilled 
  * \ref parameter_required_is_unfilled
  */
-gboolean parameters_check_has_required_unfilled_for_iter(GtkTreeIter * iter);
+gboolean validate_program_iter(GtkTreeIter * iter);
 
 G_END_DECLS
 #endif				//__PARAMETERS_H
