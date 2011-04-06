@@ -653,6 +653,11 @@ GebrGeoXmlFlowError gebr_geoxml_flow_validade(GebrGeoXmlFlow * flow, gchar ** pr
 
 gboolean gebr_geoxml_flow_has_control_program (GebrGeoXmlFlow *flow)
 {
+	return (gebr_geoxml_flow_get_control_program(flow) == NULL ? FALSE : TRUE);
+}
+
+GebrGeoXmlProgram * gebr_geoxml_flow_get_control_program (GebrGeoXmlFlow *flow)
+{
 	GebrGeoXmlSequence *seq;
 	GebrGeoXmlProgram *prog;
 	GebrGeoXmlProgramControl cont;
@@ -663,10 +668,10 @@ gboolean gebr_geoxml_flow_has_control_program (GebrGeoXmlFlow *flow)
 		cont = gebr_geoxml_program_get_control (prog);
 		if (cont != GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY
 		    && cont != GEBR_GEOXML_PROGRAM_CONTROL_UNKNOWN)
-			return TRUE;
+			return prog;
 		gebr_geoxml_sequence_next (&seq);
 	}
-	return FALSE;
+	return NULL;
 }
 
 /*
