@@ -678,8 +678,7 @@ GebrGeoXmlProgram * gebr_geoxml_flow_get_control_program (GebrGeoXmlFlow *flow)
  * gebr_geoxml_flow_insert_iter_dict:
  * @flow: a #GebrGeoXmlFlow
  *
- * Inserts the `iter' keyword into @flow's dictionary if its not
- * defined there already and @doc have a control program.
+ * Inserts the `iter' keyword into @flow's dictionary if its not defined there already.
  *
  * Returns: %TRUE if `iter' dictionary was inserted, %FALSE otherwise.
  */
@@ -710,12 +709,6 @@ void gebr_geoxml_flow_remove_iter_dict (GebrGeoXmlFlow *flow)
 	GebrGeoXmlSequence *seq;
 	GebrGeoXmlParameters *dict;
 	const gchar *keyword;
-	gboolean has_control;
-
-	has_control = gebr_geoxml_flow_has_control_program (flow);
-
-	if(has_control)
-		return;
 
 	dict = gebr_geoxml_document_get_dict_parameters (GEBR_GEOXML_DOCUMENT (flow));
 	seq = gebr_geoxml_parameters_get_first_parameter (dict);
