@@ -923,7 +923,7 @@ static gchar *assemble_bc_cmd_line (GebrdJob *job,
 		gchar *label;
 
 		valid = FALSE;
-		for (gint i = 0; i < n_types) {
+		for (gint i = 0; i < n_types; i++) {
 			if (gebr_geoxml_parameter_get_type (GEBR_GEOXML_PARAMETER (seq)) == allowed_types[i]) {
 				valid = TRUE;
 				break;
@@ -1174,7 +1174,6 @@ static void job_assembly_cmdline(GebrdJob *job)
 		g_string_prepend(job->parent.cmd_line, bc_cmd);
 	}
 
-	g_debug("cmdline: %s", job->parent.cmd_line->str);
 	g_free(bc_cmd);
 
 	job->critical_error = FALSE;
