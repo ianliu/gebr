@@ -895,6 +895,12 @@ static gchar *assemble_bc_cmd_line (GebrdJob *job,
 	GebrGeoXmlSequence *seq;
 	GebrGeoXmlParameters *params;
 	GebrGeoXmlProgramParameter *prog_param;
+	static GebrGeoXmlParameterType allowed_types[] = {
+		GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
+		GEBR_GEOXML_PARAMETER_TYPE_INT,
+	};
+	static gint n_types = G_N_ELEMENTS (allowed_types);
+	gboolean valid;
 
 	// If there are no expressions, don't bother creating the command line!
 	if (*expr == '\0')
@@ -915,6 +921,18 @@ static gchar *assemble_bc_cmd_line (GebrdJob *job,
 	for (; seq; gebr_geoxml_sequence_next (&seq))
 	{
 		gchar *label;
+
+		valid = FALSE;
+		for (gint i = 0; i < n_types) {
+			if (gebr_geoxml_parameter_get_type (GEBR_GEOXML_PARAMETER (seq)) == allowed_types[i]) {
+				valid = TRUE;
+				break;
+			}
+		}
+
+		if (!valid)
+			continue;
+
 		prog_param = GEBR_GEOXML_PROGRAM_PARAMETER (seq);
 		label = g_strdup(gebr_geoxml_parameter_get_label (GEBR_GEOXML_PARAMETER (seq)));
 		value = gebr_geoxml_program_parameter_get_first_value (prog_param, FALSE);
