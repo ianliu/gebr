@@ -17,6 +17,7 @@
  */
 
 #include <string.h>
+#include <stdlib.h>
 
 #include <gdk/gdkkeysyms.h>
 
@@ -514,6 +515,7 @@ void document_dict_edit_setup_ui(void)
 	gtk_tree_view_column_add_attribute(column, cell_renderer, "text", DICT_EDIT_VALUE);
 	gtk_tree_view_column_add_attribute(column, cell_renderer, "editable", DICT_EDIT_EDITABLE);
 	gtk_tree_view_column_add_attribute(column, cell_renderer, "sensitive", DICT_EDIT_SENSITIVE);
+	gtk_tree_view_column_set_cell_data_func(column, cell_renderer, (GtkTreeCellDataFunc)on_dict_value_keyword_edited, data, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tree_view), column);
 
 	cell_renderer = gtk_cell_renderer_text_new();
@@ -1211,11 +1213,28 @@ static void on_dict_value_keyword_edited(GtkTreeViewColumn *tree_column,
 					 struct dict_edit_data *data)
 {
 	gchar * keyword;
+	gchar * step;
+	gchar * ini;
+
 	gtk_tree_model_get(data->tree_model, iter, DICT_EDIT_KEYWORD, &keyword, -1);
+	if (g_strcmp0(keyword, "iter") != 0) {
+		g_free(keyword);
+		return;
+	}
 
-	if (g_strcmp0(keyword, "iter") == 0)
-		gtk_tree_store_set(GTK_TREE_STORE(data->tree_model), iter, DICT_EDIT_EDITABLE, FALSE, DICT_EDIT_SENSITIVE, FALSE, -1);
+	gtk_tree_store_set(GTK_TREE_STORE(data->tree_model), iter, DICT_EDIT_EDITABLE, FALSE, DICT_EDIT_SENSITIVE, FALSE, -1);
 
+	GebrGeoXmlProgram * prog = gebr_geoxml_flow_get_control_program(gebr.flow);
+	guint counter = gebr_geoxml_program_control_get_n(GEBR_GEOXML_PROGRAM(prog), &step, &ini);
+	GString *value = g_string_new(NULL);
+
+	g_string_printf(value, "(%s:%s:%d)", ini, step, atoi(ini)+atoi(step)*counter);
+
+
+	if (cell == data->cell_renderer_array[DICT_EDIT_VALUE])
+		g_object_set (cell, "text", value->str, NULL);
+
+	g_string_free(value, TRUE);
 	g_free(keyword);
 }
 
