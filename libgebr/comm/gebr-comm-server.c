@@ -142,7 +142,7 @@ GebrGeoXmlFlow *gebr_comm_server_run_strip_flow(GebrGeoXmlFlow *flow,
 	va_end(ap);
 
 	/* Remove 'iter' dictionary */
-	gebr_geoxml_flow_remove_iter_dict (clone);
+	gebr_geoxml_flow_remove_iter_dict (GEBR_GEOXML_FLOW(clone));
 
 	return GEBR_GEOXML_FLOW (clone);
 }

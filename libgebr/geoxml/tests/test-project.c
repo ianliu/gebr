@@ -87,7 +87,6 @@ void test_gebr_geoxml_project_set_line_source(void)
 	GebrGeoXmlProject *project = NULL;
 	GebrGeoXmlProjectLine *project_line;
 	const gchar *source;
-	int check;
 
 	project = gebr_geoxml_project_new();
 
