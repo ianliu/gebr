@@ -452,6 +452,36 @@ void gebr_geoxml_flow_remove_iter_dict (GebrGeoXmlFlow *flow);
  */
 GebrGeoXmlProgram *gebr_geoxml_flow_get_control_program (GebrGeoXmlFlow *flow);
 
+/**
+ * gebr_geoxml_flow_io_set_output_append:
+ * @flow: a #GebrGeoXmlFlow
+ * @setting: %TRUE to make output append
+ */
+void gebr_geoxml_flow_io_set_output_append(GebrGeoXmlFlow *flow, gboolean setting);
+
+/**
+ * gebr_geoxml_flow_io_get_output_append:
+ * @flow: a #GebrGeoXmlFlow
+ *
+ * Returns: %TRUE if output appends, %FALSE otherwise
+ */
+gboolean gebr_geoxml_flow_io_get_output_append(GebrGeoXmlFlow *flow);
+
+/**
+ * gebr_geoxml_flow_io_set_error_append:
+ * @flow: a #GebrGeoXmlFlow
+ * @setting: %TRUE to make error append
+ */
+void gebr_geoxml_flow_io_set_error_append(GebrGeoXmlFlow *flow, gboolean setting);
+
+/**
+ * gebr_geoxml_flow_io_get_error_append:
+ * @flow: a #GebrGeoXmlFlow
+ *
+ * Returns: %TRUE if error appends, %FALSE otherwise
+ */
+gboolean gebr_geoxml_flow_io_get_error_append(GebrGeoXmlFlow *flow);
+
 G_END_DECLS
 
 #endif				//__GEBR_GEOXML_FLOW_H

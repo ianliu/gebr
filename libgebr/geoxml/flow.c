@@ -717,3 +717,71 @@ void gebr_geoxml_flow_remove_iter_dict (GebrGeoXmlFlow *flow)
 	if (g_strcmp0 (keyword, "iter") == 0)
 		gebr_geoxml_sequence_remove(seq);
 }
+
+void gebr_geoxml_flow_io_set_output_append(GebrGeoXmlFlow *flow, gboolean setting)
+{
+	GdomeElement *root;
+	GdomeElement *io;
+	GdomeElement *output;
+	const gchar *setting;
+
+	g_return_if_fail (flow != NULL);
+
+	root = gebr_geoxml_document_root_element (flow);
+	io = __gebr_geoxml_get_first_element (root, "io");
+	output = __gebr_geoxml_get_first_element (io, "output");
+
+	__gebr_geoxml_set_attr_value (output, "append", setting? "yes":"no");
+}
+
+gboolean gebr_geoxml_flow_io_get_output_append(GebrGeoXmlFlow *flow)
+{
+	GdomeElement *root;
+	GdomeElement *io;
+	GdomeElement *output;
+	const gchar *setting;
+
+	g_return_val_if_fail (flow != NULL, FALSE);
+
+	root = gebr_geoxml_document_root_element (flow);
+	io = __gebr_geoxml_get_first_element (root, "io");
+	output = __gebr_geoxml_get_first_element (io, "output");
+
+	setting = __gebr_geoxml_get_attr_value (output, "append");
+
+	return g_strcmp0 (setting, "yes") == 0;
+}
+
+void gebr_geoxml_flow_io_set_error_append(GebrGeoXmlFlow *flow, gboolean setting)
+{
+	GdomeElement *root;
+	GdomeElement *io;
+	GdomeElement *error;
+	const gchar *setting;
+
+	g_return_if_fail (flow != NULL);
+
+	root = gebr_geoxml_document_root_element (flow);
+	io = __gebr_geoxml_get_first_element (root, "io");
+	error = __gebr_geoxml_get_first_element (io, "error");
+
+	__gebr_geoxml_set_attr_value (error, "append", setting? "yes":"no");
+}
+
+gboolean gebr_geoxml_flow_io_get_error_append(GebrGeoXmlFlow *flow)
+{
+	GdomeElement *root;
+	GdomeElement *io;
+	GdomeElement *error;
+	const gchar *setting;
+
+	g_return_val_if_fail (flow != NULL, FALSE);
+
+	root = gebr_geoxml_document_root_element (flow);
+	io = __gebr_geoxml_get_first_element (root, "io");
+	error = __gebr_geoxml_get_first_element (io, "error");
+
+	setting = __gebr_geoxml_get_attr_value (error, "append");
+
+	return g_strcmp0 (setting, "yes") == 0;
+}
