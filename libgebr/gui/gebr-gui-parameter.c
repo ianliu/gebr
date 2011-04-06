@@ -493,12 +493,12 @@ static void __set_toggle_icon(struct gebr_gui_parameter_widget *parameter_widget
 
 	if (is_expression)
 	{
-	value = gebr_gui_parameter_widget_get_value(parameter_widget);
-	success = gebr_geoxml_document_validate_expr(value->str, 
-						     parameter_widget->dicts->flow, 
-						     parameter_widget->dicts->line, 
-						     parameter_widget->dicts->project, 
-						     &validation_error);
+		value = gebr_gui_parameter_widget_get_value(parameter_widget);
+		success = gebr_geoxml_document_validate_expr(value->str, 
+							     parameter_widget->dicts->flow, 
+							     parameter_widget->dicts->line, 
+							     parameter_widget->dicts->project, 
+							     &validation_error);
 	}
 	if (parameter_widget->dict_parameter != NULL)
 	{
