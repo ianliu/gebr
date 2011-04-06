@@ -415,7 +415,8 @@ void document_dict_edit_setup_ui(void)
 		return;
 
 	data = g_new(struct dict_edit_data, 1);
-	tree_store = gtk_tree_store_new(DICT_EDIT_N_COLUMN, G_TYPE_STRING,	/* document */
+	tree_store = gtk_tree_store_new(DICT_EDIT_N_COLUMN,
+					G_TYPE_STRING,	/* document */
 					G_TYPE_STRING,	/* type */
 					G_TYPE_STRING,	/* keyword stock */
 					G_TYPE_STRING,	/* keyword */
@@ -424,7 +425,9 @@ void document_dict_edit_setup_ui(void)
 					G_TYPE_POINTER,	/* GebrGeoXmlParameter */
 					G_TYPE_BOOLEAN,	/* is add parameter */
 					G_TYPE_BOOLEAN,	/* keyword editable */
-					G_TYPE_BOOLEAN /* editable */ );
+					G_TYPE_BOOLEAN, /* editable */
+				        G_TYPE_BOOLEAN  /* sensitive */ );
+
 	data->tree_model = GTK_TREE_MODEL(tree_store);
 
 	data->action_group = action_group = gtk_action_group_new("dict_edit");
