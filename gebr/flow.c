@@ -558,13 +558,19 @@ void flow_run(GebrServer *server, GebrCommServerRunConfig * config, gboolean sin
 	/* Add flows and create jobs */
 	gboolean first = TRUE;
 	if (single)
-		job_create(gebr.flow, gebr.line, gebr.project, first);
+		job_create(gebr.flow,
+			   GEBR_GEOXML_DOCUMENT (gebr.line),
+			   GEBR_GEOXML_DOCUMENT (gebr.project),
+			   first);
 	else {
 		gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_flow_browse->view) {
 			GebrGeoXmlFlow *flow;
 			gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
 					   FB_XMLPOINTER, &flow, -1);
-			job_create(flow, gebr.line, gebr.project, first);
+			job_create(flow, 
+				   GEBR_GEOXML_DOCUMENT (gebr.line),
+				   GEBR_GEOXML_DOCUMENT (gebr.project),
+				   first);
 			first = FALSE;
 		}
 	}
