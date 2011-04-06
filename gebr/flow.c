@@ -513,7 +513,7 @@ void flow_run(GebrServer *server, GebrCommServerRunConfig * config, gboolean sin
 {
 	GtkTreeIter iter;
 
-	void job_create(GebrGeoXmlFlow *flow, gboolean select)
+	void job_create(GebrGeoXmlFlow *flow, GebrGeoXmlDocument *line, GebrGeoXmlDocument *proj, gboolean select)
 	{
 		GebrGeoXmlSequence *i;
 		gebr_geoxml_flow_get_program(flow, &i, 0);
@@ -529,7 +529,7 @@ void flow_run(GebrServer *server, GebrCommServerRunConfig * config, gboolean sin
 		flow_browse_info_update(); 
 
 		/* prepare flow and add it to config */
-		GebrGeoXmlFlow *stripped = gebr_comm_server_run_strip_flow(flow);
+		GebrGeoXmlFlow *stripped = gebr_comm_server_run_strip_flow(flow, line, proj, NULL);
 		flow_copy_from_dicts(stripped);
 		GebrCommServerRunFlow *run_flow = gebr_comm_server_run_config_add_flow(config, stripped);
 		gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(stripped));
@@ -558,13 +558,13 @@ void flow_run(GebrServer *server, GebrCommServerRunConfig * config, gboolean sin
 	/* Add flows and create jobs */
 	gboolean first = TRUE;
 	if (single)
-		job_create(gebr.flow, first);
+		job_create(gebr.flow, gebr.line, gebr.project, first);
 	else {
 		gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_flow_browse->view) {
 			GebrGeoXmlFlow *flow;
 			gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
 					   FB_XMLPOINTER, &flow, -1);
-			job_create(flow, first);
+			job_create(flow, gebr.line, gebr.project, first);
 			first = FALSE;
 		}
 	}

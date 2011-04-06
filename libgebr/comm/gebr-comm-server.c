@@ -103,18 +103,26 @@ GebrCommServerRunFlow* gebr_comm_server_run_config_add_flow(GebrCommServerRunCon
 	return run_flow;
 }
 
-GebrGeoXmlFlow * gebr_comm_server_run_strip_flow(GebrGeoXmlFlow * flow)
+GebrGeoXmlFlow *gebr_comm_server_run_strip_flow(GebrGeoXmlFlow *flow,
+						 ...)
 {
-	GebrGeoXmlFlow * stripped = GEBR_GEOXML_FLOW(gebr_geoxml_document_clone(GEBR_GEOXML_DOCUMENT(flow)));
+	va_list ap;
+	GebrGeoXmlSequence *i;
+	GebrGeoXmlDocument *doc;
+	GebrGeoXmlDocument *clone;
+
+	g_return_val_if_fail (flow != NULL, NULL);
+
+	clone = gebr_geoxml_document_clone(GEBR_GEOXML_DOCUMENT(flow));
 
 	/* Strip flow: remove helps and revisions */
-	gebr_geoxml_document_set_help(GEBR_GEOXML_DOCUMENT(stripped), "");
-	GebrGeoXmlSequence *i;
+	gebr_geoxml_document_set_help(clone, "");
 	gebr_geoxml_flow_get_program(flow, &i, 0);
 	for (; i != NULL; gebr_geoxml_sequence_next(&i))
 		gebr_geoxml_program_set_help(GEBR_GEOXML_PROGRAM(i), "");
+
 	/* clear all revisions */
-	gebr_geoxml_flow_get_revision(stripped, &i, 0);
+	gebr_geoxml_flow_get_revision(GEBR_GEOXML_FLOW (clone), &i, 0);
 	while (i != NULL) {
 		GebrGeoXmlSequence *tmp;
 
@@ -124,7 +132,16 @@ GebrGeoXmlFlow * gebr_comm_server_run_strip_flow(GebrGeoXmlFlow * flow)
 		i = tmp;
 	}
 
-	return stripped;
+	/* Merge all dictionaries */
+	va_start(ap, flow);
+	doc = va_arg(ap, GebrGeoXmlDocument*);
+	while (doc) {
+		gebr_geoxml_document_merge_dict (clone, doc);
+		doc = va_arg(ap, GebrGeoXmlDocument*);
+	}
+	va_end(ap);
+
+	return GEBR_GEOXML_FLOW (clone);
 }
 
 gchar * gebr_comm_server_get_user(const gchar * address)
