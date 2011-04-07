@@ -549,7 +549,7 @@ static void __set_toggle_icon(struct gebr_gui_parameter_widget *parameter_widget
 		else
 		{
 			gtk_entry_set_icon_from_stock(GTK_ENTRY(parameter_widget->value_widget), 
-						      GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_ORIENTATION_PORTRAIT);
+						      GTK_ENTRY_ICON_SECONDARY, "integer-icon");
 			gtk_entry_set_icon_tooltip_text(GTK_ENTRY(parameter_widget->value_widget), 
 							GTK_ENTRY_ICON_SECONDARY, NULL);
 		}
