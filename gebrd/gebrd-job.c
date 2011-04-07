@@ -803,12 +803,17 @@ static gboolean job_parse_parameter(GebrdJob *job, GebrGeoXmlParameter * paramet
 			if (use_expr) {
 				const gchar *expression;
 				expression = gebr_geoxml_value_sequence_get_expression (seq);
-				g_string_append_printf (expr_buf, "\t\t%s # %s\n", expression,
-							gebr_geoxml_parameter_get_label (parameter));
-				g_string_append_printf (job->parent.cmd_line, "%s${V[%d]} ",
-							gebr_geoxml_program_parameter_get_keyword(program_parameter),
-							job->expr_count);
-				job->expr_count++;
+				gchar * expre_temp = g_strdup(expression);
+
+				if (strlen(g_strstrip(expre_temp)) > 0){
+					g_string_append_printf (expr_buf, "\t\t%s # %s\n", expression,
+								gebr_geoxml_parameter_get_label (parameter));
+					g_string_append_printf (job->parent.cmd_line, "%s${V[%d]} ",
+								gebr_geoxml_program_parameter_get_keyword(program_parameter),
+								job->expr_count);
+					job->expr_count++;
+				}
+				g_free(expre_temp);
 			} else {
 				value = gebr_geoxml_program_parameter_get_string_value(program_parameter, FALSE);
 				if (strlen(value->str) > 0) {
