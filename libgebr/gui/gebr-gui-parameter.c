@@ -615,7 +615,7 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 			GtkWidget *entry;
 
 			parameter_widget->value_widget = entry = gtk_entry_new();
-			gtk_widget_set_size_request(entry, 90, 30);
+			gtk_widget_set_size_request(entry, 120, 30);
 			activatable_entry = GTK_ENTRY (entry);
 
 			g_signal_connect (entry, "icon-release",
@@ -637,7 +637,7 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 			GtkWidget *entry;
 
 			parameter_widget->value_widget = entry = gtk_entry_new();
-			gtk_widget_set_size_request(entry, 90, 30);
+			gtk_widget_set_size_request(entry, 120, 30);
 			activatable_entry = GTK_ENTRY (entry);
 
 			g_signal_connect (entry, "icon-release",
