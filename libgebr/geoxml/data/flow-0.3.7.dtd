@@ -18,12 +18,12 @@
 
 <!-- Input/Output/Erro log files -->
 <!ELEMENT input (#PCDATA)>
-<!ATTLIST input
-	append	(yes | no)	#IMPLIED>
 <!ELEMENT output (#PCDATA)>
 <!ATTLIST output
 	append	(yes | no)	#IMPLIED>
 <!ELEMENT error (#PCDATA)>
+<!ATTLIST error
+	append	(yes | no)	#IMPLIED>
 
 <!ELEMENT program (title, binary, description, help, url, parameters)>
 <!ATTLIST program
