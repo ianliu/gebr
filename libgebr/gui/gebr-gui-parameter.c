@@ -491,7 +491,7 @@ static void __set_toggle_icon(struct gebr_gui_parameter_widget *parameter_widget
 	if (gebr_geoxml_program_get_control(gebr_geoxml_parameter_get_program(parameter_widget->parameter)) != GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY)
 		return;
 
-	if (is_expression)
+	if (is_expression && parameter_widget->dicts)
 	{
 		value = gebr_gui_parameter_widget_get_value(parameter_widget);
 		success = gebr_geoxml_document_validate_expr(value->str, 
@@ -540,8 +540,10 @@ static void __set_toggle_icon(struct gebr_gui_parameter_widget *parameter_widget
 				}
 
 			}
-			g_string_free(value, TRUE);
-			value = NULL;
+			if (value){
+				g_string_free(value, TRUE);
+				value = NULL;
+			}
 			if (validation_error != NULL)
 				g_error_free(validation_error);
 			validation_error = NULL;
