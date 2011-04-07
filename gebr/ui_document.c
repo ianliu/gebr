@@ -1231,7 +1231,7 @@ static void on_dict_value_keyword_edited(GtkTreeViewColumn *tree_column,
 	guint counter = gebr_geoxml_program_control_get_n(GEBR_GEOXML_PROGRAM(prog), &step, &ini);
 	GString *value = g_string_new(NULL);
 
-	g_string_printf(value, "%s:%s:%d (%d)", ini, step, atoi(ini)+atoi(step)*counter, counter + 1);
+	g_string_printf(value, "%s:%s:%d (%d)", ini, step, atoi(ini)+atoi(step)*counter, counter);
 
 	if (cell == data->cell_renderer_array[DICT_EDIT_VALUE])
 		g_object_set (cell, "text", value->str, NULL);
