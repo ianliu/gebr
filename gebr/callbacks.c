@@ -523,6 +523,8 @@ void on_notebook_switch_page (GtkNotebook     *notebook,
 		GtkTreeModel *model = gtk_combo_box_get_model (cb);
 		flow_edition_find_flow_server (gebr.flow, model, &iter);
 		gtk_combo_box_set_active_iter (cb, &iter);
+		flow_edition_set_io();
+	 	
 	}
 }
 

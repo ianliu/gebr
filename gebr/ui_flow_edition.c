@@ -287,6 +287,7 @@ void flow_edition_select_component_iter(GtkTreeIter * iter)
 
 void flow_edition_set_io(void)
 {
+
 	gchar *input_markup  = g_markup_printf_escaped("<i>%s</i>", _("Input file"));
 	gchar *output_markup = g_markup_printf_escaped("<i>%s</i>", _("Output file"));
 	gchar *error_markup  = g_markup_printf_escaped("<i>%s</i>", _("Log file")); 
@@ -298,12 +299,32 @@ void flow_edition_set_io(void)
 	gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->input_iter,
 			   FSEQ_ICON_COLUMN, "gebr-stdin", FSEQ_TITLE_COLUMN, input, 
 			   FSEQ_EDITABLE, TRUE, FSEQ_ELLIPSIZE, PANGO_ELLIPSIZE_START, -1);
-	gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->output_iter,
-			   FSEQ_ICON_COLUMN, "gebr-stdout", FSEQ_TITLE_COLUMN, output, 
-			   FSEQ_EDITABLE, TRUE, FSEQ_ELLIPSIZE, PANGO_ELLIPSIZE_START, -1);
-	gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->error_iter,
-			   FSEQ_ICON_COLUMN, "gebr-stderr", FSEQ_TITLE_COLUMN, error,
-			   FSEQ_EDITABLE, TRUE, FSEQ_ELLIPSIZE, PANGO_ELLIPSIZE_START, -1);
+
+	if (gebr_geoxml_flow_io_get_output_append (gebr.flow))
+	{
+		gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->output_iter,
+				   FSEQ_ICON_COLUMN, "gebr-append-stdout", FSEQ_TITLE_COLUMN, output, 
+				   FSEQ_EDITABLE, TRUE, FSEQ_ELLIPSIZE, PANGO_ELLIPSIZE_START, -1);
+	}
+	else
+	{
+		gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->output_iter,
+				   FSEQ_ICON_COLUMN, "gebr-stdout", FSEQ_TITLE_COLUMN, output, 
+				   FSEQ_EDITABLE, TRUE, FSEQ_ELLIPSIZE, PANGO_ELLIPSIZE_START, -1);
+	}
+
+	if (gebr_geoxml_flow_io_get_error_append (gebr.flow))
+	{
+		gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->error_iter,
+				   FSEQ_ICON_COLUMN, "gebr-append-stderr", FSEQ_TITLE_COLUMN, error,
+				   FSEQ_EDITABLE, TRUE, FSEQ_ELLIPSIZE, PANGO_ELLIPSIZE_START, -1);
+	}
+	else
+	{
+		gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->error_iter,
+				   FSEQ_ICON_COLUMN, "gebr-stderr", FSEQ_TITLE_COLUMN, error,
+				   FSEQ_EDITABLE, TRUE, FSEQ_ELLIPSIZE, PANGO_ELLIPSIZE_START, -1);
+	}
 
 	flow_program_check_sensitiveness();
 	flow_browse_info_update();
@@ -808,12 +829,36 @@ out:	g_free(menu_filename);
 
 static void on_output_append_toggled (GtkCheckMenuItem *item)
 {
-	gebr_geoxml_flow_io_set_output_append (gebr.flow, !gtk_check_menu_item_get_active(item));
+	gboolean is_append = !gtk_check_menu_item_get_active(item);
+
+	gebr_geoxml_flow_io_set_output_append (gebr.flow, is_append);
+	if (is_append == TRUE)
+	{
+		gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->output_iter,
+				   FSEQ_ICON_COLUMN, "gebr-append-stdout", -1);
+	}
+	else
+	{
+		gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->output_iter,
+				   FSEQ_ICON_COLUMN, "gebr-stdout", -1);
+	}
 }
 
 static void on_error_append_toggled (GtkCheckMenuItem *item)
 {
-	gebr_geoxml_flow_io_set_error_append (gebr.flow, !gtk_check_menu_item_get_active(item));
+	gboolean is_append = !gtk_check_menu_item_get_active(item);
+
+	gebr_geoxml_flow_io_set_error_append (gebr.flow, is_append);
+	if (is_append == TRUE)
+	{
+		gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->error_iter,
+				   FSEQ_ICON_COLUMN, "gebr-append-stderr", -1);
+	}
+	else
+	{
+		gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->error_iter,
+				   FSEQ_ICON_COLUMN, "gebr-stderr", -1);
+	}
 }
 
 /**
