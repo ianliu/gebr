@@ -781,5 +781,5 @@ gboolean gebr_geoxml_flow_io_get_error_append(GebrGeoXmlFlow *flow)
 
 	setting = __gebr_geoxml_get_attr_value (error, "append");
 
-	return g_strcmp0 (setting, "yes") == 0;
+	return g_strcmp0 (setting, "no") != 0;
 }

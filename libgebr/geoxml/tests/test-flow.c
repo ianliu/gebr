@@ -448,22 +448,30 @@ void test_gebr_geoxml_flow_get_revision(void){
 	g_assert(revision == NULL);
 }
 
+static void test_gebr_geoxml_flow_io_output_append_default(void)
+{
+	GebrGeoXmlFlow *flow = gebr_geoxml_flow_new ();
+	// Default value is FALSE
+	g_assert (gebr_geoxml_flow_io_get_output_append (flow) == FALSE);
+}
+
 static void test_gebr_geoxml_flow_io_output_append(void)
 {
 	GebrGeoXmlFlow *flow = gebr_geoxml_flow_new ();
-
-	// Default value is FALSE
-	g_assert (gebr_geoxml_flow_io_get_output_append (flow) == FALSE);
 	gebr_geoxml_flow_io_set_output_append (flow, TRUE);
 	g_assert (gebr_geoxml_flow_io_get_output_append (flow) == TRUE);
+}
+
+static void test_gebr_geoxml_flow_io_error_append_default(void)
+{
+	GebrGeoXmlFlow *flow = gebr_geoxml_flow_new ();
+	// Default value is TRUE
+	g_assert (gebr_geoxml_flow_io_get_error_append (flow) == TRUE);
 }
 
 static void test_gebr_geoxml_flow_io_error_append(void)
 {
 	GebrGeoXmlFlow *flow = gebr_geoxml_flow_new ();
-
-	// Default value is FALSE
-	g_assert (gebr_geoxml_flow_io_get_error_append (flow) == FALSE);
 	gebr_geoxml_flow_io_set_error_append (flow, TRUE);
 	g_assert (gebr_geoxml_flow_io_get_error_append (flow) == TRUE);
 }
@@ -488,7 +496,9 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/geoxml/flow/get_and_set_revision_data", test_gebr_geoxml_flow_get_and_set_revision_data);
 	g_test_add_func("/libgebr/geoxml/flow/get_revision", test_gebr_geoxml_flow_get_revision);
 	g_test_add_func("/libgebr/geoxml/flow/io_output_append", test_gebr_geoxml_flow_io_output_append);
+	g_test_add_func("/libgebr/geoxml/flow/io_output_append_default", test_gebr_geoxml_flow_io_output_append_default);
 	g_test_add_func("/libgebr/geoxml/flow/io_error_append", test_gebr_geoxml_flow_io_error_append);
+	g_test_add_func("/libgebr/geoxml/flow/io_error_append_default", test_gebr_geoxml_flow_io_error_append_default);
 
 	return g_test_run();
 }
