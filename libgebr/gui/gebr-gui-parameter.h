@@ -105,5 +105,9 @@ void gebr_gui_parameter_widget_update_list_separator(struct gebr_gui_parameter_w
  */
 void gebr_gui_parameter_widget_reconfigure(struct gebr_gui_parameter_widget *parameter_widget);
 
+gboolean gebr_gui_parameter_widget_match_completion(GtkEntryCompletion *completion,
+						    const gchar *key,
+						    GtkTreeIter *iter,
+						    gpointer user_data);
 G_END_DECLS
 #endif				//__GEBR_GUI_PARAMETER_H
