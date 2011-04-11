@@ -86,8 +86,6 @@ is_reserved_word (const gchar *name)
 {
 	gint i = 0;
 	const gchar *reserved_words[] = {
-		// Gebr reserved variables
-		"iter",
 		// Reserved variables
 		"ibase",
 		"last",
@@ -405,10 +403,9 @@ gebr_expr_extract_vars (const gchar *e)
 	while (g_match_info_matches (info))
 	{
 		gchar *word = g_match_info_fetch (info, 0);
-		if (!is_reserved_word (word))
-			vars = g_list_prepend (vars, word);
-		else
-			g_free (word);
+
+		vars = g_list_prepend (vars, word);
+
 		g_match_info_next (info, NULL);
 	}
 

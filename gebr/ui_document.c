@@ -787,7 +787,7 @@ static void on_dict_edit_type_cell_edited(GtkCellRenderer * cell, gchar * path_s
 static gboolean
 dict_edit_is_name_valid(const gchar *name)
 {
-	if (gebr_expr_is_name_valid (name))
+	if (gebr_expr_is_name_valid (name) && g_strcmp0(name,"iter") != 0)
 		return TRUE;
 
 	gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,

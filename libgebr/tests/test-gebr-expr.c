@@ -69,9 +69,11 @@ void test_gebr_expr_extract_vars(void)
 {
 	GList *vars;
 
-	vars = gebr_expr_extract_vars ("foo * bar");
+	vars = gebr_expr_extract_vars ("5*foo * bar + 5*iter");
 	g_assert_cmpstr (g_list_nth_data (vars, 0), ==, "foo");
 	g_assert_cmpstr (g_list_nth_data (vars, 1), ==, "bar");
+	g_assert_cmpstr (g_list_nth_data (vars, 2), ==, "iter");
+	g_assert_cmpint(3,==,g_list_length(vars));
 	g_list_foreach (vars, (GFunc) g_free, NULL);
 	g_list_free (vars);
 

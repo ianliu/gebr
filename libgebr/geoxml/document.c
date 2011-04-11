@@ -1279,6 +1279,7 @@ gebr_geoxml_document_validate_expr (const gchar *expr,
 	for (GList *i = vars; i; i = i->next) {
 		gchar *value;
 		gchar *name = i->data;
+
 		if (!gebr_geoxml_document_is_dictkey_defined (name, &value,
 							      flow, line, proj,
 							      NULL))
@@ -1289,8 +1290,10 @@ gebr_geoxml_document_validate_expr (const gchar *expr,
 				     "Undefined variable name %s", name);
 			goto out;
 		}
+		if(g_strcmp0(name,"iter") == 0)
+			value = g_strdup("0");
 
-		g_hash_table_insert (ht, g_strdup (name), g_strdup (value));
+		g_hash_table_insert (ht, g_strdup (name), value);
 	}
 
 	GError *error = NULL;
