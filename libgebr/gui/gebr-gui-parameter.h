@@ -60,7 +60,10 @@ struct gebr_gui_parameter_widget {
  * Create a new parameter widget.
  */
 struct gebr_gui_parameter_widget *
-gebr_gui_parameter_widget_new(GebrGeoXmlParameter * parameter, gboolean use_default_value, gpointer data);
+gebr_gui_parameter_widget_new(GebrGeoXmlParameter *parameter,
+			      struct gebr_gui_gebr_gui_program_edit_dicts *dicts,
+			      gboolean use_default_value,
+			      gpointer data);
 
 /**
  * Set dictionaries documents to find dictionaries parameters

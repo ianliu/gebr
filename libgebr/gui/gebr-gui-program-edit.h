@@ -50,7 +50,12 @@ typedef struct {
  * Setup UI for \p program.
  */
 GebrGuiProgramEdit *
-gebr_gui_program_edit_setup_ui(GebrGeoXmlProgram * program, gpointer parameter_widget_data, gboolean use_default);
+gebr_gui_program_edit_setup_ui(GebrGeoXmlProgram * program,
+			       gpointer parameter_widget_data,
+			       gboolean use_default,
+			       GebrGeoXmlDocument *project,
+			       GebrGeoXmlDocument *line,
+			       GebrGeoXmlDocument *flow);
 
 /**
  * \internal

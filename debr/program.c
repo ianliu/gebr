@@ -306,7 +306,8 @@ void program_preview(void)
 	g_signal_connect(dialog, "delete-event", G_CALLBACK(program_preview_on_delete_event), data);
 
 	data->program_edit =
-		gebr_gui_program_edit_setup_ui(GEBR_GEOXML_PROGRAM(gebr_geoxml_object_copy(GEBR_GEOXML_OBJECT(debr.program))), NULL, TRUE);
+		gebr_gui_program_edit_setup_ui(GEBR_GEOXML_PROGRAM(gebr_geoxml_object_copy(GEBR_GEOXML_OBJECT(debr.program))), NULL, TRUE,
+					       NULL, NULL, NULL);
 
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), data->program_edit->widget, TRUE, TRUE, 0);
 	gtk_widget_show(dialog);

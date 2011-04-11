@@ -63,7 +63,12 @@ static void on_instance_destroy(GebrGroupReorderData * data);
  */
 
 GebrGuiProgramEdit *
-gebr_gui_program_edit_setup_ui(GebrGeoXmlProgram * program, gpointer parameter_widget_data, gboolean use_default)
+gebr_gui_program_edit_setup_ui(GebrGeoXmlProgram * program,
+			       gpointer parameter_widget_data,
+			       gboolean use_default,
+			       GebrGeoXmlDocument *project,
+			       GebrGeoXmlDocument *line,
+			       GebrGeoXmlDocument *flow)
 {
 	GebrGuiProgramEdit *program_edit;
 	GtkWidget *vbox;
@@ -76,9 +81,9 @@ gebr_gui_program_edit_setup_ui(GebrGeoXmlProgram * program, gpointer parameter_w
 	program_edit->parameter_widget_data = parameter_widget_data;
 	program_edit->use_default = use_default;
 	program_edit->widget = vbox = gtk_vbox_new(FALSE, 0);
-	program_edit->dicts.project = NULL;
-	program_edit->dicts.line = NULL;
-	program_edit->dicts.flow = NULL;
+	program_edit->dicts.project = project;
+	program_edit->dicts.line = line;
+	program_edit->dicts.flow = flow;
 	gtk_widget_show(vbox);
 	program_edit->title_label = title_label = gtk_label_new(NULL);
 	gtk_widget_show(title_label);
@@ -386,12 +391,15 @@ static GtkWidget *gebr_gui_program_edit_load_parameter(GebrGuiProgramEdit *progr
 		/* input widget */
 		if (type != GEBR_GEOXML_PARAMETER_TYPE_FILE)
 			gebr_gui_parameter_widget =
-			    gebr_gui_parameter_widget_new(parameter, program_edit->use_default, NULL);
+			    gebr_gui_parameter_widget_new(parameter,
+							  &program_edit->dicts,
+							  program_edit->use_default,
+							  NULL);
 		else
-			gebr_gui_parameter_widget = gebr_gui_parameter_widget_new(parameter, program_edit->use_default,
+			gebr_gui_parameter_widget = gebr_gui_parameter_widget_new(parameter,
+										  &program_edit->dicts,
+										  program_edit->use_default,
 										  program_edit->parameter_widget_data);
-		if (program_edit->dicts.project != NULL)
-			gebr_gui_parameter_widget_set_dicts(gebr_gui_parameter_widget, &program_edit->dicts);
 		gtk_widget_show(gebr_gui_parameter_widget->widget);
 
 		/* exclusive? */
