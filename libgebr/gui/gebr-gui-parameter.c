@@ -592,14 +592,13 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 		}
 	}
 
-	 /* Create the completion object */
-	GtkEntryCompletion *completion = gtk_entry_completion_new();
-	GtkTreeModel *completion_model;
-
-
 	switch (parameter_widget->parameter_type) {
 	case GEBR_GEOXML_PARAMETER_TYPE_FLOAT:{
 			GtkWidget *entry;
+
+			/* Create the completion object */
+			GtkEntryCompletion *completion = gtk_entry_completion_new();
+			GtkTreeModel *completion_model;
 
 			parameter_widget->value_widget = entry = gtk_entry_new();
 
@@ -634,6 +633,10 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 		}
 	case GEBR_GEOXML_PARAMETER_TYPE_INT:{
 			GtkWidget *entry;
+
+			/* Create the completion object */
+			GtkEntryCompletion *completion = gtk_entry_completion_new();
+			GtkTreeModel *completion_model;
 
 			parameter_widget->value_widget = entry = gtk_entry_new();
 

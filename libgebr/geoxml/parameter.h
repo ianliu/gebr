@@ -144,6 +144,12 @@ typedef enum {
 	GEBR_GEOXML_PARAMETER_TYPE_REFERENCE,
 } GebrGeoXmlParameterType;
 
+typedef enum {
+	GEBR_GEOXML_PARAMETER_ERROR_NONE = 0,
+	GEBR_GEOXML_PARAMETER_ERROR_REQUIRED_UNFILLED,
+	GEBR_GEOXML_PARAMETER_ERROR_INVALID_EXPRESSION,
+} GebrGeoXmlParameterError;
+
 void __gebr_geoxml_parameter_set_label(GebrGeoXmlParameter * parameter, const gchar * label);
 
 #include <glib.h>

@@ -42,7 +42,7 @@
 static void parameters_actions(GtkDialog * dialog, gint arg1, struct ui_parameters *ui_parameters);
 static gboolean
 parameters_on_delete_event(GtkDialog * dialog, GdkEventAny * event, struct ui_parameters *ui_parameters);
-static void validate_parameter (GebrGeoXmlParameter * parameter, gboolean * required_unfilled);
+static void validate_parameter (GebrGeoXmlParameter * parameter, GebrGeoXmlParameterError * is_valid);
 
 /*
  * Public functions.
@@ -147,7 +147,7 @@ void parameters_reset_to_default(GebrGeoXmlParameters * parameters)
 	}
 }
 
-gboolean validate_selected_program(void)
+GebrGeoXmlParameterError validate_selected_program(void)
 {
 	GtkTreeIter iter;
 
@@ -155,9 +155,9 @@ gboolean validate_selected_program(void)
 	return validate_program_iter(&iter);
 }
 
-gboolean validate_program_iter(GtkTreeIter *iter)
+GebrGeoXmlParameterError validate_program_iter(GtkTreeIter *iter)
 {
-	gboolean is_valid = TRUE;
+	GebrGeoXmlParameterError is_valid = GEBR_GEOXML_PARAMETER_ERROR_NONE;
 	GebrGeoXmlProgram *program;
 
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), iter,
@@ -167,7 +167,7 @@ gboolean validate_program_iter(GtkTreeIter *iter)
 					      (GebrGeoXmlCallback)validate_parameter,
 					      &is_valid);
 
-	return !is_valid;
+	return is_valid;
 }
 
 /*
@@ -177,7 +177,7 @@ gboolean validate_program_iter(GtkTreeIter *iter)
 /**
  * Callback to check if a given \p parameter content has some value
  */
-static void validate_parameter (GebrGeoXmlParameter * parameter, gboolean * is_valid)
+static void validate_parameter (GebrGeoXmlParameter * parameter, GebrGeoXmlParameterError * is_valid)
 {
 	GebrGeoXmlProgramParameter *prog;
 	GebrGeoXmlParameters *instance;
@@ -196,7 +196,7 @@ static void validate_parameter (GebrGeoXmlParameter * parameter, gboolean * is_v
 		return;
 
 	if (gebr_geoxml_program_parameter_get_required(prog) && !gebr_geoxml_program_parameter_is_set(prog)) {
-		*is_valid = FALSE;
+		*is_valid = GEBR_GEOXML_PARAMETER_ERROR_REQUIRED_UNFILLED;
 		return;
 	}
 
@@ -213,7 +213,7 @@ static void validate_parameter (GebrGeoXmlParameter * parameter, gboolean * is_v
 							 GEBR_GEOXML_DOCUMENT (gebr.line),
 							 GEBR_GEOXML_DOCUMENT (gebr.project),
 							 NULL)) {
-			*is_valid = FALSE;
+			*is_valid = GEBR_GEOXML_PARAMETER_ERROR_INVALID_EXPRESSION;
 			return;
 		}
 	}
@@ -248,10 +248,20 @@ static void parameters_actions(GtkDialog * dialog, gint arg1, struct ui_paramete
 				   FSEQ_ICON_COLUMN, icon,
 				   -1);
 		flow_edition_select_component_iter(&iter);
-		if (validate_selected_program())
-			flow_edition_status_changed (GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED);
-		else
+
+		GebrGeoXmlParameterError is_valid = validate_selected_program();
+		if (is_valid == GEBR_GEOXML_PARAMETER_ERROR_NONE){
 			flow_edition_status_changed (GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED);
+			puts("ERROR_NONE");
+		}
+		else if (is_valid == GEBR_GEOXML_PARAMETER_ERROR_REQUIRED_UNFILLED){
+			flow_edition_status_changed (GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED);
+			puts("REQUIRED_UNFILLED");
+		}
+		else if (is_valid == GEBR_GEOXML_PARAMETER_ERROR_INVALID_EXPRESSION){
+			flow_edition_status_changed (GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED);
+			puts("INVALID_EXPRESSION");
+		}
 		break;
 	}
 	case GTK_RESPONSE_APPLY:
