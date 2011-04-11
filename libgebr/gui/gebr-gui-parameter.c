@@ -63,18 +63,19 @@ static void gebr_gui_parameter_widget_on_value_widget_changed(GtkWidget * widget
 
 static void on_entry_activate_add (GtkEntry *entry, struct gebr_gui_parameter_widget *parameter_widget);
 
-static void on_secondary_icon_release (GtkEntry            *entry,
-				       GtkEntryIconPosition icon_pos,
-				       GdkEventButton      *event,
-				       struct gebr_gui_parameter_widget *parameter_widget);
-
 void __on_destroy_menu_unblock_handler(GtkMenuShell *menushell,
 				  GtkEntry            *entry);
-static gboolean __parameter_has_expression(struct gebr_gui_parameter_widget *parameter_widget);
 
 //==============================================================================
 // PRIVATE FUNCTIONS							       =
 //==============================================================================
+
+static gboolean __parameter_accepts_expression(struct gebr_gui_parameter_widget *parameter_widget)
+{
+	return parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_INT ||
+		parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT ||
+		parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_STRING;
+}
 
 static void enum_value_to_label_set(GebrGeoXmlSequence * sequence, const gchar * label,
 				    struct gebr_gui_parameter_widget *parameter_widget)
@@ -144,24 +145,33 @@ static void gebr_gui_parameter_widget_file_entry_customize_function(GtkFileChoos
 }
 
 static void gebr_gui_parameter_widget_set_non_list_widget_value(struct gebr_gui_parameter_widget *parameter_widget,
-								const gchar * value)
+								gchar * value)
 {
 	if (parameter_widget->dict_parameter != NULL) {
-		GString *value;
+		/* only range parameter still use the old dictionary interface */
+		if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_RANGE) {
+			GString *value;
 
-		value = g_string_new(NULL);
+			value = g_string_new(NULL);
 
-		g_string_printf(value, "%s=%s",
-				gebr_geoxml_program_parameter_get_keyword(parameter_widget->dict_parameter),
-				gebr_geoxml_program_parameter_get_first_value(parameter_widget->dict_parameter,
-									      parameter_widget->
-									      use_default_value));
-		gtk_entry_set_text(GTK_ENTRY(parameter_widget->value_widget), value->str);
-		gtk_editable_set_editable(GTK_EDITABLE(parameter_widget->value_widget), FALSE);
+			g_string_printf(value, "%s=%s",
+					gebr_geoxml_program_parameter_get_keyword(parameter_widget->dict_parameter),
+					gebr_geoxml_program_parameter_get_first_value(parameter_widget->dict_parameter,
+										      parameter_widget->
+										      use_default_value));
+			gtk_entry_set_text(GTK_ENTRY(parameter_widget->value_widget), value->str);
+			gtk_editable_set_editable(GTK_EDITABLE(parameter_widget->value_widget), FALSE);
 
-		g_string_free(value, TRUE);
+			g_string_free(value, TRUE);
 
-		return;
+			return;
+		} else {
+			/* now parameters don't use an value from dictionary; instead, the dict keyword is transformed
+			 * as the parameter value as an expression */
+			value = (gchar*)gebr_geoxml_program_parameter_get_keyword(parameter_widget->dict_parameter);
+			gebr_geoxml_program_parameter_set_string_value(parameter_widget->program_parameter,
+								       parameter_widget->use_default_value, value); 
+		}
 	}
 
 	if (gebr_gui_parameter_widget_can_use_dict(parameter_widget))
@@ -468,110 +478,68 @@ static void __on_sequence_edit_changed(GebrGuiSequenceEdit * sequence_edit,
 	__parameter_list_value_widget_update(parameter_widget);
 }
 
-static gboolean __parameter_has_expression(struct gebr_gui_parameter_widget *parameter_widget)
-{
-	GebrGeoXmlSequence * property_value = NULL;
-	gebr_geoxml_program_parameter_get_value(parameter_widget->program_parameter, FALSE, 
-						&property_value, 0);
-	return gebr_geoxml_value_sequence_get_use_expression(GEBR_GEOXML_VALUE_SEQUENCE(property_value));
-}
-
 /**
  * for parameter that accepts an expression (int and float)
  */
-static void __set_toggle_icon(struct gebr_gui_parameter_widget *parameter_widget)
+static void __set_type_icon(struct gebr_gui_parameter_widget *parameter_widget)
 {
-	gboolean is_expression = __parameter_has_expression(parameter_widget);
-	gboolean success = TRUE;
-	GError * validation_error = NULL;
-	GString *value = NULL;
 	gboolean has_focus = FALSE;
 	g_object_get(parameter_widget->value_widget, "has-focus", &has_focus, NULL);
 
-	if (gebr_geoxml_program_get_control(gebr_geoxml_parameter_get_program(parameter_widget->parameter)) != GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY)
-		return;
-
-	if (is_expression && parameter_widget->dicts)
-	{
-		value = gebr_gui_parameter_widget_get_value(parameter_widget);
-		success = gebr_geoxml_document_validate_expr(value->str, 
-							     parameter_widget->dicts->flow, 
-							     parameter_widget->dicts->line, 
-							     parameter_widget->dicts->project, 
-							     &validation_error);
-	}
-	if (parameter_widget->dict_parameter != NULL)
-	{
+	if (!has_focus && __parameter_accepts_expression(parameter_widget))
+		gtk_entry_set_icon_from_stock(GTK_ENTRY(parameter_widget->value_widget), GTK_ENTRY_ICON_SECONDARY, NULL);
+	else if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_INT) {
+		gtk_entry_set_icon_from_stock(GTK_ENTRY(parameter_widget->value_widget), GTK_ENTRY_ICON_SECONDARY, "integer-icon");
+		gtk_entry_set_icon_tooltip_text(GTK_ENTRY(parameter_widget->value_widget), GTK_ENTRY_ICON_SECONDARY, 
+						_("This parameter uses an integer value."));
+	} else if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT) {
+		gtk_entry_set_icon_from_stock(GTK_ENTRY(parameter_widget->value_widget), GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_ZOOM_IN);
+		gtk_entry_set_icon_tooltip_text(GTK_ENTRY(parameter_widget->value_widget), GTK_ENTRY_ICON_SECONDARY, 
+						_("This parameter uses a real value."));
+	} else if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_STRING) {
+		gtk_entry_set_icon_from_stock(GTK_ENTRY(parameter_widget->value_widget), GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_ZOOM_OUT);
+		gtk_entry_set_icon_tooltip_text(GTK_ENTRY(parameter_widget->value_widget), GTK_ENTRY_ICON_SECONDARY, 
+						_("This parameter uses a text value."));
+	} else if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_RANGE && parameter_widget->dict_parameter != NULL) {
 		gtk_entry_set_icon_from_stock(GTK_ENTRY(parameter_widget->value_widget), GTK_ENTRY_ICON_SECONDARY, "accessories-dictionary");
 		gtk_entry_set_icon_tooltip_text(GTK_ENTRY(parameter_widget->value_widget), 
 						GTK_ENTRY_ICON_SECONDARY, NULL);
-	}
-	else if (!has_focus && validation_error == NULL)
-	{
+	} else
 		gtk_entry_set_icon_from_stock(GTK_ENTRY(parameter_widget->value_widget), GTK_ENTRY_ICON_SECONDARY, NULL);
-		gtk_entry_set_icon_tooltip_text(GTK_ENTRY(parameter_widget->value_widget), 
-						GTK_ENTRY_ICON_SECONDARY, NULL);
-	}
-	else {
-		if (is_expression)
-		{
-			if (success == TRUE)
-			{
-				gtk_entry_set_icon_from_stock(GTK_ENTRY(parameter_widget->value_widget), 
-							      GTK_ENTRY_ICON_SECONDARY, "accessories-calculator");
-				gtk_entry_set_icon_tooltip_text(GTK_ENTRY(parameter_widget->value_widget), 
-								GTK_ENTRY_ICON_SECONDARY, 
-								_("You can enter an expression with variables here, like \"2 + myvar\""));
-			}
-			else
-			{
-				gtk_entry_set_icon_from_stock(GTK_ENTRY(parameter_widget->value_widget), 
-							      GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIALOG_WARNING);
-				if (validation_error == NULL)
-					gtk_entry_set_icon_tooltip_text(GTK_ENTRY(parameter_widget->value_widget), 
-									GTK_ENTRY_ICON_SECONDARY, 
-									"This expression is invalid");
-				else
-				{
-					gtk_entry_set_icon_tooltip_text(GTK_ENTRY(parameter_widget->value_widget), 
-									GTK_ENTRY_ICON_SECONDARY, 
-									(const gchar *) validation_error->message);
-					puts(validation_error->message);
-				}
 
-			}
-			if (value){
-				g_string_free(value, TRUE);
-				value = NULL;
-			}
-			if (validation_error != NULL)
-				g_error_free(validation_error);
-			validation_error = NULL;
+	if (parameter_widget->dicts == NULL)
+		return;
 
-		}
+	GError * validation_error = NULL;
+	GString *value = gebr_gui_parameter_widget_get_value(parameter_widget);
+	gboolean success = gebr_geoxml_document_validate_expr(value->str, 
+							      parameter_widget->dicts->flow, 
+							      parameter_widget->dicts->line, 
+							      parameter_widget->dicts->project, 
+							      &validation_error);
+
+	if (!success) {
+		gtk_entry_set_icon_from_stock(GTK_ENTRY(parameter_widget->value_widget), 
+					      GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIALOG_WARNING);
+		if (validation_error == NULL)
+			gtk_entry_set_icon_tooltip_text(GTK_ENTRY(parameter_widget->value_widget), GTK_ENTRY_ICON_SECONDARY, 
+							_("This expression is invalid"));
 		else
-		{
-			gtk_entry_set_icon_from_stock(GTK_ENTRY(parameter_widget->value_widget), 
-						      GTK_ENTRY_ICON_SECONDARY, "integer-icon");
-			gtk_entry_set_icon_tooltip_text(GTK_ENTRY(parameter_widget->value_widget), 
-							GTK_ENTRY_ICON_SECONDARY, 
-							_("You must enter a number at this parameter"));
-		}
+			gtk_entry_set_icon_tooltip_text(GTK_ENTRY(parameter_widget->value_widget), GTK_ENTRY_ICON_SECONDARY, 
+							(const gchar *)validation_error->message);
 	}
 }
 
 static void __on_activate(GtkEntry * entry, struct gebr_gui_parameter_widget *parameter_widget)
 {
 	gebr_gui_parameter_widget_validate(parameter_widget);
-	__set_toggle_icon(parameter_widget);
 }
-
 
 
 static gboolean __on_focus_out_event(GtkWidget * widget, GdkEventFocus * event,
 				     struct gebr_gui_parameter_widget *parameter_widget)
 {
-	__set_toggle_icon(parameter_widget);
+	__set_type_icon(parameter_widget);
 	gebr_gui_parameter_widget_validate(parameter_widget);
 	return FALSE;
 }
@@ -579,7 +547,7 @@ static gboolean __on_focus_out_event(GtkWidget * widget, GdkEventFocus * event,
 static gboolean __on_focus_in_event(GtkWidget * widget, GdkEventFocus * event,
 				    struct gebr_gui_parameter_widget *parameter_widget)
 {
-	__set_toggle_icon(parameter_widget);
+	__set_type_icon(parameter_widget);
 	return FALSE;
 }
 
@@ -620,18 +588,15 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 			gtk_widget_set_size_request(entry, 120, 30);
 			activatable_entry = GTK_ENTRY (entry);
 
-			g_signal_connect (entry, "icon-release",
-					  G_CALLBACK(on_secondary_icon_release), parameter_widget);
 			g_signal_connect (entry, "focus-in-event",
 					  G_CALLBACK (__on_focus_in_event), parameter_widget);
-			/* for lists */
+			g_signal_connect (entry, "focus-out-event",
+					  G_CALLBACK (__on_focus_out_event), parameter_widget);
 			g_signal_connect (entry, "activate",
 					  G_CALLBACK (on_entry_activate_add), parameter_widget);
 			/* validation */
 			g_signal_connect (entry, "activate",
 					  G_CALLBACK (__on_activate), parameter_widget);
-			g_signal_connect (entry, "focus-out-event",
-					  G_CALLBACK (__on_focus_out_event), parameter_widget);
 
 			break;
 		}
@@ -642,18 +607,15 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 			gtk_widget_set_size_request(entry, 120, 30);
 			activatable_entry = GTK_ENTRY (entry);
 
-			g_signal_connect (entry, "icon-release",
-					  G_CALLBACK(on_secondary_icon_release), parameter_widget);
 			g_signal_connect (entry, "focus-in-event",
 					  G_CALLBACK (__on_focus_in_event), parameter_widget);
-			/* for lists */
+			g_signal_connect (entry, "focus-out-event",
+					  G_CALLBACK(__on_focus_out_event), parameter_widget);
 			g_signal_connect (entry, "activate",
 					  G_CALLBACK (on_entry_activate_add), parameter_widget);
 			/* validation */
 			g_signal_connect (entry, "activate",
 					  G_CALLBACK(__on_activate), parameter_widget);
-			g_signal_connect (entry, "focus-out-event",
-					  G_CALLBACK(__on_focus_out_event), parameter_widget);
 
 			break;
 		}
@@ -663,10 +625,13 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 			parameter_widget->value_widget = entry = gtk_entry_new();
 			activatable_entry = GTK_ENTRY (entry);
 			gtk_widget_set_size_request(parameter_widget->value_widget, 140, 30);
+
 			g_signal_connect (parameter_widget->value_widget, "activate",
 					  G_CALLBACK (on_entry_activate_add), parameter_widget);
-			g_signal_connect (entry, "icon-release",
-					  G_CALLBACK(on_secondary_icon_release), parameter_widget);
+			g_signal_connect (entry, "focus-in-event",
+					  G_CALLBACK (__on_focus_in_event), parameter_widget);
+			g_signal_connect (entry, "focus-out-event",
+					  G_CALLBACK(__on_focus_out_event), parameter_widget);
 
 			break;
 		}
@@ -863,7 +828,7 @@ static void gebr_gui_parameter_widget_find_dict_parameter(struct gebr_gui_parame
 		return;
 	}
 
-	__set_toggle_icon(widget);
+	__set_type_icon(widget);
 }
 
 /*
@@ -1077,13 +1042,15 @@ static GtkWidget *gebr_gui_parameter_widget_variable_popup_menu(struct gebr_gui_
 	for (cp = compatible_parameters; cp != NULL; cp = g_list_next(cp)) {
 		GString *label;
 		const gchar * keyword;
+		const gchar * first_value;
 		const gchar * param_label;
 
 		keyword = gebr_geoxml_program_parameter_get_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(cp->data));
+		first_value = gebr_geoxml_program_parameter_get_first_value(GEBR_GEOXML_PROGRAM_PARAMETER(cp->data), FALSE);
 		param_label = gebr_geoxml_parameter_get_label(GEBR_GEOXML_PARAMETER(cp->data));
 
 		label = g_string_new(NULL);
-		g_string_printf(label, "%s", keyword);
+		g_string_printf(label, "%s=%s", keyword, first_value);
 		if (param_label != NULL && strlen(param_label) > 0)
 			g_string_append_printf(label, " (%s)", param_label);
 
@@ -1121,12 +1088,12 @@ static void gebr_gui_parameter_widget_value_entry_on_populate_popup(GtkEntry * e
 	gtk_widget_show(menu_item);
 	gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), menu_item);
 
-	menu_item = gtk_menu_item_new_with_label(_("Dictionary"));
-	gtk_widget_show(menu_item);
-	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menu_item), gebr_gui_parameter_widget_dict_popup_menu(widget));
-	gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), menu_item);
-	
-	if (__parameter_has_expression(widget)){
+	if (widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_RANGE) {
+		menu_item = gtk_menu_item_new_with_label(_("Dictionary"));
+		gtk_widget_show(menu_item);
+		gtk_menu_item_set_submenu(GTK_MENU_ITEM(menu_item), gebr_gui_parameter_widget_dict_popup_menu(widget));
+		gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), menu_item);
+	} else if (__parameter_accepts_expression(widget)) {
 		menu_item = gtk_separator_menu_item_new();
 		gtk_widget_show(menu_item);
 		gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), menu_item);
@@ -1270,15 +1237,14 @@ void gebr_gui_parameter_widget_update(struct gebr_gui_parameter_widget *paramete
 		__parameter_list_value_widget_update(parameter_widget);
 	else
 		gebr_gui_parameter_widget_set_non_list_widget_value(parameter_widget,
-								    gebr_geoxml_program_parameter_get_first_value
+								    (gchar*)gebr_geoxml_program_parameter_get_first_value
 								    (parameter_widget->program_parameter,
 								     parameter_widget->use_default_value));
 }
 
 void gebr_gui_parameter_widget_validate(struct gebr_gui_parameter_widget *parameter_widget)
 {
-	gboolean is_expression = __parameter_has_expression(parameter_widget);
-	if (is_expression) {
+	if (__parameter_accepts_expression(parameter_widget)) {
 		if (parameter_widget->dicts) {
 			GError * error = NULL;
 			GString *value = gebr_gui_parameter_widget_get_value(parameter_widget);
@@ -1291,7 +1257,6 @@ void gebr_gui_parameter_widget_validate(struct gebr_gui_parameter_widget *parame
 
 			if (!success)
 			{
-				g_warning("Invalid expression\n");
 				if (error != NULL)
 				{
 					gtk_entry_set_icon_tooltip_text(GTK_ENTRY(parameter_widget->value_widget), 
@@ -1348,25 +1313,6 @@ static void on_entry_activate_add (GtkEntry *entry, struct gebr_gui_parameter_wi
 		g_signal_emit_by_name (parameter_widget->gebr_gui_value_sequence_edit, "add-request");
 }
 
-static void on_secondary_icon_release (GtkEntry            *entry,
-				       GtkEntryIconPosition icon_pos,
-				       GdkEventButton      *event,
-				       struct gebr_gui_parameter_widget *parameter_widget)
-{
-	if (parameter_widget->dict_parameter == NULL) {
-		gboolean is_expression = __parameter_has_expression(parameter_widget);
-		GebrGeoXmlSequence * property_value = NULL;
-		gebr_geoxml_program_parameter_get_value(parameter_widget->program_parameter, FALSE, 
-							&property_value, 0);
-		gebr_geoxml_value_sequence_set_use_expression(GEBR_GEOXML_VALUE_SEQUENCE(property_value), !is_expression);
-		gebr_gui_parameter_widget_update(parameter_widget);
-		gebr_gui_parameter_widget_report_change(parameter_widget);
-		__set_toggle_icon(parameter_widget);
-	} else {
-		gtk_menu_popup(GTK_MENU(gebr_gui_parameter_widget_dict_popup_menu(parameter_widget)), NULL, NULL, NULL, NULL,
-			       event->button, event->time);
-	}
-}
 void __on_destroy_menu_unblock_handler(GtkMenuShell *menushell,
 				       GtkEntry            *entry)
 {
