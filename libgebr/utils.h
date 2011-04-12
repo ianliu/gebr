@@ -147,5 +147,13 @@ gchar *gebr_id_random_create(gssize bytes);
  */
 gchar * gebr_lock_file(const gchar *pathname, const gchar *new_lock_content, gboolean symlink);
 
+/**
+ * gebr_str_ascii_word_at:
+ * @str:
+ * @pos: (in-out): Position to search the word
+ */
+gchar *gebr_str_word_before_pos(const gchar *str, gsize *pos);
+
 G_END_DECLS
+
 #endif				//__GEBR_UTILS_H

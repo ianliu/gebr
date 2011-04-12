@@ -667,3 +667,23 @@ gchar * gebr_lock_file(const gchar *pathname, const gchar *new_lock_content, gbo
 	return contents;
 }
 
+gchar *gebr_str_word_before_pos(const gchar *str, gsize *pos)
+{
+	gchar *word;
+	gsize ini = *pos;
+	gsize end = *pos;
+
+	while (ini >= 0 && (g_ascii_isalnum(str[ini]) || str[ini] == '_'))
+		ini--;
+
+	if (ini == end)
+		return NULL;
+
+	// Advance one so ini points to the first valid char
+	ini++;
+	*pos = ini;
+	word = g_strdup(str+ini);
+	word[end-ini+1] = '\0';
+
+	return word;
+}

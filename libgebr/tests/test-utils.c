@@ -36,11 +36,31 @@ void test_gebr_str_escape (void)
 	g_free (escaped);
 }
 
+void test_gebr_str_word_before_pos(void)
+{
+	gchar *word;
+	gchar *text;
+	gsize pos;
+
+	text = "foo bar baz";
+	pos = 6;
+	word = gebr_str_word_before_pos(text, &pos);
+	g_assert_cmpint(pos, ==, 4);
+	g_assert_cmpstr(word, ==, "bar");
+
+	text = "olá, tudo bem?";
+	pos = 2;
+	word = gebr_str_word_before_pos(text, &pos);
+	g_assert(word == NULL);
+	g_assert_cmpint(pos, ==, 2);
+}
+
 int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
 
 	g_test_add_func("/libgebr/utils/str-escape", test_gebr_str_escape);
+	g_test_add_func("/libgebr/utils/str_word_before_pos", test_gebr_str_word_before_pos);
 
 	return g_test_run();
 }
