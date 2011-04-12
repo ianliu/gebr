@@ -184,7 +184,7 @@ static void validate_parameter (GebrGeoXmlParameter * parameter, GebrGeoXmlParam
 	GebrGeoXmlParameter *selected;
 	GebrGeoXmlSequence *value;
 
-	if (!*is_valid)
+	if (!is_valid)
 		return;
 
 	prog = GEBR_GEOXML_PROGRAM_PARAMETER(parameter);
@@ -252,15 +252,12 @@ static void parameters_actions(GtkDialog * dialog, gint arg1, struct ui_paramete
 		GebrGeoXmlParameterError is_valid = validate_selected_program();
 		if (is_valid == GEBR_GEOXML_PARAMETER_ERROR_NONE){
 			flow_edition_status_changed (GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED);
-			puts("ERROR_NONE");
 		}
 		else if (is_valid == GEBR_GEOXML_PARAMETER_ERROR_REQUIRED_UNFILLED){
 			flow_edition_status_changed (GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED);
-			puts("REQUIRED_UNFILLED");
 		}
 		else if (is_valid == GEBR_GEOXML_PARAMETER_ERROR_INVALID_EXPRESSION){
 			flow_edition_status_changed (GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED);
-			puts("INVALID_EXPRESSION");
 		}
 		break;
 	}
