@@ -1253,26 +1253,27 @@ static gboolean on_entry_completion_matched (GtkEntryCompletion *completion,
 					     GtkTreeIter        *iter,
 					     struct gebr_gui_parameter_widget *parameter_widget)
 {
-	GtkWidget * entry;
-	const gchar * entry_text;
-	gint position;
+	GtkWidget *entry;
+	const gchar *text;
+	gint pos;
 	gchar * var;
 	gchar * word;
 	gint ini;
 
-
 	entry = gtk_entry_completion_get_entry(completion);
-	entry_text = gtk_entry_get_text(GTK_ENTRY(entry));
-	position = gtk_editable_get_position(GTK_EDITABLE(entry)) - 1;
-	ini = position;
+	text = gtk_entry_get_text(GTK_ENTRY(entry));
+	pos = gtk_editable_get_position(GTK_EDITABLE(entry)) - 1;
+	ini = pos;
 	gtk_tree_model_get(model, iter, 0, &var, -1);
-	word = gebr_str_word_before_pos(entry_text, (gsize *)&ini);
-
+	word = gebr_str_word_before_pos(text, (gsize *)&ini);
 
 	if (!word)
-		ini = position;
-	if (ini <= position)
-		gtk_editable_delete_text(GTK_EDITABLE(entry), ini, position + 1);
+		ini = pos;
+	else if (ini - 1 >= 0 && text[ini-1] == '[')
+		ini--;
+
+	if (ini <= pos)
+		gtk_editable_delete_text(GTK_EDITABLE(entry), ini, pos + 1);
 
 	if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT ||
 	    parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_INT){
