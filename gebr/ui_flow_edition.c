@@ -514,7 +514,7 @@ gboolean flow_edition_component_key_pressed(GtkWidget *view, GdkEventKey *key)
 
 		if ((status == GEBR_GEOXML_PROGRAM_STATUS_DISABLED) ||
 		    ((status == GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED) &&
-		     (!validate_program_iter(&iter)))) {
+		     (validate_program_iter(&iter) == GEBR_GEOXML_PARAMETER_ERROR_NONE))) {
 			has_disabled = TRUE;
 			break;
 		}
@@ -535,7 +535,7 @@ gboolean flow_edition_component_key_pressed(GtkWidget *view, GdkEventKey *key)
 				    FSEQ_GEBR_GEOXML_POINTER, &program,
 				    -1);
 
-		if (validate_program_iter(&iter)
+		if ((validate_program_iter(&iter) != GEBR_GEOXML_PARAMETER_ERROR_NONE)
 		    && status == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED) {
 			gebr_geoxml_program_set_status (program, GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED);
 		} else {
@@ -588,7 +588,7 @@ void flow_edition_status_changed(guint status)
 
 		old_status = gebr_geoxml_program_get_status (program);
 
-		if (validate_program_iter (&iter) &&
+		if (validate_program_iter(&iter) != GEBR_GEOXML_PARAMETER_ERROR_NONE &&
 		    status == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED)
 			status = GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED;
 
@@ -725,7 +725,7 @@ static void flow_edition_component_selected(void)
 			   FSEQ_GEBR_GEOXML_POINTER, &gebr.program, -1);
 
 	action = gtk_action_group_get_action(gebr.action_group_status, "flow_edition_status_configured");
-	gtk_action_set_sensitive(action, !validate_selected_program());
+	gtk_action_set_sensitive(action, (validate_selected_program() == GEBR_GEOXML_PARAMETER_ERROR_NONE));
 
 	action = gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_help");
 	gtk_action_set_sensitive(action, strlen(gebr_geoxml_program_get_help(gebr.program)) != 0);
@@ -1134,10 +1134,13 @@ on_has_required_parameter_unfilled_tooltip(GtkTreeView * treeview,
 	else if (gebr_geoxml_program_get_status(program) != GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED)
 		return FALSE;
 	else
-		if (validate_program_iter(&iter))
+		if (validate_program_iter(&iter) == GEBR_GEOXML_PARAMETER_ERROR_REQUIRED_UNFILLED)
 			gtk_tooltip_set_text(tooltip, _("Required parameter unfilled"));
+		else if (validate_program_iter(&iter) == GEBR_GEOXML_PARAMETER_ERROR_INVALID_EXPRESSION)
+			gtk_tooltip_set_text(tooltip, _("Invalid expression"));
 		else
 			gtk_tooltip_set_text(tooltip, _("Verify parameter configuration"));
+
 
 	path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter);
 	gtk_tree_view_set_tooltip_row(treeview, tooltip, path);
