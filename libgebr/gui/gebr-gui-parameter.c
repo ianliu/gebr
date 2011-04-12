@@ -1298,7 +1298,38 @@ static gboolean completion_number_match_func(GtkEntryCompletion *completion,
 					     GtkTreeIter *iter,
 					     gpointer user_data)
 {
-	return TRUE;
+	GtkTreeModel *model;
+	GtkWidget *entry;
+	const gchar *text;
+	gchar *compl;
+	gchar *word;
+	gsize pos;
+	gboolean retval;
+
+	entry = gtk_entry_completion_get_entry(completion);
+	text = gtk_entry_get_text(GTK_ENTRY(entry));
+
+	// Subtract 1 from position so 0 means 'after first char'
+	pos = gtk_editable_get_position(GTK_EDITABLE(entry)) - 1;
+
+	// pos = -1 means caret is before first char
+	if (pos == -1)
+		return FALSE;
+
+	word = gebr_str_word_before_pos(text, &pos);
+
+	// We could not find a word under the cursor
+	if (!word)
+		return FALSE;
+
+	model = gtk_entry_completion_get_model(completion);
+	gtk_tree_model_get(model, iter, 0, &compl, -1);
+	retval = g_str_has_prefix(compl, word);
+
+	g_free(word);
+	g_free(compl);
+
+	return retval;
 }
 
 static gboolean completion_string_match_func(GtkEntryCompletion *completion,
@@ -1306,7 +1337,47 @@ static gboolean completion_string_match_func(GtkEntryCompletion *completion,
 					     GtkTreeIter *iter,
 					     gpointer user_data)
 {
-	return TRUE;
+	GtkTreeModel *model;
+	GtkWidget *entry;
+	const gchar *text;
+	gchar *compl;
+	gchar *word;
+	gsize pos;
+	gboolean retval;
+
+	entry = gtk_entry_completion_get_entry(completion);
+	text = gtk_entry_get_text(GTK_ENTRY(entry));
+
+	// Subtract 1 from position so 0 means 'after first char'
+	pos = gtk_editable_get_position(GTK_EDITABLE(entry)) - 1;
+
+	// pos = -1 means caret is before first char
+	if (pos == -1)
+		return FALSE;
+
+	// Start of variable name
+	if (text[pos] == '[') {
+		// This is an escaped bracket
+		if (pos-1 >= 0 && text[pos-1] == '[')
+			return FALSE;
+		else
+			return TRUE;
+	}
+
+	word = gebr_str_word_before_pos(text, &pos);
+
+	// We could not find a word under the cursor
+	if (!word)
+		return FALSE;
+
+	model = gtk_entry_completion_get_model(completion);
+	gtk_tree_model_get(model, iter, 0, &compl, -1);
+	retval = g_str_has_prefix(compl, word);
+
+	g_free(word);
+	g_free(compl);
+
+	return retval;
 }
 
 static GList *
