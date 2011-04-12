@@ -1117,7 +1117,7 @@ on_has_required_parameter_unfilled_tooltip(GtkTreeView * treeview,
 		if (g_strcmp0(gebr_geoxml_flow_io_get_output(gebr.flow),"") == 0)
 			message = g_strdup(_("Choose output file"));
 		else
-			message = g_strdup_printf(_("Output file '%s'"), gebr_geoxml_flow_io_get_output(gebr.flow));
+			message = g_strdup_printf(_("%s output file '%s'"), gebr_geoxml_flow_io_get_output_append (gebr.flow) ? _("Append to") : _("Overwrite to") , gebr_geoxml_flow_io_get_output(gebr.flow));
 
 		gtk_tooltip_set_text(tooltip, message);
 		g_free(message);
@@ -1126,7 +1126,7 @@ on_has_required_parameter_unfilled_tooltip(GtkTreeView * treeview,
 		if (g_strcmp0(gebr_geoxml_flow_io_get_error(gebr.flow),"") == 0)
 			message = g_strdup(_("Choose log file"));
 		else
-			message = g_strdup_printf(_("Log file '%s'"), gebr_geoxml_flow_io_get_error(gebr.flow));
+			message = g_strdup_printf(_("%s log file '%s'"), gebr_geoxml_flow_io_get_error_append (gebr.flow) ? _("Append to") : _("Overwrite to") , gebr_geoxml_flow_io_get_error(gebr.flow));
 
 		gtk_tooltip_set_text(tooltip, message);
 		g_free(message);
