@@ -67,8 +67,8 @@ static void __on_destroy_menu_unblock_handler(GtkMenuShell *menushell,
 					      GtkEntry     *entry);
 
 static GList *gebr_gui_parameter_widget_get_compatible_dicts(struct gebr_gui_parameter_widget *widget);
-static gboolean on_entry_completion_matched (GtkEntryCompletion *completion,
 
+static gboolean on_entry_completion_matched (GtkEntryCompletion *completion,
 					     GtkTreeModel       *model,
 					     GtkTreeIter        *iter,
 					     struct gebr_gui_parameter_widget *parameter_widget);
@@ -1466,7 +1466,7 @@ static GtkTreeModel *generate_completion_model(struct gebr_gui_parameter_widget 
 		ppar = i->data;
 		keyword = gebr_geoxml_program_parameter_get_keyword(ppar);
 		gtk_list_store_append(store, &iter);
-		gtk_list_store_set(store, &iter, 0, ppar, -1);
+		gtk_list_store_set(store, &iter, 0, keyword, -1);
 	}
 
 	g_list_free(compatible);
