@@ -239,7 +239,8 @@ void gebr_comm_http_msg_serialize(GebrCommHttpMsg *msg)
 	
 	/* headers */
 	if (msg->content->len)
-		g_hash_table_insert(msg->headers, g_strdup("content-length"), g_strdup_printf("%lu", msg->content->len));
+		g_hash_table_insert(msg->headers, g_strdup("content-length"),
+				    g_strdup_printf("%" G_GSIZE_FORMAT, msg->content->len));
 	GHashTableIter iter;
 	gchar *key, *value;
 	g_hash_table_iter_init(&iter, msg->headers);
@@ -262,7 +263,8 @@ GebrCommHttpMsg *gebr_comm_http_msg_new_request(GebrCommHttpRequestMethod method
 	gsize len;
 	if (content && (len = strlen(content))) {
 		g_string_assign(msg->content, content);
-		g_hash_table_insert(msg->headers, g_strdup("content-length"), g_strdup_printf("%lu", len));
+		g_hash_table_insert(msg->headers, g_strdup("content-length"),
+				    g_strdup_printf("%" G_GSIZE_FORMAT, len));
 	}
 	if (headers) {
 		GHashTableIter iter;
@@ -283,7 +285,8 @@ GebrCommHttpMsg *gebr_comm_http_msg_new_response(gint status_code, GHashTable * 
 	gsize len;
 	if (content && (len = strlen(content))) {
 		g_string_assign(msg->content, content);
-		g_hash_table_insert(msg->headers, g_strdup("content-length"), g_strdup_printf("%lu", len));
+		g_hash_table_insert(msg->headers, g_strdup("content-length"),
+				    g_strdup_printf("%" G_GSIZE_FORMAT, len));
 	}
 	if (headers) {
 		GHashTableIter iter;
