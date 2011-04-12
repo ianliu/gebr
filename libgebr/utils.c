@@ -667,11 +667,11 @@ gchar * gebr_lock_file(const gchar *pathname, const gchar *new_lock_content, gbo
 	return contents;
 }
 
-gchar *gebr_str_word_before_pos(const gchar *str, gsize *pos)
+gchar *gebr_str_word_before_pos(const gchar *str, gint *pos)
 {
 	gchar *word;
-	gsize ini = *pos;
-	gsize end = *pos;
+	gint ini = *pos;
+	gint end = *pos;
 
 	while (ini >= 0 && (g_ascii_isalnum(str[ini]) || str[ini] == '_'))
 		ini--;

@@ -40,7 +40,7 @@ void test_gebr_str_word_before_pos(void)
 {
 	gchar *word;
 	gchar *text;
-	gsize pos;
+	gint pos;
 
 	text = "foo bar baz";
 	pos = 6;

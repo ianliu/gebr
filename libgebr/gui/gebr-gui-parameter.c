@@ -1265,7 +1265,7 @@ static gboolean on_entry_completion_matched (GtkEntryCompletion *completion,
 	pos = gtk_editable_get_position(GTK_EDITABLE(entry)) - 1;
 	ini = pos;
 	gtk_tree_model_get(model, iter, 0, &var, -1);
-	word = gebr_str_word_before_pos(text, (gsize *)&ini);
+	word = gebr_str_word_before_pos(text, &ini);
 
 	if (!word)
 		ini = pos;
@@ -1304,7 +1304,7 @@ static gboolean completion_number_match_func(GtkEntryCompletion *completion,
 	const gchar *text;
 	gchar *compl;
 	gchar *word;
-	gsize pos;
+	gint pos;
 	gboolean retval;
 
 	entry = gtk_entry_completion_get_entry(completion);
@@ -1343,7 +1343,7 @@ static gboolean completion_string_match_func(GtkEntryCompletion *completion,
 	const gchar *text;
 	gchar *compl;
 	gchar *word;
-	gsize pos;
+	gint pos;
 	gboolean retval;
 
 	entry = gtk_entry_completion_get_entry(completion);

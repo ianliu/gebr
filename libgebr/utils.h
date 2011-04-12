@@ -152,7 +152,7 @@ gchar * gebr_lock_file(const gchar *pathname, const gchar *new_lock_content, gbo
  * @str:
  * @pos: (in-out): Position to search the word
  */
-gchar *gebr_str_word_before_pos(const gchar *str, gsize *pos);
+gchar *gebr_str_word_before_pos(const gchar *str, gint *pos);
 
 G_END_DECLS
 
