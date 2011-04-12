@@ -97,6 +97,9 @@ static void setup_entry_completion(GtkEntry *entry,
 
 static gboolean __parameter_accepts_expression(struct gebr_gui_parameter_widget *parameter_widget)
 {
+	if (gebr_geoxml_program_get_control(gebr_geoxml_parameter_get_program(parameter_widget->parameter)) != GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY)
+		return FALSE;
+	
 	return parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_INT ||
 		parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT ||
 		parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_STRING;
