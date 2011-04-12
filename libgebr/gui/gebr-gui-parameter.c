@@ -67,11 +67,11 @@ static void __on_destroy_menu_unblock_handler(GtkMenuShell *menushell,
 					      GtkEntry     *entry);
 
 static GList *gebr_gui_parameter_widget_get_compatible_dicts(struct gebr_gui_parameter_widget *widget);
+static gboolean on_entry_completion_matched (GtkEntryCompletion *completion,
 
-static gboolean on_entry_completion_matched (GtkEntryCompletion *widget,
 					     GtkTreeModel       *model,
 					     GtkTreeIter        *iter,
-					     gpointer            user_data);
+					     struct gebr_gui_parameter_widget *parameter_widget);
 
 static gboolean completion_number_match_func(GtkEntryCompletion *completion,
 					     const gchar *key,
@@ -88,7 +88,8 @@ static GtkTreeModel *generate_completion_model(struct gebr_gui_parameter_widget 
 static void setup_entry_completion(GtkEntry *entry,
 				   GtkTreeModel *model,
 				   GtkEntryCompletionMatchFunc func,
-				   GCallback match_selected_cb);
+				   GCallback match_selected_cb,
+				   struct gebr_gui_parameter_widget *parameter_widget);
 
 //==============================================================================
 // PRIVATE FUNCTIONS							       =
@@ -611,9 +612,10 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 
 			parameter_widget->value_widget = entry = gtk_entry_new();
 			completion_model = generate_completion_model(parameter_widget);
-			setup_entry_completion(entry, completion_model,
+			setup_entry_completion(GTK_ENTRY(entry), completion_model,
 					       completion_number_match_func,
-					       G_CALLBACK(on_entry_completion_matched));
+					       G_CALLBACK(on_entry_completion_matched),
+					       parameter_widget);
 			g_object_unref (completion_model);
 
 			gtk_widget_set_size_request(entry, 120, 30);
@@ -637,9 +639,10 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 
 			parameter_widget->value_widget = entry = gtk_entry_new();
 			completion_model = generate_completion_model(parameter_widget);
-			setup_entry_completion(entry, completion_model,
+			setup_entry_completion(GTK_ENTRY(entry), completion_model,
 					       completion_number_match_func,
-					       G_CALLBACK(on_entry_completion_matched));
+					       G_CALLBACK(on_entry_completion_matched),
+					       parameter_widget);
 			g_object_unref (completion_model);
 
 			gtk_widget_set_size_request(entry, 120, 30);
@@ -659,12 +662,14 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 		}
 	case GEBR_GEOXML_PARAMETER_TYPE_STRING:{
 			GtkWidget *entry;
+			GtkTreeModel *completion_model;
 
 			parameter_widget->value_widget = entry = gtk_entry_new();
 			completion_model = generate_completion_model(parameter_widget);
-			setup_entry_completion(entry, completion_model,
+			setup_entry_completion(GTK_ENTRY(entry), completion_model,
 					       completion_string_match_func,
-					       G_CALLBACK(on_entry_completion_matched));
+					       G_CALLBACK(on_entry_completion_matched),
+					       parameter_widget);
 			g_object_unref (completion_model);
 
 			activatable_entry = GTK_ENTRY (entry);
@@ -1243,11 +1248,47 @@ static void __on_destroy_menu_unblock_handler(GtkMenuShell *menushell,
 					  G_CALLBACK(__on_focus_out_event), menushell);
 }
 
-static gboolean on_entry_completion_matched (GtkEntryCompletion *widget,
+static gboolean on_entry_completion_matched (GtkEntryCompletion *completion,
 					     GtkTreeModel       *model,
 					     GtkTreeIter        *iter,
-					     gpointer            user_data)
+					     struct gebr_gui_parameter_widget *parameter_widget)
 {
+	GtkWidget * entry;
+	const gchar * entry_text;
+	gint position;
+	gchar * var;
+	gchar * word;
+	gint ini;
+
+
+	entry = gtk_entry_completion_get_entry(completion);
+	entry_text = gtk_entry_get_text(GTK_ENTRY(entry));
+	position = gtk_editable_get_position(GTK_EDITABLE(entry)) - 1;
+	ini = position;
+	gtk_tree_model_get(model, iter, 0, &var, -1);
+	word = gebr_str_word_before_pos(entry_text, (gsize *)&ini);
+
+
+	if (!word)
+		ini = position;
+	if (ini <= position)
+		gtk_editable_delete_text(GTK_EDITABLE(entry), ini, position + 1);
+
+	if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT ||
+	    parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_INT){
+		gtk_editable_insert_text(GTK_EDITABLE(entry), var, -1, &ini);
+		gtk_editable_set_position(GTK_EDITABLE(entry), ini + strlen(var));
+	}
+	else if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_STRING){
+		GString * value = g_string_new(NULL);
+
+		g_string_printf(value, "[%s]", var);
+		gtk_editable_insert_text(GTK_EDITABLE(entry), value->str, -1, &ini);
+		gtk_editable_set_position(GTK_EDITABLE(entry), ini + value->len);
+		g_string_free(value, TRUE);
+	}
+	g_free(word);
+	g_free(var);
 
 	return TRUE;
 }
@@ -1365,13 +1406,14 @@ static GtkTreeModel *generate_completion_model(struct gebr_gui_parameter_widget 
 static void setup_entry_completion(GtkEntry *entry,
 				   GtkTreeModel *model,
 				   GtkEntryCompletionMatchFunc func,
-				   GCallback match_selected_cb)
+				   GCallback match_selected_cb,
+				   struct gebr_gui_parameter_widget *parameter_widget)
 {
 	GtkEntryCompletion *comp;
 
 	comp = gtk_entry_completion_new();
 	gtk_entry_completion_set_model(comp, model);
-	gtk_entry_completion_set_text_column(completion, 0);
+	gtk_entry_completion_set_text_column(comp, 0);
 	gtk_entry_completion_set_match_func(comp, func, NULL, NULL);
 	g_signal_connect(comp, "match-selected", match_selected_cb, NULL);
 	gtk_entry_set_completion(entry, comp);
