@@ -25,8 +25,8 @@ char *strptime(const char *s, const char *formato, struct tm *tm);
 
 #include <libgebr.h>
 #include <geoxml.h>
-#include "../../utils.h"
-#include "../../date.h"
+#include "../utils.h"
+#include "../date.h"
 
 gchar *title = NULL;
 gchar *desc = NULL;

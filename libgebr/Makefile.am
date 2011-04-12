@@ -29,7 +29,7 @@ if ENABLE_TESTS
 EXTRADIR += tests
 endif
 
-SUBDIRS = . json geoxml comm po ${EXTRADIR}
+SUBDIRS = . json geoxml geoxml-utils comm po ${EXTRADIR}
 
 AM_CFLAGS = $(COMMON_CFLAGS) -fPIC
 

@@ -19,7 +19,7 @@
 #include <glib/gi18n.h>
 #include <libgebr.h>
 #include <defines.h>
-#include "../geoxml.h"
+#include "geoxml.h"
 
 int main(int argc, char **argv)
 {
