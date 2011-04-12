@@ -1478,7 +1478,7 @@ static void setup_entry_completion(GtkEntry *entry,
 				   GtkTreeModel *model,
 				   GtkEntryCompletionMatchFunc func,
 				   GCallback match_selected_cb,
-				   struct gebr_gui_parameter_widget *parameter_widget)
+				   struct gebr_gui_parameter_widget *widget)
 {
 	GtkEntryCompletion *comp;
 
@@ -1486,7 +1486,7 @@ static void setup_entry_completion(GtkEntry *entry,
 	gtk_entry_completion_set_model(comp, model);
 	gtk_entry_completion_set_text_column(comp, 0);
 	gtk_entry_completion_set_match_func(comp, func, NULL, NULL);
-	g_signal_connect(comp, "match-selected", match_selected_cb, NULL);
+	g_signal_connect(comp, "match-selected", match_selected_cb, widget);
 	gtk_entry_set_completion(entry, comp);
 	g_object_unref(comp);
 }
