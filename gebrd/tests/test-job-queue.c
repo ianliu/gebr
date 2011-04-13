@@ -16,8 +16,8 @@
  */
 #include <glib.h>
 
-#include "gebrd-job-queue.h"
-#include "gebrd-job.h"
+#include "../gebrd-job-queue.h"
+#include "../gebrd-job.h"
 
 /*
  * Tests for default parameters in a GebrdJobQueue.
@@ -36,7 +36,7 @@ static void test_job_queue_new(void)
  */
 static void test_job_queue_append_job(void)
 {
-	struct job *job_ptr, job1, job2;
+	GebrdJob *job_ptr, job1, job2;
 	GebrdJobQueue * job_queue;
 
 	job_queue = gebrd_job_queue_new("test");
@@ -44,10 +44,10 @@ static void test_job_queue_append_job(void)
 	gebrd_job_queue_append_job(job_queue, &job2);
 	g_assert(job_queue->jobs != NULL);
 
-	job_ptr = (struct job *)g_list_nth_data(job_queue->jobs, 0);
+	job_ptr = (GebrdJob *)g_list_nth_data(job_queue->jobs, 0);
 	g_assert(job_ptr == &job1);
 
-	job_ptr = (struct job *)g_list_nth_data(job_queue->jobs, 1);
+	job_ptr = (GebrdJob *)g_list_nth_data(job_queue->jobs, 1);
 	g_assert(job_ptr == &job2);
 }
 
@@ -56,7 +56,7 @@ static void test_job_queue_append_job(void)
  */
 static void test_job_queue_pop(void)
 {
-	struct job *job_ptr, job1, job2;
+	GebrdJob *job_ptr, job1, job2;
 	GebrdJobQueue * job_queue;
 
 	job_queue = gebrd_job_queue_new("test");
