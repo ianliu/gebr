@@ -788,28 +788,49 @@ static gboolean job_parse_parameter(GebrdJob *job, GebrGeoXmlParameter * paramet
 	program_parameter = GEBR_GEOXML_PROGRAM_PARAMETER(parameter);
 	switch (type) {
 	case GEBR_GEOXML_PARAMETER_TYPE_STRING: {
-		g_debug("Parse strings and insert in command line HERE!");
+		GString *value;
+		value = gebr_geoxml_program_parameter_get_string_value(program_parameter, FALSE);
+		g_debug("%s", value->str);
+		if (strlen(g_strstrip(value->str)) > 0) {
+			gchar *result;
+			GebrdStringParserError error;
+
+			error = parse_string_expression(value->str, job->table, &result);
+
+			g_debug("Error code is: %d", error);
+			switch (error) {
+			case GEBRD_STRING_PARSER_ERROR_NONE:
+				g_string_append_printf (job->parent.cmd_line, "%s\"%s\" ",
+							gebr_geoxml_program_parameter_get_keyword(program_parameter),
+							result);
+				g_free (result);
+				break;
+			case GEBRD_STRING_PARSER_ERROR_SYNTAX:
+				job_issue(job, _("Syntax error in string expression"));
+				g_string_free (value, TRUE);
+				return FALSE;
+			case GEBRD_STRING_PARSER_ERROR_UNDEF_VAR:
+				job_issue(job, _("Undefined variable in string expression"));
+				g_string_free (value, TRUE);
+				return FALSE;
+			}
+		}
 		break;
 	}
 
 	case GEBR_GEOXML_PARAMETER_TYPE_INT:
 	case GEBR_GEOXML_PARAMETER_TYPE_FLOAT: {
-		GString *expr;
-		gchar *temp;
-
-		expr = gebr_geoxml_program_parameter_get_string_value(program_parameter, FALSE);
-		temp = g_string_free(expr, FALSE);
-
-		// TODO: Tratar strings e substituir variáveis pelo valor correspondente no vetor V
-		if (strlen(g_strstrip(temp)) > 0) {
-			g_string_append_printf (expr_buf, "\t\t%s # %s\n", temp,
+		GString *value;
+		value = gebr_geoxml_program_parameter_get_string_value(program_parameter, FALSE);
+		if (strlen(g_strstrip(value->str)) > 0) {
+			g_string_append_printf (expr_buf, "\t\t%s # %s\n", value->str,
 						gebr_geoxml_parameter_get_label (parameter));
 			g_string_append_printf (job->parent.cmd_line, "%s${V[%d]} ",
 						gebr_geoxml_program_parameter_get_keyword(program_parameter),
 						job->expr_count + job->n_vars);
 			job->expr_count++;
 		}
-		g_free(temp);
+		g_string_free(value, TRUE);
 		break;
 	}
 
@@ -906,6 +927,7 @@ static void define_bc_variables(GString *expr_buf, GebrGeoXmlFlow *flow, GHashTa
 	};
 	static gint n_types = G_N_ELEMENTS (allowed_types);
 
+	*table = ht;
 	g_string_append(expr_buf, "\t\titer\n");
 	g_hash_table_insert(ht, g_strdup("iter"), GUINT_TO_POINTER(0));
 
@@ -1262,6 +1284,9 @@ GebrdStringParserError parse_string_expression(const gchar *str, GHashTable *tab
 		       continue;
 		}
 
+		// Escape single-quotes, double-quotes and backslashes
+		if (str[i] == '\'' || str[i] == '"' || str[i] == '\\')
+			g_string_append_c(unescape, '\\');
 		g_string_append_c(unescape, str[i++]);
 	}
 

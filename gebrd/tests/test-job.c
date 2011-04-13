@@ -17,7 +17,7 @@
 #include <glib.h>
 #include <gebrd-job.h>
 
-void test_gebrd_job_parse_string_expression(void)
+void test_gebrd_job_parse_string_normal(void)
 {
 	gchar *result;
 	GHashTable *ht;
@@ -43,7 +43,18 @@ void test_gebrd_job_parse_string_expression(void)
 	g_assert_cmpstr(result, ==, "${V[0]}${V[1]}${V[2]}");
 	g_free(result);
 
-	result = NULL;
+	g_hash_table_unref(ht);
+}
+
+void test_gebrd_job_parse_string_invalid(void)
+{
+	gchar *result = NULL;
+	GHashTable *ht;
+
+	ht = g_hash_table_new(g_str_hash, g_str_equal);
+	g_hash_table_insert(ht, "iter", GUINT_TO_POINTER(0));
+	g_hash_table_insert(ht, "foo", GUINT_TO_POINTER(1));
+	g_hash_table_insert(ht, "bar", GUINT_TO_POINTER(2));
 
 	g_assert(parse_string_expression("[iter][foo][baz]", ht, &result) == GEBRD_STRING_PARSER_ERROR_UNDEF_VAR);
 	g_assert(result == NULL);
@@ -57,11 +68,38 @@ void test_gebrd_job_parse_string_expression(void)
 	g_hash_table_unref(ht);
 }
 
+void test_gebrd_job_parse_string_escape(void)
+{
+	gchar *result;
+	GHashTable *ht;
+
+	ht = g_hash_table_new(g_str_hash, g_str_equal);
+	g_hash_table_insert(ht, "iter", GUINT_TO_POINTER(0));
+	g_hash_table_insert(ht, "foo", GUINT_TO_POINTER(1));
+	g_hash_table_insert(ht, "bar", GUINT_TO_POINTER(2));
+
+	g_assert(parse_string_expression("\"hi\"", ht, &result) == GEBRD_STRING_PARSER_ERROR_NONE);
+	g_assert_cmpstr(result, ==, "\\\"hi\\\"");
+	g_free(result);
+
+	g_assert(parse_string_expression("'hi'", ht, &result) == GEBRD_STRING_PARSER_ERROR_NONE);
+	g_assert_cmpstr(result, ==, "\\'hi\\'");
+	g_free(result);
+
+	g_assert(parse_string_expression("\\\"hi", ht, &result) == GEBRD_STRING_PARSER_ERROR_NONE);
+	g_assert_cmpstr(result, ==, "\\\\\\\"hi");
+	g_free(result);
+
+	g_hash_table_unref(ht);
+}
+
 int main(int argc, char * argv[])
 {
 	g_test_init(&argc, &argv, NULL);
 
-	g_test_add_func("/gebrd/job/parse_string_expression", test_gebrd_job_parse_string_expression);
+	g_test_add_func("/gebrd/job/parse_string/normal-expression", test_gebrd_job_parse_string_normal);
+	g_test_add_func("/gebrd/job/parse_string/invalid-expression", test_gebrd_job_parse_string_invalid);
+	g_test_add_func("/gebrd/job/parse_string/escape-expression", test_gebrd_job_parse_string_escape);
 
 	return g_test_run();
 }
