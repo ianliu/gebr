@@ -1173,13 +1173,23 @@ void gebr_gui_parameter_widget_validate(struct gebr_gui_parameter_widget *parame
 {
 	if (__parameter_accepts_expression(parameter_widget)) {
 		if (parameter_widget->dicts) {
+			gboolean success = FALSE;
 			GError * error = NULL;
 			GString *value = gebr_gui_parameter_widget_get_value(parameter_widget);
-			gboolean success = gebr_geoxml_document_validate_expr(value->str, 
-									      parameter_widget->dicts->flow, 
-									      parameter_widget->dicts->line, 
-									      parameter_widget->dicts->project, 
-									      &error);
+
+			if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_INT ||
+			    parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT)
+				success = gebr_geoxml_document_validate_expr(value->str, 
+									     parameter_widget->dicts->flow, 
+									     parameter_widget->dicts->line, 
+									     parameter_widget->dicts->project, 
+									     &error);
+			else if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_STRING)
+				success = gebr_geoxml_document_validate_str(value->str, 
+									    parameter_widget->dicts->flow, 
+									    parameter_widget->dicts->line, 
+									    parameter_widget->dicts->project, 
+									    &error);
 
 			if (!success)
 			{
@@ -1500,16 +1510,22 @@ static void validate_parameter_value(struct gebr_gui_parameter_widget *widget)
 	if (!GTK_IS_ENTRY(widget->value_widget))
 		return;
 
-	// TODO: add string validation here!
-	if (widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_STRING)
-		return;
-
 	value = gebr_gui_parameter_widget_get_value(widget);
-	gebr_geoxml_document_validate_expr(value->str,
-					   widget->dicts->flow,
-					   widget->dicts->line,
-					   widget->dicts->project,
-					   &error);
+
+	if (widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_INT ||
+	    widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT)
+		gebr_geoxml_document_validate_expr(value->str,
+						   widget->dicts->flow,
+						   widget->dicts->line,
+						   widget->dicts->project,
+						   &error);
+
+	else if (widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_STRING)
+		gebr_geoxml_document_validate_str(value->str,
+						   widget->dicts->flow,
+						   widget->dicts->line,
+						   widget->dicts->project,
+						   &error);
 
 	if (error) {
 		entry = GTK_ENTRY(widget->value_widget);

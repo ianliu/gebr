@@ -1152,6 +1152,8 @@ on_has_required_parameter_unfilled_tooltip(GtkTreeView * treeview,
 			gtk_tooltip_set_text(tooltip, _("Required parameter unfilled"));
 		else if (validate_program_iter(&iter) == GEBR_GEOXML_PARAMETER_ERROR_INVALID_EXPRESSION)
 			gtk_tooltip_set_text(tooltip, _("Invalid expression"));
+		else if (validate_program_iter(&iter) == GEBR_GEOXML_PARAMETER_ERROR_UNKNOWN_VARIABLE)
+			gtk_tooltip_set_text(tooltip, _("Unknown Variable"));
 		else
 			gtk_tooltip_set_text(tooltip, _("Verify parameter configuration"));
 

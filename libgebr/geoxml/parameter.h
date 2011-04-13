@@ -148,6 +148,7 @@ typedef enum {
 	GEBR_GEOXML_PARAMETER_ERROR_NONE = 0,
 	GEBR_GEOXML_PARAMETER_ERROR_REQUIRED_UNFILLED,
 	GEBR_GEOXML_PARAMETER_ERROR_INVALID_EXPRESSION,
+	GEBR_GEOXML_PARAMETER_ERROR_UNKNOWN_VARIABLE,
 } GebrGeoXmlParameterError;
 
 void __gebr_geoxml_parameter_set_label(GebrGeoXmlParameter * parameter, const gchar * label);

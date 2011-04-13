@@ -208,13 +208,26 @@ static void validate_parameter (GebrGeoXmlParameter * parameter, GebrGeoXmlParam
 			continue;
 
 		expr = gebr_geoxml_value_sequence_get_expression (GEBR_GEOXML_VALUE_SEQUENCE (value));
-		if (!gebr_geoxml_document_validate_expr (expr,
-							 GEBR_GEOXML_DOCUMENT (gebr.flow),
-							 GEBR_GEOXML_DOCUMENT (gebr.line),
-							 GEBR_GEOXML_DOCUMENT (gebr.project),
-							 NULL)) {
-			*is_valid = GEBR_GEOXML_PARAMETER_ERROR_INVALID_EXPRESSION;
-			return;
+		if (gebr_geoxml_parameter_get_type(parameter) == GEBR_GEOXML_PARAMETER_TYPE_STRING){
+			if (!gebr_geoxml_document_validate_str (expr,
+								GEBR_GEOXML_DOCUMENT (gebr.flow),
+								GEBR_GEOXML_DOCUMENT (gebr.line),
+								GEBR_GEOXML_DOCUMENT (gebr.project),
+								NULL)) {
+				*is_valid = GEBR_GEOXML_PARAMETER_ERROR_UNKNOWN_VARIABLE;
+				return;
+			}
+		}
+		else if (gebr_geoxml_parameter_get_type(parameter) == GEBR_GEOXML_PARAMETER_TYPE_INT ||
+			 gebr_geoxml_parameter_get_type(parameter) == GEBR_GEOXML_PARAMETER_TYPE_FLOAT){
+			if (!gebr_geoxml_document_validate_expr (expr,
+								 GEBR_GEOXML_DOCUMENT (gebr.flow),
+								 GEBR_GEOXML_DOCUMENT (gebr.line),
+								 GEBR_GEOXML_DOCUMENT (gebr.project),
+								 NULL)) {
+				*is_valid = GEBR_GEOXML_PARAMETER_ERROR_INVALID_EXPRESSION;
+				return;
+			}
 		}
 	}
 }
@@ -257,6 +270,9 @@ static void parameters_actions(GtkDialog * dialog, gint arg1, struct ui_paramete
 			flow_edition_status_changed (GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED);
 		}
 		else if (is_valid == GEBR_GEOXML_PARAMETER_ERROR_INVALID_EXPRESSION){
+			flow_edition_status_changed (GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED);
+		}
+		else if (is_valid == GEBR_GEOXML_PARAMETER_ERROR_UNKNOWN_VARIABLE){
 			flow_edition_status_changed (GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED);
 		}
 		break;
