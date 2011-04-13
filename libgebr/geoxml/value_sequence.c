@@ -64,30 +64,6 @@ const gchar *gebr_geoxml_value_sequence_get(GebrGeoXmlValueSequence * value_sequ
 	return __gebr_geoxml_get_element_value((GdomeElement *) value_sequence);
 }
 
-const gchar *gebr_geoxml_value_sequence_get_expression (GebrGeoXmlValueSequence *self)
-{
-	g_return_val_if_fail (self != NULL, NULL);
-
-	return __gebr_geoxml_get_attr_value((GdomeElement*) self, "expression");
-}
-
-void gebr_geoxml_value_sequence_set_expression (GebrGeoXmlValueSequence *self, const gchar *expression)
-{
-	g_return_if_fail (self != NULL);
-
-	__gebr_geoxml_set_attr_value((GdomeElement*) self, "expression", expression);
-}
-
-gboolean gebr_geoxml_value_sequence_get_use_expression (GebrGeoXmlValueSequence *self)
-{
-	return !strcmp(__gebr_geoxml_get_attr_value((GdomeElement*) self, "use_expression"), "yes") ? TRUE : FALSE;
-}
-
-void gebr_geoxml_value_sequence_set_use_expression (GebrGeoXmlValueSequence *self, gboolean use_expression)
-{
-	__gebr_geoxml_set_attr_value((GdomeElement*) self, "use_expression", use_expression ? "yes" : "no");
-}
-
 const gchar *gebr_geoxml_value_sequence_get_dictkey (GebrGeoXmlValueSequence *self)
 {
 	g_return_val_if_fail (self != NULL, NULL);

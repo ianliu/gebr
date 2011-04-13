@@ -90,35 +90,6 @@ void gebr_geoxml_value_sequence_set(GebrGeoXmlValueSequence * value_sequence, co
 const gchar *gebr_geoxml_value_sequence_get(GebrGeoXmlValueSequence * value_sequence);
 
 /**
- * gebr_geoxml_value_sequence_get_expression:
- * @self:
- *
- * Returns: the expression set in this value, or empty if there is no expression.
- */
-const gchar *gebr_geoxml_value_sequence_get_expression (GebrGeoXmlValueSequence *self);
-
-/**
- * gebr_geoxml_value_sequence_set_expression:
- * @self:
- * @expression: the expression string, or %NULL to remove the expression
- */
-void gebr_geoxml_value_sequence_set_expression (GebrGeoXmlValueSequence *self, const gchar *expression);
-
-/**
- * gebr_geoxml_value_sequence_get_use_expression:
- * @self:
- * Returns: FALSE if not using expression; TRUE otherwise.
- */
-gboolean gebr_geoxml_value_sequence_get_use_expression (GebrGeoXmlValueSequence *self);
-
-/**
- * gebr_geoxml_value_sequence_set_use_expression:
- * @self:
- * @use_expression: whether to use or not the expression value.
- */
-void gebr_geoxml_value_sequence_set_use_expression (GebrGeoXmlValueSequence *self, gboolean use_expression);
-
-/**
  * gebr_geoxml_value_sequence_get_dictkey:
  */
 const gchar *gebr_geoxml_value_sequence_get_dictkey (GebrGeoXmlValueSequence *self);
