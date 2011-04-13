@@ -46,7 +46,6 @@ test_deserialize (void)
   //g_assert_cmpstr (dictionary->parameter->value, ==, "123");
 
   gchar *json = json_gobject_to_data (object, NULL);
-  puts (json);
   g_free(json);
 
   g_object_unref (object);

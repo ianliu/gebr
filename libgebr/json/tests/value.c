@@ -229,12 +229,12 @@ GType value_get_type (void)
 		info.class_size = sizeof (ValueClass);
 		info.base_init = NULL;
 		info.base_finalize = NULL;
-		info.class_init = value_class_init;
+		info.class_init = (GClassInitFunc) value_class_init;
 		info.class_finalize = NULL;
 		info.class_data = NULL;
 		info.instance_size = sizeof (Value);
 		info.n_preallocs = 0;
-		info.instance_init = value_init;
+		info.instance_init = (GInstanceInitFunc) value_init;
 		info.value_table = &value_table;
 
 //		g_boxed_type_register_static("Value", value_object_copy, value_object_free);

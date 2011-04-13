@@ -91,13 +91,16 @@ void test_gebr_is_name_valid(void)
 	g_assert(gebr_expr_is_name_valid("var1"));
 	g_assert(gebr_expr_is_name_valid("var1_"));
 
+	// This name is valid, but it cannot be defined
+	// in GeBR's interface!
+	g_assert(gebr_expr_is_name_valid("iter"));
+
 	g_assert(!gebr_expr_is_name_valid("VAR"));
 	g_assert(!gebr_expr_is_name_valid("_var1"));
 	g_assert(!gebr_expr_is_name_valid("1var"));
 	g_assert(!gebr_expr_is_name_valid("vAr1"));
 	g_assert(!gebr_expr_is_name_valid("var1,2"));
 
-	g_assert(!gebr_expr_is_name_valid("iter"));
 	g_assert(!gebr_expr_is_name_valid("scale"));
 }
 
