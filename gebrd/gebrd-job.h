@@ -26,6 +26,12 @@
 
 G_BEGIN_DECLS
 
+typedef enum {
+	GEBRD_STRING_PARSER_ERROR_NONE,
+	GEBRD_STRING_PARSER_ERROR_SYNTAX,
+	GEBRD_STRING_PARSER_ERROR_UNDEF_VAR,
+} GebrdStringParserError;
+
 GType gebrd_job_get_type(void);
 #define GEBRD_JOB_TYPE		(gebrd_job_get_type())
 #define GEBRD_JOB(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), GEBRD_JOB_TYPE, GebrdJob))
@@ -100,6 +106,19 @@ void job_list(struct client *client);
 /**
  */
 void job_send_clients_job_notify(GebrdJob *job);
+
+/**
+ * parse_string_expression:
+ * @str:
+ * @table:
+ * @result:
+ *
+ * Parses a string expression substituting variables enclosed by brackets with
+ * the appropriate value returned by BC. Also, escaped brackets are handled.
+ *
+ * Returns: %STRING_PARSER_ERROR_NONE on success.
+ */
+GebrdStringParserError parse_string_expression(const gchar *str, GHashTable *table, gchar **result);
 
 G_END_DECLS
 #endif				//__JOB_H

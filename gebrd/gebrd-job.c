@@ -1206,3 +1206,74 @@ err:
 	g_string_assign(job->parent.cmd_line, "");
 	job->critical_error = TRUE;
 }
+
+GebrdStringParserError parse_string_expression(const gchar *str, GHashTable *table, gchar **result)
+{
+	guint pos;
+	gint i = 0, j;
+	gchar *var_name;
+	gboolean fetch_var = FALSE;
+	GString *unescape = g_string_new(NULL);
+	GebrdStringParserError retval = GEBRD_STRING_PARSER_ERROR_NONE;
+
+	var_name = g_new(gchar, strlen(str));
+
+	while (str[i])
+	{
+		if (str[i] == '[' && str[i+1] == '[') {
+			i += 2;
+			g_string_append_c(unescape, '[');
+			continue;
+		}
+
+		if (str[i] == '[') {
+			fetch_var = TRUE;
+			i++;
+			j = 0;
+			continue;
+		}
+
+		if (fetch_var) {
+			if (str[i] == ']') {
+				fetch_var = FALSE;
+				var_name[j] = '\0';
+				if (g_hash_table_lookup_extended(table, var_name, NULL, (gpointer)&pos))
+					g_string_append_printf(unescape, "${V[%d]}", pos);
+				else {
+					retval = GEBRD_STRING_PARSER_ERROR_UNDEF_VAR;
+					goto exception;
+				}
+				i++;
+				continue;
+			} else {
+				var_name[j++] = str[i++];
+				continue;
+			}
+		}
+
+		if (str[i] == ']') {
+		       if (str[i+1] != ']') {
+			       retval = GEBRD_STRING_PARSER_ERROR_SYNTAX;
+			       goto exception;
+		       } else {
+			       g_string_append_c(unescape, ']');
+			       i += 2;
+		       }
+		       continue;
+		}
+
+		g_string_append_c(unescape, str[i++]);
+	}
+
+	if (fetch_var) {
+		retval = GEBRD_STRING_PARSER_ERROR_SYNTAX;
+		goto exception;
+	}
+
+	*result = g_string_free(unescape, FALSE);
+
+exception:
+	g_free(var_name);
+
+	return retval;
+}
