@@ -14,88 +14,58 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include <stdio.h>
+#include <glib.h>
+#include <glib/gprintf.h>
 
-#include <gdome.h>
+#include "../object.h"
 
-#include "../geoxml.h"
-#include "../geoxml/xml.h"
 
-void test_project_append_line()
+static void callback (GebrGeoXmlObject *parameter, const gchar **keyword)
 {
-	const gchar * value;
-	GebrGeoXmlProject * project = gebr_geoxml_project_new();
-	GebrGeoXmlProjectLine * line;
+	GebrGeoXmlProgramParameter *prog;
+	GString *string_value;
 
-	line = gebr_geoxml_project_append_line(project, "test1");
-	g_assert(line != NULL);
+	prog = GEBR_GEOXML_PROGRAM_PARAMETER(parameter);
+	string_value = gebr_geoxml_program_parameter_get_string_value(prog, TRUE);
 
-	value = __gebr_geoxml_get_attr_value((GdomeElement*)line, "source");
-	g_assert_cmpstr(value, ==, "test1");
-
-	line = gebr_geoxml_project_append_line(project, "test2");
-	g_assert(line != NULL);
-
-	value = __gebr_geoxml_get_attr_value((GdomeElement*)line, "source");
-	g_assert_cmpstr(value, ==, "test2");
-
-	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(project));
+//	gebr_geoxml_program_parameter_get_value (prog, FALSE, &value, 0);
+	*keyword = g_strdup_printf("%s,%s=%s", *keyword, gebr_geoxml_program_parameter_get_keyword(prog), string_value->str);
 }
 
-void test_project_get_lines_number()
-{
-	GebrGeoXmlProject * project = gebr_geoxml_project_new();
+void test_gebr_geoxml_program_foreach_parameter(void){
+	GebrGeoXmlFlow *flow = gebr_geoxml_flow_new();
+	GebrGeoXmlProgram *program = gebr_geoxml_flow_append_program(flow);
 
-	glong null_project_length;
-	null_project_length = gebr_geoxml_project_get_lines_number(NULL);
-	g_assert_cmpint(null_project_length, ==, -1);
+	GebrGeoXmlParameters *parameters_list = gebr_geoxml_program_get_parameters(program);
+	GebrGeoXmlParameter *parameter;
 
-	glong empty_project_length;
-	empty_project_length = gebr_geoxml_project_get_lines_number(project);
-	g_assert_cmpint(empty_project_length, ==, 0);
+	parameter = gebr_geoxml_parameters_append_parameter(parameters_list, GEBR_GEOXML_PARAMETER_TYPE_STRING);
+	gebr_geoxml_program_parameter_set_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(parameter), "Test keyword 1");
+	gebr_geoxml_program_parameter_set_string_value(GEBR_GEOXML_PROGRAM_PARAMETER(parameter),TRUE,"11");
+	parameter = gebr_geoxml_parameters_append_parameter(parameters_list, GEBR_GEOXML_PARAMETER_TYPE_STRING);
+	gebr_geoxml_program_parameter_set_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(parameter), "Test keyword 2");
+	gebr_geoxml_program_parameter_set_string_value(GEBR_GEOXML_PROGRAM_PARAMETER(parameter),TRUE,"22");
+	parameter = gebr_geoxml_parameters_append_parameter(parameters_list, GEBR_GEOXML_PARAMETER_TYPE_STRING);
+	gebr_geoxml_program_parameter_set_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(parameter), "Test keyword 3");
+	gebr_geoxml_program_parameter_set_string_value(GEBR_GEOXML_PROGRAM_PARAMETER(parameter),TRUE,"33");
 
-	gebr_geoxml_project_append_line(project, "test1");
-	gebr_geoxml_project_append_line(project, "test2");
-	gebr_geoxml_project_append_line(project, "test3");
+	gchar *keyword;
 
-	glong three_lines_project_length;
-	three_lines_project_length = gebr_geoxml_project_get_lines_number(project);
-	g_assert_cmpint(three_lines_project_length, ==, 3);
+	gebr_geoxml_program_foreach_parameter(program,(GebrGeoXmlCallback)callback, &keyword);
+	g_assert_cmpstr(keyword, ==, ",Test keyword 1=11,Test keyword 2=22,Test keyword 3=33");
 
-	gebr_geoxml_project_append_line(project, "test4");
-	gebr_geoxml_project_append_line(project, "test4");
-	gebr_geoxml_project_append_line(project, "test4");
-
-	/* FIXME: this test should work?
-	glong duplicate_lines_project_length;
-	duplicate_lines_project_length = gebr_geoxml_project_get_lines_number(project);
-	g_assert_cmpint(duplicate_lines_project_length, ==, 4);
-	*/
-
-	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(project));
-}
-
-void test_project_has_line()
-{
-	gboolean value;
-	GebrGeoXmlProject * project = gebr_geoxml_project_new();
-
-	gebr_geoxml_project_append_line(project, "test1");
-	value = gebr_geoxml_project_has_line(project, "test1");
-	g_assert(value == TRUE);
-
-	value = gebr_geoxml_project_has_line(project, "test2");
-	g_assert(value == FALSE);
-
-	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(project));
+	/*TODO: testar condicao null
+	 *
+	 *
+	 */
 }
 
 int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
 
-	g_test_add_func("/geoxml/program/append-line", test_project_append_line);
-	g_test_add_func("/geoxml/program/get-lines-number", test_project_get_lines_number);
-	g_test_add_func("/geoxml/program/has-line", test_project_has_line);
+	g_test_add_func("/libgebr/geoxml/program/foreach_parameter", test_gebr_geoxml_program_foreach_parameter);
 
 	return g_test_run();
 }

@@ -18,6 +18,8 @@
 #include <glib.h>
 
 #include "project.h"
+#include "../geoxml.h"
+#include "../geoxml/xml.h"
 
 void test_gebr_geoxml_project_remove_line(void)
 {
@@ -117,6 +119,76 @@ void test_gebr_geoxml_project_get_line_from_source(void)
 	g_assert_cmpstr(source,==,"line1");
 }
 
+void test_project_append_line()
+{
+	const gchar * value;
+	GebrGeoXmlProject * project = gebr_geoxml_project_new();
+	GebrGeoXmlProjectLine * line;
+
+	line = gebr_geoxml_project_append_line(project, "test1");
+	g_assert(line != NULL);
+
+	value = __gebr_geoxml_get_attr_value((GdomeElement*)line, "source");
+	g_assert_cmpstr(value, ==, "test1");
+
+	line = gebr_geoxml_project_append_line(project, "test2");
+	g_assert(line != NULL);
+
+	value = __gebr_geoxml_get_attr_value((GdomeElement*)line, "source");
+	g_assert_cmpstr(value, ==, "test2");
+
+	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(project));
+}
+
+void test_project_get_lines_number()
+{
+	GebrGeoXmlProject * project = gebr_geoxml_project_new();
+
+	glong null_project_length;
+	null_project_length = gebr_geoxml_project_get_lines_number(NULL);
+	g_assert_cmpint(null_project_length, ==, -1);
+
+	glong empty_project_length;
+	empty_project_length = gebr_geoxml_project_get_lines_number(project);
+	g_assert_cmpint(empty_project_length, ==, 0);
+
+	gebr_geoxml_project_append_line(project, "test1");
+	gebr_geoxml_project_append_line(project, "test2");
+	gebr_geoxml_project_append_line(project, "test3");
+
+	glong three_lines_project_length;
+	three_lines_project_length = gebr_geoxml_project_get_lines_number(project);
+	g_assert_cmpint(three_lines_project_length, ==, 3);
+
+	gebr_geoxml_project_append_line(project, "test4");
+	gebr_geoxml_project_append_line(project, "test4");
+	gebr_geoxml_project_append_line(project, "test4");
+
+	/* FIXME: this test should work?
+	glong duplicate_lines_project_length;
+	duplicate_lines_project_length = gebr_geoxml_project_get_lines_number(project);
+	g_assert_cmpint(duplicate_lines_project_length, ==, 4);
+	*/
+
+	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(project));
+}
+
+void test_project_has_line()
+{
+	gboolean value;
+	GebrGeoXmlProject * project = gebr_geoxml_project_new();
+
+	gebr_geoxml_project_append_line(project, "test1");
+	value = gebr_geoxml_project_has_line(project, "test1");
+	g_assert(value == TRUE);
+
+	value = gebr_geoxml_project_has_line(project, "test2");
+	g_assert(value == FALSE);
+
+	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(project));
+}
+
+
 int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
@@ -125,6 +197,9 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/geoxml/project/get_number_line",test_gebr_geoxml_project_get_lines_number);
 	g_test_add_func("/libgebr/geoxml/project/set_line_source",test_gebr_geoxml_project_set_line_source);
 	g_test_add_func("/libgebr/geoxml/project/get_line_from_source",test_gebr_geoxml_project_get_line_from_source);
+	g_test_add_func("/libgebr/geoxml/project/append-line", test_project_append_line);
+	g_test_add_func("/libgebr/geoxml/project/get-lines-number", test_project_get_lines_number);
+	g_test_add_func("/libgebr/geoxml/project/has-line", test_project_has_line);
 
 	return g_test_run();
 }
