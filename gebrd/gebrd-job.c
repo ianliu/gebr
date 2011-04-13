@@ -787,57 +787,58 @@ static gboolean job_parse_parameter(GebrdJob *job, GebrGeoXmlParameter * paramet
 
 	program_parameter = GEBR_GEOXML_PROGRAM_PARAMETER(parameter);
 	switch (type) {
-	case GEBR_GEOXML_PARAMETER_TYPE_STRING:
+	case GEBR_GEOXML_PARAMETER_TYPE_STRING: {
+		g_debug("Parse strings and insert in command line HERE!");
+		break;
+	}
+
 	case GEBR_GEOXML_PARAMETER_TYPE_INT:
-	case GEBR_GEOXML_PARAMETER_TYPE_FLOAT:
+	case GEBR_GEOXML_PARAMETER_TYPE_FLOAT: {
+		GString *expr;
+		gchar *temp;
+
+		expr = gebr_geoxml_program_parameter_get_string_value(program_parameter, FALSE);
+		temp = g_string_free(expr, FALSE);
+
+		// TODO: Tratar strings e substituir variáveis pelo valor correspondente no vetor V
+		if (strlen(g_strstrip(temp)) > 0) {
+			g_string_append_printf (expr_buf, "\t\t%s # %s\n", temp,
+						gebr_geoxml_parameter_get_label (parameter));
+			g_string_append_printf (job->parent.cmd_line, "%s${V[%d]} ",
+						gebr_geoxml_program_parameter_get_keyword(program_parameter),
+						job->expr_count + job->n_vars);
+			job->expr_count++;
+		}
+		g_free(temp);
+		break;
+	}
+
 	case GEBR_GEOXML_PARAMETER_TYPE_RANGE:
 	case GEBR_GEOXML_PARAMETER_TYPE_FILE:
-	case GEBR_GEOXML_PARAMETER_TYPE_ENUM:{
-			GString *value;
-			GebrGeoXmlValueSequence *seq;
+	case GEBR_GEOXML_PARAMETER_TYPE_ENUM: {
+		GString *value;
+		value = gebr_geoxml_program_parameter_get_string_value(program_parameter, FALSE);
+		if (strlen(value->str) > 0) {
+			gchar *quoted = g_shell_quote(value->str);
+			g_string_append_printf(job->parent.cmd_line, "%s%s ",
+					       gebr_geoxml_program_parameter_get_keyword(program_parameter),
+					       quoted);
+			g_free(quoted);
+		} else {
+			/* Check if this is a required parameter */
+			if (gebr_geoxml_program_parameter_get_required(program_parameter)) {
+				job_issue(job,
+					  _("Required parameter '%s' of program '%s' not provided.\n"),
+					  gebr_geoxml_parameter_get_label(parameter),
+					  gebr_geoxml_program_get_title(program));
 
-			gebr_geoxml_program_parameter_get_value (program_parameter, FALSE, (GebrGeoXmlSequence**)&seq, 0);
-
-			if (type != GEBR_GEOXML_PARAMETER_TYPE_RANGE) {
-				GString *expr;
-				gchar *temp;
-
-				expr = gebr_geoxml_program_parameter_get_string_value(program_parameter, FALSE);
-				temp = g_string_free(expr, FALSE);
-
-				// TODO: Tratar strings e substituir variáveis pelo valor correspondente no vetor V
-				if (strlen(g_strstrip(temp)) > 0) {
-					g_string_append_printf (expr_buf, "\t\t%s # %s\n", temp,
-								gebr_geoxml_parameter_get_label (parameter));
-					g_string_append_printf (job->parent.cmd_line, "%s${V[%d]} ",
-								gebr_geoxml_program_parameter_get_keyword(program_parameter),
-								job->expr_count + job->n_vars);
-					job->expr_count++;
-				}
-				g_free(temp);
-			} else {
-				value = gebr_geoxml_program_parameter_get_string_value(program_parameter, FALSE);
-				if (strlen(value->str) > 0) {
-					gchar *quoted = g_shell_quote(value->str);
-					g_string_append_printf(job->parent.cmd_line, "%s%s ",
-							       gebr_geoxml_program_parameter_get_keyword(program_parameter),
-							       quoted);
-					g_free(quoted);
-				} else {
-					/* Check if this is a required parameter */
-					if (gebr_geoxml_program_parameter_get_required(program_parameter)) {
-						job_issue(job,
-							  _("Required parameter '%s' of program '%s' not provided.\n"),
-							  gebr_geoxml_parameter_get_label(parameter),
-							  gebr_geoxml_program_get_title(program));
-
-						return FALSE;
-					}
-				}
-				g_string_free(value, TRUE);
+				return FALSE;
 			}
-			break;
 		}
+		g_string_free(value, TRUE);
+		break;
+	}
+
 	case GEBR_GEOXML_PARAMETER_TYPE_FLAG:
 		if (gebr_geoxml_program_parameter_get_first_boolean_value(program_parameter, FALSE) == TRUE)
 			g_string_append_printf(job->parent.cmd_line, "%s ",
