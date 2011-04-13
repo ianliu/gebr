@@ -48,6 +48,8 @@ docs/reference/libgebr/{html,xml}
 gebr-client/gebr-client
 gebr/gebr
 gebrd/gebrd
+gebrd/tests/test-job
+gebrd/tests/test-job-queue
 gtk-doc.make
 install-sh
 json-enum-types.[ch]
