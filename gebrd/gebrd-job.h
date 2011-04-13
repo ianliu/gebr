@@ -48,6 +48,10 @@ struct _GebrdJob {
 	/* client stuff */
 	GebrCommProcess *tail_process;
 	gint expr_count;
+
+	/* Temporary variables to build command line */
+	GHashTable *table;
+	gsize n_vars;
 };
 struct _GebrdJobClass {
 	GebrCommJobClass parent;
