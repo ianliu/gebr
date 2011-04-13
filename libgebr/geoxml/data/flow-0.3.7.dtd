@@ -91,9 +91,7 @@
 <!-- Actual value of a parameter -->
 <!ELEMENT value (#PCDATA)>
 <!ATTLIST value
-	dictkeyword	CDATA		#IMPLIED
-	expression	CDATA		#IMPLIED
-	use_expression	(yes | no)	#IMPLIED>
+	dictkeyword	CDATA		#IMPLIED>
 
 <!-- Actual default value of a parameter -->
 <!ELEMENT default (#PCDATA)>
