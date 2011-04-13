@@ -516,6 +516,8 @@ static void __set_type_icon(struct gebr_gui_parameter_widget *parameter_widget)
 	gboolean has_focus = FALSE;
 	g_object_get(parameter_widget->value_widget, "has-focus", &has_focus, NULL);
 
+	gtk_entry_set_icon_activatable(GTK_ENTRY(parameter_widget->value_widget), GTK_ENTRY_ICON_SECONDARY, FALSE);
+
 	if (!has_focus && __parameter_accepts_expression(parameter_widget))
 		gtk_entry_set_icon_from_stock(GTK_ENTRY(parameter_widget->value_widget), GTK_ENTRY_ICON_SECONDARY, NULL);
 	else if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_INT) {
