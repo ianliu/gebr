@@ -414,3 +414,39 @@ gebr_expr_extract_vars (const gchar *e)
 
 	return g_list_reverse (vars);
 }
+
+GList * gebr_str_expr_extract_vars (const gchar *str)
+{
+	GList *vars = NULL;
+	GRegex *regex;
+	GMatchInfo *info;
+
+	regex = g_regex_new ("\\[[a-z][0-9a-z_]*\\]", 0, 0, NULL);
+	g_regex_match (regex, str, 0, &info);
+
+	while (g_match_info_matches (info))
+	{
+		gchar *word = g_match_info_fetch (info, 0);
+
+		gint i = 1;
+		while(TRUE){
+			if (i < strlen(word) - 1)
+				word[i - 1] = word[i];
+			else{
+				word[i - 1] = '\0';
+				break;
+			}
+			i++;
+		}
+
+		vars = g_list_prepend (vars, word);
+
+		g_match_info_next (info, NULL);
+	}
+
+	g_match_info_free (info);
+	g_regex_unref (regex);
+
+	return g_list_reverse (vars);
+
+}

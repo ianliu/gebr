@@ -1333,3 +1333,40 @@ out:
 
 	return success;
 }
+
+gboolean
+gebr_geoxml_document_validate_str (const gchar *str,
+				    GebrGeoXmlDocument *flow,
+				    GebrGeoXmlDocument *line,
+				    GebrGeoXmlDocument *proj,
+				    GError **err)
+{
+	gboolean success = TRUE;
+
+	if (*str == '\0')
+		return TRUE;
+
+	// Check if @str is using any undefined variable
+	GList *vars = gebr_str_expr_extract_vars (str);
+	for (GList *i = vars; i; i = i->next) {
+		gchar *value;
+		gchar *name = i->data;
+
+		if (!gebr_geoxml_document_is_dictkey_defined (name, &value,
+							      flow, line, proj,
+							      NULL))
+		{
+			success = FALSE;
+			g_set_error (err, gebr_expr_error_quark(),
+				     GEBR_EXPR_ERROR_UNDEFINED_VAR,
+				     "Undefined variable name %s", name);
+			goto out;
+		}
+	}
+
+out:
+	g_list_foreach (vars, (GFunc) g_free, NULL);
+	g_list_free (vars);
+
+	return success;
+}

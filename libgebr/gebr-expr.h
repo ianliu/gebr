@@ -97,6 +97,14 @@ GList *gebr_expr_extract_vars (const gchar *expression);
  */
 gboolean gebr_expr_is_name_valid (const gchar *name);
 
+/**
+ * gebr_str_expr_extract_vars:
+ * @str:
+ *
+ * Returns: a #GList of all variables in string
+ */
+GList * gebr_str_expr_extract_vars (const gchar *str);
+
 G_END_DECLS
 
 #endif /* __GEBR_EXPR_H__ */

@@ -397,5 +397,14 @@ gebr_geoxml_document_validate_expr (const gchar *expr,
 				    GebrGeoXmlDocument *proj,
 				    GError **err);
 
+/**
+ * Validate str against the variables at \p flow, \p line and \p proj
+ */
+gboolean
+gebr_geoxml_document_validate_str (const gchar *str,
+				    GebrGeoXmlDocument *flow,
+				    GebrGeoXmlDocument *line,
+				    GebrGeoXmlDocument *proj,
+				    GError **err);
 G_END_DECLS
 #endif				//__GEBR_GEOXML_DOCUMENT_H
