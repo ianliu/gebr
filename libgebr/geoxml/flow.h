@@ -438,6 +438,23 @@ GebrGeoXmlFlowError gebr_geoxml_flow_validade(GebrGeoXmlFlow * flow, gchar ** pr
  */
 gboolean gebr_geoxml_flow_has_control_program (GebrGeoXmlFlow *flow);
 
+/*
+ * gebr_geoxml_flow_insert_iter_dict:
+ * @flow: a #GebrGeoXmlFlow
+ *
+ * Inserts the `iter' keyword into @flow's dictionary if its not defined there already.
+ *
+ * Returns: %TRUE if `iter' dictionary was inserted, %FALSE otherwise.
+ */
+gboolean gebr_geoxml_flow_insert_iter_dict (GebrGeoXmlFlow *flow);
+
+/*
+ * gebr_geoxml_flow_insert_iter_dict:
+ * @flow: a #GebrGeoXmlFlow
+ *
+ * Remove the `iter' keyword into @flow's dictionary.
+ *
+ */
 void gebr_geoxml_flow_remove_iter_dict (GebrGeoXmlFlow *flow);
 
 /**

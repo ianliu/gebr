@@ -542,6 +542,13 @@ gboolean flow_edition_component_key_pressed(GtkWidget *view, GdkEventKey *key)
 			gebr_geoxml_program_set_status (program, status);
 		}
 
+		if(gebr_geoxml_program_get_control(program) == GEBR_GEOXML_PROGRAM_CONTROL_FOR) {
+			if(status == GEBR_GEOXML_PROGRAM_STATUS_DISABLED)
+				gebr_geoxml_flow_remove_iter_dict(gebr.flow);
+			else
+				gebr_geoxml_flow_insert_iter_dict(gebr.flow);
+		}
+
 		icon = gebr_gui_get_program_icon (program);
 		gtk_list_store_set (gebr.ui_flow_edition->fseq_store, &iter,
 				    FSEQ_ICON_COLUMN, icon,
@@ -591,6 +598,13 @@ void flow_edition_status_changed(guint status)
 		if (validate_program_iter(&iter) != GEBR_GEOXML_PARAMETER_ERROR_NONE &&
 		    status == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED)
 			status = GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED;
+
+		if(gebr_geoxml_program_get_control(program) == GEBR_GEOXML_PROGRAM_CONTROL_FOR) {
+			if(status == GEBR_GEOXML_PROGRAM_STATUS_DISABLED)
+				gebr_geoxml_flow_remove_iter_dict(gebr.flow);
+			else
+				gebr_geoxml_flow_insert_iter_dict(gebr.flow);
+		}
 
 		gebr_geoxml_program_set_status(GEBR_GEOXML_PROGRAM(program), status);
 		icon = gebr_gui_get_program_icon(GEBR_GEOXML_PROGRAM(program));

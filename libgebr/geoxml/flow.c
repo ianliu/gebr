@@ -51,8 +51,6 @@ struct gebr_geoxml_revision {
 	GdomeElement *element;
 };
 
-static gboolean gebr_geoxml_flow_insert_iter_dict (GebrGeoXmlFlow *flow);
-
 /*
  * library functions.
  */
@@ -674,15 +672,7 @@ GebrGeoXmlProgram * gebr_geoxml_flow_get_control_program (GebrGeoXmlFlow *flow)
 	return NULL;
 }
 
-/*
- * gebr_geoxml_flow_insert_iter_dict:
- * @flow: a #GebrGeoXmlFlow
- *
- * Inserts the `iter' keyword into @flow's dictionary if its not defined there already.
- *
- * Returns: %TRUE if `iter' dictionary was inserted, %FALSE otherwise.
- */
-static gboolean gebr_geoxml_flow_insert_iter_dict (GebrGeoXmlFlow *flow)
+gboolean gebr_geoxml_flow_insert_iter_dict (GebrGeoXmlFlow *flow)
 {
 	GebrGeoXmlSequence *seq;
 	GebrGeoXmlParameter *param;
