@@ -611,7 +611,7 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 				g_object_unref (completion_model);
 			}
 
-			gtk_widget_set_size_request(entry, 120, 30);
+			gtk_widget_set_size_request(entry, 140, 30);
 			activatable_entry = GTK_ENTRY (entry);
 
 			g_signal_connect (entry, "focus-in-event",
@@ -641,7 +641,7 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 				g_object_unref (completion_model);
 			}
 
-			gtk_widget_set_size_request(entry, 120, 30);
+			gtk_widget_set_size_request(entry, 140, 30);
 			activatable_entry = GTK_ENTRY (entry);
 
 			g_signal_connect (entry, "focus-in-event",
@@ -709,7 +709,7 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 			} else {
 				parameter_widget->value_widget = gtk_entry_new();
 			}
-			gtk_widget_set_size_request(parameter_widget->value_widget, 90, 30);
+			gtk_widget_set_size_request(parameter_widget->value_widget, 90, -1);
 
 			break;
 		}
