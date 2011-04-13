@@ -15,8 +15,8 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.48.0 r9654"
-   sodipodi:docname="integer.svg"
-   inkscape:export-filename="/home/ian/Desktop/integer.png"
+   sodipodi:docname="string.svg"
+   inkscape:export-filename="/home/ian/Desktop/string.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90">
   <defs
@@ -25,11 +25,11 @@
        inkscape:collect="always"
        id="linearGradient3774">
       <stop
-         style="stop-color:#efefef;stop-opacity:1"
+         style="stop-color:#000000;stop-opacity:0.02966102"
          offset="0"
          id="stop3776" />
       <stop
-         style="stop-color:#ffffff;stop-opacity:1"
+         style="stop-color:#000000;stop-opacity:0;"
          offset="1"
          id="stop3778" />
     </linearGradient>
@@ -37,11 +37,42 @@
        inkscape:collect="always"
        xlink:href="#linearGradient3774"
        id="linearGradient3780"
+       x1="-0.13392857"
+       y1="1036.4604"
+       x2="16"
+       y2="1052.3979"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3774-2"
+       id="linearGradient3780-5"
        x1="-0.48748198"
        y1="1036.1068"
        x2="16.353554"
        y2="1053.0167"
        gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient3774-2">
+      <stop
+         style="stop-color:#efefef;stop-opacity:1"
+         offset="0"
+         id="stop3776-6" />
+      <stop
+         style="stop-color:#ffffff;stop-opacity:1"
+         offset="1"
+         id="stop3778-9" />
+    </linearGradient>
+    <linearGradient
+       y2="1053.0167"
+       x2="16.353554"
+       y1="1036.1068"
+       x1="-0.48748198"
+       gradientUnits="userSpaceOnUse"
+       id="linearGradient3838"
+       xlink:href="#linearGradient3774-2"
+       inkscape:collect="always"
+       gradientTransform="translate(7.4951172e-7,-3.3703125e-5)" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -50,9 +81,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="3.9999998"
-     inkscape:cx="4.1244715"
-     inkscape:cy="-20.560489"
+     inkscape:zoom="11.313708"
+     inkscape:cx="5.7920426"
+     inkscape:cy="18.714096"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -79,8 +110,8 @@
      id="layer1"
      transform="translate(0,-1036.3622)">
     <rect
-       style="fill:url(#linearGradient3780);stroke:#d9d9d9;stroke-width:1;stroke-opacity:1;fill-opacity:1"
-       id="rect3004"
+       style="fill:url(#linearGradient3838);fill-opacity:1;stroke:#d9d9d9;stroke-width:1;stroke-opacity:1"
+       id="rect3004-1"
        width="15"
        height="15"
        x="0.5"
@@ -89,36 +120,14 @@
        ry="1.1160715" />
     <text
        xml:space="preserve"
-       style="font-size:7.80594873px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-       x="1.7065865"
-       y="1043.6249"
+       style="font-size:7.4595809px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="1.4413335"
+       y="1046.7827"
        id="text3782"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan3784"
-         x="1.7065865"
-         y="1043.6249">1</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-size:7.80594873px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-       x="9.5910597"
-       y="1045.7432"
-       id="text3782-5"
-       sodipodi:linespacing="125%"><tspan
-         sodipodi:role="line"
-         id="tspan3784-5"
-         x="9.5910597"
-         y="1045.7432">2</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-size:7.80594873px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-       x="5.0374875"
-       y="1050.6985"
-       id="text3782-2"
-       sodipodi:linespacing="125%"><tspan
-         sodipodi:role="line"
-         id="tspan3784-1"
-         x="5.0374875"
-         y="1050.6985">3</tspan></text>
+         x="1.4413335"
+         y="1046.7827">abc</tspan></text>
   </g>
 </svg>
