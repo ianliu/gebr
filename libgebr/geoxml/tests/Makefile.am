@@ -35,3 +35,6 @@ test_flow_SOURCES = test-flow.c
 
 TEST_PROGS += test-object
 test_object_SOURCES = test-object.c
+
+TEST_PROGS += test-parameters
+test_parameters_SOURCES = test-parameters.c
