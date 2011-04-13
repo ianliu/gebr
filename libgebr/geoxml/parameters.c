@@ -278,9 +278,10 @@ gboolean gebr_geoxml_parameters_is_var_used (GebrGeoXmlParameters *self,
 
 	while (seq) {
 		p = GEBR_GEOXML_PARAMETER (seq);
-		if (gebr_geoxml_parameter_get_is_program_parameter (p))
-			return gebr_geoxml_program_parameter_is_var_used (GEBR_GEOXML_PROGRAM_PARAMETER (seq), var_name);
-		else {
+		if (gebr_geoxml_parameter_get_is_program_parameter (p)) {
+			if(gebr_geoxml_program_parameter_is_var_used (GEBR_GEOXML_PROGRAM_PARAMETER (seq), var_name))
+				return TRUE;
+		} else {
 			GebrGeoXmlSequence *params;
 
 			gebr_geoxml_parameter_group_get_instance (GEBR_GEOXML_PARAMETER_GROUP (seq),

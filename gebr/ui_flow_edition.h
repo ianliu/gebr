@@ -115,6 +115,15 @@ void flow_edition_component_activated(void);
 gboolean flow_edition_component_key_pressed(GtkWidget *view, GdkEventKey *key);
 
 /**
+ * flow_edition_change_iter_status:
+ * @status: new status for program
+ * @iter: #GtkTreeIter pointing to a program
+ *
+ * Change the flow status for @iter.
+ */
+void flow_edition_change_iter_status(guint status, GtkTreeIter *iter);
+
+/**
  * Change the flow status when select the status from the "Flow Component" menu.
  */
 void flow_edition_status_changed(guint status);

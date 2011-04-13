@@ -28,6 +28,7 @@
 #include <libgebr/gui/gebr-gui-file-entry.h>
 
 #include "ui_document.h"
+#include "ui_flow_edition.h"
 #include "gebr.h"
 #include "defines.h"
 #include "flow.h"
@@ -648,9 +649,12 @@ static void on_dict_edit_add_clicked(GtkButton * button, struct dict_edit_data *
  */
 static void on_dict_edit_remove_clicked(GtkButton * button, struct dict_edit_data *data)
 {
-	GtkTreeIter iter;
+	GList *list = NULL;
+	GtkTreeIter iter, iter2;
 	GebrGeoXmlSequence *parameter;
-	gboolean is_editable = FALSE;
+	GebrGeoXmlProgram *program;
+	gboolean is_editable = FALSE, valid, confirm;
+	const gchar *var_name;
 
 	if (!dict_edit_get_selected(data, &iter))
 		return;
@@ -660,9 +664,40 @@ static void on_dict_edit_remove_clicked(GtkButton * button, struct dict_edit_dat
 			   DICT_EDIT_EDITABLE, &is_editable,
 			   -1);
 
-	if (is_editable){
-		gebr_geoxml_sequence_remove(parameter);
-		gtk_tree_store_remove(GTK_TREE_STORE(data->tree_model), &iter);
+	if (is_editable) {
+		var_name = gebr_geoxml_program_parameter_get_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(parameter));
+		valid = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter2);
+		for(; valid; valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter2)) {
+			gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter2,
+					   FSEQ_GEBR_GEOXML_POINTER, &program, -1);
+			if(!program)
+				continue;
+
+			if(gebr_geoxml_program_get_control(program) == GEBR_GEOXML_PROGRAM_CONTROL_FOR)
+				continue;
+
+			if(gebr_geoxml_program_is_var_used(program, var_name))
+				list = g_list_prepend(list, gtk_tree_iter_copy(&iter2));
+		}
+		if(list) {
+			confirm = gebr_gui_confirm_action_dialog(_("Do you really want to delete this variable?"),
+							_("One or more programs use this variable. Deleting it will invalidate those programs."));
+			if(confirm) {
+				gebr_geoxml_sequence_remove(parameter);
+				gtk_tree_store_remove(GTK_TREE_STORE(data->tree_model), &iter);
+				for(GList *i = list; i; i = i->next) {
+					GtkTreeIter *it = i->data;
+					flow_edition_change_iter_status(GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED, it);
+				}
+			}
+			g_list_foreach(list,(GFunc)gtk_tree_iter_free, NULL);
+			g_list_free(list);
+		}
+		else {
+			gebr_geoxml_sequence_remove(parameter);
+			gtk_tree_store_remove(GTK_TREE_STORE(data->tree_model), &iter);
+		}
+
 	}
 }
 

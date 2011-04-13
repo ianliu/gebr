@@ -61,11 +61,34 @@ void test_gebr_geoxml_program_foreach_parameter(void){
 	 */
 }
 
+void test_gebr_geoxml_program_is_var_used()
+{
+	GebrGeoXmlFlow *flow = gebr_geoxml_flow_new();
+	GebrGeoXmlProgram *program = gebr_geoxml_flow_append_program(flow);
+
+	GebrGeoXmlParameters *parameters_list = gebr_geoxml_program_get_parameters(program);
+	GebrGeoXmlParameter *parameter;
+
+	parameter = gebr_geoxml_parameters_append_parameter(parameters_list, GEBR_GEOXML_PARAMETER_TYPE_INT);
+	gebr_geoxml_program_parameter_set_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(parameter), "Test keyword 1");
+	gebr_geoxml_program_parameter_set_string_value(GEBR_GEOXML_PROGRAM_PARAMETER(parameter),FALSE,"11");
+
+	g_assert(gebr_geoxml_program_is_var_used(program, "var1") == FALSE);
+
+	parameter = gebr_geoxml_parameters_append_parameter(parameters_list, GEBR_GEOXML_PARAMETER_TYPE_INT);
+	gebr_geoxml_program_parameter_set_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(parameter), "Test keyword 2");
+	gebr_geoxml_program_parameter_set_string_value(GEBR_GEOXML_PROGRAM_PARAMETER(parameter),FALSE,"12+var2");
+
+	g_assert(gebr_geoxml_program_is_var_used(program, "var2") == TRUE);
+
+}
+
 int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
 
 	g_test_add_func("/libgebr/geoxml/program/foreach_parameter", test_gebr_geoxml_program_foreach_parameter);
+	g_test_add_func("/libgebr/geoxml/program/is_var_used", test_gebr_geoxml_program_is_var_used);
 
 	return g_test_run();
 }
