@@ -204,10 +204,7 @@ static void validate_parameter (GebrGeoXmlParameter * parameter, GebrGeoXmlParam
 	for (; value; gebr_geoxml_sequence_next (&value)) {
 		const gchar *expr;
 
-		if (!gebr_geoxml_value_sequence_get_use_expression (GEBR_GEOXML_VALUE_SEQUENCE (value)))
-			continue;
-
-		expr = gebr_geoxml_value_sequence_get_expression (GEBR_GEOXML_VALUE_SEQUENCE (value));
+		expr = gebr_geoxml_value_sequence_get (GEBR_GEOXML_VALUE_SEQUENCE (value));
 		if (gebr_geoxml_parameter_get_type(parameter) == GEBR_GEOXML_PARAMETER_TYPE_STRING){
 			if (!gebr_geoxml_document_validate_str (expr,
 								GEBR_GEOXML_DOCUMENT (gebr.flow),
