@@ -64,6 +64,7 @@ libgebr/geoxml-utils/gebr-geoxml-validate
 libgebr/geoxml/data/help-template.html
 libgebr/geoxml/tests/test-category
 libgebr/geoxml/tests/test-line
+libgebr/geoxml/tests/test-parameters
 libgebr/geoxml/tests/test-program
 libgebr/geoxml/tests/test-sequence
 libgebr/geoxml/tests/test-tmpl
