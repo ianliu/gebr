@@ -521,11 +521,11 @@ static void __set_type_icon(struct gebr_gui_parameter_widget *parameter_widget)
 		gtk_entry_set_icon_tooltip_text(GTK_ENTRY(parameter_widget->value_widget), GTK_ENTRY_ICON_SECONDARY, 
 						_("This parameter uses an integer value."));
 	} else if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT) {
-		gtk_entry_set_icon_from_stock(GTK_ENTRY(parameter_widget->value_widget), GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_ZOOM_IN);
+		gtk_entry_set_icon_from_stock(GTK_ENTRY(parameter_widget->value_widget), GTK_ENTRY_ICON_SECONDARY, "real-icon");
 		gtk_entry_set_icon_tooltip_text(GTK_ENTRY(parameter_widget->value_widget), GTK_ENTRY_ICON_SECONDARY, 
 						_("This parameter uses a real value."));
 	} else if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_STRING) {
-		gtk_entry_set_icon_from_stock(GTK_ENTRY(parameter_widget->value_widget), GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_ZOOM_OUT);
+		gtk_entry_set_icon_from_stock(GTK_ENTRY(parameter_widget->value_widget), GTK_ENTRY_ICON_SECONDARY, "string-icon");
 		gtk_entry_set_icon_tooltip_text(GTK_ENTRY(parameter_widget->value_widget), GTK_ENTRY_ICON_SECONDARY, 
 						_("This parameter uses a text value."));
 	} else if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_RANGE && parameter_widget->dict_parameter != NULL) {
