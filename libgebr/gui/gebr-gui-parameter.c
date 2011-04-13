@@ -91,6 +91,8 @@ static void setup_entry_completion(GtkEntry *entry,
 				   GCallback match_selected_cb,
 				   struct gebr_gui_parameter_widget *parameter_widget);
 
+static void validate_parameter_value(struct gebr_gui_parameter_widget *widget);
+
 //==============================================================================
 // PRIVATE FUNCTIONS							       =
 //==============================================================================
@@ -538,24 +540,7 @@ static void __set_type_icon(struct gebr_gui_parameter_widget *parameter_widget)
 	if (parameter_widget->dicts == NULL)
 		return;
 
-	GError * validation_error = NULL;
-	GString *value = gebr_gui_parameter_widget_get_value(parameter_widget);
-	gboolean success = gebr_geoxml_document_validate_expr(value->str, 
-							      parameter_widget->dicts->flow, 
-							      parameter_widget->dicts->line, 
-							      parameter_widget->dicts->project, 
-							      &validation_error);
-
-	if (!success) {
-		gtk_entry_set_icon_from_stock(GTK_ENTRY(parameter_widget->value_widget), 
-					      GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIALOG_WARNING);
-		if (validation_error == NULL)
-			gtk_entry_set_icon_tooltip_text(GTK_ENTRY(parameter_widget->value_widget), GTK_ENTRY_ICON_SECONDARY, 
-							_("This expression is invalid"));
-		else
-			gtk_entry_set_icon_tooltip_text(GTK_ENTRY(parameter_widget->value_widget), GTK_ENTRY_ICON_SECONDARY, 
-							(const gchar *)validation_error->message);
-	}
+	validate_parameter_value(parameter_widget);
 }
 
 static void __on_activate(GtkEntry * entry, struct gebr_gui_parameter_widget *parameter_widget)
@@ -614,12 +599,15 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 			GtkTreeModel *completion_model;
 
 			parameter_widget->value_widget = entry = gtk_entry_new();
-			completion_model = generate_completion_model(parameter_widget);
-			setup_entry_completion(GTK_ENTRY(entry), completion_model,
-					       completion_number_match_func,
-					       G_CALLBACK(on_entry_completion_matched),
-					       parameter_widget);
-			g_object_unref (completion_model);
+
+			if (may_use_dict) {
+				completion_model = generate_completion_model(parameter_widget);
+				setup_entry_completion(GTK_ENTRY(entry), completion_model,
+						       completion_number_match_func,
+						       G_CALLBACK(on_entry_completion_matched),
+						       parameter_widget);
+				g_object_unref (completion_model);
+			}
 
 			gtk_widget_set_size_request(entry, 120, 30);
 			activatable_entry = GTK_ENTRY (entry);
@@ -641,12 +629,15 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 			GtkTreeModel *completion_model;
 
 			parameter_widget->value_widget = entry = gtk_entry_new();
-			completion_model = generate_completion_model(parameter_widget);
-			setup_entry_completion(GTK_ENTRY(entry), completion_model,
-					       completion_number_match_func,
-					       G_CALLBACK(on_entry_completion_matched),
-					       parameter_widget);
-			g_object_unref (completion_model);
+
+			if (may_use_dict) {
+				completion_model = generate_completion_model(parameter_widget);
+				setup_entry_completion(GTK_ENTRY(entry), completion_model,
+						       completion_number_match_func,
+						       G_CALLBACK(on_entry_completion_matched),
+						       parameter_widget);
+				g_object_unref (completion_model);
+			}
 
 			gtk_widget_set_size_request(entry, 120, 30);
 			activatable_entry = GTK_ENTRY (entry);
@@ -668,12 +659,15 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 			GtkTreeModel *completion_model;
 
 			parameter_widget->value_widget = entry = gtk_entry_new();
-			completion_model = generate_completion_model(parameter_widget);
-			setup_entry_completion(GTK_ENTRY(entry), completion_model,
-					       completion_string_match_func,
-					       G_CALLBACK(on_entry_completion_matched),
-					       parameter_widget);
-			g_object_unref (completion_model);
+
+			if (may_use_dict) {
+				completion_model = generate_completion_model(parameter_widget);
+				setup_entry_completion(GTK_ENTRY(entry), completion_model,
+						       completion_string_match_func,
+						       G_CALLBACK(on_entry_completion_matched),
+						       parameter_widget);
+				g_object_unref (completion_model);
+			}
 
 			activatable_entry = GTK_ENTRY (entry);
 			gtk_widget_set_size_request(parameter_widget->value_widget, 140, 30);
@@ -1493,4 +1487,32 @@ static void setup_entry_completion(GtkEntry *entry,
 	g_signal_connect(comp, "match-selected", match_selected_cb, widget);
 	gtk_entry_set_completion(entry, comp);
 	g_object_unref(comp);
+}
+
+static void validate_parameter_value(struct gebr_gui_parameter_widget *widget)
+{
+	GString *value;
+	GtkEntry *entry;
+	GError *error = NULL;
+
+	if (!GTK_IS_ENTRY(widget->value_widget))
+		return;
+
+	// TODO: add string validation here!
+	if (widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_STRING)
+		return;
+
+	value = gebr_gui_parameter_widget_get_value(widget);
+	gebr_geoxml_document_validate_expr(value->str,
+					   widget->dicts->flow,
+					   widget->dicts->line,
+					   widget->dicts->project,
+					   &error);
+
+	if (error) {
+		entry = GTK_ENTRY(widget->value_widget);
+		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIALOG_WARNING);
+		gtk_entry_set_icon_tooltip_text(entry, GTK_ENTRY_ICON_SECONDARY, error->message);
+		g_clear_error(&error);
+	}
 }
