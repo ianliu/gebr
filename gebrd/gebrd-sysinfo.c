@@ -61,6 +61,8 @@ GebrdCpuInfo *gebrd_cpu_info_new (void)
 		line = NULL;
 	}
 
+	fclose(fp);
+
 	return cpuinfo;
 }
 
@@ -133,6 +135,8 @@ GebrdMemInfo *gebrd_mem_info_new (void)
 		g_free (line);
 		line = NULL;
 	}
+
+	fclose(fp);
 
 	return mem;
 }
