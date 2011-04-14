@@ -153,7 +153,7 @@ static gboolean flows_check_before_execution(void)
 {
 	GtkTreeIter iter;
 	GebrGeoXmlFlow * flow;
-	gint state = 0;
+	GebrGeoXmlFlowError state = 0;
 	gchar * program_title = NULL;
 	gchar * flow_title = NULL;
 
@@ -215,6 +215,11 @@ static gboolean flows_check_before_execution(void)
 						_("Warning"),_("Flow \"%s\" has only an empty loop"),
 						flow_title);
 			g_free(flow_title);	
+			return FALSE;
+
+		case GEBR_GEOXML_FLOW_ERROR_INVALID_INPUT:
+			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+						_("Warning"),_("Invalid input file"));
 			return FALSE;
 
 		default:
