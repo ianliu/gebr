@@ -438,14 +438,26 @@ static void flow_edition_component_edited(GtkCellRendererText *renderer, gchar *
 
 	gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter, path);
 
+	gchar * text = g_strdup(new_text);
+
+	if (!gebr_geoxml_document_validate_str ((const gchar *) text,
+						GEBR_GEOXML_DOCUMENT (gebr.flow),
+						GEBR_GEOXML_DOCUMENT (gebr.line),
+						GEBR_GEOXML_DOCUMENT (gebr.project),
+						NULL)) 
+	{
+		g_free(text);
+		text = g_strdup("");
+	}
+
 	if (gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter))
-		gebr_geoxml_flow_io_set_input(gebr.flow, new_text);
+		gebr_geoxml_flow_io_set_input(gebr.flow, text);
 
 	else if (gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter))
-		gebr_geoxml_flow_io_set_output(gebr.flow, new_text);
+		gebr_geoxml_flow_io_set_output(gebr.flow, text);
 
 	else if (gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->error_iter))
-		gebr_geoxml_flow_io_set_error(gebr.flow, new_text);
+		gebr_geoxml_flow_io_set_error(gebr.flow, text);
 
 	flow_edition_set_io();
 }
