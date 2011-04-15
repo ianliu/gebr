@@ -479,32 +479,31 @@ void job_run_flow(GebrdJob *job)
 	 * First program
 	 */
 	/* Start with/without stdin */
-	if (gebr_geoxml_program_get_stdin(GEBR_GEOXML_PROGRAM(program))) {
-		/* Input file */
+	/*if (gebr_geoxml_program_get_stdin(GEBR_GEOXML_PROGRAM(program))) {
 		if (check_for_readable_file(gebr_geoxml_flow_io_get_input(job->flow))) {
 			job_issue(job, _("Input file %s not present or not accessible.\n"),
 				  gebr_geoxml_flow_io_get_input(job->flow));
 			goto err;
 		}
-	}
+	}*/
 
 	/* check for error file output */
-	if (gebr_geoxml_program_get_stderr(GEBR_GEOXML_PROGRAM(program))) {
+	/*if (gebr_geoxml_program_get_stderr(GEBR_GEOXML_PROGRAM(program))) {
 		if (check_for_write_permission(gebr_geoxml_flow_io_get_error(job->flow))) {
 			job_issue(job, _("Write permission to %s not granted.\n"),
 				  gebr_geoxml_flow_io_get_error(job->flow));
 			goto err;
 		}
-	}
+	}*/
 
 	/* check for output file */
-	if (gebr_geoxml_program_get_stdout(GEBR_GEOXML_PROGRAM(program))) {
+	/*if (gebr_geoxml_program_get_stdout(GEBR_GEOXML_PROGRAM(program))) {
 		if (check_for_write_permission(gebr_geoxml_flow_io_get_output(job->flow))) {
 			job_issue(job, _("Write permission to %s not granted.\n"),
 				  gebr_geoxml_flow_io_get_output(job->flow));
 			goto err;
 		}
-	}
+	}*/
 
 	/* command-line */
 	gsize bytes_written;
@@ -1016,7 +1015,7 @@ static void job_assembly_cmdline(GebrdJob *job)
 	gboolean previous_stdout;
 	guint issue_number = 0;
 	GebrGeoXmlSequence *program;
-	GebrdMpiInterface * mpi;
+	GebrdMpiInterface *mpi;
 	gulong nprog;
 	gboolean has_control = FALSE;
 	guint counter = 0;
@@ -1082,10 +1081,23 @@ static void job_assembly_cmdline(GebrdJob *job)
 			goto err;
 		}
 
-		gchar * quoted = g_shell_quote(gebr_geoxml_flow_io_get_input(job->flow));
-		g_string_append_printf(job->parent.cmd_line, "<%s ", quoted);
-		g_free(quoted);
+		gchar *result;
+		const gchar *input_expr;
 
+		input_expr = gebr_geoxml_flow_io_get_input(job->flow);
+		switch (parse_string_expression(input_expr, job->table, &result))
+		{
+		case GEBRD_STRING_PARSER_ERROR_NONE:
+			g_string_append_printf(job->parent.cmd_line, "<\"%s\" ", result);
+			g_free(result);
+			break;
+		case GEBRD_STRING_PARSER_ERROR_SYNTAX:
+			job_issue(job, _("Syntax error in input file expression"));
+			goto err;
+		case GEBRD_STRING_PARSER_ERROR_UNDEF_VAR:
+			job_issue(job, _("Undefined variable in input file expression"));
+			goto err;
+		}
 	}
 
 	/* Configure MPI */
@@ -1114,10 +1126,27 @@ static void job_assembly_cmdline(GebrdJob *job)
 
 	if (job_add_program_parameters(job, GEBR_GEOXML_PROGRAM(program), expr_buf) == FALSE)
 		goto err;
+
 	/* check for error file output */
-	if (has_error_output_file && gebr_geoxml_program_get_stderr(GEBR_GEOXML_PROGRAM(program)))
-		g_string_append_printf(job->parent.cmd_line, "2>> \"%s\" ",
-				       gebr_geoxml_flow_io_get_error(job->flow));
+	if (has_error_output_file && gebr_geoxml_program_get_stderr(GEBR_GEOXML_PROGRAM(program))) {
+		gchar *result;
+		const gchar *error_expr;
+
+		error_expr = gebr_geoxml_flow_io_get_error(job->flow);
+		switch (parse_string_expression(error_expr, job->table, &result))
+		{
+		case GEBRD_STRING_PARSER_ERROR_NONE:
+			g_string_append_printf(job->parent.cmd_line, "2>> \"%s\" ", result);
+			g_free(result);
+			break;
+		case GEBRD_STRING_PARSER_ERROR_SYNTAX:
+			job_issue(job, _("Syntax error in error file expression"));
+			goto err;
+		case GEBRD_STRING_PARSER_ERROR_UNDEF_VAR:
+			job_issue(job, _("Undefined variable in error file expression"));
+			goto err;
+		}
+	}
 
 	/*
 	 * Other programs
@@ -1197,10 +1226,25 @@ static void job_assembly_cmdline(GebrdJob *job)
 
 		if (job_add_program_parameters(job, GEBR_GEOXML_PROGRAM(program), expr_buf) == FALSE)
 			goto err;
+
 		if (has_error_output_file && gebr_geoxml_program_get_stderr(GEBR_GEOXML_PROGRAM(program))) {
-			gchar * quoted = g_shell_quote(gebr_geoxml_flow_io_get_error(job->flow));
-			g_string_append_printf(job->parent.cmd_line, "2>> %s ", quoted);
-			g_free(quoted);
+			gchar *result;
+			const gchar *error_expr;
+
+			error_expr = gebr_geoxml_flow_io_get_error(job->flow);
+			switch (parse_string_expression(error_expr, job->table, &result))
+			{
+			case GEBRD_STRING_PARSER_ERROR_NONE:
+				g_string_append_printf(job->parent.cmd_line, "2>> \"%s\" ", result);
+				g_free(result);
+				break;
+			case GEBRD_STRING_PARSER_ERROR_SYNTAX:
+				job_issue(job, _("Syntax error in error file expression"));
+				goto err;
+			case GEBRD_STRING_PARSER_ERROR_UNDEF_VAR:
+				job_issue(job, _("Undefined variable in error file expression"));
+				goto err;
+			}
 		}
 
 		previous_stdout = gebr_geoxml_program_get_stdout(GEBR_GEOXML_PROGRAM(program));
@@ -1214,9 +1258,26 @@ static void job_assembly_cmdline(GebrdJob *job)
 		if (strlen(gebr_geoxml_flow_io_get_output(job->flow)) == 0)
 			job_issue(job, _("Proceeding without output file.\n"));
 		else {
-			gchar * quoted = g_shell_quote(gebr_geoxml_flow_io_get_output(job->flow));
-			g_string_append_printf(job->parent.cmd_line, gebr_geoxml_flow_io_get_output_append(job->flow) ? ">>%s" : ">%s", quoted);
-			g_free(quoted);
+			gchar *result;
+			const gchar *output_expr;
+
+			output_expr = gebr_geoxml_flow_io_get_output(job->flow);
+			switch (parse_string_expression(output_expr, job->table, &result))
+			{
+			case GEBRD_STRING_PARSER_ERROR_NONE:
+				if (gebr_geoxml_flow_io_get_output_append(job->flow))
+					g_string_append_printf(job->parent.cmd_line, ">> \"%s\" ", result);
+				else
+					g_string_append_printf(job->parent.cmd_line, "> \"%s\" ", result);
+				g_free(result);
+				break;
+			case GEBRD_STRING_PARSER_ERROR_SYNTAX:
+				job_issue(job, _("Syntax error in output file expression"));
+				goto err;
+			case GEBRD_STRING_PARSER_ERROR_UNDEF_VAR:
+				job_issue(job, _("Undefined variable in output file expression"));
+				goto err;
+			}
 		}
 	}
 
