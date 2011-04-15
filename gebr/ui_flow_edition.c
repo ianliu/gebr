@@ -165,7 +165,8 @@ struct ui_flow_edition *flow_edition_setup_ui(void)
 							 G_TYPE_POINTER,
 							 G_TYPE_INT,
 							 G_TYPE_BOOLEAN,
-							 G_TYPE_BOOLEAN);
+							 G_TYPE_BOOLEAN,
+							 G_TYPE_STRING);
 	ui_flow_edition->fseq_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_flow_edition->fseq_store));
 	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_flow_edition->fseq_view)),
 				    GTK_SELECTION_MULTIPLE);
@@ -1180,16 +1181,13 @@ on_has_required_parameter_unfilled_tooltip(GtkTreeView * treeview,
 	}
 	else if (gebr_geoxml_program_get_status(program) != GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED)
 		return FALSE;
-	else
-		if (validate_program_iter(&iter) == GEBR_GEOXML_PARAMETER_ERROR_REQUIRED_UNFILLED)
-			gtk_tooltip_set_text(tooltip, _("Required parameter unfilled"));
-		else if (validate_program_iter(&iter) == GEBR_GEOXML_PARAMETER_ERROR_INVALID_EXPRESSION)
-			gtk_tooltip_set_text(tooltip, _("Invalid expression"));
-		else if (validate_program_iter(&iter) == GEBR_GEOXML_PARAMETER_ERROR_UNKNOWN_VARIABLE)
-			gtk_tooltip_set_text(tooltip, _("Unknown Variable"));
-		else
-			gtk_tooltip_set_text(tooltip, _("Verify parameter configuration"));
-
+	else {
+		gchar *error_msg;
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter,
+							FSEQ_TOOLTIP, &error_msg, -1);
+		gtk_tooltip_set_text(tooltip, error_msg);
+		g_free(error_msg);
+	}
 
 	path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter);
 	gtk_tree_view_set_tooltip_row(treeview, tooltip, path);
