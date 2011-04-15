@@ -287,6 +287,7 @@ docs/reference/libgebr/Makefile
 docs/reference/libgebr/version.xml
 rpm/Makefile
 rpm/gebrproject.fedora.spec
+rpm/gebrproject.centos.spec
 
 libgebr/Makefile
 libgebr/comm/Makefile

@@ -96,9 +96,7 @@ marshalers.c
 marshalers.h
 missing
 po/.intltool-merge-cache
-rpm/gebrproject.fedora.spec
-rpm/gebrproject.mandriva.spec
-rpm/gebrproject.opensuse.spec
+rpm/gebrproject.*.spec
 stamp-it
 tags
 
