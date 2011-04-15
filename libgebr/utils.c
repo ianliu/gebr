@@ -447,7 +447,6 @@ const gchar *gebr_validate_int(const gchar * text_value, const gchar * min, cons
 		return "";
 
 	value = g_ascii_strtod(text_value, &endptr);
-
 	if (endptr - text_value	!= len)
 		return "";
 

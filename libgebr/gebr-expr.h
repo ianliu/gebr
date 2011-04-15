@@ -92,9 +92,13 @@ void gebr_expr_free (GebrExpr *self);
  */
 GList *gebr_expr_extract_vars (const gchar *expression);
 
+gboolean
+gebr_expr_is_reserved_word (const gchar *name);
+
 /**
  * gebr_expr_is_name_valid:
  * @name: a variable name
+ * Calls gebr_expr_is_reserved_word
  *
  * Returns: %TRUE if @name is valid
  */

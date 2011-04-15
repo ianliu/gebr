@@ -82,8 +82,8 @@ GQuark gebr_expr_error_quark (void)
 }
 
 
-static gboolean
-is_reserved_word (const gchar *name)
+gboolean
+gebr_expr_is_reserved_word (const gchar *name)
 {
 	gint i = 0;
 	const gchar *reserved_words[] = {
@@ -139,7 +139,7 @@ gebr_expr_is_name_valid (const gchar *name)
 		if (!g_ascii_isalpha (name[i]) || !g_ascii_islower(name[i]))
 			return FALSE;
 	}
-	return !is_reserved_word (name);
+	return !gebr_expr_is_reserved_word (name);
 }
 
 static VarName *
