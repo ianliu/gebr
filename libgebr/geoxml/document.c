@@ -1347,21 +1347,52 @@ gebr_geoxml_document_validate_str (const gchar *str,
 		return TRUE;
 
 	// Check if @str is using any undefined variable
-	GList *vars = gebr_str_expr_extract_vars (str);
-	for (GList *i = vars; i; i = i->next) {
-		gchar *value;
-		gchar *name = i->data;
+	GList *vars = NULL; 
+	GebrExprError error = gebr_str_expr_extract_vars (str, &vars);
+	if (error == GEBR_EXPR_ERROR_NONE){
+		for (GList *i = vars; i; i = i->next) {
+			gchar *value;
+			gchar *name = i->data;
 
-		if (!gebr_geoxml_document_is_dictkey_defined (name, &value,
-							      flow, line, proj,
-							      NULL))
-		{
-			success = FALSE;
-			g_set_error (err, gebr_expr_error_quark(),
-				     GEBR_EXPR_ERROR_UNDEFINED_VAR,
-				     "Undefined variable name %s", name);
-			goto out;
+			if (!gebr_geoxml_document_is_dictkey_defined (name, &value,
+								      flow, line, proj,
+								      NULL))
+			{
+				success = FALSE;
+				g_set_error (err, gebr_expr_error_quark(),
+					     GEBR_EXPR_ERROR_UNDEFINED_VAR,
+					     "Undefined variable name %s", name);
+				goto out;
+			}
 		}
+	}
+	else{
+		GString * err_msg = g_string_new(NULL);
+
+		switch(error){
+		case GEBR_EXPR_ERROR_SYNTAX:
+			g_string_assign(err_msg, "Syntax Error");
+			break;
+
+		case GEBR_EXPR_ERROR_EMPTY_VAR:
+			g_string_assign(err_msg, "Empty Variable");
+			break;
+
+		case GEBR_EXPR_ERROR_STATE_UNKNOWN:
+			g_string_assign(err_msg, "State Unknown");
+			break;
+
+		default:
+			g_string_assign(err_msg, "Other Error");
+			break;
+		}
+
+		success = FALSE;
+		g_set_error_literal(err, gebr_expr_error_quark(),
+				    error,
+				    err_msg->str);
+		g_string_free(err_msg, TRUE);
+		goto out;
 	}
 
 out:
