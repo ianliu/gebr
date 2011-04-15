@@ -572,7 +572,10 @@ glong gebr_geoxml_flow_get_revisions_number(GebrGeoXmlFlow * flow)
 	return __gebr_geoxml_get_elements_number(gebr_geoxml_document_root_element(GEBR_GEOXML_DOC(flow)), "revision");
 }
 
-GebrGeoXmlFlowError gebr_geoxml_flow_validade(GebrGeoXmlFlow * flow, gchar ** program_title)
+GebrGeoXmlFlowError gebr_geoxml_flow_validade(GebrGeoXmlFlow * flow, 
+					      GebrGeoXmlLine * line,  
+					      GebrGeoXmlProject *project, 
+					      gchar ** program_title)
 {
 	const gchar *input = NULL;
 	GebrGeoXmlSequence *first_program;
@@ -628,13 +631,23 @@ GebrGeoXmlFlowError gebr_geoxml_flow_validade(GebrGeoXmlFlow * flow, gchar ** pr
 			}
 
 		else 
-			if (gebr_geoxml_program_get_stdin(GEBR_GEOXML_PROGRAM(first_program)) 
-			    && (input == NULL || g_strcmp0("", input) == 0))
-			{
-				*program_title = g_strdup(gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(first_program)));
-				return GEBR_GEOXML_FLOW_ERROR_NO_INFILE;
-			}
-		
+		{
+			if (gebr_geoxml_program_get_stdin(GEBR_GEOXML_PROGRAM(first_program)))
+				if(input == NULL || g_strcmp0("", input) == 0)
+				{
+					*program_title = g_strdup(gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(first_program)));
+					return GEBR_GEOXML_FLOW_ERROR_NO_INFILE;
+				}
+				else if (!gebr_geoxml_document_validate_str (input,
+									     GEBR_GEOXML_DOCUMENT (flow),
+									     GEBR_GEOXML_DOCUMENT (line),
+									     GEBR_GEOXML_DOCUMENT (project),
+									     NULL))
+				{
+					*program_title = g_strdup(gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(first_program)));
+					return GEBR_GEOXML_FLOW_ERROR_INVALID_INFILE;
+				}	
+		}
 		previous_stdout = gebr_geoxml_program_get_stdout(GEBR_GEOXML_PROGRAM(first_program));
 		first_configured = FALSE;
 	}

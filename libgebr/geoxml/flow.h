@@ -98,6 +98,7 @@ typedef enum {
 	GEBR_GEOXML_FLOW_ERROR_NO_INPUT,
 	GEBR_GEOXML_FLOW_ERROR_NO_OUTPUT,
 	GEBR_GEOXML_FLOW_ERROR_NO_INFILE,
+	GEBR_GEOXML_FLOW_ERROR_INVALID_INFILE,
 	GEBR_GEOXML_FLOW_ERROR_NO_VALID_PROGRAMS,
 	GEBR_GEOXML_FLOW_ERROR_LOOP_ONLY
 } GebrGeoXmlFlowError;
@@ -117,6 +118,8 @@ typedef struct gebr_geoxml_revision GebrGeoXmlRevision;
 #include "macros.h"
 #include "sequence.h"
 #include "object.h"
+#include "line.h"
+#include "project.h"
 
 /**
  * Create a new empty flow and return a pointer to it.
@@ -424,7 +427,10 @@ glong gebr_geoxml_flow_get_revisions_number(GebrGeoXmlFlow * flow);
  * Determine if a flow can be executed or not. If it can't, return
  * the correct type of error.
  */
-GebrGeoXmlFlowError gebr_geoxml_flow_validade(GebrGeoXmlFlow * flow, gchar ** program_title);
+GebrGeoXmlFlowError gebr_geoxml_flow_validade(GebrGeoXmlFlow * flow, 
+					      GebrGeoXmlLine * line,  
+					      GebrGeoXmlProject *project, 
+					      gchar ** program_title);
 
 /**
  * gebr_geoxml_flow_has_control_program:

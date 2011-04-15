@@ -168,7 +168,7 @@ static gboolean flows_check_before_execution(void)
 				   FB_XMLPOINTER, &flow,
 				   FB_TITLE, &flow_title,
 				   -1);
-		state =	gebr_geoxml_flow_validade(flow, &program_title);
+		state =	gebr_geoxml_flow_validade(flow, gebr.line, gebr.project, &program_title);
 		switch (state)
 		{
 		case GEBR_GEOXML_FLOW_ERROR_NONE:
@@ -199,6 +199,15 @@ static gboolean flows_check_before_execution(void)
 			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
 						_("Warning"),
 						_("No input file specified for program \"%s\" at flow \"%s\""),
+						 program_title, flow_title);
+			g_free(flow_title);	
+			g_free(program_title);	
+			return FALSE;
+
+		case GEBR_GEOXML_FLOW_ERROR_INVALID_INFILE:
+			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+						_("Warning"),
+						_("Invalid input file specified for program \"%s\" at flow \"%s\""),
 						 program_title, flow_title);
 			g_free(flow_title);	
 			g_free(program_title);	
@@ -337,7 +346,7 @@ void on_flow_component_execute_single()
 	if (gebr.flow == NULL)
 		return;
 
-	state =	gebr_geoxml_flow_validade(gebr.flow, &program_title);
+	state =	gebr_geoxml_flow_validade(gebr.flow, gebr.line, gebr.project, &program_title);
 	switch (state)
 	{
 	case GEBR_GEOXML_FLOW_ERROR_NONE:
@@ -366,6 +375,14 @@ void on_flow_component_execute_single()
 		gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
 					_("Warning"),
 					_("No input file specified for program \"%s\""),
+					program_title);
+		g_free(program_title);	
+		return;
+
+	case GEBR_GEOXML_FLOW_ERROR_INVALID_INFILE:
+		gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+					_("Warning"),
+					_("Invalid input file specified for program \"%s\""),
 					program_title);
 		g_free(program_title);	
 		return;
