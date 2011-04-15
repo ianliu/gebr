@@ -17,6 +17,7 @@
 
 #include <errno.h>
 #include <string.h>
+#include <stdio.h>
 
 #include "gebr-expr.h"
 
@@ -415,38 +416,116 @@ gebr_expr_extract_vars (const gchar *e)
 	return g_list_reverse (vars);
 }
 
-GList * gebr_str_expr_extract_vars (const gchar *str)
+GebrExprError gebr_str_expr_extract_vars (const gchar *str, GList ** vars)
 {
-	GList *vars = NULL;
-	GRegex *regex;
-	GMatchInfo *info;
+	enum {
+		STATE_STARTING = 0,
+		STATE_CONSUMING,
+		STATE_OPEN_BRACKET, 
+		STATE_CLOSE_BRACKET, 
+		STATE_READING_VAR,
+		STATE_MATCHED,
+		STATE_FINISHED,
+	} status;
 
-	regex = g_regex_new ("\\[[a-z][0-9a-z_]*\\]", 0, 0, NULL);
-	g_regex_match (regex, str, 0, &info);
+	gchar * word = NULL;
+	status  = STATE_STARTING;
+	gint i = 0;
+	gint j = 0;
+	GebrExprError retval = GEBR_EXPR_ERROR_NONE;
 
-	while (g_match_info_matches (info))
-	{
-		gchar *word = g_match_info_fetch (info, 0);
+	*vars = NULL;
+	word = g_new(gchar, strlen(str));
 
-		gint i = 1;
-		while(TRUE){
-			if (i < strlen(word) - 1)
-				word[i - 1] = word[i];
-			else{
-				word[i - 1] = '\0';
+	while (status != STATE_FINISHED){
+		if (str[i] || status == STATE_MATCHED){
+			switch (status)
+			{
+			case STATE_STARTING:
+				if (str[i] == '[')
+					status = STATE_OPEN_BRACKET;
+				else if (str[i] == ']'){
+					retval = GEBR_EXPR_ERROR_SYNTAX;
+					status = STATE_FINISHED;
+				}
+				i++;
+				break;
+
+			case STATE_OPEN_BRACKET:
+					if (str[i] == '['){
+						status = STATE_CONSUMING;
+						i++;
+					}
+					else{
+						status = STATE_READING_VAR;
+						j = 0;
+					}
+				break;
+
+			case STATE_CONSUMING:
+				if (str[i] == '[')
+					status = STATE_OPEN_BRACKET;
+				else if (str[i] == ']')
+					status = STATE_CLOSE_BRACKET;
+				i++;
+				break;
+
+
+			case STATE_CLOSE_BRACKET:
+					if (str[i] == ']'){
+						if (str[i])
+							status = STATE_STARTING;
+						i++;
+					}
+					else{
+						retval = GEBR_EXPR_ERROR_SYNTAX;
+						status = STATE_FINISHED;
+					}
+				break;
+
+			case STATE_READING_VAR:
+				if (str[i] == ']'){
+					word[j] = '\0';
+					status = STATE_MATCHED;
+				}
+				else if (str[i] == '['){
+					retval = GEBR_EXPR_ERROR_SYNTAX;
+					status = STATE_FINISHED;
+				}
+				else
+					word[j++] = str[i++];
+				break;
+
+			case STATE_MATCHED:
+				if (strlen(word)){
+					*vars = g_list_prepend (*vars, g_strdup(word));
+
+					status = STATE_STARTING;
+					i++;
+				}
+				else{
+					retval = GEBR_EXPR_ERROR_EMPTY_VAR;
+					status = STATE_FINISHED;
+				}
+				break;
+			default:
+				retval = GEBR_EXPR_ERROR_STATE_UNKNOWN;
+				status = STATE_FINISHED;
 				break;
 			}
-			i++;
 		}
+		else{
+			if (status == STATE_CONSUMING
+			    || status == STATE_OPEN_BRACKET
+			    || status == STATE_CLOSE_BRACKET
+			    || status == STATE_READING_VAR)
+				retval = GEBR_EXPR_ERROR_SYNTAX;
 
-		vars = g_list_prepend (vars, word);
-
-		g_match_info_next (info, NULL);
+			status = STATE_FINISHED;
+		}
 	}
 
-	g_match_info_free (info);
-	g_regex_unref (regex);
-
-	return g_list_reverse (vars);
-
+	g_free(word);
+	*vars = g_list_reverse (*vars);
+	return retval;
 }

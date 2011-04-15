@@ -35,9 +35,12 @@ GQuark gebr_expr_error_quark (void);
  * @GEBR_EXPR_ERROR_MULT:   Expression returned multiple values
  */
 typedef enum {
+	GEBR_EXPR_ERROR_NONE = 0,
 	GEBR_EXPR_ERROR_SYNTAX,
 	GEBR_EXPR_ERROR_INVALID_NAME,
 	GEBR_EXPR_ERROR_UNDEFINED_VAR,
+	GEBR_EXPR_ERROR_EMPTY_VAR,
+	GEBR_EXPR_ERROR_STATE_UNKNOWN,
 	GEBR_EXPR_ERROR_INVALID_ASSIGNMENT,
 } GebrExprError;
 
@@ -97,13 +100,7 @@ GList *gebr_expr_extract_vars (const gchar *expression);
  */
 gboolean gebr_expr_is_name_valid (const gchar *name);
 
-/**
- * gebr_str_expr_extract_vars:
- * @str:
- *
- * Returns: a #GList of all variables in string
- */
-GList * gebr_str_expr_extract_vars (const gchar *str);
+GebrExprError gebr_str_expr_extract_vars (const gchar *str, GList ** vars);
 
 G_END_DECLS
 
