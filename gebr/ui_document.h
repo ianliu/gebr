@@ -51,6 +51,8 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 				   GebrPropertiesResponseFunc func,
 				   gboolean is_new);
 
+void dict_edit_check_programs_using_variables(const gchar *var_name, gboolean var_exists);
+
 /**
  * document_dict_edit_setup_ui:
  * Opens a dialog for editing dictionary keywords.

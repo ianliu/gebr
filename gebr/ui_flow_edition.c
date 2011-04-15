@@ -31,6 +31,7 @@
 #include "ui_parameters.h"
 #include "ui_help.h"
 #include "callbacks.h"
+#include "ui_document.h"
 
 /*
  * Prototypes
@@ -579,6 +580,7 @@ gboolean flow_edition_component_key_pressed(GtkWidget *view, GdkEventKey *key)
 				gebr_geoxml_flow_remove_iter_dict(gebr.flow);
 			else
 				gebr_geoxml_flow_insert_iter_dict(gebr.flow);
+			flow_edition_change_iter_status(status, &iter);
 		}
 
 		icon = gebr_gui_get_program_icon (program);
@@ -625,10 +627,13 @@ void flow_edition_change_iter_status(guint status, GtkTreeIter *iter)
 		status = GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED;
 
 	if(gebr_geoxml_program_get_control(program) == GEBR_GEOXML_PROGRAM_CONTROL_FOR) {
-		if(status == GEBR_GEOXML_PROGRAM_STATUS_DISABLED)
+		if(status == GEBR_GEOXML_PROGRAM_STATUS_DISABLED) {
 			gebr_geoxml_flow_remove_iter_dict(gebr.flow);
-		else
+			dict_edit_check_programs_using_variables("iter", FALSE);
+		} else {
 			gebr_geoxml_flow_insert_iter_dict(gebr.flow);
+			dict_edit_check_programs_using_variables("iter", TRUE);
+		}
 	}
 
 	gebr_geoxml_program_set_status(GEBR_GEOXML_PROGRAM(program), status);

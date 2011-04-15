@@ -600,6 +600,55 @@ void document_dict_edit_setup_ui(void)
 	gtk_widget_destroy(dialog);
 }
 
+static GList *program_list_from_used_variables(const gchar *var_name)
+{
+	GtkTreeIter iter;
+	GList *list = NULL;
+	gboolean valid = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter);
+	for(; valid; valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter)) {
+		GebrGeoXmlProgram *program;
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter,
+				   FSEQ_GEBR_GEOXML_POINTER, &program, -1);
+		if(!program)
+			continue;
+
+		if(gebr_geoxml_program_get_control(program) == GEBR_GEOXML_PROGRAM_CONTROL_FOR)
+			continue;
+
+		if(gebr_geoxml_program_is_var_used(program, var_name))
+			list = g_list_prepend(list, gtk_tree_iter_copy(&iter));
+	}
+	return list;
+}
+
+static void program_list_warn_undefined_variable(GList * program_list, gboolean var_exists)
+{
+	for(GList *i = program_list; i; i = i->next) {
+		GtkTreeIter *it = i->data;
+		if (!var_exists) {
+			flow_edition_change_iter_status(GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED, it);
+			gtk_list_store_set(gebr.ui_flow_edition->fseq_store, it, FSEQ_TOOLTIP, _("This program is using an undefined variable"), -1);
+		} else {
+			flow_edition_change_iter_status(GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED, it);
+			gtk_list_store_set(gebr.ui_flow_edition->fseq_store, it, FSEQ_TOOLTIP, "", -1);
+		}
+	}
+}
+
+static void program_list_free(GList * program_list)
+{
+	g_list_foreach(program_list,(GFunc)gtk_tree_iter_free, NULL);
+	g_list_free(program_list);
+}
+
+
+void dict_edit_check_programs_using_variables(const gchar *var_name, gboolean var_exists)
+{
+	GList *list = program_list_from_used_variables(var_name);
+	program_list_warn_undefined_variable(list, var_exists);
+	program_list_free(list);
+}
+
 //==============================================================================
 // PRIVATE FUNCTIONS							       =
 //==============================================================================
@@ -649,11 +698,9 @@ static void on_dict_edit_add_clicked(GtkButton * button, struct dict_edit_data *
  */
 static void on_dict_edit_remove_clicked(GtkButton * button, struct dict_edit_data *data)
 {
-	GList *list = NULL;
-	GtkTreeIter iter, iter2;
+	GtkTreeIter iter;
 	GebrGeoXmlSequence *parameter;
-	GebrGeoXmlProgram *program;
-	gboolean is_editable = FALSE, valid, confirm;
+	gboolean is_editable = FALSE;
 	const gchar *var_name;
 
 	if (!dict_edit_get_selected(data, &iter))
@@ -666,32 +713,17 @@ static void on_dict_edit_remove_clicked(GtkButton * button, struct dict_edit_dat
 
 	if (is_editable) {
 		var_name = gebr_geoxml_program_parameter_get_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(parameter));
-		valid = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter2);
-		for(; valid; valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter2)) {
-			gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter2,
-					   FSEQ_GEBR_GEOXML_POINTER, &program, -1);
-			if(!program)
-				continue;
+		GList *list = program_list_from_used_variables(var_name);
 
-			if(gebr_geoxml_program_get_control(program) == GEBR_GEOXML_PROGRAM_CONTROL_FOR)
-				continue;
-
-			if(gebr_geoxml_program_is_var_used(program, var_name))
-				list = g_list_prepend(list, gtk_tree_iter_copy(&iter2));
-		}
-		if(list) {
-			confirm = gebr_gui_confirm_action_dialog(_("Do you really want to delete this variable?"),
-							_("One or more programs use this variable. Deleting it will invalidate those programs."));
-			if(confirm) {
+		if (list) {
+			gboolean confirmed = gebr_gui_confirm_action_dialog(_("Do you really want to delete this variable?"),
+									    _("One or more programs use this variable. Deleting it will invalidate those programs."));
+			if (confirmed) {
 				gebr_geoxml_sequence_remove(parameter);
 				gtk_tree_store_remove(GTK_TREE_STORE(data->tree_model), &iter);
-				for(GList *i = list; i; i = i->next) {
-					GtkTreeIter *it = i->data;
-					flow_edition_change_iter_status(GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED, it);
-				}
+				program_list_warn_undefined_variable(list, FALSE);
 			}
-			g_list_foreach(list,(GFunc)gtk_tree_iter_free, NULL);
-			g_list_free(list);
+			program_list_free(list);
 		}
 		else {
 			gebr_geoxml_sequence_remove(parameter);
