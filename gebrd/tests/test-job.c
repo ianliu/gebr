@@ -51,12 +51,28 @@ void test_gebrd_job_parse_string_normal(void)
 	g_assert_cmpstr(result, ==, "");
 	g_free(result);
 
+	g_assert(parse_string_expression("[[]]", ht, &result) == GEBRD_STRING_PARSER_ERROR_NONE);
+	g_assert_cmpstr(result, ==, "[]");
+	g_free(result);
+
+	g_assert(parse_string_expression("foo", ht, &result) == GEBRD_STRING_PARSER_ERROR_NONE);
+	g_assert_cmpstr(result, ==, "foo");
+	g_free(result);
+
+	g_assert(parse_string_expression("[bar]", ht, &result) == GEBRD_STRING_PARSER_ERROR_NONE);
+	g_assert_cmpstr(result, ==, "${V[2]}");
+	g_free(result);
+
 	g_assert(parse_string_expression("foo[bar]baz", ht, &result) == GEBRD_STRING_PARSER_ERROR_NONE);
 	g_assert_cmpstr(result, ==, "foo${V[2]}baz");
 	g_free(result);
 
 	g_assert(parse_string_expression("foo[bar]baz[[s]]", ht, &result) == GEBRD_STRING_PARSER_ERROR_NONE);
 	g_assert_cmpstr(result, ==, "foo${V[2]}baz[s]");
+	g_free(result);
+
+	g_assert(parse_string_expression("[[[bar]]]", ht, &result) == GEBRD_STRING_PARSER_ERROR_NONE);
+	g_assert_cmpstr(result, ==, "[${V[2]}]");
 	g_free(result);
 
 	g_assert(parse_string_expression("[iter][foo][bar]", ht, &result) == GEBRD_STRING_PARSER_ERROR_NONE);
@@ -89,6 +105,16 @@ void test_gebrd_job_parse_string_invalid(void)
 
 	g_assert(parse_string_expression("[iter", ht, &result) == GEBRD_STRING_PARSER_ERROR_SYNTAX);
 	g_assert(result == NULL);
+
+	g_assert(parse_string_expression("[]", ht, &result) == GEBRD_STRING_PARSER_ERROR_SYNTAX);
+	g_assert(parse_string_expression("[[", ht, &result) == GEBRD_STRING_PARSER_ERROR_SYNTAX);
+	g_assert(parse_string_expression("[", ht, &result) == GEBRD_STRING_PARSER_ERROR_SYNTAX);
+	g_assert(parse_string_expression("[[other", ht, &result) == GEBRD_STRING_PARSER_ERROR_SYNTAX);
+	g_assert(parse_string_expression("]]", ht, &result) == GEBRD_STRING_PARSER_ERROR_SYNTAX);
+	g_assert(parse_string_expression("]", ht, &result) == GEBRD_STRING_PARSER_ERROR_SYNTAX);
+	g_assert(parse_string_expression("[[int]", ht, &result) == GEBRD_STRING_PARSER_ERROR_SYNTAX);
+	g_assert(parse_string_expression("[[]", ht, &result) == GEBRD_STRING_PARSER_ERROR_SYNTAX);
+	g_assert(parse_string_expression("[[]]]", ht, &result) == GEBRD_STRING_PARSER_ERROR_SYNTAX);
 
 	g_hash_table_unref(ht);
 }

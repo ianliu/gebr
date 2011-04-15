@@ -145,6 +145,7 @@ void test_gebr_expr_parse_string_invalid(void)
 	g_assert(gebr_str_expr_extract_vars("[[int]",&list) == GEBR_EXPR_ERROR_SYNTAX);
 	g_assert(gebr_str_expr_extract_vars("[[]",&list) == GEBR_EXPR_ERROR_SYNTAX);
 	g_assert(gebr_str_expr_extract_vars("[[]]]",&list) == GEBR_EXPR_ERROR_SYNTAX);
+	g_assert(gebr_str_expr_extract_vars("[[lakhd]kvlajl]]",&list) == GEBR_EXPR_ERROR_SYNTAX);
 
 	g_list_foreach (list, (GFunc) g_free, NULL);
 	g_list_free (list);
