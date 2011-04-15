@@ -17,15 +17,35 @@
 #include <glib.h>
 #include <gebrd-job.h>
 
+static GHashTable *build_hash_table(void) {
+	GHashTable *ht;
+	guint *i;
+
+	ht = g_hash_table_new_full(gebrd_bc_hash_func, gebrd_bc_equal_func,
+				   g_free, g_free);
+
+	i = g_new(guint, 1), *i = 0;
+	g_hash_table_insert(ht, g_strdup("number:iter"), i);
+
+	i = g_new(guint, 1), *i = 1;
+	g_hash_table_insert(ht, g_strdup("number:foo"), i);
+
+	i = g_new(guint, 1), *i = 2;
+	g_hash_table_insert(ht, g_strdup("number:bar"), i);
+
+	g_hash_table_insert(ht, g_strdup("string:s1"), g_strdup("String 1"));
+	g_hash_table_insert(ht, g_strdup("string:s2"), g_strdup("String 2"));
+	g_hash_table_insert(ht, g_strdup("string:s3"), g_strdup("\\String \"3\""));
+
+	return ht;
+}
+
 void test_gebrd_job_parse_string_normal(void)
 {
 	gchar *result;
 	GHashTable *ht;
 
-	ht = g_hash_table_new(g_str_hash, g_str_equal);
-	g_hash_table_insert(ht, "iter", GUINT_TO_POINTER(0));
-	g_hash_table_insert(ht, "foo", GUINT_TO_POINTER(1));
-	g_hash_table_insert(ht, "bar", GUINT_TO_POINTER(2));
+	ht = build_hash_table();
 
 	g_assert(parse_string_expression("", ht, &result) == GEBRD_STRING_PARSER_ERROR_NONE);
 	g_assert_cmpstr(result, ==, "");
@@ -43,6 +63,14 @@ void test_gebrd_job_parse_string_normal(void)
 	g_assert_cmpstr(result, ==, "${V[0]}${V[1]}${V[2]}");
 	g_free(result);
 
+	g_assert(parse_string_expression("[s1]", ht, &result) == GEBRD_STRING_PARSER_ERROR_NONE);
+	g_assert_cmpstr(result, ==, "String 1");
+	g_free(result);
+
+	g_assert(parse_string_expression("[s1][foo][s2]", ht, &result) == GEBRD_STRING_PARSER_ERROR_NONE);
+	g_assert_cmpstr(result, ==, "String 1${V[1]}String 2");
+	g_free(result);
+
 	g_hash_table_unref(ht);
 }
 
@@ -51,10 +79,7 @@ void test_gebrd_job_parse_string_invalid(void)
 	gchar *result = NULL;
 	GHashTable *ht;
 
-	ht = g_hash_table_new(g_str_hash, g_str_equal);
-	g_hash_table_insert(ht, "iter", GUINT_TO_POINTER(0));
-	g_hash_table_insert(ht, "foo", GUINT_TO_POINTER(1));
-	g_hash_table_insert(ht, "bar", GUINT_TO_POINTER(2));
+	ht = build_hash_table();
 
 	g_assert(parse_string_expression("[iter][foo][baz]", ht, &result) == GEBRD_STRING_PARSER_ERROR_UNDEF_VAR);
 	g_assert(result == NULL);
@@ -73,21 +98,22 @@ void test_gebrd_job_parse_string_escape(void)
 	gchar *result;
 	GHashTable *ht;
 
-	ht = g_hash_table_new(g_str_hash, g_str_equal);
-	g_hash_table_insert(ht, "iter", GUINT_TO_POINTER(0));
-	g_hash_table_insert(ht, "foo", GUINT_TO_POINTER(1));
-	g_hash_table_insert(ht, "bar", GUINT_TO_POINTER(2));
+	ht = build_hash_table();
 
 	g_assert(parse_string_expression("\"hi\"", ht, &result) == GEBRD_STRING_PARSER_ERROR_NONE);
 	g_assert_cmpstr(result, ==, "\\\"hi\\\"");
 	g_free(result);
 
 	g_assert(parse_string_expression("'hi'", ht, &result) == GEBRD_STRING_PARSER_ERROR_NONE);
-	g_assert_cmpstr(result, ==, "\\'hi\\'");
+	g_assert_cmpstr(result, ==, "'hi'");
 	g_free(result);
 
 	g_assert(parse_string_expression("\\\"hi", ht, &result) == GEBRD_STRING_PARSER_ERROR_NONE);
 	g_assert_cmpstr(result, ==, "\\\\\\\"hi");
+	g_free(result);
+
+	g_assert(parse_string_expression("foo[s3]bar", ht, &result) == GEBRD_STRING_PARSER_ERROR_NONE);
+	g_assert_cmpstr(result, ==, "foo\\\\String \\\"3\\\"bar");
 	g_free(result);
 
 	g_hash_table_unref(ht);
@@ -103,5 +129,3 @@ int main(int argc, char * argv[])
 
 	return g_test_run();
 }
-
-

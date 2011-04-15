@@ -909,27 +909,40 @@ static gchar *replace_quotes(gchar *str)
 	return str;
 }
 
+gboolean gebrd_bc_equal_func(gconstpointer a, gconstpointer b)
+{
+	return g_str_equal(a + 7, b);
+}
+
+guint gebrd_bc_hash_func(gconstpointer a)
+{
+	gchar *i;
+	const gchar *x = a;
+
+	i = strchr(x, ':');
+	if (i)
+		return g_str_hash(i+1);
+	return g_str_hash(a);
+}
+
 static void define_bc_variables(GString *expr_buf, GebrGeoXmlFlow *flow, GHashTable **table, gsize *n_vars)
 {
 	gsize j = 1;
-	gboolean valid;
+	guint *index;
 	const gchar *value;
 	const gchar *keyword;
 	GebrGeoXmlSequence *seq;
 	GebrGeoXmlParameters *params;
 	GebrGeoXmlProgramParameter *prog_param;
-	GHashTable *ht = g_hash_table_new_full(g_str_hash, g_str_equal,
-					       g_free, NULL);
-
-	static GebrGeoXmlParameterType allowed_types[] = {
-		GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
-		GEBR_GEOXML_PARAMETER_TYPE_INT,
-	};
-	static gint n_types = G_N_ELEMENTS (allowed_types);
+	GHashTable *ht = g_hash_table_new_full(gebrd_bc_hash_func,
+					       gebrd_bc_equal_func,
+					       g_free,
+					       g_free);
 
 	*table = ht;
 	g_string_append(expr_buf, "\t\titer\n");
-	g_hash_table_insert(ht, g_strdup("iter"), GUINT_TO_POINTER(0));
+	index = g_new(guint, 1), *index = 0;
+	g_hash_table_insert(ht, g_strdup("number:iter"), index);
 
 	// Insert variables definitions
 	params = gebr_geoxml_document_get_dict_parameters (GEBR_GEOXML_DOCUMENT (flow));
@@ -937,27 +950,33 @@ static void define_bc_variables(GString *expr_buf, GebrGeoXmlFlow *flow, GHashTa
 	for (; seq; gebr_geoxml_sequence_next (&seq))
 	{
 		gchar *label;
+		gchar *var_name;
 
-		valid = FALSE;
-		for (gint i = 0; i < n_types; i++) {
-			if (gebr_geoxml_parameter_get_type (GEBR_GEOXML_PARAMETER (seq)) == allowed_types[i]) {
-				valid = TRUE;
-				break;
-			}
-		}
-
-		if (!valid)
+		switch (gebr_geoxml_parameter_get_type (GEBR_GEOXML_PARAMETER (seq)))
+		{
+		case GEBR_GEOXML_PARAMETER_TYPE_FLOAT:
+		case GEBR_GEOXML_PARAMETER_TYPE_INT:
+			prog_param = GEBR_GEOXML_PROGRAM_PARAMETER (seq);
+			label = g_strdup(gebr_geoxml_parameter_get_label (GEBR_GEOXML_PARAMETER (seq)));
+			value = gebr_geoxml_program_parameter_get_first_value (prog_param, FALSE);
+			keyword = gebr_geoxml_program_parameter_get_keyword (prog_param);
+			g_string_append_printf(expr_buf, "\t\t%s = %s ; %s # %s\n",
+					       keyword, value, keyword, replace_quotes(label));
+			var_name = g_strconcat("number:", keyword, NULL);
+			index = g_new(guint, 1), *index = j++;
+			g_hash_table_insert(ht, var_name, index);
+			g_free (label);
+			break;
+		case GEBR_GEOXML_PARAMETER_TYPE_STRING:
+			prog_param = GEBR_GEOXML_PROGRAM_PARAMETER (seq);
+			value = gebr_geoxml_program_parameter_get_first_value (prog_param, FALSE);
+			keyword = gebr_geoxml_program_parameter_get_keyword (prog_param);
+			var_name = g_strconcat("string:", keyword, NULL);
+			g_hash_table_insert(ht, var_name, g_strdup(value));
+			break;
+		default:
 			continue;
-
-		prog_param = GEBR_GEOXML_PROGRAM_PARAMETER (seq);
-		label = g_strdup(gebr_geoxml_parameter_get_label (GEBR_GEOXML_PARAMETER (seq)));
-		value = gebr_geoxml_program_parameter_get_first_value (prog_param, FALSE);
-		keyword = gebr_geoxml_program_parameter_get_keyword (prog_param);
-		g_string_append_printf(expr_buf, "\t\t%s = %s ; %s # %s\n",
-				       keyword, value, keyword, replace_quotes(label));
-
-		g_hash_table_insert(ht, g_strdup(keyword), GUINT_TO_POINTER(j++));
-		g_free (label);
+		}
 	}
 
 	*n_vars = j;
@@ -1005,6 +1024,7 @@ static void job_assembly_cmdline(GebrdJob *job)
 	GString *expr_buf = g_string_new("");
 
 	job->expr_count = 0;
+	job->table = NULL;
 
 	if (job->flow == NULL) 
 		goto err;
@@ -1224,16 +1244,34 @@ static void job_assembly_cmdline(GebrdJob *job)
 	g_string_free(expr_buf, TRUE);
 	return;
 err:	
+	if (job->table)
+		g_hash_table_unref(job->table);
 	g_string_free(expr_buf, TRUE);
 	g_string_assign(job->parent.cmd_line, "");
 	job->critical_error = TRUE;
 }
 
+static gchar *escape_quote_and_slash(const gchar *str)
+{
+	gsize i = 0;
+	gchar *s = g_new(gchar, strlen(str)*2 + 1);
+
+	while (*str)
+	{
+		if (*str == '\\' || *str == '"')
+			s[i++] = '\\';
+		s[i++] = *str;
+		str++;
+	}
+	s[i] = '\0';
+	return s;
+}
+
 GebrdStringParserError parse_string_expression(const gchar *str, GHashTable *table, gchar **result)
 {
-	guint pos;
 	gint i = 0, j;
-	gchar *var_name;
+	gpointer value;
+	gchar *var_name, *real_name;
 	gboolean fetch_var = FALSE;
 	GString *unescape = g_string_new(NULL);
 	GebrdStringParserError retval = GEBRD_STRING_PARSER_ERROR_NONE;
@@ -1259,9 +1297,19 @@ GebrdStringParserError parse_string_expression(const gchar *str, GHashTable *tab
 			if (str[i] == ']') {
 				fetch_var = FALSE;
 				var_name[j] = '\0';
-				if (g_hash_table_lookup_extended(table, var_name, NULL, (gpointer)&pos))
-					g_string_append_printf(unescape, "${V[%d]}", pos);
-				else {
+				g_debug("--Found var name '%s', looking in table...", var_name);
+				if (g_hash_table_lookup_extended(table, var_name, (gpointer*)&real_name, &value)) {
+					g_debug("---Found! The real name is: %s", real_name);
+					if (g_str_has_prefix(real_name, "string:")) {
+						gchar *tmp = escape_quote_and_slash((const gchar*)value);
+						g_string_append(unescape, tmp);
+						g_free(tmp);
+					} else if (g_str_has_prefix(real_name, "number:"))
+						g_string_append_printf(unescape, "${V[%d]}", *(guint*)value);
+					else
+						g_warn_if_reached();
+				} else {
+					g_debug("ERROR ** Could not find variable %s in hash table", var_name);
 					retval = GEBRD_STRING_PARSER_ERROR_UNDEF_VAR;
 					goto exception;
 				}
@@ -1275,6 +1323,7 @@ GebrdStringParserError parse_string_expression(const gchar *str, GHashTable *tab
 
 		if (str[i] == ']') {
 		       if (str[i+1] != ']') {
+			       g_debug("ERROR ** Missing closing bracket");
 			       retval = GEBRD_STRING_PARSER_ERROR_SYNTAX;
 			       goto exception;
 		       } else {
@@ -1284,8 +1333,8 @@ GebrdStringParserError parse_string_expression(const gchar *str, GHashTable *tab
 		       continue;
 		}
 
-		// Escape single-quotes, double-quotes and backslashes
-		if (str[i] == '\'' || str[i] == '"' || str[i] == '\\')
+		// Escape double-quotes and backslashes
+		if (str[i] == '"' || str[i] == '\\')
 			g_string_append_c(unescape, '\\');
 		g_string_append_c(unescape, str[i++]);
 	}

@@ -120,5 +120,16 @@ void job_send_clients_job_notify(GebrdJob *job);
  */
 GebrdStringParserError parse_string_expression(const gchar *str, GHashTable *table, gchar **result);
 
+/**
+ * gebrd_bc_equal_func:
+ */
+gboolean gebrd_bc_equal_func(gconstpointer a, gconstpointer b);
+
+/**
+ * gebrd_bc_hash_func:
+ */
+guint gebrd_bc_hash_func(gconstpointer a);
+
 G_END_DECLS
+
 #endif				//__JOB_H
