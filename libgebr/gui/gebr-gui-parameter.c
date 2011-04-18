@@ -754,6 +754,10 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 			}
 			g_signal_connect (GEBR_GUI_FILE_ENTRY (file_entry)->entry, "activate",
 					  G_CALLBACK (on_entry_activate_add), parameter_widget);
+			g_signal_connect (GEBR_GUI_FILE_ENTRY (file_entry)->entry, "focus-in-event",
+					  G_CALLBACK (__on_focus_in_event), parameter_widget);
+			g_signal_connect (GEBR_GUI_FILE_ENTRY (file_entry)->entry, "focus-out-event",
+					  G_CALLBACK(__on_focus_out_event), parameter_widget);
 			/* validation */
 			g_signal_connect (GEBR_GUI_FILE_ENTRY (file_entry)->entry, "activate",
 					  G_CALLBACK (__on_activate), parameter_widget);
