@@ -112,5 +112,24 @@ gboolean gebr_gui_parameter_widget_match_completion(GtkEntryCompletion *completi
 						    const gchar *key,
 						    GtkTreeIter *iter,
 						    gpointer user_data);
+
+/**
+ * gebr_gui_parameter_add_variables_popup:
+ * @entry:
+ * @flow:
+ * @line:
+ * @proj:
+ * @type:
+ *
+ * Creates a popup menu with compatible variables for @entry.
+ *
+ * Returns: a #GtkMenu
+ */
+GtkWidget *gebr_gui_parameter_add_variables_popup(GtkEntry *entry,
+						  GebrGeoXmlDocument *flow,
+						  GebrGeoXmlDocument *line,
+						  GebrGeoXmlDocument *proj,
+						  GebrGeoXmlParameterType type);
+
 G_END_DECLS
 #endif				//__GEBR_GUI_PARAMETER_H

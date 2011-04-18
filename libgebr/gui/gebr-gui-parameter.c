@@ -93,6 +93,11 @@ static void setup_entry_completion(GtkEntry *entry,
 
 static void validate_parameter_value(struct gebr_gui_parameter_widget *widget);
 
+static GList * get_compatible_variables(GebrGeoXmlParameterType type,
+					GebrGeoXmlDocument *flow,
+					GebrGeoXmlDocument *line,
+					GebrGeoXmlDocument *proj);
+
 //==============================================================================
 // PRIVATE FUNCTIONS							       =
 //==============================================================================
@@ -989,34 +994,31 @@ static GtkWidget *gebr_gui_parameter_widget_dict_popup_menu(struct gebr_gui_para
 	return menu;
 }
 
-/*
- * gebr_gui_parameter_widget_variable_popup_menu:
- * Read dictionaries variables and build a popup menu to build expressions
- */
-static GtkWidget *gebr_gui_parameter_widget_variable_popup_menu(struct gebr_gui_parameter_widget *widget,
-								GtkEntry *entry)
+GtkWidget *gebr_gui_parameter_add_variables_popup(GtkEntry *entry,
+						  GebrGeoXmlDocument *flow,
+						  GebrGeoXmlDocument *line,
+						  GebrGeoXmlDocument *proj,
+						  GebrGeoXmlParameterType type)
 {
-	GList *cp;
-	GList *compatible_parameters;
+	GList *compat;
 	GtkWidget *menu;
 	GtkWidget *menu_item;
 
-	compatible_parameters = gebr_gui_parameter_widget_get_compatible_dicts(widget);
+	compat = get_compatible_variables(type, flow, line, proj);
 	menu = gtk_menu_new();
 
-	menu_item = gtk_menu_item_new();
-	g_object_set(menu_item, "user-data", NULL, NULL);
-
-	compatible_parameters = g_list_sort(compatible_parameters, (GCompareFunc) compare_parameters_by_keyword);
-	for (cp = compatible_parameters; cp != NULL; cp = g_list_next(cp)) {
+	for (GList *i = compat; i; i = i->next)
+	{
 		GString *label;
 		const gchar * keyword;
 		const gchar * first_value;
 		const gchar * param_label;
+		GebrGeoXmlProgramParameter *param;
 
-		keyword = gebr_geoxml_program_parameter_get_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(cp->data));
-		first_value = gebr_geoxml_program_parameter_get_first_value(GEBR_GEOXML_PROGRAM_PARAMETER(cp->data), FALSE);
-		param_label = gebr_geoxml_parameter_get_label(GEBR_GEOXML_PARAMETER(cp->data));
+		param = i->data;
+		keyword = gebr_geoxml_program_parameter_get_keyword(param);
+		first_value = gebr_geoxml_program_parameter_get_first_value(param, FALSE);
+		param_label = gebr_geoxml_parameter_get_label(GEBR_GEOXML_PARAMETER(param));
 
 		label = g_string_new(NULL);
 		g_string_printf(label, "%s=%s", keyword, first_value);
@@ -1024,18 +1026,36 @@ static GtkWidget *gebr_gui_parameter_widget_variable_popup_menu(struct gebr_gui_
 			g_string_append_printf(label, " (%s)", param_label);
 
 		menu_item = gtk_menu_item_new_with_label(label->str);
-		g_object_set(menu_item, "user-data", cp->data, NULL);
+		g_object_set_data (G_OBJECT (menu_item), "dict-param", param);
 		g_object_set_data (G_OBJECT (menu_item), "entry-widget", entry);
-		g_signal_connect(menu_item, "activate", G_CALLBACK(on_variable_parameter_activate), widget);
-		gtk_container_add(GTK_CONTAINER(menu), menu_item);
+		g_signal_connect(menu_item, "activate", G_CALLBACK(on_variable_parameter_activate), NULL);
+		gtk_menu_shell_append (GTK_MENU_SHELL (menu), menu_item);
 
 		g_string_free(label, TRUE);
 	}
 
 	gtk_widget_show_all(menu);
-	g_list_free(compatible_parameters);
 
 	return menu;
+}
+
+/*
+ * gebr_gui_parameter_widget_variable_popup_menu:
+ *
+ * Read dictionaries variables and build a popup menu to build expressions
+ */
+static GtkWidget *gebr_gui_parameter_widget_variable_popup_menu(struct gebr_gui_parameter_widget *widget,
+								GtkEntry *entry)
+{
+	return gebr_gui_parameter_add_variables_popup(entry,
+						      widget->dicts->flow,
+						      widget->dicts->line,
+						      widget->dicts->project,
+						      widget->parameter_type);
+}
+
+void gebr_gui_parameter_insert_dict_variables()
+{
 }
 
 /*
@@ -1445,10 +1465,35 @@ static gboolean completion_string_match_func(GtkEntryCompletion *completion,
 	return retval;
 }
 
-static GList *
-gebr_gui_parameter_widget_get_compatible_dicts(struct gebr_gui_parameter_widget *widget)
+static void fill_compatible_dicts(GebrGeoXmlParameterType type,
+				  GebrGeoXmlParameterType compat[])
 {
-	GList *compatible_parameters = NULL;
+	compat[0] = type;
+	switch (type) {
+	case GEBR_GEOXML_PARAMETER_TYPE_STRING:
+		compat[1] = GEBR_GEOXML_PARAMETER_TYPE_INT;
+		compat[2] = GEBR_GEOXML_PARAMETER_TYPE_FLOAT;
+		compat[3] = GEBR_GEOXML_PARAMETER_TYPE_RANGE;
+		return;
+	case GEBR_GEOXML_PARAMETER_TYPE_FLOAT:
+		compat[1] = GEBR_GEOXML_PARAMETER_TYPE_INT;
+		return;
+	case GEBR_GEOXML_PARAMETER_TYPE_RANGE:
+		compat[1] = GEBR_GEOXML_PARAMETER_TYPE_INT;
+		compat[2] = GEBR_GEOXML_PARAMETER_TYPE_FLOAT;
+		return;
+	default:
+		return;
+	}
+}
+
+static GList *
+get_compatible_variables(GebrGeoXmlParameterType type,
+			 GebrGeoXmlDocument *flow,
+			 GebrGeoXmlDocument *line,
+			 GebrGeoXmlDocument *proj)
+{
+	GList *compat = NULL;
 	GList *cp = NULL;
 
 	GebrGeoXmlParameterType compatibles_types[5] = {
@@ -1459,32 +1504,11 @@ gebr_gui_parameter_widget_get_compatible_dicts(struct gebr_gui_parameter_widget 
 		GEBR_GEOXML_PARAMETER_TYPE_UNKNOWN
 	};
 
-	GebrGeoXmlDocument *documents[4] = {
-		widget->dicts->project,
-		widget->dicts->line,
-		widget->dicts->flow,
-		NULL
-	};
+	GebrGeoXmlDocument *documents[4] = { proj, line, flow, NULL };
 
-	compatibles_types[0] = widget->parameter_type;
-	switch (widget->parameter_type) {
-	case GEBR_GEOXML_PARAMETER_TYPE_STRING:
+	fill_compatible_dicts(type, compatibles_types);
 	case GEBR_GEOXML_PARAMETER_TYPE_FILE:
-		compatibles_types[1] = GEBR_GEOXML_PARAMETER_TYPE_INT;
-		compatibles_types[2] = GEBR_GEOXML_PARAMETER_TYPE_FLOAT;
-		compatibles_types[3] = GEBR_GEOXML_PARAMETER_TYPE_RANGE;
-	case GEBR_GEOXML_PARAMETER_TYPE_FLOAT:
-		compatibles_types[1] = GEBR_GEOXML_PARAMETER_TYPE_INT;
-		break;
-	case GEBR_GEOXML_PARAMETER_TYPE_RANGE:
-		compatibles_types[1] = GEBR_GEOXML_PARAMETER_TYPE_INT;
-		compatibles_types[2] = GEBR_GEOXML_PARAMETER_TYPE_FLOAT;
-		break;
-	default:
-		break;
-	}
 
-	compatible_parameters = NULL;
 	for (int i = 0; documents[i] != NULL; i++) {
 		GebrGeoXmlSequence *dict_parameter;
 		GebrGeoXmlParameterType dict_parameter_type;
@@ -1507,15 +1531,24 @@ gebr_gui_parameter_widget_get_compatible_dicts(struct gebr_gui_parameter_widget 
 
 			/* Give preference for flow variables over project and line */
 			keyword = gebr_geoxml_program_parameter_get_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(dict_parameter));
-			for (cp = compatible_parameters; cp != NULL; cp = g_list_next(cp))
+			for (cp = compat; cp != NULL; cp = g_list_next(cp))
 				if (!strcmp(keyword, gebr_geoxml_program_parameter_get_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(cp->data))))
-					compatible_parameters = g_list_remove_link(compatible_parameters, cp);
+					compat = g_list_remove_link(compat, cp);
 
-			compatible_parameters = g_list_prepend(compatible_parameters, dict_parameter);
+			compat = g_list_prepend(compat, dict_parameter);
 		}
 	}
 
-	return g_list_sort(compatible_parameters, (GCompareFunc) compare_parameters_by_keyword);
+	return g_list_sort(compat, (GCompareFunc) compare_parameters_by_keyword);
+}
+
+static GList *
+gebr_gui_parameter_widget_get_compatible_dicts(struct gebr_gui_parameter_widget *widget)
+{
+	return get_compatible_variables(widget->parameter_type,
+					widget->dicts->flow,
+					widget->dicts->line,
+					widget->dicts->project);
 }
 
 static GtkTreeModel *generate_completion_model(struct gebr_gui_parameter_widget *widget)
