@@ -547,6 +547,7 @@ static void __set_type_icon(struct gebr_gui_parameter_widget *parameter_widget)
 
 static void __on_activate(GtkEntry * entry, struct gebr_gui_parameter_widget *parameter_widget)
 {
+	__set_type_icon(parameter_widget);
 	gebr_gui_parameter_widget_validate(parameter_widget);
 }
 
@@ -680,6 +681,9 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 					  G_CALLBACK (__on_focus_in_event), parameter_widget);
 			g_signal_connect (entry, "focus-out-event",
 					  G_CALLBACK(__on_focus_out_event), parameter_widget);
+			/* validation */
+			g_signal_connect (entry, "activate",
+					  G_CALLBACK(__on_activate), parameter_widget);
 
 			break;
 		}
