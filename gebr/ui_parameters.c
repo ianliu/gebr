@@ -205,7 +205,8 @@ static void validate_parameter (GebrGeoXmlParameter * parameter, GebrGeoXmlParam
 		const gchar *expr;
 
 		expr = gebr_geoxml_value_sequence_get (GEBR_GEOXML_VALUE_SEQUENCE (value));
-		if (gebr_geoxml_parameter_get_type(parameter) == GEBR_GEOXML_PARAMETER_TYPE_STRING){
+		if (gebr_geoxml_parameter_get_type(parameter) == GEBR_GEOXML_PARAMETER_TYPE_STRING ||
+		    gebr_geoxml_parameter_get_type(parameter) == GEBR_GEOXML_PARAMETER_TYPE_FILE){
 			if (!gebr_geoxml_document_validate_str (expr,
 								GEBR_GEOXML_DOCUMENT (gebr.flow),
 								GEBR_GEOXML_DOCUMENT (gebr.line),
