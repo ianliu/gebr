@@ -366,6 +366,7 @@ EOF
 	[ $? -eq 0 ] && ./configure --prefix=$INSTALL_DIR $DEBUG)) \
 	&& cd libXt-0.1.5 \
 	&& make -j$CORES install && cd .. || exit 1
+fi
 
 # libxslt-1.1.26
 	wget -c ftp://xmlsoft.org/libxslt/libxslt-1.1.26.tar.gz \
@@ -389,7 +390,6 @@ EOF
 	&& ./configure --prefix=$INSTALL_DIR $DEBUG)) \
 	&& cd tidy-20091223cvs \
 	&& make -j$CORES install && cd .. || exit 1
-fi
 
 # libsoup
 	wget -c http://ftp.gnome.org/pub/GNOME/desktop/2.25/2.25.91/sources/libsoup-2.25.91.tar.bz2 \
@@ -452,8 +452,9 @@ EOF
 	fi
 
 # gebr
-	([ -f gebrproject-$GEBR_VERSION.tar.gz ] || wget -c $GEBR_REPO/gebrproject-$GEBR_VERSION.tar.gz) \
-	&& rm -fr gebrproject-$GEBR_VERSION && tar zxf gebrproject-$GEBR_VERSION.tar.gz \
+	[ -d ../../gebrproject-$GEBR_VERSION ] && ln -s ../../gebrproject-$GEBR_VERSION \
+	|| (([ -f gebrproject-$GEBR_VERSION.tar.gz ] || wget -c $GEBR_REPO/gebrproject-$GEBR_VERSION.tar.gz) \
+	&& rm -fr gebrproject-$GEBR_VERSION && tar zxf gebrproject-$GEBR_VERSION.tar.gz) \
 	&& cd gebrproject-$GEBR_VERSION
 # Check for version 0.11.0 or greater
 if [ $GEBR_MAJOR -ge 0 -a $GEBR_MINOR -ge 11 ]; then
