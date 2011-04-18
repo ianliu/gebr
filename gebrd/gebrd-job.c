@@ -786,6 +786,7 @@ static gboolean job_parse_parameter(GebrdJob *job, GebrGeoXmlParameter * paramet
 
 	program_parameter = GEBR_GEOXML_PROGRAM_PARAMETER(parameter);
 	switch (type) {
+	case GEBR_GEOXML_PARAMETER_TYPE_FILE:
 	case GEBR_GEOXML_PARAMETER_TYPE_STRING: {
 		GString *value;
 		value = gebr_geoxml_program_parameter_get_string_value(program_parameter, FALSE);
@@ -834,7 +835,6 @@ static gboolean job_parse_parameter(GebrdJob *job, GebrGeoXmlParameter * paramet
 	}
 
 	case GEBR_GEOXML_PARAMETER_TYPE_RANGE:
-	case GEBR_GEOXML_PARAMETER_TYPE_FILE:
 	case GEBR_GEOXML_PARAMETER_TYPE_ENUM: {
 		GString *value;
 		value = gebr_geoxml_program_parameter_get_string_value(program_parameter, FALSE);
