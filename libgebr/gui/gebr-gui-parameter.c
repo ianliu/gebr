@@ -528,10 +528,9 @@ static void __set_type_icon(struct gebr_gui_parameter_widget *parameter_widget)
 	GtkEntry *entry;
 
 	if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_FILE)
-		entry = GTK_ENTRY(GEBR_GUI_FILE_ENTRY(parameter_widget->value_widget)->entry);
-	else
-		entry = GTK_ENTRY(parameter_widget->value_widget);
+		return;
 
+	entry = GTK_ENTRY(parameter_widget->value_widget);
 	g_object_get(entry, "has-focus", &has_focus, NULL);
 
 	gtk_entry_set_icon_activatable(entry, GTK_ENTRY_ICON_SECONDARY, FALSE);
@@ -550,16 +549,13 @@ static void __set_type_icon(struct gebr_gui_parameter_widget *parameter_widget)
 		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, "string-icon");
 		gtk_entry_set_icon_tooltip_text(entry, GTK_ENTRY_ICON_SECONDARY, 
 						_("This parameter uses a text value."));
-	} else if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_FILE) {
-		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, "string-icon");
-		gtk_entry_set_icon_tooltip_text(entry, GTK_ENTRY_ICON_SECONDARY, 
-						_("This parameter uses a text value."));
 	} else if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_RANGE && parameter_widget->dict_parameter != NULL) {
 		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, "accessories-dictionary");
 		gtk_entry_set_icon_tooltip_text(entry, 
 						GTK_ENTRY_ICON_SECONDARY, NULL);
 	} else
 		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, NULL);
+
 
 	if (parameter_widget->dicts == NULL)
 		return;
