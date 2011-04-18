@@ -264,12 +264,12 @@ gebr_expr_eval (GebrExpr *self,
 		GError **err)
 {
 
-	if(strchr(expr, '=')){
-			g_set_error (err, gebr_expr_error_quark (),
-									     GEBR_EXPR_ERROR_INVALID_ASSIGNMENT,
-									     "Expression might not have an assignment ('=')");
-								return FALSE;
-		}
+	if(strchr(expr, '=')) {
+		g_set_error (err, gebr_expr_error_quark (),
+			     GEBR_EXPR_ERROR_INVALID_ASSIGNMENT,
+			     "Expression might not have an assignment ('=')");
+		return FALSE;
+	}
 	return gebr_expr_eval_internal(self, expr, result, err);
 }
 

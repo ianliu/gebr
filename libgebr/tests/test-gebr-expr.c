@@ -37,6 +37,15 @@ void test_gebr_expr_invalid(void)
 
 	g_assert (gebr_expr_eval(expr, "2*", &result, NULL) == FALSE);
 	g_assert_cmpfloat (result, ==, 666);
+
+	g_assert (gebr_expr_eval(expr, "\"2", &result, NULL) == FALSE);
+	g_assert_cmpfloat (result, ==, 666);
+
+	g_assert (gebr_expr_eval(expr, "\"2\"", &result, NULL) == FALSE);
+	g_assert_cmpfloat (result, ==, 666);
+
+	g_assert (gebr_expr_eval(expr, "2c*", &result, NULL) == FALSE);
+	g_assert_cmpfloat (result, ==, 666);
 }
 
 void test_gebr_expr_mult_expression(void)
