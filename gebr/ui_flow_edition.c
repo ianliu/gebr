@@ -460,6 +460,7 @@ static void populate_io_popup(GtkEntry *entry, GtkMenu *menu)
 static void flow_edition_component_editing_started(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path)
 {
 	GtkTreeIter iter;
+	GtkTreeModel *completion_model;
 	GtkEntry *entry = GTK_ENTRY(editable);
 	const gchar *input;
 	const gchar *output;
@@ -471,6 +472,12 @@ static void flow_edition_component_editing_started(GtkCellRenderer *renderer, Gt
 
 	if (!flow_edition_get_selected_component(&iter, TRUE))
 		return;
+
+	completion_model = gebr_gui_parameter_get_completion_model(GEBR_GEOXML_DOCUMENT (gebr.flow),
+								   GEBR_GEOXML_DOCUMENT (gebr.line),
+								   GEBR_GEOXML_DOCUMENT (gebr.project),
+								   GEBR_GEOXML_PARAMETER_TYPE_STRING);
+	gebr_gui_parameter_set_string_entry_completion(entry, completion_model);
 
 	input = gebr_geoxml_flow_io_get_input(gebr.flow);
 	output = gebr_geoxml_flow_io_get_output(gebr.flow);
