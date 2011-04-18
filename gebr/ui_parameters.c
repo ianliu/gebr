@@ -265,12 +265,15 @@ static void parameters_actions(GtkDialog * dialog, gint arg1, struct ui_paramete
 		}
 		else if (is_valid == GEBR_GEOXML_PARAMETER_ERROR_REQUIRED_UNFILLED){
 			flow_edition_status_changed (GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED);
+			gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &iter, FSEQ_TOOLTIP, _("This program have a required parameter not configured"), -1);
 		}
 		else if (is_valid == GEBR_GEOXML_PARAMETER_ERROR_INVALID_EXPRESSION){
 			flow_edition_status_changed (GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED);
+			gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &iter, FSEQ_TOOLTIP, _("This program have an invalid expression"), -1);
 		}
 		else if (is_valid == GEBR_GEOXML_PARAMETER_ERROR_UNKNOWN_VARIABLE){
 			flow_edition_status_changed (GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED);
+			gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &iter, FSEQ_TOOLTIP, _("This program is using an undefined variable"), -1);
 		}
 		break;
 	}
