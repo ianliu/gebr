@@ -71,7 +71,7 @@ static GList *gebr_gui_parameter_widget_get_compatible_dicts(struct gebr_gui_par
 static gboolean on_entry_completion_matched (GtkEntryCompletion *completion,
 					     GtkTreeModel       *model,
 					     GtkTreeIter        *iter,
-					     struct gebr_gui_parameter_widget *parameter_widget);
+					     gpointer            data);
 
 static gboolean completion_number_match_func(GtkEntryCompletion *completion,
 					     const gchar *key,
@@ -89,7 +89,7 @@ static void setup_entry_completion(GtkEntry *entry,
 				   GtkTreeModel *model,
 				   GtkEntryCompletionMatchFunc func,
 				   GCallback match_selected_cb,
-				   struct gebr_gui_parameter_widget *parameter_widget);
+				   gpointer data);
 
 static void validate_parameter_value(struct gebr_gui_parameter_widget *widget);
 
@@ -626,7 +626,7 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 				setup_entry_completion(GTK_ENTRY(entry), completion_model,
 						       completion_number_match_func,
 						       G_CALLBACK(on_entry_completion_matched),
-						       parameter_widget);
+						       GINT_TO_POINTER(parameter_widget->parameter_type));
 				g_object_unref (completion_model);
 			}
 
@@ -656,7 +656,7 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 				setup_entry_completion(GTK_ENTRY(entry), completion_model,
 						       completion_number_match_func,
 						       G_CALLBACK(on_entry_completion_matched),
-						       parameter_widget);
+						       GINT_TO_POINTER(parameter_widget->parameter_type));
 				g_object_unref (completion_model);
 			}
 
@@ -686,7 +686,7 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 				setup_entry_completion(GTK_ENTRY(entry), completion_model,
 						       completion_string_match_func,
 						       G_CALLBACK(on_entry_completion_matched),
-						       parameter_widget);
+						       GINT_TO_POINTER(parameter_widget->parameter_type));
 				g_object_unref (completion_model);
 			}
 
@@ -750,7 +750,7 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 				setup_entry_completion(GTK_ENTRY(GEBR_GUI_FILE_ENTRY(file_entry)->entry), completion_model,
 						       completion_number_match_func,
 						       G_CALLBACK(on_entry_completion_matched),
-						       parameter_widget);
+						       GINT_TO_POINTER(parameter_widget->parameter_type));
 				g_object_unref (completion_model);
 			}
 			g_signal_connect (GEBR_GUI_FILE_ENTRY (file_entry)->entry, "activate",
@@ -1326,7 +1326,7 @@ static void __on_destroy_menu_unblock_handler(GtkMenuShell *menushell,
 static gboolean on_entry_completion_matched (GtkEntryCompletion *completion,
 					     GtkTreeModel       *model,
 					     GtkTreeIter        *iter,
-					     struct gebr_gui_parameter_widget *parameter_widget)
+					     gpointer            data)
 {
 	GtkWidget *entry;
 	const gchar *text;
@@ -1334,6 +1334,7 @@ static gboolean on_entry_completion_matched (GtkEntryCompletion *completion,
 	gchar * var;
 	gchar * word;
 	gint ini;
+	GebrGeoXmlParameterType type = GPOINTER_TO_INT(data);
 
 	entry = gtk_entry_completion_get_entry(completion);
 	text = gtk_entry_get_text(GTK_ENTRY(entry));
@@ -1350,13 +1351,13 @@ static gboolean on_entry_completion_matched (GtkEntryCompletion *completion,
 	if (ini <= pos)
 		gtk_editable_delete_text(GTK_EDITABLE(entry), ini, pos + 1);
 
-	if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT ||
-	    parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_INT){
+	if (type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT ||
+	    type == GEBR_GEOXML_PARAMETER_TYPE_INT){
 		gtk_editable_insert_text(GTK_EDITABLE(entry), var, -1, &ini);
 		gtk_editable_set_position(GTK_EDITABLE(entry), ini + strlen(var));
 	}
-	else if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_STRING || 
-		 parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_FILE){
+	else if (type == GEBR_GEOXML_PARAMETER_TYPE_STRING || 
+		 type == GEBR_GEOXML_PARAMETER_TYPE_FILE){
 		GString * value = g_string_new(NULL);
 
 		g_string_printf(value, "[%s]", var);
@@ -1543,7 +1544,10 @@ gebr_gui_parameter_widget_get_compatible_dicts(struct gebr_gui_parameter_widget 
 					widget->dicts->project);
 }
 
-static GtkTreeModel *generate_completion_model(struct gebr_gui_parameter_widget *widget)
+GtkTreeModel *gebr_gui_parameter_get_completion_model(GebrGeoXmlDocument *flow,
+						      GebrGeoXmlDocument *line,
+						      GebrGeoXmlDocument *proj,
+						      GebrGeoXmlParameterType type)
 {
 	const gchar *keyword;
 	GList *compatible;
@@ -1552,7 +1556,8 @@ static GtkTreeModel *generate_completion_model(struct gebr_gui_parameter_widget 
 	GebrGeoXmlProgramParameter *ppar;
 
 	store = gtk_list_store_new(1, G_TYPE_STRING);
-	compatible = gebr_gui_parameter_widget_get_compatible_dicts(widget);
+	compatible = get_compatible_variables(type, flow, line, proj);
+
 	for (GList *i = compatible; i; i = i->next) {
 		ppar = i->data;
 		keyword = gebr_geoxml_program_parameter_get_keyword(ppar);
@@ -1565,11 +1570,29 @@ static GtkTreeModel *generate_completion_model(struct gebr_gui_parameter_widget 
 	return GTK_TREE_MODEL(store);
 }
 
+static GtkTreeModel *generate_completion_model(struct gebr_gui_parameter_widget *widget)
+{
+	return gebr_gui_parameter_get_completion_model(widget->dicts->flow,
+						       widget->dicts->line,
+						       widget->dicts->project,
+						       widget->parameter_type);
+
+}
+
+void gebr_gui_parameter_set_string_entry_completion(GtkEntry *entry,
+						    GtkTreeModel *model,
+						    GebrGeoXmlParameterType type)
+{
+	setup_entry_completion(entry, model, completion_string_match_func,
+			       G_CALLBACK(on_entry_completion_matched),
+			       GINT_TO_POINTER(type));
+}
+
 static void setup_entry_completion(GtkEntry *entry,
 				   GtkTreeModel *model,
 				   GtkEntryCompletionMatchFunc func,
 				   GCallback match_selected_cb,
-				   struct gebr_gui_parameter_widget *widget)
+				   gpointer data)
 {
 	GtkEntryCompletion *comp;
 
@@ -1577,7 +1600,7 @@ static void setup_entry_completion(GtkEntry *entry,
 	gtk_entry_completion_set_model(comp, model);
 	gtk_entry_completion_set_text_column(comp, 0);
 	gtk_entry_completion_set_match_func(comp, func, NULL, NULL);
-	g_signal_connect(comp, "match-selected", match_selected_cb, widget);
+	g_signal_connect(comp, "match-selected", match_selected_cb, data);
 	gtk_entry_set_completion(entry, comp);
 	g_object_unref(comp);
 }
