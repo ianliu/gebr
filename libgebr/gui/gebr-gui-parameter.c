@@ -1032,7 +1032,6 @@ static void gebr_gui_parameter_widget_value_entry_on_populate_popup(GtkEntry * e
 		gtk_menu_item_set_submenu(GTK_MENU_ITEM(menu_item), gebr_gui_parameter_widget_variable_popup_menu(widget, entry));
 		gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), menu_item);
 	}
-
 }
 /*
  * gebr_gui_parameter_widget_can_use_dict:
@@ -1087,7 +1086,11 @@ static void on_variable_parameter_activate(GtkMenuItem * menu_item, struct gebr_
 	g_object_get(menu_item, "user-data", &dict_parameter, NULL);
 	entry = g_object_get_data (G_OBJECT (menu_item), "entry-widget");
 	position = gtk_editable_get_position(GTK_EDITABLE(entry));
-	gtk_editable_insert_text(GTK_EDITABLE(entry), gebr_geoxml_program_parameter_get_keyword(dict_parameter), -1, &position);
+	if(widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_STRING || widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_FILE) {
+		gchar *str_keyword = g_strconcat("[", gebr_geoxml_program_parameter_get_keyword(dict_parameter), "]", NULL);
+		gtk_editable_insert_text(GTK_EDITABLE(entry), str_keyword, -1, &position);
+	} else
+		gtk_editable_insert_text(GTK_EDITABLE(entry), gebr_geoxml_program_parameter_get_keyword(dict_parameter), -1, &position);
 	gtk_editable_set_position(GTK_EDITABLE(entry), position);
 }
 
