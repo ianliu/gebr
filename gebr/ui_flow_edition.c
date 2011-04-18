@@ -18,8 +18,7 @@
 #include <string.h>
 
 #include <glib/gi18n.h>
-#include <libgebr/gui/gebr-gui-utils.h>
-#include <libgebr/gui/gebr-gui-icons.h>
+#include <libgebr/gui/gui.h>
 #include <gdk/gdkkeysyms.h>
 
 #include "ui_flow_edition.h"
@@ -438,6 +437,26 @@ static void open_activated(GtkEntry *entry, GtkEntryIconPosition icon_pos, GdkEv
 	g_free(path);
 }
 
+static void populate_io_popup(GtkEntry *entry, GtkMenu *menu)
+{
+	GtkWidget *submenu;
+	GtkWidget *item;
+
+	item = gtk_separator_menu_item_new();
+	gtk_widget_show(item);
+	gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), item);
+
+	submenu = gebr_gui_parameter_add_variables_popup(entry,
+							 GEBR_GEOXML_DOCUMENT (gebr.flow),
+							 GEBR_GEOXML_DOCUMENT (gebr.line),
+							 GEBR_GEOXML_DOCUMENT (gebr.project),
+							 GEBR_GEOXML_PARAMETER_TYPE_STRING);
+	item = gtk_menu_item_new_with_label(_("Insert Variable"));
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), submenu);
+	gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), item);
+	gtk_widget_show(item);
+}
+
 static void flow_edition_component_editing_started(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path)
 {
 	GtkTreeIter iter;
@@ -463,6 +482,7 @@ static void flow_edition_component_editing_started(GtkCellRenderer *renderer, Gt
 		gtk_entry_set_text(entry, "");
 
 	g_signal_connect(entry, "icon-release", G_CALLBACK(open_activated), NULL);
+	g_signal_connect(entry, "populate-popup", G_CALLBACK(populate_io_popup), NULL);
 
 	flow_edition_set_io();
 }
