@@ -142,9 +142,7 @@ GtkTreeModel *gebr_gui_parameter_get_completion_model(GebrGeoXmlDocument *flow,
 /**
  * gebr_gui_parameter_set_string_entry_completion:
  */
-void gebr_gui_parameter_set_string_entry_completion(GtkEntry *entry,
-						    GtkTreeModel *model,
-						    GebrGeoXmlParameterType type);
+void gebr_gui_parameter_set_string_entry_completion(GtkEntry *entry, GtkTreeModel *model);
 
 G_END_DECLS
 #endif				//__GEBR_GUI_PARAMETER_H

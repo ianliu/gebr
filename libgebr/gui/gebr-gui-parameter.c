@@ -1580,12 +1580,11 @@ static GtkTreeModel *generate_completion_model(struct gebr_gui_parameter_widget 
 }
 
 void gebr_gui_parameter_set_string_entry_completion(GtkEntry *entry,
-						    GtkTreeModel *model,
-						    GebrGeoXmlParameterType type)
+						    GtkTreeModel *model)
 {
 	setup_entry_completion(entry, model, completion_string_match_func,
 			       G_CALLBACK(on_entry_completion_matched),
-			       GINT_TO_POINTER(type));
+			       GINT_TO_POINTER(GEBR_GEOXML_PARAMETER_TYPE_STRING));
 }
 
 static void setup_entry_completion(GtkEntry *entry,
