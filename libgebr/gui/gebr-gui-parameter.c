@@ -748,7 +748,7 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 			if (may_use_dict) {
 				completion_model = generate_completion_model(parameter_widget);
 				setup_entry_completion(GTK_ENTRY(GEBR_GUI_FILE_ENTRY(file_entry)->entry), completion_model,
-						       completion_number_match_func,
+						       completion_string_match_func,
 						       G_CALLBACK(on_entry_completion_matched),
 						       GINT_TO_POINTER(parameter_widget->parameter_type));
 				g_object_unref (completion_model);
