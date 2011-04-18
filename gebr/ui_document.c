@@ -608,6 +608,12 @@ void document_dict_edit_setup_ui(void)
 		gebr_gui_gtk_tree_view_expand_to_iter(GTK_TREE_VIEW(tree_view), &document_iter);
 		if (document == data->documents[i])
 			gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(tree_view), &document_iter);
+		if(data->documents[i+1] == NULL) {
+			GtkTreePath *tree_path;
+			tree_path = gtk_tree_model_get_path(gtk_tree_view_get_model(GTK_TREE_VIEW(tree_view)), &document_iter);
+			gtk_tree_view_expand_row(GTK_TREE_VIEW(tree_view), tree_path, TRUE);
+			gtk_tree_path_free(tree_path);
+		}
 	}
 
 	gtk_widget_show_all(dialog);
@@ -969,6 +975,7 @@ static gboolean dict_edit_validate_editing_cell(GtkCellRenderer *renderer, GtkTr
 			value = gebr_validate_float(new_text, NULL, NULL);
 			break;
 		default:
+			value = new_text;
 			break;
 		}
 		if (!strlen(new_text) || strcmp(value, new_text)) {
