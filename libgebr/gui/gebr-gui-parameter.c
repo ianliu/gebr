@@ -47,7 +47,7 @@ static gboolean gebr_gui_parameter_widget_can_use_dict(struct gebr_gui_parameter
 
 static void on_dict_parameter_toggled(GtkMenuItem * menu_item, struct gebr_gui_parameter_widget *widget);
 
-static void on_variable_parameter_activate(GtkMenuItem * menu_item, struct gebr_gui_parameter_widget *widget);
+static void on_variable_parameter_activate(GtkMenuItem * menu_item);
 
 static gboolean on_mnemonic_activate(GtkBox * box, gboolean cycle,
 						 struct gebr_gui_parameter_widget *widget);
@@ -1026,6 +1026,7 @@ GtkWidget *gebr_gui_parameter_add_variables_popup(GtkEntry *entry,
 			g_string_append_printf(label, " (%s)", param_label);
 
 		menu_item = gtk_menu_item_new_with_label(label->str);
+		g_object_set_data (G_OBJECT (menu_item), "param-type", GINT_TO_POINTER(type));
 		g_object_set_data (G_OBJECT (menu_item), "dict-param", param);
 		g_object_set_data (G_OBJECT (menu_item), "entry-widget", entry);
 		g_signal_connect(menu_item, "activate", G_CALLBACK(on_variable_parameter_activate), NULL);
@@ -1054,10 +1055,6 @@ static GtkWidget *gebr_gui_parameter_widget_variable_popup_menu(struct gebr_gui_
 						      widget->parameter_type);
 }
 
-void gebr_gui_parameter_insert_dict_variables()
-{
-}
-
 /*
  * gebr_gui_parameter_widget_value_entry_on_populate_popup:
  * Add dictionary submenu into entry popup menu
@@ -1083,10 +1080,6 @@ static void gebr_gui_parameter_widget_value_entry_on_populate_popup(GtkEntry * e
 		gtk_menu_item_set_submenu(GTK_MENU_ITEM(menu_item), gebr_gui_parameter_widget_dict_popup_menu(widget));
 		gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), menu_item);
 	} else if (__parameter_accepts_expression(widget)) {
-		menu_item = gtk_separator_menu_item_new();
-		gtk_widget_show(menu_item);
-		gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), menu_item);
-
 		menu_item = gtk_menu_item_new_with_label(_("Insert Variable"));
 		gtk_widget_show(menu_item);
 		gtk_menu_item_set_submenu(GTK_MENU_ITEM(menu_item), gebr_gui_parameter_widget_variable_popup_menu(widget, entry));
@@ -1138,20 +1131,23 @@ static void on_dict_parameter_toggled(GtkMenuItem * menu_item, struct gebr_gui_p
  * on_variable_parameter_activate:
  * Use value of dictionary parameter corresponding to menu_item in parameter at _widget_
  */
-static void on_variable_parameter_activate(GtkMenuItem * menu_item, struct gebr_gui_parameter_widget *widget)
+static void on_variable_parameter_activate(GtkMenuItem * menu_item)
 {
-	GtkEntry *entry;
-	GebrGeoXmlProgramParameter *dict_parameter;
 	gint position;
+	GtkEntry *entry;
+	GebrGeoXmlProgramParameter *param;
+	GebrGeoXmlParameterType type;
 
-	g_object_get(menu_item, "user-data", &dict_parameter, NULL);
+	type = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (menu_item), "param-type"));
+	param = g_object_get_data (G_OBJECT (menu_item), "dict-param");
 	entry = g_object_get_data (G_OBJECT (menu_item), "entry-widget");
 	position = gtk_editable_get_position(GTK_EDITABLE(entry));
-	if(widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_STRING || widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_FILE) {
-		gchar *str_keyword = g_strconcat("[", gebr_geoxml_program_parameter_get_keyword(dict_parameter), "]", NULL);
+
+	if(type == GEBR_GEOXML_PARAMETER_TYPE_STRING || type == GEBR_GEOXML_PARAMETER_TYPE_FILE) {
+		gchar *str_keyword = g_strconcat("[", gebr_geoxml_program_parameter_get_keyword(param), "]", NULL);
 		gtk_editable_insert_text(GTK_EDITABLE(entry), str_keyword, -1, &position);
 	} else
-		gtk_editable_insert_text(GTK_EDITABLE(entry), gebr_geoxml_program_parameter_get_keyword(dict_parameter), -1, &position);
+		gtk_editable_insert_text(GTK_EDITABLE(entry), gebr_geoxml_program_parameter_get_keyword(param), -1, &position);
 	gtk_editable_set_position(GTK_EDITABLE(entry), position);
 }
 
