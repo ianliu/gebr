@@ -1467,6 +1467,7 @@ static void fill_compatible_dicts(GebrGeoXmlParameterType type,
 	compat[0] = type;
 	switch (type) {
 	case GEBR_GEOXML_PARAMETER_TYPE_STRING:
+	case GEBR_GEOXML_PARAMETER_TYPE_FILE:
 		compat[1] = GEBR_GEOXML_PARAMETER_TYPE_INT;
 		compat[2] = GEBR_GEOXML_PARAMETER_TYPE_FLOAT;
 		compat[3] = GEBR_GEOXML_PARAMETER_TYPE_RANGE;
@@ -1503,7 +1504,6 @@ get_compatible_variables(GebrGeoXmlParameterType type,
 	GebrGeoXmlDocument *documents[4] = { proj, line, flow, NULL };
 
 	fill_compatible_dicts(type, compatibles_types);
-	case GEBR_GEOXML_PARAMETER_TYPE_FILE:
 
 	for (int i = 0; documents[i] != NULL; i++) {
 		GebrGeoXmlSequence *dict_parameter;
