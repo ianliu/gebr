@@ -83,5 +83,9 @@ const gchar *gebr_gui_file_entry_get_path(GebrGuiFileEntry * file_entry);
  */
 void gebr_gui_file_entry_set_activates_default (GebrGuiFileEntry * self, gboolean setting);
 
+void gebr_gui_file_entry_set_warning(GebrGuiFileEntry * self, const gchar * tooltip);
+
+void gebr_gui_file_entry_unset_warning(GebrGuiFileEntry * self, const gchar * tooltip);
+
 G_END_DECLS
 #endif				//__GEBR_GUI_FILE_ENTRY_H

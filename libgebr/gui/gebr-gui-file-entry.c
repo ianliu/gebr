@@ -217,3 +217,19 @@ void gebr_gui_file_entry_set_activates_default (GebrGuiFileEntry * self, gboolea
 
 	gtk_entry_set_activates_default (GTK_ENTRY (self->entry), setting);
 }
+
+void gebr_gui_file_entry_set_warning(GebrGuiFileEntry * self, const gchar * tooltip){
+
+	g_return_if_fail (GEBR_GUI_IS_FILE_ENTRY (self));
+
+	gtk_entry_set_icon_from_stock(GTK_ENTRY(self->entry), GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIALOG_WARNING);
+	gtk_entry_set_icon_tooltip_text(GTK_ENTRY(self->entry), GTK_ENTRY_ICON_SECONDARY, tooltip);
+}
+
+void gebr_gui_file_entry_unset_warning(GebrGuiFileEntry * self, const gchar * tooltip){
+
+	g_return_if_fail (GEBR_GUI_IS_FILE_ENTRY (self));
+
+	gtk_entry_set_icon_from_stock(GTK_ENTRY(self->entry), GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_OPEN);
+	gtk_entry_set_icon_tooltip_text(GTK_ENTRY(self->entry), GTK_ENTRY_ICON_SECONDARY, tooltip);
+}
