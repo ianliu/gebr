@@ -26,6 +26,7 @@
 #include <libgebr/geoxml/geoxml.h>
 #include <libgebr/gui/gebr-gui-utils.h>
 #include <libgebr/gui/gebr-gui-icons.h>
+#include <libgebr/gebr-expr.h>
 
 #include "ui_parameters.h"
 #include "gebr.h"
@@ -203,6 +204,7 @@ static void validate_parameter (GebrGeoXmlParameter * parameter, GebrGeoXmlParam
 	gebr_geoxml_program_parameter_get_value (prog, FALSE, &value, 0);
 	for (; value; gebr_geoxml_sequence_next (&value)) {
 		const gchar *expr;
+		GError * err = NULL;
 
 		expr = gebr_geoxml_value_sequence_get (GEBR_GEOXML_VALUE_SEQUENCE (value));
 		if (gebr_geoxml_parameter_get_type(parameter) == GEBR_GEOXML_PARAMETER_TYPE_STRING ||
@@ -211,8 +213,22 @@ static void validate_parameter (GebrGeoXmlParameter * parameter, GebrGeoXmlParam
 								GEBR_GEOXML_DOCUMENT (gebr.flow),
 								GEBR_GEOXML_DOCUMENT (gebr.line),
 								GEBR_GEOXML_DOCUMENT (gebr.project),
-								NULL)) {
-				*is_valid = GEBR_GEOXML_PARAMETER_ERROR_UNKNOWN_VARIABLE;
+								&err)) {
+				if (err != NULL){
+					switch (err->code){
+					case GEBR_EXPR_ERROR_EMPTY_VAR:
+					case GEBR_EXPR_ERROR_INVALID_NAME:
+					case GEBR_EXPR_ERROR_UNDEFINED_VAR:
+						*is_valid = GEBR_GEOXML_PARAMETER_ERROR_UNKNOWN_VARIABLE;
+						break;
+					case GEBR_EXPR_ERROR_SYNTAX:
+					case GEBR_EXPR_ERROR_INVALID_ASSIGNMENT:
+						*is_valid = GEBR_GEOXML_PARAMETER_ERROR_INVALID_EXPRESSION;
+						break;
+					default:
+						break;
+					}
+				}
 				return;
 			}
 		}
@@ -222,8 +238,22 @@ static void validate_parameter (GebrGeoXmlParameter * parameter, GebrGeoXmlParam
 								 GEBR_GEOXML_DOCUMENT (gebr.flow),
 								 GEBR_GEOXML_DOCUMENT (gebr.line),
 								 GEBR_GEOXML_DOCUMENT (gebr.project),
-								 NULL)) {
-				*is_valid = GEBR_GEOXML_PARAMETER_ERROR_INVALID_EXPRESSION;
+								 &err)) {
+				if (err != NULL){
+					switch (err->code){
+					case GEBR_EXPR_ERROR_EMPTY_VAR:
+					case GEBR_EXPR_ERROR_INVALID_NAME:
+					case GEBR_EXPR_ERROR_UNDEFINED_VAR:
+						*is_valid = GEBR_GEOXML_PARAMETER_ERROR_UNKNOWN_VARIABLE;
+						break;
+					case GEBR_EXPR_ERROR_SYNTAX:
+					case GEBR_EXPR_ERROR_INVALID_ASSIGNMENT:
+						*is_valid = GEBR_GEOXML_PARAMETER_ERROR_INVALID_EXPRESSION;
+						break;
+					default:
+						break;
+					}
+				}
 				return;
 			}
 		}
