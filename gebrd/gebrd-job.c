@@ -56,8 +56,6 @@ static void gebrd_job_class_init(GebrdJobClass * klass)
 
 static void job_assembly_cmdline(GebrdJob *job);
 static void job_process_finished(GebrCommProcess * process, GebrdJob *job);
-static gboolean check_for_readable_file(const gchar * file);
-static gboolean check_for_write_permission(const gchar * file);
 static void job_send_signal_on_moab(const char * signal, GebrdJob * job);
 static GebrdMpiInterface * job_get_mpi_impl(const gchar * mpi_name, GString * n_process);
 
@@ -478,33 +476,6 @@ void job_run_flow(GebrdJob *job)
 	/*
 	 * First program
 	 */
-	/* Start with/without stdin */
-	/*if (gebr_geoxml_program_get_stdin(GEBR_GEOXML_PROGRAM(program))) {
-		if (check_for_readable_file(gebr_geoxml_flow_io_get_input(job->flow))) {
-			job_issue(job, _("Input file %s not present or not accessible.\n"),
-				  gebr_geoxml_flow_io_get_input(job->flow));
-			goto err;
-		}
-	}*/
-
-	/* check for error file output */
-	/*if (gebr_geoxml_program_get_stderr(GEBR_GEOXML_PROGRAM(program))) {
-		if (check_for_write_permission(gebr_geoxml_flow_io_get_error(job->flow))) {
-			job_issue(job, _("Write permission to %s not granted.\n"),
-				  gebr_geoxml_flow_io_get_error(job->flow));
-			goto err;
-		}
-	}*/
-
-	/* check for output file */
-	/*if (gebr_geoxml_program_get_stdout(GEBR_GEOXML_PROGRAM(program))) {
-		if (check_for_write_permission(gebr_geoxml_flow_io_get_output(job->flow))) {
-			job_issue(job, _("Write permission to %s not granted.\n"),
-				  gebr_geoxml_flow_io_get_output(job->flow));
-			goto err;
-		}
-	}*/
-
 	/* command-line */
 	gsize bytes_written;
 	gchar *localized_cmd_line = g_filename_from_utf8(job->parent.cmd_line->str, -1, NULL, &bytes_written, NULL);
@@ -678,37 +649,6 @@ void job_send_clients_job_notify(GebrdJob *job)
 		struct client *client = (struct client *)link->data;
 		job_notify(job, client);
 	}
-}
-
-/**
- * \internal
- * Several tests to ensure flow executability 
- * All of them return TRUE upon error
- */
-static gboolean check_for_readable_file(const gchar * file)
-{
-	return (g_access(file, F_OK | R_OK) == -1 ? TRUE : FALSE);
-}
-
-/**
- * \internal
- */
-static gboolean check_for_write_permission(const gchar * file)
-{
-	gboolean ret;
-	gchar *dir;
-
-        /* Test if the file exists */
-        if ( g_access(file, F_OK) == 0 )
-                /* The file exists, but is it writeable ? */
-                return (g_access(file, W_OK) == 0 ? FALSE : TRUE);
-
-        /* Otherwise test for directory permissions */
-	dir = g_path_get_dirname(file);
-	ret = (g_access(dir, W_OK) == -1 ? TRUE : FALSE);
-	g_free(dir);
-
-	return ret;
 }
 
 /**
