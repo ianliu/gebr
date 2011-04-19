@@ -1465,7 +1465,7 @@ static gboolean completion_string_match_func(GtkEntryCompletion *completion,
 static void fill_compatible_dicts(GebrGeoXmlParameterType type,
 				  GebrGeoXmlParameterType compat[])
 {
-	compat[0] = type;
+	compat[0] = type == GEBR_GEOXML_PARAMETER_TYPE_FILE? GEBR_GEOXML_PARAMETER_TYPE_STRING:type;
 	switch (type) {
 	case GEBR_GEOXML_PARAMETER_TYPE_STRING:
 	case GEBR_GEOXML_PARAMETER_TYPE_FILE:

@@ -64,7 +64,7 @@ void test_gebr_geoxml_parameters_is_var_used()
 	gebr_geoxml_program_parameter_set_string_value(GEBR_GEOXML_PROGRAM_PARAMETER(parameter),FALSE,"a+var2");
 
 	g_assert(gebr_geoxml_parameters_is_var_used(parameters_list, "var2") == TRUE);
-	g_assert(gebr_geoxml_program_parameter_is_var_used(parameter, "var2") == TRUE);
+	g_assert(gebr_geoxml_program_parameter_is_var_used(GEBR_GEOXML_PROGRAM_PARAMETER(parameter), "var2") == TRUE);
 }
 
 
