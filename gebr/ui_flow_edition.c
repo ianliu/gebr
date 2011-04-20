@@ -338,6 +338,7 @@ void flow_edition_set_io(void)
 				   FSEQ_EDITABLE, TRUE, FSEQ_ELLIPSIZE, PANGO_ELLIPSIZE_START, FSEQ_TOOLTIP, "", -1);
 	}
 
+	err = NULL;
 	if (!gebr_geoxml_document_validate_str (output,
 						GEBR_GEOXML_DOCUMENT (gebr.flow),
 						GEBR_GEOXML_DOCUMENT (gebr.line),
@@ -383,6 +384,7 @@ void flow_edition_set_io(void)
 				   FSEQ_EDITABLE, TRUE, FSEQ_ELLIPSIZE, PANGO_ELLIPSIZE_START, FSEQ_TOOLTIP, "", -1);
 	}
 
+	err = NULL;
 	if (!gebr_geoxml_document_validate_str (error,
 						GEBR_GEOXML_DOCUMENT (gebr.flow),
 						GEBR_GEOXML_DOCUMENT (gebr.line),
