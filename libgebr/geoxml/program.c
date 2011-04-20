@@ -362,3 +362,25 @@ gboolean gebr_geoxml_program_is_var_used (GebrGeoXmlProgram *self,
 	params = gebr_geoxml_program_get_parameters (self);
 	return gebr_geoxml_parameters_is_var_used (params, var_name);
 }
+
+void gebr_geoxml_program_set_error_id(GebrGeoXmlProgram *self,
+				      GebrGeoXmlProgramError id)
+{
+	gchar *str_id;
+
+	g_return_if_fail(self != NULL);
+
+	str_id = g_strdup_printf("%d", id);
+	__gebr_geoxml_set_attr_value((GdomeElement*)self, "errorid", str_id);
+	g_free(str_id);
+}
+
+GebrGeoXmlProgramError gebr_geoxml_program_get_error_id(GebrGeoXmlProgram *self)
+{
+	const gchar *id;
+
+	g_return_val_if_fail(self != NULL, -1);
+
+	id = __gebr_geoxml_get_attr_value((GdomeElement*)self, "errorid");
+	return g_ascii_strtoll(id);
+}

@@ -31,6 +31,7 @@
 	stdout	(yes | no)				#REQUIRED
 	stderr	(yes | no)				#REQUIRED
 	status	(disabled | configured | unconfigured)	#REQUIRED
+	errorid CDATA					#IMPLIED
 	version CDATA					#IMPLIED
 	mpi 	CDATA					#IMPLIED
 	control	(for)					#IMPLIED>

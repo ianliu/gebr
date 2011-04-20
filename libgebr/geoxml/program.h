@@ -285,9 +285,27 @@ GebrGeoXmlProgramControl gebr_geoxml_program_get_control(GebrGeoXmlProgram * pro
 guint gebr_geoxml_program_control_get_n (GebrGeoXmlProgram *prog, gchar **step, gchar **ini);
 
 /**
+ * gebr_geoxml_program_is_var_used:
  */
 gboolean gebr_geoxml_program_is_var_used (GebrGeoXmlProgram *self,
 					  const gchar *var_name);
+
+typedef enum {
+	GEBR_GEOXML_PROGRAM_ERROR_UNDEF_VAR,
+	GEBR_GEOXML_PROGRAM_ERROR_SYNTAX,
+	GEBR_GEOXML_PROGRAM_ERROR_REQ_UNFIL,
+} GebrGeoXmlProgramError;
+
+/**
+ * gebr_geoxml_program_set_error_id:
+ */
+void gebr_geoxml_program_set_error_id(GebrGeoXmlProgram *self,
+				      GebrGeoXmlProgramError id);
+
+/**
+ * gebr_geoxml_program_get_error_id:
+ */
+GebrGeoXmlProgramError gebr_geoxml_program_get_error_id(GebrGeoXmlProgram *self);
 
 G_END_DECLS
 #endif				//__GEBR_GEOXML_PROGRAM_H
