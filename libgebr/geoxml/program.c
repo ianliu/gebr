@@ -382,5 +382,5 @@ GebrGeoXmlProgramError gebr_geoxml_program_get_error_id(GebrGeoXmlProgram *self)
 	g_return_val_if_fail(self != NULL, -1);
 
 	id = __gebr_geoxml_get_attr_value((GdomeElement*)self, "errorid");
-	return g_ascii_strtoll(id);
+	return g_ascii_strtoll(id, NULL, 10);
 }

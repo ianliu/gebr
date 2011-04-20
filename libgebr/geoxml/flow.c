@@ -632,7 +632,7 @@ GebrGeoXmlFlowError gebr_geoxml_flow_validade(GebrGeoXmlFlow * flow,
 
 		else 
 		{
-			if (gebr_geoxml_program_get_stdin(GEBR_GEOXML_PROGRAM(first_program)))
+			if (gebr_geoxml_program_get_stdin(GEBR_GEOXML_PROGRAM(first_program))) {
 				if(input == NULL || g_strcmp0("", input) == 0)
 				{
 					*program_title = g_strdup(gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(first_program)));
@@ -646,7 +646,8 @@ GebrGeoXmlFlowError gebr_geoxml_flow_validade(GebrGeoXmlFlow * flow,
 				{
 					*program_title = g_strdup(gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(first_program)));
 					return GEBR_GEOXML_FLOW_ERROR_INVALID_INFILE;
-				}	
+				}
+			}
 		}
 		previous_stdout = gebr_geoxml_program_get_stdout(GEBR_GEOXML_PROGRAM(first_program));
 		first_configured = FALSE;
