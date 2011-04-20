@@ -18,8 +18,9 @@
 #include <glib.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include <glib/gi18n.h>
 #include <gdome.h>
+#include <gebr-expr.h>
 
 #include "program.h"
 #include "parameters.h"
@@ -363,6 +364,11 @@ gboolean gebr_geoxml_program_is_var_used (GebrGeoXmlProgram *self,
 	return gebr_geoxml_parameters_is_var_used (params, var_name);
 }
 
+GQuark gebr_geoxml_program_error_quark(void)
+{
+	return g_quark_from_static_string("gebr-geoxml-program-error-quark");
+}
+
 void gebr_geoxml_program_set_error_id(GebrGeoXmlProgram *self,
 				      GebrGeoXmlProgramError id)
 {
@@ -383,4 +389,110 @@ GebrGeoXmlProgramError gebr_geoxml_program_get_error_id(GebrGeoXmlProgram *self)
 
 	id = __gebr_geoxml_get_attr_value((GdomeElement*)self, "errorid");
 	return g_ascii_strtoll(id, NULL, 10);
+}
+
+typedef struct {
+	GebrGeoXmlDocument *flow;
+	GebrGeoXmlDocument *line;
+	GebrGeoXmlDocument *proj;
+	GError *error;
+} ValidationData;
+
+static void validate_program_parameter(GebrGeoXmlParameter *parameter, ValidationData *data)
+{
+	GebrGeoXmlProgramParameter *prog;
+	GebrGeoXmlParameters *instance;
+	GebrGeoXmlParameter *selected;
+	GebrGeoXmlParameterType type;
+	GebrGeoXmlSequence *value;
+
+	if (data->error)
+		return;
+
+	prog = GEBR_GEOXML_PROGRAM_PARAMETER(parameter);
+	instance = gebr_geoxml_parameter_get_parameters(parameter);
+	selected = gebr_geoxml_parameters_get_selection(instance);
+
+	/* for exclusive groups, check if this is the selected parameter of its instance */
+	if (selected != NULL && selected != parameter)
+		return;
+
+	if (gebr_geoxml_program_parameter_get_required(prog) && !gebr_geoxml_program_parameter_is_set(prog)) {
+		g_set_error(&data->error,
+			    GEBR_GEOXML_PROGRAM_ERROR,
+			    GEBR_GEOXML_PROGRAM_ERROR_REQ_UNFILL,
+			    _("There is one or more required parameters not filled"));
+		return;
+	}
+
+	type = gebr_geoxml_parameter_get_type(parameter);
+
+	gebr_geoxml_program_parameter_get_value (prog, FALSE, &value, 0);
+	for (; value; gebr_geoxml_sequence_next (&value)) {
+		const gchar *expr;
+		GError * err = NULL;
+
+		expr = gebr_geoxml_value_sequence_get (GEBR_GEOXML_VALUE_SEQUENCE (value));
+
+		switch (type) {
+		case GEBR_GEOXML_PARAMETER_TYPE_STRING:
+		case GEBR_GEOXML_PARAMETER_TYPE_FILE:
+			gebr_geoxml_document_validate_str (expr,
+							   GEBR_GEOXML_DOCUMENT (data->flow),
+							   GEBR_GEOXML_DOCUMENT (data->line),
+							   GEBR_GEOXML_DOCUMENT (data->proj),
+							   &err);
+			break;
+		case GEBR_GEOXML_PARAMETER_TYPE_INT:
+		case GEBR_GEOXML_PARAMETER_TYPE_FLOAT:
+			gebr_geoxml_document_validate_expr (expr,
+							    GEBR_GEOXML_DOCUMENT (data->flow),
+							    GEBR_GEOXML_DOCUMENT (data->line),
+							    GEBR_GEOXML_DOCUMENT (data->proj),
+							    &err);
+			break;
+		default:
+			break;
+		}
+
+		if (err) {
+			switch (err->code) {
+			case GEBR_EXPR_ERROR_EMPTY_VAR:
+			case GEBR_EXPR_ERROR_INVALID_NAME:
+			case GEBR_EXPR_ERROR_UNDEFINED_VAR:
+				g_set_error(&data->error,
+					    GEBR_GEOXML_PROGRAM_ERROR,
+					    GEBR_GEOXML_PROGRAM_ERROR_UNKNOWN_VAR,
+					    _("This program uses an invalid variable"));
+				break;
+			case GEBR_EXPR_ERROR_SYNTAX:
+			case GEBR_EXPR_ERROR_INVALID_ASSIGNMENT:
+				g_set_error(&data->error,
+					    GEBR_GEOXML_PROGRAM_ERROR,
+					    GEBR_GEOXML_PROGRAM_ERROR_INVAL_EXPR,
+					    _("This program has an invalid expression"));
+				break;
+			default:
+				break;
+			}
+			g_clear_error(&err);
+		}
+	}
+}
+
+gboolean gebr_geoxml_program_is_valid(GebrGeoXmlProgram *self,
+				      GebrGeoXmlDocument *flow,
+				      GebrGeoXmlDocument *line,
+				      GebrGeoXmlDocument *proj,
+				      GError **err)
+{
+	ValidationData data = { flow, line, proj, NULL };
+	gebr_geoxml_program_foreach_parameter(self, (GebrGeoXmlCallback)validate_program_parameter, &data);
+
+	if (data.error) {
+		g_propagate_error(err, data.error);
+		return FALSE;
+	}
+
+	return TRUE;
 }

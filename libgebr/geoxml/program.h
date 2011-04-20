@@ -15,8 +15,8 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GEBR_GEOXML_PROGRAM_H
-#define __GEBR_GEOXML_PROGRAM_H
+#ifndef __GEBR_GEOXML_PROGRAM_H__
+#define __GEBR_GEOXML_PROGRAM_H__
 
 #include <glib.h>
 
@@ -83,6 +83,16 @@ G_BEGIN_DECLS
  * - Seismic Unix: http://www.cwp.mines.edu/cwpcodes
  * - Madagascar: http://rsf.sourceforge.net
  */
+
+typedef enum {
+	GEBR_GEOXML_PROGRAM_ERROR_NONE = 0,
+	GEBR_GEOXML_PROGRAM_ERROR_UNKNOWN_VAR,
+	GEBR_GEOXML_PROGRAM_ERROR_INVAL_EXPR,
+	GEBR_GEOXML_PROGRAM_ERROR_REQ_UNFILL,
+} GebrGeoXmlProgramError;
+
+#define GEBR_GEOXML_PROGRAM_ERROR (gebr_geoxml_program_error_quark())
+GQuark gebr_geoxml_program_error_quark(void);
 
 typedef enum {
 	GEBR_GEOXML_PROGRAM_STATUS_UNKNOWN = 0,
@@ -290,12 +300,6 @@ guint gebr_geoxml_program_control_get_n (GebrGeoXmlProgram *prog, gchar **step, 
 gboolean gebr_geoxml_program_is_var_used (GebrGeoXmlProgram *self,
 					  const gchar *var_name);
 
-typedef enum {
-	GEBR_GEOXML_PROGRAM_ERROR_UNDEF_VAR,
-	GEBR_GEOXML_PROGRAM_ERROR_SYNTAX,
-	GEBR_GEOXML_PROGRAM_ERROR_REQ_UNFIL,
-} GebrGeoXmlProgramError;
-
 /**
  * gebr_geoxml_program_set_error_id:
  */
@@ -307,5 +311,11 @@ void gebr_geoxml_program_set_error_id(GebrGeoXmlProgram *self,
  */
 GebrGeoXmlProgramError gebr_geoxml_program_get_error_id(GebrGeoXmlProgram *self);
 
+/**
+ * gebr_geoxml_program_validate:
+ */
+gboolean gebr_geoxml_program_validate(GebrGeoXmlProgram *self, GError **err);
+
 G_END_DECLS
-#endif				//__GEBR_GEOXML_PROGRAM_H
+
+#endif /* __GEBR_GEOXML_PROGRAM_H__ */
