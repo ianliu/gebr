@@ -475,7 +475,11 @@ static void validate_program_parameter(GebrGeoXmlParameter *parameter, Validatio
 			default:
 				break;
 			}
+
 			g_clear_error(&err);
+
+			/* Stop de loop if an error was set! */
+			break;
 		}
 	}
 }
