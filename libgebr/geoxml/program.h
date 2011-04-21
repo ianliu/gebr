@@ -312,9 +312,13 @@ void gebr_geoxml_program_set_error_id(GebrGeoXmlProgram *self,
 GebrGeoXmlProgramError gebr_geoxml_program_get_error_id(GebrGeoXmlProgram *self);
 
 /**
- * gebr_geoxml_program_validate:
+ * gebr_geoxml_program_is_valid:
  */
-gboolean gebr_geoxml_program_validate(GebrGeoXmlProgram *self, GError **err);
+gboolean gebr_geoxml_program_is_valid(GebrGeoXmlProgram *self,
+				      GebrGeoXmlDocument *flow,
+				      GebrGeoXmlDocument *line,
+				      GebrGeoXmlDocument *proj,
+				      GError **err);
 
 G_END_DECLS
 
