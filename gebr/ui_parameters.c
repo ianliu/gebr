@@ -43,7 +43,6 @@
 static void parameters_actions(GtkDialog * dialog, gint arg1, struct ui_parameters *ui_parameters);
 static gboolean
 parameters_on_delete_event(GtkDialog * dialog, GdkEventAny * event, struct ui_parameters *ui_parameters);
-static void validate_parameter (GebrGeoXmlParameter * parameter, GebrGeoXmlParameterError * is_valid);
 
 /*
  * Public functions.
@@ -148,117 +147,34 @@ void parameters_reset_to_default(GebrGeoXmlParameters * parameters)
 	}
 }
 
-GebrGeoXmlParameterError validate_selected_program(void)
+gboolean validate_selected_program(GError **error)
 {
 	GtkTreeIter iter;
-
 	flow_edition_get_selected_component(&iter, FALSE);
-	return validate_program_iter(&iter);
+	return validate_program_iter(&iter, error);
 }
 
-GebrGeoXmlParameterError validate_program_iter(GtkTreeIter *iter)
+gboolean validate_program_iter(GtkTreeIter *iter, GError **error)
 {
-	GebrGeoXmlParameterError is_valid = GEBR_GEOXML_PARAMETER_ERROR_NONE;
 	GebrGeoXmlProgram *program;
 
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), iter,
 			   FSEQ_GEBR_GEOXML_POINTER, &program, -1);
 
-	gebr_geoxml_program_foreach_parameter(GEBR_GEOXML_PROGRAM(program),
-					      (GebrGeoXmlCallback)validate_parameter,
-					      &is_valid);
+	if (gebr_geoxml_program_is_valid(program,
+					 GEBR_GEOXML_DOCUMENT(gebr.flow),
+					 GEBR_GEOXML_DOCUMENT(gebr.line),
+					 GEBR_GEOXML_DOCUMENT(gebr.project),
+					 error))
+		return TRUE;
 
-	return is_valid;
+	g_debug("Program is invalid!");
+	return FALSE;
 }
 
 /*
  * Private functions.
  */
-
-/**
- * Callback to check if a given \p parameter content has some value
- */
-static void validate_parameter (GebrGeoXmlParameter * parameter, GebrGeoXmlParameterError * is_valid)
-{
-	GebrGeoXmlProgramParameter *prog;
-	GebrGeoXmlParameters *instance;
-	GebrGeoXmlParameter *selected;
-	GebrGeoXmlSequence *value;
-
-	if (!is_valid)
-		return;
-
-	prog = GEBR_GEOXML_PROGRAM_PARAMETER(parameter);
-	instance = gebr_geoxml_parameter_get_parameters(parameter);
-	selected = gebr_geoxml_parameters_get_selection(instance);
-
-	/* for exclusive groups, check if this is the selected parameter of its instance */
-	if (selected != NULL && selected != parameter)
-		return;
-
-	if (gebr_geoxml_program_parameter_get_required(prog) && !gebr_geoxml_program_parameter_is_set(prog)) {
-		*is_valid = GEBR_GEOXML_PARAMETER_ERROR_REQUIRED_UNFILLED;
-		return;
-	}
-
-	gebr_geoxml_program_parameter_get_value (prog, FALSE, &value, 0);
-	for (; value; gebr_geoxml_sequence_next (&value)) {
-		const gchar *expr;
-		GError * err = NULL;
-
-		expr = gebr_geoxml_value_sequence_get (GEBR_GEOXML_VALUE_SEQUENCE (value));
-		if (gebr_geoxml_parameter_get_type(parameter) == GEBR_GEOXML_PARAMETER_TYPE_STRING ||
-		    gebr_geoxml_parameter_get_type(parameter) == GEBR_GEOXML_PARAMETER_TYPE_FILE){
-			if (!gebr_geoxml_document_validate_str (expr,
-								GEBR_GEOXML_DOCUMENT (gebr.flow),
-								GEBR_GEOXML_DOCUMENT (gebr.line),
-								GEBR_GEOXML_DOCUMENT (gebr.project),
-								&err)) {
-				if (err != NULL){
-					switch (err->code){
-					case GEBR_EXPR_ERROR_EMPTY_VAR:
-					case GEBR_EXPR_ERROR_INVALID_NAME:
-					case GEBR_EXPR_ERROR_UNDEFINED_VAR:
-						*is_valid = GEBR_GEOXML_PARAMETER_ERROR_UNKNOWN_VARIABLE;
-						break;
-					case GEBR_EXPR_ERROR_SYNTAX:
-					case GEBR_EXPR_ERROR_INVALID_ASSIGNMENT:
-						*is_valid = GEBR_GEOXML_PARAMETER_ERROR_INVALID_EXPRESSION;
-						break;
-					default:
-						break;
-					}
-				}
-				return;
-			}
-		}
-		else if (gebr_geoxml_parameter_get_type(parameter) == GEBR_GEOXML_PARAMETER_TYPE_INT ||
-			 gebr_geoxml_parameter_get_type(parameter) == GEBR_GEOXML_PARAMETER_TYPE_FLOAT){
-			if (!gebr_geoxml_document_validate_expr (expr,
-								 GEBR_GEOXML_DOCUMENT (gebr.flow),
-								 GEBR_GEOXML_DOCUMENT (gebr.line),
-								 GEBR_GEOXML_DOCUMENT (gebr.project),
-								 &err)) {
-				if (err != NULL){
-					switch (err->code){
-					case GEBR_EXPR_ERROR_EMPTY_VAR:
-					case GEBR_EXPR_ERROR_INVALID_NAME:
-					case GEBR_EXPR_ERROR_UNDEFINED_VAR:
-						*is_valid = GEBR_GEOXML_PARAMETER_ERROR_UNKNOWN_VARIABLE;
-						break;
-					case GEBR_EXPR_ERROR_SYNTAX:
-					case GEBR_EXPR_ERROR_INVALID_ASSIGNMENT:
-						*is_valid = GEBR_GEOXML_PARAMETER_ERROR_INVALID_EXPRESSION;
-						break;
-					default:
-						break;
-					}
-				}
-				return;
-			}
-		}
-	}
-}
 
 /*
  * parameters_actions:
@@ -274,6 +190,7 @@ static void parameters_actions(GtkDialog * dialog, gint arg1, struct ui_paramete
 	case GTK_RESPONSE_OK:{
 		GtkTreeIter iter;
 		const gchar * icon;
+		GError *error = NULL;
 
 		gebr_geoxml_sequence_move_before(GEBR_GEOXML_SEQUENCE(ui_parameters->program_edit->program),
 						 GEBR_GEOXML_SEQUENCE(gebr.program));
@@ -290,22 +207,14 @@ static void parameters_actions(GtkDialog * dialog, gint arg1, struct ui_paramete
 				   -1);
 		flow_edition_select_component_iter(&iter);
 
-		GebrGeoXmlParameterError is_valid = validate_selected_program();
-		if (is_valid == GEBR_GEOXML_PARAMETER_ERROR_NONE){
+		validate_selected_program(&error);
+
+		if (error) {
+			flow_edition_status_changed (GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED);
+			g_clear_error(&error);
+		} else
 			flow_edition_status_changed (GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED);
-		}
-		else if (is_valid == GEBR_GEOXML_PARAMETER_ERROR_REQUIRED_UNFILLED){
-			flow_edition_status_changed (GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED);
-			gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &iter, FSEQ_TOOLTIP, _("This program have a required parameter not configured"), -1);
-		}
-		else if (is_valid == GEBR_GEOXML_PARAMETER_ERROR_INVALID_EXPRESSION){
-			flow_edition_status_changed (GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED);
-			gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &iter, FSEQ_TOOLTIP, _("This program have an invalid expression"), -1);
-		}
-		else if (is_valid == GEBR_GEOXML_PARAMETER_ERROR_UNKNOWN_VARIABLE){
-			flow_edition_status_changed (GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED);
-			gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &iter, FSEQ_TOOLTIP, _("This program is using an undefined variable"), -1);
-		}
+
 		break;
 	}
 	case GTK_RESPONSE_APPLY:

@@ -47,14 +47,12 @@ struct ui_parameters *parameters_configure_setup_ui(void);
 void parameters_reset_to_default(GebrGeoXmlParameters * parameters);
 
 /**
- * This function checks if the selected program is valid
  */
-GebrGeoXmlParameterError validate_selected_program(void);
+gboolean validate_selected_program(GError **error);
 
 /**
- * This function checks if the selected program is valid
  */
-GebrGeoXmlParameterError validate_program_iter(GtkTreeIter *iter);
+gboolean validate_program_iter(GtkTreeIter *iter, GError **error);
 
 G_END_DECLS
 #endif				//__PARAMETERS_H
