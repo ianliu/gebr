@@ -1022,6 +1022,8 @@ static void on_dict_edit_cell_edited(GtkCellRenderer * cell, gchar * path_string
 				   dict_edit_get_column_index_for_renderer(cell, data), new_text,
 				   -1);
 	data->in_edition = NULL;
+
+	dict_edit_check_programs_using_variables(new_text, TRUE);
 }
 
 /*

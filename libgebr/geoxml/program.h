@@ -130,9 +130,14 @@ typedef struct gebr_geoxml_program GebrGeoXmlProgram;
 void gebr_geoxml_program_foreach_parameter(GebrGeoXmlProgram * program, GebrGeoXmlCallback callback, gpointer user_data);
 
 /**
- * Get the flow to which \p program belongs to.
+ * gebr_geoxml_program_flow:
+ * @program: a program appended in a flow
  *
- * If \p program is NULL nothing is done.
+ * Get the flow to which @program belongs to.
+ *
+ * @program should not be passed as NULL, or an error will occur.
+ *
+ * Returns: the flow to which @program belongs.
  */
 GebrGeoXmlFlow *gebr_geoxml_program_flow(GebrGeoXmlProgram * program);
 

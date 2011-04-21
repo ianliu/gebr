@@ -72,9 +72,7 @@ void gebr_geoxml_program_foreach_parameter(GebrGeoXmlProgram * program, GebrGeoX
 
 GebrGeoXmlFlow *gebr_geoxml_program_flow(GebrGeoXmlProgram * program)
 {
-	if (program == NULL)
-		return NULL;
-	return (GebrGeoXmlFlow *) gdome_n_parentNode((GdomeNode *) program, &exception);
+	return (GebrGeoXmlFlow *) gebr_geoxml_object_get_owner_document((GebrGeoXmlObject*) program);
 }
 
 GebrGeoXmlParameters *gebr_geoxml_program_get_parameters(GebrGeoXmlProgram * program)
