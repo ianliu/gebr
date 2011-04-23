@@ -635,15 +635,19 @@ gboolean flow_edition_component_key_pressed(GtkWidget *view, GdkEventKey *key)
 			    -1);
 
 	do {
+		gboolean has_error;
+
 		gtk_tree_model_get_iter (model, &iter, listiter->data);
 		gtk_tree_model_get (model, &iter,
 				    FSEQ_GEBR_GEOXML_POINTER, &program,
 				    -1);
 
 		status = gebr_geoxml_program_get_status (program);
+		has_error = gebr_geoxml_program_get_error_id(program, NULL);
 
 		if ((status == GEBR_GEOXML_PROGRAM_STATUS_DISABLED) ||
-		    (status == GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED && validate_program_iter(&iter, NULL))) {
+		    (status == GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED && !has_error))
+		{
 			has_disabled = TRUE;
 			break;
 		}
@@ -659,17 +663,19 @@ gboolean flow_edition_component_key_pressed(GtkWidget *view, GdkEventKey *key)
 
 	listiter = paths;
 	while (listiter) {
+		gboolean has_error;
+
 		gtk_tree_model_get_iter (model, &iter, listiter->data);
 		gtk_tree_model_get (model, &iter,
 				    FSEQ_GEBR_GEOXML_POINTER, &program,
 				    -1);
 
-		if (!validate_program_iter(&iter, NULL)
-		    && status == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED) {
+		has_error = gebr_geoxml_program_get_error_id(program, NULL);
+
+		if (has_error && status == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED)
 			gebr_geoxml_program_set_status (program, GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED);
-		} else {
+		else
 			gebr_geoxml_program_set_status (program, status);
-		}
 
 		if(gebr_geoxml_program_get_control(program) == GEBR_GEOXML_PROGRAM_CONTROL_FOR) {
 			if(status == GEBR_GEOXML_PROGRAM_STATUS_DISABLED)
@@ -703,6 +709,7 @@ void flow_edition_change_iter_status(guint status, GtkTreeIter *iter)
 	const gchar *icon;
 	GtkTreePath *input_path, *output_path, *error_path;
 	GebrGeoXmlProgram *program;
+	gboolean has_error;
 
 	model = GTK_TREE_MODEL (gebr.ui_flow_edition->fseq_store);
 	input_path = gtk_tree_model_get_path (model, &gebr.ui_flow_edition->input_iter);
@@ -717,8 +724,9 @@ void flow_edition_change_iter_status(guint status, GtkTreeIter *iter)
 	}
 
 	gtk_tree_model_get(model, iter, FSEQ_GEBR_GEOXML_POINTER, &program, -1);
+	has_error = gebr_geoxml_program_get_error_id(program, NULL);
 
-	if (!validate_program_iter(iter, NULL) && status == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED)
+	if (has_error && status == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED)
 		status = GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED;
 
 	if(gebr_geoxml_program_get_control(program) == GEBR_GEOXML_PROGRAM_CONTROL_FOR) {
@@ -857,6 +865,7 @@ flow_edition_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * 
  */
 static void flow_edition_component_selected(void)
 {
+	gboolean has_error;
 	GtkTreeIter iter;
 	GtkAction * action;
 
@@ -872,8 +881,10 @@ static void flow_edition_component_selected(void)
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter,
 			   FSEQ_GEBR_GEOXML_POINTER, &gebr.program, -1);
 
+	/* If the program has an error, disable the 'Configured' status */
 	action = gtk_action_group_get_action(gebr.action_group_status, "flow_edition_status_configured");
-	gtk_action_set_sensitive(action, validate_selected_program(NULL));
+	has_error = gebr_geoxml_program_get_error_id(gebr.program, NULL);
+	gtk_action_set_sensitive(action, has_error);
 
 	action = gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_help");
 	gtk_action_set_sensitive(action, strlen(gebr_geoxml_program_get_help(gebr.program)) != 0);

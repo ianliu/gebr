@@ -190,7 +190,6 @@ static void parameters_actions(GtkDialog * dialog, gint arg1, struct ui_paramete
 	case GTK_RESPONSE_OK:{
 		GtkTreeIter iter;
 		const gchar * icon;
-		GError *error = NULL;
 
 		gebr_geoxml_sequence_move_before(GEBR_GEOXML_SEQUENCE(ui_parameters->program_edit->program),
 						 GEBR_GEOXML_SEQUENCE(gebr.program));
@@ -207,13 +206,10 @@ static void parameters_actions(GtkDialog * dialog, gint arg1, struct ui_paramete
 				   -1);
 		flow_edition_select_component_iter(&iter);
 
-		validate_selected_program(&error);
-
-		if (error) {
-			flow_edition_status_changed (GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED);
-			g_clear_error(&error);
-		} else
+		if (validate_selected_program(NULL))
 			flow_edition_status_changed (GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED);
+		else
+			flow_edition_status_changed (GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED);
 
 		break;
 	}
