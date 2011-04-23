@@ -368,25 +368,38 @@ GQuark gebr_geoxml_program_error_quark(void)
 }
 
 void gebr_geoxml_program_set_error_id(GebrGeoXmlProgram *self,
+				      gboolean clear,
 				      GebrGeoXmlProgramError id)
 {
 	gchar *str_id;
 
 	g_return_if_fail(self != NULL);
 
-	str_id = g_strdup_printf("%d", id);
+	if (clear)
+		str_id = g_strdup("");
+	else
+		str_id = g_strdup_printf("%d", id);
+
 	__gebr_geoxml_set_attr_value((GdomeElement*)self, "errorid", str_id);
 	g_free(str_id);
 }
 
-GebrGeoXmlProgramError gebr_geoxml_program_get_error_id(GebrGeoXmlProgram *self)
+gboolean gebr_geoxml_program_get_error_id(GebrGeoXmlProgram *self,
+					  GebrGeoXmlProgramError *id)
 {
-	const gchar *id;
+	const gchar *str_id;
 
-	g_return_val_if_fail(self != NULL, -1);
+	g_return_val_if_fail(self != NULL, FALSE);
 
-	id = __gebr_geoxml_get_attr_value((GdomeElement*)self, "errorid");
-	return g_ascii_strtoll(id, NULL, 10);
+	str_id = __gebr_geoxml_get_attr_value((GdomeElement*)self, "errorid");
+
+	if (*str_id) {
+		if (id)
+			*id = g_ascii_strtoll(str_id, NULL, 10);
+		return TRUE;
+	}
+
+	return FALSE;
 }
 
 typedef struct {
@@ -493,8 +506,11 @@ gboolean gebr_geoxml_program_is_valid(GebrGeoXmlProgram *self,
 
 	if (data.error) {
 		g_propagate_error(err, data.error);
+		gebr_geoxml_program_set_error_id(self, FALSE, data.error->code);
 		return FALSE;
 	}
+
+	gebr_geoxml_program_set_error_id(self, TRUE, 0);
 
 	return TRUE;
 }

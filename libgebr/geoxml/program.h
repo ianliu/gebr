@@ -306,17 +306,36 @@ gboolean gebr_geoxml_program_is_var_used (GebrGeoXmlProgram *self,
 
 /**
  * gebr_geoxml_program_set_error_id:
+ * @self: a #GebrGeoXmlProgram
+ * @clear: %TRUE to set error to @id, %FALSE to clear
+ * @id: one of #GebrGeoXmlProgramError enumerations
+ *
+ * Sets the error id for @self program. If @clear is %TRUE, @id is ignored
+ * and the error id is set to the empty string.
  */
 void gebr_geoxml_program_set_error_id(GebrGeoXmlProgram *self,
+				      gboolean clear,
 				      GebrGeoXmlProgramError id);
 
 /**
  * gebr_geoxml_program_get_error_id:
+ * @program: a #GebrGeoXmlProgram
+ * @id: (out): return location for the error id if @program has an error
+ *
+ * Returns: %TRUE if the @program has an error id, %FALSE otherwise
  */
-GebrGeoXmlProgramError gebr_geoxml_program_get_error_id(GebrGeoXmlProgram *self);
+gboolean gebr_geoxml_program_get_error_id(GebrGeoXmlProgram *self,
+					  GebrGeoXmlProgramError *id);
 
 /**
  * gebr_geoxml_program_is_valid:
+ * @program: a #GebrGeoXmlProgram
+ * @flow: a #GebrGeoXmlFlow containing dictionary definitions
+ * @line: a #GebrGeoXmlLine containing dictionary definitions
+ * @proj: a #GebrGeoXmlProject containing dictionary definitions
+ * @err: return location for error, or %NULL
+ *
+ * Returns: %TRUE if @program is valid, %FALSE otherwise.
  */
 gboolean gebr_geoxml_program_is_valid(GebrGeoXmlProgram *self,
 				      GebrGeoXmlDocument *flow,
