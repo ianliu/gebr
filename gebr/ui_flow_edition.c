@@ -57,8 +57,13 @@ static GtkMenu *flow_edition_menu_popup_menu(GtkWidget * widget, struct ui_flow_
 static void flow_edition_on_combobox_changed(GtkComboBox * combobox);
 
 static gboolean
-on_has_required_parameter_unfilled_tooltip(GtkTreeView * treeview,
-		     gint x, gint y, gboolean keyboard_tip, GtkTooltip * tooltip, struct ui_flow_edition *ui_flow_edition);
+on_flow_sequence_query_tooltip(GtkTreeView * treeview,
+			       gint x,
+			       gint y,
+			       gboolean keyboard_tip,
+			       GtkTooltip * tooltip,
+			       struct ui_flow_edition *ui_flow_edition);
+
 static void
 on_server_disconnected_set_row_insensitive(GtkCellLayout   *cell_layout,
 					   GtkCellRenderer *cell,
@@ -186,7 +191,7 @@ struct ui_flow_edition *flow_edition_setup_ui(void)
 	gtk_tree_view_column_add_attribute(col, renderer, "stock-id", FSEQ_ICON_COLUMN);
 
 	g_object_set(G_OBJECT(ui_flow_edition->fseq_view), "has-tooltip", TRUE, NULL);
-	g_signal_connect(G_OBJECT(ui_flow_edition->fseq_view), "query-tooltip", G_CALLBACK(on_has_required_parameter_unfilled_tooltip), ui_flow_edition);
+	g_signal_connect(G_OBJECT(ui_flow_edition->fseq_view), "query-tooltip", G_CALLBACK(on_flow_sequence_query_tooltip), ui_flow_edition);
 
 	ui_flow_edition->text_renderer = renderer = gtk_cell_renderer_text_new();
 	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
@@ -1250,26 +1255,30 @@ static void flow_edition_on_combobox_changed(GtkComboBox * combobox)
  * Shows tooltips for each line in component flow tree view.
  */
 static gboolean
-on_has_required_parameter_unfilled_tooltip(GtkTreeView * treeview,
-		     gint x, gint y, gboolean keyboard_tip, GtkTooltip * tooltip, struct ui_flow_edition *ui_flow_edition)
+on_flow_sequence_query_tooltip(GtkTreeView * treeview,
+			       gint x,
+			       gint y,
+			       gboolean keyboard_tip,
+			       GtkTooltip * tooltip,
+			       struct ui_flow_edition *ui_flow_edition)
 {
+	gchar *message;
 	GtkTreeModel *model;
 	GtkTreeIter iter;
 	GtkTreePath *path;
 	GebrGeoXmlProgram *program;
+	gchar *error_msg;
 
 	if (!gtk_tree_view_get_tooltip_context(treeview, &x, &y, keyboard_tip, &model, NULL, &iter))
 		return FALSE;
 
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter,
-			   FSEQ_GEBR_GEOXML_POINTER, &program, -1);
+			   FSEQ_GEBR_GEOXML_POINTER, &program,
+			   FSEQ_TOOLTIP, &error_msg,
+			   -1);
 
-	gchar * message;
-	gchar *error_msg;
-	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter,
-			   FSEQ_TOOLTIP, &error_msg, -1);
-	if gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter) {
-		if (g_strcmp0(gebr_geoxml_flow_io_get_input(gebr.flow), "") == 0)
+	if (gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter)) {
+		if (strlen(gebr_geoxml_flow_io_get_input(gebr.flow)) == 0)
 			message = g_strdup(_("Choose input file"));
 		else if (g_strcmp0(error_msg, "") == 0)
 			message = g_strdup_printf(_("Input file '%s'"), gebr_geoxml_flow_io_get_input(gebr.flow));
@@ -1279,23 +1288,33 @@ on_has_required_parameter_unfilled_tooltip(GtkTreeView * treeview,
 		gtk_tooltip_set_text(tooltip, message);
 		g_free(message);
 	}
-	else if gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter) {
+	else if (gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter)) {
 		if (g_strcmp0(gebr_geoxml_flow_io_get_output(gebr.flow),"") == 0)
 			message = g_strdup(_("Choose output file"));
-		else if (g_strcmp0(error_msg, "") == 0)
-			message = g_strdup_printf(_("%s output file '%s'"), gebr_geoxml_flow_io_get_output_append (gebr.flow) ? _("Append to") : _("Overwrite to") , gebr_geoxml_flow_io_get_output(gebr.flow));
-		else
+		else if (g_strcmp0(error_msg, "") == 0) {
+			if (gebr_geoxml_flow_io_get_output_append (gebr.flow))
+				message = g_strdup_printf(_("Append to output file '%s'"),
+							  gebr_geoxml_flow_io_get_output(gebr.flow));
+			else
+				message = g_strdup_printf(_("Overwrite output file '%s'"),
+							  gebr_geoxml_flow_io_get_output(gebr.flow));
+		} else
 			message = g_strdup(error_msg);
 
 		gtk_tooltip_set_text(tooltip, message);
 		g_free(message);
 	}
-	else if gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->error_iter){
+	else if (gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->error_iter)) {
 		if (g_strcmp0(gebr_geoxml_flow_io_get_error(gebr.flow),"") == 0)
 			message = g_strdup(_("Choose log file"));
-		else if (g_strcmp0(error_msg, "") == 0)
-			message = g_strdup_printf(_("%s log file '%s'"), gebr_geoxml_flow_io_get_error_append (gebr.flow) ? _("Append to") : _("Overwrite to") , gebr_geoxml_flow_io_get_error(gebr.flow));
-		else
+		else if (g_strcmp0(error_msg, "") == 0) {
+			if (gebr_geoxml_flow_io_get_error_append (gebr.flow))
+				message = g_strdup_printf(_("Append to log file '%s'"),
+							  gebr_geoxml_flow_io_get_error(gebr.flow));
+			else
+				message = g_strdup_printf(_("Overwrite log file '%s'"),
+							  gebr_geoxml_flow_io_get_error(gebr.flow));
+		} else
 			message = g_strdup(error_msg);
 
 		gtk_tooltip_set_text(tooltip, message);
@@ -1304,8 +1323,25 @@ on_has_required_parameter_unfilled_tooltip(GtkTreeView * treeview,
 	else if (gebr_geoxml_program_get_status(program) != GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED)
 		return FALSE;
 	else {
-		gtk_tooltip_set_text(tooltip, error_msg);
+		GebrGeoXmlProgramError errorid;
+		if (gebr_geoxml_program_get_error_id(program, &errorid)) {
+			gchar *tmp;
+			switch (errorid) {
+			case GEBR_GEOXML_PROGRAM_ERROR_INVAL_EXPR:
+				tmp = g_strdup(_("This program has an invalid expression"));
+				break;
+			case GEBR_GEOXML_PROGRAM_ERROR_REQ_UNFILL:
+				tmp = g_strdup(_("A required parameter is unfilled"));
+				break;
+			case GEBR_GEOXML_PROGRAM_ERROR_UNKNOWN_VAR:
+				tmp = g_strdup(_("An undefined dictionary name is being used"));
+				break;
+			}
+			gtk_tooltip_set_text(tooltip, tmp);
+			g_free(tmp);
+		}
 	}
+
 	g_free(error_msg);
 
 	path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter);
