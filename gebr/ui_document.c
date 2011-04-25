@@ -469,6 +469,8 @@ void document_dict_edit_setup_ui(void)
 	GtkWidget *message_hbox = gtk_hbox_new(FALSE, 4);
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), message_hbox, FALSE, TRUE, 0);
 	GtkWidget *warning_image = gtk_image_new();
+
+	gtk_image_set_from_stock(GTK_IMAGE(warning_image), GTK_STOCK_INFO, GTK_ICON_SIZE_MENU);
 	data->warning_image = warning_image;
 	gtk_box_pack_start(GTK_BOX(message_hbox), warning_image, FALSE, TRUE, 0);
 	GtkWidget *label = gtk_label_new(_("Please enter variables with lowercase characters"));
@@ -993,10 +995,14 @@ static gboolean dict_edit_validate_editing_cell(GtkCellRenderer *renderer, GtkTr
 	}
 
 out:
-	if (data->edition_valid) 
+	if (data->edition_valid) {
 		gtk_label_set_text(GTK_LABEL(data->label), 
 				   _("Please enter variables with lowercase characters"));
-	g_object_set(G_OBJECT(data->warning_image), "stock", data->edition_valid ? NULL : GTK_STOCK_DIALOG_WARNING,
+		g_object_set(G_OBJECT(data->warning_image), "stock", GTK_STOCK_INFO,
+		     "icon-size", GTK_ICON_SIZE_MENU, NULL);
+	}
+	else
+		g_object_set(G_OBJECT(data->warning_image), "stock", GTK_STOCK_DIALOG_WARNING,
 		     "icon-size", GTK_ICON_SIZE_MENU, NULL);
 
 	return data->edition_valid;
