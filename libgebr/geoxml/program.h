@@ -285,7 +285,7 @@ const gchar *gebr_geoxml_program_get_url(GebrGeoXmlProgram * program);
 /**
  * Get \p program's control attribute.
  *
- * If \p program is NULL returns GEBR_GEOXML_PROGRAM_CONTROL_UNKNOWN.
+ * If \p program is NULL returns GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY.
  */
 GebrGeoXmlProgramControl gebr_geoxml_program_get_control(GebrGeoXmlProgram * program);
 
