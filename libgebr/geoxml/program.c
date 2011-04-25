@@ -84,13 +84,12 @@ GebrGeoXmlParameters *gebr_geoxml_program_get_parameters(GebrGeoXmlProgram * pro
 
 gsize gebr_geoxml_program_count_parameters(GebrGeoXmlProgram * program)
 {
-	if (program == NULL)
-		return -1;
-
 	gsize n = 0;
 	GebrGeoXmlSequence *param;
 	GebrGeoXmlParameters *parameters;
 	GebrGeoXmlParameterType type;
+
+	g_return_val_if_fail(program != NULL, 0);
 
 	parameters = gebr_geoxml_program_get_parameters(program);
 	gebr_geoxml_parameters_get_parameter(parameters, &param, 0);
