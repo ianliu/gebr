@@ -889,7 +889,7 @@ static void flow_edition_component_selected(void)
 	/* If the program has an error, disable the 'Configured' status */
 	action = gtk_action_group_get_action(gebr.action_group_status, "flow_edition_status_configured");
 	has_error = gebr_geoxml_program_get_error_id(gebr.program, NULL);
-	gtk_action_set_sensitive(action, has_error);
+	gtk_action_set_sensitive(action, !has_error);
 
 	action = gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_help");
 	gtk_action_set_sensitive(action, strlen(gebr_geoxml_program_get_help(gebr.program)) != 0);

@@ -670,14 +670,18 @@ static GList *program_list_from_used_variables(const gchar *var_name)
 
 static void program_list_warn_undefined_variable(GList * program_list, gboolean var_exists)
 {
+	GebrGeoXmlProgram *program;
+
 	for(GList *i = program_list; i; i = i->next) {
 		GtkTreeIter *it = i->data;
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), it,
+		                   FSEQ_GEBR_GEOXML_POINTER, &program, -1);
 		if (!var_exists) {
 			flow_edition_change_iter_status(GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED, it);
-			gtk_list_store_set(gebr.ui_flow_edition->fseq_store, it, FSEQ_TOOLTIP, _("This program is using an undefined variable"), -1);
+			gebr_geoxml_program_set_error_id(program, FALSE, GEBR_GEOXML_PROGRAM_ERROR_UNKNOWN_VAR);
 		} else {
+			gebr_geoxml_program_set_error_id(program, TRUE, 0);
 			flow_edition_change_iter_status(GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED, it);
-			gtk_list_store_set(gebr.ui_flow_edition->fseq_store, it, FSEQ_TOOLTIP, "", -1);
 		}
 	}
 }
