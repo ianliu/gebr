@@ -306,6 +306,8 @@ GebrGeoXmlProgramControl gebr_geoxml_program_get_control(GebrGeoXmlProgram * pro
 {
 	const gchar *control;
 
+	// FIXME if program is NULL, should it really return GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY?
+	// Shouldn't it be GEBR_GEOXML_PROGRAM_CONTROL_UNKNOWN? Or maybe display a warning?
 	if (program == NULL)
 		return GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY;
 
