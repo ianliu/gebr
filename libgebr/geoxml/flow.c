@@ -591,7 +591,8 @@ GebrGeoXmlFlowError gebr_geoxml_flow_validade(GebrGeoXmlFlow * flow,
 	gboolean first_configured = TRUE;
 	gint previous_stdout = 0;
 	gboolean find_control = FALSE;
-	
+	gint last_configured = 0;
+
 	/*
 	 * Checking if flow has only the for loop
 	 */
@@ -607,6 +608,9 @@ GebrGeoXmlFlowError gebr_geoxml_flow_validade(GebrGeoXmlFlow * flow,
 
 		if (status != GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED)
 			continue;
+
+		if (status == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED)
+			last_configured = i;
 
 		if (!find_control && gebr_geoxml_program_get_control (GEBR_GEOXML_PROGRAM(first_program)) == GEBR_GEOXML_PROGRAM_CONTROL_FOR){
 			find_control = TRUE;
@@ -658,6 +662,42 @@ GebrGeoXmlFlowError gebr_geoxml_flow_validade(GebrGeoXmlFlow * flow,
 		return GEBR_GEOXML_FLOW_ERROR_NO_VALID_PROGRAMS;
 	}
 
+	/*
+	 * Checking the output file
+	 */
+	const gchar *output = NULL;
+	output = gebr_geoxml_flow_io_get_output(flow);
+
+	gebr_geoxml_flow_get_program(flow, &first_program, last_configured);
+
+	if (gebr_geoxml_program_get_stdout(GEBR_GEOXML_PROGRAM(first_program))
+	    && !gebr_geoxml_document_validate_str (output,
+						   GEBR_GEOXML_DOCUMENT (flow),
+						   GEBR_GEOXML_DOCUMENT (line),
+						   GEBR_GEOXML_DOCUMENT (project),
+						   NULL))
+	{
+		*program_title = g_strdup(gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(first_program)));
+		return GEBR_GEOXML_FLOW_ERROR_INVALID_OUTFILE;
+	}	
+
+	/*
+	 * Checking the error log file
+	 */
+	const gchar *error = NULL;
+	error = gebr_geoxml_flow_io_get_error(flow);
+
+	if (gebr_geoxml_program_get_stderr(GEBR_GEOXML_PROGRAM(first_program))
+	    && !gebr_geoxml_document_validate_str (error,
+						   GEBR_GEOXML_DOCUMENT (flow),
+						   GEBR_GEOXML_DOCUMENT (line),
+						   GEBR_GEOXML_DOCUMENT (project),
+						   NULL))
+	{
+		*program_title = g_strdup(gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(first_program)));
+		return GEBR_GEOXML_FLOW_ERROR_INVALID_ERRORFILE;
+	}	
+	
 	return GEBR_GEOXML_FLOW_ERROR_NONE;
 
 
