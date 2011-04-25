@@ -24,7 +24,7 @@
 #include "../object.h"
 
 
-static void callback (GebrGeoXmlObject *parameter, const gchar **keyword)
+static void callback (GebrGeoXmlObject *parameter, GString *buffer)
 {
 	GebrGeoXmlProgramParameter *prog;
 	GString *string_value;
@@ -32,8 +32,8 @@ static void callback (GebrGeoXmlObject *parameter, const gchar **keyword)
 	prog = GEBR_GEOXML_PROGRAM_PARAMETER(parameter);
 	string_value = gebr_geoxml_program_parameter_get_string_value(prog, TRUE);
 
-	//	gebr_geoxml_program_parameter_get_value (prog, FALSE, &value, 0);
-	*keyword = g_strdup_printf("%s,%s=%s", *keyword, gebr_geoxml_program_parameter_get_keyword(prog), string_value->str);
+	g_string_append_printf(buffer, "%s=%s,", gebr_geoxml_program_parameter_get_keyword(prog), string_value->str);
+	g_string_free(string_value, TRUE);
 }
 
 void test_gebr_geoxml_program_foreach_parameter(void)
@@ -56,10 +56,11 @@ void test_gebr_geoxml_program_foreach_parameter(void)
 	gebr_geoxml_program_parameter_set_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(parameter), "Test keyword 3");
 	gebr_geoxml_program_parameter_set_string_value(GEBR_GEOXML_PROGRAM_PARAMETER(parameter),TRUE,"33");
 
-	gchar *keyword;
+	GString *buffer = g_string_new(NULL);
 
-	gebr_geoxml_program_foreach_parameter(program,(GebrGeoXmlCallback)callback, &keyword);
-	g_assert_cmpstr(keyword, ==, ",Test keyword 1=11,Test keyword 2=22,Test keyword 3=33");
+	gebr_geoxml_program_foreach_parameter(program,(GebrGeoXmlCallback)callback, buffer);
+	g_assert_cmpstr(buffer->str, ==, "Test keyword 1=11,Test keyword 2=22,Test keyword 3=33,");
+	g_string_free(buffer, TRUE);
 
 }
 
@@ -130,9 +131,6 @@ void test_gebr_geoxml_program_count_parameters(void)
 	GebrGeoXmlParameter *parameter;
 	int i;
 	gsize count;
-
-	count = gebr_geoxml_program_count_parameters(NULL);
-	g_assert_cmpint(count, ==, -1);
 
 	count = gebr_geoxml_program_count_parameters(program);
 	g_assert_cmpint(count, ==, 0);
@@ -285,7 +283,6 @@ void test_gebr_geoxml_program_set_description(void)
 
 void test_gebr_geoxml_program_set_help(void)
 {
-
 	GebrGeoXmlFlow *flow = gebr_geoxml_flow_new();
 	GebrGeoXmlProgram *program = gebr_geoxml_flow_append_program(flow);
 	const gchar *program_help;
@@ -306,6 +303,22 @@ void test_gebr_geoxml_program_set_help(void)
 	g_assert_cmpstr(program_help, ==, "Change on help goes here");
 }
 
+void test_gebr_geoxml_program_error_id(void)
+{
+	GebrGeoXmlFlow *flow = gebr_geoxml_flow_new();
+	GebrGeoXmlProgram *program = gebr_geoxml_flow_append_program(flow);
+	GebrGeoXmlProgramError errorid;
+
+	g_assert(gebr_geoxml_program_get_error_id(program, &errorid) == FALSE);
+
+	gebr_geoxml_program_set_error_id(program, FALSE, GEBR_GEOXML_PROGRAM_ERROR_REQ_UNFILL);
+	g_assert(gebr_geoxml_program_get_error_id(program, &errorid) == TRUE);
+	g_assert_cmpint(errorid, ==, GEBR_GEOXML_PROGRAM_ERROR_REQ_UNFILL);
+
+	gebr_geoxml_program_set_error_id(program, TRUE, 0);
+	g_assert(gebr_geoxml_program_get_error_id(program, &errorid) == FALSE);
+}
+
 int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
@@ -322,6 +335,8 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/geoxml/program/get_and_set_binary", test_gebr_geoxml_program_get_and_set_binary);
 	g_test_add_func("/libgebr/geoxml/program/get_and_set_description", test_gebr_geoxml_program_set_description);
 	g_test_add_func("/libgebr/geoxml/program/get_and_set_help", test_gebr_geoxml_program_set_help);
+	g_test_add_func("/libgebr/geoxml/program/get_and_set_help", test_gebr_geoxml_program_set_help);
+	g_test_add_func("/libgebr/geoxml/program/error_id", test_gebr_geoxml_program_error_id);
 
 	return g_test_run();
 }
