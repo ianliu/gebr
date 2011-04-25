@@ -118,10 +118,8 @@ void test_gebrd_job_parse_string_invalid(void)
 	g_assert(parse_string_expression("[iter", ht, &result) == GEBRD_STRING_PARSER_ERROR_SYNTAX);
 	g_assert(result == NULL);
 
-	/* FAIL
 	g_assert(parse_string_expression("[]", ht, &result) == GEBRD_STRING_PARSER_ERROR_SYNTAX);
 	g_assert(result == NULL);
-	*/
 
 	g_assert(parse_string_expression("[", ht, &result) == GEBRD_STRING_PARSER_ERROR_SYNTAX);
 	g_assert(result == NULL);
