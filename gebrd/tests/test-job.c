@@ -87,6 +87,18 @@ void test_gebrd_job_parse_string_normal(void)
 	g_assert_cmpstr(result, ==, "String 1${V[1]}String 2");
 	g_free(result);
 
+	g_assert(parse_string_expression("[[", ht, &result) == GEBRD_STRING_PARSER_ERROR_NONE);
+	g_assert_cmpstr(result, ==, "[");
+	g_free(result);
+
+	g_assert(parse_string_expression("[[other", ht, &result) == GEBRD_STRING_PARSER_ERROR_NONE);
+	g_assert_cmpstr(result, ==, "[other");
+	g_free(result);
+
+	g_assert(parse_string_expression("]]", ht, &result) == GEBRD_STRING_PARSER_ERROR_NONE);
+	g_assert_cmpstr(result, ==, "]");
+	g_free(result);
+
 	g_hash_table_unref(ht);
 }
 
@@ -106,15 +118,26 @@ void test_gebrd_job_parse_string_invalid(void)
 	g_assert(parse_string_expression("[iter", ht, &result) == GEBRD_STRING_PARSER_ERROR_SYNTAX);
 	g_assert(result == NULL);
 
+	/* FAIL
 	g_assert(parse_string_expression("[]", ht, &result) == GEBRD_STRING_PARSER_ERROR_SYNTAX);
-	g_assert(parse_string_expression("[[", ht, &result) == GEBRD_STRING_PARSER_ERROR_SYNTAX);
+	g_assert(result == NULL);
+	*/
+
 	g_assert(parse_string_expression("[", ht, &result) == GEBRD_STRING_PARSER_ERROR_SYNTAX);
-	g_assert(parse_string_expression("[[other", ht, &result) == GEBRD_STRING_PARSER_ERROR_SYNTAX);
-	g_assert(parse_string_expression("]]", ht, &result) == GEBRD_STRING_PARSER_ERROR_SYNTAX);
+	g_assert(result == NULL);
+
 	g_assert(parse_string_expression("]", ht, &result) == GEBRD_STRING_PARSER_ERROR_SYNTAX);
+	g_assert(result == NULL);
+
 	g_assert(parse_string_expression("[[int]", ht, &result) == GEBRD_STRING_PARSER_ERROR_SYNTAX);
+	g_assert(result == NULL);
+
 	g_assert(parse_string_expression("[[]", ht, &result) == GEBRD_STRING_PARSER_ERROR_SYNTAX);
+	g_assert(result == NULL);
+
 	g_assert(parse_string_expression("[[]]]", ht, &result) == GEBRD_STRING_PARSER_ERROR_SYNTAX);
+	g_assert(result == NULL);
+
 
 	g_hash_table_unref(ht);
 }

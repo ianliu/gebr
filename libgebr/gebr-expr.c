@@ -420,9 +420,7 @@ GebrExprError gebr_str_expr_extract_vars (const gchar *str, GList ** vars)
 {
 	enum {
 		STATE_STARTING = 0,
-		STATE_CONSUMING,
 		STATE_OPEN_BRACKET, 
-		STATE_CLOSE_BRACKET, 
 		STATE_READING_VAR,
 		STATE_MATCHED,
 		STATE_FINISHED,
@@ -445,15 +443,20 @@ GebrExprError gebr_str_expr_extract_vars (const gchar *str, GList ** vars)
 				if (str[i] == '[')
 					status = STATE_OPEN_BRACKET;
 				else if (str[i] == ']'){
-					retval = GEBR_EXPR_ERROR_SYNTAX;
-					status = STATE_FINISHED;
+					if (str[i+1] != ']') {
+						retval = GEBR_EXPR_ERROR_SYNTAX;
+						status = STATE_FINISHED;
+					}
+					else{
+						i++;
+					}
 				}
 				i++;
 				break;
 
 			case STATE_OPEN_BRACKET:
 					if (str[i] == '['){
-						status = STATE_CONSUMING;
+						status = STATE_STARTING;
 						i++;
 					}
 					else{
@@ -462,26 +465,6 @@ GebrExprError gebr_str_expr_extract_vars (const gchar *str, GList ** vars)
 					}
 				break;
 
-			case STATE_CONSUMING:
-				if (str[i] == '[')
-					status = STATE_OPEN_BRACKET;
-				else if (str[i] == ']')
-					status = STATE_CLOSE_BRACKET;
-				i++;
-				break;
-
-
-			case STATE_CLOSE_BRACKET:
-					if (str[i] == ']'){
-						if (str[i])
-							status = STATE_STARTING;
-						i++;
-					}
-					else{
-						retval = GEBR_EXPR_ERROR_SYNTAX;
-						status = STATE_FINISHED;
-					}
-				break;
 
 			case STATE_READING_VAR:
 				if (str[i] == ']'){
@@ -515,9 +498,7 @@ GebrExprError gebr_str_expr_extract_vars (const gchar *str, GList ** vars)
 			}
 		}
 		else{
-			if (status == STATE_CONSUMING
-			    || status == STATE_OPEN_BRACKET
-			    || status == STATE_CLOSE_BRACKET
+			if (status == STATE_OPEN_BRACKET
 			    || status == STATE_READING_VAR)
 				retval = GEBR_EXPR_ERROR_SYNTAX;
 

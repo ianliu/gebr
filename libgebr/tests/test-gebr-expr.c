@@ -134,29 +134,73 @@ void test_gebr_expr_parse_string_invalid(void)
 
 	/*Success*/
 	g_assert(gebr_str_expr_extract_vars("",&list) == GEBR_EXPR_ERROR_NONE);
+	g_list_foreach (list, (GFunc) g_free, NULL);
+
 	g_assert(gebr_str_expr_extract_vars("other",&list) == GEBR_EXPR_ERROR_NONE);
+	g_list_foreach (list, (GFunc) g_free, NULL);
+
 	g_assert(gebr_str_expr_extract_vars("[int]",&list) == GEBR_EXPR_ERROR_NONE);
-	//g_assert(gebr_str_expr_extract_vars("[[[int]]]",&list) == GEBR_EXPR_ERROR_NONE);
+	g_list_foreach (list, (GFunc) g_free, NULL);
+
 	g_assert(gebr_str_expr_extract_vars("[[]]",&list) == GEBR_EXPR_ERROR_NONE);
+	g_list_foreach (list, (GFunc) g_free, NULL);
+
 	g_assert(gebr_str_expr_extract_vars("[int][float]",&list) == GEBR_EXPR_ERROR_NONE);
+	g_list_foreach (list, (GFunc) g_free, NULL);
+
 	g_assert(gebr_str_expr_extract_vars("other[int]other",&list) == GEBR_EXPR_ERROR_NONE);
+	g_list_foreach (list, (GFunc) g_free, NULL);
+
 	g_assert(gebr_str_expr_extract_vars("[[other]]",&list) == GEBR_EXPR_ERROR_NONE);
+	g_list_foreach (list, (GFunc) g_free, NULL);
+
+	g_assert(gebr_str_expr_extract_vars("[[other]][int]other",&list) == GEBR_EXPR_ERROR_NONE);
+	g_list_foreach (list, (GFunc) g_free, NULL);
+
 	g_assert(gebr_str_expr_extract_vars("other[[other]]other",&list) == GEBR_EXPR_ERROR_NONE);
+	g_list_foreach (list, (GFunc) g_free, NULL);
+
+	g_assert(gebr_str_expr_extract_vars("[[",&list) == GEBR_EXPR_ERROR_NONE);
+	g_list_foreach (list, (GFunc) g_free, NULL);
+
+	g_assert(gebr_str_expr_extract_vars("[[other",&list) == GEBR_EXPR_ERROR_NONE);
+	g_list_foreach (list, (GFunc) g_free, NULL);
+
+	g_assert(gebr_str_expr_extract_vars("]]",&list) == GEBR_EXPR_ERROR_NONE);
+	g_list_foreach (list, (GFunc) g_free, NULL);
+
+	g_assert(gebr_str_expr_extract_vars("[[[int]]]",&list) == GEBR_EXPR_ERROR_NONE);
+	g_list_foreach (list, (GFunc) g_free, NULL);
+
 
 	/*Failure*/
-	g_assert(gebr_str_expr_extract_vars("[]",&list) == GEBR_EXPR_ERROR_EMPTY_VAR);
-	g_assert(gebr_str_expr_extract_vars("[[",&list) == GEBR_EXPR_ERROR_SYNTAX);
-	g_assert(gebr_str_expr_extract_vars("[",&list) == GEBR_EXPR_ERROR_SYNTAX);
-	g_assert(gebr_str_expr_extract_vars("[[other",&list) == GEBR_EXPR_ERROR_SYNTAX);
-	g_assert(gebr_str_expr_extract_vars("]]",&list) == GEBR_EXPR_ERROR_SYNTAX);
-	g_assert(gebr_str_expr_extract_vars("]",&list) == GEBR_EXPR_ERROR_SYNTAX);
-	g_assert(gebr_str_expr_extract_vars("[int]]",&list) == GEBR_EXPR_ERROR_SYNTAX);
-	g_assert(gebr_str_expr_extract_vars("[[int]",&list) == GEBR_EXPR_ERROR_SYNTAX);
-	g_assert(gebr_str_expr_extract_vars("[[]",&list) == GEBR_EXPR_ERROR_SYNTAX);
-	g_assert(gebr_str_expr_extract_vars("[[]]]",&list) == GEBR_EXPR_ERROR_SYNTAX);
-	g_assert(gebr_str_expr_extract_vars("[[lakhd]kvlajl]]",&list) == GEBR_EXPR_ERROR_SYNTAX);
-
+	g_assert(gebr_str_expr_extract_vars("[[other]other]]",&list) == GEBR_EXPR_ERROR_SYNTAX);
 	g_list_foreach (list, (GFunc) g_free, NULL);
+
+	g_assert(gebr_str_expr_extract_vars("[[]",&list) == GEBR_EXPR_ERROR_SYNTAX);
+	g_list_foreach (list, (GFunc) g_free, NULL);
+
+	g_assert(gebr_str_expr_extract_vars("[[int]",&list) == GEBR_EXPR_ERROR_SYNTAX);
+	g_list_foreach (list, (GFunc) g_free, NULL);
+
+	g_assert(gebr_str_expr_extract_vars("[[[int]]",&list) == GEBR_EXPR_ERROR_SYNTAX);
+	g_list_foreach (list, (GFunc) g_free, NULL);
+
+	g_assert(gebr_str_expr_extract_vars("[]",&list) == GEBR_EXPR_ERROR_EMPTY_VAR);
+	g_list_foreach (list, (GFunc) g_free, NULL);
+
+	g_assert(gebr_str_expr_extract_vars("[",&list) == GEBR_EXPR_ERROR_SYNTAX);
+	g_list_foreach (list, (GFunc) g_free, NULL);
+
+	g_assert(gebr_str_expr_extract_vars("]",&list) == GEBR_EXPR_ERROR_SYNTAX);
+	g_list_foreach (list, (GFunc) g_free, NULL);
+
+	g_assert(gebr_str_expr_extract_vars("[int]]",&list) == GEBR_EXPR_ERROR_SYNTAX);
+	g_list_foreach (list, (GFunc) g_free, NULL);
+
+	g_assert(gebr_str_expr_extract_vars("[[]]]",&list) == GEBR_EXPR_ERROR_SYNTAX);
+	g_list_foreach (list, (GFunc) g_free, NULL);
+
 	g_list_free (list);
 
 }
