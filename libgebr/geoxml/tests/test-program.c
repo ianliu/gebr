@@ -19,6 +19,7 @@
 #include <stdlib.h>
 #include <glib.h>
 #include <glib/gprintf.h>
+#include "document.h"
 #include "error.h"
 #include "../xml.h"
 #include "../object.h"
@@ -410,32 +411,46 @@ void test_gebr_geoxml_program_get_and_set_error_id(void)
 
 	gebr_geoxml_program_set_error_id(program,FALSE,GEBR_GEOXML_PROGRAM_ERROR_UNKNOWN_VAR);
 	have_error = gebr_geoxml_program_get_error_id(program, &error);
+	g_assert(have_error == TRUE);
 	g_assert(error == GEBR_GEOXML_PROGRAM_ERROR_UNKNOWN_VAR);
 
 	gebr_geoxml_program_set_error_id(program,FALSE,GEBR_GEOXML_PROGRAM_ERROR_INVAL_EXPR);
 	have_error = gebr_geoxml_program_get_error_id(program, &error);
+	g_assert(have_error == TRUE);
 	g_assert(error == GEBR_GEOXML_PROGRAM_ERROR_INVAL_EXPR);
 
 	gebr_geoxml_program_set_error_id(program,FALSE,GEBR_GEOXML_PROGRAM_ERROR_REQ_UNFILL);
 	have_error = gebr_geoxml_program_get_error_id(program, &error);
+	g_assert(have_error == TRUE);
 	g_assert(error == GEBR_GEOXML_PROGRAM_ERROR_REQ_UNFILL);
-}
-
-void test_gebr_geoxml_program_error_id(void)
-{
-	GebrGeoXmlFlow *flow = gebr_geoxml_flow_new();
-	GebrGeoXmlProgram *program = gebr_geoxml_flow_append_program(flow);
-	GebrGeoXmlProgramError errorid;
-
-	g_assert(gebr_geoxml_program_get_error_id(program, &errorid) == FALSE);
-
-	gebr_geoxml_program_set_error_id(program, FALSE, GEBR_GEOXML_PROGRAM_ERROR_REQ_UNFILL);
-	g_assert(gebr_geoxml_program_get_error_id(program, &errorid) == TRUE);
-	g_assert_cmpint(errorid, ==, GEBR_GEOXML_PROGRAM_ERROR_REQ_UNFILL);
 
 	gebr_geoxml_program_set_error_id(program, TRUE, 0);
-	g_assert(gebr_geoxml_program_get_error_id(program, &errorid) == FALSE);
+	have_error = gebr_geoxml_program_get_error_id(program, &error);
+	g_assert(have_error == TRUE);
 }
+
+/*void test_gebr_geoxml_program_control_get_n(void)
+{
+	GebrGeoXmlFlow *forloop, *flow;
+	GebrGeoXmlProgram *program;
+	gchar *step, *ini;
+	guint iter;
+
+	flow = gebr_geoxml_flow_new ();
+	gebr_geoxml_document_load((GebrGeoXmlDocument**)&forloop, TEST_DIR"/forloop.mnu",FALSE,NULL);
+
+
+	 * FIXME
+	 * Function gebr_geoxml_flow_add_flow is not setting the 'value' field of program as the one set as 'default'.
+	 * Need to check where it is done, since it is set on gebr when you add the menu 'Loop' to the flow.
+
+	gebr_geoxml_flow_add_flow(flow,forloop);
+	gebr_geoxml_flow_get_program(flow, &program, 0);
+
+	iter =	gebr_geoxml_program_control_get_n(program,&step,&ini);
+	__gebr_geoxml_to_string(program);
+	g_assert_cmpint(iter, ==, 1);
+}*/
 
 int main(int argc, char *argv[])
 {
@@ -458,7 +473,7 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/geoxml/program/get_and_set_url", test_gebr_geoxml_program_get_and_set_url);
 	g_test_add_func("/libgebr/geoxml/program/get_control", test_gebr_geoxml_program_get_control);
 	g_test_add_func("/libgebr/geoxml/program/get_and_set_error_id", test_gebr_geoxml_program_get_and_set_error_id);
-	g_test_add_func("/libgebr/geoxml/program/error_id", test_gebr_geoxml_program_error_id);
+//	g_test_add_func("/libgebr/geoxml/program/control_get_number_of_iterations", test_gebr_geoxml_program_control_get_n);
 
 	return g_test_run();
 }
