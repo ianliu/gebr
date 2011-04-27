@@ -18,6 +18,7 @@ static void gebr_string_expr_init(GebrStringExpr *self)
 static gboolean gebr_string_expr_set_var(GebrIExpr              *self,
 					 const gchar            *expr,
 					 GebrGeoXmlParameterType type,
+					 const gchar            *value,
 					 GError                **err)
 {
 	return TRUE;

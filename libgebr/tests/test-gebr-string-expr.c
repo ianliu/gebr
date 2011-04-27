@@ -1,4 +1,4 @@
-/*   libgebr - GeBR Library
+/*   libgebr - GêBR Library
  *   Copyright (C) 2011 GeBR core team (http://www.gebrproject.com/)
  *
  *   This program is free software: you can redistribute it and/or modify
@@ -15,26 +15,31 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "gebr-iexpr.h"
+#include <glib.h>
+#include <glib-object.h>
 
-G_DEFINE_INTERFACE(GebrIExpr, gebr_iexpr, G_TYPE_INTERFACE);
+#include "../gebr-iexpr.h"
+#include "../gebr-string-expr.h"
 
-static void gebr_iexpr_default_init(GebrIExprInterface *iface)
+void test_gebr_string_expr_simple(void)
 {
+	GebrStringExpr *s = gebr_string_expr_new();
+
+	g_assert(gebr_iexpr_set_var(GEBR_IEXPR(s), "foo",
+				    GEBR_GEOXML_PARAMETER_TYPE_STRING,
+				    "Hello World!", NULL));
+
+	g_assert(gebr_iexpr_is_valid(GEBR_IEXPR(s), "ola", NULL));
 }
 
-gboolean gebr_iexpr_set_var(GebrIExpr              *self,
-			    const gchar            *name,
-			    GebrGeoXmlParameterType type,
-			    const gchar            *value,
-			    GError                **error)
+int main(int argc, char *argv[])
 {
-	return GEBR_IEXPR_GET_INTERFACE(self)->set_var(self, name, type, value, error);
+	g_type_init();
+	g_test_init(&argc, &argv, NULL);
+
+	g_test_add_func("/libgebr/string-expr/simple", test_gebr_string_expr_simple);
+
+	return g_test_run();
 }
 
-gboolean gebr_iexpr_is_valid(GebrIExpr   *self,
-			     const gchar *expr,
-			     GError     **error)
-{
-	return GEBR_IEXPR_GET_INTERFACE(self)->is_valid(self, expr, error);
-}
+

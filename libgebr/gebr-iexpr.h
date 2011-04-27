@@ -67,6 +67,7 @@ struct _GebrIExprInterface {
 	gboolean (*set_var) (GebrIExpr              *self,
 			     const gchar            *name,
 			     GebrGeoXmlParameterType type,
+			     const gchar            *value,
 			     GError                **error);
 
 	gboolean (*is_valid) (GebrIExpr   *self,
@@ -81,6 +82,7 @@ GType gebr_iexpr_get_type(void) G_GNUC_CONST;
  * @expr: a #GebrIExpr
  * @name: the name of the variable
  * @type: one of #GebrGeoXmlParameterType
+ * @value: the value of the variable
  * @error: return location for an #GEBR_IEXPR_ERROR, or %NULL
  *
  * Returns: %TRUE if variable was successfully set, %FALSE otherwise.
@@ -88,6 +90,7 @@ GType gebr_iexpr_get_type(void) G_GNUC_CONST;
 gboolean gebr_iexpr_set_var(GebrIExpr              *self,
 			    const gchar            *name,
 			    GebrGeoXmlParameterType type,
+			    const gchar            *value,
 			    GError                **error);
 
 /**
