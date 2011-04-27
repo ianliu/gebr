@@ -73,12 +73,7 @@ static gboolean on_entry_completion_matched (GtkEntryCompletion *completion,
 					     GtkTreeIter        *iter,
 					     gpointer            data);
 
-static gboolean completion_number_match_func(GtkEntryCompletion *completion,
-					     const gchar *key,
-					     GtkTreeIter *iter,
-					     gpointer user_data);
-
-static gboolean completion_string_match_func(GtkEntryCompletion *completion,
+static gboolean completion_match_func(GtkEntryCompletion *completion,
 					     const gchar *key,
 					     GtkTreeIter *iter,
 					     gpointer user_data);
@@ -626,7 +621,7 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 			if (may_use_dict) {
 				completion_model = generate_completion_model(parameter_widget);
 				setup_entry_completion(GTK_ENTRY(entry), completion_model,
-						       completion_number_match_func,
+						       completion_match_func,
 						       G_CALLBACK(on_entry_completion_matched),
 						       GINT_TO_POINTER(parameter_widget->parameter_type));
 				g_object_unref (completion_model);
@@ -656,7 +651,7 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 			if (may_use_dict) {
 				completion_model = generate_completion_model(parameter_widget);
 				setup_entry_completion(GTK_ENTRY(entry), completion_model,
-						       completion_number_match_func,
+						       completion_match_func,
 						       G_CALLBACK(on_entry_completion_matched),
 						       GINT_TO_POINTER(parameter_widget->parameter_type));
 				g_object_unref (completion_model);
@@ -686,7 +681,7 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 			if (may_use_dict) {
 				completion_model = generate_completion_model(parameter_widget);
 				setup_entry_completion(GTK_ENTRY(entry), completion_model,
-						       completion_string_match_func,
+						       completion_match_func,
 						       G_CALLBACK(on_entry_completion_matched),
 						       GINT_TO_POINTER(parameter_widget->parameter_type));
 				g_object_unref (completion_model);
@@ -750,7 +745,7 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 			if (may_use_dict) {
 				completion_model = generate_completion_model(parameter_widget);
 				setup_entry_completion(GTK_ENTRY(GEBR_GUI_FILE_ENTRY(file_entry)->entry), completion_model,
-						       completion_string_match_func,
+						       completion_match_func,
 						       G_CALLBACK(on_entry_completion_matched),
 						       GINT_TO_POINTER(parameter_widget->parameter_type));
 				g_object_unref (completion_model);
@@ -1392,46 +1387,7 @@ static gboolean on_entry_completion_matched (GtkEntryCompletion *completion,
 	return TRUE;
 }
 
-static gboolean completion_number_match_func(GtkEntryCompletion *completion,
-					     const gchar *key,
-					     GtkTreeIter *iter,
-					     gpointer user_data)
-{
-	GtkTreeModel *model;
-	GtkWidget *entry;
-	const gchar *text;
-	gchar *compl;
-	gchar *word;
-	gint pos;
-	gboolean retval;
-
-	entry = gtk_entry_completion_get_entry(completion);
-	text = gtk_entry_get_text(GTK_ENTRY(entry));
-
-	// Subtract 1 from position so 0 means 'after first char'
-	pos = gtk_editable_get_position(GTK_EDITABLE(entry)) - 1;
-
-	// pos = -1 means caret is before first char
-	if (pos == -1)
-		return FALSE;
-
-	word = gebr_str_word_before_pos(text, &pos);
-
-	// We could not find a word under the cursor
-	if (!word)
-		return FALSE;
-
-	model = gtk_entry_completion_get_model(completion);
-	gtk_tree_model_get(model, iter, 0, &compl, -1);
-	retval = g_str_has_prefix(compl, word);
-
-	g_free(word);
-	g_free(compl);
-
-	return retval;
-}
-
-static gboolean completion_string_match_func(GtkEntryCompletion *completion,
+static gboolean completion_match_func(GtkEntryCompletion *completion,
 					     const gchar *key,
 					     GtkTreeIter *iter,
 					     gpointer user_data)
@@ -1606,7 +1562,7 @@ static GtkTreeModel *generate_completion_model(struct gebr_gui_parameter_widget 
 void gebr_gui_parameter_set_string_entry_completion(GtkEntry *entry,
 						    GtkTreeModel *model)
 {
-	setup_entry_completion(entry, model, completion_string_match_func,
+	setup_entry_completion(entry, model, completion_match_func,
 			       G_CALLBACK(on_entry_completion_matched),
 			       GINT_TO_POINTER(GEBR_GEOXML_PARAMETER_TYPE_STRING));
 }
