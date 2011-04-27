@@ -47,6 +47,7 @@ lib_LTLIBRARIES = libgebr.la
 libgebr_la_SOURCES = 	\
 	date.c		\
 	gebr-expr.c	\
+	gebr-iexpr.c	\
 	gebr-tar.c	\
 	libgebr.c	\
 	log.c		\
@@ -61,6 +62,7 @@ libgebrinclude_HEADERS =\
 	date.h		\
 	defines.h	\
 	gebr-expr.h	\
+	gebr-iexpr.h	\
 	gebr-tar.h	\
 	libgebr.h	\
 	log.h		\
