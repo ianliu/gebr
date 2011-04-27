@@ -539,18 +539,18 @@ static void __set_type_icon(struct gebr_gui_parameter_widget *parameter_widget)
 	else if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_INT) {
 		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, "integer-icon");
 		gtk_entry_set_icon_tooltip_text(entry, GTK_ENTRY_ICON_SECONDARY, 
-						_("This parameter uses an integer value."));
+						_("Integer value"));
 	} else if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT) {
 		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, "real-icon");
 		gtk_entry_set_icon_tooltip_text(entry, GTK_ENTRY_ICON_SECONDARY, 
-						_("This parameter uses a real value."));
+						_("Real value"));
 	} else if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_STRING) {
 		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, "string-icon");
 		gtk_entry_set_icon_tooltip_text(entry, GTK_ENTRY_ICON_SECONDARY, 
-						_("This parameter uses a text value."));
+						_("Text value"));
 	} else if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_FILE) {
 		gebr_gui_file_entry_unset_warning(GEBR_GUI_FILE_ENTRY(parameter_widget->value_widget),
-						  _("This parameter uses a file path value."));
+						  _("File path value"));
 	} else if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_RANGE && parameter_widget->dict_parameter != NULL) {
 		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, "accessories-dictionary");
 		gtk_entry_set_icon_tooltip_text(entry, 
@@ -1492,6 +1492,9 @@ static void fill_compatible_dicts(GebrGeoXmlParameterType type,
 		return;
 	case GEBR_GEOXML_PARAMETER_TYPE_FLOAT:
 		compat[1] = GEBR_GEOXML_PARAMETER_TYPE_INT;
+		return;
+	case GEBR_GEOXML_PARAMETER_TYPE_INT:
+		compat[1] = GEBR_GEOXML_PARAMETER_TYPE_FLOAT;
 		return;
 	case GEBR_GEOXML_PARAMETER_TYPE_RANGE:
 		compat[1] = GEBR_GEOXML_PARAMETER_TYPE_INT;
