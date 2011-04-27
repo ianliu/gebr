@@ -35,8 +35,6 @@
 
 static void gebr_gui_parameter_widget_find_dict_parameter(struct gebr_gui_parameter_widget *widget);
 
-static GtkWidget *gebr_gui_parameter_widget_dict_popup_menu(struct gebr_gui_parameter_widget *widget);
-
 static GtkWidget *gebr_gui_parameter_widget_variable_popup_menu(struct gebr_gui_parameter_widget *widget,
 								GtkEntry *entry);
 
@@ -44,8 +42,6 @@ static void gebr_gui_parameter_widget_value_entry_on_populate_popup(GtkEntry * e
 								    struct gebr_gui_parameter_widget *widget);
 
 static gboolean gebr_gui_parameter_widget_can_use_dict(struct gebr_gui_parameter_widget *widget);
-
-static void on_dict_parameter_toggled(GtkMenuItem * menu_item, struct gebr_gui_parameter_widget *widget);
 
 static void on_variable_parameter_activate(GtkMenuItem * menu_item);
 
@@ -65,8 +61,6 @@ static void on_entry_activate_add (GtkEntry *entry, struct gebr_gui_parameter_wi
 
 static void __on_destroy_menu_unblock_handler(GtkMenuShell *menushell,
 					      GtkEntry     *entry);
-
-static GList *gebr_gui_parameter_widget_get_compatible_dicts(struct gebr_gui_parameter_widget *widget);
 
 static gboolean on_entry_completion_matched (GtkEntryCompletion *completion,
 					     GtkTreeModel       *model,
@@ -105,7 +99,8 @@ static gboolean __parameter_accepts_expression(struct gebr_gui_parameter_widget 
 	return parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_INT ||
 		parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT ||
 		parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_FILE ||
-		parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_STRING;
+		parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_STRING ||
+		parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_RANGE;
 }
 
 static void enum_value_to_label_set(GebrGeoXmlSequence * sequence, const gchar * label,
@@ -179,30 +174,11 @@ static void gebr_gui_parameter_widget_set_non_list_widget_value(struct gebr_gui_
 								gchar * value)
 {
 	if (parameter_widget->dict_parameter != NULL) {
-		/* only range parameter still use the old dictionary interface */
-		if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_RANGE) {
-			GString *value;
-
-			value = g_string_new(NULL);
-
-			g_string_printf(value, "%s=%s",
-					gebr_geoxml_program_parameter_get_keyword(parameter_widget->dict_parameter),
-					gebr_geoxml_program_parameter_get_first_value(parameter_widget->dict_parameter,
-										      parameter_widget->
-										      use_default_value));
-			gtk_entry_set_text(GTK_ENTRY(parameter_widget->value_widget), value->str);
-			gtk_editable_set_editable(GTK_EDITABLE(parameter_widget->value_widget), FALSE);
-
-			g_string_free(value, TRUE);
-
-			return;
-		} else {
-			/* now parameters don't use an value from dictionary; instead, the dict keyword is transformed
-			 * as the parameter value as an expression */
-			value = (gchar*)gebr_geoxml_program_parameter_get_keyword(parameter_widget->dict_parameter);
-			gebr_geoxml_program_parameter_set_string_value(parameter_widget->program_parameter,
-								       parameter_widget->use_default_value, value); 
-		}
+		/* now parameters don't use an value from dictionary; instead, the dict keyword is transformed
+		 * as the parameter value as an expression */
+		value = (gchar*)gebr_geoxml_program_parameter_get_keyword(parameter_widget->dict_parameter);
+		gebr_geoxml_program_parameter_set_string_value(parameter_widget->program_parameter,
+		                                               parameter_widget->use_default_value, value);
 	}
 
 	if (gebr_gui_parameter_widget_can_use_dict(parameter_widget)){
@@ -216,19 +192,8 @@ static void gebr_gui_parameter_widget_set_non_list_widget_value(struct gebr_gui_
 	case GEBR_GEOXML_PARAMETER_TYPE_FLOAT:
 	case GEBR_GEOXML_PARAMETER_TYPE_INT:
 	case GEBR_GEOXML_PARAMETER_TYPE_STRING:
-		gtk_entry_set_text(GTK_ENTRY(parameter_widget->value_widget), value);
-		break;
 	case GEBR_GEOXML_PARAMETER_TYPE_RANGE:
-		if (!strlen(value))
-			gtk_spin_button_set_value(GTK_SPIN_BUTTON(parameter_widget->value_widget), 0);
-		else {
-			gchar *endptr;
-			double number_value;
-
-			number_value = strtod(value, &endptr);
-			gtk_spin_button_set_value(GTK_SPIN_BUTTON(parameter_widget->value_widget),
-						  (endptr != value) ? number_value : 0);
-		}
+		gtk_entry_set_text(GTK_ENTRY(parameter_widget->value_widget), value);
 		break;
 	case GEBR_GEOXML_PARAMETER_TYPE_FILE:
 		gebr_gui_file_entry_set_path(GEBR_GUI_FILE_ENTRY(parameter_widget->value_widget),
@@ -287,7 +252,7 @@ static GString *gebr_gui_parameter_widget_get_widget_value_full(struct gebr_gui_
 	case GEBR_GEOXML_PARAMETER_TYPE_STRING:
 		g_string_assign(value, gtk_entry_get_text(GTK_ENTRY(parameter_widget->value_widget)));
 		break;
-	case GEBR_GEOXML_PARAMETER_TYPE_RANGE:{
+	case GEBR_GEOXML_PARAMETER_TYPE_RANGE:{// FIXME: Recuperar valor de range!
 			guint digits;
 			digits = gtk_spin_button_get_digits(GTK_SPIN_BUTTON(parameter_widget->value_widget));
 			if (digits == 0)
@@ -546,10 +511,6 @@ static void __set_type_icon(struct gebr_gui_parameter_widget *parameter_widget)
 	} else if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_FILE) {
 		gebr_gui_file_entry_unset_warning(GEBR_GUI_FILE_ENTRY(parameter_widget->value_widget),
 						  _("File path value"));
-	} else if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_RANGE && parameter_widget->dict_parameter != NULL) {
-		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, "accessories-dictionary");
-		gtk_entry_set_icon_tooltip_text(entry, 
-						GTK_ENTRY_ICON_SECONDARY, NULL);
 	} else
 		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, NULL);
 
@@ -724,11 +685,12 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 				activatable_entry = GTK_ENTRY (spin);
 				g_signal_connect (spin, "activate",
 						  G_CALLBACK (on_entry_activate_add), parameter_widget);
+				gtk_spin_button_set_numeric(GTK_SPIN_BUTTON(spin), FALSE);
 				gtk_spin_button_set_digits(GTK_SPIN_BUTTON(spin), atoi(digits_str));
 			} else {
 				parameter_widget->value_widget = gtk_entry_new();
 			}
-			gtk_widget_set_size_request(parameter_widget->value_widget, 90, -1);
+			gtk_widget_set_size_request(parameter_widget->value_widget, 140, -1);
 
 			break;
 		}
@@ -932,61 +894,6 @@ static gint compare_parameters_by_keyword(GebrGeoXmlProgramParameter * parameter
 		      gebr_geoxml_program_parameter_get_keyword(parameter2));
 }
 
-/*
- * gebr_gui_parameter_widget_dict_popup_menu:
- * Read dictionaries and build a popup menu
- */
-static GtkWidget *gebr_gui_parameter_widget_dict_popup_menu(struct gebr_gui_parameter_widget *widget)
-{
-	GtkWidget *menu;
-	GtkWidget *menu_item;
-	GList *cp = NULL;
-	GSList *group = NULL;
-	GList *compatible_parameters = NULL;
-
-	compatible_parameters = gebr_gui_parameter_widget_get_compatible_dicts(widget);
-	menu = gtk_menu_new();
-
-	menu_item = gtk_radio_menu_item_new_with_label(NULL, _("Do not use dictionary"));
-	g_object_set(menu_item, "user-data", NULL, NULL);
-	g_signal_connect(menu_item, "activate", G_CALLBACK(on_dict_parameter_toggled), widget);
-	group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
-	gtk_container_add(GTK_CONTAINER(menu), menu_item);
-	gtk_container_add(GTK_CONTAINER(menu), gtk_separator_menu_item_new());
-
-	for (cp = compatible_parameters; cp != NULL; cp = g_list_next(cp)) {
-		GString *label;
-		const gchar * keyword;
-		const gchar * first_value;
-		const gchar * param_label;
-
-		keyword = gebr_geoxml_program_parameter_get_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(cp->data));
-		first_value = gebr_geoxml_program_parameter_get_first_value(GEBR_GEOXML_PROGRAM_PARAMETER(cp->data), FALSE);
-		param_label = gebr_geoxml_parameter_get_label(GEBR_GEOXML_PARAMETER(cp->data));
-
-		label = g_string_new(NULL);
-		g_string_printf(label, "%s=%s", keyword, first_value);
-		if (param_label != NULL && strlen(param_label) > 0)
-			g_string_append_printf(label, " (%s)", param_label);
-
-		menu_item = gtk_radio_menu_item_new_with_label(group, label->str);
-		group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menu_item));
-		g_object_set(menu_item, "user-data", cp->data, NULL);
-		g_signal_connect(menu_item, "toggled", G_CALLBACK(on_dict_parameter_toggled), widget);
-		gtk_container_add(GTK_CONTAINER(menu), menu_item);
-
-		if ((void *)widget->dict_parameter == cp->data)
-			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item), TRUE);
-
-		g_string_free(label, TRUE);
-	}
-
-	gtk_widget_show_all(menu);
-	g_list_free(compatible_parameters);
-
-	return menu;
-}
-
 GtkWidget *gebr_gui_parameter_add_variables_popup(GtkEntry *entry,
 						  GebrGeoXmlDocument *flow,
 						  GebrGeoXmlDocument *line,
@@ -1067,12 +974,7 @@ static void gebr_gui_parameter_widget_value_entry_on_populate_popup(GtkEntry * e
 	gtk_widget_show(menu_item);
 	gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), menu_item);
 
-	if (widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_RANGE) {
-		menu_item = gtk_menu_item_new_with_label(_("Dictionary"));
-		gtk_widget_show(menu_item);
-		gtk_menu_item_set_submenu(GTK_MENU_ITEM(menu_item), gebr_gui_parameter_widget_dict_popup_menu(widget));
-		gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), menu_item);
-	} else if (__parameter_accepts_expression(widget)) {
+	if (__parameter_accepts_expression(widget)) {
 		menu_item = gtk_menu_item_new_with_label(_("Insert Variable"));
 		gtk_widget_show(menu_item);
 		gtk_menu_item_set_submenu(GTK_MENU_ITEM(menu_item), gebr_gui_parameter_widget_variable_popup_menu(widget, entry));
@@ -1098,26 +1000,6 @@ static gboolean gebr_gui_parameter_widget_can_use_dict(struct gebr_gui_parameter
 	default:
 		return FALSE;
 	}
-}
-
-/*
- * on_dict_parameter_toggled:
- * Use value of dictionary parameter corresponding to menu_item in parameter at _widget_
- */
-static void on_dict_parameter_toggled(GtkMenuItem * menu_item, struct gebr_gui_parameter_widget *widget)
-{
-	GebrGeoXmlProgramParameter *dict_parameter;
-
-	if (!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(menu_item)))
-		return;
-
-	g_object_get(menu_item, "user-data", &dict_parameter, NULL);
-
-	gebr_geoxml_program_parameter_set_value_from_dict(widget->program_parameter, dict_parameter);
-	widget->dict_parameter = dict_parameter;
-	gebr_gui_parameter_widget_find_dict_parameter(widget);
-
-	gebr_gui_parameter_widget_update(widget);
 }
 
 /*
@@ -1513,15 +1395,6 @@ get_compatible_variables(GebrGeoXmlParameterType type,
 	}
 
 	return g_list_sort(compat, (GCompareFunc) compare_parameters_by_keyword);
-}
-
-static GList *
-gebr_gui_parameter_widget_get_compatible_dicts(struct gebr_gui_parameter_widget *widget)
-{
-	return get_compatible_variables(widget->parameter_type,
-					widget->dicts->flow,
-					widget->dicts->line,
-					widget->dicts->project);
 }
 
 GtkTreeModel *gebr_gui_parameter_get_completion_model(GebrGeoXmlDocument *flow,
