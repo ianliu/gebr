@@ -17,7 +17,7 @@
 
 #include "gebr-iexpr.h"
 
-G_DEFINE_INTERFACE(GebrIExpr, gebr_iexpr, G_TYPE_INTERFACE);
+G_DEFINE_INTERFACE(GebrIExpr, gebr_iexpr, G_TYPE_OBJECT);
 
 static void gebr_iexpr_default_init(GebrIExprInterface *iface)
 {
