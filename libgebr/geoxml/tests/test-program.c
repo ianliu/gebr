@@ -57,10 +57,10 @@ void test_gebr_geoxml_program_foreach_parameter(void)
 	gebr_geoxml_program_parameter_set_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(parameter), "Test keyword 3");
 	gebr_geoxml_program_parameter_set_string_value(GEBR_GEOXML_PROGRAM_PARAMETER(parameter),TRUE,"33");
 
-	gchar *keyword;
+	gchar *keyword = "Parameters: ";
 
 	gebr_geoxml_program_foreach_parameter(program,(GebrGeoXmlCallback)callback, &keyword);
-	g_assert_cmpstr(keyword, ==, ",Test keyword 1=11,Test keyword 2=22,Test keyword 3=33");
+	g_assert_cmpstr(keyword, ==, "Parameters: ,Test keyword 1=11,Test keyword 2=22,Test keyword 3=33");
 }
 
 void test_gebr_geoxml_program_is_var_used()
@@ -426,7 +426,7 @@ void test_gebr_geoxml_program_get_and_set_error_id(void)
 
 	gebr_geoxml_program_set_error_id(program, TRUE, 0);
 	have_error = gebr_geoxml_program_get_error_id(program, &error);
-	g_assert(have_error == TRUE);
+	g_assert(have_error == FALSE);
 }
 
 /*void test_gebr_geoxml_program_control_get_n(void)
@@ -440,9 +440,9 @@ void test_gebr_geoxml_program_get_and_set_error_id(void)
 	gebr_geoxml_document_load((GebrGeoXmlDocument**)&forloop, TEST_DIR"/forloop.mnu",FALSE,NULL);
 
 
-	 * FIXME
-	 * Function gebr_geoxml_flow_add_flow is not setting the 'value' field of program as the one set as 'default'.
-	 * Need to check where it is done, since it is set on gebr when you add the menu 'Loop' to the flow.
+ * FIXME
+ * Function gebr_geoxml_flow_add_flow is not setting the 'value' field of program as the one set as 'default'.
+ * Need to check where it is done, since it is set on gebr when you add the menu 'Loop' to the flow.
 
 	gebr_geoxml_flow_add_flow(flow,forloop);
 	gebr_geoxml_flow_get_program(flow, &program, 0);
@@ -473,7 +473,7 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/geoxml/program/get_and_set_url", test_gebr_geoxml_program_get_and_set_url);
 	g_test_add_func("/libgebr/geoxml/program/get_control", test_gebr_geoxml_program_get_control);
 	g_test_add_func("/libgebr/geoxml/program/get_and_set_error_id", test_gebr_geoxml_program_get_and_set_error_id);
-//	g_test_add_func("/libgebr/geoxml/program/control_get_number_of_iterations", test_gebr_geoxml_program_control_get_n);
+	//	g_test_add_func("/libgebr/geoxml/program/control_get_number_of_iterations", test_gebr_geoxml_program_control_get_n);
 
 	return g_test_run();
 }
