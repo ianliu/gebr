@@ -502,12 +502,17 @@ gboolean gebr_geoxml_program_is_valid(GebrGeoXmlProgram *self,
 				      GebrGeoXmlDocument *proj,
 				      GError **err)
 {
-	ValidationData data = { flow, line, proj, NULL };
+	ValidationData data = {
+		.flow = flow,
+		.line = line,
+		.proj = proj,
+		.error = NULL
+	};
 	gebr_geoxml_program_foreach_parameter(self, (GebrGeoXmlCallback)validate_program_parameter, &data);
 
 	if (data.error) {
-		g_propagate_error(err, data.error);
 		gebr_geoxml_program_set_error_id(self, FALSE, data.error->code);
+		g_propagate_error(err, data.error);
 		return FALSE;
 	}
 
