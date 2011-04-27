@@ -36,10 +36,14 @@ G_BEGIN_DECLS
 #define GEBR_STRING_EXPR_GET_CLASS(obj)		(G_TYPE_INSTANCE_GET_CLASS((obj), GEBR_TYPE_STRING_EXPR, GebrStringExprClass))
 
 typedef struct _GebrStringExpr GebrStringExpr;
+typedef struct _GebrStringExprPriv GebrStringExprPriv;
 typedef struct _GebrStringExprClass GebrStringExprClass;
 
 struct _GebrStringExpr {
 	GObject parent;
+
+	/*< private >*/
+	GebrStringExprPriv *priv;
 };
 
 struct _GebrStringExprClass {
@@ -64,8 +68,9 @@ GebrStringExpr *gebr_string_expr_new(void);
  * Returns: %TRUE if evaluation was successful, %FALSE otherwise.
  */
 gboolean gebr_string_expr_eval(GebrStringExpr *self,
-			       const gchar *expr,
-			       GError **error);
+			       const gchar    *expr,
+			       gchar         **result,
+			       GError        **error);
 
 G_END_DECLS
 

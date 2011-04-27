@@ -30,6 +30,20 @@ void test_gebr_string_expr_simple(void)
 				    "Hello World!", NULL));
 
 	g_assert(gebr_iexpr_is_valid(GEBR_IEXPR(s), "ola", NULL));
+	g_object_unref(s);
+}
+
+void test_gebr_string_expr_invalid(void)
+{
+	GebrStringExpr *s = gebr_string_expr_new();
+
+	/* g_assert(gebr_iexpr_set_var(GEBR_IEXPR(s), "2foo",
+				    GEBR_GEOXML_PARAMETER_TYPE_STRING,
+				    "Foo", NULL) == FALSE); */
+
+	g_assert(gebr_iexpr_is_valid(GEBR_IEXPR(s), "foo]", NULL) == FALSE);
+
+	g_object_unref(s);
 }
 
 int main(int argc, char *argv[])
@@ -38,6 +52,7 @@ int main(int argc, char *argv[])
 	g_test_init(&argc, &argv, NULL);
 
 	g_test_add_func("/libgebr/string-expr/simple", test_gebr_string_expr_simple);
+	g_test_add_func("/libgebr/string-expr/invalid", test_gebr_string_expr_invalid);
 
 	return g_test_run();
 }
