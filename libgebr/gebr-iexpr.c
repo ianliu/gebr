@@ -38,3 +38,8 @@ gboolean gebr_iexpr_is_valid(GebrIExpr   *self,
 {
 	return GEBR_IEXPR_GET_INTERFACE(self)->is_valid(self, expr, error);
 }
+
+GQuark gebr_iexpr_error_quark(void)
+{
+	return g_quark_from_static_string("gebr-iexpr-error-quark");
+}

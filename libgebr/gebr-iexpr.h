@@ -46,16 +46,20 @@ G_BEGIN_DECLS
  */
 #define GEBR_IEXPR_ERROR (gebr_iexpr_error_quark())
 
+GQuark gebr_iexpr_error_quark(void);
+
 /**
  * GebrIExprError:
  * @GEBR_IEXPR_ERROR_INVAL_VAR: An invalid variable name was found.
- * @GEBR_IEXPR_ERROR_INVAL_EXPR: The expression is invalid.
+ * @GEBR_IEXPR_ERROR_INVAL_TYPE: Variable type not supported.
+ * @GEBR_IEXPR_ERROR_SYNTAX: The expression syntax is invalid.
  *
  * Error codes returned by expression handling functions.
  */
 typedef enum {
 	GEBR_IEXPR_ERROR_INVAL_VAR,
-	GEBR_IEXPR_ERROR_INVAL_EXPR,
+	GEBR_IEXPR_ERROR_INVAL_TYPE,
+	GEBR_IEXPR_ERROR_SYNTAX,
 } GebrIExprError;
 
 typedef struct _GebrIExpr GebrIExpr;
