@@ -763,28 +763,34 @@ static gboolean job_parse_parameter(GebrdJob *job, GebrGeoXmlParameter * paramet
 		GString *value;
 		const gchar *vmin, *vmax;
 		gchar *end_str;
+		gchar *temp;
 		value = gebr_geoxml_program_parameter_get_string_value(program_parameter, FALSE);
 		gebr_geoxml_program_parameter_get_number_min_max(program_parameter, &vmin, &vmax);
 		if (strlen(g_strstrip(value->str)) > 0) {
 			g_ascii_strtod(value->str, &end_str);
 			if(*end_str) {
+				if(type == GEBR_GEOXML_PARAMETER_TYPE_INT)
+					temp = g_strdup_printf("round(%s)", value->str);
+				else
+					temp = g_strdup(value->str);
 				if(*vmin && *vmax)
-					g_string_append_printf (expr_buf, "\t\tmin(%s,max(%s,%s)) # V[%d]: %s\n", vmax, vmin, value->str,
+					g_string_append_printf (expr_buf, "\t\tmin(%s,max(%s,%s)) # V[%d]: %s\n", vmax, vmin, temp,
 					                        job->expr_count + job->n_vars, gebr_geoxml_parameter_get_label (parameter));
 				else if(*vmin)
-					g_string_append_printf (expr_buf, "\t\tmax(%s,%s) # V[%d]: %s\n", vmin, value->str,
+					g_string_append_printf (expr_buf, "\t\tmax(%s,%s) # V[%d]: %s\n", vmin, temp,
 					                        job->expr_count + job->n_vars, gebr_geoxml_parameter_get_label (parameter));
 				else if(*vmax)
-					g_string_append_printf (expr_buf, "\t\tmax(%s,%s) # V[%d]: %s\n", vmax, value->str,
+					g_string_append_printf (expr_buf, "\t\tmax(%s,%s) # V[%d]: %s\n", vmax, temp,
 					                        job->expr_count + job->n_vars, gebr_geoxml_parameter_get_label (parameter));
 				else
-					g_string_append_printf (expr_buf, "\t\t%s # V[%d]: %s\n", value->str,
+					g_string_append_printf (expr_buf, "\t\t%s # V[%d]: %s\n", temp,
 					                        job->expr_count + job->n_vars, gebr_geoxml_parameter_get_label (parameter));
 
 				g_string_append_printf (job->parent.cmd_line, "%s${V[%d]} ",
 				                        gebr_geoxml_program_parameter_get_keyword(program_parameter),
 				                        job->expr_count + job->n_vars);
 				job->expr_count++;
+				g_free(temp);
 			} else
 				g_string_append_printf (job->parent.cmd_line, "%s%s ",
 				                        gebr_geoxml_program_parameter_get_keyword(program_parameter),
@@ -910,8 +916,9 @@ static void define_bc_variables(GString *expr_buf, GebrGeoXmlFlow *flow, GHashTa
 	{
 		gchar *label;
 		gchar *var_name;
+		GebrGeoXmlParameterType type = gebr_geoxml_parameter_get_type (GEBR_GEOXML_PARAMETER (seq));
 
-		switch (gebr_geoxml_parameter_get_type (GEBR_GEOXML_PARAMETER (seq)))
+		switch (type)
 		{
 		case GEBR_GEOXML_PARAMETER_TYPE_FLOAT:
 		case GEBR_GEOXML_PARAMETER_TYPE_INT: {
@@ -971,7 +978,8 @@ static void assemble_bc_cmd_line (GString *expr_buf,
 
 	 g_string_prepend(expr_buf,
 	                  "\t\tdefine min(a,b){ if(a<b) {return a;} else {return b;}}\n"
-	                  "\t\tdefine max(a,b){ if(a>b) {return a;} else {return b;}}\n");
+	                  "\t\tdefine max(a,b){ if(a>b) {return a;} else {return b;}}\n"
+	                  "\t\tdefine round(x){ auto s; s = scale; if(x>0) x+=0.5 else x-=0.5; scale = 0; x/=1; scale = s; return (x);}");
 
 	// Initiate `iter' variable if we have ini and step
 	if (is_loop) {
