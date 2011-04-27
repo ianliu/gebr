@@ -1247,33 +1247,52 @@ void gebr_gui_parameter_widget_validate(struct gebr_gui_parameter_widget *parame
 			GString *value = gebr_gui_parameter_widget_get_value(parameter_widget);
 
 			if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_INT ||
-			    parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT)
-				success = gebr_geoxml_document_validate_expr(value->str, 
-									     parameter_widget->dicts->flow, 
-									     parameter_widget->dicts->line, 
-									     parameter_widget->dicts->project, 
-									     &error);
-			else if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_STRING ||
-				 parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_FILE)
+					parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT) {
+				gchar *end_str;
+				g_ascii_strtod(value->str, &end_str);
+				if(*end_str)
+					success = gebr_geoxml_document_validate_expr(value->str,
+					                                             parameter_widget->dicts->flow,
+					                                             parameter_widget->dicts->line,
+					                                             parameter_widget->dicts->project,
+					                                             &error);
+				else switch (parameter_widget->parameter_type) {
+				case GEBR_GEOXML_PARAMETER_TYPE_INT: {
+					const gchar *min, *max;
+
+					gebr_geoxml_program_parameter_get_number_min_max(parameter_widget->program_parameter, &min, &max);
+					gtk_entry_set_text(entry, gebr_validate_int(gtk_entry_get_text(entry), min, max));
+					break;
+				} case GEBR_GEOXML_PARAMETER_TYPE_FLOAT: {
+					const gchar *min, *max;
+
+					gebr_geoxml_program_parameter_get_number_min_max(parameter_widget->program_parameter, &min, &max);
+					gtk_entry_set_text(entry, gebr_validate_float(gtk_entry_get_text(entry), min, max));
+					break;
+				} default:
+					break;
+				}
+			} else if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_STRING ||
+					parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_FILE)
 				success = gebr_geoxml_document_validate_str(value->str, 
-									    parameter_widget->dicts->flow, 
-									    parameter_widget->dicts->line, 
-									    parameter_widget->dicts->project, 
-									    &error);
+				                                            parameter_widget->dicts->flow,
+				                                            parameter_widget->dicts->line,
+				                                            parameter_widget->dicts->project,
+				                                            &error);
 
 			if (!success)
 			{
 				if (error != NULL)
 				{
 					gtk_entry_set_icon_tooltip_text(entry, 
-									GTK_ENTRY_ICON_SECONDARY, 
-									error->message);
+					                                GTK_ENTRY_ICON_SECONDARY,
+					                                error->message);
 					g_error_free(error);
 				}
 				else
 					gtk_entry_set_icon_tooltip_text(entry, 
-									GTK_ENTRY_ICON_SECONDARY, 
-									"This expression is invalid");
+					                                GTK_ENTRY_ICON_SECONDARY,
+					                                "This expression is invalid");
 			}
 
 			g_string_free(value, TRUE);
