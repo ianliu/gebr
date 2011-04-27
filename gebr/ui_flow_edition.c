@@ -1334,7 +1334,7 @@ on_flow_sequence_query_tooltip(GtkTreeView * treeview,
 				tmp = g_strdup(_("A required parameter is unfilled"));
 				break;
 			case GEBR_GEOXML_PROGRAM_ERROR_UNKNOWN_VAR:
-				tmp = g_strdup(_("An undefined dictionary name is being used"));
+				tmp = g_strdup(_("An undefined variable is being used"));
 				break;
 			}
 			gtk_tooltip_set_text(tooltip, tmp);
