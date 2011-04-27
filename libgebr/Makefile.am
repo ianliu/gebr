@@ -44,31 +44,33 @@ touch:
 date.c: touch
 
 lib_LTLIBRARIES = libgebr.la
-libgebr_la_SOURCES = 	\
-	date.c		\
-	gebr-expr.c	\
-	gebr-iexpr.c	\
-	gebr-tar.c	\
-	libgebr.c	\
-	log.c		\
-	marshalers.c	\
-	utils.c		\
-	validate.c	\
-	version.c	\
+libgebr_la_SOURCES = 		\
+	date.c			\
+	gebr-expr.c		\
+	gebr-iexpr.c		\
+	gebr-string-expr.c	\
+	gebr-tar.c		\
+	libgebr.c		\
+	log.c			\
+	marshalers.c		\
+	utils.c			\
+	validate.c		\
+	version.c		\
 	$(NULL)
 
 libgebrincludedir = $(includedir)/libgebr
-libgebrinclude_HEADERS =\
-	date.h		\
-	defines.h	\
-	gebr-expr.h	\
-	gebr-iexpr.h	\
-	gebr-tar.h	\
-	libgebr.h	\
-	log.h		\
-	utils.h		\
-	validate.h	\
-	version.h	\
+libgebrinclude_HEADERS =	\
+	date.h			\
+	defines.h		\
+	gebr-expr.h		\
+	gebr-iexpr.h		\
+	gebr-string-expr.h	\
+	gebr-tar.h		\
+	libgebr.h		\
+	log.h			\
+	utils.h			\
+	validate.h		\
+	version.h		\
 	$(NULL)
 
 noinst_HEADERS = defines.h marshalers.h

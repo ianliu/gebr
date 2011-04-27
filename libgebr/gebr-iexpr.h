@@ -33,10 +33,10 @@
 
 G_BEGIN_DECLS
 
-#define GEBR_IEXPR_TYPE			(gebr_iexpr_get_type())
-#define GEBR_IEXPR(obj)			(G_TYPE_CHECK_INSTANCE_CAST((obj), GEBR_IEXPR_TYPE, GebrIExpr))
-#define GEBR_IS_IEXPR(obj)		(G_TYPE_CHECK_INSTANCE_TYPE((obj), GEBR_IEXPR_TYPE))
-#define GEBR_IEXPR_GET_INTERFACE(inst)	(G_TYPE_INSTANCE_GET_INTERFACE((inst), GEBR_IEXPR_TYPE, GebrIExprInterface))
+#define GEBR_TYPE_IEXPR			(gebr_iexpr_get_type())
+#define GEBR_IEXPR(obj)			(G_TYPE_CHECK_INSTANCE_CAST((obj), GEBR_TYPE_IEXPR, GebrIExpr))
+#define GEBR_IS_IEXPR(obj)		(G_TYPE_CHECK_INSTANCE_TYPE((obj), GEBR_TYPE_IEXPR))
+#define GEBR_IEXPR_GET_INTERFACE(inst)	(G_TYPE_INSTANCE_GET_INTERFACE((inst), GEBR_TYPE_IEXPR, GebrIExprInterface))
 
 /**
  * GEBR_IEXPR_ERROR:
