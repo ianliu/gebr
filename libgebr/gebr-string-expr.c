@@ -122,8 +122,27 @@ static gboolean gebr_string_expr_is_valid(GebrIExpr   *iface,
 					  const gchar *expr,
 					  GError     **err)
 {
-	GebrStringExpr *self = GEBR_STRING_EXPR(iface);
+	return gebr_string_expr_eval(GEBR_STRING_EXPR(iface), expr, NULL, err);
+}
 
+static void gebr_string_expr_interface_init(GebrIExprInterface *iface)
+{
+	iface->set_var = gebr_string_expr_set_var;
+	iface->is_valid = gebr_string_expr_is_valid;
+}
+
+/* }}} */
+
+GebrStringExpr *gebr_string_expr_new(void)
+{
+	return g_object_new(GEBR_TYPE_STRING_EXPR, NULL);
+}
+
+gboolean gebr_string_expr_eval(GebrStringExpr   *self,
+			       const gchar      *expr,
+			       gchar           **result,
+			       GError          **err)
+{
 	gint j;
 	gint i = 0;
 	gchar *name;
@@ -211,29 +230,12 @@ static gboolean gebr_string_expr_is_valid(GebrIExpr   *iface,
 		goto exception;
 	}
 
+	if (result)
+		*result = g_strdup(decoded->str);
+
 exception:
+	g_string_free(decoded, TRUE);
 	g_free(name);
 
 	return retval;
-}
-
-static void gebr_string_expr_interface_init(GebrIExprInterface *iface)
-{
-	iface->set_var = gebr_string_expr_set_var;
-	iface->is_valid = gebr_string_expr_is_valid;
-}
-
-/* }}} */
-
-GebrStringExpr *gebr_string_expr_new(void)
-{
-	return g_object_new(GEBR_TYPE_STRING_EXPR, NULL);
-}
-
-gboolean gebr_string_expr_eval(GebrStringExpr *self,
-			       const gchar    *expr,
-			       gchar         **result,
-			       GError        **error)
-{
-	return TRUE;
 }
