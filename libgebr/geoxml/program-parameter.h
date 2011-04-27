@@ -409,29 +409,25 @@ gebr_geoxml_program_parameter_set_number_min_max(GebrGeoXmlProgramParameter * pr
 						 const gchar * min, const gchar * max);
 
 /**
- * For integer, float and range parameters type, get mininimum
- * and maximum boundaries
+ * gebr_geoxml_program_parameter_get_number_min_max:
+ * @program_parameter:
+ * @min: (out): return location for the minimum value, or %NULL
+ * @max: (out): return location for the maximum value, or %NULL
  *
- * If \p program_parameter is NULL nothing is done.
- * @see gebr_geoxml_program_parameter_set_number_min_max
+ * Get the minimum and maximum values for integer, float and range parameters type.
+ * If there is no minimum or maximum value, returns an empty string.
  */
-void
-
-
-gebr_geoxml_program_parameter_get_number_min_max(GebrGeoXmlProgramParameter * program_parameter,
-						 const gchar ** min, const gchar ** max);
+void gebr_geoxml_program_parameter_get_number_min_max(GebrGeoXmlProgramParameter * program_parameter,
+                                                      const gchar ** min, const gchar ** max);
 
 /**
  *
  *
  * If \p program_parameter is NULL nothing is done.
  */
-void
-
-
-gebr_geoxml_program_parameter_set_range_properties(GebrGeoXmlProgramParameter * program_parameter,
-						   const gchar * min, const gchar * max, const gchar * inc,
-						   const gchar * digits);
+void gebr_geoxml_program_parameter_set_range_properties(GebrGeoXmlProgramParameter * program_parameter,
+                                                        const gchar * min, const gchar * max, const gchar * inc,
+                                                        const gchar * digits);
 
 /**
  *
