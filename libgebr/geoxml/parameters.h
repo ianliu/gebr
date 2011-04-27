@@ -116,7 +116,7 @@ void gebr_geoxml_parameters_set_default_selection(GebrGeoXmlParameters * paramet
 
 /**
  *
- * If \p parameters is NULL returns FALSE.
+ * Will fail if \p parameters is NULL.
  */
 GebrGeoXmlParameter *gebr_geoxml_parameters_get_default_selection(GebrGeoXmlParameters * parameters);
 
