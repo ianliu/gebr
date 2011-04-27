@@ -762,25 +762,33 @@ static gboolean job_parse_parameter(GebrdJob *job, GebrGeoXmlParameter * paramet
 	case GEBR_GEOXML_PARAMETER_TYPE_FLOAT: {
 		GString *value;
 		const gchar *vmin, *vmax;
+		gchar *end_str;
 		value = gebr_geoxml_program_parameter_get_string_value(program_parameter, FALSE);
 		gebr_geoxml_program_parameter_get_number_min_max(program_parameter, &vmin, &vmax);
 		if (strlen(g_strstrip(value->str)) > 0) {
-			if(*vmin && *vmax)
-				g_string_append_printf (expr_buf, "\t\tmin(%s,max(%s,%s)) # %s\n", vmax, vmin, value->str,
-										gebr_geoxml_parameter_get_label (parameter));
-			else if(*vmin)
-				g_string_append_printf (expr_buf, "\t\tmax(%s,%s) # %s\n", vmin, value->str,
-										gebr_geoxml_parameter_get_label (parameter));
-			else if(*vmax)
-				g_string_append_printf (expr_buf, "\t\tmax(%s,%s) # %s\n", vmax, value->str,
-										gebr_geoxml_parameter_get_label (parameter));
-			else
-				g_string_append_printf (expr_buf, "\t\t%s # %s\n", value->str,
-						gebr_geoxml_parameter_get_label (parameter));
-			g_string_append_printf (job->parent.cmd_line, "%s${V[%d]} ",
-						gebr_geoxml_program_parameter_get_keyword(program_parameter),
-						job->expr_count + job->n_vars);
-			job->expr_count++;
+			g_ascii_strtod(value->str, &end_str);
+			if(*end_str) {
+				if(*vmin && *vmax)
+					g_string_append_printf (expr_buf, "\t\tmin(%s,max(%s,%s)) # %s\n", vmax, vmin, value->str,
+					                        gebr_geoxml_parameter_get_label (parameter));
+				else if(*vmin)
+					g_string_append_printf (expr_buf, "\t\tmax(%s,%s) # %s\n", vmin, value->str,
+					                        gebr_geoxml_parameter_get_label (parameter));
+				else if(*vmax)
+					g_string_append_printf (expr_buf, "\t\tmax(%s,%s) # %s\n", vmax, value->str,
+					                        gebr_geoxml_parameter_get_label (parameter));
+				else
+					g_string_append_printf (expr_buf, "\t\t%s # %s\n", value->str,
+					                        gebr_geoxml_parameter_get_label (parameter));
+
+				g_string_append_printf (job->parent.cmd_line, "%s${V[%d]} ",
+				                        gebr_geoxml_program_parameter_get_keyword(program_parameter),
+				                        job->expr_count + job->n_vars);
+				job->expr_count++;
+			} else
+				g_string_append_printf (job->parent.cmd_line, "%s%s ",
+				                        gebr_geoxml_program_parameter_get_keyword(program_parameter),
+				                        value->str);
 		}
 		g_string_free(value, TRUE);
 		break;
