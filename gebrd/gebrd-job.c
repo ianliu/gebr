@@ -769,17 +769,17 @@ static gboolean job_parse_parameter(GebrdJob *job, GebrGeoXmlParameter * paramet
 			g_ascii_strtod(value->str, &end_str);
 			if(*end_str) {
 				if(*vmin && *vmax)
-					g_string_append_printf (expr_buf, "\t\tmin(%s,max(%s,%s)) # %s\n", vmax, vmin, value->str,
-					                        gebr_geoxml_parameter_get_label (parameter));
+					g_string_append_printf (expr_buf, "\t\tmin(%s,max(%s,%s)) # V[%d]: %s\n", vmax, vmin, value->str,
+					                        job->expr_count + job->n_vars, gebr_geoxml_parameter_get_label (parameter));
 				else if(*vmin)
-					g_string_append_printf (expr_buf, "\t\tmax(%s,%s) # %s\n", vmin, value->str,
-					                        gebr_geoxml_parameter_get_label (parameter));
+					g_string_append_printf (expr_buf, "\t\tmax(%s,%s) # V[%d]: %s\n", vmin, value->str,
+					                        job->expr_count + job->n_vars, gebr_geoxml_parameter_get_label (parameter));
 				else if(*vmax)
-					g_string_append_printf (expr_buf, "\t\tmax(%s,%s) # %s\n", vmax, value->str,
-					                        gebr_geoxml_parameter_get_label (parameter));
+					g_string_append_printf (expr_buf, "\t\tmax(%s,%s) # V[%d]: %s\n", vmax, value->str,
+					                        job->expr_count + job->n_vars, gebr_geoxml_parameter_get_label (parameter));
 				else
-					g_string_append_printf (expr_buf, "\t\t%s # %s\n", value->str,
-					                        gebr_geoxml_parameter_get_label (parameter));
+					g_string_append_printf (expr_buf, "\t\t%s # V[%d]: %s\n", value->str,
+					                        job->expr_count + job->n_vars, gebr_geoxml_parameter_get_label (parameter));
 
 				g_string_append_printf (job->parent.cmd_line, "%s${V[%d]} ",
 				                        gebr_geoxml_program_parameter_get_keyword(program_parameter),
@@ -899,7 +899,7 @@ static void define_bc_variables(GString *expr_buf, GebrGeoXmlFlow *flow, GHashTa
 					       g_free);
 
 	*table = ht;
-	g_string_append(expr_buf, "\t\titer\n");
+	g_string_append(expr_buf, "\t\titer # V[0]\n");
 	index = g_new(guint, 1), *index = 0;
 	g_hash_table_insert(ht, g_strdup("number:iter"), index);
 
@@ -922,17 +922,17 @@ static void define_bc_variables(GString *expr_buf, GebrGeoXmlFlow *flow, GHashTa
 			keyword = gebr_geoxml_program_parameter_get_keyword (prog_param);
 			gebr_geoxml_program_parameter_get_number_min_max(GEBR_GEOXML_PROGRAM_PARAMETER (seq), &vmin, &vmax);
 			if(*vmin && *vmax)
-				g_string_append_printf(expr_buf, "\t\t%s = min(%s,max(%s,%s)) ; %s # %s\n",
-						       keyword, vmax, vmin, value, keyword, replace_quotes(label));
+				g_string_append_printf(expr_buf, "\t\t%s = min(%s,max(%s,%s)) ; %s # V[%d]: %s\n",
+						       keyword, vmax, vmin, value, keyword, j, replace_quotes(label));
 			else if(*vmin)
-				g_string_append_printf(expr_buf, "\t\t%s = max(%s,%s) ; %s # %s\n",
-						       keyword, vmin, value, keyword, replace_quotes(label));
+				g_string_append_printf(expr_buf, "\t\t%s = max(%s,%s) ; %s # V[%d]: %s\n",
+						       keyword, vmin, value, keyword, j, replace_quotes(label));
 			else if(*vmax)
-				g_string_append_printf(expr_buf, "\t\t%s = min(%s,%s) ; %s # %s\n",
-				                       keyword, vmax, value, keyword, replace_quotes(label));
+				g_string_append_printf(expr_buf, "\t\t%s = min(%s,%s) ; %s # V[%d]: %s\n",
+				                       keyword, vmax, value, keyword, j, replace_quotes(label));
 			else
-				g_string_append_printf(expr_buf, "\t\t%s = %s ; %s # %s\n",
-						       keyword, value, keyword, replace_quotes(label));
+				g_string_append_printf(expr_buf, "\t\t%s = %s ; %s # V[%d]: %s\n",
+						       keyword, value, keyword, j, replace_quotes(label));
 			var_name = g_strconcat("number:", keyword, NULL);
 			index = g_new(guint, 1), *index = j++;
 			g_hash_table_insert(ht, var_name, index);
