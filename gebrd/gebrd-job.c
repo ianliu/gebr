@@ -979,7 +979,7 @@ static void assemble_bc_cmd_line (GString *expr_buf,
 	 g_string_prepend(expr_buf,
 	                  "\t\tdefine min(a,b){ if(a<b) {return a;} else {return b;}}\n"
 	                  "\t\tdefine max(a,b){ if(a>b) {return a;} else {return b;}}\n"
-	                  "\t\tdefine round(x){ auto s; s = scale; if(x>0) x+=0.5 else x-=0.5; scale = 0; x/=1; scale = s; return (x);}");
+	                  "\t\tdefine round(x){ auto s; s = scale; if(x>0) x+=0.5 else x-=0.5; scale = 0; x/=1; scale = s; return (x);}\n");
 
 	// Initiate `iter' variable if we have ini and step
 	if (is_loop) {
