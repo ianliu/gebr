@@ -14,13 +14,20 @@
    height="16"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.0 r9654"
-   sodipodi:docname="real.svg"
+   inkscape:version="0.47 r22583"
+   sodipodi:docname="real-icon.svg"
    inkscape:export-filename="/home/ian/Desktop/real.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90">
   <defs
      id="defs4">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 8 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="16 : 8 : 1"
+       inkscape:persp3d-origin="8 : 5.3333333 : 1"
+       id="perspective19" />
     <linearGradient
        inkscape:collect="always"
        id="linearGradient3774">
@@ -73,6 +80,13 @@
        xlink:href="#linearGradient3774-2"
        inkscape:collect="always"
        gradientTransform="translate(8.7774658e-7,5.0722656e-5)" />
+    <inkscape:perspective
+       id="perspective2841"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -82,15 +96,15 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="11.313708"
-     inkscape:cx="5.7920426"
-     inkscape:cy="18.714096"
+     inkscape:cx="4.4662173"
+     inkscape:cy="8.1074938"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1366"
-     inkscape:window-height="691"
+     inkscape:window-width="1680"
+     inkscape:window-height="1002"
      inkscape:window-x="0"
-     inkscape:window-y="24"
+     inkscape:window-y="25"
      inkscape:window-maximized="1" />
   <metadata
      id="metadata7">
@@ -100,7 +114,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -118,16 +132,34 @@
        y="1036.8622"
        rx="1.1607143"
        ry="1.1160715" />
-    <text
+    <flowRoot
        xml:space="preserve"
-       style="font-size:13.74100876px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-       x="3.7018447"
-       y="1048.108"
-       id="text3782"
-       sodipodi:linespacing="125%"><tspan
-         sodipodi:role="line"
-         id="tspan3784"
-         x="3.7018447"
-         y="1048.108">π</tspan></text>
+       id="flowRoot2825"
+       style="font-size:2px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Mono;-inkscape-font-specification:Liberation Mono"
+       transform="matrix(5.0411283,0,0,5.0411283,143.92687,1075.5399)"><flowRegion
+         id="flowRegion2827"><rect
+           id="rect2829"
+           width="20.506098"
+           height="14.053748"
+           x="-28.284273"
+           y="-7.9532433" /></flowRegion><flowPara
+         id="flowPara2831"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans">1</flowPara></flowRoot>    <flowRoot
+       xml:space="preserve"
+       id="flowRoot2825-2"
+       style="font-size:2px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Liberation Mono;-inkscape-font-specification:Liberation Mono"
+       transform="matrix(5.0411283,0,0,5.0411283,151.34366,1080.8878)"><flowRegion
+         id="flowRegion2827-7"><rect
+           id="rect2829-3"
+           width="20.506098"
+           height="14.053748"
+           x="-28.284273"
+           y="-7.9532433" /></flowRegion><flowPara
+         id="flowPara2831-6"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans">2</flowPara></flowRoot>    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 12.197593,3.3604657 3.6239224,12.994796"
+       id="path2864"
+       transform="translate(0,1036.3622)" />
   </g>
 </svg>
