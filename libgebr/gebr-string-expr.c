@@ -171,9 +171,12 @@ gboolean gebr_string_expr_eval(GebrStringExpr   *self,
 
 		if (fetch_var) {
 			if (expr[i] == ']') {
+				TypedVar *found;
+
 				fetch_var = FALSE;
 				name[j] = '\0';
-				if (g_hash_table_lookup_extended(self->priv->vars, name,
+				found = typed_var_new(name, 0);
+				if (g_hash_table_lookup_extended(self->priv->vars, found,
 								 (gpointer)&typed_var,
 								 (gpointer)&value))
 				{
@@ -186,12 +189,14 @@ gboolean gebr_string_expr_eval(GebrStringExpr   *self,
 					default:
 						g_warn_if_reached();
 					}
+					typed_var_free(found);
 				} else {
 					retval = FALSE;
 					g_set_error(err, GEBR_IEXPR_ERROR,
 						    GEBR_IEXPR_ERROR_UNDEF_VAR,
 						    _("Variable %s is undefined"),
 						    name);
+					typed_var_free(found);
 					goto exception;
 				}
 				i++;
