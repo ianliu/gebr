@@ -731,71 +731,111 @@ static gboolean job_parse_parameter(GebrdJob *job, GebrGeoXmlParameter * paramet
 	switch (type) {
 	case GEBR_GEOXML_PARAMETER_TYPE_FILE:
 	case GEBR_GEOXML_PARAMETER_TYPE_STRING: {
-		GString *value;
-		value = gebr_geoxml_program_parameter_get_string_value(program_parameter, FALSE);
-		if (strlen(g_strstrip(value->str)) > 0) {
-			gchar *result;
-			gchar *escaped;
-			GError *error = NULL;
+		gchar *strip;
+		const gchar *value;
+		const gchar *separator;
+		GebrGeoXmlSequence *seq;
+		gboolean first = TRUE;
 
-			gebr_string_expr_eval(job->str_expr, value->str, &result, &error);
+		gebr_geoxml_program_parameter_get_value(program_parameter, FALSE, &seq, 0);
+		g_string_append(job->parent.cmd_line, gebr_geoxml_program_parameter_get_keyword(program_parameter));
+		g_string_append_c(job->parent.cmd_line, '"');
+		separator = gebr_geoxml_program_parameter_get_list_separator(program_parameter);
 
-			if (!error) {
-				escaped = escape_quote_and_slash(result);
-				g_string_append_printf (job->parent.cmd_line, "%s\"%s\" ",
-							gebr_geoxml_program_parameter_get_keyword(program_parameter),
-							result);
-				g_free (escaped);
-				g_free (result);
-			} else {
-				job_issue(job, error->message);
-				g_string_free (value, TRUE);
-				g_error_free(error);
-				return FALSE;
+		while (seq) {
+			value = gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(seq));
+			strip = g_strstrip(g_strdup(value));
+
+			if (*strip) {
+				gchar *result;
+				gchar *escaped;
+				GError *error = NULL;
+
+				gebr_string_expr_eval(job->str_expr, strip, &result, &error);
+
+				if (!error) {
+					escaped = escape_quote_and_slash(result);
+					if (!first)
+						g_string_append(job->parent.cmd_line, separator);
+					g_string_append_printf (job->parent.cmd_line, "%s", result);
+					g_free (escaped);
+					g_free (result);
+					g_free (strip);
+				} else {
+					job_issue(job, error->message);
+					g_error_free(error);
+					g_free (strip);
+					return FALSE;
+				}
+				if (first)
+					first = FALSE;
 			}
+			gebr_geoxml_sequence_next(&seq);
 		}
+
+		g_string_append(job->parent.cmd_line, "\" ");
 		break;
 	}
 
 	case GEBR_GEOXML_PARAMETER_TYPE_INT:
 	case GEBR_GEOXML_PARAMETER_TYPE_FLOAT: {
-		GString *value;
+		const gchar *value;
 		const gchar *vmin, *vmax;
 		gchar *end_str;
 		gchar *temp;
-		value = gebr_geoxml_program_parameter_get_string_value(program_parameter, FALSE);
+		gchar *strip;
+		const gchar *separator;
+		GebrGeoXmlSequence *seq;
+		gboolean first = TRUE;
+	
+		gebr_geoxml_program_parameter_get_value(program_parameter, FALSE, &seq, 0);
 		gebr_geoxml_program_parameter_get_number_min_max(program_parameter, &vmin, &vmax);
-		if (strlen(g_strstrip(value->str)) > 0) {
-			g_ascii_strtod(value->str, &end_str);
-			if(*end_str) {
-				if(type == GEBR_GEOXML_PARAMETER_TYPE_INT)
-					temp = g_strdup_printf("round(%s)", value->str);
-				else
-					temp = g_strdup(value->str);
-				if(*vmin && *vmax)
-					g_string_append_printf (expr_buf, "\t\tmin(%s,max(%s,%s)) # V[%ld]: %s\n", vmax, vmin, temp,
-					                        job->expr_count + job->n_vars, gebr_geoxml_parameter_get_label (parameter));
-				else if(*vmin)
-					g_string_append_printf (expr_buf, "\t\tmax(%s,%s) # V[%ld]: %s\n", vmin, temp,
-					                        job->expr_count + job->n_vars, gebr_geoxml_parameter_get_label (parameter));
-				else if(*vmax)
-					g_string_append_printf (expr_buf, "\t\tmax(%s,%s) # V[%ld]: %s\n", vmax, temp,
-					                        job->expr_count + job->n_vars, gebr_geoxml_parameter_get_label (parameter));
-				else
-					g_string_append_printf (expr_buf, "\t\t%s # V[%ld]: %s\n", temp,
-					                        job->expr_count + job->n_vars, gebr_geoxml_parameter_get_label (parameter));
+		g_string_append(job->parent.cmd_line, gebr_geoxml_program_parameter_get_keyword(program_parameter));
+		g_string_append_c(job->parent.cmd_line, '"');
+		separator = gebr_geoxml_program_parameter_get_list_separator(program_parameter);
 
-				g_string_append_printf (job->parent.cmd_line, "%s${V[%ld]} ",
-				                        gebr_geoxml_program_parameter_get_keyword(program_parameter),
-				                        job->expr_count + job->n_vars);
-				job->expr_count++;
-				g_free(temp);
-			} else
-				g_string_append_printf (job->parent.cmd_line, "%s%s ",
-				                        gebr_geoxml_program_parameter_get_keyword(program_parameter),
-				                        value->str);
+		while(seq) {
+			value = gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(seq));
+			strip = g_strstrip(g_strdup(value));
+	
+			if (*strip) {
+				g_ascii_strtod(strip, &end_str);
+				if(*end_str) {
+					if(type == GEBR_GEOXML_PARAMETER_TYPE_INT)
+						temp = g_strdup_printf("round(%s)", strip);
+					else
+						temp = g_strdup(strip);
+					if(*vmin && *vmax)
+						g_string_append_printf (expr_buf, "\t\tmin(%s,max(%s,%s)) # V[%ld]: %s\n", vmax, vmin, temp,
+									job->expr_count + job->n_vars, gebr_geoxml_parameter_get_label (parameter));
+					else if(*vmin)
+						g_string_append_printf (expr_buf, "\t\tmax(%s,%s) # V[%ld]: %s\n", vmin, temp,
+									job->expr_count + job->n_vars, gebr_geoxml_parameter_get_label (parameter));
+					else if(*vmax)
+						g_string_append_printf (expr_buf, "\t\tmax(%s,%s) # V[%ld]: %s\n", vmax, temp,
+									job->expr_count + job->n_vars, gebr_geoxml_parameter_get_label (parameter));
+					else
+						g_string_append_printf (expr_buf, "\t\t%s # V[%ld]: %s\n", temp,
+									job->expr_count + job->n_vars, gebr_geoxml_parameter_get_label (parameter));
+
+					if(!first)
+						g_string_append(job->parent.cmd_line, separator);
+					g_string_append_printf (job->parent.cmd_line, "${V[%ld]}", job->expr_count + job->n_vars);
+					job->expr_count++;
+					g_free(temp);
+				} else  {
+					if(!first)
+						g_string_append(job->parent.cmd_line, separator);
+					g_string_append_printf (job->parent.cmd_line, "%s", strip);
+				}
+				if (first)
+					first = FALSE;
+			}
+			g_free(strip);
+			gebr_geoxml_sequence_next(&seq);
 		}
-		g_string_free(value, TRUE);
+
+		g_string_append(job->parent.cmd_line, "\" ");
 		break;
 	}
 
