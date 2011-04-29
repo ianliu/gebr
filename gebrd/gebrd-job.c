@@ -891,18 +891,22 @@ guint gebrd_bc_hash_func(gconstpointer a)
 
 static void define_bc_variables(GebrdJob *job, GString *expr_buf, gsize *n_vars)
 {
-	gsize j = 1;
+	gsize j = 0;
 	const gchar *value;
 	const gchar *keyword;
 	GebrGeoXmlSequence *seq;
 	GebrGeoXmlParameters *params;
 	GebrGeoXmlProgramParameter *prog_param;
+	GebrGeoXmlProgram *program;
 
-	g_string_append(expr_buf, "\t\titer # V[0]\n");
-	gebr_iexpr_set_var(GEBR_IEXPR(job->str_expr), "iter",
-			   GEBR_GEOXML_PARAMETER_TYPE_STRING,
-			   "${V[0]}", NULL);
-
+	program = gebr_geoxml_flow_get_control_program(job->flow);
+	if(gebr_geoxml_program_get_control(program) == GEBR_GEOXML_PROGRAM_CONTROL_FOR) {
+		g_string_append_printf(expr_buf, "\t\titer # V[%d]\n", j);
+		gebr_iexpr_set_var(GEBR_IEXPR(job->str_expr), "iter",
+		                   GEBR_GEOXML_PARAMETER_TYPE_STRING,
+		                   "${V[0]}", NULL);
+		j++;
+	}
 	// Insert variables definitions
 	params = gebr_geoxml_document_get_dict_parameters (GEBR_GEOXML_DOCUMENT (job->flow));
 	gebr_geoxml_parameters_get_parameter (params, &seq, 0);
