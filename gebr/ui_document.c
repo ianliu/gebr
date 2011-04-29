@@ -27,6 +27,7 @@
 #include <libgebr/gui/gebr-gui-value-sequence-edit.h>
 #include <libgebr/gui/gebr-gui-file-entry.h>
 
+#include "ui_parameters.h"
 #include "ui_document.h"
 #include "ui_flow_edition.h"
 #include "gebr.h"
@@ -680,8 +681,10 @@ static void program_list_warn_undefined_variable(GList * program_list, gboolean 
 			flow_edition_change_iter_status(GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED, it);
 			gebr_geoxml_program_set_error_id(program, FALSE, GEBR_GEOXML_PROGRAM_ERROR_UNKNOWN_VAR);
 		} else {
-			gebr_geoxml_program_set_error_id(program, TRUE, 0);
-			flow_edition_change_iter_status(GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED, it);
+			if (validate_program_iter(it, NULL))
+				flow_edition_change_iter_status(GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED, it);
+			else
+				flow_edition_change_iter_status(GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED, it);
 		}
 	}
 }
