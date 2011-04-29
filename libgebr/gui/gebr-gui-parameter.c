@@ -640,128 +640,128 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 
 		break;
 	}
-	case GEBR_GEOXML_PARAMETER_TYPE_INT:{
-			GtkWidget *entry;
-			GtkTreeModel *completion_model;
+	case GEBR_GEOXML_PARAMETER_TYPE_INT: {
+		GtkWidget *entry;
+		GtkTreeModel *completion_model;
 
-			parameter_widget->value_widget = entry = gtk_entry_new();
+		parameter_widget->value_widget = entry = gtk_entry_new();
 
-			if (may_use_dict) {
-				completion_model = generate_completion_model(parameter_widget);
-				setup_entry_completion(GTK_ENTRY(entry), completion_model,
-						       completion_match_func,
-						       G_CALLBACK(on_entry_completion_matched),
-						       GINT_TO_POINTER(parameter_widget->parameter_type));
-				g_object_unref (completion_model);
-			}
-
-			gtk_widget_set_size_request(entry, 140, 30);
-			activatable_entry = GTK_ENTRY (entry);
-
-			g_signal_connect (entry, "focus-in-event",
-					  G_CALLBACK (__on_focus_in_event), parameter_widget);
-			g_signal_connect (entry, "focus-out-event",
-					  G_CALLBACK(__on_focus_out_event), parameter_widget);
-			g_signal_connect (entry, "activate",
-					  G_CALLBACK (on_entry_activate_add), parameter_widget);
-			/* validation */
-			g_signal_connect (entry, "activate",
-					  G_CALLBACK(__on_activate), parameter_widget);
-
-			break;
+		if (may_use_dict) {
+			completion_model = generate_completion_model(parameter_widget);
+			setup_entry_completion(GTK_ENTRY(entry), completion_model,
+					       completion_match_func,
+					       G_CALLBACK(on_entry_completion_matched),
+					       GINT_TO_POINTER(parameter_widget->parameter_type));
+			g_object_unref (completion_model);
 		}
-	case GEBR_GEOXML_PARAMETER_TYPE_STRING:{
-			GtkWidget *entry;
-			GtkTreeModel *completion_model;
 
-			parameter_widget->value_widget = entry = gtk_entry_new();
+		gtk_widget_set_size_request(entry, 140, 30);
+		activatable_entry = GTK_ENTRY (entry);
 
-			if (may_use_dict) {
-				completion_model = generate_completion_model(parameter_widget);
-				setup_entry_completion(GTK_ENTRY(entry), completion_model,
-						       completion_match_func,
-						       G_CALLBACK(on_entry_completion_matched),
-						       GINT_TO_POINTER(parameter_widget->parameter_type));
-				g_object_unref (completion_model);
-			}
+		g_signal_connect (entry, "focus-in-event",
+				  G_CALLBACK (__on_focus_in_event), parameter_widget);
+		g_signal_connect (entry, "focus-out-event",
+				  G_CALLBACK(__on_focus_out_event), parameter_widget);
+		g_signal_connect (entry, "activate",
+				  G_CALLBACK (on_entry_activate_add), parameter_widget);
+		/* validation */
+		g_signal_connect (entry, "activate",
+				  G_CALLBACK(__on_activate), parameter_widget);
 
-			activatable_entry = GTK_ENTRY (entry);
-			gtk_widget_set_size_request(parameter_widget->value_widget, 140, 30);
+		break;
+	}
+	case GEBR_GEOXML_PARAMETER_TYPE_STRING: {
+		GtkWidget *entry;
+		GtkTreeModel *completion_model;
 
-			g_signal_connect (parameter_widget->value_widget, "activate",
-					  G_CALLBACK (on_entry_activate_add), parameter_widget);
-			g_signal_connect (entry, "focus-in-event",
-					  G_CALLBACK (__on_focus_in_event), parameter_widget);
-			g_signal_connect (entry, "focus-out-event",
-					  G_CALLBACK(__on_focus_out_event), parameter_widget);
-			/* validation */
-			g_signal_connect (entry, "activate",
-					  G_CALLBACK(__on_activate), parameter_widget);
+		parameter_widget->value_widget = entry = gtk_entry_new();
 
-			break;
+		if (may_use_dict) {
+			completion_model = generate_completion_model(parameter_widget);
+			setup_entry_completion(GTK_ENTRY(entry), completion_model,
+					       completion_match_func,
+					       G_CALLBACK(on_entry_completion_matched),
+					       GINT_TO_POINTER(parameter_widget->parameter_type));
+			g_object_unref (completion_model);
 		}
-	case GEBR_GEOXML_PARAMETER_TYPE_FILE:{
-			GtkWidget *file_entry;
-			GtkTreeModel *completion_model;
 
-			/* file entry */
-			parameter_widget->value_widget = file_entry =
-			    gebr_gui_file_entry_new((GebrGuiFileEntryCustomize)
-							gebr_gui_parameter_widget_file_entry_customize_function,
-							parameter_widget);
-			activatable_entry = GTK_ENTRY (GEBR_GUI_FILE_ENTRY (file_entry)->entry);
-			if (may_use_dict) {
-				completion_model = generate_completion_model(parameter_widget);
-				setup_entry_completion(GTK_ENTRY(GEBR_GUI_FILE_ENTRY(file_entry)->entry), completion_model,
-						       completion_match_func,
-						       G_CALLBACK(on_entry_completion_matched),
-						       GINT_TO_POINTER(parameter_widget->parameter_type));
-				g_object_unref (completion_model);
-			}
-			g_signal_connect (GEBR_GUI_FILE_ENTRY (file_entry)->entry, "activate",
-					  G_CALLBACK (on_entry_activate_add), parameter_widget);
-			g_signal_connect (GEBR_GUI_FILE_ENTRY (file_entry)->entry, "focus-in-event",
-					  G_CALLBACK (__on_focus_in_event), parameter_widget);
-			g_signal_connect (GEBR_GUI_FILE_ENTRY (file_entry)->entry, "focus-out-event",
-					  G_CALLBACK(__on_focus_out_event), parameter_widget);
-			/* validation */
-			g_signal_connect (GEBR_GUI_FILE_ENTRY (file_entry)->entry, "activate",
-					  G_CALLBACK (__on_activate), parameter_widget);
-			gtk_widget_set_size_request(file_entry, 220, 30);
+		activatable_entry = GTK_ENTRY (entry);
+		gtk_widget_set_size_request(parameter_widget->value_widget, 140, 30);
 
-			gebr_gui_file_entry_set_choose_directory(GEBR_GUI_FILE_ENTRY(file_entry),
-								     gebr_geoxml_program_parameter_get_file_be_directory
-								     (parameter_widget->program_parameter));
-			gebr_gui_file_entry_set_do_overwrite_confirmation(GEBR_GUI_FILE_ENTRY(file_entry),
-									      FALSE);
+		g_signal_connect (parameter_widget->value_widget, "activate",
+				  G_CALLBACK (on_entry_activate_add), parameter_widget);
+		g_signal_connect (entry, "focus-in-event",
+				  G_CALLBACK (__on_focus_in_event), parameter_widget);
+		g_signal_connect (entry, "focus-out-event",
+				  G_CALLBACK(__on_focus_out_event), parameter_widget);
+		/* validation */
+		g_signal_connect (entry, "activate",
+				  G_CALLBACK(__on_activate), parameter_widget);
 
-			break;
+		break;
+	}
+	case GEBR_GEOXML_PARAMETER_TYPE_FILE: {
+		GtkWidget *file_entry;
+		GtkTreeModel *completion_model;
+
+		/* file entry */
+		parameter_widget->value_widget = file_entry =
+			gebr_gui_file_entry_new((GebrGuiFileEntryCustomize)
+						gebr_gui_parameter_widget_file_entry_customize_function,
+						parameter_widget);
+		activatable_entry = GTK_ENTRY (GEBR_GUI_FILE_ENTRY (file_entry)->entry);
+		if (may_use_dict) {
+			completion_model = generate_completion_model(parameter_widget);
+			setup_entry_completion(GTK_ENTRY(GEBR_GUI_FILE_ENTRY(file_entry)->entry), completion_model,
+					       completion_match_func,
+					       G_CALLBACK(on_entry_completion_matched),
+					       GINT_TO_POINTER(parameter_widget->parameter_type));
+			g_object_unref (completion_model);
 		}
+		g_signal_connect (GEBR_GUI_FILE_ENTRY (file_entry)->entry, "activate",
+				  G_CALLBACK (on_entry_activate_add), parameter_widget);
+		g_signal_connect (GEBR_GUI_FILE_ENTRY (file_entry)->entry, "focus-in-event",
+				  G_CALLBACK (__on_focus_in_event), parameter_widget);
+		g_signal_connect (GEBR_GUI_FILE_ENTRY (file_entry)->entry, "focus-out-event",
+				  G_CALLBACK(__on_focus_out_event), parameter_widget);
+		/* validation */
+		g_signal_connect (GEBR_GUI_FILE_ENTRY (file_entry)->entry, "activate",
+				  G_CALLBACK (__on_activate), parameter_widget);
+		gtk_widget_set_size_request(file_entry, 220, 30);
+
+		gebr_gui_file_entry_set_choose_directory(GEBR_GUI_FILE_ENTRY(file_entry),
+							 gebr_geoxml_program_parameter_get_file_be_directory
+							 (parameter_widget->program_parameter));
+		gebr_gui_file_entry_set_do_overwrite_confirmation(GEBR_GUI_FILE_ENTRY(file_entry),
+								  FALSE);
+
+		break;
+	}
 	case GEBR_GEOXML_PARAMETER_TYPE_ENUM: {
-			GtkWidget *combo_box;
-			GebrGeoXmlSequence *enum_option;
+		GtkWidget *combo_box;
+		GebrGeoXmlSequence *enum_option;
 
-			parameter_widget->value_widget = combo_box = gtk_combo_box_new_text();
-			if (!gebr_geoxml_program_parameter_get_required(parameter_widget->program_parameter))
-				gtk_combo_box_append_text(GTK_COMBO_BOX(combo_box), "");
-			gebr_geoxml_program_parameter_get_enum_option(parameter_widget->program_parameter,
-								      &enum_option, 0);
-			for (; enum_option != NULL; gebr_geoxml_sequence_next(&enum_option)) {
-				const gchar *text;
+		parameter_widget->value_widget = combo_box = gtk_combo_box_new_text();
+		if (!gebr_geoxml_program_parameter_get_required(parameter_widget->program_parameter))
+			gtk_combo_box_append_text(GTK_COMBO_BOX(combo_box), "");
+		gebr_geoxml_program_parameter_get_enum_option(parameter_widget->program_parameter,
+							      &enum_option, 0);
+		for (; enum_option != NULL; gebr_geoxml_sequence_next(&enum_option)) {
+			const gchar *text;
 
-				text = strlen(gebr_geoxml_enum_option_get_label(GEBR_GEOXML_ENUM_OPTION(enum_option)))
-				    ? gebr_geoxml_enum_option_get_label(GEBR_GEOXML_ENUM_OPTION(enum_option))
-				    : gebr_geoxml_enum_option_get_value(GEBR_GEOXML_ENUM_OPTION(enum_option));
-				gtk_combo_box_append_text(GTK_COMBO_BOX(combo_box), text);
-			}
-
-			break;
+			text = strlen(gebr_geoxml_enum_option_get_label(GEBR_GEOXML_ENUM_OPTION(enum_option)))
+				? gebr_geoxml_enum_option_get_label(GEBR_GEOXML_ENUM_OPTION(enum_option))
+				: gebr_geoxml_enum_option_get_value(GEBR_GEOXML_ENUM_OPTION(enum_option));
+			gtk_combo_box_append_text(GTK_COMBO_BOX(combo_box), text);
 		}
+
+		break;
+	}
 	case GEBR_GEOXML_PARAMETER_TYPE_FLAG: {
-			parameter_widget->value_widget = gtk_check_button_new();
-			gtk_button_set_use_underline(GTK_BUTTON(parameter_widget->value_widget), TRUE);
-			break;
-		}
+		parameter_widget->value_widget = gtk_check_button_new();
+		gtk_button_set_use_underline(GTK_BUTTON(parameter_widget->value_widget), TRUE);
+		break;
+	}
 	default:
 		return;
 	}
