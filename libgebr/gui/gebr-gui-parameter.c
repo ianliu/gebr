@@ -573,36 +573,73 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 	}
 
 	switch (parameter_widget->parameter_type) {
-	case GEBR_GEOXML_PARAMETER_TYPE_FLOAT:{
-			GtkWidget *entry;
-			GtkTreeModel *completion_model;
+	case GEBR_GEOXML_PARAMETER_TYPE_RANGE: {
+		GtkWidget *spin;
 
-			parameter_widget->value_widget = entry = gtk_entry_new();
+		const gchar *min_str;
+		const gchar *max_str;
+		const gchar *inc_str;
+		const gchar *digits_str;
+		double min, max, inc;
+		GtkTreeModel *completion_model;
 
-			if (may_use_dict) {
-				completion_model = generate_completion_model(parameter_widget);
-				setup_entry_completion(GTK_ENTRY(entry), completion_model,
-						       completion_match_func,
-						       G_CALLBACK(on_entry_completion_matched),
-						       GINT_TO_POINTER(parameter_widget->parameter_type));
-				g_object_unref (completion_model);
-			}
+		gebr_geoxml_program_parameter_get_range_properties(parameter_widget->program_parameter,
+								   &min_str, &max_str, &inc_str, &digits_str);
+		min = !strlen(min_str) ? DOUBLE_MIN : atof(min_str);
+		max = !strlen(max_str) ? DOUBLE_MAX : atof(max_str);
+		inc = !strlen(inc_str) ? 1.0 : atof(inc_str);
+		if (inc == 0)
+			inc = 1.0;
 
-			gtk_widget_set_size_request(entry, 140, 30);
-			activatable_entry = GTK_ENTRY (entry);
+		parameter_widget->value_widget = spin = gtk_spin_button_new_with_range(min, max, inc);
+		activatable_entry = GTK_ENTRY (spin);
 
-			g_signal_connect (entry, "focus-in-event",
-					  G_CALLBACK (__on_focus_in_event), parameter_widget);
-			g_signal_connect (entry, "focus-out-event",
-					  G_CALLBACK (__on_focus_out_event), parameter_widget);
-			g_signal_connect (entry, "activate",
-					  G_CALLBACK (on_entry_activate_add), parameter_widget);
-			/* validation */
-			g_signal_connect (entry, "activate",
-					  G_CALLBACK (__on_activate), parameter_widget);
-
-			break;
+		if (may_use_dict) {
+			completion_model = generate_completion_model(parameter_widget);
+			setup_entry_completion(activatable_entry, completion_model,
+					       completion_match_func,
+					       G_CALLBACK(on_entry_completion_matched),
+					       GINT_TO_POINTER(parameter_widget->parameter_type));
+			g_object_unref (completion_model);
 		}
+
+		g_signal_connect (spin, "activate",
+				  G_CALLBACK (on_entry_activate_add), parameter_widget);
+		gtk_spin_button_set_numeric(GTK_SPIN_BUTTON(spin), FALSE);
+		gtk_spin_button_set_digits(GTK_SPIN_BUTTON(spin), atoi(digits_str));
+		gtk_widget_set_size_request(parameter_widget->value_widget, 140, -1);
+		break;
+	}
+	case GEBR_GEOXML_PARAMETER_TYPE_FLOAT: {
+		GtkWidget *entry;
+		GtkTreeModel *completion_model;
+
+		parameter_widget->value_widget = entry = gtk_entry_new();
+
+		if (may_use_dict) {
+			completion_model = generate_completion_model(parameter_widget);
+			setup_entry_completion(GTK_ENTRY(entry), completion_model,
+					       completion_match_func,
+					       G_CALLBACK(on_entry_completion_matched),
+					       GINT_TO_POINTER(parameter_widget->parameter_type));
+			g_object_unref (completion_model);
+		}
+
+		gtk_widget_set_size_request(entry, 140, 30);
+		activatable_entry = GTK_ENTRY (entry);
+
+		g_signal_connect (entry, "focus-in-event",
+				  G_CALLBACK (__on_focus_in_event), parameter_widget);
+		g_signal_connect (entry, "focus-out-event",
+				  G_CALLBACK (__on_focus_out_event), parameter_widget);
+		g_signal_connect (entry, "activate",
+				  G_CALLBACK (on_entry_activate_add), parameter_widget);
+		/* validation */
+		g_signal_connect (entry, "activate",
+				  G_CALLBACK (__on_activate), parameter_widget);
+
+		break;
+	}
 	case GEBR_GEOXML_PARAMETER_TYPE_INT:{
 			GtkWidget *entry;
 			GtkTreeModel *completion_model;
@@ -660,37 +697,6 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 			/* validation */
 			g_signal_connect (entry, "activate",
 					  G_CALLBACK(__on_activate), parameter_widget);
-
-			break;
-		}
-	case GEBR_GEOXML_PARAMETER_TYPE_RANGE:{
-			if (parameter_widget->dict_parameter == NULL) {
-				GtkWidget *spin;
-
-				const gchar *min_str;
-				const gchar *max_str;
-				const gchar *inc_str;
-				const gchar *digits_str;
-				double min, max, inc;
-
-				gebr_geoxml_program_parameter_get_range_properties(parameter_widget->program_parameter,
-										   &min_str, &max_str, &inc_str, &digits_str);
-				min = !strlen(min_str) ? DOUBLE_MIN : atof(min_str);
-				max = !strlen(max_str) ? DOUBLE_MAX : atof(max_str);
-				inc = !strlen(inc_str) ? 1.0 : atof(inc_str);
-				if (inc == 0)
-					inc = 1.0;
-
-				parameter_widget->value_widget = spin = gtk_spin_button_new_with_range(min, max, inc);
-				activatable_entry = GTK_ENTRY (spin);
-				g_signal_connect (spin, "activate",
-						  G_CALLBACK (on_entry_activate_add), parameter_widget);
-				gtk_spin_button_set_numeric(GTK_SPIN_BUTTON(spin), FALSE);
-				gtk_spin_button_set_digits(GTK_SPIN_BUTTON(spin), atoi(digits_str));
-			} else {
-				parameter_widget->value_widget = gtk_entry_new();
-			}
-			gtk_widget_set_size_request(parameter_widget->value_widget, 140, -1);
 
 			break;
 		}
@@ -1250,7 +1256,8 @@ static gboolean on_entry_completion_matched (GtkEntryCompletion *completion,
 		gtk_editable_delete_text(GTK_EDITABLE(entry), ini, pos + 1);
 
 	if (type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT ||
-	    type == GEBR_GEOXML_PARAMETER_TYPE_INT){
+	    type == GEBR_GEOXML_PARAMETER_TYPE_INT ||
+	    type == GEBR_GEOXML_PARAMETER_TYPE_RANGE) {
 		gtk_editable_insert_text(GTK_EDITABLE(entry), var, -1, &ini);
 		gtk_editable_set_position(GTK_EDITABLE(entry), ini + strlen(var));
 	}
