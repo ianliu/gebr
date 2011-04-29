@@ -113,7 +113,7 @@ static gboolean dict_edit_tooltip_callback(GtkTreeView * tree_view, GtkTooltip *
 					   GtkTreeIter * iter, GtkTreeViewColumn * column, struct dict_edit_data *data);
 static gboolean on_dict_edit_tree_view_button_press_event(GtkWidget * widget, GdkEventButton * event, struct dict_edit_data *data);
 
-static gboolean dict_edit_validate_editing_cell(GtkCellRenderer *renderer, GtkTreeIter *iter, struct dict_edit_data *data);
+static gboolean dict_edit_validate_editing_cell(struct dict_edit_data *data, gboolean start_edition, gboolean cancel_edition);
 static void on_dict_edit_type_cell_edited(GtkCellRenderer * cell, gchar * path_string, gchar * new_text,
 					  struct dict_edit_data *data);
 
@@ -140,8 +140,6 @@ static void dict_edit_append_add_parameter(struct dict_edit_data *data, GtkTreeI
 static GtkMenu *on_dict_edit_popup_menu(GtkWidget * widget, struct dict_edit_data *data);
 
 static GebrGeoXmlParameterType dict_edit_type_text_to_gebr_geoxml_type(const gchar * text);
-
-static gboolean dict_edit_check_empty_keyword(const gchar * keyword, struct dict_edit_data *data);
 
 static GtkTreeIter dict_edit_append_iter(struct dict_edit_data *data, GebrGeoXmlObject * object,
 					 GtkTreeIter * document_iter);
@@ -429,7 +427,7 @@ void document_dict_edit_setup_ui(void)
 
 	data = g_new(struct dict_edit_data, 1);
 	data->in_edition = NULL;
-	data->edition_valid = TRUE;
+	data->editing_cell = NULL;
 	tree_store = gtk_tree_store_new(DICT_EDIT_N_COLUMN,
 					G_TYPE_STRING,	/* document */
 					G_TYPE_STRING,	/* type */
@@ -459,7 +457,7 @@ void document_dict_edit_setup_ui(void)
 					     GTK_WINDOW(gebr.window),
 					     (GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
 					     GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE, NULL);
-	gtk_widget_set_size_request(dialog, 500, 300);
+	gtk_widget_set_size_request(dialog, 600, 500);
 
 	GtkWidget *message_hbox = gtk_hbox_new(FALSE, 4);
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), message_hbox, FALSE, TRUE, 0);
@@ -468,7 +466,7 @@ void document_dict_edit_setup_ui(void)
 	gtk_image_set_from_stock(GTK_IMAGE(warning_image), GTK_STOCK_INFO, GTK_ICON_SIZE_MENU);
 	data->warning_image = warning_image;
 	gtk_box_pack_start(GTK_BOX(message_hbox), warning_image, FALSE, TRUE, 0);
-	GtkWidget *label = gtk_label_new(_("Please enter variables with lowercase characters"));
+	GtkWidget *label = gtk_label_new("");
 	data->label = label;
 	gtk_box_pack_start(GTK_BOX(message_hbox), label, FALSE, TRUE, 0);
 
@@ -610,6 +608,7 @@ void document_dict_edit_setup_ui(void)
 			gtk_tree_path_free(tree_path);
 		}
 	}
+	dict_edit_validate_editing_cell(data, FALSE, FALSE);
 
 	gtk_widget_show_all(dialog);
 	gtk_dialog_run(GTK_DIALOG(dialog));
@@ -781,8 +780,7 @@ static void on_dict_edit_remove_clicked(GtkButton * button, struct dict_edit_dat
 
 static gboolean on_dict_edit_tree_view_button_press_event(GtkWidget * widget, GdkEventButton * event, struct dict_edit_data *data)
 {
-	GtkTreeIter iter;
-	if (data->in_edition && dict_edit_get_selected(data, &iter) && !dict_edit_validate_editing_cell(data->editing_cell, &iter, data))
+	if (data->in_edition && !dict_edit_validate_editing_cell(data, FALSE, FALSE))
 		return TRUE;
 	else
 		return FALSE;
@@ -796,8 +794,12 @@ static gboolean on_renderer_entry_key_press_event(GtkWidget * widget, GdkEventKe
 	case GDK_ISO_Enter:
 	case GDK_KP_Enter:
 	case GDK_Return: {
-		if (!dict_edit_validate_editing_cell(data->editing_cell, &data->editing_iter, data))
+		if (!dict_edit_validate_editing_cell(data, FALSE, FALSE))
 			return TRUE; 
+
+		GtkTreeViewColumn *column = gebr_gui_gtk_tree_view_get_next_column(GTK_TREE_VIEW(data->tree_view),
+								gebr_gui_gtk_tree_view_get_column_from_renderer
+								(GTK_TREE_VIEW(data->tree_view), data->editing_cell));
 
 		g_signal_handlers_disconnect_matched(G_OBJECT(widget),
 						     G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
@@ -805,9 +807,6 @@ static gboolean on_renderer_entry_key_press_event(GtkWidget * widget, GdkEventKe
 		/* calls on_dict_edit_cell_edited */
 		gtk_cell_editable_editing_done(data->in_edition);
 
-		GtkTreeViewColumn *column = gebr_gui_gtk_tree_view_get_next_column(GTK_TREE_VIEW(data->tree_view),
-								gebr_gui_gtk_tree_view_get_column_from_renderer
-								(GTK_TREE_VIEW(data->tree_view), data->editing_cell));
 		if (column != NULL)
 			gebr_gui_gtk_tree_view_set_cursor(GTK_TREE_VIEW(data->tree_view), &data->editing_iter, column, TRUE);
 		else {
@@ -826,8 +825,7 @@ static gboolean on_renderer_entry_key_press_event(GtkWidget * widget, GdkEventKe
 				dict_edit_start_keyword_editing(data, &data->editing_iter);
 		}
 		return TRUE;
-	}
-	case GDK_Up: 
+	} case GDK_Up: 
 		return TRUE;
 	default:
 		return FALSE;
@@ -847,6 +845,7 @@ static void on_dict_edit_renderer_editing_started(GtkCellRenderer * renderer, Gt
 	data->editing_cell = renderer;
 	data->edition_valid = TRUE;
 	dict_edit_get_selected(data, &data->editing_iter);
+	dict_edit_validate_editing_cell(data, TRUE, FALSE);
 }
 
 /*
@@ -940,53 +939,76 @@ static gint dict_edit_get_column_index_for_renderer(GtkCellRenderer *renderer, s
 	return index;
 }
 
-static gboolean dict_edit_validate_editing_cell(GtkCellRenderer *renderer, GtkTreeIter *iter, struct dict_edit_data *data)
+static gboolean dict_edit_validate_editing_cell(struct dict_edit_data *data, gboolean start_edition, gboolean cancel_edition)
 {
+	data->edition_valid = TRUE;
 	if (!data->in_edition)
 		goto out;
 	gchar *new_text = (gchar*)gtk_entry_get_text(GTK_ENTRY(data->in_edition));
 
 	GebrGeoXmlProgramParameter *parameter;
-	gtk_tree_model_get(data->tree_model, iter, DICT_EDIT_GEBR_GEOXML_POINTER, &parameter, -1);
+	gtk_tree_model_get(data->tree_model, &data->editing_iter, DICT_EDIT_GEBR_GEOXML_POINTER, &parameter, -1);
 
-	data->edition_valid = TRUE;
-	switch (dict_edit_get_column_index_for_renderer(renderer, data)) {
+	switch (dict_edit_get_column_index_for_renderer(data->editing_cell, data)) {
 	case DICT_EDIT_KEYWORD:
-		if (!dict_edit_check_empty_keyword(new_text, data) || 
+		gtk_label_set_text(GTK_LABEL(data->label),
+				   _("Please enter an unique variable name."));
+		
+		if (!strlen(new_text) || 
 		    !dict_edit_is_name_valid(new_text, data) ||
 		    dict_edit_check_duplicate_keyword(data, parameter, new_text, TRUE)) {
 			const gchar *keyword = gebr_geoxml_program_parameter_get_keyword(parameter);
-			if (!strlen(keyword)) { //new items have an empty keyword
-				gtk_tree_store_remove(GTK_TREE_STORE(data->tree_model), iter);
+			if (cancel_edition && !strlen(keyword)) { //new items have an empty keyword
+				gtk_tree_store_remove(GTK_TREE_STORE(data->tree_model), &data->editing_iter);
 				gebr_geoxml_sequence_remove(GEBR_GEOXML_SEQUENCE(parameter));
-			}
-			data->edition_valid = FALSE;
+			} else
+				data->edition_valid = FALSE;
 			goto out;
 		}
 
 		gebr_geoxml_program_parameter_set_keyword(parameter, new_text);
 		break;
 	case DICT_EDIT_VALUE: {
-		const gchar *value;
-		switch (gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(parameter))) {
+		GebrGeoXmlParameterType type = gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(parameter));
+		switch (type) {
 		case GEBR_GEOXML_PARAMETER_TYPE_INT:
-			value = gebr_validate_int(new_text, NULL, NULL);
-			break;
 		case GEBR_GEOXML_PARAMETER_TYPE_FLOAT:
-			value = gebr_validate_float(new_text, NULL, NULL);
+			gtk_label_set_text(GTK_LABEL(data->label), 
+					   _("Please enter a number."));
+			break;
+		case GEBR_GEOXML_PARAMETER_TYPE_STRING:
+			gtk_label_set_text(GTK_LABEL(data->label), 
+					   _("Please enter a text."));
 			break;
 		default:
-			value = new_text;
 			break;
 		}
-		if (!strlen(new_text) || strcmp(value, new_text)) {
+
+		const gchar *old_value = gebr_geoxml_program_parameter_get_first_value(parameter, FALSE);
+		const gchar *validated;
+		switch (type) {
+		case GEBR_GEOXML_PARAMETER_TYPE_INT:
+			validated = gebr_validate_int(new_text, NULL, NULL);
+			break;
+		case GEBR_GEOXML_PARAMETER_TYPE_FLOAT:
+			validated = gebr_validate_float(new_text, NULL, NULL);
+			break;
+		default:
+			validated = new_text;
+			break;
+		}
+		if (cancel_edition && !strlen(old_value)) {
+			gtk_tree_store_remove(GTK_TREE_STORE(data->tree_model), &data->editing_iter);
+			gebr_geoxml_sequence_remove(GEBR_GEOXML_SEQUENCE(parameter));
+		} else if (!strlen(new_text) || strcmp(validated, new_text)) {
 			data->edition_valid = FALSE;
-			gtk_label_set_text(GTK_LABEL(data->label), 
-					   _("Please enter a valid number"));
 		} else
 			gebr_geoxml_program_parameter_set_first_value(parameter, FALSE, new_text);
 		break;
 	} case DICT_EDIT_COMMENT:
+		gtk_label_set_text(GTK_LABEL(data->label), 
+				   _("Please enter a comment."));
+
 		gebr_geoxml_parameter_set_label(GEBR_GEOXML_PARAMETER(parameter), new_text);
 		break;
 	default:
@@ -995,14 +1017,16 @@ static gboolean dict_edit_validate_editing_cell(GtkCellRenderer *renderer, GtkTr
 
 out:
 	if (data->edition_valid) {
-		gtk_label_set_text(GTK_LABEL(data->label), 
-				   _("Please enter variables with lowercase characters"));
-		g_object_set(G_OBJECT(data->warning_image), "stock", GTK_STOCK_INFO,
-		     "icon-size", GTK_ICON_SIZE_MENU, NULL);
-	}
-	else
-		g_object_set(G_OBJECT(data->warning_image), "stock", GTK_STOCK_DIALOG_WARNING,
-		     "icon-size", GTK_ICON_SIZE_MENU, NULL);
+		if (!data->in_edition)
+			gtk_label_set_text(GTK_LABEL(data->label),
+					   _("Click 'New' to create a variable."));
+		g_object_set(G_OBJECT(data->warning_image),
+			     "stock", GTK_STOCK_INFO,
+			     "icon-size", GTK_ICON_SIZE_MENU, NULL);
+	} else
+		g_object_set(G_OBJECT(data->warning_image),
+			     "stock", start_edition ? GTK_STOCK_INFO : GTK_STOCK_DIALOG_WARNING,
+			     "icon-size", GTK_ICON_SIZE_MENU, NULL);
 
 	return data->edition_valid;
 }
@@ -1010,9 +1034,10 @@ out:
 static void on_dict_edit_editing_cell_canceled(GtkCellRenderer * cell, struct dict_edit_data *data)
 {
 	data->in_edition = NULL;
-	data->edition_valid = TRUE;
+	data->editing_cell = NULL;
+
 	/* just to reload message */
-	dict_edit_validate_editing_cell(cell, &data->editing_iter, data);
+	dict_edit_validate_editing_cell(data, FALSE, TRUE);
 }
 
 /*
@@ -1022,13 +1047,17 @@ static void on_dict_edit_editing_cell_canceled(GtkCellRenderer * cell, struct di
 static void on_dict_edit_cell_edited(GtkCellRenderer * cell, gchar * path_string, gchar * new_text,
 				     struct dict_edit_data *data)
 {
-	if (dict_edit_validate_editing_cell(cell, &data->editing_iter, data))
+	if (dict_edit_validate_editing_cell(data, FALSE, FALSE))
 		gtk_tree_store_set(GTK_TREE_STORE(data->tree_model), &data->editing_iter,
 				   dict_edit_get_column_index_for_renderer(cell, data), new_text,
 				   -1);
 	data->in_edition = NULL;
+	data->editing_cell = NULL;
 
 	dict_edit_check_programs_using_variables(new_text, TRUE);
+
+	/* just to reload message */
+	dict_edit_validate_editing_cell(data, FALSE, FALSE);
 }
 
 /*
@@ -1075,8 +1104,9 @@ static void dict_edit_load_iter(struct dict_edit_data *data, GtkTreeIter * iter,
 			   DICT_EDIT_COMMENT, gebr_geoxml_parameter_get_label(GEBR_GEOXML_PARAMETER(parameter)),
 			   DICT_EDIT_GEBR_GEOXML_POINTER, parameter,
 			   DICT_EDIT_IS_ADD_PARAMETER, FALSE,
-			   DICT_EDIT_KEYWORD_EDITABLE, TRUE,
-			   DICT_EDIT_EDITABLE, !is_loop_iter, DICT_EDIT_SENSITIVE, !is_loop_iter, -1);
+			   DICT_EDIT_KEYWORD_EDITABLE, !is_loop_iter,
+			   DICT_EDIT_EDITABLE, !is_loop_iter,
+			   DICT_EDIT_SENSITIVE, !is_loop_iter, -1);
 
 	g_string_free(value, TRUE);
 }
@@ -1225,15 +1255,6 @@ static GebrGeoXmlParameterType dict_edit_type_text_to_gebr_geoxml_type(const gch
 	}
 	else
 		return GEBR_GEOXML_PARAMETER_TYPE_UNKNOWN;
-}
-
-static gboolean dict_edit_check_empty_keyword(const gchar * keyword, struct dict_edit_data *data)
-{
-	if (!strlen(keyword)) {
-		gtk_label_set_text(GTK_LABEL(data->label), _("Please select a keyword."));
-		return FALSE;
-	}
-	return TRUE;
 }
 
 /*
