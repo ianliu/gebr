@@ -156,12 +156,6 @@ static void on_file_entry_activate (GtkEntry *entry, GebrGuiSequenceEdit *sequen
 
 static void on_groups_combo_box_changed (GtkComboBox *combo, GebrGuiValueSequenceEdit *edit);
 
-static void on_dict_value_keyword_edited(GtkTreeViewColumn *tree_column,
-					 GtkCellRenderer *cell,
-					 GtkTreeModel *tree_model,
-					 GtkTreeIter *iter,
-					 struct dict_edit_data *data);
-
 static const GtkActionEntry dict_actions_entries[] = {
 	{"add", GTK_STOCK_ADD, NULL, NULL, N_("Add new parameter."),
 	 G_CALLBACK(on_dict_edit_add_clicked)},
@@ -538,7 +532,6 @@ void document_dict_edit_setup_ui(void)
 	gtk_tree_view_column_add_attribute(column, cell_renderer, "text", DICT_EDIT_KEYWORD);
 	gtk_tree_view_column_add_attribute(column, cell_renderer, "editable", DICT_EDIT_EDITABLE);
 	gtk_tree_view_column_add_attribute(column, cell_renderer, "sensitive", DICT_EDIT_SENSITIVE);
-	gtk_tree_view_column_set_cell_data_func(column, cell_renderer, (GtkTreeCellDataFunc)on_dict_value_keyword_edited, data, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tree_view), column);
 
 	cell_renderer = gtk_cell_renderer_text_new();
@@ -551,7 +544,6 @@ void document_dict_edit_setup_ui(void)
 	gtk_tree_view_column_add_attribute(column, cell_renderer, "text", DICT_EDIT_VALUE);
 	gtk_tree_view_column_add_attribute(column, cell_renderer, "editable", DICT_EDIT_EDITABLE);
 	gtk_tree_view_column_add_attribute(column, cell_renderer, "sensitive", DICT_EDIT_SENSITIVE);
-	gtk_tree_view_column_set_cell_data_func(column, cell_renderer, (GtkTreeCellDataFunc)on_dict_value_keyword_edited, data, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tree_view), column);
 
 	cell_renderer = gtk_cell_renderer_text_new();
@@ -1061,17 +1053,32 @@ static void dict_edit_load_iter(struct dict_edit_data *data, GtkTreeIter * iter,
 		return;
 	}
 
+	const gchar *keyword = gebr_geoxml_program_parameter_get_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(parameter));
+	gboolean is_loop_iter = strcmp(keyword, "iter") ? FALSE : TRUE;
+	GString *value = g_string_new(NULL);
+	if (is_loop_iter) {
+		GebrGeoXmlProgram * prog = gebr_geoxml_flow_get_control_program(gebr.flow);
+		gchar * step;
+		gchar * ini;
+		guint counter = gebr_geoxml_program_control_get_n(GEBR_GEOXML_PROGRAM(prog), &step, &ini);
+		g_string_printf(value, "%s:%s:%d (%d)", ini, step, atoi(ini)+atoi(step)*(counter-1), counter);
+	} else
+		g_string_assign(value,
+				gebr_geoxml_program_parameter_get_first_value(GEBR_GEOXML_PROGRAM_PARAMETER(parameter),
+									      FALSE));
+
 	gtk_tree_store_set(GTK_TREE_STORE(data->tree_model), iter,
 			   DICT_EDIT_TYPE, type_string,
 			   DICT_EDIT_KEYWORD_IMAGE, "",
-			   DICT_EDIT_KEYWORD,
-			   gebr_geoxml_program_parameter_get_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(parameter)),
-			   DICT_EDIT_VALUE,
-			   gebr_geoxml_program_parameter_get_first_value(GEBR_GEOXML_PROGRAM_PARAMETER(parameter),
-									 FALSE), DICT_EDIT_COMMENT,
-			   gebr_geoxml_parameter_get_label(GEBR_GEOXML_PARAMETER(parameter)),
-			   DICT_EDIT_GEBR_GEOXML_POINTER, parameter, DICT_EDIT_IS_ADD_PARAMETER, FALSE,
-			   DICT_EDIT_KEYWORD_EDITABLE, TRUE, DICT_EDIT_EDITABLE, TRUE, DICT_EDIT_SENSITIVE, TRUE, -1);
+			   DICT_EDIT_KEYWORD, keyword,
+			   DICT_EDIT_VALUE, value->str,
+			   DICT_EDIT_COMMENT, gebr_geoxml_parameter_get_label(GEBR_GEOXML_PARAMETER(parameter)),
+			   DICT_EDIT_GEBR_GEOXML_POINTER, parameter,
+			   DICT_EDIT_IS_ADD_PARAMETER, FALSE,
+			   DICT_EDIT_KEYWORD_EDITABLE, TRUE,
+			   DICT_EDIT_EDITABLE, !is_loop_iter, DICT_EDIT_SENSITIVE, !is_loop_iter, -1);
+
+	g_string_free(value, TRUE);
 }
 
 /*
@@ -1395,36 +1402,5 @@ static void on_groups_combo_box_changed (GtkComboBox *combo, GebrGuiValueSequenc
 
 	g_free (group);
 	gtk_tree_path_free (path);
-}
-
-static void on_dict_value_keyword_edited(GtkTreeViewColumn *tree_column,
-					 GtkCellRenderer *cell,
-					 GtkTreeModel *tree_model,
-					 GtkTreeIter *iter,
-					 struct dict_edit_data *data)
-{
-	gchar * keyword;
-	gchar * step;
-	gchar * ini;
-
-	gtk_tree_model_get(data->tree_model, iter, DICT_EDIT_KEYWORD, &keyword, -1);
-	if (g_strcmp0(keyword, "iter") != 0) {
-		g_free(keyword);
-		return;
-	}
-
-	gtk_tree_store_set(GTK_TREE_STORE(data->tree_model), iter, DICT_EDIT_EDITABLE, FALSE, DICT_EDIT_SENSITIVE, FALSE, -1);
-
-	GebrGeoXmlProgram * prog = gebr_geoxml_flow_get_control_program(gebr.flow);
-	guint counter = gebr_geoxml_program_control_get_n(GEBR_GEOXML_PROGRAM(prog), &step, &ini);
-	GString *value = g_string_new(NULL);
-
-	g_string_printf(value, "%s:%s:%d (%d)", ini, step, atoi(ini)+atoi(step)*(counter-1), counter);
-
-	if (cell == data->cell_renderer_array[DICT_EDIT_VALUE])
-		g_object_set (cell, "text", value->str, NULL);
-
-	g_string_free(value, TRUE);
-	g_free(keyword);
 }
 
