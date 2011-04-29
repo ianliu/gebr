@@ -47,6 +47,7 @@
 #include "value_sequence.h"
 #include "../gebr-expr.h"
 
+#include "parameters.h"
 /* global variables */
 /**
  * \internal
@@ -1276,9 +1277,32 @@ gebr_geoxml_document_validate_expr (const gchar *expr,
 
 	// Check if @expr is using any undefined variable
 	GList *vars = gebr_expr_extract_vars (expr);
+
+	GHashTable *var_hash = g_hash_table_new(g_str_hash, g_str_equal);
+	gchar * hash_key = NULL;
+	gint type = 0;
+
+	GebrGeoXmlSequence *i = gebr_geoxml_parameters_get_first_parameter(gebr_geoxml_document_get_dict_parameters(flow));
+	for (; i != NULL; gebr_geoxml_sequence_next(&i)) {
+		const gchar * key = gebr_geoxml_program_parameter_get_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(i));
+		type = gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(i));
+		hash_key = g_strdup(key);
+		g_hash_table_insert(var_hash, hash_key, GINT_TO_POINTER(type));
+	}
+
 	for (GList *i = vars; i; i = i->next) {
 		gchar *value;
 		gchar *name = i->data;
+		if (g_hash_table_lookup_extended(var_hash, name, NULL, (gpointer)&type))
+			if (type != GEBR_GEOXML_PARAMETER_TYPE_INT ||
+			    type != GEBR_GEOXML_PARAMETER_TYPE_FLOAT)
+			{
+				success = FALSE;
+				g_set_error (err, gebr_expr_error_quark(),
+					     GEBR_EXPR_ERROR_UNDEFINED_VAR,
+					     "Incompatible type for variable %s", name);
+				goto out;
+			}
 
 		if (!gebr_geoxml_document_is_dictkey_defined (name, &value,
 							      flow, line, proj,
@@ -1327,6 +1351,8 @@ gebr_geoxml_document_validate_expr (const gchar *expr,
 	gebr_expr_free(expression);
 
 out:
+	g_hash_table_destroy(var_hash);
+
 	g_hash_table_unref (ht);
 	g_list_foreach (vars, (GFunc) g_free, NULL);
 	g_list_free (vars);
