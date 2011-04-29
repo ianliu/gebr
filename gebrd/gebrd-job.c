@@ -31,6 +31,8 @@
 #include <libgebr/comm/gebr-comm-socketaddress.h>
 #include <libgebr/utils.h>
 #include <libgebr/date.h>
+#include <libgebr/gebr-iexpr.h>
+#include <libgebr/gebr-string-expr.h>
 
 #include "gebrd-job.h"
 #include "gebrd.h"
@@ -58,6 +60,7 @@ static void job_assembly_cmdline(GebrdJob *job);
 static void job_process_finished(GebrCommProcess * process, GebrdJob *job);
 static void job_send_signal_on_moab(const char * signal, GebrdJob * job);
 static GebrdMpiInterface * job_get_mpi_impl(const gchar * mpi_name, GString * n_process);
+static gchar *escape_quote_and_slash(const gchar *str);
 
 /**
  * \internal
@@ -730,28 +733,24 @@ static gboolean job_parse_parameter(GebrdJob *job, GebrGeoXmlParameter * paramet
 	case GEBR_GEOXML_PARAMETER_TYPE_STRING: {
 		GString *value;
 		value = gebr_geoxml_program_parameter_get_string_value(program_parameter, FALSE);
-		g_debug("%s", value->str);
 		if (strlen(g_strstrip(value->str)) > 0) {
 			gchar *result;
-			GebrdStringParserError error;
+			gchar *escaped;
+			GError *error = NULL;
 
-			error = parse_string_expression(value->str, job->table, &result);
+			gebr_string_expr_eval(job->str_expr, value->str, &result, &error);
 
-			g_debug("Error code is: %d", error);
-			switch (error) {
-			case GEBRD_STRING_PARSER_ERROR_NONE:
+			if (!error) {
+				escaped = escape_quote_and_slash(result);
 				g_string_append_printf (job->parent.cmd_line, "%s\"%s\" ",
 							gebr_geoxml_program_parameter_get_keyword(program_parameter),
 							result);
+				g_free (escaped);
 				g_free (result);
-				break;
-			case GEBRD_STRING_PARSER_ERROR_SYNTAX:
-				job_issue(job, _("Syntax error in string expression"));
+			} else {
+				job_issue(job, error->message);
 				g_string_free (value, TRUE);
-				return FALSE;
-			case GEBRD_STRING_PARSER_ERROR_UNDEF_VAR:
-				job_issue(job, _("Undefined variable in string expression"));
-				g_string_free (value, TRUE);
+				g_error_free(error);
 				return FALSE;
 			}
 		}
@@ -890,32 +889,27 @@ guint gebrd_bc_hash_func(gconstpointer a)
 	return g_str_hash(a);
 }
 
-static void define_bc_variables(GString *expr_buf, GebrGeoXmlFlow *flow, GHashTable **table, gsize *n_vars)
+static void define_bc_variables(GebrdJob *job, GString *expr_buf, gsize *n_vars)
 {
 	gsize j = 1;
-	guint *index;
 	const gchar *value;
 	const gchar *keyword;
 	GebrGeoXmlSequence *seq;
 	GebrGeoXmlParameters *params;
 	GebrGeoXmlProgramParameter *prog_param;
-	GHashTable *ht = g_hash_table_new_full(gebrd_bc_hash_func,
-					       gebrd_bc_equal_func,
-					       g_free,
-					       g_free);
 
-	*table = ht;
 	g_string_append(expr_buf, "\t\titer # V[0]\n");
-	index = g_new(guint, 1), *index = 0;
-	g_hash_table_insert(ht, g_strdup("number:iter"), index);
+	gebr_iexpr_set_var(GEBR_IEXPR(job->str_expr), "iter",
+			   GEBR_GEOXML_PARAMETER_TYPE_STRING,
+			   "${V[0]}", NULL);
 
 	// Insert variables definitions
-	params = gebr_geoxml_document_get_dict_parameters (GEBR_GEOXML_DOCUMENT (flow));
+	params = gebr_geoxml_document_get_dict_parameters (GEBR_GEOXML_DOCUMENT (job->flow));
 	gebr_geoxml_parameters_get_parameter (params, &seq, 0);
 	for (; seq; gebr_geoxml_sequence_next (&seq))
 	{
 		gchar *label;
-		gchar *var_name;
+		gchar *var_value;
 		GebrGeoXmlParameterType type = gebr_geoxml_parameter_get_type (GEBR_GEOXML_PARAMETER (seq));
 
 		switch (type)
@@ -940,9 +934,11 @@ static void define_bc_variables(GString *expr_buf, GebrGeoXmlFlow *flow, GHashTa
 			else
 				g_string_append_printf(expr_buf, "\t\t%s = %s ; %s # V[%d]: %s\n",
 						       keyword, value, keyword, j, replace_quotes(label));
-			var_name = g_strconcat("number:", keyword, NULL);
-			index = g_new(guint, 1), *index = j++;
-			g_hash_table_insert(ht, var_name, index);
+			var_value = g_strdup_printf("${V[%d]}", j++);
+			gebr_iexpr_set_var(GEBR_IEXPR(job->str_expr), keyword,
+					   GEBR_GEOXML_PARAMETER_TYPE_STRING,
+					   var_value, NULL);
+			g_free (var_value);
 			g_free (label);
 			break;
 		}
@@ -950,8 +946,9 @@ static void define_bc_variables(GString *expr_buf, GebrGeoXmlFlow *flow, GHashTa
 			prog_param = GEBR_GEOXML_PROGRAM_PARAMETER (seq);
 			value = gebr_geoxml_program_parameter_get_first_value (prog_param, FALSE);
 			keyword = gebr_geoxml_program_parameter_get_keyword (prog_param);
-			var_name = g_strconcat("string:", keyword, NULL);
-			g_hash_table_insert(ht, var_name, g_strdup(value));
+			gebr_iexpr_set_var(GEBR_IEXPR(job->str_expr), keyword,
+					   GEBR_GEOXML_PARAMETER_TYPE_STRING,
+					   value, NULL);
 			break;
 		default:
 			continue;
@@ -1008,7 +1005,7 @@ static void job_assembly_cmdline(GebrdJob *job)
 	GString *expr_buf = g_string_new("");
 
 	job->expr_count = 0;
-	job->table = NULL;
+	job->str_expr = gebr_string_expr_new();
 
 	if (job->flow == NULL) 
 		goto err;
@@ -1068,19 +1065,27 @@ static void job_assembly_cmdline(GebrdJob *job)
 
 		gchar *result;
 		const gchar *input_expr;
+		GError *error = NULL;
 
 		input_expr = gebr_geoxml_flow_io_get_input(job->flow);
-		switch (parse_string_expression(input_expr, job->table, &result))
-		{
-		case GEBRD_STRING_PARSER_ERROR_NONE:
-			g_string_append_printf(job->parent.cmd_line, "<\"%s\" ", result);
+		gebr_string_expr_eval(job->str_expr, input_expr, &result, &error);
+
+		if (!error) {
+			gchar *escaped = escape_quote_and_slash(result);
+			g_string_append_printf(job->parent.cmd_line, "<\"%s\" ", escaped);
 			g_free(result);
-			break;
-		case GEBRD_STRING_PARSER_ERROR_SYNTAX:
-			job_issue(job, _("Syntax error in input file expression"));
-			goto err;
-		case GEBRD_STRING_PARSER_ERROR_UNDEF_VAR:
-			job_issue(job, _("Undefined variable in input file expression"));
+			g_free(escaped);
+		} else {
+			switch (error->code) {
+			case GEBR_IEXPR_ERROR_SYNTAX:
+			case GEBR_IEXPR_ERROR_INVAL_VAR:
+				job_issue(job, _("Syntax error in input file expression"));
+				break;
+			case GEBR_IEXPR_ERROR_UNDEF_VAR:
+				job_issue(job, _("Undefined variable in input file expression"));
+				break;
+			}
+			g_error_free(error);
 			goto err;
 		}
 	}
@@ -1107,7 +1112,7 @@ static void job_assembly_cmdline(GebrdJob *job)
 		g_free(mpicmd);
 	}
 
-	define_bc_variables(expr_buf, job->flow, &job->table, &job->n_vars);
+	define_bc_variables(job, expr_buf, &job->n_vars);
 
 	if (job_add_program_parameters(job, GEBR_GEOXML_PROGRAM(program), expr_buf) == FALSE)
 		goto err;
@@ -1115,20 +1120,28 @@ static void job_assembly_cmdline(GebrdJob *job)
 	/* check for error file output */
 	if (has_error_output_file && gebr_geoxml_program_get_stderr(GEBR_GEOXML_PROGRAM(program))) {
 		gchar *result;
+		GError *error = NULL;
 		const gchar *error_expr;
 
 		error_expr = gebr_geoxml_flow_io_get_error(job->flow);
-		switch (parse_string_expression(error_expr, job->table, &result))
-		{
-		case GEBRD_STRING_PARSER_ERROR_NONE:
-			g_string_append_printf(job->parent.cmd_line, "2>> \"%s\" ", result);
+		gebr_string_expr_eval(job->str_expr, error_expr, &result, &error);
+
+		if (!error) {
+			gchar *escaped = escape_quote_and_slash(result);
+			g_string_append_printf(job->parent.cmd_line, "2>> \"%s\" ", escaped);
 			g_free(result);
-			break;
-		case GEBRD_STRING_PARSER_ERROR_SYNTAX:
-			job_issue(job, _("Syntax error in error file expression"));
-			goto err;
-		case GEBRD_STRING_PARSER_ERROR_UNDEF_VAR:
-			job_issue(job, _("Undefined variable in error file expression"));
+			g_free(escaped);
+		} else {
+			switch (error->code) {
+			case GEBR_IEXPR_ERROR_SYNTAX:
+			case GEBR_IEXPR_ERROR_INVAL_VAR:
+				job_issue(job, _("Syntax error in error file expression"));
+				break;
+			case GEBR_IEXPR_ERROR_UNDEF_VAR:
+				job_issue(job, _("Undefined variable in error file expression"));
+				break;
+			}
+			g_error_free(error);
 			goto err;
 		}
 	}
@@ -1215,19 +1228,26 @@ static void job_assembly_cmdline(GebrdJob *job)
 		if (has_error_output_file && gebr_geoxml_program_get_stderr(GEBR_GEOXML_PROGRAM(program))) {
 			gchar *result;
 			const gchar *error_expr;
+			GError *error = NULL;
 
 			error_expr = gebr_geoxml_flow_io_get_error(job->flow);
-			switch (parse_string_expression(error_expr, job->table, &result))
-			{
-			case GEBRD_STRING_PARSER_ERROR_NONE:
-				g_string_append_printf(job->parent.cmd_line, "2>> \"%s\" ", result);
+			gebr_string_expr_eval(job->str_expr, error_expr, &result, &error);
+			if (!error) {
+				gchar *escaped = escape_quote_and_slash(result);
+				g_string_append_printf(job->parent.cmd_line, "2>> \"%s\" ", escaped);
 				g_free(result);
-				break;
-			case GEBRD_STRING_PARSER_ERROR_SYNTAX:
-				job_issue(job, _("Syntax error in error file expression"));
-				goto err;
-			case GEBRD_STRING_PARSER_ERROR_UNDEF_VAR:
-				job_issue(job, _("Undefined variable in error file expression"));
+				g_free(escaped);
+			} else {
+				switch (error->code) {
+				case GEBR_IEXPR_ERROR_SYNTAX:
+				case GEBR_IEXPR_ERROR_INVAL_VAR:
+					job_issue(job, _("Syntax error in error file expression"));
+					break;
+				case GEBR_IEXPR_ERROR_UNDEF_VAR:
+					job_issue(job, _("Undefined variable in error file expression"));
+					break;
+				}
+				g_error_free(error);
 				goto err;
 			}
 		}
@@ -1245,22 +1265,26 @@ static void job_assembly_cmdline(GebrdJob *job)
 		else {
 			gchar *result;
 			const gchar *output_expr;
+			GError *error = NULL;
 
 			output_expr = gebr_geoxml_flow_io_get_output(job->flow);
-			switch (parse_string_expression(output_expr, job->table, &result))
-			{
-			case GEBRD_STRING_PARSER_ERROR_NONE:
-				if (gebr_geoxml_flow_io_get_output_append(job->flow))
-					g_string_append_printf(job->parent.cmd_line, ">> \"%s\" ", result);
-				else
-					g_string_append_printf(job->parent.cmd_line, "> \"%s\" ", result);
+			gebr_string_expr_eval(job->str_expr, output_expr, &result, &error);
+			if (!error) {
+				gchar *escaped = escape_quote_and_slash(result);
+				g_string_append_printf(job->parent.cmd_line, ">> \"%s\" ", escaped);
 				g_free(result);
-				break;
-			case GEBRD_STRING_PARSER_ERROR_SYNTAX:
-				job_issue(job, _("Syntax error in output file expression"));
-				goto err;
-			case GEBRD_STRING_PARSER_ERROR_UNDEF_VAR:
-				job_issue(job, _("Undefined variable in output file expression"));
+				g_free(escaped);
+			} else {
+				switch (error->code) {
+				case GEBR_IEXPR_ERROR_SYNTAX:
+				case GEBR_IEXPR_ERROR_INVAL_VAR:
+					job_issue(job, _("Syntax error in output file expression"));
+					break;
+				case GEBR_IEXPR_ERROR_UNDEF_VAR:
+					job_issue(job, _("Undefined variable in output file expression"));
+					break;
+				}
+				g_error_free(error);
 				goto err;
 			}
 		}
@@ -1290,8 +1314,7 @@ static void job_assembly_cmdline(GebrdJob *job)
 	g_string_free(expr_buf, TRUE);
 	return;
 err:	
-	if (job->table)
-		g_hash_table_unref(job->table);
+	g_object_unref(job->str_expr);
 	g_string_free(expr_buf, TRUE);
 	g_string_assign(job->parent.cmd_line, "");
 	job->critical_error = TRUE;
@@ -1311,89 +1334,4 @@ static gchar *escape_quote_and_slash(const gchar *str)
 	}
 	s[i] = '\0';
 	return s;
-}
-
-GebrdStringParserError parse_string_expression(const gchar *str, GHashTable *table, gchar **result)
-{
-	gint i = 0, j;
-	gpointer value;
-	gchar *var_name, *real_name;
-	gboolean fetch_var = FALSE;
-	GString *unescape = g_string_new(NULL);
-	GebrdStringParserError retval = GEBRD_STRING_PARSER_ERROR_NONE;
-
-	var_name = g_new(gchar, strlen(str));
-
-	while (str[i])
-	{
-		if (str[i] == '[' && str[i+1] == '[') {
-			i += 2;
-			g_string_append_c(unescape, '[');
-			continue;
-		}
-
-		if (str[i] == '[') {
-			fetch_var = TRUE;
-			i++;
-			j = 0;
-			continue;
-		}
-
-		if (fetch_var) {
-			if (str[i] == ']') {
-				fetch_var = FALSE;
-				var_name[j] = '\0';
-				g_debug("--Found var name '%s', looking in table...", var_name);
-				if (g_hash_table_lookup_extended(table, var_name, (gpointer*)&real_name, &value)) {
-					g_debug("---Found! The real name is: %s", real_name);
-					if (g_str_has_prefix(real_name, "string:")) {
-						gchar *tmp = escape_quote_and_slash((const gchar*)value);
-						g_string_append(unescape, tmp);
-						g_free(tmp);
-					} else if (g_str_has_prefix(real_name, "number:"))
-						g_string_append_printf(unescape, "${V[%d]}", *(guint*)value);
-					else
-						g_warn_if_reached();
-				} else {
-					g_debug("ERROR ** Could not find variable %s in hash table", var_name);
-					retval = GEBRD_STRING_PARSER_ERROR_UNDEF_VAR;
-					goto exception;
-				}
-				i++;
-				continue;
-			} else {
-				var_name[j++] = str[i++];
-				continue;
-			}
-		}
-
-		if (str[i] == ']') {
-		       if (str[i+1] != ']') {
-			       g_debug("ERROR ** Missing closing bracket");
-			       retval = GEBRD_STRING_PARSER_ERROR_SYNTAX;
-			       goto exception;
-		       } else {
-			       g_string_append_c(unescape, ']');
-			       i += 2;
-		       }
-		       continue;
-		}
-
-		// Escape double-quotes and backslashes
-		if (str[i] == '"' || str[i] == '\\')
-			g_string_append_c(unescape, '\\');
-		g_string_append_c(unescape, str[i++]);
-	}
-
-	if (fetch_var) {
-		retval = GEBRD_STRING_PARSER_ERROR_SYNTAX;
-		goto exception;
-	}
-
-	*result = g_string_free(unescape, FALSE);
-
-exception:
-	g_free(var_name);
-
-	return retval;
 }

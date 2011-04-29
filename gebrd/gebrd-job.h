@@ -21,6 +21,7 @@
 #include <libgebr/geoxml/geoxml.h>
 #include <libgebr/comm/gebr-comm-process.h>
 #include <libgebr/comm/gebr-comm-job.h>
+#include <libgebr/gebr-string-expr.h>
 
 #include "gebrd-client.h"
 
@@ -56,9 +57,10 @@ struct _GebrdJob {
 	gint expr_count;
 
 	/* Temporary variables to build command line */
-	GHashTable *table;
+	GebrStringExpr *str_expr;
 	gsize n_vars;
 };
+
 struct _GebrdJobClass {
 	GebrCommJobClass parent;
 };
