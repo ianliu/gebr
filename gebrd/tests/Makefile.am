@@ -20,6 +20,6 @@ TEST_PROGS += test-job-queue
 test_job_queue_SOURCES = test-job-queue.c
 test_job_queue_LDADD = ../libgebrd.a
 
-TEST_PROGS += test-job
-test_job_SOURCES = test-job.c
-test_job_LDADD = ../libgebrd.a
+# TEST_PROGS += test-job
+# test_job_SOURCES = test-job.c
+# test_job_LDADD = ../libgebrd.a
