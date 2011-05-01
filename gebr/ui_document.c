@@ -70,6 +70,7 @@ struct dict_edit_data {
 
 	GtkWidget *warning_image;
 	GtkWidget *label;
+	GtkWidget *event_box;
 	GtkWidget *tree_view;
 
 	/* in edition parameters */
@@ -459,16 +460,20 @@ void document_dict_edit_setup_ui(void)
 					     GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE, NULL);
 	gtk_widget_set_size_request(dialog, 600, 500);
 
-	GtkWidget *message_hbox = gtk_hbox_new(FALSE, 4);
-	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), message_hbox, FALSE, TRUE, 0);
 	GtkWidget *warning_image = gtk_image_new();
-
-	gtk_image_set_from_stock(GTK_IMAGE(warning_image), GTK_STOCK_INFO, GTK_ICON_SIZE_MENU);
-	data->warning_image = warning_image;
-	gtk_box_pack_start(GTK_BOX(message_hbox), warning_image, FALSE, TRUE, 0);
 	GtkWidget *label = gtk_label_new("");
+
+	data->warning_image = warning_image;
 	data->label = label;
+	gtk_image_set_from_stock(GTK_IMAGE(warning_image), GTK_STOCK_INFO, GTK_ICON_SIZE_MENU);
+
+	GtkWidget *message_hbox = gtk_hbox_new(FALSE, 4);
+	gtk_box_pack_start(GTK_BOX(message_hbox), warning_image, FALSE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(message_hbox), label, FALSE, TRUE, 0);
+
+	data->event_box = gtk_event_box_new();
+	gtk_container_add(GTK_CONTAINER(data->event_box), message_hbox);
+	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), data->event_box, FALSE, TRUE, 0);
 
 	frame = gtk_frame_new("");
 	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), frame);
@@ -801,9 +806,8 @@ static gboolean on_renderer_entry_key_press_event(GtkWidget * widget, GdkEventKe
 								gebr_gui_gtk_tree_view_get_column_from_renderer
 								(GTK_TREE_VIEW(data->tree_view), data->editing_cell));
 
-		g_signal_handlers_disconnect_matched(G_OBJECT(widget),
-						     G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
-						     G_CALLBACK(on_renderer_entry_key_press_event), data);
+		g_signal_handlers_disconnect_by_func(widget, on_renderer_entry_key_press_event, data);
+
 		/* calls on_dict_edit_cell_edited */
 		gtk_cell_editable_editing_done(data->in_edition);
 
@@ -825,7 +829,8 @@ static gboolean on_renderer_entry_key_press_event(GtkWidget * widget, GdkEventKe
 				dict_edit_start_keyword_editing(data, &data->editing_iter);
 		}
 		return TRUE;
-	} case GDK_Up: 
+	}
+	case GDK_Up:
 		return TRUE;
 	default:
 		return FALSE;
@@ -939,6 +944,65 @@ static gint dict_edit_get_column_index_for_renderer(GtkCellRenderer *renderer, s
 	return index;
 }
 
+typedef struct {
+	guint *id;
+	guint frame;
+	guint total;
+	GdkColor overlay;
+	GdkColor original;
+	GtkWidget *widget;
+} AnimationData;
+
+static gboolean animate_widget_highlight(gpointer data)
+{
+	AnimationData *anim = data;
+	GdkColor color;
+
+	gdouble r = anim->original.red;
+	gdouble g = anim->original.green;
+	gdouble b = anim->original.blue;
+	gdouble f = anim->frame;
+	gdouble t = anim->total;
+
+	color.red   = (guint16)(f/t * r + (t-f)/t * anim->overlay.red);
+	color.green = (guint16)(f/t * g + (t-f)/t * anim->overlay.green);
+	color.blue  = (guint16)(f/t * b + (t-f)/t * anim->overlay.blue);
+
+	gtk_widget_modify_bg(anim->widget, GTK_STATE_NORMAL, &color);
+
+	if (anim->frame == anim->total) {
+		*anim->id = 0;
+		return FALSE;
+	}
+
+	anim->frame++;
+	return TRUE;
+}
+
+static void highlight_widget(GtkWidget *widget)
+{
+	static guint animation_id = 0;
+	AnimationData *anim;
+	GtkStyle *style;
+
+	/* Do not run multiple animations */
+	if (animation_id)
+		return;
+
+	anim = g_new(AnimationData, 1);
+	style = gtk_widget_get_style(widget);
+	anim->id = &animation_id;
+	anim->frame = 0;
+	anim->total = 500 / 20;
+	anim->widget = widget;
+	gdk_color_parse("yellow", &anim->overlay);
+	anim->original = style->bg[GTK_STATE_NORMAL];
+
+	animation_id = g_timeout_add_full(G_PRIORITY_DEFAULT, 20,
+					  animate_widget_highlight,
+					  anim, g_free);
+}
+
 static gboolean dict_edit_validate_editing_cell(struct dict_edit_data *data, gboolean start_edition, gboolean cancel_edition)
 {
 	data->edition_valid = TRUE;
@@ -1023,10 +1087,14 @@ out:
 		g_object_set(G_OBJECT(data->warning_image),
 			     "stock", GTK_STOCK_INFO,
 			     "icon-size", GTK_ICON_SIZE_MENU, NULL);
-	} else
+	} else {
 		g_object_set(G_OBJECT(data->warning_image),
 			     "stock", start_edition ? GTK_STOCK_INFO : GTK_STOCK_DIALOG_WARNING,
 			     "icon-size", GTK_ICON_SIZE_MENU, NULL);
+
+		if (!cancel_edition && !start_edition)
+			highlight_widget(GTK_WIDGET(data->event_box));
+	}
 
 	return data->edition_valid;
 }
