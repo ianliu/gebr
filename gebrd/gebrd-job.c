@@ -806,21 +806,21 @@ static gboolean job_parse_parameter(GebrdJob *job, GebrGeoXmlParameter * paramet
 					else
 						temp = g_strdup(strip);
 					if(*vmin && *vmax)
-						g_string_append_printf (expr_buf, "\t\tmin(%s,max(%s,%s)) # V[%ld]: %s\n", vmax, vmin, temp,
+						g_string_append_printf (expr_buf, "\t\tmin(%s,max(%s,%s)) # V[%"G_GSIZE_FORMAT"]: %s\n", vmax, vmin, temp,
 									job->expr_count + job->n_vars, gebr_geoxml_parameter_get_label (parameter));
 					else if(*vmin)
-						g_string_append_printf (expr_buf, "\t\tmax(%s,%s) # V[%ld]: %s\n", vmin, temp,
+						g_string_append_printf (expr_buf, "\t\tmax(%s,%s) # V[%"G_GSIZE_FORMAT"]: %s\n", vmin, temp,
 									job->expr_count + job->n_vars, gebr_geoxml_parameter_get_label (parameter));
 					else if(*vmax)
-						g_string_append_printf (expr_buf, "\t\tmax(%s,%s) # V[%ld]: %s\n", vmax, temp,
+						g_string_append_printf (expr_buf, "\t\tmax(%s,%s) # V[%"G_GSIZE_FORMAT"]: %s\n", vmax, temp,
 									job->expr_count + job->n_vars, gebr_geoxml_parameter_get_label (parameter));
 					else
-						g_string_append_printf (expr_buf, "\t\t%s # V[%ld]: %s\n", temp,
+						g_string_append_printf (expr_buf, "\t\t%s # V[%"G_GSIZE_FORMAT"]: %s\n", temp,
 									job->expr_count + job->n_vars, gebr_geoxml_parameter_get_label (parameter));
 
 					if(!first)
 						g_string_append(job->parent.cmd_line, separator);
-					g_string_append_printf (job->parent.cmd_line, "${V[%ld]}", job->expr_count + job->n_vars);
+					g_string_append_printf (job->parent.cmd_line, "${V[%"G_GSIZE_FORMAT"]}", job->expr_count + job->n_vars);
 					job->expr_count++;
 					g_free(temp);
 				} else  {
@@ -967,18 +967,18 @@ static void define_bc_variables(GebrdJob *job, GString *expr_buf, gsize *n_vars)
 			keyword = gebr_geoxml_program_parameter_get_keyword (prog_param);
 			gebr_geoxml_program_parameter_get_number_min_max(GEBR_GEOXML_PROGRAM_PARAMETER (seq), &vmin, &vmax);
 			if(*vmin && *vmax)
-				g_string_append_printf(expr_buf, "\t\t%s = min(%s,max(%s,%s)) ; %s # V[%ld]: %s\n",
+				g_string_append_printf(expr_buf, "\t\t%s = min(%s,max(%s,%s)) ; %s # V[%"G_GSIZE_FORMAT"]: %s\n",
 						       keyword, vmax, vmin, value, keyword, j, replace_quotes(label));
 			else if(*vmin)
-				g_string_append_printf(expr_buf, "\t\t%s = max(%s,%s) ; %s # V[%ld]: %s\n",
+				g_string_append_printf(expr_buf, "\t\t%s = max(%s,%s) ; %s # V[%"G_GSIZE_FORMAT"]: %s\n",
 						       keyword, vmin, value, keyword, j, replace_quotes(label));
 			else if(*vmax)
-				g_string_append_printf(expr_buf, "\t\t%s = min(%s,%s) ; %s # V[%ld]: %s\n",
+				g_string_append_printf(expr_buf, "\t\t%s = min(%s,%s) ; %s # V[%"G_GSIZE_FORMAT"]: %s\n",
 				                       keyword, vmax, value, keyword, j, replace_quotes(label));
 			else
-				g_string_append_printf(expr_buf, "\t\t%s = %s ; %s # V[%ld]: %s\n",
+				g_string_append_printf(expr_buf, "\t\t%s = %s ; %s # V[%"G_GSIZE_FORMAT"]: %s\n",
 						       keyword, value, keyword, j, replace_quotes(label));
-			var_value = g_strdup_printf("${V[%ld]}", j++);
+			var_value = g_strdup_printf("${V[%"G_GSIZE_FORMAT"]}", j++);
 			gebr_iexpr_set_var(GEBR_IEXPR(job->str_expr), keyword,
 					   GEBR_GEOXML_PARAMETER_TYPE_STRING,
 					   var_value, NULL);
