@@ -993,7 +993,7 @@ static void highlight_widget(GtkWidget *widget)
 	style = gtk_widget_get_style(widget);
 	anim->id = &animation_id;
 	anim->frame = 0;
-	anim->total = 500 / 20;
+	anim->total = 1000 / 20;
 	anim->widget = widget;
 	gdk_color_parse("yellow", &anim->overlay);
 	anim->original = style->bg[GTK_STATE_NORMAL];
