@@ -1278,7 +1278,7 @@ gebr_geoxml_document_validate_expr (const gchar *expr,
 	// Check if @expr is using any undefined variable
 	GList *vars = gebr_expr_extract_vars (expr);
 
-	GHashTable *var_hash = g_hash_table_new(g_str_hash, g_str_equal);
+	GHashTable *var_hash = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
 	gchar * hash_key = NULL;
 	gint type = 0;
 
@@ -1294,7 +1294,7 @@ gebr_geoxml_document_validate_expr (const gchar *expr,
 		gchar *value;
 		gchar *name = i->data;
 		if (g_hash_table_lookup_extended(var_hash, name, NULL, (gpointer)&type))
-			if (type != GEBR_GEOXML_PARAMETER_TYPE_INT ||
+			if (type != GEBR_GEOXML_PARAMETER_TYPE_INT &&
 			    type != GEBR_GEOXML_PARAMETER_TYPE_FLOAT)
 			{
 				success = FALSE;
