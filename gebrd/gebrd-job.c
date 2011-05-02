@@ -737,6 +737,23 @@ static gboolean job_parse_parameter(GebrdJob *job, GebrGeoXmlParameter * paramet
 		GebrGeoXmlSequence *seq;
 		gboolean first = TRUE;
 
+		GString *all_values;
+		all_values = gebr_geoxml_program_parameter_get_string_value(program_parameter, FALSE);
+
+		if (all_values->len == 0) {
+			if (gebr_geoxml_program_parameter_get_required(program_parameter)) {
+				job_issue(job,
+					  _("Required parameter '%s' of program '%s' not provided.\n"),
+					  gebr_geoxml_parameter_get_label(parameter),
+					  gebr_geoxml_program_get_title(program));
+				g_string_free(all_values, TRUE);
+				return FALSE;
+			}
+			g_string_free(all_values, TRUE);
+			break;
+		}
+		g_string_free(all_values, TRUE);
+
 		gebr_geoxml_program_parameter_get_value(program_parameter, FALSE, &seq, 0);
 		g_string_append(job->parent.cmd_line, gebr_geoxml_program_parameter_get_keyword(program_parameter));
 		g_string_append_c(job->parent.cmd_line, '"');
@@ -788,6 +805,23 @@ static gboolean job_parse_parameter(GebrdJob *job, GebrGeoXmlParameter * paramet
 		GebrGeoXmlSequence *seq;
 		gboolean first = TRUE;
 	
+		GString *all_values;
+		all_values = gebr_geoxml_program_parameter_get_string_value(program_parameter, FALSE);
+
+		if (all_values->len == 0) {
+			if (gebr_geoxml_program_parameter_get_required(program_parameter)) {
+				job_issue(job,
+					  _("Required parameter '%s' of program '%s' not provided.\n"),
+					  gebr_geoxml_parameter_get_label(parameter),
+					  gebr_geoxml_program_get_title(program));
+				g_string_free(all_values, TRUE);
+				return FALSE;
+			}
+			g_string_free(all_values, TRUE);
+			break;
+		}
+		g_string_free(all_values, TRUE);
+
 		gebr_geoxml_program_parameter_get_value(program_parameter, FALSE, &seq, 0);
 		gebr_geoxml_program_parameter_get_number_min_max(program_parameter, &vmin, &vmax);
 		g_string_append(job->parent.cmd_line, gebr_geoxml_program_parameter_get_keyword(program_parameter));
