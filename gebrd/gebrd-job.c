@@ -972,10 +972,13 @@ static void define_bc_variables(GebrdJob *job, GString *expr_buf, gsize *n_vars)
 	GebrGeoXmlParameters *params;
 	GebrGeoXmlProgramParameter *prog_param;
 	GebrGeoXmlProgram *program;
+	GebrGeoXmlProgramStatus status;
 
 	program = gebr_geoxml_flow_get_control_program(job->flow);
-	if(gebr_geoxml_program_get_control(program) == GEBR_GEOXML_PROGRAM_CONTROL_FOR) {
-		g_string_append_printf(expr_buf, "\t\titer # V[%d]\n", j);
+	status = gebr_geoxml_program_get_status(program);
+	if(gebr_geoxml_program_get_control(program) == GEBR_GEOXML_PROGRAM_CONTROL_FOR
+			&& status == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED) {
+		g_string_append_printf(expr_buf, "\t\titer # V[%"G_GSIZE_FORMAT"]\n", j);
 		gebr_iexpr_set_var(GEBR_IEXPR(job->str_expr), "iter",
 		                   GEBR_GEOXML_PARAMETER_TYPE_STRING,
 		                   "${V[0]}", NULL);
