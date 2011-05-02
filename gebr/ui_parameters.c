@@ -168,7 +168,6 @@ gboolean validate_program_iter(GtkTreeIter *iter, GError **error)
 					 error))
 		return TRUE;
 
-	g_debug("Program is invalid!");
 	return FALSE;
 }
 

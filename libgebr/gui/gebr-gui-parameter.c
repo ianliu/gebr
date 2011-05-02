@@ -199,8 +199,11 @@ static void gebr_gui_parameter_widget_set_non_list_widget_value(struct gebr_gui_
 	case GEBR_GEOXML_PARAMETER_TYPE_FLOAT:
 	case GEBR_GEOXML_PARAMETER_TYPE_INT:
 	case GEBR_GEOXML_PARAMETER_TYPE_STRING:
+		gtk_entry_set_text(GTK_ENTRY(parameter_widget->value_widget), value);
+		break;
 	case GEBR_GEOXML_PARAMETER_TYPE_RANGE:
 		gtk_entry_set_text(GTK_ENTRY(parameter_widget->value_widget), value);
+		gtk_spin_button_update(GTK_SPIN_BUTTON(parameter_widget->value_widget));
 		break;
 	case GEBR_GEOXML_PARAMETER_TYPE_FILE:
 		gebr_gui_file_entry_set_path(GEBR_GUI_FILE_ENTRY(parameter_widget->value_widget),
@@ -257,29 +260,9 @@ static GString *gebr_gui_parameter_widget_get_widget_value_full(struct gebr_gui_
 	case GEBR_GEOXML_PARAMETER_TYPE_FLOAT:
 	case GEBR_GEOXML_PARAMETER_TYPE_INT:
 	case GEBR_GEOXML_PARAMETER_TYPE_STRING:
+	case GEBR_GEOXML_PARAMETER_TYPE_RANGE:
 		g_string_assign(value, gtk_entry_get_text(GTK_ENTRY(parameter_widget->value_widget)));
 		break;
-	case GEBR_GEOXML_PARAMETER_TYPE_RANGE:{// FIXME: Recuperar valor de range!
-			guint digits;
-			digits = gtk_spin_button_get_digits(GTK_SPIN_BUTTON(parameter_widget->value_widget));
-			if (digits == 0)
-				g_string_printf(value, "%d",
-						gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON
-										 (parameter_widget->
-										  value_widget)));
-			else {
-				GString *mask;
-
-				mask = g_string_new(NULL);
-				g_string_printf(mask, "%%.%if", digits);
-				g_string_printf(value, mask->str,
-						gtk_spin_button_get_value(GTK_SPIN_BUTTON
-									  (parameter_widget->value_widget)));
-
-				g_string_free(mask, TRUE);
-			}
-			break;
-		}
 	case GEBR_GEOXML_PARAMETER_TYPE_FILE:
 		g_string_assign(value,
 				gebr_gui_file_entry_get_path(GEBR_GUI_FILE_ENTRY
@@ -361,13 +344,6 @@ static void gebr_gui_parameter_widget_on_value_widget_changed(GtkWidget * widget
 
 	gebr_gui_parameter_widget_sync_non_list(parameter_widget);
 	gebr_gui_parameter_widget_report_change(parameter_widget);
-}
-
-static gboolean gebr_gui_parameter_widget_on_range_changed(GtkSpinButton * spinbutton,
-							   struct gebr_gui_parameter_widget *parameter_widget)
-{
-	gebr_gui_parameter_widget_on_value_widget_changed(GTK_WIDGET(spinbutton), parameter_widget);
-	return FALSE;
 }
 
 /*
@@ -839,15 +815,10 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 		case GEBR_GEOXML_PARAMETER_TYPE_INT:
 		case GEBR_GEOXML_PARAMETER_TYPE_STRING:
 		case GEBR_GEOXML_PARAMETER_TYPE_ENUM:
+		case GEBR_GEOXML_PARAMETER_TYPE_RANGE:
 			g_signal_connect(parameter_widget->value_widget, "changed",
 					 G_CALLBACK(gebr_gui_parameter_widget_on_value_widget_changed),
 					 parameter_widget);
-			break;
-		case GEBR_GEOXML_PARAMETER_TYPE_RANGE:
-			if (parameter_widget->dict_parameter == NULL)
-				g_signal_connect(parameter_widget->value_widget, "output",
-						 G_CALLBACK(gebr_gui_parameter_widget_on_range_changed),
-						 parameter_widget);
 			break;
 		case GEBR_GEOXML_PARAMETER_TYPE_FILE:
 			g_signal_connect(parameter_widget->value_widget, "path-changed",
@@ -1118,11 +1089,12 @@ void gebr_gui_parameter_widget_update(struct gebr_gui_parameter_widget *paramete
 {
 	if (gebr_geoxml_program_parameter_get_is_list(parameter_widget->program_parameter) == TRUE)
 		__parameter_list_value_widget_update(parameter_widget);
-	else
+	else {
+		const gchar *first;
+		first = gebr_geoxml_program_parameter_get_first_value(parameter_widget->program_parameter, parameter_widget->use_default_value);
 		gebr_gui_parameter_widget_set_non_list_widget_value(parameter_widget,
-								    (gchar*)gebr_geoxml_program_parameter_get_first_value
-								    (parameter_widget->program_parameter,
-								     parameter_widget->use_default_value));
+								    (gchar*)gebr_geoxml_program_parameter_get_first_value(parameter_widget->program_parameter, parameter_widget->use_default_value));
+	}
 }
 
 void gebr_gui_parameter_widget_validate(struct gebr_gui_parameter_widget *parameter_widget)
