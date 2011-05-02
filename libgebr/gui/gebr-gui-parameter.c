@@ -1498,7 +1498,7 @@ static gboolean on_spin_button_output(GtkSpinButton *spin,
 	const gchar *text = gtk_entry_get_text(GTK_ENTRY(spin));
 
 	g_strtod(text, &err);
-	if (*err)
+	if (*err || !*text)
 		return TRUE;
 	else
 		return FALSE;
@@ -1512,7 +1512,7 @@ static gint on_spin_button_input(GtkSpinButton *spin,
 	const gchar *text = gtk_entry_get_text(GTK_ENTRY(spin));
 
 	g_strtod(text, &err);
-	if (*err) {
+	if (*err || !*text) {
 		*rval = 0;
 		gtk_spin_button_set_range(spin, 1, 0);
 		return TRUE;
