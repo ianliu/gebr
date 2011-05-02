@@ -87,6 +87,13 @@ static GList * get_compatible_variables(GebrGeoXmlParameterType type,
 					GebrGeoXmlDocument *line,
 					GebrGeoXmlDocument *proj);
 
+static gboolean on_spin_button_output(GtkSpinButton *spin,
+				      struct gebr_gui_parameter_widget *widget);
+
+static gint on_spin_button_input(GtkSpinButton *spin,
+				 gdouble *rval,
+				 struct gebr_gui_parameter_widget *widget);
+
 //==============================================================================
 // PRIVATE FUNCTIONS							       =
 //==============================================================================
@@ -605,6 +612,10 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 
 		g_signal_connect (spin, "activate",
 				  G_CALLBACK (on_entry_activate_add), parameter_widget);
+		g_signal_connect (spin, "input",
+				  G_CALLBACK (on_spin_button_input), parameter_widget);
+		g_signal_connect (spin, "output",
+				  G_CALLBACK (on_spin_button_output), parameter_widget);
 		gtk_spin_button_set_numeric(GTK_SPIN_BUTTON(spin), FALSE);
 		gtk_spin_button_set_digits(GTK_SPIN_BUTTON(spin), atoi(digits_str));
 		gtk_widget_set_size_request(parameter_widget->value_widget, 140, -1);
@@ -1505,5 +1516,39 @@ static void validate_parameter_value(struct gebr_gui_parameter_widget *widget)
 			gtk_entry_set_icon_tooltip_text(entry, GTK_ENTRY_ICON_SECONDARY, error->message);
 		}
 		g_clear_error(&error);
+	}
+}
+
+static gboolean on_spin_button_output(GtkSpinButton *spin,
+				      struct gebr_gui_parameter_widget *widget)
+{
+	gchar *err = NULL;
+	const gchar *text = gtk_entry_get_text(GTK_ENTRY(spin));
+
+	g_strtod(text, &err);
+	if (*err)
+		return TRUE;
+	else
+		return FALSE;
+}
+
+static gint on_spin_button_input(GtkSpinButton *spin,
+				 gdouble *rval,
+				 struct gebr_gui_parameter_widget *widget)
+{
+	gchar *err = NULL;
+	const gchar *text = gtk_entry_get_text(GTK_ENTRY(spin));
+
+	g_strtod(text, &err);
+	if (*err) {
+		*rval = 0;
+		gtk_spin_button_set_range(spin, 1, 0);
+		return TRUE;
+	} else {
+		const gchar *min, *max;
+		gebr_geoxml_program_parameter_get_number_min_max(widget->program_parameter,
+								 &min, &max);
+		gtk_spin_button_set_range(spin, g_strtod(min, NULL), g_strtod(max, NULL));
+		return FALSE;
 	}
 }
