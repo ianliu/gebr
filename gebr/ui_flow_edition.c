@@ -552,7 +552,7 @@ static void flow_edition_component_editing_started(GtkCellRenderer *renderer, Gt
 								   GEBR_GEOXML_DOCUMENT (gebr.line),
 								   GEBR_GEOXML_DOCUMENT (gebr.project),
 								   GEBR_GEOXML_PARAMETER_TYPE_STRING);
-	gebr_gui_parameter_set_string_entry_completion(entry, completion_model);
+	gebr_gui_parameter_set_entry_completion(entry, completion_model, GEBR_GEOXML_PARAMETER_TYPE_STRING);
 
 	input = gebr_geoxml_flow_io_get_input(gebr.flow);
 	output = gebr_geoxml_flow_io_get_output(gebr.flow);

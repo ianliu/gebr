@@ -140,9 +140,11 @@ GtkTreeModel *gebr_gui_parameter_get_completion_model(GebrGeoXmlDocument *flow,
 						      GebrGeoXmlParameterType type);
 
 /**
- * gebr_gui_parameter_set_string_entry_completion:
+ * gebr_gui_parameter_set_entry_completion:
  */
-void gebr_gui_parameter_set_string_entry_completion(GtkEntry *entry, GtkTreeModel *model);
+void gebr_gui_parameter_set_entry_completion(GtkEntry *entry,
+					     GtkTreeModel *model,
+					     GebrGeoXmlParameterType type);
 
 G_END_DECLS
 #endif				//__GEBR_GUI_PARAMETER_H

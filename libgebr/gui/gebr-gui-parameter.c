@@ -767,15 +767,6 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 		gtk_box_pack_start(GTK_BOX(parameter_widget->widget), hbox, TRUE, TRUE, 0);
 
 		parameter_widget->list_value_widget = gtk_entry_new();
-		if (may_use_dict) {
-			completion_model = generate_completion_model(parameter_widget);
-			setup_entry_completion(GTK_ENTRY(parameter_widget->list_value_widget), completion_model,
-					       completion_match_func,
-					       G_CALLBACK(on_entry_completion_matched),
-					       GINT_TO_POINTER(parameter_widget->parameter_type));
-			g_object_unref (completion_model);
-		}
-
 		if (parameter_widget->readonly)
 			gtk_widget_set_sensitive(parameter_widget->list_value_widget, FALSE);
 		gtk_widget_show(parameter_widget->list_value_widget);
@@ -798,6 +789,22 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 		gtk_widget_show(parameter_widget->value_widget);
 
 		sequence_edit = gebr_gui_value_sequence_edit_new(parameter_widget->value_widget);
+
+		if (may_use_dict) {
+			completion_model = generate_completion_model(parameter_widget);
+			setup_entry_completion(GTK_ENTRY(parameter_widget->list_value_widget), completion_model,
+					       completion_match_func,
+					       G_CALLBACK(on_entry_completion_matched),
+					       GINT_TO_POINTER(parameter_widget->parameter_type));
+			g_object_unref (completion_model);
+
+			gebr_gui_value_sequence_edit_set_autocomplete(GEBR_GUI_VALUE_SEQUENCE_EDIT(sequence_edit),
+								      parameter_widget->dicts->flow,
+								      parameter_widget->dicts->line,
+								      parameter_widget->dicts->project,
+								      parameter_widget->parameter_type);
+		}
+
 		gtk_box_pack_start(GTK_BOX(parameter_widget->widget), sequence_edit, TRUE, TRUE, 0);
 		parameter_widget->gebr_gui_value_sequence_edit = GEBR_GUI_VALUE_SEQUENCE_EDIT(sequence_edit);
 		g_object_set_data (G_OBJECT (sequence_edit), "activatable-entry", activatable_entry);
@@ -1432,12 +1439,13 @@ static GtkTreeModel *generate_completion_model(struct gebr_gui_parameter_widget 
 
 }
 
-void gebr_gui_parameter_set_string_entry_completion(GtkEntry *entry,
-						    GtkTreeModel *model)
+void gebr_gui_parameter_set_entry_completion(GtkEntry *entry,
+					     GtkTreeModel *model,
+					     GebrGeoXmlParameterType type)
 {
 	setup_entry_completion(entry, model, completion_match_func,
 			       G_CALLBACK(on_entry_completion_matched),
-			       GINT_TO_POINTER(GEBR_GEOXML_PARAMETER_TYPE_STRING));
+			       GINT_TO_POINTER(type));
 }
 
 static void setup_entry_completion(GtkEntry *entry,
