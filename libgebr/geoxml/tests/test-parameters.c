@@ -232,11 +232,6 @@ void test_gebr_geoxml_parameters_get_group(void)
 	g_assert(gebr_geoxml_parameters_get_group(NULL) == NULL);
 }
 
-void test_gebr_geoxml_parameters_reset(void)
-{
-
-}
-
 int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);

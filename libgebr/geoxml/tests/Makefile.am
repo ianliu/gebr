@@ -38,3 +38,6 @@ test_object_SOURCES = test-object.c
 
 TEST_PROGS += test-parameters
 test_parameters_SOURCES = test-parameters.c
+
+TEST_PROGS += test-parameter
+test_parameter_SOURCES = test-parameter.c

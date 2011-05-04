@@ -154,7 +154,7 @@ void __gebr_geoxml_parameter_set_label(GebrGeoXmlParameter * parameter, const gc
 /**
  * Get GebrGeoXmlParameters in which \p parameter is inside
  *
- * If \p parameter is NULL returns NULL
+ * Will fail if \p parameter is NULL.
  */
 GebrGeoXmlParameters *gebr_geoxml_parameter_get_parameters(GebrGeoXmlParameter * parameter);
 
