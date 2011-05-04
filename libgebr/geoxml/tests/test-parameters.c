@@ -196,6 +196,47 @@ void test_gebr_geoxml_parameters_get_number(void)
 	g_assert_cmpint(gebr_geoxml_parameters_get_number(parameters_list), ==, 3);
 }
 
+void test_gebr_geoxml_parameters_get_is_in_group(void)
+{
+	GebrGeoXmlParameters *parameters_list, *group_par_list;
+	GebrGeoXmlParameter *parameter;
+	GebrGeoXmlFlow *flow;
+	GebrGeoXmlProgram *program;
+
+	flow = gebr_geoxml_flow_new();
+	program = gebr_geoxml_flow_append_program(flow);
+	parameters_list = gebr_geoxml_program_get_parameters(program);
+	parameter = gebr_geoxml_parameters_append_parameter(parameters_list, GEBR_GEOXML_PARAMETER_TYPE_GROUP);
+
+	group_par_list = gebr_geoxml_parameter_group_get_template(GEBR_GEOXML_PARAMETER_GROUP(parameter));
+
+	g_assert(gebr_geoxml_parameters_get_is_in_group(group_par_list));
+	g_assert(!gebr_geoxml_parameters_get_is_in_group(NULL));
+}
+
+void test_gebr_geoxml_parameters_get_group(void)
+{
+	GebrGeoXmlParameters *parameters_list, *group_par_list;
+	GebrGeoXmlParameter *parameter;
+	GebrGeoXmlFlow *flow;
+	GebrGeoXmlProgram *program;
+
+	flow = gebr_geoxml_flow_new();
+	program = gebr_geoxml_flow_append_program(flow);
+	parameters_list = gebr_geoxml_program_get_parameters(program);
+	parameter = gebr_geoxml_parameters_append_parameter(parameters_list, GEBR_GEOXML_PARAMETER_TYPE_GROUP);
+
+	group_par_list = gebr_geoxml_parameter_group_get_template(GEBR_GEOXML_PARAMETER_GROUP(parameter));
+
+	g_assert(gebr_geoxml_parameters_get_group(group_par_list) == GEBR_GEOXML_PARAMETER_GROUP(parameter));
+	g_assert(gebr_geoxml_parameters_get_group(NULL) == NULL);
+}
+
+void test_gebr_geoxml_parameters_reset(void)
+{
+
+}
+
 int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
@@ -207,6 +248,8 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/geoxml/parameters/get_first_parameter", test_gebr_geoxml_parameters_get_first_parameter);
 	g_test_add_func("/libgebr/geoxml/parameters/get_parameter", test_gebr_geoxml_parameters_get_parameter);
 	g_test_add_func("/libgebr/geoxml/parameters/get_number", test_gebr_geoxml_parameters_get_number);
+	g_test_add_func("/libgebr/geoxml/parameters/get_is_in_group", test_gebr_geoxml_parameters_get_is_in_group);
+	g_test_add_func("/libgebr/geoxml/parameters/get_group", test_gebr_geoxml_parameters_get_group);
 
 	return g_test_run();
 }
