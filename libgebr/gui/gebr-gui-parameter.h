@@ -73,11 +73,6 @@ gebr_gui_parameter_widget_set_dicts(struct gebr_gui_parameter_widget *parameter_
 				    struct gebr_gui_gebr_gui_program_edit_dicts *dicts);
 
 /**
- * Return the parameter's widget value
- */
-GString *gebr_gui_parameter_widget_get_value(struct gebr_gui_parameter_widget *parameter_widget);
-
-/**
  *
  */
 void gebr_gui_parameter_widget_set_auto_submit_callback(struct gebr_gui_parameter_widget *parameter_widget,
@@ -94,9 +89,15 @@ void gebr_gui_parameter_widget_set_readonly(struct gebr_gui_parameter_widget *pa
 void gebr_gui_parameter_widget_update(struct gebr_gui_parameter_widget *parameter_widget);
 
 /**
- * Apply validations rules (if existent) to _gebr_gui_parameter_widget_
+ * gebr_gui_parameter_widget_validate:
+ * @parameter_widget: The parameter widget to be validated
+ *
+ * Set tooltip errors and icons for @parameter_widget. If the parameter is numeric
+ * and have minimum/maximum values, clamp the value.
+ *
+ * Returns: %TRUE if the parameter was valid, %FALSE otherwise.
  */
-void gebr_gui_parameter_widget_validate(struct gebr_gui_parameter_widget *parameter_widget);
+gboolean gebr_gui_parameter_widget_validate(struct gebr_gui_parameter_widget *parameter_widget);
 
 /**
  * Update UI of list with the new separator
