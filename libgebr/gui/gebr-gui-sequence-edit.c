@@ -127,6 +127,7 @@ static void gebr_gui_sequence_edit_set_property (GObject *object,
 				self->list_store = gtk_list_store_new(1, G_TYPE_STRING, -1);
 
 			scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+			gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW (scrolled_window), GTK_SHADOW_IN);
 			gtk_widget_show(scrolled_window);
 			gtk_box_pack_start(GTK_BOX(self), scrolled_window, TRUE, TRUE, 0);
 			gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_window),
