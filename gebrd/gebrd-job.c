@@ -1391,6 +1391,15 @@ static void job_assembly_cmdline(GebrdJob *job)
 		g_string_free(prefix, TRUE);
 	}
 
+	if (strlen(gebr_geoxml_flow_io_get_output(job->flow)) &&
+	    !gebr_geoxml_flow_io_get_output_append(job->flow))
+	{
+		GString * prefix = g_string_new(NULL);
+		g_string_printf(prefix, "rm '%s'\n", gebr_geoxml_flow_io_get_output(job->flow));
+		g_string_prepend(job->parent.cmd_line, prefix->str);
+		g_string_free(prefix, TRUE);
+	}
+
 	job->critical_error = FALSE;
 	g_string_free(expr_buf, TRUE);
 	return;
