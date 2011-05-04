@@ -44,7 +44,6 @@ struct gebr_gui_parameter_widget {
 
 	/* dict stuff */
 	gboolean dict_enabled;
-	GebrGeoXmlProgramParameter *dict_parameter;
 	struct gebr_gui_gebr_gui_program_edit_dicts *dicts;
 
 	/* for lists */

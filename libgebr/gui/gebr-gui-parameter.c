@@ -89,6 +89,8 @@ static gint on_spin_button_input(GtkSpinButton *spin,
 
 static GString *gebr_gui_parameter_widget_get_widget_value_full(struct gebr_gui_parameter_widget *parameter_widget);
 
+static void on_list_value_widget_activate(GtkEntry *entry, struct gebr_gui_parameter_widget *parameter_widget);
+
 //==============================================================================
 // PRIVATE FUNCTIONS							       =
 //==============================================================================
@@ -175,14 +177,6 @@ static void gebr_gui_parameter_widget_file_entry_customize_function(GtkFileChoos
 static void gebr_gui_parameter_widget_set_non_list_widget_value(struct gebr_gui_parameter_widget *parameter_widget,
 								gchar * value)
 {
-	if (parameter_widget->dict_parameter != NULL) {
-		/* now parameters don't use an value from dictionary; instead, the dict keyword is transformed
-		 * as the parameter value as an expression */
-		value = (gchar*)gebr_geoxml_program_parameter_get_keyword(parameter_widget->dict_parameter);
-		gebr_geoxml_program_parameter_set_string_value(parameter_widget->program_parameter,
-		                                               parameter_widget->use_default_value, value);
-	}
-
 	if (__parameter_accepts_expression(parameter_widget)) {
 		if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_FILE)
 			gtk_editable_set_editable(GTK_EDITABLE(GTK_ENTRY (GEBR_GUI_FILE_ENTRY(parameter_widget->value_widget)->entry)), TRUE);
@@ -237,14 +231,6 @@ static GString *gebr_gui_parameter_widget_get_widget_value_full(struct gebr_gui_
 	GString *value;
 
 	value = g_string_new(NULL);
-
-	if (parameter_widget->dict_parameter != NULL) {
-		g_string_assign(value,
-				gebr_geoxml_program_parameter_get_first_value(parameter_widget->dict_parameter,
-									      parameter_widget->
-									      use_default_value));
-		return value;
-	}
 
 	switch (parameter_widget->parameter_type) {
 	case GEBR_GEOXML_PARAMETER_TYPE_FLOAT:
@@ -329,9 +315,6 @@ static void gebr_gui_parameter_widget_sync_non_list(struct gebr_gui_parameter_wi
 static void gebr_gui_parameter_widget_on_value_widget_changed(GtkWidget * widget,
 							      struct gebr_gui_parameter_widget *parameter_widget)
 {
-	if (parameter_widget->dict_parameter != NULL)
-		return;
-
 	gebr_gui_parameter_widget_sync_non_list(parameter_widget);
 	gebr_gui_parameter_widget_report_change(parameter_widget);
 }
@@ -746,6 +729,11 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 		gtk_box_pack_start(GTK_BOX(parameter_widget->widget), hbox, TRUE, TRUE, 0);
 
 		parameter_widget->list_value_widget = gtk_entry_new();
+
+		/* Connects this signal to validate the list widget */
+		g_signal_connect(parameter_widget->list_value_widget, "activate",
+				 G_CALLBACK(on_list_value_widget_activate), parameter_widget);
+
 		if (parameter_widget->readonly)
 			gtk_widget_set_sensitive(parameter_widget->list_value_widget, FALSE);
 		gtk_widget_show(parameter_widget->list_value_widget);
@@ -1005,7 +993,6 @@ struct gebr_gui_parameter_widget *gebr_gui_parameter_widget_new(GebrGeoXmlParame
 	parameter_widget->readonly = FALSE;
 	parameter_widget->data = data;
 	parameter_widget->dict_enabled = FALSE;
-	parameter_widget->dict_parameter = NULL;
 	parameter_widget->dicts = dicts;
 	parameter_widget->callback = NULL;
 	parameter_widget->user_data = NULL;
@@ -1051,19 +1038,18 @@ void gebr_gui_parameter_widget_update(struct gebr_gui_parameter_widget *paramete
 	}
 }
 
-gboolean gebr_gui_parameter_widget_validate(struct gebr_gui_parameter_widget *parameter_widget)
+static gboolean _gebr_gui_parameter_widget_validate(struct gebr_gui_parameter_widget *parameter_widget,
+						    gboolean validate_list_widget)
 {
 	GtkEntry * entry;
 	const gchar *min, *max;
-
 
 	if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_FILE)
 		entry = GTK_ENTRY(GEBR_GUI_FILE_ENTRY(parameter_widget->value_widget)->entry);
 	else
 		entry = GTK_ENTRY(parameter_widget->value_widget);
 
-	if (!__parameter_accepts_expression(parameter_widget)
-	    && !parameter_widget->dict_parameter)
+	if (!__parameter_accepts_expression(parameter_widget))
 		return TRUE;
 
 	if (!parameter_widget->dicts)
@@ -1117,6 +1103,11 @@ gboolean gebr_gui_parameter_widget_validate(struct gebr_gui_parameter_widget *pa
 
 	g_string_free(value, TRUE);
 	return TRUE;
+}
+
+gboolean gebr_gui_parameter_widget_validate(struct gebr_gui_parameter_widget *parameter_widget)
+{
+	return _gebr_gui_parameter_widget_validate(parameter_widget, FALSE);
 }
 
 void gebr_gui_parameter_widget_update_list_separator(struct gebr_gui_parameter_widget *parameter_widget)
@@ -1416,4 +1407,9 @@ static gint on_spin_button_input(GtkSpinButton *spin,
 		gtk_spin_button_set_range(spin, g_strtod(min, NULL), g_strtod(max, NULL));
 		return FALSE;
 	}
+}
+
+static void on_list_value_widget_activate(GtkEntry *entry, struct gebr_gui_parameter_widget *parameter_widget)
+{
+
 }
