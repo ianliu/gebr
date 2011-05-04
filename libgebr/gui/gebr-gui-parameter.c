@@ -299,7 +299,8 @@ static void gebr_gui_parameter_on_list_value_widget_changed(GtkEntry * entry,
 
 /*
  * gebr_gui_parameter_widget_sync_non_list:
- * Syncronize input widget value with the parameter
+ *
+ * Writes the input widget value into the parameter.
  */
 static void gebr_gui_parameter_widget_sync_non_list(struct gebr_gui_parameter_widget *parameter_widget)
 {
@@ -441,7 +442,7 @@ static void __on_sequence_edit_changed(GebrGuiSequenceEdit * sequence_edit,
 	__parameter_list_value_widget_update(parameter_widget);
 }
 
-/**
+/*
  * for parameter that accepts an expression (int and float)
  */
 static void __set_type_icon(struct gebr_gui_parameter_widget *parameter_widget)
@@ -450,9 +451,9 @@ static void __set_type_icon(struct gebr_gui_parameter_widget *parameter_widget)
 	GtkEntry *entry;
 
 	if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_FILE)
-		entry = GTK_ENTRY(GEBR_GUI_FILE_ENTRY(parameter_widget->value_widget)->entry);
-	else
-		entry = GTK_ENTRY(parameter_widget->value_widget);
+		return;
+
+	entry = GTK_ENTRY(parameter_widget->value_widget);
 
 	g_object_get(entry, "has-focus", &has_focus, NULL);
 
@@ -556,7 +557,7 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 				  G_CALLBACK (on_spin_button_output), parameter_widget);
 		gtk_spin_button_set_numeric(GTK_SPIN_BUTTON(spin), FALSE);
 		gtk_spin_button_set_digits(GTK_SPIN_BUTTON(spin), atoi(digits_str));
-		gtk_widget_set_size_request(parameter_widget->value_widget, 140, -1);
+		gtk_widget_set_size_request(parameter_widget->value_widget, 220, -1);
 		break;
 	}
 	case GEBR_GEOXML_PARAMETER_TYPE_FLOAT: {
@@ -574,7 +575,7 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 			g_object_unref (completion_model);
 		}
 
-		gtk_widget_set_size_request(entry, 140, 30);
+		gtk_widget_set_size_request(entry, 220, -1);
 		activatable_entry = GTK_ENTRY (entry);
 
 		g_signal_connect (entry, "focus-in-event",
@@ -604,7 +605,7 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 			g_object_unref (completion_model);
 		}
 
-		gtk_widget_set_size_request(entry, 140, 30);
+		gtk_widget_set_size_request(entry, 220, -1);
 		activatable_entry = GTK_ENTRY (entry);
 
 		g_signal_connect (entry, "focus-in-event",
@@ -635,7 +636,7 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 		}
 
 		activatable_entry = GTK_ENTRY (entry);
-		gtk_widget_set_size_request(parameter_widget->value_widget, 140, 30);
+		gtk_widget_set_size_request(parameter_widget->value_widget, 220, -1);
 
 		g_signal_connect (parameter_widget->value_widget, "activate",
 				  G_CALLBACK (on_entry_activate_add), parameter_widget);
@@ -676,7 +677,7 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 		/* validation */
 		g_signal_connect (GEBR_GUI_FILE_ENTRY (file_entry)->entry, "activate",
 				  G_CALLBACK (__on_activate), parameter_widget);
-		gtk_widget_set_size_request(file_entry, 220, 30);
+		gtk_widget_set_size_request(file_entry, 220, -1);
 
 		gebr_gui_file_entry_set_choose_directory(GEBR_GUI_FILE_ENTRY(file_entry),
 							 gebr_geoxml_program_parameter_get_file_be_directory
@@ -1411,5 +1412,5 @@ static gint on_spin_button_input(GtkSpinButton *spin,
 
 static void on_list_value_widget_activate(GtkEntry *entry, struct gebr_gui_parameter_widget *parameter_widget)
 {
-
+	_gebr_gui_parameter_widget_validate(parameter_widget, TRUE);
 }
