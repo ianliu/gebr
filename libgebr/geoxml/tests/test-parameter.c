@@ -20,6 +20,7 @@
 #include <stdlib.h>
 #include "parameters.h"
 #include "parameter.h"
+#include "error.h"
 
 void test_gebr_geoxml_parameter_get_parameters(void)
 {
@@ -44,12 +45,76 @@ void test_gebr_geoxml_parameter_get_parameters(void)
 	g_test_trap_assert_failed();
 }
 
+void test_gebr_geoxml_parameter_get_program(void)
+{
+	GebrGeoXmlParameters *parameters_list;
+	GebrGeoXmlParameter *parameter;
+	GebrGeoXmlFlow *flow;
+	GebrGeoXmlProgram *program;
+
+	flow = gebr_geoxml_flow_new();
+	program = gebr_geoxml_flow_append_program(flow);
+	parameters_list = gebr_geoxml_program_get_parameters(program);
+	parameter = gebr_geoxml_parameters_append_parameter(parameters_list, GEBR_GEOXML_PARAMETER_TYPE_STRING);
+
+	g_assert(gebr_geoxml_parameter_get_program(parameter) == program);
+
+	// Will fail if parameter is NULL
+	if (g_test_trap_fork (0, G_TEST_TRAP_SILENCE_STDOUT | G_TEST_TRAP_SILENCE_STDERR)) {
+		g_assert(gebr_geoxml_parameter_get_parameters(NULL) == NULL);
+		exit(0);
+	}
+	g_test_trap_assert_failed();
+}
+
+void test_gebr_geoxml_parameter_get_and_set_type(void)
+{
+	GebrGeoXmlParameters *parameters_list;
+	GebrGeoXmlParameter *parameter;
+	GebrGeoXmlFlow *flow;
+	GebrGeoXmlProgram *program;
+
+	flow = gebr_geoxml_flow_new();
+	program = gebr_geoxml_flow_append_program(flow);
+	parameters_list = gebr_geoxml_program_get_parameters(program);
+	parameter = gebr_geoxml_parameters_append_parameter(parameters_list, GEBR_GEOXML_PARAMETER_TYPE_STRING);
+	gebr_geoxml_parameter_set_label(parameter,"Parameter guy");
+
+	if (g_test_trap_fork (0, G_TEST_TRAP_SILENCE_STDOUT | G_TEST_TRAP_SILENCE_STDERR)) {
+		gebr_geoxml_parameter_set_type(NULL, GEBR_GEOXML_PARAMETER_TYPE_STRING);
+		exit(0);
+	}
+	g_test_trap_assert_failed();
+
+	gebr_geoxml_parameter_set_type(parameter,GEBR_GEOXML_PARAMETER_TYPE_INT);
+	g_assert_cmpstr(gebr_geoxml_parameter_get_label(parameter), ==, "Parameter guy");
+
+	g_assert_cmpint(gebr_geoxml_parameter_get_type(parameter), ==, GEBR_GEOXML_PARAMETER_TYPE_INT);
+
+	if (g_test_trap_fork (0, G_TEST_TRAP_SILENCE_STDOUT | G_TEST_TRAP_SILENCE_STDERR)) {
+		gebr_geoxml_parameter_get_type(NULL);
+		exit(0);
+	}
+	g_test_trap_assert_failed();
+
+}
+
+void test_gebr_geoxml_parameter_set_be_reference(void)
+{
+	/* TODO:
+	 * Make tests for __gebr_geoxml_parameter_set_be_reference_with_value and __gebr_geoxml_parameter_set_be_reference
+	 * Refactor __gebr_geoxml_parameter_set_be_reference_with_value using __gebr_geoxml_parameter_set_be_reference to clean code
+	 */
+
+}
 
 int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
 
 	g_test_add_func("/libgebr/geoxml/parameter/get_parameters", test_gebr_geoxml_parameter_get_parameters);
+	g_test_add_func("/libgebr/geoxml/parameter/get_program", test_gebr_geoxml_parameter_get_program);
+	g_test_add_func("/libgebr/geoxml/parameter/get_and_set_type", test_gebr_geoxml_parameter_get_and_set_type);
 
 	return g_test_run();
 }
