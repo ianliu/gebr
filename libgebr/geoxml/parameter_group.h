@@ -97,7 +97,7 @@ typedef struct gebr_geoxml_parameter_group GebrGeoXmlParameterGroup;
 GebrGeoXmlParameters *gebr_geoxml_parameter_group_get_template(GebrGeoXmlParameterGroup * parameter_group);
 
 /**
- * Instanciate \p parameter_group, appending a new instance (which is a clone of the first instance) to the list of
+ * Instantiate \p parameter_group, appending a new instance (which is a clone of the first instance) to the list of
  * instances.
  */
 GebrGeoXmlParameters *gebr_geoxml_parameter_group_instanciate(GebrGeoXmlParameterGroup * parameter_group);
