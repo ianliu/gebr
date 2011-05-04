@@ -48,6 +48,9 @@ struct _GebrGuiValueSequenceEdit {
 	ValueSequenceSetFunction set_function;
 	ValueSequenceGetFunction get_function;
 	gpointer user_data;
+
+	/*< private >*/
+	gboolean has_autocomplete;
 };
 
 struct _GebrGuiValueSequenceEditClass {
@@ -69,6 +72,12 @@ gboolean gebr_gui_value_sequence_edit_rename(GebrGuiValueSequenceEdit *self,
 					     const gchar * new_text);
 
 void gebr_gui_value_sequence_edit_clear (GebrGuiValueSequenceEdit *self);
+
+void gebr_gui_value_sequence_edit_set_autocomplete(GebrGuiValueSequenceEdit *self,
+						   GebrGeoXmlDocument *flow,
+						   GebrGeoXmlDocument *line,
+						   GebrGeoXmlDocument *proj,
+						   GebrGeoXmlParameterType type);
 
 G_END_DECLS
 

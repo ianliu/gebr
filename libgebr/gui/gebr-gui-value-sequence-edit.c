@@ -18,6 +18,7 @@
 #include <config.h>
 #include <glib/gi18n-lib.h>
 
+#include "gebr-gui-parameter.h"
 #include "gebr-gui-value-sequence-edit.h"
 #include "gebr-gui-utils.h"
 
@@ -100,8 +101,9 @@ static void gebr_gui_value_sequence_edit_class_init(GebrGuiValueSequenceEditClas
 	g_object_class_install_property(gobject_class, MINIMUM_ONE, param_spec);
 }
 
-static void gebr_gui_value_sequence_edit_init(GebrGuiValueSequenceEdit * gebr_gui_value_sequence_edit)
+static void gebr_gui_value_sequence_edit_init(GebrGuiValueSequenceEdit *self)
 {
+	self->has_autocomplete = FALSE;
 }
 
 G_DEFINE_TYPE(GebrGuiValueSequenceEdit, gebr_gui_value_sequence_edit, GEBR_GUI_TYPE_SEQUENCE_EDIT);
@@ -285,4 +287,48 @@ void gebr_gui_value_sequence_edit_clear (GebrGuiValueSequenceEdit *self)
 
 	super = GEBR_GUI_SEQUENCE_EDIT (self);
 	gtk_list_store_clear (super->list_store);
+}
+
+typedef struct {
+	GebrGeoXmlDocument *flow;
+	GebrGeoXmlDocument *line;
+	GebrGeoXmlDocument *proj;
+	GebrGeoXmlParameterType type;
+} AutoCompletionData;
+
+static void on_renderer_editing_started(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path, AutoCompletionData *data)
+{
+	GtkTreeModel *model;
+
+	model = gebr_gui_parameter_get_completion_model(data->flow,
+							data->line,
+							data->proj,
+							data->type);
+	gebr_gui_parameter_set_entry_completion(GTK_ENTRY(editable), model,
+						data->type);
+}
+
+void gebr_gui_value_sequence_edit_set_autocomplete(GebrGuiValueSequenceEdit *self,
+						   GebrGeoXmlDocument *flow,
+						   GebrGeoXmlDocument *line,
+						   GebrGeoXmlDocument *proj,
+						   GebrGeoXmlParameterType type)
+{
+	AutoCompletionData *data;
+	GtkCellRenderer *renderer;
+
+	if (self->has_autocomplete)
+		return;
+
+	self->has_autocomplete = TRUE;
+
+	data = g_new(AutoCompletionData, 1);
+	data->flow = flow;
+	data->line = line;
+	data->proj = proj;
+	data->type = type;
+
+	renderer = GEBR_GUI_SEQUENCE_EDIT(self)->renderer;
+	g_signal_connect(renderer, "editing-started", G_CALLBACK(on_renderer_editing_started), data);
+	g_object_weak_ref(G_OBJECT(self), (GWeakNotify)g_free, data);
 }
