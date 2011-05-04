@@ -759,6 +759,7 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 		GtkWidget *hbox;
 		GtkWidget *button;
 		GtkWidget *sequence_edit;
+		GtkTreeModel *completion_model;
 
 		hbox = gtk_hbox_new(FALSE, 10);
 		if (parameter_widget->parameter_type != GEBR_GEOXML_PARAMETER_TYPE_ENUM)
@@ -766,6 +767,15 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 		gtk_box_pack_start(GTK_BOX(parameter_widget->widget), hbox, TRUE, TRUE, 0);
 
 		parameter_widget->list_value_widget = gtk_entry_new();
+		if (may_use_dict) {
+			completion_model = generate_completion_model(parameter_widget);
+			setup_entry_completion(GTK_ENTRY(parameter_widget->list_value_widget), completion_model,
+					       completion_match_func,
+					       G_CALLBACK(on_entry_completion_matched),
+					       GINT_TO_POINTER(parameter_widget->parameter_type));
+			g_object_unref (completion_model);
+		}
+
 		if (parameter_widget->readonly)
 			gtk_widget_set_sensitive(parameter_widget->list_value_widget, FALSE);
 		gtk_widget_show(parameter_widget->list_value_widget);
@@ -984,7 +994,7 @@ static gboolean gebr_gui_parameter_widget_can_use_dict(struct gebr_gui_parameter
 	case GEBR_GEOXML_PARAMETER_TYPE_STRING:
 	case GEBR_GEOXML_PARAMETER_TYPE_RANGE:
 	case GEBR_GEOXML_PARAMETER_TYPE_FILE:
-		return !gebr_geoxml_program_parameter_get_is_list(GEBR_GEOXML_PROGRAM_PARAMETER(widget->parameter));
+		return TRUE;
 	default:
 		return FALSE;
 	}
