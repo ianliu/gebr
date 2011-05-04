@@ -658,8 +658,8 @@ void project_line_export(void)
 	gchar *tmp;
 
 	GtkWidget *chooser_dialog;
-	GtkWidget *check_box;
-	const gchar *check_box_label;
+	GtkWidget *check_box_user, *check_box_var;
+	const gchar *check_box_label_user, *check_box_label_var = NULL;
 	GtkFileFilter *file_filter;
 
 	GList *rows;
@@ -684,25 +684,27 @@ void project_line_export(void)
 		path = i->data;
 		if (gtk_tree_path_get_depth (path) == 1)
 			projects = g_list_prepend (projects, path);
-		else
-			lines = g_list_prepend (lines, path);
+		else {
+			GtkTreePath **data = g_new(GtkTreePath*, 2);
+			data[0] = path;
+			data[1] = gtk_tree_path_copy(path);
+			gtk_tree_path_up(data[1]);
+			lines = g_list_prepend (lines, data);
+		}
 	}
 	g_list_free (rows);
 
 	if (projects != NULL) {
-		GtkTreePath *path;
-
 		for (GList *i = lines; i; i = i->next) {
-			GtkTreePath *parent;
-
-			path = i->data;
-			parent = gtk_tree_path_copy (path);
-			if (gtk_tree_path_up (parent) && !gtk_tree_selection_path_is_selected (selection, parent))
-				gtk_tree_selection_unselect_path (selection, path);
+			GtkTreePath **data;
+			data = i->data;
+			if (!gtk_tree_selection_path_is_selected (selection, data[1]))
+				gtk_tree_selection_unselect_path (selection, data[0]);
 		}
 
 		for (GList *i = projects; i; i = i->next) {
 			gboolean valid;
+			GtkTreePath *path;
 			GtkTreeIter iter;
 			GtkTreeIter child;
 
@@ -721,21 +723,31 @@ void project_line_export(void)
 		gtk_file_filter_set_name(file_filter, _("Project (*.prjz)"));
 		gtk_file_filter_add_pattern(file_filter, "*.prjz");
 		extension = ".prjz";
-		check_box_label = _("Make this project user-independent");
+		check_box_label_user = _("Make this project user-independent");
 	} else {
 		gtk_file_filter_set_name(file_filter, _("Line (*.lnez)"));
 		gtk_file_filter_add_pattern(file_filter, "*.lnez");
 		extension = ".lnez";
-		check_box_label = _("Make this line user-independent");
+		check_box_label_user = _("Make this line user-independent");
+		check_box_label_var = _("Merge the variables of dictionary");
 	}
 
+	GtkWidget *box;
+	box = gtk_vbox_new(FALSE, 5);
 	/* run file chooser */
-	check_box = gtk_check_button_new_with_label(check_box_label);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_box), TRUE);
+	check_box_user = gtk_check_button_new_with_label(check_box_label_user);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_box_user), TRUE);
+	gtk_box_pack_start(GTK_BOX(box), check_box_user, TRUE, TRUE, 0);
+	if(check_box_label_var) {
+		check_box_var = gtk_check_button_new_with_label(check_box_label_var);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_box_var), TRUE);
+		gtk_box_pack_start(GTK_BOX(box), check_box_var, TRUE, TRUE, 0);
+	}
 	chooser_dialog = gebr_gui_save_dialog_new(_("Choose filename to save"), GTK_WINDOW(gebr.window));
 	gebr_gui_save_dialog_set_default_extension(GEBR_GUI_SAVE_DIALOG(chooser_dialog), extension);
 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(chooser_dialog), file_filter);
-	gtk_file_chooser_set_extra_widget(GTK_FILE_CHOOSER(chooser_dialog), check_box);
+	gtk_file_chooser_set_extra_widget(GTK_FILE_CHOOSER(chooser_dialog), box);
+	gtk_widget_show_all(box);
 
 	/* show file chooser */
 	tmp = gebr_gui_save_dialog_run(GEBR_GUI_SAVE_DIALOG(chooser_dialog));
@@ -744,17 +756,21 @@ void project_line_export(void)
 	
 	tmpdir = gebr_temp_directory_create();
 
-	void parse_line(GebrGeoXmlDocument * _line) {
+	void parse_line(GebrGeoXmlDocument * _line, GebrGeoXmlDocument *proj) {
 		gchar *filename;
 		GebrGeoXmlSequence *j;
 		GebrGeoXmlLine *line;
 
 		line = GEBR_GEOXML_LINE (gebr_geoxml_document_clone (_line));
 
-		line_set_paths_to_relative(line, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(check_box)));
+		line_set_paths_to_relative(line, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(check_box_user)));
 		filename = g_build_path ("/", tmpdir->str,
 					 gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(line)),
 					 NULL);
+		if(proj)
+			if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(check_box_var)))
+				gebr_geoxml_document_merge_dict(GEBR_GEOXML_DOCUMENT(line), GEBR_GEOXML_DOCUMENT(proj));
+
 		document_save_at(GEBR_GEOXML_DOCUMENT(line), filename, FALSE, FALSE);
 		g_free (filename);
 
@@ -767,7 +783,7 @@ void project_line_export(void)
 			if (document_load((GebrGeoXmlDocument**)(&flow), flow_filename, FALSE))
 				continue;
 
-			flow_set_paths_to_relative(flow, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(check_box)));
+			flow_set_paths_to_relative(flow, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(check_box_user)));
 			filename = g_build_path ("/", tmpdir->str, flow_filename, NULL);
 			document_save_at(GEBR_GEOXML_DOCUMENT(flow), filename, FALSE, FALSE);
 			g_free (filename);
@@ -781,14 +797,20 @@ void project_line_export(void)
 
 	if (!projects)
 		for (GList *i = lines; i; i = i->next) {
-			GtkTreePath *path;
+			GtkTreePath **data;
 			GtkTreeIter iter;
 			GebrGeoXmlDocument *line;
+			GebrGeoXmlDocument *proj;
 
-			path = i->data;
-			gtk_tree_model_get_iter (model, &iter, path);
+			data = i->data;
+			gtk_tree_model_get_iter (model, &iter, data[0]);
 			gtk_tree_model_get (model, &iter, PL_XMLPOINTER, &line, -1);
-			parse_line (line);
+			gtk_tree_model_get_iter (model, &iter, data[1]);
+			gtk_tree_model_get (model, &iter, PL_XMLPOINTER, &proj, -1);
+			parse_line (line, proj);
+			gtk_tree_path_free(data[0]);
+			gtk_tree_path_free(data[1]);
+			g_free(data);
 		}
 	else for (GList *i = projects; i; i = i->next) {
 		gchar *filename;
@@ -799,6 +821,7 @@ void project_line_export(void)
 
 		path = i->data;
 		gtk_tree_model_get_iter (model, &iter, path);
+		gtk_tree_path_free(path);
 		gtk_tree_model_get (model, &iter, PL_XMLPOINTER, &prj, -1);
 		filename = g_build_path ("/",
 					 tmpdir->str,
@@ -817,7 +840,7 @@ void project_line_export(void)
 			if (document_load (&line, gebr_geoxml_project_get_line_source (pl), FALSE))
 				continue;
 
-			parse_line (line);
+			parse_line (line, NULL);
 			document_free (line);
 		}
 	}
@@ -832,6 +855,8 @@ void project_line_export(void)
 	g_free(quoted);
 	g_chdir(current_dir);
 	g_free(current_dir);
+	g_list_free(lines);
+	g_list_free(projects);
 
 	g_free(tmp);
 	gebr_temp_directory_destroy(tmpdir);
