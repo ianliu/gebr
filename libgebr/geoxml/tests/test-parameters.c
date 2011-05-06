@@ -45,7 +45,6 @@ void test_gebr_geoxml_parameters_append_parameter(void){
 
 	parameter = gebr_geoxml_parameters_append_parameter(parameters_list, GEBR_GEOXML_PARAMETER_TYPE_REFERENCE);
 	g_assert(parameter == NULL);
-
 }
 
 void test_gebr_geoxml_parameters_is_var_used()

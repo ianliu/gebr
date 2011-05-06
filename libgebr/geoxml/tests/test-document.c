@@ -51,7 +51,7 @@ void test_gebr_geoxml_document_get_version (void)
 
 	gebr_geoxml_document_load(&document, TEST_DIR"/test.mnu", FALSE, NULL);
 	version = gebr_geoxml_document_get_version(document);
-	g_assert_cmpstr(version, ==, "0.3.5");
+	g_assert_cmpstr(version, ==, "0.3.7");
 	gebr_geoxml_document_free(document);
 }
 
