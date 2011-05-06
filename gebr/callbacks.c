@@ -355,6 +355,7 @@ void on_flow_component_status_activate(GtkAction *action,
 {
 	guint status = GPOINTER_TO_UINT(user_data);
 	flow_edition_status_changed(status);
+	flow_edition_set_io();
 }
 
 void on_flow_component_execute_single()

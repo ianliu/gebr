@@ -704,6 +704,8 @@ gboolean flow_edition_component_key_pressed(GtkWidget *view, GdkEventKey *key)
 	g_list_foreach (paths, (GFunc) gtk_tree_path_free, NULL);
 	g_list_free (paths);
 
+	flow_edition_set_io();
+
 	return TRUE;
 }
 
@@ -735,7 +737,8 @@ void flow_edition_change_iter_status(guint status, GtkTreeIter *iter)
 		status = GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED;
 
 	if(gebr_geoxml_program_get_control(program) == GEBR_GEOXML_PROGRAM_CONTROL_FOR) {
-		if(status == GEBR_GEOXML_PROGRAM_STATUS_DISABLED) {
+		if(status == GEBR_GEOXML_PROGRAM_STATUS_DISABLED ||
+		   status == GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED) {
 			gebr_geoxml_flow_remove_iter_dict(gebr.flow);
 			dict_edit_check_programs_using_variables("iter", FALSE);
 		} else {
