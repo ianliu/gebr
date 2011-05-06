@@ -18,8 +18,11 @@
 #include <glib.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <gdome.h>
+
 #include "parameters.h"
 #include "parameter.h"
+#include "parameter_p.h"
 #include "error.h"
 
 void test_gebr_geoxml_parameter_get_parameters(void)
@@ -96,7 +99,6 @@ void test_gebr_geoxml_parameter_get_and_set_type(void)
 		exit(0);
 	}
 	g_test_trap_assert_failed();
-
 }
 
 void test_gebr_geoxml_parameter_set_be_reference(void)
@@ -105,7 +107,51 @@ void test_gebr_geoxml_parameter_set_be_reference(void)
 	 * Make tests for __gebr_geoxml_parameter_set_be_reference_with_value and __gebr_geoxml_parameter_set_be_reference
 	 * Refactor __gebr_geoxml_parameter_set_be_reference_with_value using __gebr_geoxml_parameter_set_be_reference to clean code
 	 */
+}
 
+/*void test__gebr_geoxml_parameter_set_be_reference(void)
+{
+	GebrGeoXmlParameters *parameters_list;
+	GebrGeoXmlParameter *parameter;
+	GebrGeoXmlFlow *test_menu;
+	GebrGeoXmlProgram *program;
+
+	gebr_geoxml_document_load((GebrGeoXmlDocument**)&test_menu, TEST_DIR"/test.mnu", FALSE, NULL);
+
+	gebr_geoxml_flow_get_program(test_menu, (GebrGeoXmlSequence**)&program, 0);
+	parameters_list = gebr_geoxml_program_get_parameters(program);
+
+	g_assert_cmpint(gebr_geoxml_parameters_get_parameter(parameters_list,(GebrGeoXmlSequence**)&parameter,2), ==, GEBR_GEOXML_RETV_SUCCESS);
+
+
+	g_assert(gebr_geoxml_program_parameter_get_is_list(parameter) == FALSE);
+
+	g_assert_cmpstr(gebr_geoxml_program_parameter_get_first_value(parameter, TRUE), ==, "123");
+	g_assert_cmpstr(gebr_geoxml_program_parameter_get_first_value(parameter, FALSE), ==, "456");
+
+	__gebr_geoxml_parameter_set_be_reference(parameter);
+	g_assert_cmpint(gebr_geoxml_parameter_get_type(parameter), ==, GEBR_GEOXML_PARAMETER_TYPE_REFERENCE);
+}*/
+
+void test_gebr_geoxml_parameter_get_type_name(void)
+{
+	GebrGeoXmlParameters *parameters_list;
+	GebrGeoXmlParameter *parameter;
+	GebrGeoXmlFlow *flow;
+	GebrGeoXmlProgram *program;
+
+	flow = gebr_geoxml_flow_new();
+	program = gebr_geoxml_flow_append_program(flow);
+	parameters_list = gebr_geoxml_program_get_parameters(program);
+	parameter = gebr_geoxml_parameters_append_parameter(parameters_list, GEBR_GEOXML_PARAMETER_TYPE_STRING);
+
+	g_assert_cmpstr(gebr_geoxml_parameter_get_type_name(parameter), ==, "string");
+
+	gebr_geoxml_parameter_set_type(parameter,GEBR_GEOXML_PARAMETER_TYPE_INT);
+
+	g_assert_cmpstr(gebr_geoxml_parameter_get_type_name(parameter), ==, "integer");
+
+	g_assert(gebr_geoxml_parameter_get_type_name(NULL) == NULL);
 }
 
 int main(int argc, char *argv[])
@@ -115,6 +161,8 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/geoxml/parameter/get_parameters", test_gebr_geoxml_parameter_get_parameters);
 	g_test_add_func("/libgebr/geoxml/parameter/get_program", test_gebr_geoxml_parameter_get_program);
 	g_test_add_func("/libgebr/geoxml/parameter/get_and_set_type", test_gebr_geoxml_parameter_get_and_set_type);
+//	g_test_add_func("/libgebr/geoxml/parameter/set_be_reference", test__gebr_geoxml_parameter_set_be_reference);
+	g_test_add_func("/libgebr/geoxml/parameter/get_type_name", test_gebr_geoxml_parameter_get_type_name);
 
 	return g_test_run();
 }
