@@ -3,14 +3,14 @@
 
 struct _GebrValidator
 {
-	GebrGeoXmlDocument *flow;
-	GebrGeoXmlDocument *line;
-	GebrGeoXmlDocument *proj;
+	GebrGeoXmlDocument **flow;
+	GebrGeoXmlDocument **line;
+	GebrGeoXmlDocument **proj;
 };
 
-GebrValidator *gebr_validator_new(GebrGeoXmlDocument *flow,
-				  GebrGeoXmlDocument *line,
-				  GebrGeoXmlDocument *proj)
+GebrValidator *gebr_validator_new(GebrGeoXmlDocument **flow,
+				  GebrGeoXmlDocument **line,
+				  GebrGeoXmlDocument **proj)
 {
 	GebrValidator *self = g_new(GebrValidator, 1);
 	self->flow = flow;
@@ -20,18 +20,52 @@ GebrValidator *gebr_validator_new(GebrGeoXmlDocument *flow,
 	return self;
 }
 
-gboolean gebr_validator_validate(GebrValidator       *self,
-				 const gchar         *expression,
-				 gchar              **validated,
-				 GebrGeoXmlParameter *param,
-				 GError             **err)
+gboolean gebr_validator_validate_param(GebrValidator        *self,
+				       GebrGeoXmlParameter  *param,
+				       gchar               **validated,
+				       GError              **err)
+{
+	// TODO Implement
+	return 0;
+}
+
+gboolean gebr_validator_validate_widget(GebrValidator            *self,
+					GebrGuiValidatableWidget *widget,
+					GebrGeoXmlParameter      *param)
+{
+	// TODO Implement
+	return 0;
+}
+
+void gebr_validator_get_documents(GebrValidator       *self,
+				  GebrGeoXmlDocument **flow,
+				  GebrGeoXmlDocument **line,
+				  GebrGeoXmlDocument **proj)
+{
+	// TODO Implement
+}
+
+void gebr_validator_free(GebrValidator *self)
+{
+	// TODO Implement
+}
+
+static gboolean gebr_validator_validate(GebrValidator          *self,
+					const gchar            *expression,
+					gchar                 **validated,
+					GebrGeoXmlParameterType type,
+					GebrGeoXmlParameter    *param,
+					GError                **err)
 {
 	GError *error = NULL;
 	GebrGeoXmlProgramParameter *pparam;
-	GebrGeoXmlParameterType type;
 
 	pparam = GEBR_GEOXML_PROGRAM_PARAMETER(param);
-	type = gebr_geoxml_parameter_get_type(param);
+
+	if (type == GEBR_GEOXML_PARAMETER_TYPE_UNKNOWN && param)
+		type = gebr_geoxml_parameter_get_type(param);
+	else
+		g_return_if_reached();
 
 	if (type == GEBR_GEOXML_PARAMETER_TYPE_INT || type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT)
 	{
@@ -53,12 +87,14 @@ gboolean gebr_validator_validate(GebrValidator       *self,
 			return TRUE;
 		}
 
-		gebr_geoxml_program_parameter_get_number_min_max(pparam, &min, &max);
+		if (pparam) {
+			gebr_geoxml_program_parameter_get_number_min_max(pparam, &min, &max);
 
-		if (type == GEBR_GEOXML_PARAMETER_TYPE_INT)
-			*validated = g_strdup(gebr_validate_int(expression, min, max));
-		else
-			*validated = g_strdup(gebr_validate_float(expression, min, max));
+			if (type == GEBR_GEOXML_PARAMETER_TYPE_INT)
+				*validated = g_strdup(gebr_validate_int(expression, min, max));
+			else
+				*validated = g_strdup(gebr_validate_float(expression, min, max));
+		}
 		return TRUE;
 	}
 
@@ -76,4 +112,16 @@ gboolean gebr_validator_validate(GebrValidator       *self,
 		*validated = g_strdup(expression);
 		return TRUE;
 	}
+
+	return TRUE;
+}
+
+void gebr_validator_get_documents(GebrValidator *self,
+				  GebrGeoXmlDocument **flow,
+				  GebrGeoXmlDocument **line,
+				  GebrGeoXmlDocument **proj)
+{
+	*flow = self->flow;
+	*line = self->line;
+	*proj = self->proj;
 }

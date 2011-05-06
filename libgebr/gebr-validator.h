@@ -25,15 +25,25 @@ G_BEGIN_DECLS
 
 typedef struct _GebrValidator GebrValidator;
 
-GebrValidator *gebr_validator_new(GebrGeoXmlDocument *flow,
-				  GebrGeoXmlDocument *line,
-				  GebrGeoXmlDocument *proj);
+GebrValidator *gebr_validator_new(GebrGeoXmlDocument **flow,
+				  GebrGeoXmlDocument **line,
+				  GebrGeoXmlDocument **proj);
 
-gboolean gebr_validator_validate(GebrValidator       *self,
-				 const gchar         *expression,
-				 gchar              **validated,
-				 GebrGeoXmlParameter *param,
-				 GError             **err);
+gboolean gebr_validator_validate_param(GebrValidator        *self,
+				       GebrGeoXmlParameter  *param,
+				       gchar               **validated,
+				       GError              **err);
+
+gboolean gebr_validator_validate_widget(GebrValidator            *self,
+					GebrGuiValidatableWidget *widget,
+					GebrGeoXmlParameter      *param);
+
+void gebr_validator_get_documents(GebrValidator       *self,
+				  GebrGeoXmlDocument **flow,
+				  GebrGeoXmlDocument **line,
+				  GebrGeoXmlDocument **proj);
+
+void gebr_validator_free(GebrValidator *self);
 
 G_END_DECLS
 
