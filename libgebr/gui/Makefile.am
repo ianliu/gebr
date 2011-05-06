@@ -30,43 +30,47 @@ libgebr_guiinclude_HEADERS = gui.h
 
 lib_LTLIBRARIES = libgebr_gui.la
 libgebr_gui_la_SOURCES = 		\
-	sexy-icon-entry.c 		\
 	gebr-gui-about.c 		\
-	gebr-gui-utils.c 		\
-	gebr-gui-pixmaps.c 		\
-	gebr-gui-icons.c 		\
-	gebr-gui-file-entry.c		\
 	gebr-gui-enhanced-entry.c	\
-	gebr-gui-sequence-edit.c	\
-	gebr-gui-value-sequence-edit.c	\
-	gebr-gui-program-edit.c		\
-	gebr-gui-parameter.c		\
-	gebr-gui-save-dialog.c		\
+	gebr-gui-file-entry.c		\
 	gebr-gui-help-edit-widget.c	\
 	gebr-gui-help-edit-window.c	\
 	gebr-gui-html-viewer-widget.c	\
 	gebr-gui-html-viewer-window.c	\
-	gebr-gui-js.c
+	gebr-gui-icons.c 		\
+	gebr-gui-js.c			\
+	gebr-gui-parameter.c		\
+	gebr-gui-pixmaps.c 		\
+	gebr-gui-program-edit.c		\
+	gebr-gui-save-dialog.c		\
+	gebr-gui-sequence-edit.c	\
+	gebr-gui-utils.c 		\
+	gebr-gui-validatable-widget.c	\
+	gebr-gui-value-sequence-edit.c	\
+	sexy-icon-entry.c 		\
+	$(NULL)
 
 libgebr_guisubincludedir = $(includedir)/libgebr/gui
 libgebr_guisubinclude_HEADERS = 	\
-	sexy-icon-entry.h		\
 	gebr-gui-about.h		\
-	gebr-gui-utils.h		\
-	gebr-gui-pixmaps.h		\
-	gebr-gui-icons.h		\
-	gebr-gui-file-entry.h		\
 	gebr-gui-enhanced-entry.h	\
-	gebr-gui-sequence-edit.h	\
-	gebr-gui-value-sequence-edit.h	\
-	gebr-gui-program-edit.h		\
-	gebr-gui-parameter.h		\
-	gebr-gui-save-dialog.h		\
+	gebr-gui-file-entry.h		\
 	gebr-gui-help-edit-widget.h	\
 	gebr-gui-help-edit-window.h	\
 	gebr-gui-html-viewer-widget.h	\
 	gebr-gui-html-viewer-window.h	\
-	gebr-gui-js.h
+	gebr-gui-icons.h		\
+	gebr-gui-js.h			\
+	gebr-gui-parameter.h		\
+	gebr-gui-pixmaps.h		\
+	gebr-gui-program-edit.h		\
+	gebr-gui-save-dialog.h		\
+	gebr-gui-sequence-edit.h	\
+	gebr-gui-utils.h		\
+	gebr-gui-validatable-widget.c	\
+	gebr-gui-value-sequence-edit.h	\
+	sexy-icon-entry.h		\
+	$(NULL)
 
 AM_CPPFLAGS =				\
 	-I..				\

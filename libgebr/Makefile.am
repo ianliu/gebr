@@ -50,6 +50,7 @@ libgebr_la_SOURCES = 		\
 	gebr-iexpr.c		\
 	gebr-string-expr.c	\
 	gebr-tar.c		\
+	gebr-validator.c	\
 	libgebr.c		\
 	log.c			\
 	marshalers.c		\
@@ -66,6 +67,7 @@ libgebrinclude_HEADERS =	\
 	gebr-iexpr.h		\
 	gebr-string-expr.h	\
 	gebr-tar.h		\
+	gebr-validator.h	\
 	libgebr.h		\
 	log.h			\
 	utils.h			\

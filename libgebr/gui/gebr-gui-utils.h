@@ -504,5 +504,9 @@ gboolean gtk_show_uri(GdkScreen *screen, const gchar *uri, guint32 timestamp, GE
 
 gboolean gebr_gui_show_uri(const gchar * uri);
 
+gboolean gebr_gui_validate_widget(GebrGuiValidatableWidget *widget,
+				  GebrGeoXmlParameter      *param,
+				  GebrValidator            *validator);
+
 G_END_DECLS
 #endif				//__GEBR_GUI_UTILS_H

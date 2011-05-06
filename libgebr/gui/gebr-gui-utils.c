@@ -1202,3 +1202,20 @@ gboolean gebr_gui_show_uri(const gchar * uri)
 	}
 	return ret;
 }
+
+gboolean gebr_gui_validate_widget(GebrGuiValidatableWidget *widget,
+				  GebrGeoXmlParameter      *param,
+				  GebrValidator            *validator)
+{
+	GebrGeoXmlParameterType type;
+	GError *error = NULL;
+	gchar *validated;
+	gchar *expression = gebr_gui_validatable_widget_get_value(widget);
+
+	gebr_validator_validate(validator, expression, &validated, param, &error);
+	gebr_gui_validatable_widget_set_icon(widget, param, error);
+
+	if (error)
+		g_clear_error(&error);
+	g_free(expression);
+}
