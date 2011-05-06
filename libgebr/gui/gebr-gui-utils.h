@@ -21,6 +21,8 @@
 #include <string.h>
 #include <gtk/gtk.h>
 #include <geoxml.h>
+#include <gebr-gui-validatable-widget.h>
+#include <gebr-validator.h>
 
 G_BEGIN_DECLS
 

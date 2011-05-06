@@ -20,6 +20,7 @@
 
 #include <glib.h>
 #include <geoxml/geoxml.h>
+#include <gui/gebr-gui-validatable-widget.h>
 
 G_BEGIN_DECLS
 

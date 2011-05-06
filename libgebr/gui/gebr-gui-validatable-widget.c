@@ -1,4 +1,4 @@
-#include "gebr-validatable-widget.h"
+#include "gebr-gui-validatable-widget.h"
 
 void gebr_gui_validatable_widget_set_icon(GebrGuiValidatableWidget *widget,
 					  GebrGeoXmlParameter *param,

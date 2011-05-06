@@ -15,15 +15,17 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GEBR_VALIDATOR_H__
-#define __GEBR_VALIDATOR_H__
+#ifndef __GEBR_GUI_VALIDATABLE_WIDGET_H__
+#define __GEBR_GUI_VALIDATABLE_WIDGET_H__
 
 #include <glib.h>
+#include <geoxml/geoxml.h>
 
 G_BEGIN_DECLS
 
-typedef struct {
-	GtkWidget *widget;
+typedef struct _GebrGuiValidatableWidget GebrGuiValidatableWidget;
+
+struct _GebrGuiValidatableWidget{
 
 	void (*set_icon) (GebrGuiValidatableWidget *widget,
 			  GebrGeoXmlParameter      *param,
@@ -33,7 +35,7 @@ typedef struct {
 
 	void (*set_value) (GebrGuiValidatableWidget *widget,
 			   const gchar *value);
-} GebrGuiValidatableWidget;
+};
 
 void gebr_gui_validatable_widget_set_icon(GebrGuiValidatableWidget *widget,
 					  GebrGeoXmlParameter      *param,
@@ -46,4 +48,4 @@ void gebr_gui_validatable_widget_set_value(GebrGuiValidatableWidget *widget,
 
 G_END_DECLS
 
-#endif /* __GEBR_VALIDATOR_H__ */
+#endif /* __GEBR_GUI_VALIDATABLE_WIDGET_H__ */

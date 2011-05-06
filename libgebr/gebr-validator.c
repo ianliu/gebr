@@ -37,20 +37,13 @@ gboolean gebr_validator_validate_widget(GebrValidator            *self,
 	return 0;
 }
 
-void gebr_validator_get_documents(GebrValidator       *self,
-				  GebrGeoXmlDocument **flow,
-				  GebrGeoXmlDocument **line,
-				  GebrGeoXmlDocument **proj)
-{
-	// TODO Implement
-}
 
 void gebr_validator_free(GebrValidator *self)
 {
 	// TODO Implement
 }
 
-static gboolean gebr_validator_validate(GebrValidator          *self,
+gboolean gebr_validator_validate(GebrValidator          *self,
 					const gchar            *expression,
 					gchar                 **validated,
 					GebrGeoXmlParameterType type,
@@ -65,7 +58,7 @@ static gboolean gebr_validator_validate(GebrValidator          *self,
 	if (type == GEBR_GEOXML_PARAMETER_TYPE_UNKNOWN && param)
 		type = gebr_geoxml_parameter_get_type(param);
 	else
-		g_return_if_reached();
+		g_return_val_if_reached(FALSE);
 
 	if (type == GEBR_GEOXML_PARAMETER_TYPE_INT || type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT)
 	{
