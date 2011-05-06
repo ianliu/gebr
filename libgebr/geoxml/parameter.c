@@ -275,18 +275,6 @@ gboolean gebr_geoxml_parameter_set_type(GebrGeoXmlParameter * parameter, GebrGeo
 	return TRUE;
 }
 
-int gebr_geoxml_parameter_set_be_reference(GebrGeoXmlParameter * parameter, GebrGeoXmlParameter * reference)
-{
-	if (parameter == NULL || reference == NULL)
-		return GEBR_GEOXML_RETV_NULL_PTR;
-	if (parameter == reference)
-		return GEBR_GEOXML_RETV_REFERENCE_TO_ITSELF;
-
-	__gebr_geoxml_parameter_set_be_reference(parameter);
-
-	return GEBR_GEOXML_RETV_SUCCESS;
-}
-
 GebrGeoXmlParameterType gebr_geoxml_parameter_get_type(GebrGeoXmlParameter * parameter)
 {
 	g_return_val_if_fail(parameter != NULL, GEBR_GEOXML_PARAMETER_TYPE_UNKNOWN);

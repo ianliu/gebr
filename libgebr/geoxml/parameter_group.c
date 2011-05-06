@@ -44,28 +44,15 @@ struct gebr_geoxml_parameter_group {
  * @instance:
  */
 static void
-__gebr_geoxml_parameter_group_turn_instance_to_reference(GebrGeoXmlParameterGroup * parameter_group,
-							 GebrGeoXmlParameters * instance)
+__gebr_geoxml_parameter_group_turn_instance_to_reference(GebrGeoXmlParameters * instance)
 {
-	GebrGeoXmlParameters *template;
 	GebrGeoXmlSequence *parameter;
 
-	template = gebr_geoxml_parameter_group_get_template(parameter_group);
 	gebr_geoxml_parameters_get_parameter(instance, &parameter, 0);
 	while (parameter) {
 		__gebr_geoxml_parameter_set_be_reference(GEBR_GEOXML_PARAMETER(parameter));
 		gebr_geoxml_sequence_next(&parameter);
 	}
-}
-
-void __gebr_geoxml_parameter_group_turn_to_reference(GebrGeoXmlParameterGroup * parameter_group)
-{
-	GebrGeoXmlSequence *instance;
-
-	gebr_geoxml_parameter_group_get_instance(parameter_group, &instance, 0);
-	for (; instance != NULL; gebr_geoxml_sequence_next(&instance))
-		__gebr_geoxml_parameter_group_turn_instance_to_reference(parameter_group,
-									 GEBR_GEOXML_PARAMETERS(instance));
 }
 
 GebrGeoXmlParameters *gebr_geoxml_parameter_group_get_template(GebrGeoXmlParameterGroup * parameter_group)
@@ -94,7 +81,7 @@ GebrGeoXmlParameters *gebr_geoxml_parameter_group_add_instance(GebrGeoXmlParamet
 	GdomeElement *group = __gebr_geoxml_parameter_get_type_element(GEBR_GEOXML_PARAMETER(parameter_group));
 	gdome_el_insertBefore_protected(group, (GdomeNode*)new_instance, NULL, &exception);
 
-	__gebr_geoxml_parameter_group_turn_instance_to_reference(parameter_group, new_instance);
+	__gebr_geoxml_parameter_group_turn_instance_to_reference(new_instance);
 
 	return new_instance;
 }
