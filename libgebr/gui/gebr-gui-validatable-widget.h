@@ -22,23 +22,27 @@
 
 G_BEGIN_DECLS
 
-typedef void (*GebrGuiValidatableIconFunc) (GebrGuiValidatableWidget *widget,
-					    GebrGeoXmlParameter *param,
-					    GError *error);
-
-typedef gchar * (*GebrGuiValidatableGetValueFunc) (GebrGuiValidatableWidget *widget);
-
 typedef struct {
 	GtkWidget *widget;
-	GebrGuiValidatableIconFunc set_icon;
-	GebrGuiValidatableGetValueFunc get_value;
+
+	void (*set_icon) (GebrGuiValidatableWidget *widget,
+			  GebrGeoXmlParameter      *param,
+			  GError                   *error);
+
+	gchar * (*get_value) (GebrGuiValidatableWidget *widget);
+
+	void (*set_value) (GebrGuiValidatableWidget *widget,
+			   const gchar *value);
 } GebrGuiValidatableWidget;
 
 void gebr_gui_validatable_widget_set_icon(GebrGuiValidatableWidget *widget,
-					  GebrGeoXmlParameter *param,
-					  GError *error);
+					  GebrGeoXmlParameter      *param,
+					  GError                   *error);
 
 gchar *gebr_gui_validatable_widget_get_value(GebrGuiValidatableWidget *widget);
+
+void gebr_gui_validatable_widget_set_value(GebrGuiValidatableWidget *widget,
+					   const gchar *validated);
 
 G_END_DECLS
 
