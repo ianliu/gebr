@@ -105,3 +105,8 @@ syntax: regexp
 ^libgebr/geoxml/tests/test-object$
 syntax: regexp
 ^libgebr/tests/test-gebr-expr$
+
+syntax: glob
+*/po/*pot
+syntax: regexp
+^libgebr/geoxml/tests/test-parameter$
