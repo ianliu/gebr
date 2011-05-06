@@ -297,6 +297,8 @@ gebr_geoxml_program_parameter_set_string_value(GebrGeoXmlProgramParameter * prog
 	if (program_parameter == NULL)
 		return;
 
+	g_return_if_fail(gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(program_parameter)) != GEBR_GEOXML_PARAMETER_TYPE_GROUP);
+
 	if (gebr_geoxml_program_parameter_get_is_list(program_parameter) == FALSE)
 		gebr_geoxml_program_parameter_set_first_value(program_parameter, default_value, value);
 	else
@@ -308,6 +310,8 @@ GString *gebr_geoxml_program_parameter_get_string_value(GebrGeoXmlProgramParamet
 {
 	if (program_parameter == NULL)
 		return NULL;
+
+	g_return_val_if_fail(gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(program_parameter)) != GEBR_GEOXML_PARAMETER_TYPE_GROUP, NULL);
 
 	GString *value;
 
