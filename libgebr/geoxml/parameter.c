@@ -262,15 +262,21 @@ GebrGeoXmlProgram *gebr_geoxml_parameter_get_program(GebrGeoXmlParameter * param
 
 gboolean gebr_geoxml_parameter_set_type(GebrGeoXmlParameter * parameter, GebrGeoXmlParameterType type)
 {
-	GdomeElement * type_element;
-
 	g_return_val_if_fail(parameter != NULL, FALSE);
 	g_return_val_if_fail(type != GEBR_GEOXML_PARAMETER_TYPE_UNKNOWN, FALSE);
 	g_return_val_if_fail(type != GEBR_GEOXML_PARAMETER_TYPE_REFERENCE, FALSE);
 
-	type_element = __gebr_geoxml_parameter_get_type_element(parameter);
+	/* backup and remove old type */
+	GdomeElement * type_element = __gebr_geoxml_parameter_get_type_element(parameter);
+	GdomeElement * property = (GdomeElement *) gdome_el_cloneNode(__gebr_geoxml_get_first_element(type_element, "property"),
+								      TRUE, &exception);
 	gdome_n_removeChild((GdomeNode*)parameter, (GdomeNode*)type_element, &exception);
-	__gebr_geoxml_parameter_insert_type(parameter, type);
+
+	type_element = __gebr_geoxml_parameter_insert_type(parameter, type);
+	/* reinsert data */
+	gdome_el_removeChild(type_element, (GdomeNode*)__gebr_geoxml_get_first_element(type_element, "property"), &exception);
+	GdomeElement * before = __gebr_geoxml_get_first_element(type_element, "property");
+	gdome_el_insertBefore_protected(type_element, (GdomeNode*)property, (GdomeNode*)before, &exception);
 
 	return TRUE;
 }
