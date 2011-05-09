@@ -34,6 +34,23 @@ gboolean gebr_validator_validate_widget(GebrValidator            *self,
 					GebrGeoXmlParameter      *param)
 {
 	// TODO Implement
+#if 0
+	GError *error = NULL;
+	gchar *validated;
+	gchar *expression = gebr_gui_validatable_widget_get_value(widget);
+	gboolean retval;
+
+	retval = gebr_validator_validate(validator, expression, &validated, param, &error);
+	gebr_gui_validatable_widget_set_icon(widget, param, error);
+	gebr_gui_validatable_widget_set_value(widget, validated);
+
+	if (error)
+		g_clear_error(&error);
+	g_free(expression);
+
+	return retval;
+#endif
+
 	return 0;
 }
 
@@ -68,9 +85,9 @@ gboolean gebr_validator_validate(GebrValidator          *self,
 		g_ascii_strtod(expression, &end_str);
 		if(*end_str) {
 			gebr_geoxml_document_validate_expr(expression,
-							   self->flow,
-							   self->line,
-							   self->proj,
+							   *self->flow,
+							   *self->line,
+							   *self->proj,
 							   &error);
 			if (error) {
 				g_propagate_error(err, error);
@@ -93,9 +110,9 @@ gboolean gebr_validator_validate(GebrValidator          *self,
 
 	if (type == GEBR_GEOXML_PARAMETER_TYPE_STRING || type == GEBR_GEOXML_PARAMETER_TYPE_FILE) {
 		gebr_geoxml_document_validate_str(expression,
-						  self->flow,
-						  self->line,
-						  self->proj,
+						  *self->flow,
+						  *self->line,
+						  *self->proj,
 						  &error);
 
 		if (error) {
@@ -114,7 +131,7 @@ void gebr_validator_get_documents(GebrValidator *self,
 				  GebrGeoXmlDocument **line,
 				  GebrGeoXmlDocument **proj)
 {
-	*flow = self->flow;
-	*line = self->line;
-	*proj = self->proj;
+	*flow = *self->flow;
+	*line = *self->line;
+	*proj = *self->proj;
 }
