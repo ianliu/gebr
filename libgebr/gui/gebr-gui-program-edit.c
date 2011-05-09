@@ -251,11 +251,9 @@ gebr_gui_program_edit_load(GebrGuiProgramEdit *program_edit, GebrGeoXmlParameter
 	return frame;
 }
 
-/**
- * \internal
- */
-static GtkWidget *gebr_gui_program_edit_load_parameter(GebrGuiProgramEdit *program_edit,
-						       GebrGeoXmlParameter * parameter, GSList ** radio_group)
+static GtkWidget *gebr_gui_program_edit_load_parameter(GebrGuiProgramEdit  *program_edit,
+						       GebrGeoXmlParameter *parameter,
+						       GSList             **radio_group)
 {
 	GebrGeoXmlParameterType type;
 
@@ -392,12 +390,12 @@ static GtkWidget *gebr_gui_program_edit_load_parameter(GebrGuiProgramEdit *progr
 		if (type != GEBR_GEOXML_PARAMETER_TYPE_FILE)
 			gebr_gui_parameter_widget =
 			    gebr_gui_parameter_widget_new(parameter,
-							  &program_edit->dicts,
+							  NULL, // FIXME Use GebrValidator here!
 							  program_edit->use_default,
 							  NULL);
 		else
 			gebr_gui_parameter_widget = gebr_gui_parameter_widget_new(parameter,
-										  &program_edit->dicts,
+										  NULL, // FIXME: Use GebrValidator here!
 										  program_edit->use_default,
 										  program_edit->parameter_widget_data);
 		gtk_widget_show(gebr_gui_parameter_widget->widget);

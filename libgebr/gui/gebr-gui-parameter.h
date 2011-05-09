@@ -20,18 +20,27 @@
 
 #include <gtk/gtk.h>
 
-#include <geoxml.h>
+#include <geoxml/geoxml.h>
+#include <gebr-validator.h>
 
 #include "gebr-gui-file-entry.h"
 #include "gebr-gui-value-sequence-edit.h"
 #include "gebr-gui-program-edit.h"
+#include "gebr-gui-validatable-widget.h"
 
 G_BEGIN_DECLS
 
-struct gebr_gui_parameter_widget;
-typedef void (*changed_callback) (struct gebr_gui_parameter_widget * gebr_gui_parameter_widget, gpointer user_data);
+typedef struct gebr_gui_parameter_widget GebrGuiParameterWidget;
 
-struct gebr_gui_parameter_widget {
+typedef void (*changed_callback) (GebrGuiParameterWidget *widget, gpointer user_data);
+
+struct gebr_gui_parameter_widget
+{
+	GebrGuiValidatableWidget parent;
+
+	/*< private >*/
+	GebrValidator *validator;
+
 	GebrGeoXmlParameter *parameter;
 	GebrGeoXmlProgramParameter *program_parameter;
 	GebrGeoXmlParameterType parameter_type;
@@ -41,10 +50,6 @@ struct gebr_gui_parameter_widget {
 
 	GtkWidget *widget;
 	GtkWidget *value_widget;
-
-	/* dict stuff */
-	gboolean dict_enabled;
-	struct gebr_gui_gebr_gui_program_edit_dicts *dicts;
 
 	/* for lists */
 	GtkWidget *list_value_widget;
@@ -58,18 +63,10 @@ struct gebr_gui_parameter_widget {
 /**
  * Create a new parameter widget.
  */
-struct gebr_gui_parameter_widget *
-gebr_gui_parameter_widget_new(GebrGeoXmlParameter *parameter,
-			      struct gebr_gui_gebr_gui_program_edit_dicts *dicts,
-			      gboolean use_default_value,
-			      gpointer data);
-
-/**
- * Set dictionaries documents to find dictionaries parameters
- */
-void
-gebr_gui_parameter_widget_set_dicts(struct gebr_gui_parameter_widget *parameter_widget,
-				    struct gebr_gui_gebr_gui_program_edit_dicts *dicts);
+GebrGuiParameterWidget *gebr_gui_parameter_widget_new(GebrGeoXmlParameter *parameter,
+						      GebrValidator       *validator,
+						      gboolean             use_default_value,
+						      gpointer             data);
 
 /**
  *
