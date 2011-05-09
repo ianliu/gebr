@@ -16,8 +16,11 @@
  */
 
 #include <glib.h>
+#include <glib-object.h>
 #include <glib/gstdio.h>
 
+#include "../gebr-expr.h"
+#include "../gebr-iexpr.h"
 #include "../gebr-validator.h"
 
 void test_gebr_validator_simple(void)
@@ -28,15 +31,29 @@ void test_gebr_validator_simple(void)
 	gchar *validated = NULL;
 	GError *error = NULL;
 
+	validator = gebr_validator_new((GebrGeoXmlDocument**)&proj, NULL, NULL);
+
 	proj = gebr_geoxml_project_new();
+
 	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
 						      GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
 						      "pi", "3.14");
-
-	validator = gebr_validator_new((GebrGeoXmlDocument**)&proj, NULL, NULL);
-
-	gebr_validator_validate_param(validator, param, &validated, &error);
+	g_assert(gebr_validator_validate_param(validator, param, &validated, &error) == TRUE);
 	g_assert_no_error(error);
+
+	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
+						      GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
+						      "e", "2.718[");
+	g_assert(gebr_validator_validate_param(validator, param, &validated, &error) == FALSE);
+	g_assert_error(error, GEBR_EXPR_ERROR, GEBR_EXPR_ERROR_SYNTAX);
+	g_clear_error(&error);
+
+	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
+						      GEBR_GEOXML_PARAMETER_TYPE_STRING,
+						      "abc", "[foo");
+	g_assert(gebr_validator_validate_param(validator, param, &validated, &error) == FALSE);
+	g_assert_error(error, GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_SYNTAX);
+	g_clear_error(&error);
 
 	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(proj));
 	gebr_validator_free(validator);
@@ -44,6 +61,7 @@ void test_gebr_validator_simple(void)
 
 int main(int argc, char *argv[])
 {
+	g_type_init();
 	g_test_init(&argc, &argv, NULL);
 
 	g_test_add_func("/libgebr/validator/simple", test_gebr_validator_simple);
