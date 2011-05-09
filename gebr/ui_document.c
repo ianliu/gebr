@@ -529,7 +529,7 @@ void document_dict_edit_setup_ui(void)
 	cell_renderer = gtk_cell_renderer_combo_new();
 	data->cell_renderer_array[DICT_EDIT_VALUE_TYPE] = cell_renderer;
 	gtk_tree_view_column_pack_start(column, cell_renderer, FALSE);
-	gtk_tree_view_column_set_min_width(column, 100);
+	gtk_tree_view_column_set_min_width(column, 200);
 	g_object_set(cell_renderer, "has-entry", FALSE, "editable", TRUE, "model", type_model, "text-column", 0, NULL);
 	g_signal_connect(cell_renderer, "edited", G_CALLBACK(on_dict_edit_value_type_cell_edited), data);
 	gtk_tree_view_column_add_attribute(column, cell_renderer, "text", DICT_EDIT_VALUE_TYPE);
@@ -854,7 +854,7 @@ static void on_dict_edit_renderer_editing_started(GtkCellRenderer * renderer, Gt
 		gtk_tree_model_get(data->tree_model, &iter, DICT_EDIT_GEBR_GEOXML_POINTER, &parameter, -1);
 		GebrGeoXmlParameterType type = gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(parameter));
 		gtk_entry_set_icon_from_stock(GTK_ENTRY(widget), GTK_ENTRY_ICON_SECONDARY,
-					      type == GEBR_GEOXML_PARAMETER_TYPE_STRING ? "string-icon" : "real-icon");
+					      type == GEBR_GEOXML_PARAMETER_TYPE_STRING ? "string-icon" : "integer-icon");
 	}
 
 	gtk_widget_set_events(GTK_WIDGET(widget), GDK_KEY_PRESS_MASK);
@@ -1033,7 +1033,6 @@ static gboolean dict_edit_validate_editing_cell(struct dict_edit_data *data, gbo
 			data->edition_valid = FALSE;
 		} else 
 			gebr_geoxml_program_parameter_set_keyword(parameter, new_text);
-		
 		break;
 	case DICT_EDIT_VALUE: {
 		GebrGeoXmlParameterType type = gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(parameter));
@@ -1052,25 +1051,45 @@ static gboolean dict_edit_validate_editing_cell(struct dict_edit_data *data, gbo
 		}
 
 		const gchar *old_value = gebr_geoxml_program_parameter_get_first_value(parameter, FALSE);
-		const gchar *validated;
-		switch (type) {
-		case GEBR_GEOXML_PARAMETER_TYPE_INT:
-			validated = gebr_validate_int(new_text, NULL, NULL);
-			break;
-		case GEBR_GEOXML_PARAMETER_TYPE_FLOAT:
-			validated = gebr_validate_float(new_text, NULL, NULL);
-			break;
-		default:
-			validated = new_text;
-			break;
-		}
+		gchar *validated;
+		GError *error;
+
+		gebr_geoxml_program_parameter_set_first_value(parameter, FALSE, new_text);
+		gebr_validator_validate_param(gebr.validator, GEBR_GEOXML_PARAMETER(parameter), &validated, &error);
+
 		if (cancel_edition && !strlen(old_value)) {
 			gtk_tree_store_remove(GTK_TREE_STORE(data->tree_model), &data->editing_iter);
 			gebr_geoxml_sequence_remove(GEBR_GEOXML_SEQUENCE(parameter));
-		} else if (!strlen(new_text) || strcmp(validated, new_text)) {
+		} else if (!strlen(validated) || strcmp(validated, validated)) {
 			data->edition_valid = FALSE;
-		} else
-			gebr_geoxml_program_parameter_set_first_value(parameter, FALSE, new_text);
+		} else {
+			if(error) {
+				gtk_entry_set_icon_from_stock(GTK_ENTRY(data->in_edition),
+				                              GTK_ENTRY_ICON_SECONDARY,
+				                              GTK_STOCK_DIALOG_WARNING);
+				switch (error->code) {
+				case GEBR_EXPR_ERROR_EMPTY_VAR:
+				case GEBR_EXPR_ERROR_INVALID_NAME:
+				case GEBR_EXPR_ERROR_UNDEFINED_VAR:
+					gtk_entry_set_icon_tooltip_text(GTK_ENTRY(data->in_edition),
+					                                GTK_ENTRY_ICON_SECONDARY,
+					                                _("This expression uses an invalid variable"));
+					break;
+				case GEBR_EXPR_ERROR_SYNTAX:
+				case GEBR_EXPR_ERROR_INVALID_ASSIGNMENT:
+					gtk_entry_set_icon_tooltip_text(GTK_ENTRY(data->in_edition),
+					                                GTK_ENTRY_ICON_SECONDARY,
+					                                _("This variable has an invalid expression"));
+					break;
+				default:
+					gtk_entry_set_icon_tooltip_text(GTK_ENTRY(data->in_edition),
+					                                GTK_ENTRY_ICON_SECONDARY,
+					                                _("Invalid variable"));
+					break;
+				}
+			} else
+				gebr_geoxml_program_parameter_set_first_value(parameter, FALSE, validated);
+		}
 		break;
 	} case DICT_EDIT_COMMENT:
 		gtk_label_set_text(GTK_LABEL(data->label), 
@@ -1473,4 +1492,3 @@ static void on_groups_combo_box_changed (GtkComboBox *combo, GebrGuiValueSequenc
 	g_free (group);
 	gtk_tree_path_free (path);
 }
-
