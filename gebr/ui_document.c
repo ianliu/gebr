@@ -893,6 +893,8 @@ static void on_dict_edit_value_type_cell_edited(GtkCellRenderer * cell, gchar * 
 						struct dict_edit_data *data)
 {
 	GebrGeoXmlParameterType type;
+	if(!new_text)
+		return;
 	if (!strcmp(new_text, _("string")))
 		type = GEBR_GEOXML_PARAMETER_TYPE_STRING;
 	else if (!strcmp(new_text, _("number")))
@@ -1052,43 +1054,47 @@ static gboolean dict_edit_validate_editing_cell(struct dict_edit_data *data, gbo
 
 		const gchar *old_value = gebr_geoxml_program_parameter_get_first_value(parameter, FALSE);
 		gchar *validated;
-		GError *error;
-
-		gebr_geoxml_program_parameter_set_first_value(parameter, FALSE, new_text);
-		gebr_validator_validate_param(gebr.validator, GEBR_GEOXML_PARAMETER(parameter), &validated, &error);
+		GError *error = NULL;
 
 		if (cancel_edition && !strlen(old_value)) {
 			gtk_tree_store_remove(GTK_TREE_STORE(data->tree_model), &data->editing_iter);
 			gebr_geoxml_sequence_remove(GEBR_GEOXML_SEQUENCE(parameter));
-		} else if (!strlen(validated) || strcmp(validated, validated)) {
+			goto out;
+		}
+		if(!strlen(new_text)) {
 			data->edition_valid = FALSE;
-		} else {
-			if(error) {
-				gtk_entry_set_icon_from_stock(GTK_ENTRY(data->in_edition),
-				                              GTK_ENTRY_ICON_SECONDARY,
-				                              GTK_STOCK_DIALOG_WARNING);
-				switch (error->code) {
-				case GEBR_EXPR_ERROR_EMPTY_VAR:
-				case GEBR_EXPR_ERROR_INVALID_NAME:
-				case GEBR_EXPR_ERROR_UNDEFINED_VAR:
-					gtk_entry_set_icon_tooltip_text(GTK_ENTRY(data->in_edition),
-					                                GTK_ENTRY_ICON_SECONDARY,
-					                                _("This expression uses an invalid variable"));
-					break;
-				case GEBR_EXPR_ERROR_SYNTAX:
-				case GEBR_EXPR_ERROR_INVALID_ASSIGNMENT:
-					gtk_entry_set_icon_tooltip_text(GTK_ENTRY(data->in_edition),
-					                                GTK_ENTRY_ICON_SECONDARY,
-					                                _("This variable has an invalid expression"));
-					break;
-				default:
-					gtk_entry_set_icon_tooltip_text(GTK_ENTRY(data->in_edition),
-					                                GTK_ENTRY_ICON_SECONDARY,
-					                                _("Invalid variable"));
-					break;
-				}
-			} else
-				gebr_geoxml_program_parameter_set_first_value(parameter, FALSE, validated);
+			goto out;
+		}
+		gebr_geoxml_program_parameter_set_first_value(parameter, FALSE, new_text);
+		gebr_validator_validate_param(gebr.validator, GEBR_GEOXML_PARAMETER(parameter), &validated, &error);
+
+		if (error) {
+			data->edition_valid = FALSE;
+
+			gtk_entry_set_icon_from_stock(GTK_ENTRY(data->in_edition),
+			                              GTK_ENTRY_ICON_SECONDARY,
+			                              GTK_STOCK_DIALOG_WARNING);
+			switch (error->code) {
+			case GEBR_EXPR_ERROR_EMPTY_VAR:
+			case GEBR_EXPR_ERROR_INVALID_NAME:
+			case GEBR_EXPR_ERROR_UNDEFINED_VAR:
+				gtk_entry_set_icon_tooltip_text(GTK_ENTRY(data->in_edition),
+				                                GTK_ENTRY_ICON_SECONDARY,
+				                                _("Using variable not defined previously"));
+				break;
+			case GEBR_EXPR_ERROR_SYNTAX:
+			case GEBR_EXPR_ERROR_INVALID_ASSIGNMENT:
+				gtk_entry_set_icon_tooltip_text(GTK_ENTRY(data->in_edition),
+				                                GTK_ENTRY_ICON_SECONDARY,
+				                                _("Invalid expression"));
+				break;
+			default:
+				gtk_entry_set_icon_tooltip_text(GTK_ENTRY(data->in_edition),
+				                                GTK_ENTRY_ICON_SECONDARY,
+				                                _("Unknown error"));
+				break;
+			}
+			g_clear_error(&error);
 		}
 		break;
 	} case DICT_EDIT_COMMENT:
