@@ -20,9 +20,10 @@
 
 #include <string.h>
 #include <gtk/gtk.h>
-#include <geoxml.h>
-#include <gebr-gui-validatable-widget.h>
+#include <geoxml/geoxml.h>
 #include <gebr-validator.h>
+
+#include "gebr-gui-validatable-widget.h"
 
 G_BEGIN_DECLS
 
