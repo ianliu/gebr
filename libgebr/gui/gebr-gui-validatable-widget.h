@@ -23,18 +23,20 @@
 
 G_BEGIN_DECLS
 
+#define GEBR_GUI_VALIDATABLE_WIDGET(obj) ((GebrGuiValidatableWidget *)(obj))
+
 typedef struct _GebrGuiValidatableWidget GebrGuiValidatableWidget;
 
-struct _GebrGuiValidatableWidget{
-
-	void (*set_icon) (GebrGuiValidatableWidget *widget,
-			  GebrGeoXmlParameter      *param,
-			  GError                   *error);
+struct _GebrGuiValidatableWidget
+{
+	void    (*set_icon)  (GebrGuiValidatableWidget *widget,
+			      GebrGeoXmlParameter      *param,
+			      GError                   *error);
 
 	gchar * (*get_value) (GebrGuiValidatableWidget *widget);
 
-	void (*set_value) (GebrGuiValidatableWidget *widget,
-			   const gchar *value);
+	void    (*set_value) (GebrGuiValidatableWidget *widget,
+			      const gchar              *value);
 };
 
 void gebr_gui_validatable_widget_set_icon(GebrGuiValidatableWidget *widget,
