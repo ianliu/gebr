@@ -24,6 +24,7 @@ void test_gebr_validator_simple(void)
 {
 	GebrValidator *validator;
 	GebrGeoXmlProject *proj;
+	GebrGeoXmlParameter *param;
 	gchar *validated = NULL;
 	GError *error = NULL;
 
