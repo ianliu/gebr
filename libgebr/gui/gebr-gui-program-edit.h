@@ -24,6 +24,7 @@
 
 #include <gtk/gtk.h>
 
+#include <gebr-validator.h>
 #include <geoxml.h>
 
 G_BEGIN_DECLS
@@ -39,11 +40,7 @@ typedef struct {
 	GtkWidget *title_label;
 	GtkWidget *hbox;
 
-	struct gebr_gui_gebr_gui_program_edit_dicts {
-		GebrGeoXmlDocument *project;
-		GebrGeoXmlDocument *line;
-		GebrGeoXmlDocument *flow;
-	} dicts;
+	GebrValidator *validator;
 } GebrGuiProgramEdit;
 
 /**
@@ -53,9 +50,7 @@ GebrGuiProgramEdit *
 gebr_gui_program_edit_setup_ui(GebrGeoXmlProgram * program,
 			       gpointer parameter_widget_data,
 			       gboolean use_default,
-			       GebrGeoXmlDocument *project,
-			       GebrGeoXmlDocument *line,
-			       GebrGeoXmlDocument *flow);
+			       GebrValidator *validator);
 
 /**
  * \internal

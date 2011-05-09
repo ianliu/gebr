@@ -78,9 +78,7 @@ struct ui_parameters *parameters_configure_setup_ui(void)
 	ui_parameters->program_edit =
 		gebr_gui_program_edit_setup_ui(GEBR_GEOXML_PROGRAM(gebr_geoxml_sequence_append_clone(GEBR_GEOXML_SEQUENCE(gebr.program))),
 					       flow_io_customized_paths_from_line, FALSE,
-					       GEBR_GEOXML_DOCUMENT(gebr.project),
-					       GEBR_GEOXML_DOCUMENT(gebr.line),
-					       GEBR_GEOXML_DOCUMENT(gebr.flow));
+					       gebr.validator);
 	gebr_gui_program_edit_reload(ui_parameters->program_edit, NULL);
 
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), ui_parameters->program_edit->widget, TRUE, TRUE, 0);

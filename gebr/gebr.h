@@ -26,6 +26,7 @@
 #include <gtk/gtk.h>
 
 #include <libgebr/log.h>
+#include <libgebr/gebr-validator.h>
 #include <libgebr/geoxml/geoxml.h>
 #include <libgebr/gui/gebr-gui-about.h>
 
@@ -81,6 +82,8 @@ struct gebr {
 
 	GHashTable * help_edit_windows;
 	GHashTable * xmls_by_filename;
+
+	GebrValidator *validator;
 
 	GebrGeoXmlDocument *project_line;
 	GebrGeoXmlProject *project;

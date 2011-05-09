@@ -30,6 +30,7 @@
 #include <glib/gi18n.h>
 #include <libgebr/utils.h>
 #include <libgebr/date.h>
+#include <libgebr/gebr-validator.h>
 #include <libgebr/gui/gebr-gui-utils.h>
 
 #include "gebr.h"
@@ -92,6 +93,10 @@ void gebr_init(void)
 	gebr.help_edit_windows = g_hash_table_new(NULL, NULL);
 	gebr.xmls_by_filename = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
 
+	gebr.validator = gebr_validator_new((GebrGeoXmlDocument**)&gebr.flow,
+	                                    (GebrGeoXmlDocument**)&gebr.line,
+	                                    (GebrGeoXmlDocument**)&gebr.project);
+
 	/* icons */
 	gebr.invisible = gtk_invisible_new();
 	gebr.pixmaps.stock_cancel =
@@ -150,6 +155,8 @@ gboolean gebr_quit(gboolean save_config)
 	g_object_unref (gebr.ui_server_list->common.combo_store);
 	g_hash_table_destroy(gebr.help_edit_windows);
 	g_hash_table_destroy(gebr.xmls_by_filename);
+
+	gebr_validator_free(gebr.validator);
 
 	/*
 	 * Data frees and cleanups

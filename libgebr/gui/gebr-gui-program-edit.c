@@ -66,9 +66,7 @@ GebrGuiProgramEdit *
 gebr_gui_program_edit_setup_ui(GebrGeoXmlProgram * program,
 			       gpointer parameter_widget_data,
 			       gboolean use_default,
-			       GebrGeoXmlDocument *project,
-			       GebrGeoXmlDocument *line,
-			       GebrGeoXmlDocument *flow)
+			       GebrValidator *validator)
 {
 	GebrGuiProgramEdit *program_edit;
 	GtkWidget *vbox;
@@ -81,9 +79,7 @@ gebr_gui_program_edit_setup_ui(GebrGeoXmlProgram * program,
 	program_edit->parameter_widget_data = parameter_widget_data;
 	program_edit->use_default = use_default;
 	program_edit->widget = vbox = gtk_vbox_new(FALSE, 0);
-	program_edit->dicts.project = project;
-	program_edit->dicts.line = line;
-	program_edit->dicts.flow = flow;
+	program_edit->validator = validator;
 	gtk_widget_show(vbox);
 	program_edit->title_label = title_label = gtk_label_new(NULL);
 	gtk_widget_show(title_label);
@@ -390,12 +386,12 @@ static GtkWidget *gebr_gui_program_edit_load_parameter(GebrGuiProgramEdit  *prog
 		if (type != GEBR_GEOXML_PARAMETER_TYPE_FILE)
 			gebr_gui_parameter_widget =
 			    gebr_gui_parameter_widget_new(parameter,
-							  NULL, // FIXME Use GebrValidator here!
+							  program_edit->validator,
 							  program_edit->use_default,
 							  NULL);
 		else
 			gebr_gui_parameter_widget = gebr_gui_parameter_widget_new(parameter,
-										  NULL, // FIXME: Use GebrValidator here!
+										  program_edit->validator,
 										  program_edit->use_default,
 										  program_edit->parameter_widget_data);
 		gtk_widget_show(gebr_gui_parameter_widget->widget);
