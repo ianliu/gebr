@@ -406,5 +406,24 @@ gebr_geoxml_document_validate_str (const gchar *str,
 				    GebrGeoXmlDocument *line,
 				    GebrGeoXmlDocument *proj,
 				    GError **err);
+
+/**
+ * gebr_geoxml_document_set_dict_keyword:
+ * @doc: A #GebrGeoXmlDocument
+ * @type: The type of the variable
+ * @keyword: The name of the variable
+ * @value: The value of the variable
+ *
+ * Creates a new variable in the dictionary variables buffer.
+ *
+ * Returns: The dictionary variable #GebrGeoXmlParameter.
+ */
+GebrGeoXmlParameter *
+gebr_geoxml_document_set_dict_keyword(GebrGeoXmlDocument *doc,
+				      GebrGeoXmlParameterType type,
+				      const gchar *keyword,
+				      const gchar *value);
+
 G_END_DECLS
+
 #endif				//__GEBR_GEOXML_DOCUMENT_H

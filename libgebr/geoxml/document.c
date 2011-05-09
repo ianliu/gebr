@@ -1427,3 +1427,29 @@ out:
 
 	return success;
 }
+
+GebrGeoXmlParameter *
+gebr_geoxml_document_set_dict_keyword(GebrGeoXmlDocument *doc,
+				      GebrGeoXmlParameterType type,
+				      const gchar *keyword,
+				      const gchar *value)
+{
+	GebrGeoXmlParameter *param;
+	GebrGeoXmlParameters *params;
+
+	g_return_val_if_fail(doc != NULL, NULL);
+	g_return_val_if_fail(keyword != NULL, NULL);
+	g_return_val_if_fail(value != NULL, NULL);
+	g_return_val_if_fail(type == GEBR_GEOXML_PARAMETER_TYPE_STRING ||
+			     type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT ||
+			     type == GEBR_GEOXML_PARAMETER_TYPE_INT,
+			     NULL);
+
+	params = gebr_geoxml_document_get_dict_parameters(doc);
+	param = gebr_geoxml_parameters_append_parameter(params, type);
+	gebr_geoxml_program_parameter_set_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(param), keyword);
+	gebr_geoxml_program_parameter_set_first_value(GEBR_GEOXML_PROGRAM_PARAMETER(param),
+						      FALSE, value);
+
+	return param;
+}
