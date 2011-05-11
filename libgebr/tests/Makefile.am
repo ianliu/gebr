@@ -24,6 +24,9 @@ test_gebr_tar_SOURCES = test-gebr-tar.c
 TEST_PROGS += test-gebr-expr
 test_gebr_expr_SOURCES = test-gebr-expr.c
 
+TEST_PROGS += test-gebr-arith-expr
+test_gebr_arith_expr_SOURCES = test-gebr-arith-expr.c
+
 TEST_PROGS += test-gebr-string-expr
 test_gebr_string_expr_SOURCES = test-gebr-string-expr.c
 

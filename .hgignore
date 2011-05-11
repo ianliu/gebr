@@ -75,6 +75,7 @@ libgebr/gui/marshalers.[ch]
 libgebr/gui/tests/test-js
 libgebr/json/stamp*
 libgebr/json/tests/test-serialize-{boxed,complex,full,simple}
+libgebr/tests/test-gebr-arith-expr
 libgebr/tests/test-gebr-string-expr
 libgebr/tests/test-gebr-tar
 libgebr/tests/test-gebr-validator

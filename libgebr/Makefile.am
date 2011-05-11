@@ -48,6 +48,7 @@ libgebr_la_SOURCES = 		\
 	date.c			\
 	gebr-expr.c		\
 	gebr-iexpr.c		\
+	gebr-arith-expr.c	\
 	gebr-string-expr.c	\
 	gebr-tar.c		\
 	gebr-validator.c	\
@@ -65,6 +66,7 @@ libgebrinclude_HEADERS =	\
 	defines.h		\
 	gebr-expr.h		\
 	gebr-iexpr.h		\
+	gebr-arith-expr.h	\
 	gebr-string-expr.h	\
 	gebr-tar.h		\
 	gebr-validator.h	\
