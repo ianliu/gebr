@@ -50,6 +50,7 @@ GQuark gebr_iexpr_error_quark(void);
 
 /**
  * GebrIExprError:
+ * @GEBR_IEXPR_ERROR_INITIALIZE: The validator failed to initialize.
  * @GEBR_IEXPR_ERROR_SYNTAX: The expression syntax is invalid.
  * @GEBR_IEXPR_ERROR_UNDEF_VAR: An undefined variable was found.
  * @GEBR_IEXPR_ERROR_INVAL_VAR: An invalid variable name was found.
@@ -58,6 +59,7 @@ GQuark gebr_iexpr_error_quark(void);
  * Error codes returned by expression handling functions.
  */
 typedef enum {
+	GEBR_IEXPR_ERROR_INITIALIZE,
 	GEBR_IEXPR_ERROR_SYNTAX,
 	GEBR_IEXPR_ERROR_UNDEF_VAR,
 	GEBR_IEXPR_ERROR_INVAL_VAR,
@@ -79,6 +81,8 @@ struct _GebrIExprInterface {
 	gboolean (*is_valid) (GebrIExpr   *self,
 			      const gchar *expr,
 			      GError     **error);
+
+	void     (*reset)    (GebrIExpr *self);
 };
 
 GType gebr_iexpr_get_type(void) G_GNUC_CONST;
@@ -110,6 +114,14 @@ gboolean gebr_iexpr_set_var(GebrIExpr              *self,
 gboolean gebr_iexpr_is_valid(GebrIExpr   *self,
 			     const gchar *expr,
 			     GError     **error);
+
+/**
+ * gebr_iexpr_reset:
+ * @expr: A #GebrIExpr
+ *
+ * Resets the state of this evaluator.
+ */
+void gebr_iexpr_reset(GebrIExpr *self);
 
 G_END_DECLS
 

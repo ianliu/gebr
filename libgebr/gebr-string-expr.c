@@ -1,10 +1,26 @@
+/*   libgebr - GeBR Library
+ *   Copyright (C) 2011 GeBR core team (http://www.gebrproject.com/)
+ *
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #include <glib/gi18n.h>
 
 #include "gebr-string-expr.h"
 #include "gebr-iexpr.h"
 
-/* Prototypes & Private {{{ */
-
+/* Prototypes & Private {{{1 */
 struct _GebrStringExprPriv {
 	GHashTable *vars;
 };
@@ -14,6 +30,7 @@ typedef struct {
 	GebrGeoXmlParameterType type;
 } TypedVar;
 
+/* Prototypes {{{2 */
 static void gebr_string_expr_interface_init(GebrIExprInterface *iface);
 
 static void gebr_string_expr_finalize(GObject *object);
@@ -30,9 +47,7 @@ G_DEFINE_TYPE_WITH_CODE(GebrStringExpr, gebr_string_expr, G_TYPE_OBJECT,
 			G_IMPLEMENT_INTERFACE(GEBR_TYPE_IEXPR,
 					      gebr_string_expr_interface_init));
 
-/* }}} */
-
-/* Class & Instance initialize/finalize {{{ */
+/* Class & Instance initialize/finalize {{{1 */
 static void gebr_string_expr_class_init(GebrStringExprClass *klass)
 {
 	GObjectClass *g_class;
@@ -59,9 +74,8 @@ static void gebr_string_expr_finalize(GObject *object)
 
 	g_hash_table_unref(self->priv->vars);
 }
-/* }}} */
 
-/* Variables hash table functions {{{ */
+/* Variables hash table functions {{{1 */
 static guint hash_func(gconstpointer a)
 {
 	const TypedVar *v = a;
@@ -90,15 +104,14 @@ TypedVar *typed_var_new(const gchar *name, GebrGeoXmlParameterType type)
 	return v;
 }
 
-/* }}} */
-
-/* GebrIExpr interface methods implementation {{{ */
+/* GebrIExpr interface methods implementation {{{1 */
 static gboolean gebr_string_expr_set_var(GebrIExpr              *iface,
 					 const gchar            *name,
 					 GebrGeoXmlParameterType type,
 					 const gchar            *value,
 					 GError                **err)
 {
+	GError *error = NULL;
 	GebrStringExpr *self = GEBR_STRING_EXPR(iface);
 
 	switch (type)
@@ -106,16 +119,26 @@ static gboolean gebr_string_expr_set_var(GebrIExpr              *iface,
 	case GEBR_GEOXML_PARAMETER_TYPE_STRING:
 	case GEBR_GEOXML_PARAMETER_TYPE_FLOAT:
 	case GEBR_GEOXML_PARAMETER_TYPE_INT:
-		g_hash_table_insert(self->priv->vars,
-				    typed_var_new(name, type),
-				    g_strdup(value));
-		return TRUE;
+		break;
 	default:
 		g_set_error(err, GEBR_IEXPR_ERROR,
 			    GEBR_IEXPR_ERROR_INVAL_TYPE,
 			    _("Invalid variable type"));
 		return FALSE;
 	}
+
+	gebr_iexpr_is_valid(iface, value, &error);
+
+	if (error) {
+		g_propagate_error(err, error);
+		return FALSE;
+	}
+
+	g_hash_table_insert(self->priv->vars,
+			    typed_var_new(name, type),
+			    g_strdup(value));
+
+	return TRUE;
 }
 
 static gboolean gebr_string_expr_is_valid(GebrIExpr   *iface,
@@ -125,14 +148,20 @@ static gboolean gebr_string_expr_is_valid(GebrIExpr   *iface,
 	return gebr_string_expr_eval(GEBR_STRING_EXPR(iface), expr, NULL, err);
 }
 
+static void gebr_string_expr_reset(GebrIExpr *iface)
+{
+	GebrStringExpr *self = GEBR_STRING_EXPR(iface);
+	g_hash_table_remove_all(self->priv->vars);
+}
+
 static void gebr_string_expr_interface_init(GebrIExprInterface *iface)
 {
 	iface->set_var = gebr_string_expr_set_var;
 	iface->is_valid = gebr_string_expr_is_valid;
+	iface->reset = gebr_string_expr_reset;
 }
 
-/* }}} */
-
+/* Public functions {{{1 */
 GebrStringExpr *gebr_string_expr_new(void)
 {
 	return g_object_new(GEBR_TYPE_STRING_EXPR, NULL);
