@@ -963,7 +963,7 @@ guint gebrd_bc_hash_func(gconstpointer a)
 	return g_str_hash(a);
 }
 
-static void define_bc_variables(GebrdJob *job, GString *expr_buf, gsize *n_vars)
+static void define_bc_variables(GebrdJob *job, GString *expr_buf, GString *str_buf, gsize *n_vars)
 {
 	gsize j = 0;
 	const gchar *value;
@@ -1023,14 +1023,22 @@ static void define_bc_variables(GebrdJob *job, GString *expr_buf, gsize *n_vars)
 			g_free (label);
 			break;
 		}
-		case GEBR_GEOXML_PARAMETER_TYPE_STRING:
+		case GEBR_GEOXML_PARAMETER_TYPE_STRING: {
+			gchar *bash_var;
+			gchar *result;
 			prog_param = GEBR_GEOXML_PROGRAM_PARAMETER (seq);
 			value = gebr_geoxml_program_parameter_get_first_value (prog_param, FALSE);
 			keyword = gebr_geoxml_program_parameter_get_keyword (prog_param);
+			gebr_string_expr_eval(job->str_expr, value, &result, NULL);
+			bash_var = g_strdup_printf("${%s}", keyword);
 			gebr_iexpr_set_var(GEBR_IEXPR(job->str_expr), keyword,
 					   GEBR_GEOXML_PARAMETER_TYPE_STRING,
-					   value, NULL);
+					   bash_var, NULL);
+			g_string_append_printf(str_buf, "\t%s=\"%s\"\n", keyword, result);
+			g_free(bash_var);
+			g_free(result);
 			break;
+		}
 		default:
 			continue;
 		}
@@ -1084,6 +1092,7 @@ static void job_assembly_cmdline(GebrdJob *job)
 	guint counter = 0;
 	gchar *step, *ini;
 	GString *expr_buf = g_string_new("");
+	GString *str_buf = g_string_new("");
 
 	job->expr_count = 0;
 	job->str_expr = gebr_string_expr_new();
@@ -1193,7 +1202,7 @@ static void job_assembly_cmdline(GebrdJob *job)
 		g_free(mpicmd);
 	}
 
-	define_bc_variables(job, expr_buf, &job->n_vars);
+	define_bc_variables(job, expr_buf, str_buf, &job->n_vars);
 
 	if (job_add_program_parameters(job, GEBR_GEOXML_PROGRAM(program), expr_buf) == FALSE)
 		goto err;
@@ -1374,13 +1383,14 @@ static void job_assembly_cmdline(GebrdJob *job)
 	if (has_control) {
 		gchar *prefix;
 		assemble_bc_cmd_line (expr_buf, ini, step);
-		prefix = g_strdup_printf("for (( counter=0; counter<%d; counter++ ))\ndo\n%s",
-					 counter, expr_buf->str);
+		prefix = g_strdup_printf("for (( counter=0; counter<%d; counter++ ))\ndo\n%s\n%s",
+					 counter, expr_buf->str, str_buf->str);
 		g_string_prepend(job->parent.cmd_line, prefix);
 		g_string_append(job->parent.cmd_line, "\ndone");
 		g_free(prefix);
 	} else {
 		assemble_bc_cmd_line (expr_buf, NULL, NULL);
+		g_string_prepend(job->parent.cmd_line, str_buf->str);
 		g_string_prepend(job->parent.cmd_line, expr_buf->str);
 	}
 
@@ -1402,6 +1412,7 @@ static void job_assembly_cmdline(GebrdJob *job)
 
 	job->critical_error = FALSE;
 	g_string_free(expr_buf, TRUE);
+	g_string_free(str_buf, TRUE);
 	return;
 err:	
 	g_object_unref(job->str_expr);
