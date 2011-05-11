@@ -25,23 +25,10 @@ struct _GebrStringExprPriv {
 	GHashTable *vars;
 };
 
-typedef struct {
-	gchar *name;
-	GebrGeoXmlParameterType type;
-} TypedVar;
-
 /* Prototypes {{{2 */
 static void gebr_string_expr_interface_init(GebrIExprInterface *iface);
 
 static void gebr_string_expr_finalize(GObject *object);
-
-static guint hash_func(gconstpointer a);
-
-static gboolean equal_func(gconstpointer a, gconstpointer b);
-
-static void typed_var_free(gpointer data);
-
-TypedVar *typed_var_new(const gchar *name, GebrGeoXmlParameterType type);
 
 G_DEFINE_TYPE_WITH_CODE(GebrStringExpr, gebr_string_expr, G_TYPE_OBJECT,
 			G_IMPLEMENT_INTERFACE(GEBR_TYPE_IEXPR,
@@ -64,8 +51,10 @@ static void gebr_string_expr_init(GebrStringExpr *self)
 						 GEBR_TYPE_STRING_EXPR,
 						 GebrStringExprPriv);
 
-	self->priv->vars = g_hash_table_new_full(hash_func, equal_func,
-						 typed_var_free, g_free);
+	self->priv->vars = g_hash_table_new_full(g_str_hash,
+						 g_str_equal,
+						 g_free,
+						 NULL);
 }
 
 static void gebr_string_expr_finalize(GObject *object)
@@ -73,35 +62,6 @@ static void gebr_string_expr_finalize(GObject *object)
 	GebrStringExpr *self = GEBR_STRING_EXPR(object);
 
 	g_hash_table_unref(self->priv->vars);
-}
-
-/* Variables hash table functions {{{1 */
-static guint hash_func(gconstpointer a)
-{
-	const TypedVar *v = a;
-	return g_str_hash(v->name);
-}
-
-static gboolean equal_func(gconstpointer a, gconstpointer b)
-{
-	const TypedVar *v = a;
-	const TypedVar *w = b;
-	return g_str_equal(v->name, w->name);
-}
-
-static void typed_var_free(gpointer data)
-{
-	TypedVar *v = data;
-	g_free(v->name);
-	g_free(v);
-}
-
-TypedVar *typed_var_new(const gchar *name, GebrGeoXmlParameterType type)
-{
-	TypedVar *v = g_new(TypedVar, 1);
-	v->name = g_strdup(name);
-	v->type = type;
-	return v;
 }
 
 /* GebrIExpr interface methods implementation {{{1 */
@@ -135,8 +95,8 @@ static gboolean gebr_string_expr_set_var(GebrIExpr              *iface,
 	}
 
 	g_hash_table_insert(self->priv->vars,
-			    typed_var_new(name, type),
-			    g_strdup(value));
+			    g_strdup(name),
+			    GINT_TO_POINTER(1));
 
 	return TRUE;
 }
@@ -175,8 +135,6 @@ gboolean gebr_string_expr_eval(GebrStringExpr   *self,
 	gint j;
 	gint i = 0;
 	gchar *name;
-	gchar *value;
-	TypedVar *typed_var;
 	gboolean retval = TRUE;
 	gboolean fetch_var = FALSE;
 	GString *decoded = g_string_new(NULL);
@@ -200,32 +158,16 @@ gboolean gebr_string_expr_eval(GebrStringExpr   *self,
 
 		if (fetch_var) {
 			if (expr[i] == ']') {
-				TypedVar *found;
-
 				fetch_var = FALSE;
 				name[j] = '\0';
-				found = typed_var_new(name, 0);
-				if (g_hash_table_lookup_extended(self->priv->vars, found,
-								 (gpointer)&typed_var,
-								 (gpointer)&value))
-				{
-					switch (typed_var->type) {
-					case GEBR_GEOXML_PARAMETER_TYPE_STRING:
-					case GEBR_GEOXML_PARAMETER_TYPE_FLOAT:
-					case GEBR_GEOXML_PARAMETER_TYPE_INT:
-						g_string_append(decoded, value);
-						break;
-					default:
-						g_warn_if_reached();
-					}
-					typed_var_free(found);
-				} else {
+				if (g_hash_table_lookup(self->priv->vars, name))
+					g_string_append(decoded, name);
+				else {
 					retval = FALSE;
 					g_set_error(err, GEBR_IEXPR_ERROR,
 						    GEBR_IEXPR_ERROR_UNDEF_VAR,
 						    _("Variable %s is undefined"),
 						    name);
-					typed_var_free(found);
 					goto exception;
 				}
 				i++;
