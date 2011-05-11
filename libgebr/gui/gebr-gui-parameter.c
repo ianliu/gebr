@@ -121,7 +121,6 @@ static void parameter_widget_set_icon(GebrGuiValidatableWidget *widget,
 							GTK_ENTRY_ICON_SECONDARY,
 							error->message);
 		}
-		g_clear_error(&error);
 	} else
 		__set_type_icon(self);
 }
@@ -512,8 +511,11 @@ static void __set_type_icon(struct gebr_gui_parameter_widget *parameter_widget)
 	gboolean has_focus = FALSE;
 	GtkEntry *entry;
 
-	if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_FILE)
+	if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_FILE) {
+		gebr_gui_file_entry_unset_warning(GEBR_GUI_FILE_ENTRY(parameter_widget->value_widget),
+						  _("File path value"));
 		return;
+	}
 
 	entry = GTK_ENTRY(parameter_widget->value_widget);
 
@@ -533,9 +535,6 @@ static void __set_type_icon(struct gebr_gui_parameter_widget *parameter_widget)
 		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, "string-icon");
 		gtk_entry_set_icon_tooltip_text(entry, GTK_ENTRY_ICON_SECONDARY, 
 						_("Text value"));
-	} else if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_FILE) {
-		gebr_gui_file_entry_unset_warning(GEBR_GUI_FILE_ENTRY(parameter_widget->value_widget),
-						  _("File path value"));
 	} else
 		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, NULL);
 }
