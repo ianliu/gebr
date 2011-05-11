@@ -132,6 +132,9 @@ GebrGeoXmlFlow *gebr_comm_server_run_strip_flow(GebrGeoXmlFlow *flow,
 		i = tmp;
 	}
 
+	/* Remove 'iter' dictionary */
+	gebr_geoxml_flow_remove_iter_dict (GEBR_GEOXML_FLOW(clone));
+
 	/* Merge all dictionaries */
 	va_start(ap, flow);
 	doc = va_arg(ap, GebrGeoXmlDocument*);
@@ -140,9 +143,6 @@ GebrGeoXmlFlow *gebr_comm_server_run_strip_flow(GebrGeoXmlFlow *flow,
 		doc = va_arg(ap, GebrGeoXmlDocument*);
 	}
 	va_end(ap);
-
-	/* Remove 'iter' dictionary */
-	gebr_geoxml_flow_remove_iter_dict (GEBR_GEOXML_FLOW(clone));
 
 	return GEBR_GEOXML_FLOW (clone);
 }
