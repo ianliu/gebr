@@ -1053,6 +1053,7 @@ GebrGuiParameterWidget *gebr_gui_parameter_widget_new(GebrGeoXmlParameter *param
 	self->parent.set_value = parameter_widget_set_value;
 	self->parent.get_value = parameter_widget_get_value;
 
+	self->validator = validator;
 	self->parameter = parameter;
 	self->program_parameter = GEBR_GEOXML_PROGRAM_PARAMETER(parameter);
 	self->parameter_type = gebr_geoxml_parameter_get_type(parameter);
