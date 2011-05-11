@@ -424,6 +424,15 @@ gebr_geoxml_document_set_dict_keyword(GebrGeoXmlDocument *doc,
 				      const gchar *keyword,
 				      const gchar *value);
 
+/**
+ * gebr_geoxml_document_get_dict_parameter:
+ * @document:
+ *
+ * Returns:
+ */
+GebrGeoXmlSequence *
+gebr_geoxml_document_get_dict_parameter(GebrGeoXmlDocument *doc);
+
 G_END_DECLS
 
 #endif				//__GEBR_GEOXML_DOCUMENT_H
