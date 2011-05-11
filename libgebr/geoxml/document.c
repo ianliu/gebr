@@ -1258,11 +1258,11 @@ gebr_geoxml_document_is_dictkey_defined (const gchar *name,
 }
 
 gboolean
-gebr_geoxml_document_validate_expr (const gchar *expr,
-				    GebrGeoXmlDocument *flow,
-				    GebrGeoXmlDocument *line,
-				    GebrGeoXmlDocument *proj,
-				    GError **err)
+gebr_geoxml_document_validate_expr(const gchar *expr,
+				   GebrGeoXmlDocument *flow,
+				   GebrGeoXmlDocument *line,
+				   GebrGeoXmlDocument *proj,
+				   GError **err)
 {
 	gboolean success = TRUE;
 	GHashTable *ht;
@@ -1362,10 +1362,10 @@ out:
 
 gboolean
 gebr_geoxml_document_validate_str (const gchar *str,
-				    GebrGeoXmlDocument *flow,
-				    GebrGeoXmlDocument *line,
-				    GebrGeoXmlDocument *proj,
-				    GError **err)
+				   GebrGeoXmlDocument *flow,
+				   GebrGeoXmlDocument *line,
+				   GebrGeoXmlDocument *proj,
+				   GError **err)
 {
 	gboolean success = TRUE;
 
@@ -1426,6 +1426,17 @@ out:
 	g_list_free (vars);
 
 	return success;
+}
+
+GebrGeoXmlSequence *
+gebr_geoxml_document_get_dict_parameter(GebrGeoXmlDocument *doc)
+{
+	GebrGeoXmlSequence *seq;
+	GebrGeoXmlParameters *params;
+
+	params = gebr_geoxml_document_get_dict_parameters(doc);
+	gebr_geoxml_parameters_get_parameter(params, &seq, 0);
+	return seq;
 }
 
 GebrGeoXmlParameter *
