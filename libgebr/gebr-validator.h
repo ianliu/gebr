@@ -26,25 +26,79 @@ G_BEGIN_DECLS
 
 typedef struct _GebrValidator GebrValidator;
 
+/**
+ * gebr_validator_new:
+ * @flow: Reference to a flow
+ * @line: Reference to a line
+ * @proj: Reference to a project
+ *
+ * Returns: A #GebrValidator to validate type parameters and/or expressions.
+ */
 GebrValidator *gebr_validator_new(GebrGeoXmlDocument **flow,
 				  GebrGeoXmlDocument **line,
 				  GebrGeoXmlDocument **proj);
 
-gboolean gebr_validator_validate_param(GebrValidator        *self,
-				       GebrGeoXmlParameter  *param,
-				       gchar               **validated,
-				       GError              **err);
+/**
+ * gebr_validator_validate_param:
+ * @validator: A #GebrValidator
+ * @parameter: The #GebrGeoXmlParameter to be validated
+ * @validated: Return location for the validated string, free with g_free()
+ * @error: Return location for the error, or %NULL
+ *
+ * Validates @parameter's values and returns the @validated string. If @parameter
+ * is not valid, then @error is filled with the appropriate message and %NULL is
+ * returned.
+ *
+ * Returns: %TRUE if @param is valid, %FALSE otherwise.
+ */
+gboolean gebr_validator_validate_param(GebrValidator       *validator,
+				       GebrGeoXmlParameter *parameter,
+				       gchar              **validated,
+				       GError             **error);
 
-gboolean gebr_validator_validate_widget(GebrValidator            *self,
+/**
+ * gebr_validator_validate_widget:
+ * @validator: A #GebrValidator
+ * @widget: A #GebrGuiValidatableWidget
+ * @parameter: The #GebrGeoXmlParameter associated with @widget
+ *
+ * Returns: %TRUE if @param is valid, %FALSE otherwise.
+ */
+gboolean gebr_validator_validate_widget(GebrValidator            *validator,
 					GebrGuiValidatableWidget *widget,
-					GebrGeoXmlParameter      *param);
+					GebrGeoXmlParameter      *parameter);
 
-void gebr_validator_get_documents(GebrValidator       *self,
+/**
+ * gebr_validator_validate_expr:
+ * @validator: A #GebrValidator
+ * @expression: The expression to be validated
+ * @type: The type of the @expression
+ * @error: Returns location for the error, or %NULL
+ *
+ * Returns: %TRUE if @expression is valid, %FALSE otherwise.
+ */
+gboolean gebr_validator_validate_expr(GebrValidator          *validator,
+				      const gchar            *expression,
+				      GebrGeoXmlParameterType type,
+				      GError                **error);
+
+/**
+ * gebr_validator_get_documents:
+ * @validator: A #GebrValidator
+ * @flow: Return location for the flow
+ * @line: Return location for the line
+ * @proj: Return location for the proj
+ */
+void gebr_validator_get_documents(GebrValidator       *validator,
 				  GebrGeoXmlDocument **flow,
 				  GebrGeoXmlDocument **line,
 				  GebrGeoXmlDocument **proj);
 
-void gebr_validator_free(GebrValidator *self);
+/**
+ * gebr_validator_free:
+ * @validator: The #GebrValidator to be freed
+ */
+void gebr_validator_free(GebrValidator *validator);
 
 G_END_DECLS
 
