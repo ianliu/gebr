@@ -23,6 +23,7 @@
 
 #include <glib/gi18n.h>
 #include <libgebr/utils.h>
+#include <libgebr/gui/gui.h>
 #include <libgebr/gui/gebr-gui-utils.h>
 #include <libgebr/gui/gebr-gui-value-sequence-edit.h>
 #include <libgebr/gui/gebr-gui-file-entry.h>
@@ -851,10 +852,20 @@ static void on_dict_edit_renderer_editing_started(GtkCellRenderer * renderer, Gt
 		dict_edit_load_iter(data, &iter, GEBR_GEOXML_PARAMETER(parameter));
 	} else if (renderer == data->cell_renderer_array[DICT_EDIT_VALUE]) {
 		GebrGeoXmlProgramParameter *parameter;
+		GtkTreeModel *completion_model;
+		GtkEntry *entry = GTK_ENTRY(editable);
+
 		gtk_tree_model_get(data->tree_model, &iter, DICT_EDIT_GEBR_GEOXML_POINTER, &parameter, -1);
 		GebrGeoXmlParameterType type = gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(parameter));
 		gtk_entry_set_icon_from_stock(GTK_ENTRY(widget), GTK_ENTRY_ICON_SECONDARY,
 					      type == GEBR_GEOXML_PARAMETER_TYPE_STRING ? "string-icon" : "integer-icon");
+
+		completion_model = gebr_gui_parameter_get_completion_model(GEBR_GEOXML_DOCUMENT (gebr.flow),
+									   GEBR_GEOXML_DOCUMENT (gebr.line),
+									   GEBR_GEOXML_DOCUMENT (gebr.project),
+									   type);
+		gebr_gui_parameter_set_entry_completion(entry, completion_model, type);
+
 	}
 
 	gtk_widget_set_events(GTK_WIDGET(widget), GDK_KEY_PRESS_MASK);
