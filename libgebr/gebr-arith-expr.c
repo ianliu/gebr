@@ -216,8 +216,30 @@ static gboolean gebr_arith_expr_is_valid(GebrIExpr   *iface,
 					 const gchar *expr,
 					 GError     **err)
 {
-	return gebr_arith_expr_eval(GEBR_ARITH_EXPR(iface),
-				    expr, NULL, err);
+	GList *vars = NULL;
+	const gchar *undef_var = NULL;
+	GebrArithExpr *self = GEBR_ARITH_EXPR(iface);
+
+	// Checks if the value uses any undefined variable
+	vars = extract_variables(expr);
+	for (GList *i = vars; i; i = i->next) {
+		const gchar *name = i->data;
+		if (!g_hash_table_lookup(self->priv->vars, name)) {
+			undef_var = name;
+			break;
+		}
+	}
+
+	if (undef_var) {
+		g_set_error(err,
+			    GEBR_IEXPR_ERROR,
+			    GEBR_IEXPR_ERROR_UNDEF_VAR,
+			    _("Variable \"%s\" is undefined"),
+			    undef_var);
+		return FALSE;
+	}
+
+	return gebr_arith_expr_eval(self, expr, NULL, err);
 }
 
 static void gebr_arith_expr_reset(GebrIExpr *iface)
