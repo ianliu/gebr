@@ -258,9 +258,43 @@ gboolean gebr_validator_validate(GebrValidator          *self,
 gboolean gebr_validator_validate_expr(GebrValidator          *self,
 				      const gchar            *expr,
 				      GebrGeoXmlParameterType type,
-				      GError                **error)
+				      GError                **err)
 {
-	return 0;
+	GError *error = NULL;
+	GebrIExpr *expr_validator = NULL;
+
+	g_return_val_if_fail(type == GEBR_GEOXML_PARAMETER_TYPE_STRING ||
+			     type == GEBR_GEOXML_PARAMETER_TYPE_FILE   ||
+			     type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT  ||
+			     type == GEBR_GEOXML_PARAMETER_TYPE_INT    ||
+			     type == GEBR_GEOXML_PARAMETER_TYPE_RANGE,
+			     FALSE);
+
+	switch (type) {
+	case GEBR_GEOXML_PARAMETER_TYPE_STRING:
+	case GEBR_GEOXML_PARAMETER_TYPE_FILE:
+		expr_validator = GEBR_IEXPR(self->string_expr);
+		break;
+	case GEBR_GEOXML_PARAMETER_TYPE_FLOAT:
+	case GEBR_GEOXML_PARAMETER_TYPE_INT:
+	case GEBR_GEOXML_PARAMETER_TYPE_RANGE:
+		expr_validator = GEBR_IEXPR(self->arith_expr);
+		break;
+	default:
+		break;
+	}
+
+	gebr_iexpr_reset(expr_validator);
+	setup_variables(self, expr_validator, NULL);
+
+	gebr_iexpr_is_valid(expr_validator, expr, &error);
+
+	if (error) {
+		g_propagate_error(err, error);
+		return FALSE;
+	}
+
+	return TRUE;
 }
 
 void gebr_validator_get_documents(GebrValidator *self,
