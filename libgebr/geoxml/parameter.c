@@ -409,3 +409,15 @@ void gebr_geoxml_parameter_reset(GebrGeoXmlParameter * parameter, gboolean recur
 		__gebr_geoxml_program_parameter_set_all_value((GebrGeoXmlProgramParameter *) parameter, TRUE, "");
 	}
 }
+
+gboolean gebr_geoxml_parameter_is_dict_param(GebrGeoXmlParameter *parameter)
+{
+	GdomeNode *grandpa;
+	GdomeDOMString *name;
+
+	grandpa = gdome_n_parentNode((GdomeNode*)parameter, &exception);
+	grandpa = gdome_n_parentNode(grandpa, &exception);
+	name = gdome_el_nodeName((GdomeElement*)grandpa, &exception);
+
+	return g_strcmp0(name->str, "dict") == 0 ? TRUE:FALSE;
+}

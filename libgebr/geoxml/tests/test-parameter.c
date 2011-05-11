@@ -154,6 +154,30 @@ void test_gebr_geoxml_parameter_get_type_name(void)
 	g_assert(gebr_geoxml_parameter_get_type_name(NULL) == NULL);
 }
 
+void test_gebr_geoxml_parameter_is_dict_param(void)
+{
+	GebrGeoXmlFlow *flow;
+	GebrGeoXmlProgram *program;
+	GebrGeoXmlParameter *dict_param;
+	GebrGeoXmlParameter *normal_param;
+	GebrGeoXmlParameters *params;
+
+	flow = gebr_geoxml_flow_new();
+
+	dict_param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(flow),
+							   GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
+							   "pi", "3.14");
+
+	program = gebr_geoxml_flow_append_program(flow);
+	params = gebr_geoxml_program_get_parameters(program);
+	normal_param = gebr_geoxml_parameters_append_parameter(params, GEBR_GEOXML_PARAMETER_TYPE_INT);
+	gebr_geoxml_program_parameter_set_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(normal_param), "life");
+	gebr_geoxml_program_parameter_set_first_value(GEBR_GEOXML_PROGRAM_PARAMETER(normal_param), FALSE, "42");
+
+	g_assert(gebr_geoxml_parameter_is_dict_param(dict_param) == TRUE);
+	g_assert(gebr_geoxml_parameter_is_dict_param(normal_param) == FALSE);
+}
+
 int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
@@ -163,6 +187,7 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/geoxml/parameter/get_and_set_type", test_gebr_geoxml_parameter_get_and_set_type);
 //	g_test_add_func("/libgebr/geoxml/parameter/set_be_reference", test__gebr_geoxml_parameter_set_be_reference);
 	g_test_add_func("/libgebr/geoxml/parameter/get_type_name", test_gebr_geoxml_parameter_get_type_name);
+	g_test_add_func("/libgebr/geoxml/parameter/is_dict_param", test_gebr_geoxml_parameter_is_dict_param);
 
 	return g_test_run();
 }

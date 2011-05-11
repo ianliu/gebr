@@ -261,5 +261,13 @@ GebrGeoXmlParameterGroup *gebr_geoxml_parameter_get_group(GebrGeoXmlParameter * 
  */
 void gebr_geoxml_parameter_reset(GebrGeoXmlParameter * parameter, gboolean recursive);
 
+/**
+ * gebr_geoxml_parameter_is_dict_param:
+ * @parameter:
+ *
+ * Returns: %TRUE if @parameter is a dictionary parameter, %FALSE otherwise.
+ */
+gboolean gebr_geoxml_parameter_is_dict_param(GebrGeoXmlParameter *parameter);
+
 G_END_DECLS
 #endif				//__GEBR_GEOXML_PARAMETER_H
