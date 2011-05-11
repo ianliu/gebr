@@ -54,7 +54,7 @@ static void gebr_string_expr_init(GebrStringExpr *self)
 	self->priv->vars = g_hash_table_new_full(g_str_hash,
 						 g_str_equal,
 						 g_free,
-						 NULL);
+						 g_free);
 }
 
 static void gebr_string_expr_finalize(GObject *object)
@@ -96,7 +96,7 @@ static gboolean gebr_string_expr_set_var(GebrIExpr              *iface,
 
 	g_hash_table_insert(self->priv->vars,
 			    g_strdup(name),
-			    GINT_TO_POINTER(1));
+			    g_strdup(value));
 
 	return TRUE;
 }
@@ -135,6 +135,7 @@ gboolean gebr_string_expr_eval(GebrStringExpr   *self,
 	gint j;
 	gint i = 0;
 	gchar *name;
+	const gchar *value;
 	gboolean retval = TRUE;
 	gboolean fetch_var = FALSE;
 	GString *decoded = g_string_new(NULL);
@@ -160,8 +161,9 @@ gboolean gebr_string_expr_eval(GebrStringExpr   *self,
 			if (expr[i] == ']') {
 				fetch_var = FALSE;
 				name[j] = '\0';
-				if (g_hash_table_lookup(self->priv->vars, name))
-					g_string_append(decoded, name);
+				value = g_hash_table_lookup(self->priv->vars, name);
+				if (value)
+					g_string_append(decoded, value);
 				else {
 					retval = FALSE;
 					g_set_error(err, GEBR_IEXPR_ERROR,

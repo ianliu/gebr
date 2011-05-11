@@ -981,7 +981,7 @@ static void define_bc_variables(GebrdJob *job, GString *expr_buf, GString *str_b
 		g_string_append_printf(expr_buf, "\t\titer # V[%"G_GSIZE_FORMAT"]\n", j);
 		gebr_iexpr_set_var(GEBR_IEXPR(job->str_expr), "iter",
 		                   GEBR_GEOXML_PARAMETER_TYPE_STRING,
-		                   "${V[0]}", NULL);
+		                   "${V[[0]]}", NULL);
 		j++;
 	}
 	// Insert variables definitions
@@ -1015,7 +1015,7 @@ static void define_bc_variables(GebrdJob *job, GString *expr_buf, GString *str_b
 			else
 				g_string_append_printf(expr_buf, "\t\t%s = %s ; %s # V[%"G_GSIZE_FORMAT"]: %s\n",
 						       keyword, value, keyword, j, replace_quotes(label));
-			var_value = g_strdup_printf("${V[%"G_GSIZE_FORMAT"]}", j++);
+			var_value = g_strdup_printf("${V[[%"G_GSIZE_FORMAT"]]}", j++);
 			gebr_iexpr_set_var(GEBR_IEXPR(job->str_expr), keyword,
 					   GEBR_GEOXML_PARAMETER_TYPE_STRING,
 					   var_value, NULL);

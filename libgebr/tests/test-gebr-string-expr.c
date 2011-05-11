@@ -70,6 +70,14 @@ static void insert_variables(GebrStringExpr *expr)
 	g_assert(gebr_iexpr_set_var(GEBR_IEXPR(expr), "bar",
 				    GEBR_GEOXML_PARAMETER_TYPE_STRING,
 				    "BAR", NULL));
+
+	g_assert(gebr_iexpr_set_var(GEBR_IEXPR(expr), "int",
+				    GEBR_GEOXML_PARAMETER_TYPE_INT,
+				    "100", NULL));
+
+	g_assert(gebr_iexpr_set_var(GEBR_IEXPR(expr), "float",
+				    GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
+				    "3.14", NULL));
 }
 
 void test_gebr_string_expr_eval_normal(void)
@@ -95,14 +103,24 @@ void test_gebr_string_expr_eval_normal(void)
 	g_assert_cmpstr(result, ==, "foo");
 	g_free(result);
 
+	gebr_string_expr_eval(expr, "[int]", &result, &error);
+	g_assert_no_error(error);
+	g_assert_cmpstr(result, ==, "100");
+	g_free(result);
+
+	gebr_string_expr_eval(expr, "[float]", &result, &error);
+	g_assert_no_error(error);
+	g_assert_cmpstr(result, ==, "3.14");
+	g_free(result);
+
 	gebr_string_expr_eval(expr, "[bar]", &result, &error);
 	g_assert_no_error(error);
 	g_assert_cmpstr(result, ==, "BAR");
 	g_free(result);
 
-	gebr_string_expr_eval(expr, "foo[bar]baz", &result, &error);
+	gebr_string_expr_eval(expr, "foo[bar]baz[int] [float]", &result, &error);
 	g_assert_no_error(error);
-	g_assert_cmpstr(result, ==, "fooBARbaz");
+	g_assert_cmpstr(result, ==, "fooBARbaz100 3.14");
 	g_free(result);
 
 	gebr_string_expr_eval(expr, "foo[bar]baz[[s]]", &result, &error);
