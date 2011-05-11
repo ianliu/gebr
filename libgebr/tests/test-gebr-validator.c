@@ -26,14 +26,22 @@
 void test_gebr_validator_simple(void)
 {
 	GebrValidator *validator;
+
+	GebrGeoXmlFlow *flow;
+	GebrGeoXmlLine *line;
 	GebrGeoXmlProject *proj;
+
 	GebrGeoXmlParameter *param;
 	gchar *validated = NULL;
 	GError *error = NULL;
 
-	validator = gebr_validator_new((GebrGeoXmlDocument**)&proj, NULL, NULL);
-
+	flow = gebr_geoxml_flow_new();
+	line = gebr_geoxml_line_new();
 	proj = gebr_geoxml_project_new();
+
+	validator = gebr_validator_new((GebrGeoXmlDocument**)&flow,
+				       (GebrGeoXmlDocument**)&line,
+				       (GebrGeoXmlDocument**)&proj);
 
 	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
 						      GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
@@ -45,7 +53,7 @@ void test_gebr_validator_simple(void)
 						      GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
 						      "e", "2.718[");
 	g_assert(gebr_validator_validate_param(validator, param, &validated, &error) == FALSE);
-	g_assert_error(error, GEBR_EXPR_ERROR, GEBR_EXPR_ERROR_SYNTAX);
+	g_assert_error(error, GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_SYNTAX);
 	g_clear_error(&error);
 
 	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
@@ -53,6 +61,19 @@ void test_gebr_validator_simple(void)
 						      "abc", "[foo");
 	g_assert(gebr_validator_validate_param(validator, param, &validated, &error) == FALSE);
 	g_assert_error(error, GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_SYNTAX);
+	g_clear_error(&error);
+
+	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
+						      GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
+						      "x", "pi*pi");
+	g_assert(gebr_validator_validate_param(validator, param, &validated, &error) == TRUE);
+	g_assert_no_error(error);
+
+	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
+						      GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
+						      "y", "pi*bo");
+	g_assert(gebr_validator_validate_param(validator, param, &validated, &error) == FALSE);
+	g_assert_error(error, GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_UNDEF_VAR);
 	g_clear_error(&error);
 
 	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(proj));
