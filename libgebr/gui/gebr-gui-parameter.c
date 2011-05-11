@@ -471,7 +471,7 @@ static void __on_sequence_edit_add_request(GebrGuiValueSequenceEdit *gebr_gui_va
 	g_object_get(gebr_gui_value_sequence_edit, "list-store", &list_store, NULL);
 	value = gebr_gui_parameter_widget_get_widget_value_full(self);
 
-	if (!gebr_validator_validate_widget(self->validator, validatable, self->parameter)) {
+	if (!gebr_gui_validatable_widget_validate(validatable, self->validator, self->parameter)) {
 		g_string_free(value, TRUE);
 		return;
 	}
@@ -1099,9 +1099,9 @@ void gebr_gui_parameter_widget_update(struct gebr_gui_parameter_widget *paramete
 
 gboolean gebr_gui_parameter_widget_validate(struct gebr_gui_parameter_widget *parameter_widget)
 {
-	return gebr_validator_validate_widget(parameter_widget->validator,
-					      GEBR_GUI_VALIDATABLE_WIDGET(parameter_widget),
-					      parameter_widget->parameter);
+	return gebr_gui_validatable_widget_validate(GEBR_GUI_VALIDATABLE_WIDGET(parameter_widget),
+						    parameter_widget->validator,
+						    parameter_widget->parameter);
 }
 
 void gebr_gui_parameter_widget_update_list_separator(struct gebr_gui_parameter_widget *parameter_widget)

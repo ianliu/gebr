@@ -158,103 +158,6 @@ gboolean gebr_validator_validate_param(GebrValidator       *self,
 	return TRUE;
 }
 
-gboolean gebr_validator_validate_widget(GebrValidator            *self,
-					GebrGuiValidatableWidget *widget,
-					GebrGeoXmlParameter      *param)
-{
-	// TODO Implement
-#if 0
-	GError *error = NULL;
-	gchar *validated;
-	gchar *expression = gebr_gui_validatable_widget_get_value(widget);
-	gboolean retval;
-
-	retval = gebr_validator_validate(validator, expression, &validated, param, &error);
-	gebr_gui_validatable_widget_set_icon(widget, param, error);
-	gebr_gui_validatable_widget_set_value(widget, validated);
-
-	if (error)
-		g_clear_error(&error);
-	g_free(expression);
-
-	return retval;
-#endif
-
-	return 0;
-}
-
-
-void gebr_validator_free(GebrValidator *self)
-{
-	// TODO Implement
-}
-
-gboolean gebr_validator_validate(GebrValidator          *self,
-					const gchar            *expression,
-					gchar                 **validated,
-					GebrGeoXmlParameterType type,
-					GebrGeoXmlParameter    *param,
-					GError                **err)
-{
-	GError *error = NULL;
-	GebrGeoXmlProgramParameter *pparam;
-
-	pparam = GEBR_GEOXML_PROGRAM_PARAMETER(param);
-
-	if (type == GEBR_GEOXML_PARAMETER_TYPE_UNKNOWN && param)
-		type = gebr_geoxml_parameter_get_type(param);
-	else
-		g_return_val_if_reached(FALSE);
-
-	if (type == GEBR_GEOXML_PARAMETER_TYPE_INT || type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT)
-	{
-		gchar *end_str;
-		const gchar *min, *max;
-
-		g_ascii_strtod(expression, &end_str);
-		if(*end_str) {
-			gebr_geoxml_document_validate_expr(expression,
-							   *self->flow,
-							   *self->line,
-							   *self->proj,
-							   &error);
-			if (error) {
-				g_propagate_error(err, error);
-				return FALSE;
-			}
-			*validated = g_strdup(expression);
-			return TRUE;
-		}
-
-		if (pparam) {
-			gebr_geoxml_program_parameter_get_number_min_max(pparam, &min, &max);
-
-			if (type == GEBR_GEOXML_PARAMETER_TYPE_INT)
-				*validated = g_strdup(gebr_validate_int(expression, min, max));
-			else
-				*validated = g_strdup(gebr_validate_float(expression, min, max));
-		}
-		return TRUE;
-	}
-
-	if (type == GEBR_GEOXML_PARAMETER_TYPE_STRING || type == GEBR_GEOXML_PARAMETER_TYPE_FILE) {
-		gebr_geoxml_document_validate_str(expression,
-						  *self->flow,
-						  *self->line,
-						  *self->proj,
-						  &error);
-
-		if (error) {
-			g_propagate_error(err, error);
-			return FALSE;
-		}
-		*validated = g_strdup(expression);
-		return TRUE;
-	}
-
-	return TRUE;
-}
-
 gboolean gebr_validator_validate_expr(GebrValidator          *self,
 				      const gchar            *expr,
 				      GebrGeoXmlParameterType type,
@@ -305,4 +208,11 @@ void gebr_validator_get_documents(GebrValidator *self,
 	*flow = *self->flow;
 	*line = *self->line;
 	*proj = *self->proj;
+}
+
+void gebr_validator_free(GebrValidator *self)
+{
+	g_object_unref(self->arith_expr);
+	g_object_unref(self->string_expr);
+	g_free(self);
 }

@@ -20,7 +20,6 @@
 
 #include <glib.h>
 #include <geoxml/geoxml.h>
-#include <gui/gebr-gui-validatable-widget.h>
 
 G_BEGIN_DECLS
 
@@ -55,18 +54,6 @@ gboolean gebr_validator_validate_param(GebrValidator       *validator,
 				       GebrGeoXmlParameter *parameter,
 				       gchar              **validated,
 				       GError             **error);
-
-/**
- * gebr_validator_validate_widget:
- * @validator: A #GebrValidator
- * @widget: A #GebrGuiValidatableWidget
- * @parameter: The #GebrGeoXmlParameter associated with @widget
- *
- * Returns: %TRUE if @param is valid, %FALSE otherwise.
- */
-gboolean gebr_validator_validate_widget(GebrValidator            *validator,
-					GebrGuiValidatableWidget *widget,
-					GebrGeoXmlParameter      *parameter);
 
 /**
  * gebr_validator_validate_expr:
