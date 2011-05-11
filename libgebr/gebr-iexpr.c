@@ -57,6 +57,11 @@ gboolean gebr_iexpr_is_valid(GebrIExpr   *self,
 	return GEBR_IEXPR_GET_INTERFACE(self)->is_valid(self, expr, error);
 }
 
+void gebr_iexpr_reset(GebrIExpr *self)
+{
+	GEBR_IEXPR_GET_INTERFACE(self)->reset(self);
+}
+
 GQuark gebr_iexpr_error_quark(void)
 {
 	return g_quark_from_static_string("gebr-iexpr-error-quark");
