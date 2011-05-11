@@ -1173,6 +1173,7 @@ void gebr_geoxml_document_merge_dict (GebrGeoXmlDocument *dst, GebrGeoXmlDocumen
 	GebrGeoXmlParameters *src_params;
 	GebrGeoXmlProgramParameter *param;
 	GebrGeoXmlSequence *seq;
+	GebrGeoXmlSequence *first;
 	GdomeNode *clone;
 	GHashTable *htable;
 	const gchar *label;
@@ -1185,6 +1186,7 @@ void gebr_geoxml_document_merge_dict (GebrGeoXmlDocument *dst, GebrGeoXmlDocumen
 	htable = g_hash_table_new (g_str_hash, g_str_equal);
 
 	gebr_geoxml_parameters_get_parameter (dst_params, &seq, 0);
+	first = seq;
 	while (seq) {
 		param = GEBR_GEOXML_PROGRAM_PARAMETER (seq);
 		label = gebr_geoxml_program_parameter_get_keyword (param);
@@ -1201,7 +1203,7 @@ void gebr_geoxml_document_merge_dict (GebrGeoXmlDocument *dst, GebrGeoXmlDocumen
 
 		clone = gdome_doc_importNode((GdomeDocument *)dst, (GdomeNode *) seq,
 					     TRUE, &exception);
-		gdome_el_appendChild((GdomeElement *)dst_params, clone, &exception);
+		gdome_el_insertBefore((GdomeElement *)dst_params, clone, (GdomeNode*)first, &exception);
 	}
 
 	g_hash_table_unref (htable);
