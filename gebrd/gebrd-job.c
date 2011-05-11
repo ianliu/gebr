@@ -993,6 +993,9 @@ static void define_bc_variables(GebrdJob *job, GString *expr_buf, GString *str_b
 		gchar *var_value;
 		GebrGeoXmlParameterType type = gebr_geoxml_parameter_get_type (GEBR_GEOXML_PARAMETER (seq));
 
+		if (g_strcmp0(gebr_geoxml_parameter_get_label(GEBR_GEOXML_PARAMETER(seq)), "iter") == 0)
+			continue;
+
 		switch (type)
 		{
 		case GEBR_GEOXML_PARAMETER_TYPE_FLOAT:
