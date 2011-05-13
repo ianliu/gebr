@@ -305,7 +305,6 @@ void job_update_label(GebrJob *job)
 		g_string_free(queue_info, TRUE);
 
 		if (job->parent.start_date->len) {
-			g_string_append(label, _(": "));
 			g_string_append(label, gebr_localized_date(job->parent.start_date->str));
 			if (job->parent.finish_date->len) {
 				g_string_append(label, _(" - "));
