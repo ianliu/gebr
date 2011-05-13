@@ -71,6 +71,7 @@ static gboolean gebr_string_expr_set_var(GebrIExpr              *iface,
 					 const gchar            *value,
 					 GError                **err)
 {
+	gchar *result = NULL;
 	GError *error = NULL;
 	GebrStringExpr *self = GEBR_STRING_EXPR(iface);
 
@@ -87,7 +88,7 @@ static gboolean gebr_string_expr_set_var(GebrIExpr              *iface,
 		return FALSE;
 	}
 
-	gebr_iexpr_is_valid(iface, value, &error);
+	gebr_string_expr_eval(self, value, &result, &error);
 
 	if (error) {
 		g_propagate_error(err, error);
@@ -96,7 +97,7 @@ static gboolean gebr_string_expr_set_var(GebrIExpr              *iface,
 
 	g_hash_table_insert(self->priv->vars,
 			    g_strdup(name),
-			    g_strdup(value));
+			    result);
 
 	return TRUE;
 }
