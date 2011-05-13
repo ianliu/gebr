@@ -1401,7 +1401,48 @@ static gint on_spin_button_input(GtkSpinButton *spin,
 	}
 }
 
-// TODO: Implement another GebrValidatableWidget for the list value widget!
-static void on_list_value_widget_activate(GtkEntry *entry, struct gebr_gui_parameter_widget *parameter_widget)
+static void on_list_value_widget_activate(GtkEntry *entry, struct gebr_gui_parameter_widget *self)
 {
+	GError *error = NULL;
+	gchar **exprs;
+	const gchar *text;
+	const gchar *separator;
+	GebrGeoXmlParameterType type;
+
+	type = gebr_geoxml_parameter_get_type(self->parameter);
+	separator = gebr_geoxml_program_parameter_get_list_separator(self->program_parameter);
+	text = gtk_entry_get_text(entry);
+
+	if (!separator)
+		return;
+
+	if (!strlen(separator)) {
+		exprs = g_new(gchar *, 2);
+		exprs[0] = g_strdup(text);
+		exprs[1] = NULL;
+	} else
+		exprs = g_strsplit(text, separator, -1);
+
+	for (int i = 0; exprs[i]; i++) {
+		gebr_validator_validate_expr(self->validator, exprs[i], type, &error);
+		if (error) {
+			gtk_entry_set_icon_from_stock(entry,
+						      GTK_ENTRY_ICON_SECONDARY,
+						      GTK_STOCK_DIALOG_WARNING);
+			gtk_entry_set_icon_tooltip_text(entry,
+							GTK_ENTRY_ICON_SECONDARY,
+							error->message);
+			g_clear_error(&error);
+			return;
+		}
+	}
+
+	gtk_entry_set_icon_from_stock(entry,
+				      GTK_ENTRY_ICON_SECONDARY,
+				      NULL);
+	gtk_entry_set_icon_tooltip_text(entry,
+					GTK_ENTRY_ICON_SECONDARY,
+					NULL);
+
+	g_strfreev(exprs);
 }
