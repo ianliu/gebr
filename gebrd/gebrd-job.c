@@ -1207,6 +1207,10 @@ static void job_assembly_cmdline(GebrdJob *job)
 	if (job_add_program_parameters(job, GEBR_GEOXML_PROGRAM(program), expr_buf) == FALSE)
 		goto err;
 
+	/* These variables keep the parsed stdout and stderr */
+	gchar *stdout_parsed = NULL;
+	gchar *stderr_parsed = NULL;
+
 	/* check for error file output */
 	if (has_error_output_file && gebr_geoxml_program_get_stderr(GEBR_GEOXML_PROGRAM(program))) {
 		gchar *result;
@@ -1217,10 +1221,9 @@ static void job_assembly_cmdline(GebrdJob *job)
 		gebr_string_expr_eval(job->str_expr, error_expr, &result, &error);
 
 		if (!error) {
-			gchar *escaped = escape_quote_and_slash(result);
-			g_string_append_printf(job->parent.cmd_line, "2>> \"%s\" ", escaped);
+			stderr_parsed = escape_quote_and_slash(result);
+			g_string_append_printf(job->parent.cmd_line, "2>> \"%s\" ", stderr_parsed);
 			g_free(result);
-			g_free(escaped);
 		} else {
 			switch (error->code) {
 			case GEBR_IEXPR_ERROR_SYNTAX:
@@ -1315,32 +1318,7 @@ static void job_assembly_cmdline(GebrdJob *job)
 		if (job_add_program_parameters(job, GEBR_GEOXML_PROGRAM(program), expr_buf) == FALSE)
 			goto err;
 
-		if (has_error_output_file && gebr_geoxml_program_get_stderr(GEBR_GEOXML_PROGRAM(program))) {
-			gchar *result;
-			const gchar *error_expr;
-			GError *error = NULL;
-
-			error_expr = gebr_geoxml_flow_io_get_error(job->flow);
-			gebr_string_expr_eval(job->str_expr, error_expr, &result, &error);
-			if (!error) {
-				gchar *escaped = escape_quote_and_slash(result);
-				g_string_append_printf(job->parent.cmd_line, "2>> \"%s\" ", escaped);
-				g_free(result);
-				g_free(escaped);
-			} else {
-				switch (error->code) {
-				case GEBR_IEXPR_ERROR_SYNTAX:
-				case GEBR_IEXPR_ERROR_INVAL_VAR:
-					job_issue(job, _("Syntax error in error file expression"));
-					break;
-				case GEBR_IEXPR_ERROR_UNDEF_VAR:
-					job_issue(job, _("Undefined variable in error file expression"));
-					break;
-				}
-				g_error_free(error);
-				goto err;
-			}
-		}
+		g_string_append_printf(job->parent.cmd_line, "2>> \"%s\" ", stderr_parsed);
 
 		previous_stdout = gebr_geoxml_program_get_stdout(GEBR_GEOXML_PROGRAM(program));
 		gebr_geoxml_sequence_next(&program);
@@ -1360,10 +1338,9 @@ static void job_assembly_cmdline(GebrdJob *job)
 			output_expr = gebr_geoxml_flow_io_get_output(job->flow);
 			gebr_string_expr_eval(job->str_expr, output_expr, &result, &error);
 			if (!error) {
-				gchar *escaped = escape_quote_and_slash(result);
-				g_string_append_printf(job->parent.cmd_line, ">> \"%s\" ", escaped);
+				stdout_parsed = escape_quote_and_slash(result);
+				g_string_append_printf(job->parent.cmd_line, ">> \"%s\" ", stdout_parsed);
 				g_free(result);
-				g_free(escaped);
 			} else {
 				switch (error->code) {
 				case GEBR_IEXPR_ERROR_SYNTAX:
@@ -1396,16 +1373,15 @@ static void job_assembly_cmdline(GebrdJob *job)
 
 	if (has_error_output_file && !gebr_geoxml_flow_io_get_error_append(job->flow)) {
 		GString * prefix = g_string_new(NULL);
-		g_string_printf(prefix, "rm '%s'\n", gebr_geoxml_flow_io_get_error(job->flow));
+		g_string_printf(prefix, "rm \"%s\"\n", stderr_parsed);
 		g_string_prepend(job->parent.cmd_line, prefix->str);
 		g_string_free(prefix, TRUE);
 	}
 
-	if (strlen(gebr_geoxml_flow_io_get_output(job->flow)) &&
-	    !gebr_geoxml_flow_io_get_output_append(job->flow))
+	if (stdout_parsed && !gebr_geoxml_flow_io_get_output_append(job->flow))
 	{
 		GString * prefix = g_string_new(NULL);
-		g_string_printf(prefix, "rm '%s'\n", gebr_geoxml_flow_io_get_output(job->flow));
+		g_string_printf(prefix, "rm \"%s\"\n", stdout_parsed);
 		g_string_prepend(job->parent.cmd_line, prefix->str);
 		g_string_free(prefix, TRUE);
 	}
