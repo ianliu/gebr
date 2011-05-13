@@ -109,29 +109,31 @@ void test_gebr_geoxml_parameter_set_be_reference(void)
 	 */
 }
 
-/*void test__gebr_geoxml_parameter_set_be_reference(void)
-{
-	GebrGeoXmlParameters *parameters_list;
-	GebrGeoXmlParameter *parameter;
-	GebrGeoXmlFlow *test_menu;
-	GebrGeoXmlProgram *program;
-
-	gebr_geoxml_document_load((GebrGeoXmlDocument**)&test_menu, TEST_DIR"/test.mnu", FALSE, NULL);
-
-	gebr_geoxml_flow_get_program(test_menu, (GebrGeoXmlSequence**)&program, 0);
-	parameters_list = gebr_geoxml_program_get_parameters(program);
-
-	g_assert_cmpint(gebr_geoxml_parameters_get_parameter(parameters_list,(GebrGeoXmlSequence**)&parameter,2), ==, GEBR_GEOXML_RETV_SUCCESS);
-
-
-	g_assert(gebr_geoxml_program_parameter_get_is_list(parameter) == FALSE);
-
-	g_assert_cmpstr(gebr_geoxml_program_parameter_get_first_value(parameter, TRUE), ==, "123");
-	g_assert_cmpstr(gebr_geoxml_program_parameter_get_first_value(parameter, FALSE), ==, "456");
-
-	__gebr_geoxml_parameter_set_be_reference(parameter);
-	g_assert_cmpint(gebr_geoxml_parameter_get_type(parameter), ==, GEBR_GEOXML_PARAMETER_TYPE_REFERENCE);
-}*/
+//void test__gebr_geoxml_parameter_set_be_reference(void)
+//{
+//	GebrGeoXmlParameters *parameters_list;
+//	GebrGeoXmlParameter *parameter;
+//	GebrGeoXmlFlow *test_menu;
+//	GebrGeoXmlProgram *program;
+//
+//	gebr_geoxml_document_load((GebrGeoXmlDocument**)&test_menu, TEST_DIR"/test.mnu", FALSE, NULL);
+//
+//	gebr_geoxml_flow_get_program(test_menu, (GebrGeoXmlSequence**)&program, 0);
+//	parameters_list = gebr_geoxml_program_get_parameters(program);
+//
+//	g_assert_cmpint(gebr_geoxml_parameters_get_parameter(parameters_list,(GebrGeoXmlSequence**)&parameter,2), ==, GEBR_GEOXML_RETV_SUCCESS);
+//
+//	g_assert(gebr_geoxml_program_parameter_get_is_list(parameter) == FALSE);
+//
+//	g_assert_cmpstr(gebr_geoxml_program_parameter_get_first_value(parameter, TRUE), ==, "123");
+//	g_assert_cmpstr(gebr_geoxml_program_parameter_get_first_value(parameter, FALSE), ==, "456");
+//
+//	__gebr_geoxml_parameter_set_be_reference(parameter);
+//	g_assert_cmpint(gebr_geoxml_parameter_get_type(parameter), ==, GEBR_GEOXML_PARAMETER_TYPE_REFERENCE);
+//
+//
+//	g_assert_cmpstr(gebr_geoxml_program_parameter_get_string_value(parameter,TRUE), ==, "Default_value");
+//}
 
 void test_gebr_geoxml_parameter_get_type_name(void)
 {
@@ -165,8 +167,8 @@ void test_gebr_geoxml_parameter_is_dict_param(void)
 	flow = gebr_geoxml_flow_new();
 
 	dict_param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(flow),
-							   GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
-							   "pi", "3.14");
+	                                                   GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
+	                                                   "pi", "3.14");
 
 	program = gebr_geoxml_flow_append_program(flow);
 	params = gebr_geoxml_program_get_parameters(program);
@@ -176,6 +178,51 @@ void test_gebr_geoxml_parameter_is_dict_param(void)
 
 	g_assert(gebr_geoxml_parameter_is_dict_param(dict_param) == TRUE);
 	g_assert(gebr_geoxml_parameter_is_dict_param(normal_param) == FALSE);
+}
+
+void test_gebr_geoxml_parameter_get_is_program_parameter(void)
+{
+	GebrGeoXmlParameters *parameters_list;
+	GebrGeoXmlParameter *parameter;
+	GebrGeoXmlFlow *flow;
+	GebrGeoXmlProgram *program;
+
+	flow = gebr_geoxml_flow_new();
+	program = gebr_geoxml_flow_append_program(flow);
+	parameters_list = gebr_geoxml_program_get_parameters(program);
+	parameter = gebr_geoxml_parameters_append_parameter(parameters_list, GEBR_GEOXML_PARAMETER_TYPE_FLOAT);
+
+	g_assert(gebr_geoxml_parameter_get_is_program_parameter(parameter) == TRUE);
+
+	g_assert(gebr_geoxml_parameter_get_is_program_parameter(NULL) == FALSE);
+
+	parameter = gebr_geoxml_parameters_append_parameter(parameters_list, GEBR_GEOXML_PARAMETER_TYPE_GROUP);
+
+	g_assert(gebr_geoxml_parameter_get_is_program_parameter(parameter) == FALSE);
+}
+
+void test_gebr_geoxml_parameter_get_and_set_label(void)
+{
+	GebrGeoXmlParameters *parameters_list;
+	GebrGeoXmlParameter *parameter;
+	GebrGeoXmlFlow *flow;
+	GebrGeoXmlProgram *program;
+
+	flow = gebr_geoxml_flow_new();
+	program = gebr_geoxml_flow_append_program(flow);
+	parameters_list = gebr_geoxml_program_get_parameters(program);
+	parameter = gebr_geoxml_parameters_append_parameter(parameters_list, GEBR_GEOXML_PARAMETER_TYPE_FLOAT);
+
+	gebr_geoxml_parameter_set_label(parameter, "The label guy");
+
+	g_assert_cmpstr(gebr_geoxml_parameter_get_label(parameter), ==, "The label guy");
+
+	if (g_test_trap_fork (0, G_TEST_TRAP_SILENCE_STDOUT | G_TEST_TRAP_SILENCE_STDERR)) {
+		g_assert(gebr_geoxml_parameter_get_label(NULL) == NULL);
+		exit(0);
+	}
+	g_test_trap_assert_failed();
+
 }
 
 int main(int argc, char *argv[])
@@ -188,6 +235,8 @@ int main(int argc, char *argv[])
 //	g_test_add_func("/libgebr/geoxml/parameter/set_be_reference", test__gebr_geoxml_parameter_set_be_reference);
 	g_test_add_func("/libgebr/geoxml/parameter/get_type_name", test_gebr_geoxml_parameter_get_type_name);
 	g_test_add_func("/libgebr/geoxml/parameter/is_dict_param", test_gebr_geoxml_parameter_is_dict_param);
+	g_test_add_func("/libgebr/geoxml/parameter/get_is_program_parameter", test_gebr_geoxml_parameter_get_is_program_parameter);
+	g_test_add_func("/libgebr/geoxml/parameter/get_and_set_label", test_gebr_geoxml_parameter_get_and_set_label);
 
 	return g_test_run();
 }

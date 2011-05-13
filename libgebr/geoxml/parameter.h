@@ -233,9 +233,11 @@ gboolean gebr_geoxml_parameter_get_is_program_parameter(GebrGeoXmlParameter * pa
 void gebr_geoxml_parameter_set_label(GebrGeoXmlParameter * parameter, const gchar * label);
 
 /**
- * Get \p parameter 's one line description.
+ * gebr_geoxml_parameter_get_label:
+ * @parameter: parameter from where the label will be get
  *
- * If \p parameter is NULL returns NULL.
+ * Get @parameter's one line description.
+ * Will fail if @parameter is NULL.
  */
 const gchar *gebr_geoxml_parameter_get_label(GebrGeoXmlParameter * parameter);
 
