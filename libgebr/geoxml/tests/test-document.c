@@ -332,7 +332,7 @@ static void test_gebr_geoxml_document_merge_dict(void)
 	gebr_geoxml_document_merge_dict (flow, line);
 	gebr_geoxml_parameters_get_parameter (flow_params, (GebrGeoXmlSequence **)&param, 1);
 
-	g_assert_cmpstr (gebr_geoxml_program_parameter_get_keyword (GEBR_GEOXML_PROGRAM_PARAMETER (param)), ==, "foo");
+	g_assert_cmpstr (gebr_geoxml_program_parameter_get_keyword (GEBR_GEOXML_PROGRAM_PARAMETER (param)), ==, "bar");
 
 	gebr_geoxml_document_merge_dict (flow, line);
 	g_assert_cmpint (gebr_geoxml_parameters_get_number (flow_params), ==, 2);
