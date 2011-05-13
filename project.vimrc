@@ -5,9 +5,9 @@ let g:netrw_list_hide='\.\(o\|lo\|la\|m4\|guess\|log\|sub\)$,^Makefile$'
 let g:build_prefix = $PWD . "/build"
 let g:run_env_vars = 'PATH=gebrd:$PATH LD_LIBRARY_PATH=libgebr/.libs:libgebr/geoxml/.libs:libgebr/comm/.libs:libgebr/gui/.libs:libgebr/json/.libs'
 let g:run_commands = []
-let g:run_commands += ['gebr', 'killall gebrd 2> /dev/null ; ' . g:run_env_vars . ' gebr/gebr &']
-let g:run_commands += ['debr', g:run_env_vars . 'debr/debr &']
-let g:run_commands += ['gebrd', 'killall gebrd 2> /dev/null ; ' . g:run_env_vars . ' gebrd/gebrd &']
+let g:run_commands += [['gebr', 'killall gebrd lt-gebrd 2> /dev/null ; ' . g:run_env_vars . ' gebr/gebr &']]
+let g:run_commands += [['debr', g:run_env_vars . 'debr/debr &']]
+let g:run_commands += [['gebrd', 'killall gebrd lt-gebrd 2> /dev/null ; ' . g:run_env_vars . ' gebrd/gebrd &']]
 
 fun! CompleteRun(A,L,P)
   let filter = []
@@ -28,4 +28,4 @@ fun! RunWhat()
   endfor
 endf
 
-nmap <F6> :call RunWhat()<CR>
+nmap <F12> :call RunWhat()<CR>
