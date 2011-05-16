@@ -45,8 +45,6 @@ static void gebr_arith_expr_interface_init(GebrIExprInterface *iface);
 
 static void gebr_arith_expr_finalize(GObject *object);
 
-GList *extract_variables(const gchar *str);
-
 static gboolean gebr_arith_expr_eval_internal(GebrArithExpr *self,
 					      const gchar   *expr,
 					      gdouble       *result,
@@ -162,7 +160,7 @@ static gboolean gebr_arith_expr_set_var(GebrIExpr              *iface,
 	}
 
 	// Checks if the value uses any undefined variable
-	vars = extract_variables(value);
+	vars = gebr_iexpr_extract_vars(iface, value);
 	for (GList *i = vars; i; i = i->next) {
 		const gchar *name = i->data;
 		if (!g_hash_table_lookup(self->priv->vars, name)) {
@@ -221,7 +219,7 @@ static gboolean gebr_arith_expr_is_valid(GebrIExpr   *iface,
 	GebrArithExpr *self = GEBR_ARITH_EXPR(iface);
 
 	// Checks if the value uses any undefined variable
-	vars = extract_variables(expr);
+	vars = gebr_iexpr_extract_vars(iface, expr);
 	for (GList *i = vars; i; i = i->next) {
 		const gchar *name = i->data;
 		if (!g_hash_table_lookup(self->priv->vars, name)) {
@@ -248,29 +246,16 @@ static void gebr_arith_expr_reset(GebrIExpr *iface)
 	g_hash_table_remove_all(self->priv->vars);
 }
 
-static void gebr_arith_expr_interface_init(GebrIExprInterface *iface)
-{
-	iface->set_var = gebr_arith_expr_set_var;
-	iface->is_valid = gebr_arith_expr_is_valid;
-	iface->reset = gebr_arith_expr_reset;
-}
-
-/* Private functions {{{1 */
-
-/*
- * extract_variables:
- *
- * Returns: a GList of the variables found in @str.
- */
-GList *
-extract_variables(const gchar *str)
+static GList *
+gebr_arith_expr_extract_vars(GebrIExpr   *iface,
+			     const gchar *expr)
 {
 	GList *vars = NULL;
 	GRegex *regex;
 	GMatchInfo *info;
 
 	regex = g_regex_new ("[a-z][0-9a-z_]*", 0, 0, NULL);
-	g_regex_match (regex, str, 0, &info);
+	g_regex_match (regex, expr, 0, &info);
 
 	while (g_match_info_matches (info))
 	{
@@ -285,6 +270,15 @@ extract_variables(const gchar *str)
 	return g_list_reverse (vars);
 }
 
+static void gebr_arith_expr_interface_init(GebrIExprInterface *iface)
+{
+	iface->set_var = gebr_arith_expr_set_var;
+	iface->is_valid = gebr_arith_expr_is_valid;
+	iface->reset = gebr_arith_expr_reset;
+	iface->extract_vars = gebr_arith_expr_extract_vars;
+}
+
+/* Private functions {{{1 */
 /*
  * configure_channel:
  *

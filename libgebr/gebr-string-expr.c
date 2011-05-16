@@ -20,15 +20,23 @@
 #include "gebr-string-expr.h"
 #include "gebr-iexpr.h"
 
-/* Prototypes & Private {{{1 */
+/* Structures {{{1 */
 struct _GebrStringExprPriv {
 	GHashTable *vars;
 };
 
-/* Prototypes {{{2 */
+/* Prototypes {{{1 */
 static void gebr_string_expr_interface_init(GebrIExprInterface *iface);
 
 static void gebr_string_expr_finalize(GObject *object);
+
+static gboolean traverse_expression(GebrStringExpr *self,
+				    const gchar    *expr,
+				    gchar         **result,
+				    gboolean        eval,
+				    void (*var_fetched) (const char *, gpointer),
+				    gpointer        data,
+				    GError        **err);
 
 G_DEFINE_TYPE_WITH_CODE(GebrStringExpr, gebr_string_expr, G_TYPE_OBJECT,
 			G_IMPLEMENT_INTERFACE(GEBR_TYPE_IEXPR,
@@ -115,23 +123,42 @@ static void gebr_string_expr_reset(GebrIExpr *iface)
 	g_hash_table_remove_all(self->priv->vars);
 }
 
+static GList *
+gebr_string_expr_extract_vars(GebrIExpr   *iface,
+			      const gchar *expr)
+{
+	GList *vars = NULL;
+	GebrStringExpr *self = GEBR_STRING_EXPR(iface);
+
+	void prepend_var(const gchar *var, gpointer data)
+	{
+		vars = g_list_prepend(vars, g_strdup(var));
+	}
+
+	if (!traverse_expression(self, expr, NULL, FALSE,
+				 prepend_var, NULL, NULL))
+		return NULL;
+
+	return g_list_reverse(vars);
+}
+
 static void gebr_string_expr_interface_init(GebrIExprInterface *iface)
 {
 	iface->set_var = gebr_string_expr_set_var;
 	iface->is_valid = gebr_string_expr_is_valid;
 	iface->reset = gebr_string_expr_reset;
+	iface->extract_vars = gebr_string_expr_extract_vars;
 }
 
-/* Public functions {{{1 */
-GebrStringExpr *gebr_string_expr_new(void)
-{
-	return g_object_new(GEBR_TYPE_STRING_EXPR, NULL);
-}
-
-gboolean gebr_string_expr_eval(GebrStringExpr   *self,
-			       const gchar      *expr,
-			       gchar           **result,
-			       GError          **err)
+/* Private Functions {{{1 */
+static gboolean
+traverse_expression(GebrStringExpr *self,
+		    const gchar    *expr,
+		    gchar         **result,
+		    gboolean        eval,
+		    void (*var_fetched) (const char *, gpointer),
+		    gpointer        data,
+		    GError        **err)
 {
 	gint j;
 	gint i = 0;
@@ -139,15 +166,19 @@ gboolean gebr_string_expr_eval(GebrStringExpr   *self,
 	const gchar *value;
 	gboolean retval = TRUE;
 	gboolean fetch_var = FALSE;
-	GString *decoded = g_string_new(NULL);
+	GString *decoded;
 
 	name = g_new(gchar, strlen(expr));
+
+	if (eval)
+		decoded = g_string_new(NULL);
 
 	while (expr[i])
 	{
 		if (expr[i] == '[' && expr[i+1] == '[') {
 			i += 2;
-			g_string_append_c(decoded, '[');
+			if (eval)
+				g_string_append_c(decoded, '[');
 			continue;
 		}
 
@@ -162,6 +193,12 @@ gboolean gebr_string_expr_eval(GebrStringExpr   *self,
 			if (expr[i] == ']') {
 				fetch_var = FALSE;
 				name[j] = '\0';
+				if (var_fetched)
+					var_fetched(name, data);
+
+				if (!eval)
+					continue;
+
 				value = g_hash_table_lookup(self->priv->vars, name);
 				if (value)
 					g_string_append(decoded, value);
@@ -189,16 +226,19 @@ gboolean gebr_string_expr_eval(GebrStringExpr   *self,
 					   _("Syntax error: unmatched closing bracket"));
 			       goto exception;
 		       } else {
-			       g_string_append_c(decoded, ']');
+			       if (eval)
+				       g_string_append_c(decoded, ']');
 			       i += 2;
 		       }
 		       continue;
 		}
 
-		// Escape double-quotes and backslashes
-		if (expr[i] == '"' || expr[i] == '\\')
-			g_string_append_c(decoded, '\\');
-		g_string_append_c(decoded, expr[i++]);
+		if (eval) {
+			// Escape double-quotes and backslashes
+			if (expr[i] == '"' || expr[i] == '\\')
+				g_string_append_c(decoded, '\\');
+			g_string_append_c(decoded, expr[i++]);
+		}
 	}
 
 	if (fetch_var) {
@@ -209,7 +249,7 @@ gboolean gebr_string_expr_eval(GebrStringExpr   *self,
 		goto exception;
 	}
 
-	if (result)
+	if (eval && result)
 		*result = g_strdup(decoded->str);
 
 exception:
@@ -217,4 +257,18 @@ exception:
 	g_free(name);
 
 	return retval;
+}
+
+/* Public functions {{{1 */
+GebrStringExpr *gebr_string_expr_new(void)
+{
+	return g_object_new(GEBR_TYPE_STRING_EXPR, NULL);
+}
+
+gboolean gebr_string_expr_eval(GebrStringExpr   *self,
+			       const gchar      *expr,
+			       gchar           **result,
+			       GError          **err)
+{
+	return traverse_expression(self, expr, result, TRUE, NULL, NULL, err);
 }

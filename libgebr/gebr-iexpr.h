@@ -73,17 +73,20 @@ typedef struct _GebrIExprInterface GebrIExprInterface;
 struct _GebrIExprInterface {
 	GTypeInterface parent;
 
-	gboolean (*set_var) (GebrIExpr              *self,
-			     const gchar            *name,
-			     GebrGeoXmlParameterType type,
-			     const gchar            *value,
-			     GError                **error);
+	gboolean (*set_var)     (GebrIExpr              *self,
+				 const gchar            *name,
+				 GebrGeoXmlParameterType type,
+				 const gchar            *value,
+				 GError                **error);
 
-	gboolean (*is_valid) (GebrIExpr   *self,
-			      const gchar *expr,
-			      GError     **error);
+	gboolean (*is_valid)     (GebrIExpr   *self,
+				  const gchar *expr,
+				  GError     **error);
 
-	void     (*reset)    (GebrIExpr *self);
+	void     (*reset)        (GebrIExpr *self);
+
+	GList *  (*extract_vars) (GebrIExpr   *self,
+				  const gchar *expr);
 };
 
 GType gebr_iexpr_get_type(void) G_GNUC_CONST;
@@ -123,6 +126,17 @@ gboolean gebr_iexpr_is_valid(GebrIExpr   *self,
  * Resets the state of this evaluator.
  */
 void gebr_iexpr_reset(GebrIExpr *self);
+
+/**
+ * gebr_iexpr_extract_vars:
+ * @self:
+ * @expression:
+ *
+ * Returns: A list of strings containing the variable names.
+ *     You must free all strings and the list itself.
+ */
+GList *gebr_iexpr_extract_vars(GebrIExpr   *self,
+			       const gchar *expr);
 
 G_END_DECLS
 
