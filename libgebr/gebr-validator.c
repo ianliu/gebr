@@ -6,6 +6,7 @@
 #include "gebr-arith-expr.h"
 #include "gebr-string-expr.h"
 
+/* Structures {{{1 */
 struct _GebrValidator
 {
 	GebrArithExpr *arith_expr;
@@ -14,20 +15,51 @@ struct _GebrValidator
 	GebrGeoXmlDocument **flow;
 	GebrGeoXmlDocument **line;
 	GebrGeoXmlDocument **proj;
+
+	GHashTable *xml_to_node;
+	GNode *root;
 };
 
-GebrValidator *gebr_validator_new(GebrGeoXmlDocument **flow,
-				  GebrGeoXmlDocument **line,
-				  GebrGeoXmlDocument **proj)
-{
-	GebrValidator *self = g_new(GebrValidator, 1);
-	self->arith_expr = gebr_arith_expr_new();
-	self->string_expr = gebr_string_expr_new();
-	self->flow = flow;
-	self->line = line;
-	self->proj = proj;
+typedef struct {
+	gboolean has_error;
+	GebrGeoXmlParameter *param;
+} NodeData;
 
-	return self;
+/* NodeData functions {{{1 */
+static NodeData *
+node_data_new(GebrGeoXmlParameter *param)
+{
+	NodeData *n = g_new(NodeData, 1);
+	n->param = param;
+	return n;
+}
+
+static void
+node_data_free(NodeData *n)
+{
+	g_free(n);
+}
+
+/* Private functions {{{1*/
+static GebrIExpr *
+get_validator(GebrValidator *self,
+	      GebrGeoXmlParameter *param)
+{
+	GebrGeoXmlParameterType type;
+
+	type = gebr_geoxml_parameter_get_type(param);
+
+	switch (type) {
+	case GEBR_GEOXML_PARAMETER_TYPE_STRING:
+	case GEBR_GEOXML_PARAMETER_TYPE_FILE:
+		return GEBR_IEXPR(self->string_expr);
+	case GEBR_GEOXML_PARAMETER_TYPE_RANGE:
+	case GEBR_GEOXML_PARAMETER_TYPE_INT:
+	case GEBR_GEOXML_PARAMETER_TYPE_FLOAT:
+		return GEBR_IEXPR(self->arith_expr);
+	default:
+		g_return_val_if_reached(GEBR_IEXPR(self->string_expr));
+	}
 }
 
 static void
@@ -86,10 +118,71 @@ setup_variables(GebrValidator *self, GebrIExpr *expr_validator, GebrGeoXmlParame
 	}
 }
 
-gboolean gebr_validator_validate_param(GebrValidator       *self,
-				       GebrGeoXmlParameter *param,
-				       gchar              **validated,
-				       GError             **err)
+
+/* Public functions {{{1 */
+GebrValidator *
+gebr_validator_new(GebrGeoXmlDocument **flow,
+		   GebrGeoXmlDocument **line,
+		   GebrGeoXmlDocument **proj)
+{
+	GebrValidator *self = g_new(GebrValidator, 1);
+	self->arith_expr = gebr_arith_expr_new();
+	self->string_expr = gebr_string_expr_new();
+	self->flow = flow;
+	self->line = line;
+	self->proj = proj;
+
+	self->xml_to_node = g_hash_table_new(NULL, NULL);
+	self->root = g_node_new(NULL);
+
+	return self;
+}
+
+gboolean
+gebr_validator_def(GebrValidator       *self,
+		   GebrGeoXmlParameter *key,
+		   GList              **affected,
+		   GError             **error)
+{
+	GebrIExpr *expr = get_validator(self, key);
+	//g_node_prepend_data(self->root, );
+	return 0;
+}
+
+gboolean
+gebr_validator_move_before(GebrValidator       *self,
+			   GebrGeoXmlParameter *key,
+			   GebrGeoXmlParameter *pivot,
+			   GList              **affected,
+			   GError             **error)
+{
+	return 0;
+}
+
+gboolean
+gebr_validator_undef(GebrValidator       *self,
+		     GebrGeoXmlParameter *key,
+		     GList              **affected,
+		     GError             **error)
+{
+	return 0;
+}
+
+gboolean
+gebr_validator_rename(GebrValidator       *self,
+		      GebrGeoXmlParameter *key,
+		      const gchar         *new_name,
+		      GList              **affected,
+		      GError             **error)
+{
+	return 0;
+}
+
+gboolean
+gebr_validator_validate_param(GebrValidator       *self,
+			      GebrGeoXmlParameter *param,
+			      gchar              **validated,
+			      GError             **err)
 {
 	GString *result;
 	GError *error = NULL;
@@ -158,10 +251,11 @@ gboolean gebr_validator_validate_param(GebrValidator       *self,
 	return TRUE;
 }
 
-gboolean gebr_validator_validate_expr(GebrValidator          *self,
-				      const gchar            *expr,
-				      GebrGeoXmlParameterType type,
-				      GError                **err)
+gboolean
+gebr_validator_validate_expr(GebrValidator          *self,
+			     const gchar            *expr,
+			     GebrGeoXmlParameterType type,
+			     GError                **err)
 {
 	GError *error = NULL;
 	GebrIExpr *expr_validator = NULL;
@@ -212,6 +306,11 @@ void gebr_validator_get_documents(GebrValidator *self,
 
 void gebr_validator_free(GebrValidator *self)
 {
+	g_hash_table_unref(self->xml_to_node);
+	g_node_traverse(self->root, G_IN_ORDER, G_TRAVERSE_ALL, -1,
+			(GNodeTraverseFunc)node_data_free, NULL);
+
+	g_node_destroy(self->root);
 	g_object_unref(self->arith_expr);
 	g_object_unref(self->string_expr);
 	g_free(self);

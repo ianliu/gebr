@@ -38,6 +38,65 @@ GebrValidator *gebr_validator_new(GebrGeoXmlDocument **flow,
 				  GebrGeoXmlDocument **proj);
 
 /**
+ * gebr_validator_move_before:
+ * @validator: A #GebrValidator
+ * @key: The variable to operate on
+ * @pivot: The pivot for the operation, or %NULL to append
+ * @error: Return location for error, or %NULL
+ *
+ * Returns: %TRUE if no error ocurred, %FALSE otherwise
+ */
+gboolean gebr_validator_move_before(GebrValidator       *self,
+				    GebrGeoXmlParameter *key,
+				    GebrGeoXmlParameter *pivot,
+				    GList              **affected,
+				    GError             **error);
+
+/**
+ * gebr_validator_def:
+ * @validator: A #GebrValidator
+ * @key: The variable to be defined
+ * @error: Return location for error, or %NULL
+ *
+ * Defines a variable in the validator.
+ *
+ * Returns: %TRUE if no error ocurred, %FALSE otherwise
+ */
+gboolean gebr_validator_def(GebrValidator       *self,
+			    GebrGeoXmlParameter *key,
+			    GList              **affected,
+			    GError             **error);
+
+/**
+ * gebr_validator_undef:
+ * @validator: A #GebrValidator
+ * @key: The variable to be deleted
+ * @affected: A list containing the #GebrGeoXmlParameter's affected
+ * @error: Return location for error, or %NULL
+ *
+ * Returns: %TRUE if no error ocurred, %FALSE otherwise
+ */
+gboolean gebr_validator_undef(GebrValidator       *self,
+			      GebrGeoXmlParameter *key,
+			      GList              **affected,
+			      GError             **error);
+
+/**
+ * gebr_validator_rename:
+ * @validator: A #GebrValidator
+ * @key: The variable to operate on
+ * @new_name:
+ * @error: Return location for error, or %NULL
+ *
+ * Returns: %TRUE if no error ocurred, %FALSE otherwise
+ */
+gboolean gebr_validator_rename(GebrValidator       *self,
+			       GebrGeoXmlParameter *key,
+			       const gchar         *new_name,
+			       GList              **affected,
+			       GError             **error);
+
+/**
  * gebr_validator_validate_param:
  * @validator: A #GebrValidator
  * @parameter: The #GebrGeoXmlParameter to be validated
