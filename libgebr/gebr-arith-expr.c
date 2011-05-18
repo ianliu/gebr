@@ -370,7 +370,7 @@ gebr_arith_expr_eval_internal(GebrArithExpr *self,
 				if (g_strcmp0(line, EVAL_COOKIE) == 0) {
 					g_set_error(err,
 						    GEBR_IEXPR_ERROR,
-						    GEBR_IEXPR_ERROR_EMPTY_EXPRESSION,
+						    GEBR_IEXPR_ERROR_SYNTAX,
 						    _("Expression does not evaluate to a value"));
 					g_free (line);
 					return FALSE;

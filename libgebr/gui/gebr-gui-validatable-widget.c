@@ -28,30 +28,23 @@ gboolean gebr_gui_validatable_widget_validate(GebrGuiValidatableWidget *widget,
 	gchar *expression;
 	gboolean retval;
 	GebrGeoXmlParameterType type;
+	GebrGeoXmlProgramParameter *pparam;
 
 	type = gebr_geoxml_parameter_get_type(param);
 	expression = gebr_gui_validatable_widget_get_value(widget);
 	retval = gebr_validator_validate_expr(self, expression, type, &error);
+	pparam = GEBR_GEOXML_PROGRAM_PARAMETER(param);
 
-	if (!error)
-	{
-		if (type == GEBR_GEOXML_PARAMETER_TYPE_STRING && 
-		    gebr_geoxml_program_parameter_get_required(GEBR_GEOXML_PROGRAM_PARAMETER(param)) &&
-		    g_strcmp0(g_strstrip(expression), "") == 0)
-			g_set_error(&error,
-				    GEBR_IEXPR_ERROR,
-				    GEBR_IEXPR_ERROR_EMPTY_EXPRESSION,
-				    _("Expression does not evaluate to a value"));
-	}
-	else if (error->code == GEBR_IEXPR_ERROR_EMPTY_EXPRESSION &&
-		 !gebr_geoxml_program_parameter_get_required(GEBR_GEOXML_PROGRAM_PARAMETER(param)))
-		g_clear_error(&error);
+	if (!error && !*expression && gebr_geoxml_program_parameter_get_required(pparam))
+		g_set_error(error,
+			    GEBR_IEXPR_ERROR,
+			    GEBR_IEXPR_ERROR_EMPTY_EXPR,
+			    _("Expression does not evaluate to a value"));
 
 	gebr_gui_validatable_widget_set_icon(widget, param, error);
 
 	if (error)
 		g_clear_error(&error);
-	g_free(expression);
 
 	return retval;
 }
