@@ -1,3 +1,4 @@
+#include <glib/gi18n.h>
 #include <geoxml/geoxml.h>
 
 #include "gebr-validator.h"
@@ -212,7 +213,7 @@ gebr_validator_validate_param(GebrValidator       *self,
 
 	if (gebr_geoxml_program_parameter_get_required(pparam)) {
 		GString *value;
-		value = gebr_geoxml_program_parameter_get_string_value(pparam);
+		value = gebr_geoxml_program_parameter_get_string_value(pparam, FALSE);
 		if (!value->len)
 			g_set_error(err,
 				    GEBR_IEXPR_ERROR,
