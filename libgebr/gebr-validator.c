@@ -145,7 +145,7 @@ gebr_validator_def(GebrValidator       *self,
 		   GList              **affected,
 		   GError             **error)
 {
-	GebrIExpr *expr = get_validator(self, key);
+	//GebrIExpr *expr = get_validator(self, key);
 	//g_node_prepend_data(self->root, );
 	return 0;
 }
@@ -223,19 +223,7 @@ gebr_validator_validate_param(GebrValidator       *self,
 		return FALSE;
 	}
 
-	switch (type) {
-	case GEBR_GEOXML_PARAMETER_TYPE_STRING:
-	case GEBR_GEOXML_PARAMETER_TYPE_FILE:
-		expr_validator = GEBR_IEXPR(self->string_expr);
-		break;
-	case GEBR_GEOXML_PARAMETER_TYPE_FLOAT:
-	case GEBR_GEOXML_PARAMETER_TYPE_INT:
-	case GEBR_GEOXML_PARAMETER_TYPE_RANGE:
-		expr_validator = GEBR_IEXPR(self->arith_expr);
-		break;
-	default:
-		break;
-	}
+	expr_validator = get_validator(self, param);
 
 	gebr_iexpr_reset(expr_validator);
 	setup_variables(self, expr_validator, param);

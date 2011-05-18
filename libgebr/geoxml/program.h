@@ -20,6 +20,8 @@
 
 #include <glib.h>
 
+#include <gebr-validator.h>
+
 G_BEGIN_DECLS
 
 /**
@@ -330,17 +332,13 @@ gboolean gebr_geoxml_program_get_error_id(GebrGeoXmlProgram *self,
 /**
  * gebr_geoxml_program_is_valid:
  * @program: a #GebrGeoXmlProgram
- * @flow: a #GebrGeoXmlFlow containing dictionary definitions
- * @line: a #GebrGeoXmlLine containing dictionary definitions
- * @proj: a #GebrGeoXmlProject containing dictionary definitions
+ * @validator: A #GebrValidator
  * @err: return location for error, or %NULL
  *
  * Returns: %TRUE if @program is valid, %FALSE otherwise.
  */
 gboolean gebr_geoxml_program_is_valid(GebrGeoXmlProgram *self,
-				      GebrGeoXmlDocument *flow,
-				      GebrGeoXmlDocument *line,
-				      GebrGeoXmlDocument *proj,
+				      GebrValidator *validator,
 				      GError **err);
 
 G_END_DECLS
