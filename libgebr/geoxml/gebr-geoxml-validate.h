@@ -21,19 +21,14 @@
 #include <glib.h>
 #include <validate.h>
 
-#include "flow.h"
+#include "gebr-geo-types.h"
 
 G_BEGIN_DECLS
-
-/**
- * \struct GebrGeoXmlValidate validate.h geoxml/validate.h
- * \brief
- * Semantic validator for GeoXml
- */
 
 typedef struct _GebrGeoXmlValidate GebrGeoXmlValidate;
 typedef struct _GebrGeoXmlValidateOperations GebrGeoXmlValidateOperations;
 typedef struct _GebrGeoXmlValidateOptions GebrGeoXmlValidateOptions;
+
 struct _GebrGeoXmlValidate {
 	struct _GebrGeoXmlValidateOperations {
 		void (*append_text)(gpointer data, const gchar * format, ...);

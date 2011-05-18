@@ -18,13 +18,14 @@
 #include <glib.h>
 #include <stdlib.h>
 
-#include "program.h"
-#include "object.h"
 #include "document.h"
 #include "flow.h"
 #include "line.h"
-#include "project.h"
+#include "object.h"
+#include "parameters.h"
 #include "program-parameter.h"
+#include "program.h"
+#include "project.h"
 
 void test_gebr_geoxml_object_get_type (void)
 {

@@ -24,8 +24,7 @@
 
 #include <glib/gi18n.h>
 #include <libgebr/geoxml/geoxml.h>
-#include <libgebr/gui/gebr-gui-utils.h>
-#include <libgebr/gui/gebr-gui-icons.h>
+#include <libgebr/gui/gui.h>
 #include <libgebr/gebr-expr.h>
 
 #include "ui_parameters.h"
@@ -110,9 +109,7 @@ gboolean validate_program_iter(GtkTreeIter *iter, GError **error)
 			   FSEQ_GEBR_GEOXML_POINTER, &program, -1);
 
 	if (gebr_geoxml_program_is_valid(program,
-					 GEBR_GEOXML_DOCUMENT(gebr.flow),
-					 GEBR_GEOXML_DOCUMENT(gebr.line),
-					 GEBR_GEOXML_DOCUMENT(gebr.project),
+					 gebr.validator,
 					 error))
 		return TRUE;
 

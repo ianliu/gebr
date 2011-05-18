@@ -34,16 +34,6 @@ g_value_object_copy_value (const GValue *src_value,
     dest_value->data[0].v_pointer = NULL;
 }
 
-static void
-g_value_object_transform_value (const GValue *src_value,
-				GValue       *dest_value)
-{
-  if (src_value->data[0].v_pointer && g_type_is_a (G_OBJECT_TYPE (src_value->data[0].v_pointer), G_VALUE_TYPE (dest_value)))
-    dest_value->data[0].v_pointer = g_object_ref (src_value->data[0].v_pointer);
-  else
-    dest_value->data[0].v_pointer = NULL;
-}
-
 static gpointer
 g_value_object_peek_pointer (const GValue *value)
 {

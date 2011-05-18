@@ -20,6 +20,8 @@
 
 #include <glib.h>
 
+#include "gebr-geo-types.h"
+
 G_BEGIN_DECLS
 
 /**
@@ -80,18 +82,6 @@ G_BEGIN_DECLS
  * GebrGeoXmlProjectLine, GebrGeoXmlLineFlow, GebrGeoXmlProgram, GebrGeoXmlProgramParameter and GebrGeoXmlCategory
  * can be treated as a super class of GebrGeoXmlSequence.
  */
-
-/**
- * Cast to super types of GebrGeoXmlSequence to it.
- */
-#define GEBR_GEOXML_SEQUENCE(seq) ((GebrGeoXmlSequence*)(seq))
-
-/**
- * The GebrGeoXmlSequence struct contains private data only, and should be accessed using the functions below.
- */
-typedef struct gebr_geoxml_sequence GebrGeoXmlSequence;
-
-#include "parameter_group.h"
 
 /**
  * Use as an auxiliary function to gebr_geoxml_sequence_next.

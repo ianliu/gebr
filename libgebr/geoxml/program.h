@@ -20,6 +20,8 @@
 
 #include <glib.h>
 
+#include "gebr-geo-types.h"
+
 #include <gebr-validator.h>
 
 G_BEGIN_DECLS
@@ -85,44 +87,6 @@ G_BEGIN_DECLS
  * - Seismic Unix: http://www.cwp.mines.edu/cwpcodes
  * - Madagascar: http://rsf.sourceforge.net
  */
-
-typedef enum {
-	GEBR_GEOXML_PROGRAM_ERROR_UNKNOWN_VAR,
-	GEBR_GEOXML_PROGRAM_ERROR_INVAL_EXPR,
-	GEBR_GEOXML_PROGRAM_ERROR_REQ_UNFILL,
-} GebrGeoXmlProgramError;
-
-#define GEBR_GEOXML_PROGRAM_ERROR (gebr_geoxml_program_error_quark())
-GQuark gebr_geoxml_program_error_quark(void);
-
-typedef enum {
-	GEBR_GEOXML_PROGRAM_STATUS_UNKNOWN = 0,
-	GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED,
-	GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED,
-	GEBR_GEOXML_PROGRAM_STATUS_DISABLED,
-} GebrGeoXmlProgramStatus;
-
-typedef enum {
-	GEBR_GEOXML_PROGRAM_CONTROL_UNKNOWN = 0,
-	GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY,
-	GEBR_GEOXML_PROGRAM_CONTROL_FOR
-} GebrGeoXmlProgramControl;
-/**
- * Promote a sequence to a program.
- */
-#define GEBR_GEOXML_PROGRAM(seq) ((GebrGeoXmlProgram*)(seq))
-
-/**
- * The GebrGeoXmlProgram struct contains private data only, and should be accessed using the functions below.
- */
-typedef struct gebr_geoxml_program GebrGeoXmlProgram;
-
-#include "parameter.h"
-#include "parameters.h"
-#include "program-parameter.h"
-#include "flow.h"
-#include "macros.h"
-#include "object.h"
 
 /**
  * Call \p callback for each parameter of \p program

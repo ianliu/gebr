@@ -19,14 +19,15 @@
 
 #include <gdome.h>
 
-#include "sequence.h"
-#include "xml.h"
-#include "types.h"
 #include "error.h"
 #include "parameter.h"
+#include "parameter_group.h"
 #include "parameter_p.h"
 #include "parameters.h"
 #include "parameters_p.h"
+#include "sequence.h"
+#include "types.h"
+#include "xml.h"
 
 /*
  * internal structures and funcionts

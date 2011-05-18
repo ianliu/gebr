@@ -19,7 +19,7 @@
 #define __GEBR_VALIDATOR_H__
 
 #include <glib.h>
-#include <geoxml/geoxml.h>
+#include <geoxml/gebr-geo-types.h>
 
 G_BEGIN_DECLS
 

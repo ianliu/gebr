@@ -20,42 +20,14 @@
 
 #include <glib.h>
 
+#include "gebr-geo-types.h"
+
 G_BEGIN_DECLS
-
-/**
- * Get base object class from a sequence or a document.
- */
-#define GEBR_GEOXML_OBJECT(object) ((GebrGeoXmlObject*)(object))
-
-
-/**
- * The GebrGeoXmlObject struct contains private data only, and should be accessed using the functions below.
- */
-typedef struct gebr_geoxml_object GebrGeoXmlObject;
-
-/**
- * GebrGeoXml basic object types
- */
-typedef enum {
-	GEBR_GEOXML_OBJECT_TYPE_UNKNOWN = 0,
-	GEBR_GEOXML_OBJECT_TYPE_PROJECT,
-	GEBR_GEOXML_OBJECT_TYPE_LINE,
-	GEBR_GEOXML_OBJECT_TYPE_FLOW,
-	GEBR_GEOXML_OBJECT_TYPE_PROGRAM,
-	GEBR_GEOXML_OBJECT_TYPE_PARAMETERS,
-	GEBR_GEOXML_OBJECT_TYPE_PARAMETER,
-	GEBR_GEOXML_OBJECT_TYPE_ENUM_OPTION,
-} GebrGeoXmlObjectType;
 
 /**
  * Return the type of \p object
  */
 GebrGeoXmlObjectType gebr_geoxml_object_get_type(GebrGeoXmlObject * object);
-
-/**
- * \see gebr_geoxml_program_foreach_parameter
- */
-typedef void (*GebrGeoXmlCallback)(GebrGeoXmlObject * object, gpointer user_data);
 
 /**
  * Set the user pointer data associated with _object_
@@ -71,8 +43,6 @@ void gebr_geoxml_object_set_user_data(GebrGeoXmlObject * object, gpointer user_d
  * \see gebr_geoxml_object_set_user_data
  */
 gpointer gebr_geoxml_object_get_user_data(GebrGeoXmlObject * object);
-
-#include "document.h"
 
 /**
  * Get the owner document of \p object

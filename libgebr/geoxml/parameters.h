@@ -18,6 +18,10 @@
 #ifndef __GEBR_GEOXML_PARAMETERS_H
 #define __GEBR_GEOXML_PARAMETERS_H
 
+#include <glib.h>
+
+#include "gebr-geo-types.h"
+
 G_BEGIN_DECLS
 
 /**
@@ -74,22 +78,6 @@ G_BEGIN_DECLS
  * \enddot
  * \see parameters.h
  */
-
-/**
- * Cast a GebrGeoXmlSequence to a GebrGeoXmlParameters.
- */
-#define GEBR_GEOXML_PARAMETERS(seq) ((GebrGeoXmlParameters*)(seq))
-
-/**
- * The GebrGeoXmlParameters struct contains private data only, and should be accessed using the functions below.
- */
-typedef struct gebr_geoxml_parameters GebrGeoXmlParameters;
-
-#include <glib.h>
-
-#include "parameter_group.h"
-#include "parameter.h"
-#include "sequence.h"
 
 /**
  * Create a new parameter and append it to \p parameters.

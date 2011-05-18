@@ -18,13 +18,14 @@
 #include <string.h>
 #include <gdome.h>
 
-#include "project.h"
+#include "defines.h"
 #include "document.h"
 #include "document_p.h"
-#include "defines.h"
 #include "error.h"
-#include "xml.h"
+#include "project.h"
+#include "sequence.h"
 #include "types.h"
+#include "xml.h"
 
 /*
  * Internal structures and functions

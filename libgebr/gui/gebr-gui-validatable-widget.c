@@ -36,7 +36,7 @@ gboolean gebr_gui_validatable_widget_validate(GebrGuiValidatableWidget *widget,
 	pparam = GEBR_GEOXML_PROGRAM_PARAMETER(param);
 
 	if (!error && !*expression && gebr_geoxml_program_parameter_get_required(pparam))
-		g_set_error(error,
+		g_set_error(&error,
 			    GEBR_IEXPR_ERROR,
 			    GEBR_IEXPR_ERROR_EMPTY_EXPR,
 			    _("This parameter is required"));

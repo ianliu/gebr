@@ -20,10 +20,15 @@
 #include <stdlib.h>
 #include <gdome.h>
 
-#include "parameters.h"
-#include "parameter.h"
-#include "parameter_p.h"
+#include "document.h"
 #include "error.h"
+#include "flow.h"
+#include "parameter.h"
+#include "parameter_group.h"
+#include "parameter_p.h"
+#include "parameters.h"
+#include "program-parameter.h"
+#include "program.h"
 
 void test_gebr_geoxml_parameter_get_parameters(void)
 {

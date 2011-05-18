@@ -20,6 +20,8 @@
 
 #include <glib.h>
 
+#include "gebr-geo-types.h"
+
 G_BEGIN_DECLS
 
 /**
@@ -69,45 +71,6 @@ G_BEGIN_DECLS
  */
 
 /**
- * Cast to GebrGeoXmlDocument's from its derived classes: GebrGeoXmlFlow, GebrGeoXmlLine and GebrGeoXmlProject
- */
-#define GEBR_GEOXML_DOCUMENT(x) ((GebrGeoXmlDocument*)(x))
-#define GEBR_GEOXML_DOC(x) GEBR_GEOXML_DOCUMENT(x)
-
-/**
- * The GebrGeoXmlDocument struct contains private data only, and should be accessed using the functions below.
- */
-typedef struct gebr_geoxml_document GebrGeoXmlDocument;
-
-#include "parameters.h"
-
-/**
- * Document type: flow, line or project
- *
- */
-typedef enum {
-	/**
-	 * The document is a GebrGeoXmlFlow
-	 */
-	GEBR_GEOXML_DOCUMENT_TYPE_FLOW,
-	/**
-	 * The document is a GebrGeoXmlLine
-	 */
-	GEBR_GEOXML_DOCUMENT_TYPE_LINE,
-	/**
-	 * The document is a GebrGeoXmlProject
-	 */
-	GEBR_GEOXML_DOCUMENT_TYPE_PROJECT,
-} GebrGeoXmlDocumentType;
-
-#include "program.h"
-
-/**
- * Used by \ref gebr_geoxml_document_load 
- */
-typedef void (*GebrGeoXmlDiscardMenuRefCallback)(GebrGeoXmlProgram * program, const gchar * menu, gint index);
-
-/**
  * Load a document XML file at \p path into \p document.
  * The document is validated using the proper DTD. Invalid documents are not loaded.
  * The filename is set according to \p path (see #gebr_geoxml_document_set_filename).
@@ -116,7 +79,10 @@ typedef void (*GebrGeoXmlDiscardMenuRefCallback)(GebrGeoXmlProgram * program, co
  * GEBR_GEOXML_RETV_FILE_NOT_FOUND, GEBR_GEOXML_RETV_PERMISSION_DENIED, 
  * GEBR_GEOXML_RETV_INVALID_DOCUMENT, GEBR_GEOXML_RETV_DTD_SPECIFIED, GEBR_GEOXML_RETV_CANT_ACCESS_DTD
  */
-int gebr_geoxml_document_load(GebrGeoXmlDocument ** document, const gchar * path, gboolean validate, GebrGeoXmlDiscardMenuRefCallback discard_menu_ref);
+int gebr_geoxml_document_load(GebrGeoXmlDocument ** document,
+			      const gchar * path,
+			      gboolean validate,
+			      GebrGeoXmlDiscardMenuRefCallback discard_menu_ref);
 
 /**
  * Load a document XML buffer at \p xml into \p document.

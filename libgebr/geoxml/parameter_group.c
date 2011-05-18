@@ -29,6 +29,7 @@
 #include "parameters_p.h"
 #include "parameter_p.h"
 #include "sequence_p.h"
+#include "sequence.h"
 
 /*
  * internal stuff

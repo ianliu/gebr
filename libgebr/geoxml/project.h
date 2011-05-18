@@ -20,6 +20,8 @@
 
 #include <glib.h>
 
+#include "gebr-geo-types.h"
+
 G_BEGIN_DECLS
 
 /**
@@ -78,34 +80,6 @@ G_BEGIN_DECLS
  *
  * \see line.h
  */
-
-/**
- * Cast project's document \p doc to GebrGeoXmlProject
- */
-#define GEBR_GEOXML_PROJECT(doc) ((GebrGeoXmlProject*)(doc))
-
-/**
- * Promote a sequence to a project line.
- */
-#define GEBR_GEOXML_PROJECT_LINE(seq) ((GebrGeoXmlProjectLine*)(seq))
-
-/**
- * Project class. Inherits GebrGeoXmlDocument
- *
- * The GebrGeoXmlProject struct contains private data only, and should be accessed using the functions below.
- */
-typedef struct gebr_geoxml_project GebrGeoXmlProject;
-
-/**
- * Represents a reference to a line inside a project.
- * It contains the path of the line.
- *
- * The GebrGeoXmlProjectLine struct contains private data only, and should be accessed using the functions below.
- */
-typedef struct gebr_geoxml_project_line GebrGeoXmlProjectLine;
-
-#include "sequence.h"
-#include "macros.h"
 
 /**
  * Create a new empty project and return a pointer to it.

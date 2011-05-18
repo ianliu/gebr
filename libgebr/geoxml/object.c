@@ -20,6 +20,10 @@
 #include <utils.h>
 #include <defines.h>
 
+#include "document.h"
+#include "sequence.h"
+#include "flow.h"
+#include "program.h"
 #include "object.h"
 #include "types.h"
 #include "xml.h"

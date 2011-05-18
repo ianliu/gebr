@@ -19,9 +19,18 @@
 #include <glib/gi18n-lib.h>
 #include <string.h>
 
-#include "gebr-geoxml-validate.h"
-#include "../validate.h"
 #include "../date.h"
+#include "../validate.h"
+#include "document.h"
+#include "enum_option.h"
+#include "flow.h"
+#include "gebr-geoxml-validate.h"
+#include "parameter.h"
+#include "parameter_group.h"
+#include "parameters.h"
+#include "program.h"
+#include "program-parameter.h"
+#include "sequence.h"
 #include "value_sequence.h"
 
 GebrGeoXmlValidate *gebr_geoxml_validate_new(gpointer data, GebrGeoXmlValidateOperations operations,

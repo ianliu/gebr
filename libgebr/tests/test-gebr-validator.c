@@ -18,6 +18,7 @@
 #include <glib.h>
 #include <glib-object.h>
 #include <glib/gstdio.h>
+#include <geoxml/geoxml.h>
 
 #include "../gebr-expr.h"
 #include "../gebr-iexpr.h"

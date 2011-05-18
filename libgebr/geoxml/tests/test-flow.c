@@ -17,9 +17,11 @@
 
 #include <glib.h>
 #include <stdlib.h>
-#include "flow.h"
-#include "error.h"
+
 #include "../../date.h"
+#include "document.h"
+#include "error.h"
+#include "flow.h"
 
 void test_gebr_geoxml_flow_server_get_and_set_address(void){
 	const gchar *address;

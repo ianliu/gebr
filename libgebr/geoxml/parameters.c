@@ -20,15 +20,17 @@
 
 #include <gdome.h>
 
-#include "parameters.h"
-#include "xml.h"
-#include "types.h"
 #include "error.h"
+#include "parameter.h"
+#include "parameter_group.h"
+#include "parameter_p.h"
+#include "parameters.h"
 #include "program-parameter.h"
 #include "program_parameter_p.h"
-#include "parameter_p.h"
-#include "parameter_group.h"
+#include "sequence.h"
+#include "types.h"
 #include "value_sequence.h"
+#include "xml.h"
 
 /*
  * internal stuff

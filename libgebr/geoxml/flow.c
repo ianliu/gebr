@@ -22,18 +22,21 @@
 #include <glib/gi18n.h>
 
 #include "../date.h"
-#include "flow.h"
 #include "defines.h"
-#include "xml.h"
-#include "error.h"
-#include "types.h"
 #include "document.h"
 #include "document_p.h"
-#include "program.h"
+#include "error.h"
+#include "flow.h"
+#include "parameter.h"
+#include "parameter_group.h"
 #include "parameters.h"
 #include "parameters_p.h"
-#include "parameter_group.h"
+#include "program.h"
+#include "program-parameter.h"
+#include "sequence.h"
+#include "types.h"
 #include "value_sequence.h"
+#include "xml.h"
 
 /*
  * internal structures and functions

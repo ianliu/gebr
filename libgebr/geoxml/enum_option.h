@@ -20,6 +20,8 @@
 
 #include <glib.h>
 
+#include "gebr-geo-types.h"
+
 G_BEGIN_DECLS
 
 /**
@@ -59,18 +61,6 @@ G_BEGIN_DECLS
 /**
  * \file enum_option.h
  */
-
-/**
- * Promote a sequence to a enum option.
- */
-#define GEBR_GEOXML_ENUM_OPTION(seq) ((GebrGeoXmlEnumOption*)(seq))
-
-/**
- * The GebrGeoXmlEnumOption struct contains private data only, and should be accessed using the functions below.
- */
-typedef struct gebr_geoxml_enum_option GebrGeoXmlEnumOption;
-
-#include "macros.h"
 
 /**
  *

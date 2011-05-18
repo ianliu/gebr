@@ -15,15 +15,20 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
 #include <glib.h>
 #include <glib/gprintf.h>
-#include "document.h"
-#include "error.h"
-#include "../xml.h"
-#include "../object.h"
+#include <stdio.h>
+#include <stdlib.h>
 
+#include "../object.h"
+#include "../xml.h"
+#include "document.h"
+#include "flow.h"
+#include "error.h"
+#include "parameter.h"
+#include "program.h"
+#include "program-parameter.h"
+#include "parameters.h"
 
 static void callback (GebrGeoXmlObject *parameter, const gchar **keyword)
 {

@@ -22,13 +22,17 @@
 #include <gdome.h>
 #include <libgebr/gebr-validator.h>
 
-#include "program.h"
-#include "parameters.h"
-#include "xml.h"
 #include "error.h"
-#include "types.h"
+#include "object.h"
+#include "parameter.h"
+#include "parameter_group.h"
+#include "parameters.h"
+#include "program.h"
+#include "program-parameter.h"
 #include "sequence.h"
+#include "types.h"
 #include "value_sequence.h"
+#include "xml.h"
 
 /*
  * internal structures and funcionts

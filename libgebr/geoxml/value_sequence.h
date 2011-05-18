@@ -20,6 +20,8 @@
 
 #include <glib.h>
 
+#include "gebr-geo-types.h"
+
 G_BEGIN_DECLS
 
 /**
@@ -64,16 +66,6 @@ G_BEGIN_DECLS
  *
  * GebrGeoXmlEnumOption and GebrGeoXmlCategory inherits GebrGeoXmlValueSequence.
  */
-
-/**
- * Cast to super types of GebrGeoXmlValueSequence to it.
- */
-#define GEBR_GEOXML_VALUE_SEQUENCE(seq) ((GebrGeoXmlValueSequence*)(seq))
-
-/**
- * The GebrGeoXmlValueSequence struct contains private data only, and should be accessed using the functions below.
- */
-typedef struct gebr_geoxml_value_sequence GebrGeoXmlValueSequence;
 
 /**
  * Set the \p value_sequence element's value to \p value.

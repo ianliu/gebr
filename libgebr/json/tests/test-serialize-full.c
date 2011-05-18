@@ -29,16 +29,14 @@ test_deserialize (void)
 {
   GObject *object;
   GError *error;
-  gchar *str;
 
   error = NULL;
   object = json_gobject_from_data (FLOW_TYPE, var_test, -1, &error);
   if (error)
     g_error ("*** Unable to parse buffer: %s\n", error->message);
 
-  Parameter *parameter = PARAMETER (FLOW (object)->parameter);
+  //Parameter *parameter = PARAMETER (FLOW (object)->parameter);
   //g_assert_cmpstr (parameter->value, ==, "456");
-  GValueArray *a;
 
   g_assert (DICTIONARY_IS_OBJECT (FLOW (object)->dictionary));
   Dictionary *dictionary = DICTIONARY (FLOW (object)->dictionary);

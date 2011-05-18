@@ -19,15 +19,17 @@
 #include <gdome.h>
 #include <gebr-expr.h>
 
-#include "program-parameter.h"
-#include "types.h"
-#include "xml.h"
+#include "document.h"
 #include "error.h"
 #include "parameter.h"
 #include "parameter_p.h"
+#include "parameters.h"
+#include "program-parameter.h"
 #include "program_p.h"
 #include "sequence.h"
+#include "types.h"
 #include "value_sequence.h"
+#include "xml.h"
 
 /*
  * internal structures and funcionts

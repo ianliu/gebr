@@ -18,6 +18,9 @@
 #include <glib.h>
 
 #include "document.h"
+#include "parameters.h"
+#include "program.h"
+#include "program-parameter.h"
 #include "flow.h"
 #include "line.h"
 #include "project.h"

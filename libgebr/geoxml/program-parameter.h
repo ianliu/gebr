@@ -20,7 +20,7 @@
 
 #include <glib.h>
 
-#include "macros.h"
+#include "gebr-geo-types.h"
 
 G_BEGIN_DECLS
 
@@ -101,32 +101,6 @@ G_BEGIN_DECLS
  *
  *
  */
-
-/**
- * Promote the instance \p program_parameter of GebrGeoXmlParameter to a GebrGeoXmlProgramParameter.
- */
-#define GEBR_GEOXML_PROGRAM_PARAMETER(program_parameter) ((GebrGeoXmlProgramParameter*)(program_parameter))
-
-/**
- * Promote a sequence of property's values \p sequence to a GebrGeoXmlPropertyValue.
- */
-#define GEBR_GEOXML_PROPERTY_VALUE(sequence) ((GebrGeoXmlPropertyValue*)(sequence))
-
-/**
- * The GebrGeoXmlProgramParameter struct contains private data only, and should be accessed using the functions below.
- */
-typedef struct gebr_geoxml_program_parameter GebrGeoXmlProgramParameter;
-
-/**
- * The GebrGeoXmlPropertyValue struct contains private data only, and should be accessed using the functions below.
- */
-typedef struct gebr_geoxml_property_value GebrGeoXmlPropertyValue;
-
-#include "sequence.h"
-#include "program-parameter.h"
-#include "enum_option.h"
-#include "document.h"
-#include "macros.h"
 
 /**
  * Mark \p program_parameter as required or optional to run its program.

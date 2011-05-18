@@ -20,11 +20,13 @@
 #include <config.h>
 #include <glib/gi18n-lib.h>
 
+#include "sequence.h"
 #include "parameter.h"
 #include "parameter_p.h"
 #include "xml.h"
 #include "types.h"
 #include "error.h"
+#include "parameters.h"
 #include "parameters_p.h"
 #include "parameter_group.h"
 #include "parameter_group_p.h"

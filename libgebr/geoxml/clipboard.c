@@ -16,12 +16,15 @@
  */
 
 #include <string.h>
-
 #include <gdome.h>
 
+#include "gebr-geo-types.h"
+
 #include "clipboard.h"
-#include "xml.h"
+#include "flow.h"
+#include "program.h"
 #include "types.h"
+#include "xml.h"
 
 extern GdomeDocument *clipboard_document;
 

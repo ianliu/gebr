@@ -20,6 +20,8 @@
 
 #include <glib.h>
 
+#include "gebr-geo-types.h"
+
 G_BEGIN_DECLS
 
 /**
@@ -79,40 +81,6 @@ G_BEGIN_DECLS
  * \ref gebr_geoxml_line_append_flow.
  */
 
-/**
- * Cast line's document \p doc to GebrGeoXmlLine
- */
-#define GEBR_GEOXML_LINE(doc) ((GebrGeoXmlLine*)(doc))
-
-/**
- * Promote a sequence to a line flow.
- */
-#define GEBR_GEOXML_LINE_FLOW(seq) ((GebrGeoXmlLineFlow*)(seq))
-
-/**
- * Line class. Inherits GebrGeoXmlDocument.
- *
- * The GebrGeoXmlLine struct contains private data only, and should be accessed using the functions below.
- */
-typedef struct gebr_geoxml_line GebrGeoXmlLine;
-
-/**
- * Represents a reference to a flow inside a line.
- * It contains the path of the line.
- *
- * The GebrGeoXmlLineFlow struct contains private data only, and should be accessed using the functions below.
- */
-typedef struct gebr_geoxml_line_flow GebrGeoXmlLineFlow;
-
-/**
- *
- *
- * The GebrGeoXmlLinePath struct contains private data only, and should be accessed using the functions below.
- */
-typedef struct gebr_geoxml_line_path GebrGeoXmlLinePath;
-
-#include "sequence.h"
-#include "macros.h"
 
 /**
  * Create a new empty line and return a pointer to it.

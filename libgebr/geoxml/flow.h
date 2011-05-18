@@ -20,6 +20,8 @@
 
 #include <glib.h>
 
+#include "gebr-geo-types.h"
+
 G_BEGIN_DECLS
 
 /**
@@ -74,54 +76,6 @@ G_BEGIN_DECLS
  *
  */
 
-/**
- * Cast flow's document \p doc to GebrGeoXmlFlow
- */
-#define GEBR_GEOXML_FLOW(doc) ((GebrGeoXmlFlow*)(doc))
-
-/**
- * Cast from GebrGeoXmlSequence at \p seq to GebrGeoXmlRevision
- */
-#define GEBR_GEOXML_REVISION(seq) ((GebrGeoXmlRevision*)(seq))
-
-/**
- * The GebrGeoXmlFlow struct contains private data only, and should be accessed using the functions below.
- */
-typedef struct gebr_geoxml_flow GebrGeoXmlFlow;
-
-
-/**
- *
- */
-typedef enum {
-	GEBR_GEOXML_FLOW_ERROR_NONE = 0,
-	GEBR_GEOXML_FLOW_ERROR_NO_INPUT,
-	GEBR_GEOXML_FLOW_ERROR_NO_OUTPUT,
-	GEBR_GEOXML_FLOW_ERROR_NO_INFILE,
-	GEBR_GEOXML_FLOW_ERROR_INVALID_INFILE,
-	GEBR_GEOXML_FLOW_ERROR_NO_VALID_PROGRAMS,
-	GEBR_GEOXML_FLOW_ERROR_INVALID_OUTFILE,
-	GEBR_GEOXML_FLOW_ERROR_INVALID_ERRORFILE,
-	GEBR_GEOXML_FLOW_ERROR_LOOP_ONLY
-} GebrGeoXmlFlowError;
-
-
-/**
- * The GebrGeoXmlCategory struct contains private data only, and should be accessed using the functions below.
- */
-typedef struct gebr_geoxml_category GebrGeoXmlCategory;
-
-/**
- * The GebrGeoXmlRevision struct contains private data only, and should be accessed using the functions below.
- */
-typedef struct gebr_geoxml_revision GebrGeoXmlRevision;
-
-#include "program.h"
-#include "macros.h"
-#include "sequence.h"
-#include "object.h"
-#include "line.h"
-#include "project.h"
 
 /**
  * Create a new empty flow and return a pointer to it.
