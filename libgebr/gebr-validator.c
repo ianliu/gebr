@@ -214,13 +214,15 @@ gebr_validator_validate_param(GebrValidator       *self,
 	if (gebr_geoxml_program_parameter_get_required(pparam)) {
 		GString *value;
 		value = gebr_geoxml_program_parameter_get_string_value(pparam, FALSE);
-		if (!value->len)
+		if (!value->len) {
 			g_set_error(err,
-				    GEBR_IEXPR_ERROR,
-				    GEBR_IEXPR_ERROR_EMPTY_EXPR,
-				    _("This parameter is required"));
+			            GEBR_IEXPR_ERROR,
+			            GEBR_IEXPR_ERROR_EMPTY_EXPR,
+			            _("This parameter is required"));
+			g_string_free(value, TRUE);
+			return FALSE;
+		}
 		g_string_free(value, TRUE);
-		return FALSE;
 	}
 
 	expr_validator = get_validator(self, param);
