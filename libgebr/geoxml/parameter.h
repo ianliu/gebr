@@ -259,11 +259,6 @@ gboolean gebr_geoxml_parameter_get_is_in_group(GebrGeoXmlParameter * parameter);
 GebrGeoXmlParameterGroup *gebr_geoxml_parameter_get_group(GebrGeoXmlParameter * parameter);
 
 /**
- * Reset \p parameter's value and default. If \p recursive, do it for groups and do recursively.
- */
-void gebr_geoxml_parameter_reset(GebrGeoXmlParameter * parameter, gboolean recursive);
-
-/**
  * gebr_geoxml_parameter_is_dict_param:
  * @parameter:
  *

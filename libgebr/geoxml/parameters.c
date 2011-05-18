@@ -259,15 +259,6 @@ GebrGeoXmlParameterGroup *gebr_geoxml_parameters_get_group(GebrGeoXmlParameters 
 	    : NULL;
 }
 
-void gebr_geoxml_parameters_reset(GebrGeoXmlParameters * parameters, gboolean recursive)
-{
-	GebrGeoXmlSequence *parameter;
-
-	parameter = gebr_geoxml_parameters_get_first_parameter(parameters);
-	for (; parameter != NULL; gebr_geoxml_sequence_next(&parameter))
-		gebr_geoxml_parameter_reset(GEBR_GEOXML_PARAMETER(parameter), recursive);
-}
-
 gboolean gebr_geoxml_parameters_is_var_used (GebrGeoXmlParameters *self,
 					     const gchar *var_name)
 {

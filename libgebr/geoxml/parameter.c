@@ -390,26 +390,6 @@ GebrGeoXmlParameterGroup *gebr_geoxml_parameter_get_group(GebrGeoXmlParameter * 
 	return gebr_geoxml_parameters_get_group(gebr_geoxml_parameter_get_parameters(parameter));
 }
 
-void gebr_geoxml_parameter_reset(GebrGeoXmlParameter * parameter, gboolean recursive)
-{
-	if (parameter == NULL)
-		return;
-	if (gebr_geoxml_parameter_get_type(parameter) == GEBR_GEOXML_PARAMETER_TYPE_GROUP) {
-		GebrGeoXmlSequence *instance;
-
-		if (recursive == FALSE)
-			return;
-
-		/* call gebr_geoxml_parameter_reset on each child */
-		gebr_geoxml_parameter_group_get_instance(GEBR_GEOXML_PARAMETER_GROUP(parameter), &instance, 0);
-		for (; instance != NULL; gebr_geoxml_sequence_next(&instance))
-			gebr_geoxml_parameters_reset(GEBR_GEOXML_PARAMETERS(instance), recursive);
-	} else {
-		__gebr_geoxml_program_parameter_set_all_value((GebrGeoXmlProgramParameter *) parameter, FALSE, "");
-		__gebr_geoxml_program_parameter_set_all_value((GebrGeoXmlProgramParameter *) parameter, TRUE, "");
-	}
-}
-
 gboolean gebr_geoxml_parameter_is_dict_param(GebrGeoXmlParameter *parameter)
 {
 	GdomeNode *grandpa;

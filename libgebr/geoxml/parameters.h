@@ -173,12 +173,6 @@ gboolean gebr_geoxml_parameters_get_is_in_group(GebrGeoXmlParameters * parameter
  */
 GebrGeoXmlParameterGroup *gebr_geoxml_parameters_get_group(GebrGeoXmlParameters * parameters);
 
-/**
- * Reset \p parameters' values and default values.
- * If \p recursive is true also do it for group (recursively)
- */
-void gebr_geoxml_parameters_reset(GebrGeoXmlParameters * parameters, gboolean recursive);
-
 gboolean gebr_geoxml_parameters_is_var_used (GebrGeoXmlParameters *self,
 					     const gchar *var_name);
 
