@@ -28,6 +28,7 @@
 #include "program_parameter_p.h"
 #include "parameter_p.h"
 #include "parameter_group.h"
+#include "value_sequence.h"
 
 /*
  * internal stuff
@@ -288,4 +289,54 @@ gboolean gebr_geoxml_parameters_is_var_used (GebrGeoXmlParameters *self,
 	}
 
 	return FALSE;
+}
+
+void gebr_geoxml_parameters_reset_to_default(GebrGeoXmlParameters * parameters)
+{
+	GebrGeoXmlSequence *parameter;
+
+	parameter = gebr_geoxml_parameters_get_first_parameter(parameters);
+	for (; parameter != NULL; gebr_geoxml_sequence_next(&parameter)) {
+		if (gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(parameter)) ==
+		    GEBR_GEOXML_PARAMETER_TYPE_GROUP) {
+			GebrGeoXmlSequence *instance;
+
+			gebr_geoxml_parameter_group_get_instance(GEBR_GEOXML_PARAMETER_GROUP(parameter), &instance, 0);
+			for (; instance != NULL; gebr_geoxml_sequence_next(&instance)) {
+				gebr_geoxml_parameters_reset_to_default(GEBR_GEOXML_PARAMETERS(instance));
+				gebr_geoxml_parameters_set_selection(GEBR_GEOXML_PARAMETERS(instance),
+								     gebr_geoxml_parameters_get_default_selection
+								     (GEBR_GEOXML_PARAMETERS(instance)));
+			}
+
+			continue;
+		}
+
+		GebrGeoXmlSequence *value;
+		GebrGeoXmlSequence *default_value;
+
+		gebr_geoxml_program_parameter_get_value(GEBR_GEOXML_PROGRAM_PARAMETER(parameter), FALSE, &value, 0);
+		gebr_geoxml_program_parameter_get_value(GEBR_GEOXML_PROGRAM_PARAMETER(parameter),
+							TRUE, &default_value, 0);
+		for (; default_value != NULL;
+		     gebr_geoxml_sequence_next(&default_value), gebr_geoxml_sequence_next(&value)) {
+			if (value == NULL)
+				value =
+				    GEBR_GEOXML_SEQUENCE(gebr_geoxml_program_parameter_append_value
+							 (GEBR_GEOXML_PROGRAM_PARAMETER(parameter), FALSE));
+			gebr_geoxml_value_sequence_set(GEBR_GEOXML_VALUE_SEQUENCE(value),
+						       gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE
+										      (default_value)));
+		}
+
+		/* remove extras values */
+		while (value != NULL) {
+			GebrGeoXmlSequence *tmp;
+
+			tmp = value;
+			gebr_geoxml_sequence_next(&tmp);
+			gebr_geoxml_sequence_remove(value);
+			value = tmp;
+		}
+	}
 }

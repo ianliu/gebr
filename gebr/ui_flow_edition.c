@@ -954,7 +954,7 @@ static void flow_edition_menu_add(void)
 	}
 
 	for (; program != NULL; gebr_geoxml_sequence_next(&program))
-		parameters_reset_to_default(gebr_geoxml_program_get_parameters(GEBR_GEOXML_PROGRAM(program)));
+		gebr_geoxml_parameters_reset_to_default(gebr_geoxml_program_get_parameters(GEBR_GEOXML_PROGRAM(program)));
 
 	menu_programs_index = gebr_geoxml_flow_get_programs_number(gebr.flow);
 	/* add it to the file */

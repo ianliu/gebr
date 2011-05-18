@@ -26,6 +26,7 @@
 #include <gtk/gtk.h>
 
 #include <libgebr/gui/gebr-gui-program-edit.h>
+#include <libgebr/geoxml/parameters.h>
 
 G_BEGIN_DECLS
 
