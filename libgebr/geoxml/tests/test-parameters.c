@@ -231,6 +231,25 @@ void test_gebr_geoxml_parameters_get_group(void)
 	g_assert(gebr_geoxml_parameters_get_group(NULL) == NULL);
 }
 
+void test_gebr_geoxml_parameters_reset_to_default(void)
+{
+	GebrGeoXmlFlow *forloop;
+	GebrGeoXmlProgram *program;
+	GebrGeoXmlParameters *parameters_list;
+	GebrGeoXmlProgramParameter *parameter;
+
+	gebr_geoxml_document_load((GebrGeoXmlDocument**)&forloop, TEST_DIR"/forloop.mnu", FALSE, NULL);
+	gebr_geoxml_flow_get_program(forloop, (GebrGeoXmlSequence**) &program, 0);
+	parameters_list = gebr_geoxml_program_get_parameters(program);
+
+	gebr_geoxml_parameters_get_parameter(parameters_list, (GebrGeoXmlSequence**)&parameter, 1);
+
+	gebr_geoxml_program_parameter_set_first_value(parameter, FALSE, "1234567890");
+
+	g_assert_cmpstr(gebr_geoxml_program_parameter_get_first_value(parameter,FALSE), ==, "1234567890");
+	//g_assert_cmpstr(gebr_geoxml_program_parameter_get_first_value(parameter,TRUE), ==, "");
+}
+
 int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
@@ -244,6 +263,7 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/geoxml/parameters/get_number", test_gebr_geoxml_parameters_get_number);
 	g_test_add_func("/libgebr/geoxml/parameters/get_is_in_group", test_gebr_geoxml_parameters_get_is_in_group);
 	g_test_add_func("/libgebr/geoxml/parameters/get_group", test_gebr_geoxml_parameters_get_group);
+	g_test_add_func("/libgebr/geoxml/parameters/reset_to_default", test_gebr_geoxml_parameters_reset_to_default);
 
 	return g_test_run();
 }
