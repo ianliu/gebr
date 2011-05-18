@@ -39,7 +39,7 @@ gboolean gebr_gui_validatable_widget_validate(GebrGuiValidatableWidget *widget,
 		g_set_error(error,
 			    GEBR_IEXPR_ERROR,
 			    GEBR_IEXPR_ERROR_EMPTY_EXPR,
-			    _("Expression does not evaluate to a value"));
+			    _("This parameter is required"));
 
 	gebr_gui_validatable_widget_set_icon(widget, param, error);
 

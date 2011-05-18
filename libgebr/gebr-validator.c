@@ -210,6 +210,18 @@ gebr_validator_validate_param(GebrValidator       *self,
 	gebr_geoxml_program_parameter_get_value(pparam, FALSE, &seq, 0);
 	separator = gebr_geoxml_program_parameter_get_list_separator(pparam);
 
+	if (gebr_geoxml_program_parameter_get_required(pparam)) {
+		GString *value;
+		value = gebr_geoxml_program_parameter_get_string_value(pparam);
+		if (!value->len)
+			g_set_error(err,
+				    GEBR_IEXPR_ERROR,
+				    GEBR_IEXPR_ERROR_EMPTY_EXPR,
+				    _("This parameter is required"));
+		g_string_free(value, TRUE);
+		return FALSE;
+	}
+
 	switch (type) {
 	case GEBR_GEOXML_PARAMETER_TYPE_STRING:
 	case GEBR_GEOXML_PARAMETER_TYPE_FILE:
