@@ -155,6 +155,10 @@ static void parameters_actions(GtkDialog * dialog, gint arg1, struct ui_paramete
 		else
 			flow_edition_status_changed (GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED);
 
+		GebrGeoXmlProgram *program = ui_parameters->program_edit->program;
+		if (gebr_geoxml_program_get_control(program) == GEBR_GEOXML_PROGRAM_CONTROL_FOR)
+			gebr_geoxml_flow_update_iter_dict_value(gebr.flow);
+
 		break;
 	}
 	case GTK_RESPONSE_APPLY:

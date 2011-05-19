@@ -830,3 +830,24 @@ gboolean gebr_geoxml_flow_io_get_error_append(GebrGeoXmlFlow *flow)
 
 	return g_strcmp0 (setting, "no") != 0;
 }
+
+void gebr_geoxml_flow_update_iter_dict_value(GebrGeoXmlFlow *flow)
+{
+	GebrGeoXmlSequence *seq;
+	GebrGeoXmlParameters *dict;
+	GebrGeoXmlProgram *program;
+	const gchar *keyword;
+	gchar *step, *ini;
+
+	dict = gebr_geoxml_document_get_dict_parameters (GEBR_GEOXML_DOCUMENT (flow));
+	seq = gebr_geoxml_parameters_get_first_parameter (dict);
+	keyword = gebr_geoxml_program_parameter_get_keyword (GEBR_GEOXML_PROGRAM_PARAMETER (seq));
+
+	if (g_strcmp0 (keyword, "iter") != 0)
+		return;
+
+	program = gebr_geoxml_flow_get_control_program(flow);
+	gebr_geoxml_program_control_get_n(program, &step, &ini);
+	gebr_geoxml_program_parameter_set_first_value(GEBR_GEOXML_PROGRAM_PARAMETER(seq),
+						      FALSE, ini);
+}

@@ -461,6 +461,14 @@ void gebr_geoxml_flow_io_set_error_append(GebrGeoXmlFlow *flow, gboolean setting
  */
 gboolean gebr_geoxml_flow_io_get_error_append(GebrGeoXmlFlow *flow);
 
+/**
+ * gebr_geoxml_flow_update_iter_dict_value:
+ *
+ * Updates the `iter' dictionary variable with the start value of the for loop
+ * of this flow. If the flow does not have a loop, does nothing and returns silently.
+ */
+void gebr_geoxml_flow_update_iter_dict_value(GebrGeoXmlFlow *flow);
+
 G_END_DECLS
 
 #endif				//__GEBR_GEOXML_FLOW_H
