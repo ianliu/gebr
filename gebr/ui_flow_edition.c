@@ -1328,20 +1328,19 @@ on_flow_sequence_query_tooltip(GtkTreeView * treeview,
 	else {
 		GebrGeoXmlProgramError errorid;
 		if (gebr_geoxml_program_get_error_id(program, &errorid)) {
-			gchar *tmp;
+			gchar *error_message = "Unknown error";
 			switch (errorid) {
 			case GEBR_GEOXML_PROGRAM_ERROR_INVAL_EXPR:
-				tmp = g_strdup(_("This program has an invalid expression"));
+				error_message = _("This program has an invalid expression");
 				break;
 			case GEBR_GEOXML_PROGRAM_ERROR_REQ_UNFILL:
-				tmp = g_strdup(_("A required parameter is unfilled"));
+				error_message = _("A required parameter is unfilled");
 				break;
 			case GEBR_GEOXML_PROGRAM_ERROR_UNKNOWN_VAR:
-				tmp = g_strdup(_("An undefined variable is being used"));
+				error_message = _("An undefined variable is being used");
 				break;
 			}
-			gtk_tooltip_set_text(tooltip, tmp);
-			g_free(tmp);
+			gtk_tooltip_set_text(tooltip, error_message);
 		}
 	}
 
