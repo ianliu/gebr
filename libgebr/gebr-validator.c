@@ -18,7 +18,7 @@ struct _GebrValidator
 	GebrGeoXmlDocument **proj;
 
 	GHashTable *xml_to_node;
-	GNode *root;
+
 };
 
 typedef struct {
@@ -134,7 +134,6 @@ gebr_validator_new(GebrGeoXmlDocument **flow,
 	self->proj = proj;
 
 	self->xml_to_node = g_hash_table_new(NULL, NULL);
-	self->root = g_node_new(NULL);
 
 	return self;
 }
@@ -198,6 +197,10 @@ gebr_validator_validate_param(GebrValidator       *self,
 	g_return_val_if_fail(param != NULL, FALSE);
 
 	type = gebr_geoxml_parameter_get_type(param);
+
+	if (type == GEBR_GEOXML_PARAMETER_TYPE_ENUM ||
+	    type == GEBR_GEOXML_PARAMETER_TYPE_FLAG)
+		return TRUE;
 
 	g_return_val_if_fail(type == GEBR_GEOXML_PARAMETER_TYPE_STRING ||
 			     type == GEBR_GEOXML_PARAMETER_TYPE_FILE   ||
@@ -310,10 +313,6 @@ void gebr_validator_get_documents(GebrValidator *self,
 void gebr_validator_free(GebrValidator *self)
 {
 	g_hash_table_unref(self->xml_to_node);
-	g_node_traverse(self->root, G_IN_ORDER, G_TRAVERSE_ALL, -1,
-			(GNodeTraverseFunc)node_data_free, NULL);
-
-	g_node_destroy(self->root);
 	g_object_unref(self->arith_expr);
 	g_object_unref(self->string_expr);
 	g_free(self);
