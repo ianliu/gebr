@@ -34,9 +34,10 @@ fun! AddGebrCommand(name, cmd, killd, label, debug)
   endif
 endf
 
-call AddGebrCommand('gebr', 'gebr/gebr &', 1, '&gebr', 1)
-call AddGebrCommand('gebrd', 'gnome-terminal -e "gebrd/gebrd -i"', 1, 'gebr&d', 0)
-call AddGebrCommand('debr', 'debr/debr &', 0, 'd&ebr', 1)
+call AddGebrCommand('gebr', 'gebr/gebr &', 1, '&Gebr\ (Kill\ Daemon)', 1)
+call AddGebrCommand('gebr', 'gebr/gebr &', 0, 'Gebr', 1)
+call AddGebrCommand('gebrd', 'gnome-terminal -e "gebrd/gebrd -i" &', 1, 'Gebr&d\ (Interactive)', 0)
+call AddGebrCommand('debr', 'debr/debr &', 0, 'D&ebr', 1)
 
 fun! RunWhat()
   let entries = ['Run:']
