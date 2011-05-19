@@ -615,6 +615,12 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 				  G_CALLBACK (on_spin_button_input), parameter_widget);
 		g_signal_connect (spin, "output",
 				  G_CALLBACK (on_spin_button_output), parameter_widget);
+		g_signal_connect (spin, "focus-in-event",
+				  G_CALLBACK (__on_focus_in_event), parameter_widget);
+		g_signal_connect (spin, "focus-out-event",
+				  G_CALLBACK (__on_focus_out_event), parameter_widget);
+		g_signal_connect (spin, "activate",
+				  G_CALLBACK (__on_activate), parameter_widget);
 		gtk_spin_button_set_numeric(GTK_SPIN_BUTTON(spin), FALSE);
 		gtk_spin_button_set_digits(GTK_SPIN_BUTTON(spin), atoi(digits_str));
 		gtk_widget_set_size_request(parameter_widget->value_widget, 220, -1);
