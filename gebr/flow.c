@@ -681,8 +681,10 @@ void flow_program_remove(void)
 					   FSEQ_GEBR_GEOXML_POINTER, &program, -1);
 			gebr_geoxml_sequence_remove(GEBR_GEOXML_SEQUENCE(program));
 
-			if (gebr_geoxml_program_get_control (program) == GEBR_GEOXML_PROGRAM_CONTROL_FOR)
+			if (gebr_geoxml_program_get_control (program) == GEBR_GEOXML_PROGRAM_CONTROL_FOR) {
 				gebr_geoxml_flow_remove_iter_dict(gebr.flow);
+				dict_edit_check_programs_using_variables("iter", FALSE);
+			}
 			valid = gtk_list_store_remove(GTK_LIST_STORE(gebr.ui_flow_edition->fseq_store), &iter);
 		}
 
