@@ -1155,20 +1155,21 @@ static gboolean dict_edit_validate_editing_cell(struct dict_edit_data *data, gbo
 		gchar *validated;
 		GError *error = NULL;
 
-		if (cancel_edition)
+		if (!cancel_edition)
+			gebr_geoxml_program_parameter_set_first_value(parameter, FALSE, new_text);
+
+		data->edition_valid = gebr_validator_validate_param(gebr.validator, GEBR_GEOXML_PARAMETER(parameter), &validated, &error);
+		if(cancel_edition)
 			goto out;
-		gebr_geoxml_program_parameter_set_first_value(parameter, FALSE, new_text);
-		gebr_validator_validate_param(gebr.validator, GEBR_GEOXML_PARAMETER(parameter), &validated, &error);
 
 		if (error) {
-			data->edition_valid = FALSE;
 			gebr_dict_alert(data, GTK_STOCK_DIALOG_WARNING, error->message);
 			gtk_label_set_text(GTK_LABEL(data->label), error->message);
 			g_clear_error(&error);
 		} else {
 			GebrGeoXmlParameterType type = gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(parameter));
 			gebr_dict_alert(data, type == GEBR_GEOXML_PARAMETER_TYPE_STRING ? "string-icon" : "integer-icon",
-					   type == GEBR_GEOXML_PARAMETER_TYPE_STRING ? "Text value" : "Number value");
+					type == GEBR_GEOXML_PARAMETER_TYPE_STRING ? "Text value" : "Number value");
 		}
 		break;
 	} case DICT_EDIT_COMMENT:
@@ -1196,8 +1197,20 @@ out:
 
 static void on_dict_edit_editing_cell_canceled(GtkCellRenderer * cell, struct dict_edit_data *data)
 {
+	GebrGeoXmlProgramParameter *parameter;
+	gtk_tree_model_get(data->tree_model, &data->editing_iter, DICT_EDIT_GEBR_GEOXML_POINTER, &parameter, -1);
+	const gchar *keyword = gebr_geoxml_program_parameter_get_keyword(parameter);
 	/* may delete item if empty */
 	dict_edit_validate_editing_cell(data, FALSE, TRUE);
+
+	puts(keyword);
+	if(data->edition_valid){
+		dict_edit_check_programs_using_variables(keyword, TRUE);
+		puts("VALID");
+	}else{
+		dict_edit_check_programs_using_variables(keyword, FALSE);
+		puts("NOT VALID");
+	}
 
 	data->in_edition = NULL;
 	data->editing_cell = NULL;
