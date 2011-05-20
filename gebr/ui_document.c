@@ -1501,14 +1501,8 @@ void on_response_ok(GtkButton * button, GebrPropertiesData * data)
 
 	/* Update title in apropriated store */
 	switch ((type = gebr_geoxml_document_get_type(data->document))) {
-	case GEBR_GEOXML_DOCUMENT_TYPE_PROJECT:
 	case GEBR_GEOXML_DOCUMENT_TYPE_LINE: {
 		GebrGeoXmlLine *line = GEBR_GEOXML_LINE(data->document);
-
-		project_line_get_selected(&iter, DontWarnUnselection);
-		gtk_tree_store_set(gebr.ui_project_line->store, &iter,
-				   PL_TITLE, gebr_geoxml_document_get_title(data->document), -1);
-		project_line_info_update();
 
 		gint current_active_group = gtk_combo_box_get_active(GTK_COMBO_BOX(data->groups_combo));
 		gboolean emptyness = gebr_geoxml_line_get_paths_number(line) == 0 && gebr_geoxml_line_get_flows_number(line) == 0;
@@ -1535,6 +1529,10 @@ void on_response_ok(GtkButton * button, GebrPropertiesData * data)
 				flow_browse_reload_selected();
 			}
 		}
+	} case GEBR_GEOXML_DOCUMENT_TYPE_PROJECT: {
+		project_line_get_selected(&iter, DontWarnUnselection);
+		gtk_tree_store_set(gebr.ui_project_line->store, &iter,
+				   PL_TITLE, gebr_geoxml_document_get_title(data->document), -1);
 		document_save(data->document, TRUE, TRUE);
 		project_line_info_update();
 		break;
