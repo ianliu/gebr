@@ -240,16 +240,25 @@ void test_gebr_geoxml_parameters_reset_to_default(void)
 	GebrGeoXmlParameters *parameters_list;
 	GebrGeoXmlProgramParameter *parameter;
 
-	gebr_geoxml_document_load((GebrGeoXmlDocument**)&forloop, TEST_DIR"/forloop.mnu", FALSE, NULL);
+	gebr_geoxml_document_load((GebrGeoXmlDocument**)&forloop, TEST_DIR"/test.mnu", FALSE, NULL);
 	gebr_geoxml_flow_get_program(forloop, (GebrGeoXmlSequence**) &program, 0);
 	parameters_list = gebr_geoxml_program_get_parameters(program);
 
 	gebr_geoxml_parameters_get_parameter(parameters_list, (GebrGeoXmlSequence**)&parameter, 1);
 
+	// Set a value to be 1234567890, with default being 77777
 	gebr_geoxml_program_parameter_set_first_value(parameter, FALSE, "1234567890");
 
+	// Check if that value was set correctly
 	g_assert_cmpstr(gebr_geoxml_program_parameter_get_first_value(parameter,FALSE), ==, "1234567890");
-	//g_assert_cmpstr(gebr_geoxml_program_parameter_get_first_value(parameter,TRUE), ==, "");
+	g_assert_cmpstr(gebr_geoxml_program_parameter_get_first_value(parameter,TRUE), ==, "77777");
+
+	gebr_geoxml_parameters_reset_to_default(parameters_list);
+	gebr_geoxml_parameters_get_parameter(parameters_list, (GebrGeoXmlSequence**)&parameter, 1);
+
+	// Check if that value was set to default now
+	g_assert_cmpstr(gebr_geoxml_program_parameter_get_first_value(parameter,FALSE), ==, "77777");
+	g_assert_cmpstr(gebr_geoxml_program_parameter_get_first_value(parameter,TRUE), ==, "77777");
 }
 
 int main(int argc, char *argv[])
