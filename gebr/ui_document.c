@@ -866,10 +866,11 @@ static gboolean on_renderer_entry_key_press_event(GtkWidget * widget, GdkEventKe
 			dict_edit_validate_editing_cell(data, FALSE, FALSE);
 
 		if (!data->edition_valid)
-			return column == gtk_tree_view_get_column(GTK_TREE_VIEW(data->tree_view), 0) ||
-					event->keyval == GDK_Return ||
-					event->keyval == GDK_ISO_Enter ||
-					event->keyval == GDK_KP_Enter;
+			if (column == gtk_tree_view_get_column(GTK_TREE_VIEW(data->tree_view), 0) ||
+			    event->keyval == GDK_Return ||
+			    event->keyval == GDK_ISO_Enter ||
+			    event->keyval == GDK_KP_Enter)
+				return TRUE;
 
 		gtk_cell_editable_editing_done(data->in_edition);
 
@@ -974,17 +975,26 @@ static void on_dict_edit_renderer_editing_started(GtkCellRenderer * renderer, Gt
 	} else if (renderer == data->cell_renderer_array[DICT_EDIT_VALUE]) {
 		GebrGeoXmlProgramParameter *parameter;
 		GtkTreeModel *completion_model;
+		gchar *var;
+		const gchar *keyword;
+		GtkTreeIter it;
 		GtkEntry *entry = GTK_ENTRY(editable);
 
 		gtk_tree_model_get(data->tree_model, &iter, DICT_EDIT_GEBR_GEOXML_POINTER, &parameter, -1);
 		GebrGeoXmlParameterType type = gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(parameter));
+		keyword = gebr_geoxml_program_parameter_get_keyword(parameter);
 
 		completion_model = gebr_gui_parameter_get_completion_model(GEBR_GEOXML_DOCUMENT (gebr.flow),
 									   GEBR_GEOXML_DOCUMENT (gebr.line),
 									   GEBR_GEOXML_DOCUMENT (gebr.project),
 									   type);
+		gebr_gui_gtk_tree_model_foreach(it, completion_model) {
+			gtk_tree_model_get(completion_model, &it, 0, &var, -1);
+			if(!g_strcmp0(keyword, var))
+				gtk_list_store_remove(GTK_LIST_STORE(completion_model), &it);
+			g_free(var);
+		}
 		gebr_gui_parameter_set_entry_completion(entry, completion_model, type);
-
 	}
 
 	gtk_widget_set_events(GTK_WIDGET(widget), GDK_KEY_PRESS_MASK);
@@ -1236,6 +1246,7 @@ static void on_dict_edit_editing_cell_canceled(GtkCellRenderer * cell, struct di
 	/* may delete item if empty */
 	dict_edit_validate_editing_cell(data, FALSE, TRUE);
 
+	validate_dict_iter(data, &data->editing_iter);
 	dict_edit_check_programs_using_variables(keyword, data->edition_valid);
 
 	data->in_edition = NULL;
@@ -1258,8 +1269,7 @@ static void on_dict_edit_cell_edited(GtkCellRenderer * cell, gchar * path_string
 	data->in_edition = NULL;
 	data->editing_cell = NULL;
 
-	if (gtk_tree_model_get_iter_from_string(data->tree_model, &iter, path_string))
-		validate_dict_iter(data, &iter);
+	validate_dict_iter(data, &data->editing_iter);
 
 	dict_edit_check_programs_using_variables(new_text, TRUE);
 }
