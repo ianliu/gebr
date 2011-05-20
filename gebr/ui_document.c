@@ -394,6 +394,49 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 	gtk_widget_show_all(window);
 }
 
+static void validate_dict_iter(struct dict_edit_data *data, GtkTreeIter *iter)
+{
+	GtkTreeIter it;
+	gchar *validated;
+	GError *error = NULL;
+	const gchar *keyword;
+	GebrGeoXmlParameter *param;
+	GebrGeoXmlParameterType type;
+
+	it = *iter;
+
+	for (gboolean valid = TRUE; valid;
+	     valid = gtk_tree_model_iter_next(data->tree_model, &it))
+	{
+		gtk_tree_model_get(data->tree_model, &it, DICT_EDIT_GEBR_GEOXML_POINTER, &param, -1);
+
+		// Avoid the 'New' row
+		if (!param)
+			break;
+
+		keyword = gebr_geoxml_program_parameter_get_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(param));
+		type = gebr_geoxml_parameter_get_type(param);
+
+		if (G_UNLIKELY(g_str_equal(keyword, "iter")))
+			continue;
+
+		gebr_validator_validate_param(gebr.validator, param, &validated, &error);
+		if (error) {
+			gtk_tree_store_set(GTK_TREE_STORE(data->tree_model), &it,
+					   DICT_EDIT_VALUE_TYPE_IMAGE, GTK_STOCK_DIALOG_WARNING,
+					   DICT_EDIT_VALUE_TYPE_TOOLTIP, error->message, -1);
+
+			gtk_label_set_text(GTK_LABEL(data->label), error->message);
+			g_clear_error(&error);
+		} else
+			gtk_tree_store_set(GTK_TREE_STORE(data->tree_model), &it,
+					   DICT_EDIT_VALUE_TYPE_IMAGE,
+					   type == GEBR_GEOXML_PARAMETER_TYPE_STRING ? "string-icon" : "integer-icon",
+					   DICT_EDIT_VALUE_TYPE_TOOLTIP,
+					   type == GEBR_GEOXML_PARAMETER_TYPE_STRING ? "Text value" : "Number value", -1);
+	}
+}
+
 void document_dict_edit_setup_ui(void)
 {
 	GtkWidget *dialog;
@@ -592,36 +635,14 @@ void document_dict_edit_setup_ui(void)
 				   DICT_EDIT_KEYWORD_EDITABLE, FALSE, DICT_EDIT_EDITABLE, FALSE, DICT_EDIT_SENSITIVE, TRUE, -1);
 		g_string_free(document_name, TRUE);
 
-		parameter =
-		    gebr_geoxml_parameters_get_first_parameter(gebr_geoxml_document_get_dict_parameters
-							       (data->documents[i]));
-		gchar *validated;
-		const gchar *label;
-		GebrGeoXmlParameterType type;
+		parameter = gebr_geoxml_document_get_dict_parameter(data->documents[i]);
 		for (; parameter != NULL; gebr_geoxml_sequence_next(&parameter)) {
-			GError *error = NULL;
-			type = gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(parameter));
 			iter = dict_edit_append_iter(data, GEBR_GEOXML_OBJECT(parameter), &document_iter);
 			dict_edit_check_duplicates(data, data->documents[i],
 						   gebr_geoxml_program_parameter_get_keyword
 						   (GEBR_GEOXML_PROGRAM_PARAMETER(parameter)));
 			gebr_geoxml_program_parameter_set_required(GEBR_GEOXML_PROGRAM_PARAMETER(parameter), TRUE);
-			gebr_validator_validate_param(gebr.validator, GEBR_GEOXML_PARAMETER(parameter), &validated, &error);
-			label = gebr_geoxml_program_parameter_get_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(parameter));
-			if (error && (g_strcmp0(label, "iter") != 0)) {
-				gtk_tree_store_set(GTK_TREE_STORE(data->tree_model), &iter,
-				                   DICT_EDIT_VALUE_TYPE_IMAGE, GTK_STOCK_DIALOG_WARNING,
-				                   DICT_EDIT_VALUE_TYPE_TOOLTIP, error->message, -1);
-
-				gtk_label_set_text(GTK_LABEL(data->label),
-				                   error->message);
-				g_clear_error(&error);
-			} else
-				gtk_tree_store_set(GTK_TREE_STORE(data->tree_model), &iter,
-				                   DICT_EDIT_VALUE_TYPE_IMAGE,
-				                   type == GEBR_GEOXML_PARAMETER_TYPE_STRING ? "string-icon" : "integer-icon",
-				                   DICT_EDIT_VALUE_TYPE_TOOLTIP,
-				                   type == GEBR_GEOXML_PARAMETER_TYPE_STRING ? "Text value" : "Number value", -1);
+			validate_dict_iter(data, &iter);
 		}
 		dict_edit_append_add_parameter(data, &document_iter);
 
@@ -717,7 +738,6 @@ static void program_list_free(GList * program_list)
 	g_list_foreach(program_list,(GFunc)gtk_tree_iter_free, NULL);
 	g_list_free(program_list);
 }
-
 
 void dict_edit_check_programs_using_variables(const gchar *var_name, gboolean var_exists)
 {
@@ -1219,13 +1239,23 @@ static void on_dict_edit_editing_cell_canceled(GtkCellRenderer * cell, struct di
 static void on_dict_edit_cell_edited(GtkCellRenderer * cell, gchar * path_string, gchar * new_text,
 				     struct dict_edit_data *data)
 {
+	GtkTreeIter iter;
+
 	gtk_tree_store_set(GTK_TREE_STORE(data->tree_model), &data->editing_iter,
 	                   dict_edit_get_column_index_for_renderer(cell, data), new_text,
 	                   -1);
 	data->in_edition = NULL;
 	data->editing_cell = NULL;
 
-	dict_edit_check_programs_using_variables(new_text, data->edition_valid);
+	if (gtk_tree_model_get_iter_from_string(data->tree_model, &iter, path_string)) {
+		gchar *key;
+		GebrGeoXmlParameter *param;
+		gtk_tree_model_get(data->tree_model, &iter, DICT_EDIT_KEYWORD, &key, DICT_EDIT_GEBR_GEOXML_POINTER, &param, -1);
+		g_debug("%p, %s", param, key);
+		validate_dict_iter(data, &iter);
+	}
+
+	dict_edit_check_programs_using_variables(new_text, TRUE);
 }
 
 /*
