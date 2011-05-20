@@ -231,7 +231,9 @@ gebr_validator_validate_param(GebrValidator       *self,
 	expr_validator = get_validator(self, param);
 
 	gebr_iexpr_reset(expr_validator);
-	setup_variables(self, expr_validator, param);
+
+	if(self->line != NULL && self->proj != NULL)
+		setup_variables(self, expr_validator, param);
 
 	while (seq) {
 		error = NULL;
@@ -288,7 +290,9 @@ gebr_validator_validate_expr(GebrValidator          *self,
 	}
 
 	gebr_iexpr_reset(expr_validator);
-	setup_variables(self, expr_validator, NULL);
+
+	if(self->line != NULL && self->proj != NULL)
+		setup_variables(self, expr_validator, NULL);
 
 	gebr_iexpr_is_valid(expr_validator, expr, &error);
 
@@ -305,9 +309,21 @@ void gebr_validator_get_documents(GebrValidator *self,
 				  GebrGeoXmlDocument **line,
 				  GebrGeoXmlDocument **proj)
 {
-	*flow = *self->flow;
-	*line = *self->line;
-	*proj = *self->proj;
+	if (self->flow)
+		*flow = *self->flow;
+	else
+		*flow = NULL;
+		
+	if (self->line)
+		*line = *self->line;
+	else
+		*line = NULL;
+		
+	if (self->proj)
+		*proj = *self->proj;
+	else
+		*proj = NULL;
+
 }
 
 void gebr_validator_free(GebrValidator *self)

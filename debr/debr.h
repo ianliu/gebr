@@ -61,6 +61,9 @@ struct debr {
 	struct about about;
 	GtkWidget *invisible;
 
+	/* Menu parameter validator */
+	GebrValidator *validator;
+
 	gint last_notebook;
 	GtkAccelGroup *accel_group_array[ACCEL_N];
 	GtkActionGroup *action_group_general;

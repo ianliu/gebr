@@ -45,6 +45,8 @@ void debr_init(void)
 	debr.program = NULL;
 	debr.parameter = NULL;
 
+	debr.validator = gebr_validator_new(NULL, NULL, NULL);
+
 	debr.help_edit_windows = g_hash_table_new(NULL, NULL);
 
 	debr.tmpfiles = g_slist_alloc();
@@ -92,6 +94,8 @@ gboolean debr_quit(void)
 	g_object_unref(debr.parameter_type_radio_actions_group);
 
 	g_hash_table_destroy(debr.help_edit_windows);
+
+	gebr_validator_free(debr.validator);
 
 	/* free config stuff */
 	g_hash_table_destroy(debr.config.opened_folders);
