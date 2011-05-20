@@ -43,8 +43,11 @@ gui/gebr-gui-program-edit.c
 gui/gebr-gui-save-dialog.c
 gui/gebr-gui-sequence-edit.c
 gui/gebr-gui-utils.c
+gui/gebr-gui-validatable-widget.c
 gui/gebr-gui-value-sequence-edit.c
 libgebr.c
 log.c
 utils.c
 validate.c
+gebr-arith-expr.c
+gebr-validator.c
