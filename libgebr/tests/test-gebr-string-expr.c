@@ -31,6 +31,7 @@ void test_gebr_string_expr_is_valid(void)
 
 	gebr_iexpr_is_valid(GEBR_IEXPR(s), "foo]", &error);
 	g_assert_error(error, GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_SYNTAX);
+	g_clear_error(&error);
 
 	g_object_unref(s);
 }
@@ -163,6 +164,11 @@ void test_gebr_string_expr_eval_invalid(void)
 	GebrStringExpr *expr = gebr_string_expr_new();
 
 	insert_variables(expr);
+
+	gebr_string_expr_eval(expr, "[xyz]", &result, &error);
+	g_assert_error(error, GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_UNDEF_VAR);
+	g_clear_error(&error);
+	g_assert(result == NULL);
 
 	gebr_string_expr_eval(expr, "[foo][baz]", &result, &error);
 	g_assert_error(error, GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_UNDEF_VAR);
