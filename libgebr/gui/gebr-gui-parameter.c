@@ -893,6 +893,8 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 	if (may_complete) {
 		GtkEntry * entry;
 
+		gebr_gui_parameter_widget_validate(parameter_widget);
+
 		if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_FILE)
 			entry = GTK_ENTRY(GEBR_GUI_FILE_ENTRY(parameter_widget->value_widget)->entry);
 		else

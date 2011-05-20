@@ -40,6 +40,7 @@
 #include "ui_paths.h"
 #include "line.h"
 #include "gebr-expr.h"
+#include "gebr-iexpr.h"
 
 enum {
 	DICT_EDIT_KEYWORD_IMAGE,
@@ -701,7 +702,7 @@ static void program_list_warn_undefined_variable(GList * program_list, gboolean 
 		                   FSEQ_GEBR_GEOXML_POINTER, &program, -1);
 		if (!var_exists) {
 			flow_edition_change_iter_status(GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED, it);
-			gebr_geoxml_program_set_error_id(program, FALSE, GEBR_GEOXML_PROGRAM_ERROR_UNKNOWN_VAR);
+			gebr_geoxml_program_set_error_id(program, FALSE, GEBR_IEXPR_ERROR_UNDEF_VAR);
 		} else {
 			if (validate_program_iter(it, NULL))
 				flow_edition_change_iter_status(GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED, it);
@@ -1200,17 +1201,11 @@ static void on_dict_edit_editing_cell_canceled(GtkCellRenderer * cell, struct di
 	GebrGeoXmlProgramParameter *parameter;
 	gtk_tree_model_get(data->tree_model, &data->editing_iter, DICT_EDIT_GEBR_GEOXML_POINTER, &parameter, -1);
 	const gchar *keyword = gebr_geoxml_program_parameter_get_keyword(parameter);
+
 	/* may delete item if empty */
 	dict_edit_validate_editing_cell(data, FALSE, TRUE);
 
-	puts(keyword);
-	if(data->edition_valid){
-		dict_edit_check_programs_using_variables(keyword, TRUE);
-		puts("VALID");
-	}else{
-		dict_edit_check_programs_using_variables(keyword, FALSE);
-		puts("NOT VALID");
-	}
+	dict_edit_check_programs_using_variables(keyword, data->edition_valid);
 
 	data->in_edition = NULL;
 	data->editing_cell = NULL;
@@ -1230,7 +1225,7 @@ static void on_dict_edit_cell_edited(GtkCellRenderer * cell, gchar * path_string
 	data->in_edition = NULL;
 	data->editing_cell = NULL;
 
-	dict_edit_check_programs_using_variables(new_text, TRUE);
+	dict_edit_check_programs_using_variables(new_text, data->edition_valid);
 }
 
 /*

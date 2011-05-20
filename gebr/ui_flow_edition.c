@@ -19,6 +19,7 @@
 
 #include <glib/gi18n.h>
 #include <libgebr/gui/gui.h>
+#include <libgebr/gebr-iexpr.h>
 #include <libgebr/gebr-expr.h>
 #include <gdk/gdkkeysyms.h>
 
@@ -1326,18 +1327,24 @@ on_flow_sequence_query_tooltip(GtkTreeView * treeview,
 	else if (gebr_geoxml_program_get_status(program) != GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED)
 		return FALSE;
 	else {
-		GebrGeoXmlProgramError errorid;
-		if (gebr_geoxml_program_get_error_id(program, &errorid)) {
+		GebrIExprError errorid;
+		if (gebr_geoxml_program_get_error_id(program, (GebrGeoXmlProgramError*)&errorid)) {
 			gchar *error_message = "Unknown error";
 			switch (errorid) {
-			case GEBR_GEOXML_PROGRAM_ERROR_INVAL_EXPR:
+			case GEBR_IEXPR_ERROR_SYNTAX:
+			case GEBR_IEXPR_ERROR_INVAL_TYPE:
 				error_message = _("This program has an invalid expression");
 				break;
-			case GEBR_GEOXML_PROGRAM_ERROR_REQ_UNFILL:
+			case GEBR_IEXPR_ERROR_EMPTY_EXPR:
 				error_message = _("A required parameter is unfilled");
 				break;
-			case GEBR_GEOXML_PROGRAM_ERROR_UNKNOWN_VAR:
+			case GEBR_IEXPR_ERROR_UNDEF_VAR:
 				error_message = _("An undefined variable is being used");
+				break;
+			case GEBR_IEXPR_ERROR_INVAL_VAR:
+				error_message = _("A not well defined variable is being used");
+				break;
+			case GEBR_IEXPR_ERROR_INITIALIZE:
 				break;
 			}
 			gtk_tooltip_set_text(tooltip, error_message);
