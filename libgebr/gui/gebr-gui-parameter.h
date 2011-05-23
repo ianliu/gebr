@@ -55,6 +55,9 @@ struct gebr_gui_parameter_widget
 	GtkWidget *list_value_widget;
 	GebrGuiValueSequenceEdit *gebr_gui_value_sequence_edit;
 
+	/* for group */
+	GtkWidget *group_warning_widget;
+
 	/* auto submit stuff */
 	changed_callback callback;
 	gpointer user_data;
@@ -142,6 +145,11 @@ GtkTreeModel *gebr_gui_parameter_get_completion_model(GebrGeoXmlDocument *flow,
 void gebr_gui_parameter_set_entry_completion(GtkEntry *entry,
 					     GtkTreeModel *model,
 					     GebrGeoXmlParameterType type);
+
+/**
+ * gebr_gui_group_instance_validate:
+ */
+gboolean gebr_gui_group_instance_validate(GebrValidator *validator, GebrGeoXmlSequence *instance, GtkWidget *icon);
 
 G_END_DECLS
 #endif				//__GEBR_GUI_PARAMETER_H

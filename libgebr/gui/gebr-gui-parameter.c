@@ -1069,6 +1069,7 @@ GebrGuiParameterWidget *gebr_gui_parameter_widget_new(GebrGeoXmlParameter *param
 	self->data = data;
 	self->callback = NULL;
 	self->user_data = NULL;
+	self->group_warning_widget = NULL;
 	self->widget = gtk_vbox_new(FALSE, 10);
 	g_object_weak_ref(G_OBJECT(self->widget), (GWeakNotify) g_free, self);
 	g_signal_connect(self->widget, "mnemonic-activate",
@@ -1106,6 +1107,14 @@ void gebr_gui_parameter_widget_update(struct gebr_gui_parameter_widget *paramete
 
 gboolean gebr_gui_parameter_widget_validate(struct gebr_gui_parameter_widget *parameter_widget)
 {
+	if (parameter_widget->group_warning_widget) {
+		GebrGeoXmlParameterGroup *group;
+		GebrGeoXmlSequence *instance;
+		group = gebr_geoxml_parameter_get_group(parameter_widget->parameter);
+		gebr_geoxml_parameter_group_get_instance(group, &instance, 0);
+		for (; instance != NULL; gebr_geoxml_sequence_next(&instance))
+			gebr_gui_group_instance_validate(parameter_widget->validator, instance, parameter_widget->group_warning_widget);
+	}
 	return gebr_gui_validatable_widget_validate(GEBR_GUI_VALIDATABLE_WIDGET(parameter_widget),
 		                                            parameter_widget->validator,
 		                                            parameter_widget->parameter);
@@ -1453,4 +1462,25 @@ static void on_list_value_widget_activate(GtkEntry *entry, struct gebr_gui_param
 					NULL);
 
 	g_strfreev(exprs);
+}
+
+gboolean gebr_gui_group_instance_validate(GebrValidator *validator, GebrGeoXmlSequence *instance, GtkWidget *icon)
+{
+	gchar *validated;
+	gboolean invalid = FALSE;
+	GebrGeoXmlSequence *parameter;
+	gebr_geoxml_parameters_get_parameter(GEBR_GEOXML_PARAMETERS(instance), &parameter, 0);
+	while (parameter) {
+		if (!gebr_validator_validate_param(validator, GEBR_GEOXML_PARAMETER(parameter), &validated, NULL)) {
+			invalid = TRUE;
+			break;
+		}
+		gebr_geoxml_sequence_next(&parameter);
+	}
+	if (invalid)
+		gtk_image_set_from_stock(GTK_IMAGE(icon), GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_MENU);
+	else
+		gtk_image_clear(GTK_IMAGE(icon));
+
+	return invalid;
 }
