@@ -28,6 +28,10 @@ void test_gebr_arith_expr_simple(void)
 
 	g_assert (gebr_arith_expr_eval(expr, "2*2", &result, NULL));
 	g_assert_cmpfloat (result, ==, 4);
+
+	result = 10;
+	g_assert (gebr_arith_expr_eval(expr, "", &result, NULL));
+	g_assert_cmpfloat (result, ==, 10);
 }
 
 void test_gebr_arith_expr_invalid(void)

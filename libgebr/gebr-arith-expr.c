@@ -324,6 +324,9 @@ gebr_arith_expr_eval_internal(GebrArithExpr *self,
 		SET_RESULT,
 	} state = READ_RESULT;
 
+	if (!expr || !*expr)
+		return TRUE;
+
 	line = g_strdup_printf ("%s ; \"%s\"\n", expr, EVAL_COOKIE);
 	status = g_io_channel_write_chars (self->priv->in_ch, line, -1, NULL, &error);
 	g_free (line);
