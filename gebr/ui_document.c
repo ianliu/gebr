@@ -843,7 +843,7 @@ static void on_dict_edit_remove_clicked(GtkButton * button, struct dict_edit_dat
 
 static gboolean on_dict_edit_tree_view_button_press_event(GtkWidget * widget, GdkEventButton * event, struct dict_edit_data *data)
 {
-	if (data->in_edition && !dict_edit_validate_editing_cell(data, FALSE, TRUE)) {
+	if (data->in_edition && !dict_edit_validate_editing_cell(data, FALSE, FALSE)) {
 		GtkTreeViewColumn *column = gebr_gui_gtk_tree_view_get_column_from_renderer(GTK_TREE_VIEW(data->tree_view), data->editing_cell);
 		 return column == gtk_tree_view_get_column(GTK_TREE_VIEW(data->tree_view), 0);
 	}
