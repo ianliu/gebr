@@ -258,6 +258,7 @@ static GtkWidget *gebr_gui_program_edit_load_parameter(GebrGuiProgramEdit  *prog
 		GtkWidget *expander;
 		GtkWidget *label_widget;
 		GtkWidget *label;
+		GtkWidget *image_widget;
 
 		GtkWidget *depth_hbox;
 		GtkWidget *group_vbox;
@@ -272,6 +273,9 @@ static GtkWidget *gebr_gui_program_edit_load_parameter(GebrGuiProgramEdit  *prog
 		parameter_group = GEBR_GEOXML_PARAMETER_GROUP(parameter);
 
 		expander = gtk_expander_new("");
+		image_widget = gtk_image_new();
+		program_edit->group_warning_widget = image_widget;
+
 		gtk_widget_show(expander);
 		gtk_expander_set_expanded(GTK_EXPANDER(expander),
 					  gebr_geoxml_parameter_group_get_expand(parameter_group));
@@ -291,7 +295,6 @@ static GtkWidget *gebr_gui_program_edit_load_parameter(GebrGuiProgramEdit  *prog
 				break;
 			}
 		}
-
 		if (required) {
 			gchar *markup;
 			markup = g_markup_printf_escaped("<b>%s*</b>",
@@ -301,8 +304,11 @@ static GtkWidget *gebr_gui_program_edit_load_parameter(GebrGuiProgramEdit  *prog
 			g_free(markup);
 		} else 
 			label = gtk_label_new_with_mnemonic(gebr_geoxml_parameter_get_label(parameter));
+
 		gtk_widget_show(label);
+		gtk_widget_show(image_widget);
 		gtk_box_pack_start(GTK_BOX(label_widget), label, FALSE, TRUE, 0);
+		gtk_box_pack_start(GTK_BOX(label_widget), image_widget, FALSE, TRUE, 0);
 
 		if (gebr_geoxml_parameter_group_get_is_instanciable(GEBR_GEOXML_PARAMETER_GROUP(parameter))) {
 			instanciate_button = gtk_button_new();
@@ -343,6 +349,22 @@ static GtkWidget *gebr_gui_program_edit_load_parameter(GebrGuiProgramEdit  *prog
 
 		gebr_geoxml_parameter_group_get_instance(parameter_group, &instance, 0);
 		for (gboolean first_instance = TRUE, i = 0; instance != NULL; gebr_geoxml_sequence_next(&instance)) {
+			gchar *validated;
+			gboolean invalid = FALSE;
+			GebrGeoXmlSequence *par;
+			gebr_geoxml_parameters_get_parameter(GEBR_GEOXML_PARAMETERS(instance), &par, 0);
+			while (par) {
+				if (!gebr_validator_validate_param(program_edit->validator, GEBR_GEOXML_PARAMETER(par), &validated, NULL)) {
+					invalid = TRUE;
+					break;
+				}
+				gebr_geoxml_sequence_next(&par);
+			}
+			if (invalid)
+				gtk_image_set_from_stock(GTK_IMAGE(program_edit->group_warning_widget), GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_MENU);
+			else
+				gtk_image_clear(GTK_IMAGE(program_edit->group_warning_widget));
+
 			GtkWidget *widget;
 			widget = gebr_gui_program_edit_load(program_edit, GEBR_GEOXML_PARAMETERS(instance));
 			data->instances_list = g_list_prepend(data->instances_list, widget);

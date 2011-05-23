@@ -39,6 +39,7 @@ typedef struct {
 	GtkWidget *scrolled_window;
 	GtkWidget *title_label;
 	GtkWidget *hbox;
+	GtkWidget *group_warning_widget;
 
 	GebrValidator *validator;
 } GebrGuiProgramEdit;
