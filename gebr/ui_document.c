@@ -157,6 +157,18 @@ static void on_file_entry_activate (GtkEntry *entry, GebrGuiSequenceEdit *sequen
 
 static void on_groups_combo_box_changed (GtkComboBox *combo, GebrGuiValueSequenceEdit *edit);
 
+static gboolean dict_edit_reorder(GtkTreeView            *tree_view,
+				  GtkTreeIter            *iter,
+				  GtkTreeIter            *position,
+				  GtkTreeViewDropPosition drop_position,
+				  struct dict_edit_data  *data);
+
+static gboolean dict_edit_can_reorder(GtkTreeView            *tree_view,
+				      GtkTreeIter            *iter,
+				      GtkTreeIter            *position,
+				      GtkTreeViewDropPosition drop_position,
+				      struct dict_edit_data  *data);
+
 static const GtkActionEntry dict_actions_entries[] = {
 	{"add", GTK_STOCK_ADD, NULL, NULL, N_("Add new parameter."),
 	 G_CALLBACK(on_dict_edit_add_clicked)},
@@ -545,6 +557,10 @@ void document_dict_edit_setup_ui(void)
 						  (GebrGuiGtkPopupCallback) on_dict_edit_popup_menu, data);
 	gebr_gui_gtk_tree_view_set_tooltip_callback(GTK_TREE_VIEW(tree_view),
 						    (GebrGuiGtkTreeViewTooltipCallback) dict_edit_tooltip_callback,
+						    data);
+	gebr_gui_gtk_tree_view_set_reorder_callback(GTK_TREE_VIEW(tree_view),
+						    (GebrGuiGtkTreeViewReorderCallback)dict_edit_reorder,
+						    (GebrGuiGtkTreeViewReorderCallback)dict_edit_can_reorder,
 						    data);
 	g_signal_connect(GTK_OBJECT(tree_view), "cursor-changed", G_CALLBACK(on_dict_edit_cursor_changed), data);
 	g_signal_connect(tree_view, "button-press-event", G_CALLBACK(on_dict_edit_tree_view_button_press_event), data);
@@ -1261,8 +1277,6 @@ static void on_dict_edit_editing_cell_canceled(GtkCellRenderer * cell, struct di
 static void on_dict_edit_cell_edited(GtkCellRenderer * cell, gchar * path_string, gchar * new_text,
 				     struct dict_edit_data *data)
 {
-	GtkTreeIter iter;
-
 	gtk_tree_store_set(GTK_TREE_STORE(data->tree_model), &data->editing_iter,
 	                   dict_edit_get_column_index_for_renderer(cell, data), new_text,
 	                   -1);
@@ -1612,4 +1626,65 @@ static void on_groups_combo_box_changed (GtkComboBox *combo, GebrGuiValueSequenc
 
 	g_free (group);
 	gtk_tree_path_free (path);
+}
+
+static gboolean dict_edit_reorder(GtkTreeView            *tree_view,
+				  GtkTreeIter            *iter,
+				  GtkTreeIter            *position,
+				  GtkTreeViewDropPosition drop_position,
+				  struct dict_edit_data  *data)
+{
+	return TRUE;
+}
+
+static gboolean dict_edit_can_reorder(GtkTreeView            *tree_view,
+				      GtkTreeIter            *iter,
+				      GtkTreeIter            *position,
+				      GtkTreeViewDropPosition drop_position,
+				      struct dict_edit_data  *data)
+{
+	gchar *keyword;
+	gboolean is_add;
+
+	/* Do not allow moving 'Project', 'Line' and 'Flow' labels */
+	if (gtk_tree_store_iter_depth(GTK_TREE_STORE(data->tree_model), iter) == 0)
+		return FALSE;
+
+	/* Do not allow moving 'after' nor 'before' a label */
+	if (gtk_tree_store_iter_depth(GTK_TREE_STORE(data->tree_model), position) == 0
+	    && (drop_position == GTK_TREE_VIEW_DROP_BEFORE
+		|| drop_position == GTK_TREE_VIEW_DROP_AFTER))
+		return FALSE;
+
+	gtk_tree_model_get(data->tree_model, iter,
+			   DICT_EDIT_KEYWORD, &keyword, -1);
+
+	/* Do not allow moving 'iter' variable */
+	if (g_strcmp0(keyword, "iter") == 0) {
+		g_free(keyword);
+		return FALSE;
+	}
+
+	g_free(keyword);
+	gtk_tree_model_get(data->tree_model, position,
+			   DICT_EDIT_KEYWORD, &keyword, -1);
+
+	/* Do not allow moving before 'iter' variable */
+	if (g_strcmp0(keyword, "iter") == 0
+	    && (drop_position == GTK_TREE_VIEW_DROP_BEFORE
+		|| drop_position == GTK_TREE_VIEW_DROP_INTO_OR_BEFORE))
+	{
+		g_free(keyword);
+		return FALSE;
+	}
+
+	g_free(keyword);
+	gtk_tree_model_get(data->tree_model, position,
+			   DICT_EDIT_IS_ADD_PARAMETER, &is_add, -1);
+
+	/* Do not allow moving after 'New' row */
+	if (is_add && drop_position != GTK_TREE_VIEW_DROP_BEFORE)
+		return FALSE;
+
+	return TRUE;
 }

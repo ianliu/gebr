@@ -459,7 +459,6 @@ static void __on_sequence_edit_add_request(GebrGuiValueSequenceEdit *gebr_gui_va
 	GebrGeoXmlSequence *sequence;
 	GtkListStore *list_store;
 	GtkWidget *entry;
-	GebrGuiValidatableWidget *validatable = GEBR_GUI_VALIDATABLE_WIDGET(self);
 
 	entry = g_object_get_data (G_OBJECT (self->gebr_gui_value_sequence_edit), "activatable-entry");
 	if (entry) {
