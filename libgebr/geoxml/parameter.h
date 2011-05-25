@@ -110,13 +110,6 @@ GebrGeoXmlProgram *gebr_geoxml_parameter_get_program(GebrGeoXmlParameter * param
 gboolean gebr_geoxml_parameter_set_type(GebrGeoXmlParameter * parameter, GebrGeoXmlParameterType type);
 
 /**
- * Change \p parameter to reference \p reference.
- *
- * Return one of GEBR_GEOXML_RETV_SUCCESS, GEBR_GEOXML_RETV_REFERENCE_TO_ITSELF, GEBR_GEOXML_RETV_NULL_PTR
- */
-int gebr_geoxml_parameter_set_be_reference(GebrGeoXmlParameter * parameter, GebrGeoXmlParameter * reference);
-
-/**
  * Returns \p parameter 's type.
  * GEBR_GEOXML_PARAMETER_TYPE_REFERENCE is not returned here. The "true" type
  * of the parameter is returned instead.
