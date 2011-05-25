@@ -1025,7 +1025,7 @@ static void define_bc_variables(GebrdJob *job, GString *expr_buf, GString *str_b
 		}
 		case GEBR_GEOXML_PARAMETER_TYPE_STRING: {
 			gchar *bash_var;
-			gchar *result;
+			gchar *result = NULL;
 			prog_param = GEBR_GEOXML_PROGRAM_PARAMETER (seq);
 			value = gebr_geoxml_program_parameter_get_first_value (prog_param, FALSE);
 			keyword = gebr_geoxml_program_parameter_get_keyword (prog_param);
