@@ -16,10 +16,11 @@ let g:debug_commands = []
 
 fun! AddGebrCommand(name, cmd, killd, label, debug)
   if a:killd
-    let cmd = 'killall gebrd lt-gebrd 2> /dev/null ; '.g:run_env_vars.' '.a:cmd
+    let cmd = 'killall gebrd lt-gebrd 2> /dev/null ; '.g:run_env_vars.' '
   else
-    let cmd = g:run_env_vars.' '.a:cmd
+    let cmd = g:run_env_vars.' '
   endif
+  let cmd .= 'gnome-terminal -e "'.a:cmd.'"'
   let g:run_commands += [[a:name, cmd]]
   exe "menu <silent> &Run." . a:label . " :call system('".cmd."')<cr>"
   if a:debug
