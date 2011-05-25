@@ -204,7 +204,7 @@ traverse_expression(GebrStringExpr *self,
 				name[j] = '\0';
 				if (var_fetched)
 					var_fetched(name, data);
-
+				i++;
 				if (!eval)
 					continue;
 
@@ -219,7 +219,6 @@ traverse_expression(GebrStringExpr *self,
 						    name);
 					goto exception;
 				}
-				i++;
 				continue;
 			} else {
 				name[j++] = expr[i++];
@@ -247,7 +246,8 @@ traverse_expression(GebrStringExpr *self,
 			if (expr[i] == '"' || expr[i] == '\\')
 				g_string_append_c(decoded, '\\');
 			g_string_append_c(decoded, expr[i++]);
-		}
+		} else
+			i++;
 	}
 
 	if (fetch_var) {
