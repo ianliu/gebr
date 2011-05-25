@@ -1352,9 +1352,10 @@ static void job_assembly_cmdline(GebrdJob *job)
 			if (!error) {
 				use_iter = gebr_output_use__var_iter(job, output_expr);
 				stdout_parsed = escape_quote_and_slash(result);
-				if(gebr_geoxml_flow_io_get_output_append(job->flow))
+				if(gebr_geoxml_flow_io_get_output_append(job->flow) ||
+				   (has_control && !use_iter))
 					g_string_append_printf(job->parent.cmd_line, ">> \"%s\" ", stdout_parsed);
-				else if(has_control && use_iter)
+				else
 					g_string_append_printf(job->parent.cmd_line, "> \"%s\" ", stdout_parsed);
 				g_free(result);
 			} else {
@@ -1372,22 +1373,23 @@ static void job_assembly_cmdline(GebrdJob *job)
 			}
 		}
 	}
-
 	if (has_control) {
-		gchar *prefix;
+		gchar *prefix, *remove;
 		assemble_bc_cmd_line (expr_buf, ini, step);
 		prefix = g_strdup_printf("for (( counter=0; counter<%d; counter++ ))\ndo\n%s\n%s",
 					 counter, expr_buf->str, str_buf->str);
+		if(!gebr_geoxml_flow_io_get_output_append(job->flow) && !use_iter) {
+			remove = g_strdup_printf("\n\ttest $counter -eq 0 && rm -f %s\n", stdout_parsed);
+			g_string_prepend(job->parent.cmd_line, remove);
+			g_free(remove);
+		}
 		g_string_prepend(job->parent.cmd_line, prefix);
 		g_string_append(job->parent.cmd_line, "\ndone");
-		if(!use_iter)
-			g_string_append_printf(job->parent.cmd_line, " > \"%s\" ", stdout_parsed);
 		g_free(prefix);
 	} else {
 		assemble_bc_cmd_line (expr_buf, NULL, NULL);
 		g_string_prepend(job->parent.cmd_line, str_buf->str);
 		g_string_prepend(job->parent.cmd_line, expr_buf->str);
-		g_string_append_printf(job->parent.cmd_line, " > \"%s\" ", stdout_parsed);
 	}
 
 	if (has_error_output_file && !gebr_geoxml_flow_io_get_error_append(job->flow)) {
