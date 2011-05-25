@@ -273,7 +273,7 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/geoxml/parameter/get_parameters", test_gebr_geoxml_parameter_get_parameters);
 	g_test_add_func("/libgebr/geoxml/parameter/get_program", test_gebr_geoxml_parameter_get_program);
 	g_test_add_func("/libgebr/geoxml/parameter/get_and_set_type", test_gebr_geoxml_parameter_get_and_set_type);
-	g_test_add_func("/libgebr/geoxml/parameter/get_reference", test__gebr_geoxml_parameter_get_be_reference);
+	g_test_add_func("/libgebr/geoxml/parameter/get_reference", test_gebr_geoxml_parameter_get_referencee);
 	g_test_add_func("/libgebr/geoxml/parameter/get_type_name", test_gebr_geoxml_parameter_get_type_name);
 	g_test_add_func("/libgebr/geoxml/parameter/get_is_program_parameter", test_gebr_geoxml_parameter_get_is_program_parameter);
 	g_test_add_func("/libgebr/geoxml/parameter/get_and_set_label", test_gebr_geoxml_parameter_get_and_set_label);
