@@ -1080,6 +1080,17 @@ static void assemble_bc_cmd_line (GString *expr_buf,
 	g_string_append (expr_buf, "\t' | bc -l ))\n");
 }
 
+gboolean gebr_output_use__var_iter(GebrdJob *job, const gchar *output_expr)
+{
+	GList *list;
+	gboolean retval;
+	list = gebr_iexpr_extract_vars(job->str_expr, output_expr);
+	retval = g_list_find_custom(list, "iter", (GCompareFunc)g_strcmp0) != NULL;
+	g_list_foreach(list, (GFunc)g_free, NULL);
+	g_list_free(list);
+	return retval;
+}
+
 static void job_assembly_cmdline(GebrdJob *job)
 {
 	gboolean has_error_output_file;
@@ -1324,6 +1335,7 @@ static void job_assembly_cmdline(GebrdJob *job)
 		gebr_geoxml_sequence_next(&program);
 	}
 
+	gboolean use_iter = FALSE;
 	if (has_error_output_file == FALSE)
 		job_issue(job,
 			  _("No error file selected; error output merged with standard output.\n"));
@@ -1338,8 +1350,12 @@ static void job_assembly_cmdline(GebrdJob *job)
 			output_expr = gebr_geoxml_flow_io_get_output(job->flow);
 			gebr_string_expr_eval(job->str_expr, output_expr, &result, &error);
 			if (!error) {
+				use_iter = gebr_output_use__var_iter(job, output_expr);
 				stdout_parsed = escape_quote_and_slash(result);
-				g_string_append_printf(job->parent.cmd_line, ">> \"%s\" ", stdout_parsed);
+				if(gebr_geoxml_flow_io_get_output_append(job->flow))
+					g_string_append_printf(job->parent.cmd_line, ">> \"%s\" ", stdout_parsed);
+				else if(has_control && use_iter)
+					g_string_append_printf(job->parent.cmd_line, "> \"%s\" ", stdout_parsed);
 				g_free(result);
 			} else {
 				switch (error->code) {
@@ -1364,24 +1380,19 @@ static void job_assembly_cmdline(GebrdJob *job)
 					 counter, expr_buf->str, str_buf->str);
 		g_string_prepend(job->parent.cmd_line, prefix);
 		g_string_append(job->parent.cmd_line, "\ndone");
+		if(!use_iter)
+			g_string_append_printf(job->parent.cmd_line, " > \"%s\" ", stdout_parsed);
 		g_free(prefix);
 	} else {
 		assemble_bc_cmd_line (expr_buf, NULL, NULL);
 		g_string_prepend(job->parent.cmd_line, str_buf->str);
 		g_string_prepend(job->parent.cmd_line, expr_buf->str);
+		g_string_append_printf(job->parent.cmd_line, " > \"%s\" ", stdout_parsed);
 	}
 
 	if (has_error_output_file && !gebr_geoxml_flow_io_get_error_append(job->flow)) {
 		GString * prefix = g_string_new(NULL);
 		g_string_printf(prefix, "rm \"%s\"\n", stderr_parsed);
-		g_string_prepend(job->parent.cmd_line, prefix->str);
-		g_string_free(prefix, TRUE);
-	}
-
-	if (stdout_parsed && !gebr_geoxml_flow_io_get_output_append(job->flow))
-	{
-		GString * prefix = g_string_new(NULL);
-		g_string_printf(prefix, "rm \"%s\"\n", stdout_parsed);
 		g_string_prepend(job->parent.cmd_line, prefix->str);
 		g_string_free(prefix, TRUE);
 	}
