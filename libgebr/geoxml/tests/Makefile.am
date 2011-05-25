@@ -41,3 +41,6 @@ test_parameters_SOURCES = test-parameters.c
 
 TEST_PROGS += test-parameter
 test_parameter_SOURCES = test-parameter.c
+
+TEST_PROGS += test-program-parameter
+test_program_parameter_SOURCES = test-program-parameter.c

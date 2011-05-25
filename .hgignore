@@ -113,3 +113,6 @@ syntax: glob
 */po/*pot
 syntax: regexp
 ^libgebr/geoxml/tests/test-parameter$
+
+syntax: regexp
+^libgebr/geoxml/tests/test-program-parameter$
