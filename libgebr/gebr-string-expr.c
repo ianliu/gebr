@@ -23,6 +23,7 @@
 /* Structures {{{1 */
 struct _GebrStringExprPriv {
 	GHashTable *vars;
+	GebrIExpr *arith_expr;
 };
 
 /* Prototypes {{{1 */
@@ -59,6 +60,7 @@ static void gebr_string_expr_init(GebrStringExpr *self)
 						 GEBR_TYPE_STRING_EXPR,
 						 GebrStringExprPriv);
 
+	self->priv->arith_expr = GEBR_IEXPR(gebr_arith_expr_new());
 	self->priv->vars = g_hash_table_new_full(g_str_hash,
 						 g_str_equal,
 						 g_free,
@@ -96,7 +98,13 @@ static gboolean gebr_string_expr_set_var(GebrIExpr              *iface,
 		return FALSE;
 	}
 
-	gebr_string_expr_eval(self, value, &result, &error);
+	if (type == GEBR_GEOXML_PARAMETER_TYPE_STRING)
+		gebr_string_expr_eval(self, value, &result, &error);
+	else {
+		gebr_iexpr_set_var(self->priv->arith_expr,
+				   name, type, value, &error);
+		result = g_strdup(value);
+	}
 
 	if (error) {
 		g_propagate_error(err, error);
@@ -121,6 +129,7 @@ static void gebr_string_expr_reset(GebrIExpr *iface)
 {
 	GebrStringExpr *self = GEBR_STRING_EXPR(iface);
 	g_hash_table_remove_all(self->priv->vars);
+	gebr_iexpr_reset(self->priv->arith_expr);
 }
 
 static GList *

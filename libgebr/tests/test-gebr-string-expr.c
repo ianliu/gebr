@@ -220,6 +220,40 @@ void test_gebr_string_expr_eval_invalid(void)
 	g_object_unref(expr);
 }
 
+void test_gebr_string_expr_with_integers(void)
+{
+	gchar *result;
+	GError *error = NULL;
+	GebrStringExpr *s = gebr_string_expr_new();
+
+	gebr_iexpr_set_var(GEBR_IEXPR(s), "pi",
+			   GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
+			   "3.14", &error);
+	g_assert_no_error(error);
+
+	gebr_iexpr_set_var(GEBR_IEXPR(s), "r",
+			   GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
+			   "10", &error);
+	g_assert_no_error(error);
+
+	gebr_iexpr_set_var(GEBR_IEXPR(s), "area",
+			   GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
+			   "pi*r^2 + ", &error);
+	g_assert_error(error, GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_SYNTAX);
+	g_clear_error(&error);
+
+	gebr_iexpr_set_var(GEBR_IEXPR(s), "area",
+			   GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
+			   "pi*r^2", &error);
+	g_assert_no_error(error);
+
+	gebr_string_expr_eval(s, "Area = [area]", &result, &error);
+	g_assert_no_error(error);
+	g_assert(g_str_has_prefix(result, "Area = 314"));
+	g_free(result);
+
+	g_object_unref(s);
+}
 
 int main(int argc, char *argv[])
 {
@@ -227,6 +261,7 @@ int main(int argc, char *argv[])
 	g_test_init(&argc, &argv, NULL);
 
 	g_test_add_func("/libgebr/string-expr/is_valid", test_gebr_string_expr_is_valid);
+	g_test_add_func("/libgebr/string-expr/with_integers", test_gebr_string_expr_with_integers);
 	g_test_add_func("/libgebr/string-expr/set_var", test_gebr_string_expr_set_var);
 	g_test_add_func("/libgebr/string-expr/eval/normal-expression",  test_gebr_string_expr_eval_normal);
 	g_test_add_func("/libgebr/string-expr/eval/invalid-expression", test_gebr_string_expr_eval_invalid);
