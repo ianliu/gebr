@@ -262,7 +262,8 @@ traverse_expression(GebrStringExpr *self,
 		*result = g_strdup(decoded->str);
 
 exception:
-	g_string_free(decoded, TRUE);
+	if (eval)
+		g_string_free(decoded, TRUE);
 	g_free(name);
 
 	return retval;
