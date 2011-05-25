@@ -777,6 +777,58 @@ void dict_edit_check_programs_using_variables(const gchar *var_name, gboolean va
 // PRIVATE FUNCTIONS							       =
 //==============================================================================
 
+static gint dict_edit_get_column_index_for_renderer(GtkCellRenderer *renderer, struct dict_edit_data *data)
+{
+	gint index;
+	for (index = DICT_EDIT_KEYWORD; index < DICT_EDIT_COMMENT; index++)
+		if (renderer == data->cell_renderer_array[index])
+			break;
+	return index;
+}
+
+static void gebr_dict_update_wizard(struct dict_edit_data *data) {
+
+	g_object_set(G_OBJECT(data->warning_image),
+		     "stock", GTK_STOCK_INFO,
+		     "icon-size", GTK_ICON_SIZE_MENU, NULL);
+
+	if (!data->in_edition) {
+		gtk_label_set_text(GTK_LABEL(data->label), _("Click 'New' to create a variable."));
+		return;
+	}
+
+	GebrGeoXmlProgramParameter *parameter;
+	gtk_tree_model_get(data->tree_model, &data->editing_iter, DICT_EDIT_GEBR_GEOXML_POINTER, &parameter, -1);
+
+	switch (dict_edit_get_column_index_for_renderer(data->editing_cell, data)) {
+	case DICT_EDIT_KEYWORD:
+		gtk_label_set_text(GTK_LABEL(data->label),
+				   _("Please enter an unique variable name."));
+		break;
+	case DICT_EDIT_VALUE: {
+		GebrGeoXmlParameterType type = gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(parameter));
+		switch (type) {
+		case GEBR_GEOXML_PARAMETER_TYPE_INT:
+		case GEBR_GEOXML_PARAMETER_TYPE_FLOAT:
+			gtk_label_set_text(GTK_LABEL(data->label),
+					   _("Please enter a number."));
+			break;
+		case GEBR_GEOXML_PARAMETER_TYPE_STRING:
+			gtk_label_set_text(GTK_LABEL(data->label),
+					   _("Please enter a text."));
+			break;
+		default:
+			break;
+		}
+		break;
+	} case DICT_EDIT_COMMENT:
+		gtk_label_set_text(GTK_LABEL(data->label),
+		                   _("Please enter a comment."));
+		break;
+	}
+
+}
+
 static void on_dict_edit_cursor_changed(GtkTreeView * tree_view, struct dict_edit_data *data)
 {
 	GtkTreeIter iter;
@@ -855,6 +907,7 @@ static void on_dict_edit_remove_clicked(GtkButton * button, struct dict_edit_dat
 		}
 
 	}
+	gebr_dict_update_wizard(data);
 }
 
 static gboolean on_dict_edit_tree_view_button_press_event(GtkWidget * widget, GdkEventButton * event, struct dict_edit_data *data)
@@ -916,58 +969,6 @@ static gboolean on_renderer_entry_key_press_event(GtkWidget * widget, GdkEventKe
 	}
 }
 
-static gint dict_edit_get_column_index_for_renderer(GtkCellRenderer *renderer, struct dict_edit_data *data)
-{
-	gint index;
-	for (index = DICT_EDIT_KEYWORD; index < DICT_EDIT_COMMENT; index++)
-		if (renderer == data->cell_renderer_array[index])
-			break;
-	return index;
-}
-
-static void gebr_dict_update_wizard(struct dict_edit_data *data) {
-
-	g_object_set(G_OBJECT(data->warning_image),
-		     "stock", GTK_STOCK_INFO,
-		     "icon-size", GTK_ICON_SIZE_MENU, NULL);
-
-	if (!data->in_edition) {
-		gtk_label_set_text(GTK_LABEL(data->label), _("Click 'New' to create a variable."));
-		return;
-	}
-
-	GebrGeoXmlProgramParameter *parameter;
-	gtk_tree_model_get(data->tree_model, &data->editing_iter, DICT_EDIT_GEBR_GEOXML_POINTER, &parameter, -1);
-
-	switch (dict_edit_get_column_index_for_renderer(data->editing_cell, data)) {
-	case DICT_EDIT_KEYWORD:
-		gtk_label_set_text(GTK_LABEL(data->label),
-				   _("Please enter an unique variable name."));
-		break;
-	case DICT_EDIT_VALUE: {
-		GebrGeoXmlParameterType type = gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(parameter));
-		switch (type) {
-		case GEBR_GEOXML_PARAMETER_TYPE_INT:
-		case GEBR_GEOXML_PARAMETER_TYPE_FLOAT:
-			gtk_label_set_text(GTK_LABEL(data->label),
-					   _("Please enter a number."));
-			break;
-		case GEBR_GEOXML_PARAMETER_TYPE_STRING:
-			gtk_label_set_text(GTK_LABEL(data->label),
-					   _("Please enter a text."));
-			break;
-		default:
-			break;
-		}
-		break;
-	} case DICT_EDIT_COMMENT:
-		gtk_label_set_text(GTK_LABEL(data->label),
-		                   _("Please enter a comment."));
-		break;
-	}
-
-}
-
 static void on_dict_edit_renderer_editing_started(GtkCellRenderer * renderer, GtkCellEditable * editable,
 						  gchar * path, struct dict_edit_data *data)
 {
@@ -1000,7 +1001,9 @@ static void on_dict_edit_renderer_editing_started(GtkCellRenderer * renderer, Gt
 		GebrGeoXmlParameterType type = gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(parameter));
 		keyword = gebr_geoxml_program_parameter_get_keyword(parameter);
 
-		completion_model = gebr_gui_parameter_get_completion_model(GEBR_GEOXML_DOCUMENT (gebr.flow),
+		GebrGeoXmlFlow *flow;
+		flow = gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook)) == NOTEBOOK_PAGE_FLOW_EDITION ? gebr.flow : NULL;
+		completion_model = gebr_gui_parameter_get_completion_model(GEBR_GEOXML_DOCUMENT (flow),
 									   GEBR_GEOXML_DOCUMENT (gebr.line),
 									   GEBR_GEOXML_DOCUMENT (gebr.project),
 									   type);
