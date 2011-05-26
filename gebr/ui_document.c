@@ -1307,16 +1307,21 @@ static void dict_edit_load_iter(struct dict_edit_data *data, GtkTreeIter * iter,
 	const gchar *keyword = gebr_geoxml_program_parameter_get_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(parameter));
 	gboolean is_loop_iter = strcmp(keyword, "iter") ? FALSE : TRUE;
 	GString *value = g_string_new(NULL);
-	if (is_loop_iter) {
+	
+	if (is_loop_iter)
+	{
 		GebrGeoXmlProgram * prog = gebr_geoxml_flow_get_control_program(gebr.flow);
 		gchar * step;
 		gchar * ini;
 		guint counter = gebr_geoxml_program_control_get_n(GEBR_GEOXML_PROGRAM(prog), &step, &ini);
 		g_string_printf(value, "%s:%s:%d (%d)", ini, step, atoi(ini)+atoi(step)*(counter-1), counter);
-	} else
+	} 
+	else
+	{
 		g_string_assign(value,
 				gebr_geoxml_program_parameter_get_first_value(GEBR_GEOXML_PROGRAM_PARAMETER(parameter),
 									      FALSE));
+	}
 
 	gchar *keyword_escaped = g_markup_escape_text(keyword, -1);
 	gtk_tree_store_set(GTK_TREE_STORE(data->tree_model), iter,
@@ -1489,6 +1494,13 @@ static GtkTreeIter dict_edit_append_iter(struct dict_edit_data *data, GebrGeoXml
 			   DICT_EDIT_KEYWORD_IMAGE, GTK_STOCK_DIALOG_WARNING, -1);
 	gtk_tree_store_set(GTK_TREE_STORE(data->tree_model), &iter, DICT_EDIT_KEYWORD_IMAGE, NULL, -1);
 
+	/* MIGRATION: for the dict number type represent a int, but is, * in fact, a float parameter */
+	if (g_strcmp0("iter", gebr_geoxml_program_parameter_get_keyword(GEBR_GEOXML_PARAMETER(object))) == 0)
+	{
+		GebrGeoXmlParameterType type = gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(object));
+		if (type == GEBR_GEOXML_PARAMETER_TYPE_INT)
+			gebr_geoxml_parameter_set_type(GEBR_GEOXML_PARAMETER(object), GEBR_GEOXML_PARAMETER_TYPE_FLOAT);
+	}
 	dict_edit_load_iter(data, &iter, GEBR_GEOXML_PARAMETER(object));
 
 	return iter;
