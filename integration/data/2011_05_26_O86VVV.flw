@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow version="0.3.7">
+  <title>LS [test_dir]</title>
+  <description/>
+  <help/>
+  <author>Fabricio Matheus Goncalves</author>
+  <email>fmatheus</email>
+  <dict>
+    <parameters default-selection="0"/>
+  </dict>
+  <date>
+    <created>2011-05-26T18:09:56.532469Z</created>
+    <modified>2011-05-26T20:38:02.103489Z</modified>
+    <lastrun>2011-05-26T20:15:02.429326Z</lastrun>
+  </date>
+  <category>Shell tools</category>
+  <server address="127.0.0.1">
+    <io>
+      <input/>
+      <output/>
+      <error/>
+    </io>
+    <lastrun/>
+  </server>
+  <program stdin="no" stdout="yes" stderr="yes" status="configured" mpi="" version="GNU ls 5.97" errorid="">
+    <title>LS</title>
+    <binary>ls</binary>
+    <description>List directory contents</description>
+    <help><![CDATA[]]></help>
+    <url>http://www.gnu.org/software/coreutils/</url>
+    <parameters default-selection="0" selection="">
+      <parameter>
+        <label>List style</label>
+        <enum>
+          <property required="no">
+            <keyword/>
+            <value>-l</value>
+            <default>-l</default>
+          </property>
+          <option>
+            <label>Comma separated list</label>
+            <value>-m</value>
+          </option>
+          <option>
+            <label>One file per line</label>
+            <value>-1</value>
+          </option>
+          <option>
+            <label>Detailed list</label>
+            <value>-l</value>
+          </option>
+          <option>
+            <label>Detailed list without owner</label>
+            <value>-g</value>
+          </option>
+          <option>
+            <label>detailed list without group</label>
+            <value>-l" "-G</value>
+          </option>
+        </enum>
+      </parameter>
+      <parameter>
+        <label>Hidden files</label>
+        <enum>
+          <property required="no">
+            <keyword/>
+            <value/>
+            <default/>
+          </property>
+          <option>
+            <label>Do not show</label>
+            <value/>
+          </option>
+          <option>
+            <label>Show all</label>
+            <value>-a</value>
+          </option>
+          <option>
+            <label>show all but . and ..</label>
+            <value>-A</value>
+          </option>
+        </enum>
+      </parameter>
+      <parameter>
+        <label>Sort criteria</label>
+        <enum>
+          <property required="no">
+            <keyword>--sort=</keyword>
+            <value/>
+            <default/>
+          </property>
+          <option>
+            <label>Directory order</label>
+            <value>none</value>
+          </option>
+          <option>
+            <label>Modification time</label>
+            <value>time</value>
+          </option>
+          <option>
+            <label>Size</label>
+            <value>size</value>
+          </option>
+          <option>
+            <label>Extension</label>
+            <value>extension</value>
+          </option>
+          <option>
+            <label/>
+            <value>version</value>
+          </option>
+        </enum>
+      </parameter>
+      <parameter>
+        <label>Reverse order while sorting</label>
+        <flag>
+          <property required="no">
+            <keyword>-r</keyword>
+            <value>off</value>
+            <default>off</default>
+          </property>
+        </flag>
+      </parameter>
+      <parameter>
+        <label>Human readable size formats</label>
+        <flag>
+          <property required="no">
+            <keyword>-h</keyword>
+            <value>off</value>
+            <default>off</default>
+          </property>
+        </flag>
+      </parameter>
+      <parameter>
+        <label>Size scale</label>
+        <enum>
+          <property required="no">
+            <keyword>--block-size=</keyword>
+            <value>1</value>
+            <default>1</default>
+          </property>
+          <option>
+            <label>bytes</label>
+            <value>1</value>
+          </option>
+          <option>
+            <label>1024 bytes</label>
+            <value>1k</value>
+          </option>
+          <option>
+            <label>kilobytes</label>
+            <value>1kB</value>
+          </option>
+          <option>
+            <label>1024^2 bytes</label>
+            <value>1M</value>
+          </option>
+          <option>
+            <label>megabytes</label>
+            <value>1MB</value>
+          </option>
+          <option>
+            <label>1024^3 bytes</label>
+            <value>1G</value>
+          </option>
+          <option>
+            <label>gigabytes</label>
+            <value>1GB</value>
+          </option>
+          <option>
+            <label>1024^4 bytes</label>
+            <value>1T</value>
+          </option>
+          <option>
+            <label>terabytes</label>
+            <value>1TB</value>
+          </option>
+        </enum>
+      </parameter>
+      <parameter>
+        <label>List directory, instead of its content</label>
+        <flag>
+          <property required="no">
+            <keyword>-d</keyword>
+            <value>off</value>
+            <default>off</default>
+          </property>
+        </flag>
+      </parameter>
+      <parameter>
+        <label>Dereference symbolic links</label>
+        <flag>
+          <property required="no">
+            <keyword>-L</keyword>
+            <value>off</value>
+            <default>off</default>
+          </property>
+        </flag>
+      </parameter>
+      <parameter>
+        <label>List subdirectories recursively</label>
+        <flag>
+          <property required="no">
+            <keyword>-R</keyword>
+            <value>off</value>
+            <default>off</default>
+          </property>
+        </flag>
+      </parameter>
+      <parameter>
+        <label>Apped suffix to explicit file type</label>
+        <flag>
+          <property required="no">
+            <keyword>-F</keyword>
+            <value>off</value>
+            <default>off</default>
+          </property>
+        </flag>
+      </parameter>
+      <parameter>
+        <label>Time style</label>
+        <enum>
+          <property required="no">
+            <keyword>--time-style=</keyword>
+            <value/>
+            <default/>
+          </property>
+          <option>
+            <label>localized</label>
+            <value>locale</value>
+          </option>
+          <option>
+            <label>YYYY-MM-DD/MM-DD HH:MM</label>
+            <value>iso</value>
+          </option>
+          <option>
+            <label>YYYY-MM-DD HH:MM</label>
+            <value>long-iso</value>
+          </option>
+          <option>
+            <label>YYYY-MM-DD HH:MM:SS TZ</label>
+            <value>full-iso</value>
+          </option>
+        </enum>
+      </parameter>
+      <parameter>
+        <label>Ignore backup file (those ending with ~)</label>
+        <flag>
+          <property required="no">
+            <keyword>-B</keyword>
+            <value>off</value>
+            <default>off</default>
+          </property>
+        </flag>
+      </parameter>
+      <parameter>
+        <label>Hide entries matching shell pattern</label>
+        <string>
+          <property required="no">
+            <keyword>--ignore=</keyword>
+            <value/>
+            <default/>
+          </property>
+        </string>
+      </parameter>
+      <parameter>
+        <label>Enclose entry names in double quotes</label>
+        <flag>
+          <property required="no">
+            <keyword>-Q</keyword>
+            <value>off</value>
+            <default>off</default>
+          </property>
+        </flag>
+      </parameter>
+      <parameter>
+        <label>Display numerical user and group IDs</label>
+        <flag>
+          <property required="no">
+            <keyword>-n</keyword>
+            <value>off</value>
+            <default>off</default>
+          </property>
+        </flag>
+      </parameter>
+      <parameter>
+        <label>Directory</label>
+        <file directory="yes">
+          <property required="no">
+            <keyword/>
+            <value>[test_dir]</value>
+            <default/>
+          </property>
+        </file>
+      </parameter>
+    </parameters>
+  </program>
+</flow>
+ 
