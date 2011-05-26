@@ -100,7 +100,10 @@ void gebr_geoxml_flow_add_flow(GebrGeoXmlFlow * flow, GebrGeoXmlFlow * flow2)
 	// Append the `iter' dictionary keyword.
 	if (!has_control1 && has_control2)
 	{
-		gebr_geoxml_flow_insert_iter_dict (flow);
+		GebrGeoXmlProgram * loop = gebr_geoxml_flow_get_control_program(flow2);
+		GebrGeoXmlProgramStatus status = gebr_geoxml_program_get_status(loop);
+		if (status == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED)
+			gebr_geoxml_flow_insert_iter_dict (flow);
 	}
 
 	/* import each program from flow2 */
