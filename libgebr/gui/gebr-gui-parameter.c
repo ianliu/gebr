@@ -265,8 +265,7 @@ static void gebr_gui_parameter_widget_set_non_list_widget_value(struct gebr_gui_
 			gebr_geoxml_program_parameter_get_enum_option(parameter_widget->program_parameter,
 								      &option, 0);
 			for (i = 0; option != NULL; ++i, gebr_geoxml_sequence_next(&option))
-				if (strcmp(value, gebr_geoxml_enum_option_get_value(GEBR_GEOXML_ENUM_OPTION(option))) ==
-				    0) {
+				if (strcmp(value, gebr_geoxml_enum_option_get_value(GEBR_GEOXML_ENUM_OPTION(option))) == 0) {
 					gtk_combo_box_set_active(GTK_COMBO_BOX(parameter_widget->value_widget),
 								 gebr_geoxml_program_parameter_get_required
 								 (parameter_widget->program_parameter) ? i : i
@@ -1105,19 +1104,23 @@ void gebr_gui_parameter_widget_update(struct gebr_gui_parameter_widget *paramete
 	}
 }
 
-gboolean gebr_gui_parameter_widget_validate(struct gebr_gui_parameter_widget *parameter_widget)
+gboolean gebr_gui_parameter_widget_validate(GebrGuiParameterWidget *self)
 {
-	if (parameter_widget->group_warning_widget) {
+	if (self->group_warning_widget) {
 		GebrGeoXmlParameterGroup *group;
 		GebrGeoXmlSequence *instance;
-		group = gebr_geoxml_parameter_get_group(parameter_widget->parameter);
+		group = gebr_geoxml_parameter_get_group(self->parameter);
 		gebr_geoxml_parameter_group_get_instance(group, &instance, 0);
 		for (; instance != NULL; gebr_geoxml_sequence_next(&instance))
-			gebr_gui_group_instance_validate(parameter_widget->validator, instance, parameter_widget->group_warning_widget);
+			gebr_gui_group_instance_validate(self->validator, instance, self->group_warning_widget);
 	}
-	return gebr_gui_validatable_widget_validate(GEBR_GUI_VALIDATABLE_WIDGET(parameter_widget),
-		                                            parameter_widget->validator,
-		                                            parameter_widget->parameter);
+
+	if (!__parameter_accepts_expression(self))
+		return TRUE;
+
+	return gebr_gui_validatable_widget_validate(GEBR_GUI_VALIDATABLE_WIDGET(self),
+						    self->validator,
+						    self->parameter);
 }
 
 void gebr_gui_parameter_widget_update_list_separator(struct gebr_gui_parameter_widget *parameter_widget)

@@ -18,6 +18,7 @@
 #include <glib/gi18n.h>
 
 #include "gebr-string-expr.h"
+#include "gebr-arith-expr.h"
 #include "gebr-iexpr.h"
 
 /* Structures {{{1 */
