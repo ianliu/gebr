@@ -1329,8 +1329,6 @@ static void job_assembly_cmdline(GebrdJob *job)
 		if (job_add_program_parameters(job, GEBR_GEOXML_PROGRAM(program), expr_buf) == FALSE)
 			goto err;
 
-		g_string_append_printf(job->parent.cmd_line, "2>> \"%s\" ", stderr_parsed);
-
 		previous_stdout = gebr_geoxml_program_get_stdout(GEBR_GEOXML_PROGRAM(program));
 		gebr_geoxml_sequence_next(&program);
 	}
