@@ -216,7 +216,7 @@ traverse_expression(GebrStringExpr *self,
 					retval = FALSE;
 					g_set_error(err, GEBR_IEXPR_ERROR,
 						    GEBR_IEXPR_ERROR_UNDEF_VAR,
-						    _("Variable %s is undefined"),
+						    _("Variable %s is not yet defined"),
 						    name);
 					goto exception;
 				}

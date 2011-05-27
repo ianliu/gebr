@@ -136,6 +136,7 @@ static gboolean gebr_arith_expr_set_var(GebrIExpr              *iface,
 	gdouble result;
 	gboolean retval = TRUE;
 	const gchar *undef_var = NULL;
+	const gchar *invalid_var = NULL;
 	GebrArithExpr *self = GEBR_ARITH_EXPR(iface);
 
 	if (!self->priv->initialized) {
@@ -161,12 +162,40 @@ static gboolean gebr_arith_expr_set_var(GebrIExpr              *iface,
 
 	// Checks if the value uses any undefined variable
 	vars = gebr_iexpr_extract_vars(iface, value);
+
+	GRegex *regex;
+	GMatchInfo *info;
+
+	regex = g_regex_new ("^[a-z][a-z0-9_]*$", 0, 0, NULL);
+
 	for (GList *i = vars; i; i = i->next) {
 		const gchar *name = i->data;
+		g_regex_match (regex, name, 0, &info);
+		if (!g_match_info_matches (info))
+		{
+			invalid_var = name;
+			g_match_info_free (info);
+			break;
+		}
+		g_match_info_free (info);
+
 		if (!g_hash_table_lookup(self->priv->vars, name)) {
 			undef_var = name;
 			break;
 		}
+	}
+	g_regex_unref (regex);
+
+
+	if (invalid_var) {
+		retval = FALSE;
+		if (!err)
+		g_set_error(err,
+			    GEBR_IEXPR_ERROR,
+			    GEBR_IEXPR_ERROR_INVAL_VAR,
+			    _("Invalid name for variable %s"),
+			    invalid_var);
+		goto exception;
 	}
 
 	if (undef_var) {
@@ -174,7 +203,7 @@ static gboolean gebr_arith_expr_set_var(GebrIExpr              *iface,
 		g_set_error(err,
 			    GEBR_IEXPR_ERROR,
 			    GEBR_IEXPR_ERROR_UNDEF_VAR,
-			    _("Variable \"%s\" is undefined"),
+			    _("Variable %s is not yet defined"),
 			    undef_var);
 		goto exception;
 	}
@@ -215,24 +244,50 @@ static gboolean gebr_arith_expr_is_valid(GebrIExpr   *iface,
 					 GError     **err)
 {
 	GList *vars = NULL;
+	const gchar *invalid_var = NULL;
 	const gchar *undef_var = NULL;
 	GebrArithExpr *self = GEBR_ARITH_EXPR(iface);
 
 	// Checks if the value uses any undefined variable
 	vars = gebr_iexpr_extract_vars(iface, expr);
+	GRegex *regex;
+	GMatchInfo *info;
+
+	regex = g_regex_new ("^[a-z][a-z0-9_]*$", 0, 0, NULL);
+
 	for (GList *i = vars; i; i = i->next) {
 		const gchar *name = i->data;
+		g_regex_match (regex, name, 0, &info);
+		if (!g_match_info_matches (info))
+		{
+			invalid_var = name;
+			g_match_info_free (info);
+			break;
+		}
+		g_match_info_free (info);
+
 		if (!g_hash_table_lookup(self->priv->vars, name)) {
 			undef_var = name;
 			break;
 		}
 	}
+	g_regex_unref (regex);
+
+
+	if (invalid_var) {
+		g_set_error(err,
+			    GEBR_IEXPR_ERROR,
+			    GEBR_IEXPR_ERROR_INVAL_VAR,
+			    _("Invalid name for variable %s"),
+			    invalid_var);
+	}
+
 
 	if (undef_var) {
 		g_set_error(err,
 			    GEBR_IEXPR_ERROR,
 			    GEBR_IEXPR_ERROR_UNDEF_VAR,
-			    _("Variable \"%s\" is undefined"),
+			    _("Variable %s is not yet defined"),
 			    undef_var);
 		return FALSE;
 	}
@@ -254,7 +309,7 @@ gebr_arith_expr_extract_vars(GebrIExpr   *iface,
 	GRegex *regex;
 	GMatchInfo *info;
 
-	regex = g_regex_new ("[a-z][0-9a-z_]*", 0, 0, NULL);
+	regex = g_regex_new ("[a-z][0-9a-z_]*", G_REGEX_CASELESS, 0, NULL);
 	g_regex_match (regex, expr, 0, &info);
 
 	while (g_match_info_matches (info))
@@ -353,6 +408,7 @@ gebr_arith_expr_eval_internal(GebrArithExpr *self,
 		status = g_io_channel_read_line (self->priv->err_ch, &line, NULL, NULL, &error);
 
 		if (status == G_IO_STATUS_NORMAL) {
+			if (!err)
 			g_set_error(err,
 				    GEBR_IEXPR_ERROR,
 				    GEBR_IEXPR_ERROR_SYNTAX,

@@ -23,6 +23,7 @@
 #include <stdarg.h>
 
 #include <glib/gstdio.h>
+#include <glib/gi18n.h>
 #include <gdome.h>
 #include <libxml/parser.h>
 
@@ -1294,9 +1295,28 @@ gebr_geoxml_document_validate_expr(const gchar *expr,
 		g_hash_table_insert(var_hash, hash_key, GINT_TO_POINTER(type));
 	}
 
+	GRegex *regex;
+	GMatchInfo *info;
+
+	regex = g_regex_new ("^[a-z][a-z0-9_]*$", 0, 0, NULL);
+
 	for (GList *i = vars; i; i = i->next) {
 		gchar *value;
 		gchar *name = i->data;
+
+		g_regex_match (regex, name, 0, &info);
+		if (!g_match_info_matches (info))
+		{
+			g_match_info_free (info);
+			success = FALSE;
+			g_set_error (err, gebr_expr_error_quark(),
+				     GEBR_EXPR_ERROR_UNDEFINED_VAR,
+				     _("Invalid name for variable %s"),
+				     name);
+			goto out;
+		}
+		g_match_info_free (info);
+
 		if (g_hash_table_lookup_extended(var_hash, name, NULL, (gpointer)&type))
 			if (type != GEBR_GEOXML_PARAMETER_TYPE_INT &&
 			    type != GEBR_GEOXML_PARAMETER_TYPE_FLOAT)
@@ -1357,6 +1377,7 @@ gebr_geoxml_document_validate_expr(const gchar *expr,
 out:
 	g_hash_table_destroy(var_hash);
 
+	g_regex_unref (regex);
 	g_hash_table_unref (ht);
 	g_list_foreach (vars, (GFunc) g_free, NULL);
 	g_list_free (vars);
@@ -1372,6 +1393,8 @@ gebr_geoxml_document_validate_str (const gchar *str,
 				   GError **err)
 {
 	gboolean success = TRUE;
+	GRegex *regex;
+	GMatchInfo *info;
 
 	if (*str == '\0')
 		return TRUE;
@@ -1380,9 +1403,24 @@ gebr_geoxml_document_validate_str (const gchar *str,
 	GList *vars = NULL; 
 	GebrExprError error = gebr_str_expr_extract_vars (str, &vars);
 	if (error == GEBR_EXPR_ERROR_NONE){
+
+		regex = g_regex_new ("^[a-z][a-z0-9_]*$", 0, 0, NULL);
+
 		for (GList *i = vars; i; i = i->next) {
 			gchar *value;
 			gchar *name = i->data;
+			g_regex_match (regex, name, 0, &info);
+			if (!g_match_info_matches (info))
+			{
+				success = FALSE;
+				g_match_info_free (info);
+				g_set_error (err, gebr_expr_error_quark(),
+					     GEBR_EXPR_ERROR_UNDEFINED_VAR,
+					     _("Invalid name for variable %s"),
+					     name);
+				goto out;
+			}
+			g_match_info_free (info);
 
 			if (!gebr_geoxml_document_is_dictkey_defined (name, &value,
 								      flow, line, proj,
@@ -1426,6 +1464,7 @@ gebr_geoxml_document_validate_str (const gchar *str,
 	}
 
 out:
+	g_regex_unref (regex);
 	g_list_foreach (vars, (GFunc) g_free, NULL);
 	g_list_free (vars);
 

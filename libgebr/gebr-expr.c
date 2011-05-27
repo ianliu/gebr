@@ -313,6 +313,7 @@ gebr_expr_eval_internal (GebrExpr *self,
 		status = g_io_channel_read_line (self->err_ch, &line, NULL, NULL, &error);
 
 		if (status == G_IO_STATUS_NORMAL) {
+			if (!err)
 			g_set_error (err, gebr_expr_error_quark(),
 				     GEBR_EXPR_ERROR_SYNTAX, "Invalid expression");
 			g_free (line);
@@ -398,7 +399,7 @@ gebr_expr_extract_vars (const gchar *e)
 	GRegex *regex;
 	GMatchInfo *info;
 
-	regex = g_regex_new ("[a-z][0-9a-z_]*", 0, 0, NULL);
+	regex = g_regex_new ("[a-z][0-9a-z_]*", G_REGEX_CASELESS, 0, NULL);
 	g_regex_match (regex, e, 0, &info);
 
 	while (g_match_info_matches (info))
