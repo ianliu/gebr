@@ -89,7 +89,9 @@ static gint on_spin_button_input(GtkSpinButton *spin,
 
 static GString *gebr_gui_parameter_widget_get_widget_value_full(struct gebr_gui_parameter_widget *parameter_widget);
 
-static void on_list_value_widget_activate(GtkEntry *entry,
+static gboolean on_list_value_widget_focus_out(GtkEntry *entry, GdkEventFocus *event, GebrGuiParameterWidget *self);
+
+static void on_list_value_widget_validate(GtkEntry *entry,
 					  struct gebr_gui_parameter_widget *parameter_widget);
 
 static void __set_type_icon(struct gebr_gui_parameter_widget *parameter_widget);
@@ -797,7 +799,9 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 
 		/* Connects this signal to validate the list widget */
 		g_signal_connect(parameter_widget->list_value_widget, "activate",
-				 G_CALLBACK(on_list_value_widget_activate), parameter_widget);
+				 G_CALLBACK(on_list_value_widget_validate), parameter_widget);
+		g_signal_connect(parameter_widget->list_value_widget, "focus-out-event",
+				 G_CALLBACK(on_list_value_widget_focus_out), parameter_widget);
 
 		if (parameter_widget->readonly)
 			gtk_widget_set_sensitive(parameter_widget->list_value_widget, FALSE);
@@ -1421,7 +1425,13 @@ static gint on_spin_button_input(GtkSpinButton *spin,
 	}
 }
 
-static void on_list_value_widget_activate(GtkEntry *entry, struct gebr_gui_parameter_widget *self)
+static gboolean on_list_value_widget_focus_out(GtkEntry *entry, GdkEventFocus *event, GebrGuiParameterWidget *self)
+{
+	on_list_value_widget_validate (entry, self);
+	return FALSE;
+}
+
+static void on_list_value_widget_validate(GtkEntry *entry, struct gebr_gui_parameter_widget *self)
 {
 	GError *error = NULL;
 	gchar **exprs;
@@ -1442,6 +1452,15 @@ static void on_list_value_widget_activate(GtkEntry *entry, struct gebr_gui_param
 		exprs[1] = NULL;
 	} else
 		exprs = g_strsplit(text, separator, -1);
+
+	if (self->group_warning_widget) {
+		GebrGeoXmlParameterGroup *group;
+		GebrGeoXmlSequence *instance;
+		group = gebr_geoxml_parameter_get_group(self->parameter);
+		gebr_geoxml_parameter_group_get_instance(group, &instance, 0);
+		for (; instance != NULL; gebr_geoxml_sequence_next(&instance))
+			gebr_gui_group_instance_validate(self->validator, instance, self->group_warning_widget);
+	}
 
 	for (int i = 0; exprs[i]; i++) {
 		gebr_validator_validate_expr(self->validator, exprs[i], type, &error);
@@ -1472,17 +1491,22 @@ gboolean gebr_gui_group_instance_validate(GebrValidator *validator, GebrGeoXmlSe
 	gchar *validated;
 	gboolean invalid = FALSE;
 	GebrGeoXmlSequence *parameter;
+	int i = 0;
 	gebr_geoxml_parameters_get_parameter(GEBR_GEOXML_PARAMETERS(instance), &parameter, 0);
 	while (parameter) {
-		if (!gebr_validator_validate_param(validator, GEBR_GEOXML_PARAMETER(parameter), &validated, NULL)) {
-			invalid = TRUE;
-			break;
-		}
+		if (!gebr_validator_validate_param(validator, GEBR_GEOXML_PARAMETER(parameter), &validated, NULL))
+			i++;
 		gebr_geoxml_sequence_next(&parameter);
 	}
-	if (invalid)
+	if (i) {
 		gtk_image_set_from_stock(GTK_IMAGE(icon), GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_MENU);
-	else
+		gchar *message;
+		if (i == 1)
+			message = g_strdup_printf(_("This group has %d error"), i);
+		else
+			message = g_strdup_printf(_("This group has %d errors"), i);
+		gtk_widget_set_tooltip_text (icon, message);
+	} else
 		gtk_image_clear(GTK_IMAGE(icon));
 
 	return invalid;

@@ -308,7 +308,7 @@ static GtkWidget *gebr_gui_program_edit_load_parameter(GebrGuiProgramEdit  *prog
 		gtk_widget_show(label);
 		gtk_widget_show(image_widget);
 		gtk_box_pack_start(GTK_BOX(label_widget), label, FALSE, TRUE, 0);
-		gtk_box_pack_start(GTK_BOX(label_widget), image_widget, FALSE, TRUE, 0);
+		gtk_box_pack_start(GTK_BOX(label_widget), image_widget, FALSE, TRUE, 5);
 
 		if (gebr_geoxml_parameter_group_get_is_instanciable(GEBR_GEOXML_PARAMETER_GROUP(parameter))) {
 			instanciate_button = gtk_button_new();
