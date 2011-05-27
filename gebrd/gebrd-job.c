@@ -1080,11 +1080,11 @@ static void assemble_bc_cmd_line (GString *expr_buf,
 	g_string_append (expr_buf, "\t' | bc -l ))\n");
 }
 
-gboolean gebr_output_use__var_iter(GebrdJob *job, const gchar *output_expr)
+gboolean gebr_output_use_var_iter(GebrdJob *job, const gchar *output_expr)
 {
 	GList *list;
 	gboolean retval;
-	list = gebr_iexpr_extract_vars(job->str_expr, output_expr);
+	list = gebr_iexpr_extract_vars(GEBR_IEXPR(job->str_expr), output_expr);
 	retval = g_list_find_custom(list, "iter", (GCompareFunc)g_strcmp0) != NULL;
 	g_list_foreach(list, (GFunc)g_free, NULL);
 	g_list_free(list);
