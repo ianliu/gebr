@@ -45,6 +45,7 @@ struct _GebrGuiSequenceEdit {
 	GtkCellRenderer *renderer;
 
 	gboolean may_rename;
+	gboolean has_scroll;
 };
 
 /**

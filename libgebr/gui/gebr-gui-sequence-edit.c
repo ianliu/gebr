@@ -29,6 +29,7 @@ enum {
 	VALUE_WIDGET,
 	LIST_STORE,
 	MAY_RENAME,
+	HAS_SCROLL,
 };
 
 enum {
@@ -98,6 +99,8 @@ static gboolean on_tree_view_key_release (GtkWidget *widget,
 
 static void gebr_gui_sequence_edit_add_request (GebrGuiSequenceEdit *self);
 
+static void on_tree_view_size_request(GtkWidget *tree_view, GtkRequisition *requisition);
+
 G_DEFINE_ABSTRACT_TYPE (GebrGuiSequenceEdit, gebr_gui_sequence_edit, GTK_TYPE_VBOX);
 
 //==============================================================================
@@ -118,43 +121,52 @@ static void gebr_gui_sequence_edit_set_property (GObject *object,
 		gtk_box_pack_start(GTK_BOX(self->widget_hbox), self->widget, TRUE, TRUE, 0);
 		break;
 	case LIST_STORE: {
-			GtkWidget *scrolled_window;
-			GtkWidget *tree_view;
+		GtkWidget *container;
+		GtkWidget *tree_view;
 
-			self->list_store = g_value_get_pointer(value);
+		self->list_store = g_value_get_pointer(value);
 
-			if (self->list_store == NULL)
-				self->list_store = gtk_list_store_new(1, G_TYPE_STRING, -1);
+		if (self->list_store == NULL)
+			self->list_store = gtk_list_store_new(1, G_TYPE_STRING, -1);
 
-			scrolled_window = gtk_scrolled_window_new(NULL, NULL);
-			gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW (scrolled_window), GTK_SHADOW_IN);
-			gtk_widget_show(scrolled_window);
-			gtk_box_pack_start(GTK_BOX(self), scrolled_window, TRUE, TRUE, 0);
-			gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_window),
+		tree_view = GEBR_GUI_SEQUENCE_EDIT_GET_CLASS (self)->create_tree_view (self);
+
+		g_signal_connect (tree_view, "key-release-event",
+				  G_CALLBACK (on_tree_view_key_release), self);
+
+		gebr_gui_gtk_tree_view_set_reorder_callback(GTK_TREE_VIEW(tree_view),
+							    (GebrGuiGtkTreeViewReorderCallback)
+							    on_reorder, NULL,
+							    self);
+		self->tree_view = tree_view;
+
+		if (self->has_scroll) {
+			container = gtk_scrolled_window_new(NULL, NULL);
+			gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW (container), GTK_SHADOW_IN);
+			gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (container),
 							GTK_POLICY_AUTOMATIC,
 							GTK_POLICY_AUTOMATIC);
+		} else {
+			container = gtk_frame_new(NULL);
+			gtk_frame_set_shadow_type(GTK_FRAME(container), GTK_SHADOW_IN);
+			g_signal_connect(tree_view, "size-request",
+					 G_CALLBACK(on_tree_view_size_request), NULL);
+		}
+		gtk_container_add(GTK_CONTAINER(container), tree_view);
+		gtk_box_pack_start(GTK_BOX(self), container, TRUE, TRUE, 0);
+		gtk_widget_show_all(container);
+		gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(tree_view), (GebrGuiGtkPopupCallback)
+							  popup_menu, self);
 
-			tree_view = GEBR_GUI_SEQUENCE_EDIT_GET_CLASS (self)->create_tree_view (self);
-
-			g_signal_connect (tree_view, "key-release-event",
-					  G_CALLBACK (on_tree_view_key_release), self);
-
-			gebr_gui_gtk_tree_view_set_reorder_callback(GTK_TREE_VIEW(tree_view),
-								    (GebrGuiGtkTreeViewReorderCallback)
-								    on_reorder, NULL,
-								    self);
-			self->tree_view = tree_view;
-			gtk_widget_show(tree_view);
-			gtk_container_add (GTK_CONTAINER (scrolled_window), tree_view);
-			gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(tree_view), (GebrGuiGtkPopupCallback)
-								  popup_menu, self);
-
-			break;
+		break;
 	}
 	case MAY_RENAME:
-			self->may_rename = g_value_get_boolean(value);
-			g_object_set(self->renderer, "editable", self->may_rename, NULL);
-			break;
+		self->may_rename = g_value_get_boolean(value);
+		g_object_set(self->renderer, "editable", self->may_rename, NULL);
+		break;
+	case HAS_SCROLL:
+		self->has_scroll = g_value_get_boolean(value);
+		break;
 	default:
 		/*We don't have any other property... */
 		G_OBJECT_WARN_INVALID_PROPERTY_ID(self, property_id, param_spec);
@@ -180,6 +192,9 @@ static void gebr_gui_sequence_edit_get_property (GObject *object,
 		break;
 	case MAY_RENAME:
 		g_value_set_boolean(value, self->may_rename);
+		break;
+	case HAS_SCROLL:
+		g_value_set_boolean(value, self->has_scroll);
 		break;
 	default:
 		/*We don't have any other property... */
@@ -284,6 +299,17 @@ static void gebr_gui_sequence_edit_class_init(GebrGuiSequenceEditClass *klass)
 					g_param_spec_boolean ("may-rename",
 							      "Rename enabled",
 							      "True if the list is renameable",
+							      TRUE,
+							      (GParamFlags) (G_PARAM_READWRITE)));
+
+	/**
+	 * GebrGuiSequenceEdit:has-scroll:
+	 */
+	g_object_class_install_property(gobject_class,
+					HAS_SCROLL,
+					g_param_spec_boolean ("has-scroll",
+							      "Has Scroll",
+							      "Weather there is a scrolled window, or not",
 							      TRUE,
 							      (GParamFlags) (G_PARAM_READWRITE)));
 }
@@ -618,6 +644,16 @@ static void gebr_gui_sequence_edit_add_request (GebrGuiSequenceEdit *self)
 		gtk_tree_view_scroll_to_cell (tree, path, NULL, TRUE, 0, 0);
 		gtk_tree_path_free (path);
 	}
+}
+
+static void on_tree_view_size_request(GtkWidget *widget, GtkRequisition *requisition)
+{
+	g_signal_handlers_block_by_func(widget, on_tree_view_size_request, NULL);
+	gtk_widget_size_request(widget, requisition);
+	g_signal_handlers_unblock_by_func(widget, on_tree_view_size_request, NULL);
+
+	requisition->height = MAX(requisition->height, 100);
+	requisition->width = widget->allocation.width;
 }
 
 //==============================================================================

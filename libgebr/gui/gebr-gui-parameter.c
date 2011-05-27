@@ -822,6 +822,7 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 		gtk_widget_show(parameter_widget->value_widget);
 
 		sequence_edit = gebr_gui_value_sequence_edit_new(parameter_widget->value_widget);
+		g_object_set(sequence_edit, "has-scroll", FALSE, NULL);
 
 		if (may_complete) {
 			completion_model = generate_completion_model(parameter_widget);
