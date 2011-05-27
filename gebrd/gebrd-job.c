@@ -1222,6 +1222,7 @@ static void job_assembly_cmdline(GebrdJob *job)
 	gchar *stdout_parsed = NULL;
 	gchar *stderr_parsed = NULL;
 
+	gboolean stderr_use_iter = FALSE;
 	/* check for error file output */
 	if (has_error_output_file && gebr_geoxml_program_get_stderr(GEBR_GEOXML_PROGRAM(program))) {
 		gchar *result;
@@ -1232,8 +1233,13 @@ static void job_assembly_cmdline(GebrdJob *job)
 		gebr_string_expr_eval(job->str_expr, error_expr, &result, &error);
 
 		if (!error) {
+			stderr_use_iter = gebr_output_use__var_iter(job, error_expr);
 			stderr_parsed = escape_quote_and_slash(result);
-			g_string_append_printf(job->parent.cmd_line, "2>> \"%s\" ", stderr_parsed);
+			if(gebr_geoxml_flow_io_get_error_append(job->flow) ||
+			   (has_control && !stderr_use_iter))
+				g_string_append_printf(job->parent.cmd_line, "2>> \"%s\" ", stderr_parsed);
+			else
+				g_string_append_printf(job->parent.cmd_line, "2> \"%s\" ", stderr_parsed);
 			g_free(result);
 		} else {
 			switch (error->code) {
@@ -1333,7 +1339,7 @@ static void job_assembly_cmdline(GebrdJob *job)
 		gebr_geoxml_sequence_next(&program);
 	}
 
-	gboolean use_iter = FALSE;
+	gboolean stdout_use_iter = FALSE;
 	if (has_error_output_file == FALSE)
 		job_issue(job,
 			  _("No error file selected; error output merged with standard output.\n"));
@@ -1348,10 +1354,10 @@ static void job_assembly_cmdline(GebrdJob *job)
 			output_expr = gebr_geoxml_flow_io_get_output(job->flow);
 			gebr_string_expr_eval(job->str_expr, output_expr, &result, &error);
 			if (!error) {
-				use_iter = gebr_output_use__var_iter(job, output_expr);
+				stdout_use_iter = gebr_output_use__var_iter(job, output_expr);
 				stdout_parsed = escape_quote_and_slash(result);
 				if(gebr_geoxml_flow_io_get_output_append(job->flow) ||
-				   (has_control && !use_iter))
+				   (has_control && !stdout_use_iter))
 					g_string_append_printf(job->parent.cmd_line, ">> \"%s\" ", stdout_parsed);
 				else
 					g_string_append_printf(job->parent.cmd_line, "> \"%s\" ", stdout_parsed);
@@ -1376,9 +1382,15 @@ static void job_assembly_cmdline(GebrdJob *job)
 		assemble_bc_cmd_line (expr_buf, ini, step);
 		prefix = g_strdup_printf("for (( counter=0; counter<%d; counter++ ))\ndo\n%s\n%s",
 					 counter, expr_buf->str, str_buf->str);
-		if(!gebr_geoxml_flow_io_get_output_append(job->flow) && !use_iter &&
+		if(!gebr_geoxml_flow_io_get_output_append(job->flow) && !stdout_use_iter &&
 		   strlen(gebr_geoxml_flow_io_get_output(job->flow)) > 0) {
 			remove = g_strdup_printf("\n\ttest $counter -eq 0 && rm -f %s\n", stdout_parsed);
+			g_string_prepend(job->parent.cmd_line, remove);
+			g_free(remove);
+		}
+		if(!gebr_geoxml_flow_io_get_error_append(job->flow) && !stderr_use_iter &&
+		   strlen(gebr_geoxml_flow_io_get_error(job->flow)) > 0) {
+			remove = g_strdup_printf("\n\ttest $counter -eq 0 && rm -f %s\n", stderr_parsed);
 			g_string_prepend(job->parent.cmd_line, remove);
 			g_free(remove);
 		}
@@ -1389,13 +1401,6 @@ static void job_assembly_cmdline(GebrdJob *job)
 		assemble_bc_cmd_line (expr_buf, NULL, NULL);
 		g_string_prepend(job->parent.cmd_line, str_buf->str);
 		g_string_prepend(job->parent.cmd_line, expr_buf->str);
-	}
-
-	if (has_error_output_file && !gebr_geoxml_flow_io_get_error_append(job->flow)) {
-		GString * prefix = g_string_new(NULL);
-		g_string_printf(prefix, "rm \"%s\"\n", stderr_parsed);
-		g_string_prepend(job->parent.cmd_line, prefix->str);
-		g_string_free(prefix, TRUE);
 	}
 
 	job->critical_error = FALSE;
