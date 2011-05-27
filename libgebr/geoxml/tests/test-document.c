@@ -427,6 +427,7 @@ void test_gebr_geoxml_document_iter(void)
 	GebrGeoXmlDocument *flow;
 	GebrGeoXmlDocument *proj;
 	GebrGeoXmlFlow *forloop;
+	GebrGeoXmlProgram *loop;
 
 	gebr_geoxml_document_load((GebrGeoXmlDocument**)&forloop, TEST_DIR"/forloop.mnu",FALSE,NULL);
 
@@ -434,11 +435,37 @@ void test_gebr_geoxml_document_iter(void)
 	flow = GEBR_GEOXML_DOCUMENT (gebr_geoxml_flow_new ());
 	proj = GEBR_GEOXML_DOCUMENT (gebr_geoxml_project_new ());
 
+	gebr_geoxml_flow_get_program(forloop,(GebrGeoXmlSequence **) &loop, 0);
+	gebr_geoxml_program_set_status(loop, GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED);
+
 	gebr_geoxml_flow_add_flow(GEBR_GEOXML_FLOW(flow),forloop);
+
 	g_assert (gebr_geoxml_document_is_dictkey_defined ("iter", NULL, flow, line, NULL) == TRUE);
 
 	gebr_geoxml_document_validate_expr ("5*iter", flow, line, proj, &error);
 	g_assert_no_error (error);
+}
+
+void test_gebr_geoxml_document_no_iter(void)
+{
+	GebrGeoXmlDocument *line;
+	GebrGeoXmlDocument *flow;
+	GebrGeoXmlDocument *proj;
+	GebrGeoXmlFlow *forloop;
+	GebrGeoXmlProgram *loop;
+
+	gebr_geoxml_document_load((GebrGeoXmlDocument**)&forloop, TEST_DIR"/forloop.mnu",FALSE,NULL);
+
+	line = GEBR_GEOXML_DOCUMENT (gebr_geoxml_line_new ());
+	flow = GEBR_GEOXML_DOCUMENT (gebr_geoxml_flow_new ());
+	proj = GEBR_GEOXML_DOCUMENT (gebr_geoxml_project_new ());
+
+	gebr_geoxml_flow_get_program(forloop,(GebrGeoXmlSequence **) &loop, 0);
+	gebr_geoxml_program_set_status(loop, GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED);
+
+	gebr_geoxml_flow_add_flow(GEBR_GEOXML_FLOW(flow),forloop);
+
+	g_assert (gebr_geoxml_document_is_dictkey_defined ("iter", NULL, flow, line, NULL) == FALSE);
 }
 
 int main(int argc, char *argv[])
@@ -460,6 +487,7 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/geoxml/document/is_dictkey_defined", test_gebr_geoxml_document_is_dictkey_defined);
 	g_test_add_func("/libgebr/geoxml/document/validate_expr", test_gebr_geoxml_document_validate_expr);
 	g_test_add_func("/libgebr/geoxml/document/test_iter", test_gebr_geoxml_document_iter);
+	g_test_add_func("/libgebr/geoxml/document/test_no_iter", test_gebr_geoxml_document_no_iter);
 
 	return g_test_run();
 }
