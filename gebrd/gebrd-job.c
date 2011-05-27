@@ -1233,7 +1233,7 @@ static void job_assembly_cmdline(GebrdJob *job)
 		gebr_string_expr_eval(job->str_expr, error_expr, &result, &error);
 
 		if (!error) {
-			stderr_use_iter = gebr_output_use__var_iter(job, error_expr);
+			stderr_use_iter = gebr_output_use_var_iter(job, error_expr);
 			stderr_parsed = escape_quote_and_slash(result);
 			if(gebr_geoxml_flow_io_get_error_append(job->flow) ||
 			   (has_control && !stderr_use_iter))
@@ -1354,7 +1354,7 @@ static void job_assembly_cmdline(GebrdJob *job)
 			output_expr = gebr_geoxml_flow_io_get_output(job->flow);
 			gebr_string_expr_eval(job->str_expr, output_expr, &result, &error);
 			if (!error) {
-				stdout_use_iter = gebr_output_use__var_iter(job, output_expr);
+				stdout_use_iter = gebr_output_use_var_iter(job, output_expr);
 				stdout_parsed = escape_quote_and_slash(result);
 				if(gebr_geoxml_flow_io_get_output_append(job->flow) ||
 				   (has_control && !stdout_use_iter))
