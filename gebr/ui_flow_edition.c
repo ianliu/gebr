@@ -1361,7 +1361,8 @@ on_flow_sequence_query_tooltip(GtkTreeView * treeview,
 				break;
 			}
 			gtk_tooltip_set_text(tooltip, error_message);
-		}
+		} else
+			gtk_tooltip_set_text(tooltip, error_msg);
 	}
 
 	g_free(error_msg);
