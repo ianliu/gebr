@@ -1495,7 +1495,7 @@ static GtkTreeIter dict_edit_append_iter(struct dict_edit_data *data, GebrGeoXml
 	gtk_tree_store_set(GTK_TREE_STORE(data->tree_model), &iter, DICT_EDIT_KEYWORD_IMAGE, NULL, -1);
 
 	/* MIGRATION: for the dict number type represent a int, but is, * in fact, a float parameter */
-	if (g_strcmp0("iter", gebr_geoxml_program_parameter_get_keyword(GEBR_GEOXML_PARAMETER(object))) == 0)
+	if (g_strcmp0("iter", gebr_geoxml_program_parameter_get_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(object))) == 0)
 	{
 		GebrGeoXmlParameterType type = gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(object));
 		if (type == GEBR_GEOXML_PARAMETER_TYPE_INT)
@@ -1714,9 +1714,9 @@ static gboolean dict_edit_reorder(GtkTreeView            *tree_view,
 		} else {
 			GtkTreeIter it;
 			GtkTreePath *path;
+			path = gtk_tree_model_get_path(data->tree_model, position);
 			gtk_tree_store_insert_before(GTK_TREE_STORE(data->tree_model),
 						     &newiter, &parent, position);
-			path = gtk_tree_model_get_path(data->tree_model, position);
 			if (gtk_tree_path_prev(path)
 			    && gtk_tree_model_get_iter(data->tree_model, &it, path))
 			{
