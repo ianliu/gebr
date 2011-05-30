@@ -108,9 +108,7 @@ gboolean validate_program_iter(GtkTreeIter *iter, GError **error)
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), iter,
 			   FSEQ_GEBR_GEOXML_POINTER, &program, -1);
 
-	if (gebr_geoxml_program_is_valid(program,
-					 gebr.validator,
-					 error))
+	if (gebr_geoxml_program_is_valid(program, gebr.validator, error))
 		return TRUE;
 
 	return FALSE;

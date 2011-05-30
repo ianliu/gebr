@@ -177,8 +177,8 @@ typedef void (*GebrGeoXmlDiscardMenuRefCallback) (GebrGeoXmlProgram *program,
 /**
  * See gebr_geoxml_program_foreach_parameter()
  */
-typedef void (*GebrGeoXmlCallback) (GebrGeoXmlObject *object,
-				    gpointer          user_data);
+typedef gboolean (*GebrGeoXmlCallback) (GebrGeoXmlObject *object,
+					gpointer          user_data);
 
 G_END_DECLS
 
