@@ -73,6 +73,9 @@ static void gebr_string_expr_finalize(GObject *object)
 	GebrStringExpr *self = GEBR_STRING_EXPR(object);
 
 	g_hash_table_unref(self->priv->vars);
+	g_object_unref(self->priv->arith_expr);
+
+	G_OBJECT_CLASS(gebr_string_expr_parent_class)->finalize(object);
 }
 
 /* GebrIExpr interface methods implementation {{{1 */
