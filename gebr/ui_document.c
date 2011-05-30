@@ -444,6 +444,7 @@ static void validate_dict_iter(struct dict_edit_data *data, GtkTreeIter *iter)
 
 				gtk_label_set_text(GTK_LABEL(data->label), error->message);
 				g_clear_error(&error);
+				dict_edit_check_programs_using_variables(keyword, FALSE);
 			} else {
 				gtk_tree_store_set(GTK_TREE_STORE(data->tree_model), &it,
 						   DICT_EDIT_VALUE_TYPE_IMAGE,
@@ -451,8 +452,8 @@ static void validate_dict_iter(struct dict_edit_data *data, GtkTreeIter *iter)
 						   DICT_EDIT_VALUE_TYPE_TOOLTIP,
 						   type == GEBR_GEOXML_PARAMETER_TYPE_STRING ? "Text value" : "Number value", -1);
 				g_free(validated);
+				dict_edit_check_programs_using_variables(keyword, TRUE);
 			}
-			dict_edit_check_programs_using_variables(keyword, data->edition_valid);
 		}
 
 		if (!gtk_tree_model_iter_next(data->tree_model, &parent))
