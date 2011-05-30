@@ -452,6 +452,7 @@ static void validate_dict_iter(struct dict_edit_data *data, GtkTreeIter *iter)
 						   type == GEBR_GEOXML_PARAMETER_TYPE_STRING ? "Text value" : "Number value", -1);
 				g_free(validated);
 			}
+			dict_edit_check_programs_using_variables(keyword, data->edition_valid);
 		}
 
 		if (!gtk_tree_model_iter_next(data->tree_model, &parent))
