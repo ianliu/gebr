@@ -189,7 +189,6 @@ static gboolean gebr_arith_expr_set_var(GebrIExpr              *iface,
 
 	if (invalid_var) {
 		retval = FALSE;
-		if (!err)
 		g_set_error(err,
 			    GEBR_IEXPR_ERROR,
 			    GEBR_IEXPR_ERROR_INVAL_VAR,
@@ -280,6 +279,7 @@ static gboolean gebr_arith_expr_is_valid(GebrIExpr   *iface,
 			    GEBR_IEXPR_ERROR_INVAL_VAR,
 			    _("Invalid name for variable %s"),
 			    invalid_var);
+		return FALSE;
 	}
 
 
@@ -408,7 +408,6 @@ gebr_arith_expr_eval_internal(GebrArithExpr *self,
 		status = g_io_channel_read_line (self->priv->err_ch, &line, NULL, NULL, &error);
 
 		if (status == G_IO_STATUS_NORMAL) {
-			if (!err)
 			g_set_error(err,
 				    GEBR_IEXPR_ERROR,
 				    GEBR_IEXPR_ERROR_SYNTAX,

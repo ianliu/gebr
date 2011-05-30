@@ -313,7 +313,6 @@ gebr_expr_eval_internal (GebrExpr *self,
 		status = g_io_channel_read_line (self->err_ch, &line, NULL, NULL, &error);
 
 		if (status == G_IO_STATUS_NORMAL) {
-			if (!err)
 			g_set_error (err, gebr_expr_error_quark(),
 				     GEBR_EXPR_ERROR_SYNTAX, "Invalid expression");
 			g_free (line);
