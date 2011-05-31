@@ -40,3 +40,13 @@ TEST_PROGS                  += test-serialize-full
 test_serialize_full_SOURCES  = test-serialize-full.c flow.c dictionary.c parameter.c value.c
 test_serialize_full_LDADD    = $(progs_ldadd)
 
+EXTRA_DIST =		\
+	dictionary.c	\
+	dictionary.h	\
+	flow.c		\
+	flow.h		\
+	parameter.c	\
+	parameter.h	\
+	value.c		\
+	value.h		\
+	$(NULL)

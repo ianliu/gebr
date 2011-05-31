@@ -60,8 +60,9 @@ libgebr_geoxmlsubinclude_HEADERS =	\
 	enum_option.h			\
 	error.h				\
 	flow.h				\
-	gebr-geoxml-validate.h		\
+	gebr-geo-types.h		\
 	gebr-geoxml-tmpl.h		\
+	gebr-geoxml-validate.h		\
 	line.h				\
 	macros.h			\
 	object.h			\

@@ -67,7 +67,7 @@ libgebr_guisubinclude_HEADERS = 	\
 	gebr-gui-save-dialog.h		\
 	gebr-gui-sequence-edit.h	\
 	gebr-gui-utils.h		\
-	gebr-gui-validatable-widget.c	\
+	gebr-gui-validatable-widget.h	\
 	gebr-gui-value-sequence-edit.h	\
 	sexy-icon-entry.h		\
 	$(NULL)
