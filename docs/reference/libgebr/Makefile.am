@@ -85,15 +85,25 @@ expand_content_files=
 # signals and properties.
 # e.g. GTKDOC_CFLAGS=-I$(top_srcdir) -I$(top_builddir) $(GTK_DEBUG_FLAGS)
 # e.g. GTKDOC_LIBS=$(top_builddir)/gtk/$(gtktargetlib)
-GTKDOC_CFLAGS=$(GEBR_CFLAGS)		\
-	      $(GEBR_GEOXML_CFLAGS)	\
-	      $(GEBR_COMM_CFLAGS)	\
-	      $(GEBR_GUI_CFLAGS)
+GTKDOC_CFLAGS=			\
+	$(GLIB_CFLAGS)		\
+	$(GDOME2_CFLAGS)	\
+	$(GEBR_CFLAGS)		\
+	$(GEBR_GEOXML_CFLAGS)	\
+	$(GEBR_JSON_CFLAGS)	\
+	$(GEBR_COMM_CFLAGS)	\
+	$(GEBR_GUI_CFLAGS)	\
+	$(NULL)
 
-GTKDOC_LIBS=$(GEBR_LIBS)	\
-	    $(GEBR_GEOXML_LIBS)	\
-	    $(GEBR_COMM_LIBS)	\
-	    $(GEBR_GUI_LIBS)
+GTKDOC_LIBS=			\
+	$(GLIB_LIBS)		\
+	$(GDOME2_LIBS)		\
+	$(GEBR_LIBS)		\
+	$(GEBR_GEOXML_LIBS)	\
+	$(GEBR_JSON_LIBS)	\
+	$(GEBR_COMM_LIBS)	\
+	$(GEBR_GUI_LIBS)	\
+	$(NULL)
 
 
 # This includes the standard gtk-doc make rules, copied by gtkdocize.
