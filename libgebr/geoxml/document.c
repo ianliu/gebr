@@ -29,8 +29,13 @@
 
 #include "defines.h"
 #if ENABLE_TIDY
-#include <tidy.h>
-#include <buffio.h>
+# if TIDY_HAVE_SUBDIR
+#  include <tidy/tidy.h>
+#  include <tidy/buffio.h>
+# else
+#  include <tidy.h>
+#  include <buffio.h>
+# endif
 #endif
 
 #include "document.h"

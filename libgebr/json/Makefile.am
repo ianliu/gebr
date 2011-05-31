@@ -5,19 +5,20 @@ TESTSDIR=tests
 endif
 SUBDIRS = . ${TESTSDIR}
 
-INCLUDES = -I$(top_srcdir)
+AM_CFLAGS = $(COMMON_CFLAGS) -fPIC
 
 AM_CPPFLAGS = \
 	-DJSON_COMPILATION 		\
-	-I$(top_srcdir)/libgebr 	\
 	-DPREFIX=\""$(prefix)"\" 	\
 	-DLIBDIR=\""$(libdir)"\" 	\
 	-DJSON_COMPILATION=1		\
 	-DG_DISABLE_DEPRECATED 		\
 	-DJSON_DISABLE_DEPRECATED	\
 	-DG_LOG_DOMAIN=\"Json\" 	\
+	$(GLIB_CFLAGS)			\
+	$(GEBR_CFLAGS)			\
+	$(GEBR_JSON_CFLAGS)		\
 	$(NULL)
-AM_CFLAGS = $(GEBR_JSON_CFLAGS)
 
 BUILT_SOURCES =
 EXTRA_DIST =
@@ -60,7 +61,16 @@ source_c = \
 # glib-mkenums rules
 glib_enum_h = json-enum-types.h
 glib_enum_c = json-enum-types.c
-glib_enum_headers = $(source_h)
+glib_enum_headers =			\
+	$(srcdir)/json-builder.h	\
+	$(srcdir)/json-generator.h 	\
+	$(srcdir)/json-gobject.h 	\
+	$(srcdir)/json-parser.h 	\
+	$(srcdir)/json-reader.h		\
+	$(srcdir)/json-types.h 		\
+	$(srcdir)/json-utils.h 		\
+	$(NULL)
+
 include $(top_srcdir)/Makefile.am.enums
 
 # glib-genmarshal rules
@@ -70,9 +80,13 @@ include $(top_srcdir)/Makefile.am.marshal
 
 lib_LTLIBRARIES = libgebr_json.la
 
-libgebr_json_la_LIBADD = ../libgebr.la
+libgebr_json_la_LIBADD =	\
+	$(GLIB_LIBS)		\
+	$(GEBR_LIBS)		\
+	$(NULL)
+
 libgebr_json_la_SOURCES = $(source_c) $(source_h) $(source_h_private) $(BUILT_SOURCES)
-libgebr_json_la_LDFLAGS = $(JSON_LT_LDFLAGS) -export-dynamic -export-symbols-regex "^json.*"
+libgebr_json_la_LDFLAGS = -export-dynamic -export-symbols-regex "^json.*"
 
 jsonincludedir = $(includedir)/libgebr/json/
 jsoninclude_HEADERS = \

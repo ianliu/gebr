@@ -171,6 +171,7 @@ AC_ARG_WITH([tidy],
 	    [want_tidy=yes])
 
 ENABLE_TIDY=0
+TIDY_HAVE_SUBDIR=0
 if test "x${want_tidy}" = xyes; then
 	AC_SEARCH_LIBS([tidyCreate], [tidy],
 		       [have_tidy=yes],
@@ -178,7 +179,7 @@ if test "x${want_tidy}" = xyes; then
 
 	if test "x${have_tidy}" = xyes; then
 		AC_CHECK_HEADERS([tidy/tidy.h tidy/buffio.h],
-				 [], 
+				 [TIDY_HAVE_SUBDIR=1],
 				 [AC_CHECK_HEADERS([tidy.h buffio.h],
 						   [],
 						   [have_tidy=no;])])
@@ -198,6 +199,7 @@ if test "x${want_tidy}" = xyes; then
 	fi
 fi
 AC_SUBST(ENABLE_TIDY)
+AC_SUBST(TIDY_HAVE_SUBDIR)
 
 dnl ============================================================================
 dnl Checking for zlib library
@@ -212,61 +214,38 @@ GTK_DOC_CHECK([1.10],[--flavour no-tmpl])
 dnl ============================================================================
 dnl Checking for Packages
 dnl ============================================================================
-PKG_CHECK_MODULES([GLIB],
-		  [glib-2.0 >= 2.12.0],
-		  [],
-		  [AC_MSG_ERROR([Could not find glib >= 2.12.0])])
+PKG_CHECK_MODULES([GLIB], [
+	glib-2.0    >= 2.24.0
+	gobject-2.0 >= 2.24.0
+	gthread-2.0 >= 2.24.0
+])
 AC_SUBST(GLIB_LIBS)
 AC_SUBST(GLIB_CFLAGS)
 
-PKG_CHECK_MODULES([GOBJECT],
-		  [gobject-2.0 >= 2.8],
-		  [],
-		  [AC_MSG_ERROR([Could not find gobject >= 2.8])])
-AC_SUBST(GOBJECT_LIBS)
-AC_SUBST(GOBJECT_CFLAGS)
-
-PKG_CHECK_MODULES([GTHREAD],
-		  [gthread-2.0 >= 2.8],
-		  [],
-		  [AC_MSG_ERROR([Could not find gthread >= 2.8])])
-AC_SUBST(GTHREAD_LIBS)
-AC_SUBST(GTHREAD_CFLAGS)
-
-PKG_CHECK_MODULES([GDOME2],
-		  [gdome2 >= 0.8.0],
-		  [],
-		  [AC_MSG_ERROR([Could not find gdome2 >= 0.8.0])])
+PKG_CHECK_MODULES([GDOME2], [gdome2 >= 0.8.0])
 AC_SUBST(GDOME2_LIBS)
 AC_SUBST(GDOME2_CFLAGS)
 
 if test "$enable_gui" = "yes"; then
-	PKG_CHECK_MODULES([GTK],
-			  [gtk+-2.0 >= 2.12.0],
-			  [],
-			  [AC_MSG_ERROR([Could not find gtk+-2.0 >= 2.12.0])])
-	AC_SUBST(GTK_LIBS)
-	AC_SUBST(GTK_CFLAGS)
-
-	PKG_CHECK_MODULES([WEBKIT],
-			  [webkit-1.0],
-			  [],
-			  [AC_MSG_ERROR([Could not find webkitgtk])])
-	AC_SUBST(WEBKIT_CFLAGS)
-	AC_SUBST(WEBKIT_LIBS)
+	PKG_CHECK_MODULES([GUI], [
+		gtk+-2.0   >= 2.20.0
+		webkit-1.0 >= 1.2.5
+	])
+	AC_SUBST(GUI_LIBS)
+	AC_SUBST(GUI_CFLAGS)
 fi
 
-GEBR_CFLAGS='-I$(top_srcdir) -I$(top_srcdir)/libgebr $(GLIB_CFLAGS) $(GOBJECT_CFLAGS) $(GTHREAD_CFLAGS)'
-GEBR_GEOXML_CFLAGS='-I$(top_srcdir)/libgebr/geoxml $(GDOME2_CFLAGS) $(TIDY_FLAGS)'
-GEBR_COMM_CFLAGS='-I$(top_srcdir)/libgebr/comm'
-GEBR_GUI_CFLAGS='-I$(top_srcdir)/libgebr/gui $(GTK_CFLAGS) $(WEBKIT_CFLAGS)'
-GEBR_JSON_CFLAGS='-I$(top_srcdir)/libgebr/json $(GLIB_CFLAGS) $(GOBJECT_CFLAGS)'
+GEBR_CFLAGS='-I$(top_srcdir) -I$(top_srcdir)/libgebr -I$(top_builddir)/libgebr'
+GEBR_GEOXML_CFLAGS='-I$(top_srcdir)/libgebr/geoxml -I$(top_builddir)/libgebr/geoxml'
+GEBR_COMM_CFLAGS='-I$(top_srcdir)/libgebr/comm -I$(top_builddir)/libgebr/comm'
+GEBR_GUI_CFLAGS='-I$(top_srcdir)/libgebr/gui -I$(top_builddir)/libgebr/gui'
+GEBR_JSON_CFLAGS='-I$(top_srcdir)/libgebr/json -I$(top_builddir)/libgebr/json'
 
-GEBR_LIBS='$(top_builddir)/libgebr/libgebr.la $(GLIB_LIBS) $(GOBJECT_LIBS) $(GTHREAD_LIBS)'
-GEBR_GEOXML_LIBS='$(top_builddir)/libgebr/geoxml/libgebr_geoxml.la $(GDOME2_LIBS) $(TIDY_LIBS)'
+GEBR_LIBS='$(top_builddir)/libgebr/libgebr.la'
+GEBR_JSON_LIBS='$(top_builddir)/libgebr/json/libgebr_json.la -lm'
+GEBR_GEOXML_LIBS='$(top_builddir)/libgebr/geoxml/libgebr_geoxml.la'
 GEBR_COMM_LIBS='$(top_builddir)/libgebr/comm/libgebr_comm.la'
-GEBR_GUI_LIBS='$(top_srcdir)/libgebr/gui/libgebr_gui.la $(GTK_LIBS) $(WEBKIT_LIBS)'
-GEBR_JSON_LIBS='$(top_builddir)/libgebr/json/libgebr_json.la $(GLIB_LIBS) $(GOBJECT_LIBS) -lm'
+GEBR_GUI_LIBS='$(top_builddir)/libgebr/gui/libgebr_gui.la'
 
 AC_SUBST(GEBR_CFLAGS)
 AC_SUBST(GEBR_GEOXML_CFLAGS)

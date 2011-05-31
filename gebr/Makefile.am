@@ -20,7 +20,10 @@ SUBDIRS = . tests po data
 bin_PROGRAMS = gebr
 
 touch:
-	if [ -d $(top_srcdir)/.hg ]; then touch main.c -r $(top_srcdir)/.hg; fi
+	if [ -d $(top_srcdir)/.hg ]; \
+	then \
+	  touch $(srcdir)/main.c -r $(top_srcdir)/.hg; \
+	fi
 client.c: touch
 
 #TODO: remove cmdline.{c,h} in future versions (remove old config format support)
@@ -87,7 +90,8 @@ noinst_HEADERS = 		\
 EXTRA_DIST = ${noinst_HEADERS}
 
 AM_CPPFLAGS =			\
-	-I..			\
+	$(GUI_CFLAGS)		\
+	$(GDOME2_CFLAGS)	\
 	$(GEBR_CFLAGS)		\
 	$(GEBR_GEOXML_CFLAGS)	\
 	$(GEBR_COMM_CFLAGS)	\
@@ -100,12 +104,14 @@ AM_CPPFLAGS =			\
 AM_CFLAGS = $(COMMON_CFLAGS)
 
 gebr_LDADD =			\
-	libgebr.a		\
+	$(GUI_LIBS)		\
+	$(GDOME2_LIBS)		\
 	$(GEBR_LIBS)		\
 	$(GEBR_GEOXML_LIBS)	\
 	$(GEBR_COMM_LIBS)	\
 	$(GEBR_GUI_LIBS)	\
 	$(GEBR_JSON_LIBS)	\
+	libgebr.a		\
 	$(NULL)
 
 .PHONY: touch

@@ -17,11 +17,13 @@
 
 #include "defines.h"
 
-/*
- * Function: gebr_version
- * Returns the libgebr version
+/**
+ * gebr_version:
+ *
+ * Returns: The libgebr version. Do not free it.
  */
-const gchar* gebr_version()
+const gchar *
+gebr_version(void)
 {
 #ifdef DEBUG
 	return LIBGEBR_VERSION NANOVERSION;

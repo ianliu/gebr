@@ -5,12 +5,21 @@ EXTRA_DIST = test.mnu
 noinst_PROGRAMS = $(TEST_PROGS)
 
 AM_CFLAGS = $(COMMON_CFLAGS)
-AM_CPPFLAGS =  $(GEBR_CFLAGS)		\
-	       $(GEBR_GEOXML_CFLAGS)	\
-	       @DEBUG_CFLAGS@		\
-	       -I$(srcdir)/..		\
-	       -DTEST_DIR=\"$(srcdir)\"
-AM_LDFLAGS = $(GEBR_LIBS) $(GEBR_GEOXML_LIBS)
+AM_CPPFLAGS =				\
+	$(GLIB_CFLAGS)			\
+	$(GDOME2_CFLAGS)		\
+	$(GEBR_CFLAGS)			\
+	$(GEBR_GEOXML_CFLAGS)		\
+	@DEBUG_CFLAGS@			\
+	-DTEST_DIR=\"$(srcdir)\"	\
+	$(NULL)
+
+AM_LDFLAGS =			\
+	$(GLIB_LIBS)		\
+	$(GDOME2_LIBS)		\
+	$(GEBR_LIBS)		\
+	$(GEBR_GEOXML_LIBS)	\
+	$(NULL)
 
 TEST_PROGS += test-sequence
 test_sequence_SOURCES = test-sequence.c

@@ -22,7 +22,7 @@
 
 G_BEGIN_DECLS
 
-const gchar *gebr_version();
+const gchar *gebr_version(void);
 
 G_END_DECLS
 #endif				//__GEBR_VERSION_H

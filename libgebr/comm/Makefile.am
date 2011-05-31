@@ -68,24 +68,23 @@ noinst_HEADERS = \
 	gebr-comm-socketprivate.h		\
 	gebr-comm-streamsocketprivate.h
 
-AM_CPPFLAGS = \
-	-I..				\
-	$(GEBR_CFLAGS)			\
-	$(GEBR_JSON_CFLAGS)		\
-	$(GEBR_GEOXML_CFLAGS)		\
-	$(GOBJECT_CFLAGS)		\
-	$(GTHREAD_CFLAGS)		\
-	@DEBUG_CFLAGS@
+AM_CPPFLAGS =			\
+	$(GLIB_CFLAGS)		\
+	$(GEBR_CFLAGS)		\
+	$(GEBR_JSON_CFLAGS)	\
+	$(GEBR_GEOXML_CFLAGS)	\
+	@DEBUG_CFLAGS@		\
+	$(NULL)
 
-AM_CFLAGS = $(COMMON_CFLAGS)
+AM_CFLAGS = $(COMMON_CFLAGS) -fPIC
 
-libgebr_comm_la_LIBADD = \
+libgebr_comm_la_LIBADD =		\
 	-lutil				\
-	$(INTLLIBS)			\
+	$(GLIB_LIBS)			\
+	$(GDOME2_LIBS)			\
 	$(GEBR_LIBS)			\
 	$(GEBR_JSON_LIBS)		\
 	$(GEBR_GEOXML_LIBS)		\
-	$(GOBJECT_LIBS)			\
-	$(GTHREAD_LIBS)			
+	$(NULL)
 
 libgebr_comm_la_LDFLAGS = -version-info @GEBR_VERSION_INFO@

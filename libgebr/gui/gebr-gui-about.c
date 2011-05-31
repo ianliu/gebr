@@ -17,9 +17,9 @@
 
 #include <config.h>
 #include <glib/gi18n-lib.h>
+#include <libgebr/defines.h>
+#include <libgebr/gebr-version.h>
 
-#include "../defines.h"
-#include "../version.h"
 #include "gebr-gui-about.h"
 #include "gebr-gui-pixmaps.h"
 

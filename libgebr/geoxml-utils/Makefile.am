@@ -25,9 +25,20 @@ bin_PROGRAMS = 			\
 	$(NULL)
 
 AM_CFLAGS = $(COMMON_CFLAGS)
-AM_CPPFLAGS = $(GEBR_CFLAGS)		\
-	      $(GEBR_GEOXML_CFLAGS)	\
-	      -I$(srcdir)/../geoxml
+
+AM_CPPFLAGS =			\
+	$(GLIB_CFLAGS)		\
+	$(GDOME2_CFLAGS)	\
+	$(GEBR_CFLAGS)		\
+	$(GEBR_GEOXML_CFLAGS)	\
+	$(NULL)
+
+utils_ldadd =			\
+	$(GLIB_LIBS)		\
+	$(GDOME2_LIBS)		\
+	$(GEBR_LIBS)		\
+	$(GEBR_GEOXML_LIBS)	\
+	$(NULL)
 
 gebr_geoxml_flow_dump_SOURCES  = flow-dump.c
 gebr_geoxml_menu_diff_SOURCES  = menu-diff.c
@@ -36,9 +47,9 @@ gebr_geoxml_menu_query_SOURCES = menu-query.c
 gebr_geoxml_upgrade_SOURCES    = upgrade.c
 gebr_geoxml_validate_SOURCES   = validate.c
 
-gebr_geoxml_flow_dump_LDADD  = $(GEBR_LIBS) $(GEBR_GEOXML_LIBS)
-gebr_geoxml_menu_diff_LDADD  = $(GEBR_LIBS) $(GEBR_GEOXML_LIBS)
-gebr_geoxml_menu_edit_LDADD  = $(GEBR_LIBS) $(GEBR_GEOXML_LIBS)
-gebr_geoxml_menu_query_LDADD = $(GEBR_LIBS) $(GEBR_GEOXML_LIBS)
-gebr_geoxml_upgrade_LDADD    = $(GEBR_LIBS) $(GEBR_GEOXML_LIBS)
-gebr_geoxml_validate_LDADD   = $(GEBR_LIBS) $(GEBR_GEOXML_LIBS)
+gebr_geoxml_flow_dump_LDADD  = $(utils_ldadd)
+gebr_geoxml_menu_diff_LDADD  = $(utils_ldadd)
+gebr_geoxml_menu_edit_LDADD  = $(utils_ldadd)
+gebr_geoxml_menu_query_LDADD = $(utils_ldadd)
+gebr_geoxml_upgrade_LDADD    = $(utils_ldadd)
+gebr_geoxml_validate_LDADD   = $(utils_ldadd)

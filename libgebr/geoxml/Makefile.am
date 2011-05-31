@@ -87,14 +87,18 @@ noinst_HEADERS =		\
 	xml.h			\
 	$(NULL)
 
-AM_CPPFLAGS = -I$(top_srcdir)		\
-	      -I$(top_srcdir)/libgebr	\
-	      -I..			\
-	      $(GLIB_CFLAGS)		\
-	      $(GDOME2_CFLAGS)		\
-	      -I/usr/include/tidy	\
-	      @DEBUG_CFLAGS@
+AM_CPPFLAGS =			\
+	$(GLIB_CFLAGS)		\
+	$(GDOME2_CFLAGS)	\
+	$(GEBR_CFLAGS)		\
+	@DEBUG_CFLAGS@		\
+	$(NULL)
+
+libgebr_geoxml_la_LIBADD =	\
+	$(GLIB_LIBS)		\
+	$(GDOME2_LIBS)		\
+	$(GEBR_LIBS)		\
+	$(NULL)
 
 AM_CFLAGS = $(COMMON_CFLAGS) -fPIC
-libgebr_geoxml_la_LIBADD = ../libgebr.la $(GLIB_LIBS) $(GDOME2_LIBS)
 libgebr_geoxml_la_LDFLAGS = -version-info @GEBR_VERSION_INFO@

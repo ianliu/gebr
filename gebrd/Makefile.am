@@ -32,7 +32,7 @@ libgebrd_a_SOURCES =			\
 	$(NULL)
 
 touch:
-	if [ -d $(top_srcdir)/.hg ]; then touch gebrd-main.c -r $(top_srcdir)/.hg; fi
+	if [ -d $(top_srcdir)/.hg ]; then touch $(srcdir)/gebrd-main.c -r $(top_srcdir)/.hg; fi
 gebrd.c: touch
 
 bin_PROGRAMS = gebrd
@@ -54,18 +54,25 @@ noinst_HEADERS =			\
 
 EXTRA_DIST = $(noinst_HEADERS)
 
-AM_CPPFLAGS = $(GEBR_CFLAGS)		\
-	      $(GEBR_COMM_CFLAGS)	\
-	      $(GEBR_GEOXML_CFLAGS)	\
-	      $(GEBR_JSON_CFLAGS)	\
-	      -DNANOVERSION=\"$(NANOVERSION)\"\
-	      @DEBUG_CFLAGS@ 
+AM_CPPFLAGS =			\
+	$(GLIB_CFLAGS)		\
+	$(GDOME2_CFLAGS)	\
+	$(GEBR_CFLAGS)		\
+	$(GEBR_GEOXML_CFLAGS)	\
+	$(GEBR_JSON_CFLAGS)	\
+	$(GEBR_COMM_CFLAGS)	\
+	-DNANOVERSION=\"$(NANOVERSION)\"\
+	@DEBUG_CFLAGS@		\
+	$(NULL)
 
 AM_CFLAGS = $(COMMON_CFLAGS)
 
-gebrd_LDADD = libgebrd.a		\
-	      $(GEBR_LIBS)		\
-	      $(GEBR_COMM_LIBS)		\
-	      $(GEBR_GEOXML_LIBS)	\
-	      $(GEBR_JSON_LIBS)		\
-	      $(NULL)
+gebrd_LDADD =			\
+	$(GLIB_LIBS)		\
+	$(GDOME2_LIBS)		\
+	$(GEBR_LIBS)		\
+	$(GEBR_GEOXML_LIBS)	\
+	$(GEBR_JSON_LIBS)	\
+	$(GEBR_COMM_LIBS)	\
+	$(builddir)/libgebrd.a	\
+	$(NULL)

@@ -23,10 +23,10 @@
 #include <glib/gi18n.h>
 #include <libgebr/gui/gebr-gui-icons.h>
 #include <libgebr/libgebr.h>
+#include <libgebr/gebr-version.h>
 
 #include "gebr.h"
 #include "defines.h"
-#include "version.h"
 #include "interface.h"
 
 

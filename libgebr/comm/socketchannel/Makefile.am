@@ -19,17 +19,17 @@ bin_PROGRAMS = gebr-comm-socketchannel
 
 AM_CFLAGS = $(COMMON_CFLAGS)
 AM_CPPFLAGS =			\
+	$(GLIB_CFLAGS)		\
 	$(GEBR_CFLAGS)		\
 	$(GEBR_JSON_CFLAGS)	\
 	$(GEBR_COMM_CFLAGS)	\
-	-I$(srcdir)/..		\
+	$(NULL)
+
+gebr_comm_socketchannel_LDADD =	\
+	$(GLIB_LIBS)		\
+	$(GEBR_LIBS)		\
+	$(GEBR_JSON_LIBS)	\
+	$(GEBR_COMM_LIBS)	\
 	$(NULL)
 
 gebr_comm_socketchannel_SOURCES = socketchannel.c
-
-gebr_comm_socketchannel_LDADD =	\
-	$(GEBR_LIBS)		\
-	$(GEBR_JSON_LIBS)	\
-	$(GEBR_GEOXML_LIBS)	\
-	$(GEBR_COMM_LIBS)	\
-	$(NULL)

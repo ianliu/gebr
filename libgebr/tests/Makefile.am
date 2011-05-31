@@ -5,15 +5,18 @@ noinst_PROGRAMS = $(TEST_PROGS)
 AM_CFLAGS = $(COMMON_CFLAGS)
 
 AM_CPPFLAGS =			\
+	$(GLIB_CFLAGS)		\
 	$(GEBR_CFLAGS)		\
 	$(GEBR_GEOXML_CFLAGS)	\
 	@DEBUG_CFLAGS@		\
-	-DTEST_SRCDIR='"$(srcdir)"'
+	-DTEST_SRCDIR='"$(srcdir)"' \
+	$(NULL)
 
 AM_LDFLAGS =			\
+	$(GLIB_LIBS)		\
 	$(GEBR_LIBS)		\
 	$(GEBR_GEOXML_LIBS)	\
-	../libgebr.la -lm
+	$(NULL)
 
 TEST_PROGS += test-utils
 test_utils_SOURCES = test-utils.c

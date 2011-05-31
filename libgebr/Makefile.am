@@ -40,46 +40,49 @@ AM_CPPFLAGS =		\
 	$(NULL)
 
 touch:
-	if [ -d $(top_srcdir)/.hg ]; then touch version.c -r $(top_srcdir)/.hg; fi
+	if [ -d $(top_srcdir)/.hg ]; \
+	then \
+	  touch $(srcdir)/gebr-version.c -r $(top_srcdir)/.hg; \
+	fi
 date.c: touch
 
 lib_LTLIBRARIES = libgebr.la
 libgebr_la_SOURCES = 		\
 	date.c			\
+	gebr-arith-expr.c	\
 	gebr-expr.c		\
 	gebr-iexpr.c		\
-	gebr-arith-expr.c	\
 	gebr-string-expr.c	\
 	gebr-tar.c		\
 	gebr-validator.c	\
+	gebr-version.c		\
 	libgebr.c		\
 	log.c			\
 	marshalers.c		\
 	utils.c			\
 	validate.c		\
-	version.c		\
 	$(NULL)
 
 libgebrincludedir = $(includedir)/libgebr
 libgebrinclude_HEADERS =	\
 	date.h			\
 	defines.h		\
+	gebr-arith-expr.h	\
 	gebr-expr.h		\
 	gebr-iexpr.h		\
-	gebr-arith-expr.h	\
 	gebr-string-expr.h	\
 	gebr-tar.h		\
 	gebr-validator.h	\
+	gebr-version.h		\
 	libgebr.h		\
 	log.h			\
 	utils.h			\
 	validate.h		\
-	version.h		\
 	$(NULL)
 
 noinst_HEADERS = defines.h marshalers.h
 
-libgebr_la_LIBADD = -lutil $(INTLLIBS) $(GLIB_LIBS)
+libgebr_la_LIBADD = -lutil $(GLIB_LIBS)
 libgebr_la_LDFLAGS = -version-info @GEBR_VERSION_INFO@
 
 # glib-genmarshal rules

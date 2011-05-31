@@ -73,22 +73,19 @@ libgebr_guisubinclude_HEADERS = 	\
 	$(NULL)
 
 AM_CPPFLAGS =				\
-	-I..				\
-	-I$(srcdir)/..			\
-	-I$(srcdir)/../geoxml		\
-	$(GTK_CFLAGS)			\
-	$(GTHREAD_CFLAGS)		\
-	$(WEBKIT_CFLAGS)		\
-	@DEBUG_CFLAGS@
-
-AM_CFLAGS = -Wall -std=gnu99 -fPIC
+	$(GUI_CFLAGS)			\
+	$(GDOME2_CFLAGS)		\
+	$(GEBR_CFLAGS)			\
+	$(GEBR_GEOXML_CFLAGS)		\
+	@DEBUG_CFLAGS@			\
+	$(NULL)
 
 libgebr_gui_la_LIBADD =			\
-	../libgebr.la			\
-	../geoxml/libgebr_geoxml.la	\
-	$(INTLLIBS)			\
-	$(GTK_LIBS)			\
-	$(GTHREAD_LIBS)			\
-	$(WEBKIT_LIBS)
+	$(GUI_LIBS)			\
+	$(GDOME2_LIBS)			\
+	$(GEBR_LIBS)			\
+	$(GEBR_GEOXML_LIBS)		\
+	$(NULL)
 
+AM_CFLAGS = $(COMMON_CFLAGS) -fPIC
 libgebr_gui_la_LDFLAGS = -version-info @GEBR_VERSION_INFO@

@@ -24,10 +24,10 @@
 
 #include <glib/gi18n.h>
 #include <libgebr/libgebr.h>
+#include <libgebr/gebr-version.h>
 
 #include "gebrd.h"
 #include "gebrd-defines.h"
-#include "version.h"
 
 int main(int argc, char **argv)
 {

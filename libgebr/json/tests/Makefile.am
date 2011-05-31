@@ -5,18 +5,22 @@ DISTCLEANFILES =
 noinst_PROGRAMS = $(TEST_PROGS)
 
 AM_CPPFLAGS =				\
-	$(MAINTAINER_CFLAGS)		\
+	$(GLIB_CFLAGS)			\
+	$(GEBR_CFLAGS)			\
 	$(GEBR_JSON_CFLAGS)		\
 	$(GEBR_GEOXML_CFLAGS)		\
-	$(JSON_DEBUG_CFLAGS)		\
-	-I$(top_srcdir)			\
-	-I$(top_srcdir)/libgebr		\
 	-DJSON_DISABLE_DEPRECATED	\
 	$(NULL)
 
 AM_CFLAGS = $(COMMON_CFLAGS)
 
-progs_ldadd = $(GEBR_JSON_LIBS) $(GEBR_GEOXML_LIBS)
+progs_ldadd =			\
+	$(GLIB_LIBS)		\
+	$(GDOME2_LIBS)		\
+	$(GEBR_LIBS)		\
+	$(GEBR_JSON_LIBS)	\
+	$(GEBR_GEOXML_LIBS)	\
+	$(NULL)
 
 TESTS_ENVIRONMENT = srcdir=$(srcdir)
 
