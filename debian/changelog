@@ -1,3 +1,9 @@
+gebrproject (0.13.5) lucid; urgency=low
+
+  * First preview of loop, expressions and server groups.
+
+ -- Fabricio Matheus Goncalves <fmatheus@gebrproject.com>  Tue, 31 May 2011 19:20:02 -0300
+
 gebrproject (0.12.0) squeeze; urgency=low
 
   * Now GêBR has updated user documentation.
