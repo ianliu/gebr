@@ -239,6 +239,7 @@ static void gebr_config_load_servers(void)
 	gboolean autoconnect;
 	gboolean ret;
 	GString *tags;
+	gboolean has_local_server = FALSE;
 
 	// Migrate servers from old config file to the new servers file
 	groups = g_key_file_get_groups(gebr.config.key_file, NULL);
@@ -248,6 +249,8 @@ static void gebr_config_load_servers(void)
 		address = gebr_g_key_file_load_string_key(gebr.config.key_file,
 							  groups[i], "address", "");
 		if (address->len) {
+			if(g_strcmp0(address->str,"127.0.0.1") == 0)
+				has_local_server = TRUE;
 			autoconnect = gebr_g_key_file_load_boolean_key(
 					gebr.config.key_file, groups[i], "autoconnect", TRUE);
 
@@ -261,6 +264,8 @@ static void gebr_config_load_servers(void)
 		g_key_file_remove_group (gebr.config.key_file, groups[i], NULL);
 	}
 	g_strfreev(groups);
+	if(!has_local_server)
+		gebr_server_new("127.0.0.1", TRUE, "");
 
 	path = g_build_path ("/", g_get_home_dir (), SERVERS_PATH, NULL);
 	servers = g_key_file_new ();
@@ -477,7 +482,6 @@ gint gebr_config_load()
 
 	/* NEW CONFIG? */
 	if (new_config) {
-		gebr_server_new("127.0.0.1", TRUE, "");
 		//gebr_config_save(FALSE); //default values saved
 		preferences_setup_ui(TRUE);
 	} else

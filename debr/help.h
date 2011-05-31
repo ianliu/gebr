@@ -39,6 +39,14 @@ void debr_help_edit(GebrGeoXmlObject * object);
  */
 void debr_help_show(GebrGeoXmlObject * object, gboolean menu, const gchar * title);
 
+/**
+ * debr_help_update:
+ * @object: a #GebrGeoXmlProgram or #GebrGeoXmlFlow
+ *
+ * Update @object's help.
+ */
+void debr_help_update(GebrGeoXmlObject *object);
+
 G_END_DECLS
 
 #endif				//__HELP_H

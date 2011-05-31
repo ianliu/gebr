@@ -230,11 +230,17 @@ static void on_load_finished(WebKitWebView * web_view, WebKitWebFrame * frame, G
 	context = webkit_web_frame_get_global_context(frame);
 
 	if (priv->object) {
+		const gchar *help;
+
 		type = gebr_geoxml_object_get_type(priv->object);
 		create_generate_links_index_function(context);
 
 		if (type == GEBR_GEOXML_OBJECT_TYPE_PROGRAM) {
-			generate_links_index(context, "[['<b>Menu</b>', 'gebr://menu']]", TRUE);
+			GebrGeoXmlDocument *menu = gebr_geoxml_object_get_owner_document(priv->object);
+			help = gebr_geoxml_document_get_help (menu);
+			if(strlen(help) > 0)
+				generate_links_index(context, "[['<b>Menu</b>', 'gebr://menu']]", TRUE);
+
 		} else if (type == GEBR_GEOXML_OBJECT_TYPE_FLOW) {
 			GString * list;
 			GebrGeoXmlSequence *program;
@@ -242,12 +248,16 @@ static void on_load_finished(WebKitWebView * web_view, WebKitWebFrame * frame, G
 			list = g_string_new("[");
 			gebr_geoxml_flow_get_program(GEBR_GEOXML_FLOW(priv->object), &program, 0);
 
-			for (gint i = 0; program != NULL; gebr_geoxml_sequence_next(&program), ++i)
-				g_string_append_printf(list, "%s['%s', 'gebr://prog%d']",
-						       i == 0? "":",",
-						       gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(program)), i);
+			for (gint i = 0; program != NULL; gebr_geoxml_sequence_next(&program), ++i) {
+				 help = gebr_geoxml_program_get_help (GEBR_GEOXML_PROGRAM (program));
+				if(strlen(help) > 0)
+					g_string_append_printf(list, "%s['%s', 'gebr://prog%d']",
+						       	   i == 0? "":",",
+						       			   gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(program)), i);
+			}
 			g_string_append(list, "]");
-			generate_links_index(context, list->str, FALSE);
+			if(strcmp(list->str,"[]") != 0)
+				generate_links_index(context, list->str, FALSE);
 			g_string_free(list, TRUE);
 		}
 	}
@@ -294,16 +304,23 @@ static WebKitNavigationResponse on_navigation_requested(WebKitWebView * web_view
 			object = GEBR_GEOXML_OBJECT(program);
 		}
 
-		gchar *help;
-		gchar *content;
+		const gchar *help;
+		GebrGeoXmlObjectType type;
+		type = gebr_geoxml_object_get_type(object);
 
-		content = gebr_geoxml_object_get_help_content (object);
-		help = gebr_geoxml_object_generate_help (object, content);
+		if (type == GEBR_GEOXML_OBJECT_TYPE_FLOW)
+			help = gebr_geoxml_document_get_help (GEBR_GEOXML_DOCUMENT (object));
+		else
+			help = gebr_geoxml_program_get_help (GEBR_GEOXML_PROGRAM (object));
+
+		if(strlen(help) == 0) {
+			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+						_("Invalid link"), _("Sorry, couldn't reach link."));
+			return WEBKIT_NAVIGATION_RESPONSE_IGNORE;
+		}
+
 		gebr_gui_html_viewer_widget_generate_links(self, object);
 		gebr_gui_html_viewer_widget_show_html(self, help);
-
-		g_free (help);
-		g_free (content);
 
 		return WEBKIT_NAVIGATION_RESPONSE_IGNORE;
 	}

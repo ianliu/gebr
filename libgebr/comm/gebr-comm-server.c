@@ -117,7 +117,7 @@ GebrGeoXmlFlow *gebr_comm_server_run_strip_flow(GebrGeoXmlFlow *flow,
 
 	/* Strip flow: remove helps and revisions */
 	gebr_geoxml_document_set_help(clone, "");
-	gebr_geoxml_flow_get_program(flow, &i, 0);
+	gebr_geoxml_flow_get_program(clone, &i, 0);
 	for (; i != NULL; gebr_geoxml_sequence_next(&i))
 		gebr_geoxml_program_set_help(GEBR_GEOXML_PROGRAM(i), "");
 

@@ -1,3 +1,84 @@
+2011-02-18  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fixed regression with trigger the next flow in queue.
+	* Updated portugese translation.
+
+2011-02-17  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Backed out changeset 869ba1d17436
+	* Merged 0.12 branch with default
+	* Leave initial status before sending the job
+	* Fixed GeBR issue status sending
+
+2011-02-16  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Makes GEBRD_LOG_LEVEL "compact" by default, use "verbose" if you
+	need.
+
+2011-02-15  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* More robust MOAB job status checking
+	* Fixed if condition
+	* Sanity checkings for MOAB
+
+2011-02-14  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed a bug when a failed job wouldn't trigger the next flow in
+	queue
+
+2011-02-11  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed a bug when cancelling queued flows
+	* Set GEBRD_LOG_LEVEL=compact in environment to shorten log messages
+	in stdout
+
+2011-02-09  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Treat checkjob errors on Netuno
+	* Tested and fixed netuno issues on daemon
+
+2011-02-09  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Apply new header names references
+
+2011-02-07  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fixed gebrd to use global nanoversion.
+
+2011-02-04  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Job now are really designed based on status. Queue code concentrated
+	on status change, where it should be.
+
+2011-02-03  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Many design flaws of GeBRD fixed
+	* Run job before sending it to the user
+
+2011-02-03  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Always update version details in about when debug is enabled. (Fixes
+	issue 567)
+
+2011-02-03  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Daemon was sending job status messages before the sending the job
+	itself
+
+2011-01-20  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Merged with tip
+
+2011-01-19  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Now flows has existence and read permission checks for the input
+	file and existence and write permission checks for output and error
+	files, on the execution moment.
+
+2011-01-18  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Merge 0.10 branch with default
+
 2011-01-13  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
 
 	* Close GeBR opened fd 3 at GeBRD

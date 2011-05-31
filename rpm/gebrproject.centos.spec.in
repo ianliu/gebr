@@ -1,0 +1,42 @@
+%define name @PACKAGE_NAME@
+%define version @PACKAGE_VERSION@
+%define release 1%{dist}
+
+Name: %{name}
+Version: %{version}
+Release: %{release}
+License: GPL
+Group: Application/Misc
+URL: http://www.gebrproject.com
+Packager: Fabricio Matheus Goncalves <fmatheus@gebrproject.com>
+Source: %{name}-%{version}.tar.gz
+BuildRoot: /tmp/%{name}-%{version}
+Summary: Seismic processing environment
+%description
+GêBR is a simple graphical interface which facilitates geophysical data processing. 
+GêBR is not a package for processing, rather it is designed to integrate a large 
+variety of free processing packages.
+What can GeBR do:
+    * Handle Projects and Lines
+    * Assemble and run processing sequences
+    * Act as an interface to many freely-available seismic-processing
+      packages (such as Seismic Unix, Madagascar, etc)
+
+%prep
+%setup -q
+
+%install
+rm -rf %{buildroot}
+mkdir -p %{buildroot}/opt
+#cp -a /root/gebr-tmp-dir .
+./rpm/gebr-centos-install.sh
+cp -a /opt/gebrproject %{buildroot}/opt/gebrproject
+
+%clean
+rm -rf %{buildroot}
+
+%files
+%defattr(-,root,root)
+/*
+
+%changelog

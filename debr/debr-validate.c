@@ -429,7 +429,7 @@ static void validate_append_text(struct validate *validate, const gchar * format
 
 	va_start(argp, format);
 	string = g_strdup_vprintf(format, argp);
-	validate_append_text_with_tag(validate, NULL, string);
+	validate_append_text_with_tag(validate, NULL, "%s", string);
 	va_end(argp);
 	g_free(string);
 }

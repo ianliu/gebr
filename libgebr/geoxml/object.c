@@ -245,7 +245,8 @@ gchar *gebr_geoxml_object_get_help_content_from_str (const gchar *str)
 	// We only needed 'html' for gebr_geoxml_tmpl, free it now
 	g_string_free (html, TRUE);
 
-	regex = g_regex_new ("<div class=\"content\">(.*?)<\\/div>",
+	//Old help does not have end content mark
+	regex = g_regex_new ("<div class=\"content\">(.*?)</div>[^<]*<div class=\"navigation\">",
 			     G_REGEX_DOTALL, 0, NULL);
 
 	if (g_regex_match (regex, str, 0, &match)) {
@@ -256,7 +257,7 @@ gchar *gebr_geoxml_object_get_help_content_from_str (const gchar *str)
 	}
 
 	g_regex_unref (regex);
-	regex = g_regex_new ("<body[^>]*>(.*?)<\\/div>",
+	regex = g_regex_new ("<body[^>]*>(.*?)<\\/body>",
 			     G_REGEX_DOTALL, 0, NULL);
 
 	if (g_regex_match (regex, str, 0, &match)) {
@@ -271,4 +272,21 @@ gchar *gebr_geoxml_object_get_help_content_from_str (const gchar *str)
 	// We could not get the 'cnt' tag, nor the '<div class="content">', nor the <body>.
 	// Return the same string we've got!
 	return g_strdup (str);
+}
+
+void gebr_geoxml_object_set_help (GebrGeoXmlObject *object, const gchar *help)
+{
+	GebrGeoXmlObjectType type;
+
+	g_return_if_fail (object != NULL);
+
+	type = gebr_geoxml_object_get_type(object);
+
+	g_return_if_fail (type == GEBR_GEOXML_OBJECT_TYPE_FLOW ||
+			      type == GEBR_GEOXML_OBJECT_TYPE_PROGRAM);
+
+	if (type == GEBR_GEOXML_OBJECT_TYPE_FLOW)
+		gebr_geoxml_document_set_help(GEBR_GEOXML_DOCUMENT(object), help);
+	else
+		gebr_geoxml_program_set_help(GEBR_GEOXML_PROGRAM(object), help);
 }

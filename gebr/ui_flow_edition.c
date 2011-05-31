@@ -239,6 +239,8 @@ struct ui_flow_edition *flow_edition_setup_ui(void)
 	gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(ui_flow_edition->menu_view),
 						  (GebrGuiGtkPopupCallback) flow_edition_menu_popup_menu,
 						  ui_flow_edition);
+	g_signal_connect(ui_flow_edition->menu_view, "key-press-event",
+			 G_CALLBACK(flow_edition_component_key_pressed), ui_flow_edition);
 	g_signal_connect(GTK_OBJECT(ui_flow_edition->menu_view), "row-activated",
 			 G_CALLBACK(flow_edition_menu_add), ui_flow_edition);
 	gebr_gui_gtk_tree_view_fancy_search(GTK_TREE_VIEW(ui_flow_edition->menu_view), MENU_TITLE_COLUMN);
@@ -542,6 +544,8 @@ static void flow_edition_component_editing_started(GtkCellRenderer *renderer, Gt
 	const gchar *output;
 	const gchar *error;
 
+	gtk_window_remove_accel_group(GTK_WINDOW(gebr.window), gebr.accel_group_array[gebr.last_notebook]);
+
 	gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_OPEN);
 	g_object_set_data(G_OBJECT(entry), "path", g_strdup(path));
 	g_object_set_data(G_OBJECT(entry), "renderer", renderer);
@@ -573,6 +577,8 @@ static void flow_edition_component_editing_started(GtkCellRenderer *renderer, Gt
 static void flow_edition_component_edited(GtkCellRendererText *renderer, gchar *path, gchar *new_text)
 {
 	GtkTreeIter iter;
+
+	gtk_window_add_accel_group(GTK_WINDOW(gebr.window), gebr.accel_group_array[gebr.last_notebook]);
 
 	gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter, path);
 

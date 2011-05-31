@@ -65,8 +65,9 @@ struct _GebrGeoXmlValidate {
 		gboolean category;
 		gboolean mhelp;
 		gboolean progs;
-                gboolean url;
+		gboolean url;
 		gboolean params;
+		gboolean verbose;
 		/**
 		 * Not influenced by all
 		 */

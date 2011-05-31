@@ -1291,6 +1291,18 @@ gboolean menu_dialog_setup_ui(gboolean new_menu)
 
 	menu_selected();
 
+	debr_help_update (GEBR_GEOXML_OBJECT  (debr.menu));
+	menu_saved_status_set(MENU_STATUS_UNSAVED);
+
+	GebrGeoXmlSequence *seq;
+	gebr_geoxml_flow_get_program(debr.menu, &seq, 0);
+	for (; seq != NULL; gebr_geoxml_sequence_next(&seq))
+	{
+		GebrGeoXmlProgram *prog;
+		prog = GEBR_GEOXML_PROGRAM(seq);
+		debr_help_update(GEBR_GEOXML_OBJECT(prog));
+	}
+
 out:
 	gtk_widget_destroy(dialog);
 	return ret;

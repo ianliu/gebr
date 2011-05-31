@@ -1,3 +1,860 @@
+2011-04-01  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Shortcut to run menu-query on eclipse.
+	* Code cleanup, remove some unnecessary casts.
+
+2011-04-01  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Adding missing headers to eclipse build.
+	* Fixed spaces been added at label and descriptions at save time,
+	turning off xml line wrapping.
+
+2011-03-31  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Improvements on program menu-query and fixes segfault when have
+	special character on help.
+	* Fixes segfault when validate menu with special character on label.
+
+2011-03-29  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Eliminates null at the end of xml documents.
+	* Do not generate links to menu or program without help, fixes
+	navigation to empty pages.
+
+2011-03-28  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fixes shortcut to configure gebrproject-0.12.
+	* Fixes the help update after menu or program properties edition.
+	* Create functions to easy update help.
+
+2011-03-28  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Don't generate help when viewing
+
+2011-03-24  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* New configuration for eclipse to run 0.12 on it's own project named
+	gebrproject-0.12.
+	* Fixed GeBR should never starts without local server.
+	* Fixed button cancel of job control to act with queues.
+
+2011-03-23  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Added libgdome to eclipse indexer.
+	* Fixed regexp to fetch content of old helps, since we have
+	navigation, hopefully since ever. (Fixes issue 916)
+
+2011-03-21  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Indent transformation to easy synchronize xml changes, use with
+	caution.
+	* Removed redundant section in new user guide organization.
+	* Synchronized index between user guide translations.
+	* Trick the xsl indent to not eat a whitespace.
+	* Formatted docbook source to make diff work better.
+	* Force eclipse to run english version of gebr.
+	* Added tag 0.11.9 for changeset 3dedf7818bd2
+	* New pre release with fixes after 0.11.8.
+
+2011-03-21  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Merged 'mcookie fix' and 'help strip' fix
+
+2011-03-18  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Fix mcookie getting loop iteration
+
+2011-03-18  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed a bug where executing a flow stripped its programs help
+
+2011-03-15  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fixed how to get help content for old helps. (Fixes issue 916)
+	* Fixed when delete key is pressed on edition of I/O at flow edition.
+	(Fixes issue 919)
+
+2011-03-11  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Cleanup ssh proccess after it finished
+
+2011-03-11  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Now, space key pressed on flow editor's menus list just change
+	status of program on Flow sequence.
+
+2011-03-03  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Now Cancel button works at Project/Line creation dialog.
+
+2011-03-02  Renan Giarola  <renangiarola@gebrproject.com>
+
+	* Doc screenshot update
+
+2011-03-01  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fixed job control toolbar actions to work with queues.
+
+2011-03-01  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Added tag 0.11.8 for changeset 44ca21d1cb04
+	* Finished English revision before next release.
+	* Revised English for all package's descriptions.
+
+2011-02-28  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Added default user doc css than hides figure's titles. (Fixes issue
+	829)
+	* Updated job control buttons in user doc. (Fixes issue 829)
+	* Fixed how to change program's state in both user guides.
+	* Beautify emails.
+	* Revised all captions using English version as reference.
+
+2011-02-28  Artur Gower  <arturgower@gebrproject.com>
+
+	* Revised the use of English language in the file debian/control
+
+2011-02-28  Renan Giarola  <renangiarola@gebrproject.com>
+
+	* Doc screenshots update in pt_br.
+
+2011-02-28  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Revised English when taking a flow snapshot.
+	* Fixed portuguese translation after english revision.
+	* Fixed markup after english revision.
+
+2011-02-23  Artur Gower  <arturgower@gebrproject.com>
+
+	* I corrected the English in the file debian/control
+
+2011-02-25  Priscila Moraes de Souza  <pris.moraess@gebrproject.com>
+
+	* Updated images properties/path line
+
+2011-02-23  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fixed the size of the icons in user documentation.
+	* Removed warning when there is no menus at /usr/local.
+	* Fixed absolute links with relative ones.
+	* Workaround for gtk-doc does not processing multiple doc source dirs.
+
+2011-02-23  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed path's for common images in GeBR's documentations
+	* Common images are now installed at $(datadir)/docs/gebr/common-
+	images
+	* Moved all common docs images from {en,pt_BR}/images to common-images
+
+2011-02-23  Renan Giarola  <renangiarola@gebrproject.com>
+
+	* Doc update in 0.12
+
+2011-02-23  Gabriel Sobral <sobral@gebrproject.com>
+
+	* Eclipse laucher to run gebr in portuguese.
+	* Changed properties window title. (Fixes issue 910)
+
+2011-02-22  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Recovery line paths on FileChooser of flow I/O selection. (Fixes
+	issue 821)
+
+2011-02-18  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Revamped debian package. (Fixes issue 722)
+	* Fixed BuildRequires, Requires, and files in each rpm package.
+
+2011-02-20  Artur Gower  <arturgower@gebrproject.com>
+
+	* Translation: two apostrophe s in titles had previously excaped me,
+	now they where cornered and shot.
+	* Translation, revised all key words, and changed the tedious "press
+	the right mouse button on" for "right-click" on.
+	* Translated some lost portugues captions, as well as some corrections
+	to titles such as Lines properties which has been changed to The
+	Line's "New Line" properties.
+
+2011-02-18  Renan Giarola  <renangiarola@gebrproject.com>
+
+	* Screenshots update in Doc
+
+2011-02-18  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fixed regression with trigger the next flow in queue.
+	* Updated portugese translation.
+	* Applied many english improvements.
+
+2011-02-17  Artur Gower  <arturgower@gebrproject.com>
+
+	* Finished translated the complete guide.
+
+2011-02-17  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Backed out changeset 869ba1d17436
+	* Merged 0.12 branch with default
+	* Leave initial status before sending the job
+	* Fixed job's issues printing and put an icon for a "waiting server
+	details" job
+	* Fixed GeBR issue status sending
+
+2011-02-14  Renan Giarola  <renangiarola@gebrproject.com>
+
+	* Doc screenshot update
+
+2011-02-16  Artur Gower  <arturgower@gebrproject.com>
+
+	* Transalted the Flow editor tab section 3.3
+
+2011-02-16  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fixed gebr launcher to prefer development gebrd server.
+	* Cleanup debug messages on help callback
+	* Makes GEBRD_LOG_LEVEL "compact" by default, use "verbose" if you
+	need.
+	* Uses system catalog to find stylesheet path.
+	* Fixes including libtidy in rpm distros.
+
+2011-02-15  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* More robust MOAB job status checking
+	* Fixed if condition
+	* Sanity checkings for MOAB
+
+2011-02-14  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Added launchers for gebr tools to easy life in eclipse.
+
+2011-02-14  Artur Gower  <arturgower@gebrproject.com>
+
+	* Translated the rest of section 3.2
+
+2011-02-14  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Improved eclipse setup.
+	* More make distcheck fixes.
+	* Fixed gtk-doc version and docbook path for old systems.
+	* Fixed make distcheck and removed placeholder for debr user's guide.
+	(Fixed issue 852)
+
+2011-02-14  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed a bug when a failed job wouldn't trigger the next flow in
+	queue
+
+2011-02-11  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fixed some links.
+	* Merged last updates at portuguese guide in the english one.
+
+2011-02-11  Renan Giarola  <renangiarola@gebrproject.com>
+
+	* Replaced screenshot for english doc. part2
+
+2011-02-11  Priscila Moraes de Souza  <pris.moraess@gebrproject.com>
+
+	* Replaced screeshots of english doc.
+
+2011-02-11  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Converted to utf8 enconding before merge.
+
+2011-02-11  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed a bug when cancelling queued flows
+	* Removed unused code for cancelling jobs
+	* Set GEBRD_LOG_LEVEL=compact in environment to shorten log messages
+	in stdout
+	* Fixed some autogen warnings
+	* Disabling DeBR's userdoc for it is not working
+	* Using xsltproc to generate DeBR's userdoc
+	* Fixed help callback in GeBR
+	* Reverting relative paths for images for pt_BR/gebr.xml
+	* Added makefiles for en/ and pt_BR/ directories
+	* Moved gebr.xml to en/gebr.xml and gebr-pt.xml to pt_BR/gebr.xml
+	* Added a directory for en and pt_BR languages for GeBR userdoc
+
+2011-02-10  Artur Gower  <arturgower@gebrproject.com>
+
+	* Translated the majority of section 3.2
+
+2011-02-10  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fixed nanoversion check for debug flag before it has been defined.
+
+2011-02-10  Artur Gower  <arturgower@gebrproject.com>
+
+	* More translations applied to gebr guide.
+
+2011-02-09  Artur Gower  <arturgower@gebrproject.com>
+
+	* Translated almost all titles pertaining to the table of contents.
+
+2011-02-09  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Fixed gebr_g_string_replace
+
+2011-02-09  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Using xsltproc with style customization. (Fixes issue 853)
+	* Converted to utf8 enconding.
+	* Defined document language and fixed xref's.
+
+2011-02-09  Priscila Moraes de Souza  <pris.moraess@gebrproject.com>
+
+	* Added caption to the figures.
+
+2011-02-09  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* When a new flow was created, it io components are made clean.
+
+2011-02-09  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Show ssh errors on the server list dialog
+	* Small quoting fix
+	* Treat checkjob errors on Netuno
+
+2011-02-09  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Fixed bug at flow input checking with multiple selection.
+
+2011-02-09  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Tested and fixed netuno issues on daemon
+	* Better top label on job control (on branch 0.12)
+
+2011-02-09  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Added const modifier for menu_new_from_menu parameters
+	* Fixed a missing include in test-gebr-tar.c
+
+2011-02-09  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Apply new header names references
+	* Upgraded naming convention for gebr-comm and add job class file
+
+2011-02-09  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Inserted flow checking before execution for multiple flows executed
+	immediatly in parallel.
+	* Fixed minor bug at single flow execution.
+
+2011-02-08  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Fixed GêBR warning dialogs for multiple flow execution.
+
+2011-02-08  Artur Gower  <arturgower@gebrproject.com>
+
+	* Translated the Line's preferred paths section.
+
+2011-02-08  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Solved a SEGFAULT when a menu without program was reverted
+
+2011-02-07  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Added tag 0.11.2 for changeset 5b6fd008f1f8
+	* Bump version to 0.11.2.
+	* Fixed Build-Depends, package install contents and overrides
+	dh_auto_configure.
+	* Fixed gebrd to use global nanoversion.
+	* Disabled test than dependents on x window.
+	* Fixed test dependency on dtd installation.
+	* Fixed free of null pointer.
+	* Do not display nanoversion if not with debug enabled.
+
+2011-02-07  Priscila Moraes de Souza  <pris.moraess@gebrproject.com>
+
+	* Replaced links by xref.
+
+2011-02-07  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Created a new dialog from scratch to take more control of the
+	elements packaged
+	* Added a text view at the project/line deletion dialog
+
+2011-02-07  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Now menus created from flows have the flow title.
+	* Improved flow execution check at GêBR. Now it checks for broken
+	pipes.
+	* Now flow treeview is updated when you load a flow revision.
+
+2011-02-06  Artur Gower  <arturgower@gebrproject.com>
+
+	* Editing a Project of Lines properties
+	* Translated section about organizing and configuring Flows
+
+2011-02-04  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed distcheck target by inserting 'html-ok' stamp file into
+	CLEANFILES
+
+2011-02-04  Artur Gower  <arturgower@gebrproject.com>
+
+	* Continuing translation of section 3.
+
+2011-02-04  Priscila Moraes de Souza  <pris.moraess@gebrproject.com>
+
+	* Revisions many small fixes after review 27.
+
+2011-02-04  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Aligning Line with Project if it has no parent selected
+
+2011-02-04  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed gebr doc compilation
+
+2011-02-04  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Dialog to alert of a project that was not empty
+	* Differs the deletion dialog from the existence of single and
+	multiple documents selected
+
+2011-02-04  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed a bug where an invalid pointer was being used
+
+2011-02-04  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Some beautifications on Flow Edition IO components
+
+2011-02-04  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed help sync when navigating to/from programs or menus
+	* get_help_content function tries to fetch the <body> in case content
+	is not present
+
+2011-02-04  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Added tag 0.11.1 for changeset d007d614ed28
+	* Bump verstion to 0.11.1 to review of Sprint27.
+	* Credits updated.
+
+2011-02-04  Artur Gower  <arturgower@gebrproject.com>
+
+	* Translating titles from seciton 3.
+
+2011-02-04  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Asks for user confirmation to delete project/lines and delete them
+	if confirmed.
+
+2011-02-03  Ricardo Biloti  <biloti@gebrproject.com>
+
+	* Commented out info tag of screenshots.
+
+2011-02-04  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Job now are really designed based on status. Queue code concentrated
+	on status change, where it should be.
+
+2011-02-03  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fixed segfault when missing configuration and a bug when projects
+	have the same title. (Fixes issue 841)
+
+2011-02-03  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Converts invalid integer to empty string. (Fixes issue 844)
+
+2011-02-03  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Workaround maximize ckeditor javascript warning.
+
+2011-02-03  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Using the new accessor for the help content
+	* Refactored accessor for help content of menus or programs
+
+2011-02-03  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Many design flaws of GeBRD fixed
+
+2011-02-03  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed content fetching for old DeBR helps
+
+2011-02-03  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Preserve the projects order after restart and enable the drag'n drop
+	for projects
+
+2011-02-03  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Items added to sequence edit widgets are now selected
+
+2011-02-03  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Run job before sending it to the user
+	* Fixed compilation on newers versions of autoconf
+
+2011-02-03  Ricardo Biloti  <biloti@gebrproject.com>
+
+	* Suppress of building-menus-from-flow functionality description from
+	GeBR doc
+
+2011-02-03  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Fixes to compile GeBR on Netuno
+
+2011-02-03  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Always update version details in about when debug is enabled. (Fixes
+	issue 567)
+
+2011-02-03  Artur Gower  <arturgower@gebrproject.com>
+
+	* Translated, almost completly, the section: Projects, Lines and
+	Flows: an overview.
+
+2011-02-03  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Daemon was sending job status messages before the sending the job
+	itself
+
+2011-02-03  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed uninstall-hook target in libgebr/gui/ckeditor
+	* GebrTar test saves the file in /tmp, so distcheck works
+
+2011-02-02  Ricardo Biloti  <biloti@gebrproject.com>
+
+	* Fixing install guide link and correcting some typos
+
+2011-02-02  Priscila Moraes de Souza  <pris.moraess@gebrproject.com>
+
+	* Updated images input/output files
+
+2011-02-02  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fixes bug in help's template path. (Fixes issue 826)
+
+2011-02-02  Artur Gower  <arturgower@gebrproject.com>
+
+	* Translated the sectio: What is GeBr?
+
+2011-02-02  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Implemented menu creation from .flwz files
+	* Fixed a memory leak in gebr flow import
+	* Implemented import for .flwz in GeBR
+
+2011-02-02  Ricardo Biloti  <biloti@gebrproject.com>
+
+	* Minor fixes and text identation to improve readability
+
+2011-02-02  Artur Gower  <arturgower@gebrproject.com>
+
+	* What is GeBR?
+
+2011-02-02  Ricardo Biloti  <biloti@gebrproject.com>
+
+	* Minor fixes including enconde bug
+
+2011-02-02  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Implemented export for multiple flows in GeBR
+	* Fixed an uninitialized variable in ui_flow in gebr
+	* Fixed type mismatch in debr program.c
+	* Fixed a gcc warning for uninitialized variable in libgebr object.c
+	* Fixed a bug in menu_edit program
+
+2011-02-02  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Fixed a bug when on the flow edition treeview, remains only one
+	component configured and the sensitiveness was not applied.
+
+2011-02-01  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Multiple selection check for project deletion
+
+2011-02-01  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Now flow revision can save using multiple selection.
+
+2011-02-01  Ricardo Biloti  <biloti@gebrproject.com>
+
+	* Further syntax cleanup
+
+2011-02-01  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Fixed uninstall target in GeBR
+	* Included check_sensitiveness on Drag and Drop function
+
+2011-02-01  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed uninstall target in GeBR
+
+2011-02-01  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Refactored line_delete and project_delete to work with iters
+
+2011-02-01  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* If the input/output/error components are insensitive it will be non
+	editable too.
+
+2011-02-01  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed a memory leak in GebrTar unit test
+
+2011-02-01  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Merged default with job-temporary-id
+
+2011-02-01  Ricardo Biloti  <biloti@gebrproject.com>
+
+	* More tag closing adjustments
+
+2011-02-01  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Updated hgignore
+	* Added unit tests for tar creation interface
+	* Added interface for creating tar files
+
+2011-02-01  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fixed segfault for empty or edited help. (Fixes issue 826)
+	* Fixes codeset for libgebr package. (Fixes issue 839)
+
+2011-02-01  Ricardo Biloti  <biloti@gebrproject.com>
+
+	* Minor fixes concerning tag closing and newlines
+
+2011-02-01  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* More sensitiveness checks around the source code
+
+2011-02-01  Ricardo Biloti  <biloti@gebrproject.com>
+
+	* docbook syntax fixed
+
+2011-02-01  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Added a new column to the model to control the sensitiveness of Flow
+	Edition input/output/error components
+
+2011-02-01  Priscila Moraes de Souza  <pris.moraess@gebrproject.com>
+
+	* Added sections about flow queues
+
+2011-02-01  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Fixed empty server add bug at server list.
+
+2011-02-01  Priscila Moraes de Souza  <pris.moraess@gebrproject.com>
+
+	* Added sections about user comments edition and report viewer.
+
+2011-02-01  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed automatic update of properties on View Help, in DeBR
+	* Fixed sensitiveness of 'View Help' button in DeBR
+	* Fixed focus bug when clicking the Add button in CategoryEdit and
+	LinePaths
+	* Fixed some i18n bugs in DeBR
+
+2011-01-31  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* New icons for io selection at flow edition.
+
+2011-01-31  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Added test tar file into EXTRA_DIST
+	* Added unit tests for GebTar module
+	* Added GebrTar module into libgebr
+
+2011-01-31  Renan Giarola  <renangiarola@gebrproject.com>
+
+	* Images update in Doc.
+
+2011-01-31  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* More i18n bugs fixed
+	* Now when a flow input/output/error component are changed, the Flow
+	notebook are updated
+	* Now when a flow input/output/error component are changed, it content
+	are saved
+
+2011-01-31  Priscila Moraes de Souza  <pris.moraess@gebrproject.com>
+
+	* Revision in flow input/output/error component
+
+2011-01-31  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* There are no more context menu for Input/Output/Error flow component
+
+2011-01-31  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Enabled multiple selection for Project/Line and fixed Export action
+
+2011-01-31  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* The help message that is shown when input/output/error components
+	are empty, now has the italics markup
+
+2011-01-31  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fixed make test target for docs.
+
+2011-01-31  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Some i18n bugs fixed
+	* On DéBR the Ctrl+q hot key now was fixed
+
+2011-01-28  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Credits fixed.
+	* Simplified logic of configuration status toggle, now starts allways
+	configuring if possible. (See issue 466 and issue 595)
+	* Tranlations updates and fixes.
+
+2011-01-28  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* When input/output/error components are empty, a help message is
+	shown
+	* Activated tooltips for Input/Output/Error components
+
+2011-01-28  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Merged light-help-sync into default
+
+2011-01-27  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Merged light help sync into default
+
+2011-01-26  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Del hot key on the input/output/error components, removes it
+	contents
+	* Del hot key doesn't remove the component related to error file path
+	* Checking if the duplicate are the same as the one in edit mode
+	* Removes all exceeding forward slash on a folder path, when doing a
+	rename operation on the Line Path Sequence Edit
+
+2011-01-25  Priscila Moraes de Souza  <pris.moraess@gebrproject.com>
+
+	* Updated GeBR Documentation section 3
+
+2011-01-24  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Added abstract method for HelpEditWidget, called when Preview is
+	enabled
+	* Removed the content template file from Makefile.am
+	* Reconsidering the separation of help-template's content
+
+2011-01-24  Renan Giarola  <renangiarola@gebrproject.com>
+
+	* Doc update in sections 3 and 4.
+
+2011-01-24  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Added debr's test binary into hgignore
+	* Added debr-tmpl module for working with HTML templates
+	* Separated help content from its template file, in DeBR
+
+2011-01-24  Priscila Moraes de Souza  <pris.moraess@gebrproject.com>
+
+	* Updated Comment edition and line path.
+
+2011-01-20  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Updated pictures in secion 2 of user doc.
+	* Undo broken merge.
+
+2011-01-20  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Merged with tip
+	* Added icon to choose file using gtk's file chooser dialog for I/O/E
+	* Added error item in the flow component list and removed flow io
+	dialog code
+	* Quit if user don't confirm first run configuration and keep
+	first_run state (no config file)
+	* Always ask for config confirm if new config is detected
+	* Documented and fixed config load order
+
+2011-01-20  Priscila Moraes de Souza  <pris.moraess@gebrproject.com>
+
+	* Fixes images in the job control section.
+
+2011-01-20  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Removed mandriva and opensuse spec files
+
+2011-01-17  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Removed fedora targets from Makefile.am
+
+2011-01-19  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Now flows has existence and read permission checks for the input
+	file and existence and write permission checks for output and error
+	files, on the execution moment.
+
+2011-01-19  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Minor changes at code comments.
+	* Now gebr resolves relative/ambiguous paths. (ex. /home/user/../ =
+	/home)
+
+2011-01-19  Priscila Moraes de Souza  <pris.moraess@gebrproject.com>
+
+	* Uptdated documentation
+
+2011-01-18  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Merged last fix
+
+2011-01-18  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Sensitiveness of context menu when job status and selection changed
+
+2011-01-18  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Fixes init sequence and cleanup config code
+	* Merge invalid document fix
+	* Merge 0.10 branch with default
+
+2011-01-17  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Now line paths ending with "/" are considered equal to paths without
+	"/" (/home = /home/)
+
+2011-01-14  Priscila Moraes de Souza  <pris.moraess@gebrproject.com>
+
+	* Uptade user documentation
+
+2011-01-14  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Updated user documentation
+
+2011-01-14  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed the plus buttons for other types of sequence edit
+
+2011-01-13  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Now GeBR checks if a flow needs an input file before submit. Also
+	checks if the flow has configured programs.
+
+2011-01-13  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* The state of last GêBR run is saved on config using project/line
+	filename instead of its treepath
+	* Wrapper functions to GKeyFile
+
+2011-01-13  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed the plus button for enum widget
+
+2011-01-13  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Now when the user selects the queue name on Job Control notebook and
+	chooses some actions on the context menu, it will be applied to all
+	jobs on that queue
+
 2011-01-13  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
 
 	* Close GeBR opened fd 3 at GeBRD

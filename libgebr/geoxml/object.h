@@ -86,5 +86,13 @@ gchar *gebr_geoxml_object_get_help_content (GebrGeoXmlObject *object);
  */
 gchar *gebr_geoxml_object_get_help_content_from_str (const gchar *str);
 
+/**
+ * gebr_geoxml_object_set_help:
+ * @object:
+ *
+ * Set help in document or program
+ */
+void gebr_geoxml_object_set_help (GebrGeoXmlObject *object, const gchar *help);
+
 G_END_DECLS
 #endif				//__GEBR_GEOXML_OBJECT_H

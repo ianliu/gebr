@@ -90,9 +90,8 @@ m4/ltversion.m4
 m4/lt~obsolete.m4
 marshalers.[ch]
 missing
-rpm/gebrproject.fedora.spec
-stamp*
-stamp-it
+rpm/gebrproject.*.spec
+stamp-*
 tags
 
 syntax: regexp

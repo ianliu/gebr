@@ -1,3 +1,95 @@
+2011-03-31  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fixes segfault when validate menu with special character on label.
+
+2011-03-28  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fixes the help update after menu or program properties edition.
+	* Create functions to easy update help.
+
+2011-03-28  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Don't generate help when viewing
+
+2011-02-18  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Updated portugese translation.
+	* Applied many english improvements.
+
+2011-02-17  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Backed out changeset 869ba1d17436
+	* Merged 0.12 branch with default
+
+2011-02-09  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Added const modifier for menu_new_from_menu parameters
+
+2011-02-08  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Fixed GêBR warning dialogs for multiple flow execution.
+
+2011-02-08  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Solved a SEGFAULT when a menu without program was reverted
+
+2011-02-07  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Now menus created from flows have the flow title.
+
+2011-02-03  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Using the new accessor for the help content
+	* Fixed content fetching for old DeBR helps
+
+2011-02-02  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fixes bug in help's template path. (Fixes issue 826)
+
+2011-02-02  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Implemented menu creation from .flwz files
+	* Fixed type mismatch in debr program.c
+
+2011-02-01  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fixed segfault for empty or edited help. (Fixes issue 826)
+
+2011-02-01  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed automatic update of properties on View Help, in DeBR
+	* Fixed sensitiveness of 'View Help' button in DeBR
+	* Fixed focus bug when clicking the Add button in CategoryEdit and
+	LinePaths
+	* Fixed some i18n bugs in DeBR
+
+2011-01-31  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* On DéBR the Ctrl+q hot key now was fixed
+
+2011-01-28  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Merged light-help-sync into default
+
+2011-01-27  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Merged light help sync into default
+
+2011-01-24  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Removed the content template file from Makefile.am
+	* Reconsidering the separation of help-template's content
+	* Added debr-tmpl module for working with HTML templates
+	* Separated help content from its template file, in DeBR
+
+2011-01-18  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Merge 0.10 branch with default
+
+2011-01-13  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed the plus button for enum widget
+
 2011-01-12  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
 
 	* Last i18n for 0.10.1 release
