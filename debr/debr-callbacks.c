@@ -26,13 +26,13 @@
 #include <libgebr/gui/gui.h>
 #include <libgebr/geoxml/gebr-geoxml-validate.h>
 
-#include "callbacks.h"
-#include "defines.h"
+#include "debr-callbacks.h"
+#include "debr-defines.h"
 #include "debr.h"
-#include "preferences.h"
-#include "parameter.h"
-#include "menu.h"
-#include "program.h"
+#include "debr-preferences.h"
+#include "debr-parameter.h"
+#include "debr-menu.h"
+#include "debr-program.h"
 
 void on_notebook_switch_page(GtkNotebook *notebook, GtkNotebookPage *page, guint page_num)
 {

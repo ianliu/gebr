@@ -23,9 +23,9 @@
 #include <libgebr/gui/gebr-gui-utils.h>
 
 #include "debr.h"
-#include "callbacks.h"
-#include "parameter.h"
-#include "parametergroup.h"
+#include "debr-callbacks.h"
+#include "debr-parameter.h"
+#include "debr-parametergroup.h"
 
 /*
  * Declarations

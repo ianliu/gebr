@@ -24,7 +24,7 @@
 #include <libgebr/geoxml/geoxml.h>
 
 #include "debr-help-edit-widget.h"
-#include "defines.h"
+#include "debr-defines.h"
 
 /*
  * HTML_HOLDER:

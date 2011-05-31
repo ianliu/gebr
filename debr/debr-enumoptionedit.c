@@ -19,7 +19,7 @@
 #include <libgebr/gui/gebr-gui-utils.h>
 #include <glib/gi18n.h>
 
-#include "enumoptionedit.h"
+#include "debr-enumoptionedit.h"
 #include "debr-validate.h"
 
 /*

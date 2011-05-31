@@ -340,7 +340,7 @@ debr/Makefile
 debr/data/Makefile
 debr/data/debr.desktop.in
 debr/po/Makefile.in
-debr/defines.h
+debr/debr-defines.h
 debr/tests/Makefile
 
 ])

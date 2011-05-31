@@ -22,10 +22,10 @@
 #include <libgebr/gui/gebr-gui-utils.h>
 #include <libgebr/gui/gebr-gui-program-edit.h>
 
-#include "program.h"
+#include "debr-program.h"
 #include "debr.h"
-#include "callbacks.h"
-#include "help.h"
+#include "debr-callbacks.h"
+#include "debr-help.h"
 
 /*
  * Declarations

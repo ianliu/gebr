@@ -15,30 +15,21 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <locale.h>
+/**
+ * @file debr-preferences.h Preferences interface for DeBR
+ * @ingroup debr
+ */
 
-#include <gtk/gtk.h>
+#ifndef __PREFERENCES_H
+#define __PREFERENCES_H
 
-#include <libgebr/gui/gebr-gui-icons.h>
-#include <libgebr/libgebr.h>
+G_BEGIN_DECLS
 
-#include "defines.h"
-#include "interface.h"
-#include "debr.h"
+/**
+ * Create and show preferences dialog; if ok, save config.
+ */
+void preferences_dialog_setup_ui(void);
 
-int main(int argc, char *argv[])
-{
-	gebr_libinit(GETTEXT_PACKAGE, argv[0]);
+G_END_DECLS
 
-	g_thread_init(NULL);
-	gtk_init(&argc, &argv);
-	setlocale(LC_ALL, "");
-	setlocale(LC_NUMERIC, "C");
-
-	gebr_gui_setup_icons();
-	gebr_gui_setup_theme();
-	debr_setup_ui();
-	gtk_main();
-
-	return 0;
-}
+#endif				//__PREFERENCES_H

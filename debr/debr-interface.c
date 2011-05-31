@@ -22,13 +22,13 @@
 
 #include <glib/gi18n.h>
 
-#include "interface.h"
+#include "debr-interface.h"
 #include "debr.h"
-#include "defines.h"
-#include "callbacks.h"
-#include "menu.h"
-#include "program.h"
-#include "parameter.h"
+#include "debr-defines.h"
+#include "debr-callbacks.h"
+#include "debr-menu.h"
+#include "debr-program.h"
+#include "debr-parameter.h"
 
 /*
  * Prototypes

@@ -26,14 +26,14 @@
 #include <libgebr/validate.h>
 #include <libgebr/gui/gui.h>
 
-#include "menu.h"
-#include "defines.h"
+#include "debr-menu.h"
+#include "debr-defines.h"
 #include "debr.h"
-#include "callbacks.h"
-#include "help.h"
-#include "program.h"
-#include "interface.h"
-#include "categoryedit.h"
+#include "debr-callbacks.h"
+#include "debr-help.h"
+#include "debr-program.h"
+#include "debr-interface.h"
+#include "debr-categoryedit.h"
 #include "debr-help-edit-widget.h"
 
 /*

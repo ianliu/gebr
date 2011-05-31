@@ -15,6 +15,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 include $(top_srcdir)/Makefile.decl
 
+SUBDIRS = . data po tests
+
 bin_PROGRAMS = debr
 
 debrgladedir = $(datadir)/debr/glade/
@@ -22,35 +24,35 @@ debrglade_DATA = menu-dialog-save-ui.glade
 
 noinst_LIBRARIES = libdebr.a
 libdebr_a_SOURCES = \
-	callbacks.c \
-	callbacks.h \
-	categoryedit.c \
-	categoryedit.h \
+	debr-callbacks.c \
+	debr-callbacks.h \
+	debr-categoryedit.c \
+	debr-categoryedit.h \
 	debr-help-edit-widget.c \
 	debr-help-edit-widget.h \
 	debr-validate.c \
 	debr-validate.h \
 	debr.c \
 	debr.h \
-	enumoptionedit.c \
-	enumoptionedit.h \
-	help.c \
-	help.h \
-	interface.c \
-	interface.h \
-	menu.c \
-	menu.h \
-	parameter.c \
-	parameter.h \
-	parametergroup.c \
-	parametergroup.h \
-	preferences.c \
-	preferences.h \
-	program.c \
-	program.h \
+	debr-enumoptionedit.c \
+	debr-enumoptionedit.h \
+	debr-help.c \
+	debr-help.h \
+	debr-interface.c \
+	debr-interface.h \
+	debr-menu.c \
+	debr-menu.h \
+	debr-parameter.c \
+	debr-parameter.h \
+	debr-parametergroup.c \
+	debr-parametergroup.h \
+	debr-preferences.c \
+	debr-preferences.h \
+	debr-program.c \
+	debr-program.h \
 	$(NULL)
 
-debr_SOURCES = main.c
+debr_SOURCES = debr-main.c
 
 EXTRA_DIST = $(noinst_HEADERS) $(debrglade_DATA) $(debrscripts_DATA)
 

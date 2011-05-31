@@ -26,9 +26,9 @@
 #include <glib/gi18n.h>
 #include <libgebr/utils.h>
 
-#include "help.h"
+#include "debr-help.h"
 #include "debr.h"
-#include "defines.h"
+#include "debr-defines.h"
 #include "debr-help-edit-widget.h"
 
 //==============================================================================

@@ -16,7 +16,7 @@
  */
 
 /**
- * @file menu.h DeBR Menu API
+ * @file debr-menu.h DeBR Menu API
  * @ingroup debr
  */
 

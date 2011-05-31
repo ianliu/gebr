@@ -26,8 +26,8 @@
 
 #include "debr-validate.h"
 #include "debr.h"
-#include "callbacks.h"
-#include <help.h>
+#include "debr-callbacks.h"
+#include <debr-help.h>
 
 static void validate_free(struct validate *validate);
 static gboolean validate_get_selected(GtkTreeIter * iter, gboolean warn_unselected);

@@ -19,9 +19,9 @@
 
 #include <glib/gi18n.h>
 
-#include "preferences.h"
+#include "debr-preferences.h"
 #include "debr.h"
-#include "menu.h"
+#include "debr-menu.h"
 
 /**
  * \internal

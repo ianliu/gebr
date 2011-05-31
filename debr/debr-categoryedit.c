@@ -20,7 +20,7 @@
 #include <libgebr/gui/gebr-gui-enhanced-entry.h>
 #include <libgebr/gui/gebr-gui-utils.h>
 
-#include "categoryedit.h"
+#include "debr-categoryedit.h"
 #include "debr.h"
 
 /*

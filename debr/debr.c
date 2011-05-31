@@ -27,9 +27,9 @@
 #include <libgebr/gui/gui.h>
 
 #include "debr.h"
-#include "help.h"
-#include "menu.h"
-#include "preferences.h"
+#include "debr-help.h"
+#include "debr-menu.h"
+#include "debr-preferences.h"
 
 struct debr debr;
 

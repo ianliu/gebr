@@ -25,14 +25,14 @@
 #include <libgebr/gui/gebr-gui-utils.h>
 #include <libgebr/gui/gebr-gui-value-sequence-edit.h>
 
-#include "parameter.h"
+#include "debr-parameter.h"
 #include "debr.h"
-#include "defines.h"
-#include "callbacks.h"
-#include "enumoptionedit.h"
-#include "interface.h"
-#include "menu.h"
-#include "parametergroup.h"
+#include "debr-defines.h"
+#include "debr-callbacks.h"
+#include "debr-enumoptionedit.h"
+#include "debr-interface.h"
+#include "debr-menu.h"
+#include "debr-parametergroup.h"
 
 /*
  * Declarations

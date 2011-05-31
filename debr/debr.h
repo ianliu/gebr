@@ -24,10 +24,10 @@
 #include <libgebr/geoxml/geoxml.h>
 #include <libgebr/gui/gebr-gui-about.h>
 
-#include "menu.h"
-#include "program.h"
-#include "parameter.h"
-#include "interface.h"
+#include "debr-menu.h"
+#include "debr-program.h"
+#include "debr-parameter.h"
+#include "debr-interface.h"
 #include "debr-validate.h"
 
 G_BEGIN_DECLS
