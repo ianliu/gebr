@@ -249,8 +249,6 @@ static void gebr_config_load_servers(void)
 		address = gebr_g_key_file_load_string_key(gebr.config.key_file,
 							  groups[i], "address", "");
 		if (address->len) {
-			if(g_strcmp0(address->str,"127.0.0.1") == 0)
-				has_local_server = TRUE;
 			autoconnect = gebr_g_key_file_load_boolean_key(
 					gebr.config.key_file, groups[i], "autoconnect", TRUE);
 
@@ -264,8 +262,6 @@ static void gebr_config_load_servers(void)
 		g_key_file_remove_group (gebr.config.key_file, groups[i], NULL);
 	}
 	g_strfreev(groups);
-	if(!has_local_server)
-		gebr_server_new("127.0.0.1", TRUE, "");
 
 	path = g_build_path ("/", g_get_home_dir (), SERVERS_PATH, NULL);
 	servers = g_key_file_new ();
@@ -275,6 +271,10 @@ static void gebr_config_load_servers(void)
 	if (ret) {
 		groups = g_key_file_get_groups(servers, NULL);
 		for (int i = 0; groups[i]; i++) {
+			address = gebr_g_key_file_load_string_key(servers,
+								  groups[i], "address", "");
+			if(g_strcmp0(address->str,"127.0.0.1") == 0)
+				has_local_server = TRUE;
 			autoconnect = gebr_g_key_file_load_boolean_key (
 					servers, groups[i], "autoconnect", TRUE);
 
@@ -282,10 +282,13 @@ static void gebr_config_load_servers(void)
 					servers, groups[i], "tags", "");
 
 			gebr_server_new (groups[i], autoconnect, tags->str);
+			g_string_free(address, TRUE);
 			g_string_free (tags, TRUE);
 		}
 		g_key_file_free (servers);
 	}
+	if(!has_local_server)
+		gebr_server_new("127.0.0.1", TRUE, "");
 
 	ui_server_update_tags_combobox ();
 }
