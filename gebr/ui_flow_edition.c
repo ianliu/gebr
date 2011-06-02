@@ -46,6 +46,7 @@ flow_edition_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * 
 		     GtkTreeViewDropPosition drop_position, struct ui_flow_edition *ui_flow_edition);
 
 static void flow_edition_component_editing_started(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path);
+static void flow_edition_component_editing_canceled(GtkCellRenderer *renderer, gpointer user_data);
 static void flow_edition_component_edited(GtkCellRendererText *renderer, gchar *path, gchar *new_text);
 static void flow_edition_component_selected(void);
 static gboolean flow_edition_get_selected_menu(GtkTreeIter * iter, gboolean warn_unselected);
@@ -204,6 +205,7 @@ struct ui_flow_edition *flow_edition_setup_ui(void)
 
 	g_signal_connect(renderer, "edited", G_CALLBACK(flow_edition_component_edited), NULL);
 	g_signal_connect(renderer, "editing-started", G_CALLBACK(flow_edition_component_editing_started), NULL);
+	g_signal_connect(renderer, "editing-canceled", G_CALLBACK(flow_edition_component_editing_canceled), NULL);
 
 	/* Space key pressed on flow component changes its configured status */
 	g_signal_connect(ui_flow_edition->fseq_view, "key-press-event",
@@ -535,6 +537,7 @@ static void populate_io_popup(GtkEntry *entry, GtkMenu *menu)
 	gtk_widget_show(item);
 }
 
+
 static void flow_edition_component_editing_started(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path)
 {
 	GtkTreeIter iter;
@@ -573,6 +576,12 @@ static void flow_edition_component_editing_started(GtkCellRenderer *renderer, Gt
 
 	flow_edition_set_io();
 }
+
+static void flow_edition_component_editing_canceled(GtkCellRenderer *renderer, gpointer user_data)
+{
+	gtk_window_add_accel_group(GTK_WINDOW(gebr.window), gebr.accel_group_array[gebr.last_notebook]);
+}
+
 
 static void flow_edition_component_edited(GtkCellRendererText *renderer, gchar *path, gchar *new_text)
 {
