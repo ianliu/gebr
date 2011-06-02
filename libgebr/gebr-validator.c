@@ -17,27 +17,37 @@ struct _GebrValidator
 	GebrGeoXmlDocument **line;
 	GebrGeoXmlDocument **proj;
 
-	GHashTable *xml_to_node;
-
+	GHashTable *vars;
 };
 
 typedef struct {
-	gboolean has_error;
 	GebrGeoXmlParameter *param;
-} NodeData;
+	GList *dep[3];
+	GList *antidep;
+	gchar *val[3];
+	gchar *error[3];
+} HashData;
 
 /* NodeData functions {{{1 */
-static NodeData *
-node_data_new(GebrGeoXmlParameter *param)
+static HashData *
+hash_data_new(GebrGeoXmlParameter *param)
 {
-	NodeData *n = g_new(NodeData, 1);
+	HashData *n = g_new0(HashData, 1);
 	n->param = param;
 	return n;
 }
 
 static void
-node_data_free(NodeData *n)
+hash_data_free(HashData *n)
 {
+	for (int i = 0; i < 3; i++) {
+		g_list_foreach(n->dep[i], (GFunc) g_free, NULL);
+		g_list_free(n->dep[i]);
+		g_free(n->val[i]);
+		g_free(n->error[i]);
+	}
+	g_list_foreach(n->antidep, (GFunc) g_free, NULL);
+	g_list_free(n->antidep);
 	g_free(n);
 }
 
@@ -119,6 +129,40 @@ setup_variables(GebrValidator *self, GebrIExpr *expr_validator, GebrGeoXmlParame
 	}
 }
 
+static gboolean
+is_variable_valid(GebrValidator *self,
+		  GebrGeoXmlParameter *param)
+{
+	return TRUE;
+}
+
+static void
+set_error(GebrValidator *self,
+	  GebrGeoXmlParameter *name,
+	  const gchar *msg)
+{
+}
+
+static const gchar *
+get_error(GebrValidator *self,
+	  GebrGeoXmlParameter *param)
+{
+	return "";
+}
+
+static const gchar *
+get_value(GebrValidator *self,
+	  const gchar *name)
+{
+	return "";
+}
+
+static gboolean
+detect_cicle(GebrValidator *self,
+	     const gchar *name)
+{
+	return FALSE;
+}
 
 /* Public functions {{{1 */
 GebrValidator *
@@ -133,49 +177,53 @@ gebr_validator_new(GebrGeoXmlDocument **flow,
 	self->line = line;
 	self->proj = proj;
 
-	self->xml_to_node = g_hash_table_new(NULL, NULL);
+	self->vars = g_hash_table_new(NULL, NULL);
 
 	return self;
 }
 
 gboolean
-gebr_validator_def(GebrValidator       *self,
-		   GebrGeoXmlParameter *key,
-		   GList              **affected,
-		   GError             **error)
-{
-	//GebrIExpr *expr = get_validator(self, key);
-	//g_node_prepend_data(self->root, );
-	return 0;
-}
-
-gboolean
-gebr_validator_move_before(GebrValidator       *self,
-			   GebrGeoXmlParameter *key,
-			   GebrGeoXmlParameter *pivot,
-			   GList              **affected,
-			   GError             **error)
+gebr_validator_insert(GebrValidator       *self,
+		      GebrGeoXmlParameter *param,
+		      GList              **affected,
+		      GError             **error)
 {
 	return 0;
 }
 
-gboolean
-gebr_validator_undef(GebrValidator       *self,
-		     GebrGeoXmlParameter *key,
-		     GList              **affected,
-		     GError             **error)
+void
+gebr_validator_remove(GebrValidator       *self,
+		      GebrGeoXmlParameter *param,
+		      GList              **affected)
 {
-	return 0;
 }
 
 gboolean
 gebr_validator_rename(GebrValidator       *self,
-		      GebrGeoXmlParameter *key,
+		      GebrGeoXmlParameter *param,
 		      const gchar         *new_name,
 		      GList              **affected,
 		      GError             **error)
 {
 	return 0;
+}
+
+gboolean
+gebr_validator_change_value(GebrValidator       *self,
+			    GebrGeoXmlParameter *param,
+			    const gchar         *new_value,
+			    GList              **affected,
+			    GError             **error)
+{
+	return 0;
+}
+
+void
+gebr_validator_move(GebrValidator       *self,
+		    GebrGeoXmlParameter *param,
+		    GebrGeoXmlParameter *pivot,
+		    GList              **affected)
+{
 }
 
 gboolean
@@ -328,7 +376,7 @@ void gebr_validator_get_documents(GebrValidator *self,
 
 void gebr_validator_free(GebrValidator *self)
 {
-	g_hash_table_unref(self->xml_to_node);
+	g_hash_table_unref(self->vars);
 	g_object_unref(self->arith_expr);
 	g_object_unref(self->string_expr);
 	g_free(self);
