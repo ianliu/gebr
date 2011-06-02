@@ -105,9 +105,28 @@ static gboolean gebr_string_expr_set_var(GebrIExpr              *iface,
 	if (type == GEBR_GEOXML_PARAMETER_TYPE_STRING)
 		gebr_string_expr_eval(self, value, &result, &error);
 	else {
+		gdouble r = 0;
+
+		if (gebr_arith_expr_eval(GEBR_ARITH_EXPR(self->priv->arith_expr), value, &r, NULL)) {
+			gsize i;
+			gsize len;
+
+			result = g_strdup_printf("%.6lf", r);
+			len = strlen(result);
+
+			// Remove decimal numbers if they are zero. The precision is
+			// 6, so we might remove up to 7 (including decimal separator) chars
+			for (i = 1; i <= 6; i++)
+				if (result[len-i] != '0')
+					break;
+			if (i == 7)
+				result[len-7] = '\0';
+			else
+				result[len-i+1] = '\0';
+		}
+
 		gebr_iexpr_set_var(self->priv->arith_expr,
 				   name, type, value, &error);
-		result = g_strdup(value);
 	}
 
 	if (error) {
