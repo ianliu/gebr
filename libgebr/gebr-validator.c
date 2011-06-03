@@ -24,6 +24,7 @@ typedef struct {
 	GebrGeoXmlParameter *param[3];
 	GList *dep[3];
 	GList *antidep;
+	/* TODO: Change this to GError?? */
 	gchar *error[3];
 } HashData;
 
@@ -154,6 +155,22 @@ static const gchar *
 get_value(GebrValidator *self,
 	  const gchar *name)
 {
+	HashData * data = NULL;
+
+	data = (HashData *)g_hash_table_lookup(self->vars, name);
+	if (!data)
+		return "";
+
+	for (int i = 0; i < 3; i++)
+	{
+		const gchar * value = gebr_geoxml_program_parameter_get_first_value(GEBR_GEOXML_PROGRAM_PARAMETER(data->param[i]), FALSE);
+		if(value)
+		{
+			hash_data_free(data);
+			return value;
+		}
+	}
+	hash_data_free(data);
 	return "";
 }
 
@@ -221,7 +238,7 @@ gebr_validator_remove(GebrValidator       *self,
 		else {
 			HashData *errors;
 			int j;
-			for (GList *v = data->antidep; v; v->next) {
+			for (GList *v = data->antidep; v; v = v->next) {
 				errors = g_hash_table_lookup(self->vars, v->data);
 
 				/* get correct scope for error */
@@ -238,6 +255,7 @@ gebr_validator_remove(GebrValidator       *self,
 	hash_data_free(data);
 }
 
+
 gboolean
 gebr_validator_rename(GebrValidator       *self,
 		      GebrGeoXmlParameter *param,
@@ -245,7 +263,36 @@ gebr_validator_rename(GebrValidator       *self,
 		      GList              **affected,
 		      GError             **error)
 {
-	return 0;
+	HashData * data = NULL;
+	const gchar * name = NULL;
+
+	name = gebr_geoxml_program_parameter_get_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(param));
+	data = (HashData *)g_hash_table_lookup(self->vars, name);
+
+	if (!data)
+	{
+		/*
+		 * TODO: Create a new error domain/types
+		 * for this operations
+		 */
+		g_set_error(error, GEBR_IEXPR_ERROR,
+			    GEBR_IEXPR_ERROR_UNDEF_VAR,
+			    _("Variable %s not found at rename method."),
+			    name);
+		return FALSE;
+	}
+
+	if (data->antidep)
+		for (GList * i = data->antidep; i; i = i->next);
+	else
+	{
+		/*
+		GebrGeoXmlProgramParameter = new_var;
+		gebr_validator_insert(self, new_var, NULL, error);
+		gebr_validator_remove(self, new_var, NULL);
+		*/
+	}
+	return TRUE;
 }
 
 gboolean

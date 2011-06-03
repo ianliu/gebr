@@ -195,7 +195,7 @@ void test_gebr_validator_rename(void)
 	e = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
 						   GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
 						   "pi", "2.72");
-	varname = gebr_validator_rename(validator,e,"e",&affected,&error);
+	gebr_validator_rename(validator,e,"e",&affected,&error);
 	varname = gebr_geoxml_program_parameter_get_keyword(e);
 
 	g_assert(affected == NULL);
@@ -305,7 +305,7 @@ int main(int argc, char *argv[])
 	g_type_init();
 	g_test_init(&argc, &argv, NULL);
 
-	//g_test_add_func("/libgebr/validator/simple", test_gebr_validator_simple);
+	g_test_add_func("/libgebr/validator/simple", test_gebr_validator_simple);
 	g_test_add_func("/libgebr/validator/insert", test_gebr_validator_insert);
 	g_test_add_func("/libgebr/validator/remove", test_gebr_validator_remove);
 	g_test_add_func("/libgebr/validator/rename", test_gebr_validator_rename);
