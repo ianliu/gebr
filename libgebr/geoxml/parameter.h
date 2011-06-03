@@ -194,5 +194,10 @@ GebrGeoXmlParameterGroup *gebr_geoxml_parameter_get_group(GebrGeoXmlParameter * 
  */
 gboolean gebr_geoxml_parameter_is_dict_param(GebrGeoXmlParameter *parameter);
 
+/*
+ *
+ */
+GebrGeoXmlDocumentType gebr_geoxml_parameter_get_scope(GebrGeoXmlParameter *parameter);
+
 G_END_DECLS
 #endif				//__GEBR_GEOXML_PARAMETER_H

@@ -218,7 +218,7 @@ gebr_validator_change_value(GebrValidator       *self,
 	return 0;
 }
 
-void
+GebrGeoXmlParameter*
 gebr_validator_move(GebrValidator       *self,
 		    GebrGeoXmlParameter *param,
 		    GebrGeoXmlParameter *pivot,

@@ -403,3 +403,11 @@ gboolean gebr_geoxml_parameter_is_dict_param(GebrGeoXmlParameter *parameter)
 
 	return g_strcmp0(name->str, "dict") == 0 ? TRUE:FALSE;
 }
+GebrGeoXmlDocumentType gebr_geoxml_parameter_get_scope(GebrGeoXmlParameter *parameter)
+{
+	GebrGeoXmlDocument *doc;
+	doc = gebr_geoxml_object_get_owner_document(GEBR_GEOXML_OBJECT(parameter));
+
+	return gebr_geoxml_document_get_type(doc);
+}
+

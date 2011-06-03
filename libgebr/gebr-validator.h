@@ -101,10 +101,10 @@ gboolean gebr_validator_change_value(GebrValidator       *self,
  * @pivot: The pivot for the operation, or %NULL to append
  * @affected: The #GebrGeoXmlParameter's affected by this operation
  */
-void gebr_validator_move(GebrValidator       *self,
-			 GebrGeoXmlParameter *key,
-			 GebrGeoXmlParameter *pivot,
-			 GList              **affected);
+GebrGeoXmlParameter* gebr_validator_move(GebrValidator       *self,
+                                         GebrGeoXmlParameter *key,
+                                         GebrGeoXmlParameter *pivot,
+                                         GList              **affected);
 
 /**
  * gebr_validator_validate_param:

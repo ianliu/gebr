@@ -99,6 +99,48 @@ void test_gebr_validator_insert(void)
 
 void test_gebr_validator_remove(void)
 {
+	GebrValidator *validator;
+
+	GebrGeoXmlFlow *flow;
+	GebrGeoXmlLine *line;
+	GebrGeoXmlProject *proj;
+
+	GebrGeoXmlParameter *param;
+	GError *error = NULL;
+	GList *affected;
+
+	flow = gebr_geoxml_flow_new();
+	line = gebr_geoxml_line_new();
+	proj = gebr_geoxml_project_new();
+
+	validator = gebr_validator_new((GebrGeoXmlDocument**)&flow,
+				       (GebrGeoXmlDocument**)&line,
+				       (GebrGeoXmlDocument**)&proj);
+
+
+	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
+	                                              GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
+	                                              "x", "12");
+	g_assert (gebr_validator_insert(validator, param, &affected, &error) == TRUE);
+
+	gebr_validator_remove (validator, param, &affected);
+	g_assert (affected == NULL);
+
+	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
+	                                              GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
+	                                              "pi2", "pi*pi");
+	g_assert (gebr_validator_insert(validator, param, &affected, &error) == TRUE);
+	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
+	                                              GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
+	                                              "pi3", "pi2*pi");
+	g_assert (gebr_validator_insert(validator, param, &affected, &error) == TRUE);
+	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
+	                                              GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
+	                                              "pi", "3.14");
+	g_assert (gebr_validator_insert(validator, param, &affected, &error) == TRUE);
+
+	gebr_validator_remove (validator, param, &affected);
+	g_assert (affected != NULL);
 }
 
 void test_gebr_validator_rename(void)
@@ -111,6 +153,66 @@ void test_gebr_validator_change(void)
 
 void test_gebr_validator_move(void)
 {
+	GebrValidator *validator;
+
+	GebrGeoXmlFlow *flow;
+	GebrGeoXmlLine *line;
+	GebrGeoXmlProject *proj;
+
+	GebrGeoXmlParameter *param, *pivot;
+	GError *error = NULL;
+	GList *affected;
+
+	flow = gebr_geoxml_flow_new();
+	line = gebr_geoxml_line_new();
+	proj = gebr_geoxml_project_new();
+
+	validator = gebr_validator_new((GebrGeoXmlDocument**)&flow,
+	                               (GebrGeoXmlDocument**)&line,
+	                               (GebrGeoXmlDocument**)&proj);
+
+
+	pivot = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
+	                                              GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
+	                                              "x", "12");
+	g_assert (gebr_validator_insert(validator, pivot, &affected, &error) == TRUE);
+
+	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(line),
+	                                              GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
+	                                              "x", "40");
+	g_assert (gebr_validator_insert(validator, param, &affected, &error) == TRUE);
+
+	result = gebr_validator_move(validator, param, pivot, &affected);
+	g_assert_cmpstr(gebr_geoxml_program_parameter_get_first_value(GEBR_GEOXML_PROGRAM_PARAMETER(result), FALSE),==,"40");
+	g_assert (gebr_geoxml_parameter_get_scope(result) == GEBR_GEOXML_DOCUMENT_TYPE_PROJECT);
+
+
+	pivot = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
+	                                              GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
+	                                              "x", "12");
+	g_assert (gebr_validator_insert(validator, pivot, &affected, &error) == TRUE);
+
+	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(line),
+	                                              GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
+	                                              "y", "40");
+	g_assert (gebr_validator_insert(validator, param, &affected, &error) == TRUE);
+
+	result = gebr_validator_move(validator, param, pivot, &affected);
+	g_assert (gebr_geoxml_parameter_get_scope(result) == GEBR_GEOXML_DOCUMENT_TYPE_PROJECT);
+
+
+	pivot = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
+	                                              GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
+	                                              "x", "12");
+	g_assert (gebr_validator_insert(validator, pivot, &affected, &error) == TRUE);
+
+	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
+	                                              GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
+	                                              "y", "40");
+	g_assert (gebr_validator_insert(validator, param, &affected, &error) == TRUE);
+
+	result = gebr_validator_move(validator, param, pivot, &affected);
+	g_assert (gebr_geoxml_parameter_get_scope(result) == GEBR_GEOXML_DOCUMENT_TYPE_PROJECT);
 }
 
 int main(int argc, char *argv[])
