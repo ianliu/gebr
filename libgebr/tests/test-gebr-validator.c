@@ -244,7 +244,7 @@ void test_gebr_validator_move(void)
 	GebrGeoXmlLine *line;
 	GebrGeoXmlProject *proj;
 
-	GebrGeoXmlParameter *param, *pivot;
+	GebrGeoXmlParameter *param, *pivot, *result;
 	GError *error = NULL;
 	GList *affected;
 

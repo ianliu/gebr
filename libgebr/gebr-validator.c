@@ -224,6 +224,7 @@ gebr_validator_move(GebrValidator       *self,
 		    GebrGeoXmlParameter *pivot,
 		    GList              **affected)
 {
+	return NULL;
 }
 
 gboolean
