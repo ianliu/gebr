@@ -93,12 +93,37 @@ void test_gebr_validator_simple(void)
 	gebr_validator_free(validator);
 }
 
+void test_gebr_validator_insert(void)
+{
+}
+
+void test_gebr_validator_remove(void)
+{
+}
+
+void test_gebr_validator_rename(void)
+{
+}
+
+void test_gebr_validator_change(void)
+{
+}
+
+void test_gebr_validator_move(void)
+{
+}
+
 int main(int argc, char *argv[])
 {
 	g_type_init();
 	g_test_init(&argc, &argv, NULL);
 
 	//g_test_add_func("/libgebr/validator/simple", test_gebr_validator_simple);
+	g_test_add_func("/libgebr/validator/insert", test_gebr_validator_insert);
+	g_test_add_func("/libgebr/validator/remove", test_gebr_validator_remove);
+	g_test_add_func("/libgebr/validator/rename", test_gebr_validator_rename);
+	g_test_add_func("/libgebr/validator/change", test_gebr_validator_change);
+	g_test_add_func("/libgebr/validator/move", test_gebr_validator_move);
 
 	return g_test_run();
 }
