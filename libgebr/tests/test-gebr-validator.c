@@ -103,6 +103,35 @@ void test_gebr_validator_remove(void)
 
 void test_gebr_validator_rename(void)
 {
+	GError *error = NULL;
+	GList *affected = NULL;
+	const gchar * varname = NULL;
+
+	GebrValidator *validator;
+
+	GebrGeoXmlFlow *flow;
+	GebrGeoXmlLine *line;
+	GebrGeoXmlProject *proj;
+
+	GebrGeoXmlParameter *e;
+
+	flow = gebr_geoxml_flow_new();
+	line = gebr_geoxml_line_new();
+	proj = gebr_geoxml_project_new();
+
+	validator = gebr_validator_new((GebrGeoXmlDocument**)&flow,
+				       (GebrGeoXmlDocument**)&line,
+				       (GebrGeoXmlDocument**)&proj);
+
+	e = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
+						   GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
+						   "pi", "2.72");
+	varname = gebr_validator_rename(validator,e,"e",&affected,&error);
+	varname = gebr_geoxml_program_parameter_get_keyword(e);
+
+	g_assert(affected == NULL);
+	g_assert(error == NULL);
+	g_assert_cmpstr(varname, ==, "e");
 }
 
 void test_gebr_validator_change(void)
