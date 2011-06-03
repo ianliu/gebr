@@ -150,7 +150,7 @@ void test_gebr_validator_remove(void)
 	                                              "x", "12");
 	g_assert (gebr_validator_insert(validator, param, &affected, &error) == TRUE);
 
-	gebr_validator_remove (validator, param, &affected);
+	gebr_validator_remove (validator, param, &affected, &error);
 	g_assert (affected == NULL);
 
 	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
@@ -166,7 +166,7 @@ void test_gebr_validator_remove(void)
 	                                              "pi", "3.14");
 	g_assert (gebr_validator_insert(validator, param, &affected, &error) == TRUE);
 
-	gebr_validator_remove (validator, param, &affected);
+	gebr_validator_remove (validator, param, &affected, &error);
 	g_assert (affected != NULL);
 }
 

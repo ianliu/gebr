@@ -60,7 +60,8 @@ gboolean gebr_validator_insert(GebrValidator       *self,
  */
 void gebr_validator_remove(GebrValidator       *self,
 			   GebrGeoXmlParameter *param,
-			   GList              **affected);
+			   GList              **affected,
+			   GError	      **error);
 
 /**
  * gebr_validator_rename:

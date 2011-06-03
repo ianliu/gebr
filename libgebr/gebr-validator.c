@@ -21,10 +21,9 @@ struct _GebrValidator
 };
 
 typedef struct {
-	GebrGeoXmlParameter *param;
+	GebrGeoXmlParameter *param[3];
 	GList *dep[3];
 	GList *antidep;
-	gchar *val[3];
 	gchar *error[3];
 } HashData;
 
@@ -33,7 +32,9 @@ static HashData *
 hash_data_new(GebrGeoXmlParameter *param)
 {
 	HashData *n = g_new0(HashData, 1);
-	n->param = param;
+	GebrGeoXmlDocumentType type;
+	type = gebr_geoxml_parameter_get_scope(param);
+	n->param[type] = param;
 	return n;
 }
 
@@ -43,7 +44,6 @@ hash_data_free(HashData *n)
 	for (int i = 0; i < 3; i++) {
 		g_list_foreach(n->dep[i], (GFunc) g_free, NULL);
 		g_list_free(n->dep[i]);
-		g_free(n->val[i]);
 		g_free(n->error[i]);
 	}
 	g_list_foreach(n->antidep, (GFunc) g_free, NULL);
@@ -194,8 +194,48 @@ gebr_validator_insert(GebrValidator       *self,
 void
 gebr_validator_remove(GebrValidator       *self,
 		      GebrGeoXmlParameter *param,
-		      GList              **affected)
+		      GList              **affected,
+		      GError		 **error)
 {
+	const gchar *name;
+	HashData *data = NULL;
+	GebrGeoXmlDocumentType type;
+
+	name = gebr_geoxml_program_parameter_get_keyword (GEBR_GEOXML_PROGRAM_PARAMETER(param));
+	type = gebr_geoxml_parameter_get_scope (param);
+	data = g_hash_table_lookup (self->vars, name);
+
+	if (!data)
+		return;
+
+	for (int i = 0; i < 3; i++) {
+		if (gebr_geoxml_parameter_get_scope (data->param[i]) != type)
+			continue;
+		gebr_geoxml_program_parameter_set_first_value(GEBR_GEOXML_PROGRAM_PARAMETER(data->param[i]), FALSE, "");
+		break;
+	}
+
+	if (g_strcmp0(get_value(self, name),"") == 0) {
+		if (data->antidep == NULL)
+			g_hash_table_remove(self->vars, name);
+		else {
+			HashData *errors;
+			int j;
+			for (GList *v = data->antidep; v; v->next) {
+				errors = g_hash_table_lookup(self->vars, v->data);
+
+				/* get correct scope for error */
+				for(j = 0; gebr_geoxml_parameter_get_scope(errors->param[j]) != type ; j++);
+
+				errors->error[j] = g_strdup_printf("Variável %s não definida",name);
+				g_hash_table_replace(self->vars, v->data, errors);
+
+				*affected = g_list_append(*affected, v->data);
+			}
+			hash_data_free(errors);
+		}
+	}
+	hash_data_free(data);
 }
 
 gboolean
