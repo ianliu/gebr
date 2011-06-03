@@ -399,6 +399,11 @@ gebr_geoxml_document_set_dict_keyword(GebrGeoXmlDocument *doc,
 GebrGeoXmlSequence *
 gebr_geoxml_document_get_dict_parameter(GebrGeoXmlDocument *doc);
 
+/**
+ * gebr_geoxml_document_set_dtd_dir:
+ */
+void gebr_geoxml_document_set_dtd_dir(const gchar *path);
+
 G_END_DECLS
 
 #endif				//__GEBR_GEOXML_DOCUMENT_H

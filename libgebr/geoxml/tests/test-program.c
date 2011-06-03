@@ -476,6 +476,8 @@ int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
 
+	gebr_geoxml_document_set_dtd_dir(DTD_DIR);
+
 	g_test_add_func("/libgebr/geoxml/program/foreach_parameter", test_gebr_geoxml_program_foreach_parameter);
 	g_test_add_func("/libgebr/geoxml/program/is_var_used", test_gebr_geoxml_program_is_var_used);
 	g_test_add_func("/libgebr/geoxml/program/get_program_flow", test_gebr_geoxml_program_flow);

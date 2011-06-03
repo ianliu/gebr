@@ -193,6 +193,8 @@ int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
 
+	gebr_geoxml_document_set_dtd_dir(DTD_DIR);
+
 	g_test_add_func("/libgebr/geoxml/project/remove_line",test_gebr_geoxml_project_remove_line);
 	g_test_add_func("/libgebr/geoxml/project/get_number_line",test_gebr_geoxml_project_get_lines_number);
 	g_test_add_func("/libgebr/geoxml/project/set_line_source",test_gebr_geoxml_project_set_line_source);

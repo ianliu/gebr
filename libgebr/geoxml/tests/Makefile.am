@@ -12,6 +12,7 @@ AM_CPPFLAGS =				\
 	$(GEBR_GEOXML_CFLAGS)		\
 	@DEBUG_CFLAGS@			\
 	-DTEST_DIR=\"$(srcdir)\"	\
+	-DDTD_DIR=\"$(top_srcdir)/libgebr/geoxml/data\" \
 	$(NULL)
 
 AM_LDFLAGS =			\

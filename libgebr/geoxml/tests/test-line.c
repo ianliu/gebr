@@ -18,8 +18,8 @@
 #include <glib.h>
 
 #include "line.h"
-#include "value_sequence.c"
-
+#include "value_sequence.h"
+#include "document.h"
 
 void test_gebr_geoxml_line_get_flows_number(void)
 {
@@ -165,6 +165,8 @@ void test_gebr_geoxml_line_get_group(void)
 int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
+
+	gebr_geoxml_document_set_dtd_dir(DTD_DIR);
 
 	g_test_add_func("/libgebr/geoxml/line/get_flow_number",test_gebr_geoxml_line_get_flows_number);
 	g_test_add_func("/libgebr/geoxml/line/get_flow",test_gebr_geoxml_line_get_flow);

@@ -265,6 +265,8 @@ int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
 
+	gebr_geoxml_document_set_dtd_dir(DTD_DIR);
+
 	g_test_add_func("/libgebr/geoxml/parameters/append_parameter", test_gebr_geoxml_parameters_append_parameter);
 	g_test_add_func("/libgebr/geoxml/parameters/is_var_used", test_gebr_geoxml_parameters_is_var_used);
 	g_test_add_func("/libgebr/geoxml/parameters/get_and_set_default_selection", test_gebr_geoxml_parameters_get_and_set_default_selection);

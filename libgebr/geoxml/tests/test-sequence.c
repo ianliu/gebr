@@ -111,6 +111,8 @@ int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
 
+	gebr_geoxml_document_set_dtd_dir(DTD_DIR);
+
 	g_test_add("/geoxml/sequence/move-before-with-null", Fixture, NULL, fixture_setup,
 		   test_gebr_geoxml_sequence_move_before_with_null, fixture_teardown);
 	g_test_add("/geoxml/sequence/move-after", Fixture, NULL, fixture_setup,

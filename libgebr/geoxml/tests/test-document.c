@@ -472,6 +472,8 @@ int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
 
+	gebr_geoxml_document_set_dtd_dir(DTD_DIR);
+
 	g_test_add_func("/libgebr/geoxml/document/load", test_gebr_geoxml_document_load);
 	g_test_add_func("/libgebr/geoxml/document/get_version", test_gebr_geoxml_document_get_version);
 	g_test_add_func("/libgebr/geoxml/document/get_type", test_gebr_geoxml_document_get_type);

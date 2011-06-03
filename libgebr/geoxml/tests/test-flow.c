@@ -482,6 +482,8 @@ int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
 
+	gebr_geoxml_document_set_dtd_dir(DTD_DIR);
+
 	g_test_add_func("/libgebr/geoxml/flow/server_get_and_set_address", test_gebr_geoxml_flow_server_get_and_set_address);
 	g_test_add_func("/libgebr/geoxml/flow/get_categories_number", test_gebr_geoxml_flow_get_categories_number);
 	g_test_add_func("/libgebr/geoxml/flow/duplicate_categories", test_duplicate_categories);
