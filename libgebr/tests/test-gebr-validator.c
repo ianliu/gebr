@@ -95,6 +95,33 @@ void test_gebr_validator_simple(void)
 
 void test_gebr_validator_insert(void)
 {
+	GError *error = NULL;
+	GList *affected = NULL;
+	const gchar *pi_value;
+
+	GebrValidator *validator;
+	GebrGeoXmlFlow *flow;
+	GebrGeoXmlLine *line;
+	GebrGeoXmlProject *proj;
+	GebrGeoXmlParameter *pi;
+
+	flow = gebr_geoxml_flow_new();
+	line = gebr_geoxml_line_new();
+	proj = gebr_geoxml_project_new();
+
+	validator = gebr_validator_new((GebrGeoXmlDocument**)&flow,
+				       (GebrGeoXmlDocument**)&line,
+				       (GebrGeoXmlDocument**)&proj);
+
+	pi = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
+						   GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
+						   "pi", "3.14");
+	gebr_validator_insert(validator, pi, &affected, &error);
+	pi_value = gebr_geoxml_program_parameter_get_first_value(
+			GEBR_GEOXML_PROGRAM_PARAMETER(pi), FALSE);
+	g_assert_no_error(error);
+	g_assert(affected == NULL);
+	g_assert_cmpstr(pi_value, ==, "3.14");
 }
 
 void test_gebr_validator_remove(void)
@@ -149,6 +176,35 @@ void test_gebr_validator_rename(void)
 
 void test_gebr_validator_change(void)
 {
+	GError *error = NULL;
+	GList *affected = NULL;
+	const gchar *pi_value;
+
+	GebrValidator *validator;
+	GebrGeoXmlFlow *flow;
+	GebrGeoXmlLine *line;
+	GebrGeoXmlProject *proj;
+	GebrGeoXmlParameter *pi;
+
+	flow = gebr_geoxml_flow_new();
+	line = gebr_geoxml_line_new();
+	proj = gebr_geoxml_project_new();
+
+	validator = gebr_validator_new((GebrGeoXmlDocument**)&flow,
+				       (GebrGeoXmlDocument**)&line,
+				       (GebrGeoXmlDocument**)&proj);
+
+	pi = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
+						   GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
+						   "pi", "3.14");
+
+	gebr_validator_insert(validator, pi, NULL, NULL);
+	gebr_validator_change_value(validator, pi, "3.1415", &affected, &error);
+	pi_value = gebr_geoxml_program_parameter_get_first_value(
+			GEBR_GEOXML_PROGRAM_PARAMETER(pi), FALSE);
+	g_assert(affected == NULL);
+	g_assert_no_error(error);
+	g_assert_cmpstr(pi_value, ==, "3.1415");
 }
 
 void test_gebr_validator_move(void)
