@@ -33,6 +33,21 @@ typedef struct {
 #define GET_VAR_VALUE(p) (gebr_geoxml_program_parameter_get_first_value(GEBR_GEOXML_PROGRAM_PARAMETER(p), FALSE))
 #define SET_VAR_VALUE(p,v) (gebr_geoxml_program_parameter_set_first_value(GEBR_GEOXML_PROGRAM_PARAMETER(p), FALSE, (v)))
 
+static void		set_error		(GebrValidator         *self,
+						 const gchar           *name,
+						 GebrGeoXmlDocumentType scope,
+						 const gchar           *msg);
+
+static const gchar *	get_error		(GebrValidator 	       *self,
+						 const gchar   	       *name);
+
+static gboolean		is_variable_valid	(GebrValidator         *self,
+						 const gchar           *name,
+						 GebrGeoXmlDocumentType scope);
+
+static const gchar *	get_value		(GebrValidator         *self,
+						 const gchar           *name);
+
 /* NodeData functions {{{1 */
 static HashData *
 hash_data_new_from_xml(GebrGeoXmlParameter *param)
@@ -148,8 +163,21 @@ setup_variables(GebrValidator *self, GebrIExpr *expr_validator, GebrGeoXmlParame
 
 static gboolean
 is_variable_valid(GebrValidator *self,
-		  GebrGeoXmlParameter *param)
+		  const gchar *name,
+		  GebrGeoXmlDocumentType scope)
 {
+	HashData *data;
+	data = g_hash_table_lookup(self->vars, name);
+
+	if (!data)
+		return FALSE;
+
+	for (GList *i = data->dep[scope]; i; i = i->next) {
+		gchar *v = i->data;
+		if (get_error(self, v))
+			return FALSE;
+	}
+
 	return TRUE;
 }
 
@@ -159,6 +187,26 @@ set_error(GebrValidator *self,
 	  GebrGeoXmlDocumentType scope,
 	  const gchar *msg)
 {
+	HashData *data;
+
+	data = g_hash_table_lookup(self->vars, name);
+
+	if (!data)
+		return;
+
+	data->error[scope] = g_strdup(msg);
+	for (GList *i = data->antidep; i; i = i->next) {
+		gchar *v = i->data;
+		if (msg && !is_variable_valid(self, v, scope)) {
+			gchar *tmp = g_strdup_printf(_("%s is undefined because of %s"),
+						     v, name);
+			set_error(self, v, scope, tmp);
+			g_free(tmp);
+		} else {
+			g_free(data->error[scope]);
+			data->error[scope] = NULL;
+		}
+	}
 }
 
 static const gchar *
