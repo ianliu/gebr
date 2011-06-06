@@ -5,9 +5,10 @@
 #include "json-debug.h"
 
 static unsigned int json_debug_flags     = 0;
-static gboolean     json_debug_flags_set = FALSE;
 
 #ifdef JSON_ENABLE_DEBUG
+static gboolean json_debug_flags_set = FALSE;
+
 static const GDebugKey json_debug_keys[] = {
   { "parser", JSON_DEBUG_PARSER },
   { "gobject", JSON_DEBUG_GOBJECT }
