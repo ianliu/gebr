@@ -44,7 +44,8 @@ static const gchar *	get_error		(GebrValidator 	       *self,
 
 static gboolean		is_variable_valid	(GebrValidator         *self,
 						 const gchar           *name,
-						 GebrGeoXmlDocumentType scope);
+						 GebrGeoXmlDocumentType scope,
+						 const gchar 	      **cause);
 
 static const gchar *	get_value		(GebrValidator         *self,
 						 const gchar           *name);
@@ -165,7 +166,8 @@ setup_variables(GebrValidator *self, GebrIExpr *expr_validator, GebrGeoXmlParame
 static gboolean
 is_variable_valid(GebrValidator *self,
 		  const gchar *name,
-		  GebrGeoXmlDocumentType scope)
+		  GebrGeoXmlDocumentType scope,
+		  const gchar **cause)
 {
 	HashData *data;
 	data = g_hash_table_lookup(self->vars, name);
@@ -175,8 +177,10 @@ is_variable_valid(GebrValidator *self,
 
 	for (GList *i = data->dep[scope]; i; i = i->next) {
 		gchar *v = i->data;
-		if (get_error(self, v))
+		if (get_error(self, v)) {
+			*cause = v;
 			return FALSE;
+		}
 	}
 
 	return TRUE;
@@ -198,9 +202,11 @@ set_error(GebrValidator *self,
 	data->error[scope] = g_strdup(msg);
 	for (GList *i = data->antidep; i; i = i->next) {
 		gchar *v = i->data;
-		if (msg && !is_variable_valid(self, v, scope)) {
-			gchar *tmp = g_strdup_printf(_("%s is undefined because of %s"),
-						     v, name);
+		gchar *cause;
+		if (!is_variable_valid(self, v, scope, &cause)) {
+			gchar *tmp;
+			tmp = g_strdup_printf(_("%s is undefined because of %s"),
+			                      v, msg? name:cause);
 			set_error(self, v, scope, tmp);
 			g_free(tmp);
 		} else {
@@ -360,8 +366,8 @@ gebr_validator_remove(GebrValidator       *self,
 
 	if (get_value(self, name)) {
 		const gchar *msg;
-		if ((msg = get_error(self, name)))
-			set_error(self, name, type, msg);
+		msg = get_error(self, name);
+		set_error(self, name, type, msg);
 	} else {
 		if (data->antidep == NULL) {
 			g_hash_table_remove(self->vars, name);
@@ -414,14 +420,14 @@ gebr_validator_rename(GebrValidator       *self,
 	aux_affec = g_list_concat(a1, a2);
 	aux_affec = g_list_sort(aux_affec, (GCompareFunc)g_strcmp0);
 
-	*affected = g_list_prepend(NULL, g_strdup(aux_affec->data));
-	for(GList *i = aux_affec->next; i; i = i->next)
-		if (g_strcmp0(i->data, i->prev->data) != 0)
-			*affected = g_list_prepend(*affected, g_strdup(i->data));
-
-	g_list_foreach(aux_affec, (GFunc)g_free, NULL);
-	g_list_free(aux_affec);
-
+	if (aux_affec) {
+		*affected = g_list_prepend(NULL, g_strdup(aux_affec->data));
+		for(GList *i = aux_affec->next; i; i = i->next)
+			if (g_strcmp0(i->data, i->prev->data) != 0)
+				*affected = g_list_prepend(*affected, g_strdup(i->data));
+		g_list_foreach(aux_affec, (GFunc)g_free, NULL);
+		g_list_free(aux_affec);
+	}
 	return TRUE;
 }
 
@@ -438,6 +444,7 @@ gebr_validator_change_value(GebrValidator       *self,
 	GebrIExpr *expr;
 	GebrGeoXmlDocumentType type;
 
+	*affected = NULL;
 	name = GET_VAR_NAME(param);
 	data = g_hash_table_lookup(self->vars, name);
 	type = gebr_geoxml_parameter_get_scope(param);
@@ -477,6 +484,7 @@ gebr_validator_change_value(GebrValidator       *self,
 
 		dep = g_hash_table_lookup(self->vars, dep_name);
 		if (!dep) {
+			// XXX: Do we need to set error for inexistent variables?
 			dep = hash_data_new(dep_name);
 			g_hash_table_insert(self->vars, g_strdup(dep_name), dep);
 		}
@@ -504,13 +512,14 @@ gebr_validator_change_value(GebrValidator       *self,
 	} else if (!has_error) {
 		GebrGeoXmlParameterType ptype;
 		ptype = gebr_geoxml_parameter_get_type(param);
-		set_error(self, name, type, NULL);
 		gebr_iexpr_set_var(expr, name, ptype, new_value, &err);
 
 		if (err) {
+			set_error(self, name, type, err->message);
 			g_propagate_error(error, err);
 			return FALSE;
-		}
+		} else
+			set_error(self, name, type, NULL);
 	}
 
 	return !has_error;
