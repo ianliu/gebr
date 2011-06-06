@@ -196,7 +196,7 @@ void test_gebr_validator_rename(void)
 						   GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
 						   "pi", "2.72");
 	gebr_validator_rename(validator,e,"e",&affected,&error);
-	varname = gebr_geoxml_program_parameter_get_keyword(e);
+	varname = gebr_geoxml_program_parameter_get_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(e));
 
 	g_assert(affected == NULL);
 	g_assert(error == NULL);
