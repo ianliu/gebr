@@ -158,15 +158,13 @@ void test_gebr_validator_remove(void)
 	                                              GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
 	                                              "pi2", "pi*pi");
 	gebr_validator_insert(validator, param, &affected, &error);
-	g_assert_error(error, GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_UNDEF_VAR);
-	g_clear_error(&error);
+	g_assert_no_error(error);
 
 	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
 	                                              GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
 	                                              "pi3", "pi2*pi");
 	gebr_validator_insert(validator, param, &affected, &error);
-	g_assert_error(error, GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_UNDEF_VAR);
-	g_clear_error(&error);
+	g_assert_no_error(error);
 
 	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
 	                                              GEBR_GEOXML_PARAMETER_TYPE_FLOAT,

@@ -450,11 +450,14 @@ gebr_validator_change_value(GebrValidator       *self,
 	}
 
 	expr = get_validator(self, param);
-	if (!gebr_iexpr_is_valid(expr, new_value, &err)) {
+	if (!gebr_iexpr_is_valid(expr, new_value, &err)
+	    && err->code == GEBR_IEXPR_ERROR_SYNTAX) {
 		set_error(self, name, type, err->message);
 		g_propagate_error(error, err);
 		return FALSE;
 	}
+	if (err)
+		g_clear_error(&err);
 
 	g_list_foreach(data->dep[type], (GFunc)g_free, NULL);
 	g_list_free(data->dep[type]);
