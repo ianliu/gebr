@@ -685,14 +685,7 @@ json_serialize_pspec (const GValue *real_value,
             {
               JsonNode *str = NULL;
  
-	      JsonNodeType node_type;
 	      str = json_serialize_pspec(&strv->values[i], G_PARAM_SPEC_VALUE_ARRAY(pspec)->element_spec);
-              //if (json_boxed_can_serialize (G_VALUE_TYPE (&strv->values[i]), &node_type))
-                //{
-                  //gpointer boxed = g_value_get_boxed (real_value);
-
-                  //str = json_boxed_serialize (G_VALUE_TYPE (real_value), boxed);
-                //}
 	      if (str == NULL)
 		      continue;
 
