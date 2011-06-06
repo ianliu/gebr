@@ -32,6 +32,7 @@ typedef struct {
 #define GET_VAR_NAME(p) (gebr_geoxml_program_parameter_get_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(p)))
 #define GET_VAR_VALUE(p) (gebr_geoxml_program_parameter_get_first_value(GEBR_GEOXML_PROGRAM_PARAMETER(p), FALSE))
 #define SET_VAR_VALUE(p,v) (gebr_geoxml_program_parameter_set_first_value(GEBR_GEOXML_PROGRAM_PARAMETER(p), FALSE, (v)))
+#define SET_VAR_NAME(p,n) (gebr_geoxml_program_parameter_set_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(p), (n)))
 
 static void		set_error		(GebrValidator         *self,
 						 const gchar           *name,
@@ -372,7 +373,7 @@ gebr_validator_remove(GebrValidator       *self,
 				errors = g_hash_table_lookup(self->vars, anti_name);
 				g_free(errors->error[type]);
 				errors->error[type] = g_strdup_printf(_("Variable %s not defined"), name);
-				tmp = g_list_prepend(tmp, anti_name);
+				tmp = g_list_prepend(tmp, g_strdup(anti_name));
 			}
 		}
 	}
@@ -389,33 +390,38 @@ gebr_validator_rename(GebrValidator       *self,
 {
 	HashData * data = NULL;
 	const gchar * name = NULL;
+	GebrGeoXmlParameterType scope;
+	GebrGeoXmlParameter *new_param;
+	GList *a1, *a2, *aux_affec;
 
-	name = gebr_geoxml_program_parameter_get_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(param));
-	data = (HashData *)g_hash_table_lookup(self->vars, name);
+	name = GET_VAR_NAME(param);
+
+	if (g_strcmp0(name,new_name) == 0)
+		return TRUE;
+
+	scope = gebr_geoxml_parameter_get_scope(param);
+	data = g_hash_table_lookup(self->vars, name);
 
 	if (!data)
-	{
-		/*
-		 * TODO: Create a new error domain/types
-		 * for this operations
-		 */
-		g_set_error(error, GEBR_IEXPR_ERROR,
-			    GEBR_IEXPR_ERROR_UNDEF_VAR,
-			    _("Variable %s not found at rename method."),
-			    name);
 		return FALSE;
-	}
 
-	if (data->antidep)
-		for (GList * i = data->antidep; i; i = i->next);
-	else
-	{
-		/*
-		GebrGeoXmlProgramParameter = new_var;
-		gebr_validator_insert(self, new_var, NULL, error);
-		gebr_validator_remove(self, new_var, NULL);
-		*/
-	}
+	new_param = data->param[scope];
+	gebr_validator_remove(self, param, &a1, error);
+
+	SET_VAR_NAME(new_param, new_name);
+	gebr_validator_insert(self, param, &a2, error);
+
+	aux_affec = g_list_concat(a1, a2);
+	aux_affec = g_list_sort(aux_affec, (GCompareFunc)g_strcmp0);
+
+	*affected = g_list_prepend(NULL, g_strdup(aux_affec->data));
+	for(GList *i = aux_affec->next; i; i = i->next)
+		if (g_strcmp0(i->data, i->prev->data) != 0)
+			*affected = g_list_prepend(*affected, g_strdup(i->data));
+
+	g_list_foreach(aux_affec, (GFunc)g_free, NULL);
+	g_list_free(aux_affec);
+
 	return TRUE;
 }
 
