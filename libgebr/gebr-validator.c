@@ -165,7 +165,18 @@ static const gchar *
 get_error(GebrValidator *self,
 	  const gchar *name)
 {
-	return "";
+	HashData *data;
+
+	data = g_hash_table_lookup(self->vars, name);
+
+	if (!data)
+		return NULL;
+
+	for (int i = 0; i < 3; i++)
+		if (data->param[i])
+			return data->error[i];
+
+	return NULL;
 }
 
 static const gchar *
