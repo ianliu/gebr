@@ -110,7 +110,6 @@ void test_gebr_geoxml_parameter_get_referencee(void)
 {
 	GebrGeoXmlParameters *parameters_list, *group_list;
 	GebrGeoXmlParameterGroup *group;
-	GebrGeoXmlParameter *parameter;
 	GebrGeoXmlFlow *test_menu;
 	GebrGeoXmlProgram *program;
 
