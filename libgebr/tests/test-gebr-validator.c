@@ -188,7 +188,7 @@ void test_gebr_validator_rename(void)
 	GebrGeoXmlLine *line;
 	GebrGeoXmlProject *proj;
 
-	GebrGeoXmlParameter *e;
+	GebrGeoXmlParameter *param;
 
 	flow = gebr_geoxml_flow_new();
 	line = gebr_geoxml_line_new();
@@ -198,11 +198,14 @@ void test_gebr_validator_rename(void)
 				       (GebrGeoXmlDocument**)&line,
 				       (GebrGeoXmlDocument**)&proj);
 
-	e = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
+	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
 						   GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
 						   "pi", "2.72");
-	gebr_validator_rename(validator,e,"e",&affected,&error);
-	varname = gebr_geoxml_program_parameter_get_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(e));
+	gebr_validator_insert(validator, param, &affected, &error);
+	g_assert_no_error(error);
+
+	gebr_validator_rename(validator, param, "e", &affected, &error);
+	varname = gebr_geoxml_program_parameter_get_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(param));
 
 	g_assert(affected == NULL);
 	g_assert(error == NULL);
