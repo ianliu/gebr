@@ -492,8 +492,17 @@ gebr_validator_change_value(GebrValidator       *self,
 		msg = g_strdup_printf(_("The variable %s has cicle dependency"), name);
 		set_error(self, name, type, msg);
 		g_free(msg);
-	} else if (!has_error)
+	} else if (!has_error) {
+		GebrGeoXmlParameterType ptype;
+		ptype = gebr_geoxml_parameter_get_type(param);
 		set_error(self, name, type, NULL);
+		gebr_iexpr_set_var(expr, name, ptype, new_value, &err);
+
+		if (err) {
+			g_propagate_error(error, err);
+			return FALSE;
+		}
+	}
 
 	return !has_error;
 }

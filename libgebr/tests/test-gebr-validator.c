@@ -148,7 +148,8 @@ void test_gebr_validator_remove(void)
 	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
 	                                              GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
 	                                              "x", "12");
-	g_assert (gebr_validator_insert(validator, param, &affected, &error) == TRUE);
+	gebr_validator_insert(validator, param, &affected, &error);
+	g_assert_no_error(error);
 
 	gebr_validator_remove (validator, param, &affected, &error);
 	g_assert (affected == NULL);
@@ -156,15 +157,22 @@ void test_gebr_validator_remove(void)
 	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
 	                                              GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
 	                                              "pi2", "pi*pi");
-	g_assert (gebr_validator_insert(validator, param, &affected, &error) == TRUE);
+	gebr_validator_insert(validator, param, &affected, &error);
+	g_assert_error(error, GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_UNDEF_VAR);
+	g_clear_error(&error);
+
 	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
 	                                              GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
 	                                              "pi3", "pi2*pi");
-	g_assert (gebr_validator_insert(validator, param, &affected, &error) == TRUE);
+	gebr_validator_insert(validator, param, &affected, &error);
+	g_assert_error(error, GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_UNDEF_VAR);
+	g_clear_error(&error);
+
 	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
 	                                              GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
 	                                              "pi", "3.14");
-	g_assert (gebr_validator_insert(validator, param, &affected, &error) == TRUE);
+	gebr_validator_insert(validator, param, &affected, &error);
+	g_assert_no_error(error);
 
 	gebr_validator_remove (validator, param, &affected, &error);
 	g_assert (affected != NULL);
