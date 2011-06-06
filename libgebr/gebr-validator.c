@@ -253,7 +253,42 @@ static gboolean
 detect_cicle(GebrValidator *self,
 	     GebrGeoXmlParameter *param)
 {
-	return FALSE;
+	GHashTable *vars_visit;
+	GQueue *vars_to_visit;
+	HashData *data;
+	const gchar *name;
+	gchar *var;
+	gboolean retval = FALSE;
+	GebrGeoXmlParameterType type;
+
+	vars_visit = g_hash_table_new_full(g_str_hash,
+	                                   g_str_equal,
+	                                   g_free, NULL);
+	vars_to_visit = g_queue_new();
+
+
+	name = GET_VAR_NAME(param);
+	type = gebr_geoxml_parameter_get_scope(param);
+
+	g_queue_push_head(vars_to_visit, (gpointer)name);
+
+	while (!g_queue_is_empty(vars_to_visit)) {
+		var = g_queue_pop_head(vars_to_visit);
+		data = g_hash_table_lookup(self->vars, var);
+
+		if (g_hash_table_lookup(vars_visit, var)) {
+			retval = TRUE;
+			goto out;
+		}
+
+		g_hash_table_insert(vars_visit, g_strdup(var), GUINT_TO_POINTER(1));
+		for(GList *i = data->dep[type]; i; i = i->next)
+			g_queue_push_tail(vars_to_visit, i->data);
+	}
+out:
+	g_hash_table_unref(vars_visit);
+	g_queue_free(vars_to_visit);
+	return retval;
 }
 
 /* Public functions {{{1 */
@@ -310,7 +345,7 @@ gebr_validator_remove(GebrValidator       *self,
 {
 	GList *tmp = NULL;
 	const gchar *name;
-	HashData *data = NULL;
+	HashData *data;
 	GebrGeoXmlDocumentType type;
 
 	name = GET_VAR_NAME(param);
@@ -323,11 +358,13 @@ gebr_validator_remove(GebrValidator       *self,
 	data->param[type] = NULL;
 
 	if (get_value(self, name)) {
-		// TODO: Revalidate anti-dependencies of name
+		const gchar *msg;
+		if ((msg = get_error(self, name)))
+			set_error(self, name, type, msg);
 	} else {
-		if (data->antidep == NULL)
+		if (data->antidep == NULL) {
 			g_hash_table_remove(self->vars, name);
-		else {
+		} else {
 			gchar *anti_name;
 			HashData *errors;
 			for (GList *v = data->antidep; v; v = v->next) {
