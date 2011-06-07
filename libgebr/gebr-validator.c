@@ -34,6 +34,7 @@ typedef struct {
 #define SET_VAR_VALUE(p,v) (gebr_geoxml_program_parameter_set_first_value(GEBR_GEOXML_PROGRAM_PARAMETER(p), FALSE, (v)))
 #define SET_VAR_NAME(p,n) (gebr_geoxml_program_parameter_set_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(p), (n)))
 
+/* Prototypes {{{1 */
 static void		set_error		(GebrValidator         *self,
 						 const gchar           *name,
 						 GebrGeoXmlDocumentType scope,
@@ -87,13 +88,9 @@ hash_data_free(gpointer p)
 
 /* Private functions {{{1 */
 static GebrIExpr *
-get_validator(GebrValidator *self,
-	      GebrGeoXmlParameter *param)
+get_validator_by_type(GebrValidator *self,
+		      GebrGeoXmlParameterType type)
 {
-	GebrGeoXmlParameterType type;
-
-	type = gebr_geoxml_parameter_get_type(param);
-
 	switch (type) {
 	case GEBR_GEOXML_PARAMETER_TYPE_STRING:
 	case GEBR_GEOXML_PARAMETER_TYPE_FILE:
@@ -105,6 +102,15 @@ get_validator(GebrValidator *self,
 	default:
 		g_return_val_if_reached(GEBR_IEXPR(self->string_expr));
 	}
+}
+
+static GebrIExpr *
+get_validator(GebrValidator *self,
+	      GebrGeoXmlParameter *param)
+{
+	GebrGeoXmlParameterType type;
+	type = gebr_geoxml_parameter_get_type(param);
+	return get_validator_by_type(self, type);
 }
 
 static void
@@ -202,7 +208,7 @@ set_error(GebrValidator *self,
 	data->error[scope] = g_strdup(msg);
 	for (GList *i = data->antidep; i; i = i->next) {
 		gchar *v = i->data;
-		gchar *cause;
+		const gchar *cause;
 		if (!is_variable_valid(self, v, scope, &cause)) {
 			gchar *tmp;
 			tmp = g_strdup_printf(_("%s is undefined because of %s"),
@@ -258,24 +264,19 @@ get_value(GebrValidator *self,
 
 static gboolean
 detect_cicle(GebrValidator *self,
-	     GebrGeoXmlParameter *param)
+	     const gchar *name,
+	     GebrGeoXmlDocumentType scope)
 {
 	GHashTable *vars_visit;
 	GQueue *vars_to_visit;
 	HashData *data;
-	const gchar *name;
 	gchar *var;
 	gboolean retval = FALSE;
-	GebrGeoXmlParameterType type;
 
 	vars_visit = g_hash_table_new_full(g_str_hash,
 	                                   g_str_equal,
 	                                   g_free, NULL);
 	vars_to_visit = g_queue_new();
-
-
-	name = GET_VAR_NAME(param);
-	type = gebr_geoxml_parameter_get_scope(param);
 
 	g_queue_push_head(vars_to_visit, (gpointer)name);
 
@@ -289,13 +290,108 @@ detect_cicle(GebrValidator *self,
 		}
 
 		g_hash_table_insert(vars_visit, g_strdup(var), GUINT_TO_POINTER(1));
-		for(GList *i = data->dep[type]; i; i = i->next)
+		for(GList *i = data->dep[scope]; i; i = i->next)
 			g_queue_push_tail(vars_to_visit, i->data);
 	}
 out:
 	g_hash_table_unref(vars_visit);
 	g_queue_free(vars_to_visit);
 	return retval;
+}
+
+static gboolean
+gebr_validator_change_value_by_name(GebrValidator          *self,
+				    const gchar            *name,
+				    GebrGeoXmlDocumentType  scope,
+				    GebrGeoXmlParameterType type,
+				    const gchar            *new_value,
+				    GList                 **affected,
+				    GError                **error)
+{
+	HashData *data;
+	GError *err = NULL;
+	GebrIExpr *expr;
+	gboolean had_error;
+
+	*affected = NULL;
+	data = g_hash_table_lookup(self->vars, name);
+	had_error = (data->error[scope] != NULL);
+
+	g_return_val_if_fail(data != NULL, FALSE);
+
+	for (GList *i = data->dep[scope]; i; i = i->next) {
+		HashData *dep;
+		gchar *dep_name = i->data;
+		GList *node;
+
+		dep = g_hash_table_lookup(self->vars, dep_name);
+		node = g_list_find_custom(dep->antidep, name, (GCompareFunc)g_strcmp0);
+		g_free(node->data);
+		dep->antidep = g_list_delete_link(dep->antidep, node);
+	}
+
+	expr = get_validator_by_type(self, type);
+	if (!gebr_iexpr_is_valid(expr, new_value, &err)
+	    && err->code == GEBR_IEXPR_ERROR_SYNTAX) {
+		set_error(self, name, scope, err->message);
+		g_propagate_error(error, err);
+
+		if (!had_error) {
+			// TODO: Generate affected list
+		}
+
+		return FALSE;
+	}
+	if (err)
+		g_clear_error(&err);
+
+	g_list_foreach(data->dep[scope], (GFunc)g_free, NULL);
+	g_list_free(data->dep[scope]);
+	data->dep[scope] = gebr_iexpr_extract_vars(expr, new_value);
+
+	gboolean has_error = FALSE;
+
+	for (GList *i = data->dep[scope]; i; i = i->next) {
+		HashData *dep;
+		gchar *dep_name = i->data;
+
+		dep = g_hash_table_lookup(self->vars, dep_name);
+		if (!dep) {
+			// XXX: Do we need to set error for inexistent variables?
+			dep = hash_data_new(dep_name);
+			g_hash_table_insert(self->vars, g_strdup(dep_name), dep);
+		}
+
+		if (!g_list_find_custom(dep->antidep, name, (GCompareFunc)g_strcmp0))
+			dep->antidep = g_list_prepend(dep->antidep, g_strdup(name));
+
+		if (!has_error && get_error(self, dep_name)) {
+			gchar *msg;
+			msg = g_strdup_printf(_("Variable %s depends on %s which has errors"),
+					      name, dep_name);
+			has_error = TRUE;
+			set_error(self, name, scope, msg);
+			g_free(msg);
+		}
+	}
+
+	if (detect_cicle(self, name, scope)) {
+		gchar *msg;
+		msg = g_strdup_printf(_("The variable %s has cicle dependency"), name);
+		set_error(self, name, scope, msg);
+		g_free(msg);
+	} else if (!has_error) {
+		gebr_iexpr_set_var(expr, name, type, new_value, &err);
+
+		if (err) {
+			set_error(self, name, scope, err->message);
+			g_propagate_error(error, err);
+			return FALSE;
+		} else
+			set_error(self, name, scope, NULL);
+	}
+
+	return !has_error;
 }
 
 /* Public functions {{{1 */
@@ -438,91 +534,28 @@ gebr_validator_change_value(GebrValidator       *self,
 			    GList              **affected,
 			    GError             **error)
 {
-	HashData *data;
+	gboolean retval;
 	const gchar *name;
 	GError *err = NULL;
-	GebrIExpr *expr;
-	GebrGeoXmlDocumentType type;
+	GebrGeoXmlDocumentType scope;
+	GebrGeoXmlParameterType type;
 
-	*affected = NULL;
 	name = GET_VAR_NAME(param);
-	data = g_hash_table_lookup(self->vars, name);
-	type = gebr_geoxml_parameter_get_scope(param);
+	scope = gebr_geoxml_parameter_get_scope(param);
+	type = gebr_geoxml_parameter_get_type(param);
 
-	g_return_val_if_fail(data != NULL, FALSE);
+	retval = gebr_validator_change_value_by_name(self, name, scope, type,
+						     new_value, affected, &err);
 
-	for (GList *i = data->dep[type]; i; i = i->next) {
-		HashData *dep;
-		gchar *dep_name = i->data;
-		GList *node;
-
-		dep = g_hash_table_lookup(self->vars, dep_name);
-		node = g_list_find_custom(dep->antidep, name, (GCompareFunc)g_strcmp0);
-		g_free(node->data);
-		dep->antidep = g_list_delete_link(dep->antidep, node);
-	}
-
-	expr = get_validator(self, param);
-	if (!gebr_iexpr_is_valid(expr, new_value, &err)
-	    && err->code == GEBR_IEXPR_ERROR_SYNTAX) {
-		set_error(self, name, type, err->message);
+	if (err) {
 		g_propagate_error(error, err);
-		return FALSE;
-	}
-	if (err)
-		g_clear_error(&err);
-
-	g_list_foreach(data->dep[type], (GFunc)g_free, NULL);
-	g_list_free(data->dep[type]);
-	data->dep[type] = gebr_iexpr_extract_vars(expr, new_value);
-
-	gboolean has_error = FALSE;
-
-	for (GList *i = data->dep[type]; i; i = i->next) {
-		HashData *dep;
-		gchar *dep_name = i->data;
-
-		dep = g_hash_table_lookup(self->vars, dep_name);
-		if (!dep) {
-			// XXX: Do we need to set error for inexistent variables?
-			dep = hash_data_new(dep_name);
-			g_hash_table_insert(self->vars, g_strdup(dep_name), dep);
-		}
-
-		if (!g_list_find_custom(dep->antidep, name, (GCompareFunc)g_strcmp0))
-			dep->antidep = g_list_prepend(dep->antidep, g_strdup(name));
-
-		if (!has_error && get_error(self, dep_name)) {
-			gchar *msg;
-			msg = g_strdup_printf(_("Variable %s depends on %s which has errors"),
-					      name, dep_name);
-			has_error = TRUE;
-			set_error(self, name, type, msg);
-			g_free(msg);
-		}
+		if (err->code == GEBR_IEXPR_ERROR_SYNTAX)
+			return retval;
 	}
 
 	SET_VAR_VALUE(param, new_value);
 
-	if (detect_cicle(self, param)) {
-		gchar *msg;
-		msg = g_strdup_printf(_("The variable %s has cicle dependency"), name);
-		set_error(self, name, type, msg);
-		g_free(msg);
-	} else if (!has_error) {
-		GebrGeoXmlParameterType ptype;
-		ptype = gebr_geoxml_parameter_get_type(param);
-		gebr_iexpr_set_var(expr, name, ptype, new_value, &err);
-
-		if (err) {
-			set_error(self, name, type, err->message);
-			g_propagate_error(error, err);
-			return FALSE;
-		} else
-			set_error(self, name, type, NULL);
-	}
-
-	return !has_error;
+	return retval;
 }
 
 GebrGeoXmlParameter*
@@ -531,6 +564,16 @@ gebr_validator_move(GebrValidator       *self,
 		    GebrGeoXmlParameter *pivot,
 		    GList              **affected)
 {
+	const gchar *name;
+	GebrGeoXmlDocumentType t1, t2;
+
+	name = GET_VAR_NAME(param);
+	t1 = gebr_geoxml_parameter_get_scope(param);
+	t2 = gebr_geoxml_parameter_get_scope(pivot);
+
+	if (t1 != t2) {
+	}
+
 	return NULL;
 }
 
