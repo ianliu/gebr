@@ -565,16 +565,48 @@ gebr_validator_move(GebrValidator       *self,
 		    GList              **affected)
 {
 	const gchar *name;
+	const gchar *value;
+	HashData *data;
+	GebrGeoXmlParameter *new_param;
+	GebrGeoXmlParameterType type;
 	GebrGeoXmlDocumentType t1, t2;
 
 	name = GET_VAR_NAME(param);
+	data = g_hash_table_lookup(self->vars, name);
+
+	g_return_val_if_fail(data != NULL, NULL);
+
+	value = GET_VAR_VALUE(param);
 	t1 = gebr_geoxml_parameter_get_scope(param);
 	t2 = gebr_geoxml_parameter_get_scope(pivot);
+	type = gebr_geoxml_parameter_get_type(param);
+
+	g_assert(data->param[t1] == param);
+
+	GList *aff1 = NULL;
+	GList *aff2 = NULL;
+	GError *err1 = NULL;
+	GError *err2 = NULL;
 
 	if (t1 != t2) {
-	}
+		if (data->param[t2]) {
+			gebr_validator_change_value(self, data->param[t2],
+						    value, &aff1, &err1);
+			new_param = data->param[t2];
+		} else {
+			GebrGeoXmlDocument *doc;
+			doc = gebr_geoxml_object_get_owner_document(GEBR_GEOXML_OBJECT(pivot));
+			new_param = gebr_geoxml_document_set_dict_keyword(doc, type, name, value);
+			gebr_validator_insert(self, new_param, &aff1, &err1);
+		}
+	} else
+		new_param = param;
 
-	return NULL;
+	gebr_validator_remove(self, param, &aff2, &err2);
+	gebr_geoxml_sequence_move_after(GEBR_GEOXML_SEQUENCE(new_param),
+					GEBR_GEOXML_SEQUENCE(pivot));
+
+	return new_param;
 }
 
 gboolean
