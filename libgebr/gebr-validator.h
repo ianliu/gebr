@@ -107,6 +107,19 @@ GebrGeoXmlParameter* gebr_validator_move(GebrValidator       *self,
                                          GebrGeoXmlParameter *pivot,
                                          GList              **affected);
 
+/*
+ * gebr_validator_check_using_var
+ * @validator: A #GebrValidator
+ * @source: Variable which the function check if using @var
+ * @var: The variable for check
+ *
+ * Returns: %TRUE if @source using @var (direct or indirect), %FALSE otherwise.
+ */
+gboolean
+gebr_validator_check_using_var(GebrValidator *self,
+                               const gchar   *source,
+                               const gchar   *var);
+
 /**
  * gebr_validator_validate_param:
  * @validator: A #GebrValidator
