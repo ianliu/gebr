@@ -682,6 +682,11 @@ void flow_program_remove(void)
 			gebr_geoxml_sequence_remove(GEBR_GEOXML_SEQUENCE(program));
 
 			if (gebr_geoxml_program_get_control (program) == GEBR_GEOXML_PROGRAM_CONTROL_FOR) {
+				GebrGeoXmlSequence *param;
+				GError *err = NULL;
+				GList *affected;
+				param = gebr_geoxml_document_get_dict_parameter(gebr.flow);
+				gebr_validator_remove(gebr.validator, GEBR_GEOXML_PARAMETER(param), &affected, &err);
 				gebr_geoxml_flow_remove_iter_dict(gebr.flow);
 				dict_edit_check_programs_using_variables("iter", FALSE);
 			}

@@ -756,13 +756,21 @@ void flow_edition_change_iter_status(guint status, GtkTreeIter *iter)
 	if (gebr_geoxml_program_get_control(program) == GEBR_GEOXML_PROGRAM_CONTROL_FOR) {
 		GtkTreeIter it;
 		GebrGeoXmlProgram *prog;
+		GebrGeoXmlSequence *parameter;
+		GError *err = NULL;
+		GList *affected;
 
 		if(status == GEBR_GEOXML_PROGRAM_STATUS_DISABLED ||
-		   status == GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED)
+		   status == GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED) {
+			parameter = gebr_geoxml_document_get_dict_parameter(GEBR_GEOXML_DOCUMENT(gebr.flow));
+			gebr_validator_remove(gebr.validator, GEBR_GEOXML_PARAMETER(parameter), &affected, &err);
 			gebr_geoxml_flow_remove_iter_dict(gebr.flow);
-		else
+		} else {
 			gebr_geoxml_flow_insert_iter_dict(gebr.flow);
-
+			parameter = gebr_geoxml_document_get_dict_parameter(GEBR_GEOXML_DOCUMENT(gebr.flow));
+			gebr_validator_insert(gebr.validator, GEBR_GEOXML_PARAMETER(parameter), &affected, &err);
+		}
+		g_clear_error(&err);
 		gebr_gui_gtk_tree_model_foreach(it, model) {
 			gtk_tree_model_get(model, &it, FSEQ_GEBR_GEOXML_POINTER, &prog, -1);
 

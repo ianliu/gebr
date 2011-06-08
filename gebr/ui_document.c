@@ -882,6 +882,8 @@ static void on_dict_edit_remove_clicked(GtkButton * button, struct dict_edit_dat
 	GebrGeoXmlSequence *parameter;
 	gboolean is_editable = FALSE;
 	const gchar *var_name;
+	GList *affected;
+	GError *err = NULL;
 
 	if (!dict_edit_get_selected(data, &iter))
 		return;
@@ -909,7 +911,7 @@ static void on_dict_edit_remove_clicked(GtkButton * button, struct dict_edit_dat
 			gebr_geoxml_sequence_remove(parameter);
 			gtk_tree_store_remove(GTK_TREE_STORE(data->tree_model), &iter);
 		}
-
+		gebr_validator_remove(gebr.validator, GEBR_GEOXML_PARAMETER(parameter), &affected, &err);
 	}
 	gebr_dict_update_wizard(data);
 }
@@ -1202,6 +1204,8 @@ static gboolean dict_edit_validate_editing_cell(struct dict_edit_data *data, gbo
 	switch (dict_edit_get_column_index_for_renderer(data->editing_cell, data)) {
 	case DICT_EDIT_KEYWORD: {
 		const gchar *keyword = gebr_geoxml_program_parameter_get_keyword(parameter);
+		GList *affected;
+		GError *err = NULL;
 		if (cancel_edition) {
 			if(keyword && !strlen(keyword)) {
 				gtk_tree_store_remove(GTK_TREE_STORE(data->tree_model), &data->editing_iter);
@@ -1213,12 +1217,19 @@ static gboolean dict_edit_validate_editing_cell(struct dict_edit_data *data, gbo
 			   dict_edit_check_duplicate_keyword(data, parameter, new_text, TRUE)) {
 			data->edition_valid = FALSE;
 			goto out;
-		} else 
+		} else {
 			gebr_geoxml_program_parameter_set_keyword(parameter, new_text);
-		break;
+			if (!strlen(keyword))
+				gebr_validator_insert(gebr.validator, GEBR_GEOXML_PARAMETER(parameter), &affected, &err);
+			else
+				gebr_validator_rename(gebr.validator, GEBR_GEOXML_PARAMETER(parameter), new_text, &affected, &err);
+			g_clear_error(&err);
+		}
+			break;
 	} case DICT_EDIT_VALUE: {
 		gchar *validated;
-		GError *error = NULL;
+		GError *error = NULL, *err = NULL;
+		GList *affected;
 
 		if (!cancel_edition)
 			gebr_geoxml_program_parameter_set_first_value(parameter, FALSE, new_text);
@@ -1235,6 +1246,8 @@ static gboolean dict_edit_validate_editing_cell(struct dict_edit_data *data, gbo
 			GebrGeoXmlParameterType type = gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(parameter));
 			gebr_dict_alert(data, type == GEBR_GEOXML_PARAMETER_TYPE_STRING ? "string-icon" : "integer-icon",
 					type == GEBR_GEOXML_PARAMETER_TYPE_STRING ? "Text value" : "Number value");
+			gebr_validator_insert(gebr.validator, GEBR_GEOXML_PARAMETER(parameter), &affected, &err);
+			g_clear_error(&err);
 		}
 		break;
 	} case DICT_EDIT_COMMENT:
@@ -1667,6 +1680,7 @@ static gboolean dict_edit_reorder(GtkTreeView            *tree_view,
 	const gchar *varname;
 	const gchar *value;
 	const gchar *comment;
+	GList *affected;
 
 	gtk_tree_model_get(data->tree_model, position,
 			   DICT_EDIT_KEYWORD, &keyword,
@@ -1769,6 +1783,7 @@ static gboolean dict_edit_reorder(GtkTreeView            *tree_view,
 	if (gtk_tree_model_get_iter(data->tree_model, &newiter, path_a))
 		validate_dict_iter(data, &newiter);
 
+	gebr_validator_move(gebr.validator, GEBR_GEOXML_PARAMETER(source), GEBR_GEOXML_PARAMETER(pivot), &affected);
 	gtk_tree_path_free(path_a);
 	g_free(keyword);
 	return TRUE;
