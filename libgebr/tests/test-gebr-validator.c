@@ -237,6 +237,8 @@ void test_gebr_validator_change(void)
 						   "pi", "3.14");
 
 	gebr_validator_insert(validator, pi, NULL, NULL);
+	g_assert_no_error(error);
+
 	gebr_validator_change_value(validator, pi, "3.1415", &affected, &error);
 	pi_value = gebr_geoxml_program_parameter_get_first_value(
 			GEBR_GEOXML_PROGRAM_PARAMETER(pi), FALSE);
