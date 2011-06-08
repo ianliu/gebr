@@ -231,7 +231,7 @@ get_error(GebrValidator *self,
 	data = g_hash_table_lookup(self->vars, name);
 
 	if (!data)
-		return NULL;
+		return _("The variable does not exists");
 
 	for (int i = 0; i < 3; i++)
 		if (data->param[i])
@@ -637,124 +637,46 @@ gebr_validator_validate_param(GebrValidator       *self,
 			      gchar              **validated,
 			      GError             **err)
 {
-	GString *result;
-	GError *error = NULL;
-	const gchar *separator;
-	const gchar *expression;
+	const gchar *str;
 	GebrGeoXmlParameterType type;
-	GebrGeoXmlProgramParameter *pparam;
-	GebrGeoXmlSequence *seq;
-	GebrIExpr *expr_validator = NULL;
-	gboolean is_first = TRUE;
 
-	g_return_val_if_fail(param != NULL, FALSE);
-
+	str = GET_VAR_VALUE(param);
 	type = gebr_geoxml_parameter_get_type(param);
 
-	if (type == GEBR_GEOXML_PARAMETER_TYPE_ENUM ||
-	    type == GEBR_GEOXML_PARAMETER_TYPE_FLAG)
-		return TRUE;
-
-	g_return_val_if_fail(type == GEBR_GEOXML_PARAMETER_TYPE_STRING ||
-			     type == GEBR_GEOXML_PARAMETER_TYPE_FILE   ||
-			     type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT  ||
-			     type == GEBR_GEOXML_PARAMETER_TYPE_INT    ||
-			     type == GEBR_GEOXML_PARAMETER_TYPE_RANGE,
-			     FALSE);
-
-	pparam = GEBR_GEOXML_PROGRAM_PARAMETER(param);
-	result = g_string_new(NULL);
-	gebr_geoxml_program_parameter_get_value(pparam, FALSE, &seq, 0);
-	separator = gebr_geoxml_program_parameter_get_list_separator(pparam);
-
-	if (gebr_geoxml_program_parameter_get_required(pparam)) {
-		GString *value;
-		value = gebr_geoxml_program_parameter_get_string_value(pparam, FALSE);
-		if (!value->len) {
-			g_set_error(err,
-			            GEBR_IEXPR_ERROR,
-			            GEBR_IEXPR_ERROR_EMPTY_EXPR,
-			            _("This parameter is required"));
-			g_string_free(value, TRUE);
-			return FALSE;
-		}
-		g_string_free(value, TRUE);
-	}
-
-	expr_validator = get_validator(self, param);
-
-	gebr_iexpr_reset(expr_validator);
-
-	if(self->line != NULL && self->proj != NULL)
-		setup_variables(self, expr_validator, param);
-
-	while (seq) {
-		error = NULL;
-		expression = gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(seq));
-		gebr_iexpr_is_valid(expr_validator, expression, &error);
-
-		if (error) {
-			g_propagate_error(err, error);
-			g_string_free(result, TRUE);
-			return FALSE;
-		}
-
-		if (is_first) {
-			is_first = FALSE;
-			g_string_append(result, expression);
-		} else
-			g_string_append_printf(result, "%s%s", separator, expression);
-
-		gebr_geoxml_sequence_next(&seq);
-	}
-
-	*validated = g_string_free(result, FALSE);
-	return TRUE;
+	return gebr_validator_validate_expr(self, str, type, err);
 }
 
 gboolean
 gebr_validator_validate_expr(GebrValidator          *self,
-			     const gchar            *expr,
+			     const gchar            *str,
 			     GebrGeoXmlParameterType type,
 			     GError                **err)
 {
-	GError *error = NULL;
-	GebrIExpr *expr_validator = NULL;
+	GList *vars;
+	GebrIExpr *expr;
+	const gchar *errmsg = NULL;
 
-	g_return_val_if_fail(type == GEBR_GEOXML_PARAMETER_TYPE_STRING ||
-			     type == GEBR_GEOXML_PARAMETER_TYPE_FILE   ||
-			     type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT  ||
-			     type == GEBR_GEOXML_PARAMETER_TYPE_INT    ||
-			     type == GEBR_GEOXML_PARAMETER_TYPE_RANGE,
-			     FALSE);
+	expr = get_validator_by_type(self, type);
+	vars = gebr_iexpr_extract_vars(expr, str);
 
-	switch (type) {
-	case GEBR_GEOXML_PARAMETER_TYPE_STRING:
-	case GEBR_GEOXML_PARAMETER_TYPE_FILE:
-		expr_validator = GEBR_IEXPR(self->string_expr);
-		break;
-	case GEBR_GEOXML_PARAMETER_TYPE_FLOAT:
-	case GEBR_GEOXML_PARAMETER_TYPE_INT:
-	case GEBR_GEOXML_PARAMETER_TYPE_RANGE:
-		expr_validator = GEBR_IEXPR(self->arith_expr);
-		break;
-	default:
-		break;
+	for (GList *i = vars; i; i = i->next) {
+		const gchar *name = i->data;
+		const gchar *msg = get_error(self, name);
+		if (msg) {
+			errmsg = msg;
+			break;
+		}
 	}
 
-	gebr_iexpr_reset(expr_validator);
+	if (errmsg)
+		g_set_error(err, GEBR_IEXPR_ERROR,
+			    GEBR_IEXPR_ERROR_INVAL_VAR,
+			    "%s", errmsg);
 
-	if(self->line != NULL && self->proj != NULL)
-		setup_variables(self, expr_validator, NULL);
+	g_list_foreach(vars, (GFunc)g_free, NULL);
+	g_list_free(vars);
 
-	gebr_iexpr_is_valid(expr_validator, expr, &error);
-
-	if (error) {
-		g_propagate_error(err, error);
-		return FALSE;
-	}
-
-	return TRUE;
+	return errmsg == NULL;
 }
 
 void gebr_validator_get_documents(GebrValidator *self,
