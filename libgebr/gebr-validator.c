@@ -578,6 +578,25 @@ gebr_validator_move(GebrValidator       *self,
 }
 
 gboolean
+gebr_validator_check_using_var(GebrValidator *self,
+                               const gchar   *source,
+                               const gchar   *var)
+{
+	HashData *data;
+	gboolean retval = FALSE;
+	data = g_hash_table_lookup(self->vars, var);
+
+	for (GList *antidep = data->antidep; antidep; antidep = antidep->next) {
+		if (g_strcmp0(antidep->data, source) == 0)
+			return TRUE;
+		retval = gebr_validator_check_using_var(self, antidep->data, var);
+		if (retval)
+			break;
+	}
+	return retval;
+}
+
+gboolean
 gebr_validator_validate_param(GebrValidator       *self,
 			      GebrGeoXmlParameter *param,
 			      gchar              **validated,

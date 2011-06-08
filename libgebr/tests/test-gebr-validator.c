@@ -309,6 +309,63 @@ void test_gebr_validator_move(void)
 	g_assert (gebr_geoxml_parameter_get_scope(result) == GEBR_GEOXML_DOCUMENT_TYPE_PROJECT);
 }
 
+void test_gebr_validator_check_using_var(void)
+{
+	GebrValidator *validator;
+
+	GebrGeoXmlFlow *flow;
+	GebrGeoXmlLine *line;
+	GebrGeoXmlProject *proj;
+
+	GebrGeoXmlParameter *param;
+	GError *error = NULL;
+	GList *affected;
+
+	flow = gebr_geoxml_flow_new();
+	line = gebr_geoxml_line_new();
+	proj = gebr_geoxml_project_new();
+
+	validator = gebr_validator_new((GebrGeoXmlDocument**)&flow,
+	                               (GebrGeoXmlDocument**)&line,
+	                               (GebrGeoXmlDocument**)&proj);
+
+
+	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
+	                                              GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
+	                                              "a", "12");
+	gebr_validator_insert(validator, param, &affected, &error);
+	g_assert_no_error(error);
+
+	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
+	                                              GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
+	                                              "x", "100");
+	gebr_validator_insert(validator, param, &affected, &error);
+	g_assert_no_error(error);
+
+	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
+	                                              GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
+	                                              "b", "a+1");
+	gebr_validator_insert(validator, param, &affected, &error);
+	g_assert_no_error(error);
+
+	g_assert(gebr_validator_check_using_var(validator, "b", "a") == TRUE);
+
+	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
+	                                              GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
+	                                              "c", "b+1");
+	gebr_validator_insert(validator, param, &affected, &error);
+	g_assert_no_error(error);
+
+	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
+	                                              GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
+	                                              "d", "c*2");
+	gebr_validator_insert(validator, param, &affected, &error);
+	g_assert_no_error(error);
+
+	g_assert(gebr_validator_check_using_var(validator, "d", "a") == TRUE);
+	g_assert(gebr_validator_check_using_var(validator, "d", "x") == FALSE);
+}
+
 int main(int argc, char *argv[])
 {
 	g_type_init();
@@ -320,6 +377,7 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/validator/rename", test_gebr_validator_rename);
 	g_test_add_func("/libgebr/validator/change", test_gebr_validator_change);
 	g_test_add_func("/libgebr/validator/move", test_gebr_validator_move);
+	g_test_add_func("/libgebr/validator/using_var", test_gebr_validator_check_using_var);
 
 	return g_test_run();
 }
