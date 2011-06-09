@@ -215,9 +215,9 @@ dnl ============================================================================
 dnl Checking for Packages
 dnl ============================================================================
 PKG_CHECK_MODULES([GLIB], [
-	glib-2.0    >= 2.24.0
-	gobject-2.0 >= 2.24.0
-	gthread-2.0 >= 2.24.0
+	glib-2.0    >= 2.22.0
+	gobject-2.0 >= 2.22.0
+	gthread-2.0 >= 2.22.0
 ])
 AC_SUBST(GLIB_LIBS)
 AC_SUBST(GLIB_CFLAGS)
@@ -228,7 +228,7 @@ AC_SUBST(GDOME2_CFLAGS)
 
 if test "$enable_gui" = "yes"; then
 	PKG_CHECK_MODULES([GUI], [
-		gtk+-2.0   >= 2.20.0
+		gtk+-2.0   >= 2.18.0
 		webkit-1.0 >= 1.2.5
 	])
 	AC_SUBST(GUI_LIBS)
