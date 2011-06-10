@@ -1076,6 +1076,7 @@ static void on_dict_edit_value_type_cell_edited(GtkCellRenderer * cell, gchar * 
 			   DICT_EDIT_IS_ADD_PARAMETER, &is_add_parameter,
 			   DICT_EDIT_GEBR_GEOXML_POINTER, &parameter, -1);
 	gebr_geoxml_parameter_set_type(GEBR_GEOXML_PARAMETER(parameter), type);
+	gebr_validator_insert(gebr.validator, GEBR_GEOXML_PARAMETER(parameter), NULL, NULL);
 
 	gtk_tree_store_set(GTK_TREE_STORE(data->tree_model), &iter,
 	                   DICT_EDIT_VALUE_TYPE_IMAGE, type == GEBR_GEOXML_PARAMETER_TYPE_STRING ? "string-icon" : "integer-icon",
@@ -1219,22 +1220,21 @@ static gboolean dict_edit_validate_editing_cell(struct dict_edit_data *data, gbo
 			goto out;
 		} else {
 			gebr_geoxml_program_parameter_set_keyword(parameter, new_text);
-			if (!strlen(keyword))
-				gebr_validator_insert(gebr.validator, GEBR_GEOXML_PARAMETER(parameter), &affected, &err);
-			else
+			if (strlen(keyword))
 				gebr_validator_rename(gebr.validator, GEBR_GEOXML_PARAMETER(parameter), new_text, &affected, &err);
-			g_clear_error(&err);
+			if (err)
+				g_clear_error(&err);
 		}
-			break;
+		break;
 	} case DICT_EDIT_VALUE: {
 		gchar *validated;
-		GError *error = NULL, *err = NULL;
-		GList *affected;
+		GError *error = NULL;
 
 		if (!cancel_edition)
-			gebr_geoxml_program_parameter_set_first_value(parameter, FALSE, new_text);
+			gebr_validator_change_value(gebr.validator, GEBR_GEOXML_PARAMETER(parameter), new_text, NULL, &error);
 
-		data->edition_valid = gebr_validator_validate_param(gebr.validator, GEBR_GEOXML_PARAMETER(parameter), &validated, &error);
+		data->edition_valid = (error == NULL);
+
 		if(cancel_edition)
 			goto out;
 
@@ -1246,8 +1246,6 @@ static gboolean dict_edit_validate_editing_cell(struct dict_edit_data *data, gbo
 			GebrGeoXmlParameterType type = gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(parameter));
 			gebr_dict_alert(data, type == GEBR_GEOXML_PARAMETER_TYPE_STRING ? "string-icon" : "integer-icon",
 					type == GEBR_GEOXML_PARAMETER_TYPE_STRING ? "Text value" : "Number value");
-			gebr_validator_insert(gebr.validator, GEBR_GEOXML_PARAMETER(parameter), &affected, &err);
-			g_clear_error(&err);
 		}
 		break;
 	} case DICT_EDIT_COMMENT:
