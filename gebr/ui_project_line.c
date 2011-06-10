@@ -44,6 +44,8 @@
 
 static void project_line_load (void);
 
+static void pl_change_selection_update_validator(GtkTreeSelection *selection);
+
 static void project_line_on_row_activated (GtkTreeView * tree_view,
 					   GtkTreePath * path,
 					   GtkTreeViewColumn * column,
@@ -118,7 +120,9 @@ struct ui_project_line *project_line_setup_ui(void)
 	gtk_tree_view_column_add_attribute(col, renderer, "text", PL_TITLE);
 	gebr_gui_gtk_tree_view_fancy_search(GTK_TREE_VIEW(ui_project_line->view), PL_TITLE);
 	g_signal_connect(gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_project_line->view)), "changed",
-			 G_CALLBACK(project_line_load), ui_project_line);
+			 G_CALLBACK(project_line_load), NULL);
+	g_signal_connect(gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_project_line->view)), "changed",
+			 G_CALLBACK(pl_change_selection_update_validator), NULL);
 
 	/* Right side */
 	scrolled_window = gtk_scrolled_window_new(NULL, NULL);
@@ -1126,6 +1130,35 @@ static void project_line_load(void)
 		g_free(line_filename);
 }
 
+static void pl_change_selection_update_validator(GtkTreeSelection *selection)
+{
+	static GebrGeoXmlProject *last_proj = NULL;
+
+	GList *rows;
+	GtkTreePath *path;
+	GtkTreeModel *model;
+
+	// Update validator when project change
+	if (gebr.project == last_proj)
+		return;
+
+	rows = gtk_tree_selection_get_selected_rows(selection, &model);
+
+	if (!rows)
+		return;
+
+	// If a line is the first selection, validator was already updated
+	// by ui_flow_browse change signal.
+	path = rows->data;
+	if (gtk_tree_path_get_depth(path) == 2)
+		goto out;
+
+	gebr_validator_update(gebr.validator);
+
+out:
+	g_list_foreach(rows, (GFunc) gtk_tree_path_free, NULL);
+	g_list_free(rows);
+}
 
 /**
  * \internal
