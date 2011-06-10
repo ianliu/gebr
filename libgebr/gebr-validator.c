@@ -370,6 +370,10 @@ gebr_validator_change_value_by_name(GebrValidator          *self,
 		return FALSE;
 	}
 
+	if (type != GEBR_GEOXML_PARAMETER_TYPE_STRING
+	    && type != GEBR_GEOXML_PARAMETER_TYPE_FILE)
+		gebr_iexpr_set_var(GEBR_IEXPR(self->string_expr), name,
+				   type, new_value, &err);
 	gebr_iexpr_set_var(expr, name, type, new_value, &err);
 
 	if (err) {
