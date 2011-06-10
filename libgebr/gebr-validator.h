@@ -165,6 +165,12 @@ void gebr_validator_get_documents(GebrValidator       *validator,
 				  GebrGeoXmlDocument **proj);
 
 /**
+ * gebr_validator_update:
+ * @validator: The #GebrValidator to be updated
+ */
+void gebr_validator_update(GebrValidator *validator);
+
+/**
  * gebr_validator_free:
  * @validator: The #GebrValidator to be freed
  */
