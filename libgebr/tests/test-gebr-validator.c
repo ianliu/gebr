@@ -48,44 +48,50 @@ void test_gebr_validator_simple(void)
 	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
 						      GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
 						      "pi", "3.14");
-	g_assert(gebr_validator_validate_param(validator, param, &validated, &error) == TRUE);
+	gebr_validator_insert(validator, param, NULL, NULL);
+	gebr_validator_validate_param(validator, param, &validated, &error);
 	g_assert_no_error(error);
 
 	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
 						      GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
 						      "e", "2.718[");
-	g_assert(gebr_validator_validate_param(validator, param, &validated, &error) == FALSE);
+	gebr_validator_insert(validator, param, NULL, NULL);
+	gebr_validator_validate_param(validator, param, &validated, &error);
 	g_assert_error(error, GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_SYNTAX);
 	g_clear_error(&error);
 
 	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
 						      GEBR_GEOXML_PARAMETER_TYPE_STRING,
 						      "abc", "[foo");
-	g_assert(gebr_validator_validate_param(validator, param, &validated, &error) == FALSE);
+	gebr_validator_insert(validator, param, NULL, NULL);
+	gebr_validator_validate_param(validator, param, &validated, &error);
 	g_assert_error(error, GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_SYNTAX);
 	g_clear_error(&error);
 
 	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
 						      GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
 						      "x", "pi*pi");
-	g_assert(gebr_validator_validate_param(validator, param, &validated, &error) == TRUE);
+	gebr_validator_insert(validator, param, NULL, NULL);
+	gebr_validator_validate_param(validator, param, &validated, &error);
 	g_assert_no_error(error);
 
 	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
 						      GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
 						      "y", "pi*bo");
-	g_assert(gebr_validator_validate_param(validator, param, &validated, &error) == FALSE);
+	gebr_validator_insert(validator, param, NULL, NULL);
+	gebr_validator_validate_param(validator, param, &validated, &error);
 	g_assert_error(error, GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_UNDEF_VAR);
 	g_clear_error(&error);
 
 	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
 						      GEBR_GEOXML_PARAMETER_TYPE_STRING,
 						      "xyz", "[bo]");
-	g_assert(gebr_validator_validate_param(validator, param, &validated, &error) == FALSE);
+	gebr_validator_insert(validator, param, NULL, NULL);
+	gebr_validator_validate_param(validator, param, &validated, &error);
 	g_assert_error(error, GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_UNDEF_VAR);
 	g_clear_error(&error);
 
-	g_assert(gebr_validator_validate_expr(validator, "[bobo]", GEBR_GEOXML_PARAMETER_TYPE_STRING, &error) == FALSE);
+	gebr_validator_validate_expr(validator, "[bobo]", GEBR_GEOXML_PARAMETER_TYPE_STRING, &error);
 	g_assert_error(error, GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_UNDEF_VAR);
 	g_clear_error(&error);
 
@@ -158,13 +164,15 @@ void test_gebr_validator_remove(void)
 	                                              GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
 	                                              "pi2", "pi*pi");
 	gebr_validator_insert(validator, param, &affected, &error);
-	g_assert_no_error(error);
+	g_assert_error(error, GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_UNDEF_VAR);
+	g_clear_error(&error);
 
 	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
 	                                              GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
 	                                              "pi3", "pi2*pi");
 	gebr_validator_insert(validator, param, &affected, &error);
-	g_assert_no_error(error);
+	g_assert_error(error, GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_UNDEF_VAR);
+	g_clear_error(&error);
 
 	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
 	                                              GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
@@ -373,12 +381,12 @@ int main(int argc, char *argv[])
 	g_type_init();
 	g_test_init(&argc, &argv, NULL);
 
-	g_test_add_func("/libgebr/validator/simple", test_gebr_validator_simple);
 	g_test_add_func("/libgebr/validator/insert", test_gebr_validator_insert);
 	g_test_add_func("/libgebr/validator/remove", test_gebr_validator_remove);
 	g_test_add_func("/libgebr/validator/rename", test_gebr_validator_rename);
 	g_test_add_func("/libgebr/validator/change", test_gebr_validator_change);
 	g_test_add_func("/libgebr/validator/move", test_gebr_validator_move);
+	g_test_add_func("/libgebr/validator/simple", test_gebr_validator_simple);
 	g_test_add_func("/libgebr/validator/using_var", test_gebr_validator_check_using_var);
 
 	return g_test_run();
