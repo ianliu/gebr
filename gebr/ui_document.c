@@ -409,22 +409,21 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 static void validate_dict_iter(struct dict_edit_data *data, GtkTreeIter *iter)
 {
 	GtkTreeIter it;
-	GtkTreeIter parent;
+	GtkTreeIter child;
 	gchar *validated;
 	GError *error = NULL;
 	const gchar *keyword;
 	GebrGeoXmlParameter *param;
 	GebrGeoXmlParameterType type;
 
-	it = *iter;
-	if (!gtk_tree_model_iter_parent(data->tree_model, &parent, &it))
-		g_return_if_reached();
+	gboolean valid = gtk_tree_model_get_iter_first(data->tree_model, &it);
 
-	while (TRUE) {
-		for (gboolean valid = TRUE; valid;
-		     valid = gtk_tree_model_iter_next(data->tree_model, &it))
+	while (valid)
+	{
+		valid = gtk_tree_model_iter_children(data->tree_model, &child, &it);
+		while (valid)
 		{
-			gtk_tree_model_get(data->tree_model, &it, DICT_EDIT_GEBR_GEOXML_POINTER, &param, -1);
+			gtk_tree_model_get(data->tree_model, &child, DICT_EDIT_GEBR_GEOXML_POINTER, &param, -1);
 
 			// Avoid the 'New' row
 			if (!param)
@@ -433,12 +432,14 @@ static void validate_dict_iter(struct dict_edit_data *data, GtkTreeIter *iter)
 			keyword = gebr_geoxml_program_parameter_get_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(param));
 			type = gebr_geoxml_parameter_get_type(param);
 
-			if (G_UNLIKELY(g_str_equal(keyword, "iter")))
+			if (G_UNLIKELY(g_str_equal(keyword, "iter"))) {
+				valid = gtk_tree_model_iter_next(data->tree_model, &child);
 				continue;
+			}
 
 			gebr_validator_validate_param(gebr.validator, param, &validated, &error);
 			if (error) {
-				gtk_tree_store_set(GTK_TREE_STORE(data->tree_model), &it,
+				gtk_tree_store_set(GTK_TREE_STORE(data->tree_model), &child,
 						   DICT_EDIT_VALUE_TYPE_IMAGE, GTK_STOCK_DIALOG_WARNING,
 						   DICT_EDIT_VALUE_TYPE_TOOLTIP, error->message, -1);
 
@@ -446,7 +447,7 @@ static void validate_dict_iter(struct dict_edit_data *data, GtkTreeIter *iter)
 				g_clear_error(&error);
 				dict_edit_check_programs_using_variables(keyword, FALSE);
 			} else {
-				gtk_tree_store_set(GTK_TREE_STORE(data->tree_model), &it,
+				gtk_tree_store_set(GTK_TREE_STORE(data->tree_model), &child,
 						   DICT_EDIT_VALUE_TYPE_IMAGE,
 						   type == GEBR_GEOXML_PARAMETER_TYPE_STRING ? "string-icon" : "integer-icon",
 						   DICT_EDIT_VALUE_TYPE_TOOLTIP,
@@ -454,14 +455,12 @@ static void validate_dict_iter(struct dict_edit_data *data, GtkTreeIter *iter)
 				g_free(validated);
 				dict_edit_check_programs_using_variables(keyword, TRUE);
 			}
+
+			valid = gtk_tree_model_iter_next(data->tree_model, &child);
 		}
 
-		if (!gtk_tree_model_iter_next(data->tree_model, &parent))
-			break;
-
-		gtk_tree_model_iter_children(data->tree_model, &it, &parent);
-	};
-
+		valid = gtk_tree_model_iter_next(data->tree_model, &it);
+	}
 }
 
 void document_dict_edit_setup_ui(void)
@@ -1227,7 +1226,6 @@ static gboolean dict_edit_validate_editing_cell(struct dict_edit_data *data, gbo
 		}
 		break;
 	} case DICT_EDIT_VALUE: {
-		gchar *validated;
 		GError *error = NULL;
 
 		if (!cancel_edition)
