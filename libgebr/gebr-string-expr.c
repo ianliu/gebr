@@ -159,16 +159,27 @@ static GList *
 gebr_string_expr_extract_vars(GebrIExpr   *iface,
 			      const gchar *expr)
 {
+	gboolean retval;
+	GHashTable *set;
 	GList *vars = NULL;
 	GebrStringExpr *self = GEBR_STRING_EXPR(iface);
 
+	set = g_hash_table_new(g_str_hash, g_str_equal);
+
 	void prepend_var(const gchar *var, gpointer data)
 	{
-		vars = g_list_prepend(vars, g_strdup(var));
+		if (!g_hash_table_lookup(set, var)) {
+			vars = g_list_prepend(vars, g_strdup(var));
+			g_hash_table_insert(set, vars->data, GUINT_TO_POINTER(1));
+		}
 	}
 
-	if (!traverse_expression(self, expr, NULL, FALSE,
-				 prepend_var, NULL, NULL))
+	retval = traverse_expression(self, expr, NULL, FALSE,
+				     prepend_var, NULL, NULL);
+
+	g_hash_table_unref(set);
+
+	if (!retval)
 		return NULL;
 
 	return g_list_reverse(vars);
