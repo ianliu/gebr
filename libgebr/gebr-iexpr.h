@@ -55,6 +55,7 @@ GQuark gebr_iexpr_error_quark(void);
  * @GEBR_IEXPR_ERROR_UNDEF_VAR: An undefined variable was found.
  * @GEBR_IEXPR_ERROR_INVAL_VAR: An invalid variable name was found.
  * @GEBR_IEXPR_ERROR_INVAL_TYPE: Variable type not supported.
+ * @GEBR_IEXPR_ERROR_CYCLE: The variable has cycle dependencies.
  *
  * Error codes returned by expression handling functions.
  */
@@ -65,6 +66,7 @@ typedef enum {
 	GEBR_IEXPR_ERROR_UNDEF_VAR,
 	GEBR_IEXPR_ERROR_INVAL_VAR,
 	GEBR_IEXPR_ERROR_INVAL_TYPE,
+	GEBR_IEXPR_ERROR_CYCLE
 } GebrIExprError;
 
 typedef struct _GebrIExpr GebrIExpr;
