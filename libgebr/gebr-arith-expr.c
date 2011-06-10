@@ -50,6 +50,11 @@ static gboolean gebr_arith_expr_eval_internal(GebrArithExpr *self,
 					      gdouble       *result,
 					      GError       **err);
 
+static gboolean
+gebr_arith_expr_eval_impl (GebrIExpr   *self,
+			   const gchar *expr,
+			   gchar      **result,
+			   GError     **err);
 G_DEFINE_TYPE_WITH_CODE(GebrArithExpr, gebr_arith_expr, G_TYPE_OBJECT,
 			G_IMPLEMENT_INTERFACE(GEBR_TYPE_IEXPR,
 					      gebr_arith_expr_interface_init));
@@ -339,6 +344,7 @@ static void gebr_arith_expr_interface_init(GebrIExprInterface *iface)
 	iface->is_valid = gebr_arith_expr_is_valid;
 	iface->reset = gebr_arith_expr_reset;
 	iface->extract_vars = gebr_arith_expr_extract_vars;
+	iface->eval = gebr_arith_expr_eval_impl;
 }
 
 /* Private functions {{{1 */
@@ -499,11 +505,24 @@ gebr_arith_expr_eval_internal(GebrArithExpr *self,
 	return TRUE;
 }
 
+static gboolean
+gebr_arith_expr_eval_impl (GebrIExpr   *self,
+			   const gchar *expr,
+			   gchar      **result,
+			   GError     **err)
+{
+	gdouble res = 0;
+
+	gebr_arith_expr_eval (GEBR_ARITH_EXPR(self),expr,&res,err);
+	*result = g_strdup_printf("%f", res);
+}
+
 /* Public functions {{{1 */
 GebrArithExpr *gebr_arith_expr_new(void)
 {
 	return g_object_new(GEBR_TYPE_ARITH_EXPR, NULL);
 }
+
 
 gboolean gebr_arith_expr_eval(GebrArithExpr *self,
 			      const gchar   *expr,

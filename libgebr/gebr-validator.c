@@ -6,6 +6,7 @@
 #include "gebr-iexpr.h"
 #include "gebr-arith-expr.h"
 #include "gebr-string-expr.h"
+#include "gebr-expr.h"
 
 /* Structures {{{1 */
 struct _GebrValidator
@@ -242,7 +243,6 @@ get_value(GebrValidator *self,
 
 		return GET_VAR_VALUE(data->param[i]);
 	}
-
 	return NULL;
 }
 
@@ -606,6 +606,9 @@ gebr_validator_check_using_var(GebrValidator *self,
 	gboolean retval = FALSE;
 	data = g_hash_table_lookup(self->vars, var);
 
+	if (data == NULL)
+		return FALSE;
+
 	for (GList *antidep = data->antidep; antidep; antidep = antidep->next) {
 		if (g_strcmp0(antidep->data, source) == 0)
 			return TRUE;
@@ -714,4 +717,66 @@ void gebr_validator_free(GebrValidator *self)
 	g_object_unref(self->arith_expr);
 	g_object_unref(self->string_expr);
 	g_free(self);
+}
+
+gboolean gebr_validator_evaluate(GebrValidator *self,
+			     const gchar * expr,
+			     GebrGeoXmlParameterType type,
+			     GebrGeoXmlProgram * prog,
+			     gchar ** value,
+			     GError ** error)
+{
+	g_return_val_if_fail(type == GEBR_GEOXML_PARAMETER_TYPE_INT
+			     || type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT
+			     || type == GEBR_GEOXML_PARAMETER_TYPE_FILE
+			     || type == GEBR_GEOXML_PARAMETER_TYPE_STRING,
+			     FALSE);
+
+	g_return_val_if_fail(expr != NULL, FALSE);
+	g_return_val_if_fail(value != NULL, FALSE);
+	g_return_val_if_fail(self != NULL, FALSE);
+
+	gchar * end_value = NULL;
+	GList *vars = NULL;
+
+	gchar * test = g_strdup(expr);
+	if (g_strcmp0((const gchar *)g_strstrip(test),"") == 0)
+	{
+		g_set_error(error,
+			    GEBR_IEXPR_ERROR,
+			    GEBR_IEXPR_ERROR_EMPTY_EXPR,
+			    _("Empty expression"));
+
+		*value = g_strdup(_("Empty expression"));
+		g_free(test);
+		return FALSE;
+	}
+	g_free(test);
+
+	GebrIExpr *iexpr;
+
+	iexpr = get_validator_by_type(self, type);
+	vars = gebr_iexpr_extract_vars(iexpr, expr);
+	gebr_iexpr_eval(iexpr, expr, value, error);
+
+	for (GList * i = vars; i; i = i->next)
+	{
+		if(gebr_validator_check_using_var(self, i->data, "iter"))
+		{
+			gebr_iexpr_eval(iexpr,expr,&end_value,error);
+			break;
+		}
+	}
+
+	if(end_value)
+	{
+		gchar * tmp = g_strdup_printf("[%s, ..., %s]",
+					      gebr_str_remove_trailing_zeros(*value),
+					      gebr_str_remove_trailing_zeros(end_value));
+		g_free(*value);
+		g_free(end_value);
+		*value = tmp;
+	}
+		
+	return TRUE;
 }

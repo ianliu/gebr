@@ -89,6 +89,11 @@ struct _GebrIExprInterface {
 
 	GList *  (*extract_vars) (GebrIExpr   *self,
 				  const gchar *expr);
+	gboolean (*eval) (GebrIExpr   *self,
+			    const gchar *expr,
+			    gchar ** value,
+			    GError ** error);
+
 };
 
 GType gebr_iexpr_get_type(void) G_GNUC_CONST;
@@ -140,6 +145,19 @@ void gebr_iexpr_reset(GebrIExpr *self);
 GList *gebr_iexpr_extract_vars(GebrIExpr   *self,
 			       const gchar *expr);
 
+/**
+ * gebr_iexpr_eval:
+ * @expr: a #GebrIExpr
+ * @expr: expression to be evaluated.
+ * @value: returns the value of the expression.
+ * @error: return location for an #GEBR_IEXPR_ERROR, or %NULL
+ *
+ * Returns: %TRUE if @expression is valid, %FALSE otherwise.
+ */
+gboolean gebr_iexpr_eval(GebrIExpr   *self,
+			     const gchar *expr,
+			     gchar ** value,
+			     GError ** error);
 G_END_DECLS
 
 #endif /* __LIBGEBR_IEXPR_H__ */

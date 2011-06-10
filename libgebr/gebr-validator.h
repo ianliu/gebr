@@ -176,6 +176,25 @@ void gebr_validator_update(GebrValidator *validator);
  */
 void gebr_validator_free(GebrValidator *validator);
 
+/**
+ * gebr_validator_evaluate:
+ * @validator: The #GebrValidator to be freed
+ * @expr: The expression to be evaluated
+ * @type: The type of expression (GEBR_GEOXML_PARAMETER_TYPE_STRING | GEBR_GEOXML_PARAMETER_TYPE_FLOAT)
+ * @value: Returns the value of the expression. Returns expr if expression can't be evaluated.
+ * @error: Returns the error, if any.
+ *
+ * Calculate the value of @expr and return it at @value.
+ *
+ * Returns: %TRUE if @expr could be evaluated. %FALSE otherwise.
+ */
+gboolean gebr_validator_evaluate(GebrValidator *self,
+			     const gchar * expr,
+			     GebrGeoXmlParameterType type,
+			     GebrGeoXmlProgram * prog,
+			     gchar ** value,
+			     GError ** error);
+
 G_END_DECLS
 
 #endif /* __GEBR_VALIDATOR_H__ */
