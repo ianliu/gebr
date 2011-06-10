@@ -154,6 +154,15 @@ gchar * gebr_lock_file(const gchar *pathname, const gchar *new_lock_content, gbo
  */
 gchar *gebr_str_word_before_pos(const gchar *str, gint *pos);
 
+/**
+ * gebr_str_remove_trailing_zeros:
+ *
+ * Modifies @str inplace by removing trailing zeros.
+ *
+ * Returns: The same @str, but modified.
+ */
+gchar *gebr_str_remove_trailing_zeros(gchar *str);
+
 G_END_DECLS
 
 #endif				//__GEBR_UTILS_H
