@@ -447,11 +447,27 @@ static void validate_dict_iter(struct dict_edit_data *data, GtkTreeIter *iter)
 				g_clear_error(&error);
 				dict_edit_check_programs_using_variables(keyword, FALSE);
 			} else {
+				gchar * tooltip = NULL;
+				const gchar * expr = NULL;
+				expr = gebr_geoxml_program_parameter_get_first_value(
+						GEBR_GEOXML_PROGRAM_PARAMETER(param), FALSE);
+				GebrGeoXmlProgram * prog = NULL;
+
+				if(gebr.flow)
+					prog = gebr_geoxml_flow_get_control_program(gebr.flow);
+
+				gebr_validator_evaluate(gebr.validator,
+							expr,
+							type,
+							prog,
+							&tooltip,
+							&error);
+
 				gtk_tree_store_set(GTK_TREE_STORE(data->tree_model), &child,
 						   DICT_EDIT_VALUE_TYPE_IMAGE,
 						   type == GEBR_GEOXML_PARAMETER_TYPE_STRING ? "string-icon" : "integer-icon",
 						   DICT_EDIT_VALUE_TYPE_TOOLTIP,
-						   type == GEBR_GEOXML_PARAMETER_TYPE_STRING ? "Text value" : "Number value", -1);
+						   tooltip, -1);
 				g_free(validated);
 				dict_edit_check_programs_using_variables(keyword, TRUE);
 			}
@@ -1057,6 +1073,7 @@ static void on_dict_edit_value_type_cell_edited(GtkCellRenderer * cell, gchar * 
 						struct dict_edit_data *data)
 {
 	GebrGeoXmlParameterType type;
+	GError * error = NULL;
 	if(!new_text)
 		return;
 	if (!strcmp(new_text, _("String")))
@@ -1077,9 +1094,25 @@ static void on_dict_edit_value_type_cell_edited(GtkCellRenderer * cell, gchar * 
 	gebr_geoxml_parameter_set_type(GEBR_GEOXML_PARAMETER(parameter), type);
 	gebr_validator_insert(gebr.validator, GEBR_GEOXML_PARAMETER(parameter), NULL, NULL);
 
+	gchar * tooltip = NULL;
+	const gchar * expr = NULL;
+	expr = gebr_geoxml_program_parameter_get_first_value(
+			GEBR_GEOXML_PROGRAM_PARAMETER(parameter), FALSE);
+	GebrGeoXmlProgram * prog = NULL;
+
+	if(gebr.flow)
+		prog = gebr_geoxml_flow_get_control_program(gebr.flow);
+
+	gebr_validator_evaluate(gebr.validator,
+				expr,
+				type,
+				prog,
+				&tooltip,
+				&error);
+
 	gtk_tree_store_set(GTK_TREE_STORE(data->tree_model), &iter,
 	                   DICT_EDIT_VALUE_TYPE_IMAGE, type == GEBR_GEOXML_PARAMETER_TYPE_STRING ? "string-icon" : "integer-icon",
-			   DICT_EDIT_VALUE_TYPE_TOOLTIP, type == GEBR_GEOXML_PARAMETER_TYPE_STRING ? "Text value" : "Number value",
+			   DICT_EDIT_VALUE_TYPE_TOOLTIP, tooltip,
 			   DICT_EDIT_VALUE_TYPE_VISIBLE, FALSE,
 			   DICT_EDIT_VALUE_VISIBLE, TRUE, -1);
 	gebr_gui_gtk_tree_view_set_cursor(GTK_TREE_VIEW(data->tree_view), &iter,

@@ -655,13 +655,6 @@ gebr_validator_validate_param(GebrValidator       *self,
 	const gchar *str;
 	GebrGeoXmlParameterType type;
 
-	error = get_error(self, GET_VAR_NAME(param));
-
-	if (error) {
-		g_propagate_error(err, g_error_copy(error));
-		return FALSE;
-	}
-
 	str = GET_VAR_VALUE(param);
 	type = gebr_geoxml_parameter_get_type(param);
 	*validated = g_strdup(str);
@@ -794,15 +787,17 @@ gboolean gebr_validator_evaluate(GebrValidator *self,
 	iexpr = get_validator_by_type(self, type);
 	vars = gebr_iexpr_extract_vars(iexpr, expr);
 
-	for (GList * i = vars; i; i = i->next) {
-		if(!use_iter && gebr_validator_check_using_var(self, i->data, "iter")) {
-			use_iter = TRUE;
-			n = gebr_geoxml_program_control_get_n(prog_loop, &step, &ini);
-			data = g_hash_table_lookup(self->vars, "iter");
-			SET_VAR_VALUE(data->param[0], ini);
+	if (prog_loop
+	    && gebr_geoxml_program_get_status(prog_loop) == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED)
+		for (GList * i = vars; i; i = i->next) {
+			if(!use_iter && gebr_validator_check_using_var(self, i->data, "iter")) {
+				use_iter = TRUE;
+				n = gebr_geoxml_program_control_get_n(prog_loop, &step, &ini);
+				data = g_hash_table_lookup(self->vars, "iter");
+				SET_VAR_VALUE(data->param[0], ini);
+			}
+			declare_dep_tree(i->data);
 		}
-		declare_dep_tree(i->data);
-	}
 
 	gebr_iexpr_eval(iexpr, expr, value, NULL);
 
