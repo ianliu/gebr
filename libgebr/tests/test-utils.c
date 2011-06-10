@@ -55,12 +55,32 @@ void test_gebr_str_word_before_pos(void)
 	g_assert_cmpint(pos, ==, 2);
 }
 
+void test_gebr_str_remove_trailing_zeros(void)
+{
+	gchar *no_zeros = g_strdup("1.345");
+	g_assert_cmpstr(gebr_str_remove_trailing_zeros(no_zeros), ==, "1.345");
+	g_free(no_zeros);
+
+	gchar *one_zero = g_strdup("1.3450");
+	g_assert_cmpstr(gebr_str_remove_trailing_zeros(one_zero), ==, "1.345");
+	g_free(one_zero);
+
+	gchar *only_zeros = g_strdup("1.0000");
+	g_assert_cmpstr(gebr_str_remove_trailing_zeros(only_zeros), ==, "1");
+	g_free(only_zeros);
+
+	gchar *only_zeros2 = g_strdup("0.0000");
+	g_assert_cmpstr(gebr_str_remove_trailing_zeros(only_zeros2), ==, "0");
+	g_free(only_zeros2);
+}
+
 int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
 
 	g_test_add_func("/libgebr/utils/str-escape", test_gebr_str_escape);
 	g_test_add_func("/libgebr/utils/str_word_before_pos", test_gebr_str_word_before_pos);
+	g_test_add_func("/libgebr/utils/str_remove_trailing_zeros", test_gebr_str_remove_trailing_zeros);
 
 	return g_test_run();
 }

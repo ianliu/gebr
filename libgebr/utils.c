@@ -693,18 +693,17 @@ gchar *
 gebr_str_remove_trailing_zeros(gchar *str)
 {
 	gsize i;
-	gsize len;
 
-	len = strlen(str);
-
-	// Remove decimal numbers if they are zero. The precision is
-	// 6, so we might remove up to 7 (including decimal separator) chars
-	for (i = 1; i <= 6; i++)
-		if (str[len-i] != '0')
+	i = strlen(str);
+	while (i--) {
+		if (str[i] == '.' || str[i] != '0')
 			break;
-	if (i == 7)
-		str[len-7] = '\0';
-	else
-		str[len-i+1] = '\0';
+	}
+
+	if (str[i] == '.')
+		str[i] = '\0';
+	else if (i != -1)
+		str[i+1] = '\0';
+
 	return str;
 }
