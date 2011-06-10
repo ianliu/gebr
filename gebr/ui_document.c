@@ -176,6 +176,8 @@ static const GtkActionEntry dict_actions_entries[] = {
 	 G_CALLBACK(on_dict_edit_remove_clicked)},
 };
 
+static void gebr_dict_update_wizard(struct dict_edit_data *data);
+
 //==============================================================================
 // PUBLIC FUNCTIONS							       =
 //==============================================================================
@@ -687,7 +689,7 @@ void document_dict_edit_setup_ui(void)
 			gtk_tree_path_free(tree_path);
 		}
 	}
-	dict_edit_validate_editing_cell(data, FALSE, FALSE);
+	gebr_dict_update_wizard(data);
 
 	gtk_widget_show_all(dialog);
 	gtk_dialog_run(GTK_DIALOG(dialog));
