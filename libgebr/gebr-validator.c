@@ -168,6 +168,8 @@ set_error_full(GebrValidator *self,
 		for (int i = 0; i < 3; i++) {
 			if (!d->param[i])
 				continue;
+			if (d->error[i]->code == GEBR_IEXPR_ERROR_CYCLE)
+				continue;
 			if (!is_variable_valid(self, v, i, &cause)) {
 				GError *e = NULL;
 				g_set_error(&e, GEBR_IEXPR_ERROR,
@@ -355,41 +357,27 @@ gebr_validator_change_value_by_name(GebrValidator          *self,
 
 		if (!g_list_find_custom(dep->antidep, name, (GCompareFunc)g_strcmp0))
 			dep->antidep = g_list_prepend(dep->antidep, g_strdup(name));
-
-		if (!err && get_error(self, dep_name)) {
-			g_set_error(&err, GEBR_IEXPR_ERROR,
-				    GEBR_IEXPR_ERROR_UNDEF_VAR,
-				    _("Variable %s depends on %s which has errors"),
-				    name, dep_name);
-			set_error(self, name, scope, err);
-		}
 	}
 
 	if (detect_cicle(self, name, scope)) {
-		// Prioritize cycle errors
-		if (err)
-			g_clear_error(&err);
-
 		g_set_error(&err, GEBR_IEXPR_ERROR,
-			    GEBR_IEXPR_ERROR_INVAL_VAR,
+			    GEBR_IEXPR_ERROR_CYCLE,
 			    _("The variable %s has cycle dependency"),
 			    name);
-		set_error(self, name, scope, err);
-	} else if (!err) {
-		gebr_iexpr_set_var(expr, name, type, new_value, &err);
-
-		if (err) {
-			set_error(self, name, scope, err);
-			g_propagate_error(error, err);
-			return FALSE;
-		} else
-			set_error(self, name, scope, NULL);
-	}
-
-	if (err) {
+		data->error[scope] = g_error_copy(err);
+		update_error(self, name, scope);
 		g_propagate_error(error, err);
 		return FALSE;
 	}
+
+	gebr_iexpr_set_var(expr, name, type, new_value, &err);
+
+	if (err) {
+		set_error(self, name, scope, err);
+		g_propagate_error(error, err);
+		return FALSE;
+	} else
+		set_error(self, name, scope, NULL);
 
 	return TRUE;
 }
@@ -643,6 +631,7 @@ gebr_validator_validate_param(GebrValidator       *self,
 
 	str = GET_VAR_VALUE(param);
 	type = gebr_geoxml_parameter_get_type(param);
+	*validated = g_strdup(str);
 
 	return gebr_validator_validate_expr(self, str, type, err);
 }
