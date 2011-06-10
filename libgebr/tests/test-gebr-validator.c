@@ -518,21 +518,6 @@ void test_gebr_validator_evaluate(void)
 	if (error)
 		g_clear_error(&error);
 
-	eval_ok = gebr_validator_evaluate(validator,
-					  "   ",
-					  GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
-					  NULL,
-					  &value,
-					  &error);
-	g_assert(!eval_ok);
-	g_assert_cmpstr(value, ==, "Empty expression");
-	g_assert(error != NULL);
-	g_assert_cmpstr(error->message, ==, "Empty expression");
-	g_free(value);
-
-	if (error)
-		g_clear_error(&error);
-
 	/* Tests for textual expressions */
 	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
 						      GEBR_GEOXML_PARAMETER_TYPE_STRING,
@@ -584,7 +569,25 @@ void test_gebr_validator_evaluate(void)
 				&value,
 				&error);
 	g_assert_no_error(error);
-	g_assert_cmpstr(value, ==, "[2, ..., 2]");
+	g_assert_cmpstr(value, ==, "[2, ..., 8]");
+	g_free(value);
+
+	gebr_validator_evaluate(validator, "x+1",
+				GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
+				loop_prog,
+				&value,
+				&error);
+	g_assert_no_error(error);
+	g_assert_cmpstr(value, ==, "[3, ..., 9]");
+	g_free(value);
+
+	gebr_validator_evaluate(validator, "out-[iter].dat",
+				GEBR_GEOXML_PARAMETER_TYPE_STRING,
+				loop_prog,
+				&value,
+				&error);
+	g_assert_no_error(error);
+	g_assert_cmpstr(value, ==, "out-[1, ..., 7].dat");
 	g_free(value);
 }
 

@@ -53,6 +53,10 @@ static gboolean		is_variable_valid	(GebrValidator         *self,
 static const gchar *	get_value		(GebrValidator         *self,
 						 const gchar           *name);
 
+static gboolean		get_first_scope		(GebrValidator          *self,
+               		               		 const gchar            *name,
+               		               		 GebrGeoXmlDocumentType *scope);
+
 /* NodeData functions {{{1 */
 static HashData *
 hash_data_new_from_xml(GebrGeoXmlParameter *param)
@@ -384,6 +388,28 @@ gebr_validator_change_value_by_name(GebrValidator          *self,
 		set_error(self, name, scope, NULL);
 
 	return TRUE;
+}
+
+static gboolean get_first_scope(GebrValidator *self,
+                         const gchar *name,
+                         GebrGeoXmlDocumentType *scope)
+{
+	HashData *data;
+
+	data = g_hash_table_lookup(self->vars, name);
+
+	if (!data)
+		return FALSE;
+
+	for (int i = 0; i < 3; i++)
+	{
+		if (!data->param[i])
+			continue;
+
+		*scope = i;
+		return TRUE;
+	}
+	return FALSE;
 }
 
 /* Public functions {{{1 */
@@ -720,12 +746,20 @@ void gebr_validator_free(GebrValidator *self)
 }
 
 gboolean gebr_validator_evaluate(GebrValidator *self,
-			     const gchar * expr,
-			     GebrGeoXmlParameterType type,
-			     GebrGeoXmlProgram * prog,
-			     gchar ** value,
-			     GError ** error)
+                                 const gchar * expr,
+                                 GebrGeoXmlParameterType type,
+                                 GebrGeoXmlProgram *prog_loop,
+                                 gchar **value,
+                                 GError **error)
 {
+	GList *vars = NULL;
+	GebrIExpr *iexpr;
+	gboolean use_iter = FALSE;
+	gchar *step = NULL;
+	gchar *ini = NULL;
+	guint n = 0;
+	HashData *data = NULL;
+
 	g_return_val_if_fail(type == GEBR_GEOXML_PARAMETER_TYPE_INT
 			     || type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT
 			     || type == GEBR_GEOXML_PARAMETER_TYPE_FILE
@@ -736,43 +770,59 @@ gboolean gebr_validator_evaluate(GebrValidator *self,
 	g_return_val_if_fail(value != NULL, FALSE);
 	g_return_val_if_fail(self != NULL, FALSE);
 
-	gchar * end_value = NULL;
-	GList *vars = NULL;
-
-	gchar * test = g_strdup(expr);
-	if (g_strcmp0((const gchar *)g_strstrip(test),"") == 0)
-	{
-		g_set_error(error,
-			    GEBR_IEXPR_ERROR,
-			    GEBR_IEXPR_ERROR_EMPTY_EXPR,
-			    _("Empty expression"));
-
-		*value = g_strdup(_("Empty expression"));
-		g_free(test);
+	if (!gebr_validator_validate_expr(self, expr, type, error))
 		return FALSE;
-	}
-	g_free(test);
 
-	GebrIExpr *iexpr;
+	void declare_dep_tree(const gchar *name)
+	{
+		GebrGeoXmlDocumentType scope;
+		HashData *deps = g_hash_table_lookup(self->vars, name);
+
+		g_return_if_fail(deps != NULL);
+
+		if (!get_first_scope(self, name, &scope))
+			return;
+
+		for (GList *i = deps->dep[scope]; i; i = i->next)
+			declare_dep_tree(i->data);
+
+		gebr_iexpr_set_var(iexpr, name, type,
+		                   get_value(self, name),
+		                   NULL);
+	}
 
 	iexpr = get_validator_by_type(self, type);
 	vars = gebr_iexpr_extract_vars(iexpr, expr);
-	gebr_iexpr_eval(iexpr, expr, value, error);
 
-	for (GList * i = vars; i; i = i->next)
-	{
-		if(gebr_validator_check_using_var(self, i->data, "iter"))
-		{
-			gebr_iexpr_eval(iexpr,expr,&end_value,error);
-			break;
+	for (GList * i = vars; i; i = i->next) {
+		if(!use_iter && gebr_validator_check_using_var(self, i->data, "iter")) {
+			use_iter = TRUE;
+			n = gebr_geoxml_program_control_get_n(prog_loop, &step, &ini);
+			data = g_hash_table_lookup(self->vars, "iter");
+			SET_VAR_VALUE(data->param[0], ini);
 		}
+		declare_dep_tree(i->data);
 	}
 
-	if(end_value)
-	{
-		gchar * tmp = g_strdup_printf("[%s, ..., %s]",
-					      gebr_str_remove_trailing_zeros(*value),
-					      gebr_str_remove_trailing_zeros(end_value));
+	gebr_iexpr_eval(iexpr, expr, value, NULL);
+
+	if (use_iter) {
+		gchar *end_value;
+		gchar *end;
+		gchar *tmp;
+
+		end = g_strdup_printf("%lf", (n-1)*g_strtod(step, NULL) + g_strtod(ini, NULL));
+		gebr_iexpr_set_var(iexpr, "iter", GEBR_GEOXML_PARAMETER_TYPE_FLOAT, end, NULL);
+		SET_VAR_VALUE(data->param[0], end);
+		g_free(end);
+
+		for (GList * i = vars; i; i = i->next)
+			declare_dep_tree(i->data);
+
+		gebr_iexpr_eval(iexpr, expr, &end_value, NULL);
+		tmp = g_strdup_printf("[%s, ..., %s]",
+		                      gebr_str_remove_trailing_zeros(*value),
+		                      gebr_str_remove_trailing_zeros(end_value));
 		g_free(*value);
 		g_free(end_value);
 		*value = tmp;
