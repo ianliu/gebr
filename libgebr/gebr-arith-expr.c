@@ -17,6 +17,7 @@
 
 #include <glib/gi18n.h>
 
+#include "utils.h"
 #include "gebr-arith-expr.h"
 #include "gebr-iexpr.h"
 
@@ -512,9 +513,12 @@ gebr_arith_expr_eval_impl (GebrIExpr   *self,
 			   GError     **err)
 {
 	gdouble res = 0;
+	gboolean retval;
 
-	gebr_arith_expr_eval (GEBR_ARITH_EXPR(self),expr,&res,err);
-	*result = g_strdup_printf("%f", res);
+	retval = gebr_arith_expr_eval (GEBR_ARITH_EXPR(self), expr, &res, err);
+	*result = gebr_str_remove_trailing_zeros(g_strdup_printf("%.10lf", res));
+
+	return retval;
 }
 
 /* Public functions {{{1 */
@@ -547,5 +551,4 @@ gboolean gebr_arith_expr_eval(GebrArithExpr *self,
 	}
 
 	return gebr_arith_expr_eval_internal(self, expr, result, err);
-
 }
