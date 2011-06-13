@@ -2,13 +2,13 @@ Source: gebrproject
 Priority: extra
 Maintainer: Fabricio Matheus Goncalves <fmatheus@gebrproject.com>
 Build-Depends: debhelper (>= 7), gtk-doc-tools, docbook-xsl,
- libwebkit-dev, libgdome2-dev, libtidy-dev
+ libwebkit-dev, libgdome2-dev, libtidy-dev, bc
 Standards-Version: 3.7.2
 
 Package: libgebr0
 Section: libs
 Architecture: any
-Depends: libwebkit-1.0-2 | libwebkit-1.0-1 | libwebkitgtk-1.0-0, libgdome2-0, libtidy-0.99-0
+Depends: libwebkit-1.0-2 | libwebkit-1.0-1 | libwebkitgtk-1.0-0, libgdome2-0, libtidy-0.99-0, bc
 Description: GeBR library collection
  GêBR is a simple graphical interface which facilitates geophysical data processing. 
  GêBR is not a package for processing, rather it is designed to integrate a large 
