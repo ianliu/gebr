@@ -50,12 +50,11 @@ static gboolean		is_variable_valid	(GebrValidator         *self,
 						 GebrGeoXmlDocumentType scope,
 						 const gchar 	      **cause);
 
-static const gchar *	get_value		(GebrValidator         *self,
+static GebrGeoXmlParameter * get_param		(GebrValidator         *self,
 						 const gchar           *name);
 
-static gboolean		get_first_scope		(GebrValidator          *self,
-               		               		 const gchar            *name,
-               		               		 GebrGeoXmlDocumentType *scope);
+static const gchar *	get_value		(GebrValidator         *self,
+						 const gchar           *name);
 
 /* NodeData functions {{{1 */
 static HashData *
@@ -229,25 +228,34 @@ get_error(GebrValidator *self,
 	return NULL;
 }
 
-static const gchar *
-get_value(GebrValidator *self,
+/*
+ * Get the first non-NULL parameter from the Hash Data.
+ * This respects scope priority, ie it returns the value
+ * of Flow, Line and them Project.
+ */
+static GebrGeoXmlParameter *
+get_param(GebrValidator *self,
 	  const gchar *name)
 {
 	HashData *data;
-
 	data = g_hash_table_lookup(self->vars, name);
 
 	if (!data)
 		return NULL;
-
-	for (int i = 0; i < 3; i++)
-	{
+	for (int i = 0; i < 3; i++) {
 		if (!data->param[i])
 			continue;
-
-		return GET_VAR_VALUE(data->param[i]);
+		return data->param[i];
 	}
 	return NULL;
+}
+
+static const gchar *
+get_value(GebrValidator *self,
+	  const gchar *name)
+{
+	GebrGeoXmlParameter *param;
+	return (param = get_param(self, name)) ? GET_VAR_VALUE(param):NULL;
 }
 
 static gboolean
@@ -388,28 +396,6 @@ gebr_validator_change_value_by_name(GebrValidator          *self,
 		set_error(self, name, scope, NULL);
 
 	return TRUE;
-}
-
-static gboolean get_first_scope(GebrValidator *self,
-                         const gchar *name,
-                         GebrGeoXmlDocumentType *scope)
-{
-	HashData *data;
-
-	data = g_hash_table_lookup(self->vars, name);
-
-	if (!data)
-		return FALSE;
-
-	for (int i = 0; i < 3; i++)
-	{
-		if (!data->param[i])
-			continue;
-
-		*scope = i;
-		return TRUE;
-	}
-	return FALSE;
 }
 
 /* Public functions {{{1 */
@@ -651,15 +637,37 @@ gebr_validator_validate_param(GebrValidator       *self,
 			      gchar              **validated,
 			      GError             **err)
 {
-	GError *error;
-	const gchar *str;
+	const gchar *value;
 	GebrGeoXmlParameterType type;
 
-	str = GET_VAR_VALUE(param);
-	type = gebr_geoxml_parameter_get_type(param);
-	*validated = g_strdup(str);
+	/* If this is a dictionary parameter, we can validate
+	 * itself and return. Otherwise we need to validate all
+	 * variables from its value.
+	 */
+	if (gebr_geoxml_parameter_is_dict_param(param)) {
+		HashData *data;
+		const gchar *name;
+		GebrGeoXmlDocumentType scope;
 
-	return gebr_validator_validate_expr(self, str, type, err);
+		scope = gebr_geoxml_parameter_get_scope(param);
+		name = GET_VAR_NAME(param);
+		data = g_hash_table_lookup(self->vars, name);
+
+		g_return_val_if_fail(data != NULL, FALSE);
+
+		if (data->error[scope]) {
+			g_propagate_error(err, g_error_copy(data->error[scope]));
+			return FALSE;
+		}
+
+		return TRUE;
+	}
+
+	value = GET_VAR_VALUE(param);
+	type = gebr_geoxml_parameter_get_type(param);
+	*validated = g_strdup(value);
+
+	return gebr_validator_validate_expr(self, value, type, err);
 }
 
 gboolean
@@ -768,19 +776,26 @@ gboolean gebr_validator_evaluate(GebrValidator *self,
 
 	void declare_dep_tree(const gchar *name)
 	{
+		GebrGeoXmlParameter *param;
 		GebrGeoXmlDocumentType scope;
+		GebrGeoXmlParameterType type;
 		HashData *deps = g_hash_table_lookup(self->vars, name);
 
 		g_return_if_fail(deps != NULL);
 
-		if (!get_first_scope(self, name, &scope))
+		param = get_param(self, name);
+		if (!param)
 			return;
+
+		scope = gebr_geoxml_parameter_get_scope(param);
 
 		for (GList *i = deps->dep[scope]; i; i = i->next)
 			declare_dep_tree(i->data);
 
-		gebr_iexpr_set_var(iexpr, name, type,
-		                   get_value(self, name),
+		type = gebr_geoxml_parameter_get_type(param);
+
+		gebr_iexpr_set_var(get_validator_by_type(self, type),
+				   name, type, get_value(self, name),
 		                   NULL);
 	}
 
@@ -815,9 +830,7 @@ gboolean gebr_validator_evaluate(GebrValidator *self,
 			declare_dep_tree(i->data);
 
 		gebr_iexpr_eval(iexpr, expr, &end_value, NULL);
-		tmp = g_strdup_printf("[%s, ..., %s]",
-		                      gebr_str_remove_trailing_zeros(*value),
-		                      gebr_str_remove_trailing_zeros(end_value));
+		tmp = g_strdup_printf("[%s, ..., %s]", *value, end_value);
 		g_free(*value);
 		g_free(end_value);
 		*value = tmp;
