@@ -49,7 +49,7 @@ const gchar *gebr_geoxml_error_string(enum GEBR_GEOXML_RETV error)
 const gchar *gebr_geoxml_error_explained_string(enum GEBR_GEOXML_RETV error)
 {
 	static const gchar *error_string_array[] = {
-		N_("The operation was done successfuly."),
+		N_("The operation was done successfully."),
 		N_("One or more mandatory function arguments were null."),
 		N_("Not enough memory. " "The library stoped after an unsucessful memory allocation."),
 		N_("Can't access file: file not found."),

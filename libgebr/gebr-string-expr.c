@@ -254,7 +254,7 @@ traverse_expression(GebrStringExpr *self,
 			       retval = FALSE;
 			       g_set_error(err, GEBR_IEXPR_ERROR,
 					   GEBR_IEXPR_ERROR_SYNTAX,
-					   _("Syntax error: unmatched closing bracket"));
+					   _("Syntax error: unmatched right bracket"));
 			       goto exception;
 		       } else {
 			       if (eval)
@@ -277,7 +277,7 @@ traverse_expression(GebrStringExpr *self,
 		retval = FALSE;
 		g_set_error(err, GEBR_IEXPR_ERROR,
 			    GEBR_IEXPR_ERROR_SYNTAX,
-			    _("Syntax error: unmatched opening bracket"));
+			    _("Syntax error: unmatched left bracket"));
 		goto exception;
 	}
 

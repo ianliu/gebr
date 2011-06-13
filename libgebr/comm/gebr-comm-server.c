@@ -272,7 +272,7 @@ void gebr_comm_server_kill(struct gebr_comm_server *server)
 {
 	GebrCommTerminalProcess *process;
 
-	gebr_comm_server_log_message(server, GEBR_LOG_INFO, _("Stoping server at '%s'."),
+	gebr_comm_server_log_message(server, GEBR_LOG_INFO, _("Stopping server at '%s'."),
 				     server->address->str);
 
 	server->tried_existant_pass = FALSE;
