@@ -587,7 +587,7 @@ void test_gebr_validator_evaluate(void)
 				&value,
 				&error);
 	g_assert_no_error(error);
-	g_assert_cmpstr(value, ==, "out-[1, ..., 7].dat");
+	g_assert_cmpstr(value, ==, "[out-1.dat, ..., out-7.dat]");
 	g_free(value);
 }
 
