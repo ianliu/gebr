@@ -953,7 +953,7 @@ int gebr_geoxml_document_save(GebrGeoXmlDocument * document, const gchar * path)
 	} else {
 		zfp = gzopen(path, "w");
 
-		if (zfp == NULL || errno != 0)
+		if (zfp == NULL && errno != 0)
 			return GEBR_GEOXML_RETV_PERMISSION_DENIED;
 
 		ret = gzwrite(zfp, xml, strlen(xml));
