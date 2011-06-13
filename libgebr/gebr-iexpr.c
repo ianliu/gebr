@@ -73,9 +73,9 @@ GQuark gebr_iexpr_error_quark(void)
 	return g_quark_from_static_string("gebr-iexpr-error-quark");
 }
 gboolean gebr_iexpr_eval(GebrIExpr   *self,
-			     const gchar *expr,
-			     gchar ** value,
-			     GError ** error)
+			 const gchar *expr,
+			 gchar ** value,
+			 GError ** error)
 {
 	return GEBR_IEXPR_GET_INTERFACE(self)->eval(self, expr, value, error);
 }

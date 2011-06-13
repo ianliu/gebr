@@ -85,14 +85,15 @@ struct _GebrIExprInterface {
 				  const gchar *expr,
 				  GError     **error);
 
-	void     (*reset)        (GebrIExpr *self);
+	void     (*reset)        (GebrIExpr   *self);
 
 	GList *  (*extract_vars) (GebrIExpr   *self,
 				  const gchar *expr);
-	gboolean (*eval) (GebrIExpr   *self,
-			    const gchar *expr,
-			    gchar ** value,
-			    GError ** error);
+
+	gboolean (*eval)         (GebrIExpr   *self,
+				  const gchar *expr,
+				  gchar      **value,
+				  GError     **error);
 
 };
 
