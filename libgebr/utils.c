@@ -695,15 +695,16 @@ gebr_str_remove_trailing_zeros(gchar *str)
 	gsize i;
 
 	i = strlen(str);
-	while (i--) {
+	while (i--)
 		if (str[i] == '.' || str[i] != '0')
 			break;
-	}
 
-	if (str[i] == '.')
-		str[i] = '\0';
-	else if (i != -1)
-		str[i+1] = '\0';
+	if (i != -1) {
+		if (str[i] == '.')
+			str[i] = '\0';
+		else
+			str[i+1] = '\0';
+	}
 
 	return str;
 }
