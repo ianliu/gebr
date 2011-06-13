@@ -369,7 +369,6 @@ void gebr_geoxml_program_set_n(GebrGeoXmlProgram *prog,
 	GebrGeoXmlParameters *params;
 	GebrGeoXmlValueSequence *value;
 	const gchar *keyword;
-	const gchar *niter;
 
 	g_return_if_fail (prog != NULL);
 
@@ -394,8 +393,6 @@ void gebr_geoxml_program_set_n(GebrGeoXmlProgram *prog,
 
 		gebr_geoxml_sequence_next(&seq);
 	}
-
-	return atoi(niter);
 }
 
 gboolean gebr_geoxml_program_is_var_used (GebrGeoXmlProgram *self,

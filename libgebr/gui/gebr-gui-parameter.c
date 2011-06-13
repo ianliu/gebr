@@ -236,8 +236,9 @@ static void gebr_gui_parameter_widget_file_entry_customize_function(GtkFileChoos
 		((GebrGuiFileEntryCustomize) parameter_widget->data) (file_chooser, NULL);
 }
 
-static void gebr_gui_parameter_widget_set_non_list_widget_value(struct gebr_gui_parameter_widget *parameter_widget,
-								gchar * value)
+static void
+gebr_gui_parameter_widget_set_non_list_widget_value(GebrGuiParameterWidget *parameter_widget,
+						    const gchar * value)
 {
 	if (__parameter_accepts_expression(parameter_widget)) {
 		if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_FILE)
@@ -1103,8 +1104,7 @@ void gebr_gui_parameter_widget_update(struct gebr_gui_parameter_widget *paramete
 	else {
 		const gchar *first;
 		first = gebr_geoxml_program_parameter_get_first_value(parameter_widget->program_parameter, parameter_widget->use_default_value);
-		gebr_gui_parameter_widget_set_non_list_widget_value(parameter_widget,
-								    (gchar*)gebr_geoxml_program_parameter_get_first_value(parameter_widget->program_parameter, parameter_widget->use_default_value));
+		gebr_gui_parameter_widget_set_non_list_widget_value(parameter_widget, first);
 	}
 }
 

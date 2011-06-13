@@ -293,12 +293,8 @@ static int __gebr_geoxml_document_validate_doc(GdomeDocument ** document, GebrGe
 
 		gebr_foreach_gslist_hyg(element, __gebr_geoxml_get_elements_by_tag(root_element, "group"), group) {
 			GdomeNode *new_instance;
-			GdomeElement *parameter;
-			GebrGeoXmlParameterGroup *group;
 			GebrGeoXmlParameters *template_instance;
 
-			parameter = (GdomeElement*)gdome_el_parentNode(element, &exception);
-			group = GEBR_GEOXML_PARAMETER_GROUP(parameter);
 			template_instance = GEBR_GEOXML_PARAMETERS(__gebr_geoxml_get_first_element(element, "parameters"));
 			/* encapsulate template instance into template-instance element */
 			GdomeElement *template_container;
