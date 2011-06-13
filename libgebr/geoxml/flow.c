@@ -747,7 +747,7 @@ gboolean gebr_geoxml_flow_insert_iter_dict (GebrGeoXmlFlow *flow)
 	if (g_strcmp0 (keyword, "iter") == 0)
 		return FALSE;
 
-	param = gebr_geoxml_parameters_append_parameter (dict, GEBR_GEOXML_PARAMETER_TYPE_INT);
+	param = gebr_geoxml_parameters_append_parameter (dict, GEBR_GEOXML_PARAMETER_TYPE_FLOAT);
 	gebr_geoxml_program_parameter_set_keyword (GEBR_GEOXML_PROGRAM_PARAMETER (param), "iter");
 	gebr_geoxml_parameter_set_label (param, _("Loop iteration counter"));
 	gebr_geoxml_sequence_move_after (GEBR_GEOXML_SEQUENCE (param), NULL);
