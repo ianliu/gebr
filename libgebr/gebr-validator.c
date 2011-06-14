@@ -665,7 +665,9 @@ gebr_validator_validate_param(GebrValidator       *self,
 
 	value = GET_VAR_VALUE(param);
 	type = gebr_geoxml_parameter_get_type(param);
-	*validated = g_strdup(value);
+
+	if (validated)
+		*validated = g_strdup(value);
 
 	return gebr_validator_validate_expr(self, value, type, err);
 }

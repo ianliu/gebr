@@ -410,7 +410,6 @@ static void validate_dict_iter(struct dict_edit_data *data, GtkTreeIter *iter)
 {
 	GtkTreeIter it;
 	GtkTreeIter child;
-	gchar *validated;
 	GError *error = NULL;
 	const gchar *keyword;
 	GebrGeoXmlParameter *param;
@@ -437,7 +436,7 @@ static void validate_dict_iter(struct dict_edit_data *data, GtkTreeIter *iter)
 				continue;
 			}
 
-			gebr_validator_validate_param(gebr.validator, param, &validated, &error);
+			gebr_validator_validate_param(gebr.validator, param, NULL, &error);
 			if (error) {
 				gtk_tree_store_set(GTK_TREE_STORE(data->tree_model), &child,
 						   DICT_EDIT_VALUE_TYPE_IMAGE, GTK_STOCK_DIALOG_WARNING,
@@ -468,7 +467,6 @@ static void validate_dict_iter(struct dict_edit_data *data, GtkTreeIter *iter)
 						   type == GEBR_GEOXML_PARAMETER_TYPE_STRING ? "string-icon" : "integer-icon",
 						   DICT_EDIT_VALUE_TYPE_TOOLTIP,
 						   tooltip, -1);
-				g_free(validated);
 				dict_edit_check_programs_using_variables(keyword, TRUE);
 			}
 
