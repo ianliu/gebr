@@ -750,7 +750,9 @@ gboolean gebr_geoxml_flow_insert_iter_dict (GebrGeoXmlFlow *flow)
 	param = gebr_geoxml_parameters_append_parameter(dict, GEBR_GEOXML_PARAMETER_TYPE_FLOAT);
 	gebr_geoxml_program_parameter_set_list_separator(GEBR_GEOXML_PROGRAM_PARAMETER (param), "|");
 
-	// Append three values in iter parameter to represent 'ini', 'step' and 'n'
+	// Append four values in iter parameter to represent the
+	// current value and the 'ini', 'step' and 'n' values.
+	gebr_geoxml_program_parameter_append_value(GEBR_GEOXML_PROGRAM_PARAMETER (param), FALSE);
 	gebr_geoxml_program_parameter_append_value(GEBR_GEOXML_PROGRAM_PARAMETER (param), FALSE);
 	gebr_geoxml_program_parameter_append_value(GEBR_GEOXML_PROGRAM_PARAMETER (param), FALSE);
 	gebr_geoxml_program_parameter_append_value(GEBR_GEOXML_PROGRAM_PARAMETER (param), FALSE);
@@ -863,16 +865,18 @@ void gebr_geoxml_flow_update_iter_dict_value(GebrGeoXmlFlow *flow)
 	n = gebr_geoxml_program_control_get_n(program, &step, &ini);
 	nstr = g_strdup_printf("%d", n);
 
-	// Set the 'ini'
+	// Set the 'ini' value for current and 'ini'
 	gebr_geoxml_program_parameter_get_value(iter, FALSE, &seq, 0);
+	gebr_geoxml_value_sequence_set(GEBR_GEOXML_VALUE_SEQUENCE(seq), ini);
+	gebr_geoxml_sequence_next(&seq);
 	gebr_geoxml_value_sequence_set(GEBR_GEOXML_VALUE_SEQUENCE(seq), ini);
 
 	// Set 'step'
-	gebr_geoxml_sequence_previous(&seq);
+	gebr_geoxml_sequence_next(&seq);
 	gebr_geoxml_value_sequence_set(GEBR_GEOXML_VALUE_SEQUENCE(seq), step);
 
 	// Set 'n'
-	gebr_geoxml_sequence_previous(&seq);
+	gebr_geoxml_sequence_next(&seq);
 	gebr_geoxml_value_sequence_set(GEBR_GEOXML_VALUE_SEQUENCE(seq), nstr);
 
 	g_free(nstr);
