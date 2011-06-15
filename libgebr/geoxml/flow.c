@@ -747,10 +747,17 @@ gboolean gebr_geoxml_flow_insert_iter_dict (GebrGeoXmlFlow *flow)
 	if (g_strcmp0 (keyword, "iter") == 0)
 		return FALSE;
 
-	param = gebr_geoxml_parameters_append_parameter (dict, GEBR_GEOXML_PARAMETER_TYPE_FLOAT);
-	gebr_geoxml_program_parameter_set_keyword (GEBR_GEOXML_PROGRAM_PARAMETER (param), "iter");
-	gebr_geoxml_parameter_set_label (param, _("Loop iteration counter"));
-	gebr_geoxml_sequence_move_after (GEBR_GEOXML_SEQUENCE (param), NULL);
+	param = gebr_geoxml_parameters_append_parameter(dict, GEBR_GEOXML_PARAMETER_TYPE_FLOAT);
+	gebr_geoxml_program_parameter_set_list_separator(GEBR_GEOXML_PROGRAM_PARAMETER (param), "|");
+
+	// Append three values in iter parameter to represent 'ini', 'step' and 'n'
+	gebr_geoxml_program_parameter_append_value(GEBR_GEOXML_PROGRAM_PARAMETER (param), FALSE);
+	gebr_geoxml_program_parameter_append_value(GEBR_GEOXML_PROGRAM_PARAMETER (param), FALSE);
+	gebr_geoxml_program_parameter_append_value(GEBR_GEOXML_PROGRAM_PARAMETER (param), FALSE);
+
+	gebr_geoxml_program_parameter_set_keyword(GEBR_GEOXML_PROGRAM_PARAMETER (param), "iter");
+	gebr_geoxml_parameter_set_label(param, _("Loop iteration counter"));
+	gebr_geoxml_sequence_move_after(GEBR_GEOXML_SEQUENCE (param), NULL);
 
 	return TRUE;
 }
@@ -837,21 +844,36 @@ gboolean gebr_geoxml_flow_io_get_error_append(GebrGeoXmlFlow *flow)
 
 void gebr_geoxml_flow_update_iter_dict_value(GebrGeoXmlFlow *flow)
 {
+	GebrGeoXmlDocument *doc;
 	GebrGeoXmlSequence *seq;
-	GebrGeoXmlParameters *dict;
+	GebrGeoXmlProgramParameter *iter;
 	GebrGeoXmlProgram *program;
 	const gchar *keyword;
-	gchar *step, *ini;
+	gchar *step, *ini, *nstr;
+	guint n;
 
-	dict = gebr_geoxml_document_get_dict_parameters (GEBR_GEOXML_DOCUMENT (flow));
-	seq = gebr_geoxml_parameters_get_first_parameter (dict);
-	keyword = gebr_geoxml_program_parameter_get_keyword (GEBR_GEOXML_PROGRAM_PARAMETER (seq));
+	doc = GEBR_GEOXML_DOCUMENT(flow);
+	iter = GEBR_GEOXML_PROGRAM_PARAMETER(gebr_geoxml_document_get_dict_parameter(doc));
+	keyword = gebr_geoxml_program_parameter_get_keyword(iter);
 
 	if (g_strcmp0 (keyword, "iter") != 0)
 		return;
 
 	program = gebr_geoxml_flow_get_control_program(flow);
-	gebr_geoxml_program_control_get_n(program, &step, &ini);
-	gebr_geoxml_program_parameter_set_first_value(GEBR_GEOXML_PROGRAM_PARAMETER(seq),
-						      FALSE, ini);
+	n = gebr_geoxml_program_control_get_n(program, &step, &ini);
+	nstr = g_strdup_printf("%d", n);
+
+	// Set the 'ini'
+	gebr_geoxml_program_parameter_get_value(iter, FALSE, &seq, 0);
+	gebr_geoxml_value_sequence_set(GEBR_GEOXML_VALUE_SEQUENCE(seq), ini);
+
+	// Set 'step'
+	gebr_geoxml_sequence_previous(&seq);
+	gebr_geoxml_value_sequence_set(GEBR_GEOXML_VALUE_SEQUENCE(seq), step);
+
+	// Set 'n'
+	gebr_geoxml_sequence_previous(&seq);
+	gebr_geoxml_value_sequence_set(GEBR_GEOXML_VALUE_SEQUENCE(seq), nstr);
+
+	g_free(nstr);
 }
