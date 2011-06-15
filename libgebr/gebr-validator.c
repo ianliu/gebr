@@ -508,10 +508,14 @@ gebr_validator_remove(GebrValidator       *self,
 				    _("Variable %s not defined"),
 				    name);
 			errors->error[type] = e;
-			tmp = g_list_prepend(tmp, g_strdup(anti_name));
+
+			if (affected)
+				tmp = g_list_prepend(tmp, g_strdup(anti_name));
 		}
 	}
-	*affected = g_list_reverse(tmp);
+
+	if (affected)
+		*affected = g_list_reverse(tmp);
 }
 
 
@@ -545,17 +549,25 @@ gebr_validator_rename(GebrValidator       *self,
 	SET_VAR_NAME(new_param, new_name);
 	gebr_validator_insert(self, param, &a2, error);
 
-	aux_affec = g_list_concat(a1, a2);
-	aux_affec = g_list_sort(aux_affec, (GCompareFunc)g_strcmp0);
+	if (affected) {
+		aux_affec = g_list_concat(a1, a2);
+		aux_affec = g_list_sort(aux_affec, (GCompareFunc)g_strcmp0);
 
-	if (aux_affec) {
-		*affected = g_list_prepend(NULL, g_strdup(aux_affec->data));
-		for(GList *i = aux_affec->next; i; i = i->next)
-			if (g_strcmp0(i->data, i->prev->data) != 0)
-				*affected = g_list_prepend(*affected, g_strdup(i->data));
-		g_list_foreach(aux_affec, (GFunc)g_free, NULL);
-		g_list_free(aux_affec);
+		if (aux_affec) {
+			*affected = g_list_prepend(NULL, g_strdup(aux_affec->data));
+			for (GList *i = aux_affec->next; i; i = i->next)
+				if (g_strcmp0(i->data, i->prev->data) != 0)
+					*affected = g_list_prepend(*affected, g_strdup(i->data));
+			g_list_foreach(aux_affec, (GFunc)g_free, NULL);
+			g_list_free(aux_affec);
+		}
+	} else {
+		g_list_foreach(a1, (GFunc) g_free, NULL);
+		g_list_foreach(a2, (GFunc) g_free, NULL);
+		g_list_free(a1);
+		g_list_free(a2);
 	}
+
 	return TRUE;
 }
 
