@@ -505,7 +505,6 @@ void gebr_config_save(gboolean verbose)
 
 	gsize length;
 	gchar *string;
-	GError *error;
 	FILE *configfp;
 
 	/* reset key_file, cause we do not sync servers automatically */
@@ -577,7 +576,6 @@ void gebr_config_save(gboolean verbose)
 		g_key_file_set_string(gebr.config.key_file, "projects", compose->str, filename);
 	}
 
-	error = NULL;
 	string = g_key_file_to_data(gebr.config.key_file, &length, NULL);
 	configfp = fopen(gebr.config.path->str, "w");
 	if (configfp == NULL) {
@@ -590,9 +588,8 @@ void gebr_config_save(gboolean verbose)
 	if (verbose)
 		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Configuration saved"));
 
-	/* frees */
-out:	g_free(string);
-
+out:
+	g_free(string);
 	return;
 }
 

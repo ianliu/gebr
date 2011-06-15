@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <glib/gi18n.h>
 #include <geoxml/geoxml.h>
 
@@ -398,6 +399,30 @@ gebr_validator_change_value_by_name(GebrValidator          *self,
 	return TRUE;
 }
 
+static void
+get_iter_bounds(GebrGeoXmlParameter *iter_param, gchar **_ini, gchar **_end)
+{
+	const gchar *ini;
+	const gchar *step;
+	const gchar *n;
+	GebrGeoXmlSequence *seq;
+	GebrGeoXmlProgramParameter *prog;
+
+	prog = GEBR_GEOXML_PROGRAM_PARAMETER(iter_param);
+
+	gebr_geoxml_program_parameter_get_value(prog, FALSE, &seq, 1);
+	ini = gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(seq));
+
+	gebr_geoxml_sequence_next(&seq);
+	step = gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(seq));
+
+	gebr_geoxml_sequence_next(&seq);
+	n = gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(seq));
+
+	*_ini = g_strdup(ini);
+	*_end = g_strdup_printf("%.10lf", atof(ini)+atof(step)*(atoi(n)-1));
+}
+
 /* Public functions {{{1 */
 GebrValidator *
 gebr_validator_new(GebrGeoXmlDocument **flow,
@@ -751,17 +776,14 @@ void gebr_validator_free(GebrValidator *self)
 gboolean gebr_validator_evaluate(GebrValidator *self,
                                  const gchar * expr,
                                  GebrGeoXmlParameterType type,
-                                 GebrGeoXmlProgram *prog_loop,
                                  gchar **value,
                                  GError **error)
 {
+	gchar *ini = NULL, *end = NULL;
 	GList *vars = NULL;
 	GebrIExpr *iexpr;
 	gboolean use_iter = FALSE;
-	gchar *step = NULL;
-	gchar *ini = NULL;
-	guint n = 0;
-	HashData *data = NULL;
+	GebrGeoXmlParameter *iter_param;
 
 	g_return_val_if_fail(type == GEBR_GEOXML_PARAMETER_TYPE_INT
 			     || type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT
@@ -796,37 +818,36 @@ gboolean gebr_validator_evaluate(GebrValidator *self,
 
 		type = gebr_geoxml_parameter_get_type(param);
 
-		gebr_iexpr_set_var(get_validator_by_type(self, type),
-				   name, type, get_value(self, name),
-		                   NULL);
+		gebr_iexpr_set_var(iexpr, name, type,
+				   get_value(self, name), NULL);
 	}
 
 	iexpr = get_validator_by_type(self, type);
 	vars = gebr_iexpr_extract_vars(iexpr, expr);
 
-	if (prog_loop
-	    && gebr_geoxml_program_get_status(prog_loop) == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED)
-		for (GList * i = vars; i; i = i->next) {
-			if(!use_iter && gebr_validator_check_using_var(self, i->data, "iter")) {
-				use_iter = TRUE;
-				n = gebr_geoxml_program_control_get_n(prog_loop, &step, &ini);
-				data = g_hash_table_lookup(self->vars, "iter");
-				SET_VAR_VALUE(data->param[0], ini);
-			}
-			declare_dep_tree(i->data);
+	for (GList * i = vars; i; i = i->next) {
+		if (!use_iter && gebr_validator_check_using_var(self, i->data, "iter")) {
+			HashData *iter_data;
+			use_iter = TRUE;
+			iter_data = g_hash_table_lookup(self->vars, "iter");
+
+			if (iter_data) {
+				iter_param = iter_data->param[0];
+				get_iter_bounds(iter_param, &ini, &end);
+				SET_VAR_VALUE(iter_param, ini);
+			} else
+				g_warn_if_reached();
 		}
+		declare_dep_tree(i->data);
+	}
 
 	gebr_iexpr_eval(iexpr, expr, value, NULL);
 
 	if (use_iter) {
 		gchar *end_value;
-		gchar *end;
 		gchar *tmp;
 
-		end = g_strdup_printf("%lf", (n-1)*g_strtod(step, NULL) + g_strtod(ini, NULL));
-		gebr_iexpr_set_var(iexpr, "iter", GEBR_GEOXML_PARAMETER_TYPE_FLOAT, end, NULL);
-		SET_VAR_VALUE(data->param[0], end);
-		g_free(end);
+		SET_VAR_VALUE(iter_param, end);
 
 		for (GList * i = vars; i; i = i->next)
 			declare_dep_tree(i->data);
@@ -837,6 +858,9 @@ gboolean gebr_validator_evaluate(GebrValidator *self,
 		g_free(end_value);
 		*value = tmp;
 	}
+
+	g_free(ini);
+	g_free(end);
 		
 	return TRUE;
 }

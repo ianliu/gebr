@@ -189,11 +189,10 @@ void gebr_validator_free(GebrValidator *validator);
  * Returns: %TRUE if @expr could be evaluated. %FALSE otherwise.
  */
 gboolean gebr_validator_evaluate(GebrValidator *self,
-			     const gchar * expr,
-			     GebrGeoXmlParameterType type,
-			     GebrGeoXmlProgram * prog,
-			     gchar ** value,
-			     GError ** error);
+                                 const gchar * expr,
+                                 GebrGeoXmlParameterType type,
+                                 gchar **value,
+                                 GError **error);
 
 G_END_DECLS
 

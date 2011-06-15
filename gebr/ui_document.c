@@ -455,12 +455,7 @@ static void validate_dict_iter(struct dict_edit_data *data, GtkTreeIter *iter)
 				if(gebr.flow)
 					prog = gebr_geoxml_flow_get_control_program(gebr.flow);
 
-				gebr_validator_evaluate(gebr.validator,
-							expr,
-							type,
-							prog,
-							&tooltip,
-							&error);
+				gebr_validator_evaluate(gebr.validator, expr, type, &tooltip, &error);
 
 				gtk_tree_store_set(GTK_TREE_STORE(data->tree_model), &child,
 						   DICT_EDIT_VALUE_TYPE_IMAGE,
@@ -1101,12 +1096,7 @@ static void on_dict_edit_value_type_cell_edited(GtkCellRenderer * cell, gchar * 
 	if(gebr.flow)
 		prog = gebr_geoxml_flow_get_control_program(gebr.flow);
 
-	gebr_validator_evaluate(gebr.validator,
-				expr,
-				type,
-				prog,
-				&tooltip,
-				&error);
+	gebr_validator_evaluate(gebr.validator, expr, type, &tooltip, &error);
 
 	gtk_tree_store_set(GTK_TREE_STORE(data->tree_model), &iter,
 	                   DICT_EDIT_VALUE_TYPE_IMAGE, type == GEBR_GEOXML_PARAMETER_TYPE_STRING ? "string-icon" : "integer-icon",
