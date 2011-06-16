@@ -467,17 +467,14 @@ gebr_validator_insert(GebrValidator       *self,
 		      GError             **error)
 {
 	const gchar *name;
-	GebrGeoXmlParameterType type;
+	GebrGeoXmlDocumentType scope = gebr_geoxml_parameter_get_scope(param);
 	HashData *data;
 
 	name = GET_VAR_NAME(param);
-	type = gebr_geoxml_parameter_get_type(param);
 	data = g_hash_table_lookup(self->vars, name);
 
-	if (data && !data->param[type]) {
-		GebrGeoXmlDocumentType type;
-		type = gebr_geoxml_parameter_get_scope(param);
-		data->param[type] = param;
+	if (data && !data->param[scope]) {
+		data->param[scope] = param;
 	} else if (!data) {
 		data = hash_data_new_from_xml(param);
 		g_hash_table_insert(self->vars, g_strdup(name), data);

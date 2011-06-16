@@ -534,6 +534,23 @@ void test_gebr_validator_eval1(Fixture *fixture, gconstpointer data)
 	VALIDATE_FLOAT_EXPR("a+2", "4");
 }
 
+void test_gebr_validator_scope(Fixture *fixture, gconstpointer data)
+{
+
+	GError *error = NULL;
+	GebrGeoXmlParameter *param;
+	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(fixture->line),
+	                                              GEBR_GEOXML_PARAMETER_TYPE_STRING,
+	                                              "a", "foo");
+	gebr_validator_insert(fixture->validator, param, NULL, &error);
+	g_assert_no_error(error);
+
+	DEF_STRING(fixture->proj, "a", "bar");
+
+	gebr_validator_remove(fixture->validator, param, NULL, &error);
+	VALIDATE_STRING_EXPR("[a]","bar");
+}
+
 int main(int argc, char *argv[])
 {
 	g_type_init();
@@ -549,6 +566,11 @@ int main(int argc, char *argv[])
 	g_test_add("/libgebr/validator/evaluate", Fixture, NULL,
 		   fixture_setup,
 		   test_gebr_validator_evaluate,
+		   fixture_teardown);
+
+	g_test_add("/libgebr/validator/scope", Fixture, NULL,
+		   fixture_setup,
+		   test_gebr_validator_scope,
 		   fixture_teardown);
 
 	g_test_add_func("/libgebr/validator/simple", test_gebr_validator_simple);
