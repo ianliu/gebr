@@ -984,8 +984,10 @@ static gboolean on_renderer_entry_key_press_event(GtkWidget * widget, GdkEventKe
 	}
 }
 
-static void on_dict_edit_renderer_editing_started(GtkCellRenderer * renderer, GtkCellEditable * editable,
-						  gchar * path, struct dict_edit_data *data)
+static void on_dict_edit_renderer_editing_started(GtkCellRenderer * renderer,
+						  GtkCellEditable * editable,
+						  gchar * path,
+						  struct dict_edit_data *data)
 {
 	GtkTreeIter iter;
 	dict_edit_get_selected(data, &iter);
@@ -1304,6 +1306,8 @@ static void on_dict_edit_editing_cell_canceled(GtkCellRenderer * cell, struct di
 	gtk_tree_model_get(data->tree_model, &data->editing_iter, DICT_EDIT_GEBR_GEOXML_POINTER, &parameter, -1);
 	const gchar *keyword = gebr_geoxml_program_parameter_get_keyword(parameter);
 
+	data->is_inserting_new = FALSE;
+
 	/* may delete item if empty */
 	dict_edit_validate_editing_cell(data, FALSE, TRUE);
 
@@ -1328,7 +1332,10 @@ static void on_dict_edit_cell_edited(GtkCellRenderer * cell, gchar * path_string
 	data->in_edition = NULL;
 	data->editing_cell = NULL;
 
-	validate_dict_iter(data, &data->editing_iter);
+	if (!data->is_inserting_new)
+		validate_dict_iter(data, &data->editing_iter);
+	else
+		data->is_inserting_new = FALSE;
 
 	dict_edit_check_programs_using_variables(new_text, TRUE);
 }
