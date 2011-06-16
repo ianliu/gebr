@@ -84,6 +84,7 @@ struct dict_edit_data {
 	GtkCellRenderer *editing_cell;
 	gboolean edition_valid;
 	gboolean guard;
+	gboolean is_inserting_new;
 };
 
 typedef struct {
@@ -123,6 +124,8 @@ static gboolean on_dict_edit_tree_view_button_press_event(GtkWidget * widget, Gd
 static gboolean dict_edit_validate_editing_cell(struct dict_edit_data *data, gboolean start_edition, gboolean cancel_edition);
 static void on_dict_edit_value_type_cell_edited(GtkCellRenderer * cell, gchar * path_string, gchar * new_text,
 						struct dict_edit_data *data);
+
+static void on_value_type_editing_canceled(GtkCellRenderer *cell, struct dict_edit_data *data);
 
 static void on_dict_edit_editing_cell_canceled(GtkCellRenderer * cell, struct dict_edit_data *data);
 static void on_dict_edit_cell_edited(GtkCellRenderer * cell, gchar * path_string, gchar * new_text,
@@ -450,10 +453,6 @@ static void validate_dict_iter(struct dict_edit_data *data, GtkTreeIter *iter)
 				const gchar * expr = NULL;
 				expr = gebr_geoxml_program_parameter_get_first_value(
 						GEBR_GEOXML_PROGRAM_PARAMETER(param), FALSE);
-				GebrGeoXmlProgram * prog = NULL;
-
-				if(gebr.flow)
-					prog = gebr_geoxml_flow_get_control_program(gebr.flow);
 
 				gebr_validator_evaluate(gebr.validator, expr, type, &tooltip, &error);
 
@@ -507,6 +506,7 @@ void document_dict_edit_setup_ui(void)
 	data = g_new(struct dict_edit_data, 1);
 	data->in_edition = NULL;
 	data->editing_cell = NULL;
+	data->is_inserting_new = FALSE;
 	tree_store = gtk_tree_store_new(DICT_EDIT_N_COLUMN,
 					G_TYPE_STRING,	/* keyword stock */
 					G_TYPE_STRING,	/* keyword */
@@ -627,6 +627,7 @@ void document_dict_edit_setup_ui(void)
 	gtk_tree_view_column_set_min_width(column, 200);
 	g_object_set(cell_renderer, "has-entry", FALSE, "editable", TRUE, "model", type_model, "text-column", 0, NULL);
 	g_signal_connect(cell_renderer, "edited", G_CALLBACK(on_dict_edit_value_type_cell_edited), data);
+	g_signal_connect(cell_renderer, "editing-canceled", G_CALLBACK(on_value_type_editing_canceled), data);
 	gtk_tree_view_column_add_attribute(column, cell_renderer, "text", DICT_EDIT_VALUE_TYPE);
 	gtk_tree_view_column_add_attribute(column, cell_renderer, "visible", DICT_EDIT_VALUE_TYPE_VISIBLE);
 	gtk_tree_view_column_add_attribute(column, cell_renderer, "editable", DICT_EDIT_EDITABLE);
@@ -1003,6 +1004,7 @@ static void on_dict_edit_renderer_editing_started(GtkCellRenderer * renderer, Gt
 						       GEBR_GEOXML_PARAMETER_TYPE_INT));
 		gebr_geoxml_program_parameter_set_required(GEBR_GEOXML_PROGRAM_PARAMETER(parameter), TRUE);
 		dict_edit_load_iter(data, &iter, GEBR_GEOXML_PARAMETER(parameter));
+		data->is_inserting_new = TRUE;
 	} else if (renderer == data->cell_renderer_array[DICT_EDIT_VALUE]) {
 		GebrGeoXmlProgramParameter *parameter;
 		GtkTreeModel *completion_model;
@@ -1091,10 +1093,6 @@ static void on_dict_edit_value_type_cell_edited(GtkCellRenderer * cell, gchar * 
 	const gchar * expr = NULL;
 	expr = gebr_geoxml_program_parameter_get_first_value(
 			GEBR_GEOXML_PROGRAM_PARAMETER(parameter), FALSE);
-	GebrGeoXmlProgram * prog = NULL;
-
-	if(gebr.flow)
-		prog = gebr_geoxml_flow_get_control_program(gebr.flow);
 
 	gebr_validator_evaluate(gebr.validator, expr, type, &tooltip, &error);
 
@@ -1105,6 +1103,16 @@ static void on_dict_edit_value_type_cell_edited(GtkCellRenderer * cell, gchar * 
 			   DICT_EDIT_VALUE_VISIBLE, TRUE, -1);
 	gebr_gui_gtk_tree_view_set_cursor(GTK_TREE_VIEW(data->tree_view), &iter,
 					  gtk_tree_view_get_column(GTK_TREE_VIEW(data->tree_view), 1), TRUE);
+}
+
+static void
+on_value_type_editing_canceled(GtkCellRenderer *cell, struct dict_edit_data *data)
+{
+	GebrGeoXmlProgramParameter *parameter;
+	gtk_tree_model_get(data->tree_model, &data->editing_iter,
+			   DICT_EDIT_GEBR_GEOXML_POINTER, &parameter, -1);
+	gtk_tree_store_remove(GTK_TREE_STORE(data->tree_model), &data->editing_iter);
+	gebr_geoxml_sequence_remove(GEBR_GEOXML_SEQUENCE(parameter));
 }
 
 static gboolean
