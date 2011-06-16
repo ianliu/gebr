@@ -176,7 +176,7 @@ set_error_full(GebrValidator *self,
 		for (int i = 0; i < 3; i++) {
 			if (!d->param[i])
 				continue;
-			if (d->error[i]->code == GEBR_IEXPR_ERROR_CYCLE)
+			if (d->error[i] && d->error[i]->code == GEBR_IEXPR_ERROR_CYCLE)
 				continue;
 			if (!is_variable_valid(self, v, i, &cause)) {
 				GError *e = NULL;
@@ -261,7 +261,7 @@ get_scope(GebrValidator *self, const gchar *name)
 
 	param = get_param(self, name);
 
-	g_return_val_if_fail(param != NULL, -1);
+	g_return_val_if_fail(param != NULL, GEBR_GEOXML_DOCUMENT_TYPE_FLOW);
 
 	return gebr_geoxml_parameter_get_scope(param);
 }
