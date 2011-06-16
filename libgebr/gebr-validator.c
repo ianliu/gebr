@@ -420,7 +420,8 @@ get_iter_bounds(GebrGeoXmlParameter *iter_param, gchar **_ini, gchar **_end)
 	n = gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(seq));
 
 	*_ini = g_strdup(ini);
-	*_end = g_strdup_printf("%.10lf", atof(ini)+atof(step)*(atoi(n)-1));
+	*_end = g_strdup_printf("%.10lf", g_strtod(ini,NULL) +
+				g_strtod(step,NULL)*((gint)g_strtod(n,NULL)-1));
 }
 
 /* Public functions {{{1 */
