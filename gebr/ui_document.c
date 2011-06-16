@@ -409,15 +409,57 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 	gtk_widget_show_all(window);
 }
 
-static void validate_dict_iter(struct dict_edit_data *data, GtkTreeIter *iter)
+static void
+validate_param_and_set_icon_tooltip(struct dict_edit_data *data, GtkTreeIter *iter)
 {
-	GtkTreeIter it;
-	GtkTreeIter child;
-	GError *error = NULL;
 	const gchar *keyword;
+	GError *error = NULL;
 	GebrGeoXmlParameter *param;
 	GebrGeoXmlParameterType type;
 
+	gtk_tree_model_get(data->tree_model, iter, DICT_EDIT_GEBR_GEOXML_POINTER, &param, -1);
+
+	// Avoid rows not having a parameter
+	if (!param)
+		return;
+
+	keyword = gebr_geoxml_program_parameter_get_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(param));
+	type = gebr_geoxml_parameter_get_type(param);
+
+	if (G_UNLIKELY(g_str_equal(keyword, "iter")))
+		return;
+
+	gebr_validator_validate_param(gebr.validator, param, NULL, &error);
+	if (error) {
+		gtk_tree_store_set(GTK_TREE_STORE(data->tree_model), iter,
+				   DICT_EDIT_VALUE_TYPE_IMAGE, GTK_STOCK_DIALOG_WARNING,
+				   DICT_EDIT_VALUE_TYPE_TOOLTIP, error->message, -1);
+
+		gtk_label_set_text(GTK_LABEL(data->label), error->message);
+		g_clear_error(&error);
+		dict_edit_check_programs_using_variables(keyword, FALSE);
+	} else {
+		gchar * tooltip = NULL;
+		const gchar * expr = NULL;
+		expr = gebr_geoxml_program_parameter_get_first_value(
+				GEBR_GEOXML_PROGRAM_PARAMETER(param), FALSE);
+
+		gebr_validator_evaluate(gebr.validator, expr, type, &tooltip, &error);
+
+		gtk_tree_store_set(GTK_TREE_STORE(data->tree_model), iter,
+				   DICT_EDIT_VALUE_TYPE_IMAGE,
+				   type == GEBR_GEOXML_PARAMETER_TYPE_STRING ? "string-icon" : "integer-icon",
+				   DICT_EDIT_VALUE_TYPE_TOOLTIP,
+				   tooltip, -1);
+		dict_edit_check_programs_using_variables(keyword, TRUE);
+	}
+}
+
+static void
+validate_dict_iter(struct dict_edit_data *data, GtkTreeIter *iter)
+{
+	GtkTreeIter it;
+	GtkTreeIter child;
 	gboolean valid = gtk_tree_model_get_iter_first(data->tree_model, &it);
 
 	while (valid)
@@ -425,45 +467,7 @@ static void validate_dict_iter(struct dict_edit_data *data, GtkTreeIter *iter)
 		valid = gtk_tree_model_iter_children(data->tree_model, &child, &it);
 		while (valid)
 		{
-			gtk_tree_model_get(data->tree_model, &child, DICT_EDIT_GEBR_GEOXML_POINTER, &param, -1);
-
-			// Avoid the 'New' row
-			if (!param)
-				break;
-
-			keyword = gebr_geoxml_program_parameter_get_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(param));
-			type = gebr_geoxml_parameter_get_type(param);
-
-			if (G_UNLIKELY(g_str_equal(keyword, "iter"))) {
-				valid = gtk_tree_model_iter_next(data->tree_model, &child);
-				continue;
-			}
-
-			gebr_validator_validate_param(gebr.validator, param, NULL, &error);
-			if (error) {
-				gtk_tree_store_set(GTK_TREE_STORE(data->tree_model), &child,
-						   DICT_EDIT_VALUE_TYPE_IMAGE, GTK_STOCK_DIALOG_WARNING,
-						   DICT_EDIT_VALUE_TYPE_TOOLTIP, error->message, -1);
-
-				gtk_label_set_text(GTK_LABEL(data->label), error->message);
-				g_clear_error(&error);
-				dict_edit_check_programs_using_variables(keyword, FALSE);
-			} else {
-				gchar * tooltip = NULL;
-				const gchar * expr = NULL;
-				expr = gebr_geoxml_program_parameter_get_first_value(
-						GEBR_GEOXML_PROGRAM_PARAMETER(param), FALSE);
-
-				gebr_validator_evaluate(gebr.validator, expr, type, &tooltip, &error);
-
-				gtk_tree_store_set(GTK_TREE_STORE(data->tree_model), &child,
-						   DICT_EDIT_VALUE_TYPE_IMAGE,
-						   type == GEBR_GEOXML_PARAMETER_TYPE_STRING ? "string-icon" : "integer-icon",
-						   DICT_EDIT_VALUE_TYPE_TOOLTIP,
-						   tooltip, -1);
-				dict_edit_check_programs_using_variables(keyword, TRUE);
-			}
-
+			validate_param_and_set_icon_tooltip(data, &child);
 			valid = gtk_tree_model_iter_next(data->tree_model, &child);
 		}
 
@@ -682,7 +686,7 @@ void document_dict_edit_setup_ui(void)
 						   gebr_geoxml_program_parameter_get_keyword
 						   (GEBR_GEOXML_PROGRAM_PARAMETER(parameter)));
 			gebr_geoxml_program_parameter_set_required(GEBR_GEOXML_PROGRAM_PARAMETER(parameter), TRUE);
-			validate_dict_iter(data, &iter);
+			validate_param_and_set_icon_tooltip(data, &iter);
 		}
 		dict_edit_append_add_parameter(data, &document_iter);
 
