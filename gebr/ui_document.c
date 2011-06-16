@@ -700,7 +700,6 @@ void document_dict_edit_setup_ui(void)
 			gtk_tree_path_free(tree_path);
 		}
 	}
-	dict_edit_validate_editing_cell(data, FALSE, FALSE);
 
 	gtk_widget_show_all(dialog);
 	gtk_dialog_run(GTK_DIALOG(dialog));
