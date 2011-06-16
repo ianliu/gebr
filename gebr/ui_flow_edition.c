@@ -737,8 +737,8 @@ void flow_edition_change_iter_status(guint status, GtkTreeIter *iter)
 
 	path = gtk_tree_model_get_path (model, iter);
 	if (gtk_tree_path_compare (path, input_path) == 0 ||
-			gtk_tree_path_compare (path, output_path) == 0 ||
-			gtk_tree_path_compare (path, error_path) == 0) {
+	    gtk_tree_path_compare (path, output_path) == 0 ||
+	    gtk_tree_path_compare (path, error_path) == 0) {
 		goto out;
 	}
 

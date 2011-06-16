@@ -742,7 +742,6 @@ gboolean gebr_geoxml_flow_insert_iter_dict (GebrGeoXmlFlow *flow)
 	dict = gebr_geoxml_document_get_dict_parameters (GEBR_GEOXML_DOCUMENT (flow));
 	seq = gebr_geoxml_parameters_get_first_parameter (dict);
 	keyword = gebr_geoxml_program_parameter_get_keyword (GEBR_GEOXML_PROGRAM_PARAMETER (seq));
-	gebr_geoxml_flow_update_iter_dict_value(flow);
 
 	if (g_strcmp0 (keyword, "iter") == 0)
 		return FALSE;
@@ -760,6 +759,8 @@ gboolean gebr_geoxml_flow_insert_iter_dict (GebrGeoXmlFlow *flow)
 	gebr_geoxml_program_parameter_set_keyword(GEBR_GEOXML_PROGRAM_PARAMETER (param), "iter");
 	gebr_geoxml_parameter_set_label(param, _("Loop iteration counter"));
 	gebr_geoxml_sequence_move_after(GEBR_GEOXML_SEQUENCE (param), NULL);
+
+	gebr_geoxml_flow_update_iter_dict_value(flow);
 
 	return TRUE;
 }
