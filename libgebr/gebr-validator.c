@@ -54,6 +54,9 @@ static gboolean		is_variable_valid	(GebrValidator         *self,
 static GebrGeoXmlParameter * get_param		(GebrValidator         *self,
 						 const gchar           *name);
 
+static GebrGeoXmlDocumentType get_scope		(GebrValidator         *self,
+						 const gchar           *name);
+
 static const gchar *	get_value		(GebrValidator         *self,
 						 const gchar           *name);
 
@@ -249,6 +252,18 @@ get_param(GebrValidator *self,
 		return data->param[i];
 	}
 	return NULL;
+}
+
+static GebrGeoXmlDocumentType
+get_scope(GebrValidator *self, const gchar *name)
+{
+	GebrGeoXmlParameter *param;
+
+	param = get_param(self, name);
+
+	g_return_val_if_fail(param != NULL, -1);
+
+	return gebr_geoxml_parameter_get_scope(param);
 }
 
 static const gchar *
@@ -650,23 +665,28 @@ gebr_validator_move(GebrValidator       *self,
 gboolean
 gebr_validator_check_using_var(GebrValidator *self,
                                const gchar   *source,
+			       GebrGeoXmlDocumentType scope,
                                const gchar   *var)
 {
 	HashData *data;
-	gboolean retval = FALSE;
-	data = g_hash_table_lookup(self->vars, var);
+
+	if (g_strcmp0(source, var) == 0)
+		return TRUE;
+
+	data = g_hash_table_lookup(self->vars, source);
 
 	if (data == NULL)
 		return FALSE;
 
-	for (GList *antidep = data->antidep; antidep; antidep = antidep->next) {
-		if (g_strcmp0(antidep->data, source) == 0)
+	for (GList *i = data->dep[scope]; i; i = i->next) {
+		if (g_strcmp0(i->data, var) == 0)
 			return TRUE;
-		retval = gebr_validator_check_using_var(self, antidep->data, var);
-		if (retval)
-			break;
+
+		if (gebr_validator_check_using_var(self, i->data, scope, var))
+			return TRUE;
 	}
-	return retval;
+
+	return FALSE;
 }
 
 gboolean
@@ -839,7 +859,8 @@ gboolean gebr_validator_evaluate(GebrValidator *self,
 	vars = gebr_iexpr_extract_vars(iexpr, expr);
 
 	for (GList * i = vars; i; i = i->next) {
-		if (!use_iter && gebr_validator_check_using_var(self, i->data, "iter")) {
+		GebrGeoXmlDocumentType s = get_scope(self, i->data);
+		if (!use_iter && gebr_validator_check_using_var(self, i->data, s, "iter")) {
 			HashData *iter_data;
 			use_iter = TRUE;
 			iter_data = g_hash_table_lookup(self->vars, "iter");

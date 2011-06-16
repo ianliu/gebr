@@ -46,6 +46,18 @@
 	g_assert_no_error(error); \
 	} G_STMT_END
 
+#define DEF_FLOAT_WITH_ERROR(doc, name, value, domain, code) \
+	G_STMT_START { \
+	GError *error = NULL; \
+	GebrGeoXmlParameter *param; \
+	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(doc), \
+	                                              GEBR_GEOXML_PARAMETER_TYPE_FLOAT, \
+	                                              name, value); \
+	gebr_validator_insert(fixture->validator, param, NULL, &error); \
+	g_assert_error(error, domain, code); \
+	g_clear_error(&error); \
+	} G_STMT_END
+
 /*
  * VALIDATE_FLOAT_EXPR:
  *
@@ -468,7 +480,7 @@ void test_gebr_validator_check_using_var(void)
 	gebr_validator_insert(validator, param, NULL, &error);
 	g_assert_no_error(error);
 
-	g_assert(gebr_validator_check_using_var(validator, "b", "a") == TRUE);
+	g_assert(gebr_validator_check_using_var(validator, "b", GEBR_GEOXML_DOCUMENT_TYPE_PROJECT, "a") == TRUE);
 
 	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
 	                                              GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
@@ -482,8 +494,8 @@ void test_gebr_validator_check_using_var(void)
 	gebr_validator_insert(validator, param, NULL, &error);
 	g_assert_no_error(error);
 
-	g_assert(gebr_validator_check_using_var(validator, "d", "a") == TRUE);
-	g_assert(gebr_validator_check_using_var(validator, "d", "x") == FALSE);
+	g_assert(gebr_validator_check_using_var(validator, "d", GEBR_GEOXML_DOCUMENT_TYPE_PROJECT, "a") == TRUE);
+	g_assert(gebr_validator_check_using_var(validator, "d", GEBR_GEOXML_DOCUMENT_TYPE_PROJECT, "x") == FALSE);
 }
 
 void test_gebr_validator_evaluate(Fixture *fixture, gconstpointer data)
@@ -515,10 +527,24 @@ void test_gebr_validator_evaluate(Fixture *fixture, gconstpointer data)
 	VALIDATE_STRING_EXPR("out-[iter].dat", "[out-1.dat, ..., out-7.dat]");
 }
 
+void test_gebr_validator_eval1(Fixture *fixture, gconstpointer data)
+{
+	DEF_FLOAT(fixture->flow, "a", "2");
+	DEF_FLOAT_WITH_ERROR(fixture->flow, "b", "iter+1", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_UNDEF_VAR);
+	VALIDATE_FLOAT_EXPR("a+2", "4");
+}
+
 int main(int argc, char *argv[])
 {
 	g_type_init();
 	g_test_init(&argc, &argv, NULL);
+
+	g_test_add_func("/libgebr/validator/using_var", test_gebr_validator_check_using_var);
+
+	g_test_add("/libgebr/validator/eval1", Fixture, NULL,
+		   fixture_setup,
+		   test_gebr_validator_eval1,
+		   fixture_teardown);
 
 	g_test_add("/libgebr/validator/evaluate", Fixture, NULL,
 		   fixture_setup,
@@ -531,7 +557,6 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/validator/rename", test_gebr_validator_rename);
 	g_test_add_func("/libgebr/validator/change", test_gebr_validator_change);
 	g_test_add_func("/libgebr/validator/move", test_gebr_validator_move);
-	g_test_add_func("/libgebr/validator/using_var", test_gebr_validator_check_using_var);
 
 	return g_test_run();
 }

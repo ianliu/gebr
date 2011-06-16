@@ -118,6 +118,7 @@ GebrGeoXmlParameter* gebr_validator_move(GebrValidator       *self,
 gboolean
 gebr_validator_check_using_var(GebrValidator *self,
                                const gchar   *source,
+			       GebrGeoXmlDocumentType scope,
                                const gchar   *var);
 
 /**
