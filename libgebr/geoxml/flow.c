@@ -96,16 +96,6 @@ void gebr_geoxml_flow_add_flow(GebrGeoXmlFlow * flow, GebrGeoXmlFlow * flow2)
 	has_control1 = gebr_geoxml_flow_has_control_program (flow);
 	has_control2 = gebr_geoxml_flow_has_control_program (flow2);
 
-	// We are adding a control menu into flow.
-	// Append the `iter' dictionary keyword.
-	if (!has_control1 && has_control2)
-	{
-		GebrGeoXmlProgram * loop = gebr_geoxml_flow_get_control_program(flow2);
-		GebrGeoXmlProgramStatus status = gebr_geoxml_program_get_status(loop);
-		if (status == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED)
-			gebr_geoxml_flow_insert_iter_dict (flow);
-	}
-
 	/* import each program from flow2 */
 	string = gdome_str_mkref("program");
 	flow2_node_list =
@@ -133,6 +123,16 @@ void gebr_geoxml_flow_add_flow(GebrGeoXmlFlow * flow, GebrGeoXmlFlow * flow2)
 		name = gebr_geoxml_value_sequence_get (GEBR_GEOXML_VALUE_SEQUENCE (category));
 		gebr_geoxml_flow_append_category (flow, name);
 		gebr_geoxml_sequence_next (&category);
+	}
+
+	// We are adding a control menu into flow.
+	// Append the `iter' dictionary keyword.
+	if (!has_control1 && has_control2)
+	{
+		GebrGeoXmlProgram * loop = gebr_geoxml_flow_get_control_program(flow2);
+		GebrGeoXmlProgramStatus status = gebr_geoxml_program_get_status(loop);
+		if (status == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED)
+			gebr_geoxml_flow_insert_iter_dict (flow);
 	}
 
 	gdome_str_unref(string);

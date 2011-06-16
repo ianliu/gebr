@@ -520,6 +520,7 @@ void test_gebr_validator_eval1(Fixture *fixture, gconstpointer data)
 	DEF_FLOAT(fixture->flow, "a", "2");
 	DEF_FLOAT_WITH_ERROR(fixture->flow, "b", "iter+1", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_UNDEF_VAR);
 	VALIDATE_FLOAT_EXPR("a+2", "4");
+	DEF_FLOAT_WITH_ERROR(fixture->flow, "c", "b+1", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_UNDEF_VAR);
 }
 
 void test_gebr_validator_scope(Fixture *fixture, gconstpointer data)
