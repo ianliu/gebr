@@ -437,7 +437,7 @@ validate_param_and_set_icon_tooltip(struct dict_edit_data *data, GtkTreeIter *it
 
 		gtk_label_set_text(GTK_LABEL(data->label), error->message);
 		g_clear_error(&error);
-		dict_edit_check_programs_using_variables(keyword, FALSE);
+		//dict_edit_check_programs_using_variables(keyword, FALSE);
 	} else {
 		gchar * tooltip = NULL;
 		const gchar * expr = NULL;
@@ -451,7 +451,7 @@ validate_param_and_set_icon_tooltip(struct dict_edit_data *data, GtkTreeIter *it
 				   type == GEBR_GEOXML_PARAMETER_TYPE_STRING ? "string-icon" : "integer-icon",
 				   DICT_EDIT_VALUE_TYPE_TOOLTIP,
 				   tooltip, -1);
-		dict_edit_check_programs_using_variables(keyword, TRUE);
+		//dict_edit_check_programs_using_variables(keyword, TRUE);
 	}
 }
 
@@ -704,6 +704,8 @@ void document_dict_edit_setup_ui(void)
 	gtk_widget_show_all(dialog);
 	gtk_dialog_run(GTK_DIALOG(dialog));
 
+	flow_edition_revalidate_programs();
+
 	for (int i = 0; data->documents[i] != NULL; ++i)
 		document_save(data->documents[i], TRUE, TRUE);
 
@@ -744,13 +746,13 @@ static GList *program_list_from_used_variables(const gchar *var_name)
 		GebrGeoXmlProgram *program;
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter,
 				   FSEQ_GEBR_GEOXML_POINTER, &program, -1);
-		if(!program)
+		if (!program)
 			continue;
 
-		if(gebr_geoxml_program_get_control(program) == GEBR_GEOXML_PROGRAM_CONTROL_FOR)
+		if (gebr_geoxml_program_get_control(program) == GEBR_GEOXML_PROGRAM_CONTROL_FOR)
 			continue;
 
-		if(gebr_geoxml_program_is_var_used(program, var_name))
+		if (gebr_geoxml_program_is_var_used(program, var_name))
 			list = g_list_prepend(list, gtk_tree_iter_copy(&iter));
 	}
 	return list;
@@ -760,7 +762,7 @@ static void program_list_warn_undefined_variable(GList * program_list, gboolean 
 {
 	GebrGeoXmlProgram *program;
 
-	for(GList *i = program_list; i; i = i->next) {
+	for (GList *i = program_list; i; i = i->next) {
 		GtkTreeIter *it = i->data;
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), it,
 		                   FSEQ_GEBR_GEOXML_POINTER, &program, -1);
@@ -1315,7 +1317,7 @@ static void on_dict_edit_editing_cell_canceled(GtkCellRenderer * cell, struct di
 	dict_edit_validate_editing_cell(data, FALSE, TRUE);
 
 	validate_dict_iter(data, &data->editing_iter);
-	dict_edit_check_programs_using_variables(keyword, data->edition_valid);
+	//dict_edit_check_programs_using_variables(keyword, data->edition_valid);
 
 	data->in_edition = NULL;
 	data->editing_cell = NULL;
@@ -1340,7 +1342,7 @@ static void on_dict_edit_cell_edited(GtkCellRenderer * cell, gchar * path_string
 	else
 		data->is_inserting_new = FALSE;
 
-	dict_edit_check_programs_using_variables(new_text, TRUE);
+	//dict_edit_check_programs_using_variables(new_text, TRUE);
 }
 
 /*

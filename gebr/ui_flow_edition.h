@@ -149,5 +149,10 @@ gboolean flow_edition_find_flow_server (GebrGeoXmlFlow *flow,
 					GtkTreeModel   *model,
 					GtkTreeIter    *iter);
 
+/**
+ * flow_edition_revalidate_programs:
+ */
+void flow_edition_revalidate_programs(void);
+
 G_END_DECLS
 #endif				//__UI_FLOW_COMPONENT_H

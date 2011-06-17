@@ -690,7 +690,8 @@ void flow_program_remove(void)
 				param = gebr_geoxml_document_get_dict_parameter(GEBR_GEOXML_DOCUMENT(gebr.flow));
 				gebr_validator_remove(gebr.validator, GEBR_GEOXML_PARAMETER(param), &affected, &err);
 				gebr_geoxml_flow_remove_iter_dict(gebr.flow);
-				dict_edit_check_programs_using_variables("iter", FALSE);
+				//dict_edit_check_programs_using_variables("iter", FALSE);
+				flow_edition_revalidate_programs();
 			}
 			valid = gtk_list_store_remove(GTK_LIST_STORE(gebr.ui_flow_edition->fseq_store), &iter);
 		}

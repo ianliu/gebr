@@ -1471,3 +1471,26 @@ flow_edition_find_flow_server (GebrGeoXmlFlow *flow,
   gtk_tree_model_get_iter_first (model, iter);
   return FALSE;
 }
+
+void
+flow_edition_revalidate_programs(void)
+{
+	GtkTreeIter iter;
+	GtkTreeModel *model;
+	GebrGeoXmlProgram *program;
+
+	model = GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store);
+
+	gebr_gui_gtk_tree_model_foreach(iter, model) {
+		gtk_tree_model_get(model, &iter,
+				   FSEQ_GEBR_GEOXML_POINTER, &program, -1);
+
+		if (!program || gebr_geoxml_program_get_control(program) == GEBR_GEOXML_PROGRAM_CONTROL_FOR)
+			continue;
+
+		if (validate_program_iter(&iter, NULL))
+			flow_edition_change_iter_status(GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED, &iter);
+		else
+			flow_edition_change_iter_status(GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED, &iter);
+	}
+}
