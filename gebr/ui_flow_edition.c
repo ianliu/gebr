@@ -1332,12 +1332,19 @@ on_flow_sequence_query_tooltip(GtkTreeView * treeview,
 		if (g_strcmp0(gebr_geoxml_flow_io_get_output(gebr.flow),"") == 0)
 			message = g_strdup(_("Choose output file"));
 		else if (g_strcmp0(error_msg, "") == 0) {
+			gchar * result = NULL;
+			gebr_validator_evaluate(gebr.validator, 
+						gebr_geoxml_flow_io_get_output(gebr.flow),
+						GEBR_GEOXML_PARAMETER_TYPE_STRING,
+						&result,
+						NULL);
 			if (gebr_geoxml_flow_io_get_output_append (gebr.flow))
 				message = g_strdup_printf(_("Append to output file '%s'"),
-							  gebr_geoxml_flow_io_get_output(gebr.flow));
+							  result);
 			else
 				message = g_strdup_printf(_("Overwrite output file '%s'"),
-							  gebr_geoxml_flow_io_get_output(gebr.flow));
+							  result);
+			g_free(result);
 		} else
 			message = g_strdup(error_msg);
 
@@ -1348,12 +1355,19 @@ on_flow_sequence_query_tooltip(GtkTreeView * treeview,
 		if (g_strcmp0(gebr_geoxml_flow_io_get_error(gebr.flow),"") == 0)
 			message = g_strdup(_("Choose log file"));
 		else if (g_strcmp0(error_msg, "") == 0) {
+			gchar * result = NULL;
+			gebr_validator_evaluate(gebr.validator, 
+						gebr_geoxml_flow_io_get_error(gebr.flow),
+						GEBR_GEOXML_PARAMETER_TYPE_STRING,
+						&result,
+						NULL);
 			if (gebr_geoxml_flow_io_get_error_append (gebr.flow))
 				message = g_strdup_printf(_("Append to log file '%s'"),
-							  gebr_geoxml_flow_io_get_error(gebr.flow));
+							  result);
 			else
 				message = g_strdup_printf(_("Overwrite log file '%s'"),
-							  gebr_geoxml_flow_io_get_error(gebr.flow));
+							  result);
+			g_free(result);
 		} else
 			message = g_strdup(error_msg);
 
