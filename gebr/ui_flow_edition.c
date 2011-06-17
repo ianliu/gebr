@@ -1330,7 +1330,7 @@ on_flow_sequence_query_tooltip(GtkTreeView * treeview,
 						GEBR_GEOXML_PARAMETER_TYPE_STRING,
 						&result,
 						NULL);
-			message = g_strdup_printf(_("Input file '%s'"), result);
+			message = g_strdup_printf(_("Input file %s"), result);
 			g_free(result);
 		}
 		else
@@ -1350,10 +1350,10 @@ on_flow_sequence_query_tooltip(GtkTreeView * treeview,
 						&result,
 						NULL);
 			if (gebr_geoxml_flow_io_get_output_append (gebr.flow))
-				message = g_strdup_printf(_("Append to output file '%s'"),
+				message = g_strdup_printf(_("Append to output file %s"),
 							  result);
 			else
-				message = g_strdup_printf(_("Overwrite output file '%s'"),
+				message = g_strdup_printf(_("Overwrite output file %s"),
 							  result);
 			g_free(result);
 		} else
@@ -1373,10 +1373,10 @@ on_flow_sequence_query_tooltip(GtkTreeView * treeview,
 						&result,
 						NULL);
 			if (gebr_geoxml_flow_io_get_error_append (gebr.flow))
-				message = g_strdup_printf(_("Append to log file '%s'"),
+				message = g_strdup_printf(_("Append to log file %s"),
 							  result);
 			else
-				message = g_strdup_printf(_("Overwrite log file '%s'"),
+				message = g_strdup_printf(_("Overwrite log file %s"),
 							  result);
 			g_free(result);
 		} else

@@ -902,7 +902,10 @@ gboolean gebr_validator_evaluate(GebrValidator *self,
 			declare_dep_tree(i->data);
 
 		gebr_iexpr_eval(iexpr, expr, &end_value, NULL);
-		tmp = g_strdup_printf("[%s, ..., %s]", *value, end_value);
+		if (type == GEBR_GEOXML_PARAMETER_TYPE_STRING)
+			tmp = g_strdup_printf("[\"%s\", ..., \"%s\"]", *value, end_value);
+		else
+			tmp = g_strdup_printf("[%s, ..., %s]", *value, end_value);
 		g_free(*value);
 		g_free(end_value);
 		*value = tmp;
