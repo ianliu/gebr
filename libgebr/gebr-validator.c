@@ -825,6 +825,7 @@ gboolean gebr_validator_evaluate(GebrValidator *self,
 	g_return_val_if_fail(type == GEBR_GEOXML_PARAMETER_TYPE_INT
 			     || type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT
 			     || type == GEBR_GEOXML_PARAMETER_TYPE_FILE
+			     || type == GEBR_GEOXML_PARAMETER_TYPE_RANGE
 			     || type == GEBR_GEOXML_PARAMETER_TYPE_STRING,
 			     FALSE);
 
