@@ -509,7 +509,7 @@ static void __on_sequence_edit_changed(GebrGuiSequenceEdit * sequence_edit,
  */
 static void __set_type_icon(GebrGuiParameterWidget *parameter_widget)
 {
-	gchar *result;
+	gchar *result = NULL;
 	const gchar *value;
 	gboolean has_focus = FALSE;
 	GtkEntry *entry;
