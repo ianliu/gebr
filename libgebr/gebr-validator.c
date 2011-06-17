@@ -110,7 +110,7 @@ get_validator_by_type(GebrValidator *self,
 	case GEBR_GEOXML_PARAMETER_TYPE_FLOAT:
 		return GEBR_IEXPR(self->arith_expr);
 	default:
-		g_return_val_if_reached(GEBR_IEXPR(self->string_expr));
+		return NULL;
 	}
 }
 
@@ -738,6 +738,10 @@ gebr_validator_validate_expr(GebrValidator          *self,
 	GebrIExpr *expr;
 
 	expr = get_validator_by_type(self, type);
+
+	if (!expr)
+		return TRUE;
+
 	vars = gebr_iexpr_extract_vars(expr, str);
 
 	for (GList *i = vars; i; i = i->next) {
@@ -749,6 +753,9 @@ gebr_validator_validate_expr(GebrValidator          *self,
 			break;
 		}
 	}
+
+	if (!has_error)
+		has_error = !gebr_iexpr_is_valid(expr, str, err);
 
 	g_list_foreach(vars, (GFunc)g_free, NULL);
 	g_list_free(vars);

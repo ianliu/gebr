@@ -452,7 +452,6 @@ static void validate_program_parameter(GebrGeoXmlParameter *parameter, Validatio
 {
 	GebrGeoXmlParameters *instance;
 	GebrGeoXmlParameter *selected;
-	gchar *validated = NULL;
 
 	if (data->error)
 		return;
@@ -464,12 +463,8 @@ static void validate_program_parameter(GebrGeoXmlParameter *parameter, Validatio
 	if (selected != NULL && selected != parameter)
 		return;
 
-	gebr_validator_validate_param(data->validator,
-				      parameter,
-				      &validated,
-				      &data->error);
-
-	g_free(validated);
+	gebr_validator_validate_param(data->validator, parameter,
+				      NULL, &data->error);
 }
 
 gboolean gebr_geoxml_program_is_valid(GebrGeoXmlProgram *self,
