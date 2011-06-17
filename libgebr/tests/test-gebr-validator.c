@@ -381,53 +381,6 @@ void test_gebr_validator_change(void)
 
 void test_gebr_validator_move(void)
 {
-	GebrValidator *validator;
-
-	GebrGeoXmlFlow *flow;
-	GebrGeoXmlLine *line;
-	GebrGeoXmlProject *proj;
-
-	GebrGeoXmlParameter *param, *pivot, *result;
-	GError *error = NULL;
-
-	flow = gebr_geoxml_flow_new();
-	line = gebr_geoxml_line_new();
-	proj = gebr_geoxml_project_new();
-
-	validator = gebr_validator_new((GebrGeoXmlDocument**)&flow,
-	                               (GebrGeoXmlDocument**)&line,
-	                               (GebrGeoXmlDocument**)&proj);
-
-
-	/* Proj: x = 12
-	 * Line: x = 40
-	 * Move x (Line) to Proj
-	 */
-	pivot = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
-	                                              GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
-	                                              "x", "12");
-	g_assert (gebr_validator_insert(validator, pivot, NULL, &error) == TRUE);
-
-	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(line),
-	                                              GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
-	                                              "x", "40");
-	g_assert (gebr_validator_insert(validator, param, NULL, &error) == TRUE);
-
-	result = gebr_validator_move(validator, param, pivot, NULL);
-	g_assert_cmpstr(gebr_geoxml_program_parameter_get_first_value(GEBR_GEOXML_PROGRAM_PARAMETER(result), FALSE),==,"40");
-	g_assert (gebr_geoxml_parameter_get_scope(result) == GEBR_GEOXML_DOCUMENT_TYPE_PROJECT);
-
-	/* Proj: x = 40
-	 * Line: y = 40
-	 * Move y (Line) to Proj
-	 */
-	pivot = result;
-	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(line),
-	                                              GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
-	                                              "y", "40");
-	g_assert (gebr_validator_insert(validator, param, NULL, &error) == TRUE);
-	result = gebr_validator_move(validator, param, pivot, NULL);
-	g_assert (gebr_geoxml_parameter_get_scope(result) == GEBR_GEOXML_DOCUMENT_TYPE_PROJECT);
 }
 
 void test_gebr_validator_check_using_var(void)
@@ -512,7 +465,7 @@ void test_gebr_validator_evaluate(Fixture *fixture, gconstpointer data)
 	DEF_FLOAT(fixture->proj, "x", "iter+1");
 	VALIDATE_FLOAT_EXPR("iter+1", "[2, ..., 8]");
 	VALIDATE_FLOAT_EXPR("x+1", "[3, ..., 9]");
-	VALIDATE_STRING_EXPR("out-[iter].dat", "[out-1.dat, ..., out-7.dat]");
+	VALIDATE_STRING_EXPR("out-[iter].dat", "[\"out-1.dat\", ..., \"out-7.dat\"]");
 }
 
 void test_gebr_validator_eval1(Fixture *fixture, gconstpointer data)
