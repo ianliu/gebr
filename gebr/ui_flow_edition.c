@@ -1321,7 +1321,16 @@ on_flow_sequence_query_tooltip(GtkTreeView * treeview,
 		if (strlen(gebr_geoxml_flow_io_get_input(gebr.flow)) == 0)
 			message = g_strdup(_("Choose input file"));
 		else if (g_strcmp0(error_msg, "") == 0)
-			message = g_strdup_printf(_("Input file '%s'"), gebr_geoxml_flow_io_get_input(gebr.flow));
+		{
+			gchar * result = NULL;
+			gebr_validator_evaluate(gebr.validator, 
+						gebr_geoxml_flow_io_get_input(gebr.flow),
+						GEBR_GEOXML_PARAMETER_TYPE_STRING,
+						&result,
+						NULL);
+			message = g_strdup_printf(_("Input file '%s'"), result);
+			g_free(result);
+		}
 		else
 			message = g_strdup(error_msg);
 
