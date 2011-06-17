@@ -390,7 +390,7 @@ gebr_validator_change_value_by_name(GebrValidator          *self,
 	if (detect_cicle(self, name, scope)) {
 		g_set_error(&err, GEBR_IEXPR_ERROR,
 			    GEBR_IEXPR_ERROR_CYCLE,
-			    _("The variable %s has cycle dependency"),
+			    _("The variable %s has cyclic dependency"),
 			    name);
 		data->error[scope] = g_error_copy(err);
 		update_error(self, name, scope);
