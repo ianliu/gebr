@@ -507,37 +507,58 @@ static void __on_sequence_edit_changed(GebrGuiSequenceEdit * sequence_edit,
 /*
  * for parameter that accepts an expression (int and float)
  */
-static void __set_type_icon(struct gebr_gui_parameter_widget *parameter_widget)
+static void __set_type_icon(GebrGuiParameterWidget *parameter_widget)
 {
+	gchar *result;
+	const gchar *value;
 	gboolean has_focus = FALSE;
 	GtkEntry *entry;
+	GError *error = NULL;
 
-	if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_FILE) {
-		gebr_gui_file_entry_unset_warning(GEBR_GUI_FILE_ENTRY(parameter_widget->value_widget),
-						  _("File path value"));
+	value = gebr_geoxml_program_parameter_get_first_value(parameter_widget->program_parameter, FALSE);
+	gebr_validator_evaluate(parameter_widget->validator, value,
+				parameter_widget->parameter_type,
+				&result, &error);
+
+	if (error) {
+		// This call won't recurse since 'error' is non-NULL.
+		// Execution should never reach here anyway...
+		gebr_gui_validatable_widget_set_icon(GEBR_GUI_VALIDATABLE_WIDGET(parameter_widget),
+						     parameter_widget->parameter,
+						     error);
+		g_clear_error(&error);
 		return;
 	}
 
-	entry = GTK_ENTRY(parameter_widget->value_widget);
+	if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_FILE) {
+		gebr_gui_file_entry_unset_warning(GEBR_GUI_FILE_ENTRY(parameter_widget->value_widget),
+						  result);
+		goto free;
+	}
 
+	entry = GTK_ENTRY(parameter_widget->value_widget);
 	g_object_get(entry, "has-focus", &has_focus, NULL);
 
-	if (!has_focus && __parameter_accepts_expression(parameter_widget))
+	if (!has_focus && __parameter_accepts_expression(parameter_widget)) {
 		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, NULL);
-	else if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_INT) {
+		goto free;
+	}
+
+	if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_INT)
 		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, "integer-icon");
-		gtk_entry_set_icon_tooltip_text(entry, GTK_ENTRY_ICON_SECONDARY, 
-						_("Integer value"));
-	} else if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT) {
+	else if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT)
 		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, "real-icon");
-		gtk_entry_set_icon_tooltip_text(entry, GTK_ENTRY_ICON_SECONDARY, 
-						_("Real value"));
-	} else if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_STRING) {
+	else if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_STRING)
 		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, "string-icon");
-		gtk_entry_set_icon_tooltip_text(entry, GTK_ENTRY_ICON_SECONDARY, 
-						_("Text value"));
-	} else
+	else {
 		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, NULL);
+		goto free;
+	}
+
+	gtk_entry_set_icon_tooltip_text(entry, GTK_ENTRY_ICON_SECONDARY, result);
+
+free:
+	g_free(result);
 }
 
 static void __on_activate(GtkEntry * entry, struct gebr_gui_parameter_widget *parameter_widget)
