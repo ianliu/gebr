@@ -514,27 +514,25 @@ gebr_validator_remove(GebrValidator       *self,
 			g_free(node->data);
 			dep->antidep = g_list_delete_link(dep->antidep, node);
 		}
-		if (data->antidep == NULL)
-			g_hash_table_remove(self->vars, name);
-		else {
-			gchar *anti_name;
-			HashData *errors;
-			for (GList *v = data->antidep; v; v = v->next) {
-				GError *e = NULL;
-				anti_name = v->data;
-				errors = g_hash_table_lookup(self->vars, anti_name);
-				if (errors->error[type])
-					g_clear_error(&errors->error[type]);
-				g_set_error(&e, GEBR_IEXPR_ERROR,
-				            GEBR_IEXPR_ERROR_UNDEF_VAR,
-				            _("Variable %s not defined"),
-				            name);
-				errors->error[type] = e;
 
-				if (affected)
-					tmp = g_list_prepend(tmp, g_strdup(anti_name));
-			}
+		gchar *anti_name;
+		HashData *errors;
+		for (GList *v = data->antidep; v; v = v->next) {
+			GError *e = NULL;
+			anti_name = v->data;
+			errors = g_hash_table_lookup(self->vars, anti_name);
+			if (errors->error[type])
+				g_clear_error(&errors->error[type]);
+			g_set_error(&e, GEBR_IEXPR_ERROR,
+			            GEBR_IEXPR_ERROR_UNDEF_VAR,
+			            _("Variable %s not defined"),
+			            name);
+			set_error(self, anti_name, type, e);
+
+			if (affected)
+				tmp = g_list_prepend(tmp, g_strdup(anti_name));
 		}
+		g_hash_table_remove(self->vars, name);
 	}
 
 	if (affected)
