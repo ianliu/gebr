@@ -1383,7 +1383,7 @@ static void job_assembly_cmdline(GebrdJob *job)
 		prefix = g_strdup_printf("for (( counter=0; counter<%d; counter++ ))\ndo\n%s\n%s",
 					 counter, expr_buf->str, str_buf->str);
 		if(!gebr_geoxml_flow_io_get_output_append(job->flow) && !stdout_use_iter &&
-		   strlen(gebr_geoxml_flow_io_get_output(job->flow)) > 0) {
+		   strlen(gebr_geoxml_flow_io_get_output(job->flow)) > 0 && previous_stdout) {
 			remove = g_strdup_printf("\n\ttest $counter -eq 0 && rm -f %s\n", stdout_parsed);
 			g_string_prepend(job->parent.cmd_line, remove);
 			g_free(remove);
