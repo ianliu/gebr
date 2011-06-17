@@ -615,7 +615,6 @@ gboolean flow_edition_component_key_pressed(GtkWidget *view, GdkEventKey *key)
 	GtkTreeIter		  iter;
 	GtkTreeModel		* model;
 	GtkTreeSelection	* selection;
-	const gchar		* icon;
 	gboolean		  has_disabled = FALSE;
 
 	if (key->keyval != GDK_space)
@@ -689,29 +688,8 @@ gboolean flow_edition_component_key_pressed(GtkWidget *view, GdkEventKey *key)
 
 	listiter = paths;
 	while (listiter) {
-		gboolean has_error;
-
-		gtk_tree_model_get_iter (model, &iter, listiter->data);
-		gtk_tree_model_get (model, &iter,
-				    FSEQ_GEBR_GEOXML_POINTER, &program,
-				    -1);
-
-		has_error = gebr_geoxml_program_get_error_id(program, NULL);
-
-		if (has_error && status == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED)
-			gebr_geoxml_program_set_status (program, GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED);
-		else
-			gebr_geoxml_program_set_status (program, status);
-
-		if(gebr_geoxml_program_get_control(program) == GEBR_GEOXML_PROGRAM_CONTROL_FOR) {
-			flow_edition_change_iter_status(status, &iter);
-		}
-
-		icon = gebr_gui_get_program_icon (program);
-		gtk_list_store_set (gebr.ui_flow_edition->fseq_store, &iter,
-				    FSEQ_ICON_COLUMN, icon,
-				    -1);
-
+		gtk_tree_model_get_iter(model, &iter, listiter->data);
+		flow_edition_change_iter_status(status, &iter);
 		listiter = listiter->next;
 	}
 
