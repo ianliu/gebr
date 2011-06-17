@@ -681,7 +681,9 @@ void flow_program_remove(void)
 					   FSEQ_GEBR_GEOXML_POINTER, &program, -1);
 			gebr_geoxml_sequence_remove(GEBR_GEOXML_SEQUENCE(program));
 
-			if (gebr_geoxml_program_get_control (program) == GEBR_GEOXML_PROGRAM_CONTROL_FOR) {
+			// Remove `iter' variable from dictionary if the Loop is configured
+			if (gebr_geoxml_program_get_control (program) == GEBR_GEOXML_PROGRAM_CONTROL_FOR
+			    && gebr_geoxml_program_get_status(program) == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED) {
 				GebrGeoXmlSequence *param;
 				GError *err = NULL;
 				GList *affected;
