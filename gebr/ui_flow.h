@@ -90,11 +90,15 @@ void flow_io_set_server(GtkTreeIter * server_iter, const gchar * input, const gc
 void flow_fast_run(gboolean parellel, gboolean single);
 
 /**
- * Adds all programs in the sequence \p program into the flow edition view.
- * @param program A #GebrGeoXmlSequence of #GebrGeoXmlProgram to be added to the view.
- * @param select_last Whether to select the last program.
+ * flow_add_program_sequence_to_view:
+ * @program: A #GebrGeoXmlSequence of #GebrGeoXmlProgram to be added to the view.
+ * @select_last: Whether to select the last program.
+ *
+ * Adds all programs in the sequence @program into the flow edition view.
  */
-void flow_add_program_sequence_to_view(GebrGeoXmlSequence * program, gboolean select_last);
+void flow_add_program_sequence_to_view(GebrGeoXmlSequence * program,
+				       gboolean select_last,
+				       gboolean never_opened);
 
 /**
  * Checks if the first program has input entrance, the last one has output exit and if even one of then has error exit.

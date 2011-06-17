@@ -281,7 +281,7 @@ void flow_edition_load_components(void)
 
 	/* now into GUI */
 	gebr_geoxml_flow_get_program(gebr.flow, &first_program, 0);
-	flow_add_program_sequence_to_view(first_program, FALSE);
+	flow_add_program_sequence_to_view(first_program, FALSE, FALSE);
 }
 
 gboolean flow_edition_get_selected_component(GtkTreeIter * iter, gboolean warn_unselected)
@@ -748,6 +748,8 @@ void flow_edition_change_iter_status(guint status, GtkTreeIter *iter)
 	}
 
 	gtk_tree_model_get(model, iter, FSEQ_GEBR_GEOXML_POINTER, &program, -1);
+	gtk_list_store_set(gebr.ui_flow_edition->fseq_store, iter, FSEQ_NEVER_OPENED, FALSE, -1);
+
 	has_error = gebr_geoxml_program_get_error_id(program, NULL);
 
 	if (has_error && status == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED)
@@ -1000,7 +1002,7 @@ static void flow_edition_menu_add(void)
 
 	/* and to the GUI */
 	gebr_geoxml_flow_get_program(gebr.flow, &menu_programs, menu_programs_index);
-	flow_add_program_sequence_to_view(menu_programs, TRUE);
+	flow_add_program_sequence_to_view(menu_programs, TRUE, TRUE);
 
 	document_free(GEBR_GEOXML_DOC(menu));
  out:	g_free(name);

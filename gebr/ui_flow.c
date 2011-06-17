@@ -94,7 +94,9 @@ void flow_fast_run(gboolean parallel, gboolean single)
 	flow_io_run(gebr.flow, parallel, single);
 }
 
-void flow_add_program_sequence_to_view(GebrGeoXmlSequence * program, gboolean select_last)
+void flow_add_program_sequence_to_view(GebrGeoXmlSequence * program,
+				       gboolean select_last,
+				       gboolean never_opened)
 {
 	const gchar *icon;
 	GtkTreeIter iter;
@@ -128,7 +130,7 @@ void flow_add_program_sequence_to_view(GebrGeoXmlSequence * program, gboolean se
 				   FSEQ_ELLIPSIZE, PANGO_ELLIPSIZE_NONE,
 				   FSEQ_EDITABLE, FALSE,
 				   FSEQ_SENSITIVE, TRUE,
-				   FSEQ_NEVER_OPENED, TRUE,
+				   FSEQ_NEVER_OPENED, never_opened,
 				   -1);
 
 		gebr_geoxml_program_is_valid(GEBR_GEOXML_PROGRAM(program), gebr.validator, NULL);
