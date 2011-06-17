@@ -186,8 +186,10 @@ set_error_full(GebrValidator *self,
 					    v, self_has_error? name:cause);
 				set_error(self, v, scope, e);
 				g_error_free(e);
-			} else if (d->error[i])
+			} else if (d->error[i]) {
 				g_clear_error(&d->error[i]);
+				set_error(self, v, scope, NULL);
+			}
 		}
 	}
 }
@@ -532,7 +534,8 @@ gebr_validator_remove(GebrValidator       *self,
 			if (affected)
 				tmp = g_list_prepend(tmp, g_strdup(anti_name));
 		}
-		g_hash_table_remove(self->vars, name);
+		if (data->antidep == NULL)
+			g_hash_table_remove(self->vars, name);
 	}
 
 	if (affected)
