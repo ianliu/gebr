@@ -126,7 +126,10 @@ void flow_add_program_sequence_to_view(GebrGeoXmlSequence * program, gboolean se
 				   FSEQ_TOOLTIP, _("This program need to be configure"),
 				   FSEQ_GEBR_GEOXML_POINTER, program,
 				   FSEQ_ELLIPSIZE, PANGO_ELLIPSIZE_NONE,
-				   FSEQ_EDITABLE, FALSE, FSEQ_SENSITIVE, TRUE, -1);
+				   FSEQ_EDITABLE, FALSE,
+				   FSEQ_SENSITIVE, TRUE,
+				   FSEQ_NEVER_OPENED, TRUE,
+				   -1);
 
 		gebr_geoxml_program_is_valid(GEBR_GEOXML_PROGRAM(program), gebr.validator, NULL);
 	}

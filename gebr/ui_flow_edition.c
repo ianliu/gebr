@@ -38,12 +38,17 @@
  * Prototypes
  */
 
-static gboolean
-flow_edition_may_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * position,
-			 GtkTreeViewDropPosition drop_position, struct ui_flow_edition *ui_flow_edition);
-static gboolean
-flow_edition_reorder(GtkTreeView * tree_view, GtkTreeIter * iter, GtkTreeIter * position,
-		     GtkTreeViewDropPosition drop_position, struct ui_flow_edition *ui_flow_edition);
+static gboolean flow_edition_may_reorder(GtkTreeView *tree_view,
+					 GtkTreeIter *iter,
+					 GtkTreeIter * position,
+					 GtkTreeViewDropPosition drop_position,
+					 struct ui_flow_edition *ui_flow_edition);
+
+static gboolean flow_edition_reorder(GtkTreeView * tree_view,
+				     GtkTreeIter * iter,
+				     GtkTreeIter * position,
+				     GtkTreeViewDropPosition drop_position,
+				     struct ui_flow_edition *ui_flow_edition);
 
 static void flow_edition_component_editing_started(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path);
 static void flow_edition_component_editing_canceled(GtkCellRenderer *renderer, gpointer user_data);
@@ -58,20 +63,18 @@ static GtkMenu *flow_edition_component_popup_menu(GtkWidget * widget, struct ui_
 static GtkMenu *flow_edition_menu_popup_menu(GtkWidget * widget, struct ui_flow_edition *ui_flow_edition);
 static void flow_edition_on_combobox_changed(GtkComboBox * combobox);
 
-static gboolean
-on_flow_sequence_query_tooltip(GtkTreeView * treeview,
-			       gint x,
-			       gint y,
-			       gboolean keyboard_tip,
-			       GtkTooltip * tooltip,
-			       struct ui_flow_edition *ui_flow_edition);
+static gboolean on_flow_sequence_query_tooltip(GtkTreeView * treeview,
+					       gint x,
+					       gint y,
+					       gboolean keyboard_tip,
+					       GtkTooltip * tooltip,
+					       struct ui_flow_edition *ui_flow_edition);
 
-static void
-on_server_disconnected_set_row_insensitive(GtkCellLayout   *cell_layout,
-					   GtkCellRenderer *cell,
-					   GtkTreeModel    *tree_model,
-					   GtkTreeIter     *iter,
-					   gpointer         data);
+static void on_server_disconnected_set_row_insensitive(GtkCellLayout   *cell_layout,
+						       GtkCellRenderer *cell,
+						       GtkTreeModel    *tree_model,
+						       GtkTreeIter     *iter,
+						       gpointer         data);
 
 static void on_queue_combobox_changed (GtkComboBox *combo, GtkComboBox *server_combo);
 
@@ -174,7 +177,8 @@ struct ui_flow_edition *flow_edition_setup_ui(void)
 							 G_TYPE_INT,
 							 G_TYPE_BOOLEAN,
 							 G_TYPE_BOOLEAN,
-							 G_TYPE_STRING);
+							 G_TYPE_STRING,
+							 G_TYPE_BOOLEAN);
 	ui_flow_edition->fseq_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_flow_edition->fseq_store));
 	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_flow_edition->fseq_view)),
 				    GTK_SELECTION_MULTIPLE);
@@ -463,6 +467,7 @@ void flow_edition_component_activated(void)
 		return;
 
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter, FSEQ_TITLE_COLUMN, &title, -1);
+	gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &iter, FSEQ_NEVER_OPENED, FALSE, -1);
 	gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Configuring program '%s'."), title);
 	parameters_configure_setup_ui();
 	g_free(title);
