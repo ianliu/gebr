@@ -64,6 +64,11 @@ static void gebrd_app_init(GebrdApp * self)
 
 	gethostname(self->hostname, 255);
 	g_random_set_seed((guint32) time(NULL));
+	self->flow = NULL;
+	self->validator = gebr_validator_new((GebrGeoXmlDocument**)&self->flow,
+					      NULL,
+					      NULL);
+	g_assert(self->validator != NULL);
 }
 static void gebrd_app_finalize(GObject * object)
 {
@@ -75,6 +80,7 @@ static void gebrd_app_finalize(GObject * object)
 	/* client */
 	g_list_foreach(self->clients, (GFunc) client_free, NULL);
 	g_list_free(self->clients);
+	gebr_validator_free(self->validator);
 
 	G_OBJECT_CLASS(gebrd_app_parent_class)->finalize(object);
 }

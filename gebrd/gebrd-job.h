@@ -22,6 +22,7 @@
 #include <libgebr/comm/gebr-comm-process.h>
 #include <libgebr/comm/gebr-comm-job.h>
 #include <libgebr/gebr-string-expr.h>
+#include <libgebr/gebr-validator.h>
 
 #include "gebrd-client.h"
 

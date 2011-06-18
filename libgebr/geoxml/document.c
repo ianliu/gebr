@@ -1479,6 +1479,7 @@ out:
 GebrGeoXmlSequence *
 gebr_geoxml_document_get_dict_parameter(GebrGeoXmlDocument *doc)
 {
+	g_return_val_if_fail(doc != NULL, NULL);
 	GebrGeoXmlSequence *seq;
 	GebrGeoXmlParameters *params;
 

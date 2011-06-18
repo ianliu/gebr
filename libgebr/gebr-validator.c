@@ -697,6 +697,53 @@ gebr_validator_check_using_var(GebrValidator *self,
 	return FALSE;
 }
 
+/* Works only for strings until now */
+gboolean
+gebr_validator_expression_check_using_var(GebrValidator *self,
+                               const gchar   *expr,
+			       GebrGeoXmlDocumentType scope,
+                               const gchar   *var)
+{
+	g_return_val_if_fail(scope == GEBR_GEOXML_DOCUMENT_TYPE_FLOW
+			     || scope == GEBR_GEOXML_DOCUMENT_TYPE_LINE
+			     || scope == GEBR_GEOXML_DOCUMENT_TYPE_PROJECT,
+			     FALSE);
+
+	g_return_val_if_fail(var != NULL, FALSE);
+	g_return_val_if_fail(self != NULL, FALSE);
+
+	g_return_val_if_fail(gebr_validator_validate_expr(self,
+							  expr,
+							  GEBR_GEOXML_PARAMETER_TYPE_STRING,
+							  NULL) == TRUE,
+			     FALSE);
+
+	if (expr == NULL)
+		return FALSE;
+
+	GList *vars = NULL;
+	GebrIExpr *iexpr;
+	gboolean retval = FALSE;
+
+	iexpr = get_validator_by_type(self, GEBR_GEOXML_PARAMETER_TYPE_STRING);
+	vars = gebr_iexpr_extract_vars(iexpr, expr);
+
+	for (GList * i = vars; i; i = i->next)
+	{
+		retval = gebr_validator_check_using_var(self, i->data, scope, var);
+		if(retval)
+			break;
+	}
+
+	if(vars)
+	{
+		g_list_foreach(vars, (GFunc)g_free, NULL);
+		g_list_free(vars);
+	}
+
+	return retval;
+}
+
 gboolean
 gebr_validator_validate_param(GebrValidator       *self,
 			      GebrGeoXmlParameter *param,
@@ -805,6 +852,9 @@ void gebr_validator_update(GebrValidator *self)
 	g_hash_table_remove_all(self->vars);
 
 	for (int i = 0; i < 3; i++) {
+		if (self->docs[i] == NULL)
+			continue;
+
 		seq = gebr_geoxml_document_get_dict_parameter(*(self->docs[i]));
 		while (seq) {
 			gebr_validator_insert(self, GEBR_GEOXML_PARAMETER(seq), NULL, NULL);
@@ -914,6 +964,12 @@ gboolean gebr_validator_evaluate(GebrValidator *self,
 
 	g_free(ini);
 	g_free(end);
+
+	if(vars)
+	{
+		g_list_foreach(vars, (GFunc)g_free, NULL);
+		g_list_free(vars);
+	}
 		
 	return TRUE;
 }

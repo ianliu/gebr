@@ -493,6 +493,34 @@ void test_gebr_validator_scope(Fixture *fixture, gconstpointer data)
 	VALIDATE_STRING_EXPR("[a]","bar");
 }
 
+void test_gebr_validator_expression_check_using_var(Fixture *fixture, gconstpointer data)
+{
+	fixture_add_loop(fixture);
+
+	/* Tests for mathematical expressions */
+	DEF_FLOAT(fixture->flow, "a", "2");
+	DEF_FLOAT(fixture->flow, "b", "3");
+	DEF_STRING(fixture->flow, "c", "a[b]");
+	DEF_STRING(fixture->flow, "d", "[c]");
+
+	g_assert(gebr_validator_expression_check_using_var(fixture->validator,
+							   "banana",
+							   GEBR_GEOXML_DOCUMENT_TYPE_FLOW,
+							   "a") == FALSE);
+	g_assert(gebr_validator_expression_check_using_var(fixture->validator,
+							   "[a]",
+							   GEBR_GEOXML_DOCUMENT_TYPE_FLOW,
+							   "a"));
+	g_assert(gebr_validator_expression_check_using_var(fixture->validator,
+							   "[c].dat",
+							   GEBR_GEOXML_DOCUMENT_TYPE_FLOW,
+							   "b"));
+	g_assert(gebr_validator_expression_check_using_var(fixture->validator,
+							   "[c].dat",
+							   GEBR_GEOXML_DOCUMENT_TYPE_FLOW,
+							   "a") == FALSE);
+
+}
 int main(int argc, char *argv[])
 {
 	g_type_init();
@@ -513,6 +541,11 @@ int main(int argc, char *argv[])
 	g_test_add("/libgebr/validator/scope", Fixture, NULL,
 		   fixture_setup,
 		   test_gebr_validator_scope,
+		   fixture_teardown);
+
+	g_test_add("/libgebr/validator/using_var_expression", Fixture, NULL,
+		   fixture_setup,
+		   test_gebr_validator_expression_check_using_var,
 		   fixture_teardown);
 
 	g_test_add_func("/libgebr/validator/simple", test_gebr_validator_simple);
