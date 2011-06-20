@@ -187,7 +187,20 @@ set_error_full(GebrValidator *self,
 				set_error(self, v, scope, e);
 				g_error_free(e);
 			} else if (d->error[i]) {
+				GError *err = NULL;
+				GebrIExpr *expr;
+				GebrGeoXmlParameterType type = gebr_geoxml_parameter_get_type(d->param[i]);
+				const gchar *value = gebr_geoxml_program_parameter_get_first_value(GEBR_GEOXML_PROGRAM_PARAMETER(d->param[i]), FALSE);
+
+				expr = get_validator_by_type(self, type);
+				if (type != GEBR_GEOXML_PARAMETER_TYPE_STRING
+				    && type != GEBR_GEOXML_PARAMETER_TYPE_FILE)
+					gebr_iexpr_set_var(GEBR_IEXPR(self->string_expr), name,
+					                   type, value, NULL);
+				gebr_iexpr_set_var(expr, name, type, value, &err);
+				g_clear_error(&err);
 				g_clear_error(&d->error[i]);
+
 				set_error(self, v, scope, NULL);
 			}
 		}

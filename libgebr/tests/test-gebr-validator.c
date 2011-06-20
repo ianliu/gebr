@@ -76,6 +76,23 @@
 	} G_STMT_END
 
 /*
+ * VALIDATE_FLOAT_EXPR_WITH_ERROR:
+ *
+ * Validates the float expression @expr and check against @result with error
+ */
+#define VALIDATE_FLOAT_EXPR_WITH_ERROR(expr, domain, code) \
+	G_STMT_START { \
+	gchar *value; \
+	GError *error = NULL; \
+	gebr_validator_evaluate(fixture->validator, (expr), \
+				GEBR_GEOXML_PARAMETER_TYPE_FLOAT, \
+				&value, &error); \
+	g_assert_error(error, domain, code); \
+	g_clear_error(&error); \
+	g_free(value); \
+	} G_STMT_END
+
+/*
  * DEF_STRING:
  *
  * Defines a string variable in scope @doc with @name and @value.
@@ -383,6 +400,17 @@ void test_gebr_validator_move(void)
 {
 }
 
+void test_gebr_validator_cyclic_errors(Fixture *fixture, gconstpointer data)
+{
+	/* Tests for mathematical expressions */
+	DEF_FLOAT_WITH_ERROR(fixture->flow, "a", "2+x", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_UNDEF_VAR);
+	DEF_FLOAT_WITH_ERROR(fixture->flow, "b", "a+1", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_UNDEF_VAR);
+	DEF_FLOAT_WITH_ERROR(fixture->flow, "c", "b+", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_UNDEF_VAR);
+	DEF_FLOAT(fixture->flow, "x", "10");
+	DEF_FLOAT(fixture->flow, "a", "2+x");
+	VALIDATE_FLOAT_EXPR("2+x", "12");
+	VALIDATE_FLOAT_EXPR("a", "12");
+}
 void test_gebr_validator_check_using_var(void)
 {
 	GebrValidator *validator;
@@ -548,6 +576,11 @@ int main(int argc, char *argv[])
 		   fixture_setup,
 		   test_gebr_validator_expression_check_using_var,
 		   fixture_teardown);
+
+	g_test_add("/libgebr/validator/cyclic_errors", Fixture, NULL,
+	           fixture_setup,
+	           test_gebr_validator_cyclic_errors,
+	           fixture_teardown);
 
 	g_test_add_func("/libgebr/validator/simple", test_gebr_validator_simple);
 	g_test_add_func("/libgebr/validator/insert", test_gebr_validator_insert);
