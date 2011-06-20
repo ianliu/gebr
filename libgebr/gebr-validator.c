@@ -350,9 +350,11 @@ gebr_validator_change_value_by_name(GebrValidator          *self,
 		GList *node;
 
 		dep = g_hash_table_lookup(self->vars, dep_name);
-		node = g_list_find_custom(dep->antidep, name, (GCompareFunc)g_strcmp0);
-		g_free(node->data);
-		dep->antidep = g_list_delete_link(dep->antidep, node);
+		if (dep->antidep) {
+			node = g_list_find_custom(dep->antidep, name, (GCompareFunc)g_strcmp0);
+			g_free(node->data);
+			dep->antidep = g_list_delete_link(dep->antidep, node);
+		}
 	}
 
 	expr = get_validator_by_type(self, type);
@@ -387,6 +389,18 @@ gebr_validator_change_value_by_name(GebrValidator          *self,
 
 		if (!g_list_find_custom(dep->antidep, name, (GCompareFunc)g_strcmp0))
 			dep->antidep = g_list_prepend(dep->antidep, g_strdup(name));
+
+		if (type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT && dep->param[scope] &&
+		    gebr_geoxml_parameter_get_type(dep->param[scope]) == GEBR_GEOXML_PARAMETER_TYPE_STRING) {
+			g_set_error(&err, GEBR_IEXPR_ERROR,
+			            GEBR_IEXPR_ERROR_TYPE_MISMATCH,
+			            _("Variable %s use different type"),
+			            name);
+			data->error[scope] = g_error_copy(err);
+			update_error(self, name, scope);
+			g_propagate_error(error, err);
+			return FALSE;
+		}
 	}
 
 	if (detect_cicle(self, name, scope)) {
@@ -410,9 +424,16 @@ gebr_validator_change_value_by_name(GebrValidator          *self,
 		set_error(self, name, scope, err);
 		g_propagate_error(error, err);
 		return FALSE;
-	} else
+	} else {
 		set_error(self, name, scope, NULL);
-
+//		FIXME: Check problem when have a cyclic error
+//		GError *e = NULL;
+//		gebr_validator_validate_expr(self, new_value, type, &e);
+//		if (e) {
+//			set_error(self, name, scope, e);
+//			g_error_free(e);
+//		}
+	}
 	return TRUE;
 }
 

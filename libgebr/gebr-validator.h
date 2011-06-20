@@ -133,9 +133,9 @@ gebr_validator_check_using_var(GebrValidator *self,
  */
 gboolean
 gebr_validator_expression_check_using_var(GebrValidator *self,
-                               const gchar   *expr,
-			       GebrGeoXmlDocumentType scope,
-                               const gchar   *var);
+                                          const gchar   *expr,
+                                          GebrGeoXmlDocumentType scope,
+                                          const gchar   *var);
 
 /**
  * gebr_validator_validate_param:

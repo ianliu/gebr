@@ -502,6 +502,7 @@ void test_gebr_validator_expression_check_using_var(Fixture *fixture, gconstpoin
 	DEF_FLOAT(fixture->flow, "b", "3");
 	DEF_STRING(fixture->flow, "c", "a[b]");
 	DEF_STRING(fixture->flow, "d", "[c]");
+	DEF_FLOAT_WITH_ERROR(fixture->flow, "e", "d", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_TYPE_MISMATCH);
 
 	g_assert(gebr_validator_expression_check_using_var(fixture->validator,
 							   "banana",
