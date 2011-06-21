@@ -372,7 +372,7 @@ gebr_validator_change_value_by_name(GebrValidator          *self,
 
 	expr = get_validator_by_type(self, type);
 	if (!gebr_iexpr_is_valid(expr, new_value, &err)
-	    && err->code == GEBR_IEXPR_ERROR_SYNTAX) {
+	    && err->code != GEBR_IEXPR_ERROR_UNDEF_VAR) {
 		set_error(self, name, scope, err);
 		g_propagate_error(error, err);
 
@@ -834,6 +834,12 @@ gebr_validator_validate_expr(GebrValidator          *self,
 	if (!expr)
 		return TRUE;
 
+	if (!gebr_iexpr_is_valid(expr, str, err)
+	    && (*err)->code != GEBR_IEXPR_ERROR_UNDEF_VAR)
+		return FALSE;
+	else if (err)
+		g_clear_error(err);
+
 	vars = gebr_iexpr_extract_vars(expr, str);
 
 	for (GList *i = vars; i; i = i->next) {
@@ -848,9 +854,6 @@ gebr_validator_validate_expr(GebrValidator          *self,
 			break;
 		}
 	}
-
-	if (!has_error)
-		has_error = !gebr_iexpr_is_valid(expr, str, err);
 
 	g_list_foreach(vars, (GFunc)g_free, NULL);
 	g_list_free(vars);
