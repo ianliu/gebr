@@ -233,7 +233,7 @@ get_error(GebrValidator *self,
 
 	data = g_hash_table_lookup(self->vars, name);
 
-	if (!data) {
+	if (!data || !get_param(self, name)) {
 		g_set_error(&err, GEBR_IEXPR_ERROR,
 			    GEBR_IEXPR_ERROR_UNDEF_VAR,
 			    _("The variable does not exists"));
@@ -440,12 +440,12 @@ gebr_validator_change_value_by_name(GebrValidator          *self,
 	} else {
 		set_error(self, name, scope, NULL);
 //		FIXME: Check problem when have a cyclic error
-//		GError *e = NULL;
-//		gebr_validator_validate_expr(self, new_value, type, &e);
-//		if (e) {
-//			set_error(self, name, scope, e);
-//			g_error_free(e);
-//		}
+		GError *e = NULL;
+		gebr_validator_validate_expr(self, new_value, type, &e);
+		if (e) {
+			set_error(self, name, scope, e);
+			g_error_free(e);
+		}
 	}
 	return TRUE;
 }
@@ -840,7 +840,10 @@ gebr_validator_validate_expr(GebrValidator          *self,
 		const gchar *name = i->data;
 		GError *error = get_error(self, name);
 		if (error) {
-			g_propagate_error(err, g_error_copy(error));
+			g_set_error(err, GEBR_IEXPR_ERROR,
+			            GEBR_IEXPR_ERROR_UNDEF_VAR,
+			            _("Variable %s is not well defined"),
+			            name);
 			has_error = TRUE;
 			break;
 		}
