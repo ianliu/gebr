@@ -290,6 +290,8 @@ static gboolean gebr_arith_expr_is_valid(GebrIExpr   *iface,
 		return FALSE;
 	}
 
+	if (!gebr_arith_expr_eval(self, expr, NULL, err))
+		return FALSE;
 
 	if (undef_var) {
 		g_set_error(err,
@@ -300,7 +302,7 @@ static gboolean gebr_arith_expr_is_valid(GebrIExpr   *iface,
 		return FALSE;
 	}
 
-	return gebr_arith_expr_eval(self, expr, NULL, err);
+	return TRUE;
 }
 
 static void gebr_arith_expr_reset(GebrIExpr *iface)

@@ -44,12 +44,14 @@ static void		update_error		(GebrValidator         *self,
 						 GebrGeoXmlDocumentType scope);
 
 static GError *		get_error		(GebrValidator 	       *self,
-						 const gchar   	       *name);
+						 const gchar   	       *name,
+						  GebrGeoXmlDocumentType scope);
 
 static gboolean		is_variable_valid	(GebrValidator         *self,
 						 const gchar           *name,
 						 GebrGeoXmlDocumentType scope,
-						 const gchar 	      **cause);
+						 const gchar 	      **cause,
+						 GError 	      **err);
 
 static GebrGeoXmlParameter * get_param		(GebrValidator         *self,
 						 const gchar           *name);
@@ -118,7 +120,8 @@ static gboolean
 is_variable_valid(GebrValidator *self,
 		  const gchar *name,
 		  GebrGeoXmlDocumentType scope,
-		  const gchar **cause)
+		  const gchar **cause,
+		  GError **err)
 {
 	HashData *data;
 	data = g_hash_table_lookup(self->vars, name);
@@ -128,7 +131,19 @@ is_variable_valid(GebrValidator *self,
 
 	for (GList *i = data->dep[scope]; i; i = i->next) {
 		gchar *v = i->data;
-		if (get_error(self, v)) {
+		GError *error = get_error(self, v, scope);
+
+		if (error) {
+			if (error->code == GEBR_IEXPR_ERROR_UNDEF_VAR)
+				g_set_error(err, GEBR_IEXPR_ERROR,
+				            GEBR_IEXPR_ERROR_UNDEF_REFERENCE,
+				            _("Variable %s is not defined"),
+				            v);
+			else
+				g_set_error(err, GEBR_IEXPR_ERROR,
+				            GEBR_IEXPR_ERROR_UNDEF_REFERENCE,
+				            _("Variable %s is not well defined"),
+				            v);
 			*cause = v;
 			return FALSE;
 		}
@@ -165,6 +180,7 @@ set_error_full(GebrValidator *self,
 		HashData *d;
 		gchar *v = i->data;
 		const gchar *cause;
+		GError *err = NULL;
 
 		d = g_hash_table_lookup(self->vars, v);
 
@@ -174,34 +190,17 @@ set_error_full(GebrValidator *self,
 		}
 
 		for (int i = 0; i < 3; i++) {
+			if (i != scope && data->param[i])
+				continue;
 			if (!d->param[i])
 				continue;
 			if (d->error[i] && d->error[i]->code == GEBR_IEXPR_ERROR_CYCLE)
 				continue;
-			if (!is_variable_valid(self, v, i, &cause)) {
-				GError *e = NULL;
-				g_set_error(&e, GEBR_IEXPR_ERROR,
-					    GEBR_IEXPR_ERROR_UNDEF_VAR,
-					    _("%s is undefined because of %s"),
-					    v, self_has_error? name:cause);
-				set_error(self, v, scope, e);
-				g_error_free(e);
-			} else if (d->error[i]) {
-				GError *err = NULL;
-				GebrIExpr *expr;
-				GebrGeoXmlParameterType type = gebr_geoxml_parameter_get_type(d->param[i]);
-				const gchar *value = gebr_geoxml_program_parameter_get_first_value(GEBR_GEOXML_PROGRAM_PARAMETER(d->param[i]), FALSE);
-
-				expr = get_validator_by_type(self, type);
-				if (type != GEBR_GEOXML_PARAMETER_TYPE_STRING
-				    && type != GEBR_GEOXML_PARAMETER_TYPE_FILE)
-					gebr_iexpr_set_var(GEBR_IEXPR(self->string_expr), name,
-					                   type, value, NULL);
-				gebr_iexpr_set_var(expr, name, type, value, &err);
-				g_clear_error(&err);
+			if (!is_variable_valid(self, v, i, &cause, &err))
+				set_error(self, v, i, err);
+			else if (d->error[i]) {
 				g_clear_error(&d->error[i]);
-
-				set_error(self, v, scope, NULL);
+				set_error(self, v, i, NULL);
 			}
 		}
 	}
@@ -226,7 +225,8 @@ update_error(GebrValidator *self,
 
 static GError *
 get_error(GebrValidator *self,
-	  const gchar *name)
+	  const gchar *name,
+	  GebrGeoXmlDocumentType scope)
 {
 	HashData *data;
 	GError *err = NULL;
@@ -239,8 +239,11 @@ get_error(GebrValidator *self,
 			    _("The variable does not exists"));
 		return err;
 	}
+	if (data->param[scope] && !data->error[scope])
+		return NULL;
 
-	for (int i = 0; i < 3; i++)
+	int i = scope;
+	for (; i < 3; i++)
 		if (data->param[i] && data->error[i])
 			return g_error_copy(data->error[i]);
 
@@ -427,12 +430,6 @@ gebr_validator_change_value_by_name(GebrValidator          *self,
 		return FALSE;
 	}
 
-	if (type != GEBR_GEOXML_PARAMETER_TYPE_STRING
-	    && type != GEBR_GEOXML_PARAMETER_TYPE_FILE)
-		gebr_iexpr_set_var(GEBR_IEXPR(self->string_expr), name,
-				   type, new_value, NULL);
-	gebr_iexpr_set_var(expr, name, type, new_value, &err);
-
 	if (err) {
 		set_error(self, name, scope, err);
 		g_propagate_error(error, err);
@@ -444,7 +441,7 @@ gebr_validator_change_value_by_name(GebrValidator          *self,
 		gebr_validator_validate_expr(self, new_value, type, &e);
 		if (e) {
 			set_error(self, name, scope, e);
-			g_error_free(e);
+			g_propagate_error(error, e);
 		}
 	}
 	return TRUE;
@@ -828,28 +825,36 @@ gebr_validator_validate_expr(GebrValidator          *self,
 	GList *vars;
 	gboolean has_error = FALSE;
 	GebrIExpr *expr;
+	GError *error = NULL;
 
 	expr = get_validator_by_type(self, type);
 
 	if (!expr)
 		return TRUE;
 
-	if (!gebr_iexpr_is_valid(expr, str, err)
-	    && (*err)->code != GEBR_IEXPR_ERROR_UNDEF_VAR)
+	if (!gebr_iexpr_is_valid(expr, str, &error)
+	    && error->code != GEBR_IEXPR_ERROR_UNDEF_VAR) {
+		g_propagate_error (err, error);
 		return FALSE;
-	else if (err)
-		g_clear_error(err);
+	} else if (error)
+		g_clear_error(&error);
 
 	vars = gebr_iexpr_extract_vars(expr, str);
 
 	for (GList *i = vars; i; i = i->next) {
 		const gchar *name = i->data;
-		GError *error = get_error(self, name);
+		GError *error = get_error(self, name, GEBR_GEOXML_DOCUMENT_TYPE_FLOW);
 		if (error) {
-			g_set_error(err, GEBR_IEXPR_ERROR,
-			            GEBR_IEXPR_ERROR_UNDEF_VAR,
-			            _("Variable %s is not well defined"),
-			            name);
+			if (error->code == GEBR_IEXPR_ERROR_UNDEF_VAR)
+				g_set_error(err, GEBR_IEXPR_ERROR,
+				            GEBR_IEXPR_ERROR_UNDEF_REFERENCE,
+				            _("Variable %s is not defined"),
+				            name);
+			else
+				g_set_error(err, GEBR_IEXPR_ERROR,
+				            GEBR_IEXPR_ERROR_UNDEF_REFERENCE,
+				            _("Variable %s is not well defined"),
+				            name);
 			has_error = TRUE;
 			break;
 		}
