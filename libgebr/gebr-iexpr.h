@@ -55,6 +55,7 @@ GQuark gebr_iexpr_error_quark(void);
  * @GEBR_IEXPR_ERROR_UNDEF_VAR: An undefined variable was found.
  * @GEBR_IEXPR_ERROR_INVAL_VAR: An invalid variable name was found.
  * @GEBR_IEXPR_ERROR_INVAL_TYPE: Variable type not supported.
+ * @GEBR_IEXPR_ERROR_CYCLE: The variable has cycle dependencies.
  *
  * Error codes returned by expression handling functions.
  */
@@ -65,6 +66,8 @@ typedef enum {
 	GEBR_IEXPR_ERROR_UNDEF_VAR,
 	GEBR_IEXPR_ERROR_INVAL_VAR,
 	GEBR_IEXPR_ERROR_INVAL_TYPE,
+	GEBR_IEXPR_ERROR_CYCLE,
+	GEBR_IEXPR_ERROR_TYPE_MISMATCH
 } GebrIExprError;
 
 typedef struct _GebrIExpr GebrIExpr;
@@ -83,10 +86,16 @@ struct _GebrIExprInterface {
 				  const gchar *expr,
 				  GError     **error);
 
-	void     (*reset)        (GebrIExpr *self);
+	void     (*reset)        (GebrIExpr   *self);
 
 	GList *  (*extract_vars) (GebrIExpr   *self,
 				  const gchar *expr);
+
+	gboolean (*eval)         (GebrIExpr   *self,
+				  const gchar *expr,
+				  gchar      **value,
+				  GError     **error);
+
 };
 
 GType gebr_iexpr_get_type(void) G_GNUC_CONST;
@@ -138,6 +147,19 @@ void gebr_iexpr_reset(GebrIExpr *self);
 GList *gebr_iexpr_extract_vars(GebrIExpr   *self,
 			       const gchar *expr);
 
+/**
+ * gebr_iexpr_eval:
+ * @expr: a #GebrIExpr
+ * @expr: expression to be evaluated.
+ * @value: returns the value of the expression.
+ * @error: return location for an #GEBR_IEXPR_ERROR, or %NULL
+ *
+ * Returns: %TRUE if @expression is valid, %FALSE otherwise.
+ */
+gboolean gebr_iexpr_eval(GebrIExpr   *self,
+			     const gchar *expr,
+			     gchar ** value,
+			     GError ** error);
 G_END_DECLS
 
 #endif /* __LIBGEBR_IEXPR_H__ */

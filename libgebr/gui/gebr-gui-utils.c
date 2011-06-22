@@ -1202,3 +1202,14 @@ gboolean gebr_gui_show_uri(const gchar * uri)
 	}
 	return ret;
 }
+
+gboolean gebr_gui_gtk_tree_iter_equal_to(GtkTreeIter *iter1, GtkTreeIter *iter2)
+{
+	if ((iter1 == NULL || !iter1->stamp) && (iter2 == NULL || !iter2->stamp))
+		return TRUE;
+
+	if ((iter1 == NULL || !iter1->stamp) || (iter2 == NULL || !iter2->stamp))
+		return FALSE;
+
+	return iter1->user_data == iter2->user_data;
+}

@@ -17,6 +17,7 @@
 
 #include <glib/gi18n.h>
 
+#include "utils.h"
 #include "gebr-arith-expr.h"
 #include "gebr-iexpr.h"
 
@@ -50,6 +51,11 @@ static gboolean gebr_arith_expr_eval_internal(GebrArithExpr *self,
 					      gdouble       *result,
 					      GError       **err);
 
+static gboolean
+gebr_arith_expr_eval_impl (GebrIExpr   *self,
+			   const gchar *expr,
+			   gchar      **result,
+			   GError     **err);
 G_DEFINE_TYPE_WITH_CODE(GebrArithExpr, gebr_arith_expr, G_TYPE_OBJECT,
 			G_IMPLEMENT_INTERFACE(GEBR_TYPE_IEXPR,
 					      gebr_arith_expr_interface_init));
@@ -310,17 +316,23 @@ gebr_arith_expr_extract_vars(GebrIExpr   *iface,
 	GList *vars = NULL;
 	GRegex *regex;
 	GMatchInfo *info;
+	GHashTable *set;
 
+	set = g_hash_table_new(g_str_hash, g_str_equal);
 	regex = g_regex_new ("[a-z][0-9a-z_]*", G_REGEX_CASELESS, 0, NULL);
 	g_regex_match (regex, expr, 0, &info);
 
 	while (g_match_info_matches (info))
 	{
 		gchar *word = g_match_info_fetch (info, 0);
-		vars = g_list_prepend (vars, word);
+		if (!g_hash_table_lookup(set, word)) {
+			vars = g_list_prepend (vars, word);
+			g_hash_table_insert(set, word, GUINT_TO_POINTER(1));
+		}
 		g_match_info_next (info, NULL);
 	}
 
+	g_hash_table_unref(set);
 	g_match_info_free (info);
 	g_regex_unref (regex);
 
@@ -333,6 +345,7 @@ static void gebr_arith_expr_interface_init(GebrIExprInterface *iface)
 	iface->is_valid = gebr_arith_expr_is_valid;
 	iface->reset = gebr_arith_expr_reset;
 	iface->extract_vars = gebr_arith_expr_extract_vars;
+	iface->eval = gebr_arith_expr_eval_impl;
 }
 
 /* Private functions {{{1 */
@@ -493,11 +506,27 @@ gebr_arith_expr_eval_internal(GebrArithExpr *self,
 	return TRUE;
 }
 
+static gboolean
+gebr_arith_expr_eval_impl (GebrIExpr   *self,
+			   const gchar *expr,
+			   gchar      **result,
+			   GError     **err)
+{
+	gdouble res = 0;
+	gboolean retval;
+
+	retval = gebr_arith_expr_eval (GEBR_ARITH_EXPR(self), expr, &res, err);
+	*result = gebr_str_remove_trailing_zeros(g_strdup_printf("%.10lf", res));
+
+	return retval;
+}
+
 /* Public functions {{{1 */
 GebrArithExpr *gebr_arith_expr_new(void)
 {
 	return g_object_new(GEBR_TYPE_ARITH_EXPR, NULL);
 }
+
 
 gboolean gebr_arith_expr_eval(GebrArithExpr *self,
 			      const gchar   *expr,
@@ -522,5 +551,4 @@ gboolean gebr_arith_expr_eval(GebrArithExpr *self,
 	}
 
 	return gebr_arith_expr_eval_internal(self, expr, result, err);
-
 }

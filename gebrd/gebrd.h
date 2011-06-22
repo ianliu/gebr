@@ -22,6 +22,7 @@
 #include <libgebr/comm/gebr-comm-server.h>
 #include <libgebr/log.h>
 #include <libgebr/comm/gebr-comm-server.h>
+#include <libgebr/gebr-validator.h>
 
 #include "gebrd-mpi-interface.h"
 #include "gebrd-user.h"
@@ -72,6 +73,12 @@ struct _GebrdApp {
 	struct gebr_log *log;
 	GMainLoop *main_loop;
 	int finished_starting_pipe[2];
+
+	/**
+	 * Validator for flow variables
+	 */
+	GebrGeoXmlFlow *flow;
+	GebrValidator *validator;
 };
 struct _GebrdAppClass {
 	GObjectClass parent;

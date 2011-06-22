@@ -53,14 +53,15 @@ gboolean gebr_validator_insert(GebrValidator       *self,
 			       GError             **error);
 
 /**
- * gebr_validator_undef:
+ * gebr_validator_remove:
  * @validator: A #GebrValidator
  * @param: The variable to be deleted
  * @affected: A list containing the #GebrGeoXmlParameter's affected
  */
 void gebr_validator_remove(GebrValidator       *self,
 			   GebrGeoXmlParameter *param,
-			   GList              **affected);
+			   GList              **affected,
+			   GError	      **error);
 
 /**
  * gebr_validator_rename:
@@ -107,6 +108,36 @@ GebrGeoXmlParameter* gebr_validator_move(GebrValidator       *self,
                                          GList              **affected);
 
 /**
+ * gebr_validator_check_using_var:
+ * @validator: A #GebrValidator
+ * @source: Variable which the function check if using @var
+ * @var: The variable for check
+ * @scope: The variable scope (GEBR_GEOXML_DOCUMENT_TYPE_FLOW | LINE | PROJECT)
+ *
+ * Returns: %TRUE if @source using @var (direct or indirect), %FALSE otherwise.
+ */
+gboolean
+gebr_validator_check_using_var(GebrValidator *self,
+                               const gchar   *source,
+			       GebrGeoXmlDocumentType scope,
+                               const gchar   *var);
+/**
+ * gebr_validator_expression_check_using_var:
+ * @validator: A #GebrValidator
+ * @expr: Variable which the function check if using @var
+ * @var: The variable for check
+ * @scope: The variable scope (GEBR_GEOXML_DOCUMENT_TYPE_FLOW | LINE | PROJECT)
+ *
+ * Important! This function works only for string variables.
+ * Returns: %TRUE if @source using @var (direct or indirect), %FALSE otherwise.
+ */
+gboolean
+gebr_validator_expression_check_using_var(GebrValidator *self,
+                                          const gchar   *expr,
+                                          GebrGeoXmlDocumentType scope,
+                                          const gchar   *var);
+
+/**
  * gebr_validator_validate_param:
  * @validator: A #GebrValidator
  * @parameter: The #GebrGeoXmlParameter to be validated
@@ -151,10 +182,34 @@ void gebr_validator_get_documents(GebrValidator       *validator,
 				  GebrGeoXmlDocument **proj);
 
 /**
+ * gebr_validator_update:
+ * @validator: The #GebrValidator to be updated
+ */
+void gebr_validator_update(GebrValidator *validator);
+
+/**
  * gebr_validator_free:
  * @validator: The #GebrValidator to be freed
  */
 void gebr_validator_free(GebrValidator *validator);
+
+/**
+ * gebr_validator_evaluate:
+ * @validator: The #GebrValidator to be used
+ * @expr: The expression to be evaluated
+ * @type: The type of expression (GEBR_GEOXML_PARAMETER_TYPE_STRING | GEBR_GEOXML_PARAMETER_TYPE_FLOAT)
+ * @value: Returns the value of the expression.
+ * @error: Returns the error, if any.
+ *
+ * Calculate the value of @expr and return it at @value.
+ *
+ * Returns: %TRUE if @expr could be evaluated. %FALSE otherwise.
+ */
+gboolean gebr_validator_evaluate(GebrValidator *self,
+                                 const gchar * expr,
+                                 GebrGeoXmlParameterType type,
+                                 gchar **value,
+                                 GError **error);
 
 G_END_DECLS
 

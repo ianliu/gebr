@@ -688,3 +688,23 @@ gchar *gebr_str_word_before_pos(const gchar *str, gint *pos)
 
 	return word;
 }
+
+gchar *
+gebr_str_remove_trailing_zeros(gchar *str)
+{
+	gsize i;
+
+	i = strlen(str);
+	while (i--)
+		if (str[i] == '.' || str[i] != '0')
+			break;
+
+	if (i != -1) {
+		if (str[i] == '.')
+			str[i] = '\0';
+		else
+			str[i+1] = '\0';
+	}
+
+	return str;
+}

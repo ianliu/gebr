@@ -103,10 +103,16 @@ gboolean validate_selected_program(GError **error)
 
 gboolean validate_program_iter(GtkTreeIter *iter, GError **error)
 {
+	gboolean never_opened;
 	GebrGeoXmlProgram *program;
 
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), iter,
-			   FSEQ_GEBR_GEOXML_POINTER, &program, -1);
+			   FSEQ_GEBR_GEOXML_POINTER, &program,
+			   FSEQ_NEVER_OPENED, &never_opened,
+			   -1);
+
+	if (never_opened)
+		return FALSE;
 
 	if (gebr_geoxml_program_is_valid(program, gebr.validator, error))
 		return TRUE;

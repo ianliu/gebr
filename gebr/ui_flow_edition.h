@@ -37,6 +37,7 @@ enum {
 	FSEQ_ELLIPSIZE,
 	FSEQ_SENSITIVE,
 	FSEQ_TOOLTIP,
+	FSEQ_NEVER_OPENED,
 	FSEQ_N_COLUMN
 };
 
@@ -148,6 +149,11 @@ void flow_edition_on_server_changed(void);
 gboolean flow_edition_find_flow_server (GebrGeoXmlFlow *flow,
 					GtkTreeModel   *model,
 					GtkTreeIter    *iter);
+
+/**
+ * flow_edition_revalidate_programs:
+ */
+void flow_edition_revalidate_programs(void);
 
 G_END_DECLS
 #endif				//__UI_FLOW_COMPONENT_H

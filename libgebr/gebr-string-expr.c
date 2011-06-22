@@ -40,6 +40,12 @@ static gboolean traverse_expression(GebrStringExpr *self,
 				    gpointer        data,
 				    GError        **err);
 
+static gboolean
+gebr_string_expr_eval_impl(GebrIExpr   *self,
+			   const gchar *expr,
+			   gchar      **result,
+			   GError     **err);
+
 G_DEFINE_TYPE_WITH_CODE(GebrStringExpr, gebr_string_expr, G_TYPE_OBJECT,
 			G_IMPLEMENT_INTERFACE(GEBR_TYPE_IEXPR,
 					      gebr_string_expr_interface_init));
@@ -105,28 +111,8 @@ static gboolean gebr_string_expr_set_var(GebrIExpr              *iface,
 	if (type == GEBR_GEOXML_PARAMETER_TYPE_STRING)
 		gebr_string_expr_eval(self, value, &result, &error);
 	else {
-		gdouble r = 0;
-
-		if (gebr_arith_expr_eval(GEBR_ARITH_EXPR(self->priv->arith_expr), value, &r, NULL)) {
-			gsize i;
-			gsize len;
-
-			result = g_strdup_printf("%.6lf", r);
-			len = strlen(result);
-
-			// Remove decimal numbers if they are zero. The precision is
-			// 6, so we might remove up to 7 (including decimal separator) chars
-			for (i = 1; i <= 6; i++)
-				if (result[len-i] != '0')
-					break;
-			if (i == 7)
-				result[len-7] = '\0';
-			else
-				result[len-i+1] = '\0';
-		}
-
-		gebr_iexpr_set_var(self->priv->arith_expr,
-				   name, type, value, &error);
+		gebr_iexpr_eval(self->priv->arith_expr, value, &result, NULL);
+		gebr_iexpr_set_var(self->priv->arith_expr, name, type, value, &error);
 	}
 
 	if (error) {
@@ -159,16 +145,27 @@ static GList *
 gebr_string_expr_extract_vars(GebrIExpr   *iface,
 			      const gchar *expr)
 {
+	gboolean retval;
+	GHashTable *set;
 	GList *vars = NULL;
 	GebrStringExpr *self = GEBR_STRING_EXPR(iface);
 
+	set = g_hash_table_new(g_str_hash, g_str_equal);
+
 	void prepend_var(const gchar *var, gpointer data)
 	{
-		vars = g_list_prepend(vars, g_strdup(var));
+		if (!g_hash_table_lookup(set, var)) {
+			vars = g_list_prepend(vars, g_strdup(var));
+			g_hash_table_insert(set, vars->data, GUINT_TO_POINTER(1));
+		}
 	}
 
-	if (!traverse_expression(self, expr, NULL, FALSE,
-				 prepend_var, NULL, NULL))
+	retval = traverse_expression(self, expr, NULL, FALSE,
+				     prepend_var, NULL, NULL);
+
+	g_hash_table_unref(set);
+
+	if (!retval)
 		return NULL;
 
 	return g_list_reverse(vars);
@@ -180,9 +177,19 @@ static void gebr_string_expr_interface_init(GebrIExprInterface *iface)
 	iface->is_valid = gebr_string_expr_is_valid;
 	iface->reset = gebr_string_expr_reset;
 	iface->extract_vars = gebr_string_expr_extract_vars;
+	iface->eval = gebr_string_expr_eval_impl;
 }
 
 /* Private Functions {{{1 */
+static gboolean
+gebr_string_expr_eval_impl(GebrIExpr   *self,
+			   const gchar *expr,
+			   gchar      **result,
+			   GError     **err)
+{
+	return gebr_string_expr_eval(GEBR_STRING_EXPR(self),expr,result,err);
+}
+
 static gboolean
 traverse_expression(GebrStringExpr *self,
 		    const gchar    *expr,

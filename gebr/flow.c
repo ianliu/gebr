@@ -681,9 +681,17 @@ void flow_program_remove(void)
 					   FSEQ_GEBR_GEOXML_POINTER, &program, -1);
 			gebr_geoxml_sequence_remove(GEBR_GEOXML_SEQUENCE(program));
 
-			if (gebr_geoxml_program_get_control (program) == GEBR_GEOXML_PROGRAM_CONTROL_FOR) {
+			// Remove `iter' variable from dictionary if the Loop is configured
+			if (gebr_geoxml_program_get_control (program) == GEBR_GEOXML_PROGRAM_CONTROL_FOR
+			    && gebr_geoxml_program_get_status(program) == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED) {
+				GebrGeoXmlSequence *param;
+				GError *err = NULL;
+				GList *affected;
+				param = gebr_geoxml_document_get_dict_parameter(GEBR_GEOXML_DOCUMENT(gebr.flow));
+				gebr_validator_remove(gebr.validator, GEBR_GEOXML_PARAMETER(param), &affected, &err);
 				gebr_geoxml_flow_remove_iter_dict(gebr.flow);
-				dict_edit_check_programs_using_variables("iter", FALSE);
+				//dict_edit_check_programs_using_variables("iter", FALSE);
+				flow_edition_revalidate_programs();
 			}
 			valid = gtk_list_store_remove(GTK_LIST_STORE(gebr.ui_flow_edition->fseq_store), &iter);
 		}
@@ -796,7 +804,7 @@ void flow_program_paste(void)
 		return;
 	}
 
-	flow_add_program_sequence_to_view(GEBR_GEOXML_SEQUENCE(pasted), TRUE);
+	flow_add_program_sequence_to_view(GEBR_GEOXML_SEQUENCE(pasted), TRUE, FALSE);
 	flow_program_check_sensitiveness();
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
 }

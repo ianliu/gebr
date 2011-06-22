@@ -142,10 +142,7 @@ gboolean gebr_gui_gtk_tree_model_find_by_column(GtkTreeModel * model, GtkTreeIte
  *
  * \see gebr_gui_gtk_tree_model_iter_equal_to
  */
-#define gebr_gui_gtk_tree_iter_equal_to(iter1, iter2) \
-	((iter1 == NULL || !(iter1)->stamp) && (iter2 == NULL || !(iter2)->stamp) \
-		? TRUE : (iter1 == NULL || !(iter1)->stamp) || (iter2 == NULL || !(iter2)->stamp) \
-			? FALSE : (gboolean)((iter1)->user_data == (iter2)->user_data))
+gboolean gebr_gui_gtk_tree_iter_equal_to(GtkTreeIter *iter1, GtkTreeIter *iter2);
 
 /**
  * Copies the values of row pointed by \p source into \p iter.

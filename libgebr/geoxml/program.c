@@ -358,6 +358,43 @@ guint gebr_geoxml_program_control_get_n (GebrGeoXmlProgram *prog, gchar **step, 
 	return atoi(niter);
 }
 
+void gebr_geoxml_program_set_n(GebrGeoXmlProgram *prog,
+			       const gchar *step,
+			       const gchar *ini,
+			       const gchar *n)
+{
+	GebrGeoXmlSequence *seq;
+	GebrGeoXmlProgramControl c;
+	GebrGeoXmlParameter *param;
+	GebrGeoXmlParameters *params;
+	GebrGeoXmlValueSequence *value;
+	const gchar *keyword;
+
+	g_return_if_fail (prog != NULL);
+
+	c = gebr_geoxml_program_get_control (prog);
+	g_return_if_fail (c == GEBR_GEOXML_PROGRAM_CONTROL_FOR);
+
+	params = gebr_geoxml_program_get_parameters (prog);
+	gebr_geoxml_parameters_get_parameter(params, &seq, 0);
+
+	while (seq) {
+		param = GEBR_GEOXML_PARAMETER(seq);
+
+		gebr_geoxml_program_parameter_get_value (GEBR_GEOXML_PROGRAM_PARAMETER (param),
+						 	 FALSE, (GebrGeoXmlSequence**)&value, 0);
+		keyword = gebr_geoxml_program_parameter_get_keyword(GEBR_GEOXML_PROGRAM_PARAMETER (param));
+		if(!strcmp(keyword,"niter"))
+			gebr_geoxml_value_sequence_set(value, n);
+		else if(!strcmp(keyword,"step"))
+			gebr_geoxml_value_sequence_set(value, step);
+		else if(!strcmp(keyword,"ini_value"))
+			gebr_geoxml_value_sequence_set(value, ini);
+
+		gebr_geoxml_sequence_next(&seq);
+	}
+}
+
 gboolean gebr_geoxml_program_is_var_used (GebrGeoXmlProgram *self,
 					  const gchar *var_name)
 {
@@ -415,7 +452,6 @@ static void validate_program_parameter(GebrGeoXmlParameter *parameter, Validatio
 {
 	GebrGeoXmlParameters *instance;
 	GebrGeoXmlParameter *selected;
-	gchar *validated = NULL;
 
 	if (data->error)
 		return;
@@ -427,12 +463,8 @@ static void validate_program_parameter(GebrGeoXmlParameter *parameter, Validatio
 	if (selected != NULL && selected != parameter)
 		return;
 
-	gebr_validator_validate_param(data->validator,
-				      parameter,
-				      &validated,
-				      &data->error);
-
-	g_free(validated);
+	gebr_validator_validate_param(data->validator, parameter,
+				      NULL, &data->error);
 }
 
 gboolean gebr_geoxml_program_is_valid(GebrGeoXmlProgram *self,

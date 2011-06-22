@@ -250,11 +250,9 @@ static void on_load_finished(WebKitWebView * view, WebKitWebFrame * frame, GebrG
 static WebKitNavigationResponse on_navigation_requested(WebKitWebView * web_view, WebKitWebFrame *frame,
 							WebKitNetworkRequest *request, GebrGuiHelpEditWidget *self)
 {
-	GebrGuiHelpEditWidgetPrivate *priv;
 	const gchar *uri;
 	const gchar *path;
 
-	priv = GEBR_GUI_HELP_EDIT_WIDGET_GET_PRIVATE (self);
 	uri = webkit_network_request_get_uri (request);
 	path = gebr_gui_help_edit_widget_get_uri (self);
 

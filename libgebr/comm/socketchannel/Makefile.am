@@ -21,6 +21,7 @@ AM_CFLAGS = $(COMMON_CFLAGS)
 AM_CPPFLAGS =			\
 	$(GLIB_CFLAGS)		\
 	$(GEBR_CFLAGS)		\
+	$(GEBR_GEOXML_CFLAGS)	\
 	$(GEBR_JSON_CFLAGS)	\
 	$(GEBR_COMM_CFLAGS)	\
 	$(NULL)
@@ -28,6 +29,7 @@ AM_CPPFLAGS =			\
 gebr_comm_socketchannel_LDADD =	\
 	$(GLIB_LIBS)		\
 	$(GEBR_LIBS)		\
+	$(GEBR_GEOXML_LIBS)	\
 	$(GEBR_JSON_LIBS)	\
 	$(GEBR_COMM_LIBS)	\
 	$(NULL)

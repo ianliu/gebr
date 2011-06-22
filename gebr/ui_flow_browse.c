@@ -37,9 +37,11 @@
  */
 
 static void flow_browse_load(void);
-static void
-flow_browse_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
-			     GtkTreeViewColumn * column, GebrUiFlowBrowse *ui_flow_browse);
+
+static void change_selection_update_validator(void);
+
+static void flow_browse_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
+					 GtkTreeViewColumn * column, GebrUiFlowBrowse *ui_flow_browse);
 static GtkMenu *flow_browse_popup_menu(GtkWidget * widget, GebrUiFlowBrowse *ui_flow_browse);
 static void flow_browse_on_revision_revert_activate(GtkMenuItem * menu_item, GebrGeoXmlRevision * revision);
 static void flow_browse_on_revision_delete_activate(GtkWidget * menu_item, GebrGeoXmlRevision * revision);
@@ -101,7 +103,9 @@ GebrUiFlowBrowse *flow_browse_setup_ui(GtkWidget * revisions_menu)
 	g_signal_connect(ui_flow_browse->view, "row-activated", G_CALLBACK(flow_browse_on_row_activated),
 			 ui_flow_browse);
 	g_signal_connect(gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_flow_browse->view)), "changed",
-			 G_CALLBACK(flow_browse_load), ui_flow_browse);
+			 G_CALLBACK(flow_browse_load), NULL);
+	g_signal_connect(gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_flow_browse->view)), "changed",
+			 G_CALLBACK(change_selection_update_validator), NULL);
 
 	renderer = gtk_cell_renderer_text_new();
 	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
@@ -483,6 +487,17 @@ static void flow_browse_load(void)
 
 	g_free(filename);
 	g_free(title);
+}
+
+static void change_selection_update_validator(void)
+{
+	static GebrGeoXmlFlow *last_flow = NULL;
+
+	// Don't update validator if flow hasn't changed
+	if (gebr.flow == last_flow)
+		return;
+
+	gebr_validator_update(gebr.validator);
 }
 
 /**

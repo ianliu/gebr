@@ -390,10 +390,8 @@ int gebr_geoxml_sequence_move_into_group(GebrGeoXmlSequence * sequence, GebrGeoX
 
 	if (gebr_geoxml_parameter_get_is_in_group((GebrGeoXmlParameter *) sequence)) {
 		GSList *referencee;
-		GebrGeoXmlParameterGroup *group;
 		GdomeElement *parameter_element;
 
-		group = gebr_geoxml_parameter_get_group((GebrGeoXmlParameter*)sequence);
 		referencee = __gebr_geoxml_parameter_get_referencee_list(GEBR_GEOXML_PARAMETER(sequence));
 
 		__gebr_geoxml_foreach_element(parameter_element, referencee)
