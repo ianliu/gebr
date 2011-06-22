@@ -123,15 +123,21 @@ is_variable_valid(GebrValidator *self,
 		  const gchar **cause,
 		  GError **err)
 {
+	GebrGeoXmlParameterType type;
 	HashData *data;
 	data = g_hash_table_lookup(self->vars, name);
+
+	type = gebr_geoxml_parameter_get_type(data->param[scope]);
 
 	if (!data)
 		return FALSE;
 
 	for (GList *i = data->dep[scope]; i; i = i->next) {
 		gchar *v = i->data;
+		HashData *dep;
 		GError *error = get_error(self, v, scope);
+
+		dep = g_hash_table_lookup(self->vars, v);
 
 		if (error) {
 			if (error->code == GEBR_IEXPR_ERROR_UNDEF_VAR)
@@ -145,6 +151,14 @@ is_variable_valid(GebrValidator *self,
 				            _("Variable %s is not well defined"),
 				            v);
 			*cause = v;
+			return FALSE;
+		}
+		else if (type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT && dep->param[scope] &&
+		    gebr_geoxml_parameter_get_type(dep->param[scope]) == GEBR_GEOXML_PARAMETER_TYPE_STRING) {
+			g_set_error(err, GEBR_IEXPR_ERROR,
+			            GEBR_IEXPR_ERROR_TYPE_MISMATCH,
+			            _("Variable %s use different type"),
+			            name);
 			return FALSE;
 		}
 	}
