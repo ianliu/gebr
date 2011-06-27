@@ -533,17 +533,17 @@ gebr_validator_insert(GebrValidator       *self,
 	name = GET_VAR_NAME(param);
 	data = g_hash_table_lookup(self->vars, name);
 
-	if (data && !data->param[scope]) {
-		data->param[scope] = param;
-	} else if (!data) {
+	if (!data) {
 		data = hash_data_new_from_xml(param);
 		g_hash_table_insert(self->vars, g_strdup(name), data);
-	}
+	} else
+		if (!data->param[scope])
+			data->param[scope] = param;
 
 	return gebr_validator_change_value(self, param, GET_VAR_VALUE(param), affected, error);
 }
 
-void
+gboolean
 gebr_validator_remove(GebrValidator       *self,
 		      GebrGeoXmlParameter *param,
 		      GList              **affected,
@@ -552,54 +552,36 @@ gebr_validator_remove(GebrValidator       *self,
 	GList *tmp = NULL;
 	const gchar *name;
 	HashData *data;
-	GebrGeoXmlDocumentType type;
+	GebrGeoXmlDocumentType scope;
 
 	name = GET_VAR_NAME(param);
-	type = gebr_geoxml_parameter_get_scope (param);
+	scope = gebr_geoxml_parameter_get_scope (param);
 	data = g_hash_table_lookup (self->vars, name);
 
 	if (!data)
-		return;
+		return FALSE;
 
-	data->param[type] = NULL;
+	data->param[scope] = NULL;
 
-	if (get_value(self, name))
-		update_error(self, name, type);
-	else {
-		for (GList *deps = data->dep[type]; deps; deps = deps->next) {
+	if (!get_value(self, name)) {
+		/* Remove the variable @param from antideps of it deps */
+		for (GList *deps = data->dep[scope]; deps; deps = deps->next) {
 			HashData *dep;
 			GList *node;
 			dep = g_hash_table_lookup(self->vars, deps->data);
 			node = g_list_find_custom(dep->antidep, name, (GCompareFunc)g_strcmp0);
+			//FIXME: Look for when the node is null (using var on numeric parameter with brackets)
 			g_free(node->data);
 			dep->antidep = g_list_delete_link(dep->antidep, node);
 		}
 
-		gchar *anti_name;
-		HashData *errors;
-		for (GList *v = data->antidep; v; v = v->next) {
-			GError *e = NULL;
-			anti_name = v->data;
-			errors = g_hash_table_lookup(self->vars, anti_name);
-			if (errors->error[type])
-				g_clear_error(&errors->error[type]);
-			g_set_error(&e, GEBR_IEXPR_ERROR,
-			            GEBR_IEXPR_ERROR_UNDEF_VAR,
-			            _("Variable %s not defined"),
-			            name);
-			set_error(self, anti_name, type, e);
-
-			if (affected)
-				tmp = g_list_prepend(tmp, g_strdup(anti_name));
-		}
 		if (data->antidep == NULL)
 			g_hash_table_remove(self->vars, name);
 	}
+	update_error(self, name, scope);
 
-	if (affected)
-		*affected = g_list_reverse(tmp);
+	return TRUE;
 }
-
 
 gboolean
 gebr_validator_rename(GebrValidator       *self,
@@ -610,45 +592,17 @@ gebr_validator_rename(GebrValidator       *self,
 {
 	HashData * data = NULL;
 	const gchar * name = NULL;
-	GebrGeoXmlParameterType scope;
-	GebrGeoXmlParameter *new_param;
-	GList *a1, *a2, *aux_affec;
 
 	name = GET_VAR_NAME(param);
 
-	if (g_strcmp0(name,new_name) == 0)
+	if (g_strcmp0(name, new_name) == 0)
 		return TRUE;
 
-	scope = gebr_geoxml_parameter_get_scope(param);
-	data = g_hash_table_lookup(self->vars, name);
-
-	if (!data)
+	if (!gebr_validator_remove(self, param, NULL, error))
 		return FALSE;
 
-	new_param = data->param[scope];
-	gebr_validator_remove(self, param, &a1, error);
-
-	SET_VAR_NAME(new_param, new_name);
-	gebr_validator_insert(self, param, &a2, error);
-
-	if (affected) {
-		aux_affec = g_list_concat(a1, a2);
-		aux_affec = g_list_sort(aux_affec, (GCompareFunc)g_strcmp0);
-
-		if (aux_affec) {
-			*affected = g_list_prepend(NULL, g_strdup(aux_affec->data));
-			for (GList *i = aux_affec->next; i; i = i->next)
-				if (g_strcmp0(i->data, i->prev->data) != 0)
-					*affected = g_list_prepend(*affected, g_strdup(i->data));
-			g_list_foreach(aux_affec, (GFunc)g_free, NULL);
-			g_list_free(aux_affec);
-		}
-	} else {
-		g_list_foreach(a1, (GFunc) g_free, NULL);
-		g_list_foreach(a2, (GFunc) g_free, NULL);
-		g_list_free(a1);
-		g_list_free(a2);
-	}
+	SET_VAR_NAME(param, new_name);
+	gebr_validator_insert(self, param, NULL, error);
 
 	return TRUE;
 }

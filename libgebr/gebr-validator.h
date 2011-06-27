@@ -40,15 +40,18 @@ GebrValidator *gebr_validator_new(GebrGeoXmlDocument **flow,
 /**
  * gebr_validator_def:
  * @validator: A #GebrValidator
- * @key: The variable to be defined
+ * @param: The variable to be defined
  * @error: Return location for error, or %NULL
  *
- * Defines a variable in the validator.
+ * Defines a variable in the validator, if the variable already exist,
+ * just updates the @param value in the validator.
+ *
+ * @see gebr_validator_change_value
  *
  * Returns: %TRUE if no error ocurred, %FALSE otherwise
  */
 gboolean gebr_validator_insert(GebrValidator       *self,
-			       GebrGeoXmlParameter *key,
+			       GebrGeoXmlParameter *param,
 			       GList              **affected,
 			       GError             **error);
 
@@ -57,8 +60,10 @@ gboolean gebr_validator_insert(GebrValidator       *self,
  * @validator: A #GebrValidator
  * @param: The variable to be deleted
  * @affected: A list containing the #GebrGeoXmlParameter's affected
+ *
+ * Returns: %TRUE if the variable was removed, %FALSE if variable is not defined
  */
-void gebr_validator_remove(GebrValidator       *self,
+gboolean gebr_validator_remove(GebrValidator       *self,
 			   GebrGeoXmlParameter *param,
 			   GList              **affected,
 			   GError	      **error);
@@ -70,6 +75,8 @@ void gebr_validator_remove(GebrValidator       *self,
  * @new_name: The new name for @param
  * @affected: The #GebrGeoXmlParameter's affected by this operation
  * @error: Return location for error, or %NULL
+ *
+ * If the @param has not been inserted in validator, returns %FALSE
  *
  * Returns: %TRUE if no error ocurred, %FALSE otherwise
  */
@@ -86,6 +93,8 @@ gboolean gebr_validator_rename(GebrValidator       *self,
  * @new_value: The new value for @param
  * @affected: The #GebrGeoXmlParameter's affected by this operation
  * @error: Return location for error, or %NULL
+ *
+ * Find variable on the correct scope, and changes the @param value to @new_value.
  *
  * Returns: %TRUE if no error ocurred, %FALSE otherwise
  */
