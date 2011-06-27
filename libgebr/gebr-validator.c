@@ -129,8 +129,7 @@ is_variable_valid(GebrValidator *self,
 
 	type = gebr_geoxml_parameter_get_type(data->param[scope]);
 
-	if (!data)
-		return FALSE;
+	g_return_val_if_fail(data != NULL, FALSE);
 
 	for (GList *i = data->dep[scope]; i; i = i->next) {
 		gchar *v = i->data;
@@ -184,8 +183,7 @@ set_error_full(GebrValidator *self,
 
 	data = g_hash_table_lookup(self->vars, name);
 
-	if (!data)
-		return;
+	g_return_val_if_fail(data != NULL, FALSE);
 
 	if (update_self) {
 		if (data->error[scope])
@@ -282,8 +280,8 @@ get_param(GebrValidator *self,
 	HashData *data;
 	data = g_hash_table_lookup(self->vars, name);
 
-	if (!data)
-		return NULL;
+	g_return_val_if_fail(data != NULL, NULL);
+
 	for (int i = 0; i < 3; i++) {
 		if (!data->param[i])
 			continue;
@@ -542,6 +540,7 @@ gebr_validator_insert(GebrValidator       *self,
 	HashData *data;
 
 	name = GET_VAR_NAME(param);
+	g_return_val_if_fail(name != NULL && strlen(name), FALSE);
 	data = g_hash_table_lookup(self->vars, name);
 
 	if (!data) {
@@ -568,8 +567,7 @@ gebr_validator_remove(GebrValidator       *self,
 	scope = gebr_geoxml_parameter_get_scope (param);
 	data = g_hash_table_lookup (self->vars, name);
 
-	if (!data)
-		return FALSE;
+	g_return_val_if_fail(data != NULL, FALSE);
 
 	data->param[scope] = NULL;
 
@@ -592,16 +590,12 @@ gebr_validator_rename(GebrValidator       *self,
 		      GError             **error)
 {
 	const gchar * name = NULL;
-	name = GET_VAR_NAME(param);
+	GET_VAR_NAME(param);
+	g_return_val_if_fail(g_strcmp0(name, new_name) != 0, TRUE);
 
-	if (g_strcmp0(name, new_name) == 0)
-		return TRUE;
-
-	if (!gebr_validator_remove(self, param, NULL, error))
-		return FALSE;
-
+	g_return_val_if_fail(gebr_validator_remove(self, param, NULL, error), FALSE);
 	SET_VAR_NAME(param, new_name);
-	gebr_validator_insert(self, param, NULL, error);
+	g_return_val_if_fail(gebr_validator_insert(self, param, NULL, error), FALSE);
 
 	return TRUE;
 }
@@ -694,8 +688,7 @@ gebr_validator_check_using_var(GebrValidator *self,
 
 	data = g_hash_table_lookup(self->vars, source);
 
-	if (data == NULL)
-		return FALSE;
+	g_return_val_if_fail(data != NULL, FALSE);
 
 	for (GList *i = data->dep[scope]; i; i = i->next) {
 		if (g_strcmp0(i->data, var) == 0)
