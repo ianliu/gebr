@@ -1262,6 +1262,8 @@ static gboolean dict_edit_validate_editing_cell(struct dict_edit_data *data, gbo
 		} else {
 			if (strlen(keyword))
 				gebr_validator_rename(gebr.validator, GEBR_GEOXML_PARAMETER(parameter), new_text, &affected, &err);
+			else
+				gebr_geoxml_program_parameter_set_keyword(parameter, new_text);
 			if (err)
 				g_clear_error(&err);
 		}
