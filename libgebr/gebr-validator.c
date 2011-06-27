@@ -359,6 +359,32 @@ detect_cicle(GebrValidator *self,
 	return retval;
 }
 
+/* Remove the variable @param from antideps of it deps */
+static gboolean
+remove_from_antidep_of_deps(GebrValidator 	   *self,
+                            HashData 		   *data,
+                            const gchar	           *var_name,
+                            GebrGeoXmlDocumentType scope)
+{
+	HashData *dep;
+	GList *node;
+
+	if (!data)
+		return FALSE;
+
+	for (GList *deps = data->dep[scope]; deps; deps = deps->next) {
+		gchar *dep_name = deps->data;
+
+		dep = g_hash_table_lookup(self->vars, dep_name);
+		if (dep->antidep) {
+			node = g_list_find_custom(dep->antidep, var_name, (GCompareFunc)g_strcmp0);
+			g_free(node->data);
+			dep->antidep = g_list_delete_link(dep->antidep, node);
+		}
+	}
+	return TRUE;
+}
+
 static gboolean
 gebr_validator_change_value_by_name(GebrValidator          *self,
 				    const gchar            *name,
@@ -371,38 +397,23 @@ gebr_validator_change_value_by_name(GebrValidator          *self,
 	HashData *data;
 	GError *err = NULL;
 	GebrIExpr *expr;
-	gboolean had_error;
 
 	if (affected)
 		*affected = NULL;
 
 	data = g_hash_table_lookup(self->vars, name);
-	had_error = (data->error[scope] != NULL);
+	if (!data)
+		return FALSE;
 
 	g_return_val_if_fail(data != NULL, FALSE);
 
-	for (GList *i = data->dep[scope]; i; i = i->next) {
-		HashData *dep;
-		gchar *dep_name = i->data;
-		GList *node;
-
-		dep = g_hash_table_lookup(self->vars, dep_name);
-		if (dep->antidep) {
-			node = g_list_find_custom(dep->antidep, name, (GCompareFunc)g_strcmp0);
-			g_free(node->data);
-			dep->antidep = g_list_delete_link(dep->antidep, node);
-		}
-	}
+	remove_from_antidep_of_deps(self, data, name, scope);
 
 	expr = get_validator_by_type(self, type);
 	if (!gebr_iexpr_is_valid(expr, new_value, &err)
 	    && err->code != GEBR_IEXPR_ERROR_UNDEF_VAR) {
 		set_error(self, name, scope, err);
 		g_propagate_error(error, err);
-
-		if (!had_error) {
-			// TODO: Generate affected list
-		}
 
 		return FALSE;
 	}
@@ -549,7 +560,6 @@ gebr_validator_remove(GebrValidator       *self,
 		      GList              **affected,
 		      GError		 **error)
 {
-	GList *tmp = NULL;
 	const gchar *name;
 	HashData *data;
 	GebrGeoXmlDocumentType scope;
@@ -564,16 +574,7 @@ gebr_validator_remove(GebrValidator       *self,
 	data->param[scope] = NULL;
 
 	if (!get_value(self, name)) {
-		/* Remove the variable @param from antideps of it deps */
-		for (GList *deps = data->dep[scope]; deps; deps = deps->next) {
-			HashData *dep;
-			GList *node;
-			dep = g_hash_table_lookup(self->vars, deps->data);
-			node = g_list_find_custom(dep->antidep, name, (GCompareFunc)g_strcmp0);
-			//FIXME: Look for when the node is null (using var on numeric parameter with brackets)
-			g_free(node->data);
-			dep->antidep = g_list_delete_link(dep->antidep, node);
-		}
+		remove_from_antidep_of_deps(self, data, name, scope);
 
 		if (data->antidep == NULL)
 			g_hash_table_remove(self->vars, name);
@@ -590,9 +591,7 @@ gebr_validator_rename(GebrValidator       *self,
 		      GList              **affected,
 		      GError             **error)
 {
-	HashData * data = NULL;
 	const gchar * name = NULL;
-
 	name = GET_VAR_NAME(param);
 
 	if (g_strcmp0(name, new_name) == 0)
