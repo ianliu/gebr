@@ -21,11 +21,11 @@ struct _GebrValidator
 };
 
 typedef struct {
-	GebrGeoXmlParameter *param[3];
+	GebrGeoXmlParameter *param[4];
 	gchar *name;
-	GList *dep[3];
+	GList *dep[4];
 	GList *antidep;
-	GError *error[3];
+	GError *error[4];
 } HashData;
 
 #define GET_VAR_NAME(p) (gebr_geoxml_program_parameter_get_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(p)))
@@ -136,8 +136,14 @@ is_variable_valid(GebrValidator *self,
 		gchar *v = i->data;
 		HashData *dep;
 		GError *error = get_error(self, v, scope);
+		GebrGeoXmlDocumentType dep_scope;
 
 		dep = g_hash_table_lookup(self->vars, v);
+
+		if (!dep->param[scope])
+			dep_scope = get_scope(self, v);
+		else
+			dep_scope = scope;
 
 		if (error) {
 			if (error->code == GEBR_IEXPR_ERROR_UNDEF_VAR)
@@ -147,18 +153,18 @@ is_variable_valid(GebrValidator *self,
 				            v);
 			else
 				g_set_error(err, GEBR_IEXPR_ERROR,
-				            GEBR_IEXPR_ERROR_UNDEF_REFERENCE,
+				            GEBR_IEXPR_ERROR_BAD_REFERENCE,
 				            _("Variable %s is not well defined"),
 				            v);
 			*cause = v;
 			return FALSE;
 		}
-		else if (type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT && dep->param[scope] &&
-		    gebr_geoxml_parameter_get_type(dep->param[scope]) == GEBR_GEOXML_PARAMETER_TYPE_STRING) {
+		else if (type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT && dep->param[dep_scope] &&
+		    gebr_geoxml_parameter_get_type(dep->param[dep_scope]) == GEBR_GEOXML_PARAMETER_TYPE_STRING) {
 			g_set_error(err, GEBR_IEXPR_ERROR,
 			            GEBR_IEXPR_ERROR_TYPE_MISMATCH,
 			            _("Variable %s use different type"),
-			            name);
+			            v);
 			return FALSE;
 		}
 	}
@@ -293,7 +299,8 @@ get_scope(GebrValidator *self, const gchar *name)
 
 	param = get_param(self, name);
 
-	g_return_val_if_fail(param != NULL, GEBR_GEOXML_DOCUMENT_TYPE_FLOW);
+	if (param == NULL)
+		return GEBR_GEOXML_DOCUMENT_TYPE_UNKNOWN;
 
 	return gebr_geoxml_parameter_get_scope(param);
 }
@@ -409,6 +416,7 @@ gebr_validator_change_value_by_name(GebrValidator          *self,
 	for (GList *i = data->dep[scope]; i; i = i->next) {
 		HashData *dep;
 		gchar *dep_name = i->data;
+		GebrGeoXmlDocumentType dep_scope;
 
 		dep = g_hash_table_lookup(self->vars, dep_name);
 		if (!dep) {
@@ -420,13 +428,18 @@ gebr_validator_change_value_by_name(GebrValidator          *self,
 		if (!g_list_find_custom(dep->antidep, name, (GCompareFunc)g_strcmp0))
 			dep->antidep = g_list_prepend(dep->antidep, g_strdup(name));
 
-		if (type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT && dep->param[scope] &&
-		    gebr_geoxml_parameter_get_type(dep->param[scope]) == GEBR_GEOXML_PARAMETER_TYPE_STRING) {
+		if (!dep->param[scope])
+			dep_scope = get_scope(self, dep_name);
+		else
+			dep_scope = scope;
+
+		if (type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT && dep->param[dep_scope] &&
+		    gebr_geoxml_parameter_get_type(dep->param[dep_scope]) == GEBR_GEOXML_PARAMETER_TYPE_STRING) {
 			g_set_error(&err, GEBR_IEXPR_ERROR,
 			            GEBR_IEXPR_ERROR_TYPE_MISMATCH,
 			            _("Variable %s use different type"),
-			            name);
-			data->error[scope] = g_error_copy(err);
+			            dep_name);
+			dep->error[dep_scope] = g_error_copy(err);
 			update_error(self, name, scope);
 			g_propagate_error(error, err);
 			return FALSE;
@@ -866,7 +879,7 @@ gebr_validator_validate_expr(GebrValidator          *self,
 				            name);
 			else
 				g_set_error(err, GEBR_IEXPR_ERROR,
-				            GEBR_IEXPR_ERROR_UNDEF_REFERENCE,
+				            GEBR_IEXPR_ERROR_BAD_REFERENCE,
 				            _("Variable %s is not well defined"),
 				            name);
 			has_error = TRUE;
