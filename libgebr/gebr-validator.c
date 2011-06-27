@@ -439,7 +439,7 @@ gebr_validator_change_value_by_name(GebrValidator          *self,
 			            GEBR_IEXPR_ERROR_TYPE_MISMATCH,
 			            _("Variable %s use different type"),
 			            dep_name);
-			dep->error[dep_scope] = g_error_copy(err);
+			data->error[dep_scope] = g_error_copy(err);
 			update_error(self, name, scope);
 			g_propagate_error(error, err);
 			return FALSE;
