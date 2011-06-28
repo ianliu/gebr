@@ -163,6 +163,17 @@ gchar *gebr_str_word_before_pos(const gchar *str, gint *pos);
  */
 gchar *gebr_str_remove_trailing_zeros(gchar *str);
 
+/**
+ * gebr_str_canonical_var_name:
+ * @keyword: The keyword to be canonized. (not modified)
+ * @new_value: Returns a new alocated string with the canonized value of keyword.
+ * @error: A GError (not used until now)
+ *
+ * Returns: TRUE if everthing is ok. False otherwise.
+ */
+gboolean
+gebr_str_canonical_var_name(const gchar * keyword, gchar ** new_value, GError ** error);
+
 G_END_DECLS
 
 #endif				//__GEBR_UTILS_H

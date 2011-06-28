@@ -404,6 +404,14 @@ gebr_geoxml_document_get_dict_parameter(GebrGeoXmlDocument *doc);
  */
 void gebr_geoxml_document_set_dtd_dir(const gchar *path);
 
+/**
+ * gebr_geoxml_document_canonize_dict_parameters:
+ * @document:
+ */
+gboolean
+gebr_geoxml_document_canonize_dict_parameters(GebrGeoXmlDocument * document,
+					      GHashTable 	** vars_list);
+
 G_END_DECLS
 
 #endif				//__GEBR_GEOXML_DOCUMENT_H

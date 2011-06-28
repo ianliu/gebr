@@ -74,6 +74,45 @@ void test_gebr_str_remove_trailing_zeros(void)
 	g_free(only_zeros2);
 }
 
+void test_gebr_str_canonical_var_name(void)
+{
+	gchar * canonical = NULL;
+
+	gebr_str_canonical_var_name("CDP EM METROS", &canonical, NULL);
+	g_assert_cmpstr(canonical, ==, "cdp_em_metros");
+	g_free(canonical);
+	canonical = NULL;
+
+	gebr_str_canonical_var_name("CDP EM METROS (m)", &canonical, NULL);
+	g_assert_cmpstr(canonical, ==, "cdp_em_metros__m_");
+	g_free(canonical);
+	canonical = NULL;
+
+	gebr_str_canonical_var_name("123", &canonical, NULL);
+	g_assert_cmpstr(canonical, ==, "var_123");
+	g_free(canonical);
+	canonical = NULL;
+
+	gebr_str_canonical_var_name("aaa", &canonical, NULL);
+	g_assert_cmpstr(canonical, ==, "aaa");
+	g_free(canonical);
+	canonical = NULL;
+
+	gebr_str_canonical_var_name("aAA", &canonical, NULL);
+	g_assert_cmpstr(canonical, ==, "aaa");
+	g_free(canonical);
+	canonical = NULL;
+
+	gchar * key = g_strdup("aAA");
+	gebr_str_canonical_var_name(key, &canonical, NULL);
+	g_assert_cmpstr(canonical, ==, "aaa");
+	g_free(canonical);
+	canonical = NULL;
+	g_free(key);
+	key = NULL;
+}
+
+
 int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
@@ -81,6 +120,7 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/utils/str-escape", test_gebr_str_escape);
 	g_test_add_func("/libgebr/utils/str_word_before_pos", test_gebr_str_word_before_pos);
 	g_test_add_func("/libgebr/utils/str_remove_trailing_zeros", test_gebr_str_remove_trailing_zeros);
+	g_test_add_func("/libgebr/utils/str_canonical_var_name", test_gebr_str_canonical_var_name);
 
 	return g_test_run();
 }

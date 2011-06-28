@@ -26,6 +26,7 @@
 #include "project.h"
 #include "error.h"
 #include "gebr-expr.h"
+#include "sequence.h"
 
 void test_gebr_geoxml_document_load (void)
 {
@@ -468,6 +469,73 @@ void test_gebr_geoxml_document_no_iter(void)
 	g_assert (gebr_geoxml_document_is_dictkey_defined ("iter", NULL, flow, line, NULL) == FALSE);
 }
 
+void test_gebr_geoxml_document_canonize_dict_parameters(void)
+{
+	GebrGeoXmlProject * proj;
+
+	GebrGeoXmlSequence * parameters;
+
+	GHashTable * keys_to_canonized = NULL;
+
+	gint i = 0;
+	gchar * keywords[] = {
+		"A",
+		"bA",
+		"CDP EM METROS",
+		"CDP EM METROS (m)",
+		"CDP EM METROS  m ",
+		"cd",
+		"CdP EM METROs %m%",
+		NULL};
+
+	gchar * canonized[] = {
+		"a",
+		"ba",
+		"cdp_em_metros",
+		"cdp_em_metros__m_",
+		"cdp_em_metros__m__1",
+		"cd",
+		"cdp_em_metros__m__2",
+		NULL};
+
+	proj = gebr_geoxml_project_new();
+
+	for ( i = 0; keywords[i]; i++)
+		gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
+						      GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
+						      keywords[i], "12");
+
+
+	parameters = gebr_geoxml_parameters_get_first_parameter(
+			gebr_geoxml_document_get_dict_parameters(
+					GEBR_GEOXML_DOCUMENT(proj)));
+
+	gebr_geoxml_document_canonize_dict_parameters(
+			GEBR_GEOXML_DOCUMENT(proj),
+			&keys_to_canonized);
+
+	for (i = 0; parameters != NULL; gebr_geoxml_sequence_next(&parameters), i++)
+	{
+		const gchar * key = gebr_geoxml_program_parameter_get_keyword(
+				GEBR_GEOXML_PROGRAM_PARAMETER(parameters));
+
+		g_assert_cmpstr(key, ==, canonized[i]);
+	}
+
+	for (i = 0; keywords[i]; i++)
+	{
+		gchar * value = g_hash_table_lookup(keys_to_canonized, keywords[i]);
+		g_assert_cmpstr(value, ==, canonized[i]);
+		g_free(value);
+	}
+
+	//FIXME: Can't free this hash table! Tests fail!
+	//Can't debug with 'libtool --mode=execute gdb test-document'
+	//either!!
+	//g_hash_table_unref(keys_to_canonized);
+
+}
+
 int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
@@ -490,6 +558,7 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/geoxml/document/validate_expr", test_gebr_geoxml_document_validate_expr);
 	g_test_add_func("/libgebr/geoxml/document/test_iter", test_gebr_geoxml_document_iter);
 	g_test_add_func("/libgebr/geoxml/document/test_no_iter", test_gebr_geoxml_document_no_iter);
+	g_test_add_func("/libgebr/geoxml/document/document_canonize_dict_parameters", test_gebr_geoxml_document_canonize_dict_parameters);
 
 	return g_test_run();
 }

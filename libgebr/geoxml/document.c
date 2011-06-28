@@ -54,6 +54,7 @@
 #include "parameter_group_p.h"
 #include "value_sequence.h"
 #include "../gebr-expr.h"
+#include "../utils.h"
 
 #include "parameters.h"
 /* global variables */
@@ -1025,6 +1026,100 @@ GebrGeoXmlParameters *gebr_geoxml_document_get_dict_parameters(GebrGeoXmlDocumen
 	    __gebr_geoxml_get_first_element(__gebr_geoxml_get_first_element
 					    (gebr_geoxml_document_root_element(document), "dict"), "parameters");
 }
+
+gboolean
+gebr_geoxml_document_canonize_dict_parameters(GebrGeoXmlDocument * document,
+					      GHashTable 	** vars_list)
+{
+	g_return_val_if_fail(document != NULL, FALSE);
+	g_return_val_if_fail(vars_list != NULL, FALSE);
+
+	GebrGeoXmlSequence * parameters = NULL;
+	gint i = 0;
+	GHashTable * values_to_canonized = NULL;
+
+	values_to_canonized = g_hash_table_new_full((GHashFunc)g_str_hash,
+						    (GEqualFunc)g_str_equal,
+						    (GDestroyNotify)g_free,
+						    (GDestroyNotify)g_free);
+
+
+	*vars_list = g_hash_table_new_full((GHashFunc)g_str_hash,
+					   (GEqualFunc)g_str_equal,
+					   (GDestroyNotify)g_free,
+					   (GDestroyNotify)g_free);
+
+	parameters = gebr_geoxml_parameters_get_first_parameter(
+			gebr_geoxml_document_get_dict_parameters(document));
+
+	for (i = 0; parameters != NULL; gebr_geoxml_sequence_next(&parameters), i++)
+	{
+		gchar * new_value = NULL;
+		const gchar * key = gebr_geoxml_program_parameter_get_keyword(
+				GEBR_GEOXML_PROGRAM_PARAMETER(parameters));
+
+
+		gebr_str_canonical_var_name(key, &new_value, NULL);
+		gchar * duplicated_key = NULL;
+
+		duplicated_key = g_hash_table_lookup(values_to_canonized,
+						     new_value);
+
+		if(!duplicated_key)
+		{
+			g_hash_table_insert(values_to_canonized,
+					    g_strdup(new_value),
+					    g_strdup(key));
+
+			g_hash_table_insert(*vars_list,
+					    g_strdup(key),
+					    g_strdup(new_value));
+		}
+		else
+		{	
+			if(g_strcmp0(key, duplicated_key) == 0)
+			{
+				g_hash_table_insert(*vars_list,
+						    g_strdup(key),
+						    g_strdup(new_value));
+
+			}
+			else
+			{
+
+				gint j = 1;
+				gchar * concat = g_strdup_printf("%s_%d", new_value, j);
+
+				while (g_hash_table_lookup(values_to_canonized,
+						     concat) != NULL)
+				{
+					g_free(concat);
+					concat = NULL;
+					j += 1;
+					concat = g_strdup_printf("%s_%d", new_value, j);
+				}
+
+				g_free(new_value);
+				new_value = concat;
+
+				g_hash_table_insert(*vars_list,
+						    g_strdup(key),
+						    g_strdup(new_value));
+
+				g_hash_table_insert(values_to_canonized,
+						    g_strdup(new_value),
+						    g_strdup(key));
+			}
+		}
+
+		gebr_geoxml_program_parameter_set_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(parameters),
+							  (const gchar *)new_value);
+	}
+
+	g_hash_table_destroy(values_to_canonized); 
+	return TRUE;
+}
+
 
 void gebr_geoxml_document_set_date_created(GebrGeoXmlDocument * document, const gchar * created)
 {
