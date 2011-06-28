@@ -39,10 +39,6 @@ static void		set_error		(GebrValidator         *self,
 						 GebrGeoXmlDocumentType scope,
 						 GError                *error);
 
-static void		update_error		(GebrValidator         *self,
-						 const gchar           *name,
-						 GebrGeoXmlDocumentType scope);
-
 static gboolean		get_error_indirect	(GebrValidator          *self,
                		                  	 GList                  *var_names,
                		                  	 GebrGeoXmlParameterType my_type,
@@ -183,72 +179,17 @@ get_error_indirect(GebrValidator *self,
 }
 
 static void
-set_error_full(GebrValidator *self,
-	       const gchar *name,
-	       GebrGeoXmlDocumentType scope,
-	       GError *error,
-	       gboolean update_self)
-{
-	HashData *data;
-	gboolean self_has_error;
-
-	data = g_hash_table_lookup(self->vars, name);
-
-	g_return_if_fail(data != NULL);
-
-	if (update_self) {
-		if (data->error[scope])
-			g_clear_error(&data->error[scope]);
-		if (error)
-			data->error[scope] = g_error_copy(error);
-		self_has_error = (error != NULL);
-	} else
-		self_has_error = (data->error[scope] != NULL);
-
-	for (GList *i = data->antidep; i; i = i->next) {
-		HashData *d;
-		gchar *v = i->data;
-		GError *err = NULL;
-
-		d = g_hash_table_lookup(self->vars, v);
-
-		if (!d) {
-			g_warn_if_reached();
-			continue;
-		}
-
-		for (int i = 0; i < 3; i++) {
-			if (i != scope && data->param[i])
-				continue;
-			if (!d->param[i])
-				continue;
-			if (d->error[i] && d->error[i]->code == GEBR_IEXPR_ERROR_CYCLE)
-				continue;
-			if (!get_error_indirect(self, d->dep[i], gebr_geoxml_parameter_get_type(d->param[i]), i, &err))
-				set_error(self, v, i, err);
-			else if (d->error[i]) {
-				g_clear_error(&d->error[i]);
-				set_error(self, v, i, NULL);
-			}
-		}
-	}
-}
-
-static void
 set_error(GebrValidator *self,
 	  const gchar *name,
 	  GebrGeoXmlDocumentType scope,
 	  GError *error)
 {
-	set_error_full(self, name, scope, error, TRUE);
-}
-
-static void
-update_error(GebrValidator *self,
-	     const gchar *name,
-	     GebrGeoXmlDocumentType scope)
-{
-	set_error_full(self, name, scope, NULL, FALSE);
+	HashData *data = g_hash_table_lookup(self->vars, name);
+	g_return_if_fail(data != NULL);
+	if (error) {
+		data->error[scope] = g_error_copy(error);
+	} else
+		g_clear_error(&data->error[scope]);
 }
 
 /*
@@ -549,7 +490,6 @@ gebr_validator_remove(GebrValidator       *self,
 			return TRUE;
 		}
 	}
-	update_error(self, name, scope);
 
 	return TRUE;
 }
