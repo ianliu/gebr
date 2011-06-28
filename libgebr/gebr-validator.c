@@ -144,6 +144,7 @@ is_variable_valid(GebrValidator *self,
 		else
 			dep_scope = scope;
 
+		//TODO: GEBR_IEXPR_ERROR_UNDEF_VAR: is_variable_valid
 		if (error) {
 			if (error->code == GEBR_IEXPR_ERROR_UNDEF_VAR)
 				g_set_error(err, GEBR_IEXPR_ERROR,
@@ -158,6 +159,7 @@ is_variable_valid(GebrValidator *self,
 			*cause = v;
 			return FALSE;
 		}
+		//TODO: GEBR_IEXPR_ERROR_TYPE_MISMATCH: is_variable_valid
 		else if (type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT && dep->param[dep_scope] &&
 		    gebr_geoxml_parameter_get_type(dep->param[dep_scope]) == GEBR_GEOXML_PARAMETER_TYPE_STRING) {
 			g_set_error(err, GEBR_IEXPR_ERROR,
@@ -183,7 +185,7 @@ set_error_full(GebrValidator *self,
 
 	data = g_hash_table_lookup(self->vars, name);
 
-	g_return_val_if_fail(data != NULL, FALSE);
+	g_return_if_fail(data != NULL);
 
 	if (update_self) {
 		if (data->error[scope])
@@ -357,21 +359,17 @@ detect_cicle(GebrValidator *self,
 	return retval;
 }
 
-/* Remove the variable @param from antideps of it deps */
+/* Remove the variable @var_name from antideps of it deps */
 static gboolean
-remove_from_antidep_of_deps(GebrValidator 	   *self,
-                            HashData 		   *data,
-                            const gchar	           *var_name,
-                            GebrGeoXmlDocumentType scope)
+remove_from_antidep_of_deps(GebrValidator  *self,
+                            GList	  **deps,
+                            const gchar	   *var_name)
 {
 	HashData *dep;
 	GList *node;
 
-	if (!data)
-		return FALSE;
-
-	for (GList *deps = data->dep[scope]; deps; deps = deps->next) {
-		gchar *dep_name = deps->data;
+	for (; *deps; *deps = (*deps)->next) {
+		gchar *dep_name = (*deps)->data;
 
 		dep = g_hash_table_lookup(self->vars, dep_name);
 		if (dep->antidep) {
@@ -380,7 +378,32 @@ remove_from_antidep_of_deps(GebrValidator 	   *self,
 			dep->antidep = g_list_delete_link(dep->antidep, node);
 		}
 	}
+
+	g_list_foreach(*deps, (GFunc)g_free, NULL);
+	g_list_free(*deps);
 	return TRUE;
+}
+
+/* Add the variable @var_name to antideps of it deps */
+static void
+add_to_antideps_of_deps(GebrValidator *self,
+                        GList         *deps,
+                        const gchar   *var_name)
+{
+	HashData *dep;
+
+	for (; deps; deps = deps->next) {
+		gchar *dep_name = deps->data;
+
+		dep = g_hash_table_lookup(self->vars, dep_name);
+		if (!dep) {
+			dep = hash_data_new(dep_name);
+			g_hash_table_insert(self->vars, g_strdup(dep_name), dep);
+		}
+
+		if (!g_list_find_custom(dep->antidep, var_name, (GCompareFunc)g_strcmp0))
+			dep->antidep = g_list_prepend(dep->antidep, g_strdup(var_name));
+	}
 }
 
 static gboolean
@@ -405,8 +428,9 @@ gebr_validator_change_value_by_name(GebrValidator          *self,
 
 	g_return_val_if_fail(data != NULL, FALSE);
 
-	remove_from_antidep_of_deps(self, data, name, scope);
+	remove_from_antidep_of_deps(self, &data->dep[scope], name);
 
+	//TODO: gebr_iexpr_is_valid (syntax validate) : gebr_validator_change_value_by_name
 	expr = get_validator_by_type(self, type);
 	if (!gebr_iexpr_is_valid(expr, new_value, &err)
 	    && err->code != GEBR_IEXPR_ERROR_UNDEF_VAR) {
@@ -418,9 +442,9 @@ gebr_validator_change_value_by_name(GebrValidator          *self,
 	if (err)
 		g_clear_error(&err);
 
-	g_list_foreach(data->dep[scope], (GFunc)g_free, NULL);
-	g_list_free(data->dep[scope]);
 	data->dep[scope] = gebr_iexpr_extract_vars(expr, new_value);
+
+	add_to_antideps_of_deps (self, data->dep[scope], name);
 
 	for (GList *i = data->dep[scope]; i; i = i->next) {
 		HashData *dep;
@@ -428,20 +452,13 @@ gebr_validator_change_value_by_name(GebrValidator          *self,
 		GebrGeoXmlDocumentType dep_scope;
 
 		dep = g_hash_table_lookup(self->vars, dep_name);
-		if (!dep) {
-			// XXX: Do we need to set error for inexistent variables?
-			dep = hash_data_new(dep_name);
-			g_hash_table_insert(self->vars, g_strdup(dep_name), dep);
-		}
-
-		if (!g_list_find_custom(dep->antidep, name, (GCompareFunc)g_strcmp0))
-			dep->antidep = g_list_prepend(dep->antidep, g_strdup(name));
 
 		if (!dep->param[scope])
 			dep_scope = get_scope(self, dep_name);
 		else
 			dep_scope = scope;
 
+		//TODO: GEBR_IEXPR_ERROR_TYPE_MISMATCH: gebr_validator_change_value_by_name
 		if (type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT && dep->param[dep_scope] &&
 		    gebr_geoxml_parameter_get_type(dep->param[dep_scope]) == GEBR_GEOXML_PARAMETER_TYPE_STRING) {
 			g_set_error(&err, GEBR_IEXPR_ERROR,
@@ -572,10 +589,12 @@ gebr_validator_remove(GebrValidator       *self,
 	data->param[scope] = NULL;
 
 	if (!get_value(self, name)) {
-		remove_from_antidep_of_deps(self, data, name, scope);
+		remove_from_antidep_of_deps(self, &data->dep[scope], name);
 
-		if (data->antidep == NULL)
+		if (data->antidep == NULL) {
 			g_hash_table_remove(self->vars, name);
+			return TRUE;
+		}
 	}
 	update_error(self, name, scope);
 
@@ -805,6 +824,7 @@ gebr_validator_validate_expr(GebrValidator          *self,
 	if (!expr)
 		return TRUE;
 
+	//TODO: gebr_iexpr_is_valid (syntax validate) : gebr_validator_validate_expr
 	if (!gebr_iexpr_is_valid(expr, str, &error)
 	    && error->code != GEBR_IEXPR_ERROR_UNDEF_VAR) {
 		g_propagate_error (err, error);
@@ -817,6 +837,7 @@ gebr_validator_validate_expr(GebrValidator          *self,
 	for (GList *i = vars; i; i = i->next) {
 		const gchar *name = i->data;
 		GError *error = get_error(self, name, GEBR_GEOXML_DOCUMENT_TYPE_FLOW);
+		//TODO: GEBR_IEXPR_ERROR_UNDEF_VAR: gebr_validator_validate_expr
 		if (error) {
 			if (error->code == GEBR_IEXPR_ERROR_UNDEF_VAR)
 				g_set_error(err, GEBR_IEXPR_ERROR,
