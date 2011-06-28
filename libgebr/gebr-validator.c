@@ -43,15 +43,11 @@ static void		update_error		(GebrValidator         *self,
 						 const gchar           *name,
 						 GebrGeoXmlDocumentType scope);
 
-static GError *		get_error		(GebrValidator 	       *self,
-						 const gchar   	       *name,
-						  GebrGeoXmlDocumentType scope);
-
-static gboolean		is_variable_valid	(GebrValidator         *self,
-						 const gchar           *name,
-						 GebrGeoXmlDocumentType scope,
-						 const gchar 	      **cause,
-						 GError 	      **err);
+static gboolean		get_error_indirect	(GebrValidator          *self,
+               		                  	 GList                  *var_names,
+               		                  	 GebrGeoXmlParameterType my_type,
+               		                  	 GebrGeoXmlDocumentType scope,
+               		                  	 GError                **err);
 
 static GebrGeoXmlParameter * get_param		(GebrValidator         *self,
 						 const gchar           *name);
@@ -61,6 +57,10 @@ static GebrGeoXmlDocumentType get_scope		(GebrValidator         *self,
 
 static const gchar *	get_value		(GebrValidator         *self,
 						 const gchar           *name);
+
+static gboolean         detect_cicle	        (GebrValidator *self,
+                                    	         const gchar *name,
+                                    	         GebrGeoXmlDocumentType scope);
 
 /* NodeData functions {{{1 */
 static HashData *
@@ -117,55 +117,64 @@ get_validator_by_type(GebrValidator *self,
 }
 
 static gboolean
-is_variable_valid(GebrValidator *self,
-		  const gchar *name,
-		  GebrGeoXmlDocumentType scope,
-		  const gchar **cause,
-		  GError **err)
+get_error_indirect(GebrValidator *self,
+                   GList *var_names,
+                   GebrGeoXmlParameterType my_type,
+                   GebrGeoXmlDocumentType scope,
+                   GError **err)
 {
-	GebrGeoXmlParameterType type;
-	HashData *data;
-	data = g_hash_table_lookup(self->vars, name);
+	HashData *dep_data;
+	GError *error = NULL;
+	GebrGeoXmlParameterType dep_type;
+	GebrGeoXmlDocumentType dep_scope;
 
-	type = gebr_geoxml_parameter_get_type(data->param[scope]);
+	for (GList *i = var_names; i; i = i->next) {
+		gchar *dep_name = i->data;
 
-	g_return_val_if_fail(data != NULL, FALSE);
+		dep_data = g_hash_table_lookup(self->vars, dep_name);
 
-	for (GList *i = data->dep[scope]; i; i = i->next) {
-		gchar *v = i->data;
-		HashData *dep;
-		GError *error = get_error(self, v, scope);
-		GebrGeoXmlDocumentType dep_scope;
+		if (!dep_data || !get_param(self, dep_name)) {
+			g_set_error(err, GEBR_IEXPR_ERROR,
+			            GEBR_IEXPR_ERROR_UNDEF_REFERENCE,
+			            _("Variable %s is not defined"),
+			            dep_name);
+			return FALSE;
+		}
 
-		dep = g_hash_table_lookup(self->vars, v);
+		if (detect_cicle(self, dep_name, scope)) {
+			g_set_error(&error, GEBR_IEXPR_ERROR,
+			            GEBR_IEXPR_ERROR_CYCLE,
+			            _("The variable %s has cyclic dependency"),
+			            dep_name);
+			g_propagate_error(err, error);
+			return FALSE;
+		}
 
-		if (!dep->param[scope])
-			dep_scope = get_scope(self, v);
+		if (!dep_data->param[scope])
+			dep_scope = get_scope(self, dep_name);
 		else
 			dep_scope = scope;
 
-		//TODO: GEBR_IEXPR_ERROR_UNDEF_VAR: is_variable_valid
+		if (!dep_data->error[dep_scope]) {
+			dep_type = gebr_geoxml_parameter_get_type(dep_data->param[dep_scope]);
+			get_error_indirect(self, dep_data->dep[scope], dep_type, dep_scope, &error);
+		}
+		else
+			g_propagate_error(&error, g_error_copy(dep_data->error[dep_scope]));
+
 		if (error) {
-			if (error->code == GEBR_IEXPR_ERROR_UNDEF_VAR)
-				g_set_error(err, GEBR_IEXPR_ERROR,
-				            GEBR_IEXPR_ERROR_UNDEF_REFERENCE,
-				            _("Variable %s is not defined"),
-				            v);
-			else
-				g_set_error(err, GEBR_IEXPR_ERROR,
-				            GEBR_IEXPR_ERROR_BAD_REFERENCE,
-				            _("Variable %s is not well defined"),
-				            v);
-			*cause = v;
+			g_set_error(err, GEBR_IEXPR_ERROR,
+			            GEBR_IEXPR_ERROR_BAD_REFERENCE,
+			            _("Variable %s is not well defined"),
+			            dep_name);
 			return FALSE;
 		}
-		//TODO: GEBR_IEXPR_ERROR_TYPE_MISMATCH: is_variable_valid
-		else if (type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT && dep->param[dep_scope] &&
-		    gebr_geoxml_parameter_get_type(dep->param[dep_scope]) == GEBR_GEOXML_PARAMETER_TYPE_STRING) {
+		else if (my_type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT && dep_data->param[dep_scope] &&
+		    gebr_geoxml_parameter_get_type(dep_data->param[dep_scope]) == GEBR_GEOXML_PARAMETER_TYPE_STRING) {
 			g_set_error(err, GEBR_IEXPR_ERROR,
 			            GEBR_IEXPR_ERROR_TYPE_MISMATCH,
 			            _("Variable %s use different type"),
-			            v);
+			            dep_name);
 			return FALSE;
 		}
 	}
@@ -199,7 +208,6 @@ set_error_full(GebrValidator *self,
 	for (GList *i = data->antidep; i; i = i->next) {
 		HashData *d;
 		gchar *v = i->data;
-		const gchar *cause;
 		GError *err = NULL;
 
 		d = g_hash_table_lookup(self->vars, v);
@@ -216,7 +224,7 @@ set_error_full(GebrValidator *self,
 				continue;
 			if (d->error[i] && d->error[i]->code == GEBR_IEXPR_ERROR_CYCLE)
 				continue;
-			if (!is_variable_valid(self, v, i, &cause, &err))
+			if (!get_error_indirect(self, d->dep[i], gebr_geoxml_parameter_get_type(d->param[i]), i, &err))
 				set_error(self, v, i, err);
 			else if (d->error[i]) {
 				g_clear_error(&d->error[i]);
@@ -241,33 +249,6 @@ update_error(GebrValidator *self,
 	     GebrGeoXmlDocumentType scope)
 {
 	set_error_full(self, name, scope, NULL, FALSE);
-}
-
-static GError *
-get_error(GebrValidator *self,
-	  const gchar *name,
-	  GebrGeoXmlDocumentType scope)
-{
-	HashData *data;
-	GError *err = NULL;
-
-	data = g_hash_table_lookup(self->vars, name);
-
-	if (!data || !get_param(self, name)) {
-		g_set_error(&err, GEBR_IEXPR_ERROR,
-			    GEBR_IEXPR_ERROR_UNDEF_VAR,
-			    _("The variable does not exists"));
-		return err;
-	}
-	if (data->param[scope] && !data->error[scope])
-		return NULL;
-
-	int i = scope;
-	for (; i < 3; i++)
-		if (data->param[i] && data->error[i])
-			return g_error_copy(data->error[i]);
-
-	return NULL;
 }
 
 /*
@@ -406,6 +387,35 @@ add_to_antideps_of_deps(GebrValidator *self,
 	}
 }
 
+/* Validate @expression and extract vars on @deps with @error */
+static gboolean
+validate_and_extract_vars(GebrValidator  *self,
+         const gchar 		*expression,
+         GebrGeoXmlParameterType type,
+         GList 		       **deps,
+         GError                **error)
+{
+	GebrIExpr *iexpr;
+	GError *err = NULL;
+
+	iexpr = get_validator_by_type(self, type);
+
+	if (!iexpr)
+		return TRUE;
+
+	if (!gebr_iexpr_is_valid(iexpr, expression, &err)
+	    && err->code != GEBR_IEXPR_ERROR_UNDEF_VAR) {
+		g_propagate_error(error, err);
+		return FALSE;
+	}
+	if (err)
+		g_clear_error(&err);
+
+	*deps = gebr_iexpr_extract_vars(iexpr, expression);
+
+	return TRUE;
+}
+
 static gboolean
 gebr_validator_change_value_by_name(GebrValidator          *self,
 				    const gchar            *name,
@@ -417,87 +427,30 @@ gebr_validator_change_value_by_name(GebrValidator          *self,
 {
 	HashData *data;
 	GError *err = NULL;
-	GebrIExpr *expr;
+	gboolean valid;
 
 	if (affected)
 		*affected = NULL;
 
 	data = g_hash_table_lookup(self->vars, name);
-	if (!data)
-		return FALSE;
 
 	g_return_val_if_fail(data != NULL, FALSE);
 
 	remove_from_antidep_of_deps(self, &data->dep[scope], name);
 
-	//TODO: gebr_iexpr_is_valid (syntax validate) : gebr_validator_change_value_by_name
-	expr = get_validator_by_type(self, type);
-	if (!gebr_iexpr_is_valid(expr, new_value, &err)
-	    && err->code != GEBR_IEXPR_ERROR_UNDEF_VAR) {
-		set_error(self, name, scope, err);
-		g_propagate_error(error, err);
-
-		return FALSE;
-	}
-	if (err)
-		g_clear_error(&err);
-
-	data->dep[scope] = gebr_iexpr_extract_vars(expr, new_value);
+	valid = validate_and_extract_vars(self, new_value, type, &data->dep[scope], &err);
 
 	add_to_antideps_of_deps (self, data->dep[scope], name);
 
-	for (GList *i = data->dep[scope]; i; i = i->next) {
-		HashData *dep;
-		gchar *dep_name = i->data;
-		GebrGeoXmlDocumentType dep_scope;
+	if (valid) {
+		set_error(self, name, scope, NULL);
 
-		dep = g_hash_table_lookup(self->vars, dep_name);
-
-		if (!dep->param[scope])
-			dep_scope = get_scope(self, dep_name);
-		else
-			dep_scope = scope;
-
-		//TODO: GEBR_IEXPR_ERROR_TYPE_MISMATCH: gebr_validator_change_value_by_name
-		if (type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT && dep->param[dep_scope] &&
-		    gebr_geoxml_parameter_get_type(dep->param[dep_scope]) == GEBR_GEOXML_PARAMETER_TYPE_STRING) {
-			g_set_error(&err, GEBR_IEXPR_ERROR,
-			            GEBR_IEXPR_ERROR_TYPE_MISMATCH,
-			            _("Variable %s use different type"),
-			            dep_name);
-			data->error[dep_scope] = g_error_copy(err);
-			update_error(self, name, scope);
-			g_propagate_error(error, err);
-			return FALSE;
-		}
-	}
-
-	if (detect_cicle(self, name, scope)) {
-		g_set_error(&err, GEBR_IEXPR_ERROR,
-			    GEBR_IEXPR_ERROR_CYCLE,
-			    _("The variable %s has cyclic dependency"),
-			    name);
-		data->error[scope] = g_error_copy(err);
-		update_error(self, name, scope);
-		g_propagate_error(error, err);
-		return FALSE;
-	}
-
-	if (err) {
+		valid = get_error_indirect(self, data->dep[scope], type, scope, error);
+	} else {
 		set_error(self, name, scope, err);
 		g_propagate_error(error, err);
-		return FALSE;
-	} else {
-		set_error(self, name, scope, NULL);
-//		FIXME: Check problem when have a cyclic error
-		GError *e = NULL;
-		gebr_validator_validate_expr(self, new_value, type, &e);
-		if (e) {
-			set_error(self, name, scope, e);
-			g_propagate_error(error, e);
-		}
 	}
-	return TRUE;
+	return valid;
 }
 
 static void
@@ -780,6 +733,9 @@ gebr_validator_validate_param(GebrValidator       *self,
 	 * itself and return. Otherwise we need to validate all
 	 * variables from its value.
 	 */
+
+	type = gebr_geoxml_parameter_get_type(param);
+
 	if (gebr_geoxml_parameter_is_dict_param(param)) {
 		HashData *data;
 		const gchar *name;
@@ -794,13 +750,13 @@ gebr_validator_validate_param(GebrValidator       *self,
 		if (data->error[scope]) {
 			g_propagate_error(err, g_error_copy(data->error[scope]));
 			return FALSE;
-		}
+		} else
+			return get_error_indirect(self, data->dep[scope], type, scope, err);
 
 		return TRUE;
 	}
 
 	value = GET_VAR_VALUE(param);
-	type = gebr_geoxml_parameter_get_type(param);
 
 	if (validated)
 		*validated = g_strdup(value);
@@ -815,49 +771,18 @@ gebr_validator_validate_expr(GebrValidator          *self,
 			     GError                **err)
 {
 	GList *vars;
-	gboolean has_error = FALSE;
-	GebrIExpr *expr;
-	GError *error = NULL;
+	gboolean valid = FALSE;
 
-	expr = get_validator_by_type(self, type);
+	valid = validate_and_extract_vars(self, str, type, &vars, err);
 
-	if (!expr)
-		return TRUE;
+	if (valid) {
+		valid = get_error_indirect(self, vars, type, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, err);
 
-	//TODO: gebr_iexpr_is_valid (syntax validate) : gebr_validator_validate_expr
-	if (!gebr_iexpr_is_valid(expr, str, &error)
-	    && error->code != GEBR_IEXPR_ERROR_UNDEF_VAR) {
-		g_propagate_error (err, error);
-		return FALSE;
-	} else if (error)
-		g_clear_error(&error);
-
-	vars = gebr_iexpr_extract_vars(expr, str);
-
-	for (GList *i = vars; i; i = i->next) {
-		const gchar *name = i->data;
-		GError *error = get_error(self, name, GEBR_GEOXML_DOCUMENT_TYPE_FLOW);
-		//TODO: GEBR_IEXPR_ERROR_UNDEF_VAR: gebr_validator_validate_expr
-		if (error) {
-			if (error->code == GEBR_IEXPR_ERROR_UNDEF_VAR)
-				g_set_error(err, GEBR_IEXPR_ERROR,
-				            GEBR_IEXPR_ERROR_UNDEF_REFERENCE,
-				            _("Variable %s is not defined"),
-				            name);
-			else
-				g_set_error(err, GEBR_IEXPR_ERROR,
-				            GEBR_IEXPR_ERROR_BAD_REFERENCE,
-				            _("Variable %s is not well defined"),
-				            name);
-			has_error = TRUE;
-			break;
-		}
+		g_list_foreach(vars, (GFunc)g_free, NULL);
+		g_list_free(vars);
 	}
 
-	g_list_foreach(vars, (GFunc)g_free, NULL);
-	g_list_free(vars);
-
-	return !has_error;
+	return valid;
 }
 
 void gebr_validator_get_documents(GebrValidator *self,
