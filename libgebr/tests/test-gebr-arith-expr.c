@@ -38,6 +38,7 @@ void test_gebr_arith_expr_invalid(void)
 {
 	gdouble result = 666;
 	GebrArithExpr *expr = gebr_arith_expr_new();
+	GError *error = NULL;
 
 	g_assert (gebr_arith_expr_eval(expr, "2*", &result, NULL) == FALSE);
 	g_assert_cmpfloat (result, ==, 666);
@@ -50,6 +51,10 @@ void test_gebr_arith_expr_invalid(void)
 
 	g_assert (gebr_arith_expr_eval(expr, "2c*", &result, NULL) == FALSE);
 	g_assert_cmpfloat (result, ==, 666);
+
+	g_assert (gebr_arith_expr_eval(expr, "2.718[", &result, &error) == FALSE);
+	g_assert_cmpfloat (result, ==, 666);
+	g_assert_error(error, GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_SYNTAX);
 }
 
 void test_gebr_arith_expr_mult_expr(void)
