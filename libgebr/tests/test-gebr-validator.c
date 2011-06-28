@@ -410,6 +410,7 @@ void test_gebr_validator_cyclic_errors(Fixture *fixture, gconstpointer data)
 	VALIDATE_FLOAT_EXPR("a", "12");
 
 	DEF_FLOAT_WITH_ERROR(fixture->flow, "x", "10+", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_SYNTAX);
+	VALIDATE_FLOAT_EXPR_WITH_ERROR("x", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_BAD_REFERENCE);
 	VALIDATE_FLOAT_EXPR_WITH_ERROR("a", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_BAD_REFERENCE);
 	VALIDATE_FLOAT_EXPR_WITH_ERROR("b", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_BAD_REFERENCE);
 	VALIDATE_FLOAT_EXPR_WITH_ERROR("c", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_BAD_REFERENCE);
@@ -518,7 +519,7 @@ void test_gebr_validator_evaluate(Fixture *fixture, gconstpointer data)
 	VALIDATE_STRING_EXPR("42: [str42]", "42: the life universe and everything");
 	VALIDATE_STRING_EXPR("[a]: [str42]", "2: the life universe and everything");
 
-	DEF_FLOAT(fixture->proj, "x", "iter+1");
+	DEF_FLOAT(fixture->flow, "x", "iter+1");
 	VALIDATE_FLOAT_EXPR("iter+1", "[2, ..., 8]");
 	VALIDATE_FLOAT_EXPR("x+1", "[3, ..., 9]");
 	VALIDATE_STRING_EXPR("out-[iter].dat", "[\"out-1.dat\", ..., \"out-7.dat\"]");
