@@ -1260,10 +1260,12 @@ static gboolean dict_edit_validate_editing_cell(struct dict_edit_data *data, gbo
 			data->edition_valid = FALSE;
 			goto out;
 		} else {
-			if (strlen(keyword))
-				gebr_validator_rename(gebr.validator, GEBR_GEOXML_PARAMETER(parameter), new_text, &affected, &err);
-			else
+			if (!strlen(keyword))
+				// The parameter is insert on validator, just when choose a type, @see on_dict_edit_value_type_cell_edited
 				gebr_geoxml_program_parameter_set_keyword(parameter, new_text);
+			else if(g_strcmp0(keyword, new_text) != 0)
+				gebr_validator_rename(gebr.validator, GEBR_GEOXML_PARAMETER(parameter), new_text, &affected, &err);
+
 			if (err)
 				g_clear_error(&err);
 		}
@@ -1316,7 +1318,6 @@ static void on_dict_edit_editing_cell_canceled(GtkCellRenderer * cell, struct di
 {
 	GebrGeoXmlProgramParameter *parameter;
 	gtk_tree_model_get(data->tree_model, &data->editing_iter, DICT_EDIT_GEBR_GEOXML_POINTER, &parameter, -1);
-	const gchar *keyword = gebr_geoxml_program_parameter_get_keyword(parameter);
 
 	data->is_inserting_new = FALSE;
 
@@ -1578,8 +1579,9 @@ static const gchar *document_get_name_from_type(GebrGeoXmlDocument * document, g
 		return upper ? _("Line") : _("line");
 	case GEBR_GEOXML_DOCUMENT_TYPE_FLOW:
 		return upper ? _("Flow") : _("flow");
+	default:
+		return upper ? _("Unknown") : _("unknown");
 	}
-	return "";
 }
 
 void on_response_ok(GtkButton * button, GebrPropertiesData * data)
