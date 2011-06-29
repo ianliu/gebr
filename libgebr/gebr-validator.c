@@ -22,6 +22,7 @@ struct _GebrValidator
 
 typedef struct {
 	GebrGeoXmlParameter *param[4];
+
 	gchar *name;
 	GList *dep[4];
 	GList *antidep;
@@ -506,12 +507,12 @@ gebr_validator_rename(GebrValidator       *self,
 		      GError             **error)
 {
 	const gchar * name = NULL;
-	GET_VAR_NAME(param);
+	name = GET_VAR_NAME(param);
 	g_return_val_if_fail(g_strcmp0(name, new_name) != 0, TRUE);
 
 	g_return_val_if_fail(gebr_validator_remove(self, param, NULL, error), FALSE);
 	SET_VAR_NAME(param, new_name);
-	g_return_val_if_fail(gebr_validator_insert(self, param, NULL, error), FALSE);
+	gebr_validator_insert(self, param, NULL, error);
 
 	return TRUE;
 }
