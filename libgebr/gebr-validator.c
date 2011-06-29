@@ -157,7 +157,7 @@ get_error_indirect(GebrValidator *self,
 
 		if (!dep_data->error[dep_scope]) {
 			dep_type = gebr_geoxml_parameter_get_type(dep_data->param[dep_scope]);
-			get_error_indirect(self, dep_data->dep[scope], dep_type, dep_scope, &error);
+			get_error_indirect(self, dep_data->dep[dep_scope], dep_type, dep_scope, &error);
 		}
 		else
 			g_propagate_error(&error, g_error_copy(dep_data->error[dep_scope]));
