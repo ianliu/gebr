@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <glib.h>
 #include <glib/gi18n.h>
 #include <geoxml/geoxml.h>
 
@@ -18,11 +19,12 @@ struct _GebrValidator
 	GebrGeoXmlDocument **docs[3];
 
 	GHashTable *vars;
+	GList *var_order[3];
 };
 
 typedef struct {
 	GebrGeoXmlParameter *param[4];
-
+	gdouble weight[4];
 	gchar *name;
 	GList *dep[4];
 	GList *antidep;
@@ -33,6 +35,13 @@ typedef struct {
 #define GET_VAR_VALUE(p) (gebr_geoxml_program_parameter_get_first_value(GEBR_GEOXML_PROGRAM_PARAMETER(p), FALSE))
 #define SET_VAR_VALUE(p,v) (gebr_geoxml_program_parameter_set_first_value(GEBR_GEOXML_PROGRAM_PARAMETER(p), FALSE, (v)))
 #define SET_VAR_NAME(p,n) (gebr_geoxml_program_parameter_set_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(p), (n)))
+
+#define GET_VAR_DATA(param, data) \
+	G_STMT_START { \
+		data = g_hash_table_lookup(self->vars, GET_VAR_NAME(param)); \
+		g_return_val_if_fail(data != NULL, FALSE); \
+	} G_STMT_END
+
 
 /* Prototypes {{{1 */
 static void		set_error		(GebrValidator         *self,
@@ -448,7 +457,78 @@ gebr_validator_new(GebrGeoXmlDocument **flow,
 					   g_free,
 					   hash_data_free);
 
+	self->var_order[0] = NULL;
+	self->var_order[1] = NULL;
+	self->var_order[2] = NULL;
+
 	return self;
+}
+
+static GList*
+get_prev_param(GebrValidator *self,
+		GebrGeoXmlParameter *param)
+{
+	GebrGeoXmlDocumentType scope = gebr_geoxml_parameter_get_scope(param);
+	GList *myself = g_list_find(self->var_order[scope], param);
+
+	if (myself && myself->prev)
+		return myself->prev;
+
+	if (scope != GEBR_GEOXML_DOCUMENT_TYPE_PROJECT)
+		scope++;
+
+	for (; scope < GEBR_GEOXML_DOCUMENT_TYPE_UNKNOWN; scope++) {
+		if (self->var_order[scope])
+			return g_list_last(self->var_order[scope]);
+	}
+	return NULL;
+}
+
+static GList*
+get_next_param(GebrValidator *self,
+		GebrGeoXmlParameter *param)
+{
+	GebrGeoXmlDocumentType scope = gebr_geoxml_parameter_get_scope(param);
+	GList *myself = g_list_find(self->var_order[scope], param);
+
+	if (myself && myself->next)
+		return myself->next;
+
+	if (scope != GEBR_GEOXML_DOCUMENT_TYPE_FLOW)
+		scope--;
+
+	for (int i = scope; i >= GEBR_GEOXML_DOCUMENT_TYPE_FLOW; i--) {
+		if (self->var_order[scope])
+			return g_list_first(self->var_order[scope]);
+	}
+	return NULL;
+}
+
+static gdouble
+get_weigth(GebrValidator *self,
+           GebrGeoXmlParameter *param)
+{
+	HashData *data;
+	GebrGeoXmlDocumentType scope = gebr_geoxml_parameter_get_scope(param);
+
+	data = g_hash_table_lookup(self->vars, GET_VAR_NAME(param));
+
+	g_return_val_if_fail(data != NULL, FALSE);
+
+	//	GET_VAR_DATA(param, data);
+
+	return data->weight[scope];
+}
+
+static gdouble
+compute_weight(GebrValidator *self,
+               GList *before,
+               GList *after)
+{
+	gdouble b = (before != NULL)? get_weigth(self, before->data) : 0;
+	gdouble a = (after != NULL)? get_weigth(self, after->data) : 100;
+
+	return (a + b)/2;
 }
 
 gboolean
@@ -460,6 +540,7 @@ gebr_validator_insert(GebrValidator       *self,
 	const gchar *name;
 	GebrGeoXmlDocumentType scope = gebr_geoxml_parameter_get_scope(param);
 	HashData *data;
+	GList *before, *after;
 
 	name = GET_VAR_NAME(param);
 	g_return_val_if_fail(name != NULL && strlen(name), FALSE);
@@ -471,6 +552,12 @@ gebr_validator_insert(GebrValidator       *self,
 	} else
 		if (!data->param[scope])
 			data->param[scope] = param;
+
+	before = get_prev_param(self, param);
+	after = get_next_param(self, param);
+	data->weight[scope] = compute_weight(self, before, after);
+	self->var_order[scope] = g_list_append(self->var_order[scope], param);
+	g_message("%s : %f\n", name, data->weight[scope]);
 
 	return gebr_validator_change_value(self, param, GET_VAR_VALUE(param), affected, error);
 }
@@ -491,6 +578,7 @@ gebr_validator_remove(GebrValidator       *self,
 
 	g_return_val_if_fail(data != NULL, FALSE);
 
+	self->var_order[scope] = g_list_remove(self->var_order[scope], data->param[scope]);
 	data->param[scope] = NULL;
 
 	if (!get_value(self, name, scope)) {
@@ -766,8 +854,14 @@ void gebr_validator_update(GebrValidator *self)
 	gebr_iexpr_reset(GEBR_IEXPR(self->string_expr));
 	g_hash_table_remove_all(self->vars);
 
-	for (int i = 0; i < 3; i++) {
-		if (self->docs[i] == NULL)
+	for (int j = 0; j < 3; j++) {
+		g_list_free(self->var_order[j]);
+		//FIXME: why the next line is needed?
+		self->var_order[j] = NULL;
+	}
+
+	for (int i = GEBR_GEOXML_DOCUMENT_TYPE_PROJECT; i >= GEBR_GEOXML_DOCUMENT_TYPE_FLOW; i--) {
+		if (*(self->docs[i]) == NULL)
 			continue;
 
 		seq = gebr_geoxml_document_get_dict_parameter(*(self->docs[i]));
