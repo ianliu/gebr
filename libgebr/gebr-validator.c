@@ -339,6 +339,13 @@ validate_and_extract_vars(GebrValidator  *self,
 	GebrIExpr *iexpr;
 	GError *err = NULL;
 
+	if (type != GEBR_GEOXML_PARAMETER_TYPE_INT
+	    && type != GEBR_GEOXML_PARAMETER_TYPE_FLOAT
+	    && type != GEBR_GEOXML_PARAMETER_TYPE_FILE
+	    && type != GEBR_GEOXML_PARAMETER_TYPE_RANGE
+	    && type != GEBR_GEOXML_PARAMETER_TYPE_STRING)
+		return TRUE;
+
 	iexpr = get_validator_by_type(self, type);
 
 	if (!iexpr)
