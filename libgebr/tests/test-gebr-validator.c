@@ -416,7 +416,7 @@ void test_gebr_validator_cyclic_errors(Fixture *fixture, gconstpointer data)
 	VALIDATE_FLOAT_EXPR_WITH_ERROR("c", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_BAD_REFERENCE);
 
 	DEF_FLOAT(fixture->flow, "x", "10");
-//	VALIDATE_FLOAT_EXPR_WITH_ERROR("2+x+foo", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_UNDEF_VAR);
+	VALIDATE_FLOAT_EXPR_WITH_ERROR("2+x+foo", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_UNDEF_REFERENCE);
 	DEF_FLOAT_WITH_ERROR(fixture->flow, "a", "2+x+foo", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_UNDEF_REFERENCE);
 	VALIDATE_FLOAT_EXPR_WITH_ERROR("a", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_BAD_REFERENCE);
 	VALIDATE_FLOAT_EXPR_WITH_ERROR("b", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_BAD_REFERENCE);
@@ -426,10 +426,11 @@ void test_gebr_validator_cyclic_errors(Fixture *fixture, gconstpointer data)
 void test_gebr_validator_scope_errors(Fixture *fixture, gconstpointer data)
 {
 	DEF_FLOAT_WITH_ERROR(fixture->line, "a", "2+x", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_UNDEF_REFERENCE);
-	DEF_FLOAT(fixture->flow, "x", "10");
 	VALIDATE_FLOAT_EXPR_WITH_ERROR("a", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_BAD_REFERENCE);
 	DEF_FLOAT(fixture->line, "x", "30");
 	VALIDATE_FLOAT_EXPR("a", "32");
+	DEF_FLOAT(fixture->flow, "x", "10");
+	VALIDATE_FLOAT_EXPR("a", "12");
 
 	DEF_FLOAT(fixture->line, "y", "2");
 	DEF_FLOAT(fixture->flow, "b", "y+100");
@@ -528,7 +529,7 @@ void test_gebr_validator_evaluate(Fixture *fixture, gconstpointer data)
 void test_gebr_validator_eval1(Fixture *fixture, gconstpointer data)
 {
 	DEF_FLOAT(fixture->flow, "a", "2");
-//	VALIDATE_FLOAT_EXPR_WITH_ERROR("iter+1", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_UNDEF_VAR);
+	VALIDATE_FLOAT_EXPR_WITH_ERROR("iter+1", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_UNDEF_REFERENCE);
 	DEF_FLOAT_WITH_ERROR(fixture->flow, "b", "iter+1", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_UNDEF_REFERENCE);
 	VALIDATE_FLOAT_EXPR("a+2", "4");
 	DEF_FLOAT_WITH_ERROR(fixture->flow, "c", "b+1", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_BAD_REFERENCE);
@@ -612,10 +613,10 @@ int main(int argc, char *argv[])
 	           test_gebr_validator_cyclic_errors,
 	           fixture_teardown);
 
-//	g_test_add("/libgebr/validator/scope_errors", Fixture, NULL,
-//		           fixture_setup,
-//		           test_gebr_validator_scope_errors,
-//		           fixture_teardown);
+	g_test_add("/libgebr/validator/scope_errors", Fixture, NULL,
+		           fixture_setup,
+		           test_gebr_validator_scope_errors,
+		           fixture_teardown);
 
 	g_test_add_func("/libgebr/validator/simple", test_gebr_validator_simple);
 	g_test_add_func("/libgebr/validator/insert", test_gebr_validator_insert);
