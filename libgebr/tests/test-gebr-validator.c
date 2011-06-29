@@ -434,11 +434,11 @@ void test_gebr_validator_scope_errors(Fixture *fixture, gconstpointer data)
 
 	DEF_FLOAT(fixture->line, "y", "2");
 	DEF_FLOAT(fixture->flow, "b", "y+100");
-//	DEF_FLOAT_WITH_ERROR(fixture->proj, "z", "y*2", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_UNDEF_REFERENCE);
+	DEF_FLOAT_WITH_ERROR(fixture->proj, "z", "y*2", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_UNDEF_REFERENCE);
 
 	DEF_FLOAT_WITH_ERROR(fixture->line, "y", "2+", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_SYNTAX);
 	VALIDATE_FLOAT_EXPR_WITH_ERROR("b", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_BAD_REFERENCE);
-//	VALIDATE_FLOAT_EXPR_WITH_ERROR("z", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_BAD_REFERENCE);
+	VALIDATE_FLOAT_EXPR_WITH_ERROR("z", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_BAD_REFERENCE);
 }
 
 void test_gebr_validator_check_using_var(void)

@@ -47,13 +47,16 @@ static gboolean		get_error_indirect	(GebrValidator          *self,
                		                  	 GError                **err);
 
 static GebrGeoXmlParameter * get_param		(GebrValidator         *self,
-						 const gchar           *name);
+						 const gchar           *name,
+						 GebrGeoXmlDocumentType scope);
 
 static GebrGeoXmlDocumentType get_scope		(GebrValidator         *self,
-						 const gchar           *name);
+						 const gchar           *name,
+						 GebrGeoXmlDocumentType scope);
 
 static const gchar *	get_value		(GebrValidator         *self,
-						 const gchar           *name);
+						 const gchar           *name,
+						 GebrGeoXmlDocumentType scope);
 
 static gboolean         detect_cicle	        (GebrValidator *self,
                                     	         const gchar *name,
@@ -133,7 +136,7 @@ get_error_indirect(GebrValidator *self,
 
 		dep_data = g_hash_table_lookup(self->vars, dep_name);
 
-		if (!dep_data || !get_param(self, dep_name)) {
+		if (!dep_data || !get_param(self, dep_name, scope)) {
 			g_set_error(err, GEBR_IEXPR_ERROR,
 			            GEBR_IEXPR_ERROR_UNDEF_REFERENCE,
 			            _("Variable %s is not defined"),
@@ -151,7 +154,7 @@ get_error_indirect(GebrValidator *self,
 		}
 
 		if (!dep_data->param[scope])
-			dep_scope = get_scope(self, dep_name);
+			dep_scope = get_scope(self, dep_name, scope);
 		else
 			dep_scope = scope;
 
@@ -203,27 +206,29 @@ set_error(GebrValidator *self,
  */
 static GebrGeoXmlParameter *
 get_param(GebrValidator *self,
-	  const gchar *name)
+	  const gchar *name,
+	  GebrGeoXmlDocumentType scope)
 {
 	HashData *data;
+
 	data = g_hash_table_lookup(self->vars, name);
 
 	g_return_val_if_fail(data != NULL, NULL);
 
-	for (int i = 0; i < 3; i++) {
-		if (!data->param[i])
+	for (; scope < 3; scope++) {
+		if (!data->param[scope])
 			continue;
-		return data->param[i];
+		return data->param[scope];
 	}
 	return NULL;
 }
 
 static GebrGeoXmlDocumentType
-get_scope(GebrValidator *self, const gchar *name)
+get_scope(GebrValidator *self, const gchar *name, GebrGeoXmlDocumentType scope)
 {
 	GebrGeoXmlParameter *param;
 
-	param = get_param(self, name);
+	param = get_param(self, name, scope);
 
 	if (param == NULL)
 		return GEBR_GEOXML_DOCUMENT_TYPE_UNKNOWN;
@@ -233,10 +238,11 @@ get_scope(GebrValidator *self, const gchar *name)
 
 static const gchar *
 get_value(GebrValidator *self,
-	  const gchar *name)
+	  const gchar *name,
+	  GebrGeoXmlDocumentType scope)
 {
 	GebrGeoXmlParameter *param;
-	return (param = get_param(self, name)) ? GET_VAR_VALUE(param):NULL;
+	return (param = get_param(self, name, scope)) ? GET_VAR_VALUE(param):NULL;
 }
 
 static gboolean
@@ -487,7 +493,7 @@ gebr_validator_remove(GebrValidator       *self,
 
 	data->param[scope] = NULL;
 
-	if (!get_value(self, name)) {
+	if (!get_value(self, name, scope)) {
 		remove_from_antidep_of_deps(self, &data->dep[scope], name);
 
 		if (data->antidep == NULL) {
@@ -815,7 +821,7 @@ gboolean gebr_validator_evaluate(GebrValidator *self,
 
 		g_return_if_fail(deps != NULL);
 
-		param = get_param(self, name);
+		param = get_param(self, name, GEBR_GEOXML_DOCUMENT_TYPE_FLOW);
 		if (!param)
 			return;
 
@@ -827,14 +833,14 @@ gboolean gebr_validator_evaluate(GebrValidator *self,
 		type = gebr_geoxml_parameter_get_type(param);
 
 		gebr_iexpr_set_var(iexpr, name, type,
-				   get_value(self, name), NULL);
+				   get_value(self, name, scope), NULL);
 	}
 
 	iexpr = get_validator_by_type(self, type);
 	vars = gebr_iexpr_extract_vars(iexpr, expr);
 
 	for (GList * i = vars; i; i = i->next) {
-		GebrGeoXmlDocumentType s = get_scope(self, i->data);
+		GebrGeoXmlDocumentType s = get_scope(self, i->data, GEBR_GEOXML_DOCUMENT_TYPE_FLOW);
 		if (!use_iter && gebr_validator_check_using_var(self, i->data, s, "iter")) {
 			HashData *iter_data;
 			use_iter = TRUE;
