@@ -1378,9 +1378,12 @@ on_flow_sequence_query_tooltip(GtkTreeView * treeview,
 				error_message = _("A required parameter is unfilled");
 				break;
 			case GEBR_IEXPR_ERROR_UNDEF_VAR:
+			case GEBR_IEXPR_ERROR_UNDEF_REFERENCE:	
 				error_message = _("An undefined variable is being used");
 				break;
 			case GEBR_IEXPR_ERROR_INVAL_VAR:
+			case GEBR_IEXPR_ERROR_BAD_REFERENCE:
+			case GEBR_IEXPR_ERROR_CYCLE:
 				error_message = _("A not well defined variable is being used");
 				break;
 			case GEBR_IEXPR_ERROR_INITIALIZE:
