@@ -124,6 +124,9 @@ get_error_indirect(GebrValidator *self,
 	GebrGeoXmlParameterType dep_type;
 	GebrGeoXmlDocumentType dep_scope;
 
+//	if (!get_validator_by_type(self, my_type))
+//		return TRUE;
+
 	for (GList *i = var_names; i; i = i->next) {
 		gchar *dep_name = i->data;
 
@@ -339,18 +342,12 @@ validate_and_extract_vars(GebrValidator  *self,
 	GebrIExpr *iexpr;
 	GError *err = NULL;
 
-	if (type != GEBR_GEOXML_PARAMETER_TYPE_INT
-	    && type != GEBR_GEOXML_PARAMETER_TYPE_FLOAT
-	    && type != GEBR_GEOXML_PARAMETER_TYPE_FILE
-	    && type != GEBR_GEOXML_PARAMETER_TYPE_RANGE
-	    && type != GEBR_GEOXML_PARAMETER_TYPE_STRING)
-		return TRUE;
-
 	iexpr = get_validator_by_type(self, type);
 
-	if (!iexpr)
+	if (!iexpr) {
+		*deps = NULL;
 		return TRUE;
-
+	}
 	if (!gebr_iexpr_is_valid(iexpr, expression, &err)
 	    && err->code != GEBR_IEXPR_ERROR_UNDEF_VAR) {
 		g_propagate_error(error, err);
@@ -717,7 +714,7 @@ gebr_validator_validate_expr(GebrValidator          *self,
 			     GebrGeoXmlParameterType type,
 			     GError                **err)
 {
-	GList *vars;
+	GList *vars = NULL;
 	gboolean valid = FALSE;
 
 	valid = validate_and_extract_vars(self, str, type, &vars, err);
