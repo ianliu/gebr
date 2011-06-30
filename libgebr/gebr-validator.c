@@ -850,13 +850,13 @@ void gebr_validator_update(GebrValidator *self)
 {
 	GebrGeoXmlSequence *seq;
 
-	gebr_iexpr_reset(GEBR_IEXPR(self->arith_expr));
-	gebr_iexpr_reset(GEBR_IEXPR(self->string_expr));
+//	TODO: Necessary?
+//	gebr_iexpr_reset(GEBR_IEXPR(self->arith_expr));
+//	gebr_iexpr_reset(GEBR_IEXPR(self->string_expr));
 	g_hash_table_remove_all(self->vars);
 
 	for (int j = 0; j < 3; j++) {
 		g_list_free(self->var_order[j]);
-		//FIXME: why the next line is needed?
 		self->var_order[j] = NULL;
 	}
 
