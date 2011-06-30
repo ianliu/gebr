@@ -491,12 +491,6 @@ static void flow_browse_load(void)
 
 static void change_selection_update_validator(void)
 {
-	static GebrGeoXmlFlow *last_flow = NULL;
-
-	// Don't update validator if flow hasn't changed
-	if (gebr.flow == last_flow)
-		return;
-
 	gebr_validator_update(gebr.validator);
 }
 
