@@ -51,6 +51,7 @@ static void		set_error		(GebrValidator         *self,
 
 static gboolean		get_error_indirect	(GebrValidator          *self,
                		                  	 GList                  *var_names,
+               		                  	 const gchar		*name,
                		                  	 GebrGeoXmlParameterType my_type,
                		                  	 GebrGeoXmlDocumentType scope,
                		                  	 GError                **err);
@@ -67,11 +68,7 @@ static const gchar *	get_value		(GebrValidator         *self,
 						 const gchar           *name,
 						 GebrGeoXmlDocumentType scope);
 
-static gboolean         detect_cicle	        (GebrValidator *self,
-                                    	         const gchar *name,
-                                    	         GebrGeoXmlDocumentType scope);
-
-static gdouble 		get_weigth		(GebrValidator *self,
+static gdouble 		get_weight		(GebrValidator *self,
                		          		 GebrGeoXmlParameter *param);
 
 /* NodeData functions {{{1 */
@@ -131,6 +128,7 @@ get_validator_by_type(GebrValidator *self,
 static gboolean
 get_error_indirect(GebrValidator *self,
                    GList *var_names,
+                   const gchar *name,
                    GebrGeoXmlParameterType my_type,
                    GebrGeoXmlDocumentType scope,
                    GError **err)
@@ -146,6 +144,14 @@ get_error_indirect(GebrValidator *self,
 	for (GList *i = var_names; i; i = i->next) {
 		gchar *dep_name = i->data;
 
+		if (g_strcmp0(name, dep_name) == 0) {
+			g_set_error(err, GEBR_IEXPR_ERROR,
+			            GEBR_IEXPR_ERROR_BAD_REFERENCE,
+			            _("Variable %s can not reference itself"),
+			            dep_name);
+			return FALSE;
+		}
+
 		dep_data = g_hash_table_lookup(self->vars, dep_name);
 
 		if (!dep_data || !get_param(self, dep_name, scope)) {
@@ -156,23 +162,25 @@ get_error_indirect(GebrValidator *self,
 			return FALSE;
 		}
 
-		if (detect_cicle(self, dep_name, scope)) {
-			g_set_error(&error, GEBR_IEXPR_ERROR,
-			            GEBR_IEXPR_ERROR_CYCLE,
-			            _("The variable %s has cyclic dependency"),
-			            dep_name);
-			g_propagate_error(err, error);
-			return FALSE;
-		}
-
 		if (!dep_data->param[scope])
 			dep_scope = get_scope(self, dep_name, scope);
-		else
+		else {
 			dep_scope = scope;
+			if (name) {
+				HashData *var = g_hash_table_lookup(self->vars, name);
+				if (var->weight[scope] < dep_data->weight[dep_scope]) {
+					g_set_error(err, GEBR_IEXPR_ERROR,
+					            GEBR_IEXPR_ERROR_UNDEF_REFERENCE,
+					            _("Variable %s is not yet defined"),
+					            dep_name);
+					return FALSE;
+				}
+			}
+		}
 
 		if (!dep_data->error[dep_scope]) {
 			dep_type = gebr_geoxml_parameter_get_type(dep_data->param[dep_scope]);
-			get_error_indirect(self, dep_data->dep[dep_scope], dep_type, dep_scope, &error);
+			get_error_indirect(self, dep_data->dep[dep_scope], dep_name, dep_type, dep_scope, &error);
 		}
 		else
 			g_propagate_error(&error, g_error_copy(dep_data->error[dep_scope]));
@@ -255,52 +263,6 @@ get_value(GebrValidator *self,
 {
 	GebrGeoXmlParameter *param;
 	return (param = get_param(self, name, scope)) ? GET_VAR_VALUE(param):NULL;
-}
-
-static gboolean
-detect_cicle(GebrValidator *self,
-	     const gchar *name,
-	     GebrGeoXmlDocumentType scope)
-{
-	GHashTable *visits;
-	gboolean retval = FALSE;
-
-	enum {
-		WHITE,
-		GREY,
-		BLACK
-	};
-
-	visits = g_hash_table_new(g_str_hash, g_str_equal);
-
-	gboolean dfs(const gchar *n)
-	{
-		gint c;
-		const gchar *v;
-		HashData *data;
-
-		c = GPOINTER_TO_INT(g_hash_table_lookup(visits, n));
-
-		if (c == GREY)
-			return TRUE; // There is a loop
-
-		if (c == BLACK)
-			return FALSE; // Visiting someone already done
-
-		g_hash_table_insert(visits, (gpointer)n, GUINT_TO_POINTER(GREY));
-		data = g_hash_table_lookup(self->vars, n);
-		for (GList *i = data->dep[scope]; i; i = i->next) {
-			v = i->data;
-			if (dfs(v))
-				return TRUE;
-		}
-		g_hash_table_insert(visits, (gpointer)n, GUINT_TO_POINTER(BLACK));
-		return FALSE;
-	}
-
-	retval = dfs(name);
-	g_hash_table_unref(visits);
-	return retval;
 }
 
 /* Remove the variable @var_name from antideps of it deps */
@@ -409,7 +371,7 @@ gebr_validator_change_value_by_name(GebrValidator          *self,
 	if (valid) {
 		set_error(self, name, scope, NULL);
 
-		valid = get_error_indirect(self, data->dep[scope], type, scope, error);
+		valid = get_error_indirect(self, data->dep[scope], name, type, scope, error);
 	} else {
 		set_error(self, name, scope, err);
 		g_propagate_error(error, err);
@@ -467,58 +429,14 @@ gebr_validator_new(GebrGeoXmlDocument **flow,
 	return self;
 }
 
-static GList*
-get_prev_param(GebrValidator *self,
-		GebrGeoXmlParameter *param)
-{
-	GebrGeoXmlDocumentType scope = gebr_geoxml_parameter_get_scope(param);
-	GList *myself = g_list_find(self->var_order[scope], param);
-
-	if (myself && myself->prev)
-		return myself->prev;
-
-//	if (scope != GEBR_GEOXML_DOCUMENT_TYPE_PROJECT)
-//		scope++;
-//
-//	for (; scope < GEBR_GEOXML_DOCUMENT_TYPE_UNKNOWN; scope++) {
-//		if (self->var_order[scope])
-//			return g_list_last(self->var_order[scope]);
-//	}
-	return NULL;
-}
-
-static GList*
-get_next_param(GebrValidator *self,
-		GebrGeoXmlParameter *param)
-{
-	GebrGeoXmlDocumentType scope = gebr_geoxml_parameter_get_scope(param);
-	GList *myself = g_list_find(self->var_order[scope], param);
-
-	if (myself && myself->next)
-		return myself->next;
-
-//	if (scope != GEBR_GEOXML_DOCUMENT_TYPE_FLOW)
-//		scope--;
-//
-//	for (int i = scope; i >= GEBR_GEOXML_DOCUMENT_TYPE_FLOW; i--) {
-//		if (self->var_order[scope])
-//			return g_list_first(self->var_order[scope]);
-//	}
-	return NULL;
-}
-
 static gdouble
-get_weigth(GebrValidator *self,
+get_weight(GebrValidator *self,
            GebrGeoXmlParameter *param)
 {
 	HashData *data;
 	GebrGeoXmlDocumentType scope = gebr_geoxml_parameter_get_scope(param);
 
-	data = g_hash_table_lookup(self->vars, GET_VAR_NAME(param));
-
-	g_return_val_if_fail(data != NULL, FALSE);
-
-	//	GET_VAR_DATA(param, data);
+	GET_VAR_DATA(param, data);
 
 	return data->weight[scope];
 }
@@ -528,8 +446,8 @@ compute_weight(GebrValidator *self,
                GList *before,
                GList *after)
 {
-	gdouble b = (before != NULL)? get_weigth(self, before->data) : 0;
-	gdouble a = (after != NULL)? get_weigth(self, after->data) : 100;
+	gdouble b = (before != NULL)? get_weight(self, before->data) : 0;
+	gdouble a = (after != NULL)? get_weight(self, after->data) : 100;
 
 	return (a + b)/2;
 }
@@ -543,7 +461,7 @@ gebr_validator_insert(GebrValidator       *self,
 	const gchar *name;
 	GebrGeoXmlDocumentType scope = gebr_geoxml_parameter_get_scope(param);
 	HashData *data;
-	GList *before, *after;
+	GList *before;
 
 	name = GET_VAR_NAME(param);
 	g_return_val_if_fail(name != NULL && strlen(name), FALSE);
@@ -556,12 +474,9 @@ gebr_validator_insert(GebrValidator       *self,
 		if (!data->param[scope])
 			data->param[scope] = param;
 
-	self->var_order[scope] = g_list_append(self->var_order[scope], param);
-	before = get_prev_param(self, param);
-	after = get_next_param(self, param);
-	data->weight[scope] = compute_weight(self, before, after);
-
-	g_message("%s : %f\n", name, data->weight[scope]);
+	before = g_list_first(self->var_order[scope]);
+	self->var_order[scope] = g_list_prepend(self->var_order[scope], param);
+	data->weight[scope] = compute_weight(self, before, NULL);
 
 	return gebr_validator_change_value(self, param, GET_VAR_VALUE(param), affected, error);
 }
@@ -794,7 +709,7 @@ gebr_validator_validate_param(GebrValidator       *self,
 			g_propagate_error(err, g_error_copy(data->error[scope]));
 			return FALSE;
 		} else
-			return get_error_indirect(self, data->dep[scope], type, scope, err);
+			return get_error_indirect(self, data->dep[scope], name, type, scope, err);
 
 		return TRUE;
 	}
@@ -819,7 +734,7 @@ gebr_validator_validate_expr(GebrValidator          *self,
 	valid = validate_and_extract_vars(self, str, type, &vars, err);
 
 	if (valid) {
-		valid = get_error_indirect(self, vars, type, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, err);
+		valid = get_error_indirect(self, vars, NULL, type, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, err);
 
 		g_list_foreach(vars, (GFunc)g_free, NULL);
 		g_list_free(vars);
