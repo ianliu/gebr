@@ -71,6 +71,9 @@ static gboolean         detect_cicle	        (GebrValidator *self,
                                     	         const gchar *name,
                                     	         GebrGeoXmlDocumentType scope);
 
+static gdouble 		get_weigth		(GebrValidator *self,
+               		          		 GebrGeoXmlParameter *param);
+
 /* NodeData functions {{{1 */
 static HashData *
 hash_data_new_from_xml(GebrGeoXmlParameter *param)
@@ -474,13 +477,13 @@ get_prev_param(GebrValidator *self,
 	if (myself && myself->prev)
 		return myself->prev;
 
-	if (scope != GEBR_GEOXML_DOCUMENT_TYPE_PROJECT)
-		scope++;
-
-	for (; scope < GEBR_GEOXML_DOCUMENT_TYPE_UNKNOWN; scope++) {
-		if (self->var_order[scope])
-			return g_list_last(self->var_order[scope]);
-	}
+//	if (scope != GEBR_GEOXML_DOCUMENT_TYPE_PROJECT)
+//		scope++;
+//
+//	for (; scope < GEBR_GEOXML_DOCUMENT_TYPE_UNKNOWN; scope++) {
+//		if (self->var_order[scope])
+//			return g_list_last(self->var_order[scope]);
+//	}
 	return NULL;
 }
 
@@ -494,13 +497,13 @@ get_next_param(GebrValidator *self,
 	if (myself && myself->next)
 		return myself->next;
 
-	if (scope != GEBR_GEOXML_DOCUMENT_TYPE_FLOW)
-		scope--;
-
-	for (int i = scope; i >= GEBR_GEOXML_DOCUMENT_TYPE_FLOW; i--) {
-		if (self->var_order[scope])
-			return g_list_first(self->var_order[scope]);
-	}
+//	if (scope != GEBR_GEOXML_DOCUMENT_TYPE_FLOW)
+//		scope--;
+//
+//	for (int i = scope; i >= GEBR_GEOXML_DOCUMENT_TYPE_FLOW; i--) {
+//		if (self->var_order[scope])
+//			return g_list_first(self->var_order[scope]);
+//	}
 	return NULL;
 }
 
@@ -553,10 +556,11 @@ gebr_validator_insert(GebrValidator       *self,
 		if (!data->param[scope])
 			data->param[scope] = param;
 
+	self->var_order[scope] = g_list_append(self->var_order[scope], param);
 	before = get_prev_param(self, param);
 	after = get_next_param(self, param);
 	data->weight[scope] = compute_weight(self, before, after);
-	self->var_order[scope] = g_list_append(self->var_order[scope], param);
+
 	g_message("%s : %f\n", name, data->weight[scope]);
 
 	return gebr_validator_change_value(self, param, GET_VAR_VALUE(param), affected, error);
