@@ -65,7 +65,7 @@
  */
 #define VALIDATE_FLOAT_EXPR(expr, result) \
 	G_STMT_START { \
-	gchar *value; \
+	gchar *value = NULL; \
 	GError *error = NULL; \
 	gebr_validator_evaluate(fixture->validator, (expr), \
 				GEBR_GEOXML_PARAMETER_TYPE_FLOAT, \
@@ -82,7 +82,7 @@
  */
 #define VALIDATE_FLOAT_EXPR_WITH_ERROR(expr, domain, code) \
 	G_STMT_START { \
-	gchar *value; \
+	gchar *value = NULL; \
 	GError *error = NULL; \
 	gebr_validator_evaluate(fixture->validator, (expr), \
 				GEBR_GEOXML_PARAMETER_TYPE_FLOAT, \
@@ -115,7 +115,7 @@
  */
 #define VALIDATE_STRING_EXPR(expr, result) \
 	G_STMT_START { \
-	gchar *value; \
+	gchar *value = NULL; \
 	GError *error = NULL; \
 	gebr_validator_evaluate(fixture->validator, (expr), \
 				GEBR_GEOXML_PARAMETER_TYPE_STRING, \
