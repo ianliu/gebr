@@ -65,7 +65,7 @@
  */
 #define VALIDATE_FLOAT_EXPR(expr, result) \
 	G_STMT_START { \
-	gchar *value; \
+	gchar *value = NULL; \
 	GError *error = NULL; \
 	gebr_validator_evaluate(fixture->validator, (expr), \
 				GEBR_GEOXML_PARAMETER_TYPE_FLOAT, \
@@ -82,7 +82,7 @@
  */
 #define VALIDATE_FLOAT_EXPR_WITH_ERROR(expr, domain, code) \
 	G_STMT_START { \
-	gchar *value; \
+	gchar *value = NULL; \
 	GError *error = NULL; \
 	gebr_validator_evaluate(fixture->validator, (expr), \
 				GEBR_GEOXML_PARAMETER_TYPE_FLOAT, \
@@ -115,7 +115,7 @@
  */
 #define VALIDATE_STRING_EXPR(expr, result) \
 	G_STMT_START { \
-	gchar *value; \
+	gchar *value = NULL; \
 	GError *error = NULL; \
 	gebr_validator_evaluate(fixture->validator, (expr), \
 				GEBR_GEOXML_PARAMETER_TYPE_STRING, \
@@ -402,12 +402,13 @@ void test_gebr_validator_move(void)
 
 void test_gebr_validator_cyclic_errors(Fixture *fixture, gconstpointer data)
 {
-	/* Tests for mathematical expressions */
 	DEF_FLOAT_WITH_ERROR(fixture->flow, "a", "2+x", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_UNDEF_REFERENCE);
 	DEF_FLOAT_WITH_ERROR(fixture->flow, "b", "a+1", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_BAD_REFERENCE);
 	DEF_FLOAT_WITH_ERROR(fixture->flow, "c", "b+", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_SYNTAX);
 	DEF_FLOAT(fixture->flow, "x", "10");
-	VALIDATE_FLOAT_EXPR("a", "12");
+	VALIDATE_FLOAT_EXPR("x", "10");
+	VALIDATE_FLOAT_EXPR_WITH_ERROR("a", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_BAD_REFERENCE);
+	VALIDATE_FLOAT_EXPR_WITH_ERROR("c", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_BAD_REFERENCE);
 
 	DEF_FLOAT_WITH_ERROR(fixture->flow, "x", "10+", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_SYNTAX);
 	VALIDATE_FLOAT_EXPR_WITH_ERROR("x", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_BAD_REFERENCE);
@@ -421,6 +422,8 @@ void test_gebr_validator_cyclic_errors(Fixture *fixture, gconstpointer data)
 	VALIDATE_FLOAT_EXPR_WITH_ERROR("a", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_BAD_REFERENCE);
 	VALIDATE_FLOAT_EXPR_WITH_ERROR("b", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_BAD_REFERENCE);
 	VALIDATE_FLOAT_EXPR_WITH_ERROR("c", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_BAD_REFERENCE);
+
+	DEF_FLOAT_WITH_ERROR(fixture->flow, "z", "z+1", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_BAD_REFERENCE);
 }
 
 void test_gebr_validator_scope_errors(Fixture *fixture, gconstpointer data)
@@ -428,9 +431,11 @@ void test_gebr_validator_scope_errors(Fixture *fixture, gconstpointer data)
 	DEF_FLOAT_WITH_ERROR(fixture->line, "a", "2+x", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_UNDEF_REFERENCE);
 	VALIDATE_FLOAT_EXPR_WITH_ERROR("a", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_BAD_REFERENCE);
 	DEF_FLOAT(fixture->line, "x", "30");
-	VALIDATE_FLOAT_EXPR("a", "32");
+	VALIDATE_FLOAT_EXPR_WITH_ERROR("a", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_BAD_REFERENCE);
+	VALIDATE_FLOAT_EXPR("x", "30");
 	DEF_FLOAT(fixture->flow, "x", "10");
-	VALIDATE_FLOAT_EXPR("a", "12");
+	VALIDATE_FLOAT_EXPR_WITH_ERROR("a", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_BAD_REFERENCE);
+	VALIDATE_FLOAT_EXPR("x", "10");
 
 	DEF_FLOAT(fixture->line, "y", "2");
 	DEF_FLOAT(fixture->flow, "b", "y+100");
@@ -535,6 +540,21 @@ void test_gebr_validator_eval1(Fixture *fixture, gconstpointer data)
 	DEF_FLOAT_WITH_ERROR(fixture->flow, "c", "b+1", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_BAD_REFERENCE);
 }
 
+void test_gebr_validator_weight(Fixture *fixture, gconstpointer data)
+{
+	DEF_FLOAT(fixture->proj, "p1", "1");
+	DEF_FLOAT_WITH_ERROR(fixture->proj, "p2", "p1+p3", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_UNDEF_REFERENCE);
+	DEF_FLOAT(fixture->proj, "p3", "3");
+	DEF_FLOAT_WITH_ERROR(fixture->proj, "p4", "p2+1", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_BAD_REFERENCE);
+	VALIDATE_FLOAT_EXPR_WITH_ERROR("p2", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_BAD_REFERENCE);
+
+	DEF_FLOAT(fixture->flow, "f1", "p1+1");
+	DEF_FLOAT_WITH_ERROR(fixture->flow, "f2", "f1+f3", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_UNDEF_REFERENCE);
+	DEF_FLOAT(fixture->flow, "f3", "p3+1");
+	DEF_FLOAT_WITH_ERROR(fixture->flow, "f4", "f2+1", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_BAD_REFERENCE);
+	VALIDATE_FLOAT_EXPR_WITH_ERROR("f2", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_BAD_REFERENCE);
+}
+
 void test_gebr_validator_scope(Fixture *fixture, gconstpointer data)
 {
 
@@ -587,6 +607,11 @@ int main(int argc, char *argv[])
 	g_test_init(&argc, &argv, NULL);
 
 	g_test_add_func("/libgebr/validator/using_var", test_gebr_validator_check_using_var);
+
+	g_test_add("/libgebr/validator/weight", Fixture, NULL,
+		   fixture_setup,
+		   test_gebr_validator_weight,
+		   fixture_teardown);
 
 	g_test_add("/libgebr/validator/eval1", Fixture, NULL,
 		   fixture_setup,

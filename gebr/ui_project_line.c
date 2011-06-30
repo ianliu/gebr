@@ -1132,32 +1132,7 @@ static void project_line_load(void)
 
 static void pl_change_selection_update_validator(GtkTreeSelection *selection)
 {
-	static GebrGeoXmlProject *last_proj = NULL;
-
-	GList *rows;
-	GtkTreePath *path;
-	GtkTreeModel *model;
-
-	// Update validator when project change
-	if (gebr.project == last_proj)
-		return;
-
-	rows = gtk_tree_selection_get_selected_rows(selection, &model);
-
-	if (!rows)
-		return;
-
-	// If a line is the first selection, validator was already updated
-	// by ui_flow_browse change signal.
-	path = rows->data;
-	if (gtk_tree_path_get_depth(path) == 2)
-		goto out;
-
 	gebr_validator_update(gebr.validator);
-
-out:
-	g_list_foreach(rows, (GFunc) gtk_tree_path_free, NULL);
-	g_list_free(rows);
 }
 
 /**
