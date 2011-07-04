@@ -203,6 +203,7 @@ void test_gebr_validator_simple(Fixture *fixture, gconstpointer data)
 	// Project variables
 	DEF_FLOAT(fixture->proj, "pi", "3.14");
 	DEF_FLOAT(fixture->proj, "x", "pi*pi");
+	DEF_FLOAT(fixture->proj, "y", "x/3");
 	DEF_STRING(fixture->proj, "s1", "foo");
 
 	// Line variables
@@ -422,6 +423,26 @@ void test_gebr_validator_scope_errors(Fixture *fixture, gconstpointer data)
 	DEF_FLOAT_WITH_ERROR(fixture->line, "y", "2+", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_SYNTAX);
 	VALIDATE_FLOAT_EXPR_WITH_ERROR("b", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_BAD_REFERENCE);
 	VALIDATE_FLOAT_EXPR_WITH_ERROR("z", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_BAD_REFERENCE);
+
+	// Define the same variable in all scopes
+	DEF_FLOAT(fixture->proj, "f", "1");
+	DEF_FLOAT(fixture->line, "f", "2");
+	DEF_FLOAT(fixture->flow, "f", "3");
+
+	GError *error = NULL;
+	GebrGeoXmlParameter *param;
+	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(fixture->line),
+	                                              GEBR_GEOXML_PARAMETER_TYPE_STRING,
+	                                              "foo", "[f].out");
+	gebr_validator_insert(fixture->validator, param, NULL, &error);
+	g_assert_no_error(error);
+
+	gchar *result = NULL;
+	gebr_validator_evaluate(fixture->validator, param, NULL,
+				GEBR_GEOXML_PARAMETER_TYPE_STRING,
+				&result, &error);
+	g_assert_no_error(error);
+	g_assert_cmpstr(result, ==, "2.out");
 }
 
 void test_gebr_validator_check_using_var(void)
