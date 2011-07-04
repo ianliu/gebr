@@ -108,6 +108,18 @@
 	g_assert_no_error(error); \
 	} G_STMT_END
 
+#define DEF_STRING_WITH_ERROR(doc, name, value, domain, code) \
+	G_STMT_START { \
+	GError *error = NULL; \
+	GebrGeoXmlParameter *param; \
+	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(doc), \
+	                                              GEBR_GEOXML_PARAMETER_TYPE_STRING, \
+	                                              name, value); \
+	gebr_validator_insert(fixture->validator, param, NULL, &error); \
+	g_assert_error(error, domain, code); \
+	g_clear_error(&error); \
+	} G_STMT_END
+
 /*
  * VALIDATE_STRING_EXPR:
  *
@@ -123,6 +135,17 @@
 	g_assert_no_error(error); \
 	g_assert_cmpstr(value, ==, (result)); \
 	g_free(value); \
+	} G_STMT_END
+
+#define VALIDATE_STRING_EXPR_WITH_ERROR(expr, domain, code) \
+	G_STMT_START { \
+		gchar *value = NULL; \
+		GError *error = NULL; \
+		gebr_validator_evaluate(fixture->validator, NULL, (expr), \
+					GEBR_GEOXML_PARAMETER_TYPE_STRING, \
+					&value, &error); \
+		g_assert_error(error, domain, code); \
+		g_clear_error(&error); \
 	} G_STMT_END
 
 typedef struct {
@@ -175,78 +198,33 @@ fixture_add_loop(Fixture *fixture)
 	return iter_param;
 }
 
-void test_gebr_validator_simple(void)
+void test_gebr_validator_simple(Fixture *fixture, gconstpointer data)
 {
-	GebrValidator *validator;
+	// Project variables
+	DEF_FLOAT(fixture->proj, "pi", "3.14");
+	DEF_FLOAT(fixture->proj, "x", "pi*pi");
+	DEF_STRING(fixture->proj, "s1", "foo");
 
-	GebrGeoXmlFlow *flow;
-	GebrGeoXmlLine *line;
-	GebrGeoXmlProject *proj;
+	// Line variables
+	DEF_FLOAT(fixture->line, "x", "42");
 
-	GebrGeoXmlParameter *param;
-	gchar *validated = NULL;
-	GError *error = NULL;
+	// Flow variables
+	DEF_FLOAT(fixture->flow, "x", "10");
 
-	flow = gebr_geoxml_flow_new();
-	line = gebr_geoxml_line_new();
-	proj = gebr_geoxml_project_new();
+	// Test!
+	VALIDATE_FLOAT_EXPR("x", "10");
+	VALIDATE_FLOAT_EXPR("pi*x", "31.4");
+	VALIDATE_STRING_EXPR("[pi]", "3.14");
+	VALIDATE_STRING_EXPR("out.[x]", "out.10");
 
-	validator = gebr_validator_new((GebrGeoXmlDocument**)&flow,
-				       (GebrGeoXmlDocument**)&line,
-				       (GebrGeoXmlDocument**)&proj);
+	// Define wrong variables
+	DEF_FLOAT_WITH_ERROR(fixture->proj, "e", "2.718[", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_SYNTAX);
+	DEF_FLOAT_WITH_ERROR(fixture->proj, "y", "pi*bo", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_UNDEF_REFERENCE);
+	DEF_STRING_WITH_ERROR(fixture->proj, "s2", "[foo", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_SYNTAX);
+	DEF_STRING_WITH_ERROR(fixture->proj, "s3", "[bo]", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_UNDEF_REFERENCE);
 
-	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
-						      GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
-						      "pi", "3.14");
-	gebr_validator_insert(validator, param, NULL, NULL);
-	gebr_validator_validate_param(validator, param, &validated, &error);
-	g_assert_no_error(error);
-
-	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
-						      GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
-						      "e", "2.718[");
-	gebr_validator_insert(validator, param, NULL, NULL);
-	gebr_validator_validate_param(validator, param, &validated, &error);
-	g_assert_error(error, GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_SYNTAX);
-	g_clear_error(&error);
-
-	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
-						      GEBR_GEOXML_PARAMETER_TYPE_STRING,
-						      "abc", "[foo");
-	gebr_validator_insert(validator, param, NULL, NULL);
-	gebr_validator_validate_param(validator, param, &validated, &error);
-	g_assert_error(error, GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_SYNTAX);
-	g_clear_error(&error);
-
-	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
-						      GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
-						      "x", "pi*pi");
-	gebr_validator_insert(validator, param, NULL, NULL);
-	gebr_validator_validate_param(validator, param, &validated, &error);
-	g_assert_no_error(error);
-
-	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
-						      GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
-						      "y", "pi*bo");
-	gebr_validator_insert(validator, param, NULL, NULL);
-	gebr_validator_validate_param(validator, param, &validated, &error);
-	g_assert_error(error, GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_UNDEF_REFERENCE);
-	g_clear_error(&error);
-
-	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
-						      GEBR_GEOXML_PARAMETER_TYPE_STRING,
-						      "xyz", "[bo]");
-	gebr_validator_insert(validator, param, NULL, NULL);
-	gebr_validator_validate_param(validator, param, &validated, &error);
-	g_assert_error(error, GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_UNDEF_REFERENCE);
-	g_clear_error(&error);
-
-	gebr_validator_validate_expr(validator, "[bobo]", GEBR_GEOXML_PARAMETER_TYPE_STRING, &error);
-	g_assert_error(error, GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_UNDEF_REFERENCE);
-	g_clear_error(&error);
-
-	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(proj));
-	gebr_validator_free(validator);
+	// Validate wrong expressions
+	VALIDATE_STRING_EXPR_WITH_ERROR("[bobo]", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_UNDEF_REFERENCE);
 }
 
 void test_gebr_validator_insert(void)
@@ -603,12 +581,17 @@ void test_gebr_validator_expression_check_using_var(Fixture *fixture, gconstpoin
 							   "a") == FALSE);
 
 }
+
 int main(int argc, char *argv[])
 {
 	g_type_init();
 	g_test_init(&argc, &argv, NULL);
 
-	g_test_add_func("/libgebr/validator/simple", test_gebr_validator_simple);
+	g_test_add("/libgebr/validator/simple", Fixture, NULL,
+		   fixture_setup,
+		   test_gebr_validator_simple,
+		   fixture_teardown);
+
 	g_test_add_func("/libgebr/validator/insert", test_gebr_validator_insert);
 	g_test_add_func("/libgebr/validator/remove", test_gebr_validator_remove);
 	g_test_add_func("/libgebr/validator/rename", test_gebr_validator_rename);
@@ -647,9 +630,9 @@ int main(int argc, char *argv[])
 	           fixture_teardown);
 
 	g_test_add("/libgebr/validator/scope_errors", Fixture, NULL,
-		           fixture_setup,
-		           test_gebr_validator_scope_errors,
-		           fixture_teardown);
+		   fixture_setup,
+		   test_gebr_validator_scope_errors,
+		   fixture_teardown);
 
 	return g_test_run();
 }
