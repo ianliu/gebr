@@ -397,12 +397,6 @@ gebr_arith_expr_eval_internal(GebrArithExpr *self,
 		return TRUE;
 
 	line = g_strdup_printf ("%s\n\"%s\"\n", expr, EVAL_COOKIE);
-	//FIXME: replace ';' by '\n'
-	gint i = 0;
-	while (line[i++]) {
-		if (line[i] == ';')
-			line[i] = '\n';
-	}
 	status = g_io_channel_write_chars (self->priv->in_ch, line, -1, NULL, &error);
 	g_free (line);
 
@@ -563,7 +557,15 @@ gboolean gebr_arith_expr_eval(GebrArithExpr *self,
 			     _("Invalid syntax '\"'"));
 		return FALSE;
 	}
-	gboolean ok = gebr_arith_expr_eval_internal(self, expr, &string, err);
+	gint i = 0;
+	gchar *line = strdup(expr);
+	while (line[i++]) {
+		if (line[i] == ';')
+			line[i] = '\n';
+	}
+
+	gboolean ok = gebr_arith_expr_eval_internal(self, line, &string, err);
+	g_free(line);
 
 	if (ok && string && result)
 		*result = g_ascii_strtod(string, NULL);
