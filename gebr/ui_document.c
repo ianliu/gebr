@@ -431,7 +431,8 @@ validate_param_and_set_icon_tooltip(struct dict_edit_data *data, GtkTreeIter *it
 	if (G_UNLIKELY(g_str_equal(keyword, "iter")))
 		return;
 
-	gebr_validator_validate_param(gebr.validator, param, NULL, &error);
+	gchar * tooltip = NULL;
+	gebr_validator_evaluate(gebr.validator, param, NULL, type, &tooltip, &error);
 	if (error) {
 		gtk_tree_store_set(GTK_TREE_STORE(data->tree_model), iter,
 				   DICT_EDIT_VALUE_TYPE_IMAGE, GTK_STOCK_DIALOG_WARNING,
@@ -439,22 +440,14 @@ validate_param_and_set_icon_tooltip(struct dict_edit_data *data, GtkTreeIter *it
 
 		gtk_label_set_text(GTK_LABEL(data->label), error->message);
 		g_clear_error(&error);
-		//dict_edit_check_programs_using_variables(keyword, FALSE);
 	} else {
-		gchar * tooltip = NULL;
-		const gchar * expr = NULL;
-		expr = gebr_geoxml_program_parameter_get_first_value(
-				GEBR_GEOXML_PROGRAM_PARAMETER(param), FALSE);
-
-		gebr_validator_evaluate(gebr.validator, param, expr, type, &tooltip, &error);
-
 		gtk_tree_store_set(GTK_TREE_STORE(data->tree_model), iter,
 				   DICT_EDIT_VALUE_TYPE_IMAGE,
 				   type == GEBR_GEOXML_PARAMETER_TYPE_STRING ? "string-icon" : "integer-icon",
 				   DICT_EDIT_VALUE_TYPE_TOOLTIP,
 				   tooltip, -1);
-		//dict_edit_check_programs_using_variables(keyword, TRUE);
 	}
+	g_free(tooltip);
 }
 
 static void
