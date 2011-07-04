@@ -1304,6 +1304,7 @@ on_flow_sequence_query_tooltip(GtkTreeView * treeview,
 		{
 			gchar * result = NULL;
 			gebr_validator_evaluate(gebr.validator, 
+			                        NULL,
 						gebr_geoxml_flow_io_get_input(gebr.flow),
 						GEBR_GEOXML_PARAMETER_TYPE_STRING,
 						&result,
@@ -1322,7 +1323,8 @@ on_flow_sequence_query_tooltip(GtkTreeView * treeview,
 			message = g_strdup(_("Choose output file"));
 		else if (g_strcmp0(error_msg, "") == 0) {
 			gchar * result = NULL;
-			gebr_validator_evaluate(gebr.validator, 
+			gebr_validator_evaluate(gebr.validator,
+			                        NULL,
 						gebr_geoxml_flow_io_get_output(gebr.flow),
 						GEBR_GEOXML_PARAMETER_TYPE_STRING,
 						&result,
@@ -1345,7 +1347,8 @@ on_flow_sequence_query_tooltip(GtkTreeView * treeview,
 			message = g_strdup(_("Choose log file"));
 		else if (g_strcmp0(error_msg, "") == 0) {
 			gchar * result = NULL;
-			gebr_validator_evaluate(gebr.validator, 
+			gebr_validator_evaluate(gebr.validator,
+			                        NULL,
 						gebr_geoxml_flow_io_get_error(gebr.flow),
 						GEBR_GEOXML_PARAMETER_TYPE_STRING,
 						&result,

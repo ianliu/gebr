@@ -516,7 +516,7 @@ static void __set_type_icon(GebrGuiParameterWidget *parameter_widget)
 	GError *error = NULL;
 
 	value = gebr_geoxml_program_parameter_get_first_value(parameter_widget->program_parameter, FALSE);
-	gebr_validator_evaluate(parameter_widget->validator, value,
+	gebr_validator_evaluate(parameter_widget->validator, NULL, value,
 				parameter_widget->parameter_type,
 				&result, &error);
 

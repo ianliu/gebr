@@ -67,7 +67,7 @@
 	G_STMT_START { \
 	gchar *value = NULL; \
 	GError *error = NULL; \
-	gebr_validator_evaluate(fixture->validator, (expr), \
+	gebr_validator_evaluate(fixture->validator, NULL, (expr), \
 				GEBR_GEOXML_PARAMETER_TYPE_FLOAT, \
 				&value, &error); \
 	g_assert_no_error(error); \
@@ -84,7 +84,7 @@
 	G_STMT_START { \
 	gchar *value = NULL; \
 	GError *error = NULL; \
-	gebr_validator_evaluate(fixture->validator, (expr), \
+	gebr_validator_evaluate(fixture->validator, NULL, (expr), \
 				GEBR_GEOXML_PARAMETER_TYPE_FLOAT, \
 				&value, &error); \
 	g_assert_error(error, domain, code); \
@@ -117,7 +117,7 @@
 	G_STMT_START { \
 	gchar *value = NULL; \
 	GError *error = NULL; \
-	gebr_validator_evaluate(fixture->validator, (expr), \
+	gebr_validator_evaluate(fixture->validator, NULL, (expr), \
 				GEBR_GEOXML_PARAMETER_TYPE_STRING, \
 				&value, &error); \
 	g_assert_no_error(error); \
@@ -504,27 +504,29 @@ void test_gebr_validator_check_using_var(void)
 
 void test_gebr_validator_evaluate(Fixture *fixture, gconstpointer data)
 {
-	fixture_add_loop(fixture);
-
 	/* Tests for mathematical expressions */
 	DEF_FLOAT(fixture->proj, "a", "2");
 	DEF_FLOAT(fixture->proj, "b", "3");
 	DEF_FLOAT(fixture->proj, "c", "a+b");
 	DEF_FLOAT(fixture->proj, "d", "c+a+b+2");
+	DEF_FLOAT(fixture->proj, "e", "1");
 
 	VALIDATE_FLOAT_EXPR("a", "2");
 	VALIDATE_FLOAT_EXPR("b", "3");
 	VALIDATE_FLOAT_EXPR("a+b", "5");
 	VALIDATE_FLOAT_EXPR("a*b", "6");
 	VALIDATE_FLOAT_EXPR("a+b+c", "10");
+	VALIDATE_FLOAT_EXPR("d", "12");
 	VALIDATE_FLOAT_EXPR("a+b+c+d-100", "-78");
 
 	/* Tests for textual expressions */
 	DEF_STRING(fixture->proj, "str42", "the life universe and everything");
+	VALIDATE_STRING_EXPR("str42", "str42");
 	VALIDATE_STRING_EXPR("[str42]", "the life universe and everything");
 	VALIDATE_STRING_EXPR("42: [str42]", "42: the life universe and everything");
 	VALIDATE_STRING_EXPR("[a]: [str42]", "2: the life universe and everything");
 
+	fixture_add_loop(fixture);
 	DEF_FLOAT(fixture->flow, "x", "iter+1");
 	VALIDATE_FLOAT_EXPR("iter+1", "[2, ..., 8]");
 	VALIDATE_FLOAT_EXPR("x+1", "[3, ..., 9]");
@@ -606,6 +608,12 @@ int main(int argc, char *argv[])
 	g_type_init();
 	g_test_init(&argc, &argv, NULL);
 
+	g_test_add_func("/libgebr/validator/simple", test_gebr_validator_simple);
+	g_test_add_func("/libgebr/validator/insert", test_gebr_validator_insert);
+	g_test_add_func("/libgebr/validator/remove", test_gebr_validator_remove);
+	g_test_add_func("/libgebr/validator/rename", test_gebr_validator_rename);
+	g_test_add_func("/libgebr/validator/change", test_gebr_validator_change);
+	g_test_add_func("/libgebr/validator/move", test_gebr_validator_move);
 	g_test_add_func("/libgebr/validator/using_var", test_gebr_validator_check_using_var);
 
 	g_test_add("/libgebr/validator/weight", Fixture, NULL,
@@ -642,13 +650,6 @@ int main(int argc, char *argv[])
 		           fixture_setup,
 		           test_gebr_validator_scope_errors,
 		           fixture_teardown);
-
-	g_test_add_func("/libgebr/validator/simple", test_gebr_validator_simple);
-	g_test_add_func("/libgebr/validator/insert", test_gebr_validator_insert);
-	g_test_add_func("/libgebr/validator/remove", test_gebr_validator_remove);
-	g_test_add_func("/libgebr/validator/rename", test_gebr_validator_rename);
-	g_test_add_func("/libgebr/validator/change", test_gebr_validator_change);
-	g_test_add_func("/libgebr/validator/move", test_gebr_validator_move);
 
 	return g_test_run();
 }
