@@ -169,13 +169,16 @@ get_error_indirect(GebrValidator *self,
 			dep_scope = scope;
 			if (name) {
 				HashData *var = g_hash_table_lookup(self->vars, name);
-				if (var->weight[scope] < dep_data->weight[dep_scope] && !get_param(self, dep_name, ++dep_scope)) {
+				GebrGeoXmlParameter *dep_param = get_param(self, dep_name, dep_scope+1);
+				if (var->weight[scope] < dep_data->weight[dep_scope] && !dep_param) {
 					g_set_error(err, GEBR_IEXPR_ERROR,
 					            GEBR_IEXPR_ERROR_UNDEF_REFERENCE,
 					            _("Variable %s is not yet defined"),
 					            dep_name);
 					return FALSE;
 				}
+				if (dep_param)
+					dep_scope = gebr_geoxml_parameter_get_scope(dep_param);
 			}
 		}
 
@@ -242,6 +245,32 @@ get_param(GebrValidator *self,
 		return data->param[scope];
 	}
 	return NULL;
+}
+
+static GebrGeoXmlParameter *
+get_dep_param(GebrValidator *self,
+              const gchar *my_name,
+              GebrGeoXmlDocumentType my_scope,
+              const gchar *dep_name)
+{
+	HashData *my_data, *dep_data;
+	GebrGeoXmlParameter *dep_param;
+	GebrGeoXmlDocumentType dep_scope;
+
+	dep_data = g_hash_table_lookup(self->vars, dep_name);
+
+	dep_param = get_param(self, dep_name, my_scope);
+	if (!dep_param || !my_name)
+		return dep_param;
+
+	my_data = g_hash_table_lookup(self->vars, my_name);
+	g_return_val_if_fail(my_data != NULL, NULL);
+
+	dep_scope = gebr_geoxml_parameter_get_scope(dep_param);
+	if (my_scope == dep_scope && dep_data->weight[dep_scope] > my_data->weight[my_scope])
+		return get_param(self, dep_name, my_scope+1);
+
+	return dep_param;
 }
 
 static GebrGeoXmlDocumentType
@@ -811,9 +840,8 @@ void gebr_validator_free(GebrValidator *self)
 static GString *
 translate_string_expr(GebrValidator  	*self,
                       const gchar 	*expr,
-                      GebrGeoXmlDocumentType scope,
-                      GList 		 **deps,
-                      GError              **error)
+                      const gchar  	 *my_name,
+                      GebrGeoXmlDocumentType my_scope)
 {
 	gchar *var_name = g_new(gchar, strlen(expr));;
 	GString *str_expr =  g_string_sized_new(128);
@@ -850,7 +878,7 @@ translate_string_expr(GebrValidator  	*self,
 			while (*expr && *expr != ']')
 				var_name[size++] = *expr++;
 			var_name[size] = '\0';
-			GebrGeoXmlParameter *var_param = get_param(self, var_name, scope);
+			GebrGeoXmlParameter *var_param = get_dep_param(self, my_name, my_scope, var_name);
 			GebrGeoXmlDocumentType var_scope = gebr_geoxml_parameter_get_scope(var_param);
 			GebrGeoXmlParameterType var_type = gebr_geoxml_parameter_get_type(var_param);
 			g_string_append_printf(str_expr, var_type == GEBR_GEOXML_PARAMETER_TYPE_STRING ? "str(%s[%d]),\"\\b\"," : "%s,", var_name, var_scope);
@@ -883,23 +911,23 @@ gebr_validator_update_vars(GebrValidator *self,
 	GString *bc_vars =  g_string_sized_new(1024);
 	GString *bc_strings =  g_string_sized_new(4*1024);
 	GebrIExpr *iexpr = get_validator_by_type(self, GEBR_GEOXML_PARAMETER_TYPE_STRING);
-	GebrGeoXmlDocumentType scope = GEBR_GEOXML_DOCUMENT_TYPE_FLOW;
+	GebrGeoXmlDocumentType param_scope = GEBR_GEOXML_DOCUMENT_TYPE_FLOW;
 
 	g_string_append(bc_strings, "define str(n) { if (n==0) \"\"");
 
 	if (param)
-		scope = gebr_geoxml_parameter_get_scope(param);
+		param_scope = gebr_geoxml_parameter_get_scope(param);
 
 	int nth = 1;
-	for (int i = scope; i <= GEBR_GEOXML_DOCUMENT_TYPE_PROJECT; i++) {
-		for (GList *var = self->var_order[i]; var; var = var->next) {
+	for (int scope = param_scope; scope <= GEBR_GEOXML_DOCUMENT_TYPE_PROJECT; scope++) {
+		for (GList *var = self->var_order[scope]; var; var = var->next) {
 			const gchar* name = GET_VAR_NAME(var->data);
 			const gchar* value = GET_VAR_VALUE(var->data);
 			GebrGeoXmlParameterType type = gebr_geoxml_parameter_get_type(var->data);
 
 			if (type == GEBR_GEOXML_PARAMETER_TYPE_STRING) {
-				GString *translate = translate_string_expr(self, value, i, NULL, NULL);
-				g_string_append_printf(bc_vars, "%1$s=%1$s[%2$d]=%3$d;", name, i, nth);
+				GString *translate = translate_string_expr(self, value, name, scope);
+				g_string_append_printf(bc_vars, "%1$s=%1$s[%2$d]=%3$d;", name, scope, nth);
 				g_string_append_printf(bc_strings, " else if (n==%d) %s", nth++, translate->str);
 				g_string_free(translate, TRUE);
 				continue;
@@ -960,6 +988,7 @@ gboolean gebr_validator_evaluate(GebrValidator *self,
 {
 	GebrIExpr *iexpr;
 	GebrGeoXmlDocumentType scope = GEBR_GEOXML_DOCUMENT_TYPE_FLOW;
+	const gchar *name = NULL;
 
 	g_return_val_if_fail(type == GEBR_GEOXML_PARAMETER_TYPE_INT
 			     || type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT
@@ -976,6 +1005,7 @@ gboolean gebr_validator_evaluate(GebrValidator *self,
 		expr = GET_VAR_VALUE(my_param);
 		type = gebr_geoxml_parameter_get_type(my_param);
 		scope = gebr_geoxml_parameter_get_scope(my_param);
+		name = GET_VAR_NAME(my_param);
 	}
 	if (!strlen(expr)) {
 		*value = g_strdup("");
@@ -990,7 +1020,7 @@ gboolean gebr_validator_evaluate(GebrValidator *self,
 
 	if (type == GEBR_GEOXML_PARAMETER_TYPE_STRING) {
 
-		GString *expression = translate_string_expr(self, expr, scope, NULL, NULL);
+		GString *expression = translate_string_expr(self, expr, name, scope);
 		g_string_append(expression, ",\"\\n\"");
 		printf("%s\n", expression->str);
 

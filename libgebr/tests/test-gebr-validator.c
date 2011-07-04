@@ -183,7 +183,7 @@ fixture_add_loop(Fixture *fixture)
 	GebrGeoXmlProgram *loop_prog;
 	GebrGeoXmlParameter *iter_param;
 
-	gebr_geoxml_document_load(&loop, TEST_SRCDIR "/forloop.mnu", FALSE, NULL);
+	gebr_geoxml_document_load(&loop, "libgebr/tests/forloop.mnu", FALSE, NULL);
 	gebr_geoxml_flow_get_program(GEBR_GEOXML_FLOW(loop), (GebrGeoXmlSequence**) &loop_prog, 0);
 	gebr_geoxml_program_set_status(loop_prog, GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED);
 	gebr_geoxml_flow_add_flow(GEBR_GEOXML_FLOW(fixture->flow), GEBR_GEOXML_FLOW(loop));
@@ -538,6 +538,12 @@ void test_gebr_validator_evaluate(Fixture *fixture, gconstpointer data)
 	DEF_STRING(fixture->line, "foo", "foo");
 	DEF_STRING(fixture->flow, "var", "[bar][foo]");
 	VALIDATE_STRING_EXPR("[var]", "FOOBARfoo");
+
+	DEF_STRING(fixture->flow, "foo", "xxx");
+	VALIDATE_STRING_EXPR("[var]", "FOOBARfoo");
+	DEF_STRING(fixture->flow, "xyz", "file.[a]");
+	DEF_FLOAT(fixture->flow, "a", "b");
+//	VALIDATE_STRING_EXPR("[xyz]", "file.2");
 
 	fixture_add_loop(fixture);
 	DEF_FLOAT(fixture->flow, "x", "iter+1");
