@@ -504,9 +504,12 @@ void test_gebr_validator_evaluate(Fixture *fixture, gconstpointer data)
 	/* Tests for textual expressions */
 	DEF_STRING(fixture->proj, "str42", "the life universe and everything");
 	DEF_STRING(fixture->proj, "foo", "FOO");
+	DEF_STRING(fixture->proj, "bar", "[foo]BAR");
 	VALIDATE_STRING_EXPR("str42", "str42");
 	VALIDATE_STRING_EXPR("[str42]", "the life universe and everything");
 	VALIDATE_STRING_EXPR("[str42][foo]", "the life universe and everythingFOO");
+	VALIDATE_STRING_EXPR("str42+[foo]", "str42+FOO");
+	VALIDATE_STRING_EXPR("str42+[bar]", "str42+FOOBAR");
 	VALIDATE_STRING_EXPR("[str42] [foo]", "the life universe and everything FOO");
 	VALIDATE_STRING_EXPR("42: [str42]", "42: the life universe and everything");
 	VALIDATE_STRING_EXPR("[a]: [str42]", "2: the life universe and everything");
