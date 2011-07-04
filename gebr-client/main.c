@@ -36,13 +36,12 @@ int main(int argc, char **argv, char **env)
 	GError *error = NULL;
 	GOptionContext *context;
 
-	gebr_libinit("gebr-client", argv[0]);
+	setlocale(LC_ALL, "");
+	gebr_libinit("gebr-client");
 
 	context = g_option_context_new(_("serveraddress command [args]}"));
-	g_option_context_set_summary(context, _("GeBR commandline client")
-	    );
-	g_option_context_set_description(context, _("a seismic processing environment")
-	    );
+	g_option_context_set_summary(context, _("GeBR commandline client"));
+	g_option_context_set_description(context, _("a seismic processing environment"));
 	g_option_context_add_main_entries(context, entries, NULL);
 	g_option_context_set_ignore_unknown_options(context, FALSE);
 	if (g_option_context_parse(context, &argc, &argv, &error) == FALSE || argv == NULL) {

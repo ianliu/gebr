@@ -42,7 +42,7 @@ int main(int argc, char **argv)
 	GOptionContext *context;
 
 	setlocale (LC_ALL, "");
-	gebr_libinit("libgebr", argv[0]);
+	gebr_libinit("libgebr");
 
 	context = g_option_context_new(NULL);
 	g_option_context_set_summary(context, _("LibGebrComm socket channelling"));

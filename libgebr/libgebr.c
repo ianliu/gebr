@@ -15,16 +15,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <unistd.h>
-#include <stdlib.h>
-#include <libintl.h>
-#include <locale.h>
-#include <string.h>
+#include <glib.h>
+#include <glib/gi18n.h>
 
 #include "libgebr.h"
 #include "defines.h"
 
-void gebr_libinit(const gchar * gettext_package, const gchar * argv0)
+void gebr_libinit(const gchar * gettext_package)
 {
 	g_return_if_fail (gettext_package != NULL);
 
@@ -35,4 +32,6 @@ void gebr_libinit(const gchar * gettext_package, const gchar * argv0)
 	bindtextdomain (gettext_package, PACKAGE_LOCALE_DIR);
 	bind_textdomain_codeset (gettext_package, "UTF-8");
 	textdomain (gettext_package);
+
+	g_debug("LC_ALL=%s %s", setlocale(LC_ALL, NULL), _("Hello, world!"));
 }

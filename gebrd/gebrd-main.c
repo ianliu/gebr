@@ -43,8 +43,10 @@ int main(int argc, char **argv)
 	GError *error = NULL;
 	GOptionContext *context;
 
-	gebr_libinit(GETTEXT_PACKAGE, argv[0]);
+	g_type_init();
+
 	setlocale(LC_ALL, "");
+	gebr_libinit(GETTEXT_PACKAGE);
 
 	context = g_option_context_new(_("GeBR daemon"));
 	g_option_context_set_translation_domain(context, GETTEXT_PACKAGE);
@@ -66,7 +68,6 @@ int main(int argc, char **argv)
 		return 0;
 	}
 
-	g_type_init();
 	gebrd = gebrd_app_new();
 	gebrd->options.foreground = foreground;
 

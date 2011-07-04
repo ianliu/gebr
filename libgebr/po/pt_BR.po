@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libgebr 0.9.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-06-13 15:35-0300\n"
-"PO-Revision-Date: 2011-01-18 11:44-0200\n"
+"POT-Creation-Date: 2011-07-04 14:05-0300\n"
+"PO-Revision-Date: 2011-07-04 14:05-0300\n"
 "Last-Translator: Fabrício Matheus Gonçalves <fmatheus@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
 "MIME-Version: 1.0\n"
@@ -179,25 +179,83 @@ msgstr "Canal criado com sucesso. Encaminhando conexões...\n"
 msgid "Unknown"
 msgstr "Desconhecida"
 
-#: ../gebr-string-expr.c:101 ../gebr-arith-expr.c:161
+#: ../gebr-arith-expr.c:154 ../gebr-arith-expr.c:542
+#, c-format
+msgid "Error while initializing validator, please contact support"
+msgstr ""
+"Erro inicializando validador, por favor, entre em contato com o suporte"
+
+#: ../gebr-arith-expr.c:167 ../gebr-string-expr.c:107
 #, c-format
 msgid "Invalid variable type"
 msgstr "Variável com tipo inválido"
 
-#: ../gebr-string-expr.c:241 ../gebr-arith-expr.c:207 ../gebr-arith-expr.c:292
+#: ../gebr-arith-expr.c:203 ../gebr-arith-expr.c:288 ../geoxml/document.c:1414
+#: ../geoxml/document.c:1519
+#, c-format
+msgid "Invalid name for variable %s"
+msgstr "Nome inválido para variável %s"
+
+#: ../gebr-arith-expr.c:213 ../gebr-arith-expr.c:300 ../gebr-string-expr.c:248
+#: ../gebr-validator.c:174
 #, c-format
 msgid "Variable %s is not yet defined"
 msgstr "Variável %s ainda não foi definida"
 
-#: ../gebr-string-expr.c:257
+#: ../gebr-arith-expr.c:230
+#, c-format
+msgid "Syntax error when assigning `%s'"
+msgstr "Erro de sintaxe ao atribuir '%s'"
+
+#: ../gebr-arith-expr.c:431
+#, c-format
+msgid "Invalid expression"
+msgstr "Expressão inválida"
+
+#: ../gebr-arith-expr.c:449
+#, c-format
+msgid "Expression does not evaluate to a value"
+msgstr "Expressão não resulta em um valor"
+
+#: ../gebr-arith-expr.c:488
+#, c-format
+msgid "Expression returned multiple results"
+msgstr "Expressão resulta em múltiplos valores"
+
+#: ../gebr-arith-expr.c:551
+#, c-format
+msgid "Invalid assignment '='"
+msgstr "Atribuição inválida '='"
+
+#: ../gebr-string-expr.c:264
 #, c-format
 msgid "Syntax error: unmatched right bracket"
 msgstr "Erro de sintaxe: fecha colchete sem par"
 
-#: ../gebr-string-expr.c:280
+#: ../gebr-string-expr.c:287
 #, c-format
 msgid "Syntax error: unmatched left bracket"
 msgstr "Erro de sintaxe: abre colchete sem par"
+
+#: ../gebr-validator.c:150
+#, c-format
+msgid "Variable %s can not reference itself"
+msgstr "Variável %s não pode depender de si mesma"
+
+#: ../gebr-validator.c:160
+#, c-format
+msgid "Variable %s is not defined"
+msgstr "Variável %s não foi definida"
+
+#: ../gebr-validator.c:191
+#, c-format
+msgid "Variable %s is not well defined"
+msgstr "Variável %s não está bem definida"
+
+#: ../gebr-validator.c:199
+#, c-format
+msgid "Variable %s use different type"
+msgstr "Variável %s usa tipos diferentes"
 
 #: ../geoxml-utils/upgrade.c:29 ../geoxml-utils/validate.c:29
 msgid "file1.flw file2.mnu file3.prj file4.lne ..."
@@ -231,12 +289,6 @@ msgstr "%s INVÁLIDO: %s"
 #, c-format
 msgid "%s valid!\n"
 msgstr "%s válido!\n"
-
-#: ../geoxml/document.c:1323 ../geoxml/document.c:1428
-#: ../gebr-arith-expr.c:197 ../gebr-arith-expr.c:282
-#, c-format
-msgid "Invalid name for variable %s"
-msgstr "Nome inválido para variável %s"
 
 #: ../geoxml/error.c:26
 msgid "Success."
@@ -381,7 +433,7 @@ msgstr "O parâmetro de referência faz referência a si próprio."
 msgid "The operation only applies to the first instance of the group."
 msgstr "A operação aplica-se somente à primeira instância do grupo."
 
-#: ../geoxml/flow.c:752
+#: ../geoxml/flow.c:760
 msgid "Loop iteration counter"
 msgstr "Contador de iterações do Loop"
 
@@ -535,39 +587,39 @@ msgstr "   [Instanciável]\n"
 msgid "All Servers"
 msgstr "Todos os Servidores"
 
-#: ../geoxml/parameter.c:299
+#: ../geoxml/parameter.c:301
 msgid "string"
 msgstr "texto"
 
-#: ../geoxml/parameter.c:299
+#: ../geoxml/parameter.c:301
 msgid "integer"
 msgstr "inteiro"
 
-#: ../geoxml/parameter.c:299
+#: ../geoxml/parameter.c:301
 msgid "file"
 msgstr "arquivo"
 
-#: ../geoxml/parameter.c:299
+#: ../geoxml/parameter.c:301
 msgid "flag"
 msgstr "boleano"
 
-#: ../geoxml/parameter.c:300
+#: ../geoxml/parameter.c:302
 msgid "real number"
 msgstr "número real"
 
-#: ../geoxml/parameter.c:300
+#: ../geoxml/parameter.c:302
 msgid "range"
 msgstr "intervalo"
 
-#: ../geoxml/parameter.c:300
+#: ../geoxml/parameter.c:302
 msgid "enum"
 msgstr "enumeração"
 
-#: ../geoxml/parameter.c:301
+#: ../geoxml/parameter.c:303
 msgid "group"
 msgstr "grupo"
 
-#: ../geoxml/parameter.c:301
+#: ../geoxml/parameter.c:303
 msgid "reference"
 msgstr "referência"
 
@@ -728,36 +780,20 @@ msgstr ""
 msgid "All"
 msgstr "Todos"
 
-#: ../gui/gebr-gui-parameter.c:516
-msgid "File path value"
-msgstr "Caminho de arquivo"
-
-#: ../gui/gebr-gui-parameter.c:529
-msgid "Integer value"
-msgstr "Número inteiro"
-
-#: ../gui/gebr-gui-parameter.c:533
-msgid "Real value"
-msgstr "Número real"
-
-#: ../gui/gebr-gui-parameter.c:537
-msgid "Text value"
-msgstr "Texto"
-
-#: ../gui/gebr-gui-parameter.c:816
+#: ../gui/gebr-gui-parameter.c:838
 msgid "Edit list"
 msgstr "Editar lista"
 
-#: ../gui/gebr-gui-parameter.c:1004
+#: ../gui/gebr-gui-parameter.c:1026
 msgid "Insert Variable"
 msgstr "Inserir variável"
 
-#: ../gui/gebr-gui-parameter.c:1505
+#: ../gui/gebr-gui-parameter.c:1526
 #, c-format
 msgid "This group has %d error"
 msgstr "Este grupo tem %d erro"
 
-#: ../gui/gebr-gui-parameter.c:1507
+#: ../gui/gebr-gui-parameter.c:1528
 #, c-format
 msgid "This group has %d errors"
 msgstr "Este grupo tem %d erros"
@@ -792,10 +828,14 @@ msgstr "<valor vazio>"
 msgid "No such file or directory:"
 msgstr "Arquivo ou diretório não encontrado:"
 
-#: ../gui/gebr-gui-validatable-widget.c:42 ../gebr-validator.c:273
+#: ../gui/gebr-gui-validatable-widget.c:42
 #, c-format
 msgid "This parameter is required"
 msgstr "Parâmetro obrigatório"
+
+#: ../libgebr.c:39
+msgid "Hello, world!"
+msgstr "Olá, mundo!"
 
 #: ../validate.c:34
 msgid "File names must be a valid path."
@@ -1017,33 +1057,14 @@ msgstr ""
 "\n"
 " - Existem tabulações"
 
-#: ../gebr-arith-expr.c:148 ../gebr-arith-expr.c:511
-#, c-format
-msgid "Error while initializing validator, please contact support"
-msgstr ""
-"Erro inicializando validador, por favor, entre em contato com o suporte"
+#~ msgid "File path value"
+#~ msgstr "Caminho de arquivo"
 
-#: ../gebr-arith-expr.c:224
-#, c-format
-msgid "Syntax error when assigning `%s'"
-msgstr "Erro de sintaxe ao atribuir '%s'"
+#~ msgid "Integer value"
+#~ msgstr "Número inteiro"
 
-#: ../gebr-arith-expr.c:416
-#, c-format
-msgid "Invalid expression"
-msgstr "Expressão inválida"
+#~ msgid "Real value"
+#~ msgstr "Número real"
 
-#: ../gebr-arith-expr.c:434
-#, c-format
-msgid "Expression does not evaluate to a value"
-msgstr "Expressão não resulta em um valor"
-
-#: ../gebr-arith-expr.c:473
-#, c-format
-msgid "Expression returned multiple results"
-msgstr "Expressão resulta em múltiplos valores"
-
-#: ../gebr-arith-expr.c:520
-#, c-format
-msgid "Invalid assignment '='"
-msgstr "Atribuição inválida '='"
+#~ msgid "Text value"
+#~ msgstr "Texto"

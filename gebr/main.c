@@ -45,7 +45,12 @@ int main(int argc, char **argv, char **env)
 	GError *error = NULL;
 	GOptionContext *context;
 
-	gebr_libinit(GETTEXT_PACKAGE, argv[0]);
+	g_type_init();
+	g_thread_init(NULL);
+
+	setlocale(LC_ALL, "");
+	setlocale(LC_NUMERIC, "C");
+	gebr_libinit(GETTEXT_PACKAGE);
 
 	context = g_option_context_new(_(" - GeBR, a seismic processing environment"));
 	g_option_context_set_summary(context,
@@ -97,10 +102,7 @@ int main(int argc, char **argv, char **env)
 		return 0;
 	}
 
-	g_thread_init(NULL);
 	gtk_init(&argc, &argv);
-	setlocale(LC_ALL, "");
-	setlocale(LC_NUMERIC, "C");
 
 	gebr_gui_setup_theme();
 	gebr_gui_setup_icons();

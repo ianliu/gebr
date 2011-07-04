@@ -28,12 +28,14 @@
 
 int main(int argc, char *argv[])
 {
-	gebr_libinit(GETTEXT_PACKAGE, argv[0]);
-
+	g_type_init();
 	g_thread_init(NULL);
-	gtk_init(&argc, &argv);
+
 	setlocale(LC_ALL, "");
 	setlocale(LC_NUMERIC, "C");
+	gebr_libinit(GETTEXT_PACKAGE);
+
+	gtk_init(&argc, &argv);
 
 	gebr_gui_setup_icons();
 	gebr_gui_setup_theme();

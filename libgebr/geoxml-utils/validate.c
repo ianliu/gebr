@@ -34,7 +34,7 @@ int main(int argc, char **argv)
 	GError *error = NULL;
 	GOptionContext *context;
 
-	gebr_libinit("libgebr", argv[0]);
+	gebr_libinit("libgebr");
 	setlocale(LC_ALL, "");
 
 	context = g_option_context_new(NULL);

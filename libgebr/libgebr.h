@@ -19,12 +19,11 @@
 #define __LIBGEBR_H
 
 #include <locale.h>
-
-#include "defines.h"
-#include "date.h"
-#include "log.h"
-#include "utils.h"
-#include "validate.h"
+#include <defines.h>
+#include <date.h>
+#include <log.h>
+#include <utils.h>
+#include <validate.h>
 
 G_BEGIN_DECLS
 
@@ -33,7 +32,7 @@ G_BEGIN_DECLS
  * If static mode is enabled, then change the current working directory to the binary directory,
  * and prepend it to PATH.
  */
-void gebr_libinit(const gchar * gettext_package, const gchar * argv0);
+void gebr_libinit(const gchar *gettext_package);
 
 G_END_DECLS
 #endif				// __LIBGEBR_H
