@@ -865,8 +865,9 @@ translate_string_expr(GebrValidator  	*self,
 		break;
 	case START:
 		g_string_set_size(str_expr, str_expr->len - 1);
+		break;
 	default:
-		g_warn_if_reached();
+		break;
 	}
 
 	return str_expr;
@@ -880,11 +881,15 @@ gebr_validator_update_vars(GebrValidator *self,
 	GString *bc_vars =  g_string_sized_new(1024);
 	GString *bc_strings =  g_string_sized_new(4*1024);
 	GebrIExpr *iexpr = get_validator_by_type(self, GEBR_GEOXML_PARAMETER_TYPE_STRING);
+	GebrGeoXmlDocumentType scope = GEBR_GEOXML_DOCUMENT_TYPE_FLOW;
 
 	g_string_append(bc_strings, "define str(n) { if (n==-1) \"\"");
 
+	if (param)
+		scope = gebr_geoxml_parameter_get_scope(param);
+
 	int nth = 0;
-	for (int i = GEBR_GEOXML_DOCUMENT_TYPE_FLOW; i <= GEBR_GEOXML_DOCUMENT_TYPE_PROJECT; i++) {
+	for (int i = scope; i <= GEBR_GEOXML_DOCUMENT_TYPE_PROJECT; i++) {
 		for (GList *var = self->var_order[i]; var; var = var->next) {
 			const gchar* name = GET_VAR_NAME(var->data);
 			const gchar* value = GET_VAR_VALUE(var->data);
@@ -1008,6 +1013,9 @@ gboolean gebr_validator_evaluate(GebrValidator *self,
 	} else {
 		gchar *ini_value = NULL;
 		gchar *end_value = NULL;
+
+		if (my_param)
+			expr = GET_VAR_NAME(my_param);
 
 		gebr_iexpr_eval(iexpr, expr, &ini_value, error);
 		gebr_validator_update_vars(self, my_param, TRUE);

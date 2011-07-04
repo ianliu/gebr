@@ -514,6 +514,10 @@ void test_gebr_validator_evaluate(Fixture *fixture, gconstpointer data)
 	VALIDATE_STRING_EXPR("42: [str42]", "42: the life universe and everything");
 	VALIDATE_STRING_EXPR("[a]: [str42]", "2: the life universe and everything");
 
+//	DEF_STRING(fixture->line, "foo", "foo");
+//	DEF_STRING(fixture->flow, "var", "[bar][foo]");
+//	VALIDATE_STRING_EXPR("[var]", "FOOBARfoo");
+
 	fixture_add_loop(fixture);
 	DEF_FLOAT(fixture->flow, "x", "iter+1");
 	VALIDATE_FLOAT_EXPR("iter+1", "[2, ..., 8]");
