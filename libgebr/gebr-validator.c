@@ -824,6 +824,7 @@ gebr_validator_update_vars(GebrValidator *self,
 			const gchar* name = GET_VAR_NAME(var->data);
 			const gchar* value = GET_VAR_VALUE(var->data);
 			GebrGeoXmlParameterType type = gebr_geoxml_parameter_get_type(var->data);
+
 			if (type == GEBR_GEOXML_PARAMETER_TYPE_STRING) {
 				g_string_append_printf(bc_vars, "%s=%d;", name, nth);
 				g_string_append_printf(bc_strings, " else if (n==%d) print \"%s\"", nth++, value);
@@ -860,6 +861,22 @@ gebr_validator_update_vars(GebrValidator *self,
 	g_string_free(bc_strings, TRUE);
 	return bc_vars;
 }
+
+static void
+clean_string(gchar **str)
+{
+	int i, b = 0;
+
+	for (i = 0; (*str)[i+b]; i++) {
+		if ((*str)[i] == '\b')
+			b++;
+		(*str)[i-b] = (*str)[i+b];
+	}
+	if ((*str)[i] == '\b')
+		b+=2;
+	(*str)[i-b] = '\0';
+}
+
 gboolean gebr_validator_evaluate(GebrValidator *self,
                                  GebrGeoXmlParameter *my_param,
                                  const gchar * expr,
@@ -867,7 +884,6 @@ gboolean gebr_validator_evaluate(GebrValidator *self,
                                  gchar **value,
                                  GError **error)
 {
-	gchar *ini = NULL, *end = NULL;
 	GList *vars = NULL;
 	GebrIExpr *iexpr;
 	gboolean use_iter = FALSE;
@@ -928,7 +944,7 @@ gboolean gebr_validator_evaluate(GebrValidator *self,
 				var_name[size] = '\0';
 				GebrGeoXmlParameter *var_param = get_param(self, var_name, GEBR_GEOXML_DOCUMENT_TYPE_FLOW);
 				GebrGeoXmlParameterType var_type = gebr_geoxml_parameter_get_type(var_param);
-				g_string_append_printf(str_expr, var_type == type ? "str(%s)," : "%s,", var_name);
+				g_string_append_printf(str_expr, var_type == type ? "str(%s),\"\\b\"," : "%s,", var_name);
 				state = START;
 				break;
 			} default:
@@ -936,16 +952,20 @@ gboolean gebr_validator_evaluate(GebrValidator *self,
 			}
 			*expr++;
 		}
-		g_string_append(str_expr, state == TEXT ? "0\\n\"" : "\"\\n\"");
+		g_string_append(str_expr, state == TEXT ? "\\n\"" : "\"\\n\"");
 		iexpr = get_validator_by_type(self, GEBR_GEOXML_PARAMETER_TYPE_FLOAT);
 		printf("%s\n", str_expr->str);
+
 		gchar *ini_value = NULL;
 		gchar *end_value = NULL;
+
 		gebr_arith_expr_eval_internal(GEBR_ARITH_EXPR(iexpr), str_expr->str, &ini_value, NULL);
-		ini_value[strlen(ini_value)-1] = '\0';
+		clean_string(&ini_value);
 		gebr_validator_update_vars(self, my_param, TRUE);
+
 		gebr_arith_expr_eval_internal(GEBR_ARITH_EXPR(iexpr), str_expr->str, &end_value, NULL);
-		end_value[strlen(end_value)-1] = '\0';
+		clean_string(&end_value);
+
 		if (g_strcmp0(ini_value, end_value) != 0) {
 			*value = g_strdup_printf("[\"%s\", ..., \"%s\"]", ini_value, end_value);
 			g_free(ini_value);
@@ -956,9 +976,11 @@ gboolean gebr_validator_evaluate(GebrValidator *self,
 	} else {
 		gchar *ini_value = NULL;
 		gchar *end_value = NULL;
+
 		gebr_iexpr_eval(iexpr, expr, &ini_value, error);
 		gebr_validator_update_vars(self, my_param, TRUE);
 		gebr_iexpr_eval(iexpr, expr, &end_value, error);
+
 		if (g_strcmp0(ini_value, end_value) != 0) {
 			*value = g_strdup_printf("[%s, ..., %s]", ini_value, end_value);
 			g_free(ini_value);
