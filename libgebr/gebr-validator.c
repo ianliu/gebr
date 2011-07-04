@@ -889,6 +889,11 @@ gboolean gebr_validator_evaluate(GebrValidator *self,
 	gboolean use_iter = FALSE;
 	GebrGeoXmlParameter *iter_param;
 
+	if (!strlen(expr)) {
+		*value = g_strdup("");
+		return TRUE;
+	}
+
 	g_return_val_if_fail(type == GEBR_GEOXML_PARAMETER_TYPE_INT
 			     || type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT
 			     || type == GEBR_GEOXML_PARAMETER_TYPE_FILE
@@ -952,7 +957,8 @@ gboolean gebr_validator_evaluate(GebrValidator *self,
 			}
 			*expr++;
 		}
-		g_string_append(str_expr, state == TEXT ? "\\n\"" : "\"\\n\"");
+		if (state != INIT)
+			g_string_append(str_expr, state == TEXT ? "\\n\"" : "\"\\n\"");
 		iexpr = get_validator_by_type(self, GEBR_GEOXML_PARAMETER_TYPE_FLOAT);
 		printf("%s\n", str_expr->str);
 
@@ -961,8 +967,8 @@ gboolean gebr_validator_evaluate(GebrValidator *self,
 
 		gebr_arith_expr_eval_internal(GEBR_ARITH_EXPR(iexpr), str_expr->str, &ini_value, NULL);
 		clean_string(&ini_value);
-		gebr_validator_update_vars(self, my_param, TRUE);
 
+		gebr_validator_update_vars(self, my_param, TRUE);
 		gebr_arith_expr_eval_internal(GEBR_ARITH_EXPR(iexpr), str_expr->str, &end_value, NULL);
 		clean_string(&end_value);
 

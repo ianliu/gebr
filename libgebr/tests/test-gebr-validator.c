@@ -482,6 +482,10 @@ void test_gebr_validator_check_using_var(void)
 
 void test_gebr_validator_evaluate(Fixture *fixture, gconstpointer data)
 {
+
+	VALIDATE_STRING_EXPR("", "");
+	VALIDATE_FLOAT_EXPR("", "");
+
 	/* Tests for mathematical expressions */
 	DEF_FLOAT(fixture->proj, "a", "2");
 	DEF_FLOAT(fixture->proj, "b", "3");
@@ -499,8 +503,11 @@ void test_gebr_validator_evaluate(Fixture *fixture, gconstpointer data)
 
 	/* Tests for textual expressions */
 	DEF_STRING(fixture->proj, "str42", "the life universe and everything");
+	DEF_STRING(fixture->proj, "foo", "FOO");
 	VALIDATE_STRING_EXPR("str42", "str42");
 	VALIDATE_STRING_EXPR("[str42]", "the life universe and everything");
+	VALIDATE_STRING_EXPR("[str42][foo]", "the life universe and everythingFOO");
+	VALIDATE_STRING_EXPR("[str42] [foo]", "the life universe and everything FOO");
 	VALIDATE_STRING_EXPR("42: [str42]", "42: the life universe and everything");
 	VALIDATE_STRING_EXPR("[a]: [str42]", "2: the life universe and everything");
 
