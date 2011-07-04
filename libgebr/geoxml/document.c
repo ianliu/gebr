@@ -22,8 +22,10 @@
 #include <errno.h>
 #include <stdarg.h>
 
+#include "../config.h"
+
 #include <glib/gstdio.h>
-#include <glib/gi18n.h>
+#include <glib/gi18n-lib.h>
 #include <gdome.h>
 #include <libxml/parser.h>
 

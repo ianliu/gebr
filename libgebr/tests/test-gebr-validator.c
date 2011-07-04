@@ -16,7 +16,6 @@
  */
 
 #include <glib.h>
-#include <glib/gi18n.h>
 #include <glib-object.h>
 #include <glib/gstdio.h>
 #include <geoxml/geoxml.h>

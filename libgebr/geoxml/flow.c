@@ -15,11 +15,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "../config.h"
+
 #include <regex.h>
 #include <gdome.h>
 #include <string.h>
 #include <stdio.h>
-#include <glib/gi18n.h>
+#include <glib/gi18n-lib.h>
 
 #include "../date.h"
 #include "defines.h"

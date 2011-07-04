@@ -16,7 +16,8 @@
  */
 
 #include <glib.h>
-#include <glib/gi18n.h>
+#include "config.h"
+#include <glib/gi18n-lib.h>
 
 #include "libgebr.h"
 #include "defines.h"
