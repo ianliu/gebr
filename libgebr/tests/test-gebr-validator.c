@@ -543,7 +543,7 @@ void test_gebr_validator_evaluate(Fixture *fixture, gconstpointer data)
 	VALIDATE_STRING_EXPR("[var]", "FOOBARfoo");
 	DEF_STRING(fixture->flow, "xyz", "file.[a]");
 	DEF_FLOAT(fixture->flow, "a", "b");
-//	VALIDATE_STRING_EXPR("[xyz]", "file.2");
+	VALIDATE_STRING_EXPR("[xyz]", "file.2");
 
 	fixture_add_loop(fixture);
 	DEF_FLOAT(fixture->flow, "x", "iter+1");

@@ -875,7 +875,7 @@ translate_string_expr(GebrValidator  	*self,
 			GebrGeoXmlParameter *var_param = get_dep_param(self, my_name, my_scope, var_name);
 			GebrGeoXmlDocumentType var_scope = gebr_geoxml_parameter_get_scope(var_param);
 			GebrGeoXmlParameterType var_type = gebr_geoxml_parameter_get_type(var_param);
-			g_string_append_printf(str_expr, var_type == GEBR_GEOXML_PARAMETER_TYPE_STRING ? "str(%s[%d]),\"\\b\"," : "%s,", var_name, var_scope);
+			g_string_append_printf(str_expr, var_type == GEBR_GEOXML_PARAMETER_TYPE_STRING ? "str(%s[%d]),\"\\b\"," : "%s[%d],", var_name, var_scope);
 			state = START;
 			break;
 		} default:
@@ -901,8 +901,7 @@ static void
 gebr_validator_update_vars(GebrValidator *self,
                            GebrGeoXmlParameter *param, gboolean iter_end)
 {
-	GString *bc_var =  g_string_sized_new(128);
-	GString *bc_vars =  g_string_sized_new(1024);
+	GString *bc_vars =  g_string_sized_new(5*1024);
 	GString *bc_strings =  g_string_sized_new(4*1024);
 	GebrIExpr *iexpr = get_validator_by_type(self, GEBR_GEOXML_PARAMETER_TYPE_STRING);
 	GebrGeoXmlDocumentType param_scope = GEBR_GEOXML_DOCUMENT_TYPE_FLOW;
@@ -912,17 +911,17 @@ gebr_validator_update_vars(GebrValidator *self,
 	if (param)
 		param_scope = gebr_geoxml_parameter_get_scope(param);
 
-	int nth = 1;
-	for (int scope = param_scope; scope <= GEBR_GEOXML_DOCUMENT_TYPE_PROJECT; scope++) {
-		for (GList *var = self->var_order[scope]; var; var = var->next) {
+	int nth = 0;
+	for (int scope = GEBR_GEOXML_DOCUMENT_TYPE_PROJECT; scope >= (int) param_scope; scope--) {
+		for (GList *var = g_list_last(self->var_order[scope]); var; var = var->prev) {
 			const gchar* name = GET_VAR_NAME(var->data);
 			const gchar* value = GET_VAR_VALUE(var->data);
 			GebrGeoXmlParameterType type = gebr_geoxml_parameter_get_type(var->data);
 
 			if (type == GEBR_GEOXML_PARAMETER_TYPE_STRING) {
 				GString *translate = translate_string_expr(self, value, name, scope);
-				g_string_append_printf(bc_vars, "%1$s=%1$s[%2$d]=%3$d;", name, scope, nth);
-				g_string_append_printf(bc_strings, " else if (n==%d) %s", nth++, translate->str);
+				g_string_append_printf(bc_vars, "%1$s=%1$s[%2$d]=%3$d\n", name, scope, ++nth);
+				g_string_append_printf(bc_strings, " else if (n==%d) %s", nth, translate->str);
 				g_string_free(translate, TRUE);
 				continue;
 			}
@@ -932,15 +931,10 @@ gebr_validator_update_vars(GebrValidator *self,
 				//TODO: replace get_iter_bounds
 //				gint n = gebr_geoxml_program_control_get_n(gebr_geoxml_parameter_get_program(var->data), &step, &ini);
 //				g_string_append_printf(bc_var, "iter=iter[0]=%s;iter[1]=%s;", ini, end);
-				g_string_append_printf(bc_var, "iter=%s*%s;", step, n);
+				g_string_append_printf(bc_vars, "iter=iter[0]=%s*%s\n", step, n);
 			} else {
-				g_string_append(bc_var, name);
-				g_string_append(bc_var, "=");
-				g_string_append(bc_var, value);
-				g_string_append(bc_var, ";\n");
+				g_string_append_printf(bc_vars, "%1$s=%1$s[%2$d]=%3$s\n", name, scope, value);
 			}
-			g_string_prepend(bc_vars, bc_var->str);
-			g_string_set_size(bc_var, 0);
 		}
 	}
 
@@ -952,7 +946,6 @@ gebr_validator_update_vars(GebrValidator *self,
 	gebr_arith_expr_eval_internal(GEBR_ARITH_EXPR(iexpr), bc_vars->str, NULL, NULL);
 	gebr_arith_expr_eval_internal(GEBR_ARITH_EXPR(iexpr), bc_strings->str, NULL, NULL);
 
-	g_string_free(bc_var, TRUE);
 	g_string_free(bc_vars, TRUE);
 	g_string_free(bc_strings, TRUE);
 }
