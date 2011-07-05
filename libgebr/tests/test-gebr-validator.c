@@ -183,7 +183,7 @@ fixture_add_loop(Fixture *fixture)
 	GebrGeoXmlProgram *loop_prog;
 	GebrGeoXmlParameter *iter_param;
 
-	gebr_geoxml_document_load(&loop, "libgebr/tests/forloop.mnu", FALSE, NULL);
+	gebr_geoxml_document_load(&loop, TEST_SRCDIR "/forloop.mnu", FALSE, NULL);
 	gebr_geoxml_flow_get_program(GEBR_GEOXML_FLOW(loop), (GebrGeoXmlSequence**) &loop_prog, 0);
 	gebr_geoxml_program_set_status(loop_prog, GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED);
 	gebr_geoxml_flow_add_flow(GEBR_GEOXML_FLOW(fixture->flow), GEBR_GEOXML_FLOW(loop));
@@ -572,8 +572,26 @@ void test_gebr_validator_weight(Fixture *fixture, gconstpointer data)
 	DEF_FLOAT(fixture->flow, "f1", "p1+1");
 	DEF_FLOAT_WITH_ERROR(fixture->flow, "f2", "f1+f3", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_UNDEF_REFERENCE);
 	DEF_FLOAT(fixture->flow, "f3", "p3+1");
+	VALIDATE_FLOAT_EXPR("f3", "4");
 	DEF_FLOAT_WITH_ERROR(fixture->flow, "f4", "f2+1", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_BAD_REFERENCE);
 	VALIDATE_FLOAT_EXPR_WITH_ERROR("f2", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_BAD_REFERENCE);
+	DEF_FLOAT(fixture->flow, "p3", "30");
+	VALIDATE_FLOAT_EXPR("f3", "4");
+	DEF_FLOAT(fixture->line, "p3", "30");
+	VALIDATE_FLOAT_EXPR("f3", "31");
+
+	DEF_FLOAT(fixture->flow, "a", "3");
+	VALIDATE_FLOAT_EXPR("a", "3");
+	DEF_FLOAT(fixture->proj, "a", "1");
+	VALIDATE_FLOAT_EXPR("a", "3");
+	DEF_FLOAT(fixture->flow, "b", "a+1");
+	VALIDATE_FLOAT_EXPR("b", "4");
+	DEF_FLOAT_WITH_ERROR(fixture->line, "a", "1+", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_SYNTAX);
+	VALIDATE_FLOAT_EXPR("a", "3");
+	VALIDATE_STRING_EXPR("[a]", "3");
+	VALIDATE_FLOAT_EXPR("b", "4");
+	VALIDATE_STRING_EXPR("[b]", "4");
+
 }
 
 void test_gebr_validator_scope(Fixture *fixture, gconstpointer data)

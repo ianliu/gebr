@@ -61,6 +61,11 @@ static GebrGeoXmlParameter * get_param		(GebrValidator         *self,
 						 const gchar           *name,
 						 GebrGeoXmlDocumentType scope);
 
+static GebrGeoXmlParameter * get_dep_param      (GebrValidator *self,
+                                                 const gchar *my_name,
+                                                 GebrGeoXmlDocumentType my_scope,
+                                                 const gchar *dep_name);
+
 static GebrGeoXmlDocumentType get_scope		(GebrValidator         *self,
 						 const gchar           *name,
 						 GebrGeoXmlDocumentType scope);
@@ -128,10 +133,10 @@ get_validator_by_type(GebrValidator *self,
 
 static gboolean
 get_error_indirect(GebrValidator *self,
-                   GList *var_names,
-                   const gchar *name,
+                   GList *dep_names,
+                   const gchar *my_name,
                    GebrGeoXmlParameterType my_type,
-                   GebrGeoXmlDocumentType scope,
+                   GebrGeoXmlDocumentType my_scope,
                    GError **err)
 {
 	HashData *dep_data;
@@ -139,13 +144,11 @@ get_error_indirect(GebrValidator *self,
 	GebrGeoXmlParameterType dep_type;
 	GebrGeoXmlDocumentType dep_scope;
 
-//	if (!get_validator_by_type(self, my_type))
-//		return TRUE;
-
-	for (GList *i = var_names; i; i = i->next) {
+	for (GList *i = dep_names; i; i = i->next) {
 		gchar *dep_name = i->data;
+		GebrGeoXmlParameter *dep_param;
 
-		if (g_strcmp0(name, dep_name) == 0) {
+		if (g_strcmp0(my_name, dep_name) == 0) {
 			g_set_error(err, GEBR_IEXPR_ERROR,
 			            GEBR_IEXPR_ERROR_BAD_REFERENCE,
 			            _("Variable %s can not reference itself"),
@@ -154,8 +157,7 @@ get_error_indirect(GebrValidator *self,
 		}
 
 		dep_data = g_hash_table_lookup(self->vars, dep_name);
-
-		if (!dep_data || !get_param(self, dep_name, scope)) {
+		if (!dep_data) {
 			g_set_error(err, GEBR_IEXPR_ERROR,
 			            GEBR_IEXPR_ERROR_UNDEF_REFERENCE,
 			            _("Variable %s is not defined"),
@@ -163,44 +165,36 @@ get_error_indirect(GebrValidator *self,
 			return FALSE;
 		}
 
-		if (!dep_data->param[scope])
-			dep_scope = get_scope(self, dep_name, scope);
-		else {
-			dep_scope = scope;
-			if (name) {
-				HashData *var = g_hash_table_lookup(self->vars, name);
-				GebrGeoXmlParameter *dep_param = get_param(self, dep_name, dep_scope+1);
-				if (var->weight[scope] < dep_data->weight[dep_scope] && !dep_param) {
-					g_set_error(err, GEBR_IEXPR_ERROR,
-					            GEBR_IEXPR_ERROR_UNDEF_REFERENCE,
-					            _("Variable %s is not yet defined"),
-					            dep_name);
-					return FALSE;
-				}
-				if (dep_param)
-					dep_scope = gebr_geoxml_parameter_get_scope(dep_param);
-			}
-		}
-
-		if (!dep_data->error[dep_scope]) {
-			dep_type = gebr_geoxml_parameter_get_type(dep_data->param[dep_scope]);
-			get_error_indirect(self, dep_data->dep[dep_scope], dep_name, dep_type, dep_scope, &error);
-		}
-		else
-			g_propagate_error(&error, g_error_copy(dep_data->error[dep_scope]));
-
-		if (error) {
+		dep_param = get_dep_param(self, my_name, my_scope, dep_name);
+		if (!dep_param) {
 			g_set_error(err, GEBR_IEXPR_ERROR,
-			            GEBR_IEXPR_ERROR_BAD_REFERENCE,
-			            _("Variable %s is not well defined"),
+			            GEBR_IEXPR_ERROR_UNDEF_REFERENCE,
+			            _("Variable %s is yet not defined"),
 			            dep_name);
 			return FALSE;
 		}
-		else if (my_type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT && dep_data->param[dep_scope] &&
-		    gebr_geoxml_parameter_get_type(dep_data->param[dep_scope]) == GEBR_GEOXML_PARAMETER_TYPE_STRING) {
+
+		dep_type = gebr_geoxml_parameter_get_type(dep_param);
+		dep_scope = gebr_geoxml_parameter_get_scope(dep_param);
+
+		if ((my_type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT ||
+				my_type == GEBR_GEOXML_PARAMETER_TYPE_INT)
+				&& dep_type == GEBR_GEOXML_PARAMETER_TYPE_STRING) {
 			g_set_error(err, GEBR_IEXPR_ERROR,
 			            GEBR_IEXPR_ERROR_TYPE_MISMATCH,
 			            _("Variable %s use different type"),
+			            dep_name);
+			return FALSE;
+		}
+
+		if (!dep_data->error[dep_scope]) {
+			get_error_indirect(self, dep_data->dep[dep_scope], dep_name, dep_type, dep_scope, &error);
+		}
+
+		if (dep_data->error[dep_scope] || error) {
+			g_set_error(err, GEBR_IEXPR_ERROR,
+			            GEBR_IEXPR_ERROR_BAD_REFERENCE,
+			            _("Variable %s is not well defined"),
 			            dep_name);
 			return FALSE;
 		}
@@ -903,7 +897,7 @@ translate_string_expr(GebrValidator  	*self,
 	return str_expr;
 }
 
-static GString*
+static void
 gebr_validator_update_vars(GebrValidator *self,
                            GebrGeoXmlParameter *param, gboolean iter_end)
 {
@@ -961,7 +955,6 @@ gebr_validator_update_vars(GebrValidator *self,
 	g_string_free(bc_var, TRUE);
 	g_string_free(bc_vars, TRUE);
 	g_string_free(bc_strings, TRUE);
-	return bc_vars;
 }
 
 static void
@@ -1012,7 +1005,8 @@ gboolean gebr_validator_evaluate(GebrValidator *self,
 		return TRUE;
 	}
 
-	if (!gebr_validator_validate_expr(self, expr, type, error))
+	if ((my_param && !gebr_validator_validate_param(self, my_param, NULL, error)) ||
+			(!gebr_validator_validate_expr(self, expr, type, error)))
 		return FALSE;
 
 	gebr_validator_update_vars(self, my_param, FALSE);
