@@ -797,7 +797,6 @@ void gebr_validator_update(GebrValidator *self)
 	for (int i = GEBR_GEOXML_DOCUMENT_TYPE_PROJECT; i >= GEBR_GEOXML_DOCUMENT_TYPE_FLOW; i--) {
 		if (*(self->docs[i]) == NULL || *(self->docs[i]) == last[i])
 			continue;
-		last[i] = *(self->docs[i]);
 
 		if (i == GEBR_GEOXML_DOCUMENT_TYPE_PROJECT) {
 			g_hash_table_remove_all(self->vars);
@@ -807,9 +806,12 @@ void gebr_validator_update(GebrValidator *self)
 			}
 			last[GEBR_GEOXML_DOCUMENT_TYPE_LINE] = NULL;
 			last[GEBR_GEOXML_DOCUMENT_TYPE_FLOW] = NULL;
-		} else {
-			for (GList *params = self->var_order[i]; params; params = params->next)
-				gebr_validator_remove(self, params->data, NULL, NULL);
+		} else if (last[i]) {
+			seq = gebr_geoxml_document_get_dict_parameter(last[i]);
+			while (seq) {
+				gebr_validator_remove(self, GEBR_GEOXML_PARAMETER(seq), NULL, NULL);
+				gebr_geoxml_sequence_next(&seq);
+			}
 			g_list_free(self->var_order[i]);
 			self->var_order[i] = NULL;
 		}
@@ -819,6 +821,7 @@ void gebr_validator_update(GebrValidator *self)
 			gebr_validator_insert(self, GEBR_GEOXML_PARAMETER(seq), NULL, NULL);
 			gebr_geoxml_sequence_next(&seq);
 		}
+		last[i] = *(self->docs[i]);
 	}
 }
 

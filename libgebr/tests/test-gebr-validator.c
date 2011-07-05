@@ -183,7 +183,7 @@ fixture_add_loop(Fixture *fixture)
 	GebrGeoXmlProgram *loop_prog;
 	GebrGeoXmlParameter *iter_param;
 
-	gebr_geoxml_document_load(&loop, TEST_SRCDIR "/forloop.mnu", FALSE, NULL);
+	gebr_geoxml_document_load(&loop, "libgebr/tests/forloop.mnu", FALSE, NULL);
 	gebr_geoxml_flow_get_program(GEBR_GEOXML_FLOW(loop), (GebrGeoXmlSequence**) &loop_prog, 0);
 	gebr_geoxml_program_set_status(loop_prog, GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED);
 	gebr_geoxml_flow_add_flow(GEBR_GEOXML_FLOW(fixture->flow), GEBR_GEOXML_FLOW(loop));
@@ -640,11 +640,48 @@ void test_gebr_validator_expression_check_using_var(Fixture *fixture, gconstpoin
 							   "a") == FALSE);
 
 }
+void test_gebr_validator_update(Fixture *fixture, gconstpointer data)
+{
+	GebrGeoXmlDocument *flow1 = fixture->flow;
+	GebrGeoXmlDocument *flow2 = GEBR_GEOXML_DOCUMENT(gebr_geoxml_flow_new());
+
+	DEF_FLOAT(fixture->proj, "a", "1");
+	VALIDATE_FLOAT_EXPR("a", "1");
+
+	DEF_STRING(flow1, "a", "A");
+	VALIDATE_FLOAT_EXPR_WITH_ERROR("a", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_TYPE_MISMATCH);
+	DEF_STRING(flow1, "b", "[a]B");
+	VALIDATE_STRING_EXPR("[a]", "A");
+	VALIDATE_STRING_EXPR("[b]", "AB");
+
+	fixture->flow = flow2;
+	gebr_validator_update(fixture->validator);
+	VALIDATE_FLOAT_EXPR("a", "1");
+	VALIDATE_STRING_EXPR_WITH_ERROR("[b]", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_UNDEF_REFERENCE);
+
+	DEF_FLOAT(flow2, "b", "a+1");
+	DEF_FLOAT(flow2, "a", "3");
+	VALIDATE_FLOAT_EXPR("a", "3");
+	VALIDATE_FLOAT_EXPR("b", "2");
+
+	fixture->flow = flow1;
+	gebr_validator_update(fixture->validator);
+	VALIDATE_STRING_EXPR("[b]", "AB");
+
+	fixture->flow = flow2;
+	gebr_validator_update(fixture->validator);
+	VALIDATE_FLOAT_EXPR("b", "2");
+}
 
 int main(int argc, char *argv[])
 {
 	g_type_init();
 	g_test_init(&argc, &argv, NULL);
+
+	g_test_add("/libgebr/validator/update", Fixture, NULL,
+		   fixture_setup,
+		   test_gebr_validator_update,
+		   fixture_teardown);
 
 	g_test_add("/libgebr/validator/simple", Fixture, NULL,
 		   fixture_setup,
