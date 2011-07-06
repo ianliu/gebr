@@ -183,13 +183,12 @@ fixture_add_loop(Fixture *fixture)
 	GebrGeoXmlProgram *loop_prog;
 	GebrGeoXmlParameter *iter_param;
 
-	gebr_geoxml_document_load(&loop, "libgebr/tests/forloop.mnu", FALSE, NULL);
+	gebr_geoxml_document_load(&loop, TEST_SRCDIR "/forloop.mnu", FALSE, NULL);
 	gebr_geoxml_flow_get_program(GEBR_GEOXML_FLOW(loop), (GebrGeoXmlSequence**) &loop_prog, 0);
 	gebr_geoxml_program_set_status(loop_prog, GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED);
+	gebr_geoxml_program_set_n(loop_prog, "1", "1", "7");
 	gebr_geoxml_flow_add_flow(GEBR_GEOXML_FLOW(fixture->flow), GEBR_GEOXML_FLOW(loop));
 	loop_prog = gebr_geoxml_flow_get_control_program(GEBR_GEOXML_FLOW(fixture->flow));
-	gebr_geoxml_program_set_n(loop_prog, "1", "1", "7");
-	gebr_geoxml_flow_update_iter_dict_value(GEBR_GEOXML_FLOW(fixture->flow));
 	seq = gebr_geoxml_document_get_dict_parameter(fixture->flow);
 	iter_param = GEBR_GEOXML_PARAMETER(seq);
 
@@ -214,7 +213,7 @@ void test_gebr_validator_simple(Fixture *fixture, gconstpointer data)
 
 	// Test!
 	VALIDATE_FLOAT_EXPR("x", "10");
-	VALIDATE_FLOAT_EXPR("pi*x", "31.4");
+	VALIDATE_FLOAT_EXPR("pi*x", "31.40");
 	VALIDATE_STRING_EXPR("[pi]", "3.14");
 	VALIDATE_STRING_EXPR("out.[x]", "out.10");
 

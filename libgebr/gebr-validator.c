@@ -32,6 +32,10 @@ typedef struct {
 	GError *error[4];
 } HashData;
 
+
+#define ITER_INI_EXPR ";iter=bc_reset(0);"
+#define ITER_END_EXPR ";iter=bc_reset(1);"
+
 #define GET_VAR_NAME(p) (gebr_geoxml_program_parameter_get_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(p)))
 #define GET_VAR_VALUE(p) (gebr_geoxml_program_parameter_get_first_value(GEBR_GEOXML_PROGRAM_PARAMETER(p), FALSE))
 #define SET_VAR_VALUE(p,v) (gebr_geoxml_program_parameter_set_first_value(GEBR_GEOXML_PROGRAM_PARAMETER(p), FALSE, (v)))
@@ -404,28 +408,18 @@ gebr_validator_change_value_by_name(GebrValidator          *self,
 }
 
 static void
-get_iter_bounds(GebrGeoXmlParameter *iter_param, const gchar **step, const gchar **n)
+get_iter_bounds(GebrGeoXmlParameter *iter_param, const gchar **ini, const gchar **step, const gchar **n)
 {
-//	const gchar *ini;
-//	const gchar *step;
-//	const gchar *n;
 	GebrGeoXmlSequence *seq;
-	GebrGeoXmlProgramParameter *prog;
 
-	prog = GEBR_GEOXML_PROGRAM_PARAMETER(iter_param);
-
-	gebr_geoxml_program_parameter_get_value(prog, FALSE, &seq, 1);
-//	ini = gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(seq));
+	gebr_geoxml_program_parameter_get_value(GEBR_GEOXML_PROGRAM_PARAMETER(iter_param), FALSE, &seq, 1);
+	*ini = gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(seq));
 
 	gebr_geoxml_sequence_next(&seq);
 	*step = gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(seq));
 
 	gebr_geoxml_sequence_next(&seq);
 	*n = gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(seq));
-
-//	*_ini = g_strdup(ini);
-//	*_end = g_strdup_printf("%.10lf", g_strtod(ini,NULL) +
-//				g_strtod(step,NULL)*((gint)g_strtod(n,NULL)-1));
 }
 
 /* Public functions {{{1 */
@@ -902,12 +896,13 @@ translate_string_expr(GebrValidator  	*self,
 
 static void
 gebr_validator_update_vars(GebrValidator *self,
-                           GebrGeoXmlParameter *param, gboolean iter_end)
+                           GebrGeoXmlParameter *param)
 {
-	GString *bc_vars =  g_string_sized_new(5*1024);
-	GString *bc_strings =  g_string_sized_new(4*1024);
+	GString *bc_vars =  g_string_sized_new(1024);
+	GString *bc_strings =  g_string_sized_new(2*1024);
 	GebrIExpr *iexpr = get_validator_by_type(self, GEBR_GEOXML_PARAMETER_TYPE_STRING);
 	GebrGeoXmlDocumentType param_scope = GEBR_GEOXML_DOCUMENT_TYPE_FLOW;
+	const gchar *ini, *step, *n = NULL;
 
 	g_string_append(bc_strings, "define str(n) { if (n==0) \"\"");
 
@@ -915,9 +910,15 @@ gebr_validator_update_vars(GebrValidator *self,
 		param_scope = gebr_geoxml_parameter_get_scope(param);
 
 	int nth = 0;
+	g_string_append(bc_vars, "define bc_reset(iter) {\n");
 	for (int scope = GEBR_GEOXML_DOCUMENT_TYPE_PROJECT; scope >= (int) param_scope; scope--) {
 		for (GList *var = g_list_last(self->var_order[scope]); var; var = var->prev) {
 			const gchar* name = GET_VAR_NAME(var->data);
+
+			HashData *data = g_hash_table_lookup(self->vars, name);
+			if (!data || data->error[scope])
+				continue;
+
 			const gchar* value = GET_VAR_VALUE(var->data);
 			GebrGeoXmlParameterType type = gebr_geoxml_parameter_get_type(var->data);
 
@@ -928,25 +929,27 @@ gebr_validator_update_vars(GebrValidator *self,
 				g_string_free(translate, TRUE);
 				continue;
 			}
-			if (iter_end && g_strcmp0(name, "iter") == 0) {
-				const gchar *step, *n;
-				get_iter_bounds(var->data, &step, &n);
-				//TODO: replace get_iter_bounds
-//				gint n = gebr_geoxml_program_control_get_n(gebr_geoxml_parameter_get_program(var->data), &step, &ini);
-//				g_string_append_printf(bc_var, "iter=iter[0]=%s;iter[1]=%s;", ini, end);
-				g_string_append_printf(bc_vars, "iter=iter[0]=%s*%s\n", step, n);
+			if (g_strcmp0(name, "iter") == 0) {
+				get_iter_bounds(var->data, &ini, &step, &n);
+				g_string_append(bc_vars, "iter=iter[0]=iter(iter)\n");
 			} else {
 				g_string_append_printf(bc_vars, "%1$s=%1$s[%2$d]=%3$s\n", name, scope, value);
 			}
 		}
 	}
+	g_string_append(bc_vars, "return iter }\n");
 
 	g_string_append(bc_strings, " }\n");
 
-	printf("%s\n", bc_vars->str);
+	if (n)
+		g_string_append_printf(bc_vars, "define iter(end){if(end){return iter=iter[0]=(%s)+(%s*(%s-1))}else{return iter=iter[0]=%s}}\n", ini, step, n, ini);
+	else
+		g_string_append(bc_vars, "define iter(end){}\n");
+	g_string_append(bc_vars, ITER_INI_EXPR);
+
+	g_string_append(bc_strings, bc_vars->str);
 	printf("%s\n", bc_strings->str);
 	iexpr = get_validator_by_type(self, GEBR_GEOXML_PARAMETER_TYPE_FLOAT);
-	gebr_arith_expr_eval_internal(GEBR_ARITH_EXPR(iexpr), bc_vars->str, NULL, NULL);
 	gebr_arith_expr_eval_internal(GEBR_ARITH_EXPR(iexpr), bc_strings->str, NULL, NULL);
 
 	g_string_free(bc_vars, TRUE);
@@ -966,6 +969,21 @@ clean_string(gchar **str)
 	if ((*str)[i] == '\b')
 		b+=1;
 	(*str)[i-b] = '\0';
+}
+
+gboolean gebr_validator_use_iter(GebrValidator *self, const gchar *expr, GebrGeoXmlParameterType type) {
+	GList * deps;
+	GebrGeoXmlParameter *iter;
+	HashData *data = g_hash_table_lookup(self->vars, "iter");
+	if (!data || !(iter = data->param[0]))
+		return FALSE;
+	data->param[0] = NULL;
+	deps = gebr_iexpr_extract_vars(get_validator_by_type(self, type), expr);
+	gboolean valid = get_error_indirect(self, deps, NULL, type, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, NULL);
+	data->param[0] = iter;
+	g_list_foreach(deps, (GFunc) g_free, NULL);
+	g_list_free(deps);
+	return !valid;
 }
 
 gboolean gebr_validator_evaluate(GebrValidator *self,
@@ -1005,35 +1023,37 @@ gboolean gebr_validator_evaluate(GebrValidator *self,
 			(!gebr_validator_validate_expr(self, expr, type, error)))
 		return FALSE;
 
-	gebr_validator_update_vars(self, my_param, FALSE);
+	gebr_validator_update_vars(self, my_param);
 	iexpr = get_validator_by_type(self, type);
 
-	if (type == GEBR_GEOXML_PARAMETER_TYPE_STRING) {
+	if (type == GEBR_GEOXML_PARAMETER_TYPE_STRING || type == GEBR_GEOXML_PARAMETER_TYPE_FILE) {
 
 		GString *expression = translate_string_expr(self, expr, name, scope);
 		g_string_append(expression, ",\"\\n\"");
-		printf("%s\n", expression->str);
 
 		iexpr = get_validator_by_type(self, GEBR_GEOXML_PARAMETER_TYPE_FLOAT);
 
 		gchar *ini_value = NULL;
 		gchar *end_value = NULL;
 
-		gebr_arith_expr_eval_internal(GEBR_ARITH_EXPR(iexpr), expression->str, &ini_value, NULL);
+		gebr_arith_expr_eval_internal(GEBR_ARITH_EXPR(iexpr), expression->str, &ini_value, error);
 		clean_string(&ini_value);
 
-		gebr_validator_update_vars(self, my_param, TRUE);
-		gebr_arith_expr_eval_internal(GEBR_ARITH_EXPR(iexpr), expression->str, &end_value, NULL);
-		clean_string(&end_value);
 
-		if (g_strcmp0(ini_value, end_value) != 0) {
-			*value = g_strdup_printf("[\"%s\", ..., \"%s\"]", ini_value, end_value);
-			g_free(ini_value);
-		} else {
+		if (!gebr_validator_use_iter(self, expr, type)) {
 			*value = ini_value;
+			g_string_free(expression, TRUE);
+			return !error;
 		}
-		g_string_free(expression, TRUE);
+
+		gchar *buf = g_strconcat(ITER_END_EXPR, expression->str, ITER_INI_EXPR, NULL);
+		gebr_arith_expr_eval_internal(GEBR_ARITH_EXPR(iexpr), buf, &end_value, error);
+		clean_string(&end_value);
+		*value = g_strdup_printf("[\"%s\", ..., \"%s\"]", ini_value, end_value);
+		g_free(buf);
+		g_free(ini_value);
 		g_free(end_value);
+		g_string_free(expression, TRUE);
 	} else {
 		gchar *ini_value = NULL;
 		gchar *end_value = NULL;
@@ -1041,16 +1061,17 @@ gboolean gebr_validator_evaluate(GebrValidator *self,
 		if (my_param)
 			expr = GET_VAR_NAME(my_param);
 
-		gebr_iexpr_eval(iexpr, expr, &ini_value, error);
-		gebr_validator_update_vars(self, my_param, TRUE);
-		gebr_iexpr_eval(iexpr, expr, &end_value, error);
+		gebr_arith_expr_eval_internal(GEBR_ARITH_EXPR(iexpr), expr, &ini_value, error);
 
-		if (g_strcmp0(ini_value, end_value) != 0) {
-			*value = g_strdup_printf("[%s, ..., %s]", ini_value, end_value);
-			g_free(ini_value);
-		} else {
+		if (!gebr_validator_use_iter(self, expr, type)) {
 			*value = ini_value;
+			return !error;
 		}
+		gchar *buf = g_strconcat(ITER_END_EXPR, expr, ITER_INI_EXPR, NULL);
+		gebr_arith_expr_eval_internal(GEBR_ARITH_EXPR(iexpr), buf, &end_value, error);
+		*value = g_strdup_printf("[%s, ..., %s]", ini_value, end_value);
+		g_free(buf);
+		g_free(ini_value);
 		g_free(end_value);
 	}
 
