@@ -450,23 +450,29 @@ validate_param_and_set_icon_tooltip(struct dict_edit_data *data, GtkTreeIter *it
 	g_free(tooltip);
 }
 
-static void
-validate_dict_iter(struct dict_edit_data *data, GtkTreeIter *iter)
+static void validate_dict_iter(struct dict_edit_data *data, GtkTreeIter *iter)
 {
 	GtkTreeIter it;
-	GtkTreeIter child;
-	gboolean valid = gtk_tree_model_get_iter_first(data->tree_model, &it);
+	GtkTreeIter parent;
+	gboolean valid = TRUE;
+	GebrGeoXmlParameter *param;
 
-	while (valid)
-	{
-		valid = gtk_tree_model_iter_children(data->tree_model, &child, &it);
+	it = *iter;
+	if (!gtk_tree_model_iter_parent(data->tree_model, &parent, &it))
+		g_return_if_reached();
+
+	while (TRUE) {
 		while (valid)
 		{
-			validate_param_and_set_icon_tooltip(data, &child);
-			valid = gtk_tree_model_iter_next(data->tree_model, &child);
+			gtk_tree_model_get(data->tree_model, &it, DICT_EDIT_GEBR_GEOXML_POINTER, &param, -1);
+			validate_param_and_set_icon_tooltip(data, &it);
+			valid = gtk_tree_model_iter_next(data->tree_model, &it);
 		}
 
-		valid = gtk_tree_model_iter_next(data->tree_model, &it);
+		if (!gtk_tree_model_iter_next(data->tree_model, &parent))
+			break;
+
+		valid = gtk_tree_model_iter_children(data->tree_model, &it, &parent);
 	}
 }
 
@@ -1817,6 +1823,7 @@ static gboolean dict_edit_can_reorder(GtkTreeView            *tree_view,
 {
 	gchar *keyword;
 	gboolean is_add;
+	GebrGeoXmlParameter *param;
 
 	if (gebr_gui_gtk_tree_model_iter_equal_to(data->tree_model, iter, position))
 		return FALSE;
@@ -1832,10 +1839,12 @@ static gboolean dict_edit_can_reorder(GtkTreeView            *tree_view,
 		return FALSE;
 
 	gtk_tree_model_get(data->tree_model, iter,
-			   DICT_EDIT_KEYWORD, &keyword, -1);
+			   DICT_EDIT_KEYWORD, &keyword,
+			   DICT_EDIT_GEBR_GEOXML_POINTER, &param,
+			   -1);
 
 	/* Do not allow moving 'iter' variable */
-	if (g_strcmp0(keyword, "iter") == 0) {
+	if (g_strcmp0(keyword, "iter") == 0 || !param) {
 		g_free(keyword);
 		return FALSE;
 	}
