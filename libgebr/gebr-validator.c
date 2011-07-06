@@ -24,11 +24,10 @@ struct _GebrValidator
 };
 
 typedef struct {
+	gchar *name;
 	GebrGeoXmlParameter *param[4];
 	gdouble weight[4];
-	gchar *name;
 	GList *dep[4];
-	GList *antidep;
 	GError *error[4];
 } HashData;
 
@@ -108,10 +107,24 @@ hash_data_free(gpointer p)
 		if (n->error[i])
 			g_error_free(n->error[i]);
 	}
-	g_list_foreach(n->antidep, (GFunc) g_free, NULL);
-	g_list_free(n->antidep);
 	g_free(n->name);
 	g_free(n);
+}
+
+static void
+hash_data_remove(GebrValidator *self,
+		const gchar *name,
+		GebrGeoXmlDocumentType scope)
+{
+	HashData *data;
+
+	data = g_hash_table_lookup(self->vars, name);
+	g_return_if_fail(data != NULL);
+
+	data->param[scope] = NULL;
+
+	if (!get_param(self, name, GEBR_GEOXML_DOCUMENT_TYPE_FLOW))
+		g_hash_table_remove(self->vars, name);
 }
 
 /* Private functions {{{1 */
@@ -290,53 +303,6 @@ get_value(GebrValidator *self,
 	return (param = get_param(self, name, scope)) ? GET_VAR_VALUE(param):NULL;
 }
 
-/* Remove the variable @var_name from antideps of it deps */
-static gboolean
-remove_from_antidep_of_deps(GebrValidator  *self,
-                            GList	  **deps,
-                            const gchar	   *var_name)
-{
-	HashData *dep;
-	GList *node;
-
-	for (; *deps; *deps = (*deps)->next) {
-		gchar *dep_name = (*deps)->data;
-
-		dep = g_hash_table_lookup(self->vars, dep_name);
-		if (dep->antidep) {
-			node = g_list_find_custom(dep->antidep, var_name, (GCompareFunc)g_strcmp0);
-			g_free(node->data);
-			dep->antidep = g_list_delete_link(dep->antidep, node);
-		}
-	}
-
-	g_list_foreach(*deps, (GFunc)g_free, NULL);
-	g_list_free(*deps);
-	return TRUE;
-}
-
-/* Add the variable @var_name to antideps of it deps */
-static void
-add_to_antideps_of_deps(GebrValidator *self,
-                        GList         *deps,
-                        const gchar   *var_name)
-{
-	HashData *dep;
-
-	for (; deps; deps = deps->next) {
-		gchar *dep_name = deps->data;
-
-		dep = g_hash_table_lookup(self->vars, dep_name);
-		if (!dep) {
-			dep = hash_data_new(dep_name);
-			g_hash_table_insert(self->vars, g_strdup(dep_name), dep);
-		}
-
-		if (!g_list_find_custom(dep->antidep, var_name, (GCompareFunc)g_strcmp0))
-			dep->antidep = g_list_prepend(dep->antidep, g_strdup(var_name));
-	}
-}
-
 /* Validate @expression and extract vars on @deps with @error */
 static gboolean
 validate_and_extract_vars(GebrValidator  *self,
@@ -387,11 +353,7 @@ gebr_validator_change_value_by_name(GebrValidator          *self,
 
 	g_return_val_if_fail(data != NULL, FALSE);
 
-	remove_from_antidep_of_deps(self, &data->dep[scope], name);
-
 	valid = validate_and_extract_vars(self, new_value, type, &data->dep[scope], &err);
-
-	add_to_antideps_of_deps (self, data->dep[scope], name);
 
 	if (valid) {
 		set_error(self, name, scope, NULL);
@@ -516,16 +478,8 @@ gebr_validator_remove(GebrValidator       *self,
 	g_return_val_if_fail(data != NULL, FALSE);
 
 	self->var_order[scope] = g_list_remove(self->var_order[scope], data->param[scope]);
-	data->param[scope] = NULL;
 
-	if (!get_value(self, name, scope)) {
-		remove_from_antidep_of_deps(self, &data->dep[scope], name);
-
-		if (data->antidep == NULL) {
-			g_hash_table_remove(self->vars, name);
-			return TRUE;
-		}
-	}
+	hash_data_remove(self, name, scope);
 
 	return TRUE;
 }
@@ -538,12 +492,32 @@ gebr_validator_rename(GebrValidator       *self,
 		      GError             **error)
 {
 	const gchar * name = NULL;
+	HashData *data, *new_data;
+	GebrGeoXmlDocumentType scope;
+
 	name = GET_VAR_NAME(param);
 	g_return_val_if_fail(g_strcmp0(name, new_name) != 0, TRUE);
 
-	g_return_val_if_fail(gebr_validator_remove(self, param, NULL, error), FALSE);
+	scope = gebr_geoxml_parameter_get_scope(param);
+
+	data = g_hash_table_lookup(self->vars, name);
+	g_return_val_if_fail(data != NULL, FALSE);
 	SET_VAR_NAME(param, new_name);
-	gebr_validator_insert(self, param, NULL, error);
+
+	new_data = g_hash_table_lookup(self->vars, new_name);
+	if (!new_data) {
+		new_data = hash_data_new_from_xml(param);
+		g_hash_table_insert(self->vars, g_strdup(new_name), new_data);
+	} else {
+		g_return_val_if_fail(new_data->param[scope] == NULL, FALSE);
+		new_data->param[scope] = data->param[scope];
+	}
+
+	new_data->weight[scope] = data->weight[scope];
+	new_data->dep[scope] = data->dep[scope];
+	new_data->error[scope] = data->error[scope];
+
+	hash_data_remove(self, name, scope);
 
 	return TRUE;
 }
@@ -1054,7 +1028,7 @@ gboolean gebr_validator_evaluate(GebrValidator *self,
 		if (!gebr_validator_use_iter(self, expr, type)) {
 			*value = ini_value;
 			g_string_free(expression, TRUE);
-			return !error;
+			return !(*error);
 		}
 
 		gchar *buf = g_strconcat(ITER_END_EXPR, expression->str, ITER_INI_EXPR, NULL);
@@ -1076,7 +1050,7 @@ gboolean gebr_validator_evaluate(GebrValidator *self,
 
 		if (!gebr_validator_use_iter(self, expr, type)) {
 			*value = ini_value;
-			return !error;
+			return !(*error);
 		}
 		gchar *buf = g_strconcat(ITER_END_EXPR, expr, ITER_INI_EXPR, NULL);
 		gebr_arith_expr_eval_internal(GEBR_ARITH_EXPR(iexpr), buf, &end_value, error);
@@ -1086,5 +1060,5 @@ gboolean gebr_validator_evaluate(GebrValidator *self,
 		g_free(end_value);
 	}
 
-	return !error;
+	return !(*error);
 }
