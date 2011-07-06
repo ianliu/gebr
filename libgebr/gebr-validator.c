@@ -520,12 +520,13 @@ gebr_validator_change_value(GebrValidator       *self,
 }
 
 gboolean
-gebr_validator_move(GebrValidator        *self,
-		    GebrGeoXmlParameter  *source,
-		    GebrGeoXmlParameter  *pivot,
-		    GebrGeoXmlParameter **copy,
-		    GList               **affected,
-		    GError              **error)
+gebr_validator_move(GebrValidator         *self,
+		    GebrGeoXmlParameter   *source,
+		    GebrGeoXmlParameter   *pivot,
+		    GebrGeoXmlDocumentType pivot_scope,
+		    GebrGeoXmlParameter  **copy,
+		    GList                **affected,
+		    GError               **error)
 {
 	const gchar *name;
 	const gchar *value;
@@ -541,7 +542,7 @@ gebr_validator_move(GebrValidator        *self,
 
 	value = GET_VAR_VALUE(source);
 	t1 = gebr_geoxml_parameter_get_scope(source);
-	t2 = pivot? gebr_geoxml_parameter_get_scope(pivot):t1;
+	t2 = pivot_scope;
 	type = gebr_geoxml_parameter_get_type(source);
 
 	g_assert(data->param[t1] == source);
@@ -558,7 +559,7 @@ gebr_validator_move(GebrValidator        *self,
 			return FALSE;
 		} else {
 			GebrGeoXmlDocument *doc;
-			doc = gebr_geoxml_object_get_owner_document(GEBR_GEOXML_OBJECT(pivot));
+			doc = *self->docs[pivot_scope];
 			new_param = gebr_geoxml_document_set_dict_keyword(doc, type, name, value);
 			gebr_validator_insert(self, new_param, NULL, &err1);
 		}
@@ -1048,4 +1049,19 @@ gboolean gebr_validator_evaluate(GebrValidator *self,
 	}
 
 	return !(*error);
+}
+
+gboolean
+gebr_validator_is_var_in_scope(GebrValidator *self,
+			       const gchar *name,
+			       GebrGeoXmlDocumentType scope)
+{
+	HashData *data;
+
+	data = g_hash_table_lookup(self->vars, name);
+
+	if (!data)
+		return FALSE;
+
+	return data->param[scope] != NULL;
 }

@@ -1446,6 +1446,7 @@ static gboolean dict_edit_check_duplicate_keyword(struct dict_edit_data *data, G
 	GebrGeoXmlDocument *document;
 	GebrGeoXmlSequence *i_parameter;
 
+	g_debug("Check duplicate");
 	document = gebr_geoxml_object_get_owner_document(GEBR_GEOXML_OBJECT(parameter));
 	i_parameter = gebr_geoxml_parameters_get_first_parameter(gebr_geoxml_document_get_dict_parameters(document));
 	for (; i_parameter != NULL; gebr_geoxml_sequence_next(&i_parameter)) {
@@ -1791,10 +1792,12 @@ static gboolean dict_edit_reorder(GtkTreeView            *tree_view,
 
 	GebrGeoXmlSequence *source;
 	GebrGeoXmlParameter *moved;
+	GebrGeoXmlDocumentType pivot_scope;
 
+	pivot_scope = gebr_geoxml_document_get_type(document);
 	gtk_tree_model_get(data->tree_model, iter, DICT_EDIT_GEBR_GEOXML_POINTER, &source, -1);
 	gtk_tree_iter_free((GtkTreeIter*)gebr_geoxml_object_get_user_data(GEBR_GEOXML_OBJECT(source)));
-	gebr_validator_move(gebr.validator, GEBR_GEOXML_PARAMETER(source), GEBR_GEOXML_PARAMETER(pivot), &moved, NULL, NULL);
+	gebr_validator_move(gebr.validator, GEBR_GEOXML_PARAMETER(source), GEBR_GEOXML_PARAMETER(pivot), pivot_scope, &moved, NULL, NULL);
 
 	gebr_geoxml_object_set_user_data(GEBR_GEOXML_OBJECT(moved), gtk_tree_iter_copy(&newiter));
 	gebr_gui_gtk_tree_model_iter_copy_values(data->tree_model, &newiter, iter);
@@ -1845,6 +1848,29 @@ static gboolean dict_edit_can_reorder(GtkTreeView            *tree_view,
 
 	/* Do not allow moving 'iter' variable */
 	if (g_strcmp0(keyword, "iter") == 0 || !param) {
+		g_free(keyword);
+		return FALSE;
+	}
+
+	GtkTreeIter parent;
+	GebrGeoXmlDocumentType dest_scope;
+	GebrGeoXmlDocumentType orig_scope;
+
+	orig_scope = gebr_geoxml_parameter_get_scope(param);
+
+	if (!gtk_tree_model_iter_parent(data->tree_model, &parent, position))
+		parent = *position;
+
+	GtkTreePath *parent_path = gtk_tree_model_get_path(data->tree_model, &parent);
+	switch (gtk_tree_path_get_indices(parent_path)[0]) {
+	case 0: dest_scope = GEBR_GEOXML_DOCUMENT_TYPE_PROJECT; break;
+	case 1: dest_scope = GEBR_GEOXML_DOCUMENT_TYPE_LINE; break;
+	case 2: dest_scope = GEBR_GEOXML_DOCUMENT_TYPE_FLOW; break;
+	default: g_return_val_if_reached(FALSE);
+	}
+	gtk_tree_path_free(parent_path);
+
+	if (dest_scope != orig_scope && gebr_validator_is_var_in_scope(gebr.validator, keyword, dest_scope)) {
 		g_free(keyword);
 		return FALSE;
 	}
