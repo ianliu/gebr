@@ -66,14 +66,6 @@ static GebrGeoXmlParameter * get_dep_param      (GebrValidator *self,
                                                  GebrGeoXmlDocumentType my_scope,
                                                  const gchar *dep_name);
 
-static GebrGeoXmlDocumentType get_scope		(GebrValidator         *self,
-						 const gchar           *name,
-						 GebrGeoXmlDocumentType scope);
-
-static const gchar *	get_value		(GebrValidator         *self,
-						 const gchar           *name,
-						 GebrGeoXmlDocumentType scope);
-
 static gdouble 		get_weight		(GebrValidator *self,
                		          		 GebrGeoXmlParameter *param);
 
@@ -86,14 +78,6 @@ hash_data_new_from_xml(GebrGeoXmlParameter *param)
 	type = gebr_geoxml_parameter_get_scope(param);
 	n->param[type] = param;
 	n->name = g_strdup(GET_VAR_NAME(param));
-	return n;
-}
-
-static HashData *
-hash_data_new(const gchar *name)
-{
-	HashData *n = g_new0(HashData, 1);
-	n->name = g_strdup(name);
 	return n;
 }
 
@@ -281,28 +265,6 @@ get_dep_param(GebrValidator *self,
 	return dep_param;
 }
 
-static GebrGeoXmlDocumentType
-get_scope(GebrValidator *self, const gchar *name, GebrGeoXmlDocumentType scope)
-{
-	GebrGeoXmlParameter *param;
-
-	param = get_param(self, name, scope);
-
-	if (param == NULL)
-		return GEBR_GEOXML_DOCUMENT_TYPE_UNKNOWN;
-
-	return gebr_geoxml_parameter_get_scope(param);
-}
-
-static const gchar *
-get_value(GebrValidator *self,
-	  const gchar *name,
-	  GebrGeoXmlDocumentType scope)
-{
-	GebrGeoXmlParameter *param;
-	return (param = get_param(self, name, scope)) ? GET_VAR_VALUE(param):NULL;
-}
-
 /* Validate @expression and extract vars on @deps with @error */
 static gboolean
 validate_and_extract_vars(GebrValidator  *self,
@@ -316,7 +278,7 @@ validate_and_extract_vars(GebrValidator  *self,
 
 	iexpr = get_validator_by_type(self, type);
 
-	if (!iexpr) {
+	if (!iexpr || !*expression) {
 		*deps = NULL;
 		return TRUE;
 	}
@@ -533,10 +495,21 @@ gebr_validator_change_value(GebrValidator       *self,
 	const gchar *name;
 	GebrGeoXmlDocumentType scope;
 	GebrGeoXmlParameterType type;
+	GError *err = NULL;
 
 	name = GET_VAR_NAME(param);
 	scope = gebr_geoxml_parameter_get_scope(param);
 	type = gebr_geoxml_parameter_get_type(param);
+
+	if (gebr_geoxml_program_parameter_get_required(GEBR_GEOXML_PROGRAM_PARAMETER(param)) && !*new_value) {
+		g_set_error(&err,
+		            GEBR_IEXPR_ERROR,
+		            GEBR_IEXPR_ERROR_EMPTY_EXPR,
+		            _("This parameter is required"));
+		set_error(self, name, scope, err);
+		g_propagate_error(error, err);
+		return FALSE;
+	}
 
 	retval = gebr_validator_change_value_by_name(self, name, scope, type,
 						     new_value, affected, error);
@@ -689,14 +662,26 @@ gebr_validator_validate_param(GebrValidator       *self,
 {
 	const gchar *value;
 	GebrGeoXmlParameterType type;
-
-	/* If this is a dictionary parameter, we can validate
-	 * itself and return. Otherwise we need to validate all
-	 * variables from its value.
-	 */
+	GError *error = NULL;
 
 	type = gebr_geoxml_parameter_get_type(param);
+	value = GET_VAR_VALUE(param);
 
+	if (!*value) {
+		if (gebr_geoxml_program_parameter_get_required(GEBR_GEOXML_PROGRAM_PARAMETER(param))) {
+			g_set_error(&error,
+			            GEBR_IEXPR_ERROR,
+			            GEBR_IEXPR_ERROR_EMPTY_EXPR,
+			            _("This parameter is required"));
+			if (gebr_geoxml_parameter_is_dict_param(param))
+				set_error(self, GET_VAR_NAME(param), gebr_geoxml_parameter_get_scope(param), error);
+			g_propagate_error(err, error);
+			return FALSE;
+		}
+		return TRUE;
+	}
+
+	// For dictionary we have cached errors, not cached yet for programs
 	if (gebr_geoxml_parameter_is_dict_param(param)) {
 		HashData *data;
 		const gchar *name;
@@ -716,8 +701,6 @@ gebr_validator_validate_param(GebrValidator       *self,
 
 		return TRUE;
 	}
-
-	value = GET_VAR_VALUE(param);
 
 	if (validated)
 		*validated = g_strdup(value);
@@ -905,6 +888,9 @@ gebr_validator_update_vars(GebrValidator *self,
 				continue;
 
 			const gchar* value = GET_VAR_VALUE(var->data);
+			if (!strlen(value))
+				continue;
+
 			GebrGeoXmlParameterType type = gebr_geoxml_parameter_get_type(var->data);
 
 			if (type == GEBR_GEOXML_PARAMETER_TYPE_STRING) {
@@ -999,14 +985,15 @@ gboolean gebr_validator_evaluate(GebrValidator *self,
 		scope = gebr_geoxml_parameter_get_scope(my_param);
 		name = GET_VAR_NAME(my_param);
 	}
-	if (!strlen(expr)) {
-		*value = g_strdup("");
-		return TRUE;
-	}
 
 	if ((my_param && !gebr_validator_validate_param(self, my_param, NULL, error)) ||
 			(!gebr_validator_validate_expr(self, expr, type, error)))
 		return FALSE;
+
+	if (!strlen(expr)) {
+		*value = g_strdup("");
+		return TRUE;
+	}
 
 	gebr_validator_update_vars(self, my_param);
 	iexpr = get_validator_by_type(self, type);
