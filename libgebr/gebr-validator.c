@@ -474,9 +474,10 @@ gebr_validator_insert(GebrValidator       *self,
 		      GError             **error)
 {
 	const gchar *name;
+	GebrGeoXmlSequence *prev_param;
 	GebrGeoXmlDocumentType scope = gebr_geoxml_parameter_get_scope(param);
 	HashData *data;
-	GList *before;
+	GList *pivot;
 
 	name = GET_VAR_NAME(param);
 	g_return_val_if_fail(name != NULL && strlen(name), FALSE);
@@ -489,9 +490,11 @@ gebr_validator_insert(GebrValidator       *self,
 		if (!data->param[scope])
 			data->param[scope] = param;
 
-	before = g_list_first(self->var_order[scope]);
-	self->var_order[scope] = g_list_prepend(self->var_order[scope], param);
-	data->weight[scope] = compute_weight(self, before, NULL);
+	prev_param = GEBR_GEOXML_SEQUENCE(param);
+	gebr_geoxml_sequence_previous(&prev_param);
+	pivot = g_list_find(self->var_order[scope], prev_param);
+	self->var_order[scope] = g_list_insert_before(self->var_order[scope], pivot, param);
+	data->weight[scope] = compute_weight(self, pivot, pivot?pivot->prev->prev:NULL);
 
 	return gebr_validator_change_value(self, param, GET_VAR_VALUE(param), affected, error);
 }
@@ -622,6 +625,9 @@ gebr_validator_move(GebrValidator        *self,
 
 	gebr_geoxml_sequence_move_after(GEBR_GEOXML_SEQUENCE(new_param),
 					GEBR_GEOXML_SEQUENCE(pivot));
+
+	if (!gebr_validator_insert(self, new_param, NULL, error))
+		return FALSE;
 
 	*copy = new_param;
 
