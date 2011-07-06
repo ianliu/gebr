@@ -1797,8 +1797,13 @@ static gboolean dict_edit_reorder(GtkTreeView            *tree_view,
 
 	gtk_tree_store_remove(GTK_TREE_STORE(data->tree_model), iter);
 
-	//if (gtk_tree_model_get_iter(data->tree_model, &newiter, path_a))
-	//	validate_dict_iter(data, &newiter);
+	GtkTreePath *path_a = gtk_tree_model_get_path(data->tree_model, iter);
+	GtkTreePath *path_b = gtk_tree_model_get_path(data->tree_model, &newiter);
+
+	if (gtk_tree_path_compare(path_a, path_b) == -1)
+		validate_dict_iter(data, iter);
+	else
+		validate_dict_iter(data, &newiter);
 
 	g_free(keyword);
 	return TRUE;
