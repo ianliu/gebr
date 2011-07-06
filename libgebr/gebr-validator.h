@@ -107,14 +107,20 @@ gboolean gebr_validator_change_value(GebrValidator       *self,
 /**
  * gebr_validator_move:
  * @validator: A #GebrValidator
- * @param: The variable to operate on
+ * @source: The variable to operate on
  * @pivot: The pivot for the operation, or %NULL to append
+ * @copy: The return location for the new parameter
  * @affected: The #GebrGeoXmlParameter's affected by this operation
+ * @error: Return location for error
+ *
+ * Returns: %TRUE if the move was successfull, %FALSE otherwise.
  */
-GebrGeoXmlParameter* gebr_validator_move(GebrValidator       *self,
-                                         GebrGeoXmlParameter *key,
-                                         GebrGeoXmlParameter *pivot,
-                                         GList              **affected);
+gboolean gebr_validator_move(GebrValidator        *self,
+			     GebrGeoXmlParameter  *source,
+			     GebrGeoXmlParameter  *pivot,
+			     GebrGeoXmlParameter **copy,
+			     GList               **affected,
+			     GError              **error);
 
 /**
  * gebr_validator_check_using_var:

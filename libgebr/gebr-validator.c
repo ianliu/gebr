@@ -42,11 +42,8 @@ typedef struct {
 #define SET_VAR_NAME(p,n) (gebr_geoxml_program_parameter_set_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(p), (n)))
 
 #define GET_VAR_DATA(param, data) \
-	G_STMT_START { \
-		data = g_hash_table_lookup(self->vars, GET_VAR_NAME(param)); \
-		g_return_val_if_fail(data != NULL, FALSE); \
-	} G_STMT_END
-
+	data = g_hash_table_lookup(self->vars, GET_VAR_NAME(param)); \
+	g_return_val_if_fail(data != NULL, FALSE);
 
 /* Prototypes {{{1 */
 static void		set_error		(GebrValidator         *self,
@@ -572,11 +569,13 @@ gebr_validator_change_value(GebrValidator       *self,
 	return retval;
 }
 
-GebrGeoXmlParameter*
-gebr_validator_move(GebrValidator       *self,
-		    GebrGeoXmlParameter *param,
-		    GebrGeoXmlParameter *pivot,
-		    GList              **affected)
+gboolean
+gebr_validator_move(GebrValidator        *self,
+		    GebrGeoXmlParameter  *source,
+		    GebrGeoXmlParameter  *pivot,
+		    GebrGeoXmlParameter **copy,
+		    GList               **affected,
+		    GError              **error)
 {
 	const gchar *name;
 	const gchar *value;
@@ -585,42 +584,48 @@ gebr_validator_move(GebrValidator       *self,
 	GebrGeoXmlParameterType type;
 	GebrGeoXmlDocumentType t1, t2;
 
-	name = GET_VAR_NAME(param);
+	name = GET_VAR_NAME(source);
 	data = g_hash_table_lookup(self->vars, name);
 
-	g_return_val_if_fail(data != NULL, NULL);
+	g_return_val_if_fail(data != NULL, FALSE);
 
-	value = GET_VAR_VALUE(param);
-	t1 = gebr_geoxml_parameter_get_scope(param);
+	value = GET_VAR_VALUE(source);
+	t1 = gebr_geoxml_parameter_get_scope(source);
 	t2 = gebr_geoxml_parameter_get_scope(pivot);
-	type = gebr_geoxml_parameter_get_type(param);
+	type = gebr_geoxml_parameter_get_type(source);
 
-	g_assert(data->param[t1] == param);
+	g_assert(data->param[t1] == source);
 
-	GList *aff1 = NULL;
-	GList *aff2 = NULL;
 	GError *err1 = NULL;
 	GError *err2 = NULL;
 
 	if (t1 != t2) {
 		if (data->param[t2]) {
-			gebr_validator_change_value(self, data->param[t2],
-						    value, &aff1, &err1);
-			new_param = data->param[t2];
+			g_set_error(error, GEBR_IEXPR_ERROR,
+				    GEBR_IEXPR_ERROR_BAD_MOVE,
+				    _("Variable %s already exists in that scope"),
+				    name);
+			return FALSE;
 		} else {
 			GebrGeoXmlDocument *doc;
 			doc = gebr_geoxml_object_get_owner_document(GEBR_GEOXML_OBJECT(pivot));
 			new_param = gebr_geoxml_document_set_dict_keyword(doc, type, name, value);
-			gebr_validator_insert(self, new_param, &aff1, &err1);
+			gebr_validator_insert(self, new_param, NULL, &err1);
 		}
 	} else
-		new_param = param;
+		new_param = source;
 
-	gebr_validator_remove(self, param, &aff2, &err2);
+	gebr_validator_remove(self, source, NULL, &err2);
+
+	if (t1 != t2)
+		gebr_geoxml_sequence_remove(GEBR_GEOXML_SEQUENCE(source));
+
 	gebr_geoxml_sequence_move_after(GEBR_GEOXML_SEQUENCE(new_param),
 					GEBR_GEOXML_SEQUENCE(pivot));
 
-	return new_param;
+	*copy = new_param;
+
+	return TRUE;
 }
 
 gboolean
@@ -867,7 +872,7 @@ translate_string_expr(GebrValidator  	*self,
 		case VAR: {
 			int size = 0;
 			while (*expr && *expr != ']')
-				var_name[size++] = *expr++;
+				var_name[size++] = *(expr++);
 			var_name[size] = '\0';
 			GebrGeoXmlParameter *var_param = get_dep_param(self, my_name, my_scope, var_name);
 			GebrGeoXmlDocumentType var_scope = gebr_geoxml_parameter_get_scope(var_param);
@@ -878,7 +883,7 @@ translate_string_expr(GebrValidator  	*self,
 		} default:
 			g_warn_if_reached();
 		}
-		*expr++;
+		expr++;
 	}
 	switch (state) {
 	case TEXT:

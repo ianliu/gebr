@@ -1710,16 +1710,8 @@ static gboolean dict_edit_reorder(GtkTreeView            *tree_view,
 	GtkTreeIter parent;
 	GtkTreeIter newiter;
 	GtkTreePath *parent_path;
-	GtkTreePath *path_a;
-	GtkTreePath *path_b;
 	GebrGeoXmlDocument *document;
-	GebrGeoXmlSequence *source;
 	GebrGeoXmlSequence *pivot = NULL;
-	GebrGeoXmlParameterType type;
-	const gchar *varname;
-	const gchar *value;
-	const gchar *comment;
-	GList *affected;
 
 	gtk_tree_model_get(data->tree_model, position,
 			   DICT_EDIT_KEYWORD, &keyword,
@@ -1783,47 +1775,31 @@ static gboolean dict_edit_reorder(GtkTreeView            *tree_view,
 	}
 
 	parent_path = gtk_tree_model_get_path(data->tree_model, &parent);
-
 	switch (gtk_tree_path_get_indices(parent_path)[0]) {
 	case 0: document = GEBR_GEOXML_DOCUMENT(gebr.project); break;
 	case 1: document = GEBR_GEOXML_DOCUMENT(gebr.line); break;
 	case 2: document = GEBR_GEOXML_DOCUMENT(gebr.flow); break;
 	default: g_return_val_if_reached(FALSE);
 	}
-
 	gtk_tree_path_free(parent_path);
-	gtk_tree_model_get(data->tree_model, iter, DICT_EDIT_GEBR_GEOXML_POINTER, &source, -1);
-	type = gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(source));
-	varname = gebr_geoxml_program_parameter_get_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(source));
-	value = gebr_geoxml_program_parameter_get_first_value(GEBR_GEOXML_PROGRAM_PARAMETER(source), FALSE);
-	comment = gebr_geoxml_parameter_get_label(GEBR_GEOXML_PARAMETER(source));
-	gtk_tree_iter_free((GtkTreeIter*)gebr_geoxml_object_get_user_data(GEBR_GEOXML_OBJECT(source)));
-	gebr_geoxml_sequence_remove(source);
 
-	// 'document' should refer to pivot's document, so we can use move_after function!
-	source = GEBR_GEOXML_SEQUENCE(gebr_geoxml_document_set_dict_keyword(document, type, varname, value));
-	gebr_geoxml_parameter_set_label(GEBR_GEOXML_PARAMETER(source), comment);
-	gebr_geoxml_sequence_move_after(source, pivot);
+	GebrGeoXmlSequence *source;
+	GebrGeoXmlParameter *moved;
+
+	gtk_tree_model_get(data->tree_model, iter, DICT_EDIT_GEBR_GEOXML_POINTER, &source, -1);
+	gtk_tree_iter_free((GtkTreeIter*)gebr_geoxml_object_get_user_data(GEBR_GEOXML_OBJECT(source)));
+	gebr_validator_move(gebr.validator, GEBR_GEOXML_PARAMETER(source), GEBR_GEOXML_PARAMETER(pivot), &moved, NULL, NULL);
+
+	gebr_geoxml_object_set_user_data(GEBR_GEOXML_OBJECT(moved), gtk_tree_iter_copy(&newiter));
 	gebr_gui_gtk_tree_model_iter_copy_values(data->tree_model, &newiter, iter);
 	gtk_tree_store_set(GTK_TREE_STORE(data->tree_model), &newiter,
-			   DICT_EDIT_GEBR_GEOXML_POINTER, source, -1);
-	gebr_geoxml_object_set_user_data(GEBR_GEOXML_OBJECT(source), gtk_tree_iter_copy(&newiter));
-
-	path_a = gtk_tree_model_get_path(data->tree_model, iter);
-	path_b = gtk_tree_model_get_path(data->tree_model, &newiter);
-	if (gtk_tree_path_compare(path_a, path_b) == 1) {
-		gtk_tree_path_free(path_a);
-		path_a = path_b;
-	} else
-		gtk_tree_path_free(path_b);
+			   DICT_EDIT_GEBR_GEOXML_POINTER, moved, -1);
 
 	gtk_tree_store_remove(GTK_TREE_STORE(data->tree_model), iter);
 
-	if (gtk_tree_model_get_iter(data->tree_model, &newiter, path_a))
-		validate_dict_iter(data, &newiter);
+	//if (gtk_tree_model_get_iter(data->tree_model, &newiter, path_a))
+	//	validate_dict_iter(data, &newiter);
 
-	gebr_validator_move(gebr.validator, GEBR_GEOXML_PARAMETER(source), GEBR_GEOXML_PARAMETER(pivot), &affected);
-	gtk_tree_path_free(path_a);
 	g_free(keyword);
 	return TRUE;
 }
