@@ -768,7 +768,7 @@ void gebr_validator_update(GebrValidator *self)
 	GebrGeoXmlSequence *seq;
 
 	for (int i = GEBR_GEOXML_DOCUMENT_TYPE_PROJECT; i >= GEBR_GEOXML_DOCUMENT_TYPE_FLOW; i--) {
-		if (*(self->docs[i]) == NULL || *(self->docs[i]) == last[i])
+		if (!self->docs[i] || !*(self->docs[i]) || *(self->docs[i]) == last[i])
 			continue;
 
 		if (i == GEBR_GEOXML_DOCUMENT_TYPE_PROJECT) {
