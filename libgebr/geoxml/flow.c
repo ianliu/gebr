@@ -756,7 +756,6 @@ gboolean gebr_geoxml_flow_insert_iter_dict (GebrGeoXmlFlow *flow)
 	gebr_geoxml_program_parameter_append_value(GEBR_GEOXML_PROGRAM_PARAMETER (param), FALSE);
 	gebr_geoxml_program_parameter_append_value(GEBR_GEOXML_PROGRAM_PARAMETER (param), FALSE);
 	gebr_geoxml_program_parameter_append_value(GEBR_GEOXML_PROGRAM_PARAMETER (param), FALSE);
-	gebr_geoxml_program_parameter_append_value(GEBR_GEOXML_PROGRAM_PARAMETER (param), FALSE);
 
 	gebr_geoxml_program_parameter_set_keyword(GEBR_GEOXML_PROGRAM_PARAMETER (param), "iter");
 	gebr_geoxml_parameter_set_label(param, _("Loop iteration counter"));

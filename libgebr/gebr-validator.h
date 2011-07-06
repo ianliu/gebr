@@ -109,18 +109,20 @@ gboolean gebr_validator_change_value(GebrValidator       *self,
  * @validator: A #GebrValidator
  * @source: The variable to operate on
  * @pivot: The pivot for the operation, or %NULL to append
+ * @pivot_scope: The scope of the pivot
  * @copy: The return location for the new parameter
  * @affected: The #GebrGeoXmlParameter's affected by this operation
  * @error: Return location for error
  *
  * Returns: %TRUE if the move was successfull, %FALSE otherwise.
  */
-gboolean gebr_validator_move(GebrValidator        *self,
-			     GebrGeoXmlParameter  *source,
-			     GebrGeoXmlParameter  *pivot,
-			     GebrGeoXmlParameter **copy,
-			     GList               **affected,
-			     GError              **error);
+gboolean gebr_validator_move(GebrValidator         *self,
+			     GebrGeoXmlParameter   *source,
+			     GebrGeoXmlParameter   *pivot,
+			     GebrGeoXmlDocumentType pivot_scope,
+			     GebrGeoXmlParameter  **copy,
+			     GList                **affected,
+			     GError               **error);
 
 /**
  * gebr_validator_check_using_var:
@@ -226,6 +228,18 @@ gboolean gebr_validator_evaluate(GebrValidator *self,
                                  GebrGeoXmlParameterType type,
                                  gchar **value,
                                  GError **error);
+
+/**
+ * gebr_validator_is_var_in_scope:
+ * @validator:
+ * @name:
+ * @scope:
+ *
+ * Returns: %TRUE if @name exists in @scope, %FALSE otherwise
+ */
+gboolean gebr_validator_is_var_in_scope(GebrValidator *self,
+					const gchar *name,
+					GebrGeoXmlDocumentType scope);
 
 G_END_DECLS
 

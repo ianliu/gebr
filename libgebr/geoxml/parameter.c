@@ -408,6 +408,9 @@ gboolean gebr_geoxml_parameter_is_dict_param(GebrGeoXmlParameter *parameter)
 GebrGeoXmlDocumentType gebr_geoxml_parameter_get_scope(GebrGeoXmlParameter *parameter)
 {
 	GebrGeoXmlDocument *doc;
+
+	g_return_val_if_fail(parameter != NULL, GEBR_GEOXML_DOCUMENT_TYPE_UNKNOWN);
+
 	doc = gebr_geoxml_object_get_owner_document(GEBR_GEOXML_OBJECT(parameter));
 
 	return gebr_geoxml_document_get_type(doc);

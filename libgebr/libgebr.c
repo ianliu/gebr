@@ -33,6 +33,4 @@ void gebr_libinit(const gchar * gettext_package)
 	bindtextdomain (gettext_package, PACKAGE_LOCALE_DIR);
 	bind_textdomain_codeset (gettext_package, "UTF-8");
 	textdomain (gettext_package);
-
-	g_debug("LC_ALL=%s %s", setlocale(LC_ALL, NULL), _("Hello, world!"));
 }
