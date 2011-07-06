@@ -72,6 +72,11 @@ gboolean gebr_arith_expr_eval(GebrArithExpr *self,
 			      gdouble       *result,
 			      GError       **err);
 
+gboolean gebr_arith_expr_eval_internal(GebrArithExpr *self,
+                                       const gchar   *expr,
+                                       gchar        **result,
+                                       GError       **err);
+
 G_END_DECLS
 
 #endif /* __LIBGEBR_ARITH_EXPR_H__ */
