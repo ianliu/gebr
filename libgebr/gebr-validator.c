@@ -418,7 +418,7 @@ gebr_validator_insert(GebrValidator       *self,
 	gebr_geoxml_sequence_previous(&prev_param);
 	pivot = g_list_find(self->var_order[scope], prev_param);
 	self->var_order[scope] = g_list_insert_before(self->var_order[scope], pivot, param);
-	data->weight[scope] = compute_weight(self, pivot, pivot?pivot->prev->prev:NULL);
+	data->weight[scope] = compute_weight(self, pivot, pivot ? pivot->prev->prev:NULL);
 
 	return gebr_validator_change_value(self, param, GET_VAR_VALUE(param), affected, error);
 }
@@ -541,7 +541,7 @@ gebr_validator_move(GebrValidator        *self,
 
 	value = GET_VAR_VALUE(source);
 	t1 = gebr_geoxml_parameter_get_scope(source);
-	t2 = gebr_geoxml_parameter_get_scope(pivot);
+	t2 = pivot? gebr_geoxml_parameter_get_scope(pivot):t1;
 	type = gebr_geoxml_parameter_get_type(source);
 
 	g_assert(data->param[t1] == source);
