@@ -574,11 +574,12 @@ gebr_validator_move(GebrValidator         *self,
 	gebr_geoxml_sequence_move_after(GEBR_GEOXML_SEQUENCE(new_param),
 					GEBR_GEOXML_SEQUENCE(pivot));
 
-	if (!gebr_validator_insert(self, new_param, NULL, error))
-		return FALSE;
+	gebr_validator_insert(self, new_param, NULL, error);
 
 	*copy = new_param;
 
+	if (*error)
+		return FALSE;
 	return TRUE;
 }
 

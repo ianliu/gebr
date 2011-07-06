@@ -1793,11 +1793,12 @@ static gboolean dict_edit_reorder(GtkTreeView            *tree_view,
 	GebrGeoXmlSequence *source;
 	GebrGeoXmlParameter *moved;
 	GebrGeoXmlDocumentType pivot_scope;
+	GError *error = NULL;
 
 	pivot_scope = gebr_geoxml_document_get_type(document);
 	gtk_tree_model_get(data->tree_model, iter, DICT_EDIT_GEBR_GEOXML_POINTER, &source, -1);
 	gtk_tree_iter_free((GtkTreeIter*)gebr_geoxml_object_get_user_data(GEBR_GEOXML_OBJECT(source)));
-	gebr_validator_move(gebr.validator, GEBR_GEOXML_PARAMETER(source), GEBR_GEOXML_PARAMETER(pivot), pivot_scope, &moved, NULL, NULL);
+	gebr_validator_move(gebr.validator, GEBR_GEOXML_PARAMETER(source), GEBR_GEOXML_PARAMETER(pivot), pivot_scope, &moved, NULL, &error);
 
 	gebr_geoxml_object_set_user_data(GEBR_GEOXML_OBJECT(moved), gtk_tree_iter_copy(&newiter));
 	gebr_gui_gtk_tree_model_iter_copy_values(data->tree_model, &newiter, iter);
