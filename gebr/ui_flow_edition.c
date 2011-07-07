@@ -744,7 +744,6 @@ void flow_edition_change_iter_status(guint status, GtkTreeIter *iter)
 		   status == GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED) {
 			parameter = gebr_geoxml_document_get_dict_parameter(GEBR_GEOXML_DOCUMENT(gebr.flow));
 			gebr_validator_remove(gebr.validator, GEBR_GEOXML_PARAMETER(parameter), &affected, &err);
-			gebr_geoxml_flow_remove_iter_dict(gebr.flow);
 		} else {
 			gebr_geoxml_flow_insert_iter_dict(gebr.flow);
 			parameter = gebr_geoxml_document_get_dict_parameter(GEBR_GEOXML_DOCUMENT(gebr.flow));

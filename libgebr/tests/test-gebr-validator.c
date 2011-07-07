@@ -278,13 +278,13 @@ void test_gebr_validator_remove(void)
 
 	x = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
 	                                              GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
-	                                              "x", "11");
+	                                              "x", "10+1");
 	gebr_validator_insert(validator, x, NULL, &error);
 	g_assert_no_error(error);
 
 	x = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(line),
 	                                              GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
-	                                              "x", "12");
+	                                              "x", "10+2");
 	gebr_validator_insert(validator, x, NULL, &error);
 	g_assert_no_error(error);
 

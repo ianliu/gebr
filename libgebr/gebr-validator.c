@@ -455,16 +455,17 @@ gebr_validator_remove(GebrValidator       *self,
 		      GError		 **error)
 {
 	const gchar *name;
-	HashData *data;
 	GebrGeoXmlDocumentType scope;
+	gboolean removed;
 
 	name = GET_VAR_NAME(param);
 	scope = gebr_geoxml_parameter_get_scope (param);
-	data = g_hash_table_lookup (self->vars, name);
 
-	g_return_val_if_fail(data != NULL, FALSE);
+	removed = hash_data_remove(self, name, scope);
+	if (removed)
+		gebr_geoxml_sequence_remove(GEBR_GEOXML_SEQUENCE(param));
 
-	return hash_data_remove(self, name, scope);
+	return removed;
 }
 
 gboolean
@@ -569,7 +570,7 @@ gebr_validator_move(GebrValidator         *self,
 	g_assert(data->param[t1] == source);
 
 	GError *err1 = NULL;
-	GError *err2 = NULL;
+//	GError *err2 = NULL;
 
 	if (t1 != t2) {
 		if (data->param[t2]) {
@@ -587,7 +588,8 @@ gebr_validator_move(GebrValidator         *self,
 	} else
 		new_param = source;
 
-	gebr_validator_remove(self, source, NULL, &err2);
+	hash_data_remove(self, name, t1);
+//	gebr_validator_remove(self, source, NULL, &err2);
 
 	if (t1 != t2)
 		gebr_geoxml_sequence_remove(GEBR_GEOXML_SEQUENCE(source));
@@ -799,7 +801,7 @@ void gebr_validator_update(GebrValidator *self)
 		} else if (last[i]) {
 			seq = gebr_geoxml_document_get_dict_parameter(last[i]);
 			while (seq) {
-				gebr_validator_remove(self, GEBR_GEOXML_PARAMETER(seq), NULL, NULL);
+				hash_data_remove(self, GET_VAR_NAME(GEBR_GEOXML_PARAMETER(seq)), i);
 				gebr_geoxml_sequence_next(&seq);
 			}
 		}
