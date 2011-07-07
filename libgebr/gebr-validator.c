@@ -977,6 +977,7 @@ gboolean gebr_validator_evaluate(GebrValidator *self,
 	GebrIExpr *iexpr;
 	GebrGeoXmlDocumentType scope = GEBR_GEOXML_DOCUMENT_TYPE_FLOW;
 	const gchar *name = NULL;
+	GError *err = NULL;
 
 	g_return_val_if_fail(type == GEBR_GEOXML_PARAMETER_TYPE_INT
 			     || type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT
@@ -1018,18 +1019,19 @@ gboolean gebr_validator_evaluate(GebrValidator *self,
 		gchar *ini_value = NULL;
 		gchar *end_value = NULL;
 
-		gebr_arith_expr_eval_internal(GEBR_ARITH_EXPR(iexpr), expression->str, &ini_value, error);
+		gebr_arith_expr_eval_internal(GEBR_ARITH_EXPR(iexpr), expression->str, &ini_value, &err);
 		clean_string(&ini_value);
-
 
 		if (!gebr_validator_use_iter(self, expr, type)) {
 			*value = ini_value;
 			g_string_free(expression, TRUE);
-			return !(*error);
+
+			if (err) g_propagate_error(error, err);
+			return !err;
 		}
 
 		gchar *buf = g_strconcat(ITER_END_EXPR, expression->str, ITER_INI_EXPR, NULL);
-		gebr_arith_expr_eval_internal(GEBR_ARITH_EXPR(iexpr), buf, &end_value, error);
+		gebr_arith_expr_eval_internal(GEBR_ARITH_EXPR(iexpr), buf, &end_value, &err);
 		clean_string(&end_value);
 		*value = g_strdup_printf("[\"%s\", ..., \"%s\"]", ini_value, end_value);
 		g_free(buf);
@@ -1043,21 +1045,23 @@ gboolean gebr_validator_evaluate(GebrValidator *self,
 		if (my_param)
 			expr = GET_VAR_NAME(my_param);
 
-		gebr_arith_expr_eval_internal(GEBR_ARITH_EXPR(iexpr), expr, &ini_value, error);
+		gebr_arith_expr_eval_internal(GEBR_ARITH_EXPR(iexpr), expr, &ini_value, &err);
 
 		if (!gebr_validator_use_iter(self, expr, type)) {
 			*value = ini_value;
-			return !(*error);
+			if (err) g_propagate_error(error, err);
+			return !err;
 		}
 		gchar *buf = g_strconcat(ITER_END_EXPR, expr, ITER_INI_EXPR, NULL);
-		gebr_arith_expr_eval_internal(GEBR_ARITH_EXPR(iexpr), buf, &end_value, error);
+		gebr_arith_expr_eval_internal(GEBR_ARITH_EXPR(iexpr), buf, &end_value, &err);
 		*value = g_strdup_printf("[%s, ..., %s]", ini_value, end_value);
 		g_free(buf);
 		g_free(ini_value);
 		g_free(end_value);
 	}
 
-	return !(*error);
+	if (err) g_propagate_error(error, err);
+	return !err;
 }
 
 gboolean
