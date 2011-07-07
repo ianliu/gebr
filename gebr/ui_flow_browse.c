@@ -491,7 +491,8 @@ static void flow_browse_load(void)
 
 static void change_selection_update_validator(void)
 {
-	gebr_validator_update(gebr.validator);
+	if (gebr.validator)
+		gebr_validator_update(gebr.validator);
 }
 
 /**

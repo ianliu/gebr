@@ -1132,7 +1132,8 @@ static void project_line_load(void)
 
 static void pl_change_selection_update_validator(GtkTreeSelection *selection)
 {
-	gebr_validator_update(gebr.validator);
+	if(gebr.validator)
+		gebr_validator_update(gebr.validator);
 }
 
 /**
