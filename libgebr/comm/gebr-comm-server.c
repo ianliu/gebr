@@ -41,7 +41,7 @@ gebr_comm_server_log_message(struct gebr_comm_server *server, enum gebr_log_mess
 			     const gchar * message, ...);
 
 static void local_run_server_read(GebrCommProcess * process, struct gebr_comm_server *server);
-static void local_run_server_finished(GebrCommProcess * process, struct gebr_comm_server *server);
+static void local_run_server_finished(GebrCommProcess * process, gint status, struct gebr_comm_server *server);
 
 static gboolean
 gebr_comm_ssh_parse_output(GebrCommTerminalProcess * process, struct gebr_comm_server *server,
@@ -414,7 +414,7 @@ static void local_run_server_read(GebrCommProcess * process, struct gebr_comm_se
 /**
  * \internal
  */
-static void local_run_server_finished(GebrCommProcess * process, struct gebr_comm_server *server)
+static void local_run_server_finished(GebrCommProcess * process, gint status, struct gebr_comm_server *server)
 {
 	GebrCommSocketAddress socket_address;
 

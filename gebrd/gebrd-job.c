@@ -58,7 +58,7 @@ static void gebrd_job_class_init(GebrdJobClass * klass)
 
 
 static void job_assembly_cmdline(GebrdJob *job);
-static void job_process_finished(GebrCommProcess * process, GebrdJob *job);
+static void job_process_finished(GebrCommProcess * process, gint status, GebrdJob *job);
 static void job_send_signal_on_moab(const char * signal, GebrdJob * job);
 static GebrdMpiInterface * job_get_mpi_impl(const gchar * mpi_name, GString * n_process);
 static gchar *escape_quote_and_slash(const gchar *str);
@@ -219,9 +219,12 @@ static void job_status_notify_finished(GebrdJob *job)
  * \internal
  * Only for regular jobs
  */
-static void job_process_finished(GebrCommProcess * process, GebrdJob *job)
+static void job_process_finished(GebrCommProcess * process, gint status, GebrdJob *job)
 {
-	job_status_notify_finished(job);
+	if (WEXITSTATUS(status) == 0)
+		job_status_notify_finished(job);
+	else
+		job_status_notify(job, JOB_STATUS_FAILED, _("Job exited with failure"));
 }
 
 /**

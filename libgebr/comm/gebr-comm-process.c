@@ -51,12 +51,36 @@ static guint object_signals[LAST_SIGNAL];
 static void gebr_comm_process_class_init(GebrCommProcessClass * class)
 {
 	/* signals */
-	object_signals[READY_READ_STDOUT] = g_signal_new("ready-read-stdout", GEBR_COMM_PROCESS_TYPE, (GSignalFlags) (G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION), G_STRUCT_OFFSET(GebrCommProcessClass, ready_read_stdout), NULL, NULL,	/* acumulators */
-							 g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
-	object_signals[READY_READ_STDERR] = g_signal_new("ready-read-stderr", GEBR_COMM_PROCESS_TYPE, (GSignalFlags) (G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION), G_STRUCT_OFFSET(GebrCommProcessClass, ready_read_stderr), NULL, NULL,	/* acumulators */
-							 g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
-	object_signals[FINISHED] = g_signal_new("finished", GEBR_COMM_PROCESS_TYPE, (GSignalFlags) (G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION), G_STRUCT_OFFSET(GebrCommProcessClass, finished), NULL, NULL,	/* acumulators */
-						g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
+	object_signals[READY_READ_STDOUT] =
+		g_signal_new("ready-read-stdout",
+			     GEBR_COMM_PROCESS_TYPE,
+			     G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+			     G_STRUCT_OFFSET(GebrCommProcessClass, ready_read_stdout),
+			     NULL, NULL,
+			     g_cclosure_marshal_VOID__VOID,
+			     G_TYPE_NONE,
+			     0);
+
+	object_signals[READY_READ_STDERR] =
+		g_signal_new("ready-read-stderr",
+			     GEBR_COMM_PROCESS_TYPE,
+			     G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+			     G_STRUCT_OFFSET(GebrCommProcessClass, ready_read_stderr),
+			     NULL, NULL,
+			     g_cclosure_marshal_VOID__VOID,
+			     G_TYPE_NONE,
+			     0);
+
+	object_signals[FINISHED] =
+		g_signal_new("finished",
+			     GEBR_COMM_PROCESS_TYPE,
+			     G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+			     G_STRUCT_OFFSET(GebrCommProcessClass, finished),
+			     NULL, NULL,
+			     g_cclosure_marshal_VOID__INT,
+			     G_TYPE_NONE,
+			     1,
+			     G_TYPE_INT);
 }
 
 static void gebr_comm_process_init(GebrCommProcess * process)
@@ -165,7 +189,7 @@ static void __gebr_comm_process_finished_watch(GPid pid, gint status, GebrCommPr
 	__gebr_comm_process_free(process);
 	__gebr_comm_process_stop_state(process);
 
-	g_signal_emit(process, object_signals[FINISHED], 0);
+	g_signal_emit(process, object_signals[FINISHED], 0, status);
 }
 
 static GByteArray *__gebr_comm_process_read(GIOChannel * io_channel, gsize max_size)
