@@ -1066,6 +1066,20 @@ gebr_geoxml_document_canonize_dict_parameters(GebrGeoXmlDocument * document,
 		const gchar * key = gebr_geoxml_program_parameter_get_keyword(
 				GEBR_GEOXML_PROGRAM_PARAMETER(parameters));
 
+		GebrGeoXmlParameterType type = gebr_geoxml_parameter_get_type(
+				GEBR_GEOXML_PARAMETER(parameters));
+
+		switch(type)
+		{
+		case	GEBR_GEOXML_PARAMETER_TYPE_STRING:
+			break;
+		case	GEBR_GEOXML_PARAMETER_TYPE_FLOAT:
+			break;
+		default:
+			gebr_geoxml_parameter_set_type(
+					GEBR_GEOXML_PARAMETER(parameters),
+					GEBR_GEOXML_PARAMETER_TYPE_FLOAT);
+		}
 
 		gebr_str_canonical_var_name(key, &new_value, NULL);
 		gchar * duplicated_key = NULL;
