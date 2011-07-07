@@ -208,7 +208,7 @@ set_error(GebrValidator *self,
 	g_return_if_fail(data != NULL);
 	if (error) {
 		data->error[scope] = g_error_copy(error);
-	} else
+	} else if (data->error[scope])
 		g_clear_error(&data->error[scope]);
 }
 
