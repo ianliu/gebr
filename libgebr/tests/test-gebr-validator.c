@@ -212,6 +212,7 @@ void test_gebr_validator_simple(Fixture *fixture, gconstpointer data)
 
 	// Test!
 	VALIDATE_FLOAT_EXPR("x", "10");
+//	VALIDATE_FLOAT_EXPR("10/5", "2");
 	VALIDATE_FLOAT_EXPR("pi*x", "31.40");
 	VALIDATE_STRING_EXPR("[pi]", "3.14");
 	VALIDATE_STRING_EXPR("out.[x]", "out.10");
@@ -263,8 +264,9 @@ void test_gebr_validator_remove(void)
 	GebrGeoXmlLine *line;
 	GebrGeoXmlProject *proj;
 
-	GebrGeoXmlParameter *param;
+	GebrGeoXmlParameter *param, *x;
 	GError *error = NULL;
+	gchar *value = NULL;
 
 	flow = gebr_geoxml_flow_new();
 	line = gebr_geoxml_line_new();
@@ -274,14 +276,33 @@ void test_gebr_validator_remove(void)
 				       (GebrGeoXmlDocument**)&line,
 				       (GebrGeoXmlDocument**)&proj);
 
+	x = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
+	                                              GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
+	                                              "x", "11");
+	gebr_validator_insert(validator, x, NULL, &error);
+	g_assert_no_error(error);
 
-	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
+	x = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(line),
 	                                              GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
 	                                              "x", "12");
+	gebr_validator_insert(validator, x, NULL, &error);
+	g_assert_no_error(error);
+
+	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(flow),
+	                                              GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
+	                                              "y", "x+1");
 	gebr_validator_insert(validator, param, NULL, &error);
 	g_assert_no_error(error);
 
-	gebr_validator_remove (validator, param, NULL, &error);
+	g_assert(gebr_validator_evaluate(validator, NULL, "y" ,GEBR_GEOXML_PARAMETER_TYPE_FLOAT, &value, &error));
+	g_assert_no_error(error);
+	g_assert_cmpstr(value,==,"13");
+
+	gebr_validator_remove (validator, x, NULL, &error);
+
+	g_assert(gebr_validator_evaluate(validator, NULL, "y" ,GEBR_GEOXML_PARAMETER_TYPE_FLOAT, &value, &error));
+	g_assert_no_error(error);
+	g_assert_cmpstr(value,==,"12");
 
 	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
 	                                              GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
@@ -300,10 +321,15 @@ void test_gebr_validator_remove(void)
 	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
 	                                              GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
 	                                              "pi", "3.14");
-	gebr_validator_insert(validator, param, NULL, &error);
+	g_assert(gebr_validator_insert(validator, param, NULL, &error));
 	g_assert_no_error(error);
 
-	gebr_validator_remove (validator, param, NULL, &error);
+	g_assert(gebr_validator_remove (validator, param, NULL, &error));
+	if (g_test_trap_fork (0, G_TEST_TRAP_SILENCE_STDOUT | G_TEST_TRAP_SILENCE_STDERR)) {
+		g_assert(gebr_validator_remove (validator, param, NULL, &error) == FALSE);
+		exit(0);
+	}
+	g_test_trap_assert_failed();
 }
 
 void test_gebr_validator_rename(void)
