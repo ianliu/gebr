@@ -929,7 +929,7 @@ gebr_validator_update_vars(GebrValidator *self,
 				get_iter_bounds(GEBR_GEOXML_PARAMETER(param), &ini, &step, &n);
 				g_string_append(bc_vars, "iter=iter[0]=iter(iter)\n");
 			} else {
-				g_string_append_printf(bc_vars, "%1$s=%1$s[%2$d]=%3$s\n", name, scope, value);
+				g_string_append_printf(bc_vars, "%1$s=%1$s[%2$d]=(%3$s)\n", name, scope, value);
 			}
 		}
 	}
