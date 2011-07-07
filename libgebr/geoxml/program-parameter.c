@@ -770,3 +770,12 @@ gboolean gebr_geoxml_program_parameter_is_var_used (GebrGeoXmlProgramParameter *
 
 	return retval;
 }
+
+gboolean
+gebr_geoxml_program_parameter_has_value(GebrGeoXmlProgramParameter *self)
+{
+	GString *s = gebr_geoxml_program_parameter_get_string_value(self, FALSE);
+	gboolean retval = (s->len != 0);
+	g_string_free(s, TRUE);
+	return retval;
+}

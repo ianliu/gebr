@@ -460,5 +460,12 @@ glong gebr_geoxml_program_parameter_get_enum_options_number(GebrGeoXmlProgramPar
 gboolean gebr_geoxml_program_parameter_is_var_used (GebrGeoXmlProgramParameter *self,
 						    const gchar *var_name);
 
+/**
+ * gebr_geoxml_program_parameter_has_value:
+ *
+ * Returns: %TRUE if @self has a non-empty value.
+ */
+gboolean gebr_geoxml_program_parameter_has_value(GebrGeoXmlProgramParameter *self);
+
 G_END_DECLS
 #endif				//__GEBR_GEOXML_PROGRAM_PARAMETER_H
