@@ -75,6 +75,7 @@ hash_data_new_from_xml(GebrGeoXmlParameter *param)
 	type = gebr_geoxml_parameter_get_scope(param);
 	n->param[type] = param;
 	n->name = g_strdup(GET_VAR_NAME(param));
+	n->weight[type] = G_MAXDOUBLE;
 	return n;
 }
 
@@ -92,7 +93,7 @@ hash_data_free(gpointer p)
 	g_free(n);
 }
 
-static void
+static gboolean
 hash_data_remove(GebrValidator *self,
 		const gchar *name,
 		GebrGeoXmlDocumentType scope)
@@ -100,12 +101,23 @@ hash_data_remove(GebrValidator *self,
 	HashData *data;
 
 	data = g_hash_table_lookup(self->vars, name);
-	g_return_if_fail(data != NULL);
+	g_return_val_if_fail(data != NULL, FALSE);
+
+	if (!data->param[scope]) {
+		return FALSE;
+	}
 
 	data->param[scope] = NULL;
+	data->weight[scope] = G_MAXDOUBLE;
+	g_list_foreach(data->dep[scope], (GFunc) g_free, NULL);
+	g_list_free(data->dep[scope]);
+	data->dep[scope] = NULL;
+	g_clear_error(&data->error[scope]);
 
 	if (!get_param(self, name, GEBR_GEOXML_DOCUMENT_TYPE_FLOW))
 		g_hash_table_remove(self->vars, name);
+
+	return TRUE;
 }
 
 /* Private functions {{{1 */
@@ -452,9 +464,7 @@ gebr_validator_remove(GebrValidator       *self,
 
 	g_return_val_if_fail(data != NULL, FALSE);
 
-	hash_data_remove(self, name, scope);
-
-	return TRUE;
+	return hash_data_remove(self, name, scope);
 }
 
 gboolean
@@ -490,7 +500,7 @@ gebr_validator_rename(GebrValidator       *self,
 	new_data->dep[scope] = data->dep[scope];
 	new_data->error[scope] = data->error[scope];
 
-	hash_data_remove(self, name, scope);
+	g_return_val_if_fail(hash_data_remove(self, name, scope), FALSE);
 
 	return TRUE;
 }
