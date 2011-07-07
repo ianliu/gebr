@@ -1036,7 +1036,7 @@ static void define_bc_variables(GebrdJob *job, GString *expr_buf, GString *str_b
 				g_string_append_printf(expr_buf, "\t\t%s = min(%s,%s) ; %s # V[%"G_GSIZE_FORMAT"]: %s\n",
 				                       keyword, vmax, value, keyword, j, replace_quotes(label));
 			else
-				g_string_append_printf(expr_buf, "\t\t%s = %s ; %s # V[%"G_GSIZE_FORMAT"]: %s\n",
+				g_string_append_printf(expr_buf, "\t\t%s = (%s) ; %s # V[%"G_GSIZE_FORMAT"]: %s\n",
 						       keyword, value, keyword, j, replace_quotes(label));
 			var_value = g_strdup_printf("${V[[%"G_GSIZE_FORMAT"]]}", j++);
 			gebr_iexpr_set_var(GEBR_IEXPR(job->str_expr), keyword,
