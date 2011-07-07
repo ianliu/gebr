@@ -411,6 +411,8 @@ void gebr_geoxml_document_set_dtd_dir(const gchar *path);
  *
  * This function canonizes a document dictionary, changing invalid variable
  * names to a valid form.
+ * This fuction also converts the variable type to the current supported types
+ * (e.g. int to float)
  *
  * Ex: "CDP EM METROS (M)" becomes "cdp_em_metros_m_".
  *
