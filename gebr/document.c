@@ -707,11 +707,13 @@ gchar * gebr_document_generate_report (GebrGeoXmlDocument *document)
 
 				include_table = gebr.config.detailed_line_parameter_table != GEBR_PARAM_TABLE_NO_TABLE;
 				document_load((GebrGeoXmlDocument**)(&flow), filename, FALSE);
+				gebr_validator_set_document(gebr.validator,(GebrGeoXmlDocument**)(&flow));
 				gchar * flow_cont = gebr_flow_get_detailed_report(flow, include_table, FALSE);
 				g_string_append(content, flow_cont);
 				g_free(flow_cont);
 				gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
 			}
+			gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**)(&gebr.flow));
 		}
 	} else if (type == GEBR_GEOXML_OBJECT_TYPE_FLOW) {
 		if (gebr.config.detailed_flow_css->len != 0)
@@ -726,12 +728,23 @@ gchar * gebr_document_generate_report (GebrGeoXmlDocument *document)
 			g_string_append_printf (content, "<div class='gebr-geoxml-flow'>%s</div>\n", inner_body);
 
 		gchar * params;
-		if (gebr.config.detailed_flow_parameter_table == GEBR_PARAM_TABLE_NO_TABLE)
+		gchar *flow_dict, *line_dict, *proj_dict;
+		if (gebr.config.detailed_flow_parameter_table == GEBR_PARAM_TABLE_NO_TABLE) {
 			params = g_strdup("");
-		else
+			proj_dict = g_strdup("");
+			line_dict = g_strdup("");
+			flow_dict = g_strdup("");
+		} else {
 			params = gebr_flow_generate_parameter_value_table (GEBR_GEOXML_FLOW (document));
-		g_string_append_printf (content, "<div class='gebr-geoxml-flow'>%s</div>\n", params);
-		g_free (params);
+			proj_dict = gebr_generate_variables_value_table(GEBR_GEOXML_DOCUMENT(gebr.project), TRUE, FALSE);
+			line_dict = gebr_generate_variables_value_table(GEBR_GEOXML_DOCUMENT(gebr.line), FALSE, FALSE);
+			flow_dict = gebr_generate_variables_value_table(document, FALSE, TRUE);
+			g_string_append_printf (content, "<div class='gebr-geoxml-flow'>%s%s%s%s</div>\n", proj_dict, line_dict, flow_dict, params);
+			g_free (params);
+			g_free (proj_dict);
+			g_free (line_dict);
+			g_free (flow_dict);
+		}
 	} else if (type == GEBR_GEOXML_OBJECT_TYPE_PROJECT) {
 		g_free (inner_body);
 		return g_strdup (report);

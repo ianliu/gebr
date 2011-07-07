@@ -1017,6 +1017,74 @@ static gchar * gebr_program_generate_parameter_value_table (GebrGeoXmlProgram *p
 	return g_string_free (table, FALSE);
 }
 
+gchar *gebr_generate_variables_value_table(GebrGeoXmlDocument *doc, gboolean header, gboolean close)
+{
+	GString *dump;
+	const gchar *name;
+	const gchar *value;
+	gchar *eval;
+	GebrGeoXmlParameters *params;
+	GebrGeoXmlSequence *sequence;
+	GebrGeoXmlParameterType type;
+	GebrGeoXmlDocumentType scope;
+	GError *error = NULL;
+	gboolean have_vars = FALSE;
+
+	dump = g_string_new(NULL);
+
+	scope = gebr_geoxml_document_get_type(doc);
+
+	params = gebr_geoxml_document_get_dict_parameters(doc);
+	gebr_geoxml_parameters_get_parameter(params, &sequence, 0);
+
+	if (header)
+		g_string_append_printf (dump,
+		                        "\n<div class=\"gebr-flow-dump\">\n"
+		                        "<table class=\"gebr-variables-table\" summary=\"Variable table\">\n"
+		                        "<caption>%s</caption>\n"
+		                        "<thead>\n<tr>\n"
+		                        "  <td>%s</td><td>%s</td><td>%s</td><td>%s</td>\n"
+		                        "</tr>\n</thead>\n"
+		                        "<tbody>\n",
+		                        _("Dictionary Parameters"), _("Keyword"), _("Expression"),_("Result"), _("Type"));
+
+	g_string_append_printf(dump, "<tr class=\"variables-group\">\n  <td colspan='4'>%s</td>\n</tr>\n",
+	                       scope == GEBR_GEOXML_DOCUMENT_TYPE_FLOW? _("Flow") :
+	                		       scope == GEBR_GEOXML_DOCUMENT_TYPE_LINE? _("Line") : _("Project"));
+
+	while (sequence) {
+		have_vars = TRUE;
+		name = gebr_geoxml_program_parameter_get_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(sequence));
+		value = gebr_geoxml_program_parameter_get_first_value(GEBR_GEOXML_PROGRAM_PARAMETER(sequence), FALSE);
+		type = gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(sequence));
+
+		gebr_validator_evaluate(gebr.validator, GEBR_GEOXML_PARAMETER(sequence), value, type, &eval, &error);
+
+		g_string_append_printf(dump, "<tr >\n  <td class=\"group-label\">%s</td>\n  <td class=\"value\">%s</td>\n"
+		                       "<td class=\"value\">%s</td>\n<td class=\"value\">%s</td>\n</tr>\n",
+		                       name, value, (error? error->message : eval),
+		                       type == GEBR_GEOXML_PARAMETER_TYPE_STRING? _("String") : _("Numeric"));
+
+		if (error)
+			g_clear_error(&error);
+		else
+			g_free(eval);
+
+		gebr_geoxml_sequence_next(&sequence);
+	}
+	if (error)
+		g_error_free(error);
+
+	if(!have_vars)
+		g_string_append_printf(dump, "<tr >\n  <td class=\"group-label\">%s</td>\n",_("There are no variables in this scope"));
+
+	if (close)
+		g_string_append (dump, "</tbody>\n</table>\n");
+
+	return g_string_free(dump, FALSE);
+
+}
+
 gchar * gebr_flow_generate_parameter_value_table(GebrGeoXmlFlow *flow)
 {
 	GString * dump;
@@ -1061,7 +1129,7 @@ gchar * gebr_flow_generate_parameter_value_table(GebrGeoXmlFlow *flow)
 		gebr_geoxml_sequence_next(&sequence);
 	}
 
-	g_string_append (dump, "</div>\n");
+	g_string_append (dump, "</div>\n</div>\n");
 	return g_string_free(dump, FALSE);
 }
 
@@ -1120,6 +1188,7 @@ gchar * gebr_flow_get_detailed_report (GebrGeoXmlFlow * flow, gboolean include_t
 	gchar * inner;
 	gchar * report;
 	gchar * header;
+	gchar * flow_dict;
 	const gchar * help;
 
 	help = gebr_geoxml_document_get_help (GEBR_GEOXML_DOCUMENT (flow));
@@ -1129,11 +1198,14 @@ gchar * gebr_flow_get_detailed_report (GebrGeoXmlFlow * flow, gboolean include_t
 		inner = g_strdup("");
 
 	table = include_table ? gebr_flow_generate_parameter_value_table (flow) : "";
+	flow_dict = include_table ? gebr_generate_variables_value_table(GEBR_GEOXML_DOCUMENT(flow), TRUE, TRUE) : "";
 	header = gebr_flow_generate_header (flow, include_date);
-	report = g_strdup_printf ("<div class='gebr-geoxml-flow'>%s%s%s</div>\n", header, inner, table);
+	report = g_strdup_printf ("<div class='gebr-geoxml-flow'>%s%s%s%s</div>\n", header, inner, flow_dict, table);
 
-	if (include_table)
+	if (include_table) {
 		g_free (table);
+		g_free(flow_dict);
+	}
 	g_free (inner);
 	g_free (header);
 

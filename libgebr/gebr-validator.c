@@ -1078,3 +1078,17 @@ gebr_validator_is_var_in_scope(GebrValidator *self,
 
 	return data->param[scope] != NULL;
 }
+
+void
+gebr_validator_set_document(GebrValidator *self,
+                            GebrGeoXmlDocument **doc)
+{
+	GebrGeoXmlDocumentType type;
+	type = gebr_geoxml_document_get_type(*doc);
+
+	self->docs[type] = doc;
+
+	gebr_validator_update(self);
+}
+
+

@@ -1385,6 +1385,8 @@ gchar * gebr_line_generate_header(GebrGeoXmlDocument * document)
 	GebrGeoXmlLine *line;
 	GebrGeoXmlDocumentType type;
 	GebrGeoXmlSequence *sequence;
+	gchar *line_dict;
+	gchar *proj_dict;
 
 	type = gebr_geoxml_document_get_type (document);
 	g_return_val_if_fail (type == GEBR_GEOXML_DOCUMENT_TYPE_LINE, NULL);
@@ -1421,7 +1423,15 @@ gchar * gebr_line_generate_header(GebrGeoXmlDocument * document)
 		gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
 		gebr_geoxml_sequence_next (&sequence);
 	}
+
+	proj_dict = gebr_generate_variables_value_table(GEBR_GEOXML_DOCUMENT(gebr.project), TRUE, FALSE);
+	line_dict = gebr_generate_variables_value_table(document, FALSE, TRUE);
+
+	if (gebr.config.detailed_line_parameter_table != GEBR_PARAM_TABLE_NO_TABLE)
+		g_string_append_printf (dump, "%s%s</div>\n", proj_dict, line_dict);
+
 	g_string_append (dump, "   </ul>\n</div>\n");
+
 	line = GEBR_GEOXML_LINE (document);
 	if (gebr_geoxml_line_get_paths_number(line) > 0) {
 		GebrGeoXmlSequence *line_path;

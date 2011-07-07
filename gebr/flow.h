@@ -112,6 +112,18 @@ void flow_program_paste(void);
 gchar * gebr_flow_generate_parameter_value_table(GebrGeoXmlFlow * flow);
 
 /**
+ * gebr_flow_generate_variables_value_table:
+ * @doc: a #GebrGeoXmlDocument
+ * @header: Pass %TRUE for include header, %FALSE otherwise
+ * @close: Pass %TRUE for close table of header, %FALSE otherwise
+ *
+ * Creates a string containing a HTML table for the variables on dictionary of @doc.
+ *
+ * Returns: a newly allocated string containing HTML markup.
+ */
+gchar * gebr_generate_variables_value_table(GebrGeoXmlDocument *doc, gboolean header, gboolean close);
+
+/**
  * gebr_flow_generate_header:
  * @flow: a #GebrGeoXmlFlow
  * @include_date: whether to include the date

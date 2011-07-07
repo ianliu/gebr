@@ -240,6 +240,16 @@ gboolean gebr_validator_evaluate(GebrValidator *self,
 gboolean gebr_validator_is_var_in_scope(GebrValidator *self,
 					const gchar *name,
 					GebrGeoXmlDocumentType scope);
+/**
+ * gebr_validator_set_document:
+ * @validator:
+ * @doc:
+ *
+ * Set on validator, a new @doc
+ *
+ */
+void gebr_validator_set_document(GebrValidator *self,
+                                 GebrGeoXmlDocument **doc);
 
 G_END_DECLS
 
