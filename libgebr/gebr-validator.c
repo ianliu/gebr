@@ -685,12 +685,11 @@ gebr_validator_validate_param(GebrValidator       *self,
 {
 	const gchar *value;
 	GebrGeoXmlParameterType type;
+	GebrGeoXmlSequence *seq;
 	GError *error = NULL;
 
-	type = gebr_geoxml_parameter_get_type(param);
-	value = GET_VAR_VALUE(param);
-
-	if (!*value) {
+	// Checks if the parameter is required or not
+	if (!gebr_geoxml_program_parameter_has_value(GEBR_GEOXML_PROGRAM_PARAMETER(param))) {
 		if (gebr_geoxml_program_parameter_get_required(GEBR_GEOXML_PROGRAM_PARAMETER(param))) {
 			g_set_error(&error,
 			            GEBR_IEXPR_ERROR,
@@ -703,6 +702,8 @@ gebr_validator_validate_param(GebrValidator       *self,
 		}
 		return TRUE;
 	}
+
+	type = gebr_geoxml_parameter_get_type(param);
 
 	// For dictionary we have cached errors, not cached yet for programs
 	if (gebr_geoxml_parameter_is_dict_param(param)) {
@@ -725,10 +726,18 @@ gebr_validator_validate_param(GebrValidator       *self,
 		return TRUE;
 	}
 
+	gebr_geoxml_program_parameter_get_value(GEBR_GEOXML_PROGRAM_PARAMETER(param), FALSE, &seq, 0);
+	for (; seq; gebr_geoxml_sequence_next(&seq))
+	{
+		value = gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(seq));
+		if (!gebr_validator_validate_expr(self, value, type, err))
+			return FALSE;
+	}
+
 	if (validated)
 		*validated = g_strdup(value);
 
-	return gebr_validator_validate_expr(self, value, type, err);
+	return TRUE;
 }
 
 gboolean
