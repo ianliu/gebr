@@ -203,6 +203,8 @@ void test_gebr_validator_simple(Fixture *fixture, gconstpointer data)
 	DEF_FLOAT(fixture->proj, "x", "pi*pi");
 	DEF_FLOAT(fixture->proj, "y", "x/3");
 	DEF_STRING(fixture->proj, "s1", "foo");
+	DEF_FLOAT(fixture->proj, "verdadeiro", "pi<pi^2");
+	DEF_FLOAT(fixture->proj, "falso", "pi>pi^2");
 
 	// Line variables
 	DEF_FLOAT(fixture->line, "x", "42");
@@ -216,6 +218,14 @@ void test_gebr_validator_simple(Fixture *fixture, gconstpointer data)
 	VALIDATE_FLOAT_EXPR("pi*x", "31.40");
 	VALIDATE_STRING_EXPR("[pi]", "3.14");
 	VALIDATE_STRING_EXPR("out.[x]", "out.10");
+	VALIDATE_FLOAT_EXPR("x>y", "1");
+	VALIDATE_FLOAT_EXPR("x<y", "0");
+	VALIDATE_FLOAT_EXPR("verdadeiro", "1");
+	VALIDATE_FLOAT_EXPR("falso", "0");
+//	VALIDATE_FLOAT_EXPR("x==x", "1");
+//	VALIDATE_FLOAT_EXPR("x==y", "0");
+//	VALIDATE_FLOAT_EXPR("x>=y", "1");
+//	VALIDATE_FLOAT_EXPR("x<=y", "0");
 
 	// Define wrong variables
 	DEF_FLOAT_WITH_ERROR(fixture->proj, "e", "2.718[", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_SYNTAX);
