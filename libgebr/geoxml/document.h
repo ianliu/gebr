@@ -406,7 +406,15 @@ void gebr_geoxml_document_set_dtd_dir(const gchar *path);
 
 /**
  * gebr_geoxml_document_canonize_dict_parameters:
- * @document:
+ * @document: Document (flow/line/project) that will have its parameters canonized.
+ * @vars_list: New hash table or a hash table used with a previous call to this function
+ *
+ * This function canonizes a document dictionary, changing invalid variable
+ * names to a valid form.
+ *
+ * Ex: "CDP EM METROS (M)" becomes "cdp_em_metros_m_".
+ *
+ * Returns: TRUE if everything when fine, FALSE otherwise.
  */
 gboolean
 gebr_geoxml_document_canonize_dict_parameters(GebrGeoXmlDocument * document,
