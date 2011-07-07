@@ -496,14 +496,11 @@ void document_import(GebrGeoXmlDocument * document)
 {
 	GString *path;
 	const gchar *extension;
-	GHashTable * keys_to_canonized = NULL;
 
 	switch (gebr_geoxml_document_get_type(document)) {
 	case GEBR_GEOXML_DOCUMENT_TYPE_FLOW:
 		extension = "flw";
 		flow_set_paths_to_relative(GEBR_GEOXML_FLOW(document), FALSE);
-		gebr_geoxml_document_canonize_dict_parameters(document,
-							      &keys_to_canonized);
 		break;
 	case GEBR_GEOXML_DOCUMENT_TYPE_LINE:
 		extension = "lne";
@@ -523,7 +520,6 @@ void document_import(GebrGeoXmlDocument * document)
 
 	document_save_at(document, path->str, FALSE, TRUE);
 
-	g_hash_table_unref(keys_to_canonized);
 	g_string_free(path, TRUE);
 }
 
