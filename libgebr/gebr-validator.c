@@ -395,10 +395,7 @@ compute_weight(GebrValidator *self,
 	gdouble b;
 	gdouble a;
 
-	if (!before)
-		return 1;
-
-	b = get_weight(self, before);
+	b = !before? 0: get_weight(self, before);
 
 	if (b == -1)
 		return 1;
@@ -570,7 +567,6 @@ gebr_validator_move(GebrValidator         *self,
 	g_assert(data->param[t1] == source);
 
 	GError *err1 = NULL;
-//	GError *err2 = NULL;
 
 	if (t1 != t2) {
 		if (data->param[t2]) {
@@ -589,7 +585,6 @@ gebr_validator_move(GebrValidator         *self,
 		new_param = source;
 
 	hash_data_remove(self, name, t1);
-//	gebr_validator_remove(self, source, NULL, &err2);
 
 	if (t1 != t2)
 		gebr_geoxml_sequence_remove(GEBR_GEOXML_SEQUENCE(source));

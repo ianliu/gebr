@@ -432,6 +432,67 @@ void test_gebr_validator_change(void)
 
 void test_gebr_validator_move(void)
 {
+	GebrValidator *validator;
+
+	GebrGeoXmlFlow *flow;
+	GebrGeoXmlLine *line;
+	GebrGeoXmlProject *proj;
+
+	GebrGeoXmlParameter *y, *x1, *x2, *moved;
+	GError *error = NULL;
+	gchar *value = NULL;
+
+	flow = gebr_geoxml_flow_new();
+	line = gebr_geoxml_line_new();
+	proj = gebr_geoxml_project_new();
+
+	validator = gebr_validator_new((GebrGeoXmlDocument**)&flow,
+				       (GebrGeoXmlDocument**)&line,
+				       (GebrGeoXmlDocument**)&proj);
+
+	x1 = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
+	                                              GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
+	                                              "x", "10");
+	gebr_validator_insert(validator, x1, NULL, &error);
+	g_assert_no_error(error);
+
+	x2 = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(line),
+	                                              GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
+	                                              "x", "11");
+	gebr_validator_insert(validator, x2, NULL, &error);
+	g_assert_no_error(error);
+
+	y = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(line),
+	                                              GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
+	                                              "y", "x*2");
+	gebr_validator_insert(validator, y, NULL, &error);
+	g_assert_no_error(error);
+
+	gebr_validator_move(validator, y, NULL, GEBR_GEOXML_DOCUMENT_TYPE_LINE, &moved, NULL, &error);
+	g_assert_no_error(error);
+
+	g_assert(gebr_validator_evaluate(validator, NULL, "y" ,GEBR_GEOXML_PARAMETER_TYPE_FLOAT, &value, &error));
+	g_assert_no_error(error);
+	g_assert_cmpstr(value,==,"20");
+	g_free(value);
+
+	gebr_validator_change_value(validator, x1, "10+", NULL, NULL);
+
+	gebr_validator_evaluate(validator, NULL, "y",
+	                        GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
+	                        &value, &error);
+	g_assert_error(error, GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_BAD_REFERENCE);
+	g_clear_error(&error);
+
+	gebr_validator_change_value(validator, x1, "10", NULL, NULL);
+
+	gebr_validator_move(validator, moved, x2, GEBR_GEOXML_DOCUMENT_TYPE_LINE, &moved, NULL, &error);
+	g_assert_no_error(error);
+
+	g_assert(gebr_validator_evaluate(validator, NULL, "y" ,GEBR_GEOXML_PARAMETER_TYPE_FLOAT, &value, &error));
+	g_assert_no_error(error);
+	g_assert_cmpstr(value,==,"22");
+	g_free(value);
 }
 
 void test_gebr_validator_cyclic_errors(Fixture *fixture, gconstpointer data)
