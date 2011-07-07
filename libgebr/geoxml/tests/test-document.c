@@ -472,6 +472,7 @@ void test_gebr_geoxml_document_no_iter(void)
 void test_gebr_geoxml_document_canonize_dict_parameters(void)
 {
 	GebrGeoXmlProject * proj;
+	GebrGeoXmlProject * proj2;
 
 	GebrGeoXmlSequence * parameters;
 
@@ -499,20 +500,34 @@ void test_gebr_geoxml_document_canonize_dict_parameters(void)
 		NULL};
 
 	proj = gebr_geoxml_project_new();
+	proj2 = gebr_geoxml_project_new();
 
+	// Setting parameters for the first project.
 	for ( i = 0; keywords[i]; i++)
 		gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
 						      GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
 						      keywords[i], "12");
 
+	// Setting parameters for the second project.
+	int indices[] = {0,1,4,5,6,-1};
+	for ( i = 0; indices[i] >= 0; i++)
+	{
+		gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj2),
+						      GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
+						      keywords[indices[i]], "12");
 
-	parameters = gebr_geoxml_parameters_get_first_parameter(
-			gebr_geoxml_document_get_dict_parameters(
-					GEBR_GEOXML_DOCUMENT(proj)));
+	}
 
+
+	// Canonize the first project dict
 	gebr_geoxml_document_canonize_dict_parameters(
 			GEBR_GEOXML_DOCUMENT(proj),
 			&keys_to_canonized);
+
+	// Check canonized vars for the first dict
+	parameters = gebr_geoxml_parameters_get_first_parameter(
+			gebr_geoxml_document_get_dict_parameters(
+					GEBR_GEOXML_DOCUMENT(proj)));
 
 	for (i = 0; parameters != NULL; gebr_geoxml_sequence_next(&parameters), i++)
 	{
@@ -524,15 +539,30 @@ void test_gebr_geoxml_document_canonize_dict_parameters(void)
 
 	for (i = 0; keywords[i]; i++)
 	{
-		gchar * value = g_hash_table_lookup(keys_to_canonized, keywords[i]);
+		// DO NOT free this value.
+		const gchar * value = (const gchar *)g_hash_table_lookup(keys_to_canonized, keywords[i]);
 		g_assert_cmpstr(value, ==, canonized[i]);
-		g_free(value);
 	}
 
-	//FIXME: Can't free this hash table! Tests fail!
-	//Can't debug with 'libtool --mode=execute gdb test-document'
-	//either!!
-	//g_hash_table_unref(keys_to_canonized);
+	// Canonize the second project dict
+	gebr_geoxml_document_canonize_dict_parameters(
+			GEBR_GEOXML_DOCUMENT(proj2),
+			&keys_to_canonized);
+
+	// Check canonized vars for the second dict
+	parameters = gebr_geoxml_parameters_get_first_parameter(
+			gebr_geoxml_document_get_dict_parameters(
+					GEBR_GEOXML_DOCUMENT(proj2)));
+
+	for (i = 0; parameters != NULL; gebr_geoxml_sequence_next(&parameters), i++)
+	{
+		const gchar * key = gebr_geoxml_program_parameter_get_keyword(
+				GEBR_GEOXML_PROGRAM_PARAMETER(parameters));
+
+		g_assert_cmpstr(key, ==, canonized[indices[i]]);
+	}
+
+	g_hash_table_unref(keys_to_canonized);
 
 }
 

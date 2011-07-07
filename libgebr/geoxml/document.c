@@ -1046,10 +1046,16 @@ gebr_geoxml_document_canonize_dict_parameters(GebrGeoXmlDocument * document,
 						    (GDestroyNotify)g_free);
 
 
-	*vars_list = g_hash_table_new_full((GHashFunc)g_str_hash,
-					   (GEqualFunc)g_str_equal,
-					   (GDestroyNotify)g_free,
-					   (GDestroyNotify)g_free);
+	// Allocate a new hash table only if needed,
+	// this function uses already canonized keywords
+	// provided in this hash table.
+	if (*vars_list == NULL)
+	{
+		*vars_list = g_hash_table_new_full((GHashFunc)g_str_hash,
+						   (GEqualFunc)g_str_equal,
+						   (GDestroyNotify)g_free,
+						   (GDestroyNotify)g_free);
+	}
 
 	parameters = gebr_geoxml_parameters_get_first_parameter(
 			gebr_geoxml_document_get_dict_parameters(document));
@@ -1063,6 +1069,15 @@ gebr_geoxml_document_canonize_dict_parameters(GebrGeoXmlDocument * document,
 
 		gebr_str_canonical_var_name(key, &new_value, NULL);
 		gchar * duplicated_key = NULL;
+
+		duplicated_key = g_hash_table_lookup(*vars_list, key);
+		if (duplicated_key)
+		{
+			gebr_geoxml_program_parameter_set_keyword(
+					GEBR_GEOXML_PROGRAM_PARAMETER(parameters),
+					(const gchar *)duplicated_key);
+			continue;
+		}
 
 		duplicated_key = g_hash_table_lookup(values_to_canonized,
 						     new_value);
