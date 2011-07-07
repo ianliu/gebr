@@ -913,16 +913,15 @@ gebr_validator_update_vars(GebrValidator *self,
 		GebrGeoXmlSequence *param = gebr_geoxml_document_get_dict_parameter(*self->docs[scope]);
 		for (; param; gebr_geoxml_sequence_next(&param)) {
 			const gchar* name = GET_VAR_NAME(param);
+			GebrGeoXmlParameterType type = gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(param));
 
 			HashData *data = g_hash_table_lookup(self->vars, name);
-			if (!data || data->error[scope])
+			if (!data || data->error[scope] || !get_error_indirect(self, data->dep[scope], name, type, scope, NULL))
 				continue;
 
 			const gchar* value = GET_VAR_VALUE(param);
 			if (!strlen(value))
 				continue;
-
-			GebrGeoXmlParameterType type = gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(param));
 
 			if (type == GEBR_GEOXML_PARAMETER_TYPE_STRING) {
 				GString *translate = translate_string_expr(self, value, name, scope);
