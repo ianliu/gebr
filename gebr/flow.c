@@ -1020,6 +1020,7 @@ gchar *gebr_generate_variables_value_table(GebrGeoXmlDocument *doc, gboolean hea
 	GString *dump;
 	const gchar *name;
 	const gchar *value;
+	const gchar *comment;
 	gchar *eval;
 	GebrGeoXmlParameters *params;
 	GebrGeoXmlSequence *sequence;
@@ -1044,24 +1045,25 @@ gchar *gebr_generate_variables_value_table(GebrGeoXmlDocument *doc, gboolean hea
 		                        "  <td>%s</td><td>%s</td><td>%s</td><td>%s</td>\n"
 		                        "</tr>\n</thead>\n"
 		                        "<tbody>\n",
-		                        _("Dictionary Parameters"), _("Keyword"), _("Expression"),_("Result"), _("Type"));
+		                        _("Variables"), _("Keyword"), _("Value"),_("Result"), _("Comment"));
 
 	g_string_append_printf(dump, "<tr class=\"variables-group\">\n  <td colspan='4'>%s</td>\n</tr>\n",
 	                       scope == GEBR_GEOXML_DOCUMENT_TYPE_FLOW? _("Flow") :
-	                		       scope == GEBR_GEOXML_DOCUMENT_TYPE_LINE? _("Line") : _("Project"));
+	                       scope == GEBR_GEOXML_DOCUMENT_TYPE_LINE? _("Line") : _("Project"));
 
 	while (sequence) {
 		have_vars = TRUE;
 		name = gebr_geoxml_program_parameter_get_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(sequence));
 		value = gebr_geoxml_program_parameter_get_first_value(GEBR_GEOXML_PROGRAM_PARAMETER(sequence), FALSE);
 		type = gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(sequence));
+		comment = gebr_geoxml_parameter_get_label(GEBR_GEOXML_PARAMETER(sequence));
 
 		gebr_validator_evaluate(gebr.validator, GEBR_GEOXML_PARAMETER(sequence), value, type, &eval, &error);
 
-		g_string_append_printf(dump, "<tr >\n  <td class=\"group-label\">%s</td>\n  <td class=\"value\">%s</td>\n"
-		                       "<td class=\"value\">%s</td>\n<td class=\"value\">%s</td>\n</tr>\n",
-		                       name, value, (error? error->message : eval),
-		                       type == GEBR_GEOXML_PARAMETER_TYPE_STRING? _("String") : _("Numeric"));
+		g_string_append_printf(dump, "<tr >\n  <td class=\"%2$sgroup-label\">%1$s</td>\n  <td class=\"%2$svalue\">%3$s</td>\n"
+		                       "<td class=\"%2$svalue\">%4$s</td>\n<td class=\"%2$svalue\">%5$s</td>\n</tr>\n",
+		                       name, (error? "error-" : (type == GEBR_GEOXML_PARAMETER_TYPE_STRING? "string-" : "numeric-")), value,
+		                       (error? error->message : eval), comment);
 
 		if (error)
 			g_clear_error(&error);
@@ -1074,7 +1076,7 @@ gchar *gebr_generate_variables_value_table(GebrGeoXmlDocument *doc, gboolean hea
 		g_error_free(error);
 
 	if(!have_vars)
-		g_string_append_printf(dump, "<tr >\n  <td class=\"group-label\">%s</td>\n",_("There are no variables in this scope"));
+		g_string_append_printf(dump, "<tr >\n  <td class=\"group-label\" colspan='4'>%s</td>\n</tr>\n",_("There are no variables in this scope"));
 
 	if (close)
 		g_string_append (dump, "</tbody>\n</table>\n");
