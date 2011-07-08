@@ -176,7 +176,7 @@ get_error_indirect(GebrValidator *self,
 		if (!dep_param) {
 			g_set_error(err, GEBR_IEXPR_ERROR,
 			            GEBR_IEXPR_ERROR_UNDEF_REFERENCE,
-			            _("Variable %s is yet not defined"),
+			            _("Variable %s is not yet defined"),
 			            dep_name);
 			return FALSE;
 		}
@@ -189,7 +189,7 @@ get_error_indirect(GebrValidator *self,
 				&& dep_type == GEBR_GEOXML_PARAMETER_TYPE_STRING) {
 			g_set_error(err, GEBR_IEXPR_ERROR,
 			            GEBR_IEXPR_ERROR_TYPE_MISMATCH,
-			            _("Variable %s use different type"),
+			            _("Variable %s is String"),
 			            dep_name);
 			return FALSE;
 		}
