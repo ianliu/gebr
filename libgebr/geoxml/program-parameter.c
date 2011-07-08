@@ -779,3 +779,52 @@ gebr_geoxml_program_parameter_has_value(GebrGeoXmlProgramParameter *self)
 	g_string_free(s, TRUE);
 	return retval;
 }
+
+const gchar *
+gebr_geoxml_program_parameter_get_old_dict_keyword(GebrGeoXmlProgramParameter * program_parameter)
+{
+	g_return_val_if_fail(program_parameter != NULL, NULL);
+	const gchar *dict_keyword;
+
+	GdomeDOMString *string;
+	GdomeElement *property_element;
+
+	property_element = __gebr_geoxml_get_first_element(
+					(GdomeElement *) program_parameter,
+					"property");
+
+	string = gdome_str_mkref("dictkeyword");
+	if (!gdome_el_hasAttribute(property_element, string, &exception))
+		return NULL;
+	gdome_str_unref(string);
+
+	dict_keyword = __gebr_geoxml_get_attr_value(property_element, "dictkeyword");
+
+	return dict_keyword;
+}
+
+gboolean
+gebr_geoxml_program_parameter_update_old_dict_value(GebrGeoXmlObject * param,
+						    gpointer keys_to_canonized)
+{
+	g_return_val_if_fail(keys_to_canonized != NULL, FALSE);
+	g_return_val_if_fail(param != NULL, FALSE);
+
+	const gchar * key = gebr_geoxml_program_parameter_get_old_dict_keyword(
+			GEBR_GEOXML_PROGRAM_PARAMETER(param));
+	if (key == NULL)
+		return TRUE;
+
+	const gchar * canonized = (const gchar *)g_hash_table_lookup(
+				(GHashTable *)keys_to_canonized,
+				key);
+
+	g_return_val_if_fail(canonized != NULL, FALSE);
+
+	gebr_geoxml_program_parameter_set_first_value(
+				GEBR_GEOXML_PROGRAM_PARAMETER(param),
+				FALSE,
+				canonized);
+
+	return TRUE;
+}

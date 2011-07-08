@@ -304,8 +304,6 @@ gebr_geoxml_program_parameter_copy_value(GebrGeoXmlProgramParameter * program_pa
  * If \p program_parameter or \p value is NULL nothing is done.
  */
 void
-
-
 gebr_geoxml_program_parameter_set_parse_list_value(GebrGeoXmlProgramParameter * program_parameter,
 						   gboolean default_value, const gchar * value);
 
@@ -459,6 +457,28 @@ glong gebr_geoxml_program_parameter_get_enum_options_number(GebrGeoXmlProgramPar
  */
 gboolean gebr_geoxml_program_parameter_is_var_used (GebrGeoXmlProgramParameter *self,
 						    const gchar *var_name);
+/**
+ * gebr_geoxml_program_parameter_get_old_dict_keyword:
+ * @program_parameter: The parameter to query the dict keyword.
+ *
+ * Returns the program parameter dict keyword, NULL if it does not exists.
+ */
+const gchar *
+gebr_geoxml_program_parameter_get_old_dict_keyword(GebrGeoXmlProgramParameter * program_parameter);
+
+/**
+ * gebr_geoxml_program_parameter_update_old_dict_value:
+ * @param: The parameter to be updated.
+ * @keys_to_canonized: A GHashTable with orininal dict key => canonized dict key.
+ *
+ * This function updates a program parameter to use a canonized dict var, insted
+ * of the old dict var.
+ *
+ * Returs TRUE if everythin goes fine.
+ */
+gboolean
+gebr_geoxml_program_parameter_update_old_dict_value(GebrGeoXmlObject * param,
+						    gpointer keys_to_canonized);
 
 /**
  * gebr_geoxml_program_parameter_has_value:
