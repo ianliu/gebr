@@ -852,6 +852,9 @@ translate_string_expr(GebrValidator  	*self,
 				g_string_append(str_expr, "\",");
 				state = VAR;
 				break;
+			} else if (*expr == '\\') {
+				g_string_append(str_expr, "\\\\");
+				break;
 			}
 			g_string_append_c(str_expr, *expr);
 			break;
@@ -901,7 +904,7 @@ gebr_validator_update_vars(GebrValidator *self,
 		param_scope = gebr_geoxml_parameter_get_scope(param);
 
 	int nth = 0;
-	g_string_append(bc_vars, "define bc_reset(iter) {\n");
+	g_string_append(bc_vars, "define bc_reset(iter) {\nscale=5\n");
 	for (int scope = GEBR_GEOXML_DOCUMENT_TYPE_PROJECT; scope >= (int) param_scope; scope--) {
 		// FIXME iterar nos parametros dos documentos
 
@@ -956,7 +959,9 @@ static void
 clean_string(gchar **str)
 {
 	int i, b = 0;
-
+	if (!*str) {
+		return;
+	}
 	for (i = 0; (*str)[i+b]; i++) {
 		if ((*str)[i+b] == '\b')
 			b++;

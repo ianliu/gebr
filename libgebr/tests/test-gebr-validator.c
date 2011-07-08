@@ -203,8 +203,8 @@ void test_gebr_validator_simple(Fixture *fixture, gconstpointer data)
 	DEF_FLOAT(fixture->proj, "x", "pi*pi");
 	DEF_FLOAT(fixture->proj, "y", "x/3");
 	DEF_STRING(fixture->proj, "s1", "foo");
-	DEF_FLOAT(fixture->proj, "verdadeiro", "pi<pi^2");
-	DEF_FLOAT(fixture->proj, "falso", "pi>pi^2");
+	DEF_FLOAT(fixture->proj, "true", "pi<pi^2");
+	DEF_FLOAT(fixture->proj, "false", "pi>pi^2");
 
 	// Line variables
 	DEF_FLOAT(fixture->line, "x", "42");
@@ -214,18 +214,21 @@ void test_gebr_validator_simple(Fixture *fixture, gconstpointer data)
 
 	// Test!
 	VALIDATE_FLOAT_EXPR("x", "10");
-//	VALIDATE_FLOAT_EXPR("10/5", "2");
+	VALIDATE_FLOAT_EXPR("10/5", "2.00000");
 	VALIDATE_FLOAT_EXPR("pi*x", "31.40");
+	VALIDATE_STRING_EXPR("x;[pi]", "x;3.14");
+//	VALIDATE_STRING_EXPR("\"", "\"");
+	VALIDATE_STRING_EXPR("a\\nb", "a\\nb");
 	VALIDATE_STRING_EXPR("[pi]", "3.14");
 	VALIDATE_STRING_EXPR("out.[x]", "out.10");
 	VALIDATE_FLOAT_EXPR("x>y", "1");
 	VALIDATE_FLOAT_EXPR("x<y", "0");
-	VALIDATE_FLOAT_EXPR("verdadeiro", "1");
-	VALIDATE_FLOAT_EXPR("falso", "0");
-//	VALIDATE_FLOAT_EXPR("x==x", "1");
-//	VALIDATE_FLOAT_EXPR("x==y", "0");
-//	VALIDATE_FLOAT_EXPR("x>=y", "1");
-//	VALIDATE_FLOAT_EXPR("x<=y", "0");
+	VALIDATE_FLOAT_EXPR("true", "1");
+	VALIDATE_FLOAT_EXPR("false", "0");
+	VALIDATE_FLOAT_EXPR("x==x", "1");
+	VALIDATE_FLOAT_EXPR("x==y", "0");
+	VALIDATE_FLOAT_EXPR("x>=y", "1");
+	VALIDATE_FLOAT_EXPR("x<=y", "0");
 
 	// Define wrong variables
 	DEF_FLOAT_WITH_ERROR(fixture->proj, "e", "2.718[", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_SYNTAX);
@@ -235,6 +238,11 @@ void test_gebr_validator_simple(Fixture *fixture, gconstpointer data)
 
 	// Validate wrong expressions
 	VALIDATE_STRING_EXPR_WITH_ERROR("[bobo]", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_UNDEF_REFERENCE);
+	VALIDATE_FLOAT_EXPR_WITH_ERROR("\"", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_SYNTAX);
+	VALIDATE_FLOAT_EXPR_WITH_ERROR(";", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_SYNTAX);
+	VALIDATE_FLOAT_EXPR_WITH_ERROR("5;6", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_SYNTAX);
+	VALIDATE_FLOAT_EXPR_WITH_ERROR("x=y", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_SYNTAX);
+	VALIDATE_FLOAT_EXPR_WITH_ERROR("x=y;6", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_SYNTAX);
 }
 
 void test_gebr_validator_insert(void)
@@ -804,14 +812,14 @@ int main(int argc, char *argv[])
 	g_type_init();
 	g_test_init(&argc, &argv, NULL);
 
-	g_test_add("/libgebr/validator/update", Fixture, NULL,
-		   fixture_setup,
-		   test_gebr_validator_update,
-		   fixture_teardown);
-
 	g_test_add("/libgebr/validator/simple", Fixture, NULL,
 		   fixture_setup,
 		   test_gebr_validator_simple,
+		   fixture_teardown);
+
+	g_test_add("/libgebr/validator/update", Fixture, NULL,
+		   fixture_setup,
+		   test_gebr_validator_update,
 		   fixture_teardown);
 
 	g_test_add_func("/libgebr/validator/insert", test_gebr_validator_insert);

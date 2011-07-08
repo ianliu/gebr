@@ -544,7 +544,7 @@ gboolean gebr_arith_expr_eval(GebrArithExpr *self,
 		return FALSE;
 	}
 
-	if (strchr(expr, '=')) {
+	if (strchr(expr, ';')) {
 		g_set_error (err,
 			     GEBR_IEXPR_ERROR,
 			     GEBR_IEXPR_ERROR_SYNTAX,
@@ -558,15 +558,8 @@ gboolean gebr_arith_expr_eval(GebrArithExpr *self,
 			     _("Invalid syntax '\"'"));
 		return FALSE;
 	}
-	gint i = 0;
-	gchar *line = strdup(expr);
-	while (line[i++]) {
-		if (line[i] == ';')
-			line[i] = '\n';
-	}
 
-	gboolean ok = gebr_arith_expr_eval_internal(self, line, &string, err);
-	g_free(line);
+	gboolean ok = gebr_arith_expr_eval_internal(self, expr, &string, err);
 
 	if (ok && string && result)
 		*result = g_ascii_strtod(string, NULL);
