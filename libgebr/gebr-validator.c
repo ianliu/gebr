@@ -1017,8 +1017,10 @@ gboolean gebr_validator_evaluate(GebrValidator *self,
 		name = GET_VAR_NAME(my_param);
 	}
 
-	if ((my_param && !gebr_validator_validate_param(self, my_param, NULL, error)) ||
-			(!gebr_validator_validate_expr(self, expr, type, error)))
+	if (my_param) {
+		if (!gebr_validator_validate_param(self, my_param, NULL, error))
+			return FALSE;
+	} else if (!gebr_validator_validate_expr(self, expr, type, error))
 		return FALSE;
 
 	if (!strlen(expr)) {
