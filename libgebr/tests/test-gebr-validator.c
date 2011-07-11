@@ -15,6 +15,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <stdlib.h>
 #include <glib.h>
 #include <glib-object.h>
 #include <glib/gstdio.h>
