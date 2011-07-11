@@ -48,10 +48,10 @@ gboolean gebr_tar_compact (GebrTar *self, const gchar *root_dir)
 	files = g_string_new ("");
 	for (GList *i = self->files; i; i = i->next) {
 		gchar *file = i->data;
-		g_string_append_printf (files, "%s ", file);
+		g_string_append_printf (files, "\"%s\" ", file);
 	}
 
-	command = g_strdup_printf ("tar czf %s -C %s %s",
+	command = g_strdup_printf ("tar czf \"%s\" -C \"%s\" %s",
 				   self->tar_path, root_dir, files->str);
 	g_string_free (files, TRUE);
 	if (!g_spawn_command_line_sync (command, NULL, NULL, NULL, NULL)) {
@@ -86,7 +86,7 @@ gboolean gebr_tar_extract (GebrTar *self)
 	tmp = gebr_temp_directory_create ();
 	self->extract_dir = g_string_free (tmp, FALSE);
 
-	command = g_strdup_printf ("tar zxfv %s -C %s",
+	command = g_strdup_printf ("tar zxfv \"%s\" -C \"%s\"",
 				   self->tar_path,
 				   self->extract_dir);
 
