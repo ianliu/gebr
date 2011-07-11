@@ -256,6 +256,8 @@ GebrGeoXmlProgram *gebr_geoxml_parameter_get_program(GebrGeoXmlParameter * param
 
 		program_element = (GdomeElement *) gdome_n_parentNode((GdomeNode *) program_element, &exception);
 		name = gdome_el_nodeName(program_element, &exception);
+		if (!name)
+			return NULL;
 		if (g_strcmp0(name->str, "program") == 0)
 			break;
 	}

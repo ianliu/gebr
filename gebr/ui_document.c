@@ -428,9 +428,6 @@ validate_param_and_set_icon_tooltip(struct dict_edit_data *data, GtkTreeIter *it
 	keyword = gebr_geoxml_program_parameter_get_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(param));
 	type = gebr_geoxml_parameter_get_type(param);
 
-	if (G_UNLIKELY(g_str_equal(keyword, "iter")))
-		return;
-
 	gchar * tooltip = NULL;
 	gebr_validator_evaluate(gebr.validator, param, NULL, type, &tooltip, &error);
 	if (error) {
@@ -753,6 +750,7 @@ static GList *program_list_from_used_variables(const gchar *var_name)
 		if (!program)
 			continue;
 
+//FIXME: Warnings on loop
 		if (gebr_geoxml_program_get_control(program) == GEBR_GEOXML_PROGRAM_CONTROL_FOR)
 			continue;
 
@@ -1365,28 +1363,15 @@ static void dict_edit_load_iter(struct dict_edit_data *data, GtkTreeIter * iter,
 
 	const gchar *keyword = gebr_geoxml_program_parameter_get_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(parameter));
 	gboolean is_loop_iter = strcmp(keyword, "iter") ? FALSE : TRUE;
-	GString *value = g_string_new(NULL);
-	
-	if (is_loop_iter)
-	{
-		GebrGeoXmlProgram * prog = gebr_geoxml_flow_get_control_program(gebr.flow);
-		gchar * step;
-		gchar * ini;
-		guint counter = gebr_geoxml_program_control_get_n(GEBR_GEOXML_PROGRAM(prog), &step, &ini);
-		g_string_printf(value, "%s:%s:%d (%d)", ini, step, atoi(ini)+atoi(step)*(counter-1), counter);
-	} 
-	else
-	{
-		g_string_assign(value,
-				gebr_geoxml_program_parameter_get_first_value(GEBR_GEOXML_PROGRAM_PARAMETER(parameter),
-									      FALSE));
-	}
+	const gchar *value;
+
+	value = gebr_geoxml_program_parameter_get_first_value(GEBR_GEOXML_PROGRAM_PARAMETER(parameter), FALSE);
 
 	gchar *keyword_escaped = g_markup_escape_text(keyword, -1);
 	gtk_tree_store_set(GTK_TREE_STORE(data->tree_model), iter,
 			   DICT_EDIT_KEYWORD_IMAGE, "",
 			   DICT_EDIT_KEYWORD, keyword_escaped,
-			   DICT_EDIT_VALUE, value->str,
+			   DICT_EDIT_VALUE, value,
 			   DICT_EDIT_COMMENT, gebr_geoxml_parameter_get_label(GEBR_GEOXML_PARAMETER(parameter)),
 			   DICT_EDIT_GEBR_GEOXML_POINTER, parameter,
 			   DICT_EDIT_IS_ADD_PARAMETER, FALSE,
@@ -1406,7 +1391,6 @@ static void dict_edit_load_iter(struct dict_edit_data *data, GtkTreeIter * iter,
 		gtk_tree_iter_free(old_iter);
 	gebr_geoxml_object_set_user_data(object, gtk_tree_iter_copy(iter));
 
-	g_string_free(value, TRUE);
 }
 
 /*
@@ -1446,7 +1430,6 @@ static gboolean dict_edit_check_duplicate_keyword(struct dict_edit_data *data, G
 	GebrGeoXmlDocument *document;
 	GebrGeoXmlSequence *i_parameter;
 
-	g_debug("Check duplicate");
 	document = gebr_geoxml_object_get_owner_document(GEBR_GEOXML_OBJECT(parameter));
 	i_parameter = gebr_geoxml_parameters_get_first_parameter(gebr_geoxml_document_get_dict_parameters(document));
 	for (; i_parameter != NULL; gebr_geoxml_sequence_next(&i_parameter)) {

@@ -172,6 +172,22 @@ gboolean gebr_validator_validate_param(GebrValidator       *validator,
 				       gchar              **validated,
 				       GError             **error);
 
+
+/**
+ * gebr_validator_validate_expr:
+ * @validator: A #GebrValidator
+ * @expression: The expression to be validated
+ * @type: The type of the @expression
+ * @scope: The scope to start validate
+ * @error: Returns location for the error, or %NULL
+ *
+ * Returns: %TRUE if @expression is valid, %FALSE otherwise.
+ */
+gboolean gebr_validator_validate_expr_on_scope(GebrValidator          *self,
+                                               const gchar            *str,
+                                               GebrGeoXmlParameterType type,
+                                               GebrGeoXmlDocumentType scope,
+                                               GError                **err);
 /**
  * gebr_validator_validate_expr:
  * @validator: A #GebrValidator
@@ -213,6 +229,26 @@ void gebr_validator_free(GebrValidator *validator);
 /**
  * gebr_validator_evaluate:
  * @validator: The #GebrValidator to be used
+ * @expr: The expression to be evaluated
+ * @type: The type of expression (GEBR_GEOXML_PARAMETER_TYPE_STRING | GEBR_GEOXML_PARAMETER_TYPE_FLOAT)
+ * @scope: Scope to evaluate expression
+ * @value: Returns the value of the expression.
+ * @error: Returns the error, if any.
+ *
+ * Calculate the value of @expr and return it at @value.
+ *
+ * Returns: %TRUE if @expr could be evaluated. %FALSE otherwise.
+ */
+gboolean gebr_validator_evaluate_scope(GebrValidator *self,
+                                       const gchar * expr,
+                                       GebrGeoXmlParameterType type,
+                                       GebrGeoXmlDocumentType scope,
+                                       gchar **value,
+                                       GError **error);
+/**
+ * gebr_validator_evaluate:
+ * @validator: The #GebrValidator to be used
+ * @myparam: The parameter to evaluate
  * @expr: The expression to be evaluated
  * @type: The type of expression (GEBR_GEOXML_PARAMETER_TYPE_STRING | GEBR_GEOXML_PARAMETER_TYPE_FLOAT)
  * @value: Returns the value of the expression.

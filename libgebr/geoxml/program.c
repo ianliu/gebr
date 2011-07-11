@@ -327,7 +327,7 @@ GebrGeoXmlProgramControl gebr_geoxml_program_get_control(GebrGeoXmlProgram * pro
 	return GEBR_GEOXML_PROGRAM_CONTROL_UNKNOWN;
 }
 
-guint gebr_geoxml_program_control_get_n (GebrGeoXmlProgram *prog, gchar **step, gchar **ini)
+const gchar *gebr_geoxml_program_control_get_n (GebrGeoXmlProgram *prog, gchar **step, gchar **ini)
 {
 	GebrGeoXmlProgramControl c;
 	GebrGeoXmlParameter *param;
@@ -357,13 +357,13 @@ guint gebr_geoxml_program_control_get_n (GebrGeoXmlProgram *prog, gchar **step, 
 		else if(!strcmp(keyword,"ini_value"))
 			*ini = (gchar *) gebr_geoxml_value_sequence_get(value);
 	}
-	return atoi(niter);
+	return niter;
 }
 
-void gebr_geoxml_program_set_n(GebrGeoXmlProgram *prog,
-			       const gchar *step,
-			       const gchar *ini,
-			       const gchar *n)
+void gebr_geoxml_program_control_set_n(GebrGeoXmlProgram *prog,
+                                       const gchar *step,
+                                       const gchar *ini,
+                                       const gchar *n)
 {
 	GebrGeoXmlSequence *seq;
 	GebrGeoXmlProgramControl c;

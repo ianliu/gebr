@@ -719,19 +719,15 @@ void flow_edition_change_iter_status(guint status, GtkTreeIter *iter)
 		GtkTreeIter it;
 		GebrGeoXmlProgram *prog;
 		GebrGeoXmlSequence *parameter;
-		GError *err = NULL;
-		GList *affected;
 
-		if(status == GEBR_GEOXML_PROGRAM_STATUS_DISABLED ||
-		   status == GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED) {
+		if(status == GEBR_GEOXML_PROGRAM_STATUS_DISABLED) {
 			parameter = gebr_geoxml_document_get_dict_parameter(GEBR_GEOXML_DOCUMENT(gebr.flow));
-			gebr_validator_remove(gebr.validator, GEBR_GEOXML_PARAMETER(parameter), &affected, &err);
+			gebr_validator_remove(gebr.validator, GEBR_GEOXML_PARAMETER(parameter), NULL, NULL);
 		} else {
 			gebr_geoxml_flow_insert_iter_dict(gebr.flow);
 			parameter = gebr_geoxml_document_get_dict_parameter(GEBR_GEOXML_DOCUMENT(gebr.flow));
-			gebr_validator_insert(gebr.validator, GEBR_GEOXML_PARAMETER(parameter), &affected, &err);
+			gebr_validator_insert(gebr.validator, GEBR_GEOXML_PARAMETER(parameter), NULL, NULL);
 		}
-		g_clear_error(&err);
 		gebr_gui_gtk_tree_model_foreach(it, model) {
 			gtk_tree_model_get(model, &it, FSEQ_GEBR_GEOXML_POINTER, &prog, -1);
 
@@ -957,6 +953,10 @@ static void flow_edition_menu_add(void)
 	menu_programs_index = gebr_geoxml_flow_get_programs_number(gebr.flow);
 	/* add it to the file */
 	gebr_geoxml_flow_add_flow(gebr.flow, menu);
+	if (c1 == GEBR_GEOXML_PROGRAM_CONTROL_FOR) {
+		GebrGeoXmlParameter *dict_iter = GEBR_GEOXML_PARAMETER(gebr_geoxml_document_get_dict_parameter(GEBR_GEOXML_DOCUMENT(gebr.flow)));
+		gebr_validator_insert(gebr.validator, dict_iter, NULL, NULL);
+	}
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
 
 	/* and to the GUI */
@@ -1377,7 +1377,7 @@ static void on_queue_combobox_changed (GtkComboBox *combo, GtkComboBox *server_c
 			    -1);
 
 	if (!last_queue_hash)
-		g_return_if_reached ();
+		return;
 
 	if (index < 0)
 		index = 0;

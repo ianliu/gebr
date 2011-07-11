@@ -133,7 +133,7 @@ void gebr_geoxml_flow_add_flow(GebrGeoXmlFlow * flow, GebrGeoXmlFlow * flow2)
 	{
 		GebrGeoXmlProgram * loop = gebr_geoxml_flow_get_control_program(flow2);
 		GebrGeoXmlProgramStatus status = gebr_geoxml_program_get_status(loop);
-		if (status == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED)
+		if (status != GEBR_GEOXML_PROGRAM_STATUS_DISABLED)
 			gebr_geoxml_flow_insert_iter_dict (flow);
 	}
 
@@ -758,7 +758,7 @@ gboolean gebr_geoxml_flow_insert_iter_dict (GebrGeoXmlFlow *flow)
 	gebr_geoxml_program_parameter_append_value(GEBR_GEOXML_PROGRAM_PARAMETER (param), FALSE);
 
 	gebr_geoxml_program_parameter_set_keyword(GEBR_GEOXML_PROGRAM_PARAMETER (param), "iter");
-	gebr_geoxml_parameter_set_label(param, _("Loop iteration counter"));
+	gebr_geoxml_parameter_set_label(param, _("Loop iteration counter [(ini)+(step)*((n)-1)]"));
 	gebr_geoxml_sequence_move_after(GEBR_GEOXML_SEQUENCE (param), NULL);
 
 	gebr_geoxml_flow_update_iter_dict_value(flow);
@@ -853,8 +853,8 @@ void gebr_geoxml_flow_update_iter_dict_value(GebrGeoXmlFlow *flow)
 	GebrGeoXmlProgramParameter *iter;
 	GebrGeoXmlProgram *program;
 	const gchar *keyword;
-	gchar *step, *ini, *nstr;
-	guint n;
+	gchar *step, *ini, *current;
+	const gchar *n;
 
 	doc = GEBR_GEOXML_DOCUMENT(flow);
 	iter = GEBR_GEOXML_PROGRAM_PARAMETER(gebr_geoxml_document_get_dict_parameter(doc));
@@ -865,11 +865,13 @@ void gebr_geoxml_flow_update_iter_dict_value(GebrGeoXmlFlow *flow)
 
 	program = gebr_geoxml_flow_get_control_program(flow);
 	n = gebr_geoxml_program_control_get_n(program, &step, &ini);
-	nstr = g_strdup_printf("%d", n);
+	current = g_strdup_printf("(%s)+(%s)*((%s)-1)", ini, step, n);
 
-	// Set the 'ini' value for current and 'ini'
+	// Set the 'ini+step*(n-1)' value for 'current'
 	gebr_geoxml_program_parameter_get_value(iter, FALSE, &seq, 0);
-	gebr_geoxml_value_sequence_set(GEBR_GEOXML_VALUE_SEQUENCE(seq), ini);
+	gebr_geoxml_value_sequence_set(GEBR_GEOXML_VALUE_SEQUENCE(seq), current);
+
+	// Set the 'ini' value for 'ini'
 	gebr_geoxml_sequence_next(&seq);
 	gebr_geoxml_value_sequence_set(GEBR_GEOXML_VALUE_SEQUENCE(seq), ini);
 
@@ -879,7 +881,7 @@ void gebr_geoxml_flow_update_iter_dict_value(GebrGeoXmlFlow *flow)
 
 	// Set 'n'
 	gebr_geoxml_sequence_next(&seq);
-	gebr_geoxml_value_sequence_set(GEBR_GEOXML_VALUE_SEQUENCE(seq), nstr);
+	gebr_geoxml_value_sequence_set(GEBR_GEOXML_VALUE_SEQUENCE(seq), n);
 
-	g_free(nstr);
+	g_free(current);
 }

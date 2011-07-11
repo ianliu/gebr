@@ -103,7 +103,8 @@ GebrCommServerRunFlow* gebr_comm_server_run_config_add_flow(GebrCommServerRunCon
 	return run_flow;
 }
 
-GebrGeoXmlFlow *gebr_comm_server_run_strip_flow(GebrGeoXmlFlow *flow,
+GebrGeoXmlFlow *gebr_comm_server_run_strip_flow(GebrValidator *validator,
+                                                GebrGeoXmlFlow *flow,
 						 ...)
 {
 	va_list ap;
@@ -131,9 +132,29 @@ GebrGeoXmlFlow *gebr_comm_server_run_strip_flow(GebrGeoXmlFlow *flow,
 		gebr_geoxml_sequence_remove(i);
 		i = tmp;
 	}
+	GebrGeoXmlProgram *program;
+	GebrGeoXmlParameter *iter;
+	const gchar *n;
+	gchar *step, *ini, *new_n, *new_ini, *new_step;
 
-	/* Remove 'iter' dictionary */
-	gebr_geoxml_flow_remove_iter_dict (GEBR_GEOXML_FLOW(clone));
+	program = gebr_geoxml_flow_get_control_program(GEBR_GEOXML_FLOW(clone));
+	if (program) {
+
+		n = gebr_geoxml_program_control_get_n(program, &step, &ini);
+
+		gebr_validator_evaluate_scope(validator, n, GEBR_GEOXML_PARAMETER_TYPE_FLOAT, GEBR_GEOXML_DOCUMENT_TYPE_LINE, &new_n, NULL);
+		gebr_validator_evaluate_scope(validator, ini, GEBR_GEOXML_PARAMETER_TYPE_FLOAT, GEBR_GEOXML_DOCUMENT_TYPE_LINE, &new_ini, NULL);
+		gebr_validator_evaluate_scope(validator, step, GEBR_GEOXML_PARAMETER_TYPE_FLOAT, GEBR_GEOXML_DOCUMENT_TYPE_LINE, &new_step, NULL);
+
+		gebr_geoxml_program_control_set_n(program, new_step, new_ini, new_n);
+
+		g_free(new_ini);
+		g_free(new_step);
+		g_free(new_n);
+
+		/* Remove 'iter' dictionary */
+		gebr_geoxml_flow_remove_iter_dict (GEBR_GEOXML_FLOW(clone));
+	}
 
 	/* Merge all dictionaries */
 	va_start(ap, flow);

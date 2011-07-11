@@ -186,7 +186,7 @@ fixture_add_loop(Fixture *fixture)
 	gebr_geoxml_document_load(&loop, TEST_SRCDIR "/forloop.mnu", FALSE, NULL);
 	gebr_geoxml_flow_get_program(GEBR_GEOXML_FLOW(loop), (GebrGeoXmlSequence**) &loop_prog, 0);
 	gebr_geoxml_program_set_status(loop_prog, GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED);
-	gebr_geoxml_program_set_n(loop_prog, "1", "1", "7");
+	gebr_geoxml_program_control_set_n(loop_prog, "1", "1", "7");
 	gebr_geoxml_flow_add_flow(GEBR_GEOXML_FLOW(fixture->flow), GEBR_GEOXML_FLOW(loop));
 	loop_prog = gebr_geoxml_flow_get_control_program(GEBR_GEOXML_FLOW(fixture->flow));
 	seq = gebr_geoxml_document_get_dict_parameter(fixture->flow);

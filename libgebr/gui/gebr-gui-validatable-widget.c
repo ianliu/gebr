@@ -51,7 +51,11 @@ gboolean gebr_gui_validatable_widget_validate(GebrGuiValidatableWidget *widget,
 
 	type = gebr_geoxml_parameter_get_type(param);
 	expression = gebr_gui_validatable_widget_get_value(widget);
-	retval = gebr_validator_validate_expr(self, expression, type, &error);
+	if (gebr_geoxml_program_get_control(gebr_geoxml_parameter_get_program(param)) == GEBR_GEOXML_PROGRAM_CONTROL_FOR)
+		gebr_validator_validate_expr_on_scope(self, expression, type, GEBR_GEOXML_DOCUMENT_TYPE_LINE, &error);
+	else
+		retval = gebr_validator_validate_expr(self, expression, type, &error);
+
 	pparam = GEBR_GEOXML_PROGRAM_PARAMETER(param);
 
 	if (!error && !*expression && gebr_geoxml_program_parameter_get_required(pparam))

@@ -157,9 +157,6 @@ static gchar *parameter_widget_get_value(GebrGuiValidatableWidget *widget)
 /* Private Functions {{{1 */
 static gboolean __parameter_accepts_expression(struct gebr_gui_parameter_widget *parameter_widget)
 {
-	if (gebr_geoxml_program_get_control(gebr_geoxml_parameter_get_program(parameter_widget->parameter)) != GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY)
-		return FALSE;
-	
 	return parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_INT ||
 		parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT ||
 		parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_FILE ||
@@ -514,9 +511,15 @@ static void __set_type_icon(GebrGuiParameterWidget *parameter_widget)
 	GError *error = NULL;
 
 	value = gebr_geoxml_program_parameter_get_first_value(parameter_widget->program_parameter, FALSE);
-	gebr_validator_evaluate(parameter_widget->validator, NULL, value,
-				parameter_widget->parameter_type,
-				&result, &error);
+
+	if (gebr_geoxml_program_get_control(gebr_geoxml_parameter_get_program(parameter_widget->parameter)) == GEBR_GEOXML_PROGRAM_CONTROL_FOR)
+		gebr_validator_evaluate(parameter_widget->validator, parameter_widget->parameter, value,
+		                        parameter_widget->parameter_type,
+		                        &result, &error);
+	else
+		gebr_validator_evaluate(parameter_widget->validator, NULL, value,
+		                        parameter_widget->parameter_type,
+		                        &result, &error);
 
 	if (error) {
 		// This call won't recurse since 'error' is non-NULL.
@@ -593,7 +596,6 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 
 	program = gebr_geoxml_parameter_get_program(parameter_widget->parameter);
 	if (parameter_widget->validator != NULL
-	    && gebr_geoxml_program_get_control(program) != GEBR_GEOXML_PROGRAM_CONTROL_FOR
 	    && __parameter_accepts_expression(parameter_widget))
 		may_complete = TRUE;
 	else
@@ -1220,8 +1222,9 @@ static GtkTreeModel *generate_completion_model(struct gebr_gui_parameter_widget 
 {
 	GebrGeoXmlDocument *flow, *line, *proj;
 	gebr_validator_get_documents(widget->validator, &flow, &line, &proj);
+	if (gebr_geoxml_program_get_control(gebr_geoxml_parameter_get_program(widget->parameter)) == GEBR_GEOXML_PROGRAM_CONTROL_FOR)
+		return gebr_gui_parameter_get_completion_model(NULL, line, proj, widget->parameter_type);
 	return gebr_gui_parameter_get_completion_model(flow, line, proj, widget->parameter_type);
-
 }
 
 static void setup_entry_completion(GtkEntry *entry,
