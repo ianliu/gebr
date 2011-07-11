@@ -723,8 +723,11 @@ void document_dict_edit_setup_ui(void)
 			GebrGeoXmlObject * object = GEBR_GEOXML_OBJECT(i_parameter);
 			gebr_geoxml_object_set_user_data(object, NULL);
 		}
-
 	}
+
+	if (gebr.flow)
+		flow_edition_set_io();
+
 	g_free(data);
 	g_string_free(dialog_title, TRUE);
 	gtk_widget_destroy(dialog);
@@ -736,7 +739,6 @@ void document_dict_edit_setup_ui(void)
 	gtk_binding_entry_add_signal(binding_set, GDK_ISO_Enter, 0, "activate", 0);
 	gtk_binding_entry_add_signal(binding_set, GDK_KP_Enter, 0, "activate", 0);
 	gtk_widget_destroy(entry_for_binding);
-
 }
 
 static GList *program_list_from_used_variables(const gchar *var_name)
