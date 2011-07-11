@@ -412,7 +412,7 @@ GQuark gebr_geoxml_program_error_quark(void)
 
 void gebr_geoxml_program_set_error_id(GebrGeoXmlProgram *self,
 				      gboolean clear,
-				      GebrGeoXmlProgramError id)
+				      GebrIExprError id)
 {
 	gchar *str_id;
 
@@ -428,7 +428,7 @@ void gebr_geoxml_program_set_error_id(GebrGeoXmlProgram *self,
 }
 
 gboolean gebr_geoxml_program_get_error_id(GebrGeoXmlProgram *self,
-					  GebrGeoXmlProgramError *id)
+					  GebrIExprError *id)
 {
 	const gchar *str_id;
 

@@ -20,6 +20,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <gebr-iexpr.h>
+
 #include "../object.h"
 #include "../xml.h"
 #include "document.h"
@@ -402,11 +404,11 @@ void test_gebr_geoxml_program_get_and_set_error_id(void)
 {
 	GebrGeoXmlFlow *flow = gebr_geoxml_flow_new();
 	GebrGeoXmlProgram *program = gebr_geoxml_flow_append_program(flow);
-	GebrGeoXmlProgramError error;
+	GebrIExprError error;
 	gboolean have_error;
 
 	if (g_test_trap_fork (0, G_TEST_TRAP_SILENCE_STDOUT | G_TEST_TRAP_SILENCE_STDERR)) {
-		gebr_geoxml_program_set_error_id(NULL,FALSE,GEBR_GEOXML_PROGRAM_ERROR_UNKNOWN_VAR);
+		gebr_geoxml_program_set_error_id(NULL, FALSE, GEBR_IEXPR_ERROR_UNDEF_VAR);
 		exit(0);
 	}
 	g_test_trap_assert_failed();
@@ -414,20 +416,20 @@ void test_gebr_geoxml_program_get_and_set_error_id(void)
 	have_error = gebr_geoxml_program_get_error_id(program, &error);
 	g_assert(have_error == FALSE);
 
-	gebr_geoxml_program_set_error_id(program,FALSE,GEBR_GEOXML_PROGRAM_ERROR_UNKNOWN_VAR);
+	gebr_geoxml_program_set_error_id(program, FALSE, GEBR_IEXPR_ERROR_UNDEF_VAR);
 	have_error = gebr_geoxml_program_get_error_id(program, &error);
 	g_assert(have_error == TRUE);
-	g_assert(error == GEBR_GEOXML_PROGRAM_ERROR_UNKNOWN_VAR);
+	g_assert(error == GEBR_IEXPR_ERROR_UNDEF_VAR);
 
-	gebr_geoxml_program_set_error_id(program,FALSE,GEBR_GEOXML_PROGRAM_ERROR_INVAL_EXPR);
+	gebr_geoxml_program_set_error_id(program, FALSE, GEBR_IEXPR_ERROR_SYNTAX);
 	have_error = gebr_geoxml_program_get_error_id(program, &error);
 	g_assert(have_error == TRUE);
-	g_assert(error == GEBR_GEOXML_PROGRAM_ERROR_INVAL_EXPR);
+	g_assert(error == GEBR_IEXPR_ERROR_SYNTAX);
 
-	gebr_geoxml_program_set_error_id(program,FALSE,GEBR_GEOXML_PROGRAM_ERROR_REQ_UNFILL);
+	gebr_geoxml_program_set_error_id(program, FALSE, GEBR_IEXPR_ERROR_BAD_REFERENCE);
 	have_error = gebr_geoxml_program_get_error_id(program, &error);
 	g_assert(have_error == TRUE);
-	g_assert(error == GEBR_GEOXML_PROGRAM_ERROR_REQ_UNFILL);
+	g_assert(error == GEBR_IEXPR_ERROR_BAD_REFERENCE);
 
 	gebr_geoxml_program_set_error_id(program, TRUE, 0);
 	have_error = gebr_geoxml_program_get_error_id(program, &error);

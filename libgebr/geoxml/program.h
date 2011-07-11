@@ -22,6 +22,7 @@
 
 #include "gebr-geo-types.h"
 
+#include <gebr-iexpr.h>
 #include <gebr-validator.h>
 
 G_BEGIN_DECLS
@@ -282,14 +283,14 @@ gboolean gebr_geoxml_program_is_var_used (GebrGeoXmlProgram *self,
  * gebr_geoxml_program_set_error_id:
  * @self: a #GebrGeoXmlProgram
  * @clear: %TRUE to set error to @id, %FALSE to clear
- * @id: one of #GebrGeoXmlProgramError enumerations
+ * @id: one of #GebrIExprError enumerations
  *
  * Sets the error id for @self program. If @clear is %TRUE, @id is ignored
  * and the error id is set to the empty string.
  */
 void gebr_geoxml_program_set_error_id(GebrGeoXmlProgram *self,
 				      gboolean clear,
-				      GebrGeoXmlProgramError id);
+				      GebrIExprError id);
 
 /**
  * gebr_geoxml_program_get_error_id:
@@ -299,7 +300,7 @@ void gebr_geoxml_program_set_error_id(GebrGeoXmlProgram *self,
  * Returns: %TRUE if the @program has an error id, %FALSE otherwise
  */
 gboolean gebr_geoxml_program_get_error_id(GebrGeoXmlProgram *self,
-					  GebrGeoXmlProgramError *id);
+					  GebrIExprError *id);
 
 /**
  * gebr_geoxml_program_is_valid:

@@ -97,12 +97,6 @@ typedef enum {
 	GEBR_GEOXML_FLOW_ERROR_LOOP_ONLY
 } GebrGeoXmlFlowError;
 
-typedef enum {
-	GEBR_GEOXML_PROGRAM_ERROR_UNKNOWN_VAR,
-	GEBR_GEOXML_PROGRAM_ERROR_INVAL_EXPR,
-	GEBR_GEOXML_PROGRAM_ERROR_REQ_UNFILL,
-} GebrGeoXmlProgramError;
-
 #define GEBR_GEOXML_PROGRAM_ERROR (gebr_geoxml_program_error_quark())
 GQuark gebr_geoxml_program_error_quark(void);
 
@@ -148,7 +142,6 @@ typedef enum {
  * @GEBR_GEOXML_PARAMETER_TYPE_REFERENCE: A reference to other parameter. If the referenced
  *     parameter is a program parameter, then this parameter will only have its value as a
  *     difference.
-
  * #GebrGeoXmlParameterType lists the program's parameters types
  * supported by libgeoxml. They were made to create a properly
  * link between the seismic processing softwares and this library.
