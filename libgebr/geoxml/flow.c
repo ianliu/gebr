@@ -908,9 +908,8 @@ gebr_geoxml_flow_merge_dicts(GebrGeoXmlFlow *flow,
 
 			// Insert separator
 			GebrGeoXmlParameters *dict;
-			dict = gebr_geoxml_document_get_dict_parameters(docs[i]);
-			gebr_geoxml_parameters_append_parameter(dict,
-								GEBR_GEOXML_PARAMETER_TYPE_REFERENCE);
+			dict = gebr_geoxml_document_get_dict_parameters(GEBR_GEOXML_DOCUMENT(flow));
+			gebr_geoxml_parameters_append_parameter(dict, GEBR_GEOXML_PARAMETER_TYPE_GROUP);
 
 			// copy data
 			value = gebr_geoxml_program_parameter_get_first_value(pparam, FALSE);
@@ -938,23 +937,24 @@ gebr_geoxml_flow_split_dict(GebrGeoXmlFlow *flow,
 			    GebrGeoXmlProject *proj)
 {
 	GebrGeoXmlSequence *seq;
+	GebrGeoXmlSequence *clean = NULL;
 	GebrGeoXmlDocument *doc = NULL;
 	GebrGeoXmlParameterType type;
 
 	/**
 	 * A flow can contain dictionary information of its project and line
-	 * together, separated by parameters of type "REFERENCE". See the
+	 * together, separated by parameters of type "SCOPE". See the
 	 * example below
 	 *
 	 * parameters
 	 *   flow parameter
 	 *   flow parameter
 	 *   ...
-	 *   PARAMETER_TYPE_REFERENCE
+	 *   PARAMETER_TYPE_SCOPE
 	 *   line parameter
 	 *   line parameter
 	 *   ...
-	 *   PARAMETER_TYPE_REFERENCE
+	 *   PARAMETER_TYPE_SCOPE
 	 *   proj parameter
 	 *   proj parameter
 	 *   ...
@@ -963,12 +963,13 @@ gebr_geoxml_flow_split_dict(GebrGeoXmlFlow *flow,
 	for (; seq; gebr_geoxml_sequence_next(&seq)) {
 		GebrGeoXmlParameter *param = GEBR_GEOXML_PARAMETER(seq);
 		type = gebr_geoxml_parameter_get_type(param);
-		if (type == GEBR_GEOXML_PARAMETER_TYPE_REFERENCE) {
-			if (!doc) // The first TYPE_REFERENCE marks line vars
+		if (type == GEBR_GEOXML_PARAMETER_TYPE_GROUP) {
+			if (!doc) // The first TYPE_SCOPE marks line vars
 				doc = GEBR_GEOXML_DOCUMENT(line);
 			else // The second marks project vars
 				doc = GEBR_GEOXML_DOCUMENT(proj);
-			gebr_geoxml_sequence_remove(seq);
+			if (!clean)
+				clean = seq;
 			continue;
 		} else if (!doc)
 			continue; // skip flow parameters
@@ -985,7 +986,12 @@ gebr_geoxml_flow_split_dict(GebrGeoXmlFlow *flow,
 		comment = gebr_geoxml_parameter_get_label(param);
 		copy = gebr_geoxml_document_set_dict_keyword(doc, type, keyword, value);
 		gebr_geoxml_parameter_set_label(copy, comment);
+	}
 
-		gebr_geoxml_sequence_remove(seq);
+	while (clean)
+	{
+		GebrGeoXmlSequence *aux = clean;
+		gebr_geoxml_sequence_next(&clean);
+		gebr_geoxml_sequence_remove(aux);
 	}
 }

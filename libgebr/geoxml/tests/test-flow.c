@@ -22,6 +22,10 @@
 #include "document.h"
 #include "error.h"
 #include "flow.h"
+#include "line.h"
+#include "project.h"
+#include "program-parameter.h"
+#include "sequence.h"
 
 void test_gebr_geoxml_flow_server_get_and_set_address(void){
 	const gchar *address;
@@ -478,6 +482,47 @@ static void test_gebr_geoxml_flow_io_error_append(void)
 	g_assert (gebr_geoxml_flow_io_get_error_append (flow) == TRUE);
 }
 
+static void test_gebr_geoxml_flow_merge_and_split_dicts(void)
+{
+	GebrGeoXmlFlow *flow = gebr_geoxml_flow_new();
+	GebrGeoXmlLine *line = gebr_geoxml_line_new();
+	GebrGeoXmlProject *proj = gebr_geoxml_project_new();
+
+	gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(flow),
+					      GEBR_GEOXML_PARAMETER_TYPE_INT, "foo", "1");
+
+	gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(line),
+					      GEBR_GEOXML_PARAMETER_TYPE_INT, "bar", "2");
+
+	gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
+					      GEBR_GEOXML_PARAMETER_TYPE_INT, "baz", "3");
+
+	gebr_geoxml_flow_merge_dicts(flow, line, proj);
+
+	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(line));
+	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(proj));
+	line = gebr_geoxml_line_new();
+	proj = gebr_geoxml_project_new();
+
+	gebr_geoxml_flow_split_dict(flow, line, proj);
+
+	GebrGeoXmlProgramParameter *pp;
+	pp = GEBR_GEOXML_PROGRAM_PARAMETER(gebr_geoxml_document_get_dict_parameter(GEBR_GEOXML_DOCUMENT(flow)));
+	g_assert_cmpstr(gebr_geoxml_program_parameter_get_keyword(pp), ==, "foo");
+	gebr_geoxml_sequence_next((GebrGeoXmlSequence**)&pp);
+	g_assert(pp == NULL);
+
+	pp = GEBR_GEOXML_PROGRAM_PARAMETER(gebr_geoxml_document_get_dict_parameter(GEBR_GEOXML_DOCUMENT(line)));
+	g_assert_cmpstr(gebr_geoxml_program_parameter_get_keyword(pp), ==, "bar");
+	gebr_geoxml_sequence_next((GebrGeoXmlSequence**)&pp);
+	g_assert(pp == NULL);
+
+	pp = GEBR_GEOXML_PROGRAM_PARAMETER(gebr_geoxml_document_get_dict_parameter(GEBR_GEOXML_DOCUMENT(proj)));
+	g_assert_cmpstr(gebr_geoxml_program_parameter_get_keyword(pp), ==, "baz");
+	gebr_geoxml_sequence_next((GebrGeoXmlSequence**)&pp);
+	g_assert(pp == NULL);
+}
+
 int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
@@ -503,6 +548,7 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/geoxml/flow/io_output_append_default", test_gebr_geoxml_flow_io_output_append_default);
 	g_test_add_func("/libgebr/geoxml/flow/io_error_append", test_gebr_geoxml_flow_io_error_append);
 	g_test_add_func("/libgebr/geoxml/flow/io_error_append_default", test_gebr_geoxml_flow_io_error_append_default);
+	g_test_add_func("/libgebr/geoxml/flow/merge_and_split_dicts", test_gebr_geoxml_flow_merge_and_split_dicts);
 
 	return g_test_run();
 }
