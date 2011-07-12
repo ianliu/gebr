@@ -218,7 +218,11 @@ void test_gebr_validator_simple(Fixture *fixture, gconstpointer data)
 	VALIDATE_FLOAT_EXPR("10/5", "2.00000");
 	VALIDATE_FLOAT_EXPR("pi*x", "31.40");
 	VALIDATE_STRING_EXPR("x;[pi]", "x;3.14");
-//	VALIDATE_STRING_EXPR("\"", "\"");
+
+	DEF_STRING(fixture->proj, "quote", "\"");
+	VALIDATE_STRING_EXPR("\"", "\"");
+	VALIDATE_STRING_EXPR("\"[quote]\"", "\"\"\"");
+
 	VALIDATE_STRING_EXPR("a\\nb", "a\\nb");
 	VALIDATE_STRING_EXPR("[pi]", "3.14");
 	VALIDATE_STRING_EXPR("out.[x]", "out.10");

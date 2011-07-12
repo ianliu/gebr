@@ -861,13 +861,15 @@ translate_string_expr(GebrValidator  	*self,
 				break;
 			}
 			g_string_append_c(str_expr, '"');
-			g_string_append_c(str_expr, *expr);
 			state = TEXT;
-			break;
+			continue;
 		case TEXT:
 			if (*expr == '[') {
 				g_string_append(str_expr, "\",");
 				state = VAR;
+				break;
+			} else if (*expr == '"') {
+				g_string_append(str_expr, "\\q");
 				break;
 			} else if (*expr == '\\') {
 				g_string_append(str_expr, "\\\\");
@@ -901,7 +903,7 @@ translate_string_expr(GebrValidator  	*self,
 	default:
 		break;
 	}
-
+	puts(str_expr->str);
 	return str_expr;
 }
 
