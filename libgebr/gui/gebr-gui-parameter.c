@@ -1245,26 +1245,39 @@ static void setup_entry_completion(GtkEntry *entry,
 }
 
 static gboolean on_spin_button_output(GtkSpinButton *spin,
-				      struct gebr_gui_parameter_widget *widget)
+				      GebrGuiParameterWidget *widget)
 {
 	gchar *err = NULL;
 	const gchar *text = gtk_entry_get_text(GTK_ENTRY(spin));
 
-	g_strtod(text, &err);
+	g_ascii_strtod(text, &err);
 	if (*err || !*text)
 		return TRUE;
-	else
-		return FALSE;
+
+	gdouble d;
+	gchar *format;
+	const gchar *dig;
+	gchar buf[G_ASCII_DTOSTR_BUF_SIZE];
+
+	gebr_geoxml_program_parameter_get_range_properties(widget->program_parameter,
+							   NULL, NULL, NULL, &dig);
+
+	d = gtk_spin_button_get_value(spin);
+	format = g_strconcat("%.", dig, "f", NULL);
+
+	gtk_entry_set_text(GTK_ENTRY(spin),
+			   g_ascii_formatd(buf, G_ASCII_DTOSTR_BUF_SIZE, format, d));
+	return TRUE;
 }
 
 static gint on_spin_button_input(GtkSpinButton *spin,
 				 gdouble *rval,
-				 struct gebr_gui_parameter_widget *widget)
+				 GebrGuiParameterWidget *widget)
 {
 	gchar *err = NULL;
 	const gchar *text = gtk_entry_get_text(GTK_ENTRY(spin));
 
-	g_strtod(text, &err);
+	g_ascii_strtod(text, &err);
 	if (*err || !*text) {
 		*rval = 0;
 		gtk_spin_button_set_range(spin, 1, 0);
@@ -1273,7 +1286,7 @@ static gint on_spin_button_input(GtkSpinButton *spin,
 		const gchar *min, *max;
 		gebr_geoxml_program_parameter_get_number_min_max(widget->program_parameter,
 								 &min, &max);
-		gtk_spin_button_set_range(spin, g_strtod(min, NULL), g_strtod(max, NULL));
+		gtk_spin_button_set_range(spin, g_ascii_strtod(min, NULL), g_ascii_strtod(max, NULL));
 		return FALSE;
 	}
 }
