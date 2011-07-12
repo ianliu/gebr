@@ -493,12 +493,16 @@ gebr_validator_rename(GebrValidator       *self,
 		g_return_val_if_fail(new_data->param[scope] == NULL, FALSE);
 		new_data->param[scope] = data->param[scope];
 	}
+	data->param[scope] = NULL;
 
 	new_data->weight[scope] = data->weight[scope];
-	new_data->dep[scope] = data->dep[scope];
-	new_data->error[scope] = data->error[scope];
+	data->weight[scope] = G_MAXDOUBLE;
 
-	g_return_val_if_fail(hash_data_remove(self, name, scope), FALSE);
+	new_data->dep[scope] = data->dep[scope];
+	data->dep[scope] = NULL;
+
+	new_data->error[scope] = data->error[scope];
+	data->error[scope] = NULL;
 
 	return TRUE;
 }
