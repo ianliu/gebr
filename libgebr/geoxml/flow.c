@@ -885,3 +885,105 @@ void gebr_geoxml_flow_update_iter_dict_value(GebrGeoXmlFlow *flow)
 
 	g_free(current);
 }
+
+void
+gebr_geoxml_flow_merge_dicts(GebrGeoXmlFlow *flow,
+			     GebrGeoXmlLine *line,
+			     GebrGeoXmlProgram *proj)
+{
+	GebrGeoXmlDocument *docs[2] = {
+		GEBR_GEOXML_DOCUMENT(line),
+		GEBR_GEOXML_DOCUMENT(proj)
+	};
+
+	for (int i = 0; i < 2; i++) {
+		GebrGeoXmlSequence *seq = gebr_geoxml_document_get_dict_parameter(docs[i]);
+		while (seq) {
+			const gchar *value;
+			const gchar *keyword;
+			const gchar *comment;
+			GebrGeoXmlParameterType type;
+			GebrGeoXmlParameter *param =  GEBR_GEOXML_PARAMETER(seq);
+			GebrGeoXmlProgramParameter *pparam = GEBR_GEOXML_PROGRAM_PARAMETER(seq);
+
+			// Insert separator
+			GebrGeoXmlParameters *dict;
+			dict = gebr_geoxml_document_get_dict_parameters(docs[i]);
+			gebr_geoxml_parameters_append_parameter(dict,
+								GEBR_GEOXML_PARAMETER_TYPE_REFERENCE);
+
+			// copy data
+			value = gebr_geoxml_program_parameter_get_first_value(pparam, FALSE);
+			keyword = gebr_geoxml_program_parameter_get_keyword(pparam);
+			comment = gebr_geoxml_parameter_get_label(param);
+			type = gebr_geoxml_parameter_get_type(param);
+
+			// paste data
+			GebrGeoXmlParameter *copy;
+			copy = gebr_geoxml_parameters_append_parameter(dict, type);
+			param = GEBR_GEOXML_PARAMETER(copy);
+			pparam = GEBR_GEOXML_PROGRAM_PARAMETER(copy);
+			gebr_geoxml_program_parameter_set_keyword(pparam, keyword);
+			gebr_geoxml_program_parameter_set_first_value(pparam, FALSE, value);
+			gebr_geoxml_parameter_set_label(param, comment);
+
+			gebr_geoxml_sequence_next(&seq);
+		}
+	}
+}
+
+void
+gebr_geoxml_flow_split_dict(GebrGeoXmlFlow *flow,
+			    GebrGeoXmlLine *line,
+			    GebrGeoXmlProgram *proj)
+{
+	GebrGeoXmlSequence *seq;
+	GebrGeoXmlDocument *doc = NULL;
+	GebrGeoXmlParameterType type;
+
+	/**
+	 * A flow can contain dictionary information of its project and line
+	 * together, separated by parameters of type "REFERENCE". See the
+	 * example below
+	 *
+	 * parameters
+	 *   flow parameter
+	 *   flow parameter
+	 *   ...
+	 *   PARAMETER_TYPE_REFERENCE
+	 *   line parameter
+	 *   line parameter
+	 *   ...
+	 *   PARAMETER_TYPE_REFERENCE
+	 *   proj parameter
+	 *   proj parameter
+	 *   ...
+	 */
+	seq = gebr_geoxml_document_get_dict_parameter(GEBR_GEOXML_DOCUMENT(flow));
+	for (; seq; gebr_geoxml_sequence_next(&seq)) {
+		GebrGeoXmlParameter *param = GEBR_GEOXML_PARAMETER(seq);
+		type = gebr_geoxml_parameter_get_type(param);
+		if (type == GEBR_GEOXML_PARAMETER_TYPE_REFERENCE) {
+			if (!doc)
+				doc = GEBR_GEOXML_DOCUMENT(line);
+			else
+				doc = GEBR_GEOXML_DOCUMENT(proj);
+			gebr_geoxml_sequence_remove(seq);
+			continue;
+		} else if (!doc)
+			continue; // skip flow parameters
+
+		// Time to split them
+		const gchar *value;
+		const gchar *keyword;
+		const gchar *comment;
+		GebrGeoXmlParameter *copy;
+		GebrGeoXmlProgramParameter *pparam = GEBR_GEOXML_PROGRAM_PARAMETER(seq);
+
+		value = gebr_geoxml_program_parameter_get_first_value(pparam, FALSE);
+		keyword = gebr_geoxml_program_parameter_get_keyword(pparam);
+		comment = gebr_geoxml_parameter_get_label(param);
+		copy = gebr_geoxml_document_set_dict_keyword(doc, type, keyword, value);
+		gebr_geoxml_parameter_set_label(copy, comment);
+	}
+}

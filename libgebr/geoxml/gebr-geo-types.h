@@ -142,6 +142,7 @@ typedef enum {
  * @GEBR_GEOXML_PARAMETER_TYPE_REFERENCE: A reference to other parameter. If the referenced
  *     parameter is a program parameter, then this parameter will only have its value as a
  *     difference.
+ *
  * #GebrGeoXmlParameterType lists the program's parameters types
  * supported by libgeoxml. They were made to create a properly
  * link between the seismic processing softwares and this library.

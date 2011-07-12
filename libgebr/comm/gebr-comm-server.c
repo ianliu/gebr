@@ -133,7 +133,6 @@ GebrGeoXmlFlow *gebr_comm_server_run_strip_flow(GebrValidator *validator,
 		i = tmp;
 	}
 	GebrGeoXmlProgram *program;
-	GebrGeoXmlParameter *iter;
 	const gchar *n;
 	gchar *step, *ini, *new_n, *new_ini, *new_step;
 
