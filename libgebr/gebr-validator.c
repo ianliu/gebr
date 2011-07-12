@@ -944,8 +944,7 @@ gebr_validator_update_vars(GebrValidator *self,
 				continue;
 			}
 			if (g_strcmp0(name, "iter") == 0) {
-				get_iter_bounds(GEBR_GEOXML_PARAMETER(param), &ini, &step, &n);
-				g_string_append(bc_vars, "iter=iter[0]=iter(iter)\n");
+				g_string_append_printf(bc_vars, "%1$s=%1$s[%2$d]=%3$s*iter\n", name, scope, value);
 			} else {
 				g_string_append_printf(bc_vars, "%1$s=%1$s[%2$d]=(%3$s)\n", name, scope, value);
 			}
@@ -955,10 +954,6 @@ gebr_validator_update_vars(GebrValidator *self,
 
 	g_string_append(bc_strings, " }\n");
 
-	if (n)
-		g_string_append_printf(bc_vars, "define iter(end){if(end){return iter=iter[0]=(%s)+(%s*(%s-1))}else{return iter=iter[0]=%s}}\n", ini, step, n, ini);
-	else
-		g_string_append(bc_vars, "define iter(end){}\n");
 	g_string_append(bc_vars, ITER_INI_EXPR);
 
 	g_string_append(bc_strings, bc_vars->str);
