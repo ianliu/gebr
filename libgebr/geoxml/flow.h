@@ -480,7 +480,7 @@ void gebr_geoxml_flow_update_iter_dict_value(GebrGeoXmlFlow *flow);
  */
 void gebr_geoxml_flow_merge_dicts(GebrGeoXmlFlow *flow,
 				  GebrGeoXmlLine *line,
-				  GebrGeoXmlProgram *proj);
+				  GebrGeoXmlProject *proj);
 
 /**
  * gebr_geoxml_flow_split_dict:
@@ -493,7 +493,7 @@ void gebr_geoxml_flow_merge_dicts(GebrGeoXmlFlow *flow,
  */
 void gebr_geoxml_flow_split_dict(GebrGeoXmlFlow *flow,
 				 GebrGeoXmlLine *line,
-				 GebrGeoXmlProgram *proj);
+				 GebrGeoXmlProject *proj);
 
 G_END_DECLS
 

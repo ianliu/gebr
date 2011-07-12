@@ -889,7 +889,7 @@ void gebr_geoxml_flow_update_iter_dict_value(GebrGeoXmlFlow *flow)
 void
 gebr_geoxml_flow_merge_dicts(GebrGeoXmlFlow *flow,
 			     GebrGeoXmlLine *line,
-			     GebrGeoXmlProgram *proj)
+			     GebrGeoXmlProject *proj)
 {
 	GebrGeoXmlDocument *docs[2] = {
 		GEBR_GEOXML_DOCUMENT(line),
@@ -935,7 +935,7 @@ gebr_geoxml_flow_merge_dicts(GebrGeoXmlFlow *flow,
 void
 gebr_geoxml_flow_split_dict(GebrGeoXmlFlow *flow,
 			    GebrGeoXmlLine *line,
-			    GebrGeoXmlProgram *proj)
+			    GebrGeoXmlProject *proj)
 {
 	GebrGeoXmlSequence *seq;
 	GebrGeoXmlDocument *doc = NULL;
@@ -964,9 +964,9 @@ gebr_geoxml_flow_split_dict(GebrGeoXmlFlow *flow,
 		GebrGeoXmlParameter *param = GEBR_GEOXML_PARAMETER(seq);
 		type = gebr_geoxml_parameter_get_type(param);
 		if (type == GEBR_GEOXML_PARAMETER_TYPE_REFERENCE) {
-			if (!doc)
+			if (!doc) // The first TYPE_REFERENCE marks line vars
 				doc = GEBR_GEOXML_DOCUMENT(line);
-			else
+			else // The second marks project vars
 				doc = GEBR_GEOXML_DOCUMENT(proj);
 			gebr_geoxml_sequence_remove(seq);
 			continue;
@@ -985,5 +985,7 @@ gebr_geoxml_flow_split_dict(GebrGeoXmlFlow *flow,
 		comment = gebr_geoxml_parameter_get_label(param);
 		copy = gebr_geoxml_document_set_dict_keyword(doc, type, keyword, value);
 		gebr_geoxml_parameter_set_label(copy, comment);
+
+		gebr_geoxml_sequence_remove(seq);
 	}
 }
