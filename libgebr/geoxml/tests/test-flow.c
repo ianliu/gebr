@@ -521,6 +521,10 @@ static void test_gebr_geoxml_flow_merge_and_split_dicts(void)
 	g_assert_cmpstr(gebr_geoxml_program_parameter_get_keyword(pp), ==, "baz");
 	gebr_geoxml_sequence_next((GebrGeoXmlSequence**)&pp);
 	g_assert(pp == NULL);
+
+	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
+	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(line));
+	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(proj));
 }
 
 int main(int argc, char *argv[])

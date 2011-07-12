@@ -943,18 +943,18 @@ gebr_geoxml_flow_split_dict(GebrGeoXmlFlow *flow,
 
 	/**
 	 * A flow can contain dictionary information of its project and line
-	 * together, separated by parameters of type "SCOPE". See the
+	 * together, separated by parameters of type "GROUP". See the
 	 * example below
 	 *
 	 * parameters
 	 *   flow parameter
 	 *   flow parameter
 	 *   ...
-	 *   PARAMETER_TYPE_SCOPE
+	 *   PARAMETER_TYPE_GROUP
 	 *   line parameter
 	 *   line parameter
 	 *   ...
-	 *   PARAMETER_TYPE_SCOPE
+	 *   PARAMETER_TYPE_GROUP
 	 *   proj parameter
 	 *   proj parameter
 	 *   ...
@@ -964,7 +964,7 @@ gebr_geoxml_flow_split_dict(GebrGeoXmlFlow *flow,
 		GebrGeoXmlParameter *param = GEBR_GEOXML_PARAMETER(seq);
 		type = gebr_geoxml_parameter_get_type(param);
 		if (type == GEBR_GEOXML_PARAMETER_TYPE_GROUP) {
-			if (!doc) // The first TYPE_SCOPE marks line vars
+			if (!doc) // The first TYPE_GROUP marks line vars
 				doc = GEBR_GEOXML_DOCUMENT(line);
 			else // The second marks project vars
 				doc = GEBR_GEOXML_DOCUMENT(proj);
