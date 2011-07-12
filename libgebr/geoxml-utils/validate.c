@@ -35,7 +35,6 @@ int main(int argc, char **argv)
 	GOptionContext *context;
 
 	gebr_libinit("libgebr");
-	setlocale(LC_ALL, "");
 
 	context = g_option_context_new(NULL);
 	g_option_context_set_translation_domain(context, "libgebr");

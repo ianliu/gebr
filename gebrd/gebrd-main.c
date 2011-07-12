@@ -45,7 +45,6 @@ int main(int argc, char **argv)
 
 	g_type_init();
 
-	setlocale(LC_ALL, "");
 	gebr_libinit(GETTEXT_PACKAGE);
 
 	context = g_option_context_new(_("GeBR daemon"));

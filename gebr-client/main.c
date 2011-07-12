@@ -36,7 +36,6 @@ int main(int argc, char **argv, char **env)
 	GError *error = NULL;
 	GOptionContext *context;
 
-	setlocale(LC_ALL, "");
 	gebr_libinit("gebr-client");
 
 	context = g_option_context_new(_("serveraddress command [args]}"));

@@ -26,6 +26,9 @@ void gebr_libinit(const gchar * gettext_package)
 {
 	g_return_if_fail (gettext_package != NULL);
 
+	setlocale(LC_ALL, "");
+	setlocale(LC_NUMERIC, "C");
+
 	if (strcmp (gettext_package, "libgebr") != 0) {
 		bindtextdomain ("libgebr", PACKAGE_LOCALE_DIR);
 		bind_textdomain_codeset ("libgebr", "UTF-8");

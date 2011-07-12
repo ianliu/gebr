@@ -31,8 +31,6 @@ int main(int argc, char *argv[])
 	g_type_init();
 	g_thread_init(NULL);
 
-	setlocale(LC_ALL, "");
-	setlocale(LC_NUMERIC, "C");
 	gebr_libinit(GETTEXT_PACKAGE);
 
 	gtk_init(&argc, &argv);
