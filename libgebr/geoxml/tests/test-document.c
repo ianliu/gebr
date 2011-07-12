@@ -462,7 +462,7 @@ void test_gebr_geoxml_document_no_iter(void)
 	proj = GEBR_GEOXML_DOCUMENT (gebr_geoxml_project_new ());
 
 	gebr_geoxml_flow_get_program(forloop,(GebrGeoXmlSequence **) &loop, 0);
-	gebr_geoxml_program_set_status(loop, GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED);
+	gebr_geoxml_program_set_status(loop, GEBR_GEOXML_PROGRAM_STATUS_DISABLED);
 
 	gebr_geoxml_flow_add_flow(GEBR_GEOXML_FLOW(flow),forloop);
 
