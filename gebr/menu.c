@@ -45,6 +45,13 @@ static const gchar * directory_list[] = {
 	NULL
 };
 
+static const gchar * directory_list_demos[] = {
+	GEBR_SYS_DEMOS_DIR,
+	"/usr/share/gebr/demos",
+	"/usr/local/share/gebr/demos",
+	NULL
+};
+
 /*
  * Prototypes
  */
@@ -420,4 +427,35 @@ static void menu_scan_directory(const gchar * directory, GKeyFile * menu_key_fil
 	}
 
 	g_string_free(path, TRUE);
+}
+
+static void recurse_dir(GList **demos, const gchar *dir)
+{
+	gchar *filename;
+	GString *path;
+	path = g_string_new(NULL);
+
+	gebr_directory_foreach_file(filename, dir) {
+		g_string_printf(path, "%s/%s", dir, filename);
+		if (g_file_test(path->str, G_FILE_TEST_IS_DIR)) {
+			recurse_dir(demos, path->str);
+			continue;
+		}
+		if (!fnmatch("*.prjz", filename, 1))
+			*demos = g_list_prepend(*demos, g_strdup(path->str));
+		g_string_set_size(path, 0);
+	}
+	g_string_free(path, TRUE);
+}
+
+GList *demos_list_create(void)
+{
+	GList *demos = NULL;
+
+	recurse_dir(&demos, directory_list_demos[0]);
+	for (int i = 1; directory_list_demos[i]; i++)
+		if (!gebr_realpath_equal (directory_list[i], directory_list[0]))
+			recurse_dir(&demos, directory_list_demos[i]);
+
+	return g_list_sort(demos, (GCompareFunc)g_strcmp0);
 }

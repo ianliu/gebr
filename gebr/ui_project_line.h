@@ -112,6 +112,11 @@ gboolean project_line_get_selected(GtkTreeIter * iter, enum ProjectLineSelection
  */
 void project_line_select_iter(GtkTreeIter * iter);
 
+/*
+ *
+ */
+void project_line_import_path(const gchar *filename);
+
 /**
  * Import line or project
  */

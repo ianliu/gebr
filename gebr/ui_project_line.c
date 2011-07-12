@@ -413,19 +413,12 @@ void project_line_select_iter(GtkTreeIter * iter)
 	gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(gebr.ui_project_line->view), iter);
 }
 
-void project_line_import(void)
+void project_line_import_path(const gchar *filename)
 {
-	GtkWidget *chooser_dialog;
-	GtkFileFilter *file_filter;
-
-	gchar *filename;
 	gboolean is_project;
 
 	GString *tmp_dir;
-	GString *command;
-	GString *command_line;
 	gint exit_status;
-	GError *error;
 	gchar *output;
 	GList *line_paths_creation_sugest = NULL;
 
@@ -434,6 +427,9 @@ void project_line_import(void)
 	gchar **files;
 	int i;
 
+	GError *error;
+	GString *command;
+	GString *command_line;
 	// Hash table with the list of canonized 
 	// dict keywords
 	GHashTable * keys_to_canonized = NULL;
@@ -442,23 +438,6 @@ void project_line_import(void)
 	command_line = g_string_new(NULL);
 	error = NULL;
 
-	chooser_dialog = gtk_file_chooser_dialog_new(_("Choose project/line to open"),
-						     GTK_WINDOW(gebr.window),
-						     GTK_FILE_CHOOSER_ACTION_OPEN,
-						     GTK_STOCK_OPEN, GTK_RESPONSE_YES,
-						     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
-	gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(chooser_dialog), TRUE);
-	file_filter = gtk_file_filter_new();
-	gtk_file_filter_set_name(file_filter, _("Project or line (*.prjz *.lnez)"));
-	gtk_file_filter_add_pattern(file_filter, "*.prjz");
-	gtk_file_filter_add_pattern(file_filter, "*.lnez");
-	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(chooser_dialog), file_filter);
-
-	/* show file chooser */
-	gtk_widget_show(chooser_dialog);
-	if (gtk_dialog_run(GTK_DIALOG(chooser_dialog)) != GTK_RESPONSE_YES)
-		goto out3;
-	filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser_dialog));
 	if (g_str_has_suffix(filename, ".prjz"))
 		is_project = TRUE;
 	else if (g_str_has_suffix(filename, ".lnez")) {
@@ -506,8 +485,8 @@ void project_line_import(void)
 			gebr_geoxml_sequence_next(&next);
 
 			int ret = document_load_at_with_parent((GebrGeoXmlDocument**)(&flow),
-							       gebr_geoxml_line_get_flow_source(GEBR_GEOXML_LINE_FLOW(i)),
-							       at_dir, project_iter);
+			                                       gebr_geoxml_line_get_flow_source(GEBR_GEOXML_LINE_FLOW(i)),
+			                                       at_dir, project_iter);
 			if (ret) {
 				i = next;
 				continue;
@@ -518,7 +497,7 @@ void project_line_import(void)
 					&keys_to_canonized);
 			document_import(GEBR_GEOXML_DOCUMENT(flow));
 			gebr_geoxml_line_set_flow_source(GEBR_GEOXML_LINE_FLOW(i),
-							 gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(flow)));
+			                                 gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(flow)));
 			document_save(GEBR_GEOXML_DOCUMENT(flow), FALSE, TRUE); /* this flow is cached */
 
 			i = next;
@@ -568,18 +547,18 @@ void project_line_import(void)
 				gebr_geoxml_sequence_next(&next);
 
 				int ret = line_import(&iter, &line, gebr_geoxml_project_get_line_source
-						      (GEBR_GEOXML_PROJECT_LINE(project_line)), tmp_dir->str);
+				                      (GEBR_GEOXML_PROJECT_LINE(project_line)), tmp_dir->str);
 				if (ret) {
 					project_line = next;
 					continue;
 				}
 				gebr_geoxml_project_set_line_source(GEBR_GEOXML_PROJECT_LINE(project_line),
-								    gebr_geoxml_document_get_filename
-								    (GEBR_GEOXML_DOCUMENT(line)));
+				                                    gebr_geoxml_document_get_filename
+				                                    (GEBR_GEOXML_DOCUMENT(line)));
 
 				project_append_line_iter(&iter, line);
 				document_save(GEBR_GEOXML_DOCUMENT(line), FALSE, FALSE);
-				
+
 				project_line = next;
 			}
 
@@ -592,7 +571,7 @@ void project_line_import(void)
 			if (line == NULL)
 				continue;
 			gebr_geoxml_project_append_line(gebr.project,
-							gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(line)));
+			                                gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(line)));
 			document_save(GEBR_GEOXML_DOCUMENT(gebr.project), TRUE, FALSE);
 
 			project_line_get_selected(&iter, DontWarnUnselection);
@@ -624,8 +603,8 @@ void project_line_import(void)
 			g_string_append_printf(paths, "\n%s", (gchar*)i->data);
 
 		if (gebr_gui_confirm_action_dialog(_("Create directories"),
-						   _("There are some line paths localed on your home directory that"
-						     " do not exist. Do you want to create following folders:%s"), paths->str)) {
+		                                   _("There are some line paths localed on your home directory that"
+		                                		   " do not exist. Do you want to create following folders:%s"), paths->str)) {
 			GString *cmd_line = g_string_new(NULL);
 			for (GList *i = line_paths_creation_sugest; i != NULL; i = g_list_next(i)) {
 				if (g_file_test (i->data, G_FILE_TEST_EXISTS))
@@ -634,17 +613,17 @@ void project_line_import(void)
 				if (g_mkdir_with_parents (i->data, 0755) != 0) {
 					GtkWidget * warning;
 					warning = gtk_message_dialog_new_with_markup (GTK_WINDOW (gebr.window),
-										      GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-										      GTK_MESSAGE_WARNING,
-										      GTK_BUTTONS_OK,
-										      "<span size='larger' weight='bold'>%s %s</span>",
-										      _("Could not create the directory"),
-										      (gchar*)i->data);
+					                                              GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+					                                              GTK_MESSAGE_WARNING,
+					                                              GTK_BUTTONS_OK,
+					                                              "<span size='larger' weight='bold'>%s %s</span>",
+					                                              _("Could not create the directory"),
+					                                              (gchar*)i->data);
 
 					gtk_message_dialog_format_secondary_markup (GTK_MESSAGE_DIALOG (warning),
-										    _("The directory <i>%s</i> could not be created. "
-										      "Certify you have the rights to perform this operation."),
-										    (gchar*)i->data);
+					                                            _("The directory <i>%s</i> could not be created. "
+					                                        		    "Certify you have the rights to perform this operation."),
+					                                        		    (gchar*)i->data);
 
 					gtk_dialog_run (GTK_DIALOG (warning));
 					gtk_widget_destroy (warning);
@@ -661,15 +640,47 @@ void project_line_import(void)
 	g_strfreev(files);
 	goto out;
 
- err:	gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Failed to import."));
+err:
+	gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Failed to import."));
 
-out:	g_free(output);
+out:
+	g_free(output);
 	g_hash_table_unref(keys_to_canonized);
-out2:	g_free(filename);
-out3:	gtk_widget_destroy(chooser_dialog);
+
+out2:
 	g_list_foreach(line_paths_creation_sugest, (GFunc)g_free, NULL);
 	g_list_free(line_paths_creation_sugest);
 	g_string_free(command, TRUE);
+}
+
+void project_line_import(void)
+{
+	GtkWidget *chooser_dialog;
+	GtkFileFilter *file_filter;
+	gchar *filename;
+
+	chooser_dialog = gtk_file_chooser_dialog_new(_("Choose project/line to open"),
+						     GTK_WINDOW(gebr.window),
+						     GTK_FILE_CHOOSER_ACTION_OPEN,
+						     GTK_STOCK_OPEN, GTK_RESPONSE_YES,
+						     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
+	gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(chooser_dialog), TRUE);
+	gtk_file_chooser_add_shortcut_folder(GTK_FILE_CHOOSER(chooser_dialog), "/usr/share/gebr/demos/", NULL);
+	file_filter = gtk_file_filter_new();
+	gtk_file_filter_set_name(file_filter, _("Project or line (*.prjz *.lnez)"));
+	gtk_file_filter_add_pattern(file_filter, "*.prjz");
+	gtk_file_filter_add_pattern(file_filter, "*.lnez");
+	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(chooser_dialog), file_filter);
+
+	/* show file chooser */
+	gtk_widget_show(chooser_dialog);
+	if (gtk_dialog_run(GTK_DIALOG(chooser_dialog)) == GTK_RESPONSE_YES) {
+		filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser_dialog));
+		project_line_import_path(filename);
+	}
+
+	gtk_widget_destroy(chooser_dialog);
+	g_free(filename);
 }
 
 void project_line_export(void)

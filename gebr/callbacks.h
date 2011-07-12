@@ -169,6 +169,11 @@ void on_help_contents_activate(void);
  */
 void on_help_about_activate (void);
 
+/*
+ *
+ */
+void import_demo(GtkWidget *menu_item, const gchar *path);
+
 void navigation_bar_update(void);
 
 void on_flow_browse_show_help(void);

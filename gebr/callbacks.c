@@ -511,6 +511,11 @@ void on_help_about_activate(void)
 	gtk_widget_show_all(gebr.about.dialog);
 }
 
+void import_demo(GtkWidget *menu_item, const gchar *path)
+{
+	project_line_import_path(path);
+}
+
 void navigation_bar_update(void)
 {
 	GString *markup;
