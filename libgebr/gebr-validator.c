@@ -982,8 +982,6 @@ clean_string(gchar **str)
 			b++;
 		(*str)[i-b] = (*str)[i+b];
 	}
-	if ((*str)[i] == '\b')
-		b+=1;
 	(*str)[i-b] = '\0';
 }
 

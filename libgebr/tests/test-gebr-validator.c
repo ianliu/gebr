@@ -812,10 +812,30 @@ void test_gebr_validator_update(Fixture *fixture, gconstpointer data)
 	VALIDATE_FLOAT_EXPR("b", "2");
 }
 
+void test_gebr_validator_clean_string(Fixture *fixture, gconstpointer data)
+{
+	DEF_STRING(fixture->flow, "a", "ABC");
+	DEF_STRING(fixture->flow, "b", "[a]");
+	DEF_STRING(fixture->flow, "c", "[b]");
+	DEF_STRING(fixture->flow, "d", "[c]DE");
+
+	VALIDATE_STRING_EXPR("[d]", "ABCDE");
+	VALIDATE_STRING_EXPR("[c]DE", "ABCDE");
+	VALIDATE_STRING_EXPR("[c]", "ABC");
+	VALIDATE_STRING_EXPR("[b]", "ABC");
+	VALIDATE_STRING_EXPR("[a]", "ABC");
+	VALIDATE_STRING_EXPR("[a]D[b]E[c]F", "ABCDABCEABCF");
+}
+
 int main(int argc, char *argv[])
 {
 	g_type_init();
 	g_test_init(&argc, &argv, NULL);
+
+	g_test_add("/libgebr/validator/clean_string", Fixture, NULL,
+	           fixture_setup,
+	           test_gebr_validator_clean_string,
+	           fixture_teardown);
 
 	g_test_add("/libgebr/validator/simple", Fixture, NULL,
 		   fixture_setup,
