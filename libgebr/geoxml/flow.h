@@ -469,32 +469,6 @@ gboolean gebr_geoxml_flow_io_get_error_append(GebrGeoXmlFlow *flow);
  */
 void gebr_geoxml_flow_update_iter_dict_value(GebrGeoXmlFlow *flow);
 
-/**
- * gebr_geoxml_flow_merge_dicts:
- * @flow: The #GebrGeoXmlFlow that will contain all dictionary parameters.
- * @line: A #GebrGeoXmlLine.
- * @proj: A #GebrGeoXmlProject.
- *
- * Merges all dictionaries into @flow, separating the parameters of @line and
- * @proj with a special parameter.
- */
-void gebr_geoxml_flow_merge_dicts(GebrGeoXmlFlow *flow,
-				  GebrGeoXmlLine *line,
-				  GebrGeoXmlProject *proj);
-
-/**
- * gebr_geoxml_flow_split_dict:
- * @flow: The #GebrGeoXmlFlow containig all dictionary parameters.
- * @line: A #GebrGeoXmlLine to hold the line parameters.
- * @proj: A #GebrGeoXmlProject to hold the project parameters.
- *
- * Undoes the operation done by gebr_geoxml_flow_merge_dicts() by copying the
- * dictionary parameters from @flow to @line and @proj.
- */
-void gebr_geoxml_flow_split_dict(GebrGeoXmlFlow *flow,
-				 GebrGeoXmlLine *line,
-				 GebrGeoXmlProject *proj);
-
 G_END_DECLS
 
 #endif				//__GEBR_GEOXML_FLOW_H
