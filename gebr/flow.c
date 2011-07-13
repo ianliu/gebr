@@ -817,6 +817,7 @@ void flow_program_paste(void)
 	flow_add_program_sequence_to_view(GEBR_GEOXML_SEQUENCE(pasted), TRUE, FALSE);
 	flow_program_check_sensitiveness();
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
+	flow_edition_revalidate_programs();
 }
 
 static void append_parameter_row(GebrGeoXmlParameter * parameter, GString * dump, gboolean in_group)
