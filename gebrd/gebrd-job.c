@@ -384,17 +384,17 @@ void job_new(GebrdJob ** _job, struct client * client, GString * queue, GString 
 	GebrGeoXmlDocument *document;
 	int ret = gebr_geoxml_document_load_buffer(&document, xml->str);
 	job->flow = GEBR_GEOXML_FLOW(document);
-
-	/* Global variable for current job flow */
-	gebrd->flow = GEBR_GEOXML_FLOW(job->flow);
-
-	g_assert(gebrd->validator != NULL);
-	gebr_validator_update(gebrd->validator);
+	gebrd->flow = document;
 
 	if (job->flow == NULL)
 		job_issue(job, gebr_geoxml_error_explained_string(ret));
-	else
+	else {
 		g_string_assign(job->parent.title, gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(job->flow)));
+		g_assert(gebrd->validator != NULL);
+		gebrd_clean_proj_line_dicts();
+		gebr_geoxml_document_split_dict(gebrd->flow, gebrd->line, gebrd->proj, NULL);
+		gebr_validator_update(gebrd->validator);
+	}
 
 	/* just to send the client the command line, we could do this after by changing the protocol */
 	job_assembly_cmdline(job);
