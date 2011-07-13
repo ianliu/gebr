@@ -1357,6 +1357,7 @@ gboolean
 gebr_geoxml_document_split_dict(GebrGeoXmlDocument *first, ...)
 {
 	va_list args;
+	gboolean retval = TRUE;
 	GebrGeoXmlSequence *seq;
 	GebrGeoXmlSequence *clean = NULL;
 	GebrGeoXmlDocument *doc = NULL;
@@ -1394,8 +1395,8 @@ gebr_geoxml_document_split_dict(GebrGeoXmlDocument *first, ...)
 			if (!doc) {
 				/* The list of documents isn't large enough to
 				 * hold the parameters. */
-				va_end(args);
-				return FALSE;
+				retval = FALSE;
+				goto clean;
 			}
 			if (!clean)
 				clean = seq;
@@ -1417,6 +1418,7 @@ gebr_geoxml_document_split_dict(GebrGeoXmlDocument *first, ...)
 		gebr_geoxml_parameter_set_label(copy, comment);
 	}
 
+clean:
 	while (clean)
 	{
 		GebrGeoXmlSequence *aux = clean;
@@ -1425,7 +1427,7 @@ gebr_geoxml_document_split_dict(GebrGeoXmlDocument *first, ...)
 	}
 
 	va_end(args);
-	return TRUE;
+	return retval;
 }
 
 static gboolean

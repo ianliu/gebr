@@ -66,6 +66,8 @@ static void gebrd_app_init(GebrdApp * self)
 	g_random_set_seed((guint32) time(NULL));
 	self->flow = NULL;
 	self->validator = gebr_validator_new(&self->flow, &self->line, &self->proj);
+	self->line = GEBR_GEOXML_DOCUMENT(gebr_geoxml_line_new());
+	self->proj = GEBR_GEOXML_DOCUMENT(gebr_geoxml_project_new());
 	g_assert(self->validator != NULL);
 }
 static void gebrd_app_finalize(GObject * object)
