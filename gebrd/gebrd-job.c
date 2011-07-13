@@ -991,10 +991,10 @@ static void define_bc_variables(GebrdJob *job, GString *expr_buf, GString *str_b
 			&& status == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED)
 	{
 		GebrGeoXmlSequence *parameter;
-		gebr_geoxml_flow_insert_iter_dict(gebrd->flow);
-		parameter = gebr_geoxml_document_get_dict_parameter(GEBR_GEOXML_DOCUMENT(gebrd->flow));
+		gebr_geoxml_flow_insert_iter_dict(GEBR_GEOXML_FLOW(gebrd->flow));
+		parameter = gebr_geoxml_document_get_dict_parameter(gebrd->flow);
 		gebr_validator_insert(gebrd->validator, GEBR_GEOXML_PARAMETER(parameter), NULL, NULL);
-		gebr_geoxml_flow_remove_iter_dict(gebrd->flow);
+		gebr_geoxml_flow_remove_iter_dict(GEBR_GEOXML_FLOW(gebrd->flow));
 		g_string_append_printf(expr_buf, "\t\titer # V[%"G_GSIZE_FORMAT"]\n", j);
 		gebr_iexpr_set_var(GEBR_IEXPR(job->str_expr), "iter",
 		                   GEBR_GEOXML_PARAMETER_TYPE_STRING,
@@ -1129,9 +1129,10 @@ static void job_assembly_cmdline(GebrdJob *job)
 	gulong nprog;
 	gboolean has_control = FALSE;
 	const gchar *counter;
-	gchar *step, *ini;
+	gchar *step, *ini, *n;
 	GString *expr_buf = g_string_new("");
 	GString *str_buf = g_string_new("");
+	GError *err = NULL;
 
 	job->expr_count = 0;
 	job->str_expr = gebr_string_expr_new();
@@ -1304,6 +1305,13 @@ static void job_assembly_cmdline(GebrdJob *job)
 		    gebr_geoxml_program_get_control(GEBR_GEOXML_PROGRAM(program)) != GEBR_GEOXML_PROGRAM_CONTROL_UNKNOWN){
 			has_control = TRUE;
 			counter = gebr_geoxml_program_control_get_n(GEBR_GEOXML_PROGRAM(program), &step, &ini);
+			gebr_validator_evaluate_scope(gebrd->validator, counter, GEBR_GEOXML_PARAMETER_TYPE_FLOAT, GEBR_GEOXML_DOCUMENT_TYPE_LINE, &n, &err);
+			if (err) {
+				job_issue(job, _("%u) %s '%s'.\n"),
+				          ++issue_number, err->message,
+				          gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(program)));
+				g_clear_error(&err);
+			}
 			gebr_geoxml_sequence_next(&program);
 			continue;
 		}
@@ -1409,7 +1417,7 @@ static void job_assembly_cmdline(GebrdJob *job)
 		gchar *prefix, *remove;
 		assemble_bc_cmd_line (expr_buf, ini, step);
 		prefix = g_strdup_printf("for (( counter=0; counter<%s; counter++ ))\ndo\n%s\n%s",
-		                         counter, expr_buf->str, str_buf->str);
+		                         n, expr_buf->str, str_buf->str);
 		if(!gebr_geoxml_flow_io_get_output_append(job->flow) && !stdout_use_iter &&
 				strlen(gebr_geoxml_flow_io_get_output(job->flow)) > 0 && previous_stdout) {
 			remove = g_strdup_printf("\n\ttest $counter -eq 0 && > %s\n", stdout_parsed);

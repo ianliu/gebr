@@ -65,9 +65,9 @@ static void gebrd_app_init(GebrdApp * self)
 	gethostname(self->hostname, 255);
 	g_random_set_seed((guint32) time(NULL));
 	self->flow = NULL;
-	self->validator = gebr_validator_new(&self->flow, &self->line, &self->proj);
 	self->line = GEBR_GEOXML_DOCUMENT(gebr_geoxml_line_new());
 	self->proj = GEBR_GEOXML_DOCUMENT(gebr_geoxml_project_new());
+	self->validator = gebr_validator_new(&self->flow, &self->line, &self->proj);
 	g_assert(self->validator != NULL);
 }
 static void gebrd_app_finalize(GObject * object)
@@ -378,18 +378,20 @@ const GebrdMpiConfig * gebrd_get_mpi_config_by_name(const gchar * name)
 void
 gebrd_clean_proj_line_dicts(void)
 {
-	GebrGeoXmlSequence *seq;
-	GebrGeoXmlSequence *aux;
-	seq = gebr_geoxml_document_get_dict_parameter(gebrd->line);
-	while (seq) {
-		aux = seq;
-		gebr_geoxml_sequence_next(&seq);
-		gebr_geoxml_sequence_remove(aux);
-	}
-	seq = gebr_geoxml_document_get_dict_parameter(gebrd->proj);
-	while (seq) {
-		aux = seq;
-		gebr_geoxml_sequence_next(&seq);
-		gebr_geoxml_sequence_remove(aux);
-	}
+//	GebrGeoXmlSequence *seq;
+//	GebrGeoXmlSequence *aux;
+//	seq = gebr_geoxml_document_get_dict_parameter(gebrd->line);
+//	while (seq) {
+//		aux = seq;
+//		gebr_geoxml_sequence_next(&seq);
+//		gebr_geoxml_sequence_remove(aux);
+//	}
+//	seq = gebr_geoxml_document_get_dict_parameter(gebrd->proj);
+//	while (seq) {
+//		aux = seq;
+//		gebr_geoxml_sequence_next(&seq);
+//		gebr_geoxml_sequence_remove(aux);
+//	}
+	gebrd->line = GEBR_GEOXML_DOCUMENT(gebr_geoxml_line_new());
+	gebrd->proj = GEBR_GEOXML_DOCUMENT(gebr_geoxml_project_new());
 }
