@@ -799,9 +799,10 @@ void project_line_export(void)
 		filename = g_build_path ("/", tmpdir->str,
 					 gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(line)),
 					 NULL);
-		if(proj)
-			if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(check_box_var)))
-				gebr_geoxml_document_merge_dict(GEBR_GEOXML_DOCUMENT(line), GEBR_GEOXML_DOCUMENT(proj));
+		if(proj && gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(check_box_var))) {
+			// TODO: DICT
+			//gebr_geoxml_document_merge_dict(GEBR_GEOXML_DOCUMENT(line), GEBR_GEOXML_DOCUMENT(proj));
+		}
 
 		document_save_at(GEBR_GEOXML_DOCUMENT(line), filename, FALSE, FALSE);
 		g_free (filename);

@@ -156,10 +156,11 @@ GebrGeoXmlFlow *gebr_comm_server_run_strip_flow(GebrValidator *validator,
 	}
 
 	/* Merge all dictionaries */
+	// TODO: DICT
 	va_start(ap, flow);
 	doc = va_arg(ap, GebrGeoXmlDocument*);
 	while (doc) {
-		gebr_geoxml_document_merge_dict (clone, doc);
+		//gebr_geoxml_document_merge_dict (clone, doc);
 		doc = va_arg(ap, GebrGeoXmlDocument*);
 	}
 	va_end(ap);

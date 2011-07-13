@@ -346,8 +346,9 @@ void flow_export(void)
 		filepath = g_build_path ("/", tempdir->str, flow_filename, NULL);
 
 		if(active_var) {
-			gebr_geoxml_document_merge_dict(GEBR_GEOXML_DOCUMENT(flow), GEBR_GEOXML_DOCUMENT(gebr.line));
-			gebr_geoxml_document_merge_dict(GEBR_GEOXML_DOCUMENT(flow), GEBR_GEOXML_DOCUMENT(gebr.project));
+			// TODO: DICT
+			//gebr_geoxml_document_merge_dict(GEBR_GEOXML_DOCUMENT(flow), GEBR_GEOXML_DOCUMENT(gebr.line));
+			//gebr_geoxml_document_merge_dict(GEBR_GEOXML_DOCUMENT(flow), GEBR_GEOXML_DOCUMENT(gebr.project));
 		}
 
 		if (!document_save_at (flow, filepath, FALSE, FALSE)) {
