@@ -56,7 +56,7 @@ static const GtkActionEntry actions_entries[] = {
 		"<Control>h", NULL, G_CALLBACK(on_help_contents_activate)},
 	{"help_about", GTK_STOCK_ABOUT, NULL,
 		NULL, NULL, G_CALLBACK(on_help_about_activate)},
-	{"help_demos_su", NULL, ("SU _Demos")},
+	{"help_demos_su", NULL, ("SU _Samples")},
 };
 
 static const GtkActionEntry actions_entries_project_line[] = {
@@ -509,23 +509,31 @@ static void assembly_menus(GtkMenuBar * menu_bar)
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menu_item), submenu);
 	GList *demos = NULL;
 	demos = demos_list_create();
-	for(GList *i = demos; i; i = i->next) {
-		gchar *path = i->data;
-		gchar *label;
-
-		GFile *file = g_file_new_for_path(path);
-		GFileInfo *info = g_file_query_info(file, G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME, 0, NULL, NULL);
-
-		label = g_strdup(g_file_info_get_attribute_string(info, G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME));
-		g_strdelimit(label, "_", ' ');
-		label[strlen(label) - 5] = '\0';
-
-		menu_item = gtk_menu_item_new_with_label(label);
-		g_signal_connect(menu_item, "activate", G_CALLBACK(import_demo), path);
-		g_object_weak_ref(G_OBJECT(menu_item), (GWeakNotify)g_free, path);
+	if (!demos) {
+		menu_item = gtk_menu_item_new_with_label(_("Install Seismic Unix package.\nGet the script of Seismic Unix on GêBR Project website."));
 		gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menu_item);
+	} else {
+		for(GList *i = demos; i; i = i->next) {
+			gchar *path = i->data;
+			gchar *label;
+			GFile *file = g_file_new_for_path(path);
+			GFileInfo *info = g_file_query_info(file, G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME, 0, NULL, NULL);
 
-		g_free(label);
+			label = g_strdup(g_file_info_get_attribute_string(info, G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME));
+
+			if (g_file_test(path, G_FILE_TEST_IS_DIR)) {
+				continue;
+			}
+			g_strdelimit(label, "_", ' ');
+			label[strlen(label) - 5] = '\0';
+
+			menu_item = gtk_menu_item_new_with_label(label);
+			g_signal_connect(menu_item, "activate", G_CALLBACK(import_demo), path);
+			g_object_weak_ref(G_OBJECT(menu_item), (GWeakNotify)g_free, path);
+			gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menu_item);
+
+			g_free(label);
+		}
+		g_list_free(demos);
 	}
-	g_list_free(demos);
 }

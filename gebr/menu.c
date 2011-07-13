@@ -438,6 +438,7 @@ static void recurse_dir(GList **demos, const gchar *dir)
 	gebr_directory_foreach_file(filename, dir) {
 		g_string_printf(path, "%s/%s", dir, filename);
 		if (g_file_test(path->str, G_FILE_TEST_IS_DIR)) {
+			*demos = g_list_prepend(*demos, g_strdup(path->str));
 			recurse_dir(demos, path->str);
 			continue;
 		}
