@@ -1181,6 +1181,33 @@ static void job_assembly_cmdline(GebrdJob *job)
 		}
 
 	}
+	/* Configure MPI */
+	const gchar * mpiname;
+	mpiname = gebr_geoxml_program_get_mpi(GEBR_GEOXML_PROGRAM(program));
+	mpi = job_get_mpi_impl(mpiname, job->parent.n_process);
+	if (strlen(mpiname) && !mpi) {
+		job_issue(job,
+			  _("Requested MPI (%s) is not supported by this server.\n"), mpiname);
+		goto err;
+	}
+
+	/* Binary followed by an space */
+	const gchar * binary;
+	binary = gebr_geoxml_program_get_binary(GEBR_GEOXML_PROGRAM(program));
+	if (mpi == NULL)
+		g_string_append_printf(job->parent.cmd_line, "%s ", binary);
+	else {
+		gchar * mpicmd;
+		mpicmd = gebrd_mpi_interface_build_comand(mpi, binary);
+		g_string_append_printf(job->parent.cmd_line, "%s ", mpicmd);
+		g_free(mpicmd);
+	}
+
+	// define variables on bc, to use on stdin, stdout, stderr and expressions
+	define_bc_variables(job, expr_buf, str_buf, &job->n_vars);
+
+	if (job_add_program_parameters(job, GEBR_GEOXML_PROGRAM(program), expr_buf) == FALSE)
+		goto err;
 
 	/*
 	 * First program
@@ -1218,33 +1245,6 @@ static void job_assembly_cmdline(GebrdJob *job)
 			goto err;
 		}
 	}
-
-	/* Configure MPI */
-	const gchar * mpiname;
-	mpiname = gebr_geoxml_program_get_mpi(GEBR_GEOXML_PROGRAM(program));
-	mpi = job_get_mpi_impl(mpiname, job->parent.n_process);
-	if (strlen(mpiname) && !mpi) {
-		job_issue(job,
-			  _("Requested MPI (%s) is not supported by this server.\n"), mpiname);
-		goto err;
-	}
-
-	/* Binary followed by an space */
-	const gchar * binary;
-	binary = gebr_geoxml_program_get_binary(GEBR_GEOXML_PROGRAM(program));
-	if (mpi == NULL)
-		g_string_append_printf(job->parent.cmd_line, "%s ", binary);
-	else {
-		gchar * mpicmd;
-		mpicmd = gebrd_mpi_interface_build_comand(mpi, binary);
-		g_string_append_printf(job->parent.cmd_line, "%s ", mpicmd);
-		g_free(mpicmd);
-	}
-
-	define_bc_variables(job, expr_buf, str_buf, &job->n_vars);
-
-	if (job_add_program_parameters(job, GEBR_GEOXML_PROGRAM(program), expr_buf) == FALSE)
-		goto err;
 
 	/* These variables keep the parsed stdout and stderr */
 	gchar *stdout_parsed = NULL;
