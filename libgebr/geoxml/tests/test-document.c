@@ -596,8 +596,11 @@ static void test_gebr_geoxml_document_merge_and_split_dicts(void)
 	GebrGeoXmlDocument *proj = GEBR_GEOXML_DOCUMENT(gebr_geoxml_project_new());
 
 	gebr_geoxml_document_set_dict_keyword(flow, GEBR_GEOXML_PARAMETER_TYPE_INT, "foo", "1");
+	gebr_geoxml_document_set_dict_keyword(flow, GEBR_GEOXML_PARAMETER_TYPE_INT, "foo2", "10");
 	gebr_geoxml_document_set_dict_keyword(line, GEBR_GEOXML_PARAMETER_TYPE_INT, "bar", "2");
+	gebr_geoxml_document_set_dict_keyword(line, GEBR_GEOXML_PARAMETER_TYPE_INT, "bar2", "20");
 	gebr_geoxml_document_set_dict_keyword(proj, GEBR_GEOXML_PARAMETER_TYPE_INT, "baz", "3");
+	gebr_geoxml_document_set_dict_keyword(proj, GEBR_GEOXML_PARAMETER_TYPE_INT, "baz2", "30");
 
 	gebr_geoxml_document_merge_dicts(flow, line, proj, NULL);
 
