@@ -1426,6 +1426,9 @@ flow_edition_revalidate_programs(void)
 		if (!program || gebr_geoxml_program_get_control(program) == GEBR_GEOXML_PROGRAM_CONTROL_FOR)
 			continue;
 
+		if (gebr_geoxml_program_get_status(program) == GEBR_GEOXML_PROGRAM_STATUS_DISABLED)
+			continue;
+
 		if (validate_program_iter(&iter, NULL))
 			flow_edition_change_iter_status(GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED, &iter);
 		else
