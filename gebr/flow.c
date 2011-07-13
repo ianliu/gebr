@@ -540,7 +540,7 @@ void flow_run(GebrServer *server, GebrCommServerRunConfig * config, gboolean sin
 		flow_browse_info_update(); 
 
 		/* prepare flow and add it to config */
-		GebrGeoXmlFlow *stripped = gebr_comm_server_run_strip_flow(gebr.validator, flow, line, proj, NULL);
+		GebrGeoXmlFlow *stripped = gebr_comm_server_run_strip_flow(gebr.validator, flow, line, proj);
 		flow_copy_from_dicts(stripped);
 		GebrCommServerRunFlow *run_flow = gebr_comm_server_run_config_add_flow(config, stripped);
 		gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(stripped));

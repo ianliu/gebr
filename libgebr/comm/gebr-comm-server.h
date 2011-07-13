@@ -153,17 +153,19 @@ GebrCommServerRunFlow* gebr_comm_server_run_config_add_flow(GebrCommServerRunCon
 
 /**
  * gebr_comm_server_run_strip_flow:
- * @flow: a #GebrGeoXmlFlow
- * @...: a %NULL-terminated list of #GebrGeoXmlDocument
+ * @flow: a #GebrGeoXmlFlow.
+ * @line: a #GebrGeoXmlLine.
+ * @proj: a #GebrGeoXmlProject.
  *
- * Make a copy of @flow and removes all help strings. All dictionaries from the #GebrGeoXmlDocuments
- * in the %NULL-terminated list @... are merged into the copy. The order is importante in the following
- * sense: if document 'a' appears before 'b' in the list, its dictionaries are preserved in case of
- * name clashes.
+ * Make a copy of @flow and removes all help strings. All dictionaries from
+ * @line and @proj are merged into the copy. 
  *
- * Returns: a new flow prepared to run
+ * Returns: a new flow prepared to run.
  */
-GebrGeoXmlFlow *gebr_comm_server_run_strip_flow(GebrValidator *validator, GebrGeoXmlFlow *flow, ...) G_GNUC_NULL_TERMINATED;
+GebrGeoXmlFlow *gebr_comm_server_run_strip_flow(GebrValidator *validator,
+                                                GebrGeoXmlFlow *flow,
+                                                GebrGeoXmlLine *line,
+                                                GebrGeoXmlProject *proj);
 
 /**
  */
