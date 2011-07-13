@@ -690,8 +690,8 @@ void project_line_export(void)
 	gchar *tmp;
 
 	GtkWidget *chooser_dialog;
-	GtkWidget *check_box_user, *check_box_var;
-	const gchar *check_box_label_user, *check_box_label_var = NULL;
+	GtkWidget *check_box_user;
+	const gchar *check_box_label_user;
 	GtkFileFilter *file_filter;
 
 	GList *rows;
@@ -761,7 +761,6 @@ void project_line_export(void)
 		gtk_file_filter_add_pattern(file_filter, "*.lnez");
 		extension = ".lnez";
 		check_box_label_user = _("Make this line user-independent");
-		check_box_label_var = _("Merge the variables of dictionary");
 	}
 
 	GtkWidget *box;
@@ -770,11 +769,7 @@ void project_line_export(void)
 	check_box_user = gtk_check_button_new_with_label(check_box_label_user);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_box_user), TRUE);
 	gtk_box_pack_start(GTK_BOX(box), check_box_user, TRUE, TRUE, 0);
-	if(check_box_label_var) {
-		check_box_var = gtk_check_button_new_with_label(check_box_label_var);
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_box_var), TRUE);
-		gtk_box_pack_start(GTK_BOX(box), check_box_var, TRUE, TRUE, 0);
-	}
+
 	chooser_dialog = gebr_gui_save_dialog_new(_("Choose filename to save"), GTK_WINDOW(gebr.window));
 	gebr_gui_save_dialog_set_default_extension(GEBR_GUI_SAVE_DIALOG(chooser_dialog), extension);
 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(chooser_dialog), file_filter);
@@ -799,10 +794,6 @@ void project_line_export(void)
 		filename = g_build_path ("/", tmpdir->str,
 					 gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(line)),
 					 NULL);
-		if(proj && gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(check_box_var))) {
-			// TODO: DICT
-			//gebr_geoxml_document_merge_dict(GEBR_GEOXML_DOCUMENT(line), GEBR_GEOXML_DOCUMENT(proj));
-		}
 
 		document_save_at(GEBR_GEOXML_DOCUMENT(line), filename, FALSE, FALSE);
 		g_free (filename);

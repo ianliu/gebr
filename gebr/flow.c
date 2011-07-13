@@ -255,9 +255,9 @@ void flow_export(void)
 	GtkFileFilter *file_filter;
 	GtkTreeModel *model;
 	GtkTreeSelection *selection;
-	GtkWidget *check_box_user, *check_box_var;
+	GtkWidget *check_box_user;
 	GtkWidget *chooser_dialog;
-	gboolean active_user, active_var;
+	gboolean active_user;
 	gboolean have_flow = FALSE;
 	gboolean error = FALSE;
 	gchar *filename;
@@ -299,8 +299,6 @@ void flow_export(void)
 
 	check_box_user = gtk_check_button_new_with_label(_("Make this Flow user-independent"));
 	gtk_box_pack_start(GTK_BOX(box), check_box_user, TRUE, TRUE, 0);
-	check_box_var = gtk_check_button_new_with_label(_("Merge the variables of dictionary"));
-	gtk_box_pack_start(GTK_BOX(box), check_box_var, TRUE, TRUE, 0);
 	chooser_dialog = gebr_gui_save_dialog_new(title->str, GTK_WINDOW(gebr.window));
 	gebr_gui_save_dialog_set_default_extension(GEBR_GUI_SAVE_DIALOG(chooser_dialog), ".flwz");
 
@@ -311,7 +309,6 @@ void flow_export(void)
 	gtk_file_chooser_set_extra_widget(GTK_FILE_CHOOSER(chooser_dialog), box);
 	gtk_widget_show_all(box);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_box_user), TRUE);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_box_var), TRUE);
 
 	tmp = gebr_gui_save_dialog_run(GEBR_GUI_SAVE_DIALOG(chooser_dialog));
 	if (!tmp)
@@ -319,7 +316,6 @@ void flow_export(void)
 
 	filename = g_path_get_basename (tmp);
 	active_user = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (check_box_user));
-	active_var = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (check_box_var));
 	tempdir = gebr_temp_directory_create ();
 	tar = gebr_tar_create (tmp);
 
@@ -344,12 +340,6 @@ void flow_export(void)
 
 		flow_set_paths_to_relative(GEBR_GEOXML_FLOW(flow), active_user);
 		filepath = g_build_path ("/", tempdir->str, flow_filename, NULL);
-
-		if(active_var) {
-			// TODO: DICT
-			//gebr_geoxml_document_merge_dict(GEBR_GEOXML_DOCUMENT(flow), GEBR_GEOXML_DOCUMENT(gebr.line));
-			//gebr_geoxml_document_merge_dict(GEBR_GEOXML_DOCUMENT(flow), GEBR_GEOXML_DOCUMENT(gebr.project));
-		}
 
 		if (!document_save_at (flow, filepath, FALSE, FALSE)) {
 			gebr_message (GEBR_LOG_ERROR, FALSE, TRUE,
