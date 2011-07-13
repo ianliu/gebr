@@ -1301,46 +1301,131 @@ static void gebr_geoxml_document_fix_header(GString * source, const gchar * tagn
 	g_free(doctype);
 }
 
-void gebr_geoxml_document_merge_dict (GebrGeoXmlDocument *dst, GebrGeoXmlDocument *src)
+void
+gebr_geoxml_document_merge_dicts(GebrGeoXmlDocument *first, ...)
 {
-	GebrGeoXmlParameters *dst_params;
-	GebrGeoXmlParameters *src_params;
-	GebrGeoXmlProgramParameter *param;
+	va_list args;
+	GebrGeoXmlDocument *doc;
+	GebrGeoXmlParameters *dict;
+
+	g_return_if_fail(first != NULL);
+
+	va_start(args, first);
+	doc = va_arg(args, GebrGeoXmlDocument*);
+
+	if (!doc)
+		return;
+
+	dict = gebr_geoxml_document_get_dict_parameters(first);
+
+	while (doc) {
+		GebrGeoXmlSequence *seq = gebr_geoxml_document_get_dict_parameter(doc);
+		while (seq) {
+			const gchar *value;
+			const gchar *keyword;
+			const gchar *comment;
+			GebrGeoXmlParameterType type;
+			GebrGeoXmlParameter *param =  GEBR_GEOXML_PARAMETER(seq);
+			GebrGeoXmlProgramParameter *pparam = GEBR_GEOXML_PROGRAM_PARAMETER(seq);
+
+			// Insert separator
+			gebr_geoxml_parameters_append_parameter(dict, GEBR_GEOXML_PARAMETER_TYPE_GROUP);
+
+			// copy data
+			value = gebr_geoxml_program_parameter_get_first_value(pparam, FALSE);
+			keyword = gebr_geoxml_program_parameter_get_keyword(pparam);
+			comment = gebr_geoxml_parameter_get_label(param);
+			type = gebr_geoxml_parameter_get_type(param);
+
+			// paste data
+			GebrGeoXmlParameter *copy;
+			copy = gebr_geoxml_parameters_append_parameter(dict, type);
+			param = GEBR_GEOXML_PARAMETER(copy);
+			pparam = GEBR_GEOXML_PROGRAM_PARAMETER(copy);
+			gebr_geoxml_program_parameter_set_keyword(pparam, keyword);
+			gebr_geoxml_program_parameter_set_first_value(pparam, FALSE, value);
+			gebr_geoxml_parameter_set_label(param, comment);
+
+			gebr_geoxml_sequence_next(&seq);
+		}
+		doc = va_arg(args, GebrGeoXmlDocument*);
+	}
+	va_end(args);
+}
+
+gboolean
+gebr_geoxml_document_split_dict(GebrGeoXmlDocument *first, ...)
+{
+	va_list args;
 	GebrGeoXmlSequence *seq;
-	GebrGeoXmlSequence *first;
-	GdomeNode *clone;
-	GHashTable *htable;
-	const gchar *label;
+	GebrGeoXmlSequence *clean = NULL;
+	GebrGeoXmlDocument *doc = NULL;
+	GebrGeoXmlParameterType type;
 
-	g_return_if_fail (dst != NULL);
-	g_return_if_fail (src != NULL);
+	va_start(args, first);
 
-	dst_params = gebr_geoxml_document_get_dict_parameters (dst);
-	src_params = gebr_geoxml_document_get_dict_parameters (src);
-	htable = g_hash_table_new (g_str_hash, g_str_equal);
+	/**
+	 * A document can contain dictionary information of its parents
+	 * documents, ie a line can contain its projects variables, and a flow
+	 * its line and project variables. Internally, they are separated by
+	 * parameters of type "GROUP". See the example below
+	 *
+	 * FLOW
+	 *   DICT-PARAMS
+	 *     flow parameter
+	 *     flow parameter
+	 *     ...
+	 *     PARAMETER_TYPE_GROUP
+	 *     line parameter
+	 *     line parameter
+	 *     ...
+	 *     PARAMETER_TYPE_GROUP
+	 *     proj parameter
+	 *     proj parameter
+	 *     ...
+	 */
 
-	gebr_geoxml_parameters_get_parameter (dst_params, &seq, 0);
-	first = seq;
-	while (seq) {
-		param = GEBR_GEOXML_PROGRAM_PARAMETER (seq);
-		label = gebr_geoxml_program_parameter_get_keyword (param);
-		g_hash_table_insert (htable, (gpointer)label, GINT_TO_POINTER (1));
-		gebr_geoxml_sequence_next (&seq);
-	}
-
-	gebr_geoxml_parameters_get_parameter (src_params, &seq, 0);
-	for ( ; seq; gebr_geoxml_sequence_next (&seq)) {
-		param = GEBR_GEOXML_PROGRAM_PARAMETER (seq);
-		label = gebr_geoxml_program_parameter_get_keyword (param);
-		if (g_hash_table_lookup (htable, label))
+	seq = gebr_geoxml_document_get_dict_parameter(GEBR_GEOXML_DOCUMENT(first));
+	for (; seq; gebr_geoxml_sequence_next(&seq)) {
+		GebrGeoXmlParameter *param = GEBR_GEOXML_PARAMETER(seq);
+		type = gebr_geoxml_parameter_get_type(param);
+		if (type == GEBR_GEOXML_PARAMETER_TYPE_GROUP) {
+			doc = va_arg(args, GebrGeoXmlDocument*);
+			if (!doc) {
+				/* The list of documents isn't large enough to
+				 * hold the parameters. */
+				va_end(args);
+				return FALSE;
+			}
+			if (!clean)
+				clean = seq;
 			continue;
+		} else if (!doc)
+			continue; // skip flow parameters
 
-		clone = gdome_doc_importNode((GdomeDocument *)dst, (GdomeNode *) seq,
-					     TRUE, &exception);
-		gdome_el_insertBefore((GdomeElement *)dst_params, clone, (GdomeNode*)first, &exception);
+		// Time to split them
+		const gchar *value;
+		const gchar *keyword;
+		const gchar *comment;
+		GebrGeoXmlParameter *copy;
+		GebrGeoXmlProgramParameter *pparam = GEBR_GEOXML_PROGRAM_PARAMETER(seq);
+
+		value = gebr_geoxml_program_parameter_get_first_value(pparam, FALSE);
+		keyword = gebr_geoxml_program_parameter_get_keyword(pparam);
+		comment = gebr_geoxml_parameter_get_label(param);
+		copy = gebr_geoxml_document_set_dict_keyword(doc, type, keyword, value);
+		gebr_geoxml_parameter_set_label(copy, comment);
 	}
 
-	g_hash_table_unref (htable);
+	while (clean)
+	{
+		GebrGeoXmlSequence *aux = clean;
+		gebr_geoxml_sequence_next(&clean);
+		gebr_geoxml_sequence_remove(aux);
+	}
+
+	va_end(args);
+	return TRUE;
 }
 
 static gboolean

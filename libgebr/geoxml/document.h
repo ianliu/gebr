@@ -326,14 +326,34 @@ const gchar *gebr_geoxml_document_get_description(GebrGeoXmlDocument * document)
 const gchar *gebr_geoxml_document_get_help(GebrGeoXmlDocument * document);
 
 /**
- * gebr_geoxml_document_merge_dict:
- * @dst: A #GebrGeoXmlDocument that will receive @src dictionary parameters
- * @src: A #GebrGeoXmlDocument containing dictionary parameters to be merged in @dst
+ * gebr_geoxml_document_merge_dicts:
+ * @first: The #GebrGeoXmlDocument that will contain all dictionary parameters.
+ * @...: A %NULL-terminated list of #GebrGeoXmlDocument that will be merged
+ *       into @first.
  *
- * Copies dictionary parameters from @src into @dst, without overwriting @dst original
- * variables in case of name clash.
+ * Merges all dictionaries into @first separating them with a special
+ * parameter. After applying this function, no one should use @first before
+ * calling gebr_geoxml_document_split_dict().
  */
-void gebr_geoxml_document_merge_dict (GebrGeoXmlDocument *dst, GebrGeoXmlDocument *src);
+void gebr_geoxml_document_merge_dicts(GebrGeoXmlDocument *first,
+				      ...) G_GNUC_NULL_TERMINATED;
+
+/**
+ * gebr_geoxml_document_split_dict:
+ * @first: The #GebrGeoXmlDocument containing dictionary parameters (or not).
+ * @...: A %NULL-terminated list of #GebrGeoXmlDocument that will be filled
+ *       with @first's dictionary parameters.
+ *
+ * If @first has dictionary parameters separated by the function
+ * gebr_geoxml_document_merge_dicts(), make sure the list @... have enougth
+ * documents to hold them. If that is not the case, the function returns
+ * %FALSE.
+ *
+ * Returns: %TRUE if the document list was large enougth to hold @first's
+ * dictionary parameters, %FALSE otherwise.
+ */
+gboolean gebr_geoxml_document_split_dict(GebrGeoXmlDocument *first,
+					 ...) G_GNUC_NULL_TERMINATED;
 
 /**
  * gebr_geoxml_document_is_dictkey_defined:
