@@ -509,17 +509,16 @@ static void __set_type_icon(GebrGuiParameterWidget *parameter_widget)
 	gboolean has_focus = FALSE;
 	GtkEntry *entry;
 	GError *error = NULL;
+	GebrGeoXmlDocumentType scope = GEBR_GEOXML_DOCUMENT_TYPE_FLOW;
 
 	value = gebr_geoxml_program_parameter_get_first_value(parameter_widget->program_parameter, FALSE);
 
 	if (gebr_geoxml_program_get_control(gebr_geoxml_parameter_get_program(parameter_widget->parameter)) == GEBR_GEOXML_PROGRAM_CONTROL_FOR)
-		gebr_validator_evaluate(parameter_widget->validator, parameter_widget->parameter, value,
-		                        parameter_widget->parameter_type,
-		                        &result, &error);
-	else
-		gebr_validator_evaluate(parameter_widget->validator, NULL, value,
-		                        parameter_widget->parameter_type,
-		                        &result, &error);
+		scope = GEBR_GEOXML_DOCUMENT_TYPE_LINE;
+
+	gebr_validator_evaluate_scope(parameter_widget->validator, value,
+	                              parameter_widget->parameter_type,
+	                              scope, &result, &error);
 
 	if (error) {
 		// This call won't recurse since 'error' is non-NULL.

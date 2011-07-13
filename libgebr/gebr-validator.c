@@ -1108,7 +1108,7 @@ gboolean gebr_validator_evaluate(GebrValidator *self,
 		g_string_free(expression, TRUE);
 	} else {
 		if (my_param)
-			expr = GET_VAR_VALUE(my_param);
+			expr = GET_VAR_NAME(my_param);
 		gebr_validator_evaluate_internal(self, expr, type, value, scope, &err);
 	}
 
