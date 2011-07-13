@@ -1412,13 +1412,13 @@ static void job_assembly_cmdline(GebrdJob *job)
 		                         counter, expr_buf->str, str_buf->str);
 		if(!gebr_geoxml_flow_io_get_output_append(job->flow) && !stdout_use_iter &&
 				strlen(gebr_geoxml_flow_io_get_output(job->flow)) > 0 && previous_stdout) {
-			remove = g_strdup_printf("\n\ttest $counter -eq 0 && rm -f %s\n", stdout_parsed);
+			remove = g_strdup_printf("\n\ttest $counter -eq 0 && > %s\n", stdout_parsed);
 			g_string_prepend(job->parent.cmd_line, remove);
 			g_free(remove);
 		}
 		if(!gebr_geoxml_flow_io_get_error_append(job->flow) && !stderr_use_iter &&
 				strlen(gebr_geoxml_flow_io_get_error(job->flow)) > 0) {
-			remove = g_strdup_printf("\n\ttest $counter -eq 0 && rm -f %s\n", stderr_parsed);
+			remove = g_strdup_printf("\n\ttest $counter -eq 0 && > %s\n", stderr_parsed);
 			g_string_prepend(job->parent.cmd_line, remove);
 			g_free(remove);
 		}
