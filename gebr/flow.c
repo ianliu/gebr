@@ -173,8 +173,6 @@ static gboolean flow_import_single (const gchar *path)
 	GebrGeoXmlDocument *flow;
 	GebrGeoXmlLineFlow *line_flow;
 
-	GHashTable * keys_to_canonized = NULL;
-
 	if (document_load_path (&flow, path))
 		return FALSE;
 
@@ -183,8 +181,7 @@ static gboolean flow_import_single (const gchar *path)
 	gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Flow '%s' imported to line '%s' from file '%s'."),
 		     title, gebr_geoxml_document_get_title (GEBR_GEOXML_DOC (gebr.line)), path);
 
-	gebr_geoxml_document_canonize_dict_parameters(flow,
-						      &keys_to_canonized);
+	gebr_geoxml_document_canonize_dict_parameters(flow);
 
 	document_import (flow);
 	line_flow = gebr_geoxml_line_append_flow (gebr.line, gebr_geoxml_document_get_filename (flow));
@@ -196,7 +193,6 @@ static gboolean flow_import_single (const gchar *path)
 	gebr_geoxml_document_set_title(flow, new_title);
 	document_save(flow, FALSE, FALSE);
 	g_free(new_title);
-	g_hash_table_unref(keys_to_canonized);
 
 	return TRUE;
 }
@@ -755,7 +751,6 @@ void flow_copy(void)
 void flow_paste(void)
 {
 	GList *i;
-	GHashTable * keys_to_canonized = NULL;
 
 	if (!project_line_get_selected(NULL, LineSelection))
 		return;
@@ -768,16 +763,13 @@ void flow_paste(void)
 			continue;
 		}
 
-		gebr_geoxml_document_canonize_dict_parameters(
-				flow,
-				&keys_to_canonized);
+		gebr_geoxml_document_canonize_dict_parameters(flow);
 		document_import(flow);
 		line_append_flow_iter(GEBR_GEOXML_FLOW(flow),
 				      GEBR_GEOXML_LINE_FLOW(gebr_geoxml_line_append_flow(gebr.line,
 											 gebr_geoxml_document_get_filename(flow))));
 		document_save(GEBR_GEOXML_DOCUMENT(gebr.line), TRUE, FALSE);
 	}
-	g_hash_table_unref(keys_to_canonized);
 }
 
 void flow_program_copy(void)

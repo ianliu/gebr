@@ -488,7 +488,6 @@ gebr_geoxml_program_parameter_get_old_dict_keyword(GebrGeoXmlProgramParameter * 
 /**
  * gebr_geoxml_program_parameter_update_old_dict_value:
  * @param: The parameter to be updated.
- * @keys_to_canonized: A GHashTable with orininal dict key => canonized dict key.
  *
  * This function updates a program parameter to use a canonized dict var, insted
  * of the old dict var.
@@ -497,7 +496,7 @@ gebr_geoxml_program_parameter_get_old_dict_keyword(GebrGeoXmlProgramParameter * 
  */
 gboolean
 gebr_geoxml_program_parameter_update_old_dict_value(GebrGeoXmlObject * param,
-						    gpointer keys_to_canonized);
+						    gpointer not_used);
 
 /**
  * gebr_geoxml_program_parameter_has_value:
