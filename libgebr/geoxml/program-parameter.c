@@ -805,9 +805,9 @@ gebr_geoxml_program_parameter_get_old_dict_keyword(GebrGeoXmlProgramParameter * 
 
 gboolean
 gebr_geoxml_program_parameter_update_old_dict_value(GebrGeoXmlObject * param,
-						    gpointer not_used)
+						    gpointer keys_to_canonized)
 {
-	g_return_val_if_fail(not_used == NULL, FALSE);
+	g_return_val_if_fail(keys_to_canonized != NULL, FALSE);
 	g_return_val_if_fail(param != NULL, FALSE);
 
 	const gchar * key = gebr_geoxml_program_parameter_get_old_dict_keyword(
@@ -815,21 +815,16 @@ gebr_geoxml_program_parameter_update_old_dict_value(GebrGeoXmlObject * param,
 	if (key == NULL)
 		return TRUE;
 
-	g_return_val_if_fail(g_quark_try_string(key) != 0, FALSE);
+	const gchar * canonized = (const gchar *)g_hash_table_lookup(
+				(GHashTable *)keys_to_canonized,
+				key);
 
-	gchar * new_value = NULL;
-	gebr_str_canonical_var_name(key, &new_value, NULL);
-
-	GQuark qk = g_quark_from_string(key);
-	gchar * canonized = g_strdup_printf("%s_%d", new_value, qk);
+	g_return_val_if_fail(canonized != NULL, FALSE);
 
 	gebr_geoxml_program_parameter_set_first_value(
 				GEBR_GEOXML_PROGRAM_PARAMETER(param),
 				FALSE,
 				canonized);
-
-	g_free(canonized);
-	g_free(new_value);
 
 	return TRUE;
 }

@@ -27,7 +27,6 @@
 #include "error.h"
 #include "gebr-expr.h"
 #include "sequence.h"
-#include "../utils.h"
 
 void test_gebr_geoxml_document_load (void)
 {
@@ -448,6 +447,8 @@ void test_gebr_geoxml_document_canonize_dict_parameters(void)
 
 	GebrGeoXmlSequence * parameters;
 
+	GHashTable * keys_to_canonized = NULL;
+
 	gint i = 0;
 	gchar * keywords[] = {
 		"A",
@@ -457,9 +458,17 @@ void test_gebr_geoxml_document_canonize_dict_parameters(void)
 		"CDP EM METROS  m ",
 		"cd",
 		"CdP EM METROs %m%",
-		"final",
 		NULL};
 
+	gchar * canonized[] = {
+		"a",
+		"ba",
+		"cdp_em_metros",
+		"cdp_em_metros__m_",
+		"cdp_em_metros__m__1",
+		"cd",
+		"cdp_em_metros__m__2",
+		NULL};
 
 	proj = gebr_geoxml_project_new();
 	proj2 = gebr_geoxml_project_new();
@@ -483,27 +492,8 @@ void test_gebr_geoxml_document_canonize_dict_parameters(void)
 
 	// Canonize the first project dict
 	gebr_geoxml_document_canonize_dict_parameters(
-			GEBR_GEOXML_DOCUMENT(proj));
-
-
-	gchar *canonized[9];
-
-	for ( i = 0; keywords[i]; i++)
-	{
-		if (keywords[i] == NULL)
-			break;
-
-		g_assert(g_quark_try_string(keywords[i]) != 0);
-		gchar * new_value = NULL;
-
-		gebr_str_canonical_var_name(keywords[i], &new_value, NULL);
-
-		GQuark qk = g_quark_from_string(keywords[i]);
-		canonized[i] = g_strdup_printf("%s_%d", new_value, qk);
-
-	}
-
-	canonized[8] = NULL;
+			GEBR_GEOXML_DOCUMENT(proj),
+			&keys_to_canonized);
 
 	// Check canonized vars for the first dict
 	parameters = gebr_geoxml_parameters_get_first_parameter(
@@ -518,9 +508,17 @@ void test_gebr_geoxml_document_canonize_dict_parameters(void)
 		g_assert_cmpstr(key, ==, canonized[i]);
 	}
 
+	for (i = 0; keywords[i]; i++)
+	{
+		// DO NOT free this value.
+		const gchar * value = (const gchar *)g_hash_table_lookup(keys_to_canonized, keywords[i]);
+		g_assert_cmpstr(value, ==, canonized[i]);
+	}
+
 	// Canonize the second project dict
 	gebr_geoxml_document_canonize_dict_parameters(
-			GEBR_GEOXML_DOCUMENT(proj2));
+			GEBR_GEOXML_DOCUMENT(proj2),
+			&keys_to_canonized);
 
 	// Check canonized vars for the second dict
 	parameters = gebr_geoxml_parameters_get_first_parameter(
@@ -535,8 +533,7 @@ void test_gebr_geoxml_document_canonize_dict_parameters(void)
 		g_assert_cmpstr(key, ==, canonized[indices[i]]);
 	}
 
-	for ( i = 0; canonized[i]; i++)
-		g_free(canonized[i]);
+	g_hash_table_unref(keys_to_canonized);
 
 }
 
@@ -545,48 +542,53 @@ void test_gebr_geoxml_document_canonize_program_parameters(void)
 	GebrGeoXmlDocument * flow = NULL;
 	GebrGeoXmlParameters *flow_params;
 	GebrGeoXmlSequence * program = NULL;
+	GHashTable * keys_to_canonized = NULL;
 
 	gebr_geoxml_document_load(&flow, TEST_DIR"/dict_test_flow.flw", TRUE, NULL);
 	flow_params = gebr_geoxml_document_get_dict_parameters (flow);
 	gebr_geoxml_flow_get_program(GEBR_GEOXML_FLOW(flow), &program, 0);
-	gebr_geoxml_document_canonize_dict_parameters(flow);
+	gebr_geoxml_document_canonize_dict_parameters(flow, &keys_to_canonized);
 
+	GHashTable * canonized_to_keys = g_hash_table_new_full((GHashFunc)g_str_hash,
+							       (GEqualFunc)g_str_equal,
+							       (GDestroyNotify)g_free,
+							       (GDestroyNotify)g_free);
 
+	void hash_copy_inverse(gpointer key, gpointer value, gpointer target)
+	{
+		g_hash_table_insert((GHashTable *) target, value, key);
+	}
+
+	g_hash_table_foreach(keys_to_canonized, hash_copy_inverse, canonized_to_keys);
 
 	gboolean assert_dict_keyword(GebrGeoXmlObject *object, gpointer user_data)
 	{
 		const gchar * key = gebr_geoxml_program_parameter_get_old_dict_keyword(
 				GEBR_GEOXML_PROGRAM_PARAMETER(object));
+		gchar * canonized = g_hash_table_lookup(keys_to_canonized, key);
+		gchar * match = NULL;
+		match = g_hash_table_lookup(canonized_to_keys, canonized);
 
-		g_assert(g_quark_try_string(key) != 0);
-		gchar * new_value = NULL;
+		g_assert(match != NULL);
 
-		gebr_str_canonical_var_name(key, &new_value, NULL);
-
-		GQuark qk = g_quark_from_string(key);
-		gchar * canonized = g_strdup_printf("%s_%d", new_value, qk);
-
-		const gchar * value = gebr_geoxml_program_parameter_get_first_value(
-				GEBR_GEOXML_PROGRAM_PARAMETER(object),
-				FALSE);
-		g_assert_cmpstr(value, ==, canonized);
-
-		g_free(new_value);
-		g_free(canonized);
 		return TRUE;
 	}
 
 	gebr_geoxml_program_foreach_parameter(
 			GEBR_GEOXML_PROGRAM(program),
 			gebr_geoxml_program_parameter_update_old_dict_value,
-			NULL);
+			keys_to_canonized);
 
 	gebr_geoxml_program_foreach_parameter(
 			GEBR_GEOXML_PROGRAM(program),
 			assert_dict_keyword,
 			NULL);
 
+	// Freeing this hash table also frees the values stored
+	// at canonized_to_keys.
+	g_hash_table_unref(keys_to_canonized);
 	gebr_geoxml_document_free(flow);
+
 }
 
 static void test_gebr_geoxml_document_merge_and_split_dicts(void)
