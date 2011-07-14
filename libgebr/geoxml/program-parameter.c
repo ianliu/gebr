@@ -812,8 +812,17 @@ gebr_geoxml_program_parameter_update_old_dict_value(GebrGeoXmlObject * param,
 
 	const gchar * key = gebr_geoxml_program_parameter_get_old_dict_keyword(
 			GEBR_GEOXML_PROGRAM_PARAMETER(param));
+
 	if (key == NULL)
 		return TRUE;
+
+	gchar * spaces = g_strdup(key);
+	if(g_strcmp0(g_strstrip(spaces),"") == 0)
+	{
+		g_free(spaces);
+		return TRUE;
+	}
+	g_free(spaces);
 
 	const gchar * canonized = (const gchar *)g_hash_table_lookup(
 				(GHashTable *)keys_to_canonized,

@@ -187,7 +187,9 @@ static GdomeDocument *__gebr_geoxml_document_clone_doc(GdomeDocument * source, G
 /**
  * \internal
  */
-static int __gebr_geoxml_document_validate_doc(GdomeDocument ** document, GebrGeoXmlDiscardMenuRefCallback discard_menu_ref)
+static int
+__gebr_geoxml_document_validate_doc(GdomeDocument ** document,
+				    GebrGeoXmlDiscardMenuRefCallback discard_menu_ref)
 {
 	GString *source;
 	GString *dtd_filename;
@@ -646,12 +648,19 @@ static int __gebr_geoxml_document_validate_doc(GdomeDocument ** document, GebrGe
 
 	if (strcmp(version, "0.3.7") < 0) {
 		if (gebr_geoxml_document_get_type(((GebrGeoXmlDocument *) *document)) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW) {
+			GHashTable * keys_to_canonized = NULL;
+			GebrGeoXmlSequence * program = NULL;
+
 			GdomeElement *io;
 			GdomeElement *el;
 			GdomeElement *new_io;
 			GdomeElement *lastrun;
 			GdomeElement *server;
 			GdomeElement *servers;
+
+			gebr_geoxml_document_canonize_dict_parameters(
+					(GebrGeoXmlDocument *) *document,
+					&keys_to_canonized);
 
 			io = __gebr_geoxml_get_first_element (root_element, "io");
 			servers = __gebr_geoxml_next_element (io);
@@ -679,6 +688,19 @@ static int __gebr_geoxml_document_validate_doc(GdomeDocument ** document, GebrGe
 
 			gdome_el_removeChild(root_element, (GdomeNode*) io, &exception);
 			gdome_el_removeChild(root_element, (GdomeNode*) servers, &exception);
+
+			gebr_geoxml_flow_get_program(
+					(GebrGeoXmlFlow *) *document,
+					&program, 0);
+
+			for (; program != NULL; gebr_geoxml_sequence_next(&program))
+			{
+				gebr_geoxml_program_foreach_parameter(
+						GEBR_GEOXML_PROGRAM(program),
+						gebr_geoxml_program_parameter_update_old_dict_value,
+						keys_to_canonized);
+
+			}
 			__gebr_geoxml_set_attr_value(root_element, "version", "0.3.7");
 		}
 	}
@@ -1042,25 +1064,19 @@ gebr_geoxml_document_canonize_dict_parameters(GebrGeoXmlDocument * document,
 	gint i = 0;
 	GHashTable * values_to_canonized = NULL;
 
-	values_to_canonized = g_hash_table_new_full((GHashFunc)g_str_hash,
-						    (GEqualFunc)g_str_equal,
-						    (GDestroyNotify)g_free,
-						    (GDestroyNotify)g_free);
+	values_to_canonized = g_hash_table_new_full(g_str_hash, g_str_equal,
+						    g_free, g_free);
 
-
-	// Allocate a new hash table only if needed,
-	// this function uses already canonized keywords
-	// provided in this hash table.
 	if (gebr_geoxml_document_get_type(document) == GEBR_GEOXML_DOCUMENT_TYPE_PROJECT)
 	{
 		if (vars_list != NULL)
-			g_hash_table_unref(vars_list);
-
-		vars_list = g_hash_table_new_full((GHashFunc)g_str_hash,
-						   (GEqualFunc)g_str_equal,
-						   (GDestroyNotify)g_free,
-						   (GDestroyNotify)g_free);
+			g_hash_table_destroy(vars_list);
+		vars_list = NULL;
 	}
+
+	if (vars_list == NULL)
+		vars_list = g_hash_table_new_full(g_str_hash, g_str_equal,
+						  g_free, g_free);
 
 	parameters = gebr_geoxml_parameters_get_first_parameter(
 			gebr_geoxml_document_get_dict_parameters(document));
@@ -1085,6 +1101,14 @@ gebr_geoxml_document_canonize_dict_parameters(GebrGeoXmlDocument * document,
 					GEBR_GEOXML_PARAMETER(parameters),
 					GEBR_GEOXML_PARAMETER_TYPE_FLOAT);
 		}
+
+		gchar * spaces = g_strdup(key);
+		if(g_strcmp0(g_strstrip(spaces),"") == 0)
+		{
+			g_free(spaces);
+			continue;
+		}
+		g_free(spaces);
 
 		gebr_str_canonical_var_name(key, &new_value, NULL);
 		gchar * duplicated_key = NULL;

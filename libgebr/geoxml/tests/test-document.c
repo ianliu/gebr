@@ -547,40 +547,10 @@ void test_gebr_geoxml_document_canonize_program_parameters(void)
 	gebr_geoxml_flow_get_program(GEBR_GEOXML_FLOW(flow), &program, 0);
 	gebr_geoxml_document_canonize_dict_parameters(flow, &keys_to_canonized);
 
-	GHashTable * canonized_to_keys = g_hash_table_new_full((GHashFunc)g_str_hash,
-							       (GEqualFunc)g_str_equal,
-							       (GDestroyNotify)g_free,
-							       (GDestroyNotify)g_free);
-
-	void hash_copy_inverse(gpointer key, gpointer value, gpointer target)
-	{
-		g_hash_table_insert((GHashTable *) target, value, key);
-	}
-
-	g_hash_table_foreach(keys_to_canonized, hash_copy_inverse, canonized_to_keys);
-
-	gboolean assert_dict_keyword(GebrGeoXmlObject *object, gpointer user_data)
-	{
-		const gchar * key = gebr_geoxml_program_parameter_get_old_dict_keyword(
-				GEBR_GEOXML_PROGRAM_PARAMETER(object));
-		gchar * canonized = g_hash_table_lookup(keys_to_canonized, key);
-		gchar * match = NULL;
-		match = g_hash_table_lookup(canonized_to_keys, canonized);
-
-		g_assert(match != NULL);
-
-		return TRUE;
-	}
-
 	gebr_geoxml_program_foreach_parameter(
 			GEBR_GEOXML_PROGRAM(program),
 			gebr_geoxml_program_parameter_update_old_dict_value,
 			keys_to_canonized);
-
-	gebr_geoxml_program_foreach_parameter(
-			GEBR_GEOXML_PROGRAM(program),
-			assert_dict_keyword,
-			NULL);
 
 	// Freeing this hash table also frees the values stored
 	// at canonized_to_keys.
@@ -643,6 +613,9 @@ int main(int argc, char *argv[])
 
 	gebr_geoxml_document_set_dtd_dir(DTD_DIR);
 
+	g_test_add_func("/libgebr/geoxml/document/document_canonize_program_parameters", test_gebr_geoxml_document_canonize_program_parameters);
+	g_test_add_func("/libgebr/geoxml/document/merge_and_split_dicts", test_gebr_geoxml_document_merge_and_split_dicts);
+
 	g_test_add_func("/libgebr/geoxml/document/load", test_gebr_geoxml_document_load);
 	g_test_add_func("/libgebr/geoxml/document/get_version", test_gebr_geoxml_document_get_version);
 	g_test_add_func("/libgebr/geoxml/document/get_type", test_gebr_geoxml_document_get_type);
@@ -659,8 +632,6 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/geoxml/document/test_iter", test_gebr_geoxml_document_iter);
 	g_test_add_func("/libgebr/geoxml/document/test_no_iter", test_gebr_geoxml_document_no_iter);
 	g_test_add_func("/libgebr/geoxml/document/document_canonize_dict_parameters", test_gebr_geoxml_document_canonize_dict_parameters);
-	g_test_add_func("/libgebr/geoxml/document/document_canonize_program_parameters", test_gebr_geoxml_document_canonize_program_parameters);
-	g_test_add_func("/libgebr/geoxml/document/merge_and_split_dicts", test_gebr_geoxml_document_merge_and_split_dicts);
 
 	return g_test_run();
 }
