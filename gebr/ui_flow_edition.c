@@ -326,8 +326,8 @@ void flow_edition_set_io(void)
 		tooltip = NULL;
 	} else {
 		title = g_strdup(input);
-		gebr_validator_evaluate(gebr.validator, NULL, input,
-					GEBR_GEOXML_PARAMETER_TYPE_STRING, &result, &err);
+		gebr_validator_evaluate(gebr.validator, input, GEBR_GEOXML_PARAMETER_TYPE_STRING,
+		                        GEBR_GEOXML_DOCUMENT_TYPE_FLOW, &result, &err);
 		if (err) {
 			tooltip = g_strdup(err->message);
 			icon = GTK_STOCK_DIALOG_WARNING;
@@ -362,8 +362,8 @@ void flow_edition_set_io(void)
 		tooltip = NULL;
 	} else {
 		title = g_strdup(output);
-		gebr_validator_evaluate(gebr.validator, NULL, output,
-					GEBR_GEOXML_PARAMETER_TYPE_STRING, &result, &err);
+		gebr_validator_evaluate(gebr.validator, output, GEBR_GEOXML_PARAMETER_TYPE_STRING,
+		                        GEBR_GEOXML_DOCUMENT_TYPE_FLOW, &result, &err);
 		if (err)
 			tooltip = g_strdup(err->message);
 		else {
@@ -400,8 +400,8 @@ void flow_edition_set_io(void)
 		tooltip = NULL;
 	} else {
 		title = g_strdup(output);
-		gebr_validator_evaluate(gebr.validator, NULL, error,
-					GEBR_GEOXML_PARAMETER_TYPE_STRING, &result, &err);
+		gebr_validator_evaluate(gebr.validator, error, GEBR_GEOXML_PARAMETER_TYPE_STRING,
+		                        GEBR_GEOXML_DOCUMENT_TYPE_FLOW, &result, &err);
 		if (err)
 			tooltip = g_strdup(err->message);
 		else {

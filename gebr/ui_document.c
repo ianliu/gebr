@@ -429,7 +429,7 @@ validate_param_and_set_icon_tooltip(struct dict_edit_data *data, GtkTreeIter *it
 	type = gebr_geoxml_parameter_get_type(param);
 
 	gchar * tooltip = NULL;
-	gebr_validator_evaluate(gebr.validator, param, NULL, type, &tooltip, &error);
+	gebr_validator_evaluate_param(gebr.validator, param, &tooltip, &error);
 	if (error) {
 		gtk_tree_store_set(GTK_TREE_STORE(data->tree_model), iter,
 				   DICT_EDIT_VALUE_TYPE_IMAGE, GTK_STOCK_DIALOG_WARNING,
@@ -1100,11 +1100,8 @@ static void on_dict_edit_value_type_cell_edited(GtkCellRenderer * cell, gchar * 
 	gebr_validator_insert(gebr.validator, GEBR_GEOXML_PARAMETER(parameter), NULL, NULL);
 
 	gchar * tooltip = NULL;
-	const gchar * expr = NULL;
-	expr = gebr_geoxml_program_parameter_get_first_value(
-			GEBR_GEOXML_PROGRAM_PARAMETER(parameter), FALSE);
 
-	gebr_validator_evaluate(gebr.validator, GEBR_GEOXML_PARAMETER(parameter), expr, type, &tooltip, &error);
+	gebr_validator_evaluate_param(gebr.validator, GEBR_GEOXML_PARAMETER(parameter), &tooltip, &error);
 
 	gtk_tree_store_set(GTK_TREE_STORE(data->tree_model), &iter,
 	                   DICT_EDIT_VALUE_TYPE_IMAGE, type == GEBR_GEOXML_PARAMETER_TYPE_STRING ? "string-icon" : "integer-icon",

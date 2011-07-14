@@ -227,7 +227,7 @@ void gebr_validator_update(GebrValidator *validator);
 void gebr_validator_free(GebrValidator *validator);
 
 /**
- * gebr_validator_evaluate:
+ * gebr_validator_evaluate_param:
  * @validator: The #GebrValidator to be used
  * @expr: The expression to be evaluated
  * @type: The type of expression (GEBR_GEOXML_PARAMETER_TYPE_STRING | GEBR_GEOXML_PARAMETER_TYPE_FLOAT)
@@ -239,18 +239,16 @@ void gebr_validator_free(GebrValidator *validator);
  *
  * Returns: %TRUE if @expr could be evaluated. %FALSE otherwise.
  */
-gboolean gebr_validator_evaluate_scope(GebrValidator *self,
+gboolean gebr_validator_evaluate(GebrValidator *self,
                                        const gchar * expr,
                                        GebrGeoXmlParameterType type,
                                        GebrGeoXmlDocumentType scope,
                                        gchar **value,
                                        GError **error);
 /**
- * gebr_validator_evaluate:
+ * gebr_validator_evaluate_param:
  * @validator: The #GebrValidator to be used
  * @myparam: The parameter to evaluate
- * @expr: The expression to be evaluated
- * @type: The type of expression (GEBR_GEOXML_PARAMETER_TYPE_STRING | GEBR_GEOXML_PARAMETER_TYPE_FLOAT)
  * @value: Returns the value of the expression.
  * @error: Returns the error, if any.
  *
@@ -258,12 +256,10 @@ gboolean gebr_validator_evaluate_scope(GebrValidator *self,
  *
  * Returns: %TRUE if @expr could be evaluated. %FALSE otherwise.
  */
-gboolean gebr_validator_evaluate(GebrValidator *self,
-                                 GebrGeoXmlParameter *myparam,
-                                 const gchar * expr,
-                                 GebrGeoXmlParameterType type,
-                                 gchar **value,
-                                 GError **error);
+gboolean gebr_validator_evaluate_param(GebrValidator *self,
+                                       GebrGeoXmlParameter *myparam,
+                                       gchar **value,
+                                       GError **error);
 
 /**
  * gebr_validator_is_var_in_scope:

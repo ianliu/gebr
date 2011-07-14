@@ -1305,7 +1305,7 @@ static void job_assembly_cmdline(GebrdJob *job)
 		    gebr_geoxml_program_get_control(GEBR_GEOXML_PROGRAM(program)) != GEBR_GEOXML_PROGRAM_CONTROL_UNKNOWN){
 			has_control = TRUE;
 			counter = gebr_geoxml_program_control_get_n(GEBR_GEOXML_PROGRAM(program), &step, &ini);
-			gebr_validator_evaluate_scope(gebrd->validator, counter, GEBR_GEOXML_PARAMETER_TYPE_FLOAT, GEBR_GEOXML_DOCUMENT_TYPE_LINE, &n, &err);
+			gebr_validator_evaluate(gebrd->validator, counter, GEBR_GEOXML_PARAMETER_TYPE_FLOAT, GEBR_GEOXML_DOCUMENT_TYPE_LINE, &n, &err);
 			if (err) {
 				job_issue(job, _("%u) %s '%s'.\n"),
 				          ++issue_number, err->message,

@@ -1041,7 +1041,7 @@ gchar *gebr_generate_variables_value_table(GebrGeoXmlDocument *doc, gboolean hea
 		type = gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(sequence));
 		comment = gebr_geoxml_parameter_get_label(GEBR_GEOXML_PARAMETER(sequence));
 
-		gebr_validator_evaluate(gebr.validator, GEBR_GEOXML_PARAMETER(sequence), value, type, &eval, &error);
+		gebr_validator_evaluate_param(gebr.validator, GEBR_GEOXML_PARAMETER(sequence), &eval, &error);
 
 		g_string_append_printf(dump, "<tr >\n  <td class=\"%2$sgroup-label\">%1$s</td>\n  <td class=\"%2$svalue\">%3$s</td>\n"
 		                       "<td class=\"%2$svalue\">%4$s</td>\n<td class=\"%2$svalue\">%5$s</td>\n</tr>\n",

@@ -67,8 +67,9 @@
 	G_STMT_START { \
 	gchar *value = NULL; \
 	GError *error = NULL; \
-	gebr_validator_evaluate(fixture->validator, NULL, (expr), \
+	gebr_validator_evaluate(fixture->validator, expr, \
 				GEBR_GEOXML_PARAMETER_TYPE_FLOAT, \
+				GEBR_GEOXML_DOCUMENT_TYPE_FLOW, \
 				&value, &error); \
 	g_assert_no_error(error); \
 	g_assert_cmpstr(value, ==, (result)); \
@@ -84,8 +85,9 @@
 	G_STMT_START { \
 	gchar *value = NULL; \
 	GError *error = NULL; \
-	gebr_validator_evaluate(fixture->validator, NULL, (expr), \
+	gebr_validator_evaluate(fixture->validator, expr, \
 				GEBR_GEOXML_PARAMETER_TYPE_FLOAT, \
+				GEBR_GEOXML_DOCUMENT_TYPE_FLOW, \
 				&value, &error); \
 	g_assert_error(error, domain, code); \
 	g_clear_error(&error); \
@@ -129,8 +131,9 @@
 	G_STMT_START { \
 	gchar *value = NULL; \
 	GError *error = NULL; \
-	gebr_validator_evaluate(fixture->validator, NULL, (expr), \
+	gebr_validator_evaluate(fixture->validator, expr, \
 				GEBR_GEOXML_PARAMETER_TYPE_STRING, \
+				GEBR_GEOXML_DOCUMENT_TYPE_FLOW, \
 				&value, &error); \
 	g_assert_no_error(error); \
 	g_assert_cmpstr(value, ==, (result)); \
@@ -141,8 +144,9 @@
 	G_STMT_START { \
 		gchar *value = NULL; \
 		GError *error = NULL; \
-		gebr_validator_evaluate(fixture->validator, NULL, (expr), \
+		gebr_validator_evaluate(fixture->validator, expr, \
 					GEBR_GEOXML_PARAMETER_TYPE_STRING, \
+					GEBR_GEOXML_DOCUMENT_TYPE_FLOW, \
 					&value, &error); \
 		g_assert_error(error, domain, code); \
 		g_clear_error(&error); \
@@ -317,13 +321,13 @@ void test_gebr_validator_remove(void)
 	gebr_validator_insert(validator, param, NULL, &error);
 	g_assert_no_error(error);
 
-	g_assert(gebr_validator_evaluate(validator, NULL, "y" ,GEBR_GEOXML_PARAMETER_TYPE_FLOAT, &value, &error));
+	g_assert(gebr_validator_evaluate_param(validator, param, &value, &error));
 	g_assert_no_error(error);
 	g_assert_cmpstr(value,==,"13");
 
 	gebr_validator_remove (validator, x, NULL, &error);
 
-	g_assert(gebr_validator_evaluate(validator, NULL, "y" ,GEBR_GEOXML_PARAMETER_TYPE_FLOAT, &value, &error));
+	g_assert(gebr_validator_evaluate_param(validator, param, &value, &error));
 	g_assert_no_error(error);
 	g_assert_cmpstr(value,==,"12");
 
@@ -405,7 +409,7 @@ void test_gebr_validator_rename(void)
 	g_assert_error(error, GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_BAD_REFERENCE);
 	g_clear_error(&error);
 
-	g_assert(gebr_validator_evaluate(validator, NULL, "y" ,GEBR_GEOXML_PARAMETER_TYPE_FLOAT, &value, &error));
+	g_assert(gebr_validator_evaluate_param(validator, param, &value, &error));
 	g_assert_no_error(error);
 	g_assert_cmpstr(value,==,"7.3984");
 
@@ -415,7 +419,7 @@ void test_gebr_validator_rename(void)
 	gebr_validator_insert(validator, param, NULL, &error);
 	g_assert_no_error(error);
 
-	g_assert(gebr_validator_evaluate(validator, NULL, "x" ,GEBR_GEOXML_PARAMETER_TYPE_FLOAT, &value, &error));
+	g_assert(gebr_validator_evaluate(validator, "x", GEBR_GEOXML_PARAMETER_TYPE_FLOAT, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, &value, &error));
 	g_assert_no_error(error);
 	g_assert_cmpstr(value,==,"9.8596");
 }
@@ -494,16 +498,14 @@ void test_gebr_validator_move(void)
 	gebr_validator_move(validator, y, NULL, GEBR_GEOXML_DOCUMENT_TYPE_LINE, &moved, NULL, &error);
 	g_assert_no_error(error);
 
-	g_assert(gebr_validator_evaluate(validator, NULL, "y" ,GEBR_GEOXML_PARAMETER_TYPE_FLOAT, &value, &error));
+	g_assert(gebr_validator_evaluate_param(validator, y, &value, &error));
 	g_assert_no_error(error);
 	g_assert_cmpstr(value,==,"20");
 	g_free(value);
 
 	gebr_validator_change_value(validator, x1, "10+", NULL, NULL);
 
-	gebr_validator_evaluate(validator, NULL, "y",
-	                        GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
-	                        &value, &error);
+	gebr_validator_evaluate_param(validator, y, &value, &error);
 	g_assert_error(error, GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_BAD_REFERENCE);
 	g_clear_error(&error);
 
@@ -512,7 +514,7 @@ void test_gebr_validator_move(void)
 	gebr_validator_move(validator, moved, x2, GEBR_GEOXML_DOCUMENT_TYPE_LINE, &moved, NULL, &error);
 	g_assert_no_error(error);
 
-	g_assert(gebr_validator_evaluate(validator, NULL, "y" ,GEBR_GEOXML_PARAMETER_TYPE_FLOAT, &value, &error));
+	g_assert(gebr_validator_evaluate_param(validator, y, &value, &error));
 	g_assert_no_error(error);
 	g_assert_cmpstr(value,==,"22");
 	g_free(value);
@@ -577,9 +579,7 @@ void test_gebr_validator_scope_errors(Fixture *fixture, gconstpointer data)
 	g_assert_no_error(error);
 
 	gchar *result = NULL;
-	gebr_validator_evaluate(fixture->validator, param, NULL,
-				GEBR_GEOXML_PARAMETER_TYPE_STRING,
-				&result, &error);
+	gebr_validator_evaluate_param(fixture->validator, param, &result, &error);
 	g_assert_no_error(error);
 	g_assert_cmpstr(result, ==, "2.out");
 }
