@@ -103,10 +103,10 @@ GebrCommServerRunFlow* gebr_comm_server_run_config_add_flow(GebrCommServerRunCon
 	return run_flow;
 }
 
-GebrGeoXmlFlow *gebr_comm_server_run_strip_flow(GebrValidator *validator,
-                                                GebrGeoXmlFlow *flow,
-                                                GebrGeoXmlLine *line,
-                                                GebrGeoXmlProject *proj)
+GebrGeoXmlFlow *
+gebr_comm_server_run_strip_flow(GebrGeoXmlFlow *flow,
+				GebrGeoXmlLine *line,
+				GebrGeoXmlProject *proj)
 {
 	GebrGeoXmlSequence *i;
 	GebrGeoXmlDocument *clone;

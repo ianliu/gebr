@@ -162,8 +162,7 @@ GebrCommServerRunFlow* gebr_comm_server_run_config_add_flow(GebrCommServerRunCon
  *
  * Returns: a new flow prepared to run.
  */
-GebrGeoXmlFlow *gebr_comm_server_run_strip_flow(GebrValidator *validator,
-                                                GebrGeoXmlFlow *flow,
+GebrGeoXmlFlow *gebr_comm_server_run_strip_flow(GebrGeoXmlFlow *flow,
                                                 GebrGeoXmlLine *line,
                                                 GebrGeoXmlProject *proj);
 
