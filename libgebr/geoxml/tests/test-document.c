@@ -480,7 +480,7 @@ void test_gebr_geoxml_document_canonize_dict_parameters(void)
 						      keywords[i], "12");
 
 	// Setting parameters for the second project.
-	int indices[] = {0,1,4,5,6,-1};
+	int indices[] = {0,1,2,3,4,-1};
 	for ( i = 0; indices[i] >= 0; i++)
 	{
 		gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj2),
@@ -533,8 +533,6 @@ void test_gebr_geoxml_document_canonize_dict_parameters(void)
 		g_assert_cmpstr(key, ==, canonized[indices[i]]);
 	}
 
-	g_hash_table_unref(keys_to_canonized);
-
 }
 
 void test_gebr_geoxml_document_canonize_program_parameters(void)
@@ -586,7 +584,6 @@ void test_gebr_geoxml_document_canonize_program_parameters(void)
 
 	// Freeing this hash table also frees the values stored
 	// at canonized_to_keys.
-	g_hash_table_unref(keys_to_canonized);
 	gebr_geoxml_document_free(flow);
 
 }

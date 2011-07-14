@@ -1031,10 +1031,12 @@ GebrGeoXmlParameters *gebr_geoxml_document_get_dict_parameters(GebrGeoXmlDocumen
 
 gboolean
 gebr_geoxml_document_canonize_dict_parameters(GebrGeoXmlDocument * document,
-					      GHashTable 	** vars_list)
+					      GHashTable 	** list_copy)
 {
 	g_return_val_if_fail(document != NULL, FALSE);
-	g_return_val_if_fail(vars_list != NULL, FALSE);
+	g_return_val_if_fail(list_copy != NULL, FALSE);
+
+	static GHashTable * vars_list = NULL;
 
 	GebrGeoXmlSequence * parameters = NULL;
 	gint i = 0;
@@ -1049,9 +1051,12 @@ gebr_geoxml_document_canonize_dict_parameters(GebrGeoXmlDocument * document,
 	// Allocate a new hash table only if needed,
 	// this function uses already canonized keywords
 	// provided in this hash table.
-	if (*vars_list == NULL)
+	if (gebr_geoxml_document_get_type(document) == GEBR_GEOXML_DOCUMENT_TYPE_PROJECT)
 	{
-		*vars_list = g_hash_table_new_full((GHashFunc)g_str_hash,
+		if (vars_list != NULL)
+			g_hash_table_unref(vars_list);
+
+		vars_list = g_hash_table_new_full((GHashFunc)g_str_hash,
 						   (GEqualFunc)g_str_equal,
 						   (GDestroyNotify)g_free,
 						   (GDestroyNotify)g_free);
@@ -1084,7 +1089,7 @@ gebr_geoxml_document_canonize_dict_parameters(GebrGeoXmlDocument * document,
 		gebr_str_canonical_var_name(key, &new_value, NULL);
 		gchar * duplicated_key = NULL;
 
-		duplicated_key = g_hash_table_lookup(*vars_list, key);
+		duplicated_key = g_hash_table_lookup(vars_list, key);
 		if (duplicated_key)
 		{
 			gebr_geoxml_program_parameter_set_keyword(
@@ -1102,7 +1107,7 @@ gebr_geoxml_document_canonize_dict_parameters(GebrGeoXmlDocument * document,
 					    g_strdup(new_value),
 					    g_strdup(key));
 
-			g_hash_table_insert(*vars_list,
+			g_hash_table_insert(vars_list,
 					    g_strdup(key),
 					    g_strdup(new_value));
 		}
@@ -1110,7 +1115,7 @@ gebr_geoxml_document_canonize_dict_parameters(GebrGeoXmlDocument * document,
 		{	
 			if(g_strcmp0(key, duplicated_key) == 0)
 			{
-				g_hash_table_insert(*vars_list,
+				g_hash_table_insert(vars_list,
 						    g_strdup(key),
 						    g_strdup(new_value));
 
@@ -1133,7 +1138,7 @@ gebr_geoxml_document_canonize_dict_parameters(GebrGeoXmlDocument * document,
 				g_free(new_value);
 				new_value = concat;
 
-				g_hash_table_insert(*vars_list,
+				g_hash_table_insert(vars_list,
 						    g_strdup(key),
 						    g_strdup(new_value));
 
@@ -1147,6 +1152,7 @@ gebr_geoxml_document_canonize_dict_parameters(GebrGeoXmlDocument * document,
 							  (const gchar *)new_value);
 	}
 
+	*list_copy = vars_list;
 	g_hash_table_destroy(values_to_canonized); 
 	return TRUE;
 }
