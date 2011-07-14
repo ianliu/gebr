@@ -722,6 +722,11 @@ gebr_str_canonical_var_name(const gchar * keyword, gchar ** new_value, GError **
 	/* g_strcanon modifies the string in place */
 	*new_value = g_strcanon(*new_value, 
 			       "abcdefghijklmnopqrstuvxwyz1234567890_",
+			       ' ');
+
+	*new_value = g_strstrip(*new_value);
+	*new_value = g_strcanon(*new_value, 
+			       "abcdefghijklmnopqrstuvxwyz1234567890_",
 			       '_');
 	if (!g_unichar_isalpha((*new_value)[0]))
 	{

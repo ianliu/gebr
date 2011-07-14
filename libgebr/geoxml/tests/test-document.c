@@ -464,10 +464,10 @@ void test_gebr_geoxml_document_canonize_dict_parameters(void)
 		"a",
 		"ba",
 		"cdp_em_metros",
-		"cdp_em_metros__m_",
-		"cdp_em_metros__m__1",
+		"cdp_em_metros__m",
+		"cdp_em_metros__m_1",
 		"cd",
-		"cdp_em_metros__m__2",
+		"cdp_em_metros__m_2",
 		NULL};
 
 	proj = gebr_geoxml_project_new();
