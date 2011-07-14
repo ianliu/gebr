@@ -1,0 +1,94 @@
+<!ELEMENT project (title, description, help, author, email, dict, date, line*)>
+<!ATTLIST project
+	version CDATA #FIXED "0.3.2">
+
+<!ELEMENT date (created, modified)>
+
+<!-- Line reference -->
+<!ELEMENT line EMPTY>
+<!ATTLIST line source CDATA #REQUIRED>
+
+<!-- ******* BEGIN COMMON PART FOR DOCUMENTS ******* -->
+
+<!-- Short title for a program, flow, line or project -->
+<!ELEMENT title	(#PCDATA)>
+<!-- One line description for a program or flow -->
+<!ELEMENT description (#PCDATA)>
+<!-- Detailed text used as help message for a program or flow -->
+<!ELEMENT help (#PCDATA)>
+<!-- Author of the flow and his/her email -->
+<!ELEMENT author (#PCDATA)>
+<!ELEMENT email (#PCDATA)>
+<!-- Dictionary of parameters for use in programs' parameters -->
+<!ELEMENT dict (parameters)>
+<!-- Dates associated to the line -->
+<!ELEMENT created (#PCDATA)>
+<!ELEMENT modified (#PCDATA)>
+
+<!ELEMENT parameter (label, (reference | int | float | string | flag | file | range | enum | group))>
+
+<!ELEMENT group (template-instance, parameters+)>
+<!ATTLIST group
+	expand		(yes | no)	#REQUIRED
+	instanciable	(yes | no)	#REQUIRED
+	exclusive	(yes | no)	#IMPLIED
+	instances-min	CDATA		#IMPLIED
+	instances-max	CDATA		#IMPLIED>
+
+<!ELEMENT template-instance (parameters)>
+<!ELEMENT parameters (parameter*)>
+<!ATTLIST parameters
+	default-selection	CDATA	#REQUIRED
+	selection		CDATA	#IMPLIED>
+
+<!-- Short text to be displayed as label for a parameter -->
+<!ELEMENT label (#PCDATA)>
+
+<!ELEMENT property (keyword, value+, default+)>
+<!ATTLIST property
+	dictkeyword	CDATA		#IMPLIED
+	required	(yes | no)	#IMPLIED
+	separator	CDATA		#IMPLIED>
+
+<!-- Keyword to build the command line -->
+<!ELEMENT keyword (#PCDATA)>
+<!-- Actual value of a parameter -->
+<!ELEMENT value (#PCDATA)>
+<!-- Actual default value of a parameter -->
+<!ELEMENT default (#PCDATA)>
+
+<!-- Types of parameters -->
+<!-- Reference (except for groups) -->
+<!ELEMENT reference (property)>
+<!-- Integer -->
+<!ELEMENT int (property)>
+<!ATTLIST int
+	min	CDATA	#IMPLIED
+	max	CDATA	#IMPLIED>
+<!-- Real number -->
+<!ELEMENT float (property)>
+<!ATTLIST float
+	min	CDATA	#IMPLIED
+	max	CDATA	#IMPLIED>
+<!-- String -->
+<!ELEMENT string (property)>
+<!-- Flag -->
+<!ELEMENT flag (property)>
+<!-- File -->
+<!ELEMENT file (property)>
+<!ATTLIST file
+	directory	(yes | no)	#REQUIRED
+	filter-name	CDATA		#IMPLIED
+	filter-pattern	CDATA		#IMPLIED>
+<!-- Range -->
+<!ELEMENT range (property)>
+<!ATTLIST range
+	min	CDATA	#REQUIRED
+	max	CDATA	#REQUIRED
+	inc	CDATA	#REQUIRED
+	digits	CDATA	#REQUIRED>
+<!-- Enum -->
+<!ELEMENT enum (property, option*)>
+<!ELEMENT option (label, value)>
+
+<!-- ******* END COMMON PART FOR DOCUMENTS ******* -->
