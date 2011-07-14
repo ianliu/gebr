@@ -554,29 +554,76 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 			__port_to_new_group_semantics();
 		}
 	}
-	/* flow 0.3.2 to 0.3.3 */ 
-	if (strcmp(version, "0.3.3") < 0) {
+	/* 0.3.2 to 0.3.3 */ 
+	if (strcmp(version, "0.3.3") < 0)
+	{
+		GebrGeoXmlDocumentType type = gebr_geoxml_document_get_type(
+				(GebrGeoXmlDocument *) *document);
+
+		switch (type)
+		{
 		// Backward compatible change, nothing to be done.
 		// Added #IMPLIED 'version' attribute to 'program' tag.
-		if (gebr_geoxml_document_get_type(((GebrGeoXmlDocument *) *document)) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW)
+		case GEBR_GEOXML_DOCUMENT_TYPE_FLOW:
 			__gebr_geoxml_set_attr_value(root_element, "version", "0.3.3");
-		else if (gebr_geoxml_document_get_type(((GebrGeoXmlDocument *) *document)) == GEBR_GEOXML_DOCUMENT_TYPE_LINE) {
+			break;
+
+		case GEBR_GEOXML_DOCUMENT_TYPE_LINE: {
 			GdomeElement *pivot;
+
 			pivot = __gebr_geoxml_get_first_element(root_element, "date");
 			pivot = __gebr_geoxml_next_element(pivot);
+
 			__gebr_geoxml_insert_new_element(root_element, "server-group", pivot);
 			__gebr_geoxml_set_attr_value(root_element, "version", "0.3.3");
+		} break;
+
+		case GEBR_GEOXML_DOCUMENT_TYPE_PROJECT:	{
+			GHashTable * keys_to_canonized = NULL;
+
+			gebr_geoxml_document_canonize_dict_parameters(
+					((GebrGeoXmlDocument *) *document),
+					&keys_to_canonized);
+
+			__gebr_geoxml_set_attr_value(root_element, "version", "0.3.3");
+		} break;
+
+		default:
+			g_warn_if_reached();
 		}
 	}
 
-	/* flow 0.3.3 to 0.3.4 */ 
-	if (strcmp(version, "0.3.4") < 0) {
+	/* 0.3.3 to 0.3.4 */ 
+	if (strcmp(version, "0.3.4") < 0)
+	{
+		GebrGeoXmlDocumentType type = gebr_geoxml_document_get_type(
+				(GebrGeoXmlDocument *) *document);
 		// Backward compatible change, nothing to be done.
 		// Added #IMPLIED 'mpi' attribute to 'program' tag.
-		if (gebr_geoxml_document_get_type(((GebrGeoXmlDocument *) *document)) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW)
+		switch (type)
+		{
+		case GEBR_GEOXML_DOCUMENT_TYPE_FLOW:
 			__gebr_geoxml_set_attr_value(root_element, "version", "0.3.4");
+			break;
+
+		case GEBR_GEOXML_DOCUMENT_TYPE_LINE: {
+			GHashTable * keys_to_canonized = NULL;
+
+			gebr_geoxml_document_canonize_dict_parameters(
+					((GebrGeoXmlDocument *) *document),
+					&keys_to_canonized);
+
+			__gebr_geoxml_set_attr_value(root_element, "version", "0.3.4");
+		} break;
+
+		case GEBR_GEOXML_DOCUMENT_TYPE_PROJECT:
+			break;
+
+		default:
+			g_warn_if_reached();
+		}
 	}
-	/* flow 0.3.4 to 0.3.5 */ 
+	/* 0.3.4 to 0.3.5 */ 
 	if (strcmp(version, "0.3.5") < 0) {
 		if (gebr_geoxml_document_get_type(((GebrGeoXmlDocument *) *document)) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW) {
 			__gebr_geoxml_set_attr_value(root_element, "version", "0.3.5");
@@ -610,7 +657,7 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 			g_slist_free(refer);
 		}
 	}
-	/* flow 0.3.5 to 0.3.6 */ 
+	/* 0.3.5 to 0.3.6 */ 
 	if (strcmp(version, "0.3.6") < 0) {
 		if (gebr_geoxml_document_get_type(((GebrGeoXmlDocument *) *document)) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW) {
 			__gebr_geoxml_set_attr_value(root_element, "version", "0.3.6");
