@@ -617,15 +617,21 @@ static void test_gebr_geoxml_document_merge_and_split_dicts(void)
 	pp = GEBR_GEOXML_PROGRAM_PARAMETER(gebr_geoxml_document_get_dict_parameter(flow));
 	g_assert_cmpstr(gebr_geoxml_program_parameter_get_keyword(pp), ==, "foo");
 	gebr_geoxml_sequence_next((GebrGeoXmlSequence**)&pp);
+	g_assert_cmpstr(gebr_geoxml_program_parameter_get_keyword(pp), ==, "foo2");
+	gebr_geoxml_sequence_next((GebrGeoXmlSequence**)&pp);
 	g_assert(pp == NULL);
 
 	pp = GEBR_GEOXML_PROGRAM_PARAMETER(gebr_geoxml_document_get_dict_parameter(line));
 	g_assert_cmpstr(gebr_geoxml_program_parameter_get_keyword(pp), ==, "bar");
 	gebr_geoxml_sequence_next((GebrGeoXmlSequence**)&pp);
+	g_assert_cmpstr(gebr_geoxml_program_parameter_get_keyword(pp), ==, "bar2");
+	gebr_geoxml_sequence_next((GebrGeoXmlSequence**)&pp);
 	g_assert(pp == NULL);
 
 	pp = GEBR_GEOXML_PROGRAM_PARAMETER(gebr_geoxml_document_get_dict_parameter(proj));
 	g_assert_cmpstr(gebr_geoxml_program_parameter_get_keyword(pp), ==, "baz");
+	gebr_geoxml_sequence_next((GebrGeoXmlSequence**)&pp);
+	g_assert_cmpstr(gebr_geoxml_program_parameter_get_keyword(pp), ==, "baz2");
 	gebr_geoxml_sequence_next((GebrGeoXmlSequence**)&pp);
 	g_assert(pp == NULL);
 
@@ -657,7 +663,6 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/geoxml/document/test_no_iter", test_gebr_geoxml_document_no_iter);
 	g_test_add_func("/libgebr/geoxml/document/document_canonize_dict_parameters", test_gebr_geoxml_document_canonize_dict_parameters);
 	g_test_add_func("/libgebr/geoxml/document/document_canonize_program_parameters", test_gebr_geoxml_document_canonize_program_parameters);
-
 	g_test_add_func("/libgebr/geoxml/document/merge_and_split_dicts", test_gebr_geoxml_document_merge_and_split_dicts);
 
 	return g_test_run();

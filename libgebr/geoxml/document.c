@@ -1320,6 +1320,7 @@ gebr_geoxml_document_merge_dicts(GebrGeoXmlDocument *first, ...)
 
 	while (doc) {
 		GebrGeoXmlSequence *seq = gebr_geoxml_document_get_dict_parameter(doc);
+		gebr_geoxml_parameters_append_parameter(dict, GEBR_GEOXML_PARAMETER_TYPE_GROUP);
 		while (seq) {
 			const gchar *value;
 			const gchar *keyword;
@@ -1327,9 +1328,6 @@ gebr_geoxml_document_merge_dicts(GebrGeoXmlDocument *first, ...)
 			GebrGeoXmlParameterType type;
 			GebrGeoXmlParameter *param =  GEBR_GEOXML_PARAMETER(seq);
 			GebrGeoXmlProgramParameter *pparam = GEBR_GEOXML_PROGRAM_PARAMETER(seq);
-
-			// Insert separator
-			gebr_geoxml_parameters_append_parameter(dict, GEBR_GEOXML_PARAMETER_TYPE_GROUP);
 
 			// copy data
 			value = gebr_geoxml_program_parameter_get_first_value(pparam, FALSE);
