@@ -125,36 +125,6 @@ gboolean gebr_validator_move(GebrValidator         *self,
 			     GError               **error);
 
 /**
- * gebr_validator_check_using_var:
- * @validator: A #GebrValidator
- * @source: Variable which the function check if using @var
- * @var: The variable for check
- * @scope: The variable scope (GEBR_GEOXML_DOCUMENT_TYPE_FLOW | LINE | PROJECT)
- *
- * Returns: %TRUE if @source using @var (direct or indirect), %FALSE otherwise.
- */
-gboolean
-gebr_validator_check_using_var(GebrValidator *self,
-                               const gchar   *source,
-			       GebrGeoXmlDocumentType scope,
-                               const gchar   *var);
-/**
- * gebr_validator_expression_check_using_var:
- * @validator: A #GebrValidator
- * @expr: Variable which the function check if using @var
- * @var: The variable for check
- * @scope: The variable scope (GEBR_GEOXML_DOCUMENT_TYPE_FLOW | LINE | PROJECT)
- *
- * Important! This function works only for string variables.
- * Returns: %TRUE if @source using @var (direct or indirect), %FALSE otherwise.
- */
-gboolean
-gebr_validator_expression_check_using_var(GebrValidator *self,
-                                          const gchar   *expr,
-                                          GebrGeoXmlDocumentType scope,
-                                          const gchar   *var);
-
-/**
  * gebr_validator_validate_param:
  * @validator: A #GebrValidator
  * @parameter: The #GebrGeoXmlParameter to be validated

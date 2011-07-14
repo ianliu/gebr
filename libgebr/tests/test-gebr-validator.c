@@ -584,62 +584,6 @@ void test_gebr_validator_scope_errors(Fixture *fixture, gconstpointer data)
 	g_assert_cmpstr(result, ==, "2.out");
 }
 
-void test_gebr_validator_check_using_var(void)
-{
-	GebrValidator *validator;
-
-	GebrGeoXmlFlow *flow;
-	GebrGeoXmlLine *line;
-	GebrGeoXmlProject *proj;
-
-	GebrGeoXmlParameter *param;
-	GError *error = NULL;
-
-	flow = gebr_geoxml_flow_new();
-	line = gebr_geoxml_line_new();
-	proj = gebr_geoxml_project_new();
-
-	validator = gebr_validator_new((GebrGeoXmlDocument**)&flow,
-	                               (GebrGeoXmlDocument**)&line,
-	                               (GebrGeoXmlDocument**)&proj);
-
-
-	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
-	                                              GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
-	                                              "a", "12");
-	gebr_validator_insert(validator, param, NULL, &error);
-	g_assert_no_error(error);
-
-	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
-	                                              GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
-	                                              "x", "100");
-	gebr_validator_insert(validator, param, NULL, &error);
-	g_assert_no_error(error);
-
-	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
-	                                              GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
-	                                              "b", "a+1");
-	gebr_validator_insert(validator, param, NULL, &error);
-	g_assert_no_error(error);
-
-	g_assert(gebr_validator_check_using_var(validator, "b", GEBR_GEOXML_DOCUMENT_TYPE_PROJECT, "a") == TRUE);
-
-	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
-	                                              GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
-	                                              "c", "b+1");
-	gebr_validator_insert(validator, param, NULL, &error);
-	g_assert_no_error(error);
-
-	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
-	                                              GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
-	                                              "d", "c*2");
-	gebr_validator_insert(validator, param, NULL, &error);
-	g_assert_no_error(error);
-
-	g_assert(gebr_validator_check_using_var(validator, "d", GEBR_GEOXML_DOCUMENT_TYPE_PROJECT, "a") == TRUE);
-	g_assert(gebr_validator_check_using_var(validator, "d", GEBR_GEOXML_DOCUMENT_TYPE_PROJECT, "x") == FALSE);
-}
-
 void test_gebr_validator_evaluate(Fixture *fixture, gconstpointer data)
 {
 
@@ -730,7 +674,6 @@ void test_gebr_validator_weight(Fixture *fixture, gconstpointer data)
 	VALIDATE_STRING_EXPR("[a]", "3");
 	VALIDATE_FLOAT_EXPR("b", "4");
 	VALIDATE_STRING_EXPR("[b]", "4");
-
 }
 
 void test_gebr_validator_scope(Fixture *fixture, gconstpointer data)
@@ -750,35 +693,6 @@ void test_gebr_validator_scope(Fixture *fixture, gconstpointer data)
 	VALIDATE_STRING_EXPR("[a]","bar");
 }
 
-void test_gebr_validator_expression_check_using_var(Fixture *fixture, gconstpointer data)
-{
-	fixture_add_loop(fixture);
-
-	/* Tests for mathematical expressions */
-	DEF_FLOAT(fixture->flow, "a", "2");
-	DEF_FLOAT(fixture->flow, "b", "3");
-	DEF_STRING(fixture->flow, "c", "a[b]");
-	DEF_STRING(fixture->flow, "d", "[c]");
-	DEF_FLOAT_WITH_ERROR(fixture->flow, "e", "d", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_TYPE_MISMATCH);
-
-	g_assert(gebr_validator_expression_check_using_var(fixture->validator,
-							   "banana",
-							   GEBR_GEOXML_DOCUMENT_TYPE_FLOW,
-							   "a") == FALSE);
-	g_assert(gebr_validator_expression_check_using_var(fixture->validator,
-							   "[a]",
-							   GEBR_GEOXML_DOCUMENT_TYPE_FLOW,
-							   "a"));
-	g_assert(gebr_validator_expression_check_using_var(fixture->validator,
-							   "[c].dat",
-							   GEBR_GEOXML_DOCUMENT_TYPE_FLOW,
-							   "b"));
-	g_assert(gebr_validator_expression_check_using_var(fixture->validator,
-							   "[c].dat",
-							   GEBR_GEOXML_DOCUMENT_TYPE_FLOW,
-							   "a") == FALSE);
-
-}
 void test_gebr_validator_update(Fixture *fixture, gconstpointer data)
 {
 	GebrGeoXmlDocument *flow1 = fixture->flow;
@@ -852,7 +766,6 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/validator/rename", test_gebr_validator_rename);
 	g_test_add_func("/libgebr/validator/change", test_gebr_validator_change);
 	g_test_add_func("/libgebr/validator/move", test_gebr_validator_move);
-	g_test_add_func("/libgebr/validator/using_var", test_gebr_validator_check_using_var);
 
 	g_test_add("/libgebr/validator/weight", Fixture, NULL,
 		   fixture_setup,
@@ -872,11 +785,6 @@ int main(int argc, char *argv[])
 	g_test_add("/libgebr/validator/scope", Fixture, NULL,
 		   fixture_setup,
 		   test_gebr_validator_scope,
-		   fixture_teardown);
-
-	g_test_add("/libgebr/validator/using_var_expression", Fixture, NULL,
-		   fixture_setup,
-		   test_gebr_validator_expression_check_using_var,
 		   fixture_teardown);
 
 	g_test_add("/libgebr/validator/cyclic_errors", Fixture, NULL,

@@ -42,29 +42,14 @@ typedef struct {
 #define SET_VAR_NAME(p,n) (gebr_geoxml_program_parameter_set_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(p), (n)))
 
 /* Prototypes {{{1 */
-static void		set_error		(GebrValidator         *self,
-						 const gchar           *name,
-						 GebrGeoXmlDocumentType scope,
-						 GError                *error);
+static GebrGeoXmlParameter * get_param(GebrValidator         *self,
+                                       const gchar           *name,
+                                       GebrGeoXmlDocumentType scope);
 
-static gboolean		get_error_indirect	(GebrValidator          *self,
-               		                  	 GList                  *var_names,
-               		                  	 const gchar		*name,
-               		                  	 GebrGeoXmlParameterType my_type,
-               		                  	 GebrGeoXmlDocumentType scope,
-               		                  	 GError                **err);
-
-static GebrGeoXmlParameter * get_param		(GebrValidator         *self,
-						 const gchar           *name,
-						 GebrGeoXmlDocumentType scope);
-
-static GebrGeoXmlParameter * get_dep_param      (GebrValidator *self,
-                                                 const gchar *my_name,
-                                                 GebrGeoXmlDocumentType my_scope,
-                                                 const gchar *dep_name);
-
-static gdouble 		get_weight		(GebrValidator *self,
-               		          		 GebrGeoXmlParameter *param);
+static GebrGeoXmlParameter * get_dep_param(GebrValidator *self,
+                                           const gchar *my_name,
+                                           GebrGeoXmlDocumentType my_scope,
+                                           const gchar *dep_name);
 
 /* NodeData functions {{{1 */
 static HashData *
@@ -304,39 +289,6 @@ validate_and_extract_vars(GebrValidator  *self,
 	return TRUE;
 }
 
-static gboolean
-gebr_validator_change_value_by_name(GebrValidator          *self,
-				    const gchar            *name,
-				    GebrGeoXmlDocumentType  scope,
-				    GebrGeoXmlParameterType type,
-				    const gchar            *new_value,
-				    GList                 **affected,
-				    GError                **error)
-{
-	HashData *data;
-	GError *err = NULL;
-	gboolean valid;
-
-	if (affected)
-		*affected = NULL;
-
-	data = g_hash_table_lookup(self->vars, name);
-
-	g_return_val_if_fail(data != NULL, FALSE);
-
-	valid = validate_and_extract_vars(self, new_value, type, &data->dep[scope], &err);
-
-	if (valid) {
-		set_error(self, name, scope, NULL);
-
-		valid = get_error_indirect(self, data->dep[scope], name, type, scope, error);
-	} else {
-		set_error(self, name, scope, err);
-		g_propagate_error(error, err);
-	}
-	return valid;
-}
-
 /* Public functions {{{1 */
 GebrValidator *
 gebr_validator_new(GebrGeoXmlDocument **flow,
@@ -499,7 +451,7 @@ gebr_validator_change_value(GebrValidator       *self,
 			    GList              **affected,
 			    GError             **error)
 {
-	gboolean retval;
+	HashData *data;
 	const gchar *name;
 	GebrGeoXmlDocumentType scope;
 	GebrGeoXmlParameterType type;
@@ -519,12 +471,24 @@ gebr_validator_change_value(GebrValidator       *self,
 		return FALSE;
 	}
 
-	retval = gebr_validator_change_value_by_name(self, name, scope, type,
-						     new_value, affected, error);
+	data = g_hash_table_lookup(self->vars, name);
+
+	g_return_val_if_fail(data != NULL, FALSE);
+
+	gboolean valid = validate_and_extract_vars(self, new_value, type, &data->dep[scope], &err);
+
+	if (valid) {
+		set_error(self, name, scope, NULL);
+
+		valid = get_error_indirect(self, data->dep[scope], name, type, scope, error);
+	} else {
+		set_error(self, name, scope, err);
+		g_propagate_error(error, err);
+	}
 
 	SET_VAR_VALUE(param, new_value);
 
-	return retval;
+	return valid;
 }
 
 gboolean
@@ -588,79 +552,6 @@ gebr_validator_move(GebrValidator         *self,
 	if (*error)
 		return FALSE;
 	return TRUE;
-}
-
-gboolean
-gebr_validator_check_using_var(GebrValidator *self,
-                               const gchar   *source,
-			       GebrGeoXmlDocumentType scope,
-                               const gchar   *var)
-{
-	HashData *data;
-
-	if (g_strcmp0(source, var) == 0)
-		return TRUE;
-
-	data = g_hash_table_lookup(self->vars, source);
-
-	g_return_val_if_fail(data != NULL, FALSE);
-
-	for (GList *i = data->dep[scope]; i; i = i->next) {
-		if (g_strcmp0(i->data, var) == 0)
-			return TRUE;
-
-		if (gebr_validator_check_using_var(self, i->data, scope, var))
-			return TRUE;
-	}
-
-	return FALSE;
-}
-
-/* Works only for strings until now */
-gboolean
-gebr_validator_expression_check_using_var(GebrValidator *self,
-                               const gchar   *expr,
-			       GebrGeoXmlDocumentType scope,
-                               const gchar   *var)
-{
-	g_return_val_if_fail(scope == GEBR_GEOXML_DOCUMENT_TYPE_FLOW
-			     || scope == GEBR_GEOXML_DOCUMENT_TYPE_LINE
-			     || scope == GEBR_GEOXML_DOCUMENT_TYPE_PROJECT,
-			     FALSE);
-
-	g_return_val_if_fail(var != NULL, FALSE);
-	g_return_val_if_fail(self != NULL, FALSE);
-
-	g_return_val_if_fail(gebr_validator_validate_expr(self,
-							  expr,
-							  GEBR_GEOXML_PARAMETER_TYPE_STRING,
-							  NULL) == TRUE,
-			     FALSE);
-
-	if (expr == NULL)
-		return FALSE;
-
-	GList *vars = NULL;
-	GebrIExpr *iexpr;
-	gboolean retval = FALSE;
-
-	iexpr = get_validator_by_type(self, GEBR_GEOXML_PARAMETER_TYPE_STRING);
-	vars = gebr_iexpr_extract_vars(iexpr, expr);
-
-	for (GList * i = vars; i; i = i->next)
-	{
-		retval = gebr_validator_check_using_var(self, i->data, scope, var);
-		if(retval)
-			break;
-	}
-
-	if(vars)
-	{
-		g_list_foreach(vars, (GFunc)g_free, NULL);
-		g_list_free(vars);
-	}
-
-	return retval;
 }
 
 gboolean
@@ -965,12 +856,12 @@ gboolean gebr_validator_use_iter(GebrValidator *self, const gchar *expr, GebrGeo
 	HashData *data = g_hash_table_lookup(self->vars, "iter");
 	if (scope > GEBR_GEOXML_DOCUMENT_TYPE_FLOW)
 		return FALSE;
-	if (!data || !(iter = data->param[0]))
+	if (!data || !(iter = data->param[GEBR_GEOXML_DOCUMENT_TYPE_FLOW]))
 		return FALSE;
-	data->param[0] = NULL;
+	data->param[GEBR_GEOXML_DOCUMENT_TYPE_FLOW] = NULL;
 	deps = gebr_iexpr_extract_vars(get_validator_by_type(self, type), expr);
 	gboolean valid = get_error_indirect(self, deps, NULL, type, scope, NULL);
-	data->param[0] = iter;
+	data->param[GEBR_GEOXML_DOCUMENT_TYPE_FLOW] = iter;
 	g_list_foreach(deps, (GFunc) g_free, NULL);
 	g_list_free(deps);
 	return !valid;

@@ -1095,10 +1095,8 @@ static void assemble_bc_cmd_line (GString *expr_buf)
 gboolean gebr_output_use_var_iter(GebrdJob *job, const gchar *output_expr)
 {
 	g_assert(gebrd->validator != NULL);
-	return gebr_validator_expression_check_using_var(gebrd->validator,
-					      output_expr,
-					      GEBR_GEOXML_DOCUMENT_TYPE_FLOW,
-					      "iter");
+	return gebr_validator_use_iter(gebrd->validator, output_expr,
+	                               GEBR_GEOXML_PARAMETER_TYPE_STRING, GEBR_GEOXML_DOCUMENT_TYPE_FLOW);
 }
 
 static void job_assembly_cmdline(GebrdJob *job)
