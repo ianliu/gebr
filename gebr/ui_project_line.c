@@ -462,8 +462,6 @@ void project_line_import_path(const gchar *filename)
 		if ((ret = document_load_at((GebrGeoXmlDocument**)line, line_filename, at_dir)))
 			return ret;
 
-		gebr_geoxml_document_canonize_dict_parameters(GEBR_GEOXML_DOCUMENT(*line));
-
 		document_import(GEBR_GEOXML_DOCUMENT(*line));
 		/* check for paths that could be created; */
 		GebrGeoXmlSequence *line_path;
@@ -489,7 +487,6 @@ void project_line_import_path(const gchar *filename)
 				continue;
 			}
 
-			gebr_geoxml_document_canonize_dict_parameters(GEBR_GEOXML_DOCUMENT(flow));
 			document_import(GEBR_GEOXML_DOCUMENT(flow));
 			gebr_geoxml_line_set_flow_source(GEBR_GEOXML_LINE_FLOW(i),
 			                                 gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(flow)));
@@ -526,8 +523,6 @@ void project_line_import_path(const gchar *filename)
 
 			if (document_load_at((GebrGeoXmlDocument**)(&project), files[i], tmp_dir->str))
 				continue;
-
-			gebr_geoxml_document_canonize_dict_parameters(GEBR_GEOXML_DOCUMENT(project));
 
 			document_import(GEBR_GEOXML_DOCUMENT(project));
 			iter = project_append_iter(project);
