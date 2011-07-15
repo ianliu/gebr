@@ -399,7 +399,7 @@ void flow_edition_set_io(void)
 		title = g_markup_printf_escaped("<i>%s</i>", _("Error file"));
 		tooltip = NULL;
 	} else {
-		title = g_strdup(output);
+		title = g_strdup(error);
 		gebr_validator_evaluate(gebr.validator, error, GEBR_GEOXML_PARAMETER_TYPE_STRING,
 		                        GEBR_GEOXML_DOCUMENT_TYPE_FLOW, &result, &err);
 		if (err)
