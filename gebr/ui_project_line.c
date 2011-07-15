@@ -683,8 +683,6 @@ static gboolean update_progress(gpointer user_data)
 			                       NULL);
 
 			g_string_free(paths, TRUE);
-			g_list_foreach(data->line_paths_creation_sugest, (GFunc)g_free, NULL);
-			g_list_free(data->line_paths_creation_sugest);
 		} else
 			gtk_widget_destroy(GTK_WIDGET(data->dialog));
 	}
@@ -721,6 +719,10 @@ static void on_dialog_response(GtkWidget *dialog, gint response_id, gpointer use
 		}
 		g_string_free(cmd_line, TRUE);
 	}
+
+	g_list_foreach(data->line_paths_creation_sugest, (GFunc)g_free, NULL);
+	g_list_free(data->line_paths_creation_sugest);
+	g_free(data);
 	gtk_widget_destroy(dialog);
 }
 
