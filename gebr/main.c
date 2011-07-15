@@ -47,6 +47,7 @@ int main(int argc, char **argv, char **env)
 
 	g_type_init();
 	g_thread_init(NULL);
+	gdk_threads_init();
 
 	gebr_libinit(GETTEXT_PACKAGE);
 
@@ -107,6 +108,8 @@ int main(int argc, char **argv, char **env)
 	gebr_setup_ui();
 	gebr_init();
 
+	gdk_threads_enter();
 	gtk_main();
+	gdk_threads_leave();
 	return 0;
 }
