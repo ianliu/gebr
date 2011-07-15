@@ -162,6 +162,7 @@ gboolean gebr_quit(gboolean save_config)
 	/*
 	 * Data frees and cleanups
 	 */
+	gtk_tree_view_set_model(GTK_TREE_VIEW(gebr.ui_flow_browse->view), NULL);
 	flow_free();
 	project_line_free();
 
