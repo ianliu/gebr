@@ -155,9 +155,9 @@ static void parameters_actions(GtkDialog * dialog, gint arg1, struct ui_paramete
 		flow_edition_select_component_iter(&iter);
 
 		if (validate_selected_program(NULL))
-			flow_edition_status_changed (GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED);
+			flow_edition_change_iter_status(GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED, &iter);
 		else
-			flow_edition_status_changed (GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED);
+			flow_edition_change_iter_status(GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED, &iter);
 
 		GebrGeoXmlProgram *program = ui_parameters->program_edit->program;
 		if (gebr_geoxml_program_get_control(program) == GEBR_GEOXML_PROGRAM_CONTROL_FOR) {

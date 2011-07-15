@@ -708,6 +708,10 @@ void flow_edition_change_iter_status(guint status, GtkTreeIter *iter)
 	}
 
 	gtk_tree_model_get(model, iter, FSEQ_GEBR_GEOXML_POINTER, &program, -1);
+
+	if (gebr_geoxml_program_get_status(program) == status)
+		return;
+
 	gtk_list_store_set(gebr.ui_flow_edition->fseq_store, iter, FSEQ_NEVER_OPENED, FALSE, -1);
 
 	has_error = gebr_geoxml_program_get_error_id(program, NULL);
@@ -716,8 +720,6 @@ void flow_edition_change_iter_status(guint status, GtkTreeIter *iter)
 		status = GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED;
 
 	if (gebr_geoxml_program_get_control(program) == GEBR_GEOXML_PROGRAM_CONTROL_FOR) {
-		GtkTreeIter it;
-		GebrGeoXmlProgram *prog;
 		GebrGeoXmlSequence *parameter;
 
 		if(status == GEBR_GEOXML_PROGRAM_STATUS_DISABLED) {
@@ -728,17 +730,7 @@ void flow_edition_change_iter_status(guint status, GtkTreeIter *iter)
 			parameter = gebr_geoxml_document_get_dict_parameter(GEBR_GEOXML_DOCUMENT(gebr.flow));
 			gebr_validator_insert(gebr.validator, GEBR_GEOXML_PARAMETER(parameter), NULL, NULL);
 		}
-		gebr_gui_gtk_tree_model_foreach(it, model) {
-			gtk_tree_model_get(model, &it, FSEQ_GEBR_GEOXML_POINTER, &prog, -1);
-
-			if (!prog || gebr_geoxml_program_get_control(prog) != GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY)
-				continue;
-
-			if (validate_program_iter(&it, NULL))
-				flow_edition_change_iter_status(GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED, &it);
-			else
-				flow_edition_change_iter_status(GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED, &it);
-		}
+		flow_edition_revalidate_programs();
 	}
 
 	gebr_geoxml_program_set_status(GEBR_GEOXML_PROGRAM(program), status);
