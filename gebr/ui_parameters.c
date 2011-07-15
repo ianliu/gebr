@@ -165,7 +165,6 @@ static void parameters_actions(GtkDialog * dialog, gint arg1, struct ui_paramete
 			GebrGeoXmlProgramParameter *dict_iter = GEBR_GEOXML_PROGRAM_PARAMETER(gebr_geoxml_document_get_dict_parameter(GEBR_GEOXML_DOCUMENT(gebr.flow)));
 			const gchar *value = gebr_geoxml_program_parameter_get_first_value(dict_iter, FALSE);
 			gebr_validator_change_value(gebr.validator, GEBR_GEOXML_PARAMETER(dict_iter), value, NULL, NULL);
-			flow_edition_revalidate_programs();
 			flow_edition_set_io();
 		}
 		break;
