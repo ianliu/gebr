@@ -38,11 +38,19 @@
 #include "callbacks.h"
 #include "../defines.h"
 
+typedef struct {
+	const gchar *path;
+	GtkDialog *dialog;
+	GtkProgressBar *progress;
+	gint var;
+	GList *line_paths_creation_sugest;
+} TimeoutData;
+
 /*
  * Prototypes
  */
 
-static void project_line_load (void);
+static void project_line_load(void);
 
 static void pl_change_selection_update_validator(GtkTreeSelection *selection);
 
@@ -408,19 +416,13 @@ gboolean project_line_get_selected(GtkTreeIter * _iter, enum ProjectLineSelectio
 	return TRUE;
 }
 
-void project_line_select_iter(GtkTreeIter * iter)
-{
-	gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(gebr.ui_project_line->view), iter);
-}
-
-void project_line_import_path(const gchar *filename)
+static gboolean _project_line_import_path(const gchar *filename, GList **line_paths_creation_sugest)
 {
 	gboolean is_project;
 
 	GString *tmp_dir;
 	gint exit_status;
 	gchar *output;
-	GList *line_paths_creation_sugest = NULL;
 
 	GebrGeoXmlDocument *document;
 	GtkTreeIter iter;
@@ -441,10 +443,16 @@ void project_line_import_path(const gchar *filename)
 		is_project = TRUE;
 	else if (g_str_has_suffix(filename, ".lnez")) {
 		is_project = FALSE;
-		if (!project_line_get_selected(NULL, ProjectLineSelection))
+		gdk_threads_enter();
+		if (!project_line_get_selected(NULL, ProjectLineSelection)) {
+			gdk_threads_leave();
 			goto out2;
+		}
+		gdk_threads_leave();
 	} else {
+		gdk_threads_enter();
 		gebr_message(GEBR_LOG_ERROR, FALSE, TRUE, _("Unrecognized file type."));
+		gdk_threads_leave();
 		goto out2;
 	}
 
@@ -459,17 +467,23 @@ void project_line_import_path(const gchar *filename)
 		GebrGeoXmlSequence *i;
 		int ret;
 
-		if ((ret = document_load_at((GebrGeoXmlDocument**)line, line_filename, at_dir)))
+		gdk_threads_enter();
+		if ((ret = document_load_at((GebrGeoXmlDocument**)line, line_filename, at_dir))) {
+			gdk_threads_leave();
 			return ret;
+		}
+		gdk_threads_leave();
 
+		gdk_threads_enter();
 		document_import(GEBR_GEOXML_DOCUMENT(*line));
+		gdk_threads_leave();
 		/* check for paths that could be created; */
 		GebrGeoXmlSequence *line_path;
 		gebr_geoxml_line_get_path(*line, &line_path, 0);
 		for (; line_path != NULL; gebr_geoxml_sequence_next(&line_path)) {
 			const gchar *path = gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(line_path));
 			if (gebr_path_is_at_home(path) && !g_file_test(path, G_FILE_TEST_EXISTS))
-				line_paths_creation_sugest = g_list_prepend(line_paths_creation_sugest, g_strdup(path));
+				*line_paths_creation_sugest = g_list_prepend(*line_paths_creation_sugest, g_strdup(path));
 		}
 
 		gebr_geoxml_line_get_flow(*line, &i, 0);
@@ -479,22 +493,31 @@ void project_line_import_path(const gchar *filename)
 			GebrGeoXmlSequence * next = i;
 			gebr_geoxml_sequence_next(&next);
 
+			gdk_threads_enter();
 			int ret = document_load_at_with_parent((GebrGeoXmlDocument**)(&flow),
 			                                       gebr_geoxml_line_get_flow_source(GEBR_GEOXML_LINE_FLOW(i)),
 			                                       at_dir, project_iter);
+			gdk_threads_leave();
+
 			if (ret) {
 				i = next;
 				continue;
 			}
 
+			gdk_threads_enter();
 			document_import(GEBR_GEOXML_DOCUMENT(flow));
+			gdk_threads_leave();
 			gebr_geoxml_line_set_flow_source(GEBR_GEOXML_LINE_FLOW(i),
 			                                 gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(flow)));
+			gdk_threads_enter();
 			document_save(GEBR_GEOXML_DOCUMENT(flow), FALSE, TRUE); /* this flow is cached */
+			gdk_threads_leave();
 
 			i = next;
 		}
+		gdk_threads_enter();
 		document_save(GEBR_GEOXML_DOCUMENT(*line), FALSE, FALSE);
+		gdk_threads_leave();
 
 		return ret;
 	}
@@ -521,11 +544,17 @@ void project_line_import_path(const gchar *filename)
 			GebrGeoXmlProject *project;
 			GebrGeoXmlSequence *project_line;
 
-			if (document_load_at((GebrGeoXmlDocument**)(&project), files[i], tmp_dir->str))
+			gdk_threads_enter();
+			if (document_load_at((GebrGeoXmlDocument**)(&project), files[i], tmp_dir->str)) {
+				gdk_threads_leave();
 				continue;
+			}
+			gdk_threads_leave();
 
+			gdk_threads_enter();
 			document_import(GEBR_GEOXML_DOCUMENT(project));
 			iter = project_append_iter(project);
+			gdk_threads_leave();
 
 			gebr_geoxml_project_get_line(project, &project_line, 0);
 			while (project_line != NULL) {
@@ -533,7 +562,6 @@ void project_line_import_path(const gchar *filename)
 
 				GebrGeoXmlSequence * next = project_line;
 				gebr_geoxml_sequence_next(&next);
-
 				int ret = line_import(&iter, &line, gebr_geoxml_project_get_line_source
 				                      (GEBR_GEOXML_PROJECT_LINE(project_line)), tmp_dir->str);
 				if (ret) {
@@ -544,20 +572,24 @@ void project_line_import_path(const gchar *filename)
 				                                    gebr_geoxml_document_get_filename
 				                                    (GEBR_GEOXML_DOCUMENT(line)));
 
+				gdk_threads_enter();
 				project_append_line_iter(&iter, line);
 				document_save(GEBR_GEOXML_DOCUMENT(line), FALSE, FALSE);
+				gdk_threads_leave();
 
 				project_line = next;
 			}
-
 			document = GEBR_GEOXML_DOCUMENT(project);
 		} else if (!is_project && g_str_has_suffix(files[i], ".lne")) {
 			GebrGeoXmlLine *line;
 			GtkTreeIter parent;
 
+			gdk_threads_enter();
 			line_import(&parent, &line, files[i], tmp_dir->str);
-			if (line == NULL)
+			if (line == NULL) {
+				gdk_threads_leave();
 				continue;
+			}
 			gebr_geoxml_project_append_line(gebr.project,
 			                                gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(line)));
 			document_save(GEBR_GEOXML_DOCUMENT(gebr.project), TRUE, FALSE);
@@ -567,77 +599,160 @@ void project_line_import_path(const gchar *filename)
 			if (!gtk_tree_model_iter_parent(GTK_TREE_MODEL(gebr.ui_project_line->store), &parent, &iter))
 				parent = iter;
 			iter = project_append_line_iter(&parent, line);
+			gdk_threads_leave();
 
 			document = GEBR_GEOXML_DOCUMENT(line);
 		} else
 			document = NULL;
 
 		if (document != NULL) {
+			gdk_threads_enter();
 			project_line_select_iter(&iter);
 
 			GString *new_title = g_string_new(NULL);
+
 			g_string_printf(new_title, _("%s (Imported)"), gebr_geoxml_document_get_title(document));
 			gtk_tree_store_set(gebr.ui_project_line->store, &iter, PL_TITLE, new_title->str, -1);
 			gebr_geoxml_document_set_title(document, new_title->str);
-			g_string_free(new_title, TRUE);
-
 			document_save(document, FALSE, FALSE);
+			gdk_threads_leave();
+			g_string_free(new_title, TRUE);
 		}
-	}
-
-	if (line_paths_creation_sugest != NULL) {
-		GString *paths = g_string_new("");
-		for (GList *i = line_paths_creation_sugest; i != NULL; i = g_list_next(i))
-			g_string_append_printf(paths, "\n%s", (gchar*)i->data);
-
-		if (gebr_gui_confirm_action_dialog(_("Create directories"),
-		                                   _("There are some line paths localed on your home directory that"
-		                                		   " do not exist. Do you want to create following folders:%s"), paths->str)) {
-			GString *cmd_line = g_string_new(NULL);
-			for (GList *i = line_paths_creation_sugest; i != NULL; i = g_list_next(i)) {
-				if (g_file_test (i->data, G_FILE_TEST_EXISTS))
-					continue;
-
-				if (g_mkdir_with_parents (i->data, 0755) != 0) {
-					GtkWidget * warning;
-					warning = gtk_message_dialog_new_with_markup (GTK_WINDOW (gebr.window),
-					                                              GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-					                                              GTK_MESSAGE_WARNING,
-					                                              GTK_BUTTONS_OK,
-					                                              "<span size='larger' weight='bold'>%s %s</span>",
-					                                              _("Could not create the directory"),
-					                                              (gchar*)i->data);
-
-					gtk_message_dialog_format_secondary_markup (GTK_MESSAGE_DIALOG (warning),
-					                                            _("The directory <i>%s</i> could not be created. "
-					                                        		    "Certify you have the rights to perform this operation."),
-					                                        		    (gchar*)i->data);
-
-					gtk_dialog_run (GTK_DIALOG (warning));
-					gtk_widget_destroy (warning);
-				}
-			}
-			g_string_free(cmd_line, TRUE);
-		}
-
-		g_string_free(paths, TRUE);
 	}
 
 	gebr_temp_directory_destroy(tmp_dir);
+	gdk_threads_enter();
 	gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Import successful."));
+	gdk_threads_leave();
 	g_strfreev(files);
 	goto out;
 
 err:
+	gdk_threads_enter();
 	gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Failed to import."));
-
+	gdk_threads_leave();
+	return FALSE;
 out:
 	g_free(output);
-
 out2:
-	g_list_foreach(line_paths_creation_sugest, (GFunc)g_free, NULL);
-	g_list_free(line_paths_creation_sugest);
 	g_string_free(command, TRUE);
+
+	return TRUE;
+}
+
+void project_line_select_iter(GtkTreeIter * iter)
+{
+	gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(gebr.ui_project_line->view), iter);
+}
+
+static void *import_demo_thread(gpointer user_data)
+{
+	TimeoutData *data = user_data;
+	gboolean ret;
+
+	ret = _project_line_import_path(data->path, &(data->line_paths_creation_sugest));
+	data->var = 1;
+	g_thread_exit(NULL);
+	return NULL;
+}
+
+static gboolean update_progress(gpointer user_data)
+{
+	TimeoutData *data = user_data;
+	gtk_progress_bar_pulse(data->progress);
+	if (data->var == 1) {
+		gtk_progress_bar_set_fraction(data->progress, 1);
+
+		if (data->line_paths_creation_sugest != NULL) {
+			GString *paths = g_string_new("");
+			for (GList *i = data->line_paths_creation_sugest; i != NULL; i = g_list_next(i))
+				g_string_append_printf(paths, "\n%s", (gchar*)i->data);
+
+			if (gebr_gui_confirm_action_dialog(_("Create directories"),
+			                                   _("There are some line paths localed on your home directory that"
+			                                		   " do not exist. Do you want to create following folders:%s"), paths->str)) {
+				GString *cmd_line = g_string_new(NULL);
+				for (GList *i = data->line_paths_creation_sugest; i != NULL; i = g_list_next(i)) {
+					if (g_file_test (i->data, G_FILE_TEST_EXISTS))
+						continue;
+
+					if (g_mkdir_with_parents (i->data, 0755) != 0) {
+						GtkWidget * warning;
+						warning = gtk_message_dialog_new_with_markup (GTK_WINDOW (gebr.window),
+						                                              GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+						                                              GTK_MESSAGE_WARNING,
+						                                              GTK_BUTTONS_OK,
+						                                              "<span size='larger' weight='bold'>%s %s</span>",
+						                                              _("Could not create the directory"),
+						                                              (gchar*)i->data);
+
+						gtk_message_dialog_format_secondary_markup (GTK_MESSAGE_DIALOG (warning),
+						                                            _("The directory <i>%s</i> could not be created. "
+						                                        		    "Certify you have the rights to perform this operation."),
+						                                        		    (gchar*)i->data);
+
+						gtk_dialog_run (GTK_DIALOG (warning));
+						gtk_widget_destroy (warning);
+					}
+				}
+				g_string_free(cmd_line, TRUE);
+			}
+			gtk_widget_destroy(GTK_WIDGET(data->dialog));
+			g_string_free(paths, TRUE);
+			g_list_foreach(data->line_paths_creation_sugest, (GFunc)g_free, NULL);
+			g_list_free(data->line_paths_creation_sugest);
+		}
+		else
+			gtk_dialog_add_button(data->dialog, GTK_STOCK_OK, GTK_RESPONSE_OK);
+	}
+	return data->var != 1;
+}
+
+static void on_dialog_response(GtkWidget *dialog, gint response_id)
+{
+	if (response_id == GTK_RESPONSE_OK)
+		gtk_widget_destroy(dialog);
+}
+
+static gboolean on_delete_event(GtkWidget *dialog)
+{
+	return TRUE;
+}
+
+void project_line_import_path(const gchar *path)
+{
+	GtkWidget *dialog;
+	GtkWidget *progress;
+	GtkWidget *label;
+	TimeoutData *data;
+
+	dialog = gtk_dialog_new_with_buttons("",
+	                                     GTK_WINDOW(gebr.window),
+	                                     GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+	                                     NULL);
+
+	g_signal_connect(dialog, "response", G_CALLBACK(on_dialog_response), NULL);
+	g_signal_connect(dialog, "delete-event", G_CALLBACK(on_delete_event), NULL);
+	gtk_window_set_deletable(GTK_WINDOW(dialog), FALSE);
+
+	label = gtk_label_new("Importing lines...");
+	progress = gtk_progress_bar_new();
+	gtk_progress_bar_set_pulse_step(GTK_PROGRESS_BAR(progress), 0.1);
+	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), label);
+	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), progress);
+
+	data = g_new(TimeoutData, 1);
+	data->dialog = GTK_DIALOG(dialog);
+	data->progress = GTK_PROGRESS_BAR(progress);
+	data->var = 0;
+	data->path = path;
+	data->line_paths_creation_sugest = NULL;
+	g_timeout_add(100, update_progress, data);
+	//gtk_widget_show_all(dialog);
+	gtk_widget_show(label);
+	gtk_widget_show(progress);
+	g_thread_create(import_demo_thread, data, FALSE, NULL);
+	gtk_dialog_run(GTK_DIALOG(dialog));
 }
 
 void project_line_import(void)
@@ -661,12 +776,10 @@ void project_line_import(void)
 
 	/* show file chooser */
 	gtk_widget_show(chooser_dialog);
-	if (gtk_dialog_run(GTK_DIALOG(chooser_dialog)) == GTK_RESPONSE_YES) {
+	if (gtk_dialog_run(GTK_DIALOG(chooser_dialog)) == GTK_RESPONSE_YES)
 		filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser_dialog));
-		project_line_import_path(filename);
-	}
-
 	gtk_widget_destroy(chooser_dialog);
+	project_line_import_path(filename);
 	g_free(filename);
 }
 

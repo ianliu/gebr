@@ -108,14 +108,17 @@ void project_line_info_update(void);
 gboolean project_line_get_selected(GtkTreeIter * iter, enum ProjectLineSelectionType check_type);
 
 /**
- * Select \p iter and load it into UI.
+ * project_line_select_iter:
+ * @iter:
+ *
+ * Selects the current project or line, filling @iter.
  */
 void project_line_select_iter(GtkTreeIter * iter);
 
 /*
  *
  */
-void project_line_import_path(const gchar *filename);
+void project_line_import_path(const gchar *path);
 
 /**
  * Import line or project
