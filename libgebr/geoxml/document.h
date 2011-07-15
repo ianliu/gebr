@@ -21,6 +21,7 @@
 #include <glib.h>
 
 #include "gebr-geo-types.h"
+#include <gebr-validator.h>
 
 G_BEGIN_DECLS
 
@@ -327,6 +328,8 @@ const gchar *gebr_geoxml_document_get_help(GebrGeoXmlDocument * document);
 
 /**
  * gebr_geoxml_document_merge_dicts:
+ * @validator: Uses validator to omit parameters with error,
+ *       if NULL is passed all parameters are merged.
  * @first: The #GebrGeoXmlDocument that will contain all dictionary parameters.
  * @...: A %NULL-terminated list of #GebrGeoXmlDocument that will be merged
  *       into @first.
@@ -335,7 +338,7 @@ const gchar *gebr_geoxml_document_get_help(GebrGeoXmlDocument * document);
  * parameter. After applying this function, no one should use @first before
  * calling gebr_geoxml_document_split_dict().
  */
-void gebr_geoxml_document_merge_dicts(GebrGeoXmlDocument *first,
+void gebr_geoxml_document_merge_dicts(GebrValidator *validator, GebrGeoXmlDocument *first,
 				      ...) G_GNUC_NULL_TERMINATED;
 
 /**

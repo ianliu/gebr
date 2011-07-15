@@ -1379,7 +1379,7 @@ static void gebr_geoxml_document_fix_header(GString * source, const gchar * tagn
 }
 
 void
-gebr_geoxml_document_merge_dicts(GebrGeoXmlDocument *first, ...)
+gebr_geoxml_document_merge_dicts(GebrValidator *validator, GebrGeoXmlDocument *first, ...)
 {
 	va_list args;
 	GebrGeoXmlDocument *doc;
@@ -1405,6 +1405,12 @@ gebr_geoxml_document_merge_dicts(GebrGeoXmlDocument *first, ...)
 			GebrGeoXmlParameterType type;
 			GebrGeoXmlParameter *param =  GEBR_GEOXML_PARAMETER(seq);
 			GebrGeoXmlProgramParameter *pparam = GEBR_GEOXML_PROGRAM_PARAMETER(seq);
+
+			// Strip parameters with error
+			if (validator && !gebr_validator_validate_param(validator, param, NULL, NULL)) {
+				gebr_geoxml_sequence_next(&seq);
+				continue;
+			}
 
 			// copy data
 			value = gebr_geoxml_program_parameter_get_first_value(pparam, FALSE);

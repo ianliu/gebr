@@ -104,7 +104,8 @@ GebrCommServerRunFlow* gebr_comm_server_run_config_add_flow(GebrCommServerRunCon
 }
 
 GebrGeoXmlFlow *
-gebr_comm_server_run_strip_flow(GebrGeoXmlFlow *flow,
+gebr_comm_server_run_strip_flow(GebrValidator *validator,
+                                GebrGeoXmlFlow *flow,
 				GebrGeoXmlLine *line,
 				GebrGeoXmlProject *proj)
 {
@@ -132,7 +133,17 @@ gebr_comm_server_run_strip_flow(GebrGeoXmlFlow *flow,
 		i = tmp;
 	}
 
-	gebr_geoxml_document_merge_dicts (clone, line, proj, NULL);
+	/* Merge and Strip invalid parameters in dictionary */
+	i = gebr_geoxml_document_get_dict_parameter(clone);
+	while (i != NULL) {
+		GebrGeoXmlSequence *next = i;
+		gebr_geoxml_sequence_next(&next);
+		if (validator && !gebr_validator_validate_param(validator, GEBR_GEOXML_PARAMETER(i), NULL, NULL)) {
+			gebr_geoxml_sequence_remove(i);
+		}
+		i = next;
+	}
+	gebr_geoxml_document_merge_dicts(validator, clone, line, proj, NULL);
 
 	return GEBR_GEOXML_FLOW (clone);
 }
