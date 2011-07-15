@@ -84,7 +84,7 @@ void test_gebr_str_canonical_var_name(void)
 	canonical = NULL;
 
 	gebr_str_canonical_var_name("CDP EM METROS (m)", &canonical, NULL);
-	g_assert_cmpstr(canonical, ==, "cdp_em_metros__m_");
+	g_assert_cmpstr(canonical, ==, "cdp_em_metros__m");
 	g_free(canonical);
 	canonical = NULL;
 

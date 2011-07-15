@@ -898,7 +898,7 @@ static gboolean gebr_validator_evaluate_internal(GebrValidator *self,
 
 	gebr_arith_expr_eval_internal(self->arith_expr, expr, value, &err);
 
-	if (use_iter) {
+	if (!err && use_iter) {
 		gchar *end_value, *ini_value = *value;
 		gchar *buf = g_strconcat(ITER_END_EXPR, expr, ITER_INI_EXPR, NULL);
 		gebr_arith_expr_eval_internal(self->arith_expr, buf, &end_value, &err);

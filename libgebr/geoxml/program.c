@@ -352,9 +352,9 @@ const gchar *gebr_geoxml_program_control_get_n (GebrGeoXmlProgram *prog, gchar *
 		keyword = gebr_geoxml_program_parameter_get_keyword(GEBR_GEOXML_PROGRAM_PARAMETER (param));
 		if(!strcmp(keyword,"niter"))
 			niter = gebr_geoxml_value_sequence_get(value);
-		else if(!strcmp(keyword,"step"))
+		else if(step && !strcmp(keyword,"step"))
 			*step = (gchar *) gebr_geoxml_value_sequence_get(value);
-		else if(!strcmp(keyword,"ini_value"))
+		else if(ini && !strcmp(keyword,"ini_value"))
 			*ini = (gchar *) gebr_geoxml_value_sequence_get(value);
 	}
 	return niter;

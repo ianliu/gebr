@@ -1364,6 +1364,13 @@ static void dict_edit_load_iter(struct dict_edit_data *data, GtkTreeIter * iter,
 
 	value = gebr_geoxml_program_parameter_get_first_value(GEBR_GEOXML_PROGRAM_PARAMETER(parameter), FALSE);
 
+	if (is_loop_iter){
+		GebrGeoXmlProgram * prog = gebr_geoxml_flow_get_control_program(gebr.flow);
+		gchar * ini;
+		gebr_geoxml_program_control_get_n(GEBR_GEOXML_PROGRAM(prog), NULL, &ini);
+		value = g_strconcat("[", ini, ", ...,", value, "]", NULL);
+	}
+
 	gchar *keyword_escaped = g_markup_escape_text(keyword, -1);
 	gtk_tree_store_set(GTK_TREE_STORE(data->tree_model), iter,
 			   DICT_EDIT_KEYWORD_IMAGE, "",
