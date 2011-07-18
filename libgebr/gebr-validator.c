@@ -8,16 +8,12 @@
 
 #include "gebr-validator.h"
 #include "utils.h"
-#include "gebr-iexpr.h"
 #include "gebr-arith-expr.h"
-#include "gebr-string-expr.h"
-#include "gebr-expr.h"
 
 /* Structures {{{1 */
 struct _GebrValidator
 {
 	GebrArithExpr *arith_expr;
-	GebrStringExpr *string_expr;
 
 	GebrGeoXmlDocument **docs[3];
 
@@ -113,7 +109,8 @@ get_validator_by_type(GebrValidator *self,
 	switch (type) {
 	case GEBR_GEOXML_PARAMETER_TYPE_STRING:
 	case GEBR_GEOXML_PARAMETER_TYPE_FILE:
-		return GEBR_IEXPR(self->string_expr);
+		// FIXME
+		return NULL;
 	case GEBR_GEOXML_PARAMETER_TYPE_RANGE:
 	case GEBR_GEOXML_PARAMETER_TYPE_INT:
 	case GEBR_GEOXML_PARAMETER_TYPE_FLOAT:
@@ -259,34 +256,175 @@ get_dep_param(GebrValidator *self,
 	return dep_param;
 }
 
+static gboolean
+translate_string_expr(GebrValidator *self,
+                      const gchar *expr,
+                      const gchar *my_name,
+                      GebrGeoXmlDocumentType my_scope,
+                      gchar **translated,
+                      GList **deps,
+                      GError **error)
+{
+	GString *str_expr =  g_string_sized_new(128);
+	enum {
+		INIT,
+		START,
+		TEXT,
+		VAR
+	} state = INIT;
+
+	while (*expr) {
+		switch (state) {
+		case INIT:
+			g_string_append(str_expr, "print ");
+		case START:
+			if (*expr == '[' && expr[1] != '[') {
+				state = VAR;
+				break;
+			}
+			g_string_append_c(str_expr, '"');
+			state = TEXT;
+			continue;
+		case TEXT:
+			if (*expr == '"') {
+				g_string_append(str_expr, "\\q");
+				break;
+			}
+			if (*expr == '\\') {
+				g_string_append(str_expr, "\\\\");
+				break;
+			}
+			if (*expr == '[') {
+				if (expr[1] != '[') {
+					g_string_append(str_expr, "\",");
+					state = VAR;
+				} else {
+					g_string_append_c(str_expr, '[');
+					expr++; // discards one '['
+				}
+				break;
+			}
+			if (*expr == ']') {
+				if (expr[1] != ']') {
+					goto unmatched_right;
+				}
+				expr++; // discards one ']'
+			}
+			g_string_append_c(str_expr, *expr);
+			break;
+		case VAR: {
+			int size = 0;
+			while (expr[size] != ']') {
+				if (!expr[size]) {
+					goto unmatched_right;
+				}
+				if (expr[size] == '[') {
+					goto unmatched_left;
+				}
+				size++;
+			}
+			gchar *var_name = g_strndup(expr, size);
+			if (translated) {
+				GebrGeoXmlParameter *var_param = get_dep_param(self, my_name, my_scope, var_name);
+				GebrGeoXmlDocumentType var_scope = gebr_geoxml_parameter_get_scope(var_param);
+				GebrGeoXmlParameterType var_type = gebr_geoxml_parameter_get_type(var_param);
+				g_string_append_printf(str_expr, var_type == GEBR_GEOXML_PARAMETER_TYPE_STRING ? "str(%s[%d]),\"\\b\"," : "%s[%d],", var_name, var_scope);
+			}
+			if (deps) {
+				*deps = g_list_prepend(*deps, var_name);
+			} else {
+				g_free(var_name);
+			}
+			state = START;
+			expr += size;
+			break;
+		} default:
+			g_warn_if_reached();
+		}
+		expr++;
+	}
+	switch (state) {
+	case TEXT:
+		g_string_append(str_expr, "\",");
+		break;
+	case VAR:
+		goto unmatched_left;
+	default:
+		break;
+	}
+
+	g_string_append(str_expr, "\"\\n\"");
+
+	if (deps) {
+		*deps = g_list_reverse(*deps);
+	}
+
+	if (translated) {
+		*translated = str_expr->str;
+		g_string_free(str_expr, FALSE);
+		puts(*translated);
+	} else {
+		g_string_free(str_expr, TRUE);
+	}
+	return TRUE;
+
+	unmatched_right:
+	g_set_error(error, GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_SYNTAX,
+	            _("Syntax error: unmatched right bracket"));
+	goto exception;
+
+	unmatched_left:
+	g_set_error(error, GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_SYNTAX,
+	            _("Syntax error: unmatched left bracket"));
+
+	exception:
+	if (deps) {
+		g_list_foreach(*deps, (GFunc)g_free, NULL);
+		g_list_free(*deps);
+		*deps = NULL;
+	}
+	if (translated)
+		g_free(*translated);
+	g_string_free(str_expr, TRUE);
+	return FALSE;
+}
+
 /* Validate @expression and extract vars on @deps with @error */
 static gboolean
 validate_and_extract_vars(GebrValidator  *self,
-                          const gchar 		*expression,
+                          const gchar *expression,
                           GebrGeoXmlParameterType type,
-                          GList 		 **deps,
-                          GError                **error)
+                          GList **deps,
+                          GError **error)
 {
-	GebrIExpr *iexpr;
 	GError *err = NULL;
 
-	iexpr = get_validator_by_type(self, type);
-
-	if (!iexpr || !*expression) {
+	if (!*expression) {
 		*deps = NULL;
 		return TRUE;
 	}
-	if (!gebr_iexpr_is_valid(iexpr, expression, &err)
-	    && err->code != GEBR_IEXPR_ERROR_UNDEF_VAR) {
-		g_propagate_error(error, err);
-		return FALSE;
+
+	switch (type) {
+	case GEBR_GEOXML_PARAMETER_TYPE_STRING:
+	case GEBR_GEOXML_PARAMETER_TYPE_FILE:
+		return translate_string_expr(self, expression, NULL, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, NULL, deps, error);
+	case GEBR_GEOXML_PARAMETER_TYPE_RANGE:
+	case GEBR_GEOXML_PARAMETER_TYPE_INT:
+	case GEBR_GEOXML_PARAMETER_TYPE_FLOAT:
+		if (!gebr_iexpr_is_valid(GEBR_IEXPR(self->arith_expr), expression, &err)
+		    && err->code != GEBR_IEXPR_ERROR_UNDEF_VAR) {
+			g_propagate_error(error, err);
+			return FALSE;
+		}
+		if (err)
+			g_clear_error(&err);
+
+		*deps = gebr_iexpr_extract_vars(GEBR_IEXPR(self->arith_expr), expression);
+		return TRUE;
+	default:
+		*deps = NULL;
+		return TRUE;
 	}
-	if (err)
-		g_clear_error(&err);
-
-	*deps = gebr_iexpr_extract_vars(iexpr, expression);
-
-	return TRUE;
 }
 
 /* Public functions {{{1 */
@@ -297,7 +435,6 @@ gebr_validator_new(GebrGeoXmlDocument **flow,
 {
 	GebrValidator *self = g_new(GebrValidator, 1);
 	self->arith_expr = gebr_arith_expr_new();
-	self->string_expr = gebr_string_expr_new();
 	self->docs[0] = flow;
 	self->docs[1] = line;
 	self->docs[2] = proj;
@@ -707,112 +844,7 @@ void gebr_validator_free(GebrValidator *self)
 {
 	g_hash_table_unref(self->vars);
 	g_object_unref(self->arith_expr);
-	g_object_unref(self->string_expr);
 	g_free(self);
-}
-
-/* Validate @expression and extract vars on @deps with @error */
-static GString *
-translate_string_expr(GebrValidator  	*self,
-                      const gchar 	*expr,
-                      const gchar  	 *my_name,
-                      GebrGeoXmlDocumentType my_scope,
-                      GError **error)
-{
-	gchar *var_name = g_new(gchar, strlen(expr));;
-	GString *str_expr =  g_string_sized_new(128);
-	enum {
-		INIT,
-		START,
-		TEXT,
-		VAR
-	} state = INIT;
-
-	while (*expr) {
-		switch (state) {
-		case INIT:
-			g_string_append(str_expr, "print ");
-		case START:
-			if (*expr == '[' && expr[1] != '[') {
-				state = VAR;
-				break;
-			}
-			g_string_append_c(str_expr, '"');
-			state = TEXT;
-			continue;
-		case TEXT:
-			if (*expr == '"') {
-				g_string_append(str_expr, "\\q");
-				break;
-			}
-			if (*expr == '\\') {
-				g_string_append(str_expr, "\\\\");
-				break;
-			}
-			if (*expr == '[') {
-				if (expr[1] != '[') {
-					g_string_append(str_expr, "\",");
-					state = VAR;
-				} else {
-					g_string_append_c(str_expr, '[');
-					expr++; // discards one '['
-				}
-				break;
-			}
-			if (*expr == ']') {
-				if (expr[1] != ']') {
-					goto unmatched_right;
-				}
-				expr++; // discards one ']'
-			}
-			g_string_append_c(str_expr, *expr);
-			break;
-		case VAR: {
-			int size = 0;
-			while (*expr && *expr != ']') {
-				if (*expr == '[') {
-					goto unmatched_left;
-				}
-				var_name[size++] = *(expr++);
-			}
-			var_name[size] = '\0';
-			GebrGeoXmlParameter *var_param = get_dep_param(self, my_name, my_scope, var_name);
-			GebrGeoXmlDocumentType var_scope = gebr_geoxml_parameter_get_scope(var_param);
-			GebrGeoXmlParameterType var_type = gebr_geoxml_parameter_get_type(var_param);
-			g_string_append_printf(str_expr, var_type == GEBR_GEOXML_PARAMETER_TYPE_STRING ? "str(%s[%d]),\"\\b\"," : "%s[%d],", var_name, var_scope);
-			state = START;
-			break;
-		} default:
-			g_warn_if_reached();
-		}
-		expr++;
-	}
-	switch (state) {
-	case TEXT:
-		g_string_append_c(str_expr, '"');
-		break;
-	case START:
-		g_string_set_size(str_expr, str_expr->len - 1);
-		break;
-	case VAR:
-		goto unmatched_left;
-	default:
-		break;
-	}
-	puts(str_expr->str);
-	return str_expr;
-
-	unmatched_right:
-	g_set_error(error, GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_SYNTAX,
-	            _("Syntax error: unmatched right bracket"));
-	goto exception;
-
-	unmatched_left:
-	g_set_error(error, GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_SYNTAX,
-	            _("Syntax error: unmatched left bracket"));
-
-	exception:
-	return;
 }
 
 static void
@@ -843,10 +875,12 @@ gebr_validator_update_vars(GebrValidator *self,
 				continue;
 
 			if (type == GEBR_GEOXML_PARAMETER_TYPE_STRING) {
-				GString *translate = translate_string_expr(self, value, name, scope, NULL);
+				gchar *translated = NULL;
+				translate_string_expr(self, value, name, scope, &translated, NULL, NULL);
+				translated[strlen(translated) - 5] = '\0'; // removes the new line sequence
 				g_string_append_printf(bc_vars, "%1$s=%1$s[%2$d]=%3$d\n", name, scope, ++nth);
-				g_string_append_printf(bc_strings, " else if (n==%d) %s", nth, translate->str);
-				g_string_free(translate, TRUE);
+				g_string_append_printf(bc_strings, " else if (n==%d) %s", nth, translated);
+				g_free(translated);
 				continue;
 			}
 			if (g_strcmp0(name, "iter") == 0) {
@@ -874,7 +908,7 @@ clean_string(gchar **str)
 	if (!*str) {
 		return;
 	}
-	for (i = 0; (*str)[i+b]; i++) {
+	for (i = 0; i < strlen(*str); i++) {
 		if ((*str)[i+b] == '\b')
 			b++;
 		(*str)[i-b] = (*str)[i+b];
@@ -883,7 +917,7 @@ clean_string(gchar **str)
 }
 
 gboolean gebr_validator_use_iter(GebrValidator *self, const gchar *expr, GebrGeoXmlParameterType type, GebrGeoXmlDocumentType scope) {
-	GList * deps;
+	GList * deps = NULL;
 	GebrGeoXmlParameter *iter;
 	HashData *data = g_hash_table_lookup(self->vars, "iter");
 	if (scope > GEBR_GEOXML_DOCUMENT_TYPE_FLOW)
@@ -891,7 +925,10 @@ gboolean gebr_validator_use_iter(GebrValidator *self, const gchar *expr, GebrGeo
 	if (!data || !(iter = data->param[GEBR_GEOXML_DOCUMENT_TYPE_FLOW]))
 		return FALSE;
 	data->param[GEBR_GEOXML_DOCUMENT_TYPE_FLOW] = NULL;
-	deps = gebr_iexpr_extract_vars(get_validator_by_type(self, type), expr);
+	if (get_validator_by_type(self, type) == GEBR_IEXPR(self->arith_expr))
+		deps = gebr_iexpr_extract_vars(GEBR_IEXPR(self->arith_expr), expr);
+	else
+		translate_string_expr(self, expr, NULL, scope, NULL, &deps, NULL);
 	gboolean valid = get_error_indirect(self, deps, NULL, type, scope, NULL);
 	data->param[GEBR_GEOXML_DOCUMENT_TYPE_FLOW] = iter;
 	g_list_foreach(deps, (GFunc) g_free, NULL);
@@ -907,7 +944,7 @@ static gboolean gebr_validator_evaluate_internal(GebrValidator *self,
                                                  GebrGeoXmlDocumentType scope,
                                                  GError **error)
 {
-	GString *expression;
+	gchar *translated;
 	GError *err = NULL;
 
 	g_return_val_if_fail(self != NULL, FALSE);
@@ -923,9 +960,8 @@ static gboolean gebr_validator_evaluate_internal(GebrValidator *self,
 	gboolean use_iter = gebr_validator_use_iter(self, expr, type, scope);
 
 	if (!is_math) {
-		expression = translate_string_expr(self, expr, NULL, scope, NULL);
-		g_string_append(expression, ",\"\\n\"");
-		expr = expression->str;
+		translate_string_expr(self, expr, NULL, scope, &translated, NULL, NULL);
+		expr = translated;
 	}
 
 	gebr_arith_expr_eval_internal(self->arith_expr, expr, value, &err);
@@ -942,7 +978,7 @@ static gboolean gebr_validator_evaluate_internal(GebrValidator *self,
 
 	if (!is_math) {
 		clean_string(value);
-		g_string_free(expression, TRUE);
+		g_free(translated);
 	}
 
 	if (err) {
