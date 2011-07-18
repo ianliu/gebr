@@ -571,7 +571,7 @@ static void test_gebr_geoxml_document_merge_and_split_dicts(void)
 	gebr_geoxml_document_set_dict_keyword(proj, GEBR_GEOXML_PARAMETER_TYPE_INT, "baz", "3");
 	gebr_geoxml_document_set_dict_keyword(proj, GEBR_GEOXML_PARAMETER_TYPE_INT, "baz2", "30");
 
-	gebr_geoxml_document_merge_dicts(flow, line, proj, NULL);
+	gebr_geoxml_document_merge_dicts(NULL, flow, line, proj, NULL);
 
 	gebr_geoxml_document_free(line);
 	gebr_geoxml_document_free(proj);
