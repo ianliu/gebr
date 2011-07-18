@@ -97,9 +97,6 @@ typedef enum {
 	GEBR_GEOXML_FLOW_ERROR_LOOP_ONLY
 } GebrGeoXmlFlowError;
 
-#define GEBR_GEOXML_PROGRAM_ERROR (gebr_geoxml_program_error_quark())
-GQuark gebr_geoxml_program_error_quark(void);
-
 typedef enum {
 	GEBR_GEOXML_PROGRAM_STATUS_UNKNOWN = 0,
 	GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED,

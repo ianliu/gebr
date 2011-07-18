@@ -405,11 +405,6 @@ gboolean gebr_geoxml_program_is_var_used (GebrGeoXmlProgram *self,
 	return gebr_geoxml_parameters_is_var_used (params, var_name);
 }
 
-GQuark gebr_geoxml_program_error_quark(void)
-{
-	return g_quark_from_static_string("gebr-geoxml-program-error-quark");
-}
-
 void gebr_geoxml_program_set_error_id(GebrGeoXmlProgram *self,
 				      gboolean clear,
 				      GebrIExprError id)
