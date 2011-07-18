@@ -103,13 +103,15 @@ struct ui_flow_edition *flow_edition_setup_ui(void)
 	/* Create flow edit ui_flow_edition->widget */
 	ui_flow_edition->widget = gtk_vbox_new(FALSE, 0);
 	hpanel = gtk_hpaned_new();
+	g_object_set(hpanel, "min-position", 150, NULL);
 	gtk_container_add(GTK_CONTAINER(ui_flow_edition->widget), hpanel);
 
 	/*
 	 * Left side: flow components
 	 */
 	left_vbox = gtk_vbox_new(FALSE, 5);
-	gtk_paned_pack1(GTK_PANED(hpanel), left_vbox, FALSE, FALSE);
+	gtk_paned_pack1(GTK_PANED(hpanel), left_vbox, TRUE, FALSE);
+	gtk_widget_set_size_request(left_vbox, 150, -1);
 
 	ui_flow_edition->server_combobox = combobox = gtk_combo_box_new ();
 	ui_flow_edition->queue_combobox = gtk_combo_box_new ();
@@ -228,7 +230,8 @@ struct ui_flow_edition *flow_edition_setup_ui(void)
 	 * Right side: Menu list
 	 */
 	frame = gtk_frame_new(_("Menus"));
-	gtk_paned_pack2(GTK_PANED(hpanel), frame, TRUE, TRUE);
+	gtk_paned_pack2(GTK_PANED(hpanel), frame, FALSE, FALSE);
+	gtk_widget_set_size_request(frame, 150, -1);
 
 	vbox = gtk_vbox_new(FALSE, 3);
 	gtk_container_add(GTK_CONTAINER(frame), vbox);
@@ -262,6 +265,8 @@ struct ui_flow_edition *flow_edition_setup_ui(void)
 	col = gtk_tree_view_column_new_with_attributes(_("Description"), renderer, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(ui_flow_edition->menu_view), col);
 	gtk_tree_view_column_add_attribute(col, renderer, "text", MENU_DESC_COLUMN);
+
+	gtk_paned_set_position(GTK_PANED(hpanel), 150);
 
 	return ui_flow_edition;
 }
