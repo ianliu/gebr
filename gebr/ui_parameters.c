@@ -154,11 +154,6 @@ static void parameters_actions(GtkDialog * dialog, gint arg1, struct ui_paramete
 				   -1);
 		flow_edition_select_component_iter(&iter);
 
-		if (validate_selected_program(NULL))
-			flow_edition_change_iter_status(GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED, &iter);
-		else
-			flow_edition_change_iter_status(GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED, &iter);
-
 		GebrGeoXmlProgram *program = ui_parameters->program_edit->program;
 		if (gebr_geoxml_program_get_control(program) == GEBR_GEOXML_PROGRAM_CONTROL_FOR) {
 			gebr_geoxml_flow_update_iter_dict_value(gebr.flow);
@@ -167,6 +162,11 @@ static void parameters_actions(GtkDialog * dialog, gint arg1, struct ui_paramete
 			gebr_validator_change_value(gebr.validator, GEBR_GEOXML_PARAMETER(dict_iter), value, NULL, NULL);
 			flow_edition_set_io();
 		}
+
+		if (validate_selected_program(NULL))
+			flow_edition_change_iter_status(GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED, &iter);
+		else
+			flow_edition_change_iter_status(GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED, &iter);
 		break;
 	}
 	case GTK_RESPONSE_APPLY:
