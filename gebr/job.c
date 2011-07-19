@@ -99,13 +99,14 @@ static GebrJob *job_new(GebrServer *server, GString * title, GString *queue)
 	GtkTreeIter queue_jc_iter = job_add_jc_queue_iter(job);
 	/* Add job on the job control list */
 	GtkTreeIter iter;
-	gtk_tree_store_append(gebr.ui_job_control->store, &iter, &queue_jc_iter); 
+	gtk_tree_store_append(gebr.ui_job_control->store, &iter, &queue_jc_iter);
 	gtk_tree_store_set(gebr.ui_job_control->store, &iter,
 			   JC_SERVER_ADDRESS, job->server->comm->address->str,
 			   JC_QUEUE_NAME, job->parent.queue_id->str,
 			   JC_TITLE, job->parent.title->str,
 			   JC_STRUCT, job,
 			   JC_IS_JOB, TRUE,
+			   JC_VISIBLE, TRUE,
 			   -1);
 	job->iter = iter;
 	/* Add queue on the server queue list model (only if server is regular) */
@@ -186,9 +187,13 @@ GebrJob *job_new_from_jid(GebrServer *server, GString * jid, GString * _status, 
 void job_free(GebrJob *job)
 {
 	/* UI */
-	if (gtk_tree_store_remove(gebr.ui_job_control->store, &job->iter))
-		gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(gebr.ui_job_control->view), &job->iter);
-	else {
+	if (gtk_tree_store_remove(gebr.ui_job_control->store, &job->iter)) {
+		GtkTreeIter iter;
+		GtkTreeModelFilter *filter;
+		filter = GTK_TREE_MODEL_FILTER(gtk_tree_view_get_model(GTK_TREE_VIEW(gebr.ui_job_control->view)));
+		gtk_tree_model_filter_convert_child_iter_to_iter(filter, &iter, &job->iter);
+		gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(gebr.ui_job_control->view), &iter);
+	} else {
 		gtk_text_buffer_set_text(gebr.ui_job_control->text_buffer, "", -1);
 		gtk_label_set_text(GTK_LABEL(gebr.ui_job_control->label), "");
 	}
@@ -249,8 +254,12 @@ void job_set_active(GebrJob *job)
 
 gboolean job_is_active(GebrJob *job)
 {
+	GtkTreeIter iter;
+	GtkTreeModelFilter *filter;
+	filter = GTK_TREE_MODEL_FILTER(gtk_tree_view_get_model(GTK_TREE_VIEW(gebr.ui_job_control->view)));
+	gtk_tree_model_filter_convert_child_iter_to_iter(filter, &iter, &job->iter);
 	return gtk_tree_selection_iter_is_selected(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)),
-						   &job->iter);
+						   &iter);
 }
 
 void job_append_output(GebrJob *job, GString * output)

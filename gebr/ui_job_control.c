@@ -39,6 +39,10 @@ static void on_text_view_populate_popup(GtkTextView * textview, GtkMenu * menu);
 static GtkMenu * job_control_popup_menu(GtkWidget * widget, struct ui_job_control *ui_job_control);
 
 static void job_control_queue_by_func(void (* func)(void));
+
+static void on_tree_store_insert_delete(GtkTreeModel *model,
+                                        GtkTreePath *path);
+
 /*
  * Public functions.
  */
@@ -75,11 +79,22 @@ struct ui_job_control *job_control_setup_ui(void)
 				       GTK_POLICY_AUTOMATIC);
 	gtk_container_add(GTK_CONTAINER(frame), scrolled_window);
 
-	ui_job_control->store = gtk_tree_store_new(JC_N_COLUMN, GDK_TYPE_PIXBUF, G_TYPE_BOOLEAN, G_TYPE_STRING,
-						   G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
+	ui_job_control->store = gtk_tree_store_new(JC_N_COLUMN,
+	                                           GDK_TYPE_PIXBUF,
+	                                           G_TYPE_BOOLEAN,
+	                                           G_TYPE_STRING,
+						   G_TYPE_STRING,
+						   G_TYPE_STRING,
+						   G_TYPE_POINTER,
+						   G_TYPE_BOOLEAN);
+	g_signal_connect(ui_job_control->store, "row-inserted", G_CALLBACK(on_tree_store_insert_delete), NULL);
+	g_signal_connect(ui_job_control->store, "row-deleted", G_CALLBACK(on_tree_store_insert_delete), NULL);
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(ui_job_control->store), JC_SERVER_ADDRESS,
 					     GTK_SORT_ASCENDING);
-	ui_job_control->view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_job_control->store));
+	GtkTreeModel *filter = gtk_tree_model_filter_new(GTK_TREE_MODEL(ui_job_control->store), NULL);
+	ui_job_control->view = gtk_tree_view_new_with_model(filter);
+	gtk_tree_model_filter_set_visible_column(GTK_TREE_MODEL_FILTER(filter), JC_VISIBLE);
+	g_object_unref(filter);
 	
 	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_job_control->view)),
 				    GTK_SELECTION_MULTIPLE);
@@ -406,16 +421,23 @@ static void job_control_on_cursor_changed(void)
 
 	gint selected_rows = gtk_tree_selection_count_selected_rows(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)));
 	GtkTreeIter iter;
+	GtkTreeModelFilter *filter;
+	filter = GTK_TREE_MODEL_FILTER(gtk_tree_view_get_model(GTK_TREE_VIEW(gebr.ui_job_control->view)));
+
 	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_job_control->view) {
 		GebrJob *job;
 		gboolean is_job;
-		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter, JC_STRUCT, &job, JC_IS_JOB, &is_job, -1);
+
+		GtkTreeIter model_iter;
+		gtk_tree_model_filter_convert_iter_to_child_iter(filter, &model_iter, &iter);
+
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &model_iter, JC_STRUCT, &job, JC_IS_JOB, &is_job, -1);
 
 		if (is_job) {
 			get_state(job);
 			job_load_details(job);
 		} else if (selected_rows == 1) {
-			GtkTreeIter iter_queue = iter;
+			GtkTreeIter iter_queue = model_iter;
 			GtkTreeIter iter_child;
 			gboolean has_children = gtk_tree_model_iter_children (GTK_TREE_MODEL(gebr.ui_job_control->store), &iter_child, &iter_queue);
 			if (has_children) {
@@ -435,7 +457,13 @@ static void job_control_on_cursor_changed(void)
 				GtkTreeIter iter;
 				gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_job_control->view) {
 					gboolean is_job;
-					gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter, JC_STRUCT, &job, JC_IS_JOB, &is_job, -1);
+					GtkTreeIter model_iter;
+					gtk_tree_model_filter_convert_iter_to_child_iter(filter, &model_iter, &iter);
+
+					gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &model_iter,
+					                   JC_STRUCT, &job,
+					                   JC_IS_JOB, &is_job,
+					                   -1);
 					if (is_job)
 						get_state(job);
 				}
@@ -609,3 +637,23 @@ static void job_control_queue_by_func(void (* func)(void))
 		func();
 }
 
+static void
+on_tree_store_insert_delete(GtkTreeModel *model,
+                            GtkTreePath *path)
+{
+	GtkTreeIter iter;
+	GtkTreePath *copy = gtk_tree_path_copy(path);
+
+	if (gtk_tree_path_get_depth(copy) == 2)
+		gtk_tree_path_up(copy);
+
+	if (!gtk_tree_model_get_iter(model, &iter, copy))
+		goto free_copy;
+
+	gtk_tree_store_set(GTK_TREE_STORE(model), &iter,
+	                   JC_VISIBLE, gtk_tree_model_iter_has_child(model, &iter),
+	                   -1);
+
+free_copy:
+	gtk_tree_path_free(copy);
+}

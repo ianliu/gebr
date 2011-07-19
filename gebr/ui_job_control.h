@@ -43,6 +43,7 @@ enum {
 	JC_QUEUE_NAME,
 	JC_TITLE,
 	JC_STRUCT, /* non-NULL if it is a job */
+	JC_VISIBLE,
 	JC_N_COLUMN
 };
 
