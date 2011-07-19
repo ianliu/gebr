@@ -511,6 +511,7 @@ static gboolean _project_line_import_path(const gchar *filename, GList **line_pa
 			gebr_geoxml_line_set_flow_source(GEBR_GEOXML_LINE_FLOW(i),
 			                                 gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(flow)));
 			gdk_threads_enter();
+			gebr_geoxml_flow_revalidate(flow, gebr.validator);
 			document_save(GEBR_GEOXML_DOCUMENT(flow), FALSE, TRUE); /* this flow is cached */
 			gdk_threads_leave();
 
