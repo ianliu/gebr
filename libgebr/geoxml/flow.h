@@ -19,6 +19,7 @@
 #define __GEBR_GEOXML_FLOW_H
 
 #include <glib.h>
+#include <gebr-validator.h>
 
 #include "gebr-geo-types.h"
 
@@ -380,13 +381,19 @@ void gebr_geoxml_flow_get_revision_data(GebrGeoXmlRevision * revision, gchar ** 
 glong gebr_geoxml_flow_get_revisions_number(GebrGeoXmlFlow * flow);
 
 /**
- * Determine if a flow can be executed or not. If it can't, return
- * the correct type of error.
+ * gebr_geoxml_flow_validate:
+ * @flow: The #GebrGeoXmlFlow to be validated.
+ * @validator: A GebrValidator.
+ * @error: Return location for the error or %NULL if you don't need it.
+ *
+ * Determine if a flow can be executed or not. If not, return the correct
+ * type of error in @error and returns %FALSE.
+ *
+ * Returns: %TRUE if no error was set, %FALSE otherwise.
  */
-GebrGeoXmlFlowError gebr_geoxml_flow_validade(GebrGeoXmlFlow * flow, 
-					      GebrGeoXmlLine * line,  
-					      GebrGeoXmlProject *project, 
-					      gchar ** program_title);
+gboolean gebr_geoxml_flow_validate(GebrGeoXmlFlow *flow,
+				   GebrValidator  *validator, 
+				   GError        **error);
 
 /**
  * gebr_geoxml_flow_has_control_program:

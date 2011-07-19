@@ -580,135 +580,130 @@ glong gebr_geoxml_flow_get_revisions_number(GebrGeoXmlFlow * flow)
 	return __gebr_geoxml_get_elements_number(gebr_geoxml_document_root_element(GEBR_GEOXML_DOC(flow)), "revision");
 }
 
-GebrGeoXmlFlowError gebr_geoxml_flow_validade(GebrGeoXmlFlow * flow, 
-					      GebrGeoXmlLine * line,  
-					      GebrGeoXmlProject *project, 
-					      gchar ** program_title)
+gboolean
+gebr_geoxml_flow_validate(GebrGeoXmlFlow *flow,
+			  GebrValidator  *validator, 
+			  GError        **err)
 {
-	const gchar *input = NULL;
-	GebrGeoXmlSequence *first_program;
-	gulong i = 0, max = 0;
+	GebrGeoXmlSequence *seq;
+	gboolean first = TRUE;
+	gboolean previous_stdout = FALSE;
+	GebrGeoXmlProgram *last_configured = NULL;
 
-	input = gebr_geoxml_flow_io_get_input(flow);
+	const gchar *program_title;
+	const gchar *flow_title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(flow));
 
-	/*
-	 * Checking if the flow has at least one configured program
-	 */
-	max = gebr_geoxml_flow_get_programs_number(flow); 
-	gint status = 0;
-	gboolean first_configured = TRUE;
-	gint previous_stdout = 0;
-	gboolean find_control = FALSE;
-	gint last_configured = 0;
-
-	/*
-	 * Checking if flow has only the for loop
-	 */
-
-	if (max == 1 && gebr_geoxml_flow_has_control_program (flow))
-		return GEBR_GEOXML_FLOW_ERROR_LOOP_ONLY;
-
-
-	for (i = 0; i < max; i++)
+	/* Checking if flow has only the for loop */
+	if (gebr_geoxml_flow_get_programs_number(flow) == 1
+	    && gebr_geoxml_flow_has_control_program(flow))
 	{
-		gebr_geoxml_flow_get_program(flow, &first_program, i);
-		status = gebr_geoxml_program_get_status(GEBR_GEOXML_PROGRAM(first_program));
+		g_set_error(err, GEBR_GEOXML_FLOW_ERROR,
+			    GEBR_GEOXML_FLOW_ERROR_LOOP_ONLY,
+			    _("Flow \"%s\" has only an empty loop"),
+			    flow_title);
+		return FALSE;
+	}
 
-		if (status != GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED)
+	const gchar *input = gebr_geoxml_flow_io_get_input(flow);
+
+	/* Checking if the flow has at least one configured program */
+	gebr_geoxml_flow_get_program(flow, &seq, 0);
+	for (; seq; gebr_geoxml_sequence_next(&seq))
+	{
+		GebrGeoXmlProgram *prog = GEBR_GEOXML_PROGRAM(seq);
+
+		GebrGeoXmlProgramStatus status = gebr_geoxml_program_get_status(prog);
+
+		if (status != GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED
+		    || gebr_geoxml_program_get_control(prog) == GEBR_GEOXML_PROGRAM_CONTROL_FOR)
 			continue;
 
-		if (status == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED)
-			last_configured = i;
+		last_configured = prog;
+		program_title = gebr_geoxml_program_get_title(prog);
 
-		if (!find_control && gebr_geoxml_program_get_control (GEBR_GEOXML_PROGRAM(first_program)) == GEBR_GEOXML_PROGRAM_CONTROL_FOR){
-			find_control = TRUE;
-			continue;
-		}
+		if (first && gebr_geoxml_program_get_stdin(prog)) {
+			if (!input || !*input) {
+				g_set_error(err, GEBR_GEOXML_FLOW_ERROR,
+					    GEBR_GEOXML_FLOW_ERROR_NO_INFILE,
+					    _("No input file specified for program "
+					      "\"%s\" at flow \"%s\""),
+					    program_title, flow_title);
+				return FALSE;
+			}
 
-		int chain_option = gebr_geoxml_program_get_stdin(GEBR_GEOXML_PROGRAM(first_program)) 
-				   + (previous_stdout << 1);
-		if (!first_configured)
-			switch (chain_option) 
-			{
-			case 0:
+			if (!gebr_validator_validate_expr(validator, input,
+							  GEBR_GEOXML_PARAMETER_TYPE_STRING,
+							  NULL)) {
+				g_set_error(err, GEBR_GEOXML_FLOW_ERROR,
+					    GEBR_GEOXML_FLOW_ERROR_INVALID_INFILE,
+					    _("Invalid input file specified for program "
+					      "\"%s\" at flow \"%s\""),
+					    program_title, flow_title);
+				return FALSE;
+			}
+		} else {
+			/* Convenience variable to check if two programs can connect with each other. */
+			int chain_option = (previous_stdout << 1) + gebr_geoxml_program_get_stdin(prog);
+			switch (chain_option) {
+			case 0: /* Neither output nor input */
+			case 3: /* Both output and input */
 				break;
 			case 1:	/* Previous does not write to stdin but current expect something */
-				*program_title = g_strdup(gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(first_program)));
-				return GEBR_GEOXML_FLOW_ERROR_NO_INPUT;
-			case 2:	/* Previous does write to stdin but current does not carry about */
-				*program_title = g_strdup(gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(first_program)));
-				return GEBR_GEOXML_FLOW_ERROR_NO_OUTPUT;
+				g_set_error(err, GEBR_GEOXML_FLOW_ERROR,
+					    GEBR_GEOXML_FLOW_ERROR_NO_INPUT,
+					    _("Flow \"%s\" is broken before program "
+					      "\"%s\" (no input)."),
+					    flow_title, program_title);
+				return FALSE;
+			case 2:	/* Previous does write to stdin but current does not care about */
+				g_set_error(err, GEBR_GEOXML_FLOW_ERROR,
+					    GEBR_GEOXML_FLOW_ERROR_NO_OUTPUT,
+					    _("Flow \"%s\" is broken before program "
+					      "\"%s\" (unexpected output).\n"),
+					    flow_title, program_title);
+				return FALSE;
 			default:
-				break;
-			}
-
-		else 
-		{
-			if (gebr_geoxml_program_get_stdin(GEBR_GEOXML_PROGRAM(first_program))) {
-				if(input == NULL || g_strcmp0("", input) == 0)
-				{
-					*program_title = g_strdup(gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(first_program)));
-					return GEBR_GEOXML_FLOW_ERROR_NO_INFILE;
-				}
-				else if (!gebr_geoxml_document_validate_str (input,
-									     GEBR_GEOXML_DOCUMENT (flow),
-									     GEBR_GEOXML_DOCUMENT (line),
-									     GEBR_GEOXML_DOCUMENT (project),
-									     NULL))
-				{
-					*program_title = g_strdup(gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(first_program)));
-					return GEBR_GEOXML_FLOW_ERROR_INVALID_INFILE;
-				}
+				g_warn_if_reached();
 			}
 		}
-		previous_stdout = gebr_geoxml_program_get_stdout(GEBR_GEOXML_PROGRAM(first_program));
-		first_configured = FALSE;
+		previous_stdout = gebr_geoxml_program_get_stdout(prog);
+		first = FALSE;
 	}
 	
-	if (first_configured)
-	{
-		return GEBR_GEOXML_FLOW_ERROR_NO_VALID_PROGRAMS;
+	if (first) {
+		g_set_error(err, GEBR_GEOXML_FLOW_ERROR,
+			    GEBR_GEOXML_FLOW_ERROR_NO_VALID_PROGRAMS,
+			    _("No configured or enabled programs found for flow \"%s\""),
+			    flow_title);
+		return FALSE;
 	}
 
-	/*
-	 * Checking the output file
-	 */
-	const gchar *output = NULL;
-	output = gebr_geoxml_flow_io_get_output(flow);
+	program_title = gebr_geoxml_program_get_title(last_configured);
 
-	gebr_geoxml_flow_get_program(flow, &first_program, last_configured);
-
-	if (gebr_geoxml_program_get_stdout(GEBR_GEOXML_PROGRAM(first_program))
-	    && !gebr_geoxml_document_validate_str (output,
-						   GEBR_GEOXML_DOCUMENT (flow),
-						   GEBR_GEOXML_DOCUMENT (line),
-						   GEBR_GEOXML_DOCUMENT (project),
-						   NULL))
-	{
-		*program_title = g_strdup(gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(first_program)));
-		return GEBR_GEOXML_FLOW_ERROR_INVALID_OUTFILE;
+	const gchar *output = gebr_geoxml_flow_io_get_output(flow);
+	if (gebr_geoxml_program_get_stdout(last_configured)
+	    && !gebr_validator_validate_expr(validator, output,
+					    GEBR_GEOXML_PARAMETER_TYPE_STRING, NULL)) {
+		g_set_error(err, GEBR_GEOXML_FLOW_ERROR,
+			    GEBR_GEOXML_FLOW_ERROR_INVALID_OUTFILE,
+			    _("Invalid output file file specified for program \"%s\" at flow \"%s\""),
+			    program_title, flow_title);
+		return FALSE;
 	}	
 
-	/*
-	 * Checking the error log file
-	 */
-	const gchar *error = NULL;
-	error = gebr_geoxml_flow_io_get_error(flow);
-
-	if (gebr_geoxml_program_get_stderr(GEBR_GEOXML_PROGRAM(first_program))
-	    && !gebr_geoxml_document_validate_str (error,
-						   GEBR_GEOXML_DOCUMENT (flow),
-						   GEBR_GEOXML_DOCUMENT (line),
-						   GEBR_GEOXML_DOCUMENT (project),
-						   NULL))
+	const gchar *error = gebr_geoxml_flow_io_get_error(flow);
+	if (gebr_geoxml_program_get_stderr(last_configured)
+	    && !gebr_validator_validate_expr(validator, error,
+					    GEBR_GEOXML_PARAMETER_TYPE_STRING, NULL))
 	{
-		*program_title = g_strdup(gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(first_program)));
-		return GEBR_GEOXML_FLOW_ERROR_INVALID_ERRORFILE;
+		g_set_error(err, GEBR_GEOXML_FLOW_ERROR,
+			    GEBR_GEOXML_FLOW_ERROR_INVALID_ERRORFILE,
+			    _("Invalid error file specified for program \"%s\" at flow \"%s\""),
+			    program_title, flow_title);
+		return FALSE;
 	}	
 	
-	return GEBR_GEOXML_FLOW_ERROR_NONE;
-
-
+	return TRUE;
 }
 
 gboolean gebr_geoxml_flow_has_control_program (GebrGeoXmlFlow *flow)
@@ -885,3 +880,9 @@ void gebr_geoxml_flow_update_iter_dict_value(GebrGeoXmlFlow *flow)
 
 	g_free(current);
 }
+
+GQuark gebr_geoxml_flow_error_quark(void)
+{
+	return g_quark_from_static_string("gebr-geoxml-flow-error-quark");
+}
+
