@@ -144,7 +144,7 @@ void on_flow_delete_activate(void)
 	flow_delete(TRUE);
 }
 
-/**
+/*
  * Returns TRUE if all flows at "Flows" tab
  * can be executed. If they can't, return false
  * and pop-up a dialog with the error.
@@ -152,106 +152,48 @@ void on_flow_delete_activate(void)
 static gboolean flows_check_before_execution(void)
 {
 	GtkTreeIter iter;
-	GebrGeoXmlFlow * flow;
-	gint state = 0;
-	gchar * program_title = NULL;
-	gchar * flow_title = NULL;
+	GtkTreeModel *model;
+	GebrGeoXmlFlow *flow;
+	GtkTreeSelection *selection;
+	GList *rows;
 
-	GtkTreeSelection * selection =	gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
-	GList * rows = gtk_tree_selection_get_selected_rows(selection, NULL);
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
+	rows = gtk_tree_selection_get_selected_rows(selection, &model);
 
-	for (GList * i = rows; i; i = i->next )
+	for (GList * i = rows; i; i = i->next)
 	{
+		GError *error = NULL;
+		GebrGeoXmlFlowError error_code;
 
-		gtk_tree_model_get_iter(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter, i->data); 
-		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter, 
-				   FB_XMLPOINTER, &flow,
-				   FB_TITLE, &flow_title,
-				   -1);
-		state =	gebr_geoxml_flow_validade(flow, gebr.line, gebr.project, &program_title);
-		switch (state)
+		gtk_tree_model_get_iter(model, &iter, i->data); 
+		gtk_tree_model_get(model, &iter, FB_XMLPOINTER, &flow, -1);
+
+		gebr_geoxml_flow_validate(flow, gebr.validator, &error);
+
+		if (!error)
+			continue;
+
+		error_code = error->code;
+		switch (error_code)
 		{
-		case GEBR_GEOXML_FLOW_ERROR_NONE:
-			break;
-
 		case GEBR_GEOXML_FLOW_ERROR_NO_INPUT:
-			gebr_gui_message_dialog (GTK_MESSAGE_ERROR,
-						 GTK_BUTTONS_OK,
-						 _("Broken flow"),
-						 _("Flow \"%s\" is broken before program \"%s\" (no input).\n"),
-						 flow_title, program_title);
-			g_free(flow_title);	
-			g_free(program_title);	
-			return FALSE;
-
 		case GEBR_GEOXML_FLOW_ERROR_NO_OUTPUT:
-			gebr_gui_message_dialog (GTK_MESSAGE_ERROR,
-						 GTK_BUTTONS_OK,
-						 _("Broken flow"),
-						 _("Flow \"%s\" is broken before program \"%s\" (unexpected output).\n"),
-						 flow_title, program_title);
-			g_free(flow_title);	
-			g_free(program_title);	
-			return FALSE;
-
-
+			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Broken flow"), error->message);
+			break;
 		case GEBR_GEOXML_FLOW_ERROR_NO_INFILE:
-			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
-						_("Warning"),
-						_("No input file specified for program \"%s\" at flow \"%s\""),
-						 program_title, flow_title);
-			g_free(flow_title);	
-			g_free(program_title);	
-			return FALSE;
-
 		case GEBR_GEOXML_FLOW_ERROR_INVALID_INFILE:
-			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
-						_("Warning"),
-						_("Invalid input file specified for program \"%s\" at flow \"%s\""),
-						 program_title, flow_title);
-			g_free(flow_title);	
-			g_free(program_title);	
-			return FALSE;
-
 		case GEBR_GEOXML_FLOW_ERROR_INVALID_OUTFILE:
-			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
-						_("Warning"),
-						_("Invalid output file specified for program \"%s\" at flow \"%s\""),
-						 program_title, flow_title);
-			g_free(flow_title);	
-			g_free(program_title);	
-			return FALSE;
-
 		case GEBR_GEOXML_FLOW_ERROR_INVALID_ERRORFILE:
-			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
-						_("Warning"),
-						_("Invalid error file specified for program \"%s\" at flow \"%s\""),
-						 program_title, flow_title);
-			g_free(flow_title);	
-			g_free(program_title);	
-			return FALSE;
-
 		case GEBR_GEOXML_FLOW_ERROR_NO_VALID_PROGRAMS:
-			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
-						_("Warning"),_("No configured or enabled programs found for flow \"%s\""),
-						flow_title);
-			g_free(flow_title);	
-			return FALSE;
 		case GEBR_GEOXML_FLOW_ERROR_LOOP_ONLY:
-			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
-						_("Warning"),_("Flow \"%s\" has only an empty loop"),
-						flow_title);
-			g_free(flow_title);	
-			return FALSE;
-
-		default:
-			g_free(flow_title);	
-			return FALSE;
+			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Warning"), error->message);
+			break;
 		}
 
-		g_free(flow_title);	
+		g_clear_error(&error);
+		return FALSE;
 	}
-	
+
 	return TRUE;
 }
 
@@ -360,82 +302,33 @@ void on_flow_component_status_activate(GtkAction *action,
 
 void on_flow_component_execute_single()
 {
-	gint state = 0;
-	gchar * program_title = NULL;
-	if (gebr.flow == NULL)
+	GError *error = NULL;
+
+	if (!gebr.flow)
 		return;
 
-	state =	gebr_geoxml_flow_validade(gebr.flow, gebr.line, gebr.project, &program_title);
-	switch (state)
-	{
-	case GEBR_GEOXML_FLOW_ERROR_NONE:
-		break;
+	gebr_geoxml_flow_validate(gebr.flow, gebr.validator, &error);
 
-	case GEBR_GEOXML_FLOW_ERROR_NO_INPUT:
-		gebr_gui_message_dialog (GTK_MESSAGE_ERROR,
-					 GTK_BUTTONS_OK,
-					 _("Broken flow"),
-					 _("Broken flow before \"%s\" (no input).\n"),
-					 program_title);
-		g_free(program_title);	
-		return;
-
-	case GEBR_GEOXML_FLOW_ERROR_NO_OUTPUT:
-		gebr_gui_message_dialog (GTK_MESSAGE_ERROR,
-					 GTK_BUTTONS_OK,
-					 _("Broken flow"),
-					 _("Broken flow before \"%s\" (unexpected output).\n"),
-					 program_title);
-		g_free(program_title);	
-		return;
-
-
-	case GEBR_GEOXML_FLOW_ERROR_NO_INFILE:
-		gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
-					_("Warning"),
-					_("No input file specified for program \"%s\""),
-					program_title);
-		g_free(program_title);	
-		return;
-
-	case GEBR_GEOXML_FLOW_ERROR_INVALID_INFILE:
-		gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
-					_("Warning"),
-					_("Invalid input file specified for program \"%s\""),
-					program_title);
-		g_free(program_title);	
-		return;
-
-	case GEBR_GEOXML_FLOW_ERROR_INVALID_ERRORFILE:
-		gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
-					_("Warning"),
-					_("Invalid error file specified for program \"%s\""),
-					program_title);
-		g_free(program_title);	
-		return;
-
-	case GEBR_GEOXML_FLOW_ERROR_INVALID_OUTFILE:
-		gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
-					_("Warning"),
-					_("Invalid output file file specified for program \"%s\""),
-					program_title);
-		g_free(program_title);	
-		return;
-
-
-	case GEBR_GEOXML_FLOW_ERROR_NO_VALID_PROGRAMS:
-		gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
-					_("Warning"),_("No configured or enabled programs found"));
-		return;
-	case GEBR_GEOXML_FLOW_ERROR_LOOP_ONLY:
-		gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
-					_("Warning"),_("Your flow has only an empty loop"));
-		return;
-	default:
-		return;
-	}
-
-	flow_fast_run (FALSE, TRUE);
+	if (error) {
+		GebrGeoXmlFlowError error_code = error->code;
+		switch (error_code)
+		{
+		case GEBR_GEOXML_FLOW_ERROR_NO_INPUT:
+		case GEBR_GEOXML_FLOW_ERROR_NO_OUTPUT:
+			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Broken flow"), error->message);
+			break;
+		case GEBR_GEOXML_FLOW_ERROR_NO_INFILE:
+		case GEBR_GEOXML_FLOW_ERROR_INVALID_INFILE:
+		case GEBR_GEOXML_FLOW_ERROR_INVALID_OUTFILE:
+		case GEBR_GEOXML_FLOW_ERROR_INVALID_ERRORFILE:
+		case GEBR_GEOXML_FLOW_ERROR_NO_VALID_PROGRAMS:
+		case GEBR_GEOXML_FLOW_ERROR_LOOP_ONLY:
+			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Warning"), error->message);
+			break;
+		}
+		g_clear_error(&error);
+	} else
+		flow_fast_run(FALSE, TRUE);
 }
 
 void on_job_control_save(void)
