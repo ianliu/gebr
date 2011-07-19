@@ -249,7 +249,11 @@ void job_close(GebrJob *job, gboolean force, gboolean verbose)
 
 void job_set_active(GebrJob *job)
 {
- 	gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(gebr.ui_job_control->view), &job->iter);
+	GtkTreeIter iter;
+	GtkTreeModelFilter *filter;
+	filter = GTK_TREE_MODEL_FILTER(gtk_tree_view_get_model(GTK_TREE_VIEW(gebr.ui_job_control->view)));
+	gtk_tree_model_filter_convert_child_iter_to_iter(filter, &iter, &job->iter);
+ 	gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(gebr.ui_job_control->view), &iter);
 }
 
 gboolean job_is_active(GebrJob *job)

@@ -38,7 +38,7 @@ static void on_text_view_populate_popup(GtkTextView * textview, GtkMenu * menu);
 
 static GtkMenu * job_control_popup_menu(GtkWidget * widget, struct ui_job_control *ui_job_control);
 
-static void job_control_queue_by_func(void (* func)(void));
+static void job_control_queue_by_func(gboolean (* func)(void));
 
 static void on_tree_store_insert_delete(GtkTreeModel *model,
                                         GtkTreePath *path);
@@ -155,11 +155,12 @@ struct ui_job_control *job_control_setup_ui(void)
 	return ui_job_control;
 }
 
-void job_control_save(void)
+gboolean job_control_save(void)
 {
 	GtkTreeIter iter;
 	GtkWidget *chooser_dialog;
 	GtkFileFilter *filefilter;
+	GtkTreeModel *model;
 
 	gchar *path;
 	FILE *fp;
@@ -170,11 +171,6 @@ void job_control_save(void)
 	gchar * title;
 
 	GebrJob *job;
-
-	gint selected_rows = 0;
-	gint iter_depth = 0;
-	
-	selected_rows =	gtk_tree_selection_count_selected_rows(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)));
 
 	/* run file chooser */
 	chooser_dialog = gebr_gui_save_dialog_new(_("Choose filename to save"), GTK_WINDOW(gebr.window));
@@ -188,24 +184,27 @@ void job_control_save(void)
 	/* show file chooser */
 	path = gebr_gui_save_dialog_run(GEBR_GUI_SAVE_DIALOG(chooser_dialog));
 	if (!path)
-		return;
+		return TRUE;
 
 	/* save to file */
 	fp = fopen(path, "w");
 	if (fp == NULL) {
 		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Could not write file."));
 		g_free(path);
-		return;
+		return TRUE;
 	}
 
+	model = gtk_tree_view_get_model(GTK_TREE_VIEW(gebr.ui_job_control->view));
+
 	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_job_control->view) {
-		
-		iter_depth = gtk_tree_store_iter_depth(gebr.ui_job_control->store, &iter);
-
-		if (iter_depth <= 0)
+		GtkTreePath *path = gtk_tree_model_get_path(model, &iter);
+		if (gtk_tree_path_get_depth(path) == 1) {
+			gtk_tree_path_free(path);
 			continue;
+		}
+		gtk_tree_path_free(path);
 
-		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter, JC_STRUCT, &job, -1);
+		gtk_tree_model_get(model, &iter, JC_STRUCT, &job, -1);
 		job_load_details(job);
 		
 		title = g_strdup_printf("---------- %s ---------\n", job->parent.title->str);
@@ -225,51 +224,68 @@ void job_control_save(void)
 	
 	fclose(fp);
 	g_free(path);
+	return TRUE;
 }
 
-void job_control_close(void)
+gboolean job_control_close(void)
 {
 	GtkTreeIter iter;
-
 	GebrJob *job;
+	GtkTreeModel *model;
+	GtkTreeSelection *selection;
+	GList *rows;
+	GList *rowrefs = NULL;
+	gboolean retval = TRUE;
+
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view));
+	rows = gtk_tree_selection_get_selected_rows(selection, &model);
 	
-	gboolean asked = FALSE;
-	gint selected_rows = 0;
-	gint iter_depth = 0;
+	gtk_tree_model_get_iter(model, &iter, rows->data);
+	gtk_tree_model_get(model, &iter, JC_STRUCT, &job, -1);
 
-	selected_rows =	gtk_tree_selection_count_selected_rows(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)));
-	
-	/*
-	if (!job_control_get_selected(&iter, JobControlJobSelection))
-		return;
-*/
-	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_job_control->view) {
+	if (!rows->next) {
+		if (!gebr_gui_confirm_action_dialog(_("Close job "),
+		                                    _("Are you sure you want to close job '%s'?"),
+		                                    job->parent.title->str))
+			goto free_rows;
+	} else {
+		if (!gebr_gui_confirm_action_dialog(_("Close job "),
+		                                    _("Are you sure you want to close the selected jobs?")))
+			goto free_rows;
+	}
 
-		iter_depth = gtk_tree_store_iter_depth(gebr.ui_job_control->store, &iter);
+	retval = FALSE;
+	for (GList *i = rows; i; i = i->next) {
+		GtkTreeRowReference *rowref = gtk_tree_row_reference_new(model, i->data);
+		rowrefs = g_list_prepend(rowrefs, rowref);
+	}
 
-		if (iter_depth <= 0)
+	for (GList *i = rowrefs; i; i = i->next) {
+		GtkTreePath *path = gtk_tree_row_reference_get_path(i->data);
+		if (gtk_tree_path_get_depth(path) == 1) {
+			gtk_tree_path_free(path);
 			continue;
-		
-		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter, JC_STRUCT, &job, -1);
-
-		if (selected_rows == 1)
-		{
-			if (gebr_gui_confirm_action_dialog
-			    (_("Close job "), _("Are you sure you want to close job '%s'?"), job->parent.title->str) == FALSE)
-				return;
-		}
-		else if (!asked)
-		{
-			if (gebr_gui_confirm_action_dialog
-			    (_("Close job "), _("Are you sure you want to close the selected jobs?")) == FALSE)
-				return;
-
-			asked = TRUE;
 		}
 
+		if (!gtk_tree_model_get_iter(model, &iter, path)) {
+			gtk_tree_path_free(path);
+			continue;
+		}
+		gtk_tree_path_free(path);
+
+		gtk_tree_model_get(model, &iter, JC_STRUCT, &job, -1);
 		job_close(job, FALSE, TRUE);
 	}
+
 	job_control_on_cursor_changed();
+
+	g_list_foreach(rowrefs, (GFunc)gtk_tree_row_reference_free, NULL);
+	g_list_free(rowrefs);
+
+free_rows:
+	g_list_foreach(rows, (GFunc)gtk_tree_path_free, NULL);
+	g_list_free(rows);
+	return retval;
 }
 
 void job_control_clear(gboolean force)
@@ -295,33 +311,26 @@ void job_control_clear(gboolean force)
 						  (GtkTreeModelForeachFunc)job_control_clear_foreach, NULL); 
 }
 
-void job_control_stop(void)
+gboolean job_control_stop(void)
 {
 	GtkTreeIter iter;
+	GtkTreeModel *model;
 
 	GebrJob *job;
 	
 	gboolean asked = FALSE;
 	gint selected_rows = 0;
-	gint iter_depth	= 0;
 	selected_rows =	gtk_tree_selection_count_selected_rows(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)));
-	
-	
-
+	model = gtk_tree_view_get_model(GTK_TREE_VIEW(gebr.ui_job_control->view));
 	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_job_control->view) {
-		
-		iter_depth = gtk_tree_store_iter_depth(gebr.ui_job_control->store, &iter);
-
-		if (iter_depth <= 0)
-			continue;
-
-		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter, JC_STRUCT, &job, -1);
-/*		
-		if (job->parent.status != JOB_STATUS_RUNNING) {
-			gebr_message(GEBR_LOG_WARNING, TRUE, FALSE, _("Job is not running."));
+		GtkTreePath *path = gtk_tree_model_get_path(model, &iter);
+		if (gtk_tree_path_get_depth(path) == 1) {
+			gtk_tree_path_free(path);
 			continue;
 		}
-*/
+		gtk_tree_path_free(path);
+
+		gtk_tree_model_get(model, &iter, JC_STRUCT, &job, -1);
 		if (gebr_comm_server_is_logged(job->server->comm) == FALSE) {
 			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("You are not connected to job's server."));
 			continue;
@@ -332,13 +341,13 @@ void job_control_stop(void)
 			if (gebr_gui_confirm_action_dialog(_("Kill job"), _("Are you sure you want to kill job '%s'?"),
 							   job->parent.title->str)
 			    == FALSE)
-				return;
+				return TRUE;
 		}
 		else if (!asked)
 		{
 			if (gebr_gui_confirm_action_dialog(_("Kill job"), _("Are you sure you want to kill the selected jobs?"))
 			    == FALSE)
-				return;
+				return TRUE;
 			asked = TRUE;
 		}
 		gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Asking server to kill job."));
@@ -353,6 +362,8 @@ void job_control_stop(void)
 						      gebr_comm_protocol_defs.kil_def, 1,
 						      job->parent.jid->str);
 	}
+
+	return TRUE;
 }
 
 gboolean job_control_get_selected(GtkTreeIter * iter, enum JobControlSelectionType check_type)
@@ -378,7 +389,8 @@ gboolean job_control_get_selected(GtkTreeIter * iter, enum JobControlSelectionTy
 
 	gboolean is_job;
 	GtkTreePath *path;
-	path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_job_control->store), iter);
+	GtkTreeModel *model = gtk_tree_view_get_model(GTK_TREE_VIEW(gebr.ui_job_control->view));
+	path = gtk_tree_model_get_path(model, iter);
 	is_job = gtk_tree_path_get_depth(path) == 2 ? TRUE : FALSE;
 	gtk_tree_path_free(path);
 	if (check_type == JobControlJobSelection && !is_job) {
@@ -441,7 +453,9 @@ static void job_control_on_cursor_changed(void)
 			GtkTreeIter iter_child;
 			gboolean has_children = gtk_tree_model_iter_children (GTK_TREE_MODEL(gebr.ui_job_control->store), &iter_child, &iter_queue);
 			if (has_children) {
-				gtk_tree_selection_unselect_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)), &iter_queue);
+				GtkTreeIter filter_iter;
+				gtk_tree_model_filter_convert_child_iter_to_iter(filter, &filter_iter, &iter_child);
+				gtk_tree_selection_unselect_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)), &filter_iter);
 
 				GtkTreeIter iter_child_first = iter_child;
 				GtkTreeIter iter_child_last;
@@ -452,7 +466,10 @@ static void job_control_on_cursor_changed(void)
 
 				GtkTreePath *path_first = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter_child_first);
 				GtkTreePath *path_last = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter_child_last);
-				gtk_tree_selection_select_range (gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)), path_first, path_last);
+				GtkTreePath *fpath_first = gtk_tree_model_filter_convert_child_path_to_path(filter, path_first);
+				GtkTreePath *fpath_last= gtk_tree_model_filter_convert_child_path_to_path(filter, path_last);
+				gtk_tree_selection_select_range (gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)),
+				                                 fpath_first, fpath_last);
 
 				GtkTreeIter iter;
 				gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_job_control->view) {
@@ -473,11 +490,13 @@ static void job_control_on_cursor_changed(void)
 					gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_stop"), has_execution);
 					gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_queue_close"), has_finished);
 					gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_queue_stop"), has_execution);
-					gtk_tree_selection_unselect_range (gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)), path_first, path_last);
-					gtk_tree_selection_select_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)), &iter_queue);
+					gtk_tree_selection_unselect_range (gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)), fpath_first, fpath_last);
+					//gtk_tree_selection_select_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)), &iter);
 				}
 				gtk_tree_path_free(path_first);
 				gtk_tree_path_free(path_last);
+				gtk_tree_path_free(fpath_first);
+				gtk_tree_path_free(fpath_last);
 			} else 
 				job_load_details(NULL);
 		}
@@ -562,11 +581,16 @@ static GtkMenu *job_control_popup_menu(GtkWidget * widget, struct ui_job_control
 	selected_rows =	gtk_tree_selection_count_selected_rows(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)));
 
 	menu = gtk_menu_new();
+	GtkTreeModelFilter *filter;
+	filter = GTK_TREE_MODEL_FILTER(gtk_tree_view_get_model(GTK_TREE_VIEW(gebr.ui_job_control->view)));
+
 	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_job_control->view) {
+		GtkTreeIter model_iter;
+		gtk_tree_model_filter_convert_iter_to_child_iter(filter, &model_iter, &iter);
 
-		iter_depth = gtk_tree_store_iter_depth(gebr.ui_job_control->store, &iter);
+		iter_depth = gtk_tree_store_iter_depth(gebr.ui_job_control->store, &model_iter);
 
-		if (selected_rows == 1 && iter_depth == 0 && gtk_tree_model_iter_children (GTK_TREE_MODEL(gebr.ui_job_control->store), &iter_child, &iter))
+		if (selected_rows == 1 && iter_depth == 0 && gtk_tree_model_iter_children (GTK_TREE_MODEL(gebr.ui_job_control->store), &iter_child, &model_iter))
 		{
 			gtk_container_add(GTK_CONTAINER(menu),
 					  gtk_action_create_menu_item(
@@ -598,7 +622,7 @@ static GtkMenu *job_control_popup_menu(GtkWidget * widget, struct ui_job_control
 
 }
 
-static void job_control_queue_by_func(void (* func)(void))
+static void job_control_queue_by_func(gboolean (* func)(void))
 {
 	GtkTreeIter iter_queue;
 	GtkTreeIter iter_child;
@@ -607,31 +631,32 @@ static void job_control_queue_by_func(void (* func)(void))
 	GtkTreePath  *path_first;
 	GtkTreePath  *path_last;
 	gboolean has_children = FALSE;
+	GtkTreeModel *model;
 
 	if (!job_control_get_selected(&iter_queue, JobControlDontWarnUnselection)) {
 		return;
 	}
 
-	has_children = gtk_tree_model_iter_children (GTK_TREE_MODEL(gebr.ui_job_control->store), &iter_child, &iter_queue);
+	model = gtk_tree_view_get_model(GTK_TREE_VIEW(gebr.ui_job_control->view));
+	has_children = gtk_tree_model_iter_children (model, &iter_child, &iter_queue);
 	if (has_children){
 		gtk_tree_selection_unselect_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)), &iter_queue);
 		iter_child_first = iter_child;
 
-		while (has_children){
-
+		while (has_children) {
 			iter_child_last = iter_child;
-			has_children = gtk_tree_model_iter_next (GTK_TREE_MODEL(gebr.ui_job_control->store), &iter_child);
+			has_children = gtk_tree_model_iter_next (model, &iter_child);
 		}
 
-		path_first = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter_child_first);
-		path_last = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_job_control->store), &iter_child_last);
+		path_first = gtk_tree_model_get_path(model, &iter_child_first);
+		path_last = gtk_tree_model_get_path(model, &iter_child_last);
 		gtk_tree_selection_select_range (gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)), path_first, path_last);
 
-		func();
-
-		gtk_tree_selection_unselect_range (gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)), path_first, path_last);
-
-		gtk_tree_selection_select_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)), &iter_queue);
+		if (func()) {
+			gtk_tree_selection_unselect_range (gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)),
+			                                   path_first, path_last);
+			gtk_tree_selection_select_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)), &iter_queue);
+		}
 	}
 	else
 		func();
