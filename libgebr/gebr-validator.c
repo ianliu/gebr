@@ -22,10 +22,10 @@ struct _GebrValidator
 
 typedef struct {
 	gchar *name;
-	GebrGeoXmlParameter *param[4];
-	gdouble weight[4];
-	GList *dep[4];
-	GError *error[4];
+	GebrGeoXmlParameter *param[3];
+	gdouble weight[3];
+	GList *dep[3];
+	GError *error[3];
 } HashData;
 
 
