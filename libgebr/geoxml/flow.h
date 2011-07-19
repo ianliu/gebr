@@ -476,6 +476,16 @@ gboolean gebr_geoxml_flow_io_get_error_append(GebrGeoXmlFlow *flow);
  */
 void gebr_geoxml_flow_update_iter_dict_value(GebrGeoXmlFlow *flow);
 
+/**
+ * gebr_geoxml_flow_revalidate:
+ * @flow: A #GebrGeoXmlFlow to be revalidated.
+ * @validator: The #GebrValidator that will validate @flow's programs.
+ *
+ * Revalidates all @flow's programs and set their statuses accordingly.
+ */
+void gebr_geoxml_flow_revalidate(GebrGeoXmlFlow *flow,
+                                 GebrValidator *validator);
+
 G_END_DECLS
 
 #endif				//__GEBR_GEOXML_FLOW_H

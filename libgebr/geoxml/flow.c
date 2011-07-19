@@ -886,3 +886,20 @@ GQuark gebr_geoxml_flow_error_quark(void)
 	return g_quark_from_static_string("gebr-geoxml-flow-error-quark");
 }
 
+void
+gebr_geoxml_flow_revalidate(GebrGeoXmlFlow *flow, GebrValidator *validator)
+{
+	GebrGeoXmlProgram *prog;
+	GebrGeoXmlSequence *seq;
+
+	gebr_geoxml_flow_get_program(flow, &seq, 0);
+	for (; seq; gebr_geoxml_sequence_next(&seq)) {
+		prog = GEBR_GEOXML_PROGRAM(seq);
+		if (gebr_geoxml_program_get_status(prog) == GEBR_GEOXML_PROGRAM_STATUS_DISABLED)
+			continue;
+		if (!gebr_geoxml_program_is_valid(prog, validator, NULL))
+			gebr_geoxml_program_set_status(prog, GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED);
+		else
+			gebr_geoxml_program_set_status(prog, GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED);
+	}
+}

@@ -185,6 +185,7 @@ static gboolean flow_import_single (const gchar *path)
 	line_flow = gebr_geoxml_line_append_flow (gebr.line, gebr_geoxml_document_get_filename (flow));
 	document_save(GEBR_GEOXML_DOC(gebr.line), FALSE, FALSE);
 	iter = line_append_flow_iter(GEBR_GEOXML_FLOW (flow), line_flow);
+	gebr_geoxml_flow_revalidate(GEBR_GEOXML_FLOW(flow), gebr.validator);
 
 	new_title = g_strdup_printf (_("%s (Imported)"), title);
 	gtk_list_store_set(gebr.ui_flow_browse->store, &iter, FB_TITLE, new_title, -1);
@@ -758,7 +759,7 @@ void flow_paste(void)
 	for (i = g_list_first(gebr.flow_clipboard); i != NULL; i = g_list_next(i)) {
 		GebrGeoXmlDocument *flow;
 
-		if (document_load((GebrGeoXmlDocument**)(&flow), (gchar *)i->data, FALSE)) {
+		if (document_load(&flow, (gchar *)i->data, FALSE)) {
 			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Could not paste flow. It was probably deleted."));
 			continue;
 		}
@@ -768,6 +769,7 @@ void flow_paste(void)
 				      GEBR_GEOXML_LINE_FLOW(gebr_geoxml_line_append_flow(gebr.line,
 											 gebr_geoxml_document_get_filename(flow))));
 		document_save(GEBR_GEOXML_DOCUMENT(gebr.line), TRUE, FALSE);
+		gebr_geoxml_flow_revalidate(GEBR_GEOXML_FLOW(flow), gebr.validator);
 	}
 }
 
