@@ -359,44 +359,6 @@ gboolean gebr_geoxml_document_split_dict(GebrGeoXmlDocument *first,
 					 ...) G_GNUC_NULL_TERMINATED;
 
 /**
- * gebr_geoxml_document_is_dictkey_defined:
- * @name: The name of the variable to be searched
- * @out_value: Return location for the value of @name, or %NULL. Free with g_free()
- * @first_doc: The first document to search the variable
- * @...: Other documents that will be searched for
- *
- * Searches @name in @first_doc. If it is not found, search on other documents
- * in the list. The search stops on the first match. If no match is found, the
- * function returns %FALSE.
- *
- * Returns: %TRUE if @name was found in the list of documents
- */
-gboolean gebr_geoxml_document_is_dictkey_defined (const gchar *name,
-						  gchar **out_value,
-						  GebrGeoXmlDocument *first_doc,
-						  ...) G_GNUC_NULL_TERMINATED;
-
-/**
- * Validate expr against the variables at \p flow, \p line and \p proj
- */
-gboolean
-gebr_geoxml_document_validate_expr (const gchar *expr,
-				    GebrGeoXmlDocument *flow,
-				    GebrGeoXmlDocument *line,
-				    GebrGeoXmlDocument *proj,
-				    GError **err);
-
-/**
- * Validate str against the variables at \p flow, \p line and \p proj
- */
-gboolean
-gebr_geoxml_document_validate_str (const gchar *str,
-				    GebrGeoXmlDocument *flow,
-				    GebrGeoXmlDocument *line,
-				    GebrGeoXmlDocument *proj,
-				    GError **err);
-
-/**
  * gebr_geoxml_document_set_dict_keyword:
  * @doc: A #GebrGeoXmlDocument
  * @type: The type of the variable
