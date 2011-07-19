@@ -916,7 +916,12 @@ clean_string(gchar **str)
 	(*str)[i-b] = '\0';
 }
 
-gboolean gebr_validator_use_iter(GebrValidator *self, const gchar *expr, GebrGeoXmlParameterType type, GebrGeoXmlDocumentType scope) {
+gboolean
+gebr_validator_use_iter(GebrValidator *self,
+			const gchar *expr,
+			GebrGeoXmlParameterType type,
+			GebrGeoXmlDocumentType scope)
+{
 	GList * deps = NULL;
 	GebrGeoXmlParameter *iter;
 	HashData *data = g_hash_table_lookup(self->vars, "iter");

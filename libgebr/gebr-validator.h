@@ -253,6 +253,20 @@ gboolean gebr_validator_is_var_in_scope(GebrValidator *self,
 void gebr_validator_set_document(GebrValidator *self,
                                  GebrGeoXmlDocument **doc);
 
+/**
+ * gebr_validator_use_iter:
+ * @self:
+ * @expr:
+ * @type:
+ * @scope:
+ *
+ * Returns:
+ */
+gboolean gebr_validator_use_iter(GebrValidator *self,
+				 const gchar *expr,
+				 GebrGeoXmlParameterType type,
+				 GebrGeoXmlDocumentType scope);
+
 G_END_DECLS
 
 #endif /* __GEBR_VALIDATOR_H__ */
