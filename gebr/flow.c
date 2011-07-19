@@ -31,6 +31,7 @@
 #include <libgebr/comm/gebr-comm.h>
 #include <libgebr/gui/gui.h>
 #include <libgebr/gui/gebr-gui-utils.h>
+#include <gebr-validator.h>
 
 #include "flow.h"
 #include "line.h"
@@ -575,12 +576,14 @@ void flow_run(GebrServer *server, GebrCommServerRunConfig * config, gboolean sin
 			GebrGeoXmlFlow *flow;
 			gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
 					   FB_XMLPOINTER, &flow, -1);
+			gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &flow);
 			job_create(flow, 
 				   GEBR_GEOXML_DOCUMENT (gebr.line),
 				   GEBR_GEOXML_DOCUMENT (gebr.project),
 				   first);
 			first = FALSE;
 		}
+		gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &gebr.flow);
 	}
 
 	/* RUN */

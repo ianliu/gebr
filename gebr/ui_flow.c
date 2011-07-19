@@ -504,7 +504,7 @@ static void flow_io_run(GebrGeoXmlFlow *flow, gboolean parallel, gboolean single
 
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
 
-	flow_run(server, config, single);
+	flow_run(server, config, !multiple);
 	return;
 
 err:
