@@ -85,8 +85,10 @@ typedef enum {
 	GEBR_GEOXML_DOCUMENT_TYPE_UNKNOWN
 } GebrGeoXmlDocumentType;
 
+#define GEBR_GEOXML_FLOW_ERROR (gebr_geoxml_flow_error_quark())
+GQuark gebr_geoxml_flow_error_quark(void);
+
 typedef enum {
-	GEBR_GEOXML_FLOW_ERROR_NONE = 0,
 	GEBR_GEOXML_FLOW_ERROR_NO_INPUT,
 	GEBR_GEOXML_FLOW_ERROR_NO_OUTPUT,
 	GEBR_GEOXML_FLOW_ERROR_NO_INFILE,
