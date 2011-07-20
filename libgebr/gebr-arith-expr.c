@@ -430,6 +430,32 @@ configure_channel(GIOChannel *channel, GError **err)
 	return TRUE;
 }
 
+static gboolean
+read_bc_line(GebrArithExpr *self,
+	     gchar **line,
+	     GError **err)
+{
+	GError *error = NULL;
+	GIOStatus status;
+
+	do
+		status = g_io_channel_read_line(self->priv->out_ch, line, NULL, NULL, &error);
+	while (status == G_IO_STATUS_AGAIN);
+
+	if (error) {
+		g_warning("Error while reading `bc' output channel: %s",
+			  error->message);
+		g_set_error(err, GEBR_IEXPR_ERROR,
+			    GEBR_IEXPR_ERROR_INITIALIZE,
+			    _("Error while reading `bc' output channel: %s"),
+			    error->message);
+		g_clear_error(&error);
+		return FALSE;
+	}
+
+	return TRUE;
+}
+
 /*
  * gebr_arith_expr_eval_internal:
  */
@@ -440,23 +466,14 @@ gebr_arith_expr_eval_internal(GebrArithExpr *self,
 			      GError       **err)
 {
 	gchar *line;
-	GIOStatus status;
 	gchar *result_str = NULL;
 	GError *error = NULL;
-	gboolean finished = FALSE;
-
-	enum {
-		READ_RESULT,
-		READ_STAMP,
-		ERROR,
-		SET_RESULT,
-	} state = READ_RESULT;
 
 	if (!expr || !*expr)
 		return TRUE;
 
 	line = g_strdup_printf ("%s\n\"%s\"\n", expr, EVAL_COOKIE);
-	status = g_io_channel_write_chars (self->priv->in_ch, line, -1, NULL, &error);
+	g_io_channel_write_chars (self->priv->in_ch, line, -1, NULL, &error);
 	g_free (line);
 
 	if (error)
@@ -476,100 +493,65 @@ gebr_arith_expr_eval_internal(GebrArithExpr *self,
 		return FALSE;
 	}
 
-	while (!finished)
-	{
-		/* FIXME: Deprecate stderr
-		status = g_io_channel_read_line (self->priv->err_ch, &line, NULL, NULL, &error);
+	if (!read_bc_line(self, &line, err))
+		return FALSE;
 
-		if (status == G_IO_STATUS_NORMAL) {
-			g_set_error(err,
-				    GEBR_IEXPR_ERROR,
-				    GEBR_IEXPR_ERROR_SYNTAX,
-				    _("Invalid expression"));
-			g_free (line);
-			state = ERROR;
-		} else if (error) {
-			g_warning("Error while reading `bc' error channel: %s",
-				  error->message);
-			g_clear_error(&error);
-		}
-		*/
-
-		switch (state)
-		{
-		case READ_RESULT:
-			status = g_io_channel_read_line(self->priv->out_ch, &line, NULL, NULL, &error);
-			if (status == G_IO_STATUS_NORMAL) {
-				if (g_strcmp0(line, EVAL_COOKIE) == 0) {
-					g_set_error(err,
-						    GEBR_IEXPR_ERROR,
-						    GEBR_IEXPR_ERROR_SYNTAX,
-						    _("Expression does not evaluate to a value"));
-					g_free (line);
-					return FALSE;
-				} else {
-					result_str = g_strndup(line, strlen(line)-1);
-					if (g_str_has_prefix(result_str, "(standard_in) ") ||
-					    g_str_has_prefix(result_str, "Runtime error (func"))
-					{
-						status = ERROR;
-						break;
-					}
-					state = READ_STAMP;
-				}
-				g_free (line);
-			} else if (error) {
-				g_warning("Error while reading `bc' output channel: %s",
-					  error->message);
-				g_clear_error(&error);
-			}
-			break;
-		case READ_STAMP:
-			status = g_io_channel_read_line(self->priv->out_ch, &line, NULL, NULL, &error);
-			if (status == G_IO_STATUS_NORMAL) {
-				if (g_strcmp0(line, EVAL_COOKIE) == 0) {
-					state = SET_RESULT;
-				} else {
-					state = ERROR;
-				}
-				g_free (line);
-			} else if (error) {
-				g_warning("Error while reading `bc' output channel: %s",
-					  error->message);
-				g_clear_error(&error);
-			}
-			break;
-		case ERROR:
-			// TODO: Flush output and error
-			status = g_io_channel_read_line(self->priv->out_ch, &line, NULL, NULL, &error);
-			if (status == G_IO_STATUS_NORMAL) {
-				if (g_strcmp0(line, EVAL_COOKIE) == 0) {
-					g_free(result_str);
-					g_free(line);
-					if (!err)
-						g_set_error(err,
-						            GEBR_IEXPR_ERROR,
-						            GEBR_IEXPR_ERROR_SYNTAX,
-						            _("Expression returned multiple results"));
-					return FALSE;
-				} else if (error) {
-					g_warning("Error while reading `bc' output channel: %s",
-						  error->message);
-					g_clear_error(&error);
-				}
-				g_free (line);
-			}
-			break;
-
-		case SET_RESULT:
-			if (result != NULL)
-				*result = result_str;
-			finished = TRUE;
-			break;
-		}
+	if (g_str_has_prefix(line, "(standard_in) ")) {
+		g_set_error(err,
+			    GEBR_IEXPR_ERROR,
+			    GEBR_IEXPR_ERROR_SYNTAX,
+			    _("Invalid expression"));
+		goto exception_and_flush;
 	}
 
-	return TRUE;
+	if (g_str_has_prefix(line, "Runtime error (func")) {
+		gchar *msg;
+		msg = strchr(line, ':');
+		g_set_error(err,
+			    GEBR_IEXPR_ERROR,
+			    GEBR_IEXPR_ERROR_SYNTAX,
+			    _("Invalid expression%s"), msg);
+		goto exception_and_flush;
+	}
+
+	if (g_strcmp0(line, EVAL_COOKIE) == 0) {
+		g_set_error(err,
+			    GEBR_IEXPR_ERROR,
+			    GEBR_IEXPR_ERROR_SYNTAX,
+			    _("Expression does not evaluate to a value"));
+		goto exception;
+	}
+
+	result_str = line;
+
+	if (!read_bc_line(self, &line, err)) {
+		line = result_str;
+		goto exception;
+	}
+
+	if (g_strcmp0(line, EVAL_COOKIE) == 0) {
+		result_str[strlen(result_str) - 1] = '\0';
+		*result = result_str;
+		g_free(line);
+		return TRUE;
+	}
+
+	g_set_error(err,
+		    GEBR_IEXPR_ERROR,
+		    GEBR_IEXPR_ERROR_SYNTAX,
+		    _("Expression returned multiple results"));
+
+exception_and_flush:
+
+	do {
+		g_free(line);
+		read_bc_line(self, &line, NULL);
+	} while (g_strcmp0(line, EVAL_COOKIE) != 0);
+
+exception:
+
+	g_free(line);
+	return FALSE;
 }
 
 static gboolean
