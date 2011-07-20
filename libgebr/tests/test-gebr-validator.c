@@ -252,6 +252,10 @@ void test_gebr_validator_simple(Fixture *fixture, gconstpointer data)
 	VALIDATE_FLOAT_EXPR_WITH_ERROR("5;6", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_SYNTAX);
 	VALIDATE_FLOAT_EXPR_WITH_ERROR("x=y", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_SYNTAX);
 	VALIDATE_FLOAT_EXPR_WITH_ERROR("x=y;6", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_SYNTAX);
+
+	// Breaks bc wrapper with multiple errors in one line
+	VALIDATE_FLOAT_EXPR_WITH_ERROR("??", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_SYNTAX);
+	VALIDATE_FLOAT_EXPR("1", "1");
 }
 
 void test_gebr_validator_insert(void)
