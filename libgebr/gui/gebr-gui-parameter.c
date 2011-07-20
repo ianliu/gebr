@@ -1537,12 +1537,19 @@ gboolean gebr_gui_group_instance_validate(GebrValidator *validator, GebrGeoXmlSe
 	gchar *validated;
 	gboolean invalid = FALSE;
 	GebrGeoXmlSequence *parameter;
+	GebrGeoXmlParameter *selected;
 	int i = 0;
 	gebr_geoxml_parameters_get_parameter(GEBR_GEOXML_PARAMETERS(instance), &parameter, 0);
-	while (parameter) {
-		if (!gebr_validator_validate_param(validator, GEBR_GEOXML_PARAMETER(parameter), &validated, NULL))
+	selected = gebr_geoxml_parameters_get_selection(GEBR_GEOXML_PARAMETERS(instance));
+	if (selected) {
+		if (!gebr_validator_validate_param(validator, GEBR_GEOXML_PARAMETER(selected), &validated, NULL))
 			i++;
-		gebr_geoxml_sequence_next(&parameter);
+	} else {
+		while (parameter) {
+			if (!gebr_validator_validate_param(validator, GEBR_GEOXML_PARAMETER(parameter), &validated, NULL))
+				i++;
+			gebr_geoxml_sequence_next(&parameter);
+		}
 	}
 	if (i) {
 		gtk_image_set_from_stock(GTK_IMAGE(icon), GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_MENU);
