@@ -496,17 +496,11 @@ gebr_arith_expr_eval_internal(GebrArithExpr *self,
 	if (!read_bc_line(self, &line, err))
 		return FALSE;
 
-	if (g_str_has_prefix(line, "(standard_in) ")) {
-		g_set_error(err,
-			    GEBR_IEXPR_ERROR,
-			    GEBR_IEXPR_ERROR_SYNTAX,
-			    _("Invalid expression"));
-		goto exception_and_flush;
-	}
-
-	if (g_str_has_prefix(line, "Runtime error (func")) {
+	if (g_str_has_prefix(line, "(standard_in) ") ||
+	    g_str_has_prefix(line, "Runtime error (func")) {
 		gchar *msg;
 		msg = strchr(line, ':');
+		msg[strlen(msg) - 1] = '\0';
 		g_set_error(err,
 			    GEBR_IEXPR_ERROR,
 			    GEBR_IEXPR_ERROR_SYNTAX,
@@ -536,10 +530,19 @@ gebr_arith_expr_eval_internal(GebrArithExpr *self,
 		return TRUE;
 	}
 
-	g_set_error(err,
-		    GEBR_IEXPR_ERROR,
-		    GEBR_IEXPR_ERROR_SYNTAX,
-		    _("Expression returned multiple results"));
+	if (result_str[strlen(result_str) - 2] == '\\') {
+		g_set_error(err,
+			    GEBR_IEXPR_ERROR,
+			    GEBR_IEXPR_ERROR_SYNTAX,
+			    _("Expression result is too big"));
+	} else {
+		g_set_error(err,
+		            GEBR_IEXPR_ERROR,
+		            GEBR_IEXPR_ERROR_SYNTAX,
+		            _("Expression returned multiple results"));
+	}
+
+	g_free(result_str);
 
 exception_and_flush:
 
@@ -596,14 +599,14 @@ gboolean gebr_arith_expr_eval(GebrArithExpr *self,
 		g_set_error (err,
 			     GEBR_IEXPR_ERROR,
 			     GEBR_IEXPR_ERROR_SYNTAX,
-			     _("Invalid assignment '='"));
+			     _("Invalid syntax: ';'"));
 		return FALSE;
 	}
 	if (strchr(expr, '"')) {
 		g_set_error (err,
 			     GEBR_IEXPR_ERROR,
 			     GEBR_IEXPR_ERROR_SYNTAX,
-			     _("Invalid syntax '\"'"));
+			     _("Invalid syntax: '\"'"));
 		return FALSE;
 	}
 
