@@ -162,7 +162,7 @@ gboolean job_control_save(void)
 	GtkFileFilter *filefilter;
 	GtkTreeModel *model;
 
-	gchar *path;
+	gchar *fname;
 	FILE *fp;
 
 	GtkTextIter start_iter;
@@ -182,15 +182,15 @@ gboolean job_control_save(void)
 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(chooser_dialog), filefilter);
 
 	/* show file chooser */
-	path = gebr_gui_save_dialog_run(GEBR_GUI_SAVE_DIALOG(chooser_dialog));
-	if (!path)
+	fname = gebr_gui_save_dialog_run(GEBR_GUI_SAVE_DIALOG(chooser_dialog));
+	if (!fname)
 		return TRUE;
 
 	/* save to file */
-	fp = fopen(path, "w");
+	fp = fopen(fname, "w");
 	if (fp == NULL) {
 		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Could not write file."));
-		g_free(path);
+		g_free(fname);
 		return TRUE;
 	}
 
@@ -217,13 +217,13 @@ gboolean job_control_save(void)
 		text = g_strdup_printf("%s\n\n", text);
 		fputs(text, fp);
 
-		gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Saved job information at '%s'."), path);
+		gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Saved job information at '%s'."), fname);
 		
 		g_free(text);
 	}
 	
 	fclose(fp);
-	g_free(path);
+	g_free(fname);
 	return TRUE;
 }
 
@@ -624,42 +624,50 @@ static GtkMenu *job_control_popup_menu(GtkWidget * widget, struct ui_job_control
 
 static void job_control_queue_by_func(gboolean (* func)(void))
 {
-	GtkTreeIter iter_queue;
-	GtkTreeIter iter_child;
-	GtkTreeIter iter_child_first;
-	GtkTreeIter iter_child_last;
-	GtkTreePath  *path_first;
-	GtkTreePath  *path_last;
-	gboolean has_children = FALSE;
+	GList *rows;
+	GList *unselect = NULL;
+	GtkTreeIter iter;
 	GtkTreeModel *model;
+	GtkTreeSelection *selection;
 
-	if (!job_control_get_selected(&iter_queue, JobControlDontWarnUnselection)) {
-		return;
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view));
+	rows = gtk_tree_selection_get_selected_rows(selection, &model);
+
+	/* By the end of this 'for' loop, the selected jobs have this characteristics:
+	 *  - It is selected, or
+	 *  - Its parent is selected
+	 */
+	for (GList *i = rows; i; i = i->next) {
+		GtkTreePath *path = i->data;
+		if (gtk_tree_path_get_depth(path) == 1) {
+			int n, first;
+			first = gtk_tree_path_get_indices(path)[0];
+			gtk_tree_model_get_iter(model, &iter, path);
+			n = gtk_tree_model_iter_n_children(model, &iter);
+			for (int j = 0; j < n; j++) {
+				GtkTreePath *newpath;
+				newpath = gtk_tree_path_new_from_indices(first, j, -1);
+				gtk_tree_selection_select_path(selection, newpath);
+				gtk_tree_path_free(newpath);
+			}
+			unselect = g_list_prepend(unselect, path);
+		} else {
+			GtkTreePath *up = gtk_tree_path_copy(path);
+			gtk_tree_path_up(up);
+			if (!gtk_tree_selection_path_is_selected(selection, up))
+				gtk_tree_selection_select_path(selection, path);
+			gtk_tree_path_free(up);
+		}
 	}
 
-	model = gtk_tree_view_get_model(GTK_TREE_VIEW(gebr.ui_job_control->view));
-	has_children = gtk_tree_model_iter_children (model, &iter_child, &iter_queue);
-	if (has_children){
-		gtk_tree_selection_unselect_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)), &iter_queue);
-		iter_child_first = iter_child;
+	for (GList *i = unselect; i; i = i->next)
+		gtk_tree_selection_unselect_path(selection, i->data);
 
-		while (has_children) {
-			iter_child_last = iter_child;
-			has_children = gtk_tree_model_iter_next (model, &iter_child);
-		}
+	g_list_foreach(rows, (GFunc)gtk_tree_path_free, NULL);
+	g_list_free(rows);
+	g_list_free(unselect);
 
-		path_first = gtk_tree_model_get_path(model, &iter_child_first);
-		path_last = gtk_tree_model_get_path(model, &iter_child_last);
-		gtk_tree_selection_select_range (gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)), path_first, path_last);
-
-		if (func()) {
-			gtk_tree_selection_unselect_range (gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)),
-			                                   path_first, path_last);
-			gtk_tree_selection_select_iter(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)), &iter_queue);
-		}
-	}
-	else
-		func();
+	func();
 }
 
 static void
