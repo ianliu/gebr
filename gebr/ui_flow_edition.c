@@ -103,7 +103,6 @@ struct ui_flow_edition *flow_edition_setup_ui(void)
 	/* Create flow edit ui_flow_edition->widget */
 	ui_flow_edition->widget = gtk_vbox_new(FALSE, 0);
 	hpanel = gtk_hpaned_new();
-	g_object_set(hpanel, "min-position", 150, NULL);
 	gtk_container_add(GTK_CONTAINER(ui_flow_edition->widget), hpanel);
 
 	/*

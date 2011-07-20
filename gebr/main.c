@@ -32,7 +32,6 @@
 
 int main(int argc, char **argv, char **env)
 {
-
 	gboolean show_version = FALSE;
 	gboolean show_sys_dir = FALSE;
 	GOptionEntry entries[] = {
