@@ -362,7 +362,7 @@ translate_string_expr(GebrValidator *self,
 	if (translated) {
 		*translated = str_expr->str;
 		g_string_free(str_expr, FALSE);
-		puts(*translated);
+		//puts(*translated);
 	} else {
 		g_string_free(str_expr, TRUE);
 	}
@@ -893,7 +893,7 @@ gebr_validator_update_vars(GebrValidator *self,
 	g_string_append(bc_strings, " }\n");
 	g_string_append(bc_strings, bc_vars->str);
 	g_string_append(bc_strings, "return iter }\n" ITER_INI_EXPR);
-	printf("%s\n", bc_strings->str);
+	//printf("%s\n", bc_strings->str);
 
 	gebr_arith_expr_eval_internal(self->arith_expr, bc_strings->str, NULL, NULL);
 

@@ -15,8 +15,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+
 #include "config.h"
 #include <glib/gi18n-lib.h>
+#include <glib/gstdio.h>
 
 #include "utils.h"
 #include "gebr-arith-expr.h"
@@ -36,7 +41,6 @@ struct _GebrArithExprPriv {
 	GHashTable *vars;
 	GIOChannel *in_ch;
 	GIOChannel *out_ch;
-	GIOChannel *err_ch;
 	gboolean initialized;
 };
 
@@ -52,6 +56,9 @@ gebr_arith_expr_eval_impl (GebrIExpr   *self,
 			   const gchar *expr,
 			   gchar      **result,
 			   GError     **err);
+
+gboolean arith_spawn_bc(int *in_fd, int *out_fd);
+
 G_DEFINE_TYPE_WITH_CODE(GebrArithExpr, gebr_arith_expr, G_TYPE_OBJECT,
 			G_IMPLEMENT_INTERFACE(GEBR_TYPE_IEXPR,
 					      gebr_arith_expr_interface_init));
@@ -69,40 +76,27 @@ static void gebr_arith_expr_class_init(GebrArithExprClass *klass)
 
 static void gebr_arith_expr_init(GebrArithExpr *self)
 {
-	const gchar *home_dir	= g_get_home_dir ();
-	gchar *argv[]		= {"bc", "-l", NULL};
-	GError *error		= NULL;
-	gint in_fd, out_fd, err_fd;
+	gint in_fd, out_fd;
+	GError *error = NULL;
 
 	self->priv = G_TYPE_INSTANCE_GET_PRIVATE(self,
 						 GEBR_TYPE_ARITH_EXPR,
 						 GebrArithExprPriv);
 
-	g_spawn_async_with_pipes (home_dir, argv, NULL,
-				  G_SPAWN_SEARCH_PATH,
-				  NULL, NULL, NULL,
-				  &in_fd, &out_fd, &err_fd,
-				  &error);
-
-	if (error) {
-		g_warning("Could not execute `bc': %s",
-			  error->message);
-		g_clear_error(&error);
+	if (!arith_spawn_bc (&in_fd, &out_fd)) {
+		g_warning("Could not execute `bc'");
 		self->priv->initialized = FALSE;
 		return;
 	}
 
 	self->priv->in_ch = g_io_channel_unix_new (in_fd);
 	self->priv->out_ch = g_io_channel_unix_new (out_fd);
-	self->priv->err_ch = g_io_channel_unix_new (err_fd);
 
 	if (!configure_channel (self->priv->in_ch, &error) ||
-	    !configure_channel (self->priv->out_ch, &error) ||
-	    !configure_channel (self->priv->err_ch, &error))
+	    !configure_channel (self->priv->out_ch, &error))
 	{
 		g_io_channel_unref (self->priv->in_ch);
 		g_io_channel_unref (self->priv->out_ch);
-		g_io_channel_unref (self->priv->err_ch);
 
 		g_warning("Could not create channels to listen `bc': %s",
 			  error->message);
@@ -350,6 +344,67 @@ static void gebr_arith_expr_interface_init(GebrIExprInterface *iface)
 
 /* Private functions {{{1 */
 /*
+ */
+gboolean
+arith_spawn_bc(int *infd, int *outfd)
+{
+	const gchar *home_dir	= g_get_home_dir ();
+	gchar *argv[]		= {"bc", "-l", NULL};
+
+	gint in_fd[2];
+	gint out_fd[2];
+
+	if (pipe(in_fd) < 0 || pipe(out_fd) < 0)
+		return FALSE;
+
+	GPid child;
+	child = fork();
+
+	if (child < 0)
+		return FALSE;
+
+	if (child == 0) {
+		GPid grandchild;
+		grandchild = fork();
+
+		if (grandchild < 0)
+			_exit(1);
+
+		if (grandchild == 0) {
+			if (dup2(in_fd[0], 0) < 0 ||
+			    dup2(out_fd[1], 1) < 0 ||
+			    dup2(out_fd[1], 2) < 0)
+				_exit(1);
+
+			if (close(in_fd[1]) < 0 ||
+			    close(out_fd[0]) < 0)
+			    _exit(1);
+
+			if (g_chdir(home_dir) < 0)
+				_exit(1);
+
+			execvp(argv[0], argv);
+		}
+
+		_exit(0);
+	} else {
+		int rv;
+		wait(&rv);
+
+		if (WEXITSTATUS(rv) == 1)
+			return FALSE;
+	}
+
+	close(in_fd[0]);
+	close(out_fd[1]);
+
+	*infd = in_fd[1];
+	*outfd = out_fd[0];
+
+	return TRUE;
+}
+
+/*
  * configure_channel:
  *
  * Set @channel to non-blocking and @err if an error occured.
@@ -420,6 +475,7 @@ gebr_arith_expr_eval_internal(GebrArithExpr *self,
 
 	while (!finished)
 	{
+		/* FIXME: Deprecate stderr
 		status = g_io_channel_read_line (self->priv->err_ch, &line, NULL, NULL, &error);
 
 		if (status == G_IO_STATUS_NORMAL) {
@@ -434,6 +490,7 @@ gebr_arith_expr_eval_internal(GebrArithExpr *self,
 				  error->message);
 			g_clear_error(&error);
 		}
+		*/
 
 		switch (state)
 		{
@@ -449,6 +506,12 @@ gebr_arith_expr_eval_internal(GebrArithExpr *self,
 					return FALSE;
 				} else {
 					result_str = g_strndup(line, strlen(line)-1);
+					if (g_str_has_prefix(result_str, "(standard_in) ") ||
+					    g_str_has_prefix(result_str, "Runtime error (func"))
+					{
+						status = ERROR;
+						break;
+					}
 					state = READ_STAMP;
 				}
 				g_free (line);
