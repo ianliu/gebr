@@ -1419,11 +1419,21 @@ flow_edition_revalidate_programs(void)
 		gtk_tree_model_get(model, &iter,
 				   FSEQ_GEBR_GEOXML_POINTER, &program, -1);
 
-		if (!program || gebr_geoxml_program_get_control(program) == GEBR_GEOXML_PROGRAM_CONTROL_FOR)
+		if (!program)
 			continue;
 
 		if (gebr_geoxml_program_get_status(program) == GEBR_GEOXML_PROGRAM_STATUS_DISABLED)
 			continue;
+
+		if(gebr_geoxml_program_get_control(program) == GEBR_GEOXML_PROGRAM_CONTROL_FOR) {
+			if (validate_program_iter(&iter, NULL))
+				gebr_geoxml_program_set_status(GEBR_GEOXML_PROGRAM(program), GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED);
+			else
+				gebr_geoxml_program_set_status(GEBR_GEOXML_PROGRAM(program), GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED);
+			const gchar *icon = gebr_gui_get_program_icon(GEBR_GEOXML_PROGRAM(program));
+			gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &iter, FSEQ_ICON_COLUMN, icon, -1);
+			continue;
+		}
 
 		if (validate_program_iter(&iter, NULL))
 			flow_edition_change_iter_status(GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED, &iter);
