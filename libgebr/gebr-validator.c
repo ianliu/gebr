@@ -1062,12 +1062,9 @@ gebr_validator_is_var_in_scope(GebrValidator *self,
 
 void
 gebr_validator_set_document(GebrValidator *self,
-                            GebrGeoXmlDocument **doc)
+                            GebrGeoXmlDocument **doc,
+			    GebrGeoXmlDocumentType type)
 {
-	GebrGeoXmlDocumentType type;
-	type = gebr_geoxml_document_get_type(*doc);
-
 	self->docs[type] = doc;
-
 	gebr_validator_update(self);
 }

@@ -707,13 +707,13 @@ gchar * gebr_document_generate_report (GebrGeoXmlDocument *document)
 
 				include_table = gebr.config.detailed_line_parameter_table != GEBR_PARAM_TABLE_NO_TABLE;
 				document_load((GebrGeoXmlDocument**)(&flow), filename, FALSE);
-				gebr_validator_set_document(gebr.validator,(GebrGeoXmlDocument**)(&flow));
+				gebr_validator_set_document(gebr.validator,(GebrGeoXmlDocument**)(&flow), GEBR_GEOXML_DOCUMENT_TYPE_FLOW);
 				gchar * flow_cont = gebr_flow_get_detailed_report(flow, include_table, FALSE);
 				g_string_append(content, flow_cont);
 				g_free(flow_cont);
 				gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
 			}
-			gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**)(&gebr.flow));
+			gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**)(&gebr.flow), GEBR_GEOXML_DOCUMENT_TYPE_FLOW);
 		}
 	} else if (type == GEBR_GEOXML_OBJECT_TYPE_FLOW) {
 		if (gebr.config.detailed_flow_css->len != 0)

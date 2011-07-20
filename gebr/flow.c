@@ -576,14 +576,14 @@ void flow_run(GebrServer *server, GebrCommServerRunConfig * config, gboolean sin
 			GebrGeoXmlFlow *flow;
 			gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
 					   FB_XMLPOINTER, &flow, -1);
-			gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &flow);
+			gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW);
 			job_create(flow, 
 				   GEBR_GEOXML_DOCUMENT (gebr.line),
 				   GEBR_GEOXML_DOCUMENT (gebr.project),
 				   first);
 			first = FALSE;
 		}
-		gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &gebr.flow);
+		gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &gebr.flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW);
 	}
 
 	/* RUN */
@@ -772,8 +772,10 @@ void flow_paste(void)
 				      GEBR_GEOXML_LINE_FLOW(gebr_geoxml_line_append_flow(gebr.line,
 											 gebr_geoxml_document_get_filename(flow))));
 		document_save(GEBR_GEOXML_DOCUMENT(gebr.line), TRUE, FALSE);
+		gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW);
 		gebr_geoxml_flow_revalidate(GEBR_GEOXML_FLOW(flow), gebr.validator);
 	}
+	gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &gebr.flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW);
 }
 
 void flow_program_copy(void)
