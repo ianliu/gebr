@@ -187,6 +187,12 @@ GebrJob *job_new_from_jid(GebrServer *server, GString * jid, GString * _status, 
 void job_free(GebrJob *job)
 {
 	/* UI */
+	GtkTreeIter parent;
+	gchar *i_name;
+
+	gtk_tree_model_iter_parent(GTK_TREE_MODEL(gebr.ui_job_control->store), &parent, &job->iter);
+	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &parent,
+	                   JC_QUEUE_NAME, &i_name, -1);
 	if (gtk_tree_store_remove(gebr.ui_job_control->store, &job->iter)) {
 		GtkTreeIter iter;
 		GtkTreeModelFilter *filter;
@@ -196,7 +202,28 @@ void job_free(GebrJob *job)
 	} else {
 		gtk_text_buffer_set_text(gebr.ui_job_control->text_buffer, "", -1);
 		gtk_label_set_text(GTK_LABEL(gebr.ui_job_control->label), "");
+
+		if (gtk_tree_model_iter_n_children(GTK_TREE_MODEL(gebr.ui_job_control->store), &parent) == 0) {
+			GtkTreeModel *model;
+			GtkTreeIter queue_iter;
+			gboolean valid;
+			gchar *queue_id;
+
+			model = gtk_combo_box_get_model(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox));
+			valid = gtk_tree_model_get_iter_first(model, &queue_iter);
+			while (valid) {
+				gtk_tree_model_get(model, &queue_iter,
+				                   SERVER_QUEUE_ID, &queue_id, -1);
+				if (g_strcmp0(i_name, queue_id) == 0) {
+					gtk_list_store_remove(GTK_LIST_STORE(model), &queue_iter);
+					break;
+				}
+				valid = gtk_tree_model_iter_next(model, &queue_iter);
+			}
+			g_free(queue_id);
+		}
 	}
+	g_free(i_name);
 	g_object_unref(job);
 }
 
