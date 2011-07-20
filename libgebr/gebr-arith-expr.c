@@ -313,17 +313,20 @@ gebr_arith_expr_extract_vars(GebrIExpr   *iface,
 	GHashTable *set;
 
 	set = g_hash_table_new(g_str_hash, g_str_equal);
-	regex = g_regex_new ("[a-z][0-9a-z_]*", G_REGEX_CASELESS, 0, NULL);
+	regex = g_regex_new ("([a-z][0-9a-z_]*)\\s*(.?)", G_REGEX_CASELESS, 0, NULL);
 	g_regex_match (regex, expr, 0, &info);
 
 	while (g_match_info_matches (info))
 	{
-		gchar *word = g_match_info_fetch (info, 0);
-		if (!g_hash_table_lookup(set, word)) {
+		gchar *word = g_match_info_fetch (info, 1);
+		gchar *next_char = g_match_info_fetch(info, 2);
+		if (next_char[0] != '(' && !g_hash_table_lookup(set, word)) {
 			vars = g_list_prepend (vars, word);
 			g_hash_table_insert(set, word, GUINT_TO_POINTER(1));
-		}
+		} else
+			g_free(word);
 		g_match_info_next (info, NULL);
+		g_free(next_char);
 	}
 
 	g_hash_table_unref(set);
