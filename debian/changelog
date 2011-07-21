@@ -1,3 +1,11 @@
+gebrproject (0.13.9) lucid; urgency=medium
+
+  * Expression evaluation improved and tested.
+  * Reports now includes dictionary variables.
+  * Backward compatibility with previews version dictionary.
+
+ -- Fabricio Matheus Goncalves <fmatheus@gebrproject.com>  Thu, 21 Jul 2011 17:35:40 -0300
+
 gebrproject (0.13.5) lucid; urgency=low
 
   * First preview of loop, expressions and server groups.
