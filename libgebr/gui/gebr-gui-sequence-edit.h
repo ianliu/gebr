@@ -33,6 +33,7 @@ GType gebr_gui_sequence_edit_get_type(void);
 
 typedef struct _GebrGuiSequenceEdit GebrGuiSequenceEdit;
 typedef struct _GebrGuiSequenceEditClass GebrGuiSequenceEditClass;
+typedef struct _GebrGuiSequenceEditPriv GebrGuiSequenceEditPriv;
 
 struct _GebrGuiSequenceEdit {
 	GtkVBox parent;
@@ -46,6 +47,8 @@ struct _GebrGuiSequenceEdit {
 
 	gboolean may_rename;
 	gboolean has_scroll;
+
+	GebrGuiSequenceEditPriv *priv;
 };
 
 /**
@@ -162,9 +165,18 @@ void gebr_gui_sequence_edit_move_bottom (GebrGuiSequenceEdit *self,
  * @iter: the iterator to be renamed
  * @new_text: the new value to be put on previous iterator
  */
-void gebr_gui_sequence_edit_rename (GebrGuiSequenceEdit *self,
-					 GtkTreeIter *iter,
-					 const gchar *new_text);
+void gebr_gui_sequence_edit_rename(GebrGuiSequenceEdit *self,
+                                   GtkTreeIter *iter,
+                                   const gchar *new_text);
+
+/**
+ * gebr_gui_sequence_edit_toggle_keypresses:
+ * @self:
+ * @setting:
+ */
+void gebr_gui_sequence_edit_set_keypresses(GebrGuiSequenceEdit *self,
+                                              gboolean setting);
+
 G_END_DECLS
 
 #endif				//__GEBR_GUI_SEQUENCE_EDIT_H

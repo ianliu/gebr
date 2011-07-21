@@ -40,6 +40,10 @@ enum {
 	LAST_SIGNAL
 };
 
+struct _GebrGuiSequenceEditPriv {
+	guint keypress_handler;
+};
+
 static guint object_signals[LAST_SIGNAL] = { 0 };
 
 //==============================================================================
@@ -131,8 +135,9 @@ static void gebr_gui_sequence_edit_set_property (GObject *object,
 
 		tree_view = GEBR_GUI_SEQUENCE_EDIT_GET_CLASS (self)->create_tree_view (self);
 
-		g_signal_connect (tree_view, "key-release-event",
-				  G_CALLBACK (on_tree_view_key_release), self);
+		self->priv->keypress_handler =
+				g_signal_connect(tree_view, "key-release-event",
+				                 G_CALLBACK (on_tree_view_key_release), self);
 
 		gebr_gui_gtk_tree_view_set_reorder_callback(GTK_TREE_VIEW(tree_view),
 							    (GebrGuiGtkTreeViewReorderCallback)
@@ -312,6 +317,7 @@ static void gebr_gui_sequence_edit_class_init(GebrGuiSequenceEditClass *klass)
 							      "Weather there is a scrolled window, or not",
 							      TRUE,
 							      (GParamFlags) (G_PARAM_READWRITE)));
+	g_type_class_add_private(klass, sizeof (GebrGuiSequenceEditPriv));
 }
 
 static void gebr_gui_sequence_edit_init (GebrGuiSequenceEdit *self)
@@ -319,6 +325,7 @@ static void gebr_gui_sequence_edit_init (GebrGuiSequenceEdit *self)
 	GtkWidget *hbox;
 	GtkWidget *button;
 
+	self->priv = G_TYPE_INSTANCE_GET_PRIVATE(self, GEBR_GUI_TYPE_SEQUENCE_EDIT, GebrGuiSequenceEditPriv);
 	self->may_rename = TRUE;
 
 	hbox = gtk_hbox_new(FALSE, 0);
@@ -717,10 +724,20 @@ void gebr_gui_sequence_edit_move_bottom (GebrGuiSequenceEdit *self,
 }
 
 void gebr_gui_sequence_edit_rename (GebrGuiSequenceEdit *self,
-					 GtkTreeIter *iter,
-					 const gchar *new_text)
+                                    GtkTreeIter *iter,
+                                    const gchar *new_text)
 {
 	g_return_if_fail (GEBR_GUI_IS_SEQUENCE_EDIT (self));
 
 	GEBR_GUI_SEQUENCE_EDIT_GET_CLASS (self)->rename (self, iter, new_text);
+}
+
+void
+gebr_gui_sequence_edit_set_keypresses(GebrGuiSequenceEdit *self,
+                                      gboolean setting)
+{
+	if (!setting)
+		g_signal_handler_block(self->tree_view, self->priv->keypress_handler);
+	else
+		g_signal_handler_unblock(self->tree_view, self->priv->keypress_handler);
 }

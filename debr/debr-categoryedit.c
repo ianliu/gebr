@@ -171,7 +171,7 @@ static void category_edit_add_request(CategoryEdit * category_edit, GtkWidget *c
  * \internal
  * \p cell and \p path_string may be NULL
  */
-	static void
+static void
 __category_edit_on_value_edited(GtkCellRendererText * cell, gchar * path_string, gchar * new_text,
 				GebrGuiSequenceEdit * sequence_edit)
 {
@@ -185,6 +185,7 @@ __category_edit_on_value_edited(GtkCellRendererText * cell, gchar * path_string,
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(sequence_edit->tree_view));
 	gtk_tree_selection_get_selected(selection, &model, &iter);
 	gtk_tree_model_get(GTK_TREE_MODEL(sequence_edit->list_store), &iter, 0, &old_text, -1);
+	gebr_gui_sequence_edit_set_keypresses(sequence_edit, TRUE);
 
 	if (!strcmp (old_text, new_text))
 		return;
@@ -202,6 +203,14 @@ __category_edit_on_value_edited(GtkCellRendererText * cell, gchar * path_string,
 	g_signal_emit_by_name(sequence_edit, "changed");
 }
 
+static void
+__category_editing_started (GtkCellRenderer *renderer,
+                            GtkCellEditable *editable,
+                            gchar *path,
+                            GebrGuiSequenceEdit * sequence_edit)
+{
+	gebr_gui_sequence_edit_set_keypresses(sequence_edit, FALSE);
+}
 /**
  * \internal
  * Check for emptyness.
@@ -485,6 +494,7 @@ static GtkWidget *__category_edit_create_tree_view(CategoryEdit * category_edit)
 	renderer = gtk_cell_renderer_text_new();
 	g_object_set(renderer, "editable", TRUE, NULL);
 	g_signal_connect(renderer, "edited", G_CALLBACK(__category_edit_on_value_edited), category_edit);
+	g_signal_connect(renderer, "editing-started", G_CALLBACK(__category_editing_started), category_edit);
 	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
 	gtk_tree_view_column_set_expand(col, TRUE);
 	gtk_tree_view_column_add_attribute(col, renderer, "text", 0);
