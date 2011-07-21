@@ -210,7 +210,12 @@ void job_free(GebrJob *job)
 			gchar *queue_id;
 
 			model = gtk_combo_box_get_model(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox));
-			valid = gtk_tree_model_get_iter_first(model, &queue_iter);
+
+			if (!model)
+				valid = FALSE;
+			else
+				valid = gtk_tree_model_get_iter_first(model, &queue_iter);
+
 			while (valid) {
 				gtk_tree_model_get(model, &queue_iter,
 				                   SERVER_QUEUE_ID, &queue_id, -1);
@@ -219,8 +224,8 @@ void job_free(GebrJob *job)
 					break;
 				}
 				valid = gtk_tree_model_iter_next(model, &queue_iter);
+				g_free(queue_id);
 			}
-			g_free(queue_id);
 		}
 	}
 	g_free(i_name);
