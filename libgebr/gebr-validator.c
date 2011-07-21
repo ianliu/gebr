@@ -273,6 +273,12 @@ translate_string_expr(GebrValidator *self,
 		VAR
 	} state = INIT;
 
+	if (deps) {
+		g_list_foreach(*deps, (GFunc) g_free, NULL);
+		g_list_free(*deps);
+		*deps = NULL;
+	}
+
 	while (*expr) {
 		switch (state) {
 		case INIT:
