@@ -52,11 +52,10 @@ static HashData *
 hash_data_new_from_xml(GebrGeoXmlParameter *param)
 {
 	HashData *n = g_new0(HashData, 1);
-	GebrGeoXmlDocumentType type;
-	type = gebr_geoxml_parameter_get_scope(param);
-	n->param[type] = param;
+	GebrGeoXmlDocumentType scope = gebr_geoxml_parameter_get_scope(param);
+	n->param[scope] = param;
 	n->name = g_strdup(GET_VAR_NAME(param));
-	n->weight[type] = G_MAXDOUBLE;
+	n->weight[scope] = G_MAXDOUBLE;
 	return n;
 }
 
@@ -81,6 +80,7 @@ hash_data_remove(GebrValidator *self,
 {
 	HashData *data;
 
+	g_return_val_if_fail(scope < GEBR_GEOXML_DOCUMENT_TYPE_UNKNOWN, FALSE);
 	data = g_hash_table_lookup(self->vars, name);
 	g_return_val_if_fail(data != NULL, FALSE);
 
@@ -380,7 +380,6 @@ translate_string_expr(GebrValidator *self,
 	if (translated) {
 		*translated = str_expr->str;
 		g_string_free(str_expr, FALSE);
-		//puts(*translated);
 	} else {
 		g_string_free(str_expr, TRUE);
 	}
@@ -911,7 +910,6 @@ gebr_validator_update_vars(GebrValidator *self,
 	g_string_append(bc_strings, " }\n");
 	g_string_append(bc_strings, bc_vars->str);
 	g_string_append(bc_strings, "return iter }\n" ITER_INI_EXPR);
-	//printf("%s\n", bc_strings->str);
 
 	gebr_arith_expr_eval_internal(self->arith_expr, bc_strings->str, NULL, NULL);
 
@@ -1069,6 +1067,7 @@ gebr_validator_is_var_in_scope(GebrValidator *self,
 			       GebrGeoXmlDocumentType scope)
 {
 	HashData *data;
+	g_return_val_if_fail(scope < GEBR_GEOXML_DOCUMENT_TYPE_UNKNOWN, FALSE);
 
 	data = g_hash_table_lookup(self->vars, name);
 
