@@ -1226,19 +1226,29 @@ static GtkTreeModel *generate_completion_model(struct gebr_gui_parameter_widget 
 	return gebr_gui_parameter_get_completion_model(flow, line, proj, widget->parameter_type);
 }
 
-static void setup_entry_completion(GtkEntry *entry,
-				   GtkTreeModel *model,
-				   GtkEntryCompletionMatchFunc func,
-				   GCallback match_selected_cb,
-				   gpointer data)
+static void
+setup_entry_completion(GtkEntry *entry,
+		       GtkTreeModel *model,
+		       GtkEntryCompletionMatchFunc func,
+		       GCallback match_selected_cb,
+		       gpointer data)
 {
 	GtkEntryCompletion *comp;
+	GtkCellRenderer *cell;
 
 	comp = gtk_entry_completion_new();
 	gtk_entry_completion_set_model(comp, model);
-	gtk_entry_completion_set_text_column(comp, 0);
 	gtk_entry_completion_set_match_func(comp, func, NULL, NULL);
 	g_signal_connect(comp, "match-selected", match_selected_cb, data);
+
+	cell = gtk_cell_renderer_pixbuf_new();
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(comp), cell, FALSE);
+	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(comp), cell, "stock-id", 1);
+
+	cell = gtk_cell_renderer_text_new();
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(comp), cell, TRUE);
+	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(comp), cell, "text", 0);
+
 	gtk_entry_set_completion(entry, comp);
 	g_object_unref(comp);
 }
@@ -1503,19 +1513,28 @@ GtkTreeModel *gebr_gui_parameter_get_completion_model(GebrGeoXmlDocument *flow,
 						      GebrGeoXmlParameterType type)
 {
 	const gchar *keyword;
+	const gchar *icon;
 	GList *compatible;
 	GtkTreeIter iter;
 	GtkListStore *store;
 	GebrGeoXmlProgramParameter *ppar;
 
-	store = gtk_list_store_new(1, G_TYPE_STRING);
+	store = gtk_list_store_new(2,
+				   G_TYPE_STRING,
+				   G_TYPE_STRING);
 	compatible = get_compatible_variables(type, flow, line, proj);
 
 	for (GList *i = compatible; i; i = i->next) {
 		ppar = i->data;
 		keyword = gebr_geoxml_program_parameter_get_keyword(ppar);
+		switch(gebr_geoxml_parameter_get_type(i->data)) {
+		case GEBR_GEOXML_PARAMETER_TYPE_STRING: icon = "string-icon"; break;
+		case GEBR_GEOXML_PARAMETER_TYPE_FLOAT: icon = "real-icon"; break;
+		case GEBR_GEOXML_PARAMETER_TYPE_INT: icon = "int-icon"; break;
+		default: icon = NULL; break;
+		}
 		gtk_list_store_append(store, &iter);
-		gtk_list_store_set(store, &iter, 0, keyword, -1);
+		gtk_list_store_set(store, &iter, 0, keyword, 1, icon, -1);
 	}
 
 	g_list_free(compatible);
