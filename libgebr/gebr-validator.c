@@ -147,19 +147,31 @@ get_error_indirect(GebrValidator *self,
 
 		dep_data = g_hash_table_lookup(self->vars, dep_name);
 		if (!dep_data) {
-			g_set_error(err, GEBR_IEXPR_ERROR,
-			            GEBR_IEXPR_ERROR_UNDEF_REFERENCE,
-			            _("Variable %s is not defined"),
-			            dep_name);
+			if (!g_strcmp0(dep_name, "iter"))
+				g_set_error(err, GEBR_IEXPR_ERROR,
+				            GEBR_IEXPR_ERROR_UNDEF_REFERENCE,
+				            my_scope == GEBR_GEOXML_DOCUMENT_TYPE_FLOW ?
+				            _("Insert program Loop to use variable iter"):
+				            _("Iter can be used only on flow variables"));
+			else
+				g_set_error(err, GEBR_IEXPR_ERROR,
+				            GEBR_IEXPR_ERROR_UNDEF_REFERENCE,
+				            _("Variable %s is not defined"),
+				            dep_name);
 			return FALSE;
 		}
 
 		dep_param = get_dep_param(self, my_name, my_scope, dep_name);
 		if (!dep_param) {
-			g_set_error(err, GEBR_IEXPR_ERROR,
-			            GEBR_IEXPR_ERROR_UNDEF_REFERENCE,
-			            _("Variable %s is not yet defined"),
-			            dep_name);
+			if (!g_strcmp0(dep_name, "iter"))
+				g_set_error(err, GEBR_IEXPR_ERROR,
+				            GEBR_IEXPR_ERROR_UNDEF_REFERENCE,
+				            _("Iter can be used only on flow variables"));
+			else
+				g_set_error(err, GEBR_IEXPR_ERROR,
+				            GEBR_IEXPR_ERROR_UNDEF_REFERENCE,
+				            _("Variable %s is not yet defined"),
+				            dep_name);
 			return FALSE;
 		}
 
