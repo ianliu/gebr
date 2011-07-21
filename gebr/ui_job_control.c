@@ -431,7 +431,6 @@ static void job_control_on_cursor_changed(void)
 		has_finished = has_finished || job_has_finished(job);
 	}
 
-	gint selected_rows = gtk_tree_selection_count_selected_rows(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)));
 	GtkTreeIter iter;
 	GtkTreeModelFilter *filter;
 	filter = GTK_TREE_MODEL_FILTER(gtk_tree_view_get_model(GTK_TREE_VIEW(gebr.ui_job_control->view)));
@@ -572,6 +571,7 @@ void job_control_queue_close(void)
 static GtkMenu *job_control_popup_menu(GtkWidget * widget, struct ui_job_control *ui_job_control)
 {
 	GtkWidget *menu;
+	GtkWidget *menu_item;
 	GtkTreeIter iter;
 	GtkTreeIter iter_child;
 	gint iter_depth = 0;
@@ -593,33 +593,45 @@ static GtkMenu *job_control_popup_menu(GtkWidget * widget, struct ui_job_control
 		if (iter_depth == 0 && gtk_tree_model_iter_children (GTK_TREE_MODEL(gebr.ui_job_control->store), &iter_child, &model_iter))
 		{
 			gtk_container_add(GTK_CONTAINER(menu),
-					  gtk_action_create_menu_item(
-							  gtk_action_group_get_action(gebr.action_group_job_control, "job_control_queue_save")));
+			                  gtk_action_create_menu_item(
+			                		  gtk_action_group_get_action(gebr.action_group_job_control, "job_control_queue_save")));
 			gtk_container_add(GTK_CONTAINER(menu),
-					  gtk_action_create_menu_item(
-							  gtk_action_group_get_action(gebr.action_group_job_control, "job_control_queue_close")));
+			                  gtk_action_create_menu_item(
+			                		  gtk_action_group_get_action(gebr.action_group_job_control, "job_control_queue_close")));
 			gtk_container_add(GTK_CONTAINER(menu),
-					  gtk_action_create_menu_item(
-							  gtk_action_group_get_action(gebr.action_group_job_control, "job_control_queue_stop")));
-			gtk_widget_show_all(menu);
-			return GTK_MENU(menu);
+			                  gtk_action_create_menu_item(
+			                		  gtk_action_group_get_action(gebr.action_group_job_control, "job_control_queue_stop")));
+			goto out;
 		}
 
 		if (iter_depth > 0)
 		{
 			gtk_container_add(GTK_CONTAINER(menu),
-					  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_save")));
+			                  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_save")));
 			gtk_container_add(GTK_CONTAINER(menu),
-					  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_close")));
+			                  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_close")));
 			gtk_container_add(GTK_CONTAINER(menu),
-					  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_stop")));
-			gtk_widget_show_all(menu);
-			return GTK_MENU(menu);
+			                  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_stop")));
+			goto out;
 		}
 	}
 
 	return NULL;
 
+out:
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
+
+	menu_item = gtk_menu_item_new_with_label(_("Collapse all"));
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+	g_signal_connect_swapped(menu_item, "activate", G_CALLBACK(gtk_tree_view_collapse_all), ui_job_control->view);
+
+	menu_item = gtk_menu_item_new_with_label(_("Expand all"));
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+	g_signal_connect_swapped(menu_item, "activate", G_CALLBACK(gtk_tree_view_expand_all), ui_job_control->view);
+
+	gtk_widget_show_all(menu);
+
+	return GTK_MENU(menu);
 }
 
 static void job_control_queue_by_func(gboolean (* func)(void))
