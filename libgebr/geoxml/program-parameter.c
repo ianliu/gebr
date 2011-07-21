@@ -817,7 +817,34 @@ gebr_geoxml_program_parameter_update_old_dict_value(GebrGeoXmlObject * param,
 			GEBR_GEOXML_PROGRAM_PARAMETER(param));
 
 	if (key == NULL)
+	{
+		switch(type)
+		{
+		case GEBR_GEOXML_PARAMETER_TYPE_INT:
+		case GEBR_GEOXML_PARAMETER_TYPE_FLOAT: {
+			const gchar * value = gebr_geoxml_program_parameter_get_first_value(
+					GEBR_GEOXML_PROGRAM_PARAMETER(param),
+					FALSE);
+
+			if(g_strrstr(value, "e"))
+			{
+				GString * string = g_string_new(value);
+				gebr_g_string_replace(string, "e", "*10^");
+				gebr_g_string_replace(string, "E", "*10^");
+				gebr_geoxml_program_parameter_set_first_value(
+						GEBR_GEOXML_PROGRAM_PARAMETER(param),
+						FALSE,
+						string->str);
+				g_string_free(string, TRUE);
+			}
+
+			break;
+		}
+		default:
+			break;
+		}
 		return TRUE;
+	}
 
 	gchar * spaces = g_strdup(key);
 	if(g_strcmp0(g_strstrip(spaces),"") == 0)
@@ -841,6 +868,7 @@ gebr_geoxml_program_parameter_update_old_dict_value(GebrGeoXmlObject * param,
 				GEBR_GEOXML_PROGRAM_PARAMETER(param),
 				FALSE,
 				canonized);
+
 		break;
 	case GEBR_GEOXML_PARAMETER_TYPE_STRING:
 	case GEBR_GEOXML_PARAMETER_TYPE_FILE: {
@@ -850,6 +878,8 @@ gebr_geoxml_program_parameter_update_old_dict_value(GebrGeoXmlObject * param,
 				FALSE,
 				brackets);
 		g_free(brackets);
+
+		break;
 	}
 	
 	default:
