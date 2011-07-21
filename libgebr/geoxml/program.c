@@ -327,23 +327,17 @@ GebrGeoXmlProgramControl gebr_geoxml_program_get_control(GebrGeoXmlProgram * pro
 	return GEBR_GEOXML_PROGRAM_CONTROL_UNKNOWN;
 }
 
-const gchar *
-gebr_geoxml_program_control_get_n(GebrGeoXmlProgram *prog,
-				  const gchar **step,
-				  const gchar **ini)
+static void
+gebr_geoxml_program_control_get_info(GebrGeoXmlProgram *prog,
+				     const gchar *bounds[],
+				     const gchar *labels[])
 {
-	GebrGeoXmlProgramControl c;
 	GebrGeoXmlProgramParameter *pparam;
 	GebrGeoXmlParameters *params;
 	GebrGeoXmlSequence *seq;
 	const gchar *value;
+	const gchar *label;
 	const gchar *keyword;
-	const gchar *niter;
-
-	g_return_val_if_fail (prog != NULL, 0);
-
-	c = gebr_geoxml_program_get_control (prog);
-	g_return_val_if_fail (c == GEBR_GEOXML_PROGRAM_CONTROL_FOR, 0);
 
 	params = gebr_geoxml_program_get_parameters(prog);
 	gebr_geoxml_parameters_get_parameter(params, &seq, 0);
@@ -354,21 +348,74 @@ gebr_geoxml_program_control_get_n(GebrGeoXmlProgram *prog,
 		value = gebr_geoxml_program_parameter_get_first_value(pparam, FALSE);
 		if (!*value)
 			value = gebr_geoxml_program_parameter_get_first_value(pparam, TRUE);
+		label = gebr_geoxml_parameter_get_label(GEBR_GEOXML_PARAMETER(seq));
 
 		if (!g_strcmp0(keyword, "niter")) {
-			niter = value;
+			if (bounds) bounds[2] = value;
+			if (labels) labels[2] = label;
 			continue;
 		}
 
-		if (step && !g_strcmp0(keyword, "step")) {
-			*step = value;
+		if (!g_strcmp0(keyword, "step")) {
+			if (bounds) bounds[1] = value;
+			if (labels) labels[1] = label;
 			continue;
 		}
 
-		if (ini && !g_strcmp0(keyword, "ini_value"))
-			*ini = value;
+		if (!g_strcmp0(keyword, "ini_value")) {
+			if (bounds) bounds[0] = value;
+			if (labels) labels[0] = label;
+		}
 	}
-	return niter;
+}
+
+void
+gebr_geoxml_program_control_get_labels(GebrGeoXmlProgram *prog,
+				       const gchar **ini,
+				       const gchar **step,
+				       const gchar **niter)
+{
+	GebrGeoXmlProgramControl c;
+	const gchar *labels[3];
+
+	g_return_if_fail (prog != NULL);
+
+	c = gebr_geoxml_program_get_control (prog);
+	g_return_if_fail (c == GEBR_GEOXML_PROGRAM_CONTROL_FOR);
+
+	gebr_geoxml_program_control_get_info(prog, NULL, labels);
+
+	if (ini)
+		*ini = labels[0];
+
+	if (step)
+		*step = labels[1];
+
+	if (niter)
+		*niter = labels[2];
+}
+
+const gchar *
+gebr_geoxml_program_control_get_n(GebrGeoXmlProgram *prog,
+				  const gchar **step,
+				  const gchar **ini)
+{
+	GebrGeoXmlProgramControl c;
+	const gchar *bounds[3];
+
+	g_return_val_if_fail (prog != NULL, NULL);
+	c = gebr_geoxml_program_get_control (prog);
+	g_return_val_if_fail (c == GEBR_GEOXML_PROGRAM_CONTROL_FOR, NULL);
+
+	gebr_geoxml_program_control_get_info(prog, bounds, NULL);
+
+	if (ini)
+		*ini = bounds[0];
+
+	if (step)
+		*step = bounds[1];
+
+	return bounds[2];
 }
 
 void gebr_geoxml_program_control_set_n(GebrGeoXmlProgram *prog,

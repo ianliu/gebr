@@ -268,6 +268,18 @@ const gchar *gebr_geoxml_program_control_get_n(GebrGeoXmlProgram *prog,
 					       const gchar **ini);
 
 /**
+ * gebr_geoxml_program_control_get_labels:
+ * @prog: A Loop program.
+ * @ini: Return location for initial value label.
+ * @step: Return location for step label.
+ * @niter: Return location for number of iterations label.
+ */
+void gebr_geoxml_program_control_get_labels(GebrGeoXmlProgram *prog,
+					    const gchar **ini,
+					    const gchar **step,
+					    const gchar **niter);
+
+/**
  * gebr_geoxml_program_control_set_n:
  */
 void gebr_geoxml_program_control_set_n(GebrGeoXmlProgram *prog,
