@@ -431,11 +431,42 @@ validate_param_and_set_icon_tooltip(struct dict_edit_data *data, GtkTreeIter *it
 	gchar * tooltip = NULL;
 	gebr_validator_evaluate_param(gebr.validator, param, &tooltip, &error);
 	if (error) {
+		gchar *error_msg;
+		if (g_strcmp0(keyword, "iter") == 0) {
+			int i;
+			const gchar *vars[3];
+			const gchar *labels[3];
+			GebrGeoXmlProgram *loop;
+			loop = gebr_geoxml_flow_get_control_program(gebr.flow);
+			vars[2] = gebr_geoxml_program_control_get_n(loop, &vars[1], &vars[0]);
+			gebr_geoxml_program_control_get_labels(loop, &labels[0], &labels[1], &labels[2]);
+			g_clear_error(&error);
+
+			for (i = 0; i < 3; i++) {
+				gebr_validator_validate_expr_on_scope(gebr.validator, vars[i],
+								      GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
+								      GEBR_GEOXML_DOCUMENT_TYPE_LINE,
+								      &error);
+				if (error)
+					break;
+			}
+
+			if (!error && !*vars[2]) {
+				g_set_error(&error, GEBR_IEXPR_ERROR,
+					    GEBR_IEXPR_ERROR_EMPTY_EXPR,
+					    _("Number of iterations is required"));
+				error_msg = g_strdup(error->message);
+			} else
+				/* Comment for translators: 1st %s is expression error; 2nd is variable label */
+				error_msg = g_strdup_printf(_("%s on %s"), error->message, labels[i]);
+		} else
+			error_msg = g_strdup(error->message);
+
 		gtk_tree_store_set(GTK_TREE_STORE(data->tree_model), iter,
 				   DICT_EDIT_VALUE_TYPE_IMAGE, GTK_STOCK_DIALOG_WARNING,
-				   DICT_EDIT_VALUE_TYPE_TOOLTIP, error->message, -1);
+				   DICT_EDIT_VALUE_TYPE_TOOLTIP, error_msg, -1);
 
-		gtk_label_set_text(GTK_LABEL(data->label), error->message);
+		gtk_label_set_text(GTK_LABEL(data->label), error_msg);
 		g_clear_error(&error);
 	} else {
 		gtk_tree_store_set(GTK_TREE_STORE(data->tree_model), iter,
