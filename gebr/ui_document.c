@@ -416,10 +416,8 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 static void
 validate_param_and_set_icon_tooltip(struct dict_edit_data *data, GtkTreeIter *iter)
 {
-	const gchar *keyword;
 	GError *error = NULL;
 	GebrGeoXmlParameter *param;
-	GebrGeoXmlParameterType type;
 
 	gtk_tree_model_get(data->tree_model, iter, DICT_EDIT_GEBR_GEOXML_POINTER, &param, -1);
 
@@ -427,13 +425,13 @@ validate_param_and_set_icon_tooltip(struct dict_edit_data *data, GtkTreeIter *it
 	if (!param)
 		return;
 
-	keyword = gebr_geoxml_program_parameter_get_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(param));
-	type = gebr_geoxml_parameter_get_type(param);
-
 	gchar * tooltip = NULL;
 	gebr_validator_evaluate_param(gebr.validator, param, &tooltip, &error);
+
 	if (error) {
 		gchar *error_msg;
+		const gchar *keyword;
+		keyword = gebr_geoxml_program_parameter_get_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(param));
 		if (g_strcmp0(keyword, "iter") == 0) {
 			int i;
 			const gchar *vars[3];
@@ -473,6 +471,8 @@ validate_param_and_set_icon_tooltip(struct dict_edit_data *data, GtkTreeIter *it
 		}
 		g_clear_error(&error);
 	} else {
+		GebrGeoXmlParameterType type;
+		type = gebr_geoxml_parameter_get_type(param);
 		gtk_tree_store_set(GTK_TREE_STORE(data->tree_model), iter,
 				   DICT_EDIT_VALUE_TYPE_IMAGE,
 				   type == GEBR_GEOXML_PARAMETER_TYPE_STRING ? "string-icon" : "integer-icon",
@@ -487,7 +487,6 @@ static void validate_dict_iter(struct dict_edit_data *data, GtkTreeIter *iter)
 	GtkTreeIter it;
 	GtkTreeIter parent;
 	gboolean valid = TRUE;
-	GebrGeoXmlParameter *param;
 
 	it = *iter;
 	if (!gtk_tree_model_iter_parent(data->tree_model, &parent, &it))
@@ -496,7 +495,6 @@ static void validate_dict_iter(struct dict_edit_data *data, GtkTreeIter *iter)
 	while (TRUE) {
 		while (valid)
 		{
-			gtk_tree_model_get(data->tree_model, &it, DICT_EDIT_GEBR_GEOXML_POINTER, &param, -1);
 			validate_param_and_set_icon_tooltip(data, &it);
 			valid = gtk_tree_model_iter_next(data->tree_model, &it);
 		}
@@ -600,6 +598,8 @@ void document_dict_edit_setup_ui(void)
 				       GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 
 	tree_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(tree_store));
+	g_object_unref(tree_store);
+
 	data->tree_view = tree_view;
 	gtk_container_add(GTK_CONTAINER(scrolled_window), tree_view);
 	gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(tree_view),
@@ -631,7 +631,6 @@ void document_dict_edit_setup_ui(void)
 	gtk_tree_view_column_add_attribute(column, cell_renderer, "sensitive", DICT_EDIT_SENSITIVE);
 	pixbuf_cell_renderer = gtk_cell_renderer_pixbuf_new();
 	data->cell_renderer_array[DICT_EDIT_KEYWORD_IMAGE] = pixbuf_cell_renderer;
-//	gtk_tree_view_column_add_attribute(column, pixbuf_cell_renderer, "stock-id", DICT_EDIT_KEYWORD_IMAGE);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tree_view), column);
 
 	/* value */
@@ -762,9 +761,9 @@ void document_dict_edit_setup_ui(void)
 	if (gebr.flow)
 		flow_edition_set_io();
 
+	gtk_widget_destroy(dialog);
 	g_free(data);
 	g_string_free(dialog_title, TRUE);
-	gtk_widget_destroy(dialog);
 
 	/* restore binding sets */
 	entry_for_binding = gtk_entry_new();
@@ -1347,16 +1346,12 @@ out:
 
 static void on_dict_edit_editing_cell_canceled(GtkCellRenderer * cell, struct dict_edit_data *data)
 {
-	GebrGeoXmlProgramParameter *parameter;
-	gtk_tree_model_get(data->tree_model, &data->editing_iter, DICT_EDIT_GEBR_GEOXML_POINTER, &parameter, -1);
-
 	data->is_inserting_new = FALSE;
 
-	/* may delete item if empty */
+	/* may delete item if empty... */
 	dict_edit_validate_editing_cell(data, FALSE, TRUE);
-
+	/* ... and mark as required if not deleted */
 	validate_dict_iter(data, &data->editing_iter);
-	//dict_edit_check_programs_using_variables(keyword, data->edition_valid);
 
 	data->in_edition = NULL;
 	data->editing_cell = NULL;
