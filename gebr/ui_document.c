@@ -179,6 +179,8 @@ static const GtkActionEntry dict_actions_entries[] = {
 	 G_CALLBACK(on_dict_edit_remove_clicked)},
 };
 
+static void on_dict_edit_change_selection(GtkTreeSelection *selection, struct dict_edit_data *data);
+
 static void gebr_dict_update_wizard(struct dict_edit_data *data);
 
 //==============================================================================
@@ -611,6 +613,8 @@ void document_dict_edit_setup_ui(void)
 						    data);
 	g_signal_connect(GTK_OBJECT(tree_view), "cursor-changed", G_CALLBACK(on_dict_edit_cursor_changed), data);
 	g_signal_connect(tree_view, "button-press-event", G_CALLBACK(on_dict_edit_tree_view_button_press_event), data);
+	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tree_view));
+	g_signal_connect(selection, "changed", G_CALLBACK(on_dict_edit_change_selection), data);
 
 	/* keyword */
 	column = gtk_tree_view_column_new();
@@ -1918,4 +1922,9 @@ static gboolean dict_edit_can_reorder(GtkTreeView            *tree_view,
 		return FALSE;
 
 	return TRUE;
+}
+
+static void on_dict_edit_change_selection(GtkTreeSelection *selection, struct dict_edit_data *data)
+{
+	gebr_dict_update_wizard(data);
 }
