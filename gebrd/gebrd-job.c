@@ -991,7 +991,7 @@ static void define_bc_variables(GebrdJob *job, GString *expr_buf, GString *str_b
 	    && status == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED)
 	{
 		gchar *iter_expr;
-		gchar *ini, *step;
+		const gchar *ini, *step;
 		GebrGeoXmlProgramParameter *pparam;
 		gebr_geoxml_program_control_get_n(program, &step, &ini);
 		iter_expr = g_strdup_printf("(%s) + (%s) * '\"$counter\"'", ini, step);
@@ -1109,7 +1109,8 @@ static void job_assembly_cmdline(GebrdJob *job)
 	gulong nprog;
 	gboolean has_control = FALSE;
 	const gchar *counter;
-	gchar *step, *ini, *n;
+	const gchar *step, *ini;
+	gchar *n;
 	GString *expr_buf = g_string_new("");
 	GString *str_buf = g_string_new("");
 	GError *err = NULL;

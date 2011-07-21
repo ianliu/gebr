@@ -327,35 +327,46 @@ GebrGeoXmlProgramControl gebr_geoxml_program_get_control(GebrGeoXmlProgram * pro
 	return GEBR_GEOXML_PROGRAM_CONTROL_UNKNOWN;
 }
 
-const gchar *gebr_geoxml_program_control_get_n (GebrGeoXmlProgram *prog, gchar **step, gchar **ini)
+const gchar *
+gebr_geoxml_program_control_get_n(GebrGeoXmlProgram *prog,
+				  const gchar **step,
+				  const gchar **ini)
 {
 	GebrGeoXmlProgramControl c;
-	GebrGeoXmlParameter *param;
+	GebrGeoXmlProgramParameter *pparam;
 	GebrGeoXmlParameters *params;
-	GebrGeoXmlValueSequence *value;
+	GebrGeoXmlSequence *seq;
+	const gchar *value;
 	const gchar *keyword;
 	const gchar *niter;
-	gsize n;
 
 	g_return_val_if_fail (prog != NULL, 0);
 
 	c = gebr_geoxml_program_get_control (prog);
 	g_return_val_if_fail (c == GEBR_GEOXML_PROGRAM_CONTROL_FOR, 0);
 
-	n = gebr_geoxml_program_count_parameters(prog);
-	params = gebr_geoxml_program_get_parameters (prog);
+	params = gebr_geoxml_program_get_parameters(prog);
+	gebr_geoxml_parameters_get_parameter(params, &seq, 0);
 
-	for(int i = 0; i < n; i++) {
-		gebr_geoxml_parameters_get_parameter (params, (GebrGeoXmlSequence**)&param, i);
-		gebr_geoxml_program_parameter_get_value (GEBR_GEOXML_PROGRAM_PARAMETER (param),
-						 	 FALSE, (GebrGeoXmlSequence**)&value, 0);
-		keyword = gebr_geoxml_program_parameter_get_keyword(GEBR_GEOXML_PROGRAM_PARAMETER (param));
-		if(!strcmp(keyword,"niter"))
-			niter = gebr_geoxml_value_sequence_get(value);
-		else if(step && !strcmp(keyword,"step"))
-			*step = (gchar *) gebr_geoxml_value_sequence_get(value);
-		else if(ini && !strcmp(keyword,"ini_value"))
-			*ini = (gchar *) gebr_geoxml_value_sequence_get(value);
+	for (; seq; gebr_geoxml_sequence_next(&seq)) {
+		pparam = GEBR_GEOXML_PROGRAM_PARAMETER(seq);
+		keyword = gebr_geoxml_program_parameter_get_keyword(pparam);
+		value = gebr_geoxml_program_parameter_get_first_value(pparam, FALSE);
+		if (!*value)
+			value = gebr_geoxml_program_parameter_get_first_value(pparam, TRUE);
+
+		if (!g_strcmp0(keyword, "niter")) {
+			niter = value;
+			continue;
+		}
+
+		if (step && !g_strcmp0(keyword, "step")) {
+			*step = value;
+			continue;
+		}
+
+		if (ini && !g_strcmp0(keyword, "ini_value"))
+			*ini = value;
 	}
 	return niter;
 }

@@ -442,7 +442,7 @@ void test_gebr_geoxml_program_control_get_n(void)
 	GebrGeoXmlProgram *program;
 	GebrGeoXmlParameters *parameters_list;
 	GebrGeoXmlProgramParameter *parameter;
-	gchar *step, *ini;
+	const gchar *step, *ini;
 	const gchar *iter;
 
 	flow = gebr_geoxml_flow_new ();

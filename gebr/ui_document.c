@@ -1366,7 +1366,7 @@ static void dict_edit_load_iter(struct dict_edit_data *data, GtkTreeIter * iter,
 
 	if (is_loop_iter){
 		GebrGeoXmlProgram * prog = gebr_geoxml_flow_get_control_program(gebr.flow);
-		gchar * ini;
+		const gchar *ini;
 		gebr_geoxml_program_control_get_n(GEBR_GEOXML_PROGRAM(prog), NULL, &ini);
 		value = g_strconcat("[", ini, ", ...,", value, "]", NULL);
 	}

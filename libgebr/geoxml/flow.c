@@ -848,8 +848,10 @@ void gebr_geoxml_flow_update_iter_dict_value(GebrGeoXmlFlow *flow)
 	GebrGeoXmlProgramParameter *iter;
 	GebrGeoXmlProgram *program;
 	const gchar *keyword;
-	gchar *step, *ini, *current;
+	const gchar *step;
+	const gchar *ini;
 	const gchar *n;
+	gchar *current;
 
 	doc = GEBR_GEOXML_DOCUMENT(flow);
 	iter = GEBR_GEOXML_PROGRAM_PARAMETER(gebr_geoxml_document_get_dict_parameter(doc));
