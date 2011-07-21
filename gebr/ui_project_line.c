@@ -628,6 +628,7 @@ static gboolean _project_line_import_path(const gchar *filename, GList **line_pa
 
 	gebr_temp_directory_destroy(tmp_dir);
 	gdk_threads_enter();
+	gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), NOTEBOOK_PAGE_PROJECT_LINE);
 	gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Import successful."));
 	gdk_threads_leave();
 	g_strfreev(files);
