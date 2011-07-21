@@ -1083,7 +1083,7 @@ static void assemble_bc_cmd_line (GString *expr_buf)
 		return;
 
 	 g_string_prepend(expr_buf,
-			  "\tV=($(echo '\n"
+			  "\tV=($(echo 'scale=5\n"
 	                  "\t\tdefine min(a,b){ if(a<b) {return a;} else {return b;}}\n"
 	                  "\t\tdefine max(a,b){ if(a>b) {return a;} else {return b;}}\n"
 	                  "\t\tdefine round(x){ auto s; s = scale; if(x>0) x+=0.5 else x-=0.5; scale = 0; x/=1; scale = s; return (x);}\n");
