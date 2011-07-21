@@ -166,7 +166,7 @@ void flow_program_check_sensitiveness (void)
 		if (control != GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY)
 			continue;
 
-		if (gebr_geoxml_program_get_status (GEBR_GEOXML_PROGRAM(program)) == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED){
+		if (gebr_geoxml_program_get_status (GEBR_GEOXML_PROGRAM(program)) == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED) {
 			if (!has_configured) {
 				first_program = GEBR_GEOXML_PROGRAM(program);
 				has_configured = TRUE;
@@ -190,10 +190,6 @@ void flow_program_check_sensitiveness (void)
 			gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->error_iter,
 					   FSEQ_EDITABLE, TRUE,
 					   FSEQ_SENSITIVE, TRUE, -1);
-		else
-			gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->error_iter,
-					   FSEQ_EDITABLE, FALSE,
-					   FSEQ_SENSITIVE, FALSE, -1);
 	}
 }
 

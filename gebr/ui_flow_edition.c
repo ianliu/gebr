@@ -318,13 +318,21 @@ void flow_edition_set_io(void)
 	gchar *tooltip;
 	const gchar *icon;
 	gboolean is_append;
+	GtkTreeModel *model;
+	gboolean sensitivity;
+
+	flow_program_check_sensitiveness();
+
+	model = gtk_tree_view_get_model(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view));
+
 
 	/* Set the INPUT properties.
 	 * INPUT does not have 'Append/Overwrite' so there is only 2 possible icons:
 	 *  - gebr-stdin
 	 *  - GTK_STOCK_DIALOG_WARNING
 	 */
-	if (!*input) {
+	gtk_tree_model_get(model, &gebr.ui_flow_edition->input_iter, FSEQ_SENSITIVE, &sensitivity, -1);
+	if (!*input || !sensitivity) {
 		title = g_markup_printf_escaped("<i>%s</i>", _("Input file"));
 		icon = "gebr-stdin";
 		tooltip = NULL;
@@ -361,7 +369,8 @@ void flow_edition_set_io(void)
 	 */
 	result = NULL;
 	is_append = gebr_geoxml_flow_io_get_output_append(gebr.flow);
-	if (!*output) {
+	gtk_tree_model_get(model, &gebr.ui_flow_edition->output_iter, FSEQ_SENSITIVE, &sensitivity, -1);
+	if (!*output || !sensitivity) {
 		title = g_markup_printf_escaped("<i>%s</i>", _("Output file"));
 		tooltip = NULL;
 	} else {
@@ -399,7 +408,8 @@ void flow_edition_set_io(void)
 	/* Set the ERROR properties. */
 	result = NULL;
 	is_append = gebr_geoxml_flow_io_get_error_append(gebr.flow);
-	if (!*error) {
+	gtk_tree_model_get(model, &gebr.ui_flow_edition->error_iter, FSEQ_SENSITIVE, &sensitivity, -1);
+	if (!*error || !sensitivity) {
 		title = g_markup_printf_escaped("<i>%s</i>", _("Error file"));
 		tooltip = NULL;
 	} else {
@@ -434,7 +444,6 @@ void flow_edition_set_io(void)
 	g_free(title);
 	g_free(tooltip);
 
-	flow_program_check_sensitiveness();
 	flow_browse_info_update();
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
 }
