@@ -466,7 +466,9 @@ validate_param_and_set_icon_tooltip(struct dict_edit_data *data, GtkTreeIter *it
 				   DICT_EDIT_VALUE_TYPE_IMAGE, GTK_STOCK_DIALOG_WARNING,
 				   DICT_EDIT_VALUE_TYPE_TOOLTIP, error_msg, -1);
 
-		gtk_label_set_text(GTK_LABEL(data->label), error_msg);
+		if (data->in_edition) {
+			gtk_label_set_text(GTK_LABEL(data->label), error_msg);
+		}
 		g_clear_error(&error);
 	} else {
 		gtk_tree_store_set(GTK_TREE_STORE(data->tree_model), iter,
