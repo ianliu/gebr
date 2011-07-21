@@ -203,7 +203,7 @@ void job_free(GebrJob *job)
 		gtk_text_buffer_set_text(gebr.ui_job_control->text_buffer, "", -1);
 		gtk_label_set_text(GTK_LABEL(gebr.ui_job_control->label), "");
 
-		if (gtk_tree_model_iter_n_children(GTK_TREE_MODEL(gebr.ui_job_control->store), &parent) == 0) {
+		if (gtk_tree_model_iter_n_children(GTK_TREE_MODEL(gebr.ui_job_control->store), &parent) == 0 && g_strcmp0(i_name,"j") != 0) {
 			GtkTreeModel *model;
 			GtkTreeIter queue_iter;
 			gboolean valid;
