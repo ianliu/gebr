@@ -151,6 +151,7 @@ static void parameters_actions(GtkDialog * dialog, gint arg1, struct ui_paramete
 		gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &iter,
 				   FSEQ_GEBR_GEOXML_POINTER, ui_parameters->program_edit->program,
 				   FSEQ_ICON_COLUMN, icon,
+				   FSEQ_NEVER_OPENED, FALSE,
 				   -1);
 		flow_edition_select_component_iter(&iter);
 

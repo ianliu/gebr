@@ -462,7 +462,6 @@ void flow_edition_component_activated(void)
 		return;
 
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter, FSEQ_TITLE_COLUMN, &title, -1);
-	gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &iter, FSEQ_NEVER_OPENED, FALSE, -1);
 	gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Configuring program '%s'."), title);
 	parameters_configure_setup_ui();
 	g_free(title);
@@ -699,7 +698,7 @@ gboolean flow_edition_component_key_pressed(GtkWidget *view, GdkEventKey *key)
 	return TRUE;
 }
 
-void flow_edition_change_iter_status(guint status, GtkTreeIter *iter)
+void flow_edition_change_iter_status(GebrGeoXmlProgramStatus status, GtkTreeIter *iter)
 {
 	GtkTreePath *path;
 	GtkTreeModel *model;
@@ -725,7 +724,8 @@ void flow_edition_change_iter_status(guint status, GtkTreeIter *iter)
 	if (gebr_geoxml_program_get_status(program) == status)
 		return;
 
-	gtk_list_store_set(gebr.ui_flow_edition->fseq_store, iter, FSEQ_NEVER_OPENED, FALSE, -1);
+	gtk_list_store_set(gebr.ui_flow_edition->fseq_store, iter, FSEQ_NEVER_OPENED,
+	                   status == GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED, -1);
 
 	has_error = gebr_geoxml_program_get_error_id(program, NULL);
 

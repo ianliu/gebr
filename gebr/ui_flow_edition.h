@@ -123,7 +123,7 @@ gboolean flow_edition_component_key_pressed(GtkWidget *view, GdkEventKey *key);
  *
  * Change the flow status for @iter.
  */
-void flow_edition_change_iter_status(guint status, GtkTreeIter *iter);
+void flow_edition_change_iter_status(GebrGeoXmlProgramStatus status, GtkTreeIter *iter);
 
 /**
  * Change the flow status when select the status from the "Flow Component" menu.
