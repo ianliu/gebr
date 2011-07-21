@@ -448,7 +448,7 @@ static void job_control_on_cursor_changed(void)
 		if (is_job) {
 			get_state(job);
 			job_load_details(job);
-		} else if (selected_rows == 1) {
+		} else {
 			GtkTreeIter iter_queue = model_iter;
 			GtkTreeIter iter_child;
 			gboolean has_children = gtk_tree_model_iter_children (GTK_TREE_MODEL(gebr.ui_job_control->store), &iter_child, &iter_queue);
@@ -590,7 +590,7 @@ static GtkMenu *job_control_popup_menu(GtkWidget * widget, struct ui_job_control
 
 		iter_depth = gtk_tree_store_iter_depth(gebr.ui_job_control->store, &model_iter);
 
-		if (selected_rows == 1 && iter_depth == 0 && gtk_tree_model_iter_children (GTK_TREE_MODEL(gebr.ui_job_control->store), &iter_child, &model_iter))
+		if (iter_depth == 0 && gtk_tree_model_iter_children (GTK_TREE_MODEL(gebr.ui_job_control->store), &iter_child, &model_iter))
 		{
 			gtk_container_add(GTK_CONTAINER(menu),
 					  gtk_action_create_menu_item(
