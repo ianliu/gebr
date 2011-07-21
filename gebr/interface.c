@@ -500,11 +500,14 @@ static void assembly_menus(GtkMenuBar * menu_bar)
 
 	gtk_container_add(GTK_CONTAINER(menu),
 			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_general, "help_contents")));
-	gtk_container_add(GTK_CONTAINER(menu),
-			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_general, "help_about")));
 
 	menu_item = gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_general, "help_demos_su"));
 	gtk_container_add(GTK_CONTAINER(menu), menu_item);
+
+        gtk_container_add(GTK_CONTAINER(menu), gtk_separator_menu_item_new());
+	gtk_container_add(GTK_CONTAINER(menu),
+			  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_general, "help_about")));
+
 	GtkWidget *submenu = gtk_menu_new();
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menu_item), submenu);
 	GList *demos = NULL;
