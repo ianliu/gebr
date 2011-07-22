@@ -1280,6 +1280,7 @@ static gboolean dict_edit_validate_editing_cell(struct dict_edit_data *data, gbo
 		GError *err = NULL;
 		if (cancel_edition) {
 			if(keyword && !strlen(keyword)) {
+				data->in_edition = NULL;
 				gtk_tree_store_remove(GTK_TREE_STORE(data->tree_model), &data->editing_iter);
 				gebr_geoxml_sequence_remove(GEBR_GEOXML_SEQUENCE(parameter));
 			}
