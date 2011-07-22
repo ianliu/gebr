@@ -454,11 +454,11 @@ validate_param_and_set_icon_tooltip(struct dict_edit_data *data, GtkTreeIter *it
 			if (!error && !*vars[2]) {
 				g_set_error(&error, GEBR_IEXPR_ERROR,
 					    GEBR_IEXPR_ERROR_EMPTY_EXPR,
-					    _("Number of iterations is required"));
+					    _("\"Number of iterations\" is required"));
 				error_msg = g_strdup(error->message);
 			} else
 				/* Comment for translators: 1st %s is expression error; 2nd is variable label */
-				error_msg = g_strdup_printf(_("%s on %s"), error->message, labels[i]);
+				error_msg = g_strdup_printf(_("%s on \"%s\""), error->message, labels[i]);
 		} else
 			error_msg = g_strdup(error->message);
 
