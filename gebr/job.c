@@ -435,7 +435,6 @@ void job_status_show(GebrJob *job)
 void job_load_details(GebrJob *job)
 {
 	job_status_show(job);
-	gtk_label_set_text(GTK_LABEL(gebr.ui_job_control->label), "");
 	gtk_text_buffer_set_text(gebr.ui_job_control->text_buffer, "", 0);
 	if (job == NULL)
 		return;
