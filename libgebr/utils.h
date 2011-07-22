@@ -25,7 +25,20 @@
 
 G_BEGIN_DECLS
 
-void gebr_g_string_replace(GString * string, const gchar * oldtext, const gchar * newtext);
+/**
+ * gebr_g_string_replace:
+ * @string: The string to with the text.
+ * @oldtext: The text to be replaced.
+ * @newtext: The text to replace oldtext.
+ *
+ * Replace each reference of \p oldtext in \p string
+ * with \p newtext. If \p newtext if NULL, then each reference of oldtext found is removed.
+ */
+void
+gebr_g_string_replace(GString * string,
+		      const gchar * oldtext,
+		      const gchar * newtext);
+
 void gebr_g_string_replace_first_ref(GString * string, const gchar * oldtext, const gchar * newtext);
 gboolean gebr_g_string_starts_with(GString * string, const gchar * val);
 gboolean gebr_g_string_ends_with(GString * string, const gchar * val);

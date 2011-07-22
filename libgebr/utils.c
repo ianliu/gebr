@@ -30,23 +30,25 @@
 #include "defines.h"
 #include "utils.h"
 
-/**
- * Replace each reference of \p oldtext in \p string
- * with \p newtext. If \p newtext if NULL, then each reference of oldtext found is removed.
- */
-void gebr_g_string_replace(GString * string, const gchar * oldtext, const gchar * newtext)
+void
+gebr_g_string_replace(GString * string,
+		      const gchar * oldtext,
+		      const gchar * newtext)
 {
-	gchar *position;
-	gssize oldtext_len = strlen(oldtext);
+	g_return_if_fail(string != NULL);
+	g_return_if_fail(oldtext != NULL);
+	g_return_if_fail(newtext != NULL);
 
-	position = string->str;
-	while ((position = strstr(string->str, oldtext)) != NULL) {
-		gssize index = (position - string->str) / sizeof(gchar);
-		g_string_erase(string, index, oldtext_len);
+	if (g_strrstr(string->str, oldtext) == NULL)
+		return;
 
-		if (newtext != NULL)
-			g_string_insert(string, index, newtext);
-	}
+	gchar ** split = g_strsplit(string->str, oldtext, -1);
+
+	gchar * new_string = g_strjoinv(newtext, split);
+	string = g_string_assign(string, new_string);
+	g_free(new_string);
+	g_strfreev(split);
+
 }
 
 /**

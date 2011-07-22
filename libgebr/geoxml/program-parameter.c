@@ -818,14 +818,13 @@ gebr_geoxml_program_parameter_update_old_dict_value(GebrGeoXmlObject * param,
 
 	if (key == NULL)
 	{
+		const gchar * value = gebr_geoxml_program_parameter_get_first_value(
+				GEBR_GEOXML_PROGRAM_PARAMETER(param),
+				FALSE);
 		switch(type)
 		{
 		case GEBR_GEOXML_PARAMETER_TYPE_INT:
 		case GEBR_GEOXML_PARAMETER_TYPE_FLOAT: {
-			const gchar * value = gebr_geoxml_program_parameter_get_first_value(
-					GEBR_GEOXML_PROGRAM_PARAMETER(param),
-					FALSE);
-
 			if(g_strrstr(value, "e"))
 			{
 				GString * string = g_string_new(value);
@@ -837,6 +836,19 @@ gebr_geoxml_program_parameter_update_old_dict_value(GebrGeoXmlObject * param,
 						string->str);
 				g_string_free(string, TRUE);
 			}
+
+			break;
+		}
+		case GEBR_GEOXML_PARAMETER_TYPE_STRING:
+		case GEBR_GEOXML_PARAMETER_TYPE_FILE: {
+			GString * string = g_string_new(value);
+			gebr_g_string_replace(string, "[", "[[");
+			gebr_g_string_replace(string, "]", "]]");
+			gebr_geoxml_program_parameter_set_first_value(
+					GEBR_GEOXML_PROGRAM_PARAMETER(param),
+					FALSE,
+					string->str);
+			g_string_free(string, TRUE);
 
 			break;
 		}
