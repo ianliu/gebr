@@ -157,6 +157,11 @@ void test_gebr_str_replace(void)
 
 	g_assert_cmpstr(str->str, ==, "aeiouae o _ o");
 	g_string_free(str, TRUE);
+
+	str = g_string_new("Isso deve sair: banana");
+	gebr_g_string_replace(str, "banana", NULL);
+	g_assert_cmpstr(str->str, ==, "Isso deve sair: ");
+	g_string_free(str, TRUE);
 }
 
 int main(int argc, char *argv[])

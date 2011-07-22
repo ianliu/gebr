@@ -37,18 +37,25 @@ gebr_g_string_replace(GString * string,
 {
 	g_return_if_fail(string != NULL);
 	g_return_if_fail(oldtext != NULL);
-	g_return_if_fail(newtext != NULL);
+
+	gchar * text = NULL;
 
 	if (g_strrstr(string->str, oldtext) == NULL)
 		return;
 
+	if (newtext == NULL)
+		text = g_strdup("");
+	else
+		text = g_strdup(newtext);
+
 	gchar ** split = g_strsplit(string->str, oldtext, -1);
 
-	gchar * new_string = g_strjoinv(newtext, split);
+	gchar * new_string = g_strjoinv(text, split);
 	string = g_string_assign(string, new_string);
-	g_free(new_string);
-	g_strfreev(split);
 
+	g_free(new_string);
+	g_free(text);
+	g_strfreev(split);
 }
 
 /**

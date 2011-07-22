@@ -31,8 +31,8 @@ G_BEGIN_DECLS
  * @oldtext: The text to be replaced.
  * @newtext: The text to replace oldtext.
  *
- * Replace each reference of \p oldtext in \p string
- * with \p newtext. If \p newtext if NULL, then each reference of oldtext found is removed.
+ * Replace each reference of oldtext in string
+ * with newtext. If newtext if NULL, then each reference of oldtext found is removed.
  */
 void
 gebr_g_string_replace(GString * string,
