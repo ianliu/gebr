@@ -17,7 +17,6 @@
 
 #include <glib.h>
 #include <stdlib.h>
-#include <gebr-dirs-priv.h>
 
 #include "document.h"
 #include "flow.h"
@@ -165,7 +164,7 @@ int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
 
-	gebr_dirs_set_dtd_dir(DTD_DIR);
+	gebr_geoxml_document_set_dtd_dir(DTD_DIR);
 
 	g_test_add_func("/libgebr/geoxml/object/get_type", test_gebr_geoxml_object_get_type);
 	g_test_add_func("/libgebr/geoxml/object/get_and_set_user_data", test_gebr_geoxml_object_get_user_data);

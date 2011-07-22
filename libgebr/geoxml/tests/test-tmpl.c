@@ -17,7 +17,6 @@
 
 #include <glib.h>
 #include <gebr-geoxml-tmpl.h>
-#include <gebr-dirs-priv.h>
 
 #include "document.h"
 
@@ -78,7 +77,7 @@ int main(int argc, char *argv[])
 {
 	g_test_init (&argc, &argv, NULL);
 
-	gebr_dirs_set_dtd_dir(DTD_DIR);
+	gebr_geoxml_document_set_dtd_dir(DTD_DIR);
 
 	g_test_add_func ("/GebrGeoxml/tmpl/get", test_debr_tmpl_get);
 	g_test_add_func ("/GebrGeoxml/tmpl/set", test_debr_tmpl_set);

@@ -50,7 +50,6 @@ lib_LTLIBRARIES = libgebr.la
 libgebr_la_SOURCES = 		\
 	date.c			\
 	gebr-arith-expr.c	\
-	gebr-dirs-priv.c	\
 	gebr-expr.c		\
 	gebr-iexpr.c		\
 	gebr-string-expr.c	\

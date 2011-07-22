@@ -18,7 +18,6 @@
 #include <glib.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <gebr-dirs-priv.h>
 
 #include "flow.h"
 #include "parameters.h"
@@ -266,7 +265,7 @@ int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
 
-	gebr_dirs_set_dtd_dir(DTD_DIR);
+	gebr_geoxml_document_set_dtd_dir(DTD_DIR);
 
 	g_test_add_func("/libgebr/geoxml/parameters/append_parameter", test_gebr_geoxml_parameters_append_parameter);
 	g_test_add_func("/libgebr/geoxml/parameters/is_var_used", test_gebr_geoxml_parameters_is_var_used);
