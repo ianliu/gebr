@@ -725,7 +725,7 @@ void flow_edition_change_iter_status(GebrGeoXmlProgramStatus status, GtkTreeIter
 		return;
 
 	gtk_list_store_set(gebr.ui_flow_edition->fseq_store, iter, FSEQ_NEVER_OPENED,
-	                   status == GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED, -1);
+	                   FALSE, -1);
 
 	has_error = gebr_geoxml_program_get_error_id(program, NULL);
 
