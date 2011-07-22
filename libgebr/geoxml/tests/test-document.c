@@ -16,6 +16,7 @@
  */
 
 #include <glib.h>
+#include <gebr-dirs-priv.h>
 
 #include "document.h"
 #include "parameters.h"
@@ -484,7 +485,7 @@ int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
 
-	gebr_geoxml_document_set_dtd_dir(DTD_DIR);
+	gebr_dirs_set_dtd_dir(DTD_DIR);
 
 	g_test_add_func("/libgebr/geoxml/document/document_canonize_program_parameters", test_gebr_geoxml_document_canonize_program_parameters);
 	g_test_add_func("/libgebr/geoxml/document/merge_and_split_dicts", test_gebr_geoxml_document_merge_and_split_dicts);

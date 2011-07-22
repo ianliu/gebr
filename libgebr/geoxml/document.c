@@ -28,6 +28,7 @@
 #include <glib/gi18n-lib.h>
 #include <gdome.h>
 #include <libxml/parser.h>
+#include <gebr-dirs-priv.h>
 
 #include "defines.h"
 #if ENABLE_TIDY
@@ -91,8 +92,6 @@ static gint dom_implementation_ref_count = 0;
  * Used at GebrGeoXmlObject's methods.
  */
 GdomeDocument *clipboard_document = NULL;
-
-static const gchar *dtd_directory = GEBR_GEOXML_DTD_DIR;
 
 /**
  * \internal
@@ -226,7 +225,7 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 	/* Find the DTD spec file. If the file doesn't exists, it may mean that this document is from newer version. */
 	gchar * tagname;
 	tagname = g_strdup(gdome_el_nodeName(root_element, &exception)->str);
-	g_string_printf(dtd_filename, "%s/%s-%s.dtd", dtd_directory, tagname, version);
+	g_string_printf(dtd_filename, "%s/%s-%s.dtd", gebr_dirs_get_dtd_dir(), tagname, version);
 	if (g_file_test(dtd_filename->str, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_REGULAR) == FALSE
 	    || g_access(dtd_filename->str, R_OK) < 0) {
 		ret = GEBR_GEOXML_RETV_CANT_ACCESS_DTD;
@@ -1547,9 +1546,4 @@ gebr_geoxml_document_set_dict_keyword(GebrGeoXmlDocument *doc,
 						      FALSE, value);
 
 	return param;
-}
-
-void gebr_geoxml_document_set_dtd_dir(const gchar *path)
-{
-	dtd_directory = path;
 }

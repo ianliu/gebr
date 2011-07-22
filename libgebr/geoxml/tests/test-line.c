@@ -16,6 +16,7 @@
  */
 
 #include <glib.h>
+#include <gebr-dirs-priv.h>
 
 #include "line.h"
 #include "value_sequence.h"
@@ -166,7 +167,7 @@ int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
 
-	gebr_geoxml_document_set_dtd_dir(DTD_DIR);
+	gebr_dirs_set_dtd_dir(DTD_DIR);
 
 	g_test_add_func("/libgebr/geoxml/line/get_flow_number",test_gebr_geoxml_line_get_flows_number);
 	g_test_add_func("/libgebr/geoxml/line/get_flow",test_gebr_geoxml_line_get_flow);

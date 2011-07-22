@@ -385,11 +385,6 @@ GebrGeoXmlSequence *
 gebr_geoxml_document_get_dict_parameter(GebrGeoXmlDocument *doc);
 
 /**
- * gebr_geoxml_document_set_dtd_dir:
- */
-void gebr_geoxml_document_set_dtd_dir(const gchar *path);
-
-/**
  * gebr_geoxml_document_canonize_dict_parameters:
  * @document: Document (flow/line/project) that will have its parameters canonized.
  * @list_copy: A hash table pointer to access the keywords -> canonized list.
