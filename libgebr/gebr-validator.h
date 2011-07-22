@@ -269,6 +269,21 @@ gboolean gebr_validator_use_iter(GebrValidator *self,
 				 GebrGeoXmlParameterType type,
 				 GebrGeoXmlDocumentType scope);
 
+/**
+ * gebr_validator_validate_control_parameter:
+ * @self: @GebrValidator to validate parameter
+ * @name:
+ * @expression:
+ * @error: @GError to set if has error
+ *
+ * Return %FALSE if parameter have error, %FALSE otherwise
+ */
+gboolean
+gebr_validator_validate_control_parameter(GebrValidator *self,
+                                          const gchar *name,
+                                          const gchar *expression,
+                                          GError **error);
+
 G_END_DECLS
 
 #endif /* __GEBR_VALIDATOR_H__ */

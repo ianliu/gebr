@@ -576,7 +576,8 @@ static gboolean __on_focus_out_event(GtkWidget * widget, GdkEventFocus * event,
 static gboolean __on_focus_in_event(GtkWidget * widget, GdkEventFocus * event,
 				    struct gebr_gui_parameter_widget *parameter_widget)
 {
-	__set_type_icon(parameter_widget);
+	if (!gtk_entry_get_icon_stock(GTK_ENTRY(parameter_widget->value_widget), GTK_ENTRY_ICON_SECONDARY))
+		__set_type_icon(parameter_widget);
 	return FALSE;
 }
 

@@ -47,6 +47,10 @@ static GebrGeoXmlParameter * get_dep_param(GebrValidator *self,
                                            GebrGeoXmlDocumentType my_scope,
                                            const gchar *dep_name);
 
+static gboolean gebr_validator_validate_iter(GebrValidator *self,
+                                             GebrGeoXmlParameter *param,
+                                             GError **error);
+
 /* NodeData functions {{{1 */
 static HashData *
 hash_data_new_from_xml(GebrGeoXmlParameter *param)
@@ -625,6 +629,14 @@ gebr_validator_change_value(GebrValidator       *self,
 		return FALSE;
 	}
 
+	if (g_strcmp0(name, "iter") == 0) {
+		if (!gebr_validator_validate_iter(self, param, &err)) {
+			set_error(self, name, scope, err);
+			g_propagate_error(error, err);
+			return FALSE;
+		}
+	}
+
 	data = g_hash_table_lookup(self->vars, name);
 
 	g_return_val_if_fail(data != NULL, FALSE);
@@ -757,17 +769,19 @@ gebr_validator_validate_param(GebrValidator       *self,
 		return TRUE;
 	}
 
-	gebr_geoxml_program_parameter_get_value(GEBR_GEOXML_PROGRAM_PARAMETER(param), FALSE, &seq, 0);
-	for (; seq; gebr_geoxml_sequence_next(&seq))
-	{
-		value = gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(seq));
-		if (gebr_geoxml_program_get_control(gebr_geoxml_parameter_get_program(param)) == GEBR_GEOXML_PROGRAM_CONTROL_FOR) {
-			if (!gebr_validator_validate_expr_on_scope(self, value, type, GEBR_GEOXML_DOCUMENT_TYPE_LINE, err))
-				return FALSE;
-		} else if (!gebr_validator_validate_expr(self, value, type, err))
+	if (gebr_geoxml_program_get_control(gebr_geoxml_parameter_get_program(param)) == GEBR_GEOXML_PROGRAM_CONTROL_FOR) {
+		if (!gebr_validator_validate_control_parameter(self, GET_VAR_NAME(param), GET_VAR_VALUE(param), err))
 			return FALSE;
+		goto out;
 	}
 
+	gebr_geoxml_program_parameter_get_value(GEBR_GEOXML_PROGRAM_PARAMETER(param), FALSE, &seq, 0);
+	for (; seq; gebr_geoxml_sequence_next(&seq)) {
+		value = gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(seq));
+		if (!gebr_validator_validate_expr(self, value, type, err))
+			return FALSE;
+	}
+out:
 	if (validated)
 		*validated = g_strdup(value);
 
@@ -1084,4 +1098,68 @@ gebr_validator_set_document(GebrValidator *self,
 {
 	self->docs[type] = doc;
 	gebr_validator_update(self);
+}
+
+gboolean
+gebr_validator_validate_control_parameter(GebrValidator *self,
+                                          const gchar *name,
+                                          const gchar *expression,
+                                          GError **error)
+{
+	gchar *result;
+	int result_num;
+
+	gebr_validator_evaluate(self, expression, GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
+	                        GEBR_GEOXML_DOCUMENT_TYPE_LINE, &result, error);
+	if (*error)
+		return FALSE;
+
+	if (name && !g_strcmp0(name, "niter")) {
+		if (!strlen(expression)) {
+			g_set_error(error, GEBR_IEXPR_ERROR,
+			            GEBR_IEXPR_ERROR_EMPTY_EXPR,
+			            _("Parameter required"));
+			return FALSE;
+		}
+
+		result_num = atoi(result);
+		if (result_num <= 0 || strchr(result, '.') != NULL) {
+			g_set_error(error,
+			            GEBR_IEXPR_ERROR,
+			            GEBR_IEXPR_ERROR_SYNTAX,
+			            _("Accepts only integer positive values"));
+			return FALSE;
+		}
+	}
+	return TRUE;
+}
+static gboolean
+gebr_validator_validate_iter(GebrValidator *self,
+                             GebrGeoXmlParameter *param,
+                             GError **error)
+{
+	const gchar *labels[3] = {"Initial value", "Step", "Total number of steps"};
+	int i = 0;
+	const gchar *name = NULL;
+	GebrGeoXmlSequence *seq;
+	const gchar *value;
+
+	gebr_geoxml_program_parameter_get_value(GEBR_GEOXML_PROGRAM_PARAMETER(param), FALSE, &seq, 1);
+	for (; seq; gebr_geoxml_sequence_next(&seq)) {
+		if (i == 2)
+			name = g_strdup("niter");
+		value = gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(seq));
+		gebr_validator_validate_control_parameter(self, name, value, error);
+		if(*error)
+			break;
+		i++;
+	}
+	/* Comment for translators: 1st %s is expression error; 2nd is variable label */
+	if (*error) {
+		gchar *old_msg = (*error)->message;
+		(*error)->message = g_strdup_printf(_("%s on \"%s\""), old_msg, labels[i]);
+		g_free(old_msg);
+		return FALSE;
+	}
+	return TRUE;
 }
