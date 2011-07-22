@@ -11,12 +11,21 @@ gdktarget = x11
 # initialize variables for unconditional += appending
 # EXTRA_DIST =
 TEST_PROGS =
+INT_TEST_PROGS =
 
 ### testing rules
 
 # test: run all tests in cwd and subdirs
 test:	${TEST_PROGS}
 	@test -z "${TEST_PROGS}" || ${GTESTER} --verbose ${TEST_PROGS}
+	@ for subdir in $(SUBDIRS) . ; do \
+	    test "$$subdir" = "." -o "$$subdir" = "po" || \
+	    ( cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) $@ ) || exit $? ; \
+	  done
+
+# test: run all tests in cwd and subdirs
+int-test:	${INT_TEST_PROGS}
+	@test -z "${INT_TEST_PROGS}" || ${GTESTER} --verbose ${INT_TEST_PROGS}
 	@ for subdir in $(SUBDIRS) . ; do \
 	    test "$$subdir" = "." -o "$$subdir" = "po" || \
 	    ( cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) $@ ) || exit $? ; \
@@ -58,6 +67,7 @@ test-report perf-report full-report:	${TEST_PROGS}
 	    rm -rf "$$GTESTER_LOGDIR"/ ; \
 	    ${GTESTER_REPORT} --version 2>/dev/null 1>&2 ; test "$$?" != 0 || ${GTESTER_REPORT} $@.xml >$@.html ; \
 	  }
-.PHONY: test test-report perf-report full-report
+.PHONY: test test-report perf-report full-report int-test
 # run make test as part of make check
 check-local: test
+installcheck-local: int-test
