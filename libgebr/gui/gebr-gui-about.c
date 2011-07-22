@@ -1,5 +1,5 @@
 /*   libgebr - GeBR Library
- *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
+ *   Copyright (C) 2007-2011 GeBR core team (http://www.gebrproject.com/)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -41,25 +41,32 @@ struct about gebr_gui_about_setup_ui(const gchar * program, const gchar * descri
 		" ",
 		_("Coordinator"),
 		"  Ricardo Biloti <biloti@gebrproject.com>",
+                "  Ph.D. Applied Mathematics",
+                "  State University of Campinas, Brazil",
 		" ",
+                _("Development manager"),
+		"  Fabrício Matheus Gonçalves <fmatheus@gebrproject.com>",
+                "  B.Sc. Computer Engineering",
+                " ",
 		_("Developers"),
-		"  Alexandre Baaklini <abaaklini@gebrproject.com>",
 		"  Bráulio Oliveira <brauliobo@gebrproject.com>",
 		"  Davi Clemente <davi.clemente@gebrproject.com>",
-		"  Fábio Azevedo <fabioaz@gebrproject.com>",
-		"  Fabrício Matheus Gonçalves <fmatheus@gebrproject.com>",
-		"  Gabriel Sobral <sobral@gebrproject.com>",
 		"  Ian Liu Rodrigues <ian.liu@gebrproject.com>",
 		"  Jorge Pizzolatto <jorge.pzt@gebrproject.com>",
 		"  Priscila Moraes <pris.moraess@gebrproject.com>",
-		"  Renan Giarola <renangiarola@gebrproject.com>",
 		"  Rodrigo Morelatto <morelatto@gebrproject.com>",
 		" ",
 		_("Consultants"),
-		"  Eduardo Filpo <efilpo@gmail.com>",
-		"  Fernando Roxo <roxo@roxo.org>",
-		"  Luis Alberto D'Afonseca <luis.dafonseca@gebrproject.com>",
-		"  Rodrigo Portugal <rosoport@gmail.com>",
+		"  Eduardo Filpo, Petrobras",
+		"  Fernando Roxo, Prosismo",
+		"  Luis Alberto D'Afonseca, CGG",
+		"  Rodrigo Portugal, Schlumberger",
+                " ",
+                _("Former members"),
+		"  Alexandre Baaklini",
+		"  Fábio Azevedo",
+		"  Gabriel Sobral",
+		"  Renan William Giarola Miranda",               
 		NULL
 	};
 
@@ -77,7 +84,7 @@ struct about gebr_gui_about_setup_ui(const gchar * program, const gchar * descri
 	gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(about.dialog), _("GêBR Core Team"));
 
 	gtk_about_dialog_set_license(GTK_ABOUT_DIALOG(about.dialog),
-				     _("Copyright (C) 2007-2010 GêBR core team (http://www.gebrproject.com/)\n" "\n"
+				     _("Copyright (C) 2007-2011 GêBR core team (http://www.gebrproject.com/)\n" "\n"
 				       "This program is free software: you can redistribute it and/or modify "
 				       "it under the terms of the GNU General Public License as published by "
 				       "the Free Software Foundation, either version 3 of the License, or "
