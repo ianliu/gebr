@@ -810,9 +810,9 @@ void project_line_import(void)
 		filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser_dialog));
 		gtk_widget_destroy(chooser_dialog);
 		project_line_import_path(filename);
+		g_free(filename);
 	} else
 		gtk_widget_destroy(chooser_dialog);
-	g_free(filename);
 }
 
 void project_line_export(void)
