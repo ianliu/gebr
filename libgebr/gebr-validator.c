@@ -1017,7 +1017,6 @@ static gboolean gebr_validator_evaluate_internal(GebrValidator *self,
 	}
 
 	if (err) {
-		g_free(*value);
 		g_propagate_error(error, err);
 		return FALSE;
 	}
