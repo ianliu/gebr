@@ -1585,7 +1585,7 @@ void on_response_ok(GtkButton * button, GebrPropertiesData * data)
 	old_title = gebr_geoxml_document_get_title(data->document);
 	new_title = gtk_entry_get_text(GTK_ENTRY(data->title));
 
-	gebr_geoxml_document_set_title(data->document, new_title);
+	gebr_geoxml_document_set_title(data->document, strlen(new_title) == 0? "Untitled" : new_title);
 	gebr_geoxml_document_set_description(data->document, gtk_entry_get_text(GTK_ENTRY(data->description)));
 	gebr_geoxml_document_set_author(data->document, gtk_entry_get_text(GTK_ENTRY(data->author)));
 	gebr_geoxml_document_set_email(data->document, gtk_entry_get_text(GTK_ENTRY(data->email)));
