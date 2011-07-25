@@ -466,7 +466,7 @@ gebr_arith_expr_eval_internal(GebrArithExpr *self,
 			      GError       **err)
 {
 	gchar *line;
-	gchar *result_str = NULL;
+	GString *buffer = g_string_sized_new(70);
 	GError *error = NULL;
 
 	if (!expr || !*expr)
@@ -493,22 +493,33 @@ gebr_arith_expr_eval_internal(GebrArithExpr *self,
 		return FALSE;
 	}
 
-	if (!read_bc_line(self, &line, err))
-		return FALSE;
-
-	if (g_str_has_prefix(line, "(standard_in) ") ||
-	    g_str_has_prefix(line, "Runtime error (func")) {
-		gchar *msg;
-		msg = strchr(line, ':');
-		msg[strlen(msg) - 1] = '\0';
-		g_set_error(err,
-			    GEBR_IEXPR_ERROR,
-			    GEBR_IEXPR_ERROR_SYNTAX,
-			    _("Invalid expression%s"), msg);
-		goto exception_and_flush;
+	int results = 0;
+	while (read_bc_line(self, &line, err)) {
+		if (g_strcmp0(line, EVAL_COOKIE) == 0) {
+			g_free(line);
+			break;
+		}
+		if (g_str_has_prefix(line, "(standard_in) ") ||
+		    g_str_has_prefix(line, "Runtime error (func")) {
+			gchar *msg;
+			msg = strchr(line, ':');
+			msg[strlen(msg) - 1] = '\0';
+			g_set_error(err,
+				    GEBR_IEXPR_ERROR,
+				    GEBR_IEXPR_ERROR_SYNTAX,
+				    _("Invalid expression%s"), msg);
+			goto exception_and_flush;
+		}
+		int length = strlen(line);
+		if (line[length - 2] == '\\')
+			length -= 2;
+		else
+			results++;
+		g_string_append_len(buffer, line, length);
+		g_free(line);
 	}
 
-	if (g_strcmp0(line, EVAL_COOKIE) == 0) {
+	if (results == 0) {
 		g_set_error(err,
 			    GEBR_IEXPR_ERROR,
 			    GEBR_IEXPR_ERROR_SYNTAX,
@@ -516,33 +527,18 @@ gebr_arith_expr_eval_internal(GebrArithExpr *self,
 		goto exception;
 	}
 
-	result_str = line;
-
-	if (!read_bc_line(self, &line, err)) {
-		line = result_str;
-		goto exception;
-	}
-
-	if (g_strcmp0(line, EVAL_COOKIE) == 0) {
-		result_str[strlen(result_str) - 1] = '\0';
-		*result = result_str;
-		g_free(line);
-		return TRUE;
-	}
-
-	if (result_str[strlen(result_str) - 2] == '\\') {
-		g_set_error(err,
-			    GEBR_IEXPR_ERROR,
-			    GEBR_IEXPR_ERROR_SYNTAX,
-			    _("Expression result is too big"));
-	} else {
+	if (results > 1) {
 		g_set_error(err,
 		            GEBR_IEXPR_ERROR,
 		            GEBR_IEXPR_ERROR_SYNTAX,
 		            _("Expression returned multiple results"));
+		goto exception;
 	}
 
-	g_free(result_str);
+	g_string_set_size(buffer, buffer->len - 1);
+	*result = buffer->str;
+	g_string_free(buffer, FALSE);
+	return TRUE;
 
 exception_and_flush:
 
@@ -550,10 +546,11 @@ exception_and_flush:
 		g_free(line);
 		read_bc_line(self, &line, NULL);
 	} while (g_strcmp0(line, EVAL_COOKIE) != 0);
+	g_free(line);
 
 exception:
 
-	g_free(line);
+	g_string_free(buffer, TRUE);
 	return FALSE;
 }
 
