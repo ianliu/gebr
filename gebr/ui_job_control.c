@@ -647,6 +647,10 @@ static void job_control_queue_by_func(gboolean (* func)(void))
 	 *  - It is selected, or
 	 *  - Its parent is selected
 	 */
+
+	if (!rows)
+		return;
+
 	for (GList *i = rows; i; i = i->next) {
 		GtkTreePath *path = i->data;
 		if (gtk_tree_path_get_depth(path) == 1) {
