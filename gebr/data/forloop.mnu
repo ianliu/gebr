@@ -2,7 +2,76 @@
 <flow version="0.3.7">
   <title>Loop</title>
   <description>Executes a flow multiple times</description>
-  <help />
+  <help>
+    <![CDATA[<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="content-type" content=
+  "text/html; charset=utf-8" />
+  <link rel="stylesheet" type="text/css" href="gebr.css" />
+  <title>
+    <!-- begin ttl -->Loop<!-- end ttl -->
+  </title>
+</head>
+
+<body>
+  <div class="outer-container">
+    <div class="inner-container">
+      <div class="header">
+        <div class="title">
+          <span class="flowtitle">
+            <!-- begin tt2 -->Loop<!-- end tt2 -->
+          </span>
+          <div class="description">
+            <!-- begin des -->Executes a flow multiple times<!-- end des -->
+          </div>
+        </div>
+      </div>
+
+      <div class="category">
+        <!-- begin cat -->Loops<!-- end cat -->
+      </div>
+
+      <div class="main">
+        <div class="content">
+          <!-- begin cnt --><h2 id="intro">
+        Introduction</h2>
+<p>
+        Executes a flow multiple times.</p>
+<h2 id="credits">
+        Credits</h2>
+<!-- begin cpy --><p>
+        Jul 25, 2011: written by G&ecirc;BR Team &lt;biloti@gebrproject.com&gt;</p>
+<!-- end cpy --><!-- end cnt -->
+        </div>
+
+        <div class="navigation">
+          <h2>Index</h2>
+
+          <ul>
+            <li><a href="#intro">Introduction</a></li>
+
+            <li><a href="#credits">Credits</a></li>
+          </ul>
+        </div>
+
+        <div class="clearer"></div>
+      </div>
+
+      <div class="footer">
+        <span class="left">G&ecirc;BR 0.13.9 (<!-- begin dtd -->0.3.7<!-- end dtd -->) |
+                <!-- begin ver -->Jul 25, 2011<!-- end ver --></span>
+
+        <div class="clearer"></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+]]>
+</help>
   <author>GêBR Team</author>
   <email>biloti@gebrproject.com</email>
   <dict>
@@ -10,7 +79,7 @@
   </dict>
   <date>
     <created>2011-03-15T11:43:48.395481Z</created>
-    <modified>2011-04-27T17:12:52.391153Z</modified>
+    <modified>2011-07-25T15:57:08.231948Z</modified>
     <lastrun />
   </date>
   <category>Loops</category>
@@ -22,13 +91,118 @@
     </io>
     <lastrun />
   </server>
-  <program stdin="no" stdout="no" stderr="no" status="unconfigured"
-  mpi="" version="0.1" control="for">
+  <program stdin="no" stdout="no" stderr="no" status="unconfigured" mpi="" version="GêBR Loop 1.0" control="for">
     <title>Loop</title>
     <binary />
     <description>Executes a flow multiple times</description>
-    <help />
-    <url>http://gebrproject.com</url>
+    <help>
+      <![CDATA[<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="content-type" content=
+  "text/html; charset=utf-8" />
+  <link rel="stylesheet" type="text/css" href="gebr.css" />
+  <title>
+    <!-- begin ttl -->Loop<!-- end ttl -->
+  </title>
+</head>
+
+<body>
+  <div class="outer-container">
+    <div class="inner-container">
+      <div class="header">
+        <div class="title">
+          <span class="flowtitle">
+            <!-- begin tt2 -->Loop<!-- end tt2 -->
+          </span>
+          <div class="description">
+            <!-- begin des -->Executes a flow multiple times<!-- end des -->
+          </div>
+        </div>
+      </div>
+
+      <div class="category">
+        <!-- begin cat -->Loops<!-- end cat -->
+      </div>
+
+      <div class="main">
+        <div class="content">
+          <!-- begin cnt --><h2 id="intro">
+        Introduction</h2>
+<p>
+        Executes a flow multiple times.<br />
+        This program has&nbsp;a&nbsp;special treatment,&nbsp;different from all&nbsp;others in the&nbsp;G&ecirc;BR.&nbsp;<br />
+        You can have only one Loop menu on each flow, and when insert the program on flow, automatically creates a variable on dictionary, named &quot;iter&quot;.</p>
+<!-- begin par --><div class="parameters">
+        <h2 id="par">
+                Parameters</h2>
+<!-- begin lst -->      <ul>
+                <li>
+                        <span class="label">Initial value</span><br />
+                        The initial value&nbsp;which the&nbsp;loop&nbsp;will start.</li>
+                <li>
+                        <span class="label">Step</span><br />
+                        The step&nbsp;of each iteration.</li>
+                <li>
+                        <span class="reqlabel">Total number of steps</span><br />
+                        This value must be&nbsp;positive integer.</li>
+        </ul>
+<!-- end lst --></div>
+<!-- end par --><h2 id="details">
+        Description</h2>
+<p>
+        The variable &quot;iter&quot; can be used only on flow&#39;s variables, and in other programs. This&nbsp;is calculated on each iteration of loop, and uses the follow expression to do that:</p>
+<ul>
+        <li>
+                (<strong>Initial value</strong>) + (<strong>Step</strong>) * (<strong>Total number of steps</strong> - 1).</li>
+</ul>
+<p>
+        All parameters accepts expressions using variables defined on Project or Line.</p>
+<h2 id="credits">
+        Credits</h2>
+<p>
+        G&ecirc;BR Team.</p>
+<!-- begin cpy --><!-- end cpy --><!-- end cnt -->
+        </div>
+
+        <div class="navigation">
+          <h2>Index</h2>
+
+          <ul>
+            <li><a href="#intro">Introduction</a></li>
+
+            <!-- begin mpr -->
+            <li><a href="#par">Parameters</a></li>
+            <!-- end mpr -->
+
+            <li><a href="#details">Description</a></li>
+
+            <li><a href="#notes">Notes</a></li>
+
+            <li><a href="#ref">References</a></li>
+
+            <li><a href="#credits">Credits</a></li>
+          </ul>
+        </div>
+
+        <div class="clearer"></div>
+      </div>
+
+      <div class="footer">
+        <span class="left">G&ecirc;BR 0.13.9 (<!-- begin dtd -->0.3.7<!-- end dtd -->) |
+                <!-- begin ver -->GêBR Loop 1.0<!-- end ver --></span>
+
+        <div class="clearer"></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+]]>
+</help>
+    <url>http://www.gebrproject.com</url>
     <parameters default-selection="0">
       <parameter>
         <label>Initial value</label>
@@ -41,7 +215,7 @@
         </float>
       </parameter>
       <parameter>
-        <label>Step of iterations</label>
+        <label>Step</label>
         <float min="">
           <property required="no">
             <keyword>step</keyword>
@@ -51,12 +225,12 @@
         </float>
       </parameter>
       <parameter>
-        <label>Number of iterations</label>
+        <label>Total number of steps</label>
         <int min="1">
           <property required="yes">
             <keyword>niter</keyword>
             <value />
-            <default></default>
+            <default />
           </property>
         </int>
       </parameter>
