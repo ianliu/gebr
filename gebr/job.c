@@ -226,6 +226,7 @@ void job_free(GebrJob *job)
 				valid = gtk_tree_model_iter_next(model, &queue_iter);
 				g_free(queue_id);
 			}
+			gtk_combo_box_set_active(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox), 0);
 		}
 	}
 	g_free(i_name);
@@ -562,14 +563,19 @@ void job_status_update(GebrJob *job, enum JobStatus status, const gchar *paramet
 		/* We suppose the requeue always happen to a true queue */
 		if (job->parent.status == JOB_STATUS_RUNNING) {
 			const gchar *queue_title = job->server->type == GEBR_COMM_SERVER_TYPE_REGULAR 
-				? job->parent.queue_id->str+1 /* jump q identifier */ : job->parent.queue_id->str;
-			GString *string = g_string_new(NULL);
-			g_string_printf(string, _("After '%s' at '%s'"), job->parent.title->str, queue_title);
-			gtk_list_store_set(job->server->queues_model, &queue_iter, 
-					   SERVER_QUEUE_TITLE, string->str,
-					   SERVER_QUEUE_ID, job->parent.queue_id->str, 
-					   SERVER_QUEUE_LAST_RUNNING_JOB, job, -1);
-			g_string_free(string, TRUE);
+						   ? job->parent.queue_id->str+1 /* jump q identifier */ : job->parent.queue_id->str;
+			if (job->parent.queue_id->str[0] != 'q') {
+				GString *string = g_string_new(NULL);
+				g_string_printf(string, _("After '%s' at '%s'"), job->parent.title->str, queue_title);
+				gtk_list_store_set(job->server->queues_model, &queue_iter,
+				                   SERVER_QUEUE_TITLE, string->str,
+				                   SERVER_QUEUE_ID, job->parent.queue_id->str,
+				                   SERVER_QUEUE_LAST_RUNNING_JOB, job, -1);
+				g_string_free(string, TRUE);
+			} else {
+				gtk_list_store_remove(job->server->queues_model, &queue_iter);
+				gtk_combo_box_set_active(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox), 0);
+			}
 		}
 
 		if (was_selected)
@@ -624,7 +630,8 @@ void job_status_update(GebrJob *job, enum JobStatus status, const gchar *paramet
 		} else {
 			const gchar *queue_title = job->server->type == GEBR_COMM_SERVER_TYPE_REGULAR 
 				? job->parent.queue_id->str+1 /* jump q identifier */ : job->parent.queue_id->str;
-			g_string_printf(string, _("After '%s' at '%s'"), job->parent.title->str, queue_title);
+			if (job->parent.queue_id->str[0] != 'q')
+				g_string_printf(string, _("After '%s' at '%s'"), job->parent.title->str, queue_title);
 		}
 		if (!queue_exists)
 			gtk_list_store_append(job->server->queues_model, &queue_iter);
