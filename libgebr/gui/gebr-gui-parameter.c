@@ -576,7 +576,13 @@ static gboolean __on_focus_out_event(GtkWidget * widget, GdkEventFocus * event,
 static gboolean __on_focus_in_event(GtkWidget * widget, GdkEventFocus * event,
 				    struct gebr_gui_parameter_widget *parameter_widget)
 {
-	if (!gtk_entry_get_icon_stock(GTK_ENTRY(parameter_widget->value_widget), GTK_ENTRY_ICON_SECONDARY))
+	GtkEntry *entry;
+	if (GEBR_GUI_IS_FILE_ENTRY(parameter_widget->value_widget)) {
+		entry = GTK_ENTRY(GEBR_GUI_FILE_ENTRY(parameter_widget->value_widget)->entry);
+	} else {
+		entry = GTK_ENTRY(parameter_widget->value_widget);
+	}
+	if (!gtk_entry_get_icon_stock(entry, GTK_ENTRY_ICON_SECONDARY))
 		__set_type_icon(parameter_widget);
 	return FALSE;
 }
