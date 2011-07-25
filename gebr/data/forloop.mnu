@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<flow version="0.3.7">
+  <title>Loop</title>
+  <description>Executes a flow multiple times</description>
+  <help />
+  <author>GêBR Team</author>
+  <email>biloti@gebrproject.com</email>
+  <dict>
+    <parameters default-selection="0" />
+  </dict>
+  <date>
+    <created>2011-03-15T11:43:48.395481Z</created>
+    <modified>2011-04-27T17:12:52.391153Z</modified>
+    <lastrun />
+  </date>
+  <category>Loops</category>
+  <server address="">
+    <io>
+      <input />
+      <output />
+      <error />
+    </io>
+    <lastrun />
+  </server>
+  <program stdin="no" stdout="no" stderr="no" status="unconfigured"
+  mpi="" version="0.1" control="for">
+    <title>Loop</title>
+    <binary />
+    <description>Executes a flow multiple times</description>
+    <help />
+    <url>http://gebrproject.com</url>
+    <parameters default-selection="0">
+      <parameter>
+        <label>Initial value</label>
+        <float min="">
+          <property required="no">
+            <keyword>ini_value</keyword>
+            <value />
+            <default>1</default>
+          </property>
+        </float>
+      </parameter>
+      <parameter>
+        <label>Step of iterations</label>
+        <float min="">
+          <property required="no">
+            <keyword>step</keyword>
+            <value />
+            <default>1</default>
+          </property>
+        </float>
+      </parameter>
+      <parameter>
+        <label>Number of iterations</label>
+        <int min="1">
+          <property required="yes">
+            <keyword>niter</keyword>
+            <value />
+            <default></default>
+          </property>
+        </int>
+      </parameter>
+    </parameters>
+  </program>
+</flow>
