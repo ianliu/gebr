@@ -544,9 +544,19 @@ static void __set_type_icon(GebrGuiParameterWidget *parameter_widget)
 		goto free;
 	}
 
-	if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_INT)
+	const gchar *inc;
+	gboolean range_param_int = FALSE;
+	gboolean range_param_real = FALSE;
+	if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_RANGE) {
+		gebr_geoxml_program_parameter_get_range_properties(parameter_widget->program_parameter, NULL, NULL, &inc, NULL);
+		if (strchr(inc, '.'))
+			range_param_real = TRUE;
+		else
+			range_param_int = TRUE;
+	}
+	if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_INT || range_param_int)
 		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, "integer-icon");
-	else if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT)
+	else if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT || range_param_real)
 		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, "real-icon");
 	else if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_STRING)
 		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, "string-icon");
@@ -1294,7 +1304,7 @@ static gint on_spin_button_input(GtkSpinButton *spin,
 	const gchar *text = gtk_entry_get_text(GTK_ENTRY(spin));
 
 	g_ascii_strtod(text, &err);
-	if (*err || !*text) {
+	if (*err) {
 		*rval = 0;
 		gtk_spin_button_set_range(spin, 1, 0);
 		return TRUE;
@@ -1303,6 +1313,10 @@ static gint on_spin_button_input(GtkSpinButton *spin,
 		gebr_geoxml_program_parameter_get_number_min_max(widget->program_parameter,
 								 &min, &max);
 		gtk_spin_button_set_range(spin, g_ascii_strtod(min, NULL), g_ascii_strtod(max, NULL));
+		if (!*text) {
+			gtk_entry_set_text(GTK_ENTRY(spin), min);
+			return TRUE;
+		}
 		return FALSE;
 	}
 }
