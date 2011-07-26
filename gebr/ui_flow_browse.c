@@ -38,8 +38,6 @@
 
 static void flow_browse_load(void);
 
-static void change_selection_update_validator(void);
-
 static void flow_browse_on_row_activated(GtkTreeView * tree_view, GtkTreePath * path,
 					 GtkTreeViewColumn * column, GebrUiFlowBrowse *ui_flow_browse);
 static GtkMenu *flow_browse_popup_menu(GtkWidget * widget, GebrUiFlowBrowse *ui_flow_browse);
@@ -104,8 +102,6 @@ GebrUiFlowBrowse *flow_browse_setup_ui(GtkWidget * revisions_menu)
 			 ui_flow_browse);
 	g_signal_connect(gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_flow_browse->view)), "changed",
 			 G_CALLBACK(flow_browse_load), NULL);
-	g_signal_connect(gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_flow_browse->view)), "changed",
-			 G_CALLBACK(change_selection_update_validator), NULL);
 
 	renderer = gtk_cell_renderer_text_new();
 	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
@@ -438,7 +434,7 @@ void flow_browse_load_revision(GebrGeoXmlRevision * revision, gboolean new)
 
 /**
  * \internal
- * Load a selected flow from file when selected in "Flow Browse".
+ * Load a selected flow from file when selected in "Flow Browser".
  */
 static void flow_browse_load(void)
 {
@@ -465,6 +461,9 @@ static void flow_browse_load(void)
 			   FB_XMLPOINTER, &gebr.flow,
 			   -1);
 
+	if (gebr.validator)
+		gebr_validator_update(gebr.validator);
+
 	/* free previous flow and load it */
 	gtk_widget_set_sensitive(gebr.ui_flow_edition->queue_combobox, TRUE);
 	gtk_widget_set_sensitive(gebr.ui_flow_edition->server_combobox, TRUE);
@@ -487,12 +486,6 @@ static void flow_browse_load(void)
 
 	g_free(filename);
 	g_free(title);
-}
-
-static void change_selection_update_validator(void)
-{
-	if (gebr.validator)
-		gebr_validator_update(gebr.validator);
 }
 
 /**

@@ -572,8 +572,6 @@ static void flow_edition_component_editing_started(GtkCellRenderer *renderer, Gt
 
 	g_signal_connect(entry, "icon-release", G_CALLBACK(open_activated), NULL);
 	g_signal_connect(entry, "populate-popup", G_CALLBACK(populate_io_popup), NULL);
-
-	flow_edition_set_io();
 }
 
 static void flow_edition_component_editing_canceled(GtkCellRenderer *renderer, gpointer user_data)
