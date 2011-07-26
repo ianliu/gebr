@@ -202,6 +202,28 @@ void gebr_validator_free(GebrValidator *validator);
  * @expr: The expression to be evaluated
  * @type: The type of expression (GEBR_GEOXML_PARAMETER_TYPE_STRING | GEBR_GEOXML_PARAMETER_TYPE_FLOAT)
  * @scope: Scope to evaluate expression
+ * @show_interval: %TRUE if want to evaluate a interval ([1, ..., 10]), %FALSE otherwise
+ * @value: Returns the value of the expression.
+ * @error: Returns the error, if any.
+ *
+ * Calculate the value of @expr and return it at @value.
+ *
+ * Returns: %TRUE if @expr could be evaluated. %FALSE otherwise.
+ */
+gboolean gebr_validator_evaluate_interval(GebrValidator *self,
+                                          const gchar *expr,
+                                          GebrGeoXmlParameterType type,
+                                          GebrGeoXmlDocumentType scope,
+                                          gboolean show_interval,
+                                          gchar **value,
+                                          GError **error);
+
+/**
+ * gebr_validator_evaluate_param:
+ * @validator: The #GebrValidator to be used
+ * @expr: The expression to be evaluated
+ * @type: The type of expression (GEBR_GEOXML_PARAMETER_TYPE_STRING | GEBR_GEOXML_PARAMETER_TYPE_FLOAT)
+ * @scope: Scope to evaluate expression
  * @value: Returns the value of the expression.
  * @error: Returns the error, if any.
  *
@@ -210,11 +232,11 @@ void gebr_validator_free(GebrValidator *validator);
  * Returns: %TRUE if @expr could be evaluated. %FALSE otherwise.
  */
 gboolean gebr_validator_evaluate(GebrValidator *self,
-                                       const gchar * expr,
-                                       GebrGeoXmlParameterType type,
-                                       GebrGeoXmlDocumentType scope,
-                                       gchar **value,
-                                       GError **error);
+                                 const gchar * expr,
+                                 GebrGeoXmlParameterType type,
+                                 GebrGeoXmlDocumentType scope,
+                                 gchar **value,
+                                 GError **error);
 /**
  * gebr_validator_evaluate_param:
  * @validator: The #GebrValidator to be used

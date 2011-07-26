@@ -977,6 +977,7 @@ static gboolean gebr_validator_evaluate_internal(GebrValidator *self,
                                                  GebrGeoXmlParameterType type,
                                                  gchar **value,
                                                  GebrGeoXmlDocumentType scope,
+                                                 gboolean show_interval,
                                                  GError **error)
 {
 	gchar *translated;
@@ -992,7 +993,7 @@ static gboolean gebr_validator_evaluate_internal(GebrValidator *self,
 	g_return_val_if_fail(value != NULL, FALSE);
 
 	gboolean is_math = get_validator_by_type(self, type) == GEBR_IEXPR(self->arith_expr);
-	gboolean use_iter = gebr_validator_use_iter(self, expr, type, scope);
+	gboolean use_iter = show_interval && gebr_validator_use_iter(self, expr, type, scope);
 
 	if (!is_math) {
 		translate_string_expr(self, expr, NULL, scope, &translated, NULL, NULL);
@@ -1024,12 +1025,13 @@ static gboolean gebr_validator_evaluate_internal(GebrValidator *self,
 	return TRUE;
 }
 
-gboolean gebr_validator_evaluate(GebrValidator *self,
-                                 const gchar *expr,
-                                 GebrGeoXmlParameterType type,
-                                 GebrGeoXmlDocumentType scope,
-                                 gchar **value,
-                                 GError **error)
+gboolean gebr_validator_evaluate_interval(GebrValidator *self,
+                                          const gchar *expr,
+                                          GebrGeoXmlParameterType type,
+                                          GebrGeoXmlDocumentType scope,
+                                          gboolean show_interval,
+                                          gchar **value,
+                                          GError **error)
 {
 	g_return_val_if_fail(expr != NULL, FALSE);
 
@@ -1043,7 +1045,17 @@ gboolean gebr_validator_evaluate(GebrValidator *self,
 
 	gebr_validator_update_vars(self, scope);
 
-	return gebr_validator_evaluate_internal(self, NULL, expr, type, value, scope, error);
+	return gebr_validator_evaluate_internal(self, NULL, expr, type, value, scope, show_interval, error);
+}
+
+gboolean gebr_validator_evaluate(GebrValidator *self,
+                                 const gchar *expr,
+                                 GebrGeoXmlParameterType type,
+                                 GebrGeoXmlDocumentType scope,
+                                 gchar **value,
+                                 GError **error)
+{
+	return gebr_validator_evaluate_interval(self, expr, type, scope, TRUE, value, error);
 }
 
 gboolean gebr_validator_evaluate_param(GebrValidator *self,
@@ -1071,7 +1083,7 @@ gboolean gebr_validator_evaluate_param(GebrValidator *self,
 	if (get_validator_by_type(self, type) == GEBR_IEXPR(self->arith_expr))
 		expr = name;
 
-	return gebr_validator_evaluate_internal(self, name, expr, type, value, scope, error);
+	return gebr_validator_evaluate_internal(self, name, expr, type, value, scope, TRUE, error);
 }
 
 gboolean
