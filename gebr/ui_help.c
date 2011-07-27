@@ -199,10 +199,8 @@ static void on_help_edit_window_destroy(GtkWidget * widget, gpointer document)
 
 static gboolean on_close_window(GtkWidget *widget, GdkEventFocus *event)
 {
-	if (gebr.current_report.report_wind == widget) {
-		gebr.current_report.report_wind = NULL;
-		gebr.current_report.report_group = NULL;
-	}
+	gebr.current_report.report_wind = NULL;
+	gebr.current_report.report_group = NULL;
 	return FALSE;
 }
 
@@ -407,7 +405,7 @@ void gebr_help_show(GebrGeoXmlObject *object, gboolean menu)
 		GebrGuiHtmlViewerWindow *html_window;
 
 		gtk_window_set_modal (GTK_WINDOW (window), FALSE);
-		g_signal_connect (window, "destroy-event", G_CALLBACK (on_close_window), NULL);
+		g_signal_connect(window, "destroy", G_CALLBACK(on_close_window), NULL);
 
 		html_window = GEBR_GUI_HTML_VIEWER_WINDOW (window);
 		manager = gebr_gui_html_viewer_window_get_ui_manager (html_window);
