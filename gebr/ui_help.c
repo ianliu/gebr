@@ -197,6 +197,24 @@ static void on_help_edit_window_destroy(GtkWidget * widget, gpointer document)
 	g_hash_table_remove(gebr.help_edit_windows, document);
 }
 
+static gboolean on_close_window(GtkWidget *widget, GdkEventFocus *event)
+{
+	if (gebr.current_report.report_wind == widget) {
+		gebr.current_report.report_wind = NULL;
+		gebr.current_report.report_group = NULL;
+	}
+	return FALSE;
+}
+
+static gboolean on_focus_in(GtkWidget *widget, GdkEventFocus *event, GtkActionGroup *group)
+{
+	GtkAction *action = gtk_action_group_get_action(group, "OptionsMenu");
+	if (gtk_action_is_sensitive(action))
+		gtk_action_set_sensitive(action, FALSE);
+
+	return FALSE;
+}
+
 static void on_title_ready(GebrGuiHelpEditWidget * widget, const gchar * title, GtkWindow * window)
 {
 	GString * final_title;
@@ -388,6 +406,9 @@ void gebr_help_show(GebrGeoXmlObject *object, gboolean menu)
 		GtkAction *action;
 		GebrGuiHtmlViewerWindow *html_window;
 
+		gtk_window_set_modal (GTK_WINDOW (window), FALSE);
+		g_signal_connect (window, "destroy-event", G_CALLBACK (on_close_window), NULL);
+
 		html_window = GEBR_GUI_HTML_VIEWER_WINDOW (window);
 		manager = gebr_gui_html_viewer_window_get_ui_manager (html_window);
 		group = gtk_action_group_new ("HtmlViewerGroup");
@@ -402,6 +423,14 @@ void gebr_help_show(GebrGeoXmlObject *object, gboolean menu)
 		gtk_action_group_add_radio_actions (group, html_viewer_radio_entries,
 						    n_html_viewer_radio_entries,
 						    0, G_CALLBACK (on_ptbl_changed), window);
+
+		if (gebr.current_report.report_wind) {
+			GtkWidget *old_window = gebr.current_report.report_wind;
+			GtkActionGroup *old_group = gebr.current_report.report_group;
+			g_signal_connect(GTK_WINDOW(old_window), "focus-in-event", G_CALLBACK(on_focus_in), old_group);
+		}
+		gebr.current_report.report_wind = window;
+		gebr.current_report.report_group = group;
 
 		gint i = 1;
 		GtkRadioAction *radio_action;

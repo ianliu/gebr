@@ -74,6 +74,9 @@ void gebr_init(void)
 	gebr.program = NULL;
 	gebr.flow_clipboard = NULL;
 
+	gebr.current_report.report_wind = NULL;
+	gebr.current_report.report_group = NULL;
+
 	/* check/create config dir */
 	if (gebr_create_config_dirs() == FALSE) {
 		fprintf(stderr, _("Unable to create GêBR configuration files.\n"

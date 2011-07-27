@@ -77,6 +77,11 @@ struct gebr {
 	GtkActionGroup *action_group_status;
 	GtkActionGroup *action_group_server;
 
+	struct gebr_report {
+		GtkWidget *report_wind;
+		GtkActionGroup *report_group;
+	} current_report;
+
 	/** \deprecated This should be avoided. Use Stock icons instead. */
 	GtkWidget *invisible;			
 
