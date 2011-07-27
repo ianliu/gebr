@@ -157,10 +157,16 @@ static void parameters_actions(GtkDialog * dialog, gint arg1, struct ui_paramete
 
 		GebrGeoXmlProgram *program = ui_parameters->program_edit->program;
 		if (gebr_geoxml_program_get_control(program) == GEBR_GEOXML_PROGRAM_CONTROL_FOR) {
-			gebr_geoxml_flow_update_iter_dict_value(gebr.flow);
-			GebrGeoXmlProgramParameter *dict_iter = GEBR_GEOXML_PROGRAM_PARAMETER(gebr_geoxml_document_get_dict_parameter(GEBR_GEOXML_DOCUMENT(gebr.flow)));
-			const gchar *value = gebr_geoxml_program_parameter_get_first_value(dict_iter, FALSE);
-			gebr_validator_change_value(gebr.validator, GEBR_GEOXML_PARAMETER(dict_iter), value, NULL, NULL);
+			if (gebr_geoxml_program_get_status(program) == GEBR_GEOXML_PROGRAM_STATUS_DISABLED) {
+				gebr_geoxml_flow_insert_iter_dict(gebr.flow);
+				GebrGeoXmlSequence *parameter = gebr_geoxml_document_get_dict_parameter(GEBR_GEOXML_DOCUMENT(gebr.flow));
+				gebr_validator_insert(gebr.validator, GEBR_GEOXML_PARAMETER(parameter), NULL, NULL);
+			} else {
+				gebr_geoxml_flow_update_iter_dict_value(gebr.flow);
+				GebrGeoXmlProgramParameter *dict_iter = GEBR_GEOXML_PROGRAM_PARAMETER(gebr_geoxml_document_get_dict_parameter(GEBR_GEOXML_DOCUMENT(gebr.flow)));
+				const gchar *value = gebr_geoxml_program_parameter_get_first_value(dict_iter, FALSE);
+				gebr_validator_change_value(gebr.validator, GEBR_GEOXML_PARAMETER(dict_iter), value, NULL, NULL);
+			}
 		}
 
 		if (validate_selected_program(NULL))
