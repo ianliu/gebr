@@ -1266,6 +1266,11 @@ setup_entry_completion(GtkEntry *entry,
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(comp), cell, TRUE);
 	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(comp), cell, "text", 0);
 
+	cell = gtk_cell_renderer_text_new();
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(comp), cell, TRUE);
+	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(comp), cell, "text", 2);
+	gtk_cell_renderer_set_sensitive(cell, FALSE);
+
 	gtk_entry_set_completion(entry, comp);
 	g_object_unref(comp);
 }
@@ -1535,12 +1540,14 @@ GtkTreeModel *gebr_gui_parameter_get_completion_model(GebrGeoXmlDocument *flow,
 {
 	const gchar *keyword;
 	const gchar *icon;
+	const gchar *result, *value;
 	GList *compatible;
 	GtkTreeIter iter;
 	GtkListStore *store;
 	GebrGeoXmlProgramParameter *ppar;
 
-	store = gtk_list_store_new(2,
+	store = gtk_list_store_new(3,
+				   G_TYPE_STRING,
 				   G_TYPE_STRING,
 				   G_TYPE_STRING);
 	compatible = get_compatible_variables(type, flow, line, proj);
@@ -1548,6 +1555,8 @@ GtkTreeModel *gebr_gui_parameter_get_completion_model(GebrGeoXmlDocument *flow,
 	for (GList *i = compatible; i; i = i->next) {
 		ppar = i->data;
 		keyword = gebr_geoxml_program_parameter_get_keyword(ppar);
+		value = gebr_geoxml_program_parameter_get_first_value(ppar, FALSE);
+		result = g_strdup_printf("= %s", value);
 		switch(gebr_geoxml_parameter_get_type(i->data)) {
 		case GEBR_GEOXML_PARAMETER_TYPE_STRING: icon = "string-icon"; break;
 		case GEBR_GEOXML_PARAMETER_TYPE_FLOAT: icon = "real-icon"; break;
@@ -1555,7 +1564,7 @@ GtkTreeModel *gebr_gui_parameter_get_completion_model(GebrGeoXmlDocument *flow,
 		default: icon = NULL; break;
 		}
 		gtk_list_store_append(store, &iter);
-		gtk_list_store_set(store, &iter, 0, keyword, 1, icon, -1);
+		gtk_list_store_set(store, &iter, 0, keyword, 1, icon, 2, result, -1);
 	}
 
 	g_list_free(compatible);
