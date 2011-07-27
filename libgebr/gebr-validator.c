@@ -668,6 +668,7 @@ gebr_validator_move(GebrValidator         *self,
 {
 	const gchar *name;
 	const gchar *value;
+	const gchar *comment;
 	HashData *data;
 	GebrGeoXmlParameter *new_param;
 	GebrGeoXmlParameterType type;
@@ -678,6 +679,7 @@ gebr_validator_move(GebrValidator         *self,
 
 	g_return_val_if_fail(data != NULL, FALSE);
 
+	comment = gebr_geoxml_parameter_get_label(source);
 	value = GET_VAR_VALUE(source);
 	t1 = gebr_geoxml_parameter_get_scope(source);
 	t2 = pivot_scope;
@@ -698,6 +700,7 @@ gebr_validator_move(GebrValidator         *self,
 			GebrGeoXmlDocument *doc;
 			doc = *self->docs[pivot_scope];
 			new_param = gebr_geoxml_document_set_dict_keyword(doc, type, name, value);
+			gebr_geoxml_parameter_set_label(new_param, comment);
 			gebr_validator_insert(self, new_param, NULL, &err1);
 		}
 	} else
