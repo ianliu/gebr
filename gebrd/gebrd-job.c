@@ -464,25 +464,11 @@ void job_status_notify(GebrdJob *job, enum JobStatus status, const gchar *_param
 void job_run_flow(GebrdJob *job)
 {
 	GString *cmd_line;
-	guint issue_number = 0;
 
 	/* initialization */
 	cmd_line = g_string_new(NULL);
 
 	if (job->critical_error == TRUE)
-		goto err;
-
-	/* Check if there is configured programs */
-	GebrGeoXmlSequence *program;
-	gebr_geoxml_flow_get_program(job->flow, &program, 0);
-	while (program != NULL &&
-	       gebr_geoxml_program_get_status(GEBR_GEOXML_PROGRAM(program)) != GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED) {
-		job_issue(job, _("%u) Skipping disabled/not configured program '%s'.\n"),
-			  ++issue_number, gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(program)));
-
-		gebr_geoxml_sequence_next(&program);
-	}
-	if (program == NULL)
 		goto err;
 
 	/*
@@ -568,6 +554,8 @@ void job_run_flow(GebrdJob *job)
 		/* pool for moab status */
 		g_timeout_add(1000, (GSourceFunc)job_moab_checkjob_pooling, job); 
 	} else {
+		GebrGeoXmlSequence *program;
+
 		g_signal_connect(job->process, "ready-read-stdout", G_CALLBACK(job_process_read_stdout), job);
 		g_signal_connect(job->process, "ready-read-stderr", G_CALLBACK(job_process_read_stderr), job);
 		g_signal_connect(job->process, "finished", G_CALLBACK(job_process_finished), job);
@@ -1004,6 +992,7 @@ static gchar* define_bc_variables(GebrdJob *job, GString *expr_buf, GString *str
 			          gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(program)));
 			g_clear_error(&err);
 		}
+		result = g_strdup_printf("%d", atoi(result));
 		iter_expr = g_strdup_printf("(%s) + (%s) * '\"$counter\"'", ini, step);
 		pparam = GEBR_GEOXML_PROGRAM_PARAMETER(gebr_geoxml_document_get_dict_parameter(gebrd->flow));
 		gebr_geoxml_program_parameter_set_first_value(pparam, FALSE, iter_expr);
@@ -1412,6 +1401,7 @@ static void job_assembly_cmdline(GebrdJob *job)
 		g_string_prepend(job->parent.cmd_line, prefix);
 		g_string_append(job->parent.cmd_line, "\ndone");
 		g_free(prefix);
+		g_free(n);
 	} else {
 		assemble_bc_cmd_line (expr_buf);
 		g_string_prepend(job->parent.cmd_line, str_buf->str);
