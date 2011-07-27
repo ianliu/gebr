@@ -631,7 +631,9 @@ gebr_validator_change_value(GebrValidator       *self,
 
 	if (g_strcmp0(name, "iter") == 0) {
 		if (!gebr_validator_validate_iter(self, param, &err)) {
-			set_error(self, name, scope, err);
+			if (err->code == GEBR_IEXPR_ERROR_SYNTAX ||
+			    err->code == GEBR_IEXPR_ERROR_EMPTY_EXPR)
+				set_error(self, name, scope, err);
 			g_propagate_error(error, err);
 			return FALSE;
 		}
