@@ -355,7 +355,9 @@ void job_update_label(GebrJob *job)
 			if (job->parent.finish_date->len) {
 				g_string_append(label, _(" - "));
 				g_string_append(label, gebr_localized_date(job->parent.finish_date->str));
-			} else
+			} else if(job->parent.status == JOB_STATUS_FAILED)
+				g_string_append(label, _(" (Failed)"));
+			else
 				g_string_append(label, _(" (running)"));
 		}
 		g_string_append(label, _("."));
