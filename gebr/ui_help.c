@@ -204,15 +204,6 @@ static gboolean on_close_window(GtkWidget *widget, GdkEventFocus *event)
 	return FALSE;
 }
 
-static gboolean on_focus_in(GtkWidget *widget, GdkEventFocus *event, GtkActionGroup *group)
-{
-	GtkAction *action = gtk_action_group_get_action(group, "OptionsMenu");
-	if (gtk_action_is_sensitive(action))
-		gtk_action_set_sensitive(action, FALSE);
-
-	return FALSE;
-}
-
 static void on_title_ready(GebrGuiHelpEditWidget * widget, const gchar * title, GtkWindow * window)
 {
 	GString * final_title;
@@ -423,9 +414,10 @@ void gebr_help_show(GebrGeoXmlObject *object, gboolean menu)
 						    0, G_CALLBACK (on_ptbl_changed), window);
 
 		if (gebr.current_report.report_wind) {
-			GtkWidget *old_window = gebr.current_report.report_wind;
 			GtkActionGroup *old_group = gebr.current_report.report_group;
-			g_signal_connect(GTK_WINDOW(old_window), "focus-in-event", G_CALLBACK(on_focus_in), old_group);
+			GtkAction *action = gtk_action_group_get_action(old_group, "OptionsMenu");
+			if (gtk_action_is_sensitive(action))
+				gtk_action_set_sensitive(action, FALSE);
 		}
 		gebr.current_report.report_wind = window;
 		gebr.current_report.report_group = group;
