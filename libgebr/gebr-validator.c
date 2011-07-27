@@ -1121,7 +1121,8 @@ gebr_validator_validate_control_parameter(GebrValidator *self,
                                           GError **error)
 {
 	gchar *result;
-	int result_num;
+	int result_int;
+	gdouble result_d;
 
 	gebr_validator_evaluate(self, expression, GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
 	                        GEBR_GEOXML_DOCUMENT_TYPE_LINE, &result, error);
@@ -1136,12 +1137,21 @@ gebr_validator_validate_control_parameter(GebrValidator *self,
 			return FALSE;
 		}
 
-		result_num = atoi(result);
-		if (result_num <= 0 || strchr(result, '.') != NULL) {
+		result_int = atoi(result);
+		if (result_int <= 0) {
 			g_set_error(error,
 			            GEBR_IEXPR_ERROR,
 			            GEBR_IEXPR_ERROR_SYNTAX,
-			            _("Accepts only integer positive values"));
+			            _("Accepts only positive values"));
+			return FALSE;
+		}
+		result_d = g_ascii_strtod(result, NULL);
+		if (result_d > result_int)
+		{
+			g_set_error(error,
+			            GEBR_IEXPR_ERROR,
+			            GEBR_IEXPR_ERROR_SYNTAX,
+			            _("Accepts only integer values"));
 			return FALSE;
 		}
 	}
