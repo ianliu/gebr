@@ -972,17 +972,20 @@ guint gebrd_bc_hash_func(gconstpointer a)
 	return g_str_hash(a);
 }
 
-static void define_bc_variables(GebrdJob *job, GString *expr_buf, GString *str_buf, gsize *n_vars)
+static gchar* define_bc_variables(GebrdJob *job, GString *expr_buf, GString *str_buf, gsize *n_vars, guint *issue_number)
 {
 	gsize j = 0;
 	const gchar *value;
 	const gchar *keyword;
+	const gchar *n = NULL;
+	gchar *result = NULL;
 	GebrGeoXmlSequence *seq;
 	GebrGeoXmlParameters *params;
 	GebrGeoXmlProgramParameter *prog_param;
 	GebrGeoXmlProgram *program;
 	GebrGeoXmlProgramStatus status;
 	GebrGeoXmlParameter *param;
+	GError *err = NULL;
 
 	program = gebr_geoxml_flow_get_control_program(job->flow);
 	status = gebr_geoxml_program_get_status(program);
@@ -992,7 +995,15 @@ static void define_bc_variables(GebrdJob *job, GString *expr_buf, GString *str_b
 		gchar *iter_expr;
 		const gchar *ini, *step;
 		GebrGeoXmlProgramParameter *pparam;
-		gebr_geoxml_program_control_get_n(program, &step, &ini);
+		n = gebr_geoxml_program_control_get_n(program, &step, &ini);
+		gebr_validator_evaluate(gebrd->validator, n, GEBR_GEOXML_PARAMETER_TYPE_FLOAT, GEBR_GEOXML_DOCUMENT_TYPE_LINE, &result, &err);
+		if (err) {
+			*issue_number += 1;
+			job_issue(job, _("%u) %s '%s'.\n"),
+			          *issue_number, err->message,
+			          gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(program)));
+			g_clear_error(&err);
+		}
 		iter_expr = g_strdup_printf("(%s) + (%s) * '\"$counter\"'", ini, step);
 		pparam = GEBR_GEOXML_PROGRAM_PARAMETER(gebr_geoxml_document_get_dict_parameter(gebrd->flow));
 		gebr_geoxml_program_parameter_set_first_value(pparam, FALSE, iter_expr);
@@ -1071,6 +1082,8 @@ static void define_bc_variables(GebrdJob *job, GString *expr_buf, GString *str_b
 	}
 
 	*n_vars = j;
+
+	return result;
 }
 
 /*
@@ -1108,12 +1121,9 @@ static void job_assembly_cmdline(GebrdJob *job)
 	GebrdMpiInterface *mpi;
 	gulong nprog;
 	gboolean has_control = FALSE;
-	const gchar *counter;
-	const gchar *step, *ini;
 	gchar *n;
 	GString *expr_buf = g_string_new("");
 	GString *str_buf = g_string_new("");
-	GError *err = NULL;
 
 	job->expr_count = 0;
 
@@ -1144,14 +1154,6 @@ static void job_assembly_cmdline(GebrdJob *job)
 
 	if (gebr_geoxml_program_get_control(GEBR_GEOXML_PROGRAM(program)) == GEBR_GEOXML_PROGRAM_CONTROL_FOR) {
 		has_control = TRUE;
-		counter = gebr_geoxml_program_control_get_n(GEBR_GEOXML_PROGRAM(program), &step, &ini);
-		gebr_validator_evaluate(gebrd->validator, counter, GEBR_GEOXML_PARAMETER_TYPE_FLOAT, GEBR_GEOXML_DOCUMENT_TYPE_LINE, &n, &err);
-		if (err) {
-			job_issue(job, _("%u) %s '%s'.\n"),
-			          ++issue_number, err->message,
-			          gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(program)));
-			g_clear_error(&err);
-		}
 		/* Check if there is configured programs */
 		gebr_geoxml_sequence_next(&program);
 		while (program != NULL &&
@@ -1191,7 +1193,7 @@ static void job_assembly_cmdline(GebrdJob *job)
 	}
 
 	// define variables on bc, to use on stdin, stdout, stderr and expressions
-	define_bc_variables(job, expr_buf, str_buf, &job->n_vars);
+	n = define_bc_variables(job, expr_buf, str_buf, &job->n_vars, &issue_number);
 
 	if (job_add_program_parameters(job, GEBR_GEOXML_PROGRAM(program), expr_buf) == FALSE)
 		goto err;
@@ -1289,14 +1291,6 @@ static void job_assembly_cmdline(GebrdJob *job)
 
 		if (gebr_geoxml_program_get_control(GEBR_GEOXML_PROGRAM(program)) == GEBR_GEOXML_PROGRAM_CONTROL_FOR) {
 			has_control = TRUE;
-			counter = gebr_geoxml_program_control_get_n(GEBR_GEOXML_PROGRAM(program), &step, &ini);
-			gebr_validator_evaluate(gebrd->validator, counter, GEBR_GEOXML_PARAMETER_TYPE_FLOAT, GEBR_GEOXML_DOCUMENT_TYPE_LINE, &n, &err);
-			if (err) {
-				job_issue(job, _("%u) %s '%s'.\n"),
-				          ++issue_number, err->message,
-				          gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(program)));
-				g_clear_error(&err);
-			}
 			gebr_geoxml_sequence_next(&program);
 			continue;
 		}
@@ -1398,7 +1392,7 @@ static void job_assembly_cmdline(GebrdJob *job)
 			}
 		}
 	}
-	if (has_control) {
+	if (has_control && n) {
 		gchar *prefix, *remove;
 		assemble_bc_cmd_line (expr_buf);
 		prefix = g_strdup_printf("for (( counter=0; counter<%s; counter++ ))\ndo\n%s\n%s",
