@@ -499,14 +499,23 @@ gebr_arith_expr_eval_internal(GebrArithExpr *self,
 			g_free(line);
 			break;
 		}
-		if (g_str_has_prefix(line, "(standard_in) ") ||
-		    g_str_has_prefix(line, "Runtime error (func")) {
+		if (g_str_has_prefix(line, "(standard_in) ")) {
 			gchar *msg;
 			msg = strchr(line, ':');
 			msg[strlen(msg) - 1] = '\0';
 			g_set_error(err,
 				    GEBR_IEXPR_ERROR,
 				    GEBR_IEXPR_ERROR_SYNTAX,
+				    _("Invalid expression%s"), msg);
+			goto exception_and_flush;
+		}
+		if (g_str_has_prefix(line, "Runtime error (func")) {
+			gchar *msg;
+			msg = strchr(line, ':');
+			msg[strlen(msg) - 1] = '\0';
+			g_set_error(err,
+				    GEBR_IEXPR_ERROR,
+				    GEBR_IEXPR_ERROR_RUNTIME,
 				    _("Invalid expression%s"), msg);
 			goto exception_and_flush;
 		}
@@ -536,8 +545,9 @@ gebr_arith_expr_eval_internal(GebrArithExpr *self,
 	}
 
 	g_string_set_size(buffer, buffer->len - 1);
-	*result = buffer->str;
-	g_string_free(buffer, FALSE);
+	if (result)
+		*result = buffer->str;
+	g_string_free(buffer, !result);
 	return TRUE;
 
 exception_and_flush:
