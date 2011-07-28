@@ -250,8 +250,9 @@ void test_gebr_validator_simple(Fixture *fixture, gconstpointer data)
 	VALIDATE_FLOAT_EXPR_WITH_ERROR("\"", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_SYNTAX);
 	VALIDATE_FLOAT_EXPR_WITH_ERROR(";", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_SYNTAX);
 	VALIDATE_FLOAT_EXPR_WITH_ERROR("5;6", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_SYNTAX);
-	VALIDATE_FLOAT_EXPR_WITH_ERROR("x=y", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_SYNTAX);
-	VALIDATE_FLOAT_EXPR_WITH_ERROR("x=y;6", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_SYNTAX);
+	VALIDATE_FLOAT_EXPR_WITH_ERROR("x=y", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_BAD_REFERENCE);
+	VALIDATE_FLOAT_EXPR_WITH_ERROR("x=3", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_SYNTAX);
+	VALIDATE_FLOAT_EXPR_WITH_ERROR("x=3;6", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_SYNTAX);
 
 	// Breaks bc wrapper with multiple errors in one line
 	VALIDATE_FLOAT_EXPR_WITH_ERROR("??", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_SYNTAX);
@@ -420,7 +421,7 @@ void test_gebr_validator_rename(void)
 	g_assert_error(error, GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_BAD_REFERENCE);
 	g_clear_error(&error);
 
-	g_assert(gebr_validator_evaluate_param(validator, param, &value, &error));
+	gebr_validator_evaluate_param(validator, param, &value, &error);
 	g_assert_no_error(error);
 	g_assert_cmpstr(value,==,"7.3984");
 
@@ -535,7 +536,7 @@ void test_gebr_validator_cyclic_errors(Fixture *fixture, gconstpointer data)
 {
 	DEF_FLOAT_WITH_ERROR(fixture->flow, "a", "2+x", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_UNDEF_REFERENCE);
 	DEF_FLOAT_WITH_ERROR(fixture->flow, "b", "a+1", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_BAD_REFERENCE);
-	DEF_FLOAT_WITH_ERROR(fixture->flow, "c", "b+", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_SYNTAX);
+	DEF_FLOAT_WITH_ERROR(fixture->flow, "c", "b+", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_BAD_REFERENCE);
 	DEF_FLOAT(fixture->flow, "x", "10");
 	VALIDATE_FLOAT_EXPR("x", "10");
 	VALIDATE_FLOAT_EXPR_WITH_ERROR("a", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_BAD_REFERENCE);
@@ -760,6 +761,55 @@ void test_gebr_validator_string(Fixture *fixture, gconstpointer data)
 	VALIDATE_STRING_EXPR("a]]b[[c", "a]b[c");
 }
 
+void test_gebr_validator_divide_by_zero(Fixture *fixture, gconstpointer data)
+{
+	GError *error = NULL;
+	GebrGeoXmlParameter *a, *b;
+	gchar *value;
+
+	VALIDATE_FLOAT_EXPR_WITH_ERROR("10/a", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_UNDEF_REFERENCE);
+
+	// Divide by zero
+	a = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(fixture->proj),
+	                                          GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
+	                                          "a", "0");
+	gebr_validator_insert(fixture->validator, a, NULL, &error);
+	g_assert_no_error(error);
+	VALIDATE_FLOAT_EXPR_WITH_ERROR("10/a", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_RUNTIME);
+	b = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(fixture->proj),
+	                                          GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
+	                                          "b", "10/a");
+	gebr_validator_insert(fixture->validator, b, NULL, &error);
+	g_assert_error(error, GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_RUNTIME);
+	g_clear_error(&error);
+	VALIDATE_FLOAT_EXPR_WITH_ERROR("b", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_BAD_REFERENCE);
+
+	// Fix the divisor
+	gebr_validator_change_value(fixture->validator, a, "10", NULL, &error);
+	g_assert_no_error(error);
+	gebr_validator_evaluate_param(fixture->validator, b, &value, &error);
+	g_assert_no_error(error);
+	g_assert_cmpstr(value,==,"1.00000");
+	VALIDATE_FLOAT_EXPR("b", "1.00000");
+
+	// Divide by zero again
+	gebr_validator_change_value(fixture->validator, a, "0", NULL, &error);
+	g_assert_no_error(error);
+	VALIDATE_FLOAT_EXPR_WITH_ERROR("10/a", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_RUNTIME);
+	VALIDATE_FLOAT_EXPR_WITH_ERROR("b", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_BAD_REFERENCE);
+	gebr_validator_evaluate_param(fixture->validator, b, &value, &error);
+	g_assert_error(error, GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_RUNTIME);
+	g_clear_error(&error);
+	VALIDATE_FLOAT_EXPR_WITH_ERROR("b", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_BAD_REFERENCE);
+
+	// Divide by not defined
+	gebr_validator_remove(fixture->validator, a, NULL, &error);
+	g_assert_no_error(error);
+	gebr_validator_evaluate_param(fixture->validator, b, &value, &error);
+	g_assert_error(error, GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_UNDEF_REFERENCE);
+	g_clear_error(&error);
+}
+
 int main(int argc, char *argv[])
 {
 	g_type_init();
@@ -782,7 +832,6 @@ int main(int argc, char *argv[])
 
 	g_test_add_func("/libgebr/validator/insert", test_gebr_validator_insert);
 	g_test_add_func("/libgebr/validator/remove", test_gebr_validator_remove);
-	g_test_add_func("/libgebr/validator/rename", test_gebr_validator_rename);
 	g_test_add_func("/libgebr/validator/change", test_gebr_validator_change);
 	g_test_add_func("/libgebr/validator/move", test_gebr_validator_move);
 
@@ -815,6 +864,13 @@ int main(int argc, char *argv[])
 		   fixture_setup,
 		   test_gebr_validator_scope_errors,
 		   fixture_teardown);
+
+	g_test_add("/libgebr/validator/divide_by_zero", Fixture, NULL,
+		   fixture_setup,
+		   test_gebr_validator_divide_by_zero,
+		   fixture_teardown);
+
+	g_test_add_func("/libgebr/validator/rename", test_gebr_validator_rename);
 
 	return g_test_run();
 }
