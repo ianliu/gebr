@@ -1022,11 +1022,6 @@ static gchar* define_bc_variables(GebrdJob *job, GString *expr_buf, GString *str
 				prog_param = GEBR_GEOXML_PROGRAM_PARAMETER (seq);
 				param = GEBR_GEOXML_PARAMETER(seq);
 
-				g_assert(gebrd->validator != NULL);
-				gebr_validator_insert(gebrd->validator,
-						      GEBR_GEOXML_PARAMETER(prog_param),
-						      NULL, NULL);
-
 				label = g_strdup(gebr_geoxml_parameter_get_label (param));
 				value = gebr_geoxml_program_parameter_get_first_value (prog_param, FALSE);
 				keyword = gebr_geoxml_program_parameter_get_keyword (prog_param);
@@ -1046,12 +1041,6 @@ static gchar* define_bc_variables(GebrdJob *job, GString *expr_buf, GString *str
 				gchar *result = NULL;
 				prog_param = GEBR_GEOXML_PROGRAM_PARAMETER (seq);
 				param = GEBR_GEOXML_PARAMETER(seq);
-
-				g_assert(gebrd->validator != NULL);
-				gebr_validator_insert(gebrd->validator,
-						      param,
-						      NULL,
-						      NULL);
 
 				value = gebr_geoxml_program_parameter_get_first_value (prog_param, FALSE);
 				keyword = gebr_geoxml_program_parameter_get_keyword (prog_param);

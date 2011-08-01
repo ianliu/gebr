@@ -527,8 +527,6 @@ gebr_validator_update_vars(GebrValidator *self,
 	g_string_append(bc_strings, " }\n");
 	g_string_append(bc_strings, bc_vars->str);
 	g_string_append(bc_strings, "return iter };0\n" ITER_INI_EXPR);
-puts(bc_strings->str);
-puts("\n");
 	GError *error = NULL;
 	gebr_arith_expr_eval_internal(self->arith_expr, bc_strings->str, NULL, &error);
 	self->cached_scope = param_scope;
@@ -1131,7 +1129,7 @@ gboolean gebr_validator_evaluate_param(GebrValidator *self,
 	gebr_validator_update_vars(self, scope);
 
 	if (data->error[scope]) {
-		*error = g_error_copy(data->error[scope]);
+		g_propagate_error(error, g_error_copy(data->error[scope]));
 		return FALSE;
 	} else if (!get_error_indirect(self, data->dep[scope], name, type, scope, error))
 		return FALSE;

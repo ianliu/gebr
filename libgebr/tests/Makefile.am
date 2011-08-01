@@ -30,9 +30,6 @@ test_gebr_expr_SOURCES = test-gebr-expr.c
 TEST_PROGS += test-gebr-arith-expr
 test_gebr_arith_expr_SOURCES = test-gebr-arith-expr.c
 
-TEST_PROGS += test-gebr-string-expr
-test_gebr_string_expr_SOURCES = test-gebr-string-expr.c
-
 TEST_PROGS += test-gebr-validator
 test_gebr_validator_SOURCES = test-gebr-validator.c
 

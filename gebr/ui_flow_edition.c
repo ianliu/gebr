@@ -1302,7 +1302,9 @@ on_flow_sequence_query_tooltip(GtkTreeView * treeview,
 	gchar *error_message = _("Unknown error");
 	switch (errorid) {
 	case GEBR_IEXPR_ERROR_SYNTAX:
+	case GEBR_IEXPR_ERROR_RUNTIME:
 	case GEBR_IEXPR_ERROR_INVAL_TYPE:
+	case GEBR_IEXPR_ERROR_TYPE_MISMATCH:
 		error_message = _("This program has an invalid expression");
 		break;
 	case GEBR_IEXPR_ERROR_EMPTY_EXPR:
@@ -1315,7 +1317,6 @@ on_flow_sequence_query_tooltip(GtkTreeView * treeview,
 	case GEBR_IEXPR_ERROR_INVAL_VAR:
 	case GEBR_IEXPR_ERROR_BAD_REFERENCE:
 	case GEBR_IEXPR_ERROR_CYCLE:
-	case GEBR_IEXPR_ERROR_TYPE_MISMATCH:
 		error_message = _("A not well defined variable is being used");
 		break;
 	case GEBR_IEXPR_ERROR_BAD_MOVE:
