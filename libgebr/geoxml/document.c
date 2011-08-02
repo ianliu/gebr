@@ -985,6 +985,7 @@ int gebr_geoxml_document_save(GebrGeoXmlDocument * document, const gchar * path)
 	if ((gebr_geoxml_document_get_type(document) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW) && g_str_has_suffix(path, ".mnu")) {
 		fp = fopen(path, "w");
 		if (fp == NULL) {
+			g_free(xml);
 			return GEBR_GEOXML_RETV_PERMISSION_DENIED;
 		}
 
@@ -1037,6 +1038,8 @@ int gebr_geoxml_document_save(GebrGeoXmlDocument * document, const gchar * path)
 		gebr_geoxml_document_set_filename(document, filename);
 		g_free(filename);
 	}
+
+	g_free(xml);
 
 	return ret ? GEBR_GEOXML_RETV_SUCCESS : GEBR_GEOXML_RETV_PERMISSION_DENIED;
 }
