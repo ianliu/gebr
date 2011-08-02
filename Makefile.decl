@@ -70,4 +70,4 @@ test-report perf-report full-report:	${TEST_PROGS}
 .PHONY: test test-report perf-report full-report int-test
 # run make test as part of make check
 check-local: test
-installcheck-local: int-test
+installcheck-local: int-test check
