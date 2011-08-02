@@ -87,10 +87,14 @@ __gebr_geoxml_parameter_get_type(GebrGeoXmlParameter * parameter, gboolean resol
 
 	type_element = __gebr_geoxml_parameter_get_type_element(parameter);
 	tag_name = gdome_el_tagName(type_element, &exception);
-	for (gint i = 1; i <= parameter_type_to_str_len; ++i)
-		if (!strcmp(parameter_type_to_str[i], tag_name->str))
+	for (gint i = 1; i <= parameter_type_to_str_len; ++i) {
+		if (!strcmp(parameter_type_to_str[i], tag_name->str)) {
+			gdome_str_unref(tag_name);
 			return (GebrGeoXmlParameterType)i;
+		}
+	}
 
+	gdome_str_unref(tag_name);
 	return GEBR_GEOXML_PARAMETER_TYPE_UNKNOWN;
 }
 

@@ -402,13 +402,23 @@ GdomeElement *__gebr_geoxml_previous_same_element(GdomeElement * element)
 GdomeElement *__gebr_geoxml_next_same_element(GdomeElement * element)
 {
 	GdomeElement *next_element;
+	GdomeDOMString *name1, *name2;
 
 	next_element = __gebr_geoxml_next_element(element);
-	if (next_element != NULL &&
-	    gdome_str_equal(gdome_el_nodeName(element, &exception), gdome_el_nodeName(next_element, &exception)))
-		return next_element;
 
-	return NULL;
+	if (!next_element)
+		return NULL;
+
+	name1 = gdome_el_nodeName(element, &exception);
+	name2 = gdome_el_nodeName(next_element, &exception);
+
+	if (!gdome_str_equal (name1, name2))
+		next_element = NULL;
+
+	gdome_str_unref(name1);
+	gdome_str_unref(name2);
+
+	return next_element;
 }
 
 GdomeXPathResult *__gebr_geoxml_xpath_evaluate(GdomeElement * context, const gchar * expression)
