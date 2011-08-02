@@ -68,6 +68,8 @@ static void gebr_arith_expr_class_init(GebrArithExprClass *klass)
 {
 	GObjectClass *g_class;
 
+	signal(SIGCHLD, SIG_IGN);
+
 	g_class = G_OBJECT_CLASS(klass);
 	g_class->finalize = gebr_arith_expr_finalize;
 
@@ -367,35 +369,20 @@ arith_spawn_bc(int *infd, int *outfd)
 		return FALSE;
 
 	if (child == 0) {
-		GPid grandchild;
-		grandchild = fork();
-
-		if (grandchild < 0)
+		if (dup2(in_fd[0], 0) < 0 ||
+		    dup2(out_fd[1], 1) < 0 ||
+		    dup2(out_fd[1], 2) < 0)
 			_exit(1);
 
-		if (grandchild == 0) {
-			if (dup2(in_fd[0], 0) < 0 ||
-			    dup2(out_fd[1], 1) < 0 ||
-			    dup2(out_fd[1], 2) < 0)
-				_exit(1);
+		if (close(in_fd[1]) < 0 ||
+		    close(out_fd[0]) < 0)
+			_exit(1);
 
-			if (close(in_fd[1]) < 0 ||
-			    close(out_fd[0]) < 0)
-			    _exit(1);
+		if (g_chdir(home_dir) < 0)
+			_exit(1);
 
-			if (g_chdir(home_dir) < 0)
-				_exit(1);
-
-			execvp(argv[0], argv);
-		}
-
-		_exit(0);
-	} else {
-		int rv;
-		wait(&rv);
-
-		if (WEXITSTATUS(rv) == 1)
-			return FALSE;
+		setsid();
+		execvp(argv[0], argv);
 	}
 
 	close(in_fd[0]);
