@@ -931,21 +931,14 @@ void gebr_validator_get_documents(GebrValidator *self,
 				  GebrGeoXmlDocument **line,
 				  GebrGeoXmlDocument **proj)
 {
-	if (self->docs[0])
-		*flow = *self->docs[0];
-	else
-		*flow = NULL;
-		
-	if (self->docs[1])
-		*line = *self->docs[1];
-	else
-		*line = NULL;
-		
-	if (self->docs[2])
-		*proj = *self->docs[2];
-	else
-		*proj = NULL;
+	if (flow)
+		*flow = self->docs[0] ? *self->docs[0] : NULL;
 
+	if (line)
+		*line = self->docs[1] ? *self->docs[1] : NULL;
+
+	if (proj)
+		*proj = self->docs[2] ? *self->docs[2] : NULL;
 }
 
 void gebr_validator_update(GebrValidator *self)
