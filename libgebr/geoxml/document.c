@@ -918,18 +918,15 @@ void gebr_geoxml_document_free(GebrGeoXmlDocument * document)
 
 GebrGeoXmlDocument *gebr_geoxml_document_clone(GebrGeoXmlDocument * source)
 {
-	if (source == NULL)
-		return NULL;
-
-	gchar *xml;
 	GebrGeoXmlDocumentData *data;
 	GebrGeoXmlDocument *document;
 
+	if (source == NULL)
+		return NULL;
+
 	data = _gebr_geoxml_document_get_data(source);
-	gebr_geoxml_document_to_string(source, &xml);
-	gebr_geoxml_document_load_buffer(&document, xml);
+	document = (GebrGeoXmlDocument*)__gebr_geoxml_document_clone_doc((GdomeDocument*)source, NULL);
 	__gebr_geoxml_document_new_data(document, data->filename->str);
-	g_free(xml);
 
 	return document;
 }
