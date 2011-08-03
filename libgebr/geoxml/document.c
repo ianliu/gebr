@@ -178,8 +178,13 @@ static GdomeDocument *__gebr_geoxml_document_clone_doc(GdomeDocument * source, G
 	GdomeElement *element = __gebr_geoxml_get_first_element(source_root_element, "*");
 	for (; element != NULL; element = __gebr_geoxml_next_element(element)) {
 		GdomeNode *new_node = gdome_doc_importNode(document, (GdomeNode*)element, TRUE, &exception);
-		gdome_el_appendChild(root_element, new_node, &exception);
+		GdomeNode *result = gdome_el_appendChild(root_element, new_node, &exception);
+		gdome_n_unref(new_node, &exception);
+		gdome_n_unref(result, &exception);
 	}
+
+	gdome_el_unref(source_root_element, &exception);
+	gdome_el_unref(root_element, &exception);
 
 	return document;
 }
