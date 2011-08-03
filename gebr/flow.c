@@ -182,19 +182,19 @@ static gboolean flow_import_single (const gchar *path)
 	gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Flow '%s' imported to line '%s' from file '%s'."),
 		     title, gebr_geoxml_document_get_title (GEBR_GEOXML_DOC (gebr.line)), path);
 
-	document_import (flow);
+	new_title = g_strdup_printf (_("%s (Imported)"), title);
+	gebr_geoxml_document_set_title(flow, new_title);
+	g_free(new_title);
+
 	line_flow = gebr_geoxml_line_append_flow (gebr.line, gebr_geoxml_document_get_filename (flow));
 	document_save(GEBR_GEOXML_DOC(gebr.line), FALSE, FALSE);
 	iter = line_append_flow_iter(GEBR_GEOXML_FLOW (flow), line_flow);
+
 	gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW);
 	gebr_geoxml_flow_revalidate(GEBR_GEOXML_FLOW(flow), gebr.validator);
 	gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &gebr.flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW);
 
-	new_title = g_strdup_printf (_("%s (Imported)"), title);
-	gtk_list_store_set(gebr.ui_flow_browse->store, &iter, FB_TITLE, new_title, -1);
-	gebr_geoxml_document_set_title(flow, new_title);
-	document_save(flow, FALSE, FALSE);
-	g_free(new_title);
+	document_import (flow);
 
 	return TRUE;
 }
