@@ -538,18 +538,14 @@ void flow_run(GebrServer *server, GebrCommServerRunConfig * config, gboolean sin
 		document_save(GEBR_GEOXML_DOC(flow), FALSE, TRUE);
 		flow_browse_info_update(); 
 
-		/* prepare flow and add it to config */
-		GebrGeoXmlFlow *stripped = gebr_comm_server_run_strip_flow(gebr.validator, flow,
-									   GEBR_GEOXML_LINE(line),
-									   GEBR_GEOXML_PROJECT(proj));
-		flow_copy_from_dicts(stripped);
-		GebrCommServerRunFlow *run_flow = gebr_comm_server_run_config_add_flow(config, stripped);
-		gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(stripped));
+		// FIXME: Deprecate this function
+		//flow_copy_from_dicts(stripped);
+		guint runid = gebr_comm_server_run_config_add_flow(config, gebr.validator, flow);
 
 		GString *queue_gstring = g_string_new(config->queue);
-		GebrJob * job = job_new_from_flow(server, run_flow->flow, queue_gstring);
+		GebrJob * job = job_new_from_flow(server, flow, queue_gstring);
 		g_string_free(queue_gstring, TRUE);
-		g_string_printf(job->parent.run_id, "%u", run_flow->run_id);
+		g_string_printf(job->parent.run_id, "%u", runid);
 		if (select) {
 			job_set_active(job);
 			gebr.config.current_notebook = 3;

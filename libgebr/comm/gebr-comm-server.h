@@ -119,7 +119,7 @@ struct gebr_comm_server {
  * Returned by gebr_comm_server_run_config_add_flow 
  */
 typedef struct {
-	GebrGeoXmlFlow * flow;
+	gchar *flow_xml;
 	guint run_id;
 } GebrCommServerRunFlow;
 /**
@@ -150,23 +150,9 @@ void gebr_comm_server_run_config_free(GebrCommServerRunConfig *run_config);
 
 /**
  */
-GebrCommServerRunFlow* gebr_comm_server_run_config_add_flow(GebrCommServerRunConfig *config, GebrGeoXmlFlow * flow);
-
-/**
- * gebr_comm_server_run_strip_flow:
- * @flow: a #GebrGeoXmlFlow.
- * @line: a #GebrGeoXmlLine.
- * @proj: a #GebrGeoXmlProject.
- *
- * Make a copy of @flow and removes all help strings. All dictionaries from
- * @line and @proj are merged into the copy. 
- *
- * Returns: a new flow prepared to run.
- */
-GebrGeoXmlFlow *gebr_comm_server_run_strip_flow(GebrValidator *validator,
-                                                GebrGeoXmlFlow *flow,
-                                                GebrGeoXmlLine *line,
-                                                GebrGeoXmlProject *proj);
+guint gebr_comm_server_run_config_add_flow(GebrCommServerRunConfig *config,
+                                           GebrValidator *vaildator,
+                                           GebrGeoXmlFlow *flow);
 
 /**
  */
