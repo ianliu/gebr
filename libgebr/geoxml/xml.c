@@ -342,9 +342,6 @@ void __gebr_geoxml_set_attr_value(GdomeElement * element, const gchar * name, co
 
 const gchar *__gebr_geoxml_get_attr_value(GdomeElement * element, const gchar * name)
 {
-	static gchar buffer[1024] = {0,};
-
-	gint i;
 	GdomeDOMString *string;
 	GdomeDOMString *attr_value;
 
@@ -353,23 +350,9 @@ const gchar *__gebr_geoxml_get_attr_value(GdomeElement * element, const gchar * 
 
 	string = gdome_str_mkref(name);
 	attr_value = gdome_el_getAttribute(element, string, &exception);
-
-	for (i = 0; i < 1024; i++) {
-		buffer[i] = attr_value->str[i];
-		if (!attr_value->str[i])
-			break;
-	}
-
-	if (i == 1024) {
-		g_critical("Attribute length is too long (>1024). Report this bug to %s",
-		           PACKAGE_BUGREPORT);
-		buffer[1023] = '\0';
-	}
-
 	gdome_str_unref(string);
-	gdome_str_unref(attr_value);
 
-	return buffer;
+	return attr_value->str;
 }
 
 void __gebr_geoxml_remove_attr(GdomeElement * element, const gchar * name)
