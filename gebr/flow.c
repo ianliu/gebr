@@ -463,8 +463,12 @@ static void flow_set_paths_to(GebrGeoXmlFlow * flow, set_path_func func, gboolea
 				gebr_geoxml_value_sequence_set(GEBR_GEOXML_VALUE_SEQUENCE(value), path->str);
 				g_string_free(path, TRUE);
 			}
-			if (set_programs_unconfigured && cleaned)
-				gebr_geoxml_program_set_status (gebr_geoxml_parameter_get_program(parameter), GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED);
+			if (set_programs_unconfigured && cleaned) {
+				GebrGeoXmlProgram *program = gebr_geoxml_parameter_get_program(parameter);
+				gebr_geoxml_program_set_status (program, GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED);
+				gebr_geoxml_program_set_error_id(program, FALSE, GEBR_IEXPR_ERROR_PATH);
+				return FALSE;
+			}
 		}
 		return TRUE;
 	}

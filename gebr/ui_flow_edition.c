@@ -1319,6 +1319,9 @@ on_flow_sequence_query_tooltip(GtkTreeView * treeview,
 	case GEBR_IEXPR_ERROR_CYCLE:
 		error_message = _("A not well defined variable is being used");
 		break;
+	case GEBR_IEXPR_ERROR_PATH:
+		error_message = _("This program has cleaned their paths");
+		break;
 	case GEBR_IEXPR_ERROR_BAD_MOVE:
 	case GEBR_IEXPR_ERROR_INITIALIZE:
 		break;

@@ -74,6 +74,7 @@ typedef enum {
 	GEBR_IEXPR_ERROR_CYCLE,
 	GEBR_IEXPR_ERROR_TYPE_MISMATCH,
 	GEBR_IEXPR_ERROR_BAD_MOVE,
+	GEBR_IEXPR_ERROR_PATH,
 } GebrIExprError;
 
 typedef struct _GebrIExpr GebrIExpr;

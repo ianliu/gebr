@@ -133,6 +133,10 @@ void flow_add_program_sequence_to_view(GebrGeoXmlSequence * program,
 				   FSEQ_NEVER_OPENED, never_opened,
 				   -1);
 
+		GebrIExprError undef;
+		gebr_geoxml_program_get_error_id(GEBR_GEOXML_PROGRAM(program), &undef);
+		if (never_opened || undef == GEBR_IEXPR_ERROR_PATH)
+			continue;
 		gebr_geoxml_program_is_valid(GEBR_GEOXML_PROGRAM(program), gebr.validator, NULL);
 	}
 
