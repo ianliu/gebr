@@ -327,7 +327,9 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 	if (!document_path_is_at_gebr_data_dir(path)) {
 		gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_OK, 0);
 		gtk_widget_show_all(dialog);
+		gdk_threads_enter();
 		gtk_dialog_run(GTK_DIALOG(dialog));
+		gdk_threads_leave();
 		gtk_widget_destroy(dialog);
 		goto out;
 	}
@@ -340,6 +342,7 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 	gtk_widget_show_all(dialog);
 	gint response;
 	gboolean keep_dialog = FALSE;
+	gdk_threads_enter();
 	do switch ((response = gtk_dialog_run(GTK_DIALOG(dialog)))) {
 	case 1: { /* Export */
 		gchar * export_path;
@@ -437,6 +440,7 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 		keep_dialog = FALSE;
 		break;
 	} while (keep_dialog);
+	gdk_threads_leave();
 
 	/* frees */
 	if (*document) {
