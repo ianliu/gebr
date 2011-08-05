@@ -208,7 +208,8 @@ gchar *gebr_geoxml_object_generate_help (GebrGeoXmlObject *object, const gchar *
 
 gchar *gebr_geoxml_object_get_help_content (GebrGeoXmlObject *object)
 {
-	const gchar *help;
+	gchar *help;
+	gchar *retval;
 	GebrGeoXmlObjectType type;
 
 	g_return_val_if_fail (object != NULL, NULL);
@@ -224,7 +225,10 @@ gchar *gebr_geoxml_object_get_help_content (GebrGeoXmlObject *object)
 	else
 		help = gebr_geoxml_program_get_help (GEBR_GEOXML_PROGRAM (object));
 
-	return gebr_geoxml_object_get_help_content_from_str (help);
+	retval = gebr_geoxml_object_get_help_content_from_str (help);
+	g_free (help);
+
+	return retval;
 }
 
 gchar *gebr_geoxml_object_get_help_content_from_str (const gchar *str)

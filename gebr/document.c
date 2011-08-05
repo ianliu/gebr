@@ -672,7 +672,7 @@ gchar * gebr_document_generate_report (GebrGeoXmlDocument *document)
 	GebrGeoXmlSequence *line_flow;
 	GebrGeoXmlObjectType type;
 	const gchar * title;
-	const gchar * report;
+	gchar * report;
 	gchar * detailed_html = "";
 	gchar * inner_body = "";
 	gchar * styles = "";
@@ -751,9 +751,10 @@ gchar * gebr_document_generate_report (GebrGeoXmlDocument *document)
 		}
 	} else if (type == GEBR_GEOXML_OBJECT_TYPE_PROJECT) {
 		g_free (inner_body);
-		return g_strdup (report);
+		return report;
 	} else {
 		g_free (inner_body);
+		g_free (report);
 		g_return_val_if_reached (NULL);
 	}
 
@@ -763,6 +764,7 @@ gchar * gebr_document_generate_report (GebrGeoXmlDocument *document)
 	g_free(styles);
 	g_free(inner_body);
 	g_string_free(content, TRUE);
+	g_free (report);
 
 	return detailed_html;
 }

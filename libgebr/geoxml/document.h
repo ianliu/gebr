@@ -324,7 +324,7 @@ const gchar *gebr_geoxml_document_get_description(GebrGeoXmlDocument * document)
  *
  * \see gebr_geoxml_document_set_help
  */
-const gchar *gebr_geoxml_document_get_help(GebrGeoXmlDocument * document);
+gchar *gebr_geoxml_document_get_help(GebrGeoXmlDocument * document);
 
 /**
  * gebr_geoxml_document_merge_dicts:

@@ -298,19 +298,23 @@ void test_gebr_geoxml_document_get_help (void)
 	// If \p help was not set, its value is "" (empty string).
 	help = gebr_geoxml_document_get_help(document);
 	g_assert_cmpstr(help, ==, "");
+	g_free (help);
 
 	gebr_geoxml_document_set_help(document, "]]>help accepts HTML");
 	help = gebr_geoxml_document_get_help(document);
 	g_assert_cmpstr(help, ==, "]]>help accepts HTML");
+	g_free (help);
 
 	// If \p help is NULL, nothing is done.
 	gebr_geoxml_document_set_help(document, NULL);
 	help = gebr_geoxml_document_get_help(document);
 	g_assert_cmpstr(help, ==, "]]>help accepts HTML");
+	g_free (help);
 
 	gebr_geoxml_document_set_help(document, "");
 	help = gebr_geoxml_document_get_help(document);
 	g_assert_cmpstr(help, ==, "");
+	g_free (help);
 }
 
 void test_gebr_geoxml_document_canonize_dict_parameters(void)

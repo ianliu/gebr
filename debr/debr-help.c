@@ -623,7 +623,7 @@ static gsize strip_block(GString * buffer, const gchar * tag)
 static void help_edit_on_commit_request(GebrGuiHelpEditWidget * self)
 {
 	gboolean sensitive;
-	const gchar * help;
+	gchar * help;
 	gboolean valid;
 	gboolean interrupt = FALSE;
 	GtkTreeIter iter;
@@ -667,7 +667,6 @@ static void help_edit_on_commit_request(GebrGuiHelpEditWidget * self)
 	if (interrupt)
 		menu_status_set_from_iter(&iter, MENU_STATUS_UNSAVED);
 	
-
 	if (prog) {
 		help = gebr_geoxml_program_get_help (prog);
 		sensitive = strlen(help) > 0 ? TRUE : FALSE;
@@ -679,6 +678,7 @@ static void help_edit_on_commit_request(GebrGuiHelpEditWidget * self)
 		g_object_set(debr.ui_menu.details.help_view, "sensitive", sensitive, NULL);
 		validate_image_set_check_help(debr.ui_menu.help_validate_image, help);
 	}
+	g_free (help);
 }
 
 static void help_edit_window_on_destroy(GtkWidget * window)
@@ -862,7 +862,7 @@ static void on_title_ready (GebrGuiHtmlViewerWidget * widget,
 //==============================================================================
 void debr_help_show(GebrGeoXmlObject * object, gboolean menu, const gchar * title)
 {
-	const gchar *help;
+	gchar *help;
 	GtkWidget *window;
 	GebrGuiHtmlViewerWidget *html_viewer_widget;
 
@@ -881,6 +881,7 @@ void debr_help_show(GebrGeoXmlObject * object, gboolean menu, const gchar * titl
 		help = gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(object));
 
 	gebr_gui_html_viewer_window_show_html(GEBR_GUI_HTML_VIEWER_WINDOW(window), help);
+	g_free (help);
 
 	gtk_widget_show (window);
 }
@@ -894,12 +895,14 @@ void debr_help_edit(GebrGeoXmlObject * object)
 
 	if (gebr_geoxml_object_get_type(object) == GEBR_GEOXML_OBJECT_TYPE_PROGRAM) {
 		program = GEBR_GEOXML_PROGRAM(object);
-		help = g_strdup(gebr_geoxml_program_get_help(program));
+		help = gebr_geoxml_program_get_help(program);
 	} else
-		help = g_strdup(gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(object)));
+		help = gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(object));
 
-	if (strlen(help) <= 1)
+	if (strlen(help) <= 1) {
+		g_free (help);
 		help = generate_help_from_template(object);
+	}
 
 	/* EDIT IT */
 	if (debr.config.native_editor || !debr.config.htmleditor->len) {

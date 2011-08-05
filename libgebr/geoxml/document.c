@@ -1321,7 +1321,7 @@ const gchar *gebr_geoxml_document_get_description(GebrGeoXmlDocument * document)
 	return __gebr_geoxml_get_tag_value(gebr_geoxml_document_root_element(document), "description");
 }
 
-const gchar *gebr_geoxml_document_get_help(GebrGeoXmlDocument * document)
+gchar *gebr_geoxml_document_get_help(GebrGeoXmlDocument * document)
 {
 	if (document == NULL)
 		return NULL;

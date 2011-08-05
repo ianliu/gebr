@@ -160,14 +160,18 @@ gint gebr_geoxml_validate_report_menu(GebrGeoXmlValidate * validate, GebrGeoXmlF
 	}
 	if (validate->options.mhelp) {
 		validate_append_item(validate, _("Help:          "));
-		if (strlen(gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(menu))) >= 1)
+		gchar *tmp_help = gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(menu));
+		if (strlen(tmp_help) >= 1)
 			validate->operations.append_text(validate->data, _("Defined"));
 		else
 			validate_append_check(validate, "", GEBR_VALIDATE_CHECK_EMPTY, GEBR_VALIDATE_CASE_HELP, "");
+		g_free (tmp_help);
 		validate->operations.append_text(validate->data, "\n");
 	}
 	if (validate->options.ehelp == 0) {
-		validate->operations.append_text(validate->data, "%s", gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(menu)));
+		gchar *tmp_help = gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(menu));
+		validate->operations.append_text(validate->data, "%s", tmp_help);
+		g_free (tmp_help);
 	}
 	if (validate->options.category) {
 		gebr_geoxml_flow_get_category(menu, &seq, 0);

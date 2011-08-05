@@ -404,8 +404,8 @@ gboolean gebr_geoxml_flow_change_to_revision(GebrGeoXmlFlow * flow, GebrGeoXmlRe
 		return FALSE;
 
 	GString *merged_help;
-	const gchar *revision_help;
-	const gchar *flow_help;
+	gchar *revision_help;
+	gchar *flow_help;
 	GebrGeoXmlDocument *revision_flow;
 	GebrGeoXmlSequence *first_revision;
 	GdomeElement *child;
@@ -460,6 +460,8 @@ gboolean gebr_geoxml_flow_change_to_revision(GebrGeoXmlFlow * flow, GebrGeoXmlRe
 		if(report_merged)
 			*report_merged = TRUE;
 	}
+	g_free(flow_help);
+	g_free(revision_help);
 
 	gebr_geoxml_flow_get_revision(flow, &first_revision, 0);
 	/* remove all elements till first_revision

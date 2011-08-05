@@ -1182,10 +1182,11 @@ gchar * gebr_flow_get_detailed_report (GebrGeoXmlFlow * flow, gboolean include_t
 	gchar * report;
 	gchar * header;
 	gchar * flow_dict;
-	const gchar * help;
+	gchar * help;
 
 	help = gebr_geoxml_document_get_help (GEBR_GEOXML_DOCUMENT (flow));
 	inner = gebr_document_report_get_inner_body (help);
+	g_free(help);
 	
 	if (inner == NULL)
 		inner = g_strdup("");

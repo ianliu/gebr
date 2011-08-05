@@ -100,7 +100,12 @@ int main(int argc, char **argv)
 	       gebr_geoxml_document_get_date_created(doc[0]), gebr_geoxml_document_get_date_created(doc[1]));
 	report("Modified date",
 	       gebr_geoxml_document_get_date_modified(doc[0]), gebr_geoxml_document_get_date_modified(doc[1]));
-	report_help("Help", gebr_geoxml_document_get_help(doc[0]), gebr_geoxml_document_get_help(doc[1]));
+	gchar *help1, *help2;
+	help1 = gebr_geoxml_document_get_help(doc[0]);
+	help2 = gebr_geoxml_document_get_help(doc[1]);
+	report_help("Help", help1, help2);
+	g_free (help1);
+	g_free (help2);
 
 	{
 		GString *cat[2];

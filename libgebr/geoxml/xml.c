@@ -282,7 +282,7 @@ const gchar *__gebr_geoxml_get_element_value(GdomeElement * element)
 	} while (1);
 	string = gdome_n_nodeValue(child, &exception);
 	if (string == NULL)
-		return "";
+		return g_strdup ("");
 	if (gdome_n_nodeType(child, &exception) == GDOME_TEXT_NODE) {
 		gchar *protected_str;
 

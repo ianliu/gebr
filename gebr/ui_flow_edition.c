@@ -1190,11 +1190,13 @@ static GtkMenu *flow_edition_menu_popup_menu(GtkWidget * widget, struct ui_flow_
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_edition->menu_store), &iter,
 			   MENU_FILEPATH_COLUMN, &menu_filename, -1);
 	GebrGeoXmlDocument *xml = GEBR_GEOXML_DOCUMENT(menu_load_path(menu_filename));
-	if (xml != NULL && strlen(gebr_geoxml_document_get_help(xml)) <= 1)
+	gchar *tmp_help = gebr_geoxml_document_get_help(xml);
+	if (xml != NULL && strlen(tmp_help) <= 1)
 		gtk_widget_set_sensitive(menu_item, FALSE);
 	if (xml)
 		document_free(xml);
 	g_free(menu_filename);
+	g_free(tmp_help);
 
  out:	gtk_widget_show_all(menu);
 
