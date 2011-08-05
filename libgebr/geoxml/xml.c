@@ -292,8 +292,9 @@ const gchar *__gebr_geoxml_get_element_value(GdomeElement * element)
 
 		return protected_str;
 	}
-
-	return string->str;
+	gchar *str = g_strdup(string->str);
+	gdome_str_unref(string);
+	return str;
 }
 
 void
