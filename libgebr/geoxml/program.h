@@ -228,7 +228,7 @@ const gchar *gebr_geoxml_program_get_description(GebrGeoXmlProgram * program);
 /**
  *
  */
-const gchar *gebr_geoxml_program_get_help(GebrGeoXmlProgram * program);
+gchar *gebr_geoxml_program_get_help(GebrGeoXmlProgram * program);
 
 /**
  * Gets the \p program's version.

@@ -892,7 +892,9 @@ static void flow_edition_component_selected(void)
 	gtk_action_set_sensitive(action, !has_error);
 
 	action = gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_help");
-	gtk_action_set_sensitive(action, strlen(gebr_geoxml_program_get_help(gebr.program)) != 0);
+	gchar *tmp_help_p = gebr_geoxml_program_get_help(gebr.program);
+	gtk_action_set_sensitive(action, strlen(tmp_help_p) != 0);
+	g_free(tmp_help_p);
 }
 
 /*

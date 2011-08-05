@@ -249,7 +249,7 @@ static void on_load_finished(WebKitWebView * web_view, WebKitWebFrame * frame, G
 			gebr_geoxml_flow_get_program(GEBR_GEOXML_FLOW(priv->object), &program, 0);
 
 			for (gint i = 0; program != NULL; gebr_geoxml_sequence_next(&program), ++i) {
-				 help = gebr_geoxml_program_get_help (GEBR_GEOXML_PROGRAM (program));
+				help = gebr_geoxml_program_get_help (GEBR_GEOXML_PROGRAM (program));
 				if(strlen(help) > 0)
 					g_string_append_printf(list, "%s['%s', 'gebr://prog%d']",
 						       	   i == 0? "":",",

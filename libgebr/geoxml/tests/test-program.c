@@ -294,7 +294,7 @@ void test_gebr_geoxml_program_get_and_set_help(void)
 {
 	GebrGeoXmlFlow *flow = gebr_geoxml_flow_new();
 	GebrGeoXmlProgram *program = gebr_geoxml_flow_append_program(flow);
-	const gchar *program_help;
+	gchar *program_help;
 
 	// Should do nothing, and not crash
 	gebr_geoxml_program_set_help(NULL, "Help goes here");
@@ -306,10 +306,12 @@ void test_gebr_geoxml_program_get_and_set_help(void)
 	gebr_geoxml_program_set_help(program, "Help goes here");
 	program_help = gebr_geoxml_program_get_help(program);
 	g_assert_cmpstr(program_help, ==, "Help goes here");
+	g_free(program_help);
 
 	gebr_geoxml_program_set_help(program, "Change on help goes here");
 	program_help= gebr_geoxml_program_get_help(program);
 	g_assert_cmpstr(program_help, ==, "Change on help goes here");
+	g_free(program_help);
 }
 
 void test_gebr_geoxml_program_get_and_set_version(void)

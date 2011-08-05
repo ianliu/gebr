@@ -190,7 +190,11 @@ int main(int argc, char **argv)
 
 		report("URL", gebr_geoxml_program_get_url(prog[0]), gebr_geoxml_program_get_url(prog[1]));
 
-		report_help("Help", gebr_geoxml_program_get_help(prog[0]), gebr_geoxml_program_get_help(prog[1]));
+		gchar *tmp_help_p1 = gebr_geoxml_program_get_help(prog[0]);
+		gchar *tmp_help_p2 = gebr_geoxml_program_get_help(prog[1]);
+		report_help("Help", tmp_help_p1, tmp_help_p2);
+		g_free(tmp_help_p1);
+		g_free(tmp_help_p2);
 
 		compare_parameters(prog[0], prog[1]);
 

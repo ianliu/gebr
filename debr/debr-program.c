@@ -678,7 +678,7 @@ void program_details_update(void)
 	g_object_set(debr.ui_program.details.help_view, "visible", is_program_selected, NULL);
 
 	if (is_program_selected) {
-		const gchar * help;
+		gchar * help;
 		gboolean help_exists;
 		help = gebr_geoxml_program_get_help(GEBR_GEOXML_PROGRAM(debr.program));
 		help_exists = strlen(help) > 0 ? TRUE : FALSE;
@@ -686,6 +686,7 @@ void program_details_update(void)
 		g_object_set(debr.ui_program.details.help_edit, "sensitive", TRUE, NULL);
 		gtk_action_set_sensitive(gtk_action_group_get_action(debr.action_group_program, "program_help_view"), help_exists);
 		validate_image_set_check_help(debr.ui_program.help_validate_image, help);
+		g_free(help);
 	}
 
 	gtk_widget_set_sensitive(GTK_WIDGET(debr.tool_item_new), is_program_selected);
@@ -809,9 +810,6 @@ static void program_load_selected(void)
 static GtkTreeIter program_append_to_ui(GebrGeoXmlProgram * program)
 {
 	GtkTreeIter iter;
-	const gchar * help;
-
-	help = gebr_geoxml_program_get_help(program);
 
 	gtk_list_store_append(debr.ui_program.list_store, &iter);
 	gtk_list_store_set(debr.ui_program.list_store, &iter,
@@ -1041,9 +1039,8 @@ gchar * debr_program_get_backup_help_from_pointer (gpointer program)
 	gebr_geoxml_document_load (&menu, fname, TRUE, NULL);
 	gebr_geoxml_flow_get_program (GEBR_GEOXML_FLOW (menu), &sequence, index);
 
-	if (sequence) {
-		help = g_strdup (gebr_geoxml_program_get_help (GEBR_GEOXML_PROGRAM (sequence)));
-	}
+	if (sequence)
+		help = gebr_geoxml_program_get_help (GEBR_GEOXML_PROGRAM (sequence));
 
 	gebr_geoxml_document_free (menu);
 

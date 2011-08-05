@@ -61,8 +61,10 @@ struct ui_parameters *parameters_configure_setup_ui(void)
 					     (GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT), NULL);
 	g_object_set(dialog, "type-hint", GDK_WINDOW_TYPE_HINT_NORMAL, NULL);
 	button = gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_HELP, GTK_RESPONSE_HELP);
-	if (strlen(gebr_geoxml_program_get_help(gebr.program)) == 0)	
+	gchar *tmp_help_p = gebr_geoxml_program_get_help(gebr.program);
+	if (strlen(tmp_help_p) == 0)	
 		gtk_widget_set_sensitive(button, FALSE);
+	g_free(tmp_help_p);
 
 	button = gtk_dialog_add_button(GTK_DIALOG(dialog), _("Default"), GTK_RESPONSE_APPLY);
 	g_object_set(G_OBJECT(button), "image",

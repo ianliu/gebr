@@ -279,7 +279,7 @@ const gchar *gebr_geoxml_program_get_description(GebrGeoXmlProgram * program)
 	return __gebr_geoxml_get_tag_value((GdomeElement *) program, "description");
 }
 
-const gchar *gebr_geoxml_program_get_help(GebrGeoXmlProgram * program)
+gchar *gebr_geoxml_program_get_help(GebrGeoXmlProgram * program)
 {
 	if (program == NULL)
 		return NULL;
