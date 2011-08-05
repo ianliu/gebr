@@ -146,10 +146,19 @@ create_help_edit_window(GebrGeoXmlDocument * document)
 	window = gebr_gui_help_edit_window_new(help_edit_widget);
 	help_edit_window = GEBR_GUI_HELP_EDIT_WINDOW(window);
 
-	g_free(help);
 
 	g_signal_connect(window, "destroy",
 			 G_CALLBACK(on_help_edit_window_destroy), document);
+
+
+	void 
+	free_help(GtkWidget * widget,
+		  gpointer help)
+	{
+		g_free((gchar *)help);
+	}
+
+	g_signal_connect_after(window, "destroy", G_CALLBACK(free_help), help);
 
 	switch(gebr_geoxml_document_get_type(document)) {
 	case GEBR_GEOXML_DOCUMENT_TYPE_FLOW:
@@ -573,7 +582,7 @@ void gebr_help_edit_document(GebrGeoXmlDocument * document)
 			goto out;
 		}
 		gchar *tmp_help = gebr_geoxml_document_get_help(document);
-		g_string_assign(prepared_html, tmp_help);
+		g_string_assign(prepared_html, (const gchar *)tmp_help);
 		g_free(tmp_help);
 		fputs(prepared_html->str, html_fp);
 		fclose(html_fp);
