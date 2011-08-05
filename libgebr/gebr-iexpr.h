@@ -52,6 +52,7 @@ GQuark gebr_iexpr_error_quark(void);
  * GebrIExprError:
  * @GEBR_IEXPR_ERROR_INITIALIZE: The validator failed to initialize.
  * @GEBR_IEXPR_ERROR_EMPTY_EXPR:
+ * @GEBR_IEXPR_ERROR_TOOBIG:
  * @GEBR_IEXPR_ERROR_RUNTIME:
  * @GEBR_IEXPR_ERROR_SYNTAX: The expression syntax is invalid.
  * @GEBR_IEXPR_ERROR_UNDEF_VAR: An undefined variable was found.
@@ -62,13 +63,13 @@ GQuark gebr_iexpr_error_quark(void);
  * @GEBR_IEXPR_ERROR_TYPE_MISMATCH: The numeric variable uses a string one.
  * @GEBR_IEXPR_ERROR_BAD_MOVE:
  * @GEBR_IEXPR_ERROR_PATH:
- * @GEBR_IEXPR_ERROR_TOOBIG:
  *
  * Error codes returned by expression handling functions.
  */
 typedef enum {
 	GEBR_IEXPR_ERROR_INITIALIZE,
 	GEBR_IEXPR_ERROR_EMPTY_EXPR,
+	GEBR_IEXPR_ERROR_TOOBIG,
 	GEBR_IEXPR_ERROR_RUNTIME,
 	GEBR_IEXPR_ERROR_SYNTAX,
 	GEBR_IEXPR_ERROR_UNDEF_VAR,
@@ -80,7 +81,6 @@ typedef enum {
 	GEBR_IEXPR_ERROR_TYPE_MISMATCH,
 	GEBR_IEXPR_ERROR_BAD_MOVE,
 	GEBR_IEXPR_ERROR_PATH,
-	GEBR_IEXPR_ERROR_TOOBIG,
 } GebrIExprError;
 
 typedef struct _GebrIExpr GebrIExpr;
