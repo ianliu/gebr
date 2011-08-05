@@ -24,6 +24,7 @@
 #include <glib/gi18n.h>
 #include <libgebr/date.h>
 #include <libgebr/utils.h>
+#include <libgebr/geoxml/document.h>
 #include <libgebr/gui/gebr-gui-utils.h>
 #include <libgebr/gui/gebr-gui-save-dialog.h>
 
@@ -520,6 +521,7 @@ static gboolean _project_line_import_path(const gchar *filename, GList **line_pa
 
 			i = next;
 		}
+		gebr_geoxml_document_unref_sequence(i);
 		gdk_threads_enter();
 		document_save(GEBR_GEOXML_DOCUMENT(*line), FALSE, FALSE);
 		gdk_threads_leave();
@@ -946,6 +948,7 @@ void project_line_export(void)
 
 			document_free(GEBR_GEOXML_DOCUMENT(flow));
 		}
+		gebr_geoxml_document_unref_sequence(j);
 
 		document_free(GEBR_GEOXML_DOCUMENT(line));
 	}
@@ -1561,6 +1564,7 @@ gchar * gebr_line_generate_header(GebrGeoXmlDocument * document)
 		gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
 		gebr_geoxml_sequence_next (&sequence);
 	}
+	gebr_geoxml_document_unref_sequence(sequence);
 
 	proj_dict = gebr_generate_variables_value_table(GEBR_GEOXML_DOCUMENT(gebr.project), TRUE, FALSE);
 	line_dict = gebr_generate_variables_value_table(document, FALSE, TRUE);

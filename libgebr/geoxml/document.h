@@ -412,6 +412,11 @@ void gebr_geoxml_document_set_dtd_dir(const gchar *path);
 gboolean
 gebr_geoxml_document_canonize_dict_parameters(GebrGeoXmlDocument * document,
 					      GHashTable 	** vars_list);
+/*
+ *
+ */
+void
+gebr_geoxml_document_unref_sequence(GebrGeoXmlSequence *element);
 
 G_END_DECLS
 
