@@ -61,14 +61,17 @@ GebrGeoXmlParameters *gebr_geoxml_parameter_group_get_template(GebrGeoXmlParamet
 	if (parameter_group == NULL)
 		return NULL;
 
-	GdomeElement *tpl;
+	GdomeElement *parent;
+	GdomeElement *grandpa;
 	GdomeElement *group;
 
 	group = __gebr_geoxml_parameter_get_type_element(GEBR_GEOXML_PARAMETER(parameter_group));
-	tpl = __gebr_geoxml_get_first_element(group, "template-instance");
-	tpl = __gebr_geoxml_get_first_element(tpl, "parameters");
+	parent = __gebr_geoxml_get_first_element(group, "template-instance");
+	grandpa = __gebr_geoxml_get_first_element(parent, "parameters");
+	gdome_el_unref(group, &exception);
+	gdome_el_unref(parent, &exception);
 
-	return GEBR_GEOXML_PARAMETERS(tpl);
+	return GEBR_GEOXML_PARAMETERS(grandpa);
 }
 
 GebrGeoXmlParameters *gebr_geoxml_parameter_group_add_instance(GebrGeoXmlParameterGroup * parameter_group)

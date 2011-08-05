@@ -52,6 +52,8 @@ static inline gboolean __gebr_geoxml_sequence_is_parameter(GebrGeoXmlSequence * 
  */
 static int __gebr_geoxml_sequence_check(GebrGeoXmlSequence * sequence, gboolean check_master_instance)
 {
+	int retval;
+
 	if (sequence == NULL)
 		return GEBR_GEOXML_RETV_NULL_PTR;
 
@@ -62,14 +64,18 @@ static int __gebr_geoxml_sequence_check(GebrGeoXmlSequence * sequence, gboolean 
 		GebrGeoXmlParameters *parameters;
 
 		parameters = (GebrGeoXmlParameters *) gdome_el_parentNode((GdomeElement *) sequence, &exception);
-		if (__gebr_geoxml_parameters_group_check(parameters) == FALSE)
-			return GEBR_GEOXML_RETV_NOT_MASTER_INSTANCE;
-
-		return GEBR_GEOXML_RETV_SUCCESS;
+		if (__gebr_geoxml_parameters_group_check(parameters) == FALSE) {
+			retval = GEBR_GEOXML_RETV_NOT_MASTER_INSTANCE;
+			gdome_el_unref((GdomeElement*)parameters, &exception);
+			goto out;
+		}
+		gdome_el_unref((GdomeElement*)parameters, &exception);
+		retval = GEBR_GEOXML_RETV_SUCCESS;
+		goto out;
 	}
 
 	/* on success, return 0 = GEBR_GEOXML_RETV_SUCCESS */
-	return strcmp(tag->str, "server")
+	retval = strcmp(tag->str, "server")
 		&& strcmp(tag->str, "value")
 		&& strcmp(tag->str, "default")
 		&& strcmp(tag->str, "option")
@@ -81,6 +87,10 @@ static int __gebr_geoxml_sequence_check(GebrGeoXmlSequence * sequence, gboolean 
 		&& strcmp(tag->str, "flow")
 		&& strcmp(tag->str, "path")
 		&& strcmp(tag->str, "line");
+
+out:
+	gdome_str_unref(tag);
+	return retval;
 }
 
 int

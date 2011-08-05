@@ -64,22 +64,28 @@ GebrGeoXmlFlow *gebr_geoxml_flow_new()
 {
 	GebrGeoXmlDocument *document;
 	GdomeElement *io;
+	GdomeElement *root;
 	GdomeElement *server;
 
 	document = gebr_geoxml_document_new("flow", GEBR_GEOXML_FLOW_VERSION);
 
-	server = __gebr_geoxml_insert_new_element(gebr_geoxml_document_root_element(document), "server", NULL);
+	root = gebr_geoxml_document_root_element(document);
+	server = __gebr_geoxml_insert_new_element(root, "server", NULL);
 	__gebr_geoxml_set_attr_value (server, "address", "");
 
 	io = __gebr_geoxml_insert_new_element(server, "io", NULL);
-	__gebr_geoxml_insert_new_element(io, "input", NULL);
-	__gebr_geoxml_insert_new_element(io, "output", NULL);
-	__gebr_geoxml_insert_new_element(io, "error", NULL);
+	gdome_el_unref(__gebr_geoxml_insert_new_element(io, "input", NULL), &exception);
+	gdome_el_unref(__gebr_geoxml_insert_new_element(io, "output", NULL), &exception);
+	gdome_el_unref(__gebr_geoxml_insert_new_element(io, "error", NULL), &exception);
+	gdome_el_unref(__gebr_geoxml_insert_new_element(server, "lastrun", NULL), &exception);
 
-	__gebr_geoxml_insert_new_element(server, "lastrun", NULL);
+	GdomeElement *date = __gebr_geoxml_get_first_element(root, "date");
+	gdome_el_unref(__gebr_geoxml_insert_new_element(date, "lastrun", NULL), &exception);
 
-	__gebr_geoxml_insert_new_element(__gebr_geoxml_get_first_element
-					 (gebr_geoxml_document_root_element(document), "date"), "lastrun", NULL);
+	gdome_el_unref(server, &exception);
+	gdome_el_unref(date, &exception);
+	gdome_el_unref(root, &exception);
+	gdome_el_unref(io, &exception);
 
 	return GEBR_GEOXML_FLOW(document);
 }

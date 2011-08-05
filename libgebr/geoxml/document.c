@@ -117,10 +117,11 @@ static void gebr_geoxml_document_fix_header(GString * source, const gchar * tagn
 static void __gebr_geoxml_ref(void)
 {
 	if (!dom_implementation_ref_count) {
+		GdomeDOMString *string = gdome_str_mkref("gebr-geoxml-clipboard");
 		dom_implementation = gdome_di_mkref();
 		clipboard_document = gdome_di_createDocument(dom_implementation, NULL,
-							     gdome_str_mkref("gebr-geoxml-clipboard"), NULL,
-							     &exception);
+							     string, NULL, &exception);
+		gdome_str_unref(string);
 	} else
 		gdome_di_ref(dom_implementation, &exception);
 	++dom_implementation_ref_count;

@@ -249,17 +249,30 @@ gboolean gebr_geoxml_parameters_get_is_in_group(GebrGeoXmlParameters * parameter
 
 GebrGeoXmlParameterGroup *gebr_geoxml_parameters_get_group(GebrGeoXmlParameters * parameters)
 {
+	GdomeDOMString *tag;
+	GdomeElement *parent;
+
 	if (parameters == NULL)
 		return NULL;
-	GdomeElement *parent;
+
 	parent = (GdomeElement*)gdome_el_parentNode((GdomeElement*)parameters, &exception);
+	tag = gdome_el_tagName(parent, &exception);
 
-	if (strcmp(gdome_el_tagName(parent, &exception)->str, "template-instance") == 0)
+	if (strcmp(tag->str, "template-instance") == 0) {
+		gdome_el_unref(parent, &exception);
 		parent = (GdomeElement*)gdome_el_parentNode(parent, &exception);
+	}
 
-	return !strcmp(gdome_el_tagName(parent, &exception)->str, "group")
-	    ? (GebrGeoXmlParameterGroup*)gdome_el_parentNode(parent, &exception)
-	    : NULL;
+	gdome_str_unref(tag);
+	tag = gdome_el_tagName(parent, &exception);
+
+	if (g_strcmp0(tag->str, "group") == 0) {
+		GdomeElement *grandpa = gdome_el_parentNode(parent, &exception);
+		gdome_el_unref(parent, &exception);
+		return (GebrGeoXmlParameterGroup*) grandpa;
+	}
+
+	return NULL;
 }
 
 gboolean gebr_geoxml_parameters_is_var_used (GebrGeoXmlParameters *self,

@@ -372,10 +372,13 @@ __gebr_geoxml_set_tag_value(GdomeElement * parent_element, const gchar * tag_nam
 void __gebr_geoxml_set_attr_value(GdomeElement * element, const gchar * name, const gchar * value)
 {
 	GdomeDOMString *string;
+	GdomeDOMString *str_value;
 
-	string = gdome_str_mkref(name);
-	gdome_el_setAttribute(element, string, gdome_str_mkref_dup(value), &exception);
+	string = gdome_str_mkref_dup(name);
+	str_value = gdome_str_mkref_dup(value);
+	gdome_el_setAttribute(element, string, str_value, &exception);
 	gdome_str_unref(string);
+	gdome_str_unref(str_value);
 }
 
 const gchar *__gebr_geoxml_get_attr_value(GdomeElement * element, const gchar * name)

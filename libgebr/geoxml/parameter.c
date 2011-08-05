@@ -58,8 +58,13 @@ const int parameter_type_to_str_len = 9;
 GdomeElement *__gebr_geoxml_parameter_get_type_element(GebrGeoXmlParameter * parameter)
 {
 	GdomeElement *type_element;
+	GdomeElement *next;
+
 	type_element = __gebr_geoxml_get_first_element((GdomeElement *) parameter, "label");
-	return __gebr_geoxml_next_element(type_element);
+	next = __gebr_geoxml_next_element(type_element);
+	gdome_el_unref(type_element, &exception);
+
+	return next;
 }
 
 /**
