@@ -28,7 +28,7 @@ typedef struct {
 	GError *error[3];
 } HashData;
 
-
+#define MAX_RESULT_LENGTH 68
 #define ITER_INI_EXPR ";iter=bc_reset(0);"
 #define ITER_END_EXPR ";iter=bc_reset(1);"
 
@@ -471,7 +471,15 @@ validate_and_extract_vars(GebrValidator  *self,
 			} else {
 				define = g_strdup(expression);
 			}
-			valid = gebr_arith_expr_eval_internal(self->arith_expr, define, NULL, error);
+			gchar *result = NULL;
+			valid = gebr_arith_expr_eval_internal(self->arith_expr, define, &result, error);
+			if (valid && strlen(result) > MAX_RESULT_LENGTH) {
+				valid = FALSE;
+				g_set_error(error, GEBR_IEXPR_ERROR,
+					    GEBR_IEXPR_ERROR_TOOBIG,
+					    _("Expression result is too big"));
+				g_free(result);
+			}
 			g_free(define);
 		}
 		break;

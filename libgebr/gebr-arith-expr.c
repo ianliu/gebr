@@ -507,13 +507,9 @@ gebr_arith_expr_eval_internal(GebrArithExpr *self,
 			goto exception_and_flush;
 		}
 		int length = strlen(line);
-		if (line[length - 2] == '\\') {
-			g_set_error(err,
-				    GEBR_IEXPR_ERROR,
-				    GEBR_IEXPR_ERROR_TOOBIG,
-				    _("Expression result is too big"));
-			goto exception_and_flush;
-		} else
+		if (line[length - 2] == '\\')
+			length -= 2;
+		else
 			results++;
 		g_string_append_len(buffer, line, length);
 		g_free(line);
