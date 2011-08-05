@@ -770,13 +770,13 @@ void test_gebr_validator_divide_by_zero(Fixture *fixture, gconstpointer data)
 	VALIDATE_FLOAT_EXPR_WITH_ERROR("10/a", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_UNDEF_REFERENCE);
 
 	// Divide by zero
-	a = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(fixture->proj),
+	a = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(fixture->flow),
 	                                          GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
 	                                          "a", "0");
 	gebr_validator_insert(fixture->validator, a, NULL, &error);
 	g_assert_no_error(error);
 	VALIDATE_FLOAT_EXPR_WITH_ERROR("10/a", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_RUNTIME);
-	b = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(fixture->proj),
+	b = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(fixture->flow),
 	                                          GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
 	                                          "b", "10/a");
 	gebr_validator_insert(fixture->validator, b, NULL, &error);
@@ -794,6 +794,37 @@ void test_gebr_validator_divide_by_zero(Fixture *fixture, gconstpointer data)
 
 	// Divide by zero again
 	gebr_validator_change_value(fixture->validator, a, "0", NULL, &error);
+	g_assert_no_error(error);
+	VALIDATE_FLOAT_EXPR_WITH_ERROR("10/a", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_RUNTIME);
+	VALIDATE_FLOAT_EXPR_WITH_ERROR("b", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_BAD_REFERENCE);
+	gebr_validator_evaluate_param(fixture->validator, b, &value, &error);
+	g_assert_error(error, GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_RUNTIME);
+	g_clear_error(&error);
+	VALIDATE_FLOAT_EXPR_WITH_ERROR("b", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_BAD_REFERENCE);
+
+	fixture_add_loop(fixture);
+
+	VALIDATE_FLOAT_EXPR_WITH_ERROR("1/(iter-1)", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_RUNTIME);
+
+	// Divide by zero when iter has initial value
+	gebr_validator_change_value(fixture->validator, a, "1/(iter-1)", NULL, &error);
+	g_assert_error(error, GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_RUNTIME);
+	g_clear_error(&error);
+	VALIDATE_FLOAT_EXPR_WITH_ERROR("a", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_BAD_REFERENCE);
+	gebr_validator_change_value(fixture->validator, a, "iter-1", NULL, &error);
+	g_assert_no_error(error);
+	VALIDATE_FLOAT_EXPR_WITH_ERROR("10/a", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_RUNTIME);
+	VALIDATE_FLOAT_EXPR_WITH_ERROR("b", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_BAD_REFERENCE);
+	gebr_validator_evaluate_param(fixture->validator, b, &value, &error);
+	g_assert_error(error, GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_RUNTIME);
+	g_clear_error(&error);
+	VALIDATE_FLOAT_EXPR_WITH_ERROR("b", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_BAD_REFERENCE);
+
+	// Divide by zero when iter has final value
+//	gebr_validator_change_value(fixture->validator, a, "1/(iter-7)", NULL, &error);
+//	g_assert_error(error, GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_RUNTIME);
+//	g_clear_error(&error);
+	gebr_validator_change_value(fixture->validator, a, "iter-7", NULL, &error);
 	g_assert_no_error(error);
 	VALIDATE_FLOAT_EXPR_WITH_ERROR("10/a", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_RUNTIME);
 	VALIDATE_FLOAT_EXPR_WITH_ERROR("b", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_BAD_REFERENCE);
