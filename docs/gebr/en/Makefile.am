@@ -16,7 +16,7 @@
 include $(top_srcdir)/Makefile.decl
 
 HTMLDIR = $(DESTDIR)$(datadir)/doc/gebr
-LANG = en
+LANG_DIR = en
 
 if HAVE_DOCBOOK
 HTML_DEP = html-ok
@@ -39,13 +39,13 @@ dist-ok: html-ok
 	cp -Rp $(builddir)/html $(srcdir)/images $(distdir)
 
 inst-ok: html-ok
-	${INSTALL_SCRIPT} -d $(HTMLDIR)/$(LANG)/html
-	${INSTALL_SCRIPT} -d $(HTMLDIR)/$(LANG)/images
-	${INSTALL_DATA} $(builddir)/html/* $(HTMLDIR)/$(LANG)/html
-	${INSTALL_DATA} $(srcdir)/images/* $(HTMLDIR)/$(LANG)/images
+	${INSTALL_SCRIPT} -d $(HTMLDIR)/$(LANG_DIR)/html
+	${INSTALL_SCRIPT} -d $(HTMLDIR)/$(LANG_DIR)/images
+	${INSTALL_DATA} $(builddir)/html/* $(HTMLDIR)/$(LANG_DIR)/html
+	${INSTALL_DATA} $(srcdir)/images/* $(HTMLDIR)/$(LANG_DIR)/images
 
 uinst-ok:
-	( cd $(HTMLDIR) && rm -r $(LANG) )
+	( cd $(HTMLDIR) && rm -r $(LANG_DIR) )
 
 html-error:
 	echo "***"

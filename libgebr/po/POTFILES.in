@@ -12,7 +12,6 @@ comm/gebr-comm-terminalprocess.c
 comm/socketchannel/socketchannel.c
 date.c
 gebr-arith-expr.c
-gebr-string-expr.c
 gebr-validator.c
 geoxml-utils/upgrade.c
 geoxml-utils/validate.c
