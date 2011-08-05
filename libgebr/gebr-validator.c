@@ -51,6 +51,15 @@ static gboolean gebr_validator_validate_iter(GebrValidator *self,
                                              GebrGeoXmlParameter *param,
                                              GError **error);
 
+static gboolean gebr_validator_evaluate_internal(GebrValidator *self,
+                                                 const gchar *name,
+                                                 const gchar *expr,
+                                                 GebrGeoXmlParameterType type,
+                                                 gchar **value,
+                                                 GebrGeoXmlDocumentType scope,
+                                                 gboolean show_interval,
+                                                 GError **error);
+
 /* NodeData functions {{{1 */
 static HashData *
 hash_data_new_from_xml(GebrGeoXmlParameter *param)
@@ -214,6 +223,7 @@ set_error(GebrValidator *self,
 	  GebrGeoXmlDocumentType scope,
 	  GError *error)
 {
+	if (!name) return;
 	HashData *data = g_hash_table_lookup(self->vars, name);
 	g_return_if_fail(data != NULL);
 	if (error) {
@@ -477,12 +487,47 @@ validate_and_extract_vars(GebrValidator  *self,
 	return valid;
 }
 
-static void
+/* Validate @expression and extract vars on @deps with @error */
+static gboolean
+validate_and_extract_param(GebrValidator  *self,
+                           GebrGeoXmlParameter *param,
+                           GList **deps,
+                           GError **error)
+{
+	GError *err = NULL;
+	const gchar *name = GET_VAR_NAME(param);
+	const gchar *value = GET_VAR_VALUE(param);
+	GebrGeoXmlParameterType type = gebr_geoxml_parameter_get_type(param);
+	GebrGeoXmlDocumentType scope = gebr_geoxml_parameter_get_scope(param);
+	if (gebr_geoxml_program_parameter_get_required(GEBR_GEOXML_PROGRAM_PARAMETER(param)) && !*value) {
+		g_set_error(&err,
+		            GEBR_IEXPR_ERROR,
+		            GEBR_IEXPR_ERROR_EMPTY_EXPR,
+		            _("This parameter is required"));
+		set_error(self, name, scope, err);
+		g_propagate_error(error, err);
+		return FALSE;
+	}
+	if (validate_and_extract_vars(self, name, value, type, scope, deps, &err)) {
+		set_error(self, name, scope, NULL);
+		return TRUE;
+	}
+	if (err->code >= GEBR_IEXPR_ERROR_EMPTY_EXPR && err->code <= GEBR_IEXPR_ERROR_SYNTAX) {
+		set_error(self, name, scope, err);
+	} else {
+		set_error(self, name, scope, NULL);
+	}
+	g_propagate_error(error, err);
+	return FALSE;
+}
+
+static gboolean
 gebr_validator_update_vars(GebrValidator *self,
-                           GebrGeoXmlDocumentType param_scope)
+                           GebrGeoXmlDocumentType param_scope,
+                           GError **error)
 {
 	if (self->cached_scope == param_scope)
-		return;
+		return TRUE;
 	int nth = 0;
 	GString *bc_vars =  g_string_sized_new(1024);
 	GString *bc_strings =  g_string_sized_new(2*1024);
@@ -490,6 +535,27 @@ gebr_validator_update_vars(GebrValidator *self,
 	g_string_append(bc_strings, "define str(n) { if (n==0) \"\"");
 
 	g_string_append(bc_vars, "define bc_reset(iter) {\n");
+
+	gboolean has_iter = FALSE;
+	// Validate iter final value
+	if (param_scope == GEBR_GEOXML_DOCUMENT_TYPE_FLOW) {
+		int scope = GEBR_GEOXML_DOCUMENT_TYPE_FLOW;
+		GebrGeoXmlSequence *param = gebr_geoxml_document_get_dict_parameter(*self->docs[scope]);
+		if (g_strcmp0(GET_VAR_NAME(param), "iter") == 0) {
+			has_iter = TRUE;
+			if (gebr_validator_update_vars(self, GEBR_GEOXML_DOCUMENT_TYPE_LINE, NULL)
+					&& validate_and_extract_param(self, GEBR_GEOXML_PARAMETER(param), NULL, NULL)) {
+				gebr_geoxml_sequence_next(&param);
+				for (; param; gebr_geoxml_sequence_next(&param)) {
+					GebrGeoXmlParameterType type = gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(param));
+					if (type == GEBR_GEOXML_PARAMETER_TYPE_STRING) {
+						continue;
+					}
+					validate_and_extract_param(self, GEBR_GEOXML_PARAMETER(param), NULL, NULL);
+				}
+			}
+		}
+	}
 	for (int scope = GEBR_GEOXML_DOCUMENT_TYPE_PROJECT; scope >= (int) param_scope; scope--) {
 		if (!self->docs[scope] || !*(self->docs[scope]))
 			continue;
@@ -497,15 +563,28 @@ gebr_validator_update_vars(GebrValidator *self,
 		for (; param; gebr_geoxml_sequence_next(&param)) {
 			const gchar* name = GET_VAR_NAME(param);
 			GebrGeoXmlParameterType type = gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(param));
-			gboolean is_math = get_validator_by_type(self, type) == GEBR_IEXPR(self->arith_expr);
-			if (is_math && !gebr_validator_validate_param(self, GEBR_GEOXML_PARAMETER(param), NULL, NULL))
-				continue;
+
 			HashData *data = g_hash_table_lookup(self->vars, name);
-			if (!data || data->error[scope] || !get_error_indirect(self, data->dep[scope], name, type, scope, NULL))
+			if (!data || (has_iter && data->error[scope]) || !get_error_indirect(self, data->dep[scope], name, type, scope, NULL))
 				continue;
 
-			const gchar* value = GET_VAR_VALUE(param);
-			if (!strlen(value))
+			const gchar *value = GET_VAR_VALUE(param);
+
+			if (type != GEBR_GEOXML_PARAMETER_TYPE_STRING && g_strcmp0(name, "iter") == 0) {
+				g_string_append_printf(bc_vars, "%1$s=%1$s[%2$d]=%3$s*iter\n", name, scope, value);
+				gchar *expr = g_strconcat(value, "*0", NULL);
+				validate_and_extract_vars(self, name, expr, type, scope, NULL, NULL);
+				g_free(expr);
+				continue;
+			}
+
+			// Revalidate numbers
+			if (type != GEBR_GEOXML_PARAMETER_TYPE_STRING
+					&& validate_and_extract_param(self, GEBR_GEOXML_PARAMETER(param), NULL, NULL)) {
+				g_string_append_printf(bc_vars, "%1$s=%1$s[%2$d]=(%3$s)\n", name, scope, value);
+			}
+
+			if (data->error[scope] || !get_error_indirect(self, data->dep[scope], name, type, scope, NULL))
 				continue;
 
 			if (type == GEBR_GEOXML_PARAMETER_TYPE_STRING) {
@@ -517,23 +596,17 @@ gebr_validator_update_vars(GebrValidator *self,
 				g_free(translated);
 				continue;
 			}
-			if (g_strcmp0(name, "iter") == 0) {
-				g_string_append_printf(bc_vars, "%1$s=%1$s[%2$d]=%3$s*iter\n", name, scope, value);
-			} else {
-				g_string_append_printf(bc_vars, "%1$s=%1$s[%2$d]=(%3$s)\n", name, scope, value);
-			}
 		}
 	}
 	g_string_append(bc_strings, " }\n");
 	g_string_append(bc_strings, bc_vars->str);
 	g_string_append(bc_strings, "return iter };0\n" ITER_INI_EXPR);
-	GError *error = NULL;
-	gebr_arith_expr_eval_internal(self->arith_expr, bc_strings->str, NULL, &error);
+	gboolean ok = gebr_arith_expr_eval_internal(self->arith_expr, bc_strings->str, NULL, error);
 	self->cached_scope = param_scope;
-	g_assert_no_error(error);
 
 	g_string_free(bc_vars, TRUE);
 	g_string_free(bc_strings, TRUE);
+	return ok;
 }
 
 /* Public functions {{{1 */
@@ -721,10 +794,12 @@ gebr_validator_change_value(GebrValidator       *self,
 		return FALSE;
 	}
 
+	SET_VAR_VALUE(param, new_value);
+	self->cached_scope = GEBR_GEOXML_DOCUMENT_TYPE_UNKNOWN;
+
 	if (g_strcmp0(name, "iter") == 0) {
 		if (!gebr_validator_validate_iter(self, param, &err)) {
-			if (err->code == GEBR_IEXPR_ERROR_SYNTAX ||
-			    err->code == GEBR_IEXPR_ERROR_EMPTY_EXPR)
+			if (err->code >= GEBR_IEXPR_ERROR_EMPTY_EXPR && err->code <= GEBR_IEXPR_ERROR_SYNTAX)
 				set_error(self, name, scope, err);
 			g_propagate_error(error, err);
 			return FALSE;
@@ -732,27 +807,8 @@ gebr_validator_change_value(GebrValidator       *self,
 	}
 
 	data = g_hash_table_lookup(self->vars, name);
-
 	g_return_val_if_fail(data != NULL, FALSE);
-
-	gboolean valid = validate_and_extract_vars(self, name, new_value, type, scope, &data->dep[scope], &err);
-
-	if (valid) {
-		set_error(self, name, scope, NULL);
-	} else {
-		if (err->code >= GEBR_IEXPR_ERROR_EMPTY_EXPR || err->code <= GEBR_IEXPR_ERROR_SYNTAX) {
-			// Cache only direct errors
-			set_error(self, name, scope, err);
-		} else {
-			set_error(self, name, scope, NULL);
-		}
-		g_propagate_error(error, err);
-	}
-
-	SET_VAR_VALUE(param, new_value);
-	self->cached_scope = GEBR_GEOXML_DOCUMENT_TYPE_UNKNOWN;
-
-	return valid;
+	return validate_and_extract_param(self, param, &data->dep[scope], error);
 }
 
 gboolean
@@ -828,9 +884,25 @@ gebr_validator_validate_param(GebrValidator       *self,
 			      GError             **err)
 {
 	const gchar *value;
-	GebrGeoXmlParameterType type;
+	GebrGeoXmlParameterType type = gebr_geoxml_parameter_get_type(param);
 	GebrGeoXmlSequence *seq;
 	GError *error = NULL;
+
+	// For dictionary we have cached errors, not cached yet for programs
+	if (gebr_geoxml_parameter_is_dict_param(param)) {
+		const gchar *name = GET_VAR_NAME(param);
+		HashData *data = g_hash_table_lookup(self->vars, name);
+		GebrGeoXmlDocumentType scope = gebr_geoxml_parameter_get_scope(param);
+		gebr_validator_update_vars(self, scope, NULL);
+		if (!get_error_indirect(self, data->dep[scope], name, type, scope, err))
+			return FALSE;
+
+		if (data->error[scope]) {
+			g_propagate_error(err, g_error_copy(data->error[scope]));
+			return FALSE;
+		}
+		return TRUE;
+	}
 
 	// Checks if the parameter is required or not
 	if (!gebr_geoxml_program_parameter_has_value(GEBR_GEOXML_PROGRAM_PARAMETER(param))) {
@@ -839,53 +911,10 @@ gebr_validator_validate_param(GebrValidator       *self,
 			            GEBR_IEXPR_ERROR,
 			            GEBR_IEXPR_ERROR_EMPTY_EXPR,
 			            _("This parameter is required"));
-			if (gebr_geoxml_parameter_is_dict_param(param))
-				set_error(self, GET_VAR_NAME(param), gebr_geoxml_parameter_get_scope(param), error);
 			g_propagate_error(err, error);
 			return FALSE;
 		}
 		return TRUE;
-	}
-
-	type = gebr_geoxml_parameter_get_type(param);
-
-	// For dictionary we have cached errors, not cached yet for programs
-	if (gebr_geoxml_parameter_is_dict_param(param)) {
-		const gchar *name;
-		GebrGeoXmlDocumentType scope;
-		GError *error = NULL;
-		gboolean is_math = get_validator_by_type(self, type) == GEBR_IEXPR(self->arith_expr);
-
-		scope = gebr_geoxml_parameter_get_scope(param);
-		name = GET_VAR_NAME(param);
-
-		// If BC is sync or is String we can use the cache
-		if (self->cached_scope == scope || !is_math) {
-			HashData *data = g_hash_table_lookup(self->vars, name);
-
-			g_return_val_if_fail(data != NULL, FALSE);
-
-			if (data->error[scope]) {
-				g_propagate_error(err, g_error_copy(data->error[scope]));
-				return FALSE;
-			} else
-				return get_error_indirect(self, data->dep[scope], name, type, scope, err);
-
-			return TRUE;
-		} else {
-			gboolean valid = validate_and_extract_vars(self, name, GET_VAR_VALUE(param), type, scope, NULL, &error);
-			if (valid) {
-				set_error(self, name, scope, NULL);
-			} else {
-				if (error->code >= GEBR_IEXPR_ERROR_EMPTY_EXPR || error->code <= GEBR_IEXPR_ERROR_SYNTAX) {
-					set_error(self, name, scope, error);
-				} else {
-					set_error(self, name, scope, NULL);
-				}
-				g_propagate_error(err, error);
-			}
-			return valid;
-		}
 	}
 
 	if (gebr_geoxml_program_get_control(gebr_geoxml_parameter_get_program(param)) == GEBR_GEOXML_PROGRAM_CONTROL_FOR) {
@@ -982,7 +1011,7 @@ static void
 clean_string(gchar **str)
 {
 	int i, b = 0;
-	if (!*str) {
+	if (!str || !*str) {
 		return;
 	}
 	for (i = 0; i < strlen(*str); i++) {
@@ -1001,9 +1030,9 @@ gebr_validator_use_iter(GebrValidator *self,
 {
 	GList * deps = NULL;
 	GebrGeoXmlParameter *iter;
-	HashData *data = g_hash_table_lookup(self->vars, "iter");
 	if (scope > GEBR_GEOXML_DOCUMENT_TYPE_FLOW)
 		return FALSE;
+	HashData *data = g_hash_table_lookup(self->vars, "iter");
 	if (!data || !(iter = data->param[GEBR_GEOXML_DOCUMENT_TYPE_FLOW]))
 		return FALSE;
 	data->param[GEBR_GEOXML_DOCUMENT_TYPE_FLOW] = NULL;
@@ -1027,6 +1056,7 @@ static gboolean gebr_validator_evaluate_internal(GebrValidator *self,
                                                  gboolean show_interval,
                                                  GError **error)
 {
+	gchar *end_value, *ini_value;
 	gchar *translated;
 	GError *err = NULL;
 
@@ -1037,8 +1067,6 @@ static gboolean gebr_validator_evaluate_internal(GebrValidator *self,
 			     || type == GEBR_GEOXML_PARAMETER_TYPE_RANGE
 			     || type == GEBR_GEOXML_PARAMETER_TYPE_STRING,
 			     FALSE);
-	g_return_val_if_fail(value != NULL, FALSE);
-
 	gboolean is_math = get_validator_by_type(self, type) == GEBR_IEXPR(self->arith_expr);
 	gboolean use_iter = show_interval && gebr_validator_use_iter(self, expr, type, scope);
 
@@ -1047,17 +1075,22 @@ static gboolean gebr_validator_evaluate_internal(GebrValidator *self,
 		expr = translated;
 	}
 
-	gebr_arith_expr_eval_internal(self->arith_expr, expr, value, &err);
+	gebr_arith_expr_eval_internal(self->arith_expr, expr, value ? &ini_value : NULL, &err);
 
 	if (!err && use_iter) {
-		gchar *end_value, *ini_value = *value;
 		gchar *buf = g_strconcat(ITER_END_EXPR, expr, ITER_INI_EXPR, NULL);
-		gebr_arith_expr_eval_internal(self->arith_expr, buf, &end_value, &err);
-		*value = g_strdup_printf(is_math ? "[%s, ..., %s]" : "[\"%s\", ..., \"%s\"]", ini_value, end_value);
-		g_free(ini_value);
-		g_free(end_value);
+		if (gebr_arith_expr_eval_internal(self->arith_expr, buf, value ? &end_value : NULL, &err)) {
+			if (value) {
+				*value = g_strdup_printf(is_math ? "[%s, ..., %s]" : "[\"%s\", ..., \"%s\"]", ini_value, end_value);
+				g_free(ini_value);
+				g_free(end_value);
+			}
+		}
 		g_free(buf);
-	}
+	} else if (value) {
+		*value = ini_value;
+	} else
+		g_free(ini_value);
 
 	if (!is_math) {
 		clean_string(value);
@@ -1065,10 +1098,16 @@ static gboolean gebr_validator_evaluate_internal(GebrValidator *self,
 	}
 
 	if (err) {
+		if (err->code >= GEBR_IEXPR_ERROR_EMPTY_EXPR && err->code <= GEBR_IEXPR_ERROR_SYNTAX) {
+			set_error(self, name, scope, err);
+		} else {
+			set_error(self, name, scope, NULL);
+		}
 		g_propagate_error(error, err);
 		return FALSE;
 	}
 
+	set_error(self, name, scope, NULL);
 	return TRUE;
 }
 
@@ -1087,7 +1126,8 @@ gboolean gebr_validator_evaluate_interval(GebrValidator *self,
 		return TRUE;
 	}
 
-	gebr_validator_update_vars(self, scope);
+	if(!gebr_validator_update_vars(self, scope, error))
+		return FALSE;
 
 	if (!gebr_validator_validate_expr_on_scope(self, expr, type, scope, error))
 		return FALSE;
@@ -1119,13 +1159,16 @@ gboolean gebr_validator_evaluate_param(GebrValidator *self,
 	HashData *data = g_hash_table_lookup(self->vars, name);
 	g_return_val_if_fail(data != NULL , FALSE);
 
-	gebr_validator_update_vars(self, scope);
+	if(!gebr_validator_update_vars(self, scope, error))
+		return FALSE;
+
+	if (!get_error_indirect(self, data->dep[scope], name, type, scope, error))
+			return FALSE;
 
 	if (data->error[scope]) {
 		g_propagate_error(error, g_error_copy(data->error[scope]));
 		return FALSE;
-	} else if (!get_error_indirect(self, data->dep[scope], name, type, scope, error))
-		return FALSE;
+	}
 
 	// Numeric expressions on dictionary must be just fetched by name
 	if (get_validator_by_type(self, type) == GEBR_IEXPR(self->arith_expr))
