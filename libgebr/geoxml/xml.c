@@ -30,18 +30,15 @@ static gchar *__gebr_geoxml_remove_line_break(const gchar * tag_value)
 {
 	gchar *linebreak;
 	GString *value;
-	gchar *new_tag_value;
 
 	if (strchr(tag_value, 0x0A) == NULL)
-		return (gchar *) tag_value;
+		return g_strdup(tag_value);
 
-	value = g_string_new(tag_value);
+	value = g_string_new (tag_value);
 	while ((linebreak = strchr(value->str, 0x0A)) != NULL)
 		g_string_erase(value, (linebreak - value->str), 1);
 
-	new_tag_value = value->str;
-	g_string_free(value, FALSE);
-	return new_tag_value;
+	return g_string_free(value, FALSE);
 }
 
 /*
@@ -272,28 +269,42 @@ const gchar *__gebr_geoxml_get_element_value(GdomeElement * element)
 
 	if (element == NULL)
 		return NULL;
+
 	/* jump spaces, useful for CDATA lookup */
 	child = gdome_el_firstChild(element, &exception);
 	do {
 		GdomeNode *next = gdome_n_nextSibling(child, &exception);
 		if (next == NULL || gdome_n_nodeType(child, &exception) == GDOME_CDATA_SECTION_NODE)
 			break;
+		gdome_n_unref(child, &exception);
 		child = next;
 	} while (1);
+
 	string = gdome_n_nodeValue(child, &exception);
-	if (string == NULL)
+
+	if (string == NULL) {
+		gdome_n_unref(child, &exception);
 		return g_strdup ("");
+	}
+
 	if (gdome_n_nodeType(child, &exception) == GDOME_TEXT_NODE) {
 		gchar *protected_str;
 
 		protected_str = __gebr_geoxml_remove_line_break(string->str);
-		if (protected_str != string->str)
-			gdome_n_set_nodeValue(child, gdome_str_mkref(protected_str), &exception);
+		if (g_strcmp0(protected_str, string->str) != 0) {
+			GdomeDOMString *str = gdome_str_mkref(protected_str);
+			gdome_n_set_nodeValue(child, str, &exception);
+			gdome_str_unref(str);
+		}
+
+		gdome_n_unref(child, &exception);
+		gdome_str_unref(string);
 
 		return protected_str;
 	}
 	gchar *str = g_strdup(string->str);
 	gdome_str_unref(string);
+	gdome_n_unref(child, &exception);
 	return str;
 }
 
@@ -321,7 +332,12 @@ const gchar *__gebr_geoxml_get_tag_value(GdomeElement * parent_element, const gc
 
 const gchar *__gebr_geoxml_get_tag_value_non_rec(GdomeElement * parent_element, const gchar * tag_name)
 {
-	return __gebr_geoxml_get_element_value(__gebr_geoxml_get_element_at(parent_element, tag_name, 0, FALSE));
+	GdomeElement *element;
+	const gchar *retval;
+	element = __gebr_geoxml_get_element_at(parent_element, tag_name, 0, FALSE);
+	retval = __gebr_geoxml_get_element_value(element);
+	gdome_el_unref(element, &exception);
+	return retval;
 }
 
 void
@@ -380,11 +396,16 @@ GdomeElement *__gebr_geoxml_previous_element(GdomeElement * element)
 GdomeElement *__gebr_geoxml_next_element(GdomeElement * element)
 {
 	GdomeNode *node;
+	GdomeNode *aux;
 
-	node = (GdomeNode *) element;
-	do
-		node = gdome_n_nextSibling(node, &exception);
-	while ((node != NULL) && (gdome_n_nodeType(node, &exception) != GDOME_ELEMENT_NODE));
+	node = gdome_el_nextSibling(element, &exception);
+	while (node) {
+		if (gdome_n_nodeType(node, &exception) == GDOME_ELEMENT_NODE)
+			break;
+		aux = node;
+		node = gdome_n_nextSibling(aux, &exception);
+		gdome_n_unref(aux, &exception);
+	}
 
 	return (GdomeElement *) node;
 }
@@ -433,7 +454,6 @@ GdomeXPathResult *__gebr_geoxml_xpath_evaluate(GdomeElement * context, const gch
 	xpath_evaluator = gdome_xpeval_mkref();
 	xpath_result = gdome_xpeval_evaluate(xpath_evaluator, string, (GdomeNode *) context, NULL, 0, NULL, &exception);
 
-	/* frees */
 	gdome_str_unref(string);
 	gdome_xpeval_unref(xpath_evaluator, &exception);
 
