@@ -17,6 +17,7 @@
 
 #include <glib.h>
 
+#include "object.h"
 #include "document.h"
 #include "flow.h"
 
@@ -48,6 +49,7 @@ test_gebr_geoxml_leaks_flow_foreach_parameter(void)
 				  TEST_DIR "/test.mnu", TRUE, NULL);
 
 	gboolean callback(GebrGeoXmlObject *object, gpointer user_data) {
+		return TRUE;
 	}
 
 	gebr_geoxml_flow_foreach_parameter(flow, callback, NULL);
