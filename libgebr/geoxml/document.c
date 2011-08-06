@@ -57,6 +57,7 @@
 #include "value_sequence.h"
 #include "../gebr-expr.h"
 #include "../utils.h"
+#include "object.h"
 
 #include "parameters.h"
 
@@ -1592,6 +1593,7 @@ clean:
 	while (clean)
 	{
 		GebrGeoXmlSequence *aux = clean;
+		gebr_geoxml_object_ref(aux);
 		gebr_geoxml_sequence_next(&clean);
 		gebr_geoxml_sequence_remove(aux);
 	}
