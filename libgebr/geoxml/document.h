@@ -126,7 +126,7 @@ GebrGeoXmlDocumentType gebr_geoxml_document_get_type(GebrGeoXmlDocument * docume
  *
  * If \p document is NULL nothing is done.
  */
-const gchar *gebr_geoxml_document_get_version(GebrGeoXmlDocument * document);
+gchar *gebr_geoxml_document_get_version(GebrGeoXmlDocument * document);
 
 /**
  * Validate the document specified in \p filename.

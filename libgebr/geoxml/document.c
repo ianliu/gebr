@@ -970,12 +970,18 @@ out:
 	return retval;
 }
 
-const gchar *gebr_geoxml_document_get_version(GebrGeoXmlDocument * document)
+gchar *gebr_geoxml_document_get_version(GebrGeoXmlDocument * document)
 {
+	GdomeElement *root;
+	gchar *version;
+
 	if (document == NULL)
 		return NULL;
-	return __gebr_geoxml_get_attr_value(gdome_doc_documentElement((GdomeDocument *) document, &exception),
-					    "version");
+
+	root = gdome_doc_documentElement((GdomeDocument *) document, &exception);
+	version = __gebr_geoxml_get_attr_value(root, "version");
+
+	return version;
 }
 
 int gebr_geoxml_document_validate(const gchar * filename)
