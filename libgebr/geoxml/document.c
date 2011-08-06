@@ -943,30 +943,33 @@ GebrGeoXmlDocumentType gebr_geoxml_document_get_type(GebrGeoXmlDocument * docume
 {
 	GebrGeoXmlDocumentType retval;
 	GdomeElement *root_element;
+	GdomeDOMString *name;
 
 	if (document == NULL)
 		return GEBR_GEOXML_DOCUMENT_TYPE_FLOW;
 
 	retval = GEBR_GEOXML_DOCUMENT_TYPE_FLOW;
 	root_element = gdome_doc_documentElement((GdomeDocument *) document, &exception);
+	name = gdome_el_nodeName(root_element, &exception);
 
-	if (strcmp("flow", gdome_el_nodeName(root_element, &exception)->str) == 0) {
+	if (g_strcmp0("flow", name->str) == 0) {
 		retval = GEBR_GEOXML_DOCUMENT_TYPE_FLOW;
 		goto out;
 	}
 
-	if (strcmp("line", gdome_el_nodeName(root_element, &exception)->str) == 0) {
+	if (g_strcmp0("line", name->str) == 0) {
 		retval = GEBR_GEOXML_DOCUMENT_TYPE_LINE;
 		goto out;
 	}
 
-	if (strcmp("project", gdome_el_nodeName(root_element, &exception)->str) == 0) {
+	if (g_strcmp0("project", name->str) == 0) {
 		retval = GEBR_GEOXML_DOCUMENT_TYPE_PROJECT;
 		goto out;
 	}
 
 out:
 	gdome_el_unref(root_element, &exception);
+	gdome_str_unref(name);
 	return retval;
 }
 
