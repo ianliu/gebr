@@ -115,7 +115,7 @@ gulong __gebr_geoxml_get_elements_number(GdomeElement * parent_element, const gc
  * \internal
  *
  */
-const gchar *__gebr_geoxml_get_element_value(GdomeElement * element);
+gchar *__gebr_geoxml_get_element_value(GdomeElement * element);
 
 /**
  * \internal
@@ -128,7 +128,7 @@ void __gebr_geoxml_set_element_value(GdomeElement * element, const gchar * tag_v
  * \internal
  *
  */
-const gchar *__gebr_geoxml_get_tag_value(GdomeElement * parent_element, const gchar * tag_name);
+gchar *__gebr_geoxml_get_tag_value(GdomeElement * parent_element, const gchar * tag_name);
 
 /**
  * \internal

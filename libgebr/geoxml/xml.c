@@ -119,12 +119,9 @@ GdomeElement *__gebr_geoxml_get_first_element(GdomeElement * parent_element, con
 	GdomeDOMString *string;
 
 	string = gdome_str_mkref(tag_name);
-
-	/* get the list of elements with this tag_name. */
 	node_list = gdome_el_getElementsByTagName(parent_element, string, &exception);
-	node = gdome_nl_item(node_list, 0, &exception);
-
 	gdome_str_unref(string);
+	node = gdome_nl_item(node_list, 0, &exception);
 	gdome_nl_unref(node_list, &exception);
 
 	return (GdomeElement *) node;
@@ -280,7 +277,7 @@ gulong __gebr_geoxml_get_elements_number(GdomeElement * parent_element, const gc
 	return elements_number;
 }
 
-const gchar *__gebr_geoxml_get_element_value(GdomeElement * element)
+gchar *__gebr_geoxml_get_element_value(GdomeElement * element)
 {
 	GdomeDOMString *string;
 	GdomeNode *child;
@@ -345,9 +342,16 @@ __gebr_geoxml_set_element_value(GdomeElement * element, const gchar * tag_value,
 	create_func(element, value_str);
 }
 
-const gchar *__gebr_geoxml_get_tag_value(GdomeElement * parent_element, const gchar * tag_name)
+gchar *__gebr_geoxml_get_tag_value(GdomeElement * parent_element, const gchar * tag_name)
 {
-	return __gebr_geoxml_get_element_value(__gebr_geoxml_get_first_element(parent_element, tag_name));
+	gchar *value;
+	GdomeElement *element;
+
+	element = __gebr_geoxml_get_first_element(parent_element, tag_name);
+	value = __gebr_geoxml_get_element_value(element);
+	gdome_el_unref(element, &exception);
+
+	return value;
 }
 
 const gchar *__gebr_geoxml_get_tag_value_non_rec(GdomeElement * parent_element, const gchar * tag_name)
