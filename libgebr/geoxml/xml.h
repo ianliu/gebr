@@ -155,7 +155,7 @@ void __gebr_geoxml_set_attr_value(GdomeElement * element, const gchar * name, co
  * Get attribute with name \p attr_name of \p element value.
  * If it doesn't exist it an empty string is returned.
  */
-const gchar *__gebr_geoxml_get_attr_value(GdomeElement * element, const gchar * name);
+gchar *__gebr_geoxml_get_attr_value(GdomeElement * element, const gchar * name);
 
 /**
  * \internal

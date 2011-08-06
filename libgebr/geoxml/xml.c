@@ -385,8 +385,9 @@ void __gebr_geoxml_set_attr_value(GdomeElement * element, const gchar * name, co
 	gdome_str_unref(str_value);
 }
 
-const gchar *__gebr_geoxml_get_attr_value(GdomeElement * element, const gchar * name)
+gchar *__gebr_geoxml_get_attr_value(GdomeElement * element, const gchar * name)
 {
+	gchar *attr;
 	GdomeDOMString *string;
 	GdomeDOMString *attr_value;
 
@@ -395,9 +396,12 @@ const gchar *__gebr_geoxml_get_attr_value(GdomeElement * element, const gchar * 
 
 	string = gdome_str_mkref(name);
 	attr_value = gdome_el_getAttribute(element, string, &exception);
-	gdome_str_unref(string);
+	attr = g_strdup(attr_value->str);
 
-	return attr_value->str;
+	gdome_str_unref(string);
+	gdome_str_unref(attr_value);
+
+	return attr;
 }
 
 void __gebr_geoxml_remove_attr(GdomeElement * element, const gchar * name)
