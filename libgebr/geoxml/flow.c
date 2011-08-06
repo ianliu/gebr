@@ -719,7 +719,13 @@ gebr_geoxml_flow_validate(GebrGeoXmlFlow *flow,
 
 gboolean gebr_geoxml_flow_has_control_program (GebrGeoXmlFlow *flow)
 {
-	return (gebr_geoxml_flow_get_control_program(flow) == NULL ? FALSE : TRUE);
+	GebrGeoXmlProgram *control = gebr_geoxml_flow_get_control_program(flow);
+
+	if (!control)
+		return FALSE;
+
+	gebr_geoxml_object_unref(control);
+	return TRUE;
 }
 
 GebrGeoXmlProgram * gebr_geoxml_flow_get_control_program (GebrGeoXmlFlow *flow)
