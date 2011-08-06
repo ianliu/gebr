@@ -25,6 +25,21 @@ static void
 test_gebr_geoxml_leaks_new_flow(void)
 {
 	GebrGeoXmlFlow *flow = gebr_geoxml_flow_new();
+	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
+}
+
+static void
+test_gebr_geoxml_leaks_has_control(void)
+{
+	GebrGeoXmlFlow *flow = gebr_geoxml_flow_new();
+	gebr_geoxml_flow_has_control_program(flow);
+	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
+}
+
+static void
+test_gebr_geoxml_leaks_get_control_program(void)
+{
+	GebrGeoXmlFlow *flow = gebr_geoxml_flow_new();
 	GebrGeoXmlProgram *prog = gebr_geoxml_flow_get_control_program(flow);
 	gebr_geoxml_object_unref(GEBR_GEOXML_OBJECT(prog));
 	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
@@ -62,7 +77,9 @@ int main(int argc, char *argv[])
 
 	gebr_geoxml_document_set_dtd_dir(DTD_DIR);
 
-	g_test_add_func("/libgebr/geoxml/leaks/new_flow", test_gebr_geoxml_leaks_new_flow);
+	g_test_add_func("/libgebr/geoxml/leaks/flow_new", test_gebr_geoxml_leaks_new_flow);
+	g_test_add_func("/libgebr/geoxml/leaks/has_control", test_gebr_geoxml_leaks_has_control);
+	g_test_add_func("/libgebr/geoxml/leaks/get_control_program", test_gebr_geoxml_leaks_get_control_program);
 	g_test_add_func("/libgebr/geoxml/leaks/flow_add_flow", test_gebr_geoxml_leaks_flow_add_flow);
 	g_test_add_func("/libgebr/geoxml/leaks/flow_foreach_parameter", test_gebr_geoxml_leaks_flow_foreach_parameter);
 
