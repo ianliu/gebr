@@ -94,5 +94,11 @@ gchar *gebr_geoxml_object_get_help_content_from_str (const gchar *str);
  */
 void gebr_geoxml_object_set_help (GebrGeoXmlObject *object, const gchar *help);
 
+/**
+ * gebr_geoxml_object_unref:
+ * @object: The object to be unreferenced.
+ */
+void gebr_geoxml_object_unref(GebrGeoXmlObject *object);
+
 G_END_DECLS
 #endif				//__GEBR_GEOXML_OBJECT_H

@@ -25,7 +25,7 @@ test_gebr_geoxml_leaks_new_flow(void)
 {
 	GebrGeoXmlFlow *flow = gebr_geoxml_flow_new();
 	GebrGeoXmlProgram *prog = gebr_geoxml_flow_get_control_program(flow);
-	gebr_geoxml_document_unref_sequence(GEBR_GEOXML_SEQUENCE(prog));
+	gebr_geoxml_object_unref(GEBR_GEOXML_OBJECT(prog));
 	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
 }
 

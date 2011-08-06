@@ -1590,8 +1590,3 @@ void gebr_geoxml_document_set_dtd_dir(const gchar *path)
 {
 	dtd_directory = path;
 }
-
-void gebr_geoxml_document_unref_sequence(GebrGeoXmlSequence *element)
-{
-	gdome_el_unref((GdomeElement*)element, &exception);
-}
