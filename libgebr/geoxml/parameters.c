@@ -65,8 +65,8 @@ __gebr_geoxml_parameters_group_check(GebrGeoXmlParameters * parameters)
 	template = gebr_geoxml_parameter_group_get_template(group);
 	retval = (template == parameters);
 
-	gdome_n_unref((GdomeNode*) template);
-	gdome_n_unref((GdomeNode*) group);
+	gdome_n_unref((GdomeNode*) template, &exception);
+	gdome_n_unref((GdomeNode*) group, &exception);
 
 	return retval;
 }
@@ -90,6 +90,8 @@ __gebr_geoxml_parameters_do_insert_in_group_stuff(GebrGeoXmlParameters * paramet
 	parameter_group = GEBR_GEOXML_PARAMETER_GROUP(gdome_el_parentNode(parent, &exception));
 	exclusive = gebr_geoxml_parameter_group_is_exclusive(parameter_group);
 
+	gdome_el_unref(parent, &exception);
+
 	gebr_geoxml_parameter_group_get_instance(parameter_group, &instance, 0);
 	for (; instance != NULL; gebr_geoxml_sequence_next(&instance)) {
 		GdomeElement *reference;
@@ -97,8 +99,8 @@ __gebr_geoxml_parameters_do_insert_in_group_stuff(GebrGeoXmlParameters * paramet
 
 		reference = (GdomeElement *) gdome_el_cloneNode((GdomeElement *) parameter, TRUE, &exception);
 		gebr_geoxml_parameters_get_parameter(GEBR_GEOXML_PARAMETERS(instance), &position, index);
-		gdome_el_insertBefore_protected((GdomeElement *) instance, (GdomeNode *) reference,
-						(GdomeNode *) position, &exception);
+		gdome_n_unref(gdome_el_insertBefore_protected((GdomeElement *) instance, (GdomeNode *) reference,
+						(GdomeNode *) position, &exception), &exception);
 		__gebr_geoxml_parameter_set_be_reference((GebrGeoXmlParameter *) reference);
 
 		// If template is exclusive and this is the first parameter being inserted
@@ -106,7 +108,9 @@ __gebr_geoxml_parameters_do_insert_in_group_stuff(GebrGeoXmlParameters * paramet
 		if (exclusive && index == 0)
 			gebr_geoxml_parameters_set_default_selection(GEBR_GEOXML_PARAMETERS(instance),
 								     GEBR_GEOXML_PARAMETER(reference));
+		gdome_el_unref(reference, &exception);
 	}
+	gdome_el_unref((GdomeElement*)parameter_group, &exception);
 }
 
 /*
@@ -126,8 +130,8 @@ GebrGeoXmlParameter *gebr_geoxml_parameters_append_parameter(GebrGeoXmlParameter
 	GdomeElement *element;
 
 	element = __gebr_geoxml_insert_new_element((GdomeElement *) parameters, "parameter", NULL);
-	__gebr_geoxml_insert_new_element(element, "label", NULL);
-	__gebr_geoxml_parameter_insert_type((GebrGeoXmlParameter *) element, type);
+	gdome_el_unref(__gebr_geoxml_insert_new_element(element, "label", NULL), &exception);
+	gdome_el_unref(__gebr_geoxml_parameter_insert_type((GebrGeoXmlParameter *) element, type), &exception);
 
 	__gebr_geoxml_parameters_do_insert_in_group_stuff(parameters, (GebrGeoXmlParameter *) element);
 
