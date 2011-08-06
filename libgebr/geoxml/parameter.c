@@ -144,7 +144,8 @@ void __gebr_geoxml_parameter_set_be_reference(GebrGeoXmlParameter * parameter)
 	type_element = __gebr_geoxml_parameter_get_type_element(parameter);
 
 	gdome_el_removeChild((GdomeElement *) parameter, (GdomeNode *) type_element, &exception);
-	__gebr_geoxml_parameter_insert_type(parameter, GEBR_GEOXML_PARAMETER_TYPE_REFERENCE);
+	gdome_el_unref(__gebr_geoxml_parameter_insert_type(parameter, GEBR_GEOXML_PARAMETER_TYPE_REFERENCE), &exception);
+	gdome_el_unref(type_element, &exception);
 	gebr_geoxml_program_parameter_set_string_value(program, TRUE, default_value->str);
 
 	g_string_free(default_value, TRUE);
