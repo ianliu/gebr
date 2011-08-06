@@ -29,12 +29,13 @@
 #include "document_p.h"
 #include "error.h"
 #include "flow.h"
+#include "object.h"
 #include "parameter.h"
 #include "parameter_group.h"
 #include "parameters.h"
 #include "parameters_p.h"
-#include "program.h"
 #include "program-parameter.h"
+#include "program.h"
 #include "sequence.h"
 #include "types.h"
 #include "value_sequence.h"
@@ -322,14 +323,16 @@ GebrGeoXmlProgram *gebr_geoxml_flow_append_program(GebrGeoXmlFlow * flow)
 
 int gebr_geoxml_flow_get_program(GebrGeoXmlFlow * flow, GebrGeoXmlSequence ** program, gulong index)
 {
+	GdomeElement *root;
+
 	if (flow == NULL) {
 		*program = NULL;
 		return GEBR_GEOXML_RETV_NULL_PTR;
 	}
 
-	*program = (GebrGeoXmlSequence *)
-	    __gebr_geoxml_get_element_at(gebr_geoxml_document_root_element(GEBR_GEOXML_DOC(flow)), "program", index,
-					 FALSE);
+	root = gebr_geoxml_document_root_element(GEBR_GEOXML_DOC(flow));
+	*program = (GebrGeoXmlSequence *) __gebr_geoxml_get_element_at(root, "program", index, FALSE);
+	gdome_el_unref(root, &exception);
 
 	return (*program == NULL)
 	    ? GEBR_GEOXML_RETV_INVALID_INDEX : GEBR_GEOXML_RETV_SUCCESS;
@@ -733,6 +736,7 @@ GebrGeoXmlProgram * gebr_geoxml_flow_get_control_program (GebrGeoXmlFlow *flow)
 		    && cont != GEBR_GEOXML_PROGRAM_CONTROL_UNKNOWN)
 			return prog;
 		gebr_geoxml_sequence_next (&seq);
+		gebr_geoxml_object_unref(seq);
 	}
 	return NULL;
 }
