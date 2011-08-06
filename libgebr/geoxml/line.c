@@ -165,7 +165,8 @@ void gebr_geoxml_line_set_group (GebrGeoXmlLine *line, const gchar *group, gbool
 
 const gchar *gebr_geoxml_line_get_group (GebrGeoXmlLine *line, gboolean *is_fs)
 {
-	const gchar *group;
+	gchar *name;
+	gchar *group;
 	GdomeElement *root;
 	GdomeElement *group_el;
 
@@ -176,12 +177,19 @@ const gchar *gebr_geoxml_line_get_group (GebrGeoXmlLine *line, gboolean *is_fs)
 	group_el = __gebr_geoxml_get_first_element (root, "server-group");
 	group = __gebr_geoxml_get_element_value (group_el);
 
+	gdome_el_unref(root, &exception);
+	gdome_el_unref(group_el, &exception);
+
 	if (g_str_has_prefix (group, "fs:")) {
 		*is_fs = TRUE;
-		return group + 3;
+		name = g_strdup(group + 3);
+		g_free(group);
+		return name;
 	} else if (g_str_has_prefix (group, "g:")) {
 		*is_fs = FALSE;
-		return group + 2;
+		name = g_strdup(group + 2);
+		g_free(group);
+		return name;
 	} else {
 		*is_fs = FALSE;
 		return group;
