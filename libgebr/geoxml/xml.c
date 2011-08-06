@@ -84,11 +84,15 @@ GdomeElement *__gebr_geoxml_new_element(GdomeElement * parent_element, const gch
 	return element;
 }
 
-GdomeNode *gdome_n_insertBefore_protected(GdomeNode * self, GdomeNode *newChild,
-					   GdomeNode *refChild, GdomeException *exc)
+GdomeNode *
+gdome_n_insertBefore_protected(GdomeNode      *self,
+			       GdomeNode      *newChild,
+			       GdomeNode      *refChild,
+			       GdomeException *exc)
 {
 	if (newChild == refChild) {
 		*exc = GDOME_NOEXCEPTION_ERR;
+		gdome_n_ref(newChild, &exception);
 		return newChild;
 	}
 	return gdome_n_insertBefore(self, newChild, refChild, exc);
