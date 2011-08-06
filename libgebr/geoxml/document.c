@@ -1139,10 +1139,14 @@ void gebr_geoxml_document_set_email(GebrGeoXmlDocument * document, const gchar *
 GebrGeoXmlParameters *gebr_geoxml_document_get_dict_parameters(GebrGeoXmlDocument * document)
 {
 	g_return_val_if_fail (document != NULL, NULL);
+	GdomeElement *root = gebr_geoxml_document_root_element(document);
+	GdomeElement *element = __gebr_geoxml_get_first_element (root, "dict");
 
-	return (GebrGeoXmlParameters *)
-	    __gebr_geoxml_get_first_element(__gebr_geoxml_get_first_element
-					    (gebr_geoxml_document_root_element(document), "dict"), "parameters");
+	GebrGeoXmlParameters *params = (GebrGeoXmlParameters *)__gebr_geoxml_get_first_element(element, "parameters");
+
+	gdome_el_unref(root, &exception);
+	gdome_el_unref(element, &exception);
+	return params;
 }
 
 gboolean
