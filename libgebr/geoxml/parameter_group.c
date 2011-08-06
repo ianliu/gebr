@@ -83,7 +83,7 @@ GebrGeoXmlParameters *gebr_geoxml_parameter_group_add_instance(GebrGeoXmlParamet
 
 	new_instance = GEBR_GEOXML_PARAMETERS(__gebr_geoxml_sequence_append_clone(template_instance));
 	GdomeElement *group = __gebr_geoxml_parameter_get_type_element(GEBR_GEOXML_PARAMETER(parameter_group));
-	gdome_el_insertBefore_protected(group, (GdomeNode*)new_instance, NULL, &exception);
+	gdome_n_unref(gdome_el_insertBefore_protected(group, (GdomeNode*)new_instance, NULL, &exception), &exception);
 
 	__gebr_geoxml_parameter_group_turn_instance_to_reference(new_instance);
 
@@ -235,12 +235,15 @@ void gebr_geoxml_parameter_group_set_exclusive(GebrGeoXmlParameterGroup * parame
 
 gboolean gebr_geoxml_parameter_group_is_exclusive(GebrGeoXmlParameterGroup * parameter_group)
 {
-	const gchar * default_selection;
+	gchar * default_selection;
 	GebrGeoXmlParameters * template;
 
 	g_return_val_if_fail(parameter_group != NULL, FALSE);
 
 	template = gebr_geoxml_parameter_group_get_template(parameter_group);
 	default_selection = __gebr_geoxml_get_attr_value((GdomeElement*)template, "default-selection");
-	return default_selection[0] == '0' ? FALSE:TRUE;
+	gdome_el_unref((GdomeElement*)template, &exception);
+	gboolean retval = default_selection[0] == '0' ? FALSE : TRUE;
+	g_free(default_selection);
+	return retval;
 }
