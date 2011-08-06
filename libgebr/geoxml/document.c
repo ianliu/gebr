@@ -761,24 +761,32 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 
 	/* CHECKS (may impact performance) */
 	if (gebr_geoxml_document_get_type(((GebrGeoXmlDocument *) *document)) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW) {
-		GdomeElement *element;
-
+		GSList *elements = __gebr_geoxml_get_elements_by_tag(root_element, "flag");
 		/* accept only on/off for flags */
-		gebr_foreach_gslist(element, __gebr_geoxml_get_elements_by_tag(root_element, "flag")) {
+		for (GSList *i = elements; i; i = i->next) {
 			GdomeElement *value_element;
 			GdomeElement *default_value_element;
+			GdomeElement *element = i->data;
+			gchar *val;
 
 			value_element = __gebr_geoxml_get_first_element(element, "value");
 			default_value_element = __gebr_geoxml_get_first_element(element, "default");
 
-			if (strcmp(__gebr_geoxml_get_element_value(value_element), "on") &&
-			    strcmp(__gebr_geoxml_get_element_value(value_element), "off"))
+			val = __gebr_geoxml_get_element_value(value_element);
+			if (strcmp(val, "on") && strcmp(val, "off"))
 				__gebr_geoxml_set_element_value(value_element, "off", __gebr_geoxml_create_TextNode);
-			if (strcmp(__gebr_geoxml_get_element_value(default_value_element), "on") &&
-			    strcmp(__gebr_geoxml_get_element_value(default_value_element), "off"))
-				__gebr_geoxml_set_element_value(default_value_element, "off",
-								__gebr_geoxml_create_TextNode);
+			g_free(val);
+
+			val = __gebr_geoxml_get_element_value(default_value_element);
+			if (strcmp(val, "on") && strcmp(val, "off"))
+				__gebr_geoxml_set_element_value(default_value_element, "off", __gebr_geoxml_create_TextNode);
+			g_free(val);
+
+			gdome_el_unref(element, &exception);
+			gdome_el_unref(value_element, &exception);
+			gdome_el_unref(default_value_element, &exception);
 		}
+		g_slist_free(elements);
 	}
 
 	ret = GEBR_GEOXML_RETV_SUCCESS;
