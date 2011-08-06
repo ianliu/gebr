@@ -50,14 +50,25 @@ GebrGeoXmlParameters *__gebr_geoxml_parameters_append_new(GdomeElement * parent)
 	return parameters;
 }
 
-gboolean __gebr_geoxml_parameters_group_check(GebrGeoXmlParameters * parameters)
+gboolean
+__gebr_geoxml_parameters_group_check(GebrGeoXmlParameters * parameters)
 {
-	GebrGeoXmlParameterGroup *group = gebr_geoxml_parameters_get_group(parameters);
-	if (group == NULL)
+	GebrGeoXmlParameterGroup *group;
+	GebrGeoXmlParameters *template;
+	gboolean retval;
+
+	group = gebr_geoxml_parameters_get_group(parameters);
+
+	if (!group)
 		return TRUE; 
 
-	return (gebr_geoxml_parameter_group_get_template(group) == parameters)
-	       	? TRUE : FALSE;
+	template = gebr_geoxml_parameter_group_get_template(group);
+	retval = (template == parameters);
+
+	gdome_n_unref((GdomeNode*) template);
+	gdome_n_unref((GdomeNode*) group);
+
+	return retval;
 }
 
 void
@@ -247,7 +258,8 @@ gboolean gebr_geoxml_parameters_get_is_in_group(GebrGeoXmlParameters * parameter
 	return !strcmp(gdome_el_tagName(parent, &exception)->str, "group") ? TRUE : FALSE;
 }
 
-GebrGeoXmlParameterGroup *gebr_geoxml_parameters_get_group(GebrGeoXmlParameters * parameters)
+GebrGeoXmlParameterGroup *
+gebr_geoxml_parameters_get_group(GebrGeoXmlParameters * parameters)
 {
 	GdomeDOMString *tag;
 	GdomeElement *parent;
