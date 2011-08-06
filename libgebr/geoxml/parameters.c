@@ -267,7 +267,7 @@ GebrGeoXmlParameterGroup *gebr_geoxml_parameters_get_group(GebrGeoXmlParameters 
 	tag = gdome_el_tagName(parent, &exception);
 
 	if (g_strcmp0(tag->str, "group") == 0) {
-		GdomeElement *grandpa = gdome_el_parentNode(parent, &exception);
+		GdomeNode *grandpa = gdome_el_parentNode(parent, &exception);
 		gdome_el_unref(parent, &exception);
 		return (GebrGeoXmlParameterGroup*) grandpa;
 	}
