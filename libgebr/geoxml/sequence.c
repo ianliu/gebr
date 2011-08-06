@@ -168,17 +168,17 @@ void __gebr_geoxml_sequence_remove(GebrGeoXmlSequence * sequence)
 
 GebrGeoXmlSequence *__gebr_geoxml_sequence_append_clone(GebrGeoXmlSequence * sequence)
 {
-	GebrGeoXmlSequence *clone;
-	GebrGeoXmlSequence *after_last;
+	GdomeNode *clone;
+	GdomeNode *parent;
+	GdomeNode *insert;
 
-	clone = (GebrGeoXmlSequence *) gdome_el_cloneNode((GdomeElement *) sequence, TRUE, &exception);
+	parent = gdome_n_parentNode((GdomeNode *) sequence, &exception);
+	clone = gdome_n_cloneNode((GdomeNode *) sequence, TRUE, &exception);
+	insert = gdome_n_insertBefore_protected(parent, clone, NULL, &exception);
+	gdome_n_unref(parent, &exception);
+	gdome_n_unref(clone, &exception);
 
-	after_last = sequence;
-	while (__gebr_geoxml_sequence_next(&after_last) == GEBR_GEOXML_RETV_SUCCESS);
-	gdome_n_insertBefore_protected(gdome_el_parentNode((GdomeElement *) sequence, &exception),
-			     (GdomeNode *) clone, (GdomeNode *) after_last, &exception);
-
-	return clone;
+	return GEBR_GEOXML_SEQUENCE(insert);
 }
 
 int __gebr_geoxml_sequence_move_before(GebrGeoXmlSequence * sequence, GebrGeoXmlSequence * position)
