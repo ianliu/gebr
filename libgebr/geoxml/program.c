@@ -309,7 +309,7 @@ const gchar *gebr_geoxml_program_get_url(GebrGeoXmlProgram * program)
 
 GebrGeoXmlProgramControl gebr_geoxml_program_get_control(GebrGeoXmlProgram * program)
 {
-	const gchar *control;
+	gchar *control;
 
 	// FIXME if program is NULL, should it really return GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY?
 	// Shouldn't it be GEBR_GEOXML_PROGRAM_CONTROL_UNKNOWN? Or maybe display a warning?
@@ -318,11 +318,17 @@ GebrGeoXmlProgramControl gebr_geoxml_program_get_control(GebrGeoXmlProgram * pro
 
 	control = __gebr_geoxml_get_attr_value((GdomeElement*)program, "control");
 
-	if (g_strcmp0(control, "for") == 0)
+	if (g_strcmp0(control, "for") == 0) {
+		g_free(control);
 		return GEBR_GEOXML_PROGRAM_CONTROL_FOR;
+	}
 
-	if (strlen (control) == 0)
+	if (strlen (control) == 0) {
+		g_free(control);
 		return GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY;
+	}
+
+	g_free(control);
 
 	return GEBR_GEOXML_PROGRAM_CONTROL_UNKNOWN;
 }
