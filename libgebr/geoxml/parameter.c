@@ -328,22 +328,25 @@ gboolean gebr_geoxml_parameter_get_is_reference(GebrGeoXmlParameter * parameter)
 GebrGeoXmlParameter *gebr_geoxml_parameter_get_referencee(GebrGeoXmlParameter * parameter_reference)
 {
 	gint index;
-	GdomeElement * group;
-	GdomeDOMString * node_name;
-	GebrGeoXmlSequence * referencee;
-	GebrGeoXmlParameters * template;
+	GdomeNode *parent;
+	GdomeNode *grandpa;
+	GdomeNode *group;
+	GdomeDOMString *node_name;
+	GebrGeoXmlSequence *referencee;
+	GebrGeoXmlParameters *template;
 
 	if (!gebr_geoxml_parameter_get_is_reference(parameter_reference))
 		return NULL;
 
-	group = (GdomeElement*)gdome_el_parentNode((GdomeElement*)parameter_reference, &exception);
-	group = (GdomeElement*)gdome_el_parentNode(group, &exception);
+	parent = gdome_el_parentNode((GdomeElement*)parameter_reference, &exception);
+	grandpa = gdome_n_parentNode(parent, &exception);
 	
-	node_name = gdome_el_nodeName(group, &exception);
-	if (strcmp(node_name->str, "group") != 0)
+	node_name = gdome_n_nodeName(grandpa, &exception);
+	if (g_strcmp0(node_name->str, "group") != 0)
 		g_error("DTD is wrong!");
+	gdome_str_unref(node_name);
 
-	group = (GdomeElement*)gdome_el_parentNode(group, &exception);
+	group = gdome_n_parentNode(grandpa, &exception);
 	template = gebr_geoxml_parameter_group_get_template(GEBR_GEOXML_PARAMETER_GROUP(group));
 
 	if (!template)
