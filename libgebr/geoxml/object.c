@@ -295,7 +295,14 @@ void gebr_geoxml_object_set_help (GebrGeoXmlObject *object, const gchar *help)
 		gebr_geoxml_program_set_help(GEBR_GEOXML_PROGRAM(object), help);
 }
 
-void gebr_geoxml_object_unref(gpointer object)
+void
+gebr_geoxml_object_unref(gpointer object)
 {
 	gdome_el_unref((GdomeElement*)object, &exception);
+}
+
+void
+gebr_geoxml_object_ref(gpointer object)
+{
+	gdome_el_ref((GdomeElement*)object, &exception);
 }

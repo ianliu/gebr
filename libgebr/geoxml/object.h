@@ -100,5 +100,11 @@ void gebr_geoxml_object_set_help (GebrGeoXmlObject *object, const gchar *help);
  */
 void gebr_geoxml_object_unref(gpointer object);
 
+/**
+ * gebr_geoxml_object_ref:
+ * @object: The object to be referenced.
+ */
+void gebr_geoxml_object_ref(gpointer object);
+
 G_END_DECLS
 #endif				//__GEBR_GEOXML_OBJECT_H
