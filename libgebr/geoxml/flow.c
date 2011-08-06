@@ -106,11 +106,13 @@ void gebr_geoxml_flow_add_flow(GebrGeoXmlFlow * flow, GebrGeoXmlFlow * flow2)
 	has_control2 = gebr_geoxml_flow_has_control_program (flow2);
 
 	/* import each program from flow2 */
+	GdomeElement *root = gebr_geoxml_document_root_element(GEBR_GEOXML_DOC(flow2));
 	string = gdome_str_mkref("program");
 	flow2_node_list =
-	    gdome_el_getElementsByTagName(gebr_geoxml_document_root_element(GEBR_GEOXML_DOC(flow2)), string,
+	    gdome_el_getElementsByTagName(root, string,
 					  &exception);
 	n = gdome_nl_length(flow2_node_list, &exception);
+	gdome_el_unref(root, &exception);
 
 	for (i = 0; i < n; ++i) {
 		GdomeNode *node;
@@ -124,15 +126,20 @@ void gebr_geoxml_flow_add_flow(GebrGeoXmlFlow * flow, GebrGeoXmlFlow * flow2)
 		root_element = gebr_geoxml_document_root_element(GEBR_GEOXML_DOC(flow));
 		revision = __gebr_geoxml_get_first_element(root_element, "revision");
 		gdome_el_insertBefore_protected(root_element, new_node, (GdomeNode *)revision, &exception);
+		gdome_n_unref(node, &exception);
+		gdome_n_unref(new_node, &exception);
+		gdome_el_unref(revision, &exception);
+		gdome_el_unref(root_element, &exception);
 	}
 
 	gebr_geoxml_flow_get_category (flow2, &category, 0);
 	while (category) {
 		const gchar *name;
 		name = gebr_geoxml_value_sequence_get (GEBR_GEOXML_VALUE_SEQUENCE (category));
-		gebr_geoxml_flow_append_category (flow, name);
+		gebr_geoxml_object_unref(gebr_geoxml_flow_append_category (flow, name));
 		gebr_geoxml_sequence_next (&category);
 	}
+	gebr_geoxml_object_unref(category);
 
 	// We are adding a control menu into flow.
 	// Append the `iter' dictionary keyword.
@@ -375,12 +382,14 @@ GebrGeoXmlCategory *gebr_geoxml_flow_append_category(GebrGeoXmlFlow * flow, cons
 			return (GebrGeoXmlCategory *)(sequence);
 		gebr_geoxml_sequence_next (&sequence);
 	}
+	GdomeElement *root = gebr_geoxml_document_root_element(GEBR_GEOXML_DOC(flow));
+	GdomeElement *element = __gebr_geoxml_get_first_element(root, "server");
+	category = (GebrGeoXmlCategory *)__gebr_geoxml_insert_new_element(root, "category", element);
 
-	category = (GebrGeoXmlCategory *)
-	    __gebr_geoxml_insert_new_element(gebr_geoxml_document_root_element(GEBR_GEOXML_DOC(flow)), "category",
-					     __gebr_geoxml_get_first_element(gebr_geoxml_document_root_element
-									     (GEBR_GEOXML_DOC(flow)), "server"));
 	gebr_geoxml_value_sequence_set(GEBR_GEOXML_VALUE_SEQUENCE(category), name);
+
+	gdome_el_unref(root, &exception);
+	gdome_el_unref(element, &exception);
 
 	return category;
 }
@@ -391,10 +400,10 @@ int gebr_geoxml_flow_get_category(GebrGeoXmlFlow * flow, GebrGeoXmlSequence ** c
 		*category = NULL;
 		return GEBR_GEOXML_RETV_NULL_PTR;
 	}
+	GdomeElement *root = gebr_geoxml_document_root_element(GEBR_GEOXML_DOC(flow));
+	*category = (GebrGeoXmlSequence *)__gebr_geoxml_get_element_at(root, "category", index, FALSE);
 
-	*category = (GebrGeoXmlSequence *)
-	    __gebr_geoxml_get_element_at(gebr_geoxml_document_root_element(GEBR_GEOXML_DOC(flow)), "category", index,
-					 FALSE);
+	gdome_el_unref(root, &exception);
 
 	return (*category == NULL)
 	    ? GEBR_GEOXML_RETV_INVALID_INDEX : GEBR_GEOXML_RETV_SUCCESS;
@@ -764,17 +773,21 @@ gboolean gebr_geoxml_flow_insert_iter_dict (GebrGeoXmlFlow *flow)
 	param = gebr_geoxml_parameters_append_parameter(dict, GEBR_GEOXML_PARAMETER_TYPE_FLOAT);
 	gebr_geoxml_program_parameter_set_list_separator(GEBR_GEOXML_PROGRAM_PARAMETER (param), "|");
 
+	gebr_geoxml_object_unref(dict);
+	gebr_geoxml_object_unref(seq);
+
 	// Append four values in iter parameter to represent the
 	// current value and the 'ini', 'step' and 'n' values.
-	gebr_geoxml_program_parameter_append_value(GEBR_GEOXML_PROGRAM_PARAMETER (param), FALSE);
-	gebr_geoxml_program_parameter_append_value(GEBR_GEOXML_PROGRAM_PARAMETER (param), FALSE);
-	gebr_geoxml_program_parameter_append_value(GEBR_GEOXML_PROGRAM_PARAMETER (param), FALSE);
+	gebr_geoxml_object_unref(gebr_geoxml_program_parameter_append_value(GEBR_GEOXML_PROGRAM_PARAMETER (param), FALSE));
+	gebr_geoxml_object_unref(gebr_geoxml_program_parameter_append_value(GEBR_GEOXML_PROGRAM_PARAMETER (param), FALSE));
+	gebr_geoxml_object_unref(gebr_geoxml_program_parameter_append_value(GEBR_GEOXML_PROGRAM_PARAMETER (param), FALSE));
 
 	gebr_geoxml_program_parameter_set_keyword(GEBR_GEOXML_PROGRAM_PARAMETER (param), "iter");
 	gebr_geoxml_parameter_set_label(param, _("Loop iteration counter"));
 	gebr_geoxml_sequence_move_after(GEBR_GEOXML_SEQUENCE (param), NULL);
 
 	gebr_geoxml_flow_update_iter_dict_value(flow);
+	gebr_geoxml_object_unref(param);
 
 	return TRUE;
 }
