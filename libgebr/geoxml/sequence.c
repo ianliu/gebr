@@ -181,27 +181,23 @@ GebrGeoXmlSequence *__gebr_geoxml_sequence_append_clone(GebrGeoXmlSequence * seq
 	return GEBR_GEOXML_SEQUENCE(insert);
 }
 
-int __gebr_geoxml_sequence_move_before(GebrGeoXmlSequence * sequence, GebrGeoXmlSequence * position)
+int
+__gebr_geoxml_sequence_move_before(GebrGeoXmlSequence *sequence,
+				   GebrGeoXmlSequence *position)
 {
-	if (position == NULL) {
-		GebrGeoXmlSequence *last_element, *tmp;
+	GdomeNode *parent;
+	GdomeNode *insert;
+	GdomeException exc1, exc2;
 
-		last_element = tmp = sequence;
-		while (!__gebr_geoxml_sequence_next(&tmp))
-			last_element = tmp;
-		if (last_element != sequence) {
-			last_element = (GebrGeoXmlSequence *) __gebr_geoxml_next_element((GdomeElement *) last_element);
-			gdome_n_insertBefore_protected(gdome_el_parentNode((GdomeElement *) sequence, &exception),
-					     (GdomeNode *) sequence, (GdomeNode *) last_element, &exception);
-		} else
-			exception = GDOME_NOEXCEPTION_ERR;
-	} else if (sequence != position)
-		gdome_n_insertBefore_protected(gdome_el_parentNode((GdomeElement *) position, &exception),
-				     (GdomeNode *) sequence, (GdomeNode *) position, &exception);
-	else
-		exception = GDOME_NOEXCEPTION_ERR;
+	parent = gdome_n_parentNode((GdomeNode *) position, &exc1);
+	insert = gdome_n_insertBefore_protected(parent, (GdomeNode *)sequence,
+						(GdomeNode *)position, &exc2);
+	gdome_n_unref(parent, &exception);
+	gdome_n_unref(insert, &exception);
 
-	return exception == GDOME_NOEXCEPTION_ERR ? GEBR_GEOXML_RETV_SUCCESS : GEBR_GEOXML_RETV_DIFFERENT_SEQUENCES;
+	if (exc1 == GDOME_NOEXCEPTION_ERR || exc2 == GDOME_NOEXCEPTION_ERR)
+		return GEBR_GEOXML_RETV_DIFFERENT_SEQUENCES;
+	return GEBR_GEOXML_RETV_SUCCESS;
 }
 
 int __gebr_geoxml_sequence_move_after(GebrGeoXmlSequence * sequence, GebrGeoXmlSequence * position)
