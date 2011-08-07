@@ -416,23 +416,30 @@ GebrGeoXmlParameterGroup *gebr_geoxml_parameter_get_group(GebrGeoXmlParameter * 
 
 gboolean gebr_geoxml_parameter_is_dict_param(GebrGeoXmlParameter *parameter)
 {
-	GdomeNode *grandpa;
+	GdomeNode *grandpa, *parent;
 	GdomeDOMString *name;
 
-	grandpa = gdome_n_parentNode((GdomeNode*)parameter, &exception);
-	grandpa = gdome_n_parentNode(grandpa, &exception);
+	parent = gdome_n_parentNode((GdomeNode*)parameter, &exception);
+	grandpa = gdome_n_parentNode(parent, &exception);
 	name = gdome_el_nodeName((GdomeElement*)grandpa, &exception);
+	gboolean is_dict = g_strcmp0(name->str, "dict") == 0;
 
-	return g_strcmp0(name->str, "dict") == 0 ? TRUE:FALSE;
+	gdome_n_unref(parent, &exception);
+	gdome_n_unref(grandpa, &exception);
+	gdome_str_unref(name);
+	return is_dict;
 }
 GebrGeoXmlDocumentType gebr_geoxml_parameter_get_scope(GebrGeoXmlParameter *parameter)
 {
 	GebrGeoXmlDocument *doc;
+	GebrGeoXmlDocumentType scope;
 
 	g_return_val_if_fail(parameter != NULL, GEBR_GEOXML_DOCUMENT_TYPE_UNKNOWN);
 
 	doc = gebr_geoxml_object_get_owner_document(GEBR_GEOXML_OBJECT(parameter));
 
-	return gebr_geoxml_document_get_type(doc);
+	scope = gebr_geoxml_document_get_type(doc);
+	gebr_geoxml_object_unref(doc);
+	return scope;
 }
 
