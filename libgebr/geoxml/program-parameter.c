@@ -206,6 +206,7 @@ gebr_geoxml_program_parameter_set_first_value(GebrGeoXmlProgramParameter * progr
 	gebr_geoxml_program_parameter_get_value(program_parameter, FALSE, &property_value, 0);
 	__gebr_geoxml_set_tag_value((GdomeElement *) program_parameter,
 				    default_value == FALSE ? "value" : "default", value, __gebr_geoxml_create_TextNode);
+	gebr_geoxml_object_unref(property_value);
 }
 
 void
