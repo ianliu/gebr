@@ -119,6 +119,10 @@ static void gebr_arith_expr_finalize(GObject *object)
 {
 	GebrArithExpr *self = GEBR_ARITH_EXPR(object);
 
+	gebr_arith_expr_eval_internal(self, "quit", NULL, NULL);
+	g_io_channel_unref (self->priv->in_ch);
+	g_io_channel_unref (self->priv->out_ch);
+
 	g_hash_table_unref(self->priv->vars);
 
 	G_OBJECT_CLASS(gebr_arith_expr_parent_class)->finalize(object);
@@ -482,7 +486,7 @@ gebr_arith_expr_eval_internal(GebrArithExpr *self,
 
 	int results = 0;
 	while (read_bc_line(self, &line, err)) {
-		if (g_strcmp0(line, EVAL_COOKIE) == 0) {
+		if (!line || g_strcmp0(line, EVAL_COOKIE) == 0) {
 			g_free(line);
 			break;
 		}
