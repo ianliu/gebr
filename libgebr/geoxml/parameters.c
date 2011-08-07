@@ -59,8 +59,10 @@ __gebr_geoxml_parameters_group_check(GebrGeoXmlParameters * parameters)
 
 	group = gebr_geoxml_parameters_get_group(parameters);
 
-	if (!group)
-		return TRUE; 
+	if (!group) {
+		gdome_n_unref((GdomeNode*) group, &exception);
+		return TRUE;
+	}
 
 	template = gebr_geoxml_parameter_group_get_template(group);
 	retval = (template == parameters);
@@ -282,13 +284,14 @@ gebr_geoxml_parameters_get_group(GebrGeoXmlParameters * parameters)
 	gdome_str_unref(tag);
 	tag = gdome_el_tagName(parent, &exception);
 
+	GebrGeoXmlParameterGroup *grandpa = NULL;
 	if (g_strcmp0(tag->str, "group") == 0) {
-		GdomeNode *grandpa = gdome_el_parentNode(parent, &exception);
-		gdome_el_unref(parent, &exception);
-		return (GebrGeoXmlParameterGroup*) grandpa;
+		grandpa = (GebrGeoXmlParameterGroup*) gdome_el_parentNode(parent, &exception);
 	}
 
-	return NULL;
+	gdome_str_unref(tag);
+	gdome_el_unref(parent, &exception);
+	return grandpa;
 }
 
 gboolean gebr_geoxml_parameters_is_var_used (GebrGeoXmlParameters *self,
