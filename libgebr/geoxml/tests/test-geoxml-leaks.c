@@ -71,6 +71,32 @@ test_gebr_geoxml_leaks_flow_foreach_parameter(void)
 	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
 }
 
+static void
+test_gebr_geoxml_leaks_set_dict_keyword(void)
+{
+	GebrGeoXmlParameter *param;
+	GebrGeoXmlParameters *params;
+	GebrGeoXmlFlow *flow = gebr_geoxml_flow_new();
+
+// FIXME: Leaks because of gebr_geoxml_parameters_append_parameter
+//	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOC(flow), GEBR_GEOXML_PARAMETER_TYPE_STRING, "x", "y");
+
+	params = gebr_geoxml_document_get_dict_parameters(GEBR_GEOXML_DOC(flow)); // OK
+	gebr_geoxml_parameters_get_group(params); // OK
+	__gebr_geoxml_parameters_group_check(params); // OK
+
+	// FIXME: Leaks
+	param = gebr_geoxml_parameters_append_parameter(params, GEBR_GEOXML_PARAMETER_TYPE_STRING);
+//	gebr_geoxml_program_parameter_set_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(param), "x");
+//	gebr_geoxml_program_parameter_set_first_value(GEBR_GEOXML_PROGRAM_PARAMETER(param),
+//						      FALSE, "y");
+
+	gebr_geoxml_object_unref(params);
+	gebr_geoxml_object_unref(param);
+	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
+}
+
+
 int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
@@ -83,6 +109,7 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/geoxml/leaks/flow_add_flow", test_gebr_geoxml_leaks_flow_add_flow);
 	g_test_add_func("/libgebr/geoxml/leaks/flow_foreach_parameter", test_gebr_geoxml_leaks_flow_foreach_parameter);
 
+	g_test_add_func("/libgebr/geoxml/leaks/dict/set_keyword", test_gebr_geoxml_leaks_set_dict_keyword);
+
 	return g_test_run();
 }
-

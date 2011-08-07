@@ -1635,6 +1635,7 @@ gebr_geoxml_document_set_dict_keyword(GebrGeoXmlDocument *doc,
 	gebr_geoxml_program_parameter_set_first_value(GEBR_GEOXML_PROGRAM_PARAMETER(param),
 						      FALSE, value);
 
+	gebr_geoxml_object_unref(params);
 	return param;
 }
 
