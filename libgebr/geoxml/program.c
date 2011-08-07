@@ -58,10 +58,15 @@ static gboolean gebr_geoxml_parameters_foreach(GebrGeoXmlParameters * parameters
 			GebrGeoXmlSequence *instance;
 			gebr_geoxml_parameter_group_get_instance(GEBR_GEOXML_PARAMETER_GROUP(parameter), &instance, 0);
 			for (; instance != NULL; gebr_geoxml_sequence_next(&instance))
-				if (!gebr_geoxml_parameters_foreach(GEBR_GEOXML_PARAMETERS(instance), callback, user_data))
+				if (!gebr_geoxml_parameters_foreach(GEBR_GEOXML_PARAMETERS(instance), callback, user_data)) {
+					gebr_geoxml_object_unref(parameter);
+					gebr_geoxml_object_unref(instance);
 					return FALSE;
-		} else if (!callback(GEBR_GEOXML_OBJECT(parameter), user_data))
+				}
+		} else if (!callback(GEBR_GEOXML_OBJECT(parameter), user_data)) {
+			gebr_geoxml_object_unref(parameter);
 			return FALSE;
+		}
 	}
 
 	return TRUE;
@@ -72,7 +77,9 @@ void gebr_geoxml_program_foreach_parameter(GebrGeoXmlProgram * program, GebrGeoX
 	if (program == NULL)
 		return;
 
-	gebr_geoxml_parameters_foreach(gebr_geoxml_program_get_parameters(program), callback, user_data);
+	GebrGeoXmlParameters *params = gebr_geoxml_program_get_parameters(program);
+	gebr_geoxml_parameters_foreach(params, callback, user_data);
+	gebr_geoxml_object_unref(params);
 }
 
 GebrGeoXmlFlow *gebr_geoxml_program_flow(GebrGeoXmlProgram * program)
