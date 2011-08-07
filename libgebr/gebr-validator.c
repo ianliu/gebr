@@ -563,6 +563,7 @@ gebr_validator_update_vars(GebrValidator *self,
 				}
 			}
 		}
+		gebr_geoxml_object_unref(param);
 	}
 	for (int scope = GEBR_GEOXML_DOCUMENT_TYPE_PROJECT; scope >= (int) param_scope; scope--) {
 		if (!self->docs[scope] || !*(self->docs[scope]))
@@ -701,13 +702,16 @@ gebr_validator_insert(GebrValidator       *self,
 			data->param[scope] = param;
 
 	prev_param = GEBR_GEOXML_SEQUENCE(param);
+	gebr_geoxml_object_ref(param);
 	next_param = GEBR_GEOXML_SEQUENCE(param);
+	gebr_geoxml_object_ref(param);
 	gebr_geoxml_sequence_previous(&prev_param);
 	gebr_geoxml_sequence_next(&next_param);
 	data->weight[scope] = compute_weight(self,
 					     GEBR_GEOXML_PARAMETER(prev_param),
 					     GEBR_GEOXML_PARAMETER(next_param));
-
+	gebr_geoxml_object_unref(prev_param);
+	gebr_geoxml_object_unref(next_param);
 	return gebr_validator_change_value(self, param, GET_VAR_VALUE(param), affected, error);
 }
 
