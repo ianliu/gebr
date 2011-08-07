@@ -167,7 +167,7 @@ void gebr_geoxml_parameter_set_label(GebrGeoXmlParameter * parameter, const gcha
  * Get @parameter's one line description.
  * Will fail if @parameter is NULL.
  */
-const gchar *gebr_geoxml_parameter_get_label(GebrGeoXmlParameter * parameter);
+gchar *gebr_geoxml_parameter_get_label(GebrGeoXmlParameter * parameter);
 
 /**
  * Return TRUE if \p parameter is part of a group

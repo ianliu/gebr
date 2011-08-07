@@ -124,7 +124,7 @@ void __gebr_geoxml_parameter_set_be_reference_with_value(GebrGeoXmlParameter * p
 	value = gebr_geoxml_program_parameter_get_string_value(program, FALSE);
 	type_element = __gebr_geoxml_parameter_get_type_element(parameter);
 
-	gdome_el_unref(gdome_el_removeChild((GdomeElement *) parameter, (GdomeNode *) type_element, &exception), &exception);
+	gdome_n_unref(gdome_el_removeChild((GdomeElement *) parameter, (GdomeNode *) type_element, &exception), &exception);
 	gdome_el_unref(__gebr_geoxml_parameter_insert_type(parameter, GEBR_GEOXML_PARAMETER_TYPE_REFERENCE), &exception);
 	gebr_geoxml_program_parameter_set_string_value(program, TRUE, default_value->str);
 	gebr_geoxml_program_parameter_set_string_value(program, FALSE, value->str);
@@ -386,7 +386,7 @@ void gebr_geoxml_parameter_set_label(GebrGeoXmlParameter * parameter, const gcha
 	__gebr_geoxml_set_tag_value((GdomeElement *) parameter, "label", label, __gebr_geoxml_create_TextNode);
 }
 
-const gchar *gebr_geoxml_parameter_get_label(GebrGeoXmlParameter * parameter)
+gchar *gebr_geoxml_parameter_get_label(GebrGeoXmlParameter * parameter)
 {
 	GebrGeoXmlParameter *template;
 
