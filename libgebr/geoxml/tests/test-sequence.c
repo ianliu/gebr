@@ -55,13 +55,20 @@ static void generate_parameter_list(GString * string, GebrGeoXmlProgram * progra
 	if (reversed) {
 		gebr_geoxml_parameters_get_parameter(parameters, &parameter,
 						     gebr_geoxml_parameters_get_number(parameters)-1);
-		for (; parameter != NULL;  gebr_geoxml_sequence_previous(&parameter)) 
-			g_string_append_printf(string, "%s", gebr_geoxml_parameter_get_label(GEBR_GEOXML_PARAMETER(parameter)));
+		for (; parameter != NULL;  gebr_geoxml_sequence_previous(&parameter)) {
+			gchar *label = gebr_geoxml_parameter_get_label(GEBR_GEOXML_PARAMETER(parameter));
+			g_string_append_printf(string, "%s", label);
+			g_free(label);
+		}
 	} else {
 		parameter = gebr_geoxml_parameters_get_first_parameter(parameters);
-		for (; parameter != NULL;  gebr_geoxml_sequence_next(&parameter)) 
-			g_string_append_printf(string, "%s", gebr_geoxml_parameter_get_label(GEBR_GEOXML_PARAMETER(parameter)));
+		for (; parameter != NULL;  gebr_geoxml_sequence_next(&parameter)) {
+			gchar *label = gebr_geoxml_parameter_get_label(GEBR_GEOXML_PARAMETER(parameter));
+			g_string_append_printf(string, "%s", label);
+			g_free(label);
+		}
 	}
+	gebr_geoxml_object_unref(parameters);
 }
 
 static void
@@ -100,11 +107,17 @@ test_gebr_geoxml_sequence_move_after(Fixture * fix, gconstpointer data)
 	parameter = gebr_geoxml_parameters_get_first_parameter(parameters);
 	gebr_geoxml_parameters_get_parameter(parameters, &last_parameter,
 					     gebr_geoxml_parameters_get_number(parameters)-1);
-	for (; parameter != last_parameter; parameter = gebr_geoxml_parameters_get_first_parameter(parameters))
+	for (; parameter != last_parameter; parameter = gebr_geoxml_parameters_get_first_parameter(parameters)) {
 		gebr_geoxml_sequence_move_after(parameter, last_parameter);
+		gebr_geoxml_object_unref(parameter);
+	}
 
 	generate_parameter_list(fix->after, GEBR_GEOXML_PROGRAM(program), TRUE);
 	g_assert_cmpstr(fix->before->str, ==, fix->after->str);
+	gebr_geoxml_object_unref(last_parameter);
+	gebr_geoxml_object_unref(parameters);
+	gebr_geoxml_object_unref(parameter);
+	gebr_geoxml_object_unref(program);
 }
 
 int main(int argc, char *argv[])
