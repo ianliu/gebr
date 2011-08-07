@@ -271,12 +271,15 @@ gulong __gebr_geoxml_get_element_index(GdomeElement * element)
 
 gulong __gebr_geoxml_get_elements_number(GdomeElement * parent_element, const gchar * tag_name)
 {
-	GdomeElement *child;
+	GdomeElement *child, *next;
 	gulong elements_number;
 
 	elements_number = 0;
-	for (child = __gebr_geoxml_get_element_at(parent_element, tag_name, 0, FALSE); child != NULL; elements_number++)
-		child = __gebr_geoxml_next_same_element(child);
+	for (child = __gebr_geoxml_get_element_at(parent_element, tag_name, 0, FALSE); child != NULL; elements_number++) {
+		next = __gebr_geoxml_next_same_element(child);
+		gdome_el_unref(child, &exception);
+		child = next;
+	}
 
 	return elements_number;
 }
@@ -419,12 +422,17 @@ void __gebr_geoxml_remove_attr(GdomeElement * element, const gchar * name)
 
 GdomeElement *__gebr_geoxml_previous_element(GdomeElement * element)
 {
-	GdomeNode *node;
+	GdomeNode *node, *prev;
 
-	node = (GdomeNode *) element;
-	do
-		node = gdome_n_previousSibling(node, &exception);
-	while ((node != NULL) && (gdome_n_nodeType(node, &exception) != GDOME_ELEMENT_NODE));
+	node = gdome_el_previousSibling(element, &exception);
+	while (node && gdome_n_nodeType(node, &exception) != GDOME_ELEMENT_NODE) {
+//		if (gdome_n_nodeType(node, &exception) != GDOME_ELEMENT_NODE)
+//			break;
+		prev = gdome_n_previousSibling(node, &exception);
+		gdome_n_unref(node, &exception);
+		node = prev;
+	}
+//	while ((node != NULL) && (gdome_n_nodeType(node, &exception) != GDOME_ELEMENT_NODE));
 
 	return (GdomeElement *) node;
 }
@@ -448,25 +456,26 @@ GdomeElement *__gebr_geoxml_next_element(GdomeElement * element)
 
 GdomeElement *__gebr_geoxml_previous_same_element(GdomeElement * element)
 {
-	GdomeElement *previous_element;
-	GdomeDOMString *str1, *str2;
+	GdomeElement *prev_element;
+	GdomeDOMString *name1, *name2;
 
-	previous_element = __gebr_geoxml_previous_element(element);
-	str1 = gdome_el_nodeName(element, &exception);
-	str2 = gdome_el_nodeName(previous_element, &exception);
+	prev_element = __gebr_geoxml_previous_element(element);
 
-	if (previous_element != NULL &&
-	    gdome_str_equal(str1, str2)) {
-		gdome_str_unref(str1);
-		gdome_str_unref(str2);
-		return previous_element;
+	if (!prev_element)
+		return NULL;
+
+	name1 = gdome_el_nodeName(element, &exception);
+	name2 = gdome_el_nodeName(prev_element, &exception);
+
+	if (!gdome_str_equal (name1, name2)) {
+		gdome_el_unref(prev_element, &exception);
+		prev_element = NULL;
 	}
-	gdome_str_unref(str1);
-	if (previous_element != NULL) {
-		gdome_str_unref(str2);
-		gdome_el_unref(previous_element, &exception);
-	}
-	return NULL;
+
+	gdome_str_unref(name1);
+	gdome_str_unref(name2);
+
+	return prev_element;
 }
 
 GdomeElement *__gebr_geoxml_next_same_element(GdomeElement * element)
