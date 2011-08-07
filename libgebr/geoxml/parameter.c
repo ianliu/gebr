@@ -86,8 +86,11 @@ __gebr_geoxml_parameter_get_type(GebrGeoXmlParameter * parameter, gboolean resol
 	if (resolve_references) {
 		GebrGeoXmlParameter * referencee;
 		referencee = gebr_geoxml_parameter_get_referencee(parameter);
-		if (referencee)
-			return __gebr_geoxml_parameter_get_type(referencee, FALSE);
+		if (referencee) {
+			GebrGeoXmlParameterType type = __gebr_geoxml_parameter_get_type(referencee, FALSE);
+			gebr_geoxml_object_unref(referencee);
+			return type;
+		}
 	}
 
 	type_element = __gebr_geoxml_parameter_get_type_element(parameter);
@@ -95,10 +98,11 @@ __gebr_geoxml_parameter_get_type(GebrGeoXmlParameter * parameter, gboolean resol
 	for (gint i = 1; i <= parameter_type_to_str_len; ++i) {
 		if (!strcmp(parameter_type_to_str[i], tag_name->str)) {
 			gdome_str_unref(tag_name);
+			gdome_el_unref(type_element, &exception);
 			return (GebrGeoXmlParameterType)i;
 		}
 	}
-
+	gdome_el_unref(type_element, &exception);
 	gdome_str_unref(tag_name);
 	return GEBR_GEOXML_PARAMETER_TYPE_UNKNOWN;
 }
@@ -120,11 +124,12 @@ void __gebr_geoxml_parameter_set_be_reference_with_value(GebrGeoXmlParameter * p
 	value = gebr_geoxml_program_parameter_get_string_value(program, FALSE);
 	type_element = __gebr_geoxml_parameter_get_type_element(parameter);
 
-	gdome_el_removeChild((GdomeElement *) parameter, (GdomeNode *) type_element, &exception);
-	__gebr_geoxml_parameter_insert_type(parameter, GEBR_GEOXML_PARAMETER_TYPE_REFERENCE);
+	gdome_el_unref(gdome_el_removeChild((GdomeElement *) parameter, (GdomeNode *) type_element, &exception), &exception);
+	gdome_el_unref(__gebr_geoxml_parameter_insert_type(parameter, GEBR_GEOXML_PARAMETER_TYPE_REFERENCE), &exception);
 	gebr_geoxml_program_parameter_set_string_value(program, TRUE, default_value->str);
 	gebr_geoxml_program_parameter_set_string_value(program, FALSE, value->str);
 
+	gdome_el_unref(type_element, &exception);
 	g_string_free(default_value, TRUE);
 }
 
