@@ -76,7 +76,7 @@ GdomeElement *__gebr_geoxml_new_element(GdomeElement * parent_element, const gch
 	GdomeDOMString *str;
 
 	owner_doc = gdome_el_ownerDocument(parent_element, &exception);
-	str = gdome_str_mkref(tag_name);
+	str = gdome_str_mkref_dup(tag_name);
 	element = gdome_doc_createElement(owner_doc, str, &exception);
 
 	gdome_doc_unref(owner_doc, &exception);
@@ -426,13 +426,10 @@ GdomeElement *__gebr_geoxml_previous_element(GdomeElement * element)
 
 	node = gdome_el_previousSibling(element, &exception);
 	while (node && gdome_n_nodeType(node, &exception) != GDOME_ELEMENT_NODE) {
-//		if (gdome_n_nodeType(node, &exception) != GDOME_ELEMENT_NODE)
-//			break;
 		prev = gdome_n_previousSibling(node, &exception);
 		gdome_n_unref(node, &exception);
 		node = prev;
 	}
-//	while ((node != NULL) && (gdome_n_nodeType(node, &exception) != GDOME_ELEMENT_NODE));
 
 	return (GdomeElement *) node;
 }
