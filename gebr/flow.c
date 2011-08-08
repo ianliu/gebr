@@ -283,13 +283,15 @@ void flow_export(void)
 		gtk_tree_model_get_iter (model, &iter, path);
 		gtk_tree_model_get (model, &iter, FB_FILENAME, &flow_filename, -1);
 
-		if (document_load (&flow, flow_filename, FALSE))
+		if (gebr_geoxml_document_load((GebrGeoXmlDocument**)&flow, flow_filename, TRUE, NULL) != GEBR_GEOXML_RETV_SUCCESS)
+//		if (document_load (&flow, flow_filename, FALSE))
 			goto out;
 
 		g_string_printf (title, _("Save '%s' as..."),
 				 gebr_geoxml_document_get_title (flow));
 
-		document_free (flow);
+//		document_free (flow);
+		gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
 	}
 
 	GtkWidget *box;
@@ -467,6 +469,7 @@ static void flow_set_paths_to(GebrGeoXmlFlow * flow, set_path_func func, gboolea
 				GebrGeoXmlProgram *program = gebr_geoxml_parameter_get_program(parameter);
 				gebr_geoxml_program_set_status (program, GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED);
 				gebr_geoxml_program_set_error_id(program, FALSE, GEBR_IEXPR_ERROR_PATH);
+				gebr_geoxml_object_unref(program);
 				return FALSE;
 			}
 		}
