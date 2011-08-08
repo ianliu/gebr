@@ -58,13 +58,21 @@ GebrGeoXmlObjectType gebr_geoxml_object_get_type(GebrGeoXmlObject * object)
 
 	if (gdome_n_nodeType((GdomeNode*)object, &exception) == GDOME_DOCUMENT_NODE)
 		element = gdome_doc_documentElement((GdomeDocument*)object, &exception);
-	else
+	else {
+		gebr_geoxml_object_ref(object);
 		element = (GdomeElement*)object;
-
-	for (i = 1; i <= 7; ++i)
-		if (!strcmp(gdome_el_tagName(element, &exception)->str, tag_map[i]))
+	}
+	GdomeDOMString *tag;
+	for (i = 1; i <= 7; ++i) {
+		tag = gdome_el_tagName(element, &exception);
+		if (!strcmp(tag->str, tag_map[i])) {
+			gdome_str_unref(tag);
+			gdome_el_unref(element, &exception);
 			return (GebrGeoXmlObjectType)i;
-
+		}
+		gdome_str_unref(tag);
+	}
+	gdome_el_unref(element, &exception);
 	return GEBR_GEOXML_OBJECT_TYPE_UNKNOWN;
 }
 
