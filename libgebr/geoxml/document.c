@@ -138,7 +138,7 @@ static void __gebr_geoxml_unref(void)
 {
 	gdome_di_unref(dom_implementation, &exception);
 	--dom_implementation_ref_count;
-	if (!dom_implementation) {
+	if (!dom_implementation_ref_count) {
 		gdome_doc_unref(clipboard_document, &exception);
 		clipboard_document = NULL;
 	}
