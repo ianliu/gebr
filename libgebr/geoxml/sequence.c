@@ -44,7 +44,10 @@ struct gebr_geoxml_sequence {
  */
 static inline gboolean __gebr_geoxml_sequence_is_parameter(GebrGeoXmlSequence * sequence)
 {
-	return (gboolean) ! strcmp(gdome_el_nodeName((GdomeElement *) sequence, &exception)->str, "parameter");
+	GdomeDOMString *string = gdome_el_nodeName((GdomeElement *) sequence, &exception);
+	gboolean retval = !strcmp(string->str, "parameter");
+	gdome_str_unref(string);
+	return retval;
 }
 
 /**
@@ -177,8 +180,11 @@ int __gebr_geoxml_sequence_previous(GebrGeoXmlSequence ** sequence)
 
 void __gebr_geoxml_sequence_remove(GebrGeoXmlSequence * sequence)
 {
-	gdome_n_unref(gdome_n_removeChild(gdome_el_parentNode((GdomeElement *) sequence, &exception),
-					  (GdomeNode *) sequence, &exception), &exception);
+	GdomeNode *parent;
+	parent = gdome_el_parentNode((GdomeElement *) sequence, &exception);
+	gdome_n_unref(gdome_n_removeChild(parent, (GdomeNode *) sequence, &exception), &exception);
+	gdome_n_unref(parent, &exception);
+	gebr_geoxml_object_unref(sequence);
 }
 
 GebrGeoXmlSequence *__gebr_geoxml_sequence_append_clone(GebrGeoXmlSequence * sequence)
@@ -385,22 +391,27 @@ int gebr_geoxml_sequence_remove(GebrGeoXmlSequence * sequence)
 	if (!strcmp(tag->str, "parameters")) {
 		GebrGeoXmlParameters *parameters = (GebrGeoXmlParameters*)sequence;
 		GebrGeoXmlParameterGroup *group = gebr_geoxml_parameters_get_group(parameters);
+		GebrGeoXmlParameters *template = gebr_geoxml_parameter_group_get_template(group);
 		if (group != NULL && (gebr_geoxml_parameter_group_get_instances_number(group) == 1 ||
-		    gebr_geoxml_parameter_group_get_template(group) == parameters)) 
+		    template == parameters))
 			ret = GEBR_GEOXML_RETV_INVALID_INDEX;
 		else
 			ret = GEBR_GEOXML_RETV_SUCCESS;
-	} else if (__gebr_geoxml_sequence_is_parameter(sequence)
-	    && gebr_geoxml_parameter_get_is_in_group((GebrGeoXmlParameter *) sequence)) {
+		gebr_geoxml_object_unref(group);
+		gebr_geoxml_object_unref(template);
+	} else if (__gebr_geoxml_sequence_is_parameter(sequence) &&
+		   gebr_geoxml_parameter_get_is_in_group((GebrGeoXmlParameter *) sequence)) {
 		GSList * list;
 
 		list = __gebr_geoxml_parameter_get_referencee_list(GEBR_GEOXML_PARAMETER(sequence));
 		for (GSList *i = list; i; i = i->next)
-		    __gebr_geoxml_sequence_remove(GEBR_GEOXML_SEQUENCE(i->data));
+			__gebr_geoxml_sequence_remove(GEBR_GEOXML_SEQUENCE(i->data));
+		g_slist_free(list);
 	}
 	if (ret == GEBR_GEOXML_RETV_SUCCESS)
 		__gebr_geoxml_sequence_remove(sequence);
 
+	gdome_str_unref(tag);
 	return ret;
 }
 
