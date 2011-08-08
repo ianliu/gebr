@@ -343,10 +343,12 @@ __gebr_geoxml_set_element_value(GdomeElement * element, const gchar * tag_value,
 		gdome_n_unref(remove_node, &exception);
 	}
 	/* Protection agains line-breaks inside text nodes */
+	gchar *line_break = __gebr_geoxml_remove_line_break(tag_value);
 	value_str = (create_func == __gebr_geoxml_create_TextNode)
-	    ? __gebr_geoxml_remove_line_break(tag_value) : tag_value;
+	    ? line_break : tag_value;
 
 	create_func(element, value_str);
+	g_free(line_break);
 }
 
 gchar *__gebr_geoxml_get_tag_value(GdomeElement * parent_element, const gchar * tag_name)
