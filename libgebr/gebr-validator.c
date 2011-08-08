@@ -82,7 +82,7 @@ hash_data_free(gpointer p)
 		g_list_free(n->dep[i]);
 		if (n->error[i])
 			g_error_free(n->error[i]);
-		if (!n->param[i])
+		if (n->param[i])
 			gebr_geoxml_object_unref(n->param[i]);
 	}
 	g_free(n->name);
@@ -533,7 +533,7 @@ validate_and_extract_param(GebrValidator  *self,
 	return FALSE;
 }
 
-static gboolean
+gboolean
 gebr_validator_update_vars(GebrValidator *self,
                            GebrGeoXmlDocumentType param_scope,
                            GError **error)
@@ -708,10 +708,12 @@ gebr_validator_insert(GebrValidator       *self,
 		data->param[scope] = param;
 	}
 	prev_param = GEBR_GEOXML_SEQUENCE(param);
-	gebr_geoxml_object_ref(param);
 	next_param = GEBR_GEOXML_SEQUENCE(param);
-	gebr_geoxml_object_ref(param);
+
+	gebr_geoxml_object_ref(prev_param);
 	gebr_geoxml_sequence_previous(&prev_param);
+
+	gebr_geoxml_object_ref(next_param);
 	gebr_geoxml_sequence_next(&next_param);
 	data->weight[scope] = compute_weight(self,
 					     GEBR_GEOXML_PARAMETER(prev_param),
@@ -1281,8 +1283,10 @@ gebr_validator_validate_iter(GebrValidator *self,
 			name = g_strdup("niter");
 		value = gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(seq));
 		gebr_validator_validate_control_parameter(self, name, value, error);
-		if(*error)
+		if(*error) {
+			gebr_geoxml_object_unref(seq);
 			break;
+		}
 		i++;
 	}
 	/* Comment for translators: 1st %s is expression error; 2nd is variable label */
