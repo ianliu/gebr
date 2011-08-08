@@ -332,6 +332,41 @@ test_gebr_geoxml_object_get_type(void)
 	gebr_geoxml_document_free(doc);
 }
 
+static void
+test_gebr_geoxml_leaks_get_scope_and_required(void)
+{
+	GebrGeoXmlFlow *flow;
+	GebrGeoXmlProgram *prog;
+	GebrGeoXmlParameter *param;
+	GebrGeoXmlParameters *params;
+
+	gebr_geoxml_document_load((GebrGeoXmlDocument **)&flow,
+				  TEST_DIR "/test.mnu", TRUE, NULL);
+
+	gebr_geoxml_flow_get_program(flow, (GebrGeoXmlSequence**)&prog, 0);
+	params = gebr_geoxml_program_get_parameters(prog);
+	gebr_geoxml_parameters_get_parameter(params, (GebrGeoXmlSequence**)&param, 0);
+
+	gebr_geoxml_parameter_get_scope(param);
+	gebr_geoxml_program_parameter_get_required(GEBR_GEOXML_PROGRAM_PARAMETER(param));
+	gebr_geoxml_object_unref(param);
+
+	GebrGeoXmlSequence *seq;
+	GebrGeoXmlParameter *ref;
+	gebr_geoxml_parameters_get_parameter(params, (GebrGeoXmlSequence**)&param, 2);
+	gebr_geoxml_parameter_group_get_instance(GEBR_GEOXML_PARAMETER_GROUP(param), &seq, 0);
+	gebr_geoxml_parameters_get_parameter(GEBR_GEOXML_PARAMETERS(seq), (GebrGeoXmlSequence**)&ref, 0);
+
+	gebr_geoxml_program_parameter_get_required(GEBR_GEOXML_PROGRAM_PARAMETER(param));
+
+	gebr_geoxml_object_unref(ref);
+	gebr_geoxml_object_unref(seq);
+	gebr_geoxml_object_unref(prog);
+	gebr_geoxml_object_unref(param);
+	gebr_geoxml_object_unref(params);
+	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
+}
+
 int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
@@ -356,7 +391,7 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/geoxml/leaks/parameter_get_type", test_gebr_geoxml_leaks_parameter_get_type);
 	g_test_add_func("/libgebr/geoxml/leaks/get_instance", test_gebr_geoxml_leaks_get_instance);
 	g_test_add_func("/libgebr/geoxml/leaks/object_get_type", test_gebr_geoxml_object_get_type);
-
+	g_test_add_func("/libgebr/geoxml/leaks/get_scope_and_required", test_gebr_geoxml_leaks_get_scope_and_required);
 
 	return g_test_run();
 }

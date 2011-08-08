@@ -90,17 +90,32 @@ void gebr_geoxml_program_parameter_set_required(GebrGeoXmlProgramParameter * pro
 
 gboolean gebr_geoxml_program_parameter_get_required(GebrGeoXmlProgramParameter * program_parameter)
 {
+	gchar *required;
+	gboolean is_required;
+	GdomeElement *element;
+
 	if (program_parameter == NULL)
 		return FALSE;
+
 	if (gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(program_parameter)) == GEBR_GEOXML_PARAMETER_TYPE_FLAG)
 		return FALSE;
-	if (gebr_geoxml_parameter_get_is_reference((GebrGeoXmlParameter *) program_parameter))
-		return gebr_geoxml_program_parameter_get_required((GebrGeoXmlProgramParameter *)
-								  gebr_geoxml_parameter_get_referencee((GebrGeoXmlParameter *) program_parameter));
-	return (!strcmp
-		(__gebr_geoxml_get_attr_value
-		 (__gebr_geoxml_get_first_element((GdomeElement *) program_parameter, "property"), "required"), "yes"))
-	    ? TRUE : FALSE;
+
+	if (gebr_geoxml_parameter_get_is_reference((GebrGeoXmlParameter *) program_parameter)) {
+		GebrGeoXmlParameter *ref;
+		ref = gebr_geoxml_parameter_get_referencee((GebrGeoXmlParameter *) program_parameter);
+		is_required = gebr_geoxml_program_parameter_get_required((GebrGeoXmlProgramParameter *) ref);
+		gebr_geoxml_object_unref(ref);
+		return is_required;
+	}
+
+	element = __gebr_geoxml_get_first_element((GdomeElement *)program_parameter, "property");
+	required = __gebr_geoxml_get_attr_value(element, "required");
+	is_required = (g_strcmp0(required, "yes") == 0);
+
+	g_free(required);
+	gdome_el_unref(element, &exception);
+
+	return is_required;
 }
 
 void gebr_geoxml_program_parameter_set_keyword(GebrGeoXmlProgramParameter * program_parameter, const gchar * keyword)
