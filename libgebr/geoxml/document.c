@@ -710,31 +710,27 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 			GdomeElement *element;
 
 			gebr_foreach_gslist_hyg(element, __gebr_geoxml_get_elements_by_tag(root_element, "group"), group) {
-				GdomeElement *parameter;
 				GebrGeoXmlParameterGroup *group;
 				GebrGeoXmlSequence *instance;
 				GebrGeoXmlSequence *iter;
 				gboolean first_instance = TRUE;
 
-				parameter = (GdomeElement*)gdome_el_parentNode(element, &exception);
-				group = GEBR_GEOXML_PARAMETER_GROUP(parameter);
+				group = GEBR_GEOXML_PARAMETER_GROUP(gdome_el_parentNode(element, &exception));
 				gebr_geoxml_parameter_group_get_instance(group, &instance, 0);
 
-				for (; instance != NULL; gebr_geoxml_sequence_next(&instance)){
+				for (; instance != NULL; gebr_geoxml_sequence_next(&instance)) {
 					gebr_geoxml_parameters_get_parameter(GEBR_GEOXML_PARAMETERS(instance), &iter, 0);
 
-					for (; iter != NULL; gebr_geoxml_sequence_next(&iter)){
+					for (; iter != NULL; gebr_geoxml_sequence_next(&iter)) {
 						__gebr_geoxml_parameter_set_label((GebrGeoXmlParameter *) iter, "");
 
-						if (first_instance){
-							if( __gebr_geoxml_parameter_get_type((GebrGeoXmlParameter *) iter, FALSE) != GEBR_GEOXML_PARAMETER_TYPE_REFERENCE){
-								__gebr_geoxml_parameter_set_be_reference_with_value((GebrGeoXmlParameter *) iter);
-							}
-						}
+						if (first_instance &&
+						    __gebr_geoxml_parameter_get_type((GebrGeoXmlParameter *) iter, FALSE) != GEBR_GEOXML_PARAMETER_TYPE_REFERENCE)
+							__gebr_geoxml_parameter_set_be_reference_with_value((GebrGeoXmlParameter *) iter);
 					}
 					first_instance = FALSE;
 				}
-				gdome_el_unref(parameter, &exception);
+				gdome_el_unref(element, &exception);
 				gebr_geoxml_object_unref(group);
 			}
 		}
