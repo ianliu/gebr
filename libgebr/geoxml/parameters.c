@@ -78,21 +78,29 @@ __gebr_geoxml_parameters_do_insert_in_group_stuff(GebrGeoXmlParameters * paramet
 {
 	glong index;
 	gboolean exclusive;
-	GdomeElement *parent;
+	GdomeNode *parent;
+	GdomeNode *grandpa;
+	GdomeDOMString *tagname;
 	GebrGeoXmlParameterGroup *parameter_group;
 	GebrGeoXmlSequence *instance;
 
 	/* The structure is group/template-instance/parameters, that is why we need the grandparent. */
-	parent = (GdomeElement *) gdome_el_parentNode((GdomeElement *) parameters, &exception);
-	parent = (GdomeElement *) gdome_el_parentNode((GdomeElement *) parent, &exception);
-	if (strcmp(gdome_el_tagName(parent, &exception)->str, "group"))
+	parent = gdome_el_parentNode((GdomeElement *) parameters, &exception);
+	grandpa = gdome_n_parentNode(parent, &exception);
+
+	tagname = gdome_el_tagName((GdomeElement*)grandpa, &exception);
+	if (g_strcmp0(tagname->str, "group") != 0) {
+		gdome_str_unref(tagname);
 		return;
+	}
+	gdome_str_unref(tagname);
 
 	index = __gebr_geoxml_get_element_index((GdomeElement *) parameter);
-	parameter_group = GEBR_GEOXML_PARAMETER_GROUP(gdome_el_parentNode(parent, &exception));
+	parameter_group = GEBR_GEOXML_PARAMETER_GROUP(gdome_n_parentNode(grandpa, &exception));
 	exclusive = gebr_geoxml_parameter_group_is_exclusive(parameter_group);
 
-	gdome_el_unref(parent, &exception);
+	gdome_n_unref(parent, &exception);
+	gdome_n_unref(grandpa, &exception);
 
 	gebr_geoxml_parameter_group_get_instance(parameter_group, &instance, 0);
 	for (; instance != NULL; gebr_geoxml_sequence_next(&instance)) {
