@@ -1637,6 +1637,7 @@ gebr_geoxml_document_get_dict_parameter(GebrGeoXmlDocument *doc)
 
 	params = gebr_geoxml_document_get_dict_parameters(doc);
 	gebr_geoxml_parameters_get_parameter(params, &seq, 0);
+	gebr_geoxml_object_unref(params);
 	return seq;
 }
 
