@@ -116,7 +116,7 @@ void gebr_geoxml_flow_set_date_last_run(GebrGeoXmlFlow * flow, const gchar * las
  *
  * \see gebr_geoxml_flow_set_date_modified
  */
-const gchar *gebr_geoxml_flow_get_date_last_run(GebrGeoXmlFlow * flow);
+gchar *gebr_geoxml_flow_get_date_last_run(GebrGeoXmlFlow * flow);
 
 /**
  * Sets the address of this flow server.
@@ -127,7 +127,7 @@ void gebr_geoxml_flow_server_set_address(GebrGeoXmlFlow *flow, const gchar * add
  * Returns the address of this flow server.
  * The string must be freed with g_free() .
  */
-const gchar *gebr_geoxml_flow_server_get_address(GebrGeoXmlFlow *flow);
+gchar *gebr_geoxml_flow_server_get_address(GebrGeoXmlFlow *flow);
 
 /**
  * gebr_geoxml_flow_server_set_date_last_run:
@@ -151,7 +151,7 @@ void gebr_geoxml_flow_server_set_date_last_run(GebrGeoXmlFlow *flow, const gchar
  * @flow should not be passed as NULL.
  *
  */
-const gchar *gebr_geoxml_flow_server_get_date_last_run(GebrGeoXmlFlow *flow);
+gchar *gebr_geoxml_flow_server_get_date_last_run(GebrGeoXmlFlow *flow);
 
 /**
  * gebr_geoxml_flow_io_set_input:
@@ -206,7 +206,7 @@ void gebr_geoxml_flow_io_set_error(GebrGeoXmlFlow * flow, const gchar * error);
  *
  * See gebr_geoxml_flow_server_io_set_input()
  */
-const gchar *gebr_geoxml_flow_io_get_input(GebrGeoXmlFlow * flow);
+gchar *gebr_geoxml_flow_io_get_input(GebrGeoXmlFlow * flow);
 
 /**
  * gebr_geoxml_flow_io_get_output:
@@ -219,7 +219,7 @@ const gchar *gebr_geoxml_flow_io_get_input(GebrGeoXmlFlow * flow);
  *
  * See gebr_geoxml_flow_server_io_set_output().
  */
-const gchar *gebr_geoxml_flow_io_get_output(GebrGeoXmlFlow * flow);
+gchar *gebr_geoxml_flow_io_get_output(GebrGeoXmlFlow * flow);
 
 /**
  * gebr_geoxml_flow_io_get_error:
@@ -233,7 +233,7 @@ const gchar *gebr_geoxml_flow_io_get_output(GebrGeoXmlFlow * flow);
  * See gebr_geoxml_flow_server_io_set_error().
  *
  */
-const gchar *gebr_geoxml_flow_io_get_error(GebrGeoXmlFlow * flow);
+gchar *gebr_geoxml_flow_io_get_error(GebrGeoXmlFlow * flow);
 
 /**
  * gebr_geoxml_flow_append_program:
