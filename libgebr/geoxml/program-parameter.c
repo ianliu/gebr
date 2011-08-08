@@ -491,6 +491,7 @@ gebr_geoxml_program_parameter_set_file_be_directory(GebrGeoXmlProgramParameter *
 
 	type_element = __gebr_geoxml_parameter_get_type_element(parameter);
 	__gebr_geoxml_set_attr_value(type_element, "directory", (is_directory == TRUE ? "yes" : "no"));
+	gdome_el_unref(type_element, &exception);
 }
 
 gboolean gebr_geoxml_program_parameter_get_file_be_directory(GebrGeoXmlProgramParameter * program_parameter)
@@ -628,6 +629,8 @@ gebr_geoxml_program_parameter_set_range_properties(GebrGeoXmlProgramParameter * 
 		__gebr_geoxml_set_attr_value(type_element, "inc", inc);
 	if (digits)
 		__gebr_geoxml_set_attr_value(type_element, "digits", digits);
+
+	gdome_el_unref(type_element, &exception);
 }
 
 void

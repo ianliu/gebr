@@ -156,28 +156,34 @@ void __gebr_geoxml_parameter_set_be_reference(GebrGeoXmlParameter * parameter)
 	g_string_free(default_value, TRUE);
 }
 
-GdomeElement *__gebr_geoxml_parameter_insert_type(GebrGeoXmlParameter * parameter, GebrGeoXmlParameterType type)
+GdomeElement *
+__gebr_geoxml_parameter_insert_type(GebrGeoXmlParameter * parameter,
+				    GebrGeoXmlParameterType type)
 {
 	GdomeElement *type_element;
 
 	type_element = __gebr_geoxml_insert_new_element((GdomeElement *) parameter, parameter_type_to_str[type], NULL);
-	if (type == GEBR_GEOXML_PARAMETER_TYPE_GROUP) {
+	if (type == GEBR_GEOXML_PARAMETER_TYPE_GROUP)
+	{
 		GdomeElement * template;
 		template = __gebr_geoxml_insert_new_element(type_element, "template-instance", NULL);
-		__gebr_geoxml_parameters_append_new(template);
-		__gebr_geoxml_parameters_append_new(type_element);
+		gebr_geoxml_object_unref(__gebr_geoxml_parameters_append_new(template));
+		gebr_geoxml_object_unref(__gebr_geoxml_parameters_append_new(type_element));
 		gebr_geoxml_parameter_group_set_is_instanciable((GebrGeoXmlParameterGroup *)parameter, FALSE);
 		gebr_geoxml_parameter_group_set_expand((GebrGeoXmlParameterGroup *)parameter, FALSE);
-	} else {
+	} 
+	else
+	{
 		GdomeElement *property_element;
 		GdomeElement *value_element;
 		GdomeElement *default_value_element;
 
 		property_element = __gebr_geoxml_insert_new_element(type_element, "property", NULL);
-		__gebr_geoxml_insert_new_element(property_element, "keyword", NULL);
+		gebr_geoxml_object_unref(__gebr_geoxml_insert_new_element(property_element, "keyword", NULL));
 		value_element = __gebr_geoxml_insert_new_element(property_element, "value", NULL);
 		default_value_element = __gebr_geoxml_insert_new_element(property_element, "default", NULL);
 		__gebr_geoxml_set_attr_value(property_element, "required", "no");
+		gdome_el_unref(property_element, &exception);
 
 		switch (type) {
 		case GEBR_GEOXML_PARAMETER_TYPE_FILE:
@@ -195,6 +201,10 @@ GdomeElement *__gebr_geoxml_parameter_insert_type(GebrGeoXmlParameter * paramete
 		default:
 			break;
 		}
+
+		gdome_el_unref(value_element, &exception);
+		gdome_el_unref(default_value_element, &exception);
+
 	}
 
 	return type_element;
