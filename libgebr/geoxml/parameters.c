@@ -90,9 +90,12 @@ __gebr_geoxml_parameters_do_insert_in_group_stuff(GebrGeoXmlParameters * paramet
 
 	tagname = gdome_el_tagName((GdomeElement*)grandpa, &exception);
 	if (g_strcmp0(tagname->str, "group") != 0) {
+		gdome_n_unref(grandpa, &exception);
+		gdome_n_unref(parent, &exception);
 		gdome_str_unref(tagname);
 		return;
 	}
+
 	gdome_str_unref(tagname);
 
 	index = __gebr_geoxml_get_element_index((GdomeElement *) parameter);
@@ -284,7 +287,7 @@ gebr_geoxml_parameters_get_group(GebrGeoXmlParameters * parameters)
 	parent = (GdomeElement*)gdome_el_parentNode((GdomeElement*)parameters, &exception);
 	tag = gdome_el_tagName(parent, &exception);
 
-	if (strcmp(tag->str, "template-instance") == 0) {
+	if (g_strcmp0(tag->str, "template-instance") == 0) {
 		gdome_el_unref(parent, &exception);
 		parent = (GdomeElement*)gdome_el_parentNode(parent, &exception);
 	}

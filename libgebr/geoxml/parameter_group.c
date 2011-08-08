@@ -132,6 +132,8 @@ gboolean gebr_geoxml_parameter_group_deinstanciate(GebrGeoXmlParameterGroup * pa
 int gebr_geoxml_parameter_group_get_instance(GebrGeoXmlParameterGroup * parameter_group,
 					     GebrGeoXmlSequence ** parameters, gulong index)
 {
+	enum GEBR_GEOXML_RETV retval = GEBR_GEOXML_RETV_SUCCESS;
+
 	if (parameter_group == NULL) {
 		*parameters = NULL;
 		return GEBR_GEOXML_RETV_NULL_PTR;
@@ -143,8 +145,10 @@ int gebr_geoxml_parameter_group_get_instance(GebrGeoXmlParameterGroup * paramete
 	*parameters = (GebrGeoXmlSequence *) __gebr_geoxml_get_element_at(type_element, "parameters", index, FALSE);
 	gdome_el_unref(type_element, &exception);
 
-	return (*parameters == NULL)
+	retval =  (*parameters == NULL)
 	    ? GEBR_GEOXML_RETV_INVALID_INDEX : GEBR_GEOXML_RETV_SUCCESS;
+
+	return retval;
 }
 
 glong gebr_geoxml_parameter_group_get_instances_number(GebrGeoXmlParameterGroup * parameter_group)
