@@ -283,15 +283,15 @@ void flow_export(void)
 		gtk_tree_model_get_iter (model, &iter, path);
 		gtk_tree_model_get (model, &iter, FB_FILENAME, &flow_filename, -1);
 
-		if (gebr_geoxml_document_load((GebrGeoXmlDocument**)&flow, flow_filename, TRUE, NULL) != GEBR_GEOXML_RETV_SUCCESS)
-//		if (document_load (&flow, flow_filename, FALSE))
+		//if (gebr_geoxml_document_load((GebrGeoXmlDocument**)&flow, flow_filename, TRUE, NULL) != GEBR_GEOXML_RETV_SUCCESS)
+		if (document_load (&flow, flow_filename, FALSE))
 			goto out;
 
 		g_string_printf (title, _("Save '%s' as..."),
 				 gebr_geoxml_document_get_title (flow));
 
-//		document_free (flow);
-		gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
+		document_free (flow);
+		//gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
 	}
 
 	GtkWidget *box;

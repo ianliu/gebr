@@ -926,8 +926,7 @@ void project_line_export(void)
 			GebrGeoXmlFlow *flow;
 
 			flow_filename = gebr_geoxml_line_get_flow_source(GEBR_GEOXML_LINE_FLOW(j));
-			//if (document_load((GebrGeoXmlDocument**)(&flow), flow_filename, FALSE))
-			if (gebr_geoxml_document_load((GebrGeoXmlDocument**)&flow, flow_filename, TRUE, NULL) != GEBR_GEOXML_RETV_SUCCESS)
+			if (document_load((GebrGeoXmlDocument**)(&flow), flow_filename, FALSE))
 				continue;
 
 			flow_set_paths_to_relative(flow, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(check_box_user)));
@@ -935,7 +934,6 @@ void project_line_export(void)
 			document_save_at(GEBR_GEOXML_DOCUMENT(flow), filename, FALSE, FALSE);
 			g_free (filename);
 
-			//document_free(GEBR_GEOXML_DOCUMENT(flow));
 			gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
 		}
 		document_free(GEBR_GEOXML_DOCUMENT(line));
