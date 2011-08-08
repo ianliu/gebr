@@ -160,6 +160,45 @@ get_document_property(GebrGeoXmlDocument *doc,
 	return prop_value;
 }
 
+static void
+set_document_property(GebrGeoXmlDocument *doc,
+                      const gchar *tag_element,
+		      const gchar *tag_name,
+		      const gchar *tag_value)
+{
+	GdomeElement *root;
+	GdomeElement *element;
+
+	g_return_if_fail(doc != NULL);
+	g_return_if_fail(tag_name != NULL);
+	g_return_if_fail(tag_value != NULL);
+	g_return_if_fail(tag_element != NULL);
+
+	root = gebr_geoxml_document_root_element(doc);
+	element = __gebr_geoxml_get_first_element(root, tag_element);
+	__gebr_geoxml_set_tag_value(element, tag_name, tag_value, __gebr_geoxml_create_TextNode);
+
+	gdome_el_unref(element, &exception);
+	gdome_el_unref(root, &exception);
+}
+
+static void
+set_document_simple_property(GebrGeoXmlDocument *doc,
+                             const gchar *tag_name,
+                             const gchar *tag_value)
+{
+	GdomeElement *root;
+
+	g_return_if_fail(doc != NULL);
+	g_return_if_fail(tag_name != NULL);
+	g_return_if_fail(tag_value != NULL);
+
+	root = gebr_geoxml_document_root_element(doc);
+	__gebr_geoxml_set_tag_value(root, tag_name, tag_value, __gebr_geoxml_create_TextNode);
+
+	gdome_el_unref(root, &exception);
+}
+
 /*
  * __gebr_geoxml_document_new_data:
  * Creates the #GebrGeoXmlDocumentData for this document.
@@ -1155,26 +1194,17 @@ void gebr_geoxml_document_set_filename(GebrGeoXmlDocument * document, const gcha
 
 void gebr_geoxml_document_set_title(GebrGeoXmlDocument * document, const gchar * title)
 {
-	if (document == NULL || title == NULL)
-		return;
-	__gebr_geoxml_set_tag_value(gebr_geoxml_document_root_element(document),
-				    "title", title, __gebr_geoxml_create_TextNode);
+	set_document_simple_property(document, "title", title);
 }
 
 void gebr_geoxml_document_set_author(GebrGeoXmlDocument * document, const gchar * author)
 {
-	if (document == NULL || author == NULL)
-		return;
-	__gebr_geoxml_set_tag_value(gebr_geoxml_document_root_element(document),
-				    "author", author, __gebr_geoxml_create_TextNode);
+	set_document_simple_property(document, "author", author);
 }
 
 void gebr_geoxml_document_set_email(GebrGeoXmlDocument * document, const gchar * email)
 {
-	if (document == NULL || email == NULL)
-		return;
-	__gebr_geoxml_set_tag_value(gebr_geoxml_document_root_element(document),
-				    "email", email, __gebr_geoxml_create_TextNode);
+	set_document_simple_property(document, "email", email);
 }
 
 GebrGeoXmlParameters *gebr_geoxml_document_get_dict_parameters(GebrGeoXmlDocument * document)
@@ -1323,39 +1353,22 @@ gebr_geoxml_document_canonize_dict_parameters(GebrGeoXmlDocument * document,
 
 void gebr_geoxml_document_set_date_created(GebrGeoXmlDocument * document, const gchar * created)
 {
-	if (document == NULL || created == NULL)
-		return;
-	__gebr_geoxml_set_tag_value(__gebr_geoxml_get_first_element
-				    (gebr_geoxml_document_root_element(document), "date"), "created", created,
-				    __gebr_geoxml_create_TextNode);
+	set_document_property(document, "date", "created", created);
 }
 
 void gebr_geoxml_document_set_date_modified(GebrGeoXmlDocument * document, const gchar * modified)
 {
-	if (document == NULL || modified == NULL)
-		return;
-	GdomeElement *root = gebr_geoxml_document_root_element(document);
-	GdomeElement *element = __gebr_geoxml_get_first_element(root, "date");
-	__gebr_geoxml_set_tag_value(element, "modified", modified, __gebr_geoxml_create_TextNode);
-
-	gdome_el_unref(element, &exception);
-	gdome_el_unref(root, &exception);
+	set_document_property(document, "date", "modified", modified);
 }
 
 void gebr_geoxml_document_set_description(GebrGeoXmlDocument * document, const gchar * description)
 {
-	if (document == NULL || description == NULL)
-		return;
-	__gebr_geoxml_set_tag_value(gebr_geoxml_document_root_element(document),
-				    "description", description, __gebr_geoxml_create_TextNode);
+	set_document_simple_property(document, "description", description);
 }
 
 void gebr_geoxml_document_set_help(GebrGeoXmlDocument * document, const gchar * help)
 {
-	if (document == NULL || help == NULL)
-		return;
-	__gebr_geoxml_set_tag_value(gebr_geoxml_document_root_element(document),
-				    "help", help, __gebr_geoxml_create_CDATASection);
+	set_document_simple_property(document, "help", help);
 }
 
 const gchar *gebr_geoxml_document_get_filename(GebrGeoXmlDocument * document)
