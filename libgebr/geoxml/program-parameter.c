@@ -128,14 +128,14 @@ void gebr_geoxml_program_parameter_set_keyword(GebrGeoXmlProgramParameter * prog
 				    __gebr_geoxml_create_TextNode);
 }
 
-const gchar *gebr_geoxml_program_parameter_get_keyword(GebrGeoXmlProgramParameter * program_parameter)
+gchar *gebr_geoxml_program_parameter_get_keyword(GebrGeoXmlProgramParameter * program_parameter)
 {
 	if (program_parameter == NULL)
 		return NULL;
 
 	if (gebr_geoxml_parameter_get_is_reference((GebrGeoXmlParameter *) program_parameter)) {
 		GebrGeoXmlParameter *ref = gebr_geoxml_parameter_get_referencee((GebrGeoXmlParameter *) program_parameter);
-		const gchar *key = gebr_geoxml_program_parameter_get_keyword((GebrGeoXmlProgramParameter *)ref);
+		gchar *key = gebr_geoxml_program_parameter_get_keyword((GebrGeoXmlProgramParameter *)ref);
 		gebr_geoxml_object_unref(ref);
 		return key;
 	}

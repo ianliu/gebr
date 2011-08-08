@@ -140,7 +140,7 @@ gebr_geoxml_program_parameter_set_keyword(GebrGeoXmlProgramParameter * program_p
  *
  * If \p program_parameter is NULL returns NULL.
  */
-const gchar *
+gchar *
 gebr_geoxml_program_parameter_get_keyword(GebrGeoXmlProgramParameter * program_parameter);
 
 /**
