@@ -20,6 +20,8 @@
 #include "object.h"
 #include "document.h"
 #include "flow.h"
+#include "parameters.h"
+#include "parameter_p.h"
 
 static void
 test_gebr_geoxml_leaks_new_flow(void)

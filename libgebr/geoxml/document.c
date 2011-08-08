@@ -429,18 +429,18 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 					parameter = __gebr_geoxml_insert_new_element((GdomeElement *) parameters,
 										     "parameter", old_parameter);
 					GdomeElement *first = __gebr_geoxml_get_first_element(old_parameter, "label");
-					gdome_el_unref(gdome_el_insertBefore_protected(parameter, (GdomeNode *)first, NULL, &exception), &exception);
+					gdome_n_unref(gdome_el_insertBefore_protected(parameter, (GdomeNode *)first, NULL, &exception), &exception);
 					gdome_el_unref(first, &exception);
 
 					next_parameter = __gebr_geoxml_next_element(old_parameter);
-					gdome_el_unref(gdome_el_insertBefore_protected(parameter, (GdomeNode *) old_parameter, NULL, &exception), &exception);
+					gdome_n_unref(gdome_el_insertBefore_protected(parameter, (GdomeNode *) old_parameter, NULL, &exception), &exception);
 
 					property = __gebr_geoxml_insert_new_element(old_parameter, "property",
 										    (GdomeElement *)
 										    gdome_el_firstChild(old_parameter,
 													&exception));
 					GdomeElement *el2 = __gebr_geoxml_get_first_element(old_parameter, "keyword");
-					gdome_el_unref(gdome_el_insertBefore_protected(property, (GdomeNode *)el2, NULL, &exception), &exception);
+					gdome_n_unref(gdome_el_insertBefore_protected(property, (GdomeNode *)el2, NULL, &exception), &exception);
 					gdome_el_unref(el2, &exception);
 
 					if (type != GEBR_GEOXML_PARAMETER_TYPE_FLAG) {
@@ -505,7 +505,7 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 						gdome_el_unref(element2, &exception);
 						__gebr_geoxml_set_attr_value(property, "required", "no");
 
-						gdome_el_unref(gdome_el_removeChild(old_parameter, (GdomeNode *) state, &exception), &exception);
+						gdome_n_unref(gdome_el_removeChild(old_parameter, (GdomeNode *) state, &exception), &exception);
 						gdome_el_unref(state, &exception);
 					}
 
@@ -551,7 +551,7 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 		} else {
 			/* removal of filename for project and lines */
 			GdomeElement *el = __gebr_geoxml_get_first_element(root_element, "filename");
-			gdome_el_unref(gdome_el_removeChild(root_element, (GdomeNode*)el, &exception), &exception);
+			gdome_n_unref(gdome_el_removeChild(root_element, (GdomeNode*)el, &exception), &exception);
 			gdome_el_unref(el, &exception);
 
 			__gebr_geoxml_remove_attr(root_element, "nextid");
@@ -657,7 +657,7 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 
 			GdomeElement *el = __gebr_geoxml_get_first_element(root_element, "filename");
 			/* remove flow filename */
-			gdome_el_unref(gdome_el_removeChild(root_element, (GdomeNode*)el, &exception), &exception);
+			gdome_n_unref(gdome_el_removeChild(root_element, (GdomeNode*)el, &exception), &exception);
 			gdome_el_unref(el, &exception);
 
 			__port_to_new_group_semantics();
@@ -762,15 +762,15 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 				gdome_el_unref(lastrun, &exception);
 			} else {
 				server = (GdomeElement*)gdome_el_cloneNode(server, TRUE, &exception);
-				gdome_el_unref(gdome_el_insertBefore_protected(root_element,
+				gdome_n_unref(gdome_el_insertBefore_protected(root_element,
 								(GdomeNode*)server,
 								(GdomeNode*)servers,
 								&exception), &exception);
 			}
 			gdome_el_unref(server, &exception);
 
-			gdome_el_unref(gdome_el_removeChild(root_element, (GdomeNode*) io, &exception), &exception);
-			gdome_el_unref(gdome_el_removeChild(root_element, (GdomeNode*) servers, &exception), &exception);
+			gdome_n_unref(gdome_el_removeChild(root_element, (GdomeNode*) io, &exception), &exception);
+			gdome_n_unref(gdome_el_removeChild(root_element, (GdomeNode*) servers, &exception), &exception);
 
 			gebr_geoxml_flow_get_program(
 					(GebrGeoXmlFlow *) *document,

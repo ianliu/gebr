@@ -18,6 +18,8 @@
 #ifndef __GEBR_GEOXML_PARAMETER_P_H
 #define __GEBR_GEOXML_PARAMETER_P_H
 
+#include <gdome.h>
+
 G_BEGIN_DECLS
 
 /**
@@ -64,6 +66,11 @@ void __gebr_geoxml_parameter_set_be_reference(GebrGeoXmlParameter * parameter);
 GSList *__gebr_geoxml_parameter_get_referencee_list(GebrGeoXmlParameter * parameter);
 
 GebrGeoXmlParameter * __gebr_geoxml_parameter_resolve(GebrGeoXmlParameter * parameter);
+
+/**
+ * __gebr_geoxml_parameters_group_check:
+ */
+gboolean __gebr_geoxml_parameters_group_check(GebrGeoXmlParameters * parameters);
 
 G_END_DECLS
 #endif				//__GEBR_GEOXML_PARAMETER_P_H

@@ -30,6 +30,7 @@
 #include "types.h"
 #include "value_sequence.h"
 #include "xml.h"
+#include "object.h"
 
 /*
  * internal structures and funcionts
