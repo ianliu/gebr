@@ -233,6 +233,57 @@ test_gebr_geoxml_leaks_get_instance(void)
 	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
 }
 
+static void
+test_gebr_geoxml_flow_set_get_date_last_run(void)
+{
+	GebrGeoXmlFlow *flow = gebr_geoxml_flow_new();
+
+	gebr_geoxml_flow_set_date_last_run(flow, "08/08/2011");
+	gchar *str = gebr_geoxml_flow_get_date_last_run(flow);
+	g_free(str);
+	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
+}
+
+static void
+test_gebr_geoxml_flow_server_set_get_address(void)
+{
+	GebrGeoXmlFlow *flow = gebr_geoxml_flow_new();
+
+	gebr_geoxml_flow_server_set_address(flow, "adress-str");
+	gchar *str = gebr_geoxml_flow_server_get_address(flow);
+	g_free(str);
+	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
+}
+
+static void
+test_gebr_geoxml_flow_server_set_get_date_last_run(void)
+{
+	GebrGeoXmlFlow *flow = gebr_geoxml_flow_new();
+
+	gebr_geoxml_flow_server_set_date_last_run(flow, "08/08/2011");
+	gchar *str = gebr_geoxml_flow_server_get_date_last_run(flow);
+	g_free(str);
+
+	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
+}
+
+static void
+test_gebr_geoxml_flow_io_set_get(void)
+{
+	GebrGeoXmlFlow *flow = gebr_geoxml_flow_new();
+
+	gebr_geoxml_flow_io_set_input(flow, "input");
+	gebr_geoxml_flow_io_set_output(flow, "output");
+	gebr_geoxml_flow_io_set_error(flow, "error");
+
+	g_free(gebr_geoxml_flow_io_get_input(flow));
+	g_free(gebr_geoxml_flow_io_get_output(flow));
+	g_free(gebr_geoxml_flow_io_get_error(flow));
+
+	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
+}
+
+
 int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
@@ -246,8 +297,12 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/geoxml/leaks/flow_add_flow", test_gebr_geoxml_leaks_flow_add_flow);
 	g_test_add_func("/libgebr/geoxml/leaks/flow_foreach_parameter", test_gebr_geoxml_leaks_flow_foreach_parameter);
 	g_test_add_func("/libgebr/geoxml/leaks/dict/set_keyword", test_gebr_geoxml_leaks_set_dict_keyword);
+	g_test_add_func("/libgebr/geoxml/leaks/flow_set_get_data_last_run", test_gebr_geoxml_flow_set_get_date_last_run);
+	g_test_add_func("/libgebr/geoxml/leaks/flow_server_set_get_address", test_gebr_geoxml_flow_server_set_get_address);
+	g_test_add_func("/libgebr/geoxml/leaks/flow_server_set_get_date_last_run", test_gebr_geoxml_flow_server_set_get_date_last_run);
 	g_test_add_func("/libgebr/geoxml/leaks/program_foreach", test_gebr_geoxml_leaks_program_foreach);
 	g_test_add_func("/libgebr/geoxml/leaks/get_program", test_gebr_geoxml_leaks_get_program);
+	g_test_add_func("/libgebr/geoxml/leaks/flow_io_set_get", test_gebr_geoxml_flow_io_set_get);
 	g_test_add_func("/libgebr/geoxml/leaks/get_parameters", test_gebr_geoxml_leaks_get_parameters);
 	g_test_add_func("/libgebr/geoxml/leaks/parameter_get_type", test_gebr_geoxml_leaks_parameter_get_type);
 	g_test_add_func("/libgebr/geoxml/leaks/get_instance", test_gebr_geoxml_leaks_get_instance);
