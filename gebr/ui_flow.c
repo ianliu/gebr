@@ -173,12 +173,18 @@ void flow_program_check_sensitiveness (void)
 		if (gebr_geoxml_program_get_status (GEBR_GEOXML_PROGRAM(program)) == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED) {
 			if (!has_configured) {
 				first_program = GEBR_GEOXML_PROGRAM(program);
+				gebr_geoxml_object_ref(first_program);
 				has_configured = TRUE;
 			}
 			if (!has_some_error_output && gebr_geoxml_program_get_stderr(GEBR_GEOXML_PROGRAM(program))){
 				has_some_error_output = TRUE;
 			}
+
+			if (last_program)
+				gebr_geoxml_object_unref(last_program);
+
 			last_program = GEBR_GEOXML_PROGRAM(program);
+			gebr_geoxml_object_ref(last_program);
 		}
 	}
 
@@ -194,6 +200,8 @@ void flow_program_check_sensitiveness (void)
 			gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->error_iter,
 					   FSEQ_EDITABLE, TRUE,
 					   FSEQ_SENSITIVE, TRUE, -1);
+		gebr_geoxml_object_unref(first_program);
+		gebr_geoxml_object_unref(last_program);
 	}
 }
 

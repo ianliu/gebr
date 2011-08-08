@@ -36,6 +36,14 @@ test_gebr_geoxml_leaks_new_flow(void)
 }
 
 static void
+test_gebr_geoxml_leaks_document_load(void)
+{
+	GebrGeoXmlDocument *doc;
+	gebr_geoxml_document_load(&doc, TEST_DIR "/dict_test_flow.flw", TRUE, NULL);
+	//gebr_geoxml_document_free(doc);
+}
+
+static void
 test_gebr_geoxml_leaks_has_control(void)
 {
 	GebrGeoXmlFlow *flow = gebr_geoxml_flow_new();
@@ -411,7 +419,7 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/geoxml/leaks/object_get_type", test_gebr_geoxml_object_get_type);
 	g_test_add_func("/libgebr/geoxml/leaks/sequence_remove", test_gebr_geoxml_sequence_remove);
 	g_test_add_func("/libgebr/geoxml/leaks/get_scope_and_required", test_gebr_geoxml_leaks_get_scope_and_required);
-
+	g_test_add_func("/libgebr/geoxml/leaks/document_load", test_gebr_geoxml_leaks_document_load);
 
 	return g_test_run();
 }
