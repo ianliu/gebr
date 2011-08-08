@@ -66,6 +66,7 @@ hash_data_new_from_xml(GebrGeoXmlParameter *param)
 {
 	HashData *n = g_new0(HashData, 1);
 	GebrGeoXmlDocumentType scope = gebr_geoxml_parameter_get_scope(param);
+	gebr_geoxml_object_ref(param);
 	n->param[scope] = param;
 	n->name = g_strdup(GET_VAR_NAME(param));
 	n->weight[scope] = G_MAXDOUBLE;
@@ -81,6 +82,8 @@ hash_data_free(gpointer p)
 		g_list_free(n->dep[i]);
 		if (n->error[i])
 			g_error_free(n->error[i]);
+		if (!n->param[i])
+			gebr_geoxml_object_unref(n->param[i]);
 	}
 	g_free(n->name);
 	g_free(n);
@@ -101,6 +104,7 @@ hash_data_remove(GebrValidator *self,
 		return FALSE;
 	}
 
+	gebr_geoxml_object_unref(data->param[scope]);
 	data->param[scope] = NULL;
 	data->weight[scope] = G_MAXDOUBLE;
 	g_list_foreach(data->dep[scope], (GFunc) g_free, NULL);
@@ -552,7 +556,7 @@ gebr_validator_update_vars(GebrValidator *self,
 		if (g_strcmp0(GET_VAR_NAME(param), "iter") == 0) {
 			has_iter = TRUE;
 			if (gebr_validator_update_vars(self, GEBR_GEOXML_DOCUMENT_TYPE_LINE, NULL)
-					&& validate_and_extract_param(self, GEBR_GEOXML_PARAMETER(param), NULL, NULL)) {
+			    && validate_and_extract_param(self, GEBR_GEOXML_PARAMETER(param), NULL, NULL)) {
 				gebr_geoxml_sequence_next(&param);
 				for (; param; gebr_geoxml_sequence_next(&param)) {
 					GebrGeoXmlParameterType type = gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(param));
@@ -561,9 +565,11 @@ gebr_validator_update_vars(GebrValidator *self,
 					}
 					validate_and_extract_param(self, GEBR_GEOXML_PARAMETER(param), NULL, NULL);
 				}
-			}
+			} else
+				gebr_geoxml_object_unref(param);
 		}
-		gebr_geoxml_object_unref(param);
+		else
+			gebr_geoxml_object_unref(param);
 	}
 	for (int scope = GEBR_GEOXML_DOCUMENT_TYPE_PROJECT; scope >= (int) param_scope; scope--) {
 		if (!self->docs[scope] || !*(self->docs[scope]))
@@ -697,10 +703,10 @@ gebr_validator_insert(GebrValidator       *self,
 	if (!data) {
 		data = hash_data_new_from_xml(param);
 		g_hash_table_insert(self->vars, g_strdup(name), data);
-	} else
-		if (!data->param[scope])
-			data->param[scope] = param;
-
+	} else if (!data->param[scope]) {
+		gebr_geoxml_object_ref(param);
+		data->param[scope] = param;
+	}
 	prev_param = GEBR_GEOXML_SEQUENCE(param);
 	gebr_geoxml_object_ref(param);
 	next_param = GEBR_GEOXML_SEQUENCE(param);
@@ -761,6 +767,7 @@ gebr_validator_rename(GebrValidator       *self,
 	if (!new_data) {
 		new_data = hash_data_new_from_xml(param);
 		g_hash_table_insert(self->vars, g_strdup(new_name), new_data);
+		gebr_geoxml_object_unref(data->param[scope]);
 	} else {
 		g_return_val_if_fail(new_data->param[scope] == NULL, FALSE);
 		new_data->param[scope] = data->param[scope];
