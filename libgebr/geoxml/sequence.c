@@ -28,6 +28,7 @@
 #include "sequence.h"
 #include "types.h"
 #include "xml.h"
+#include "object.h"
 
 /*
  * internal structures and funcionts
@@ -342,8 +343,11 @@ GebrGeoXmlSequence *gebr_geoxml_sequence_append_clone(GebrGeoXmlSequence * seque
 gint gebr_geoxml_sequence_get_index(GebrGeoXmlSequence * sequence)
 {
 	gint index;
+	GebrGeoXmlSequence *i = sequence;
 
-	for (index = -1; sequence != NULL; __gebr_geoxml_sequence_previous(&sequence))
+	gebr_geoxml_object_ref(sequence);
+
+	for (index = -1; i; __gebr_geoxml_sequence_previous(&i))
 		index++;
 
 	return index;
