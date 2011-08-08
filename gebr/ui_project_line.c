@@ -491,11 +491,8 @@ static gboolean _project_line_import_path(const gchar *filename, GList **line_pa
 		}
 
 		gebr_geoxml_line_get_flow(*line, &i, 0);
-		while (i != NULL) {
+		for (; i; gebr_geoxml_sequence_next(&i)) {
 			GebrGeoXmlFlow *flow;
-
-			GebrGeoXmlSequence * next = i;
-			gebr_geoxml_sequence_next(&next);
 
 			gdk_threads_enter();
 			int ret = document_load_at_with_parent((GebrGeoXmlDocument**)(&flow),
@@ -503,10 +500,8 @@ static gboolean _project_line_import_path(const gchar *filename, GList **line_pa
 			                                       at_dir, project_iter);
 			gdk_threads_leave();
 
-			if (ret) {
-				i = next;
+			if (ret)
 				continue;
-			}
 
 			gdk_threads_enter();
 			document_import(GEBR_GEOXML_DOCUMENT(flow));
@@ -518,8 +513,6 @@ static gboolean _project_line_import_path(const gchar *filename, GList **line_pa
 			gebr_geoxml_flow_revalidate(flow, gebr.validator);
 			document_save(GEBR_GEOXML_DOCUMENT(flow), FALSE, TRUE); /* this flow is cached */
 			gdk_threads_leave();
-
-			i = next;
 		}
 		gebr_geoxml_object_unref(GEBR_GEOXML_OBJECT(i));
 		gdk_threads_enter();
@@ -571,17 +564,14 @@ static gboolean _project_line_import_path(const gchar *filename, GList **line_pa
 			gdk_threads_leave();
 
 			gebr_geoxml_project_get_line(project, &project_line, 0);
-			while (project_line != NULL) {
+			for (; project_line; gebr_geoxml_sequence_next(&project_line)) {
 				GebrGeoXmlLine *line;
 
-				GebrGeoXmlSequence * next = project_line;
-				gebr_geoxml_sequence_next(&next);
 				int ret = line_import(&iter, &line, gebr_geoxml_project_get_line_source
 				                      (GEBR_GEOXML_PROJECT_LINE(project_line)), tmp_dir->str);
-				if (ret) {
-					project_line = next;
+				if (ret)
 					continue;
-				}
+
 				gebr_geoxml_project_set_line_source(GEBR_GEOXML_PROJECT_LINE(project_line),
 				                                    gebr_geoxml_document_get_filename
 				                                    (GEBR_GEOXML_DOCUMENT(line)));
@@ -590,8 +580,6 @@ static gboolean _project_line_import_path(const gchar *filename, GList **line_pa
 				project_append_line_iter(&iter, line);
 				document_save(GEBR_GEOXML_DOCUMENT(line), FALSE, FALSE);
 				gdk_threads_leave();
-
-				project_line = next;
 			}
 			document = GEBR_GEOXML_DOCUMENT(project);
 		} else if (!is_project && g_str_has_suffix(files[i], ".lne")) {
