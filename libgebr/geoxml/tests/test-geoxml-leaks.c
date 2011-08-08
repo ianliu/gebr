@@ -26,6 +26,7 @@
 #include "parameter_p.h"
 #include "parameter_group.h"
 #include "program-parameter.h"
+#include "sequence.h"
 
 static void
 test_gebr_geoxml_leaks_new_flow(void)
@@ -99,6 +100,7 @@ test_gebr_geoxml_leaks_flow_foreach_parameter(void)
 static void
 test_gebr_geoxml_leaks_set_dict_keyword(void)
 {
+	gchar *key;
 	GebrGeoXmlParameter *param;
 	GebrGeoXmlParameters *params;
 	GebrGeoXmlFlow *flow = gebr_geoxml_flow_new();
@@ -112,7 +114,9 @@ test_gebr_geoxml_leaks_set_dict_keyword(void)
 	param = gebr_geoxml_parameters_append_parameter(params, GEBR_GEOXML_PARAMETER_TYPE_STRING);
 
 	gebr_geoxml_program_parameter_set_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(param), "x");
-	g_assert_cmpstr(gebr_geoxml_program_parameter_get_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(param)), ==, "x");
+	key = gebr_geoxml_program_parameter_get_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(param));
+	g_assert_cmpstr(key, ==, "x");
+	g_free(key);
 
 	gebr_geoxml_program_parameter_set_first_value(GEBR_GEOXML_PROGRAM_PARAMETER(param),
 						      FALSE, "y");
@@ -333,6 +337,20 @@ test_gebr_geoxml_object_get_type(void)
 }
 
 static void
+test_gebr_geoxml_sequence_remove(void)
+{
+	GebrGeoXmlSequence *seq;
+	GebrGeoXmlDocument *doc;
+
+	gebr_geoxml_document_load(&doc, TEST_DIR "/test.mnu", TRUE, NULL);
+
+	gebr_geoxml_flow_get_program(GEBR_GEOXML_FLOW(doc), &seq, 0);
+	gebr_geoxml_sequence_remove(seq);
+
+	gebr_geoxml_document_free(doc);
+}
+
+static void
 test_gebr_geoxml_leaks_get_scope_and_required(void)
 {
 	GebrGeoXmlFlow *flow;
@@ -391,7 +409,9 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/geoxml/leaks/parameter_get_type", test_gebr_geoxml_leaks_parameter_get_type);
 	g_test_add_func("/libgebr/geoxml/leaks/get_instance", test_gebr_geoxml_leaks_get_instance);
 	g_test_add_func("/libgebr/geoxml/leaks/object_get_type", test_gebr_geoxml_object_get_type);
+	g_test_add_func("/libgebr/geoxml/leaks/sequence_remove", test_gebr_geoxml_sequence_remove);
 	g_test_add_func("/libgebr/geoxml/leaks/get_scope_and_required", test_gebr_geoxml_leaks_get_scope_and_required);
+
 
 	return g_test_run();
 }
