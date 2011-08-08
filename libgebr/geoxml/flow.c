@@ -85,7 +85,9 @@ set_flow_tag_property(GebrGeoXmlFlow *flow,
 }
 
 static gchar *
-get_flow_tag_property(GebrGeoXmlFlow *flow)
+get_flow_tag_property(GebrGeoXmlFlow *flow,
+                       const gchar *tag_element,
+                       const gchar *tag_name)
 {
 	gchar *prop_value;
 	GdomeElement *root;
@@ -94,8 +96,8 @@ get_flow_tag_property(GebrGeoXmlFlow *flow)
 	g_return_val_if_fail(flow != NULL, NULL);
 
 	root = gebr_geoxml_document_root_element(GEBR_GEOXML_DOC(flow));
-	element = __gebr_geoxml_get_first_element(root, "date");
-	prop_value =  __gebr_geoxml_get_tag_value(element, "lastrun");
+	element = __gebr_geoxml_get_first_element(root, tag_element);
+	prop_value =  __gebr_geoxml_get_tag_value(element, tag_name);
 
 	gdome_el_unref(root, &exception);
 	gdome_el_unref(element, &exception);
@@ -127,7 +129,9 @@ set_flow_attr_property(GebrGeoXmlFlow *flow,
 }
 
 static gchar *
-get_flow_attr_property(GebrGeoXmlFlow *flow)
+get_flow_attr_property(GebrGeoXmlFlow *flow,
+                       const gchar *tag_element,
+                       const gchar *tag_name)
 {
 	gchar *prop_value;
 	GdomeElement *root;
@@ -136,8 +140,8 @@ get_flow_attr_property(GebrGeoXmlFlow *flow)
 	g_return_val_if_fail(flow != NULL, NULL);
 
 	root = gebr_geoxml_document_root_element(GEBR_GEOXML_DOC(flow));
-	element = __gebr_geoxml_get_first_element(root, "date");
-	prop_value = __gebr_geoxml_get_attr_value((GdomeElement *) element, "address");
+	element = __gebr_geoxml_get_first_element(root, tag_element);
+	prop_value = __gebr_geoxml_get_attr_value((GdomeElement *) element, tag_name);
 
 	gdome_el_unref(root, &exception);
 	gdome_el_unref(element, &exception);
@@ -260,7 +264,7 @@ void gebr_geoxml_flow_set_date_last_run(GebrGeoXmlFlow * flow, const gchar * las
 
 gchar *gebr_geoxml_flow_get_date_last_run(GebrGeoXmlFlow * flow)
 {
-	return get_flow_tag_property(flow);
+	return get_flow_tag_property(flow, "date", "lastrun");
 }
 
 void gebr_geoxml_flow_server_set_address(GebrGeoXmlFlow *flow, const gchar * address)
@@ -270,7 +274,7 @@ void gebr_geoxml_flow_server_set_address(GebrGeoXmlFlow *flow, const gchar * add
 
 gchar *gebr_geoxml_flow_server_get_address(GebrGeoXmlFlow *flow)
 {
-	return get_flow_attr_property(flow);
+	return get_flow_attr_property(flow, "server", "address");
 }
 
 void gebr_geoxml_flow_server_set_date_last_run(GebrGeoXmlFlow *flow, const gchar * date)
@@ -280,7 +284,7 @@ void gebr_geoxml_flow_server_set_date_last_run(GebrGeoXmlFlow *flow, const gchar
 
 gchar *gebr_geoxml_flow_server_get_date_last_run(GebrGeoXmlFlow *flow)
 {
-	return get_flow_tag_property(flow);
+	return get_flow_tag_property(flow, "server", "lastrun");
 }
 
 void gebr_geoxml_flow_io_set_input(GebrGeoXmlFlow *flow, const gchar *input)
@@ -300,17 +304,17 @@ void gebr_geoxml_flow_io_set_error(GebrGeoXmlFlow *flow, const gchar *error)
 
 gchar *gebr_geoxml_flow_io_get_input(GebrGeoXmlFlow *flow)
 {
-	return get_flow_tag_property(flow);
+	return get_flow_tag_property(flow, "io", "input");
 }
 
 gchar *gebr_geoxml_flow_io_get_output(GebrGeoXmlFlow * flow)
 {
-	return get_flow_tag_property(flow);
+	return get_flow_tag_property(flow, "io", "output");
 }
 
 gchar *gebr_geoxml_flow_io_get_error(GebrGeoXmlFlow * flow)
 {
-	return get_flow_tag_property(flow);
+	return get_flow_tag_property(flow, "io", "error");
 }
 
 GebrGeoXmlProgram *gebr_geoxml_flow_append_program(GebrGeoXmlFlow * flow)

@@ -31,9 +31,6 @@ void test_gebr_geoxml_flow_server_get_and_set_address(void){
 	const gchar *address;
 	GebrGeoXmlFlow *flow = NULL;
 
-	address = gebr_geoxml_flow_server_get_address(flow);
-	g_assert(address == NULL);
-
 	flow = gebr_geoxml_flow_new ();
 	address = gebr_geoxml_flow_server_get_address(flow);
 	g_assert_cmpstr(address, ==, "");
@@ -85,9 +82,6 @@ void test_duplicate_categories(void)
 void test_gebr_geoxml_flow_get_and_set_date_last_run(void){
 	const gchar *date;
 	GebrGeoXmlFlow *flow = NULL;
-
-	date = gebr_geoxml_flow_get_date_last_run(flow);
-	g_assert(date == NULL);
 
 	flow = gebr_geoxml_flow_new ();
 	gebr_geoxml_flow_set_date_last_run(flow, "18/03/2011");
