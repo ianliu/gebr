@@ -212,11 +212,15 @@ test_gebr_geoxml_leaks_parameter_get_type(void)
 	params = gebr_geoxml_program_get_parameters(prog);
 
 	gebr_geoxml_parameters_get_parameter(params, (GebrGeoXmlSequence**)&param, 0);
-	gebr_geoxml_parameter_get_type(param);
+	g_assert_cmpint(gebr_geoxml_parameter_get_type(param), ==, GEBR_GEOXML_PARAMETER_TYPE_FLAG);
+	gebr_geoxml_object_unref(param);
+
+	gebr_geoxml_parameters_get_parameter(params, (GebrGeoXmlSequence**)&param, 1);
+	g_assert_cmpint(gebr_geoxml_parameter_get_type(param), ==, GEBR_GEOXML_PARAMETER_TYPE_FLOAT);
 	gebr_geoxml_object_unref(param);
 
 	gebr_geoxml_parameters_get_parameter(params, (GebrGeoXmlSequence**)&param, 2);
-	gebr_geoxml_parameter_get_type(param);
+	g_assert_cmpint(gebr_geoxml_parameter_get_type(param), ==, GEBR_GEOXML_PARAMETER_TYPE_GROUP);
 	gebr_geoxml_object_unref(param);
 
 	gebr_geoxml_object_unref(prog);
@@ -248,6 +252,7 @@ test_gebr_geoxml_leaks_get_instance(void)
 	GebrGeoXmlParameter *referencee;
 	gebr_geoxml_parameters_get_parameter(GEBR_GEOXML_PARAMETERS(seq),
 					     (GebrGeoXmlSequence**)&ref, 0);
+	g_assert_cmpint(gebr_geoxml_parameter_get_type(ref), ==, GEBR_GEOXML_PARAMETER_TYPE_STRING);
 	referencee = gebr_geoxml_parameter_get_referencee(ref);
 	if (referencee)
 		gebr_geoxml_object_unref(referencee);
