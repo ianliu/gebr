@@ -85,12 +85,8 @@ void test_gebr_geoxml_document_get_type (void)
 
 void test_gebr_geoxml_document_get_filename (void)
 {
-	GebrGeoXmlDocument *document = NULL;
+	GebrGeoXmlDocument *document;
 	const gchar *filename;
-
-	// If \p document is NULL, returns NULL.
-	filename = gebr_geoxml_document_get_filename(document);
-	g_assert_cmpstr(filename, ==, NULL);
 
 	document = GEBR_GEOXML_DOCUMENT (gebr_geoxml_flow_new());
 
@@ -114,12 +110,8 @@ void test_gebr_geoxml_document_get_filename (void)
 
 void test_gebr_geoxml_document_get_title (void)
 {
-	GebrGeoXmlDocument *document = NULL;
+	GebrGeoXmlDocument *document;
 	const gchar *title;
-
-	// If \p document is NULL, returns NULL.
-	title = gebr_geoxml_document_get_title(document);
-	g_assert_cmpstr(title, ==, NULL);
 
 	document = GEBR_GEOXML_DOCUMENT (gebr_geoxml_flow_new());
 
@@ -143,12 +135,8 @@ void test_gebr_geoxml_document_get_title (void)
 
 void test_gebr_geoxml_document_get_author (void)
 {
-	GebrGeoXmlDocument *document = NULL;
+	GebrGeoXmlDocument *document;
 	const gchar *author;
-
-	// If \p document is NULL, returns NULL.
-	author = gebr_geoxml_document_get_author(document);
-	g_assert_cmpstr(author, ==, NULL);
 
 	document = GEBR_GEOXML_DOCUMENT (gebr_geoxml_flow_new());
 
@@ -172,12 +160,8 @@ void test_gebr_geoxml_document_get_author (void)
 
 void test_gebr_geoxml_document_get_email (void)
 {
-	GebrGeoXmlDocument *document = NULL;
+	GebrGeoXmlDocument *document;
 	const gchar *email;
-
-	// If \p document is NULL, returns NULL.
-	email = gebr_geoxml_document_get_email(document);
-	g_assert_cmpstr(email, ==, NULL);
 
 	document = GEBR_GEOXML_DOCUMENT (gebr_geoxml_flow_new());
 
@@ -201,12 +185,8 @@ void test_gebr_geoxml_document_get_email (void)
 
 void test_gebr_geoxml_document_get_date_created (void)
 {
-	GebrGeoXmlDocument *document = NULL;
+	GebrGeoXmlDocument *document;
 	const gchar *date_created;
-
-	// If \p document is NULL, returns NULL.
-	date_created = gebr_geoxml_document_get_date_created(document);
-	g_assert_cmpstr(date_created, ==, NULL);
 
 	document = GEBR_GEOXML_DOCUMENT (gebr_geoxml_flow_new());
 
@@ -230,12 +210,8 @@ void test_gebr_geoxml_document_get_date_created (void)
 
 void test_gebr_geoxml_document_get_date_modified (void)
 {
-	GebrGeoXmlDocument *document = NULL;
+	GebrGeoXmlDocument *document;
 	const gchar *date_modified;
-
-	// If \p document is NULL, returns NULL.
-	date_modified = gebr_geoxml_document_get_date_modified(document);
-	g_assert_cmpstr(date_modified, ==, NULL);
 
 	document = GEBR_GEOXML_DOCUMENT (gebr_geoxml_flow_new());
 
@@ -259,12 +235,8 @@ void test_gebr_geoxml_document_get_date_modified (void)
 
 void test_gebr_geoxml_document_get_description (void)
 {
-	GebrGeoXmlDocument *document = NULL;
+	GebrGeoXmlDocument *document;
 	const gchar *description;
-
-	// If \p document is NULL, returns NULL.
-	description = gebr_geoxml_document_get_description(document);
-	g_assert_cmpstr(description, ==, NULL);
 
 	document = GEBR_GEOXML_DOCUMENT (gebr_geoxml_flow_new());
 
@@ -288,12 +260,8 @@ void test_gebr_geoxml_document_get_description (void)
 
 void test_gebr_geoxml_document_get_help (void)
 {
-	GebrGeoXmlDocument *document = NULL;
+	GebrGeoXmlDocument *document;
 	gchar *help;
-
-	// If \p document is NULL, returns NULL.
-	help = gebr_geoxml_document_get_help(document);
-	g_assert_cmpstr(help, ==, NULL);
 
 	document = GEBR_GEOXML_DOCUMENT (gebr_geoxml_flow_new());
 
