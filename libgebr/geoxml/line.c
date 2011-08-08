@@ -132,9 +132,10 @@ int gebr_geoxml_line_get_path(GebrGeoXmlLine * line, GebrGeoXmlSequence ** path,
 		return GEBR_GEOXML_RETV_NULL_PTR;
 	}
 
-	*path = (GebrGeoXmlSequence *)
-	    __gebr_geoxml_get_element_at(gebr_geoxml_document_root_element(GEBR_GEOXML_DOC(line)), "path", index,
-					 FALSE);
+	GdomeElement *root = gebr_geoxml_document_root_element(GEBR_GEOXML_DOC(line));
+	*path = (GebrGeoXmlSequence *)__gebr_geoxml_get_element_at(root, "path", index, FALSE);
+
+	gdome_el_unref(root, &exception);
 
 	return (*path == NULL)
 	    ? GEBR_GEOXML_RETV_INVALID_INDEX : GEBR_GEOXML_RETV_SUCCESS;
@@ -144,7 +145,10 @@ glong gebr_geoxml_line_get_paths_number(GebrGeoXmlLine * line)
 {
 	if (line == NULL)
 		return -1;
-	return __gebr_geoxml_get_elements_number(gebr_geoxml_document_root_element(GEBR_GEOXML_DOC(line)), "path");
+	GdomeElement *root = gebr_geoxml_document_root_element(GEBR_GEOXML_DOC(line));
+	gulong retval = __gebr_geoxml_get_elements_number(root, "path");
+	gdome_el_unref(root, &exception);
+	return retval;
 }
 
 void gebr_geoxml_line_set_group (GebrGeoXmlLine *line, const gchar *group, gboolean is_fs)
