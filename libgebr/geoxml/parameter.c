@@ -214,7 +214,6 @@ GSList *__gebr_geoxml_parameter_get_referencee_list(GebrGeoXmlParameter * parame
 {
 	gint index;
 	GSList * list = NULL;
-	GdomeNode * parent;
 	GdomeDOMString * tagname;
 	GebrGeoXmlSequence * instance;
 
@@ -228,14 +227,21 @@ GSList *__gebr_geoxml_parameter_get_referencee_list(GebrGeoXmlParameter * parame
 	 * 	      |       `-parameter*   <-- You are here (4 parents below)
 	 * 	      `-parameters*
 	 */
-	parent = gdome_el_parentNode((GdomeElement*)parameter, &exception);
-	parent = gdome_el_parentNode((GdomeElement*)parent, &exception);
-	parent = gdome_el_parentNode((GdomeElement*)parent, &exception);
+	GdomeNode *parent1, *parent2, *parent;
+	parent1 = gdome_el_parentNode((GdomeElement*)parameter, &exception);
+	parent2 = gdome_el_parentNode((GdomeElement*)parent1, &exception);
+	parent = gdome_el_parentNode((GdomeElement*)parent2, &exception);
 	tagname = gdome_el_tagName((GdomeElement*)parent, &exception);
+
+	gdome_n_unref(parent1, &exception);
+	gdome_n_unref(parent2, &exception);
 
 	g_return_val_if_fail("parameter should be inside a template"
 			     && strcmp(tagname->str, "group") == 0, NULL);
-	parent = gdome_el_parentNode((GdomeElement*)parent, &exception);
+	gdome_str_unref(tagname);
+	parent2 = gdome_el_parentNode((GdomeElement*)parent, &exception);
+	gdome_n_unref(parent, &exception);
+	parent = parent2;
 
 	index = gebr_geoxml_sequence_get_index(GEBR_GEOXML_SEQUENCE(parameter));
 
@@ -248,9 +254,11 @@ GSList *__gebr_geoxml_parameter_get_referencee_list(GebrGeoXmlParameter * parame
 
 		gebr_geoxml_parameters_get_parameter(GEBR_GEOXML_PARAMETERS(instance),
 						     &param, index);
+		gebr_geoxml_object_ref(param);
 		list = g_slist_prepend(list, param);
 		gebr_geoxml_sequence_next(&instance);
 	}
+	gdome_n_unref(parent, &exception);
 	return g_slist_reverse(list);
 }
 
@@ -428,14 +436,20 @@ gboolean gebr_geoxml_parameter_get_is_in_group(GebrGeoXmlParameter * parameter)
 {
 	if (parameter == NULL)
 		return FALSE;
-	return gebr_geoxml_parameters_get_is_in_group(gebr_geoxml_parameter_get_parameters(parameter));
+	GebrGeoXmlParameters *params = gebr_geoxml_parameter_get_parameters(parameter);
+	gboolean retval = gebr_geoxml_parameters_get_is_in_group(params);
+	gebr_geoxml_object_unref(params);
+	return retval;
 }
 
 GebrGeoXmlParameterGroup *gebr_geoxml_parameter_get_group(GebrGeoXmlParameter * parameter)
 {
 	if (parameter == NULL)
 		return NULL;
-	return gebr_geoxml_parameters_get_group(gebr_geoxml_parameter_get_parameters(parameter));
+	GebrGeoXmlParameters *params = gebr_geoxml_parameter_get_parameters(parameter);
+	GebrGeoXmlParameterGroup *group =  gebr_geoxml_parameters_get_group(params);
+	gebr_geoxml_object_unref(params);
+	return group;
 }
 
 gboolean gebr_geoxml_parameter_is_dict_param(GebrGeoXmlParameter *parameter)
