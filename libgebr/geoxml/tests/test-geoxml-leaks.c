@@ -20,6 +20,7 @@
 #include "object.h"
 #include "document.h"
 #include "flow.h"
+#include "program.h"
 #include "parameters.h"
 #include "parameter_p.h"
 
@@ -44,6 +45,31 @@ test_gebr_geoxml_leaks_get_control_program(void)
 	GebrGeoXmlFlow *flow = gebr_geoxml_flow_new();
 	GebrGeoXmlProgram *prog = gebr_geoxml_flow_get_control_program(flow);
 	gebr_geoxml_object_unref(GEBR_GEOXML_OBJECT(prog));
+	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
+}
+
+static void
+test_gebr_geoxml_leaks_get_props(void)
+{
+	GebrGeoXmlDocument *doc;
+	GebrGeoXmlFlow *flow;
+	gchar *prop;
+
+	gebr_geoxml_document_load((GebrGeoXmlDocument **)&flow,
+				  TEST_DIR "/test.mnu", TRUE, NULL);
+	doc = GEBR_GEOXML_DOCUMENT(flow);
+
+	prop = gebr_geoxml_document_get_author(doc),		g_free(prop);
+	prop = gebr_geoxml_document_get_date_created(doc),	g_free(prop);
+	prop = gebr_geoxml_document_get_date_modified(doc),	g_free(prop);
+	prop = gebr_geoxml_document_get_description(doc),	g_free(prop);
+	prop = gebr_geoxml_document_get_email(doc),		g_free(prop);
+	prop = gebr_geoxml_document_get_help(doc),		g_free(prop);
+	prop = gebr_geoxml_document_get_title(doc),		g_free(prop);
+
+	gebr_geoxml_document_get_type(doc);
+	gebr_geoxml_document_get_filename(doc);
+
 	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
 }
 
@@ -98,6 +124,38 @@ test_gebr_geoxml_leaks_set_dict_keyword(void)
 	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
 }
 
+static void
+test_gebr_geoxml_leaks_get_program(void)
+{
+	GebrGeoXmlFlow *flow;
+	GebrGeoXmlProgram *prog;
+
+	gebr_geoxml_document_load((GebrGeoXmlDocument **)&flow,
+				  TEST_DIR "/test.mnu", TRUE, NULL);
+
+	gebr_geoxml_flow_get_program(flow, (GebrGeoXmlSequence**)&prog, 0);
+	gebr_geoxml_object_unref(prog);
+	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
+}
+
+static void
+test_gebr_geoxml_leaks_program_foreach(void)
+{
+	GebrGeoXmlFlow *flow;
+	GebrGeoXmlProgram *prog;
+
+	gebr_geoxml_document_load((GebrGeoXmlDocument **)&flow,
+				  TEST_DIR "/test.mnu", TRUE, NULL);
+
+	gboolean callback(GebrGeoXmlObject *object, gpointer user_data) {
+		return TRUE;
+	}
+
+	gebr_geoxml_flow_get_program(flow, (GebrGeoXmlSequence**)&prog, 0);
+	gebr_geoxml_program_foreach_parameter(prog, callback, NULL);
+	gebr_geoxml_object_unref(prog);
+	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
+}
 
 int main(int argc, char *argv[])
 {
@@ -106,12 +164,14 @@ int main(int argc, char *argv[])
 	gebr_geoxml_document_set_dtd_dir(DTD_DIR);
 
 	g_test_add_func("/libgebr/geoxml/leaks/flow_new", test_gebr_geoxml_leaks_new_flow);
+	g_test_add_func("/libgebr/geoxml/leaks/get_props", test_gebr_geoxml_leaks_get_props);
 	g_test_add_func("/libgebr/geoxml/leaks/has_control", test_gebr_geoxml_leaks_has_control);
 	g_test_add_func("/libgebr/geoxml/leaks/get_control_program", test_gebr_geoxml_leaks_get_control_program);
 	g_test_add_func("/libgebr/geoxml/leaks/flow_add_flow", test_gebr_geoxml_leaks_flow_add_flow);
 	g_test_add_func("/libgebr/geoxml/leaks/flow_foreach_parameter", test_gebr_geoxml_leaks_flow_foreach_parameter);
-
 	g_test_add_func("/libgebr/geoxml/leaks/dict/set_keyword", test_gebr_geoxml_leaks_set_dict_keyword);
+	g_test_add_func("/libgebr/geoxml/leaks/program_foreach", test_gebr_geoxml_leaks_program_foreach);
+	g_test_add_func("/libgebr/geoxml/leaks/get_program", test_gebr_geoxml_leaks_get_program);
 
 	return g_test_run();
 }

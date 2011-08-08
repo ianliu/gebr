@@ -144,6 +144,22 @@ static void __gebr_geoxml_unref(void)
 	}
 }
 
+static gchar *
+get_document_property(GebrGeoXmlDocument *doc,
+		      const gchar *prop)
+{
+	gchar *prop_value;
+	GdomeElement *root;
+
+	g_return_val_if_fail(doc != NULL, NULL);
+
+	root = gebr_geoxml_document_root_element(doc);
+	prop_value = __gebr_geoxml_get_tag_value(root, prop);
+	gdome_el_unref(root, &exception);
+
+	return prop_value;
+}
+
 /*
  * __gebr_geoxml_document_new_data:
  * Creates the #GebrGeoXmlDocumentData for this document.
@@ -1348,69 +1364,70 @@ void gebr_geoxml_document_set_help(GebrGeoXmlDocument * document, const gchar * 
 
 const gchar *gebr_geoxml_document_get_filename(GebrGeoXmlDocument * document)
 {
-	if (document == NULL)
-		return NULL;
+	g_return_val_if_fail(document != NULL, NULL);
+
 	return _gebr_geoxml_document_get_data(document)->filename->str;
 }
 
-const gchar *gebr_geoxml_document_get_title(GebrGeoXmlDocument * document)
+gchar *gebr_geoxml_document_get_title(GebrGeoXmlDocument * document)
 {
-	GdomeElement *root;
-	const gchar *retval;
+	return get_document_property(document, "title");
+}
 
-	if (document == NULL)
-		return NULL;
+gchar *gebr_geoxml_document_get_author(GebrGeoXmlDocument * document)
+{
+	return get_document_property(document, "author");
+}
+
+gchar *gebr_geoxml_document_get_email(GebrGeoXmlDocument * document)
+{
+	return get_document_property(document, "email");
+}
+
+gchar *
+gebr_geoxml_document_get_date_created(GebrGeoXmlDocument * document)
+{
+	gchar *retval;
+	GdomeElement *first;
+	GdomeElement *root;
+
+	g_return_val_if_fail(document != NULL, NULL);
 
 	root = gebr_geoxml_document_root_element(document);
-	retval = __gebr_geoxml_get_tag_value_non_rec(root, "title");
+	first = __gebr_geoxml_get_first_element(root, "date");
+	retval = __gebr_geoxml_get_tag_value(first, "created");
 	gdome_el_unref(root, &exception);
+	gdome_el_unref(first, &exception);
+
 	return retval;
 }
 
-const gchar *gebr_geoxml_document_get_author(GebrGeoXmlDocument * document)
+gchar *
+gebr_geoxml_document_get_date_modified(GebrGeoXmlDocument * document)
 {
-	if (document == NULL)
-		return NULL;
-	return __gebr_geoxml_get_tag_value(gebr_geoxml_document_root_element(document), "author");
+	gchar *retval;
+	GdomeElement *first;
+	GdomeElement *root;
+
+	g_return_val_if_fail(document != NULL, NULL);
+
+	root = gebr_geoxml_document_root_element(document);
+	first = __gebr_geoxml_get_first_element(root, "date");
+	retval = __gebr_geoxml_get_tag_value(first, "modified");
+	gdome_el_unref(root, &exception);
+	gdome_el_unref(first, &exception);
+
+	return retval;
 }
 
-const gchar *gebr_geoxml_document_get_email(GebrGeoXmlDocument * document)
+gchar *gebr_geoxml_document_get_description(GebrGeoXmlDocument * document)
 {
-	if (document == NULL)
-		return NULL;
-	return __gebr_geoxml_get_tag_value(gebr_geoxml_document_root_element(document), "email");
-}
-
-const gchar *gebr_geoxml_document_get_date_created(GebrGeoXmlDocument * document)
-{
-	if (document == NULL)
-		return NULL;
-	return
-	    __gebr_geoxml_get_tag_value(__gebr_geoxml_get_first_element
-					(gebr_geoxml_document_root_element(document), "date"), "created");
-}
-
-const gchar *gebr_geoxml_document_get_date_modified(GebrGeoXmlDocument * document)
-{
-	if (document == NULL)
-		return NULL;
-	return
-	    __gebr_geoxml_get_tag_value(__gebr_geoxml_get_first_element
-					(gebr_geoxml_document_root_element(document), "date"), "modified");
-}
-
-const gchar *gebr_geoxml_document_get_description(GebrGeoXmlDocument * document)
-{
-	if (document == NULL)
-		return NULL;
-	return __gebr_geoxml_get_tag_value(gebr_geoxml_document_root_element(document), "description");
+	return get_document_property(document, "description");
 }
 
 gchar *gebr_geoxml_document_get_help(GebrGeoXmlDocument * document)
 {
-	if (document == NULL)
-		return NULL;
-	return __gebr_geoxml_get_tag_value(gebr_geoxml_document_root_element(document), "help");
+	return get_document_property(document, "help");
 }
 
 static gboolean gebr_geoxml_document_is_version_valid(const gchar * version)
