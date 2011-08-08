@@ -48,10 +48,16 @@ static gchar *__gebr_geoxml_remove_line_break(const gchar * tag_value)
 void __gebr_geoxml_create_CDATASection(GdomeElement * parent_element, const gchar * value)
 {
 	GdomeNode *node;
+	GdomeDocument *document;
+	GdomeDOMString *string;
 
-	node = (GdomeNode *) gdome_doc_createCDATASection(gdome_el_ownerDocument(parent_element, &exception),
-							  gdome_str_mkref_dup(value), &exception);
-	gdome_el_appendChild(parent_element, node, &exception);
+	document = gdome_el_ownerDocument(parent_element, &exception);
+	string = gdome_str_mkref_dup(value);
+	node = (GdomeNode *) gdome_doc_createCDATASection(document, string, &exception);
+	gdome_n_unref(gdome_el_appendChild(parent_element, node, &exception), &exception);
+	gdome_n_unref(node, &exception);
+	gdome_str_unref(string);
+	gdome_doc_unref(document, &exception);
 }
 
 void __gebr_geoxml_create_TextNode(GdomeElement * parent_element, const gchar * value)
