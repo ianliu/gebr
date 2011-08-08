@@ -1564,7 +1564,6 @@ gchar * gebr_line_generate_header(GebrGeoXmlDocument * document)
 		gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
 		gebr_geoxml_sequence_next (&sequence);
 	}
-	gebr_geoxml_object_unref(GEBR_GEOXML_OBJECT(sequence));
 
 	proj_dict = gebr_generate_variables_value_table(GEBR_GEOXML_DOCUMENT(gebr.project), TRUE, FALSE);
 	line_dict = gebr_generate_variables_value_table(document, FALSE, TRUE);

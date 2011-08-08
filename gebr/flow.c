@@ -923,11 +923,8 @@ static void append_parameter_row(GebrGeoXmlParameter * parameter, GString * dump
 static gchar * gebr_program_generate_parameter_value_table (GebrGeoXmlProgram *program)
 {
 	GString * table;
-	GebrGeoXmlDocument *document;
 	GebrGeoXmlParameters *parameters;
 	GebrGeoXmlSequence *sequence;
-
-	document = gebr_geoxml_object_get_owner_document (GEBR_GEOXML_OBJECT (program));
 
 	table = g_string_new ("");
 	parameters = gebr_geoxml_program_get_parameters (program);
