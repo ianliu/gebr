@@ -354,7 +354,7 @@ void flow_edition_set_io(void)
 	gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->input_iter,
 			   FSEQ_ICON_COLUMN, icon,
 			   FSEQ_TITLE_COLUMN, title, 
-			   FSEQ_EDITABLE, TRUE,
+			   FSEQ_EDITABLE, sensitivity? TRUE : FALSE,
 			   FSEQ_ELLIPSIZE, PANGO_ELLIPSIZE_START,
 			   FSEQ_TOOLTIP, tooltip,
 			   -1);
@@ -398,7 +398,7 @@ void flow_edition_set_io(void)
 	gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->output_iter,
 			   FSEQ_ICON_COLUMN, icon,
 			   FSEQ_TITLE_COLUMN, title, 
-			   FSEQ_EDITABLE, TRUE,
+			   FSEQ_EDITABLE, sensitivity? TRUE : FALSE,
 			   FSEQ_ELLIPSIZE, PANGO_ELLIPSIZE_START,
 			   FSEQ_TOOLTIP, tooltip,
 			   -1);
@@ -437,7 +437,7 @@ void flow_edition_set_io(void)
 	gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->error_iter,
 			   FSEQ_ICON_COLUMN, icon,
 			   FSEQ_TITLE_COLUMN, title, 
-			   FSEQ_EDITABLE, TRUE,
+			   FSEQ_EDITABLE, sensitivity? TRUE : FALSE,
 			   FSEQ_ELLIPSIZE, PANGO_ELLIPSIZE_START,
 			   FSEQ_TOOLTIP, tooltip,
 			   -1);
