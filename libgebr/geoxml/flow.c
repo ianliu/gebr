@@ -549,17 +549,16 @@ gebr_geoxml_flow_append_revision(GebrGeoXmlFlow * flow,
 	revision_flow = GEBR_GEOXML_FLOW(gebr_geoxml_document_clone(GEBR_GEOXML_DOCUMENT(flow)));
 	gebr_geoxml_document_set_help (GEBR_GEOXML_DOCUMENT (revision_flow), "");
 
+	GdomeElement * revision_root = gebr_geoxml_document_root_element(GEBR_GEOXML_DOCUMENT(revision_flow));
 	/* remove revisions from the revision flow. */
 	gebr_geoxml_flow_get_revision(revision_flow, &seq, 0);
 
 	while (seq)
 	{
-		GdomeElement * root = gebr_geoxml_document_root_element(GEBR_GEOXML_DOCUMENT(revision_flow));
-		gdome_el_removeChild(root, (GdomeNode *) seq, &exception);
-		gebr_geoxml_object_unref(root);
-
+		gdome_el_unref(gdome_el_removeChild(revision_root, (GdomeNode *) seq, &exception), &exception);
 		gebr_geoxml_sequence_next(&seq);
 	}
+	gebr_geoxml_object_unref(revision_root);
 
 	/* save to xml and free */
 	gchar *revision_xml;
