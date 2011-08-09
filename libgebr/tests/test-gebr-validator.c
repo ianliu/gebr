@@ -30,6 +30,8 @@
  * calling scope.
  */
 
+gboolean gebr_validator_update_vars(GebrValidator *, GebrGeoXmlDocumentType, GError **);
+
 /*
  * DEF_FLOAT:
  *

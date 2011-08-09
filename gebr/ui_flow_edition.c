@@ -1306,6 +1306,7 @@ on_flow_sequence_query_tooltip(GtkTreeView * treeview,
 	gchar *error_message = _("Unknown error");
 	switch (errorid) {
 	case GEBR_IEXPR_ERROR_SYNTAX:
+	case GEBR_IEXPR_ERROR_TOOBIG:
 	case GEBR_IEXPR_ERROR_RUNTIME:
 	case GEBR_IEXPR_ERROR_INVAL_TYPE:
 	case GEBR_IEXPR_ERROR_TYPE_MISMATCH:

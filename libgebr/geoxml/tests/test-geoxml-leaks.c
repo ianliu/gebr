@@ -395,11 +395,11 @@ test_gebr_geoxml_leaks_get_scope_and_required(void)
 	gebr_geoxml_object_unref(gebr_geoxml_parameters_append_parameter(template, GEBR_GEOXML_PARAMETER_TYPE_INT));
 
 	GdomeException exc;
-	GdomeElement *prev = __gebr_geoxml_previous_same_element(param);
+	GdomeElement *prev = __gebr_geoxml_previous_same_element((GdomeElement*)param);
 	g_assert(prev != NULL);
 	gdome_el_unref(prev, &exc);
 
-	g_assert_cmpint(2, ==, __gebr_geoxml_get_element_index(param));
+	g_assert_cmpint(2, ==, __gebr_geoxml_get_element_index((GdomeElement*)param));
 
 	gebr_geoxml_parameter_group_is_exclusive(GEBR_GEOXML_PARAMETER_GROUP(param));
 	gebr_geoxml_parameter_group_get_instance(GEBR_GEOXML_PARAMETER_GROUP(param), &seq, 0);
