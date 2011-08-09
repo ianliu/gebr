@@ -148,7 +148,7 @@ void __gebr_geoxml_parameter_set_be_reference(GebrGeoXmlParameter * parameter)
 	default_value = gebr_geoxml_program_parameter_get_string_value(program, TRUE);
 	type_element = __gebr_geoxml_parameter_get_type_element(parameter);
 
-	gdome_el_removeChild((GdomeElement *) parameter, (GdomeNode *) type_element, &exception);
+	gdome_n_unref(gdome_el_removeChild((GdomeElement *) parameter, (GdomeNode *) type_element, &exception), &exception);
 	gdome_el_unref(__gebr_geoxml_parameter_insert_type(parameter, GEBR_GEOXML_PARAMETER_TYPE_REFERENCE), &exception);
 	gdome_el_unref(type_element, &exception);
 	gebr_geoxml_program_parameter_set_string_value(program, TRUE, default_value->str);
@@ -171,6 +171,7 @@ __gebr_geoxml_parameter_insert_type(GebrGeoXmlParameter * parameter,
 		gebr_geoxml_object_unref(__gebr_geoxml_parameters_append_new(type_element));
 		gebr_geoxml_parameter_group_set_is_instanciable((GebrGeoXmlParameterGroup *)parameter, FALSE);
 		gebr_geoxml_parameter_group_set_expand((GebrGeoXmlParameterGroup *)parameter, FALSE);
+		gebr_geoxml_object_unref(template);
 	} 
 	else
 	{
@@ -433,10 +434,13 @@ gchar *gebr_geoxml_parameter_get_label(GebrGeoXmlParameter * parameter)
 
 	if (gebr_geoxml_parameter_get_is_reference(parameter))
 		template = gebr_geoxml_parameter_get_referencee(parameter);
-	else
+	else {
 		template = parameter;
-
-	return __gebr_geoxml_get_tag_value((GdomeElement *) template, "label");
+		gebr_geoxml_object_ref(template);
+	}
+	gchar *label = __gebr_geoxml_get_tag_value((GdomeElement *) template, "label");
+	gebr_geoxml_object_unref(template);
+	return label;
 }
 
 gboolean gebr_geoxml_parameter_get_is_in_group(GebrGeoXmlParameter * parameter)
