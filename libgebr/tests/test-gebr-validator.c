@@ -860,7 +860,7 @@ void test_gebr_validator_leaks(Fixture *fixture, gconstpointer data)
 	g_assert_no_error(error);
 	gebr_validator_remove(fixture->validator, a, NULL, &error);
 	g_assert_no_error(error);
-	gebr_geoxml_object_unref(a);
+//	gebr_geoxml_object_unref(a);
 	gebr_geoxml_object_unref(b);
 }
 
