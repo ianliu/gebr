@@ -28,6 +28,7 @@
 #include "gebr-expr.h"
 #include "sequence.h"
 #include <gdome.h>
+#include "object.h"
 
 void test_gebr_geoxml_document_load (void)
 {
@@ -424,7 +425,9 @@ void test_gebr_geoxml_document_canonize_program_parameters(void)
 	gebr_geoxml_document_free(flow);
 	gebr_geoxml_object_unref(flow_params);
 	gebr_geoxml_object_unref(program);
-	g_hash_table_destroy(keys_to_canonized);
+
+//	FIXME: This hash is been used by test_gebr_geoxml_document_canonize_dict_parameters
+//	g_hash_table_destroy(keys_to_canonized);
 }
 
 static void test_gebr_geoxml_document_merge_and_split_dicts(void)
