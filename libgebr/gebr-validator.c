@@ -737,6 +737,7 @@ gebr_validator_remove(GebrValidator       *self,
 	name = GET_VAR_NAME(param);
 	scope = gebr_geoxml_parameter_get_scope (param);
 
+	gebr_geoxml_object_ref(param);
 	removed = hash_data_remove(self, name, scope);
 	if (removed)
 		gebr_geoxml_sequence_remove(GEBR_GEOXML_SEQUENCE(param));
