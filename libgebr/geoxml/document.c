@@ -1514,7 +1514,7 @@ gebr_geoxml_document_merge_dicts(GebrValidator *validator, GebrGeoXmlDocument *f
 
 	while (doc) {
 		GebrGeoXmlSequence *seq = gebr_geoxml_document_get_dict_parameter(doc);
-		gebr_geoxml_parameters_append_parameter(dict, GEBR_GEOXML_PARAMETER_TYPE_GROUP);
+		GebrGeoXmlParameter *separator = gebr_geoxml_parameters_append_parameter(dict, GEBR_GEOXML_PARAMETER_TYPE_GROUP);
 		while (seq) {
 			const gchar *value;
 			const gchar *keyword;
@@ -1544,10 +1544,13 @@ gebr_geoxml_document_merge_dicts(GebrValidator *validator, GebrGeoXmlDocument *f
 			gebr_geoxml_program_parameter_set_first_value(pparam, FALSE, value);
 			gebr_geoxml_parameter_set_label(param, comment);
 
+			gebr_geoxml_object_unref(copy);
 			gebr_geoxml_sequence_next(&seq);
 		}
 		doc = va_arg(args, GebrGeoXmlDocument*);
+		gebr_geoxml_object_unref(separator);
 	}
+	gebr_geoxml_object_unref(dict);
 	va_end(args);
 }
 
@@ -1594,10 +1597,13 @@ gebr_geoxml_document_split_dict(GebrGeoXmlDocument *first, ...)
 				/* The list of documents isn't large enough to
 				 * hold the parameters. */
 				retval = FALSE;
+				clean = seq;
 				goto clean;
 			}
-			if (!clean)
+			if (!clean) {
+				gebr_geoxml_object_ref(seq);
 				clean = seq;
+			}
 			continue;
 		} else if (!doc)
 			continue; // skip flow parameters
@@ -1614,6 +1620,7 @@ gebr_geoxml_document_split_dict(GebrGeoXmlDocument *first, ...)
 		comment = gebr_geoxml_parameter_get_label(param);
 		copy = gebr_geoxml_document_set_dict_keyword(doc, type, keyword, value);
 		gebr_geoxml_parameter_set_label(copy, comment);
+		gebr_geoxml_object_unref(copy);
 	}
 
 clean:
