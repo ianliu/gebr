@@ -125,7 +125,7 @@ gebr_comm_server_run_strip_flow(GebrValidator *validator, GebrGeoXmlFlow *flow)
 	gebr_geoxml_flow_get_revision(GEBR_GEOXML_FLOW (clone), &i, 0);
 	while (i != NULL) {
 		GebrGeoXmlSequence *tmp;
-
+		gebr_geoxml_object_ref(i);
 		tmp = i;
 		gebr_geoxml_sequence_next(&tmp);
 		gebr_geoxml_sequence_remove(i);
@@ -136,7 +136,9 @@ gebr_comm_server_run_strip_flow(GebrValidator *validator, GebrGeoXmlFlow *flow)
 	i = gebr_geoxml_document_get_dict_parameter(clone);
 	while (i != NULL) {
 		GebrGeoXmlSequence *next = i;
+
 		if (validator && !gebr_validator_validate_param(validator, GEBR_GEOXML_PARAMETER(i), NULL, NULL)) {
+			gebr_geoxml_object_ref(i);
 			gebr_geoxml_sequence_remove(i);
 		}
 		gebr_geoxml_sequence_next(&next);
