@@ -805,17 +805,15 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 				el = __gebr_geoxml_insert_new_element(new_io, "error", NULL);
 				__gebr_geoxml_set_element_value(el, "", __gebr_geoxml_create_TextNode);
 				gdome_el_unref(el, &exception);
+				gdome_el_unref(new_io, &exception);
+
 				GdomeElement *lastrun = __gebr_geoxml_insert_new_element(server, "lastrun", NULL);
 				__gebr_geoxml_set_element_value(lastrun, "", __gebr_geoxml_create_TextNode);
-				gdome_el_unref(el, &exception);
-				gdome_el_unref(new_io, &exception);
 				gdome_el_unref(lastrun, &exception);
 			} else {
 				GdomeNode *clone = gdome_el_cloneNode(server, TRUE, &exception);
-				gdome_n_unref(gdome_el_insertBefore_protected(root_element,
-								clone,
-								(GdomeNode*)servers,
-								&exception), &exception);
+				gdome_n_unref(gdome_el_insertBefore_protected(root_element, clone, (GdomeNode*)servers,
+				                                              &exception), &exception);
 				gdome_n_unref(clone, &exception);
 			}
 
