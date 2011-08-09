@@ -772,19 +772,16 @@ gboolean gebr_geoxml_flow_has_control_program (GebrGeoXmlFlow *flow)
 GebrGeoXmlProgram * gebr_geoxml_flow_get_control_program (GebrGeoXmlFlow *flow)
 {
 	GebrGeoXmlSequence *seq;
-	GebrGeoXmlProgram *prog;
 	GebrGeoXmlProgramControl cont;
 
 	gebr_geoxml_flow_get_program (flow, &seq, 0);
 	while (seq) {
-		prog = GEBR_GEOXML_PROGRAM (seq);
-		cont = gebr_geoxml_program_get_control (prog);
+		cont = gebr_geoxml_program_get_control(GEBR_GEOXML_PROGRAM(seq));
 		if (cont != GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY
 		    && cont != GEBR_GEOXML_PROGRAM_CONTROL_UNKNOWN) {
-			gebr_geoxml_object_unref(seq);
-			return prog;
+			return GEBR_GEOXML_PROGRAM(seq);
 		}
-		gebr_geoxml_sequence_next (&seq);
+		gebr_geoxml_sequence_next(&seq);
 	}
 	return NULL;
 }
