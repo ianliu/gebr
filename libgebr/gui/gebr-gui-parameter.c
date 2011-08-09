@@ -1442,6 +1442,14 @@ GtkWidget *gebr_gui_parameter_add_variables_popup(GtkEntry *entry,
 	return menu;
 }
 
+static void
+parameter_widget_free(GebrGuiParameterWidget *self)
+{
+	gebr_geoxml_object_unref(self->parameter);
+	g_free(self);
+	g_debug("Im UNrefed!!");
+}
+
 GebrGuiParameterWidget *gebr_gui_parameter_widget_new(GebrGeoXmlParameter *parameter,
 						      GebrValidator       *validator,
 						      gboolean             use_default_value,
@@ -1456,8 +1464,10 @@ GebrGuiParameterWidget *gebr_gui_parameter_widget_new(GebrGeoXmlParameter *param
 	self->parent.set_value = parameter_widget_set_value;
 	self->parent.get_value = parameter_widget_get_value;
 
-	self->validator = validator;
+	g_debug("Im refed!!");
+	gebr_geoxml_object_ref(parameter);
 	self->parameter = parameter;
+	self->validator = validator;
 	self->program_parameter = GEBR_GEOXML_PROGRAM_PARAMETER(parameter);
 	self->parameter_type = gebr_geoxml_parameter_get_type(parameter);
 	self->use_default_value = use_default_value;
@@ -1467,7 +1477,7 @@ GebrGuiParameterWidget *gebr_gui_parameter_widget_new(GebrGeoXmlParameter *param
 	self->user_data = NULL;
 	self->group_warning_widget = NULL;
 	self->widget = gtk_vbox_new(FALSE, 10);
-	g_object_weak_ref(G_OBJECT(self->widget), (GWeakNotify) g_free, self);
+	g_object_weak_ref(G_OBJECT(self->widget), (GWeakNotify) parameter_widget_free, self);
 	g_signal_connect(self->widget, "mnemonic-activate",
 			 G_CALLBACK(on_mnemonic_activate), self);
 
