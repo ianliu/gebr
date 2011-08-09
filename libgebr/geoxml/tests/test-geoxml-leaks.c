@@ -139,13 +139,15 @@ test_gebr_geoxml_leaks_append_parameter(void)
 {
 	
 	GdomeException exception;
-	GebrGeoXmlParameter *param;
+	GebrGeoXmlParameter *param, *group;
 	GebrGeoXmlParameters *params;
 	GebrGeoXmlFlow *flow = gebr_geoxml_flow_new();
 
 	params = gebr_geoxml_document_get_dict_parameters(GEBR_GEOXML_DOC(flow));
 
 	param = gebr_geoxml_parameters_append_parameter(params, GEBR_GEOXML_PARAMETER_TYPE_STRING);
+
+	group = gebr_geoxml_parameters_append_parameter(params, GEBR_GEOXML_PARAMETER_TYPE_GROUP);
 
 	GebrGeoXmlParameterType type = GEBR_GEOXML_PARAMETER_TYPE_STRING;
 	GdomeElement *element;
@@ -154,7 +156,8 @@ test_gebr_geoxml_leaks_append_parameter(void)
 	gdome_el_unref(__gebr_geoxml_insert_new_element(element, "label", NULL), &exception); //OK
 	gdome_el_unref(__gebr_geoxml_parameter_insert_type((GebrGeoXmlParameter *) element, type), &exception); //OK
 	gdome_el_unref(element, &exception);
-	
+
+	gebr_geoxml_object_unref(group);
 	gebr_geoxml_object_unref(params);
 	gebr_geoxml_object_unref(param);
 	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
@@ -373,18 +376,38 @@ test_gebr_geoxml_leaks_get_scope_and_required(void)
 	params = gebr_geoxml_program_get_parameters(prog);
 	gebr_geoxml_parameters_get_parameter(params, (GebrGeoXmlSequence**)&param, 0);
 
+	g_assert(gebr_geoxml_parameters_get_is_in_group(params) == FALSE);
+
 	gebr_geoxml_parameter_get_scope(param);
 	gebr_geoxml_program_parameter_get_required(GEBR_GEOXML_PROGRAM_PARAMETER(param));
 	gebr_geoxml_object_unref(param);
 
 	GebrGeoXmlSequence *seq;
 	GebrGeoXmlParameter *ref;
+	GebrGeoXmlParameters *template;
+
 	gebr_geoxml_parameters_get_parameter(params, (GebrGeoXmlSequence**)&param, 2);
+	template = gebr_geoxml_parameter_group_get_template(GEBR_GEOXML_PARAMETER_GROUP(param));
+
+	g_assert(gebr_geoxml_parameters_get_is_in_group(template) == TRUE);
+
+	g_assert(__gebr_geoxml_parameters_group_check(params) == TRUE);
+	gebr_geoxml_object_unref(gebr_geoxml_parameters_append_parameter(template, GEBR_GEOXML_PARAMETER_TYPE_INT));
+
+	GdomeException exc;
+	GdomeElement *prev = __gebr_geoxml_previous_same_element(param);
+	g_assert(prev != NULL);
+	gdome_el_unref(prev, &exc);
+
+	g_assert_cmpint(2, ==, __gebr_geoxml_get_element_index(param));
+
+	gebr_geoxml_parameter_group_is_exclusive(GEBR_GEOXML_PARAMETER_GROUP(param));
 	gebr_geoxml_parameter_group_get_instance(GEBR_GEOXML_PARAMETER_GROUP(param), &seq, 0);
 	gebr_geoxml_parameters_get_parameter(GEBR_GEOXML_PARAMETERS(seq), (GebrGeoXmlSequence**)&ref, 0);
 
 	gebr_geoxml_program_parameter_get_required(GEBR_GEOXML_PROGRAM_PARAMETER(param));
 
+	gebr_geoxml_object_unref(template);
 	gebr_geoxml_object_unref(ref);
 	gebr_geoxml_object_unref(seq);
 	gebr_geoxml_object_unref(prog);

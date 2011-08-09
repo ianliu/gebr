@@ -380,9 +380,9 @@ GebrGeoXmlSequence *gebr_geoxml_sequence_get_at(GebrGeoXmlSequence * sequence, g
 
 int gebr_geoxml_sequence_remove(GebrGeoXmlSequence * sequence)
 {
-	int ret;
+	int ret = __gebr_geoxml_sequence_check(sequence, TRUE);
 
-	if ((ret = __gebr_geoxml_sequence_check(sequence, TRUE)))
+	if (ret != GEBR_GEOXML_RETV_SUCCESS)
 		return ret;
 
 	GdomeDOMString *tag = gdome_el_tagName((GdomeElement *) sequence, &exception);
