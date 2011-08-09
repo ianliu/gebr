@@ -482,7 +482,7 @@ gebr_geoxml_program_parameter_is_var_used (GebrGeoXmlProgramParameter *self,
  *
  * Returns the program parameter dict keyword, NULL if it does not exists.
  */
-const gchar *
+gchar *
 gebr_geoxml_program_parameter_get_old_dict_keyword(GebrGeoXmlProgramParameter * program_parameter);
 
 /**

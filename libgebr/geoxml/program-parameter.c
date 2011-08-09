@@ -802,11 +802,11 @@ gebr_geoxml_program_parameter_has_value(GebrGeoXmlProgramParameter *self)
 	return retval;
 }
 
-const gchar *
+gchar *
 gebr_geoxml_program_parameter_get_old_dict_keyword(GebrGeoXmlProgramParameter * program_parameter)
 {
 	g_return_val_if_fail(program_parameter != NULL, NULL);
-	const gchar *dict_keyword;
+	gchar *dict_keyword;
 
 	GdomeDOMString *string;
 	GdomeElement *property_element;
@@ -821,6 +821,7 @@ gebr_geoxml_program_parameter_get_old_dict_keyword(GebrGeoXmlProgramParameter * 
 	gdome_str_unref(string);
 
 	dict_keyword = __gebr_geoxml_get_attr_value(property_element, "dictkeyword");
+	gdome_el_unref(property_element, &exception);
 
 	return dict_keyword;
 }
@@ -835,7 +836,7 @@ gebr_geoxml_program_parameter_update_old_dict_value(GebrGeoXmlObject * param,
 	GebrGeoXmlParameterType type = gebr_geoxml_parameter_get_type(
 				GEBR_GEOXML_PARAMETER(param));
 
-	const gchar * key = gebr_geoxml_program_parameter_get_old_dict_keyword(
+	gchar * key = gebr_geoxml_program_parameter_get_old_dict_keyword(
 			GEBR_GEOXML_PROGRAM_PARAMETER(param));
 
 	if (key == NULL)
@@ -920,5 +921,6 @@ gebr_geoxml_program_parameter_update_old_dict_value(GebrGeoXmlObject * param,
 		break;
 	}
 
+	g_free(key);
 	return TRUE;
 }
