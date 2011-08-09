@@ -768,10 +768,11 @@ GebrGeoXmlProgram * gebr_geoxml_flow_get_control_program (GebrGeoXmlFlow *flow)
 		prog = GEBR_GEOXML_PROGRAM (seq);
 		cont = gebr_geoxml_program_get_control (prog);
 		if (cont != GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY
-		    && cont != GEBR_GEOXML_PROGRAM_CONTROL_UNKNOWN)
+		    && cont != GEBR_GEOXML_PROGRAM_CONTROL_UNKNOWN) {
+			gebr_geoxml_object_unref(seq);
 			return prog;
+		}
 		gebr_geoxml_sequence_next (&seq);
-		gebr_geoxml_object_unref(seq);
 	}
 	return NULL;
 }
