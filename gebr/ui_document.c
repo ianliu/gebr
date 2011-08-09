@@ -712,7 +712,7 @@ void document_dict_edit_setup_ui(void)
 	flow_edition_revalidate_programs();
 
 	for (int i = 0; data->documents[i] != NULL; ++i)
-		document_save(data->documents[i], TRUE, TRUE);
+		document_save(data->documents[i], TRUE, FALSE);
 
 	for (int i = 0; data->documents[i] != NULL; ++i) {
 		GebrGeoXmlSequence *i_parameter;
