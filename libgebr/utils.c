@@ -723,26 +723,21 @@ gebr_str_canonical_var_name(const gchar * keyword, gchar ** new_value, GError **
 {
 	g_return_val_if_fail(keyword != NULL, FALSE);
 	g_return_val_if_fail(error == NULL, FALSE);
+
 	/* This pointer must point to something */
 	g_return_val_if_fail(new_value != NULL, FALSE);
 
-	*new_value = g_utf8_strdown(keyword,-1);
+	gchar *str = g_utf8_strdown(keyword, -1);
 
 	/* g_strcanon modifies the string in place */
-	*new_value = g_strcanon(*new_value, 
-			       "abcdefghijklmnopqrstuvxwyz1234567890_",
-			       ' ');
-
-	*new_value = g_strstrip(*new_value);
-	*new_value = g_strcanon(*new_value, 
-			       "abcdefghijklmnopqrstuvxwyz1234567890_",
-			       '_');
-	if (!g_unichar_isalpha((*new_value)[0]))
-	{
-		gchar * new = g_strdup_printf("var_%s", *new_value);
-		g_free(*new_value);
-		*new_value = new;
-	}
+	g_strcanon(str, "abcdefghijklmnopqrstuvxwyz1234567890_", ' ');
+	g_strstrip(str);
+	g_strcanon(str, "abcdefghijklmnopqrstuvxwyz1234567890_", '_');
+	if (!g_unichar_isalpha(g_utf8_get_char(str))) {
+		*new_value = g_strdup_printf("var_%s", str);
+		g_free(str);
+	} else
+		*new_value = str;
 
 	return TRUE;
 }
