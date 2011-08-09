@@ -137,10 +137,16 @@ GdomeElement *__gebr_geoxml_get_first_element(GdomeElement * parent_element, con
 	return (GdomeElement *) node;
 }
 
-GdomeElement *__gebr_geoxml_get_element_at(GdomeElement * parent_element, const gchar * tag_name, gulong index,
-					   gboolean recursive)
+GdomeElement *
+__gebr_geoxml_get_element_at(GdomeElement * parent_element,
+			     const gchar * tag_name,
+			     gulong index,
+			     gboolean recursive)
 {
-	if (recursive == FALSE) {
+	g_return_if_fail(parent_element != NULL);
+
+	if (recursive == FALSE)
+	{
 		GString *expression;
 		GdomeElement *child;
 		GdomeXPathResult *xpath_result;
@@ -155,7 +161,9 @@ GdomeElement *__gebr_geoxml_get_element_at(GdomeElement * parent_element, const 
 		gdome_xpresult_unref(xpath_result, &exception);
 
 		return child;
-	} else {
+	}
+	else
+	{
 		GdomeElement *element;
 		GdomeNodeList *node_list;
 		GdomeDOMString *string;
@@ -163,7 +171,8 @@ GdomeElement *__gebr_geoxml_get_element_at(GdomeElement * parent_element, const 
 		string = gdome_str_mkref(tag_name);
 
 		node_list = gdome_el_getElementsByTagName(parent_element, string, &exception);
-		if (index >= gdome_nl_length(node_list, &exception)) {
+		if (index >= gdome_nl_length(node_list, &exception))
+		{
 			gdome_str_unref(string);
 			gdome_nl_unref(node_list, &exception);
 			return NULL;
@@ -505,7 +514,9 @@ GdomeElement *__gebr_geoxml_next_same_element(GdomeElement * element)
 	return next_element;
 }
 
-GdomeXPathResult *__gebr_geoxml_xpath_evaluate(GdomeElement * context, const gchar * expression)
+GdomeXPathResult *
+__gebr_geoxml_xpath_evaluate(GdomeElement * context,
+			     const gchar * expression)
 {
 	GdomeDOMString *string;
 	GdomeXPathEvaluator *xpath_evaluator;

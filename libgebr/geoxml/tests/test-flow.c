@@ -20,6 +20,7 @@
 
 #include "../../date.h"
 #include "document.h"
+#include "object.h"
 #include "error.h"
 #include "flow.h"
 #include "line.h"
@@ -417,32 +418,44 @@ void test_gebr_geoxml_flow_get_revision(void){
 	GebrGeoXmlSequence *revision = NULL;
 	int returned;
 
-	returned = gebr_geoxml_flow_get_revision(flow, &revision, 0);
-	g_assert_cmpint(returned, ==, GEBR_GEOXML_RETV_NULL_PTR);
+	// Now this function logs a critical warning in this
+	// case. Change this test to conform to that.
+	//returned = gebr_geoxml_flow_get_revision(flow, &revision, 0);
+	//gebr_geoxml_object_unref(revision);
+	//g_assert_cmpint(returned, ==, GEBR_GEOXML_RETV_NULL_PTR);
 
 	flow = gebr_geoxml_flow_new();
 	returned = gebr_geoxml_flow_get_revision(flow, &revision, 0);
+	gebr_geoxml_object_unref(revision);
 	g_assert_cmpint(returned, ==, GEBR_GEOXML_RETV_INVALID_INDEX);
 
 	revision = (GebrGeoXmlSequence*) gebr_geoxml_flow_append_revision(flow,"commented");
+	gebr_geoxml_object_unref(revision);
 	returned = gebr_geoxml_flow_get_revision(flow, &revision, 0);
+	gebr_geoxml_object_unref(revision);
 	g_assert_cmpint(returned, ==, GEBR_GEOXML_RETV_SUCCESS);
 
 	revision = (GebrGeoXmlSequence*) gebr_geoxml_flow_append_revision(flow,"brbr");
+	gebr_geoxml_object_unref(revision);
 	returned = gebr_geoxml_flow_get_revision(flow, &revision, 1);
+	gebr_geoxml_object_unref(revision);
 	g_assert_cmpint(returned, ==, GEBR_GEOXML_RETV_SUCCESS);
 
 	// Checking if the last procedure didn't messed with first revision
 	returned = gebr_geoxml_flow_get_revision(flow, &revision, 0);
+	gebr_geoxml_object_unref(revision);
 	g_assert_cmpint(returned, ==, GEBR_GEOXML_RETV_SUCCESS);
 
+	// Now this function logs a critical warning in this
+	// case. Change this test to conform to that.
 	// Check if at failure (when flow is NULL), revision will be set as NULL
-	returned = gebr_geoxml_flow_get_revision(NULL, &revision, 0);
-	g_assert_cmpint(returned, ==, GEBR_GEOXML_RETV_NULL_PTR);
-	g_assert(revision == NULL);
+	// returned = gebr_geoxml_flow_get_revision(NULL, &revision, 0);
+	// g_assert_cmpint(returned, ==, GEBR_GEOXML_RETV_NULL_PTR);
+	// g_assert(revision == NULL);
 
 	// Check if at failure (when an invalid index is passed), revision will be set as NULL
 	revision = (GebrGeoXmlSequence*) gebr_geoxml_flow_append_revision(flow,"1234pnbmns");
+	gebr_geoxml_object_unref(revision);
 	returned = gebr_geoxml_flow_get_revision(flow, &revision, 2654);
 	g_assert_cmpint(returned, ==, GEBR_GEOXML_RETV_INVALID_INDEX);
 	g_assert(revision == NULL);

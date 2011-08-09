@@ -535,10 +535,12 @@ gboolean gebr_geoxml_flow_change_to_revision(GebrGeoXmlFlow * flow, GebrGeoXmlRe
 	return TRUE;
 }
 
-GebrGeoXmlRevision *gebr_geoxml_flow_append_revision(GebrGeoXmlFlow * flow, const gchar * comment)
+GebrGeoXmlRevision *
+gebr_geoxml_flow_append_revision(GebrGeoXmlFlow * flow,
+				 const gchar * comment)
 {
 	GebrGeoXmlRevision *revision;
-	GebrGeoXmlSequence *i;
+	GebrGeoXmlSequence *seq;
 	GebrGeoXmlFlow *revision_flow;
 
 	g_return_val_if_fail(flow != NULL, NULL);
@@ -548,13 +550,15 @@ GebrGeoXmlRevision *gebr_geoxml_flow_append_revision(GebrGeoXmlFlow * flow, cons
 	gebr_geoxml_document_set_help (GEBR_GEOXML_DOCUMENT (revision_flow), "");
 
 	/* remove revisions from the revision flow. */
-	gebr_geoxml_flow_get_revision(revision_flow, &i, 0);
-	while (i != NULL) {
-		GebrGeoXmlSequence *aux = (GebrGeoXmlSequence *) __gebr_geoxml_next_element((GdomeElement *) i);
-		gdome_el_removeChild(gebr_geoxml_document_root_element(GEBR_GEOXML_DOCUMENT(revision_flow)),
-				     (GdomeNode *) i, &exception);
+	gebr_geoxml_flow_get_revision(revision_flow, &seq, 0);
 
-		i = aux;
+	while (seq)
+	{
+		GdomeElement * root = gebr_geoxml_document_root_element(GEBR_GEOXML_DOCUMENT(revision_flow));
+		gdome_el_removeChild(root, (GdomeNode *) seq, &exception);
+		gebr_geoxml_object_unref(root);
+
+		gebr_geoxml_sequence_next(&seq);
 	}
 
 	/* save to xml and free */
@@ -564,9 +568,11 @@ GebrGeoXmlRevision *gebr_geoxml_flow_append_revision(GebrGeoXmlFlow * flow, cons
 
 	GebrGeoXmlSequence *first_revision;
 	gebr_geoxml_flow_get_revision(flow, &first_revision, 0);
-	revision = (GebrGeoXmlRevision *)
-	    __gebr_geoxml_insert_new_element(gebr_geoxml_document_root_element(GEBR_GEOXML_DOCUMENT(flow)), "revision",
-					     (GdomeElement *) first_revision);
+
+	GdomeElement * root = gebr_geoxml_document_root_element(GEBR_GEOXML_DOCUMENT(flow));
+	revision = (GebrGeoXmlRevision *) __gebr_geoxml_insert_new_element(root, "revision", (GdomeElement *) first_revision);
+	gebr_geoxml_object_unref(root);
+	gebr_geoxml_object_unref(first_revision);
 
 	gebr_geoxml_flow_set_revision_data(revision, revision_xml, gebr_iso_date(), comment);
 	g_free(revision_xml);
@@ -585,19 +591,26 @@ void gebr_geoxml_flow_set_revision_data(GebrGeoXmlRevision * revision, const gch
 		__gebr_geoxml_set_attr_value((GdomeElement *) revision, "comment", comment);
 }
 
-int gebr_geoxml_flow_get_revision(GebrGeoXmlFlow * flow, GebrGeoXmlSequence ** revision, gulong index)
+enum GEBR_GEOXML_RETV
+gebr_geoxml_flow_get_revision(GebrGeoXmlFlow * flow,
+			      GebrGeoXmlSequence ** revision,
+			      gulong index)
 {
-	if (flow == NULL) {
+	enum GEBR_GEOXML_RETV retval = GEBR_GEOXML_RETV_SUCCESS; 
+
+	if (flow == NULL)
+	{
 		*revision = NULL;
-		return GEBR_GEOXML_RETV_NULL_PTR;
+		g_return_val_if_fail(flow != NULL, GEBR_GEOXML_RETV_NULL_PTR);
 	}
 
-	*revision = (GebrGeoXmlSequence *)
-		__gebr_geoxml_get_element_at(gebr_geoxml_document_root_element(GEBR_GEOXML_DOCUMENT(flow)), "revision",
-					     index, FALSE);
+	GdomeElement * root = gebr_geoxml_document_root_element(GEBR_GEOXML_DOCUMENT(flow));
+	*revision = (GebrGeoXmlSequence *) __gebr_geoxml_get_element_at(root, "revision", index, FALSE);
+	gebr_geoxml_object_unref(root);
 
-	return (*revision == NULL)
-	    ? GEBR_GEOXML_RETV_INVALID_INDEX : GEBR_GEOXML_RETV_SUCCESS;
+	retval = (*revision == NULL) ? GEBR_GEOXML_RETV_INVALID_INDEX : GEBR_GEOXML_RETV_SUCCESS;
+
+	return retval;
 }
 
 void gebr_geoxml_flow_get_revision_data(GebrGeoXmlRevision * revision, gchar ** flow, gchar ** date, gchar ** comment)

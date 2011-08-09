@@ -361,7 +361,10 @@ void gebr_geoxml_flow_set_revision_data(GebrGeoXmlRevision * revision, const gch
  *
  * See gebr_geoxml_sequence_move gebr_geoxml_sequence_move_up gebr_geoxml_sequence_move_down gebr_geoxml_sequence_remove
  */
-int gebr_geoxml_flow_get_revision(GebrGeoXmlFlow * flow, GebrGeoXmlSequence ** revision, gulong index);
+enum GEBR_GEOXML_RETV
+gebr_geoxml_flow_get_revision(GebrGeoXmlFlow * flow,
+			      GebrGeoXmlSequence ** revision,
+			      gulong index);
 
 /**
  * Get information of \p revision. The flow is stored at \p flow and can be
