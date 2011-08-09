@@ -306,17 +306,24 @@ gboolean gebr_geoxml_parameter_set_type(GebrGeoXmlParameter * parameter, GebrGeo
 	g_return_val_if_fail(type != GEBR_GEOXML_PARAMETER_TYPE_REFERENCE, FALSE);
 
 	/* backup and remove old type */
-	GdomeElement * type_element = __gebr_geoxml_parameter_get_type_element(parameter);
-	GdomeElement * property = (GdomeElement *) gdome_el_cloneNode(__gebr_geoxml_get_first_element(type_element, "property"),
-								      TRUE, &exception);
-	gdome_n_removeChild((GdomeNode*)parameter, (GdomeNode*)type_element, &exception);
+	GdomeElement *type_element = __gebr_geoxml_parameter_get_type_element(parameter);
+	GdomeElement *first_element = __gebr_geoxml_get_first_element(type_element, "property");
+	GdomeNode *property = gdome_el_cloneNode(first_element, TRUE, &exception);
+	gdome_n_unref(gdome_n_removeChild((GdomeNode*)parameter, (GdomeNode*)type_element, &exception), &exception);
+	gdome_el_unref(type_element, &exception);
+	gdome_el_unref(first_element, &exception);
 
 	type_element = __gebr_geoxml_parameter_insert_type(parameter, type);
+	first_element = __gebr_geoxml_get_first_element(type_element, "property");
 	/* reinsert data */
-	gdome_el_removeChild(type_element, (GdomeNode*)__gebr_geoxml_get_first_element(type_element, "property"), &exception);
+	gdome_n_unref(gdome_el_removeChild(type_element, (GdomeNode*) first_element, &exception), &exception);
 	GdomeElement * before = __gebr_geoxml_get_first_element(type_element, "property");
-	gdome_el_insertBefore_protected(type_element, (GdomeNode*)property, (GdomeNode*)before, &exception);
+	gdome_n_unref(gdome_el_insertBefore_protected(type_element, property, (GdomeNode*)before, &exception), &exception);
 
+	gdome_n_unref(property, &exception);
+	gdome_el_unref(before, &exception);
+	gdome_el_unref(type_element, &exception);
+	gdome_el_unref(first_element, &exception);
 	return TRUE;
 }
 
