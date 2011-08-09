@@ -201,9 +201,10 @@ void parameter_load_program(void)
 	}
 
 	gebr_geoxml_parameters_get_parameter(gebr_geoxml_program_get_parameters(debr.program), &parameter, 0);
-	for (; parameter != NULL; gebr_geoxml_sequence_next(&parameter))
+	for (; parameter != NULL; gebr_geoxml_sequence_next(&parameter)) {
+		gebr_geoxml_object_ref(parameter);
 		parameter_append_to_ui(GEBR_GEOXML_PARAMETER(parameter), NULL, NULL);
-
+	}
 	debr.parameter = NULL;
 }
 
