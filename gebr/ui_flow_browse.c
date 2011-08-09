@@ -598,8 +598,9 @@ static void flow_browse_on_revision_revert_activate(GtkMenuItem * menu_item, Geb
 	if (gebr_gui_confirm_action_dialog(_("Backup current state?"),
 					   _("You are about to revert to a previous state. "
 					     "The current flow will be lost after this action. "
-					     "Do you want to save the current flow state?")) && !flow_revision_save())
-		return;
+					     "Do you want to save the current flow state?")))
+		if (!flow_revision_save())
+			return;
 
 	gchar *date;
 	gchar *comment;
@@ -621,6 +622,7 @@ static void flow_browse_on_revision_revert_activate(GtkMenuItem * menu_item, Geb
 		gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Reverted to state '%s' ('%s')."), comment, date);
 
 	flow_browse_load();
+	gebr_validator_force_update(gebr.validator);
 	flow_browse_get_selected(&iter, FALSE);
 	gtk_list_store_set(gebr.ui_flow_browse->store, &iter,
 			   FB_TITLE, gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.flow)), -1);
