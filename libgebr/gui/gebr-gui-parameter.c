@@ -1227,6 +1227,7 @@ get_compatible_variables(GebrGeoXmlParameterType type,
 				if (!strcmp(keyword, gebr_geoxml_program_parameter_get_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(cp->data))))
 					compat = g_list_remove_link(compat, cp);
 
+			gebr_geoxml_object_ref(dict_parameter);
 			compat = g_list_prepend(compat, dict_parameter);
 		}
 	}
@@ -1436,7 +1437,8 @@ GtkWidget *gebr_gui_parameter_add_variables_popup(GtkEntry *entry,
 
 		g_string_free(label, TRUE);
 	}
-
+	g_list_foreach(compat, (GFunc)gebr_geoxml_object_unref, NULL);
+	g_list_free(compat);
 	gtk_widget_show_all(menu);
 
 	return menu;
@@ -1447,7 +1449,6 @@ parameter_widget_free(GebrGuiParameterWidget *self)
 {
 	gebr_geoxml_object_unref(self->parameter);
 	g_free(self);
-	g_debug("Im UNrefed!!");
 }
 
 GebrGuiParameterWidget *gebr_gui_parameter_widget_new(GebrGeoXmlParameter *parameter,
@@ -1464,7 +1465,6 @@ GebrGuiParameterWidget *gebr_gui_parameter_widget_new(GebrGeoXmlParameter *param
 	self->parent.set_value = parameter_widget_set_value;
 	self->parent.get_value = parameter_widget_get_value;
 
-	g_debug("Im refed!!");
 	gebr_geoxml_object_ref(parameter);
 	self->parameter = parameter;
 	self->validator = validator;
@@ -1577,6 +1577,7 @@ GtkTreeModel *gebr_gui_parameter_get_completion_model(GebrGeoXmlDocument *flow,
 		gtk_list_store_set(store, &iter, 0, keyword, 1, icon, 2, result, -1);
 	}
 
+	g_list_foreach(compatible, (GFunc)gebr_geoxml_object_unref, NULL);
 	g_list_free(compatible);
 
 	return GTK_TREE_MODEL(store);
