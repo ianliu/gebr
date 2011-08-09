@@ -555,7 +555,7 @@ gebr_geoxml_flow_append_revision(GebrGeoXmlFlow * flow,
 
 	while (seq)
 	{
-		gdome_el_unref(gdome_el_removeChild(revision_root, (GdomeNode *) seq, &exception), &exception);
+		gdome_n_unref(gdome_el_removeChild(revision_root, (GdomeNode *) seq, &exception), &exception);
 		gebr_geoxml_sequence_next(&seq);
 	}
 	gebr_geoxml_object_unref(revision_root);
