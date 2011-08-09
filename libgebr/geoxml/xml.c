@@ -269,18 +269,17 @@ GSList *__gebr_geoxml_get_elements_by_tag(GdomeElement * base, const gchar * tag
 gulong __gebr_geoxml_get_element_index(GdomeElement * element)
 {
 	gulong index;
-	GdomeElement *i, *next;
-
-	/* TODO: try XPath position() */
+	GdomeElement *i, *prev;
 
 	index = 0;
-	i = element;
-	while ((next = __gebr_geoxml_previous_same_element(i)) != NULL) {
+	prev = __gebr_geoxml_previous_same_element(element);
+	while (prev) {
 		++index;
-		gdome_el_unref(i, &exception);
-		i = next;
+		i = __gebr_geoxml_previous_same_element(prev);
+		gdome_el_unref(prev, &exception);
+		prev = i;
 	}
-	gdome_el_unref(next, &exception);
+
 	return index;
 }
 
