@@ -132,6 +132,7 @@ void flow_add_program_sequence_to_view(GebrGeoXmlSequence * program,
 				   FSEQ_SENSITIVE, TRUE,
 				   FSEQ_NEVER_OPENED, never_opened,
 				   -1);
+		gebr_geoxml_object_ref(program);
 
 		GebrIExprError undef;
 		gebr_geoxml_program_get_error_id(GEBR_GEOXML_PROGRAM(program), &undef);
