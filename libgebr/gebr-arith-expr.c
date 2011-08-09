@@ -457,7 +457,6 @@ gebr_arith_expr_eval_internal(GebrArithExpr *self,
 			      GError       **err)
 {
 	gchar *line;
-	GString *buffer = g_string_sized_new(70);
 	GError *error = NULL;
 
 	if (!expr || !*expr)
@@ -483,6 +482,8 @@ gebr_arith_expr_eval_internal(GebrArithExpr *self,
 			  error->message);
 		return FALSE;
 	}
+
+	GString *buffer = g_string_sized_new(70);
 
 	int results = 0;
 	while (read_bc_line(self, &line, err)) {

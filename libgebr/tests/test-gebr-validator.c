@@ -43,6 +43,7 @@
 	                                              GEBR_GEOXML_PARAMETER_TYPE_FLOAT, \
 	                                              name, value); \
 	gebr_validator_insert(fixture->validator, param, NULL, &error); \
+	gebr_geoxml_object_unref(param); \
 	g_assert_no_error(error); \
 	} G_STMT_END
 
@@ -54,6 +55,7 @@
 	                                              GEBR_GEOXML_PARAMETER_TYPE_FLOAT, \
 	                                              name, value); \
 	gebr_validator_insert(fixture->validator, param, NULL, &error); \
+	gebr_geoxml_object_unref(param); \
 	g_assert_error(error, domain, code); \
 	g_clear_error(&error); \
 	} G_STMT_END
@@ -107,6 +109,7 @@
 	                                              GEBR_GEOXML_PARAMETER_TYPE_STRING, \
 	                                              name, value); \
 	gebr_validator_insert(fixture->validator, param, NULL, &error); \
+	gebr_geoxml_object_unref(param); \
 	g_assert_no_error(error); \
 	} G_STMT_END
 
@@ -118,6 +121,7 @@
 	                                              GEBR_GEOXML_PARAMETER_TYPE_STRING, \
 	                                              name, value); \
 	gebr_validator_insert(fixture->validator, param, NULL, &error); \
+	gebr_geoxml_object_unref(param); \
 	g_assert_error(error, domain, code); \
 	g_clear_error(&error); \
 	} G_STMT_END

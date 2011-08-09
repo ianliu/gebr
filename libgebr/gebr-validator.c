@@ -938,18 +938,22 @@ gebr_validator_validate_param(GebrValidator       *self,
 		}
 		return TRUE;
 	}
-
-	if (gebr_geoxml_program_get_control(gebr_geoxml_parameter_get_program(param)) == GEBR_GEOXML_PROGRAM_CONTROL_FOR) {
+	GebrGeoXmlProgram *program = gebr_geoxml_parameter_get_program(param);
+	if (gebr_geoxml_program_get_control(program) == GEBR_GEOXML_PROGRAM_CONTROL_FOR) {
+		gebr_geoxml_object_unref(program);
 		if (!gebr_validator_validate_control_parameter(self, GET_VAR_NAME(param), GET_VAR_VALUE(param), err))
 			return FALSE;
 		goto out;
 	}
+	gebr_geoxml_object_unref(program);
 
 	gebr_geoxml_program_parameter_get_value(GEBR_GEOXML_PROGRAM_PARAMETER(param), FALSE, &seq, 0);
 	for (; seq; gebr_geoxml_sequence_next(&seq)) {
 		value = gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(seq));
-		if (!gebr_validator_validate_expr(self, value, type, err))
+		if (!gebr_validator_validate_expr(self, value, type, err)) {
+			gebr_geoxml_object_unref(seq);
 			return FALSE;
+		}
 	}
 out:
 	if (validated)
