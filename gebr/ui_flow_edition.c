@@ -445,7 +445,7 @@ void flow_edition_set_io(void)
 	g_free(tooltip);
 
 	flow_browse_info_update();
-	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
+	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, FALSE);
 }
 
 void flow_edition_component_activated(void)

@@ -542,7 +542,7 @@ void flow_run(GebrServer *server, GebrCommServerRunConfig * config, gboolean sin
 
 		/* save last run date */
 		gebr_geoxml_flow_set_date_last_run(flow, gebr_iso_date());
-		document_save(GEBR_GEOXML_DOC(flow), FALSE, TRUE);
+		document_save(GEBR_GEOXML_DOC(flow), FALSE, FALSE);
 		flow_browse_info_update(); 
 
 		// FIXME: Deprecate this function

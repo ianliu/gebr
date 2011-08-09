@@ -43,6 +43,7 @@ static GebrGeoXmlDocument *document_cache_check(const gchar *path)
 
 static void document_cache_add(const gchar *path, GebrGeoXmlDocument * document)
 {
+	g_return_if_fail(g_hash_table_lookup(gebr.xmls_by_filename, path) == NULL);
 	g_hash_table_insert(gebr.xmls_by_filename, g_strdup(path), document);
 }
 
@@ -481,7 +482,6 @@ gboolean document_save(GebrGeoXmlDocument * document, gboolean set_modified_date
 
 	path = document_get_path(gebr_geoxml_document_get_filename(document));
 	ret = document_save_at(document, path->str, set_modified_date, cache);
-
 	g_string_free(path, TRUE);
 	return ret;
 }

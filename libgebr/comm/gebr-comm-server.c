@@ -136,10 +136,10 @@ gebr_comm_server_run_strip_flow(GebrValidator *validator, GebrGeoXmlFlow *flow)
 	i = gebr_geoxml_document_get_dict_parameter(clone);
 	while (i != NULL) {
 		GebrGeoXmlSequence *next = i;
-		gebr_geoxml_sequence_next(&next);
 		if (validator && !gebr_validator_validate_param(validator, GEBR_GEOXML_PARAMETER(i), NULL, NULL)) {
 			gebr_geoxml_sequence_remove(i);
 		}
+		gebr_geoxml_sequence_next(&next);
 		i = next;
 	}
 
