@@ -287,7 +287,6 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 	strncpy(tagname, root_name->str, MAX_TAGNAME_SIZE);
 	tagname[MAX_TAGNAME_SIZE - 1] = '\0';
 	gdome_str_unref(root_name);
-	gdome_el_unref(root_element, &exception);
 
 	/* Find the DTD spec file. If the file doesn't exists, it may mean that this document is from newer version. */
 	dtd_filename = g_strdup_printf("%s/%s-%s.dtd", dtd_directory, tagname, version);
@@ -336,6 +335,7 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 		ret = GEBR_GEOXML_RETV_NO_MEMORY;
 		goto free_source_dtd_root_version;
 	}
+	gdome_el_unref(root_element, &exception);
 	gdome_doc_unref(*document, &exception);
 	*document = tmp_doc;
 	root_element = gebr_geoxml_document_root_element(tmp_doc);
