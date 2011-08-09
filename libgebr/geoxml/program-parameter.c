@@ -186,9 +186,12 @@ gboolean gebr_geoxml_program_parameter_get_is_list(GebrGeoXmlProgramParameter * 
 {
 	if (program_parameter == NULL)
 		return FALSE;
-	if (gebr_geoxml_parameter_get_is_reference((GebrGeoXmlParameter *) program_parameter))
-		return gebr_geoxml_program_parameter_get_is_list((GebrGeoXmlProgramParameter *)
-								 gebr_geoxml_parameter_get_referencee((GebrGeoXmlParameter *) program_parameter));
+	if (gebr_geoxml_parameter_get_is_reference((GebrGeoXmlParameter *) program_parameter)) {
+		GebrGeoXmlParameter *ref = gebr_geoxml_parameter_get_referencee((GebrGeoXmlParameter *) program_parameter);
+		gboolean is_list = gebr_geoxml_program_parameter_get_is_list((GebrGeoXmlProgramParameter *)ref);
+		gebr_geoxml_object_unref(ref);
+		return is_list;
+	}
 
 	GdomeDOMString *string;
 	GdomeElement *property_element;
@@ -199,20 +202,27 @@ gboolean gebr_geoxml_program_parameter_get_is_list(GebrGeoXmlProgramParameter * 
 	is_list = gdome_el_hasAttribute(property_element, string, &exception);
 
 	gdome_str_unref(string);
+	gdome_el_unref(property_element, &exception);
 
 	return is_list;
 }
 
-const gchar *gebr_geoxml_program_parameter_get_list_separator(GebrGeoXmlProgramParameter * program_parameter)
+gchar *gebr_geoxml_program_parameter_get_list_separator(GebrGeoXmlProgramParameter * program_parameter)
 {
 	if (gebr_geoxml_program_parameter_get_is_list(program_parameter) == FALSE)
 		return NULL;
-	if (gebr_geoxml_parameter_get_is_reference((GebrGeoXmlParameter *) program_parameter))
-		return gebr_geoxml_program_parameter_get_list_separator((GebrGeoXmlProgramParameter *)
-									gebr_geoxml_parameter_get_referencee((GebrGeoXmlParameter *) program_parameter));
-	return
-	    __gebr_geoxml_get_attr_value(__gebr_geoxml_get_first_element
-					 ((GdomeElement *) program_parameter, "property"), "separator");
+	gchar *list_separator;
+
+	if (gebr_geoxml_parameter_get_is_reference((GebrGeoXmlParameter *) program_parameter)) {
+		GebrGeoXmlParameter *ref = gebr_geoxml_parameter_get_referencee((GebrGeoXmlParameter *) program_parameter);
+		list_separator = gebr_geoxml_program_parameter_get_list_separator((GebrGeoXmlProgramParameter *)ref);
+		gebr_geoxml_object_unref(ref);
+		return list_separator;
+	}
+	GdomeElement *element = __gebr_geoxml_get_first_element((GdomeElement *) program_parameter, "property");
+	list_separator = __gebr_geoxml_get_attr_value(element, "separator");
+	gdome_el_unref(element, &exception);
+	return list_separator;
 }
 
 void
@@ -241,7 +251,7 @@ gebr_geoxml_program_parameter_set_first_boolean_value(GebrGeoXmlProgramParameter
 				    (enabled == TRUE ? "on" : "off"), __gebr_geoxml_create_TextNode);
 }
 
-const gchar *gebr_geoxml_program_parameter_get_first_value(GebrGeoXmlProgramParameter * program_parameter,
+gchar *gebr_geoxml_program_parameter_get_first_value(GebrGeoXmlProgramParameter * program_parameter,
 							   gboolean default_value)
 {
 	g_return_val_if_fail(program_parameter != NULL, NULL);
@@ -337,11 +347,13 @@ GString *gebr_geoxml_program_parameter_get_string_value(GebrGeoXmlProgramParamet
 	GString *value;
 
 	value = g_string_new("");
-	if (gebr_geoxml_program_parameter_get_is_list(program_parameter) == FALSE)
-		g_string_assign(value, gebr_geoxml_program_parameter_get_first_value(program_parameter, default_value));
-	else {
+	if (gebr_geoxml_program_parameter_get_is_list(program_parameter) == FALSE) {
+		gchar *first_value = gebr_geoxml_program_parameter_get_first_value(program_parameter, default_value);
+		g_string_assign(value, first_value);
+		g_free(first_value);
+	} else {
 		GebrGeoXmlSequence *property_value;
-		const gchar *separator;
+		gchar *separator;
 
 		separator = gebr_geoxml_program_parameter_get_list_separator(program_parameter);
 		gebr_geoxml_program_parameter_get_value(program_parameter, default_value, &property_value, 0);
@@ -349,9 +361,9 @@ GString *gebr_geoxml_program_parameter_get_string_value(GebrGeoXmlProgramParamet
 		gebr_geoxml_sequence_next(&property_value);
 		for (; property_value != NULL; gebr_geoxml_sequence_next(&property_value)) {
 			g_string_append(value, separator);
-			g_string_append(value,
-					gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(property_value)));
+			g_string_append(value, gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(property_value)));
 		}
+		g_free(separator);
 	}
 
 	return value;
