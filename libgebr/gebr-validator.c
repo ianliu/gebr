@@ -28,6 +28,8 @@ typedef struct {
 	GError *error[3];
 } HashData;
 
+static GebrGeoXmlDocument *cache_docs[] = { NULL, NULL, NULL};
+
 #define MAX_RESULT_LENGTH 68
 #define ITER_INI_EXPR ";iter=bc_reset(0);"
 #define ITER_END_EXPR ";iter=bc_reset(1);"
@@ -998,19 +1000,18 @@ void gebr_validator_get_documents(GebrValidator *self,
 
 void gebr_validator_update(GebrValidator *self)
 {
-	static GebrGeoXmlDocument *last[] = { NULL, NULL, NULL};
 	GebrGeoXmlSequence *seq;
 
 	for (int i = GEBR_GEOXML_DOCUMENT_TYPE_PROJECT; i >= GEBR_GEOXML_DOCUMENT_TYPE_FLOW; i--) {
-		if (!self->docs[i] || !*(self->docs[i]) || *(self->docs[i]) == last[i])
+		if (!self->docs[i] || !*(self->docs[i]) || *(self->docs[i]) == cache_docs[i])
 			continue;
 
 		if (i == GEBR_GEOXML_DOCUMENT_TYPE_PROJECT) {
 			g_hash_table_remove_all(self->vars);
-			last[GEBR_GEOXML_DOCUMENT_TYPE_LINE] = NULL;
-			last[GEBR_GEOXML_DOCUMENT_TYPE_FLOW] = NULL;
-		} else if (last[i]) {
-			seq = gebr_geoxml_document_get_dict_parameter(last[i]);
+			cache_docs[GEBR_GEOXML_DOCUMENT_TYPE_LINE] = NULL;
+			cache_docs[GEBR_GEOXML_DOCUMENT_TYPE_FLOW] = NULL;
+		} else if (cache_docs[i]) {
+			seq = gebr_geoxml_document_get_dict_parameter(cache_docs[i]);
 			while (seq) {
 				hash_data_remove(self, GET_VAR_NAME(GEBR_GEOXML_PARAMETER(seq)), i);
 				gebr_geoxml_sequence_next(&seq);
@@ -1022,7 +1023,26 @@ void gebr_validator_update(GebrValidator *self)
 			gebr_validator_insert(self, GEBR_GEOXML_PARAMETER(seq), NULL, NULL);
 			gebr_geoxml_sequence_next(&seq);
 		}
-		last[i] = *(self->docs[i]);
+		cache_docs[i] = *(self->docs[i]);
+	}
+}
+
+void gebr_validator_force_update(GebrValidator *self)
+{
+	g_hash_table_remove_all(self->vars);
+
+	for (int i = GEBR_GEOXML_DOCUMENT_TYPE_PROJECT; i >= GEBR_GEOXML_DOCUMENT_TYPE_FLOW; i--) {
+		GebrGeoXmlSequence *seq;
+
+		if (!self->docs[i] || !*(self->docs[i]))
+			continue;
+
+		seq = gebr_geoxml_document_get_dict_parameter(*(self->docs[i]));
+		while (seq) {
+			gebr_validator_insert(self, GEBR_GEOXML_PARAMETER(seq), NULL, NULL);
+			gebr_geoxml_sequence_next(&seq);
+		}
+		cache_docs[i] = *(self->docs[i]);
 	}
 }
 

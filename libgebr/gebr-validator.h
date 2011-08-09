@@ -187,8 +187,18 @@ void gebr_validator_get_documents(GebrValidator       *validator,
 /**
  * gebr_validator_update:
  * @validator: The #GebrValidator to be updated
+ *
+ * Updates of all variables of the changed documents.
  */
 void gebr_validator_update(GebrValidator *validator);
+
+/**
+ * gebr_validator_force_update:
+ * @validator:
+ *
+ * Forces update of all variables, ignoring document cache.
+ */
+void gebr_validator_force_update(GebrValidator *validator);
 
 /**
  * gebr_validator_free:
