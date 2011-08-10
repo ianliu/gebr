@@ -239,8 +239,10 @@ gebr_gui_value_sequence_edit_add(GebrGuiValueSequenceEdit * gebr_gui_value_seque
 
 void
 gebr_gui_value_sequence_edit_load(GebrGuiValueSequenceEdit * gebr_gui_value_sequence_edit,
-				  GebrGeoXmlSequence * sequence, ValueSequenceSetFunction set_function,
-				  ValueSequenceGetFunction get_function, gpointer user_data)
+				  GebrGeoXmlSequence * sequence,
+				  ValueSequenceSetFunction set_function,
+				  ValueSequenceGetFunction get_function,
+				  gpointer user_data)
 {
 	if (set_function == NULL || get_function == NULL)
 		return;
@@ -254,6 +256,7 @@ gebr_gui_value_sequence_edit_load(GebrGuiValueSequenceEdit * gebr_gui_value_sequ
 		GebrGeoXmlSequence *next;
 
 		next = sequence;
+		gebr_geoxml_object_ref(next);
 		gebr_geoxml_sequence_next(&next);
 		if (next == NULL &&
 		    !strlen(gebr_gui_value_sequence_edit->get_function
@@ -261,6 +264,7 @@ gebr_gui_value_sequence_edit_load(GebrGuiValueSequenceEdit * gebr_gui_value_sequ
 			return;
 	}
 
+	gebr_geoxml_object_ref(sequence);
 	for (; sequence != NULL; gebr_geoxml_sequence_next(&sequence))
 		gebr_gui_value_sequence_edit_add(gebr_gui_value_sequence_edit, sequence);
 }
