@@ -73,23 +73,43 @@ int document_load_at_with_parent(GebrGeoXmlDocument ** document, const gchar * f
  * Calls #document_load_path_with_parent.
  */
 int document_load_path(GebrGeoXmlDocument **document, const gchar * path);
+
 /**
- * Load a document from its path, handling errors.
- * Return the errors codes of #gebr_geoxml_document_load.
+ * document_load_path_with_parent:
+ * @document: Return location for the document to be loaded.
+ * @path: The document path in the file system.
+ * @parent: ???
+ * @cache: %TRUE to cache this document.
  *
- * If load error is GEBR_GEOXML_RETV_FILE_NOT_FOUND or GEBR_GEOXML_RETV_PERMISSION_DENIED,
- * no action is requested from user and a log message is shown.
- * Otherwise, a dialog is presented to the user. If the user choose to delete or export file,
- * GEBR_GEOXML_RETV_FILE_NOT_FOUND is returned. This function will remove the reference of \p path
- * if \p parent is not NULL. The callee must take care to the removal of reference
- * pointer (eg. GebrGeoXmlProjectLine) so that the next iterator pointer is obtained before
+ * If the return value is %GEBR_GEOXML_RETV_SUCCESS, loads the document in
+ * @path and returns it in @document.
+ *
+ * If the return value is %GEBR_GEOXML_RETV_FILE_NOT_FOUND or
+ * %GEBR_GEOXML_RETV_PERMISSION_DENIED, a log message is shown indicating the
+ * error.
+ *
+ * If another error ocurred while loading the document, a dialog is presented
+ * to the user asking him to choose one of:
+ *  a) delete the erroneous document;
+ *  b) export the file.
+ *
+ * In both cases, this method will return %GEBR_GEOXML_RETV_FILE_NOT_FOUND.
+ *
+ * This function will remove the reference of @path if @parent is not %NULL.
+ * The callee must take care to the removal of reference pointer (eg.
+ * GebrGeoXmlProjectLine) so that the next iterator pointer is obtained before
  * calling this function.
  *
- * If \p parent is non-NULL, it must point to the parent of \p document
- * (eg. a line if \p document is a flow).
- * It is used to remove child's reference if \p document fails to load. 
+ * If @parent is non-%NULL, it must point to the parent of @document (eg. a
+ * line if @document is a flow). It is used to remove child's reference if
+ * @document fails to load.
+ *
+ * Returns: The same errors codes of gebr_geoxml_document_load().
  */
-int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * path, GtkTreeIter *parent, gboolean cache);
+int document_load_path_with_parent(GebrGeoXmlDocument **document,
+				   const gchar         *path,
+				   GtkTreeIter         *parent,
+				   gboolean             cache);
 
 /**
  * Save \p document at \p path.  * Only set \p set_modified_date to TRUE if this save is a reflect of a explicit user action.
