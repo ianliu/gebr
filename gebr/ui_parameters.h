@@ -25,7 +25,11 @@ G_BEGIN_DECLS
 /**
  * parameters_configure_setup_ui:
  *
- * Shows a dialog to configure the current selected program's parameters.
+ * When the selected program is edited, a copy is created at the bottom of its
+ * flow. That copy is modified instead the original flow and if the operation
+ * is cancelled, ie the user press the Cancel button, that copy is deleted.
+ * Otherwise, if the user confirm by pressing Ok, the original program is
+ * deleted and the copy is moved into its position.
  */
 void parameters_configure_setup_ui(void);
 

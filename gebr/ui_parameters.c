@@ -78,6 +78,7 @@ parameters_configure_setup_ui(void)
 						      flow_io_customized_paths_from_line,
 						      FALSE,
 						      gebr.validator);
+	gebr_geoxml_object_unref(clone);
 
 	g_signal_connect(dialog, "response", G_CALLBACK(parameters_actions), program_edit);
 	g_signal_connect(dialog, "delete-event", G_CALLBACK(parameters_on_delete_event), program_edit);
@@ -123,18 +124,10 @@ validate_program_iter(GtkTreeIter *iter, GError **error)
 }
 
 /* Private functions {{{1*/
-/*
- * parameters_actions:
- * @dialog: the dialog that emitted the response signal
- * @arg1: the response id
- * @program_edit:
- */
 static void
-parameters_actions(GtkDialog *dialog,
-		   gint arg1,
-		   GebrGuiProgramEdit *program_edit)
+parameters_actions(GtkDialog *dialog, gint response, GebrGuiProgramEdit *program_edit)
 {
-	switch (arg1) {
+	switch (response) {
 	case GTK_RESPONSE_OK:{
 		GtkTreeIter iter;
 		const gchar * icon;
