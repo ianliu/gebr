@@ -94,6 +94,8 @@ void test_gebr_geoxml_flow_get_and_set_date_last_run(void){
 	gebr_geoxml_flow_set_date_last_run(flow, "");
 	date = gebr_geoxml_flow_get_date_last_run(flow);
 	g_assert_cmpstr(date, ==, "");
+
+	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
 }
 
 void test_gebr_geoxml_flow_server_get_and_set_date_last_run(void){
