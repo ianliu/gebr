@@ -1333,8 +1333,8 @@
       <title>O dicionário</title>
       <para>O dicionário é um recurso muito flexível, que pode ser utilizado de formas diferentes e para diversos fins, e foi totalmente reformulado na 
       <emphasis role="bold">versão 0.14 da GêBR</emphasis>.</para>
-	<para>Agora o dicionário, como os parâmetros de programa, aceitam expressões, podendo assim definir variáveis mais complexas,
-	assim ele se torna uma ferramenta muito interessante na construção de fluxos. Durante esta seção vamos apresentar exemplos do uso de variáveis em um fluxo.</para>
+	<para>Agora o dicionário, como os parâmetros de programa, aceita expressões, podendo assim definir variáveis mais complexas,
+	tornando-se uma ferramenta muito interessante na construção de fluxos. Durante esta seção vamos apresentar exemplos do uso de variáveis em um fluxo.</para>
 	<para>A seguir um exemplo simples de como definir uma variável no dicionário:</para>
 	 <procedure>
         <step>
@@ -1345,7 +1345,7 @@
             <guilabel>Editor de Fluxo</guilabel>).</para>
           <figure>
             <mediaobject>
-              <caption>Na aba Fluxos, acrescentamos "Fluxo Exemplo" à "Linha teste 1", uso no próximo exemplo. </caption>
+              <caption>Na aba Fluxos, acrescentamos "Fluxo Exemplo" à "Linha teste 1", utilizado no próximo exemplo. </caption>
               <imageobject>
                 <imagedata fileref="../images/exemplo_variaveis_1.png"/>
               </imageobject>

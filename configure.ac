@@ -26,7 +26,7 @@ AC_PREREQ([2.59])
 
 m4_define(gebr_major_version,   [0])
 m4_define(gebr_minor_version,  [13])
-m4_define(gebr_micro_version,   [9])
+m4_define(gebr_micro_version,  [10])
 m4_define([gebr_interface_age], [0])
 m4_define([gebr_binary_age],
           [m4_eval(100 * gebr_minor_version + gebr_micro_version)])
@@ -229,7 +229,7 @@ AC_SUBST(GDOME2_CFLAGS)
 if test "$enable_gui" = "yes"; then
 	PKG_CHECK_MODULES([GUI], [
 		gtk+-2.0   >= 2.18.0
-		webkit-1.0 >= 1.2.5
+		webkit-1.0 >= 1.0.1
 	])
 	AC_SUBST(GUI_LIBS)
 	AC_SUBST(GUI_CFLAGS)
