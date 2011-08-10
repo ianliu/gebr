@@ -383,11 +383,15 @@ void test_gebr_geoxml_flow_change_to_revision(void){
 
 	revision = gebr_geoxml_flow_append_revision(flow, "asdf");
 	boole = gebr_geoxml_flow_change_to_revision(flow, revision, NULL);
+	gebr_geoxml_object_unref(revision);
 	g_assert(boole == TRUE);
 
 	revision = gebr_geoxml_flow_append_revision(flow, "kakarotto");
 	boole = gebr_geoxml_flow_change_to_revision(flow, revision, NULL);
+	gebr_geoxml_object_unref(revision);
 	g_assert(boole == TRUE);
+
+	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
 
 }
 void test_gebr_geoxml_flow_get_and_set_revision_data(void){
