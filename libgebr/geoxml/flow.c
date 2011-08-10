@@ -797,8 +797,11 @@ gboolean gebr_geoxml_flow_insert_iter_dict (GebrGeoXmlFlow *flow)
 	seq = gebr_geoxml_parameters_get_first_parameter (dict);
 	keyword = gebr_geoxml_program_parameter_get_keyword (GEBR_GEOXML_PROGRAM_PARAMETER (seq));
 
-	if (g_strcmp0 (keyword, "iter") == 0)
+	if (g_strcmp0 (keyword, "iter") == 0) {
+		gebr_geoxml_object_unref(dict);
+		gebr_geoxml_object_unref(seq);
 		return FALSE;
+	}
 
 	param = gebr_geoxml_parameters_append_parameter(dict, GEBR_GEOXML_PARAMETER_TYPE_FLOAT);
 	gebr_geoxml_program_parameter_set_list_separator(GEBR_GEOXML_PROGRAM_PARAMETER (param), "|");
@@ -826,7 +829,7 @@ void gebr_geoxml_flow_remove_iter_dict (GebrGeoXmlFlow *flow)
 {
 	GebrGeoXmlSequence *seq;
 	GebrGeoXmlParameters *dict;
-	const gchar *keyword;
+	gchar *keyword;
 
 	dict = gebr_geoxml_document_get_dict_parameters (GEBR_GEOXML_DOCUMENT (flow));
 	seq = gebr_geoxml_parameters_get_first_parameter (dict);
@@ -834,6 +837,9 @@ void gebr_geoxml_flow_remove_iter_dict (GebrGeoXmlFlow *flow)
 
 	if (g_strcmp0 (keyword, "iter") == 0)
 		gebr_geoxml_sequence_remove(seq);
+
+	gebr_geoxml_object_unref(dict);
+	g_free(keyword);
 }
 
 void gebr_geoxml_flow_io_set_output_append(GebrGeoXmlFlow *flow, gboolean setting)
@@ -918,8 +924,10 @@ void gebr_geoxml_flow_update_iter_dict_value(GebrGeoXmlFlow *flow)
 	iter = GEBR_GEOXML_PROGRAM_PARAMETER(gebr_geoxml_document_get_dict_parameter(doc));
 	keyword = gebr_geoxml_program_parameter_get_keyword(iter);
 
-	if (g_strcmp0 (keyword, "iter") != 0)
+	if (g_strcmp0 (keyword, "iter") != 0) {
+		gebr_geoxml_object_unref(iter);
 		return;
+	}
 
 	program = gebr_geoxml_flow_get_control_program(flow);
 	n = gebr_geoxml_program_control_get_n(program, &step, &ini);
@@ -940,6 +948,11 @@ void gebr_geoxml_flow_update_iter_dict_value(GebrGeoXmlFlow *flow)
 	// Set 'n'
 	gebr_geoxml_sequence_next(&seq);
 	gebr_geoxml_value_sequence_set(GEBR_GEOXML_VALUE_SEQUENCE(seq), n);
+
+	gebr_geoxml_object_unref(iter);
+	gebr_geoxml_object_unref(program);
+	if (seq)
+		gebr_geoxml_object_unref(seq);
 
 	g_free(current);
 }
