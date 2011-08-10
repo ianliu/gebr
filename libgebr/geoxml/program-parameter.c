@@ -741,15 +741,18 @@ gebr_geoxml_program_parameter_get_enum_option(GebrGeoXmlProgramParameter * progr
 	if (gebr_geoxml_parameter_get_is_reference(parameter)) {
 		GebrGeoXmlParameter * referencee;
 		GebrGeoXmlProgramParameter * program;
+		int retval;
 
 		referencee = gebr_geoxml_parameter_get_referencee(parameter);
 		program = GEBR_GEOXML_PROGRAM_PARAMETER(referencee);
-
-		return gebr_geoxml_program_parameter_get_enum_option(program, enum_option, index);
+		retval = gebr_geoxml_program_parameter_get_enum_option(program, enum_option, index);
+		gebr_geoxml_object_unref(referencee);
+		return retval;
 	}
 
 	type_element = __gebr_geoxml_parameter_get_type_element(parameter);
 	*enum_option = GEBR_GEOXML_SEQUENCE(__gebr_geoxml_get_element_at(type_element, "option", index, TRUE));
+	gdome_el_unref(type_element, &exception);
 
 	return (*enum_option == NULL) ? GEBR_GEOXML_RETV_INVALID_INDEX : GEBR_GEOXML_RETV_SUCCESS;
 }
