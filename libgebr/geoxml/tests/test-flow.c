@@ -302,13 +302,16 @@ void test_gebr_geoxml_flow_get_programs_number(void){
 	g_assert_cmpint(number, ==, 0);
 
 	program = gebr_geoxml_flow_append_program(flow);
+	gebr_geoxml_object_unref(program);
 	number = gebr_geoxml_flow_get_programs_number(flow);
 	g_assert_cmpint(number, ==, 1);
 
 	program = gebr_geoxml_flow_append_program(flow);
 	number = gebr_geoxml_flow_get_programs_number(flow);
+	gebr_geoxml_object_unref(program);
 	g_assert_cmpint(number, ==, 2);
 
+	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
 }
 
 void test_gebr_geoxml_flow_get_category(void){
