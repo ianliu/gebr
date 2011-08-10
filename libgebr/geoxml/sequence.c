@@ -210,7 +210,7 @@ __gebr_geoxml_sequence_move_before(GebrGeoXmlSequence *sequence,
 	GdomeNode *insert;
 	GdomeException exc1, exc2;
 
-	parent = gdome_n_parentNode((GdomeNode *) position, &exc1);
+	parent = gdome_n_parentNode((GdomeNode *) sequence, &exc1);
 	insert = gdome_n_insertBefore_protected(parent, (GdomeNode *)sequence,
 						(GdomeNode *)position, &exc2);
 	gdome_n_unref(parent, &exception);

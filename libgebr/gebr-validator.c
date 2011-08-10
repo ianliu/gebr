@@ -881,13 +881,17 @@ gebr_validator_move(GebrValidator         *self,
 			gebr_geoxml_parameter_set_label(new_param, comment);
 			gebr_validator_insert(self, new_param, NULL, &err1);
 		}
-	} else
+	} else {
 		new_param = source;
+		gebr_geoxml_object_ref(source);
+	}
 
 	hash_data_remove(self, name, t1);
 
-	if (t1 != t2)
+	if (t1 != t2) {
+		gebr_geoxml_object_ref(source);
 		gebr_geoxml_sequence_remove(GEBR_GEOXML_SEQUENCE(source));
+	}
 
 	gebr_geoxml_sequence_move_after(GEBR_GEOXML_SEQUENCE(new_param),
 					GEBR_GEOXML_SEQUENCE(pivot));

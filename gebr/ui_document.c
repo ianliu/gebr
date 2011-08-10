@@ -1357,6 +1357,7 @@ static void dict_edit_load_iter(struct dict_edit_data *data, GtkTreeIter * iter,
 		value = g_strconcat("[", ini, ", ...,", value, "]", NULL);
 	}
 
+	gebr_geoxml_object_ref(parameter);
 	gchar *keyword_escaped = g_markup_escape_text(keyword, -1);
 	gtk_tree_store_set(GTK_TREE_STORE(data->tree_model), iter,
 			   DICT_EDIT_KEYWORD_IMAGE, "",
