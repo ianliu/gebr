@@ -429,11 +429,19 @@ int gebr_geoxml_flow_get_category(GebrGeoXmlFlow * flow, GebrGeoXmlSequence ** c
 	    ? GEBR_GEOXML_RETV_INVALID_INDEX : GEBR_GEOXML_RETV_SUCCESS;
 }
 
-glong gebr_geoxml_flow_get_categories_number(GebrGeoXmlFlow * flow)
+glong
+gebr_geoxml_flow_get_categories_number(GebrGeoXmlFlow * flow)
 {
 	if (flow == NULL)
 		return -1;
-	return __gebr_geoxml_get_elements_number(gebr_geoxml_document_root_element(GEBR_GEOXML_DOC(flow)), "category");
+
+	gulong retval = 0;
+	GdomeElement * root = gebr_geoxml_document_root_element(GEBR_GEOXML_DOC(flow));
+
+	retval =  __gebr_geoxml_get_elements_number(root, "category");
+	gdome_el_unref(root, &exception);
+
+	return retval;	
 }
 
 gboolean gebr_geoxml_flow_change_to_revision(GebrGeoXmlFlow * flow, GebrGeoXmlRevision * revision, gboolean * report_merged)

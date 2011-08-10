@@ -314,7 +314,8 @@ int gebr_geoxml_flow_get_category(GebrGeoXmlFlow * flow, GebrGeoXmlSequence ** c
  *
  * If @flow is NULL returns -1.
  */
-glong gebr_geoxml_flow_get_categories_number(GebrGeoXmlFlow * flow);
+glong
+gebr_geoxml_flow_get_categories_number(GebrGeoXmlFlow * flow);
 
 /**
  * Change all the flow data to the one stored at revision, except, of course,
