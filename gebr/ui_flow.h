@@ -70,12 +70,6 @@ gboolean flow_io_get_selected(struct ui_flow_io *ui_flow_io, GtkTreeIter * iter)
 void flow_io_select_iter(struct ui_flow_io *ui_flow_io, GtkTreeIter * iter);
 
 /**
- * Add line's paths as shortcuts in \p chooser.
- * @param chooser The #GtkFileChooser to have the shortcuts set.
- */
-void flow_io_customized_paths_from_line(GtkFileChooser * chooser);
-
-/**
  * Sets the IO information for server pointed by \p server_iter.
  * @param server_iter The iterator for \ref gebr.ui_server_list->common.store.
  * @param input Input file.

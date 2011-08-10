@@ -51,30 +51,6 @@ void flow_io_select_iter(struct ui_flow_io *ui_flow_io, GtkTreeIter * iter)
 	gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(ui_flow_io->treeview), iter);
 }
 
-void flow_io_customized_paths_from_line(GtkFileChooser * chooser)
-{
-	GError *error;
-	GebrGeoXmlSequence *path_sequence;
-
-	if (gebr.line == NULL)
-		return;
-
-	error = NULL;
-	gebr_geoxml_line_get_path(gebr.line, &path_sequence, 0);
-	if (path_sequence != NULL) {
-		gtk_file_chooser_set_current_folder(chooser,
-						    gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE
-										   (path_sequence)));
-
-		do {
-			gtk_file_chooser_add_shortcut_folder(chooser,
-							     gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE
-											    (path_sequence)), &error);
-			gebr_geoxml_sequence_next(&path_sequence);
-		} while (path_sequence != NULL);
-	}
-}
-
 void flow_io_set_server(GtkTreeIter * server_iter, const gchar * input, const gchar * output, const gchar * error)
 {
 	GebrServer *server;
