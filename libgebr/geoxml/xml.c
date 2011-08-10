@@ -143,7 +143,7 @@ __gebr_geoxml_get_element_at(GdomeElement * parent_element,
 			     gulong index,
 			     gboolean recursive)
 {
-	g_return_if_fail(parent_element != NULL);
+	g_return_val_if_fail(parent_element != NULL, NULL);
 
 	if (recursive == FALSE)
 	{
@@ -289,8 +289,7 @@ gulong __gebr_geoxml_get_elements_number(GdomeElement * parent_element, const gc
 	gulong elements_number;
 
 	elements_number = 0;
-	for (child = __gebr_geoxml_get_element_at(parent_element, tag_name, 0, FALSE); child != NULL; elements_number++)
-	{
+	for (child = __gebr_geoxml_get_element_at(parent_element, tag_name, 0, FALSE); child != NULL; elements_number++) {
 		next = __gebr_geoxml_next_same_element(child);
 		gdome_el_unref(child, &exception);
 		child = next;
@@ -457,12 +456,9 @@ GdomeElement *__gebr_geoxml_next_element(GdomeElement * element)
 	GdomeNode *aux;
 
 	node = gdome_el_nextSibling(element, &exception);
-
-	while (node)
-	{
+	while (node) {
 		if (gdome_n_nodeType(node, &exception) == GDOME_ELEMENT_NODE)
 			break;
-
 		aux = node;
 		node = gdome_n_nextSibling(aux, &exception);
 		gdome_n_unref(aux, &exception);
@@ -508,9 +504,8 @@ GdomeElement *__gebr_geoxml_next_same_element(GdomeElement * element)
 	name1 = gdome_el_nodeName(element, &exception);
 	name2 = gdome_el_nodeName(next_element, &exception);
 
-	if (!gdome_str_equal (name1, name2))
-	{
-		gebr_geoxml_object_unref(next_element);
+	if (!gdome_str_equal (name1, name2)) {
+		gdome_el_unref(next_element, &exception);
 		next_element = NULL;
 	}
 
