@@ -273,19 +273,26 @@ void test_gebr_geoxml_flow_get_program(void){
 
 	flow = gebr_geoxml_flow_new();
 	program = GEBR_GEOXML_SEQUENCE(gebr_geoxml_flow_append_program(flow));
+	gebr_geoxml_object_unref(program);
 	returned = gebr_geoxml_flow_get_program(flow, &program, 1337);
+	gebr_geoxml_object_unref(program);
 	g_assert_cmpint(returned, ==, GEBR_GEOXML_RETV_INVALID_INDEX);
 
 	returned = gebr_geoxml_flow_get_program(flow, &program, 0);
+	gebr_geoxml_object_unref(program);
 	g_assert_cmpint(returned, ==, GEBR_GEOXML_RETV_SUCCESS);
 
 	returned = gebr_geoxml_flow_get_program(flow, &program, 1);
+	gebr_geoxml_object_unref(program);
 	g_assert_cmpint(returned, ==, GEBR_GEOXML_RETV_INVALID_INDEX);
 
 	program = GEBR_GEOXML_SEQUENCE(gebr_geoxml_flow_append_program(flow));
+	gebr_geoxml_object_unref(program);
 	returned = gebr_geoxml_flow_get_program(flow, &program, 1);
+	gebr_geoxml_object_unref(program);
 	g_assert_cmpint(returned, ==, GEBR_GEOXML_RETV_SUCCESS);
 
+	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
 }
 
 void test_gebr_geoxml_flow_get_programs_number(void){
