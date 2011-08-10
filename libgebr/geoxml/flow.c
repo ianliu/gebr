@@ -674,11 +674,15 @@ gebr_geoxml_flow_validate(GebrGeoXmlFlow *flow,
 
 		GebrGeoXmlProgramStatus status = gebr_geoxml_program_get_status(prog);
 
+		if (last_configured)
+			gebr_geoxml_object_unref(last_configured);
+		last_configured = prog;
+		gebr_geoxml_object_ref(last_configured);
+
 		if (status != GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED
 		    || gebr_geoxml_program_get_control(prog) == GEBR_GEOXML_PROGRAM_CONTROL_FOR)
 			continue;
 
-		last_configured = prog;
 		program_title = gebr_geoxml_program_get_title(prog);
 
 		if (first && gebr_geoxml_program_get_stdin(prog)) {
@@ -688,6 +692,8 @@ gebr_geoxml_flow_validate(GebrGeoXmlFlow *flow,
 					    _("No input file specified for program "
 					      "\"%s\" at flow \"%s\""),
 					    program_title, flow_title);
+				gebr_geoxml_object_unref(seq);
+				gebr_geoxml_object_unref(last_configured);
 				return FALSE;
 			}
 
@@ -699,6 +705,8 @@ gebr_geoxml_flow_validate(GebrGeoXmlFlow *flow,
 					    _("Invalid input file specified for program "
 					      "\"%s\" at flow \"%s\""),
 					    program_title, flow_title);
+				gebr_geoxml_object_unref(seq);
+				gebr_geoxml_object_unref(last_configured);
 				return FALSE;
 			}
 		} else {
@@ -714,6 +722,8 @@ gebr_geoxml_flow_validate(GebrGeoXmlFlow *flow,
 					    _("Flow \"%s\" is broken before program "
 					      "\"%s\" (no input)."),
 					    flow_title, program_title);
+				gebr_geoxml_object_unref(seq);
+				gebr_geoxml_object_unref(last_configured);
 				return FALSE;
 			case 2:	/* Previous does write to stdin but current does not care about */
 				g_set_error(err, GEBR_GEOXML_FLOW_ERROR,
@@ -721,6 +731,8 @@ gebr_geoxml_flow_validate(GebrGeoXmlFlow *flow,
 					    _("Flow \"%s\" is broken before program "
 					      "\"%s\" (unexpected output).\n"),
 					    flow_title, program_title);
+				gebr_geoxml_object_unref(seq);
+				gebr_geoxml_object_unref(last_configured);
 				return FALSE;
 			default:
 				g_warn_if_reached();
@@ -735,6 +747,7 @@ gebr_geoxml_flow_validate(GebrGeoXmlFlow *flow,
 			    GEBR_GEOXML_FLOW_ERROR_NO_VALID_PROGRAMS,
 			    _("No configured or enabled programs found for flow \"%s\""),
 			    flow_title);
+		gebr_geoxml_object_unref(last_configured);
 		return FALSE;
 	}
 
@@ -748,6 +761,7 @@ gebr_geoxml_flow_validate(GebrGeoXmlFlow *flow,
 			    GEBR_GEOXML_FLOW_ERROR_INVALID_OUTFILE,
 			    _("Invalid output file file specified for program \"%s\" at flow \"%s\""),
 			    program_title, flow_title);
+		gebr_geoxml_object_unref(last_configured);
 		return FALSE;
 	}	
 
@@ -760,9 +774,11 @@ gebr_geoxml_flow_validate(GebrGeoXmlFlow *flow,
 			    GEBR_GEOXML_FLOW_ERROR_INVALID_ERRORFILE,
 			    _("Invalid error file specified for program \"%s\" at flow \"%s\""),
 			    program_title, flow_title);
+		gebr_geoxml_object_unref(last_configured);
 		return FALSE;
 	}	
 	
+	gebr_geoxml_object_unref(last_configured);
 	return TRUE;
 }
 

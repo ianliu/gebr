@@ -870,6 +870,19 @@ void test_gebr_validator_leaks(Fixture *fixture, gconstpointer data)
 	gebr_geoxml_object_unref(b);
 }
 
+void test_gebr_geoxml_validate_flow(Fixture *fixture, gconstpointer data)
+{
+	GebrGeoXmlDocument *doc;
+	GError *err = NULL;
+
+	gebr_geoxml_document_load(&doc, TEST_SRCDIR "/../geoxml/tests/dict_test_flow.flw", TRUE, NULL);
+
+	gebr_geoxml_flow_validate(GEBR_GEOXML_FLOW(doc), fixture->validator, &err);
+	g_assert_no_error(err);
+
+	gebr_geoxml_document_free(doc);
+}
+
 int main(int argc, char *argv[])
 {
 	g_type_init();
@@ -934,6 +947,10 @@ int main(int argc, char *argv[])
 		   fixture_setup,
 			test_gebr_validator_leaks,
 		   fixture_teardown);
+	g_test_add("/libgebr/validator/validate_flow", Fixture, NULL,
+	           fixture_setup,
+	           test_gebr_geoxml_validate_flow,
+	           fixture_teardown);
 	g_test_add_func("/libgebr/validator/rename", test_gebr_validator_rename);
 
 	return g_test_run();
