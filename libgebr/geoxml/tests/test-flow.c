@@ -72,17 +72,25 @@ void test_duplicate_categories(void)
 {
 	gint n;
 	GebrGeoXmlFlow *flow = NULL;
+	GebrGeoXmlCategory * cat = NULL;
 
 	flow = gebr_geoxml_flow_new ();
-	gebr_geoxml_flow_append_category(flow, "foo");
-	gebr_geoxml_flow_append_category(flow, "foo");
+
+	cat = gebr_geoxml_flow_append_category(flow, "foo");
+	gebr_geoxml_object_unref(cat);
+
+	cat = gebr_geoxml_flow_append_category(flow, "foo");
+	gebr_geoxml_object_unref(cat);
 
 	n = gebr_geoxml_flow_get_categories_number (flow);
 	g_assert_cmpint (n, ==, 1);
 
-	gebr_geoxml_flow_append_category(flow, "bar");
+	cat = gebr_geoxml_flow_append_category(flow, "bar");
 	n = gebr_geoxml_flow_get_categories_number (flow);
+	gebr_geoxml_object_unref(cat);
 	g_assert_cmpint (n, ==, 2);
+
+	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
 }
 
 void test_gebr_geoxml_flow_get_and_set_date_last_run(void){
