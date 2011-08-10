@@ -1027,7 +1027,7 @@ gtk_tree_view_reorder_callback(GtkTreeView * tree_view, GtkTreeIter * iter, GtkT
 	if (drop_position == GTK_TREE_VIEW_DROP_AFTER) {
 		gebr_geoxml_sequence_move_after(sequence, position_sequence);
 		gtk_list_store_move_after(GTK_LIST_STORE(tree_model), iter, position);
-
+		gebr_geoxml_object_ref(position_sequence);
 		gebr_geoxml_sequence_next(&position_sequence);
 	} else {
 		gebr_geoxml_sequence_move_before(sequence, position_sequence);
