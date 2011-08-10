@@ -46,6 +46,7 @@ int main(int argc, char **argv)
 	g_type_init();
 
 	gebr_libinit(GETTEXT_PACKAGE);
+	gebr_geoxml_init();
 
 	context = g_option_context_new(_("GeBR daemon"));
 	g_option_context_set_translation_domain(context, GETTEXT_PACKAGE);
@@ -72,6 +73,7 @@ int main(int argc, char **argv)
 
 	gebrd_config_load();
 	gebrd_init();
+	gebr_geoxml_finalize();
 
 	return 0;
 }

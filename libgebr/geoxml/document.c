@@ -85,11 +85,8 @@ typedef GdomeDocument *(*createDoc_func) (GdomeDOMImplementation *, char *, unsi
 /**
  * \internal
  */
-static GdomeDOMImplementation *dom_implementation;
-/**
- * \internal
- */
-static gint dom_implementation_ref_count = 0;
+static GdomeDOMImplementation *dom_implementation = NULL;
+
 /**
  * \internal
  * Used at GebrGeoXmlObject's methods.
@@ -115,33 +112,20 @@ static gboolean gebr_geoxml_document_check_version(GebrGeoXmlDocument * document
  */
 static void gebr_geoxml_document_fix_header(GString * source, const gchar * tagname, const gchar * dtd_filename);
 
-/**
- * \internal
- */
-static void __gebr_geoxml_ref(void)
+void gebr_geoxml_init(void)
 {
-	if (!dom_implementation_ref_count) {
-		GdomeDOMString *string = gdome_str_mkref("gebr-geoxml-clipboard");
-		dom_implementation = gdome_di_mkref();
-		clipboard_document = gdome_di_createDocument(dom_implementation, NULL,
-							     string, NULL, &exception);
-		gdome_str_unref(string);
-	} else
-		gdome_di_ref(dom_implementation, &exception);
-	++dom_implementation_ref_count;
+	GdomeDOMString *string = gdome_str_mkref("gebr-geoxml-clipboard");
+	dom_implementation = gdome_di_mkref();
+	clipboard_document = gdome_di_createDocument(dom_implementation, NULL,
+						     string, NULL, &exception);
+	gdome_str_unref(string);
 }
 
-/**
- * \internal
- */
-static void __gebr_geoxml_unref(void)
+void gebr_geoxml_finalize(void)
 {
 	gdome_di_unref(dom_implementation, &exception);
-	--dom_implementation_ref_count;
-	if (!dom_implementation_ref_count) {
-		gdome_doc_unref(clipboard_document, &exception);
-		clipboard_document = NULL;
-	}
+	gdome_doc_unref(clipboard_document, &exception);
+	clipboard_document = NULL;
 }
 
 static gchar *
@@ -889,9 +873,6 @@ static int __gebr_geoxml_document_load(GebrGeoXmlDocument ** document, const gch
 	GdomeDocument *doc;
 	int ret;
 
-	/* create the implementation. */
-	__gebr_geoxml_ref();
-
 	/* load */
 	doc = func(dom_implementation, (gchar *) src, GDOME_LOAD_PARSING, &exception);
 	if (doc == NULL) {
@@ -911,7 +892,7 @@ static int __gebr_geoxml_document_load(GebrGeoXmlDocument ** document, const gch
 	__gebr_geoxml_document_new_data(*document, "");
 	return GEBR_GEOXML_RETV_SUCCESS;
 
- err:	__gebr_geoxml_unref();
+ err:
 	*document = NULL;
 	return ret;
 }
@@ -942,8 +923,6 @@ GebrGeoXmlDocument *gebr_geoxml_document_new(const gchar * name, const gchar * v
 	GdomeElement *element;
 	GdomeDOMString *str;
 
-	/* create the implementation. */
-	__gebr_geoxml_ref();
 	str = gdome_str_mkref(name);
 	document = gdome_di_createDocument(dom_implementation, NULL, str, NULL, &exception);
 	__gebr_geoxml_document_new_data((GebrGeoXmlDocument *)document, "");
@@ -1011,7 +990,6 @@ void gebr_geoxml_document_free(GebrGeoXmlDocument * document)
 	g_string_free(data->filename, TRUE);
 	g_free(data);
 	gdome_doc_unref((GdomeDocument *) document, &exception);
-	__gebr_geoxml_unref();
 }
 
 GebrGeoXmlDocument *gebr_geoxml_document_clone(GebrGeoXmlDocument * source)

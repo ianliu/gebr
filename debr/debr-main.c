@@ -32,6 +32,7 @@ int main(int argc, char *argv[])
 	g_thread_init(NULL);
 
 	gebr_libinit(GETTEXT_PACKAGE);
+	gebr_geoxml_init();
 
 	gtk_init(&argc, &argv);
 
@@ -39,6 +40,8 @@ int main(int argc, char *argv[])
 	gebr_gui_setup_theme();
 	debr_setup_ui();
 	gtk_main();
+
+	gebr_geoxml_finalize();
 
 	return 0;
 }

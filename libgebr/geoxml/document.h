@@ -72,6 +72,16 @@ G_BEGIN_DECLS
  */
 
 /**
+ * gebr_geoxml_init:
+ */
+void gebr_geoxml_init(void);
+
+/**
+ * gebr_geoxml_finalize:
+ */
+void gebr_geoxml_finalize(void);
+
+/**
  * Load a document XML file at \p path into \p document.
  * The document is validated using the proper DTD. Invalid documents are not loaded.
  * The filename is set according to \p path (see #gebr_geoxml_document_set_filename).
