@@ -321,7 +321,8 @@ void test_gebr_geoxml_flow_get_programs_number(void){
 	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
 }
 
-void test_gebr_geoxml_flow_get_category(void){
+void test_gebr_geoxml_flow_get_category(void)
+{
 
 	GebrGeoXmlFlow *flow = NULL;
 	GebrGeoXmlSequence *category = NULL;
@@ -332,17 +333,21 @@ void test_gebr_geoxml_flow_get_category(void){
 
 	flow = gebr_geoxml_flow_new();
 	category = (GebrGeoXmlSequence*) gebr_geoxml_flow_append_category(flow,"qwerty");
+	gebr_geoxml_object_unref(category);
 	returned = gebr_geoxml_flow_get_category(flow, &category, 1337);
 	g_assert_cmpint(returned, ==, GEBR_GEOXML_RETV_INVALID_INDEX);
 
 	returned = gebr_geoxml_flow_get_category(flow, &category, 0);
+	gebr_geoxml_object_unref(category);
 	g_assert_cmpint(returned, ==, GEBR_GEOXML_RETV_SUCCESS);
 
 	returned = gebr_geoxml_flow_get_category(flow, &category, 1);
 	g_assert_cmpint(returned, ==, GEBR_GEOXML_RETV_INVALID_INDEX);
 
 	category = (GebrGeoXmlSequence*) gebr_geoxml_flow_append_category(flow,"zxcvb");
+	gebr_geoxml_object_unref(category);
 	returned = gebr_geoxml_flow_get_category(flow, &category, 1);
+	gebr_geoxml_object_unref(category);
 	g_assert_cmpint(returned, ==, GEBR_GEOXML_RETV_SUCCESS);
 
 	// Check if at failure (when flow is NULL), category will be set as NULL
@@ -352,8 +357,12 @@ void test_gebr_geoxml_flow_get_category(void){
 
 	// Check if at failure (when an invalid index is passed), category will be set as NULL
 	category = (GebrGeoXmlSequence*) gebr_geoxml_flow_append_category(flow,"zxcvb");
+	gebr_geoxml_object_unref(category);
 	returned = gebr_geoxml_flow_get_category(flow, &category, 24957);
+	gebr_geoxml_object_unref(category);
 	g_assert_cmpint(returned, ==, GEBR_GEOXML_RETV_INVALID_INDEX);
+
+	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
 }
 
 void test_gebr_geoxml_flow_append_revision(void){
