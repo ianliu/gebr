@@ -73,6 +73,7 @@ int main(int argc, char **argv)
 	GOptionContext *context;
 
 	gebr_libinit("libgebr");
+	gebr_geoxml_init();
 
 	/* Summary */
 	context = g_option_context_new(NULL);
@@ -192,6 +193,8 @@ int main(int argc, char **argv)
 			fprintf(stderr, "Unable to save %s\n", menu[imenu]);
 		gebr_geoxml_document_free(doc);
 	}
+
+	gebr_geoxml_finalize();
 
 	return 0;
 }

@@ -63,6 +63,7 @@ int main(int argc, char **argv)
 	int nmenu;
 
 	gebr_libinit("libgebr");
+	gebr_geoxml_init();
 
 	parse_command_line(argc, argv);
 
@@ -211,6 +212,7 @@ int main(int argc, char **argv)
 
 	g_string_free(prefix, TRUE);
 	g_string_free(offset, TRUE);
+	gebr_geoxml_finalize();
 
 	return EXIT_SUCCESS;
 }
