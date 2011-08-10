@@ -43,6 +43,8 @@ void test_gebr_geoxml_flow_server_get_and_set_address(void){
 	gebr_geoxml_flow_server_set_address(flow, "asdf/fdsa");
 	address = gebr_geoxml_flow_server_get_address(flow);
 	g_assert_cmpstr(address, ==, "asdf/fdsa");
+
+	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
 }
 
 void test_gebr_geoxml_flow_get_categories_number(void)
