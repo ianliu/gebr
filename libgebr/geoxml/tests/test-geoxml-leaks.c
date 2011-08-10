@@ -434,6 +434,25 @@ test_gebr_geoxml_leaks_sequence_append_clone(void)
 	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
 }
 
+static void
+test_gebr_geoxml_leaks_parameters_reset_to_default(void)
+{
+	GebrGeoXmlFlow *flow;
+	GebrGeoXmlSequence *program;
+	GebrGeoXmlParameters *params;
+
+	gebr_geoxml_document_load((GebrGeoXmlDocument **)&flow,
+				  TEST_DIR "/test.mnu", TRUE, NULL);
+
+	gebr_geoxml_flow_get_program(flow, &program, 0);
+	params = gebr_geoxml_program_get_parameters(GEBR_GEOXML_PROGRAM(program));
+	gebr_geoxml_parameters_reset_to_default(params);
+
+	gebr_geoxml_object_unref(params);
+	gebr_geoxml_object_unref(program);
+	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
+}
+
 int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
@@ -462,6 +481,7 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/geoxml/leaks/get_scope_and_required", test_gebr_geoxml_leaks_get_scope_and_required);
 	g_test_add_func("/libgebr/geoxml/leaks/document_load", test_gebr_geoxml_leaks_document_load);
 	g_test_add_func("/libgebr/geoxml/leaks/sequence_append_clone", test_gebr_geoxml_leaks_sequence_append_clone);
+	g_test_add_func("/libgebr/geoxml/leaks/parameters_reset_to_default", test_gebr_geoxml_leaks_parameters_reset_to_default);
 
 	return g_test_run();
 }
