@@ -1242,10 +1242,14 @@ gebr_validator_is_var_in_scope(GebrValidator *self,
 void
 gebr_validator_set_document(GebrValidator *self,
                             GebrGeoXmlDocument **doc,
-			    GebrGeoXmlDocumentType type)
+			    GebrGeoXmlDocumentType type,
+			    gboolean force)
 {
 	self->docs[type] = doc;
-	gebr_validator_update(self);
+	if (force)
+		gebr_validator_force_update(self);
+	else
+		gebr_validator_update(self);
 }
 
 gboolean

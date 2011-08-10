@@ -279,13 +279,15 @@ gboolean gebr_validator_is_var_in_scope(GebrValidator *self,
  * @validator:
  * @doc:
  * @type:
+ * @force:
  *
  * Set on validator, a new @doc
  *
  */
 void gebr_validator_set_document(GebrValidator *self,
 				 GebrGeoXmlDocument **doc,
-				 GebrGeoXmlDocumentType type);
+				 GebrGeoXmlDocumentType type,
+				 gboolean force);
 
 /**
  * gebr_validator_use_iter:
