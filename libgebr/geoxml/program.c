@@ -265,7 +265,7 @@ GebrGeoXmlProgramStatus gebr_geoxml_program_get_status(GebrGeoXmlProgram * progr
 	return GEBR_GEOXML_PROGRAM_STATUS_UNKNOWN;
 }
 
-const gchar *gebr_geoxml_program_get_title(GebrGeoXmlProgram * program)
+gchar *gebr_geoxml_program_get_title(GebrGeoXmlProgram * program)
 {
 	if (program == NULL)
 		return NULL;
@@ -279,7 +279,7 @@ const gchar *gebr_geoxml_program_get_binary(GebrGeoXmlProgram * program)
 	return __gebr_geoxml_get_tag_value((GdomeElement *) program, "binary");
 }
 
-const gchar *gebr_geoxml_program_get_description(GebrGeoXmlProgram * program)
+gchar *gebr_geoxml_program_get_description(GebrGeoXmlProgram * program)
 {
 	if (program == NULL)
 		return NULL;
@@ -293,7 +293,7 @@ gchar *gebr_geoxml_program_get_help(GebrGeoXmlProgram * program)
 	return __gebr_geoxml_get_tag_value((GdomeElement *) program, "help");
 }
 
-const gchar *gebr_geoxml_program_get_version(GebrGeoXmlProgram * program)
+gchar *gebr_geoxml_program_get_version(GebrGeoXmlProgram * program)
 {
 	if (program == NULL)
 		return NULL;

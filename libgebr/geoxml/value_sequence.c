@@ -58,7 +58,7 @@ void gebr_geoxml_value_sequence_set(GebrGeoXmlValueSequence * value_sequence, co
 	__gebr_geoxml_set_element_value((GdomeElement *) value_sequence, value, __gebr_geoxml_create_TextNode);
 }
 
-const gchar *gebr_geoxml_value_sequence_get(GebrGeoXmlValueSequence * value_sequence)
+gchar *gebr_geoxml_value_sequence_get(GebrGeoXmlValueSequence * value_sequence)
 {
 	if (value_sequence == NULL)
 		return NULL;

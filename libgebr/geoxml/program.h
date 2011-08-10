@@ -213,7 +213,7 @@ GebrGeoXmlProgramStatus gebr_geoxml_program_get_status(GebrGeoXmlProgram * progr
 /**
  *
  */
-const gchar *gebr_geoxml_program_get_title(GebrGeoXmlProgram * program);
+gchar *gebr_geoxml_program_get_title(GebrGeoXmlProgram * program);
 
 /**
  *
@@ -223,7 +223,7 @@ const gchar *gebr_geoxml_program_get_binary(GebrGeoXmlProgram * program);
 /**
  *
  */
-const gchar *gebr_geoxml_program_get_description(GebrGeoXmlProgram * program);
+gchar *gebr_geoxml_program_get_description(GebrGeoXmlProgram * program);
 
 /**
  *
@@ -235,7 +235,7 @@ gchar *gebr_geoxml_program_get_help(GebrGeoXmlProgram * program);
  *
  * If \p program is NULL returns NULL.
  */
-const gchar *gebr_geoxml_program_get_version(GebrGeoXmlProgram * program);
+gchar *gebr_geoxml_program_get_version(GebrGeoXmlProgram * program);
 
 /**
  * Get \p program's mpi implementation.
