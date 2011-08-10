@@ -107,10 +107,12 @@ test_gebr_geoxml_sequence_move_after(Fixture * fix, gconstpointer data)
 	parameter = gebr_geoxml_parameters_get_first_parameter(parameters);
 	gebr_geoxml_parameters_get_parameter(parameters, &last_parameter,
 					     gebr_geoxml_parameters_get_number(parameters)-1);
-	for (; parameter != last_parameter; parameter = gebr_geoxml_parameters_get_first_parameter(parameters)) {
-		gebr_geoxml_sequence_move_after(parameter, last_parameter);
-		gebr_geoxml_object_unref(parameter);
-	}
+
+	// Three elements: A, B, C
+	// Move A after C
+	// Move C to begin
+	gebr_geoxml_sequence_move_after(parameter, last_parameter);
+	gebr_geoxml_sequence_move_after(last_parameter, NULL);
 
 	generate_parameter_list(fix->after, GEBR_GEOXML_PROGRAM(program), TRUE);
 	g_assert_cmpstr(fix->before->str, ==, fix->after->str);
