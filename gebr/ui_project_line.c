@@ -515,7 +515,6 @@ static gboolean _project_line_import_path(const gchar *filename, GList **line_pa
 			gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
 			gdk_threads_leave();
 		}
-		gebr_geoxml_object_unref(GEBR_GEOXML_OBJECT(i));
 		gdk_threads_enter();
 		document_save(GEBR_GEOXML_DOCUMENT(*line), FALSE, FALSE);
 		gdk_threads_leave();
