@@ -362,7 +362,6 @@ void test_gebr_validator_remove(Fixture *fixture, gconstpointer data)
 	}
 	g_test_trap_assert_failed();
 
-	g_free(value);
 	gebr_geoxml_object_unref(x);
 	gebr_geoxml_object_unref(param);
 }
