@@ -519,13 +519,13 @@ typedef struct {
 	GError *error;
 } ValidationData;
 
-static void validate_program_parameter(GebrGeoXmlParameter *parameter, ValidationData *data)
+static gboolean
+validate_program_parameter(GebrGeoXmlObject *object, gpointer user_data)
 {
+	GebrGeoXmlParameter *parameter = GEBR_GEOXML_PARAMETER(object);
+	ValidationData *data = user_data;
 	GebrGeoXmlParameters *instance;
 	GebrGeoXmlParameter *selected;
-
-	if (data->error)
-		return;
 
 	/* for exclusive groups, check if this is
 	 * the selected parameter of its instance */
@@ -536,6 +536,11 @@ static void validate_program_parameter(GebrGeoXmlParameter *parameter, Validatio
 					      NULL, &data->error);
 	gebr_geoxml_object_unref(instance);
 	gebr_geoxml_object_unref(selected);
+
+	if (data->error)
+		return FALSE;
+
+	return TRUE;
 }
 
 gboolean gebr_geoxml_program_is_valid(GebrGeoXmlProgram *self,
@@ -546,7 +551,7 @@ gboolean gebr_geoxml_program_is_valid(GebrGeoXmlProgram *self,
 		.validator = validator,
 		.error = NULL
 	};
-	gebr_geoxml_program_foreach_parameter(self, (GebrGeoXmlCallback)validate_program_parameter, &data);
+	gebr_geoxml_program_foreach_parameter(self, validate_program_parameter, &data);
 
 	if (data.error) {
 		gebr_geoxml_program_set_error_id(self, FALSE, data.error->code);
