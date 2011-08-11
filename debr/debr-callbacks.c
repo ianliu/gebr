@@ -240,6 +240,7 @@ void on_menu_revert_activate(void)
 		/* revert to the one in disk */
 		gebr_geoxml_document_free(GEBR_GEOXML_DOC(old_menu));
 		debr.program = NULL;
+		gebr_geoxml_document_ref(GEBR_GEOXML_DOCUMENT(menu));
 		gtk_tree_store_set(debr.ui_menu.model, &iter, MENU_XMLPOINTER, menu, -1);
 		menu_status_set_from_iter(&iter, MENU_STATUS_SAVED);
 

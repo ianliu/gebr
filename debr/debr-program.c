@@ -402,6 +402,7 @@ void program_paste(void)
 
 	do {
 		gtk_list_store_append(debr.ui_program.list_store, &pasted_iter);
+		gebr_geoxml_object_ref(pasted);
 		gtk_list_store_set(debr.ui_program.list_store, &pasted_iter, PROGRAM_XMLPOINTER, pasted, -1);
 		program_load_iter(&pasted_iter);
 	} while (!gebr_geoxml_sequence_next(&pasted));
@@ -812,6 +813,7 @@ static GtkTreeIter program_append_to_ui(GebrGeoXmlProgram * program)
 	GtkTreeIter iter;
 
 	gtk_list_store_append(debr.ui_program.list_store, &iter);
+	gebr_geoxml_object_ref(program);
 	gtk_list_store_set(debr.ui_program.list_store, &iter,
 			   PROGRAM_XMLPOINTER, program,
 			   -1);

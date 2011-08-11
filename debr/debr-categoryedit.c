@@ -340,6 +340,7 @@ static void __category_edit_add(CategoryEdit * category_edit, GebrGeoXmlSequence
 	GtkTreeIter iter;
 
 	gtk_list_store_append(GEBR_GUI_SEQUENCE_EDIT(category_edit)->list_store, &iter);
+	gebr_geoxml_object_ref(category);
 	gtk_list_store_set(GEBR_GUI_SEQUENCE_EDIT(category_edit)->list_store, &iter,
 			   0, gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(category)),
 			   1, NULL, 2, category, -1);

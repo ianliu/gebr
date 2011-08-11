@@ -310,10 +310,15 @@ void menu_new_from_menu(GebrGeoXmlFlow *menu, gboolean edit,
 
 	gtk_tree_store_append(debr.ui_menu.model, &iter, &target);
 	gebr_geoxml_document_set_filename(GEBR_GEOXML_DOC(menu), filename);
+	gebr_geoxml_document_ref(GEBR_GEOXML_DOCUMENT(debr.menu));
 	gtk_tree_store_set(debr.ui_menu.model, &iter,
-			   MENU_STATUS, MENU_STATUS_UNSAVED, MENU_IMAGE, GTK_STOCK_NO,
-			   MENU_FILENAME, filename, MENU_XMLPOINTER, (gpointer) debr.menu,
-			   MENU_PATH, "", MENU_VALIDATE_POINTER, NULL, -1),
+			   MENU_STATUS, MENU_STATUS_UNSAVED,
+			   MENU_IMAGE, GTK_STOCK_NO,
+			   MENU_FILENAME, filename,
+			   MENU_XMLPOINTER, debr.menu,
+			   MENU_PATH, "",
+			   MENU_VALIDATE_POINTER, NULL,
+			   -1),
 	menu_select_iter(&iter);
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
@@ -415,6 +420,7 @@ void menu_load_iter(const gchar * path, GtkTreeIter * iter, GebrGeoXmlFlow * men
 		label = g_markup_printf_escaped("%s", filename);
 
 	debr_menu_sync_help_edit_window(iter, menu);
+	gebr_geoxml_document_ref(GEBR_GEOXML_DOCUMENT(menu));
 	gtk_tree_store_set(debr.ui_menu.model, iter,
 			   MENU_FILENAME, label,
 			   MENU_MODIFIED_DATE, tmp,
@@ -1298,9 +1304,7 @@ gboolean menu_dialog_setup_ui(gboolean new_menu)
 	gebr_geoxml_flow_get_program(debr.menu, &seq, 0);
 	for (; seq != NULL; gebr_geoxml_sequence_next(&seq))
 	{
-		GebrGeoXmlProgram *prog;
-		prog = GEBR_GEOXML_PROGRAM(seq);
-		debr_help_update(GEBR_GEOXML_OBJECT(prog));
+		debr_help_update(GEBR_GEOXML_OBJECT(seq));
 	}
 
 out:
@@ -1581,7 +1585,10 @@ void menu_replace(void) {
 
 	if (menu_get_selected(&iter, FALSE)) {
 		debr_menu_sync_help_edit_window(&iter, debr.menu_recovery.clone);
-		gtk_tree_store_set(debr.ui_menu.model, &iter, MENU_XMLPOINTER, debr.menu_recovery.clone, -1);
+
+		gebr_geoxml_document_ref(GEBR_GEOXML_DOCUMENT(debr.menu_recovery.clone));
+		gtk_tree_store_set(debr.ui_menu.model, &iter,
+				   MENU_XMLPOINTER, debr.menu_recovery.clone, -1);
 		gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(debr.menu));
 		menu_selected();
 		menu_saved_status_set(debr.menu_recovery.status);

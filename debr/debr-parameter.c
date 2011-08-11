@@ -492,6 +492,7 @@ void parameter_paste(void)
 			/* Insert pasted parameter after pre-selected one. */
 			do {
 				next = pasted_sequence;
+				gebr_geoxml_object_ref(pasted_sequence);
 				gebr_geoxml_sequence_next(&next);
 				gebr_geoxml_sequence_move_after(pasted_sequence, xml_sequence);
 
@@ -506,6 +507,7 @@ void parameter_paste(void)
 			/* Selection is a group. Insert pasted parameter at the end of the group's list. */
 			do {
 				next = pasted_sequence;
+				gebr_geoxml_object_ref(pasted_sequence);
 				gebr_geoxml_sequence_next(&next);
 				gebr_geoxml_sequence_move_into_group(pasted_sequence, parameter_group);
 				
@@ -527,6 +529,7 @@ void parameter_paste(void)
 			/* Selection is out of groups. Paste parameter after pre-selected one. */
 			do {
 				next = pasted_sequence;
+				gebr_geoxml_object_ref(pasted_sequence);
 				gebr_geoxml_sequence_next(&next);
 				gebr_geoxml_sequence_move_after(pasted_sequence, xml_sequence);
 
@@ -542,6 +545,7 @@ void parameter_paste(void)
 			/* Nothing is selected. Paste parameter at the end of the list. */
 			do {
 				next = pasted_sequence;
+				gebr_geoxml_object_ref(pasted_sequence);
 				gebr_geoxml_sequence_next(&next);
 
 				gtk_tree_store_append(debr.ui_parameter.tree_store, &pasted_iter, NULL);
@@ -1238,6 +1242,7 @@ static void parameter_insert_to_ui(GebrGeoXmlParameter *parameter, GtkTreeIter *
 	GtkTreeIter iter_;
 
 	gtk_tree_store_insert_after(debr.ui_parameter.tree_store, &iter_, NULL, sibling);
+	gebr_geoxml_object_ref(parameter);
 	gtk_tree_store_set(debr.ui_parameter.tree_store, &iter_, PARAMETER_XMLPOINTER, parameter, -1);
 	parameter_load_iter(&iter_, TRUE);
 
