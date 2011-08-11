@@ -423,6 +423,8 @@ gboolean
 gebr_geoxml_document_canonize_dict_parameters(GebrGeoXmlDocument * document,
 					      GHashTable 	** vars_list);
 
+void gebr_geoxml_document_ref(GebrGeoXmlDocument *self);
+
 G_END_DECLS
 
 #endif				//__GEBR_GEOXML_DOCUMENT_H
