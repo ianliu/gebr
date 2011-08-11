@@ -531,11 +531,11 @@ static void validate_program_parameter(GebrGeoXmlParameter *parameter, Validatio
 	 * the selected parameter of its instance */
 	instance = gebr_geoxml_parameter_get_parameters(parameter);
 	selected = gebr_geoxml_parameters_get_selection(instance);
-	if (selected != NULL && selected != parameter)
-		return;
-
-	gebr_validator_validate_param(data->validator, parameter,
-				      NULL, &data->error);
+	if (selected == NULL || selected == parameter)
+		gebr_validator_validate_param(data->validator, parameter,
+					      NULL, &data->error);
+	gebr_geoxml_object_unref(instance);
+	gebr_geoxml_object_unref(selected);
 }
 
 gboolean gebr_geoxml_program_is_valid(GebrGeoXmlProgram *self,
