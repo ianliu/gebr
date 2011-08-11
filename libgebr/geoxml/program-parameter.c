@@ -478,17 +478,19 @@ gebr_geoxml_program_parameter_set_parse_list_value(GebrGeoXmlProgramParameter * 
 	__gebr_geoxml_program_parameter_remove_value_elements(program_parameter, default_value);
 
 	separator = gebr_geoxml_program_parameter_get_list_separator(program_parameter);
-	if (!strlen(value) || !strlen(separator))
-		gebr_geoxml_program_parameter_append_value(program_parameter, default_value);
-	else {
+	if (!strlen(value) || !strlen(separator)) {
+		gebr_geoxml_object_unref(gebr_geoxml_program_parameter_append_value(program_parameter, default_value));
+	} else {
 		gchar **splits;
 		int i;
 
 		splits = g_strsplit(value, separator, 0);
-		for (i = 0; splits[i] != NULL; ++i)
-			gebr_geoxml_value_sequence_set(GEBR_GEOXML_VALUE_SEQUENCE
-						       (gebr_geoxml_program_parameter_append_value
-							(program_parameter, default_value)), splits[i]);
+		for (i = 0; splits[i] != NULL; ++i) {
+			GebrGeoXmlPropertyValue *value;
+			value = gebr_geoxml_program_parameter_append_value(program_parameter, default_value);
+			gebr_geoxml_value_sequence_set(GEBR_GEOXML_VALUE_SEQUENCE(value), splits[i]);
+			gebr_geoxml_object_unref(value);
+		}
 		g_strfreev(splits);
 	}
 }
