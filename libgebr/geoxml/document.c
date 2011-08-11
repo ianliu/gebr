@@ -1236,6 +1236,8 @@ gebr_geoxml_document_canonize_dict_parameters(GebrGeoXmlDocument * document,
 		GebrGeoXmlParameterType type = gebr_geoxml_parameter_get_type(
 				GEBR_GEOXML_PARAMETER(parameters));
 
+		gebr_geoxml_program_parameter_set_required(GEBR_GEOXML_PROGRAM_PARAMETER(parameters), TRUE);
+
 		switch(type)
 		{
 		case	GEBR_GEOXML_PARAMETER_TYPE_STRING:
