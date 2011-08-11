@@ -211,11 +211,11 @@ gchar *gebr_geoxml_object_generate_help (GebrGeoXmlObject *object, const gchar *
 	if (is_program) {
 		tmp = gebr_geoxml_program_get_version (prog);
 		gebr_geoxml_tmpl_set (tmpl, "ver", tmp);
+		g_free(tmp);
 	} else
 		gebr_geoxml_tmpl_set (tmpl, "ver",
 				      gebr_date_get_localized ("%b %d, %Y", "C"));
 
-	g_free(tmp);
 	g_free(tmpl_str);
 	gdome_doc_unref((GdomeDocument*)doc, &exception);
 
