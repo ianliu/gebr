@@ -279,7 +279,8 @@ GebrGeoXmlParameters *gebr_geoxml_parameter_get_parameters(GebrGeoXmlParameter *
 	return (GebrGeoXmlParameters *) gdome_n_parentNode((GdomeNode *) parameter, &exception);
 }
 
-GebrGeoXmlProgram *gebr_geoxml_parameter_get_program(GebrGeoXmlParameter * parameter)
+GebrGeoXmlProgram *
+gebr_geoxml_parameter_get_program(GebrGeoXmlParameter * parameter)
 {
 	if (parameter == NULL)
 		return NULL;
@@ -290,10 +291,16 @@ GebrGeoXmlProgram *gebr_geoxml_parameter_get_program(GebrGeoXmlParameter * param
 
 		program_element = (GdomeElement *) gdome_n_parentNode((GdomeNode *) program_element, &exception);
 		name = gdome_el_nodeName(program_element, &exception);
+
 		if (!name)
 			return NULL;
-		if (g_strcmp0(name->str, "program") == 0)
+
+		if (g_strcmp0(name->str, "program") == 0) {
+			gdome_str_unref(name);
 			break;
+		}
+
+		gdome_str_unref(name);
 	}
 
 	return (GebrGeoXmlProgram *) program_element;
