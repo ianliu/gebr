@@ -6,6 +6,13 @@
    ...
 }
 {
+   g_type_init_with_debug_flags
+   Memcheck:Leak
+   ...
+   fun:g_type_init_with_debug_flags
+   ...
+}
+{
    g_type_init
    Memcheck:Leak
    ...
