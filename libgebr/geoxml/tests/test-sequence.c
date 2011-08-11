@@ -80,16 +80,24 @@ test_gebr_geoxml_sequence_move_before_with_null(Fixture * fix, gconstpointer dat
 	gint length;
 
 	gebr_geoxml_flow_get_program(fix->flow, &program, 0);
-	generate_parameter_list(fix->before, GEBR_GEOXML_PROGRAM(program), TRUE);
+	generate_parameter_list(fix->before, GEBR_GEOXML_PROGRAM(program), FALSE);
 
 	parameters = gebr_geoxml_program_get_parameters(GEBR_GEOXML_PROGRAM(program));
 	parameter = gebr_geoxml_parameters_get_first_parameter(parameters);
 	length = gebr_geoxml_parameters_get_number(parameters);
-	for (gint i = 0; i < length; i++, parameter = gebr_geoxml_parameters_get_first_parameter(parameters))
-		gebr_geoxml_sequence_move_before(parameter, NULL);
 
-	generate_parameter_list(fix->after, GEBR_GEOXML_PROGRAM(program), TRUE);
+	for (gint i = 0; i < length; i++) {
+		gebr_geoxml_sequence_move_before(parameter, NULL);
+		gebr_geoxml_object_unref(parameter);
+		parameter = gebr_geoxml_parameters_get_first_parameter(parameters);
+	}
+
+	generate_parameter_list(fix->after, GEBR_GEOXML_PROGRAM(program), FALSE);
 	g_assert_cmpstr(fix->before->str, ==, fix->after->str);
+
+	gebr_geoxml_object_unref(parameters);
+	gebr_geoxml_object_unref(program);
+	gebr_geoxml_object_unref(parameter);
 }
 
 static void

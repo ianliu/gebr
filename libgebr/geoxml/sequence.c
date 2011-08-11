@@ -206,19 +206,42 @@ int
 __gebr_geoxml_sequence_move_before(GebrGeoXmlSequence *sequence,
 				   GebrGeoXmlSequence *position)
 {
-	GdomeNode *parent;
-	GdomeNode *insert;
-	GdomeException exc1, exc2;
+	if (!position) {
+		GebrGeoXmlSequence *iter = sequence;
+		GebrGeoXmlSequence *last = NULL;
 
-	parent = gdome_n_parentNode((GdomeNode *) sequence, &exc1);
-	insert = gdome_n_insertBefore_protected(parent, (GdomeNode *)sequence,
-						(GdomeNode *)position, &exc2);
-	gdome_n_unref(parent, &exception);
-	gdome_n_unref(insert, &exception);
+		gebr_geoxml_object_ref(sequence); // protect 'sequence'
+		while (iter) {
+			if (last)
+				gebr_geoxml_object_unref(last);
+			last = iter;
+			gebr_geoxml_object_ref(last);
+			gebr_geoxml_sequence_next(&iter);
+		}
 
-	if (exc1 == GDOME_NOEXCEPTION_ERR || exc2 == GDOME_NOEXCEPTION_ERR)
-		return GEBR_GEOXML_RETV_DIFFERENT_SEQUENCES;
-	return GEBR_GEOXML_RETV_SUCCESS;
+		if (last != sequence) {
+			GdomeElement *el;
+			GdomeNode *insert, *parent;
+			el = __gebr_geoxml_next_element((GdomeElement*) last);
+			parent = gdome_el_parentNode((GdomeElement *) sequence, &exception);
+			insert = gdome_n_insertBefore_protected(parent, (GdomeNode *) sequence,
+								(GdomeNode *) el, &exception);
+			gdome_el_unref(el, &exception);
+			gdome_n_unref(insert, &exception);
+			gdome_n_unref(parent, &exception);
+		} else
+			exception = GDOME_NOEXCEPTION_ERR;
+		gebr_geoxml_object_unref(last);
+	} else if (sequence != position) {
+		GdomeNode *parent = gdome_el_parentNode((GdomeElement *) position, &exception);
+		GdomeNode *insert = gdome_n_insertBefore_protected(parent, (GdomeNode *) sequence,
+								   (GdomeNode *) position, &exception);
+		gdome_n_unref(insert, &exception);
+		gdome_n_unref(parent, &exception);
+	} else
+		exception = GDOME_NOEXCEPTION_ERR;
+
+	return exception == GDOME_NOEXCEPTION_ERR ? GEBR_GEOXML_RETV_SUCCESS : GEBR_GEOXML_RETV_DIFFERENT_SEQUENCES;
 }
 
 int __gebr_geoxml_sequence_move_after(GebrGeoXmlSequence * sequence, GebrGeoXmlSequence * position)
