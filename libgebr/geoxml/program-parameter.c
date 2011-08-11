@@ -65,11 +65,15 @@ __gebr_geoxml_program_parameter_remove_value_elements(GebrGeoXmlProgramParameter
 	/* remove all value/default elements */
 	element = __gebr_geoxml_get_first_element((GdomeElement *) program_parameter,
 						  default_value == FALSE ? "value" : "default");
-	while (element != NULL) {
+	while (element) {
 		GdomeElement *tmp;
+		GdomeNode *parent;
 
+		parent = gdome_el_parentNode(element, &exception);
 		tmp = __gebr_geoxml_next_same_element(element);
-		gdome_n_removeChild(gdome_el_parentNode(element, &exception), (GdomeNode *) element, &exception);
+		gdome_n_unref(gdome_n_removeChild(parent, (GdomeNode *) element, &exception), &exception);
+		gdome_n_unref(parent, &exception);
+		gdome_el_unref(element, &exception);
 		element = tmp;
 	}
 }
