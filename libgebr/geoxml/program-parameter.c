@@ -827,17 +827,18 @@ gebr_geoxml_program_parameter_get_old_dict_keyword(GebrGeoXmlProgramParameter * 
 	GdomeDOMString *string;
 	GdomeElement *property_element;
 
-	property_element = __gebr_geoxml_get_first_element(
-					(GdomeElement *) program_parameter,
-					"property");
+	property_element = __gebr_geoxml_get_first_element((GdomeElement *) program_parameter, "property");
 
 	string = gdome_str_mkref("dictkeyword");
-	if (!gdome_el_hasAttribute(property_element, string, &exception))
+	if (!gdome_el_hasAttribute(property_element, string, &exception)) {
+		gdome_el_unref(property_element, &exception);
+		gdome_str_unref(string);
 		return NULL;
-	gdome_str_unref(string);
+	}
 
 	dict_keyword = __gebr_geoxml_get_attr_value(property_element, "dictkeyword");
 	gdome_el_unref(property_element, &exception);
+	gdome_str_unref(string);
 
 	return dict_keyword;
 }
@@ -849,17 +850,14 @@ gebr_geoxml_program_parameter_update_old_dict_value(GebrGeoXmlObject * param,
 	g_return_val_if_fail(keys_to_canonized != NULL, FALSE);
 	g_return_val_if_fail(param != NULL, FALSE);
 
-	GebrGeoXmlParameterType type = gebr_geoxml_parameter_get_type(
-				GEBR_GEOXML_PARAMETER(param));
+	GebrGeoXmlParameterType type = gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(param));
 
-	gchar * key = gebr_geoxml_program_parameter_get_old_dict_keyword(
-			GEBR_GEOXML_PROGRAM_PARAMETER(param));
+	gchar *key = gebr_geoxml_program_parameter_get_old_dict_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(param));
 
 	if (key == NULL)
 	{
-		const gchar * value = gebr_geoxml_program_parameter_get_first_value(
-				GEBR_GEOXML_PROGRAM_PARAMETER(param),
-				FALSE);
+		gchar *value = gebr_geoxml_program_parameter_get_first_value(GEBR_GEOXML_PROGRAM_PARAMETER(param), FALSE);
+
 		switch(type)
 		{
 		case GEBR_GEOXML_PARAMETER_TYPE_INT:
@@ -869,10 +867,7 @@ gebr_geoxml_program_parameter_update_old_dict_value(GebrGeoXmlObject * param,
 				GString * string = g_string_new(value);
 				gebr_g_string_replace(string, "e", "*10^");
 				gebr_g_string_replace(string, "E", "*10^");
-				gebr_geoxml_program_parameter_set_first_value(
-						GEBR_GEOXML_PROGRAM_PARAMETER(param),
-						FALSE,
-						string->str);
+				gebr_geoxml_program_parameter_set_first_value(GEBR_GEOXML_PROGRAM_PARAMETER(param), FALSE, string->str);
 				g_string_free(string, TRUE);
 			}
 
@@ -883,10 +878,7 @@ gebr_geoxml_program_parameter_update_old_dict_value(GebrGeoXmlObject * param,
 			GString * string = g_string_new(value);
 			gebr_g_string_replace(string, "[", "[[");
 			gebr_g_string_replace(string, "]", "]]");
-			gebr_geoxml_program_parameter_set_first_value(
-					GEBR_GEOXML_PROGRAM_PARAMETER(param),
-					FALSE,
-					string->str);
+			gebr_geoxml_program_parameter_set_first_value(GEBR_GEOXML_PROGRAM_PARAMETER(param), FALSE, string->str);
 			g_string_free(string, TRUE);
 
 			break;
@@ -894,20 +886,21 @@ gebr_geoxml_program_parameter_update_old_dict_value(GebrGeoXmlObject * param,
 		default:
 			break;
 		}
+		g_free(value);
+		g_free(key);
 		return TRUE;
 	}
 
-	gchar * spaces = g_strdup(key);
-	if(g_strcmp0(g_strstrip(spaces),"") == 0)
+	gchar *spaces = g_strdup(key);
+	if(*g_strstrip(spaces))
 	{
 		g_free(spaces);
+		g_free(key);
 		return TRUE;
 	}
 	g_free(spaces);
 
-	const gchar * canonized = (const gchar *)g_hash_table_lookup(
-				(GHashTable *)keys_to_canonized,
-				key);
+	const gchar *canonized = g_hash_table_lookup((GHashTable *)keys_to_canonized, key);
 
 	g_return_val_if_fail(canonized != NULL, FALSE);
 
@@ -915,19 +908,12 @@ gebr_geoxml_program_parameter_update_old_dict_value(GebrGeoXmlObject * param,
 	{
 	case GEBR_GEOXML_PARAMETER_TYPE_INT:
 	case GEBR_GEOXML_PARAMETER_TYPE_FLOAT:
-		gebr_geoxml_program_parameter_set_first_value(
-				GEBR_GEOXML_PROGRAM_PARAMETER(param),
-				FALSE,
-				canonized);
-
+		gebr_geoxml_program_parameter_set_first_value(GEBR_GEOXML_PROGRAM_PARAMETER(param), FALSE, canonized);
 		break;
 	case GEBR_GEOXML_PARAMETER_TYPE_STRING:
 	case GEBR_GEOXML_PARAMETER_TYPE_FILE: {
 		gchar * brackets = g_strdup_printf("[%s]", canonized);
-		gebr_geoxml_program_parameter_set_first_value(
-				GEBR_GEOXML_PROGRAM_PARAMETER(param),
-				FALSE,
-				brackets);
+		gebr_geoxml_program_parameter_set_first_value(GEBR_GEOXML_PROGRAM_PARAMETER(param), FALSE, brackets);
 		g_free(brackets);
 
 		break;
