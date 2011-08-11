@@ -285,16 +285,16 @@ gebr_geoxml_parameter_get_program(GebrGeoXmlParameter * parameter)
 	if (parameter == NULL)
 		return NULL;
 
-	GdomeElement *program_element = (GdomeElement*)parameter;
+	gebr_geoxml_object_ref(parameter);
+	GdomeNode *element = (GdomeNode*)parameter;
 	while (1) {
-		GdomeDOMString *name;
-
-		program_element = (GdomeElement *) gdome_n_parentNode((GdomeNode *) program_element, &exception);
-		name = gdome_el_nodeName(program_element, &exception);
+		GdomeNode *aux = element;
+		element = gdome_n_parentNode(aux, &exception);
+		gdome_n_unref(aux, &exception);
+		GdomeDOMString *name = gdome_n_nodeName(element, &exception);
 
 		if (!name) {
-			if (program_element)
-				gdome_el_unref(program_element, &exception);
+			gdome_n_unref(element, &exception);
 			return NULL;
 		}
 
@@ -303,11 +303,10 @@ gebr_geoxml_parameter_get_program(GebrGeoXmlParameter * parameter)
 			break;
 		}
 
-		gdome_el_unref(program_element, &exception);
 		gdome_str_unref(name);
 	}
 
-	return (GebrGeoXmlProgram *) program_element;
+	return (GebrGeoXmlProgram *) element;
 }
 
 
