@@ -1,7 +1,7 @@
 include $(top_srcdir)/Makefile.decl
 
-EXTRA_DIST = test.mnu forloop.mnu dict_test_flow.flw
-DISTCLEANFILES = test.mnu forloop.mnu dict_test_flow.flw
+EXTRA_DIST = test.mnu forloop.mnu dict_test_flow.flw test2.flw
+DISTCLEANFILES = test.mnu forloop.mnu dict_test_flow.flw test2.flw
 
 noinst_PROGRAMS = $(INT_TEST_PROGS)
 
