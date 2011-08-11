@@ -208,6 +208,7 @@ void test_gebr_expr_parse_string_invalid(void)
 int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
+	gebr_geoxml_init();
 
 	g_test_add_func("/libgebr/expr/invalid", test_gebr_expr_invalid);
 	g_test_add_func("/libgebr/expr/simple", test_gebr_expr_simple);
@@ -218,6 +219,8 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/expr/side_effect", test_gebr_expr_side_effect);
 	g_test_add_func("/libgebr/expr/parse_string_invalid", test_gebr_expr_parse_string_invalid);
 
-	return g_test_run();
+	gint ret = g_test_run();
+	gebr_geoxml_finalize();
+	return ret;
 }
 

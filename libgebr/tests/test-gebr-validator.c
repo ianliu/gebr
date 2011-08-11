@@ -887,6 +887,7 @@ int main(int argc, char *argv[])
 {
 	g_type_init();
 	g_test_init(&argc, &argv, NULL);
+	gebr_geoxml_init();
 
 	g_test_add("/libgebr/validator/string", Fixture, NULL,
 	           fixture_setup,
@@ -953,7 +954,9 @@ int main(int argc, char *argv[])
 	           fixture_teardown);
 	g_test_add_func("/libgebr/validator/rename", test_gebr_validator_rename);
 
-	return g_test_run();
+	gint ret = g_test_run();
+	gebr_geoxml_finalize();
+	return ret;
 }
 
 
