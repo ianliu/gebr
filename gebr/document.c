@@ -753,11 +753,11 @@ gchar * gebr_document_generate_report (GebrGeoXmlDocument *document)
 			line_dict = gebr_generate_variables_value_table(GEBR_GEOXML_DOCUMENT(gebr.line), FALSE, FALSE);
 			flow_dict = gebr_generate_variables_value_table(document, FALSE, TRUE);
 			g_string_append_printf (content, "<div class='gebr-geoxml-flow'>%s%s%s%s</div>\n", proj_dict, line_dict, flow_dict, params);
-			g_free (params);
-			g_free (proj_dict);
-			g_free (line_dict);
-			g_free (flow_dict);
 		}
+		g_free (params);
+		g_free (proj_dict);
+		g_free (line_dict);
+		g_free (flow_dict);
 	} else if (type == GEBR_GEOXML_OBJECT_TYPE_PROJECT) {
 		g_free (inner_body);
 		return report;
