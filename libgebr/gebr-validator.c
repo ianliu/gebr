@@ -1086,7 +1086,6 @@ void gebr_validator_force_update(GebrValidator *self)
 void gebr_validator_free(GebrValidator *self)
 {
 	g_hash_table_unref(self->vars);
-	self->vars = NULL;
 	g_object_unref(self->arith_expr);
 	g_free(self);
 }
@@ -1298,14 +1297,16 @@ gebr_validator_validate_control_parameter(GebrValidator *self,
                                           const gchar *expression,
                                           GError **error)
 {
-	gchar *result;
+	GError *err = NULL;
+	gchar *result = NULL;
 	int result_int;
 	gdouble result_d;
 
-	gebr_validator_evaluate(self, expression, GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
-	                        GEBR_GEOXML_DOCUMENT_TYPE_LINE, &result, error);
-	if (*error)
+	if (!gebr_validator_evaluate(self, expression, GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
+	                        GEBR_GEOXML_DOCUMENT_TYPE_LINE, &result, &err)) {
+		g_propagate_error(error, err);
 		return FALSE;
+	}
 
 	if (name && !g_strcmp0(name, "niter")) {
 		if (!strlen(expression)) {
@@ -1326,12 +1327,12 @@ gebr_validator_validate_control_parameter(GebrValidator *self,
 			return FALSE;
 		}
 		result_d = g_ascii_strtod(result, NULL);
-		g_free(result);
 		if (result_d > result_int) {
 			g_set_error(error,
 			            GEBR_IEXPR_ERROR,
 			            GEBR_IEXPR_ERROR_SYNTAX,
 			            _("Accepts only integer values"));
+			g_free(result);
 			return FALSE;
 		}
 	}
@@ -1343,6 +1344,7 @@ gebr_validator_validate_iter(GebrValidator *self,
                              GebrGeoXmlParameter *param,
                              GError **error)
 {
+	GError *err = NULL;
 	const gchar *labels[3] = {"Initial value", "Step", "Total number of steps"};
 	int i = 0;
 	const gchar *name = NULL;
@@ -1354,15 +1356,15 @@ gebr_validator_validate_iter(GebrValidator *self,
 		if (i == 2)
 			name = g_strdup("niter");
 		value = gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(seq));
-		gebr_validator_validate_control_parameter(self, name, value, error);
-		if(*error) {
+		if(!gebr_validator_validate_control_parameter(self, name, value, &err)) {
 			gebr_geoxml_object_unref(seq);
+			g_propagate_error(error, err);
 			break;
 		}
 		i++;
 	}
 	/* Comment for translators: 1st %s is expression error; 2nd is variable label */
-	if (*error) {
+	if (error && *error) {
 		gchar *old_msg = (*error)->message;
 		(*error)->message = g_strdup_printf(_("%s on \"%s\""), old_msg, labels[i]);
 		g_free(old_msg);
