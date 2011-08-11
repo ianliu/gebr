@@ -593,7 +593,9 @@ static GtkMenu *flow_browse_popup_menu(GtkWidget * widget, GebrUiFlowBrowse *ui_
  * \internal
  * Change flow to selected revision
  */
-static void flow_browse_on_revision_revert_activate(GtkMenuItem * menu_item, GebrGeoXmlRevision * revision)
+static void
+flow_browse_on_revision_revert_activate(GtkMenuItem *menu_item,
+					GebrGeoXmlRevision *revision)
 {
 	if (gebr_gui_confirm_action_dialog(_("Backup current state?"),
 					   _("You are about to revert to a previous state. "
@@ -611,9 +613,10 @@ static void flow_browse_on_revision_revert_activate(GtkMenuItem * menu_item, Geb
 	if (!gebr_geoxml_flow_change_to_revision(gebr.flow, revision, &report_merged)) {
 		document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, FALSE);
 		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Could not revert to state '%s' ('%s')."), comment, date);
+		g_free(date);
+		g_free(comment);
 		return;
 	}
-	gebr_geoxml_object_unref(revision);
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, FALSE);
 
 	if (report_merged)
@@ -628,6 +631,8 @@ static void flow_browse_on_revision_revert_activate(GtkMenuItem * menu_item, Geb
 			   FB_TITLE, gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.flow)), -1);
 	flow_browse_info_update();
 
+	g_free(date);
+	g_free(comment);
 }
 
 /**
