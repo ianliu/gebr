@@ -320,12 +320,17 @@ gebr_geoxml_program_parameter_get_value(GebrGeoXmlProgramParameter * program_par
 glong
 gebr_geoxml_program_parameter_get_values_number(GebrGeoXmlProgramParameter * program_parameter, gboolean default_value)
 {
+	glong number;
+	GdomeElement *first;
+
 	if (program_parameter == NULL)
 		return -1;
-	return
-	    __gebr_geoxml_get_elements_number(__gebr_geoxml_get_first_element
-					      ((GdomeElement *) program_parameter, "property"),
-					      default_value == FALSE ? "value" : "default");
+
+	first = __gebr_geoxml_get_first_element((GdomeElement *) program_parameter, "property");
+	number = __gebr_geoxml_get_elements_number(first, default_value? "default":"value");
+	gdome_el_unref(first, &exception);
+
+	return number;
 }
 
 void
