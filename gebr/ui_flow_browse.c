@@ -604,8 +604,8 @@ flow_browse_on_revision_revert_activate(GtkMenuItem *menu_item,
 		if (!flow_revision_save())
 			return;
 
-	gchar *date;
-	gchar *comment;
+	gchar *date = NULL;
+	gchar *comment = NULL;
 	gboolean report_merged = FALSE;
 	GtkTreeIter iter;
 

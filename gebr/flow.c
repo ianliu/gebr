@@ -661,6 +661,7 @@ gboolean flow_revision_save(void)
 			gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter, FB_FILENAME, &flow_filename, -1);
 			if (document_load((GebrGeoXmlDocument**)(&flow), flow_filename, TRUE))
 			{
+				g_free(flow_filename);
 				return FALSE;
 			}
 

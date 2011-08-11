@@ -565,9 +565,12 @@ gebr_geoxml_flow_append_revision(GebrGeoXmlFlow * flow,
 
 	while (seq)
 	{
-		gdome_n_unref(gdome_el_removeChild(revision_root, (GdomeNode *) seq, &exception), &exception);
+		GebrGeoXmlSequence *aux = seq;
+		gebr_geoxml_object_ref(aux);
 		gebr_geoxml_sequence_next(&seq);
+		gebr_geoxml_sequence_remove(aux);
 	}
+
 	gebr_geoxml_object_unref(revision_root);
 
 	/* save to xml and free */
@@ -624,15 +627,19 @@ gebr_geoxml_flow_get_revision(GebrGeoXmlFlow * flow,
 
 void gebr_geoxml_flow_get_revision_data(GebrGeoXmlRevision * revision, gchar ** flow, gchar ** date, gchar ** comment)
 {
-	if (revision == NULL)
-		return;
+	g_return_if_fail(revision != NULL);
 
-	if (flow != NULL)
-		*flow = (gchar *) __gebr_geoxml_get_element_value((GdomeElement *) revision);
-	if (date != NULL)
-		*date = (gchar *) gebr_localized_date(__gebr_geoxml_get_attr_value((GdomeElement *) revision, "date"));
-	if (comment != NULL)
-		*comment = (gchar *) __gebr_geoxml_get_attr_value((GdomeElement *) revision, "comment");
+	if (flow)
+		*flow = __gebr_geoxml_get_element_value((GdomeElement *) revision);
+
+	if (date) {
+		gchar *date_attr = __gebr_geoxml_get_attr_value((GdomeElement *) revision, "date");
+		*date = g_strdup(gebr_localized_date(date_attr));
+		g_free(date_attr);
+	}
+
+	if (comment)
+		*comment = __gebr_geoxml_get_attr_value((GdomeElement *) revision, "comment");
 }
 
 glong gebr_geoxml_flow_get_revisions_number(GebrGeoXmlFlow * flow)
