@@ -1652,6 +1652,7 @@ gebr_geoxml_document_set_dict_keyword(GebrGeoXmlDocument *doc,
 
 	params = gebr_geoxml_document_get_dict_parameters(doc);
 	param = gebr_geoxml_parameters_append_parameter(params, type);
+	gebr_geoxml_program_parameter_set_required(GEBR_GEOXML_PROGRAM_PARAMETER(param), TRUE);
 	gebr_geoxml_program_parameter_set_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(param), keyword);
 	gebr_geoxml_program_parameter_set_first_value(GEBR_GEOXML_PROGRAM_PARAMETER(param),
 						      FALSE, value);

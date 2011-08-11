@@ -459,8 +459,15 @@ gebr_arith_expr_eval_internal(GebrArithExpr *self,
 	gchar *line;
 	GError *error = NULL;
 
-	if (!expr || !*expr)
-		return TRUE;
+	gchar *striped = (expr && *expr) ? g_strstrip(g_strdup(expr)) : NULL;
+	gboolean empty = !striped || !*striped;
+	g_free(striped);
+
+	if (empty) {
+		g_set_error(err, GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_EMPTY_EXPR,
+		            _("Empty expression"));
+		return FALSE;
+	}
 
 	line = g_strdup_printf ("%s\n\"%s\"\n", expr, EVAL_COOKIE);
 	g_io_channel_write_chars (self->priv->in_ch, line, -1, NULL, &error);

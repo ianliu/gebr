@@ -583,7 +583,15 @@ void test_gebr_validator_evaluate(Fixture *fixture, gconstpointer data)
 {
 
 	VALIDATE_STRING_EXPR("", "");
+	VALIDATE_STRING_EXPR(" ", " ");
 	VALIDATE_FLOAT_EXPR("", "");
+	VALIDATE_FLOAT_EXPR_WITH_ERROR(" ", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_EMPTY_EXPR);
+
+	// Empty String in dictionary
+	DEF_STRING_WITH_ERROR(fixture->proj, "empty_str", "", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_EMPTY_EXPR);
+	DEF_STRING(fixture->proj, "white_str", " ");
+	DEF_FLOAT_WITH_ERROR(fixture->proj, "empty_num", "", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_EMPTY_EXPR);
+	DEF_FLOAT_WITH_ERROR(fixture->proj, "white_num", " ", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_EMPTY_EXPR);
 
 	/* Tests for mathematical expressions */
 	DEF_FLOAT(fixture->proj, "a", "2");
@@ -867,7 +875,7 @@ void test_gebr_geoxml_validate_flow(Fixture *fixture, gconstpointer data)
 	GebrGeoXmlDocument *doc;
 	GError *err = NULL;
 
-	gebr_geoxml_document_load(&doc, TEST_SRCDIR "/../geoxml/tests/dict_test_flow.flw", TRUE, NULL);
+	gebr_geoxml_document_load(&doc, TEST_SRCDIR "/nmo.flw", TRUE, NULL);
 
 	gebr_geoxml_flow_validate(GEBR_GEOXML_FLOW(doc), fixture->validator, &err);
 	g_assert_no_error(err);

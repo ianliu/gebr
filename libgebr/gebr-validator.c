@@ -432,7 +432,7 @@ validate_and_extract_vars(GebrValidator  *self,
                           GError **error)
 {
 	GList *vars = NULL;
-	gboolean valid;
+	gboolean valid = FALSE;
 	if (deps) {
 		g_list_foreach(*deps, (GFunc) g_free, NULL);
 		g_list_free(*deps);
@@ -443,9 +443,14 @@ validate_and_extract_vars(GebrValidator  *self,
 		return TRUE;
 	}
 
+	gchar *striped = g_strstrip(g_strdup(expression));
+	gboolean empty = !*striped;
+	g_free(striped);
+
 	switch (type) {
 	case GEBR_GEOXML_PARAMETER_TYPE_STRING:
 	case GEBR_GEOXML_PARAMETER_TYPE_FILE:
+		if (empty) return TRUE;
 		valid = translate_string_expr(self, expression, NULL, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, NULL, &vars, error);
 		if (valid)
 			valid = get_error_indirect(self, vars, name, type, scope, error);
@@ -453,6 +458,13 @@ validate_and_extract_vars(GebrValidator  *self,
 	case GEBR_GEOXML_PARAMETER_TYPE_RANGE:
 	case GEBR_GEOXML_PARAMETER_TYPE_INT:
 	case GEBR_GEOXML_PARAMETER_TYPE_FLOAT: {
+		if (empty) {
+			g_set_error (error,
+			             GEBR_IEXPR_ERROR,
+			             GEBR_IEXPR_ERROR_EMPTY_EXPR,
+			             _("Expression does not evaluate to a value"));
+			return FALSE;
+		}
 		vars = gebr_iexpr_extract_vars(GEBR_IEXPR(self->arith_expr), expression);
 		valid = get_error_indirect(self, vars, name, type, scope, error);
 		if (valid) {
@@ -479,6 +491,7 @@ validate_and_extract_vars(GebrValidator  *self,
 				define = g_strdup(expression);
 			}
 			gchar *result = NULL;
+			puts(define);
 			valid = gebr_arith_expr_eval_internal(self->arith_expr, define, &result, error);
 			if (valid && strlen(result) > MAX_RESULT_LENGTH) {
 				valid = FALSE;
@@ -633,8 +646,11 @@ gebr_validator_update_vars(GebrValidator *self,
 	g_string_append(bc_strings, " }\n");
 	g_string_append(bc_strings, bc_vars->str);
 	g_string_append(bc_strings, "return iter };0\n" ITER_INI_EXPR);
+	puts(bc_strings->str);
+	if (error) g_assert_no_error(*error);
 	gboolean ok = gebr_arith_expr_eval_internal(self->arith_expr, bc_strings->str, NULL, error);
 	self->cached_scope = param_scope;
+	if (error) g_assert_no_error(*error);
 
 	g_string_free(bc_vars, TRUE);
 	g_string_free(bc_strings, TRUE);
@@ -1223,9 +1239,11 @@ gboolean gebr_validator_evaluate_interval(GebrValidator *self,
 
 	if(!gebr_validator_update_vars(self, scope, error))
 		return FALSE;
+	g_assert_no_error(*error);
 
 	if (!gebr_validator_validate_expr_on_scope(self, expr, type, scope, error))
 		return FALSE;
+	g_assert_no_error(*error);
 
 	return gebr_validator_evaluate_internal(self, NULL, expr, type, value, scope, show_interval, error);
 }
