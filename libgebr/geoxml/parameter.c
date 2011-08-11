@@ -292,14 +292,18 @@ gebr_geoxml_parameter_get_program(GebrGeoXmlParameter * parameter)
 		program_element = (GdomeElement *) gdome_n_parentNode((GdomeNode *) program_element, &exception);
 		name = gdome_el_nodeName(program_element, &exception);
 
-		if (!name)
+		if (!name) {
+			if (program_element)
+				gdome_el_unref(program_element, &exception);
 			return NULL;
+		}
 
 		if (g_strcmp0(name->str, "program") == 0) {
 			gdome_str_unref(name);
 			break;
 		}
 
+		gdome_el_unref(program_element, &exception);
 		gdome_str_unref(name);
 	}
 
