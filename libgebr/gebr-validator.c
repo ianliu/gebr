@@ -574,8 +574,8 @@ gebr_validator_update_vars(GebrValidator *self,
 
 	gboolean has_iter = FALSE;
 	// Validate iter final value
-	if (param_scope == GEBR_GEOXML_DOCUMENT_TYPE_FLOW) {
-		int scope = GEBR_GEOXML_DOCUMENT_TYPE_FLOW;
+	int scope = GEBR_GEOXML_DOCUMENT_TYPE_FLOW;
+	if (param_scope == scope && self->docs[scope]) {
 		GebrGeoXmlSequence *param = gebr_geoxml_document_get_dict_parameter(*self->docs[scope]);
 		g_free(name);
 		name = GET_VAR_NAME(param);
@@ -901,6 +901,7 @@ gebr_validator_move(GebrValidator         *self,
 	data = g_hash_table_lookup(self->vars, name);
 
 	g_return_val_if_fail(data != NULL, FALSE);
+	g_return_val_if_fail(self->docs[pivot_scope] != NULL, FALSE);
 
 	comment = gebr_geoxml_parameter_get_label(source);
 	value = GET_VAR_VALUE(source);
