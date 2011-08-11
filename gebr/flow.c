@@ -195,7 +195,7 @@ static gboolean flow_import_single (const gchar *path)
 	gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Flow '%s' imported to line '%s' from file '%s'."),
 		     title, gebr_geoxml_document_get_title (GEBR_GEOXML_DOC (gebr.line)), path);
 
-	document_import (flow);
+	document_import (flow, TRUE);
 	line_flow = gebr_geoxml_line_append_flow (gebr.line, gebr_geoxml_document_get_filename (flow));
 	document_save(GEBR_GEOXML_DOC(gebr.line), FALSE, FALSE);
 	iter = line_append_flow_iter(GEBR_GEOXML_FLOW (flow), line_flow);
@@ -786,7 +786,7 @@ void flow_paste(void)
 			continue;
 		}
 
-		document_import(flow);
+		document_import(flow, TRUE);
 		line_append_flow_iter(GEBR_GEOXML_FLOW(flow),
 				      GEBR_GEOXML_LINE_FLOW(gebr_geoxml_line_append_flow(gebr.line,
 											 gebr_geoxml_document_get_filename(flow))));

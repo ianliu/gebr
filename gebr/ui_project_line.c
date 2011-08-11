@@ -479,7 +479,7 @@ static gboolean _project_line_import_path(const gchar *filename, GList **line_pa
 		gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) line, GEBR_GEOXML_DOCUMENT_TYPE_LINE, FALSE);
 
 		gdk_threads_enter();
-		document_import(GEBR_GEOXML_DOCUMENT(*line));
+		document_import(GEBR_GEOXML_DOCUMENT(*line), TRUE);
 		gdk_threads_leave();
 		/* check for paths that could be created; */
 		GebrGeoXmlSequence *line_path;
@@ -504,14 +504,15 @@ static gboolean _project_line_import_path(const gchar *filename, GList **line_pa
 				continue;
 
 			gdk_threads_enter();
-			document_import(GEBR_GEOXML_DOCUMENT(flow));
+			document_import(GEBR_GEOXML_DOCUMENT(flow), FALSE);
 			gdk_threads_leave();
 			gebr_geoxml_line_set_flow_source(GEBR_GEOXML_LINE_FLOW(i),
 			                                 gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(flow)));
 			gdk_threads_enter();
-			gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE);
+			gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, TRUE);
 			gebr_geoxml_flow_revalidate(flow, gebr.validator);
 			document_save(GEBR_GEOXML_DOCUMENT(flow), FALSE, FALSE);
+			gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
 			gdk_threads_leave();
 		}
 		gebr_geoxml_object_unref(GEBR_GEOXML_OBJECT(i));
@@ -559,7 +560,7 @@ static gboolean _project_line_import_path(const gchar *filename, GList **line_pa
 			gdk_threads_leave();
 
 			gdk_threads_enter();
-			document_import(GEBR_GEOXML_DOCUMENT(project));
+			document_import(GEBR_GEOXML_DOCUMENT(project), TRUE);
 			iter = project_append_iter(project);
 			gdk_threads_leave();
 

@@ -131,7 +131,7 @@ void document_free(GebrGeoXmlDocument * document);
 /**
  * Import \p document into data directory, saving it with a new filename.
  */
-void document_import(GebrGeoXmlDocument * document);
+void document_import(GebrGeoXmlDocument * document, gboolean save);
 
 /**
  * Creates a filename for a document

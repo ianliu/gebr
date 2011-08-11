@@ -87,6 +87,8 @@ void flow_add_program_sequence_to_view(GebrGeoXmlSequence * program,
 	control = gebr_geoxml_program_get_control (first_prog);
 	has_control = control != GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY;
 
+	// Reference this program so _sequence_next don't destroy it
+	gebr_geoxml_object_ref(program);
 	for (; program != NULL; gebr_geoxml_sequence_next(&program)) {
 		control = gebr_geoxml_program_get_control (GEBR_GEOXML_PROGRAM (program));
 
