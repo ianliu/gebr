@@ -482,6 +482,7 @@ static void test_gebr_geoxml_document_merge_and_split_dicts(void)
 int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
+	gebr_geoxml_init();
 
 	gebr_geoxml_document_set_dtd_dir(DTD_DIR);
 
@@ -501,5 +502,7 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/geoxml/document/get_help", test_gebr_geoxml_document_get_help);
 	g_test_add_func("/libgebr/geoxml/document/document_canonize_dict_parameters", test_gebr_geoxml_document_canonize_dict_parameters);
 
-	return g_test_run();
+	gint ret = g_test_run();
+	gebr_geoxml_finalize();
+	return ret;
 }

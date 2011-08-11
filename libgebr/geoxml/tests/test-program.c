@@ -479,6 +479,7 @@ void test_gebr_geoxml_program_control_get_n(void)
 int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
+	gebr_geoxml_init();
 
 	gebr_geoxml_document_set_dtd_dir(DTD_DIR);
 
@@ -501,5 +502,7 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/geoxml/program/get_and_set_error_id", test_gebr_geoxml_program_get_and_set_error_id);
 	g_test_add_func("/libgebr/geoxml/program/control_get_number_of_iterations", test_gebr_geoxml_program_control_get_n);
 
-	return g_test_run();
+	gint ret = g_test_run();
+	gebr_geoxml_finalize();
+	return ret;
 }

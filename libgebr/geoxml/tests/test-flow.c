@@ -530,6 +530,7 @@ static void test_gebr_geoxml_flow_io_error_append(void)
 int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
+	gebr_geoxml_init();
 
 	gebr_geoxml_document_set_dtd_dir(DTD_DIR);
 
@@ -553,5 +554,7 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/geoxml/flow/io_error_append", test_gebr_geoxml_flow_io_error_append);
 	g_test_add_func("/libgebr/geoxml/flow/io_error_append_default", test_gebr_geoxml_flow_io_error_append_default);
 
-	return g_test_run();
+	gint ret = g_test_run();
+	gebr_geoxml_finalize();
+	return ret;
 }

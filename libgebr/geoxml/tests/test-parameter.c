@@ -268,6 +268,7 @@ void test_gebr_geoxml_parameter_is_dict_param(void)
 int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
+	gebr_geoxml_init();
 
 	gebr_geoxml_document_set_dtd_dir(DTD_DIR);
 
@@ -282,5 +283,7 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/geoxml/parameter/get_group", test_gebr_geoxml_parameter_get_group);
 	g_test_add_func("/libgebr/geoxml/parameter/is_dict_param", test_gebr_geoxml_parameter_is_dict_param);
 
-	return g_test_run();
+	gint ret = g_test_run();
+	gebr_geoxml_finalize();
+	return ret;
 }

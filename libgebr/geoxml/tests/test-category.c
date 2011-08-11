@@ -57,11 +57,14 @@ void test_duplicate_categories(void)
 int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
+	gebr_geoxml_init();
 
 	gebr_geoxml_document_set_dtd_dir(DTD_DIR);
 
 	g_test_add_func("/libgebr/geoxml/flow/get_categories_number", test_gebr_geoxml_flow_get_categories_number);
 	g_test_add_func("/libgebr/geoxml/flow/duplicate_categories", test_duplicate_categories);
 
-	return g_test_run();
+	gint ret = g_test_run();
+	gebr_geoxml_finalize();
+	return ret;
 }

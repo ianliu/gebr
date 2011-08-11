@@ -192,6 +192,7 @@ void test_project_has_line()
 int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
+	gebr_geoxml_init();
 
 	gebr_geoxml_document_set_dtd_dir(DTD_DIR);
 
@@ -203,5 +204,7 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/geoxml/project/get-lines-number", test_project_get_lines_number);
 	g_test_add_func("/libgebr/geoxml/project/has-line", test_project_has_line);
 
-	return g_test_run();
+	gint ret = g_test_run();
+	gebr_geoxml_finalize();
+	return ret;
 }
