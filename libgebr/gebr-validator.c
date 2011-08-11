@@ -197,8 +197,8 @@ get_error_indirect(GebrValidator *self,
 		dep_scope = gebr_geoxml_parameter_get_scope(dep_param);
 
 		if ((my_type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT ||
-				my_type == GEBR_GEOXML_PARAMETER_TYPE_INT)
-				&& dep_type == GEBR_GEOXML_PARAMETER_TYPE_STRING) {
+		     my_type == GEBR_GEOXML_PARAMETER_TYPE_INT)
+		    && dep_type == GEBR_GEOXML_PARAMETER_TYPE_STRING) {
 			g_set_error(err, GEBR_IEXPR_ERROR,
 			            GEBR_IEXPR_ERROR_TYPE_MISMATCH,
 			            _("Variable %s is String"),
@@ -206,11 +206,13 @@ get_error_indirect(GebrValidator *self,
 			return FALSE;
 		}
 
-		if (!dep_data->error[dep_scope]) {
+		if (!dep_data->error[dep_scope])
 			get_error_indirect(self, dep_data->dep[dep_scope], dep_name, dep_type, dep_scope, &error);
-		}
 
 		if (dep_data->error[dep_scope] || error) {
+			if (error)
+				g_clear_error(&error);
+
 			g_set_error(err, GEBR_IEXPR_ERROR,
 			            GEBR_IEXPR_ERROR_BAD_REFERENCE,
 			            _("Variable %s is not well defined"),
