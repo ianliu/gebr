@@ -1594,7 +1594,6 @@ void gebr_gui_parameter_set_entry_completion(GtkEntry *entry,
 
 gboolean gebr_gui_group_instance_validate(GebrValidator *validator, GebrGeoXmlSequence *instance, GtkWidget *icon)
 {
-	gchar *validated;
 	gboolean invalid = FALSE;
 	GebrGeoXmlSequence *parameter;
 	GebrGeoXmlParameter *selected;
@@ -1602,11 +1601,11 @@ gboolean gebr_gui_group_instance_validate(GebrValidator *validator, GebrGeoXmlSe
 	gebr_geoxml_parameters_get_parameter(GEBR_GEOXML_PARAMETERS(instance), &parameter, 0);
 	selected = gebr_geoxml_parameters_get_selection(GEBR_GEOXML_PARAMETERS(instance));
 	if (selected) {
-		if (!gebr_validator_validate_param(validator, GEBR_GEOXML_PARAMETER(selected), &validated, NULL))
+		if (!gebr_validator_validate_param(validator, GEBR_GEOXML_PARAMETER(selected), NULL, NULL))
 			i++;
 	} else {
 		while (parameter) {
-			if (!gebr_validator_validate_param(validator, GEBR_GEOXML_PARAMETER(parameter), &validated, NULL))
+			if (!gebr_validator_validate_param(validator, GEBR_GEOXML_PARAMETER(parameter), NULL, NULL))
 				i++;
 			gebr_geoxml_sequence_next(&parameter);
 		}
