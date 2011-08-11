@@ -348,12 +348,13 @@ gebr_geoxml_program_control_get_info(GebrGeoXmlProgram *prog,
 	GebrGeoXmlProgramParameter *pparam;
 	GebrGeoXmlParameters *params;
 	GebrGeoXmlSequence *seq;
-	const gchar *value;
-	const gchar *label;
-	const gchar *keyword;
+	gchar *value;
+	gchar *label;
+	gchar *keyword;
 
 	params = gebr_geoxml_program_get_parameters(prog);
 	gebr_geoxml_parameters_get_parameter(params, &seq, 0);
+	gebr_geoxml_object_unref(params);
 
 	for (; seq; gebr_geoxml_sequence_next(&seq)) {
 		pparam = GEBR_GEOXML_PROGRAM_PARAMETER(seq);
@@ -438,7 +439,6 @@ void gebr_geoxml_program_control_set_n(GebrGeoXmlProgram *prog,
 {
 	GebrGeoXmlSequence *seq;
 	GebrGeoXmlProgramControl c;
-	GebrGeoXmlParameter *param;
 	GebrGeoXmlParameters *params;
 	GebrGeoXmlValueSequence *value;
 	const gchar *keyword;
@@ -450,13 +450,12 @@ void gebr_geoxml_program_control_set_n(GebrGeoXmlProgram *prog,
 
 	params = gebr_geoxml_program_get_parameters (prog);
 	gebr_geoxml_parameters_get_parameter(params, &seq, 0);
+	gebr_geoxml_object_unref(params);
 
 	while (seq) {
-		param = GEBR_GEOXML_PARAMETER(seq);
-
-		gebr_geoxml_program_parameter_get_value (GEBR_GEOXML_PROGRAM_PARAMETER (param),
+		gebr_geoxml_program_parameter_get_value (GEBR_GEOXML_PROGRAM_PARAMETER (seq),
 						 	 FALSE, (GebrGeoXmlSequence**)&value, 0);
-		keyword = gebr_geoxml_program_parameter_get_keyword(GEBR_GEOXML_PROGRAM_PARAMETER (param));
+		keyword = gebr_geoxml_program_parameter_get_keyword(GEBR_GEOXML_PROGRAM_PARAMETER (seq));
 		if(!strcmp(keyword,"niter"))
 			gebr_geoxml_value_sequence_set(value, n);
 		else if(!strcmp(keyword,"step"))
@@ -464,6 +463,7 @@ void gebr_geoxml_program_control_set_n(GebrGeoXmlProgram *prog,
 		else if(!strcmp(keyword,"ini_value"))
 			gebr_geoxml_value_sequence_set(value, ini);
 
+		gebr_geoxml_object_unref(value);
 		gebr_geoxml_sequence_next(&seq);
 	}
 }
