@@ -981,11 +981,14 @@ gebr_validator_validate_param(GebrValidator       *self,
 	GebrGeoXmlProgram *program = gebr_geoxml_parameter_get_program(param);
 	if (gebr_geoxml_program_get_control(program) == GEBR_GEOXML_PROGRAM_CONTROL_FOR) {
 		gebr_geoxml_object_unref(program);
-		if (!gebr_validator_validate_control_parameter(self, name, GET_VAR_VALUE(param), err)) {
+		gchar *var_value = GET_VAR_VALUE(param);
+		if (!gebr_validator_validate_control_parameter(self, name, var_value, err)) {
 			g_free(name);
+			g_free(var_value);
 			return FALSE;
 		}
 		g_free(name);
+		g_free(var_value);
 		goto out;
 	}
 	g_free(name);
@@ -1344,6 +1347,7 @@ gebr_validator_validate_control_parameter(GebrValidator *self,
 		}
 	}
 	g_free(result);
+
 	return TRUE;
 }
 static gboolean
