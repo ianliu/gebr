@@ -1,0 +1,42 @@
+{
+   gtk_init
+   Memcheck:Leak
+   ...
+   fun:gtk_init
+   ...
+}
+{
+   g_type_init
+   Memcheck:Leak
+   ...
+   fun:g_type_init
+   ...
+}
+{
+   g_get_home_dir
+   Memcheck:Leak
+   ...
+   fun:g_get_home_dir
+   ...
+}
+{
+   g_type_register_static
+   Memcheck:Leak
+   ...
+   fun:g_type_register_static
+   ...
+}
+{
+   g_type_add_interface_static
+   Memcheck:Leak
+   ...
+   fun:g_type_add_interface_static
+   ...
+}
+{
+   g_type_class_ref
+   Memcheck:Leak
+   ...
+   fun:g_type_class_ref
+   ...
+}
