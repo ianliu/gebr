@@ -1239,11 +1239,9 @@ gboolean gebr_validator_evaluate_interval(GebrValidator *self,
 
 	if(!gebr_validator_update_vars(self, scope, error))
 		return FALSE;
-	g_assert_no_error(*error);
 
 	if (!gebr_validator_validate_expr_on_scope(self, expr, type, scope, error))
 		return FALSE;
-	g_assert_no_error(*error);
 
 	return gebr_validator_evaluate_internal(self, NULL, expr, type, value, scope, show_interval, error);
 }
