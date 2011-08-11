@@ -224,19 +224,27 @@ void gebr_geoxml_parameters_set_selection(GebrGeoXmlParameters * parameters, Geb
 	g_free(value);
 }
 
-GebrGeoXmlParameter *gebr_geoxml_parameters_get_selection(GebrGeoXmlParameters * parameters)
+GebrGeoXmlParameter *
+gebr_geoxml_parameters_get_selection(GebrGeoXmlParameters * parameters)
 {
 	if (parameters == NULL)
 		return FALSE;
+
 	GebrGeoXmlParameter *selection = gebr_geoxml_parameters_get_default_selection(parameters);
+
 	if (selection == NULL)
 		return NULL;
+
 	gebr_geoxml_object_unref(selection);
 
+	gchar *str;
 	gulong index;
 	GebrGeoXmlSequence *parameter;
 
-	index = atol(__gebr_geoxml_get_attr_value((GdomeElement *) parameters, "selection"));
+	str = __gebr_geoxml_get_attr_value((GdomeElement *) parameters, "selection");
+	index = atol(str);
+	g_free(str);
+
 	if (index == 0)
 		return NULL;
 	index--;
