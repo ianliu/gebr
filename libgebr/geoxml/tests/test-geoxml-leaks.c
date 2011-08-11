@@ -21,6 +21,8 @@
 #include "object.h"
 #include "document.h"
 #include "flow.h"
+#include "line.h"
+#include "project.h"
 #include "program.h"
 #include "parameters.h"
 #include "parameter_p.h"
@@ -453,8 +455,30 @@ test_gebr_geoxml_leaks_parameters_reset_to_default(void)
 	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
 }
 
+static void
+test_gebr_geoxml_leaks_flow_revalidate(void)
+{
+	GebrGeoXmlDocument *flow;
+	GebrGeoXmlDocument *line;
+	GebrGeoXmlDocument *proj;
+	GebrValidator *validator;
+
+	gebr_geoxml_document_load(&flow, TEST_DIR "/test2.flw", TRUE, NULL);
+	line = GEBR_GEOXML_DOCUMENT(gebr_geoxml_line_new());
+	proj = GEBR_GEOXML_DOCUMENT(gebr_geoxml_project_new());
+	validator = gebr_validator_new(&flow, &line, &proj);
+
+	gebr_geoxml_flow_revalidate(GEBR_GEOXML_FLOW(flow), validator);
+
+	gebr_validator_free(validator);
+	gebr_geoxml_document_free(flow);
+	gebr_geoxml_document_free(line);
+	gebr_geoxml_document_free(proj);
+}
+
 int main(int argc, char *argv[])
 {
+	g_type_init();
 	g_test_init(&argc, &argv, NULL);
 	gebr_geoxml_init();
 
@@ -483,6 +507,7 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/geoxml/leaks/document_load", test_gebr_geoxml_leaks_document_load);
 	g_test_add_func("/libgebr/geoxml/leaks/sequence_append_clone", test_gebr_geoxml_leaks_sequence_append_clone);
 	g_test_add_func("/libgebr/geoxml/leaks/parameters_reset_to_default", test_gebr_geoxml_leaks_parameters_reset_to_default);
+	g_test_add_func("/libgebr/geoxml/leaks/flow_revalidate", test_gebr_geoxml_leaks_flow_revalidate);
 
 	gint ret = g_test_run();
 	gebr_geoxml_finalize();
