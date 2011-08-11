@@ -274,8 +274,6 @@ void test_gebr_validator_insert(Fixture *fixture, gconstpointer data)
 	GError *error = NULL;
 	gchar *pi_value;
 
-	GebrGeoXmlDocument *flow = fixture->flow;
-	GebrGeoXmlDocument *line = fixture->line;
 	GebrGeoXmlDocument *proj = fixture->proj;
 	GebrValidator *validator= fixture->validator;
 	GebrGeoXmlParameter *pi;
@@ -325,12 +323,14 @@ void test_gebr_validator_remove(Fixture *fixture, gconstpointer data)
 	g_assert(gebr_validator_evaluate_param(validator, param, &value, &error));
 	g_assert_no_error(error);
 	g_assert_cmpstr(value,==,"13");
+	g_free(value);
 
 	gebr_validator_remove (validator, x, NULL, &error);
 
 	g_assert(gebr_validator_evaluate_param(validator, param, &value, &error));
 	g_assert_no_error(error);
 	g_assert_cmpstr(value,==,"12");
+	g_free(value);
 
 	gebr_geoxml_object_unref(param);
 	param = gebr_geoxml_document_set_dict_keyword(GEBR_GEOXML_DOCUMENT(proj),
@@ -373,7 +373,6 @@ void test_gebr_validator_rename(Fixture *fixture, gconstpointer data)
 	const gchar *varname = NULL;
 	gchar *value = NULL;
 
-	GebrGeoXmlDocument *flow = fixture->flow;
 	GebrGeoXmlDocument *line = fixture->line;
 	GebrGeoXmlDocument *proj = fixture->proj;
 	GebrValidator *validator= fixture->validator;
@@ -412,6 +411,7 @@ void test_gebr_validator_rename(Fixture *fixture, gconstpointer data)
 	gebr_validator_evaluate_param(validator, param, &value, &error);
 	g_assert_no_error(error);
 	g_assert_cmpstr(value,==,"7.3984");
+	g_free(value);
 
 	gebr_geoxml_object_unref(param);
 	param = gebr_geoxml_document_set_dict_keyword((proj),
@@ -423,6 +423,7 @@ void test_gebr_validator_rename(Fixture *fixture, gconstpointer data)
 	g_assert(gebr_validator_evaluate(validator, "x", GEBR_GEOXML_PARAMETER_TYPE_FLOAT, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, &value, &error));
 	g_assert_no_error(error);
 	g_assert_cmpstr(value,==,"9.8596");
+	g_free(value);
 
 	gebr_geoxml_object_unref(param);
 	gebr_geoxml_object_unref(rename_param);
@@ -575,6 +576,7 @@ void test_gebr_validator_scope_errors(Fixture *fixture, gconstpointer data)
 	gebr_validator_evaluate_param(fixture->validator, param, &result, &error);
 	g_assert_no_error(error);
 	g_assert_cmpstr(result, ==, "2.out");
+	g_free(result);
 	gebr_geoxml_object_unref(param);
 }
 
@@ -776,6 +778,7 @@ void test_gebr_validator_divide_by_zero(Fixture *fixture, gconstpointer data)
 	gebr_validator_evaluate_param(fixture->validator, b, &value, &error);
 	g_assert_no_error(error);
 	g_assert_cmpstr(value,==,"1.00000");
+	g_free(value);
 	VALIDATE_FLOAT_EXPR("b", "1.00000");
 
 	// Divide by zero again
