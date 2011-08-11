@@ -940,7 +940,7 @@ gebr_validator_validate_param(GebrValidator       *self,
 			      gchar              **validated,
 			      GError             **err)
 {
-	const gchar *value;
+	gchar *value;
 	GebrGeoXmlParameterType type = gebr_geoxml_parameter_get_type(param);
 	GebrGeoXmlSequence *seq;
 	GError *error = NULL;
@@ -972,8 +972,10 @@ gebr_validator_validate_param(GebrValidator       *self,
 			            GEBR_IEXPR_ERROR_EMPTY_EXPR,
 			            _("This parameter is required"));
 			g_propagate_error(err, error);
+			g_free(name);
 			return FALSE;
 		}
+		g_free(name);
 		return TRUE;
 	}
 	GebrGeoXmlProgram *program = gebr_geoxml_parameter_get_program(param);
@@ -983,6 +985,7 @@ gebr_validator_validate_param(GebrValidator       *self,
 			g_free(name);
 			return FALSE;
 		}
+		g_free(name);
 		goto out;
 	}
 	g_free(name);
@@ -993,12 +996,14 @@ gebr_validator_validate_param(GebrValidator       *self,
 		value = gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(seq));
 		if (!gebr_validator_validate_expr(self, value, type, err)) {
 			gebr_geoxml_object_unref(seq);
+			g_free(value);
 			return FALSE;
 		}
+		g_free(value);
 	}
 out:
 	if (validated)
-		*validated = g_strdup(value);
+		*validated = NULL;
 
 	return TRUE;
 }
