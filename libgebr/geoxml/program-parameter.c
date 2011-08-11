@@ -88,8 +88,10 @@ void gebr_geoxml_program_parameter_set_required(GebrGeoXmlProgramParameter * pro
 		return;
 	if (gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(program_parameter)) == GEBR_GEOXML_PARAMETER_TYPE_FLAG)
 		return;
-	__gebr_geoxml_set_attr_value(__gebr_geoxml_get_first_element((GdomeElement *) program_parameter, "property"),
-				     "required", (required == TRUE ? "yes" : "no"));
+
+	GdomeElement *first = __gebr_geoxml_get_first_element((GdomeElement *) program_parameter, "property");
+	__gebr_geoxml_set_attr_value(first, "required", (required == TRUE ? "yes" : "no"));
+	gebr_geoxml_object_unref(first);
 }
 
 gboolean gebr_geoxml_program_parameter_get_required(GebrGeoXmlProgramParameter * program_parameter)
