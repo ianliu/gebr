@@ -43,6 +43,9 @@ test_gebr_geoxml_leaks_document_load(void)
 	GebrGeoXmlDocument *doc;
 	gebr_geoxml_document_load(&doc, TEST_DIR "/dict_test_flow.flw", TRUE, NULL);
 	gebr_geoxml_document_free(doc);
+
+	gebr_geoxml_document_load(&doc, TEST_DIR "/z2xyz.mnu", TRUE, NULL);
+	gebr_geoxml_document_free(doc);
 }
 
 static void
