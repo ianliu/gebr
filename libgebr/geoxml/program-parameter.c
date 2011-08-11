@@ -277,19 +277,20 @@ GebrGeoXmlPropertyValue *gebr_geoxml_program_parameter_append_value(GebrGeoXmlPr
 	if (program_parameter == NULL)
 		return NULL;
 
+	GdomeElement *property;
+	GdomeElement *defaulty;
 	GebrGeoXmlPropertyValue *property_value;
 
-	if (default_value == FALSE)
-		property_value = (GebrGeoXmlPropertyValue *)
-		    __gebr_geoxml_insert_new_element(__gebr_geoxml_get_first_element
-						     ((GdomeElement *) program_parameter, "property"), "value",
-						     __gebr_geoxml_get_first_element((GdomeElement *) program_parameter,
-										     "default"));
-	else
-		property_value = (GebrGeoXmlPropertyValue *)
-		    __gebr_geoxml_insert_new_element(__gebr_geoxml_get_first_element
-						     ((GdomeElement *) program_parameter, "property"), "default", NULL);
-
+	if (default_value == FALSE) {
+		property = __gebr_geoxml_get_first_element((GdomeElement *) program_parameter, "property");
+		defaulty = __gebr_geoxml_get_first_element((GdomeElement *) program_parameter, "default");
+		property_value = (GebrGeoXmlPropertyValue *) __gebr_geoxml_insert_new_element(property, "value", defaulty);
+		gdome_el_unref(defaulty, &exception);
+	} else {
+		property = __gebr_geoxml_get_first_element((GdomeElement *) program_parameter, "property");
+		property_value = (GebrGeoXmlPropertyValue *) __gebr_geoxml_insert_new_element(property, "default", NULL);
+	}
+	gdome_el_unref(property, &exception);
 	return property_value;
 }
 
