@@ -17,6 +17,7 @@
 
 #include <glib.h>
 #include <string.h>
+#include <geoxml/geoxml.h>
 
 #include "../gebr-iexpr.h"
 #include "../gebr-arith-expr.h"

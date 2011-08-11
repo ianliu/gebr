@@ -16,6 +16,7 @@
  */
 
 #include <glib.h>
+#include <geoxml/geoxml.h>
 
 #include "../utils.h"
 
