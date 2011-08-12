@@ -586,9 +586,8 @@ gebr_validator_update_vars(GebrValidator *self,
 				gebr_geoxml_sequence_next(&param);
 				for (; param; gebr_geoxml_sequence_next(&param)) {
 					GebrGeoXmlParameterType type = gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(param));
-					if (type == GEBR_GEOXML_PARAMETER_TYPE_STRING) {
+					if (type == GEBR_GEOXML_PARAMETER_TYPE_STRING)
 						continue;
-					}
 					validate_and_extract_param(self, GEBR_GEOXML_PARAMETER(param), NULL, NULL);
 				}
 			}
@@ -864,15 +863,19 @@ gebr_validator_change_value(GebrValidator       *self,
 	SET_VAR_VALUE(param, new_value);
 	self->cached_scope = GEBR_GEOXML_DOCUMENT_TYPE_UNKNOWN;
 
-	if (g_strcmp0(name, "iter") == 0 && !gebr_validator_validate_iter(self, param, &err)) {
-		g_propagate_error(error, err);
-		g_free(name);
-		return FALSE;
+	if (g_strcmp0(name, "iter") == 0) {
+		if (!gebr_validator_validate_iter(self, param, &err)) {
+			g_propagate_error(error, err);
+			g_free(name);
+			return FALSE;
+		}
+		return TRUE;
 	}
 
 	data = g_hash_table_lookup(self->vars, name);
 	g_free(name);
 	g_return_val_if_fail(data != NULL, FALSE);
+
 	return validate_and_extract_param(self, param, &data->dep[scope], error);
 }
 
@@ -1295,14 +1298,14 @@ gboolean gebr_validator_evaluate_param(GebrValidator *self,
 	HashData *data = g_hash_table_lookup(self->vars, name);
 	g_return_val_if_fail(data != NULL , FALSE);
 
-	if (g_strcmp0(name, "iter") == 0 && !gebr_validator_validate_iter(self, param, error))
-		return FALSE;
-
 	if(!gebr_validator_update_vars(self, scope, error))
 		return FALSE;
 
 	if (!get_error_indirect(self, data->dep[scope], name, type, scope, error))
-			return FALSE;
+		return FALSE;
+
+	if (g_strcmp0(name, "iter") == 0 && !gebr_validator_validate_iter(self, param, error))
+		return FALSE;
 
 	if (data->error[scope]) {
 		g_propagate_error(error, g_error_copy(data->error[scope]));
@@ -1402,6 +1405,13 @@ gebr_validator_validate_iter(GebrValidator *self,
 	const gchar *name = NULL;
 	GebrGeoXmlSequence *seq;
 	const gchar *value;
+	HashData *data;
+
+	data = g_hash_table_lookup(self->vars, "iter");
+	g_return_val_if_fail(data != NULL, FALSE);
+
+	if (!validate_and_extract_param(self, param, &data->dep[GEBR_GEOXML_DOCUMENT_TYPE_FLOW], error))
+		return FALSE;
 
 	gebr_geoxml_program_parameter_get_value(GEBR_GEOXML_PROGRAM_PARAMETER(param), FALSE, &seq, 1);
 	for (; seq; gebr_geoxml_sequence_next(&seq)) {
