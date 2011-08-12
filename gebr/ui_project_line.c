@@ -519,8 +519,8 @@ static gboolean _project_line_import_path(const gchar *filename, GList **line_pa
 		document_save(GEBR_GEOXML_DOCUMENT(*line), FALSE, FALSE);
 		gdk_threads_leave();
 
-		gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &gebr.line, GEBR_GEOXML_DOCUMENT_TYPE_LINE, FALSE);
-		gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &gebr.flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE);
+		gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &gebr.flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, TRUE);
+		gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &gebr.line, GEBR_GEOXML_DOCUMENT_TYPE_LINE, TRUE);
 
 		return ret;
 	}
