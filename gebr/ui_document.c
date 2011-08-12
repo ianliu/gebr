@@ -240,6 +240,7 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 	data->window = window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_modal(GTK_WINDOW(window), TRUE);
 	gtk_window_set_transient_for(GTK_WINDOW(window), GTK_WINDOW(gebr.window));
+	gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER_ON_PARENT);
 	gtk_window_set_destroy_with_parent(GTK_WINDOW(window), TRUE);
 
 	window_title = g_strdup_printf(_("%s '%s' properties"),
