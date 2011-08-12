@@ -1672,3 +1672,8 @@ void gebr_geoxml_document_ref(GebrGeoXmlDocument *self)
 {
 	gdome_doc_ref((GdomeDocument*)self, &exception);
 }
+
+void gebr_geoxml_document_unref(GebrGeoXmlDocument *self)
+{
+	gdome_doc_unref((GdomeDocument*)self, &exception);
+}

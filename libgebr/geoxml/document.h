@@ -425,6 +425,8 @@ gebr_geoxml_document_canonize_dict_parameters(GebrGeoXmlDocument * document,
 
 void gebr_geoxml_document_ref(GebrGeoXmlDocument *self);
 
+void gebr_geoxml_document_unref(GebrGeoXmlDocument *self);
+
 G_END_DECLS
 
 #endif				//__GEBR_GEOXML_DOCUMENT_H
