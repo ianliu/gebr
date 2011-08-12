@@ -177,32 +177,60 @@ fixture_setup(Fixture *fixture, gconstpointer data)
 }
 
 void
+fixture_add_loop(Fixture *fixture)
+{
+	GebrGeoXmlProgram *prog_loop;
+	GebrGeoXmlDocument *loop;
+	GebrGeoXmlParameter *iter_param = NULL;
+
+	gebr_geoxml_document_load(&loop, TEST_SRCDIR "/forloop.mnu", FALSE, NULL);
+	gebr_geoxml_flow_get_program(GEBR_GEOXML_FLOW(loop), (GebrGeoXmlSequence**) &prog_loop, 0);
+	gebr_geoxml_program_set_status(prog_loop, GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED);
+
+	gebr_geoxml_program_control_set_n(prog_loop, "1", "1", "7");
+	gebr_geoxml_flow_add_flow(GEBR_GEOXML_FLOW(fixture->flow), GEBR_GEOXML_FLOW(loop));
+	iter_param = GEBR_GEOXML_PARAMETER(gebr_geoxml_document_get_dict_parameter(fixture->flow));
+	g_assert(gebr_validator_insert(fixture->validator, iter_param, NULL, NULL));
+
+	gebr_geoxml_object_unref(prog_loop);
+	gebr_geoxml_document_free(loop);
+	gebr_geoxml_object_unref(iter_param);
+}
+
+void
+fixture_change_iter_value (Fixture *fixture,
+                           gchar *ini,
+                           gchar *step,
+                           gchar *n)
+{
+	GebrGeoXmlProgram *prog_loop;
+	GebrGeoXmlProgramParameter *dict_iter;
+	gchar *value = NULL;
+
+	fixture_add_loop(fixture);
+
+	prog_loop = gebr_geoxml_flow_get_control_program((GebrGeoXmlFlow*)fixture->flow);
+
+	gebr_geoxml_program_control_set_n(prog_loop, step, ini, n);
+
+	gebr_geoxml_flow_update_iter_dict_value((GebrGeoXmlFlow*)fixture->flow);
+	dict_iter = GEBR_GEOXML_PROGRAM_PARAMETER(gebr_geoxml_document_get_dict_parameter(GEBR_GEOXML_DOCUMENT(fixture->flow)));
+
+	value = gebr_geoxml_program_parameter_get_first_value(dict_iter, FALSE);
+	gebr_validator_change_value(fixture->validator, GEBR_GEOXML_PARAMETER(dict_iter), value, NULL, NULL);
+
+	g_free(value);
+	gebr_geoxml_object_unref(dict_iter);
+	gebr_geoxml_object_unref(prog_loop);
+}
+
+void
 fixture_teardown(Fixture *fixture, gconstpointer data)
 {
 	gebr_validator_free(fixture->validator);
 	gebr_geoxml_document_free(fixture->flow);
 	gebr_geoxml_document_free(fixture->line);
 	gebr_geoxml_document_free(fixture->proj);
-}
-
-GebrGeoXmlParameter *
-fixture_add_loop(Fixture *fixture)
-{
-	GebrGeoXmlDocument *loop;
-	GebrGeoXmlProgram *loop_prog;
-	GebrGeoXmlParameter *iter_param = NULL;
-
-	gebr_geoxml_document_load(&loop, TEST_SRCDIR "/forloop.mnu", FALSE, NULL);
-	gebr_geoxml_flow_get_program(GEBR_GEOXML_FLOW(loop), (GebrGeoXmlSequence**) &loop_prog, 0);
-	gebr_geoxml_program_set_status(loop_prog, GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED);
-	gebr_geoxml_program_control_set_n(loop_prog, "1", "1", "7");
-	gebr_geoxml_flow_add_flow(GEBR_GEOXML_FLOW(fixture->flow), GEBR_GEOXML_FLOW(loop));
-	iter_param = GEBR_GEOXML_PARAMETER(gebr_geoxml_document_get_dict_parameter(fixture->flow));
-	g_assert(gebr_validator_insert(fixture->validator, iter_param, NULL, NULL));
-
-	gebr_geoxml_object_unref(loop_prog);
-	gebr_geoxml_document_free(loop);
-	return iter_param;
 }
 
 void test_gebr_validator_simple(Fixture *fixture, gconstpointer data)
@@ -631,20 +659,20 @@ void test_gebr_validator_evaluate(Fixture *fixture, gconstpointer data)
 	DEF_FLOAT(fixture->flow, "a", "b");
 	VALIDATE_STRING_EXPR("[xyz]", "file.2");
 
-	gebr_geoxml_object_unref(fixture_add_loop(fixture));
-//	DEF_FLOAT(fixture->flow, "x", "iter+1");
-//	VALIDATE_FLOAT_EXPR("iter+1", "[2, ..., 8]");
-//	VALIDATE_FLOAT_EXPR("x+1", "[3, ..., 9]");
-//	VALIDATE_STRING_EXPR("out-[iter].dat", "[\"out-1.dat\", ..., \"out-7.dat\"]");
+	fixture_change_iter_value(fixture, "1", "1", "7");
+	DEF_FLOAT(fixture->flow, "x", "iter+1");
+	VALIDATE_FLOAT_EXPR("iter+1", "[2, ..., 8]");
+	VALIDATE_FLOAT_EXPR("x+1", "[3, ..., 9]");
+	VALIDATE_STRING_EXPR("out-[iter].dat", "[\"out-1.dat\", ..., \"out-7.dat\"]");
 }
 
 void test_gebr_validator_eval1(Fixture *fixture, gconstpointer data)
 {
 	DEF_FLOAT(fixture->flow, "a", "2");
-//	VALIDATE_FLOAT_EXPR_WITH_ERROR("iter+1", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_UNDEF_REFERENCE);
-//	DEF_FLOAT_WITH_ERROR(fixture->flow, "b", "iter+1", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_UNDEF_REFERENCE);
-//	VALIDATE_FLOAT_EXPR("a+2", "4");
-//	DEF_FLOAT_WITH_ERROR(fixture->flow, "c", "b+1", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_BAD_REFERENCE);
+	VALIDATE_FLOAT_EXPR_WITH_ERROR("iter+1", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_UNDEF_REFERENCE);
+	DEF_FLOAT_WITH_ERROR(fixture->flow, "b", "iter+1", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_UNDEF_REFERENCE);
+	VALIDATE_FLOAT_EXPR("a+2", "4");
+	DEF_FLOAT_WITH_ERROR(fixture->flow, "c", "b+1", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_BAD_REFERENCE);
 }
 
 void test_gebr_validator_weight(Fixture *fixture, gconstpointer data)
@@ -801,7 +829,7 @@ void test_gebr_validator_divide_by_zero(Fixture *fixture, gconstpointer data)
 	g_clear_error(&error);
 	VALIDATE_FLOAT_EXPR_WITH_ERROR("b", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_BAD_REFERENCE);
 
-	gebr_geoxml_object_unref(fixture_add_loop(fixture));
+	fixture_change_iter_value(fixture, "1", "1", "7");
 
 	VALIDATE_FLOAT_EXPR_WITH_ERROR("1/(iter-1)", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_RUNTIME);
 
