@@ -53,6 +53,9 @@ GebrGeoXmlValidate *gebr_geoxml_validate_new(gpointer data, GebrGeoXmlValidateOp
 		options.category = TRUE;
 		options.mhelp = TRUE;
 		options.progs = TRUE;
+		options.url = TRUE;
+		options.params = TRUE;
+		options.verbose = TRUE;
         options.url = TRUE;
         options.verbose = TRUE;
 	}
