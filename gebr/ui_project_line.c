@@ -563,6 +563,8 @@ static gboolean _project_line_import_path(const gchar *filename, GList **line_pa
 			iter = project_append_iter(project);
 			gdk_threads_leave();
 
+			gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &project, GEBR_GEOXML_DOCUMENT_TYPE_PROJECT, FALSE);
+
 			gebr_geoxml_project_get_line(project, &project_line, 0);
 			for (; project_line; gebr_geoxml_sequence_next(&project_line)) {
 				GebrGeoXmlLine *line;
@@ -581,6 +583,7 @@ static gboolean _project_line_import_path(const gchar *filename, GList **line_pa
 				document_save(GEBR_GEOXML_DOCUMENT(line), FALSE, FALSE);
 				gdk_threads_leave();
 			}
+			gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &gebr.project, GEBR_GEOXML_DOCUMENT_TYPE_PROJECT, FALSE);
 			document = GEBR_GEOXML_DOCUMENT(project);
 		} else if (!is_project && g_str_has_suffix(files[i], ".lne")) {
 			GebrGeoXmlLine *line;
