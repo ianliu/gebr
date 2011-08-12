@@ -719,9 +719,13 @@ void flow_edition_change_iter_status(GebrGeoXmlProgramStatus status, GtkTreeIter
 
 	gtk_tree_model_get(model, iter, FSEQ_GEBR_GEOXML_POINTER, &program, -1);
 
-	if (gebr_geoxml_program_get_status(program) == status)
-		return;
-
+	gboolean is_control = (gebr_geoxml_program_get_control(program) == GEBR_GEOXML_PROGRAM_CONTROL_FOR);
+	if (gebr_geoxml_program_get_status(program) == status) {
+		// If program is control, it may invalidate other programs but not itself
+		if(is_control)
+			flow_edition_revalidate_programs();
+		goto out;
+	}
 	gtk_list_store_set(gebr.ui_flow_edition->fseq_store, iter, FSEQ_NEVER_OPENED,
 	                   FALSE, -1);
 
@@ -730,7 +734,7 @@ void flow_edition_change_iter_status(GebrGeoXmlProgramStatus status, GtkTreeIter
 	if (has_error && status == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED)
 		status = GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED;
 
-	if (gebr_geoxml_program_get_control(program) == GEBR_GEOXML_PROGRAM_CONTROL_FOR) {
+	if (is_control) {
 		GebrGeoXmlSequence *parameter;
 
 		if(status == GEBR_GEOXML_PROGRAM_STATUS_DISABLED) {

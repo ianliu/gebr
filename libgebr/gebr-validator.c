@@ -1010,6 +1010,8 @@ gebr_validator_validate_param(GebrValidator       *self,
 	g_free(name);
 	gebr_geoxml_object_unref(program);
 
+	gebr_validator_update_vars(self, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, NULL);
+
 	gebr_geoxml_program_parameter_get_value(GEBR_GEOXML_PROGRAM_PARAMETER(param), FALSE, &seq, 0);
 	for (; seq; gebr_geoxml_sequence_next(&seq)) {
 		value = gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(seq));
