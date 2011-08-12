@@ -518,6 +518,9 @@ gebr_arith_expr_eval_internal(GebrArithExpr *self,
 				    _("Invalid expression%s"), msg);
 			goto exception_and_flush;
 		}
+		if (g_str_has_prefix(line, "Runtime warning (func"))
+			continue;
+
 		int length = strlen(line);
 		if (line[length - 2] == '\\')
 			length -= 2;
