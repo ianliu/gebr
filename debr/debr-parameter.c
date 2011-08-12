@@ -1431,8 +1431,8 @@ static GtkMenu *parameter_popup_menu(GtkWidget * tree_view)
 		goto out;
 	}
 
-	param_top    = gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group_program, "program_top"));
-	param_bottom = gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group_program, "program_bottom"));
+	param_top    = gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group_parameter, "parameter_top"));
+	param_bottom = gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group_parameter, "parameter_bottom"));
 
 	if (gebr_gui_gtk_tree_store_can_move_up(debr.ui_parameter.tree_store, &iter) == TRUE)
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), param_top);
