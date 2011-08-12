@@ -712,6 +712,9 @@ void test_gebr_validator_update(Fixture *fixture, gconstpointer data)
 	VALIDATE_STRING_EXPR("[a]", "A");
 	VALIDATE_STRING_EXPR("[b]", "AB");
 
+	fixture->flow = NULL;
+	gebr_validator_update(fixture->validator);
+
 	fixture->flow = flow2;
 	gebr_validator_update(fixture->validator);
 	VALIDATE_FLOAT_EXPR("a", "1");
