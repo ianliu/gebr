@@ -760,7 +760,7 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 	}
 
 	if (strcmp(version, "0.3.7") < 0) {
-		if (gebr_geoxml_document_get_type(((GebrGeoXmlDocument *) *document)) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW) {
+		if (gebr_geoxml_document_get_type(GEBR_GEOXML_DOCUMENT(*document)) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW) {
 			GHashTable * keys_to_canonized = NULL;
 			GebrGeoXmlSequence * program = NULL;
 
@@ -768,9 +768,26 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 			GdomeElement *server;
 			GdomeElement *servers;
 
-			gebr_geoxml_document_canonize_dict_parameters(
-					(GebrGeoXmlDocument *) *document,
-					&keys_to_canonized);
+			// Canonize revisions
+			GebrGeoXmlSequence *seq;
+			gebr_geoxml_flow_get_revision(GEBR_GEOXML_FLOW(*document), &seq, 0);
+
+			for (; seq; gebr_geoxml_sequence_next(&seq)) {
+				gchar *flow_xml;
+				GebrGeoXmlDocument *revdoc;
+				gebr_geoxml_flow_get_revision_data(GEBR_GEOXML_REVISION(seq), &flow_xml, NULL, NULL);
+
+				if (gebr_geoxml_document_load_buffer(&revdoc, flow_xml) != GEBR_GEOXML_RETV_SUCCESS) {
+					g_free(flow_xml);
+					continue;
+				}
+
+				g_free(flow_xml);
+				gebr_geoxml_document_to_string(revdoc, &flow_xml);
+				gebr_geoxml_flow_set_revision_data(GEBR_GEOXML_REVISION(seq), flow_xml, NULL, NULL);
+				gebr_geoxml_document_free(revdoc);
+				g_free(flow_xml);
+			}
 
 			io = __gebr_geoxml_get_first_element (root_element, "io");
 			servers = __gebr_geoxml_next_element (io);
@@ -804,22 +821,20 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 			gdome_n_unref(gdome_el_removeChild(root_element, (GdomeNode*) io, &exception), &exception);
 			gdome_n_unref(gdome_el_removeChild(root_element, (GdomeNode*) servers, &exception), &exception);
 
-			gebr_geoxml_flow_get_program(
-					(GebrGeoXmlFlow *) *document,
-					&program, 0);
+			gebr_geoxml_document_canonize_dict_parameters(GEBR_GEOXML_DOCUMENT(*document), &keys_to_canonized);
 
-			for (; program != NULL; gebr_geoxml_sequence_next(&program))
-			{
+			gebr_geoxml_flow_get_program(GEBR_GEOXML_FLOW(*document), &program, 0);
+			for (; program != NULL; gebr_geoxml_sequence_next(&program)) {
 				gebr_geoxml_program_foreach_parameter(
 						GEBR_GEOXML_PROGRAM(program),
 						gebr_geoxml_program_parameter_update_old_dict_value,
 						keys_to_canonized);
 			}
+
 			__gebr_geoxml_set_attr_value(root_element, "version", "0.3.7");
 			gdome_el_unref(io, &exception);
 			gdome_el_unref(server, &exception);
 			gdome_el_unref(servers, &exception);
-			gebr_geoxml_object_unref(program);
 		}
 	}
 
@@ -1199,8 +1214,8 @@ GebrGeoXmlParameters *gebr_geoxml_document_get_dict_parameters(GebrGeoXmlDocumen
 }
 
 gboolean
-gebr_geoxml_document_canonize_dict_parameters(GebrGeoXmlDocument * document,
-					      GHashTable 	** list_copy)
+gebr_geoxml_document_canonize_dict_parameters(GebrGeoXmlDocument *document,
+					      GHashTable 	**list_copy)
 {
 	g_return_val_if_fail(document != NULL, FALSE);
 	g_return_val_if_fail(list_copy != NULL, FALSE);

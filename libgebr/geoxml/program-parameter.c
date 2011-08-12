@@ -905,8 +905,7 @@ gebr_geoxml_program_parameter_update_old_dict_value(GebrGeoXmlObject * param,
 	}
 
 	gchar *spaces = g_strdup(key);
-	if(*g_strstrip(spaces))
-	{
+	if (!*g_strstrip(spaces)) {
 		g_free(spaces);
 		g_free(key);
 		return TRUE;
