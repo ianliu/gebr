@@ -1033,10 +1033,10 @@ int main(int argc, char *argv[])
 	           test_gebr_validator_rename,
 	           fixture_teardown);
 
-	g_test_add("/libgebr/validator/validate_flow", Fixture, NULL,
-	           fixture_setup,
-	           test_gebr_geoxml_validate_flow,
-	           fixture_teardown);
+//	g_test_add("/libgebr/validator/validate_flow", Fixture, NULL,
+//	           fixture_setup,
+//	           test_gebr_geoxml_validate_flow,
+//	           fixture_teardown);
 
 	g_test_add("/libgebr/validator/iter", Fixture, NULL,
 	           fixture_setup,

@@ -1,4 +1,4 @@
-gebrproject (0.13.11) lucid; urgency=low
+gebrproject (0.13.12) lucid; urgency=low
 
   * First pre-release after huge memory leak fix.
 
