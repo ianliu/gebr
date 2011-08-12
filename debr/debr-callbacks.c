@@ -371,7 +371,7 @@ void on_menu_validate_activate(void)
 	GtkTreeIter iter;
 
 	gebr_gui_gtk_tree_view_foreach_selected(&iter, debr.ui_menu.tree_view)
-		menu_validate(&iter);
+		validate_menu(&iter);
 	gtk_notebook_set_current_page(GTK_NOTEBOOK(debr.notebook), NOTEBOOK_PAGE_VALIDATE);
 }
 

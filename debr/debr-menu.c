@@ -690,11 +690,6 @@ out:
 	return ret;
 }
 
-void menu_validate(GtkTreeIter * iter)
-{
-	validate_menu(iter);
-}
-
 void menu_install(void)
 {
 	gboolean overwriteall;
@@ -877,7 +872,7 @@ void menu_selected(void)
 		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &iter, MENU_VALIDATE_POINTER, &validate, -1);
 		if (validate != NULL) {
 			validate_set_selected(&validate->iter);
-			menu_validate(&iter);
+			validate_menu(&iter);
 		}
 
 		gchar *tmp_help = gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(debr.menu));
