@@ -512,6 +512,7 @@ static gboolean _project_line_import_path(const gchar *filename, GList **line_pa
 			gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, TRUE);
 			gebr_geoxml_flow_revalidate(flow, gebr.validator);
 			document_save(GEBR_GEOXML_DOCUMENT(flow), FALSE, FALSE);
+			gebr_validator_set_document(gebr.validator, NULL, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, TRUE);
 			gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
 			gdk_threads_leave();
 		}
