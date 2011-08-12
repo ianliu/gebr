@@ -491,7 +491,6 @@ validate_and_extract_vars(GebrValidator  *self,
 				define = g_strdup(expression);
 			}
 			gchar *result = NULL;
-			puts(define);
 			valid = gebr_arith_expr_eval_internal(self->arith_expr, define, &result, error);
 			if (valid && strlen(result) > MAX_RESULT_LENGTH) {
 				valid = FALSE;
@@ -581,7 +580,7 @@ gebr_validator_update_vars(GebrValidator *self,
 		name = GET_VAR_NAME(param);
 		if (g_strcmp0(name, "iter") == 0) {
 			has_iter = TRUE;
-			if (gebr_validator_update_vars(self, GEBR_GEOXML_DOCUMENT_TYPE_LINE, NULL)
+			if (gebr_validator_validate_iter(self, GEBR_GEOXML_PARAMETER(param), NULL)
 			    && validate_and_extract_param(self, GEBR_GEOXML_PARAMETER(param), NULL, NULL)) {
 				gebr_geoxml_sequence_next(&param);
 				for (; param; gebr_geoxml_sequence_next(&param)) {
@@ -646,7 +645,6 @@ gebr_validator_update_vars(GebrValidator *self,
 	g_string_append(bc_strings, " }\n");
 	g_string_append(bc_strings, bc_vars->str);
 	g_string_append(bc_strings, "return iter };0\n" ITER_INI_EXPR);
-	puts(bc_strings->str);
 	if (error) g_assert_no_error(*error);
 	gboolean ok = gebr_arith_expr_eval_internal(self->arith_expr, bc_strings->str, NULL, error);
 	self->cached_scope = param_scope;
@@ -864,14 +862,10 @@ gebr_validator_change_value(GebrValidator       *self,
 	SET_VAR_VALUE(param, new_value);
 	self->cached_scope = GEBR_GEOXML_DOCUMENT_TYPE_UNKNOWN;
 
-	if (g_strcmp0(name, "iter") == 0) {
-		if (!gebr_validator_validate_iter(self, param, &err)) {
-			if (err->code >= GEBR_IEXPR_ERROR_EMPTY_EXPR && err->code <= GEBR_IEXPR_ERROR_SYNTAX)
-				set_error(self, name, scope, err);
-			g_propagate_error(error, err);
-			g_free(name);
-			return FALSE;
-		}
+	if (g_strcmp0(name, "iter") == 0 && !gebr_validator_validate_iter(self, param, &err)) {
+		g_propagate_error(error, err);
+		g_free(name);
+		return FALSE;
 	}
 
 	data = g_hash_table_lookup(self->vars, name);
@@ -1271,6 +1265,9 @@ gboolean gebr_validator_evaluate_param(GebrValidator *self,
 	HashData *data = g_hash_table_lookup(self->vars, name);
 	g_return_val_if_fail(data != NULL , FALSE);
 
+	if (g_strcmp0(name, "iter") == 0 && !gebr_validator_validate_iter(self, param, error))
+		return FALSE;
+
 	if(!gebr_validator_update_vars(self, scope, error))
 		return FALSE;
 
@@ -1345,20 +1342,20 @@ gebr_validator_validate_control_parameter(GebrValidator *self,
 		}
 
 		result_int = atoi(result);
-		if (result_int <= 0) {
-			g_set_error(error,
-			            GEBR_IEXPR_ERROR,
-			            GEBR_IEXPR_ERROR_SYNTAX,
-			            _("Accepts only positive values"));
-			g_free(result);
-			return FALSE;
-		}
 		result_d = g_ascii_strtod(result, NULL);
 		if (result_d > result_int) {
 			g_set_error(error,
 			            GEBR_IEXPR_ERROR,
 			            GEBR_IEXPR_ERROR_SYNTAX,
 			            _("Accepts only integer values"));
+			g_free(result);
+			return FALSE;
+		}
+		if (result_int <= 0) {
+			g_set_error(error,
+			            GEBR_IEXPR_ERROR,
+			            GEBR_IEXPR_ERROR_SYNTAX,
+			            _("Accepts only positive values"));
 			g_free(result);
 			return FALSE;
 		}
@@ -1386,17 +1383,21 @@ gebr_validator_validate_iter(GebrValidator *self,
 		value = gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(seq));
 		if(!gebr_validator_validate_control_parameter(self, name, value, &err)) {
 			gebr_geoxml_object_unref(seq);
-			g_propagate_error(error, err);
 			break;
 		}
 		i++;
 	}
+
 	/* Comment for translators: 1st %s is expression error; 2nd is variable label */
-	if (error && *error) {
-		gchar *old_msg = (*error)->message;
-		(*error)->message = g_strdup_printf(_("%s on \"%s\""), old_msg, labels[i]);
+	if (err) {
+		gchar *old_msg = (err)->message;
+		(err)->message = g_strdup_printf(_("%s on \"%s\""), old_msg, labels[i]);
 		g_free(old_msg);
+		if (err->code >= GEBR_IEXPR_ERROR_EMPTY_EXPR && err->code <= GEBR_IEXPR_ERROR_SYNTAX)
+			set_error(self, "iter", GEBR_GEOXML_DOCUMENT_TYPE_FLOW, err);
+		g_propagate_error(error, err);
 		return FALSE;
 	}
+
 	return TRUE;
 }
