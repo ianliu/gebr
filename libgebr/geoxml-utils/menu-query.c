@@ -87,6 +87,7 @@ int main(int argc, char **argv)
 	GebrGeoXmlValidate *validate;
 
 	gebr_libinit("libgebr");
+	gebr_geoxml_init();
 
 	/* default values */
 	options.all = TRUE;
@@ -118,6 +119,8 @@ int main(int argc, char **argv)
 		gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
 	}
 	gebr_geoxml_validate_free(validate);
+
+	gebr_geoxml_finalize();
 
 	return global_error_count;
 }

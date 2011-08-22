@@ -54,6 +54,7 @@ int main(int argc, char **argv)
 	int nflow;
 	int iflow;
 
+	gebr_geoxml_init();
 	parse_command_line(argc, argv);
 
 	if (flowfn == NULL)
@@ -207,5 +208,6 @@ void show_parameter(GebrGeoXmlParameter * parameter)
                 g_string_free(group, TRUE);
         }
 
+	gebr_geoxml_finalize();
 	return;
 }

@@ -1,3 +1,9 @@
+gebrproject (0.13.12) lucid; urgency=low
+
+  * First pre-release after huge memory leak fix.
+
+ -- Fabricio Matheus Goncalves <fmatheus@gebrproject.com>  Thu, 11 Aug 2011 21:40:16 -0300
+
 gebrproject (0.13.9) lucid; urgency=medium
 
   * Expression evaluation improved and tested.

@@ -165,6 +165,7 @@ void test_gebr_geoxml_line_get_group(void)
 int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
+	gebr_geoxml_init();
 
 	gebr_geoxml_document_set_dtd_dir(DTD_DIR);
 
@@ -176,5 +177,7 @@ int main(int argc, char *argv[])
 //	g_test_add_func("/libgebr/geoxml/line/duplicate_paths",test_duplicate_paths);
 	g_test_add_func("/libgebr/geoxml/line/get_group",test_gebr_geoxml_line_get_group);
 
-	return g_test_run();
+	gint ret = g_test_run();
+	gebr_geoxml_finalize();
+	return ret;
 }

@@ -18,6 +18,7 @@
 #include <glib.h>
 #include <glib/gstdio.h>
 #include <string.h>
+#include <geoxml/geoxml.h>
 
 #include "../gebr-tar.h"
 
@@ -86,9 +87,12 @@ void test_gebr_tar_compact (void)
 int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
+	gebr_geoxml_init();
 
 	g_test_add_func("/libgebr/tar/extract", test_gebr_tar_extract);
 	g_test_add_func("/libgebr/tar/compact", test_gebr_tar_compact);
 
-	return g_test_run();
+	gint ret = g_test_run();
+	gebr_geoxml_finalize();
+	return ret;
 }

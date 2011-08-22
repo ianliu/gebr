@@ -492,6 +492,7 @@ void parameter_paste(void)
 			/* Insert pasted parameter after pre-selected one. */
 			do {
 				next = pasted_sequence;
+				gebr_geoxml_object_ref(pasted_sequence);
 				gebr_geoxml_sequence_next(&next);
 				gebr_geoxml_sequence_move_after(pasted_sequence, xml_sequence);
 
@@ -506,6 +507,7 @@ void parameter_paste(void)
 			/* Selection is a group. Insert pasted parameter at the end of the group's list. */
 			do {
 				next = pasted_sequence;
+				gebr_geoxml_object_ref(pasted_sequence);
 				gebr_geoxml_sequence_next(&next);
 				gebr_geoxml_sequence_move_into_group(pasted_sequence, parameter_group);
 				
@@ -527,6 +529,7 @@ void parameter_paste(void)
 			/* Selection is out of groups. Paste parameter after pre-selected one. */
 			do {
 				next = pasted_sequence;
+				gebr_geoxml_object_ref(pasted_sequence);
 				gebr_geoxml_sequence_next(&next);
 				gebr_geoxml_sequence_move_after(pasted_sequence, xml_sequence);
 
@@ -542,6 +545,7 @@ void parameter_paste(void)
 			/* Nothing is selected. Paste parameter at the end of the list. */
 			do {
 				next = pasted_sequence;
+				gebr_geoxml_object_ref(pasted_sequence);
 				gebr_geoxml_sequence_next(&next);
 
 				gtk_tree_store_append(debr.ui_parameter.tree_store, &pasted_iter, NULL);
@@ -1220,6 +1224,7 @@ static void parameter_append_to_ui(GebrGeoXmlParameter * parameter, GtkTreeIter 
 	GtkTreeIter iter_;
 
 	gtk_tree_store_append(debr.ui_parameter.tree_store, &iter_, parent);
+	gebr_geoxml_object_ref(parameter);
 	gtk_tree_store_set(debr.ui_parameter.tree_store, &iter_, PARAMETER_XMLPOINTER, parameter, -1);
 	parameter_load_iter(&iter_, TRUE);
 
@@ -1237,6 +1242,7 @@ static void parameter_insert_to_ui(GebrGeoXmlParameter *parameter, GtkTreeIter *
 	GtkTreeIter iter_;
 
 	gtk_tree_store_insert_after(debr.ui_parameter.tree_store, &iter_, NULL, sibling);
+	gebr_geoxml_object_ref(parameter);
 	gtk_tree_store_set(debr.ui_parameter.tree_store, &iter_, PARAMETER_XMLPOINTER, parameter, -1);
 	parameter_load_iter(&iter_, TRUE);
 
@@ -1425,8 +1431,8 @@ static GtkMenu *parameter_popup_menu(GtkWidget * tree_view)
 		goto out;
 	}
 
-	param_top    = gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group_program, "program_top"));
-	param_bottom = gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group_program, "program_bottom"));
+	param_top    = gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group_parameter, "parameter_top"));
+	param_bottom = gtk_action_create_menu_item(gtk_action_group_get_action(debr.action_group_parameter, "parameter_bottom"));
 
 	if (gebr_gui_gtk_tree_store_can_move_up(debr.ui_parameter.tree_store, &iter) == TRUE)
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), param_top);

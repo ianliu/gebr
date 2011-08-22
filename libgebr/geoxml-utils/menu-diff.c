@@ -63,6 +63,7 @@ int main(int argc, char **argv)
 	int nmenu;
 
 	gebr_libinit("libgebr");
+	gebr_geoxml_init();
 
 	parse_command_line(argc, argv);
 
@@ -100,7 +101,12 @@ int main(int argc, char **argv)
 	       gebr_geoxml_document_get_date_created(doc[0]), gebr_geoxml_document_get_date_created(doc[1]));
 	report("Modified date",
 	       gebr_geoxml_document_get_date_modified(doc[0]), gebr_geoxml_document_get_date_modified(doc[1]));
-	report_help("Help", gebr_geoxml_document_get_help(doc[0]), gebr_geoxml_document_get_help(doc[1]));
+	gchar *help1, *help2;
+	help1 = gebr_geoxml_document_get_help(doc[0]);
+	help2 = gebr_geoxml_document_get_help(doc[1]);
+	report_help("Help", help1, help2);
+	g_free (help1);
+	g_free (help2);
 
 	{
 		GString *cat[2];
@@ -185,7 +191,11 @@ int main(int argc, char **argv)
 
 		report("URL", gebr_geoxml_program_get_url(prog[0]), gebr_geoxml_program_get_url(prog[1]));
 
-		report_help("Help", gebr_geoxml_program_get_help(prog[0]), gebr_geoxml_program_get_help(prog[1]));
+		gchar *tmp_help_p1 = gebr_geoxml_program_get_help(prog[0]);
+		gchar *tmp_help_p2 = gebr_geoxml_program_get_help(prog[1]);
+		report_help("Help", tmp_help_p1, tmp_help_p2);
+		g_free(tmp_help_p1);
+		g_free(tmp_help_p2);
 
 		compare_parameters(prog[0], prog[1]);
 
@@ -202,6 +212,7 @@ int main(int argc, char **argv)
 
 	g_string_free(prefix, TRUE);
 	g_string_free(offset, TRUE);
+	gebr_geoxml_finalize();
 
 	return EXIT_SUCCESS;
 }

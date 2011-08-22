@@ -111,6 +111,23 @@ G_DEFINE_TYPE(GebrGuiValueSequenceEdit, gebr_gui_value_sequence_edit, GEBR_GUI_T
 /*
  * Internal functions
  */
+static void
+clean_list_store(GebrGuiValueSequenceEdit *self)
+{
+	GtkTreeIter   iter;
+	GtkTreeView  *tree_view = GTK_TREE_VIEW(self->parent.tree_view);
+	GtkTreeModel *model     = gtk_tree_view_get_model(tree_view);
+	gboolean      valid     = gtk_tree_model_get_iter_first(model, &iter);
+
+	gtk_tree_view_set_model(tree_view, NULL);
+	while (valid) {
+		GebrGeoXmlSequence *seq;
+		gtk_tree_model_get(model, &iter, 1, &seq, -1);
+		gebr_geoxml_object_unref(seq);
+		valid = gtk_list_store_remove(self->parent.list_store, &iter);
+	}
+	gtk_tree_view_set_model(tree_view, model);
+}
 
 static void
 __gebr_gui_value_sequence_edit_remove(GebrGuiValueSequenceEdit * gebr_gui_value_sequence_edit, GtkTreeIter * iter)
@@ -127,7 +144,6 @@ __gebr_gui_value_sequence_edit_remove(GebrGuiValueSequenceEdit * gebr_gui_value_
 		gebr_geoxml_sequence_remove(sequence);
 
 	gtk_list_store_remove(GEBR_GUI_SEQUENCE_EDIT(gebr_gui_value_sequence_edit)->list_store, iter);
-
 	g_signal_emit_by_name(gebr_gui_value_sequence_edit, "changed");
 }
 
@@ -233,36 +249,40 @@ gebr_gui_value_sequence_edit_add(GebrGuiValueSequenceEdit * gebr_gui_value_seque
 				     gebr_gui_value_sequence_edit->get_function(sequence,
 										gebr_gui_value_sequence_edit->
 										user_data), FALSE);
-	gtk_list_store_set(GEBR_GUI_SEQUENCE_EDIT(gebr_gui_value_sequence_edit)->list_store, &iter, 1, sequence,
-			   -1);
+	gebr_geoxml_object_ref(sequence);
+	gtk_list_store_set(GEBR_GUI_SEQUENCE_EDIT(gebr_gui_value_sequence_edit)->list_store, &iter,
+			   1, sequence, -1);
 }
 
 void
-gebr_gui_value_sequence_edit_load(GebrGuiValueSequenceEdit * gebr_gui_value_sequence_edit,
-				  GebrGeoXmlSequence * sequence, ValueSequenceSetFunction set_function,
-				  ValueSequenceGetFunction get_function, gpointer user_data)
+gebr_gui_value_sequence_edit_load(GebrGuiValueSequenceEdit *self,
+				  GebrGeoXmlSequence       *sequence,
+				  ValueSequenceSetFunction  set_function,
+				  ValueSequenceGetFunction  get_function,
+				  gpointer                  user_data)
 {
-	if (set_function == NULL || get_function == NULL)
-		return;
+	g_return_if_fail(set_function != NULL && get_function != NULL);
 
-	gebr_gui_value_sequence_edit->set_function = set_function;
-	gebr_gui_value_sequence_edit->get_function = get_function;
-	gebr_gui_value_sequence_edit->user_data = user_data;
-	gtk_list_store_clear(GEBR_GUI_SEQUENCE_EDIT(gebr_gui_value_sequence_edit)->list_store);
+	self->set_function = set_function;
+	self->get_function = get_function;
+	self->user_data = user_data;
+	clean_list_store(self);
 
-	if (gebr_gui_value_sequence_edit->minimum_one) {
+	if (self->minimum_one) {
 		GebrGeoXmlSequence *next;
 
 		next = sequence;
+		gebr_geoxml_object_ref(next);
 		gebr_geoxml_sequence_next(&next);
 		if (next == NULL &&
-		    !strlen(gebr_gui_value_sequence_edit->get_function
-			    (sequence, gebr_gui_value_sequence_edit->user_data)))
+		    !strlen(self->get_function
+			    (sequence, self->user_data)))
 			return;
 	}
 
+	gebr_geoxml_object_ref(sequence);
 	for (; sequence != NULL; gebr_geoxml_sequence_next(&sequence))
-		gebr_gui_value_sequence_edit_add(gebr_gui_value_sequence_edit, sequence);
+		gebr_gui_value_sequence_edit_add(self, sequence);
 }
 
 gboolean
@@ -281,12 +301,9 @@ gebr_gui_value_sequence_edit_rename(GebrGuiValueSequenceEdit * gebr_gui_value_se
 	return TRUE;
 }
 
-void gebr_gui_value_sequence_edit_clear (GebrGuiValueSequenceEdit *self)
+void gebr_gui_value_sequence_edit_clear(GebrGuiValueSequenceEdit *self)
 {
-	GebrGuiSequenceEdit *super;
-
-	super = GEBR_GUI_SEQUENCE_EDIT (self);
-	gtk_list_store_clear (super->list_store);
+	clean_list_store(self);
 }
 
 typedef struct {

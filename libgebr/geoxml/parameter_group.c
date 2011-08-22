@@ -61,14 +61,17 @@ GebrGeoXmlParameters *gebr_geoxml_parameter_group_get_template(GebrGeoXmlParamet
 	if (parameter_group == NULL)
 		return NULL;
 
-	GdomeElement *tpl;
+	GdomeElement *parent;
+	GdomeElement *grandpa;
 	GdomeElement *group;
 
 	group = __gebr_geoxml_parameter_get_type_element(GEBR_GEOXML_PARAMETER(parameter_group));
-	tpl = __gebr_geoxml_get_first_element(group, "template-instance");
-	tpl = __gebr_geoxml_get_first_element(tpl, "parameters");
+	parent = __gebr_geoxml_get_first_element(group, "template-instance");
+	grandpa = __gebr_geoxml_get_first_element(parent, "parameters");
+	gdome_el_unref(group, &exception);
+	gdome_el_unref(parent, &exception);
 
-	return GEBR_GEOXML_PARAMETERS(tpl);
+	return GEBR_GEOXML_PARAMETERS(grandpa);
 }
 
 GebrGeoXmlParameters *gebr_geoxml_parameter_group_add_instance(GebrGeoXmlParameterGroup * parameter_group)
@@ -80,7 +83,7 @@ GebrGeoXmlParameters *gebr_geoxml_parameter_group_add_instance(GebrGeoXmlParamet
 
 	new_instance = GEBR_GEOXML_PARAMETERS(__gebr_geoxml_sequence_append_clone(template_instance));
 	GdomeElement *group = __gebr_geoxml_parameter_get_type_element(GEBR_GEOXML_PARAMETER(parameter_group));
-	gdome_el_insertBefore_protected(group, (GdomeNode*)new_instance, NULL, &exception);
+	gdome_n_unref(gdome_el_insertBefore_protected(group, (GdomeNode*)new_instance, NULL, &exception), &exception);
 
 	__gebr_geoxml_parameter_group_turn_instance_to_reference(new_instance);
 
@@ -129,6 +132,8 @@ gboolean gebr_geoxml_parameter_group_deinstanciate(GebrGeoXmlParameterGroup * pa
 int gebr_geoxml_parameter_group_get_instance(GebrGeoXmlParameterGroup * parameter_group,
 					     GebrGeoXmlSequence ** parameters, gulong index)
 {
+	enum GEBR_GEOXML_RETV retval = GEBR_GEOXML_RETV_SUCCESS;
+
 	if (parameter_group == NULL) {
 		*parameters = NULL;
 		return GEBR_GEOXML_RETV_NULL_PTR;
@@ -138,9 +143,12 @@ int gebr_geoxml_parameter_group_get_instance(GebrGeoXmlParameterGroup * paramete
 
 	type_element = __gebr_geoxml_parameter_get_type_element(GEBR_GEOXML_PARAMETER(parameter_group));
 	*parameters = (GebrGeoXmlSequence *) __gebr_geoxml_get_element_at(type_element, "parameters", index, FALSE);
+	gdome_el_unref(type_element, &exception);
 
-	return (*parameters == NULL)
+	retval =  (*parameters == NULL)
 	    ? GEBR_GEOXML_RETV_INVALID_INDEX : GEBR_GEOXML_RETV_SUCCESS;
+
+	return retval;
 }
 
 glong gebr_geoxml_parameter_group_get_instances_number(GebrGeoXmlParameterGroup * parameter_group)
@@ -151,7 +159,10 @@ glong gebr_geoxml_parameter_group_get_instances_number(GebrGeoXmlParameterGroup 
 
 	type_element = __gebr_geoxml_parameter_get_type_element(GEBR_GEOXML_PARAMETER(parameter_group));
 
-	return __gebr_geoxml_get_elements_number(type_element, "parameters");
+	gulong retval =  __gebr_geoxml_get_elements_number(type_element, "parameters");
+	gdome_el_unref(type_element, &exception);
+
+	return retval;
 }
 
 void gebr_geoxml_parameter_group_set_is_instanciable(GebrGeoXmlParameterGroup * parameter_group, gboolean enable)
@@ -162,6 +173,7 @@ void gebr_geoxml_parameter_group_set_is_instanciable(GebrGeoXmlParameterGroup * 
 
 	type_element = __gebr_geoxml_parameter_get_type_element(GEBR_GEOXML_PARAMETER(parameter_group));
 	__gebr_geoxml_set_attr_value(type_element, "instanciable", (enable == TRUE ? "yes" : "no"));
+	gdome_el_unref(type_element, &exception);
 }
 
 void gebr_geoxml_parameter_group_set_expand(GebrGeoXmlParameterGroup * parameter_group, const gboolean enable)
@@ -172,6 +184,7 @@ void gebr_geoxml_parameter_group_set_expand(GebrGeoXmlParameterGroup * parameter
 
 	type_element = __gebr_geoxml_parameter_get_type_element(GEBR_GEOXML_PARAMETER(parameter_group));
 	__gebr_geoxml_set_attr_value(type_element, "expand", (enable == TRUE ? "yes" : "no"));
+	gdome_el_unref(type_element, &exception);
 }
 
 gboolean gebr_geoxml_parameter_group_get_is_instanciable(GebrGeoXmlParameterGroup * parameter_group)
@@ -232,12 +245,15 @@ void gebr_geoxml_parameter_group_set_exclusive(GebrGeoXmlParameterGroup * parame
 
 gboolean gebr_geoxml_parameter_group_is_exclusive(GebrGeoXmlParameterGroup * parameter_group)
 {
-	const gchar * default_selection;
+	gchar * default_selection;
 	GebrGeoXmlParameters * template;
 
 	g_return_val_if_fail(parameter_group != NULL, FALSE);
 
 	template = gebr_geoxml_parameter_group_get_template(parameter_group);
 	default_selection = __gebr_geoxml_get_attr_value((GdomeElement*)template, "default-selection");
-	return default_selection[0] == '0' ? FALSE:TRUE;
+	gdome_el_unref((GdomeElement*)template, &exception);
+	gboolean retval = default_selection[0] == '0' ? FALSE : TRUE;
+	g_free(default_selection);
+	return retval;
 }

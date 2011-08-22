@@ -37,9 +37,12 @@ static gboolean __gebr_geoxml_value_sequence_check(GebrGeoXmlValueSequence * val
 
 	name = gdome_el_nodeName((GdomeElement *) value_sequence, &exception);
 
-	return (gboolean) ! strcmp(name->str, "value") ||
-	    (gboolean) ! strcmp(name->str, "default") ||
-	    (gboolean) ! strcmp(name->str, "path") || (gboolean) ! strcmp(name->str, "category");
+	gboolean retval = (gboolean) !strcmp(name->str, "value") ||
+			  (gboolean) !strcmp(name->str, "default") ||
+			  (gboolean) !strcmp(name->str, "path") ||
+			  (gboolean) !strcmp(name->str, "category");
+	gdome_str_unref(name);
+	return retval;
 }
 
 /*
@@ -55,7 +58,7 @@ void gebr_geoxml_value_sequence_set(GebrGeoXmlValueSequence * value_sequence, co
 	__gebr_geoxml_set_element_value((GdomeElement *) value_sequence, value, __gebr_geoxml_create_TextNode);
 }
 
-const gchar *gebr_geoxml_value_sequence_get(GebrGeoXmlValueSequence * value_sequence)
+gchar *gebr_geoxml_value_sequence_get(GebrGeoXmlValueSequence * value_sequence)
 {
 	if (value_sequence == NULL)
 		return NULL;

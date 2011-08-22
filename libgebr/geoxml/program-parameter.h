@@ -140,7 +140,7 @@ gebr_geoxml_program_parameter_set_keyword(GebrGeoXmlProgramParameter * program_p
  *
  * If \p program_parameter is NULL returns NULL.
  */
-const gchar *
+gchar *
 gebr_geoxml_program_parameter_get_keyword(GebrGeoXmlProgramParameter * program_parameter);
 
 /**
@@ -197,7 +197,7 @@ gebr_geoxml_program_parameter_set_first_boolean_value(GebrGeoXmlProgramParameter
  * \see gebr_geoxml_program_parameter_set_is_list, gebr_geoxml_program_parameter_set_list_separator,
  * gebr_geoxml_program_parameter_get_list_separator
  */
-const gchar *
+gchar *
 gebr_geoxml_program_parameter_get_list_separator(GebrGeoXmlProgramParameter * program_parameter);
 
 /**
@@ -205,7 +205,7 @@ gebr_geoxml_program_parameter_get_list_separator(GebrGeoXmlProgramParameter * pr
  *
  * If \p program_parameter is NULL returns NULL.
  */
-const gchar *
+gchar *
 gebr_geoxml_program_parameter_get_first_value(GebrGeoXmlProgramParameter * program_parameter,
 					      gboolean default_value);
 
@@ -482,7 +482,7 @@ gebr_geoxml_program_parameter_is_var_used (GebrGeoXmlProgramParameter *self,
  *
  * Returns the program parameter dict keyword, NULL if it does not exists.
  */
-const gchar *
+gchar *
 gebr_geoxml_program_parameter_get_old_dict_keyword(GebrGeoXmlProgramParameter * program_parameter);
 
 /**

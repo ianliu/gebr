@@ -20,6 +20,7 @@
 
 #include "../../date.h"
 #include "document.h"
+#include "object.h"
 #include "error.h"
 #include "flow.h"
 #include "line.h"
@@ -30,9 +31,6 @@
 void test_gebr_geoxml_flow_server_get_and_set_address(void){
 	const gchar *address;
 	GebrGeoXmlFlow *flow = NULL;
-
-	address = gebr_geoxml_flow_server_get_address(flow);
-	g_assert(address == NULL);
 
 	flow = gebr_geoxml_flow_new ();
 	address = gebr_geoxml_flow_server_get_address(flow);
@@ -45,6 +43,8 @@ void test_gebr_geoxml_flow_server_get_and_set_address(void){
 	gebr_geoxml_flow_server_set_address(flow, "asdf/fdsa");
 	address = gebr_geoxml_flow_server_get_address(flow);
 	g_assert_cmpstr(address, ==, "asdf/fdsa");
+
+	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
 }
 
 void test_gebr_geoxml_flow_get_categories_number(void)
@@ -60,34 +60,42 @@ void test_gebr_geoxml_flow_get_categories_number(void)
 	n = gebr_geoxml_flow_get_categories_number (flow);
 	g_assert_cmpint (n, ==, 0);
 
-	gebr_geoxml_flow_append_category(flow, "foo");
+	GebrGeoXmlCategory * cat = gebr_geoxml_flow_append_category(flow, "foo");
+	gebr_geoxml_object_unref(cat);
 	n = gebr_geoxml_flow_get_categories_number (flow);
 	g_assert_cmpint (n, ==, 1);
+
+	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
 }
 
 void test_duplicate_categories(void)
 {
 	gint n;
 	GebrGeoXmlFlow *flow = NULL;
+	GebrGeoXmlCategory * cat = NULL;
 
 	flow = gebr_geoxml_flow_new ();
-	gebr_geoxml_flow_append_category(flow, "foo");
-	gebr_geoxml_flow_append_category(flow, "foo");
+
+	cat = gebr_geoxml_flow_append_category(flow, "foo");
+	gebr_geoxml_object_unref(cat);
+
+	cat = gebr_geoxml_flow_append_category(flow, "foo");
+	gebr_geoxml_object_unref(cat);
 
 	n = gebr_geoxml_flow_get_categories_number (flow);
 	g_assert_cmpint (n, ==, 1);
 
-	gebr_geoxml_flow_append_category(flow, "bar");
+	cat = gebr_geoxml_flow_append_category(flow, "bar");
 	n = gebr_geoxml_flow_get_categories_number (flow);
+	gebr_geoxml_object_unref(cat);
 	g_assert_cmpint (n, ==, 2);
+
+	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
 }
 
 void test_gebr_geoxml_flow_get_and_set_date_last_run(void){
 	const gchar *date;
 	GebrGeoXmlFlow *flow = NULL;
-
-	date = gebr_geoxml_flow_get_date_last_run(flow);
-	g_assert(date == NULL);
 
 	flow = gebr_geoxml_flow_new ();
 	gebr_geoxml_flow_set_date_last_run(flow, "18/03/2011");
@@ -97,6 +105,8 @@ void test_gebr_geoxml_flow_get_and_set_date_last_run(void){
 	gebr_geoxml_flow_set_date_last_run(flow, "");
 	date = gebr_geoxml_flow_get_date_last_run(flow);
 	g_assert_cmpstr(date, ==, "");
+
+	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
 }
 
 void test_gebr_geoxml_flow_server_get_and_set_date_last_run(void){
@@ -263,19 +273,26 @@ void test_gebr_geoxml_flow_get_program(void){
 
 	flow = gebr_geoxml_flow_new();
 	program = GEBR_GEOXML_SEQUENCE(gebr_geoxml_flow_append_program(flow));
+	gebr_geoxml_object_unref(program);
 	returned = gebr_geoxml_flow_get_program(flow, &program, 1337);
+	gebr_geoxml_object_unref(program);
 	g_assert_cmpint(returned, ==, GEBR_GEOXML_RETV_INVALID_INDEX);
 
 	returned = gebr_geoxml_flow_get_program(flow, &program, 0);
+	gebr_geoxml_object_unref(program);
 	g_assert_cmpint(returned, ==, GEBR_GEOXML_RETV_SUCCESS);
 
 	returned = gebr_geoxml_flow_get_program(flow, &program, 1);
+	gebr_geoxml_object_unref(program);
 	g_assert_cmpint(returned, ==, GEBR_GEOXML_RETV_INVALID_INDEX);
 
 	program = GEBR_GEOXML_SEQUENCE(gebr_geoxml_flow_append_program(flow));
+	gebr_geoxml_object_unref(program);
 	returned = gebr_geoxml_flow_get_program(flow, &program, 1);
+	gebr_geoxml_object_unref(program);
 	g_assert_cmpint(returned, ==, GEBR_GEOXML_RETV_SUCCESS);
 
+	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
 }
 
 void test_gebr_geoxml_flow_get_programs_number(void){
@@ -292,16 +309,20 @@ void test_gebr_geoxml_flow_get_programs_number(void){
 	g_assert_cmpint(number, ==, 0);
 
 	program = gebr_geoxml_flow_append_program(flow);
+	gebr_geoxml_object_unref(program);
 	number = gebr_geoxml_flow_get_programs_number(flow);
 	g_assert_cmpint(number, ==, 1);
 
 	program = gebr_geoxml_flow_append_program(flow);
 	number = gebr_geoxml_flow_get_programs_number(flow);
+	gebr_geoxml_object_unref(program);
 	g_assert_cmpint(number, ==, 2);
 
+	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
 }
 
-void test_gebr_geoxml_flow_get_category(void){
+void test_gebr_geoxml_flow_get_category(void)
+{
 
 	GebrGeoXmlFlow *flow = NULL;
 	GebrGeoXmlSequence *category = NULL;
@@ -312,17 +333,21 @@ void test_gebr_geoxml_flow_get_category(void){
 
 	flow = gebr_geoxml_flow_new();
 	category = (GebrGeoXmlSequence*) gebr_geoxml_flow_append_category(flow,"qwerty");
+	gebr_geoxml_object_unref(category);
 	returned = gebr_geoxml_flow_get_category(flow, &category, 1337);
 	g_assert_cmpint(returned, ==, GEBR_GEOXML_RETV_INVALID_INDEX);
 
 	returned = gebr_geoxml_flow_get_category(flow, &category, 0);
+	gebr_geoxml_object_unref(category);
 	g_assert_cmpint(returned, ==, GEBR_GEOXML_RETV_SUCCESS);
 
 	returned = gebr_geoxml_flow_get_category(flow, &category, 1);
 	g_assert_cmpint(returned, ==, GEBR_GEOXML_RETV_INVALID_INDEX);
 
 	category = (GebrGeoXmlSequence*) gebr_geoxml_flow_append_category(flow,"zxcvb");
+	gebr_geoxml_object_unref(category);
 	returned = gebr_geoxml_flow_get_category(flow, &category, 1);
+	gebr_geoxml_object_unref(category);
 	g_assert_cmpint(returned, ==, GEBR_GEOXML_RETV_SUCCESS);
 
 	// Check if at failure (when flow is NULL), category will be set as NULL
@@ -332,8 +357,12 @@ void test_gebr_geoxml_flow_get_category(void){
 
 	// Check if at failure (when an invalid index is passed), category will be set as NULL
 	category = (GebrGeoXmlSequence*) gebr_geoxml_flow_append_category(flow,"zxcvb");
+	gebr_geoxml_object_unref(category);
 	returned = gebr_geoxml_flow_get_category(flow, &category, 24957);
+	gebr_geoxml_object_unref(category);
 	g_assert_cmpint(returned, ==, GEBR_GEOXML_RETV_INVALID_INDEX);
+
+	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
 }
 
 void test_gebr_geoxml_flow_append_revision(void){
@@ -373,11 +402,15 @@ void test_gebr_geoxml_flow_change_to_revision(void){
 
 	revision = gebr_geoxml_flow_append_revision(flow, "asdf");
 	boole = gebr_geoxml_flow_change_to_revision(flow, revision, NULL);
+	gebr_geoxml_object_unref(revision);
 	g_assert(boole == TRUE);
 
 	revision = gebr_geoxml_flow_append_revision(flow, "kakarotto");
 	boole = gebr_geoxml_flow_change_to_revision(flow, revision, NULL);
+	gebr_geoxml_object_unref(revision);
 	g_assert(boole == TRUE);
+
+	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
 
 }
 void test_gebr_geoxml_flow_get_and_set_revision_data(void){
@@ -423,32 +456,44 @@ void test_gebr_geoxml_flow_get_revision(void){
 	GebrGeoXmlSequence *revision = NULL;
 	int returned;
 
-	returned = gebr_geoxml_flow_get_revision(flow, &revision, 0);
-	g_assert_cmpint(returned, ==, GEBR_GEOXML_RETV_NULL_PTR);
+	// Now this function logs a critical warning in this
+	// case. Change this test to conform to that.
+	//returned = gebr_geoxml_flow_get_revision(flow, &revision, 0);
+	//gebr_geoxml_object_unref(revision);
+	//g_assert_cmpint(returned, ==, GEBR_GEOXML_RETV_NULL_PTR);
 
 	flow = gebr_geoxml_flow_new();
 	returned = gebr_geoxml_flow_get_revision(flow, &revision, 0);
+	gebr_geoxml_object_unref(revision);
 	g_assert_cmpint(returned, ==, GEBR_GEOXML_RETV_INVALID_INDEX);
 
 	revision = (GebrGeoXmlSequence*) gebr_geoxml_flow_append_revision(flow,"commented");
+	gebr_geoxml_object_unref(revision);
 	returned = gebr_geoxml_flow_get_revision(flow, &revision, 0);
+	gebr_geoxml_object_unref(revision);
 	g_assert_cmpint(returned, ==, GEBR_GEOXML_RETV_SUCCESS);
 
 	revision = (GebrGeoXmlSequence*) gebr_geoxml_flow_append_revision(flow,"brbr");
+	gebr_geoxml_object_unref(revision);
 	returned = gebr_geoxml_flow_get_revision(flow, &revision, 1);
+	gebr_geoxml_object_unref(revision);
 	g_assert_cmpint(returned, ==, GEBR_GEOXML_RETV_SUCCESS);
 
 	// Checking if the last procedure didn't messed with first revision
 	returned = gebr_geoxml_flow_get_revision(flow, &revision, 0);
+	gebr_geoxml_object_unref(revision);
 	g_assert_cmpint(returned, ==, GEBR_GEOXML_RETV_SUCCESS);
 
+	// Now this function logs a critical warning in this
+	// case. Change this test to conform to that.
 	// Check if at failure (when flow is NULL), revision will be set as NULL
-	returned = gebr_geoxml_flow_get_revision(NULL, &revision, 0);
-	g_assert_cmpint(returned, ==, GEBR_GEOXML_RETV_NULL_PTR);
-	g_assert(revision == NULL);
+	// returned = gebr_geoxml_flow_get_revision(NULL, &revision, 0);
+	// g_assert_cmpint(returned, ==, GEBR_GEOXML_RETV_NULL_PTR);
+	// g_assert(revision == NULL);
 
 	// Check if at failure (when an invalid index is passed), revision will be set as NULL
 	revision = (GebrGeoXmlSequence*) gebr_geoxml_flow_append_revision(flow,"1234pnbmns");
+	gebr_geoxml_object_unref(revision);
 	returned = gebr_geoxml_flow_get_revision(flow, &revision, 2654);
 	g_assert_cmpint(returned, ==, GEBR_GEOXML_RETV_INVALID_INDEX);
 	g_assert(revision == NULL);
@@ -485,6 +530,7 @@ static void test_gebr_geoxml_flow_io_error_append(void)
 int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
+	gebr_geoxml_init();
 
 	gebr_geoxml_document_set_dtd_dir(DTD_DIR);
 
@@ -508,5 +554,7 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/geoxml/flow/io_error_append", test_gebr_geoxml_flow_io_error_append);
 	g_test_add_func("/libgebr/geoxml/flow/io_error_append_default", test_gebr_geoxml_flow_io_error_append_default);
 
-	return g_test_run();
+	gint ret = g_test_run();
+	gebr_geoxml_finalize();
+	return ret;
 }

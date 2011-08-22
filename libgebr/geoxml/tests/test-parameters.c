@@ -265,6 +265,7 @@ void test_gebr_geoxml_parameters_reset_to_default(void)
 int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
+	gebr_geoxml_init();
 
 	gebr_geoxml_document_set_dtd_dir(DTD_DIR);
 
@@ -279,5 +280,7 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/geoxml/parameters/get_group", test_gebr_geoxml_parameters_get_group);
 	g_test_add_func("/libgebr/geoxml/parameters/reset_to_default", test_gebr_geoxml_parameters_reset_to_default);
 
-	return g_test_run();
+	gint ret = g_test_run();
+	gebr_geoxml_finalize();
+	return ret;
 }

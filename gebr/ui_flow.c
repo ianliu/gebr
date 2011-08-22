@@ -51,30 +51,6 @@ void flow_io_select_iter(struct ui_flow_io *ui_flow_io, GtkTreeIter * iter)
 	gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(ui_flow_io->treeview), iter);
 }
 
-void flow_io_customized_paths_from_line(GtkFileChooser * chooser)
-{
-	GError *error;
-	GebrGeoXmlSequence *path_sequence;
-
-	if (gebr.line == NULL)
-		return;
-
-	error = NULL;
-	gebr_geoxml_line_get_path(gebr.line, &path_sequence, 0);
-	if (path_sequence != NULL) {
-		gtk_file_chooser_set_current_folder(chooser,
-						    gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE
-										   (path_sequence)));
-
-		do {
-			gtk_file_chooser_add_shortcut_folder(chooser,
-							     gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE
-											    (path_sequence)), &error);
-			gebr_geoxml_sequence_next(&path_sequence);
-		} while (path_sequence != NULL);
-	}
-}
-
 void flow_io_set_server(GtkTreeIter * server_iter, const gchar * input, const gchar * output, const gchar * error)
 {
 	GebrServer *server;
@@ -111,6 +87,8 @@ void flow_add_program_sequence_to_view(GebrGeoXmlSequence * program,
 	control = gebr_geoxml_program_get_control (first_prog);
 	has_control = control != GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY;
 
+	// Reference this program so _sequence_next don't destroy it
+	gebr_geoxml_object_ref(program);
 	for (; program != NULL; gebr_geoxml_sequence_next(&program)) {
 		control = gebr_geoxml_program_get_control (GEBR_GEOXML_PROGRAM (program));
 
@@ -132,6 +110,7 @@ void flow_add_program_sequence_to_view(GebrGeoXmlSequence * program,
 				   FSEQ_SENSITIVE, TRUE,
 				   FSEQ_NEVER_OPENED, never_opened,
 				   -1);
+		gebr_geoxml_object_ref(program);
 
 		GebrIExprError undef;
 		gebr_geoxml_program_get_error_id(GEBR_GEOXML_PROGRAM(program), &undef);
@@ -173,12 +152,18 @@ void flow_program_check_sensitiveness (void)
 		if (gebr_geoxml_program_get_status (GEBR_GEOXML_PROGRAM(program)) == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED) {
 			if (!has_configured) {
 				first_program = GEBR_GEOXML_PROGRAM(program);
+				gebr_geoxml_object_ref(first_program);
 				has_configured = TRUE;
 			}
 			if (!has_some_error_output && gebr_geoxml_program_get_stderr(GEBR_GEOXML_PROGRAM(program))){
 				has_some_error_output = TRUE;
 			}
+
+			if (last_program)
+				gebr_geoxml_object_unref(last_program);
+
 			last_program = GEBR_GEOXML_PROGRAM(program);
+			gebr_geoxml_object_ref(last_program);
 		}
 	}
 
@@ -194,6 +179,8 @@ void flow_program_check_sensitiveness (void)
 			gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->error_iter,
 					   FSEQ_EDITABLE, TRUE,
 					   FSEQ_SENSITIVE, TRUE, -1);
+		gebr_geoxml_object_unref(first_program);
+		gebr_geoxml_object_unref(last_program);
 	}
 }
 
@@ -502,7 +489,7 @@ static void flow_io_run(GebrGeoXmlFlow *flow, gboolean parallel, gboolean single
 		}
 	}
 
-	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
+	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, FALSE);
 
 	flow_run(server, config, !multiple);
 	return;

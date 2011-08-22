@@ -58,13 +58,21 @@ GebrGeoXmlObjectType gebr_geoxml_object_get_type(GebrGeoXmlObject * object)
 
 	if (gdome_n_nodeType((GdomeNode*)object, &exception) == GDOME_DOCUMENT_NODE)
 		element = gdome_doc_documentElement((GdomeDocument*)object, &exception);
-	else
+	else {
+		gebr_geoxml_object_ref(object);
 		element = (GdomeElement*)object;
-
-	for (i = 1; i <= 7; ++i)
-		if (!strcmp(gdome_el_tagName(element, &exception)->str, tag_map[i]))
+	}
+	GdomeDOMString *tag;
+	for (i = 1; i <= 7; ++i) {
+		tag = gdome_el_tagName(element, &exception);
+		if (!strcmp(tag->str, tag_map[i])) {
+			gdome_str_unref(tag);
+			gdome_el_unref(element, &exception);
 			return (GebrGeoXmlObjectType)i;
-
+		}
+		gdome_str_unref(tag);
+	}
+	gdome_el_unref(element, &exception);
 	return GEBR_GEOXML_OBJECT_TYPE_UNKNOWN;
 }
 
@@ -110,7 +118,7 @@ gchar *gebr_geoxml_object_generate_help (GebrGeoXmlObject *object, const gchar *
 	GebrGeoXmlDocument *doc;
 	GebrGeoXmlProgram *prog;
 	gboolean is_program;
-	const gchar *tmp;
+	gchar *tmp;
 	gchar *escaped;
 	gchar *tmpl_str;
 	GError *error = NULL;
@@ -138,6 +146,7 @@ gchar *gebr_geoxml_object_generate_help (GebrGeoXmlObject *object, const gchar *
 	} else {
 		is_program = FALSE;
 		doc = GEBR_GEOXML_DOCUMENT (object);
+		gdome_doc_ref((GdomeDocument*)doc, &exception);
 		prog = NULL;
 	}
 
@@ -147,24 +156,24 @@ gchar *gebr_geoxml_object_generate_help (GebrGeoXmlObject *object, const gchar *
 	gebr_geoxml_tmpl_set (tmpl, "cnt", content);
 
 	// Set the title!
-	tmp = is_program?
-		gebr_geoxml_program_get_title (prog)
-		:gebr_geoxml_document_get_title (doc);
+	tmp = is_program? gebr_geoxml_program_get_title (prog) : gebr_geoxml_document_get_title (doc);
+
 	escaped = g_markup_escape_text (tmp, -1);
 	if (strlen (escaped)) {
 		gebr_geoxml_tmpl_set (tmpl, "ttl", escaped);
 		gebr_geoxml_tmpl_set (tmpl, "tt2", escaped);
 	}
 	g_free (escaped);
+	g_free(tmp);
 
 	// Set the description!
-	tmp = is_program?
-		gebr_geoxml_program_get_description (prog)
-		:gebr_geoxml_document_get_description (doc);
+	tmp = is_program? gebr_geoxml_program_get_description (prog) : gebr_geoxml_document_get_description (doc);
+
 	escaped = g_markup_escape_text (tmp, -1);
 	if (strlen (escaped))
 		gebr_geoxml_tmpl_set (tmpl, "des", escaped);
 	g_free (escaped);
+	g_free(tmp);
 
 	// Set the categories!
 	GString *catstr;
@@ -178,6 +187,7 @@ gchar *gebr_geoxml_object_generate_help (GebrGeoXmlObject *object, const gchar *
 		escaped = g_markup_escape_text (tmp, -1);
 		g_string_append (catstr, escaped);
 		g_free (escaped);
+		g_free(tmp);
 		gebr_geoxml_sequence_next (&cat);
 	}
 	while (cat) {
@@ -185,6 +195,7 @@ gchar *gebr_geoxml_object_generate_help (GebrGeoXmlObject *object, const gchar *
 		escaped = g_markup_escape_text (tmp, -1);
 		g_string_append_printf (catstr, " | %s", escaped);
 		g_free (escaped);
+		g_free(tmp);
 		gebr_geoxml_sequence_next (&cat);
 	}
 	if (catstr->len)
@@ -194,21 +205,27 @@ gchar *gebr_geoxml_object_generate_help (GebrGeoXmlObject *object, const gchar *
 	// Set the DTD!
 	tmp = gebr_geoxml_document_get_version (doc);
 	gebr_geoxml_tmpl_set (tmpl, "dtd", tmp);
+	g_free(tmp);
 
 	// Sets the version!
 	if (is_program) {
 		tmp = gebr_geoxml_program_get_version (prog);
 		gebr_geoxml_tmpl_set (tmpl, "ver", tmp);
+		g_free(tmp);
 	} else
 		gebr_geoxml_tmpl_set (tmpl, "ver",
 				      gebr_date_get_localized ("%b %d, %Y", "C"));
+
+	g_free(tmpl_str);
+	gdome_doc_unref((GdomeDocument*)doc, &exception);
 
 	return g_string_free (tmpl, FALSE);
 }
 
 gchar *gebr_geoxml_object_get_help_content (GebrGeoXmlObject *object)
 {
-	const gchar *help;
+	gchar *help;
+	gchar *retval;
 	GebrGeoXmlObjectType type;
 
 	g_return_val_if_fail (object != NULL, NULL);
@@ -224,7 +241,10 @@ gchar *gebr_geoxml_object_get_help_content (GebrGeoXmlObject *object)
 	else
 		help = gebr_geoxml_program_get_help (GEBR_GEOXML_PROGRAM (object));
 
-	return gebr_geoxml_object_get_help_content_from_str (help);
+	retval = gebr_geoxml_object_get_help_content_from_str (help);
+	g_free (help);
+
+	return retval;
 }
 
 gchar *gebr_geoxml_object_get_help_content_from_str (const gchar *str)
@@ -289,4 +309,16 @@ void gebr_geoxml_object_set_help (GebrGeoXmlObject *object, const gchar *help)
 		gebr_geoxml_document_set_help(GEBR_GEOXML_DOCUMENT(object), help);
 	else
 		gebr_geoxml_program_set_help(GEBR_GEOXML_PROGRAM(object), help);
+}
+
+void
+gebr_geoxml_object_unref(gpointer object)
+{
+	gdome_el_unref((GdomeElement*)object, &exception);
+}
+
+void
+gebr_geoxml_object_ref(gpointer object)
+{
+	gdome_el_ref((GdomeElement*)object, &exception);
 }

@@ -65,6 +65,7 @@ libgebr/geoxml-utils/gebr-geoxml-upgrade
 libgebr/geoxml-utils/gebr-geoxml-validate
 libgebr/geoxml/data/help-template.html
 libgebr/geoxml/tests/test-category
+libgebr/geoxml/tests/test-geoxml-leaks
 libgebr/geoxml/tests/test-line
 libgebr/geoxml/tests/test-parameter
 libgebr/geoxml/tests/test-parameters

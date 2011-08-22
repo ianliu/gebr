@@ -190,16 +190,6 @@ gboolean menu_save_folder(GtkTreeIter * folder);
 gboolean menu_save_all(void);
 
 /**
- * Validates the menu pointed by \p iter.
- *
- * Validation consists of checking sentences which are not capitalized, invalid e-mail addresses, etc. This function
- * reports all possible errors in a menu and reports them.
- *
- * \param iter The iterator pointing to the menu to be validated.
- */
-void menu_validate(GtkTreeIter * iter);
-
-/**
  * Call GeBR to install selected(s) menus.
  */
 void menu_install(void);

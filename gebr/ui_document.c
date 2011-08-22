@@ -240,6 +240,7 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 	data->window = window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_modal(GTK_WINDOW(window), TRUE);
 	gtk_window_set_transient_for(GTK_WINDOW(window), GTK_WINDOW(gebr.window));
+	gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER_ON_PARENT);
 	gtk_window_set_destroy_with_parent(GTK_WINDOW(window), TRUE);
 
 	window_title = g_strdup_printf(_("%s '%s' properties"),
@@ -712,7 +713,7 @@ void document_dict_edit_setup_ui(void)
 	flow_edition_revalidate_programs();
 
 	for (int i = 0; data->documents[i] != NULL; ++i)
-		document_save(data->documents[i], TRUE, TRUE);
+		document_save(data->documents[i], TRUE, FALSE);
 
 	for (int i = 0; data->documents[i] != NULL; ++i) {
 		GebrGeoXmlSequence *i_parameter;
@@ -1357,6 +1358,7 @@ static void dict_edit_load_iter(struct dict_edit_data *data, GtkTreeIter * iter,
 		value = g_strconcat("[", ini, ", ...,", value, "]", NULL);
 	}
 
+	gebr_geoxml_object_ref(parameter);
 	gchar *keyword_escaped = g_markup_escape_text(keyword, -1);
 	gtk_tree_store_set(GTK_TREE_STORE(data->tree_model), iter,
 			   DICT_EDIT_KEYWORD_IMAGE, "",

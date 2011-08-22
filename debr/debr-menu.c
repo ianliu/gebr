@@ -310,10 +310,15 @@ void menu_new_from_menu(GebrGeoXmlFlow *menu, gboolean edit,
 
 	gtk_tree_store_append(debr.ui_menu.model, &iter, &target);
 	gebr_geoxml_document_set_filename(GEBR_GEOXML_DOC(menu), filename);
+	gebr_geoxml_document_ref(GEBR_GEOXML_DOCUMENT(debr.menu));
 	gtk_tree_store_set(debr.ui_menu.model, &iter,
-			   MENU_STATUS, MENU_STATUS_UNSAVED, MENU_IMAGE, GTK_STOCK_NO,
-			   MENU_FILENAME, filename, MENU_XMLPOINTER, (gpointer) debr.menu,
-			   MENU_PATH, "", MENU_VALIDATE_POINTER, NULL, -1),
+			   MENU_STATUS, MENU_STATUS_UNSAVED,
+			   MENU_IMAGE, GTK_STOCK_NO,
+			   MENU_FILENAME, filename,
+			   MENU_XMLPOINTER, debr.menu,
+			   MENU_PATH, "",
+			   MENU_VALIDATE_POINTER, NULL,
+			   -1),
 	menu_select_iter(&iter);
 
 	menu_saved_status_set(MENU_STATUS_UNSAVED);
@@ -390,14 +395,12 @@ void menu_load_user_directory(void)
 void menu_load_iter(const gchar * path, GtkTreeIter * iter, GebrGeoXmlFlow * menu, gboolean select)
 {
 	const gchar *date;
-	const gchar *help;
 	gchar *tmp;
 	gchar *label;
 	gchar *filename;
 	GtkTreeIter parent;
 
 	filename = g_path_get_basename(path);
-	help = gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(menu));
 	date = gebr_geoxml_document_get_date_modified(GEBR_GEOXML_DOCUMENT(menu));
 	if (strlen(date) > 0)
 		tmp = g_strdup_printf("%ld", gebr_iso_date_to_g_time_val(date).tv_sec);
@@ -417,6 +420,7 @@ void menu_load_iter(const gchar * path, GtkTreeIter * iter, GebrGeoXmlFlow * men
 		label = g_markup_printf_escaped("%s", filename);
 
 	debr_menu_sync_help_edit_window(iter, menu);
+	gebr_geoxml_document_ref(GEBR_GEOXML_DOCUMENT(menu));
 	gtk_tree_store_set(debr.ui_menu.model, iter,
 			   MENU_FILENAME, label,
 			   MENU_MODIFIED_DATE, tmp,
@@ -686,11 +690,6 @@ out:
 	return ret;
 }
 
-void menu_validate(GtkTreeIter * iter)
-{
-	validate_menu(iter);
-}
-
 void menu_install(void)
 {
 	gboolean overwriteall;
@@ -873,10 +872,12 @@ void menu_selected(void)
 		gtk_tree_model_get(GTK_TREE_MODEL(debr.ui_menu.model), &iter, MENU_VALIDATE_POINTER, &validate, -1);
 		if (validate != NULL) {
 			validate_set_selected(&validate->iter);
-			menu_validate(&iter);
+			validate_menu(&iter);
 		}
 
-		gboolean help_exists = (strlen(gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(debr.menu))) ? TRUE : FALSE);
+		gchar *tmp_help = gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(debr.menu));
+		gboolean help_exists = (strlen(tmp_help) ? TRUE : FALSE);
+		g_free(tmp_help);
 		gtk_action_set_sensitive(gtk_action_group_get_action(debr.action_group_menu, "menu_help_view"), help_exists);
 
 	} else if (type == ITER_FOLDER) {
@@ -1298,9 +1299,7 @@ gboolean menu_dialog_setup_ui(gboolean new_menu)
 	gebr_geoxml_flow_get_program(debr.menu, &seq, 0);
 	for (; seq != NULL; gebr_geoxml_sequence_next(&seq))
 	{
-		GebrGeoXmlProgram *prog;
-		prog = GEBR_GEOXML_PROGRAM(seq);
-		debr_help_update(GEBR_GEOXML_OBJECT(prog));
+		debr_help_update(GEBR_GEOXML_OBJECT(seq));
 	}
 
 out:
@@ -1357,7 +1356,9 @@ void menu_details_update(void)
 		gtk_container_foreach(GTK_CONTAINER(debr.ui_menu.details.vbox), (GtkCallback) gtk_widget_hide, NULL);
 		return;
 	} else{
-		gboolean help_exists = (strlen(gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(debr.menu))) ? TRUE : FALSE);
+		gchar *tmp_help = gebr_geoxml_document_get_help(GEBR_GEOXML_DOCUMENT(debr.menu));
+		gboolean help_exists = (strlen(tmp_help) ? TRUE : FALSE);
+		g_free(tmp_help);
 
 		gtk_container_foreach(GTK_CONTAINER(debr.ui_menu.details.vbox), (GtkCallback) gtk_widget_show, NULL);
 		gtk_container_foreach(GTK_CONTAINER(debr.ui_menu.details.hbox), (GtkCallback) gtk_widget_show, NULL);
@@ -1365,8 +1366,9 @@ void menu_details_update(void)
 		g_object_set(debr.ui_menu.details.help_view, "sensitive", help_exists, NULL);
 		g_object_set(debr.ui_menu.details.help_edit, "sensitive", TRUE, NULL);
 		gtk_action_set_sensitive(gtk_action_group_get_action(debr.action_group_menu, "menu_help_view"), help_exists);
-		validate_image_set_check_help(debr.ui_menu.help_validate_image,
-					      gebr_geoxml_document_get_help(GEBR_GEOXML_DOC(debr.menu)));
+		tmp_help = gebr_geoxml_document_get_help(GEBR_GEOXML_DOC(debr.menu));
+		validate_image_set_check_help(debr.ui_menu.help_validate_image, tmp_help);
+		g_free(tmp_help);
 	}
 	markup = g_markup_printf_escaped("<b>%s</b>", gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(debr.menu)));
 	gtk_label_set_markup(GTK_LABEL(debr.ui_menu.details.title_label), markup);
@@ -1578,7 +1580,10 @@ void menu_replace(void) {
 
 	if (menu_get_selected(&iter, FALSE)) {
 		debr_menu_sync_help_edit_window(&iter, debr.menu_recovery.clone);
-		gtk_tree_store_set(debr.ui_menu.model, &iter, MENU_XMLPOINTER, debr.menu_recovery.clone, -1);
+
+		gebr_geoxml_document_ref(GEBR_GEOXML_DOCUMENT(debr.menu_recovery.clone));
+		gtk_tree_store_set(debr.ui_menu.model, &iter,
+				   MENU_XMLPOINTER, debr.menu_recovery.clone, -1);
 		gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(debr.menu));
 		menu_selected();
 		menu_saved_status_set(debr.menu_recovery.status);
@@ -1730,7 +1735,7 @@ gchar * debr_menu_get_backup_help_from_pointer(gpointer menu)
 	if (retval != GEBR_GEOXML_RETV_SUCCESS)
 		return NULL;
 
-	help = g_strdup (gebr_geoxml_document_get_help (document));
+	help = gebr_geoxml_document_get_help (document);
 	gebr_geoxml_document_free (document);
 
 	return help;

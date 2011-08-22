@@ -205,6 +205,7 @@ void test_gebr_geoxml_program_parameter_get_and_set_first_boolean_value(void)
 int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
+	gebr_geoxml_init();
 
 	gebr_geoxml_document_set_dtd_dir(DTD_DIR);
 
@@ -215,5 +216,7 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/geoxml/program_parameter/get_and_set_first_value", test_gebr_geoxml_program_parameter_get_and_set_first_value);
 	g_test_add_func("/libgebr/geoxml/program_parameter/get_and_set_first_boolean_value", test_gebr_geoxml_program_parameter_get_and_set_first_boolean_value);
 
-	return g_test_run();
+	gint ret = g_test_run();
+	gebr_geoxml_finalize();
+	return ret;
 }

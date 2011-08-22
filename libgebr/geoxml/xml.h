@@ -115,7 +115,7 @@ gulong __gebr_geoxml_get_elements_number(GdomeElement * parent_element, const gc
  * \internal
  *
  */
-const gchar *__gebr_geoxml_get_element_value(GdomeElement * element);
+gchar *__gebr_geoxml_get_element_value(GdomeElement * element);
 
 /**
  * \internal
@@ -128,7 +128,7 @@ void __gebr_geoxml_set_element_value(GdomeElement * element, const gchar * tag_v
  * \internal
  *
  */
-const gchar *__gebr_geoxml_get_tag_value(GdomeElement * parent_element, const gchar * tag_name);
+gchar *__gebr_geoxml_get_tag_value(GdomeElement * parent_element, const gchar * tag_name);
 
 /**
  * \internal
@@ -155,7 +155,7 @@ void __gebr_geoxml_set_attr_value(GdomeElement * element, const gchar * name, co
  * Get attribute with name \p attr_name of \p element value.
  * If it doesn't exist it an empty string is returned.
  */
-const gchar *__gebr_geoxml_get_attr_value(GdomeElement * element, const gchar * name);
+gchar *__gebr_geoxml_get_attr_value(GdomeElement * element, const gchar * name);
 
 /**
  * \internal

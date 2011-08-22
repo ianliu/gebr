@@ -187,8 +187,18 @@ void gebr_validator_get_documents(GebrValidator       *validator,
 /**
  * gebr_validator_update:
  * @validator: The #GebrValidator to be updated
+ *
+ * Updates of all variables of the changed documents.
  */
 void gebr_validator_update(GebrValidator *validator);
+
+/**
+ * gebr_validator_force_update:
+ * @validator:
+ *
+ * Forces update of all variables, ignoring document cache.
+ */
+void gebr_validator_force_update(GebrValidator *validator);
 
 /**
  * gebr_validator_free:
@@ -269,13 +279,15 @@ gboolean gebr_validator_is_var_in_scope(GebrValidator *self,
  * @validator:
  * @doc:
  * @type:
+ * @force:
  *
  * Set on validator, a new @doc
  *
  */
 void gebr_validator_set_document(GebrValidator *self,
 				 GebrGeoXmlDocument **doc,
-				 GebrGeoXmlDocumentType type);
+				 GebrGeoXmlDocumentType type,
+				 gboolean force);
 
 /**
  * gebr_validator_use_iter:

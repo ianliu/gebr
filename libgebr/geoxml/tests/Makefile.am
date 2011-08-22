@@ -1,7 +1,7 @@
 include $(top_srcdir)/Makefile.decl
 
-EXTRA_DIST = test.mnu forloop.mnu dict_test_flow.flw
-DISTCLEANFILES = test.mnu forloop.mnu dict_test_flow.flw
+EXTRA_DIST = test.mnu forloop.mnu dict_test_flow.flw test2.flw
+DISTCLEANFILES = test.mnu forloop.mnu dict_test_flow.flw test2.flw
 
 noinst_PROGRAMS = $(INT_TEST_PROGS)
 
@@ -55,3 +55,6 @@ test_parameter_SOURCES = test-parameter.c
 
 INT_TEST_PROGS += test-program-parameter
 test_program_parameter_SOURCES = test-program-parameter.c
+
+INT_TEST_PROGS += test-geoxml-leaks
+test_geoxml_leaks_SOURCES = test-geoxml-leaks.c

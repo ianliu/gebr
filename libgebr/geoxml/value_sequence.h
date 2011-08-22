@@ -79,7 +79,7 @@ void gebr_geoxml_value_sequence_set(GebrGeoXmlValueSequence * value_sequence, co
  *
  * If \p value_sequence is NULL returns NULL.
  */
-const gchar *gebr_geoxml_value_sequence_get(GebrGeoXmlValueSequence * value_sequence);
+gchar *gebr_geoxml_value_sequence_get(GebrGeoXmlValueSequence * value_sequence);
 
 /**
  * gebr_geoxml_value_sequence_get_dictkey:

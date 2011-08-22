@@ -119,6 +119,10 @@ static void gebr_arith_expr_finalize(GObject *object)
 {
 	GebrArithExpr *self = GEBR_ARITH_EXPR(object);
 
+	gebr_arith_expr_eval_internal(self, "quit", NULL, NULL);
+	g_io_channel_unref (self->priv->in_ch);
+	g_io_channel_unref (self->priv->out_ch);
+
 	g_hash_table_unref(self->priv->vars);
 
 	G_OBJECT_CLASS(gebr_arith_expr_parent_class)->finalize(object);
@@ -453,11 +457,17 @@ gebr_arith_expr_eval_internal(GebrArithExpr *self,
 			      GError       **err)
 {
 	gchar *line;
-	GString *buffer = g_string_sized_new(70);
 	GError *error = NULL;
 
-	if (!expr || !*expr)
-		return TRUE;
+	gchar *striped = (expr && *expr) ? g_strstrip(g_strdup(expr)) : NULL;
+	gboolean empty = !striped || !*striped;
+	g_free(striped);
+
+	if (empty) {
+		g_set_error(err, GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_EMPTY_EXPR,
+		            _("Empty expression"));
+		return FALSE;
+	}
 
 	line = g_strdup_printf ("%s\n\"%s\"\n", expr, EVAL_COOKIE);
 	g_io_channel_write_chars (self->priv->in_ch, line, -1, NULL, &error);
@@ -480,9 +490,11 @@ gebr_arith_expr_eval_internal(GebrArithExpr *self,
 		return FALSE;
 	}
 
+	GString *buffer = g_string_sized_new(70);
+
 	int results = 0;
 	while (read_bc_line(self, &line, err)) {
-		if (g_strcmp0(line, EVAL_COOKIE) == 0) {
+		if (!line || g_strcmp0(line, EVAL_COOKIE) == 0) {
 			g_free(line);
 			break;
 		}
@@ -506,6 +518,9 @@ gebr_arith_expr_eval_internal(GebrArithExpr *self,
 				    _("Invalid expression%s"), msg);
 			goto exception_and_flush;
 		}
+		if (g_str_has_prefix(line, "Runtime warning (func"))
+			continue;
+
 		int length = strlen(line);
 		if (line[length - 2] == '\\')
 			length -= 2;

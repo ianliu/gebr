@@ -30,12 +30,6 @@ int __gebr_geoxml_sequence_previous(GebrGeoXmlSequence ** sequence);
  * \internal
  * Do operation without checks, for library use
  */
-int __gebr_geoxml_sequence_next(GebrGeoXmlSequence ** sequence);
-
-/**
- * \internal
- * Do operation without checks, for library use
- */
 int __gebr_geoxml_sequence_remove(GebrGeoXmlSequence * sequence);
 
 /**

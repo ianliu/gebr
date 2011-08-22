@@ -52,7 +52,9 @@ struct gebr_geoxml_line_path {
 GebrGeoXmlLine *gebr_geoxml_line_new()
 {
 	GebrGeoXmlDocument *document = gebr_geoxml_document_new("line", GEBR_GEOXML_LINE_VERSION);
-	__gebr_geoxml_insert_new_element(gebr_geoxml_document_root_element(document), "server-group", NULL);
+	GdomeElement *root = gebr_geoxml_document_root_element(document);
+	gdome_el_unref(__gebr_geoxml_insert_new_element(root, "server-group", NULL), &exception);
+	gdome_el_unref(root, &exception);
 	return GEBR_GEOXML_LINE(document);
 }
 
@@ -72,17 +74,17 @@ GebrGeoXmlLineFlow *gebr_geoxml_line_append_flow(GebrGeoXmlLine * line, const gc
 
 int gebr_geoxml_line_get_flow(GebrGeoXmlLine * line, GebrGeoXmlSequence ** line_flow, gulong index)
 {
+	gint retval;
 	if (line == NULL) {
 		*line_flow = NULL;
 		return GEBR_GEOXML_RETV_NULL_PTR;
 	}
+	GdomeElement *root = gebr_geoxml_document_root_element(GEBR_GEOXML_DOC(line));
+	*line_flow = (GebrGeoXmlSequence *)__gebr_geoxml_get_element_at(root, "flow", index, FALSE);
+	gdome_el_unref(root, &exception);
 
-	*line_flow = (GebrGeoXmlSequence *)
-	    __gebr_geoxml_get_element_at(gebr_geoxml_document_root_element(GEBR_GEOXML_DOC(line)), "flow", index,
-					 FALSE);
-
-	return (*line_flow == NULL)
-	    ? GEBR_GEOXML_RETV_INVALID_INDEX : GEBR_GEOXML_RETV_SUCCESS;
+	retval = (*line_flow == NULL) ? GEBR_GEOXML_RETV_INVALID_INDEX : GEBR_GEOXML_RETV_SUCCESS;
+	return retval;
 }
 
 glong gebr_geoxml_line_get_flows_number(GebrGeoXmlLine * line)
@@ -130,9 +132,10 @@ int gebr_geoxml_line_get_path(GebrGeoXmlLine * line, GebrGeoXmlSequence ** path,
 		return GEBR_GEOXML_RETV_NULL_PTR;
 	}
 
-	*path = (GebrGeoXmlSequence *)
-	    __gebr_geoxml_get_element_at(gebr_geoxml_document_root_element(GEBR_GEOXML_DOC(line)), "path", index,
-					 FALSE);
+	GdomeElement *root = gebr_geoxml_document_root_element(GEBR_GEOXML_DOC(line));
+	*path = (GebrGeoXmlSequence *)__gebr_geoxml_get_element_at(root, "path", index, FALSE);
+
+	gdome_el_unref(root, &exception);
 
 	return (*path == NULL)
 	    ? GEBR_GEOXML_RETV_INVALID_INDEX : GEBR_GEOXML_RETV_SUCCESS;
@@ -142,7 +145,10 @@ glong gebr_geoxml_line_get_paths_number(GebrGeoXmlLine * line)
 {
 	if (line == NULL)
 		return -1;
-	return __gebr_geoxml_get_elements_number(gebr_geoxml_document_root_element(GEBR_GEOXML_DOC(line)), "path");
+	GdomeElement *root = gebr_geoxml_document_root_element(GEBR_GEOXML_DOC(line));
+	gulong retval = __gebr_geoxml_get_elements_number(root, "path");
+	gdome_el_unref(root, &exception);
+	return retval;
 }
 
 void gebr_geoxml_line_set_group (GebrGeoXmlLine *line, const gchar *group, gboolean is_fs)
@@ -163,7 +169,8 @@ void gebr_geoxml_line_set_group (GebrGeoXmlLine *line, const gchar *group, gbool
 
 const gchar *gebr_geoxml_line_get_group (GebrGeoXmlLine *line, gboolean *is_fs)
 {
-	const gchar *group;
+	gchar *name;
+	gchar *group;
 	GdomeElement *root;
 	GdomeElement *group_el;
 
@@ -174,12 +181,19 @@ const gchar *gebr_geoxml_line_get_group (GebrGeoXmlLine *line, gboolean *is_fs)
 	group_el = __gebr_geoxml_get_first_element (root, "server-group");
 	group = __gebr_geoxml_get_element_value (group_el);
 
+	gdome_el_unref(root, &exception);
+	gdome_el_unref(group_el, &exception);
+
 	if (g_str_has_prefix (group, "fs:")) {
 		*is_fs = TRUE;
-		return group + 3;
+		name = g_strdup(group + 3);
+		g_free(group);
+		return name;
 	} else if (g_str_has_prefix (group, "g:")) {
 		*is_fs = FALSE;
-		return group + 2;
+		name = g_strdup(group + 2);
+		g_free(group);
+		return name;
 	} else {
 		*is_fs = FALSE;
 		return group;

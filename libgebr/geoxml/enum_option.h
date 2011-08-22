@@ -70,7 +70,7 @@ void gebr_geoxml_enum_option_set_label(GebrGeoXmlEnumOption * enum_option, const
 /**
  *
  */
-const gchar *gebr_geoxml_enum_option_get_label(GebrGeoXmlEnumOption * enum_option);
+gchar *gebr_geoxml_enum_option_get_label(GebrGeoXmlEnumOption * enum_option);
 
 /**
  *
@@ -80,7 +80,7 @@ void gebr_geoxml_enum_option_set_value(GebrGeoXmlEnumOption * enum_option, const
 /**
  *
  */
-const gchar *gebr_geoxml_enum_option_get_value(GebrGeoXmlEnumOption * enum_option);
+gchar *gebr_geoxml_enum_option_get_value(GebrGeoXmlEnumOption * enum_option);
 
 G_END_DECLS
 #endif				//__GEBR_GEOXML_ENUM_OPTION_H

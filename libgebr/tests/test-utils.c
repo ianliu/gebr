@@ -16,6 +16,7 @@
  */
 
 #include <glib.h>
+#include <geoxml/geoxml.h>
 
 #include "../utils.h"
 
@@ -178,6 +179,7 @@ void test_gebr_str_replace(void)
 int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
+	gebr_geoxml_init();
 
 	g_test_add_func("/libgebr/utils/str-escape", test_gebr_str_escape);
 	g_test_add_func("/libgebr/utils/str_word_before_pos", test_gebr_str_word_before_pos);
@@ -185,5 +187,7 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/utils/str_canonical_var_name", test_gebr_str_canonical_var_name);
 	g_test_add_func("/libgebr/utils/str_replace", test_gebr_str_replace);
 
-	return g_test_run();
+	gint ret = g_test_run();
+	gebr_geoxml_finalize();
+	return ret;
 }

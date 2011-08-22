@@ -24,6 +24,7 @@
 #include <glib/gi18n.h>
 #include <libgebr/date.h>
 #include <libgebr/utils.h>
+#include <libgebr/geoxml/document.h>
 #include <libgebr/gui/gebr-gui-utils.h>
 #include <libgebr/gui/gebr-gui-save-dialog.h>
 
@@ -475,10 +476,10 @@ static gboolean _project_line_import_path(const gchar *filename, GList **line_pa
 		}
 		gdk_threads_leave();
 
-		gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) line, GEBR_GEOXML_DOCUMENT_TYPE_LINE);
+		gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) line, GEBR_GEOXML_DOCUMENT_TYPE_LINE, FALSE);
 
 		gdk_threads_enter();
-		document_import(GEBR_GEOXML_DOCUMENT(*line));
+		document_import(GEBR_GEOXML_DOCUMENT(*line), TRUE);
 		gdk_threads_leave();
 		/* check for paths that could be created; */
 		GebrGeoXmlSequence *line_path;
@@ -490,11 +491,8 @@ static gboolean _project_line_import_path(const gchar *filename, GList **line_pa
 		}
 
 		gebr_geoxml_line_get_flow(*line, &i, 0);
-		while (i != NULL) {
+		for (; i; gebr_geoxml_sequence_next(&i)) {
 			GebrGeoXmlFlow *flow;
-
-			GebrGeoXmlSequence * next = i;
-			gebr_geoxml_sequence_next(&next);
 
 			gdk_threads_enter();
 			int ret = document_load_at_with_parent((GebrGeoXmlDocument**)(&flow),
@@ -502,30 +500,28 @@ static gboolean _project_line_import_path(const gchar *filename, GList **line_pa
 			                                       at_dir, project_iter);
 			gdk_threads_leave();
 
-			if (ret) {
-				i = next;
+			if (ret)
 				continue;
-			}
 
 			gdk_threads_enter();
-			document_import(GEBR_GEOXML_DOCUMENT(flow));
+			document_import(GEBR_GEOXML_DOCUMENT(flow), FALSE);
 			gdk_threads_leave();
 			gebr_geoxml_line_set_flow_source(GEBR_GEOXML_LINE_FLOW(i),
 			                                 gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(flow)));
 			gdk_threads_enter();
-			gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW);
+			gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, TRUE);
 			gebr_geoxml_flow_revalidate(flow, gebr.validator);
-			document_save(GEBR_GEOXML_DOCUMENT(flow), FALSE, TRUE); /* this flow is cached */
+			document_save(GEBR_GEOXML_DOCUMENT(flow), FALSE, FALSE);
+			gebr_validator_set_document(gebr.validator, NULL, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, TRUE);
+			gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
 			gdk_threads_leave();
-
-			i = next;
 		}
 		gdk_threads_enter();
 		document_save(GEBR_GEOXML_DOCUMENT(*line), FALSE, FALSE);
 		gdk_threads_leave();
 
-		gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &gebr.line, GEBR_GEOXML_DOCUMENT_TYPE_LINE);
-		gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &gebr.flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW);
+		gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &gebr.flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, TRUE);
+		gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &gebr.line, GEBR_GEOXML_DOCUMENT_TYPE_LINE, TRUE);
 
 		return ret;
 	}
@@ -564,22 +560,21 @@ static gboolean _project_line_import_path(const gchar *filename, GList **line_pa
 			gdk_threads_leave();
 
 			gdk_threads_enter();
-			document_import(GEBR_GEOXML_DOCUMENT(project));
+			document_import(GEBR_GEOXML_DOCUMENT(project), TRUE);
 			iter = project_append_iter(project);
 			gdk_threads_leave();
 
+			gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &project, GEBR_GEOXML_DOCUMENT_TYPE_PROJECT, FALSE);
+
 			gebr_geoxml_project_get_line(project, &project_line, 0);
-			while (project_line != NULL) {
+			for (; project_line; gebr_geoxml_sequence_next(&project_line)) {
 				GebrGeoXmlLine *line;
 
-				GebrGeoXmlSequence * next = project_line;
-				gebr_geoxml_sequence_next(&next);
 				int ret = line_import(&iter, &line, gebr_geoxml_project_get_line_source
 				                      (GEBR_GEOXML_PROJECT_LINE(project_line)), tmp_dir->str);
-				if (ret) {
-					project_line = next;
+				if (ret)
 					continue;
-				}
+
 				gebr_geoxml_project_set_line_source(GEBR_GEOXML_PROJECT_LINE(project_line),
 				                                    gebr_geoxml_document_get_filename
 				                                    (GEBR_GEOXML_DOCUMENT(line)));
@@ -588,9 +583,8 @@ static gboolean _project_line_import_path(const gchar *filename, GList **line_pa
 				project_append_line_iter(&iter, line);
 				document_save(GEBR_GEOXML_DOCUMENT(line), FALSE, FALSE);
 				gdk_threads_leave();
-
-				project_line = next;
 			}
+			gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &gebr.project, GEBR_GEOXML_DOCUMENT_TYPE_PROJECT, FALSE);
 			document = GEBR_GEOXML_DOCUMENT(project);
 		} else if (!is_project && g_str_has_suffix(files[i], ".lne")) {
 			GebrGeoXmlLine *line;
@@ -944,9 +938,8 @@ void project_line_export(void)
 			document_save_at(GEBR_GEOXML_DOCUMENT(flow), filename, FALSE, FALSE);
 			g_free (filename);
 
-			document_free(GEBR_GEOXML_DOCUMENT(flow));
+			gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
 		}
-
 		document_free(GEBR_GEOXML_DOCUMENT(line));
 	}
 
@@ -1529,12 +1522,17 @@ gchar * gebr_line_generate_header(GebrGeoXmlDocument * document)
 	type = gebr_geoxml_document_get_type (document);
 	g_return_val_if_fail (type == GEBR_GEOXML_DOCUMENT_TYPE_LINE, NULL);
 
+	gchar *title = gebr_geoxml_document_get_title(document);
+	gchar *description = gebr_geoxml_document_get_description(document);
 	dump = g_string_new(NULL);
 	g_string_printf(dump,
 			"<h1>%s</h1>\n<h2>%s</h2>\n",
-			gebr_geoxml_document_get_title(document),
-			gebr_geoxml_document_get_description(document));
+			title, description);
+	g_free(title);
+	g_free(description);
 
+	gchar *author = gebr_geoxml_document_get_author(document);
+	gchar *email = gebr_geoxml_document_get_email(document);
 	g_string_append_printf(dump,
 			       "<p class=\"credits\">%s <span class=\"gebr-author\">%s</span> "
 			       "<span class=\"gebr-email\">%s</span>, "
@@ -1542,9 +1540,10 @@ gchar * gebr_line_generate_header(GebrGeoXmlDocument * document)
 			       // Comment for translators:
 			       // "By" as in "By John McClane"
 			       _("By"),
-			       gebr_geoxml_document_get_author(document),
-			       gebr_geoxml_document_get_email(document),
+			       author, email,
 			       gebr_localized_date(gebr_iso_date()));
+	g_free(author);
+	g_free(email);
 			
 
 	g_string_append_printf (dump, "<div class=\"gebr-flows-list\">\n   <p>%s</p>\n   <ul>\n", _("Line composed by the flow(s):"));
@@ -1555,9 +1554,13 @@ gchar * gebr_line_generate_header(GebrGeoXmlDocument * document)
 
 		fname = gebr_geoxml_line_get_flow_source (GEBR_GEOXML_LINE_FLOW (sequence));
 		document_load(&flow, fname, FALSE);
+
+		gchar *title = gebr_geoxml_document_get_title(flow);
+		gchar *description = gebr_geoxml_document_get_description(flow);
 		g_string_append_printf (dump, "      <li>%s <span class=\"gebr-flow-description\">&mdash; %s</span></li>\n",
-                                        gebr_geoxml_document_get_title (flow),
-                                        gebr_geoxml_document_get_description (flow));
+                                        title, description);
+		g_free(title);
+		g_free(description);
 		gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
 		gebr_geoxml_sequence_next (&sequence);
 	}
@@ -1569,6 +1572,9 @@ gchar * gebr_line_generate_header(GebrGeoXmlDocument * document)
 		g_string_append_printf (dump, "%s%s</div>\n", proj_dict, line_dict);
 
 	g_string_append (dump, "   </ul>\n</div>\n");
+
+	g_free(proj_dict);
+	g_free(line_dict);
 
 	line = GEBR_GEOXML_LINE (document);
 	if (gebr_geoxml_line_get_paths_number(line) > 0) {

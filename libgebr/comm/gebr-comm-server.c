@@ -125,7 +125,7 @@ gebr_comm_server_run_strip_flow(GebrValidator *validator, GebrGeoXmlFlow *flow)
 	gebr_geoxml_flow_get_revision(GEBR_GEOXML_FLOW (clone), &i, 0);
 	while (i != NULL) {
 		GebrGeoXmlSequence *tmp;
-
+		gebr_geoxml_object_ref(i);
 		tmp = i;
 		gebr_geoxml_sequence_next(&tmp);
 		gebr_geoxml_sequence_remove(i);
@@ -135,14 +135,15 @@ gebr_comm_server_run_strip_flow(GebrValidator *validator, GebrGeoXmlFlow *flow)
 	/* Merge and Strip invalid parameters in dictionary */
 	i = gebr_geoxml_document_get_dict_parameter(clone);
 	while (i != NULL) {
-		GebrGeoXmlSequence *next = i;
-		gebr_geoxml_sequence_next(&next);
 		if (validator && !gebr_validator_validate_param(validator, GEBR_GEOXML_PARAMETER(i), NULL, NULL)) {
-			gebr_geoxml_sequence_remove(i);
+			GebrGeoXmlSequence *aux = i;
+			gebr_geoxml_object_ref(aux);
+			gebr_geoxml_sequence_next(&i);
+			gebr_geoxml_sequence_remove(aux);
+			continue;
 		}
-		i = next;
+		gebr_geoxml_sequence_next(&i);
 	}
-
 	gebr_validator_get_documents(validator, NULL, &line, &proj);
 	gebr_geoxml_document_merge_dicts(validator, clone, line, proj, NULL);
 
