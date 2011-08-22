@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow version="0.2.3">
+  <filename>unimodeling.mnu</filename>
+  <title>Modeling</title>
+  <description>Kirchhoff modeling via diffraction curves</description>
+  <help><![CDATA[<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="content-type" content=
+  "text/html; charset=utf-8" />
+  <link rel="stylesheet" type="text/css" href="gebr.css" />
+
+  <title>G&ecirc;BR - Modeling</title>
+</head>
+
+<body>
+  <div class="outer-container">
+    <div class="inner-container">
+      <div class="header">
+        <div class="title">
+          <span class="flowtitle">Modeling</span>
+
+          <div class="description">
+            Kirchhoff modeling via diffraction curves
+          </div>
+        </div>
+      </div>
+
+      <div class="category">
+        Simulation and Model Building | Unified Approach
+      </div>
+
+      <div class="main">
+        <div class="content">
+
+          <a name="intro" id="intro"></a>
+          <h2>Introduction</h2>
+
+          <p>Kinematic Kirchhoff modeling distributing amplitudes over diffraction curves.</p>
+
+	  <a name="ref" id="ref"></a>
+          <h2>References</h2>
+
+ 	  <!-- List of references -->
+          <ul>
+            <li>Jörg Scheleicher, Martin Tygel and Peter Hubral. <i>Seismic True-Amplitude Imaging</i>. Society
+                of Exploration Geophysicists, 2007.</li>
+          </ul>
+
+	  <a name="credits" id="credits"></a>
+          <h2>Credits</h2>
+
+          <p>Jul 02, 2008: created by Ricardo Biloti, DMA/IMECC/UNICAMP.</p>
+        </div>
+
+        <div class="navigation">
+          <h2>Index</h2>
+
+          <ul>
+            <li><a href="#intro">Introduction</a></li>
+            <li><a href="#ref">References</a></li>
+            <li><a href="#credits">Credits</a></li>
+          </ul>
+        </div>
+
+        <div class="clearer"></div>
+      </div>
+
+      <div class="footer">
+        <span class="left">G&ecirc;BR 0.9.5.0 (0.2.3) | Jul 02, 2008</span>
+
+        <div class="clearer"></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+]]></help>
+  <author>Ricardo Biloti</author>
+  <email>biloti@gmail.com</email>
+  <date>
+    <created/>
+    <modified/>
+    <lastrun/>
+  </date>
+  <category>Simulation and Model Building</category>
+  <category>Unified Approach</category>
+  <io>
+    <input/>
+    <output/>
+    <error/>
+  </io>
+  <program stdin="yes" stdout="yes" stderr="yes" status="unconfigured">
+    <menu index="0">unimodeling.mnu</menu>
+    <title>Modeling</title>
+    <binary>modeling</binary>
+    <description>Kirchhoff modeling via diffraction curves</description>
+    <help/>
+    <url/>
+    <parameters>
+      <int required="no">
+        <keyword>--ntr=</keyword>
+        <label>Number of traces in velocity file</label>
+        <value/>
+      </int>
+      <float required="no">
+        <keyword>--tmin=</keyword>
+        <label>Initial recording time</label>
+        <value default="0"/>
+      </float>
+      <float required="no"><keyword>--dt=</keyword><label>Sampling interval (in s)</label><value default="0.004"/></float>
+      <int required="no">
+        <keyword>--ns=</keyword>
+        <label>Number of samples per trace</label>
+        <value default="1501"/>
+      </int>
+      <float required="no">
+        <keyword>--fxi=</keyword>
+        <label>First simulated mid-point coordinate</label>
+        <value default="0"/>
+      </float>
+      <float required="no"><keyword>--dxi=</keyword><label>Incremet in mid-point coordinates</label><value default="40"/></float>
+      <int required="no"><keyword>--nxi=</keyword><label>Total number of simulated mid-points</label><value default="101"/></int>
+      <float required="no">
+        <keyword>--hoffset=</keyword>
+        <label>Simulated half-offset</label>
+        <value default="0"/>
+      </float>
+      <file required="yes" directory="no"><keyword>--diffptos=</keyword><label>ASCII file with diffraction points</label><value/></file>
+    </parameters>
+  </program>
+</flow>
