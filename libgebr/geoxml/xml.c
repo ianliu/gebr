@@ -31,6 +31,8 @@ static gchar *__gebr_geoxml_remove_line_break(const gchar * tag_value)
 	gchar *linebreak;
 	GString *value;
 
+	g_return_val_if_fail(tag_value != NULL, NULL);
+
 	if (strchr(tag_value, 0x0A) == NULL)
 		return g_strdup(tag_value);
 

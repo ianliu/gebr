@@ -488,11 +488,11 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 						GdomeDOMString *separator;
 
 						string = gdome_str_mkref("required");
-						gdome_el_setAttribute(property, string,
-								      gdome_el_getAttribute(old_parameter, string,
-											    &exception), &exception);
+						GdomeDOMString *attr = gdome_el_getAttribute(old_parameter, string, &exception);
+						gdome_el_setAttribute(property, string, attr, &exception);
 						gdome_el_removeAttribute(old_parameter, string, &exception);
 						gdome_str_unref(string);
+						gdome_str_unref(attr);
 
 						value = __gebr_geoxml_get_first_element(old_parameter, "value");
 						string = gdome_str_mkref("separator");
@@ -500,25 +500,23 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 						if (strlen(separator->str)) {
 							gdome_el_setAttribute(property, string, separator, &exception);
 
-							gebr_geoxml_program_parameter_set_parse_list_value
-							    (GEBR_GEOXML_PROGRAM_PARAMETER(parameter), FALSE,
-							     __gebr_geoxml_get_element_value(value));
+							gebr_geoxml_program_parameter_set_parse_list_value(GEBR_GEOXML_PROGRAM_PARAMETER(parameter), FALSE,
+							                                                   __gebr_geoxml_get_element_value(value));
 							gebr_geoxml_program_parameter_set_parse_list_value
 							    (GEBR_GEOXML_PROGRAM_PARAMETER(parameter), TRUE,
 							     __gebr_geoxml_get_attr_value(value, "default"));
 						} else {
+							gchar *str_value = __gebr_geoxml_get_element_value(value);
 							GdomeElement *element1 = __gebr_geoxml_insert_new_element((GdomeElement *) property, "value", NULL);
-							__gebr_geoxml_set_element_value(element1,
-											__gebr_geoxml_get_element_value
-											(value),
-											__gebr_geoxml_create_TextNode);
+							__gebr_geoxml_set_element_value(element1, str_value? str_value:"", __gebr_geoxml_create_TextNode);
 							gdome_el_unref(element1, &exception);
+							g_free(str_value);
 
 							GdomeElement *element2 = __gebr_geoxml_insert_new_element((GdomeElement *) property, "default", NULL);
-							__gebr_geoxml_set_element_value(element2,
-											__gebr_geoxml_get_attr_value
-											(value, "default"),
-											__gebr_geoxml_create_TextNode);
+
+							str_value = __gebr_geoxml_get_attr_value (value, "default");
+							__gebr_geoxml_set_element_value(element2, str_value?str_value:"", __gebr_geoxml_create_TextNode);
+							g_free(str_value);
 							gdome_el_unref(element2, &exception);
 						}
 						gdome_n_unref(gdome_el_removeChild(old_parameter, (GdomeNode *) value, &exception), &exception);
@@ -548,8 +546,8 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 						gdome_el_unref(state, &exception);
 					}
 
+					gdome_el_unref(old_parameter, &exception);
 					old_parameter = next_parameter;
-					gdome_el_unref(next_parameter, &exception);
 				}
 				gebr_geoxml_sequence_next(&program);
 			}
