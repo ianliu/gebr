@@ -42,6 +42,7 @@ struct _GebrArithExprPriv {
 	GIOChannel *in_ch;
 	GIOChannel *out_ch;
 	gboolean initialized;
+	GPid child;
 };
 
 /* Prototypes {{{2 */
@@ -57,7 +58,7 @@ gebr_arith_expr_eval_impl (GebrIExpr   *self,
 			   gchar      **result,
 			   GError     **err);
 
-gboolean arith_spawn_bc(int *in_fd, int *out_fd);
+gboolean arith_spawn_bc(GebrArithExpr *self, int *in_fd, int *out_fd);
 
 G_DEFINE_TYPE_WITH_CODE(GebrArithExpr, gebr_arith_expr, G_TYPE_OBJECT,
 			G_IMPLEMENT_INTERFACE(GEBR_TYPE_IEXPR,
@@ -67,8 +68,6 @@ G_DEFINE_TYPE_WITH_CODE(GebrArithExpr, gebr_arith_expr, G_TYPE_OBJECT,
 static void gebr_arith_expr_class_init(GebrArithExprClass *klass)
 {
 	GObjectClass *g_class;
-
-	signal(SIGCHLD, SIG_IGN);
 
 	g_class = G_OBJECT_CLASS(klass);
 	g_class->finalize = gebr_arith_expr_finalize;
@@ -85,7 +84,7 @@ static void gebr_arith_expr_init(GebrArithExpr *self)
 						 GEBR_TYPE_ARITH_EXPR,
 						 GebrArithExprPriv);
 
-	if (!arith_spawn_bc (&in_fd, &out_fd)) {
+	if (!arith_spawn_bc (self, &in_fd, &out_fd)) {
 		g_warning("Could not execute `bc'");
 		self->priv->initialized = FALSE;
 		return;
@@ -117,12 +116,13 @@ static void gebr_arith_expr_init(GebrArithExpr *self)
 
 static void gebr_arith_expr_finalize(GObject *object)
 {
+	gint exitstatus;
 	GebrArithExpr *self = GEBR_ARITH_EXPR(object);
 
-	gebr_arith_expr_eval_internal(self, "quit", NULL, NULL);
+	kill(self->priv->child, SIGKILL);
+	waitpid(self->priv->child, &exitstatus, 0);
 	g_io_channel_unref (self->priv->in_ch);
 	g_io_channel_unref (self->priv->out_ch);
-
 	g_hash_table_unref(self->priv->vars);
 
 	G_OBJECT_CLASS(gebr_arith_expr_parent_class)->finalize(object);
@@ -355,7 +355,7 @@ static void gebr_arith_expr_interface_init(GebrIExprInterface *iface)
 /*
  */
 gboolean
-arith_spawn_bc(int *infd, int *outfd)
+arith_spawn_bc(GebrArithExpr *self, int *infd, int *outfd)
 {
 	const gchar *home_dir	= g_get_home_dir ();
 	gchar *argv[]		= {"bc", "-l", NULL};
@@ -366,13 +366,12 @@ arith_spawn_bc(int *infd, int *outfd)
 	if (pipe(in_fd) < 0 || pipe(out_fd) < 0)
 		return FALSE;
 
-	GPid child;
-	child = fork();
+	self->priv->child = fork();
 
-	if (child < 0)
+	if (self->priv->child < 0)
 		return FALSE;
 
-	if (child == 0) {
+	if (self->priv->child == 0) {
 		if (dup2(in_fd[0], 0) < 0 ||
 		    dup2(out_fd[1], 1) < 0 ||
 		    dup2(out_fd[1], 2) < 0)
