@@ -17,6 +17,8 @@
 
 //remove round warning
 #define _ISOC99_SOURCE
+#include <sys/types.h>
+#include <sys/wait.h>
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
@@ -26,6 +28,7 @@
 #include <glib/gstdio.h>
 #include <locale.h>
 #include <fcntl.h>
+#include <signal.h>
 
 #include "defines.h"
 #include "utils.h"
@@ -220,16 +223,17 @@ GString *gebr_make_temp_filename(const gchar * template)
  */
 gint gebr_system(const gchar *cmd, ...)
 {
-	gint ret;
+	gint exit, ret;
 
 	va_list argp;
 	va_start(argp, cmd);
 	gchar *cmd_parsed = g_strdup_vprintf(cmd, argp);
 	va_end(argp);
 	ret = system(cmd_parsed);
+	exit = WEXITSTATUS(ret);
 	g_free(cmd_parsed);
 
-	return ret;
+	return exit;
 }
 
 /**
