@@ -782,9 +782,10 @@ void menu_install(void)
 		gchar *quote1 = g_shell_quote(menu_path);
 		gchar *quote2 = g_shell_quote(destination->str);
 		if (do_save && gebr_system("cp %s %s", quote1, quote2) != 0) {
-			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, NULL,
-						_("Failed to install menu '%s'"),
-						menu_filename);
+			gchar *title = g_strdup_printf(_("Failed to install menu '%s'"), menu_filename);
+			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, title,
+						_("A problem occurred when copying the menu into GeBR's folder."));
+			g_free(title);
 		}
 		g_free(quote1);
 		g_free(quote2);
