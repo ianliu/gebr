@@ -183,6 +183,7 @@ static void __enum_option_edit_add(EnumOptionEdit * enum_option_edit, GebrGeoXml
 	GtkTreeIter iter;
 
 	gtk_list_store_append(GEBR_GUI_SEQUENCE_EDIT(enum_option_edit)->list_store, &iter);
+	gebr_geoxml_object_ref(enum_option);
 	gtk_list_store_set(GEBR_GUI_SEQUENCE_EDIT(enum_option_edit)->list_store, &iter,
 			   0, gebr_geoxml_enum_option_get_value(enum_option),
 			   1, gebr_geoxml_enum_option_get_label(enum_option), 2, enum_option, -1);
