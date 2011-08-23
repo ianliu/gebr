@@ -78,7 +78,6 @@ parameters_configure_setup_ui(void)
 						      flow_io_customized_paths_from_line,
 						      FALSE,
 						      gebr.validator);
-	gebr_geoxml_object_unref(clone);
 
 	g_signal_connect(dialog, "response", G_CALLBACK(parameters_actions), program_edit);
 	g_signal_connect(dialog, "delete-event", G_CALLBACK(parameters_on_delete_event), program_edit);
