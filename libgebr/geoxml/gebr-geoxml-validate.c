@@ -250,8 +250,10 @@ gint gebr_geoxml_validate_report_menu(GebrGeoXmlValidate * validate, GebrGeoXmlF
 			parameter = GEBR_GEOXML_PARAMETER(gebr_geoxml_parameters_get_first_parameter
 							  (gebr_geoxml_program_get_parameters(prog)));
 
-			validate->ipar = 0;
-			for (; parameter != NULL; gebr_geoxml_sequence_next((GebrGeoXmlSequence **)&parameter), ++validate->ipar)
+			if (parameter)
+				validate->ipar = 0;
+
+			for (; parameter; gebr_geoxml_sequence_next((GebrGeoXmlSequence **)&parameter), ++validate->ipar)
 				show_parameter(validate, parameter);
 			g_hash_table_unref(hotkey_table);
 		}
