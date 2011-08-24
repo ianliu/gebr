@@ -53,6 +53,7 @@ int main(int argc, char **argv)
 	int iprog;
 	int nflow;
 	int iflow;
+	gchar *title, *desc, *author, *email, *data;
 
 	gebr_geoxml_init();
 	parse_command_line(argc, argv);
@@ -70,14 +71,23 @@ int main(int argc, char **argv)
                 }
 		doc = GEBR_GEOXML_DOC(flow);
 
-                printf("%s -- %s\n",
-                       gebr_geoxml_document_get_title(doc),
-                       gebr_geoxml_document_get_description(doc));
+		title = gebr_geoxml_document_get_title(doc);
+		desc = gebr_geoxml_document_get_description(doc);
 
-                printf("By %s <%s>, %s\n",
-                       gebr_geoxml_document_get_author(doc),
-                       gebr_geoxml_document_get_email(doc),
-                       gebr_localized_date(gebr_geoxml_document_get_date_modified(doc)));
+		printf("%s -- %s\n", title, desc);
+
+		g_free(title);
+		g_free(desc);
+
+		author = gebr_geoxml_document_get_author(doc);
+		email = gebr_geoxml_document_get_email(doc);
+		data = gebr_geoxml_document_get_date_modified(doc);
+
+		printf("By %s <%s>, %s\n", author, email, gebr_localized_date(data));
+
+		g_free(author);
+		g_free(email);
+		g_free(data);
 
 		nprog = gebr_geoxml_flow_get_programs_number(flow);
 
@@ -96,7 +106,7 @@ int main(int argc, char **argv)
 			printf("\nProgram %s\n",gebr_geoxml_program_get_title(prog));
                         parameter = GEBR_GEOXML_PARAMETER(gebr_geoxml_parameters_get_first_parameter
 							  (gebr_geoxml_program_get_parameters(prog)));
-                        while (parameter != NULL) {
+                        while (parameter) {
                                 show_parameter(parameter);
                                 gebr_geoxml_sequence_next((GebrGeoXmlSequence **) & parameter);
                         }
@@ -144,7 +154,7 @@ GString *dump_program_parameter(GebrGeoXmlProgramParameter * pp, gboolean is_sub
 {
 	GString *value;
         GString *default_value;
-        static GString *par = NULL;
+        GString *par = NULL;
 
         if (par == NULL)
                 par = g_string_new(NULL);
@@ -154,11 +164,11 @@ GString *dump_program_parameter(GebrGeoXmlProgramParameter * pp, gboolean is_sub
         value = gebr_geoxml_program_parameter_get_string_value(pp, FALSE);
         default_value = gebr_geoxml_program_parameter_get_string_value(pp, TRUE);
 
-        if ( !dump_all && (
-                           (hide_pars_in_default && (strcmp(value->str, default_value->str) == 0)) || 
-                           strlen(value->str) == 0)){
-                g_string_free(value, TRUE);
-                return NULL;
+        if (!dump_all &&
+            ((hide_pars_in_default && (strcmp(value->str, default_value->str) == 0)) ||
+            strlen(value->str) == 0)) {
+        	g_string_free(value, TRUE);
+        	return NULL;
         }
 
         if (is_subpar) g_string_append(par, "   ");
@@ -175,7 +185,7 @@ void show_parameter(GebrGeoXmlParameter * parameter)
 
 	if (gebr_geoxml_parameter_get_is_program_parameter(parameter)){
 		par = dump_program_parameter(GEBR_GEOXML_PROGRAM_PARAMETER(parameter), FALSE);
-                if (par != NULL)
+                if (par)
                         printf("%s", par->str);
         }
 	else {
@@ -189,12 +199,12 @@ void show_parameter(GebrGeoXmlParameter * parameter)
 		g_string_printf(group, "   Group %s\n", gebr_geoxml_parameter_get_label(parameter));
 
 		gebr_geoxml_parameter_group_get_instance(GEBR_GEOXML_PARAMETER_GROUP(parameter), &instance, 0);
-                while (instance != NULL){
+                while (instance){
                         subpar = gebr_geoxml_parameters_get_first_parameter(GEBR_GEOXML_PARAMETERS(instance));
                         
-                        while (subpar != NULL) {
+                        while (subpar) {
                                 par = dump_program_parameter(GEBR_GEOXML_PROGRAM_PARAMETER(subpar), TRUE);
-                                if (par != NULL){
+                                if (par){
                                         g_string_append(group, par->str);
                                         show = TRUE;
                                 }
@@ -207,7 +217,5 @@ void show_parameter(GebrGeoXmlParameter * parameter)
                         printf("%s", group->str);
                 g_string_free(group, TRUE);
         }
-
-	gebr_geoxml_finalize();
 	return;
 }
