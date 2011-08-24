@@ -54,10 +54,7 @@ GebrGeoXmlValidate *gebr_geoxml_validate_new(gpointer data, GebrGeoXmlValidateOp
 		options.mhelp = TRUE;
 		options.progs = TRUE;
 		options.url = TRUE;
-		options.params = TRUE;
 		options.verbose = TRUE;
-        options.url = TRUE;
-        options.verbose = TRUE;
 	}
 	validate->options = options;
 
@@ -188,8 +185,8 @@ gint gebr_geoxml_validate_report_menu(GebrGeoXmlValidate * validate, GebrGeoXmlF
 	}
 	gint nprog = gebr_geoxml_flow_get_programs_number(menu);
 	if (validate->options.ehelp > 0 && validate->options.ehelp <= nprog) {
-		gchar *tmp_help = gebr_geoxml_program_get_help(GEBR_GEOXML_PROGRAM(seq));
 		gebr_geoxml_flow_get_program(menu, &seq, validate->options.ehelp - 1);
+		gchar *tmp_help = gebr_geoxml_program_get_help(GEBR_GEOXML_PROGRAM(seq));
 		validate->operations.append_text(validate->data, "%s", tmp_help);
 		g_free(tmp_help);
 	}
