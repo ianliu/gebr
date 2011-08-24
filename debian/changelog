@@ -1,8 +1,8 @@
-gebrproject (0.13.12) lucid; urgency=low
+gebrproject (0.13.13) lucid; urgency=medium
 
-  * First pre-release after huge memory leak fix.
+  * Huge memory leak in xml fixed.
 
- -- Fabricio Matheus Goncalves <fmatheus@gebrproject.com>  Thu, 11 Aug 2011 21:40:16 -0300
+ -- Fabricio Matheus Goncalves <fmatheus@gebrproject.com>  Wed, 24 Aug 2011 12:35:47 -0300
 
 gebrproject (0.13.9) lucid; urgency=medium
 
