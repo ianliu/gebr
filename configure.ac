@@ -235,7 +235,7 @@ if test "$enable_gui" = "yes"; then
 	AC_SUBST(GUI_CFLAGS)
 fi
 
-GEBR_CFLAGS='-I$(top_srcdir) -I$(top_srcdir)/libgebr -I$(top_builddir)/libgebr'
+GEBR_CFLAGS='-I$(top_srcdir) -I$(top_srcdir)/libgebr -I$(top_builddir) -I$(top_builddir)/libgebr'
 GEBR_GEOXML_CFLAGS='-I$(top_srcdir)/libgebr/geoxml -I$(top_builddir)/libgebr/geoxml'
 GEBR_COMM_CFLAGS='-I$(top_srcdir)/libgebr/comm -I$(top_builddir)/libgebr/comm'
 GEBR_GUI_CFLAGS='-I$(top_srcdir)/libgebr/gui -I$(top_builddir)/libgebr/gui'
