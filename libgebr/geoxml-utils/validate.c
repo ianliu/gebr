@@ -16,6 +16,7 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <glib/gi18n.h>
 #include <libgebr.h>
 #include <defines.h>
@@ -49,6 +50,13 @@ int main(int argc, char **argv)
 		fprintf(stderr, _("Try %s --help\n"), argv[0]);
 		ret = -1;
 		goto out;
+	}
+
+	if (files == NULL)
+	{
+		g_printerr(_("Error! No input files specified.\n"));
+		g_printerr(_("Try: %s --help\n"), g_get_prgname ());
+		return EXIT_FAILURE;
 	}
 
 	for (i = 0; files[i] != NULL; ++i) {
