@@ -109,7 +109,7 @@ struct ui_flow_edition *flow_edition_setup_ui(void)
 	 * Left side: flow components
 	 */
 	left_vbox = gtk_vbox_new(FALSE, 5);
-	gtk_paned_pack1(GTK_PANED(hpanel), left_vbox, TRUE, FALSE);
+	gtk_paned_pack1(GTK_PANED(hpanel), left_vbox, FALSE, FALSE);
 	gtk_widget_set_size_request(left_vbox, 150, -1);
 
 	ui_flow_edition->server_combobox = combobox = gtk_combo_box_new ();
@@ -229,7 +229,7 @@ struct ui_flow_edition *flow_edition_setup_ui(void)
 	 * Right side: Menu list
 	 */
 	frame = gtk_frame_new(_("Menus"));
-	gtk_paned_pack2(GTK_PANED(hpanel), frame, FALSE, FALSE);
+	gtk_paned_pack2(GTK_PANED(hpanel), frame, TRUE, FALSE);
 	gtk_widget_set_size_request(frame, 150, -1);
 
 	vbox = gtk_vbox_new(FALSE, 3);
