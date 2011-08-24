@@ -192,6 +192,7 @@ int main(int argc, char **argv)
 		       (gebr_geoxml_program_get_stderr(prog[1]) ? "Append" : "Ignore"));
 
 		report("Executable", gebr_geoxml_program_get_binary(prog[0]), gebr_geoxml_program_get_binary(prog[1]));
+		report("Version", gebr_geoxml_program_get_version(prog[0]), gebr_geoxml_program_get_version(prog[1]));
 
 		report("URL", gebr_geoxml_program_get_url(prog[0]), gebr_geoxml_program_get_url(prog[1]));
 
