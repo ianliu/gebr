@@ -91,6 +91,10 @@ int main(int argc, char **argv)
 
 	report("Comparing files", fnmenu[nmenu - 2], fnmenu[nmenu - 1]);
 	diff_count--;
+	if (!doc[0] || !doc[1]) {
+		printf("The file %s not exist.\n", doc[0]? fnmenu[nmenu - 1] : fnmenu[nmenu - 2]);
+		goto out;
+	}
 	report("Filename", gebr_geoxml_document_get_filename(doc[0]), gebr_geoxml_document_get_filename(doc[1]));
 	report("Title", gebr_geoxml_document_get_title(doc[0]), gebr_geoxml_document_get_title(doc[1]));
 	report("Description",
