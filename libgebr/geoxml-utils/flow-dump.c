@@ -117,7 +117,7 @@ int main(int argc, char **argv)
  out:		
  		gebr_geoxml_document_free(doc);
 	}
-
+	gebr_geoxml_finalize();
 	return EXIT_SUCCESS;
 }
 
