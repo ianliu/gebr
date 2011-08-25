@@ -274,13 +274,14 @@ int __gebr_geoxml_sequence_move_after(GebrGeoXmlSequence * sequence, GebrGeoXmlS
 		gebr_geoxml_object_unref(first);
 	} else if (sequence != position) {
 		GdomeElement *next_element;
+		GdomeException exc;
 
 		next_element = __gebr_geoxml_next_element((GdomeElement *) position);
 		GdomeNode *parent = gdome_el_parentNode((GdomeElement *) position, &exception);
 		gdome_n_unref(gdome_n_insertBefore_protected(parent,
-					       (GdomeNode *) sequence, (GdomeNode *) next_element, &exception), &exception);
-		gdome_n_unref(parent, &exception);
-		gdome_el_unref(next_element, &exception);
+					       (GdomeNode *) sequence, (GdomeNode *) next_element, &exception), &exc);
+		gdome_n_unref(parent, &exc);
+		gdome_el_unref(next_element, &exc);
 	} else
 		exception = GDOME_NOEXCEPTION_ERR;
 
