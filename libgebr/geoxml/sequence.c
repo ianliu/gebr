@@ -206,6 +206,8 @@ int
 __gebr_geoxml_sequence_move_before(GebrGeoXmlSequence *sequence,
 				   GebrGeoXmlSequence *position)
 {
+	GdomeException exc;
+
 	if (!position) {
 		GebrGeoXmlSequence *iter = sequence;
 		GebrGeoXmlSequence *last = NULL;
@@ -226,9 +228,9 @@ __gebr_geoxml_sequence_move_before(GebrGeoXmlSequence *sequence,
 			parent = gdome_el_parentNode((GdomeElement *) sequence, &exception);
 			insert = gdome_n_insertBefore_protected(parent, (GdomeNode *) sequence,
 								(GdomeNode *) el, &exception);
-			gdome_el_unref(el, &exception);
-			gdome_n_unref(insert, &exception);
-			gdome_n_unref(parent, &exception);
+			gdome_el_unref(el, &exc);
+			gdome_n_unref(insert, &exc);
+			gdome_n_unref(parent, &exc);
 		} else
 			exception = GDOME_NOEXCEPTION_ERR;
 		gebr_geoxml_object_unref(last);
@@ -236,8 +238,8 @@ __gebr_geoxml_sequence_move_before(GebrGeoXmlSequence *sequence,
 		GdomeNode *parent = gdome_el_parentNode((GdomeElement *) position, &exception);
 		GdomeNode *insert = gdome_n_insertBefore_protected(parent, (GdomeNode *) sequence,
 								   (GdomeNode *) position, &exception);
-		gdome_n_unref(insert, &exception);
-		gdome_n_unref(parent, &exception);
+		gdome_n_unref(insert, &exc);
+		gdome_n_unref(parent, &exc);
 	} else
 		exception = GDOME_NOEXCEPTION_ERR;
 
@@ -246,6 +248,8 @@ __gebr_geoxml_sequence_move_before(GebrGeoXmlSequence *sequence,
 
 int __gebr_geoxml_sequence_move_after(GebrGeoXmlSequence * sequence, GebrGeoXmlSequence * position)
 {
+	GdomeException exc;
+
 	if (position == NULL) {
 		GebrGeoXmlSequence *current = NULL;
 		GebrGeoXmlSequence *first;
@@ -267,14 +271,13 @@ int __gebr_geoxml_sequence_move_after(GebrGeoXmlSequence * sequence, GebrGeoXmlS
 		if (first != sequence) {
 			GdomeNode *parent = gdome_el_parentNode((GdomeElement *) sequence, &exception);
 			gdome_n_unref(gdome_n_insertBefore_protected(parent,
-					     (GdomeNode *) sequence, (GdomeNode *) first, &exception), &exception);
-			gdome_n_unref(parent, &exception);
+					     (GdomeNode *) sequence, (GdomeNode *) first, &exception), &exc);
+			gdome_n_unref(parent, &exc);
 		} else
 			exception = GDOME_NOEXCEPTION_ERR;
 		gebr_geoxml_object_unref(first);
 	} else if (sequence != position) {
 		GdomeElement *next_element;
-		GdomeException exc;
 
 		next_element = __gebr_geoxml_next_element((GdomeElement *) position);
 		GdomeNode *parent = gdome_el_parentNode((GdomeElement *) position, &exception);
