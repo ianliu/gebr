@@ -538,7 +538,7 @@ void document_dict_edit_setup_ui(void)
 	gebr_gui_gtk_action_group_set_accel_group(action_group, accel_group);
 
 	dialog_title = g_string_new(NULL);
-	g_string_printf(dialog_title, _("Parameter dictionary for %s '%s'"),
+	g_string_printf(dialog_title, _("Variables dictionary for %s '%s'"),
 			document_get_name_from_type(document, FALSE), gebr_geoxml_document_get_title(document));
 	dialog = gtk_dialog_new_with_buttons(dialog_title->str,
 					     GTK_WINDOW(gebr.window),
