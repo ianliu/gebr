@@ -252,6 +252,7 @@ gint gebr_geoxml_validate_report_menu(GebrGeoXmlValidate * validate, GebrGeoXmlF
 
 			for (; parameter; gebr_geoxml_sequence_next((GebrGeoXmlSequence **)&parameter), ++validate->ipar)
 				show_parameter(validate, parameter);
+			validate->ipar = -1;
 			g_hash_table_unref(hotkey_table);
 		}
 	}
@@ -462,7 +463,10 @@ static void show_parameter(GebrGeoXmlValidate * validate, GebrGeoXmlParameter * 
 
 		template = gebr_geoxml_parameter_group_get_template(GEBR_GEOXML_PARAMETER_GROUP(parameter));
 		subpar = gebr_geoxml_parameters_get_first_parameter(template);
-		validate->isubpar = 0;
+
+		if (subpar)
+			validate->isubpar = 0;
+
 		for (; subpar != NULL; gebr_geoxml_sequence_next(&subpar), ++validate->isubpar)
 			show_parameter(validate, GEBR_GEOXML_PARAMETER(subpar));
 
