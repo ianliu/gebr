@@ -1424,7 +1424,7 @@ gebr_validator_validate_iter(GebrValidator *self,
 	g_return_val_if_fail(data != NULL, FALSE);
 
 	define_validate_and_extract_vars(self, NULL, GET_VAR_VALUE(param),
-	                                 GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
+	                                 gebr_geoxml_parameter_get_type(param),
 	                                 GEBR_GEOXML_DOCUMENT_TYPE_LINE,
 	                                 &data->dep[GEBR_GEOXML_DOCUMENT_TYPE_FLOW], NULL);
 

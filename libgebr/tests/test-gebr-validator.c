@@ -952,6 +952,23 @@ void test_gebr_validator_iter(Fixture *fixture, gconstpointer data)
 	g_assert_error(err, GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_EMPTY_EXPR);
 	g_clear_error(&err);
 	VALIDATE_FLOAT_EXPR_WITH_ERROR("iter", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_BAD_REFERENCE);
+
+	fixture_change_iter_value(fixture, "1", "1", "10", &err);
+	g_assert_no_error(err);
+
+	GebrGeoXmlParameter *iter = GEBR_GEOXML_PARAMETER(gebr_geoxml_document_get_dict_parameter(fixture->flow));
+	gebr_geoxml_parameter_set_type(iter, GEBR_GEOXML_PARAMETER_TYPE_STRING);
+	gebr_validator_change_value(fixture->validator, iter, "${V[[0]]}", NULL, &err);
+	g_assert_no_error(err);
+
+	gchar *result = NULL;
+	gebr_validator_evaluate_interval(fixture->validator, "[iter]",
+					 GEBR_GEOXML_PARAMETER_TYPE_STRING,
+					 GEBR_GEOXML_DOCUMENT_TYPE_FLOW,
+					 FALSE, &result, &err);
+	g_assert_no_error(err);
+	g_assert_cmpstr(result, ==, "${V[0]}");
+	g_free(result);
 }
 
 int main(int argc, char *argv[])
