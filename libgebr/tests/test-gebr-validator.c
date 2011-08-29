@@ -935,6 +935,8 @@ void test_gebr_validator_iter(Fixture *fixture, gconstpointer data)
 
 	DEF_FLOAT(fixture->line, "n", "10");
 	fixture_change_iter_value(fixture, "a", "1", "n", &err);
+	g_assert_error(err, GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_UNDEF_REFERENCE);
+	g_clear_error(&err);
 
 	VALIDATE_FLOAT_EXPR("n", "10");
 	VALIDATE_FLOAT_EXPR_WITH_ERROR("a", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_UNDEF_REFERENCE);
@@ -945,6 +947,11 @@ void test_gebr_validator_iter(Fixture *fixture, gconstpointer data)
 
 	DEF_FLOAT(fixture->line, "a", "1");
 	VALIDATE_FLOAT_EXPR("iter", "[1, ..., 10]");
+
+	fixture_change_iter_value(fixture, "a", "1", "", &err);
+	g_assert_error(err, GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_EMPTY_EXPR);
+	g_clear_error(&err);
+	VALIDATE_FLOAT_EXPR_WITH_ERROR("iter", GEBR_IEXPR_ERROR, GEBR_IEXPR_ERROR_BAD_REFERENCE);
 }
 
 int main(int argc, char *argv[])

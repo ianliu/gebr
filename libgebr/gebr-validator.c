@@ -1423,11 +1423,10 @@ gebr_validator_validate_iter(GebrValidator *self,
 	data = g_hash_table_lookup(self->vars, "iter");
 	g_return_val_if_fail(data != NULL, FALSE);
 
-	if (!define_validate_and_extract_vars(self, NULL, GET_VAR_VALUE(param),
-	                               GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
-	                               GEBR_GEOXML_DOCUMENT_TYPE_LINE,
-	                               &data->dep[GEBR_GEOXML_DOCUMENT_TYPE_FLOW], error))
-		return FALSE;
+	define_validate_and_extract_vars(self, NULL, GET_VAR_VALUE(param),
+	                                 GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
+	                                 GEBR_GEOXML_DOCUMENT_TYPE_LINE,
+	                                 &data->dep[GEBR_GEOXML_DOCUMENT_TYPE_FLOW], NULL);
 
 	gebr_geoxml_program_parameter_get_value(GEBR_GEOXML_PROGRAM_PARAMETER(param), FALSE, &seq, 1);
 	for (; seq; gebr_geoxml_sequence_next(&seq)) {
