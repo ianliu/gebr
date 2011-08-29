@@ -717,7 +717,8 @@ void flow_edition_change_iter_status(GebrGeoXmlProgramStatus status, GtkTreeIter
 		goto out;
 	}
 
-	gtk_tree_model_get(model, iter, FSEQ_GEBR_GEOXML_POINTER, &program, -1);
+	gboolean never_opened;
+	gtk_tree_model_get(model, iter, FSEQ_GEBR_GEOXML_POINTER, &program, FSEQ_NEVER_OPENED, &never_opened, -1);
 
 	gboolean is_control = (gebr_geoxml_program_get_control(program) == GEBR_GEOXML_PROGRAM_CONTROL_FOR);
 	if (gebr_geoxml_program_get_status(program) == status) {
@@ -726,9 +727,11 @@ void flow_edition_change_iter_status(GebrGeoXmlProgramStatus status, GtkTreeIter
 			flow_edition_revalidate_programs();
 		goto out;
 	}
-	gtk_list_store_set(gebr.ui_flow_edition->fseq_store, iter, FSEQ_NEVER_OPENED,
-	                   FALSE, -1);
-
+	if (never_opened) {
+		gtk_list_store_set(gebr.ui_flow_edition->fseq_store, iter, FSEQ_NEVER_OPENED,
+		                   FALSE, -1);
+		validate_program_iter(iter, NULL);
+	}
 	has_error = gebr_geoxml_program_get_error_id(program, NULL);
 
 	if (has_error && status == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED)
