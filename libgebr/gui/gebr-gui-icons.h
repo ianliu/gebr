@@ -24,8 +24,6 @@ G_BEGIN_DECLS
 
 void gebr_gui_setup_icons(void);
 
-void gebr_gui_setup_theme(void);
-
 const gchar * gebr_gui_get_program_icon(GebrGeoXmlProgram * program);
 
 G_END_DECLS

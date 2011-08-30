@@ -37,7 +37,6 @@ int main(int argc, char *argv[])
 	gtk_init(&argc, &argv);
 
 	gebr_gui_setup_icons();
-	gebr_gui_setup_theme();
 	debr_setup_ui();
 	gtk_main();
 

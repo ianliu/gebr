@@ -103,7 +103,6 @@ int main(int argc, char **argv, char **env)
 
 	gtk_init(&argc, &argv);
 
-	gebr_gui_setup_theme();
 	gebr_gui_setup_icons();
 	gebr_setup_ui();
 	gebr_init();

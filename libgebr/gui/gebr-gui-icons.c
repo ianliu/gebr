@@ -38,7 +38,8 @@ void gebr_gui_setup_icons(void)
 {
 	static GtkIconFactory *icon_factory = NULL;
 	static const gchar *sizes[] = {
-		"16x16", "22x22", "48x48", NULL
+		"16x16", "22x22", "48x48",
+		"gebr-theme/16x16", "gebr-theme/22x22", "gebr-theme/48x48", NULL
 	};
 	static const int gtk_icon_sizes[] = {
 		GTK_ICON_SIZE_MENU,
@@ -69,9 +70,6 @@ void gebr_gui_setup_icons(void)
 			DIR *dir;
 			struct dirent *file;
 
-			/* ignore gtk stock items */
-			if (strcmp(size_file->d_name, "stock") == 0)
-				continue;
 			g_string_printf(path, "%s/%s", size_path->str, size_file->d_name);
 			if ((dir = opendir(path->str)) == NULL)
 				continue;
@@ -123,12 +121,6 @@ void gebr_gui_setup_icons(void)
 
 	g_string_free(size_path, TRUE);
 	g_string_free(path, TRUE);
-}
-
-void gebr_gui_setup_theme(void)
-{
-	gtk_icon_theme_append_search_path(gtk_icon_theme_get_default(), LIBGEBR_ICONS_DIR);
-	g_object_set(gtk_settings_get_default(), "gtk-icon-theme-name", "gebr-theme", NULL);
 }
 
 const gchar * gebr_gui_get_program_icon(GebrGeoXmlProgram * program)
