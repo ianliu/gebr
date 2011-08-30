@@ -1,3 +1,9 @@
+gebrproject (0.13.14) lucid; urgency=medium
+
+  * Natty compatibility.
+
+ -- Fabricio Matheus Goncalves <fmatheus@gebrproject.com>  Tue, 30 Aug 2011 19:15:07 -0300
+
 gebrproject (0.13.13) lucid; urgency=medium
 
   * Huge memory leak in xml fixed.
