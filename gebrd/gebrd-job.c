@@ -60,6 +60,7 @@ static void job_process_finished(GebrCommProcess * process, gint status, GebrdJo
 static void job_send_signal_on_moab(const char * signal, GebrdJob * job);
 static GebrdMpiInterface * job_get_mpi_impl(const gchar * mpi_name, GString * n_process);
 static gchar *escape_quote_and_slash(const gchar *str);
+static gchar *replace_quotes(gchar *str);
 
 /**
  * \internal
@@ -833,28 +834,30 @@ static gboolean job_parse_parameter(GebrdJob *job, GebrGeoXmlParameter * paramet
 			if (*strip) {
 				g_ascii_strtod(strip, &end_str);
 				if(*end_str) {
+					gchar *escaped = replace_quotes(gebr_geoxml_parameter_get_label (parameter));
 					if(type == GEBR_GEOXML_PARAMETER_TYPE_INT)
 						temp = g_strdup_printf("round(%s)", strip);
 					else
 						temp = g_strdup(strip);
 					if(*vmin && *vmax)
 						g_string_append_printf (expr_buf, "\t\tmin(%s,max(%s,%s)) # V[%"G_GSIZE_FORMAT"]: %s\n", vmax, vmin, temp,
-									job->expr_count + job->n_vars, gebr_geoxml_parameter_get_label (parameter));
+									job->expr_count + job->n_vars, escaped);
 					else if(*vmin)
 						g_string_append_printf (expr_buf, "\t\tmax(%s,%s) # V[%"G_GSIZE_FORMAT"]: %s\n", vmin, temp,
-									job->expr_count + job->n_vars, gebr_geoxml_parameter_get_label (parameter));
+									job->expr_count + job->n_vars, escaped);
 					else if(*vmax)
 						g_string_append_printf (expr_buf, "\t\tmax(%s,%s) # V[%"G_GSIZE_FORMAT"]: %s\n", vmax, temp,
-									job->expr_count + job->n_vars, gebr_geoxml_parameter_get_label (parameter));
+									job->expr_count + job->n_vars, escaped);
 					else
 						g_string_append_printf (expr_buf, "\t\t%s # V[%"G_GSIZE_FORMAT"]: %s\n", temp,
-									job->expr_count + job->n_vars, gebr_geoxml_parameter_get_label (parameter));
+									job->expr_count + job->n_vars, escaped);
 
 					if(!first)
 						g_string_append(job->parent.cmd_line, separator);
 					g_string_append_printf (job->parent.cmd_line, "${V[%"G_GSIZE_FORMAT"]}", job->expr_count + job->n_vars);
 					job->expr_count++;
 					g_free(temp);
+					g_free(escaped);
 				} else  {
 					if(!first)
 						g_string_append(job->parent.cmd_line, separator);
