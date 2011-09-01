@@ -79,7 +79,7 @@
   </dict>
   <date>
     <created>2011-03-15T11:43:48.395481Z</created>
-    <modified>2011-08-31T14:55:29.508481Z</modified>
+    <modified>2011-09-01T14:40:29.769642Z</modified>
     <lastrun />
   </date>
   <category>Loops</category>
@@ -178,7 +178,7 @@
         <li>
                 Change &quot;Initial Value&quot; to 2001, &quot;Step&quot; to 1 and total number of steps to 10. With this your loop will go from 2001 to 2011</li>
         <li>
-                Now add the &quot;Calendar&quot; as usual and double click it to change its parameter values.</li>
+                Now add the &quot;Calendar&quot; program as usual and double click it to change its parameter values.</li>
         <li>
                 Change the &quot;Year&quot; parameter value to &quot;iter&quot;</li>
         <li>
@@ -186,6 +186,44 @@
 </ol>
 <p>
         In the job control tab, you will see the calendars from 2001 to 2011. Because the the flow was run 10 times, and the Calendar program was called 10 times with a different year every time.</p>
+<h3>
+        Writing the Output to Multiple Files</h3>
+<p>
+        One of the features of the &quot;Loop&quot; menu is the possibility to write on multiple files, one per step of the Loop. Using the flow created on the previous example, you can write one calendar per file, using the &quot;iter&quot; variable.</p>
+<p>
+        In order to do that, just change the flow output filename to &quot;year-[iter].txt&quot;. This will create ten output files named from &quot;year-2001.txt&quot; to &quot;year-2011.txt&quot;, each one containing one calendar, from 2001 to 2011.</p>
+<p>
+        &nbsp;</p>
+<h3>
+        Reading the Output to Multiple Files</h3>
+<p>
+        In a very similar manner to the previous example, you can read from multiple files.</p>
+<p>
+        As an example you can concatenate the calendars, created in the previous example, in a single file.</p>
+<p>
+        &nbsp;</p>
+<ol>
+        <li>
+                Create a new flow.</li>
+        <li>
+                Add the &quot;Loop&quot; menu by double clicking it in the &quot;Menus&quot; box at &quot;Flow Editor&quot; tab.</li>
+        <li>
+                You will see the &quot;Loop&quot; menu at a especial position in the &quot;Flow Sequence&quot; list. Right in the beginning of the list.</li>
+        <li>
+                Double click it to change its parameters values.</li>
+        <li>
+                Change &quot;Initial Value&quot; to 2001, &quot;Step&quot; to 1 and total number of steps to 10. With this your loop will go from 2001 to 2011</li>
+        <li>
+                Now add the &quot;Case converter&quot; program as usual and double click it to change its status to configured</li>
+        <li>
+                Change the &quot;Input file&quot; filename to &quot;year-[iter].txt&quot;</li>
+        <li>
+                Now run the flow to see the results.</li>
+</ol>
+<p>
+        &nbsp;</p>
+<p>
+        &nbsp;</p>
 <h2 id="credits">
         Credits</h2>
 <p>
