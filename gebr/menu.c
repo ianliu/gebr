@@ -15,6 +15,10 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <stdlib.h>
@@ -29,7 +33,6 @@
 #include <libgebr/gui/gebr-gui-utils.h>
 
 #include "menu.h"
-#include "defines.h"
 #include "gebr.h"
 #include "document.h"
 

@@ -15,6 +15,10 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -31,7 +35,6 @@
 
 #include "gebrd-client.h"
 #include "gebrd.h"
-#include "gebrd-defines.h"
 #include "gebrd-job.h"
 #include "gebrd-queues.h"
 #include "gebrd-server.h"

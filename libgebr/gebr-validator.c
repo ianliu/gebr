@@ -1,4 +1,4 @@
-#include "config.h"
+#include "libgebr-gettext.h"
 
 #include <stdlib.h>
 #include <glib.h>

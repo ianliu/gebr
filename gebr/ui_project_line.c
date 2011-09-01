@@ -16,6 +16,10 @@
  *   <http://www.gnu.org/licenses/>.
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include <stdlib.h>
 #include <string.h>
 
@@ -37,7 +41,6 @@
 #include "flow.h"
 #include "ui_help.h"
 #include "callbacks.h"
-#include "../defines.h"
 
 typedef struct {
 	const gchar *path;

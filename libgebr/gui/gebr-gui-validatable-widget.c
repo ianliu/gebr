@@ -15,7 +15,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "../config.h"
+#include "../libgebr-gettext.h"
 
 #include "gebr-gui-validatable-widget.h"
 #include "../gebr-iexpr.h"

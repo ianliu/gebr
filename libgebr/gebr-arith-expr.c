@@ -19,7 +19,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
-#include "config.h"
+#include "libgebr-gettext.h"
 #include <glib/gi18n-lib.h>
 #include <glib/gstdio.h>
 

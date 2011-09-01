@@ -15,7 +15,11 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "defines.h"
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+#include "gebr-version.h"
 
 /**
  * gebr_version:

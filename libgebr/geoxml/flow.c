@@ -15,7 +15,11 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "../config.h"
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+#include "../libgebr-gettext.h"
 
 #include <regex.h>
 #include <gdome.h>
@@ -24,7 +28,6 @@
 #include <glib/gi18n-lib.h>
 
 #include "../date.h"
-#include "defines.h"
 #include "document.h"
 #include "document_p.h"
 #include "error.h"

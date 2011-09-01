@@ -18,6 +18,12 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+#include "debr-gettext.h"
+
 #include <glib/gi18n.h>
 #include <libgebr/utils.h>
 #include <libgebr/gui/gebr-gui-file-entry.h>
@@ -27,7 +33,6 @@
 
 #include "debr-parameter.h"
 #include "debr.h"
-#include "debr-defines.h"
 #include "debr-callbacks.h"
 #include "debr-enumoptionedit.h"
 #include "debr-interface.h"

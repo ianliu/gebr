@@ -15,6 +15,12 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+#include "gebrd-gettext.h"
+
 #include <locale.h>
 #ifdef ENABLE_NLS
 #include <glib/gi18n.h>
@@ -27,7 +33,6 @@
 #include <libgebr/gebr-version.h>
 
 #include "gebrd.h"
-#include "gebrd-defines.h"
 
 int main(int argc, char **argv)
 {

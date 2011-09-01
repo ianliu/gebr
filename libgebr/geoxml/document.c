@@ -15,6 +15,12 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+#include "../libgebr-gettext.h"
+
 #include <unistd.h>
 #include <string.h>
 #include <zlib.h>
@@ -22,14 +28,11 @@
 #include <errno.h>
 #include <stdarg.h>
 
-#include "../config.h"
-
 #include <glib/gstdio.h>
 #include <glib/gi18n-lib.h>
 #include <gdome.h>
 #include <libxml/parser.h>
 
-#include "defines.h"
 #if ENABLE_TIDY
 # if TIDY_HAVE_SUBDIR
 #  include <tidy/tidy.h>

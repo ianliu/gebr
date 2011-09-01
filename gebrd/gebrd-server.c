@@ -16,6 +16,11 @@
  */
 
 #define _GNU_SOURCE
+
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -35,7 +40,6 @@
 #include <libgebr/geoxml/geoxml.h>
 
 #include "gebrd-server.h"
-#include "gebrd-defines.h"
 #include "gebrd.h"
 
 

@@ -23,11 +23,10 @@
 #include <string.h>
 #include <config.h>
 
+#include "../libgebr-gettext.h"
 #include <glib/gi18n-lib.h>
-
 #include <libgebr/utils.h>
 
-#include "../defines.h"
 #include "gebr-comm-server.h"
 #include "gebr-comm-listensocket.h"
 #include "gebr-comm-protocol.h"

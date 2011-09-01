@@ -15,6 +15,10 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
 #include <unistd.h>
@@ -23,7 +27,6 @@
 #include <libgebr/gui/gui.h>
 
 #include <gebr.h>
-#include <../defines.h>
 #include <interface.h>
 
 #if GTK_CHECK_VERSION(2,14,0)

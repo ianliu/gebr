@@ -33,9 +33,11 @@ m4_define([gebr_binary_age],
 m4_define(gebr_version, gebr_major_version.gebr_minor_version.gebr_micro_version)
 
 AC_INIT([gebrproject], [gebr_version], [http://code.google.com/p/gebr/issues/list])
+AM_INIT_AUTOMAKE
+
 AC_CONFIG_SRCDIR([libgebr/libgebr.h])
 AC_CONFIG_MACRO_DIR([m4])
-AM_INIT_AUTOMAKE
+AC_CONFIG_HEADERS([config.h])
 
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
@@ -259,6 +261,103 @@ AC_SUBST(GEBR_COMM_LIBS)
 AC_SUBST(GEBR_GUI_LIBS)
 AC_SUBST(GEBR_JSON_LIBS)
 
+dnl ============================================================================
+dnl Paths & Directories definitions
+dnl ============================================================================
+
+if test "x$prefix" = xNONE ; then
+	TMP_PREFIX=$ac_default_prefix
+else
+	TMP_PREFIX=$prefix
+fi
+
+AC_DEFINE_UNQUOTED(ENABLE_TIDY, [$ENABLE_TIDY],
+		   [If one, tidy is enabled, zero is disabled])
+AC_DEFINE_UNQUOTED(TIDY_HAVE_SUBDIR, [$TIDY_HAVE_SUBDIR],
+		   [If one, tidy resides in tidy/tidy.h])
+
+DATA_DIR=`echo $TMP_PREFIX/share`
+AC_DEFINE_UNQUOTED(DATA_DIR, ["$DATA_DIR"], [Data dir])
+
+PACKAGE_LOCALE_DIR="$DATA_DIR/locale"
+AC_DEFINE_UNQUOTED(PACKAGE_LOCALE_DIR, ["$PACKAGE_LOCALE_DIR"], [Locale dir])
+
+AC_DEFINE_UNQUOTED(LIBGEBR_VERSION, ["$VERSION"], [libgebr version])
+
+LIBGEBR_DATA_DIR="$DATA_DIR/libgebr"
+AC_DEFINE_UNQUOTED(LIBGEBR_DATA_DIR, ["$LIBGEBR_DATA_DIR"], [libgebr data dir])
+
+LIBGEBR_HELP_TEMPLATE="$LIBGEBR_DATA_DIR/geoxml/help-template.html"
+AC_DEFINE_UNQUOTED(LIBGEBR_HELP_TEMPLATE, ["$LIBGEBR_DATA_DIR"], [Help template])
+
+LIBGEBR_PIXMAPS_DIR="$LIBGEBR_DATA_DIR/pixmaps"
+AC_DEFINE_UNQUOTED(LIBGEBR_PIXMAPS_DIR, ["$LIBGEBR_DATA_DIR"], [libgebr pixmap dir])
+
+LIBGEBR_ICONS_DIR="$LIBGEBR_DATA_DIR/icons"
+AC_DEFINE_UNQUOTED(LIBGEBR_ICONS_DIR, ["$LIBGEBR_ICONS_DIR"], [libgebr icons dir])
+
+LIBGEBR_CKEDITOR_DIR="$LIBGEBR_DATA_DIR/ckeditor"
+AC_DEFINE_UNQUOTED(LIBGEBR_CKEDITOR_DIR, ["$LIBGEBR_CKEDITOR_DIR"], [libgebr ckeditor dir])
+
+LIBGEBR_STYLES_DIR="$LIBGEBR_DATA_DIR/styles"
+AC_DEFINE_UNQUOTED(LIBGEBR_STYLES_DIR, ["$LIBGEBR_STYLES_DIR"], [libgebr styles])
+
+GEBR_GEOXML_FLOW_VERSION="$FLOW_VERSION"
+AC_DEFINE_UNQUOTED(GEBR_GEOXML_FLOW_VERSION, ["$GEBR_GEOXML_FLOW_VERSION"], [Flow version])
+
+GEBR_GEOXML_LINE_VERSION="$LINE_VERSION"
+AC_DEFINE_UNQUOTED(GEBR_GEOXML_LINE_VERSION, ["$GEBR_GEOXML_LINE_VERSION"], [Line version])
+
+GEBR_GEOXML_PROJECT_VERSION="$PROJECT_VERSION"
+AC_DEFINE_UNQUOTED(GEBR_GEOXML_PROJECT_VERSION, ["$GEBR_GEOXML_PROJECT_VERSION"], [Project version])
+
+GEBR_GEOXML_DOCUMENT_VERSION="$DOCUMENT_VERSION"
+AC_DEFINE_UNQUOTED(GEBR_GEOXML_DOCUMENT_VERSION, ["$GEBR_GEOXML_DOCUMENT_VERSION"],
+		   [General document version])
+
+GEBR_GEOXML_DTD_DIR="$LIBGEBR_DATA_DIR/geoxml"
+AC_DEFINE_UNQUOTED(GEBR_GEOXML_DTD_DIR, ["$GEBR_GEOXML_DTD_DIR"], [DTD dir])
+
+GEBR_DATA_DIR="$DATA_DIR/gebr"
+AC_DEFINE_UNQUOTED(GEBR_DATA_DIR, ["$GEBR_DATA_DIR"], ["GeBR's data dir"])
+
+GEBR_VERSION="$VERSION"
+AC_DEFINE_UNQUOTED(GEBR_VERSION, ["$GEBR_VERSION"], ["GeBR's version"])
+
+GEBR_HELP_EDIT_SCRIPT_PATH=$LIBGEBR_CKEDITOR_DIR
+AC_DEFINE_UNQUOTED(GEBR_HELP_EDIT_SCRIPT_PATH, ["$GEBR_HELP_EDIT_SCRIPT_PATH"],
+		   ["TODO Substitute me with LIBGEBR_CKEDITOR_DIR"])
+
+GEBR_STYLES_DIR=$LIBGEBR_STYLES_DIR
+AC_DEFINE_UNQUOTED(GEBR_STYLES_DIR, ["$GEBR_STYLES_DIR"],
+		   ["TODO Substitute me with LIBGEBR_STYLES_DIR"])
+
+GEBR_SYS_MENUS_DIR="$GEBR_DATA_DIR/menus"
+AC_DEFINE_UNQUOTED(GEBR_SYS_MENUS_DIR, ["$GEBR_SYS_MENUS_DIR"], [Menus dir])
+
+GEBR_SYS_DEMOS_DIR="$GEBR_DATA_DIR/demos"
+AC_DEFINE_UNQUOTED(GEBR_SYS_DEMOS_DIR, ["$GEBR_SYS_DEMOS_DIR"], [Demos dir])
+
+GEBR_USERDOC_DIR="$DATA_DIR/doc/gebr"
+AC_DEFINE_UNQUOTED(GEBR_USERDOC_DIR, ["$GEBR_USERDOC_DIR"], [Documentation dir])
+
+DEBR_DATA_DIR="$DATA_DIR/debr"
+AC_DEFINE_UNQUOTED(DEBR_DATA_DIR, ["$DEBR_DATA_DIR"], ["DeBR's data dir"])
+
+DEBR_GLADE_DIR="$DEBR_DATA_DIR/glade"
+AC_DEFINE_UNQUOTED(DEBR_GLADE_DIR, ["$DEBR_GLADE_DIR"], [Glade dir])
+
+DEBR_HELP_EDIT_CKEDITOR="$LIBGEBR_CKEDITOR_DIR/ckeditor.js"
+AC_DEFINE_UNQUOTED(DEBR_HELP_EDIT_CKEDITOR, ["$DEBR_HELP_EDIT_CKEDITOR"],
+		   [TODO Use this instead of dir?])
+
+DEBR_USERDOC_HTML="$DEBR_DATA_DIR/userdoc/debr.html"
+AC_DEFINE_UNQUOTED(DEBR_USERDOC_HTML, ["$DEBR_USERDOC_HTML"], [User documentation])
+
+
+GEBRD_VERSION="$VERSION"
+AC_DEFINE_UNQUOTED(GEBRD_VERSION, ["$GEBRD_VERSION"], ["GeBRd's version"]) 
+
 AC_CONFIG_FILES([
 Makefile
 docs/Makefile
@@ -278,8 +377,6 @@ libgebr/comm/Makefile
 libgebr/comm/gebr-comm.pc
 libgebr/comm/socketchannel/Makefile
 libgebr/comm/tests/Makefile
-libgebr/config.h
-libgebr/defines.h
 libgebr/gebr.pc
 libgebr/geoxml-utils/Makefile
 libgebr/geoxml/Makefile
@@ -303,13 +400,11 @@ libgebr/tests/Makefile
 gebrd/Makefile
 gebrd/doc/Makefile
 gebrd/po/Makefile.in
-gebrd/gebrd-defines.h
 gebrd/tests/Makefile
 
 gebr/Makefile
 gebr/data/Makefile
 gebr/data/gebr.desktop.in
-gebr/defines.h
 gebr/po/Makefile.in
 gebr/tests/Makefile
 
@@ -319,7 +414,6 @@ debr/Makefile
 debr/data/Makefile
 debr/data/debr.desktop.in
 debr/po/Makefile.in
-debr/debr-defines.h
 debr/tests/Makefile
 
 ])

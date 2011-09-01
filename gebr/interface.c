@@ -16,6 +16,12 @@
  *   <http://www.gnu.org/licenses/>.
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+#include "gebr-gettext.h"
+
 #include <string.h>
 
 #include <gio/gio.h>
@@ -26,7 +32,6 @@
 #include "ui_flow_edition.h"
 #include "interface.h"
 #include "gebr.h"
-#include "defines.h"
 #include "flow.h"
 #include "callbacks.h"
 #include "menu.h"

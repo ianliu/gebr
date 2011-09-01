@@ -15,6 +15,12 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+#include "gebr-gettext.h"
+
 #include <stdlib.h>
 #include <locale.h>
 
@@ -26,7 +32,6 @@
 #include <libgebr/gebr-version.h>
 
 #include "gebr.h"
-#include "defines.h"
 #include "interface.h"
 
 

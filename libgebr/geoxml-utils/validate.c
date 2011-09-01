@@ -15,11 +15,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <glib/gi18n.h>
 #include <libgebr.h>
-#include <defines.h>
 #include "geoxml.h"
 #include <glib/gstdio.h>
 

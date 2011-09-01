@@ -16,6 +16,10 @@
  *   <http://www.gnu.org/licenses/>.
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include <time.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -25,7 +29,6 @@
 #include <glib/gi18n.h>
 #include <libgebr/utils.h>
 #include <libgebr/date.h>
-#include <libgebr/defines.h>
 #include <libgebr/gui/gebr-gui-save-dialog.h>
 
 #include "document.h"

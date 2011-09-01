@@ -16,6 +16,12 @@
  *   <http://www.gnu.org/licenses/>.
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+#include "gebr-gettext.h"
+
 #include <string.h>
 #include <stdlib.h>
 
@@ -32,7 +38,6 @@
 #include "ui_document.h"
 #include "ui_flow_edition.h"
 #include "gebr.h"
-#include "defines.h"
 #include "flow.h"
 #include "ui_help.h"
 #include "document.h"
