@@ -52,6 +52,8 @@ static void on_properties_response(gboolean accept)
 {
 	if (!accept)
 		flow_delete(FALSE);
+	else
+		gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), NOTEBOOK_PAGE_FLOW_EDITION);
 }
 
 void flow_new (void)
