@@ -23,22 +23,19 @@ GPATH = $(srcdir)
 
 TARGET_DIR=$(HTML_DIR)/$(DOC_MODULE)
 
-EXTRA_DIST = 				\
-	$(content_files)		\
-	$(HTML_IMAGES)			\
-	$(DOC_MAIN_SGML_FILE)		\
-	$(DOC_MODULE)-sections.txt	\
-	$(DOC_MODULE)-overrides.txt
-
-DOC_STAMPS=scan-build.stamp sgml-build.stamp html-build.stamp pdf-build.stamp \
-	$(srcdir)/sgml.stamp $(srcdir)/html.stamp  \
+DOC_STAMPS=			\
+	scan-build.stamp	\
+	sgml-build.stamp	\
+	html-build.stamp	\
+	pdf-build.stamp		\
+	$(srcdir)/html.stamp	\
 	$(srcdir)/pdf.stamp
 
-SCANOBJ_FILES = 		 \
-	$(DOC_MODULE).args 	 \
-	$(DOC_MODULE).hierarchy  \
-	$(DOC_MODULE).interfaces \
-	$(DOC_MODULE).prerequisites \
+SCANOBJ_FILES =				\
+	$(DOC_MODULE).args		\
+	$(DOC_MODULE).hierarchy		\
+	$(DOC_MODULE).interfaces	\
+	$(DOC_MODULE).prerequisites	\
 	$(DOC_MODULE).signals
 
 REPORT_FILES = \
@@ -86,24 +83,18 @@ scan-build.stamp: $(HFILE_GLOB) $(CFILE_GLOB)
 	fi
 	@touch scan-build.stamp
 
-$(DOC_MODULE)-decl.txt $(SCANOBJ_FILES) $(DOC_MODULE)-sections.txt $(DOC_MODULE)-overrides.txt: scan-build.stamp
-	@true
-
 #### xml ####
 
-sgml-build.stamp: $(DOC_MODULE)-decl.txt $(SCANOBJ_FILES) $(DOC_MODULE)-sections.txt $(DOC_MODULE)-overrides.txt $(expand_content_files)
+sgml-build.stamp: scan-build.stamp
 	@echo 'gtk-doc: Building XML'
 	@-chmod -R u+w $(srcdir)
 	@cd $(srcdir) && \
 	gtkdoc-mkdb --module=$(DOC_MODULE) --source-dir=$(DOC_SOURCE_DIR) --output-format=xml --expand-content-files="$(expand_content_files)" --main-sgml-file=$(DOC_MAIN_SGML_FILE) $(MKDB_OPTIONS)
 	@touch sgml-build.stamp
 
-sgml.stamp: sgml-build.stamp
-	@true
-
 #### html ####
 
-html-build.stamp: sgml.stamp $(DOC_MAIN_SGML_FILE) $(content_files)
+html-build.stamp: sgml-build.stamp $(DOC_MAIN_SGML_FILE) $(content_files)
 	@echo 'gtk-doc: Building HTML'
 	@-chmod -R u+w $(srcdir)
 	@rm -rf $(srcdir)/html
@@ -122,7 +113,7 @@ html-build.stamp: sgml.stamp $(DOC_MAIN_SGML_FILE) $(content_files)
 
 #### pdf ####
 
-pdf-build.stamp: sgml.stamp $(DOC_MAIN_SGML_FILE) $(content_files)
+pdf-build.stamp: sgml-build.stamp $(DOC_MAIN_SGML_FILE) $(content_files)
 	@echo 'gtk-doc: Building PDF'
 	@-chmod -R u+w $(srcdir)
 	@rm -rf $(srcdir)/$(DOC_MODULE).pdf
@@ -185,24 +176,4 @@ uninstall-local:
 	fi; \
 	rm -rf $${installdir}
 
-#
-# Require gtk-doc when making dist
-#
-if ENABLE_GTK_DOC
-dist-check-gtkdoc:
-else
-dist-check-gtkdoc:
-	@echo "*** gtk-doc must be installed and enabled in order to make dist"
-	@false
-endif
-
-dist-hook: dist-check-gtkdoc dist-hook-local
-	mkdir $(distdir)/html
-	cp $(srcdir)/html/* $(distdir)/html
-	-cp $(srcdir)/$(DOC_MODULE).pdf $(distdir)/
-	-cp $(srcdir)/$(DOC_MODULE).types $(distdir)/
-	-cp $(srcdir)/$(DOC_MODULE)-sections.txt $(distdir)/
-	cd $(distdir) && rm -f $(DISTCLEANFILES)
-	$(GTKDOC_REBASE) --online --relative --html-dir=$(distdir)/html
-
-.PHONY : dist-hook-local docs
+.PHONY : docs
