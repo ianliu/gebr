@@ -79,7 +79,7 @@
   </dict>
   <date>
     <created>2011-03-15T11:43:48.395481Z</created>
-    <modified>2011-09-01T14:40:29.769642Z</modified>
+    <modified>2011-09-01T16:30:56.440190Z</modified>
     <lastrun />
   </date>
   <category>Loops</category>
@@ -193,15 +193,11 @@
 <p>
         In order to do that, just change the flow output filename to &quot;year-[iter].txt&quot;. This will create ten output files named from &quot;year-2001.txt&quot; to &quot;year-2011.txt&quot;, each one containing one calendar, from 2001 to 2011.</p>
 <p>
-        &nbsp;</p>
-<h3>
-        Reading the Output to Multiple Files</h3>
+        <span class="Apple-style-span" style="font-size: 14px; font-weight: bold; ">Reading the Input from Multiple Files</span></p>
 <p>
         In a very similar manner to the previous example, you can read from multiple files.</p>
 <p>
         As an example you can concatenate the calendars, created in the previous example, in a single file.</p>
-<p>
-        &nbsp;</p>
 <ol>
         <li>
                 Create a new flow.</li>
@@ -221,9 +217,13 @@
                 Now run the flow to see the results.</li>
 </ol>
 <p>
-        &nbsp;</p>
+        <span class="Apple-style-span" style="font-size: 14px; font-weight: bold; ">Writing the Output to a Single File</span></p>
 <p>
-        &nbsp;</p>
+        Taking the flow created in the first example, you can write the output of the entire loop execution to a single file. To do that, just write the &quot;Output file&quot; filename without using the especial variable &quot;iter&quot;. In this case, you also can&#39;t use a variable that uses the iter value somehow.</p>
+<p>
+        <span class="Apple-style-span" style="font-size: 14px; font-weight: bold; ">Reading the Input from a Single File</span></p>
+<p>
+        To read the same input file in all iterations of the loop, you just have to use the &quot;Input file&quot; filename without using the especial variable iter. This is done in the same way as in the last example.</p>
 <h2 id="credits">
         Credits</h2>
 <p>
