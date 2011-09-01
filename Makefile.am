@@ -33,5 +33,3 @@ DISTCLEANFILES = libgebr/po/Makefile.in	\
 		 gebrd/po/Makefile.in	\
 		 gebr/po/Makefile.in	\
 		 debr/po/Makefile.in
-
-distcheck-hook: all

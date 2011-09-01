@@ -20,15 +20,26 @@ SUBDIRS = . po doc tests
 noinst_LIBRARIES = libgebrd.a
 libgebrd_a_SOURCES =			\
 	gebrd-client.c			\
-	gebrd-sysinfo.c			\
-	gebrd.c				\
-	gebrd-user.c			\
+	gebrd-client.h			\
+	gebrd-gettext.h			\
 	gebrd-job-queue.c		\
+	gebrd-job-queue.h		\
 	gebrd-job.c			\
+	gebrd-job.h			\
 	gebrd-mpi-implementations.c	\
+	gebrd-mpi-implementations.h	\
 	gebrd-mpi-interface.c		\
+	gebrd-mpi-interface.h		\
 	gebrd-queues.c			\
+	gebrd-queues.h			\
 	gebrd-server.c			\
+	gebrd-server.h			\
+	gebrd-sysinfo.c			\
+	gebrd-sysinfo.h			\
+	gebrd-user.c			\
+	gebrd-user.h			\
+	gebrd.c				\
+	gebrd.h				\
 	$(NULL)
 
 touch:
@@ -38,21 +49,6 @@ gebrd.c: touch
 bin_PROGRAMS = gebrd
 gebrd_SOURCES = \
 	gebrd-main.c 
-
-noinst_HEADERS =			\
-	gebrd-client.h			\
-	gebrd-sysinfo.h			\
-	gebrd.h				\
-	gebrd-user.h			\
-	gebrd-job-queue.h		\
-	gebrd-job.h			\
-	gebrd-mpi-implementations.h	\
-	gebrd-mpi-interface.h		\
-	gebrd-queues.h			\
-	gebrd-server.h			\
-	$(NULL)
-
-EXTRA_DIST = $(noinst_HEADERS)
 
 AM_CPPFLAGS =			\
 	$(GLIB_CFLAGS)		\
