@@ -1518,8 +1518,8 @@
           o valor resolvido da variável <emphasis role="bold">iter</emphasis>, assim podemos verificar que iremos percorrer os anos que queriamos.</para>
 	      </step>
 	      <step>
-	        <para>Agora, com o programa preenchido corretamente, podemos mandar executar o programa (assunto abordado na seção <xref linkend="executar_fluxo"/>), 
-	        e visualizar quando cairá as festas de fim de ano para os próximos 5 anos.</para>
+	        <para>Agora, com o programa preenchido corretamente, executamos o programa (assunto abordado na seção <xref linkend="executar_fluxo"/>), 
+	        e visualizar quando serão as festas de fim de ano para os próximos 5 anos.</para>
 	        <figure>
             <mediaobject>
               <caption>Resultado da execução do fluxo, na aba <guilabel>Controle de Tarefas</guilabel>.</caption>
