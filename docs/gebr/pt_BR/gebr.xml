@@ -1468,7 +1468,7 @@
           </figure>
 	      </step>
 	      <step>
-	        <para>Agora iremos definir uma variável no dicionário que representará o ano atual, desta forma fica mais facil caso venha a mudar o ano.
+	        <para>Agora iremos definir uma variável no dicionário que representará o ano atual, facilitando o processo de escolha do ano.
 	        Vamos definir a variável na Linha, com o nome de <emphasis role="bold">ano_atual</emphasis> e valor <emphasis role="bold">2011</emphasis>.</para>
 	        <figure>
             <mediaobject>
