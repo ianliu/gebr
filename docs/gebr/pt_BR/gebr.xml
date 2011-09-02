@@ -1367,9 +1367,9 @@
         </step>
         <step>
           <para>Na janela que se abre (<guilabel>Dicionário de parâmetros para fluxo</guilabel>), clique em <emphasis>Nova</emphasis> no escopo de <emphasis role="bold">Fluxo</emphasis>.
-          Preencha o campo <emphasis>Palavra-chave</emphasis> (este será o nome de sua variável) com <emphasis role="bold">var1</emphasis>, em seguida, no campo valor, antes de preenche-lo será 
-          necessário escolher um tipo (<guimenuitem>Número</guimenuitem> ou <guimenuitem>Texto</guimenuitem>), escolha <guimenuitem>Número</guimenuitem>, preencha com o valor 
-          <emphasis role="bold">10</emphasis>.</para>
+		  Preencha o campo <emphasis>Palavra-chave</emphasis> (este será o nome de sua variável) com <emphasis role="bold">var1</emphasis>. Em seguida, aperte enter para prosseguir para o próximo campo, o campo <emphasis>Valor</emphasis>. Antes de preenchê-lo, será 
+		  necessário escolher um tipo de dado para a sua variável recém criada (<guimenuitem>Número</guimenuitem> ou <guimenuitem>Texto</guimenuitem>), escolha <guimenuitem>Número</guimenuitem>. O cursor do mouse agora estará localizado no campo <emphasis>Valor</emphasis>, preencha esse campo com o número 
+		  <emphasis role="bold">10</emphasis> e pressione enter novamente.</para> O último campo é o campo <emphasis>Comentário</emphasis>. Preencha esse campo com algum comentário, descrevendo a função da sua variável recém criada. Lembrando que o comentário é opcional e pode ser deixado em branco.
           <para>Ao terminar, sua janela deve se parecer com a seguinte:</para>
           <figure>
             <mediaobject>
