@@ -1640,7 +1640,7 @@
         <step>
           <para>Na janela que se abre (<guilabel>Dicionário de variáveis para linha</guilabel>), clique duas vezes no
           campo <guilabel>Novo</guilabel>, dentro da lista <guilabel>Projeto</guilabel>. Abre-se um menu com três opções
-          (<guimenuitem>inteiro</guimenuitem>, <guimenuitem>real</guimenuitem> e
+          (<guimenuitem>número</guimenuitem> e
             <guimenuitem>string</guimenuitem>). Selecione a opção <guimenuitem>inteiro</guimenuitem>, depois digite
             <userinput>Tempo</userinput> na coluna <guilabel>Palavra-chave</guilabel> e
             <userinput>5</userinput> na coluna <guilabel>Valor</guilabel>. Ao terminar, sua janela deve se parecer com a
