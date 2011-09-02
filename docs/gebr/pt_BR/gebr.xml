@@ -1617,7 +1617,7 @@
             <guilabel>Editor de Fluxo</guilabel>).</para>
           <figure>
             <mediaobject>
-              <caption>Na aba Fluxos, acrescentamos "Fluxo 1" à "inha linha" uso no próximo exemplo. </caption>
+              <caption>Exemplo de inserção de um novo fluxo, denominado "Fluxo 1", à linha "Minha linha". </caption>
               <imageobject>
                 <imagedata fileref="../images/exemplo_dicionario_1.png"/>
               </imageobject>
@@ -1625,7 +1625,7 @@
           </figure>
           <figure>
             <mediaobject>
-              <caption>Na aba Editor de Fluxo, adiciona-se um programa chamado "Sleep" ao "Fluxo 1".</caption>
+		    <caption>Captura de tela da aba Editor de Fluxo, mostrando o novo fluxo citado no exemplo acima. Observe que esse fluxo possui o programa "Sleep", citado anteriormente.<caption>
               <imageobject>
                 <imagedata fileref="../images/exemplo_dicionario_2.png"/>
               </imageobject>
