@@ -446,9 +446,9 @@
           <guilabel>Detalhes</guilabel>, localizada no lado direito da janela principal, exibe informações sobre a linha
           selecionada.</para>
       <tip>
-        <para>A GêBR permite <emphasis role="bold">colapsar</emphasis> ou <emphasis role="bold">expandir</emphasis> o
-          projeto. No estado colapsado, as <emphasis role="bold">linhas do projeto ficam ocultas</emphasis>. No estado
-          expandido, as <emphasis role="bold">linhas do projeto ficam visíveis</emphasis>. Para colapsar, clique no
+        <para>A GêBR permite <emphasis role="bold">contrair</emphasis> ou <emphasis role="bold">expandir</emphasis> o
+          projeto. No estado contraído, as <emphasis role="bold">linhas do projeto ficam ocultas</emphasis>. No estado
+          expandido, as <emphasis role="bold">linhas do projeto ficam visíveis</emphasis>. Para contrair, clique no
           ícone <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_expandido.png"/></imageobject></inlinemediaobject></guiicon> à esquerda do nome do projeto. Para expandir, clique no
           ícone <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_colapsado.png"/></imageobject></inlinemediaobject></guiicon>.</para>
       </tip>
@@ -997,7 +997,7 @@
         <para>Utilities</para>
       </listitem>
     </itemizedlist>
-    <para>Por padrão, as categorias são mostradas na forma colapsada, ocultando os componentes. Para exibir os
+    <para>Por padrão, as categorias são mostradas na forma contraída, ocultando os componentes. Para exibir os
 	componentes de uma categoria, você deve expandí-la clicando no
   ícone <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_colapsado.png"/></imageobject></inlinemediaobject></guiicon> à esquerda da categoria.</para>
     <para>Para <emphasis role="bold">adicionar um programa</emphasis> ao fluxo, siga o seguinte procedimento:</para>
@@ -1779,7 +1779,7 @@
       <title>O log de execução</title>
       <para>A GêBR grava grande parte das ações executadas pelo usuário, bem como os resultados dessas ações, no
 	chamado <emphasis>log de execução</emphasis>. Este log é mostrado na parte inferior da janela principal. Pode
-	ser apresentado na forma colapsada (padrão) ou expandida (como na janela abaixo).</para>
+	ser apresentado na forma contraída (padrão) ou expandida (como na janela abaixo).</para>
       <figure>
         <mediaobject>
           <caption>No canto inferior das janelas principais da GêBR, encontra-se o log de execução, que carrega as informações dos processamentos da GêBR.</caption>
