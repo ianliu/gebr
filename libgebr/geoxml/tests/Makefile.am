@@ -11,8 +11,6 @@ EXTRA_DIST =			\
 	z2xyz.mnu		\
 	$(NULL)
 
-DISTCLEANFILES = test.mnu forloop.mnu dict_test_flow.flw test2.flw
-
 noinst_PROGRAMS = $(INT_TEST_PROGS)
 
 AM_CFLAGS = $(COMMON_CFLAGS)
