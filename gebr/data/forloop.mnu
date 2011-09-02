@@ -185,7 +185,7 @@
                 Now run the flow to see the results.</li>
 </ol>
 <p>
-        In the job control tab, you will see the calendars from 2001 to 2011. Because the the flow was run 10 times, and the Calendar program was called 10 times with a different year every time.</p>
+        In the job control tab, you will see the calendars from 2001 to 2011. Because the flow was run 10 times, and the Calendar program was called 10 times with a different year every time.</p>
 <h3>
         Writing the Output to Multiple Files</h3>
 <p>
