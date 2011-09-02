@@ -18,7 +18,7 @@ include $(top_srcdir)/Makefile.decl
 ACLOCAL_AMFLAGS = -I m4
 DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc
 
-SUBDIRS = libgebr gebrd rpm
+SUBDIRS = gtester libgebr gebrd rpm
 if ENABLE_GUI
 SUBDIRS += gebr gebr-client debr docs 
 endif

@@ -360,6 +360,9 @@ AC_DEFINE_UNQUOTED(GEBRD_VERSION, ["$GEBRD_VERSION"], ["GeBRd's version"])
 
 AC_CONFIG_FILES([
 Makefile
+
+gtester/Makefile
+
 docs/Makefile
 docs/gebr/Makefile
 docs/gebr/common-images/Makefile
