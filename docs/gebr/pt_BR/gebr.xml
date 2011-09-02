@@ -392,7 +392,7 @@
       </listitem>
       <listitem>
         <para>
-          <link linkend="sec_3_1_5">Editar o dicionário de parâmetros do projeto ou linha</link>
+          <link linkend="sec_3_1_5">Editar o dicionário de variáveis do projeto ou linha</link>
         </para>
       </listitem>
       <listitem>
@@ -477,7 +477,7 @@
         personalizados, cujo detalhamento será abordado na <xref linkend="editar_caminhos_preferenciais_da_linha"/>.</para>
     </section>
     <section xml:id="sec_3_1_5">
-      <title>Editar o dicionário de parâmetros do projeto ou linha</title>
+      <title>Editar o dicionário de variáveis do projeto ou linha</title>
       <para>Este recurso está documentado na <xref linkend="dicionario_de_parametros"/>.</para>
     </section>
     <section xml:id="editar_caminhos_preferenciais_da_linha">
@@ -805,7 +805,7 @@
           <guilabel>Título, Descrição, Autor e Email</guilabel>.</para>
     </section>
     <section xml:id="sec_3_2_6">
-      <title>Editar o dicionário de parâmetros de um fluxo</title>
+      <title>Editar o dicionário de variáveis de um fluxo</title>
       <para>Este recurso está documentado na <xref linkend="dicionario_de_parametros"/>.</para>
     </section>
     <section xml:id="sec_3_2_7">
@@ -1363,10 +1363,10 @@
         <step>
           <para>Na aba <guilabel>Editor de Fluxo</guilabel>, clique no
                   botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_dicionario_projeto.png"/></imageobject></inlinemediaobject></guiicon> 
-                  para <emphasis role="bold">editar o dicionário de parâmetros</emphasis>.</para>
+                  para <emphasis role="bold">editar o dicionário de variáveis</emphasis>.</para>
         </step>
         <step>
-          <para>Na janela que se abre (<guilabel>Dicionário de parâmetros para fluxo</guilabel>), clique em <emphasis>Nova</emphasis> no escopo de <emphasis role="bold">Fluxo</emphasis>.
+          <para>Na janela que se abre (<guilabel>Dicionário de variáveis para fluxo</guilabel>), clique em <emphasis>Nova</emphasis> no escopo de <emphasis role="bold">Fluxo</emphasis>.
 		  Preencha o campo <emphasis>Palavra-chave</emphasis> (este será o nome de sua variável) com <emphasis role="bold">var1</emphasis>. Em seguida, aperte enter para prosseguir para o próximo campo, o campo <emphasis>Valor</emphasis>. Antes de preenchê-lo, será 
 		  necessário escolher um tipo de dado para a sua variável recém criada (<guimenuitem>Número</guimenuitem> ou <guimenuitem>Texto</guimenuitem>), escolha <guimenuitem>Número</guimenuitem>. O cursor do mouse agora estará localizado no campo <emphasis>Valor</emphasis>, preencha esse campo com o número 
 		  <emphasis role="bold">10</emphasis> e pressione enter novamente.</para> O último campo é o campo <emphasis>Comentário</emphasis>. Preencha esse campo com algum comentário, descrevendo a função da sua variável recém criada. Lembrando que o comentário é opcional e pode ser deixado em branco.
@@ -1604,8 +1604,8 @@
   <section xml:id="sec_4">
     <title>Recursos adicionais</title>
     <section xml:id="dicionario_de_parametros">
-      <title>O dicionário de parâmetros</title>
-      <para>O dicionário de parâmetros é uma novidade introduzida na <emphasis role="bold">versão 0.9.15 da
+      <title>O dicionário de variáveis</title>
+      <para>O dicionário de variáveis é uma novidade introduzida na <emphasis role="bold">versão 0.9.15 da
 	GêBR</emphasis>. É um recurso muito flexível, que pode ser utilizado de muitas formas diferentes e para diversos
 	fins, a critério do usuário. Vamos ilustrar com um exemplo:</para>
       <procedure>
@@ -1638,7 +1638,7 @@
           parâmetros</emphasis>.</para>
         </step>
         <step>
-          <para>Na janela que se abre (<guilabel>Dicionário de parâmetros para linha</guilabel>), clique duas vezes no
+          <para>Na janela que se abre (<guilabel>Dicionário de variáveis para linha</guilabel>), clique duas vezes no
           campo <guilabel>Novo</guilabel>, dentro da lista <guilabel>Projeto</guilabel>. Abre-se um menu com três opções
           (<guimenuitem>inteiro</guimenuitem>, <guimenuitem>real</guimenuitem> e
             <guimenuitem>string</guimenuitem>). Selecione a opção <guimenuitem>inteiro</guimenuitem>, depois digite
@@ -1686,13 +1686,13 @@
           </figure>
         </step>
         <step>
-          <para>Acesse novamente o dicionário de parâmetros e digite o valor 
+          <para>Acesse novamente o dicionário de variáveis e digite o valor 
             <userinput>2</userinput> no lugar do valor 
             <userinput>5</userinput>. Isso altera o valor da variável
             <userinput>Tempo</userinput> em todos os fluxos. Agora, ao executar qualquer um deles, o resultado é uma  <emphasis role="bold">pausa de 2 segundos</emphasis>, e não mais de 5 segundos como antes.</para>
         </step>
       </procedure>
-      <para>O que o exemplo tenta mostrar é que, por meio do dicionário de parâmetros, é
+      <para>O que o exemplo tenta mostrar é que, por meio do dicionário de variáveis, é
 	possível <emphasis role="bold">modificar os fluxos indiretamente</emphasis>, alterando as variáveis definidas no
 	dicionário. Sem isso, seria muito mais penoso alterar o tempo de execução dos fluxos do exemplo, pois as cópias
 	teriam de ser reconfiguradas uma a uma.</para>
