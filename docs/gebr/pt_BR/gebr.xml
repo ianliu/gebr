@@ -1593,8 +1593,8 @@
             </figure>
           </listitem>
         </itemizedlist>
-        <tip>Todos os campos, seja ele um parâmetro de programa ou uma variável, se contiver algum erro nele, automaticamente aparecerá o ícone 
-        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_nao_configurado.png"/></imageobject></inlinemediaobject></guiicon> neste campo,
+        <tip>Todos os campos, sejam eles parâmetros de programa ou variáveis, se contiverem algum, automaticamente exibirão o ícone 
+        <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_nao_configurado.png"/></imageobject></inlinemediaobject></guiicon>,
         que contém em sua tooltip, uma explicação do erro.</tip>
         </listitem>
         </itemizedlist>
