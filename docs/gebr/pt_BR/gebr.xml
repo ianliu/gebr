@@ -1389,7 +1389,7 @@
     
     <section xml:id="definindo_variaveis">
       <title>Definindo e usando variáveis</title>
-      <para>Agora que já temos uma variável simples no dicionário, vamos utiliza-la para definir outras variáveis mais complexas.
+      <para>Agora que já temos uma variável simples no dicionário, vamos utilizá-la para definir outras variáveis mais complexas.
       Utilizando a mesma idéia de criação de uma variável, visto na seção <xref linkend="janela_dicionario"/>, vamos definir mais duas variáveis:</para>
       <procedure>
         <step>
