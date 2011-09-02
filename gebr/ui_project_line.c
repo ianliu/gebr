@@ -715,11 +715,11 @@ static void on_dialog_response(GtkWidget *dialog, gint response_id, gpointer use
 				                                              "<span size='larger' weight='bold'>%s %s</span>",
 				                                              _("Could not create the directory"),
 				                                              (gchar*)i->data);
+				gchar *escaped= g_markup_printf_escaped(_("The directory <i>%s</i> could not be created. "
+						"Certify you have the rights to perform this operation."),(gchar*)i->data);
 
-				gtk_message_dialog_format_secondary_markup (GTK_MESSAGE_DIALOG (warning),
-				                                            _("The directory <i>%s</i> could not be created. "
-				                                              "Certify you have the rights to perform this operation."),
-				                                              (gchar*)i->data);
+				gtk_message_dialog_format_secondary_markup (GTK_MESSAGE_DIALOG (warning), "%s", escaped);
+				g_free(escaped);
 
 				gtk_dialog_run (GTK_DIALOG (warning));
 				gtk_widget_destroy (warning);
