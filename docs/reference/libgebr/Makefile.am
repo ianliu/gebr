@@ -73,7 +73,7 @@ HTML_IMAGES=images/gebr-gui-help-edit-window.png
 
 # Extra SGML files that are included by $(DOC_MAIN_SGML_FILE).
 # e.g. content_files=running.sgml building.sgml changes-2.0.sgml
-content_files=version.xml
+content_files=
 
 # SGML files where gtk-doc abbrevations (#GtkWidget) are expanded
 # These files must be listed here *and* in content_files
@@ -109,10 +109,6 @@ GTKDOC_LIBS=			\
 # This includes the standard gtk-doc make rules, copied by gtkdocize.
 include $(top_srcdir)/gtk-doc.make
 
-# Other files to distribute
-# e.g. EXTRA_DIST += version.xml.in
-EXTRA_DIST += version.xml.in
-
 # Files not to distribute
 # for --rebuild-types in $(SCAN_OPTIONS), e.g. $(DOC_MODULE).types
 # for --rebuild-sections in $(SCAN_OPTIONS) e.g. $(DOC_MODULE)-sections.txt
@@ -123,5 +119,13 @@ if ENABLE_GTK_DOC
 #TESTS_ENVIRONMENT = cd $(srcsrc) &&
 #TESTS = $(GTKDOC_CHECK)
 endif
+
+EXTRA_DIST = 				\
+	$(content_files)		\
+	$(HTML_IMAGES)			\
+	$(DOC_MAIN_SGML_FILE)		\
+	$(DOC_MODULE)-sections.txt	\
+	$(DOC_MODULE).types		\
+	version.xml.in
 
 -include $(top_srcdir)/git.mk

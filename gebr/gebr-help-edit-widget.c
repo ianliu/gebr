@@ -16,13 +16,16 @@
  *   <http://www.gnu.org/licenses/>.
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include <webkit/webkit.h>
 #include <libgebr/utils.h>
 #include <glib/gstdio.h>
 
 #include "gebr-help-edit-widget.h"
 #include "document.h"
-#include "defines.h"
 #include "gebr.h"
 #include "ui_help.h"
 

@@ -16,11 +16,15 @@
  */
 
 #include <glib.h>
-#include "config.h"
+
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+#include "libgebr-gettext.h"
 #include <glib/gi18n-lib.h>
 
 #include "libgebr.h"
-#include "defines.h"
 
 void gebr_libinit(const gchar * gettext_package)
 {

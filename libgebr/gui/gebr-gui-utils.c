@@ -15,11 +15,16 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+#include "../libgebr-gettext.h"
+
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
 #include <gdk/gdkkeysyms.h>
-#include <config.h>
 #include <glib/gi18n-lib.h>
 
 #include "gebr-gui-utils.h"

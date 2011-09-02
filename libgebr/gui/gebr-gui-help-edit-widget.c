@@ -16,8 +16,13 @@
  *   <http://www.gnu.org/licenses/>.
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+#include "../libgebr-gettext.h"
+
 #include <glib.h>
-#include <config.h>
 #include <glib/gi18n-lib.h>
 
 #include "gebr-gui-help-edit-widget.h"

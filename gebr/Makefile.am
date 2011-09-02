@@ -30,64 +30,61 @@ client.c: touch
 noinst_LIBRARIES = libgebr.a
 libgebr_a_SOURCES =		\
 	callbacks.c		\
-	client.c		\
-	cmdline.c		\
-	document.c		\
-	flow.c			\
-	gebr-help-edit-widget.c	\
-	gebr.c			\
-	interface.c		\
-	job.c			\
-	line.c			\
-	menu.c			\
-	project.c		\
-	server.c		\
-	ui_document.c		\
-	ui_flow.c		\
-	ui_flow_browse.c	\
-	ui_flow_edition.c	\
-	ui_help.c		\
-	ui_job_control.c	\
-	ui_log.c		\
-	ui_moab.c		\
-	ui_parameters.c		\
-	ui_paths.c		\
-	ui_preferences.c	\
-	ui_project_line.c	\
-	ui_server.c		\
-	$(NULL)
-
-gebr_SOURCES = main.c
-noinst_HEADERS = 		\
 	callbacks.h		\
+	client.c		\
 	client.h		\
+	cmdline.c		\
 	cmdline.h		\
+	document.c		\
 	document.h		\
+	flow.c			\
 	flow.h			\
+	gebr-gettext.h		\
+	gebr-help-edit-widget.c	\
 	gebr-help-edit-widget.h	\
+	gebr.c			\
 	gebr.h			\
+	interface.c		\
 	interface.h		\
+	job.c			\
 	job.h			\
+	line.c			\
 	line.h			\
+	menu.c			\
 	menu.h			\
+	project.c		\
 	project.h		\
+	server.c		\
 	server.h		\
+	ui_document.c		\
 	ui_document.h		\
+	ui_flow.c		\
 	ui_flow.h		\
+	ui_flow_browse.c	\
 	ui_flow_browse.h	\
+	ui_flow_edition.c	\
 	ui_flow_edition.h	\
+	ui_help.c		\
 	ui_help.h		\
+	ui_job_control.c	\
 	ui_job_control.h	\
+	ui_log.c		\
 	ui_log.h		\
+	ui_moab.c		\
 	ui_moab.h		\
+	ui_parameters.c		\
 	ui_parameters.h		\
+	ui_paths.c		\
 	ui_paths.h		\
+	ui_preferences.c	\
 	ui_preferences.h	\
+	ui_project_line.c	\
 	ui_project_line.h	\
+	ui_server.c		\
 	ui_server.h		\
 	$(NULL)
 
-EXTRA_DIST = ${noinst_HEADERS}
+gebr_SOURCES = main.c
 
 AM_CPPFLAGS =			\
 	$(GUI_CFLAGS)		\

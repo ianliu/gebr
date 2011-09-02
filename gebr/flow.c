@@ -16,6 +16,10 @@
  *   <http://www.gnu.org/licenses/>.
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -46,7 +50,6 @@
 #include "ui_flow_browse.h"
 #include "ui_flow_edition.h"
 #include "ui_project_line.h"
-#include "../defines.h"
 
 static void on_properties_response(gboolean accept)
 {

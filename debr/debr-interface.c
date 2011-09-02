@@ -15,6 +15,12 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+#include "debr-gettext.h"
+
 #include <libgebr/gui/gebr-gui-pixmaps.h>
 
 #include <libgebr/gui/gebr-gui-utils.h>
@@ -24,7 +30,6 @@
 
 #include "debr-interface.h"
 #include "debr.h"
-#include "debr-defines.h"
 #include "debr-callbacks.h"
 #include "debr-menu.h"
 #include "debr-program.h"

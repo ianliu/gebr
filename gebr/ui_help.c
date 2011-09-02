@@ -21,6 +21,12 @@
  * Responsible for help/report exibition and edition
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+#include "gebr-gettext.h"
+
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
@@ -36,7 +42,6 @@
 #include "ui_help.h"
 #include "gebr.h"
 #include "document.h"
-#include "../defines.h"
 #include "menu.h"
 #include "flow.h"
 #include "ui_project_line.h"

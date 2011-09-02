@@ -15,14 +15,17 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+#include "debr-gettext.h"
+
 #include <locale.h>
-
 #include <gtk/gtk.h>
-
 #include <libgebr/gui/gebr-gui-icons.h>
 #include <libgebr/libgebr.h>
 
-#include "debr-defines.h"
 #include "debr-interface.h"
 #include "debr.h"
 

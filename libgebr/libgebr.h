@@ -19,7 +19,6 @@
 #define __LIBGEBR_H
 
 #include <locale.h>
-#include <defines.h>
 #include <date.h>
 #include <log.h>
 #include <utils.h>

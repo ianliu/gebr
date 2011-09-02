@@ -16,6 +16,10 @@
  *   <http://www.gnu.org/licenses/>.
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include <regex.h>
 #include <glib/gstdio.h>
 #include <webkit/webkit.h>
@@ -24,7 +28,6 @@
 #include <libgebr/geoxml/geoxml.h>
 
 #include "debr-help-edit-widget.h"
-#include "debr-defines.h"
 
 /*
  * HTML_HOLDER:

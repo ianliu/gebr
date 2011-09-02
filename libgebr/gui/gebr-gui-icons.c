@@ -15,6 +15,10 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
@@ -24,7 +28,6 @@
 #include "gtk/gtk.h"
 
 #include "gebr-gui-icons.h"
-#include "defines.h"
 
 /*
  * Private functions

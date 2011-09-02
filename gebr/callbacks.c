@@ -16,6 +16,10 @@
  *   <http://www.gnu.org/licenses/>.
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include <gdk/gdkkeysyms.h>
 
 #include <glib/gi18n.h>
@@ -23,7 +27,6 @@
 #include <locale.h>
 
 #include "callbacks.h"
-#include "defines.h"
 #include "gebr.h"
 #include "document.h"
 #include "project.h"

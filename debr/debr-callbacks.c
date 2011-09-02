@@ -19,6 +19,12 @@
 #include <glib.h>
 #include <glib/gstdio.h>
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+#include "debr-gettext.h"
+
 #include <glib/gi18n.h>
 #include <libgebr/date.h>
 #include <libgebr/utils.h>
@@ -27,7 +33,6 @@
 #include <libgebr/geoxml/gebr-geoxml-validate.h>
 
 #include "debr-callbacks.h"
-#include "debr-defines.h"
 #include "debr.h"
 #include "debr-preferences.h"
 #include "debr-parameter.h"

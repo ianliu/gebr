@@ -28,14 +28,11 @@ libdebr_a_SOURCES = \
 	debr-callbacks.h \
 	debr-categoryedit.c \
 	debr-categoryedit.h \
-	debr-help-edit-widget.c \
-	debr-help-edit-widget.h \
-	debr-validate.c \
-	debr-validate.h \
-	debr.c \
-	debr.h \
 	debr-enumoptionedit.c \
 	debr-enumoptionedit.h \
+	debr-gettext.h	\
+	debr-help-edit-widget.c \
+	debr-help-edit-widget.h \
 	debr-help.c \
 	debr-help.h \
 	debr-interface.c \
@@ -50,6 +47,10 @@ libdebr_a_SOURCES = \
 	debr-preferences.h \
 	debr-program.c \
 	debr-program.h \
+	debr-validate.c \
+	debr-validate.h \
+	debr.c \
+	debr.h \
 	$(NULL)
 
 debr_SOURCES = debr-main.c
