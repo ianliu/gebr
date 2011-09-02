@@ -115,3 +115,6 @@ syntax: regexp
 
 syntax: regexp
 ^libgebr/geoxml/tests/test-program-parameter$
+
+syntax: regexp
+^gtester/gtester$
