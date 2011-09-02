@@ -1449,12 +1449,12 @@
     
 	<section xml:id="variavel_iter">
 	  <title>A variável iter</title>
-	    <para>Como vimos na seção <xref linkend="loop"/>, a GêBR agora permite o uso de loop, e juntamente com este programa, teremos agora acesso a uma variável
-	    especial, de nome <emphasis role="bold">iter</emphasis>.A seguir, vamos mostrar um exemplo de uso desta variável:</para>
+	  <para>Como vimos na seção <xref linkend="loop"/>, a GêBR permite o uso de loops, através do programa <guimenuitem>Loop</guimenuitem>. Juntamente com esse programa, temos acesso a uma variável
+	    especial, chamada <emphasis role="bold">iter</emphasis>. A seguir, mostraremos um exemplo de uso desta variável:</para>
 	    <procedure>
 	      <step>
-	        <para>Vamos supor que queremos saber quando cairá as festas de fim de ano nos próximos 5 anos, portanto, queremos o calendário do mês de Dezembro destes anos.
-	        Para isso, vamos usar o programa <guimenuitem>Calendar</guimenuitem> (você encontra este programa na categoria <guimenu>Shell tools</guimenu>, 
+	        <para>Vamos supor que queiramos saber em qual dia da semana serão as festas de fim de ano nos próximos 5 anos. Para esse fim, necessitamos do calendário do mês de Dezembro desses anos.
+	        Para isso, utilizaremos o programa <guimenuitem>Calendar</guimenuitem> (você encontra este programa na categoria <guimenu>Shell tools</guimenu>, 
 	        na aba <guilabel>Editor de Fluxo</guilabel>).</para>
 	        <para>Portanto, utilizando o preenchimento dos parâmetros proposto no exemplo da seção <xref linkend="loop"/>, teremos a variável <emphasis role="bold">iter</emphasis>
 	        no dicionário como na janela a seguir.</para>
