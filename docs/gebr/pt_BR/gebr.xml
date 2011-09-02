@@ -1531,7 +1531,7 @@
 	      </step>
 	    </procedure>
 	    <para>Este foi um exemplo simples do uso da variável <emphasis role="bold">iter</emphasis> em um fluxo, mas podemos notar que o uso de loop e de variáveis
-	    definidas no dicionário podem facilitar muito nossas tarefas, deixando todo o processo muito mais dinâmico e rápido.</para>
+	    definidas no dicionário podem facilitar muito nossas tarefas, deixando todo o processo mais dinâmico.</para>
 	</section>	
 	<section xml:id="variaveis_recursos">
 	  <title>Recursos no dicionário</title>
