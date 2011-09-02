@@ -389,10 +389,9 @@ void job_new(GebrdJob ** _job, struct client * client, GString * queue, GString 
 		job_issue(job, gebr_geoxml_error_explained_string(ret));
 	else {
 		g_string_assign(job->parent.title, gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(job->flow)));
-		g_assert(gebrd->validator != NULL);
 		gebrd_clean_proj_line_dicts();
 		gebr_geoxml_document_split_dict(gebrd->flow, gebrd->line, gebrd->proj, NULL);
-		gebr_validator_update(gebrd->validator);
+		gebr_validator_update(gebrd_get_validator(gebrd));
 	}
 
 	/* just to send the client the command line, we could do this after by changing the protocol */
@@ -766,7 +765,7 @@ static gboolean job_parse_parameter(GebrdJob *job, GebrGeoXmlParameter * paramet
 				gchar *escaped;
 				GError *error = NULL;
 
-				gebr_validator_evaluate_interval(gebrd->validator, strip, GEBR_GEOXML_PARAMETER_TYPE_STRING, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE, &result, &error);
+				gebr_validator_evaluate_interval(gebrd_get_validator(gebrd), strip, GEBR_GEOXML_PARAMETER_TYPE_STRING, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE, &result, &error);
 
 				if (!error) {
 					escaped = escape_quote_and_slash(result);
@@ -987,7 +986,7 @@ static gchar* define_bc_variables(GebrdJob *job, GString *expr_buf, GString *str
 		const gchar *ini, *step;
 		GebrGeoXmlProgramParameter *pparam;
 		n = gebr_geoxml_program_control_get_n(program, &step, &ini);
-		gebr_validator_evaluate(gebrd->validator, n, GEBR_GEOXML_PARAMETER_TYPE_FLOAT, GEBR_GEOXML_DOCUMENT_TYPE_LINE, &result, &err);
+		gebr_validator_evaluate(gebrd_get_validator(gebrd), n, GEBR_GEOXML_PARAMETER_TYPE_FLOAT, GEBR_GEOXML_DOCUMENT_TYPE_LINE, &result, &err);
 		if (err) {
 			*issue_number += 1;
 			job_issue(job, _("%u) %s '%s'.\n"),
@@ -1032,7 +1031,7 @@ static gchar* define_bc_variables(GebrdJob *job, GString *expr_buf, GString *str
 						       keyword, value, keyword, j, replace_quotes(label));
 				var_value = g_strdup_printf("${V[[%"G_GSIZE_FORMAT"]]}", j++);
 				gebr_geoxml_parameter_set_type(param, GEBR_GEOXML_PARAMETER_TYPE_STRING);
-				gebr_validator_change_value(gebrd->validator, param, var_value, NULL, NULL);
+				gebr_validator_change_value(gebrd_get_validator(gebrd), param, var_value, NULL, NULL);
 				g_free (var_value);
 				g_free (label);
 				break;
@@ -1048,9 +1047,9 @@ static gchar* define_bc_variables(GebrdJob *job, GString *expr_buf, GString *str
 				value = gebr_geoxml_program_parameter_get_first_value (prog_param, FALSE);
 				keyword = gebr_geoxml_program_parameter_get_keyword (prog_param);
 				scope = gebr_geoxml_parameter_get_scope(param);
-				gebr_validator_evaluate_interval(gebrd->validator, value, GEBR_GEOXML_PARAMETER_TYPE_STRING, scope, FALSE, &result, NULL);
+				gebr_validator_evaluate_interval(gebrd_get_validator(gebrd), value, GEBR_GEOXML_PARAMETER_TYPE_STRING, scope, FALSE, &result, NULL);
 				bash_var = g_strdup_printf("${%s}", keyword);
-				gebr_validator_change_value(gebrd->validator, param, bash_var, NULL, NULL);
+				gebr_validator_change_value(gebrd_get_validator(gebrd), param, bash_var, NULL, NULL);
 				g_string_append_printf(str_buf, "\t%s=\"%s\"\n", keyword, result);
 				g_free(bash_var);
 				g_free(result);
@@ -1088,8 +1087,7 @@ static void assemble_bc_cmd_line (GString *expr_buf)
 
 gboolean gebr_output_use_var_iter(GebrdJob *job, const gchar *output_expr)
 {
-	g_assert(gebrd->validator != NULL);
-	return gebr_validator_use_iter(gebrd->validator, output_expr,
+	return gebr_validator_use_iter(gebrd_get_validator(gebrd), output_expr,
 	                               GEBR_GEOXML_PARAMETER_TYPE_STRING, GEBR_GEOXML_DOCUMENT_TYPE_FLOW);
 }
 
@@ -1194,7 +1192,7 @@ static void job_assembly_cmdline(GebrdJob *job)
 		GError *error = NULL;
 
 		input_expr = gebr_geoxml_flow_io_get_input(job->flow);
-		gebr_validator_evaluate_interval(gebrd->validator, input_expr, GEBR_GEOXML_PARAMETER_TYPE_STRING, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE, &result, &error);
+		gebr_validator_evaluate_interval(gebrd_get_validator(gebrd), input_expr, GEBR_GEOXML_PARAMETER_TYPE_STRING, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE, &result, &error);
 
 		if (!error) {
 			gchar *escaped = escape_quote_and_slash(result);
@@ -1228,7 +1226,7 @@ static void job_assembly_cmdline(GebrdJob *job)
 		const gchar *error_expr;
 
 		error_expr = gebr_geoxml_flow_io_get_error(job->flow);
-		gebr_validator_evaluate_interval(gebrd->validator, error_expr, GEBR_GEOXML_PARAMETER_TYPE_STRING, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE, &result, &error);
+		gebr_validator_evaluate_interval(gebrd_get_validator(gebrd), error_expr, GEBR_GEOXML_PARAMETER_TYPE_STRING, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE, &result, &error);
 
 		if (!error) {
 			stderr_use_iter = gebr_output_use_var_iter(job, error_expr);
@@ -1348,7 +1346,7 @@ static void job_assembly_cmdline(GebrdJob *job)
 			GError *error = NULL;
 
 			output_expr = gebr_geoxml_flow_io_get_output(job->flow);
-			gebr_validator_evaluate_interval(gebrd->validator, output_expr, GEBR_GEOXML_PARAMETER_TYPE_STRING, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE, &result, &error);
+			gebr_validator_evaluate_interval(gebrd_get_validator(gebrd), output_expr, GEBR_GEOXML_PARAMETER_TYPE_STRING, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE, &result, &error);
 			if (!error) {
 				stdout_use_iter = gebr_output_use_var_iter(job, output_expr);
 				stdout_parsed = escape_quote_and_slash(result);

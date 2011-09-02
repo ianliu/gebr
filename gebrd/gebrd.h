@@ -139,5 +139,12 @@ const GebrdMpiConfig * gebrd_get_mpi_config_by_name(const gchar * name);
  */
 void gebrd_clean_proj_line_dicts(void);
 
+/*
+ *  gebrd_get_validator:
+ *
+ *  Get validator to gebrd if self->validator != NULL
+ */
+GebrValidator *gebrd_get_validator(GebrdApp *self);
+
 G_END_DECLS
 #endif				//__GEBRD_H
