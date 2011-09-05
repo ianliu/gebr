@@ -24,7 +24,7 @@
     </section>
     <section>
       <title>Informações técnicas</title>
-      <para>Este guia refere-se à <emphasis role="bold">versão 0.12.0</emphasis> da GêBR. As telas usadas no guia foram
+      <para>Este guia refere-se à <emphasis role="bold">versão 0.14.0</emphasis> da GêBR. As telas usadas no guia foram
 	capturadas em um sistema <emphasis role="bold">Ubuntu 10.04</emphasis>. Por isso, podem apresentar pequenas
 	diferenças em relação a outros sistemas operacionais. Para obter instruções de instalação específicas para cada
 	sistema, leia o <emphasis><link xlink:href="http://www.gebrproject.com/install-guide">guia de
@@ -266,16 +266,16 @@
         </step>
         <step>
           <para>Selecione a aba <guilabel>Fluxos</guilabel> e, em seguida, clique no
-                  botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_criar_fluxo.png"/></imageobject></inlinemediaobject></guiicon>.</para>
+            botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_criar_fluxo.png"/></imageobject></inlinemediaobject></guiicon>.</para>
         </step>
         <step>
           <para>Na janela <guilabel>Propriedade para Fluxo</guilabel>, digite um <emphasis>título</emphasis> para o
           fluxo (por exemplo, <userinput>Meu primeiro fluxo</userinput>). Se desejar, digite também uma
           breve <emphasis>descrição</emphasis> do fluxo, o <emphasis>autor</emphasis> e um <emphasis>e-mail</emphasis>
-          para contato. Feito isso, clique<guibutton>OK</guibutton>.</para>
+          para contato. Feito isso, clique <guibutton>OK</guibutton>.</para>
         </step>
         <step>
-          <para>Selecione a aba <guilabel>Editor de Fluxo</guilabel>. Em seguida, expanda a categoria
+          <para>A aba <guilabel>Editor de Fluxo</guilabel> será mostrada. Em seguida, expanda a categoria
             <guimenu>Graphics</guimenu> e dê um clique duplo no menu <guimenuitem>SU Simple X
             Image</guimenuitem>. Fazendo isso você adiciona este menu ao seu fluxo (note que o programa
             <guimenuitem>SU Simple X Image</guimenuitem> agora aparece na caixa <guilabel>Sequência de fluxo</guilabel>,
@@ -478,7 +478,7 @@
     </section>
     <section xml:id="sec_3_1_5">
       <title>Editar o dicionário de variáveis do projeto ou linha</title>
-      <para>Este recurso está documentado na <xref linkend="dicionario_de_parametros"/>.</para>
+      <para>Este recurso está documentado na <xref linkend="variaveis_dicionario"/>.</para>
     </section>
     <section xml:id="editar_caminhos_preferenciais_da_linha">
       <title>Editar caminhos preferenciais da linha</title>
@@ -806,7 +806,7 @@
     </section>
     <section xml:id="sec_3_2_6">
       <title>Editar o dicionário de variáveis de um fluxo</title>
-      <para>Este recurso está documentado na <xref linkend="dicionario_de_parametros"/>.</para>
+      <para>Este recurso está documentado na <xref linkend="variaveis_dicionario"/>.</para>
     </section>
     <section xml:id="sec_3_2_7">
       <title>Salvar o estado de um fluxo</title>
@@ -1603,110 +1603,6 @@
   
   <section xml:id="sec_4">
     <title>Recursos adicionais</title>
-    <section xml:id="dicionario_de_parametros">
-      <title>O dicionário de variáveis</title>
-      <para>O dicionário de variáveis é uma novidade introduzida na <emphasis role="bold">versão 0.9.15 da
-	GêBR</emphasis>. É um recurso muito flexível, que pode ser utilizado de muitas formas diferentes e para diversos
-	fins, a critério do usuário. Vamos ilustrar com um exemplo:</para>
-      <procedure>
-        <step>
-          <para>Crie um fluxo e insira nele um programa muito simples chamado 
-            <guimenuitem>Sleep</guimenuitem>, cuja única função é pausar a execução do fluxo por um determinado tempo
-            (você encontra este programa na categoria 
-            <guimenu>Shell tools</guimenu>, na aba 
-            <guilabel>Editor de Fluxo</guilabel>).</para>
-          <figure>
-            <mediaobject>
-              <caption>Exemplo de inserção de um novo fluxo, denominado "Fluxo 1", à linha "Minha linha". </caption>
-              <imageobject>
-                <imagedata fileref="../images/exemplo_dicionario_1.png"/>
-              </imageobject>
-            </mediaobject>
-          </figure>
-          <figure>
-            <mediaobject>
-		    <caption>Captura de tela da aba Editor de Fluxo, mostrando o novo fluxo citado no exemplo acima. Observe que esse fluxo possui o programa "Sleep", citado anteriormente.</caption>
-              <imageobject>
-                <imagedata fileref="../images/exemplo_dicionario_2.png"/>
-              </imageobject>
-            </mediaobject>
-          </figure>
-        </step>
-        <step>
-          <para>Na aba <guilabel>Projetos e Linhas</guilabel>, clique no
-                  botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_dicionario_projeto.png"/></imageobject></inlinemediaobject></guiicon> para <emphasis role="bold">editar o dicionário de
-          parâmetros</emphasis>.</para>
-        </step>
-        <step>
-          <para>Na janela que se abre (<guilabel>Dicionário de variáveis para linha</guilabel>), clique duas vezes no
-          campo <guilabel>Novo</guilabel>, dentro da lista <guilabel>Projeto</guilabel>. Abre-se um menu com três opções
-          (<guimenuitem>número</guimenuitem> e
-            <guimenuitem>string</guimenuitem>). Selecione a opção <guimenuitem>inteiro</guimenuitem>, depois digite
-            <userinput>Tempo</userinput> na coluna <guilabel>Palavra-chave</guilabel> e
-            <userinput>5</userinput> na coluna <guilabel>Valor</guilabel>. Ao terminar, sua janela deve se parecer com a
-            seguinte:</para>
-          <figure>
-            <mediaobject>
-              <caption>Na janela de parâmetros de dicionário para Fluxo, é possível editar parâmetros para este Fluxo, para sua Linha ou seu Projeto.</caption>
-              <imageobject>
-                <imagedata fileref="../images/exemplo_dicionario_3.png"/>
-              </imageobject>
-            </mediaobject>
-          </figure>
-        </step>
-        <step>
-          <para>Depois de fechar a janela <guilabel>Dicionário de parâmeros para linha</guilabel>, selecione a aba
-            <guilabel>Editor de Fluxo</guilabel> e, na caixa <guilabel>Sequência de fluxo</guilabel>, dê um clique duplo
-            no programa <guilabel>Sleep</guilabel>. Na janela que se abre (<guilabel>Parâmetros</guilabel>), clique com
-            o <emphasis role="bold">botão direito do mouse</emphasis> no campo <guilabel>Time to sleep</guilabel>. O
-            objetivo é atribuir a variável <emphasis role="bold">Tempo=5</emphasis> ao parâmetro <guilabel>Time to
-            sleep</guilabel>, como mostrado a seguir:</para>
-          <figure>
-            <mediaobject>
-              <caption>Através de um clique com o botão direito na área de edição da janela de parâmetros do programa "Sleep" surge um menu de contexto
-		 em que é possível, entre outras coisas, inserir parâmetros de dicionário conforme exemplo.</caption>
-              <imageobject>
-                <imagedata fileref="../images/exemplo_dicionario_4.png"/>
-              </imageobject>
-            </mediaobject>
-          </figure>
-        </step>
-        <step>
-          <para>Depois de fechar a janela <guilabel>Parâmetros</guilabel>, vá para a aba
-            <guilabel>Fluxos</guilabel> e crie algumas cópias do fluxo, dando nomes diferentes a cada uma. Ao executar
-            qualquer um destes fluxos, o resultado é uma  <emphasis role="bold">pausa de 5 segundos</emphasis>.</para>
-          <figure>
-            <mediaobject>
-              <caption>Na aba Fluxos, conforme já abordado, pode-se fazer cópias de um fluxo.
-		 No exemplo, as cópias terão parâmetros de dicionário para os programas "sleep's" tal qual a matriz.</caption>
-              <imageobject>
-                <imagedata fileref="../images/exemplo_dicionario_5.png"/>
-              </imageobject>
-            </mediaobject>
-          </figure>
-        </step>
-        <step>
-          <para>Acesse novamente o dicionário de variáveis e digite o valor 
-            <userinput>2</userinput> no lugar do valor 
-            <userinput>5</userinput>. Isso altera o valor da variável
-            <userinput>Tempo</userinput> em todos os fluxos. Agora, ao executar qualquer um deles, o resultado é uma  <emphasis role="bold">pausa de 2 segundos</emphasis>, e não mais de 5 segundos como antes.</para>
-        </step>
-      </procedure>
-      <para>O que o exemplo tenta mostrar é que, por meio do dicionário de variáveis, é
-	possível <emphasis role="bold">modificar os fluxos indiretamente</emphasis>, alterando as variáveis definidas no
-	dicionário. Sem isso, seria muito mais penoso alterar o tempo de execução dos fluxos do exemplo, pois as cópias
-	teriam de ser reconfiguradas uma a uma.</para>
-      <important>
-        <para>Você pode definir a visibilidade das variáveis, compartimentando-as nas listas
-          <guilabel>Projeto</guilabel>, <guilabel>Linha</guilabel> e <guilabel>Fluxo</guilabel>. Variáveis pertencentes
-          à lista <guilabel>Projeto</guilabel> são visíveis para <emphasis role="bold">todos os fluxos</emphasis> de
-          todas as linhas do projeto selecionado. Variáveis pertencentes à lista <guilabel>Linha</guilabel> são visíveis
-          apenas para os <emphasis role="bold">fluxos da linha selecionada</emphasis>. Variáveis pertencentes à
-          lista <guilabel>Fluxo</guilabel> são visíveis apenas para o <emphasis role="bold">fluxo
-          selecionado</emphasis>.</para>
-      </important>
-    </section>
-    
     
     <section xml:id="menu">
       <title>O menu 
