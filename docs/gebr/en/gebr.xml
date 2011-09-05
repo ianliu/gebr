@@ -1259,7 +1259,7 @@ de <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-ima
 					  <guilabel>Flow Editor</guilabel> tab).</para>
 				  <figure>
 					  <mediaobject>
-						  <caption>In the Flows tab, we add the "Example flow" to "test line 1", utilized in the next example.</caption>
+						  <caption>Screenshot of the generation of the "Example flow".</caption>
 						  <imageobject>
 							  <imagedata fileref="../images/exemplo_variaveis_1.png"/>
 						  </imageobject>
@@ -1284,32 +1284,31 @@ de <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-ima
 				  <para>When you finish, your window must look like with this one:</para>
 				  <figure>
 					  <mediaobject>
-						  <caption>Na janela de parâmetros de dicionário para Fluxo, é possível editar parâmetros para este Fluxo, para sua Linha ou seu Projeto.</caption>
+						  <caption>Screenshot of the parameters window.</caption>
 						  <imageobject>
 							  <imagedata fileref="../images/exemplo_variaveis_3.png"/>
 						  </imageobject>
 					  </mediaobject>
 				  </figure>
-				  <tip>Para entender melhor sobre a definição de variáveis, veja a seção <xref linkend="definindo_variaveis"/>.</tip>
-				  <tip>Posicionando o mouse em cima do ícone do tipo da variável, podemos ver a expressão resolvida.</tip>
-				  <tip>Podemos navegar entre os campos do dicionário utilizando as teclas <keycap>Enter</keycap>, <keycap>Tab</keycap> ou com o 
-					  <mousebutton>Botão esquerdo do mouse</mousebutton>.</tip>
+				  <tip>To better understand about variables definition, check section <xref linkend="definindo_variaveis"/>.</tip>
+				  <tip>Positioning the pointer on the icon of the variable type, we can check the solved expression.</tip>
+				  <tip>We can navigate over the fields using the keys <keycap>Enter</keycap>, <keycap>Tab</keycap> or with the
+					  <mousebutton>Left button of the mouse </mousebutton>.</tip>
 			  </step>
 		  </procedure>
 	  </section>
 
 	  <section xml:id="definindo_variaveis">
-		  <title>Definindo e usando variáveis</title>
-		  <para>Agora que já temos uma variável simples no dicionário, vamos utilizá-la para definir outras variáveis mais complexas.
-			  Utilizando a mesma idéia de criação de uma variável, visto na seção <xref linkend="janela_dicionario"/>, vamos definir mais duas variáveis:</para>
+		  <title>Defining and using variables</title>
+		  <para>We can use the dictionary to define more complex variables. Using the same idea as the creation of variables in <xref linkend="janela_dicionario"/>, we can define two more variables:</para>
 		  <procedure>
 			  <step>
-				  <para>Variável de nome <emphasis role="bold">var2</emphasis>, tipo <guimenuitem>Número</guimenuitem> e valor 
+				  <para>Variable of name <emphasis role="bold">var2</emphasis>, type <guimenuitem>Number</guimenuitem> and value
 					  <emphasis role="bold">var1 + 10</emphasis>.
 				  </para>
 				  <figure>
 					  <mediaobject>
-						  <caption>Criando a variável <emphasis role="bold">var2</emphasis>, usando auto-completação.</caption>
+						  <caption>Screenshot of the creation of the variable <emphasis role="bold">var2</emphasis>, using auto-completion.</caption>
 						  <imageobject>
 							  <imagedata fileref="../images/exemplo_variaveis_4.png"/>
 						  </imageobject>
@@ -1317,27 +1316,26 @@ de <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-ima
 				  </figure>
 			  </step>
 			  <step>
-				  <para>Variável de nome <emphasis role="bold">string</emphasis>, tipo <guimenuitem>Texto</guimenuitem> e valor 
-					  <emphasis role="bold">Variável 2 vale [var2]</emphasis>.
+				  <para>Variable of name <emphasis role="bold">string</emphasis>, tipo <guimenuitem>Text</guimenuitem> and value 
+					  <emphasis role="bold">Variable 2 is equal to [var2]</emphasis>.
 				  </para>
 				  <figure>
 					  <mediaobject>
-						  <caption>Criando a variável <emphasis role="bold">string</emphasis>, e verificando o resultado.</caption>
+						  <caption>Creating the variable <emphasis role="bold">string</emphasis>, and verifying the result.</caption>
 						  <imageobject>
 							  <imagedata fileref="../images/exemplo_variaveis_5.png"/>
 						  </imageobject>
 					  </mediaobject>
 				  </figure>
-				  <tip>Para utilizar variáveis em campos do tipo <guimenuitem>Texto</guimenuitem>, deve-se colocar o nome da variável cercada de colchetes 
-					  <emphasis role="bold">[</emphasis>nome-da-variável<emphasis role="bold">]</emphasis>.</tip>
+				  <tip>In order to use the variables in fields like <guimenuitem>Text</guimenuitem>, you must put the variable name embraced by square brackets
+					  <emphasis role="bold">[</emphasis>name-of-the-variable<emphasis role="bold">]</emphasis>.</tip>
 			  </step>
 			  <step>
-				  <para>Agora com as variáveis criadas, vamos utiliza-las no nosso "Fluxo Exemplo" já criado.</para>
-				  <para>Na aba Editor de Fluxo, dê um clique duplo no programa <guilabel>Echo</guilabel>, na janela de edição de parâmetros, 
-					  vamos utilizar a variável <emphasis role="bold">string</emphasis>.</para>
+				  <para>Now we can use the variables in our newly-created "Example Flow".</para>
+				  <para>In the Flow Editor, double click on <guilabel>Echo</guilabel> in the parameters edition window and use the variable <emphasis role="bold">string</emphasis>.</para>
 				  <figure>
 					  <mediaobject>
-						  <caption>Preenchendo o parâmetro com a variável <emphasis role="bold">string</emphasis> do dicionário.</caption>
+						  <caption>Screenshot of the parameters editor of the program Echo with the variable <emphasis role="bold">string</emphasis>.</caption>
 						  <imageobject>
 							  <imagedata fileref="../images/exemplo_variaveis_6.png"/>
 						  </imageobject>
@@ -1345,33 +1343,27 @@ de <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-ima
 				  </figure>
 			  </step>
 		  </procedure>
-		  <tip>Para validar uma expressão ou uma variável, em qualquer campo, basta utilizar a tecla <keycap>Enter</keycap>.</tip>
-		  <tip>Para ver todas as variáveis disponíveis para auto-completação, basta digitar no campo o caracter '<emphasis role="bold">[</emphasis>' (abrir colchete).</tip>
+		  <tip>In order to validate a field of an expression or a variable, you just need to use the key <keycap>Enter</keycap>.</tip>
+		  <tip>To see all the available variables for auto-completion, we just need to type the character <emphasis role="bold">[</emphasis>' (open brackets).</tip>
 		  <important>
-			  <para>Você pode definir a visibilidade das variáveis, compartimentando-as nas listas
-				  <guilabel>Projeto</guilabel>, <guilabel>Linha</guilabel> e <guilabel>Fluxo</guilabel>. Variáveis pertencentes
-				  à lista <guilabel>Projeto</guilabel> são visíveis para <emphasis role="bold">todos os fluxos</emphasis> de
-				  todas as linhas do projeto selecionado. Variáveis pertencentes à lista <guilabel>Linha</guilabel> são visíveis
-				  apenas para os <emphasis role="bold">fluxos da linha selecionada</emphasis>. Variáveis pertencentes à
-				  lista <guilabel>Fluxo</guilabel> são visíveis apenas para o <emphasis role="bold">fluxo
-					  selecionado</emphasis>.</para>
+			  <para>We can define the visibility of the variables, managing them in the lists <guilabel>Project</guilabel>, <guilabel>Line</guilabel> and <guilabel>Flow</guilabel>. Variables from the list <guilabel>Project</guilabel> are visible to <emphasis role="bold">every flow</emphasis> of every line of the choosen project <guilabel>Line</guilabel> are visible
+				  just for the <emphasis role="bold">flows of the selected flow</emphasis>. Variables from the list <guilabel>Flow</guilabel> are visible just for the <emphasis role="bold">choosen flow
+					  </emphasis>.</para>
 		  </important>
 	  </section>
 
 	  <section xml:id="variavel_iter">
-		  <title>A variável iter</title>
-		  <para>Como vimos na seção <xref linkend="loop"/>, a GêBR permite o uso de loops, através do programa <guimenuitem>Loop</guimenuitem>. Juntamente com esse programa, temos acesso a uma variável
-			  especial, chamada <emphasis role="bold">iter</emphasis>. A seguir, mostraremos um exemplo de uso desta variável:</para>
+		  <title>The variable iter</title>
+		  <para>As we saw in the section <xref linkend="loop"/>, GêBR allows the use of loops, through the program <guimenuitem>Loop</guimenuitem>. With this program, we have access to a special variable
+called <emphasis role="bold">iter</emphasis>. Then we can show an example of the use of this variable:</para>
 		  <procedure>
 			  <step>
-				  <para>Vamos supor que queiramos saber em qual dia da semana serão as festas de fim de ano nos próximos 5 anos. Para esse fim, necessitamos do calendário do mês de Dezembro desses anos.
-					  Para isso, utilizaremos o programa <guimenuitem>Calendar</guimenuitem> (você encontra este programa na categoria <guimenu>Shell tools</guimenu>, 
-					  na aba <guilabel>Editor de Fluxo</guilabel>).</para>
-				  <para>Portanto, utilizando o preenchimento dos parâmetros proposto no exemplo da seção <xref linkend="loop"/>, teremos a variável <emphasis role="bold">iter</emphasis>
-					  no dicionário como na janela a seguir.</para>
+				  <para>Suppose we want to know in which week days are going to fall the turns of the next 5 years. To this end, we need the calendar of December from these 5 years.
+					  We are going to use the program <guimenuitem>Calendar</guimenuitem> (it can be found in the <guimenu>Shell Tools</guimenu> category, in the <guilabel>Flow Editor</guilabel> tab).</para> 
+				  <para>Using the examples about the filling of parameters in section <xref linkend="loop"/>, we are going to end up with the variable <emphasis role="bold">iter</emphasis> in the dictionary as in the following window.</para>
 				  <figure>
 					  <mediaobject>
-						  <caption>A variavel <emphasis role="bold">iter</emphasis> com sua expressão resolvida.</caption>
+						  <caption>Screenshot of the variable <emphasis role="bold">iter</emphasis> and its solved expression.</caption>
 						  <imageobject>
 							  <imagedata fileref="../images/exemplo_iter_1.png"/>
 						  </imageobject>
@@ -1379,11 +1371,11 @@ de <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-ima
 				  </figure>
 			  </step>
 			  <step>
-				  <para>Agora iremos definir uma variável no dicionário que representará o ano atual, facilitando o processo de escolha do ano.
-					  Vamos definir a variável na Linha, com o nome de <emphasis role="bold">ano_atual</emphasis> e valor <emphasis role="bold">2011</emphasis>.</para>
+				  <para>We can define a variable in the dictionary that represents the present year, facilitating the process of choosing of the year.
+					  We define the variable in the line, with the name of <emphasis role="bold">ano_atual</emphasis> and value <emphasis role="bold">2011</emphasis>.</para>
 				  <figure>
 					  <mediaobject>
-						  <caption>A variavel <emphasis role="bold">ano_atual</emphasis> definida no dicionário.</caption>
+						  <caption>Screenshot of the variable <emphasis role="bold">ano_atual</emphasis> defined in the dictionary.</caption>
 						  <imageobject>
 							  <imagedata fileref="../images/exemplo_iter_2.png"/>
 						  </imageobject>
@@ -1391,10 +1383,10 @@ de <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-ima
 				  </figure>
 			  </step>
 			  <step>
-				  <para>Após definirmos esta variável, vamos melhorar os parâmetros do programa <guimenuitem>Loop</guimenuitem>, para que a variável 
-					  <emphasis role="bold">iter</emphasis> tenha um comportamento melhor para o propósito do problema.</para>
-				  <para>Logo, no parâmetro Initial value (valor inicial) iremos incluir a variável <emphasis role="bold">ano_atual</emphasis>.
-					  No parâmetro Step (passo de cada iteração), preencheremos com 1, pois queremos anos seguidos.
+				  <para>After defining this variable, we improve the parameters of the program <guimenuitem>Loop</guimenuitem>, so the variable 
+					  <emphasis role="bold">iter</emphasis> has a better behaviour to the purpose of the problem.</para>
+				  <para>In the Initial Value we are going to include a variable <emphasis role="bold">ano_atual</emphasis>.
+					  We fill the parameter Step (step from each iteration) with 1, since we look for consecutives years.
 					  No parâmetro Total number of steps (número total de passos), colocaremos o valor 5, para que realize está repetição 5 vezes, desta forma,
 					  pegando os 5 próximos anos, apartir de 2011.</para>
 				  <figure>
