@@ -582,3 +582,7 @@ void on_server_common_stop(void)
 	}
 }
 
+void open_url_on_press_event(void)
+{
+	gebr_gui_show_uri("http://www.gebrproject.com/install-guide/download");
+}

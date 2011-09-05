@@ -35,6 +35,7 @@
 #include "menu.h"
 #include "gebr.h"
 #include "document.h"
+#include "callbacks.h"
 
 /**
  * \internal
@@ -432,34 +433,72 @@ static void menu_scan_directory(const gchar * directory, GKeyFile * menu_key_fil
 	g_string_free(path, TRUE);
 }
 
-static void recurse_dir(GList **demos, const gchar *dir)
+static gchar *canonize_name(const gchar *path)
+{
+	GFile *file = g_file_new_for_path(path);
+	GFileInfo *info = g_file_query_info(file, G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME, 0, NULL, NULL);
+
+	gchar *label = g_strdup(g_file_info_get_attribute_string(info, G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME));
+	g_strdelimit(label, "_", ' ');
+
+	g_object_unref(file);
+	g_object_unref(info);
+
+	return label;
+}
+
+static void populate_menu_demo(const gchar *dir, GtkMenu *menu)
 {
 	gchar *filename;
+	gchar *dirname;
 	GString *path;
 	path = g_string_new(NULL);
 
-	gebr_directory_foreach_file(filename, dir) {
-		g_string_printf(path, "%s/%s", dir, filename);
-		if (g_file_test(path->str, G_FILE_TEST_IS_DIR)) {
-			*demos = g_list_prepend(*demos, g_strdup(path->str));
-			recurse_dir(demos, path->str);
+	gebr_directory_foreach_file(dirname, dir) {
+		gboolean has_demo = FALSE;
+		g_string_printf(path, "%s/%s", dir, dirname);
+		if (!g_file_test(path->str, G_FILE_TEST_IS_DIR)) {
+			g_string_free(path, TRUE);
 			continue;
 		}
-		if (!fnmatch("*.prjz", filename, 1))
-			*demos = g_list_prepend(*demos, g_strdup(path->str));
-		g_string_set_size(path, 0);
+		gchar *label = canonize_name(path->str);
+		GtkWidget *menu_item = gtk_menu_item_new_with_label(label);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+		GtkWidget *submenu = gtk_menu_new();
+		gtk_menu_item_set_submenu(GTK_MENU_ITEM(menu_item), submenu);
+		g_free(label);
+		gebr_directory_foreach_file_hyg(filename, path->str, dir) {
+			if (!fnmatch("*.prjz", filename, 1)) {
+				has_demo = TRUE;
+				gchar *demo_path = g_strconcat(dir, "/", dirname, "/", filename, NULL);
+				label = canonize_name(demo_path);
+				label[strlen(label) - 5] = '\0';
+				menu_item = gtk_menu_item_new_with_label(label);
+				gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menu_item);
+				g_signal_connect(menu_item, "activate", G_CALLBACK(import_demo), demo_path);
+				g_object_weak_ref(G_OBJECT(menu_item), (GWeakNotify)g_free, demo_path);
+				g_free(label);
+			}
+		}
+		if (!has_demo) {
+			if (g_strcmp0(dirname, "Seismic_Unix") == 0) {
+				menu_item = gtk_menu_item_new_with_label(_("Install Seismic Unix package.\n"
+						"Click here to get the script of Seismic Unix on GêBR Project website."));
+				g_signal_connect(menu_item, "button_press_event", G_CALLBACK(open_url_on_press_event), NULL);
+			} else {
+				menu_item = gtk_menu_item_new_with_label(_("Empty"));
+				gtk_widget_set_sensitive(menu_item, FALSE);
+			}
+			gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menu_item);
+		}
+		g_string_free(path, TRUE);
 	}
-	g_string_free(path, TRUE);
 }
 
-GList *demos_list_create(void)
+void demos_list_create(GtkMenu *menu)
 {
-	GList *demos = NULL;
-
-	recurse_dir(&demos, directory_list_demos[0]);
+	populate_menu_demo(directory_list_demos[0], menu);
 	for (int i = 1; directory_list_demos[i]; i++)
 		if (!gebr_realpath_equal (directory_list[i], directory_list[0]))
-			recurse_dir(&demos, directory_list_demos[i]);
-
-	return g_list_sort(demos, (GCompareFunc)g_strcmp0);
+			populate_menu_demo(directory_list_demos[i], menu);
 }

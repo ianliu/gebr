@@ -64,7 +64,7 @@ gboolean menu_list_create_index(void);
 /*
  *
  */
-GList *demos_list_create(void);
+void demos_list_create(GtkMenu *menu);
 
 /**
  * Lists all system directories that GeBR looks for menus.
