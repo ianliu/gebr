@@ -143,13 +143,13 @@ void job_init_details(GebrJob *job, GString * _status, GString * title, GString 
 	if (strcmp(job->parent.title->str, title->str)) {
 		gtk_tree_store_set(gebr.ui_job_control->store, &job->iter,
 				   JC_TITLE, title->str, -1);
-		gebr_message(GEBR_LOG_DEBUG, TRUE, TRUE, _("The title of job '%s' changed to '%s' according to the server."),
+		gebr_message(GEBR_LOG_DEBUG, TRUE, TRUE, _("According to the server, the title of Job '%s' has changed to '%s'."),
 			     job->parent.title->str, title->str);
 	}
 	g_string_assign(job->parent.title, title->str);
 	if (hostname != NULL) {
 		if (job->parent.client_hostname->len && strcmp(job->parent.client_hostname->str, hostname->str))
-			gebr_message(GEBR_LOG_WARNING, FALSE, TRUE, _("The hostname sent for job '%s' differs from this host ('%s')."),
+			gebr_message(GEBR_LOG_WARNING, FALSE, TRUE, _("The hostname sent for Job '%s' differs from this host ('%s')."),
 				     hostname->str, job->parent.client_hostname->str);
 		g_string_assign(job->parent.client_hostname, hostname->str);
 	}
@@ -161,7 +161,7 @@ void job_init_details(GebrJob *job, GString * _status, GString * title, GString 
 	g_string_assign(job->parent.moab_jid, moab_jid->str);
 	/* QUEUE CHANGE!! Shouldn't ever happen */
 	if (job->parent.queue_id->str[0] != 'j' && strcmp(job->parent.queue_id->str, queue->str))
-		gebr_message(GEBR_LOG_DEBUG, FALSE, FALSE, _("The queue of job '%s' changed to '%s' when received from server."),
+		gebr_message(GEBR_LOG_DEBUG, FALSE, FALSE, _("The server has changed the queue of Job '%s' to '%s'."),
 			     job->parent.title->str, job->parent.queue_id->str);
 	/* necessary for the new job queue name */
 	gtk_tree_store_set(gebr.ui_job_control->store, &job->iter,
@@ -227,9 +227,9 @@ void job_close(GebrJob *job, gboolean force, gboolean verbose)
 	if (job->parent.status == JOB_STATUS_RUNNING || job->parent.status == JOB_STATUS_QUEUED) {
 		if (verbose) {
 			if (job->parent.status == JOB_STATUS_RUNNING)
-				gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Can't close running job '%s'"), job->parent.title->str);
+				gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Can not close the running Job '%s'"), job->parent.title->str);
 			else if (job->parent.status == JOB_STATUS_QUEUED)
-				gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Can't close queued job '%s'"), job->parent.title->str);
+				gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Can not close the queued Job '%s'"), job->parent.title->str);
 		}
 		return;
 	}
@@ -291,16 +291,16 @@ void job_update_label(GebrJob *job)
 
 	GString *label = g_string_new("");
 	if (job->parent.status == JOB_STATUS_INITIAL)
-		g_string_printf(label, _("Job waiting for server details"));
+		g_string_printf(label, _("Job awaiting details from the server"));
 	else {
 		/* who and where, same at job_update_text_buffer */
 		GString *queue_info = g_string_new(NULL); 
 		const gchar *queue = job_get_queue_name(job);
 		if (queue == NULL)
-			g_string_assign(queue_info, _("unqueued"));
+			g_string_assign(queue_info, _("without queue"));
 		else
 			g_string_printf(queue_info, "on %s", queue);
-		g_string_append_printf(label, _("Job submitted at '%s' ('%s') by %s\n"),
+		g_string_append_printf(label, _("Job submitted to '%s' ('%s') by %s\n"),
 				       server_get_name(job->server), queue_info->str, job->parent.client_hostname->str);
 		g_string_free(queue_info, TRUE);
 
@@ -402,15 +402,15 @@ void job_load_details(GebrJob *job)
 	GString *queue_info = g_string_new(NULL); 
 	const gchar *queue = job_get_queue_name(job);
 	if (queue == NULL)
-		g_string_assign(queue_info, _("unqueued"));
+		g_string_assign(queue_info, _("without queue"));
 	else
 		g_string_printf(queue_info, "on %s", queue);
-	g_string_append_printf(info, _("Job submitted at '%s' ('%s') by %s.\n"),
+	g_string_append_printf(info, _("Job submitted to '%s' ('%s') by %s.\n"),
 			       server_get_name(job->server), queue_info->str, job->parent.client_hostname->str);
 	g_string_free(queue_info, TRUE);
 
 	if (job->parent.status == JOB_STATUS_INITIAL) {
-		g_string_append_printf(info, _("\nWaiting for more server details..."));
+		g_string_append_printf(info, _("\nWaiting for more details from the server..."));
 		goto out;
 	} 
 

@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-07-04 13:36-0300\n"
-"PO-Revision-Date: 2011-07-04 13:48-0300\n"
+"POT-Creation-Date: 2011-09-05 17:46-0300\n"
+"PO-Revision-Date: 2011-09-05 17:46-0300\n"
 "Last-Translator: Rodrigo Morelatto <morelatto@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
 "MIME-Version: 1.0\n"
@@ -31,17 +31,17 @@ msgid "Seismic processing environment"
 msgstr "Ambiente de processamento sísmico"
 
 #: ../callbacks.c:180 ../callbacks.c:190 ../callbacks.c:377 ../callbacks.c:386
-msgid "Broken flow"
+msgid "Broken Flow"
 msgstr "Fluxo quebrado"
 
 #: ../callbacks.c:181
 #, c-format
-msgid "Flow \"%s\" is broken before program \"%s\" (no input).\n"
+msgid "Flow \"%s\" broke before Program \"%s\" (no input).\n"
 msgstr "Fluxo '%s' quebrado antes do Programa '%s' (falta entrada).\n"
 
 #: ../callbacks.c:191
 #, c-format
-msgid "Flow \"%s\" is broken before program \"%s\" (unexpected output).\n"
+msgid "Flow \"%s\" broke before Program \"%s\" (unexpected output).\n"
 msgstr ""
 "Fluxo '%s' quebrado antes do Programa '%s' (saída para arquivo inesperada).\n"
 
@@ -53,33 +53,33 @@ msgstr "Aviso"
 
 #: ../callbacks.c:201
 #, c-format
-msgid "No input file specified for program \"%s\" at flow \"%s\""
+msgid "No input file specified for the program \"%s\" in Flow \"%s\""
 msgstr ""
 "Nenhum arquivo de entrada especificado para o programa \"%s\" do Fluxo \"%s"
 "\"."
 
 #: ../callbacks.c:210
 #, c-format
-msgid "Invalid input file specified for program \"%s\" at flow \"%s\""
+msgid "Invalid input file specified for the program \"%s\" Flow \"%s\""
 msgstr ""
 "Arquivo de entrada inválido especificado para o programa \"%s\" do Fluxo \"%s"
 "\""
 
 #: ../callbacks.c:219
 #, c-format
-msgid "Invalid output file specified for program \"%s\" at flow \"%s\""
+msgid "Invalid output file specified for the program \"%s\" in Flow \"%s\""
 msgstr ""
 "Arquivo de saída inválido especificado para o programa \"%s\" do Fluxo \"%s\""
 
 #: ../callbacks.c:228
 #, c-format
-msgid "Invalid error file specified for program \"%s\" at flow \"%s\""
+msgid "Invalid error file specified for the program \"%s\" in Flow \"%s\""
 msgstr ""
 "Arquivo de log inválido especificado para o programa \"%s\" do Fluxo \"%s\""
 
 #: ../callbacks.c:236
 #, c-format
-msgid "No configured or enabled programs found for flow \"%s\""
+msgid "No configured or enabled programs found for Flow \"%s\""
 msgstr ""
 "Nenhum programa configurado ou ativado foi encontrado para o Fluxo \"%s\""
 
@@ -90,32 +90,32 @@ msgstr "Fluxo \"%s\" tem apenas um Loop vazio"
 
 #: ../callbacks.c:378
 #, c-format
-msgid "Broken flow before \"%s\" (no input).\n"
+msgid "The Flow broke before \"%s\" (no input).\n"
 msgstr "Fluxo quebrado antes de \"%s\" (falta entrada).\n"
 
 #: ../callbacks.c:387
 #, c-format
-msgid "Broken flow before \"%s\" (unexpected output).\n"
+msgid "The Flow broke before \"%s\" (unexpected output).\n"
 msgstr "Fluxo quebrado antes de \"%s\" (saída para arquivo inesperada).\n"
 
 #: ../callbacks.c:396
 #, c-format
-msgid "No input file specified for program \"%s\""
+msgid "No input file specified for the program \"%s\""
 msgstr "Nenhum arquivo de entrada especificado para o programa \"%s\""
 
 #: ../callbacks.c:404
 #, c-format
-msgid "Invalid input file specified for program \"%s\""
+msgid "Invalid input file specified for the program \"%s\""
 msgstr "Arquivo de entrada inválido especificado para o programa \"%s\""
 
 #: ../callbacks.c:412
 #, c-format
-msgid "Invalid error file specified for program \"%s\""
+msgid "Invalid error file specified for the program \"%s\""
 msgstr "Arquivo de log inválido especificado para o programa \"%s\""
 
 #: ../callbacks.c:420
 #, c-format
-msgid "Invalid output file file specified for program \"%s\""
+msgid "Invalid output file specified for the program \"%s\""
 msgstr "Arquivo de saída inválido especificado para o programa \"%s\""
 
 #: ../callbacks.c:428
@@ -123,7 +123,7 @@ msgid "No configured or enabled programs found"
 msgstr "Nenhum programa configurado ou ativado foi encontrado"
 
 #: ../callbacks.c:432
-msgid "Your flow has only an empty loop"
+msgid "Your Flow has only an empty loop"
 msgstr "O Fluxo tem apenas um laço vazio"
 
 #: ../callbacks.c:505
@@ -134,8 +134,8 @@ msgstr ""
 
 #: ../client.c:89
 #, c-format
-msgid "Server '%s' reported error '%s'."
-msgstr "Servidor '%s' informou erro '%s'."
+msgid "Server '%s' reported the error '%s'."
+msgstr "Servidor '%s' informou o erro '%s'."
 
 #: ../client.c:136 ../server.c:443
 msgid "Immediately"
@@ -147,12 +147,12 @@ msgid "At '%s'"
 msgstr "Em '%s'"
 
 #: ../client.c:176
-msgid "Connected to local server."
+msgid "Connected to the local server."
 msgstr "Conectado ao servidor local."
 
 #: ../client.c:179
 #, c-format
-msgid "Connected to server '%s'."
+msgid "Connected to the server '%s'."
 msgstr "Conectado ao servidor '%s'."
 
 #: ../client.c:184
@@ -170,28 +170,30 @@ msgstr "O servidor '%s' não conseguiu redirecionar a saída gráfica."
 
 #: ../client.c:274
 #, c-format
-msgid "Received already listed job %s."
-msgstr "Recebida Tarefa '%s' já listada anteriormente."
+msgid "Received the already listed Job %s."
+msgstr "Recebida a Tarefa '%s' já listada anteriormente."
 
 #: ../client.c:326
-msgid "Error communicating with local server. Please reconnect."
+msgid "Error communicating with the local server. Please reconnect."
 msgstr "Erro na comunicação com o servidor local. Por favor, reconecte."
 
 #: ../client.c:328
 #, c-format
-msgid "Error communicating with server '%s'. Please reconnect."
+msgid "Error communicating with the server '%s'. Please reconnect."
 msgstr "Erro na comunicação com o servidor '%s'. Por favor, reconecte."
 
 #. the final point already comes with gebr_geoxml_error_string
 #: ../document.c:245
 #, c-format
-msgid "Can't load file at %s: %s"
-msgstr "Não foi possível carregar documento em %s: %s."
+msgid "Can not load the file at %s: %s"
+msgstr ""
+"Não foi possível carregar o menu em %s:\n"
+"%s"
 
 #: ../document.c:260
 #, c-format
 msgid ""
-"Can't load menu '%s' at %s:\n"
+"Can not load menu '%s' at %s:\n"
 "%s"
 msgstr ""
 "Não foi possível carregar o menu '%s' em %s:\n"
@@ -200,7 +202,7 @@ msgstr ""
 #: ../document.c:263
 #, c-format
 msgid ""
-"Can't load menu at %s:\n"
+"Can not load the Menu at %s:\n"
 "%s"
 msgstr ""
 "Não foi possível carregar o menu em %s:\n"
@@ -210,15 +212,15 @@ msgstr ""
 msgid "document"
 msgstr "documento"
 
-#: ../document.c:276 ../ui_document.c:1577 ../ui_help.c:160 ../ui_help.c:216
+#: ../document.c:276 ../ui_document.c:1570 ../ui_help.c:160 ../ui_help.c:216
 msgid "project"
 msgstr "projeto"
 
-#: ../document.c:279 ../ui_document.c:1579 ../ui_help.c:157 ../ui_help.c:220
+#: ../document.c:279 ../ui_document.c:1572 ../ui_help.c:157 ../ui_help.c:220
 msgid "line"
 msgstr "linha"
 
-#: ../document.c:282 ../ui_document.c:1581 ../ui_help.c:154 ../ui_help.c:224
+#: ../document.c:282 ../ui_document.c:1574 ../ui_help.c:154 ../ui_help.c:224
 msgid "flow"
 msgstr "fluxo"
 
@@ -253,61 +255,61 @@ msgid "Delete"
 msgstr "Apagar"
 
 #: ../document.c:348
-msgid "Choose filename to export"
+msgid "Choose the filename to export"
 msgstr "Escolha o nome do arquivo para exportar"
 
 #: ../document.c:361
 #, c-format
 msgid ""
-"Failed to export file '%s':\n"
+"Failed to export the file '%s':\n"
 "%s."
 msgstr ""
 "Falha ao exportar o arquivo '%s':\n"
 "%s."
 
 #: ../document.c:385
-msgid "Orphans lines"
+msgid "Orphan Lines"
 msgstr "Linhas órfãs"
 
 #: ../document.c:403 ../document.c:417
-msgid "Orphans flows"
+msgid "Orphan Flows"
 msgstr "Fluxos órfãos"
 
 #: ../document.c:463
 #, c-format
-msgid "Failed to save document '%s' file at '%s'."
+msgid "Failed to save the document '%s' at '%s'."
 msgstr "Falha ao salvar o documento '%s' em '%s'."
 
 #: ../flow.c:75 ../interface.c:88
 msgid "New Flow"
-msgstr "Novo fluxo"
+msgstr "Novo Fluxo"
 
 #: ../flow.c:96
 #, c-format
-msgid "New flow added to line '%s'."
-msgstr "Novo fluxo adicionado à linha '%s'."
+msgid "New Flow added to Line '%s'."
+msgstr "Novo Fluxo adicionado à Linha '%s'."
 
 #: ../flow.c:126
-msgid "Delete flow"
-msgstr "Apagar fluxo"
+msgid "Delete Flow"
+msgstr "Apagar Fluxo"
 
 #: ../flow.c:127
-msgid "Are you sure you want to delete the selected flow(s)?"
-msgstr "Tem certeza que quer apagar o(s) fluxo(s) selecionado(s)?"
+msgid "Are you sure you want to delete the selected Flow(s)?"
+msgstr "Tem certeza que quer apagar o(s) Fluxo(s) selecionado(s)?"
 
 #: ../flow.c:139
 #, c-format
-msgid "Deleting flow '%s'."
-msgstr "Apagando o fluxo '%s'."
+msgid "Deleting Flow '%s'."
+msgstr "Apagando o Fluxo '%s'."
 
 #: ../flow.c:140
 #, c-format
-msgid "Deleting flow '%s' from line '%s'."
-msgstr "Apagando o fluxo '%s' da linha '%s'."
+msgid "Deleting  Flow '%s' from Line '%s'."
+msgstr "Apagando o Fluxo '%s' da Linha '%s'."
 
 #: ../flow.c:181
 #, c-format
-msgid "Flow '%s' imported to line '%s' from file '%s'."
+msgid "Flow '%s' imported into Line '%s' from the file '%s'."
 msgstr "Fluxo '%s' importado para a linha '%s' a partir do arquivo '%s'."
 
 #: ../flow.c:189 ../ui_project_line.c:596
@@ -320,15 +322,15 @@ msgid "Choose a Flow to import"
 msgstr "Escolha um Fluxo para importar"
 
 #: ../flow.c:214
-msgid "Flow files (*.flw, *.flwz)"
+msgid "Flow file types (*.flw, *.flwz)"
 msgstr "Arquivos de Fluxo (*.flw, *flwz)"
 
 #: ../flow.c:229 ../flow.c:235
 #, c-format
-msgid "Could not import flow file %s"
+msgid "Could not import Flow from the file %s"
 msgstr "Não foi possível importar o Fluxo em '%s'"
 
-#: ../flow.c:267
+#: ../flow.c:267 ../ui_flow_browse.c:382
 msgid "No Flow selected"
 msgstr "Nenhum Fluxo selecionado"
 
@@ -342,27 +344,27 @@ msgid "Make this Flow user-independent"
 msgstr "Tornar este Fluxo independente de usuário."
 
 #: ../flow.c:296 ../ui_project_line.c:736
-msgid "Merge the variables of dictionary"
+msgid "Merge variables from all dictionaries"
 msgstr "Incluir parâmetros de todos os dicionários"
 
 #: ../flow.c:302
-msgid "Flow files (*.flwz)"
+msgid "Flow file types (*.flwz)"
 msgstr "Arquivos de Fluxo (*.flwz)"
 
 #: ../flow.c:334
 #, c-format
-msgid "Could not clone flow %s"
+msgid "Could not clone Flow %s"
 msgstr "Não foi possível clonar o Fluxo '%s'"
 
 #: ../flow.c:349
 #, c-format
-msgid "Could not save flow %s at %s"
+msgid "Could not save Flow %s at %s"
 msgstr "Não foi possível salvar o Fluxo '%s' em '%s'"
 
 #: ../flow.c:365
 #, c-format
 msgid ""
-"Exported selected flow(s) into %s with error. See log file for more "
+"Exported selected Flow(s) into %s with error. See log file for more "
 "information."
 msgstr ""
 "Fluxos selecionados exportados com erro para '%s'. Veja o arquivo de log "
@@ -370,44 +372,44 @@ msgstr ""
 
 #: ../flow.c:367
 #, c-format
-msgid "Exported selected flow(s) into %s."
+msgid "Exported selected Flow(s) into %s."
 msgstr "Fluxos selecionados exportados em '%s'."
 
 #: ../flow.c:371
-msgid "Could not export flow(s). See log file for more information."
+msgid "Could not export Flow(s). See log file for more information."
 msgstr "Impossível exportar Fluxo(s). Veja log para mais detalhes."
 
 #: ../flow.c:535
 #, c-format
 msgid "Flow '%s' is empty, ignoring."
-msgstr "Fluxo '%s' está vazio, ignorando."
+msgstr "O Fluxo '%s' está vazio, ignorando."
 
 #. status and logging
 #: ../flow.c:562
 #, c-format
-msgid "Asking server to run flow '%s'."
-msgstr "Pedindo para o servidor executar o fluxo '%s'."
+msgid "Asking server to run Flow '%s'."
+msgstr "Pedindo para o servidor executar o Fluxo '%s'."
 
 #: ../flow.c:565
 #, c-format
-msgid "Asking server '%s' to run flow '%s'."
+msgid "Asking server '%s' to run Flow '%s'."
 msgstr "Pedindo para o servidor '%s' executar o fluxo '%s'."
 
 #: ../flow.c:568
 #, c-format
-msgid "Asking local server to run flow '%s'."
+msgid "Asking local server to run Flow '%s'."
 msgstr "Pedindo para o servidor local executar o fluxo '%s'."
 
 #: ../flow.c:616
-msgid "Save selected Flows"
-msgstr "Salvar Fluxos selecionados"
+msgid "Save selected Flows?"
+msgstr "Salvar Fluxos selecionados?"
 
 #: ../flow.c:631
 msgid "Write a description about this version of the selected Flows:"
 msgstr "Descreva esta versão dos Fluxos selecionados:"
 
 #: ../flow.c:771
-msgid "Could not paste flow. It was probably deleted."
+msgid "Could not paste Flow. It was probably deleted."
 msgstr "Não foi possível colar o fluxo. Provavelmente ele foi apagado."
 
 #: ../flow.c:803
@@ -420,14 +422,14 @@ msgstr "Instância"
 
 #: ../flow.c:931
 #, c-format
-msgid "Parameters for %s program"
+msgid "Parameters for the program %s"
 msgstr "Parâmetros do programa %s"
 
 #: ../flow.c:949
 msgid "Parameter"
 msgstr "Parâmetros"
 
-#: ../flow.c:949 ../ui_document.c:612
+#: ../flow.c:949 ../ui_document.c:605
 msgid "Value"
 msgstr "Valor"
 
@@ -459,22 +461,22 @@ msgid "By"
 msgstr "Por"
 
 #: ../flow.c:1085
-msgid "Flow composed by the program(s):"
+msgid "Flow composed of the program(s):"
 msgstr "Fluxo composto pelo(s) programa(s):"
 
 #: ../gebr.c:79
 #, c-format
 msgid ""
 "Unable to create GêBR configuration files.\n"
-"Perhaps you do not have write permission to your own\n"
-"home directory or there is no space left on device.\n"
+"You might not have write permission in your own\n"
+"home directory or there is not enough space left on the device.\n"
 msgstr ""
 "Incapaz de criar os arquivos de configuração da GêBR.\n"
 "Talvez você não tenha permissão de escrita no seu\n"
 "próprio diretório ou não haja espaço no dispositivo.\n"
 
 #: ../gebr.c:185
-msgid "GêBR finalizing..."
+msgid "Finalizing GêBR..."
 msgstr "GêBR finalizando..."
 
 #: ../gebr.c:334 ../gebr.c:582
@@ -482,7 +484,7 @@ msgid "Could not save configuration."
 msgstr "Não foi possível salvar a configuração."
 
 #: ../gebr.c:347
-msgid "GêBR initiating..."
+msgid "Initiating GêBR..."
 msgstr "GêBR iniciando..."
 
 #: ../gebr.c:355
@@ -505,7 +507,7 @@ msgstr ""
 #: ../gebr.c:765
 msgid ""
 "Cannot copy data files to GêBR's directory. Please check your write "
-"permissions to your home directory."
+"permissions in your home directory."
 msgstr ""
 "Não foi possível copiar os arquivos de dados para o diretório da GêBR. Por "
 "favor\n"
@@ -518,7 +520,7 @@ msgstr "_Servidores"
 #.
 #. * Project/Line
 #.
-#: ../interface.c:63 ../interface.c:64
+#: ../interface.c:63 ../interface.c:64 ../project.c:56
 msgid "New Project"
 msgstr "Novo Projeto"
 
@@ -554,21 +556,15 @@ msgstr "Importar Projetos ou Linhas"
 msgid "Export selected Projects and Lines"
 msgstr "Exportar Projetos e Linhas selecionados"
 
-#: ../interface.c:77 ../interface.c:109
+#: ../interface.c:77 ../interface.c:78 ../interface.c:109
+#: ../ui_flow_browse.c:221 ../ui_project_line.c:204
 msgid "View Report"
 msgstr "Visualizar Relatório"
 
-#: ../interface.c:78 ../ui_flow_browse.c:221 ../ui_project_line.c:204
-msgid "View report"
-msgstr "Visualizar relatório"
-
-#: ../interface.c:79 ../interface.c:111
+#: ../interface.c:79 ../interface.c:80 ../interface.c:111
+#: ../ui_flow_browse.c:222 ../ui_project_line.c:205
 msgid "Edit Comments"
-msgstr "Editar comentários"
-
-#: ../interface.c:80 ../ui_flow_browse.c:222 ../ui_project_line.c:205
-msgid "Edit comments"
-msgstr "Editar comentários"
+msgstr "Editar Comentários"
 
 #: ../interface.c:90
 msgid "Delete selected Flows"
@@ -627,11 +623,11 @@ msgid "Delete Program"
 msgstr "Deletar Programa"
 
 #: ../interface.c:124
-msgid "Edit Program parameters"
+msgid "Edit the Program's parameters"
 msgstr "Editar parâmetros do Programa"
 
 #: ../interface.c:126
-msgid "Refresh available Menu's list"
+msgid "Refresh Menu list"
 msgstr "Atualizar lista de Menus disponíveis"
 
 #: ../interface.c:128
@@ -655,7 +651,7 @@ msgid "Execute this Flow"
 msgstr "Executar esse Fluxo"
 
 #: ../interface.c:144
-msgid "Save Job information in a file"
+msgid "Save Job information to a file"
 msgstr "Salvar informação da Tarefa em um arquivo"
 
 #: ../interface.c:145
@@ -706,7 +702,7 @@ msgid "Configured"
 msgstr "Configurado"
 
 #: ../interface.c:163
-msgid "Change selected Programs status to configured"
+msgid "Change the selected Programs status to configured"
 msgstr "Mudar o estado do Programa selecionado para configurado"
 
 #: ../interface.c:164
@@ -714,7 +710,7 @@ msgid "Disabled"
 msgstr "Desabilitado"
 
 #: ../interface.c:165
-msgid "Change selected Programs status to disabled"
+msgid "Change the selected Programs status to disabled"
 msgstr "Mudar o estado do Programa selecionado para desabilitado"
 
 #: ../interface.c:166
@@ -722,7 +718,7 @@ msgid "Not configured"
 msgstr "Não configurado"
 
 #: ../interface.c:167
-msgid "Change selected Programs status to not configured"
+msgid "Change the selected Programs status to not configured"
 msgstr "Mudar o estado do Programa selecionado para não configurado"
 
 #.
@@ -745,30 +741,22 @@ msgid "Disconnect from server"
 msgstr "Desconectar do servidor"
 
 #: ../interface.c:178
-msgid "Auto connect"
-msgstr "Conectar automaticamente"
-
-#: ../interface.c:179
-msgid "Connect the server at startup"
-msgstr "Conectar o servidor ao iniciar"
-
-#: ../interface.c:180
 msgid "Remove"
 msgstr "Remover"
 
-#: ../interface.c:181
+#: ../interface.c:179
 msgid "Remove server from list"
 msgstr "Remover servidor"
 
-#: ../interface.c:182
+#: ../interface.c:180
 msgid "Stop server"
 msgstr "Parar servidor"
 
-#: ../interface.c:183
+#: ../interface.c:181
 msgid "Stop server from running"
 msgstr "Parar servidor"
 
-#: ../interface.c:211
+#: ../interface.c:209
 msgid ""
 "A plug-and-play environment for\n"
 "seismic processing tools"
@@ -776,57 +764,57 @@ msgstr ""
 "Um ambiente plug-and-play para\n"
 "ferramentas de processamento sísmico"
 
-#: ../interface.c:339
+#: ../interface.c:337
 msgid "Projects and Lines"
 msgstr "Projetos e Linhas"
 
-#: ../interface.c:372
+#: ../interface.c:370
 msgid "Save or Restore a version of the selected Flows"
 msgstr "Salva ou Restaura uma versão dos Fluxos selecionados"
 
-#: ../interface.c:388
+#: ../interface.c:386
 msgid "Flows"
 msgstr "Fluxos"
 
-#: ../interface.c:433
+#: ../interface.c:431
 msgid "Flow Editor"
 msgstr "Editor de Fluxo"
 
-#: ../interface.c:457
+#: ../interface.c:455
 msgid "Job Control"
 msgstr "Controle de Tarefas"
 
-#: ../interface.c:478
+#: ../interface.c:476
 msgid "_Actions"
 msgstr "_Ações"
 
-#: ../interface.c:493
+#: ../interface.c:491
 msgid "_Help"
 msgstr "A_juda"
 
 #: ../job.c:146
 #, c-format
-msgid "The title of job '%s' changed to '%s' according to the server."
+msgid "According to the server, the title of Job '%s' has changed to '%s'."
 msgstr "O título da Tarefa '%s' mudou para '%s' de acordo com o servidor."
 
 #: ../job.c:152
 #, c-format
-msgid "The hostname sent for job '%s' differs from this host ('%s')."
+msgid "The hostname sent for Job '%s' differs from this host ('%s')."
 msgstr "O nome do terminal que enviou a Tarefa '%s' difere deste ('%s')."
 
 #: ../job.c:164
 #, c-format
-msgid "The queue of job '%s' changed to '%s' when received from server."
+msgid "The server has changed the queue of Job '%s' to '%s'."
 msgstr "A fila da Tarefa '%s' foi mudada para '%s' pelo servidor."
 
 #: ../job.c:230
 #, c-format
-msgid "Can't close running job '%s'"
+msgid "Can not close the running Job '%s'"
 msgstr "Não foi possível fechar a tarefa '%s' em execução"
 
 #: ../job.c:232
 #, c-format
-msgid "Can't close queued job '%s'"
+msgid "Can not close the queued Job '%s'"
 msgstr "Não foi possível fechar a tarefa '%s' em espera"
 
 #: ../job.c:265 ../ui_flow_browse.c:329
@@ -835,16 +823,16 @@ msgstr "Saída:"
 
 #: ../job.c:294
 #, c-format
-msgid "Job waiting for server details"
+msgid "Job awaiting details from the server"
 msgstr "Tarefa aguardando detalhes do servidor"
 
 #: ../job.c:300 ../job.c:405
-msgid "unqueued"
+msgid "without queue"
 msgstr "sem fila"
 
 #: ../job.c:303
 #, c-format
-msgid "Job submitted at '%s' ('%s') by %s\n"
+msgid "Job submitted to '%s' ('%s') by %s\n"
 msgstr "Tarefa enviada para '%s' (%s) por %s.\n"
 
 #: ../job.c:310
@@ -861,14 +849,14 @@ msgstr "."
 
 #: ../job.c:408
 #, c-format
-msgid "Job submitted at '%s' ('%s') by %s.\n"
+msgid "Job submitted to '%s' ('%s') by %s.\n"
 msgstr "Tarefa enviada para '%s' (%s) por %s.\n"
 
 #: ../job.c:413
 #, c-format
 msgid ""
 "\n"
-"Waiting for more server details..."
+"Waiting for more details from the server..."
 msgstr ""
 "\n"
 "Esperando mais detalhes do servidor..."
@@ -909,93 +897,89 @@ msgid "After '%s'"
 msgstr "Depois de '%s'"
 
 #: ../line.c:43
-msgid "New line created."
+msgid "New Line created."
 msgstr "Nova Linha criada."
 
 #: ../line.c:82
 #, c-format
-msgid "New line created in project '%s'."
-msgstr "Nova linha criada no projeto '%s'."
+msgid "New Line created in project '%s'."
+msgstr "Nova Linha criada no projeto '%s'."
 
 #. log action
 #: ../line.c:112
 #, c-format
-msgid "Deleting child flow '%s'."
-msgstr "Apagando o fluxo '%s'."
+msgid "Deleting child Flow '%s'."
+msgstr "Apagando o Fluxo '%s'."
 
 #: ../line.c:126
 #, c-format
-msgid "Deleting line '%s'."
-msgstr "Apagando o fluxo '%s'."
+msgid "Deleting Line '%s'."
+msgstr "Apagando o Fluxo '%s'."
 
 #: ../line.c:128
 #, c-format
-msgid "Deleting line '%s' from project '%s'."
-msgstr "Apagando a linha '%s' do projeto '%s'."
+msgid "Deleting Line '%s' from project '%s'."
+msgstr "Apagando a Linha '%s' do projeto '%s'."
 
 #: ../line.c:215
 msgid "Flows loaded."
 msgstr "Fluxos carregados."
 
 #: ../main.c:40
-msgid "Return the users menu directory"
+msgid "Returns the users menu directory"
 msgstr "Retorna o diretório de menus do usuário"
 
 #: ../main.c:42
-msgid "Show GeBR version"
+msgid "Show GeBR's version"
 msgstr "Exibe a versão da GêBR"
 
-#: ../main.c:50
+#: ../main.c:55
 msgid " - GeBR, a seismic processing environment"
 msgstr "- GêBR, um ambiente de processamento sísmico"
 
-#: ../main.c:52
+#: ../main.c:57
 msgid ""
-"GeBR is a free-software which provides an environment to seismic\n"
-"data processing, designed to easily assemble and run processing\n"
-"flows, as well as to manage jobs."
+"GeBR is a free-software which provides an environment to process seismic\n"
+"data, designed to easily assemble and run processing\n"
+"flows, as well as manage jobs."
 msgstr ""
 "A GêBR é um ambiente livre de processamento de dados sísmicos,\n"
 "projetado para criar e executar fluxos de processamento facilmente,\n"
 "bem como para gerir tarefas."
 
-#: ../main.c:55
+#: ../main.c:60
 msgid "GeBR Project - http://www.gebrproject.com/"
 msgstr "Projeto GêBR - http://www.gebrproject.com/"
 
-#: ../main.c:59
+#: ../main.c:64
 #, c-format
 msgid "%s: syntax error\n"
 msgstr "%s: erro de sintaxe\n"
 
-#: ../main.c:60
+#: ../main.c:65
 #, c-format
 msgid "Try %s --help\n"
 msgstr "Tente %s --help\n"
 
-#: ../main.c:82
+#: ../main.c:87
 #, c-format
 msgid "ERROR: Could not find GeBR configuration file at %s.\n"
 msgstr ""
 "ERRO: Não foi possível encontrar o arquivo de configuração da GêBR em %s.\n"
 
-#: ../main.c:88
+#: ../main.c:93
 #, c-format
-msgid "ERROR: Local menu directory not defined in GeBR configuration.\n"
+msgid "ERROR: Local menu directory is not defined in GeBR's settings.\n"
 msgstr ""
-"ERROR: Diretório de menus local não definido nas configurações da GêBR.\n"
+"ERRO: Diretório de menus local não definido nas configurações da GêBR.\n"
 
 #: ../menu.c:274 ../menu.c:287
-msgid "Unable to write menus' index."
-msgstr "Não foi possível escrever o índice de menus."
+msgid "Unable to write Menus' index."
+msgstr "Não foi possível escrever o índice de Menus."
 
 #: ../project.c:41
-msgid "New project created."
+msgid "New Project created."
 msgstr "Novo projeto criado."
-
-#: ../project.c:56
-msgid "New project"
-msgstr "Novo projeto"
 
 #: ../project.c:75
 msgid "Selection error:"
@@ -1003,8 +987,9 @@ msgstr "Erro de seleção:"
 
 #: ../project.c:76
 msgid ""
-"Project selected is not empty.\n"
-"Also select all lines of it to delete."
+"The Project has Lines.\n"
+"These Lines should also be selected so as to be deleted along with the "
+"Project."
 msgstr ""
 "O Projeto selecionado possui Linhas.\n"
 "Elas também devem ser selecionadas para serem apagadas junto com o Projeto."
@@ -1066,75 +1051,75 @@ msgstr "Grupo do servidor"
 
 #. Line Path's
 #: ../ui_document.c:376
-msgid "Path"
+msgid "Path:"
 msgstr "Caminhos:"
 
-#: ../ui_document.c:541
+#: ../ui_document.c:534
 #, c-format
 msgid "Parameter dictionary for %s '%s'"
 msgstr "Dicionário de parâmetros para %s '%s'"
 
-#: ../ui_document.c:588
+#: ../ui_document.c:581
 msgid "Keyword"
 msgstr "Palavra-chave"
 
-#: ../ui_document.c:627 ../ui_document.c:1089
+#: ../ui_document.c:620 ../ui_document.c:1082
 msgid "Number"
 msgstr "Número"
 
-#: ../ui_document.c:629 ../ui_document.c:1087
+#: ../ui_document.c:622 ../ui_document.c:1080
 msgid "String"
 msgstr "Texto"
 
-#: ../ui_document.c:650
+#: ../ui_document.c:643
 msgid "Comment"
 msgstr "Comentário"
 
-#: ../ui_document.c:817
+#: ../ui_document.c:810
 msgid "Click 'New' to create a variable."
 msgstr "Clique em 'Nova' para criar uma variável."
 
-#: ../ui_document.c:827
+#: ../ui_document.c:820
 msgid "Please enter an unique variable name."
 msgstr "Por favor, digite um nome de variável único."
 
-#: ../ui_document.c:835
-msgid "Please enter a number."
+#: ../ui_document.c:828
+msgid "Please enter a number or expression."
 msgstr "Por favor, digite um número ou expressão."
 
-#: ../ui_document.c:839
+#: ../ui_document.c:832
 msgid "Please enter a text."
 msgstr "Por favor, insira um texto."
 
-#: ../ui_document.c:847
+#: ../ui_document.c:840
 msgid "Please enter a comment."
 msgstr "Por favor, digite um comentário."
 
-#: ../ui_document.c:918
+#: ../ui_document.c:911
 msgid "Do you really want to delete this variable?"
 msgstr "Tem certeza que deseja apagar esta variável?"
 
-#: ../ui_document.c:919
+#: ../ui_document.c:912
 msgid ""
-"One or more programs use this variable. Deleting it will invalidate those "
+"One or more programs use this variable, deleting it will invalidate those "
 "programs."
 msgstr ""
-"Um ou mais programas estão usando esta variável. Removê-la invalidará estes "
+"Um ou mais programas estão usando esta variável, removê-la invalidará estes "
 "programas."
 
-#: ../ui_document.c:1069
+#: ../ui_document.c:1062
 msgid "Click to select type for a new parameter"
 msgstr "Clique para escolher o tipo de um novo parâmetro"
 
-#: ../ui_document.c:1136
-msgid "Can't use reserved keyword iter."
+#: ../ui_document.c:1129
+msgid "Can not use reserved keyword iter."
 msgstr "A palavra-chave 'iter' não pode ser usada."
 
-#: ../ui_document.c:1141
+#: ../ui_document.c:1134
 msgid "This keyword is reserved."
 msgstr "Esta palavra-chave é reservada."
 
-#: ../ui_document.c:1146
+#: ../ui_document.c:1139
 msgid ""
 "Valid keywords are lower case characters from 'a' to 'z', numbers or "
 "underscore."
@@ -1142,56 +1127,57 @@ msgstr ""
 "Palavras-chaves válidas são compostas por letras minúsculas, números e "
 "sublinhado '_'."
 
-#: ../ui_document.c:1462
-msgid "Other parameter already uses this keyword. Please choose another."
+#: ../ui_document.c:1455
+msgid ""
+"There is a parameter which already uses this keyword. Please choose another."
 msgstr ""
 "Outro parâmetro já utiliza esta palavra-chave. Por favor escolha outra."
 
-#: ../ui_document.c:1502
+#: ../ui_document.c:1495
 msgid "<i>New</i>"
 msgstr "<i>Nova</i>"
 
-#: ../ui_document.c:1577 ../ui_project_line.c:258
+#: ../ui_document.c:1570 ../ui_project_line.c:258
 msgid "Project"
 msgstr "Projeto"
 
-#: ../ui_document.c:1579 ../ui_project_line.c:259
+#: ../ui_document.c:1572 ../ui_project_line.c:259
 msgid "Line"
 msgstr "Linha"
 
-#: ../ui_document.c:1581
+#: ../ui_document.c:1574
 msgid "Flow"
 msgstr "Fluxo"
 
-#: ../ui_document.c:1583
+#: ../ui_document.c:1576
 msgid "Unknown"
 msgstr "Desconhecido"
 
-#: ../ui_document.c:1583
+#: ../ui_document.c:1576
 msgid "unknown"
 msgstr "desconhecido"
 
-#: ../ui_document.c:1613
-msgid "Clean line and flow(s) path(s)?"
+#: ../ui_document.c:1606
+msgid "Clear Line and Flow(s) path(s)?"
 msgstr "Limpar Linha e caminho(s) de Fluxo(s)?"
 
-#: ../ui_document.c:1614
-msgid "Do you wish to clean all paths from this line and its respective flows?"
+#: ../ui_document.c:1607
+msgid "Do you wish to clear all paths from this Line and its respective Flows?"
 msgstr "Deseja apagar todos os caminhos desta Linha e seus respectivos Fluxos?"
 
-#: ../ui_document.c:1651
+#: ../ui_document.c:1644
 #, c-format
 msgid "Properties of %s '%s' updated."
 msgstr "Propriedades de %s '%s' atualizadas."
 
-#: ../ui_document.c:1654
+#: ../ui_document.c:1647
 #, c-format
 msgid "Renaming %s '%s' to '%s'."
 msgstr "Renomeando %s '%s' para '%s'."
 
 #: ../ui_flow.c:128
-msgid "This program needs to be configured"
-msgstr "Este programa precisa ser configurado"
+msgid "This program needs to be configure"
+msgstr "Este Programa precisa ser configurado"
 
 #: ../ui_flow.c:219
 msgid "Flow execution parameters"
@@ -1230,11 +1216,11 @@ msgid "Empty number"
 msgstr "Número vazio"
 
 #: ../ui_flow.c:339
-msgid "Please enter the number of processes to run the flow."
-msgstr "Por favor, forneça o número de processos para rodar o fluxo."
+msgid "Please enter the number of processes to run this Flow."
+msgstr "Por favor, forneça o número de processos para rodar o Fluxo."
 
 #: ../ui_flow.c:364
-msgid "No flow selected."
+msgid "No Flow selected."
 msgstr "Nenhum fluxo selecionado"
 
 #. just happen if the current server was removed
@@ -1279,20 +1265,20 @@ msgid "Last run:"
 msgstr "Última execução:"
 
 #: ../ui_flow_browse.c:307
-msgid "This flow has never had its state saved"
+msgid "This Flow has never had its state saved"
 msgstr "O estado deste fluxo nunca foi salvo"
 
 #: ../ui_flow_browse.c:310
-msgid "This flow had its state saved once"
+msgid "This Flow had its state saved once"
 msgstr "O estado deste fluxo foi salvo uma vez"
 
 #: ../ui_flow_browse.c:313
-msgid "This flow had its state saved twice"
+msgid "This Flow had its state saved twice"
 msgstr "O estado deste fluxo foi salvo duas vezes"
 
 #: ../ui_flow_browse.c:316
 #, c-format
-msgid "This flow had its state saved %ld times"
+msgid "This Flow had its state saved %ld times"
 msgstr "O estado deste fluxo foi salvo %ld vezes"
 
 # t I/O labels
@@ -1309,21 +1295,17 @@ msgstr "Entrada:"
 msgid "Error log:"
 msgstr "Log de erro:"
 
-#: ../ui_flow_browse.c:382
-msgid "No flow selected"
-msgstr "Nenhum fluxo selecionado"
-
 #: ../ui_flow_browse.c:602
 msgid "Backup current state?"
 msgstr "Fazer backup do estado atual?"
 
 #: ../ui_flow_browse.c:603
 msgid ""
-"You are about to revert to a previous state. The current flow will be lost "
-"after this action. Do you want to save the current flow state?"
+"You are about to revert to a previous state. The current Flow will be lost "
+"after this action. Do you want to save the current Flow's state?"
 msgstr ""
-"Você está prestes a reverter a um estado anterior. O fluxo atual será "
-"perdido depois dessa ação. Você quer salvar o estado do fluxo atual?"
+"Você está prestes a reverter a um estado anterior. O Fluxo atual será "
+"perdido depois dessa ação. Você quer salvar o estado do Fluxo atual?"
 
 #: ../ui_flow_browse.c:616
 #, c-format
@@ -1332,7 +1314,7 @@ msgstr "Não foi possível reverter para o estado '%s' ('%s')."
 
 #: ../ui_flow_browse.c:623
 #, c-format
-msgid "Reverted to state '%s' ('%s'), and merged report to current"
+msgid "Reverted to state '%s' ('%s'), and merged reports"
 msgstr "Revertido para o estado '%s' ('%s'), e unido o relatório com o atual"
 
 #: ../ui_flow_browse.c:625
@@ -1346,7 +1328,7 @@ msgstr "Remover esta revisão permanentemente?"
 
 #: ../ui_flow_browse.c:642
 msgid ""
-"If you choose to remove this revision, you will not be able to recover it "
+"If you choose to remove this revision you will not be able to recover it "
 "later."
 msgstr ""
 "Se você optar por remover esta revisão, você não conseguirá recuperá-la mais "
@@ -1392,7 +1374,7 @@ msgid "This file path is using an undefined variable"
 msgstr "Caminho de arquivo contém uma variável não definida"
 
 #: ../ui_flow_edition.c:341 ../ui_flow_edition.c:381 ../ui_flow_edition.c:427
-msgid "This file path have an invalid expression"
+msgid "This file path has an invalid expression"
 msgstr "Caminho de arquivo contém uma expressão inválida"
 
 #: ../ui_flow_edition.c:471
@@ -1413,7 +1395,7 @@ msgid "Select a menu instead of a category."
 msgstr "Selecione um menu ao invés de uma categoria."
 
 #: ../ui_flow_edition.c:969
-msgid "This flow already contains a loop"
+msgid "This Flow already contains a loop"
 msgstr "Fluxo já contém um Loop"
 
 #: ../ui_flow_edition.c:1081
@@ -1438,54 +1420,54 @@ msgstr "Expandir todos"
 msgid "Choose input file"
 msgstr "Escolha o arquivo de entrada"
 
-#: ../ui_flow_edition.c:1311
+#: ../ui_flow_edition.c:1312
 #, c-format
-msgid "Input file %s"
-msgstr "Arquivo de entrada %s"
+msgid "Input file '%s'"
+msgstr "Arquivo de entrada '%s'"
 
-#: ../ui_flow_edition.c:1322
+#: ../ui_flow_edition.c:1323
 msgid "Choose output file"
 msgstr "Escolha o arquivo de saída"
 
-#: ../ui_flow_edition.c:1331
+#: ../ui_flow_edition.c:1333
 #, c-format
-msgid "Append to output file %s"
-msgstr "Acrescentar ao arquivo de saída %s"
+msgid "Append to output file '%s'"
+msgstr "Acrescentar ao arquivo de saída '%s'"
 
-#: ../ui_flow_edition.c:1334
+#: ../ui_flow_edition.c:1336
 #, c-format
-msgid "Overwrite output file %s"
-msgstr "Sobrescrever arquivo de saída %s"
+msgid "Overwrite output file '%s'"
+msgstr "Sobrescrever arquivo de saída '%s'"
 
-#: ../ui_flow_edition.c:1345
+#: ../ui_flow_edition.c:1347
 msgid "Choose log file"
 msgstr "Escolha o arquivo de log"
 
-#: ../ui_flow_edition.c:1354
-#, c-format
-msgid "Append to log file %s"
-msgstr "Acrescentar ao arquivo de log %s"
-
 #: ../ui_flow_edition.c:1357
 #, c-format
-msgid "Overwrite log file %s"
-msgstr "Sobrescrever arquivo de log %s"
+msgid "Append to log file '%s'"
+msgstr "Acrescentar ao arquivo de log '%s'"
 
-#: ../ui_flow_edition.c:1375
+#: ../ui_flow_edition.c:1360
+#, c-format
+msgid "Overwrite log file '%s'"
+msgstr "Sobrescrever arquivo de log '%s'"
+
+#: ../ui_flow_edition.c:1378
 msgid "This program has an invalid expression"
 msgstr "Programa contém expressão inválida"
 
-#: ../ui_flow_edition.c:1378
+#: ../ui_flow_edition.c:1381
 msgid "A required parameter is unfilled"
 msgstr "Parâmetro obrigatório não preenchido"
 
-#: ../ui_flow_edition.c:1382
+#: ../ui_flow_edition.c:1385
 msgid "An undefined variable is being used"
 msgstr "Uma variável não definida está sendo usada"
 
-#: ../ui_flow_edition.c:1387
-msgid "A not well defined variable is being used"
-msgstr "Uma variável incorretamente definida está sendo usada"
+#: ../ui_flow_edition.c:1390
+msgid "A badly defined variable is being used"
+msgstr "Uma variável mal definida está sendo usada"
 
 #: ../ui_help.c:69
 msgid "Save the current document"
@@ -1508,7 +1490,7 @@ msgid "_Include user's commentary"
 msgstr "Incluir comentários do usuário"
 
 #: ../ui_help.c:85
-msgid "Include _flows report"
+msgid "Include the _Flow's report"
 msgstr "Incluir relatório do fluxo"
 
 #: ../ui_help.c:91
@@ -1516,7 +1498,7 @@ msgid "No table at all"
 msgstr "Nenhuma tabela"
 
 #: ../ui_help.c:93
-msgid "Just parameters which differ from default"
+msgid "Show only the parameters which differ from the default values"
 msgstr "Mostrar apenas os parâmetros diferentes do padrão"
 
 #: ../ui_help.c:95
@@ -1529,7 +1511,7 @@ msgstr "Todos os parâmetros"
 
 #: ../ui_help.c:169
 #, c-format
-msgid "Comments of the %s \"%s\""
+msgid "Comments from the %s \"%s\""
 msgstr "Comentários do(a) %s \"%s\""
 
 #: ../ui_help.c:171 ../ui_help.c:242
@@ -1581,76 +1563,76 @@ msgstr "Não foi possível escrever arquivo."
 
 #: ../ui_job_control.c:206
 #, c-format
-msgid "Saved job information at '%s'."
-msgstr "Salvou informação da tarefa em '%s'."
+msgid "Saved Job information at '%s'."
+msgstr "Salvou informação da Tarefa em '%s'."
 
 #: ../ui_job_control.c:243 ../ui_job_control.c:249
-msgid "Close job "
-msgstr "Limpar tarefa "
+msgid "Close Job"
+msgstr "Limpar Tarefa "
 
 #: ../ui_job_control.c:243
 #, c-format
-msgid "Are you sure you want to close job '%s'?"
-msgstr "Tem certeza que quer limpar a tarefa '%s'?"
+msgid "Are you sure you want to clear Job '%s'?"
+msgstr "Tem certeza que quer limpar a Tarefa '%s'?"
 
 #: ../ui_job_control.c:249
-msgid "Are you sure you want to close the selected jobs?"
-msgstr "Tem certeza que quer limpar as tarefas selecionadas?"
+msgid "Are you sure you want to clear the selected Jobs?"
+msgstr "Tem certeza que quer limpar as Tarefas selecionadas?"
 
 #: ../ui_job_control.c:262
-msgid "Clear all jobs"
-msgstr "Limpar todas as tarefas"
+msgid "Clear all Jobs"
+msgstr "Limpar todas as Tarefas"
 
 #: ../ui_job_control.c:263
-msgid "Are you sure you want to clear all jobs from all servers?"
-msgstr "Tem certeza que quer limpar todas as tarefas de todos os servidores?"
+msgid "Are you sure you want to clear all Jobs from all servers?"
+msgstr "Tem certeza que quer limpar todas as Tarefas de todos os servidores?"
 
 #: ../ui_job_control.c:311
-msgid "You are not connected to job's server."
-msgstr "Você não está conectado ao servidor da tarefa."
+msgid "You are not connected to Job's server."
+msgstr "Você não está conectado ao servidor da Tarefa."
 
 #: ../ui_job_control.c:317 ../ui_job_control.c:324
-msgid "Kill job"
-msgstr "Matar a tarefa"
+msgid "Kill Job"
+msgstr "Matar a Tarefa"
 
 #: ../ui_job_control.c:317
 #, c-format
-msgid "Are you sure you want to kill job '%s'?"
-msgstr "Tem certeza que quer matar a tarefa '%s'?"
+msgid "Are you sure you want to kill Job '%s'?"
+msgstr "Tem certeza que quer matar a Tarefa '%s'?"
 
 #: ../ui_job_control.c:324
-msgid "Are you sure you want to kill the selected jobs?"
-msgstr "Tem certeza que quer apagar matar as tarefas selecionadas?"
+msgid "Are you sure you want to kill the selected Jobs?"
+msgstr "Tem certeza que quer apagar matar as Tarefas selecionadas?"
 
 #: ../ui_job_control.c:329
-msgid "Asking server to kill job."
-msgstr "Pedindo para o servidor matar a tarefa."
+msgid "Asking server to kill Job."
+msgstr "Pedindo para o servidor matar a Tarefa."
 
 #: ../ui_job_control.c:331
 #, c-format
-msgid "Asking server '%s' to kill job '%s'."
-msgstr "Pedindo para o servidor '%s' matar a tarefa '%s'."
+msgid "Asking server '%s' to kill Job '%s'."
+msgstr "Pedindo para o servidor '%s' matar a Tarefa '%s'."
 
 #: ../ui_job_control.c:334
 #, c-format
-msgid "Asking local server to kill job '%s'."
-msgstr "Pedindo para o servidor local matar a tarefa '%s'."
+msgid "Asking local server to kill Job '%s'."
+msgstr "Pedindo para o servidor local matar a Tarefa '%s'."
 
 #: ../ui_job_control.c:350
 msgid "Nothing selected."
 msgstr "Nada selecionado."
 
 #: ../ui_job_control.c:353
-msgid "No job selected."
-msgstr "Nenhuma tarefa selecionada."
+msgid "No Job selected."
+msgstr "Nenhuma Tarefa selecionada."
 
 #: ../ui_job_control.c:356
 msgid "No queue selected."
 msgstr "Nenhuma fila selecionada."
 
 #: ../ui_job_control.c:370
-msgid "Please select a job."
-msgstr "Por favor, selecione uma tarefa."
+msgid "Please select a Job."
+msgstr "Por favor, selecione uma Tarefa."
 
 #: ../ui_job_control.c:374
 msgid "Please select a queue."
@@ -1735,11 +1717,11 @@ msgstr "Seu endereço de e-mail"
 #. * User's menus directory
 #.
 #: ../ui_preferences.c:124 ../ui_preferences.c:129
-msgid "User's menus directory"
+msgid "User's menu directory"
 msgstr "Diretório de menus do usuário"
 
 #: ../ui_preferences.c:131
-msgid "Path to look for private user's menus"
+msgid "Path to look for user's private menus"
 msgstr "Caminho para procurar menus particulares do usuário"
 
 #.
@@ -1758,7 +1740,7 @@ msgid "Custom"
 msgstr "Alternativo"
 
 #: ../ui_preferences.c:159
-msgid "An HTML capable editor to edit helps and reports"
+msgid "An HTML editor capable of editing help files and reports"
 msgstr "Um editor HTML capaz de editar arquivos de ajuda e relatórios"
 
 #. Load log
@@ -1772,18 +1754,18 @@ msgstr "Índice"
 
 #: ../ui_project_line.c:274
 #, c-format
-msgid "This project has 1 line"
-msgstr "Este projeto tem 1 linha"
+msgid "This project has 1 Line"
+msgstr "Este projeto tem 1 Linha"
 
 #: ../ui_project_line.c:275
 #, c-format
-msgid "This project has %d lines"
-msgstr "Este projeto tem %d linhas"
+msgid "This project has %d Lines"
+msgstr "Este projeto tem %d Linhas"
 
 #: ../ui_project_line.c:276
 #, c-format
-msgid "This project has no line"
-msgstr "Este projeto não tem linhas"
+msgid "This project has no Line"
+msgstr "Este projeto não tem Linhas"
 
 # t I/O labels
 #: ../ui_project_line.c:299
@@ -1795,24 +1777,24 @@ msgid "Paths:"
 msgstr "Caminhos:"
 
 #: ../ui_project_line.c:366
-msgid "Please select a line."
-msgstr "Por favor, selecione uma linha."
+msgid "Please select a Line."
+msgstr "Por favor, selecione uma Linha."
 
 #: ../ui_project_line.c:367
 msgid "Please select a project."
 msgstr "Por favor, selecione um projeto."
 
-#: ../ui_project_line.c:383 ../ui_project_line.c:680
-msgid "Please select a project or a line."
-msgstr "Por favor, selecione um projeto ou linha."
+#: ../ui_project_line.c:383
+msgid "Please select a project or a Line."
+msgstr "Por favor, selecione um projeto ou Linha."
 
 #: ../ui_project_line.c:441
-msgid "Choose project/line to open"
-msgstr "Escolha o projeto ou linha para abrir"
+msgid "Choose Project/Line to open"
+msgstr "Escolha o Projeto ou Linha para abrir"
 
 #: ../ui_project_line.c:448
-msgid "Project or line (*.prjz *.lnez)"
-msgstr "Projeto ou linha (*.prjz *.lnez)"
+msgid "Project or Line (*.prjz *.lnez)"
+msgstr "Projeto ou Linha (*.prjz *.lnez)"
 
 #: ../ui_project_line.c:465
 msgid "Unrecognized file type."
@@ -1838,8 +1820,8 @@ msgstr "Não foi possível criar o diretório."
 #: ../ui_project_line.c:629
 #, c-format
 msgid ""
-"The directory <i>%s</i> could not be created. Certify you have the rights to "
-"perform this operation."
+"The directory <i>%s</i> could not be created. Certify you have the "
+"permission to perform this operation."
 msgstr ""
 "O diretório <i>%s<i> não pôde ser criado. Certifique-se se há permissão de "
 "acesso para a execução dessa operação."
@@ -1851,6 +1833,10 @@ msgstr "Importação bem-sucedida."
 #: ../ui_project_line.c:648
 msgid "Failed to import."
 msgstr "Falha ao importar."
+
+#: ../ui_project_line.c:680
+msgid "Please select a Project or a Line."
+msgstr "Por favor, selecione um projeto ou Linha."
 
 #: ../ui_project_line.c:727
 msgid "Project (*.prjz)"
@@ -1865,8 +1851,8 @@ msgid "Line (*.lnez)"
 msgstr "Linha (*.lnez)"
 
 #: ../ui_project_line.c:735
-msgid "Make this line user-independent"
-msgstr "Tornar esta linha independente de usuário"
+msgid "Make this Line user-independent"
+msgstr "Tornar esta Linha independente de usuário"
 
 #: ../ui_project_line.c:856
 msgid "Could not export."
@@ -1887,7 +1873,7 @@ msgstr "vazio"
 
 #: ../ui_project_line.c:937
 #, c-format
-msgid "including %ld flow(s)"
+msgid "including %ld Flow(s)"
 msgstr "incluindo %ld Fluxos"
 
 #: ../ui_project_line.c:946
@@ -1895,7 +1881,7 @@ msgstr "incluindo %ld Fluxos"
 msgid "Line '%s' (%s).\n"
 msgstr "Linha '%s' (%s).\n"
 
-#: ../ui_project_line.c:960
+#: ../ui_project_line.c:960 ../ui_server.c:1154
 msgid ""
 "The following documents are about to be deleted.\n"
 "This operation can't be undone! Are you sure?\n"
@@ -1920,8 +1906,8 @@ msgid "Confirm deletion"
 msgstr "Confirme remoção"
 
 #: ../ui_project_line.c:1392
-msgid "Line composed by the flow(s):"
-msgstr "Linha composta pelo(s) fluxo(s):"
+msgid "Line composed by the Flow(s):"
+msgstr "Linha composta pelo(s) Fluxo(s):"
 
 #. Comment for translators: HTML header for detailed report
 #: ../ui_project_line.c:1412
@@ -1941,11 +1927,11 @@ msgstr "Autoconectar desativado"
 msgid "Confirm group deletion"
 msgstr "Confirme remoção do grupo"
 
-#: ../ui_server.c:197 ../ui_server.c:1154
+#: ../ui_server.c:197
 msgid ""
 "The following groups are about to be deleted.\n"
-"There might be lines that make reference to them!\n"
-" Are you sure?\n"
+"There might be Lines that use them!\n"
+"Are you sure?\n"
 msgstr ""
 "Os seguintes grupos serão apagados.\n"
 "Podem haver Linhas que os utilizem! Confirma mesmo assim?\n"
@@ -2003,6 +1989,12 @@ msgid "Enter group names separated by comma and press ENTER to confirm."
 msgstr ""
 "Digite nomes de grupos separados por vírgula e pressione ENTER para "
 "confirmar."
+
+#~ msgid "Auto connect"
+#~ msgstr "Conectar automaticamente"
+
+#~ msgid "Connect to the server at startup"
+#~ msgstr "Conectar o servidor ao iniciar"
 
 #~ msgid "serveraddress command [args]}"
 #~ msgstr "serveraddress comando [parametros]"

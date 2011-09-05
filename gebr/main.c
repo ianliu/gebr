@@ -37,9 +37,9 @@ int main(int argc, char **argv, char **env)
 	gboolean show_sys_dir = FALSE;
 	GOptionEntry entries[] = {
 		{"query-system-menu", 's', 0, G_OPTION_ARG_NONE, &show_sys_dir,
-		 _("Return the users menu directory"), NULL},
+		 _("Returns the users menu directory"), NULL},
 		{"version", 'V', 0, G_OPTION_ARG_NONE, &show_version,
-		 _("Show GeBR version"), NULL},
+		 _("Show GeBR's version"), NULL},
 		{NULL}
 	};
 	GError *error = NULL;
@@ -54,9 +54,9 @@ int main(int argc, char **argv, char **env)
 
 	context = g_option_context_new(_(" - GeBR, a seismic processing environment"));
 	g_option_context_set_summary(context,
-				     _("GeBR is a free-software which provides an environment to seismic\n"
-				       "data processing, designed to easily assemble and run processing\n"
-				       "flows, as well as to manage jobs."));
+				     _("GeBR is a free-software which provides an environment to process seismic\n"
+				       "data, designed to easily assemble and run processing\n"
+				       "flows, as well as manage jobs."));
 	g_option_context_set_description(context, _("GeBR Project - http://www.gebrproject.com/"));
 	g_option_context_add_main_entries(context, entries, NULL);
 	g_option_context_set_ignore_unknown_options(context, FALSE);
@@ -90,7 +90,7 @@ int main(int argc, char **argv, char **env)
 
 		usermenus = g_key_file_get_string(file, "general", "usermenus", &error);
 		if (!usermenus) {
-			fprintf(stderr, _("ERROR: Local menu directory not defined in GeBR configuration.\n"));
+			fprintf(stderr, _("ERROR: Local menu directory is not defined in GeBR's settings.\n"));
 			return 1;
 		}
 

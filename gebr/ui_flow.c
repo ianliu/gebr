@@ -125,7 +125,7 @@ void flow_add_program_sequence_to_view(GebrGeoXmlSequence * program,
 		gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &iter,
 				   FSEQ_TITLE_COLUMN, gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(program)),
 				   FSEQ_ICON_COLUMN, icon,
-				   FSEQ_TOOLTIP, _("This program needs to be configured"),
+				   FSEQ_TOOLTIP, _("This program needs to be configure"),
 				   FSEQ_GEBR_GEOXML_POINTER, program,
 				   FSEQ_ELLIPSIZE, PANGO_ELLIPSIZE_NONE,
 				   FSEQ_EDITABLE, FALSE,
@@ -336,7 +336,7 @@ static gboolean flow_io_run_dialog(GebrCommServerRunConfig *config, GebrServer *
 			// TODO: Better validation for the number of processes...
 			if (strlen(config->num_processes) == 0) {
 				gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
-							_("Empty number"), _("Please enter the number of processes to run the flow."));
+							_("Empty number"), _("Please enter the number of processes to run this Flow."));
 				g_free(config->num_processes);
 				config->num_processes = NULL;
 			}
@@ -361,7 +361,7 @@ static void flow_io_run(GebrGeoXmlFlow *flow, gboolean parallel, gboolean single
 {
 	/* FLOW: get selected */
 	if (!flow_browse_get_selected(NULL, FALSE)) {
-		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No flow selected."));
+		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No Flow selected."));
 		return;
 	}
 	/* SERVER on combox: get selected */

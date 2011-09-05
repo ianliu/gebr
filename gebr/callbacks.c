@@ -177,8 +177,8 @@ static gboolean flows_check_before_execution(void)
 		case GEBR_GEOXML_FLOW_ERROR_NO_INPUT:
 			gebr_gui_message_dialog (GTK_MESSAGE_ERROR,
 						 GTK_BUTTONS_OK,
-						 _("Broken flow"),
-						 _("Flow \"%s\" is broken before program \"%s\" (no input).\n"),
+						 _("Broken Flow"),
+						 _("Flow \"%s\" broke before Program \"%s\" (no input).\n"),
 						 flow_title, program_title);
 			g_free(flow_title);	
 			g_free(program_title);	
@@ -187,8 +187,8 @@ static gboolean flows_check_before_execution(void)
 		case GEBR_GEOXML_FLOW_ERROR_NO_OUTPUT:
 			gebr_gui_message_dialog (GTK_MESSAGE_ERROR,
 						 GTK_BUTTONS_OK,
-						 _("Broken flow"),
-						 _("Flow \"%s\" is broken before program \"%s\" (unexpected output).\n"),
+						 _("Broken Flow"),
+						 _("Flow \"%s\" broke before Program \"%s\" (unexpected output).\n"),
 						 flow_title, program_title);
 			g_free(flow_title);	
 			g_free(program_title);	
@@ -198,7 +198,7 @@ static gboolean flows_check_before_execution(void)
 		case GEBR_GEOXML_FLOW_ERROR_NO_INFILE:
 			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
 						_("Warning"),
-						_("No input file specified for program \"%s\" at flow \"%s\""),
+						_("No input file specified for the program \"%s\" in Flow \"%s\""),
 						 program_title, flow_title);
 			g_free(flow_title);	
 			g_free(program_title);	
@@ -207,7 +207,7 @@ static gboolean flows_check_before_execution(void)
 		case GEBR_GEOXML_FLOW_ERROR_INVALID_INFILE:
 			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
 						_("Warning"),
-						_("Invalid input file specified for program \"%s\" at flow \"%s\""),
+						_("Invalid input file specified for the program \"%s\" Flow \"%s\""),
 						 program_title, flow_title);
 			g_free(flow_title);	
 			g_free(program_title);	
@@ -216,7 +216,7 @@ static gboolean flows_check_before_execution(void)
 		case GEBR_GEOXML_FLOW_ERROR_INVALID_OUTFILE:
 			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
 						_("Warning"),
-						_("Invalid output file specified for program \"%s\" at flow \"%s\""),
+						_("Invalid output file specified for the program \"%s\" in Flow \"%s\""),
 						 program_title, flow_title);
 			g_free(flow_title);	
 			g_free(program_title);	
@@ -225,7 +225,7 @@ static gboolean flows_check_before_execution(void)
 		case GEBR_GEOXML_FLOW_ERROR_INVALID_ERRORFILE:
 			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
 						_("Warning"),
-						_("Invalid error file specified for program \"%s\" at flow \"%s\""),
+						_("Invalid error file specified for the program \"%s\" in Flow \"%s\""),
 						 program_title, flow_title);
 			g_free(flow_title);	
 			g_free(program_title);	
@@ -233,7 +233,7 @@ static gboolean flows_check_before_execution(void)
 
 		case GEBR_GEOXML_FLOW_ERROR_NO_VALID_PROGRAMS:
 			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
-						_("Warning"),_("No configured or enabled programs found for flow \"%s\""),
+						_("Warning"),_("No configured or enabled programs found for Flow \"%s\""),
 						flow_title);
 			g_free(flow_title);	
 			return FALSE;
@@ -374,8 +374,8 @@ void on_flow_component_execute_single()
 	case GEBR_GEOXML_FLOW_ERROR_NO_INPUT:
 		gebr_gui_message_dialog (GTK_MESSAGE_ERROR,
 					 GTK_BUTTONS_OK,
-					 _("Broken flow"),
-					 _("Broken flow before \"%s\" (no input).\n"),
+					 _("Broken Flow"),
+					 _("The Flow broke before \"%s\" (no input).\n"),
 					 program_title);
 		g_free(program_title);	
 		return;
@@ -383,8 +383,8 @@ void on_flow_component_execute_single()
 	case GEBR_GEOXML_FLOW_ERROR_NO_OUTPUT:
 		gebr_gui_message_dialog (GTK_MESSAGE_ERROR,
 					 GTK_BUTTONS_OK,
-					 _("Broken flow"),
-					 _("Broken flow before \"%s\" (unexpected output).\n"),
+					 _("Broken Flow"),
+					 _("The Flow broke before \"%s\" (unexpected output).\n"),
 					 program_title);
 		g_free(program_title);	
 		return;
@@ -393,7 +393,7 @@ void on_flow_component_execute_single()
 	case GEBR_GEOXML_FLOW_ERROR_NO_INFILE:
 		gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
 					_("Warning"),
-					_("No input file specified for program \"%s\""),
+					_("No input file specified for the program \"%s\""),
 					program_title);
 		g_free(program_title);	
 		return;
@@ -401,7 +401,7 @@ void on_flow_component_execute_single()
 	case GEBR_GEOXML_FLOW_ERROR_INVALID_INFILE:
 		gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
 					_("Warning"),
-					_("Invalid input file specified for program \"%s\""),
+					_("Invalid input file specified for the program \"%s\""),
 					program_title);
 		g_free(program_title);	
 		return;
@@ -409,7 +409,7 @@ void on_flow_component_execute_single()
 	case GEBR_GEOXML_FLOW_ERROR_INVALID_ERRORFILE:
 		gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
 					_("Warning"),
-					_("Invalid error file specified for program \"%s\""),
+					_("Invalid error file specified for the program \"%s\""),
 					program_title);
 		g_free(program_title);	
 		return;
@@ -417,7 +417,7 @@ void on_flow_component_execute_single()
 	case GEBR_GEOXML_FLOW_ERROR_INVALID_OUTFILE:
 		gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
 					_("Warning"),
-					_("Invalid output file file specified for program \"%s\""),
+					_("Invalid output file specified for the program \"%s\""),
 					program_title);
 		g_free(program_title);	
 		return;
@@ -429,7 +429,7 @@ void on_flow_component_execute_single()
 		return;
 	case GEBR_GEOXML_FLOW_ERROR_LOOP_ONLY:
 		gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
-					_("Warning"),_("Your flow has only an empty loop"));
+					_("Warning"),_("Your Flow has only an empty loop"));
 		return;
 	default:
 		return;

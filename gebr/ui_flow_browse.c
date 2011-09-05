@@ -218,8 +218,8 @@ GebrUiFlowBrowse *flow_browse_setup_ui(GtkWidget * revisions_menu)
 	GtkWidget * hbox;
 	hbox = gtk_hbox_new(FALSE, 0);
 
-	ui_flow_browse->info.help_view = gtk_button_new_with_label(_("View report"));
-	ui_flow_browse->info.help_edit = gtk_button_new_with_label(_("Edit comments"));
+	ui_flow_browse->info.help_view = gtk_button_new_with_label(_("View Report"));
+	ui_flow_browse->info.help_edit = gtk_button_new_with_label(_("Edit Comments"));
 
 	gtk_box_pack_start(GTK_BOX(hbox), ui_flow_browse->info.help_view, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), ui_flow_browse->info.help_edit, TRUE, TRUE, 0);
@@ -304,16 +304,16 @@ void flow_browse_info_update(void)
 
                 switch (nrevision){
                 case 0:
-                        str_tmp = g_strdup( _("This flow has never had its state saved"));
+                        str_tmp = g_strdup( _("This Flow has never had its state saved"));
                         break;
                 case 1:
-                        str_tmp = g_strdup(_("This flow had its state saved once"));
+                        str_tmp = g_strdup(_("This Flow had its state saved once"));
                         break;
                 case 2:
-                        str_tmp = g_strdup(_("This flow had its state saved twice"));
+                        str_tmp = g_strdup(_("This Flow had its state saved twice"));
                         break;
                 default:
-                        str_tmp = g_strdup_printf(_("This flow had its state saved %ld times"), nrevision);
+                        str_tmp = g_strdup_printf(_("This Flow had its state saved %ld times"), nrevision);
                 }
 		gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.rev_num), str_tmp);
 		g_free(str_tmp);
@@ -379,7 +379,7 @@ gboolean flow_browse_get_selected(GtkTreeIter * iter, gboolean warn_unselected)
 {
 	if (!gebr_gui_gtk_tree_view_get_selected(GTK_TREE_VIEW(gebr.ui_flow_browse->view), iter)) {
 		if (warn_unselected)
-			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No flow selected"));
+			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No Flow selected"));
 		return FALSE;
 	}
 
@@ -601,8 +601,8 @@ static void flow_browse_on_revision_revert_activate(GtkMenuItem * menu_item, Geb
 {
 	if (gebr_gui_confirm_action_dialog(_("Backup current state?"),
 					   _("You are about to revert to a previous state. "
-					     "The current flow will be lost after this action. "
-					     "Do you want to save the current flow state?")) && !flow_revision_save())
+					     "The current Flow will be lost after this action. "
+					     "Do you want to save the current Flow's state?")) && !flow_revision_save())
 		return;
 
 	gchar *date;
@@ -620,7 +620,7 @@ static void flow_browse_on_revision_revert_activate(GtkMenuItem * menu_item, Geb
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
 
 	if (report_merged)
-		gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Reverted to state '%s' ('%s'), and merged report to current"), comment, date);
+		gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Reverted to state '%s' ('%s'), and merged reports"), comment, date);
 	else
 		gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Reverted to state '%s' ('%s')."), comment, date);
 
@@ -639,7 +639,7 @@ static void flow_browse_on_revision_delete_activate(GtkWidget * widget, GebrGeoX
 	gboolean response;
 	gpointer menu_item;
 	response = gebr_gui_confirm_action_dialog(_("Remove this revision permanently?"),
-						  _("If you choose to remove this revision, "
+						  _("If you choose to remove this revision "
 						    "you will not be able to recover it later."));
 	if (response) {
 		gebr_geoxml_sequence_remove(GEBR_GEOXML_SEQUENCE(revision));

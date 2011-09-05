@@ -203,7 +203,7 @@ void job_control_save(void)
 		text = g_strdup_printf("%s\n\n", text);
 		fputs(text, fp);
 
-		gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Saved job information at '%s'."), path);
+		gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Saved Job information at '%s'."), path);
 		
 		g_free(text);
 	}
@@ -240,13 +240,13 @@ void job_control_close(void)
 		if (selected_rows == 1)
 		{
 			if (gebr_gui_confirm_action_dialog
-			    (_("Close job "), _("Are you sure you want to close job '%s'?"), job->parent.title->str) == FALSE)
+			    (_("Close Job"), _("Are you sure you want to clear Job '%s'?"), job->parent.title->str) == FALSE)
 				return;
 		}
 		else if (!asked)
 		{
 			if (gebr_gui_confirm_action_dialog
-			    (_("Close job "), _("Are you sure you want to close the selected jobs?")) == FALSE)
+			    (_("Close Job"), _("Are you sure you want to clear the selected Jobs?")) == FALSE)
 				return;
 
 			asked = TRUE;
@@ -259,8 +259,8 @@ void job_control_close(void)
 
 void job_control_clear(gboolean force)
 {
-	if (!force && !gebr_gui_confirm_action_dialog(_("Clear all jobs"),
-						      _("Are you sure you want to clear all jobs from all servers?")))
+	if (!force && !gebr_gui_confirm_action_dialog(_("Clear all Jobs"),
+						      _("Are you sure you want to clear all Jobs from all servers?")))
 		return;
 
 	gboolean job_control_clear_foreach(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter)
@@ -308,30 +308,30 @@ void job_control_stop(void)
 		}
 */
 		if (gebr_comm_server_is_logged(job->server->comm) == FALSE) {
-			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("You are not connected to job's server."));
+			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("You are not connected to Job's server."));
 			continue;
 		}
 		
 		if (selected_rows == 1)
 		{
-			if (gebr_gui_confirm_action_dialog(_("Kill job"), _("Are you sure you want to kill job '%s'?"),
+			if (gebr_gui_confirm_action_dialog(_("Kill Job"), _("Are you sure you want to kill Job '%s'?"),
 							   job->parent.title->str)
 			    == FALSE)
 				return;
 		}
 		else if (!asked)
 		{
-			if (gebr_gui_confirm_action_dialog(_("Kill job"), _("Are you sure you want to kill the selected jobs?"))
+			if (gebr_gui_confirm_action_dialog(_("Kill Job"), _("Are you sure you want to kill the selected Jobs?"))
 			    == FALSE)
 				return;
 			asked = TRUE;
 		}
-		gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Asking server to kill job."));
+		gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Asking server to kill Job."));
 		if (gebr_comm_server_is_local(job->server->comm) == FALSE) 
-			gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Asking server '%s' to kill job '%s'."),
+			gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Asking server '%s' to kill Job '%s'."),
 				     job->server->comm->address->str, job->parent.title->str);
 		else 
-			gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Asking local server to kill job '%s'."),
+			gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Asking local server to kill Job '%s'."),
 				     job->parent.title->str);
 			
 		gebr_comm_protocol_socket_oldmsg_send(job->server->comm->socket, FALSE,
@@ -350,7 +350,7 @@ gboolean job_control_get_selected(GtkTreeIter * iter, enum JobControlSelectionTy
 			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Nothing selected."));
 			break;
 		case JobControlJobSelection:
-			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No job selected."));
+			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No Job selected."));
 			break;
 		case JobControlQueueSelection:
 			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No queue selected."));
@@ -367,7 +367,7 @@ gboolean job_control_get_selected(GtkTreeIter * iter, enum JobControlSelectionTy
 	is_job = gtk_tree_path_get_depth(path) == 2 ? TRUE : FALSE;
 	gtk_tree_path_free(path);
 	if (check_type == JobControlJobSelection && !is_job) {
-		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Please select a job."));
+		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Please select a Job."));
 		return FALSE;
 	}
 	if (check_type == JobControlQueueSelection && is_job) {

@@ -121,14 +121,14 @@ struct ui_preferences *preferences_setup_ui(gboolean first_run)
 	/*
 	 * User's menus directory
 	 */
-	label = gtk_label_new(_("User's menus directory"));
+	label = gtk_label_new(_("User's menu directory"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, row, row + 1, (GtkAttachOptions)GTK_FILL,
 			 (GtkAttachOptions)GTK_FILL, 3, 3);
 	eventbox = gtk_event_box_new();
-	ui_preferences->usermenus = gtk_file_chooser_button_new(_("User's menus directory"), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
+	ui_preferences->usermenus = gtk_file_chooser_button_new(_("User's menu directory"), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
 	gtk_container_add(GTK_CONTAINER(eventbox), ui_preferences->usermenus);
-	gebr_gui_gtk_widget_set_tooltip(eventbox, _("Path to look for private user's menus"));
+	gebr_gui_gtk_widget_set_tooltip(eventbox, _("Path to look for user's private menus"));
 	gtk_table_attach(GTK_TABLE(table), eventbox, 1, 2, row, row + 1, (GtkAttachOptions)GTK_FILL,
 			 (GtkAttachOptions)GTK_FILL, 3, 3), ++row;
 
@@ -156,7 +156,7 @@ struct ui_preferences *preferences_setup_ui(gboolean first_run)
 	ui_preferences->editor = gtk_entry_new();
 	gtk_widget_set_sensitive(ui_preferences->editor, FALSE);
 	gtk_entry_set_activates_default(GTK_ENTRY(ui_preferences->editor), TRUE);
-	gebr_gui_gtk_widget_set_tooltip(ui_preferences->editor, _("An HTML capable editor to edit helps and reports"));
+	gebr_gui_gtk_widget_set_tooltip(ui_preferences->editor, _("An HTML editor capable of editing help files and reports"));
 
 	g_signal_connect(ui_preferences->user_radio_button, "toggled", G_CALLBACK(on_custom_radio_toggled), ui_preferences->editor);
 

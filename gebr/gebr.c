@@ -77,8 +77,8 @@ void gebr_init(void)
 	/* check/create config dir */
 	if (gebr_create_config_dirs() == FALSE) {
 		fprintf(stderr, _("Unable to create GêBR configuration files.\n"
-				  "Perhaps you do not have write permission to your own\n"
-				  "home directory or there is no space left on device.\n"));
+				  "You might not have write permission in your own\n"
+				  "home directory or there is not enough space left on the device.\n"));
 		exit(-1);
 	}
 
@@ -182,7 +182,7 @@ gboolean gebr_quit(gboolean save_config)
 	g_slist_foreach(gebr.tmpfiles, (GFunc) g_free, NULL);
 	g_slist_free(gebr.tmpfiles);
 
-	gebr_message(GEBR_LOG_END, TRUE, TRUE, _("GêBR finalizing..."));
+	gebr_message(GEBR_LOG_END, TRUE, TRUE, _("Finalizing GêBR..."));
 	gebr_log_close(gebr.log);
 
 	/*
@@ -344,7 +344,7 @@ gint gebr_config_load()
 
 	/* LOG */
 	gebr_log_load();
-	gebr_message(GEBR_LOG_START, TRUE, TRUE, _("GêBR initiating..."));
+	gebr_message(GEBR_LOG_START, TRUE, TRUE, _("Initiating GêBR..."));
 
 	/* load from file (we still support deprecated gengetopt format) */
 	GError *error = NULL;
@@ -762,7 +762,7 @@ static void gebr_migrate_data_dir(void)
 		dialog = gtk_message_dialog_new(GTK_WINDOW(gebr.window),
 						(GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
 						GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
-						_("Cannot copy data files to GêBR's directory. Please check your write permissions to your home directory."));
+						_("Cannot copy data files to GêBR's directory. Please check your write permissions in your home directory."));
 	}
 	gtk_widget_show_all(dialog);
 	gtk_dialog_run(GTK_DIALOG(dialog));

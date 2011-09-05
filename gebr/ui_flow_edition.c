@@ -338,7 +338,7 @@ void flow_edition_set_io(void)
 						gtk_list_store_set(gebr.ui_flow_edition->fseq_store,
 								   &gebr.ui_flow_edition->input_iter,
 								   FSEQ_TOOLTIP,
-								   _("This file path have an invalid expression"), -1);
+								   _("This file path has an invalid expression"), -1);
 						break;
 					default:
 						break;
@@ -378,7 +378,7 @@ void flow_edition_set_io(void)
 						gtk_list_store_set(gebr.ui_flow_edition->fseq_store,
 								   &gebr.ui_flow_edition->output_iter,
 								   FSEQ_TOOLTIP,
-								   _("This file path have an invalid expression"), -1);
+								   _("This file path has an invalid expression"), -1);
 						break;
 					default:
 						break;
@@ -424,7 +424,7 @@ void flow_edition_set_io(void)
 						gtk_list_store_set(gebr.ui_flow_edition->fseq_store,
 								   &gebr.ui_flow_edition->error_iter,
 								   FSEQ_TOOLTIP,
-								   _("This file path have an invalid expression"), -1);
+								   _("This file path has an invalid expression"), -1);
 						break;
 					default:
 						break;
@@ -966,7 +966,7 @@ static void flow_edition_menu_add(void)
 
 	if (c1 != GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY && c2 != GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY) {
 		document_free(GEBR_GEOXML_DOC(menu));
-		gebr_message (GEBR_LOG_ERROR, TRUE, TRUE, _("This flow already contains a loop"));
+		gebr_message (GEBR_LOG_ERROR, TRUE, TRUE, _("This Flow already contains a loop"));
 		goto out;
 	}
 
@@ -1309,7 +1309,7 @@ on_flow_sequence_query_tooltip(GtkTreeView * treeview,
 						GEBR_GEOXML_PARAMETER_TYPE_STRING,
 						&result,
 						NULL);
-			message = g_strdup_printf(_("Input file %s"), result);
+			message = g_strdup_printf(_("Input file '%s'"), result);
 			g_free(result);
 		}
 		else
@@ -1330,10 +1330,10 @@ on_flow_sequence_query_tooltip(GtkTreeView * treeview,
 						&result,
 						NULL);
 			if (gebr_geoxml_flow_io_get_output_append (gebr.flow))
-				message = g_strdup_printf(_("Append to output file %s"),
+				message = g_strdup_printf(_("Append to output file '%s'"),
 							  result);
 			else
-				message = g_strdup_printf(_("Overwrite output file %s"),
+				message = g_strdup_printf(_("Overwrite output file '%s'"),
 							  result);
 			g_free(result);
 		} else
@@ -1354,10 +1354,10 @@ on_flow_sequence_query_tooltip(GtkTreeView * treeview,
 						&result,
 						NULL);
 			if (gebr_geoxml_flow_io_get_error_append (gebr.flow))
-				message = g_strdup_printf(_("Append to log file %s"),
+				message = g_strdup_printf(_("Append to log file '%s'"),
 							  result);
 			else
-				message = g_strdup_printf(_("Overwrite log file %s"),
+				message = g_strdup_printf(_("Overwrite log file '%s'"),
 							  result);
 			g_free(result);
 		} else
@@ -1387,7 +1387,7 @@ on_flow_sequence_query_tooltip(GtkTreeView * treeview,
 			case GEBR_IEXPR_ERROR_INVAL_VAR:
 			case GEBR_IEXPR_ERROR_BAD_REFERENCE:
 			case GEBR_IEXPR_ERROR_CYCLE:
-				error_message = _("A not well defined variable is being used");
+				error_message = _("A badly defined variable is being used");
 				break;
 			case GEBR_IEXPR_ERROR_INITIALIZE:
 				break;

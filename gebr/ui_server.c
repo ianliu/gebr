@@ -194,7 +194,7 @@ static void on_tags_edited (GtkCellRendererText *cell,
 			GtkWidget * image = gtk_image_new_from_stock(GTK_STOCK_DIALOG_QUESTION, GTK_ICON_SIZE_DIALOG);
 			guint row = 0;
 			char *markup = g_markup_printf_escaped("<span font_weight='bold' size='large'>%s</span>", _("Confirm group deletion"));
-			GString *message = g_string_new(_("The following groups are about to be deleted.\nThere might be lines that make reference to them!\n Are you sure?\n"));
+			GString *message = g_string_new(_("The following groups are about to be deleted.\nThere might be Lines that use them!\nAre you sure?\n"));
 			gboolean empty_tag = FALSE;
 			GtkWidget *scrolled_window;
 			scrolled_window = gtk_scrolled_window_new(NULL, NULL);
@@ -1151,7 +1151,7 @@ gboolean ui_server_ask_for_tags_remove_permission (void){
 		GtkWidget * image = gtk_image_new_from_stock(GTK_STOCK_DIALOG_QUESTION, GTK_ICON_SIZE_DIALOG);
 		guint row = 0;
 		char *markup = g_markup_printf_escaped("<span font_weight='bold' size='large'>%s</span>", _("Confirm group deletion"));
-		GString *message = g_string_new(_("The following groups are about to be deleted.\nThere might be lines that make reference to them!\n Are you sure?\n"));
+		GString *message = g_string_new(_("The following documents are about to be deleted.\nThis operation can't be undone! Are you sure?\n"));
 		gboolean empty_tag = FALSE;
 		GtkWidget *scrolled_window;
 		gboolean ret;

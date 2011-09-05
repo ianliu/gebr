@@ -271,7 +271,7 @@ gboolean menu_list_create_index(void)
 
 	g_string_printf(path, "%s/.gebr/gebr/menus.idx2", g_get_home_dir());
 	if ((menu_fp = fopen(path->str, "w")) == NULL) {
-		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Unable to write menus' index."));
+		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Unable to write Menus' index."));
 		ret = FALSE;
 		goto out;
 	}
@@ -284,7 +284,7 @@ gboolean menu_list_create_index(void)
 	
 	g_string_printf(path, "%s/.gebr/gebr/categories.idx2", g_get_home_dir());
 	if ((category_fp = fopen(path->str, "w")) == NULL) {
-		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Unable to write menus' index."));
+		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Unable to write Menus' index."));
 		ret = FALSE;
 		goto out;
 	}

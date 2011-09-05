@@ -40,7 +40,7 @@
 static void on_properties_response(gboolean accept)
 {
 	if (accept)
-		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("New line created."));
+		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("New Line created."));
 	else {
 		GtkTreeIter iter;
 		if (project_line_get_selected(&iter, DontWarnUnselection))
@@ -79,7 +79,7 @@ void line_new(void)
 	document_save(GEBR_GEOXML_DOC(gebr.project), TRUE, FALSE);
 	document_save(GEBR_GEOXML_DOC(line), TRUE, FALSE);
 
-	gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("New line created in project '%s'."), project_title);
+	gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("New Line created in project '%s'."), project_title);
 	g_free(project_title);
 
 	project_line_select_iter(&iter);
@@ -109,7 +109,7 @@ gboolean line_delete(GtkTreeIter * iter, gboolean warn_user)
 		g_string_free(path, TRUE);
 
 		/* log action */
-		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Deleting child flow '%s'."), flow_source);
+		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Deleting child Flow '%s'."), flow_source);
 	}
 	/* remove the line from its project */
 	const gchar *line_filename = gebr_geoxml_document_get_filename(GEBR_GEOXML_DOC(line));
@@ -123,9 +123,9 @@ gboolean line_delete(GtkTreeIter * iter, gboolean warn_user)
 
 	/* inform the user */
 	if (warn_user) {
-		gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Deleting line '%s'."),
+		gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Deleting Line '%s'."),
 			     gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(line)));
-		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Deleting line '%s' from project '%s'."),
+		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Deleting Line '%s' from project '%s'."),
 			     gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(line)),
 			     gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(project)));
 	}

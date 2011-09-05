@@ -242,7 +242,7 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 
 	if (ret == GEBR_GEOXML_RETV_FILE_NOT_FOUND || ret == GEBR_GEOXML_RETV_PERMISSION_DENIED) {
 		/* the final point already comes with gebr_geoxml_error_string */
-		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Can't load file at %s: %s"),
+		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Can not load the file at %s: %s"),
 			     path, gebr_geoxml_error_string((enum GEBR_GEOXML_RETV)ret));
 		if (parent != NULL && ret == GEBR_GEOXML_RETV_FILE_NOT_FOUND)
 			remove_parent_ref(parent_document, path);
@@ -257,10 +257,10 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 	if (g_str_has_suffix(path, ".mnu")) {
 		/* the final point already comes with gebr_geoxml_error_string */
 		if (title != NULL)
-			gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Can't load menu '%s' at %s:\n%s"),
+			gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Can not load menu '%s' at %s:\n%s"),
 				     title, path, gebr_geoxml_error_string((enum GEBR_GEOXML_RETV)ret));
 		else
-			gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Can't load menu at %s:\n%s"),
+			gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Can not load the Menu at %s:\n%s"),
 				     path, gebr_geoxml_error_string((enum GEBR_GEOXML_RETV)ret));
 
 		goto out;
@@ -345,7 +345,7 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 		gchar * export_path;
 		GtkWidget *chooser_dialog;
 
-		chooser_dialog = gebr_gui_save_dialog_new(_("Choose filename to export"),
+		chooser_dialog = gebr_gui_save_dialog_new(_("Choose the filename to export"),
 							  GTK_WINDOW(gebr.window));
 		export_path = gebr_gui_save_dialog_run(GEBR_GUI_SAVE_DIALOG(chooser_dialog));
 		if (export_path) {
@@ -358,7 +358,7 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 						      NULL, NULL)) {
 				if (strlen(standard_error)) 
 					gebr_message(GEBR_LOG_ERROR, TRUE, TRUE,
-						     _("Failed to export file '%s':\n%s."),
+						     _("Failed to export the file '%s':\n%s."),
 						     path, standard_error);
 				g_free(standard_error);
 			}
@@ -382,7 +382,7 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 			GebrGeoXmlDocument *orphans_project;
 
 			orphans_project = document_new(GEBR_GEOXML_DOCUMENT_TYPE_PROJECT);
-			gebr_geoxml_document_set_title(orphans_project, _("Orphans lines"));
+			gebr_geoxml_document_set_title(orphans_project, _("Orphan Lines"));
 
 			gebr_geoxml_project_get_line(GEBR_GEOXML_PROJECT(*document), &project_line, 0);
 			for (; project_line != NULL; gebr_geoxml_sequence_next(&project_line)) {
@@ -400,7 +400,7 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 			GebrGeoXmlDocument *orphans_line;
 
 			orphans_line = document_new(GEBR_GEOXML_DOCUMENT_TYPE_LINE);
-			gebr_geoxml_document_set_title(orphans_line, _("Orphans flows"));
+			gebr_geoxml_document_set_title(orphans_line, _("Orphan Flows"));
 
 			gebr_geoxml_line_get_flow(GEBR_GEOXML_LINE(*document), &line_flow, 0);
 			for (; line_flow != NULL; gebr_geoxml_sequence_next(&line_flow)) {
@@ -414,7 +414,7 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 			if (parent == NULL) {
 				free_document = TRUE;
 				parent_document = document_new(GEBR_GEOXML_DOCUMENT_TYPE_PROJECT);
-				gebr_geoxml_document_set_title(parent_document, _("Orphans flows"));
+				gebr_geoxml_document_set_title(parent_document, _("Orphan Flows"));
 			}
 
 			gebr_geoxml_project_append_line(GEBR_GEOXML_PROJECT(parent_document),
@@ -460,7 +460,7 @@ gboolean document_save_at(GebrGeoXmlDocument * document, const gchar * path, gbo
 
 	ret = (gebr_geoxml_document_save(document, path) == GEBR_GEOXML_RETV_SUCCESS);
 	if (!ret)
-		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Failed to save document '%s' file at '%s'."),
+		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Failed to save the document '%s' at '%s'."),
 			     gebr_geoxml_document_get_title(document), path);
 	if (cache)
 		document_cache_add(path, document);

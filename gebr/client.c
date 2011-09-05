@@ -86,7 +86,7 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 1)) == NULL)
 				goto err;
 			g_string_assign(server->last_error, ((GString *)g_list_nth_data(arguments, 0))->str);
-			gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Server '%s' reported error '%s'."),
+			gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Server '%s' reported the error '%s'."),
 				     comm_server->address->str, server->last_error->str);
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
@@ -173,10 +173,10 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 				server_list_updated_status(server);
 				g_string_assign(comm_server->socket->protocol->hostname, hostname->str);
 				if (gebr_comm_server_is_local(comm_server) == TRUE)
-					gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Connected to local server."),
+					gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Connected to the local server."),
 						     comm_server->address->str);
 				else {
-					gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Connected to server '%s'."),
+					gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Connected to the server '%s'."),
 						     comm_server->address->str);
 					if (display_port->len) {
 						if (!strcmp(display_port->str, "0"))
@@ -271,7 +271,7 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 				job_init_details(job, status, title, start_date, finish_date,
 						 hostname, issues, cmd_line, output, queue, moab_jid);
 			else
-				gebr_message(GEBR_LOG_DEBUG, FALSE, FALSE, _("Received already listed job %s."), job->parent.jid);
+				gebr_message(GEBR_LOG_DEBUG, FALSE, FALSE, _("Received the already listed Job %s."), job->parent.jid);
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		} else if (message->hash == gebr_comm_protocol_defs.out_def.code_hash) {
@@ -323,9 +323,9 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 err:	gebr_comm_message_free(message);
 	comm_server->socket->protocol->messages = g_list_delete_link(comm_server->socket->protocol->messages, link);
 	if (gebr_comm_server_is_local(comm_server) == TRUE)
-		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Error communicating with local server. Please reconnect."));
+		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Error communicating with the local server. Please reconnect."));
 	else
-		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Error communicating with server '%s'. Please reconnect."),
+		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Error communicating with the server '%s'. Please reconnect."),
 			     comm_server->address->str);
 	gebr_comm_server_disconnect(comm_server);
 
