@@ -549,7 +549,7 @@ void document_dict_edit_setup_ui(void)
 					     GTK_WINDOW(gebr.window),
 					     (GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
 					     GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE, NULL);
-	gtk_widget_set_size_request(dialog, 600, 500);
+	gtk_window_set_default_size(GTK_WINDOW(dialog), 600, 500);
 
 	GtkWidget *warning_image = gtk_image_new();
 	GtkWidget *label = gtk_label_new("");
