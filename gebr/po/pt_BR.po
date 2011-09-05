@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: gebr 0.9.18\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-09-05 17:46-0300\n"
-"PO-Revision-Date: 2011-09-05 17:46-0300\n"
+"PO-Revision-Date: 2011-09-05 18:11-0300\n"
 "Last-Translator: Rodrigo Morelatto <morelatto@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
 "MIME-Version: 1.0\n"
@@ -1836,7 +1836,7 @@ msgstr "Falha ao importar."
 
 #: ../ui_project_line.c:680
 msgid "Please select a Project or a Line."
-msgstr "Por favor, selecione um projeto ou Linha."
+msgstr "Por favor, selecione um Projeto ou Linha."
 
 #: ../ui_project_line.c:727
 msgid "Project (*.prjz)"

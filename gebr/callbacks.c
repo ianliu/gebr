@@ -207,7 +207,7 @@ static gboolean flows_check_before_execution(void)
 		case GEBR_GEOXML_FLOW_ERROR_INVALID_INFILE:
 			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
 						_("Warning"),
-						_("Invalid input file specified for the program \"%s\" Flow \"%s\""),
+						_("Invalid input file specified for the program \"%s\" in Flow \"%s\""),
 						 program_title, flow_title);
 			g_free(flow_title);	
 			g_free(program_title);	

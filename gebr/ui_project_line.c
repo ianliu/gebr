@@ -438,7 +438,7 @@ void project_line_import(void)
 	command_line = g_string_new(NULL);
 	error = NULL;
 
-	chooser_dialog = gtk_file_chooser_dialog_new(_("Choose Project/Line to open"),
+	chooser_dialog = gtk_file_chooser_dialog_new(_("Choose a Project or Line to open"),
 						     GTK_WINDOW(gebr.window),
 						     GTK_FILE_CHOOSER_ACTION_OPEN,
 						     GTK_STOCK_OPEN, GTK_RESPONSE_YES,
@@ -677,7 +677,7 @@ void project_line_export(void)
 
 	if (!rows) {
 		gebr_message (GEBR_LOG_ERROR, TRUE, FALSE,
-			      _("Please select a Project or a Line."));
+			      _("Please select a Project or Line."));
 		return;
 	}
 
