@@ -1259,7 +1259,7 @@ de <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-ima
 					  <guilabel>Flow Editor</guilabel> tab).</para>
 				  <figure>
 					  <mediaobject>
-						  <caption>Na aba Fluxos, acrescentamos "Fluxo Exemplo" à "Linha teste 1", utilizado no próximo exemplo. </caption>
+						  <caption>In the Flows tab, we add the "Example flow" to "test line 1", utilized in the next example.</caption>
 						  <imageobject>
 							  <imagedata fileref="../images/exemplo_variaveis_1.png"/>
 						  </imageobject>
@@ -1267,7 +1267,7 @@ de <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-ima
 				  </figure>
 				  <figure>
 					  <mediaobject>
-						  <caption>Na aba Editor de Fluxo, adiciona-se um programa chamado "Echo" ao "Fluxo Exemplo".</caption>
+						  <caption>Screenshot of Flow Editor tab showing the insertion of the Echo program</caption>
 						  <imageobject>
 							  <imagedata fileref="../images/exemplo_variaveis_2.png"/>
 						  </imageobject>
@@ -1275,16 +1275,13 @@ de <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-ima
 				  </figure>
 			  </step>
 			  <step>
-				  <para>Na aba <guilabel>Editor de Fluxo</guilabel>, clique no
-					  botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_dicionario_projeto.png"/></imageobject></inlinemediaobject></guiicon> 
-					  para <emphasis role="bold">editar o dicionário de variáveis</emphasis>.</para>
+				  <para>At the  <guilabel>Flow Editor</guilabel>, click at button					  <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_dicionario_projeto.png"/></imageobject></inlinemediaobject></guiicon> 
+					  to <emphasis role="bold">edit the variables dictionary</emphasis>.</para>
 			  </step>
 			  <step>
-				  <para>Na janela que se abre (<guilabel>Dicionário de variáveis para fluxo</guilabel>), clique em <emphasis>Nova</emphasis> no escopo de <emphasis role="bold">Fluxo</emphasis>.
-					  Preencha o campo <emphasis>Palavra-chave</emphasis> (este será o nome de sua variável) com <emphasis role="bold">var1</emphasis>. Em seguida, aperte enter para prosseguir para o próximo campo, o campo <emphasis>Valor</emphasis>. Antes de preenchê-lo, será 
-					  necessário escolher um tipo de dado para a sua variável recém criada (<guimenuitem>Número</guimenuitem> ou <guimenuitem>Texto</guimenuitem>), escolha <guimenuitem>Número</guimenuitem>. O cursor do mouse agora estará localizado no campo <emphasis>Valor</emphasis>, preencha esse campo com o número 
-					  <emphasis role="bold">10</emphasis> e pressione enter novamente.</para> O último campo é o campo <emphasis>Comentário</emphasis>. Preencha esse campo com algum comentário, descrevendo a função da sua variável recém criada. Lembrando que o comentário é opcional e pode ser deixado em branco.
-				  <para>Ao terminar, sua janela deve se parecer com a seguinte:</para>
+				  <para>At the window that pops up (<guilabel>Variables dictionary for flow</guilabel>), click in <emphasis>New</emphasis> at <emphasis role="bold">Flow</emphasis> escope.
+					  Fill the field <emphasis>keyword</emphasis> with the variable's name <emphasis role="bold">var1</emphasis>. Then, press enter to proceed to the next field, <emphasis>Value</emphasis>. Before fill it, you must choose a data type to your new variable (<guimenuitem>Number</guimenuitem> or <guimenuitem>Text</guimenuitem>), choose <guimenuitem>Number</guimenuitem>. The mouse cursor will be located at field <emphasis>Value</emphasis>. Fill that field with <emphasis role="bold">10</emphasis> and press enter again.</para> The last field is the <emphasis>Comments</emphasis>. Fill it with some description of your newly created variable. Remeber: The comments are optional, you can leave this field empty if you want.
+				  <para>When you finish, your window must look like with this one:</para>
 				  <figure>
 					  <mediaobject>
 						  <caption>Na janela de parâmetros de dicionário para Fluxo, é possível editar parâmetros para este Fluxo, para sua Linha ou seu Projeto.</caption>
