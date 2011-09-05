@@ -1249,14 +1249,14 @@ de <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-ima
 		  <title>The dictionary</title>
 		  <para>The dictionary is a very flexible feature, that can be used in many forms and to many ends. It was totally reformulated in the <emphasis role="bold">0.14 version of GêBR</emphasis>.</para>
 		  <para>Now the dictionary accepts expressions as input. This way more complex variables can be defined. In this section we will show some examples of variables usage in a flow.</para>
-		  <para>A seguir um exemplo simples de como definir uma variável no dicionário:</para>
+		  <para>Follows a simple example of how to define a variable in the dictionary:</para>
 		  <procedure>
 			  <step>
-				  <para>Crie um fluxo e insira nele um programa muito simples chamado 
-					  <guimenuitem>Echo</guimenuitem>, cuja única função é mostrar na saída o texto escrito
-					  (você encontra este programa na categoria 
-					  <guimenu>Shell tools</guimenu>, na aba 
-					  <guilabel>Editor de Fluxo</guilabel>).</para>
+				  <para>Create a flow and insert a program called
+					  <guimenuitem>Echo</guimenuitem>. Echo's basic function is to show text in the screen.
+					  (you can find this program at
+					  <guimenu>Shell tools</guimenu> category, at 
+					  <guilabel>Flow Editor</guilabel> tab).</para>
 				  <figure>
 					  <mediaobject>
 						  <caption>Na aba Fluxos, acrescentamos "Fluxo Exemplo" à "Linha teste 1", utilizado no próximo exemplo. </caption>
