@@ -181,7 +181,7 @@ static gboolean flows_check_before_execution(void)
 		{
 		case GEBR_GEOXML_FLOW_ERROR_NO_INPUT:
 		case GEBR_GEOXML_FLOW_ERROR_NO_OUTPUT:
-			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Broken flow"), error->message);
+			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Broken Flow"), error->message);
 			break;
 		case GEBR_GEOXML_FLOW_ERROR_NO_INFILE:
 		case GEBR_GEOXML_FLOW_ERROR_INVALID_INFILE:
@@ -318,7 +318,7 @@ void on_flow_component_execute_single()
 		{
 		case GEBR_GEOXML_FLOW_ERROR_NO_INPUT:
 		case GEBR_GEOXML_FLOW_ERROR_NO_OUTPUT:
-			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Broken flow"), error->message);
+			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Broken Flow"), error->message);
 			break;
 		case GEBR_GEOXML_FLOW_ERROR_NO_INFILE:
 		case GEBR_GEOXML_FLOW_ERROR_INVALID_INFILE:

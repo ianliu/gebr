@@ -87,7 +87,7 @@ static const GtkToggleActionEntry html_viewer_toggle_entries[] = {
 	{"IncludeCommentAction", NULL, N_("_Include user's commentary"), NULL,
 		NULL, G_CALLBACK (on_include_comment_activate), TRUE},
 
-	{"IncludeFlowsReportAction", NULL, N_("Include _flows report"), NULL,
+	{"IncludeFlowsReportAction", NULL, N_("Include the _Flow's report"), NULL,
 		NULL, G_CALLBACK (on_include_flows_report_activate), TRUE},
 };
 static guint n_html_viewer_toggle_entries = G_N_ELEMENTS (html_viewer_toggle_entries);
@@ -95,7 +95,7 @@ static guint n_html_viewer_toggle_entries = G_N_ELEMENTS (html_viewer_toggle_ent
 static const GtkRadioActionEntry html_viewer_radio_entries[] = {
 	{"NoTableAction", NULL, N_("No table at all"),
 		NULL, NULL, GEBR_PARAM_TABLE_NO_TABLE},
-	{"OnlyChangedAction", NULL, N_("Just parameters which differ from default"),
+	{"OnlyChangedAction", NULL, N_("Show only the parameters which differ from the default values"),
 		NULL, NULL, GEBR_PARAM_TABLE_ONLY_CHANGED},
 	{"OnlyFilledAction", NULL, N_("Just filled in parameters"),
 		NULL, NULL, GEBR_PARAM_TABLE_ONLY_FILLED},
@@ -182,7 +182,7 @@ create_help_edit_window(GebrGeoXmlDocument * document)
 
 	doc_title = gebr_geoxml_document_get_title (document);
 	if (strlen (doc_title))
-		title = g_strdup_printf (_("Comments of the %s \"%s\""), document_type, doc_title);
+		title = g_strdup_printf (_("Comments from the %s \"%s\""), document_type, doc_title);
 	else
 		title = g_strdup_printf (_("Report of the %s"), document_type);
 	gtk_window_set_title (GTK_WINDOW (window), title);

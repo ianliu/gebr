@@ -84,9 +84,9 @@ static const GtkActionEntry actions_entries_project_line[] = {
 	{"project_line_export", "document-export", N_("Export"),
 		NULL, N_("Export selected Projects and Lines"), G_CALLBACK(on_project_line_export_activate)},
 	{"project_line_view", GTK_STOCK_INFO, N_("View Report"),
-		NULL, N_("View report"), G_CALLBACK(on_project_line_show_help)},
+		NULL, N_("View Report"), G_CALLBACK(on_project_line_show_help)},
 	{"project_line_edit", GTK_STOCK_EDIT, N_("Edit Comments"),
-		NULL, N_("Edit comments"), G_CALLBACK(on_project_line_edit_help)},
+		NULL, N_("Edit Comments"), G_CALLBACK(on_project_line_edit_help)},
 };
 
 static const GtkActionEntry actions_entries_flow[] = {
@@ -130,9 +130,9 @@ static const GtkActionEntry actions_entries_flow_edition[] = {
 	{"flow_edition_delete", GTK_STOCK_DELETE, NULL,
 		"Delete", N_("Delete Program"), G_CALLBACK(on_flow_component_delete_activate)},
 	{"flow_edition_properties", GTK_STOCK_PROPERTIES, NULL,
-		NULL, N_("Edit Program parameters"), G_CALLBACK(on_flow_component_properties_activate)},
+		NULL, N_("Edit the Program's parameters"), G_CALLBACK(on_flow_component_properties_activate)},
 	{"flow_edition_refresh", GTK_STOCK_REFRESH, NULL,
-		NULL, N_("Refresh available Menu's list"), G_CALLBACK(on_flow_component_refresh_activate)},
+		NULL, N_("Refresh Menu list"), G_CALLBACK(on_flow_component_refresh_activate)},
 	{"flow_edition_copy", GTK_STOCK_COPY, N_("Copy"),
 		NULL, N_("Copy selected Programs to clipboard"), G_CALLBACK(on_copy_activate)},
 	{"flow_edition_paste", GTK_STOCK_PASTE, N_("Paste"),
@@ -150,7 +150,7 @@ static const GtkActionEntry actions_entries_job_control[] = {
 	 * Job control - Job Actions
 	 */
 	{"job_control_save", GTK_STOCK_SAVE, NULL,
-		NULL, N_("Save Job information in a file"), G_CALLBACK(on_job_control_queue_save)},
+		NULL, N_("Save Job information to a file"), G_CALLBACK(on_job_control_queue_save)},
 	{"job_control_close", "trash-empty", N_("Close"),
 		"Delete", N_("Clear selected Jobs"), G_CALLBACK(on_job_control_queue_close)},
 	{"job_control_stop", GTK_STOCK_STOP, N_("Cancel"),
@@ -169,11 +169,11 @@ static const GtkActionEntry actions_entries_job_control[] = {
 
 static const GtkActionEntry status_action_entries[] = {
 	{"flow_edition_status_configured", NULL, N_("Configured"),
-		NULL, N_("Change selected Programs status to configured"), NULL},
+		NULL, N_("Change the selected Programs status to configured"), NULL},
 	{"flow_edition_status_disabled", NULL, N_("Disabled"),
-		NULL, N_("Change selected Programs status to disabled"), NULL},
+		NULL, N_("Change the selected Programs status to disabled"), NULL},
 	{"flow_edition_status_unconfigured", NULL, N_("Not configured"),
-		NULL, N_("Change selected Programs status to not configured"), NULL}
+		NULL, N_("Change the selected Programs status to not configured"), NULL}
 };
 
 static const GtkActionEntry actions_entries_server[] = {
@@ -184,8 +184,6 @@ static const GtkActionEntry actions_entries_server[] = {
 		NULL, N_("Connect to the server"), G_CALLBACK(on_server_common_connect)},
 	{"server_disconnect", GTK_STOCK_DISCONNECT, N_("Disconnect"),
 		NULL, N_("Disconnect from server"), G_CALLBACK(on_server_common_disconnect)},
-	{"server_autoconnect", NULL, N_("Auto connect"),
-		NULL, N_("Connect the server at startup"), G_CALLBACK(on_server_common_autoconnect_changed)},
 	{"server_remove", GTK_STOCK_REMOVE, N_("Remove"),
 		"Delete", N_("Remove server from list"), G_CALLBACK(on_server_common_remove)},
 	{"server_stop", GTK_STOCK_STOP, N_("Stop server"),

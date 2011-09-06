@@ -325,7 +325,6 @@ void flow_edition_set_io(void)
 
 	model = gtk_tree_view_get_model(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view));
 
-
 	/* Set the INPUT properties.
 	 * INPUT does not have 'Append/Overwrite' so there is only 2 possible icons:
 	 *  - gebr-stdin
@@ -345,7 +344,7 @@ void flow_edition_set_io(void)
 			icon = GTK_STOCK_DIALOG_WARNING;
 			g_clear_error(&err);
 		} else {
-			tooltip = g_strdup_printf(_("Input file %s"), result);
+			tooltip = g_strdup_printf(_("Input file \"%s\""), result);
 			icon = "gebr-stdin";
 			g_free(result);
 		}
@@ -371,6 +370,7 @@ void flow_edition_set_io(void)
 	is_append = gebr_geoxml_flow_io_get_output_append(gebr.flow);
 	gtk_tree_model_get(model, &gebr.ui_flow_edition->output_iter, FSEQ_SENSITIVE, &sensitivity, -1);
 	if (!*output || !sensitivity) {
+		// FIXME: This line does not need escaping...
 		title = g_markup_printf_escaped("<i>%s</i>", _("Output file"));
 		tooltip = NULL;
 	} else {
@@ -381,9 +381,10 @@ void flow_edition_set_io(void)
 			tooltip = g_strdup(err->message);
 		else {
 			if (is_append)
-				tooltip = g_strdup_printf(_("Append to output file %s"), result);
+				// FIXME: ... but this does!
+				tooltip = g_strdup_printf(_("Append to output file \"%s\""), result);
 			else
-				tooltip = g_strdup_printf(_("Overwrite output file %s"), result);
+				tooltip = g_strdup_printf(_("Overwrite output file \"%s\""), result);
 			g_free(result);
 		}
 	}
@@ -410,7 +411,7 @@ void flow_edition_set_io(void)
 	is_append = gebr_geoxml_flow_io_get_error_append(gebr.flow);
 	gtk_tree_model_get(model, &gebr.ui_flow_edition->error_iter, FSEQ_SENSITIVE, &sensitivity, -1);
 	if (!*error || !sensitivity) {
-		title = g_markup_printf_escaped("<i>%s</i>", _("Error file"));
+		title = g_markup_printf_escaped("<i>%s</i>", _("Log file"));
 		tooltip = NULL;
 	} else {
 		title = g_strdup(error);
@@ -420,9 +421,9 @@ void flow_edition_set_io(void)
 			tooltip = g_strdup(err->message);
 		else {
 			if (is_append)
-				tooltip = g_strdup_printf(_("Append to error file %s"), result);
+				tooltip = g_strdup_printf(_("Append to log file \"%s\""), result);
 			else
-				tooltip = g_strdup_printf(_("Overwrite error file %s"), result);
+				tooltip = g_strdup_printf(_("Overwrite log file \"%s\""), result);
 			g_free(result);
 		}
 	}
@@ -955,7 +956,7 @@ static void flow_edition_menu_add(void)
 
 	if (c1 != GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY && c2 != GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY) {
 		document_free(GEBR_GEOXML_DOC(menu));
-		gebr_message (GEBR_LOG_ERROR, TRUE, TRUE, _("This flow already contains a loop"));
+		gebr_message (GEBR_LOG_ERROR, TRUE, TRUE, _("This Flow already contains a loop"));
 		goto out;
 	}
 
@@ -1077,7 +1078,7 @@ static GtkMenu *flow_edition_component_popup_menu(GtkWidget * widget, struct ui_
 	} else
 	if (gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->error_iter)) {
 		is_file = TRUE;
-		label = _("Overwrite existing error file");
+		label = _("Overwrite existing log file");
 		is_append = gebr_geoxml_flow_io_get_error_append (gebr.flow);
 		append_cb = G_CALLBACK (on_error_append_toggled);
 	}
@@ -1329,7 +1330,7 @@ on_flow_sequence_query_tooltip(GtkTreeView * treeview,
 	case GEBR_IEXPR_ERROR_INVAL_VAR:
 	case GEBR_IEXPR_ERROR_BAD_REFERENCE:
 	case GEBR_IEXPR_ERROR_CYCLE:
-		error_message = _("A not well defined variable is being used");
+		error_message = _("A badly defined variable is being used");
 		break;
 	case GEBR_IEXPR_ERROR_PATH:
 		error_message = _("This program has cleaned their paths");

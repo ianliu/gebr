@@ -381,7 +381,7 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 		gtk_widget_show (groups_combo);
 
 		/* Line Path's*/
-		line_path_label = gtk_label_new(_("Path"));
+		line_path_label = gtk_label_new(_("Path:"));
 		gtk_widget_show(line_path_label);
 		gtk_table_attach(GTK_TABLE(table), line_path_label, 0, 1, row, row+1, GTK_FILL, GTK_FILL, 3, 3);
 		gtk_misc_set_alignment(GTK_MISC(line_path_label), 0, 0);
@@ -543,7 +543,7 @@ void document_dict_edit_setup_ui(void)
 	gebr_gui_gtk_action_group_set_accel_group(action_group, accel_group);
 
 	dialog_title = g_string_new(NULL);
-	g_string_printf(dialog_title, _("Variables dictionary for %s '%s'"),
+	g_string_printf(dialog_title, _("Variables dictionary for %s \"%s\""),
 			document_get_name_from_type(document, FALSE), gebr_geoxml_document_get_title(document));
 	dialog = gtk_dialog_new_with_buttons(dialog_title->str,
 					     GTK_WINDOW(gebr.window),
@@ -843,7 +843,7 @@ static void gebr_dict_update_wizard(struct dict_edit_data *data) {
 		case GEBR_GEOXML_PARAMETER_TYPE_INT:
 		case GEBR_GEOXML_PARAMETER_TYPE_FLOAT:
 			gtk_label_set_text(GTK_LABEL(data->label),
-					   _("Please enter a number."));
+					   _("Please enter a number or expression."));
 			break;
 		case GEBR_GEOXML_PARAMETER_TYPE_STRING:
 			gtk_label_set_text(GTK_LABEL(data->label),
@@ -1122,7 +1122,7 @@ dict_edit_is_name_valid(const gchar *name, struct dict_edit_data *data)
 {
 	if (g_strcmp0(name,"iter") == 0) {
 		gtk_label_set_text(GTK_LABEL(data->label), 
-				   _("Can't use reserved keyword iter."));
+				   _("Can not use reserved keyword iter."));
 		return FALSE;
 	}
 	if (gebr_expr_is_reserved_word (name)) {
@@ -1439,7 +1439,7 @@ static gboolean dict_edit_check_duplicate_keyword(struct dict_edit_data *data, G
 			continue;
 		if (show_error)
 			gtk_label_set_text(GTK_LABEL(data->label), 
-					   _("Other parameter already uses this keyword. Please choose another."));
+					   _("There is a parameter which already uses this keyword. Please choose another."));
 		return TRUE;
 	}
 
@@ -1590,9 +1590,9 @@ void on_response_ok(GtkButton * button, GebrPropertiesData * data)
 		gboolean emptyness = gebr_geoxml_line_get_paths_number(line) == 0 && gebr_geoxml_line_get_flows_number(line) == 0;
 		if (!emptyness && current_active_group != data->previous_active_group) {
 			gboolean clean = gebr_gui_message_dialog (GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
-								  _("Clean line and flow(s) path(s)?"),
-								  _("Do you wish to clean all paths from"
-								    " this line and its respective flows?"));
+								  _("Clear Line and Flow(s) path(s)?"),
+								  _("Do you wish to clear all paths from"
+								    " this Line and its respective Flows?"));
 			if (clean) {
 				GebrGeoXmlDocument *flow;
 				GebrGeoXmlSequence *sequence;
