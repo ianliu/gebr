@@ -1411,20 +1411,20 @@ called <emphasis role="bold">iter</emphasis>. Then we can show an example of the
 						  </imageobject>
 					  </mediaobject>
 				  </figure>
-				  <para>Ao colocarmos o mouse sobre o ícone de tipo do parâmetro Year, podemos verificar através da tooltip 
+				  <para>We can verify the solved value of the variable <emphasis role="bold">iter</emphasis> through the tooltip of parameter Year 
 					  <guiicon><inlinemediaobject>
 							  <imageobject>
 								  <imagedata fileref="../images/exemplo_iter_5.png"/>
 							  </imageobject>
-					  </inlinemediaobject></guiicon>
-					  o valor resolvido da variável <emphasis role="bold">iter</emphasis>, assim podemos verificar que iremos percorrer os anos que queriamos.</para>
+					  </inlinemediaobject></guiicon>.
+					   positioning the pointer over the Year icon. This way, we can verify the which years we are walking through.</para>
 			  </step>
 			  <step>
-				  <para>Agora, com o programa preenchido corretamente, executamos o programa (assunto abordado na seção <xref linkend="executar_fluxo"/>), 
-					  e visualizar quando serão as festas de fim de ano para os próximos 5 anos.</para>
+				  <para>Now, with all the parameters set, we can run the flow (as in section <xref linkend="executar_fluxo"/>), 
+					  to see in which week days the holidays are going to be for the next five years.</para>
 				  <figure>
 					  <mediaobject>
-						  <caption>Resultado da execução do fluxo, na aba <guilabel>Controle de Tarefas</guilabel>.</caption>
+						  <caption>Screenshot of execution of flow, in the tab <guilabel>Controle de Tarefas</guilabel>.</caption>
 						  <imageobject>
 							  <imagedata fileref="../images/exemplo_iter_6.png"/>
 						  </imageobject>
@@ -1432,33 +1432,32 @@ called <emphasis role="bold">iter</emphasis>. Then we can show an example of the
 				  </figure>
 			  </step>
 		  </procedure>
-		  <para>Este foi um exemplo simples do uso da variável <emphasis role="bold">iter</emphasis> em um fluxo, mas podemos notar que o uso de loop e de variáveis
-			  definidas no dicionário podem facilitar muito nossas tarefas, deixando todo o processo mais dinâmico.</para>
+		  <para>That was a simple example of <emphasis role="bold">iter</emphasis> variable usage in a flow. We can notice that loops and variables ease the execution of repetitive tasks.</para>
 	  </section>	
 	  <section xml:id="variaveis_recursos">
-		  <title>Recursos no dicionário</title>
-		  <para>O dicionário conta com novos recursos que facilitam bastante sua usabilidade, vamos listar alguns destes recursos:</para>
+		  <title>Dictionary features</title>
+		  <para>The dictionary has a big list of resources that increments its functionality. We are going to list some of these resources:</para>
 		  <itemizedlist>
 			  <listitem>
-				  <para><emphasis role="bold">Funções</emphasis></para>
-				  <para>Além de utilizar variáveis e expressões para preencher os valores, podemos também usar algumas funções pré-definidas:</para>
+				  <para><emphasis role="bold">Function</emphasis></para>
+				  <para>Besides using variables and expressions, we can use some predefined functions:</para>
 				  <itemizedlist>
-					  <listitem><para><emphasis>Seno</emphasis> - Utiliza-se na forma <emphasis role="bold">s (</emphasis>valor<emphasis role="bold">)</emphasis>.</para></listitem>
+					  <listitem><para><emphasis>Sin</emphasis> - Usage: <emphasis role="bold">s (</emphasis>value<emphasis role="bold">)</emphasis>.</para></listitem>
 				  </itemizedlist>
 				  <itemizedlist>
-					  <listitem><para><emphasis>Cosseno</emphasis> - Utiliza-se na forma <emphasis role="bold">c (</emphasis>valor<emphasis role="bold">)</emphasis>.</para></listitem>
+					  <listitem><para><emphasis>Cosine</emphasis> - Usage: <emphasis role="bold">c (</emphasis>value<emphasis role="bold">)</emphasis>.</para></listitem>
 				  </itemizedlist>
 				  <itemizedlist>
-					  <listitem><para><emphasis>Arcotangente</emphasis> - Utiliza-se na forma <emphasis role="bold">a (</emphasis>valor<emphasis role="bold">)</emphasis>.</para></listitem>
+					  <listitem><para><emphasis>Arctangent</emphasis> - Usage: <emphasis role="bold">a (</emphasis>value<emphasis role="bold">)</emphasis>.</para></listitem>
 				  </itemizedlist>
 				  <itemizedlist>
-					  <listitem><para><emphasis>Logaritimo Natural</emphasis> - Utiliza-se na forma <emphasis role="bold">l (</emphasis>valor<emphasis role="bold">)</emphasis>.</para></listitem>
+					  <listitem><para><emphasis>Natural logarithm</emphasis> - Usage: <emphasis role="bold">l (</emphasis>value<emphasis role="bold">)</emphasis>.</para></listitem>
 				  </itemizedlist>
 				  <itemizedlist>
-					  <listitem><para><emphasis>Função exponencial</emphasis> - Utiliza-se na forma <emphasis role="bold">e (</emphasis>valor<emphasis role="bold">)</emphasis>.</para></listitem>
+					  <listitem><para><emphasis>Exponential function</emphasis> - Usage: <emphasis role="bold">e (</emphasis>value<emphasis role="bold">)</emphasis>.</para></listitem>
 				  </itemizedlist>
 				  <itemizedlist>
-					  <listitem><para><emphasis>Função de Bessel</emphasis> - Utiliza-se na forma <emphasis role="bold">j (</emphasis>ordem, valor<emphasis role="bold">)</emphasis>.</para></listitem> 
+					  <listitem><para><emphasis>Bessel's function</emphasis> - Usage: <emphasis role="bold">j (</emphasis>ordem, value<emphasis role="bold">)</emphasis>.</para></listitem> 
 				  </itemizedlist>
 			  </listitem>
 			  <listitem>
