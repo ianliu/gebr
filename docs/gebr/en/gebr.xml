@@ -1176,6 +1176,30 @@ de <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-ima
           <guilabel>Job control</guilabel> tab, which will display a report (<emphasis>log</emphasis>) on the execution of the
 	 Flow .</para>
     </section>
+    <!--  Falta Traduzir -->
+    <section xml:id="loop">
+      <title>Programa Loop</title>
+      <para>O programa <emphasis>Loop</emphasis> (que pertence a categoria <emphasis role="bold">Loops</emphasis>) é tratado de uma maneira especial comparado aos outros programas da GêBR. Vamos ver a seguir
+      algumas destas diferenças.</para>
+      <para>Ao adicionarmos o programa Loop, nota-se que ele sempre aparece no topo do fluxo, isso ocorre para representar 
+      que aquele fluxo será executado repetidamente, de acordo com o preenchimento dos parâmetros do programa (visto na seção <xref linkend="editar_parametros_programa"/>).</para>
+        <mediaobject>
+          <caption>Na aba Editor de Fluxo, após o programa <emphasis>Loop</emphasis> ser adicionado e configurado.</caption>
+          <imageobject>
+            <imagedata fileref="../images/loop_adicionado.png"/>
+          </imageobject>
+        </mediaobject>
+      <para>Após o <emphasis>Loop</emphasis> ser adicionado, teremos acesso a uma nova variável, chamada <emphasis role="bold">iter</emphasis>, que tem seu valor alterado a cada iteração,
+      de acordo com o preenchimento de seus parâmetros.</para>
+      <mediaobject>
+          <caption>Janela de edição de parâmetros do programa <emphasis>Loop</emphasis>, com um exemplo simples do preenchimento.</caption>
+          <imageobject>
+            <imagedata fileref="../images/loop_parametros.png"/>
+          </imageobject>
+        </mediaobject>
+      <tip>Maiores informações sobre a variável <emphasis role="bold">iter</emphasis> estão disponíveis na seção <xref linkend="variavel_iter"/>.</tip>
+    </section>
+    
   </section>
   <section xml:id="controle_de_tarefas">
     <title>The 
