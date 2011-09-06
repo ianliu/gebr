@@ -1387,26 +1387,25 @@ called <emphasis role="bold">iter</emphasis>. Then we can show an example of the
 					  <emphasis role="bold">iter</emphasis> has a better behaviour on the purpose of the problem.</para>
 				  <para>In the Initial Value we are going to include a variable <emphasis role="bold">ano_atual</emphasis>.
 					  We fill the parameter Step (step of each iteration) with 1, since we look for consecutive years.
-					  No parâmetro Total number of steps (número total de passos), colocaremos o valor 5, para que realize está repetição 5 vezes, desta forma,
-					  pegando os 5 próximos anos, apartir de 2011.</para>
+					  We fill the parameter Total number of steps with 5, so the Loop will be repeated five times, covering years 2011 to 2016.</para>
 				  <figure>
 					  <mediaobject>
-						  <caption>Parâmetros do programa <guimenuitem>Loop</guimenuitem> preenchidos.</caption>
+						  <caption>Screenshot of <guimenuitem>Loop</guimenuitem> program with its parameters filled in.</caption>
 						  <imageobject>
 							  <imagedata fileref="../images/exemplo_iter_3.png"/>
 						  </imageobject>
 					  </mediaobject>
 				  </figure>
 				  <important>
-					  <para>O programa <guimenuitem>Loop</guimenuitem> pode usar apenas variáveis definidas na Linha e no Projeto, os quais aquele fluxo pertence.</para>  
+					  <para>The program <guimenuitem>Loop</guimenuitem> can only use variables defined at its Line or Project.</para>  
 				  </important>
 			  </step>
 			  <step>
-				  <para>Agora, abrimos o programa <guimenuitem>Calendar</guimenuitem> e vamos preencher seus parâmetros.
-					  Iremos apenas preencher dois parâmetros, o Month com o valor <emphasis>December</emphasis>, e o Year com a variável <emphasis role="bold">iter</emphasis>.</para>
+				  <para>Now we open program <guimenuitem>Calendar</guimenuitem> to fill its parameters.
+					  We gonna fill only two parameters, Month with value <emphasis>December</emphasis> and Year with the variable <emphasis role="bold">iter</emphasis>.</para>
 				  <figure>
 					  <mediaobject>
-						  <caption>Parâmetros do programa <guimenuitem>Calendar</guimenuitem> preenchidos.</caption>
+						  <caption>Screenshot of <guimenuitem>Calendar</guimenuitem> program parameters filled in.</caption>
 						  <imageobject>
 							  <imagedata fileref="../images/exemplo_iter_4.png"/>
 						  </imageobject>
