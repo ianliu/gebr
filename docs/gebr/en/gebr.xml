@@ -1259,7 +1259,7 @@ de <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-ima
 					  <guilabel>Flow Editor</guilabel> tab).</para>
 				  <figure>
 					  <mediaobject>
-						  <caption>Screenshot of the generation of the "Example flow".</caption>
+						  <caption>Screenshot of the creation of the "Example flow".</caption>
 						  <imageobject>
 							  <imagedata fileref="../images/exemplo_variaveis_1.png"/>
 						  </imageobject>
@@ -1300,10 +1300,10 @@ de <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-ima
 
 	  <section xml:id="definindo_variaveis">
 		  <title>Defining and using variables</title>
-		  <para>We can use the dictionary to define more complex variables. Using the same idea as the creation of variables in <xref linkend="janela_dicionario"/>, we can define two more variables:</para>
+		  <para>We can use the dictionary to define more complex variables. Using the same idea from the creation of variables in <xref linkend="janela_dicionario"/>, we can define two more variables:</para>
 		  <procedure>
 			  <step>
-				  <para>Variable of name <emphasis role="bold">var2</emphasis>, type <guimenuitem>Number</guimenuitem> and value
+				  <para>Variable named <emphasis role="bold">var2</emphasis>, type <guimenuitem>Number</guimenuitem> and value
 					  <emphasis role="bold">var1 + 10</emphasis>.
 				  </para>
 				  <figure>
@@ -1316,12 +1316,12 @@ de <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-ima
 				  </figure>
 			  </step>
 			  <step>
-				  <para>Variable of name <emphasis role="bold">string</emphasis>, tipo <guimenuitem>Text</guimenuitem> and value 
+				  <para>Variable named <emphasis role="bold">string</emphasis>, of type <guimenuitem>Text</guimenuitem> and value 
 					  <emphasis role="bold">Variable 2 is equal to [var2]</emphasis>.
 				  </para>
 				  <figure>
 					  <mediaobject>
-						  <caption>Creating the variable <emphasis role="bold">string</emphasis>, and verifying the result.</caption>
+						  <caption>Creation of variable <emphasis role="bold">string</emphasis>, and verification of the result.</caption>
 						  <imageobject>
 							  <imagedata fileref="../images/exemplo_variaveis_5.png"/>
 						  </imageobject>
@@ -1332,7 +1332,7 @@ de <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-ima
 			  </step>
 			  <step>
 				  <para>Now we can use the variables in our newly-created "Example Flow".</para>
-				  <para>In the Flow Editor, double click on <guilabel>Echo</guilabel> in the parameters edition window and use the variable <emphasis role="bold">string</emphasis>.</para>
+				  <para>In the Flow Editor, double click <guilabel>Echo</guilabel> in the parameters editor window and use the variable <emphasis role="bold">string</emphasis>.</para>
 				  <figure>
 					  <mediaobject>
 						  <caption>Screenshot of the parameters editor of the program Echo with the variable <emphasis role="bold">string</emphasis>.</caption>
@@ -1363,7 +1363,7 @@ called <emphasis role="bold">iter</emphasis>. Then we can show an example of the
 				  <para>Using the examples about the filling of parameters in section <xref linkend="loop"/>, we are going to end up with the variable <emphasis role="bold">iter</emphasis> in the dictionary as in the following window.</para>
 				  <figure>
 					  <mediaobject>
-						  <caption>Screenshot of the variable <emphasis role="bold">iter</emphasis> and its solved expression.</caption>
+						  <caption>Screenshot of variable <emphasis role="bold">iter</emphasis> and its solved expression.</caption>
 						  <imageobject>
 							  <imagedata fileref="../images/exemplo_iter_1.png"/>
 						  </imageobject>
@@ -1371,11 +1371,11 @@ called <emphasis role="bold">iter</emphasis>. Then we can show an example of the
 				  </figure>
 			  </step>
 			  <step>
-				  <para>We can define a variable in the dictionary that represents the present year, facilitating the process of choosing of the year.
+				  <para>We can define a variable in the dictionary that represents the present year, facilitating the process of year choice.
 					  We define the variable in the line, with the name of <emphasis role="bold">ano_atual</emphasis> and value <emphasis role="bold">2011</emphasis>.</para>
 				  <figure>
 					  <mediaobject>
-						  <caption>Screenshot of the variable <emphasis role="bold">ano_atual</emphasis> defined in the dictionary.</caption>
+						  <caption>Screenshot of variable <emphasis role="bold">ano_atual</emphasis> defined in the dictionary.</caption>
 						  <imageobject>
 							  <imagedata fileref="../images/exemplo_iter_2.png"/>
 						  </imageobject>
@@ -1384,9 +1384,9 @@ called <emphasis role="bold">iter</emphasis>. Then we can show an example of the
 			  </step>
 			  <step>
 				  <para>After defining this variable, we improve the parameters of the program <guimenuitem>Loop</guimenuitem>, so the variable 
-					  <emphasis role="bold">iter</emphasis> has a better behaviour to the purpose of the problem.</para>
+					  <emphasis role="bold">iter</emphasis> has a better behaviour on the purpose of the problem.</para>
 				  <para>In the Initial Value we are going to include a variable <emphasis role="bold">ano_atual</emphasis>.
-					  We fill the parameter Step (step from each iteration) with 1, since we look for consecutives years.
+					  We fill the parameter Step (step of each iteration) with 1, since we look for consecutive years.
 					  No parâmetro Total number of steps (número total de passos), colocaremos o valor 5, para que realize está repetição 5 vezes, desta forma,
 					  pegando os 5 próximos anos, apartir de 2011.</para>
 				  <figure>
