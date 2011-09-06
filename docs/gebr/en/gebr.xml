@@ -1424,7 +1424,7 @@ called <emphasis role="bold">iter</emphasis>. Then we can show an example of the
 					  to see in which week days the holidays are going to be for the next five years.</para>
 				  <figure>
 					  <mediaobject>
-						  <caption>Screenshot of execution of flow, in the tab <guilabel>Controle de Tarefas</guilabel>.</caption>
+						  <caption>Screenshot of execution of flow, in the tab <guilabel>Job Control</guilabel>.</caption>
 						  <imageobject>
 							  <imagedata fileref="../images/exemplo_iter_6.png"/>
 						  </imageobject>
@@ -1457,17 +1457,17 @@ called <emphasis role="bold">iter</emphasis>. Then we can show an example of the
 					  <listitem><para><emphasis>Exponential function</emphasis> - Usage: <emphasis role="bold">e (</emphasis>value<emphasis role="bold">)</emphasis>.</para></listitem>
 				  </itemizedlist>
 				  <itemizedlist>
-					  <listitem><para><emphasis>Bessel's function</emphasis> - Usage: <emphasis role="bold">j (</emphasis>ordem, value<emphasis role="bold">)</emphasis>.</para></listitem> 
+					  <listitem><para><emphasis>Bessel's function</emphasis> - Usage: <emphasis role="bold">j (</emphasis>order, value<emphasis role="bold">)</emphasis>.</para></listitem> 
 				  </itemizedlist>
 			  </listitem>
 			  <listitem>
 				  <para><emphasis role="bold">Drag and Drop</emphasis></para>
 				  <itemizedlist>
-					  <listitem><para>É possível reordenar as variáveis do dicionário utilizando-se do recurso de drag and drop, deixando a declaração das variáveis
-							  mais flexível e dinâmica, dado que uma variável só pode utilizar uma outra que está definida acima dela, tornando assim este recurso muito importante.</para>
+					  <listitem><para>We can reorder the dictionary variables through the drag and drop. Since a variable can just use another variable above it, this features turns the declaration of variables more flexible and dynamic.
+							  </para>
 						  <figure>
 							  <mediaobject>
-								  <caption>Resultado da execução do fluxo, na aba <guilabel>Controle de Tarefas</guilabel>.</caption>
+								  <caption>Screenshot of the flow execution in the tab <guilabel>Job Control</guilabel>.</caption>
 								  <imageobject>
 									  <imagedata fileref="../images/recurso_dict_1.png"/>
 								  </imageobject>
@@ -1477,16 +1477,14 @@ called <emphasis role="bold">iter</emphasis>. Then we can show an example of the
 				  </itemizedlist>
 			  </listitem>
 			  <listitem>
-				  <para><emphasis role="bold">Validação dinâmica</emphasis></para>
+				  <para><emphasis role="bold">Dynamic Validation</emphasis></para>
 				  <itemizedlist>
 					  <listitem>
-						  <para>O dicionário conta com uma validação de suas variáveis de uma forma totalmente dinâmica, ocorrendo revalidação quando se altera o nome, 
-							  o valor e a posição de uma variável, deixando assim, muito mais prático de definir tudo na ordem correta.</para>
-						  <para>Programas que utilizam variáveis com erros, também são automaticamente validados, mudando seu estado de configuração (assunto abordado na seção <xref linkend="sec_3_3_5"/>).</para>
+						  <para>The dictionary validates the variables in a dynamic way, revalidating them you change the name, the value and the position. On this way, it is much simpler to keep everything in order.</para>
+						  <para>Programs with variables with errors are automatically revalidated, changing its state configuration (see section <xref linkend="sec_3_3_5"/>).</para>
 						  <figure>
 							  <mediaobject>
-								  <caption>A Variável <emphasis role="bold">ano_atual</emphasis> está usando uma variável que não existe na sua expressão,
-									  por isso ela fica em um estado de erro.</caption>
+								  <caption>Screenshot of the variable <emphasis role="bold">ano_atual</emphasis> using a non-existent variable in its expression.</caption>
 								  <imageobject>
 									  <imagedata fileref="../images/recurso_dict_2.png"/>
 								  </imageobject>
@@ -1494,9 +1492,9 @@ called <emphasis role="bold">iter</emphasis>. Then we can show an example of the
 						  </figure>
 					  </listitem>
 				  </itemizedlist>
-				  <tip>Todos os campos, sejam eles parâmetros de programa ou variáveis, se contiverem algum, automaticamente exibirão o ícone 
+				  <tip>Every field, from program parameters or variables, is going to exhibit the icon
 					  <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_nao_configurado.png"/></imageobject></inlinemediaobject></guiicon>,
-					  que contém em sua tooltip, uma explicação do erro.</tip>
+					  and an explanation of the error.</tip>
 			  </listitem>
 		  </itemizedlist>
 	  </section>	
