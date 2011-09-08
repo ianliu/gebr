@@ -22,6 +22,24 @@
       site: <emphasis><link xlink:href="http://www.gebrproject.com">www.gebrproject.com</link></emphasis>.</para>
     </section>
     <section>
+	    	    <title>What's new in version 0.14.0</title>
+	    <para>The release of GêBR (0.14.0) suffered some changes. GêBR is more stable and present some new functionalities: </para>
+	    <itemizedlist>
+		    <listitem>
+			    The variables dictionary and the program parameters accept arithmetic expressions (see section <xref linkend="variaveis_recursos"/>).
+		    </listitem>
+		    <listitem>
+			   Repetitive processes can be automatized by the use of loops (see section <xref linkend="variavel_iter"/>).
+		    </listitem>
+		    <listitem>
+			    Reports are automatically generated and can be exported to external files (see section <xref linkend="visualizar_relatorio"/>).
+		    </listitem>
+		    <listitem>
+			    Samples are available to import (see section <xref linkend="import_samples"/>).
+		    </listitem>
+	    </itemizedlist>
+    </section>
+    <section>
       <title>Technical Information</title>
       <para>This guide is for GêBR <emphasis role="bold">version 0.12.0</emphasis>. The images used in this guide where
       captured in the system <emphasis role="bold">Ubuntu 10.04</emphasis>. Therefore you may observe slight differences
@@ -1612,5 +1630,19 @@ called <emphasis role="bold">iter</emphasis>. Then we can show an example of the
 	actions that have taken place since GêBR's last initialization.</para>
       </tip>
     </section>
+    <section xml:id="import_samples"><title>Help</title>
+	<para>In the Help menu, besides the general Help section, we can import available samples:</para>
+    
+      <figure>
+        <mediaobject>
+          <caption>Screenshot of the Samples Menu</caption>
+          <imageobject>
+            <imagedata fileref="../images/samples_en.png"/>
+          </imageobject>
+        </mediaobject>
+      </figure>
+    
+    </section>
+
   </section>
 </article>

@@ -23,6 +23,24 @@
       projeto: <emphasis><link xlink:href="http://www.gebrproject.com">www.gebrproject.com</link></emphasis>.</para>
     </section>
     <section>
+	    	    <title>Novidades da versão 0.14.0</title>
+	    <para>A versão 0.14.0 da interface GêBR sofreu alterações. O programa está mais estável e apresenta novas funcionalidades: </para>
+	    <itemizedlist>
+		    <listitem>
+			    O dicionário de variáveis e os parâmetros dos programas aceitam expressões aritméticas (veja seção <xref linkend="variaveis_recursos"/>).
+		    </listitem>
+		    <listitem>
+			   A GêBR automatiza fluxos repetitivos através de loops (veja seção <xref linkend="variavel_iter"/>).
+		    </listitem>
+		    <listitem>
+			    Nesta versão temos a geração automática de relatórios, o qual pode ser exportado para um arquivo externo (veja seção <xref linkend="visualizar_relatorio"/>).
+		    </listitem>
+		    <listitem>
+			     Exemplos de projetos podem ser importados na seção Samples (seção <xref linkend="import_samples"/>).
+		    </listitem>
+	    </itemizedlist>
+    </section>
+    <section>
       <title>Informações técnicas</title>
       <para>Este guia refere-se à <emphasis role="bold">versão 0.14.0</emphasis> da GêBR. As telas usadas no guia foram
 	capturadas em um sistema <emphasis role="bold">Ubuntu 10.04</emphasis>. Por isso, podem apresentar pequenas
@@ -1691,6 +1709,20 @@
           incluindo ações de datas passadas, o log compacto, que mostra apenas as ações a partir da última
           inicialização.</para>
       </tip>
+    </section>    <section xml:id="import_samples"><title>Help</title>
+	<para>Na seção Ajuda, além da seção de Ajuda geral, podemos importar exemplos já existentes:</para>
+    
+      <figure>
+        <mediaobject>
+          <caption>Captura de tela do menu Samples</caption>
+          <imageobject>
+            <imagedata fileref="../images/samples_pt.png"/>
+          </imageobject>
+        </mediaobject>
+      </figure>
+    
     </section>
+
+
   </section>
 </article>
