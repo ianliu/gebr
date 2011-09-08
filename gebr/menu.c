@@ -447,15 +447,17 @@ static gchar *canonize_name(const gchar *path)
 	return label;
 }
 
-static void populate_menu_demo(const gchar *dir, GtkMenu *menu)
+static gboolean populate_menu_demo(const gchar *dir, GtkMenu *menu)
 {
 	gchar *filename;
 	gchar *dirname;
 	GString *path;
+	gboolean has_demo = FALSE;
 	path = g_string_new(NULL);
 
 	gebr_directory_foreach_file(dirname, dir) {
-		gboolean has_demo = FALSE;
+		gboolean has_dir = FALSE;
+		has_demo = TRUE;
 		g_string_printf(path, "%s/%s", dir, dirname);
 		if (!g_file_test(path->str, G_FILE_TEST_IS_DIR)) {
 			g_string_free(path, TRUE);
@@ -469,7 +471,7 @@ static void populate_menu_demo(const gchar *dir, GtkMenu *menu)
 		g_free(label);
 		gebr_directory_foreach_file_hyg(filename, path->str, dir) {
 			if (!fnmatch("*.prjz", filename, 1)) {
-				has_demo = TRUE;
+				has_dir = TRUE;
 				gchar *demo_path = g_strconcat(dir, "/", dirname, "/", filename, NULL);
 				label = canonize_name(demo_path);
 				label[strlen(label) - 5] = '\0';
@@ -479,26 +481,35 @@ static void populate_menu_demo(const gchar *dir, GtkMenu *menu)
 				g_object_weak_ref(G_OBJECT(menu_item), (GWeakNotify)g_free, demo_path);
 				g_free(label);
 			}
-		}
-		if (!has_demo) {
-			if (g_strcmp0(dirname, "Seismic_Unix") == 0) {
-				menu_item = gtk_menu_item_new_with_label(_("Install Seismic Unix package.\n"
-						"Click here to get the script of Seismic Unix on GêBR Project website."));
-				g_signal_connect(menu_item, "button_press_event", G_CALLBACK(open_url_on_press_event), NULL);
-			} else {
+			if (!has_dir) {
 				menu_item = gtk_menu_item_new_with_label(_("Empty"));
 				gtk_widget_set_sensitive(menu_item, FALSE);
+				gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menu_item);
 			}
-			gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menu_item);
 		}
 		g_string_free(path, TRUE);
 	}
+	if (!has_demo)
+		return FALSE;
+	return TRUE;
 }
 
 void demos_list_create(GtkMenu *menu)
 {
-	populate_menu_demo(directory_list_demos[0], menu);
+	gboolean has_demo;
+	has_demo = populate_menu_demo(directory_list_demos[0], menu);
 	for (int i = 1; directory_list_demos[i]; i++)
-		if (!gebr_realpath_equal (directory_list[i], directory_list[0]))
-			populate_menu_demo(directory_list_demos[i], menu);
+		if (!gebr_realpath_equal (directory_list_demos[i], directory_list_demos[0])) {
+			if (has_demo)
+				populate_menu_demo(directory_list_demos[i], menu);
+			else
+				has_demo = populate_menu_demo(directory_list_demos[i], menu);
+		}
+	if (!has_demo) {
+		GtkWidget *menu_item;
+		menu_item = gtk_menu_item_new_with_label(_("Install Seismic Unix package.\n"
+							 "Click here to get the script of Seismic Unix on GêBR Project website."));
+		g_signal_connect(menu_item, "button_press_event", G_CALLBACK(open_url_on_press_event), NULL);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+	}
 }
