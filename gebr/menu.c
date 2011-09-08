@@ -481,11 +481,12 @@ static gboolean populate_menu_demo(const gchar *dir, GtkMenu *menu)
 				g_object_weak_ref(G_OBJECT(menu_item), (GWeakNotify)g_free, demo_path);
 				g_free(label);
 			}
-			if (!has_dir) {
-				menu_item = gtk_menu_item_new_with_label(_("Empty"));
-				gtk_widget_set_sensitive(menu_item, FALSE);
-				gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menu_item);
-			}
+		}
+		if (!has_dir) {
+			puts("Ola");
+			menu_item = gtk_menu_item_new_with_label(_("Empty"));
+			gtk_widget_set_sensitive(menu_item, FALSE);
+			gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menu_item);
 		}
 		g_string_free(path, TRUE);
 	}
