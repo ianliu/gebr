@@ -696,7 +696,7 @@
     <section xml:id="sec_3_2_1">
       <title>Creating a new Flow</title>
       <para>To create a new Flow first check that you have already <emphasis role="bold"> created and selected a Line
-	</emphasis> in the <guilabel>Projects e Lines</guilabel> tab. When you have done this, select the
+	</emphasis> in the <guilabel>Projects and Lines</guilabel> tab. When you have done this, select the
           <guilabel>Flows</guilabel> tab and left-click on
           <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_criar_fluxo.png"/></imageobject></inlinemediaobject></guiicon>. In the dialog box that opens, <xref linkend="editar_propriedades_fluxo"/>, fill in the required information then click on <guibutton>OK</guibutton>. For
 	 more details see <xref linkend="criando_fluxos"/>.</para>
@@ -734,7 +734,7 @@
       <tip>
         <para>Any Flow (or a set of Flows) that has been copied to the clipboard can be pasted to 
 	 <emphasis role="bold">any Line</emphasis>. Simply switch to the 
-	 <guilabel>Projects e Lines</guilabel> tab, select the desired Line, then go back to the 
+	 <guilabel>Projects and Lines</guilabel> tab, select the desired Line, then go back to the 
             <guilabel>Flows</guilabel> tab and paste the Flow(s).</para>
       </tip>
     </section>
@@ -761,7 +761,7 @@
     <section xml:id="sec_3_2_7">
       <title>Saving a Flows state</title>
       <para>When working with GêBR you will encounter situations where it will be useful to use an existing Flow
-	as a basis to create new Flows. for example, you might want to experiment with Flows that are only slightly 
+	as a basis to create new Flows. For example, you might want to experiment with Flows that are only slightly 
 	different from one another, however without having to discard or modify the original Flow.</para>
       <para>One way of doing this is to copy and paste the Flow (see the section
 	 <xref linkend="copiar_fluxos_area_tranferencia"/>
@@ -857,7 +857,7 @@
       <title>Executing a Flow</title>
       <para>This command is present in the tab <guilabel>Flows</guilabel>  and the tab
           <guilabel>Flow editor</guilabel>  where both work differently. In the tab Flows, the
-          button <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_executar_fluxo.png"/></imageobject></inlinemediaobject></guiicon> executes several Flows in a sequence. see Figure: 
+          button <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_executar_fluxo.png"/></imageobject></inlinemediaobject></guiicon> executes several Flows in a sequence. See Figure: 
 	<figure><mediaobject><caption>In the tab Flows you are able to execute several Flows sequentially by first: selecting the Flows
 	you wish to use, and then left-click on 
   <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_executar_fluxo.png"/></imageobject></inlinemediaobject></guiicon>. </caption><imageobject><imagedata fileref="../images/janela_execucao_de_fluxo.png"/></imageobject></mediaobject></figure></para>
