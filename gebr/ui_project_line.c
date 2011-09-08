@@ -284,9 +284,9 @@ void project_line_info_update(void)
 		gint nlines;
 
 		nlines = gebr_geoxml_project_get_lines_number(gebr.project);
-		markup = nlines != 0 ? nlines == 1 ? g_markup_printf_escaped(_("This project has 1 Line"))
-		    : g_markup_printf_escaped(_("This project has %d Lines"), nlines)
-		    : g_markup_printf_escaped(_("This project has no Line"));
+		markup = nlines != 0 ? nlines == 1 ? g_markup_printf_escaped(_("This Project has 1 Line"))
+		    : g_markup_printf_escaped(_("This Project has %d Lines"), nlines)
+		    : g_markup_printf_escaped(_("This Project has no Line"));
 
 		gtk_label_set_markup(GTK_LABEL(gebr.ui_project_line->info.numberoflines), markup);
 		g_free(markup);
@@ -377,7 +377,7 @@ gboolean project_line_get_selected(GtkTreeIter * _iter, enum ProjectLineSelectio
 	GtkTreeModel *model;
 	GtkTreeSelection *selection;
 	static const gchar *no_line_selected = N_("Please select a Line.");
-	static const gchar *no_project_selected = N_("Please select a project.");
+	static const gchar *no_project_selected = N_("Please select a Project.");
 
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (gebr.ui_project_line->view));
 	rows = gtk_tree_selection_get_selected_rows (selection, &model);
@@ -393,7 +393,7 @@ gboolean project_line_get_selected(GtkTreeIter * _iter, enum ProjectLineSelectio
 			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _(no_line_selected));
 			break;
 		case ProjectLineSelection:
-			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Please select a project or a Line."));
+			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Please select a Project or a Line."));
 			break;
 		}
 		return FALSE;
@@ -887,7 +887,7 @@ void project_line_export(void)
 		gtk_file_filter_set_name(file_filter, _("Project (*.prjz)"));
 		gtk_file_filter_add_pattern(file_filter, "*.prjz");
 		extension = ".prjz";
-		check_box_label_user = _("Make this project user-independent");
+		check_box_label_user = _("Make this Project user-independent");
 	} else {
 		gtk_file_filter_set_name(file_filter, _("Line (*.lnez)"));
 		gtk_file_filter_add_pattern(file_filter, "*.lnez");

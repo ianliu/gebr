@@ -89,7 +89,7 @@ gboolean project_delete(GtkTreeIter * iter, gboolean warn_user)
 
 	/* message user */
 	if (warn_user)
-		gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Deleting project '%s'."),
+		gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Deleting Project '%s'."),
 			     gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(project)));
 
 	return TRUE;

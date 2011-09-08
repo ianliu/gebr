@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-08 10:33-0300\n"
-"PO-Revision-Date: 2011-09-08 11:01-0300\n"
+"POT-Creation-Date: 2011-09-08 13:34-0300\n"
+"PO-Revision-Date: 2011-09-08 13:35-0300\n"
 "Last-Translator: Rodrigo Morelatto <morelatto@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
 "MIME-Version: 1.0\n"
@@ -98,9 +98,7 @@ msgstr "Erro na comunicação com o servidor '%s'. Por favor, reconecte."
 #: ../document.c:258
 #, c-format
 msgid "Can not load the file at %s: %s"
-msgstr ""
-"Não foi possível carregar o menu em %s:\n"
-"%s"
+msgstr "Não foi possível carregar o menu em %s:%s"
 
 #: ../document.c:273
 #, c-format
@@ -335,7 +333,7 @@ msgstr "Parâmetros do programa \"%s\""
 
 #: ../flow.c:971
 msgid "Parameter"
-msgstr "Parâmetros"
+msgstr "Parâmetro"
 
 #: ../flow.c:971 ../flow.c:1062 ../ui_document.c:620
 msgid "Value"
@@ -773,7 +771,7 @@ msgstr "sem fila"
 #: ../job.c:349
 #, c-format
 msgid "Job submitted to '%s' ('%s') by %s\n"
-msgstr "Tarefa enviada para '%s' (%s) por %s.\n"
+msgstr "Tarefa enviada para '%s' ('%s') por %s\n"
 
 #: ../job.c:356
 msgid " - "
@@ -794,7 +792,7 @@ msgstr "."
 #: ../job.c:455
 #, c-format
 msgid "Job submitted to '%s' ('%s') by %s.\n"
-msgstr "Tarefa enviada para '%s' (%s) por %s.\n"
+msgstr "Tarefa enviada para '%s' ('%s') por %s.\n"
 
 #: ../job.c:460
 #, c-format
@@ -857,7 +855,7 @@ msgstr "Apagando o Fluxo '%s'."
 #: ../line.c:126
 #, c-format
 msgid "Deleting Line '%s'."
-msgstr "Apagando o Fluxo '%s'."
+msgstr "Apagando a Linha '%s'."
 
 #: ../line.c:128
 #, c-format
@@ -951,8 +949,8 @@ msgstr ""
 
 #: ../project.c:92
 #, c-format
-msgid "Deleting project '%s'."
-msgstr "Apagando o fluxo '%s'."
+msgid "Deleting Project '%s'."
+msgstr "Apagando o Projeto '%s'."
 
 #: ../server.c:314
 msgid "Local server"
@@ -1007,7 +1005,7 @@ msgstr "Grupo do servidor"
 #. Line Path's
 #: ../ui_document.c:384
 msgid "Path:"
-msgstr "Caminhos:"
+msgstr "Caminho:"
 
 #: ../ui_document.c:546
 #, c-format
@@ -1047,7 +1045,7 @@ msgid "Click to select type for a new parameter"
 msgstr "Clique para escolher o tipo de um novo parâmetro"
 
 #: ../ui_document.c:1125
-msgid "Can not use reserved keyword iter."
+msgid "Can not use reserved keyword 'iter'."
 msgstr "A palavra-chave 'iter' não pode ser usada."
 
 #: ../ui_document.c:1130
@@ -1259,7 +1257,7 @@ msgstr ""
 
 #: ../ui_flow_edition.c:145
 msgid "Server"
-msgstr "_Servidor"
+msgstr "Servidor"
 
 #: ../ui_flow_edition.c:155
 msgid "Queue"
@@ -1267,7 +1265,7 @@ msgstr "Fila"
 
 #: ../ui_flow_edition.c:164
 msgid "Flow sequence"
-msgstr "Seqüência de fluxo"
+msgstr "Seqüência de Fluxo"
 
 #.
 #. * Right side: Menu list
@@ -1351,7 +1349,7 @@ msgstr "Sobrescrever arquivo de log pré existente"
 #: ../ui_flow_edition.c:1172 ../ui_flow_edition.c:1187 ../ui_job_control.c:622
 #: ../ui_project_line.c:1338 ../ui_project_line.c:1373
 msgid "Collapse all"
-msgstr "Colapsar todos"
+msgstr "Contrair todos"
 
 #: ../ui_flow_edition.c:1175 ../ui_flow_edition.c:1190 ../ui_job_control.c:626
 #: ../ui_project_line.c:1342 ../ui_project_line.c:1377
@@ -1400,11 +1398,11 @@ msgstr "Estilo"
 
 #: ../ui_help.c:87
 msgid "_Include user's commentary"
-msgstr "Incluir comentários do usuário"
+msgstr "_Incluir comentários do usuário"
 
 #: ../ui_help.c:90
 msgid "Include the _Flow's report"
-msgstr "Incluir relatório do fluxo"
+msgstr "Incluir relatório do Fluxo"
 
 #: ../ui_help.c:96
 msgid "No table at all"
@@ -1412,7 +1410,7 @@ msgstr "Nenhuma tabela"
 
 #: ../ui_help.c:98
 msgid "Show only the parameters which differ from the default values"
-msgstr "Mostrar apenas os parâmetros diferentes do padrão"
+msgstr "Mostrar apenas os parâmetros com valores diferentes do padrão"
 
 #: ../ui_help.c:100
 msgid "Just filled in parameters"
@@ -1448,7 +1446,7 @@ msgstr "Nenhum"
 
 #: ../ui_help.c:588 ../ui_help.c:608
 msgid "Unable to create temporary file."
-msgstr "Impossível escrever arquivo temporário."
+msgstr "Impossível criar arquivo temporário."
 
 #: ../ui_help.c:599
 msgid "Error during editor execution."
@@ -1472,7 +1470,7 @@ msgstr "Texto (*.txt)"
 
 #: ../ui_job_control.c:192
 msgid "Could not write file."
-msgstr "Não foi possível escrever arquivo."
+msgstr "Não foi possível escrever o arquivo."
 
 #: ../ui_job_control.c:220
 #, c-format
@@ -1481,7 +1479,7 @@ msgstr "Salvou informação da Tarefa em \"%s\"."
 
 #: ../ui_job_control.c:247 ../ui_job_control.c:252
 msgid "Clear Job"
-msgstr "Limpar Tarefas"
+msgstr "Limpar Tarefa"
 
 #: ../ui_job_control.c:248
 #, c-format
@@ -1597,7 +1595,7 @@ msgstr "Caminho já existe"
 msgid ""
 "The path <i>%s</i> already exists in the list, the operation will be "
 "cancelled."
-msgstr "O caminho <i>%s</i> ainda existe na lista, a operação será cancelada."
+msgstr "O caminho <i>%s</i> já existe na lista, a operação será cancelada."
 
 #: ../ui_paths.c:175
 #, c-format
@@ -1605,7 +1603,7 @@ msgid ""
 "The path <i>%s</i> already exists in the list as %s, the operation will be "
 "cancelled."
 msgstr ""
-"O caminho <i>%s</i> ainda existe na lista como %s, a operação será cancelada."
+"O caminho <i>%s</i> já existe na lista como %s, a operação será cancelada."
 
 #: ../ui_preferences.c:67
 msgid "Preferences"
@@ -1667,18 +1665,18 @@ msgstr "Índice"
 
 #: ../ui_project_line.c:287
 #, c-format
-msgid "This project has 1 Line"
-msgstr "Este projeto tem 1 Linha"
+msgid "This Project has 1 Line"
+msgstr "Este Projeto tem 1 Linha"
 
 #: ../ui_project_line.c:288
 #, c-format
-msgid "This project has %d Lines"
-msgstr "Este projeto tem %d Linhas"
+msgid "This Project has %d Lines"
+msgstr "Este Projeto tem %d Linhas"
 
 #: ../ui_project_line.c:289
 #, c-format
-msgid "This project has no Line"
-msgstr "Este projeto não tem Linhas"
+msgid "This Project has no Line"
+msgstr "Este Projeto não tem Linhas"
 
 # t I/O labels
 #: ../ui_project_line.c:312
@@ -1694,12 +1692,12 @@ msgid "Please select a Line."
 msgstr "Por favor, selecione uma Linha."
 
 #: ../ui_project_line.c:380
-msgid "Please select a project."
-msgstr "Por favor, selecione um projeto."
+msgid "Please select a Project."
+msgstr "Por favor, selecione um Projeto."
 
 #: ../ui_project_line.c:396
-msgid "Please select a project or a Line."
-msgstr "Por favor, selecione um projeto ou Linha."
+msgid "Please select a Project or a Line."
+msgstr "Por favor, selecione um Projeto ou Linha."
 
 #: ../ui_project_line.c:459
 msgid "Unrecognized file type."
@@ -1762,8 +1760,8 @@ msgid "Project (*.prjz)"
 msgstr "Projeto (*.prjz)"
 
 #: ../ui_project_line.c:890
-msgid "Make this project user-independent"
-msgstr "Tornar este projeto independente de usuário"
+msgid "Make this Project user-independent"
+msgstr "Tornar este Projeto independente de usuário"
 
 #: ../ui_project_line.c:892
 msgid "Line (*.lnez)"

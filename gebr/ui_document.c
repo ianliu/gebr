@@ -1122,7 +1122,7 @@ dict_edit_is_name_valid(const gchar *name, struct dict_edit_data *data)
 {
 	if (g_strcmp0(name,"iter") == 0) {
 		gtk_label_set_text(GTK_LABEL(data->label), 
-				   _("Can not use reserved keyword iter."));
+				   _("Can not use reserved keyword 'iter'."));
 		return FALSE;
 	}
 	if (gebr_expr_is_reserved_word (name)) {
