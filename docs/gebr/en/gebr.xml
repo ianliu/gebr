@@ -950,7 +950,7 @@
         <tip>
           <para>When in the 
               <guilabel>Flows</guilabel> tab try double clicking on a Flow. This way you will have selected the Flow and already
-		find your self in the <guilabel>Flow editor</guilabel> tab.</para>
+		find yourself in the <guilabel>Flow editor</guilabel> tab.</para>
         </tip>
       </step>
       <step>
@@ -963,8 +963,6 @@
 	Flow. To do so, <emphasis role="bold">right-click </emphasis> on the component and choose 
 	<guilabel>Help</guilabel>.</para>
         </tip>
-      </step>
-    </procedure>
     <tip>
       <para>Note that the <emphasis role="bold">information bar</emphasis> just bellow the <guimenu>Actions</guimenu> menu, at
 	 the top of the main window. Shows which Flow is currently selected at all times, in every tab.</para>
@@ -974,6 +972,7 @@
 	<guilabel>Flow sequence</guilabel> by simply <emphasis role="bold">dragging</emphasis> the program of your choice to the 
 	its new position.</para>
     </tip>
+    </step></procedure>
     <para>Now that we know how to add programs to the Flow let us learn how to configure these programs, and investigate the
 	 other tools found in the 
 	<guilabel>Flow editor</guilabel> tab:</para>
@@ -1015,7 +1014,7 @@
       </listitem>
     </itemizedlist>
     <tip>
-      <para>Instead of command buttons try using <emphasis role="bold">context menus</emphasis>. To do so
+      <para>Instead of command buttons, try using <emphasis role="bold">context menus</emphasis>. To do so,
            <emphasis role="bold">right-click</emphasis> on a program you have added. 
 	 Notice that many command can be accessed through this menu.  For certain cases this method is
            <emphasis role="bold">easier and faster</emphasis> then using command buttons.</para>
@@ -1090,7 +1089,7 @@
           to <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_configurado.png"/></imageobject></inlinemediaobject></guiicon> instead of
 de <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_nao_configurado.png"/></imageobject></inlinemediaobject></guiicon>. This means that the program's state has gone from
 	 <emphasis role="bold">Not configured</emphasis> to the 
-        <emphasis role="bold">Configured</emphasis> state. Other then these two states the program can also be set to the
+        <emphasis role="bold">Configured</emphasis> state. Besides these two states the program can also be set to the
 	 <emphasis role="bold">Disabled</emphasis> state
    (<guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_desabilitado.png"/></imageobject></inlinemediaobject></guiicon>). You can alternate between these states by using two methods,
         you can either <mousebutton>right-click</mousebutton> on the program and then select from the context menu the desired state,
@@ -1101,8 +1100,8 @@ de <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-ima
             <keycombo><keycap>Shift</keycap><mousebutton>Clique</mousebutton></keycombo>.</para>
       </tip>
       <tip>
-        <para>Changing a programs state does not alter its parameter configuration. You can safely alternate between the 
-	states, for the parameters will continue the same.</para>
+        <para>Changing a program state does not alter its parameter configuration. You can safely alternate between the 
+	states and the parameters will continue the same.</para>
       </tip>
       <important>
         <para><emphasis role="bold">Disabled</emphasis> programs
@@ -1152,25 +1151,25 @@ de <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-ima
       <title>Executing a Flow</title>
       <para>To execute the current Flow click on 
           <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_executar_fluxo.png"/></imageobject></inlinemediaobject></guiicon>.</para>
-      <para>By default the Flow's are executed on the machine of origin, which is identified automatically by GêBR
+      <para>By default the Flow's are executed on the machine of origin, which is automatically identified by GêBR
           as <emphasis role="bold">local server</emphasis>. However, GêBR does permit that you 
 	<emphasis role="bold">execute Flows on remote machines</emphasis>. More details on the definition and selection
 	of servers can be found in <xref linkend="menu"/>.</para>
-      <para>In the Flow editor tab, even if you selected several Flow from the Flows tab, when you click on
+      <para>In the Flow editor tab, even if you have selected several Flow from the Flows tab, when you click on
           <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_executar_fluxo.png"/></imageobject></inlinemediaobject></guiicon> only the first selected Flow will be executed.</para>
       <para>In this version of GêBR a concept called queues can now be employed to run a Flow, or sequence of Flows, in
-	 different queues, this was explained in <xref linkend="executar_fluxo_aba_fluxos"/>. In this tab you can choose from
-	the Queue fields in which queue the Flow is to be executed. You can also name this chosen queue, see figure:</para>
+	 different queues (see section <xref linkend="executar_fluxo_aba_fluxos"/>. In this tab you can choose from
+	the Queue fields in which queue the Flow is to be executed. You can also name this chosen queue:</para>
       <figure>
         <mediaobject>
-          <caption>In the Flow editor tab, from the Queue fields you can determine in which queue a Flow will be executed.
+          <caption>Screenshot of the Flow editor tab. From the Queue fields you can determine in which queue a Flow will be executed.
 	</caption>
           <imageobject>
             <imagedata fileref="../images/janela_filas_edicao_de_fluxo.png"/>
           </imageobject>
         </mediaobject>
       </figure>
-      <para>On the moment that the Flow is executed GêBR will automatically switch to the
+      <para>In the moment that the Flow is executed, GêBR will automatically switch to the
           <guilabel>Job control</guilabel> tab, which will display a report (<emphasis>log</emphasis>) on the execution of the
 	 Flow .</para>
     </section>
@@ -1342,7 +1341,7 @@ de <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-ima
 				  </para>
 				  <figure>
 					  <mediaobject>
-						  <caption>Creation of variable <emphasis role="bold">string</emphasis>, and verification of the result.</caption>
+						  <caption>Screenshot of the creation of variable <emphasis role="bold">string</emphasis> and verification of the result.</caption>
 						  <imageobject>
 							  <imagedata fileref="../images/exemplo_variaveis_5.png"/>
 						  </imageobject>
@@ -1379,7 +1378,7 @@ de <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-ima
 called <emphasis role="bold">iter</emphasis>. Then we can show an example of the use of this variable:</para>
 		  <procedure>
 			  <step>
-				  <para>Suppose we want to know in which week days are going to fall the turns of the next 5 years. To this end, we need the calendar of December from these 5 years.
+				  <para>Suppose we want to know in which week days the turns of next 5 years will be. To this end, we need the calendar of December from these 5 years.
 					  We are going to use the program <guimenuitem>Calendar</guimenuitem> (it can be found in the <guimenu>Shell Tools</guimenu> category, in the <guilabel>Flow Editor</guilabel> tab).</para> 
 				  <para>Using the examples about the filling of parameters in section <xref linkend="loop"/>, we are going to end up with the variable <emphasis role="bold">iter</emphasis> in the dictionary as in the following window.</para>
 				  <figure>
@@ -1566,7 +1565,7 @@ called <emphasis role="bold">iter</emphasis>. Then we can show an example of the
       </section>
       <section>
         <title>Servers</title>
-        <para>Use the window <guilabel>Configure servers</guilabel> to configure the local server and remote servers that you
+        <para>Use the window <guilabel>Server Configuration</guilabel> to configure the local server and remote servers that you
 	have added.</para>
         <para>The <emphasis>Local server</emphasis> is automatically defined and connected when GêBR initializes. 
 	It is used as the default machine when executing Flows.</para>
