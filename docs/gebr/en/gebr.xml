@@ -1367,8 +1367,8 @@ de <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-ima
 		  <tip>In order to validate a field of an expression or a variable, you just need to use the key <keycap>Enter</keycap>.</tip>
 		  <tip>To see all the available variables for auto-completion, we just need to type the character <emphasis role="bold">[</emphasis>' (open brackets).</tip>
 		  <important>
-			  <para>We can define the visibility of the variables, managing them in the lists <guilabel>Project</guilabel>, <guilabel>Line</guilabel> and <guilabel>Flow</guilabel>. Variables from the list <guilabel>Project</guilabel> are visible to <emphasis role="bold">every flow</emphasis> of every line of the choosen project <guilabel>Line</guilabel> are visible
-				  just for the <emphasis role="bold">flows of the selected flow</emphasis>. Variables from the list <guilabel>Flow</guilabel> are visible just for the <emphasis role="bold">choosen flow
+			  <para>We can define the visibility of the variables, managing them in the lists <guilabel>Project</guilabel>, <guilabel>Line</guilabel> and <guilabel>Flow</guilabel>. Variables from the list <guilabel>Project</guilabel> are visible to <emphasis role="bold">every flow</emphasis> of every line of the chosen project <guilabel>Line</guilabel> are visible
+				  just for the <emphasis role="bold">flows of the selected flow</emphasis>. Variables from the list <guilabel>Flow</guilabel> are visible just for the <emphasis role="bold">chosen flow
 					  </emphasis>.</para>
 		  </important>
 	  </section>
