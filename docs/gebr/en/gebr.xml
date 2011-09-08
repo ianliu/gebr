@@ -488,7 +488,7 @@
           (<keycombo><keycap>Ctrl</keycap><keycap>End</keycap></keycombo>).</para>
       <figure>
         <mediaobject>
-          <caption>In the Line's proporties dialog box, other than add useful information such as the Line's
+          <caption>In the Line's properties dialog box, other than add useful information such as the Line's
 	description, author and email, you can also add the Line's preferred paths in the paths text box.</caption>
           <imageobject>
             <imagedata fileref="../images/janela_path_list.png"/>
@@ -506,12 +506,10 @@
               button <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_importar_projeto.png"/></imageobject></inlinemediaobject></guiicon></para>
         </step>
         <step>
-          <para>Navegue pela janela <guilabel>Escolha o projeto ou linha para abrir</guilabel> e selecione o projeto
-              ou a linha que deseja importar (apenas arquivos do tipo <filename class="extension">prjz</filename> ou
-              <filename class="extension">lnez</filename> serão mostrados).</para>
+		<para>Select the project or line you want to import at window <guilabel>Choose project/line to open</guilabel>. Only files with extension <filename class="extension">prjz</filename> or <filename class="extension">lnez</filename> will be show.</para>
         </step>
         <step>
-          <para>Clique no botão <guibutton>Abrir</guibutton>.</para>
+          <para>Click at button <guibutton>Open</guibutton>.</para>
         </step>
       </procedure>
       <para>The imported project is added to the list of projects, found on the left of the main window. An imported
