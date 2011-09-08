@@ -635,10 +635,10 @@
         possível:</para>
       <procedure>
         <step>
-          <para> Salvar;</para>
+          <para> Salvar o relatório;</para>
         </step>
         <step>
-          <para> Imprimir o relatório.</para>
+          <para> Imprimir-lo.</para>
         </step>
       </procedure>
       <para> Em Opções, ainda na janela de visualização do relatório, é possível:</para>
@@ -653,7 +653,7 @@
           <para> Configurar as tabelas de parâmetros dos programas do fluxo;</para>
         </step>
         <step>
-          <para> Bem como escolher o estilo de apresentação do relatório gerado,com a possibilidade de inclusão de
+          <para>Escolher o estilo de apresentação do relatório gerado, com a possibilidade de inclusão de
           outros estilos.</para>
         </step>
       </procedure>
