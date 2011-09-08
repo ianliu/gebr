@@ -887,7 +887,7 @@
       <title>View report</title>
       <para>This button appears in the <guilabel>Projects and Lines</guilabel> tab and in
           <guilabel>Flows</guilabel> tab. This button allows the user to View the report on the Line or Flow
-          in question, with the difference that the the Line's report can include the Flow's report. 
+          in question, with the difference that the Line's report can include the Flow's report. 
 	All other functions are described in <xref linkend="visualizar_relatorio"/>.</para>
     </section>
   </section>
@@ -1181,7 +1181,7 @@ de <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-ima
       <para>When we add the program Loop, we can see it always appears in the top of the flow. That happens to indicate that the flow is going to be executed more than once, according to the parameters set for the program.
       (see section <xref linkend="editar_parametros_programa"/> for further details).</para>
         <mediaobject>
-          <caption>Screenshot of the program <emphasis>Loop</emphasis>, added and configured.</caption>
+          <caption>Screenshot of program <emphasis>Loop</emphasis>, added to a flow and properly configured.</caption>
           <imageobject>
             <imagedata fileref="../images/loop_adicionado.png"/>
           </imageobject>
@@ -1189,7 +1189,7 @@ de <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-ima
       <para>After the <emphasis>Loop</emphasis> be added, we have access to a new variable, the <emphasis role="bold">iter</emphasis>. This special variable changes its value on each iteration, according to the parameters set.
       </para>
       <mediaobject>
-          <caption>Screenshot of the edition of the parameters of the program <emphasis>Loop</emphasis>, with a simple example of parameters setting.</caption>
+          <caption>Screenshot of the edition from parameters of <emphasis>Loop</emphasis> program , with a simple example of parameters setting.</caption>
           <imageobject>
             <imagedata fileref="../images/loop_parametros.png"/>
           </imageobject>
@@ -1230,7 +1230,7 @@ de <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-ima
     <figure>
       <mediaobject>
         <caption>In the Job control tab, to the right of the main menu we can view a list of Flows being carried out,
-	 already executed, cancelled and failed. To the right there will be information about each execution.</caption>
+	 already executed, canceled and failed. To the right there will be information about each execution.</caption>
         <imageobject>
           <imagedata fileref="../images/janela_aba_controle_de_tarefas.png"/>
         </imageobject>
@@ -1280,7 +1280,7 @@ de <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-ima
 					  <guilabel>Flow Editor</guilabel> tab).</para>
 				  <figure>
 					  <mediaobject>
-						  <caption>Screenshot of the creation of the "Example flow".</caption>
+						  <caption>Screenshot of the creation of flow "Example flow".</caption>
 						  <imageobject>
 							  <imagedata fileref="../images/exemplo_variaveis_1.png"/>
 						  </imageobject>
@@ -1300,8 +1300,8 @@ de <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-ima
 					  to <emphasis role="bold">edit the variables dictionary</emphasis>.</para>
 			  </step>
 			  <step>
-				  <para>At the window that pops up (<guilabel>Variables dictionary for flow</guilabel>), click in <emphasis>New</emphasis> at <emphasis role="bold">Flow</emphasis> escope.
-					  Fill the field <emphasis>keyword</emphasis> with the variable's name <emphasis role="bold">var1</emphasis>. Then, press enter to proceed to the next field, <emphasis>Value</emphasis>. Before fill it, you must choose a data type to your new variable (<guimenuitem>Number</guimenuitem> or <guimenuitem>Text</guimenuitem>), choose <guimenuitem>Number</guimenuitem>. The mouse cursor will be located at field <emphasis>Value</emphasis>. Fill that field with <emphasis role="bold">10</emphasis> and press enter again.</para> The last field is the <emphasis>Comments</emphasis>. Fill it with some description of your newly created variable. Remeber: The comments are optional, you can leave this field empty if you want.
+				  <para>At the window that pops up (<guilabel>Variables dictionary for flow</guilabel>), click in <emphasis>New</emphasis> at <emphasis role="bold">Flow</emphasis> scope.
+					  Fill the field <emphasis>keyword</emphasis> with the variable's name <emphasis role="bold">var1</emphasis>. Then, press enter to proceed to the next field, <emphasis>Value</emphasis>. Before fill it, you must choose a data type to your new variable (<guimenuitem>Number</guimenuitem> or <guimenuitem>Text</guimenuitem>), choose <guimenuitem>Number</guimenuitem>. The mouse cursor will be located at field <emphasis>Value</emphasis>. Fill that field with <emphasis role="bold">10</emphasis> and press enter again.</para> The last field is the <emphasis>Comments</emphasis>. Fill it with some description of your newly created variable. Remember: The comments are optional, you can leave this field empty if you want.
 				  <para>When you finish, your window must look like with this one:</para>
 				  <figure>
 					  <mediaobject>
