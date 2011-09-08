@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-06 11:32-0300\n"
-"PO-Revision-Date: 2011-09-05 18:11-0300\n"
+"POT-Creation-Date: 2011-09-08 10:33-0300\n"
+"PO-Revision-Date: 2011-09-08 11:01-0300\n"
 "Last-Translator: Rodrigo Morelatto <morelatto@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
 "MIME-Version: 1.0\n"
@@ -329,9 +329,9 @@ msgid "Instance"
 msgstr "Instância"
 
 #: ../flow.c:953
-#, fuzzy, c-format
+#, c-format
 msgid "Parameters for the Program \"%s\""
-msgstr "Parâmetros do programa %s"
+msgstr "Parâmetros do programa \"%s\""
 
 #: ../flow.c:971
 msgid "Parameter"
@@ -342,18 +342,16 @@ msgid "Value"
 msgstr "Valor"
 
 #: ../flow.c:1062
-#, fuzzy
 msgid "Variables"
-msgstr "Inserir Variável"
+msgstr "Variáveis"
 
 #: ../flow.c:1062 ../ui_document.c:597
 msgid "Keyword"
 msgstr "Palavra-chave"
 
 #: ../flow.c:1062
-#, fuzzy
 msgid "Result"
-msgstr "Padrão"
+msgstr "Resultado"
 
 #: ../flow.c:1062 ../ui_document.c:658
 msgid "Comment"
@@ -373,7 +371,7 @@ msgstr "Projeto"
 
 #: ../flow.c:1097
 msgid "There are no variables in this scope"
-msgstr ""
+msgstr "Não existem variáveis neste escopo"
 
 #: ../flow.c:1128
 msgid "I/O table"
@@ -479,14 +477,12 @@ msgid "Edit properties"
 msgstr "Editar propriedades"
 
 #: ../interface.c:80 ../interface.c:102
-#, fuzzy
 msgid "Variables dictionary"
-msgstr "Dicionário de parâmetros"
+msgstr "Dicionário de variáveis"
 
 #: ../interface.c:81 ../interface.c:103
-#, fuzzy
 msgid "Edit variables dictionary"
-msgstr "Editar dicionário de parâmetros"
+msgstr "Editar dicionário de variáveis"
 
 #: ../interface.c:82 ../interface.c:106
 msgid "Import"
@@ -785,7 +781,7 @@ msgstr " - "
 
 #: ../job.c:359
 msgid " (Failed)"
-msgstr ""
+msgstr " (Falhou)"
 
 #: ../job.c:361
 msgid " (running)"
@@ -929,9 +925,10 @@ msgid ""
 "Install Seismic Unix package.\n"
 "Click here to get the script of Seismic Unix on GêBR Project website."
 msgstr ""
+"Instale o pacote do Seismic Unix.\n"
+"Clique aqui para baixar o script do Seismic Unix no site da GêBR Project."
 
 #: ../menu.c:489
-#, fuzzy
 msgid "Empty"
 msgstr "vazio"
 
@@ -1013,9 +1010,9 @@ msgid "Path:"
 msgstr "Caminhos:"
 
 #: ../ui_document.c:546
-#, fuzzy, c-format
-msgid "Variables dictionary for %s '%s'"
-msgstr "Dicionário de parâmetros para %s '%s'"
+#, c-format
+msgid "Variables dictionary for %s \"%s\""
+msgstr "Dicionário de variáveis para %s \"%s\""
 
 #: ../ui_document.c:635 ../ui_document.c:1081
 msgid "Number"
@@ -1218,8 +1215,8 @@ msgid "Input:"
 msgstr "Entrada:"
 
 #: ../ui_flow_browse.c:328
-msgid "Error log:"
-msgstr "Log de erro:"
+msgid "Log:"
+msgstr "Log:"
 
 #: ../ui_flow_browse.c:600
 msgid "Backup current state?"
@@ -1288,9 +1285,9 @@ msgid "Input file"
 msgstr "Arquivo de entrada"
 
 #: ../ui_flow_edition.c:347
-#, fuzzy, c-format
-msgid "Input file %s"
-msgstr "Arquivo de entrada '%s'"
+#, c-format
+msgid "Input file \"%s\""
+msgstr "Arquivo de entrada \"%s\""
 
 #. FIXME: This line does not need escaping...
 #: ../ui_flow_edition.c:374
@@ -1299,29 +1296,28 @@ msgstr "Arquivo de saída"
 
 #. FIXME: ... but this does!
 #: ../ui_flow_edition.c:385
-#, fuzzy, c-format
+#, c-format
 msgid "Append to output file \"%s\""
-msgstr "Acrescentar ao arquivo de saída '%s'"
+msgstr "Acrescentar ao arquivo de saída \"%s\""
 
 #: ../ui_flow_edition.c:387
-#, fuzzy, c-format
+#, c-format
 msgid "Overwrite output file \"%s\""
-msgstr "Sobrescrever arquivo de saída '%s'"
+msgstr "Sobrescrever arquivo de saída \"%s\""
 
 #: ../ui_flow_edition.c:414
-#, fuzzy
-msgid "Error file"
-msgstr "Log de erro:"
+msgid "Log file"
+msgstr "Arquivo de log"
 
 #: ../ui_flow_edition.c:424
-#, fuzzy, c-format
-msgid "Append to error file \"%s\""
-msgstr "Acrescentar ao arquivo de log '%s'"
+#, c-format
+msgid "Append to log file \"%s\""
+msgstr "Acrescentar ao arquivo de log \"%s\""
 
 #: ../ui_flow_edition.c:426
-#, fuzzy, c-format
-msgid "Overwrite error file \"%s\""
-msgstr "Sobrescrever arquivo de log '%s'"
+#, c-format
+msgid "Overwrite log file \"%s\""
+msgstr "Sobrescrever arquivo de log \"%s\""
 
 #: ../ui_flow_edition.c:466
 #, c-format
@@ -1349,7 +1345,7 @@ msgid "Overwrite existing output file"
 msgstr "Sobrescrever arquivo de saída pré existente"
 
 #: ../ui_flow_edition.c:1081
-msgid "Overwrite existing error file"
+msgid "Overwrite existing log file"
 msgstr "Sobrescrever arquivo de log pré existente"
 
 #: ../ui_flow_edition.c:1172 ../ui_flow_edition.c:1187 ../ui_job_control.c:622
@@ -1363,9 +1359,8 @@ msgid "Expand all"
 msgstr "Expandir todos"
 
 #: ../ui_flow_edition.c:1314
-#, fuzzy
 msgid "Unknown error"
-msgstr "Desconhecido"
+msgstr "Erro desconhecido"
 
 #: ../ui_flow_edition.c:1321
 msgid "This program has an invalid expression"
@@ -1380,14 +1375,12 @@ msgid "An undefined variable is being used"
 msgstr "Uma variável não definida está sendo usada"
 
 #: ../ui_flow_edition.c:1333
-#, fuzzy
-msgid "A not well defined variable is being used"
-msgstr "Uma variável não definida está sendo usada"
+msgid "A badly defined variable is being used"
+msgstr "Uma variável mal definida está sendo usada"
 
 #: ../ui_flow_edition.c:1336
-#, fuzzy
 msgid "This program has cleaned their paths"
-msgstr "Programa contém expressão inválida"
+msgstr "Este programa limpou os seus caminhos"
 
 #: ../ui_help.c:74
 msgid "Save the current document"
@@ -1482,18 +1475,18 @@ msgid "Could not write file."
 msgstr "Não foi possível escrever arquivo."
 
 #: ../ui_job_control.c:220
-#, fuzzy, c-format
+#, c-format
 msgid "Saved Job information at \"%s\"."
-msgstr "Salvou informação da Tarefa em '%s'."
+msgstr "Salvou informação da Tarefa em \"%s\"."
 
 #: ../ui_job_control.c:247 ../ui_job_control.c:252
 msgid "Clear Job"
 msgstr "Limpar Tarefas"
 
 #: ../ui_job_control.c:248
-#, fuzzy, c-format
+#, c-format
 msgid "Are you sure you want to clear Job \"%s\"?"
-msgstr "Tem certeza que quer limpar a Tarefa '%s'?"
+msgstr "Tem certeza que quer limpar a Tarefa \"%s\"?"
 
 #: ../ui_job_control.c:253
 msgid "Are you sure you want to clear the selected Jobs?"
@@ -1512,34 +1505,31 @@ msgid "You are not connected to Job's server."
 msgstr "Você não está conectado ao servidor da Tarefa."
 
 #: ../ui_job_control.c:341 ../ui_job_control.c:348
-#, fuzzy
 msgid "Cancel Job"
-msgstr "Cancelar"
+msgstr "Cancelar Tarefa"
 
 #: ../ui_job_control.c:342
-#, fuzzy, c-format
+#, c-format
 msgid "Are you sure you want to cancel Job \"%s\"?"
-msgstr "Tem certeza que quer limpar a Tarefa '%s'?"
+msgstr "Tem certeza que quer cancelar a Tarefa \"%s\"?"
 
 #: ../ui_job_control.c:349
-#, fuzzy
 msgid "Are you sure you want to cancel the selected Jobs?"
-msgstr "Tem certeza que quer limpar as Tarefas selecionadas?"
+msgstr "Tem certeza que quer cancelar as Tarefas selecionadas?"
 
 #: ../ui_job_control.c:353
-#, fuzzy
 msgid "Asking server to cancel Job."
-msgstr "Pedindo para o servidor matar a Tarefa."
+msgstr "Pedindo para o servidor cancelar a Tarefa."
 
 #: ../ui_job_control.c:355
-#, fuzzy, c-format
+#, c-format
 msgid "Asking server \"%s\" to cancel Job \"%s\"."
-msgstr "Pedindo para o servidor '%s' matar a Tarefa '%s'."
+msgstr "Pedindo para o servidor \"%s\" cancelar a Tarefa \"%s\"."
 
 #: ../ui_job_control.c:358
-#, fuzzy, c-format
+#, c-format
 msgid "Asking local server to cancel Job \"%s\"."
-msgstr "Pedindo para o servidor local matar a Tarefa '%s'."
+msgstr "Pedindo para o servidor local cancelar a Tarefa \"%s\"."
 
 #: ../ui_job_control.c:376
 msgid "Nothing selected."
@@ -1725,37 +1715,37 @@ msgstr "Falha ao importar."
 
 #: ../ui_project_line.c:680
 msgid "<span size='large' weight='bold'>Create directories?</span>"
-msgstr ""
+msgstr "<span size='large' weight='bold'>Criar diretórios?</span>"
 
 #: ../ui_project_line.c:681
-#, fuzzy
 msgid ""
 "There are some Line's paths located on your home directory that\n"
-" do not exist. Do you want to create the following folders: "
+" do not exist. Do you want to create the following folders?"
 msgstr ""
-"Existem caminhos preferenciais a serem criados no seu diretório pessoal. "
-"Gostaria de criar as seguintes pastas:%s"
+"Existem caminhos preferenciais a serem criados no seu diretório pessoal.\n"
+"Gostaria de criar as seguintes pastas?"
 
 #: ../ui_project_line.c:716
 msgid "Could not create the directory"
 msgstr "Não foi possível criar o diretório."
 
 #: ../ui_project_line.c:718
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The directory <i>%s</i> could not be created. You do not have the "
 "permissions necessary to create the directories."
 msgstr ""
-"O diretório <i>%s<i> não pôde ser criado. Certifique-se se há permissão de "
-"acesso para a execução dessa operação."
+"O diretório <i>%s<i> não pôde ser criado. Você não tem as permissões "
+"necessárias para criar os diretórios."
 
 #: ../ui_project_line.c:764
 msgid ""
 "<span size='large' weight='bold'>Importing documents, please wait...</span>"
 msgstr ""
+"<span size='large' weight='bold'>Importando documentos, aguarde por favor..."
+"</span>"
 
 #: ../ui_project_line.c:792
-#, fuzzy
 msgid "Choose a Project or Line to open"
 msgstr "Escolha o Projeto ou Linha para abrir"
 
@@ -1764,7 +1754,6 @@ msgid "Project or Line (*.prjz *.lnez)"
 msgstr "Projeto ou Linha (*.prjz *.lnez)"
 
 #: ../ui_project_line.c:840
-#, fuzzy
 msgid "Please select a Project or Line."
 msgstr "Por favor, selecione um Projeto ou Linha."
 
@@ -1920,6 +1909,17 @@ msgstr ""
 "Digite nomes de grupos separados por vírgula e pressione ENTER para "
 "confirmar."
 
+#~ msgid "Error log:"
+#~ msgstr "Log de erro:"
+
+#, fuzzy
+#~ msgid "Error file"
+#~ msgstr "Log de erro:"
+
+#, fuzzy
+#~ msgid "A not well defined variable is being used"
+#~ msgstr "Uma variável não definida está sendo usada"
+
 #~ msgid "Flow \"%s\" broke before Program \"%s\" (no input).\n"
 #~ msgstr "Fluxo '%s' quebrado antes do Programa '%s' (falta entrada).\n"
 
@@ -1995,9 +1995,6 @@ msgstr ""
 #~ "Um ou mais programas estão usando esta variável, removê-la invalidará "
 #~ "estes programas."
 
-#~ msgid "Log file"
-#~ msgstr "Arquivo de log"
-
 #~ msgid "This file path is using an undefined variable"
 #~ msgstr "Caminho de arquivo contém uma variável não definida"
 
@@ -2012,9 +2009,6 @@ msgstr ""
 
 #~ msgid "Choose log file"
 #~ msgstr "Escolha o arquivo de log"
-
-#~ msgid "A badly defined variable is being used"
-#~ msgstr "Uma variável mal definida está sendo usada"
 
 #~ msgid "Close Job"
 #~ msgstr "Limpar Tarefa "
