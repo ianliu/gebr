@@ -701,7 +701,7 @@ gebr_geoxml_flow_validate(GebrGeoXmlFlow *flow,
 			if (!input || !*input) {
 				g_set_error(err, GEBR_GEOXML_FLOW_ERROR,
 					    GEBR_GEOXML_FLOW_ERROR_NO_INFILE,
-					    _("No input file specified for the Program "
+					    _("No input file was specified for the Program "
 					      "\"%s\" in Flow \"%s\"."),
 					    program_title, flow_title);
 				gebr_geoxml_object_unref(seq);
@@ -731,18 +731,16 @@ gebr_geoxml_flow_validate(GebrGeoXmlFlow *flow,
 			case 1:	/* Previous does not write to stdin but current expect something */
 				g_set_error(err, GEBR_GEOXML_FLOW_ERROR,
 					    GEBR_GEOXML_FLOW_ERROR_NO_INPUT,
-					    _("Flow \"%s\" is broken before the Program "
-					      "\"%s\" (no input)."),
-					    flow_title, program_title);
+					    _("The Flow \"%s\" expects an input file."),
+					    flow_title);
 				gebr_geoxml_object_unref(seq);
 				gebr_geoxml_object_unref(last_configured);
 				return FALSE;
 			case 2:	/* Previous does write to stdin but current does not care about */
 				g_set_error(err, GEBR_GEOXML_FLOW_ERROR,
 					    GEBR_GEOXML_FLOW_ERROR_NO_OUTPUT,
-					    _("Flow \"%s\" is broken before the Program "
-					      "\"%s\" (unexpected output)."),
-					    flow_title, program_title);
+					    _("Unexpected output file for the Flow \"%s\"."),
+					    flow_title);
 				gebr_geoxml_object_unref(seq);
 				gebr_geoxml_object_unref(last_configured);
 				return FALSE;

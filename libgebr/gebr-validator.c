@@ -171,7 +171,7 @@ get_error_indirect(GebrValidator *self,
 				            GEBR_IEXPR_ERROR_UNDEF_REFERENCE,
 				            my_scope == GEBR_GEOXML_DOCUMENT_TYPE_FLOW ?
 				            _("Insert program Loop to use variable iter"):
-				            _("Iter can be used only on flow variables"));
+				            _("Iter can be used only in Flow variables"));
 			else
 				g_set_error(err, GEBR_IEXPR_ERROR,
 				            GEBR_IEXPR_ERROR_UNDEF_REFERENCE,
@@ -185,7 +185,7 @@ get_error_indirect(GebrValidator *self,
 			if (!g_strcmp0(dep_name, "iter"))
 				g_set_error(err, GEBR_IEXPR_ERROR,
 				            GEBR_IEXPR_ERROR_UNDEF_REFERENCE,
-				            _("Iter can be used only on flow variables"));
+				            _("Iter can be used only in Flow variables"));
 			else
 				g_set_error(err, GEBR_IEXPR_ERROR,
 				            GEBR_IEXPR_ERROR_UNDEF_REFERENCE,
@@ -202,7 +202,7 @@ get_error_indirect(GebrValidator *self,
 		    && dep_type == GEBR_GEOXML_PARAMETER_TYPE_STRING) {
 			g_set_error(err, GEBR_IEXPR_ERROR,
 			            GEBR_IEXPR_ERROR_TYPE_MISMATCH,
-			            _("Variable %s is String"),
+			            _("The variable %s is a String"),
 			            dep_name);
 			return FALSE;
 		}
@@ -927,7 +927,7 @@ gebr_validator_move(GebrValidator         *self,
 		if (data->param[t2]) {
 			g_set_error(error, GEBR_IEXPR_ERROR,
 				    GEBR_IEXPR_ERROR_BAD_MOVE,
-				    _("Variable %s already exists in that scope"),
+				    _("The variable %s already exists in that scope"),
 				    name);
 			return FALSE;
 		} else {
@@ -1379,7 +1379,7 @@ gebr_validator_validate_control_parameter(GebrValidator *self,
 		if (!strlen(expression)) {
 			g_set_error(error, GEBR_IEXPR_ERROR,
 			            GEBR_IEXPR_ERROR_EMPTY_EXPR,
-			            _("Parameter required"));
+			            _("Required parameter"));
 			g_free(result);
 			return FALSE;
 		}
@@ -1440,9 +1440,10 @@ gebr_validator_validate_iter(GebrValidator *self,
 		i++;
 	}
 
-	/* Comment for translators: 1st %s is expression error; 2nd is variable label */
 	if (err) {
 		gchar *old_msg = (err)->message;
+		// FIXME: The message below is untranslatable!
+		/* Comment for translators: 1st %s is expression error; 2nd is variable label */
 		(err)->message = g_strdup_printf(_("%s on \"%s\""), old_msg, labels[i]);
 		g_free(old_msg);
 		if (err->code >= GEBR_IEXPR_ERROR_EMPTY_EXPR && err->code <= GEBR_IEXPR_ERROR_SYNTAX)
