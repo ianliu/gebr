@@ -454,7 +454,7 @@
     </section>
     <section xml:id="sec_3_1_5">
       <title>Editing the Project's or Line's parameter dictionary</title>
-      <para>This feature is documented in the Section <xref linkend="dicionario_de_parametros"/>.</para>
+      <para>This feature is documented in the Section <xref linkend="variaveis_dicionario"/>.</para>
     </section>
     <section xml:id="editar_caminhos_preferenciais_da_linha">
       <title>Editing the Line's preferred paths</title>
@@ -758,7 +758,7 @@
     </section>
     <section xml:id="sec_3_2_6">
       <title>Editing the Flow's parameter dictionary</title>
-      <para>This feature is documented in the section <xref linkend="dicionario_de_parametros"/>.</para>
+      <para>This feature is documented in the section <xref linkend="variaveis_dicionario"/>.</para>
     </section>
     <section xml:id="sec_3_2_7">
       <title>Saving a Flows state</title>
@@ -1178,26 +1178,25 @@ de <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-ima
     </section>
     <!--  Falta Traduzir -->
     <section xml:id="loop">
-      <title>Programa Loop</title>
-      <para>O programa <emphasis>Loop</emphasis> (que pertence a categoria <emphasis role="bold">Loops</emphasis>) é tratado de uma maneira especial comparado aos outros programas da GêBR. Vamos ver a seguir
-      algumas destas diferenças.</para>
-      <para>Ao adicionarmos o programa Loop, nota-se que ele sempre aparece no topo do fluxo, isso ocorre para representar 
-      que aquele fluxo será executado repetidamente, de acordo com o preenchimento dos parâmetros do programa (visto na seção <xref linkend="editar_parametros_programa"/>).</para>
+      <title>Loop program</title>
+      <para>The program <emphasis>Loop</emphasis> (from the category <emphasis role="bold">Loops</emphasis>) has a totally different usage compared to the remaining programs from GêBR. We are going to see some of these differences.</para>
+      <para>When we add the program Loop, we can see it always appears in the top of the flow. That happens to indicate that the flow is going to be executed more than once, according to the parameters set for the program.
+      (see section <xref linkend="editar_parametros_programa"/> for further details).</para>
         <mediaobject>
-          <caption>Na aba Editor de Fluxo, após o programa <emphasis>Loop</emphasis> ser adicionado e configurado.</caption>
+          <caption>Screenshot of the program <emphasis>Loop</emphasis>, added and configured.</caption>
           <imageobject>
             <imagedata fileref="../images/loop_adicionado.png"/>
           </imageobject>
         </mediaobject>
-      <para>Após o <emphasis>Loop</emphasis> ser adicionado, teremos acesso a uma nova variável, chamada <emphasis role="bold">iter</emphasis>, que tem seu valor alterado a cada iteração,
-      de acordo com o preenchimento de seus parâmetros.</para>
+      <para>After the <emphasis>Loop</emphasis> be added, we have access to a new variable, the <emphasis role="bold">iter</emphasis>. This special variable changes its value on each iteration, according to the parameters set.
+      </para>
       <mediaobject>
-          <caption>Janela de edição de parâmetros do programa <emphasis>Loop</emphasis>, com um exemplo simples do preenchimento.</caption>
+          <caption>Screenshot of the edition of the parameters of the program <emphasis>Loop</emphasis>, with a simple example of parameters setting.</caption>
           <imageobject>
             <imagedata fileref="../images/loop_parametros.png"/>
           </imageobject>
         </mediaobject>
-      <tip>Maiores informações sobre a variável <emphasis role="bold">iter</emphasis> estão disponíveis na seção <xref linkend="variavel_iter"/>.</tip>
+      <tip>Further information about the variable <emphasis role="bold">iter</emphasis> are available in section <xref linkend="variavel_iter"/>.</tip>
     </section>
     
   </section>
