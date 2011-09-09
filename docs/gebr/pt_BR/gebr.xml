@@ -293,7 +293,7 @@
           para contato. Feito isso, clique <guibutton>OK</guibutton>.</para>
         </step>
         <step>
-          <para>A aba <guilabel>Editor de Fluxo</guilabel> será mostrada. Em seguida, expanda a categoria
+          <para>Selecione a aba <guilabel>Editor de Fluxo</guilabel> e em seguida, expanda a categoria
             <guimenu>Graphics</guimenu> e dê um clique duplo no menu <guimenuitem>SU Simple X
             Image</guimenuitem>. Fazendo isso você adiciona este menu ao seu fluxo (note que o programa
             <guimenuitem>SU Simple X Image</guimenuitem> agora aparece na caixa <guilabel>Sequência de fluxo</guilabel>,
