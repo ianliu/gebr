@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-08 13:34-0300\n"
-"PO-Revision-Date: 2011-09-08 13:35-0300\n"
+"POT-Creation-Date: 2011-09-09 12:42-0300\n"
+"PO-Revision-Date: 2011-09-09 12:42-0300\n"
 "Last-Translator: Rodrigo Morelatto <morelatto@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
 "MIME-Version: 1.0\n"
@@ -190,84 +190,84 @@ msgstr "Fluxos órfãos"
 msgid "Failed to save the document '%s' at '%s'."
 msgstr "Falha ao salvar o documento '%s' em '%s'."
 
-#: ../flow.c:81 ../interface.c:97
+#: ../flow.c:79 ../interface.c:97
 msgid "New Flow"
 msgstr "Novo Fluxo"
 
-#: ../flow.c:102
+#: ../flow.c:100
 #, c-format
 msgid "New Flow added to Line '%s'."
 msgstr "Novo Fluxo adicionado à Linha '%s'."
 
-#: ../flow.c:145
+#: ../flow.c:143
 msgid "Delete Flow"
 msgstr "Apagar Fluxo"
 
-#: ../flow.c:146
+#: ../flow.c:144
 msgid "Are you sure you want to delete the selected Flow(s)?"
 msgstr "Tem certeza que quer apagar o(s) Fluxo(s) selecionado(s)?"
 
-#: ../flow.c:158
+#: ../flow.c:156
 #, c-format
 msgid "Deleting Flow '%s'."
 msgstr "Apagando o Fluxo '%s'."
 
-#: ../flow.c:159
+#: ../flow.c:157
 #, c-format
 msgid "Deleting  Flow '%s' from Line '%s'."
 msgstr "Apagando o Fluxo '%s' da Linha '%s'."
 
-#: ../flow.c:200
+#: ../flow.c:198
 #, c-format
 msgid "Flow '%s' imported into Line '%s' from the file '%s'."
 msgstr "Fluxo '%s' importado para a linha '%s' a partir do arquivo '%s'."
 
-#: ../flow.c:211 ../ui_project_line.c:621
+#: ../flow.c:209 ../ui_project_line.c:621
 #, c-format
 msgid "%s (Imported)"
 msgstr "%s (Importado)"
 
-#: ../flow.c:229
+#: ../flow.c:227
 msgid "Choose a Flow to import"
 msgstr "Escolha um Fluxo para importar"
 
-#: ../flow.c:236
+#: ../flow.c:234
 msgid "Flow file types (*.flw, *.flwz)"
 msgstr "Arquivos de Fluxo (*.flw, *flwz)"
 
-#: ../flow.c:251 ../flow.c:257
+#: ../flow.c:249 ../flow.c:255
 #, c-format
 msgid "Could not import Flow from the file %s"
 msgstr "Não foi possível importar o Fluxo em '%s'"
 
-#: ../flow.c:289 ../ui_flow_browse.c:378
+#: ../flow.c:287 ../ui_flow_browse.c:378
 msgid "No Flow selected"
 msgstr "Nenhum Fluxo selecionado"
 
-#: ../flow.c:308
+#: ../flow.c:306
 #, c-format
 msgid "Save '%s' as..."
 msgstr "Salvar '%s' como..."
 
-#: ../flow.c:318
+#: ../flow.c:316
 msgid "Make this Flow user-independent"
 msgstr "Tornar este Fluxo independente de usuário."
 
-#: ../flow.c:324
+#: ../flow.c:322
 msgid "Flow file types (*.flwz)"
 msgstr "Arquivos de Fluxo (*.flwz)"
 
-#: ../flow.c:354
+#: ../flow.c:352
 #, c-format
 msgid "Could not clone Flow %s"
 msgstr "Não foi possível clonar o Fluxo '%s'"
 
-#: ../flow.c:364
+#: ../flow.c:362
 #, c-format
 msgid "Could not save Flow %s at %s"
 msgstr "Não foi possível salvar o Fluxo '%s' em '%s'"
 
-#: ../flow.c:380
+#: ../flow.c:378
 #, c-format
 msgid ""
 "Exported selected Flow(s) into %s with error. See log file for more "
@@ -276,129 +276,129 @@ msgstr ""
 "Fluxos selecionados exportados com erro para '%s'. Veja o arquivo de log "
 "para mais detalhes."
 
-#: ../flow.c:382
+#: ../flow.c:380
 #, c-format
 msgid "Exported selected Flow(s) into %s."
 msgstr "Fluxos selecionados exportados em '%s'."
 
-#: ../flow.c:386
+#: ../flow.c:384
 msgid "Could not export Flow(s). See log file for more information."
 msgstr "Impossível exportar Fluxo(s). Veja log para mais detalhes."
 
-#: ../flow.c:556
+#: ../flow.c:554
 #, c-format
 msgid "Flow '%s' is empty, ignoring."
 msgstr "O Fluxo '%s' está vazio, ignorando."
 
 #. status and logging
-#: ../flow.c:581
+#: ../flow.c:579
 #, c-format
 msgid "Asking server to run Flow '%s'."
 msgstr "Pedindo para o servidor executar o Fluxo '%s'."
 
-#: ../flow.c:584
+#: ../flow.c:582
 #, c-format
 msgid "Asking server '%s' to run Flow '%s'."
 msgstr "Pedindo para o servidor '%s' executar o fluxo '%s'."
 
-#: ../flow.c:587
+#: ../flow.c:585
 #, c-format
 msgid "Asking local server to run Flow '%s'."
 msgstr "Pedindo para o servidor local executar o fluxo '%s'."
 
-#: ../flow.c:637
+#: ../flow.c:635
 msgid "Save selected Flows?"
 msgstr "Salvar Fluxos selecionados?"
 
-#: ../flow.c:652
+#: ../flow.c:650
 msgid "Write a description about this version of the selected Flows:"
 msgstr "Descreva esta versão dos Fluxos selecionados:"
 
-#: ../flow.c:791
+#: ../flow.c:789
 msgid "Could not paste Flow. It was probably deleted."
 msgstr "Não foi possível colar o fluxo. Provavelmente ele foi apagado."
 
-#: ../flow.c:826
+#: ../flow.c:824
 msgid "Could not paste program."
 msgstr "Não foi possível colar programa."
 
-#: ../flow.c:910
+#: ../flow.c:908
 msgid "Instance"
 msgstr "Instância"
 
-#: ../flow.c:953
+#: ../flow.c:951
 #, c-format
 msgid "Parameters for the Program \"%s\""
 msgstr "Parâmetros do programa \"%s\""
 
-#: ../flow.c:971
+#: ../flow.c:969
 msgid "Parameter"
 msgstr "Parâmetro"
 
-#: ../flow.c:971 ../flow.c:1062 ../ui_document.c:620
+#: ../flow.c:969 ../flow.c:1060 ../ui_document.c:620
 msgid "Value"
 msgstr "Valor"
 
-#: ../flow.c:1062
+#: ../flow.c:1060
 msgid "Variables"
 msgstr "Variáveis"
 
-#: ../flow.c:1062 ../ui_document.c:597
+#: ../flow.c:1060 ../ui_document.c:597
 msgid "Keyword"
 msgstr "Palavra-chave"
 
-#: ../flow.c:1062
+#: ../flow.c:1060
 msgid "Result"
 msgstr "Resultado"
 
-#: ../flow.c:1062 ../ui_document.c:658
+#: ../flow.c:1060 ../ui_document.c:658
 msgid "Comment"
 msgstr "Comentário"
 
-#: ../flow.c:1065 ../ui_document.c:1561
+#: ../flow.c:1063 ../ui_document.c:1561
 msgid "Flow"
 msgstr "Fluxo"
 
-#: ../flow.c:1066 ../ui_document.c:1559 ../ui_project_line.c:272
+#: ../flow.c:1064 ../ui_document.c:1559 ../ui_project_line.c:272
 msgid "Line"
 msgstr "Linha"
 
-#: ../flow.c:1066 ../ui_document.c:1557 ../ui_project_line.c:271
+#: ../flow.c:1064 ../ui_document.c:1557 ../ui_project_line.c:271
 msgid "Project"
 msgstr "Projeto"
 
-#: ../flow.c:1097
+#: ../flow.c:1095
 msgid "There are no variables in this scope"
 msgstr "Não existem variáveis neste escopo"
 
-#: ../flow.c:1128
+#: ../flow.c:1126
 msgid "I/O table"
 msgstr "Tabela de entrada/saída"
 
-#: ../flow.c:1129
+#: ../flow.c:1127
 msgid "Input"
 msgstr "Entrada"
 
-#: ../flow.c:1129 ../flow.c:1130 ../flow.c:1131 ../ui_flow_browse.c:341
+#: ../flow.c:1127 ../flow.c:1128 ../flow.c:1129 ../ui_flow_browse.c:341
 #: ../ui_flow_browse.c:348 ../ui_flow_browse.c:355
 msgid "(none)"
 msgstr "(nenhum)"
 
-#: ../flow.c:1130
+#: ../flow.c:1128
 msgid "Output"
 msgstr "Saída"
 
-#: ../flow.c:1131
+#: ../flow.c:1129
 msgid "Error"
 msgstr "Log de erro"
 
 #. Comment for translators:
 #. "By" as in "By John McClane"
-#: ../flow.c:1190 ../ui_project_line.c:1548
+#: ../flow.c:1188 ../ui_project_line.c:1548
 msgid "By"
 msgstr "Por"
 
-#: ../flow.c:1198
+#: ../flow.c:1196
 msgid "Flow composed of the program(s):"
 msgstr "Fluxo composto pelo(s) programa(s):"
 
@@ -454,6 +454,10 @@ msgstr ""
 #: ../interface.c:57
 msgid "_Servers"
 msgstr "_Servidores"
+
+#: ../interface.c:65
+msgid "Samples"
+msgstr "Exemplos"
 
 #.
 #. * Project/Line
@@ -918,17 +922,17 @@ msgstr ""
 msgid "Unable to write Menus' index."
 msgstr "Não foi possível escrever o índice de Menus."
 
-#: ../menu.c:485
+#: ../menu.c:487
+msgid "Empty"
+msgstr "vazio"
+
+#: ../menu.c:511
 msgid ""
 "Install Seismic Unix package.\n"
 "Click here to get the script of Seismic Unix on GêBR Project website."
 msgstr ""
 "Instale o pacote do Seismic Unix.\n"
 "Clique aqui para baixar o script do Seismic Unix no site da GêBR Project."
-
-#: ../menu.c:489
-msgid "Empty"
-msgstr "vazio"
 
 #: ../project.c:41
 msgid "New Project created."

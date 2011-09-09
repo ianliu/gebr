@@ -62,7 +62,7 @@ static const GtkActionEntry actions_entries[] = {
 		"<Control>h", NULL, G_CALLBACK(on_help_contents_activate)},
 	{"help_about", GTK_STOCK_ABOUT, NULL,
 		NULL, NULL, G_CALLBACK(on_help_about_activate)},
-	{"help_demos_su", NULL, ("_Samples")},
+	{"help_demos_su", NULL, N_("Samples")},
 };
 
 static const GtkActionEntry actions_entries_project_line[] = {
