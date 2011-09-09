@@ -23,14 +23,14 @@
       projeto: <emphasis><link xlink:href="http://www.gebrproject.com">www.gebrproject.com</link></emphasis>.</para>
     </section>
     <section>
-	    	    <title>Novidades da versão 0.14.0</title>
-	    <para>A versão 0.14.0 da interface GêBR sofreu alterações. O programa está mais estável e apresenta novas funcionalidades: </para>
+	    	    <title>Novidades na versão 0.14.0</title>
+	    <para>A versão 0.14.0 está mais estável e apresenta novas funcionalidades:</para>
 	    <itemizedlist>
 		    <listitem>
-			    O dicionário de variáveis e os parâmetros dos programas aceitam expressões aritméticas (veja seção <xref linkend="variaveis_recursos"/>).
+			    O dicionário de variáveis e os parâmetros dos programas aceitam expressões aritméticas (veja seção <xref linkend="variaveis_dicionario"/>).
 		    </listitem>
 		    <listitem>
-			   A GêBR automatiza fluxos repetitivos através de loops (veja seção <xref linkend="variavel_iter"/>).
+			   A GêBR automatiza fluxos repetitivos através de loops (veja seção <xref linkend="loop"/>).
 		    </listitem>
 		    <listitem>
 			    Nesta versão temos a geração automática de relatórios, o qual pode ser exportado para um arquivo externo (veja seção <xref linkend="visualizar_relatorio"/>).
@@ -1255,7 +1255,7 @@
           <guilabel>Controle de tarefas</guilabel>, que mostra o relatório (<emphasis>log</emphasis>) da execução.</para>
     </section>
     <section xml:id="loop">
-      <title>Programa Loop</title>
+      <title>Executando um fluxo múltiplas vezes</title>
       <para>O programa <emphasis>Loop</emphasis> (que pertence a categoria <emphasis role="bold">Loops</emphasis>) é tratado de uma maneira especial comparado aos outros programas da GêBR. Vamos ver a seguir
       algumas destas diferenças.</para>
       <para>Ao adicionarmos o programa Loop, nota-se que ele sempre aparece no topo do fluxo, isso ocorre para representar 
@@ -1557,25 +1557,24 @@
 	    <itemizedlist>
 	    <listitem>
           <para><emphasis role="bold">Funções</emphasis></para>
-          <para>Além de utilizar variáveis e expressões para preencher os valores, podemos também usar algumas funções pré-definidas:</para>
-          <itemizedlist>
-            <listitem><para><emphasis>Seno</emphasis> - Utiliza-se na forma <emphasis role="bold">s (</emphasis>valor<emphasis role="bold">)</emphasis>.</para></listitem>
-          </itemizedlist>
-          <itemizedlist>
-            <listitem><para><emphasis>Cosseno</emphasis> - Utiliza-se na forma <emphasis role="bold">c (</emphasis>valor<emphasis role="bold">)</emphasis>.</para></listitem>
-          </itemizedlist>
-          <itemizedlist>
-            <listitem><para><emphasis>Arcotangente</emphasis> - Utiliza-se na forma <emphasis role="bold">a (</emphasis>valor<emphasis role="bold">)</emphasis>.</para></listitem>
-          </itemizedlist>
-          <itemizedlist>
-            <listitem><para><emphasis>Logaritimo Natural</emphasis> - Utiliza-se na forma <emphasis role="bold">l (</emphasis>valor<emphasis role="bold">)</emphasis>.</para></listitem>
-          </itemizedlist>
-          <itemizedlist>
-            <listitem><para><emphasis>Função exponencial</emphasis> - Utiliza-se na forma <emphasis role="bold">e (</emphasis>valor<emphasis role="bold">)</emphasis>.</para></listitem>
-          </itemizedlist>
-          <itemizedlist>
-            <listitem><para><emphasis>Função de Bessel</emphasis> - Utiliza-se na forma <emphasis role="bold">j (</emphasis>ordem, valor<emphasis role="bold">)</emphasis>.</para></listitem> 
-          </itemizedlist>
+          <para>Além de utilizar variáveis e expressões para preencher os
+            valores, podemos também usar algumas funções pré-definidas:</para>
+          <table><title>Funções disponíveis</title>
+            <tgroup cols='2'>
+              <thead>
+                <row><entry>Nome da função</entry> <entry>Sintaxe</entry></row>
+              </thead>
+              <tbody>
+                <row><entry>Raiz quadrada     </entry> <entry>sqrt(<emphasis>valor</emphasis>)</entry></row>
+                <row><entry>Seno              </entry> <entry>   s(<emphasis>valor</emphasis>)</entry></row>
+                <row><entry>Cosseno           </entry> <entry>   c(<emphasis>valor</emphasis>)</entry></row>
+                <row><entry>Arcotangente      </entry> <entry>   a(<emphasis>valor</emphasis>)</entry></row>
+                <row><entry>Logarítimo Natural</entry> <entry>   l(<emphasis>valor</emphasis>)</entry></row>
+                <row><entry>Função exponencial</entry> <entry>   e(<emphasis>valor</emphasis>)</entry></row>
+                <row><entry>Função de Bessel  </entry> <entry>   j(<emphasis>ordem, valor)</emphasis></entry></row>
+              </tbody>
+            </tgroup>
+          </table>
         </listitem>
         <listitem>
         <para><emphasis role="bold">Drag and Drop</emphasis></para>
@@ -1709,7 +1708,7 @@
           incluindo ações de datas passadas, o log compacto, que mostra apenas as ações a partir da última
           inicialização.</para>
       </tip>
-    </section>    <section xml:id="import_samples"><title>Help</title>
+    </section>    <section xml:id="import_samples"><title>Ajuda</title>
 	<para>Na seção Ajuda, além da seção de Ajuda geral, podemos importar exemplos já existentes:</para>
     
       <figure>
