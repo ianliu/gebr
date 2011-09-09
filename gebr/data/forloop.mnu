@@ -152,10 +152,8 @@
         Description</h2>
 <p>
         The variable &quot;iter&quot; can be used only on flow&#39;s variables, and in other programs. This&nbsp;is calculated on each iteration of loop, and uses the follow expression to do that:</p>
-<ul>
-        <li>
-                (<strong>Initial value</strong>) + (<strong>Step</strong>) * (<strong>Total number of steps</strong> - 1).</li>
-</ul>
+<p style="text-align:center">
+        (<strong>Initial value</strong>) + (<strong>Step</strong>) * (<strong>Total number of steps</strong> - 1)</p>
 <p>
         All parameters accepts expressions using variables defined on Project or Line.</p>
 <h2>
