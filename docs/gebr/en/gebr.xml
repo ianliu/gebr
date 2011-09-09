@@ -26,10 +26,10 @@
 	    <para>The release of GêBR (0.14.0) suffered some changes. GêBR is more stable and present some new functionalities: </para>
 	    <itemizedlist>
 		    <listitem>
-			    The variables dictionary and the program parameters accept arithmetic expressions (see section <xref linkend="variaveis_recursos"/>).
+			    The variables dictionary and the program parameters accept arithmetic expressions (see section <xref linkend="variaveis_dicionario"/>).
 		    </listitem>
 		    <listitem>
-			   Repetitive processes can be automatized by the use of loops (see section <xref linkend="variavel_iter"/>).
+			   Repetitive processes can be automatized by the use of loops (see section <xref linkend="loop"/>).
 		    </listitem>
 		    <listitem>
 			    Reports are automatically generated and can be exported to external files (see section <xref linkend="visualizar_relatorio"/>).
@@ -1193,7 +1193,7 @@ de <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-ima
     </section>
     <!--  Falta Traduzir -->
     <section xml:id="loop">
-      <title>Loop program</title>
+      <title>Execution a flow multiple times</title>
       <para>The program <emphasis>Loop</emphasis> (from the category <emphasis role="bold">Loops</emphasis>) has a totally different usage compared to the remaining programs from GêBR. We are going to see some of these differences.</para>
       <para>When we add the program Loop, we can see it always appears in the top of the flow. That happens to indicate that the flow is going to be executed more than once, according to the parameters set for the program.
       (see section <xref linkend="editar_parametros_programa"/> for further details).</para>
@@ -1479,24 +1479,26 @@ called <emphasis role="bold">iter</emphasis>. Then we can show an example of the
 			  <listitem>
 				  <para><emphasis role="bold">Function</emphasis></para>
 				  <para>Besides using variables and expressions, we can use some predefined functions:</para>
-				  <itemizedlist>
-					  <listitem><para><emphasis>Sin</emphasis> - Usage: <emphasis role="bold">s (</emphasis>value<emphasis role="bold">)</emphasis>.</para></listitem>
-				  </itemizedlist>
-				  <itemizedlist>
-					  <listitem><para><emphasis>Cosine</emphasis> - Usage: <emphasis role="bold">c (</emphasis>value<emphasis role="bold">)</emphasis>.</para></listitem>
-				  </itemizedlist>
-				  <itemizedlist>
-					  <listitem><para><emphasis>Arctangent</emphasis> - Usage: <emphasis role="bold">a (</emphasis>value<emphasis role="bold">)</emphasis>.</para></listitem>
-				  </itemizedlist>
-				  <itemizedlist>
-					  <listitem><para><emphasis>Natural logarithm</emphasis> - Usage: <emphasis role="bold">l (</emphasis>value<emphasis role="bold">)</emphasis>.</para></listitem>
-				  </itemizedlist>
-				  <itemizedlist>
-					  <listitem><para><emphasis>Exponential function</emphasis> - Usage: <emphasis role="bold">e (</emphasis>value<emphasis role="bold">)</emphasis>.</para></listitem>
-				  </itemizedlist>
-				  <itemizedlist>
-					  <listitem><para><emphasis>Bessel's function</emphasis> - Usage: <emphasis role="bold">j (</emphasis>order, value<emphasis role="bold">)</emphasis>.</para></listitem> 
-				  </itemizedlist>
+
+          <table><title>Available functions</title>
+            <tgroup cols='2'>
+              <thead>
+                <row><entry>Function</entry> <entry>Sintax</entry></row>
+              </thead>
+              <tbody>
+                <row><entry>Square root</entry> <entry>sqrt(<emphasis>value</emphasis>)</entry></row>
+                <row><entry>Sine              </entry> <entry>   s(<emphasis>value</emphasis>)</entry></row>
+                <row><entry>Cosine           </entry> <entry>   c(<emphasis>value</emphasis>)</entry></row>
+                <row><entry>Arctangent      </entry> <entry>   a(<emphasis>value</emphasis>)</entry></row>
+                <row><entry>Natural Logarithm</entry> <entry>   l(<emphasis>value</emphasis>)</entry></row>
+                <row><entry>Exponencial</entry> <entry>   e(<emphasis>value</emphasis>)</entry></row>
+                <row><entry>Bessel</entry> <entry>   j(<emphasis>order, value)</emphasis></entry></row>
+              </tbody>
+            </tgroup>
+          </table>
+
+
+
 			  </listitem>
 			  <listitem>
 				  <para><emphasis role="bold">Drag and Drop</emphasis></para>
@@ -1624,9 +1626,9 @@ called <emphasis role="bold">iter</emphasis>. Then we can show an example of the
       </figure>
       <tip>
         <para>In 
-          <menuchoice><guimenu>Actions</guimenu><guimenuitem>Preferences</guimenuitem></menuchoice> at the bottom of the dialog box, you will the check box 
-          <guilabel>Load past-execution log</guilabel> by checking this box you are opting to exhibit the full log, including
-	actions from past dates. By leaving the box unchecked you a choosing to have a compact log, one which only shows
+          <menuchoice><guimenu>Actions</guimenu><guimenuitem>Preferences</guimenuitem></menuchoice> at the bottom of the dialog box, we can see the box 
+          <guilabel>Load past-execution log</guilabel>. By checking this box we choose to exhibit the whole log, including
+	actions from past dates. By leaving the box unchecked we choose to have a compact log, which only shows
 	actions that have taken place since GêBR's last initialization.</para>
       </tip>
     </section>
