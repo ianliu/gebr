@@ -79,7 +79,7 @@
   </dict>
   <date>
     <created>2011-03-15T11:43:48.395481Z</created>
-    <modified>2011-09-02T17:33:34.468781Z</modified>
+    <modified>2011-09-09T15:36:37.195123Z</modified>
     <lastrun />
   </date>
   <category>Loops</category>
@@ -185,13 +185,13 @@
 <p>
         In the job control tab, you will see the calendars from 2001 to 2011. Because the flow was run 10 times, and the Calendar program was called 10 times with a different year every time.</p>
 <h3>
-        Writing the Output to Multiple Files</h3>
+        Output to Multiple Files</h3>
 <p>
         One of the features of the &quot;Loop&quot; menu is the possibility to write on multiple files, one per step of the Loop. Using the flow created on the previous example, you can write one calendar per file, using the &quot;iter&quot; variable.</p>
 <p>
         In order to do that, just change the flow output filename to &quot;year-[iter].txt&quot;. This will create ten output files named from &quot;year-2001.txt&quot; to &quot;year-2011.txt&quot;, each one containing one calendar, from 2001 to 2011.</p>
 <h3>
-        Reading the Input from Multiple Files</h3>
+        Input from Multiple Files</h3>
 <p>
         In a very similar manner to the previous example, you can read from multiple files.</p>
 <p>
@@ -215,11 +215,11 @@
                 Now run the flow to see the results.</li>
 </ol>
 <h3>
-        Writing the Output to a Single File</h3>
+        Output to a Single File</h3>
 <p>
         Taking the flow created in the first example, you can write the output of the entire loop execution to a single file. To do that, just write the &quot;Output file&quot; filename without using the especial variable &quot;iter&quot;. In this case, you also can&#39;t use a variable that uses the iter value somehow.</p>
 <h3>
-        Reading the Input from a Single File</h3>
+        Input from a Single File</h3>
 <p>
         To read the same input file in all iterations of the loop, you just have to use the &quot;Input file&quot; filename without using the especial variable iter. This is done in the same way as in the last example.</p>
 <h2 id="credits">
