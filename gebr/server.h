@@ -40,6 +40,7 @@ typedef struct _GebrServerClass GebrServerClass;
 struct _GebrServer {
 	/*< private >*/
 	GObject parent;
+	gint ncores;
 
 	/*< public >*/
 	struct gebr_comm_server *comm;
@@ -154,6 +155,21 @@ void gebr_server_set_autoconnect (GebrServer *self, gboolean setting);
  * gebr_server_connect:
  */
 void gebr_server_connect (GebrServer *self);
+
+/**
+ * gebr_server_get_ncores:
+ * @self: A #GebrServer
+ *
+ * Returns: the number of cores for server @self, as shown in /proc/cpuinfo.
+ */
+gint gebr_server_get_ncores (GebrServer *self);
+
+/**
+ * gebr_server_set_ncores:
+ * @self: A #GebrServer
+ * @cores: The number of cores for this server.
+ */
+void gebr_server_set_ncores (GebrServer *self, gint cores);
 
 G_END_DECLS
 

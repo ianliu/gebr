@@ -270,12 +270,18 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			GebrdMemInfo *meminfo = gebrd_mem_info_new();
 			model_name = gebrd_cpu_info_get (cpuinfo, 0, "model name");
 			total_memory = gebrd_mem_info_get (meminfo, "MemTotal");
+			gchar *ncores = g_strdup_printf("%d", gebrd_cpu_info_n_procs(cpuinfo));
 			gebr_comm_protocol_socket_oldmsg_send(client->socket, FALSE,
-							      gebr_comm_protocol_defs.ret_def, 8,
-							      gebrd->hostname, display_port->str,
-							      queue_list->str, server_type,
-							      accounts_list->str, model_name,
-							      total_memory, gebrd->fs_lock->str);
+							      gebr_comm_protocol_defs.ret_def, 9,
+							      gebrd->hostname,
+							      display_port->str,
+							      queue_list->str,
+							      server_type,
+							      accounts_list->str,
+							      model_name,
+							      total_memory,
+							      gebrd->fs_lock->str,
+							      ncores);
 
 			gebrd_cpu_info_free (cpuinfo);
 			gebrd_mem_info_free (meminfo);
@@ -283,7 +289,7 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			g_string_free(display_port, TRUE);
 			g_string_free(accounts_list, TRUE);
 			g_string_free(queue_list, TRUE);
-
+			g_free(ncores);
 		} else if (client->socket->protocol->logged == FALSE) {
 			/* not logged! */
 			goto err;
