@@ -88,6 +88,8 @@ struct gebr {
 	GHashTable * help_edit_windows;
 	GHashTable * xmls_by_filename;
 
+	GtkWidget *flow_exec_speed_widget;
+
 	GebrValidator *validator;
 
 	GebrGeoXmlDocument *project_line;
@@ -125,6 +127,8 @@ struct gebr {
 		gboolean job_log_word_wrap;
 		gboolean job_log_auto_scroll;
 		gboolean native_editor;
+
+		gint flow_exec_speed;
 
 		// Selections state
 		gint current_notebook;

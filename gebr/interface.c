@@ -22,6 +22,7 @@
 
 #include "gebr-gettext.h"
 
+#include <math.h>
 #include <string.h>
 
 #include <gio/gio.h>
@@ -195,6 +196,49 @@ static const GtkActionEntry actions_entries_server[] = {
  */
 
 static void assembly_menus(GtkMenuBar * menu_bar);
+
+static gboolean
+change_value(GtkRange *range, GtkScrollType scroll, gdouble value, gpointer user_data)
+{
+	GtkAdjustment *adj = gtk_range_get_adjustment(range);
+	gdouble min, max;
+	min = gtk_adjustment_get_lower(adj);
+	max = gtk_adjustment_get_upper(adj);
+	gint speed = (int) CLAMP(round(value), min, max);
+	gebr.config.flow_exec_speed = speed;
+	gtk_range_set_value(range, speed);
+	return TRUE;
+}
+
+/*
+ * Inserts a speed controler inside a toolbar,
+ * which is a GtkScale to control the performance of flow execution.
+ */
+static void
+insert_speed_controler(GtkToolbar *toolbar)
+{
+	GtkToolItem *turtle_item = gtk_tool_item_new();
+	GtkToolItem *scale_item = gtk_tool_item_new();
+	GtkToolItem *bunny_item = gtk_tool_item_new();
+	GtkWidget *scale = gtk_hscale_new_with_range(1, 5, 1);
+
+	gtk_scale_set_draw_value(GTK_SCALE(scale), FALSE);
+	gtk_scale_set_digits(GTK_SCALE(scale), 0);
+	gtk_range_set_update_policy(GTK_RANGE(scale), GTK_UPDATE_DISCONTINUOUS);
+	g_signal_connect(scale, "change-value", G_CALLBACK(change_value), NULL);
+
+	gtk_container_add(GTK_CONTAINER(turtle_item), gtk_image_new_from_stock("turtle", GTK_ICON_SIZE_LARGE_TOOLBAR));
+	gtk_container_add(GTK_CONTAINER(bunny_item), gtk_image_new_from_stock("bunny", GTK_ICON_SIZE_LARGE_TOOLBAR));
+	gtk_container_add(GTK_CONTAINER(scale_item), scale);
+	gtk_widget_set_size_request(GTK_WIDGET(scale_item), 100, -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), turtle_item, -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), scale_item, -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), bunny_item, -1);
+	gtk_container_child_set(GTK_CONTAINER(toolbar), GTK_WIDGET(turtle_item), "homogeneous", TRUE, NULL);
+	gtk_container_child_set(GTK_CONTAINER(toolbar), GTK_WIDGET(bunny_item), "homogeneous", TRUE, NULL);
+
+	gebr.flow_exec_speed_widget = scale;
+}
 
 /*
  * Public functions
@@ -432,6 +476,8 @@ void gebr_setup_ui(void)
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
 					 (gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_execute"))), -1);
+
+	insert_speed_controler(GTK_TOOLBAR(toolbar));
 
 	gebr.ui_flow_edition = flow_edition_setup_ui();
 	vbox = gtk_vbox_new(FALSE, 0);

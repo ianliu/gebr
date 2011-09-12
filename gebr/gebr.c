@@ -124,7 +124,10 @@ void gebr_init(void)
 	    gtk_widget_render_icon(gebr.invisible, "chronometer", GTK_ICON_SIZE_SMALL_TOOLBAR, NULL);
 
 	/* finally the config. file */
+	// FIXME: Configuration *should* be loaded before the interface!
 	gebr_config_load();
+
+	gtk_range_set_value(GTK_RANGE(gebr.flow_exec_speed_widget), gebr.config.flow_exec_speed);
 
 	/* check for a menu list change */
 	if (menu_refresh_needed() == TRUE) {
@@ -483,6 +486,8 @@ gint gebr_config_load()
 		}
 	}
 
+	gebr.config.flow_exec_speed = gebr_g_key_file_load_int_key(gebr.config.key_file, "general", "flow_exec_speed", 3);
+
 	/* MENUS */
 	menu_list_populate();
 	/* JOB UI */
@@ -548,6 +553,7 @@ void gebr_config_save(gboolean verbose)
 	g_key_file_set_boolean (gebr.config.key_file, "general", "detailed_line_include_report", gebr.config.detailed_line_include_report);
 	g_key_file_set_boolean (gebr.config.key_file, "general", "detailed_line_include_flow_report", gebr.config.detailed_line_include_flow_report);
 	g_key_file_set_integer (gebr.config.key_file, "general", "detailed_line_parameter_table", gebr.config.detailed_line_parameter_table);
+	g_key_file_set_integer (gebr.config.key_file, "general", "flow_exec_speed", gebr.config.flow_exec_speed);
 
 	g_key_file_set_integer(gebr.config.key_file, "state", "notebook", gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook)));
 
