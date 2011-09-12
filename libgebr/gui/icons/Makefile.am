@@ -91,7 +91,9 @@ icons22actions_DATA = \
 	$(srcdir)/22x22/actions/system-switch-user.png \
 	$(srcdir)/22x22/actions/tab-new-background.png \
 	$(srcdir)/22x22/actions/trash-empty.png \
-	$(srcdir)/22x22/actions/window-new.png
+	$(srcdir)/22x22/actions/window-new.png \
+	$(srcdir)/22x22/actions/bunny.png \
+	$(srcdir)/22x22/actions/turtle.png
 
 icons22appsdir = $(datadir)/libgebr/icons/22x22/apps
 icons22apps_DATA = \
@@ -128,7 +130,9 @@ icons48actions_DATA = \
 	$(srcdir)/48x48/actions/system-switch-user.png \
 	$(srcdir)/48x48/actions/tab-new-background.png \
 	$(srcdir)/48x48/actions/user-trash.png \
-	$(srcdir)/48x48/actions/window-new.png
+	$(srcdir)/48x48/actions/window-new.png \
+	$(srcdir)/48x48/actions/bunny.png \
+	$(srcdir)/48x48/actions/turtle.png
 
 icons48appsdir = $(datadir)/libgebr/icons/48x48/apps
 icons48apps_DATA = \
