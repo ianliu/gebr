@@ -43,7 +43,10 @@ enum {
     ACCEL_SERVER,
     ACCEL_N
 };
+
 void gebr_setup_ui(void);
+
+gint gebr_interface_get_execution_speed(void);
 
 G_END_DECLS
 #endif				//__INTERFACE_H

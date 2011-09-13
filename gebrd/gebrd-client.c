@@ -301,17 +301,19 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			job_list(client);
 		} else if (message->hash == gebr_comm_protocol_defs.run_def.code_hash) {
 			GList *arguments;
-			GString *xml, *account, *queue, *n_process, *run_id;
+			GString *xml, *account, *queue, *n_process, *run_id, *exec_speed;
 			GebrdJob *job;
 
 			/* organize message data */
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 5)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 6)) == NULL)
 				goto err;
 			xml = g_list_nth_data(arguments, 0);
 			account = g_list_nth_data(arguments, 1);
 			queue = g_list_nth_data(arguments, 2);
 			n_process = g_list_nth_data(arguments, 3);
 			run_id = g_list_nth_data(arguments, 4);
+			exec_speed = g_list_nth_data(arguments, 5);
+			puts (exec_speed->str);
 
 			/* try to run and send return */
 			job_new(&job, client, queue, account, xml, n_process, run_id);

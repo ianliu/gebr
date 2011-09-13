@@ -89,6 +89,7 @@ void gebr_comm_server_run_config_free(GebrCommServerRunConfig *config)
 	g_list_free(config->flows);
 	g_free(config->account);
 	g_free(config->queue);
+	g_free(config->execution_speed);
 	g_free(config);
 }
 
@@ -377,11 +378,12 @@ void gebr_comm_server_run_flow(struct gebr_comm_server *server, GebrCommServerRu
 
 		g_string_printf(run_id_gstring, "%u", run_flow->run_id);
 		gebr_comm_protocol_socket_oldmsg_send(server->socket, FALSE,
-						      gebr_comm_protocol_defs.run_def, 5, run_flow->flow_xml,
+						      gebr_comm_protocol_defs.run_def, 6, run_flow->flow_xml,
 						      config->account ? config->account : "",
 						      config->queue ? config->queue : "",
 						      config->num_processes ? config->num_processes : "",
-						      run_id_gstring->str);
+						      run_id_gstring->str,
+						      config->execution_speed);
 	}
 
 	g_string_free(run_id_gstring, TRUE);

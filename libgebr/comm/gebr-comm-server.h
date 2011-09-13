@@ -138,6 +138,7 @@ typedef struct {
 	gchar * account;
 	gchar * queue;
 	gchar * num_processes;
+	gchar * execution_speed;
 } GebrCommServerRunConfig;
 
 /**

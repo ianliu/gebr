@@ -379,6 +379,7 @@ static void flow_io_run(GebrGeoXmlFlow *flow, gboolean parallel, gboolean single
 	GebrCommServerRunConfig *config = gebr_comm_server_run_config_new();
 	config->queue = NULL;
 	config->parallel = parallel;
+	config->execution_speed = g_strdup_printf("%d", gebr_interface_get_execution_speed());
 	
 	/* SET config->queue */
 	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));

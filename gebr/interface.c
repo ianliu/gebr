@@ -600,3 +600,9 @@ static void assembly_menus(GtkMenuBar * menu_bar)
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menu_item), submenu);
 	demos_list_create(GTK_MENU(submenu));
 }
+
+gint
+gebr_interface_get_execution_speed(void)
+{
+	return (gint)gtk_range_get_value(GTK_RANGE(gebr.flow_exec_speed_widget));
+}
