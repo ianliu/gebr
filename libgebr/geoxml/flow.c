@@ -1026,10 +1026,14 @@ gboolean
 gebr_geoxml_flow_is_parallelizable(GebrGeoXmlFlow *flow,
                                    GebrValidator *validator)
 {
+	gboolean has_control = gebr_geoxml_flow_has_control_program(flow);
+
+	if (!has_control)
+		return FALSE;
+
 	const gchar *input = gebr_geoxml_flow_io_get_input(flow);
 
 	if(strlen(input))
 		return !gebr_validator_use_iter(validator, input, GEBR_GEOXML_PARAMETER_TYPE_FLOAT, GEBR_GEOXML_DOCUMENT_TYPE_FLOW);
-
 	return TRUE;
 }
