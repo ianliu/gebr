@@ -210,6 +210,42 @@ change_value(GtkRange *range, GtkScrollType scroll, gdouble value, gpointer user
 	return TRUE;
 }
 
+static gboolean
+speed_controller_query_tooltip(GtkWidget  *widget,
+			       gint        x,
+			       gint        y,
+			       gboolean    keyboard_mode,
+			       GtkTooltip *tooltip,
+			       gpointer    user_data)
+{
+	GtkRange *scale = GTK_RANGE(widget);
+	gint value = (gint) gtk_range_get_value(scale);
+	const gchar * text_tooltip;
+	switch (value) {
+	case 1:
+		text_tooltip = _("Very low performance");
+		break;
+	case 2:
+		text_tooltip = _("Low performance");
+		break;
+	case 3:
+		text_tooltip = _("Medium performance");
+		break;
+	case 4:
+		text_tooltip = _("High performance");
+		break;
+	case 5:
+		text_tooltip = _("Very high performance");
+		break;
+	default:
+		text_tooltip = "";
+		g_return_val_if_reached(FALSE);
+		break;
+	}
+	gtk_tooltip_set_text (tooltip, text_tooltip);
+	return TRUE;
+}
+
 /*
  * Inserts a speed controler inside a toolbar,
  * which is a GtkScale to control the performance of flow execution.
@@ -224,8 +260,10 @@ insert_speed_controler(GtkToolbar *toolbar)
 
 	gtk_scale_set_draw_value(GTK_SCALE(scale), FALSE);
 	gtk_scale_set_digits(GTK_SCALE(scale), 0);
+	g_object_set(scale, "has-tooltip",TRUE, NULL);
 	gtk_range_set_update_policy(GTK_RANGE(scale), GTK_UPDATE_DISCONTINUOUS);
 	g_signal_connect(scale, "change-value", G_CALLBACK(change_value), NULL);
+	g_signal_connect(scale, "query-tooltip", G_CALLBACK(speed_controller_query_tooltip), NULL);
 
 	gtk_container_add(GTK_CONTAINER(turtle_item), gtk_image_new_from_stock("turtle", GTK_ICON_SIZE_LARGE_TOOLBAR));
 	gtk_container_add(GTK_CONTAINER(bunny_item), gtk_image_new_from_stock("bunny", GTK_ICON_SIZE_LARGE_TOOLBAR));
