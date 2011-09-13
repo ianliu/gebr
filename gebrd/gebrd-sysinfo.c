@@ -10,7 +10,8 @@ struct _GebrdCpuInfo {
 	GList *cores;
 };
 
-GebrdCpuInfo *gebrd_cpu_info_new (void)
+GebrdCpuInfo *
+gebrd_cpu_info_new_from_file (const gchar *file)
 {
 	FILE *fp;
 	char *line;
@@ -20,7 +21,7 @@ GebrdCpuInfo *gebrd_cpu_info_new (void)
 	gboolean create = TRUE;
 	GebrdCpuInfo *cpuinfo;
 
-	fp = fopen("/proc/cpuinfo", "r");
+	fp = fopen(file, "r");
 	if (!fp)
 		return NULL;
 
@@ -66,6 +67,12 @@ GebrdCpuInfo *gebrd_cpu_info_new (void)
 	return cpuinfo;
 }
 
+GebrdCpuInfo *
+gebrd_cpu_info_new (void)
+{
+	return gebrd_cpu_info_new_from_file("/proc/cpuinfo");
+}
+
 const gchar *gebrd_cpu_info_get (GebrdCpuInfo *self,
 				 guint proc_id,
 				 const gchar *prop)
@@ -96,7 +103,8 @@ struct _GebrdMemInfo {
 	GHashTable *props;
 };
 
-GebrdMemInfo *gebrd_mem_info_new (void)
+GebrdMemInfo *
+gebrd_mem_info_new_from_file (const gchar *file)
 {
 	FILE *fp;
 	char *line;
@@ -104,7 +112,7 @@ GebrdMemInfo *gebrd_mem_info_new (void)
 	ssize_t read;
 	GebrdMemInfo *mem;
 
-	fp = fopen("/proc/meminfo", "r");
+	fp = fopen(file, "r");
 	if (!fp)
 		return NULL;
 
@@ -139,6 +147,12 @@ GebrdMemInfo *gebrd_mem_info_new (void)
 	fclose(fp);
 
 	return mem;
+}
+
+GebrdMemInfo *
+gebrd_mem_info_new(void)
+{
+	return gebrd_mem_info_new_from_file("/proc/meminfo");
 }
 
 const gchar *gebrd_mem_info_get (GebrdMemInfo *self,

@@ -23,9 +23,18 @@ typedef struct _GebrdCpuInfo GebrdCpuInfo;
 /**
  * gebrd_cpu_info_new:
  *
- * Returns: a new GebrdCpuInfo object. Free with gebrd_cpu_info_free().
+ * Returns: a new #GebrdCpuInfo object. Free with gebrd_cpu_info_free().
  */
 GebrdCpuInfo *gebrd_cpu_info_new (void);
+
+/**
+ * gebrd_cpu_info_new_from_file:
+ * @file: The file to parse.
+ *
+ * Returns: a new #GebrdCpuInfo object from file @file.
+ * Free with gebrd_cpu_info_free().
+ */
+GebrdCpuInfo *gebrd_cpu_info_new_from_file (const gchar *file);
 
 /**
  * gebrd_cpu_info_get:
@@ -55,11 +64,23 @@ guint gebrd_cpu_info_n_procs (GebrdCpuInfo *self);
  */
 void gebrd_cpu_info_free (GebrdCpuInfo *self);
 
-/**
- */
 typedef struct _GebrdMemInfo GebrdMemInfo;
 
+/**
+ * gebrd_mem_info_new:
+ *
+ * Returns: a new #GebrdMemInfo object. Free with gebrd_mem_info_free().
+ */
 GebrdMemInfo *gebrd_mem_info_new (void);
+
+/**
+ * gebrd_mem_info_new_from_file:
+ * @file:
+ *
+ * Returns: a new #GebrdMemInfo object from file @file.
+ * Free with gebrd_mem_info_free().
+ */
+GebrdMemInfo *gebrd_mem_info_new_from_file(const gchar *file);
 
 const gchar *gebrd_mem_info_get (GebrdMemInfo *self,
 				 const gchar *prop);
