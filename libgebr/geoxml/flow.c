@@ -1021,3 +1021,15 @@ gebr_geoxml_flow_revalidate(GebrGeoXmlFlow *flow, GebrValidator *validator)
 			gebr_geoxml_program_set_status(prog, GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED);
 	}
 }
+
+gboolean
+gebr_geoxml_flow_is_parallelizable(GebrGeoXmlFlow *flow,
+                                   GebrValidator *validator)
+{
+	const gchar *input = gebr_geoxml_flow_io_get_input(flow);
+
+	if(strlen(input))
+		return !gebr_validator_use_iter(validator, input, GEBR_GEOXML_PARAMETER_TYPE_FLOAT, GEBR_GEOXML_DOCUMENT_TYPE_FLOW);
+
+	return TRUE;
+}

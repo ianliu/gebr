@@ -490,6 +490,17 @@ void gebr_geoxml_flow_update_iter_dict_value(GebrGeoXmlFlow *flow);
 void gebr_geoxml_flow_revalidate(GebrGeoXmlFlow *flow,
                                  GebrValidator *validator);
 
+/*
+ * gebr_geoxml_flow_is_parallelizable:
+ * @flow: A #GebrGeoXmlFlow to be checked if is parallelizable.
+ * @validator: The #GebrValidator that will be used to check @flow.
+ *
+ * Returns: %TRUE if flow is parallelizable, %FALSE otherwise
+ */
+gboolean
+gebr_geoxml_flow_is_parallelizable(GebrGeoXmlFlow *flow,
+                                   GebrValidator *validator);
+
 G_END_DECLS
 
 #endif				//__GEBR_GEOXML_FLOW_H
