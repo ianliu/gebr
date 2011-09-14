@@ -1390,8 +1390,10 @@ static void job_assembly_cmdline(GebrdJob *job)
 	if (has_control && n) {
 		gchar *prefix;
 		gchar *remove;
+		gint nprocs, nice;
 
 		assemble_bc_cmd_line (expr_buf);
+		nprocs = gebrd_app_set_heuristic_aggression(gebrd, atoi(job->exec_speed->str), &nice);
 
 		puts("===========");
 		puts(expr_buf->str);
@@ -1406,7 +1408,7 @@ static void job_assembly_cmdline(GebrdJob *job)
 						 "  for ((counter=$_outter; counter < $_outter+%d; counter++))\n"
 						 "  do\n"
 						 "    %s\n%s",
-						 n, gebrd->nprocs, gebrd->nprocs, expr_buf->str, str_buf->str);
+						 n, nprocs, nprocs, expr_buf->str, str_buf->str);
 		} else {
 			prefix = g_strdup_printf("for (( counter=0; counter<%s; counter++ ))\ndo\n%s\n%s",
 						 n, expr_buf->str, str_buf->str);
@@ -1428,7 +1430,7 @@ static void job_assembly_cmdline(GebrdJob *job)
 			g_string_append_printf(job->parent.cmd_line, "\n"
 					       "  done\n"
 					       "  while [ `cat /dev/shm/.gebr_ok 2>/dev/null | wc -l` -lt %d ] ; do sleep 0.2 ; done",
-					       gebrd->nprocs);
+					       nprocs);
 		g_string_append(job->parent.cmd_line, "\ndone");
 		g_free(prefix);
 		g_free(n);
