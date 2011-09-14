@@ -527,8 +527,32 @@ static void test_gebr_geoxml_flow_io_error_append(void)
 	g_assert (gebr_geoxml_flow_io_get_error_append (flow) == TRUE);
 }
 
+static void test_gebr_geoxml_flow_is_parallelizable (void)
+{
+	GebrGeoXmlFlow *loop;
+	GebrGeoXmlFlow *flow = gebr_geoxml_flow_new();
+	GebrValidator *validator = gebr_validator_new((GebrGeoXmlDocument**)&flow, NULL, NULL);
+
+	gebr_geoxml_document_load((GebrGeoXmlDocument**)&loop, TEST_DIR"/forloop.mnu", TRUE, NULL);
+
+	g_assert (gebr_geoxml_flow_is_parallelizable(flow, validator) == FALSE);
+
+	gebr_geoxml_flow_io_set_output(flow, "/home/eric/Desktop/teste_semLoop.txt" );
+	g_assert (gebr_geoxml_flow_is_parallelizable(flow, validator) == FALSE);
+
+	gebr_geoxml_flow_add_flow(flow, loop);
+	gebr_geoxml_flow_insert_iter_dict(flow);
+	GebrGeoXmlParameter *iter_param = GEBR_GEOXML_PARAMETER(gebr_geoxml_document_get_dict_parameter(GEBR_GEOXML_DOCUMENT(flow)));
+	gebr_validator_insert(validator, iter_param, NULL, NULL);
+	g_assert (gebr_geoxml_flow_is_parallelizable(flow, validator) == FALSE);
+
+	gebr_geoxml_flow_io_set_output(flow, "/home/eric/Desktop/teste_[iter].txt");
+	g_assert (gebr_geoxml_flow_is_parallelizable(flow, validator) == TRUE);
+}
+
 int main(int argc, char *argv[])
 {
+	g_type_init();
 	g_test_init(&argc, &argv, NULL);
 	gebr_geoxml_init();
 
@@ -553,6 +577,7 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/geoxml/flow/io_output_append_default", test_gebr_geoxml_flow_io_output_append_default);
 	g_test_add_func("/libgebr/geoxml/flow/io_error_append", test_gebr_geoxml_flow_io_error_append);
 	g_test_add_func("/libgebr/geoxml/flow/io_error_append_default", test_gebr_geoxml_flow_io_error_append_default);
+	g_test_add_func("/libgebr/geoxml/flow/is_parallelizable", test_gebr_geoxml_flow_is_parallelizable);
 
 	gint ret = g_test_run();
 	gebr_geoxml_finalize();
