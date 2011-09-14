@@ -149,5 +149,16 @@ void gebrd_clean_proj_line_dicts(void);
  */
 GebrValidator *gebrd_get_validator(GebrdApp *self);
 
+/*
+ * gebrd_set_heuristic_aggression:
+ *
+ * @self: The #GebrdApp with number of procs.
+ * @aggressive: Aggression will be the basis of heuristic.
+ * @nice: The nice to be used on processor.
+ *
+ * Returns: The number of procs and nice after set heuristic.
+ */
+gint gebrd_set_heuristic_aggression(GebrdApp *self, gint aggressive, gint *nice);
+
 G_END_DECLS
 #endif				//__GEBRD_H

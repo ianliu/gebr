@@ -36,6 +36,10 @@
 
 #define GEBRD_CONF_FILE "/etc/gebr/gebrd.conf"
 
+#define MAX_NICE 19
+#define MIN_NICE 0
+#define DEFAULT_NPROCS 1
+
 GebrdApp *gebrd = NULL;
 
 /* GOBJECT STUFF */
@@ -391,4 +395,31 @@ GebrValidator *gebrd_get_validator(GebrdApp *self)
 		self->validator = gebr_validator_new(&self->flow, &self->line, &self->proj);
 
 	return self->validator;
+}
+
+gint
+gebrd_set_heuristic_aggression(GebrdApp *self,
+                               gint aggressive,
+                               gint *nice)
+{
+	switch (aggressive) {
+	case 1:
+		*nice = MAX_NICE;
+		return DEFAULT_NPROCS;
+	case 2:
+		*nice = MAX_NICE/2;
+		return DEFAULT_NPROCS;
+	case 3:
+		*nice = MIN_NICE;
+		return DEFAULT_NPROCS;
+	case 4:
+		*nice = MIN_NICE;
+		return (self->nprocs)/2;
+	case 5:
+		*nice = MIN_NICE;
+		return self->nprocs;
+	default:
+		*nice = MIN_NICE;
+		return DEFAULT_NPROCS;
+	}
 }
