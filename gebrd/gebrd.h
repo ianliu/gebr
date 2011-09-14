@@ -81,7 +81,10 @@ struct _GebrdApp {
 	GebrGeoXmlDocument *line;
 	GebrGeoXmlDocument *proj;
 	GebrValidator *validator;
+
+	gint nprocs;
 };
+
 struct _GebrdAppClass {
 	GObjectClass parent;
 };
