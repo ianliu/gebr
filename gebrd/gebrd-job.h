@@ -60,6 +60,7 @@ struct _GebrdJob {
 	gsize n_vars;
 
 	GString *exec_speed;
+	gboolean is_parallelizable;
 };
 
 struct _GebrdJobClass {

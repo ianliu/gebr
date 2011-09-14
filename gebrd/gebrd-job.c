@@ -1115,6 +1115,9 @@ static void job_assembly_cmdline(GebrdJob *job)
 	if (job->flow == NULL) 
 		goto err;
 
+	job->is_parallelizable =
+		gebr_geoxml_flow_is_parallelizable(job->flow, gebrd_get_validator(gebrd));
+
 	has_error_output_file = strlen(gebr_geoxml_flow_io_get_error(job->flow)) ? TRUE : FALSE;
 	nprog = gebr_geoxml_flow_get_programs_number(job->flow);
 	if (nprog == 0) {
@@ -1169,7 +1172,9 @@ static void job_assembly_cmdline(GebrdJob *job)
 	const gchar * binary;
 	binary = gebr_geoxml_program_get_binary(GEBR_GEOXML_PROGRAM(program));
 	if (mpi == NULL)
-		g_string_append_printf(job->parent.cmd_line, "%s ", binary);
+		g_string_append_printf(job->parent.cmd_line, "%s%s ",
+				       job->is_parallelizable ? "$exec ":"",
+				       binary);
 	else {
 		gchar * mpicmd;
 		mpicmd = gebrd_mpi_interface_build_comand(mpi, binary);
@@ -1285,23 +1290,12 @@ static void job_assembly_cmdline(GebrdJob *job)
 
 		/* How to connect chained programs */
 		int chain_option = gebr_geoxml_program_get_stdin(GEBR_GEOXML_PROGRAM(program)) + (previous_stdout << 1);
+		const gchar *sep = NULL;
 		switch (chain_option) {
-		case 0:	{
+		case 0:
 			/* Previous does not write to stdin and current does not carry about */
-
-			const gchar * binary;
-
-			binary = gebr_geoxml_program_get_binary(GEBR_GEOXML_PROGRAM(program));
-			if (mpi == NULL)
-				g_string_append_printf(job->parent.cmd_line, "; %s ", binary);
-			else {
-				gchar * mpicmd;
-				mpicmd = gebrd_mpi_interface_build_comand(mpi, binary);
-				g_string_append_printf(job->parent.cmd_line, "; %s ", mpicmd);
-				g_free(mpicmd);
-			}
+			sep = ";";
 			break;
-		}
 		case 1:	/* Previous does not write to stdin but current expect something */
 			job_issue(job, _("Broken flow before %s (no input).\n"),
 				  gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(program)));
@@ -1310,26 +1304,27 @@ static void job_assembly_cmdline(GebrdJob *job)
 			job_issue(job, _("Broken flow before %s (unexpected output).\n"),
 				  gebr_geoxml_program_get_title(GEBR_GEOXML_PROGRAM(program)));
 			goto err;
-		case 3:	{
+		case 3:
 			/* Both talk to each other */
-
-			const gchar * binary;
-
-			binary = gebr_geoxml_program_get_binary(GEBR_GEOXML_PROGRAM(program));
-
-			if (mpi == NULL)
-				g_string_append_printf(job->parent.cmd_line, "| %s ", binary);
-			else {
-				gchar * mpicmd;
-				mpicmd = gebrd_mpi_interface_build_comand(mpi, binary);
-				g_string_append_printf(job->parent.cmd_line, "| %s ", mpicmd);
-				g_free(mpicmd);
-			}
-
+			sep = "|";
 			break;
-		}
 		default:
 			break;
+		}
+
+		const gchar * binary;
+
+		binary = gebr_geoxml_program_get_binary(GEBR_GEOXML_PROGRAM(program));
+		if (mpi == NULL)
+			g_string_append_printf(job->parent.cmd_line, "%s %s%s ",
+					       sep,
+					       job->is_parallelizable ? "$exec ":"",
+					       binary);
+		else {
+			gchar * mpicmd;
+			mpicmd = gebrd_mpi_interface_build_comand(mpi, binary);
+			g_string_append_printf(job->parent.cmd_line, "%s %s ", sep, mpicmd);
+			g_free(mpicmd);
 		}
 
 		if (job_add_program_parameters(job, GEBR_GEOXML_PROGRAM(program), expr_buf) == FALSE)
@@ -1339,8 +1334,6 @@ static void job_assembly_cmdline(GebrdJob *job)
 		gebr_geoxml_sequence_next(&program);
 	}
 
-	gboolean is_parallelizable =
-		gebr_geoxml_flow_is_parallelizable(job->flow, gebrd_get_validator(gebrd));
 	gboolean stdout_use_iter = FALSE;
 
 	if (has_error_output_file == FALSE)
@@ -1360,17 +1353,12 @@ static void job_assembly_cmdline(GebrdJob *job)
 			if (!error) {
 				stdout_use_iter = gebr_output_use_var_iter(job, output_expr);
 				stdout_parsed = escape_quote_and_slash(result);
-				const gchar *background = is_parallelizable ? " ; echo done >> /dev/shm/.gebr_ok ) &" : "";
 
 				if (gebr_geoxml_flow_io_get_output_append(job->flow) ||
 				    (has_control && !stdout_use_iter))
-					g_string_append_printf(job->parent.cmd_line, ">> \"%s\" %s",
-							       stdout_parsed, background);
+					g_string_append_printf(job->parent.cmd_line, ">> \"%s\" ", stdout_parsed);
 				else
-					g_string_append_printf(job->parent.cmd_line, "> \"%s\" %s",
-							       stdout_parsed, background);
-				if (is_parallelizable)
-					g_string_prepend_c(job->parent.cmd_line, '(');
+					g_string_append_printf(job->parent.cmd_line, "> \"%s\" ", stdout_parsed);
 				g_free(result);
 			} else {
 				switch (error->code) {
@@ -1395,20 +1383,19 @@ static void job_assembly_cmdline(GebrdJob *job)
 		assemble_bc_cmd_line (expr_buf);
 		nprocs = gebrd_app_set_heuristic_aggression(gebrd, atoi(job->exec_speed->str), &nice);
 
-		puts("===========");
-		puts(expr_buf->str);
-		puts("--");
-		puts(str_buf->str);
-		puts("===========");
-
-		if (is_parallelizable) {
-			prefix = g_strdup_printf("for (( _outter=0; _outter < %s; _outter+=%d ))\n"
+		if (job->is_parallelizable) {
+			prefix = g_strdup_printf("PROC=%d\n"
+						 "NICE=%d\n"
+						 "exec=\"nice -n $NICE\"\n"
+						 "for (( _outter=0; _outter < %s; _outter+=$PROC ))\n"
 						 "do\n"
 						 "  rm -f /dev/shm/.gebr_ok\n"
-						 "  for ((counter=$_outter; counter < $_outter+%d; counter++))\n"
+						 "  for (( counter=$_outter; counter < $_outter+$PROC; counter++ ))\n"
 						 "  do\n"
 						 "    %s\n%s",
-						 n, nprocs, nprocs, expr_buf->str, str_buf->str);
+						 nprocs, nice, n, expr_buf->str, str_buf->str);
+			g_string_append(job->parent.cmd_line, "; echo done >> /dev/shm/.gebr_ok ) &");
+			g_string_prepend_c(job->parent.cmd_line, '(');
 		} else {
 			prefix = g_strdup_printf("for (( counter=0; counter<%s; counter++ ))\ndo\n%s\n%s",
 						 n, expr_buf->str, str_buf->str);
@@ -1426,11 +1413,10 @@ static void job_assembly_cmdline(GebrdJob *job)
 			g_free(remove);
 		}
 		g_string_prepend(job->parent.cmd_line, prefix);
-		if (is_parallelizable)
+		if (job->is_parallelizable)
 			g_string_append_printf(job->parent.cmd_line, "\n"
 					       "  done\n"
-					       "  while [ `cat /dev/shm/.gebr_ok 2>/dev/null | wc -l` -lt %d ] ; do sleep 0.2 ; done",
-					       nprocs);
+					       "  while [ `cat /dev/shm/.gebr_ok 2>/dev/null | wc -l` -lt $PROC ] ; do sleep 0.2 ; done");
 		g_string_append(job->parent.cmd_line, "\ndone");
 		g_free(prefix);
 		g_free(n);
