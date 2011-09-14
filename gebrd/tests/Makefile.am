@@ -33,4 +33,8 @@ TEST_PROGS += test-sysinfo
 test_sysinfo_SOURCES = test-sysinfo.c
 test_sysinfo_LDADD = ../libgebrd.a
 
+TEST_PROGS += test-gebrd
+test_gebrd_SOURCES = test-gebrd.c
+test_gebrd_LDADD = ../libgebrd.a
+
 EXTRA_DIST = cpuinfo
