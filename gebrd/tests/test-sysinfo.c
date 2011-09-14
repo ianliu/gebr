@@ -24,7 +24,6 @@ test_cpuinfo_get(void)
 	GebrdCpuInfo *cpu = gebrd_cpu_info_new_from_file(TEST_DIR"/cpuinfo");
 	g_assert_cmpstr(gebrd_cpu_info_get(cpu, 0, "vendor_id"), ==, "GenuineIntel");
 	g_assert_cmpstr(gebrd_cpu_info_get(cpu, 1, "siblings"), ==, "4");
-	g_assert_cmpstr(gebrd_cpu_info_get(cpu, 2, "processor"), ==, "1");
 	gebrd_cpu_info_free(cpu);
 }
 
@@ -36,12 +35,22 @@ test_cpuinfo_n_procs(void)
 	gebrd_cpu_info_free(cpu);
 }
 
+static void
+test_meminfo_get(void)
+{
+	GebrdMemInfo *mem = gebrd_mem_info_new_from_file(TEST_DIR"/meminfo");
+	g_assert_cmpstr(gebrd_mem_info_get(mem, "Cached"), ==, "927372 kB");
+	gebrd_mem_info_free(mem);
+}
+
+
 int main(int argc, char * argv[])
 {
 	g_test_init(&argc, &argv, NULL);
 
 	g_test_add_func("/gebrd/sysinfo/cpu_info_get", test_cpuinfo_get);
 	g_test_add_func("/gebrd/sysinfo/cpu_info_n_procs", test_cpuinfo_n_procs);
+	g_test_add_func("/gebrd/sysinfo/mem_info_get", test_meminfo_get);
 
 	return g_test_run();
 }

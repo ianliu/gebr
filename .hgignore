@@ -50,6 +50,7 @@ gebr/gebr
 gebrd/gebrd
 gebrd/tests/test-job
 gebrd/tests/test-job-queue
+gebrd/tests/test-sysinfo
 install-sh
 json-enum-types.[ch]
 json-marshal.[ch]

@@ -37,4 +37,4 @@ TEST_PROGS += test-gebrd
 test_gebrd_SOURCES = test-gebrd.c
 test_gebrd_LDADD = ../libgebrd.a
 
-EXTRA_DIST = cpuinfo
+EXTRA_DIST = cpuinfo meminfo
