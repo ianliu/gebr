@@ -404,9 +404,9 @@ GebrValidator *gebrd_get_validator(GebrdApp *self)
 }
 
 gint
-gebrd_set_heuristic_aggression(GebrdApp *self,
-                               gint aggressive,
-                               gint *nice)
+gebrd_app_set_heuristic_aggression(GebrdApp *self,
+				   gint aggressive,
+				   gint *nice)
 {
 	switch (aggressive) {
 	case 1:
@@ -420,7 +420,7 @@ gebrd_set_heuristic_aggression(GebrdApp *self,
 		return DEFAULT_NPROCS;
 	case 4:
 		*nice = MIN_NICE;
-		return (self->nprocs)/2;
+		return MAX((self->nprocs)/2, 1);
 	case 5:
 		*nice = MIN_NICE;
 		return self->nprocs;
