@@ -42,18 +42,21 @@
 enum {
 	LAST_PROPERTY
 };
+
 enum {
 	LAST_SIGNAL
 };
-// static guint object_signals[LAST_SIGNAL];
+
 G_DEFINE_TYPE(GebrdJob, gebrd_job, GEBR_COMM_JOB_TYPE)
+
 static void gebrd_job_init(GebrdJob * job)
 {
+	job->exec_speed = g_string_new(NULL);
 }
+
 static void gebrd_job_class_init(GebrdJobClass * klass)
 {
 }
-
 
 static void job_assembly_cmdline(GebrdJob *job);
 static void job_process_finished(GebrCommProcess * process, gint status, GebrdJob *job);
@@ -358,7 +361,7 @@ GebrdJob *job_find(GString * jid)
 }
 
 void job_new(GebrdJob ** _job, struct client * client, GString * queue, GString * account, GString * xml,
-	     GString * n_process, GString * run_id)
+	     GString * n_process, GString * run_id, GString *exec_speed)
 {
 	/* initialization */
 	GebrdJob *job = GEBRD_JOB(g_object_new(GEBRD_JOB_TYPE, NULL, NULL));
@@ -375,6 +378,8 @@ void job_new(GebrdJob ** _job, struct client * client, GString * queue, GString 
 	g_string_assign(job->parent.queue_id, queue->str);
 	g_string_assign(job->parent.moab_account, account->str);
 	g_string_assign(job->parent.n_process, n_process->str);
+	g_debug("Execution speed is %s", exec_speed->str);
+	g_string_assign(job->exec_speed, exec_speed->str);
 	job->parent.status = JOB_STATUS_INITIAL;
 
 	*_job = job;
@@ -414,6 +419,7 @@ void job_free(GebrdJob *job)
 			gebr_comm_process_free(job->tail_process);
 	if (job->flow)
 		gebr_geoxml_document_free(GEBR_GEOXML_DOC(job->flow));
+	g_string_free(job->exec_speed, TRUE);
 	g_object_unref(job);
 }
 
@@ -1333,10 +1339,14 @@ static void job_assembly_cmdline(GebrdJob *job)
 		gebr_geoxml_sequence_next(&program);
 	}
 
+	gboolean is_parallelizable =
+		gebr_geoxml_flow_is_parallelizable(job->flow, gebrd_get_validator(gebrd));
 	gboolean stdout_use_iter = FALSE;
+
 	if (has_error_output_file == FALSE)
 		job_issue(job,
 			  _("No error file selected; error output merged with standard output.\n"));
+
 	if (previous_stdout) {
 		if (strlen(gebr_geoxml_flow_io_get_output(job->flow)) == 0)
 			job_issue(job, _("Proceeding without output file.\n"));
@@ -1350,11 +1360,17 @@ static void job_assembly_cmdline(GebrdJob *job)
 			if (!error) {
 				stdout_use_iter = gebr_output_use_var_iter(job, output_expr);
 				stdout_parsed = escape_quote_and_slash(result);
-				if(gebr_geoxml_flow_io_get_output_append(job->flow) ||
-				   (has_control && !stdout_use_iter))
-					g_string_append_printf(job->parent.cmd_line, ">> \"%s\" ", stdout_parsed);
+				const gchar *background = is_parallelizable ? " ; echo done >> /dev/shm/.gebr_ok ) &" : "";
+
+				if (gebr_geoxml_flow_io_get_output_append(job->flow) ||
+				    (has_control && !stdout_use_iter))
+					g_string_append_printf(job->parent.cmd_line, ">> \"%s\" %s",
+							       stdout_parsed, background);
 				else
-					g_string_append_printf(job->parent.cmd_line, "> \"%s\" ", stdout_parsed);
+					g_string_append_printf(job->parent.cmd_line, "> \"%s\" %s",
+							       stdout_parsed, background);
+				if (is_parallelizable)
+					g_string_prepend_c(job->parent.cmd_line, '(');
 				g_free(result);
 			} else {
 				switch (error->code) {
@@ -1372,23 +1388,47 @@ static void job_assembly_cmdline(GebrdJob *job)
 		}
 	}
 	if (has_control && n) {
-		gchar *prefix, *remove;
+		gchar *prefix;
+		gchar *remove;
+
 		assemble_bc_cmd_line (expr_buf);
-		prefix = g_strdup_printf("for (( counter=0; counter<%s; counter++ ))\ndo\n%s\n%s",
-		                         n, expr_buf->str, str_buf->str);
-		if(!gebr_geoxml_flow_io_get_output_append(job->flow) && !stdout_use_iter &&
-				strlen(gebr_geoxml_flow_io_get_output(job->flow)) > 0 && previous_stdout) {
+
+		puts("===========");
+		puts(expr_buf->str);
+		puts("--");
+		puts(str_buf->str);
+		puts("===========");
+
+		if (is_parallelizable) {
+			prefix = g_strdup_printf("for (( _outter=0; _outter < %s; _outter+=%d ))\n"
+						 "do\n"
+						 "  rm -f /dev/shm/.gebr_ok\n"
+						 "  for ((counter=$_outter; counter < $_outter+%d; counter++))\n"
+						 "  do\n"
+						 "    %s\n%s",
+						 n, gebrd->nprocs, gebrd->nprocs, expr_buf->str, str_buf->str);
+		} else {
+			prefix = g_strdup_printf("for (( counter=0; counter<%s; counter++ ))\ndo\n%s\n%s",
+						 n, expr_buf->str, str_buf->str);
+		}
+		if (!gebr_geoxml_flow_io_get_output_append(job->flow) && !stdout_use_iter &&
+		    strlen(gebr_geoxml_flow_io_get_output(job->flow)) > 0 && previous_stdout) {
 			remove = g_strdup_printf("\n\ttest $counter -eq 0 && > %s\n", stdout_parsed);
 			g_string_prepend(job->parent.cmd_line, remove);
 			g_free(remove);
 		}
-		if(!gebr_geoxml_flow_io_get_error_append(job->flow) && !stderr_use_iter &&
-				strlen(gebr_geoxml_flow_io_get_error(job->flow)) > 0) {
+		if (!gebr_geoxml_flow_io_get_error_append(job->flow) && !stderr_use_iter &&
+		    strlen(gebr_geoxml_flow_io_get_error(job->flow)) > 0) {
 			remove = g_strdup_printf("\n\ttest $counter -eq 0 && > %s\n", stderr_parsed);
 			g_string_prepend(job->parent.cmd_line, remove);
 			g_free(remove);
 		}
 		g_string_prepend(job->parent.cmd_line, prefix);
+		if (is_parallelizable)
+			g_string_append_printf(job->parent.cmd_line, "\n"
+					       "  done\n"
+					       "  while [ `cat /dev/shm/.gebr_ok 2>/dev/null | wc -l` -lt %d ] ; do sleep 0.2 ; done",
+					       gebrd->nprocs);
 		g_string_append(job->parent.cmd_line, "\ndone");
 		g_free(prefix);
 		g_free(n);

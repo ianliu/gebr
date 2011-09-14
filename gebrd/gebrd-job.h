@@ -58,6 +58,8 @@ struct _GebrdJob {
 
 	/* Temporary variables to build command line */
 	gsize n_vars;
+
+	GString *exec_speed;
 };
 
 struct _GebrdJobClass {
@@ -71,7 +73,7 @@ GebrdJob *job_find(GString * jid);
 /**
  */
 void job_new(GebrdJob ** _job, struct client * client, GString * queue, GString * account, GString * xml,
-	     GString * n_process, GString * run_id);
+	     GString * n_process, GString * run_id, GString *exec_speed);
 /**
  */
 void job_free(GebrdJob *job);

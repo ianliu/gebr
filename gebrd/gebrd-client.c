@@ -313,10 +313,9 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			n_process = g_list_nth_data(arguments, 3);
 			run_id = g_list_nth_data(arguments, 4);
 			exec_speed = g_list_nth_data(arguments, 5);
-			puts (exec_speed->str);
 
 			/* try to run and send return */
-			job_new(&job, client, queue, account, xml, n_process, run_id);
+			job_new(&job, client, queue, account, xml, n_process, run_id, exec_speed);
 #ifdef DEBUG
 			gchar *env_delay = getenv("GEBRD_RUN_DELAY_SEC");
 			if (env_delay != NULL)
