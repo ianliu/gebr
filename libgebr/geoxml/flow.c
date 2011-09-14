@@ -1031,9 +1031,9 @@ gebr_geoxml_flow_is_parallelizable(GebrGeoXmlFlow *flow,
 	if (!has_control)
 		return FALSE;
 
-	const gchar *input = gebr_geoxml_flow_io_get_input(flow);
+	const gchar *output = gebr_geoxml_flow_io_get_output(flow);
 
-	if(strlen(input))
-		return !gebr_validator_use_iter(validator, input, GEBR_GEOXML_PARAMETER_TYPE_FLOAT, GEBR_GEOXML_DOCUMENT_TYPE_FLOW);
-	return TRUE;
+	if(strlen(output) && gebr_validator_use_iter(validator, output, GEBR_GEOXML_PARAMETER_TYPE_FLOAT, GEBR_GEOXML_DOCUMENT_TYPE_FLOW))
+		return TRUE;
+	return FALSE;
 }
