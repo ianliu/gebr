@@ -548,6 +548,9 @@ static void test_gebr_geoxml_flow_is_parallelizable (void)
 
 	gebr_geoxml_flow_io_set_output(flow, "/home/eric/Desktop/teste_[iter].txt");
 	g_assert (gebr_geoxml_flow_is_parallelizable(flow, validator) == TRUE);
+
+	gebr_geoxml_flow_io_set_output(flow, "");
+	g_assert (gebr_geoxml_flow_is_parallelizable(flow, validator) == TRUE);
 }
 
 int main(int argc, char *argv[])
