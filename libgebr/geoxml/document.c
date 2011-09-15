@@ -33,14 +33,12 @@
 #include <gdome.h>
 #include <libxml/parser.h>
 
-#if ENABLE_TIDY
-# if TIDY_HAVE_SUBDIR
-#  include <tidy/tidy.h>
-#  include <tidy/buffio.h>
-# else
-#  include <tidy.h>
-#  include <buffio.h>
-# endif
+#if HAVE_TIDY_TIDY_H
+# include <tidy/tidy.h>
+# include <tidy/buffio.h>
+#elif HAVE_TIDY_H
+# include <tidy.h>
+# include <buffio.h>
 #endif
 
 #include "document.h"

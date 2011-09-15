@@ -173,7 +173,6 @@ AC_ARG_WITH([tidy],
 	    [want_tidy=yes])
 
 ENABLE_TIDY=0
-TIDY_HAVE_SUBDIR=0
 if test "x${want_tidy}" = xyes; then
 	AC_SEARCH_LIBS([tidyCreate], [tidy],
 		       [have_tidy=yes],
@@ -181,7 +180,7 @@ if test "x${want_tidy}" = xyes; then
 
 	if test "x${have_tidy}" = xyes; then
 		AC_CHECK_HEADERS([tidy/tidy.h tidy/buffio.h],
-				 [TIDY_HAVE_SUBDIR=1],
+				 [],
 				 [AC_CHECK_HEADERS([tidy.h buffio.h],
 						   [],
 						   [have_tidy=no;])])
@@ -201,7 +200,6 @@ if test "x${want_tidy}" = xyes; then
 	fi
 fi
 AC_SUBST(ENABLE_TIDY)
-AC_SUBST(TIDY_HAVE_SUBDIR)
 
 dnl ============================================================================
 dnl Checking for zlib library
@@ -273,8 +271,6 @@ fi
 
 AC_DEFINE_UNQUOTED(ENABLE_TIDY, [$ENABLE_TIDY],
 		   [If one, tidy is enabled, zero is disabled])
-AC_DEFINE_UNQUOTED(TIDY_HAVE_SUBDIR, [$TIDY_HAVE_SUBDIR],
-		   [If one, tidy resides in tidy/tidy.h])
 
 DATA_DIR=`echo $TMP_PREFIX/share`
 AC_DEFINE_UNQUOTED(DATA_DIR, ["$DATA_DIR"], [Data dir])
