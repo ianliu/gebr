@@ -1389,12 +1389,11 @@ static void job_assembly_cmdline(GebrdJob *job)
 						 "exec=\"nice -n $NICE\"\n"
 						 "for (( _outter=0; _outter < %s; _outter+=$PROC ))\n"
 						 "do\n"
-						 "  rm -f /dev/shm/.gebr_ok\n"
 						 "  for (( counter=$_outter; counter < $_outter+$PROC; counter++ ))\n"
 						 "  do\n"
 						 "    %s\n%s",
 						 nprocs, nice, n, expr_buf->str, str_buf->str);
-			g_string_append(job->parent.cmd_line, "; echo done >> /dev/shm/.gebr_ok ) &");
+			g_string_append(job->parent.cmd_line, " ) &");
 			g_string_prepend_c(job->parent.cmd_line, '(');
 		} else {
 			prefix = g_strdup_printf("for (( counter=0; counter<%s; counter++ ))\ndo\n%s\n%s",
