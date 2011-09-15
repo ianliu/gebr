@@ -447,7 +447,7 @@ void gebr_help_show(GebrGeoXmlObject *object, gboolean menu)
 		gtk_radio_action_set_group (radio_action, style_group);
 		style_group = gtk_radio_action_get_group (radio_action);
 		gtk_action_group_add_action (group, GTK_ACTION (radio_action));
-		dir = g_dir_open (GEBR_STYLES_DIR, 0, &error);
+		dir = g_dir_open (LIBGEBR_STYLES_DIR, 0, &error);
 
 		if (error) {
 			g_critical ("%s", error->message);
@@ -463,7 +463,7 @@ void gebr_help_show(GebrGeoXmlObject *object, gboolean menu)
 					gchar *fname_cpy;
 
 					action_name = g_strdup_printf ("StyleAction%d", i);
-					abs_path = g_strconcat (GEBR_STYLES_DIR, "/", fname, NULL);
+					abs_path = g_strconcat (LIBGEBR_STYLES_DIR, "/", fname, NULL);
 					css_title = gebr_document_get_css_header_field (abs_path, "title");
 					radio_action = gtk_radio_action_new (action_name,
 									     css_title,

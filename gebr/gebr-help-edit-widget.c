@@ -41,7 +41,7 @@
 	"var menu_edition = false;"							\
 	"function onCkEditorLoadFinished() {}"						\
 	"</script>"									\
-	"<script src='" GEBR_HELP_EDIT_SCRIPT_PATH "/ckeditor.js'>"			\
+	"<script src='" DEBR_HELP_EDIT_CKEDITOR "'>"					\
 	"</script>"									\
 	"</head>"                                                                       \
 	"<body>"									\
