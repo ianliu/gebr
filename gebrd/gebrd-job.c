@@ -1416,7 +1416,7 @@ static void job_assembly_cmdline(GebrdJob *job)
 		if (job->is_parallelizable)
 			g_string_append_printf(job->parent.cmd_line, "\n"
 					       "  done\n"
-					       "  while [ `cat /dev/shm/.gebr_ok 2>/dev/null | wc -l` -lt $PROC ] ; do sleep 0.2 ; done");
+					       "  wait\n");
 		g_string_append(job->parent.cmd_line, "\ndone");
 		g_free(prefix);
 		g_free(n);
