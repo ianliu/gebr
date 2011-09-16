@@ -408,24 +408,12 @@ gebrd_app_set_heuristic_aggression(GebrdApp *self,
 				   gint aggressive,
 				   gint *nice)
 {
-	switch (aggressive) {
-	case 1:
+	if (aggressive > 0)
+		*nice = MIN_NICE;
+	else {
 		*nice = MAX_NICE;
-		return DEFAULT_NPROCS;
-	case 2:
-		*nice = MAX_NICE/2;
-		return DEFAULT_NPROCS;
-	case 3:
-		*nice = MIN_NICE;
-		return DEFAULT_NPROCS;
-	case 4:
-		*nice = MIN_NICE;
-		return MAX((self->nprocs)/2, 1);
-	case 5:
-		*nice = MIN_NICE;
-		return self->nprocs;
-	default:
-		*nice = MIN_NICE;
-		return DEFAULT_NPROCS;
+		aggressive *= -1;
 	}
+
+	return (self->nprocs - DEFAULT_NPROCS) * (aggressive-1)/4 + DEFAULT_NPROCS;
 }
