@@ -296,12 +296,16 @@ int __gebr_geoxml_sequence_move_up(GebrGeoXmlSequence * sequence)
 	GebrGeoXmlSequence *previous;
 
 	previous = sequence;
+	gebr_geoxml_object_ref(previous);
 	gebr_geoxml_sequence_previous(&previous);
+
 	if (previous == NULL)
 		return GEBR_GEOXML_RETV_INVALID_INDEX;
 
-	gdome_n_insertBefore_protected(gdome_el_parentNode((GdomeElement *) sequence, &exception),
-			     (GdomeNode *) sequence, (GdomeNode *) previous, &exception);
+	GdomeNode * parent = gdome_el_parentNode((GdomeElement *) sequence, &exception);
+	gdome_n_insertBefore_protected(parent, (GdomeNode *) sequence, (GdomeNode *) previous, &exception);
+	gdome_n_unref(parent, &exception);
+	gebr_geoxml_object_unref(previous);
 
 	return GEBR_GEOXML_RETV_SUCCESS;
 }
@@ -311,13 +315,17 @@ int __gebr_geoxml_sequence_move_down(GebrGeoXmlSequence * sequence)
 	GebrGeoXmlSequence *next;
 
 	next = sequence;
+	gebr_geoxml_object_ref(next);
 	gebr_geoxml_sequence_next(&next);
 	if (next == NULL)
 		return GEBR_GEOXML_RETV_INVALID_INDEX;
-	next = (GebrGeoXmlSequence *) __gebr_geoxml_next_element((GdomeElement *) next);
-
-	gdome_n_insertBefore_protected(gdome_el_parentNode((GdomeElement *) sequence, &exception),
-			     (GdomeNode *) sequence, (GdomeNode *) next, &exception);
+	GdomeElement *next2 = __gebr_geoxml_next_element((GdomeElement *) next);
+	GdomeNode *parent = gdome_el_parentNode((GdomeElement *) sequence, &exception);
+	gdome_n_insertBefore_protected(parent,
+			     (GdomeNode *) sequence, (GdomeNode *) next2, &exception);
+	gdome_n_unref(parent, &exception);
+	gebr_geoxml_object_unref(next);
+	gebr_geoxml_object_unref(next2);
 
 	return GEBR_GEOXML_RETV_SUCCESS;
 }
