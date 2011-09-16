@@ -121,7 +121,7 @@ void log_set_message(struct ui_log *ui_log, const gchar * message)
 	g_string_free(msgb, TRUE);
 }
 
-void gebr_log_add_message_to_list(struct ui_log *ui_log, struct gebr_log_message *message)
+void gebr_log_add_message_to_list(struct ui_log *ui_log, GebrLogMessage *message)
 {
 	GtkTreeIter iter;
 	GdkPixbuf *pixbuf;

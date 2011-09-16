@@ -70,7 +70,7 @@ struct _GebrdApp {
 
 	GString *run_filename;
 	GString *fs_lock;
-	struct gebr_log *log;
+	GebrLog *log;
 	GMainLoop *main_loop;
 	int finished_starting_pipe[2];
 
@@ -106,7 +106,7 @@ void gebrd_quit(void);
  * Log a message in the gebrd log file and to standand output.
  * The message in only shown in the stdout if gebrd is running in interative mode.
  */
-void gebrd_message(enum gebr_log_message_type type, const gchar * message, ...);
+void gebrd_message(GebrLogMessageType type, const gchar * message, ...);
 
 /**
  * Return a free port to be used for X11 redirection.

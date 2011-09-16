@@ -99,7 +99,7 @@ struct gebr {
 	GebrGeoXmlProgram *program;
 
 	GList *flow_clipboard;
-	struct gebr_log *log;
+	GebrLog *log;
 	GSList *tmpfiles;
 
 	/* Persistent GUI */
@@ -197,7 +197,7 @@ void gebr_config_save(gboolean verbose);
  * \param in_log_file If TRUE, appends \p message in log file (see ~/.gebr/log/ directory).
  * \param message A printf-like formated message.
  */
-void gebr_message(enum gebr_log_message_type type, gboolean in_statusbar, gboolean in_log_file,
+void gebr_message(GebrLogMessageType type, gboolean in_statusbar, gboolean in_log_file,
 		  const gchar * message, ...);
 
 /**

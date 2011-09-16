@@ -43,7 +43,7 @@ struct ui_log *log_setup_ui(void);
 
 void log_set_message(struct ui_log *ui_log, const gchar * message);
 
-void gebr_log_add_message_to_list(struct ui_log *ui_log, struct gebr_log_message *message);
+void gebr_log_add_message_to_list(struct ui_log *ui_log, GebrLogMessage *message);
 
 G_END_DECLS
 #endif				//__UI_GEBR_LOG_H

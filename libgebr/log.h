@@ -16,19 +16,23 @@
  */
 
 /**
- * \file log.h Logging API
+ * SECTION:gebr-log log.h Logging API
+ * @short_description: GeBR's logging class
+ * @title: GeBR Log Class
+ * @include <libgebr/log.h>
+ *
+ * The GeBR logging class provides functions for logging various types of
+ * messages, such as informative messages and error messages.
  */
 
 #ifndef __GEBR_GEBR_LOG_H
 #define __GEBR_GEBR_LOG_H
 
-#include <stdio.h>
-
 #include <glib.h>
 
 G_BEGIN_DECLS
 
-enum gebr_log_message_type {
+typedef enum {
 	GEBR_LOG_START,
 	GEBR_LOG_END,
 	GEBR_LOG_INFO,
@@ -36,32 +40,33 @@ enum gebr_log_message_type {
 	GEBR_LOG_WARNING,
 	GEBR_LOG_DEBUG,
 	GEBR_LOG_MSG
-};
+} GebrLogMessageType;
 
-struct gebr_log_message {
-	enum gebr_log_message_type type;
+typedef struct  {
+	GebrLogMessageType type;
 	GString *date;
 	GString *message;
-};
+} GebrLogMessage;
 
-struct gebr_log {
+typedef struct {
 	GIOChannel *io_channel;
-};
+} GebrLog;
 
-struct gebr_log *gebr_log_open(const gchar * path);
+GebrLog *gebr_log_open(const gchar * path);
 
-void gebr_log_close(struct gebr_log *log);
+void gebr_log_close(GebrLog *log);
 
-struct gebr_log_message *gebr_log_message_new(enum gebr_log_message_type type, const gchar * date,
-					      const gchar * message);
+GebrLogMessage *gebr_log_message_new(GebrLogMessageType type,
+				     const gchar * date,
+				     const gchar * message);
 
-void gebr_log_message_free(struct gebr_log_message *message);
+void gebr_log_message_free(GebrLogMessage *message);
 
-GList *gebr_log_messages_read(struct gebr_log *log);
+GList *gebr_log_messages_read(GebrLog *log);
 
 void gebr_log_messages_free(GList * messages);
 
-void gebr_log_add_message(struct gebr_log *log, enum gebr_log_message_type type, const gchar * message);
+void gebr_log_add_message(GebrLog *log, GebrLogMessageType type, const gchar * message);
 
 G_END_DECLS
 

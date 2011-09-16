@@ -39,7 +39,7 @@ void gebr_client_quit(void)
 	g_main_loop_quit(gebr_client.main_loop);
 }
 
-void gebr_client_message(enum gebr_log_message_type type, const gchar * message, ...)
+void gebr_client_message(GebrLogMessageType type, const gchar * message, ...)
 {
 	gchar *string;
 	va_list argp;

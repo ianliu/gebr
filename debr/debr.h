@@ -153,7 +153,7 @@ void debr_config_save(void);
  * \param type The log level, for example #GEBR_LOG_ERROR.
  * \param message A printf-like formated string.
  */
-void debr_message(enum gebr_log_message_type type, const gchar * message, ...);
+void debr_message(GebrLogMessageType type, const gchar * message, ...);
 
 /**
  * Tells if \p category is present in the list of categories.

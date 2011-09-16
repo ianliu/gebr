@@ -197,7 +197,7 @@ void debr_config_save(void)
 	g_strfreev(list);
 }
 
-void debr_message(enum gebr_log_message_type type, const gchar * message, ...)
+void debr_message(GebrLogMessageType type, const gchar * message, ...)
 {
 	gchar *string;
 	va_list argp;

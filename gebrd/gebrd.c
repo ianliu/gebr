@@ -232,7 +232,7 @@ void gebrd_quit(void)
 	g_main_loop_quit(gebrd->main_loop);
 }
 
-void gebrd_message(enum gebr_log_message_type type, const gchar * message, ...)
+void gebrd_message(GebrLogMessageType type, const gchar * message, ...)
 {
 	gchar *string;
 	const gchar *loglevel;

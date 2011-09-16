@@ -42,7 +42,7 @@ gboolean gebr_client_init(const gchar * server_address);
 
 void gebr_client_quit(void);
 
-void gebr_client_message(enum gebr_log_message_type type, const gchar * message, ...);
+void gebr_client_message(GebrLogMessageType type, const gchar * message, ...);
 
 G_END_DECLS
 #endif				//__GEBR_CLIENT_H

@@ -173,7 +173,7 @@ static void gebr_server_init (GebrServer *self)
 /**
  * \internal
  */
-static void server_log_message(enum gebr_log_message_type type, const gchar * message)
+static void server_log_message(GebrLogMessageType type, const gchar * message)
 {
 	gebr_message(type, TRUE, TRUE, message);
 }

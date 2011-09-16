@@ -32,7 +32,7 @@
  * Internal functions
  */
 
-static void server_log_message(enum gebr_log_message_type type, const gchar * message)
+static void server_log_message(GebrLogMessageType type, const gchar * message)
 {
 	gebr_client_message(type, message);
 }

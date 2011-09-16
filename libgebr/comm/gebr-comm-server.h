@@ -88,7 +88,7 @@ struct gebr_comm_server {
 
 	/* virtual methods */
 	const struct gebr_comm_server_ops {
-		void (*log_message) (enum gebr_log_message_type type, const gchar * message);
+		void (*log_message) (GebrLogMessageType type, const gchar * message);
 		void (*state_changed) (struct gebr_comm_server *server, gpointer user_data);
 		GString *(*ssh_login) (const gchar * title, const gchar * message);
 		gboolean(*ssh_question) (const gchar * title, const gchar * message);

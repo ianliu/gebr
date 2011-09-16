@@ -604,7 +604,7 @@ out:
 	return;
 }
 
-void gebr_message(enum gebr_log_message_type type, gboolean in_statusbar, gboolean in_log_file,
+void gebr_message(GebrLogMessageType type, gboolean in_statusbar, gboolean in_log_file,
 		  const gchar * message, ...)
 {
 	gchar *string;
@@ -623,7 +623,7 @@ void gebr_message(enum gebr_log_message_type type, gboolean in_statusbar, gboole
 	else if (in_statusbar)
 		log_set_message(gebr.ui_log, string);
 	if (in_log_file) {
-		struct gebr_log_message *log_message;
+		GebrLogMessage *log_message;
 
 		log_message = gebr_log_message_new(type, gebr_iso_date(), string);
 		gebr_log_add_message(gebr.log, type, string);
@@ -696,7 +696,7 @@ static void gebr_log_load(void)
 
 		messages = gebr_log_messages_read(gebr.log);
 		for (i = messages; i != NULL; i = g_list_next(i))
-			gebr_log_add_message_to_list(gebr.ui_log, (struct gebr_log_message *)i->data);
+			gebr_log_add_message_to_list(gebr.ui_log, (GebrLogMessage *)i->data);
 
 		gebr_log_messages_free(messages);
 	}

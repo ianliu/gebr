@@ -36,7 +36,7 @@
  */
 
 static void
-gebr_comm_server_log_message(struct gebr_comm_server *server, enum gebr_log_message_type type,
+gebr_comm_server_log_message(struct gebr_comm_server *server, GebrLogMessageType type,
 			     const gchar * message, ...);
 
 static void local_run_server_read(GebrCommProcess * process, struct gebr_comm_server *server);
@@ -393,7 +393,7 @@ void gebr_comm_server_run_flow(struct gebr_comm_server *server, GebrCommServerRu
  * \internal
  */
 static void
-gebr_comm_server_log_message(struct gebr_comm_server *server, enum gebr_log_message_type type,
+gebr_comm_server_log_message(struct gebr_comm_server *server, GebrLogMessageType type,
 			     const gchar * message, ...)
 {
 	va_list argp;

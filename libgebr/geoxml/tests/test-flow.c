@@ -16,6 +16,7 @@
  */
 
 #include <glib.h>
+#include <glib-object.h>
 #include <stdlib.h>
 
 #include "../../date.h"
