@@ -27,12 +27,12 @@
 G_BEGIN_DECLS
 
 /**
- * \file channelsocket.h
- * \brief A socket that channel all data to another address
+ * SECTION: gebr-comm-channel-socket
+ * @short_description: A socket that channel all data to another address
  *
- * This classes channels all data from a given #GebrCommStreamSocket to another address.
- * At first, a connection is made to this address. If it successful, a pipe-like data flow
- * is established between these two sockets.
+ * This classes channels all data from a given #GebrCommStreamSocket to another
+ * address.  At first, a connection is made to this address. If it successful,
+ * a pipe-like data flow is established between these two sockets.
  */
 
 GType gebr_comm_channel_socket_get_type(void);

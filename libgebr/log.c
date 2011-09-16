@@ -15,6 +15,16 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * SECTION: log
+ * @short_description: GeBR's logging class
+ * @title: GeBR Log Class
+ * @include: libgebr/log.h
+ *
+ * The GeBR logging class provides functions for logging various types of
+ * messages, such as informative messages and error messages.
+ */
+
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
@@ -63,6 +73,15 @@ GebrLog *gebr_log_open(const gchar * path)
 	return log;
 }
 
+/**
+ * gebr_log_message_new:
+ * @type: The type of this message.
+ * @date: When this message occured.
+ * @message: The message itself.
+ *
+ * Returns: A newly allocated #GebrLogMessage structure. Free with
+ * gebr_log_message_free().
+ */
 GebrLogMessage *gebr_log_message_new(GebrLogMessageType type, const gchar * date,
 					      const gchar * message)
 {
@@ -76,6 +95,12 @@ GebrLogMessage *gebr_log_message_new(GebrLogMessageType type, const gchar * date
 	return log_message;
 }
 
+/**
+ * gebr_log_message_free:
+ * @message: The #GebrLogMessage.
+ *
+ * Free the message structure.
+ */
 void gebr_log_message_free(GebrLogMessage *message)
 {
 	g_string_free(message->date, TRUE);
@@ -194,18 +219,36 @@ void gebr_log_add_message(GebrLog *log, GebrLogMessageType type, const gchar * m
 	g_string_free(line, TRUE);
 }
 
+/**
+ * gebr_log_message_get_date:
+ * @message: The #GebrLogMessage.
+ *
+ * Returns: The time in which this message was sent; do not free it.
+ */
 const gchar *
 gebr_log_message_get_date(GebrLogMessage *message)
 {
 	return message->date->str;
 }
 
+/**
+ * gebr_log_message_get_message:
+ * @message: The #GebrLogMessage.
+ *
+ * Returns: The message that was sent; do not free it.
+ */
 const gchar *
 gebr_log_message_get_message(GebrLogMessage *message)
 {
 	return message->message->str;
 }
 
+/**
+ * gebr_log_message_get_type:
+ * @message: The #GebrLogMessage.
+ *
+ * Returns: The type of this message.
+ */
 GebrLogMessageType
 gebr_log_message_get_type(GebrLogMessage *message)
 {

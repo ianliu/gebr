@@ -15,16 +15,6 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * SECTION:gebr-log log.h Logging API
- * @short_description: GeBR's logging class
- * @title: GeBR Log Class
- * @include <libgebr/log.h>
- *
- * The GeBR logging class provides functions for logging various types of
- * messages, such as informative messages and error messages.
- */
-
 #ifndef __GEBR_GEBR_LOG_H
 #define __GEBR_GEBR_LOG_H
 
@@ -55,49 +45,16 @@ void gebr_log_add_message(GebrLog *log, GebrLogMessageType type, const gchar * m
 
 void gebr_log_close(GebrLog *log);
 
-/**
- * gebr_log_message_new:
- * @type: The type of this message.
- * @date: When this message occured.
- * @message: The message itself.
- *
- * Returns: A newly allocated #GebrLogMessage structure. Free with
- * gebr_log_message_free().
- */
 GebrLogMessage *gebr_log_message_new(GebrLogMessageType type,
 				     const gchar       *date,
 				     const gchar       *message);
 
-/**
- * gebr_log_message_get_date:
- * @message: The #GebrLogMessage.
- *
- * Returns: The time in which this message was sent; do not free it.
- */
 const gchar *gebr_log_message_get_date(GebrLogMessage *message);
 
-/**
- * gebr_log_message_get_message:
- * @message: The #GebrLogMessage.
- *
- * Returns: The message that was sent; do not free it.
- */
 const gchar *gebr_log_message_get_message(GebrLogMessage *message);
 
-/**
- * gebr_log_message_get_type:
- * @message: The #GebrLogMessage.
- *
- * Returns: The type of this message.
- */
 GebrLogMessageType gebr_log_message_get_type(GebrLogMessage *message);
 
-/**
- * gebr_log_message_free:
- * @message: The #GebrLogMessage.
- *
- * Free the message structure.
- */
 void gebr_log_message_free(GebrLogMessage *message);
 
 G_END_DECLS
