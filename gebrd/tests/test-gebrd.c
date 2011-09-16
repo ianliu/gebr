@@ -28,10 +28,16 @@ test_set_heuristic_aggression_border (void)
 	gint nice;
 
 	g_assert(gebrd_app_set_heuristic_aggression(self, MIN_AGRESSION, &nice) == 1);
+	g_assert_cmpint(nice, ==, 0);
+
+	g_assert(gebrd_app_set_heuristic_aggression(self, -MIN_AGRESSION, &nice) == 1);
 	g_assert_cmpint(nice, ==, 19);
 
 	g_assert(gebrd_app_set_heuristic_aggression(self, MAX_AGRESSION, &nice) == (self->nprocs));
 	g_assert_cmpint(nice, ==, 0);
+
+	g_assert(gebrd_app_set_heuristic_aggression(self, -MAX_AGRESSION, &nice) == (self->nprocs));
+	g_assert_cmpint(nice, ==, 19);
 }
 
 void
@@ -40,18 +46,12 @@ test_set_heuristic_aggression (void)
 	GebrdApp *self = gebrd_app_new();
 	gint nice;
 
-	g_assert(gebrd_app_set_heuristic_aggression(self, 2, &nice) == 1);
-	g_assert_cmpint(nice, ==, 9);
-
-	g_assert(gebrd_app_set_heuristic_aggression(self, 3, &nice) == 1);
+	g_assert(gebrd_app_set_heuristic_aggression(self, 2, &nice) == ((self->nprocs - 1) * 1/4 + 1));
 	g_assert_cmpint(nice, ==, 0);
 
-	g_assert(gebrd_app_set_heuristic_aggression(self, 4, &nice) == (self->nprocs/2));
-	g_assert_cmpint(nice, ==, 0);
 
-	// If out of bounds, the returns always default
-	g_assert(gebrd_app_set_heuristic_aggression(self, 6, &nice) == 1);
-	g_assert_cmpint(nice, ==, 0);
+	g_assert(gebrd_app_set_heuristic_aggression(self, -2, &nice) == ((self->nprocs - 1) * 1/4 + 1));
+	g_assert_cmpint(nice, ==, 19);
 }
 
 int main(int argc, char * argv[])
