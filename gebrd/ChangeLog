@@ -1,3 +1,392 @@
+2011-09-08  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fixes fuzzy translates and untranslated messages on gebr and gebrd
+
+2011-09-05  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix GETTEXT_PACKAGE variables for gebr, gebrd and debr
+
+2011-09-02  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fixed another regression on need to connect twice when server is not
+	running (Fixes issue 813)
+
+2011-09-02  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Merge use-autoheader into default
+
+2011-09-01  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix typo in configure.ac and added *-gettext.h into dist
+	* Now using autoheader; compilation is OK
+
+2011-08-31  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fixed escape of single quote on parameter label in deamon (Fixed
+	issue 1041)
+
+2011-08-10  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Remove reference count of DomImplementation, use
+	gebr_geoxml_(init|finalize)
+
+2011-08-01  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Deprecates gebr-string-expr.
+
+2011-07-27  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fixes a duplicate code to skip nonconfigured programs and removes
+	zeros when niter parameter value is a division expression.
+	* Fixes bug on evaluate of niter parameter of loop, when uses
+	variables.
+
+2011-07-26  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Deprecates string_expression on gebrd, and don't open one bc by job
+	anymore.
+
+2011-07-21  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Makes server set expression scale to 5 decimal digits in sync with
+	client precision.
+
+2011-07-21  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Loop uses default values when their values are missing
+
+2011-07-20  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Removes a queue from ComboBox when it is empty on job control
+
+2011-07-15  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Now loop works even if it is inserted before the first program of
+	flow. (Fixes issue 998)
+
+2011-07-14  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* One more validator cleanup.
+
+2011-07-14  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Daemon now accepts expressions in loop variables
+
+2011-07-14  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Validator evaluate cleanup, fixes evaluation bug in programs.
+
+2011-07-13  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fixed document free on gebrd and avoid validator update cache.
+
+2011-07-13  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Evaluate counter before loop. FIXME: free on docs of gebrd.
+
+2011-07-13  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix segfault in Dameon
+	* Strip incoming flow in GeBRd
+	* Add project and line into GeBRd structure
+
+2011-07-13  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change command 'rm -f' for clear output file to '>'.
+	* Fixes bug on gebrd when use variable iter on input file.
+
+2011-07-12  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Call setlocale function inside gebr_libinit
+
+2011-07-11  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Enable expressions on Loop program.
+
+2011-07-07  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fixes precedence of assign over comparison at bc. (Fixes issue 962)
+
+2011-07-07  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Finished signal emitted by GebrCommProcess returns process status
+	now
+
+2011-07-04  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Update i18n
+
+2011-06-17  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Added suport for recursive iter regognition at gebrd output + bonus.
+
+2011-06-17  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fixes remove (null) on stdout
+
+2011-06-16  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Updated gebrd translation.
+
+2011-05-31  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix remote configure and standardize Makefiles
+
+2011-05-31  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fixed make check subdirs on gebrd and debr.
+
+2011-05-27  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* More typo fixes!
+	* Fix typo in function name
+
+2011-05-27  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Stderr works like stdout
+	* Fixes stderr with null when there's no selected log file.
+
+2011-05-26  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fixes remove a file when run a program without output file
+
+2011-05-25  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fixes problems on Append/Overwrite for output files.
+
+2011-05-25  Priscila Moraes de Souza <pris.moraess@gebrproject.com>
+
+	* Fixed double free at server, when have some variables with error.
+
+2011-05-25  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change append/over on stdout
+
+2011-05-13  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix 'rm' bug in GeBRd
+
+2011-05-11  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Escape brackets when defining string variables in Daemon
+
+2011-05-11  Priscila Moraes de Souza <pris.moraess@gebrproject.com>
+
+	* Undo "iter" ignore in Daemon
+
+2011-05-11  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Do not define iter variable in BC
+
+2011-05-11  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Declaration of string variables on bash
+
+2011-05-04  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix append/overwrite for output file in GeBRd
+
+2011-05-02  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix range widget to use expressions
+
+2011-05-02  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Variable iter is declared on bc only when loop is configured
+
+2011-05-02  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Do not write empty parameters in gebrd command line
+
+2011-05-01  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix gcc warning for gsize printf format
+
+2011-04-29  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Variable iter defined in bc only when flow has loop.
+
+2011-04-29  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Implement expression expansion in string lists
+
+2011-04-29  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix printf warnings
+
+2011-04-29  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* GeBRd compiles again
+	* Remove GeBRd tests for string expressions
+
+2011-04-27  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Insert line break on define of function round in job control.
+	* Round for expressions on interger parameters.
+
+2011-04-27  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* These tests need json flags to work.
+
+2011-04-27  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Related positions of variables and expressions in the statement.
+	* Numerical constants are no longer evaluated as an expression.
+	* Treatment of min and max on numeric parameters.
+
+2011-04-25  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Updated a unit test case
+	* On the string field validation, the double brackets are treated as
+	an escape, no more as a closure
+
+2011-04-19  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Remove unused code
+
+2011-04-18  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Enable string expressions for file parameters in GeBRd
+
+2011-04-15  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* More unit test for gebr-expr and gebrd-job
+
+2011-04-15  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* IO files are parsed as string expressions
+	* Dictionary string variables are now properly substituted
+
+2011-04-14  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix memory leak in gebrd-sysinfo module
+
+2011-04-13  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Substitution of string expressions in GeBRd is now working
+	* Create unit test for string expression parser
+	* Implement string expression parser in GeBRd
+	* Assume expression for int, float and strings in GeBRd
+	* Gebrd command line returns variable values
+
+2011-04-07  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* When an expression parameter is empty it was ignored by the Daemon.
+
+2011-04-06  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Added append behavior to stdout and overwrite to error log.
+	* Fixes external loop counter to begin with zero.
+
+2011-04-06  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix syntax error
+	* Assemble bc command line with float and integer dictionaries only
+	* Fix execution of flow without loop
+
+2011-04-05  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Rename iterator variables in GeBRd to 'iter'
+
+2011-04-04  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Do not insert parameter value when using expressions
+	* Assemble bc command line expression
+
+2011-04-01  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Inserted parameters INI and STEP on menu Loop, and changed the
+	function to get all values.
+
+2011-04-01  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Added warning messages for gebr_geoxml_parameter_get_label
+
+2011-03-23  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fixed regression on need to connect twice when server is not
+	running. (Fixes issue 813)
+
+2011-03-18  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Simple Loop created to nest the command line to be executed on the
+	Daemon
+
+2011-03-11  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Improvements in gebrd documentation. Minor changes in server FS
+	naming.
+	* Now server's fs name is automatic.
+
+2011-03-02  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Don't generate IDs with comma!
+	* Reverted issue line feed
+	* Fixed issue line feed
+	* Don't send line feed for each issue
+
+2011-02-25  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Use GebrCommJsonContent to transmit json
+
+2011-02-24  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Fix gebrd foreground option
+	* Fix compilation warnings
+	* Added message to get/set file system nickname on the gebrd using a
+	new protocol based on URL and REST
+
+2011-02-23  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Compilation fixed for gebr-client
+	* Use GebrCommProtocolSocket instead of deprecated struct
+	gebr_comm_protocol
+
+2011-02-21  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Merged 0.12 into default
+	* Fixed regression with trigger the next flow in queue
+
+2011-02-20  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Fix infinite loop if fd 3 wasn't open
+	* Server was running multiple times and not respecting run file
+
+2011-02-19  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Merged default with serializable-job
+	* Added properties to GebrCommJob and various minor fixes
+
+2011-02-18  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Updated portugese translation.
+
+2011-02-18  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Minimal changes to make the code compile with the new classes
+	GebrCommJob, GebrdJob and GebrJob
+	* Send the fs lock hash on the INI's return
+	* Create a fs lock file
+
+2011-02-17  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Merge default with 0.12 branch
+	* Prototyped gebr_lock_file_open
+	* Removed src directory
+	* Moved gebr-client to root
+	* Updated sources naming scheme on GeBRD
+
+2011-02-16  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* GeBRd informs CPU model and total memory of its system to GeBR
+	* Fixed segfaults when using getline() function
+	* Added functions for retrieving memory information
+	* Added module for fetching system details
+
+2011-04-12  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Update changelogs before release.
+
 2011-02-18  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
 
 	* Fixed regression with trigger the next flow in queue.
