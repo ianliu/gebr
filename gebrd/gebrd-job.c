@@ -1384,6 +1384,7 @@ static void job_assembly_cmdline(GebrdJob *job)
 		nprocs = gebrd_app_set_heuristic_aggression(gebrd, atoi(job->exec_speed->str), &nice);
 
 		if (job->is_parallelizable) {
+			job_issue(job, "This flow is executed with %d processor(s) using %s of machine.\n", nprocs, nice == 0? "all the resources" : "only the idle time");
 			prefix = g_strdup_printf("PROC=%d\n"
 						 "NICE=%d\n"
 						 "exec=\"nice -n $NICE\"\n"
@@ -1397,6 +1398,7 @@ static void job_assembly_cmdline(GebrdJob *job)
 			g_string_append(job->parent.cmd_line, " ) &\nPIDS=\"$! $PIDS\"");
 			g_string_prepend_c(job->parent.cmd_line, '(');
 		} else {
+			job_issue(job, "This flow is executed with 1 processor(s) using all the resources of machine.\n");
 			prefix = g_strdup_printf("for (( counter=0; counter<%s; counter++ ))\ndo\n%s\n%s",
 						 n, expr_buf->str, str_buf->str);
 		}
