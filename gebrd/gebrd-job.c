@@ -1389,11 +1389,12 @@ static void job_assembly_cmdline(GebrdJob *job)
 						 "exec=\"nice -n $NICE\"\n"
 						 "for (( _outter=0; _outter < %s; _outter+=$PROC ))\n"
 						 "do\n"
+						 "  unset PIDS\n"
 						 "  for (( counter=$_outter; counter < $_outter+$PROC; counter++ ))\n"
 						 "  do\n"
 						 "    %s\n%s",
 						 nprocs, nice, n, expr_buf->str, str_buf->str);
-			g_string_append(job->parent.cmd_line, " ) &");
+			g_string_append(job->parent.cmd_line, " ) &\nPIDS=\"$! $PIDS\"");
 			g_string_prepend_c(job->parent.cmd_line, '(');
 		} else {
 			prefix = g_strdup_printf("for (( counter=0; counter<%s; counter++ ))\ndo\n%s\n%s",
@@ -1415,7 +1416,7 @@ static void job_assembly_cmdline(GebrdJob *job)
 		if (job->is_parallelizable)
 			g_string_append_printf(job->parent.cmd_line, "\n"
 					       "  done\n"
-					       "  wait\n");
+					       "  wait $PIDS\n");
 		g_string_append(job->parent.cmd_line, "\ndone");
 		g_free(prefix);
 		g_free(n);
