@@ -1,3 +1,10 @@
+gebrproject (0.13.15) lucid; urgency=high
+
+  * Removed section "Reports of What's New" in GeBR's documentation.
+  * Fix double free in in GeoXml library.
+
+ -- Ian Liu <ian.liu@gebrproject.com>  Fri, 16 Sep 2011 10:00:32 -0300
+
 gebrproject (0.13.14) lucid; urgency=medium
 
   * Natty compatibility.

@@ -33,9 +33,6 @@
 			   A GêBR automatiza fluxos repetitivos através de loops (veja seção <xref linkend="loop"/>).
 		    </listitem>
 		    <listitem>
-			    Nesta versão temos a geração automática de relatórios, o qual pode ser exportado para um arquivo externo (veja seção <xref linkend="visualizar_relatorio"/>).
-		    </listitem>
-		    <listitem>
 			     Exemplos de projetos podem ser importados na seção Samples (seção <xref linkend="import_samples"/>).
 		    </listitem>
 	    </itemizedlist>

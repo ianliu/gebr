@@ -1,3 +1,1401 @@
+2011-09-09  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fixed style of ordered lists in helps.
+
+2011-09-09  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Translate menu Samples on Gebr.
+
+2011-09-09  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change title of subsections Input/Output on help of program Loop
+
+2011-09-09  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Remove feature of fast view when create a new flow
+
+2011-09-08  GeBR Team  <gebr-devel@googlegroup.com>
+
+	* Fix samples menu when there is no sample
+
+2011-09-08  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fixes logic error when creates menu of samples on gebr
+	* FIxes minor errors on translation of gebr and the pattern of first
+	letter upper-case to projects
+	* Fixes fuzzy translates and untranslated messages on gebr and gebrd
+
+2011-09-06  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Merge English fixes into default
+
+2011-09-05  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* More english fixes
+	* Ported english corrections from Arthur's diff
+	* Fix path construction for CKEditor script
+	* Fix minimum size of dictionary window
+
+2011-09-05  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change menu of samples on help to have another submenu.
+
+2011-09-05  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix GETTEXT_PACKAGE variables for gebr, gebrd and debr
+
+2011-09-02  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fixes crash when clearing flow job (Fixes issue 1045)
+
+2011-09-02  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Removed buggy comments from loop title
+	* Corrections in formatation of Loop program help
+
+2011-09-02  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Merge use-autoheader into default
+
+2011-09-02  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Spellcheck corrections in the flow help
+
+2011-09-01  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change to flow editor page when create a new flow (Fixes issue 922)
+
+2011-09-01  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix typo in configure.ac and added *-gettext.h into dist
+	* Now using autoheader; compilation is OK
+
+2011-09-01  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Added instructions to the loop menu docs on how to use single
+	output/input files
+	* Add examples of multiple file manipulation in the Loop menu help
+
+2011-08-31  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Improved "Loop" documentation with an example of "iter" variable
+	usage
+
+2011-08-30  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix icons in Natty
+
+2011-08-29  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Validates programs that were never opened on keypress event
+
+2011-08-25  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Improvements in the portuguese translation of gebr
+	* Changed dictionary name to "Variables dictionary"
+
+2011-08-24  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fixes frames on flow editor tab
+
+2011-08-23  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix segfault when edit program without parameters.
+
+2011-08-12  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fixes revalidate programs when press ok on program loop
+
+2011-08-12  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix project_line_import
+
+2011-08-12  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* FIxes bug on import project.
+
+2011-08-11  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Open project, line and flow's properties window in center of gebr's
+	window
+	* Fix import of projects/lines
+
+2011-08-11  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix revision creation bug
+	* Free two leaked strings in flow_browse_on_revision_revert_activate
+
+2011-08-11  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix read after free in gebr/document.c
+	* Fix double free in project_line_import
+
+2011-08-11  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fixes leaks on generate_report of lines
+
+2011-08-11  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Frees almost all leak when importing SU Demos
+
+2011-08-10  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Remove reference count of DomImplementation, use
+	gebr_geoxml_(init|finalize)
+
+2011-08-10  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fixes segfault on drag and drop of flows and dictionary (need
+	revision to fix leaks on that)
+
+2011-08-10  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* gebr_validator_update has a new 'force' flag
+
+2011-08-10  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Improve parameters_configure_setup_ui documentation in gebr
+	* Remove ui_parameters struct and moved
+	flow_io_customized_paths_from_line
+	* Unref programs when changing selected flow
+	* Fix double cache check and document_load_path_with_parent
+	documentation
+
+2011-08-09  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix some compilation warnings
+	* Force validator update when reverting a flow
+
+2011-08-09  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fixes reference on programs on gebr.
+	* Change more saves to not use unnecessary caches, and fixes some
+	references on signals.
+	* Change saves to not use unnecessary caches.
+	* Entry of I/O is editable only when have sensitivity. (Fixes issue
+	1026)
+	* Remove double calls of function program_edit_reload.
+
+2011-08-08  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix double free in ui_flow.c
+	* Revert export document load
+
+2011-08-08  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix loop with sequences in project_line
+
+2011-08-08  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fixes invalid unref after sequence_next.
+	* Fixes leak on project/line export.
+	* Fixes leak when export projects, line and flows (need revision for
+	flow).
+
+2011-08-06  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Renamed gebr_geoxml_document_unref_sequence to
+	gebr_geoxml_object_unref
+
+2011-08-05  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix memory leak on modify_date, new_line, new_document.
+
+2011-08-05  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Minnor fixes at memory free at report comments window.
+
+2011-08-05  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Free leaks from gebr_geoxml_program_get_help
+	* Free return value of gebr_geoxml_document_get_help
+	* Fix flow import by reverting commit ba9d22d5fa2e
+
+2011-08-04  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fixes freeze when open gebr with faulty projects.
+	* Insert a new error on programs when clean their paths.
+
+2011-08-03  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fixes freeze of gebr when try to connect on another server.
+
+2011-08-03  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Avoid extra document save when importing flows
+	* Avoid one document clone when executing a flow
+
+2011-08-02  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Deprecated treatment when removing variables that are used in
+	programs.
+
+2011-08-01  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Deprecates gebr-string-expr.
+
+2011-07-28  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fixed bug in title of the program help Loop.
+
+2011-07-27  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix label of failed job on Job Control.
+	* Fixes critical on program Loop, when it is disable in response of Ok
+	action.
+	* Remove focus-in signal on report window.
+	* Fixes warnings when close report window.
+	* It is now possible to open multiple windows report.
+
+2011-07-26  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fixes too many flow I/O updates.
+
+2011-07-25  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fixes duplicate queues on ComboBox when user creates a new queue
+	* Fixes callback to use on foreach_parameter when import/export
+	documents
+	* Fixes seg fault when press button close without selected rows on Job
+	Control
+
+2011-07-25  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Creates Help and fix url to menu forloop (again)
+	* Restore forloop.mnu, deleted on revision 4d14f3fd9380
+
+2011-07-25  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fixed segfault when canceling project or line import.
+
+2011-07-25  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Creates Help and fix url to menu forloop
+	* Change to 'Untitled' empty names for project/line/flow
+
+2011-07-22  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Parameter number of steps on Loop program only accept positive
+	integer values
+	* FIxes segfault when cancel edition in dictionary
+	* Insert quotes on errors of variable iter in dictionary
+	* Change status of programs goes to opened
+	* Popup menu on job control without selected rows, shows only collapse
+	and expand options
+	* Change notebook on initialize import samples of SU
+	* Recovered frame on job control
+
+2011-07-21  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix segfault when closing GeBR
+
+2011-07-21  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* After import project or line, goes to Project/Line tab
+	* Insert options to 'Collapse All' and 'Expand All' on popup menu of
+	job control
+
+2011-07-21  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix segfault when closing dictionary dialog while editing it
+
+2011-07-21  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Shows popup menu on job control on multiple selection
+	* Queue 'immediately' never removed from ComboBox
+	* Always update dictionary wizard on changed selection
+	* Programs considering open just on ok button of properties
+
+2011-07-21  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Only update dictionary wizard during edition. (Fixes issue 989)
+
+2011-07-21  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change validator for each flow on import before revalidation.
+
+2011-07-21  Ricardo Biloti  <biloti@gebrproject.com>
+
+	* About menuitem move to bottom
+
+2011-07-21  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Improve error messages for iter variable
+	* Loop uses default values when their values are missing
+	* Remove default value for number of iterations in Loop menu
+	* Only show IO text if the programs involved accepts it and are
+	configured
+	* Update IO in flow edition when exiting programs dialog
+
+2011-07-20  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fixes revalidation of loop when programs are revalidated
+	* Removes a queue from ComboBox when it is empty on job control
+	* Fixes import of project using correct dictionary on each line and
+	flow
+	* Fix selection algorithm in job control
+	* Remove invalid object property set
+
+2011-07-19  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Update dictionary before multiple flow execution. (Fixes issue 1004)
+
+2011-07-19  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix all job control operations to work with the filtered version
+	* Only show queues having jobs on Job Control
+	* Revalidate all flows when import line.
+	* Revalidate programs when paste or import flows.
+	* Change variable iter on dictionary before revalidate programs
+
+2011-07-19  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix calls to gebr_flow_validate
+
+2011-07-18  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix ComboBox width bug
+
+2011-07-15  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Display interval expression for Loop iter at Dictionary.
+	* Do not send dictionary variables with error to flow execution.
+
+2011-07-15  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix segfault when closing GeBR after executing multiple flows
+
+2011-07-15  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix free of line paths when creates a directory on import documents.
+
+2011-07-15  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Remove redundant call to revalidate_programs
+
+2011-07-15  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Closing loop do not revalidate disabled programs
+
+2011-07-15  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix text of error's file in flow edition
+	* Unified importing dialog with directory creation dialog
+	* Import documents in a separate thread, showing a progress bar
+	* Initialize threads in GeBR
+
+2011-07-14  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Validator evaluate cleanup, fixes evaluation bug in programs.
+
+2011-07-14  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Remove some compilation warnings
+
+2011-07-14  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Removed dict upgrade fuction call from ui fuctions.
+
+2011-07-13  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* When list of demos are empty, show informations and store on list
+	name of directory with demos.
+
+2011-07-13  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Changed dictionary and program parameters canonization function to a
+	more simple implementation using GQuark.
+
+2011-07-13  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Remove iter evaluation when sending a flow to Daemon
+
+2011-07-13  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Remove check box of merge dicts when export line or flow.
+	* Revalidate programs when copy to other flow.
+	* Fixes revalidate disabled programs when closing dictionary.
+
+2011-07-13  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix compilation by commenting old merge_dict functions, search for
+	'TODO: DICT'
+
+2011-07-12  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fixes iter definition on bc, and cached evaluated values on I/O.
+
+2011-07-12  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add GEBR_SYS_DEMOS_DIR into defines.h.in
+
+2011-07-12  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Insert SU demos on Help menu, and refactoring function
+	project_line_import.
+
+2011-07-12  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Call setlocale function inside gebr_libinit
+
+2011-07-11  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Enable expressions on Loop program.
+
+2011-07-11  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Update IO when closing dictionary dialog is closed
+	* Cache tooltip for input, output and error entries in flow edition
+
+2011-07-08  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Create new class for string, numeric and errors on css, and add
+	column of comment.
+
+2011-07-07  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Validator remove also remove parameter from xml.
+	* Create variable tables on report for line and flows.
+
+2011-07-07  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Implemented dictionary canonization function for flow/line/project
+	importation.
+	* Implemented flow dict canonization at document import. Fixed
+	incompatible dict types bug.
+
+2011-07-07  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fixes seg fault on close gebr.
+
+2011-07-06  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fixes bug on DnD when variable has error after move.
+
+2011-07-06  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Do not allow moving variable already existing in dest scope
+	* Recover validation of dictionary iterators
+	* Validate dict variables on DnD
+	* DnD in dictionary dialog almost complete
+
+2011-07-04  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* It is not necessary to validade before evaluate.
+
+2011-07-04  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Update i18n
+
+2011-07-04  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Refactoring expression evaluation, first step to deprecate more
+	lines of code. We need more tests.
+
+2011-06-30  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Now validator knows when it needs to update the cached document
+	variables.
+
+2011-06-30  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* TODO: Review dictionary partial update logic!
+
+2011-06-29  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Just rename parameter if the name has changed.
+	* Translate new errors from parameters to program.
+
+2011-06-27  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fixes bug when add keyword in xml on a first time.
+
+2011-06-27  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Merge smart-validator fix.
+
+2011-06-27  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Fixed variable rename bug at dictionary.
+
+2011-06-22  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fixes propagate of errors when remove variables
+
+2011-06-22  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Merge smart-validator.
+
+2011-06-17  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Reuse function to change program status when pressing Space Key
+
+2011-06-17  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add double quote on string expressions
+
+2011-06-17  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix bugs related to never opened/configured programs
+
+2011-06-17  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change message of tooltip when insert a new program
+
+2011-06-17  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Added flow editor input tooltip evaluation.
+	* Added flow output/error tooltip resolution.
+
+2011-06-17  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Don't validate programs never configured by user when closing the
+	dictionary window
+	* Revalidate programs after closing dictionary window
+	* Fix segfault when removing unconfigured loop
+
+2011-06-16  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Don't make animation after opening dictionary
+	* Remove iter from GebrValidator before removing from XML
+	* Update iter values after inserting it
+
+2011-06-16  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Fixed variable removal bug when iter changes to unconfigured.
+
+2011-06-16  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Don't validate current variable before choosing variable type
+	* Delete dictionary row when canceling type selection
+
+2011-06-15  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Updated gebr translation.
+
+2011-06-15  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Change GebrValidator to use data from 'iter' dict parameter
+
+2011-06-14  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Allow NULL for 'validated' parameter in GebrValidator
+
+2011-06-10  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* First attempt to use gebr_validator_eval to set the dictionary
+	tooltips.
+
+2011-06-10  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fixed dictionary wizard when it has warnings on opening.
+
+2011-06-10  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Revalidate all parameters when changing the state of a variable
+	* Move variable insertion in validator
+
+2011-06-10  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Hook validator_update method in selection change signal
+	* Remove gcc warning in GeBR compilation
+
+2011-06-08  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Calls of validator functions on interface events.
+
+2011-06-02  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Fixed critical bug when flow i/o edition was canceled.
+
+2011-06-01  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fixed local server creation after merge with 0.12.
+
+2011-05-31  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix remote configure and standardize Makefiles
+
+2011-05-31  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Merge with 0.12.0
+
+2011-05-30  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fixes bug on change status of programs wich not used edited variable
+
+2011-05-30  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add more stock images to GeBR
+
+2011-05-30  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change status of programs on DnD in dictionary
+
+2011-05-27  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Validate program on insertion
+
+2011-05-27  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Correctly set program status when enabling/disabling loop
+	* Fix DnD bug
+
+2011-05-26  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Now iter is only inserted at dict if loop is configured.
+	* Fixed empty iter var bug at dictionary.
+
+2011-05-25  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fixes memory leak
+
+2011-05-25  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Implement DnD in dictionary window
+
+2011-05-25  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fixes auto-complete on line and reorder functions.
+
+2011-05-24  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* DnD enabled for dictionary window
+
+2011-05-23  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fixes button press problem.
+
+2011-05-20  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Auto-complete doesn't show the variable been edited, and fixed tab
+	navigation.
+
+2011-05-20  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fixed critical warning when mixing project and line.
+
+2011-05-20  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Validate all variables below the edited one
+	* Validate all iter below edited variable in a dictionary scope
+
+2011-05-20  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fixes sync erros and tooltips with variables and programs.
+	* Invalid expression on dictionary update programs state
+	automatically.
+	* Fixes bug when delete loop not disconfigure programs
+
+2011-05-19  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* `iter' variable is set to its start value
+
+2011-05-19  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fixed segfalt when showing tooltip for a program with unknown error.
+
+2011-05-18  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Dictionary validation, wizard and icons should be realy working now.
+
+2011-05-18  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix GeoXml includes by defining all types in gebr-geo-types.h
+
+2011-05-18  Davi Clemente <davi.clemente@gebrproject.com>
+
+	* Passing a function from gebr/ui_parameters.c to
+	libgebr/geoxml/parameters.c.
+
+2011-05-16  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Icons always visible and lay navigation on parameters of dictionary
+
+2011-05-13  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Removed ":" from job description.
+	* Fixed flow editor Menu's column title.
+
+2011-05-11  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Available auto-completion on dictionary
+
+2011-05-09  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fixes validation on variables of dictionary
+	* Validate variables and expressions on dictionary
+	* Initializes global variable GebrValidator on gebr
+
+2011-05-06  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Revamped dict's user interface
+
+2011-05-06  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Added loop iter variable validation for flow in/out/err files.
+
+2011-05-04  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Enable auto-completion in list entries
+
+2011-05-04  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Option to merge the variables of dictionary when export a line/flow
+
+2011-05-02  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Raise animation time
+
+2011-05-02  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix range widget to use expressions
+
+2011-05-01  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Change dictionaries message background color on error
+
+2011-04-29  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Status messaging for dictionary dialog
+	* Fix edition of dict's parameters when there is a loop parameter
+
+2011-04-29  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Validate programs when enabling loop or inserting variables
+
+2011-04-27  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change tooltip for parameters with undefined variables.
+	* Fixed minimum value of parameter "Step of iterations" on menu
+	forloop.
+
+2011-04-25  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fixes of lost of tooltip when remove variable from dictionary
+
+2011-04-25  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Flow output/error syntax check before sending the job.
+
+2011-04-25  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Fixed SegFault when closed the dictionary dialog in edited mode
+
+2011-04-23  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Set tooltip according to the programs error code
+	* Use the new functions in GeBR for checking errors in a program
+
+2011-04-21  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Merge program validation functions into default
+	* Change GeBR validation functions to use GError
+
+2011-04-20  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Now when a variable is added on the dictionary, the program that
+	already use it are made configured.
+	* Fixed a bug when rising errors with the error variable not correct
+	initialized
+
+2011-04-19  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Tool tip for IO component are enabled.
+	* Now the validate_parameter function, deals with the error data
+	passed by gebr_geoxml_document_validate_str/expr, and the program
+	warning show the correct tooltip
+
+2011-04-18  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* GeBR input, output and error have auto-completion
+
+2011-04-18  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Insert variables popup menu is shown in GeBR io
+
+2011-04-18  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Included: Auto complete, "Insert Variable" from context menu,
+	validation and program warning for file type parameter entry.
+
+2011-04-18  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fixes validation of strings and expands current document variables
+	in dictionary.
+	* Inserted tooltips in not configured programs.
+
+2011-04-15  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Fixed variable inline editing
+
+2011-04-15  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Update status of programs which uses variable iter, when status of
+	loop is changed.
+
+2011-04-15  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Error verification (string variables) at input before gebr send a
+	job.
+
+2011-04-15  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fixes how the program set a tooltip in not configured program (still
+	need set the tooltips in tree model).
+
+2011-04-14  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Backed out changeset 273e300e85e4. Unwarned compiler errors. Better
+	place to put this changes.
+	* Included string expression spellchecking with icon at flow editor
+	input/out/err
+	* Changed flow input/output/error callback to delete invalid entries.
+	* Variable validation checking for flow input file when the flow is
+	sent.
+
+2011-04-13  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Alert when removes variable from dictionary, if that used in one or
+	more programs.
+
+2011-04-13  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Remove deprecated usage of expression API in GeBR
+
+2011-04-13  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Warning the mis formed string due invalid variable
+
+2011-04-13  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Removes the parameter "iter" from dictionary when disable program
+	Loop.
+
+2011-04-12  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Fixing some function, called with the wrong signature.
+	* Changed IO components Tool Tips to contain overwrite/append
+	information
+	* Now programs with invalid expressions has it state changed to
+	warning
+
+2011-04-11  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Create function for populating TreeModel with completion options
+
+2011-04-11  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Now validate_program and validate_parameter returns an enumeration
+	to specify the error on validating process.
+
+2011-04-11  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Try to fix validation of parameter iter, need more work.
+	* Move parameter “Number of Iterations” on menu forloop to bottom.
+
+2011-04-08  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix end value of iter variable
+
+2011-04-07  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Created and implemented icons for output/error appending.
+
+2011-04-07  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Fixed a bug when showing the number of iterations on the dictionary
+
+2011-04-06  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add context menu to choose append for output/error in flow edition
+	* Programs with invalid expressions can't be configured
+	* Show number of iterations in dictionary
+	* Fix dictionary TreeStore creation
+	* Always remove 'iter' variable when executing flows
+
+2011-04-06  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* On the callback on_dict_value_keyword_edited, related with cell
+	renderer data function, was created the value to be stored on the
+	iter value of the dictionary
+
+2011-04-06  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix mismatch type warning
+	* Merge flow, line and project dictionaries before executing
+
+2011-04-05  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Remove variable iter from dictionary when remove loop.
+
+2011-04-05  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Deny the user to try to removes or edit the loop iterator on
+	dictionary
+
+2011-04-05  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Check for invalid name in GeBR dictionaries
+
+2011-04-01  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fixed potfiles after gebr directory reorganization.
+
+2011-04-01  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Inserted parameters INI and STEP on menu Loop, and changed the
+	function to get all values.
+	* Move project to the top and flow to the bottom on dictionary.
+
+2011-03-31  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Changed "must" for "might" on Tag deletion warning dialog
+
+2011-03-28  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Solved a SegFault when editing a group
+	* Checks all servers connection to state that a group is heterogeneous
+
+2011-03-24  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Changed loop title from "For Loop" to "Loop". Changed parameter name
+	to "Number of iterations".
+	* Fixed bug. GeBR was not saving line's paths clean after server group
+	change.
+	* Fixed bug. Now line paths are updated at line details, when you
+	change the server group.
+	* CPU col. of servers window is resizable. Reduced a little servers
+	window initial size.
+
+2011-03-23  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed a bug when retrieving the server iter
+
+2011-03-23  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed queue selection bug
+
+2011-03-23  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed some warnings on gebr initialization
+	* Fix a server selection bug when starting gebr
+	* Added utility function for getting the server iter
+
+2011-03-23  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Added label for the filter combobox in servers window
+
+2011-03-22  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fixed segfault when selected queue at job control, and inconsistency
+	with action close and cancel jobs.
+
+2011-03-22  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* When cleaning the paths of a program, if the program has nothing to
+	be done, it status remains "configured"
+	* When the local server was included on the selection, it was not
+	considered to build the removed item list
+
+2011-03-21  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* When in a multiple selection, one of the servers is the local
+	server, the deletion process are abandoned. And some memory freeing
+	.
+	* When deleting a server, the tags are checked to know if it will
+	disappear and alert the user to make the decision
+
+2011-03-21  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Initialize iterator before using it
+	* Select 'All Servers' when needed, in Line properties dialog
+	* Select first connected server when switching to Flow Edition page
+
+2011-03-18  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Don't ask to clean line's path for empty lines
+
+2011-03-17  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Fix at loop getter function. Now you can't send a flow with an empty
+	loop.
+
+2011-03-16  Gabriel Sobral <sobral@gebrproject.com>
+
+	* Display server groups on line details.
+
+2011-03-16  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Select first connected server when removing a server
+	* Fixed a bug where For Loop was being added in the middle of the flow
+
+2011-03-16  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Stop considering the control program to make IO components sensitive
+	* If a tag is about to disappear, a warning arise to alert the user
+	that a line
+
+2011-03-16  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Removed 'Move Top' and 'Move Bottom' for 'For Loop'
+
+2011-03-15  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Created a function to checks which tags are removed after a group
+	edition
+
+2011-03-15  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Select All Servers when creating a new line
+
+2011-03-15  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Removing some puts
+	* Fixed a bug when the DEL key is pressed on the Groups entry widget
+
+2011-03-15  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Added help tooltip to groups in Server List
+	* Added new icons for Loops
+	* For Loop is inserted on top of flow and there can be only one
+	control program
+	* Block DnD of For Loop program
+	* Don't select All Servers when the group isn't present
+	* Added forloop.mnu into gebrproject
+
+2011-03-14  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Server's combobox is now sorted
+
+2011-03-14  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* When a heterogeneous group has a server disconnected the warning
+	sign disappear if
+
+2011-03-14  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Pressing Del key on Local Server no longer deletes it
+
+2011-03-11  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Ask to clean line/flows paths on the dialog ok click instead of when
+	the user change the group
+	* Clean file paths when changing group of servers
+
+2011-03-11  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Selects flow's server when it the flow is clicked
+
+2011-03-11  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Clean warning state after disconnect action has been triggered
+
+2011-03-11  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Removed 'Autoconnect' button from popup menu in Servers dialog
+
+2011-03-11  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Improvements in gebrd documentation. Minor changes in server FS
+	naming.
+
+2011-03-11  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Initialize servers_filter model before selecting Line/Flow
+	* Fixed a bug when selecting the first server for a flow
+	* Removed debugging message from GeBR
+	* Fixed a bug with insensitive combobox
+
+2011-03-11  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Now server's fs name is automatic.
+
+2011-03-11  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* To define if a tag is heterogeneous, just considering connected
+	servers, and
+
+2011-03-11  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Changing autoconnect on server does not connect it
+	* Local Server can not be removed
+
+2011-03-11  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Increased server window default size.
+
+2011-03-10  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Included the DEL Hot Key on server configuration dialog
+
+2011-03-04  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed some details updating bugs when swapping server group
+
+2011-03-03  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Added dialog for asking whether to remove all paths
+	* Fixed function for cleaning line paths
+
+2011-03-03  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Now Cancel button works at Project/Line creation dialog.
+	(transplanted from 0.12)
+
+2011-03-03  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* The previous commit doesn't resolve the SegFault, this one should be
+	better on try this.
+	* Fixed a SegFault when remove the last tag from server
+
+2011-03-03  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed some warnings when removing a server
+
+2011-03-02  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Added functions {flow,line}_set_paths_to_empty
+	* Fix job stop action sensitive and some smalls code cleanups
+	* Kill job button wasn't disabled after job finished
+	* Fixed on-demand issues add on job's details
+
+2011-03-02  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed a bug when trying to use a NULL hash table
+	* Fixed a crash when trying to access unitialized gebr struct
+	* Removed old queue combo
+
+2011-03-02  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* changeset: 3638:dac185ae6251
+
+2011-03-02  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Added refiltering call when server list changes
+	* Fixed a wrong model being used with the filtered iter
+	* Fixed usage of line's group getter/setter in GeBR
+
+2011-03-01  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fixed job control toolbar actions to work with queues. (transplanted
+	from 0.12)
+
+2011-03-01  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Merged 0.11.8 fixes in default branch.
+
+2011-03-01  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Line property is using the same combobox as the server dialog
+	* Added FS ids into filter combo box
+	* Updating tags when a fs nick is answered
+
+2011-03-01  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Added TreeModelFilter into Flow's server combobox
+
+2011-02-28  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Revised English when taking a flow snapshot.
+
+2011-02-28  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* When created a new line the default group was set to 'All Servers'
+	* Removed on_server_initialized that was not needed any more.
+
+2011-02-25  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Created a dialog to ask the user for the fs nickname
+
+2011-02-25  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Removed the dialog to alert that two servers shares the same file
+	system and
+
+2011-02-25  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Use GebrCommJsonContent to transmit json
+
+2011-02-25  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed a bug when changing a flow server
+
+2011-02-24  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Added message to get/set file system nickname on the gebrd using a
+	new protocol based on URL and REST
+
+2011-02-24  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* The server context menu, now has it contents sensitive due to
+	selection
+
+2011-02-23  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Removed warning when there is no menus at /usr/local.
+
+2011-02-23  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Some check to connect only if the server was disconnected and vice-
+	versa
+	* Changed the way context menu was build to looks like Job Control and
+	multiple
+
+2011-02-23  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Use GebrCommProtocolSocket instead of deprecated struct
+	gebr_comm_protocol
+
+2011-02-23  Gabriel Sobral <sobral@gebrproject.com>
+
+	* Changed properties window title. (Fixes issue 910)
+
+2011-02-22  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Recovery line paths on FileChooser of flow I/O selection. (Fixes
+	issue 821)
+
+2011-02-22  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Included a new column to show FS alias on server dialog
+	* On server dialog entry, now its not possible to add empty server
+	name
+
+2011-02-22  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Auto connect check box is now clickable
+	* 'Connect all' and 'Disconnect all' buttons acts only on filtered
+	servers
+
+2011-02-22  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Fixed the SEGFAULT when added a server during filter selection
+
+2011-02-21  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Merged 0.12 into default
+	* Groups combobox is always sensitive
+	* GeBR asks to apply the same tags for servers in common nfs
+	* Added 'initialized' signal to GebrServer
+	* Transformed 'struct gebr' into GebrServer class
+	* Fixed memory leak in struct server
+	* Fixed warnings when trying to add a server which is already present
+
+2011-02-20  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed a bug in which group filter was unselected when adding group
+	tags
+	* Fixed segfault when adding server with enabled filter
+
+2011-02-19  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Merged with default latest changes
+	* Added properties to GebrCommJob and various minor fixes
+
+2011-02-18  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixed a bug when editing group tags
+	* Added 'All servers' item into filter combobox
+
+2011-02-18  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Updated portugese translation.
+	* Applied many english improvements.
+
+2011-02-18  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Added nfsid into Gebr's server struct
+	* Removed 'All Servers' string; it will be specialy treated
+	* Added widget for choosing a group for a line
+	* Merged default into line-groups-dtd
+	* Fixed various bugs in Server groups implementation
+
+2011-02-18  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Minimal changes to make the code compile with the new classes
+	GebrCommJob, GebrdJob and GebrJob
+
+2011-02-18  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Added 'is_new' parameter to document_properties_setup_ui function
+	* Replaced all old 'flow server' API in GeBR
+
+2011-02-17  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Merge default with 0.12 branch
+	* Fixed gebr's Makefile.am
+	* Removed missing directory
+	* Merged with default
+	* Removed src directory
+
+2011-02-17  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Fixed a SegFault on server dialog due wrong model pointed by tooltip
+
+2011-02-17  Braulio Barros de Oliveira  <brauliobo@gebrproject.com>
+
+	* Moved gebr-client to root
+
+2011-02-16  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Setting CPU and memory info in server list
+
+2011-02-16  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Created the ui interface, on server dialog, to show cpu and memory
+	info
+
+2011-02-16  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* GeBRd informs CPU model and total memory of its system to GeBR
+
+2011-02-16  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Fixed a bug when removes a server with a exclusive tag and the combo
+	box was not updated
+
+2011-02-15  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Created a Combo Box widget, where all tags added to the servers are
+	shown and it selection only display the servers in which tags
+	appears
+
+2011-02-11  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* Fixed a SegFault on the servers groups entry, when there are only
+	comma elements.
+	* Removed ui_server_add_tag on behalf of ui_server_set_tag due to
+	sorting capabilities
+
+2011-02-11  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Merged 0.12 branch into default
+
+2011-02-11  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Editing servers groups is enabled
+
+2011-02-10  Alexandre Baaklini Gomes Coelho  <abaaklini@gebrproject.com>
+
+	* More changes on Server Tags/Group
+	* Finished the Tags API, ui_server_add_tag, ui_server_remove_tag,
+	ui_server_list_tag, ui_server_with_tag
+
+2011-02-09  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Fixed bug at flow input checking with multiple selection.
+
+2011-02-09  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Started function for processing text entered in 'Groups' column
+	* Added 'Groups' column into server list dialog
+	* Servers are kept in ~/.gebr/gebr/servers.conf
+
+2011-04-12  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Update changelogs before release.
+
 2011-03-24  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
 
 	* Fixed GeBR should never starts without local server.
