@@ -32,9 +32,6 @@
 			   Repetitive processes can be automatized by the use of loops (see section <xref linkend="loop"/>).
 		    </listitem>
 		    <listitem>
-			    Reports are automatically generated and can be exported to external files (see section <xref linkend="visualizar_relatorio"/>).
-		    </listitem>
-		    <listitem>
 			    Samples are available to import (see section <xref linkend="import_samples"/>).
 		    </listitem>
 	    </itemizedlist>
