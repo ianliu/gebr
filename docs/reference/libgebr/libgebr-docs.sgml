@@ -16,6 +16,34 @@
   </bookinfo>
 
   <part>
+    <title>The Libgebr Library</title>
+    <partintro>
+      <para>
+        The libgebr library provides utility modules, such as GebrTar and GebrValidator.
+      </para>
+    </partintro>
+
+    <chapter>
+      <title>Validation and Evaluation of expressions</title>
+      <xi:include href="xml/gebr-arith-expr.xml" />
+      <xi:include href="xml/gebr-validator.xml" />
+      <xi:include href="xml/gebr-iexpr.xml" />
+      <xi:include href="xml/validate.xml" />
+    </chapter>
+
+    <chapter>
+      <title>Utilitari modules</title>
+      <xi:include href="xml/utils.xml"/>
+      <xi:include href="xml/gebr-tar.xml"/>
+      <xi:include href="xml/date.xml"/>
+      <xi:include href="xml/log.xml"/>
+    </chapter>
+
+    <chapter>
+    </chapter>
+  </part>
+
+  <part>
     <title>The Communication Library</title>
     <partintro>
       <para>
@@ -27,24 +55,29 @@
 
     <chapter>
       <title>Socket related classes</title>
-      <xi:include href="xml/listensocket.xml"/>
-      <xi:include href="xml/channelsocket.xml"/>
-      <xi:include href="xml/socket.xml"/>
-      <xi:include href="xml/streamsocket.xml"/>
-      <xi:include href="xml/socketaddress.xml"/>
-      <xi:include href="xml/hostinfo.xml"/>
+      <xi:include href="xml/gebr-comm-listensocket.xml"/>
+      <xi:include href="xml/gebr-comm-channelsocket.xml"/>
+      <xi:include href="xml/gebr-comm-socket.xml"/>
+      <xi:include href="xml/gebr-comm-streamsocket.xml"/>
+      <xi:include href="xml/gebr-comm-socketaddress.xml"/>
+      <xi:include href="xml/gebr-comm-hostinfo.xml"/>
+      <xi:include href="xml/gebr-comm-protocol-socket.xml"/>
     </chapter>
 
     <chapter>
       <title>Protocol related classes</title>
-      <xi:include href="xml/protocol.xml"/>
-      <xi:include href="xml/server.xml"/>
+      <xi:include href="xml/gebr-comm-protocol.xml"/>
+      <xi:include href="xml/gebr-comm-server.xml"/>
+      <xi:include href="xml/gebr-comm-http-msg.xml"/>
+      <xi:include href="xml/gebr-comm-job.xml"/>
+      <xi:include href="xml/gebr-comm-json-content.xml"/>
+      <xi:include href="xml/gebr-comm-protocol-socket.xml"/>
     </chapter>
 
     <chapter>
       <title>Process related classes</title>
-      <xi:include href="xml/terminalprocess.xml"/>
-      <xi:include href="xml/process.xml"/>
+      <xi:include href="xml/gebr-comm-terminalprocess.xml"/>
+      <xi:include href="xml/gebr-comm-process.xml"/>
     </chapter>
   </part>
 
@@ -57,22 +90,24 @@
       </para>
     </partintro>
 
-    <xi:include href="xml/project.xml"/>
-    <xi:include href="xml/enum_option.xml"/>
-    <xi:include href="xml/value_sequence.xml"/>
+    <xi:include href="xml/clipboard.xml"/>
     <xi:include href="xml/document.xml"/>
-    <xi:include href="xml/parameter.xml"/>
-    <xi:include href="xml/types.xml"/>
-    <xi:include href="xml/line.xml"/>
-    <xi:include href="xml/parameters.xml"/>
-    <xi:include href="xml/object.xml"/>
-    <xi:include href="xml/sequence.xml"/>
-    <xi:include href="xml/program.xml"/>
-    <xi:include href="xml/flow.xml"/>
-    <xi:include href="xml/parameter_group.xml"/>
-    <xi:include href="xml/program-parameter.xml"/>
+    <xi:include href="xml/enum_option.xml"/>
     <xi:include href="xml/error.xml"/>
+    <xi:include href="xml/flow.xml"/>
+    <xi:include href="xml/gebr-geoxml-tmpl.xml"/>
     <xi:include href="xml/gebr-geoxml-validate.xml"/>
+    <xi:include href="xml/line.xml"/>
+    <xi:include href="xml/object.xml"/>
+    <xi:include href="xml/parameter.xml"/>
+    <xi:include href="xml/parameter_group.xml"/>
+    <xi:include href="xml/parameters.xml"/>
+    <xi:include href="xml/program-parameter.xml"/>
+    <xi:include href="xml/program.xml"/>
+    <xi:include href="xml/project.xml"/>
+    <xi:include href="xml/sequence.xml"/>
+    <xi:include href="xml/types.xml"/>
+    <xi:include href="xml/value_sequence.xml"/>
   </part>
 
   <part>

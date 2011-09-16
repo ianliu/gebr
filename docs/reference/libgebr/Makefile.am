@@ -31,7 +31,7 @@ SCANGOBJ_OPTIONS=
 
 # Extra options to supply to gtkdoc-scan.
 # e.g. SCAN_OPTIONS=--deprecated-guards="GTK_DISABLE_DEPRECATED"
-SCAN_OPTIONS=
+SCAN_OPTIONS=--rebuild-sections --rebuild-types
 
 # Extra options to supply to gtkdoc-mkdb.
 # e.g. MKDB_OPTIONS=--sgml-mode --output-format=xml
@@ -53,11 +53,13 @@ FIXXREF_OPTIONS=
 # e.g. CFILE_GLOB=$(top_srcdir)/gtk/*.c
 HFILE_GLOB=$(top_srcdir)/libgebr/comm/*.h	\
 	   $(top_srcdir)/libgebr/geoxml/*.h	\
-	   $(top_srcdir)/libgebr/gui/*.h
+	   $(top_srcdir)/libgebr/gui/*.h	\
+	   $(top_srcdir)/libgebr/*.h
 
 CFILE_GLOB=$(top_srcdir)/libgebr/comm/*.c	\
 	   $(top_srcdir)/libgebr/geoxml/*.c	\
-	   $(top_srcdir)/libgebr/gui/*.c
+	   $(top_srcdir)/libgebr/gui/*.c	\
+	   $(top_srcdir)/libgebr/*.c
 
 # Extra header to include when scanning, which are not under DOC_SOURCE_DIR
 # e.g. EXTRA_HFILES=$(top_srcdir}/contrib/extra.h
