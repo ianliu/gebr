@@ -486,7 +486,7 @@ gint gebr_config_load()
 		}
 	}
 
-	gebr.config.flow_exec_speed = gebr_g_key_file_load_int_key(gebr.config.key_file, "general", "flow_exec_speed", 3);
+	gebr.config.flow_exec_speed = gebr_g_key_file_load_int_key(gebr.config.key_file, "general", "flow_exec_speed", 1);
 
 	/* MENUS */
 	menu_list_populate();

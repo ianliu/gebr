@@ -205,8 +205,7 @@ change_value(GtkRange *range, GtkScrollType scroll, gdouble value, gpointer user
 	min = gtk_adjustment_get_lower(adj);
 	max = gtk_adjustment_get_upper(adj);
 	gint speed = (int) CLAMP(round(value), min, max);
-	gebr.config.flow_exec_speed = speed;
-	gtk_range_set_value(range, speed);
+	gebr.config.flow_exec_speed = speed; gtk_range_set_value(range, speed);
 	return TRUE;
 }
 
@@ -245,7 +244,33 @@ speed_controller_query_tooltip(GtkWidget  *widget,
 	gtk_tooltip_set_text (tooltip, text_tooltip);
 	return TRUE;
 }
-
+static gboolean
+toggle_button_tooltip (GtkWidget  *widget,
+		       gint        x,
+		       gint        y,
+		       gboolean    keyboard_mode,
+		       GtkTooltip *tooltip,
+		       gpointer    user_data)
+{
+	GtkToggleToolButton *toggle= GTK_TOGGLE_TOOL_BUTTON(widget);
+	gboolean active=  gtk_toggle_tool_button_get_active (toggle);
+	const gchar * text_tooltip;
+	if (active)
+		text_tooltip = _("I don't want to perturb!");
+	else
+		text_tooltip = _("I want to use all resources!");
+	gtk_tooltip_set_text (tooltip, text_tooltip);
+	return TRUE;
+}
+/*
+ *Change the nice of the next execution
+ * */
+static void
+change_niceness(GtkToggleButton *togglebutton,
+		gpointer         user_data)
+{
+	gebr.config.flow_exec_speed*=-1;
+}
 /*
  * Inserts a speed controler inside a toolbar,
  * which is a GtkScale to control the performance of flow execution.
@@ -257,6 +282,7 @@ insert_speed_controler(GtkToolbar *toolbar)
 	GtkToolItem *scale_item = gtk_tool_item_new();
 	GtkToolItem *bunny_item = gtk_tool_item_new();
 	GtkWidget *scale = gtk_hscale_new_with_range(1, 5, 1);
+	GtkToolItem *toggle = gtk_toggle_tool_button_new_from_stock(GTK_STOCK_ADD );
 
 	gtk_scale_set_draw_value(GTK_SCALE(scale), FALSE);
 	gtk_scale_set_digits(GTK_SCALE(scale), 0);
@@ -272,6 +298,12 @@ insert_speed_controler(GtkToolbar *toolbar)
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), turtle_item, -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), scale_item, -1);
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), bunny_item, -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), toggle, -1);
+
+	g_object_set(toggle, "has-tooltip",TRUE, NULL);
+	g_signal_connect(GTK_WIDGET(toggle), "toggled", change_niceness, NULL);
+	g_signal_connect(GTK_WIDGET(toggle), "query-tooltip", G_CALLBACK(toggle_button_tooltip), NULL);
+
 	gtk_container_child_set(GTK_CONTAINER(toolbar), GTK_WIDGET(turtle_item), "homogeneous", TRUE, NULL);
 	gtk_container_child_set(GTK_CONTAINER(toolbar), GTK_WIDGET(bunny_item), "homogeneous", TRUE, NULL);
 
