@@ -31,6 +31,7 @@
 #include <glib/gi18n.h>
 #include <libgebr/libgebr.h>
 #include <libgebr/gebr-version.h>
+#include <stdio.h>
 
 #include "gebrd.h"
 

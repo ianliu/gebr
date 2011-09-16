@@ -32,6 +32,16 @@
  * Library functions
  */
 
+struct _GebrLogMessage {
+	GebrLogMessageType type;
+	GString *date;
+	GString *message;
+};
+
+struct _GebrLog {
+	GIOChannel *io_channel;
+};
+
 GebrLog *gebr_log_open(const gchar * path)
 {
 	GebrLog *log;
@@ -181,6 +191,23 @@ void gebr_log_add_message(GebrLog *log, GebrLogMessageType type, const gchar * m
 	error = NULL;
 	g_io_channel_flush(log->io_channel, &error);
 
-	/* frees */
 	g_string_free(line, TRUE);
+}
+
+const gchar *
+gebr_log_message_get_date(GebrLogMessage *message)
+{
+	return message->date->str;
+}
+
+const gchar *
+gebr_log_message_get_message(GebrLogMessage *message)
+{
+	return message->message->str;
+}
+
+GebrLogMessageType
+gebr_log_message_get_type(GebrLogMessage *message)
+{
+	return message->type;
 }

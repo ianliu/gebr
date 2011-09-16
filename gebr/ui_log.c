@@ -129,9 +129,11 @@ void gebr_log_add_message_to_list(struct ui_log *ui_log, GebrLogMessage *message
 
 	/* date */
 	markuped_date = g_string_new(NULL);
-	g_string_printf(markuped_date, "<small>%s</small>", gebr_localized_date(message->date->str));
+	g_string_printf(markuped_date, "<small>%s</small>", gebr_localized_date(gebr_log_message_get_date(message)));
+
 	/* icon type */
-	switch (message->type) {
+	// FIXME: Use stock icons here, please
+	switch (gebr_log_message_get_type(message)) {
 	case GEBR_LOG_START:
 		pixbuf = gebr.pixmaps.stock_go_forward;
 		break;
@@ -150,11 +152,12 @@ void gebr_log_add_message_to_list(struct ui_log *ui_log, GebrLogMessage *message
 	default:
 		return;
 	}
+
 	/* add */
 	gtk_list_store_append(ui_log->store, &iter);
 	gtk_list_store_set(ui_log->store, &iter,
 			   GEBR_LOG_TYPE_ICON, pixbuf,
-			   GEBR_LOG_DATE, markuped_date->str, GEBR_LOG_MESSAGE, message->message->str, -1);
+			   GEBR_LOG_DATE, markuped_date->str, GEBR_LOG_MESSAGE, gebr_log_message_get_message(message), -1);
 	gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(ui_log->view), &iter);
 
 	/* frees */

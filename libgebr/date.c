@@ -54,12 +54,17 @@ gchar *gebr_iso_date(void)
 	return date;
 }
 
-/*
- * Function: gebr_localized_date
- * Returns an (static allocated) string with _gebr_iso_date_ converted to a localized date
- * If _gebr_iso_date_ is NULL, current date is used.
+/**
+ * gebr_localized_date:
+ * @iso_date: The date string to be converted, or %NULL.
+ *
+ * Returns: An string with @iso_date converted to a localized date, or the
+ * current date if @iso_date is %NULL. The returned string should not be freed
+ * since it is statically allocated. This means that subsequent calls to this
+ * function will override the previous value.
  */
-const gchar *gebr_localized_date(const gchar * iso_date)
+const gchar *
+gebr_localized_date(const gchar *iso_date)
 {
 	static gchar date[100];
 	GTimeVal time_val;

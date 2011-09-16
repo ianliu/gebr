@@ -32,6 +32,9 @@
 
 G_BEGIN_DECLS
 
+typedef struct _GebrLogMessage GebrLogMessage;
+typedef struct _GebrLog GebrLog;
+
 typedef enum {
 	GEBR_LOG_START,
 	GEBR_LOG_END,
@@ -42,31 +45,60 @@ typedef enum {
 	GEBR_LOG_MSG
 } GebrLogMessageType;
 
-typedef struct  {
-	GebrLogMessageType type;
-	GString *date;
-	GString *message;
-} GebrLogMessage;
-
-typedef struct {
-	GIOChannel *io_channel;
-} GebrLog;
-
 GebrLog *gebr_log_open(const gchar * path);
-
-void gebr_log_close(GebrLog *log);
-
-GebrLogMessage *gebr_log_message_new(GebrLogMessageType type,
-				     const gchar * date,
-				     const gchar * message);
-
-void gebr_log_message_free(GebrLogMessage *message);
 
 GList *gebr_log_messages_read(GebrLog *log);
 
 void gebr_log_messages_free(GList * messages);
 
 void gebr_log_add_message(GebrLog *log, GebrLogMessageType type, const gchar * message);
+
+void gebr_log_close(GebrLog *log);
+
+/**
+ * gebr_log_message_new:
+ * @type: The type of this message.
+ * @date: When this message occured.
+ * @message: The message itself.
+ *
+ * Returns: A newly allocated #GebrLogMessage structure. Free with
+ * gebr_log_message_free().
+ */
+GebrLogMessage *gebr_log_message_new(GebrLogMessageType type,
+				     const gchar       *date,
+				     const gchar       *message);
+
+/**
+ * gebr_log_message_get_date:
+ * @message: The #GebrLogMessage.
+ *
+ * Returns: The time in which this message was sent; do not free it.
+ */
+const gchar *gebr_log_message_get_date(GebrLogMessage *message);
+
+/**
+ * gebr_log_message_get_message:
+ * @message: The #GebrLogMessage.
+ *
+ * Returns: The message that was sent; do not free it.
+ */
+const gchar *gebr_log_message_get_message(GebrLogMessage *message);
+
+/**
+ * gebr_log_message_get_type:
+ * @message: The #GebrLogMessage.
+ *
+ * Returns: The type of this message.
+ */
+GebrLogMessageType gebr_log_message_get_type(GebrLogMessage *message);
+
+/**
+ * gebr_log_message_free:
+ * @message: The #GebrLogMessage.
+ *
+ * Free the message structure.
+ */
+void gebr_log_message_free(GebrLogMessage *message);
 
 G_END_DECLS
 
