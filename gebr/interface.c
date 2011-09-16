@@ -636,5 +636,5 @@ static void assembly_menus(GtkMenuBar * menu_bar)
 gint
 gebr_interface_get_execution_speed(void)
 {
-	return (gint)gtk_range_get_value(GTK_RANGE(gebr.flow_exec_speed_widget));
+	return gebr.config.flow_exec_speed;
 }
