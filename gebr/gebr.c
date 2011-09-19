@@ -43,10 +43,6 @@
 #include "flow.h"
 #include "ui_project_line.h"
 
-/*
- * Prototypes
- */
-
 struct gebr gebr;
 
 static void gebr_log_load(void);
@@ -59,13 +55,18 @@ static void gebr_config_load_servers(void);
 
 static void gebr_config_save_servers(void);
 
+static void gebr_post_config(gboolean has_config);
+
 #define SERVERS_PATH ".gebr/gebr/servers.conf"
 
-/*
- * Public functions
+/**
+ * gebr_init:
+ *
+ * This method initializes some widgets of the interface, such as the server
+ * list.
  */
-
-void gebr_init(void)
+void
+gebr_init(gboolean has_config)
 {
 	gebr.project_line = NULL;
 	gebr.project = NULL;
@@ -85,13 +86,7 @@ void gebr_init(void)
 		exit(-1);
 	}
 
-	gebr.config.detailed_flow_css = g_string_new (NULL);
-	gebr.config.detailed_line_css = g_string_new (NULL);
-	gebr.config.path = g_string_new(NULL);
-	g_string_printf(gebr.config.path, "%s/.gebr/gebr/gebr.conf", g_get_home_dir());
-
-	/* allocating list of temporary files */
-	gebr.tmpfiles = g_slist_alloc();
+	gebr.tmpfiles = NULL;
 
 	gebr.help_edit_windows = g_hash_table_new(NULL, NULL);
 	gebr.xmls_by_filename = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
@@ -123,9 +118,7 @@ void gebr_init(void)
 	gebr.pixmaps.chronometer = 
 	    gtk_widget_render_icon(gebr.invisible, "chronometer", GTK_ICON_SIZE_SMALL_TOOLBAR, NULL);
 
-	/* finally the config. file */
-	// FIXME: Configuration *should* be loaded before the interface!
-	gebr_config_load();
+	gebr_post_config(has_config);
 
 	gtk_range_set_value(GTK_RANGE(gebr.flow_exec_speed_widget), gebr.config.flow_exec_speed);
 
@@ -295,7 +288,7 @@ static void gebr_config_load_servers(void)
 		}
 		g_key_file_free (servers);
 	}
-	if(!has_local_server)
+	if (!has_local_server)
 		gebr_server_new("127.0.0.1", TRUE, "");
 
 	ui_server_update_tags_combobox ();
@@ -342,40 +335,83 @@ static void gebr_config_save_servers(void)
 			      _("Could not save configuration."));
 }
 
-gint gebr_config_load()
+/**
+ * gebr_config_load:
+ *
+ * Loads ~/.gebr/gebr.conf file fill the global gebr.config structure.
+ *
+ * Returns: %TRUE if the configuration exists, %FALSE otherwise.
+ */
+gboolean
+gebr_config_load(void)
 {
-	gboolean new_config;
+	gboolean has_config;
+	gchar *usermenus = g_strdup_printf("%s/GeBR-Menus", g_get_home_dir());
+	gchar *datadir = g_strdup_printf("%s/.gebr/gebr/data", g_get_home_dir());
 
-	/* the config load order must be: log, load file servers, projects/line/flows, menus.
-	 * new config check must be after all default values loaded.
+	gebr.config.path = g_string_new(NULL);
+	g_string_printf(gebr.config.path, "%s/.gebr/gebr/gebr.conf", g_get_home_dir());
+	has_config = g_access(gebr.config.path->str, F_OK | R_OK) == 0 ? TRUE : FALSE;
+	gebr.config.key_file = g_key_file_new();
+
+	if (has_config)
+		/* For the sake of backwards compatibility, load deprecated gengetopt file format ... */
+		if (!g_key_file_load_from_file(gebr.config.key_file, gebr.config.path->str, G_KEY_FILE_NONE, NULL))
+			gebr_config_load_from_gengetopt();
+
+	gebr.config.username  = gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "name", g_get_real_name());
+	gebr.config.email     = gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "email", g_get_user_name());
+	gebr.config.usermenus = gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "usermenus", usermenus);
+	gebr.config.data      = gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "data", datadir);
+	gebr.config.editor    = gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "editor", "");
+	gebr.config.native_editor = gebr_g_key_file_load_boolean_key(gebr.config.key_file, "general", "native_editor", TRUE);
+	gebr.config.width     = gebr_g_key_file_load_int_key(gebr.config.key_file, "general", "width", 700);
+	gebr.config.height    = gebr_g_key_file_load_int_key(gebr.config.key_file, "general", "height", 400);
+	gebr.config.log_load  = gebr_g_key_file_load_boolean_key(gebr.config.key_file, "general", "log_load", FALSE);
+	gebr.config.log_expander_state = gebr_g_key_file_load_boolean_key(gebr.config.key_file, "general", "log_expander_state", FALSE);
+	gebr.config.job_log_word_wrap = gebr_g_key_file_load_boolean_key(gebr.config.key_file, "general", "job_log_word_wrap", FALSE);
+	gebr.config.job_log_auto_scroll = gebr_g_key_file_load_boolean_key(gebr.config.key_file, "general", "job_log_auto_scroll", FALSE);
+	gebr.config.detailed_flow_include_report = gebr_g_key_file_load_boolean_key (gebr.config.key_file, "general", "detailed_flow_include_report", FALSE);
+	gebr.config.detailed_flow_parameter_table = gebr_g_key_file_load_int_key (gebr.config.key_file, "general", "detailed_flow_parameter_table", 0);
+	gebr.config.detailed_line_include_report = gebr_g_key_file_load_boolean_key (gebr.config.key_file, "general", "detailed_line_include_report", FALSE);
+	gebr.config.detailed_line_include_flow_report = gebr_g_key_file_load_boolean_key (gebr.config.key_file, "general", "detailed_line_include_flow_report", FALSE);
+	gebr.config.detailed_line_parameter_table = gebr_g_key_file_load_int_key (gebr.config.key_file, "general", "detailed_line_parameter_table", 0);
+	gebr.config.flow_exec_speed = gebr_g_key_file_load_int_key(gebr.config.key_file, "general", "flow_exec_speed", 1);
+	gebr.config.detailed_flow_css = gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "detailed_flow_css", "");
+	gebr.config.detailed_line_css = gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "detailed_line_css", "");
+
+	/*
+	 * For the sake of backwards compatibility...
 	 */
+	if (gebr_g_key_file_has_key(gebr.config.key_file, "general", "notebook")) {
+		gebr.config.current_notebook = gebr_g_key_file_load_int_key(gebr.config.key_file, "general", "notebook", 0);
+		gebr.config.project_line_filename = g_string_new("");
+		gebr.config.flow_treepath_string = gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "flow_string", "");
+	} else {
+		gebr.config.current_notebook = gebr_g_key_file_load_int_key(gebr.config.key_file, "state", "notebook", 0);
+		gebr.config.project_line_filename = gebr_g_key_file_load_string_key(gebr.config.key_file, "state", "project_line_filename", "");
+		gebr.config.flow_treepath_string = gebr_g_key_file_load_string_key(gebr.config.key_file, "state", "flow_treepath_string", "");
+	}
 
-	/* LOG */
+	g_free(datadir);
+	g_free(usermenus);
+
+	return has_config;
+}
+
+/*
+ * The config load order must be: log, load file servers, projects/line/flows,
+ * menus. New config check must be after all default values loaded.
+ */
+static void
+gebr_post_config(gboolean has_config)
+{
 	gebr_log_load();
 	gebr_message(GEBR_LOG_START, TRUE, TRUE, _("Initiating GêBR..."));
 
-	/* load from file (we still support deprecated gengetopt format) */
-	GError *error = NULL;
-	gebr.config.key_file = g_key_file_new();
-	if (!(new_config = (gboolean) g_access(gebr.config.path->str, F_OK | R_OK)) &&
-	    !g_key_file_load_from_file(gebr.config.key_file, gebr.config.path->str, G_KEY_FILE_NONE, &error) &&
-	    !gebr_config_load_from_gengetopt())
-		gebr_message(GEBR_LOG_ERROR, FALSE, TRUE, _("Error parsing config file; reseting it."));
-
-	/* GENERAL */
-	gebr.config.username = gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "name", g_get_real_name());
-	gebr.config.email = gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "email", g_get_user_name());
-
-	GString *default_dir = g_string_new(NULL);
-	g_string_printf(default_dir, "%s/GeBR-Menus", g_get_home_dir());
-	gebr.config.usermenus = gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "usermenus", default_dir->str);
-	if (!strcmp(gebr.config.usermenus->str, default_dir->str) && !g_file_test(default_dir->str, G_FILE_TEST_EXISTS))
-		g_mkdir_with_parents(default_dir->str, 0755);
+	if (!g_file_test(gebr.config.usermenus->str, G_FILE_TEST_EXISTS))
+		g_mkdir_with_parents(gebr.config.usermenus->str, 0755);
 	gebr_path_resolve_home_variable(gebr.config.usermenus);
-
-	g_string_printf(default_dir, "%s/.gebr/gebr/data", g_get_home_dir());
-	gebr.config.data = gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "data", default_dir->str);
-	g_string_free(default_dir, TRUE);
 
 	/* DEPRECATED: old directory structure migration */
 	if (g_str_has_suffix(gebr.config.data->str, ".gebr/gebrdata"))
@@ -385,122 +421,56 @@ gint gebr_config_load()
 	else
 		gebr_path_resolve_home_variable(gebr.config.data);
 
-	/* GENERAL */
-	gebr.config.editor =
-		gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "editor", "");
-	gebr.config.native_editor =
-		gebr_g_key_file_load_boolean_key(gebr.config.key_file, "general", "native_editor", TRUE);
-
-	gebr.config.width = gebr_g_key_file_load_int_key(gebr.config.key_file, "general", "width", 700);
-	gebr.config.height = gebr_g_key_file_load_int_key(gebr.config.key_file, "general", "height", 400);
 	gtk_window_resize(GTK_WINDOW(gebr.window), gebr.config.width, gebr.config.height);
-
-	gebr.config.log_load = gebr_g_key_file_load_boolean_key(gebr.config.key_file, "general", "log_load", FALSE);
-	gebr.config.log_expander_state = gebr_g_key_file_load_boolean_key(gebr.config.key_file, "general",
-									  "log_expander_state", FALSE);
 	gtk_expander_set_expanded(GTK_EXPANDER(gebr.ui_log->widget), gebr.config.log_expander_state);
 
-
-	gebr.config.job_log_word_wrap = gebr_g_key_file_load_boolean_key(gebr.config.key_file, "general",
-									 "job_log_word_wrap", FALSE);
 	g_object_set(G_OBJECT(gebr.ui_job_control->text_view), "wrap-mode",
 		     gebr.config.job_log_word_wrap ? GTK_WRAP_WORD : GTK_WRAP_NONE, NULL);
-	gebr.config.job_log_auto_scroll = gebr_g_key_file_load_boolean_key(gebr.config.key_file, "general",
-									   "job_log_auto_scroll", FALSE);
-
-	g_string_assign (gebr.config.detailed_flow_css,
-			 gebr_g_key_file_load_string_key (gebr.config.key_file, "general", "detailed_flow_css", "")->str);
-	gebr.config.detailed_flow_include_report =
-		gebr_g_key_file_load_boolean_key (gebr.config.key_file, "general", "detailed_flow_include_report", FALSE);
-	gebr.config.detailed_flow_parameter_table =
-		gebr_g_key_file_load_int_key (gebr.config.key_file, "general", "detailed_flow_parameter_table", 0);
-
-	g_string_assign (gebr.config.detailed_line_css,
-			 gebr_g_key_file_load_string_key (gebr.config.key_file, "general", "detailed_line_css", "")->str);
-	gebr.config.detailed_line_include_report =
-		gebr_g_key_file_load_boolean_key (gebr.config.key_file, "general", "detailed_line_include_report", FALSE);
-	gebr.config.detailed_line_include_flow_report =
-		gebr_g_key_file_load_boolean_key (gebr.config.key_file, "general", "detailed_line_include_flow_report", FALSE);
-	gebr.config.detailed_line_parameter_table =
-		gebr_g_key_file_load_int_key (gebr.config.key_file, "general", "detailed_line_parameter_table", 0);
 
 	gebr_config_load_servers ();
-
-	/* PROJECT/LINE/FLOWS */
 	project_list_populate();
 
-	gebr.ui_project_line->servers_filter =
-		gtk_tree_model_filter_new (GTK_TREE_MODEL (gebr.ui_server_list->common.store),
-					   NULL);
+	gebr.ui_project_line->servers_filter = gtk_tree_model_filter_new(GTK_TREE_MODEL(gebr.ui_server_list->common.store), NULL);
+	gebr.ui_project_line->servers_sort = gtk_tree_model_sort_new_with_model(gebr.ui_project_line->servers_filter);
+	gtk_tree_model_filter_set_visible_func(GTK_TREE_MODEL_FILTER(gebr.ui_project_line->servers_filter), servers_filter_visible_func, NULL, NULL);
+	gtk_tree_sortable_set_sort_func(GTK_TREE_SORTABLE(gebr.ui_project_line->servers_sort), 0, servers_sort_func, NULL, NULL);
+	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(gebr.ui_project_line->servers_sort), 0, GTK_SORT_ASCENDING);
+	gtk_combo_box_set_model(GTK_COMBO_BOX(gebr.ui_flow_edition->server_combobox), gebr.ui_project_line->servers_sort);
 
-	gebr.ui_project_line->servers_sort =
-		gtk_tree_model_sort_new_with_model (gebr.ui_project_line->servers_filter);
-
-	gtk_tree_model_filter_set_visible_func (
-			GTK_TREE_MODEL_FILTER (gebr.ui_project_line->servers_filter),
-			servers_filter_visible_func, NULL, NULL);
-
-	gtk_tree_sortable_set_sort_func (GTK_TREE_SORTABLE (gebr.ui_project_line->servers_sort),
-					 0, servers_sort_func, NULL, NULL);
-
-	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (gebr.ui_project_line->servers_sort), 0,
-					      GTK_SORT_ASCENDING);
-
-	gtk_combo_box_set_model (
-			GTK_COMBO_BOX (gebr.ui_flow_edition->server_combobox),
-			gebr.ui_project_line->servers_sort);
-
+	GtkTreeIter iter;
 	gboolean project_line_selected;
+
 	if (gebr_g_key_file_has_key(gebr.config.key_file, "general", "notebook")) {
-		/* old config */
-		gebr.config.current_notebook = gebr_g_key_file_load_int_key(gebr.config.key_file, "general", "notebook", 0);
-
-		gebr.config.project_line_filename = g_string_new("");
-		GString *project_line_string = 
-			gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "project_line_string", "");
-		GtkTreeIter iter;
-		if ((project_line_selected = (project_line_string->len &&
-					      gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter, project_line_string->str))))
-			project_line_select_iter(&iter);
-		g_string_free(project_line_string, TRUE);
-
-		gebr.config.flow_treepath_string =
-			gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "flow_string", "");
+		GString *project_line_string = gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "project_line_string", "");
+		project_line_selected = (project_line_string->len &&
+					 gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(gebr.ui_project_line->store),
+									     &iter, project_line_string->str));
+		g_string_free(project_line_string, FALSE);
 	} else {
-		gebr.config.current_notebook = gebr_g_key_file_load_int_key(gebr.config.key_file, "state", "notebook", 0);
-		gebr.config.project_line_filename =
-			gebr_g_key_file_load_string_key(gebr.config.key_file, "state", "project_line_filename", "");
-		GtkTreeIter iter;
-		if ((project_line_selected = (gebr.config.project_line_filename->len &&
-					      gebr_gui_gtk_tree_model_find_by_column(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter, PL_FILENAME, gebr.config.project_line_filename->str))))
-			project_line_select_iter(&iter);
-		gebr.config.flow_treepath_string =
-			gebr_g_key_file_load_string_key(gebr.config.key_file, "state", "flow_treepath_string", "");
+		project_line_selected = (gebr.config.project_line_filename->len &&
+					 gebr_gui_gtk_tree_model_find_by_column(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter,
+										PL_FILENAME, gebr.config.project_line_filename->str));
 	}
+
 	if (project_line_selected) {
-		GtkTreeIter iter;
-		if ((gebr.config.flow_treepath_string->len) && gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter, gebr.config.flow_treepath_string->str)){
+		project_line_select_iter(&iter);
+
+		if (gebr.config.flow_treepath_string->len &&
+		    gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
+							gebr.config.flow_treepath_string->str))
+		{
 			flow_browse_select_iter(&iter);
-			/* Restore last selected tab */
 			gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), gebr.config.current_notebook);
 		}
 	}
 
-	gebr.config.flow_exec_speed = gebr_g_key_file_load_int_key(gebr.config.key_file, "general", "flow_exec_speed", 1);
-
-	/* MENUS */
 	menu_list_populate();
-	/* JOB UI */
 	job_control_selected();
 
-	/* NEW CONFIG? */
-	if (new_config) {
-		//gebr_config_save(FALSE); //default values saved
+	if (!has_config)
 		preferences_setup_ui(TRUE);
-	} else
-		gebr_config_save(FALSE); //save config to keep updated
-
-	return 0;
+	else
+		gebr_config_save(FALSE);
 }
 
 void gebr_config_apply(void)
@@ -563,9 +533,8 @@ void gebr_config_save(gboolean verbose)
 	if (project_line_get_selected(&iter, DontWarnUnselection)) {
 		gchar *str;
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter, PL_FILENAME, &str, -1);
-		g_string_assign(gebr.config.project_line_filename, str);
-		g_free(str);
 		g_key_file_set_string(gebr.config.key_file, "state", "project_line_filename", gebr.config.project_line_filename->str);
+		g_free(str);
 
 		if (flow_browse_get_selected(&iter, FALSE)) {
 			g_string_assign(gebr.config.flow_treepath_string, gtk_tree_model_get_string_from_iter(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter));

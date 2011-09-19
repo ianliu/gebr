@@ -108,9 +108,10 @@ int main(int argc, char **argv, char **env)
 
 	gtk_init(&argc, &argv);
 
+	gboolean has_config = gebr_config_load();
 	gebr_gui_setup_icons();
 	gebr_setup_ui();
-	gebr_init();
+	gebr_init(has_config);
 
 	gdk_threads_enter();
 	gtk_main();
