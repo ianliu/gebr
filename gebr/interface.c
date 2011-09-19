@@ -301,8 +301,8 @@ insert_speed_controler(GtkToolbar *toolbar)
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), toggle, -1);
 
 	g_object_set(toggle, "has-tooltip",TRUE, NULL);
-	g_signal_connect(GTK_WIDGET(toggle), "toggled", change_niceness, NULL);
-	g_signal_connect(GTK_WIDGET(toggle), "query-tooltip", G_CALLBACK(toggle_button_tooltip), NULL);
+	g_signal_connect(toggle, "toggled", G_CALLBACK(change_niceness), NULL);
+	g_signal_connect(toggle, "query-tooltip", G_CALLBACK(toggle_button_tooltip), NULL);
 
 	gtk_container_child_set(GTK_CONTAINER(toolbar), GTK_WIDGET(turtle_item), "homogeneous", TRUE, NULL);
 	gtk_container_child_set(GTK_CONTAINER(toolbar), GTK_WIDGET(bunny_item), "homogeneous", TRUE, NULL);
