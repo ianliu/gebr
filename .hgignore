@@ -48,6 +48,7 @@ docs/reference/libgebr/{html,xml}
 gebr-client/gebr-client
 gebr/gebr
 gebrd/gebrd
+gebrd/tests/test-gebrd
 gebrd/tests/test-job
 gebrd/tests/test-job-queue
 gebrd/tests/test-sysinfo
