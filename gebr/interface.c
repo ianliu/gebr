@@ -205,7 +205,9 @@ change_value(GtkRange *range, GtkScrollType scroll, gdouble value, gpointer user
 	min = gtk_adjustment_get_lower(adj);
 	max = gtk_adjustment_get_upper(adj);
 	gint speed = (int) CLAMP(round(value), min, max);
-	gebr.config.flow_exec_speed = speed; gtk_range_set_value(range, speed);
+	int s = gebr.config.flow_exec_speed < 0 ? -1 : 1;
+	gebr.config.flow_exec_speed = s*speed;
+	gtk_range_set_value(range, speed);
 	return TRUE;
 }
 
@@ -268,9 +270,33 @@ toggle_button_tooltip (GtkWidget  *widget,
 static void
 change_niceness(GtkToggleButton *togglebutton,
 		gpointer         user_data)
-{
+{ 
 	gebr.config.flow_exec_speed*=-1;
 }
+
+/*
+ * Updates the value of the scale
+ */
+static void 
+on_show_scale(GtkWidget * scale)
+{
+	g_signal_handlers_block_by_func(scale, change_value, NULL);
+	gtk_range_set_value(GTK_RANGE(scale), ABS(gebr.config.flow_exec_speed));
+	g_signal_handlers_unblock_by_func(scale, change_value, NULL);
+}
+
+/*
+ * Updates the value of the toggle 
+ */
+static void 
+on_show_toggle(GtkWidget * toggle)
+{
+	g_signal_handlers_block_by_func(toggle, change_niceness, NULL);
+	gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(toggle), gebr.config.flow_exec_speed > 0 ? TRUE : FALSE);
+	g_signal_handlers_unblock_by_func(toggle, change_niceness, NULL);
+
+}
+
 /*
  * Inserts a speed controler inside a toolbar,
  * which is a GtkScale to control the performance of flow execution.
@@ -283,13 +309,17 @@ insert_speed_controler(GtkToolbar *toolbar)
 	GtkToolItem *bunny_item = gtk_tool_item_new();
 	GtkWidget *scale = gtk_hscale_new_with_range(1, 5, 1);
 	GtkToolItem *toggle = gtk_toggle_tool_button_new_from_stock(GTK_STOCK_ADD );
+	GtkAdjustment *adjustment = gtk_range_get_adjustment(GTK_RANGE(scale));
 
+	gtk_adjustment_set_page_increment(adjustment, 1);
 	gtk_scale_set_draw_value(GTK_SCALE(scale), FALSE);
 	gtk_scale_set_digits(GTK_SCALE(scale), 0);
 	g_object_set(scale, "has-tooltip",TRUE, NULL);
 	gtk_range_set_update_policy(GTK_RANGE(scale), GTK_UPDATE_DISCONTINUOUS);
 	g_signal_connect(scale, "change-value", G_CALLBACK(change_value), NULL);
 	g_signal_connect(scale, "query-tooltip", G_CALLBACK(speed_controller_query_tooltip), NULL);
+	g_signal_connect(scale, "map", G_CALLBACK(on_show_scale), NULL);
+
 
 	gtk_container_add(GTK_CONTAINER(turtle_item), gtk_image_new_from_stock("turtle", GTK_ICON_SIZE_LARGE_TOOLBAR));
 	gtk_container_add(GTK_CONTAINER(bunny_item), gtk_image_new_from_stock("bunny", GTK_ICON_SIZE_LARGE_TOOLBAR));
@@ -303,6 +333,7 @@ insert_speed_controler(GtkToolbar *toolbar)
 	g_object_set(toggle, "has-tooltip",TRUE, NULL);
 	g_signal_connect(toggle, "toggled", G_CALLBACK(change_niceness), NULL);
 	g_signal_connect(toggle, "query-tooltip", G_CALLBACK(toggle_button_tooltip), NULL);
+	g_signal_connect(toggle, "map", G_CALLBACK(on_show_toggle), NULL);
 
 	gtk_container_child_set(GTK_CONTAINER(toolbar), GTK_WIDGET(turtle_item), "homogeneous", TRUE, NULL);
 	gtk_container_child_set(GTK_CONTAINER(toolbar), GTK_WIDGET(bunny_item), "homogeneous", TRUE, NULL);
@@ -481,10 +512,6 @@ void gebr_setup_ui(void)
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
 					 (gtk_action_group_get_action(gebr.action_group_flow, "flow_properties"))), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new (), -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
-			   GTK_TOOL_ITEM(gtk_action_create_tool_item
-					 (gtk_action_group_get_action(gebr.action_group_flow, "flow_execute"))), -1);
 
 	menu = gtk_menu_new();
 	tool_item = gtk_menu_tool_button_new_from_stock("document-open-recent");
@@ -501,6 +528,13 @@ void gebr_setup_ui(void)
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
 					 (gtk_action_group_get_action(gebr.action_group_flow, "flow_export"))), -1);
+
+
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), gtk_separator_tool_item_new (), -1);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
+			   GTK_TOOL_ITEM(gtk_action_create_tool_item
+					 (gtk_action_group_get_action(gebr.action_group_flow, "flow_execute"))), -1);
+	insert_speed_controler(GTK_TOOLBAR(toolbar));
 
 	gebr.ui_flow_browse = flow_browse_setup_ui(menu);
 	vbox = gtk_vbox_new(FALSE, 0);
