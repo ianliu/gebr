@@ -163,20 +163,14 @@ struct gebr {
 	} pixmaps;				
 };
 
-/**
- * Take initial measures. This function is called when \ref gebr.window is shown.
- */
-void gebr_init(void);
+void gebr_init(gboolean has_config);
 
 /**
  * Free memory, remove temporaries files and quit.
  */
 gboolean gebr_quit(gboolean save_config);
 
-/**
- * Initialize configuration for GeBR.
- */
-int gebr_config_load(void);
+gboolean gebr_config_load(void);
 
 /**
  * Populates the various data models, such as menus index and projects & lines.
