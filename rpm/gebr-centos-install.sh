@@ -208,12 +208,12 @@ mkdir -p $TMP_DIR && cd $TMP_DIR
 	&& cd pkg-config-0.25 \
 	&& make install -j$CORES && cd .. || exit 1
 
-# glib-2.20.5
-	wget -c http://ftp.gnome.org/pub/gnome/sources/glib/2.20/glib-2.20.5.tar.bz2 \
-	&& (cd glib-2.20.5 2> /dev/null || (tar jxf glib-2.20.5.tar.bz2 \
-	&& cd glib-2.20.5 \
+# glib-2.24.1
+	wget -c http://ftp.gnome.org/pub/gnome/sources/glib/2.24/glib-2.24.1.tar.bz2 \
+	&& (cd glib-2.24.1 2> /dev/null || (tar jxf glib-2.24.1.tar.bz2 \
+	&& cd glib-2.24.1 \
 	&& ./configure --prefix=$INSTALL_DIR $DEBUG)) \
-	&& cd glib-2.20.5 \
+	&& cd glib-2.24.1 \
 	&& make install -j$CORES && cd .. || exit 1
 
 # atk-1.20.0
@@ -272,12 +272,12 @@ mkdir -p $TMP_DIR && cd $TMP_DIR
 	&& cd pango-1.20.5 \
 	&& make install -j$CORES && cd .. || exit 1
 
-# gtk-2.16.6
-	wget -c http://ftp.gnome.org/pub/gnome/sources/gtk+/2.16/gtk+-2.16.6.tar.bz2 \
-	&& (cd gtk+-2.16.6 2> /dev/null || (tar jxf gtk+-2.16.6.tar.bz2 \
-	&& cd gtk+-2.16.6 \
+# gtk-2.20.1
+	wget -c http://ftp.gnome.org/pub/gnome/sources/gtk+/2.20/gtk+-2.20.1.tar.bz2 \
+	&& (cd gtk+-2.20.1 2> /dev/null || (tar jxf gtk+-2.20.1.tar.bz2 \
+	&& cd gtk+-2.20.1 \
 	&& ./configure --prefix=$INSTALL_DIR $DEBUG --without-libjasper)) \
-	&& cd gtk+-2.16.6 \
+	&& cd gtk+-2.20.1 \
 	&& make install -j$CORES && cd .. || exit 1
 
 # libxml2-2.6.32
