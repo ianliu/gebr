@@ -233,7 +233,7 @@ mkdir -p $TMP_DIR && cd $TMP_DIR
 	&& make install -j$CORES && cd .. || exit 1
 
 # libpng-1.2.44.tar.gz
-	wget -c http://sourceforge.net/projects/libpng/files/libpng12/1.2.44/libpng-1.2.44.tar.gz/download \
+	wget -c http://downloads.sourceforge.net/project/libpng/libpng12/older-releases/1.2.44/libpng-1.2.44.tar.gz \
 	&& (cd libpng-1.2.44 2> /dev/null || (tar xzf libpng-1.2.44.tar.gz \
 	&& cd libpng-1.2.44 \
 	&& ./configure --prefix=$INSTALL_DIR)) \
