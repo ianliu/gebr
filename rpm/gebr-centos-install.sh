@@ -216,12 +216,12 @@ mkdir -p $TMP_DIR && cd $TMP_DIR
 	&& cd glib-2.24.1 \
 	&& make install -j$CORES && cd .. || exit 1
 
-# atk-1.20.0
-	wget -c http://ftp.acc.umu.se/pub/GNOME/sources/atk/1.13/atk-1.13.2.tar.bz2 \
-	&& (cd atk-1.13.2 2> /dev/null || (tar jxf atk-1.13.2.tar.bz2 \
-	&& cd atk-1.13.2 \
+# atk-1.30.0
+	wget -c http://ftp.acc.umu.se/pub/GNOME/sources/atk/1.30/atk-1.30.0.tar.bz2 \
+	&& (cd atk-1.30.0 2> /dev/null || (tar jxf atk-1.30.0.tar.bz2 \
+	&& cd atk-1.30.0 \
 	&& ./configure --prefix=$INSTALL_DIR $DEBUG)) \
-	&& cd atk-1.13.2 \
+	&& cd atk-1.30.0 \
 	&& make install -j$CORES && cd .. || exit 1
 
 # pixman-0.10.0
