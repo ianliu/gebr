@@ -1391,10 +1391,10 @@ static void job_assembly_cmdline(GebrdJob *job)
 						 "for (( _outter=0; _outter < %s; _outter+=$PROC ))\n"
 						 "do\n"
 						 "  unset PIDS\n"
-						 "  for (( counter=$_outter; counter < $_outter+$PROC; counter++ ))\n"
+						 "  for (( counter=$_outter; counter < $_outter+$PROC && counter < %s; counter++ ))\n"
 						 "  do\n"
 						 "    %s\n%s",
-						 nprocs, nice, n, expr_buf->str, str_buf->str);
+						 nprocs, nice, n, n, expr_buf->str, str_buf->str);
 			g_string_append(job->parent.cmd_line, " ) &\nPIDS=\"$! $PIDS\"");
 			g_string_prepend_c(job->parent.cmd_line, '(');
 		} else {
