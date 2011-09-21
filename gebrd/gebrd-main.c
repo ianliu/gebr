@@ -59,7 +59,8 @@ int main(int argc, char **argv)
 	g_option_context_set_summary(context, _("Run flows and manage jobs of GeBR."));
 	g_option_context_set_description(context, _(
 					 "Debug-compiled environment variables:\n"
-					 "  GEBRD_RUN_DELAY_SEC: delay in seconds to wait before sending response of a flow run request."
+					 "  GEBRD_RUN_DELAY_SEC   Delay in seconds to wait before sending response of a flow run request\n"
+					 "  GEBRD_LOG_LEVEL       If equal to 'verbose', prints extra information in stdout"
 					 ));
 	g_option_context_add_main_entries(context, entries, NULL);
 	g_option_context_set_ignore_unknown_options(context, FALSE);
