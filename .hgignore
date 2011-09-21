@@ -35,6 +35,7 @@ docs/gebr/{en,pt_BR}/html-ok
 docs/reference/libgebr/libgebr-decl-list.txt
 docs/reference/libgebr/libgebr-decl.txt
 docs/reference/libgebr/libgebr-overrides.txt
+docs/reference/libgebr/libgebr-sections.txt
 docs/reference/libgebr/libgebr-undeclared.txt
 docs/reference/libgebr/libgebr-undocumented.txt
 docs/reference/libgebr/libgebr-unused.txt
