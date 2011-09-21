@@ -260,7 +260,6 @@ toggle_button_tooltip (GtkWidget  *widget,
 	if (active)
 		text_tooltip = _("I want to use all resources!");
 	else
-		text_tooltip = _("I want to use all resources!");
 		text_tooltip = _("I don't want to perturb!");
 	gtk_tooltip_set_text (tooltip, text_tooltip);
 	return TRUE;
@@ -272,7 +271,8 @@ static void
 change_niceness(GtkToggleButton *togglebutton,
 		gpointer         user_data)
 { 
-	gebr.config.flow_exec_speed*=-1;
+	gboolean active=  gtk_toggle_tool_button_get_active (togglebutton);
+	gebr.config.flow_exec_speed = active ? ABS(gebr.config.flow_exec_speed): -ABS(gebr.config.flow_exec_speed);
 }
 
 /*
