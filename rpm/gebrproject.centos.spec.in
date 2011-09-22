@@ -10,7 +10,7 @@ Group: Application/Misc
 URL: http://www.gebrproject.com
 Packager: Fabricio Matheus Goncalves <fmatheus@gebrproject.com>
 Source: %{name}-%{version}.tar.gz
-BuildRoot: /tmp/%{name}-%{version}
+BuildRoot: /tmp/gebrproject-%{version}-%{release}
 Summary: Seismic processing environment
 %description
 GêBR is a simple graphical interface which facilitates geophysical data processing. 
@@ -27,10 +27,7 @@ What can GeBR do:
 
 %install
 rm -rf %{buildroot}
-mkdir -p %{buildroot}/opt
-#cp -a /root/gebr-tmp-dir .
-TMP_DIR=/tmp/gebr-tmp-dir ./rpm/gebr-centos-install.sh
-cp -a /opt/gebrproject %{buildroot}/opt/gebrproject
+GEBR_VERSION=%{version} TMP_DIR=/tmp/gebr-tmp-dir ./rpm/gebr-centos-install.sh --prefix=/opt/gebrproject --destdir=%{buildroot}
 
 %clean
 rm -rf %{buildroot}
