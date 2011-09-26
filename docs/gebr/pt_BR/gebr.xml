@@ -33,7 +33,7 @@
 			   A GêBR automatiza fluxos repetitivos através de loops (veja seção <xref linkend="loop"/>).
 		    </listitem>
 		    <listitem>
-			     Exemplos de projetos podem ser importados na seção Samples (seção <xref linkend="import_samples"/>).
+			     Exemplos de projetos podem ser importados na seção Exemplos (seção <xref linkend="import_samples"/>).
 		    </listitem>
 	    </itemizedlist>
     </section>
@@ -1705,12 +1705,12 @@
           incluindo ações de datas passadas, o log compacto, que mostra apenas as ações a partir da última
           inicialização.</para>
       </tip>
-    </section>    <section xml:id="import_samples"><title>Ajuda</title>
+    </section>    <section xml:id="import_samples"><title>Exemplos de projeto</title>
 	<para>Na seção Ajuda, além da seção de Ajuda geral, podemos importar exemplos já existentes:</para>
     
       <figure>
         <mediaobject>
-          <caption>Captura de tela do menu Samples</caption>
+          <caption>Captura de tela do menu Exemplos</caption>
           <imageobject>
             <imagedata fileref="../images/samples_pt.png"/>
           </imageobject>

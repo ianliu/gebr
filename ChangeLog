@@ -1,3 +1,39 @@
+2011-09-22  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Do not use /tmp by default in centos install spec
+	* Fix RPM spec file for centos to use the new gebr-centos-install
+	script
+	* Change gebr centos install script to work with GeBR 0.14
+	* Make cache live between rpmbuild's
+
+2011-09-21  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Upgrade version of atk on gebr-centos script
+	* Upgrade version of glib and gtk on gebr-centos script
+
+2011-09-21  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix libpng link in gebr-centos-install.sh
+
+2011-09-21  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fixed build on Fedora, now depends on gtk-doc.
+
+2011-09-20  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Update 'Samples' screenshot
+
+2011-09-20  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Changes on section samples of Gebr Help on pt and en
+
+2011-09-16  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Added tag 0.13.0 for changeset c594535ea426
+	* Added tag 0.12.0 for changeset 39178934fe63
+	* Update changelogs before release.
+	* Added the new crew members and usage example for changelog build.
+
 2011-09-16  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
 
 	* Backed out changeset 6cdbd1a8293a. Not yet ready to release.
