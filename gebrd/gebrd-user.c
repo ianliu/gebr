@@ -37,34 +37,40 @@
 enum {
 	PROP_0,
 	PROP_FS_NICKNAME,
+	PROP_SYS_LOAD,
 	LAST_PROPERTY
 };
-//static guint property_member_offset [] = {0,
-//};
+
 enum {
 	LAST_SIGNAL
 };
-//static guint object_signals[LAST_SIGNAL];
-G_DEFINE_TYPE(GebrdUser, gebrd_user, G_TYPE_OBJECT)
-static void gebrd_user_init(GebrdUser * self)
+
+G_DEFINE_TYPE(GebrdUser, gebrd_user, G_TYPE_OBJECT);
+
+static void
+gebrd_user_init(GebrdUser *self)
 {
 	self->fs_nickname = g_string_new("");
-	self->queues = g_hash_table_new_full((GHashFunc)g_str_hash, (GEqualFunc)g_str_equal,
-					     (GDestroyNotify)g_free, NULL);
+	self->queues = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
 }
-static void gebrd_user_finalize(GObject * object)
+
+static void
+gebrd_user_finalize(GObject *object)
 {
 	GebrdUser *self = (GebrdUser *) object;
 
 	g_string_free(self->fs_nickname, TRUE);
-	/* jobs */
 	g_list_foreach(self->jobs, (GFunc) job_free, NULL);
 	g_list_free(self->jobs);
 
 	G_OBJECT_CLASS(gebrd_user_parent_class)->finalize(object);
 }
+
 static void
-gebrd_user_set_property(GObject * object, guint property_id, const GValue * value, GParamSpec * pspec)
+gebrd_user_set_property(GObject      *object,
+			guint         property_id,
+			const GValue *value,
+			GParamSpec   *pspec)
 {
 	GebrdUser *self = (GebrdUser *) object;
 	switch (property_id) {
@@ -77,6 +83,7 @@ gebrd_user_set_property(GObject * object, guint property_id, const GValue * valu
 	}
 	gebrd_user_data_save();
 }
+
 static void
 gebrd_user_get_property(GObject * object, guint property_id, GValue * value, GParamSpec * pspec)
 {
@@ -85,21 +92,44 @@ gebrd_user_get_property(GObject * object, guint property_id, GValue * value, GPa
 	case PROP_FS_NICKNAME:
 		g_value_set_string(value, self->fs_nickname->str);
 		break;
+	case PROP_SYS_LOAD: {
+		gchar *loads;
+		gchar *content;
+		if (g_file_get_contents("/proc/loadavg", &content, NULL, NULL)) {
+			gdouble load1, load5, load15;
+			sscanf(content, "%lf %lf %lf", &load1, &load5, &load15);
+			loads = g_strdup_printf("%f %f %f", load1, load5, load15);
+		} else
+			loads = NULL;
+		g_value_set_string(value, loads);
+
+		g_free(loads);
+		break;
+	}
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
 		break;
 	}
 }
-static void gebrd_user_class_init(GebrdUserClass * klass)
+
+static void
+gebrd_user_class_init(GebrdUserClass *klass)
 { 
 	GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
 	gobject_class->finalize = gebrd_user_finalize;
 	
-	/* properties */
-	GParamSpec *spec;
 	gobject_class->set_property = gebrd_user_set_property;
 	gobject_class->get_property = gebrd_user_get_property;
-	spec =	g_param_spec_string("fs-nickname", "", "", "", (GParamFlags)(G_PARAM_READABLE | G_PARAM_WRITABLE)); 
-	g_object_class_install_property(gobject_class, PROP_FS_NICKNAME, spec);
-}
 
+	g_object_class_install_property(gobject_class,
+					PROP_FS_NICKNAME,
+					g_param_spec_string("fs-nickname",
+							    "", "", "",
+							    G_PARAM_READABLE | G_PARAM_WRITABLE));
+
+	g_object_class_install_property(gobject_class,
+					PROP_SYS_LOAD,
+					g_param_spec_string("sys-load",
+							    "", "", "",
+							    G_PARAM_READABLE));
+}
