@@ -339,30 +339,12 @@ out:
 	return ret;
 }
 
-/*
- * flow_io_run:
- *
- * Check for current server and if its connected, for the queue selected.
- */
-static void flow_io_run(GebrGeoXmlFlow *flow, gboolean parallel, gboolean single)
+static void
+flow_io_run_on_server(GebrGeoXmlFlow *flow,
+		      GebrServer     *server,
+		      gboolean        parallel,
+		      gboolean        single)
 {
-	/* FLOW: get selected */
-	if (!flow_browse_get_selected(NULL, FALSE)) {
-		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No Flow selected."));
-		return;
-	}
-	/* SERVER on combox: get selected */
-	GtkTreeIter server_iter;
-	if (!gtk_combo_box_get_active_iter(GTK_COMBO_BOX(gebr.ui_flow_edition->server_combobox), &server_iter)) {
-		//just happen if the current server was removed
-		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No server selected."));
-		return;
-	}
-
-	GebrServer *server;
-
-	gtk_tree_model_get (GTK_TREE_MODEL(gebr.ui_project_line->servers_sort), &server_iter,
-			    SERVER_POINTER, &server, -1);
 
 	/* SERVER: check connection */
 	if (!gebr_comm_server_is_logged(server->comm)) {
@@ -497,4 +479,103 @@ static void flow_io_run(GebrGeoXmlFlow *flow, gboolean parallel, gboolean single
 
 err:
 	gebr_comm_server_run_config_free(config);
+}
+
+static GList *
+get_connected_servers(GtkTreeModel *model)
+{
+	GtkTreeIter iter;
+	GList *servers = NULL;
+	GebrServer *server;
+
+	gebr_gui_gtk_tree_model_foreach(iter, model) {
+		gtk_tree_model_get(model, &iter, SERVER_POINTER, &server, -1);
+		if (server->comm->socket->protocol->logged)
+			servers = g_list_prepend(servers, server);
+	}
+
+	return servers;
+}
+
+static gdouble
+calculate_server_score(const gchar *load, gint ncores)
+{
+	return 0.0;
+}
+
+typedef struct {
+	gdouble max_score;
+	GebrServer *the_one;
+} ServerScores;
+
+static void
+on_response_received(GebrCommHttpMsg *request, GebrCommHttpMsg *response, ServerScores *scores)
+{
+	if (request->method == GEBR_COMM_HTTP_METHOD_GET)
+	{
+		GebrCommJsonContent *json = gebr_comm_json_content_new(response->content->str);
+		GString *value = gebr_comm_json_content_to_gstring(json);
+		g_debug("Resposta do servidor: %s", value->str);
+		GebrServer *server = g_object_get_data(G_OBJECT(request), "current-server");
+		gdouble score = calculate_server_score(value->str, server->ncores);
+
+		if (score > scores->max_score) {
+			scores->max_score = score;
+			scores->the_one = server;
+		}
+	}
+}
+
+static void
+send_sys_load_request(GList *servers)
+{
+	ServerScores *scores = g_new0(ServerScores, 1);
+
+	for (GList *i = servers; i; i = i->next) {
+		GebrCommHttpMsg *request;
+		GebrServer *server = i->data;
+		request = gebr_comm_protocol_socket_send_request(server->comm->socket,
+								 GEBR_COMM_HTTP_METHOD_GET,
+								 "/sys-load", NULL);
+		g_object_set_data(G_OBJECT(request), "current-server", i->data);
+		g_signal_connect(request, "response-received",
+				 G_CALLBACK(on_response_received), scores);
+	}
+}
+
+/*
+ * flow_io_run:
+ *
+ * Check for current server and if its connected, for the queue selected.
+ */
+static void flow_io_run(GebrGeoXmlFlow *flow, gboolean parallel, gboolean single)
+{
+	if (!flow_browse_get_selected(NULL, FALSE)) {
+		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No Flow selected."));
+		return;
+	}
+
+	if (gebr.ui_flow_edition->autochoose) {
+		GebrServer *server;
+		gdouble max_score = 0;
+		GtkTreeModel *model = gtk_combo_box_get_model(GTK_COMBO_BOX(gebr.ui_flow_edition->server_combobox));
+		GList *servers = get_connected_servers(model);
+		send_sys_load_request(servers);
+		g_list_free(servers);
+	} else {
+		/* SERVER on combox: get selected */
+		GtkTreeIter server_iter;
+		if (!gtk_combo_box_get_active_iter(GTK_COMBO_BOX(gebr.ui_flow_edition->server_combobox), &server_iter)) {
+			//just happen if the current server was removed
+			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No server selected."));
+			return;
+		}
+
+		GebrServer *server;
+
+		gtk_tree_model_get (GTK_TREE_MODEL(gebr.ui_project_line->servers_sort), &server_iter,
+				    SERVER_POINTER, &server, -1);
+
+		flow_io_run_on_server(flow, server, parallel, single);
+	}
 }

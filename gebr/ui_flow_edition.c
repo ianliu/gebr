@@ -78,11 +78,15 @@ static void on_server_disconnected_set_row_insensitive(GtkCellLayout   *cell_lay
 
 static void on_queue_combobox_changed (GtkComboBox *combo, GtkComboBox *server_combo);
 
+static void on_autochoose_toggled(GtkToggleButton *button,
+				  struct ui_flow_edition *self);
+
 /*
  * Public functions
  */
 
-struct ui_flow_edition *flow_edition_setup_ui(void)
+struct ui_flow_edition *
+flow_edition_setup_ui(void)
 {
 	struct ui_flow_edition *ui_flow_edition;
 
@@ -139,6 +143,11 @@ struct ui_flow_edition *flow_edition_setup_ui(void)
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(combobox), renderer, TRUE);
 	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(combobox), renderer, "text", SERVER_NAME);
 	gtk_cell_layout_set_cell_data_func (GTK_CELL_LAYOUT (combobox), renderer, on_server_disconnected_set_row_insensitive, NULL, NULL);
+
+	GtkWidget *autochoose = gtk_check_button_new_with_label(_("Autochoose"));
+	g_signal_connect(autochoose, "toggled", G_CALLBACK(on_autochoose_toggled), ui_flow_edition);
+	gtk_box_pack_start(GTK_BOX(left_vbox), autochoose, FALSE, TRUE, 0);
+	gtk_widget_show(autochoose);
 
 	frame = gtk_frame_new(NULL);
 	alignment = gtk_alignment_new(0.5, 0.5, 1, 1);
@@ -1464,4 +1473,14 @@ flow_edition_revalidate_programs(void)
 		else
 			flow_edition_change_iter_status(GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED, &iter);
 	}
+}
+
+static void
+on_autochoose_toggled(GtkToggleButton *button,
+		      struct ui_flow_edition *self)
+{
+	gboolean active = gtk_toggle_button_get_active(button);
+	self->autochoose = active;
+	gtk_widget_set_sensitive(self->server_combobox, !active);
+	gtk_widget_set_sensitive(self->queue_combobox, !active);
 }
