@@ -571,6 +571,11 @@ calculate_server_score(const gchar *load, gint ncores)
 typedef struct {
 	gdouble max_score;
 	GebrServer *the_one;
+	gint responses;
+	gint requests;
+	GebrGeoXmlFlow *flow;
+	gboolean parallel;
+	gboolean single;
 } ServerScores;
 
 /*
@@ -586,12 +591,17 @@ on_response_received(GebrCommHttpMsg *request, GebrCommHttpMsg *response, Server
 		g_debug("Resposta do servidor: %s", value->str);
 		GebrServer *server = g_object_get_data(G_OBJECT(request), "current-server");
 		gdouble score = calculate_server_score(value->str, server->ncores);
-		g_debug("%lf", score);
-		g_debug("%d", server->ncores);
+		g_debug("Score: %lf", score);
+		g_debug("Server: %s", server->comm->address->str);
 
 		if (score > scores->max_score) {
 			scores->max_score = score;
 			scores->the_one = server;
+		}
+		scores->responses++;
+		if (scores->responses == scores->requests) {
+			flow_io_run_on_server(scores->flow, scores->the_one, scores->parallel, scores->single);
+			g_debug("Max Server: %lf", scores->max_score);
 		}
 	}
 }
@@ -599,10 +609,13 @@ on_response_received(GebrCommHttpMsg *request, GebrCommHttpMsg *response, Server
 /*
  * Request all the connected servers the info on the local file /proc/loadavg
  */
-static GebrServer*
-send_sys_load_request(GList *servers)
+static void
+send_sys_load_request(GList *servers, GebrGeoXmlFlow *flow, gboolean parallel, gboolean single)
 {
 	ServerScores *scores = g_new0(ServerScores, 1);
+	scores->flow = flow;
+	scores->parallel = parallel;
+	scores->single = single;
 
 	for (GList *i = servers; i; i = i->next) {
 		GebrCommHttpMsg *request;
@@ -613,8 +626,8 @@ send_sys_load_request(GList *servers)
 		g_object_set_data(G_OBJECT(request), "current-server", i->data);
 		g_signal_connect(request, "response-received",
 				 G_CALLBACK(on_response_received), scores);
+		scores->requests++;
 	}
-	return scores->the_one;
 }
 
 /*
@@ -632,9 +645,8 @@ static void flow_io_run(GebrGeoXmlFlow *flow, gboolean parallel, gboolean single
 	if (gebr.ui_flow_edition->autochoose) {
 		GtkTreeModel *model = gtk_combo_box_get_model(GTK_COMBO_BOX(gebr.ui_flow_edition->server_combobox));
 		GList *servers = get_connected_servers(model);
-		GebrServer *choose_server = send_sys_load_request(servers);
+		send_sys_load_request(servers, flow, parallel, single);
 		g_list_free(servers);
-		//flow_io_run_on_server(flow, choose_server, parallel, single);
 	} else {
 		/* SERVER on combox: get selected */
 		GtkTreeIter server_iter;
