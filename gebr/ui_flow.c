@@ -496,18 +496,86 @@ get_connected_servers(GtkTreeModel *model)
 
 	return servers;
 }
+/*
+ * Struct to handle 2D points
+ */
+typedef struct{
+	gdouble x;
+	gdouble y;
+}GebrPoint;
 
+/*
+ * Compute the linear regression over a given list of points (GebrPoints)
+ */
+void
+create_linear_model(GList *points, GebrPoint *parameters)
+{
+	gdouble sumY=0, sumX=0, sumX2=0, sumXY=0, n=0;
+	for (GList *i = points; i; i = i->next) {
+		GebrPoint *point = i->data;
+		sumY += point->y;
+		sumX += point->x;
+		sumX2 += (point->x*point->x);
+		sumXY += (point->x*point->y);
+		n++;
+	}
+	parameters->y = (n*sumXY - sumX*sumY)/((n*sumX*sumX) - sumX2);
+	parameters->x = (sumY - parameters->y*sumX)/n;
+}
+
+/*
+ * Predict the future load
+ */
+static gdouble
+predict_current_load(GList *points, gdouble delay)
+{
+	GebrPoint parameters;
+	create_linear_model(points, &parameters);
+
+	return (parameters.x + parameters.y*(15.0+delay));
+}
+
+
+/*
+ * Compute the score of a server
+ */
 static gdouble
 calculate_server_score(const gchar *load, gint ncores)
 {
-	return 0.0;
+	GList *points = NULL;
+	gdouble delay = 1.0;
+	GebrPoint point1, point5, point15;
+	
+	sscanf(load, "%lf %lf %lf", &(point1.y), &(point5.y), &(point15.y));
+	
+	point1.y /= ncores; 
+	point5.y /= ncores;
+       	point15.y /= ncores;	
+	point1.x = 15.0-1.0; 
+	point5.x = 15.0-5.0; 
+	point15.x = 15.0-15.0;
+	points = g_list_prepend(points, &point1);
+	points = g_list_prepend(points, &point5);
+	points = g_list_prepend(points, &point15);
+	
+	gdouble current_load = predict_current_load(points, delay);
+	
+	g_list_free(points);
+
+	return 1/current_load;
 }
 
+/*
+ * Struct to handle the server with the maximum score
+ */
 typedef struct {
 	gdouble max_score;
 	GebrServer *the_one;
 } ServerScores;
 
+/*
+ * Rank the server according to the scores
+ */
 static void
 on_response_received(GebrCommHttpMsg *request, GebrCommHttpMsg *response, ServerScores *scores)
 {
@@ -518,6 +586,8 @@ on_response_received(GebrCommHttpMsg *request, GebrCommHttpMsg *response, Server
 		g_debug("Resposta do servidor: %s", value->str);
 		GebrServer *server = g_object_get_data(G_OBJECT(request), "current-server");
 		gdouble score = calculate_server_score(value->str, server->ncores);
+		g_debug("%lf", score);
+		g_debug("%d", server->ncores);
 
 		if (score > scores->max_score) {
 			scores->max_score = score;
@@ -526,7 +596,10 @@ on_response_received(GebrCommHttpMsg *request, GebrCommHttpMsg *response, Server
 	}
 }
 
-static void
+/*
+ * Request all the connected servers the info on the local file /proc/loadavg
+ */
+static GebrServer*
 send_sys_load_request(GList *servers)
 {
 	ServerScores *scores = g_new0(ServerScores, 1);
@@ -541,6 +614,7 @@ send_sys_load_request(GList *servers)
 		g_signal_connect(request, "response-received",
 				 G_CALLBACK(on_response_received), scores);
 	}
+	return scores->the_one;
 }
 
 /*
@@ -556,12 +630,11 @@ static void flow_io_run(GebrGeoXmlFlow *flow, gboolean parallel, gboolean single
 	}
 
 	if (gebr.ui_flow_edition->autochoose) {
-		GebrServer *server;
-		gdouble max_score = 0;
 		GtkTreeModel *model = gtk_combo_box_get_model(GTK_COMBO_BOX(gebr.ui_flow_edition->server_combobox));
 		GList *servers = get_connected_servers(model);
-		send_sys_load_request(servers);
+		GebrServer *choose_server = send_sys_load_request(servers);
 		g_list_free(servers);
+		//flow_io_run_on_server(flow, choose_server, parallel, single);
 	} else {
 		/* SERVER on combox: get selected */
 		GtkTreeIter server_iter;

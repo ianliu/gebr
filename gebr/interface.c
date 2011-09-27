@@ -268,7 +268,7 @@ toggle_button_tooltip (GtkWidget  *widget,
  *Change the nice of the next execution
  * */
 static void
-change_niceness(GtkToggleButton *togglebutton,
+change_niceness(GtkToggleToolButton *togglebutton,
 		gpointer         user_data)
 { 
 	gboolean active=  gtk_toggle_tool_button_get_active (togglebutton);
