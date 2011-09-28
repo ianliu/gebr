@@ -139,6 +139,13 @@ gboolean gebr_quit(gboolean save_config)
 	/* Free servers structs */
 	gebr_gui_gtk_tree_model_foreach_hyg(iter, GTK_TREE_MODEL(gebr.ui_server_list->common.store), 1) {
 		GebrServer *server;
+		gboolean is_auto_choose;
+
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter,
+				   SERVER_IS_AUTO_CHOOSE, &is_auto_choose, -1);
+
+		if (is_auto_choose)
+			continue;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter,
 				   SERVER_POINTER, &server, -1);
@@ -310,6 +317,12 @@ static void gebr_config_save_servers(void)
 	servers = g_key_file_new ();
 
 	gebr_gui_gtk_tree_model_foreach(iter, model) {
+		gboolean is_auto_choose;
+
+		gtk_tree_model_get(model, &iter, SERVER_IS_AUTO_CHOOSE, &is_auto_choose, -1);
+		if (is_auto_choose)
+			continue;
+		
 		gtk_tree_model_get(model, &iter,
 				   SERVER_POINTER, &server,
 				   SERVER_AUTOCONNECT, &autoconnect,
