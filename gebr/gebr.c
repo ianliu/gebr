@@ -533,7 +533,7 @@ void gebr_config_save(gboolean verbose)
 	if (project_line_get_selected(&iter, DontWarnUnselection)) {
 		gchar *str;
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter, PL_FILENAME, &str, -1);
-		g_key_file_set_string(gebr.config.key_file, "state", "project_line_filename", gebr.config.project_line_filename->str);
+		g_key_file_set_string(gebr.config.key_file, "state", "project_line_filename", str);
 		g_free(str);
 
 		if (flow_browse_get_selected(&iter, FALSE)) {
