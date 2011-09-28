@@ -496,13 +496,14 @@ get_connected_servers(GtkTreeModel *model)
 
 	return servers;
 }
+
 /*
  * Struct to handle 2D points
  */
-typedef struct{
+typedef struct {
 	gdouble x;
 	gdouble y;
-}GebrPoint;
+} GebrPoint;
 
 /*
  * Compute the linear regression over a given list of points (GebrPoints)
@@ -510,17 +511,23 @@ typedef struct{
 void
 create_linear_model(GList *points, GebrPoint *parameters)
 {
-	gdouble sumY=0, sumX=0, sumX2=0, sumXY=0, n=0;
-	for (GList *i = points; i; i = i->next) {
+	gint j;
+	GList *i;
+	gdouble weight[] = {1, 1, 1};
+	gdouble sumY=0, sumX=0, sumX2=0, sumXY=0, w=0;
+	for (i = points, j = 0; i; i = i->next, j++) {
 		GebrPoint *point = i->data;
-		sumY += point->y;
-		sumX += point->x;
-		sumX2 += (point->x*point->x);
-		sumXY += (point->x*point->y);
-		n++;
+		sumY += point->y * weight[j];
+		sumX += point->x * weight[j];
+		sumX2 += (point->x*point->x) * weight[j];
+		sumXY += (point->x*point->y) * weight[j];
+		w += weight[j];
 	}
-	parameters->y = (n*sumXY - sumX*sumY)/((n*sumX*sumX) - sumX2);
-	parameters->x = (sumY - parameters->y*sumX)/n;
+	// Line Ax + B = 0
+	// A = parameters->y
+	// B = parameters->x
+	parameters->y = (w*sumXY - sumX*sumY)/(w*sumX2 - sumX*sumX);
+	parameters->x = (sumY - parameters->y*sumX)/w;
 }
 
 /*
@@ -532,9 +539,8 @@ predict_current_load(GList *points, gdouble delay)
 	GebrPoint parameters;
 	create_linear_model(points, &parameters);
 
-	return (parameters.x + parameters.y*(15.0+delay));
+	return (parameters.x + parameters.y*delay);
 }
-
 
 /*
  * Compute the score of a server
@@ -551,9 +557,9 @@ calculate_server_score(const gchar *load, gint ncores)
 	point1.y /= ncores; 
 	point5.y /= ncores;
        	point15.y /= ncores;	
-	point1.x = 15.0-1.0; 
-	point5.x = 15.0-5.0; 
-	point15.x = 15.0-15.0;
+	point1.x = -1.0; 
+	point5.x = -5.0; 
+	point15.x = -15.0;
 	points = g_list_prepend(points, &point1);
 	points = g_list_prepend(points, &point5);
 	points = g_list_prepend(points, &point15);
@@ -562,14 +568,14 @@ calculate_server_score(const gchar *load, gint ncores)
 	
 	g_list_free(points);
 
-	return 1/current_load;
+	return current_load;
 }
 
 /*
  * Struct to handle the server with the maximum score
  */
 typedef struct {
-	gdouble max_score;
+	gdouble min_score;
 	GebrServer *the_one;
 	gint responses;
 	gint requests;
@@ -588,20 +594,18 @@ on_response_received(GebrCommHttpMsg *request, GebrCommHttpMsg *response, Server
 	{
 		GebrCommJsonContent *json = gebr_comm_json_content_new(response->content->str);
 		GString *value = gebr_comm_json_content_to_gstring(json);
-		g_debug("Resposta do servidor: %s", value->str);
 		GebrServer *server = g_object_get_data(G_OBJECT(request), "current-server");
 		gdouble score = calculate_server_score(value->str, server->ncores);
-		g_debug("Score: %lf", score);
-		g_debug("Server: %s", server->comm->address->str);
+		g_debug("Server: %s, Score: %lf, Load: %s", server->comm->address->str, score*4, value->str);
 
-		if (score > scores->max_score) {
-			scores->max_score = score;
+		if (score < scores->min_score) {
+			scores->min_score = score;
 			scores->the_one = server;
 		}
 		scores->responses++;
 		if (scores->responses == scores->requests) {
 			flow_io_run_on_server(scores->flow, scores->the_one, scores->parallel, scores->single);
-			g_debug("Max Server: %lf", scores->max_score);
+			g_debug("THE ONE: %s, Max Score: %lf", scores->the_one->comm->address->str, scores->min_score*4);
 		}
 	}
 }
@@ -616,6 +620,7 @@ send_sys_load_request(GList *servers, GebrGeoXmlFlow *flow, gboolean parallel, g
 	scores->flow = flow;
 	scores->parallel = parallel;
 	scores->single = single;
+	scores->min_score = G_MAXDOUBLE;
 
 	for (GList *i = servers; i; i = i->next) {
 		GebrCommHttpMsg *request;
