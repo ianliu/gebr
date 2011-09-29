@@ -81,7 +81,7 @@ void flow_io_set_server(GtkTreeIter * server_iter, const gchar * input, const gc
 /**
  * Runs the last used IO configuration.
  */
-void flow_fast_run(gboolean parellel, gboolean single);
+void gebr_ui_flow_run(gboolean parellel, gboolean single);
 
 /**
  * flow_add_program_sequence_to_view:

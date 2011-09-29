@@ -205,7 +205,7 @@ void on_flow_execute_activate(void)
 	if (!flows_check_before_execution())
 		return;
 
-	flow_fast_run(FALSE, FALSE);
+	gebr_ui_flow_run(FALSE, FALSE);
 }
 
 void on_flow_execute_in_parallel_activate(void)
@@ -213,7 +213,7 @@ void on_flow_execute_in_parallel_activate(void)
 	if (!flows_check_before_execution())
 		return;
 
-	flow_fast_run(TRUE, FALSE);
+	gebr_ui_flow_run(TRUE, FALSE);
 }
 
 void on_flow_revision_save_activate(void)
@@ -331,7 +331,7 @@ void on_flow_component_execute_single()
 		}
 		g_clear_error(&error);
 	} else
-		flow_fast_run(FALSE, TRUE);
+		gebr_ui_flow_run(FALSE, TRUE);
 }
 
 void on_job_control_save(void)

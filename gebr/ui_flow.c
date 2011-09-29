@@ -38,7 +38,6 @@
 #define GEBR_FLOW_UI_RESPONSE_EXECUTE 1
 
 static gboolean flow_io_run_dialog(GebrCommServerRunConfig *config, GebrServer *server, gboolean mpi_program);
-static void flow_io_run(GebrGeoXmlFlow *flow, gboolean parallel, gboolean single);
 
 gboolean flow_io_get_selected(struct ui_flow_io *ui_flow_io, GtkTreeIter * iter)
 {
@@ -63,11 +62,6 @@ void flow_io_set_server(GtkTreeIter * server_iter, const gchar * input, const gc
 	gebr_geoxml_flow_io_set_error(gebr.flow, error);
 
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
-}
-
-void flow_fast_run(gboolean parallel, gboolean single)
-{
-	flow_io_run(gebr.flow, parallel, single);
 }
 
 void flow_add_program_sequence_to_view(GebrGeoXmlSequence * program,
@@ -617,12 +611,8 @@ send_sys_load_request(GList *servers, GebrGeoXmlFlow *flow, gboolean parallel, g
 	}
 }
 
-/*
- * flow_io_run:
- *
- * Check for current server and if its connected, for the queue selected.
- */
-static void flow_io_run(GebrGeoXmlFlow *flow, gboolean parallel, gboolean single)
+void
+gebr_ui_flow_run(gboolean parallel, gboolean single)
 {
 	if (!flow_browse_get_selected(NULL, FALSE)) {
 		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No Flow selected."));
@@ -632,7 +622,7 @@ static void flow_io_run(GebrGeoXmlFlow *flow, gboolean parallel, gboolean single
 	if (gebr.ui_flow_edition->autochoose) {
 		GtkTreeModel *model = gtk_combo_box_get_model(GTK_COMBO_BOX(gebr.ui_flow_edition->server_combobox));
 		GList *servers = get_connected_servers(model);
-		send_sys_load_request(servers, flow, parallel, single);
+		send_sys_load_request(servers, gebr.flow, parallel, single);
 		g_list_free(servers);
 	} else {
 		/* SERVER on combox: get selected */
@@ -664,8 +654,9 @@ static void flow_io_run(GebrGeoXmlFlow *flow, gboolean parallel, gboolean single
 			gtk_tree_model_get(GTK_TREE_MODEL(server->queues_model), &queue_iter, 
 					   SERVER_QUEUE_ID, &queue_id, -1);
 
-			flow_io_run_on_server(flow, server, queue_id, parallel, single);
+			flow_io_run_on_server(gebr.flow, server, queue_id, parallel, single);
 			g_free(queue_id);
 		}
 	}
 }
+
