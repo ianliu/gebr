@@ -814,9 +814,7 @@ ui_server_has_tag (GebrServer *server,
 
 	g_return_val_if_fail(tag != NULL, FALSE);
 	g_return_val_if_fail(g_strcmp0(tag, "") == 0, FALSE);
-
-	if (server == NULL)
-		return FALSE;
+	g_return_val_if_fail(server != NULL, FALSE);
 
 	model = GTK_TREE_MODEL (gebr.ui_server_list->common.store);
 
@@ -881,6 +879,10 @@ static gchar *sort_and_remove_doubles (const gchar *tags_str)
 
 void ui_server_set_tags (GebrServer *server, const gchar *str)
 {
+	g_return_if_fail(server != NULL);
+	g_return_if_fail(str != NULL);
+	g_return_if_fail(g_strcmp0(str, "") == 0);
+
 	gtk_list_store_set (gebr.ui_server_list->common.store, &server->iter,
 			    SERVER_TAGS, str,
 			    -1);
