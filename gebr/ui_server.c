@@ -695,12 +695,14 @@ void server_list_show(struct ui_server_list *ui_server_list)
 	gtk_widget_show_all(ui_server_list->common.dialog);
 }
 
-/*
- * Function: server_list_updated_status
- * Update status of _server_ in store
+/**
+ * server_list_updated_status:
+ * @server: Pointer to an server
  *
+ * Update status of @server in store
  */
-void server_list_updated_status(GebrServer *server)
+void
+server_list_updated_status(GebrServer *server)
 {
 	GdkPixbuf *status_icon;
 	GtkTreePath *path;
