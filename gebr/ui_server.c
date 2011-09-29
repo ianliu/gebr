@@ -746,7 +746,15 @@ ui_server_list_tag (GebrServer *server)
 	return tag_list;
 }
 
-GList *ui_server_servers_with_tag (const gchar *tag) {
+/**
+ * ui_server_servers_with_tag:
+ * @tag: Tag to be seached
+ *
+ * Return a list with all servers with tag @tag
+ */
+GList *
+ui_server_servers_with_tag (const gchar *tag)
+{
 	GList *list = NULL;
 	GtkTreeIter iter;
 	GtkTreeModel *model;
@@ -787,7 +795,17 @@ GList *ui_server_servers_with_tag (const gchar *tag) {
 	return g_list_reverse (list);
 }
 
-gboolean ui_server_has_tag (GebrServer *server, const gchar *tag)
+/**
+ * ui_server_has_tag:
+ * @server: Pointer to an server
+ * @tag: Tag to be seached
+ *
+ * Return TRUE if @server has tag @tag, FALSE otherwise. If @server is NULL this
+ * fuction returns FALSE.
+ */
+gboolean
+ui_server_has_tag (GebrServer *server,
+		   const gchar *tag)
 {
 	gchar *tags;
 	gchar **tag_list;

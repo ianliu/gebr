@@ -85,9 +85,12 @@ struct ui_server_select {
 gchar **
 ui_server_list_tag (GebrServer *server);
 
-GList *ui_server_servers_with_tag (const gchar *tag);
+GList *
+ui_server_servers_with_tag (const gchar *tag);
 
-gboolean ui_server_has_tag (GebrServer *server, const gchar *tag);
+gboolean
+ui_server_has_tag (GebrServer *server,
+		   const gchar *tag);
 
 void ui_server_set_tags (GebrServer *server, const gchar *str);
 
