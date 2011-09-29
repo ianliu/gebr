@@ -727,6 +727,9 @@ gchar **ui_server_list_tag (GebrServer *server)
 	gchar **tag_list;
 	GtkTreeModel *model;
 
+	if (server == NULL)
+		return NULL;
+
 	model = GTK_TREE_MODEL (gebr.ui_server_list->common.store);
 
 	gtk_tree_model_get(model, &server->iter, SERVER_TAGS, &tags, -1);
