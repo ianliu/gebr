@@ -937,7 +937,8 @@ ui_server_get_all_tags (void)
 	return retval;
 }
 
-gchar **ui_server_get_all_fsid (void)
+gchar **
+ui_server_get_all_fsid (void)
 {
 	gchar *fsid;
 	gchar *sorted;

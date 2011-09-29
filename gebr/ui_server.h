@@ -101,7 +101,13 @@ ui_server_get_all_tags (void);
 
 void ui_server_update_tags_combobox (void);
 
-gchar **ui_server_get_all_fsid (void);
+/**
+ * ui_server_get_all_fsid:
+ *
+ * Return a list of all fsid (file system id) from all servers
+ */
+gchar **
+ui_server_get_all_fsid (void);
 
 GtkWidget *ui_server_create_tag_combo_box (void);
 
