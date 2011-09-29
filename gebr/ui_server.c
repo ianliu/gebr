@@ -934,7 +934,17 @@ ui_server_get_all_fsid (void)
 	return retval;
 }
 
-static gboolean tag_is_heterogeneous (const gchar *tag)
+/**
+ * tag_is_heterogeneous:
+ *
+ * @tag: The tag to be checked
+ *
+ * Check if a server tag is heterogeneous. When a tag is
+ * heterogeneous it means that this tag is applied to servers
+ * in different filesystems.
+ */
+static gboolean
+tag_is_heterogeneous (const gchar *tag)
 {
 	gchar *fs1, *fs2;
 	GList *servers = NULL;
@@ -942,6 +952,9 @@ static gboolean tag_is_heterogeneous (const gchar *tag)
 	GebrServer *svr1, *srv2;
 	GtkTreeModel *model;
 	gboolean retval = FALSE;
+
+	g_return_val_if_fail(tag != NULL, FALSE);
+	g_return_val_if_fail(g_strcmp0(tag, "") == 0, FALSE);
 
 	model = GTK_TREE_MODEL (gebr.ui_server_list->common.store);
 	list = servers = ui_server_servers_with_tag (tag);
