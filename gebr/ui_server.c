@@ -40,7 +40,9 @@
  * Prototypes
  */
 
-static void server_list_add(struct ui_server_list *ui_server_list, const gchar * address);
+static void
+server_list_add(struct ui_server_list *ui_server_list,
+		const gchar * address);
 
 static void on_combo_changed(gpointer user_data);
 
@@ -426,11 +428,16 @@ static void server_common_actions(GtkDialog * dialog, gint arg1, struct ui_serve
 	}
 }
 
-/*
- * Function: server_list_add
+/**
+ * server_list_add:
+ * @ui_server_list: Pointer to user interface server list
+ * @address: The new server address
+ *
  * Callback to add a server to the server list
  */
-static void server_list_add(struct ui_server_list *ui_server_list, const gchar * address)
+static void
+server_list_add(struct ui_server_list *ui_server_list,
+		const gchar * address)
 {
 	gboolean ret;
 	GtkTreeIter iter;
@@ -450,7 +457,8 @@ static void server_list_add(struct ui_server_list *ui_server_list, const gchar *
 		if (is_auto_choose)
 			continue;
 
-		if (g_strcmp0 (server->comm->address->str, address) == 0) {
+		if (g_strcmp0 (server->comm->address->str, address) == 0)
+		{
 			ret = gtk_tree_model_filter_convert_child_iter_to_iter (
 					GTK_TREE_MODEL_FILTER (ui_server_list->common.filter),
 					&filter_iter, &iter);
@@ -1120,9 +1128,9 @@ gboolean ui_server_ask_for_tags_remove_permission (void){
 	gboolean result = FALSE;
 	gchar *tags;
 	GString *removed_tags = g_string_new(NULL);
-	gchar **removed_tagsv; 
+	gchar **removed_tagsv;
 	GString *all_tags = g_string_new(NULL);
-	gchar **all_tagsv; 
+	gchar **all_tagsv;
 	GList *all = NULL;
 
 
