@@ -39,31 +39,6 @@
 
 static gboolean flow_io_run_dialog(GebrCommServerRunConfig *config, GebrServer *server, gboolean mpi_program);
 
-gboolean flow_io_get_selected(struct ui_flow_io *ui_flow_io, GtkTreeIter * iter)
-{
-	return gtk_tree_selection_get_selected(
-			gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_flow_io->treeview)), NULL, iter);
-}
-
-void flow_io_select_iter(struct ui_flow_io *ui_flow_io, GtkTreeIter * iter)
-{
-	gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(ui_flow_io->treeview), iter);
-}
-
-void flow_io_set_server(GtkTreeIter * server_iter, const gchar * input, const gchar * output, const gchar * error)
-{
-	GebrServer *server;
-
-	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), server_iter, SERVER_POINTER, &server, -1);
-
-	gebr_geoxml_flow_server_set_address(gebr.flow, server->comm->address->str);
-	gebr_geoxml_flow_io_set_input(gebr.flow, input);
-	gebr_geoxml_flow_io_set_output(gebr.flow, output);
-	gebr_geoxml_flow_io_set_error(gebr.flow, error);
-
-	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
-}
-
 void flow_add_program_sequence_to_view(GebrGeoXmlSequence * program,
 				       gboolean select_last,
 				       gboolean never_opened)

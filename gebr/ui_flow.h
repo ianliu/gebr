@@ -44,41 +44,6 @@ enum {
 };
 
 /**
- * Structure to work with Server IO dialog.
- */
-struct ui_flow_io {
-	GtkListStore *store;		/**< Model to hold server IO entries. */
-	GtkWidget *dialog;		/**< #GtkDialog to be shown to the user. */
-	GtkWidget *treeview;		/**< #GtkTreeView to present model data. */
-	GtkWidget *execute_button;	/**< The execute button. */
-	GtkTreeIter row_new_server;	/**< Special row, that is used to add new rows. */
-};
-
-/**
- * Fills in \p iter a reference for the selected row if there is a selection.
- * @param iter A reference to a #GtkTreeIter or #NULL.
- * @return #TRUE if there is a selection, #FALSE otherwise.
- */
-gboolean flow_io_get_selected(struct ui_flow_io *ui_flow_io, GtkTreeIter * iter);
-
-/**
- * Sets the selection of the server dialog to \p iter.
- * You must be sure \p iter is valid.
- *
- * @param iter The new row to be selected.
- */
-void flow_io_select_iter(struct ui_flow_io *ui_flow_io, GtkTreeIter * iter);
-
-/**
- * Sets the IO information for server pointed by \p server_iter.
- * @param server_iter The iterator for \ref gebr.ui_server_list->common.store.
- * @param input Input file.
- * @param output Output file.
- * @param error Error file.
- */
-void flow_io_set_server(GtkTreeIter * server_iter, const gchar * input, const gchar * output, const gchar * error);
-
-/**
  * Runs the last used IO configuration.
  */
 void gebr_ui_flow_run(gboolean parellel, gboolean single);
@@ -101,4 +66,5 @@ void flow_add_program_sequence_to_view(GebrGeoXmlSequence * program,
 void flow_program_check_sensitiveness (void);
 
 G_END_DECLS
+
 #endif				//__UI_FLOW_H
