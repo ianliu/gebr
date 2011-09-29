@@ -422,9 +422,9 @@ gebr_post_config(gboolean has_config)
 	gebr_log_load();
 	gebr_message(GEBR_LOG_START, TRUE, TRUE, _("Initiating GêBR..."));
 
+	gebr_path_resolve_home_variable(gebr.config.usermenus);
 	if (!g_file_test(gebr.config.usermenus->str, G_FILE_TEST_EXISTS))
 		g_mkdir_with_parents(gebr.config.usermenus->str, 0755);
-	gebr_path_resolve_home_variable(gebr.config.usermenus);
 
 	/* DEPRECATED: old directory structure migration */
 	if (g_str_has_suffix(gebr.config.data->str, ".gebr/gebrdata"))
