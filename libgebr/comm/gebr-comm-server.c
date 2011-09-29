@@ -68,7 +68,7 @@ static void gebr_comm_server_free_x11_forward(struct gebr_comm_server *server);
 static void gebr_comm_server_free_for_reuse(struct gebr_comm_server *server);
 
 
-GebrCommRunConfig * gebr_comm_server_run_config_new(void)
+GebrCommRunConfig * gebr_comm_run_config_new(void)
 {
 	GebrCommRunConfig *config = g_new(GebrCommRunConfig, 1);
 	config->flows = NULL;

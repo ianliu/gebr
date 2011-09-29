@@ -143,7 +143,7 @@ typedef struct {
 
 /**
  */
-GebrCommRunConfig * gebr_comm_server_run_config_new(void);
+GebrCommRunConfig * gebr_comm_run_config_new(void);
 
 /**
  */

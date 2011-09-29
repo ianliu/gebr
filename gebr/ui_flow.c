@@ -211,7 +211,7 @@ flow_io_run_on_server(GebrGeoXmlFlow *flow,
 	}
 
 	/* initialization */
-	GebrCommRunConfig *config = gebr_comm_server_run_config_new();
+	GebrCommRunConfig *config = gebr_comm_run_config_new();
 	config->queue = NULL;
 	config->parallel = parallel;
 	config->execution_speed = g_strdup_printf("%d", gebr_interface_get_execution_speed());
@@ -469,10 +469,15 @@ send_sys_load_request(GList *servers, GebrGeoXmlFlow *flow, gboolean parallel, g
 	}
 }
 
-static GebrCommRunConfig *
-fill_config_run_struct(void)
+/*
+ * config: (inout)
+ *
+ * Populates a GebrCommRunConfig from the interface setup so we can execute it.
+ */
+static void
+fill_config_run_struct(GebrCommRunConfig *config)
 {
-	GebrCommRunConfig *config = gebr_comm_server_run_config_new();
+	GebrCommRunConfig *config = gebr_comm_run_config_new();
 	return config;
 }
 
