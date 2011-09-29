@@ -794,6 +794,12 @@ gboolean ui_server_has_tag (GebrServer *server, const gchar *tag)
 	GtkTreeModel *model;
 	gboolean retval = FALSE;
 
+	g_return_val_if_fail(tag != NULL, FALSE);
+	g_return_val_if_fail(g_strcmp0(tag, "") == 0, FALSE);
+
+	if (server == NULL)
+		return FALSE;
+
 	model = GTK_TREE_MODEL (gebr.ui_server_list->common.store);
 
 	gtk_tree_model_get (model, &server->iter, SERVER_TAGS, &tags, -1);
