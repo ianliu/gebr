@@ -441,10 +441,16 @@ static void server_list_add(struct ui_server_list *ui_server_list, const gchar *
 	/* check if it is already in list */
 	gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(ui_server_list->common.store)) {
 		GebrServer *server;
+		gboolean is_auto_choose = FALSE;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(ui_server_list->common.store), &iter, SERVER_POINTER, &server, -1);
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter,
+		   				   SERVER_IS_AUTO_CHOOSE, &is_auto_choose, -1);
 
-		if (strcmp (server->comm->address->str, address) == 0) {
+		if (is_auto_choose)
+			continue;
+
+		if (g_strcmp0 (server->comm->address->str, address) == 0) {
 			ret = gtk_tree_model_filter_convert_child_iter_to_iter (
 					GTK_TREE_MODEL_FILTER (ui_server_list->common.filter),
 					&filter_iter, &iter);
