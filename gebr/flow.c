@@ -542,7 +542,7 @@ void flow_set_paths_to_empty(GebrGeoXmlFlow * flow)
 	flow_set_paths_to(flow, func, TRUE);
 }
 
-void flow_run(GebrServer *server, GebrCommServerRunConfig * config, gboolean single)
+void flow_run(GebrServer *server, GebrCommRunConfig * config, gboolean single)
 {
 	GtkTreeIter iter;
 

@@ -41,7 +41,7 @@
  * @mpi_program:
  */
 static gboolean
-flow_io_run_dialog(GebrCommServerRunConfig *config,
+flow_io_run_dialog(GebrCommRunConfig *config,
 		   GebrServer              *server,
 		   gboolean                 mpi_program)
 {
@@ -211,7 +211,7 @@ flow_io_run_on_server(GebrGeoXmlFlow *flow,
 	}
 
 	/* initialization */
-	GebrCommServerRunConfig *config = gebr_comm_server_run_config_new();
+	GebrCommRunConfig *config = gebr_comm_server_run_config_new();
 	config->queue = NULL;
 	config->parallel = parallel;
 	config->execution_speed = g_strdup_printf("%d", gebr_interface_get_execution_speed());
@@ -467,6 +467,12 @@ send_sys_load_request(GList *servers, GebrGeoXmlFlow *flow, gboolean parallel, g
 				 G_CALLBACK(on_response_received), scores);
 		scores->requests++;
 	}
+}
+
+static GebrCommRunConfig *
+fill_config_run_struct(void)
+{
+	GebrCommRunConfig *config = gebr_comm_server_run_config_new();
 }
 
 /* Public methods {{{1 */

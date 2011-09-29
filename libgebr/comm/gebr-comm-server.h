@@ -123,7 +123,7 @@ typedef struct {
 	guint run_id;
 } GebrCommServerRunFlow;
 /**
- * GebrCommServerRunConfig:
+ * GebrCommRunConfig:
  * @flows: use gebr_comm_server_run_config_add_flow to add a flow
  * @parallel: whether this will be executed in a parallel environment
  * @account: account for moab servers
@@ -139,19 +139,19 @@ typedef struct {
 	gchar * queue;
 	gchar * num_processes;
 	gchar * execution_speed;
-} GebrCommServerRunConfig;
+} GebrCommRunConfig;
 
 /**
  */
-GebrCommServerRunConfig * gebr_comm_server_run_config_new(void);
+GebrCommRunConfig * gebr_comm_server_run_config_new(void);
 
 /**
  */
-void gebr_comm_server_run_config_free(GebrCommServerRunConfig *run_config);
+void gebr_comm_server_run_config_free(GebrCommRunConfig *run_config);
 
 /**
  */
-guint gebr_comm_server_run_config_add_flow(GebrCommServerRunConfig *config,
+guint gebr_comm_server_run_config_add_flow(GebrCommRunConfig *config,
                                            GebrValidator *vaildator,
                                            GebrGeoXmlFlow *flow);
 
@@ -194,7 +194,7 @@ gboolean gebr_comm_server_forward_x11(struct gebr_comm_server *gebr_comm_server,
  * Ask _gebr_comm_server_ to run the current _flow_.
  * Returns the run_id for the first flow.
  */
-void gebr_comm_server_run_flow(struct gebr_comm_server *gebr_comm_server, GebrCommServerRunConfig * config);
+void gebr_comm_server_run_flow(struct gebr_comm_server *gebr_comm_server, GebrCommRunConfig * config);
 
 G_END_DECLS
 #endif				//__GEBR_COMM_SERVER_H

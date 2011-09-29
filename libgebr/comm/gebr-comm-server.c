@@ -68,16 +68,16 @@ static void gebr_comm_server_free_x11_forward(struct gebr_comm_server *server);
 static void gebr_comm_server_free_for_reuse(struct gebr_comm_server *server);
 
 
-GebrCommServerRunConfig * gebr_comm_server_run_config_new(void)
+GebrCommRunConfig * gebr_comm_server_run_config_new(void)
 {
-	GebrCommServerRunConfig *config = g_new(GebrCommServerRunConfig, 1);
+	GebrCommRunConfig *config = g_new(GebrCommServerRunConfig, 1);
 	config->flows = NULL;
 	config->parallel = FALSE;
 	config->account = config->queue = config->num_processes = NULL;
 	return config;
 }
 
-void gebr_comm_server_run_config_free(GebrCommServerRunConfig *config)
+void gebr_comm_server_run_config_free(GebrCommRunConfig *config)
 {
 	void free_each(GebrCommServerRunFlow *run_flow)
 	{
@@ -150,7 +150,7 @@ gebr_comm_server_run_strip_flow(GebrValidator *validator, GebrGeoXmlFlow *flow)
 	return GEBR_GEOXML_FLOW (clone);
 }
 
-guint gebr_comm_server_run_config_add_flow(GebrCommServerRunConfig *config, GebrValidator *validator, GebrGeoXmlFlow * flow)
+guint gebr_comm_server_run_config_add_flow(GebrCommRunConfig *config, GebrValidator *validator, GebrGeoXmlFlow * flow)
 {
 	static guint run_id = 0;
 	GebrCommServerRunFlow *run_flow = g_new(GebrCommServerRunFlow, 1);
@@ -369,7 +369,7 @@ gboolean gebr_comm_server_forward_x11(struct gebr_comm_server *server, guint16 p
 	return ret;
 }
 
-void gebr_comm_server_run_flow(struct gebr_comm_server *server, GebrCommServerRunConfig * config)
+void gebr_comm_server_run_flow(struct gebr_comm_server *server, GebrCommRunConfig * config)
 {
 	GString *run_id_gstring = g_string_new("");
 
