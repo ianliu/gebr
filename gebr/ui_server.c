@@ -787,7 +787,7 @@ ui_server_has_tag (GebrServer *server,
 	gboolean retval = FALSE;
 
 	g_return_val_if_fail(tag != NULL, FALSE);
-	g_return_val_if_fail(g_strcmp0(tag, "") == 0, FALSE);
+	g_return_val_if_fail(g_strcmp0(tag, "") != 0, FALSE);
 	g_return_val_if_fail(server != NULL, FALSE);
 
 	model = GTK_TREE_MODEL (gebr.ui_server_list->common.store);
@@ -857,7 +857,7 @@ ui_server_set_tags (GebrServer *server,
 {
 	g_return_if_fail(server != NULL);
 	g_return_if_fail(str != NULL);
-	g_return_if_fail(g_strcmp0(str, "") == 0);
+	g_return_if_fail(g_strcmp0(str, "") != 0);
 
 	gtk_list_store_set (gebr.ui_server_list->common.store, &server->iter,
 			    SERVER_TAGS, str,
@@ -954,7 +954,7 @@ tag_is_heterogeneous (const gchar *tag)
 	gboolean retval = FALSE;
 
 	g_return_val_if_fail(tag != NULL, FALSE);
-	g_return_val_if_fail(g_strcmp0(tag, "") == 0, FALSE);
+	g_return_val_if_fail(g_strcmp0(tag, "") != 0, FALSE);
 
 	model = GTK_TREE_MODEL (gebr.ui_server_list->common.store);
 	list = servers = ui_server_servers_with_tag (tag);
