@@ -1175,6 +1175,14 @@ gboolean ui_server_ask_for_tags_remove_permission (void){
 
 	/* Build the list with all tags not sorted nor exclusive tags*/
 	gebr_gui_gtk_tree_model_foreach (iter, GTK_TREE_MODEL (gebr.ui_server_list->common.store)) {
+		gboolean is_auto_choose = FALSE;
+
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter,
+		   				   SERVER_IS_AUTO_CHOOSE, &is_auto_choose, -1);
+
+		if (is_auto_choose)
+			continue;
+
 		gtk_tree_model_get (GTK_TREE_MODEL (gebr.ui_server_list->common.store), &iter,
 				    SERVER_TAGS, &tags,
 				    -1);
@@ -1192,6 +1200,14 @@ gboolean ui_server_ask_for_tags_remove_permission (void){
 	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_server_list->common.view) {
 
 		GebrServer *server;
+		gboolean is_auto_choose = FALSE;
+
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter,
+		   				   SERVER_IS_AUTO_CHOOSE, &is_auto_choose, -1);
+
+		if (is_auto_choose)
+			continue;
+
 		gtk_tree_model_get (gebr.ui_server_list->common.sort_store, &iter,
 				    SERVER_POINTER, &server,
 				    SERVER_TAGS, &tags,
