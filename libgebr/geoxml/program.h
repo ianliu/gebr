@@ -263,9 +263,9 @@ GebrGeoXmlProgramControl gebr_geoxml_program_get_control(GebrGeoXmlProgram * pro
  * Returns: 0 if @prog is %NULL or the parameter is not defined, otherwise it
  * returns the non-negative value representing the number of iterations.
  */
-const gchar *gebr_geoxml_program_control_get_n(GebrGeoXmlProgram *prog,
-					       const gchar **step,
-					       const gchar **ini);
+gchar *gebr_geoxml_program_control_get_n(GebrGeoXmlProgram *prog,
+					 gchar **step,
+					 gchar **ini);
 
 /**
  * gebr_geoxml_program_control_get_labels:
@@ -275,9 +275,9 @@ const gchar *gebr_geoxml_program_control_get_n(GebrGeoXmlProgram *prog,
  * @niter: Return location for number of iterations label.
  */
 void gebr_geoxml_program_control_get_labels(GebrGeoXmlProgram *prog,
-					    const gchar **ini,
-					    const gchar **step,
-					    const gchar **niter);
+					    gchar **ini,
+					    gchar **step,
+					    gchar **niter);
 
 /**
  * gebr_geoxml_program_control_set_n:

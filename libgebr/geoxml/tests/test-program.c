@@ -444,8 +444,8 @@ void test_gebr_geoxml_program_control_get_n(void)
 	GebrGeoXmlProgram *program;
 	GebrGeoXmlParameters *parameters_list;
 	GebrGeoXmlProgramParameter *parameter;
-	const gchar *step, *ini;
-	const gchar *iter;
+	char *step, *ini;
+	gchar *iter;
 
 	flow = gebr_geoxml_flow_new ();
 	gebr_geoxml_document_load((GebrGeoXmlDocument**)&forloop, TEST_DIR"/forloop.mnu", FALSE, NULL);
@@ -469,11 +469,15 @@ void test_gebr_geoxml_program_control_get_n(void)
 	g_assert(gebr_geoxml_parameter_get_is_program_parameter((GebrGeoXmlParameter*)parameter));
 	gebr_geoxml_program_parameter_set_first_value(parameter, FALSE, "1337");
 
-	iter =	gebr_geoxml_program_control_get_n(program, &step, &ini);
+	iter = gebr_geoxml_program_control_get_n(program, &step, &ini);
 
 	g_assert_cmpstr(ini, ==, "5");
 	g_assert_cmpstr(step, ==, "8000");
 	g_assert_cmpstr(iter, ==, "1337");
+
+	g_free(step);
+	g_free(ini);
+	g_free(iter);
 }
 
 int main(int argc, char *argv[])

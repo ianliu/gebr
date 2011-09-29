@@ -345,8 +345,8 @@ GebrGeoXmlProgramControl gebr_geoxml_program_get_control(GebrGeoXmlProgram * pro
 
 static void
 gebr_geoxml_program_control_get_info(GebrGeoXmlProgram *prog,
-				     const gchar *bounds[],
-				     const gchar *labels[])
+				     gchar *bounds[],
+				     gchar *labels[])
 {
 	GebrGeoXmlProgramParameter *pparam;
 	GebrGeoXmlParameters *params;
@@ -388,12 +388,12 @@ gebr_geoxml_program_control_get_info(GebrGeoXmlProgram *prog,
 
 void
 gebr_geoxml_program_control_get_labels(GebrGeoXmlProgram *prog,
-				       const gchar **ini,
-				       const gchar **step,
-				       const gchar **niter)
+				       gchar **ini,
+				       gchar **step,
+				       gchar **niter)
 {
 	GebrGeoXmlProgramControl c;
-	const gchar *labels[3];
+	gchar *labels[3];
 
 	g_return_if_fail (prog != NULL);
 
@@ -412,13 +412,13 @@ gebr_geoxml_program_control_get_labels(GebrGeoXmlProgram *prog,
 		*niter = labels[2];
 }
 
-const gchar *
+gchar *
 gebr_geoxml_program_control_get_n(GebrGeoXmlProgram *prog,
-				  const gchar **step,
-				  const gchar **ini)
+				  gchar **step,
+				  gchar **ini)
 {
 	GebrGeoXmlProgramControl c;
-	const gchar *bounds[3];
+	gchar *bounds[3];
 
 	g_return_val_if_fail (prog != NULL, NULL);
 	c = gebr_geoxml_program_get_control (prog);

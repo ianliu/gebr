@@ -973,7 +973,7 @@ static gchar* define_bc_variables(GebrdJob *job, GString *expr_buf, GString *str
 	gsize j = 0;
 	const gchar *value;
 	const gchar *keyword;
-	const gchar *n = NULL;
+	gchar *n;
 	gchar *result = NULL;
 	GebrGeoXmlSequence *seq;
 	GebrGeoXmlParameters *params;
@@ -989,7 +989,7 @@ static gchar* define_bc_variables(GebrdJob *job, GString *expr_buf, GString *str
 	    && status == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED)
 	{
 		gchar *iter_expr;
-		const gchar *ini, *step;
+		gchar *ini, *step;
 		GebrGeoXmlProgramParameter *pparam;
 		n = gebr_geoxml_program_control_get_n(program, &step, &ini);
 		gebr_validator_evaluate(gebrd_get_validator(gebrd), n, GEBR_GEOXML_PARAMETER_TYPE_FLOAT, GEBR_GEOXML_DOCUMENT_TYPE_LINE, &result, &err);
@@ -1005,6 +1005,9 @@ static gchar* define_bc_variables(GebrdJob *job, GString *expr_buf, GString *str
 		pparam = GEBR_GEOXML_PROGRAM_PARAMETER(gebr_geoxml_document_get_dict_parameter(gebrd->flow));
 		gebr_geoxml_program_parameter_set_first_value(pparam, FALSE, iter_expr);
 		g_free(iter_expr);
+		g_free(ini);
+		g_free(step);
+		g_free(n);
 	}
 
 	GebrGeoXmlDocument *docs[3] = {
