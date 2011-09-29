@@ -16,8 +16,6 @@
  *   <http://www.gnu.org/licenses/>.
  */
 
-#include <string.h>
-
 #include <glib/gi18n.h>
 #include <libgebr/date.h>
 #include <libgebr/gui/gebr-gui-file-entry.h>
@@ -35,18 +33,17 @@
 
 #include "job.h"
 
-#define GEBR_FLOW_UI_RESPONSE_EXECUTE 1
-
-static gboolean flow_io_run_dialog(GebrCommServerRunConfig *config, GebrServer *server, gboolean mpi_program);
-
-/**
- * \internal
- *
- * @param config A pointer to a gebr_comm_server_run structure, which will hold the parameters entered within the dialog.
- * @param server
- * @param mpi_program
+/* Private methods {{{1 */
+/*
+ * flow_io_run_dialog:
+ * @config: A pointer to a gebr_comm_server_run structure, which will hold the parameters entered within the dialog.
+ * @server:
+ * @mpi_program:
  */
-static gboolean flow_io_run_dialog(GebrCommServerRunConfig *config, GebrServer *server, gboolean mpi_program)
+static gboolean
+flow_io_run_dialog(GebrCommServerRunConfig *config,
+		   GebrServer              *server,
+		   gboolean                 mpi_program)
 {
 	gboolean ret = TRUE;
 	GtkWidget *dialog;
@@ -472,6 +469,7 @@ send_sys_load_request(GList *servers, GebrGeoXmlFlow *flow, gboolean parallel, g
 	}
 }
 
+/* Public methods {{{1 */
 void
 gebr_ui_flow_run(gboolean parallel, gboolean single)
 {
@@ -520,4 +518,3 @@ gebr_ui_flow_run(gboolean parallel, gboolean single)
 		}
 	}
 }
-
