@@ -96,7 +96,8 @@ void
 ui_server_set_tags (GebrServer *server,
 		    const gchar *str);
 
-gchar **ui_server_get_all_tags (void);
+gchar **
+ui_server_get_all_tags (void);
 
 void ui_server_update_tags_combobox (void);
 

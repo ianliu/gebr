@@ -898,7 +898,14 @@ ui_server_set_tags (GebrServer *server,
 	ui_server_update_tags_combobox ();
 }
 
-gchar **ui_server_get_all_tags (void)
+/**
+ * ui_server_get_all_tags:
+ *
+ * Return a list of all tags of the server selected
+ * at the interface
+ */
+gchar **
+ui_server_get_all_tags (void)
 {
 	GtkTreeIter iter;
 	GtkTreeModel *model;
