@@ -950,6 +950,13 @@ gchar **ui_server_get_all_fsid (void)
 	list = g_string_new ("");
 
 	gebr_gui_gtk_tree_model_foreach (iter, model) {
+		gboolean is_auto_choose = FALSE;
+
+		gtk_tree_model_get (model, &iter, SERVER_IS_AUTO_CHOOSE, &is_auto_choose, -1);
+
+		if (is_auto_choose)
+			continue;
+
 		gtk_tree_model_get (model, &iter, SERVER_FS, &fsid, -1);
 		if (fsid)
 			g_string_append_printf (list, "%s,", fsid);
