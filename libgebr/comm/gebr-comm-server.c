@@ -70,7 +70,7 @@ static void gebr_comm_server_free_for_reuse(struct gebr_comm_server *server);
 
 GebrCommRunConfig * gebr_comm_server_run_config_new(void)
 {
-	GebrCommRunConfig *config = g_new(GebrCommServerRunConfig, 1);
+	GebrCommRunConfig *config = g_new(GebrCommRunConfig, 1);
 	config->flows = NULL;
 	config->parallel = FALSE;
 	config->account = config->queue = config->num_processes = NULL;

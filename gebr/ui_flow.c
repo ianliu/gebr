@@ -42,8 +42,8 @@
  */
 static gboolean
 flow_io_run_dialog(GebrCommRunConfig *config,
-		   GebrServer              *server,
-		   gboolean                 mpi_program)
+		   GebrServer        *server,
+		   gboolean           mpi_program)
 {
 	gboolean ret = TRUE;
 	GtkWidget *dialog;
@@ -473,6 +473,7 @@ static GebrCommRunConfig *
 fill_config_run_struct(void)
 {
 	GebrCommRunConfig *config = gebr_comm_server_run_config_new();
+	return config;
 }
 
 /* Public methods {{{1 */
