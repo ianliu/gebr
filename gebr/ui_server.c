@@ -705,6 +705,9 @@ void server_list_updated_status(GebrServer *server)
 	GdkPixbuf *status_icon;
 	GtkTreePath *path;
 
+	if (server == NULL)
+		return;
+
 	status_icon = (server->last_error->len || server->comm->last_error->len)
 	    ? gebr.pixmaps.stock_warning : (server->comm->socket->protocol->logged == TRUE)
 	    ? gebr.pixmaps.stock_connect : gebr.pixmaps.stock_disconnect;
