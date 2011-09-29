@@ -157,5 +157,23 @@ gboolean flow_edition_find_flow_server (GebrGeoXmlFlow *flow,
  */
 void flow_edition_revalidate_programs(void);
 
+/**
+ * flow_add_program_sequence_to_view:
+ * @program: A #GebrGeoXmlSequence of #GebrGeoXmlProgram to be added to the view.
+ * @select_last: Whether to select the last program.
+ *
+ * Adds all programs in the sequence @program into the flow edition view.
+ */
+void flow_add_program_sequence_to_view(GebrGeoXmlSequence * program,
+				       gboolean select_last,
+				       gboolean never_opened);
+
+/**
+ * Checks if the first program has input entrance, the last one has output exit and if even one of then has error exit.
+ * If one of this is false, so the respective component are made insensitive. 
+ */
+void flow_program_check_sensitiveness (void);
+
+
 G_END_DECLS
 #endif				//__UI_FLOW_COMPONENT_H
