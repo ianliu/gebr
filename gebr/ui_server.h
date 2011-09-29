@@ -93,7 +93,7 @@ struct ui_server_select {
  * ui_server_list_tag:
  * @server: Pointer to an server
  *
- * Return @server tags in the form of a gchar list
+ * Return tags associated to @server in the form of a gchar list
  */
 gchar **
 ui_server_list_tag (GebrServer *server);
@@ -112,7 +112,7 @@ ui_server_servers_with_tag (const gchar *tag);
  * @server: Pointer to an server
  * @tag: Tag to be seached
  *
- * Return TRUE if @server has tag @tag, FALSE otherwise. If @server is NULL this
+ * Return TRUE if @server is associated to tag @tag, FALSE otherwise. If @server is NULL this
  * fuction returns FALSE.
  */
 gboolean
@@ -124,7 +124,7 @@ ui_server_has_tag (GebrServer *server,
  * @server: Pointer to an server
  * @str: String containing tags to be set
  *
- * Sets the tags of @server with string @str
+ * Associate server @sever to the tags contained in a comma-separated-strint @str
  */
 void
 ui_server_set_tags (GebrServer *server,
@@ -133,7 +133,7 @@ ui_server_set_tags (GebrServer *server,
 /**
  * ui_server_get_all_tags:
  *
- * Return a list of all tags of the server selected
+ * Return a list of all tags associated to the server selected
  * at the interface
  */
 gchar **
@@ -144,7 +144,7 @@ void ui_server_update_tags_combobox (void);
 /**
  * ui_server_get_all_fsid:
  *
- * Return a list of all fsid (file system id) from all servers
+ * Return a list of all fsid (file system id) of all servers
  */
 gchar **
 ui_server_get_all_fsid (void);
