@@ -721,7 +721,14 @@ server_list_updated_status(GebrServer *server)
 	gtk_tree_model_row_changed(GTK_TREE_MODEL(gebr.ui_server_list->common.store), path, &server->iter);
 }
 
-gchar **ui_server_list_tag (GebrServer *server)
+/**
+ * ui_server_list_tag:
+ * @server: Pointer to an server
+ *
+ * Return @server tags in the form of a gchar list
+ */
+gchar **
+ui_server_list_tag (GebrServer *server)
 {
 	gchar *tags;
 	gchar **tag_list;

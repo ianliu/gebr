@@ -82,7 +82,8 @@ struct ui_server_select {
 	GtkWidget *ok_button;
 };
 
-gchar **ui_server_list_tag (GebrServer *server);
+gchar **
+ui_server_list_tag (GebrServer *server);
 
 GList *ui_server_servers_with_tag (const gchar *tag);
 
