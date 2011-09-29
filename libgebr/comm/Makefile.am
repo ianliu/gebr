@@ -30,37 +30,41 @@ libcomminclude_HEADERS=gebr-comm.h
 
 lib_LTLIBRARIES = libgebr_comm.la
 libgebr_comm_la_SOURCES = \
-	gebr-comm-socketaddress.c	\
-	gebr-comm-hostinfo.c		\
-	gebr-comm-socket.c		\
-	gebr-comm-streamsocket.c	\
-	gebr-comm-listensocket.c	\
 	gebr-comm-channelsocket.c	\
-	gebr-comm-process.c		\
-	gebr-comm-terminalprocess.c	\
-	gebr-comm-protocol.c		\
-	gebr-comm-protocol-socket.c	\
-	gebr-comm-json-content.c	\
+	gebr-comm-hostinfo.c		\
 	gebr-comm-http-msg.c 		\
 	gebr-comm-job.c			\
-	gebr-comm-server.c
+	gebr-comm-json-content.c	\
+	gebr-comm-listensocket.c	\
+	gebr-comm-process.c		\
+	gebr-comm-protocol-socket.c	\
+	gebr-comm-protocol.c		\
+	gebr-comm-runner.c		\
+	gebr-comm-server.c		\
+	gebr-comm-socket.c		\
+	gebr-comm-socketaddress.c	\
+	gebr-comm-streamsocket.c	\
+	gebr-comm-terminalprocess.c	\
+	$(NULL)
 
 libgebr_commsubincludedir = $(includedir)/libgebr/comm
 libgebr_commsubinclude_HEADERS = \
-	gebr-comm-socketaddress.h	\
-	gebr-comm-hostinfo.h		\
-	gebr-comm-socket.h		\
-	gebr-comm-streamsocket.h	\
-	gebr-comm-listensocket.h	\
 	gebr-comm-channelsocket.h	\
-	gebr-comm-process.h		\
-	gebr-comm-terminalprocess.h	\
-	gebr-comm-protocol.h		\
-	gebr-comm-protocol-socket.h	\
-	gebr-comm-json-content.h	\
+	gebr-comm-hostinfo.h		\
 	gebr-comm-http-msg.h 		\
 	gebr-comm-job.h			\
-	gebr-comm-server.h
+	gebr-comm-json-content.h	\
+	gebr-comm-listensocket.h	\
+	gebr-comm-process.h		\
+	gebr-comm-protocol-socket.h	\
+	gebr-comm-protocol.h		\
+	gebr-comm-runner.h		\
+	gebr-comm-server.h		\
+	gebr-comm-socket.h		\
+	gebr-comm-socketaddress.h	\
+	gebr-comm-streamsocket.h	\
+	gebr-comm-terminalprocess.h	\
+	$(NULL)
 
 noinst_HEADERS = \
 	gebr-comm-protocol_p.h			\

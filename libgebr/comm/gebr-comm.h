@@ -29,3 +29,4 @@
 #include <comm/gebr-comm-http-msg.h>
 #include <comm/gebr-comm-job.h>
 #include <comm/gebr-comm-server.h>
+#include <comm/gebr-comm-runner.h>
