@@ -877,7 +877,16 @@ static gchar *sort_and_remove_doubles (const gchar *tags_str)
 	return g_string_free (tags, FALSE);
 }
 
-void ui_server_set_tags (GebrServer *server, const gchar *str)
+/**
+ * ui_server_set_tags:
+ * @server: Pointer to an server
+ * @str: String containing tags to be set
+ *
+ * Sets the tags of @server with string @str
+ */
+void
+ui_server_set_tags (GebrServer *server,
+		    const gchar *str)
 {
 	g_return_if_fail(server != NULL);
 	g_return_if_fail(str != NULL);

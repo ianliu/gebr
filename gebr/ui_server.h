@@ -92,7 +92,9 @@ gboolean
 ui_server_has_tag (GebrServer *server,
 		   const gchar *tag);
 
-void ui_server_set_tags (GebrServer *server, const gchar *str);
+void
+ui_server_set_tags (GebrServer *server,
+		    const gchar *str);
 
 gchar **ui_server_get_all_tags (void);
 
