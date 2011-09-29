@@ -72,7 +72,14 @@ struct ui_server_list *server_list_setup_ui(void);
 
 void server_list_show(struct ui_server_list *ui_server_list);
 
-void server_list_updated_status(GebrServer *server);
+/**
+ * server_list_updated_status:
+ * @server: Pointer to an server
+ *
+ * Update status of @server in store
+ */
+void
+server_list_updated_status(GebrServer *server);
 
 struct ui_server_select {
 	struct ui_server_common common;
@@ -82,20 +89,53 @@ struct ui_server_select {
 	GtkWidget *ok_button;
 };
 
+/**
+ * ui_server_list_tag:
+ * @server: Pointer to an server
+ *
+ * Return @server tags in the form of a gchar list
+ */
 gchar **
 ui_server_list_tag (GebrServer *server);
 
+/**
+ * ui_server_servers_with_tag:
+ * @tag: Tag to be seached
+ *
+ * Return a list with all servers with tag @tag
+ */
 GList *
 ui_server_servers_with_tag (const gchar *tag);
 
+/**
+ * ui_server_has_tag:
+ * @server: Pointer to an server
+ * @tag: Tag to be seached
+ *
+ * Return TRUE if @server has tag @tag, FALSE otherwise. If @server is NULL this
+ * fuction returns FALSE.
+ */
 gboolean
 ui_server_has_tag (GebrServer *server,
 		   const gchar *tag);
 
+/**
+ * ui_server_set_tags:
+ * @server: Pointer to an server
+ * @str: String containing tags to be set
+ *
+ * Sets the tags of @server with string @str
+ */
 void
 ui_server_set_tags (GebrServer *server,
 		    const gchar *str);
 
+/**
+ * ui_server_get_all_tags:
+ *
+ * Return a list of all tags of the server selected
+ * at the interface
+ */
 gchar **
 ui_server_get_all_tags (void);
 
