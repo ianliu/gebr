@@ -51,6 +51,17 @@ gebr_server_set_property (GObject         *object,
                          GParamSpec      *pspec)
 {
 	GebrServer *self = GEBR_SERVER (object);
+	gboolean is_auto_choose = FALSE;
+
+	if (self == NULL)
+		return;
+
+	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &self->iter,
+			   SERVER_IS_AUTO_CHOOSE, &is_auto_choose, -1);
+
+	if(is_auto_choose)
+		return;
+
 	switch (prop_id) {
 	case PROP_ADDRESS:
 		gtk_list_store_set (gebr.ui_server_list->common.store, &self->iter,
