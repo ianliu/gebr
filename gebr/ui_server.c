@@ -1198,7 +1198,7 @@ gboolean ui_server_ask_for_tags_remove_permission (void){
 		GebrServer *server;
 		gboolean is_auto_choose = FALSE;
 
-		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter,
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.sort_store), &iter,
 		   				   SERVER_IS_AUTO_CHOOSE, &is_auto_choose, -1);
 
 		if (is_auto_choose)
