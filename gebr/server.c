@@ -302,7 +302,7 @@ gboolean server_find_address (const gchar *address,
 
 		gtk_tree_model_get (model, &i, SERVER_POINTER, &server, -1);
 
-		if (strcmp (address, server->comm->address->str) != 0)
+		if (g_strcmp0 (address, server->comm->address->str) != 0)
 			continue;
 
 		if (!group) {
