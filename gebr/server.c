@@ -296,9 +296,19 @@ gboolean server_find_address (const gchar *address,
 	GtkTreeIter i;
 	GtkTreeModel *model;
 
+	g_return_val_if_fail(address != NULL, FALSE);
+	g_return_val_if_fail(g_strcmp0(address, "") != 0, FALSE);
+
 	model = GTK_TREE_MODEL (gebr.ui_server_list->common.store);
 	gebr_gui_gtk_tree_model_foreach(i, model) {
 		GebrServer *server;
+		gboolean is_auto_choose = FALSE;
+
+		gtk_tree_model_get(model, &iter,
+				   SERVER_IS_AUTO_CHOOSE, &is_auto_choose, -1);
+
+		if (is_auto_choose)
+			continue;
 
 		gtk_tree_model_get (model, &i, SERVER_POINTER, &server, -1);
 
