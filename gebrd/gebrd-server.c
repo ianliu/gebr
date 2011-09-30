@@ -58,7 +58,7 @@ static gboolean server_run_lock(gboolean *already_running)
 		if (!g_file_get_contents(gebrd->run_filename->str, &contents, NULL, &error))
 			g_warning("%s:%d: Failed to retrieve contents of '%s' file",
 				  __FILE__, __LINE__, gebrd->run_filename->str);
-		puts(contents);
+
 		guint16 port = atoi(contents);
 		g_free(contents);
 

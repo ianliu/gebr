@@ -742,7 +742,6 @@ ui_server_servers_with_tag (const gchar *tag)
 	GtkTreeModel *model;
 
 	model = GTK_TREE_MODEL (gebr.ui_server_list->common.store);
-	puts(tag);
 
 	gebr_gui_gtk_tree_model_foreach (iter, model) {
 		GebrServer *server;
@@ -752,8 +751,6 @@ ui_server_servers_with_tag (const gchar *tag)
 
 		gtk_tree_model_get(model, &iter, SERVER_IS_AUTO_CHOOSE, &is_auto_choose, -1);
 
-		puts(is_auto_choose ? "Is autochoose!":":(");
-
 		if (is_auto_choose)
 			continue;
 
@@ -761,7 +758,6 @@ ui_server_servers_with_tag (const gchar *tag)
 				   SERVER_POINTER, &server,
 				   SERVER_TAGS, &tags,
 				   -1);
-		puts(tags);
 
 		tag_list = g_strsplit (tags, ",", 0);	
 		for (gint i = 0; tag_list[i]; i++) {

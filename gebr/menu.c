@@ -483,7 +483,6 @@ static gboolean populate_menu_demo(const gchar *dir, GtkMenu *menu)
 			}
 		}
 		if (!has_dir) {
-			puts("Ola");
 			menu_item = gtk_menu_item_new_with_label(_("Empty"));
 			gtk_widget_set_sensitive(menu_item, FALSE);
 			gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menu_item);

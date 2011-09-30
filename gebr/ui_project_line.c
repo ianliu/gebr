@@ -1650,7 +1650,6 @@ gint servers_sort_func (GtkTreeModel *model,
 	gboolean ca, cb;
 	gboolean is_auto_choose = FALSE;
 
-	g_message("servers_sort_func:");
 	gtk_tree_model_get(GTK_TREE_MODEL(model), a, SERVER_IS_AUTO_CHOOSE, &is_auto_choose, -1);
 
 	if (is_auto_choose)
