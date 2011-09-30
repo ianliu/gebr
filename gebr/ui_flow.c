@@ -21,6 +21,7 @@
 #include <libgebr/gui/gebr-gui-file-entry.h>
 #include <libgebr/gui/gebr-gui-utils.h>
 #include <libgebr/gui/gebr-gui-icons.h>
+#include <stdlib.h>
 
 #include "ui_flow.h"
 #include "gebr.h"
@@ -343,7 +344,7 @@ typedef struct {
  * Compute the linear regression over a given list of points (GebrPoints)
  */
 void
-create_linear_model(GList *points, GebrPoint *parameters)
+create_linear_model(GList *points, gdouble **parameters)
 {
 	gint j;
 	GList *i;
@@ -358,22 +359,57 @@ create_linear_model(GList *points, GebrPoint *parameters)
 		w += weight[j];
 	}
 	// Line Ax + B = 0
-	// A = parameters->y
-	// B = parameters->x
-	parameters->y = (w*sumXY - sumX*sumY)/(w*sumX2 - sumX*sumX);
-	parameters->x = (sumY - parameters->y*sumX)/w;
+	// A = parameters[0]
+	// B = parameters[1]
+	(*parameters)[0] = (w*sumXY - sumX*sumY)/(w*sumX2 - sumX*sumX);
+	(*parameters)[1] = (sumY - (*parameters)[0]*sumX)/w;
 }
 
+/*
+ * Compute the parameters of a polynomial (2nd order) fit
+ */
+void
+create_2ndDegreePoly_model(GList *points, gdouble **parameters)
+{
+	gdouble M, MA, MB, MC, **N;
+	gint j;
+	GList *i;
+	N=malloc( sizeof(GebrPoint*) * 3);
+	for (i = points, j = 0; i; i = i->next, j++) {
+		GebrPoint *point = i->data;
+		N[j]=malloc(sizeof(GebrPoint) * 4);
+		N[j][0] = 1;
+		N[j][1] = point->x; 
+		N[j][2] = N[j][1]*N[j][1]; 
+		N[j][3] = point->y;
+		}
+
+	M = (N[1][1] - N[0][1]) * (N[2][1] - N[0][1])*(N[2][1] - N[1][1]);
+	MA = N[2][3]*(N[1][1]-N[0][1]) + N[1][3]*(N[0][1]-N[2][1]) + N[0][3]*(N[2][1]-N[1][1]);
+	MB = N[2][3]*(N[0][2]-N[2][2]) + N[2][3]*(N[2][2]-N[0][2]) + N[0][3]*(N[1][2]-N[2][2]);
+	MC = N[2][3]*(N[0][1]*N[1][2]-N[1][1]*N[0][2]) + N[1][3]*(N[2][1]*N[0][2]-N[0][1]*N[2][2]) + N[0][3]*(N[1][1]*N[2][2]-N[2][1]*N[1][2]);  
+	// Equation Ax2 + Bx + C = 0
+	(*parameters)[0] = MA/M;
+	(*parameters)[1] = MB/M;
+	(*parameters)[2] = MC/M;
+	
+	for (gint j=0; j<3; j++)
+		free(N[j]);
+	free(N);
+}
 /*
  * Predict the future load
  */
 static gdouble
 predict_current_load(GList *points, gdouble delay)
 {
-	GebrPoint parameters;
-	create_linear_model(points, &parameters);
+	gdouble prediction;
+	gdouble *parameters=g_new0(gdouble, 3);
+//	create_linear_model(points, &parameters); 		prediction = parameters[0]*delay + parameters[1];
+	create_2ndDegreePoly_model(points, &parameters);	prediction = parameters[0]*delay*delay + parameters[1]*delay + parameters[2];
+	g_free(parameters);
 
-	return (parameters.x + parameters.y*delay);
+	return (prediction);
 }
 
 /*
