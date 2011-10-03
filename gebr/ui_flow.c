@@ -32,20 +32,10 @@
 
 #include "job.h"
 
-/* Private methods {{{1 */
-/*
- * Swaps the data structs from GebrCommRunner::servers list from GebrServer to
- * GebrCommServer, so GebrComm can handle it (because GebrComm can't see
- * GebrServer struct).
- */
-static void
-swap_server_list_and_run(GebrCommRunner *runner)
-{
-	for (GList *i = runner->servers; i; i = i->next)
-		i->data = ((GebrServer*)i->data)->comm;
-	gebr_comm_runner_run(runner);
-}
+/* Prototypes {{{1 */
+static void create_jobs_and_run(GebrCommRunner *runner);
 
+/* Private methods {{{1 */
 /*
  * flow_io_run_dialog:
  * @config: A pointer to a gebr_comm_server_run structure, which will hold the parameters entered within the dialog.
@@ -371,7 +361,7 @@ get_connected_servers(GtkTreeModel *model)
 			continue;
 
 		if (server->comm->socket->protocol->logged)
-			servers = g_list_prepend(servers, server->comm);
+			servers = g_list_prepend(servers, server);
 	}
 
 	return servers;
@@ -484,10 +474,10 @@ on_response_received(GebrCommHttpMsg *request, GebrCommHttpMsg *response, Server
 		}
 		scores->responses++;
 		if (scores->responses == scores->requests) {
-			if (!fill_runner_struct(scores->runner, NULL, scores->parallel, scores->single))
-				gebr_comm_runner_free(scores->runner);
-			else
-				swap_server_list_and_run(scores->runner);
+			scores->runner->servers = g_list_prepend(scores->runner->servers, scores->the_one);
+			if (fill_runner_struct(scores->runner, NULL, scores->parallel, scores->single))
+				create_jobs_and_run(scores->runner);
+			gebr_comm_runner_free(scores->runner);
 
 			g_debug("THE ONE: %s, Min Score: %lf", scores->the_one->comm->address->str, scores->min_score*4);
 		}
@@ -520,6 +510,61 @@ send_sys_load_request(GList *servers, GebrCommRunner *runner, gboolean parallel,
 }
 
 static void
+create_job_entry(GebrCommRunner *runner, GebrGeoXmlFlow *flow, guint runid, gboolean select)
+{
+	gchar *title;
+	GebrJob *job;
+	GebrServer *server;
+	GString *queue_string;
+
+	gebr_geoxml_flow_set_date_last_run(flow, gebr_iso_date());
+	document_save(GEBR_GEOXML_DOC(flow), FALSE, FALSE);
+	flow_browse_info_update(); 
+
+	server = runner->servers->data;
+	queue_string = g_string_new(runner->queue);
+	job = job_new_from_flow(server, flow, queue_string);
+	g_string_free(queue_string, TRUE);
+	g_string_printf(job->parent.run_id, "%u", runid);
+
+	if (select) {
+		job_set_active(job);
+		gebr.config.current_notebook = 3;
+		gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), gebr.config.current_notebook);
+	}
+
+	title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(flow));
+
+	if (gebr_comm_server_is_local(server->comm) == FALSE)
+		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Asking server '%s' to run Flow '%s'."), server->comm->address->str, title);
+	else 
+		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Asking local server to run Flow '%s'."), title);
+	g_free(title);
+}
+
+/*
+ * Creates job entries in JobControl tab. Also swaps the data structs from
+ * GebrCommRunner::servers list from GebrServer to GebrCommServer, so GebrComm
+ * can handle it (because GebrComm can't see GebrServer struct).
+ */
+static void
+create_jobs_and_run(GebrCommRunner *runner)
+{
+	gboolean first = TRUE;
+
+	for (GList *i = runner->flows; i; i = i->next) {
+		GebrCommRunnerFlow *runflow = i->data;
+		create_job_entry(runner, runflow->flow, runflow->run_id, first);
+		first = FALSE;
+	}
+
+	for (GList *i = runner->servers; i; i = i->next)
+		i->data = ((GebrServer*)i->data)->comm;
+
+	gebr_comm_runner_run(runner);
+}
+
+static void
 add_selected_flows_to_runner(GebrCommRunner *runner)
 {
 	GebrGeoXmlFlow *flow;
@@ -532,8 +577,10 @@ add_selected_flows_to_runner(GebrCommRunner *runner)
 
 	gebr_gui_gtk_tree_view_foreach_selected(&iter, treeview) {
 		gtk_tree_model_get(model, &iter, FB_XMLPOINTER, &flow, -1);
+		gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE);
 		gebr_comm_runner_add_flow(runner, gebr.validator, flow);
 	}
+	gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &gebr.flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE);
 }
 
 /*
@@ -582,12 +629,11 @@ gebr_ui_flow_run(gboolean parallel, gboolean single)
 	else
 		add_selected_flows_to_runner(runner);
 
-	// Create jobs
-
 	if (gebr.ui_flow_edition->autochoose) {
 		GList *servers = get_connected_servers(model);
 		send_sys_load_request(servers, runner, parallel, single);
 		g_list_free(servers);
+		return;
 	} else {
 		GtkTreeIter server_iter;
 		GebrServer *server;
@@ -611,7 +657,7 @@ gebr_ui_flow_run(gboolean parallel, gboolean single)
 		if (!fill_runner_struct(runner, queue_id, parallel, single))
 			goto free_and_error;
 
-		swap_server_list_and_run(runner);
+		create_jobs_and_run(runner);
 	}
 
 free_and_error:

@@ -85,6 +85,7 @@ gebr_comm_runner_new(void)
 {
 	GebrCommRunner *self = g_new(GebrCommRunner, 1);
 	self->flows = NULL;
+	self->servers = NULL;
 	self->parallel = FALSE;
 	self->account = self->queue = self->num_processes = NULL;
 	return self;
@@ -101,6 +102,7 @@ gebr_comm_runner_free(GebrCommRunner *self)
 
 	g_list_foreach(self->flows, (GFunc)free_each, NULL);
 	g_list_free(self->flows);
+	g_list_free(self->servers);
 	g_free(self->account);
 	g_free(self->queue);
 	g_free(self->execution_speed);
