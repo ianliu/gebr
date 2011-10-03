@@ -61,6 +61,9 @@ struct _GebrdJob {
 
 	GString *exec_speed;
 	gboolean is_parallelizable;
+
+	GString *buf[2];
+	gint timeout[2];
 };
 
 struct _GebrdJobClass {

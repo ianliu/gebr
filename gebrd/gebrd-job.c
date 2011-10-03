@@ -15,6 +15,8 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#define OUTPUT_FLUSH_TIMEOUT 1
+
 #define _XOPEN_SOURCE
 #include <stdlib.h>
 #include <stdio.h>
@@ -128,42 +130,46 @@ static void job_process_add_output(GebrdJob *job, GString * destination, GString
 	g_string_free(final_output, TRUE);
 }
 
+#define OUTBUF 0
+#define ERRBUF 1
 
-/**
- * \internal
- */
-static void moab_process_read_stdout(GebrCommProcess *process, GebrdJob *job)
+static void
+append_output_and_send(GebrCommProcess * process, GebrdJob *job, GString *output, gint buf)
 {
-	GString *stdout;
-	stdout = gebr_comm_process_read_stdout_string_all(process);
-	job_process_add_output(job, job->parent.output, stdout);
-	g_string_free(stdout, TRUE);
+	GTimeVal tv;
+
+	g_string_append(job->buf[buf], output->str);
+	g_get_current_time(&tv);
+
+	if (tv.tv_sec - job->timeout[buf] > OUTPUT_FLUSH_TIMEOUT) {
+		job_process_add_output(job, job->parent.output, job->buf[buf]);
+		g_string_assign(job->buf[buf], "");
+		job->timeout[buf] = tv.tv_sec;
+	}
 }
 
-/**
- * \internal
- */
-static void job_process_read_stdout(GebrCommProcess * process, GebrdJob *job)
+static void
+job_process_read_stdout(GebrCommProcess * process, GebrdJob *job)
 {
-	GString *stdout;
-
-	stdout = gebr_comm_process_read_stdout_string_all(process);
-	job_process_add_output(job, job->parent.output, stdout);
-
-	g_string_free(stdout, TRUE);
+	GString *output;
+	output = gebr_comm_process_read_stdout_string_all(process);
+	append_output_and_send(process, job, output, OUTBUF);
+	g_string_free(output, TRUE);
 }
 
-/**
- * \internal
- */
-static void job_process_read_stderr(GebrCommProcess * process, GebrdJob *job)
+static void
+job_process_read_stderr(GebrCommProcess * process, GebrdJob *job)
 {
-	GString *stderr;
+	GString *output;
+	output = gebr_comm_process_read_stderr_string_all(process);
+	append_output_and_send(process, job, output, ERRBUF);
+	g_string_free(output, TRUE);
+}
 
-	stderr = gebr_comm_process_read_stderr_string_all(process);
-	job_process_add_output(job, job->parent.output, stderr);
-
-	g_string_free(stderr, TRUE);
+static void
+moab_process_read_stdout(GebrCommProcess *process, GebrdJob *job)
+{
+	job_process_read_stdout(process, job);
 }
 
 /*
@@ -370,6 +376,10 @@ void job_new(GebrdJob ** _job, struct client * client, GString * queue, GString 
 	job->flow = NULL;
 	job->critical_error = FALSE;
 	job->user_finished = FALSE;
+	job->buf[0] = g_string_new(NULL);
+	job->buf[1] = g_string_new(NULL);
+	job->timeout[0] = 0;
+	job->timeout[1] = 0;
 
 	g_string_assign(job->parent.client_hostname, client->socket->protocol->hostname->str);
 	g_string_assign(job->parent.client_display, client->display->str);
@@ -420,6 +430,8 @@ void job_free(GebrdJob *job)
 	if (job->flow)
 		gebr_geoxml_document_free(GEBR_GEOXML_DOC(job->flow));
 	g_string_free(job->exec_speed, TRUE);
+	g_string_free(job->buf[0], TRUE);
+	g_string_free(job->buf[1], TRUE);
 	g_object_unref(job);
 }
 
