@@ -372,7 +372,7 @@ void gebrd_user_data_save(void)
 {
 	if (gebrd == NULL)
 		return;
-	puts("save");
+
 	if (!json_gobject_to_file(G_OBJECT(gebrd->user), gebrd->user_data_filename->str))
 		g_warning("Could not save user data");
 }

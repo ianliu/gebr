@@ -1648,6 +1648,17 @@ gint servers_sort_func (GtkTreeModel *model,
 {
 	GebrServer *sa, *sb;
 	gboolean ca, cb;
+	gboolean is_auto_choose = FALSE;
+
+	gtk_tree_model_get(GTK_TREE_MODEL(model), a, SERVER_IS_AUTO_CHOOSE, &is_auto_choose, -1);
+
+	if (is_auto_choose)
+		return -1;
+
+	gtk_tree_model_get(GTK_TREE_MODEL(model), b, SERVER_IS_AUTO_CHOOSE, &is_auto_choose, -1);
+
+	if (is_auto_choose)
+		return -1;
 
 	gtk_tree_model_get (model, a, SERVER_POINTER, &sa, -1);
 	gtk_tree_model_get (model, b, SERVER_POINTER, &sb, -1);
