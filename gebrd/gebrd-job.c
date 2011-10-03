@@ -834,11 +834,18 @@ static gboolean job_parse_parameter(GebrdJob *job, GebrGeoXmlParameter * paramet
 				g_ascii_strtod(strip, &end_str);
 				if(*end_str) {
 					gchar *escaped = replace_quotes(gebr_geoxml_parameter_get_label (parameter));
-					if(type == GEBR_GEOXML_PARAMETER_TYPE_INT)
+
+					if (type == GEBR_GEOXML_PARAMETER_TYPE_RANGE) {
+						const gchar *digits;
+						gebr_geoxml_program_parameter_get_range_properties(program_parameter, NULL, NULL, NULL, &digits);
+						if (g_strcmp0(digits, "0") == 0)
+							temp = g_strdup_printf("round(%s)", strip);
+					} else if (type == GEBR_GEOXML_PARAMETER_TYPE_INT)
 						temp = g_strdup_printf("round(%s)", strip);
 					else
 						temp = g_strdup(strip);
-					if(*vmin && *vmax)
+
+					if (*vmin && *vmax)
 						g_string_append_printf (expr_buf, "\t\tmin(%s,max(%s,%s)) # V[%"G_GSIZE_FORMAT"]: %s\n", vmax, vmin, temp,
 									job->expr_count + job->n_vars, escaped);
 					else if(*vmin)
