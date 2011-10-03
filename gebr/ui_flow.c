@@ -374,10 +374,10 @@ create_2ndDegreePoly_model(GList *points, gdouble **parameters)
 	gdouble M, MA, MB, MC, **N;
 	gint j;
 	GList *i;
-	N=malloc( sizeof(GebrPoint*) * 3);
+	N=g_new( GebrPoint*, 3);
 	for (i = points, j = 0; i; i = i->next, j++) {
 		GebrPoint *point = i->data;
-		N[j]=malloc(sizeof(GebrPoint) * 4);
+		N[j]=g_new(GebrPoint, 4);
 		N[j][0] = 1;
 		N[j][1] = point->x; 
 		N[j][2] = N[j][1]*N[j][1]; 
@@ -386,16 +386,16 @@ create_2ndDegreePoly_model(GList *points, gdouble **parameters)
 
 	M = (N[1][1] - N[0][1]) * (N[2][1] - N[0][1])*(N[2][1] - N[1][1]);
 	MA = N[2][3]*(N[1][1]-N[0][1]) + N[1][3]*(N[0][1]-N[2][1]) + N[0][3]*(N[2][1]-N[1][1]);
-	MB = N[2][3]*(N[0][2]-N[2][2]) + N[2][3]*(N[2][2]-N[0][2]) + N[0][3]*(N[1][2]-N[2][2]);
-	MC = N[2][3]*(N[0][1]*N[1][2]-N[1][1]*N[0][2]) + N[1][3]*(N[2][1]*N[0][2]-N[0][1]*N[2][2]) + N[0][3]*(N[1][1]*N[2][2]-N[2][1]*N[1][2]);  
+	MB = N[2][3]*(N[0][2]-N[1][2]) + N[1][3]*(N[2][2]-N[0][2]) + N[0][3]*(N[1][2]-N[2][2]);
+	MC = N[2][3]*(N[0][1]*N[1][2] - N[1][1]*N[0][2]) + N[1][3]*(N[2][1]*N[0][2]-N[0][1]*N[2][2]) + N[0][3]*(N[1][1]*N[2][2]-N[2][1]*N[1][2]);  
 	// Equation Ax2 + Bx + C = 0
 	(*parameters)[0] = MA/M;
 	(*parameters)[1] = MB/M;
 	(*parameters)[2] = MC/M;
 	
 	for (gint j=0; j<3; j++)
-		free(N[j]);
-	free(N);
+		g_free(N[j]);
+	g_free(N);
 }
 /*
  * Predict the future load
