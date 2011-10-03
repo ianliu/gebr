@@ -542,7 +542,7 @@ void flow_set_paths_to_empty(GebrGeoXmlFlow * flow)
 	flow_set_paths_to(flow, func, TRUE);
 }
 
-void flow_run(GebrServer *server, GebrCommRunConfig * config, gboolean single)
+void flow_run(GebrServer *server, GebrCommRunner * config, gboolean single)
 {
 	GtkTreeIter iter;
 
@@ -563,7 +563,7 @@ void flow_run(GebrServer *server, GebrCommRunConfig * config, gboolean single)
 
 		// FIXME: Deprecate this function
 		//flow_copy_from_dicts(stripped);
-		guint runid = gebr_comm_server_run_config_add_flow(config, gebr.validator, flow);
+		guint runid = gebr_comm_runner_add_flow(config, gebr.validator, flow);
 
 		GString *queue_gstring = g_string_new(config->queue);
 		GebrJob * job = job_new_from_flow(server, flow, queue_gstring);
@@ -608,11 +608,8 @@ void flow_run(GebrServer *server, GebrCommRunConfig * config, gboolean single)
 		gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &gebr.flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE);
 	}
 
-	/* RUN */
-	gebr_comm_server_run_flow(server->comm, config);
-
-	/* frees */
-	gebr_comm_server_run_config_free(config);
+	gebr_comm_runner_run(config);
+	gebr_comm_runner_free(config);
 }
 
 gboolean flow_revision_save(void)

@@ -18,9 +18,8 @@
 
 #include <glib/gi18n.h>
 #include <libgebr/date.h>
-#include <libgebr/gui/gebr-gui-file-entry.h>
-#include <libgebr/gui/gebr-gui-utils.h>
-#include <libgebr/gui/gebr-gui-icons.h>
+#include <libgebr/gui/gui.h>
+#include <libgebr/comm/gebr-comm.h>
 
 #include "ui_flow.h"
 #include "gebr.h"
@@ -41,9 +40,9 @@
  * @mpi_program:
  */
 static gboolean
-flow_io_run_dialog(GebrCommRunConfig *config,
-		   GebrServer        *server,
-		   gboolean           mpi_program)
+flow_io_run_dialog(GebrCommRunner *config,
+		   GebrServer     *server,
+		   gboolean        mpi_program)
 {
 	gboolean ret = TRUE;
 	GtkWidget *dialog;
@@ -211,7 +210,7 @@ flow_io_run_on_server(GebrGeoXmlFlow *flow,
 	}
 
 	/* initialization */
-	GebrCommRunConfig *config = gebr_comm_run_config_new();
+	GebrCommRunner *config = gebr_comm_runner_new();
 	config->queue = NULL;
 	config->parallel = parallel;
 	config->execution_speed = g_strdup_printf("%d", gebr_interface_get_execution_speed());
@@ -309,7 +308,7 @@ flow_io_run_on_server(GebrGeoXmlFlow *flow,
 	return;
 
 err:
-	gebr_comm_server_run_config_free(config);
+	gebr_comm_runner_free(config);
 }
 
 static GList *
@@ -475,10 +474,8 @@ send_sys_load_request(GList *servers, GebrGeoXmlFlow *flow, gboolean parallel, g
  * Populates a GebrCommRunConfig from the interface setup so we can execute it.
  */
 static void
-fill_config_run_struct(GebrCommRunConfig *config)
+fill_config_run_struct(GebrCommRunner *config)
 {
-	GebrCommRunConfig *config = gebr_comm_run_config_new();
-	return config;
 }
 
 /* Public methods {{{1 */
