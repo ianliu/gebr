@@ -18,11 +18,7 @@
 #include "gebr-comm-runner.h"
 
 #include <libgebr/geoxml/geoxml.h>
-
-typedef struct {
-	gchar *flow_xml;
-	guint run_id;
-} GebrCommRunnerFlow;
+#include <libgebr/comm/gebr-comm.h>
 
 /* Private methods {{{1 */
 /*
@@ -124,8 +120,10 @@ gebr_comm_runner_add_flow(GebrCommRunner *self,
 	gebr_geoxml_document_to_string(GEBR_GEOXML_DOC(stripped), &xml);
 	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(stripped));
 
+	run_flow->flow = flow;
 	run_flow->flow_xml = xml;
 	run_flow->run_id = run_id++;
+
 	self->flows = g_list_append(self->flows, run_flow);
 	return run_flow->run_id;
 }
@@ -133,22 +131,21 @@ gebr_comm_runner_add_flow(GebrCommRunner *self,
 void
 gebr_comm_runner_run(GebrCommRunner *self)
 {
-#if 0
 	GString *run_id_gstring = g_string_new("");
+	GebrCommServer *server = self->servers->data;
 
-	for (GList *i = config->flows; i != NULL; i = g_list_next(i)) {
+	for (GList *i = self->flows; i != NULL; i = g_list_next(i)) {
 		GebrCommRunnerFlow *run_flow = (GebrCommRunnerFlow*)i->data;
 
 		g_string_printf(run_id_gstring, "%u", run_flow->run_id);
 		gebr_comm_protocol_socket_oldmsg_send(server->socket, FALSE,
 						      gebr_comm_protocol_defs.run_def, 6, run_flow->flow_xml,
-						      config->account ? config->account : "",
-						      config->queue ? config->queue : "",
-						      config->num_processes ? config->num_processes : "",
+						      self->account ? self->account : "",
+						      self->queue ? self->queue : "",
+						      self->num_processes ? self->num_processes : "",
 						      run_id_gstring->str,
-						      config->execution_speed);
+						      self->execution_speed);
 	}
 
 	g_string_free(run_id_gstring, TRUE);
-#endif
 }

@@ -23,6 +23,12 @@
 
 G_BEGIN_DECLS
 
+typedef struct {
+	GebrGeoXmlFlow *flow;
+	gchar *flow_xml;
+	guint run_id;
+} GebrCommRunnerFlow;
+
 /**
  * GebrCommRunner:
  * @flows: use gebr_comm_runner_add_flow() to add a flow
@@ -30,6 +36,8 @@ G_BEGIN_DECLS
  * @account: account for moab servers
  * @queue: the queue this flow will be appended
  * @num_processes: the number of processes to run in parallel
+ * @execution_speed: the absolute value means the number of cores, while its
+ * sign means niceness 0 (+) and niceness 19 (-).
  */
 typedef struct {
 	/*< private >*/
