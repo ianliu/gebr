@@ -853,7 +853,6 @@ ui_server_set_tags (GebrServer *server,
 {
 	g_return_if_fail(server != NULL);
 	g_return_if_fail(str != NULL);
-	g_return_if_fail(g_strcmp0(str, "") != 0);
 
 	gtk_list_store_set (gebr.ui_server_list->common.store, &server->iter,
 			    SERVER_TAGS, str,
