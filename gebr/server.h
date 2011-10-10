@@ -41,6 +41,7 @@ struct _GebrServer {
 	/*< private >*/
 	GObject parent;
 	gint ncores;
+	gdouble clock_cpu;
 
 	/*< public >*/
 	struct gebr_comm_server *comm;

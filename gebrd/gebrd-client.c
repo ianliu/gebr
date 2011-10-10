@@ -265,14 +265,16 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 
 			/* send return */
 			const gchar *model_name;
+			const gchar *cpu_clock;
 			const gchar *total_memory;
 			GebrdCpuInfo *cpuinfo = gebrd_cpu_info_new();
 			GebrdMemInfo *meminfo = gebrd_mem_info_new();
 			model_name = gebrd_cpu_info_get (cpuinfo, 0, "model name");
+			cpu_clock = gebrd_cpu_info_get (cpuinfo, 0, "cpu MHz");
 			total_memory = gebrd_mem_info_get (meminfo, "MemTotal");
 			gchar *ncores = g_strdup_printf("%d", gebrd_cpu_info_n_procs(cpuinfo));
 			gebr_comm_protocol_socket_oldmsg_send(client->socket, FALSE,
-							      gebr_comm_protocol_defs.ret_def, 9,
+							      gebr_comm_protocol_defs.ret_def, 10,
 							      gebrd->hostname,
 							      display_port->str,
 							      queue_list->str,
@@ -281,8 +283,8 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 							      model_name,
 							      total_memory,
 							      gebrd->fs_lock->str,
-							      ncores);
-
+							      ncores,
+							      cpu_clock);
 			gebrd_cpu_info_free (cpuinfo);
 			gebrd_mem_info_free (meminfo);
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);

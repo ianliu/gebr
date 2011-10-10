@@ -102,10 +102,11 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 				GString *total_memory;
 				GString *nfsid;
 				GString *ncores;
+				GString *clock_cpu;
 				GtkTreeIter iter;
 
 				/* organize message data */
-				if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 9)) == NULL)
+				if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 10)) == NULL)
 					goto err;
 				hostname = g_list_nth_data(arguments, 0);
 				display_port = g_list_nth_data(arguments, 1);
@@ -116,9 +117,11 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 				total_memory = g_list_nth_data (arguments, 6);
 				nfsid = g_list_nth_data (arguments, 7);
 				ncores = g_list_nth_data (arguments, 8);
+				clock_cpu = g_list_nth_data (arguments, 9);
 
 				g_string_assign (server->nfsid, nfsid->str);
 				server->ncores = atoi(ncores->str);
+				server->clock_cpu = atof(clock_cpu->str);
 
 				gtk_list_store_set (gebr.ui_server_list->common.store, &server->iter,
 						    SERVER_CPU, model_name->str,
