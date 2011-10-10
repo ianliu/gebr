@@ -449,7 +449,7 @@ predict_current_load(GList *points, gdouble delay)
 	create_2ndDegreePoly_model(points, parameters);
 	prediction = parameters[0]*delay*delay + parameters[1]*delay + parameters[2];
 
-	return prediction;
+	return MAX(0,prediction);
 }
 
 /*
@@ -464,9 +464,6 @@ calculate_server_score(const gchar *load, gint ncores, gdouble cpu_clock)
 	
 	sscanf(load, "%lf %lf %lf", &(point1.y), &(point5.y), &(point15.y));
 	
-	point1.y /= ncores*cpu_clock; 
-	point5.y /= ncores*cpu_clock;
-       	point15.y /= ncores*cpu_clock;	
 	point1.x = -1.0; 
 	point5.x = -5.0; 
 	point15.x = -15.0;
@@ -475,17 +472,18 @@ calculate_server_score(const gchar *load, gint ncores, gdouble cpu_clock)
 	points = g_list_prepend(points, &point15);
 	
 	gdouble current_load = predict_current_load(points, delay);
+	gdouble score = cpu_clock*ncores/(current_load+1);
 	
 	g_list_free(points);
 
-	return current_load;
+	return score;
 }
 
 /*
  * Struct to handle the server with the maximum score
  */
 typedef struct {
-	gdouble min_score;
+	gdouble max_score;
 	GebrServer *the_one;
 	gint responses;
 	gint requests;
@@ -506,10 +504,10 @@ on_response_received(GebrCommHttpMsg *request, GebrCommHttpMsg *response, Server
 		GString *value = gebr_comm_json_content_to_gstring(json);
 		GebrServer *server = g_object_get_data(G_OBJECT(request), "current-server");
 		gdouble score = calculate_server_score(value->str, server->ncores, server->clock_cpu);
-		g_debug("Server: %s, Score: %lf, Load: %s", server->comm->address->str, score*4, value->str);
+		g_debug("Server: %s, Score: %lf, Load: %s", server->comm->address->str, score, value->str);
 
-		if (score < scores->min_score) {
-			scores->min_score = score;
+		if (score > scores->max_score) {
+			scores->max_score = score;
 			scores->the_one = server;
 		}
 		scores->responses++;
@@ -519,7 +517,7 @@ on_response_received(GebrCommHttpMsg *request, GebrCommHttpMsg *response, Server
 				create_jobs_and_run(scores->runner);
 			gebr_comm_runner_free(scores->runner);
 
-			g_debug("THE ONE: %s, Min Score: %lf", scores->the_one->comm->address->str, scores->min_score*4);
+			g_debug("THE ONE: %s, maxScore: %lf", scores->the_one->comm->address->str, scores->max_score);
 		}
 	}
 }
@@ -533,7 +531,7 @@ send_sys_load_request(GList *servers, GebrCommRunner *runner, gboolean parallel,
 	ServerScores *scores = g_new0(ServerScores, 1);
 	scores->parallel = parallel;
 	scores->single = single;
-	scores->min_score = G_MAXDOUBLE;
+	scores->max_score = 0.0;
 	scores->runner = runner;
 
 	for (GList *i = servers; i; i = i->next) {
