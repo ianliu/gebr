@@ -368,6 +368,7 @@ get_connected_servers(GtkTreeModel *model)
 	return servers;
 }
 
+/* Heuristics structure and methods {{{1*/
 /*
  * Struct to handle 2D points
  */
@@ -410,20 +411,21 @@ create_2ndDegreePoly_model(GList *points, gdouble parameters[])
 	gdouble M, MA, MB, MC, **N;
 	gint j;
 	GList *i;
-	N = g_new(GebrPoint*, 3);
+	N = g_new(gdouble*, 3);
 	for (i = points, j = 0; i; i = i->next, j++) {
 		GebrPoint *point = i->data;
-		N[j] = g_new(GebrPoint, 4);
+		N[j] = g_new(gdouble, 4);
 		N[j][0] = 1;
 		N[j][1] = point->x; 
 		N[j][2] = N[j][1]*N[j][1]; 
 		N[j][3] = point->y;
-		}
+	}
 
 	M = (N[1][1] - N[0][1]) * (N[2][1] - N[0][1])*(N[2][1] - N[1][1]);
 	MA = N[2][3]*(N[1][1]-N[0][1]) + N[1][3]*(N[0][1]-N[2][1]) + N[0][3]*(N[2][1]-N[1][1]);
 	MB = N[2][3]*(N[0][2]-N[1][2]) + N[1][3]*(N[2][2]-N[0][2]) + N[0][3]*(N[1][2]-N[2][2]);
 	MC = N[2][3]*(N[0][1]*N[1][2] - N[1][1]*N[0][2]) + N[1][3]*(N[2][1]*N[0][2]-N[0][1]*N[2][2]) + N[0][3]*(N[1][1]*N[2][2]-N[2][1]*N[1][2]);  
+
 	// Equation Ax2 + Bx + C = 0
 	parameters[0] = MA/M;
 	parameters[1] = MB/M;
@@ -454,7 +456,7 @@ predict_current_load(GList *points, gdouble delay)
  * Compute the score of a server
  */
 static gdouble
-calculate_server_score(const gchar *load, gint ncores)
+calculate_server_score(const gchar *load, gint ncores, gdouble cpu_clock)
 {
 	GList *points = NULL;
 	gdouble delay = 1.0;
@@ -462,9 +464,9 @@ calculate_server_score(const gchar *load, gint ncores)
 	
 	sscanf(load, "%lf %lf %lf", &(point1.y), &(point5.y), &(point15.y));
 	
-	point1.y /= ncores; 
-	point5.y /= ncores;
-       	point15.y /= ncores;	
+	point1.y /= ncores*cpu_clock; 
+	point5.y /= ncores*cpu_clock;
+       	point15.y /= ncores*cpu_clock;	
 	point1.x = -1.0; 
 	point5.x = -5.0; 
 	point15.x = -15.0;
@@ -503,7 +505,7 @@ on_response_received(GebrCommHttpMsg *request, GebrCommHttpMsg *response, Server
 		GebrCommJsonContent *json = gebr_comm_json_content_new(response->content->str);
 		GString *value = gebr_comm_json_content_to_gstring(json);
 		GebrServer *server = g_object_get_data(G_OBJECT(request), "current-server");
-		gdouble score = calculate_server_score(value->str, server->ncores);
+		gdouble score = calculate_server_score(value->str, server->ncores, server->clock_cpu);
 		g_debug("Server: %s, Score: %lf, Load: %s", server->comm->address->str, score*4, value->str);
 
 		if (score < scores->min_score) {
