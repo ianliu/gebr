@@ -26,6 +26,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <glib/gi18n-lib.h>
+#include <stdlib.h>
 
 #include "../date.h"
 #include "document.h"
@@ -1035,4 +1036,80 @@ gebr_geoxml_flow_is_parallelizable(GebrGeoXmlFlow *flow,
 		return TRUE;
 
 	return FALSE;
+}
+
+static gint *
+gebr_geoxml_flow_calculate_proportional_n(gint total_n,
+                                          gdouble *weights,
+                                          gint n_weights)
+{
+	gint *distributed_n = g_new(int, n_weights);
+	gint aux_total_n = total_n;
+
+	for (gint i = 0; i < n_weights; i++)
+	{
+		gint partial_n;
+		partial_n = total_n * weights[i];
+		aux_total_n -= partial_n;
+
+		distributed_n[i] = partial_n;
+	}
+
+	gint k = 0;
+	while (aux_total_n > 0)
+	{
+		distributed_n[k]++;
+		aux_total_n--;
+
+		if (k == n_weights - 1)
+			k = 0;
+		else
+			k++;
+	}
+
+	return distributed_n;
+}
+
+GList *gebr_geoxml_flow_divide_flows(GebrGeoXmlFlow *flow,
+                                     GebrValidator *validator,
+                                     gdouble *weights,
+                                     gint n_weights)
+{
+	if (!gebr_geoxml_flow_is_parallelizable(flow, validator))
+		return NULL;
+
+	GList *flows = NULL;
+	GebrGeoXmlProgram *loop;
+	gchar *n, *step, *ini;
+	gint total_n;
+	gint *distributed_n;
+
+	loop = gebr_geoxml_flow_get_control_program(flow);
+	n = gebr_geoxml_program_control_get_n(loop, &step, &ini);
+	gebr_geoxml_object_unref(loop);
+
+	total_n = atoi(n);
+	distributed_n = gebr_geoxml_flow_calculate_proportional_n(total_n, weights, n_weights);
+
+	for (gint i = 0; i < n_weights; i++)
+	{
+		GebrGeoXmlFlow *div_flow;
+		GebrGeoXmlProgram *div_loop;
+		const gchar *div_n;
+
+		div_n = g_strdup_printf("%d", distributed_n[i]);
+
+		div_flow = GEBR_GEOXML_FLOW(gebr_geoxml_document_clone(GEBR_GEOXML_DOCUMENT(flow)));
+		div_loop = gebr_geoxml_flow_get_control_program(div_flow);
+		gebr_geoxml_program_control_set_n(div_loop, step, ini, div_n);
+
+		flows = g_list_append(flows, div_flow);
+		gebr_geoxml_object_unref(div_loop);
+	}
+
+	g_free(ini);
+	g_free(step);
+	g_free(distributed_n);
+
+	return flows;
 }

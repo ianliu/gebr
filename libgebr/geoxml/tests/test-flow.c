@@ -28,6 +28,88 @@
 #include "project.h"
 #include "program-parameter.h"
 #include "sequence.h"
+#include "program.h"
+
+typedef struct {
+	GebrValidator *validator;
+	GebrGeoXmlDocument *flow;
+	GebrGeoXmlDocument *line;
+	GebrGeoXmlDocument *proj;
+} Fixture;
+
+void
+fixture_setup(Fixture *fixture, gconstpointer data)
+{
+	fixture->flow = GEBR_GEOXML_DOCUMENT(gebr_geoxml_flow_new());
+	fixture->line = GEBR_GEOXML_DOCUMENT(gebr_geoxml_line_new());
+	fixture->proj = GEBR_GEOXML_DOCUMENT(gebr_geoxml_project_new());
+	fixture->validator = gebr_validator_new(&fixture->flow,
+						&fixture->line,
+						&fixture->proj);
+}
+
+void
+fixture_add_loop(Fixture *fixture)
+{
+	GebrGeoXmlProgram *prog_loop;
+	GebrGeoXmlDocument *loop;
+	GebrGeoXmlParameter *iter_param = NULL;
+
+	gebr_geoxml_document_load(&loop, TEST_DIR"/forloop.mnu", FALSE, NULL);
+	gebr_geoxml_flow_get_program(GEBR_GEOXML_FLOW(loop), (GebrGeoXmlSequence**) &prog_loop, 0);
+	gebr_geoxml_program_set_status(prog_loop, GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED);
+
+	gebr_geoxml_program_control_set_n(prog_loop, "1", "1", "10");
+	gebr_geoxml_flow_add_flow(GEBR_GEOXML_FLOW(fixture->flow), GEBR_GEOXML_FLOW(loop));
+	iter_param = GEBR_GEOXML_PARAMETER(gebr_geoxml_document_get_dict_parameter(fixture->flow));
+	g_assert(gebr_validator_insert(fixture->validator, iter_param, NULL, NULL));
+
+	gebr_geoxml_object_unref(prog_loop);
+	gebr_geoxml_document_free(loop);
+	gebr_geoxml_object_unref(iter_param);
+}
+
+gboolean
+fixture_change_iter_value (Fixture *fixture,
+                           gchar *ini,
+                           gchar *step,
+                           gchar *n,
+                           GError **error)
+{
+	GebrGeoXmlProgram *prog_loop;
+	GebrGeoXmlProgramParameter *dict_iter;
+	gchar *value = NULL;
+
+	prog_loop = gebr_geoxml_flow_get_control_program((GebrGeoXmlFlow*)fixture->flow);
+
+	if(!prog_loop) {
+		fixture_add_loop(fixture);
+		prog_loop = gebr_geoxml_flow_get_control_program((GebrGeoXmlFlow*)fixture->flow);
+	}
+
+	gebr_geoxml_program_control_set_n(prog_loop, step, ini, n);
+
+	gebr_geoxml_flow_update_iter_dict_value((GebrGeoXmlFlow*)fixture->flow);
+	dict_iter = GEBR_GEOXML_PROGRAM_PARAMETER(gebr_geoxml_document_get_dict_parameter(GEBR_GEOXML_DOCUMENT(fixture->flow)));
+
+	value = gebr_geoxml_program_parameter_get_first_value(dict_iter, FALSE);
+	gboolean retval = gebr_validator_change_value(fixture->validator, GEBR_GEOXML_PARAMETER(dict_iter), value, NULL, error);
+
+	g_free(value);
+	gebr_geoxml_object_unref(dict_iter);
+	gebr_geoxml_object_unref(prog_loop);
+	return retval;
+}
+
+void
+fixture_teardown(Fixture *fixture, gconstpointer data)
+{
+	gebr_validator_free(fixture->validator);
+	gebr_geoxml_document_free(fixture->flow);
+	gebr_geoxml_document_free(fixture->line);
+	gebr_geoxml_document_free(fixture->proj);
+}
+
 
 void test_gebr_geoxml_flow_server_get_and_set_address(void){
 	const gchar *address;
@@ -554,13 +636,82 @@ static void test_gebr_geoxml_flow_is_parallelizable (void)
 	g_assert (gebr_geoxml_flow_is_parallelizable(flow, validator) == TRUE);
 }
 
+void test_gebr_geoxml_flow_divide_flows (Fixture *fixture, gconstpointer data)
+{
+	GList *flows = NULL;
+	gdouble *weigths = g_new(double, 4);
+	gchar *ini, *step;
+
+	fixture_change_iter_value(fixture, "1", "1", "101", NULL);
+	gebr_geoxml_flow_io_set_output(GEBR_GEOXML_FLOW(fixture->flow), "");
+
+	// total de 101 passos
+	weigths[0] = 0.4; // 40 passos
+	weigths[1] = 0.3; // 30 passos
+	weigths[2] = 0.2; // 20 passos
+	weigths[3] = 0.1; // 10 passos
+
+	//falta 1 passo que irá para posição 0
+
+	flows = gebr_geoxml_flow_divide_flows(GEBR_GEOXML_FLOW(fixture->flow), fixture->validator, weigths, 4);
+
+	GebrGeoXmlProgram *control1 = gebr_geoxml_flow_get_control_program(flows->data);
+	GebrGeoXmlProgram *control2 = gebr_geoxml_flow_get_control_program(flows->next->data);
+	GebrGeoXmlProgram *control3 = gebr_geoxml_flow_get_control_program(flows->next->next->data);
+	GebrGeoXmlProgram *control4 = gebr_geoxml_flow_get_control_program(flows->next->next->next->data);
+
+
+	gchar *n1 = gebr_geoxml_program_control_get_n(control1, &ini, &step);
+	g_assert_cmpstr(n1, ==, "41");
+	g_assert_cmpstr(ini, ==, "1");
+	g_assert_cmpstr(step, ==, "1");
+	g_free(ini);
+	g_free(step);
+
+	gchar *n2 = gebr_geoxml_program_control_get_n(control2, &ini, &step);
+	g_assert_cmpstr(n2, ==, "30");
+	g_assert_cmpstr(ini, ==, "1");
+	g_assert_cmpstr(step, ==, "1");
+	g_free(ini);
+	g_free(step);
+
+	gchar *n3 = gebr_geoxml_program_control_get_n(control3, &ini, &step);
+	g_assert_cmpstr(n3, ==, "20");
+	g_assert_cmpstr(ini, ==, "1");
+	g_assert_cmpstr(step, ==, "1");
+	g_free(ini);
+	g_free(step);
+
+	gchar *n4 = gebr_geoxml_program_control_get_n(control4, &ini, &step);
+	g_assert_cmpstr(n4, ==, "10");
+	g_assert_cmpstr(ini, ==, "1");
+	g_assert_cmpstr(step, ==, "1");
+	g_free(ini);
+	g_free(step);
+
+
+	gebr_geoxml_object_unref(control1);
+	gebr_geoxml_object_unref(control2);
+	gebr_geoxml_object_unref(control3);
+	gebr_geoxml_object_unref(control4);
+	g_free(n1);
+	g_free(n2);
+	g_free(n3);
+	g_free(n4);
+	g_free(weigths);
+	g_list_free(flows);
+}
+
 int main(int argc, char *argv[])
 {
 	g_type_init();
 	g_test_init(&argc, &argv, NULL);
 	gebr_geoxml_init();
 
-	gebr_geoxml_document_set_dtd_dir(DTD_DIR);
+	g_test_add("/libgebr/geoxml/flow/divide_flow", Fixture, NULL,
+		           fixture_setup,
+		           test_gebr_geoxml_flow_divide_flows,
+		           fixture_teardown);
 
 	g_test_add_func("/libgebr/geoxml/flow/server_get_and_set_address", test_gebr_geoxml_flow_server_get_and_set_address);
 	g_test_add_func("/libgebr/geoxml/flow/get_categories_number", test_gebr_geoxml_flow_get_categories_number);
