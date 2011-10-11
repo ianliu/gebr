@@ -346,29 +346,38 @@ free_and_error:
 	return FALSE;
 }
 
+typedef struct {
+	GebrServer *server;
+	gdouble score;
+} ServerScore;
+
+/*
+ * Returns: a GList containing ServerScore structs with the score field set to 0.
+ */
 static GList *
 get_connected_servers(GtkTreeModel *model)
 {
 	GtkTreeIter iter;
 	GList *servers = NULL;
-	GebrServer *server;
 
 	gebr_gui_gtk_tree_model_foreach(iter, model) {
 		gboolean is_auto_choose;
-		gtk_tree_model_get(model, &iter, SERVER_POINTER, &server,
+		ServerScore *sc = g_new0(ServerScore, 1);
+
+		gtk_tree_model_get(model, &iter, SERVER_POINTER, &sc->server,
 				   SERVER_IS_AUTO_CHOOSE, &is_auto_choose, -1);
 
 		if (is_auto_choose)
 			continue;
 
-		if (server->comm->socket->protocol->logged)
-			servers = g_list_prepend(servers, server);
+		if (sc->server->comm->socket->protocol->logged)
+			servers = g_list_prepend(servers, sc);
 	}
 
 	return servers;
 }
 
-/* Heuristics structure and methods {{{1*/
+/* Heuristics structure and methods {{{1 */
 /*
  * Struct to handle 2D points
  */
@@ -483,41 +492,45 @@ calculate_server_score(const gchar *load, gint ncores, gdouble cpu_clock)
  * Struct to handle the server with the maximum score
  */
 typedef struct {
-	gdouble max_score;
-	GebrServer *the_one;
 	gint responses;
 	gint requests;
 	gboolean parallel;
 	gboolean single;
 	GebrCommRunner *runner;
-} ServerScores;
+} AsyncRunInfo;
 
 /*
  * Rank the server according to the scores
  */
 static void
-on_response_received(GebrCommHttpMsg *request, GebrCommHttpMsg *response, ServerScores *scores)
+on_response_received(GebrCommHttpMsg *request, GebrCommHttpMsg *response, AsyncRunInfo *scores)
 {
 	if (request->method == GEBR_COMM_HTTP_METHOD_GET)
 	{
 		GebrCommJsonContent *json = gebr_comm_json_content_new(response->content->str);
 		GString *value = gebr_comm_json_content_to_gstring(json);
-		GebrServer *server = g_object_get_data(G_OBJECT(request), "current-server");
-		gdouble score = calculate_server_score(value->str, server->ncores, server->clock_cpu);
-		g_debug("Server: %s, Score: %lf, Load: %s", server->comm->address->str, score, value->str);
+		ServerScore *sc = g_object_get_data(G_OBJECT(request), "current-server");
+		gdouble score = calculate_server_score(value->str, sc->server->ncores, sc->server->clock_cpu);
+		sc->score = score;
+		g_debug("Server: %s, Score: %lf, Load: %s", sc->server->comm->address->str, score, value->str);
 
-		if (score > scores->max_score) {
-			scores->max_score = score;
-			scores->the_one = server;
-		}
 		scores->responses++;
 		if (scores->responses == scores->requests) {
-			scores->runner->servers = g_list_prepend(scores->runner->servers, scores->the_one);
+			gint comp_func(ServerScore *a, ServerScore *b) {
+				return b->score - a->score;
+			}
+			scores->runner->servers = g_list_sort(scores->runner->servers, (GCompareFunc)comp_func);
+
+			for (GList *i = scores->runner->servers; i; i = i->next) {
+				ServerScore *sc = i->data;
+				i->data = sc->server;
+				g_debug("Server %s, score %lf", sc->server->comm->address->str, sc->score);
+				g_free(sc);
+			}
+
 			if (fill_runner_struct(scores->runner, NULL, scores->parallel, scores->single))
 				create_jobs_and_run(scores->runner);
 			gebr_comm_runner_free(scores->runner);
-
-			g_debug("THE ONE: %s, maxScore: %lf", scores->the_one->comm->address->str, scores->max_score);
 		}
 	}
 }
@@ -528,19 +541,19 @@ on_response_received(GebrCommHttpMsg *request, GebrCommHttpMsg *response, Server
 static void
 send_sys_load_request(GList *servers, GebrCommRunner *runner, gboolean parallel, gboolean single)
 {
-	ServerScores *scores = g_new0(ServerScores, 1);
+	AsyncRunInfo *scores = g_new0(AsyncRunInfo, 1);
 	scores->parallel = parallel;
 	scores->single = single;
-	scores->max_score = 0.0;
 	scores->runner = runner;
+	scores->runner->servers = servers;
 
 	for (GList *i = servers; i; i = i->next) {
 		GebrCommHttpMsg *request;
-		GebrServer *server = i->data;
-		request = gebr_comm_protocol_socket_send_request(server->comm->socket,
+		ServerScore *sc = i->data;
+		request = gebr_comm_protocol_socket_send_request(sc->server->comm->socket,
 								 GEBR_COMM_HTTP_METHOD_GET,
 								 "/sys-load", NULL);
-		g_object_set_data(G_OBJECT(request), "current-server", i->data);
+		g_object_set_data(G_OBJECT(request), "current-server", sc);
 		g_signal_connect(request, "response-received",
 				 G_CALLBACK(on_response_received), scores);
 		scores->requests++;
@@ -668,9 +681,8 @@ gebr_ui_flow_run(gboolean parallel, gboolean single)
 		add_selected_flows_to_runner(runner);
 
 	if (gebr.ui_flow_edition->autochoose) {
-		GList *servers = get_connected_servers(model);
-		send_sys_load_request(servers, runner, parallel, single);
-		g_list_free(servers);
+		send_sys_load_request(get_connected_servers(model),
+				      runner, parallel, single);
 		return;
 	} else {
 		GtkTreeIter server_iter;
