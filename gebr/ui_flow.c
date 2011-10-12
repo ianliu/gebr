@@ -503,7 +503,7 @@ typedef struct {
  * Rank the server according to their scores.
  */
 static void
-on_response_received(GebrCommHttpMsg *request, GebrCommHttpMsg *response, AsyncRunInfo *scores)
+on_response_received(GebrCommHttpMsg *request, GebrCommHttpMsg *response, AsyncRunInfo *runinfo)
 {
 	if (request->method == GEBR_COMM_HTTP_METHOD_GET)
 	{
@@ -514,23 +514,23 @@ on_response_received(GebrCommHttpMsg *request, GebrCommHttpMsg *response, AsyncR
 		sc->score = score;
 		g_debug("Server: %s, Score: %lf, Load: %s", sc->server->comm->address->str, score, value->str);
 
-		scores->responses++;
-		if (scores->responses == scores->requests) {
+		runinfo->responses++;
+		if (runinfo->responses == runinfo->requests) {
 			gint comp_func(ServerScore *a, ServerScore *b) {
 				return b->score - a->score;
 			}
-			scores->runner->servers = g_list_sort(scores->runner->servers, (GCompareFunc)comp_func);
+			runinfo->runner->servers = g_list_sort(runinfo->runner->servers, (GCompareFunc)comp_func);
 
-			for (GList *i = scores->runner->servers; i; i = i->next) {
+			for (GList *i = runinfo->runner->servers; i; i = i->next) {
 				ServerScore *sc = i->data;
 				i->data = sc->server;
 				g_debug("Server %s, score %lf", sc->server->comm->address->str, sc->score);
 				g_free(sc);
 			}
 
-			if (fill_runner_struct(scores->runner, NULL, scores->parallel, scores->single))
-				create_jobs_and_run(scores->runner);
-			gebr_comm_runner_free(scores->runner);
+			if (fill_runner_struct(runinfo->runner, NULL, runinfo->parallel, runinfo->single))
+				create_jobs_and_run(runinfo->runner);
+			gebr_comm_runner_free(runinfo->runner);
 		}
 	}
 }
