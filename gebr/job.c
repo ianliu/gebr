@@ -658,3 +658,66 @@ void job_status_update(GebrJob *job, enum JobStatus status, const gchar *paramet
 		g_string_free(finish_date, TRUE);
 	} 
 }
+
+GHashTable *jid_to_rid = NULL;
+
+typedef struct {
+	GebrServer *server;
+	gchar *jid;
+} TaskId;
+
+TaskId *
+task_id_new(GebrServer *server, const gchar *jid)
+{
+	TaskId *task = g_new(TaskId, 1);
+	task->server = server;
+	task->jid = g_strdup(jid);
+	return task;
+}
+
+void
+task_id_free(gpointer data)
+{
+	TaskId *task = data;
+	g_free(task->jid);
+	g_free(task);
+}
+
+guint task_id_hash(gconstpointer key)
+{
+	const TaskId *task = key;
+	gchar *str = g_strdup_printf("%s %s", task->server->comm->address->str, task->jid);
+	guint hash = g_str_hash(str);
+	g_free(str);
+	return hash;
+}
+
+gboolean task_id_equal(gconstpointer a, gconstpointer b)
+{
+	const TaskId *t1 = a;
+	const TaskId *t2 = b;
+	return t1->server == t2->server && t1->jid == t2->jid;
+}
+
+void
+gebr_job_hash_bind(GebrServer *server, const gchar *jid, const gchar *rid)
+{
+	if (!jid_to_rid)
+	{
+		jid_to_rid = g_hash_table_new_full(task_id_hash,
+						   task_id_equal,
+						   task_id_free,
+						   g_free);
+	}
+
+	g_hash_table_insert(jid_to_rid, task_id_new(server, jid), g_strdup(rid));
+}
+
+const gchar *
+gebr_job_hash_get(GebrServer *server, const gchar *jid)
+{
+	g_return_val_if_fail(jid != NULL, NULL);
+
+	const TaskId task = {server, (gchar*) jid};
+	return g_hash_table_lookup(jid_to_rid, &task);
+}

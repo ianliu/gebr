@@ -150,6 +150,21 @@ gboolean job_has_finished(GebrJob *job);
  */
 void job_status_update(GebrJob *job, enum JobStatus status, const gchar *parameter);
 
+/**
+ * gebr_job_bind:
+ *
+ * Associates the pair (@server, @jid) with @rid.
+ */
+void gebr_job_bind(GebrServer *server, const gchar *jid, const gchar *rid);
+
+/**
+ * gebr_job_hash_get:
+ *
+ * Returns: the run id associated with the pair (@server, @jid), or %NULL if it
+ * does not exist.
+ */
+const gchar *gebr_job_hash_get(GebrServer *server, const gchar *jid);
+
 G_END_DECLS
 
 #endif /* __GEBR_JOB_H__ */
