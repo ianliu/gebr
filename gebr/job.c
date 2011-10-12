@@ -696,7 +696,7 @@ gboolean task_id_equal(gconstpointer a, gconstpointer b)
 {
 	const TaskId *t1 = a;
 	const TaskId *t2 = b;
-	return t1->server == t2->server && t1->jid == t2->jid;
+	return t1->server == t2->server && g_str_equal(t1->jid, t2->jid);
 }
 
 void
@@ -710,6 +710,8 @@ gebr_job_hash_bind(GebrServer *server, const gchar *jid, const gchar *rid)
 						   g_free);
 	}
 
+	g_debug("Binding pair (%s, %s) to rid %s",
+		server->comm->address->str, jid, rid);
 	g_hash_table_insert(jid_to_rid, task_id_new(server, jid), g_strdup(rid));
 }
 
@@ -717,6 +719,9 @@ const gchar *
 gebr_job_hash_get(GebrServer *server, const gchar *jid)
 {
 	g_return_val_if_fail(jid != NULL, NULL);
+
+	g_debug("Fetching pair (%s, %s)",
+		server->comm->address->str, jid);
 
 	const TaskId task = {server, (gchar*) jid};
 	return g_hash_table_lookup(jid_to_rid, &task);

@@ -233,6 +233,7 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 					goto err;
 				jid = g_list_nth_data(arguments, 0);
 				run_id = g_list_nth_data(arguments, 1);
+				gebr_job_hash_bind(server, jid->str, run_id->str);
 				GebrJob * job = job_find(comm_server->address, run_id, FALSE);
 				if (job != NULL) {
 					g_string_assign(job->parent.jid, jid->str);
@@ -281,6 +282,7 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		} else if (message->hash == gebr_comm_protocol_defs.out_def.code_hash) {
+			const gchar *rid;
 			GList *arguments;
 			GString *jid, *output;
 			GebrJob *job;
@@ -290,8 +292,14 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 				goto err;
 			jid = g_list_nth_data(arguments, 0);
 			output = g_list_nth_data(arguments, 1);
+			rid = gebr_job_hash_get(server, jid->str);
 
-			job = job_find(comm_server->address, jid, TRUE);
+			g_assert(rid != NULL);
+
+			GString *run_id = g_string_new(rid);
+			job = job_find(comm_server->address, run_id, FALSE);
+			g_string_free(run_id, TRUE);
+
 			if (job != NULL) {
 				job_append_output(job, output);
 			}
