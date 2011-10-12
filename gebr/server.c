@@ -308,8 +308,7 @@ gboolean server_find_address (const gchar *address,
 		GebrServer *server;
 		gboolean is_auto_choose = FALSE;
 
-		gtk_tree_model_get(model, &iter,
-				   SERVER_IS_AUTO_CHOOSE, &is_auto_choose, -1);
+		gtk_tree_model_get(model, &i, SERVER_IS_AUTO_CHOOSE, &is_auto_choose, -1);
 
 		if (is_auto_choose)
 			continue;
