@@ -155,7 +155,7 @@ void job_status_update(GebrJob *job, enum JobStatus status, const gchar *paramet
  *
  * Associates the pair (@server, @jid) with @rid.
  */
-void gebr_job_bind(GebrServer *server, const gchar *jid, const gchar *rid);
+void gebr_job_hash_bind(GebrServer *server, const gchar *jid, const gchar *rid);
 
 /**
  * gebr_job_hash_get:
