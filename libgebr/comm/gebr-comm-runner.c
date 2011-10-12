@@ -88,6 +88,7 @@ gebr_comm_runner_new(void)
 	self->servers = NULL;
 	self->parallel = FALSE;
 	self->account = self->queue = self->num_processes = NULL;
+	self->is_parallelizable = FALSE;
 	return self;
 }
 
@@ -112,7 +113,8 @@ gebr_comm_runner_free(GebrCommRunner *self)
 guint
 gebr_comm_runner_add_flow(GebrCommRunner *self,
 			  GebrValidator  *validator,
-			  GebrGeoXmlFlow *flow)
+			  GebrGeoXmlFlow *flow,
+			  gboolean 	  divided)
 {
 	static guint run_id = 0;
 	GebrCommRunnerFlow *run_flow = g_new(GebrCommRunnerFlow, 1);
@@ -124,7 +126,10 @@ gebr_comm_runner_add_flow(GebrCommRunner *self,
 
 	run_flow->flow = flow;
 	run_flow->flow_xml = xml;
-	run_flow->run_id = run_id++;
+	if (divided)
+		run_flow->run_id = run_id;
+	else
+		run_flow->run_id = run_id++;
 
 	self->flows = g_list_append(self->flows, run_flow);
 	return run_flow->run_id;
@@ -135,6 +140,7 @@ gebr_comm_runner_run(GebrCommRunner *self)
 {
 	GString *run_id_gstring = g_string_new("");
 	GebrCommServer *server = self->servers->data;
+	GList *run_servers = self->servers;
 
 	for (GList *i = self->flows; i != NULL; i = g_list_next(i)) {
 		GebrCommRunnerFlow *run_flow = (GebrCommRunnerFlow*)i->data;
@@ -147,6 +153,11 @@ gebr_comm_runner_run(GebrCommRunner *self)
 						      self->num_processes ? self->num_processes : "",
 						      run_id_gstring->str,
 						      self->execution_speed);
+
+		if (self->is_parallelizable && run_servers->next) {
+			run_servers = run_servers->next;
+			server = run_servers->data;
+		}
 	}
 
 	g_string_free(run_id_gstring, TRUE);

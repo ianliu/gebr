@@ -48,6 +48,7 @@ typedef struct {
 	gchar *queue;
 	gchar *num_processes;
 	gchar *execution_speed;
+	gboolean is_parallelizable;
 } GebrCommRunner;
 
 /**
@@ -67,7 +68,8 @@ void gebr_comm_runner_free(GebrCommRunner *self);
  */
 guint gebr_comm_runner_add_flow(GebrCommRunner *self,
 				GebrValidator  *vaildator,
-				GebrGeoXmlFlow *flow);
+				GebrGeoXmlFlow *flow,
+				gboolean 	divided);
 
 /**
  * gebr_comm_runner_run:
