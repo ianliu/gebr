@@ -500,7 +500,7 @@ typedef struct {
 } AsyncRunInfo;
 
 /*
- * Rank the server according to the scores
+ * Rank the server according to their scores.
  */
 static void
 on_response_received(GebrCommHttpMsg *request, GebrCommHttpMsg *response, AsyncRunInfo *scores)
@@ -572,9 +572,10 @@ create_job_entry(GebrCommRunner *runner, GebrGeoXmlFlow *flow, guint runid, gboo
 	document_save(GEBR_GEOXML_DOC(flow), FALSE, FALSE);
 	flow_browse_info_update(); 
 
+	title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(flow));
 	server = runner->servers->data;
 	queue_string = g_string_new(runner->queue);
-	job = job_new_from_flow(server, flow, queue_string);
+	job = job_new_from_flow(server, title, queue_string);
 	g_string_free(queue_string, TRUE);
 	g_string_printf(job->parent.run_id, "%u", runid);
 
@@ -583,8 +584,6 @@ create_job_entry(GebrCommRunner *runner, GebrGeoXmlFlow *flow, guint runid, gboo
 		gebr.config.current_notebook = 3;
 		gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), gebr.config.current_notebook);
 	}
-
-	title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(flow));
 
 	if (gebr_comm_server_is_local(server->comm) == FALSE)
 		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Asking server '%s' to run Flow '%s'."), server->comm->address->str, title);

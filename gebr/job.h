@@ -15,13 +15,8 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * \file job.c
- * Job callbacks
- */
-
-#ifndef __JOB_H
-#define __JOB_H
+#ifndef __GEBR_JOB_H__
+#define __GEBR_JOB_H__
 
 #include <gtk/gtk.h>
 
@@ -32,13 +27,12 @@
 
 G_BEGIN_DECLS
 
-GType gebr_job_get_type(void);
-#define GEBR_JOB_TYPE		(gebr_job_get_type())
-#define GEBR_JOB(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), GEBR_JOB_TYPE, GebrJob))
-#define GEBR_JOB_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), GEBR_JOB_TYPE, GebrJobClass))
+#define GEBR_JOB_TYPE			(gebr_job_get_type())
+#define GEBR_JOB(obj)			(G_TYPE_CHECK_INSTANCE_CAST ((obj), GEBR_JOB_TYPE, GebrJob))
+#define GEBR_JOB_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST ((klass), GEBR_JOB_TYPE, GebrJobClass))
 #define GEBR_IS_JOB(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEBR_JOB_TYPE))
 #define GEBR_IS_JOB_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), GEBR_JOB_TYPE))
-#define GEBR_JOB_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), GEBR_JOB_TYPE, GebrJobClass))
+#define GEBR_JOB_GET_CLASS(obj)		(G_TYPE_INSTANCE_GET_CLASS ((obj), GEBR_JOB_TYPE, GebrJobClass))
 
 typedef struct _GebrJob GebrJob;
 typedef struct _GebrJobClass GebrJobClass;
@@ -53,16 +47,23 @@ struct _GebrJobClass {
 	GebrCommJobClass parent;
 };
 
+GType gebr_job_get_type(void) G_GNUC_CONST;
+
 /**
- * Find the job structure for the corresponding \p id and server \p address.
- * If jid is TRUE, find for jid, if FALSE then find using run_id for "incomplete".
+ * job_find:
+ * @address: The daemon address to be searched for.
+ * @id: The job id.
+ * @jid: If %TRUE, search by #GebrCommJob:jid, otherwise search by #GebrCommJob:run_id.
+ *
+ * Find the job structure for the corresponding @id and server @address. If
+ * @jid is %TRUE find by @jid, otherwise find by #GebrCommJob:run_id.
  */
 GebrJob *job_find(GString * address, GString * id, gboolean jid);
 
 /**
  * Create a new job (from \p server) and add it to list of jobs
  */
-GebrJob *job_new_from_flow(GebrServer *server, GebrGeoXmlFlow * flow, GString *queue);
+GebrJob *job_new_from_flow(GebrServer *server, const gchar *title, GString *queue);
 
 /**
  * Create a new job (from \p server) and add it to list of jobs
@@ -150,4 +151,5 @@ gboolean job_has_finished(GebrJob *job);
 void job_status_update(GebrJob *job, enum JobStatus status, const gchar *parameter);
 
 G_END_DECLS
-#endif				//__JOB_H
+
+#endif /* __GEBR_JOB_H__ */
