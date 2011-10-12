@@ -34,7 +34,9 @@
 #include "job.h"
 
 /* Prototypes {{{1 */
-static void create_jobs_and_run(GebrCommRunner *runner);
+static void create_jobs_and_run(GebrCommRunner *runner, gboolean is_divided);
+
+static gboolean is_divisible(gboolean single);
 
 /* Private methods {{{1 */
 /*
@@ -529,7 +531,7 @@ on_response_received(GebrCommHttpMsg *request, GebrCommHttpMsg *response, AsyncR
 			}
 
 			if (fill_runner_struct(runinfo->runner, NULL, runinfo->parallel, runinfo->single))
-				create_jobs_and_run(runinfo->runner);
+				create_jobs_and_run(runinfo->runner, is_divisible(runinfo->single));
 			gebr_comm_runner_free(runinfo->runner);
 		}
 	}
@@ -592,20 +594,31 @@ create_job_entry(GebrCommRunner *runner, GebrGeoXmlFlow *flow, guint runid, gboo
 	g_free(title);
 }
 
+static gboolean
+is_divisible(gboolean single)
+{
+	return single && gebr.ui_flow_edition->autochoose;
+}
+
 /*
  * Creates job entries in JobControl tab. Also swaps the data structs from
  * GebrCommRunner::servers list from GebrServer to GebrCommServer, so GebrComm
  * can handle it (because GebrComm can't see GebrServer struct).
  */
 static void
-create_jobs_and_run(GebrCommRunner *runner)
+create_jobs_and_run(GebrCommRunner *runner, gboolean is_divided)
 {
 	gboolean first = TRUE;
 
-	for (GList *i = runner->flows; i; i = i->next) {
-		GebrCommRunnerFlow *runflow = i->data;
+	if (is_divided) {
+		GebrCommRunnerFlow *runflow = runner->flows->data;
 		create_job_entry(runner, runflow->flow, runflow->run_id, first);
-		first = FALSE;
+	} else {
+		for (GList *i = runner->flows; i; i = i->next) {
+			GebrCommRunnerFlow *runflow = i->data;
+			create_job_entry(runner, runflow->flow, runflow->run_id, first);
+			first = FALSE;
+		}
 	}
 
 	for (GList *i = runner->servers; i; i = i->next)
@@ -706,7 +719,7 @@ gebr_ui_flow_run(gboolean parallel, gboolean single)
 		if (!fill_runner_struct(runner, queue_id, parallel, single))
 			goto free_and_error;
 
-		create_jobs_and_run(runner);
+		create_jobs_and_run(runner, FALSE);
 	}
 
 free_and_error:
