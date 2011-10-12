@@ -38,6 +38,8 @@ static void create_jobs_and_run(GebrCommRunner *runner, gboolean is_divided);
 
 static gboolean is_divisible(gboolean single);
 
+static void add_selected_flows_to_runner(GebrCommRunner *runner);
+
 /* Private methods {{{1 */
 /*
  * flow_io_run_dialog:
@@ -291,6 +293,27 @@ fill_runner_struct(GebrCommRunner *runner,
 	GebrServer *server;
 	GebrCommRunnerFlow *runflow;
 	gboolean multiple, is_mpi;
+
+	if (single) {
+		if (gebr.ui_flow_edition->autochoose && gebr_geoxml_flow_is_parallelizable(gebr.flow, gebr.validator)) {
+			GList *flows;
+			gdouble *weights;
+			guint n_servers = g_list_length(runner->servers);
+			runner->is_parallelizable = TRUE;
+
+			weights = gebr_geoxml_flow_calulate_weights(n_servers);
+			flows = gebr_geoxml_flow_divide_flows(gebr.flow, gebr.validator, weights, n_servers);
+
+			for (GList *i = flows; i; i = i->next) {
+				GebrGeoXmlFlow *frac_flow = i->data;
+				gebr_comm_runner_add_flow(runner, gebr.validator, frac_flow, TRUE);
+			}
+			g_free(weights);
+			g_list_free(flows);
+		} else
+			gebr_comm_runner_add_flow(runner, gebr.validator, gebr.flow, FALSE);
+	} else
+		add_selected_flows_to_runner(runner);
 
 	server = runner->servers->data;
 	runflow = runner->flows->data;
@@ -641,7 +664,7 @@ add_selected_flows_to_runner(GebrCommRunner *runner)
 	gebr_gui_gtk_tree_view_foreach_selected(&iter, treeview) {
 		gtk_tree_model_get(model, &iter, FB_XMLPOINTER, &flow, -1);
 		gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE);
-		gebr_comm_runner_add_flow(runner, gebr.validator, flow);
+		gebr_comm_runner_add_flow(runner, gebr.validator, flow, FALSE);
 	}
 	gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &gebr.flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE);
 }
@@ -686,11 +709,6 @@ gebr_ui_flow_run(gboolean parallel, gboolean single)
 	runner = gebr_comm_runner_new();
 	runner->parallel = parallel;
 	runner->execution_speed = g_strdup_printf("%d", gebr_interface_get_execution_speed());
-
-	if (single)
-		gebr_comm_runner_add_flow(runner, gebr.validator, gebr.flow);
-	else
-		add_selected_flows_to_runner(runner);
 
 	if (gebr.ui_flow_edition->autochoose) {
 		send_sys_load_request(get_connected_servers(model),
