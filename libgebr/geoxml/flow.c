@@ -1088,7 +1088,7 @@ GList *gebr_geoxml_flow_divide_flows(GebrGeoXmlFlow *flow,
 	n = gebr_geoxml_program_control_get_n(loop, &step, &ini);
 	gebr_geoxml_object_unref(loop);
 
-	total_n = atoi(n);
+	total_n = (gint) g_strtod(n, NULL);
 	distributed_n = gebr_geoxml_flow_calculate_proportional_n(total_n, weights, n_weights);
 
 	for (gint i = 0; i < n_weights; i++)
