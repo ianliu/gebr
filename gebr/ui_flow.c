@@ -62,8 +62,8 @@ flow_io_run_dialog(GebrCommRunner *config,
 	GtkWidget *entry_queue = NULL;
 	GtkWidget *entry_np = NULL;
 
-	dialog = gtk_dialog_new_with_buttons(_("Flow execution parameters"), GTK_WINDOW(gebr.window), 
-					     (GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT), 
+	dialog = gtk_dialog_new_with_buttons(_("Flow execution parameters"), GTK_WINDOW(gebr.window),
+					     (GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
 					     GTK_STOCK_CANCEL, GTK_RESPONSE_REJECT,
 					     GTK_STOCK_EXECUTE, GTK_RESPONSE_ACCEPT,
 					     NULL);
@@ -96,7 +96,7 @@ flow_io_run_dialog(GebrCommRunner *config,
 
 		g_free(markup);
 	}
-	
+
 	if (server->type == GEBR_COMM_SERVER_TYPE_MOAB) {
 		GtkCellRenderer *cell;
 		cell = gtk_cell_renderer_text_new();
@@ -125,12 +125,12 @@ flow_io_run_dialog(GebrCommRunner *config,
 		gtk_entry_set_activates_default(GTK_ENTRY(entry_np), TRUE);
 		plug_widget(_("Number of processes"), entry_np);
 	}
-	
+
 	gtk_widget_show_all(dialog);
 
 	gboolean moab_server_validated = !(server->type == GEBR_COMM_SERVER_TYPE_MOAB);
 	gboolean queue_name_validated = !(config->queue == NULL);
-	gboolean num_processes_validated = !(mpi_program); 
+	gboolean num_processes_validated = !(mpi_program);
 
 	do {
 		if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_ACCEPT) {
@@ -450,21 +450,21 @@ create_2ndDegreePoly_model(GList *points, gdouble parameters[])
 		GebrPoint *point = i->data;
 		N[j] = g_new(gdouble, 4);
 		N[j][0] = 1;
-		N[j][1] = point->x; 
-		N[j][2] = N[j][1]*N[j][1]; 
+		N[j][1] = point->x;
+		N[j][2] = N[j][1]*N[j][1];
 		N[j][3] = point->y;
 	}
 
 	M = (N[1][1] - N[0][1]) * (N[2][1] - N[0][1])*(N[2][1] - N[1][1]);
 	MA = N[2][3]*(N[1][1]-N[0][1]) + N[1][3]*(N[0][1]-N[2][1]) + N[0][3]*(N[2][1]-N[1][1]);
 	MB = N[2][3]*(N[0][2]-N[1][2]) + N[1][3]*(N[2][2]-N[0][2]) + N[0][3]*(N[1][2]-N[2][2]);
-	MC = N[2][3]*(N[0][1]*N[1][2] - N[1][1]*N[0][2]) + N[1][3]*(N[2][1]*N[0][2]-N[0][1]*N[2][2]) + N[0][3]*(N[1][1]*N[2][2]-N[2][1]*N[1][2]);  
+	MC = N[2][3]*(N[0][1]*N[1][2] - N[1][1]*N[0][2]) + N[1][3]*(N[2][1]*N[0][2]-N[0][1]*N[2][2]) + N[0][3]*(N[1][1]*N[2][2]-N[2][1]*N[1][2]);
 
 	// Equation Ax2 + Bx + C = 0
 	parameters[0] = MA/M;
 	parameters[1] = MB/M;
 	parameters[2] = MC/M;
-	
+
 	for (gint j=0; j<3; j++)
 		g_free(N[j]);
 	g_free(N);
@@ -495,19 +495,19 @@ calculate_server_score(const gchar *load, gint ncores, gdouble cpu_clock)
 	GList *points = NULL;
 	gdouble delay = 1.0;
 	GebrPoint point1, point5, point15;
-	
+
 	sscanf(load, "%lf %lf %lf", &(point1.y), &(point5.y), &(point15.y));
-	
-	point1.x = -1.0; 
-	point5.x = -5.0; 
+
+	point1.x = -1.0;
+	point5.x = -5.0;
 	point15.x = -15.0;
 	points = g_list_prepend(points, &point1);
 	points = g_list_prepend(points, &point5);
 	points = g_list_prepend(points, &point15);
-	
+
 	gdouble current_load = predict_current_load(points, delay);
 	gdouble score = cpu_clock*ncores/(current_load+1);
-	
+
 	g_list_free(points);
 
 	return score;
@@ -611,7 +611,7 @@ create_job_entry(GebrCommRunner *runner, GebrGeoXmlFlow *flow, guint runid, gboo
 
 	if (gebr_comm_server_is_local(server->comm) == FALSE)
 		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Asking server '%s' to run Flow '%s'."), server->comm->address->str, title);
-	else 
+	else
 		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Asking local server to run Flow '%s'."), title);
 	g_free(title);
 }
@@ -687,7 +687,7 @@ get_selected_queue(gchar **queue, GebrServer *server)
 	}
 
 	if (!has_error)
-		gtk_tree_model_get(GTK_TREE_MODEL(server->queues_model), &queue_iter, 
+		gtk_tree_model_get(GTK_TREE_MODEL(server->queues_model), &queue_iter,
 				   SERVER_QUEUE_ID, queue, -1);
 
 	return !has_error;
