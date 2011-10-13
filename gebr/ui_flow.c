@@ -594,8 +594,7 @@ create_job_entry(GebrCommRunner *runner, GebrGeoXmlFlow *flow, guint runid, gboo
 	GString *queue_string;
 
 	gebr_geoxml_flow_set_date_last_run(flow, gebr_iso_date());
-	document_save(GEBR_GEOXML_DOC(flow), FALSE, FALSE);
-	flow_browse_info_update(); 
+	flow_browse_info_update();
 
 	title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(flow));
 	server = runner->servers->data;
