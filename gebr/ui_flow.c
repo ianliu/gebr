@@ -705,6 +705,15 @@ gebr_ui_flow_run(gboolean parallel, gboolean single)
 		return;
 	}
 
+   GtkTreeIter iter;
+	gebr_gui_gtk_tree_view_foreach_selected(&iter, GTK_TREE_VIEW(gebr.ui_flow_browse->view)) {
+      GebrGeoXmlFlow *document = NULL;
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
+				   FB_XMLPOINTER, &document, -1);
+      gebr_geoxml_flow_set_date_last_run(document, gebr_iso_date());
+      document_save(GEBR_GEOXML_DOCUMENT(document), FALSE, FALSE);
+	}
+
 	runner = gebr_comm_runner_new();
 	runner->parallel = parallel;
 	runner->execution_speed = g_strdup_printf("%d", gebr_interface_get_execution_speed());
