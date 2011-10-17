@@ -487,10 +487,23 @@ predict_current_load(GList *points, gdouble delay)
 }
 
 /*
+ * Compute the effective core, based on the number of cores, 
+ * on the flow_exec_speed and on the number of steps
+ */ 
+static gint
+compute_effective_cores(const gint ncores, const gint scale, const gint nsteps) 
+{
+	gint eff_ncores= (scale*ncores)/ 5;
+	if (eff_ncores == 0)
+		eff_ncores = 1;
+	return (eff_ncores < nsteps ? eff_ncores : nsteps);
+}
+
+/*
  * Compute the score of a server
  */
 static gdouble
-calculate_server_score(const gchar *load, gint ncores, gdouble cpu_clock)
+calculate_server_score(const gchar *load, gint ncores, gdouble cpu_clock, gint scale, gint nsteps)
 {
 	GList *points = NULL;
 	gdouble delay = 1.0;
@@ -506,11 +519,16 @@ calculate_server_score(const gchar *load, gint ncores, gdouble cpu_clock)
 	points = g_list_prepend(points, &point15);
 
 	gdouble current_load = predict_current_load(points, delay);
-	gdouble score = cpu_clock*ncores/(current_load+1);
+	gint eff_ncores = compute_effective_cores(ncores, scale, nsteps); 
+	gdouble score;
+	if (current_load*ncores > ncores)
+		score = cpu_clock*ncores/(current_load + eff_ncores - ncores + 1);
+	else
+		score = cpu_clock*ncores;
 
 	g_list_free(points);
 
-	return score;
+	return (score);
 }
 
 /*
@@ -521,6 +539,7 @@ typedef struct {
 	gint requests;
 	gboolean parallel;
 	gboolean single;
+	GList *flows;
 	GebrCommRunner *runner;
 } AsyncRunInfo;
 
@@ -535,7 +554,18 @@ on_response_received(GebrCommHttpMsg *request, GebrCommHttpMsg *response, AsyncR
 		GebrCommJsonContent *json = gebr_comm_json_content_new(response->content->str);
 		GString *value = gebr_comm_json_content_to_gstring(json);
 		ServerScore *sc = g_object_get_data(G_OBJECT(request), "current-server");
-		gdouble score = calculate_server_score(value->str, sc->server->ncores, sc->server->clock_cpu);
+		
+		GebrGeoXmlProgram *loop = gebr_geoxml_flow_get_control_program(runinfo->flows->data);
+		gchar *n = gebr_geoxml_program_control_get_n(loop, NULL, NULL);
+		gchar *eval_n;
+		gebr_validator_evaluate(gebr.validator, n, GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
+					GEBR_GEOXML_DOCUMENT_TYPE_LINE, &eval_n, NULL);
+		gdouble score = calculate_server_score(value->str, sc->server->ncores, sc->server->clock_cpu, gebr.config.flow_exec_speed, atoi(eval_n));
+		
+		g_free(n);
+		g_free(eval_n);
+		gebr_geoxml_object_unref(loop);
+
 		sc->score = score;
 		g_debug("Server: %s, Score: %lf, Load: %s", sc->server->comm->address->str, score, value->str);
 
@@ -545,10 +575,12 @@ on_response_received(GebrCommHttpMsg *request, GebrCommHttpMsg *response, AsyncR
 				return b->score - a->score;
 			}
 			runinfo->runner->servers = g_list_sort(runinfo->runner->servers, (GCompareFunc)comp_func);
+			gdouble acc_scores = 0;
 
 			for (GList *i = runinfo->runner->servers; i; i = i->next) {
 				ServerScore *sc = i->data;
 				i->data = sc->server;
+				acc_scores += sc->score;
 				g_debug("Server %s, score %lf", sc->server->comm->address->str, sc->score);
 				g_free(sc);
 			}
@@ -564,15 +596,17 @@ on_response_received(GebrCommHttpMsg *request, GebrCommHttpMsg *response, AsyncR
  * Request all the connected servers the info on the local file /proc/loadavg
  */
 static void
-send_sys_load_request(GList *servers, GebrCommRunner *runner, gboolean parallel, gboolean single)
+send_sys_load_request(GList *servers, GList *flows,  GebrCommRunner *runner, gboolean parallel, gboolean single)
 {
 	AsyncRunInfo *scores = g_new0(AsyncRunInfo, 1);
 	scores->parallel = parallel;
 	scores->single = single;
 	scores->runner = runner;
 	scores->runner->servers = servers;
+	scores->flows = flows;
 
 	for (GList *i = servers; i; i = i->next) {
+
 		GebrCommHttpMsg *request;
 		ServerScore *sc = i->data;
 		request = gebr_comm_protocol_socket_send_request(sc->server->comm->socket,
@@ -697,6 +731,7 @@ get_selected_queue(gchar **queue, GebrServer *server)
 void
 gebr_ui_flow_run(gboolean parallel, gboolean single)
 {
+	GList *flows = NULL;
 	GebrCommRunner *runner;
 	GtkTreeModel *model = gtk_combo_box_get_model(GTK_COMBO_BOX(gebr.ui_flow_edition->server_combobox));
 
@@ -705,13 +740,14 @@ gebr_ui_flow_run(gboolean parallel, gboolean single)
 		return;
 	}
 
-   GtkTreeIter iter;
+	GtkTreeIter iter;
 	gebr_gui_gtk_tree_view_foreach_selected(&iter, GTK_TREE_VIEW(gebr.ui_flow_browse->view)) {
-      GebrGeoXmlFlow *document = NULL;
+		GebrGeoXmlFlow *document = NULL;
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
 				   FB_XMLPOINTER, &document, -1);
-      gebr_geoxml_flow_set_date_last_run(document, gebr_iso_date());
-      document_save(GEBR_GEOXML_DOCUMENT(document), FALSE, FALSE);
+		gebr_geoxml_flow_set_date_last_run(document, gebr_iso_date());
+		document_save(GEBR_GEOXML_DOCUMENT(document), FALSE, FALSE);
+		flows = g_list_prepend (flows, document);
 	}
 
 	runner = gebr_comm_runner_new();
@@ -719,7 +755,7 @@ gebr_ui_flow_run(gboolean parallel, gboolean single)
 	runner->execution_speed = g_strdup_printf("%d", gebr_interface_get_execution_speed());
 
 	if (gebr.ui_flow_edition->autochoose) {
-		send_sys_load_request(get_connected_servers(model),
+		send_sys_load_request(get_connected_servers(model), flows, 
 				      runner, parallel, single);
 		return;
 	} else {
