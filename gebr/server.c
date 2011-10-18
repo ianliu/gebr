@@ -403,6 +403,7 @@ void server_free(GebrServer *server)
 
 const gchar *server_get_name(GebrServer * server)
 {
+	g_return_val_if_fail(server != NULL, NULL);
 	return server_get_name_from_address(server->comm->address->str);
 }
 
@@ -427,6 +428,9 @@ gboolean server_find(GebrServer * server, GtkTreeIter * iter)
 gboolean server_queue_find(GebrServer * server, const gchar * name, GtkTreeIter * _iter)
 {
 	GtkTreeIter iter;
+
+	g_return_val_if_fail(server != NULL, FALSE);
+
 	gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(server->queues_model)) {
 		gchar * i_name;
 
@@ -459,8 +463,16 @@ void server_queue_find_at_job_control(GebrServer * server, const gchar * name, G
 				   JC_QUEUE_NAME, &i_name,
 				   JC_IS_JOB, &is_job,
 				   -1);
-		if (!is_job && !strcmp(server->comm->address->str, i_address) && (!strcmp(name, i_name) || 
-		    (name[0] == 'j' && i_name[0] == 'j') /* immediately */)) {
+
+		if (is_job)
+			continue;
+
+		gboolean is_immediately = (name[0] == 'j' && i_name[0] == 'j');
+
+		if (!is_immediately && !server)
+			continue;
+
+		if (is_immediately || (!strcmp(server->comm->address->str, i_address) && (!strcmp(name, i_name)))) {
 			if (_iter != NULL)
 				*_iter = iter;
 			found = TRUE;
@@ -469,6 +481,7 @@ void server_queue_find_at_job_control(GebrServer * server, const gchar * name, G
 		g_free(i_address);
 		g_free(i_name);
 	}
+
 	if (found)
 		return;
 
@@ -476,13 +489,26 @@ void server_queue_find_at_job_control(GebrServer * server, const gchar * name, G
 	if (_iter != NULL)
 		*_iter = iter;
 
+	const gchar *rhs;
+	const gchar *queue;
 	GString *title = g_string_new(NULL);
 	gboolean immediately = name[0] == 'j';
-	g_string_printf(title, _("%s at %s"),
-			(server->type == GEBR_COMM_SERVER_TYPE_MOAB) ? name : immediately ? _("Immediately") : name + 1,
-			server_get_name_from_address(server->comm->address->str));
+
+	if (server)
+		rhs = server_get_name_from_address(server->comm->address->str);
+	else
+		rhs = "FooGroup";
+
+	if (server->type == GEBR_COMM_SERVER_TYPE_MOAB)
+		queue = name;
+	else if (immediately)
+		queue = _("Immediately");
+	else
+		queue = name + 1;
+
+	g_string_printf(title, _("%s at %s"), queue, rhs);
 	gtk_tree_store_set(gebr.ui_job_control->store, &iter,
-			   JC_SERVER_ADDRESS, server->comm->address->str,
+			   JC_SERVER_ADDRESS, rhs,
 			   JC_QUEUE_NAME, name,
 			   JC_TITLE, title->str,
 			   JC_STRUCT, NULL,

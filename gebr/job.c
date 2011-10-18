@@ -61,34 +61,43 @@ gebr_job_new(GebrServer *server, const gchar *title, const gchar *queue)
 	job->parent.queue_id = g_string_new(queue);
 	job->parent.status = JOB_STATUS_INITIAL; 
 
-	/* Add iterators 
-	 */
-	/* Add queue on the job control list */
-	GtkTreeIter queue_jc_iter = job_add_jc_queue_iter(job);
+	/* Add iterators */
+
+	GtkTreeIter queue_jc_iter;
+	queue_jc_iter = job_add_jc_queue_iter(job);
+
 	/* Add job on the job control list */
 	GtkTreeIter iter;
+	gchar *rhs;
+	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &queue_jc_iter, JC_SERVER_ADDRESS, &rhs, -1);
+
 	gtk_tree_store_append(gebr.ui_job_control->store, &iter, &queue_jc_iter);
 	gtk_tree_store_set(gebr.ui_job_control->store, &iter,
-			   JC_SERVER_ADDRESS, job->server->comm->address->str,
+			   JC_SERVER_ADDRESS, rhs,
 			   JC_QUEUE_NAME, job->parent.queue_id->str,
 			   JC_TITLE, job->parent.title->str,
 			   JC_STRUCT, job,
 			   JC_IS_JOB, TRUE,
 			   JC_VISIBLE, TRUE,
 			   -1);
+	g_free(rhs);
 	job->iter = iter;
 	/* Add queue on the server queue list model (only if server is regular) */
-	GtkTreeIter queue_iter;
-	gboolean queue_exists = server_queue_find(job->server, job->parent.queue_id->str, &queue_iter);
-	if (!queue_exists && job->server->type == GEBR_COMM_SERVER_TYPE_REGULAR && job->parent.queue_id->str[0] == 'q') {
-		GString *string = g_string_new(NULL);
-		g_string_printf(string, _("At '%s'"), job->parent.queue_id->str+1);
-		gtk_list_store_append(job->server->queues_model, &queue_iter);
-		gtk_list_store_set(job->server->queues_model, &queue_iter,
-				   SERVER_QUEUE_TITLE, string->str,
-				   SERVER_QUEUE_ID, job->parent.queue_id->str, 
-				   SERVER_QUEUE_LAST_RUNNING_JOB, NULL, -1);
-		g_string_free(string, TRUE);
+
+	if (job->server) {
+		GtkTreeIter queue_iter;
+		gboolean queue_exists;
+		queue_exists = server_queue_find(job->server, job->parent.queue_id->str, &queue_iter);
+		if (!queue_exists && job->server->type == GEBR_COMM_SERVER_TYPE_REGULAR && job->parent.queue_id->str[0] == 'q') {
+			GString *string = g_string_new(NULL);
+			g_string_printf(string, _("At \"%s\""), job->parent.queue_id->str+1);
+			gtk_list_store_append(job->server->queues_model, &queue_iter);
+			gtk_list_store_set(job->server->queues_model, &queue_iter,
+					   SERVER_QUEUE_TITLE, string->str,
+					   SERVER_QUEUE_ID, job->parent.queue_id->str, 
+					   SERVER_QUEUE_LAST_RUNNING_JOB, NULL, -1);
+			g_string_free(string, TRUE);
+		}
 	}
 
 	return job;
@@ -200,6 +209,10 @@ void job_delete(GebrJob *job)
 const gchar *job_get_queue_name(GebrJob *job)
 {
 	const gchar *queue;
+
+	if (!job->server)
+		return NULL;
+
 	if (job->server->type == GEBR_COMM_SERVER_TYPE_REGULAR) {
 		if (job->parent.queue_id->str[0] == 'q')
 			queue = job->parent.queue_id->str+1;
@@ -411,8 +424,16 @@ void job_load_details(GebrJob *job)
 		g_string_assign(queue_info, _("without queue"));
 	else
 		g_string_printf(queue_info, "on %s", queue);
+
+	gchar *addr_or_group;
+	if (!job->server)
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), &job->iter, JC_SERVER_ADDRESS, &addr_or_group, -1);
+	else
+		addr_or_group = g_strdup(server_get_name(job->server));
+
 	g_string_append_printf(info, _("Job submitted to '%s' ('%s') by %s.\n"),
-			       server_get_name(job->server), queue_info->str, job->parent.client_hostname->str);
+			       addr_or_group, queue_info->str, job->parent.client_hostname->str);
+	g_free(addr_or_group);
 	g_string_free(queue_info, TRUE);
 
 	if (job->parent.status == JOB_STATUS_INITIAL) {
