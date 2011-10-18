@@ -310,9 +310,13 @@ GtkCellRenderer *gebr_gui_gtk_tree_view_column_get_first_renderer_with_mode(GtkT
 	gebr_gui_gtk_tree_model_foreach_child_hyg(iter, parent, tree_model, __nohyg)
 
 /**
- * Alternative to gtk_tree_model_foreach that works with removal of iter
+ * gebr_gui_gtk_tree_model_foreach_recursive:
+ *
+ * Alternative to gtk_tree_model_foreach() that works when removing items from
+ * @tree_model.
  */
-void gebr_gui_gtk_tree_model_foreach_recursive(GtkTreeModel *tree_model, GtkTreeModelForeachFunc func,
+void gebr_gui_gtk_tree_model_foreach_recursive(GtkTreeModel *tree_model,
+					       GtkTreeModelForeachFunc func,
 					       gpointer user_data);
 
 /**
