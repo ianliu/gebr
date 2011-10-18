@@ -42,12 +42,12 @@ libgebr_a_SOURCES =		\
 	gebr-gettext.h		\
 	gebr-help-edit-widget.c	\
 	gebr-help-edit-widget.h	\
+	gebr-task.c		\
+	gebr-task.h		\
 	gebr.c			\
 	gebr.h			\
 	interface.c		\
 	interface.h		\
-	job.c			\
-	job.h			\
 	line.c			\
 	line.h			\
 	menu.c			\

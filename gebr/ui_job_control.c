@@ -26,7 +26,7 @@
 
 #include "ui_job_control.h"
 #include "gebr.h"
-#include "job.h"
+#include "gebr-task.h"
 
 /*
  * Prototypes

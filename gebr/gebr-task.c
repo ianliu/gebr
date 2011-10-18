@@ -23,7 +23,7 @@
 #include <libgebr/utils.h>
 #include <libgebr/date.h>
 
-#include "job.h"
+#include "gebr-task.h"
 #include "gebr.h"
 #include "ui_job_control.h"
 

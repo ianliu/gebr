@@ -43,7 +43,7 @@
 #include "menu.h"
 #include "document.h"
 #include "server.h"
-#include "job.h"
+#include "gebr-task.h"
 #include "callbacks.h"
 #include "ui_flow.h"
 #include "ui_document.h"

@@ -25,7 +25,7 @@
 #include "client.h"
 #include "gebr.h"
 #include "server.h"
-#include "job.h"
+#include "gebr-task.h"
 
 void client_process_server_request(struct gebr_comm_server *comm_server, GebrCommHttpMsg *request, GebrServer *server)
 {

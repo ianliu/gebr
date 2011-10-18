@@ -36,7 +36,7 @@
 #include "gebr.h"
 #include "project.h"
 #include "server.h"
-#include "job.h"
+#include "gebr-task.h"
 #include "menu.h"
 #include "callbacks.h"
 #include "document.h"

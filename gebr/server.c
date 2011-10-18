@@ -26,7 +26,7 @@
 #include "server.h"
 #include "gebr.h"
 #include "client.h"
-#include "job.h"
+#include "gebr-task.h"
 #include "callbacks.h"
 
 enum {

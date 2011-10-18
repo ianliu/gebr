@@ -31,7 +31,7 @@
 #include "ui_server.h"
 #include "ui_moab.h"
 
-#include "job.h"
+#include "gebr-task.h"
 
 /* Prototypes {{{1 */
 static void create_jobs_and_run(GebrCommRunner *runner, gboolean is_divided);
