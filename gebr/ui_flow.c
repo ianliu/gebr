@@ -588,17 +588,18 @@ on_response_received(GebrCommHttpMsg *request, GebrCommHttpMsg *response, AsyncR
 		GString *value = gebr_comm_json_content_to_gstring(json);
 		ServerScore *sc = g_object_get_data(G_OBJECT(request), "current-server");
 
-		GebrGeoXmlProgram *loop = gebr_geoxml_flow_get_control_program(runinfo->flows->data);
 		gchar *eval_n;
-		if(loop){
+		GebrGeoXmlProgram *loop = gebr_geoxml_flow_get_control_program(runinfo->flows->data);
+
+		if (loop) {
 			gchar *n = gebr_geoxml_program_control_get_n(loop, NULL, NULL);
 			gebr_validator_evaluate(gebr.validator, n, GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
-					GEBR_GEOXML_DOCUMENT_TYPE_LINE, &eval_n, NULL);
+						GEBR_GEOXML_DOCUMENT_TYPE_LINE, &eval_n, NULL);
 			g_free(n);
 			gebr_geoxml_object_unref(loop);
 		}
 		else
-			eval_n = "1";
+			eval_n = g_strdup("1");
 		gdouble score = calculate_server_score(value->str, sc->server->ncores, sc->server->clock_cpu, gebr.config.flow_exec_speed, atoi(eval_n));
 		
 		g_free(eval_n);
