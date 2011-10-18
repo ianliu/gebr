@@ -29,6 +29,7 @@ typedef struct {
 	GebrCommServer *server;
 	gchar *flow_xml;
 	guint run_id;
+	gchar *frac;
 	gpointer user_data;
 } GebrCommRunnerFlow;
 
@@ -51,7 +52,6 @@ typedef struct {
 	gchar *num_processes;
 	gchar *execution_speed;
 	gboolean is_parallelizable;
-	gchar *frac;
 } GebrCommRunner;
 
 /**
@@ -69,12 +69,12 @@ void gebr_comm_runner_free(GebrCommRunner *self);
 /**
  * gebr_comm_runner_add_flow:
  */
-GebrCommRunner * gebr_comm_runner_add_flow(GebrCommRunner *self,
-					   GebrValidator  *validator,
-					   GebrGeoXmlFlow *flow,
-					   GebrCommServer *server,
-					   gboolean        divided,
-					   gpointer        user_data);
+GebrCommRunnerFlow * gebr_comm_runner_add_flow(GebrCommRunner *self,
+					       GebrValidator  *validator,
+					       GebrGeoXmlFlow *flow,
+					       GebrCommServer *server,
+					       gboolean        divided,
+					       gpointer        user_data);
 
 void gebr_comm_runner_flow_set_frac(GebrCommRunnerFlow *self, const gchar *frac);
 

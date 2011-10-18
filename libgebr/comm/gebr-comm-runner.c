@@ -85,7 +85,6 @@ gebr_comm_runner_new(void)
 {
 	GebrCommRunner *self = g_new(GebrCommRunner, 1);
 	self->flows = NULL;
-	self->servers = NULL;
 	self->parallel = FALSE;
 	self->account = self->queue = self->num_processes = NULL;
 	self->is_parallelizable = FALSE;
@@ -98,20 +97,19 @@ gebr_comm_runner_free(GebrCommRunner *self)
 	void free_each(GebrCommRunnerFlow *run_flow)
 	{
 		g_free(run_flow->flow_xml);
+		g_free(run_flow->frac);
 		g_free(run_flow);
 	}
 
 	g_list_foreach(self->flows, (GFunc)free_each, NULL);
 	g_list_free(self->flows);
-	g_list_free(self->servers);
 	g_free(self->account);
 	g_free(self->queue);
 	g_free(self->execution_speed);
-	g_free(self->frac);
 	g_free(self);
 }
 
-GebrCommRunner *
+GebrCommRunnerFlow *
 gebr_comm_runner_add_flow(GebrCommRunner *self,
 			  GebrValidator  *validator,
 			  GebrGeoXmlFlow *flow,
@@ -156,7 +154,7 @@ gebr_comm_runner_run(GebrCommRunner *self, const gchar *sessid)
 
 	for (GList *i = self->flows; i != NULL; i = g_list_next(i)) {
 		GebrCommRunnerFlow *run_flow = i->data;
-		g_string_printf(run_id_gstring, "%u:%s", sessid, run_flow->run_id);
+		g_string_printf(run_id_gstring, "%u:%s", run_flow->run_id, sessid);
 		gebr_comm_protocol_socket_oldmsg_send(run_flow->server->socket, FALSE,
 						      gebr_comm_protocol_defs.run_def, 7,
 						      run_flow->flow_xml,
