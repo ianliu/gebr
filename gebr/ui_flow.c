@@ -582,14 +582,14 @@ on_response_received(GebrCommHttpMsg *request, GebrCommHttpMsg *response, AsyncR
 			gchar *n = gebr_geoxml_program_control_get_n(loop, NULL, NULL);
 			gebr_validator_evaluate(gebr.validator, n, GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
 					GEBR_GEOXML_DOCUMENT_TYPE_LINE, &eval_n, NULL);
+			g_free(n);
+			gebr_geoxml_object_unref(loop);
 		}
 		else
 			eval_n = "1";
 		gdouble score = calculate_server_score(value->str, sc->server->ncores, sc->server->clock_cpu, gebr.config.flow_exec_speed, atoi(eval_n));
 		
-		g_free(n);
 		g_free(eval_n);
-		gebr_geoxml_object_unref(loop);
 
 		sc->score = score;
 		g_debug("Server: %s, Score: %lf, Load: %s", sc->server->comm->address->str, score, value->str);
