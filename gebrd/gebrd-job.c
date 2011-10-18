@@ -54,6 +54,7 @@ G_DEFINE_TYPE(GebrdJob, gebrd_job, GEBR_COMM_JOB_TYPE)
 static void gebrd_job_init(GebrdJob * job)
 {
 	job->exec_speed = g_string_new(NULL);
+	job->frac = g_string_new(NULL);
 }
 
 static void gebrd_job_class_init(GebrdJobClass * klass)
@@ -388,7 +389,6 @@ void job_new(GebrdJob ** _job, struct client * client, GString * queue, GString 
 	g_string_assign(job->parent.queue_id, queue->str);
 	g_string_assign(job->parent.moab_account, account->str);
 	g_string_assign(job->parent.n_process, n_process->str);
-	g_debug("Execution speed is %s", exec_speed->str);
 	g_string_assign(job->exec_speed, exec_speed->str);
 	g_string_assign(job->frac, frac->str);
 	job->parent.status = JOB_STATUS_INITIAL;
@@ -433,6 +433,7 @@ void job_free(GebrdJob *job)
 	g_string_free(job->exec_speed, TRUE);
 	g_string_free(job->buf[0], TRUE);
 	g_string_free(job->buf[1], TRUE);
+	g_string_free(job->frac, TRUE);
 	g_object_unref(job);
 }
 

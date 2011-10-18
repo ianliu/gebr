@@ -673,7 +673,7 @@ create_job_entry(GebrCommRunner *runner, GebrServer *server, GebrGeoXmlFlow *flo
 	title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(flow));
 	job = gebr_job_new(server, title, runner->queue);
 
-	g_string_printf(job->parent.run_id, "%u", runid);
+	g_string_printf(job->parent.run_id, "%u:%s", runid, gebr_get_session_id());
 	g_debug("Job entry created with RID = %s!", job->parent.run_id->str);
 
 	if (select) {

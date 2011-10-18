@@ -129,6 +129,7 @@ gebr_comm_runner_add_flow(GebrCommRunner *self,
 	run_flow->server = server;
 	run_flow->flow_xml = xml;
 	run_flow->frac = g_strdup("1:1");
+	run_flow->user_data = user_data;
 
 	if (divided)
 		run_flow->run_id = run_id;

@@ -27,43 +27,13 @@
 #include "gebr.h"
 #include "ui_job_control.h"
 
-GebrJob *
-gebr_job_find(const gchar *rid)
-{
-	GebrJob *job = NULL;
+G_DEFINE_TYPE(GebrJob, gebr_job, GEBR_COMM_JOB_TYPE);
 
-	g_return_val_if_fail(rid != NULL, NULL);
-
-	gboolean job_find_foreach_func(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data)
-	{
-		GebrJob *i;
-		gtk_tree_model_get(model, iter, JC_STRUCT, &i, -1);
-		if (g_strcmp0(i->parent.run_id->str, rid) == 0) {
-			job = i;
-			return TRUE;
-		}
-		return FALSE;
-	}
-
-	gtk_tree_model_foreach(GTK_TREE_MODEL(gebr.ui_job_control->store), job_find_foreach_func, NULL);
-
-	return job;
-}
-
-
-/* GOBJECT STUFF */
-enum {
-	LAST_PROPERTY
-};
-enum {
-	LAST_SIGNAL
-};
-// static guint object_signals[LAST_SIGNAL];
-G_DEFINE_TYPE(GebrJob, gebr_job, GEBR_COMM_JOB_TYPE)
 static void gebr_job_init(GebrJob * job)
 {
 }
-static void gebr_job_class_init(GebrJobClass * klass)
+
+static void gebr_job_class_init(GebrJobClass *klass)
 {
 }
 
@@ -719,3 +689,32 @@ gebr_job_hash_get(GebrServer *server, const gchar *jid)
 	const TaskId task = {server, (gchar*) jid};
 	return g_hash_table_lookup(jid_to_rid, &task);
 }
+
+GebrJob *
+gebr_job_find(const gchar *rid)
+{
+	GebrJob *job = NULL;
+
+	g_return_val_if_fail(rid != NULL, NULL);
+
+	gboolean job_find_foreach_func(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data)
+	{
+		GebrJob *i;
+
+		gtk_tree_model_get(model, iter, JC_STRUCT, &i, -1);
+
+		if (!i)
+			return FALSE;
+
+		if (g_strcmp0(i->parent.run_id->str, rid) == 0) {
+			job = i;
+			return TRUE;
+		}
+		return FALSE;
+	}
+
+	gtk_tree_model_foreach(GTK_TREE_MODEL(gebr.ui_job_control->store), job_find_foreach_func, NULL);
+
+	return job;
+}
+
