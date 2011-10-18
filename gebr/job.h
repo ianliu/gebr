@@ -58,9 +58,13 @@ GType gebr_job_get_type(void) G_GNUC_CONST;
 GebrJob *gebr_job_find(const gchar *rid);
 
 /**
- * Create a new job (from \p server) and add it to list of jobs
+ * gebr_job_new:
+ *
+ * Creates a new job for @server.
  */
-GebrJob *job_new_from_flow(GebrServer *server, const gchar *title, GString *queue);
+GebrJob *gebr_job_new(GebrServer  *server,
+		      const gchar *title,
+		      const gchar *queue);
 
 /**
  * Create a new job (from \p server) and add it to list of jobs

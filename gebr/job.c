@@ -77,7 +77,8 @@ static GtkTreeIter job_add_jc_queue_iter(GebrJob * job)
 	return queue_jc_iter;
 }
 
-static GebrJob *job_new(GebrServer *server, const gchar * title, GString *queue)
+GebrJob *
+gebr_job_new(GebrServer *server, const gchar *title, const gchar *queue)
 {
 	GebrJob *job = GEBR_JOB(g_object_new(GEBR_JOB_TYPE, NULL, NULL));
 	job->server = server;
@@ -87,7 +88,7 @@ static GebrJob *job_new(GebrServer *server, const gchar * title, GString *queue)
 
 	job->parent.client_hostname = g_string_new(local_hostname != NULL ? local_hostname : "");
 	job->parent.title = g_string_new(title);
-	job->parent.queue_id = g_string_new(queue->str); 
+	job->parent.queue_id = g_string_new(queue);
 	job->parent.status = JOB_STATUS_INITIAL; 
 
 	/* Add iterators 
@@ -121,11 +122,6 @@ static GebrJob *job_new(GebrServer *server, const gchar * title, GString *queue)
 	}
 
 	return job;
-}
-
-GebrJob *job_new_from_flow(GebrServer *server, const gchar *title, GString *queue)
-{
-	return job_new(server, title, queue);
 }
 
 void job_init_details(GebrJob *job, GString * _status, GString * title, GString * start_date, GString * finish_date,
@@ -171,7 +167,7 @@ GebrJob *job_new_from_jid(GebrServer *server, GString * jid, GString * _status, 
 			     GString * start_date, GString * finish_date, GString * hostname, GString * issues,
 			     GString * cmd_line, GString * output, GString * queue, GString * moab_jid)
 {
-	GebrJob *job = job_new(server, title->str, queue);
+	GebrJob *job = gebr_job_new(server, title->str, queue->str);
 	g_string_assign(job->parent.jid, jid->str);
 	job_init_details(job, _status, title, start_date, finish_date, hostname, issues, cmd_line, output, queue, moab_jid);
 	return job;
