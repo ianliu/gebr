@@ -57,6 +57,8 @@ static void gebr_config_save_servers(void);
 
 static void gebr_post_config(gboolean has_config);
 
+gchar * gebr_generate_session_id(void);
+
 #define SERVERS_PATH ".gebr/gebr/servers.conf"
 
 static gchar *SESSIONID = NULL;

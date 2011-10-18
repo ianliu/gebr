@@ -303,7 +303,7 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			job_list(client);
 		} else if (message->hash == gebr_comm_protocol_defs.run_def.code_hash) {
 			GList *arguments;
-			GString *xml, *account, *queue, *n_process, *run_id, *exec_speed;
+			GString *xml, *account, *queue, *n_process, *run_id, *exec_speed, *frac;
 			GebrdJob *job;
 
 			/* organize message data */
