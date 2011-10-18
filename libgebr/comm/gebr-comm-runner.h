@@ -20,13 +20,16 @@
 
 #include <glib.h>
 #include <libgebr/gebr-validator.h>
+#include <libgebr/comm/gebr-comm-server.h>
 
 G_BEGIN_DECLS
 
 typedef struct {
 	GebrGeoXmlFlow *flow;
+	GebrCommServer *server;
 	gchar *flow_xml;
 	guint run_id;
+	gpointer user_data;
 } GebrCommRunnerFlow;
 
 /**
@@ -42,13 +45,13 @@ typedef struct {
 typedef struct {
 	/*< private >*/
 	GList *flows;
-	GList *servers;
 	gboolean parallel;
 	gchar *account;
 	gchar *queue;
 	gchar *num_processes;
 	gchar *execution_speed;
 	gboolean is_parallelizable;
+	gchar *frac;
 } GebrCommRunner;
 
 /**
@@ -66,16 +69,21 @@ void gebr_comm_runner_free(GebrCommRunner *self);
 /**
  * gebr_comm_runner_add_flow:
  */
-guint gebr_comm_runner_add_flow(GebrCommRunner *self,
-				GebrValidator  *vaildator,
-				GebrGeoXmlFlow *flow,
-				gboolean 	divided);
+GebrCommRunner * gebr_comm_runner_add_flow(GebrCommRunner *self,
+					   GebrValidator  *validator,
+					   GebrGeoXmlFlow *flow,
+					   GebrCommServer *server,
+					   gboolean        divided,
+					   gpointer        user_data);
+
+void gebr_comm_runner_flow_set_frac(GebrCommRunnerFlow *self, const gchar *frac);
 
 /**
  * gebr_comm_runner_run:
  * @self:
+ * @sessid:
  */
-void gebr_comm_runner_run(GebrCommRunner *self);
+void gebr_comm_runner_run(GebrCommRunner *self, const gchar *sessid);
 
 G_END_DECLS
 

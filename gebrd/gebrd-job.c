@@ -367,7 +367,7 @@ GebrdJob *job_find(GString * jid)
 }
 
 void job_new(GebrdJob ** _job, struct client * client, GString * queue, GString * account, GString * xml,
-	     GString * n_process, GString * run_id, GString *exec_speed)
+	     GString * n_process, GString * run_id, GString *exec_speed, GString *frac)
 {
 	/* initialization */
 	GebrdJob *job = GEBRD_JOB(g_object_new(GEBRD_JOB_TYPE, NULL, NULL));
@@ -390,6 +390,7 @@ void job_new(GebrdJob ** _job, struct client * client, GString * queue, GString 
 	g_string_assign(job->parent.n_process, n_process->str);
 	g_debug("Execution speed is %s", exec_speed->str);
 	g_string_assign(job->exec_speed, exec_speed->str);
+	g_string_assign(job->frac, frac->str);
 	job->parent.status = JOB_STATUS_INITIAL;
 
 	*_job = job;

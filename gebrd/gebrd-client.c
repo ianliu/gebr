@@ -307,17 +307,19 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			GebrdJob *job;
 
 			/* organize message data */
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 6)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 7)) == NULL)
 				goto err;
-			xml = g_list_nth_data(arguments, 0);
+
+			xml = arguments->data;
 			account = g_list_nth_data(arguments, 1);
 			queue = g_list_nth_data(arguments, 2);
 			n_process = g_list_nth_data(arguments, 3);
 			run_id = g_list_nth_data(arguments, 4);
 			exec_speed = g_list_nth_data(arguments, 5);
+			frac = g_list_nth_data(arguments, 6);
 
 			/* try to run and send return */
-			job_new(&job, client, queue, account, xml, n_process, run_id, exec_speed);
+			job_new(&job, client, queue, account, xml, n_process, run_id, exec_speed, frac);
 #ifdef DEBUG
 			gchar *env_delay = getenv("GEBRD_RUN_DELAY_SEC");
 			if (env_delay != NULL)

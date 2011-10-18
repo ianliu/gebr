@@ -107,14 +107,17 @@ gebr_comm_runner_free(GebrCommRunner *self)
 	g_free(self->account);
 	g_free(self->queue);
 	g_free(self->execution_speed);
+	g_free(self->frac);
 	g_free(self);
 }
 
-guint
+GebrCommRunner *
 gebr_comm_runner_add_flow(GebrCommRunner *self,
 			  GebrValidator  *validator,
 			  GebrGeoXmlFlow *flow,
-			  gboolean 	  divided)
+			  GebrCommServer *server,
+			  gboolean 	  divided,
+			  gpointer        user_data)
 {
 	static guint run_id = 0;
 	GebrCommRunnerFlow *run_flow = g_new(GebrCommRunnerFlow, 1);
@@ -125,39 +128,44 @@ gebr_comm_runner_add_flow(GebrCommRunner *self,
 	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(stripped));
 
 	run_flow->flow = flow;
+	run_flow->server = server;
 	run_flow->flow_xml = xml;
+	run_flow->frac = g_strdup("1:1");
+
 	if (divided)
 		run_flow->run_id = run_id;
 	else
 		run_flow->run_id = run_id++;
 
 	self->flows = g_list_append(self->flows, run_flow);
-	return run_flow->run_id;
+
+	return run_flow;
 }
 
 void
-gebr_comm_runner_run(GebrCommRunner *self)
+gebr_comm_runner_flow_set_frac(GebrCommRunnerFlow *self, const gchar *frac)
+{
+	g_free(self->frac);
+	self->frac = g_strdup(frac);
+}
+
+void
+gebr_comm_runner_run(GebrCommRunner *self, const gchar *sessid)
 {
 	GString *run_id_gstring = g_string_new("");
-	GebrCommServer *server = self->servers->data;
-	GList *run_servers = self->servers;
 
 	for (GList *i = self->flows; i != NULL; i = g_list_next(i)) {
-		GebrCommRunnerFlow *run_flow = (GebrCommRunnerFlow*)i->data;
-
-		g_string_printf(run_id_gstring, "%u", run_flow->run_id);
-		gebr_comm_protocol_socket_oldmsg_send(server->socket, FALSE,
-						      gebr_comm_protocol_defs.run_def, 6, run_flow->flow_xml,
+		GebrCommRunnerFlow *run_flow = i->data;
+		g_string_printf(run_id_gstring, "%u:%s", sessid, run_flow->run_id);
+		gebr_comm_protocol_socket_oldmsg_send(run_flow->server->socket, FALSE,
+						      gebr_comm_protocol_defs.run_def, 7,
+						      run_flow->flow_xml,
 						      self->account ? self->account : "",
 						      self->queue ? self->queue : "",
 						      self->num_processes ? self->num_processes : "",
 						      run_id_gstring->str,
-						      self->execution_speed);
-
-		if (self->is_parallelizable && run_servers->next) {
-			run_servers = run_servers->next;
-			server = run_servers->data;
-		}
+						      self->execution_speed,
+						      run_flow->frac);
 	}
 
 	g_string_free(run_id_gstring, TRUE);
