@@ -645,12 +645,20 @@ void job_notify(GebrdJob *job, struct client *client)
 		job_status_set(job, JOB_STATUS_QUEUED);
 
 	gebr_comm_protocol_socket_oldmsg_send(client->socket, FALSE,
-					      gebr_comm_protocol_defs.job_def, 11,
-					      job->parent.jid->str, status_enum_to_string(job->parent.status),
-					      job->parent.title->str, job->parent.start_date->str,
-					      job->parent.finish_date->str, job->parent.client_hostname->str, job->parent.issues->str,
-					      job->parent.cmd_line->str, job->parent.output->str,
-					      job->parent.queue_id->str, job->parent.moab_jid->str);
+					      gebr_comm_protocol_defs.job_def, 13,
+					      job->parent.jid->str,
+					      status_enum_to_string(job->parent.status),
+					      job->parent.title->str,
+					      job->parent.start_date->str,
+					      job->parent.finish_date->str,
+					      job->parent.client_hostname->str,
+					      job->parent.issues->str,
+					      job->parent.cmd_line->str,
+					      job->parent.output->str,
+					      job->parent.queue_id->str,
+					      job->parent.moab_jid->str,
+					      job->parent.run_id->str,
+					      job->frac->str);
 }
 
 

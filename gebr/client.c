@@ -252,11 +252,11 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 		} else if (message->hash == gebr_comm_protocol_defs.job_def.code_hash) {
 			GList *arguments;
 			GString *jid, *hostname, *status, *title, *start_date, *finish_date, *issues, *cmd_line,
-				*output, *queue, *moab_jid;
+				*output, *queue, *moab_jid, *run_id, *frac;
 			GebrJob *job;
 
 			/* organize message data */
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 11)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 13)) == NULL)
 				goto err;
 			jid = g_list_nth_data(arguments, 0);
 			status = g_list_nth_data(arguments, 1);
@@ -269,6 +269,8 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 			output = g_list_nth_data(arguments, 8);
 			queue = g_list_nth_data(arguments, 9);
 			moab_jid = g_list_nth_data(arguments, 10);
+			run_id = g_list_nth_data(arguments, 11);
+			frac = g_list_nth_data(arguments, 12);
 
 			job = job_find(comm_server->address, jid, TRUE);
 			if (job == NULL)
