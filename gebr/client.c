@@ -228,13 +228,14 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 				GString *jid;
 				GString *run_id;
 
-				/* organize message data */
 				if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
 					goto err;
+
 				jid = g_list_nth_data(arguments, 0);
 				run_id = g_list_nth_data(arguments, 1);
+
 				gebr_job_hash_bind(server, jid->str, run_id->str);
-				GebrJob * job = job_find(comm_server->address, run_id, FALSE);
+				GebrJob * job = gebr_job_find(run_id->str);
 				if (job != NULL) {
 					g_string_assign(job->parent.jid, jid->str);
 
@@ -272,7 +273,8 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 			run_id = g_list_nth_data(arguments, 11);
 			frac = g_list_nth_data(arguments, 12);
 
-			job = job_find(comm_server->address, jid, TRUE);
+			job = gebr_job_find(run_id->str);
+
 			if (job == NULL)
 				job = job_new_from_jid(server, jid, status, title, start_date, finish_date,
 						       hostname, issues, cmd_line, output, queue, moab_jid);
@@ -284,7 +286,6 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		} else if (message->hash == gebr_comm_protocol_defs.out_def.code_hash) {
-			const gchar *rid;
 			GList *arguments;
 			GString *jid, *output;
 			GebrJob *job;
@@ -294,13 +295,7 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 				goto err;
 			jid = g_list_nth_data(arguments, 0);
 			output = g_list_nth_data(arguments, 1);
-			rid = gebr_job_hash_get(server, jid->str);
-
-			g_assert(rid != NULL);
-
-			GString *run_id = g_string_new(rid);
-			job = job_find(comm_server->address, run_id, FALSE);
-			g_string_free(run_id, TRUE);
+			job = gebr_job_find(gebr_job_hash_get(server, jid->str));
 
 			if (job != NULL) {
 				job_append_output(job, output);
@@ -315,11 +310,12 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 			/* organize message data */
 			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 3)) == NULL)
 				goto err;
+
 			jid = g_list_nth_data(arguments, 0);
 			status = g_list_nth_data(arguments, 1);
 			parameter = g_list_nth_data(arguments, 2);
 
-			job = job_find(comm_server->address, jid, TRUE);
+			job = gebr_job_find(gebr_job_hash_get(server, jid->str));
 			if (job != NULL) {
 				enum JobStatus status_enum;
 

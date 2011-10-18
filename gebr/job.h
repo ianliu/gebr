@@ -50,15 +50,12 @@ struct _GebrJobClass {
 GType gebr_job_get_type(void) G_GNUC_CONST;
 
 /**
- * job_find:
- * @address: The daemon address to be searched for.
- * @id: The job id.
- * @jid: If %TRUE, search by #GebrCommJob:jid, otherwise search by #GebrCommJob:run_id.
+ * gebr_job_find:
  *
- * Find the job structure for the corresponding @id and server @address. If
- * @jid is %TRUE find by @jid, otherwise find by #GebrCommJob:run_id.
+ * Searches for @rid in the jobs list and returns it. If there is no job with
+ * id @rid, %NULL is returned. It is an error to pass %NULL for this method.
  */
-GebrJob *job_find(GString * address, GString * id, gboolean jid);
+GebrJob *gebr_job_find(const gchar *rid);
 
 /**
  * Create a new job (from \p server) and add it to list of jobs

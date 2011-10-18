@@ -27,28 +27,25 @@
 #include "gebr.h"
 #include "ui_job_control.h"
 
-GebrJob *job_find(GString * address, GString * id, gboolean jid)
+GebrJob *
+gebr_job_find(const gchar *rid)
 {
 	GebrJob *job = NULL;
 
-	gboolean job_find_foreach_func(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter)
+	g_return_val_if_fail(rid != NULL, NULL);
+
+	gboolean job_find_foreach_func(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data)
 	{
 		GebrJob *i;
-		gboolean is_job;
-
-		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), iter, JC_STRUCT, &i, JC_IS_JOB, &is_job,
-				   -1);
-		if (!is_job || strcmp(i->server->comm->address->str, address->str))
-			return FALSE;
-		if ((jid && !strcmp(i->parent.jid->str, id->str)) || (!jid && !strcmp(i->parent.run_id->str, id->str))) {
+		gtk_tree_model_get(model, iter, JC_STRUCT, &i, -1);
+		if (g_strcmp0(i->parent.run_id->str, rid) == 0) {
 			job = i;
-			return TRUE;	
+			return TRUE;
 		}
 		return FALSE;
 	}
 
-	gebr_gui_gtk_tree_model_foreach_recursive(GTK_TREE_MODEL(gebr.ui_job_control->store),
-						  (GtkTreeModelForeachFunc)job_find_foreach_func, NULL); 
+	gtk_tree_model_foreach(GTK_TREE_MODEL(gebr.ui_job_control->store), job_find_foreach_func, NULL);
 
 	return job;
 }
