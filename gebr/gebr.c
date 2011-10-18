@@ -59,6 +59,8 @@ static void gebr_post_config(gboolean has_config);
 
 #define SERVERS_PATH ".gebr/gebr/servers.conf"
 
+static gchar *SESSIONID = NULL;
+
 /**
  * gebr_init:
  *
@@ -68,6 +70,8 @@ static void gebr_post_config(gboolean has_config);
 void
 gebr_init(gboolean has_config)
 {
+	SESSIONID = gebr_generate_session_id();
+
 	gebr.project_line = NULL;
 	gebr.project = NULL;
 	gebr.line = NULL;
@@ -132,6 +136,8 @@ gebr_init(gboolean has_config)
 gboolean gebr_quit(gboolean save_config)
 {
 	GtkTreeIter iter;
+
+	g_free(SESSIONID);
 
 	if (save_config)
 		gebr_config_save(FALSE);
@@ -763,4 +769,19 @@ static void gebr_migrate_data_dir(void)
 	g_string_free(command_line, TRUE);
 	g_string_free(new_data_dir, TRUE);
 	gtk_widget_destroy(dialog);
+}
+
+// FIXME How can we improve the session id?
+static gchar *
+gebr_generate_session_id(void)
+{
+	GTimeVal tv;
+	g_get_current_time(&tv);
+	return g_strdup_printf("%ld", tv.tv_usec);
+}
+
+const gchar *
+gebr_get_session_id(void)
+{
+	return SESSIONID;
 }

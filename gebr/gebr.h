@@ -1,5 +1,5 @@
 /*   GeBR - An environment for seismic processing.
- *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
+ *   Copyright (C) 2007-2011 GeBR core team (http://www.gebrproject.com/)
  *
  *   This program is free software: you can redistribute it and/or
  *   modify it under the terms of the GNU General Public License as
@@ -199,6 +199,8 @@ void gebr_message(GebrLogMessageType type, gboolean in_statusbar, gboolean in_lo
  * @document:
  */
 void gebr_remove_help_edit_window(GebrGeoXmlDocument * document);
+
+const gchar *gebr_get_session_id(void);
 
 G_END_DECLS
 
