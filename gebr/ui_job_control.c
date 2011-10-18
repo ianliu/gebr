@@ -170,7 +170,7 @@ gboolean job_control_save(void)
 	gchar *text;
 	gchar * title;
 
-	GebrJob *job;
+	GebrTask *job;
 
 	/* run file chooser */
 	chooser_dialog = gebr_gui_save_dialog_new(_("Choose filename to save"), GTK_WINDOW(gebr.window));
@@ -230,7 +230,7 @@ gboolean job_control_save(void)
 gboolean job_control_close(void)
 {
 	GtkTreeIter iter;
-	GebrJob *job;
+	GebrTask *job;
 	GtkTreeModel *model;
 	GtkTreeSelection *selection;
 	GList *rows;
@@ -296,7 +296,7 @@ void job_control_clear(gboolean force)
 
 	gboolean job_control_clear_foreach(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter)
 	{
-		GebrJob *job;
+		GebrTask *job;
 		gboolean is_job;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), iter, JC_STRUCT, &job, JC_IS_JOB,
@@ -316,7 +316,7 @@ gboolean job_control_stop(void)
 	GtkTreeIter iter;
 	GtkTreeModel *model;
 
-	GebrJob *job;
+	GebrTask *job;
 	
 	gboolean asked = FALSE;
 	gint selected_rows = 0;
@@ -424,7 +424,7 @@ static void job_control_on_cursor_changed(void)
 	gboolean has_execution = FALSE;
 	gboolean has_job = FALSE;
 
-	void get_state(GebrJob *job)
+	void get_state(GebrTask *job)
 	{
 		has_job = TRUE;
 		has_execution = has_execution || job_is_running(job);
@@ -436,7 +436,7 @@ static void job_control_on_cursor_changed(void)
 	filter = GTK_TREE_MODEL_FILTER(gtk_tree_view_get_model(GTK_TREE_VIEW(gebr.ui_job_control->view)));
 
 	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_job_control->view) {
-		GebrJob *job;
+		GebrTask *job;
 		gboolean is_job;
 
 		GtkTreeIter model_iter;

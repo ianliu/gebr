@@ -669,7 +669,7 @@ static void
 create_job_entry(GebrCommRunner *runner, GebrServer *server, GebrGeoXmlFlow *flow, guint runid, gboolean select)
 {
 	gchar *title;
-	GebrJob *job;
+	GebrTask *job;
 
 	title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOC(flow));
 	job = gebr_job_new(server, title, runner->queue);

@@ -15,8 +15,8 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GEBR_JOB_H__
-#define __GEBR_JOB_H__
+#ifndef __GEBR_TASK_H__
+#define __GEBR_TASK_H__
 
 #include <gtk/gtk.h>
 
@@ -27,27 +27,27 @@
 
 G_BEGIN_DECLS
 
-#define GEBR_JOB_TYPE			(gebr_job_get_type())
-#define GEBR_JOB(obj)			(G_TYPE_CHECK_INSTANCE_CAST ((obj), GEBR_JOB_TYPE, GebrJob))
-#define GEBR_JOB_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST ((klass), GEBR_JOB_TYPE, GebrJobClass))
-#define GEBR_IS_JOB(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEBR_JOB_TYPE))
-#define GEBR_IS_JOB_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), GEBR_JOB_TYPE))
-#define GEBR_JOB_GET_CLASS(obj)		(G_TYPE_INSTANCE_GET_CLASS ((obj), GEBR_JOB_TYPE, GebrJobClass))
+#define GEBR_TASK_TYPE			(gebr_task_get_type())
+#define GEBR_TASK(obj)			(G_TYPE_CHECK_INSTANCE_CAST ((obj), GEBR_TASK_TYPE, GebrTask))
+#define GEBR_TASK_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST ((klass), GEBR_TASK_TYPE, GebrTaskClass))
+#define GEBR_IS_TASK(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEBR_TASK_TYPE))
+#define GEBR_IS_TASK_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), GEBR_TASK_TYPE))
+#define GEBR_TASK_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), GEBR_TASK_TYPE, GebrTaskClass))
 
-typedef struct _GebrJob GebrJob;
-typedef struct _GebrJobClass GebrJobClass;
+typedef struct _GebrTask GebrTask;
+typedef struct _GebrTaskClass GebrTaskClass;
 
-struct _GebrJob {
+struct _GebrTask {
 	GebrCommJob parent;
 	GtkTreeIter iter;
 	GebrServer *server;
-
 };
-struct _GebrJobClass {
+
+struct _GebrTaskClass {
 	GebrCommJobClass parent;
 };
 
-GType gebr_job_get_type(void) G_GNUC_CONST;
+GType gebr_task_get_type(void) G_GNUC_CONST;
 
 /**
  * gebr_job_find:
@@ -55,67 +55,67 @@ GType gebr_job_get_type(void) G_GNUC_CONST;
  * Searches for @rid in the jobs list and returns it. If there is no job with
  * id @rid, %NULL is returned. It is an error to pass %NULL for this method.
  */
-GebrJob *gebr_job_find(const gchar *rid);
+GebrTask *gebr_job_find(const gchar *rid);
 
 /**
  * gebr_job_new:
  *
  * Creates a new job for @server.
  */
-GebrJob *gebr_job_new(GebrServer  *server,
+GebrTask *gebr_job_new(GebrServer  *server,
 		      const gchar *title,
 		      const gchar *queue);
 
 /**
  * Create a new job (from \p server) and add it to list of jobs
  */
-GebrJob *job_new_from_jid(GebrServer *server, GString * jid, GString * _status, GString * title,
+GebrTask *job_new_from_jid(GebrServer *server, GString * jid, GString * _status, GString * title,
 			     GString * start_date, GString * finish_date, GString * hostname, GString * issues,
 			     GString * cmd_line, GString * output, GString * queue, GString * moab_jid);
 
-void job_init_details(GebrJob *job, GString * _status, GString * title, GString * start_date, GString * finish_date,
+void job_init_details(GebrTask *job, GString * _status, GString * title, GString * start_date, GString * finish_date,
 		      GString * hostname, GString * issues, GString * cmd_line, GString * output, GString * queue,
 		      GString * moab_jid);
 /**
  * Frees job structure.
  */
-void job_free(GebrJob *job);
+void job_free(GebrTask *job);
 
 /**
  * Obsolete, same as job_free
  */
-void job_delete(GebrJob *job);
+void job_delete(GebrTask *job);
 
 /**
  * Return NULL if immediately
  */
-const gchar *job_get_queue_name(GebrJob *job);
+const gchar *job_get_queue_name(GebrTask *job);
 
 /**
  * Remove job from the list. 
  */
-void job_close(GebrJob *job, gboolean force, gboolean verbose);
+void job_close(GebrTask *job, gboolean force, gboolean verbose);
 
 /**
  * Select \p job and load it. 
  */
-void job_set_active(GebrJob *job);
+void job_set_active(GebrTask *job);
 
 /**
  */
-gboolean job_is_active(GebrJob *job);
+gboolean job_is_active(GebrTask *job);
 
 /**
  */
-void job_append_output(GebrJob *job, GString * output);
+void job_append_output(GebrTask *job, GString * output);
 
 /**
  */
-void job_update(GebrJob *job);
+void job_update(GebrTask *job);
 
 /**
  */
-void job_update_label(GebrJob *job);
+void job_update_label(GebrTask *job);
 
 /**
  * Translate a \p status protocol string to a status enumeration 
@@ -126,30 +126,30 @@ enum JobStatus job_translate_status(GString * status);
  * Set UI related with status.
  * If \p job is not active nothing is done.
  */
-void job_status_show(GebrJob *job);
+void job_status_show(GebrTask *job);
 
 /*
  * Updates the job text buffer
  */
-void job_load_details(GebrJob *job);
+void job_load_details(GebrTask *job);
 
 /**
  */
-void job_add_issue(GebrJob *job, const gchar *issues);
+void job_add_issue(GebrTask *job, const gchar *issues);
 
 /**
  */
-gboolean job_is_running(GebrJob *job);
+gboolean job_is_running(GebrTask *job);
 
 /**
  */
-gboolean job_has_finished(GebrJob *job);
+gboolean job_has_finished(GebrTask *job);
 
 /**
  * Change the status of \p job according to \p status and its \p parameter.
  * Change the GtkTreeIter's icon and handling other status changes. Calls #job_status_show.
  */
-void job_status_update(GebrJob *job, enum JobStatus status, const gchar *parameter);
+void job_status_update(GebrTask *job, enum JobStatus status, const gchar *parameter);
 
 /**
  * gebr_job_bind:
@@ -168,4 +168,4 @@ const gchar *gebr_job_hash_get(GebrServer *server, const gchar *jid);
 
 G_END_DECLS
 
-#endif /* __GEBR_JOB_H__ */
+#endif /* __GEBR_TASK_H__ */

@@ -235,7 +235,7 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 				run_id = g_list_nth_data(arguments, 1);
 
 				gebr_job_hash_bind(server, jid->str, run_id->str);
-				GebrJob * job = gebr_job_find(run_id->str);
+				GebrTask * job = gebr_job_find(run_id->str);
 				if (job != NULL) {
 					g_string_assign(job->parent.jid, jid->str);
 
@@ -254,7 +254,7 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 			GList *arguments;
 			GString *jid, *hostname, *status, *title, *start_date, *finish_date, *issues, *cmd_line,
 				*output, *queue, *moab_jid, *run_id, *frac;
-			GebrJob *job;
+			GebrTask *job;
 
 			/* organize message data */
 			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 13)) == NULL)
@@ -288,7 +288,7 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 		} else if (message->hash == gebr_comm_protocol_defs.out_def.code_hash) {
 			GList *arguments;
 			GString *jid, *output;
-			GebrJob *job;
+			GebrTask *job;
 
 			/* organize message data */
 			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
@@ -305,7 +305,7 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 		} else if (message->hash == gebr_comm_protocol_defs.sta_def.code_hash) {
 			GList *arguments;
 			GString *jid, *status, *parameter;
-			GebrJob *job;
+			GebrTask *job;
 
 			/* organize message data */
 			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 3)) == NULL)

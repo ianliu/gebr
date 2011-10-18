@@ -268,7 +268,7 @@ static void server_clear_jobs(GebrServer * server)
 {
 	gboolean server_free_foreach_job(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter)
 	{
-		GebrJob *job;
+		GebrTask *job;
 		gchar *server_address;
 		gboolean is_job;
 

@@ -27,17 +27,17 @@
 #include "gebr.h"
 #include "ui_job_control.h"
 
-G_DEFINE_TYPE(GebrJob, gebr_job, GEBR_COMM_JOB_TYPE);
+G_DEFINE_TYPE(GebrTask, gebr_task, GEBR_COMM_JOB_TYPE);
 
-static void gebr_job_init(GebrJob * job)
+static void gebr_task_init(GebrTask * job)
 {
 }
 
-static void gebr_job_class_init(GebrJobClass *klass)
+static void gebr_task_class_init(GebrTaskClass *klass)
 {
 }
 
-static GtkTreeIter job_add_jc_queue_iter(GebrJob * job)
+static GtkTreeIter job_add_jc_queue_iter(GebrTask * job)
 {
 	GtkTreeIter queue_jc_iter;
 
@@ -47,10 +47,10 @@ static GtkTreeIter job_add_jc_queue_iter(GebrJob * job)
 	return queue_jc_iter;
 }
 
-GebrJob *
+GebrTask *
 gebr_job_new(GebrServer *server, const gchar *title, const gchar *queue)
 {
-	GebrJob *job = GEBR_JOB(g_object_new(GEBR_JOB_TYPE, NULL, NULL));
+	GebrTask *job = GEBR_TASK(g_object_new(GEBR_TASK_TYPE, NULL, NULL));
 	job->server = server;
 
 	gchar local_hostname[100];
@@ -103,7 +103,7 @@ gebr_job_new(GebrServer *server, const gchar *title, const gchar *queue)
 	return job;
 }
 
-void job_init_details(GebrJob *job, GString * _status, GString * title, GString * start_date, GString * finish_date,
+void job_init_details(GebrTask *job, GString * _status, GString * title, GString * start_date, GString * finish_date,
 		      GString * hostname, GString * issues, GString * cmd_line, GString * output, GString * queue,
 		      GString * moab_jid)
 {
@@ -142,17 +142,17 @@ void job_init_details(GebrJob *job, GString * _status, GString * title, GString 
 	job_update(job);
 }
 
-GebrJob *job_new_from_jid(GebrServer *server, GString * jid, GString * _status, GString * title,
+GebrTask *job_new_from_jid(GebrServer *server, GString * jid, GString * _status, GString * title,
 			     GString * start_date, GString * finish_date, GString * hostname, GString * issues,
 			     GString * cmd_line, GString * output, GString * queue, GString * moab_jid)
 {
-	GebrJob *job = gebr_job_new(server, title->str, queue->str);
+	GebrTask *job = gebr_job_new(server, title->str, queue->str);
 	g_string_assign(job->parent.jid, jid->str);
 	job_init_details(job, _status, title, start_date, finish_date, hostname, issues, cmd_line, output, queue, moab_jid);
 	return job;
 }
 
-void job_free(GebrJob *job)
+void job_free(GebrTask *job)
 {
 	/* UI */
 	GtkTreeIter parent;
@@ -201,12 +201,12 @@ void job_free(GebrJob *job)
 	g_object_unref(job);
 }
 
-void job_delete(GebrJob *job)
+void job_delete(GebrTask *job)
 {
 	job_free(job);
 }
 
-const gchar *job_get_queue_name(GebrJob *job)
+const gchar *job_get_queue_name(GebrTask *job)
 {
 	const gchar *queue;
 
@@ -223,7 +223,7 @@ const gchar *job_get_queue_name(GebrJob *job)
 	return queue;
 }
 
-void job_close(GebrJob *job, gboolean force, gboolean verbose)
+void job_close(GebrTask *job, gboolean force, gboolean verbose)
 {
 	/* Checking if passed job pointer is valid */
 	if (job == NULL)
@@ -252,7 +252,7 @@ void job_close(GebrJob *job, gboolean force, gboolean verbose)
 	job_delete(job);
 }
 
-void job_set_active(GebrJob *job)
+void job_set_active(GebrTask *job)
 {
 	GtkTreeIter iter;
 	GtkTreeModelFilter *filter;
@@ -261,7 +261,7 @@ void job_set_active(GebrJob *job)
  	gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(gebr.ui_job_control->view), &iter);
 }
 
-gboolean job_is_active(GebrJob *job)
+gboolean job_is_active(GebrTask *job)
 {
 	GtkTreeIter iter;
 	GtkTreeModelFilter *filter;
@@ -271,7 +271,7 @@ gboolean job_is_active(GebrJob *job)
 						   &iter);
 }
 
-void job_append_output(GebrJob *job, GString * output)
+void job_append_output(GebrTask *job, GString * output)
 {
 	GtkTextIter iter;
 	GString *text;
@@ -296,13 +296,13 @@ void job_append_output(GebrJob *job, GString * output)
 	}
 }
 
-void job_update(GebrJob *job)
+void job_update(GebrTask *job)
 {
 	if (job_is_active(job))
 		job_load_details(job);
 }
 
-void job_update_label(GebrJob *job)
+void job_update_label(GebrTask *job)
 {
 	if (job_is_active(job) == FALSE) 
 		return;
@@ -365,7 +365,7 @@ enum JobStatus job_translate_status(GString * status)
 	return translated_status;
 }
 
-void job_status_show(GebrJob *job)
+void job_status_show(GebrTask *job)
 {
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_close"), job_has_finished(job));
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_stop"), job_is_running(job));
@@ -407,7 +407,7 @@ void job_status_show(GebrJob *job)
 	}
 }
 
-void job_load_details(GebrJob *job)
+void job_load_details(GebrTask *job)
 {
 	job_status_show(job);
 	gtk_text_buffer_set_text(gebr.ui_job_control->text_buffer, "", 0);
@@ -485,7 +485,7 @@ out:
 	g_string_free(info, TRUE);
 }
 
-void job_add_issue(GebrJob *job, const gchar *_issues)
+void job_add_issue(GebrTask *job, const gchar *_issues)
 {
 	g_object_set(gebr.ui_job_control->issues_title_tag, "invisible", FALSE, NULL);
 
@@ -510,19 +510,19 @@ void job_add_issue(GebrJob *job, const gchar *_issues)
 	g_string_free(issues, TRUE);
 }
 
-gboolean job_is_running(GebrJob *job)
+gboolean job_is_running(GebrTask *job)
 {
 	return job && (job->parent.status == JOB_STATUS_RUNNING || job->parent.status == JOB_STATUS_QUEUED);
 }
 
-gboolean job_has_finished(GebrJob *job)
+gboolean job_has_finished(GebrTask *job)
 {
 	return job && (job->parent.status == JOB_STATUS_FAILED ||
 		       job->parent.status == JOB_STATUS_FINISHED ||
 		       job->parent.status == JOB_STATUS_CANCELED);
 }
 
-void job_status_update(GebrJob *job, enum JobStatus status, const gchar *parameter)
+void job_status_update(GebrTask *job, enum JobStatus status, const gchar *parameter)
 {
 	GtkTreeIter queue_iter;
 	gboolean queue_exists = server_queue_find(job->server, job->parent.queue_id->str, &queue_iter);
@@ -586,7 +586,7 @@ void job_status_update(GebrJob *job, enum JobStatus status, const gchar *paramet
 		} else {
 			/* The last job of the queue is not running anymore.
 			 * Rename queue. */
-			GebrJob *last_job;
+			GebrTask *last_job;
 			gtk_tree_model_get(GTK_TREE_MODEL(job->server->queues_model), &queue_iter, 
 					   SERVER_QUEUE_LAST_RUNNING_JOB, &last_job, -1);
 			if (job == last_job) {
@@ -711,16 +711,16 @@ gebr_job_hash_get(GebrServer *server, const gchar *jid)
 	return g_hash_table_lookup(jid_to_rid, &task);
 }
 
-GebrJob *
+GebrTask *
 gebr_job_find(const gchar *rid)
 {
-	GebrJob *job = NULL;
+	GebrTask *job = NULL;
 
 	g_return_val_if_fail(rid != NULL, NULL);
 
 	gboolean job_find_foreach_func(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data)
 	{
-		GebrJob *i;
+		GebrTask *i;
 
 		gtk_tree_model_get(model, iter, JC_STRUCT, &i, -1);
 
