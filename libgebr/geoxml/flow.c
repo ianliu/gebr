@@ -1070,15 +1070,16 @@ gebr_geoxml_flow_calculate_proportional_n(gint total_n,
 	return distributed_n;
 }
 
-gdouble *gebr_geoxml_flow_calulate_weights(gint n_servers)
+gdouble *gebr_geoxml_flow_calulate_weights(gint n_servers,
+                                           gdouble *scores,
+                                           gdouble acc_scores)
 {
 	gdouble *weigths = g_new(double, n_servers);
-	gint pos_server = 1;
 
 	for (gint i = 0; i < n_servers; i++)
 	{
-		weigths[i] = (2.0*(n_servers - pos_server + 1))/(n_servers * (n_servers + 1));
-		pos_server++;
+		gdouble score = scores[i];
+		weigths[i] = score/acc_scores;
 	}
 
 	return weigths;

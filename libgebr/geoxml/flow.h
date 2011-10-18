@@ -518,10 +518,14 @@ GList *gebr_geoxml_flow_divide_flows(GebrGeoXmlFlow *flow,
 /**
  * gebr_geoxml_flow_calculate_weights:
  * @n_servers: Number of connected server to run a parallelizable flow
+ * @scores: A sort #gdouble vector of scores
+ * @acc_scores: Accumulated scores
  *
  * Returns: A gdouble vector with weights of each server
  */
-gdouble *gebr_geoxml_flow_calulate_weights(gint n_servers);
+gdouble *gebr_geoxml_flow_calulate_weights(gint n_servers,
+                                           gdouble *scores,
+                                           gdouble acc_scores);
 
 G_END_DECLS
 

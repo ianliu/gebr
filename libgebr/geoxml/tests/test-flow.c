@@ -702,18 +702,18 @@ void test_gebr_geoxml_flow_divide_flows (Fixture *fixture, gconstpointer data)
 	g_list_free(flows);
 }
 
-static void test_gebr_geoxml_flow_calulate_weights(void)
-{
-	gdouble *weights;
-	gint n_servers = 4;
-
-	weights = gebr_geoxml_flow_calulate_weights(n_servers);
-
-	g_assert_cmpfloat(ABS(weights[0] - 0.4), <, 1E-8);
-	g_assert_cmpfloat(ABS(weights[1] - 0.3), <, 1E-8);
-	g_assert_cmpfloat(ABS(weights[2] - 0.2), <, 1E-8);
-	g_assert_cmpfloat(ABS(weights[3] - 0.1), <, 1E-8);
-}
+//static void test_gebr_geoxml_flow_calulate_weights(void)
+//{
+//	gdouble *weights;
+//	gint n_servers = 4;
+//
+//	weights = gebr_geoxml_flow_calulate_weights(n_servers);
+//
+//	g_assert_cmpfloat(ABS(weights[0] - 0.4), <, 1E-8);
+//	g_assert_cmpfloat(ABS(weights[1] - 0.3), <, 1E-8);
+//	g_assert_cmpfloat(ABS(weights[2] - 0.2), <, 1E-8);
+//	g_assert_cmpfloat(ABS(weights[3] - 0.1), <, 1E-8);
+//}
 
 int main(int argc, char *argv[])
 {
@@ -746,7 +746,7 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/geoxml/flow/io_error_append", test_gebr_geoxml_flow_io_error_append);
 	g_test_add_func("/libgebr/geoxml/flow/io_error_append_default", test_gebr_geoxml_flow_io_error_append_default);
 	g_test_add_func("/libgebr/geoxml/flow/is_parallelizable", test_gebr_geoxml_flow_is_parallelizable);
-	g_test_add_func("/libgebr/geoxml/flow/calculate_weights", test_gebr_geoxml_flow_calulate_weights);
+//	g_test_add_func("/libgebr/geoxml/flow/calculate_weights", test_gebr_geoxml_flow_calulate_weights);
 
 	gint ret = g_test_run();
 	gebr_geoxml_finalize();

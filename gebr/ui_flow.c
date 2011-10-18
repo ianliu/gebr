@@ -281,6 +281,11 @@ create_multiple_execution_queue(GebrCommRunner *runner,
 	return g_string_free(new_queue, FALSE);
 }
 
+typedef struct {
+	GebrServer *server;
+	gdouble score;
+} ServerScore;
+
 /*
  * Fills the queue and MPI/MOAB parameters in @runner struct.
  */
@@ -300,8 +305,20 @@ fill_runner_struct(GebrCommRunner *runner,
 			gdouble *weights;
 			guint n_servers = g_list_length(servers);
 			runner->is_parallelizable = TRUE;
+			gdouble *scores = g_new(gdouble, n_servers);
+			gdouble acc_scores;
+			gint k = 0;
 
-			weights = gebr_geoxml_flow_calulate_weights(n_servers);
+			for (GList *i = servers; i; i = i->next) {
+				ServerScore *sc = i->data;
+				scores[k] = sc->score;
+				acc_scores += sc->score;
+				k++;
+			}
+
+			weights = gebr_geoxml_flow_calulate_weights(n_servers, scores, acc_scores);
+			g_free(scores);
+
 			flows = gebr_geoxml_flow_divide_flows(gebr.flow, gebr.validator, weights, n_servers);
 			list = servers;
 
@@ -390,11 +407,6 @@ free_and_error:
 	gebr_comm_runner_free(runner);
 	return FALSE;
 }
-
-typedef struct {
-	GebrServer *server;
-	gdouble score;
-} ServerScore;
 
 /*
  * Returns: a GList containing ServerScore structs with the score field set to 0.
