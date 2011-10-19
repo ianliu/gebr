@@ -235,7 +235,7 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 				run_id = g_list_nth_data(arguments, 1);
 
 				gebr_job_hash_bind(server, jid->str, run_id->str);
-				GebrTask * job = gebr_job_find(run_id->str);
+				GebrTask * job = gebr_task_find(run_id->str);
 				if (job != NULL) {
 					g_string_assign(job->parent.jid, jid->str);
 
@@ -273,7 +273,7 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 			run_id = g_list_nth_data(arguments, 11);
 			frac = g_list_nth_data(arguments, 12);
 
-			job = gebr_job_find(run_id->str);
+			job = gebr_task_find(run_id->str);
 
 			if (job == NULL)
 				job = job_new_from_jid(server, jid, status, title, start_date, finish_date,
@@ -295,7 +295,7 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 				goto err;
 			jid = g_list_nth_data(arguments, 0);
 			output = g_list_nth_data(arguments, 1);
-			job = gebr_job_find(gebr_job_hash_get(server, jid->str));
+			job = gebr_task_find(gebr_job_hash_get(server, jid->str));
 
 			if (job != NULL) {
 				job_append_output(job, output);
@@ -315,7 +315,7 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 			status = g_list_nth_data(arguments, 1);
 			parameter = g_list_nth_data(arguments, 2);
 
-			job = gebr_job_find(gebr_job_hash_get(server, jid->str));
+			job = gebr_task_find(gebr_job_hash_get(server, jid->str));
 			if (job != NULL) {
 				enum JobStatus status_enum;
 

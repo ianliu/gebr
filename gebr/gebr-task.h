@@ -50,21 +50,21 @@ struct _GebrTaskClass {
 GType gebr_task_get_type(void) G_GNUC_CONST;
 
 /**
- * gebr_job_find:
+ * gebr_task_find:
  *
  * Searches for @rid in the jobs list and returns it. If there is no job with
  * id @rid, %NULL is returned. It is an error to pass %NULL for this method.
  */
-GebrTask *gebr_job_find(const gchar *rid);
+GebrTask *gebr_task_find(const gchar *rid);
 
 /**
- * gebr_job_new:
+ * gebr_task_new:
  *
  * Creates a new job for @server.
  */
-GebrTask *gebr_job_new(GebrServer  *server,
-		      const gchar *title,
-		      const gchar *queue);
+GebrTask *gebr_task_new(GebrServer  *server,
+			const gchar *title,
+			const gchar *queue);
 
 /**
  * Create a new job (from \p server) and add it to list of jobs

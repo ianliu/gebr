@@ -48,7 +48,7 @@ static GtkTreeIter job_add_jc_queue_iter(GebrTask * job)
 }
 
 GebrTask *
-gebr_job_new(GebrServer *server, const gchar *title, const gchar *queue)
+gebr_task_new(GebrServer *server, const gchar *title, const gchar *queue)
 {
 	GebrTask *job = GEBR_TASK(g_object_new(GEBR_TASK_TYPE, NULL, NULL));
 	job->server = server;
@@ -146,7 +146,7 @@ GebrTask *job_new_from_jid(GebrServer *server, GString * jid, GString * _status,
 			     GString * start_date, GString * finish_date, GString * hostname, GString * issues,
 			     GString * cmd_line, GString * output, GString * queue, GString * moab_jid)
 {
-	GebrTask *job = gebr_job_new(server, title->str, queue->str);
+	GebrTask *job = gebr_task_new(server, title->str, queue->str);
 	g_string_assign(job->parent.jid, jid->str);
 	job_init_details(job, _status, title, start_date, finish_date, hostname, issues, cmd_line, output, queue, moab_jid);
 	return job;
@@ -712,7 +712,7 @@ gebr_job_hash_get(GebrServer *server, const gchar *jid)
 }
 
 GebrTask *
-gebr_job_find(const gchar *rid)
+gebr_task_find(const gchar *rid)
 {
 	GebrTask *job = NULL;
 
