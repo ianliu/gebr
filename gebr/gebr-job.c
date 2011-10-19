@@ -26,7 +26,19 @@ struct _GebrJobPriv {
 	gchar *group;
 	GtkTreeIter iter;
 	GtkTreeStore *store;
+	GString *output;
+	enum JobStatus status;
 };
+
+void gebr_job_append_task_output(GebrTask *task,
+                                 GString *output,
+                                 GebrJob *job);
+
+static void gebr_job_change_task_status(GebrTask *task,
+                                        gint old_status,
+                                        gint new_status,
+                                        const gchar *parameter,
+                                        GebrJob *job);
 
 /* Private methods {{{1 */
 static void
@@ -97,6 +109,12 @@ void
 gebr_job_append_task(GebrJob *job, GebrTask *task)
 {
 	job->priv->tasks = g_list_prepend(job->priv->tasks, task);
+
+	gint frac, total;
+	gebr_task_get_fraction(task, &frac, &total);
+
+	g_signal_connect(i->data, "status-changed", gebr_job_change_task_status, job);
+	g_signal_connect(task, "output", gebr_job_append_task_output, job);
 }
 
 enum JobStatus
@@ -104,6 +122,34 @@ gebr_job_get_status(GebrJob *job)
 {
 	/* computa status */
 	return 0;
+}
+
+GebrJob *
+gebr_job_find(const gchar *rid)
+{
+	GebrTask *job = NULL;
+
+	g_return_val_if_fail(rid != NULL, NULL);
+
+	gboolean job_find_foreach_func(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data)
+	{
+		GebrJob *i;
+
+		gtk_tree_model_get(model, iter, JC_STRUCT, &i, -1);
+
+		if (!i)
+			return FALSE;
+
+		if (g_strcmp0(i->parent.run_id->str, rid) == 0) {
+			job = i;
+			return TRUE;
+		}
+		return FALSE;
+	}
+
+	gtk_tree_model_foreach(GTK_TREE_MODEL(gebr.ui_job_control->store), job_find_foreach_func, NULL);
+
+	return job;
 }
 
 void
@@ -114,4 +160,91 @@ gebr_job_free(GebrJob *job)
 	g_list_free(job->priv->tasks);
 	g_free(job->priv);
 	g_free(job);
+}
+
+static void
+gebr_job_append_task_output(GebrTask *task,
+                            GString *output,
+                            GebrJob *job)
+{
+	GtkTextIter iter;
+	GString *text;
+	GtkTextMark *mark;
+
+	if (!output->len)
+		return;
+	if (!job->priv->output->len) {
+		g_string_printf(job->priv->output, "\n%s\n%s", _("Output:"), output->str);
+		text = job->priv->output;
+	} else {
+		g_string_append(job->priv->output, output->str);
+		text = output;
+	}
+	if (job_is_active(job) == TRUE) {
+		gtk_text_buffer_get_end_iter(gebr.ui_job_control->text_buffer, &iter);
+		gtk_text_buffer_insert(gebr.ui_job_control->text_buffer, &iter, text->str, text->len);
+		if (gebr.config.job_log_auto_scroll) {
+			mark = gtk_text_buffer_get_mark(gebr.ui_job_control->text_buffer, "end");
+			gtk_text_view_scroll_mark_onscreen(GTK_TEXT_VIEW(gebr.ui_job_control->text_view), mark);
+		}
+	}
+}
+
+static void
+gebr_job_change_task_status(GebrTask *task,
+                            gint old_status,
+                            gint new_status,
+                            const gchar *parameter,
+                            GebrJob *job)
+{
+	gint total;
+	gebr_task_get_fraction(task, NULL, &total);
+
+	if (g_list_length(job->priv->tasks) != total)
+		//status incomplete do job
+		return;
+
+	if (new_status == JOB_STATUS_REQUEUED) {
+		job->priv->status = JOB_STATUS_REQUEUED;
+		// Remove o job e insere em outro lugar, ou seja
+		// altera o pai do job
+
+		return;
+
+	} else if (new_status == JOB_STATUS_RUNNING) {
+		if (job->priv->status == JOB_STATUS_RUNNING)
+			return;
+		else {
+			for (GList *i = job->priv->tasks; i; i = i->next) {
+				GebrTask *t = i->data;
+				if (t->status != JOB_STATUS_RUNNING)
+					return;
+			}
+			job->priv->status = JOB_STATUS_RUNNING;
+		}
+
+	} else if (new_status == JOB_STATUS_FINISHED) {
+		if (job->priv->status == JOB_STATUS_FINISHED)
+			return;
+		else {
+			for (GList *i = job->priv->tasks; i; i = i->next) {
+				GebrTask *t = i->data;
+				if (t->status != JOB_STATUS_FINISHED)
+					return;
+			}
+			job->priv->status = JOB_STATUS_FINISHED;
+		}
+
+	} else if (new_status == JOB_STATUS_CANCELED || new_status == JOB_STATUS_FAILED) {
+		job->priv->status = JOB_STATUS_FAILED;
+	}
+
+	else if (new_status == JOB_STATUS_ISSUED) {
+		job_add_issue(job, parameter);
+		return;
+	}
+
+	GtkTreeModel *model = GTK_TREE_MODEL(job->priv->store);
+	GtkTreePath *path = gtk_tree_model_get_path(model, &job->priv->iter);
+	gtk_tree_model_row_changed(model, path, &job->priv->iter);
 }
