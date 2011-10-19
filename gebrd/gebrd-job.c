@@ -15,7 +15,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#define OUTPUT_FLUSH_TIMEOUT 1
+#define OUTPUT_FLUSH_TIMEOUT 0
 
 #define _XOPEN_SOURCE
 #include <stdlib.h>
@@ -143,7 +143,7 @@ append_output_and_send(GebrCommProcess * process, GebrdJob *job, GString *output
 	g_string_append(job->buf[buf], output->str);
 	g_get_current_time(&tv);
 
-	if (tv.tv_sec - job->timeout[buf] > OUTPUT_FLUSH_TIMEOUT) {
+	if (tv.tv_sec - job->timeout[buf] >= OUTPUT_FLUSH_TIMEOUT) {
 		job_process_add_output(job, job->parent.output, job->buf[buf]);
 		g_string_assign(job->buf[buf], "");
 		job->timeout[buf] = tv.tv_sec;
@@ -649,7 +649,7 @@ void job_notify(GebrdJob *job, struct client *client)
 		job_status_set(job, JOB_STATUS_QUEUED);
 
 	gebr_comm_protocol_socket_oldmsg_send(client->socket, FALSE,
-					      gebr_comm_protocol_defs.job_def, 13,
+					      gebr_comm_protocol_defs.job_def, 14,
 					      job->parent.jid->str,
 					      status_enum_to_string(job->parent.status),
 					      job->parent.title->str,
@@ -662,7 +662,8 @@ void job_notify(GebrdJob *job, struct client *client)
 					      job->parent.queue_id->str,
 					      job->parent.moab_jid->str,
 					      job->parent.run_id->str,
-					      job->frac->str);
+					      job->frac->str,
+					      "FooBarGroup");
 }
 
 

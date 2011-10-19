@@ -15,8 +15,11 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "gebr.h"
 #include "gebr-job.h"
+
+#include <glib/gi18n.h>
+
+#include "gebr.h"
 
 struct _GebrJobPriv {
 	GList *tasks;
@@ -30,9 +33,9 @@ struct _GebrJobPriv {
 	enum JobStatus status;
 };
 
-void gebr_job_append_task_output(GebrTask *task,
-                                 GString *output,
-                                 GebrJob *job);
+static void gebr_job_append_task_output(GebrTask *task,
+					const gchar *output,
+					GebrJob *job);
 
 static void gebr_job_change_task_status(GebrTask *task,
                                         gint old_status,
@@ -60,14 +63,28 @@ GebrJob *
 gebr_job_new(GtkTreeStore *store, const gchar *queue, const gchar *group)
 {
 	static int runid = 0;
+	gchar *new_rid = g_strdup_printf("%d:%s", runid++, gebr_get_session_id());
+	GebrJob *job = gebr_job_new_with_id(store, new_rid, queue, group);
+	g_free(new_rid);
+	return job;
+}
 
+GebrJob *
+gebr_job_new_with_id(GtkTreeStore *store,
+		     const gchar  *rid,
+		     const gchar  *queue,
+		     const gchar  *group)
+{
 	GebrJob *job = g_new0(GebrJob, 1);
 
 	job->priv = g_new0(GebrJobPriv, 1);
 	job->priv->store = store;
+	job->priv->output = g_string_new(NULL);
 	job->priv->queue = g_strdup(queue);
 	job->priv->group = g_strdup(group);
-	job->priv->runid = g_strdup_printf("%d:%s", runid++, gebr_get_session_id());
+	job->priv->runid = g_strdup(rid);
+
+	g_debug("New job created with rid %s", job->priv->runid);
 
 	return job;
 }
@@ -113,8 +130,8 @@ gebr_job_append_task(GebrJob *job, GebrTask *task)
 	gint frac, total;
 	gebr_task_get_fraction(task, &frac, &total);
 
-	g_signal_connect(i->data, "status-changed", gebr_job_change_task_status, job);
-	g_signal_connect(task, "output", gebr_job_append_task_output, job);
+	g_signal_connect(task, "status-change", G_CALLBACK(gebr_job_change_task_status), job);
+	g_signal_connect(task, "output", G_CALLBACK(gebr_job_append_task_output), job);
 }
 
 enum JobStatus
@@ -127,7 +144,7 @@ gebr_job_get_status(GebrJob *job)
 GebrJob *
 gebr_job_find(const gchar *rid)
 {
-	GebrTask *job = NULL;
+	GebrJob *job = NULL;
 
 	g_return_val_if_fail(rid != NULL, NULL);
 
@@ -137,10 +154,14 @@ gebr_job_find(const gchar *rid)
 
 		gtk_tree_model_get(model, iter, JC_STRUCT, &i, -1);
 
+		g_debug("--job_find: current job is %p", i);
+
 		if (!i)
 			return FALSE;
 
-		if (g_strcmp0(i->parent.run_id->str, rid) == 0) {
+		g_debug("----job_find: current job id is %s Versus %s", gebr_job_get_id(i), rid);
+
+		if (g_strcmp0(gebr_job_get_id(i), rid) == 0) {
 			job = i;
 			return TRUE;
 		}
@@ -162,32 +183,75 @@ gebr_job_free(GebrJob *job)
 	g_free(job);
 }
 
+static gboolean
+job_is_active(GebrJob *job)
+{
+	GtkTreeIter iter;
+	GtkTreeModelFilter *filter;
+	filter = GTK_TREE_MODEL_FILTER(gtk_tree_view_get_model(GTK_TREE_VIEW(gebr.ui_job_control->view)));
+	gtk_tree_model_filter_convert_child_iter_to_iter(filter, &iter, &job->priv->iter);
+	return gtk_tree_selection_iter_is_selected(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)),
+						   &iter);
+}
+
 static void
 gebr_job_append_task_output(GebrTask *task,
-                            GString *output,
+                            const gchar *output,
                             GebrJob *job)
 {
 	GtkTextIter iter;
-	GString *text;
+	const gchar *text;
 	GtkTextMark *mark;
 
-	if (!output->len)
+	gint frac, total;
+
+	gebr_task_get_fraction(task, &frac, &total);
+	g_debug("==========Output signal from %d of %d: received %s", frac, total, output);
+
+	if (!strlen(output))
 		return;
+
 	if (!job->priv->output->len) {
-		g_string_printf(job->priv->output, "\n%s\n%s", _("Output:"), output->str);
-		text = job->priv->output;
+		g_string_printf(job->priv->output, "\n%s\n%s", _("Output:"), output);
+		text = job->priv->output->str;
 	} else {
-		g_string_append(job->priv->output, output->str);
+		g_string_append(job->priv->output, output);
 		text = output;
 	}
 	if (job_is_active(job) == TRUE) {
 		gtk_text_buffer_get_end_iter(gebr.ui_job_control->text_buffer, &iter);
-		gtk_text_buffer_insert(gebr.ui_job_control->text_buffer, &iter, text->str, text->len);
+		gtk_text_buffer_insert(gebr.ui_job_control->text_buffer, &iter, text, strlen(text));
 		if (gebr.config.job_log_auto_scroll) {
 			mark = gtk_text_buffer_get_mark(gebr.ui_job_control->text_buffer, "end");
 			gtk_text_view_scroll_mark_onscreen(GTK_TEXT_VIEW(gebr.ui_job_control->text_view), mark);
 		}
 	}
+}
+
+void
+gebr_job_add_issue(GebrJob *job, const gchar *_issues)
+{
+	g_object_set(gebr.ui_job_control->issues_title_tag, "invisible", FALSE, NULL);
+
+	GString *issues = g_string_new("");
+	g_string_assign(issues, _issues);
+	if (job_is_active(job) == FALSE) {
+		g_string_free(issues, TRUE);
+		return;
+	}
+	g_object_set(gebr.ui_job_control->issues_title_tag, "invisible", FALSE, NULL);
+	GtkTextMark * mark = gtk_text_buffer_get_mark(gebr.ui_job_control->text_buffer, "last-issue");
+	if (mark != NULL) {
+		GtkTextIter iter;
+		gtk_text_buffer_get_iter_at_mark(gebr.ui_job_control->text_buffer, &iter, mark);
+		gtk_text_buffer_insert_with_tags(gebr.ui_job_control->text_buffer, &iter, issues->str, issues->len,
+						 gebr.ui_job_control->issues_title_tag, NULL);
+
+		gtk_text_buffer_delete_mark(gebr.ui_job_control->text_buffer, mark);
+		gtk_text_buffer_create_mark(gebr.ui_job_control->text_buffer, "last-issue", &iter, TRUE);
+	} else
+		g_warning("Can't find mark \"issue\"");
+	g_string_free(issues, TRUE);
 }
 
 static void
@@ -199,6 +263,9 @@ gebr_job_change_task_status(GebrTask *task,
 {
 	gint total;
 	gebr_task_get_fraction(task, NULL, &total);
+
+	g_debug("Status changed from %d to %d",
+		old_status, new_status);
 
 	if (g_list_length(job->priv->tasks) != total)
 		//status incomplete do job
@@ -217,7 +284,7 @@ gebr_job_change_task_status(GebrTask *task,
 		else {
 			for (GList *i = job->priv->tasks; i; i = i->next) {
 				GebrTask *t = i->data;
-				if (t->status != JOB_STATUS_RUNNING)
+				if (gebr_task_get_status(t) != JOB_STATUS_RUNNING)
 					return;
 			}
 			job->priv->status = JOB_STATUS_RUNNING;
@@ -229,7 +296,7 @@ gebr_job_change_task_status(GebrTask *task,
 		else {
 			for (GList *i = job->priv->tasks; i; i = i->next) {
 				GebrTask *t = i->data;
-				if (t->status != JOB_STATUS_FINISHED)
+				if (gebr_task_get_status(t) != JOB_STATUS_FINISHED)
 					return;
 			}
 			job->priv->status = JOB_STATUS_FINISHED;
@@ -240,11 +307,17 @@ gebr_job_change_task_status(GebrTask *task,
 	}
 
 	else if (new_status == JOB_STATUS_ISSUED) {
-		job_add_issue(job, parameter);
+		gebr_job_add_issue(job, parameter);
 		return;
 	}
 
 	GtkTreeModel *model = GTK_TREE_MODEL(job->priv->store);
 	GtkTreePath *path = gtk_tree_model_get_path(model, &job->priv->iter);
 	gtk_tree_model_row_changed(model, path, &job->priv->iter);
+}
+
+const gchar *
+gebr_job_get_id(GebrJob *job)
+{
+	return job->priv->runid;
 }

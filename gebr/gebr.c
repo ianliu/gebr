@@ -159,7 +159,7 @@ gboolean gebr_quit(gboolean save_config)
 				   SERVER_POINTER, &server, -1);
 		server_free(server);
 	}
-	job_control_clear(TRUE);
+//	job_control_clear(TRUE);
 
 	if (gebr.flow_clipboard != NULL) {
 		g_list_foreach(gebr.flow_clipboard, (GFunc) g_free, NULL);
@@ -486,7 +486,7 @@ gebr_post_config(gboolean has_config)
 	}
 
 	menu_list_populate();
-	job_control_selected();
+//	job_control_selected();
 
 	if (!has_config)
 		preferences_setup_ui(TRUE);

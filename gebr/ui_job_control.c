@@ -26,12 +26,14 @@
 
 #include "ui_job_control.h"
 #include "gebr.h"
-#include "gebr-task.h"
+#include "gebr-job.h"
 
 /*
  * Prototypes
  */
 
+
+#if 0
 static void job_control_on_cursor_changed(void);
 
 static void on_text_view_populate_popup(GtkTextView * textview, GtkMenu * menu);
@@ -42,6 +44,7 @@ static void job_control_queue_by_func(gboolean (* func)(void));
 
 static void on_tree_store_insert_delete(GtkTreeModel *model,
                                         GtkTreePath *path);
+#endif
 
 /*
  * Public functions.
@@ -87,12 +90,13 @@ struct ui_job_control *job_control_setup_ui(void)
 						   G_TYPE_STRING,
 						   G_TYPE_POINTER,
 						   G_TYPE_BOOLEAN);
-	g_signal_connect(ui_job_control->store, "row-inserted", G_CALLBACK(on_tree_store_insert_delete), NULL);
-	g_signal_connect(ui_job_control->store, "row-deleted", G_CALLBACK(on_tree_store_insert_delete), NULL);
+	//g_signal_connect(ui_job_control->store, "row-inserted", G_CALLBACK(on_tree_store_insert_delete), NULL);
+	//g_signal_connect(ui_job_control->store, "row-deleted", G_CALLBACK(on_tree_store_insert_delete), NULL);
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(ui_job_control->store), JC_SERVER_ADDRESS,
 					     GTK_SORT_ASCENDING);
 	GtkTreeModel *filter = gtk_tree_model_filter_new(GTK_TREE_MODEL(ui_job_control->store), NULL);
-	ui_job_control->view = gtk_tree_view_new_with_model(filter);
+	//ui_job_control->view = gtk_tree_view_new_with_model(filter);
+	ui_job_control->view = gtk_tree_view_new();
 	gtk_tree_model_filter_set_visible_column(GTK_TREE_MODEL_FILTER(filter), JC_VISIBLE);
 	g_object_unref(filter);
 	
@@ -100,8 +104,10 @@ struct ui_job_control *job_control_setup_ui(void)
 				    GTK_SELECTION_MULTIPLE);
 
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(ui_job_control->view), FALSE);
+#if 0
 	g_signal_connect(GTK_OBJECT(ui_job_control->view), "cursor-changed",
 			 G_CALLBACK(job_control_on_cursor_changed), NULL);
+#endif
 
 	col = gtk_tree_view_column_new();
 	gtk_tree_view_append_column(GTK_TREE_VIEW(ui_job_control->view), col);
@@ -135,7 +141,7 @@ struct ui_job_control *job_control_setup_ui(void)
 	gtk_text_buffer_get_end_iter(ui_job_control->text_buffer, &iter_end);
 	gtk_text_buffer_create_mark(ui_job_control->text_buffer, "end", &iter_end, FALSE);
 	text_view = gtk_text_view_new_with_buffer(ui_job_control->text_buffer);
-	g_signal_connect(text_view, "populate-popup", G_CALLBACK(on_text_view_populate_popup), ui_job_control);
+	//g_signal_connect(text_view, "populate-popup", G_CALLBACK(on_text_view_populate_popup), ui_job_control);
 	g_object_set(G_OBJECT(text_view), "editable", FALSE, "cursor-visible", FALSE, NULL);
 	{
 		PangoFontDescription *font;
@@ -149,12 +155,13 @@ struct ui_job_control *job_control_setup_ui(void)
 	ui_job_control->text_view = text_view;
 	gtk_container_add(GTK_CONTAINER(scrolled_window), text_view);
 	
-	gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(ui_job_control->view),
-						  (GebrGuiGtkPopupCallback) job_control_popup_menu, ui_job_control);
+	//gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(ui_job_control->view),
+	//					  (GebrGuiGtkPopupCallback) job_control_popup_menu, ui_job_control);
 
 	return ui_job_control;
 }
 
+#if 0
 gboolean job_control_save(void)
 {
 	GtkTreeIter iter;
@@ -170,7 +177,7 @@ gboolean job_control_save(void)
 	gchar *text;
 	gchar * title;
 
-	GebrTask *job;
+	GebrJob *job;
 
 	/* run file chooser */
 	chooser_dialog = gebr_gui_save_dialog_new(_("Choose filename to save"), GTK_WINDOW(gebr.window));
@@ -207,7 +214,7 @@ gboolean job_control_save(void)
 		gtk_tree_model_get(model, &iter, JC_STRUCT, &job, -1);
 		job_load_details(job);
 		
-		title = g_strdup_printf("---------- %s ---------\n", job->parent.title->str);
+		title = g_strdup_printf("---------- %s ---------\n", gebr_job_get_title(job));
 		fputs(title, fp);
 		g_free(title);
 
@@ -230,7 +237,7 @@ gboolean job_control_save(void)
 gboolean job_control_close(void)
 {
 	GtkTreeIter iter;
-	GebrTask *job;
+	GebrJob *job;
 	GtkTreeModel *model;
 	GtkTreeSelection *selection;
 	GList *rows;
@@ -296,7 +303,7 @@ void job_control_clear(gboolean force)
 
 	gboolean job_control_clear_foreach(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter)
 	{
-		GebrTask *job;
+		GebrJob *job;
 		gboolean is_job;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), iter, JC_STRUCT, &job, JC_IS_JOB,
@@ -316,7 +323,7 @@ gboolean job_control_stop(void)
 	GtkTreeIter iter;
 	GtkTreeModel *model;
 
-	GebrTask *job;
+	GebrJob *job;
 	
 	gboolean asked = FALSE;
 	gint selected_rows = 0;
@@ -424,7 +431,7 @@ static void job_control_on_cursor_changed(void)
 	gboolean has_execution = FALSE;
 	gboolean has_job = FALSE;
 
-	void get_state(GebrTask *job)
+	void get_state(GebrJob *job)
 	{
 		has_job = TRUE;
 		has_execution = has_execution || job_is_running(job);
@@ -436,7 +443,7 @@ static void job_control_on_cursor_changed(void)
 	filter = GTK_TREE_MODEL_FILTER(gtk_tree_view_get_model(GTK_TREE_VIEW(gebr.ui_job_control->view)));
 
 	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_job_control->view) {
-		GebrTask *job;
+		GebrJob *job;
 		gboolean is_job;
 
 		GtkTreeIter model_iter;
@@ -704,6 +711,8 @@ on_tree_store_insert_delete(GtkTreeModel *model,
 free_copy:
 	gtk_tree_path_free(copy);
 }
+
+#endif
 
 void
 gebr_jc_get_queue_group_iter(GtkTreeStore *store,

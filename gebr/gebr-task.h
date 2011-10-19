@@ -1,5 +1,5 @@
 /*   GeBR - An environment for seismic processing.
- *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
+ *   Copyright (C) 2007-2011 GeBR core team (http://www.gebrproject.com/)
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@
 
 G_BEGIN_DECLS
 
-#define GEBR_TASK_TYPE			(gebr_task_get_type())
+#define GEBR_TYPE_TASK			(gebr_task_get_type())
 #define GEBR_TASK(obj)			(G_TYPE_CHECK_INSTANCE_CAST ((obj), GEBR_TASK_TYPE, GebrTask))
 #define GEBR_TASK_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST ((klass), GEBR_TASK_TYPE, GebrTaskClass))
 #define GEBR_IS_TASK(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEBR_TASK_TYPE))
@@ -35,27 +35,37 @@ G_BEGIN_DECLS
 #define GEBR_TASK_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), GEBR_TASK_TYPE, GebrTaskClass))
 
 typedef struct _GebrTask GebrTask;
+typedef struct _GebrTaskPriv GebrTaskPriv;
 typedef struct _GebrTaskClass GebrTaskClass;
 
 struct _GebrTask {
-	GebrCommJob parent;
-	GtkTreeIter iter;
-	GebrServer *server;
+	GObject parent;
+
+	/*< private >*/
+	GebrTaskPriv *priv;
 };
 
 struct _GebrTaskClass {
-	GebrCommJobClass parent;
+	GObjectClass parent;
+
+	void (*status_change) (GebrTask *task,
+			       gint old_status,
+			       gint new_status,
+			       const gchar *parameter,
+			       gpointer user_data);
+
+	void (*output) (GebrTask *task,
+			const gchar *output,
+			gpointer user_data);
 };
 
 GType gebr_task_get_type(void) G_GNUC_CONST;
 
 /**
  * gebr_task_find:
- *
- * Searches for @rid in the jobs list and returns it. If there is no job with
- * id @rid, %NULL is returned. It is an error to pass %NULL for this method.
  */
-GebrTask *gebr_task_find(const gchar *rid);
+GebrTask *gebr_task_find(const gchar *rid,
+			 const gchar *frac);
 
 /**
  * gebr_task_new:
@@ -63,15 +73,19 @@ GebrTask *gebr_task_find(const gchar *rid);
  * Creates a new job for @server.
  */
 GebrTask *gebr_task_new(GebrServer  *server,
-			const gchar *title,
-			const gchar *queue);
+			const gchar *rid,
+			const gchar *frac);
+
+void gebr_task_get_fraction(GebrTask *task,
+			    gint *frac,
+			    gint *total);
 
 /**
  * Create a new job (from \p server) and add it to list of jobs
  */
-GebrTask *job_new_from_jid(GebrServer *server, GString * jid, GString * _status, GString * title,
-			     GString * start_date, GString * finish_date, GString * hostname, GString * issues,
-			     GString * cmd_line, GString * output, GString * queue, GString * moab_jid);
+GebrTask *gebr_task_new_from_jid(GebrServer *server, GString * jid, GString * _status, GString * title,
+				 GString * start_date, GString * finish_date, GString * hostname, GString * issues,
+				 GString * cmd_line, GString * output, GString * queue, GString * moab_jid);
 
 void job_init_details(GebrTask *job, GString * _status, GString * title, GString * start_date, GString * finish_date,
 		      GString * hostname, GString * issues, GString * cmd_line, GString * output, GString * queue,
@@ -102,12 +116,11 @@ void job_close(GebrTask *job, gboolean force, gboolean verbose);
 void job_set_active(GebrTask *job);
 
 /**
+ * gebr_task_append_output:
+ *
+ * Appends @output
  */
-gboolean job_is_active(GebrTask *job);
-
-/**
- */
-void job_append_output(GebrTask *job, GString * output);
+void gebr_task_append_output(GebrTask *job, const gchar *output);
 
 /**
  */
@@ -139,6 +152,17 @@ void job_add_issue(GebrTask *job, const gchar *issues);
 
 /**
  */
+void gebr_task_init_details(GebrTask *task,
+		       GString  *status,
+		       GString  *start_date,
+		       GString  *finish_date,
+		       GString  *issues,
+		       GString  *cmd_line,
+		       GString  *queue,
+		       GString  *moab_jid);
+
+/**
+ */
 gboolean job_is_running(GebrTask *job);
 
 /**
@@ -165,6 +189,15 @@ void gebr_job_hash_bind(GebrServer *server, const gchar *jid, const gchar *rid);
  * does not exist.
  */
 const gchar *gebr_job_hash_get(GebrServer *server, const gchar *jid);
+
+enum JobStatus gebr_task_get_status(GebrTask *task);
+
+void gebr_task_emit_output_signal(GebrTask *task,
+				  const gchar *output);
+
+void gebr_task_emit_status_changed_signal(GebrTask *task,
+					  enum JobStatus new_status,
+					  const gchar *parameter);
 
 G_END_DECLS
 

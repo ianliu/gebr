@@ -26,6 +26,7 @@
 #include "gebr.h"
 #include "server.h"
 #include "gebr-task.h"
+#include "gebr-job.h"
 
 void client_process_server_request(struct gebr_comm_server *comm_server, GebrCommHttpMsg *request, GebrServer *server)
 {
@@ -234,18 +235,6 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 				jid = g_list_nth_data(arguments, 0);
 				run_id = g_list_nth_data(arguments, 1);
 
-				gebr_job_hash_bind(server, jid->str, run_id->str);
-				GebrTask * job = gebr_task_find(run_id->str);
-				if (job != NULL) {
-					g_string_assign(job->parent.jid, jid->str);
-
-					/* move it to the end, the right place... */
-					gboolean was_selected = job_is_active(job);
-					gebr_gui_gtk_tree_store_move_before(gebr.ui_job_control->store, &job->iter, NULL);
-					if (was_selected)
-						job_set_active(job);
-				}
-
 				gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 			} else if (comm_server->socket->protocol->waiting_ret_hash == gebr_comm_protocol_defs.flw_def.code_hash) {
 
@@ -254,7 +243,7 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 			GList *arguments;
 			GString *jid, *hostname, *status, *title, *start_date, *finish_date, *issues, *cmd_line,
 				*output, *queue, *moab_jid, *run_id, *frac, *group;
-			GebrTask *job;
+			GebrJob *job;
 
 			/* organize message data */
 			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 14)) == NULL)
@@ -274,17 +263,22 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 			frac = g_list_nth_data(arguments, 12);
 			group = g_list_nth_data(arguments, 13);
 
+			g_debug("JOB_DEF: Received task %s frac %s", run_id->str, frac->str);
 			GebrTask *task = gebr_task_new(server, run_id->str, frac->str);
-			gebr_task_init_details(task, status, start_date, finish_date, issues, cmd_line, queue, moab_jid, output);
+			gebr_task_init_details(task, status, start_date, finish_date, issues, cmd_line, queue, moab_jid);
 
-			GebrJob *job = gebr_job_find(run_id->str);
+			job = gebr_job_find(run_id->str);
+
+			g_debug("Job found is: %p", job);
 
 			if (job == NULL) {
-				job = gebr_job_new(gebr.ui_job_control->store, queue->str, group->str);
+				job = gebr_job_new_with_id(gebr.ui_job_control->store, run_id->str, queue->str, group->str);
 				gebr_job_set_title(job, title->str);
+				gebr_job_show(job);
 			}
-			gebr_job_append_task(job, task);
 
+			gebr_job_append_task(job, task);
+			gebr_task_emit_output_signal(task, output->str);
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		} else if (message->hash == gebr_comm_protocol_defs.out_def.code_hash) {
 			GList *arguments;
@@ -299,10 +293,11 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 			rid = g_list_nth_data(arguments, 2);
 			frac = g_list_nth_data(arguments, 3);
 
-			task = gebr_task_find(rid, frac);
+			task = gebr_task_find(rid->str, frac->str);
+			g_debug("OUT_DEF: Found task %p rid %s frac %s output %s", task, rid->str, frac->str, output->str);
 
 			if (task != NULL) {
-				gebr_task_emmit_output_signal(task, output);
+				gebr_task_emit_output_signal(task, output->str);
 			}
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
@@ -321,13 +316,15 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 			rid = g_list_nth_data(arguments, 3);
 			frac = g_list_nth_data(arguments, 4);
 
-			task = gebr_task_find(rid, frac);
+			g_debug("STA_DEF: Task %s frac %s status %s param %s", rid->str, frac->str, status->str, parameter->str);
+
+			task = gebr_task_find(rid->str, frac->str);
 
 			if (task != NULL) {
 				enum JobStatus status_enum;
 
 				status_enum = job_translate_status(status);
-				gebr_task_emmit_status_changed_signal(task, status_enum, parameter->str);
+				gebr_task_emit_status_changed_signal(task, status_enum, parameter->str);
 			}
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
