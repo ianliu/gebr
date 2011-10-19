@@ -15,6 +15,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 include $(top_srcdir)/Makefile.decl
 
+BUILT_SOURCES =
+EXTRA_DIST =
+CLEANFILES =
+DISTCLEANFILES =
+EXTRADIR =
+
 SUBDIRS = . tests po data
 
 bin_PROGRAMS = gebr
