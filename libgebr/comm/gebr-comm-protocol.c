@@ -47,14 +47,14 @@ void gebr_comm_protocol_init(void)
 	gebr_comm_protocol_defs.ini_def = gebr_comm_message_def_create("INI", TRUE, 4);
 	gebr_comm_protocol_defs.qut_def = gebr_comm_message_def_create("QUT", FALSE, 0);
 	gebr_comm_protocol_defs.lst_def = gebr_comm_message_def_create("LST", FALSE, 0); /* return JOBs, not RET */
-	gebr_comm_protocol_defs.job_def = gebr_comm_message_def_create("JOB", FALSE, 11);
+	gebr_comm_protocol_defs.job_def = gebr_comm_message_def_create("JOB", FALSE, 13);
 	gebr_comm_protocol_defs.run_def = gebr_comm_message_def_create("RUN", TRUE, 5);
 	gebr_comm_protocol_defs.rnq_def = gebr_comm_message_def_create("RNQ", FALSE, 2);
 	gebr_comm_protocol_defs.clr_def = gebr_comm_message_def_create("CLR", FALSE, 1);
 	gebr_comm_protocol_defs.end_def = gebr_comm_message_def_create("END", FALSE, 1);
 	gebr_comm_protocol_defs.kil_def = gebr_comm_message_def_create("KIL", FALSE, 1);
-	gebr_comm_protocol_defs.out_def = gebr_comm_message_def_create("OUT", FALSE, 2);
-	gebr_comm_protocol_defs.sta_def = gebr_comm_message_def_create("STA", FALSE, 3);
+	gebr_comm_protocol_defs.out_def = gebr_comm_message_def_create("OUT", FALSE, 4);
+	gebr_comm_protocol_defs.sta_def = gebr_comm_message_def_create("STA", FALSE, 5);
 	gebr_comm_protocol_defs.flw_def = gebr_comm_message_def_create("FLW", TRUE, 1); /* UNUSED */
 
 	/* hashes them */

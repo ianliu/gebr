@@ -27,7 +27,7 @@ G_BEGIN_DECLS
 /* DEPRECATED */
 
 extern struct gebr_comm_protocol_defs gebr_comm_protocol_defs;
-#define PROTOCOL_VERSION "1.0.8"
+#define PROTOCOL_VERSION "1.0.9"
 
 struct gebr_comm_message_def {
 	guint		code_hash;
