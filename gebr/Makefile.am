@@ -44,6 +44,8 @@ libgebr_a_SOURCES =		\
 	gebr-help-edit-widget.h	\
 	gebr-job.c		\
 	gebr-job.h		\
+	gebr-marshal.c		\
+	gebr-marshal.h		\
 	gebr-task.c		\
 	gebr-task.h		\
 	gebr.c			\
@@ -86,6 +88,11 @@ libgebr_a_SOURCES =		\
 	ui_server.h		\
 	$(NULL)
 
+# glib-genmarshal rules
+glib_marshal_list = gebr-marshal.list
+glib_marshal_prefix = gebr_cclosure_marshal
+include $(top_srcdir)/Makefile.am.marshal
+
 gebr_SOURCES = main.c
 
 AM_CPPFLAGS =			\
@@ -112,5 +119,7 @@ gebr_LDADD =			\
 	$(GEBR_JSON_LIBS)	\
 	libgebr.a		\
 	$(NULL)
+
+EXTRA_DIST += gebr-marshal.list
 
 .PHONY: touch
