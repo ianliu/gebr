@@ -2,6 +2,7 @@ syntax: glob
 
 *.Plo
 *.Po
+*.Tpo
 *.a
 *.desktop
 *.desktop.in
@@ -48,6 +49,7 @@ docs/reference/libgebr/version.xml
 docs/reference/libgebr/{html,xml}
 gebr-client/gebr-client
 gebr/gebr
+gebr/gebr-marshal.[ch]
 gebrd/gebrd
 gebrd/tests/test-gebrd
 gebrd/tests/test-job
