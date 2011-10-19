@@ -273,54 +273,67 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 			run_id = g_list_nth_data(arguments, 11);
 			frac = g_list_nth_data(arguments, 12);
 
-			job = gebr_task_find(run_id->str);
+			GebrTask *task = gebr_task_new(server, run_id->str, frac->str);
 
-			if (job == NULL)
+			GebrJob *job = gebr_job_find(run_id->str);
+
+			if (job == NULL) {
 				job = job_new_from_jid(server, jid, status, title, start_date, finish_date,
 						       hostname, issues, cmd_line, output, queue, moab_jid);
-			else if (job->parent.status == JOB_STATUS_INITIAL)
-				job_init_details(job, status, title, start_date, finish_date,
-						 hostname, issues, cmd_line, output, queue, moab_jid);
-			else
-				gebr_message(GEBR_LOG_DEBUG, FALSE, FALSE, _("Received the already listed Job %s."), job->parent.jid);
+				gebr_job_append_task(job, task);
+			} else
+				gebr_job_append_task(job, task);
+
+//			else if (job->parent.status == JOB_STATUS_INITIAL)
+//				job_init_details(job, status, title, start_date, finish_date,
+//						 hostname, issues, cmd_line, output, queue, moab_jid);
+//			else
+
+//				gebr_message(GEBR_LOG_DEBUG, FALSE, FALSE, _("Received the already listed Job %s."), job->parent.jid);
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		} else if (message->hash == gebr_comm_protocol_defs.out_def.code_hash) {
 			GList *arguments;
-			GString *jid, *output;
-			GebrTask *job;
+			GString *jid, *output, *rid, *frac;
+			GebrTask *task;
 
 			/* organize message data */
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 4)) == NULL)
 				goto err;
 			jid = g_list_nth_data(arguments, 0);
 			output = g_list_nth_data(arguments, 1);
-			job = gebr_task_find(gebr_job_hash_get(server, jid->str));
+			rid = g_list_nth_data(arguments, 2);
+			frac = g_list_nth_data(arguments, 3);
 
-			if (job != NULL) {
-				job_append_output(job, output);
+			task = gebr_task_find(rid, frac);
+
+			if (task != NULL) {
+				gebr_task_emmit_output_signal(task, output);
 			}
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		} else if (message->hash == gebr_comm_protocol_defs.sta_def.code_hash) {
 			GList *arguments;
-			GString *jid, *status, *parameter;
-			GebrTask *job;
+			GString *jid, *status, *parameter, *rid, *frac;
+			GebrTask *task;
 
 			/* organize message data */
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 3)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 5)) == NULL)
 				goto err;
 
 			jid = g_list_nth_data(arguments, 0);
 			status = g_list_nth_data(arguments, 1);
 			parameter = g_list_nth_data(arguments, 2);
+			rid = g_list_nth_data(arguments, 3);
+			frac = g_list_nth_data(arguments, 4);
 
-			job = gebr_task_find(gebr_job_hash_get(server, jid->str));
-			if (job != NULL) {
+			task = gebr_task_find(rid, frac);
+
+			if (task != NULL) {
 				enum JobStatus status_enum;
 
 				status_enum = job_translate_status(status);
-				job_status_update(job, status_enum, parameter->str);
+				gebr_task_emmit_status_changed_signal(task, status_enum);
 			}
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
