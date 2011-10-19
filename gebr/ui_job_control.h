@@ -91,6 +91,17 @@ void job_control_queue_save(void);
 void job_control_queue_close(void);
 
 /**
+ * gebr_jc_get_queue_group_iter:
+ *
+ * Fills @iter with the iterator corresponding to the line matching servers
+ * group to @group and queue to @queue.
+ */
+void gebr_jc_get_queue_group_iter(GtkTreeStore *store,
+				  const gchar  *queue,
+				  const gchar  *group,
+				  GtkTreeIter  *iter);
+
+/**
  * Get selected job/queue and put it at \p iter.
  * Return TRUE if there was something selected. Otherwise, return FALSE.
  * \p check_type determine the error message if selection don't match it.

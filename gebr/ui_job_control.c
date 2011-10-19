@@ -704,3 +704,39 @@ on_tree_store_insert_delete(GtkTreeModel *model,
 free_copy:
 	gtk_tree_path_free(copy);
 }
+
+void
+gebr_jc_get_queue_group_iter(GtkTreeStore *store,
+			     const gchar  *queue,
+			     const gchar  *group,
+			     GtkTreeIter  *iter)
+{
+	GtkTreeIter it;
+	GtkTreeModel *model = GTK_TREE_MODEL(store);
+	gboolean valid = gtk_tree_model_get_iter_first(model, &it);
+
+	while (valid) {
+		gchar *g, *q;
+		gtk_tree_model_get(model, &it,
+				   JC_SERVER_ADDRESS, &g, /* GEBR_JC_GROUP */
+				   JC_QUEUE_NAME, &q, /* GEBR_JC_QUEUE */
+				   -1);
+
+		if (g_strcmp0(group, g) == 0 && g_strcmp0(queue, q) == 0) {
+			*iter = it;
+			g_free(g);
+			g_free(q);
+			return;
+		}
+
+		g_free(g);
+		g_free(q);
+		valid = gtk_tree_model_iter_next(model, &it);
+	}
+
+	gtk_tree_store_append(store, iter, NULL);
+	gtk_tree_store_set(store, iter,
+			   JC_SERVER_ADDRESS, group,
+			   JC_QUEUE_NAME, queue,
+			   -1);
+}
