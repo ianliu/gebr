@@ -121,12 +121,6 @@ gboolean server_find(GebrServer *server, GtkTreeIter * iter);
 gboolean server_queue_find(GebrServer * server, const gchar * queue_name, GtkTreeIter * iter);
 
 /**
- * Find the queue named \p queue_name and set \p iter corresponding (from the job control UI).
- * If not found, the queue is added.
- */
-void server_queue_find_at_job_control(GebrServer * server, const gchar * queue_name, GtkTreeIter * _iter);
-
-/**
  * gebr_server_emit_initialized:
  * @self:
  *

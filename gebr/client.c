@@ -162,9 +162,6 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 
 							g_string_free(string, TRUE);
 						}
-
-						/* at job control */
-						server_queue_find_at_job_control(server, queues[i], NULL);
 					}
 				}
 
