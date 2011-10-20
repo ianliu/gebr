@@ -31,6 +31,16 @@ enum {
 	MENUBAR_N
 };
 
+/**
+ * The various tabs in GeBR interface.
+ */
+enum NOTEBOOK_PAGE {
+	NOTEBOOK_PAGE_PROJECT_LINE = 0,
+	NOTEBOOK_PAGE_FLOW_BROWSE,
+	NOTEBOOK_PAGE_FLOW_EDITION,
+	NOTEBOOK_PAGE_JOB_CONTROL,
+};
+
 /* Accel Group entries */
 /* The order here are similar to the notebook pages*/
 enum {
@@ -47,6 +57,8 @@ enum {
 void gebr_setup_ui(void);
 
 gint gebr_interface_get_execution_speed(void);
+
+void gebr_interface_change_tab(enum NOTEBOOK_PAGE page);
 
 G_END_DECLS
 #endif				//__INTERFACE_H

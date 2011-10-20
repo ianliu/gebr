@@ -45,16 +45,6 @@
 G_BEGIN_DECLS
 
 /**
- * The various tabs in GeBR interface.
- */
-enum NOTEBOOK_PAGE {
-	NOTEBOOK_PAGE_PROJECT_LINE = 0,
-	NOTEBOOK_PAGE_FLOW_BROWSE,
-	NOTEBOOK_PAGE_FLOW_EDITION,
-	NOTEBOOK_PAGE_JOB_CONTROL,
-};
-
-/**
  * Global variable of common needed stuff.
  */
 extern struct gebr gebr;

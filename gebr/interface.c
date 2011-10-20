@@ -673,3 +673,9 @@ gebr_interface_get_execution_speed(void)
 {
 	return gebr.config.flow_exec_speed;
 }
+
+void
+gebr_interface_change_tab(enum NOTEBOOK_PAGE page)
+{
+	gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), page);
+}
