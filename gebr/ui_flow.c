@@ -286,11 +286,13 @@ add_flows_to_runner(GebrCommRunner *runner,
 			list = servers;
 
 			gint j = 1;
+			gboolean last = FALSE;
 			for (GList *i = flows; i; i = i->next) {
 				GebrGeoXmlFlow *frac_flow = i->data;
+				last = i->next == NULL? TRUE : FALSE;
 				GebrCommRunnerFlow *runflow;
 				runflow = gebr_comm_runner_add_flow(runner, gebr.validator, frac_flow,
-								    ((GebrServer*)list->data)->comm, TRUE,
+								    ((GebrServer*)list->data)->comm, !last,
 								    gebr_get_session_id(), list->data);
 
 				gchar *frac = g_strdup_printf("%d:%d", j++, n_servers);
@@ -298,7 +300,7 @@ add_flows_to_runner(GebrCommRunner *runner,
 				g_free(frac);
 
 				list = list->next;
-				if (!list) {
+				if (!list && i->next) {
 					list = servers;
 					g_warn_if_reached();
 				}
