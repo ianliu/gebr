@@ -32,6 +32,17 @@
  * Prototypes
  */
 
+static void icon_column_data_func(GtkTreeViewColumn *tree_column,
+				  GtkCellRenderer *cell,
+				  GtkTreeModel *tree_model,
+				  GtkTreeIter *iter,
+				  gpointer data);
+
+static void title_column_data_func(GtkTreeViewColumn *tree_column,
+				   GtkCellRenderer *cell,
+				   GtkTreeModel *tree_model,
+				   GtkTreeIter *iter,
+				   gpointer data);
 
 #if 0
 static void job_control_on_cursor_changed(void);
@@ -82,21 +93,21 @@ struct ui_job_control *job_control_setup_ui(void)
 				       GTK_POLICY_AUTOMATIC);
 	gtk_container_add(GTK_CONTAINER(frame), scrolled_window);
 
+	g_debug("=========================================");
+	g_debug(" STORE CREATED!");
+	g_debug("=========================================");
 	ui_job_control->store = gtk_tree_store_new(JC_N_COLUMN,
-	                                           GDK_TYPE_PIXBUF,
-	                                           G_TYPE_BOOLEAN,
-	                                           G_TYPE_STRING,
-						   G_TYPE_STRING,
-						   G_TYPE_STRING,
-						   G_TYPE_POINTER,
-						   G_TYPE_BOOLEAN);
+	                                           G_TYPE_STRING,  /* JC_SERVER_ADDRESS */
+						   G_TYPE_STRING,  /* JC_QUEUE_NAME */
+						   G_TYPE_POINTER, /* JC_STRUCT */
+						   G_TYPE_BOOLEAN);/* JC_VISIBLE */
+
 	//g_signal_connect(ui_job_control->store, "row-inserted", G_CALLBACK(on_tree_store_insert_delete), NULL);
 	//g_signal_connect(ui_job_control->store, "row-deleted", G_CALLBACK(on_tree_store_insert_delete), NULL);
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(ui_job_control->store), JC_SERVER_ADDRESS,
 					     GTK_SORT_ASCENDING);
 	GtkTreeModel *filter = gtk_tree_model_filter_new(GTK_TREE_MODEL(ui_job_control->store), NULL);
-	//ui_job_control->view = gtk_tree_view_new_with_model(filter);
-	ui_job_control->view = gtk_tree_view_new();
+	ui_job_control->view = gtk_tree_view_new_with_model(filter);
 	gtk_tree_model_filter_set_visible_column(GTK_TREE_MODEL_FILTER(filter), JC_VISIBLE);
 	g_object_unref(filter);
 	
@@ -111,12 +122,14 @@ struct ui_job_control *job_control_setup_ui(void)
 
 	col = gtk_tree_view_column_new();
 	gtk_tree_view_append_column(GTK_TREE_VIEW(ui_job_control->view), col);
+
 	renderer = gtk_cell_renderer_pixbuf_new();
 	gtk_tree_view_column_pack_start(col, renderer, FALSE);
-	gtk_tree_view_column_add_attribute(col, renderer, "pixbuf", JC_ICON);
+	gtk_tree_view_column_set_cell_data_func(col, renderer, icon_column_data_func, NULL, NULL);
+
 	renderer = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_pack_start(col, renderer, TRUE);
-	gtk_tree_view_column_add_attribute(col, renderer, "text", JC_TITLE);
+	gtk_tree_view_column_set_cell_data_func(col, renderer, title_column_data_func, NULL, NULL);
 
 	gtk_container_add(GTK_CONTAINER(scrolled_window), ui_job_control->view);
 	gtk_widget_set_size_request(GTK_WIDGET(scrolled_window), 180, 30);
@@ -747,5 +760,77 @@ gebr_jc_get_queue_group_iter(GtkTreeStore *store,
 	gtk_tree_store_set(store, iter,
 			   JC_SERVER_ADDRESS, group,
 			   JC_QUEUE_NAME, queue,
+			   JC_VISIBLE, TRUE,
 			   -1);
+}
+
+static void
+icon_column_data_func(GtkTreeViewColumn *tree_column,
+		      GtkCellRenderer *cell,
+		      GtkTreeModel *tree_model,
+		      GtkTreeIter *iter,
+		      gpointer data)
+{
+	GebrJob *job;
+	const gchar *stock_id;
+
+	gtk_tree_model_get(tree_model, iter, JC_STRUCT, &job, -1);
+
+	if (!job) {
+		g_object_set(cell, "stock-id", NULL, NULL);
+		return;
+	}
+
+	switch (gebr_job_get_status(job))
+	{
+	case JOB_STATUS_CANCELED:
+	case JOB_STATUS_FAILED:
+		stock_id = GTK_STOCK_CANCEL;
+		break;
+	case JOB_STATUS_FINISHED:
+		stock_id = GTK_STOCK_APPLY;
+		break;
+	case JOB_STATUS_INITIAL:
+		stock_id = GTK_STOCK_NETWORK;
+		break;
+	case JOB_STATUS_QUEUED:
+		stock_id = "chronometer";
+		break;
+	case JOB_STATUS_RUNNING:
+		stock_id = GTK_STOCK_EXECUTE;
+		break;
+	case JOB_STATUS_ISSUED:
+	case JOB_STATUS_REQUEUED:
+		break;
+	}
+
+	g_object_set(cell, "stock-id", stock_id, NULL);
+}
+
+static void
+title_column_data_func(GtkTreeViewColumn *tree_column,
+		       GtkCellRenderer *cell,
+		       GtkTreeModel *tree_model,
+		       GtkTreeIter *iter,
+		       gpointer data)
+{
+	GebrJob *job;
+	gchar *servers, *queue;
+
+	gtk_tree_model_get(tree_model, iter,
+			   JC_STRUCT, &job,
+			   JC_SERVER_ADDRESS, &servers,
+			   JC_QUEUE_NAME, &queue,
+			   -1);
+
+	if (job)
+		g_object_set(cell, "text", gebr_job_get_title(job), NULL);
+	else {
+		gchar *title = g_strdup_printf(_("%s at %s"), queue, servers);
+		g_object_set(cell, "text", title, NULL);
+		g_free(title);
+	}
+
+	g_free(queue);
+	g_free(servers);
 }

@@ -260,7 +260,7 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 			frac = g_list_nth_data(arguments, 12);
 			group = g_list_nth_data(arguments, 13);
 
-			g_debug("JOB_DEF: Received task %s frac %s", run_id->str, frac->str);
+			g_debug("JOB_DEF: Received task %s frac %s status %s", run_id->str, frac->str, status->str);
 			GebrTask *task = gebr_task_new(server, run_id->str, frac->str);
 			gebr_task_init_details(task, status, start_date, finish_date, issues, cmd_line, queue, moab_jid);
 
@@ -276,6 +276,7 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 
 			gebr_job_append_task(job, task);
 			gebr_task_emit_output_signal(task, output->str);
+			gebr_task_emit_status_changed_signal(task, job_translate_status(status), "");
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		} else if (message->hash == gebr_comm_protocol_defs.out_def.code_hash) {
 			GList *arguments;

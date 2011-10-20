@@ -55,7 +55,10 @@ insert_into_model(GebrJob *job)
 				     &parent);
 
 	gtk_tree_store_append(job->priv->store, &job->priv->iter, &parent);
-	gtk_tree_store_set(job->priv->store, &job->priv->iter, JC_STRUCT /* GEBR_JC_JOB */, job, -1);
+	gtk_tree_store_set(job->priv->store, &job->priv->iter,
+			   JC_STRUCT, job,
+			   JC_VISIBLE, TRUE,
+			   -1);
 }
 
 /* Public methods {{{1 */
@@ -83,6 +86,7 @@ gebr_job_new_with_id(GtkTreeStore *store,
 	job->priv->queue = g_strdup(queue);
 	job->priv->group = g_strdup(group);
 	job->priv->runid = g_strdup(rid);
+	job->priv->status = JOB_STATUS_INITIAL;
 
 	g_debug("New job created with rid %s", job->priv->runid);
 
@@ -137,8 +141,7 @@ gebr_job_append_task(GebrJob *job, GebrTask *task)
 enum JobStatus
 gebr_job_get_status(GebrJob *job)
 {
-	/* computa status */
-	return 0;
+	return job->priv->status;
 }
 
 GebrJob *
@@ -218,14 +221,14 @@ gebr_job_append_task_output(GebrTask *task,
 		g_string_append(job->priv->output, output);
 		text = output;
 	}
-	if (job_is_active(job) == TRUE) {
-		gtk_text_buffer_get_end_iter(gebr.ui_job_control->text_buffer, &iter);
-		gtk_text_buffer_insert(gebr.ui_job_control->text_buffer, &iter, text, strlen(text));
-		if (gebr.config.job_log_auto_scroll) {
-			mark = gtk_text_buffer_get_mark(gebr.ui_job_control->text_buffer, "end");
-			gtk_text_view_scroll_mark_onscreen(GTK_TEXT_VIEW(gebr.ui_job_control->text_view), mark);
-		}
-	}
+	//if (job_is_active(job) == TRUE) {
+	//	gtk_text_buffer_get_end_iter(gebr.ui_job_control->text_buffer, &iter);
+	//	gtk_text_buffer_insert(gebr.ui_job_control->text_buffer, &iter, text, strlen(text));
+	//	if (gebr.config.job_log_auto_scroll) {
+	//		mark = gtk_text_buffer_get_mark(gebr.ui_job_control->text_buffer, "end");
+	//		gtk_text_view_scroll_mark_onscreen(GTK_TEXT_VIEW(gebr.ui_job_control->text_view), mark);
+	//	}
+	//}
 }
 
 void
@@ -235,10 +238,10 @@ gebr_job_add_issue(GebrJob *job, const gchar *_issues)
 
 	GString *issues = g_string_new("");
 	g_string_assign(issues, _issues);
-	if (job_is_active(job) == FALSE) {
+	//if (job_is_active(job) == FALSE) {
 		g_string_free(issues, TRUE);
 		return;
-	}
+	//}
 	g_object_set(gebr.ui_job_control->issues_title_tag, "invisible", FALSE, NULL);
 	GtkTextMark * mark = gtk_text_buffer_get_mark(gebr.ui_job_control->text_buffer, "last-issue");
 	if (mark != NULL) {

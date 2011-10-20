@@ -259,9 +259,6 @@ gebr_task_emit_status_changed_signal(GebrTask *task,
 {
 	enum JobStatus old_status;
 
-	if (task->priv->status == new_status)
-		return;
-
 	old_status = task->priv->status;
 	task->priv->status = new_status;
 
