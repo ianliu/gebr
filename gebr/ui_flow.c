@@ -214,34 +214,6 @@ fill_moab_account_and_queue(GebrCommRunner *runner,
 }
 
 /*
- * QueueTypes:
- * @AUTOMATIC_QUEUE: A queue created when a flow is executed
- * @USER_QUEUE: A queue created when the user chooses a name or when multiple
- * flows are executed.
- * @IMMEDIATELY_QUEUE: The immediately queue.
- */
-typedef enum {
-	AUTOMATIC_QUEUE,
-	USER_QUEUE,
-	IMMEDIATELY_QUEUE,
-} QueueTypes;
-
-static QueueTypes
-get_queue_type(const gchar *queue_id)
-{
-	if (g_strcmp0(queue_id, "j") == 0)
-		return IMMEDIATELY_QUEUE;
-
-	if (queue_id[0] == 'j')
-		return AUTOMATIC_QUEUE;
-
-	if (queue_id[0] == 'q')
-		return USER_QUEUE;
-
-	g_return_val_if_reached(IMMEDIATELY_QUEUE);
-}
-
-/*
  * Creates the queue name for multiple flows execution.
  * The queue name consists of the title of the first flow
  * concatenated with the title of the last flow.
@@ -366,12 +338,12 @@ fill_runner_struct(GebrCommRunner *runner,
 		else
 			goto free_and_error;
 	} else {
-		gboolean is_immediately = queue_id == NULL || get_queue_type(queue_id) == IMMEDIATELY_QUEUE;
+		gboolean is_immediately = queue_id == NULL || gebr_get_queue_type(queue_id) == IMMEDIATELY_QUEUE;
 
 		// Multiple flows in sequence
 		if (!single && !parallel) {
 			const gchar *internal_queue_name = queue_id? queue_id:"j";
-			if (is_immediately || get_queue_type(internal_queue_name) == AUTOMATIC_QUEUE) {
+			if (is_immediately || gebr_get_queue_type(internal_queue_name) == AUTOMATIC_QUEUE) {
 				runner->queue = create_multiple_execution_queue(runner, server);
 				gebr_comm_protocol_socket_oldmsg_send(server->comm->socket, FALSE,
 								      gebr_comm_protocol_defs.rnq_def, 2,
@@ -381,7 +353,7 @@ fill_runner_struct(GebrCommRunner *runner,
 
 		// Append single flow in queue
 		} else if (!parallel && !is_immediately) {
-			if (get_queue_type(queue_id) == AUTOMATIC_QUEUE) {
+			if (gebr_get_queue_type(queue_id) == AUTOMATIC_QUEUE) {
 				if (!flow_io_run_dialog(runner, server, is_mpi))
 					goto free_and_error;
 
@@ -795,4 +767,19 @@ gebr_ui_flow_run(gboolean parallel, gboolean single)
 free_and_error:
 	gebr_comm_runner_free(runner);
 	g_list_free(servers);
+}
+
+GebrQueueTypes
+gebr_get_queue_type(const gchar *queue_id)
+{
+	if (g_strcmp0(queue_id, "j") == 0)
+		return IMMEDIATELY_QUEUE;
+
+	if (queue_id[0] == 'j')
+		return AUTOMATIC_QUEUE;
+
+	if (queue_id[0] == 'q')
+		return USER_QUEUE;
+
+	g_return_val_if_reached(IMMEDIATELY_QUEUE);
 }

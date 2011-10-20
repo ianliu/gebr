@@ -22,6 +22,21 @@
 
 G_BEGIN_DECLS
 
+/*
+ * QueueTypes:
+ * @AUTOMATIC_QUEUE: A queue created when a flow is executed
+ * @USER_QUEUE: A queue created when the user chooses a name or when multiple
+ * flows are executed.
+ * @IMMEDIATELY_QUEUE: The immediately queue.
+ */
+typedef enum {
+	AUTOMATIC_QUEUE,
+	USER_QUEUE,
+	IMMEDIATELY_QUEUE,
+} GebrQueueTypes;
+
+GebrQueueTypes gebr_get_queue_type(const gchar *queue_id);
+
 /**
  * gebr_ui_flow_run:
  * @parallel: Will run selected flows in parallel.
