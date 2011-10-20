@@ -183,12 +183,15 @@ gebr_job_find(const gchar *rid)
 	return job;
 }
 
-void
+static void
 gebr_job_free(GebrJob *job)
 {
+	g_free(job->priv->title);
+	g_free(job->priv->runid);
 	g_free(job->priv->queue);
 	g_free(job->priv->servers);
 	g_list_free(job->priv->tasks);
+	g_string_free(job->priv->output, TRUE);
 	g_free(job->priv);
 	g_free(job);
 }
@@ -389,4 +392,22 @@ gebr_job_get_issues(GebrJob *job)
 	for (GList *i = job->priv->tasks; i; i = i->next)
 		g_string_append_printf(buf, "%s\n", gebr_task_get_issues(i->data));
 	return g_string_free(buf, FALSE);
+}
+
+void
+gebr_job_close(GebrJob *job)
+{
+	for (GList *i = job->priv->tasks; i; i = i->next)
+		gebr_task_close(i->data);
+
+	if (!gtk_tree_model_iter_parent(GTK_TREE_MODEL(job->priv->store),
+					&parent, &job->priv->iter))
+		g_return_if_reached();
+
+	gtk_tree_store_remove(job->priv->store, &job->priv->iter);
+
+	if (gtk_tree_model_iter_n_children(GTK_TREE_MODEL(job->priv->store), &parent) == 0)
+		gtk_tree_store_remove(job->priv->store, &parent);
+
+	gebr_job_free(job);
 }

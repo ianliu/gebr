@@ -99,6 +99,14 @@ build_task_id(const gchar *rid,
 	return g_strconcat(rid, ":", frac, NULL);
 }
 
+static gchar *
+build_task_id_from_ints(const gchar *rid,
+			gint frac,
+			gint total)
+{
+	return g_strdup_printf("%s:%d:%d", rid, frac, total);
+}
+
 GebrTask *
 gebr_task_new(GebrServer  *server,
 	      const gchar *rid,
@@ -263,4 +271,28 @@ const gchar *
 gebr_task_get_issues(GebrTask *task)
 {
 	return task->priv->issues->str;
+}
+
+static void
+gebr_task_free(GebrTask *task)
+{
+	g_string_free(start_date, TRUE);
+	g_string_free(finish_date, TRUE);
+	g_string_free(issues, TRUE);
+	g_string_free(cmd_line, TRUE);
+	g_string_free(moab_jid, TRUE);
+	g_string_free(queue_id, TRUE);
+}
+
+void
+gebr_task_close(GebrTask *task, const gchar *rid)
+{
+	gchar *tid = build_task_id_from_ints(rid, task->priv->frac, task->priv->total);
+	if (gebr_comm_server_is_logged(task->priv->server->comm))
+		gebr_comm_protocol_socket_oldmsg_send(task->priv->server->comm->socket, FALSE,
+						      gebr_comm_protocol_defs.clr_def, 1,
+						      job->parent.jid->str);
+
+	g_hash_table_remove(tasks_map, tid);
+	gebr_task_free(task);
 }

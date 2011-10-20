@@ -113,6 +113,8 @@ const gchar *gebr_task_get_finish_date(GebrTask *task);
 
 const gchar *gebr_task_get_issues(GebrTask *task);
 
+void gebr_task_close(GebrTask *task);
+
 G_END_DECLS
 
 #endif /* __GEBR_TASK_H__ */
