@@ -28,7 +28,7 @@ typedef struct {
 	GebrGeoXmlFlow *flow;
 	GebrCommServer *server;
 	gchar *flow_xml;
-	guint run_id;
+	gchar *run_id;
 	gchar *frac;
 	gpointer user_data;
 } GebrCommRunnerFlow;
@@ -74,6 +74,7 @@ GebrCommRunnerFlow * gebr_comm_runner_add_flow(GebrCommRunner *self,
 					       GebrGeoXmlFlow *flow,
 					       GebrCommServer *server,
 					       gboolean        divided,
+					       const gchar    *sessid,
 					       gpointer        user_data);
 
 void gebr_comm_runner_flow_set_frac(GebrCommRunnerFlow *self, const gchar *frac);
@@ -81,9 +82,8 @@ void gebr_comm_runner_flow_set_frac(GebrCommRunnerFlow *self, const gchar *frac)
 /**
  * gebr_comm_runner_run:
  * @self:
- * @sessid:
  */
-void gebr_comm_runner_run(GebrCommRunner *self, const gchar *sessid);
+void gebr_comm_runner_run(GebrCommRunner *self);
 
 G_END_DECLS
 

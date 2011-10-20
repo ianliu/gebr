@@ -24,6 +24,7 @@
 
 #include "ui_flow.h"
 #include "gebr.h"
+#include "gebr-job.h"
 #include "flow.h"
 #include "document.h"
 #include "ui_flow_browse.h"
@@ -34,9 +35,7 @@
 #include "gebr-task.h"
 
 /* Prototypes {{{1 */
-static void create_jobs_and_run(GebrCommRunner *runner, gboolean is_divided);
-
-static gboolean is_divisible(gboolean single);
+static void create_jobs_and_run(GebrCommRunner *runner);
 
 static void add_selected_flows_to_runner(GebrCommRunner *runner, GList *servers);
 
@@ -292,7 +291,7 @@ add_flows_to_runner(GebrCommRunner *runner,
 				GebrCommRunnerFlow *runflow;
 				runflow = gebr_comm_runner_add_flow(runner, gebr.validator, frac_flow,
 								    ((GebrServer*)list->data)->comm, TRUE,
-								    list->data);
+								    gebr_get_session_id(), list->data);
 
 				gchar *frac = g_strdup_printf("%d:%d", j++, n_servers);
 				gebr_comm_runner_flow_set_frac(runflow, frac);
@@ -311,7 +310,7 @@ add_flows_to_runner(GebrCommRunner *runner,
 			// Use the first server for this flow
 			gebr_comm_runner_add_flow(runner, gebr.validator, gebr.flow,
 						  ((GebrServer*)servers->data)->comm, FALSE,
-						  servers->data);
+						  gebr_get_session_id(), servers->data);
 	} else
 		// FIXME This method accesses the GUI!
 		add_selected_flows_to_runner(runner, servers);
@@ -600,7 +599,7 @@ on_response_received(GebrCommHttpMsg *request, GebrCommHttpMsg *response, AsyncR
 			}
 
 			if (fill_runner_struct(runinfo->runner, runinfo->servers, NULL, runinfo->parallel, runinfo->single, runinfo->is_mpi))
-				create_jobs_and_run(runinfo->runner, is_divisible(runinfo->single));
+				create_jobs_and_run(runinfo->runner);
 			gebr_comm_runner_free(runinfo->runner);
 		}
 	}
@@ -633,23 +632,49 @@ send_sys_load_request(GList *servers, GList *flows, GebrCommRunner *runner, gboo
 	}
 }
 
-static gboolean
-is_divisible(gboolean single)
-{
-	g_debug("Is single? %s. Is Auto-choose? %s.", single?"yes":"no", gebr.ui_flow_edition->autochoose?"yes":"no");
-
-	return single && gebr.ui_flow_edition->autochoose;
-}
-
 /*
- * Creates job entries in JobControl tab. Also swaps the data structs from
- * GebrCommRunner::servers list from GebrServer to GebrCommServer, so GebrComm
- * can handle it (because GebrComm can't see GebrServer struct).
+ * Creates job entries in JobControl tab.
  */
 static void
-create_jobs_and_run(GebrCommRunner *runner, gboolean is_divided)
+create_jobs_and_run(GebrCommRunner *runner)
 {
-	gebr_comm_runner_run(runner, gebr_get_session_id());
+	gboolean first = TRUE;
+	GHashTable *map = g_hash_table_new(g_str_hash, g_str_equal);
+
+	for (GList *i = runner->flows; i; i = i->next) {
+		GString *value;
+		GebrCommRunnerFlow *runflow = i->data;
+
+		value = g_hash_table_lookup(map, runflow->run_id);
+		if (!value) {
+			value = g_string_new(runflow->server->address->str);
+			g_hash_table_insert(map, runflow->run_id, value);
+		} else
+			g_string_append_printf(value, ",%s", runflow->server->address->str);
+
+	}
+
+	void func(gpointer key, gpointer value, gpointer data) {
+		gchar *runid = key;
+		gchar *servers = ((GString *)value)->str;
+		gebr_job_new_with_id(gebr.ui_job_control->store,
+				     gebr.ui_job_control->text_buffer,
+				     runid,
+				     runner->queue,
+				     servers);
+		g_string_free((GString *)value, TRUE);
+
+		if (first) {
+			gebr_interface_change_tab(NOTEBOOK_PAGE_JOB_CONTROL);
+			gebr_job_control_select_job(gebr.ui_job_control, runid);
+			first = FALSE;
+		}
+	}
+
+	g_hash_table_foreach(map, func, NULL);
+	g_hash_table_unref(map);
+
+	gebr_comm_runner_run(runner);
 }
 
 static void
@@ -667,7 +692,7 @@ add_selected_flows_to_runner(GebrCommRunner *runner, GList *servers)
 	gebr_gui_gtk_tree_view_foreach_selected(&iter, treeview) {
 		gtk_tree_model_get(model, &iter, FB_XMLPOINTER, &flow, -1);
 		gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE);
-		gebr_comm_runner_add_flow(runner, gebr.validator, flow, server->comm, FALSE, server);
+		gebr_comm_runner_add_flow(runner, gebr.validator, flow, server->comm, FALSE, gebr_get_session_id(), server);
 	}
 	gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &gebr.flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE);
 }
@@ -716,6 +741,7 @@ gebr_ui_flow_run(gboolean parallel, gboolean single)
 
 	gebr_gui_gtk_tree_view_foreach_selected(&iter, GTK_TREE_VIEW(gebr.ui_flow_browse->view)) {
 		GebrGeoXmlFlow *flow;
+
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
 				   FB_XMLPOINTER, &flow, -1);
 
@@ -761,7 +787,7 @@ gebr_ui_flow_run(gboolean parallel, gboolean single)
 		if (!fill_runner_struct(runner, servers, queue_id, parallel, single, has_mpi))
 			goto free_and_error;
 
-		create_jobs_and_run(runner, FALSE);
+		create_jobs_and_run(runner);
 	}
 
 free_and_error:

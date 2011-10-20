@@ -115,6 +115,7 @@ gebr_comm_runner_add_flow(GebrCommRunner *self,
 			  GebrGeoXmlFlow *flow,
 			  GebrCommServer *server,
 			  gboolean 	  divided,
+			  const gchar    *sessid,
 			  gpointer        user_data)
 {
 	static guint run_id = 0;
@@ -132,9 +133,9 @@ gebr_comm_runner_add_flow(GebrCommRunner *self,
 	run_flow->user_data = user_data;
 
 	if (divided)
-		run_flow->run_id = run_id;
+		run_flow->run_id = g_strdup_printf("%u:%s", run_id, sessid);
 	else
-		run_flow->run_id = run_id++;
+		run_flow->run_id = g_strdup_printf("%u:%s", run_id++, sessid);
 
 	self->flows = g_list_append(self->flows, run_flow);
 
@@ -149,9 +150,8 @@ gebr_comm_runner_flow_set_frac(GebrCommRunnerFlow *self, const gchar *frac)
 }
 
 void
-gebr_comm_runner_run(GebrCommRunner *self, const gchar *sessid)
+gebr_comm_runner_run(GebrCommRunner *self)
 {
-	GString *run_id_gstring = g_string_new("");
 	GString *server_list;
 	GebrCommRunnerFlow *runflow = self->flows->data;
 
@@ -163,19 +163,17 @@ gebr_comm_runner_run(GebrCommRunner *self, const gchar *sessid)
 
 	for (GList *i = self->flows; i != NULL; i = g_list_next(i)) {
 		runflow = i->data;
-		g_string_printf(run_id_gstring, "%u:%s", runflow->run_id, sessid);
 		gebr_comm_protocol_socket_oldmsg_send(runflow->server->socket, FALSE,
 						      gebr_comm_protocol_defs.run_def, 8,
 						      runflow->flow_xml,
 						      self->account ? self->account : "",
 						      self->queue ? self->queue : "",
 						      self->num_processes ? self->num_processes : "",
-						      run_id_gstring->str,
+						      runflow->run_id,
 						      self->execution_speed,
 						      runflow->frac,
 						      server_list->str);
 	}
 
 	g_string_free(server_list, TRUE);
-	g_string_free(run_id_gstring, TRUE);
 }
