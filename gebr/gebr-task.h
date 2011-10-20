@@ -196,6 +196,12 @@ void gebr_task_emit_status_changed_signal(GebrTask *task,
 
 const gchar *gebr_task_get_cmd_line(GebrTask *task);
 
+const gchar *gebr_task_get_start_date(GebrTask *task);
+
+const gchar *gebr_task_get_finish_date(GebrTask *task);
+
+const gchar *gebr_task_get_issues(GebrTask *task);
+
 G_END_DECLS
 
 #endif /* __GEBR_TASK_H__ */

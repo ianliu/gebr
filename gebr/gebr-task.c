@@ -276,3 +276,21 @@ gebr_task_get_cmd_line(GebrTask *task)
 {
 	return task->priv->cmd_line->str;
 }
+
+const gchar *
+gebr_task_get_start_date(GebrTask *task)
+{
+	return task->priv->start_date->str;
+}
+
+const gchar *
+gebr_task_get_finish_date(GebrTask *task)
+{
+	return task->priv->finish_date->str;
+}
+
+const gchar *
+gebr_task_get_issues(GebrTask *task)
+{
+	return task->priv->issues->str;
+}

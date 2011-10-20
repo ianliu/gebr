@@ -66,11 +66,15 @@ void gebr_job_free(GebrJob *job);
 
 const gchar *gebr_job_get_id(GebrJob *job);
 
-const gchar *gebr_job_get_issues(GebrJob *job);
-
 gchar *gebr_job_get_command_line(GebrJob *job);
 
 const gchar *gebr_job_get_output(GebrJob *job);
+
+const gchar *gebr_job_get_start_date(GebrJob *job);
+
+const gchar *gebr_job_get_finish_date(GebrJob *job);
+
+gchar *gebr_job_get_issues(GebrJob *job);
 
 G_END_DECLS
 

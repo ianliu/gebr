@@ -27,6 +27,8 @@ struct _GebrJobPriv {
 	gchar *runid;
 	gchar *queue;
 	gchar *servers;
+	const gchar *start_date;
+	const gchar *finish_date;
 	GtkTreeIter iter;
 	GString *output;
 	enum JobStatus status;
@@ -139,6 +141,9 @@ gebr_job_append_task(GebrJob *job, GebrTask *task)
 
 	gint frac, total;
 	gebr_task_get_fraction(task, &frac, &total);
+
+	if (!job->priv->start_date)
+		job->priv->start_date = gebr_task_get_start_date(task);
 
 	g_signal_connect(task, "status-change", G_CALLBACK(gebr_job_change_task_status), job);
 	g_signal_connect(task, "output", G_CALLBACK(gebr_job_append_task_output), job);
@@ -306,10 +311,12 @@ gebr_job_change_task_status(GebrTask *task,
 					return;
 			}
 			job->priv->status = JOB_STATUS_FINISHED;
+			job->priv->finish_date = gebr_task_get_finish_date(task);
 		}
 
 	} else if (new_status == JOB_STATUS_CANCELED || new_status == JOB_STATUS_FAILED) {
 		job->priv->status = JOB_STATUS_FAILED;
+		job->priv->finish_date = gebr_task_get_finish_date(task);
 	}
 
 	else if (new_status == JOB_STATUS_ISSUED) {
@@ -340,12 +347,6 @@ gebr_job_get_servers(GebrJob *job)
 	return job->priv->servers;
 }
 
-const gchar *
-gebr_job_get_issues(GebrJob *job)
-{
-	return ""; //job->priv->issues;
-}
-
 gchar *
 gebr_job_get_command_line(GebrJob *job)
 {
@@ -367,4 +368,25 @@ const gchar *
 gebr_job_get_output(GebrJob *job)
 {
 	return job->priv->output->str;
+}
+
+const gchar *
+gebr_job_get_start_date(GebrJob *job)
+{
+	return job->priv->start_date;
+}
+
+const gchar *
+gebr_job_get_finish_date(GebrJob *job)
+{
+	return job->priv->finish_date;
+}
+
+gchar *
+gebr_job_get_issues(GebrJob *job)
+{
+	GString *buf = g_string_new(NULL);
+	for (GList *i = job->priv->tasks; i; i = i->next)
+		g_string_append_printf(buf, "%s\n", gebr_task_get_issues(i->data));
+	return g_string_free(buf, FALSE);
 }
