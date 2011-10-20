@@ -804,6 +804,24 @@ gebr_job_control_select_job(struct ui_job_control *jc, const gchar *rid)
 }
 
 static void
+add_job_issues(struct ui_job_control *jc, const gchar *issues)
+{
+	g_object_set(jc->issues_title_tag, "invisible", FALSE, NULL);
+
+	GtkTextMark * mark = gtk_text_buffer_get_mark(jc->text_buffer, "last-issue");
+	if (mark != NULL) {
+		GtkTextIter iter;
+		gtk_text_buffer_get_iter_at_mark(jc->text_buffer, &iter, mark);
+		gtk_text_buffer_insert_with_tags(jc->text_buffer, &iter, issues, strlen(issues),
+						 jc->issues_title_tag, NULL);
+
+		gtk_text_buffer_delete_mark(jc->text_buffer, mark);
+		gtk_text_buffer_create_mark(jc->text_buffer, "last-issue", &iter, TRUE);
+	} else
+		g_warning("Can't find mark \"issue\"");
+}
+
+static void
 gebr_job_control_load_details(struct ui_job_control *jc,
 			      GebrJob *job)
 {
@@ -854,9 +872,11 @@ gebr_job_control_load_details(struct ui_job_control *jc,
 		goto out;
 
 	/* issues */
-	//const gchar *issues = gebr_job_get_issues(job);
-	//if (strlen(issues) > 0)
-	//	job_add_issue(job, job->parent.issues->str);
+	gchar *issues = gebr_job_get_issues(job);
+	if (issues && strlen(issues) > 0) {
+		add_job_issues(jc, issues);
+		g_free(issues);
+	}
 
 	/* command-line */
 	gchar *cmdline = gebr_job_get_command_line(job);
@@ -864,17 +884,20 @@ gebr_job_control_load_details(struct ui_job_control *jc,
 	g_free(cmdline);
 
 	/* start date (may have failed, never started) */
-	//if (job->parent.start_date->len)
-	//	g_string_append_printf(info, "\n%s %s\n", _("Start date:"), gebr_localized_date(job->parent.start_date->str));
+	const gchar *start_date = gebr_job_get_start_date(job);
+	if (start_date && strlen(start_date))
+		g_string_append_printf(info, "\n%s %s\n", _("Start date:"),
+				       gebr_localized_date(start_date));
 
 	/* output */
 	g_string_append(info, gebr_job_get_output(job));
 
 	/* finish date */
-	//if (job->parent.finish_date->len)
-	//	g_string_append_printf(info, "\n%s %s",
-	//			       job->parent.status == JOB_STATUS_FINISHED ? _("Finish date:") : _("Cancel date:"),
-	//			       gebr_localized_date(job->parent.finish_date->str));
+	const gchar *finish_date = gebr_job_get_finish_date(job);
+	if (finish_date && strlen(finish_date))
+		g_string_append_printf(info, "\n%s %s",
+				       status == JOB_STATUS_FINISHED ? _("Finish date:") : _("Cancel date:"),
+				       gebr_localized_date(finish_date));
 
 out:
 	gtk_text_buffer_get_end_iter(jc->text_buffer, &end_iter);
