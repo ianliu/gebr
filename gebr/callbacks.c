@@ -373,10 +373,11 @@ void on_flow_component_execute_single()
 //	job_control_queue_close();
 //}
 //
-//void on_configure_preferences_activate(void)
-//{
-//	preferences_setup_ui(FALSE);
-//}
+
+void on_configure_preferences_activate(void)
+{
+	preferences_setup_ui(FALSE);
+}
 
 void on_configure_servers_activate(void)
 {

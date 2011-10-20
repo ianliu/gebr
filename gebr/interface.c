@@ -53,8 +53,8 @@
  * Items values are (action name, stock id, label, hotkey, tooltip, callback).
  */
 static const GtkActionEntry actions_entries[] = {
-//	{"actions_preferences", GTK_STOCK_PREFERENCES, NULL,
-//		NULL, NULL, G_CALLBACK(on_configure_preferences_activate)},
+	{"actions_preferences", GTK_STOCK_PREFERENCES, NULL,
+		NULL, NULL, G_CALLBACK(on_configure_preferences_activate)},
 	{"actions_servers", GTK_STOCK_NETWORK, N_("_Servers"),
 		NULL, NULL, G_CALLBACK(on_configure_servers_activate)},
 	{"actions_quit", GTK_STOCK_QUIT, NULL,
@@ -146,27 +146,27 @@ static const GtkActionEntry actions_entries_flow_edition[] = {
 		"<Control>R", N_("Execute this Flow"), G_CALLBACK (on_flow_component_execute_single)}
 };
 
-//static const GtkActionEntry actions_entries_job_control[] = {
-//	/*
-//	 * Job control - Job Actions
-//	 */
-//	{"job_control_save", GTK_STOCK_SAVE, NULL,
-//		NULL, N_("Save Job information to a file"), G_CALLBACK(on_job_control_queue_save)},
-//	{"job_control_close", "trash-empty", N_("Close"),
-//		"Delete", N_("Clear selected Jobs"), G_CALLBACK(on_job_control_queue_close)},
-//	{"job_control_stop", GTK_STOCK_STOP, N_("Cancel"),
-//		NULL, N_("Ask server to cancel the selected Job"), G_CALLBACK(on_job_control_queue_stop)},
-//	/*
-//	 * Job Control - Queue Actions
-//	 */
-//	{"job_control_queue_save", GTK_STOCK_SAVE, N_("Save All"),
-//		NULL, N_("Ask server to save all Jobs from queue"), G_CALLBACK(on_job_control_queue_save)},
-//	{"job_control_queue_close", "trash-empty", N_("Close All"),
-//		NULL, N_("Clear all Jobs from selected queue"), G_CALLBACK(on_job_control_queue_close)},
-//	{"job_control_queue_stop", GTK_STOCK_STOP, N_("Cancel All"),
-//		NULL, N_("Ask server to cancel all Jobs from selected queue"), G_CALLBACK(on_job_control_queue_stop)}
-//
-//};
+static const GtkActionEntry actions_entries_job_control[] = {
+	/*
+	 * Job control - Job Actions
+	 */
+	{"job_control_save", GTK_STOCK_SAVE, NULL,
+		NULL, N_("Save Job information to a file"), G_CALLBACK(NULL/*on_job_control_queue_save*/)},
+	{"job_control_close", "trash-empty", N_("Close"),
+		"Delete", N_("Clear selected Jobs"), G_CALLBACK(NULL/*on_job_control_queue_close*/)},
+	{"job_control_stop", GTK_STOCK_STOP, N_("Cancel"),
+		NULL, N_("Ask server to cancel the selected Job"), G_CALLBACK(NULL/*on_job_control_queue_stop*/)},
+	/*
+	 * Job Control - Queue Actions
+	 */
+	{"job_control_queue_save", GTK_STOCK_SAVE, N_("Save All"),
+		NULL, N_("Ask server to save all Jobs from queue"), G_CALLBACK(NULL/*on_job_control_queue_save*/)},
+	{"job_control_queue_close", "trash-empty", N_("Close All"),
+		NULL, N_("Clear all Jobs from selected queue"), G_CALLBACK(NULL/*on_job_control_queue_close*/)},
+	{"job_control_queue_stop", GTK_STOCK_STOP, N_("Cancel All"),
+		NULL, N_("Ask server to cancel all Jobs from selected queue"), G_CALLBACK(NULL/*on_job_control_queue_stop*/)}
+
+};
 
 static const GtkActionEntry status_action_entries[] = {
 	{"flow_edition_status_configured", NULL, N_("Configured"),
@@ -398,7 +398,7 @@ void gebr_setup_ui(void)
 
 	gebr.action_group_job_control = gtk_action_group_new("Job Control");
 	gtk_action_group_set_translation_domain(gebr.action_group_job_control, GETTEXT_PACKAGE);
-//	gtk_action_group_add_actions(gebr.action_group_job_control, actions_entries_job_control, G_N_ELEMENTS(actions_entries_job_control), NULL);
+	gtk_action_group_add_actions(gebr.action_group_job_control, actions_entries_job_control, G_N_ELEMENTS(actions_entries_job_control), NULL);
 	gebr.accel_group_array[ACCEL_JOB_CONTROL] = gtk_accel_group_new();
 	gebr_gui_gtk_action_group_set_accel_group(gebr.action_group_job_control, gebr.accel_group_array[ACCEL_JOB_CONTROL]);
 
