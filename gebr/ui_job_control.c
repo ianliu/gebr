@@ -93,9 +93,6 @@ struct ui_job_control *job_control_setup_ui(void)
 				       GTK_POLICY_AUTOMATIC);
 	gtk_container_add(GTK_CONTAINER(frame), scrolled_window);
 
-	g_debug("=========================================");
-	g_debug(" STORE CREATED!");
-	g_debug("=========================================");
 	ui_job_control->store = gtk_tree_store_new(JC_N_COLUMN,
 	                                           G_TYPE_STRING,  /* JC_SERVER_ADDRESS */
 						   G_TYPE_STRING,  /* JC_QUEUE_NAME */
@@ -737,6 +734,17 @@ gebr_jc_get_queue_group_iter(GtkTreeStore *store,
 	GtkTreeModel *model = GTK_TREE_MODEL(store);
 	gboolean valid = gtk_tree_model_get_iter_first(model, &it);
 
+	gboolean are_queues_equal(const gchar *queue1, const gchar *queue2)
+	{
+		if (g_strcmp0(queue1, queue2) == 0)
+			return TRUE;
+		if (gebr_get_queue_type(queue1) == AUTOMATIC_QUEUE
+		    && gebr_get_queue_type(queue2) == AUTOMATIC_QUEUE)
+			return TRUE;
+
+		return FALSE;
+	}
+
 	while (valid) {
 		gchar *g, *q;
 		gtk_tree_model_get(model, &it,
@@ -744,7 +752,9 @@ gebr_jc_get_queue_group_iter(GtkTreeStore *store,
 				   JC_QUEUE_NAME, &q, /* GEBR_JC_QUEUE */
 				   -1);
 
-		if (g_strcmp0(group, g) == 0 && g_strcmp0(queue, q) == 0) {
+		g_debug("------- comparing with %s Versus %s", q, queue);
+
+		if (g_strcmp0(group, g) == 0 && are_queues_equal(queue, q)) {
 			*iter = it;
 			g_free(g);
 			g_free(q);
@@ -755,6 +765,8 @@ gebr_jc_get_queue_group_iter(GtkTreeStore *store,
 		g_free(q);
 		valid = gtk_tree_model_iter_next(model, &it);
 	}
+
+	g_debug("Created a father %s!", queue);
 
 	gtk_tree_store_append(store, iter, NULL);
 	gtk_tree_store_set(store, iter,
@@ -826,7 +838,11 @@ title_column_data_func(GtkTreeViewColumn *tree_column,
 	if (job)
 		g_object_set(cell, "text", gebr_job_get_title(job), NULL);
 	else {
-		gchar *title = g_strdup_printf(_("%s at %s"), queue, servers);
+		gchar *title;
+		if (gebr_get_queue_type(queue) == AUTOMATIC_QUEUE)
+			title = g_strdup_printf(_("Immediately at %s"), servers);
+		else
+			title = g_strdup_printf(_("%s at %s"), queue, servers);
 		g_object_set(cell, "text", title, NULL);
 		g_free(title);
 	}

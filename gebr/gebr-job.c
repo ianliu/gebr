@@ -157,12 +157,8 @@ gebr_job_find(const gchar *rid)
 
 		gtk_tree_model_get(model, iter, JC_STRUCT, &i, -1);
 
-		g_debug("--job_find: current job is %p", i);
-
 		if (!i)
 			return FALSE;
-
-		g_debug("----job_find: current job id is %s Versus %s", gebr_job_get_id(i), rid);
 
 		if (g_strcmp0(gebr_job_get_id(i), rid) == 0) {
 			job = i;
