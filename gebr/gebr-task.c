@@ -166,36 +166,6 @@ gebr_task_init_details(GebrTask *task,
 	}
 }
 
-GebrTask *gebr_task_new_from_jid(GebrServer *server, GString * jid, GString * status, GString * title,
-				 GString * start_date, GString * finish_date, GString * hostname, GString * issues,
-				 GString * cmd_line, GString * output, GString * queue, GString * moab_jid)
-{
-	GebrTask *task = gebr_task_new(server, title->str, queue->str);
-
-	g_object_set(task, "jid", jid, NULL);
-//	job_init_details(task, status, title, start_date, finish_date, hostname, issues, cmd_line, output, queue, moab_jid);
-
-	return task;
-}
-
-const gchar *
-job_get_queue_name(GebrTask *task)
-{
-	const gchar *queue;
-
-	if (!task->priv->server)
-		return NULL;
-
-	if (task->priv->server->type == GEBR_COMM_SERVER_TYPE_REGULAR) {
-		if (task->priv->queue_id->str[0] == 'q')
-			queue = task->priv->queue_id->str+1;
-		else
-			return NULL;
-	} else
-		queue = task->priv->queue_id->str;
-	return queue;
-}
-
 enum JobStatus job_translate_status(GString * status)
 {
 	enum JobStatus translated_status;

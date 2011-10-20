@@ -81,109 +81,20 @@ void gebr_task_get_fraction(GebrTask *task,
 			    gint *total);
 
 /**
- * Create a new job (from \p server) and add it to list of jobs
- */
-GebrTask *gebr_task_new_from_jid(GebrServer *server, GString * jid, GString * _status, GString * title,
-				 GString * start_date, GString * finish_date, GString * hostname, GString * issues,
-				 GString * cmd_line, GString * output, GString * queue, GString * moab_jid);
-
-void job_init_details(GebrTask *job, GString * _status, GString * title, GString * start_date, GString * finish_date,
-		      GString * hostname, GString * issues, GString * cmd_line, GString * output, GString * queue,
-		      GString * moab_jid);
-/**
- * Frees job structure.
- */
-void job_free(GebrTask *job);
-
-/**
- * Obsolete, same as job_free
- */
-void job_delete(GebrTask *job);
-
-/**
- * Return NULL if immediately
- */
-const gchar *job_get_queue_name(GebrTask *job);
-
-/**
- * Remove job from the list. 
- */
-void job_close(GebrTask *job, gboolean force, gboolean verbose);
-
-/**
- * Select \p job and load it. 
- */
-void job_set_active(GebrTask *job);
-
-/**
- * gebr_task_append_output:
- *
- * Appends @output
- */
-void gebr_task_append_output(GebrTask *job, const gchar *output);
-
-/**
- */
-void job_update(GebrTask *job);
-
-/**
- */
-void job_update_label(GebrTask *job);
-
-/**
  * Translate a \p status protocol string to a status enumeration 
  */
 enum JobStatus job_translate_status(GString * status);
 
 /**
- * Set UI related with status.
- * If \p job is not active nothing is done.
- */
-void job_status_show(GebrTask *job);
-
-/**
- */
-void job_add_issue(GebrTask *job, const gchar *issues);
-
-/**
  */
 void gebr_task_init_details(GebrTask *task,
-		       GString  *status,
-		       GString  *start_date,
-		       GString  *finish_date,
-		       GString  *issues,
-		       GString  *cmd_line,
-		       GString  *queue,
-		       GString  *moab_jid);
-
-/**
- */
-gboolean job_is_running(GebrTask *job);
-
-/**
- */
-gboolean job_has_finished(GebrTask *job);
-
-/**
- * Change the status of \p job according to \p status and its \p parameter.
- * Change the GtkTreeIter's icon and handling other status changes. Calls #job_status_show.
- */
-void job_status_update(GebrTask *job, enum JobStatus status, const gchar *parameter);
-
-/**
- * gebr_job_bind:
- *
- * Associates the pair (@server, @jid) with @rid.
- */
-void gebr_job_hash_bind(GebrServer *server, const gchar *jid, const gchar *rid);
-
-/**
- * gebr_job_hash_get:
- *
- * Returns: the run id associated with the pair (@server, @jid), or %NULL if it
- * does not exist.
- */
-const gchar *gebr_job_hash_get(GebrServer *server, const gchar *jid);
+			    GString  *status,
+			    GString  *start_date,
+			    GString  *finish_date,
+			    GString  *issues,
+			    GString  *cmd_line,
+			    GString  *queue,
+			    GString  *moab_jid);
 
 enum JobStatus gebr_task_get_status(GebrTask *task);
 
