@@ -276,12 +276,12 @@ gebr_task_get_issues(GebrTask *task)
 static void
 gebr_task_free(GebrTask *task)
 {
-	g_string_free(start_date, TRUE);
-	g_string_free(finish_date, TRUE);
-	g_string_free(issues, TRUE);
-	g_string_free(cmd_line, TRUE);
-	g_string_free(moab_jid, TRUE);
-	g_string_free(queue_id, TRUE);
+	g_string_free(task->priv->start_date, TRUE);
+	g_string_free(task->priv->finish_date, TRUE);
+	g_string_free(task->priv->issues, TRUE);
+	g_string_free(task->priv->cmd_line, TRUE);
+	g_string_free(task->priv->moab_jid, TRUE);
+	g_string_free(task->priv->queue_id, TRUE);
 }
 
 void
@@ -291,7 +291,7 @@ gebr_task_close(GebrTask *task, const gchar *rid)
 	if (gebr_comm_server_is_logged(task->priv->server->comm))
 		gebr_comm_protocol_socket_oldmsg_send(task->priv->server->comm->socket, FALSE,
 						      gebr_comm_protocol_defs.clr_def, 1,
-						      job->parent.jid->str);
+						      rid);
 
 	g_hash_table_remove(tasks_map, tid);
 	gebr_task_free(task);

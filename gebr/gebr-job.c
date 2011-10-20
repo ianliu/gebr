@@ -64,6 +64,19 @@ insert_into_model(GebrJob *job)
 			   -1);
 }
 
+static void
+gebr_job_free(GebrJob *job)
+{
+	g_free(job->priv->title);
+	g_free(job->priv->runid);
+	g_free(job->priv->queue);
+	g_free(job->priv->servers);
+	g_list_free(job->priv->tasks);
+	g_string_free(job->priv->output, TRUE);
+	g_free(job->priv);
+	g_free(job);
+}
+
 /* Public methods {{{1 */
 GebrJob *
 gebr_job_new(GtkTreeStore  *store,
@@ -181,19 +194,6 @@ gebr_job_find(const gchar *rid)
 	gtk_tree_model_foreach(GTK_TREE_MODEL(gebr.ui_job_control->store), job_find_foreach_func, NULL);
 
 	return job;
-}
-
-static void
-gebr_job_free(GebrJob *job)
-{
-	g_free(job->priv->title);
-	g_free(job->priv->runid);
-	g_free(job->priv->queue);
-	g_free(job->priv->servers);
-	g_list_free(job->priv->tasks);
-	g_string_free(job->priv->output, TRUE);
-	g_free(job->priv);
-	g_free(job);
 }
 
 static gboolean
@@ -398,7 +398,9 @@ void
 gebr_job_close(GebrJob *job)
 {
 	for (GList *i = job->priv->tasks; i; i = i->next)
-		gebr_task_close(i->data);
+		gebr_task_close(i->data, job->priv->runid);
+
+	GtkTreeIter parent;
 
 	if (!gtk_tree_model_iter_parent(GTK_TREE_MODEL(job->priv->store),
 					&parent, &job->priv->iter))

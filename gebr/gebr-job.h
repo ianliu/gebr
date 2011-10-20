@@ -62,8 +62,6 @@ const gchar *gebr_job_get_group(GebrJob *job);
 
 enum JobStatus gebr_job_get_status(GebrJob *job);
 
-void gebr_job_free(GebrJob *job);
-
 const gchar *gebr_job_get_id(GebrJob *job);
 
 gchar *gebr_job_get_command_line(GebrJob *job);
