@@ -339,11 +339,11 @@ void on_flow_component_execute_single()
 //	job_control_save();
 //}
 //
-//void on_job_control_close(void)
-//{
-//	job_control_close();
-//}
-//
+void on_job_control_close(void)
+{
+	job_control_close();
+}
+
 //void on_job_control_clear(void)
 //{
 //	job_control_clear(FALSE);
@@ -368,11 +368,11 @@ void on_flow_component_execute_single()
 //	job_control_queue_save();
 //}
 //
-//void on_job_control_queue_close(void)
-//{
-//	job_control_queue_close();
-//}
-//
+void on_job_control_queue_close(void)
+{
+	job_control_queue_close();
+}
+
 
 void on_configure_preferences_activate(void)
 {

@@ -55,8 +55,10 @@ static void on_text_view_populate_popup(GtkTextView * textview, GtkMenu * menu);
 
 static GtkMenu * job_control_popup_menu(GtkWidget * widget, struct ui_job_control *ui_job_control);
 
+#endif
 static void job_control_queue_by_func(gboolean (* func)(void));
 
+#if 0
 static void on_tree_store_insert_delete(GtkTreeModel *model,
                                         GtkTreePath *path);
 #endif
@@ -245,6 +247,7 @@ gboolean job_control_save(void)
 	g_free(fname);
 	return TRUE;
 }
+#endif
 
 gboolean job_control_close(void)
 {
@@ -264,8 +267,7 @@ gboolean job_control_close(void)
 
 	if (!rows->next) {
 		if (!gebr_gui_confirm_action_dialog(_("Clear Job"),
-		                                    _("Are you sure you want to clear Job \"%s\"?"),
-		                                    job->parent.title->str))
+		                                    _("Are you sure you want to clear Job \"%s\"?"), gebr_job_get_title(job)))
 			goto free_rows;
 	} else {
 		if (!gebr_gui_confirm_action_dialog(_("Clear Job"),
@@ -293,10 +295,10 @@ gboolean job_control_close(void)
 		gtk_tree_path_free(path);
 
 		gtk_tree_model_get(model, &iter, JC_STRUCT, &job, -1);
-		job_close(job, FALSE, TRUE);
+		gebr_job_close(job);
 	}
 
-	job_control_on_cursor_changed();
+	job_control_on_cursor_changed(selection, gebr.ui_job_control);
 
 	g_list_foreach(rowrefs, (GFunc)gtk_tree_row_reference_free, NULL);
 	g_list_free(rowrefs);
@@ -307,6 +309,7 @@ free_rows:
 	return retval;
 }
 
+#if 0
 void job_control_clear(gboolean force)
 {
 	if (!force && !gebr_gui_confirm_action_dialog(_("Clear all Jobs"),
@@ -436,6 +439,9 @@ job_control_on_cursor_changed(GtkTreeSelection *selection,
 {
 	GList *rows = gtk_tree_selection_get_selected_rows(selection, NULL);
 
+	if(!rows)
+		return;
+
 	if (!rows->next) {
 		GebrJob *job;
 		GtkTreeIter iter;
@@ -509,12 +515,14 @@ void job_control_queue_save(void)
 	job_control_queue_by_func(job_control_save);
 }
 
+#endif
+
 void job_control_queue_close(void)
 {
 	job_control_queue_by_func(job_control_close);
 }
 
-
+#if 0
 /**
  * \internal
  * Build popup menu
@@ -582,6 +590,7 @@ out:
 
 	return GTK_MENU(menu);
 }
+#endif
 
 static void job_control_queue_by_func(gboolean (* func)(void))
 {
@@ -635,6 +644,7 @@ static void job_control_queue_by_func(gboolean (* func)(void))
 	func();
 }
 
+#if 0
 static void
 on_tree_store_insert_delete(GtkTreeModel *model,
                             GtkTreePath *path)
