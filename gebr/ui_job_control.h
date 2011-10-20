@@ -56,6 +56,9 @@ struct ui_job_control {
 	GtkTextTag *issues_title_tag;
 };
 
+void gebr_job_control_select_job(struct ui_job_control *jc,
+				 const gchar *rid);
+
 /**
  * Assembly the job control page.
  * Return:

@@ -22,6 +22,7 @@
 #include <libgebr/comm/gebr-comm-server.h>
 #include <libgebr/gui/gebr-gui-utils.h>
 
+#include "interface.h"
 #include "client.h"
 #include "gebr.h"
 #include "server.h"
@@ -292,7 +293,10 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 				qsort(servers, length, sizeof(servers[0]), cmpfun);
 				gchar *servers_str = g_strjoinv(", ", servers);
 
-				job = gebr_job_new_with_id(gebr.ui_job_control->store, run_id->str, queue->str, servers_str);
+				job = gebr_job_new_with_id(gebr.ui_job_control->store,
+							   gebr.ui_job_control->text_buffer,
+							   run_id->str, queue->str, servers_str);
+
 				gebr_job_set_title(job, title->str);
 				gebr_job_show(job);
 				g_free(servers_str);

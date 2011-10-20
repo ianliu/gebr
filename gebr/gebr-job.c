@@ -28,9 +28,10 @@ struct _GebrJobPriv {
 	gchar *queue;
 	gchar *servers;
 	GtkTreeIter iter;
-	GtkTreeStore *store;
 	GString *output;
 	enum JobStatus status;
+	GtkTreeStore *store;
+	GtkTextBuffer *buffer;
 };
 
 static void gebr_job_append_task_output(GebrTask *task,
@@ -63,25 +64,30 @@ insert_into_model(GebrJob *job)
 
 /* Public methods {{{1 */
 GebrJob *
-gebr_job_new(GtkTreeStore *store, const gchar *queue, const gchar *servers)
+gebr_job_new(GtkTreeStore  *store,
+	     GtkTextBuffer *buffer,
+	     const gchar   *queue,
+	     const gchar   *servers)
 {
 	static int runid = 0;
 	gchar *new_rid = g_strdup_printf("%d:%s", runid++, gebr_get_session_id());
-	GebrJob *job = gebr_job_new_with_id(store, new_rid, queue, servers);
+	GebrJob *job = gebr_job_new_with_id(store, buffer, new_rid, queue, servers);
 	g_free(new_rid);
 	return job;
 }
 
 GebrJob *
-gebr_job_new_with_id(GtkTreeStore *store,
-		     const gchar  *rid,
-		     const gchar  *queue,
-		     const gchar  *servers)
+gebr_job_new_with_id(GtkTreeStore  *store,
+		     GtkTextBuffer *buffer,
+		     const gchar   *rid,
+		     const gchar   *queue,
+		     const gchar   *servers)
 {
 	GebrJob *job = g_new0(GebrJob, 1);
 
 	job->priv = g_new0(GebrJobPriv, 1);
 	job->priv->store = store;
+	job->priv->buffer = buffer;
 	job->priv->output = g_string_new(NULL);
 	job->priv->queue = g_strdup(queue);
 	job->priv->servers = g_strdup(servers);
@@ -187,10 +193,10 @@ job_is_active(GebrJob *job)
 {
 	GtkTreeIter iter;
 	GtkTreeModelFilter *filter;
+
 	filter = GTK_TREE_MODEL_FILTER(gtk_tree_view_get_model(GTK_TREE_VIEW(gebr.ui_job_control->view)));
 	gtk_tree_model_filter_convert_child_iter_to_iter(filter, &iter, &job->priv->iter);
-	return gtk_tree_selection_iter_is_selected(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)),
-						   &iter);
+	return gtk_tree_selection_iter_is_selected(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)), &iter);
 }
 
 static void
@@ -217,14 +223,15 @@ gebr_job_append_task_output(GebrTask *task,
 		g_string_append(job->priv->output, output);
 		text = output;
 	}
-	//if (job_is_active(job) == TRUE) {
-	//	gtk_text_buffer_get_end_iter(gebr.ui_job_control->text_buffer, &iter);
-	//	gtk_text_buffer_insert(gebr.ui_job_control->text_buffer, &iter, text, strlen(text));
-	//	if (gebr.config.job_log_auto_scroll) {
-	//		mark = gtk_text_buffer_get_mark(gebr.ui_job_control->text_buffer, "end");
-	//		gtk_text_view_scroll_mark_onscreen(GTK_TEXT_VIEW(gebr.ui_job_control->text_view), mark);
-	//	}
-	//}
+
+	if (job_is_active(job)) {
+		gtk_text_buffer_get_end_iter(job->priv->buffer, &iter);
+		gtk_text_buffer_insert(job->priv->buffer, &iter, text, strlen(text));
+		if (gebr.config.job_log_auto_scroll) {
+			mark = gtk_text_buffer_get_mark(job->priv->buffer, "end");
+			gtk_text_view_scroll_mark_onscreen(GTK_TEXT_VIEW(gebr.ui_job_control->text_view), mark);
+		}
+	}
 }
 
 void
@@ -234,10 +241,10 @@ gebr_job_add_issue(GebrJob *job, const gchar *_issues)
 
 	GString *issues = g_string_new("");
 	g_string_assign(issues, _issues);
-	//if (job_is_active(job) == FALSE) {
+	if (job_is_active(job) == FALSE) {
 		g_string_free(issues, TRUE);
 		return;
-	//}
+	}
 	g_object_set(gebr.ui_job_control->issues_title_tag, "invisible", FALSE, NULL);
 	GtkTextMark * mark = gtk_text_buffer_get_mark(gebr.ui_job_control->text_buffer, "last-issue");
 	if (mark != NULL) {
@@ -319,4 +326,45 @@ const gchar *
 gebr_job_get_id(GebrJob *job)
 {
 	return job->priv->runid;
+}
+
+GtkTreeIter
+gebr_job_get_iter(GebrJob *job)
+{
+	return job->priv->iter;
+}
+
+const gchar *
+gebr_job_get_servers(GebrJob *job)
+{
+	return job->priv->servers;
+}
+
+const gchar *
+gebr_job_get_issues(GebrJob *job)
+{
+	return ""; //job->priv->issues;
+}
+
+gchar *
+gebr_job_get_command_line(GebrJob *job)
+{
+	GString *buf = g_string_new(NULL);
+
+	for (GList *i = job->priv->tasks; i; i = i->next) {
+		gint frac, total;
+		GebrTask *task = i->data;
+
+		gebr_task_get_fraction(task, &frac, &total);
+		g_string_append_printf(buf, _("Command line for task %d of %d"), frac, total);
+		g_string_append_printf(buf, "\n%s\n", gebr_task_get_cmd_line(task));
+	}
+
+	return g_string_free(buf, FALSE);
+}
+
+const gchar *
+gebr_job_get_output(GebrJob *job)
+{
+	return job->priv->output->str;
 }

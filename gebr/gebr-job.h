@@ -31,16 +31,22 @@ struct _GebrJob {
 	GebrJobPriv *priv;
 };
 
-GebrJob * gebr_job_new(GtkTreeStore *store,
-		       const gchar  *queue,
-		       const gchar  *group);
+GebrJob * gebr_job_new(GtkTreeStore  *store,
+		       GtkTextBuffer *buffer,
+		       const gchar   *queue,
+		       const gchar   *servers);
 
-GebrJob *gebr_job_new_with_id(GtkTreeStore *store,
-			      const gchar  *rid,
-			      const gchar  *queue,
-			      const gchar  *group);
+GebrJob *gebr_job_new_with_id(GtkTreeStore  *store,
+			      GtkTextBuffer *buffer,
+			      const gchar   *rid,
+			      const gchar   *queue,
+			      const gchar   *servers);
 
 void gebr_job_show(GebrJob *job);
+
+GtkTreeIter gebr_job_get_iter(GebrJob *job);
+
+const gchar *gebr_job_get_servers(GebrJob *job);
 
 void gebr_job_append_task(GebrJob *job, GebrTask *task);
 
@@ -59,6 +65,12 @@ enum JobStatus gebr_job_get_status(GebrJob *job);
 void gebr_job_free(GebrJob *job);
 
 const gchar *gebr_job_get_id(GebrJob *job);
+
+const gchar *gebr_job_get_issues(GebrJob *job);
+
+gchar *gebr_job_get_command_line(GebrJob *job);
+
+const gchar *gebr_job_get_output(GebrJob *job);
 
 G_END_DECLS
 
