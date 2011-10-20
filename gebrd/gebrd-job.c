@@ -55,6 +55,7 @@ static void gebrd_job_init(GebrdJob * job)
 {
 	job->exec_speed = g_string_new(NULL);
 	job->frac = g_string_new(NULL);
+	job->server_list = g_string_new(NULL);
 }
 
 static void gebrd_job_class_init(GebrdJobClass * klass)
@@ -369,7 +370,7 @@ GebrdJob *job_find(GString * jid)
 }
 
 void job_new(GebrdJob ** _job, struct client * client, GString * queue, GString * account, GString * xml,
-	     GString * n_process, GString * run_id, GString *exec_speed, GString *frac)
+	     GString * n_process, GString * run_id, GString *exec_speed, GString *frac, GString *server_list)
 {
 	/* initialization */
 	GebrdJob *job = GEBRD_JOB(g_object_new(GEBRD_JOB_TYPE, NULL, NULL));
@@ -392,6 +393,7 @@ void job_new(GebrdJob ** _job, struct client * client, GString * queue, GString 
 	g_string_assign(job->parent.n_process, n_process->str);
 	g_string_assign(job->exec_speed, exec_speed->str);
 	g_string_assign(job->frac, frac->str);
+	g_string_assign(job->server_list, server_list->str);
 	job->parent.status = JOB_STATUS_INITIAL;
 
 	*_job = job;
@@ -663,7 +665,7 @@ void job_notify(GebrdJob *job, struct client *client)
 					      job->parent.moab_jid->str,
 					      job->parent.run_id->str,
 					      job->frac->str,
-					      "FooBarGroup");
+					      job->server_list->str);
 }
 
 

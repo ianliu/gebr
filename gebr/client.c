@@ -239,7 +239,7 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 		} else if (message->hash == gebr_comm_protocol_defs.job_def.code_hash) {
 			GList *arguments;
 			GString *jid, *hostname, *status, *title, *start_date, *finish_date, *issues, *cmd_line,
-				*output, *queue, *moab_jid, *run_id, *frac, *group;
+				*output, *queue, *moab_jid, *run_id, *frac, *server_list;
 			GebrJob *job;
 
 			/* organize message data */
@@ -258,7 +258,7 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 			moab_jid = g_list_nth_data(arguments, 10);
 			run_id = g_list_nth_data(arguments, 11);
 			frac = g_list_nth_data(arguments, 12);
-			group = g_list_nth_data(arguments, 13);
+			server_list = g_list_nth_data(arguments, 13);
 
 			g_debug("JOB_DEF: Received task %s frac %s status %s", run_id->str, frac->str, status->str);
 			GebrTask *task = gebr_task_new(server, run_id->str, frac->str);
@@ -268,10 +268,34 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 
 			g_debug("Job found is: %p", job);
 
-			if (job == NULL) {
-				job = gebr_job_new_with_id(gebr.ui_job_control->store, run_id->str, queue->str, group->str);
+			if (!job) {
+				gchar **servers = g_strsplit(server_list->str, ",", 0);
+				gint length = 0;
+
+				while (servers[length])
+					length++;
+
+				gint cmpfun(gconstpointer a, gconstpointer b) {
+					const gchar *aa = *(gchar * const *)a;
+					const gchar *bb = *(gchar * const *)b;
+
+					g_debug("Comparing %s to %s", aa, bb);
+					if (g_strcmp0(aa, "127.0.0.1") == 0)
+						return -1;
+
+					if (g_strcmp0(bb, "127.0.0.1") == 0)
+						return 1;
+
+					return g_strcmp0(aa, bb);
+				}
+
+				qsort(servers, length, sizeof(servers[0]), cmpfun);
+				gchar *servers_str = g_strjoinv(", ", servers);
+
+				job = gebr_job_new_with_id(gebr.ui_job_control->store, run_id->str, queue->str, servers_str);
 				gebr_job_set_title(job, title->str);
 				gebr_job_show(job);
+				g_free(servers_str);
 			}
 
 			gebr_job_append_task(job, task);

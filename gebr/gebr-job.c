@@ -26,7 +26,7 @@ struct _GebrJobPriv {
 	gchar *title;
 	gchar *runid;
 	gchar *queue;
-	gchar *group;
+	gchar *servers;
 	GtkTreeIter iter;
 	GtkTreeStore *store;
 	GString *output;
@@ -51,7 +51,7 @@ insert_into_model(GebrJob *job)
 
 	gebr_jc_get_queue_group_iter(job->priv->store,
 				     job->priv->queue,
-				     job->priv->group,
+				     job->priv->servers,
 				     &parent);
 
 	gtk_tree_store_append(job->priv->store, &job->priv->iter, &parent);
@@ -63,11 +63,11 @@ insert_into_model(GebrJob *job)
 
 /* Public methods {{{1 */
 GebrJob *
-gebr_job_new(GtkTreeStore *store, const gchar *queue, const gchar *group)
+gebr_job_new(GtkTreeStore *store, const gchar *queue, const gchar *servers)
 {
 	static int runid = 0;
 	gchar *new_rid = g_strdup_printf("%d:%s", runid++, gebr_get_session_id());
-	GebrJob *job = gebr_job_new_with_id(store, new_rid, queue, group);
+	GebrJob *job = gebr_job_new_with_id(store, new_rid, queue, servers);
 	g_free(new_rid);
 	return job;
 }
@@ -76,7 +76,7 @@ GebrJob *
 gebr_job_new_with_id(GtkTreeStore *store,
 		     const gchar  *rid,
 		     const gchar  *queue,
-		     const gchar  *group)
+		     const gchar  *servers)
 {
 	GebrJob *job = g_new0(GebrJob, 1);
 
@@ -84,7 +84,7 @@ gebr_job_new_with_id(GtkTreeStore *store,
 	job->priv->store = store;
 	job->priv->output = g_string_new(NULL);
 	job->priv->queue = g_strdup(queue);
-	job->priv->group = g_strdup(group);
+	job->priv->servers = g_strdup(servers);
 	job->priv->runid = g_strdup(rid);
 	job->priv->status = JOB_STATUS_INITIAL;
 
@@ -96,14 +96,14 @@ gebr_job_new_with_id(GtkTreeStore *store,
 void
 gebr_job_show(GebrJob *job)
 {
-	g_return_if_fail(job->priv->queue != NULL || job->priv->group != NULL);
+	g_return_if_fail(job->priv->queue != NULL || job->priv->servers != NULL);
 	insert_into_model(job);
 }
 
 const gchar *
 gebr_job_get_group(GebrJob *job)
 {
-	return job->priv->group;
+	return job->priv->servers;
 }
 
 const gchar *
@@ -176,7 +176,7 @@ void
 gebr_job_free(GebrJob *job)
 {
 	g_free(job->priv->queue);
-	g_free(job->priv->group);
+	g_free(job->priv->servers);
 	g_list_free(job->priv->tasks);
 	g_free(job->priv);
 	g_free(job);

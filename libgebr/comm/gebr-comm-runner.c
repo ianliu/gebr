@@ -152,20 +152,30 @@ void
 gebr_comm_runner_run(GebrCommRunner *self, const gchar *sessid)
 {
 	GString *run_id_gstring = g_string_new("");
+	GString *server_list;
+	GebrCommRunnerFlow *runflow = self->flows->data;
+
+	server_list = g_string_new(runflow->server->address->str);
+	for (GList *i = self->flows->next; i != NULL; i = g_list_next(i)) {
+		runflow = i->data;
+		g_string_append_printf(server_list, ",%s", runflow->server->address->str);
+	}
 
 	for (GList *i = self->flows; i != NULL; i = g_list_next(i)) {
-		GebrCommRunnerFlow *run_flow = i->data;
-		g_string_printf(run_id_gstring, "%u:%s", run_flow->run_id, sessid);
-		gebr_comm_protocol_socket_oldmsg_send(run_flow->server->socket, FALSE,
-						      gebr_comm_protocol_defs.run_def, 7,
-						      run_flow->flow_xml,
+		runflow = i->data;
+		g_string_printf(run_id_gstring, "%u:%s", runflow->run_id, sessid);
+		gebr_comm_protocol_socket_oldmsg_send(runflow->server->socket, FALSE,
+						      gebr_comm_protocol_defs.run_def, 8,
+						      runflow->flow_xml,
 						      self->account ? self->account : "",
 						      self->queue ? self->queue : "",
 						      self->num_processes ? self->num_processes : "",
 						      run_id_gstring->str,
 						      self->execution_speed,
-						      run_flow->frac);
+						      runflow->frac,
+						      server_list->str);
 	}
 
+	g_string_free(server_list, TRUE);
 	g_string_free(run_id_gstring, TRUE);
 }

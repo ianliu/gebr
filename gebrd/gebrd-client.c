@@ -303,11 +303,11 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			job_list(client);
 		} else if (message->hash == gebr_comm_protocol_defs.run_def.code_hash) {
 			GList *arguments;
-			GString *xml, *account, *queue, *n_process, *run_id, *exec_speed, *frac;
+			GString *xml, *account, *queue, *n_process, *run_id, *exec_speed, *frac, *server_list;
 			GebrdJob *job;
 
 			/* organize message data */
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 7)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 8)) == NULL)
 				goto err;
 
 			xml = arguments->data;
@@ -317,9 +317,11 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			run_id = g_list_nth_data(arguments, 4);
 			exec_speed = g_list_nth_data(arguments, 5);
 			frac = g_list_nth_data(arguments, 6);
+			server_list = g_list_nth_data(arguments, 7);
 
 			/* try to run and send return */
-			job_new(&job, client, queue, account, xml, n_process, run_id, exec_speed, frac);
+			job_new(&job, client, queue, account, xml, n_process, run_id, exec_speed, frac, server_list);
+
 #ifdef DEBUG
 			gchar *env_delay = getenv("GEBRD_RUN_DELAY_SEC");
 			if (env_delay != NULL)
