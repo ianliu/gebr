@@ -834,23 +834,41 @@ gebr_job_control_load_details(struct ui_job_control *jc,
 	GString *info = g_string_new("");
 
 	GtkTextIter end_iter;
-	const gchar *queue = gebr_job_get_queue(job);
 
-	if (gebr_get_queue_type(queue) == AUTOMATIC_QUEUE)
-		g_string_assign(queue_info, _("without queue"));
-	else
-		g_string_printf(queue_info, _("on %s"), queue);
-
-	g_string_append_printf(info, _("Job submitted to '%s' ('%s') by %s.\n"),
-			       gebr_job_get_servers(job),
-			       queue_info->str,
-			       g_get_host_name());
-	g_string_free(queue_info, TRUE);
+	const gchar *start_date = gebr_job_get_start_date(job);
+	const gchar *finish_date = gebr_job_get_finish_date(job);
 
 	if (status == JOB_STATUS_INITIAL) {
-		g_string_append_printf(info, _("\nWaiting for more details from the server..."));
+		g_string_append_printf(info, _("Waiting for more details from the server..."));
+		gtk_label_set_text(GTK_LABEL(jc->label), info->str);
 		goto out;
-	} 
+	} else {
+		GString *label;
+		const gchar *queue = gebr_job_get_queue(job);
+
+		if (gebr_get_queue_type(queue) == AUTOMATIC_QUEUE)
+			g_string_assign(queue_info, _("without queue"));
+		else
+			g_string_printf(queue_info, _("on %s"), queue);
+
+		g_string_append_printf(info, _("Job submitted to '%s' ('%s') by %s"),
+				       gebr_job_get_servers(job), queue_info->str, g_get_host_name()); // FIXME: Hostname
+		label = g_string_new(info->str);
+
+		if (start_date && strlen(start_date)) {
+			g_string_append_printf(label, "\n%s", gebr_localized_date(start_date));
+			if (finish_date && strlen(finish_date))
+				g_string_append_printf(label, " - %s", gebr_localized_date(finish_date));
+			else if(status == JOB_STATUS_FAILED)
+				g_string_append(label, _(" (Failed)"));
+			else
+				g_string_append(label, _(" (running)"));
+		}
+		g_string_free(queue_info, TRUE);
+		gtk_label_set_text(GTK_LABEL(jc->label), label->str);
+	}
+
+	g_string_append(info, "\n");
 
 	/* moab job id */
 	//if (job->server->type == GEBR_COMM_SERVER_TYPE_MOAB && job->parent.moab_jid->len)
@@ -884,7 +902,6 @@ gebr_job_control_load_details(struct ui_job_control *jc,
 	g_free(cmdline);
 
 	/* start date (may have failed, never started) */
-	const gchar *start_date = gebr_job_get_start_date(job);
 	if (start_date && strlen(start_date))
 		g_string_append_printf(info, "\n%s %s\n", _("Start date:"),
 				       gebr_localized_date(start_date));
@@ -893,7 +910,6 @@ gebr_job_control_load_details(struct ui_job_control *jc,
 	g_string_append(info, gebr_job_get_output(job));
 
 	/* finish date */
-	const gchar *finish_date = gebr_job_get_finish_date(job);
 	if (finish_date && strlen(finish_date))
 		g_string_append_printf(info, "\n%s %s",
 				       status == JOB_STATUS_FINISHED ? _("Finish date:") : _("Cancel date:"),
