@@ -33,8 +33,8 @@ touch:
 client.c: touch
 
 #TODO: remove cmdline.{c,h} in future versions (remove old config format support)
-noinst_LIBRARIES = libgebr.a
-libgebr_a_SOURCES =		\
+noinst_LTLIBRARIES = libgebr.la
+libgebr_la_SOURCES =		\
 	callbacks.c		\
 	callbacks.h		\
 	client.c		\
@@ -94,6 +94,16 @@ libgebr_a_SOURCES =		\
 	ui_server.h		\
 	$(NULL)
 
+libgebr_la_LIBADD =		\
+	$(GUI_LIBS)		\
+	$(GDOME2_LIBS)		\
+	$(GEBR_LIBS)		\
+	$(GEBR_GEOXML_LIBS)	\
+	$(GEBR_COMM_LIBS)	\
+	$(GEBR_GUI_LIBS)	\
+	$(GEBR_JSON_LIBS)	\
+	$(NULL)
+
 # glib-genmarshal rules
 glib_marshal_list = gebr-marshal.list
 glib_marshal_prefix = gebr_cclosure_marshal
@@ -123,7 +133,7 @@ gebr_LDADD =			\
 	$(GEBR_COMM_LIBS)	\
 	$(GEBR_GUI_LIBS)	\
 	$(GEBR_JSON_LIBS)	\
-	libgebr.a		\
+	libgebr.la		\
 	$(NULL)
 
 EXTRA_DIST += gebr-marshal.list

@@ -17,8 +17,8 @@ include $(top_srcdir)/Makefile.decl
 
 SUBDIRS = . po doc tests
 
-noinst_LIBRARIES = libgebrd.a
-libgebrd_a_SOURCES =			\
+noinst_LTLIBRARIES = libgebrd.la
+libgebrd_la_SOURCES =			\
 	gebrd-client.c			\
 	gebrd-client.h			\
 	gebrd-gettext.h			\
@@ -40,6 +40,15 @@ libgebrd_a_SOURCES =			\
 	gebrd-user.h			\
 	gebrd.c				\
 	gebrd.h				\
+	$(NULL)
+
+libgebrd_la_LIBADD =		\
+	$(GLIB_LIBS)		\
+	$(GDOME2_LIBS)		\
+	$(GEBR_LIBS)		\
+	$(GEBR_GEOXML_LIBS)	\
+	$(GEBR_JSON_LIBS)	\
+	$(GEBR_COMM_LIBS)	\
 	$(NULL)
 
 touch:
@@ -70,5 +79,5 @@ gebrd_LDADD =			\
 	$(GEBR_GEOXML_LIBS)	\
 	$(GEBR_JSON_LIBS)	\
 	$(GEBR_COMM_LIBS)	\
-	$(builddir)/libgebrd.a	\
+	$(builddir)/libgebrd.la	\
 	$(NULL)

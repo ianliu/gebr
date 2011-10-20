@@ -113,7 +113,7 @@ json_array_ref (JsonArray *array)
   g_return_val_if_fail (array != NULL, NULL);
   g_return_val_if_fail (array->ref_count > 0, NULL);
 
-  g_atomic_int_exchange_and_add (&array->ref_count, 1);
+  g_atomic_int_add (&array->ref_count, 1);
 
   return array;
 }
@@ -332,7 +332,7 @@ json_array_get_boolean_element (JsonArray *array,
  *
  * Since: 0.8
  */
-G_CONST_RETURN gchar *
+const gchar *
 json_array_get_string_element (JsonArray *array,
                                guint      index_)
 {

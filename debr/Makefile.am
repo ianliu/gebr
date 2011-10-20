@@ -22,8 +22,8 @@ bin_PROGRAMS = debr
 debrgladedir = $(datadir)/debr/glade/
 debrglade_DATA = menu-dialog-save-ui.glade
 
-noinst_LIBRARIES = libdebr.a
-libdebr_a_SOURCES = \
+noinst_LTLIBRARIES = libdebr.la
+libdebr_la_SOURCES = \
 	debr-callbacks.c \
 	debr-callbacks.h \
 	debr-categoryedit.c \
@@ -53,6 +53,14 @@ libdebr_a_SOURCES = \
 	debr.h \
 	$(NULL)
 
+libdebr_la_LIBADD =		\
+	$(GUI_LIBS)		\
+	$(GDOME2_LIBS)		\
+	$(GEBR_LIBS)		\
+	$(GEBR_GEOXML_LIBS)	\
+	$(GEBR_GUI_LIBS)	\
+	$(NULL)
+
 debr_SOURCES = debr-main.c
 
 EXTRA_DIST = $(noinst_HEADERS) $(debrglade_DATA) $(debrscripts_DATA)
@@ -74,6 +82,6 @@ debr_LDADD =			\
 	$(GEBR_LIBS)		\
 	$(GEBR_GEOXML_LIBS)	\
 	$(GEBR_GUI_LIBS)	\
-	libdebr.a		\
+	libdebr.la		\
 	$(NULL)
 	

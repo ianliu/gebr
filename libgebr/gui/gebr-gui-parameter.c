@@ -611,11 +611,9 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 {
 	gboolean may_complete;
 	GtkEntry *activatable_entry = NULL;
-	GebrGeoXmlProgram *program;
 
 	gtk_container_foreach(GTK_CONTAINER(parameter_widget->widget), (GtkCallback)gtk_widget_destroy, NULL);
 
-	program = gebr_geoxml_parameter_get_program(parameter_widget->parameter);
 	if (parameter_widget->validator != NULL
 	    && __parameter_accepts_expression(parameter_widget))
 		may_complete = TRUE;

@@ -48,12 +48,23 @@ static guint object_signals[LAST_SIGNAL];
 
 static void gebr_comm_terminal_process_class_init(GebrCommTerminalProcessClass * class)
 {
-	/* signals */
-	object_signals[READY_READ] = g_signal_new("ready-read", GEBR_COMM_TERMINAL_PROCESS_TYPE, (GSignalFlags) (G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION), G_STRUCT_OFFSET(GebrCommTerminalProcessClass, ready_read), NULL, NULL,	/* acumulators */
-						  g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
-	object_signals[FINISHED] = g_signal_new("finished", GEBR_COMM_TERMINAL_PROCESS_TYPE, (GSignalFlags) (G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION), G_STRUCT_OFFSET(GebrCommTerminalProcessClass, finished), NULL, NULL,	/* acumulators */
-						g_cclosure_marshal_VOID__VOID,
-						G_TYPE_NONE, 0 /*2, G_TYPE_INT, G_TYPE_INT */ );
+	object_signals[READY_READ] =
+		g_signal_new("ready-read",
+			     GEBR_COMM_TERMINAL_PROCESS_TYPE,
+			     G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+			     G_STRUCT_OFFSET(GebrCommTerminalProcessClass, ready_read),
+			     NULL, NULL,
+			     g_cclosure_marshal_VOID__VOID,
+			     G_TYPE_NONE, 0);
+
+	object_signals[FINISHED] =
+		g_signal_new("finished",
+			     GEBR_COMM_TERMINAL_PROCESS_TYPE,
+			     G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+			     G_STRUCT_OFFSET(GebrCommTerminalProcessClass, finished),
+			     NULL, NULL,
+			     g_cclosure_marshal_VOID__VOID,
+			     G_TYPE_NONE, 0);
 }
 
 static void gebr_comm_terminal_process_init(GebrCommTerminalProcess * terminal_process)
