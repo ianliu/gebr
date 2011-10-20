@@ -116,6 +116,12 @@ gebr_task_new(GebrServer  *server,
 	task->priv->server = server;
 	task->priv->frac = atoi(frac);
 	task->priv->total = atoi(total);
+	task->priv->start_date = g_string_new(NULL);
+	task->priv->finish_date = g_string_new(NULL);
+	task->priv->issues = g_string_new(NULL);
+	task->priv->cmd_line = g_string_new(NULL);
+	task->priv->moab_jid = g_string_new(NULL);
+	task->priv->queue_id = g_string_new(NULL);
 
 	g_free(frac);
 
@@ -135,12 +141,12 @@ gebr_task_init_details(GebrTask *task,
 		       GString  *moab_jid)
 {
 	task->priv->status = job_translate_status(status);
-	task->priv->start_date = start_date;
-	task->priv->finish_date	= finish_date;
-	task->priv->issues = issues;
-	task->priv->cmd_line = cmd_line;
-	task->priv->moab_jid = moab_jid;
-	task->priv->queue_id = queue;
+	g_string_assign(task->priv->start_date, start_date->str);
+	g_string_assign(task->priv->finish_date, finish_date->str);
+	g_string_assign(task->priv->issues, issues->str);
+	g_string_assign(task->priv->cmd_line, cmd_line->str);
+	g_string_assign(task->priv->moab_jid, moab_jid->str);
+	g_string_assign(task->priv->queue_id, queue->str);
 
 	/* Add queue on the server queue list model (only if server is regular) */
 	if (task->priv->server) {
@@ -263,4 +269,10 @@ gebr_task_emit_status_changed_signal(GebrTask *task,
 	task->priv->status = new_status;
 
 	g_signal_emit(task, signals[STATUS_CHANGE], 0, old_status, new_status, parameter);
+}
+
+const gchar *
+gebr_task_get_cmd_line(GebrTask *task)
+{
+	return task->priv->cmd_line->str;
 }

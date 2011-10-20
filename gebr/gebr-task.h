@@ -141,11 +141,6 @@ enum JobStatus job_translate_status(GString * status);
  */
 void job_status_show(GebrTask *job);
 
-/*
- * Updates the job text buffer
- */
-void job_load_details(GebrTask *job);
-
 /**
  */
 void job_add_issue(GebrTask *job, const gchar *issues);
@@ -198,6 +193,8 @@ void gebr_task_emit_output_signal(GebrTask *task,
 void gebr_task_emit_status_changed_signal(GebrTask *task,
 					  enum JobStatus new_status,
 					  const gchar *parameter);
+
+const gchar *gebr_task_get_cmd_line(GebrTask *task);
 
 G_END_DECLS
 
