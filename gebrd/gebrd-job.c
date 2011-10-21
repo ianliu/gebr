@@ -353,14 +353,14 @@ out:
 	return keep_polling;
 }
 
-GebrdJob *job_find(GString * jid)
+GebrdJob *job_find(GString * rid)
 {
 	GebrdJob *job;
 
 	job = NULL;
 	for (GList *link = gebrd->user->jobs; link != NULL; link = g_list_next(link)) {
 		GebrdJob *i = (GebrdJob *)link->data;
-		if (!strcmp(i->parent.jid->str, jid->str)) {
+		if (!strcmp(i->parent.run_id->str, rid->str)) {
 			job = i;
 			break;
 		}

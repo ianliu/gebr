@@ -44,6 +44,7 @@ static guint signals[N_SIGNALS] = { 0, };
 struct _GebrTaskPriv {
 	GebrServer *server;
 	enum JobStatus status;
+	gchar *rid;
 	gint frac;
 	gint total;
 	GString *start_date;
@@ -100,11 +101,12 @@ build_task_id(const gchar *rid,
 }
 
 static gchar *
-build_task_id_from_ints(const gchar *rid,
-			gint frac,
-			gint total)
+gebr_task_get_id(GebrTask *task)
 {
-	return g_strdup_printf("%s:%d:%d", rid, frac, total);
+	return g_strdup_printf("%s:%d:%d",
+			       task->priv->rid,
+			       task->priv->frac,
+			       task->priv->total);
 }
 
 GebrTask *
@@ -122,6 +124,7 @@ gebr_task_new(GebrServer  *server,
 
 	task->priv->status = JOB_STATUS_INITIAL; 
 	task->priv->server = server;
+	task->priv->rid = g_strdup(rid);
 	task->priv->frac = atoi(frac);
 	task->priv->total = atoi(total);
 	task->priv->start_date = g_string_new(NULL);
@@ -133,7 +136,7 @@ gebr_task_new(GebrServer  *server,
 
 	g_free(frac);
 
-	g_hash_table_insert(tasks_map, build_task_id(rid, _frac), task);
+	g_hash_table_insert(tasks_map, gebr_task_get_id(task), task);
 
 	return task;
 }
@@ -276,6 +279,7 @@ gebr_task_get_issues(GebrTask *task)
 static void
 gebr_task_free(GebrTask *task)
 {
+	g_free(task->priv->rid);
 	g_string_free(task->priv->start_date, TRUE);
 	g_string_free(task->priv->finish_date, TRUE);
 	g_string_free(task->priv->issues, TRUE);
@@ -287,7 +291,7 @@ gebr_task_free(GebrTask *task)
 void
 gebr_task_close(GebrTask *task, const gchar *rid)
 {
-	gchar *tid = build_task_id_from_ints(rid, task->priv->frac, task->priv->total);
+	gchar *tid = gebr_task_get_id(task);
 	if (gebr_comm_server_is_logged(task->priv->server->comm))
 		gebr_comm_protocol_socket_oldmsg_send(task->priv->server->comm->socket, FALSE,
 						      gebr_comm_protocol_defs.clr_def, 1,
@@ -295,4 +299,5 @@ gebr_task_close(GebrTask *task, const gchar *rid)
 
 	g_hash_table_remove(tasks_map, tid);
 	gebr_task_free(task);
+	g_free(tid);
 }

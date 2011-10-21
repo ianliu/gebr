@@ -378,15 +378,15 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			/* TODO: */
 		} else if (message->hash == gebr_comm_protocol_defs.clr_def.code_hash) {
 			GList *arguments;
-			GString *jid;
+			GString *rid;
 			GebrdJob *job;
 
 			/* organize message data */
 			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 1)) == NULL)
 				goto err;
-			jid = g_list_nth_data(arguments, 0);
+			rid = g_list_nth_data(arguments, 0);
 
-			job = job_find(jid);
+			job = job_find(rid);
 			if (job != NULL)
 				job_clear(job);
 
@@ -394,16 +394,16 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		} else if (message->hash == gebr_comm_protocol_defs.end_def.code_hash) {
 			GList *arguments;
-			GString *jid;
+			GString *rid;
 			GebrdJob *job;
 
 			/* organize message data */
 			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 1)) == NULL)
 				goto err;
-			jid = g_list_nth_data(arguments, 0);
+			rid = g_list_nth_data(arguments, 0);
 
 			/* try to run and send return */
-			job = job_find(jid);
+			job = job_find(rid);
 			if (job != NULL) {
 				job_end(job);
 			}
@@ -412,16 +412,16 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		} else if (message->hash == gebr_comm_protocol_defs.kil_def.code_hash) {
 			GList *arguments;
-			GString *jid;
+			GString *rid;
 			GebrdJob *job;
 
 			/* organize message data */
 			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 1)) == NULL)
 				goto err;
-			jid = g_list_nth_data(arguments, 0);
+			rid = g_list_nth_data(arguments, 0);
 
 			/* try to run and send return */
-			job = job_find(jid);
+			job = job_find(rid);
 			if (job != NULL) {
 				job_kill(job);
 			}
