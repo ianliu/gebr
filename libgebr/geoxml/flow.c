@@ -1122,6 +1122,9 @@ GList *gebr_geoxml_flow_divide_flows(GebrGeoXmlFlow *flow,
 		GebrGeoXmlProgram *div_loop;
 		const gchar *div_n;
 
+		if (distributed_n[i] <= 0)
+			break;
+
 		ini = g_strdup_printf("%d", ini_int);
 		end = (distributed_n[i]-1)*step_int+ini_int;
 		div_n = g_strdup_printf("%d", distributed_n[i]);

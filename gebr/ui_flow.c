@@ -286,6 +286,7 @@ add_flows_to_runner(GebrCommRunner *runner,
 			g_free(scores);
 
 			flows = gebr_geoxml_flow_divide_flows(gebr.flow, gebr.validator, weights, n_servers);
+			gint nflows = g_list_length(flows);
 			list = servers;
 
 			gint j = 1;
@@ -299,7 +300,7 @@ add_flows_to_runner(GebrCommRunner *runner,
 								    sc->server->comm, !last, gebr_get_session_id(),
 								    list->data);
 
-				gebr_comm_runner_flow_set_frac(runflow, j++, n_servers);
+				gebr_comm_runner_flow_set_frac(runflow, j++, nflows);
 
 				list = list->next;
 				if (!list && i->next) {
