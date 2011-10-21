@@ -301,3 +301,11 @@ gebr_task_close(GebrTask *task, const gchar *rid)
 	gebr_task_free(task);
 	g_free(tid);
 }
+
+void
+gebr_task_kill(GebrTask *task)
+{
+	gebr_comm_protocol_socket_oldmsg_send(task->priv->server->comm->socket, FALSE,
+					      gebr_comm_protocol_defs.kil_def, 1,
+					      task->priv->rid);
+}

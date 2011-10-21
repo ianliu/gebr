@@ -249,6 +249,51 @@ gboolean job_control_save(void)
 }
 #endif
 
+gboolean job_control_stop(void)
+{
+	GtkTreeIter iter;
+	GtkTreeModel *model;
+
+	GebrJob *job;
+	
+	gboolean asked = FALSE;
+	gint selected_rows = 0;
+	selected_rows =	gtk_tree_selection_count_selected_rows(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)));
+	model = gtk_tree_view_get_model(GTK_TREE_VIEW(gebr.ui_job_control->view));
+	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_job_control->view) {
+		GtkTreePath *path = gtk_tree_model_get_path(model, &iter);
+		if (gtk_tree_path_get_depth(path) == 1) {
+			gtk_tree_path_free(path);
+			continue;
+		}
+		gtk_tree_path_free(path);
+
+		gtk_tree_model_get(model, &iter, JC_STRUCT, &job, -1);
+		
+		if (selected_rows == 1)
+		{
+			if (gebr_gui_confirm_action_dialog(_("Cancel Job"),
+							   _("Are you sure you want to cancel Job \"%s\"?"),
+							   gebr_job_get_title(job)) == FALSE)
+				return TRUE;
+		}
+		else if (!asked)
+		{
+			if (gebr_gui_confirm_action_dialog(_("Cancel Job"),
+							   _("Are you sure you want to cancel the selected Jobs?")) == FALSE)
+				return TRUE;
+			asked = TRUE;
+		}
+		gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Asking server to cancel Job."));
+		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Asking server(s) \"%s\" to cancel Job \"%s\"."),
+			     gebr_job_get_servers(job), gebr_job_get_title(job));
+
+		gebr_job_kill(job);
+	}
+
+	return TRUE;
+}
+
 gboolean job_control_close(void)
 {
 	GtkTreeIter iter;
@@ -331,61 +376,6 @@ void job_control_clear(gboolean force)
 	}
 	gebr_gui_gtk_tree_model_foreach_recursive(GTK_TREE_MODEL(gebr.ui_job_control->store),
 						  (GtkTreeModelForeachFunc)job_control_clear_foreach, NULL); 
-}
-
-gboolean job_control_stop(void)
-{
-	GtkTreeIter iter;
-	GtkTreeModel *model;
-
-	GebrJob *job;
-	
-	gboolean asked = FALSE;
-	gint selected_rows = 0;
-	selected_rows =	gtk_tree_selection_count_selected_rows(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)));
-	model = gtk_tree_view_get_model(GTK_TREE_VIEW(gebr.ui_job_control->view));
-	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_job_control->view) {
-		GtkTreePath *path = gtk_tree_model_get_path(model, &iter);
-		if (gtk_tree_path_get_depth(path) == 1) {
-			gtk_tree_path_free(path);
-			continue;
-		}
-		gtk_tree_path_free(path);
-
-		gtk_tree_model_get(model, &iter, JC_STRUCT, &job, -1);
-		if (gebr_comm_server_is_logged(job->server->comm) == FALSE) {
-			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("You are not connected to Job's server."));
-			continue;
-		}
-		
-		if (selected_rows == 1)
-		{
-			if (gebr_gui_confirm_action_dialog(_("Cancel Job"),
-							   _("Are you sure you want to cancel Job \"%s\"?"),
-							   job->parent.title->str) == FALSE)
-				return TRUE;
-		}
-		else if (!asked)
-		{
-			if (gebr_gui_confirm_action_dialog(_("Cancel Job"),
-							   _("Are you sure you want to cancel the selected Jobs?")) == FALSE)
-				return TRUE;
-			asked = TRUE;
-		}
-		gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Asking server to cancel Job."));
-		if (gebr_comm_server_is_local(job->server->comm) == FALSE) 
-			gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Asking server \"%s\" to cancel Job \"%s\"."),
-				     job->server->comm->address->str, job->parent.title->str);
-		else 
-			gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Asking local server to cancel Job \"%s\"."),
-				     job->parent.title->str);
-			
-		gebr_comm_protocol_socket_oldmsg_send(job->server->comm->socket, FALSE,
-						      gebr_comm_protocol_defs.kil_def, 1,
-						      job->parent.jid->str);
-	}
-
-	return TRUE;
 }
 
 gboolean job_control_get_selected(GtkTreeIter * iter, enum JobControlSelectionType check_type)
@@ -505,17 +495,17 @@ static void on_text_view_populate_popup(GtkTextView * text_view, GtkMenu * menu)
 /*
  * Queue Actions
  */
-void job_control_queue_stop(void)
-{
-	job_control_queue_by_func(job_control_stop);
-}
-
 void job_control_queue_save(void)
 {
 	job_control_queue_by_func(job_control_save);
 }
 
 #endif
+
+void job_control_queue_stop(void)
+{
+	job_control_queue_by_func(job_control_stop);
+}
 
 void job_control_queue_close(void)
 {

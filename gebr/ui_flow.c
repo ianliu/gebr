@@ -311,11 +311,13 @@ add_flows_to_runner(GebrCommRunner *runner,
 			g_free(weights);
 			g_list_foreach(flows, (GFunc)gebr_geoxml_document_unref, NULL);
 			g_list_free(flows);
-		} else
+		} else {
+			ServerScore *sc = servers->data;
 			// Use the first server for this flow
 			gebr_comm_runner_add_flow(runner, gebr.validator, gebr.flow,
-						  ((GebrServer*)servers->data)->comm, FALSE,
+						  sc->server->comm, FALSE,
 						  gebr_get_session_id(), servers->data);
+		}
 	} else
 		// FIXME This method accesses the GUI!
 		add_selected_flows_to_runner(runner, servers);
@@ -332,7 +334,7 @@ fill_runner_struct(GebrCommRunner *runner,
 		   gboolean        single,
 		   gboolean        is_mpi)
 {
-	GebrServer *server = servers->data;
+	GebrServer *server = ((ServerScore *)servers->data)->server;
 
 	add_flows_to_runner(runner, servers, single);
 

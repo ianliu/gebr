@@ -358,11 +358,11 @@ void on_job_control_close(void)
  * Job Control - Queue Actions
  */
 
-//void on_job_control_queue_stop(void)
-//{
-//	job_control_queue_stop();
-//}
-//
+void on_job_control_queue_stop(void)
+{
+	job_control_queue_stop();
+}
+
 //void on_job_control_queue_save(void)
 //{
 //	job_control_queue_save();

@@ -76,6 +76,8 @@ gchar *gebr_job_get_issues(GebrJob *job);
 
 void gebr_job_close(GebrJob *job);
 
+void gebr_job_kill(GebrJob *job);
+
 G_END_DECLS
 
 #endif /* __GEBR_JOB_H__ */

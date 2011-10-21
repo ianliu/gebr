@@ -413,3 +413,10 @@ gebr_job_close(GebrJob *job)
 
 	gebr_job_free(job);
 }
+
+void
+gebr_job_kill(GebrJob *job)
+{
+	for (GList *i = job->priv->tasks; i; i = i->next)
+		gebr_task_kill(i->data);
+}
