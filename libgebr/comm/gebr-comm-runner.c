@@ -143,10 +143,11 @@ gebr_comm_runner_add_flow(GebrCommRunner *self,
 }
 
 void
-gebr_comm_runner_flow_set_frac(GebrCommRunnerFlow *self, const gchar *frac)
+gebr_comm_runner_flow_set_frac(GebrCommRunnerFlow *self, gint frac, gint total)
 {
-	g_free(self->frac);
-	self->frac = g_strdup(frac);
+	if (self->frac)
+		g_free(self->frac);
+	self->frac = g_strdup_printf("%d:%d", frac, total);
 }
 
 void

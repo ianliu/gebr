@@ -257,6 +257,9 @@ typedef struct {
 	gdouble score;
 } ServerScore;
 
+/*
+ * @servers: A list of ServerScore's ordered by highest score.
+ */
 static void
 add_flows_to_runner(GebrCommRunner *runner,
 		    GList          *servers,
@@ -286,18 +289,17 @@ add_flows_to_runner(GebrCommRunner *runner,
 			list = servers;
 
 			gint j = 1;
-			gboolean last = FALSE;
 			for (GList *i = flows; i; i = i->next) {
 				GebrGeoXmlFlow *frac_flow = i->data;
-				last = i->next == NULL? TRUE : FALSE;
 				GebrCommRunnerFlow *runflow;
-				runflow = gebr_comm_runner_add_flow(runner, gebr.validator, frac_flow,
-								    ((GebrServer*)list->data)->comm, !last,
-								    gebr_get_session_id(), list->data);
+				ServerScore *sc = list->data;
+				gboolean last = (i->next == NULL);
 
-				gchar *frac = g_strdup_printf("%d:%d", j++, n_servers);
-				gebr_comm_runner_flow_set_frac(runflow, frac);
-				g_free(frac);
+				runflow = gebr_comm_runner_add_flow(runner, gebr.validator, frac_flow,
+								    sc->server->comm, !last, gebr_get_session_id(),
+								    list->data);
+
+				gebr_comm_runner_flow_set_frac(runflow, j++, n_servers);
 
 				list = list->next;
 				if (!list && i->next) {
@@ -307,6 +309,7 @@ add_flows_to_runner(GebrCommRunner *runner,
 			}
 
 			g_free(weights);
+			g_list_foreach(flows, (GFunc)gebr_geoxml_document_unref, NULL);
 			g_list_free(flows);
 		} else
 			// Use the first server for this flow
@@ -491,7 +494,7 @@ predict_current_load(GList *points, gdouble delay)
 	create_2ndDegreePoly_model(points, parameters);
 	prediction = parameters[0]*delay*delay + parameters[1]*delay + parameters[2];
 
-	return MAX(0,prediction);
+	return MAX(0, prediction);
 }
 
 /*
@@ -499,7 +502,7 @@ predict_current_load(GList *points, gdouble delay)
  * on the flow_exec_speed and on the number of steps
  */ 
 static gint
-compute_effective_cores(const gint ncores, const gint scale, const gint nsteps) 
+compute_effective_cores(const gint ncores, const gint scale, const gint nsteps)
 {
 	gint eff_ncores= (scale*ncores)/ 5;
 	if (eff_ncores == 0)
@@ -529,10 +532,10 @@ calculate_server_score(const gchar *load, gint ncores, gdouble cpu_clock, gint s
 	gdouble current_load = predict_current_load(points, delay);
 	gint eff_ncores = compute_effective_cores(ncores, scale, nsteps); 
 	gdouble score;
-	if (current_load*ncores > ncores)
-		score = cpu_clock*ncores/(current_load + eff_ncores - ncores + 1);
+	if (current_load + eff_ncores > ncores)
+		score = cpu_clock*eff_ncores/(current_load + eff_ncores - ncores + 1);
 	else
-		score = cpu_clock*ncores;
+		score = cpu_clock*eff_ncores;
 
 	g_list_free(points);
 
@@ -578,11 +581,17 @@ on_response_received(GebrCommHttpMsg *request, GebrCommHttpMsg *response, AsyncR
 		else
 			eval_n = g_strdup("1");
 		gdouble score = calculate_server_score(value->str, sc->server->ncores, sc->server->clock_cpu, gebr.config.flow_exec_speed, atoi(eval_n));
+
+		g_printf("[ %s ]\n", sc->server->comm->address->str);
+		g_printf("cores = %d\n", sc->server->ncores);
+		g_printf("used cores = %d\n", compute_effective_cores(sc->server->ncores, gebr.config.flow_exec_speed, atoi(eval_n)));
+		g_printf("clock = %lf\n", sc->server->clock_cpu);
+		g_printf("steps = %s\n", eval_n);
+		g_printf("score = %lf\n", eval_n);
+		g_printf("\n");
 		
 		g_free(eval_n);
-
 		sc->score = score;
-		g_debug("Server: %s, Score: %lf, Load: %s", sc->server->comm->address->str, score, value->str);
 
 		runinfo->responses++;
 		if (runinfo->responses == runinfo->requests) {
@@ -590,15 +599,6 @@ on_response_received(GebrCommHttpMsg *request, GebrCommHttpMsg *response, AsyncR
 				return b->score - a->score;
 			}
 			runinfo->servers = g_list_sort(runinfo->servers, (GCompareFunc)comp_func);
-			gdouble acc_scores = 0;
-
-			for (GList *i = runinfo->servers; i; i = i->next) {
-				ServerScore *sc = i->data;
-				i->data = sc->server;
-				acc_scores += sc->score;
-				g_debug("Server %s, score %lf", sc->server->comm->address->str, sc->score);
-				g_free(sc);
-			}
 
 			if (fill_runner_struct(runinfo->runner, runinfo->servers, NULL, runinfo->parallel, runinfo->single, runinfo->is_mpi))
 				create_jobs_and_run(runinfo->runner);
@@ -785,7 +785,8 @@ gebr_ui_flow_run(gboolean parallel, gboolean single)
 			goto free_and_error;
 		}
 
-		servers = g_list_prepend(NULL, server);
+		ServerScore sc = {server, 1};
+		servers = g_list_prepend(NULL, &sc);
 		if (!fill_runner_struct(runner, servers, queue_id, parallel, single, has_mpi))
 			goto free_and_error;
 

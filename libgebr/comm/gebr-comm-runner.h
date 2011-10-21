@@ -77,7 +77,7 @@ GebrCommRunnerFlow * gebr_comm_runner_add_flow(GebrCommRunner *self,
 					       const gchar    *sessid,
 					       gpointer        user_data);
 
-void gebr_comm_runner_flow_set_frac(GebrCommRunnerFlow *self, const gchar *frac);
+void gebr_comm_runner_flow_set_frac(GebrCommRunnerFlow *self, gint frac, gint total);
 
 /**
  * gebr_comm_runner_run:
