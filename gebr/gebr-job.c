@@ -289,9 +289,7 @@ gebr_job_change_task_status(GebrTask *task,
 		job->priv->status = JOB_STATUS_REQUEUED;
 		// Remove o job e insere em outro lugar, ou seja
 		// altera o pai do job
-
 		return;
-
 	} else if (new_status == JOB_STATUS_RUNNING) {
 		if (job->priv->status == JOB_STATUS_RUNNING)
 			return;
@@ -320,6 +318,7 @@ gebr_job_change_task_status(GebrTask *task,
 	} else if (new_status == JOB_STATUS_CANCELED || new_status == JOB_STATUS_FAILED) {
 		job->priv->status = JOB_STATUS_FAILED;
 		job->priv->finish_date = gebr_task_get_finish_date(task);
+		gebr_job_kill(job);
 	}
 
 	else if (new_status == JOB_STATUS_ISSUED) {
