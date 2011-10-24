@@ -398,6 +398,11 @@ gebr_job_get_issues(GebrJob *job)
 void
 gebr_job_close(GebrJob *job)
 {
+	if (job->priv->status != JOB_STATUS_FINISHED ||
+	    job->priv->status != JOB_STATUS_CANCELED ||
+	    job->priv->status != JOB_STATUS_FAILED)
+		return;
+
 	for (GList *i = job->priv->tasks; i; i = i->next)
 		gebr_task_close(i->data, job->priv->runid);
 
