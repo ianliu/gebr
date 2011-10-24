@@ -105,10 +105,16 @@ struct ui_job_control *job_control_setup_ui(void)
 					     GTK_SORT_ASCENDING);
 
 	GtkTreeModel *filter = gtk_tree_model_filter_new(GTK_TREE_MODEL(ui_job_control->store), NULL);
-	ui_job_control->view = gtk_tree_view_new_with_model(filter);
+
+	GtkTreeView *treeview;
+	treeview = GTK_TREE_VIEW(gtk_builder_get_object(builder, "treeview_jobs"));
+	gtk_tree_view_set_model(treeview, filter);
+
 	gtk_tree_model_filter_set_visible_column(GTK_TREE_MODEL_FILTER(filter), JC_VISIBLE);
 	g_object_unref(filter);
 	
+	ui_job_control->view = GTK_WIDGET(treeview);
+
 	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_job_control->view)),
 				    GTK_SELECTION_MULTIPLE);
 
@@ -131,9 +137,58 @@ struct ui_job_control *job_control_setup_ui(void)
 	 * Right side
 	 */
 
+	GtkWidget *text_view;
+	GtkTextIter iter_end;
+
 	GtkToggleButton *details = GTK_TOGGLE_BUTTON(gtk_builder_get_object(builder, "more_details"));
 	g_signal_connect(details, "toggled", G_CALLBACK(on_toggled_more_details), builder);
 	gtk_toggle_button_set_active(details, FALSE);
+
+	ui_job_control->text_buffer = gtk_text_buffer_new(NULL);
+
+	gtk_text_buffer_get_end_iter(ui_job_control->text_buffer, &iter_end);
+	gtk_text_buffer_create_mark(ui_job_control->text_buffer, "end", &iter_end, FALSE);
+
+	text_view = GTK_WIDGET(gtk_builder_get_object(builder, "textview_output"));
+	gtk_text_view_set_buffer(GTK_TEXT_VIEW(text_view), ui_job_control->text_buffer);
+
+	//g_signal_connect(text_view, "populate-popup", G_CALLBACK(on_text_view_populate_popup), ui_job_control);
+	g_object_set(G_OBJECT(text_view), "editable", FALSE, "cursor-visible", FALSE, NULL);
+	{
+		PangoFontDescription *font;
+
+		font = pango_font_description_new();
+		pango_font_description_set_family(font, "monospace");
+		gtk_widget_modify_font(text_view, font);
+
+		pango_font_description_free(font);
+	}
+
+	ui_job_control->text_view = text_view;
+
+	ui_job_control->cmd_buffer = gtk_text_buffer_new(NULL);
+	gtk_text_buffer_get_end_iter(ui_job_control->cmd_buffer, &iter_end);
+	gtk_text_buffer_create_mark(ui_job_control->cmd_buffer, "end", &iter_end, FALSE);
+
+	text_view = GTK_WIDGET(gtk_builder_get_object(builder, "textview_command_line"));
+	gtk_text_view_set_buffer(GTK_TEXT_VIEW(text_view), ui_job_control->cmd_buffer);
+
+	//g_signal_connect(text_view, "populate-popup", G_CALLBACK(on_text_view_populate_popup), ui_job_control);
+	g_object_set(G_OBJECT(text_view), "editable", FALSE, "cursor-visible", FALSE, NULL);
+	{
+		PangoFontDescription *font;
+
+		font = pango_font_description_new();
+		pango_font_description_set_family(font, "monospace");
+		gtk_widget_modify_font(text_view, font);
+
+		pango_font_description_free(font);
+	}
+
+	ui_job_control->cmd_view = text_view;
+
+
+
 
 //	vbox = gtk_vbox_new(FALSE, 0);
 //	gtk_paned_pack2(GTK_PANED(hpanel), vbox, TRUE, TRUE);
@@ -851,73 +906,75 @@ gebr_job_control_load_details(struct ui_job_control *jc,
 	enum JobStatus status = gebr_job_get_status(job);
 	GString *queue_info = g_string_new(NULL); 
 	GString *info = g_string_new("");
+	GString *info_cmd = g_string_new("");
 
 	GtkTextIter end_iter;
+	GtkTextIter end_iter_cmd;
 
 	const gchar *start_date = gebr_job_get_start_date(job);
 	const gchar *finish_date = gebr_job_get_finish_date(job);
 
-	if (status == JOB_STATUS_INITIAL) {
-		g_string_append_printf(info, _("Waiting for more details from the server..."));
-		gtk_label_set_text(GTK_LABEL(jc->label), info->str);
-		goto out;
-	} else {
-		GString *label;
-		const gchar *queue = gebr_job_get_queue(job);
-
-		if (gebr_get_queue_type(queue) == AUTOMATIC_QUEUE)
-			g_string_assign(queue_info, _("without queue"));
-		else
-			g_string_printf(queue_info, _("on %s"), queue);
-
-		g_string_append_printf(info, _("Job submitted to '%s' ('%s') by %s"),
-				       gebr_job_get_servers(job), queue_info->str, g_get_host_name()); // FIXME: Hostname
-		label = g_string_new(info->str);
-
-		if (start_date && strlen(start_date)) {
-			g_string_append_printf(label, "\n%s", gebr_localized_date(start_date));
-			if (finish_date && strlen(finish_date))
-				g_string_append_printf(label, " - %s", gebr_localized_date(finish_date));
-			else if(status == JOB_STATUS_FAILED)
-				g_string_append(label, _(" (Failed)"));
-			else
-				g_string_append(label, _(" (running)"));
-		}
-		g_string_free(queue_info, TRUE);
-		gtk_label_set_text(GTK_LABEL(jc->label), label->str);
-	}
-
-	g_string_append(info, "\n");
-
-	/* moab job id */
-	//if (job->server->type == GEBR_COMM_SERVER_TYPE_MOAB && job->parent.moab_jid->len)
-	//	g_string_append_printf(info, "\n%s\n%s\n", _("Moab Job ID:"), job->parent.moab_jid->str);
-
-	gtk_text_buffer_insert_at_cursor(jc->text_buffer, info->str, info->len);
-
-	/* issues title with tag and mark, for receiving issues */
-	g_object_set(jc->issues_title_tag, "invisible", TRUE, NULL);
-	gtk_text_buffer_get_end_iter(jc->text_buffer, &end_iter);
-	g_string_assign(info, _("Issues:\n"));
-	gtk_text_buffer_insert_with_tags(jc->text_buffer, &end_iter, info->str, info->len,
-					 jc->issues_title_tag, NULL);
-	g_string_assign(info, "");
-	gtk_text_buffer_get_end_iter(jc->text_buffer, &end_iter);
-	gtk_text_buffer_create_mark(jc->text_buffer, "last-issue", &end_iter, FALSE);
-
-	if (status == JOB_STATUS_QUEUED)
-		goto out;
-
-	/* issues */
-	gchar *issues = gebr_job_get_issues(job);
-	if (issues && strlen(issues) > 0) {
-		add_job_issues(jc, issues);
-		g_free(issues);
-	}
+//	if (status == JOB_STATUS_INITIAL) {
+//		g_string_append_printf(info, _("Waiting for more details from the server..."));
+//		gtk_label_set_text(GTK_LABEL(jc->label), info->str);
+//		goto out;
+//	} else {
+//		GString *label;
+//		const gchar *queue = gebr_job_get_queue(job);
+//
+//		if (gebr_get_queue_type(queue) == AUTOMATIC_QUEUE)
+//			g_string_assign(queue_info, _("without queue"));
+//		else
+//			g_string_printf(queue_info, _("on %s"), queue);
+//
+//		g_string_append_printf(info, _("Job submitted to '%s' ('%s') by %s"),
+//				       gebr_job_get_servers(job), queue_info->str, g_get_host_name()); // FIXME: Hostname
+//		label = g_string_new(info->str);
+//
+//		if (start_date && strlen(start_date)) {
+//			g_string_append_printf(label, "\n%s", gebr_localized_date(start_date));
+//			if (finish_date && strlen(finish_date))
+//				g_string_append_printf(label, " - %s", gebr_localized_date(finish_date));
+//			else if(status == JOB_STATUS_FAILED)
+//				g_string_append(label, _(" (Failed)"));
+//			else
+//				g_string_append(label, _(" (running)"));
+//		}
+//		g_string_free(queue_info, TRUE);
+//		gtk_label_set_text(GTK_LABEL(jc->label), label->str);
+//	}
+//
+//	g_string_append(info, "\n");
+//
+//	/* moab job id */
+//	//if (job->server->type == GEBR_COMM_SERVER_TYPE_MOAB && job->parent.moab_jid->len)
+//	//	g_string_append_printf(info, "\n%s\n%s\n", _("Moab Job ID:"), job->parent.moab_jid->str);
+//
+//	gtk_text_buffer_insert_at_cursor(jc->text_buffer, info->str, info->len);
+//
+//	/* issues title with tag and mark, for receiving issues */
+//	g_object_set(jc->issues_title_tag, "invisible", TRUE, NULL);
+//	gtk_text_buffer_get_end_iter(jc->text_buffer, &end_iter);
+//	g_string_assign(info, _("Issues:\n"));
+//	gtk_text_buffer_insert_with_tags(jc->text_buffer, &end_iter, info->str, info->len,
+//					 jc->issues_title_tag, NULL);
+//	g_string_assign(info, "");
+//	gtk_text_buffer_get_end_iter(jc->text_buffer, &end_iter);
+//	gtk_text_buffer_create_mark(jc->text_buffer, "last-issue", &end_iter, FALSE);
+//
+//	if (status == JOB_STATUS_QUEUED)
+//		goto out;
+//
+//	/* issues */
+//	gchar *issues = gebr_job_get_issues(job);
+//	if (issues && strlen(issues) > 0) {
+//		add_job_issues(jc, issues);
+//		g_free(issues);
+//	}
 
 	/* command-line */
 	gchar *cmdline = gebr_job_get_command_line(job);
-	g_string_append_printf(info, "\n%s\n%s\n", _("Command line:"), cmdline);
+	g_string_append_printf(info_cmd, "\n%s\n%s\n", _("Command line:"), cmdline);
 	g_free(cmdline);
 
 	/* start date (may have failed, never started) */
@@ -938,6 +995,10 @@ out:
 	gtk_text_buffer_get_end_iter(jc->text_buffer, &end_iter);
 	gtk_text_buffer_insert(jc->text_buffer, &end_iter, info->str, info->len);
 
+	gtk_text_buffer_get_end_iter(jc->cmd_buffer, &end_iter_cmd);
+	gtk_text_buffer_insert(jc->cmd_buffer, &end_iter_cmd, info_cmd->str, info_cmd->len);
+
 	/* frees */
 	g_string_free(info, TRUE);
+	g_string_free(info_cmd, TRUE);
 }

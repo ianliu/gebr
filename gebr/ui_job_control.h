@@ -54,6 +54,9 @@ struct ui_job_control {
 	GtkWidget *text_view;
 	GtkTextBuffer *text_buffer;
 	GtkTextTag *issues_title_tag;
+
+	GtkWidget *cmd_view;
+	GtkTextBuffer *cmd_buffer;
 };
 
 void gebr_job_control_select_job(struct ui_job_control *jc,
