@@ -50,14 +50,7 @@ static void gebr_job_change_task_status(GebrTask *task,
 static void
 insert_into_model(GebrJob *job)
 {
-	GtkTreeIter parent;
-
-	gebr_jc_get_queue_group_iter(job->priv->store,
-				     job->priv->queue,
-				     job->priv->servers,
-				     &parent);
-
-	gtk_tree_store_append(job->priv->store, &job->priv->iter, &parent);
+	gtk_tree_store_append(job->priv->store, &job->priv->iter, NULL);
 	gtk_tree_store_set(job->priv->store, &job->priv->iter,
 			   JC_STRUCT, job,
 			   JC_VISIBLE, TRUE,
@@ -397,24 +390,15 @@ gebr_job_get_issues(GebrJob *job)
 void
 gebr_job_close(GebrJob *job)
 {
-	if (job->priv->status != JOB_STATUS_FINISHED ||
-	    job->priv->status != JOB_STATUS_CANCELED ||
+	if (job->priv->status != JOB_STATUS_FINISHED &&
+	    job->priv->status != JOB_STATUS_CANCELED &&
 	    job->priv->status != JOB_STATUS_FAILED)
 		return;
 
 	for (GList *i = job->priv->tasks; i; i = i->next)
 		gebr_task_close(i->data, job->priv->runid);
 
-	GtkTreeIter parent;
-
-	if (!gtk_tree_model_iter_parent(GTK_TREE_MODEL(job->priv->store),
-					&parent, &job->priv->iter))
-		g_return_if_reached();
-
 	gtk_tree_store_remove(job->priv->store, &job->priv->iter);
-
-	if (gtk_tree_model_iter_n_children(GTK_TREE_MODEL(job->priv->store), &parent) == 0)
-		gtk_tree_store_remove(job->priv->store, &parent);
 
 	gebr_job_free(job);
 }
