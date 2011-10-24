@@ -505,9 +505,9 @@ predict_current_load(GList *points, gdouble delay)
  * on the flow_exec_speed and on the number of steps
  */ 
 static gint
-compute_effective_cores(const gint ncores, const gint scale, const gint nsteps)
+compute_effective_ncores(const gint ncores, const gint scale, const gint nsteps)
 {
-	gint eff_ncores= (scale*ncores)/ 5;
+	gint eff_ncores= (ABS(scale)*ncores)/ 5;
 	if (eff_ncores == 0)
 		eff_ncores = 1;
 	return (eff_ncores < nsteps ? eff_ncores : nsteps);
@@ -533,13 +533,18 @@ calculate_server_score(const gchar *load, gint ncores, gdouble cpu_clock, gint s
 	points = g_list_prepend(points, &point15);
 
 	gdouble current_load = predict_current_load(points, delay);
-	gint eff_ncores = compute_effective_cores(ncores, scale, nsteps); 
+	gint eff_ncores = compute_effective_ncores(ncores, scale, nsteps); 
 	gdouble score;
 	if (current_load + eff_ncores > ncores)
 		score = cpu_clock*eff_ncores/(current_load + eff_ncores - ncores + 1);
+
 	else
 		score = cpu_clock*eff_ncores;
 
+	if (current_load + eff_ncores > ncores)
+		g_debug ("CASE 01, %lf, cpu_clock: %lf, curren_load:%lf, eff_ncores: %d", score, cpu_clock, current_load, eff_ncores);
+	else
+		g_debug ("CASE 02, %lf, cpu_clock: %lf, curren_load:%lf, eff_ncores: %d", score, cpu_clock, current_load, eff_ncores);
 	g_list_free(points);
 
 	return score;
@@ -587,10 +592,10 @@ on_response_received(GebrCommHttpMsg *request, GebrCommHttpMsg *response, AsyncR
 
 		g_printf("[ %s ]\n", sc->server->comm->address->str);
 		g_printf("cores = %d\n", sc->server->ncores);
-		g_printf("used cores = %d\n", compute_effective_cores(sc->server->ncores, gebr.config.flow_exec_speed, atoi(eval_n)));
+		g_printf("used cores = %d\n", compute_effective_ncores(sc->server->ncores, gebr.config.flow_exec_speed, atoi(eval_n)));
 		g_printf("clock = %lf\n", sc->server->clock_cpu);
 		g_printf("steps = %s\n", eval_n);
-		g_printf("score = %lf\n", eval_n);
+		g_printf("score = %lf\n", score);
 		g_printf("\n");
 		
 		g_free(eval_n);
@@ -598,6 +603,9 @@ on_response_received(GebrCommHttpMsg *request, GebrCommHttpMsg *response, AsyncR
 
 		runinfo->responses++;
 		if (runinfo->responses == runinfo->requests) {
+			for (GList *i = runinfo->servers; i; i = i->next) {
+				g_debug("funcao onResponseReceived : score_i:%lf", ((ServerScore*)i->data)->score);
+			}
 			gint comp_func(ServerScore *a, ServerScore *b) {
 				return b->score - a->score;
 			}

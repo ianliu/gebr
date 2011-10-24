@@ -360,8 +360,9 @@ gebr_job_get_command_line(GebrJob *job)
 		GebrTask *task = i->data;
 
 		gebr_task_get_fraction(task, &frac, &total);
-		g_string_append_printf(buf, _("Command line for task %d of %d"), frac, total);
-		g_string_append_printf(buf, "\n%s\n", gebr_task_get_cmd_line(task));
+		g_string_append_printf(buf, _("Command line for task %d of %d "), frac, total);
+		g_string_append_printf(buf, _(" \(Server: %s)\n"), (gebr_task_get_server(task))->comm->address->str);
+		g_string_append_printf(buf, "%s\n", gebr_task_get_cmd_line(task));
 	}
 
 	return g_string_free(buf, FALSE);

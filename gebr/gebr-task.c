@@ -309,3 +309,9 @@ gebr_task_kill(GebrTask *task)
 					      gebr_comm_protocol_defs.kil_def, 1,
 					      task->priv->rid);
 }
+
+GebrServer *
+gebr_task_get_server(GebrTask *task)
+{
+	return task->priv->server;
+}
