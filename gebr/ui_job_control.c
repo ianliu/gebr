@@ -101,9 +101,6 @@ struct ui_job_control *job_control_setup_ui(void)
 						   G_TYPE_POINTER, /* JC_STRUCT */
 						   G_TYPE_BOOLEAN);/* JC_VISIBLE */
 
-	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(ui_job_control->store), JC_SERVER_ADDRESS,
-					     GTK_SORT_ASCENDING);
-
 	GtkTreeModel *filter = gtk_tree_model_filter_new(GTK_TREE_MODEL(ui_job_control->store), NULL);
 
 	GtkTreeView *treeview;
@@ -144,8 +141,8 @@ struct ui_job_control *job_control_setup_ui(void)
 	g_signal_connect(details, "toggled", G_CALLBACK(on_toggled_more_details), builder);
 	gtk_toggle_button_set_active(details, FALSE);
 
+	/* Text view of output*/
 	ui_job_control->text_buffer = gtk_text_buffer_new(NULL);
-
 	gtk_text_buffer_get_end_iter(ui_job_control->text_buffer, &iter_end);
 	gtk_text_buffer_create_mark(ui_job_control->text_buffer, "end", &iter_end, FALSE);
 
@@ -166,6 +163,7 @@ struct ui_job_control *job_control_setup_ui(void)
 
 	ui_job_control->text_view = text_view;
 
+	/* Text view of command line */
 	ui_job_control->cmd_buffer = gtk_text_buffer_new(NULL);
 	gtk_text_buffer_get_end_iter(ui_job_control->cmd_buffer, &iter_end);
 	gtk_text_buffer_create_mark(ui_job_control->cmd_buffer, "end", &iter_end, FALSE);
@@ -173,7 +171,7 @@ struct ui_job_control *job_control_setup_ui(void)
 	text_view = GTK_WIDGET(gtk_builder_get_object(builder, "textview_command_line"));
 	gtk_text_view_set_buffer(GTK_TEXT_VIEW(text_view), ui_job_control->cmd_buffer);
 
-	//g_signal_connect(text_view, "populate-popup", G_CALLBACK(on_text_view_populate_popup), ui_job_control);
+//	g_signal_connect(text_view, "populate-popup", G_CALLBACK(on_text_view_populate_popup), ui_job_control);
 	g_object_set(G_OBJECT(text_view), "editable", FALSE, "cursor-visible", FALSE, NULL);
 	{
 		PangoFontDescription *font;
@@ -186,8 +184,6 @@ struct ui_job_control *job_control_setup_ui(void)
 	}
 
 	ui_job_control->cmd_view = text_view;
-
-
 
 
 //	vbox = gtk_vbox_new(FALSE, 0);
@@ -313,12 +309,6 @@ gboolean job_control_stop(void)
 	selected_rows =	gtk_tree_selection_count_selected_rows(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)));
 	model = gtk_tree_view_get_model(GTK_TREE_VIEW(gebr.ui_job_control->view));
 	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_job_control->view) {
-		GtkTreePath *path = gtk_tree_model_get_path(model, &iter);
-		if (gtk_tree_path_get_depth(path) == 1) {
-			gtk_tree_path_free(path);
-			continue;
-		}
-		gtk_tree_path_free(path);
 
 		gtk_tree_model_get(model, &iter, JC_STRUCT, &job, -1);
 		
@@ -380,10 +370,6 @@ gboolean job_control_close(void)
 
 	for (GList *i = rowrefs; i; i = i->next) {
 		GtkTreePath *path = gtk_tree_row_reference_get_path(i->data);
-		if (gtk_tree_path_get_depth(path) == 1) {
-			gtk_tree_path_free(path);
-			continue;
-		}
 
 		if (!gtk_tree_model_get_iter(model, &iter, path)) {
 			gtk_tree_path_free(path);
@@ -556,12 +542,12 @@ void job_control_queue_save(void)
 
 void job_control_queue_stop(void)
 {
-	job_control_queue_by_func(job_control_stop);
+	job_control_stop();
 }
 
 void job_control_queue_close(void)
 {
-	job_control_queue_by_func(job_control_close);
+	job_control_close();
 }
 
 #if 0
@@ -787,11 +773,6 @@ icon_column_data_func(GtkTreeViewColumn *tree_column,
 
 	gtk_tree_model_get(tree_model, iter, JC_STRUCT, &job, -1);
 
-	if (!job) {
-		g_object_set(cell, "stock-id", NULL, NULL);
-		return;
-	}
-
 	switch (gebr_job_get_status(job))
 	{
 	case JOB_STATUS_CANCELED:
@@ -834,17 +815,7 @@ title_column_data_func(GtkTreeViewColumn *tree_column,
 			   JC_QUEUE_NAME, &queue,
 			   -1);
 
-	if (job)
-		g_object_set(cell, "text", gebr_job_get_title(job), NULL);
-	else {
-		gchar *title;
-		if (gebr_get_queue_type(queue) == AUTOMATIC_QUEUE)
-			title = g_strdup_printf(_("Immediately at %s"), servers);
-		else
-			title = g_strdup_printf(_("%s at %s"), queue, servers);
-		g_object_set(cell, "text", title, NULL);
-		g_free(title);
-	}
+	g_object_set(cell, "text", gebr_job_get_title(job), NULL);
 
 	g_free(queue);
 	g_free(servers);
@@ -856,6 +827,14 @@ static void time_column_data_func(GtkTreeViewColumn *tree_column,
                                   GtkTreeIter *iter,
                                   gpointer data)
 {
+	GebrJob *job;
+
+	gtk_tree_model_get(tree_model, iter,
+	                   JC_STRUCT, &job,
+	                   -1);
+
+	g_object_set(cell, "text", "moments ago", NULL);
+
 	return;
 }
 
@@ -901,18 +880,13 @@ gebr_job_control_load_details(struct ui_job_control *jc,
 {
 	g_return_if_fail(job != NULL);
 
-	gtk_text_buffer_set_text(jc->text_buffer, "", 0);
 
 	enum JobStatus status = gebr_job_get_status(job);
 	GString *queue_info = g_string_new(NULL); 
-	GString *info = g_string_new("");
-	GString *info_cmd = g_string_new("");
-
-	GtkTextIter end_iter;
-	GtkTextIter end_iter_cmd;
 
 	const gchar *start_date = gebr_job_get_start_date(job);
 	const gchar *finish_date = gebr_job_get_finish_date(job);
+
 
 //	if (status == JOB_STATUS_INITIAL) {
 //		g_string_append_printf(info, _("Waiting for more details from the server..."));
@@ -971,6 +945,14 @@ gebr_job_control_load_details(struct ui_job_control *jc,
 //		add_job_issues(jc, issues);
 //		g_free(issues);
 //	}
+
+	GString *info = g_string_new("");
+	GString *info_cmd = g_string_new("");
+	GtkTextIter end_iter;
+	GtkTextIter end_iter_cmd;
+
+	gtk_text_buffer_set_text(jc->text_buffer, "", 0);
+	gtk_text_buffer_set_text(jc->cmd_buffer, "", 0);
 
 	/* command-line */
 	gchar *cmdline = gebr_job_get_command_line(job);
