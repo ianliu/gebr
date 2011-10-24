@@ -44,11 +44,20 @@ static void title_column_data_func(GtkTreeViewColumn *tree_column,
 				   GtkTreeIter *iter,
 				   gpointer data);
 
+static void time_column_data_func(GtkTreeViewColumn *tree_column,
+                                  GtkCellRenderer *cell,
+                                  GtkTreeModel *tree_model,
+                                  GtkTreeIter *iter,
+                                  gpointer data);
+
 static void gebr_job_control_load_details(struct ui_job_control *jc,
 					  GebrJob *job);
 
 static void job_control_on_cursor_changed(GtkTreeSelection *selection,
 					  struct ui_job_control *jc);
+
+static void on_toggled_more_details(GtkToggleButton *button,
+                                    GtkBuilder *builder);
 
 #if 0
 static void on_text_view_populate_popup(GtkTextView * textview, GtkMenu * menu);
@@ -71,33 +80,20 @@ struct ui_job_control *job_control_setup_ui(void)
 {
 	struct ui_job_control *ui_job_control;
 
-	GtkWidget *hpanel;
-	GtkWidget *vbox;
-	GtkWidget *scrolled_window;
-	GtkWidget *frame;
-
 	GtkTreeViewColumn *col;
 	GtkCellRenderer *renderer;
+	GtkBuilder *builder;
 
-	GtkWidget *text_view;
-	GtkTextIter iter_end;
-
-	/* alloc */
 	ui_job_control = g_new(struct ui_job_control, 1);
 
-	hpanel = gtk_hpaned_new();
-	ui_job_control->widget = hpanel;
+	builder = gtk_builder_new();
+	gtk_builder_add_from_file(builder, GEBR_GLADE_DIR"/gebr-job-control.glade", NULL);
+
+	ui_job_control->widget = GTK_WIDGET(gtk_builder_get_object(builder, "top-level-widget"));
 
 	/*
 	 * Left side
 	 */
-	frame = gtk_frame_new(_("Jobs"));
-	gtk_paned_pack1(GTK_PANED(hpanel), frame, FALSE, FALSE);
-
-	scrolled_window = gtk_scrolled_window_new(NULL, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window), GTK_POLICY_AUTOMATIC,
-				       GTK_POLICY_AUTOMATIC);
-	gtk_container_add(GTK_CONTAINER(frame), scrolled_window);
 
 	ui_job_control->store = gtk_tree_store_new(JC_N_COLUMN,
 	                                           G_TYPE_STRING,  /* JC_SERVER_ADDRESS */
@@ -105,10 +101,9 @@ struct ui_job_control *job_control_setup_ui(void)
 						   G_TYPE_POINTER, /* JC_STRUCT */
 						   G_TYPE_BOOLEAN);/* JC_VISIBLE */
 
-	//g_signal_connect(ui_job_control->store, "row-inserted", G_CALLBACK(on_tree_store_insert_delete), NULL);
-	//g_signal_connect(ui_job_control->store, "row-deleted", G_CALLBACK(on_tree_store_insert_delete), NULL);
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(ui_job_control->store), JC_SERVER_ADDRESS,
 					     GTK_SORT_ASCENDING);
+
 	GtkTreeModel *filter = gtk_tree_model_filter_new(GTK_TREE_MODEL(ui_job_control->store), NULL);
 	ui_job_control->view = gtk_tree_view_new_with_model(filter);
 	gtk_tree_model_filter_set_visible_column(GTK_TREE_MODEL_FILTER(filter), JC_VISIBLE);
@@ -121,53 +116,55 @@ struct ui_job_control *job_control_setup_ui(void)
 	g_signal_connect(gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_job_control->view)), "changed",
 			 G_CALLBACK(job_control_on_cursor_changed), ui_job_control);
 
-	col = gtk_tree_view_column_new();
-	gtk_tree_view_append_column(GTK_TREE_VIEW(ui_job_control->view), col);
+	col = GTK_TREE_VIEW_COLUMN(gtk_builder_get_object(builder, "tv_column"));
 
-	renderer = gtk_cell_renderer_pixbuf_new();
-	gtk_tree_view_column_pack_start(col, renderer, FALSE);
+	renderer = GTK_CELL_RENDERER(gtk_builder_get_object(builder, "tv_icon_cell"));
 	gtk_tree_view_column_set_cell_data_func(col, renderer, icon_column_data_func, NULL, NULL);
 
-	renderer = gtk_cell_renderer_text_new();
-	gtk_tree_view_column_pack_start(col, renderer, TRUE);
+	renderer = GTK_CELL_RENDERER(gtk_builder_get_object(builder, "tv_title_cell"));
 	gtk_tree_view_column_set_cell_data_func(col, renderer, title_column_data_func, NULL, NULL);
 
-	gtk_container_add(GTK_CONTAINER(scrolled_window), ui_job_control->view);
-	gtk_widget_set_size_request(GTK_WIDGET(scrolled_window), 180, 30);
+	renderer = GTK_CELL_RENDERER(gtk_builder_get_object(builder, "tv_time_cell"));
+	gtk_tree_view_column_set_cell_data_func(col, renderer, time_column_data_func, NULL, NULL);
 
 	/*
 	 * Right side
 	 */
-	vbox = gtk_vbox_new(FALSE, 0);
-	gtk_paned_pack2(GTK_PANED(hpanel), vbox, TRUE, TRUE);
 
-	ui_job_control->label = gtk_label_new("");
-	gtk_box_pack_start(GTK_BOX(vbox), ui_job_control->label, FALSE, TRUE, 0);
+	GtkToggleButton *details = GTK_TOGGLE_BUTTON(gtk_builder_get_object(builder, "more_details"));
+	g_signal_connect(details, "toggled", G_CALLBACK(on_toggled_more_details), builder);
+	gtk_toggle_button_set_active(details, FALSE);
 
-	scrolled_window = gtk_scrolled_window_new(NULL, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window), GTK_POLICY_AUTOMATIC,
-				       GTK_POLICY_AUTOMATIC);
-	gtk_box_pack_end(GTK_BOX(vbox), scrolled_window, TRUE, TRUE, 0);
-
-	ui_job_control->text_buffer = gtk_text_buffer_new(NULL);
-	ui_job_control->issues_title_tag = gtk_text_buffer_create_tag(ui_job_control->text_buffer, "issues_title",
-								      "invisible", TRUE, NULL);
-	gtk_text_buffer_get_end_iter(ui_job_control->text_buffer, &iter_end);
-	gtk_text_buffer_create_mark(ui_job_control->text_buffer, "end", &iter_end, FALSE);
-	text_view = gtk_text_view_new_with_buffer(ui_job_control->text_buffer);
-	//g_signal_connect(text_view, "populate-popup", G_CALLBACK(on_text_view_populate_popup), ui_job_control);
-	g_object_set(G_OBJECT(text_view), "editable", FALSE, "cursor-visible", FALSE, NULL);
-	{
-		PangoFontDescription *font;
-
-		font = pango_font_description_new();
-		pango_font_description_set_family(font, "monospace");
-		gtk_widget_modify_font(text_view, font);
-
-		pango_font_description_free(font);
-	}
-	ui_job_control->text_view = text_view;
-	gtk_container_add(GTK_CONTAINER(scrolled_window), text_view);
+//	vbox = gtk_vbox_new(FALSE, 0);
+//	gtk_paned_pack2(GTK_PANED(hpanel), vbox, TRUE, TRUE);
+//
+//	ui_job_control->label = gtk_label_new("");
+//	gtk_box_pack_start(GTK_BOX(vbox), ui_job_control->label, FALSE, TRUE, 0);
+//
+//	scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+//	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window), GTK_POLICY_AUTOMATIC,
+//				       GTK_POLICY_AUTOMATIC);
+//	gtk_box_pack_end(GTK_BOX(vbox), scrolled_window, TRUE, TRUE, 0);
+//
+//	ui_job_control->text_buffer = gtk_text_buffer_new(NULL);
+//	ui_job_control->issues_title_tag = gtk_text_buffer_create_tag(ui_job_control->text_buffer, "issues_title",
+//								      "invisible", TRUE, NULL);
+//	gtk_text_buffer_get_end_iter(ui_job_control->text_buffer, &iter_end);
+//	gtk_text_buffer_create_mark(ui_job_control->text_buffer, "end", &iter_end, FALSE);
+//	text_view = gtk_text_view_new_with_buffer(ui_job_control->text_buffer);
+//	//g_signal_connect(text_view, "populate-popup", G_CALLBACK(on_text_view_populate_popup), ui_job_control);
+//	g_object_set(G_OBJECT(text_view), "editable", FALSE, "cursor-visible", FALSE, NULL);
+//	{
+//		PangoFontDescription *font;
+//
+//		font = pango_font_description_new();
+//		pango_font_description_set_family(font, "monospace");
+//		gtk_widget_modify_font(text_view, font);
+//
+//		pango_font_description_free(font);
+//	}
+//	ui_job_control->text_view = text_view;
+//	gtk_container_add(GTK_CONTAINER(scrolled_window), text_view);
 	
 	//gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(ui_job_control->view),
 	//					  (GebrGuiGtkPopupCallback) job_control_popup_menu, ui_job_control);
@@ -658,6 +655,19 @@ free_copy:
 
 #endif
 
+static void
+on_toggled_more_details(GtkToggleButton *button,
+                        GtkBuilder *builder)
+{
+	GtkVBox *details = GTK_VBOX(gtk_builder_get_object(builder, "details_widget"));
+
+	if (!gtk_toggle_button_get_active(button)) {
+		gtk_widget_set_visible(GTK_WIDGET(details), FALSE);
+		return;
+	}
+	gtk_widget_set_visible(GTK_WIDGET(details), TRUE);
+}
+
 void
 gebr_jc_get_queue_group_iter(GtkTreeStore *store,
 			     const gchar  *queue,
@@ -783,6 +793,15 @@ title_column_data_func(GtkTreeViewColumn *tree_column,
 
 	g_free(queue);
 	g_free(servers);
+}
+
+static void time_column_data_func(GtkTreeViewColumn *tree_column,
+                                  GtkCellRenderer *cell,
+                                  GtkTreeModel *tree_model,
+                                  GtkTreeIter *iter,
+                                  gpointer data)
+{
+	return;
 }
 
 void
