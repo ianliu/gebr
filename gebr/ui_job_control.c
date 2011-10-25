@@ -50,11 +50,11 @@ static void time_column_data_func(GtkTreeViewColumn *tree_column,
                                   GtkTreeIter *iter,
                                   gpointer data);
 
-static void gebr_job_control_load_details(struct ui_job_control *jc,
+static void gebr_job_control_load_details(GebrJobControl *jc,
 					  GebrJob *job);
 
 static void job_control_on_cursor_changed(GtkTreeSelection *selection,
-					  struct ui_job_control *jc);
+					  GebrJobControl *jc);
 
 static void on_toggled_more_details(GtkToggleButton *button,
                                     GtkBuilder *builder);
@@ -76,15 +76,15 @@ static void on_tree_store_insert_delete(GtkTreeModel *model,
  * Public functions.
  */
 
-struct ui_job_control *job_control_setup_ui(void)
+GebrJobControl *job_control_setup_ui(void)
 {
-	struct ui_job_control *ui_job_control;
+	GebrJobControl *ui_job_control;
 
 	GtkTreeViewColumn *col;
 	GtkCellRenderer *renderer;
 	GtkBuilder *builder;
 
-	ui_job_control = g_new(struct ui_job_control, 1);
+	ui_job_control = g_new(GebrJobControl, 1);
 
 	builder = gtk_builder_new();
 	gtk_builder_add_from_file(builder, GEBR_GLADE_DIR"/gebr-job-control.glade", NULL);
@@ -463,7 +463,7 @@ void job_control_selected(void)
 
 static void
 job_control_on_cursor_changed(GtkTreeSelection *selection,
-			      struct ui_job_control *jc)
+			      GebrJobControl *jc)
 {
 	GList *rows = gtk_tree_selection_get_selected_rows(selection, NULL);
 
@@ -839,7 +839,7 @@ static void time_column_data_func(GtkTreeViewColumn *tree_column,
 }
 
 void
-gebr_job_control_select_job(struct ui_job_control *jc, const gchar *rid)
+gebr_job_control_select_job(GebrJobControl *jc, const gchar *rid)
 {
 	GebrJob *job = gebr_job_find(rid);
 
@@ -857,7 +857,7 @@ gebr_job_control_select_job(struct ui_job_control *jc, const gchar *rid)
 }
 
 static void
-add_job_issues(struct ui_job_control *jc, const gchar *issues)
+add_job_issues(GebrJobControl *jc, const gchar *issues)
 {
 	g_object_set(jc->issues_title_tag, "invisible", FALSE, NULL);
 
@@ -875,7 +875,7 @@ add_job_issues(struct ui_job_control *jc, const gchar *issues)
 }
 
 static void
-gebr_job_control_load_details(struct ui_job_control *jc,
+gebr_job_control_load_details(GebrJobControl *jc,
 			      GebrJob *job)
 {
 	g_return_if_fail(job != NULL);

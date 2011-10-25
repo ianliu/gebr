@@ -44,7 +44,7 @@ enum {
 	JC_N_COLUMN
 };
 
-struct ui_job_control {
+typedef struct _GebrJobControl {
 	GtkWidget *widget;
 
 	GtkTreeStore *store;
@@ -57,9 +57,9 @@ struct ui_job_control {
 
 	GtkWidget *cmd_view;
 	GtkTextBuffer *cmd_buffer;
-};
+} GebrJobControl;
 
-void gebr_job_control_select_job(struct ui_job_control *jc,
+void gebr_job_control_select_job(GebrJobControl *jc,
 				 const gchar *rid);
 
 /**
@@ -67,7 +67,7 @@ void gebr_job_control_select_job(struct ui_job_control *jc,
  * Return:
  * The structure containing relevant data.
  */
-struct ui_job_control *job_control_setup_ui(void);
+GebrJobControl *job_control_setup_ui(void);
 
 /**
  */
