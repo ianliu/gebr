@@ -32,13 +32,8 @@ struct _GebrJobControlPriv {
 	GtkWidget *widget;
 };
 
-/*
- * Tree view fields 
- */
 enum {
-	JC_SERVER_ADDRESS, /* for ordering */
-	JC_QUEUE_NAME,
-	JC_STRUCT, /* non-NULL if it is a job */
+	JC_STRUCT,
 	JC_N_COLUMN
 };
 
@@ -103,10 +98,7 @@ gebr_job_control_new(void)
 	 * Left side
 	 */
 
-	jc->store = gtk_list_store_new(JC_N_COLUMN,
-				       G_TYPE_STRING,  /* JC_SERVER_ADDRESS */
-				       G_TYPE_STRING,  /* JC_QUEUE_NAME */
-				       G_TYPE_POINTER);/* JC_STRUCT */
+	jc->store = gtk_list_store_new(JC_N_COLUMN, G_TYPE_POINTER);
 
 	GtkTreeModel *filter = gtk_tree_model_filter_new(GTK_TREE_MODEL(jc->store), NULL);
 
@@ -752,18 +744,9 @@ title_column_data_func(GtkTreeViewColumn *tree_column,
 		       gpointer data)
 {
 	GebrJob *job;
-	gchar *servers, *queue;
 
-	gtk_tree_model_get(tree_model, iter,
-			   JC_STRUCT, &job,
-			   JC_SERVER_ADDRESS, &servers,
-			   JC_QUEUE_NAME, &queue,
-			   -1);
-
+	gtk_tree_model_get(tree_model, iter, JC_STRUCT, &job, -1);
 	g_object_set(cell, "text", gebr_job_get_title(job), NULL);
-
-	g_free(queue);
-	g_free(servers);
 }
 
 static void time_column_data_func(GtkTreeViewColumn *tree_column,
@@ -774,10 +757,7 @@ static void time_column_data_func(GtkTreeViewColumn *tree_column,
 {
 	GebrJob *job;
 
-	gtk_tree_model_get(tree_model, iter,
-	                   JC_STRUCT, &job,
-	                   -1);
-
+	gtk_tree_model_get(tree_model, iter, JC_STRUCT, &job, -1);
 	g_object_set(cell, "text", "moments ago", NULL);
 
 	return;

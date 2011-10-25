@@ -656,28 +656,31 @@ create_jobs_and_run(GebrCommRunner *runner)
 	GHashTable *map = g_hash_table_new(g_str_hash, g_str_equal);
 
 	for (GList *i = runner->flows; i; i = i->next) {
-		GString *value;
+		GString **values;
 		GebrCommRunnerFlow *runflow = i->data;
 
-		value = g_hash_table_lookup(map, runflow->run_id);
-		if (!value) {
-			value = g_string_new(runflow->server->address->str);
-			g_hash_table_insert(map, runflow->run_id, value);
+		values = g_hash_table_lookup(map, runflow->run_id);
+		if (!values) {
+			values = g_new(GString *, 2);
+			values[0] = g_string_new(runflow->server->address->str);
+			values[1] = g_string_new(gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(runflow->flow)));
+			g_hash_table_insert(map, runflow->run_id, values);
 		} else
-			g_string_append_printf(value, ",%s", runflow->server->address->str);
+			g_string_append_printf(values[0], ",%s", runflow->server->address->str);
 
 	}
 
 	void func(gpointer key, gpointer value, gpointer data) {
 		gchar *runid = key;
-		gchar *servers = ((GString *)value)->str;
+		GString **values = value;
 		GebrJob *job = gebr_job_new_with_id(GTK_TREE_MODEL(gebr.job_control->store),
-						    gebr.job_control->text_buffer,
-						    runid,
-						    runner->queue,
-						    servers);
+						    gebr.job_control->text_buffer, runid,
+						    runner->queue, values[0]->str);
+		gebr_job_set_title(job, values[1]->str);
 		gebr_job_control_add(gebr.job_control, job);
-		g_string_free((GString *)value, TRUE);
+		g_string_free((GString *)values[0], TRUE);
+		g_string_free((GString *)values[1], TRUE);
+		g_free(values);
 
 		if (first) {
 			gebr_interface_change_tab(NOTEBOOK_PAGE_JOB_CONTROL);
