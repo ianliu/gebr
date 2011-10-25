@@ -17,6 +17,7 @@
  */
 
 #include <glib/gi18n.h>
+#include <glib/gprintf.h>
 #include <libgebr/date.h>
 #include <libgebr/gui/gui.h>
 #include <libgebr/comm/gebr-comm.h>
@@ -670,7 +671,7 @@ create_jobs_and_run(GebrCommRunner *runner)
 	void func(gpointer key, gpointer value, gpointer data) {
 		gchar *runid = key;
 		gchar *servers = ((GString *)value)->str;
-		gebr_job_new_with_id(gebr.job_control->store,
+		gebr_job_new_with_id(GTK_TREE_MODEL(gebr.job_control->store),
 				     gebr.job_control->text_buffer,
 				     runid,
 				     runner->queue,
