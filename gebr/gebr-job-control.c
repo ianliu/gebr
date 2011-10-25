@@ -30,6 +30,7 @@
 
 struct _GebrJobControlPriv {
 	GtkWidget *widget;
+	GtkBuilder *builder;
 };
 
 enum {
@@ -65,8 +66,6 @@ static void job_control_on_cursor_changed(GtkTreeSelection *selection,
 static void on_toggled_more_details(GtkToggleButton *button,
                                     GtkBuilder *builder);
 
-static void job_control_queue_by_func(gboolean (* func)(void));
-
 /* Private methods {{{1 */
 static gboolean
 jobs_visible_func(GtkTreeModel *model,
@@ -84,15 +83,14 @@ gebr_job_control_new(void)
 
 	GtkTreeViewColumn *col;
 	GtkCellRenderer *renderer;
-	GtkBuilder *builder;
 
 	jc = g_new(GebrJobControl, 1);
 	jc->priv = g_new0(GebrJobControlPriv, 1);
 
-	builder = gtk_builder_new();
-	gtk_builder_add_from_file(builder, GEBR_GLADE_DIR"/gebr-job-control.glade", NULL);
+	jc->priv->builder = gtk_builder_new();
+	gtk_builder_add_from_file(jc->priv->builder, GEBR_GLADE_DIR"/gebr-job-control.glade", NULL);
 
-	jc->priv->widget = GTK_WIDGET(gtk_builder_get_object(builder, "top-level-widget"));
+	jc->priv->widget = GTK_WIDGET(gtk_builder_get_object(jc->priv->builder, "top-level-widget"));
 
 	/*
 	 * Left side
@@ -103,7 +101,7 @@ gebr_job_control_new(void)
 	GtkTreeModel *filter = gtk_tree_model_filter_new(GTK_TREE_MODEL(jc->store), NULL);
 
 	GtkTreeView *treeview;
-	treeview = GTK_TREE_VIEW(gtk_builder_get_object(builder, "treeview_jobs"));
+	treeview = GTK_TREE_VIEW(gtk_builder_get_object(jc->priv->builder, "treeview_jobs"));
 	gtk_tree_view_set_model(treeview, filter);
 
 	gtk_tree_model_filter_set_visible_func(GTK_TREE_MODEL_FILTER(filter),
@@ -120,15 +118,15 @@ gebr_job_control_new(void)
 	g_signal_connect(gtk_tree_view_get_selection(GTK_TREE_VIEW(jc->view)), "changed",
 			 G_CALLBACK(job_control_on_cursor_changed), jc);
 
-	col = GTK_TREE_VIEW_COLUMN(gtk_builder_get_object(builder, "tv_column"));
+	col = GTK_TREE_VIEW_COLUMN(gtk_builder_get_object(jc->priv->builder, "tv_column"));
 
-	renderer = GTK_CELL_RENDERER(gtk_builder_get_object(builder, "tv_icon_cell"));
+	renderer = GTK_CELL_RENDERER(gtk_builder_get_object(jc->priv->builder, "tv_icon_cell"));
 	gtk_tree_view_column_set_cell_data_func(col, renderer, icon_column_data_func, NULL, NULL);
 
-	renderer = GTK_CELL_RENDERER(gtk_builder_get_object(builder, "tv_title_cell"));
+	renderer = GTK_CELL_RENDERER(gtk_builder_get_object(jc->priv->builder, "tv_title_cell"));
 	gtk_tree_view_column_set_cell_data_func(col, renderer, title_column_data_func, NULL, NULL);
 
-	renderer = GTK_CELL_RENDERER(gtk_builder_get_object(builder, "tv_time_cell"));
+	renderer = GTK_CELL_RENDERER(gtk_builder_get_object(jc->priv->builder, "tv_time_cell"));
 	gtk_tree_view_column_set_cell_data_func(col, renderer, time_column_data_func, NULL, NULL);
 
 	/*
@@ -138,8 +136,8 @@ gebr_job_control_new(void)
 	GtkWidget *text_view;
 	GtkTextIter iter_end;
 
-	GtkToggleButton *details = GTK_TOGGLE_BUTTON(gtk_builder_get_object(builder, "more_details"));
-	g_signal_connect(details, "toggled", G_CALLBACK(on_toggled_more_details), builder);
+	GtkToggleButton *details = GTK_TOGGLE_BUTTON(gtk_builder_get_object(jc->priv->builder, "more_details"));
+	g_signal_connect(details, "toggled", G_CALLBACK(on_toggled_more_details), jc->priv->builder);
 	gtk_toggle_button_set_active(details, FALSE);
 
 	/* Text view of output*/
@@ -147,7 +145,7 @@ gebr_job_control_new(void)
 	gtk_text_buffer_get_end_iter(jc->text_buffer, &iter_end);
 	gtk_text_buffer_create_mark(jc->text_buffer, "end", &iter_end, FALSE);
 
-	text_view = GTK_WIDGET(gtk_builder_get_object(builder, "textview_output"));
+	text_view = GTK_WIDGET(gtk_builder_get_object(jc->priv->builder, "textview_output"));
 	gtk_text_view_set_buffer(GTK_TEXT_VIEW(text_view), jc->text_buffer);
 
 	g_object_set(G_OBJECT(text_view), "editable", FALSE, "cursor-visible", FALSE, NULL);
@@ -168,7 +166,7 @@ gebr_job_control_new(void)
 	gtk_text_buffer_get_end_iter(jc->cmd_buffer, &iter_end);
 	gtk_text_buffer_create_mark(jc->cmd_buffer, "end", &iter_end, FALSE);
 
-	text_view = GTK_WIDGET(gtk_builder_get_object(builder, "textview_command_line"));
+	text_view = GTK_WIDGET(gtk_builder_get_object(jc->priv->builder, "textview_command_line"));
 	gtk_text_view_set_buffer(GTK_TEXT_VIEW(text_view), jc->cmd_buffer);
 
 	g_object_set(G_OBJECT(text_view), "editable", FALSE, "cursor-visible", FALSE, NULL);
@@ -190,6 +188,7 @@ gebr_job_control_new(void)
 void
 gebr_job_control_free(GebrJobControl *jc)
 {
+	g_object_unref(jc->priv->builder);
 	g_free(jc->priv);
 	g_free(jc);
 }
@@ -633,58 +632,6 @@ out:
 }
 #endif
 
-static void job_control_queue_by_func(gboolean (* func)(void))
-{
-	GList *rows;
-	GList *unselect = NULL;
-	GtkTreeIter iter;
-	GtkTreeModel *model;
-	GtkTreeSelection *selection;
-
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.job_control->view));
-	rows = gtk_tree_selection_get_selected_rows(selection, &model);
-
-	/* By the end of this 'for' loop, the selected jobs have this characteristics:
-	 *  - It is selected, or
-	 *  - Its parent is selected
-	 */
-
-	if (!rows)
-		return;
-
-	for (GList *i = rows; i; i = i->next) {
-		GtkTreePath *path = i->data;
-		if (gtk_tree_path_get_depth(path) == 1) {
-			int n, first;
-			first = gtk_tree_path_get_indices(path)[0];
-			gtk_tree_model_get_iter(model, &iter, path);
-			n = gtk_tree_model_iter_n_children(model, &iter);
-			for (int j = 0; j < n; j++) {
-				GtkTreePath *newpath;
-				newpath = gtk_tree_path_new_from_indices(first, j, -1);
-				gtk_tree_selection_select_path(selection, newpath);
-				gtk_tree_path_free(newpath);
-			}
-			unselect = g_list_prepend(unselect, path);
-		} else {
-			GtkTreePath *up = gtk_tree_path_copy(path);
-			gtk_tree_path_up(up);
-			if (!gtk_tree_selection_path_is_selected(selection, up))
-				gtk_tree_selection_select_path(selection, path);
-			gtk_tree_path_free(up);
-		}
-	}
-
-	for (GList *i = unselect; i; i = i->next)
-		gtk_tree_selection_unselect_path(selection, i->data);
-
-	g_list_foreach(rows, (GFunc)gtk_tree_path_free, NULL);
-	g_list_free(rows);
-	g_list_free(unselect);
-
-	func();
-}
-
 static void
 on_toggled_more_details(GtkToggleButton *button,
                         GtkBuilder *builder)
@@ -749,11 +696,12 @@ title_column_data_func(GtkTreeViewColumn *tree_column,
 	g_object_set(cell, "text", gebr_job_get_title(job), NULL);
 }
 
-static void time_column_data_func(GtkTreeViewColumn *tree_column,
-                                  GtkCellRenderer *cell,
-                                  GtkTreeModel *tree_model,
-                                  GtkTreeIter *iter,
-                                  gpointer data)
+static void
+time_column_data_func(GtkTreeViewColumn *tree_column,
+		      GtkCellRenderer *cell,
+		      GtkTreeModel *tree_model,
+		      GtkTreeIter *iter,
+		      gpointer data)
 {
 	GebrJob *job;
 
@@ -784,95 +732,14 @@ gebr_job_control_select_job(GebrJobControl *jc, GebrJob *job)
 }
 
 static void
-add_job_issues(GebrJobControl *jc, const gchar *issues)
-{
-	g_object_set(jc->issues_title_tag, "invisible", FALSE, NULL);
-
-	GtkTextMark * mark = gtk_text_buffer_get_mark(jc->text_buffer, "last-issue");
-	if (mark != NULL) {
-		GtkTextIter iter;
-		gtk_text_buffer_get_iter_at_mark(jc->text_buffer, &iter, mark);
-		gtk_text_buffer_insert_with_tags(jc->text_buffer, &iter, issues, strlen(issues),
-						 jc->issues_title_tag, NULL);
-
-		gtk_text_buffer_delete_mark(jc->text_buffer, mark);
-		gtk_text_buffer_create_mark(jc->text_buffer, "last-issue", &iter, TRUE);
-	} else
-		g_warning("Can't find mark \"issue\"");
-}
-
-static void
 gebr_job_control_load_details(GebrJobControl *jc,
 			      GebrJob *job)
 {
 	g_return_if_fail(job != NULL);
 
-
 	enum JobStatus status = gebr_job_get_status(job);
-	GString *queue_info = g_string_new(NULL); 
-
 	const gchar *start_date = gebr_job_get_start_date(job);
 	const gchar *finish_date = gebr_job_get_finish_date(job);
-
-
-//	if (status == JOB_STATUS_INITIAL) {
-//		g_string_append_printf(info, _("Waiting for more details from the server..."));
-//		gtk_label_set_text(GTK_LABEL(jc->label), info->str);
-//		goto out;
-//	} else {
-//		GString *label;
-//		const gchar *queue = gebr_job_get_queue(job);
-//
-//		if (gebr_get_queue_type(queue) == AUTOMATIC_QUEUE)
-//			g_string_assign(queue_info, _("without queue"));
-//		else
-//			g_string_printf(queue_info, _("on %s"), queue);
-//
-//		g_string_append_printf(info, _("Job submitted to '%s' ('%s') by %s"),
-//				       gebr_job_get_servers(job), queue_info->str, g_get_host_name()); // FIXME: Hostname
-//		label = g_string_new(info->str);
-//
-//		if (start_date && strlen(start_date)) {
-//			g_string_append_printf(label, "\n%s", gebr_localized_date(start_date));
-//			if (finish_date && strlen(finish_date))
-//				g_string_append_printf(label, " - %s", gebr_localized_date(finish_date));
-//			else if(status == JOB_STATUS_FAILED)
-//				g_string_append(label, _(" (Failed)"));
-//			else
-//				g_string_append(label, _(" (running)"));
-//		}
-//		g_string_free(queue_info, TRUE);
-//		gtk_label_set_text(GTK_LABEL(jc->label), label->str);
-//	}
-//
-//	g_string_append(info, "\n");
-//
-//	/* moab job id */
-//	//if (job->server->type == GEBR_COMM_SERVER_TYPE_MOAB && job->parent.moab_jid->len)
-//	//	g_string_append_printf(info, "\n%s\n%s\n", _("Moab Job ID:"), job->parent.moab_jid->str);
-//
-//	gtk_text_buffer_insert_at_cursor(jc->text_buffer, info->str, info->len);
-//
-//	/* issues title with tag and mark, for receiving issues */
-//	g_object_set(jc->issues_title_tag, "invisible", TRUE, NULL);
-//	gtk_text_buffer_get_end_iter(jc->text_buffer, &end_iter);
-//	g_string_assign(info, _("Issues:\n"));
-//	gtk_text_buffer_insert_with_tags(jc->text_buffer, &end_iter, info->str, info->len,
-//					 jc->issues_title_tag, NULL);
-//	g_string_assign(info, "");
-//	gtk_text_buffer_get_end_iter(jc->text_buffer, &end_iter);
-//	gtk_text_buffer_create_mark(jc->text_buffer, "last-issue", &end_iter, FALSE);
-//
-//	if (status == JOB_STATUS_QUEUED)
-//		goto out;
-//
-//	/* issues */
-//	gchar *issues = gebr_job_get_issues(job);
-//	if (issues && strlen(issues) > 0) {
-//		add_job_issues(jc, issues);
-//		g_free(issues);
-//	}
-
 	GString *info = g_string_new("");
 	GString *info_cmd = g_string_new("");
 	GtkTextIter end_iter;
@@ -900,7 +767,6 @@ gebr_job_control_load_details(GebrJobControl *jc,
 				       status == JOB_STATUS_FINISHED ? _("Finish date:") : _("Cancel date:"),
 				       gebr_localized_date(finish_date));
 
-out:
 	gtk_text_buffer_get_end_iter(jc->text_buffer, &end_iter);
 	gtk_text_buffer_insert(jc->text_buffer, &end_iter, info->str, info->len);
 
