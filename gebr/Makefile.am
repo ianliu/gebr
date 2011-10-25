@@ -48,6 +48,8 @@ libgebr_la_SOURCES =		\
 	gebr-gettext.h		\
 	gebr-help-edit-widget.c	\
 	gebr-help-edit-widget.h	\
+	gebr-job-control.c	\
+	gebr-job-control.h	\
 	gebr-job.c		\
 	gebr-job.h		\
 	gebr-marshal.c		\
@@ -76,8 +78,6 @@ libgebr_la_SOURCES =		\
 	ui_flow_edition.h	\
 	ui_help.c		\
 	ui_help.h		\
-	ui_job_control.c	\
-	ui_job_control.h	\
 	ui_log.c		\
 	ui_log.h		\
 	ui_moab.c		\

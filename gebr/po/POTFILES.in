@@ -6,6 +6,7 @@ cmdline.c
 data/gebr.desktop.in.in
 document.c
 flow.c
+gebr-job-control.c
 gebr-task.c
 gebr.c
 interface.c
@@ -19,7 +20,6 @@ ui_flow.c
 ui_flow_browse.c
 ui_flow_edition.c
 ui_help.c
-ui_job_control.c
 ui_log.c
 ui_moab.c
 ui_parameters.c

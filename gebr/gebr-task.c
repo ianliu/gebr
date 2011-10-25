@@ -29,7 +29,7 @@
 #include "gebr-task.h"
 #include "gebr.h"
 #include "server.h"
-#include "ui_job_control.h"
+#include "gebr-job-control.h"
 #include "server.h"
 #include "gebr-marshal.h"
 

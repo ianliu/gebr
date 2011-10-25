@@ -24,7 +24,7 @@
 #include <libgebr/gui/gebr-gui-utils.h>
 #include <libgebr/gui/gebr-gui-save-dialog.h>
 
-#include "ui_job_control.h"
+#include "gebr-job-control.h"
 #include "gebr.h"
 #include "gebr-job.h"
 

@@ -36,7 +36,7 @@
 #include "ui_flow_browse.h"
 #include "ui_flow_edition.h"
 #include "ui_help.h"
-#include "ui_job_control.h"
+#include "gebr-job-control.h"
 #include "ui_log.h"
 #include "ui_preferences.h"
 #include "ui_project_line.h"

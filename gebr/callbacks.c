@@ -38,7 +38,7 @@
 #include "ui_document.h"
 #include "ui_paths.h"
 #include "ui_project_line.h"
-#include "ui_job_control.h"
+#include "gebr-job-control.h"
 #include "ui_help.h"
 
 void on_new_activate(void)
