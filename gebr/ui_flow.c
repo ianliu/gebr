@@ -670,8 +670,8 @@ create_jobs_and_run(GebrCommRunner *runner)
 	void func(gpointer key, gpointer value, gpointer data) {
 		gchar *runid = key;
 		gchar *servers = ((GString *)value)->str;
-		gebr_job_new_with_id(gebr.ui_job_control->store,
-				     gebr.ui_job_control->text_buffer,
+		gebr_job_new_with_id(gebr.job_control->store,
+				     gebr.job_control->text_buffer,
 				     runid,
 				     runner->queue,
 				     servers);
@@ -679,7 +679,7 @@ create_jobs_and_run(GebrCommRunner *runner)
 
 		if (first) {
 			gebr_interface_change_tab(NOTEBOOK_PAGE_JOB_CONTROL);
-			gebr_job_control_select_job(gebr.ui_job_control, runid);
+			gebr_job_control_select_job(gebr.job_control, runid);
 			first = FALSE;
 		}
 	}

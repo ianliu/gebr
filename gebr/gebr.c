@@ -212,7 +212,7 @@ gboolean gebr_quit(gboolean save_config)
 	g_free(gebr.ui_project_line);
 	g_free(gebr.ui_flow_browse);
 	g_free(gebr.ui_flow_edition);
-	g_free(gebr.ui_job_control);
+	gebr_job_control_free(gebr.job_control);
 	g_free(gebr.ui_server_list);
 
 	g_object_unref(gebr.pixmaps.stock_cancel);
@@ -445,7 +445,7 @@ gebr_post_config(gboolean has_config)
 	gtk_window_resize(GTK_WINDOW(gebr.window), gebr.config.width, gebr.config.height);
 	gtk_expander_set_expanded(GTK_EXPANDER(gebr.ui_log->widget), gebr.config.log_expander_state);
 
-	g_object_set(G_OBJECT(gebr.ui_job_control->text_view), "wrap-mode",
+	g_object_set(G_OBJECT(gebr.job_control->text_view), "wrap-mode",
 		     gebr.config.job_log_word_wrap ? GTK_WRAP_WORD : GTK_WRAP_NONE, NULL);
 
 	gebr_config_load_servers ();

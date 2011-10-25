@@ -265,7 +265,7 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 			GebrTask *task = gebr_task_new(server, run_id->str, frac->str);
 			gebr_task_init_details(task, status, start_date, finish_date, issues, cmd_line, queue, moab_jid);
 
-			job = gebr_job_control_find(gebr.ui_job_control, run_id->str);
+			job = gebr_job_control_find(gebr.job_control, run_id->str);
 
 			g_debug("Job found is: %p", job);
 
@@ -292,12 +292,12 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 				qsort(servers, length, sizeof(servers[0]), cmpfun);
 				gchar *servers_str = g_strjoinv(", ", servers);
 
-				job = gebr_job_new_with_id(gebr.ui_job_control->store,
-							   gebr.ui_job_control->text_buffer,
+				job = gebr_job_new_with_id(gebr.job_control->store,
+							   gebr.job_control->text_buffer,
 							   run_id->str, queue->str, servers_str);
 
 				gebr_job_set_title(job, title->str);
-				gebr_job_control_add(gebr.ui_job_control, job);
+				gebr_job_control_add(gebr.job_control, job);
 				g_free(servers_str);
 			}
 

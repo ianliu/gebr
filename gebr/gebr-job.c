@@ -154,9 +154,9 @@ job_is_active(GebrJob *job)
 	GtkTreeIter iter;
 	GtkTreeModelFilter *filter;
 
-	filter = GTK_TREE_MODEL_FILTER(gtk_tree_view_get_model(GTK_TREE_VIEW(gebr.ui_job_control->view)));
+	filter = GTK_TREE_MODEL_FILTER(gtk_tree_view_get_model(GTK_TREE_VIEW(gebr.job_control->view)));
 	gtk_tree_model_filter_convert_child_iter_to_iter(filter, &iter, &job->priv->iter);
-	return gtk_tree_selection_iter_is_selected(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_job_control->view)), &iter);
+	return gtk_tree_selection_iter_is_selected(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.job_control->view)), &iter);
 }
 
 static void
@@ -189,7 +189,7 @@ gebr_job_append_task_output(GebrTask *task,
 		gtk_text_buffer_insert(job->priv->buffer, &iter, text, strlen(text));
 		if (gebr.config.job_log_auto_scroll) {
 			mark = gtk_text_buffer_get_mark(job->priv->buffer, "end");
-			gtk_text_view_scroll_mark_onscreen(GTK_TEXT_VIEW(gebr.ui_job_control->text_view), mark);
+			gtk_text_view_scroll_mark_onscreen(GTK_TEXT_VIEW(gebr.job_control->text_view), mark);
 		}
 	}
 }
@@ -197,7 +197,7 @@ gebr_job_append_task_output(GebrTask *task,
 void
 gebr_job_add_issue(GebrJob *job, const gchar *_issues)
 {
-	g_object_set(gebr.ui_job_control->issues_title_tag, "invisible", FALSE, NULL);
+	g_object_set(gebr.job_control->issues_title_tag, "invisible", FALSE, NULL);
 
 	GString *issues = g_string_new("");
 	g_string_assign(issues, _issues);
@@ -205,16 +205,16 @@ gebr_job_add_issue(GebrJob *job, const gchar *_issues)
 		g_string_free(issues, TRUE);
 		return;
 	}
-	g_object_set(gebr.ui_job_control->issues_title_tag, "invisible", FALSE, NULL);
-	GtkTextMark * mark = gtk_text_buffer_get_mark(gebr.ui_job_control->text_buffer, "last-issue");
+	g_object_set(gebr.job_control->issues_title_tag, "invisible", FALSE, NULL);
+	GtkTextMark * mark = gtk_text_buffer_get_mark(gebr.job_control->text_buffer, "last-issue");
 	if (mark != NULL) {
 		GtkTextIter iter;
-		gtk_text_buffer_get_iter_at_mark(gebr.ui_job_control->text_buffer, &iter, mark);
-		gtk_text_buffer_insert_with_tags(gebr.ui_job_control->text_buffer, &iter, issues->str, issues->len,
-						 gebr.ui_job_control->issues_title_tag, NULL);
+		gtk_text_buffer_get_iter_at_mark(gebr.job_control->text_buffer, &iter, mark);
+		gtk_text_buffer_insert_with_tags(gebr.job_control->text_buffer, &iter, issues->str, issues->len,
+						 gebr.job_control->issues_title_tag, NULL);
 
-		gtk_text_buffer_delete_mark(gebr.ui_job_control->text_buffer, mark);
-		gtk_text_buffer_create_mark(gebr.ui_job_control->text_buffer, "last-issue", &iter, TRUE);
+		gtk_text_buffer_delete_mark(gebr.job_control->text_buffer, mark);
+		gtk_text_buffer_create_mark(gebr.job_control->text_buffer, "last-issue", &iter, TRUE);
 	} else
 		g_warning("Can't find mark \"issue\"");
 	g_string_free(issues, TRUE);

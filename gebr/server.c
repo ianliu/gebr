@@ -272,14 +272,14 @@ static void server_clear_jobs(GebrServer * server)
 //		gchar *server_address;
 //		gboolean is_job;
 //
-//		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_job_control->store), iter, JC_SERVER_ADDRESS, &server_address,
+//		gtk_tree_model_get(GTK_TREE_MODEL(gebr.job_control->store), iter, JC_SERVER_ADDRESS, &server_address,
 //				   JC_STRUCT, &job, JC_IS_JOB, &is_job, -1);
 //		if (strcmp(server_address, server->comm->address->str)) {
 //			g_free(server_address);
 //			return FALSE;	
 //		}
 //		if (!is_job)
-//			gtk_tree_store_remove(gebr.ui_job_control->store, iter);
+//			gtk_tree_store_remove(gebr.job_control->store, iter);
 //		else if (job != NULL)
 //			job_delete(job);
 //
@@ -287,7 +287,7 @@ static void server_clear_jobs(GebrServer * server)
 //		return FALSE;
 //	}
 //	/* delete all jobs at server */
-//	gebr_gui_gtk_tree_model_foreach_recursive(GTK_TREE_MODEL(gebr.ui_job_control->store),
+//	gebr_gui_gtk_tree_model_foreach_recursive(GTK_TREE_MODEL(gebr.job_control->store),
 //						  (GtkTreeModelForeachFunc)server_free_foreach_job, NULL); 
 }
 
