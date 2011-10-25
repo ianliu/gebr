@@ -28,11 +28,11 @@
 G_BEGIN_DECLS
 
 #define GEBR_TYPE_TASK			(gebr_task_get_type())
-#define GEBR_TASK(obj)			(G_TYPE_CHECK_INSTANCE_CAST ((obj), GEBR_TASK_TYPE, GebrTask))
-#define GEBR_TASK_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST ((klass), GEBR_TASK_TYPE, GebrTaskClass))
-#define GEBR_IS_TASK(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEBR_TASK_TYPE))
-#define GEBR_IS_TASK_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), GEBR_TASK_TYPE))
-#define GEBR_TASK_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), GEBR_TASK_TYPE, GebrTaskClass))
+#define GEBR_TASK(obj)			(G_TYPE_CHECK_INSTANCE_CAST ((obj), GEBR_TYPE_TASK, GebrTask))
+#define GEBR_TASK_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST ((klass), GEBR_TYPE_TASK, GebrTaskClass))
+#define GEBR_IS_TASK(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEBR_TYPE_TASK))
+#define GEBR_IS_TASK_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), GEBR_TYPE_TASK))
+#define GEBR_TASK_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), GEBR_TYPE_TASK, GebrTaskClass))
 
 typedef struct _GebrTask GebrTask;
 typedef struct _GebrTaskPriv GebrTaskPriv;
