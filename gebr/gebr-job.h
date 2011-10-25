@@ -44,7 +44,7 @@ struct _GebrJobClass {
 	GObjectClass parent_class;
 };
 
-GebrJob *gebr_job_new_with_id(GtkTreeStore  *store,
+GebrJob *gebr_job_new_with_id(GtkTreeModel  *model,
 			      GtkTextBuffer *buffer,
 			      const gchar   *rid,
 			      const gchar   *queue,

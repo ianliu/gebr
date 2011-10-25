@@ -32,7 +32,7 @@ struct _GebrJobPriv {
 	GtkTreeIter iter;
 	GString *output;
 	enum JobStatus status;
-	GtkTreeStore *store;
+	GtkTreeModel *model;
 	GtkTextBuffer *buffer;
 };
 
@@ -84,7 +84,7 @@ gebr_job_class_init(GebrJobClass *klass)
 
 /* Public methods {{{1 */
 GebrJob *
-gebr_job_new_with_id(GtkTreeStore  *store,
+gebr_job_new_with_id(GtkTreeModel  *model,
 		     GtkTextBuffer *buffer,
 		     const gchar   *rid,
 		     const gchar   *queue,
@@ -92,7 +92,7 @@ gebr_job_new_with_id(GtkTreeStore  *store,
 {
 	GebrJob *job = g_object_new(GEBR_TYPE_JOB, NULL);
 
-	job->priv->store = store;
+	job->priv->model = model;
 	job->priv->buffer = buffer;
 	job->priv->queue = g_strdup(queue);
 	job->priv->servers = g_strdup(servers);
@@ -278,9 +278,9 @@ gebr_job_change_task_status(GebrTask *task,
 		return;
 	}
 
-	GtkTreeModel *model = GTK_TREE_MODEL(job->priv->store);
-	GtkTreePath *path = gtk_tree_model_get_path(model, &job->priv->iter);
-	gtk_tree_model_row_changed(model, path, &job->priv->iter);
+	GtkTreePath *path = gtk_tree_model_get_path(job->priv->model, &job->priv->iter);
+	gtk_tree_model_row_changed(job->priv->model, path, &job->priv->iter);
+	gtk_tree_path_free(path);
 }
 
 const gchar *
@@ -357,7 +357,6 @@ gebr_job_close(GebrJob *job)
 	for (GList *i = job->priv->tasks; i; i = i->next)
 		gebr_task_close(i->data, job->priv->runid);
 
-	gtk_tree_store_remove(job->priv->store, &job->priv->iter);
 	g_object_unref(job);
 }
 
