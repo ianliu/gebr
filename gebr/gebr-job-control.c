@@ -784,12 +784,14 @@ static void time_column_data_func(GtkTreeViewColumn *tree_column,
 }
 
 void
-gebr_job_control_select_job(GebrJobControl *jc, const gchar *rid)
+gebr_job_control_select_job_by_rid(GebrJobControl *jc, const gchar *rid)
 {
-	GebrJob *job = gebr_job_control_find(jc, rid);
+	gebr_job_control_select_job(jc, gebr_job_control_find(jc, rid));
+}
 
-	g_debug("SELECT JOB: %p", job);
-
+void
+gebr_job_control_select_job(GebrJobControl *jc, GebrJob *job)
+{
 	if (job) {
 		GtkTreeModel *filter = gtk_tree_view_get_model(GTK_TREE_VIEW(jc->view));
 		GtkTreeIter *iter = gebr_job_get_iter(job), filter_iter;

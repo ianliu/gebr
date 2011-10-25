@@ -671,16 +671,17 @@ create_jobs_and_run(GebrCommRunner *runner)
 	void func(gpointer key, gpointer value, gpointer data) {
 		gchar *runid = key;
 		gchar *servers = ((GString *)value)->str;
-		gebr_job_new_with_id(GTK_TREE_MODEL(gebr.job_control->store),
-				     gebr.job_control->text_buffer,
-				     runid,
-				     runner->queue,
-				     servers);
+		GebrJob *job = gebr_job_new_with_id(GTK_TREE_MODEL(gebr.job_control->store),
+						    gebr.job_control->text_buffer,
+						    runid,
+						    runner->queue,
+						    servers);
+		gebr_job_control_add(gebr.job_control, job);
 		g_string_free((GString *)value, TRUE);
 
 		if (first) {
 			gebr_interface_change_tab(NOTEBOOK_PAGE_JOB_CONTROL);
-			gebr_job_control_select_job(gebr.job_control, runid);
+			gebr_job_control_select_job(gebr.job_control, job);
 			first = FALSE;
 		}
 	}

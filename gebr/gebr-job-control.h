@@ -57,8 +57,9 @@ GebrJobControl *gebr_job_control_new(void);
 
 void gebr_job_control_free(GebrJobControl *jc);
 
-void gebr_job_control_select_job(GebrJobControl *jc,
-				 const gchar *rid);
+void gebr_job_control_select_job(GebrJobControl *jc, GebrJob *job);
+
+void gebr_job_control_select_job_by_rid(GebrJobControl *jc, const gchar *rid);
 
 GtkWidget *gebr_job_control_get_widget(GebrJobControl *jc);
 
