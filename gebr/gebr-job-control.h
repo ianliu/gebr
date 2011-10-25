@@ -34,7 +34,7 @@ typedef struct _GebrJobControl GebrJobControl;
 typedef struct _GebrJobControlPriv GebrJobControlPriv;
 
 struct _GebrJobControl {
-	GtkTreeStore *store;
+	GtkListStore *store;
 	GtkWidget *view;
 
 	GtkWidget *label;

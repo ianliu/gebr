@@ -39,7 +39,6 @@ enum {
 	JC_SERVER_ADDRESS, /* for ordering */
 	JC_QUEUE_NAME,
 	JC_STRUCT, /* non-NULL if it is a job */
-	JC_VISIBLE,
 	JC_N_COLUMN
 };
 
@@ -74,62 +73,12 @@ static void on_toggled_more_details(GtkToggleButton *button,
 static void job_control_queue_by_func(gboolean (* func)(void));
 
 /* Private methods {{{1 */
-/*
- * gebr_jc_get_queue_group_iter:
- *
- * Fills @iter with the iterator corresponding to the line matching servers
- * group to @group and queue to @queue.
- */
-static void
-get_queue_group_iter(GtkTreeStore *store,
-		     const gchar  *queue,
-		     const gchar  *group,
-		     GtkTreeIter  *iter)
+static gboolean
+jobs_visible_func(GtkTreeModel *model,
+		  GtkTreeIter *iter,
+		  GebrJobControl *jc)
 {
-	GtkTreeIter it;
-	GtkTreeModel *model = GTK_TREE_MODEL(store);
-	gboolean valid = gtk_tree_model_get_iter_first(model, &it);
-
-	gboolean are_queues_equal(const gchar *queue1, const gchar *queue2)
-	{
-		if (g_strcmp0(queue1, queue2) == 0)
-			return TRUE;
-		if (gebr_get_queue_type(queue1) == AUTOMATIC_QUEUE
-		    && gebr_get_queue_type(queue2) == AUTOMATIC_QUEUE)
-			return TRUE;
-
-		return FALSE;
-	}
-
-	while (valid) {
-		gchar *g, *q;
-		gtk_tree_model_get(model, &it,
-				   JC_SERVER_ADDRESS, &g, /* GEBR_JC_GROUP */
-				   JC_QUEUE_NAME, &q, /* GEBR_JC_QUEUE */
-				   -1);
-
-		g_debug("------- comparing with %s Versus %s", q, queue);
-
-		if (g_strcmp0(group, g) == 0 && are_queues_equal(queue, q)) {
-			*iter = it;
-			g_free(g);
-			g_free(q);
-			return;
-		}
-
-		g_free(g);
-		g_free(q);
-		valid = gtk_tree_model_iter_next(model, &it);
-	}
-
-	g_debug("Created a father %s!", queue);
-
-	gtk_tree_store_append(store, iter, NULL);
-	gtk_tree_store_set(store, iter,
-			   JC_SERVER_ADDRESS, group,
-			   JC_QUEUE_NAME, queue,
-			   JC_VISIBLE, TRUE,
-			   -1);
+	return TRUE;
 }
 
 /* Public methods {{{1 */
@@ -154,11 +103,10 @@ gebr_job_control_new(void)
 	 * Left side
 	 */
 
-	jc->store = gtk_tree_store_new(JC_N_COLUMN,
+	jc->store = gtk_list_store_new(JC_N_COLUMN,
 				       G_TYPE_STRING,  /* JC_SERVER_ADDRESS */
 				       G_TYPE_STRING,  /* JC_QUEUE_NAME */
-				       G_TYPE_POINTER, /* JC_STRUCT */
-				       G_TYPE_BOOLEAN);/* JC_VISIBLE */
+				       G_TYPE_POINTER);/* JC_STRUCT */
 
 	GtkTreeModel *filter = gtk_tree_model_filter_new(GTK_TREE_MODEL(jc->store), NULL);
 
@@ -166,7 +114,9 @@ gebr_job_control_new(void)
 	treeview = GTK_TREE_VIEW(gtk_builder_get_object(builder, "treeview_jobs"));
 	gtk_tree_view_set_model(treeview, filter);
 
-	gtk_tree_model_filter_set_visible_column(GTK_TREE_MODEL_FILTER(filter), JC_VISIBLE);
+	gtk_tree_model_filter_set_visible_func(GTK_TREE_MODEL_FILTER(filter),
+					       (GtkTreeModelFilterVisibleFunc)jobs_visible_func,
+					       jc, NULL);
 	g_object_unref(filter);
 	
 	jc->view = GTK_WIDGET(treeview);
@@ -261,17 +211,8 @@ gebr_job_control_get_widget(GebrJobControl *jc)
 void
 gebr_job_control_add(GebrJobControl *jc, GebrJob *job)
 {
-	GtkTreeIter parent;
-	get_queue_group_iter(jc->store,
-			     gebr_job_get_queue(job),
-			     gebr_job_get_servers(job),
-			     &parent);
-
-	gtk_tree_store_append(jc->store, gebr_job_get_iter(job), &parent);
-	gtk_tree_store_set(jc->store, gebr_job_get_iter(job),
-			   JC_STRUCT, job,
-			   JC_VISIBLE, TRUE,
-			   -1);
+	gtk_list_store_append(jc->store, gebr_job_get_iter(job));
+	gtk_list_store_set(jc->store, gebr_job_get_iter(job), JC_STRUCT, job, -1);
 }
 
 GebrJob *
@@ -751,30 +692,6 @@ static void job_control_queue_by_func(gboolean (* func)(void))
 
 	func();
 }
-
-#if 0
-static void
-on_tree_store_insert_delete(GtkTreeModel *model,
-                            GtkTreePath *path)
-{
-	GtkTreeIter iter;
-	GtkTreePath *copy = gtk_tree_path_copy(path);
-
-	if (gtk_tree_path_get_depth(copy) == 2)
-		gtk_tree_path_up(copy);
-
-	if (!gtk_tree_model_get_iter(model, &iter, copy))
-		goto free_copy;
-
-	gtk_tree_store_set(GTK_TREE_STORE(model), &iter,
-	                   JC_VISIBLE, gtk_tree_model_iter_has_child(model, &iter),
-	                   -1);
-
-free_copy:
-	gtk_tree_path_free(copy);
-}
-
-#endif
 
 static void
 on_toggled_more_details(GtkToggleButton *button,
