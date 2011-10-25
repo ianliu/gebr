@@ -42,6 +42,10 @@ struct _GebrJob {
 
 struct _GebrJobClass {
 	GObjectClass parent_class;
+
+	void (*output) (GebrJob     *job,
+			GebrTask    *task,
+			const gchar *output);
 };
 
 GebrJob *gebr_job_new_with_id(GtkTreeModel  *model,

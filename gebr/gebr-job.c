@@ -20,6 +20,7 @@
 #include <glib/gi18n.h>
 
 #include "gebr.h"
+#include "gebr-marshal.h"
 
 struct _GebrJobPriv {
 	GList *tasks;
@@ -35,6 +36,13 @@ struct _GebrJobPriv {
 	GtkTreeModel *model;
 	GtkTextBuffer *buffer;
 };
+
+enum {
+	OUTPUT,
+	N_SIGNALS
+};
+
+static guint signals[N_SIGNALS] = { 0, };
 
 static void gebr_job_append_task_output(GebrTask *task,
 					const gchar *output,
@@ -78,6 +86,15 @@ gebr_job_class_init(GebrJobClass *klass)
 {
 	GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
 	gobject_class->finalize = gebr_job_finalize;
+
+	signals[OUTPUT] =
+		g_signal_new("output",
+			     G_OBJECT_CLASS_TYPE(gobject_class),
+			     G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
+			     G_STRUCT_OFFSET(GebrJobClass, output),
+			     NULL, NULL,
+			     gebr_cclosure_marshal_VOID__OBJECT_STRING,
+			     G_TYPE_NONE, 1, GEBR_TYPE_TASK, G_TYPE_STRING);
 
 	g_type_class_add_private(klass, sizeof(GebrJobPriv));
 }
@@ -164,34 +181,11 @@ gebr_job_append_task_output(GebrTask *task,
                             const gchar *output,
                             GebrJob *job)
 {
-	GtkTextIter iter;
-	const gchar *text;
-	GtkTextMark *mark;
-
-	gint frac, total;
-
-	gebr_task_get_fraction(task, &frac, &total);
-	g_debug("==========Output signal from %d of %d: received %s", frac, total, output);
-
-	if (!strlen(output))
+	if (!*output)
 		return;
 
-	if (!job->priv->output->len) {
-		g_string_printf(job->priv->output, "\n%s\n%s", _("Output:"), output);
-		text = job->priv->output->str;
-	} else {
-		g_string_append(job->priv->output, output);
-		text = output;
-	}
-
-	if (job_is_active(job)) {
-		gtk_text_buffer_get_end_iter(job->priv->buffer, &iter);
-		gtk_text_buffer_insert(job->priv->buffer, &iter, text, strlen(text));
-		if (gebr.config.job_log_auto_scroll) {
-			mark = gtk_text_buffer_get_mark(job->priv->buffer, "end");
-			gtk_text_view_scroll_mark_onscreen(GTK_TEXT_VIEW(gebr.job_control->text_view), mark);
-		}
-	}
+	g_string_append(job->priv->output, output);
+	g_signal_emit(job, signals[OUTPUT], 0, task, output);
 }
 
 void
