@@ -82,16 +82,6 @@ gebr_job_class_init(GebrJobClass *klass)
 	g_type_class_add_private(klass, sizeof(GebrJobPriv));
 }
 
-static void
-insert_into_model(GebrJob *job)
-{
-	gtk_tree_store_append(job->priv->store, &job->priv->iter, NULL);
-	gtk_tree_store_set(job->priv->store, &job->priv->iter,
-			   JC_STRUCT, job,
-			   JC_VISIBLE, TRUE,
-			   -1);
-}
-
 /* Public methods {{{1 */
 GebrJob *
 gebr_job_new_with_id(GtkTreeStore  *store,
@@ -109,13 +99,6 @@ gebr_job_new_with_id(GtkTreeStore  *store,
 	job->priv->runid = g_strdup(rid);
 
 	return job;
-}
-
-void
-gebr_job_show(GebrJob *job)
-{
-	g_return_if_fail(job->priv->queue != NULL || job->priv->servers != NULL);
-	insert_into_model(job);
 }
 
 const gchar *
@@ -163,34 +146,6 @@ enum JobStatus
 gebr_job_get_status(GebrJob *job)
 {
 	return job->priv->status;
-}
-
-GebrJob *
-gebr_job_find(const gchar *rid)
-{
-	GebrJob *job = NULL;
-
-	g_return_val_if_fail(rid != NULL, NULL);
-
-	gboolean job_find_foreach_func(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data)
-	{
-		GebrJob *i;
-
-		gtk_tree_model_get(model, iter, JC_STRUCT, &i, -1);
-
-		if (!i)
-			return FALSE;
-
-		if (g_strcmp0(gebr_job_get_id(i), rid) == 0) {
-			job = i;
-			return TRUE;
-		}
-		return FALSE;
-	}
-
-	gtk_tree_model_foreach(GTK_TREE_MODEL(gebr.ui_job_control->store), job_find_foreach_func, NULL);
-
-	return job;
 }
 
 static gboolean
@@ -334,10 +289,10 @@ gebr_job_get_id(GebrJob *job)
 	return job->priv->runid;
 }
 
-GtkTreeIter
+GtkTreeIter *
 gebr_job_get_iter(GebrJob *job)
 {
-	return job->priv->iter;
+	return &job->priv->iter;
 }
 
 const gchar *

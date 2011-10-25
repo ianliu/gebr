@@ -54,7 +54,7 @@ GType gebr_job_get_type() G_GNUC_CONST;
 
 void gebr_job_show(GebrJob *job);
 
-GtkTreeIter gebr_job_get_iter(GebrJob *job);
+GtkTreeIter *gebr_job_get_iter(GebrJob *job);
 
 const gchar *gebr_job_get_servers(GebrJob *job);
 

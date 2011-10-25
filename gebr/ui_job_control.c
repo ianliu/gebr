@@ -32,6 +32,17 @@ struct _GebrJobControlPriv {
 	GtkWidget *widget;
 };
 
+/*
+ * Tree view fields 
+ */
+enum {
+	JC_SERVER_ADDRESS, /* for ordering */
+	JC_QUEUE_NAME,
+	JC_STRUCT, /* non-NULL if it is a job */
+	JC_VISIBLE,
+	JC_N_COLUMN
+};
+
 /* Prototypes {{{1 */
 static void icon_column_data_func(GtkTreeViewColumn *tree_column,
 				  GtkCellRenderer *cell,
@@ -73,7 +84,66 @@ static void on_tree_store_insert_delete(GtkTreeModel *model,
                                         GtkTreePath *path);
 #endif
 
-/* Public functions {{{1 */
+/* Private methods {{{1 */
+/*
+ * gebr_jc_get_queue_group_iter:
+ *
+ * Fills @iter with the iterator corresponding to the line matching servers
+ * group to @group and queue to @queue.
+ */
+static void
+get_queue_group_iter(GtkTreeStore *store,
+		     const gchar  *queue,
+		     const gchar  *group,
+		     GtkTreeIter  *iter)
+{
+	GtkTreeIter it;
+	GtkTreeModel *model = GTK_TREE_MODEL(store);
+	gboolean valid = gtk_tree_model_get_iter_first(model, &it);
+
+	gboolean are_queues_equal(const gchar *queue1, const gchar *queue2)
+	{
+		if (g_strcmp0(queue1, queue2) == 0)
+			return TRUE;
+		if (gebr_get_queue_type(queue1) == AUTOMATIC_QUEUE
+		    && gebr_get_queue_type(queue2) == AUTOMATIC_QUEUE)
+			return TRUE;
+
+		return FALSE;
+	}
+
+	while (valid) {
+		gchar *g, *q;
+		gtk_tree_model_get(model, &it,
+				   JC_SERVER_ADDRESS, &g, /* GEBR_JC_GROUP */
+				   JC_QUEUE_NAME, &q, /* GEBR_JC_QUEUE */
+				   -1);
+
+		g_debug("------- comparing with %s Versus %s", q, queue);
+
+		if (g_strcmp0(group, g) == 0 && are_queues_equal(queue, q)) {
+			*iter = it;
+			g_free(g);
+			g_free(q);
+			return;
+		}
+
+		g_free(g);
+		g_free(q);
+		valid = gtk_tree_model_iter_next(model, &it);
+	}
+
+	g_debug("Created a father %s!", queue);
+
+	gtk_tree_store_append(store, iter, NULL);
+	gtk_tree_store_set(store, iter,
+			   JC_SERVER_ADDRESS, group,
+			   JC_QUEUE_NAME, queue,
+			   JC_VISIBLE, TRUE,
+			   -1);
+}
+
+/* Public methods {{{1 */
 GebrJobControl *
 gebr_job_control_new(void)
 {
@@ -198,6 +268,51 @@ gebr_job_control_get_widget(GebrJobControl *jc)
 {
 	return jc->priv->widget;
 }
+
+void
+gebr_job_control_add(GebrJobControl *jc, GebrJob *job)
+{
+	GtkTreeIter parent;
+	get_queue_group_iter(jc->store,
+			     gebr_job_get_queue(job),
+			     gebr_job_get_servers(job),
+			     &parent);
+
+	gtk_tree_store_append(jc->store, gebr_job_get_iter(job), &parent);
+	gtk_tree_store_set(jc->store, gebr_job_get_iter(job),
+			   JC_STRUCT, job,
+			   JC_VISIBLE, TRUE,
+			   -1);
+}
+
+GebrJob *
+gebr_job_control_find(GebrJobControl *jc, const gchar *rid)
+{
+	GebrJob *job = NULL;
+
+	g_return_val_if_fail(rid != NULL, NULL);
+
+	gboolean job_find_foreach_func(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data)
+	{
+		GebrJob *i;
+
+		gtk_tree_model_get(model, iter, JC_STRUCT, &i, -1);
+
+		if (!i)
+			return FALSE;
+
+		if (g_strcmp0(gebr_job_get_id(i), rid) == 0) {
+			job = i;
+			return TRUE;
+		}
+		return FALSE;
+	}
+
+	gtk_tree_model_foreach(GTK_TREE_MODEL(jc->store), job_find_foreach_func, NULL);
+
+	return job;
+}
+
 
 #if 0
 gboolean job_control_save(void)
@@ -685,58 +800,6 @@ on_toggled_more_details(GtkToggleButton *button,
 	gtk_widget_set_visible(GTK_WIDGET(details), TRUE);
 }
 
-void
-gebr_jc_get_queue_group_iter(GtkTreeStore *store,
-			     const gchar  *queue,
-			     const gchar  *group,
-			     GtkTreeIter  *iter)
-{
-	GtkTreeIter it;
-	GtkTreeModel *model = GTK_TREE_MODEL(store);
-	gboolean valid = gtk_tree_model_get_iter_first(model, &it);
-
-	gboolean are_queues_equal(const gchar *queue1, const gchar *queue2)
-	{
-		if (g_strcmp0(queue1, queue2) == 0)
-			return TRUE;
-		if (gebr_get_queue_type(queue1) == AUTOMATIC_QUEUE
-		    && gebr_get_queue_type(queue2) == AUTOMATIC_QUEUE)
-			return TRUE;
-
-		return FALSE;
-	}
-
-	while (valid) {
-		gchar *g, *q;
-		gtk_tree_model_get(model, &it,
-				   JC_SERVER_ADDRESS, &g, /* GEBR_JC_GROUP */
-				   JC_QUEUE_NAME, &q, /* GEBR_JC_QUEUE */
-				   -1);
-
-		g_debug("------- comparing with %s Versus %s", q, queue);
-
-		if (g_strcmp0(group, g) == 0 && are_queues_equal(queue, q)) {
-			*iter = it;
-			g_free(g);
-			g_free(q);
-			return;
-		}
-
-		g_free(g);
-		g_free(q);
-		valid = gtk_tree_model_iter_next(model, &it);
-	}
-
-	g_debug("Created a father %s!", queue);
-
-	gtk_tree_store_append(store, iter, NULL);
-	gtk_tree_store_set(store, iter,
-			   JC_SERVER_ADDRESS, group,
-			   JC_QUEUE_NAME, queue,
-			   JC_VISIBLE, TRUE,
-			   -1);
-}
-
 static void
 icon_column_data_func(GtkTreeViewColumn *tree_column,
 		      GtkCellRenderer *cell,
@@ -817,15 +880,15 @@ static void time_column_data_func(GtkTreeViewColumn *tree_column,
 void
 gebr_job_control_select_job(GebrJobControl *jc, const gchar *rid)
 {
-	GebrJob *job = gebr_job_find(rid);
+	GebrJob *job = gebr_job_control_find(jc, rid);
 
 	g_debug("SELECT JOB: %p", job);
 
 	if (job) {
 		GtkTreeModel *filter = gtk_tree_view_get_model(GTK_TREE_VIEW(jc->view));
-		GtkTreeIter iter = gebr_job_get_iter(job), filter_iter;
+		GtkTreeIter *iter = gebr_job_get_iter(job), filter_iter;
 
-		if (!gtk_tree_model_filter_convert_child_iter_to_iter(GTK_TREE_MODEL_FILTER(filter), &filter_iter, &iter))
+		if (!gtk_tree_model_filter_convert_child_iter_to_iter(GTK_TREE_MODEL_FILTER(filter), &filter_iter, iter))
 			return;
 
 		gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(jc->view), &filter_iter);

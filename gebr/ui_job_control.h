@@ -15,14 +15,11 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * \file ui_job_control.c Responsible for UI for job management.
- */
-
 #ifndef __GEBR_JOB_CONTROL_H__
 #define __GEBR_JOB_CONTROL_H__
 
 #include <gtk/gtk.h>
+#include "gebr-job.h"
 
 G_BEGIN_DECLS
 
@@ -31,17 +28,6 @@ enum JobControlSelectionType {
 	JobControlJobQueueSelection,
 	JobControlJobSelection,
 	JobControlQueueSelection,
-};
-
-/**
- * Store fields 
- */
-enum {
-	JC_SERVER_ADDRESS, /* for ordering */
-	JC_QUEUE_NAME,
-	JC_STRUCT, /* non-NULL if it is a job */
-	JC_VISIBLE,
-	JC_N_COLUMN
 };
 
 typedef struct _GebrJobControl GebrJobControl;
@@ -76,6 +62,10 @@ void gebr_job_control_select_job(GebrJobControl *jc,
 
 GtkWidget *gebr_job_control_get_widget(GebrJobControl *jc);
 
+void gebr_job_control_add(GebrJobControl *jc, GebrJob *job);
+
+GebrJob *gebr_job_control_find(GebrJobControl *jc, const gchar *rid);
+
 /**
  */
 gboolean job_control_save(void);
@@ -95,17 +85,6 @@ gboolean job_control_stop(void);
 void job_control_queue_stop(void);
 void job_control_queue_save(void);
 void job_control_queue_close(void);
-
-/**
- * gebr_jc_get_queue_group_iter:
- *
- * Fills @iter with the iterator corresponding to the line matching servers
- * group to @group and queue to @queue.
- */
-void gebr_jc_get_queue_group_iter(GtkTreeStore *store,
-				  const gchar  *queue,
-				  const gchar  *group,
-				  GtkTreeIter  *iter);
 
 /**
  * Get selected job/queue and put it at \p iter.

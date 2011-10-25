@@ -265,7 +265,7 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 			GebrTask *task = gebr_task_new(server, run_id->str, frac->str);
 			gebr_task_init_details(task, status, start_date, finish_date, issues, cmd_line, queue, moab_jid);
 
-			job = gebr_job_find(run_id->str);
+			job = gebr_job_control_find(gebr.ui_job_control, run_id->str);
 
 			g_debug("Job found is: %p", job);
 
@@ -280,7 +280,6 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 					const gchar *aa = *(gchar * const *)a;
 					const gchar *bb = *(gchar * const *)b;
 
-					g_debug("Comparing %s to %s", aa, bb);
 					if (g_strcmp0(aa, "127.0.0.1") == 0)
 						return -1;
 
@@ -298,7 +297,7 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 							   run_id->str, queue->str, servers_str);
 
 				gebr_job_set_title(job, title->str);
-				gebr_job_show(job);
+				gebr_job_control_add(gebr.ui_job_control, job);
 				g_free(servers_str);
 			}
 
