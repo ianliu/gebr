@@ -607,11 +607,11 @@ void gebr_setup_ui(void)
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
 					 (gtk_action_group_get_action(gebr.action_group_job_control, "job_control_stop"))), -1);
 
-	gebr.ui_job_control = job_control_setup_ui();
+	gebr.ui_job_control = gebr_job_control_new();
 
 	vbox = gtk_vbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), gebr.ui_job_control->widget, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), gebr_job_control_get_widget(gebr.ui_job_control), TRUE, TRUE, 0);
 	gtk_notebook_append_page(GTK_NOTEBOOK(gebr.notebook), vbox, gtk_label_new(_("Job Control")));
 	gtk_widget_show_all(vbox);
 

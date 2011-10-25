@@ -28,10 +28,11 @@
 #include "gebr.h"
 #include "gebr-job.h"
 
-/*
- * Prototypes
- */
+struct _GebrJobControlPriv {
+	GtkWidget *widget;
+};
 
+/* Prototypes {{{1 */
 static void icon_column_data_func(GtkTreeViewColumn *tree_column,
 				  GtkCellRenderer *cell,
 				  GtkTreeModel *tree_model,
@@ -72,36 +73,35 @@ static void on_tree_store_insert_delete(GtkTreeModel *model,
                                         GtkTreePath *path);
 #endif
 
-/*
- * Public functions.
- */
-
-GebrJobControl *job_control_setup_ui(void)
+/* Public functions {{{1 */
+GebrJobControl *
+gebr_job_control_new(void)
 {
-	GebrJobControl *ui_job_control;
+	GebrJobControl *jc;
 
 	GtkTreeViewColumn *col;
 	GtkCellRenderer *renderer;
 	GtkBuilder *builder;
 
-	ui_job_control = g_new(GebrJobControl, 1);
+	jc = g_new(GebrJobControl, 1);
+	jc->priv = g_new0(GebrJobControlPriv, 1);
 
 	builder = gtk_builder_new();
 	gtk_builder_add_from_file(builder, GEBR_GLADE_DIR"/gebr-job-control.glade", NULL);
 
-	ui_job_control->widget = GTK_WIDGET(gtk_builder_get_object(builder, "top-level-widget"));
+	jc->priv->widget = GTK_WIDGET(gtk_builder_get_object(builder, "top-level-widget"));
 
 	/*
 	 * Left side
 	 */
 
-	ui_job_control->store = gtk_tree_store_new(JC_N_COLUMN,
-	                                           G_TYPE_STRING,  /* JC_SERVER_ADDRESS */
-						   G_TYPE_STRING,  /* JC_QUEUE_NAME */
-						   G_TYPE_POINTER, /* JC_STRUCT */
-						   G_TYPE_BOOLEAN);/* JC_VISIBLE */
+	jc->store = gtk_tree_store_new(JC_N_COLUMN,
+				       G_TYPE_STRING,  /* JC_SERVER_ADDRESS */
+				       G_TYPE_STRING,  /* JC_QUEUE_NAME */
+				       G_TYPE_POINTER, /* JC_STRUCT */
+				       G_TYPE_BOOLEAN);/* JC_VISIBLE */
 
-	GtkTreeModel *filter = gtk_tree_model_filter_new(GTK_TREE_MODEL(ui_job_control->store), NULL);
+	GtkTreeModel *filter = gtk_tree_model_filter_new(GTK_TREE_MODEL(jc->store), NULL);
 
 	GtkTreeView *treeview;
 	treeview = GTK_TREE_VIEW(gtk_builder_get_object(builder, "treeview_jobs"));
@@ -110,14 +110,14 @@ GebrJobControl *job_control_setup_ui(void)
 	gtk_tree_model_filter_set_visible_column(GTK_TREE_MODEL_FILTER(filter), JC_VISIBLE);
 	g_object_unref(filter);
 	
-	ui_job_control->view = GTK_WIDGET(treeview);
+	jc->view = GTK_WIDGET(treeview);
 
-	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_job_control->view)),
+	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(jc->view)),
 				    GTK_SELECTION_MULTIPLE);
 
-	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(ui_job_control->view), FALSE);
-	g_signal_connect(gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_job_control->view)), "changed",
-			 G_CALLBACK(job_control_on_cursor_changed), ui_job_control);
+	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(jc->view), FALSE);
+	g_signal_connect(gtk_tree_view_get_selection(GTK_TREE_VIEW(jc->view)), "changed",
+			 G_CALLBACK(job_control_on_cursor_changed), jc);
 
 	col = GTK_TREE_VIEW_COLUMN(gtk_builder_get_object(builder, "tv_column"));
 
@@ -142,14 +142,13 @@ GebrJobControl *job_control_setup_ui(void)
 	gtk_toggle_button_set_active(details, FALSE);
 
 	/* Text view of output*/
-	ui_job_control->text_buffer = gtk_text_buffer_new(NULL);
-	gtk_text_buffer_get_end_iter(ui_job_control->text_buffer, &iter_end);
-	gtk_text_buffer_create_mark(ui_job_control->text_buffer, "end", &iter_end, FALSE);
+	jc->text_buffer = gtk_text_buffer_new(NULL);
+	gtk_text_buffer_get_end_iter(jc->text_buffer, &iter_end);
+	gtk_text_buffer_create_mark(jc->text_buffer, "end", &iter_end, FALSE);
 
 	text_view = GTK_WIDGET(gtk_builder_get_object(builder, "textview_output"));
-	gtk_text_view_set_buffer(GTK_TEXT_VIEW(text_view), ui_job_control->text_buffer);
+	gtk_text_view_set_buffer(GTK_TEXT_VIEW(text_view), jc->text_buffer);
 
-	//g_signal_connect(text_view, "populate-popup", G_CALLBACK(on_text_view_populate_popup), ui_job_control);
 	g_object_set(G_OBJECT(text_view), "editable", FALSE, "cursor-visible", FALSE, NULL);
 	{
 		PangoFontDescription *font;
@@ -161,17 +160,16 @@ GebrJobControl *job_control_setup_ui(void)
 		pango_font_description_free(font);
 	}
 
-	ui_job_control->text_view = text_view;
+	jc->text_view = text_view;
 
 	/* Text view of command line */
-	ui_job_control->cmd_buffer = gtk_text_buffer_new(NULL);
-	gtk_text_buffer_get_end_iter(ui_job_control->cmd_buffer, &iter_end);
-	gtk_text_buffer_create_mark(ui_job_control->cmd_buffer, "end", &iter_end, FALSE);
+	jc->cmd_buffer = gtk_text_buffer_new(NULL);
+	gtk_text_buffer_get_end_iter(jc->cmd_buffer, &iter_end);
+	gtk_text_buffer_create_mark(jc->cmd_buffer, "end", &iter_end, FALSE);
 
 	text_view = GTK_WIDGET(gtk_builder_get_object(builder, "textview_command_line"));
-	gtk_text_view_set_buffer(GTK_TEXT_VIEW(text_view), ui_job_control->cmd_buffer);
+	gtk_text_view_set_buffer(GTK_TEXT_VIEW(text_view), jc->cmd_buffer);
 
-//	g_signal_connect(text_view, "populate-popup", G_CALLBACK(on_text_view_populate_popup), ui_job_control);
 	g_object_set(G_OBJECT(text_view), "editable", FALSE, "cursor-visible", FALSE, NULL);
 	{
 		PangoFontDescription *font;
@@ -183,44 +181,22 @@ GebrJobControl *job_control_setup_ui(void)
 		pango_font_description_free(font);
 	}
 
-	ui_job_control->cmd_view = text_view;
+	jc->cmd_view = text_view;
 
+	return jc;
+}
 
-//	vbox = gtk_vbox_new(FALSE, 0);
-//	gtk_paned_pack2(GTK_PANED(hpanel), vbox, TRUE, TRUE);
-//
-//	ui_job_control->label = gtk_label_new("");
-//	gtk_box_pack_start(GTK_BOX(vbox), ui_job_control->label, FALSE, TRUE, 0);
-//
-//	scrolled_window = gtk_scrolled_window_new(NULL, NULL);
-//	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window), GTK_POLICY_AUTOMATIC,
-//				       GTK_POLICY_AUTOMATIC);
-//	gtk_box_pack_end(GTK_BOX(vbox), scrolled_window, TRUE, TRUE, 0);
-//
-//	ui_job_control->text_buffer = gtk_text_buffer_new(NULL);
-//	ui_job_control->issues_title_tag = gtk_text_buffer_create_tag(ui_job_control->text_buffer, "issues_title",
-//								      "invisible", TRUE, NULL);
-//	gtk_text_buffer_get_end_iter(ui_job_control->text_buffer, &iter_end);
-//	gtk_text_buffer_create_mark(ui_job_control->text_buffer, "end", &iter_end, FALSE);
-//	text_view = gtk_text_view_new_with_buffer(ui_job_control->text_buffer);
-//	//g_signal_connect(text_view, "populate-popup", G_CALLBACK(on_text_view_populate_popup), ui_job_control);
-//	g_object_set(G_OBJECT(text_view), "editable", FALSE, "cursor-visible", FALSE, NULL);
-//	{
-//		PangoFontDescription *font;
-//
-//		font = pango_font_description_new();
-//		pango_font_description_set_family(font, "monospace");
-//		gtk_widget_modify_font(text_view, font);
-//
-//		pango_font_description_free(font);
-//	}
-//	ui_job_control->text_view = text_view;
-//	gtk_container_add(GTK_CONTAINER(scrolled_window), text_view);
-	
-	//gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(ui_job_control->view),
-	//					  (GebrGuiGtkPopupCallback) job_control_popup_menu, ui_job_control);
+void
+gebr_job_control_free(GebrJobControl *jc)
+{
+	g_free(jc->priv);
+	g_free(jc);
+}
 
-	return ui_job_control;
+GtkWidget *
+gebr_job_control_get_widget(GebrJobControl *jc)
+{
+	return jc->priv->widget;
 }
 
 #if 0

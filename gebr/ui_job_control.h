@@ -19,8 +19,8 @@
  * \file ui_job_control.c Responsible for UI for job management.
  */
 
-#ifndef __UI_JOB_CONTROL_H
-#define __UI_JOB_CONTROL_H
+#ifndef __GEBR_JOB_CONTROL_H__
+#define __GEBR_JOB_CONTROL_H__
 
 #include <gtk/gtk.h>
 
@@ -44,9 +44,10 @@ enum {
 	JC_N_COLUMN
 };
 
-typedef struct _GebrJobControl {
-	GtkWidget *widget;
+typedef struct _GebrJobControl GebrJobControl;
+typedef struct _GebrJobControlPriv GebrJobControlPriv;
 
+struct _GebrJobControl {
 	GtkTreeStore *store;
 	GtkWidget *view;
 
@@ -57,17 +58,23 @@ typedef struct _GebrJobControl {
 
 	GtkWidget *cmd_view;
 	GtkTextBuffer *cmd_buffer;
-} GebrJobControl;
+
+	GebrJobControlPriv *priv;
+};
+
+/**
+ * gebr_job_control_new:
+ *
+ * Creates the job control page. Free with gebr_job_control_free().
+ */
+GebrJobControl *gebr_job_control_new(void);
+
+void gebr_job_control_free(GebrJobControl *jc);
 
 void gebr_job_control_select_job(GebrJobControl *jc,
 				 const gchar *rid);
 
-/**
- * Assembly the job control page.
- * Return:
- * The structure containing relevant data.
- */
-GebrJobControl *job_control_setup_ui(void);
+GtkWidget *gebr_job_control_get_widget(GebrJobControl *jc);
 
 /**
  */
@@ -84,10 +91,6 @@ void job_control_clear(gboolean force);
 /**
  */
 gboolean job_control_stop(void);
-
-/*
- */
-void job_control_selected(void);
 
 void job_control_queue_stop(void);
 void job_control_queue_save(void);
@@ -112,4 +115,5 @@ void gebr_jc_get_queue_group_iter(GtkTreeStore *store,
 gboolean job_control_get_selected(GtkTreeIter * iter, enum JobControlSelectionType check_type);
 
 G_END_DECLS
-#endif				//__UI_JOB_CONTROL_H
+
+#endif /* __GEBR_JOB_CONTROL_H__ */
