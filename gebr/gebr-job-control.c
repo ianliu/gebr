@@ -732,18 +732,79 @@ gebr_job_control_select_job(GebrJobControl *jc, GebrJob *job)
 }
 
 static void
+gebr_jc_update_status_and_time(GebrJobControl *jc,
+                               GebrJob *job)
+{
+	enum JobStatus status = gebr_job_get_status(job);
+
+	const gchar *start_date = gebr_job_get_start_date(job);
+	const gchar *finish_date = gebr_job_get_finish_date(job);
+	GString *start = g_string_new(NULL);
+	GString *finish = g_string_new(NULL);
+
+	/* start date (may have failed, never started) */
+	if (start_date && strlen(start_date))
+		g_string_append_printf(start, "%s %s", _("Started at"),
+		                       gebr_localized_date(start_date));
+
+	/* finish date */
+	if (finish_date && strlen(finish_date))
+		g_string_append_printf(finish, "%s %s", status == JOB_STATUS_FINISHED ?
+				       _("Finished at") : _("Canceled at"),
+				       gebr_localized_date(finish_date));
+
+	GtkImage *img = GTK_IMAGE(gtk_builder_get_object(jc->priv->builder, "status_image"));
+	GtkLabel *subheader = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "subheader_label"));
+	GtkButton *queued_button = GTK_BUTTON(gtk_builder_get_object(jc->priv->builder, "subheader_button"));
+	GtkLabel *details_start_date = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "detail_start_date"));
+	gtk_widget_hide(GTK_WIDGET(queued_button));
+
+	if (status == JOB_STATUS_FINISHED) {
+		gtk_image_set_from_stock(img, GTK_STOCK_APPLY, GTK_ICON_SIZE_DIALOG);
+		gtk_label_set_text(subheader, finish->str);
+		gtk_label_set_text(details_start_date, start->str);
+	}
+
+	else if (status == JOB_STATUS_RUNNING) {
+		gtk_image_set_from_stock(img, GTK_STOCK_EXECUTE, GTK_ICON_SIZE_DIALOG);
+		gtk_widget_hide(GTK_WIDGET(subheader));
+		gtk_label_set_text(details_start_date, start->str);
+	}
+
+	else if (status == JOB_STATUS_FAILED || status == JOB_STATUS_CANCELED) {
+		gtk_image_set_from_stock(img, GTK_STOCK_CANCEL, GTK_ICON_SIZE_DIALOG);
+		gtk_label_set_text(subheader, finish->str);
+		gtk_label_set_text(details_start_date, start->str);
+	}
+
+	else if (status == JOB_STATUS_QUEUED) {
+		gtk_image_set_from_stock(img, "chronometer", GTK_ICON_SIZE_DIALOG);
+		gtk_widget_show(GTK_WIDGET(queued_button));
+	}
+
+	g_string_free(start, FALSE);
+	g_string_free(finish, FALSE);
+}
+
+static void
 gebr_job_control_load_details(GebrJobControl *jc,
 			      GebrJob *job)
 {
 	g_return_if_fail(job != NULL);
 
-	enum JobStatus status = gebr_job_get_status(job);
-	const gchar *start_date = gebr_job_get_start_date(job);
-	const gchar *finish_date = gebr_job_get_finish_date(job);
 	GString *info = g_string_new("");
 	GString *info_cmd = g_string_new("");
 	GtkTextIter end_iter;
 	GtkTextIter end_iter_cmd;
+
+	gebr_jc_update_status_and_time(jc, job);
+
+	GtkLabel *label = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "header_label"));
+	const gchar *title = gebr_job_get_title(job);
+	gchar *markup;
+	markup = g_markup_printf_escaped ("<span size=\"large\"><b>%s</b></span>", title);
+	gtk_label_set_markup (label, markup);
+	g_free (markup);
 
 	gtk_text_buffer_set_text(jc->text_buffer, "", 0);
 	gtk_text_buffer_set_text(jc->cmd_buffer, "", 0);
@@ -753,25 +814,15 @@ gebr_job_control_load_details(GebrJobControl *jc,
 	g_string_append_printf(info_cmd, "\n%s\n%s\n", _("Command line:"), cmdline);
 	g_free(cmdline);
 
-	/* start date (may have failed, never started) */
-	if (start_date && strlen(start_date))
-		g_string_append_printf(info, "\n%s %s\n", _("Start date:"),
-				       gebr_localized_date(start_date));
+	gtk_text_buffer_get_end_iter(jc->cmd_buffer, &end_iter_cmd);
+	gtk_text_buffer_insert(jc->cmd_buffer, &end_iter_cmd, info_cmd->str, info_cmd->len);
 
 	/* output */
 	g_string_append(info, gebr_job_get_output(job));
 
-	/* finish date */
-	if (finish_date && strlen(finish_date))
-		g_string_append_printf(info, "\n%s %s",
-				       status == JOB_STATUS_FINISHED ? _("Finish date:") : _("Cancel date:"),
-				       gebr_localized_date(finish_date));
-
 	gtk_text_buffer_get_end_iter(jc->text_buffer, &end_iter);
 	gtk_text_buffer_insert(jc->text_buffer, &end_iter, info->str, info->len);
 
-	gtk_text_buffer_get_end_iter(jc->cmd_buffer, &end_iter_cmd);
-	gtk_text_buffer_insert(jc->cmd_buffer, &end_iter_cmd, info_cmd->str, info_cmd->len);
 
 	/* frees */
 	g_string_free(info, TRUE);
