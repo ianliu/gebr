@@ -22,25 +22,35 @@
 
 #include "gebr-task.h"
 
+#define GEBR_TYPE_JOB			(gebr_job_get_type())
+#define GEBR_JOB(obj)			(G_TYPE_CHECK_INSTANCE_CAST ((obj), GEBR_TYPE_JOB, GebrJob))
+#define GEBR_JOB_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST ((klass), GEBR_TYPE_JOB, GebrJobClass))
+#define GEBR_IS_JOB(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEBR_TYPE_JOB))
+#define GEBR_IS_JOB_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), GEBR_TYPE_JOB))
+#define GEBR_JOB_GET_CLASS(obj)		(G_TYPE_INSTANCE_GET_CLASS ((obj), GEBR_TYPE_JOB, GebrJobClass))
+
 G_BEGIN_DECLS
 
 typedef struct _GebrJob GebrJob;
 typedef struct _GebrJobPriv GebrJobPriv;
+typedef struct _GebrJobClass GebrJobClass;
 
 struct _GebrJob {
+	GObject parent;
 	GebrJobPriv *priv;
 };
 
-GebrJob * gebr_job_new(GtkTreeStore  *store,
-		       GtkTextBuffer *buffer,
-		       const gchar   *queue,
-		       const gchar   *servers);
+struct _GebrJobClass {
+	GObjectClass parent_class;
+};
 
 GebrJob *gebr_job_new_with_id(GtkTreeStore  *store,
 			      GtkTextBuffer *buffer,
 			      const gchar   *rid,
 			      const gchar   *queue,
 			      const gchar   *servers);
+
+GType gebr_job_get_type() G_GNUC_CONST;
 
 void gebr_job_show(GebrJob *job);
 

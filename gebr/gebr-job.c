@@ -46,7 +46,42 @@ static void gebr_job_change_task_status(GebrTask *task,
                                         const gchar *parameter,
                                         GebrJob *job);
 
+G_DEFINE_TYPE(GebrJob, gebr_job, G_TYPE_OBJECT);
+
 /* Private methods {{{1 */
+static void
+gebr_job_finalize(GObject *object)
+{
+	GebrJob *job = GEBR_JOB(object);
+	g_free(job->priv->title);
+	g_free(job->priv->runid);
+	g_free(job->priv->queue);
+	g_free(job->priv->servers);
+	g_list_free(job->priv->tasks);
+	g_string_free(job->priv->output, TRUE);
+
+	G_OBJECT_CLASS(gebr_job_parent_class)->finalize(object);
+}
+
+static void
+gebr_job_init(GebrJob *job)
+{
+	job->priv = G_TYPE_INSTANCE_GET_PRIVATE(job,
+						GEBR_TYPE_JOB,
+						GebrJobPriv);
+	job->priv->output = g_string_new(NULL);
+	job->priv->status = JOB_STATUS_INITIAL;
+}
+
+static void
+gebr_job_class_init(GebrJobClass *klass)
+{
+	GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
+	gobject_class->finalize = gebr_job_finalize;
+
+	g_type_class_add_private(klass, sizeof(GebrJobPriv));
+}
+
 static void
 insert_into_model(GebrJob *job)
 {
@@ -57,33 +92,7 @@ insert_into_model(GebrJob *job)
 			   -1);
 }
 
-static void
-gebr_job_free(GebrJob *job)
-{
-	g_free(job->priv->title);
-	g_free(job->priv->runid);
-	g_free(job->priv->queue);
-	g_free(job->priv->servers);
-	g_list_free(job->priv->tasks);
-	g_string_free(job->priv->output, TRUE);
-	g_free(job->priv);
-	g_free(job);
-}
-
 /* Public methods {{{1 */
-GebrJob *
-gebr_job_new(GtkTreeStore  *store,
-	     GtkTextBuffer *buffer,
-	     const gchar   *queue,
-	     const gchar   *servers)
-{
-	static int runid = 0;
-	gchar *new_rid = g_strdup_printf("%d:%s", runid++, gebr_get_session_id());
-	GebrJob *job = gebr_job_new_with_id(store, buffer, new_rid, queue, servers);
-	g_free(new_rid);
-	return job;
-}
-
 GebrJob *
 gebr_job_new_with_id(GtkTreeStore  *store,
 		     GtkTextBuffer *buffer,
@@ -91,18 +100,13 @@ gebr_job_new_with_id(GtkTreeStore  *store,
 		     const gchar   *queue,
 		     const gchar   *servers)
 {
-	GebrJob *job = g_new0(GebrJob, 1);
+	GebrJob *job = g_object_new(GEBR_TYPE_JOB, NULL);
 
-	job->priv = g_new0(GebrJobPriv, 1);
 	job->priv->store = store;
 	job->priv->buffer = buffer;
-	job->priv->output = g_string_new(NULL);
 	job->priv->queue = g_strdup(queue);
 	job->priv->servers = g_strdup(servers);
 	job->priv->runid = g_strdup(rid);
-	job->priv->status = JOB_STATUS_INITIAL;
-
-	g_debug("New job created with rid %s", job->priv->runid);
 
 	return job;
 }
@@ -399,8 +403,7 @@ gebr_job_close(GebrJob *job)
 		gebr_task_close(i->data, job->priv->runid);
 
 	gtk_tree_store_remove(job->priv->store, &job->priv->iter);
-
-	gebr_job_free(job);
+	g_object_unref(job);
 }
 
 void
