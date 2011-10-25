@@ -5,6 +5,7 @@
   <object class="GtkHPaned" id="top-level-widget">
     <property name="visible">True</property>
     <property name="can_focus">True</property>
+    <property name="position">150</property>
     <child>
       <object class="GtkFrame" id="frame1">
         <property name="visible">True</property>
