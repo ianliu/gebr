@@ -70,7 +70,7 @@ gebr_job_finalize(GObject *object)
 	g_free(job->priv->servers);
 	g_free(job->priv->input_file);
 	g_free(job->priv->output_file);
-	g_free(job->priv->output_file);
+	g_free(job->priv->log_file);
 	g_list_free(job->priv->tasks);
 
 	G_OBJECT_CLASS(gebr_job_parent_class)->finalize(object);
