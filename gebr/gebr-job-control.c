@@ -33,6 +33,7 @@ typedef struct {
 	guint sig_output;
 	guint sig_status;
 	guint sig_issued;
+	guint sig_cmd_line;
 } LastSelection;
 
 struct _GebrJobControlPriv {
@@ -459,6 +460,13 @@ on_job_issued(GebrJob *job,
 }
 
 static void
+on_job_cmd_line_received(GebrJob *job,
+			 GebrJobControl *jc)
+{
+	g_debug("JC[CMD_LINE]: %s", gebr_job_get_command_line(job));
+}
+
+static void
 job_control_on_cursor_changed(GtkTreeSelection *selection,
 			      GebrJobControl *jc)
 {
@@ -469,6 +477,10 @@ job_control_on_cursor_changed(GtkTreeSelection *selection,
 					    jc->priv->last_selection.sig_output);
 		g_signal_handler_disconnect(jc->priv->last_selection.job,
 					    jc->priv->last_selection.sig_status);
+		g_signal_handler_disconnect(jc->priv->last_selection.job,
+					    jc->priv->last_selection.sig_issued);
+		g_signal_handler_disconnect(jc->priv->last_selection.job,
+					    jc->priv->last_selection.sig_cmd_line);
 	}
 
 	if (!rows)
@@ -491,6 +503,8 @@ job_control_on_cursor_changed(GtkTreeSelection *selection,
 					g_signal_connect(job, "status-change", G_CALLBACK(on_job_status), jc);
 				jc->priv->last_selection.sig_issued =
 					g_signal_connect(job, "issued", G_CALLBACK(on_job_issued), jc);
+				jc->priv->last_selection.sig_cmd_line =
+					g_signal_connect(job, "cmd-line-received", G_CALLBACK(on_job_cmd_line_received), jc);
 			}
 		} else
 			g_warn_if_reached();
