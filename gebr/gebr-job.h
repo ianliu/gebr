@@ -43,16 +43,23 @@ struct _GebrJob {
 struct _GebrJobClass {
 	GObjectClass parent_class;
 
+	void (*status_change) (GebrJob *job,
+			       gint old_status,
+			       gint new_status,
+			       const gchar *parameter,
+			       gpointer user_data);
+
+	void (*issued) (GebrJob     *job,
+			const gchar *issues);
+
 	void (*output) (GebrJob     *job,
 			GebrTask    *task,
 			const gchar *output);
 };
 
-GebrJob *gebr_job_new_with_id(GtkTreeModel  *model,
-			      GtkTextBuffer *buffer,
-			      const gchar   *rid,
-			      const gchar   *queue,
-			      const gchar   *servers);
+GebrJob *gebr_job_new_with_id(const gchar *rid,
+			      const gchar *queue,
+			      const gchar *servers);
 
 GType gebr_job_get_type() G_GNUC_CONST;
 

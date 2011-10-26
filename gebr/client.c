@@ -292,9 +292,7 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 				qsort(servers, length, sizeof(servers[0]), cmpfun);
 				gchar *servers_str = g_strjoinv(", ", servers);
 
-				job = gebr_job_new_with_id(GTK_TREE_MODEL(gebr.job_control->store),
-							   gebr.job_control->text_buffer,
-							   run_id->str, queue->str, servers_str);
+				job = gebr_job_new_with_id(run_id->str, queue->str, servers_str);
 
 				gebr_job_set_title(job, title->str);
 				gebr_job_control_add(gebr.job_control, job);

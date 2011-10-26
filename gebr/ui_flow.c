@@ -673,9 +673,7 @@ create_jobs_and_run(GebrCommRunner *runner)
 	void func(gpointer key, gpointer value, gpointer data) {
 		gchar *runid = key;
 		GString **values = value;
-		GebrJob *job = gebr_job_new_with_id(GTK_TREE_MODEL(gebr.job_control->store),
-						    gebr.job_control->text_buffer, runid,
-						    runner->queue, values[0]->str);
+		GebrJob *job = gebr_job_new_with_id(runid, runner->queue, values[0]->str);
 		gebr_job_set_title(job, values[1]->str);
 		gebr_job_control_add(gebr.job_control, job);
 		g_string_free((GString *)values[0], TRUE);
