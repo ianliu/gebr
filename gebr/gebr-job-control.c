@@ -395,7 +395,7 @@ gebr_job_control_close_selected(GebrJobControl *jc)
 		rowrefs = g_list_prepend(rowrefs, rowref);
 	}
 
-	BLOCK_SELECTION_CHANGED_SIGNAL(jc);
+	jc->priv->last_selection.job = NULL;
 
 	for (GList *i = rowrefs; i; i = i->next) {
 		GtkTreePath *path = gtk_tree_row_reference_get_path(i->data);
@@ -411,10 +411,6 @@ gebr_job_control_close_selected(GebrJobControl *jc)
 		gtk_tree_path_free(path);
 	}
 
-	jc->priv->last_selection.job = NULL;
-
-	UNBLOCK_SELECTION_CHANGED_SIGNAL(jc);
-
 	g_list_foreach(rowrefs, (GFunc)gtk_tree_row_reference_free, NULL);
 	g_list_free(rowrefs);
 
@@ -422,31 +418,6 @@ free_rows:
 	g_list_foreach(rows, (GFunc)gtk_tree_path_free, NULL);
 	g_list_free(rows);
 }
-
-#if 0
-void job_control_clear(gboolean force)
-{
-	if (!force && !gebr_gui_confirm_action_dialog(_("Clear all Jobs"),
-						      _("Are you sure you want to clear all Jobs from all servers?")))
-		return;
-
-	gboolean job_control_clear_foreach(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter)
-	{
-		GebrJob *job;
-		gboolean is_job;
-
-		gtk_tree_model_get(GTK_TREE_MODEL(gebr.job_control->store), iter, JC_STRUCT, &job, JC_IS_JOB,
-				   &is_job, -1);
-		if (!is_job)
-			return FALSE;
-		job_close(job, force, FALSE);
-
-		return FALSE;
-	}
-	gebr_gui_gtk_tree_model_foreach_recursive(GTK_TREE_MODEL(gebr.job_control->store),
-						  (GtkTreeModelForeachFunc)job_control_clear_foreach, NULL); 
-}
-#endif
 
 static void
 on_job_output(GebrJob *job,
