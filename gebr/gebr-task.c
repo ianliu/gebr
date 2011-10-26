@@ -241,6 +241,7 @@ void
 gebr_task_emit_output_signal(GebrTask *task,
 			     const gchar *output)
 {
+	g_string_append(task->priv->output, output);
 	g_signal_emit(task, signals[OUTPUT], 0, output);
 }
 
