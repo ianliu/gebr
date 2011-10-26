@@ -28,9 +28,17 @@
 #include "gebr.h"
 #include "gebr-job.h"
 
+typedef struct {
+	GebrJob *job;
+	guint sig_output;
+	guint sig_status;
+	guint sig_issued;
+} LastSelection;
+
 struct _GebrJobControlPriv {
 	GtkWidget *widget;
 	GtkBuilder *builder;
+	LastSelection last_selection;
 };
 
 enum {
@@ -474,21 +482,66 @@ void job_control_selected(void)
 #endif
 
 static void
+on_job_output(GebrJob *job,
+	      GebrTask *task,
+	      const gchar *output,
+	      GebrJobControl *jc)
+{
+	g_debug("JC[OUTPUT]: %s", output);
+}
+
+static void
+on_job_status(GebrJob *job,
+	      enum JobStatus old_status,
+	      enum JobStatus new_status,
+	      const gchar *parameter,
+	      GebrJobControl *jc)
+{
+	g_debug("JC[STATUS]: %d -> %d, param: %s", old_status, new_status, parameter);
+}
+
+static void
+on_job_issued(GebrJob *job,
+	      const gchar *issues,
+	      GebrJobControl *jc)
+{
+	g_debug("JC[ISSUED]: %s", issues);
+}
+
+static void
 job_control_on_cursor_changed(GtkTreeSelection *selection,
 			      GebrJobControl *jc)
 {
 	GList *rows = gtk_tree_selection_get_selected_rows(selection, NULL);
 
-	if(!rows)
+	if (jc->priv->last_selection.job) {
+		g_signal_handler_disconnect(jc->priv->last_selection.job,
+					    jc->priv->last_selection.sig_output);
+		g_signal_handler_disconnect(jc->priv->last_selection.job,
+					    jc->priv->last_selection.sig_status);
+	}
+
+	if (!rows)
 		return;
+
+	jc->priv->last_selection.job = NULL;
 
 	if (!rows->next) {
 		GebrJob *job;
 		GtkTreeIter iter;
 		if (gtk_tree_model_get_iter(GTK_TREE_MODEL(jc->store), &iter, (GtkTreePath*)rows->data)) {
 			gtk_tree_model_get(GTK_TREE_MODEL(jc->store), &iter, JC_STRUCT, &job, -1);
-			if (job)
+			if (job) {
 				gebr_job_control_load_details(jc, job);
+
+				jc->priv->last_selection.job = job;
+				jc->priv->last_selection.sig_output =
+					g_signal_connect(job, "output", G_CALLBACK(on_job_output), jc);
+				jc->priv->last_selection.sig_status =
+					g_signal_connect(job, "status-change", G_CALLBACK(on_job_status), jc);
+				jc->priv->last_selection.sig_issued =
+					g_signal_connect(job, "issued", G_CALLBACK(on_job_issued), jc);
+			}
 		} else
 			g_warn_if_reached();
 	} else
