@@ -28,12 +28,10 @@ struct _GebrJobPriv {
 	gchar *runid;
 	gchar *queue;
 	gchar *servers;
-	const gchar *start_date;
-	const gchar *finish_date;
 	GtkTreeIter iter;
-	GString *output;
 	enum JobStatus status;
 	gboolean has_issued;
+	GtkTreeModel *model;
 };
 
 enum {
@@ -68,7 +66,6 @@ gebr_job_finalize(GObject *object)
 	g_free(job->priv->queue);
 	g_free(job->priv->servers);
 	g_list_free(job->priv->tasks);
-	g_string_free(job->priv->output, TRUE);
 
 	G_OBJECT_CLASS(gebr_job_parent_class)->finalize(object);
 }
@@ -79,7 +76,6 @@ gebr_job_init(GebrJob *job)
 	job->priv = G_TYPE_INSTANCE_GET_PRIVATE(job,
 						GEBR_TYPE_JOB,
 						GebrJobPriv);
-	job->priv->output = g_string_new(NULL);
 	job->priv->status = JOB_STATUS_INITIAL;
 	job->priv->has_issued = FALSE;
 }
@@ -137,7 +133,7 @@ gebr_job_append_task_output(GebrTask *task,
 	if (!*output)
 		return;
 
-	g_string_append(job->priv->output, output);
+	//g_string_append(job->priv->output, output);
 	g_signal_emit(job, signals[OUTPUT], 0, task, output);
 }
 
@@ -197,7 +193,6 @@ gebr_job_change_task_status(GebrTask *task,
 	case JOB_STATUS_CANCELED:
 	case JOB_STATUS_FAILED:
 		job->priv->status = new_status;
-		job->priv->finish_date = gebr_task_get_finish_date(task);
 		g_signal_emit(job, signals[STATUS_CHANGE], 0,
 			      old, job->priv->status, parameter);
 		break;
@@ -207,13 +202,17 @@ gebr_job_change_task_status(GebrTask *task,
 				break;
 		if (ntasks == total && i == NULL) { // If i == NULL, all tasks are finished
 			job->priv->status = JOB_STATUS_FINISHED;
-			job->priv->finish_date = gebr_task_get_finish_date(task);
 			g_signal_emit(job, signals[STATUS_CHANGE], 0,
 				      old, job->priv->status, parameter);
 		}
 		break;
 	default:
 		g_return_if_reached();
+	}
+	if (job->priv->model) {
+		GtkTreePath *path = gtk_tree_model_get_path(job->priv->model, &job->priv->iter);
+		gtk_tree_model_row_changed(job->priv->model, path, &job->priv->iter);
+		gtk_tree_path_free(path);
 	}
 }
 
@@ -266,14 +265,35 @@ gebr_job_append_task(GebrJob *job, GebrTask *task)
 
 	gint frac, total;
 	gebr_task_get_fraction(task, &frac, &total);
-
-	if (!job->priv->start_date)
-		job->priv->start_date = gebr_task_get_start_date(task);
+	const gchar *issues = gebr_task_get_issues(task);
+	enum JobStatus status = gebr_task_get_status(task);
 
 	g_signal_connect(task, "status-change", G_CALLBACK(gebr_job_change_task_status), job);
 	g_signal_connect(task, "output", G_CALLBACK(gebr_job_append_task_output), job);
 
 	g_signal_emit(job, signals[CMD_LINE_RECEIVED], 0);
+	g_signal_emit(job, signals[OUTPUT], 0, task, gebr_task_get_output(task));
+
+	if (strlen(issues))
+		gebr_job_change_task_status(task, job->priv->status, status, issues, job);
+
+	switch(status)
+	{
+	case JOB_STATUS_FINISHED:
+	case JOB_STATUS_CANCELED:
+	case JOB_STATUS_FAILED:
+		gebr_job_change_task_status(task, job->priv->status, status, gebr_task_get_finish_date(task), job);
+		break;
+	case JOB_STATUS_QUEUED:
+		gebr_job_change_task_status(task, job->priv->status, status, gebr_job_get_queue(job), job);
+		break;
+	case JOB_STATUS_RUNNING:
+		gebr_job_change_task_status(task, job->priv->status, status, gebr_task_get_start_date(task), job);
+		break;
+	default:
+		g_warn_if_reached();
+		break;
+	}
 }
 
 enum JobStatus
@@ -318,22 +338,65 @@ gebr_job_get_command_line(GebrJob *job)
 	return g_string_free(buf, FALSE);
 }
 
-const gchar *
+gchar *
 gebr_job_get_output(GebrJob *job)
 {
-	return job->priv->output->str;
+	GString *output = g_string_new(NULL);
+
+	for (GList *i = job->priv->tasks; i; i = i->next)
+		g_string_append(output, gebr_task_get_output(i->data));
+
+	return g_string_free(output, FALSE);
 }
 
 const gchar *
 gebr_job_get_start_date(GebrJob *job)
 {
-	return job->priv->start_date;
+	const gchar *start_date = NULL;
+
+	for (GList *i = job->priv->tasks; i; i = i->next) {
+		GebrTask *task = i->data;
+		GTimeVal new_time, old_time;
+		const gchar *start_task_date = gebr_task_get_start_date(task);
+
+		if (!start_date) {
+			start_date = start_task_date;
+			continue;
+		}
+
+		g_time_val_from_iso8601(start_task_date, &new_time);
+		g_time_val_from_iso8601(start_date, &old_time);
+
+		if (new_time.tv_sec < old_time.tv_sec)
+			start_date = start_task_date;
+	}
+
+	return start_date;
 }
 
 const gchar *
 gebr_job_get_finish_date(GebrJob *job)
 {
-	return job->priv->finish_date;
+	const gchar *finish_date = NULL;
+
+	for (GList *i = job->priv->tasks; i; i = i->next) {
+		GebrTask *task = i->data;
+		GTimeVal new_time, old_time;
+		const gchar *finish_task_date = gebr_task_get_finish_date(task);
+
+		if (!finish_date) {
+			finish_date = finish_task_date;
+			continue;
+		}
+
+		g_time_val_from_iso8601(finish_task_date, &new_time);
+		g_time_val_from_iso8601(finish_date, &old_time);
+
+		if (new_time.tv_sec > old_time.tv_sec)
+			finish_date = finish_task_date;
+	}
+
+	return finish_date;
 }
 
 gchar *
@@ -364,4 +427,11 @@ gebr_job_kill(GebrJob *job)
 {
 	for (GList *i = job->priv->tasks; i; i = i->next)
 		gebr_task_kill(i->data);
+}
+
+void
+gebr_job_set_model(GebrJob *job,
+                   GtkTreeModel *model)
+{
+	job->priv->model = model;
 }

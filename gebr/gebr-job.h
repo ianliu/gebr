@@ -89,7 +89,7 @@ const gchar *gebr_job_get_id(GebrJob *job);
 
 gchar *gebr_job_get_command_line(GebrJob *job);
 
-const gchar *gebr_job_get_output(GebrJob *job);
+gchar *gebr_job_get_output(GebrJob *job);
 
 const gchar *gebr_job_get_start_date(GebrJob *job);
 
@@ -100,6 +100,9 @@ gchar *gebr_job_get_issues(GebrJob *job);
 void gebr_job_close(GebrJob *job);
 
 void gebr_job_kill(GebrJob *job);
+
+void gebr_job_set_model(GebrJob *job,
+                        GtkTreeModel *model);
 
 G_END_DECLS
 
