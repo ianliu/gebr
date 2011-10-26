@@ -32,6 +32,9 @@ struct _GebrJobPriv {
 	enum JobStatus status;
 	gboolean has_issued;
 	GtkTreeModel *model;
+	gchar *input_file;
+	gchar *output_file;
+	gchar *log_file;
 };
 
 enum {
@@ -65,6 +68,9 @@ gebr_job_finalize(GObject *object)
 	g_free(job->priv->runid);
 	g_free(job->priv->queue);
 	g_free(job->priv->servers);
+	g_free(job->priv->input_file);
+	g_free(job->priv->output_file);
+	g_free(job->priv->output_file);
 	g_list_free(job->priv->tasks);
 
 	G_OBJECT_CLASS(gebr_job_parent_class)->finalize(object);
@@ -133,7 +139,6 @@ gebr_job_append_task_output(GebrTask *task,
 	if (!*output)
 		return;
 
-	//g_string_append(job->priv->output, output);
 	g_signal_emit(job, signals[OUTPUT], 0, task, output);
 }
 
@@ -434,4 +439,22 @@ gebr_job_set_model(GebrJob *job,
                    GtkTreeModel *model)
 {
 	job->priv->model = model;
+}
+
+void
+gebr_job_set_io(GebrJob *job, gchar *input_file, gchar *output_file,
+		gchar *log_file)
+{
+	job->priv->input_file = g_strdup(input_file);
+	job->priv->output_file = g_strdup(output_file);
+	job->priv->log_file = g_strdup(log_file);
+}
+
+void
+gebr_job_get_io(GebrJob *job, gchar **input_file, gchar **output_file,
+		gchar **log_file)
+{
+	(*input_file) = g_strdup(job->priv->input_file);
+	(*output_file) = g_strdup(job->priv->output_file);
+	(*log_file) = g_strdup(job->priv->log_file);
 }

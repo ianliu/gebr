@@ -44,7 +44,6 @@
 #include "flow.h"
 #include "ui_project_line.h"
 
-gchar *calculate_relative_time(GDate *date1, GDate *date2);//later i'll move it to libgebr
 struct gebr gebr;
 
 static void gebr_log_load(void);
@@ -368,19 +367,6 @@ static void gebr_config_save_servers(void)
 gboolean
 gebr_config_load(void)
 {
-	GDate *date1 = g_new(GDate,1);
-	GDate *date2 = g_new(GDate,1);
-	date1->day=5;
-	date1->month=6;
-	date1->year=2010;
-
-	date2->day=12;
-	date2->month=5;
-	date2->year=2012;
-
-	gchar *relative_time_msg;
-	relative_time_msg=calculate_relative_time(date1,date2);
-	g_debug("relative_time_msg:%s",relative_time_msg );
 	gboolean has_config;
 	gchar *usermenus = g_strdup_printf("%s/GeBR-Menus", g_get_home_dir());
 	gchar *datadir = g_strdup_printf("%s/.gebr/gebr/data", g_get_home_dir());
@@ -804,28 +790,3 @@ gebr_get_session_id(void)
 {
 	return SESSIONID;
 }
-gchar *calculate_relative_time (GDate *date1, GDate *date2)
-{
-	g_debug("entrou no calculate_relative_time");
-
-	if (date2->year < date1->year)
-		return (NULL);
-	if (date2->year > date1->year+1)
-		return g_strdup_printf(_("More than a year ago."));
-	if (date2->year == date1->year+1 && date2->month >= date1->month)
-			return (g_strdup_printf(_("More than a year ago.")));
-	if (date2->year == date1->year+1 && date2->month < date1->month)
-		return (g_strdup_printf(_("%d months ago."), date2->month +12 - date1->month));
-	if (date2->year == date1->year+1 || (date2->year == date1->year && date2->month > date1->month))
-		return (g_strdup_printf(_("%d months ago."), ABS(date1->month - date2->month)));
-
-	if (date2->month == date1->month && date2->day > date1->day)
-
-	
-
-	g_debug("date1: day: %d, month:%d, year:%d", date1->day, date1->month, date1->year);
-	g_debug("date2: day: %d, month:%d, year:%d", date2->day, date2->month, date2->year);
-		return (g_strdup_printf(_("Teste")));
-	return (NULL);
-}
-

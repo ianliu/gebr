@@ -824,13 +824,35 @@ gebr_job_control_load_details(GebrJobControl *jc,
 	GString *info_cmd = g_string_new("");
 	GtkTextIter end_iter;
 	GtkTextIter end_iter_cmd;
+	GtkLabel *input_file, *output_file, *log_file;
+	gchar *input_file_str, *output_file_str, *log_file_str;
 	enum JobStatus status = gebr_job_get_status(job);
+
+	input_file = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "input_label"));
+	output_file = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "output_label"));
+	log_file = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "log_label"));
+
+
+	gebr_job_get_io(job, &input_file_str, &output_file_str, &log_file_str);
+
+	gchar *markup;
+
+	markup = g_markup_printf_escaped ("<b>Input file</b>: %s", input_file_str ? input_file_str : _("None"));
+	gtk_label_set_markup (input_file, markup);
+	g_free(markup);
+
+	markup = g_markup_printf_escaped ("<b>Output file</b>: %s", output_file_str ? output_file_str : _("None"));
+	gtk_label_set_markup (output_file, markup);
+	g_free(markup);
+
+	markup = g_markup_printf_escaped ("<b>Log File</b>: %s", log_file_str ? log_file_str : _("None"));
+	gtk_label_set_markup (log_file, markup);
+	g_free(markup);
 
 	gebr_jc_update_status_and_time(jc, job, status);
 
 	GtkLabel *label = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "header_label"));
 	const gchar *title = gebr_job_get_title(job);
-	gchar *markup;
 	markup = g_markup_printf_escaped ("<span size=\"large\"><b>%s</b></span>", title);
 	gtk_label_set_markup (label, markup);
 	g_free (markup);

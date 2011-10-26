@@ -302,6 +302,7 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 				gebr_job_set_title(job, title->str);
 				gebr_job_set_model(job, GTK_TREE_MODEL(gebr.job_control->store));
 				gebr_job_control_add(gebr.job_control, job);
+				gebr_job_set_io(job, input_file->str, output_file->str, log_file->str);
 				g_free(servers_str);
 			}
 

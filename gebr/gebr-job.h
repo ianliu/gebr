@@ -104,6 +104,14 @@ void gebr_job_kill(GebrJob *job);
 void gebr_job_set_model(GebrJob *job,
                         GtkTreeModel *model);
 
+void gebr_job_set_io(GebrJob *job,
+		     gchar *input_file,
+		     gchar *output_file,
+		     gchar *log_file);
+
+void gebr_job_get_io(GebrJob *job, gchar **input_file, gchar **output_file,
+		gchar **log_file);
+
 G_END_DECLS
 
 #endif /* __GEBR_JOB_H__ */
