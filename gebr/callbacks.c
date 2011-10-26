@@ -339,9 +339,15 @@ void on_flow_component_execute_single()
 //	job_control_save();
 //}
 //
+
 void on_job_control_close(void)
 {
-	job_control_close();
+	gebr_job_control_close_selected(gebr.job_control);
+}
+
+void on_job_control_stop(void)
+{
+	gebr_job_control_stop_selected(gebr.job_control);
 }
 
 //void on_job_control_clear(void)
@@ -349,30 +355,16 @@ void on_job_control_close(void)
 //	job_control_clear(FALSE);
 //}
 //
-//void on_job_control_stop(void)
-//{
-//	job_control_stop();
-//}
 
 /*
  * Job Control - Queue Actions
  */
-
-void on_job_control_queue_stop(void)
-{
-	job_control_queue_stop();
-}
 
 //void on_job_control_queue_save(void)
 //{
 //	job_control_queue_save();
 //}
 //
-void on_job_control_queue_close(void)
-{
-	job_control_queue_close();
-}
-
 
 void on_configure_preferences_activate(void)
 {

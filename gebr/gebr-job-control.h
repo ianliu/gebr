@@ -23,13 +23,6 @@
 
 G_BEGIN_DECLS
 
-enum JobControlSelectionType {
-	JobControlDontWarnUnselection,
-	JobControlJobQueueSelection,
-	JobControlJobSelection,
-	JobControlQueueSelection,
-};
-
 typedef struct _GebrJobControl GebrJobControl;
 typedef struct _GebrJobControlPriv GebrJobControlPriv;
 
@@ -55,44 +48,63 @@ struct _GebrJobControl {
  */
 GebrJobControl *gebr_job_control_new(void);
 
+/**
+ * gebr_job_control_free:
+ *
+ * Free the @jc struct.
+ */
 void gebr_job_control_free(GebrJobControl *jc);
 
+/**
+ * gebr_job_control_select_job:
+ *
+ * Selects @job in Job Control tab. If @job is %NULL, deselects everything; if
+ * @job does not exists in the job control list, nothing is done.
+ */
 void gebr_job_control_select_job(GebrJobControl *jc, GebrJob *job);
 
+/**
+ * gebr_job_control_select_job_by_rid:
+ *
+ * Finds a job with gebr_job_control_job_find() and selects it with
+ * gebr_job_control_select_job().
+ */
 void gebr_job_control_select_job_by_rid(GebrJobControl *jc, const gchar *rid);
 
+/**
+ * gebr_job_control_get_widget:
+ *
+ * Returns: The #GtkWidget containing the Job control interface.
+ */
 GtkWidget *gebr_job_control_get_widget(GebrJobControl *jc);
 
+/**
+ * gebr_job_control_add:
+ *
+ * Adds @job into the job control list.
+ */
 void gebr_job_control_add(GebrJobControl *jc, GebrJob *job);
 
+/**
+ * gebr_job_control_find:
+ *
+ * Finds the job with the unique id @rid.
+ */
 GebrJob *gebr_job_control_find(GebrJobControl *jc, const gchar *rid);
 
 /**
+ * gebr_job_control_close_selected:
+ *
+ * Closes the selected job if applicable. See gebr_job_close().
  */
-gboolean job_control_save(void);
-/**
- */
-void job_control_cancel(void);
-/**
- */
-gboolean job_control_close(void);
-/**
- */
-void job_control_clear(gboolean force);
-/**
- */
-gboolean job_control_stop(void);
-
-void job_control_queue_stop(void);
-void job_control_queue_save(void);
-void job_control_queue_close(void);
+void gebr_job_control_close_selected(GebrJobControl *jc);
 
 /**
- * Get selected job/queue and put it at \p iter.
- * Return TRUE if there was something selected. Otherwise, return FALSE.
- * \p check_type determine the error message if selection don't match it.
+ * gebr_job_control_stop_selected:
+ *
+ * Stops the selected job if applicable.
  */
-gboolean job_control_get_selected(GtkTreeIter * iter, enum JobControlSelectionType check_type);
+void gebr_job_control_stop_selected(GebrJobControl *jc);
 
 G_END_DECLS
 

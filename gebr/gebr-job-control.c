@@ -317,7 +317,8 @@ gboolean job_control_save(void)
 }
 #endif
 
-gboolean job_control_stop(void)
+void
+gebr_job_control_stop_selected(GebrJobControl *jc)
 {
 	GtkTreeIter iter;
 	GtkTreeModel *model;
@@ -328,22 +329,19 @@ gboolean job_control_stop(void)
 	gint selected_rows = 0;
 	selected_rows =	gtk_tree_selection_count_selected_rows(gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.job_control->view)));
 	model = gtk_tree_view_get_model(GTK_TREE_VIEW(gebr.job_control->view));
-	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.job_control->view) {
 
+	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.job_control->view) {
 		gtk_tree_model_get(model, &iter, JC_STRUCT, &job, -1);
 		
-		if (selected_rows == 1)
-		{
+		if (selected_rows == 1) {
 			if (gebr_gui_confirm_action_dialog(_("Cancel Job"),
 							   _("Are you sure you want to cancel Job \"%s\"?"),
 							   gebr_job_get_title(job)) == FALSE)
-				return TRUE;
-		}
-		else if (!asked)
-		{
+				return;
+		} else if (!asked) {
 			if (gebr_gui_confirm_action_dialog(_("Cancel Job"),
 							   _("Are you sure you want to cancel the selected Jobs?")) == FALSE)
-				return TRUE;
+				return;
 			asked = TRUE;
 		}
 		gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Asking server to cancel Job."));
@@ -352,11 +350,10 @@ gboolean job_control_stop(void)
 
 		gebr_job_kill(job);
 	}
-
-	return TRUE;
 }
 
-gboolean job_control_close(void)
+void
+gebr_job_control_close_selected(GebrJobControl *jc)
 {
 	GtkTreeIter iter;
 	GebrJob *job;
@@ -364,9 +361,8 @@ gboolean job_control_close(void)
 	GtkTreeSelection *selection;
 	GList *rows;
 	GList *rowrefs = NULL;
-	gboolean retval = TRUE;
 
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.job_control->view));
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(jc->view));
 	rows = gtk_tree_selection_get_selected_rows(selection, &model);
 	
 	gtk_tree_model_get_iter(model, &iter, rows->data);
@@ -382,7 +378,6 @@ gboolean job_control_close(void)
 			goto free_rows;
 	}
 
-	retval = FALSE;
 	for (GList *i = rows; i; i = i->next) {
 		GtkTreeRowReference *rowref = gtk_tree_row_reference_new(model, i->data);
 		rowrefs = g_list_prepend(rowrefs, rowref);
@@ -401,7 +396,7 @@ gboolean job_control_close(void)
 		gebr_job_close(job);
 	}
 
-	job_control_on_cursor_changed(selection, gebr.job_control);
+	job_control_on_cursor_changed(selection, jc);
 
 	g_list_foreach(rowrefs, (GFunc)gtk_tree_row_reference_free, NULL);
 	g_list_free(rowrefs);
@@ -409,7 +404,6 @@ gboolean job_control_close(void)
 free_rows:
 	g_list_foreach(rows, (GFunc)gtk_tree_path_free, NULL);
 	g_list_free(rows);
-	return retval;
 }
 
 #if 0
@@ -434,50 +428,6 @@ void job_control_clear(gboolean force)
 	}
 	gebr_gui_gtk_tree_model_foreach_recursive(GTK_TREE_MODEL(gebr.job_control->store),
 						  (GtkTreeModelForeachFunc)job_control_clear_foreach, NULL); 
-}
-
-gboolean job_control_get_selected(GtkTreeIter * iter, enum JobControlSelectionType check_type)
-{
-	if (!gebr_gui_gtk_tree_view_get_selected(GTK_TREE_VIEW(gebr.job_control->view), iter)) {
-		switch (check_type) {
-		case JobControlDontWarnUnselection:
-			break;
-		case JobControlJobQueueSelection:
-			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Nothing selected."));
-			break;
-		case JobControlJobSelection:
-			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No Job selected."));
-			break;
-		case JobControlQueueSelection:
-			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No queue selected."));
-			break;
-		default:
-			break;
-		}
-		return FALSE;
-	}
-
-	gboolean is_job;
-	GtkTreePath *path;
-	GtkTreeModel *model = gtk_tree_view_get_model(GTK_TREE_VIEW(gebr.job_control->view));
-	path = gtk_tree_model_get_path(model, iter);
-	is_job = gtk_tree_path_get_depth(path) == 2 ? TRUE : FALSE;
-	gtk_tree_path_free(path);
-	if (check_type == JobControlJobSelection && !is_job) {
-		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Please select a Job."));
-		return FALSE;
-	}
-	if (check_type == JobControlQueueSelection && is_job) {
-		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Please select a queue."));
-		return FALSE;
-	}
-
-	return TRUE;
-}
-
-void job_control_selected(void)
-{
-	job_control_on_cursor_changed();
 }
 #endif
 
@@ -603,19 +553,6 @@ void job_control_queue_save(void)
 	job_control_queue_by_func(job_control_save);
 }
 
-#endif
-
-void job_control_queue_stop(void)
-{
-	job_control_stop();
-}
-
-void job_control_queue_close(void)
-{
-	job_control_close();
-}
-
-#if 0
 /**
  * \internal
  * Build popup menu
