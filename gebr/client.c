@@ -301,6 +301,8 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 
 			gebr_job_append_task(job, task);
 			gebr_task_emit_output_signal(task, output->str);
+			if (issues->len)
+				gebr_task_emit_status_changed_signal(task, JOB_STATUS_ISSUED, issues->str);
 			gebr_task_emit_status_changed_signal(task, job_translate_status(status), "");
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		} else if (message->hash == gebr_comm_protocol_defs.out_def.code_hash) {
