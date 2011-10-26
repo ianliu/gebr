@@ -96,6 +96,7 @@ gebr_comm_runner_free(GebrCommRunner *self)
 {
 	void free_each(GebrCommRunnerFlow *run_flow)
 	{
+		gebr_geoxml_document_ref(GEBR_GEOXML_DOCUMENT(run_flow->flow));
 		g_free(run_flow->flow_xml);
 		g_free(run_flow->frac);
 		g_free(run_flow);
@@ -125,6 +126,7 @@ gebr_comm_runner_add_flow(GebrCommRunner *self,
 
 	gebr_geoxml_document_to_string(GEBR_GEOXML_DOC(stripped), &xml);
 	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(stripped));
+	gebr_geoxml_document_ref(GEBR_GEOXML_DOCUMENT(flow));
 
 	run_flow->flow = flow;
 	run_flow->server = server;

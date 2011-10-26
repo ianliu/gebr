@@ -68,6 +68,9 @@ void gebr_comm_runner_free(GebrCommRunner *self);
 
 /**
  * gebr_comm_runner_add_flow:
+ *
+ * Adds @flow to the @self struct and returns it. The @flow referenced once,
+ * and unreferenced when gebr_comm_runner_free() is called.
  */
 GebrCommRunnerFlow * gebr_comm_runner_add_flow(GebrCommRunner *self,
 					       GebrValidator  *validator,
