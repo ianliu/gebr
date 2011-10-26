@@ -268,7 +268,7 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 			g_debug("JOB_DEF: Received task %s frac %s status %s", run_id->str, frac->str, status->str);
 			g_debug("JOB_DEF: Received input_file:%s, output_file:%s, log_file:%s", input_file->str, output_file->str, log_file->str);
 			GebrTask *task = gebr_task_new(server, run_id->str, frac->str);
-			gebr_task_init_details(task, status, start_date, finish_date, issues, cmd_line, queue, moab_jid);
+			gebr_task_init_details(task, status, start_date, finish_date, issues, cmd_line, queue, moab_jid, output);
 
 			job = gebr_job_control_find(gebr.job_control, run_id->str);
 
@@ -300,15 +300,12 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 				job = gebr_job_new_with_id(run_id->str, queue->str, servers_str);
 
 				gebr_job_set_title(job, title->str);
+				gebr_job_set_model(job, GTK_TREE_MODEL(gebr.job_control->store));
 				gebr_job_control_add(gebr.job_control, job);
 				g_free(servers_str);
 			}
 
 			gebr_job_append_task(job, task);
-			gebr_task_emit_output_signal(task, output->str);
-			if (issues->len)
-				gebr_task_emit_status_changed_signal(task, JOB_STATUS_ISSUED, issues->str);
-			gebr_task_emit_status_changed_signal(task, job_translate_status(status), "");
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		} else if (message->hash == gebr_comm_protocol_defs.out_def.code_hash) {
 			GList *arguments;
