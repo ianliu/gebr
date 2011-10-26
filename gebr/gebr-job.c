@@ -451,10 +451,29 @@ gebr_job_set_io(GebrJob *job, gchar *input_file, gchar *output_file,
 }
 
 void
-gebr_job_get_io(GebrJob *job, gchar **input_file, gchar **output_file,
+gebr_job_get_io(GebrJob *job,
+		gchar **input_file,
+		gchar **output_file,
 		gchar **log_file)
 {
-	(*input_file) = g_strdup(job->priv->input_file);
-	(*output_file) = g_strdup(job->priv->output_file);
-	(*log_file) = g_strdup(job->priv->log_file);
+	if (input_file) {
+		if (!job->priv->input_file || strlen(job->priv->input_file) == 0)
+			*input_file = NULL;
+		else
+			*input_file = g_strdup(job->priv->input_file);
+	}
+
+	if (output_file) {
+		if (!job->priv->output_file || strlen(job->priv->output_file) == 0)
+			*output_file = NULL;
+		else
+			*output_file = g_strdup(job->priv->output_file);
+	}
+
+	if (log_file) {
+		if (!job->priv->log_file || strlen(job->priv->log_file) == 0)
+			*log_file = NULL;
+		else
+			*log_file = g_strdup(job->priv->log_file);
+	}
 }
