@@ -119,6 +119,7 @@ struct gebr {
 		gboolean native_editor;
 
 		gint flow_exec_speed;
+		gint niceness;
 
 		// Selections state
 		gint current_notebook;

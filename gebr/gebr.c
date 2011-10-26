@@ -25,6 +25,7 @@
 #include <sys/stat.h>
 
 #include <glib/gstdio.h>
+#include <glib/gi18n.h>
 
 #include <libgebr.h>
 #include <glib/gi18n.h>
@@ -43,6 +44,7 @@
 #include "flow.h"
 #include "ui_project_line.h"
 
+gchar *calculate_relative_time(GDate *date1, GDate *date2);//later i'll move it to libgebr
 struct gebr gebr;
 
 static void gebr_log_load(void);
@@ -366,6 +368,19 @@ static void gebr_config_save_servers(void)
 gboolean
 gebr_config_load(void)
 {
+	GDate *date1 = g_new(GDate,1);
+	GDate *date2 = g_new(GDate,1);
+	date1->day=5;
+	date1->month=6;
+	date1->year=2010;
+
+	date2->day=12;
+	date2->month=5;
+	date2->year=2012;
+
+	gchar *relative_time_msg;
+	relative_time_msg=calculate_relative_time(date1,date2);
+	g_debug("relative_time_msg:%s",relative_time_msg );
 	gboolean has_config;
 	gchar *usermenus = g_strdup_printf("%s/GeBR-Menus", g_get_home_dir());
 	gchar *datadir = g_strdup_printf("%s/.gebr/gebr/data", g_get_home_dir());
@@ -398,10 +413,11 @@ gebr_config_load(void)
 	gebr.config.detailed_line_include_flow_report = gebr_g_key_file_load_boolean_key (gebr.config.key_file, "general", "detailed_line_include_flow_report", FALSE);
 	gebr.config.detailed_line_parameter_table = gebr_g_key_file_load_int_key (gebr.config.key_file, "general", "detailed_line_parameter_table", 0);
 	gebr.config.flow_exec_speed = gebr_g_key_file_load_int_key(gebr.config.key_file, "general", "flow_exec_speed", 1);
+	gebr.config.niceness = gebr_g_key_file_load_int_key(gebr.config.key_file, "general", "niceness", 1);
 	gebr.config.detailed_flow_css = gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "detailed_flow_css", "");
 	gebr.config.detailed_line_css = gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "detailed_line_css", "");
 
-	/*
+	/*gebr_g_key_file_load_int_key
 	 * For the sake of backwards compatibility...
 	 */
 	if (gebr_g_key_file_has_key(gebr.config.key_file, "general", "notebook")) {
@@ -545,6 +561,7 @@ void gebr_config_save(gboolean verbose)
 	g_key_file_set_boolean (gebr.config.key_file, "general", "detailed_line_include_flow_report", gebr.config.detailed_line_include_flow_report);
 	g_key_file_set_integer (gebr.config.key_file, "general", "detailed_line_parameter_table", gebr.config.detailed_line_parameter_table);
 	g_key_file_set_integer (gebr.config.key_file, "general", "flow_exec_speed", gebr.config.flow_exec_speed);
+	g_key_file_set_integer(gebr.config.key_file, "general", "niceness", gebr.config.niceness);
 
 	g_key_file_set_integer(gebr.config.key_file, "state", "notebook", gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook)));
 
@@ -787,3 +804,28 @@ gebr_get_session_id(void)
 {
 	return SESSIONID;
 }
+gchar *calculate_relative_time (GDate *date1, GDate *date2)
+{
+	g_debug("entrou no calculate_relative_time");
+
+	if (date2->year < date1->year)
+		return (NULL);
+	if (date2->year > date1->year+1)
+		return g_strdup_printf(_("More than a year ago."));
+	if (date2->year == date1->year+1 && date2->month >= date1->month)
+			return (g_strdup_printf(_("More than a year ago.")));
+	if (date2->year == date1->year+1 && date2->month < date1->month)
+		return (g_strdup_printf(_("%d months ago."), date2->month +12 - date1->month));
+	if (date2->year == date1->year+1 || (date2->year == date1->year && date2->month > date1->month))
+		return (g_strdup_printf(_("%d months ago."), ABS(date1->month - date2->month)));
+
+	if (date2->month == date1->month && date2->day > date1->day)
+
+	
+
+	g_debug("date1: day: %d, month:%d, year:%d", date1->day, date1->month, date1->year);
+	g_debug("date2: day: %d, month:%d, year:%d", date2->day, date2->month, date2->year);
+		return (g_strdup_printf(_("Teste")));
+	return (NULL);
+}
+
