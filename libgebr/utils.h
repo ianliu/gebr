@@ -187,6 +187,15 @@ gchar *gebr_str_remove_trailing_zeros(gchar *str);
 gboolean
 gebr_str_canonical_var_name(const gchar * keyword, gchar ** new_value, GError ** error);
 
+
+/**
+ * calculate_relative_time:
+ * @time1: The first date to compare 
+ * @time2: The second date to compare 
+ *
+ * Returns: A message (string) of the relative time and NULL if time2 is older than time1.
+ */
+gchar *calculate_relative_time (GTimeVal *time1, GTimeVal *time2);
 G_END_DECLS
 
 #endif				//__GEBR_UTILS_H
