@@ -83,6 +83,10 @@ static void job_control_on_cursor_changed(GtkTreeSelection *selection,
 static void on_toggled_more_details(GtkToggleButton *button,
                                     GtkBuilder *builder);
 
+static void gebr_jc_update_status_and_time(GebrJobControl *jc,
+                                           GebrJob 	  *job,
+                                           enum JobStatus status);
+
 /* Private methods {{{1 */
 static gboolean
 jobs_visible_func(GtkTreeModel *model,
@@ -450,7 +454,10 @@ on_job_output(GebrJob *job,
 	      const gchar *output,
 	      GebrJobControl *jc)
 {
-	g_debug("JC[OUTPUT]: %s", output);
+	GtkTextIter end_iter;
+
+	gtk_text_buffer_get_end_iter(jc->text_buffer, &end_iter);
+	gtk_text_buffer_insert(jc->text_buffer, &end_iter, output, strlen(output));
 }
 
 static void
@@ -460,7 +467,7 @@ on_job_status(GebrJob *job,
 	      const gchar *parameter,
 	      GebrJobControl *jc)
 {
-	g_debug("JC[STATUS]: %d -> %d, param: %s", old_status, new_status, parameter);
+	gebr_jc_update_status_and_time(jc, job, new_status);
 }
 
 static void
@@ -475,7 +482,11 @@ static void
 on_job_cmd_line_received(GebrJob *job,
 			 GebrJobControl *jc)
 {
-	g_debug("JC[CMD_LINE]: %s", gebr_job_get_command_line(job));
+	GtkTextIter end_iter;
+	const gchar *cmdline = gebr_job_get_command_line(job);
+
+	gtk_text_buffer_get_end_iter(jc->cmd_buffer, &end_iter);
+	gtk_text_buffer_insert(jc->cmd_buffer, &end_iter, cmdline, strlen(cmdline));
 }
 
 static void
@@ -749,10 +760,9 @@ gebr_job_control_select_job(GebrJobControl *jc, GebrJob *job)
 
 static void
 gebr_jc_update_status_and_time(GebrJobControl *jc,
-                               GebrJob *job)
+                               GebrJob 	      *job,
+                               enum JobStatus status)
 {
-	enum JobStatus status = gebr_job_get_status(job);
-
 	const gchar *start_date = gebr_job_get_start_date(job);
 	const gchar *finish_date = gebr_job_get_finish_date(job);
 	GString *start = g_string_new(NULL);
@@ -779,12 +789,13 @@ gebr_jc_update_status_and_time(GebrJobControl *jc,
 		gtk_image_set_from_stock(img, GTK_STOCK_APPLY, GTK_ICON_SIZE_DIALOG);
 		gtk_label_set_text(subheader, finish->str);
 		gtk_label_set_text(details_start_date, start->str);
+		gtk_widget_show(GTK_WIDGET(details_start_date));
 	}
 
 	else if (status == JOB_STATUS_RUNNING) {
 		gtk_image_set_from_stock(img, GTK_STOCK_EXECUTE, GTK_ICON_SIZE_DIALOG);
-		gtk_widget_hide(GTK_WIDGET(subheader));
-		gtk_label_set_text(details_start_date, start->str);
+		gtk_label_set_text(subheader, start->str);
+		gtk_widget_hide(GTK_WIDGET(details_start_date));
 	}
 
 	else if (status == JOB_STATUS_FAILED || status == JOB_STATUS_CANCELED) {
@@ -813,8 +824,9 @@ gebr_job_control_load_details(GebrJobControl *jc,
 	GString *info_cmd = g_string_new("");
 	GtkTextIter end_iter;
 	GtkTextIter end_iter_cmd;
+	enum JobStatus status = gebr_job_get_status(job);
 
-	gebr_jc_update_status_and_time(jc, job);
+	gebr_jc_update_status_and_time(jc, job, status);
 
 	GtkLabel *label = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "header_label"));
 	const gchar *title = gebr_job_get_title(job);
