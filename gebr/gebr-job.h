@@ -52,6 +52,8 @@ struct _GebrJobClass {
 	void (*issued) (GebrJob     *job,
 			const gchar *issues);
 
+	void (*cmd_line_received) (GebrJob *job);
+
 	void (*output) (GebrJob     *job,
 			GebrTask    *task,
 			const gchar *output);

@@ -39,6 +39,7 @@ struct _GebrJobPriv {
 enum {
 	STATUS_CHANGE,
 	ISSUED,
+	CMD_LINE_RECEIVED,
 	OUTPUT,
 	N_SIGNALS
 };
@@ -107,6 +108,15 @@ gebr_job_class_init(GebrJobClass *klass)
 			     g_cclosure_marshal_VOID__STRING,
 			     G_TYPE_NONE, 1, G_TYPE_STRING);
 
+	signals[CMD_LINE_RECEIVED] =
+		g_signal_new("cmd-line-received",
+			     G_OBJECT_CLASS_TYPE(gobject_class),
+			     G_SIGNAL_RUN_FIRST,
+			     G_STRUCT_OFFSET(GebrJobClass, cmd_line_received),
+			     NULL, NULL,
+			     g_cclosure_marshal_VOID__VOID,
+			     G_TYPE_NONE, 0);
+
 	signals[OUTPUT] =
 		g_signal_new("output",
 			     G_OBJECT_CLASS_TYPE(gobject_class),
@@ -172,8 +182,8 @@ gebr_job_change_task_status(GebrTask *task,
 			      old, job->priv->status, parameter);
 		break;
 	case JOB_STATUS_REQUEUED:
-		g_debug("The task %d:%d was requeued",
-			frac, total);
+		g_debug("The task %d:%d was requeued to %s",
+			frac, total, parameter);
 		break;
 	case JOB_STATUS_QUEUED:
 		if (total != 1)
@@ -195,7 +205,7 @@ gebr_job_change_task_status(GebrTask *task,
 		for (i = job->priv->tasks; i; i = i->next)
 			if (gebr_task_get_status(i->data) != JOB_STATUS_FINISHED)
 				break;
-		if (!i) { // If i == NULL, all tasks are finished
+		if (ntasks == total && i == NULL) { // If i == NULL, all tasks are finished
 			job->priv->status = JOB_STATUS_FINISHED;
 			job->priv->finish_date = gebr_task_get_finish_date(task);
 			g_signal_emit(job, signals[STATUS_CHANGE], 0,
@@ -262,6 +272,8 @@ gebr_job_append_task(GebrJob *job, GebrTask *task)
 
 	g_signal_connect(task, "status-change", G_CALLBACK(gebr_job_change_task_status), job);
 	g_signal_connect(task, "output", G_CALLBACK(gebr_job_append_task_output), job);
+
+	g_signal_emit(job, signals[CMD_LINE_RECEIVED], 0);
 }
 
 enum JobStatus
