@@ -490,6 +490,21 @@ on_job_cmd_line_received(GebrJob *job,
 }
 
 static void
+gebr_job_control_info_set_visible(GebrJobControl *jc,
+				  gboolean visible,
+				  const gchar *txt)
+{
+	GtkWidget *job_info = GTK_WIDGET(gtk_builder_get_object(jc->priv->builder, "job_info_widget"));
+	GtkLabel *empty_label = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "empty_job_selection_label"));
+
+	gtk_widget_set_visible(job_info, visible);
+	gtk_widget_set_visible(GTK_WIDGET(empty_label), !visible);
+
+	if (!visible)
+		gtk_label_set_text(empty_label, txt);
+}
+
+static void
 job_control_on_cursor_changed(GtkTreeSelection *selection,
 			      GebrJobControl *jc)
 {
@@ -506,14 +521,18 @@ job_control_on_cursor_changed(GtkTreeSelection *selection,
 					    jc->priv->last_selection.sig_cmd_line);
 	}
 
-	if (!rows)
+	if (!rows) {
+		gebr_job_control_info_set_visible(jc, FALSE, _("Please, select a job at the list on the left"));
 		return;
+	}
 
+	gboolean has_job = FALSE;
 	jc->priv->last_selection.job = NULL;
 
 	if (!rows->next) {
 		GebrJob *job;
 		GtkTreeIter iter;
+
 		if (gtk_tree_model_get_iter(GTK_TREE_MODEL(jc->store), &iter, (GtkTreePath*)rows->data)) {
 			gtk_tree_model_get(GTK_TREE_MODEL(jc->store), &iter, JC_STRUCT, &job, -1);
 			if (job) {
@@ -528,11 +547,14 @@ job_control_on_cursor_changed(GtkTreeSelection *selection,
 					g_signal_connect(job, "issued", G_CALLBACK(on_job_issued), jc);
 				jc->priv->last_selection.sig_cmd_line =
 					g_signal_connect(job, "cmd-line-received", G_CALLBACK(on_job_cmd_line_received), jc);
+				has_job = TRUE;
 			}
 		} else
 			g_warn_if_reached();
 	} else
 		g_debug("MULTIPLE SELECTION! SURFIN BIRD");
+
+	gebr_job_control_info_set_visible(jc, has_job, _("Multiple jobs selected"));
 
 	g_list_foreach(rows, (GFunc) gtk_tree_path_free, NULL);
 	g_list_free(rows);

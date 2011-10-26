@@ -615,7 +615,6 @@ void gebr_setup_ui(void)
 	gtk_notebook_append_page(GTK_NOTEBOOK(gebr.notebook), vbox, gtk_label_new(_("Job Control")));
 	gtk_widget_show(vbox);
 	gtk_widget_show(toolbar);
-	gtk_widget_show(gebr_job_control_get_widget(gebr.job_control));
 
 	/*
 	 * Log status bar
