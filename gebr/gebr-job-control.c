@@ -817,7 +817,6 @@ static void
 gebr_job_control_load_details(GebrJobControl *jc,
 			      GebrJob *job)
 {
-	g_debug("xxxxx on gebr_job_control_load_details xxxxx");
 	g_return_if_fail(job != NULL);
 
 	GString *info = g_string_new("");
@@ -830,7 +829,7 @@ gebr_job_control_load_details(GebrJobControl *jc,
 
 	input_file = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "input_label"));
 	output_file = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "output_label"));
-	log_file = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "log_label"));
+	log_file = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "error_label"));
 
 
 	gebr_job_get_io(job, &input_file_str, &output_file_str, &log_file_str);
