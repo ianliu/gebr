@@ -47,6 +47,14 @@ enum {
 	JC_N_COLUMN
 };
 
+#define BLOCK_SELECTION_CHANGED_SIGNAL(jc) \
+	g_signal_handlers_block_by_func(gtk_tree_view_get_selection(GTK_TREE_VIEW(jc->view)), \
+					job_control_on_cursor_changed, jc);
+
+#define UNBLOCK_SELECTION_CHANGED_SIGNAL(jc) \
+	g_signal_handlers_unblock_by_func(gtk_tree_view_get_selection(GTK_TREE_VIEW(jc->view)), \
+					  job_control_on_cursor_changed, jc);
+
 /* Prototypes {{{1 */
 static void icon_column_data_func(GtkTreeViewColumn *tree_column,
 				  GtkCellRenderer *cell,
@@ -356,8 +364,8 @@ gebr_job_control_stop_selected(GebrJobControl *jc)
 void
 gebr_job_control_close_selected(GebrJobControl *jc)
 {
-	GtkTreeIter iter;
 	GebrJob *job;
+	GtkTreeIter iter;
 	GtkTreeModel *model;
 	GtkTreeSelection *selection;
 	GList *rows;
@@ -365,11 +373,10 @@ gebr_job_control_close_selected(GebrJobControl *jc)
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(jc->view));
 	rows = gtk_tree_selection_get_selected_rows(selection, &model);
-	
-	gtk_tree_model_get_iter(model, &iter, rows->data);
-	gtk_tree_model_get(model, &iter, JC_STRUCT, &job, -1);
 
 	if (!rows->next) {
+		gtk_tree_model_get_iter(model, &iter, rows->data);
+		gtk_tree_model_get(model, &iter, JC_STRUCT, &job, -1);
 		if (!gebr_gui_confirm_action_dialog(_("Clear Job"),
 		                                    _("Are you sure you want to clear Job \"%s\"?"), gebr_job_get_title(job)))
 			goto free_rows;
@@ -384,20 +391,25 @@ gebr_job_control_close_selected(GebrJobControl *jc)
 		rowrefs = g_list_prepend(rowrefs, rowref);
 	}
 
+	BLOCK_SELECTION_CHANGED_SIGNAL(jc);
+
 	for (GList *i = rowrefs; i; i = i->next) {
 		GtkTreePath *path = gtk_tree_row_reference_get_path(i->data);
 
 		if (!gtk_tree_model_get_iter(model, &iter, path)) {
 			gtk_tree_path_free(path);
+			g_warn_if_reached();
 			continue;
 		}
-		gtk_tree_path_free(path);
-
 		gtk_tree_model_get(model, &iter, JC_STRUCT, &job, -1);
+		gtk_list_store_remove(jc->store, gebr_job_get_iter(job));
 		gebr_job_close(job);
+		gtk_tree_path_free(path);
 	}
 
-	job_control_on_cursor_changed(selection, jc);
+	jc->priv->last_selection.job = NULL;
+
+	UNBLOCK_SELECTION_CHANGED_SIGNAL(jc);
 
 	g_list_foreach(rowrefs, (GFunc)gtk_tree_row_reference_free, NULL);
 	g_list_free(rowrefs);
