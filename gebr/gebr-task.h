@@ -94,7 +94,8 @@ void gebr_task_init_details(GebrTask *task,
 			    GString  *issues,
 			    GString  *cmd_line,
 			    GString  *queue,
-			    GString  *moab_jid);
+			    GString  *moab_jid,
+			    GString *output);
 
 enum JobStatus gebr_task_get_status(GebrTask *task);
 
@@ -112,6 +113,8 @@ const gchar *gebr_task_get_start_date(GebrTask *task);
 const gchar *gebr_task_get_finish_date(GebrTask *task);
 
 const gchar *gebr_task_get_issues(GebrTask *task);
+
+const gchar *gebr_task_get_output(GebrTask *task);
 
 void gebr_task_close(GebrTask *task, const gchar *rid);
 

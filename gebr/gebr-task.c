@@ -53,17 +53,26 @@ struct _GebrTaskPriv {
 	GString *cmd_line;
 	GString *moab_jid;
 	GString *queue_id;
+	GString *output;
 };
 
 G_DEFINE_TYPE(GebrTask, gebr_task, G_TYPE_OBJECT);
 
 static GHashTable *tasks_map = NULL;
 
-static void gebr_task_init(GebrTask *job)
+static void gebr_task_init(GebrTask *task)
 {
-	job->priv = G_TYPE_INSTANCE_GET_PRIVATE(job,
-						GEBR_TYPE_TASK,
-						GebrTaskPriv);
+	task->priv = G_TYPE_INSTANCE_GET_PRIVATE(task,
+	                                         GEBR_TYPE_TASK,
+	                                         GebrTaskPriv);
+
+	task->priv->output = g_string_new(NULL);
+	task->priv->start_date = g_string_new(NULL);
+	task->priv->finish_date = g_string_new(NULL);
+	task->priv->issues = g_string_new(NULL);
+	task->priv->cmd_line = g_string_new(NULL);
+	task->priv->moab_jid = g_string_new(NULL);
+	task->priv->queue_id = g_string_new(NULL);
 }
 
 static void gebr_task_class_init(GebrTaskClass *klass)
@@ -127,12 +136,6 @@ gebr_task_new(GebrServer  *server,
 	task->priv->rid = g_strdup(rid);
 	task->priv->frac = atoi(frac);
 	task->priv->total = atoi(total);
-	task->priv->start_date = g_string_new(NULL);
-	task->priv->finish_date = g_string_new(NULL);
-	task->priv->issues = g_string_new(NULL);
-	task->priv->cmd_line = g_string_new(NULL);
-	task->priv->moab_jid = g_string_new(NULL);
-	task->priv->queue_id = g_string_new(NULL);
 
 	g_free(frac);
 
@@ -149,7 +152,8 @@ gebr_task_init_details(GebrTask *task,
 		       GString  *issues,
 		       GString  *cmd_line,
 		       GString  *queue,
-		       GString  *moab_jid)
+		       GString  *moab_jid,
+		       GString *output)
 {
 	task->priv->status = job_translate_status(status);
 	g_string_assign(task->priv->start_date, start_date->str);
@@ -158,6 +162,7 @@ gebr_task_init_details(GebrTask *task,
 	g_string_assign(task->priv->cmd_line, cmd_line->str);
 	g_string_assign(task->priv->moab_jid, moab_jid->str);
 	g_string_assign(task->priv->queue_id, queue->str);
+	g_string_assign(task->priv->output, output->str);
 
 	/* Add queue on the server queue list model (only if server is regular) */
 	if (task->priv->server) {
@@ -249,6 +254,18 @@ gebr_task_emit_status_changed_signal(GebrTask *task,
 	old_status = task->priv->status;
 	task->priv->status = new_status;
 
+	switch (new_status)
+	{
+	case JOB_STATUS_RUNNING:
+		g_string_assign(task->priv->start_date, parameter);
+		break;
+	case JOB_STATUS_FINISHED:
+	case JOB_STATUS_CANCELED:
+	case JOB_STATUS_FAILED:
+		g_string_assign(task->priv->finish_date, parameter);
+		break;
+	}
+
 	g_signal_emit(task, signals[STATUS_CHANGE], 0, old_status, new_status, parameter);
 }
 
@@ -261,7 +278,7 @@ gebr_task_get_cmd_line(GebrTask *task)
 const gchar *
 gebr_task_get_start_date(GebrTask *task)
 {
-	return task->priv->start_date->str;
+	return task->priv->start_date->len > 0 ? task->priv->start_date->str : NULL;
 }
 
 const gchar *
@@ -275,6 +292,11 @@ gebr_task_get_issues(GebrTask *task)
 {
 	return task->priv->issues->str;
 }
+const gchar *
+gebr_task_get_output(GebrTask *task)
+{
+	return task->priv->output->str;
+}
 
 static void
 gebr_task_free(GebrTask *task)
@@ -286,6 +308,7 @@ gebr_task_free(GebrTask *task)
 	g_string_free(task->priv->cmd_line, TRUE);
 	g_string_free(task->priv->moab_jid, TRUE);
 	g_string_free(task->priv->queue_id, TRUE);
+	g_string_free(task->priv->output, TRUE);
 }
 
 void
