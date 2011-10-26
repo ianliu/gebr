@@ -649,9 +649,12 @@ void job_notify(GebrdJob *job, struct client *client)
 {
 	if (job->parent.status == JOB_STATUS_INITIAL)
 		job_status_set(job, JOB_STATUS_QUEUED);
+	gchar *input_file = gebr_geoxml_flow_io_get_input(job->flow);
+	gchar *output_file = gebr_geoxml_flow_io_get_output(job->flow);
+	gchar *log_file = gebr_geoxml_flow_io_get_error(job->flow);
 
 	gebr_comm_protocol_socket_oldmsg_send(client->socket, FALSE,
-					      gebr_comm_protocol_defs.job_def, 14,
+					      gebr_comm_protocol_defs.job_def, 17,
 					      job->parent.jid->str,
 					      status_enum_to_string(job->parent.status),
 					      job->parent.title->str,
@@ -665,7 +668,11 @@ void job_notify(GebrdJob *job, struct client *client)
 					      job->parent.moab_jid->str,
 					      job->parent.run_id->str,
 					      job->frac->str,
-					      job->server_list->str);
+					      job->server_list->str,
+					      input_file,
+					      output_file,
+					      log_file);
+			//g_debug("job_notify: Received input_file:%s, output_file:%s, log_file:%s", input_file, output_file, log_file);
 }
 
 

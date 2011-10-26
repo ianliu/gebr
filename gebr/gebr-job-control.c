@@ -843,6 +843,7 @@ static void
 gebr_job_control_load_details(GebrJobControl *jc,
 			      GebrJob *job)
 {
+	g_debug("xxxxx on gebr_job_control_load_details xxxxx");
 	g_return_if_fail(job != NULL);
 
 	GString *info = g_string_new("");

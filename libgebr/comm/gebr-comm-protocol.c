@@ -47,7 +47,7 @@ void gebr_comm_protocol_init(void)
 	gebr_comm_protocol_defs.ini_def = gebr_comm_message_def_create("INI", TRUE, 4);
 	gebr_comm_protocol_defs.qut_def = gebr_comm_message_def_create("QUT", FALSE, 0);
 	gebr_comm_protocol_defs.lst_def = gebr_comm_message_def_create("LST", FALSE, 0); /* return JOBs, not RET */
-	gebr_comm_protocol_defs.job_def = gebr_comm_message_def_create("JOB", FALSE, 13);
+	gebr_comm_protocol_defs.job_def = gebr_comm_message_def_create("JOB", FALSE, 17);
 	gebr_comm_protocol_defs.run_def = gebr_comm_message_def_create("RUN", TRUE, 5);
 	gebr_comm_protocol_defs.rnq_def = gebr_comm_message_def_create("RNQ", FALSE, 2);
 	gebr_comm_protocol_defs.clr_def = gebr_comm_message_def_create("CLR", FALSE, 1);

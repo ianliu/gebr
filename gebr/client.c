@@ -240,11 +240,12 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 		} else if (message->hash == gebr_comm_protocol_defs.job_def.code_hash) {
 			GList *arguments;
 			GString *jid, *hostname, *status, *title, *start_date, *finish_date, *issues, *cmd_line,
-				*output, *queue, *moab_jid, *run_id, *frac, *server_list;
+				*output, *queue, *moab_jid, *run_id, *frac, *server_list, *input_file,
+				*output_file, *log_file;
 			GebrJob *job;
 
 			/* organize message data */
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 14)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 17)) == NULL)
 				goto err;
 			jid = g_list_nth_data(arguments, 0);
 			status = g_list_nth_data(arguments, 1);
@@ -260,8 +261,12 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 			run_id = g_list_nth_data(arguments, 11);
 			frac = g_list_nth_data(arguments, 12);
 			server_list = g_list_nth_data(arguments, 13);
+			input_file = g_list_nth_data(arguments, 14);
+			output_file= g_list_nth_data(arguments, 15);
+			log_file = g_list_nth_data(arguments, 16);
 
 			g_debug("JOB_DEF: Received task %s frac %s status %s", run_id->str, frac->str, status->str);
+			g_debug("JOB_DEF: Received input_file:%s, output_file:%s, log_file:%s", input_file->str, output_file->str, log_file->str);
 			GebrTask *task = gebr_task_new(server, run_id->str, frac->str);
 			gebr_task_init_details(task, status, start_date, finish_date, issues, cmd_line, queue, moab_jid);
 
