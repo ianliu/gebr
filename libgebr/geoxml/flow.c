@@ -1028,7 +1028,8 @@ gebr_geoxml_flow_is_parallelizable(GebrGeoXmlFlow *flow,
                                    GebrValidator *validator)
 {
 	GebrGeoXmlProgram *prog = gebr_geoxml_flow_get_control_program(flow);
-	if (prog && gebr_geoxml_program_get_status(prog) != GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED) {
+
+	if (!prog || (prog && gebr_geoxml_program_get_status(prog) != GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED)) {
 		gebr_geoxml_object_unref(prog);
 		return FALSE;
 	}
