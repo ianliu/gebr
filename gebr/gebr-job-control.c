@@ -492,13 +492,14 @@ job_control_on_cursor_changed(GtkTreeSelection *selection,
 					    jc->priv->last_selection.sig_cmd_line);
 	}
 
+	jc->priv->last_selection.job = NULL;
+
 	if (!rows) {
 		gebr_job_control_info_set_visible(jc, FALSE, _("Please, select a job at the list on the left"));
 		return;
 	}
 
 	gboolean has_job = FALSE;
-	jc->priv->last_selection.job = NULL;
 
 	if (!rows->next) {
 		GebrJob *job;
@@ -748,6 +749,7 @@ gebr_job_control_select_job(GebrJobControl *jc, GebrJob *job)
 			return;
 
 		GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(jc->view));
+		gtk_tree_selection_unselect_all(selection);
 		gtk_tree_selection_select_iter(selection, &filter_iter);
 	}
 }
