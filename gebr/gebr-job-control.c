@@ -104,6 +104,337 @@ on_dismiss_clicked(GtkButton *dismiss, GebrJobControl *jc)
 	g_debug("Dismiss!!!!");
 }
 
+static void
+on_job_output(GebrJob *job,
+	      GebrTask *task,
+	      const gchar *output,
+	      GebrJobControl *jc)
+{
+	GtkTextIter end_iter;
+
+	gtk_text_buffer_get_end_iter(jc->text_buffer, &end_iter);
+	gtk_text_buffer_insert(jc->text_buffer, &end_iter, output, strlen(output));
+}
+
+static void
+on_job_status(GebrJob *job,
+	      enum JobStatus old_status,
+	      enum JobStatus new_status,
+	      const gchar *parameter,
+	      GebrJobControl *jc)
+{
+	gebr_jc_update_status_and_time(jc, job, new_status);
+}
+
+static void
+on_job_issued(GebrJob *job,
+	      const gchar *issues,
+	      GebrJobControl *jc)
+{
+	const gchar *stock_id;
+	GtkInfoBar *info = GTK_INFO_BAR(gtk_builder_get_object(jc->priv->builder, "issues_info_bar"));
+	GtkLabel *label = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "issues_info_bar_label"));
+	GtkImage *image = GTK_IMAGE(gtk_builder_get_object(jc->priv->builder, "issues_info_bar_image"));
+
+	gtk_widget_show(GTK_WIDGET(info));
+
+	switch(gebr_job_get_status(job))
+	{
+	case JOB_STATUS_CANCELED:
+	case JOB_STATUS_FAILED:
+		gtk_info_bar_set_message_type(info, GTK_MESSAGE_ERROR);
+		stock_id = GTK_STOCK_DIALOG_ERROR;
+		break;
+	default:
+		gtk_info_bar_set_message_type(info, GTK_MESSAGE_WARNING);
+		stock_id = GTK_STOCK_DIALOG_WARNING;
+		break;
+	}
+	gtk_label_set_text(label, issues);
+	gtk_image_set_from_stock(image, stock_id, GTK_ICON_SIZE_DIALOG);
+}
+
+static void
+on_job_cmd_line_received(GebrJob *job,
+			 GebrJobControl *jc)
+{
+	GtkTextIter end_iter;
+	const gchar *cmdline = gebr_job_get_command_line(job);
+
+	gtk_text_buffer_get_end_iter(jc->cmd_buffer, &end_iter);
+	gtk_text_buffer_insert(jc->cmd_buffer, &end_iter, cmdline, strlen(cmdline));
+}
+
+static void
+gebr_job_control_info_set_visible(GebrJobControl *jc,
+				  gboolean visible,
+				  const gchar *txt)
+{
+	GtkWidget *job_info = GTK_WIDGET(gtk_builder_get_object(jc->priv->builder, "job_info_widget"));
+	GtkLabel *empty_label = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "empty_job_selection_label"));
+
+	gtk_widget_set_visible(job_info, visible);
+	gtk_widget_set_visible(GTK_WIDGET(empty_label), !visible);
+
+	if (!visible)
+		gtk_label_set_text(empty_label, txt);
+}
+
+static void
+job_control_on_cursor_changed(GtkTreeSelection *selection,
+			      GebrJobControl *jc)
+{
+	GList *rows = gtk_tree_selection_get_selected_rows(selection, NULL);
+
+	if (jc->priv->last_selection.job) {
+		g_signal_handler_disconnect(jc->priv->last_selection.job,
+					    jc->priv->last_selection.sig_output);
+		g_signal_handler_disconnect(jc->priv->last_selection.job,
+					    jc->priv->last_selection.sig_status);
+		g_signal_handler_disconnect(jc->priv->last_selection.job,
+					    jc->priv->last_selection.sig_issued);
+		g_signal_handler_disconnect(jc->priv->last_selection.job,
+					    jc->priv->last_selection.sig_cmd_line);
+	}
+
+	jc->priv->last_selection.job = NULL;
+
+	if (!rows) {
+		gebr_job_control_info_set_visible(jc, FALSE, _("Please, select a job at the list on the left"));
+		return;
+	}
+
+	gboolean has_job = FALSE;
+
+	if (!rows->next) {
+		GebrJob *job;
+		GtkTreeIter iter;
+
+		if (gtk_tree_model_get_iter(GTK_TREE_MODEL(jc->store), &iter, (GtkTreePath*)rows->data)) {
+			gtk_tree_model_get(GTK_TREE_MODEL(jc->store), &iter, JC_STRUCT, &job, -1);
+			if (job) {
+				gebr_job_control_load_details(jc, job);
+
+				jc->priv->last_selection.job = job;
+				jc->priv->last_selection.sig_output =
+					g_signal_connect(job, "output", G_CALLBACK(on_job_output), jc);
+				jc->priv->last_selection.sig_status =
+					g_signal_connect(job, "status-change", G_CALLBACK(on_job_status), jc);
+				jc->priv->last_selection.sig_issued =
+					g_signal_connect(job, "issued", G_CALLBACK(on_job_issued), jc);
+				jc->priv->last_selection.sig_cmd_line =
+					g_signal_connect(job, "cmd-line-received", G_CALLBACK(on_job_cmd_line_received), jc);
+				has_job = TRUE;
+			}
+		} else
+			g_warn_if_reached();
+	} else
+		g_debug("MULTIPLE SELECTION! SURFIN BIRD");
+
+	gebr_job_control_info_set_visible(jc, has_job, _("Multiple jobs selected"));
+
+	g_list_foreach(rows, (GFunc) gtk_tree_path_free, NULL);
+	g_list_free(rows);
+}
+
+static void
+on_toggled_more_details(GtkToggleButton *button,
+                        GtkBuilder *builder)
+{
+	GtkVBox *details = GTK_VBOX(gtk_builder_get_object(builder, "details_widget"));
+
+	if (!gtk_toggle_button_get_active(button)) {
+		gtk_widget_set_visible(GTK_WIDGET(details), FALSE);
+		return;
+	}
+	gtk_widget_set_visible(GTK_WIDGET(details), TRUE);
+}
+
+static void
+icon_column_data_func(GtkTreeViewColumn *tree_column,
+		      GtkCellRenderer *cell,
+		      GtkTreeModel *tree_model,
+		      GtkTreeIter *iter,
+		      gpointer data)
+{
+	GebrJob *job;
+	const gchar *stock_id;
+
+	gtk_tree_model_get(tree_model, iter, JC_STRUCT, &job, -1);
+
+	switch (gebr_job_get_status(job))
+	{
+	case JOB_STATUS_CANCELED:
+	case JOB_STATUS_FAILED:
+		stock_id = GTK_STOCK_CANCEL;
+		break;
+	case JOB_STATUS_FINISHED:
+		stock_id = GTK_STOCK_APPLY;
+		break;
+	case JOB_STATUS_INITIAL:
+		stock_id = GTK_STOCK_NETWORK;
+		break;
+	case JOB_STATUS_QUEUED:
+		stock_id = "chronometer";
+		break;
+	case JOB_STATUS_RUNNING:
+		stock_id = GTK_STOCK_EXECUTE;
+		break;
+	case JOB_STATUS_ISSUED:
+	case JOB_STATUS_REQUEUED:
+		break;
+	}
+
+	g_object_set(cell, "stock-id", stock_id, NULL);
+}
+
+static void
+title_column_data_func(GtkTreeViewColumn *tree_column,
+		       GtkCellRenderer *cell,
+		       GtkTreeModel *tree_model,
+		       GtkTreeIter *iter,
+		       gpointer data)
+{
+	GebrJob *job;
+
+	gtk_tree_model_get(tree_model, iter, JC_STRUCT, &job, -1);
+	g_object_set(cell, "text", gebr_job_get_title(job), NULL);
+}
+
+static void
+time_column_data_func(GtkTreeViewColumn *tree_column,
+		      GtkCellRenderer *cell,
+		      GtkTreeModel *tree_model,
+		      GtkTreeIter *iter,
+		      gpointer data)
+{
+	GebrJob *job;
+
+	gtk_tree_model_get(tree_model, iter, JC_STRUCT, &job, -1);
+	g_object_set(cell, "text", "moments ago", NULL);
+
+	return;
+}
+
+static void
+gebr_jc_update_status_and_time(GebrJobControl *jc,
+                               GebrJob 	      *job,
+                               enum JobStatus status)
+{
+	const gchar *start_date = gebr_job_get_start_date(job);
+	const gchar *finish_date = gebr_job_get_finish_date(job);
+	GString *start = g_string_new(NULL);
+	GString *finish = g_string_new(NULL);
+
+	/* start date (may have failed, never started) */
+	if (start_date && strlen(start_date))
+		g_string_append_printf(start, "%s %s", _("Started at"),
+		                       gebr_localized_date(start_date));
+
+	/* finish date */
+	if (finish_date && strlen(finish_date))
+		g_string_append_printf(finish, "%s %s", status == JOB_STATUS_FINISHED ?
+				       _("Finished at") : _("Canceled at"),
+				       gebr_localized_date(finish_date));
+
+	GtkImage *img = GTK_IMAGE(gtk_builder_get_object(jc->priv->builder, "status_image"));
+	GtkLabel *subheader = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "subheader_label"));
+	GtkButton *queued_button = GTK_BUTTON(gtk_builder_get_object(jc->priv->builder, "subheader_button"));
+	GtkLabel *details_start_date = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "detail_start_date"));
+	gtk_widget_hide(GTK_WIDGET(queued_button));
+
+	if (status == JOB_STATUS_FINISHED) {
+		gtk_image_set_from_stock(img, GTK_STOCK_APPLY, GTK_ICON_SIZE_DIALOG);
+		gtk_label_set_text(subheader, finish->str);
+		gtk_label_set_text(details_start_date, start->str);
+		gtk_widget_show(GTK_WIDGET(details_start_date));
+	}
+
+	else if (status == JOB_STATUS_RUNNING) {
+		gtk_image_set_from_stock(img, GTK_STOCK_EXECUTE, GTK_ICON_SIZE_DIALOG);
+		gtk_label_set_text(subheader, start->str);
+		gtk_widget_hide(GTK_WIDGET(details_start_date));
+	}
+
+	else if (status == JOB_STATUS_FAILED || status == JOB_STATUS_CANCELED) {
+		gtk_image_set_from_stock(img, GTK_STOCK_CANCEL, GTK_ICON_SIZE_DIALOG);
+		gtk_label_set_text(subheader, finish->str);
+		gtk_label_set_text(details_start_date, start->str);
+	}
+
+	else if (status == JOB_STATUS_QUEUED) {
+		gtk_image_set_from_stock(img, "chronometer", GTK_ICON_SIZE_DIALOG);
+		gtk_widget_show(GTK_WIDGET(queued_button));
+	}
+
+	g_string_free(start, FALSE);
+	g_string_free(finish, FALSE);
+}
+
+static void
+gebr_job_control_load_details(GebrJobControl *jc,
+			      GebrJob *job)
+{
+	g_return_if_fail(job != NULL);
+
+	GString *info = g_string_new("");
+	GString *info_cmd = g_string_new("");
+	GtkTextIter end_iter;
+	GtkTextIter end_iter_cmd;
+	GtkLabel *input_file, *output_file, *log_file;
+	gchar *input_file_str, *output_file_str, *log_file_str;
+	enum JobStatus status = gebr_job_get_status(job);
+
+	input_file = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "input_label"));
+	output_file = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "output_label"));
+	log_file = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "error_label"));
+
+
+	gebr_job_get_io(job, &input_file_str, &output_file_str, &log_file_str);
+
+	gchar *markup;
+
+	markup = g_markup_printf_escaped ("<b>Input file</b>: %s", input_file_str ? input_file_str : _("None"));
+	gtk_label_set_markup (input_file, markup);
+	g_free(markup);
+
+	markup = g_markup_printf_escaped ("<b>Output file</b>: %s", output_file_str ? output_file_str : _("None"));
+	gtk_label_set_markup (output_file, markup);
+	g_free(markup);
+
+	markup = g_markup_printf_escaped ("<b>Log File</b>: %s", log_file_str ? log_file_str : _("None"));
+	gtk_label_set_markup (log_file, markup);
+	g_free(markup);
+
+	gebr_jc_update_status_and_time(jc, job, status);
+
+	GtkLabel *label = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "header_label"));
+	const gchar *title = gebr_job_get_title(job);
+	markup = g_markup_printf_escaped ("<span size=\"large\"><b>%s</b></span>", title);
+	gtk_label_set_markup (label, markup);
+	g_free (markup);
+
+	gtk_text_buffer_set_text(jc->text_buffer, "", 0);
+	gtk_text_buffer_set_text(jc->cmd_buffer, "", 0);
+
+	/* command-line */
+	gchar *cmdline = gebr_job_get_command_line(job);
+	g_string_append_printf(info_cmd, "\n%s\n%s\n", _("Command line:"), cmdline);
+	g_free(cmdline);
+
+	gtk_text_buffer_get_end_iter(jc->cmd_buffer, &end_iter_cmd);
+	gtk_text_buffer_insert(jc->cmd_buffer, &end_iter_cmd, info_cmd->str, info_cmd->len);
+
+	/* output */
+	g_string_append(info, gebr_job_get_output(job));
+
+	gtk_text_buffer_get_end_iter(jc->text_buffer, &end_iter);
+	gtk_text_buffer_insert(jc->text_buffer, &end_iter, info->str, info->len);
+
+	g_string_free(info, TRUE);
+	g_string_free(info_cmd, TRUE);
+}
+
 /* Public methods {{{1 */
 GebrJobControl *
 gebr_job_control_new(void)
@@ -265,7 +596,6 @@ gebr_job_control_find(GebrJobControl *jc, const gchar *rid)
 
 	return job;
 }
-
 
 #if 0
 gboolean job_control_save(void)
@@ -430,135 +760,6 @@ free_rows:
 	g_list_free(rows);
 }
 
-static void
-on_job_output(GebrJob *job,
-	      GebrTask *task,
-	      const gchar *output,
-	      GebrJobControl *jc)
-{
-	GtkTextIter end_iter;
-
-	gtk_text_buffer_get_end_iter(jc->text_buffer, &end_iter);
-	gtk_text_buffer_insert(jc->text_buffer, &end_iter, output, strlen(output));
-}
-
-static void
-on_job_status(GebrJob *job,
-	      enum JobStatus old_status,
-	      enum JobStatus new_status,
-	      const gchar *parameter,
-	      GebrJobControl *jc)
-{
-	gebr_jc_update_status_and_time(jc, job, new_status);
-}
-
-static void
-on_job_issued(GebrJob *job,
-	      const gchar *issues,
-	      GebrJobControl *jc)
-{
-	GtkInfoBar *info = GTK_INFO_BAR(gtk_builder_get_object(jc->priv->builder, "issues_info_bar"));
-	GtkLabel *label = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "issues_info_bar_label"));
-
-	g_debug("Issued: %s", issues);
-
-	gtk_widget_show(GTK_WIDGET(info));
-
-	switch(gebr_job_get_status(job))
-	{
-	case JOB_STATUS_CANCELED:
-	case JOB_STATUS_FAILED:
-		gtk_info_bar_set_message_type(info, GTK_MESSAGE_ERROR);
-		break;
-	default:
-		gtk_info_bar_set_message_type(info, GTK_MESSAGE_WARNING);
-		break;
-	}
-	gtk_label_set_text(label, issues);
-}
-
-static void
-on_job_cmd_line_received(GebrJob *job,
-			 GebrJobControl *jc)
-{
-	GtkTextIter end_iter;
-	const gchar *cmdline = gebr_job_get_command_line(job);
-
-	gtk_text_buffer_get_end_iter(jc->cmd_buffer, &end_iter);
-	gtk_text_buffer_insert(jc->cmd_buffer, &end_iter, cmdline, strlen(cmdline));
-}
-
-static void
-gebr_job_control_info_set_visible(GebrJobControl *jc,
-				  gboolean visible,
-				  const gchar *txt)
-{
-	GtkWidget *job_info = GTK_WIDGET(gtk_builder_get_object(jc->priv->builder, "job_info_widget"));
-	GtkLabel *empty_label = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "empty_job_selection_label"));
-
-	gtk_widget_set_visible(job_info, visible);
-	gtk_widget_set_visible(GTK_WIDGET(empty_label), !visible);
-
-	if (!visible)
-		gtk_label_set_text(empty_label, txt);
-}
-
-static void
-job_control_on_cursor_changed(GtkTreeSelection *selection,
-			      GebrJobControl *jc)
-{
-	GList *rows = gtk_tree_selection_get_selected_rows(selection, NULL);
-
-	if (jc->priv->last_selection.job) {
-		g_signal_handler_disconnect(jc->priv->last_selection.job,
-					    jc->priv->last_selection.sig_output);
-		g_signal_handler_disconnect(jc->priv->last_selection.job,
-					    jc->priv->last_selection.sig_status);
-		g_signal_handler_disconnect(jc->priv->last_selection.job,
-					    jc->priv->last_selection.sig_issued);
-		g_signal_handler_disconnect(jc->priv->last_selection.job,
-					    jc->priv->last_selection.sig_cmd_line);
-	}
-
-	jc->priv->last_selection.job = NULL;
-
-	if (!rows) {
-		gebr_job_control_info_set_visible(jc, FALSE, _("Please, select a job at the list on the left"));
-		return;
-	}
-
-	gboolean has_job = FALSE;
-
-	if (!rows->next) {
-		GebrJob *job;
-		GtkTreeIter iter;
-
-		if (gtk_tree_model_get_iter(GTK_TREE_MODEL(jc->store), &iter, (GtkTreePath*)rows->data)) {
-			gtk_tree_model_get(GTK_TREE_MODEL(jc->store), &iter, JC_STRUCT, &job, -1);
-			if (job) {
-				gebr_job_control_load_details(jc, job);
-
-				jc->priv->last_selection.job = job;
-				jc->priv->last_selection.sig_output =
-					g_signal_connect(job, "output", G_CALLBACK(on_job_output), jc);
-				jc->priv->last_selection.sig_status =
-					g_signal_connect(job, "status-change", G_CALLBACK(on_job_status), jc);
-				jc->priv->last_selection.sig_issued =
-					g_signal_connect(job, "issued", G_CALLBACK(on_job_issued), jc);
-				jc->priv->last_selection.sig_cmd_line =
-					g_signal_connect(job, "cmd-line-received", G_CALLBACK(on_job_cmd_line_received), jc);
-				has_job = TRUE;
-			}
-		} else
-			g_warn_if_reached();
-	} else
-		g_debug("MULTIPLE SELECTION! SURFIN BIRD");
-
-	gebr_job_control_info_set_visible(jc, has_job, _("Multiple jobs selected"));
-
-	g_list_foreach(rows, (GFunc) gtk_tree_path_free, NULL);
-	g_list_free(rows);
-}
 
 #if 0
 /**
@@ -681,85 +882,6 @@ out:
 }
 #endif
 
-static void
-on_toggled_more_details(GtkToggleButton *button,
-                        GtkBuilder *builder)
-{
-	GtkVBox *details = GTK_VBOX(gtk_builder_get_object(builder, "details_widget"));
-
-	if (!gtk_toggle_button_get_active(button)) {
-		gtk_widget_set_visible(GTK_WIDGET(details), FALSE);
-		return;
-	}
-	gtk_widget_set_visible(GTK_WIDGET(details), TRUE);
-}
-
-static void
-icon_column_data_func(GtkTreeViewColumn *tree_column,
-		      GtkCellRenderer *cell,
-		      GtkTreeModel *tree_model,
-		      GtkTreeIter *iter,
-		      gpointer data)
-{
-	GebrJob *job;
-	const gchar *stock_id;
-
-	gtk_tree_model_get(tree_model, iter, JC_STRUCT, &job, -1);
-
-	switch (gebr_job_get_status(job))
-	{
-	case JOB_STATUS_CANCELED:
-	case JOB_STATUS_FAILED:
-		stock_id = GTK_STOCK_CANCEL;
-		break;
-	case JOB_STATUS_FINISHED:
-		stock_id = GTK_STOCK_APPLY;
-		break;
-	case JOB_STATUS_INITIAL:
-		stock_id = GTK_STOCK_NETWORK;
-		break;
-	case JOB_STATUS_QUEUED:
-		stock_id = "chronometer";
-		break;
-	case JOB_STATUS_RUNNING:
-		stock_id = GTK_STOCK_EXECUTE;
-		break;
-	case JOB_STATUS_ISSUED:
-	case JOB_STATUS_REQUEUED:
-		break;
-	}
-
-	g_object_set(cell, "stock-id", stock_id, NULL);
-}
-
-static void
-title_column_data_func(GtkTreeViewColumn *tree_column,
-		       GtkCellRenderer *cell,
-		       GtkTreeModel *tree_model,
-		       GtkTreeIter *iter,
-		       gpointer data)
-{
-	GebrJob *job;
-
-	gtk_tree_model_get(tree_model, iter, JC_STRUCT, &job, -1);
-	g_object_set(cell, "text", gebr_job_get_title(job), NULL);
-}
-
-static void
-time_column_data_func(GtkTreeViewColumn *tree_column,
-		      GtkCellRenderer *cell,
-		      GtkTreeModel *tree_model,
-		      GtkTreeIter *iter,
-		      gpointer data)
-{
-	GebrJob *job;
-
-	gtk_tree_model_get(tree_model, iter, JC_STRUCT, &job, -1);
-	g_object_set(cell, "text", "moments ago", NULL);
-
-	return;
-}
-
 void
 gebr_job_control_select_job_by_rid(GebrJobControl *jc, const gchar *rid)
 {
@@ -780,125 +902,4 @@ gebr_job_control_select_job(GebrJobControl *jc, GebrJob *job)
 		gtk_tree_selection_unselect_all(selection);
 		gtk_tree_selection_select_iter(selection, &filter_iter);
 	}
-}
-
-static void
-gebr_jc_update_status_and_time(GebrJobControl *jc,
-                               GebrJob 	      *job,
-                               enum JobStatus status)
-{
-	const gchar *start_date = gebr_job_get_start_date(job);
-	const gchar *finish_date = gebr_job_get_finish_date(job);
-	GString *start = g_string_new(NULL);
-	GString *finish = g_string_new(NULL);
-
-	/* start date (may have failed, never started) */
-	if (start_date && strlen(start_date))
-		g_string_append_printf(start, "%s %s", _("Started at"),
-		                       gebr_localized_date(start_date));
-
-	/* finish date */
-	if (finish_date && strlen(finish_date))
-		g_string_append_printf(finish, "%s %s", status == JOB_STATUS_FINISHED ?
-				       _("Finished at") : _("Canceled at"),
-				       gebr_localized_date(finish_date));
-
-	GtkImage *img = GTK_IMAGE(gtk_builder_get_object(jc->priv->builder, "status_image"));
-	GtkLabel *subheader = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "subheader_label"));
-	GtkButton *queued_button = GTK_BUTTON(gtk_builder_get_object(jc->priv->builder, "subheader_button"));
-	GtkLabel *details_start_date = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "detail_start_date"));
-	gtk_widget_hide(GTK_WIDGET(queued_button));
-
-	if (status == JOB_STATUS_FINISHED) {
-		gtk_image_set_from_stock(img, GTK_STOCK_APPLY, GTK_ICON_SIZE_DIALOG);
-		gtk_label_set_text(subheader, finish->str);
-		gtk_label_set_text(details_start_date, start->str);
-		gtk_widget_show(GTK_WIDGET(details_start_date));
-	}
-
-	else if (status == JOB_STATUS_RUNNING) {
-		gtk_image_set_from_stock(img, GTK_STOCK_EXECUTE, GTK_ICON_SIZE_DIALOG);
-		gtk_label_set_text(subheader, start->str);
-		gtk_widget_hide(GTK_WIDGET(details_start_date));
-	}
-
-	else if (status == JOB_STATUS_FAILED || status == JOB_STATUS_CANCELED) {
-		gtk_image_set_from_stock(img, GTK_STOCK_CANCEL, GTK_ICON_SIZE_DIALOG);
-		gtk_label_set_text(subheader, finish->str);
-		gtk_label_set_text(details_start_date, start->str);
-	}
-
-	else if (status == JOB_STATUS_QUEUED) {
-		gtk_image_set_from_stock(img, "chronometer", GTK_ICON_SIZE_DIALOG);
-		gtk_widget_show(GTK_WIDGET(queued_button));
-	}
-
-	g_string_free(start, FALSE);
-	g_string_free(finish, FALSE);
-}
-
-static void
-gebr_job_control_load_details(GebrJobControl *jc,
-			      GebrJob *job)
-{
-	g_return_if_fail(job != NULL);
-
-	GString *info = g_string_new("");
-	GString *info_cmd = g_string_new("");
-	GtkTextIter end_iter;
-	GtkTextIter end_iter_cmd;
-	GtkLabel *input_file, *output_file, *log_file;
-	gchar *input_file_str, *output_file_str, *log_file_str;
-	enum JobStatus status = gebr_job_get_status(job);
-
-	input_file = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "input_label"));
-	output_file = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "output_label"));
-	log_file = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "error_label"));
-
-
-	gebr_job_get_io(job, &input_file_str, &output_file_str, &log_file_str);
-
-	gchar *markup;
-
-	markup = g_markup_printf_escaped ("<b>Input file</b>: %s", input_file_str ? input_file_str : _("None"));
-	gtk_label_set_markup (input_file, markup);
-	g_free(markup);
-
-	markup = g_markup_printf_escaped ("<b>Output file</b>: %s", output_file_str ? output_file_str : _("None"));
-	gtk_label_set_markup (output_file, markup);
-	g_free(markup);
-
-	markup = g_markup_printf_escaped ("<b>Log File</b>: %s", log_file_str ? log_file_str : _("None"));
-	gtk_label_set_markup (log_file, markup);
-	g_free(markup);
-
-	gebr_jc_update_status_and_time(jc, job, status);
-
-	GtkLabel *label = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "header_label"));
-	const gchar *title = gebr_job_get_title(job);
-	markup = g_markup_printf_escaped ("<span size=\"large\"><b>%s</b></span>", title);
-	gtk_label_set_markup (label, markup);
-	g_free (markup);
-
-	gtk_text_buffer_set_text(jc->text_buffer, "", 0);
-	gtk_text_buffer_set_text(jc->cmd_buffer, "", 0);
-
-	/* command-line */
-	gchar *cmdline = gebr_job_get_command_line(job);
-	g_string_append_printf(info_cmd, "\n%s\n%s\n", _("Command line:"), cmdline);
-	g_free(cmdline);
-
-	gtk_text_buffer_get_end_iter(jc->cmd_buffer, &end_iter_cmd);
-	gtk_text_buffer_insert(jc->cmd_buffer, &end_iter_cmd, info_cmd->str, info_cmd->len);
-
-	/* output */
-	g_string_append(info, gebr_job_get_output(job));
-
-	gtk_text_buffer_get_end_iter(jc->text_buffer, &end_iter);
-	gtk_text_buffer_insert(jc->text_buffer, &end_iter, info->str, info->len);
-
-
-	/* frees */
-	g_string_free(info, TRUE);
-	g_string_free(info_cmd, TRUE);
 }
