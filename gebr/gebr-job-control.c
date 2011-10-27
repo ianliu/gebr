@@ -347,7 +347,7 @@ time_column_data_func(GtkTreeViewColumn *tree_column,
 
 	gtk_tree_model_get(tree_model, iter, JC_STRUCT, &job, -1);
 	start_time_str = gebr_job_get_start_date(job);
-	g_debug("start_time_str: %s", start_time_str);
+//	g_debug("start_time_str: %s", start_time_str);
 	g_time_val_from_iso8601(start_time_str, &start_time);
 	g_get_current_time(&curr_time);
 
@@ -355,6 +355,11 @@ time_column_data_func(GtkTreeViewColumn *tree_column,
 	relative_time_msg = calculate_relative_time(&start_time, &curr_time);
 	g_object_set(cell, "text", relative_time_msg, NULL);
 	g_free(relative_time_msg);
+
+	GtkTreePath *path = gtk_tree_model_get_path(tree_model, iter);
+	gtk_tree_model_row_changed(tree_model, path, iter);
+	gtk_tree_path_free(path);
+
 	return;
 }
 

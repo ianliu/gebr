@@ -752,8 +752,8 @@ gebr_str_canonical_var_name(const gchar * keyword, gchar ** new_value, GError **
 }
 
 gchar *calculate_relative_time (GTimeVal *time1, GTimeVal *time2){
-	g_debug("time1: %s",g_time_val_to_iso8601(time1));
-	g_debug("time2: %s",g_time_val_to_iso8601(time2));
+//	g_debug("time1: %s",g_time_val_to_iso8601(time1));
+//	g_debug("time2: %s",g_time_val_to_iso8601(time2));
 
 	if ( time2->tv_sec < time1->tv_sec) 
 		return NULL;
