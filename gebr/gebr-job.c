@@ -408,10 +408,16 @@ gebr_job_get_finish_date(GebrJob *job)
 gchar *
 gebr_job_get_issues(GebrJob *job)
 {
-	GString *buf = g_string_new(NULL);
-	for (GList *i = job->priv->tasks; i; i = i->next)
-		g_string_append_printf(buf, "%s\n", gebr_task_get_issues(i->data));
-	return g_string_free(buf, FALSE);
+	return g_strdup(gebr_task_get_issues(job->priv->tasks->data));
+}
+
+gboolean
+gebr_job_has_issues(GebrJob *job)
+{
+	if (!job->priv->tasks)
+		return FALSE;
+
+	return gebr_task_get_issues(job->priv->tasks->data)[0] == '\0' ? FALSE : TRUE;
 }
 
 void

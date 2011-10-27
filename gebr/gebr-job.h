@@ -97,6 +97,8 @@ const gchar *gebr_job_get_finish_date(GebrJob *job);
 
 gchar *gebr_job_get_issues(GebrJob *job);
 
+gboolean gebr_job_has_issues(GebrJob *job);
+
 void gebr_job_close(GebrJob *job);
 
 void gebr_job_kill(GebrJob *job);
