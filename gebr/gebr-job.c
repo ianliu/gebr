@@ -280,7 +280,8 @@ gebr_job_append_task(GebrJob *job, GebrTask *task)
 	g_signal_emit(job, signals[OUTPUT], 0, task, gebr_task_get_output(task));
 
 	if (strlen(issues))
-		gebr_job_change_task_status(task, job->priv->status, status, issues, job);
+		gebr_job_change_task_status(task, job->priv->status,
+					    JOB_STATUS_ISSUED, issues, job);
 
 	switch(status)
 	{
