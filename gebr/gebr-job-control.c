@@ -99,6 +99,45 @@ jobs_visible_func(GtkTreeModel *model,
 	return TRUE;
 }
 
+static const gchar *
+get_issues_image_for_status(GebrJob *job)
+{
+	switch(gebr_job_get_status(job))
+	{
+	case JOB_STATUS_CANCELED:
+	case JOB_STATUS_FAILED:
+		return GTK_STOCK_DIALOG_ERROR;
+	default:
+		return GTK_STOCK_DIALOG_WARNING;
+	}
+}
+
+
+static void
+fill_issues_properties(GebrJobControl *jc,
+                       const gchar *issues,
+                       GebrJob *job)
+{
+	const gchar *stock_id;
+	GtkInfoBar *info = GTK_INFO_BAR(gtk_builder_get_object(jc->priv->builder, "issues_info_bar"));
+	GtkLabel *label = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "issues_info_bar_label"));
+	GtkImage *image = GTK_IMAGE(gtk_builder_get_object(jc->priv->builder, "issues_info_bar_image"));
+
+	gtk_widget_show(GTK_WIDGET(info));
+	GtkButton *show_issues = GTK_BUTTON(gtk_builder_get_object(jc->priv->builder, "show_issues_button"));
+	gtk_widget_hide(GTK_WIDGET(show_issues));
+
+	stock_id = get_issues_image_for_status(job);
+
+	if (stock_id == GTK_STOCK_DIALOG_ERROR)
+		gtk_info_bar_set_message_type(info, GTK_MESSAGE_ERROR);
+	else
+		gtk_info_bar_set_message_type(info, GTK_MESSAGE_WARNING);
+
+	gtk_label_set_text(label, issues);
+	gtk_image_set_from_stock(image, stock_id, GTK_ICON_SIZE_DIALOG);
+}
+
 static void
 on_dismiss_clicked(GtkButton *dismiss, GebrJobControl *jc)
 {
@@ -114,13 +153,21 @@ on_dismiss_clicked(GtkButton *dismiss, GebrJobControl *jc)
 static void
 on_show_issues_clicked(GtkButton *show_issues, GebrJobControl *jc)
 {
-	GtkInfoBar *info = GTK_INFO_BAR(gtk_builder_get_object(jc->priv->builder, "issues_info_bar"));
+	GebrJob *job;
+	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(jc->view));
+	GtkTreeModel *model;
+	GtkTreeIter iter;
+	GList *rows = gtk_tree_selection_get_selected_rows(selection, &model);
 
-	if (!gtk_widget_get_visible(GTK_WIDGET(info))) {
-		gtk_widget_show(GTK_WIDGET(info));
-		gtk_widget_hide(GTK_WIDGET(show_issues));
-	}
-	g_debug("Show issues again!!!!");
+	if (!gtk_tree_model_get_iter(model, &iter, rows->data))
+		g_return_if_reached();
+
+	gtk_tree_model_get(model, &iter, JC_STRUCT, &job, -1);
+
+	fill_issues_properties(jc, gebr_job_get_issues(job), job);
+
+	g_list_foreach(rows, (GFunc)gtk_tree_path_free, NULL);
+	g_list_free(rows);
 }
 
 
@@ -156,29 +203,7 @@ on_job_issued(GebrJob *job,
 	      const gchar *issues,
 	      GebrJobControl *jc)
 {
-	const gchar *stock_id;
-	GtkInfoBar *info = GTK_INFO_BAR(gtk_builder_get_object(jc->priv->builder, "issues_info_bar"));
-	GtkLabel *label = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "issues_info_bar_label"));
-	GtkImage *image = GTK_IMAGE(gtk_builder_get_object(jc->priv->builder, "issues_info_bar_image"));
-
-	gtk_widget_show(GTK_WIDGET(info));
-	GtkButton *show_issues = GTK_BUTTON(gtk_builder_get_object(jc->priv->builder, "show_issues_button"));
-	gtk_widget_hide(GTK_WIDGET(show_issues));
-
-	switch(gebr_job_get_status(job))
-	{
-	case JOB_STATUS_CANCELED:
-	case JOB_STATUS_FAILED:
-		gtk_info_bar_set_message_type(info, GTK_MESSAGE_ERROR);
-		stock_id = GTK_STOCK_DIALOG_ERROR;
-		break;
-	default:
-		gtk_info_bar_set_message_type(info, GTK_MESSAGE_WARNING);
-		stock_id = GTK_STOCK_DIALOG_WARNING;
-		break;
-	}
-	gtk_label_set_text(label, issues);
-	gtk_image_set_from_stock(image, stock_id, GTK_ICON_SIZE_DIALOG);
+	fill_issues_properties(jc, issues, job);
 }
 
 static void
@@ -213,57 +238,83 @@ gebr_job_control_info_set_visible(GebrJobControl *jc,
 }
 
 static void
+job_control_disconnect_signals(GebrJobControl *jc)
+{
+	if (jc->priv->last_selection.job) {
+		g_signal_handler_disconnect(jc->priv->last_selection.job,
+		                            jc->priv->last_selection.sig_output);
+		g_signal_handler_disconnect(jc->priv->last_selection.job,
+		                            jc->priv->last_selection.sig_status);
+		g_signal_handler_disconnect(jc->priv->last_selection.job,
+		                            jc->priv->last_selection.sig_issued);
+		g_signal_handler_disconnect(jc->priv->last_selection.job,
+		                            jc->priv->last_selection.sig_cmd_line);
+	}
+}
+
+static void
 job_control_on_cursor_changed(GtkTreeSelection *selection,
 			      GebrJobControl *jc)
 {
 	GList *rows = gtk_tree_selection_get_selected_rows(selection, NULL);
 
-	if (jc->priv->last_selection.job) {
-		g_signal_handler_disconnect(jc->priv->last_selection.job,
-					    jc->priv->last_selection.sig_output);
-		g_signal_handler_disconnect(jc->priv->last_selection.job,
-					    jc->priv->last_selection.sig_status);
-		g_signal_handler_disconnect(jc->priv->last_selection.job,
-					    jc->priv->last_selection.sig_issued);
-		g_signal_handler_disconnect(jc->priv->last_selection.job,
-					    jc->priv->last_selection.sig_cmd_line);
-	}
-
-	jc->priv->last_selection.job = NULL;
-
 	if (!rows) {
+		job_control_disconnect_signals(jc);
+		jc->priv->last_selection.job = NULL;
 		gebr_job_control_info_set_visible(jc, FALSE, _("Please, select a job at the list on the left"));
 		return;
 	}
 
-	gboolean has_job = FALSE;
+	GebrJob *job = NULL;
 
 	if (!rows->next) {
-		GebrJob *job;
 		GtkTreeIter iter;
-
-		if (gtk_tree_model_get_iter(GTK_TREE_MODEL(jc->store), &iter, (GtkTreePath*)rows->data)) {
+		if (gtk_tree_model_get_iter(GTK_TREE_MODEL(jc->store), &iter, (GtkTreePath*)rows->data))
 			gtk_tree_model_get(GTK_TREE_MODEL(jc->store), &iter, JC_STRUCT, &job, -1);
-			if (job) {
-				gebr_job_control_load_details(jc, job);
-
-				jc->priv->last_selection.job = job;
-				jc->priv->last_selection.sig_output =
-					g_signal_connect(job, "output", G_CALLBACK(on_job_output), jc);
-				jc->priv->last_selection.sig_status =
-					g_signal_connect(job, "status-change", G_CALLBACK(on_job_status), jc);
-				jc->priv->last_selection.sig_issued =
-					g_signal_connect(job, "issued", G_CALLBACK(on_job_issued), jc);
-				jc->priv->last_selection.sig_cmd_line =
-					g_signal_connect(job, "cmd-line-received", G_CALLBACK(on_job_cmd_line_received), jc);
-				has_job = TRUE;
-			}
-		} else
+		else
 			g_warn_if_reached();
-	} else
-		g_debug("MULTIPLE SELECTION! SURFIN BIRD");
+	}
 
-	gebr_job_control_info_set_visible(jc, has_job, _("Multiple jobs selected"));
+	gboolean has_job = (job != NULL);
+
+	if (!has_job) {
+		gebr_job_control_info_set_visible(jc, FALSE, _("Multiple jobs selected"));
+		return;
+	}
+
+	if (job == jc->priv->last_selection.job)
+		return;
+
+	gebr_job_control_info_set_visible(jc, TRUE, NULL);
+
+	if (has_job) {
+		job_control_disconnect_signals(jc);
+
+		jc->priv->last_selection.job = job;
+		jc->priv->last_selection.sig_output =
+				g_signal_connect(job, "output", G_CALLBACK(on_job_output), jc);
+		jc->priv->last_selection.sig_status =
+				g_signal_connect(job, "status-change", G_CALLBACK(on_job_status), jc);
+		jc->priv->last_selection.sig_issued =
+				g_signal_connect(job, "issued", G_CALLBACK(on_job_issued), jc);
+		jc->priv->last_selection.sig_cmd_line =
+				g_signal_connect(job, "cmd-line-received", G_CALLBACK(on_job_cmd_line_received), jc);
+
+		gebr_job_control_load_details(jc, job);
+	}
+
+	GtkButton *button = GTK_BUTTON(gtk_builder_get_object(jc->priv->builder, "show_issues_button"));
+	GtkInfoBar *info = GTK_INFO_BAR(gtk_builder_get_object(jc->priv->builder, "issues_info_bar"));
+
+	gtk_widget_hide(GTK_WIDGET(info));
+
+	if (has_job && gebr_job_has_issues(job)) {
+		GtkImage *image = GTK_IMAGE(gtk_builder_get_object(jc->priv->builder, "show_issues_img"));
+		gtk_image_set_from_stock(image, get_issues_image_for_status(job), GTK_ICON_SIZE_DND);
+		gtk_widget_show(GTK_WIDGET(button));
+	} else
+		gtk_widget_hide(GTK_WIDGET(button));
+
 
 	g_list_foreach(rows, (GFunc) gtk_tree_path_free, NULL);
 	g_list_free(rows);
