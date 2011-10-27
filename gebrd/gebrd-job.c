@@ -1383,14 +1383,8 @@ static void job_assembly_cmdline(GebrdJob *job)
 
 	gboolean stdout_use_iter = FALSE;
 
-	if (has_error_output_file == FALSE)
-		job_issue(job,
-			  _("No error file selected; error output merged with standard output.\n"));
-
 	if (previous_stdout) {
-		if (strlen(gebr_geoxml_flow_io_get_output(job->flow)) == 0)
-			job_issue(job, _("Proceeding without output file.\n"));
-		else {
+		if (strlen(gebr_geoxml_flow_io_get_output(job->flow)) != 0) {
 			gchar *result;
 			const gchar *output_expr;
 			GError *error = NULL;
