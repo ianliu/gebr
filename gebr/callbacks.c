@@ -459,7 +459,24 @@ void on_notebook_switch_page (GtkNotebook     *notebook,
 		gtk_window_remove_accel_group(GTK_WINDOW(gebr.window), gebr.accel_group_array[gebr.last_notebook]);
 
 	gtk_window_add_accel_group(GTK_WINDOW(gebr.window), gebr.accel_group_array[page_num]);
-	gebr.last_notebook = page_num;
+
+	switch (gebr.last_notebook)
+	{
+	case NOTEBOOK_PAGE_JOB_CONTROL:
+		gebr_job_control_hide(gebr.job_control);
+		break;
+	default:
+		break;
+	}
+
+	switch (page_num)
+	{
+	case NOTEBOOK_PAGE_JOB_CONTROL:
+		gebr_job_control_show(gebr.job_control);
+		break;
+	default:
+		break;
+	}
 
 	if (page_num == NOTEBOOK_PAGE_FLOW_EDITION) {
 		if (!gebr.flow)
@@ -471,6 +488,8 @@ void on_notebook_switch_page (GtkNotebook     *notebook,
 		flow_edition_find_flow_server (gebr.flow, model, &iter);
 		gtk_combo_box_set_active_iter (cb, &iter);
 	}
+
+	gebr.last_notebook = page_num;
 }
 
 void on_server_common_connect(void)

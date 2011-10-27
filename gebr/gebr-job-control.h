@@ -106,6 +106,20 @@ void gebr_job_control_close_selected(GebrJobControl *jc);
  */
 void gebr_job_control_stop_selected(GebrJobControl *jc);
 
+/**
+ * gebr_job_control_show:
+ *
+ * Called when job control tab is shown.
+ */
+void gebr_job_control_show(GebrJobControl *jc);
+
+/**
+ * gebr_job_control_hide:
+ *
+ * Called when job control tab is hidden.
+ */
+void gebr_job_control_hide(GebrJobControl *jc);
+
 G_END_DECLS
 
 #endif /* __GEBR_JOB_CONTROL_H__ */

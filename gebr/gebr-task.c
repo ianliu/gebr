@@ -265,6 +265,8 @@ gebr_task_emit_status_changed_signal(GebrTask *task,
 	case JOB_STATUS_FAILED:
 		g_string_assign(task->priv->finish_date, parameter);
 		break;
+	default:
+		break;
 	}
 
 	g_signal_emit(task, signals[STATUS_CHANGE], 0, old_status, new_status, parameter);

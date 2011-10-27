@@ -37,6 +37,7 @@ typedef struct {
 } LastSelection;
 
 struct _GebrJobControlPriv {
+	guint timeout_source_id;
 	GtkWidget *widget;
 	GtkBuilder *builder;
 	LastSelection last_selection;
@@ -347,7 +348,6 @@ time_column_data_func(GtkTreeViewColumn *tree_column,
 
 	gtk_tree_model_get(tree_model, iter, JC_STRUCT, &job, -1);
 	start_time_str = gebr_job_get_start_date(job);
-//	g_debug("start_time_str: %s", start_time_str);
 	g_time_val_from_iso8601(start_time_str, &start_time);
 	g_get_current_time(&curr_time);
 
@@ -355,10 +355,6 @@ time_column_data_func(GtkTreeViewColumn *tree_column,
 	relative_time_msg = gebr_calculate_relative_time(&start_time, &curr_time);
 	g_object_set(cell, "text", relative_time_msg, NULL);
 	g_free(relative_time_msg);
-
-	GtkTreePath *path = gtk_tree_model_get_path(tree_model, iter);
-	gtk_tree_model_row_changed(tree_model, path, iter);
-	gtk_tree_path_free(path);
 
 	return;
 }
@@ -480,6 +476,25 @@ gebr_job_control_load_details(GebrJobControl *jc,
 
 	g_string_free(info, TRUE);
 	g_string_free(info_cmd, TRUE);
+}
+
+static gboolean
+update_tree_view(gpointer data)
+{
+	GtkTreeIter iter;
+	GebrJobControl *jc = data;
+	GtkTreeModel *model = gtk_tree_view_get_model(GTK_TREE_VIEW(jc->view));
+	gboolean valid = gtk_tree_model_get_iter_first(model, &iter);
+
+	while (valid)
+	{
+		GtkTreePath *path = gtk_tree_model_get_path(model, &iter);
+		gtk_tree_model_row_changed(GTK_TREE_MODEL(jc->store), path, &iter);
+		gtk_tree_path_free(path);
+		valid = gtk_tree_model_iter_next(model, &iter);
+	}
+
+	return TRUE;
 }
 
 /* Public methods {{{1 */
