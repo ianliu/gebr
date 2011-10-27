@@ -751,24 +751,23 @@ gebr_str_canonical_var_name(const gchar * keyword, gchar ** new_value, GError **
 	return TRUE;
 }
 
-gchar *calculate_relative_time (GTimeVal *time1, GTimeVal *time2){
-//	g_debug("time1: %s",g_time_val_to_iso8601(time1));
-//	g_debug("time2: %s",g_time_val_to_iso8601(time2));
-
+gchar *
+gebr_calculate_relative_time (GTimeVal *time1, GTimeVal *time2)
+{
 	if ( time2->tv_sec < time1->tv_sec) 
 		return NULL;
 	else if ( time2->tv_sec - time1->tv_sec < 5)
-		return (g_strdup(_("A moment ago.")));
+		return (g_strdup(_("A moment ago")));
 	else if ( time2->tv_sec - time1->tv_sec < 60)
-		return (g_strdup_printf(_("%ld seconds ago."), time2->tv_sec - time1->tv_sec));
+		return (g_strdup_printf(_("%ld seconds ago"), time2->tv_sec - time1->tv_sec));
 	else if ( time2->tv_sec - time1->tv_sec < 3600)
-		return (g_strdup_printf(_("%ld minutes ago."), (time2->tv_sec - time1->tv_sec)/60));
+		return (g_strdup_printf(_("%ld minutes ago"), (time2->tv_sec - time1->tv_sec)/60));
 	else if ( time2->tv_sec - time1->tv_sec < 86400)
-		return (g_strdup_printf(_("%ld hours ago."), (time2->tv_sec - time1->tv_sec)/3600));
+		return (g_strdup_printf(_("%ld hours ago"), (time2->tv_sec - time1->tv_sec)/3600));
 	else if ( time2->tv_sec - time1->tv_sec < 604800)
-		return (g_strdup_printf(_("%ld weeks ago."), (time2->tv_sec - time1->tv_sec)/86400));
+		return (g_strdup_printf(_("%ld weeks ago"), (time2->tv_sec - time1->tv_sec)/86400));
 	else if ( time2->tv_sec - time1->tv_sec < 2678400)
-		return (g_strdup_printf(_("%ld months ago."), (time2->tv_sec - time1->tv_sec)/604800));
+		return (g_strdup_printf(_("%ld months ago"), (time2->tv_sec - time1->tv_sec)/604800));
 	else 
-		return (g_strdup(_("More than a year ago.")));
+		return (g_strdup(_("More than a year ago")));
 }

@@ -179,23 +179,25 @@ gchar *gebr_str_remove_trailing_zeros(gchar *str);
 /**
  * gebr_str_canonical_var_name:
  * @keyword: The keyword to be canonized. (not modified)
- * @new_value: Returns a new alocated string with the canonized value of keyword.
+ * @new_value: Returns a new alocated string with the canonized value of
+ * keyword.
  * @error: A GError (not used until now)
  *
  * Returns: TRUE if everthing is ok. False otherwise.
  */
-gboolean
-gebr_str_canonical_var_name(const gchar * keyword, gchar ** new_value, GError ** error);
-
+gboolean gebr_str_canonical_var_name(const gchar * keyword,
+				     gchar ** new_value,
+				     GError ** error);
 
 /**
- * calculate_relative_time:
+ * gebr_calculate_relative_time:
  * @time1: The first date to compare 
  * @time2: The second date to compare 
  *
- * Returns: A message (string) of the relative time and NULL if time2 is older than time1.
+ * Returns: A message (string) of the relative time and NULL if time2 is older
+ * than time1.
  */
-gchar *calculate_relative_time (GTimeVal *time1, GTimeVal *time2);
+gchar *gebr_calculate_relative_time (GTimeVal *time1, GTimeVal *time2);
 G_END_DECLS
 
 #endif				//__GEBR_UTILS_H
