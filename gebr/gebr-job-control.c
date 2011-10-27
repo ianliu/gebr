@@ -328,10 +328,21 @@ time_column_data_func(GtkTreeViewColumn *tree_column,
 		      gpointer data)
 {
 	GebrJob *job;
+	const gchar *start_time_str;
+	gchar *relative_time_msg;
+
+	GTimeVal start_time, curr_time;
 
 	gtk_tree_model_get(tree_model, iter, JC_STRUCT, &job, -1);
-	g_object_set(cell, "text", "moments ago", NULL);
+	start_time_str = gebr_job_get_start_date(job);
+	g_debug("start_time_str: %s", start_time_str);
+	g_time_val_from_iso8601(start_time_str, &start_time);
+	g_get_current_time(&curr_time);
 
+
+	relative_time_msg = calculate_relative_time(&start_time, &curr_time);
+	g_object_set(cell, "text", relative_time_msg, NULL);
+	g_free(relative_time_msg);
 	return;
 }
 
