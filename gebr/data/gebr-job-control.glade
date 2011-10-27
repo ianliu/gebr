@@ -61,6 +61,33 @@
       <object class="GtkVBox" id="vbox1">
         <property name="visible">True</property>
         <child>
+          <object class="GtkInfoBar" id="issues_info_bar">
+            <child internal-child="content_area">
+              <object class="GtkHBox" id="issues_info_bar_hbox">
+                <child>
+                  <object class="GtkLabel" id="issues_info_bar_label">
+                    <property name="visible">True</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child internal-child="action_area">
+              <object class="GtkVButtonBox" id="issues_info_bar_hbutton_box">
+                <child>
+                  <object class="GtkButton" id="issues_info_bar_dismiss">
+                    <property name="visible">True</property>
+                    <property name="label" translatable="yes">Dismiss</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="position">0</property>
+	    <property name="expand">False</property>
+          </packing>
+        </child>
+        <child>
           <object class="GtkVBox" id="job_info_widget">
             <property name="spacing">10</property>
             <child>
@@ -389,7 +416,7 @@
             </child>
           </object>
           <packing>
-            <property name="position">0</property>
+            <property name="position">1</property>
           </packing>
         </child>
         <child>
@@ -399,7 +426,7 @@
             <property name="label">Please, select a job at the list on the left</property>
           </object>
           <packing>
-            <property name="position">1</property>
+            <property name="position">2</property>
           </packing>
         </child>
       </object>
