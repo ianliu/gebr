@@ -101,8 +101,25 @@ on_dismiss_clicked(GtkButton *dismiss, GebrJobControl *jc)
 {
 	GtkInfoBar *info = GTK_INFO_BAR(gtk_builder_get_object(jc->priv->builder, "issues_info_bar"));
 	gtk_widget_hide(GTK_WIDGET(info));
+
+	GtkButton *show_issues = GTK_BUTTON(gtk_builder_get_object(jc->priv->builder, "show_issues_button"));
+	gtk_widget_show(GTK_WIDGET(show_issues));
+
 	g_debug("Dismiss!!!!");
 }
+
+static void
+on_show_issues_clicked(GtkButton *show_issues, GebrJobControl *jc)
+{
+	GtkInfoBar *info = GTK_INFO_BAR(gtk_builder_get_object(jc->priv->builder, "issues_info_bar"));
+
+	if (!gtk_widget_get_visible(GTK_WIDGET(info))) {
+		gtk_widget_show(GTK_WIDGET(info));
+		gtk_widget_hide(GTK_WIDGET(show_issues));
+	}
+	g_debug("Show issues again!!!!");
+}
+
 
 static void
 on_job_output(GebrJob *job,
@@ -137,6 +154,8 @@ on_job_issued(GebrJob *job,
 	GtkImage *image = GTK_IMAGE(gtk_builder_get_object(jc->priv->builder, "issues_info_bar_image"));
 
 	gtk_widget_show(GTK_WIDGET(info));
+	GtkButton *show_issues = GTK_BUTTON(gtk_builder_get_object(jc->priv->builder, "show_issues_button"));
+	gtk_widget_hide(GTK_WIDGET(show_issues));
 
 	switch(gebr_job_get_status(job))
 	{
@@ -495,6 +514,16 @@ gebr_job_control_new(void)
 	GtkButton *dismiss;
 	dismiss = GTK_BUTTON(gtk_builder_get_object(jc->priv->builder, "issues_info_bar_dismiss"));
 	g_signal_connect(dismiss, "clicked", G_CALLBACK(on_dismiss_clicked), jc);
+
+	GtkButton *show_issues;
+	show_issues = GTK_BUTTON(gtk_builder_get_object(jc->priv->builder, "show_issues_button"));
+	g_signal_connect(show_issues, "clicked", G_CALLBACK(on_show_issues_clicked), jc);
+
+	GtkInfoBar *info = GTK_INFO_BAR(gtk_builder_get_object(jc->priv->builder, "issues_info_bar"));
+	if (!gtk_widget_get_visible(GTK_WIDGET(info)))
+		gtk_widget_show(GTK_WIDGET(show_issues));
+	else
+		gtk_widget_hide(GTK_WIDGET(show_issues));
 
 	GtkWidget *text_view;
 	GtkTextIter iter_end;
