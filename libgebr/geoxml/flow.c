@@ -1027,8 +1027,12 @@ gboolean
 gebr_geoxml_flow_is_parallelizable(GebrGeoXmlFlow *flow,
                                    GebrValidator *validator)
 {
-	if (!gebr_geoxml_flow_has_control_program(flow))
+	GebrGeoXmlProgram *prog = gebr_geoxml_flow_get_control_program(flow);
+	if (prog && gebr_geoxml_program_get_status(prog) != GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED) {
+		gebr_geoxml_object_unref(prog);
 		return FALSE;
+	}
+	gebr_geoxml_object_unref(prog);
 
 	const gchar *output = gebr_geoxml_flow_io_get_output(flow);
 
