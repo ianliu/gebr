@@ -142,7 +142,7 @@ gebr_job_append_task_output(GebrTask *task,
 	g_signal_emit(job, signals[OUTPUT], 0, task, output);
 }
 
-static gboolean
+gboolean
 job_is_stopped(GebrJob *job)
 {
 	return job->priv->status == JOB_STATUS_FINISHED
@@ -422,21 +422,26 @@ gebr_job_has_issues(GebrJob *job)
 	return gebr_task_get_issues(job->priv->tasks->data)[0] == '\0' ? FALSE : TRUE;
 }
 
-void
+gboolean
 gebr_job_close(GebrJob *job)
 {
 	if (!job_is_stopped(job))
-		return;
+		return FALSE;
 
 	for (GList *i = job->priv->tasks; i; i = i->next)
 		gebr_task_close(i->data, job->priv->runid);
 
 	g_object_unref(job);
+
+	return TRUE;
 }
 
 void
 gebr_job_kill(GebrJob *job)
 {
+	if (job_is_stopped(job))
+		return;
+
 	for (GList *i = job->priv->tasks; i; i = i->next)
 		gebr_task_kill(i->data);
 }
