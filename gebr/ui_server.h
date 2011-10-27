@@ -153,6 +153,8 @@ GtkWidget *ui_server_create_tag_combo_box (void);
 
 gboolean ui_server_ask_for_tags_remove_permission (void);
 
+gchar *gebr_get_groups_of_server(gchar *server_address);
+
 G_END_DECLS
 
 #endif				//__UI_SERVER_H
