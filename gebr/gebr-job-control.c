@@ -102,16 +102,8 @@ jobs_visible_func(GtkTreeModel *model,
 static const gchar *
 get_issues_image_for_status(GebrJob *job)
 {
-	switch(gebr_job_get_status(job))
-	{
-	case JOB_STATUS_CANCELED:
-	case JOB_STATUS_FAILED:
-		return GTK_STOCK_DIALOG_ERROR;
-	default:
-		return GTK_STOCK_DIALOG_WARNING;
-	}
+	return GTK_STOCK_DIALOG_WARNING;
 }
-
 
 static void
 fill_issues_properties(GebrJobControl *jc,
@@ -129,7 +121,7 @@ fill_issues_properties(GebrJobControl *jc,
 
 	stock_id = get_issues_image_for_status(job);
 
-	if (stock_id == GTK_STOCK_DIALOG_ERROR)
+	if (g_strcmp0(stock_id, GTK_STOCK_DIALOG_ERROR) == 0)
 		gtk_info_bar_set_message_type(info, GTK_MESSAGE_ERROR);
 	else
 		gtk_info_bar_set_message_type(info, GTK_MESSAGE_WARNING);
@@ -450,9 +442,15 @@ gebr_jc_update_status_and_time(GebrJobControl *jc,
 		gtk_widget_hide(GTK_WIDGET(details_start_date));
 	}
 
-	else if (status == JOB_STATUS_FAILED || status == JOB_STATUS_CANCELED) {
+	else if (status == JOB_STATUS_CANCELED) {
 		gtk_image_set_from_stock(img, GTK_STOCK_CANCEL, GTK_ICON_SIZE_DIALOG);
 		gtk_label_set_text(subheader, finish->str);
+		gtk_label_set_text(details_start_date, start->str);
+	}
+
+	else if (status == JOB_STATUS_FAILED) {
+		gtk_image_set_from_stock(img, GTK_STOCK_CANCEL, GTK_ICON_SIZE_DIALOG);
+		gtk_label_set_text(subheader, _("Job failed"));
 		gtk_label_set_text(details_start_date, start->str);
 	}
 

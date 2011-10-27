@@ -285,9 +285,11 @@ gebr_job_append_task(GebrJob *job, GebrTask *task)
 
 	switch(status)
 	{
+	case JOB_STATUS_FAILED:
+		gebr_job_change_task_status(task, job->priv->status, status, "", job);
+		break;
 	case JOB_STATUS_FINISHED:
 	case JOB_STATUS_CANCELED:
-	case JOB_STATUS_FAILED:
 		gebr_job_change_task_status(task, job->priv->status, status, gebr_task_get_finish_date(task), job);
 		break;
 	case JOB_STATUS_QUEUED:
@@ -423,9 +425,7 @@ gebr_job_has_issues(GebrJob *job)
 void
 gebr_job_close(GebrJob *job)
 {
-	if (job->priv->status != JOB_STATUS_FINISHED &&
-	    job->priv->status != JOB_STATUS_CANCELED &&
-	    job->priv->status != JOB_STATUS_FAILED)
+	if (!job_is_stopped(job))
 		return;
 
 	for (GList *i = job->priv->tasks; i; i = i->next)
