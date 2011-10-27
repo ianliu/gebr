@@ -96,6 +96,14 @@ jobs_visible_func(GtkTreeModel *model,
 	return TRUE;
 }
 
+static void
+on_dismiss_clicked(GtkButton *dismiss, GebrJobControl *jc)
+{
+	GtkInfoBar *info = GTK_INFO_BAR(gtk_builder_get_object(jc->priv->builder, "issues_info_bar"));
+	gtk_widget_hide(GTK_WIDGET(info));
+	g_debug("Dismiss!!!!");
+}
+
 /* Public methods {{{1 */
 GebrJobControl *
 gebr_job_control_new(void)
@@ -153,6 +161,9 @@ gebr_job_control_new(void)
 	/*
 	 * Right side
 	 */
+	GtkButton *dismiss;
+	dismiss = GTK_BUTTON(gtk_builder_get_object(jc->priv->builder, "issues_info_bar_dismiss"));
+	g_signal_connect(dismiss, "clicked", G_CALLBACK(on_dismiss_clicked), jc);
 
 	GtkWidget *text_view;
 	GtkTextIter iter_end;
@@ -446,7 +457,24 @@ on_job_issued(GebrJob *job,
 	      const gchar *issues,
 	      GebrJobControl *jc)
 {
-	g_debug("JC[ISSUED]: %s", issues);
+	GtkInfoBar *info = GTK_INFO_BAR(gtk_builder_get_object(jc->priv->builder, "issues_info_bar"));
+	GtkLabel *label = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "issues_info_bar_label"));
+
+	g_debug("Issued: %s", issues);
+
+	gtk_widget_show(GTK_WIDGET(info));
+
+	switch(gebr_job_get_status(job))
+	{
+	case JOB_STATUS_CANCELED:
+	case JOB_STATUS_FAILED:
+		gtk_info_bar_set_message_type(info, GTK_MESSAGE_ERROR);
+		break;
+	default:
+		gtk_info_bar_set_message_type(info, GTK_MESSAGE_WARNING);
+		break;
+	}
+	gtk_label_set_text(label, issues);
 }
 
 static void
