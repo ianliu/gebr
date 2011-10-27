@@ -87,6 +87,8 @@ static void gebr_jc_update_status_and_time(GebrJobControl *jc,
                                            GebrJob 	  *job,
                                            enum JobStatus status);
 
+static void on_text_view_populate_popup(GtkTextView * text_view, GtkMenu * menu);
+
 /* Private methods {{{1 */
 static gboolean
 jobs_visible_func(GtkTreeModel *model,
@@ -128,9 +130,14 @@ on_job_output(GebrJob *job,
 	      GebrJobControl *jc)
 {
 	GtkTextIter end_iter;
+	GtkTextMark *mark;
 
 	gtk_text_buffer_get_end_iter(jc->text_buffer, &end_iter);
 	gtk_text_buffer_insert(jc->text_buffer, &end_iter, output, strlen(output));
+	if (gebr.config.job_log_auto_scroll) {
+		mark = gtk_text_buffer_get_mark(jc->text_buffer, "end");
+		gtk_text_view_scroll_mark_onscreen(GTK_TEXT_VIEW(jc->text_view), mark);
+	}
 }
 
 static void
@@ -178,10 +185,15 @@ on_job_cmd_line_received(GebrJob *job,
 			 GebrJobControl *jc)
 {
 	GtkTextIter end_iter;
+	GtkTextMark *mark;
 	const gchar *cmdline = gebr_job_get_command_line(job);
 
 	gtk_text_buffer_get_end_iter(jc->cmd_buffer, &end_iter);
 	gtk_text_buffer_insert(jc->cmd_buffer, &end_iter, cmdline, strlen(cmdline));
+	if (gebr.config.job_log_auto_scroll) {
+		mark = gtk_text_buffer_get_mark(jc->cmd_buffer, "end");
+		gtk_text_view_scroll_mark_onscreen(GTK_TEXT_VIEW(jc->cmd_view), mark);
+	}
 }
 
 static void
@@ -538,7 +550,7 @@ gebr_job_control_new(void)
 
 	GtkWidget *text_view;
 	GtkTextIter iter_end;
-
+	
 	GtkToggleButton *details = GTK_TOGGLE_BUTTON(gtk_builder_get_object(jc->priv->builder, "more_details"));
 	g_signal_connect(details, "toggled", G_CALLBACK(on_toggled_more_details), jc->priv->builder);
 	gtk_toggle_button_set_active(details, FALSE);
@@ -563,6 +575,7 @@ gebr_job_control_new(void)
 	}
 
 	jc->text_view = text_view;
+	g_signal_connect(jc->text_view, "populate-popup", G_CALLBACK(on_text_view_populate_popup), jc);
 
 	/* Text view of command line */
 	jc->cmd_buffer = gtk_text_buffer_new(NULL);
@@ -584,6 +597,7 @@ gebr_job_control_new(void)
 	}
 
 	jc->cmd_view = text_view;
+	g_signal_connect(jc->cmd_view, "populate-popup", G_CALLBACK(on_text_view_populate_popup), jc);
 
 	return jc;
 }
@@ -801,7 +815,6 @@ free_rows:
 }
 
 
-#if 0
 /**
  * \internal
  */
@@ -844,7 +857,7 @@ static void on_text_view_populate_popup(GtkTextView * text_view, GtkMenu * menu)
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item), gebr.config.job_log_auto_scroll);
 }
 
-
+#if 0
 /*
  * Queue Actions
  */
