@@ -747,7 +747,8 @@ gebr_job_control_select_job(GebrJobControl *jc, GebrJob *job)
 		if (!gtk_tree_model_filter_convert_child_iter_to_iter(GTK_TREE_MODEL_FILTER(filter), &filter_iter, iter))
 			return;
 
-		gebr_gui_gtk_tree_view_select_iter(GTK_TREE_VIEW(jc->view), &filter_iter);
+		GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(jc->view));
+		gtk_tree_selection_select_iter(selection, &filter_iter);
 	}
 }
 
