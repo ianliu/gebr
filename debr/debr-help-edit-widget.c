@@ -430,16 +430,3 @@ gboolean debr_help_edit_widget_is_content_empty(DebrHelpEditWidget * self)
 
 	return retval;
 }
-
-void debr_help_edit_widget_refresh (DebrHelpEditWidget *self)
-{
-	gchar *content;
-	GString *tmpl;
-
-	g_return_if_fail (DEBR_IS_HELP_EDIT_WIDGET (self));
-
-	content = gebr_gui_help_edit_widget_get_content (GEBR_GUI_HELP_EDIT_WIDGET (self));
-	tmpl = g_string_new (content);
-
-	g_free (content);
-}

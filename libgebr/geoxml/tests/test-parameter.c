@@ -108,7 +108,7 @@ void test_gebr_geoxml_parameter_get_and_set_type(void)
 
 void test_gebr_geoxml_parameter_get_referencee(void)
 {
-	GebrGeoXmlParameters *parameters_list, *group_list;
+	GebrGeoXmlParameters *parameters_list;
 	GebrGeoXmlParameterGroup *group;
 	GebrGeoXmlFlow *test_menu;
 	GebrGeoXmlProgram *program;
@@ -120,11 +120,12 @@ void test_gebr_geoxml_parameter_get_referencee(void)
 
 	g_assert_cmpint(gebr_geoxml_parameters_get_parameter(parameters_list,(GebrGeoXmlSequence**)&group,2), ==, GEBR_GEOXML_RETV_SUCCESS);
 
-	group_list = gebr_geoxml_parameter_group_get_template(group);
 
 	/*TODO:
 	 * ADD GROUP INSTANCE
 	 */
+//	GebrGeoXmlParameters *group_list;
+//	group_list = gebr_geoxml_parameter_group_get_template(group);
 //
 //	g_assert_cmpint(gebr_geoxml_parameters_get_parameter(group_list,(GebrGeoXmlSequence**)&parameter,0), ==, GEBR_GEOXML_RETV_SUCCESS);
 //

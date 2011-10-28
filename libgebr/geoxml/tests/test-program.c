@@ -132,7 +132,6 @@ void test_gebr_geoxml_program_count_parameters(void)
 	GebrGeoXmlFlow *flow = gebr_geoxml_flow_new();
 	GebrGeoXmlProgram *program = gebr_geoxml_flow_append_program(flow);
 	GebrGeoXmlParameters *parameters_list = gebr_geoxml_program_get_parameters(program);
-	GebrGeoXmlParameter *parameter;
 	int i;
 	gsize count;
 
@@ -142,16 +141,16 @@ void test_gebr_geoxml_program_count_parameters(void)
 	}
 	g_test_trap_assert_failed();
 
+	gebr_geoxml_parameters_append_parameter(parameters_list, GEBR_GEOXML_PARAMETER_TYPE_INT);
 	count = gebr_geoxml_program_count_parameters(program);
 	g_assert_cmpint(count, ==, 0);
 
-	parameter = gebr_geoxml_parameters_append_parameter(parameters_list, GEBR_GEOXML_PARAMETER_TYPE_INT);
 	count = gebr_geoxml_program_count_parameters(program);
 	g_assert_cmpint(count, ==, 1);
 
 	// Test inclusion of some parameters
-	for(i = 1; i <= 5; i++){
-		parameter = gebr_geoxml_parameters_append_parameter(parameters_list, GEBR_GEOXML_PARAMETER_TYPE_INT);
+	for (i = 1; i <= 5; i++) {
+		gebr_geoxml_parameters_append_parameter(parameters_list, GEBR_GEOXML_PARAMETER_TYPE_INT);
 		count = gebr_geoxml_program_count_parameters(program);
 		g_assert_cmpint(count, ==, i+1);
 	}
@@ -440,14 +439,13 @@ void test_gebr_geoxml_program_get_and_set_error_id(void)
 
 void test_gebr_geoxml_program_control_get_n(void)
 {
-	GebrGeoXmlFlow *forloop, *flow;
+	GebrGeoXmlFlow *forloop;
 	GebrGeoXmlProgram *program;
 	GebrGeoXmlParameters *parameters_list;
 	GebrGeoXmlProgramParameter *parameter;
 	char *step, *ini;
 	gchar *iter;
 
-	flow = gebr_geoxml_flow_new ();
 	gebr_geoxml_document_load((GebrGeoXmlDocument**)&forloop, TEST_DIR"/forloop.mnu", FALSE, NULL);
 
 	gebr_geoxml_flow_get_program(forloop, (GebrGeoXmlSequence**) &program, 0);

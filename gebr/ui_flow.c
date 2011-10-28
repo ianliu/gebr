@@ -56,7 +56,6 @@ flow_io_run_dialog(GebrCommRunner *config,
 	GtkWidget *dialog;
 	GtkWidget *box;
 	GtkTreeIter iter;
-	GtkSizeGroup *group;
 
 	GtkWidget *cb_account = NULL;
 	GtkWidget *entry_queue = NULL;
@@ -69,7 +68,6 @@ flow_io_run_dialog(GebrCommRunner *config,
 					     NULL);
 
 	box = GTK_DIALOG(dialog)->vbox; /* This is the 'main box' of the dialog. */
-	group = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT);
 	gtk_container_set_border_width(GTK_CONTAINER(dialog), 5);

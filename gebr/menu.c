@@ -191,7 +191,6 @@ void menu_list_populate(void)
 	GtkTreeIter find_or_add_category(const gchar *title)
 	{
 		GtkTreeIter parent;
-		GtkTreeIter *pparent = NULL;
 		GtkTreeIter iter;
 
 		gchar **category_tree = g_strsplit(title, "|", 0);
@@ -213,7 +212,6 @@ void menu_list_populate(void)
 				iter = *category_iter;
 
 			parent = iter;
-			pparent = &parent;
 			g_string_free(bold, TRUE);
 		}
 		g_string_free(category_name, TRUE);

@@ -655,9 +655,8 @@ void project_line_select_iter(GtkTreeIter * iter)
 static void *import_demo_thread(gpointer user_data)
 {
 	TimeoutData *data = user_data;
-	gboolean ret;
 
-	ret = _project_line_import_path(data->path, &(data->line_paths_creation_sugest));
+	_project_line_import_path(data->path, &(data->line_paths_creation_sugest));
 	data->var = 1;
 	g_thread_exit(NULL);
 	return NULL;

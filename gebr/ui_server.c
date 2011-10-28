@@ -443,7 +443,6 @@ server_list_add(struct ui_server_list *ui_server_list,
 	GtkTreeIter iter;
 	GtkTreeIter filter_iter;
 	GtkTreeIter sort_iter;
-	GebrServer *server;
 
 	/* check if it is already in list */
 	gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(ui_server_list->common.store)) {
@@ -480,7 +479,7 @@ server_list_add(struct ui_server_list *ui_server_list,
 		}
 	}
 
-	server = gebr_server_new(address, TRUE, "");
+	gebr_server_new(address, TRUE, "");
 	gtk_tree_model_filter_refilter (GTK_TREE_MODEL_FILTER (gebr.ui_project_line->servers_filter));
 }
 

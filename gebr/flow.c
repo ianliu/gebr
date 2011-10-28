@@ -62,7 +62,6 @@ void flow_new (void)
 	GtkTreeIter iter;
 
 	const gchar *line_title;
-	const gchar *line_filename;
 
 	GebrServer *server;
 	GebrGeoXmlFlow *flow;
@@ -72,7 +71,6 @@ void flow_new (void)
 		return;
 
 	line_title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.line));
-	line_filename = gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(gebr.line));
 
 	/* Create a new flow */
 	flow = GEBR_GEOXML_FLOW(document_new(GEBR_GEOXML_DOCUMENT_TYPE_FLOW));

@@ -134,7 +134,6 @@ static void create_help_edit_window(GebrGeoXmlObject * object, const gchar * hel
 {
 	gchar * title;
 	gchar * help_backup;
-	gboolean is_menu_selected;
 	const gchar * object_title;
 	GtkTreeIter iter;
 	GebrGuiHelpEditWidget * help_edit_widget;
@@ -156,7 +155,7 @@ static void create_help_edit_window(GebrGeoXmlObject * object, const gchar * hel
 			title = g_strdup_printf(_("Help of the menu"));
 	}
 
-	is_menu_selected = menu_get_selected(&iter, TRUE);
+	menu_get_selected(&iter, TRUE);
 	help_edit_widget = debr_help_edit_widget_new(object, help, help_backup != NULL);
 	help_edit_window = gebr_gui_help_edit_window_new(help_edit_widget);
 	gebr_gui_help_edit_window_set_auto_save(GEBR_GUI_HELP_EDIT_WINDOW(help_edit_window), TRUE);

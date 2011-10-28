@@ -853,12 +853,10 @@ gebr_validator_change_value(GebrValidator       *self,
 	HashData *data;
 	gchar *name;
 	GebrGeoXmlDocumentType scope;
-	GebrGeoXmlParameterType type;
 	GError *err = NULL;
 
 	name = GET_VAR_NAME(param);
 	scope = gebr_geoxml_parameter_get_scope(param);
-	type = gebr_geoxml_parameter_get_type(param);
 
 	if (gebr_geoxml_program_parameter_get_required(GEBR_GEOXML_PROGRAM_PARAMETER(param)) && !*new_value) {
 		g_set_error(&err,

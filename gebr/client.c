@@ -223,23 +223,11 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 				gebr_server_emit_initialized (server);
 
 			} else if (comm_server->socket->protocol->waiting_ret_hash == gebr_comm_protocol_defs.run_def.code_hash) {
-				GList *arguments;
-				GString *jid;
-				GString *run_id;
-
-				if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
-					goto err;
-
-				jid = g_list_nth_data(arguments, 0);
-				run_id = g_list_nth_data(arguments, 1);
-
-				gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 			} else if (comm_server->socket->protocol->waiting_ret_hash == gebr_comm_protocol_defs.flw_def.code_hash) {
-
 			}
 		} else if (message->hash == gebr_comm_protocol_defs.job_def.code_hash) {
 			GList *arguments;
-			GString *jid, *hostname, *status, *title, *start_date, *finish_date, *issues, *cmd_line,
+			GString *hostname, *status, *title, *start_date, *finish_date, *issues, *cmd_line,
 				*output, *queue, *moab_jid, *run_id, *frac, *server_list, *input_file,
 				*output_file, *log_file;
 			GebrJob *job;
@@ -247,7 +235,6 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 			/* organize message data */
 			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 17)) == NULL)
 				goto err;
-			jid = g_list_nth_data(arguments, 0);
 			status = g_list_nth_data(arguments, 1);
 			title = g_list_nth_data(arguments, 2);
 			start_date = g_list_nth_data(arguments, 3);
@@ -310,13 +297,12 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		} else if (message->hash == gebr_comm_protocol_defs.out_def.code_hash) {
 			GList *arguments;
-			GString *jid, *output, *rid, *frac;
+			GString *output, *rid, *frac;
 			GebrTask *task;
 
 			/* organize message data */
 			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 4)) == NULL)
 				goto err;
-			jid = g_list_nth_data(arguments, 0);
 			output = g_list_nth_data(arguments, 1);
 			rid = g_list_nth_data(arguments, 2);
 			frac = g_list_nth_data(arguments, 3);
@@ -331,14 +317,13 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		} else if (message->hash == gebr_comm_protocol_defs.sta_def.code_hash) {
 			GList *arguments;
-			GString *jid, *status, *parameter, *rid, *frac;
+			GString *status, *parameter, *rid, *frac;
 			GebrTask *task;
 
 			/* organize message data */
 			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 5)) == NULL)
 				goto err;
 
-			jid = g_list_nth_data(arguments, 0);
 			status = g_list_nth_data(arguments, 1);
 			parameter = g_list_nth_data(arguments, 2);
 			rid = g_list_nth_data(arguments, 3);
