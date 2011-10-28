@@ -3,10 +3,12 @@
 callbacks.c
 client.c
 cmdline.c
+data/gebr-job-control.glade
 data/gebr.desktop.in.in
 document.c
 flow.c
 gebr-job-control.c
+gebr-job.c
 gebr-task.c
 gebr.c
 interface.c

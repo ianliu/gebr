@@ -141,10 +141,10 @@ void test_gebr_geoxml_program_count_parameters(void)
 	}
 	g_test_trap_assert_failed();
 
-	gebr_geoxml_parameters_append_parameter(parameters_list, GEBR_GEOXML_PARAMETER_TYPE_INT);
 	count = gebr_geoxml_program_count_parameters(program);
 	g_assert_cmpint(count, ==, 0);
 
+	gebr_geoxml_parameters_append_parameter(parameters_list, GEBR_GEOXML_PARAMETER_TYPE_INT);
 	count = gebr_geoxml_program_count_parameters(program);
 	g_assert_cmpint(count, ==, 1);
 

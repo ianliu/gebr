@@ -620,10 +620,14 @@ static void test_gebr_geoxml_flow_is_parallelizable (void)
 
 	g_assert (gebr_geoxml_flow_is_parallelizable(flow, validator) == FALSE);
 
-	gebr_geoxml_flow_io_set_output(flow, "/home/eric/Desktop/teste_semLoop.txt" );
+	gebr_geoxml_flow_io_set_output(flow, "/home/eric/Desktop/teste_semLoop.txt");
 	g_assert (gebr_geoxml_flow_is_parallelizable(flow, validator) == FALSE);
 
 	gebr_geoxml_flow_add_flow(flow, loop);
+	GebrGeoXmlProgram *forloop = gebr_geoxml_flow_get_control_program(flow);
+	gebr_geoxml_program_set_status(forloop, GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED);
+	gebr_geoxml_object_unref(forloop);
+
 	gebr_geoxml_flow_insert_iter_dict(flow);
 	GebrGeoXmlParameter *iter_param = GEBR_GEOXML_PARAMETER(gebr_geoxml_document_get_dict_parameter(GEBR_GEOXML_DOCUMENT(flow)));
 	gebr_validator_insert(validator, iter_param, NULL, NULL);
@@ -661,30 +665,30 @@ void test_gebr_geoxml_flow_divide_flows (Fixture *fixture, gconstpointer data)
 	GebrGeoXmlProgram *control4 = gebr_geoxml_flow_get_control_program(flows->next->next->next->data);
 
 
-	gchar *n1 = gebr_geoxml_program_control_get_n(control1, &ini, &step);
+	gchar *n1 = gebr_geoxml_program_control_get_n(control1, &step, &ini);
 	g_assert_cmpstr(n1, ==, "41");
 	g_assert_cmpstr(ini, ==, "1");
 	g_assert_cmpstr(step, ==, "1");
 	g_free(ini);
 	g_free(step);
 
-	gchar *n2 = gebr_geoxml_program_control_get_n(control2, &ini, &step);
+	gchar *n2 = gebr_geoxml_program_control_get_n(control2, &step, &ini);
 	g_assert_cmpstr(n2, ==, "30");
-	g_assert_cmpstr(ini, ==, "1");
+	g_assert_cmpstr(ini, ==, "42");
 	g_assert_cmpstr(step, ==, "1");
 	g_free(ini);
 	g_free(step);
 
-	gchar *n3 = gebr_geoxml_program_control_get_n(control3, &ini, &step);
+	gchar *n3 = gebr_geoxml_program_control_get_n(control3, &step, &ini);
 	g_assert_cmpstr(n3, ==, "20");
-	g_assert_cmpstr(ini, ==, "1");
+	g_assert_cmpstr(ini, ==, "72");
 	g_assert_cmpstr(step, ==, "1");
 	g_free(ini);
 	g_free(step);
 
-	gchar *n4 = gebr_geoxml_program_control_get_n(control4, &ini, &step);
+	gchar *n4 = gebr_geoxml_program_control_get_n(control4, &step, &ini);
 	g_assert_cmpstr(n4, ==, "10");
-	g_assert_cmpstr(ini, ==, "1");
+	g_assert_cmpstr(ini, ==, "92");
 	g_assert_cmpstr(step, ==, "1");
 	g_free(ini);
 	g_free(step);
