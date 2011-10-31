@@ -685,8 +685,6 @@ void job_notify(GebrdJob *job, struct client *client)
 	else
 		rid = "";
 
-	g_debug("SEND JOB_DEF: queue %s", rid);
-
 	gebr_comm_protocol_socket_oldmsg_send(client->socket, FALSE,
 					      gebr_comm_protocol_defs.job_def, 17,
 					      job->parent.jid->str,
@@ -703,10 +701,11 @@ void job_notify(GebrdJob *job, struct client *client)
 					      job->parent.run_id->str,
 					      job->frac->str,
 					      job->server_list->str,
+					      job->parent.n_process,
+					      job->exec_speed,
 					      input_file,
 					      output_file,
 					      log_file);
-			//g_debug("job_notify: Received input_file:%s, output_file:%s, log_file:%s", input_file, output_file, log_file);
 }
 
 

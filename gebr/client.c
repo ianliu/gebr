@@ -204,12 +204,12 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 		} else if (message->hash == gebr_comm_protocol_defs.job_def.code_hash) {
 			GList *arguments;
 			GString *hostname, *status, *title, *start_date, *finish_date, *issues, *cmd_line,
-				*output, *queue, *moab_jid, *rid, *frac, *server_list, *input_file,
-				*output_file, *log_file;
+				*output, *queue, *moab_jid, *rid, *frac, *server_list, *n_procs, *niceness,
+				*input_file, *output_file, *log_file;
 			GebrJob *job;
 
 			/* organize message data */
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 17)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 19)) == NULL)
 				goto err;
 			status = g_list_nth_data(arguments, 1);
 			title = g_list_nth_data(arguments, 2);
@@ -224,15 +224,17 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 			rid = g_list_nth_data(arguments, 11);
 			frac = g_list_nth_data(arguments, 12);
 			server_list = g_list_nth_data(arguments, 13);
-			input_file = g_list_nth_data(arguments, 14);
-			output_file= g_list_nth_data(arguments, 15);
-			log_file = g_list_nth_data(arguments, 16);
+			n_procs = g_list_nth_data(arguments, 14);
+			niceness = g_list_nth_data(arguments, 15);
+			input_file = g_list_nth_data(arguments, 16);
+			output_file= g_list_nth_data(arguments, 17);
+			log_file = g_list_nth_data(arguments, 18);
 
 			g_debug("JOB_DEF: Received task %s frac %s status %s after %s",
 				rid->str, frac->str, status->str, queue->str);
 
 			GebrTask *task = gebr_task_new(server, rid->str, frac->str);
-			gebr_task_init_details(task, status, start_date, finish_date, issues, cmd_line, queue, moab_jid, output);
+			gebr_task_init_details(task, status, start_date, finish_date, issues, cmd_line, queue, moab_jid, output, n_procs, niceness);
 
 			job = gebr_job_control_find(gebr.job_control, rid->str);
 
