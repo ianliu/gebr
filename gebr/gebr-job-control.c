@@ -461,6 +461,12 @@ time_column_data_func(GtkTreeViewColumn *tree_column,
 	GTimeVal start_time, curr_time;
 
 	gtk_tree_model_get(tree_model, iter, JC_STRUCT, &job, -1);
+
+	if (gebr_job_get_status(job) == JOB_STATUS_QUEUED) {
+		g_object_set(cell, "text", "Waiting", NULL);
+		return;
+	}
+
 	start_time_str = gebr_job_get_start_date(job);
 	if (!start_time_str)
 		return;
