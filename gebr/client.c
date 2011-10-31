@@ -107,17 +107,17 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 				GtkTreeIter iter;
 
 				/* organize message data */
-				if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 10)) == NULL)
+				if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 9)) == NULL)
 					goto err;
 				hostname = g_list_nth_data(arguments, 0);
 				display_port = g_list_nth_data(arguments, 1);
-				server->type = gebr_comm_server_get_id(((GString*)g_list_nth_data(arguments, 3))->str);
-				accounts = g_strsplit(((GString *)g_list_nth_data(arguments, 4))->str, ",", 0);
-				model_name = g_list_nth_data (arguments, 5);
-				total_memory = g_list_nth_data (arguments, 6);
-				nfsid = g_list_nth_data (arguments, 7);
-				ncores = g_list_nth_data (arguments, 8);
-				clock_cpu = g_list_nth_data (arguments, 9);
+				server->type = gebr_comm_server_get_id(((GString*)g_list_nth_data(arguments, 2))->str);
+				accounts = g_strsplit(((GString *)g_list_nth_data(arguments, 3))->str, ",", 0);
+				model_name = g_list_nth_data (arguments, 4);
+				total_memory = g_list_nth_data (arguments, 5);
+				nfsid = g_list_nth_data (arguments, 6);
+				ncores = g_list_nth_data (arguments, 7);
+				clock_cpu = g_list_nth_data (arguments, 8);
 
 				g_string_assign (server->nfsid, nfsid->str);
 				server->ncores = atoi(ncores->str);
@@ -204,7 +204,7 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 		} else if (message->hash == gebr_comm_protocol_defs.job_def.code_hash) {
 			GList *arguments;
 			GString *hostname, *status, *title, *start_date, *finish_date, *issues, *cmd_line,
-				*output, *queue, *moab_jid, *run_id, *frac, *server_list, *input_file,
+				*output, *queue, *moab_jid, *rid, *frac, *server_list, *input_file,
 				*output_file, *log_file;
 			GebrJob *job;
 
@@ -221,19 +221,19 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 			output = g_list_nth_data(arguments, 8);
 			queue = g_list_nth_data(arguments, 9);
 			moab_jid = g_list_nth_data(arguments, 10);
-			run_id = g_list_nth_data(arguments, 11);
+			rid = g_list_nth_data(arguments, 11);
 			frac = g_list_nth_data(arguments, 12);
 			server_list = g_list_nth_data(arguments, 13);
 			input_file = g_list_nth_data(arguments, 14);
 			output_file= g_list_nth_data(arguments, 15);
 			log_file = g_list_nth_data(arguments, 16);
 
-			g_debug("JOB_DEF: Received task %s frac %s status %s", run_id->str, frac->str, status->str);
+			g_debug("JOB_DEF: Received task %s frac %s status %s", rid->str, frac->str, status->str);
 			g_debug("JOB_DEF: Received input_file:%s, output_file:%s, log_file:%s", input_file->str, output_file->str, log_file->str);
-			GebrTask *task = gebr_task_new(server, run_id->str, frac->str);
+			GebrTask *task = gebr_task_new(server, rid->str, frac->str);
 			gebr_task_init_details(task, status, start_date, finish_date, issues, cmd_line, queue, moab_jid, output);
 
-			job = gebr_job_control_find(gebr.job_control, run_id->str);
+			job = gebr_job_control_find(gebr.job_control, rid->str);
 
 			g_debug("Job found is: %p", job);
 
@@ -260,7 +260,7 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 				qsort(servers, length, sizeof(servers[0]), cmpfun);
 				gchar *servers_str = g_strjoinv(", ", servers);
 
-				job = gebr_job_new_with_id(run_id->str, queue->str, servers_str);
+				job = gebr_job_new_with_id(rid->str, queue->str, servers_str);
 
 				gebr_job_set_title(job, title->str);
 				gebr_job_set_model(job, GTK_TREE_MODEL(gebr.job_control->store));
@@ -271,7 +271,7 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 
 			gebr_job_append_task(job, task);
 
-			if (strlen(queue->str) && !gebr_job_is_stopped(job)) {
+			if (!gebr_job_is_stopped(job)) {
 				GString *string = g_string_new("");
 				const gchar *title;
 				GtkTreeIter iter;
@@ -282,7 +282,7 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 				gtk_list_store_append(server->queues_model, &iter);
 				gtk_list_store_set(server->queues_model, &iter,
 				                   SERVER_QUEUE_TITLE, string->str,
-				                   SERVER_QUEUE_ID, queue->str,
+				                   SERVER_QUEUE_ID, rid->str,
 				                   SERVER_QUEUE_LAST_RUNNING_JOB, NULL, -1);
 
 				g_string_free(string, TRUE);
