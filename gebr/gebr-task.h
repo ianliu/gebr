@@ -120,6 +120,8 @@ void gebr_task_close(GebrTask *task, const gchar *rid);
 
 void gebr_task_kill(GebrTask *task);
 
+const gchar *gebr_task_get_queue(GebrTask *task);
+
 GebrServer *gebr_task_get_server(GebrTask *task);
 
 G_END_DECLS

@@ -153,7 +153,7 @@ gebr_task_init_details(GebrTask *task,
 		       GString  *cmd_line,
 		       GString  *queue,
 		       GString  *moab_jid,
-		       GString *output)
+		       GString  *output)
 {
 	task->priv->status = job_translate_status(status);
 	g_string_assign(task->priv->start_date, start_date->str);
@@ -339,4 +339,10 @@ GebrServer *
 gebr_task_get_server(GebrTask *task)
 {
 	return task->priv->server;
+}
+
+const gchar *
+gebr_task_get_queue(GebrTask *task)
+{
+	return task->priv->queue_id->str;
 }
