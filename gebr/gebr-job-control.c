@@ -96,7 +96,35 @@ static void on_text_view_populate_popup(GtkTextView * text_view, GtkMenu * menu)
 
 static GtkMenu *job_control_popup_menu(GtkWidget * widget, GebrJobControl *job_control);
 
+static void job_control_fill_servers_info(GebrJobControl *jc);
+
 /* Private methods {{{1 */
+static GebrJob *
+get_selected_job(GebrJobControl *jc)
+{
+	GebrJob *job = NULL;
+	GtkTreeModel *model;
+	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(jc->view));
+	GList *rows = gtk_tree_selection_get_selected_rows(selection, &model);
+
+	if (!rows || rows->next)
+		goto free_and_return;
+
+	GtkTreeIter iter;
+
+	if (!gtk_tree_model_get_iter(model, &iter, rows->data))
+		g_return_val_if_reached(NULL);
+
+	gtk_tree_model_get(model, &iter, JC_STRUCT, &job, -1);
+
+free_and_return:
+
+	g_list_foreach(rows, (GFunc) gtk_tree_path_free, NULL);
+	g_list_free(rows);
+
+	return job;
+}
+
 static gboolean
 jobs_visible_func(GtkTreeModel *model,
 		  GtkTreeIter *iter,
@@ -149,48 +177,57 @@ on_dismiss_clicked(GtkButton *dismiss, GebrJobControl *jc)
 static void
 on_show_issues_clicked(GtkButton *show_issues, GebrJobControl *jc)
 {
-	GebrJob *job;
-	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(jc->view));
-	GtkTreeModel *model;
-	GtkTreeIter iter;
-	GList *rows = gtk_tree_selection_get_selected_rows(selection, &model);
-
-	if (!gtk_tree_model_get_iter(model, &iter, rows->data))
-		g_return_if_reached();
-
-	gtk_tree_model_get(model, &iter, JC_STRUCT, &job, -1);
-
+	GebrJob *job = get_selected_job(jc);
 	fill_issues_properties(jc, gebr_job_get_issues(job), job);
-
-	g_list_foreach(rows, (GFunc)gtk_tree_path_free, NULL);
-	g_list_free(rows);
 }
 
 static void
 on_job_wait_button(GtkButton *button,
                    GebrJobControl *jc)
 {
-	GtkTreeSelection *selection;
-	GtkTreeModel *model;
-	GtkTreeIter iter;
-	GList *rows;
 	GebrJob *job, *parent;
 
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(jc->view));
-	rows = gtk_tree_selection_get_selected_rows(selection, &model);
-
-	if (!gtk_tree_model_get_iter(model, &iter, rows->data))
-		g_return_if_reached();
-
-	gtk_tree_model_get(model, &iter, JC_STRUCT, &job, -1);
-
+	job = get_selected_job(jc);
 	parent = gebr_job_control_find(jc, gebr_job_get_queue(job));
 	gebr_job_control_select_job(jc, parent);
-
-	g_list_foreach(rows, (GFunc)gtk_tree_path_free, NULL);
-	g_list_free(rows);
 }
 
+static gboolean
+on_popup_focus_out(GtkWidget *widget,
+		   GdkEventFocus *focus,
+		   GtkToggleButton *button)
+{
+	gtk_widget_hide(widget);
+	return TRUE;
+}
+
+static void
+on_info_button_clicked(GtkButton *button,
+		       GebrJobControl *jc)
+{
+	static GtkWidget *popup = NULL;
+
+	GtkWidget *toplevel = gtk_widget_get_toplevel(GTK_WIDGET(button));
+	GdkWindow *window = gtk_widget_get_window(toplevel);
+	GtkAllocation a;
+	gint x, y;
+
+	gdk_window_get_origin(window, &x, &y);
+	gtk_widget_get_allocation(GTK_WIDGET(button), &a);
+
+	if (!popup) {
+		popup = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+		g_signal_connect(popup, "focus-out-event",
+				 G_CALLBACK(on_popup_focus_out), button);
+		gtk_window_set_decorated(GTK_WINDOW(popup), FALSE);
+		GtkWidget *widget = GTK_WIDGET(gtk_builder_get_object(jc->priv->builder, "servers_widget"));
+		gtk_container_add(GTK_CONTAINER(popup), widget);
+	} else
+		gtk_widget_show(popup);
+
+	gtk_window_move(GTK_WINDOW(popup), x+a.x, y+a.y+a.height);
+	gtk_widget_show_all(popup);
+}
 
 static void
 on_job_output(GebrJob *job,
@@ -259,21 +296,28 @@ gebr_job_control_info_set_visible(GebrJobControl *jc,
 }
 
 static void
-job_control_fill_servers_info(GebrJobControl *jc,
-                              GtkWidget *widget,
-                              GebrJob *job)
+job_control_fill_servers_info(GebrJobControl *jc)
 {
+	GebrJob *job = get_selected_job(jc);
 	GString *resources = g_string_new(NULL);
 	GtkLabel *res_label = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "resources_text"));
 	gchar *nprocs, *niceness;
 
 	gebr_job_get_resources(job, &nprocs, &niceness);
-	g_string_printf(resources, "Executed with %s processor(s)\n", nprocs);
-	g_string_printf(resources, "Using %s", !g_strcmp0(niceness, "0")? "all the resources" : "only the idle time");
+
+	if (!nprocs || !niceness)
+		g_string_printf(resources, _("Waiting for server(s) details"));
+	else {
+		g_string_append_printf(resources, _("Executed with %s processor(s)\n"), nprocs);
+		if (g_strcmp0(niceness, "0"))
+			g_string_append_printf(resources, _("Using all machines resources\n"));
+		else
+			g_string_append_printf(resources, _("Using the machines idle time\n"));
+		g_free(nprocs);
+		g_free(niceness);
+	}
 	gtk_label_set_text(res_label, resources->str);
 
-	g_free(nprocs);
-	g_free(niceness);
 	g_string_free(resources, TRUE);
 
 	GString *servers_list = g_string_new(NULL);
@@ -282,14 +326,15 @@ job_control_fill_servers_info(GebrJobControl *jc,
 	gint n_servers = 0, i;
 	gchar **servers;
 
-	servers = g_strsplit(gebr_job_get_servers(job), DELIM, -1);
+	servers = g_strsplit(gebr_job_get_servers(job), ",", -1);
 
 	for (i = 0; servers[i]; i++) {
-		g_string_printf(servers_list, "   %s\n", servers[i]);
+		g_string_append_printf(servers_list, "   %s\n", servers[i]);
 		n_servers++;
 	}
-	g_string_printf(servers_info, "This flow used %d server(s), listed below:\n", n_servers);
-	g_string_prepend(servers_info, servers_list->str);
+
+	g_string_printf(servers_info, _("This flow used %d server(s), listed below:\n"), n_servers);
+	g_string_append(servers_info, servers_list->str);
 
 	gtk_label_set_text(servers_label, servers_info->str);
 
@@ -550,6 +595,8 @@ gebr_jc_update_status_and_time(GebrJobControl *jc,
 	GtkLabel *details_start_date = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "detail_start_date"));
 	gtk_widget_hide(GTK_WIDGET(queued_button));
 
+	job_control_fill_servers_info(jc);
+
 	if (status == JOB_STATUS_FINISHED) {
 		gtk_image_set_from_stock(img, GTK_STOCK_APPLY, GTK_ICON_SIZE_DIALOG);
 		gtk_label_set_text(subheader, finish->str);
@@ -757,6 +804,10 @@ gebr_job_control_new(void)
 	GtkButton *wait_button;
 	wait_button = GTK_BUTTON(gtk_builder_get_object(jc->priv->builder, "subheader_button"));
 	g_signal_connect(wait_button, "clicked", G_CALLBACK(on_job_wait_button), jc);
+
+	GtkButton *info_button;
+	info_button = GTK_BUTTON(gtk_builder_get_object(jc->priv->builder, "info_button"));
+	g_signal_connect(info_button, "clicked", G_CALLBACK(on_info_button_clicked), jc);
 
 	GtkInfoBar *info = GTK_INFO_BAR(gtk_builder_get_object(jc->priv->builder, "issues_info_bar"));
 	if (!gtk_widget_get_visible(GTK_WIDGET(info)))
