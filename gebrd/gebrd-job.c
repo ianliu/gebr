@@ -395,7 +395,6 @@ void job_new(GebrdJob ** _job, struct client * client, GString *queue, GString *
 	g_string_assign(job->frac, frac->str);
 	g_string_assign(job->server_list, server_list->str);
 	job->parent.status = JOB_STATUS_INITIAL;
-	job->effprocs = gebrd_app_set_heuristic_aggression(gebrd, atoi(exec_speed->str), &job->niceness);
 
 	*_job = job;
 	gebrd->user->jobs = g_list_append(gebrd->user->jobs, job);
@@ -413,6 +412,13 @@ void job_new(GebrdJob ** _job, struct client * client, GString *queue, GString *
 		gebr_geoxml_document_split_dict(gebrd->flow, gebrd->line, gebrd->proj, NULL);
 		gebr_validator_update(gebrd_get_validator(gebrd));
 	}
+
+	gint n = gebrd_app_set_heuristic_aggression(gebrd, atoi(exec_speed->str), &job->niceness);
+
+	if (gebr_geoxml_flow_is_parallelizable(job->flow, gebrd->validator))
+		job->effprocs = n;
+	else
+		job->effprocs = 1;
 
 	/* just to send the client the command line, we could do this after by changing the protocol */
 	job_assembly_cmdline(job);
