@@ -209,46 +209,6 @@ fill_moab_account_and_queue(GebrCommRunner *runner,
 	return TRUE;
 }
 
-/*
- * Creates the queue name for multiple flows execution.
- * The queue name consists of the title of the first flow
- * concatenated with the title of the last flow.
- */
-static gchar *
-create_multiple_execution_queue(GebrCommRunner *runner,
-				GebrServer *server)
-{
-	GebrCommRunnerFlow *runflow;
-	GebrGeoXmlFlow *first, *last;
-	GString *new_queue = g_string_new(NULL);
-	gchar *tfirst, *tlast;
-
-	runflow = g_list_first(runner->flows)->data;
-	first = runflow->flow;
-
-	runflow = g_list_last(runner->flows)->data;
-	last = runflow->flow;
-
-	tfirst = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(first));
-	tlast = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(last));
-	g_string_printf(new_queue, _("After \"%s\"...\"%s\""), tfirst, tlast);
-	g_string_prepend_c(new_queue, 'q');
-	g_free(tfirst);
-	g_free(tlast);
-
-	/* Finds a unique name for the queue. */
-	gint queue_num = 1;
-	gchar *tmpname = g_strdup(new_queue->str);
-	while (server_queue_find(server, tmpname, NULL)) {
-		g_free(tmpname);
-		tmpname = g_strdup_printf("%s %d", new_queue->str, queue_num);
-		queue_num++;
-	}
-	g_string_assign(new_queue, tmpname);
-
-	return g_string_free(new_queue, FALSE);
-}
-
 typedef struct {
 	GebrServer *server;
 	gdouble score;
@@ -335,53 +295,9 @@ fill_runner_struct(GebrCommRunner *runner,
 		else
 			goto free_and_error;
 	} else {
-		gboolean is_immediately = queue_id == NULL || !g_strcmp0(queue_id, "");
-
-//		if (single) {
-		runner->queue = g_strdup(queue_id);
+		runner->queue = g_strdup(queue_id? queue_id:"");
 		if (is_mpi && !flow_io_run_dialog(runner, server, is_mpi))
 			goto free_and_error;
-
-//		} else if (!parallel && !is_immediately) {
-//			runner->queue = g_strdup(queue_id);
-//			if (is_mpi && !flow_io_run_dialog(runner, server, is_mpi))
-//				goto free_and_error;
-//		}
-
-//		// Multiple flows in sequence
-//		if (!single && !parallel) {
-//			const gchar *internal_queue_name = queue_id? queue_id:"j";
-//			if (is_immediately || gebr_get_queue_type(internal_queue_name) == AUTOMATIC_QUEUE) {
-//				runner->queue = create_multiple_execution_queue(runner, server);
-//				gebr_comm_protocol_socket_oldmsg_send(server->comm->socket, FALSE,
-//								      gebr_comm_protocol_defs.rnq_def, 2,
-//								      internal_queue_name, runner->queue);
-//			} else
-//				runner->queue = g_strdup(internal_queue_name);
-//
-//		// Append single flow in queue
-//		} else if (!parallel && !is_immediately) {
-//			if (gebr_get_queue_type(queue_id) == AUTOMATIC_QUEUE) {
-//				if (!flow_io_run_dialog(runner, server, is_mpi))
-//					goto free_and_error;
-//
-//				gebr_comm_protocol_socket_oldmsg_send(server->comm->socket, FALSE,
-//								      gebr_comm_protocol_defs.rnq_def, 2,
-//								      queue_id, runner->queue);
-//			} else {
-//				runner->queue = g_strdup(queue_id);
-//				if (is_mpi && !flow_io_run_dialog(runner, server, is_mpi))
-//					goto free_and_error;
-//			}
-//
-//		// Single or Multiple parallel execution
-//		} else {
-//			/* If the active combobox entry is the first one (index 0), then
-//			 * "Immediately" (a queue name starting with j) is selected as queue option. */
-//			runner->queue = g_strdup("j");
-//			if (is_mpi && !flow_io_run_dialog(runner, server, is_mpi))
-//			    goto free_and_error;
-//		}
 	}
 
 	return TRUE;
