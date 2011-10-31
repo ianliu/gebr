@@ -246,7 +246,7 @@ gebr_job_get_group(GebrJob *job)
 const gchar *
 gebr_job_get_queue(GebrJob *job)
 {
-	return job->priv->queue;
+	return gebr_task_get_queue(job->priv->tasks->data);
 }
 
 void
