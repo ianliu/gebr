@@ -54,6 +54,8 @@ struct _GebrTaskPriv {
 	GString *moab_jid;
 	GString *queue_id;
 	GString *output;
+	GString *n_procs;
+	GString *niceness;
 };
 
 G_DEFINE_TYPE(GebrTask, gebr_task, G_TYPE_OBJECT);
@@ -153,7 +155,9 @@ gebr_task_init_details(GebrTask *task,
 		       GString  *cmd_line,
 		       GString  *queue,
 		       GString  *moab_jid,
-		       GString  *output)
+		       GString  *output,
+		       GString  *n_procs,
+		       GString  *niceness)
 {
 	task->priv->status = job_translate_status(status);
 	g_string_assign(task->priv->start_date, start_date->str);
@@ -163,23 +167,8 @@ gebr_task_init_details(GebrTask *task,
 	g_string_assign(task->priv->moab_jid, moab_jid->str);
 	g_string_assign(task->priv->queue_id, queue->str);
 	g_string_assign(task->priv->output, output->str);
-
-	/* Add queue on the server queue list model (only if server is regular) */
-	if (task->priv->server) {
-		GtkTreeIter queue_iter;
-		gboolean queue_exists;
-		queue_exists = server_queue_find(task->priv->server, task->priv->queue_id->str, &queue_iter);
-		if (!queue_exists && task->priv->server->type == GEBR_COMM_SERVER_TYPE_REGULAR && task->priv->queue_id->str[0] == 'q') {
-			GString *string = g_string_new(NULL);
-			g_string_printf(string, _("At \"%s\""), task->priv->queue_id->str+1);
-			gtk_list_store_append(task->priv->server->queues_model, &queue_iter);
-			gtk_list_store_set(task->priv->server->queues_model, &queue_iter,
-					   SERVER_QUEUE_TITLE, string->str,
-					   SERVER_QUEUE_ID, task->priv->queue_id->str, 
-					   SERVER_QUEUE_LAST_RUNNING_JOB, NULL, -1);
-			g_string_free(string, TRUE);
-		}
-	}
+	g_string_assign(task->priv->n_procs, n_procs->str);
+	g_string_assign(task->priv->niceness, niceness->str);
 }
 
 enum JobStatus job_translate_status(GString * status)
@@ -345,4 +334,21 @@ const gchar *
 gebr_task_get_queue(GebrTask *task)
 {
 	return task->priv->queue_id->str;
+}
+
+const gchar *
+gebr_task_get_nprocs(GebrTask *task)
+{
+	return task->priv->n_procs->str;
+}
+
+const gchar *
+gebr_task_get_niceness(GebrTask *task)
+{
+	gint niceness = atoi(task->priv->niceness->str);
+
+	if (niceness > 0)
+		return g_strdup_printf("0");
+	else
+		return g_strdup_printf("19");
 }

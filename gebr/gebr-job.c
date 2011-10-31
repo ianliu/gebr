@@ -18,6 +18,7 @@
 #include "gebr-job.h"
 
 #include <glib/gi18n.h>
+#include <stdlib.h>
 
 #include "gebr.h"
 #include "gebr-marshal.h"
@@ -298,7 +299,16 @@ gebr_job_set_title(GebrJob *job, const gchar *title)
 		g_free(job->priv->title);
 	job->priv->title = g_strdup(title);
 }
-const gchar * gebr_job_get_title(GebrJob *job) { return job->priv->title; } void gebr_job_append_task(GebrJob *job, GebrTask *task) {
+
+const gchar *
+gebr_job_get_title(GebrJob *job)
+{
+	return job->priv->title;
+}
+
+void
+gebr_job_append_task(GebrJob *job, GebrTask *task)
+{
 	job->priv->tasks = g_list_prepend(job->priv->tasks, task);
 
 	gint frac, total;
@@ -521,4 +531,21 @@ gebr_job_get_io(GebrJob *job,
 		else
 			*log_file = g_strdup(job->priv->log_file);
 	}
+}
+
+void
+gebr_job_get_resources(GebrJob *job,
+                       gchar **nprocs,
+                       gchar **niceness)
+{
+	gint total_procs = 0;
+
+	for (GList *i = job->priv->tasks; i; i = i->next) {
+		GebrTask *task = i->data;
+		gint nprocs = atoi(gebr_task_get_nprocs(task));
+		total_procs += nprocs;
+	}
+
+	*nprocs = g_strdup_printf("%d", total_procs);
+	*niceness = gebr_task_get_niceness(job->priv->tasks->data);
 }

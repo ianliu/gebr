@@ -100,8 +100,6 @@ GList *gebr_job_get_groups(GebrJob *job);
  * Returns a groups
  *
  */ 
-GList *gebr_job_get_groups(GebrJob *job);
-
 const gchar *gebr_job_get_group(GebrJob *job);
 
 enum JobStatus gebr_job_get_status(GebrJob *job);
@@ -134,6 +132,10 @@ void gebr_job_set_io(GebrJob *job,
 
 void gebr_job_get_io(GebrJob *job, gchar **input_file, gchar **output_file,
 		gchar **log_file);
+
+void gebr_job_get_resources(GebrJob *job,
+                            gchar **nprocs,
+                            gchar **niceness);
 
 G_END_DECLS
 

@@ -87,15 +87,18 @@ enum JobStatus job_translate_status(GString * status);
 
 /**
  */
-void gebr_task_init_details(GebrTask *task,
-			    GString  *status,
-			    GString  *start_date,
-			    GString  *finish_date,
-			    GString  *issues,
-			    GString  *cmd_line,
-			    GString  *queue,
-			    GString  *moab_jid,
-			    GString *output);
+void
+gebr_task_init_details(GebrTask *task,
+		       GString  *status,
+		       GString  *start_date,
+		       GString  *finish_date,
+		       GString  *issues,
+		       GString  *cmd_line,
+		       GString  *queue,
+		       GString  *moab_jid,
+		       GString  *output,
+		       GString  *n_procs,
+		       GString  *niceness);
 
 enum JobStatus gebr_task_get_status(GebrTask *task);
 
@@ -123,6 +126,10 @@ void gebr_task_kill(GebrTask *task);
 const gchar *gebr_task_get_queue(GebrTask *task);
 
 GebrServer *gebr_task_get_server(GebrTask *task);
+
+const gchar *gebr_task_get_nprocs(GebrTask *task);
+
+const gchar *gebr_task_get_niceness(GebrTask *task);
 
 G_END_DECLS
 
