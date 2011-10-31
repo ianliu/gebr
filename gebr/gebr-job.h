@@ -83,7 +83,7 @@ void gebr_job_set_title(GebrJob *job, const gchar *title);
 
 const gchar *gebr_job_get_queue(GebrJob *job);
 
-const gchar *gebr_job_get_group(GebrJob *job);
+GList *gebr_job_get_group(GebrJob *job);
 
 enum JobStatus gebr_job_get_status(GebrJob *job);
 

@@ -1320,7 +1320,7 @@ gboolean ui_server_ask_for_tags_remove_permission (void){
 	return result;
 }
 
-gchar *
+const gchar *
 gebr_get_groups_of_server(gchar *server_address)
 {
 	GtkTreeIter iter;

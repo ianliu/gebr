@@ -22,6 +22,8 @@
 #include "gebr.h"
 #include "gebr-marshal.h"
 
+#define DELIM ", "
+
 struct _GebrJobPriv {
 	GList *tasks;
 	gchar *title;
@@ -237,10 +239,34 @@ gebr_job_new_with_id(const gchar *rid,
 	return job;
 }
 
-const gchar *
+GList *
 gebr_job_get_group(GebrJob *job)
 {
-	return job->priv->servers;
+	gint counter, i, j;
+	gchar **servers;
+	const gchar *set_of_servers= gebr_job_get_servers(job);
+	gchar **groups;
+	GList *servers_list, *groups_list = NULL;
+
+	servers = g_strsplit(set_of_servers, DELIM, -1); 
+	groups = ui_server_get_all_tags(); 
+
+	for(i=0; groups[i]; i++){
+		servers_list = ui_server_servers_with_tag(groups[i]);
+		for (GList *k = servers_list; k; k = k->next) {
+			GebrServer *server = k->data;
+			counter=0;
+			for(j=0; servers[j]; j++){
+				if (!g_strcmp0(servers[j], server->comm->address->str))
+					counter++;
+			}
+		}
+		if (g_list_length(servers_list) == counter){
+			gchar *aux = g_strdup(groups[i]);
+			groups_list = g_list_prepend(groups_list, aux);
+		}
+	}
+	return groups_list;
 }
 
 const gchar *
@@ -256,16 +282,7 @@ gebr_job_set_title(GebrJob *job, const gchar *title)
 		g_free(job->priv->title);
 	job->priv->title = g_strdup(title);
 }
-
-const gchar *
-gebr_job_get_title(GebrJob *job)
-{
-	return job->priv->title;
-}
-
-void
-gebr_job_append_task(GebrJob *job, GebrTask *task)
-{
+const gchar * gebr_job_get_title(GebrJob *job) { return job->priv->title; } void gebr_job_append_task(GebrJob *job, GebrTask *task) {
 	job->priv->tasks = g_list_prepend(job->priv->tasks, task);
 
 	gint frac, total;
