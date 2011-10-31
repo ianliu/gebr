@@ -29,9 +29,9 @@
 #include <libgebr/comm/gebr-comm-protocol.h>
 
 #include "gebrd.h"
+#include "gebrd-job.h"
 #include "gebrd-server.h"
 #include "gebrd-client.h"
-#include "gebrd-job-queue.h"
 
 /* GOBJECT STUFF */
 enum {

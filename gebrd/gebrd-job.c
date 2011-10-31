@@ -37,7 +37,6 @@
 
 #include "gebrd-job.h"
 #include "gebrd.h"
-#include "gebrd-queues.h"
 #include "gebrd-mpi-implementations.h"
 
 /* GOBJECT STUFF */

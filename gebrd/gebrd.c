@@ -32,7 +32,6 @@
 #include "gebrd.h"
 #include "gebrd-server.h"
 #include "gebrd-client.h"
-#include "gebrd-job-queue.h"
 #include "gebrd-sysinfo.h"
 
 #define GEBRD_CONF_FILE "/etc/gebr/gebrd.conf"

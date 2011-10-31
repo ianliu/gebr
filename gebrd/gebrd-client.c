@@ -36,7 +36,6 @@
 #include "gebrd-client.h"
 #include "gebrd.h"
 #include "gebrd-job.h"
-#include "gebrd-queues.h"
 #include "gebrd-server.h"
 #include "gebrd-sysinfo.h"
 
