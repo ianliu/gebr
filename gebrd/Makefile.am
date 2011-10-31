@@ -22,16 +22,12 @@ libgebrd_la_SOURCES =			\
 	gebrd-client.c			\
 	gebrd-client.h			\
 	gebrd-gettext.h			\
-	gebrd-job-queue.c		\
-	gebrd-job-queue.h		\
 	gebrd-job.c			\
 	gebrd-job.h			\
 	gebrd-mpi-implementations.c	\
 	gebrd-mpi-implementations.h	\
 	gebrd-mpi-interface.c		\
 	gebrd-mpi-interface.h		\
-	gebrd-queues.c			\
-	gebrd-queues.h			\
 	gebrd-server.c			\
 	gebrd-server.h			\
 	gebrd-sysinfo.c			\

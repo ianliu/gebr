@@ -369,7 +369,7 @@ GebrdJob *job_find(GString * rid)
 	return job;
 }
 
-void job_new(GebrdJob ** _job, struct client * client, GString * queue, GString * account, GString * xml,
+void job_new(GebrdJob ** _job, struct client * client, GString * account, GString * xml,
 	     GString * n_process, GString * run_id, GString *exec_speed, GString *frac, GString *server_list)
 {
 	/* initialization */
@@ -389,7 +389,6 @@ void job_new(GebrdJob ** _job, struct client * client, GString * queue, GString 
 	g_string_assign(job->parent.client_display, client->display->str);
 	job->parent.server_location = client->server_location;
 	g_string_assign(job->parent.run_id, run_id->str);
-	g_string_assign(job->parent.queue_id, queue->str);
 	g_string_assign(job->parent.moab_account, account->str);
 	g_string_assign(job->parent.n_process, n_process->str);
 	g_string_assign(job->exec_speed, exec_speed->str);
@@ -432,8 +431,6 @@ gebrd_job_append(GebrdJob *job,
 
 void job_free(GebrdJob *job)
 {
-	gebrd_queues_remove_job_from(job->parent.queue_id->str, job);
-
 	GList *link = g_list_find(gebrd->user->jobs, job);
 	/* job that failed to run are not added to this list */
 	if (link != NULL)
@@ -453,6 +450,14 @@ void job_free(GebrdJob *job)
 	g_object_unref(job);
 }
 
+static GebrdJob *
+gebrd_job_get_parent(GebrdJob *job)
+{
+	if (!job->parent.queue_id || job->parent.queue_id->len == 0)
+		return NULL;
+	return job_find(job->parent.queue_id);
+}
+
 void job_status_set(GebrdJob *job, enum JobStatus status)
 {
 	if (job->parent.status == status) {
@@ -464,16 +469,23 @@ void job_status_set(GebrdJob *job, enum JobStatus status)
 	if (status == JOB_STATUS_REQUEUED || status == JOB_STATUS_ISSUED)
 		return;
 
-	enum JobStatus old_status = job->parent.status;
 	job->parent.status = status;
 
 	if (job->parent.status == JOB_STATUS_FAILED
 	    || job->parent.status == JOB_STATUS_FINISHED
-	    || (job->parent.status == JOB_STATUS_CANCELED && old_status == JOB_STATUS_RUNNING)) {
-		if (gebrd_queues_has_next(job->parent.queue_id->str))
-			gebrd_queues_step_queue(job->parent.queue_id->str);
+	    || job->parent.status == JOB_STATUS_CANCELED)
+	{
+		GebrdJob *parent = gebrd_job_get_parent(job);
+
+		if (parent)
+			for (GList *i = job->children; i; i = i->next)
+				gebrd_job_append(parent, i->data);
 		else
-			gebrd_queues_set_queue_busy(job->parent.queue_id->str, FALSE);
+			for (GList *i = job->children; i; i = i->next)
+				job_run_flow(i->data);
+
+		g_list_free(job->children);
+		job->children = NULL;
 	}
 }
 
@@ -632,7 +644,6 @@ void job_end(GebrdJob *job)
 {
 	if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_REGULAR) {
 		if (job->parent.status == JOB_STATUS_QUEUED) {
-			gebrd_queues_remove_job_from(job->parent.queue_id->str, job);
 			g_string_assign(job->parent.finish_date, gebr_iso_date());
 			job_status_notify(job, JOB_STATUS_CANCELED, job->parent.finish_date->str);
 		} else {
@@ -647,7 +658,6 @@ void job_kill(GebrdJob *job)
 {
 	if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_REGULAR) {
 		if (job->parent.status == JOB_STATUS_QUEUED) {
-			gebrd_queues_remove_job_from(job->parent.queue_id->str, job);
 			g_string_assign(job->parent.finish_date, gebr_iso_date());
 			job_status_notify(job, JOB_STATUS_CANCELED, job->parent.finish_date->str);
 		} else {

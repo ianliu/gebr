@@ -314,7 +314,7 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			server_list = g_list_nth_data(arguments, 7);
 
 			/* try to run and send return */
-			job_new(&job, client, queue, account, xml, n_process, run_id, exec_speed, frac, server_list);
+			job_new(&job, client, account, xml, n_process, run_id, exec_speed, frac, server_list);
 
 #ifdef DEBUG
 			gchar *env_delay = getenv("GEBRD_RUN_DELAY_SEC");
@@ -326,23 +326,16 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			gebr_comm_protocol_socket_oldmsg_send(client->socket, FALSE,
 							      gebr_comm_protocol_defs.ret_def, 2,
 							      job->parent.jid->str, job->parent.run_id->str);
-			/* assign queue name for immediately jobs (only for regular, moab is already set) */
-			if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_REGULAR &&
-			    (!queue->len || queue->str[0] == 'j')) {
-				g_string_printf(queue, "j%s", job->parent.jid->str);
-				g_string_assign(job->parent.queue_id, queue->str);
-			}
-			gebrd_queues_add_job_to(queue->str, job);
 
 			if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_REGULAR) {
 				/* send job message (job is created -promoted from waiting server response- at the client) */
 				job_send_clients_job_notify(job);
-				/* run or queue */
-				if (!gebrd_queues_is_queue_busy(queue->str)) {
-					gebrd_queues_set_queue_busy(queue->str, TRUE);
-					gebrd_queues_step_queue(queue->str); //will call job_run_flow for immediately jobs
-				}
-			} else {//moab
+				GebrdJob *after = job_find(queue);
+				if (after)
+					gebrd_job_append(after, job);
+				else
+					job_run_flow(job);
+			} else {
 				/* ask moab to run */
 				job_run_flow(job);
 				/* send job message (job is created -promoted from waiting server response- at the client)
@@ -355,21 +348,7 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			/* frees */
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		} else if (message->hash == gebr_comm_protocol_defs.rnq_def.code_hash) {
-			GList *arguments;
-			GString *oldname, *newname;
-
-			/* organize message data */
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
-				goto err;
-			oldname = g_list_nth_data(arguments, 0);
-			newname = g_list_nth_data(arguments, 1);
-
-			gebrd_queues_rename(oldname->str, newname->str);
-
-			/* frees */
-			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		} else if (message->hash == gebr_comm_protocol_defs.flw_def.code_hash) {
-			/* TODO: */
 		} else if (message->hash == gebr_comm_protocol_defs.clr_def.code_hash) {
 			GList *arguments;
 			GString *rid;

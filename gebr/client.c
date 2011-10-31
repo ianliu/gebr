@@ -99,7 +99,6 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 				GString *hostname;
 				GString *display_port;
 				gchar ** accounts;
-//				gchar ** queues;
 				GString *model_name;
 				GString *total_memory;
 				GString *nfsid;
@@ -112,7 +111,6 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 					goto err;
 				hostname = g_list_nth_data(arguments, 0);
 				display_port = g_list_nth_data(arguments, 1);
-//				queues = g_strsplit(((GString *)g_list_nth_data(arguments, 2))->str, ",", 0);
 				server->type = gebr_comm_server_get_id(((GString*)g_list_nth_data(arguments, 3))->str);
 				accounts = g_strsplit(((GString *)g_list_nth_data(arguments, 4))->str, ",", 0);
 				model_name = g_list_nth_data (arguments, 5);
@@ -147,7 +145,6 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 							   -1);
 				}
 
-//				g_strfreev(queues);
 				g_strfreev(accounts);
 
 
