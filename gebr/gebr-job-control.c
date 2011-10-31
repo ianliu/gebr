@@ -34,6 +34,7 @@ typedef struct {
 	guint sig_status;
 	guint sig_issued;
 	guint sig_cmd_line;
+	guint sig_button;
 } LastSelection;
 
 struct _GebrJobControlPriv {
@@ -165,6 +166,31 @@ on_show_issues_clicked(GtkButton *show_issues, GebrJobControl *jc)
 	g_list_free(rows);
 }
 
+static void
+on_job_wait_button(GtkButton *button,
+                   GebrJobControl *jc)
+{
+	GtkTreeSelection *selection;
+	GtkTreeModel *model;
+	GtkTreeIter iter;
+	GList *rows;
+	GebrJob *job, *parent;
+
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(jc->view));
+	rows = gtk_tree_selection_get_selected_rows(selection, &model);
+
+	if (!gtk_tree_model_get_iter(model, &iter, rows->data))
+		g_return_if_reached();
+
+	gtk_tree_model_get(model, &iter, JC_STRUCT, &job, -1);
+
+	parent = gebr_job_control_find(jc, gebr_job_get_queue(job));
+	gebr_job_control_select_job(jc, parent);
+
+	g_list_foreach(rows, (GFunc)gtk_tree_path_free, NULL);
+	g_list_free(rows);
+}
+
 
 static void
 on_job_output(GebrJob *job,
@@ -251,6 +277,9 @@ job_control_disconnect_signals(GebrJobControl *jc,
 		                            jc->priv->last_selection.sig_issued);
 		g_signal_handler_disconnect(jc->priv->last_selection.job,
 		                            jc->priv->last_selection.sig_cmd_line);
+		if (jc->priv->last_selection.sig_button > 0)
+			g_signal_handler_disconnect(jc->priv->last_selection.job,
+			                            jc->priv->last_selection.sig_button);
 	}
 }
 
@@ -327,6 +356,12 @@ job_control_on_cursor_changed(GtkTreeSelection *selection,
 		jc->priv->last_selection.sig_cmd_line =
 				g_signal_connect(job, "cmd-line-received", G_CALLBACK(on_job_cmd_line_received), jc);
 
+		if (gebr_job_get_status(job) == JOB_STATUS_QUEUED) {
+			GtkButton *button = GTK_BUTTON(gtk_builder_get_object(jc->priv->builder, "subheader_button"));
+			jc->priv->last_selection.sig_button =
+					g_signal_connect(button, "clicked", G_CALLBACK(on_job_wait_button), jc);
+		}
+
 		gebr_job_control_load_details(jc, job);
 	}
 
@@ -363,17 +398,10 @@ on_toggled_more_details(GtkToggleButton *button,
 	gtk_widget_set_visible(GTK_WIDGET(details), TRUE);
 }
 
-static void
-icon_column_data_func(GtkTreeViewColumn *tree_column,
-		      GtkCellRenderer *cell,
-		      GtkTreeModel *tree_model,
-		      GtkTreeIter *iter,
-		      gpointer data)
+static const gchar *
+job_control_get_icon_for_job(GebrJob *job)
 {
-	GebrJob *job;
 	const gchar *stock_id;
-
-	gtk_tree_model_get(tree_model, iter, JC_STRUCT, &job, -1);
 
 	switch (gebr_job_get_status(job))
 	{
@@ -397,6 +425,22 @@ icon_column_data_func(GtkTreeViewColumn *tree_column,
 	case JOB_STATUS_REQUEUED:
 		break;
 	}
+	return stock_id;
+}
+
+static void
+icon_column_data_func(GtkTreeViewColumn *tree_column,
+		      GtkCellRenderer *cell,
+		      GtkTreeModel *tree_model,
+		      GtkTreeIter *iter,
+		      gpointer data)
+{
+	GebrJob *job;
+	const gchar *stock_id;
+
+	gtk_tree_model_get(tree_model, iter, JC_STRUCT, &job, -1);
+
+	stock_id = job_control_get_icon_for_job(job);
 
 	g_object_set(cell, "stock-id", stock_id, NULL);
 }
@@ -495,8 +539,21 @@ gebr_jc_update_status_and_time(GebrJobControl *jc,
 	}
 
 	else if (status == JOB_STATUS_QUEUED) {
-		gtk_image_set_from_stock(img, "chronometer", GTK_ICON_SIZE_DIALOG);
-		gtk_widget_show(GTK_WIDGET(queued_button));
+		GebrJob *parent;
+		GtkImage *wait_img = GTK_IMAGE(gtk_builder_get_object(jc->priv->builder, "subheader_button_img"));
+		GtkLabel *wait_label = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "subheader_button_lbl"));
+
+		parent = gebr_job_control_find(jc, gebr_job_get_queue(job));
+
+		if (parent) {
+			gtk_image_set_from_stock(img, "chronometer", GTK_ICON_SIZE_DIALOG);
+			gtk_label_set_text(subheader, "Waiting for job");
+
+			gtk_image_set_from_stock(wait_img, job_control_get_icon_for_job(parent), GTK_ICON_SIZE_BUTTON);
+			gtk_label_set_text(wait_label, gebr_job_get_title(parent));
+
+			gtk_widget_show(GTK_WIDGET(queued_button));
+		}
 	}
 
 	g_string_free(start, FALSE);
@@ -653,6 +710,10 @@ gebr_job_control_new(void)
 	GtkButton *show_issues;
 	show_issues = GTK_BUTTON(gtk_builder_get_object(jc->priv->builder, "show_issues_button"));
 	g_signal_connect(show_issues, "clicked", G_CALLBACK(on_show_issues_clicked), jc);
+
+	GtkButton *wait_button;
+	wait_button = GTK_BUTTON(gtk_builder_get_object(jc->priv->builder, "subheader_button"));
+	g_signal_connect(wait_button, "clicked", G_CALLBACK(on_job_wait_button), jc);
 
 	GtkInfoBar *info = GTK_INFO_BAR(gtk_builder_get_object(jc->priv->builder, "issues_info_bar"));
 	if (!gtk_widget_get_visible(GTK_WIDGET(info)))
