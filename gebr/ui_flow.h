@@ -39,12 +39,10 @@ GebrQueueTypes gebr_get_queue_type(const gchar *queue_id);
 
 /**
  * gebr_ui_flow_run:
- * @parallel: Will run selected flows in parallel.
- * @single: Will run only the first selected flow.
  *
  * This method runs the selected flows according to the interface setup.
  */
-void gebr_ui_flow_run(gboolean parellel, gboolean single);
+void gebr_ui_flow_run(void);
 
 G_END_DECLS
 

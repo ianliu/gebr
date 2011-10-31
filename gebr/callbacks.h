@@ -85,10 +85,7 @@ void on_flow_export_activate(void);
 void on_flow_delete_activate(void);
 
 void on_flow_execute_activate(void);
-/**
- *
- */
-void on_flow_execute_in_parallel_activate(void);
+
 /** 
  * Call #flow_revision_save
  */
@@ -123,8 +120,6 @@ void on_flow_component_status_activate(GtkAction *action,
 void on_flow_component_move_top(void);
 
 void on_flow_component_move_bottom(void);
-
-void on_flow_component_execute_single();
 
 /**
  * on_job_control_save:

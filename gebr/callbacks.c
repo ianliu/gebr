@@ -205,15 +205,7 @@ void on_flow_execute_activate(void)
 	if (!flows_check_before_execution())
 		return;
 
-	gebr_ui_flow_run(FALSE, FALSE);
-}
-
-void on_flow_execute_in_parallel_activate(void)
-{
-	if (!flows_check_before_execution())
-		return;
-
-	gebr_ui_flow_run(TRUE, FALSE);
+	gebr_ui_flow_run();
 }
 
 void on_flow_revision_save_activate(void)
@@ -303,36 +295,6 @@ void on_flow_component_status_activate(GtkAction *action,
 	flow_edition_set_io();
 }
 
-void on_flow_component_execute_single()
-{
-	GError *error = NULL;
-
-	if (!gebr.flow)
-		return;
-
-	gebr_geoxml_flow_validate(gebr.flow, gebr.validator, &error);
-
-	if (error) {
-		GebrGeoXmlFlowError error_code = error->code;
-		switch (error_code)
-		{
-		case GEBR_GEOXML_FLOW_ERROR_NO_INPUT:
-		case GEBR_GEOXML_FLOW_ERROR_NO_OUTPUT:
-			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Broken Flow"), error->message);
-			break;
-		case GEBR_GEOXML_FLOW_ERROR_NO_INFILE:
-		case GEBR_GEOXML_FLOW_ERROR_INVALID_INFILE:
-		case GEBR_GEOXML_FLOW_ERROR_INVALID_OUTFILE:
-		case GEBR_GEOXML_FLOW_ERROR_INVALID_ERRORFILE:
-		case GEBR_GEOXML_FLOW_ERROR_NO_VALID_PROGRAMS:
-		case GEBR_GEOXML_FLOW_ERROR_LOOP_ONLY:
-			gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Warning"), error->message);
-			break;
-		}
-		g_clear_error(&error);
-	} else
-		gebr_ui_flow_run(FALSE, TRUE);
-}
 //
 //void on_job_control_save(void)
 //{

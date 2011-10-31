@@ -110,8 +110,6 @@ static const GtkActionEntry actions_entries_flow[] = {
 		NULL, N_("Export selected Flows"), G_CALLBACK(on_flow_export_activate)},
 	{"flow_execute", GTK_STOCK_EXECUTE, NULL,
 		"<Control>R", N_("Execute selected Flows in sequence"), G_CALLBACK(on_flow_execute_activate)},
-	{"flow_execute_in_parallel", GTK_STOCK_EXECUTE, NULL,
-		"<Control><Shift>R", N_("Execute selected Flows simultaneously"), G_CALLBACK(on_flow_execute_in_parallel_activate)},
 	{"flow_copy", GTK_STOCK_COPY, N_("Copy"),
 		NULL, N_("Copy selected Flows to clipboard"), G_CALLBACK(on_copy_activate)},
 	{"flow_paste", GTK_STOCK_PASTE, N_("Paste"),
@@ -143,7 +141,7 @@ static const GtkActionEntry actions_entries_flow_edition[] = {
 	{"flow_edition_bottom", GTK_STOCK_GOTO_BOTTOM, N_("Move to Bottom"),
 		"End", NULL, G_CALLBACK(on_flow_component_move_bottom)},
 	{"flow_edition_execute", GTK_STOCK_EXECUTE, NULL,
-		"<Control>R", N_("Execute this Flow"), G_CALLBACK (on_flow_component_execute_single)}
+		"<Control>R", N_("Execute this Flow"), G_CALLBACK (on_flow_execute_activate)}
 };
 
 static const GtkActionEntry actions_entries_job_control[] = {

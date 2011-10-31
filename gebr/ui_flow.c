@@ -38,8 +38,6 @@
 /* Prototypes {{{1 */
 static void create_jobs_and_run(GebrCommRunner *runner);
 
-static void add_selected_flows_to_runner(GebrCommRunner *runner, GList *servers);
-
 /* Private methods {{{1 */
 /*
  * flow_io_run_dialog:
@@ -261,66 +259,61 @@ typedef struct {
  */
 static void
 add_flows_to_runner(GebrCommRunner *runner,
-		    GList          *servers,
-		    gboolean        single)
+		    GList          *servers)
 {
-	if (single) {
-		if (gebr.ui_flow_edition->autochoose && gebr_geoxml_flow_is_parallelizable(gebr.flow, gebr.validator)) {
-			GList *flows, *list;
-			gdouble *weights;
-			guint n_servers = g_list_length(servers);
-			runner->is_parallelizable = TRUE;
-			gdouble *scores = g_new(gdouble, n_servers);
-			gdouble acc_scores;
-			gint k = 0;
+	if (gebr.ui_flow_edition->autochoose && gebr_geoxml_flow_is_parallelizable(gebr.flow, gebr.validator)) {
+		GList *flows, *list;
+		gdouble *weights;
+		guint n_servers = g_list_length(servers);
+		runner->is_parallelizable = TRUE;
+		gdouble *scores = g_new(gdouble, n_servers);
+		gdouble acc_scores;
+		gint k = 0;
 
-			for (GList *i = servers; i; i = i->next) {
-				ServerScore *sc = i->data;
-				scores[k] = sc->score;
-				acc_scores += sc->score;
-				k++;
-			}
-
-			weights = gebr_geoxml_flow_calulate_weights(n_servers, scores, acc_scores);
-			g_free(scores);
-
-			flows = gebr_geoxml_flow_divide_flows(gebr.flow, gebr.validator, weights, n_servers);
-			gint nflows = g_list_length(flows);
-			list = servers;
-
-			gint j = 1;
-			for (GList *i = flows; i; i = i->next) {
-				GebrGeoXmlFlow *frac_flow = i->data;
-				GebrCommRunnerFlow *runflow;
-				ServerScore *sc = list->data;
-				gboolean last = (i->next == NULL);
-
-				runflow = gebr_comm_runner_add_flow(runner, gebr.validator, frac_flow,
-								    sc->server->comm, !last, gebr_get_session_id(),
-								    list->data);
-
-				gebr_comm_runner_flow_set_frac(runflow, j++, nflows);
-
-				list = list->next;
-				if (!list && i->next) {
-					list = servers;
-					g_warn_if_reached();
-				}
-			}
-
-			g_free(weights);
-			g_list_foreach(flows, (GFunc)gebr_geoxml_document_unref, NULL);
-			g_list_free(flows);
-		} else {
-			ServerScore *sc = servers->data;
-			// Use the first server for this flow
-			gebr_comm_runner_add_flow(runner, gebr.validator, gebr.flow,
-						  sc->server->comm, FALSE,
-						  gebr_get_session_id(), servers->data);
+		for (GList *i = servers; i; i = i->next) {
+			ServerScore *sc = i->data;
+			scores[k] = sc->score;
+			acc_scores += sc->score;
+			k++;
 		}
-	} else
-		// FIXME This method accesses the GUI!
-		add_selected_flows_to_runner(runner, servers);
+
+		weights = gebr_geoxml_flow_calulate_weights(n_servers, scores, acc_scores);
+		g_free(scores);
+
+		flows = gebr_geoxml_flow_divide_flows(gebr.flow, gebr.validator, weights, n_servers);
+		gint nflows = g_list_length(flows);
+		list = servers;
+
+		gint j = 1;
+		for (GList *i = flows; i; i = i->next) {
+			GebrGeoXmlFlow *frac_flow = i->data;
+			GebrCommRunnerFlow *runflow;
+			ServerScore *sc = list->data;
+			gboolean last = (i->next == NULL);
+
+			runflow = gebr_comm_runner_add_flow(runner, gebr.validator, frac_flow,
+							    sc->server->comm, !last, gebr_get_session_id(),
+							    list->data);
+
+			gebr_comm_runner_flow_set_frac(runflow, j++, nflows);
+
+			list = list->next;
+			if (!list && i->next) {
+				list = servers;
+				g_warn_if_reached();
+			}
+		}
+
+		g_free(weights);
+		g_list_foreach(flows, (GFunc)gebr_geoxml_document_unref, NULL);
+		g_list_free(flows);
+	} else {
+		ServerScore *sc = servers->data;
+		// Use the first server for this flow
+		gebr_comm_runner_add_flow(runner, gebr.validator, gebr.flow,
+					  sc->server->comm, FALSE,
+					  gebr_get_session_id(), servers->data);
+	}
 }
 
 /*
@@ -330,13 +323,11 @@ static gboolean
 fill_runner_struct(GebrCommRunner *runner,
 		   GList          *servers,
 		   const gchar    *queue_id,
-		   gboolean        parallel,
-		   gboolean        single,
 		   gboolean        is_mpi)
 {
 	GebrServer *server = ((ServerScore *)servers->data)->server;
 
-	add_flows_to_runner(runner, servers, single);
+	add_flows_to_runner(runner, servers);
 
 	if (server->type == GEBR_COMM_SERVER_TYPE_MOAB) {
 		if (fill_moab_account_and_queue(runner, server, queue_id, is_mpi))
@@ -569,7 +560,7 @@ typedef struct {
 	gboolean parallel;
 	gboolean single;
 	gboolean is_mpi;
-	GList *flows;
+	GebrGeoXmlFlow *flow;
 	GebrCommRunner *runner;
 	GList *servers;
 } AsyncRunInfo;
@@ -587,7 +578,7 @@ on_response_received(GebrCommHttpMsg *request, GebrCommHttpMsg *response, AsyncR
 		ServerScore *sc = g_object_get_data(G_OBJECT(request), "current-server");
 
 		gchar *eval_n;
-		GebrGeoXmlProgram *loop = gebr_geoxml_flow_get_control_program(runinfo->flows->data);
+		GebrGeoXmlProgram *loop = gebr_geoxml_flow_get_control_program(runinfo->flow);
 
 		if (loop) {
 			gchar *n = gebr_geoxml_program_control_get_n(loop, NULL, NULL);
@@ -613,15 +604,13 @@ on_response_received(GebrCommHttpMsg *request, GebrCommHttpMsg *response, AsyncR
 
 		runinfo->responses++;
 		if (runinfo->responses == runinfo->requests) {
-			for (GList *i = runinfo->servers; i; i = i->next) {
-				g_debug("funcao onResponseReceived : score_i:%lf", ((ServerScore*)i->data)->score);
-			}
 			gint comp_func(ServerScore *a, ServerScore *b) {
 				return b->score - a->score;
 			}
+
 			runinfo->servers = g_list_sort(runinfo->servers, (GCompareFunc)comp_func);
 
-			if (fill_runner_struct(runinfo->runner, runinfo->servers, NULL, runinfo->parallel, runinfo->single, runinfo->is_mpi))
+			if (fill_runner_struct(runinfo->runner, runinfo->servers, NULL, runinfo->is_mpi))
 				create_jobs_and_run(runinfo->runner);
 			gebr_comm_runner_free(runinfo->runner);
 		}
@@ -632,14 +621,15 @@ on_response_received(GebrCommHttpMsg *request, GebrCommHttpMsg *response, AsyncR
  * Request all the connected servers the info on the local file /proc/loadavg
  */
 static void
-send_sys_load_request(GList *servers, GList *flows, GebrCommRunner *runner, gboolean parallel, gboolean single, gboolean is_mpi)
+send_sys_load_request(GList *servers,
+		      GebrGeoXmlFlow *flow,
+		      GebrCommRunner *runner,
+		      gboolean is_mpi)
 {
 	AsyncRunInfo *scores = g_new0(AsyncRunInfo, 1);
-	scores->parallel = parallel;
-	scores->single = single;
 	scores->runner = runner;
 	scores->servers = servers;
-	scores->flows = flows;
+	scores->flow = flow;
 	scores->is_mpi = is_mpi;
 
 	for (GList *i = servers; i; i = i->next) {
@@ -703,26 +693,6 @@ create_jobs_and_run(GebrCommRunner *runner)
 	gebr_comm_runner_run(runner);
 }
 
-static void
-add_selected_flows_to_runner(GebrCommRunner *runner, GList *servers)
-{
-	GebrGeoXmlFlow *flow;
-	GtkTreeView *treeview;
-	GtkTreeModel *model;
-	GtkTreeIter iter;
-	GebrServer *server = servers->data;
-
-	treeview = GTK_TREE_VIEW(gebr.ui_flow_browse->view);
-	model = gtk_tree_view_get_model(treeview);
-
-	gebr_gui_gtk_tree_view_foreach_selected(&iter, treeview) {
-		gtk_tree_model_get(model, &iter, FB_XMLPOINTER, &flow, -1);
-		gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE);
-		gebr_comm_runner_add_flow(runner, gebr.validator, flow, server->comm, FALSE, gebr_get_session_id(), server);
-	}
-	gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &gebr.flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE);
-}
-
 /*
  * Gets the selected queue. Returns %TRUE if no queue was selected, %FALSE
  * otherwise.
@@ -750,46 +720,29 @@ get_selected_queue(gchar **queue, GebrServer *server)
 
 /* Public methods {{{1 */
 void
-gebr_ui_flow_run(gboolean parallel, gboolean single)
+gebr_ui_flow_run(void)
 {
-	GList *flows = NULL, *servers = NULL;
+	GtkTreeIter iter;
+	gboolean has_mpi;
+	GebrGeoXmlFlow *flow;
+	GList *servers = NULL;
 	GebrCommRunner *runner;
 	GtkTreeModel *model = gtk_combo_box_get_model(GTK_COMBO_BOX(gebr.ui_flow_edition->server_combobox));
 
-	if (!flow_browse_get_selected(NULL, FALSE)) {
-		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No Flow selected."));
+	if (!flow_browse_get_selected(&iter, TRUE))
 		return;
-	}
 
-	gint i = 0;
-	GtkTreeIter iter;
-	gboolean has_mpi = FALSE;
-
-	gebr_gui_gtk_tree_view_foreach_selected(&iter, GTK_TREE_VIEW(gebr.ui_flow_browse->view)) {
-		GebrGeoXmlFlow *flow;
-
-		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
-				   FB_XMLPOINTER, &flow, -1);
-
-		gebr_geoxml_flow_set_date_last_run(flow, gebr_iso_date());
-		document_save(GEBR_GEOXML_DOCUMENT(flow), FALSE, FALSE);
-		flows = g_list_prepend(flows, flow);
-
-		i++;
-		if (gebr_geoxml_flow_get_first_mpi_program(flow))
-			has_mpi = TRUE;
-	}
-
-	if (!single && i == 1)
-		single = TRUE;
+	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
+			   FB_XMLPOINTER, &flow, -1);
+	gebr_geoxml_flow_set_date_last_run(flow, gebr_iso_date());
+	document_save(GEBR_GEOXML_DOCUMENT(flow), FALSE, FALSE);
+	has_mpi = (gebr_geoxml_flow_get_first_mpi_program(flow) != NULL);
 
 	runner = gebr_comm_runner_new();
-	runner->parallel = parallel;
 	runner->execution_speed = g_strdup_printf("%d", gebr_interface_get_execution_speed());
 
 	if (gebr.ui_flow_edition->autochoose) {
-		send_sys_load_request(get_connected_servers(model), flows,
-				      runner, parallel, single, has_mpi);
+		send_sys_load_request(get_connected_servers(model), flow, runner, has_mpi);
 		return;
 	} else {
 		GtkTreeIter server_iter;
@@ -811,7 +764,7 @@ gebr_ui_flow_run(gboolean parallel, gboolean single)
 
 		ServerScore sc = {server, 1};
 		servers = g_list_prepend(NULL, &sc);
-		if (!fill_runner_struct(runner, servers, queue_id, parallel, single, has_mpi))
+		if (!fill_runner_struct(runner, servers, queue_id, has_mpi))
 			goto free_and_error;
 
 		create_jobs_and_run(runner);
