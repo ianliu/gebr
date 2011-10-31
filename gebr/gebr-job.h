@@ -83,7 +83,26 @@ void gebr_job_set_title(GebrJob *job, const gchar *title);
 
 const gchar *gebr_job_get_queue(GebrJob *job);
 
-GList *gebr_job_get_group(GebrJob *job);
+/**
+ * gebr_job_get_groups:
+ *
+ * Get the groups associated to the servers related to @job
+ *
+ * Returns a list of groups
+ */ 
+GList *gebr_job_get_groups(GebrJob *job);
+
+/**
+ * gebr_job_get_group:
+ *
+ * Get the first (alphabetically) group associated to the servers related to @job
+ * 
+ * Returns a groups
+ *
+ */ 
+GList *gebr_job_get_groups(GebrJob *job);
+
+const gchar *gebr_job_get_group(GebrJob *job);
 
 enum JobStatus gebr_job_get_status(GebrJob *job);
 

@@ -565,13 +565,14 @@ gebr_job_control_load_details(GebrJobControl *jc,
 	GString *info_cmd = g_string_new("");
 	GtkTextIter end_iter;
 	GtkTextIter end_iter_cmd;
-	GtkLabel *input_file, *output_file, *log_file;
+	GtkLabel *input_file, *output_file, *log_file, *job_group;
 	gchar *input_file_str, *output_file_str, *log_file_str;
 	enum JobStatus status = gebr_job_get_status(job);
 
 	input_file = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "input_label"));
 	output_file = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "output_label"));
 	log_file = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "error_label"));
+	job_group = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "job_group"));
 
 
 	gebr_job_get_io(job, &input_file_str, &output_file_str, &log_file_str);
@@ -589,6 +590,11 @@ gebr_job_control_load_details(GebrJobControl *jc,
 	markup = g_markup_printf_escaped ("<b>Log File</b>: %s", log_file_str ? log_file_str : _("None"));
 	gtk_label_set_markup (log_file, markup);
 	g_free(markup);
+
+	gchar *msg = g_strdup(gebr_job_get_group(job));
+	if (msg == NULL) 
+		msg = g_strdup("All servers");
+	gtk_label_set_markup (job_group, msg);
 
 	gebr_jc_update_status_and_time(jc, job, status);
 

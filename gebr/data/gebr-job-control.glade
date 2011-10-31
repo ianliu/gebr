@@ -61,49 +61,6 @@
       <object class="GtkVBox" id="vbox1">
         <property name="visible">True</property>
         <child>
-          <object class="GtkInfoBar" id="issues_info_bar">
-            <child internal-child="content_area">
-              <object class="GtkHBox" id="issues_info_bar_hbox">
-        		<property name="homogeneous">False</property>
-                <child>
-                  <object class="GtkImage" id="issues_info_bar_image">
-                    <property name="visible">True</property>
-                    <property name="xalign">0.0</property>
-                  </object>
-                  <packing>
-            		<property name="position">0</property>
-	    			<property name="expand">False</property>
-          		  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel" id="issues_info_bar_label">
-                    <property name="visible">True</property>
-                    <property name="xalign">0.0</property>
-                  </object>
-                  <packing>
-            		<property name="position">1</property>
-	    			<property name="expand">True</property>
-          		  </packing>
-                </child>
-              </object>
-            </child>
-            <child internal-child="action_area">
-              <object class="GtkVButtonBox" id="issues_info_bar_hbutton_box">
-                <child>
-                  <object class="GtkButton" id="issues_info_bar_dismiss">
-                    <property name="visible">True</property>
-                    <property name="label" translatable="yes">Dismiss</property>
-                  </object>
-                </child>
-              </object>
-            </child>
-          </object>
-          <packing>
-            <property name="position">0</property>
-	    <property name="expand">False</property>
-          </packing>
-        </child>
-        <child>
           <object class="GtkVBox" id="job_info_widget">
             <property name="spacing">10</property>
             <child>
@@ -199,26 +156,25 @@
                       </packing>
                     </child>
                     <child>
-+                      <object class="GtkButton" id="show_issues_button">
-+                        <property name="visible">True</property>
-+                        <property name="can_focus">True</property>
-						 <property name="receives_default">True</property>
-	                     <property name="relief">none</property>
-+                        <child>
-+                          <object class="GtkImage" id="show_issues_img">
-+                            <property name="visible">True</property>
-+                            <property name="can_focus">False</property>
-+                            <property name="stock">gtk-dialog-warning</property>
-                        	 <property name="icon-size">5</property>
-+                          </object>
-+                        </child>
-+                      </object>
-+                      <packing>
-+                        <property name="expand">False</property>
-+                        <property name="fill">False</property>
-+                        <property name="position">2</property>
-+                      </packing>
-+                    </child>
+                      <object class="GtkButton" id="show_issues_button">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">True</property>
+                        <property name="relief">none</property>
+                        <child>
+                          <object class="GtkImage" id="show_issues_img">
+                            <property name="visible">True</property>
+                            <property name="stock">gtk-dialog-warning</property>
+                            <property name="icon-size">5</property>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">2</property>
+                      </packing>
+                    </child>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -335,7 +291,7 @@
                               <object class="GtkHBox" id="hbox3">
                                 <property name="visible">True</property>
                                 <child>
-                                  <object class="GtkLabel" id="label9">
+                                  <object class="GtkLabel" id="job_group">
                                     <property name="visible">True</property>
                                     <property name="label">Dells</property>
                                   </object>
