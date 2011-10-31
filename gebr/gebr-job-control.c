@@ -268,9 +268,9 @@ gebr_jc_get_jobs_state(GebrJobControl *jc,
 	for (GList *i = jobs; i; i = i->next) {
 		if (gtk_tree_model_get_iter(GTK_TREE_MODEL(jc->store), &iter, (GtkTreePath*)i->data)) {
 			gtk_tree_model_get(GTK_TREE_MODEL(jc->store), &iter, JC_STRUCT, &job, -1);
-			if (!(*finished) && job_is_stopped(job))
+			if (!(*finished) && gebr_job_is_stopped(job))
 				*finished = TRUE;
-			if (!(*running) && !job_is_stopped(job))
+			if (!(*running) && !gebr_job_is_stopped(job))
 				*running = TRUE;
 		}
 	}
@@ -314,7 +314,7 @@ job_control_on_cursor_changed(GtkTreeSelection *selection,
 	GebrJob *old_job = jc->priv->last_selection.job;
 
 	if (has_job) {
-		finished = job_is_stopped(job);
+		finished = gebr_job_is_stopped(job);
 		job_control_disconnect_signals(jc, finished, !finished, TRUE);
 
 		jc->priv->last_selection.job = job;

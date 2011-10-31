@@ -143,7 +143,7 @@ gebr_job_append_task_output(GebrTask *task,
 }
 
 gboolean
-job_is_stopped(GebrJob *job)
+gebr_job_is_stopped(GebrJob *job)
 {
 	return job->priv->status == JOB_STATUS_FINISHED
 		|| job->priv->status == JOB_STATUS_FAILED
@@ -164,7 +164,7 @@ gebr_job_change_task_status(GebrTask *task,
 	gebr_task_get_fraction(task, &frac, &total);
 	ntasks = g_list_length(job->priv->tasks);
 
-	if (job_is_stopped(job)) {
+	if (gebr_job_is_stopped(job)) {
 		gebr_task_kill(task);
 		return;
 	}
@@ -425,7 +425,7 @@ gebr_job_has_issues(GebrJob *job)
 gboolean
 gebr_job_close(GebrJob *job)
 {
-	if (!job_is_stopped(job))
+	if (!gebr_job_is_stopped(job))
 		return FALSE;
 
 	for (GList *i = job->priv->tasks; i; i = i->next)
@@ -439,7 +439,7 @@ gebr_job_close(GebrJob *job)
 void
 gebr_job_kill(GebrJob *job)
 {
-	if (job_is_stopped(job))
+	if (gebr_job_is_stopped(job))
 		return;
 
 	for (GList *i = job->priv->tasks; i; i = i->next)

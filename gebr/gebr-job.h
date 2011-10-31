@@ -67,7 +67,7 @@ GType gebr_job_get_type() G_GNUC_CONST;
 
 void gebr_job_show(GebrJob *job);
 
-gboolean job_is_stopped(GebrJob *job);
+gboolean gebr_job_is_stopped(GebrJob *job);
 
 GtkTreeIter *gebr_job_get_iter(GebrJob *job);
 
