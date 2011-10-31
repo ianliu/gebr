@@ -368,7 +368,7 @@ GebrdJob *job_find(GString * rid)
 	return job;
 }
 
-void job_new(GebrdJob ** _job, struct client * client, GString * account, GString * xml,
+void job_new(GebrdJob ** _job, struct client * client, GString *queue, GString * account, GString * xml,
 	     GString * n_process, GString * run_id, GString *exec_speed, GString *frac, GString *server_list)
 {
 	/* initialization */
@@ -390,6 +390,7 @@ void job_new(GebrdJob ** _job, struct client * client, GString * account, GStrin
 	g_string_assign(job->parent.run_id, run_id->str);
 	g_string_assign(job->parent.moab_account, account->str);
 	g_string_assign(job->parent.n_process, n_process->str);
+	g_string_assign(job->parent.queue_id, queue->str);
 	g_string_assign(job->exec_speed, exec_speed->str);
 	g_string_assign(job->frac, frac->str);
 	g_string_assign(job->server_list, server_list->str);
@@ -454,6 +455,7 @@ gebrd_job_get_parent(GebrdJob *job)
 {
 	if (!job->parent.queue_id || job->parent.queue_id->len == 0)
 		return NULL;
+
 	return job_find(job->parent.queue_id);
 }
 
@@ -671,9 +673,19 @@ void job_notify(GebrdJob *job, struct client *client)
 {
 	if (job->parent.status == JOB_STATUS_INITIAL)
 		job_status_set(job, JOB_STATUS_QUEUED);
+
 	gchar *input_file = gebr_geoxml_flow_io_get_input(job->flow);
 	gchar *output_file = gebr_geoxml_flow_io_get_output(job->flow);
 	gchar *log_file = gebr_geoxml_flow_io_get_error(job->flow);
+
+	const gchar *rid;
+	GebrdJob *parent = gebrd_job_get_parent(job);
+	if (parent)
+		rid = parent->parent.run_id->str;
+	else
+		rid = "";
+
+	g_debug("SEND JOB_DEF: queue %s", rid);
 
 	gebr_comm_protocol_socket_oldmsg_send(client->socket, FALSE,
 					      gebr_comm_protocol_defs.job_def, 17,
@@ -686,7 +698,7 @@ void job_notify(GebrdJob *job, struct client *client)
 					      job->parent.issues->str,
 					      job->parent.cmd_line->str,
 					      job->parent.output->str,
-					      job->parent.queue_id->str,
+					      rid,
 					      job->parent.moab_jid->str,
 					      job->parent.run_id->str,
 					      job->frac->str,

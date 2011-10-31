@@ -80,7 +80,7 @@ GebrdJob *job_find(GString * jid);
 
 /**
  */
-void job_new(GebrdJob ** _job, struct client * client, GString * account, GString * xml,
+void job_new(GebrdJob ** _job, struct client * client, GString *queue, GString * account, GString * xml,
 	     GString * n_process, GString * run_id, GString *exec_speed, GString *frac, GString *server_list);
 
 /**
