@@ -28,6 +28,8 @@
 #include "gebr.h"
 #include "gebr-job.h"
 
+#define DELIM ", "
+
 typedef struct {
 	GebrJob *job;
 	guint sig_output;
@@ -254,6 +256,46 @@ gebr_job_control_info_set_visible(GebrJobControl *jc,
 
 	if (!visible)
 		gtk_label_set_text(empty_label, txt);
+}
+
+static void
+job_control_fill_servers_info(GebrJobControl *jc,
+                              GtkWidget *widget,
+                              GebrJob *job)
+{
+	GString *resources = g_string_new(NULL);
+	GtkLabel *res_label = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "resources_text"));
+	gchar *nprocs, *niceness;
+
+	gebr_job_get_resources(job, &nprocs, &niceness);
+	g_string_printf(resources, "Executed with %s processor(s)\n", nprocs);
+	g_string_printf(resources, "Using %s", !g_strcmp0(niceness, "0")? "all the resources" : "only the idle time");
+	gtk_label_set_text(res_label, resources->str);
+
+	g_free(nprocs);
+	g_free(niceness);
+	g_string_free(resources, TRUE);
+
+	GString *servers_list = g_string_new(NULL);
+	GString *servers_info = g_string_new(NULL);
+	GtkLabel *servers_label = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "servers_text"));
+	gint n_servers = 0, i;
+	gchar **servers;
+
+	servers = g_strsplit(gebr_job_get_servers(job), DELIM, -1);
+
+	for (i = 0; servers[i]; i++) {
+		g_string_printf(servers_list, "   %s\n", servers[i]);
+		n_servers++;
+	}
+	g_string_printf(servers_info, "This flow used %d server(s), listed below:\n", n_servers);
+	g_string_prepend(servers_info, servers_list->str);
+
+	gtk_label_set_text(servers_label, servers_info->str);
+
+	g_free(servers);
+	g_string_free(servers_info, TRUE);
+	g_string_free(servers_list, TRUE);
 }
 
 static void
