@@ -52,6 +52,8 @@ struct _GebrdJob {
 	gboolean critical_error; /* the flow can't be run if TRUE! */
 	gboolean user_finished;
 
+	GList *children;
+
 	/* client stuff */
 	GebrCommProcess *tail_process;
 	gint expr_count;
@@ -80,6 +82,16 @@ GebrdJob *job_find(GString * jid);
  */
 void job_new(GebrdJob ** _job, struct client * client, GString * queue, GString * account, GString * xml,
 	     GString * n_process, GString * run_id, GString *exec_speed, GString *frac, GString *server_list);
+
+/**
+ * gebrd_job_append:
+ *
+ * Appends @child into @job's children list. If @job is in a final state,
+ * executes @child immediatelly and nothing is appended to the list.
+ */
+void gebrd_job_append(GebrdJob *job,
+		      GebrdJob *child);
+
 /**
  */
 void job_free(GebrdJob *job);

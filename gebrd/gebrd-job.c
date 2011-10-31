@@ -379,6 +379,7 @@ void job_new(GebrdJob ** _job, struct client * client, GString * queue, GString 
 	job->flow = NULL;
 	job->critical_error = FALSE;
 	job->user_finished = FALSE;
+	job->children = NULL;
 	job->buf[0] = g_string_new(NULL);
 	job->buf[1] = g_string_new(NULL);
 	job->timeout[0] = 0;
@@ -415,6 +416,18 @@ void job_new(GebrdJob ** _job, struct client * client, GString * queue, GString 
 
 	/* just to send the client the command line, we could do this after by changing the protocol */
 	job_assembly_cmdline(job);
+}
+
+void
+gebrd_job_append(GebrdJob *job,
+		 GebrdJob *child)
+{
+	if (job->parent.status == JOB_STATUS_FINISHED
+	    || job->parent.status == JOB_STATUS_CANCELED
+	    || job->parent.status == JOB_STATUS_FAILED)
+		job_run_flow(child);
+	else
+		job->children = g_list_prepend(job->children, child);
 }
 
 void job_free(GebrdJob *job)
