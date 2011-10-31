@@ -313,7 +313,7 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			server_list = g_list_nth_data(arguments, 7);
 
 			/* try to run and send return */
-			job_new(&job, client, account, xml, n_process, run_id, exec_speed, frac, server_list);
+			job_new(&job, client, queue, account, xml, n_process, run_id, exec_speed, frac, server_list);
 
 #ifdef DEBUG
 			gchar *env_delay = getenv("GEBRD_RUN_DELAY_SEC");
@@ -321,19 +321,16 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 				sleep(atoi(env_delay));
 #endif
 
-			/* run message return with the job_id and the temporary id created by the client */
-			gebr_comm_protocol_socket_oldmsg_send(client->socket, FALSE,
-							      gebr_comm_protocol_defs.ret_def, 2,
-							      job->parent.jid->str, job->parent.run_id->str);
-
 			if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_REGULAR) {
 				/* send job message (job is created -promoted from waiting server response- at the client) */
-				job_send_clients_job_notify(job);
+				g_debug("RUN_DEF: run task with rid %s, after %s",
+					run_id->str, queue->str);
 				GebrdJob *after = job_find(queue);
 				if (after)
 					gebrd_job_append(after, job);
 				else
 					job_run_flow(job);
+				job_send_clients_job_notify(job);
 			} else {
 				/* ask moab to run */
 				job_run_flow(job);
