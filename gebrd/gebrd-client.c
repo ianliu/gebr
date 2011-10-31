@@ -255,13 +255,8 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 				/* Get info from the MOAB cluster */
 				server_moab_read_credentials(accounts_list, queue_list);
 				server_type = "moab";
-			} else {
-				gchar * queue_list_str;
-				queue_list_str = gebrd_queues_get_names();
-				g_string_assign(queue_list, queue_list_str);
-				g_free(queue_list_str);
+			} else
 				server_type = "regular";
-			}
 
 			/* send return */
 			const gchar *model_name;
@@ -274,10 +269,9 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			total_memory = gebrd_mem_info_get (meminfo, "MemTotal");
 			gchar *ncores = g_strdup_printf("%d", gebrd_cpu_info_n_procs(cpuinfo));
 			gebr_comm_protocol_socket_oldmsg_send(client->socket, FALSE,
-							      gebr_comm_protocol_defs.ret_def, 10,
+							      gebr_comm_protocol_defs.ret_def, 9,
 							      gebrd->hostname,
 							      display_port->str,
-							      queue_list->str,
 							      server_type,
 							      accounts_list->str,
 							      model_name,
