@@ -540,12 +540,18 @@ gebr_job_get_resources(GebrJob *job,
 {
 	gint total_procs = 0;
 
+	if (!job->priv->tasks) {
+		*nprocs = NULL;
+		*niceness = NULL;
+		return;
+	}
+
 	for (GList *i = job->priv->tasks; i; i = i->next) {
 		GebrTask *task = i->data;
-		gint nprocs = atoi(gebr_task_get_nprocs(task));
-		total_procs += nprocs;
+		gint n = atoi(gebr_task_get_nprocs(task));
+		total_procs += n;
 	}
 
 	*nprocs = g_strdup_printf("%d", total_procs);
-	*niceness = gebr_task_get_niceness(job->priv->tasks->data);
+	*niceness = g_strdup(gebr_task_get_niceness(job->priv->tasks->data));
 }

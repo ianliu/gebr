@@ -347,10 +347,5 @@ gebr_task_get_nprocs(GebrTask *task)
 const gchar *
 gebr_task_get_niceness(GebrTask *task)
 {
-	gint niceness = atoi(task->priv->niceness->str);
-
-	if (niceness > 0)
-		return g_strdup_printf("0");
-	else
-		return g_strdup_printf("19");
+	return task->priv->niceness->str;
 }
