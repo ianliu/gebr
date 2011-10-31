@@ -686,7 +686,7 @@ void job_notify(GebrdJob *job, struct client *client)
 		rid = "";
 
 	gebr_comm_protocol_socket_oldmsg_send(client->socket, FALSE,
-					      gebr_comm_protocol_defs.job_def, 17,
+					      gebr_comm_protocol_defs.job_def, 19,
 					      job->parent.jid->str,
 					      status_enum_to_string(job->parent.status),
 					      job->parent.title->str,

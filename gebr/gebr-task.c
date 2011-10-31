@@ -75,6 +75,8 @@ static void gebr_task_init(GebrTask *task)
 	task->priv->cmd_line = g_string_new(NULL);
 	task->priv->moab_jid = g_string_new(NULL);
 	task->priv->queue_id = g_string_new(NULL);
+	task->priv->n_procs = g_string_new(NULL);
+	task->priv->niceness = g_string_new(NULL);
 }
 
 static void gebr_task_class_init(GebrTaskClass *klass)
