@@ -25,10 +25,6 @@ AM_LDFLAGS =			\
 	$(GEBR_COMM_LIBS)	\
 	$(NULL)
 
-TEST_PROGS += test-job-queue
-test_job_queue_SOURCES = test-job-queue.c
-test_job_queue_LDADD = ../libgebrd.la
-
 TEST_PROGS += test-sysinfo
 test_sysinfo_SOURCES = test-sysinfo.c
 test_sysinfo_LDADD = ../libgebrd.la
