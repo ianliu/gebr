@@ -344,42 +344,53 @@ fill_runner_struct(GebrCommRunner *runner,
 		else
 			goto free_and_error;
 	} else {
-		gboolean is_immediately = queue_id == NULL || gebr_get_queue_type(queue_id) == IMMEDIATELY_QUEUE;
+		gboolean is_immediately = queue_id == NULL || !g_strcmp0(queue_id, "");
 
-		// Multiple flows in sequence
-		if (!single && !parallel) {
-			const gchar *internal_queue_name = queue_id? queue_id:"j";
-			if (is_immediately || gebr_get_queue_type(internal_queue_name) == AUTOMATIC_QUEUE) {
-				runner->queue = create_multiple_execution_queue(runner, server);
-				gebr_comm_protocol_socket_oldmsg_send(server->comm->socket, FALSE,
-								      gebr_comm_protocol_defs.rnq_def, 2,
-								      internal_queue_name, runner->queue);
-			} else
-				runner->queue = g_strdup(internal_queue_name);
+//		if (single) {
+		runner->queue = g_strdup(queue_id);
+		if (is_mpi && !flow_io_run_dialog(runner, server, is_mpi))
+			goto free_and_error;
 
-		// Append single flow in queue
-		} else if (!parallel && !is_immediately) {
-			if (gebr_get_queue_type(queue_id) == AUTOMATIC_QUEUE) {
-				if (!flow_io_run_dialog(runner, server, is_mpi))
-					goto free_and_error;
+//		} else if (!parallel && !is_immediately) {
+//			runner->queue = g_strdup(queue_id);
+//			if (is_mpi && !flow_io_run_dialog(runner, server, is_mpi))
+//				goto free_and_error;
+//		}
 
-				gebr_comm_protocol_socket_oldmsg_send(server->comm->socket, FALSE,
-								      gebr_comm_protocol_defs.rnq_def, 2,
-								      queue_id, runner->queue);
-			} else {
-				runner->queue = g_strdup(queue_id);
-				if (is_mpi && !flow_io_run_dialog(runner, server, is_mpi))
-					goto free_and_error;
-			}
-
-		// Single or Multiple parallel execution
-		} else {
-			/* If the active combobox entry is the first one (index 0), then
-			 * "Immediately" (a queue name starting with j) is selected as queue option. */
-			runner->queue = g_strdup("j");
-			if (is_mpi && !flow_io_run_dialog(runner, server, is_mpi))
-			    goto free_and_error;
-		}
+//		// Multiple flows in sequence
+//		if (!single && !parallel) {
+//			const gchar *internal_queue_name = queue_id? queue_id:"j";
+//			if (is_immediately || gebr_get_queue_type(internal_queue_name) == AUTOMATIC_QUEUE) {
+//				runner->queue = create_multiple_execution_queue(runner, server);
+//				gebr_comm_protocol_socket_oldmsg_send(server->comm->socket, FALSE,
+//								      gebr_comm_protocol_defs.rnq_def, 2,
+//								      internal_queue_name, runner->queue);
+//			} else
+//				runner->queue = g_strdup(internal_queue_name);
+//
+//		// Append single flow in queue
+//		} else if (!parallel && !is_immediately) {
+//			if (gebr_get_queue_type(queue_id) == AUTOMATIC_QUEUE) {
+//				if (!flow_io_run_dialog(runner, server, is_mpi))
+//					goto free_and_error;
+//
+//				gebr_comm_protocol_socket_oldmsg_send(server->comm->socket, FALSE,
+//								      gebr_comm_protocol_defs.rnq_def, 2,
+//								      queue_id, runner->queue);
+//			} else {
+//				runner->queue = g_strdup(queue_id);
+//				if (is_mpi && !flow_io_run_dialog(runner, server, is_mpi))
+//					goto free_and_error;
+//			}
+//
+//		// Single or Multiple parallel execution
+//		} else {
+//			/* If the active combobox entry is the first one (index 0), then
+//			 * "Immediately" (a queue name starting with j) is selected as queue option. */
+//			runner->queue = g_strdup("j");
+//			if (is_mpi && !flow_io_run_dialog(runner, server, is_mpi))
+//			    goto free_and_error;
+//		}
 	}
 
 	return TRUE;
@@ -814,14 +825,14 @@ free_and_error:
 GebrQueueTypes
 gebr_get_queue_type(const gchar *queue_id)
 {
-	if (g_strcmp0(queue_id, "j") == 0)
+	if (g_strcmp0(queue_id, "") == 0)
 		return IMMEDIATELY_QUEUE;
 
-	if (queue_id[0] == 'j')
-		return AUTOMATIC_QUEUE;
-
-	if (queue_id[0] == 'q')
-		return USER_QUEUE;
+//	if (queue_id[0] == 'j')
+//		return AUTOMATIC_QUEUE;
+//
+//	if (queue_id[0] == 'q')
+//		return USER_QUEUE;
 
 	g_return_val_if_reached(IMMEDIATELY_QUEUE);
 }

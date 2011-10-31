@@ -99,7 +99,7 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 				GString *hostname;
 				GString *display_port;
 				gchar ** accounts;
-				gchar ** queues;
+//				gchar ** queues;
 				GString *model_name;
 				GString *total_memory;
 				GString *nfsid;
@@ -112,7 +112,7 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 					goto err;
 				hostname = g_list_nth_data(arguments, 0);
 				display_port = g_list_nth_data(arguments, 1);
-				queues = g_strsplit(((GString *)g_list_nth_data(arguments, 2))->str, ",", 0);
+//				queues = g_strsplit(((GString *)g_list_nth_data(arguments, 2))->str, ",", 0);
 				server->type = gebr_comm_server_get_id(((GString*)g_list_nth_data(arguments, 3))->str);
 				accounts = g_strsplit(((GString *)g_list_nth_data(arguments, 4))->str, ",", 0);
 				model_name = g_list_nth_data (arguments, 5);
@@ -142,34 +142,13 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 					gtk_list_store_append(server->queues_model, &iter);
 					gtk_list_store_set(server->queues_model, &iter,
 							   SERVER_QUEUE_TITLE, _("Immediately"),
-							   SERVER_QUEUE_ID, "j", 
+							   SERVER_QUEUE_ID, "",
 							   SERVER_QUEUE_LAST_RUNNING_JOB, NULL,
 							   -1);
 				}
-				for (gint i = 0; queues[i]; i++) {
-					if (strlen(queues[i])) {
-						if (queues[i][0] != 'j') {
-							GString *string;
 
-							string = g_string_new("");
-							g_string_printf(string, _("At '%s'"),
-									server->type == GEBR_COMM_SERVER_TYPE_REGULAR
-								       	? queues[i]+1 : queues[i]);
-							gtk_list_store_append(server->queues_model, &iter);
-							gtk_list_store_set(server->queues_model, &iter,
-									   SERVER_QUEUE_TITLE, string->str,
-									   SERVER_QUEUE_ID, queues[i],
-									   SERVER_QUEUE_LAST_RUNNING_JOB, NULL, -1);
-
-							g_string_free(string, TRUE);
-						}
-					}
-				}
-
-				gtk_combo_box_set_active(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox), 0);
-
+//				g_strfreev(queues);
 				g_strfreev(accounts);
-				g_strfreev(queues);
 
 
 				/* say we are logged */
@@ -294,6 +273,27 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 			}
 
 			gebr_job_append_task(job, task);
+
+			if (strlen(queue->str) && !gebr_job_is_stopped(job)) {
+				GString *string = g_string_new("");
+				const gchar *title;
+				GtkTreeIter iter;
+
+				title = gebr_job_get_title(job);
+
+				g_string_printf(string, _("After '%s'"), title);
+				gtk_list_store_append(server->queues_model, &iter);
+				gtk_list_store_set(server->queues_model, &iter,
+				                   SERVER_QUEUE_TITLE, string->str,
+				                   SERVER_QUEUE_ID, queue->str,
+				                   SERVER_QUEUE_LAST_RUNNING_JOB, NULL, -1);
+
+				g_string_free(string, TRUE);
+			}
+
+			gtk_combo_box_set_active(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox), 0);
+
+
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		} else if (message->hash == gebr_comm_protocol_defs.out_def.code_hash) {
 			GList *arguments;
@@ -338,6 +338,28 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 
 				status_enum = job_translate_status(status);
 				gebr_task_emit_status_changed_signal(task, status_enum, parameter->str);
+			}
+
+			GebrJob *job;
+			GtkTreeIter iter;
+			gchar *job_id;
+			enum JobStatus job_status;
+
+			job = gebr_job_control_find(gebr.job_control, rid->str);
+			job_status = gebr_job_get_status(job);
+
+			if (gebr_job_is_stopped(job)) {
+				gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(server->queues_model)) {
+
+					gtk_tree_model_get(GTK_TREE_MODEL(server->queues_model), &iter,
+					                   SERVER_QUEUE_ID, &job_id, -1);
+
+					if (g_strcmp0(job_id, rid->str) == 0) {
+						gtk_list_store_remove(server->queues_model, &iter);
+						g_free(job_id);
+						break;
+					}
+				}
 			}
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
