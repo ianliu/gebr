@@ -17,6 +17,7 @@
  */
 
 #include <string.h>
+#include <stdlib.h>
 
 #include <glib/gi18n.h>
 #include <libgebr/utils.h>
@@ -302,13 +303,20 @@ job_control_fill_servers_info(GebrJobControl *jc)
 	GString *resources = g_string_new(NULL);
 	GtkLabel *res_label = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "resources_text"));
 	gchar *nprocs, *niceness;
+	gint n_servers = 0, i;
+	gchar **servers;
+
+	servers = g_strsplit(gebr_job_get_servers(job), ",", -1);
+
+	while (servers[n_servers])
+		n_servers++;
 
 	gebr_job_get_resources(job, &nprocs, &niceness);
 
 	if (!nprocs || !niceness)
 		g_string_printf(resources, _("Waiting for server(s) details"));
 	else {
-		g_string_append_printf(resources, _("Executed with %s processor(s)\n"), nprocs);
+		g_string_append_printf(resources, _("Executed with %s processor(s) on %d server(s)\n"), nprocs, n_servers);
 		if (g_strcmp0(niceness, "0"))
 			g_string_append_printf(resources, _("Using all machines resources\n"));
 		else
@@ -323,17 +331,31 @@ job_control_fill_servers_info(GebrJobControl *jc)
 	GString *servers_list = g_string_new(NULL);
 	GString *servers_info = g_string_new(NULL);
 	GtkLabel *servers_label = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "servers_text"));
-	gint n_servers = 0, i;
-	gchar **servers;
 
-	servers = g_strsplit(gebr_job_get_servers(job), ",", -1);
+	gint cmpfun(gconstpointer a, gconstpointer b) {
+		const gchar *aa = *(gchar * const *)a;
+		const gchar *bb = *(gchar * const *)b;
 
-	for (i = 0; servers[i]; i++) {
-		g_string_append_printf(servers_list, "   %s\n", servers[i]);
-		n_servers++;
+		if (g_strcmp0(aa, "127.0.0.1") == 0)
+			return -1;
+
+		if (g_strcmp0(bb, "127.0.0.1") == 0)
+			return 1;
+
+		return g_strcmp0(aa, bb);
 	}
 
-	g_string_printf(servers_info, _("This flow used %d server(s), listed below:\n"), n_servers);
+	qsort(servers, n_servers, sizeof(servers[0]), cmpfun);
+
+	for (i = 0; servers[i]; i++) {
+		const gchar *server;
+		if (!g_strcmp0(servers[i], "127.0.0.1")) {
+			 server = server_get_name_from_address(servers[i]);
+		} else
+			server = servers[i];
+		g_string_append_printf(servers_list, "%s\n", server);
+	}
+
 	g_string_append(servers_info, servers_list->str);
 
 	gtk_label_set_text(servers_label, servers_info->str);
