@@ -395,6 +395,7 @@ void job_new(GebrdJob ** _job, struct client * client, GString *queue, GString *
 	g_string_assign(job->frac, frac->str);
 	g_string_assign(job->server_list, server_list->str);
 	job->parent.status = JOB_STATUS_INITIAL;
+	job->effprocs = gebrd_app_set_heuristic_aggression(gebrd, atoi(exec_speed->str), &job->niceness);
 
 	*_job = job;
 	gebrd->user->jobs = g_list_append(gebrd->user->jobs, job);
@@ -443,7 +444,6 @@ void job_free(GebrdJob *job)
 			gebr_comm_process_free(job->tail_process);
 	if (job->flow)
 		gebr_geoxml_document_free(GEBR_GEOXML_DOC(job->flow));
-	g_string_free(job->exec_speed, TRUE);
 	g_string_free(job->buf[0], TRUE);
 	g_string_free(job->buf[1], TRUE);
 	g_string_free(job->frac, TRUE);
@@ -685,6 +685,9 @@ void job_notify(GebrdJob *job, struct client *client)
 	else
 		rid = "";
 
+	gchar *nprocs = g_strdup_printf("%d", job->effprocs);
+	gchar *nice = g_strdup_printf("%d", job->niceness);
+
 	gebr_comm_protocol_socket_oldmsg_send(client->socket, FALSE,
 					      gebr_comm_protocol_defs.job_def, 19,
 					      job->parent.jid->str,
@@ -701,11 +704,13 @@ void job_notify(GebrdJob *job, struct client *client)
 					      job->parent.run_id->str,
 					      job->frac->str,
 					      job->server_list->str,
-					      job->parent.n_process,
-					      job->exec_speed,
+					      nprocs,
+					      nice,
 					      input_file,
 					      output_file,
 					      log_file);
+	g_free(nprocs);
+	g_free(nice);
 }
 
 
@@ -1455,10 +1460,10 @@ static void job_assembly_cmdline(GebrdJob *job)
 		gint nprocs, nice;
 
 		assemble_bc_cmd_line (expr_buf);
-		nprocs = gebrd_app_set_heuristic_aggression(gebrd, atoi(job->exec_speed->str), &nice);
 
 		if (job->is_parallelizable) {
-			job_issue(job, "This flow is executed with %d processor(s) using %s of machine.\n", nprocs, nice == 0? "all the resources" : "only the idle time");
+			nprocs = job->effprocs;
+			nice = job->niceness;
 			prefix = g_strdup_printf("PROC=%d\n"
 						 "NICE=%d\n"
 						 "exec=\"nice -n $NICE\"\n"
@@ -1472,7 +1477,6 @@ static void job_assembly_cmdline(GebrdJob *job)
 			g_string_append(job->parent.cmd_line, " ) &\nPIDS=\"$! $PIDS\"");
 			g_string_prepend_c(job->parent.cmd_line, '(');
 		} else {
-			job_issue(job, "This flow is executed with 1 processor(s) using all the resources of machine.\n");
 			prefix = g_strdup_printf("for (( counter=0; counter<%s; counter++ ))\ndo\n%s\n%s",
 						 n, expr_buf->str, str_buf->str);
 		}
