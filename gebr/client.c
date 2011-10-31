@@ -228,8 +228,9 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 			output_file= g_list_nth_data(arguments, 15);
 			log_file = g_list_nth_data(arguments, 16);
 
-			g_debug("JOB_DEF: Received task %s frac %s status %s", rid->str, frac->str, status->str);
-			g_debug("JOB_DEF: Received input_file:%s, output_file:%s, log_file:%s", input_file->str, output_file->str, log_file->str);
+			g_debug("JOB_DEF: Received task %s frac %s status %s after %s",
+				rid->str, frac->str, status->str, queue->str);
+
 			GebrTask *task = gebr_task_new(server, rid->str, frac->str);
 			gebr_task_init_details(task, status, start_date, finish_date, issues, cmd_line, queue, moab_jid, output);
 

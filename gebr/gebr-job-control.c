@@ -142,8 +142,6 @@ on_dismiss_clicked(GtkButton *dismiss, GebrJobControl *jc)
 
 	GtkButton *show_issues = GTK_BUTTON(gtk_builder_get_object(jc->priv->builder, "show_issues_button"));
 	gtk_widget_show(GTK_WIDGET(show_issues));
-
-	g_debug("Dismiss!!!!");
 }
 
 static void
@@ -277,9 +275,6 @@ job_control_disconnect_signals(GebrJobControl *jc,
 		                            jc->priv->last_selection.sig_issued);
 		g_signal_handler_disconnect(jc->priv->last_selection.job,
 		                            jc->priv->last_selection.sig_cmd_line);
-		if (jc->priv->last_selection.sig_button > 0)
-			g_signal_handler_disconnect(jc->priv->last_selection.job,
-			                            jc->priv->last_selection.sig_button);
 	}
 }
 
@@ -355,12 +350,6 @@ job_control_on_cursor_changed(GtkTreeSelection *selection,
 				g_signal_connect(job, "issued", G_CALLBACK(on_job_issued), jc);
 		jc->priv->last_selection.sig_cmd_line =
 				g_signal_connect(job, "cmd-line-received", G_CALLBACK(on_job_cmd_line_received), jc);
-
-		if (gebr_job_get_status(job) == JOB_STATUS_QUEUED) {
-			GtkButton *button = GTK_BUTTON(gtk_builder_get_object(jc->priv->builder, "subheader_button"));
-			jc->priv->last_selection.sig_button =
-					g_signal_connect(button, "clicked", G_CALLBACK(on_job_wait_button), jc);
-		}
 
 		gebr_job_control_load_details(jc, job);
 	}
