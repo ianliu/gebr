@@ -20,6 +20,8 @@
 
 #include <gtk/gtk.h>
 
+#include "gebr-job-control.h"
+
 G_BEGIN_DECLS
 
 /**
@@ -216,6 +218,8 @@ void on_server_common_stop(void);
  * Open url of gebrproject to install SU samples
  */
 void open_url_on_press_event(void);
+
+void on_job_control_filter(GtkWidget *button);
 
 G_END_DECLS
 #endif				//__CALLBACKS_H

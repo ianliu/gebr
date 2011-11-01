@@ -45,6 +45,9 @@ struct _GebrJobControlPriv {
 	GtkWidget *widget;
 	GtkBuilder *builder;
 	LastSelection last_selection;
+
+	GtkTreeModel *server_filter;
+	GtkListStore *status_model;
 };
 
 enum {
@@ -773,6 +776,26 @@ tree_sort_func(GtkTreeModel *model,
 	return tvb.tv_usec - tva.tv_usec;
 }
 
+static gboolean
+server_group_separator_func(GtkTreeModel *model,
+			    GtkTreeIter *iter,
+			    gpointer data)
+{
+	gboolean is_sep;
+	gtk_tree_model_get(model, iter, TAG_SEP, &is_sep, -1);
+	return is_sep;
+}
+
+static gboolean
+server_filter_visible_func(GtkTreeModel *model,
+			   GtkTreeIter *iter,
+			   gpointer data)
+{
+	GebrJobControl *jc = data;
+
+	return TRUE;
+}
+
 /* Public methods {{{1 */
 GebrJobControl *
 gebr_job_control_new(void)
@@ -831,6 +854,23 @@ gebr_job_control_new(void)
 
 	gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(jc->view),
 	                                          (GebrGuiGtkPopupCallback) job_control_popup_menu, jc);
+
+	/*
+	 * Filter
+	 */
+	GtkComboBox *group_cb = GTK_COMBO_BOX(gtk_builder_get_object(jc->priv->builder, "filter-servers-group-cb"));
+	gtk_combo_box_set_row_separator_func(group_cb, server_group_separator_func, NULL, NULL);
+	gtk_combo_box_set_model(group_cb, GTK_TREE_MODEL(gebr.ui_server_list->common.combo_store));
+	GtkCellRenderer *cell = gtk_cell_renderer_text_new();
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(group_cb), cell, TRUE);
+	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(group_cb), cell, "text", TAG_NAME);
+
+	GtkComboBox *server_cb = GTK_COMBO_BOX(gtk_builder_get_object(jc->priv->builder, "filter-servers-cb"));
+	jc->priv->server_filter = gtk_tree_model_filter_new(GTK_TREE_MODEL(gebr.ui_server_list->common.store), NULL);
+	gtk_tree_model_filter_set_visible_func(GTK_TREE_MODEL_FILTER(jc->priv->server_filter), server_filter_visible_func, jc, NULL);
+	gtk_combo_box_set_model(server_cb, GTK_TREE_MODEL(jc->priv->server_filter));
+
+	GtkComboBox *status_cb = GTK_COMBO_BOX(gtk_builder_get_object(jc->priv->builder, "filter-status-cb"));
 
 	/*
 	 * Right side
@@ -1273,4 +1313,42 @@ gebr_job_control_hide(GebrJobControl *jc)
 {
 	if (jc->priv->timeout_source_id)
 		g_source_remove(jc->priv->timeout_source_id);
+}
+
+static void
+on_filter_ok_clicked(GtkButton *button, GtkWidget *popup)
+{
+	gtk_widget_hide(popup);
+}
+
+void
+gebr_job_control_open_filter(GebrJobControl *jc,
+			     GtkWidget *button)
+{
+	static GtkWidget *popup = NULL;
+
+	GtkWidget *toplevel = gtk_widget_get_toplevel(button);
+	GdkWindow *window = gtk_widget_get_window(toplevel);
+	GtkAllocation a;
+	gint x, y;
+
+	gdk_window_get_origin(window, &x, &y);
+	gtk_widget_get_allocation(button, &a);
+
+	if (!popup) {
+		popup = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+		gtk_window_set_transient_for(GTK_WINDOW(popup), GTK_WINDOW(gebr.window));
+		gtk_window_set_decorated(GTK_WINDOW(popup), FALSE);
+		gtk_window_set_resizable(GTK_WINDOW(popup), FALSE);
+		gtk_window_set_modal(GTK_WINDOW(popup), TRUE);
+		GtkWidget *widget = GTK_WIDGET(gtk_builder_get_object(jc->priv->builder, "tl-filter"));
+		GtkButton *button = GTK_BUTTON(gtk_builder_get_object(jc->priv->builder, "filter-ok"));
+		g_signal_connect(button, "clicked", G_CALLBACK(on_filter_ok_clicked), popup);
+		gtk_container_add(GTK_CONTAINER(popup), widget);
+	} else
+		gtk_widget_show(popup);
+
+	gtk_window_move(GTK_WINDOW(popup), x+a.x, y+a.y+a.height);
+	gtk_widget_show_all(popup);
+	gdk_keyboard_grab(popup->window, TRUE, GDK_CURRENT_TIME);
 }

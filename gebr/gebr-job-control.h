@@ -127,6 +127,12 @@ void gebr_job_control_show(GebrJobControl *jc);
  */
 void gebr_job_control_hide(GebrJobControl *jc);
 
+/**
+ * gebr_job_control_open_filter:
+ */
+void gebr_job_control_open_filter(GebrJobControl *jc,
+				  GtkWidget *button);
+
 G_END_DECLS
 
 #endif /* __GEBR_JOB_CONTROL_H__ */

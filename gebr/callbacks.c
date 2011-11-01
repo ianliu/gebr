@@ -548,3 +548,9 @@ void open_url_on_press_event(void)
 {
 	gebr_gui_show_uri("http://www.gebrproject.com/install-guide/download");
 }
+
+void
+on_job_control_filter(GtkWidget *button)
+{
+	gebr_job_control_open_filter(gebr.job_control, button);
+}

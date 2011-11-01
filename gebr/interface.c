@@ -154,16 +154,8 @@ static const GtkActionEntry actions_entries_job_control[] = {
 		"Delete", N_("Clear selected Jobs"), G_CALLBACK(on_job_control_close)},
 	{"job_control_stop", GTK_STOCK_STOP, N_("Cancel"),
 		NULL, N_("Ask server to cancel the selected Job"), G_CALLBACK(on_job_control_stop)},
-	/*
-	 * Job Control - Queue Actions
-	 */
-	{"job_control_queue_save", GTK_STOCK_SAVE, N_("Save All"),
-		NULL, N_("Ask server to save all Jobs from queue"), G_CALLBACK(NULL/*on_job_control_queue_save*/)},
-	{"job_control_queue_close", "trash-empty", N_("Close All"),
-		NULL, N_("Clear all Jobs from selected queue"), G_CALLBACK(NULL/*on_job_control_queue_close*/)},
-	{"job_control_queue_stop", GTK_STOCK_STOP, N_("Cancel All"),
-		NULL, N_("Ask server to cancel all Jobs from selected queue"), G_CALLBACK(NULL/*on_job_control_queue_stop*/)}
-
+	{"job_control_filter", "filter", N_("Filter"),
+		NULL, N_("Filter jobs by server group, server and status"), NULL},
 };
 
 static const GtkActionEntry status_action_entries[] = {
@@ -602,6 +594,10 @@ void gebr_setup_ui(void)
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
 					 (gtk_action_group_get_action(gebr.action_group_job_control, "job_control_stop"))), -1);
+
+	GtkWidget *item = gtk_action_create_tool_item(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_filter"));
+	g_signal_connect(item, "clicked", G_CALLBACK(on_job_control_filter), NULL);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(item), -1);
 
 	gebr.job_control = gebr_job_control_new();
 
