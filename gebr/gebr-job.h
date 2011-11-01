@@ -126,9 +126,9 @@ void gebr_job_set_model(GebrJob *job,
                         GtkTreeModel *model);
 
 void gebr_job_set_io(GebrJob *job,
-		     gchar *input_file,
-		     gchar *output_file,
-		     gchar *log_file);
+		     const gchar *input_file,
+		     const gchar *output_file,
+		     const gchar *log_file);
 
 void gebr_job_get_io(GebrJob *job, gchar **input_file, gchar **output_file,
 		gchar **log_file);

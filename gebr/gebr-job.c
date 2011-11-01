@@ -216,6 +216,7 @@ gebr_job_change_task_status(GebrTask *task,
 	default:
 		g_return_if_reached();
 	}
+
 	if (job->priv->model) {
 		GtkTreePath *path = gtk_tree_model_get_path(job->priv->model, &job->priv->iter);
 		gtk_tree_model_row_changed(job->priv->model, path, &job->priv->iter);
@@ -507,9 +508,20 @@ gebr_job_set_model(GebrJob *job,
 }
 
 void
-gebr_job_set_io(GebrJob *job, gchar *input_file, gchar *output_file,
-		gchar *log_file)
+gebr_job_set_io(GebrJob *job,
+		const gchar *input_file,
+		const gchar *output_file,
+		const gchar *log_file)
 {
+	if (job->priv->input_file)
+		g_free(job->priv->input_file);
+
+	if (job->priv->output_file)
+		g_free(job->priv->output_file);
+
+	if (job->priv->log_file)
+		g_free(job->priv->log_file);
+
 	job->priv->input_file = g_strdup(input_file);
 	job->priv->output_file = g_strdup(output_file);
 	job->priv->log_file = g_strdup(log_file);
