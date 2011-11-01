@@ -23,14 +23,13 @@
 #include "gebr.h"
 #include "gebr-marshal.h"
 
-#define DELIM ", "
-
 struct _GebrJobPriv {
 	GList *tasks;
 	gchar *title;
 	gchar *runid;
 	gchar *queue;
-	gchar *servers;
+	gchar **servers;
+	gint n_servers;
 	GtkTreeIter iter;
 	enum JobStatus status;
 	gboolean has_issued;
@@ -70,7 +69,7 @@ gebr_job_finalize(GObject *object)
 	g_free(job->priv->title);
 	g_free(job->priv->runid);
 	g_free(job->priv->queue);
-	g_free(job->priv->servers);
+	g_strfreev(job->priv->servers);
 	g_free(job->priv->input_file);
 	g_free(job->priv->output_file);
 	g_free(job->priv->log_file);
@@ -224,6 +223,20 @@ gebr_job_change_task_status(GebrTask *task,
 	}
 }
 
+static gint
+compare_func(gconstpointer a, gconstpointer b)
+{
+	const gchar *aa = *(gchar * const *)a;
+	const gchar *bb = *(gchar * const *)b;
+
+	if (g_strcmp0(aa, "127.0.0.1") == 0)
+		return -1;
+
+	if (g_strcmp0(bb, "127.0.0.1") == 0)
+		return 1;
+
+	return g_strcmp0(aa, bb);
+}
 
 /* Public methods {{{1 */
 GebrJob *
@@ -234,8 +247,14 @@ gebr_job_new_with_id(const gchar *rid,
 	GebrJob *job = g_object_new(GEBR_TYPE_JOB, NULL);
 
 	job->priv->queue = g_strdup(queue);
-	job->priv->servers = g_strdup(servers);
+	job->priv->servers = g_strsplit(servers, ",", 0);
 	job->priv->runid = g_strdup(rid);
+	job->priv->n_servers = 0;
+
+	while (job->priv->servers[job->priv->n_servers]) 
+		job->priv->n_servers++;
+	qsort(job->priv->servers, job->priv->n_servers,
+	      sizeof(servers[0]), compare_func);
 
 	return job;
 }
@@ -244,38 +263,25 @@ GList *
 gebr_job_get_groups(GebrJob *job)
 {
 	gint counter, i, j;
-	gchar **servers;
-	const gchar *set_of_servers= gebr_job_get_servers(job);
 	gchar **groups;
 	GList *servers_list, *groups_list = NULL;
 
-	servers = g_strsplit(set_of_servers, DELIM, -1); 
-	//g_debug("on gebr_job_get_groups: set_of_servers:'%s'", set_of_servers);
 	groups = ui_server_get_all_tags(); 
 
-	for(i=0; groups[i]; i++){
+	for (i = 0; groups[i]; i++) {
 		servers_list = ui_server_servers_with_tag(groups[i]);
-		//g_debug("on gebr_job_get_groups: set_of_servers from tag '%s':", groups[i]);
-			counter=0;
+		counter = 0;
 		for (GList *k = servers_list; k; k = k->next) {
 			GebrServer *server = k->data;
-		//g_debug("server-'%s'", server->comm->address->str);
-			for(j=0; servers[j]; j++){
-				if (!g_strcmp0(servers[j], server->comm->address->str)){
+			for (j = 0; job->priv->servers[j]; j++) 
+				if (!g_strcmp0(job->priv->servers[j], server->comm->address->str)) 
 					counter++;
-					//g_debug("%s equal to %s", servers[j], server->comm->address->str);
-				}
-			}
 		}
-		//g_debug("counter:%d",counter);
-		if (g_list_length(servers_list) == counter){
+		if (g_list_length(servers_list) == counter) 
 			groups_list = g_list_prepend(groups_list, g_strdup(groups[i]));
-		}
 	}
-	gint my_compare_function (gconstpointer a, gconstpointer b){
-		return (g_strcmp0(a,b));
-		}
-	groups_list = g_list_sort(groups_list, my_compare_function);
+
+	groups_list = g_list_sort(groups_list, (GCompareFunc)g_strcmp0);
 	return groups_list;
 }
 
@@ -283,6 +289,8 @@ const gchar *
 gebr_job_get_group(GebrJob *job)
 {
 	GList *list = gebr_job_get_groups(job);
+	if (list)
+		g_debug("on gebr_job_get_group: %s", (gchar*)list->data);
 	return list ? list->data : NULL;
 }
 
@@ -365,9 +373,11 @@ gebr_job_get_iter(GebrJob *job)
 	return &job->priv->iter;
 }
 
-const gchar *
-gebr_job_get_servers(GebrJob *job)
+gchar **
+gebr_job_get_servers(GebrJob *job, gint *n)
 {
+	if (n)
+		*n = job->priv->n_servers;
 	return job->priv->servers;
 }
 

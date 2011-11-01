@@ -303,13 +303,10 @@ job_control_fill_servers_info(GebrJobControl *jc)
 	GString *resources = g_string_new(NULL);
 	GtkLabel *res_label = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "resources_text"));
 	gchar *nprocs, *niceness;
-	gint n_servers = 0, i;
+	gint n_servers, i;
 	gchar **servers;
 
-	servers = g_strsplit(gebr_job_get_servers(job), ",", -1);
-
-	while (servers[n_servers])
-		n_servers++;
+	servers = gebr_job_get_servers(job, &n_servers);
 
 	gebr_job_get_resources(job, &nprocs, &niceness);
 
@@ -332,20 +329,6 @@ job_control_fill_servers_info(GebrJobControl *jc)
 	GString *servers_info = g_string_new(NULL);
 	GtkLabel *servers_label = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "servers_text"));
 
-	gint cmpfun(gconstpointer a, gconstpointer b) {
-		const gchar *aa = *(gchar * const *)a;
-		const gchar *bb = *(gchar * const *)b;
-
-		if (g_strcmp0(aa, "127.0.0.1") == 0)
-			return -1;
-
-		if (g_strcmp0(bb, "127.0.0.1") == 0)
-			return 1;
-
-		return g_strcmp0(aa, bb);
-	}
-
-	qsort(servers, n_servers, sizeof(servers[0]), cmpfun);
 
 	for (i = 0; servers[i]; i++) {
 		const gchar *server;
@@ -360,7 +343,6 @@ job_control_fill_servers_info(GebrJobControl *jc)
 
 	gtk_label_set_text(servers_label, servers_info->str);
 
-	g_free(servers);
 	g_string_free(servers_info, TRUE);
 	g_string_free(servers_list, TRUE);
 }
@@ -1045,9 +1027,13 @@ gebr_job_control_stop_selected(GebrJobControl *jc)
 				return;
 			asked = TRUE;
 		}
+
+		gchar *servers = g_strjoinv(", ", gebr_job_get_servers(job, NULL));
+
 		gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Asking server to cancel Job."));
 		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Asking server(s) \"%s\" to cancel Job \"%s\"."),
-			     gebr_job_get_servers(job), gebr_job_get_title(job));
+			     servers, gebr_job_get_title(job));
+		g_free(servers);
 
 		gebr_job_kill(job);
 	}

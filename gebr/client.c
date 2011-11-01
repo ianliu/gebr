@@ -261,17 +261,17 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 				}
 
 				qsort(servers, length, sizeof(servers[0]), cmpfun);
-				gchar *servers_str = g_strjoinv(", ", servers);
+				gchar *servers_str = g_strjoinv(",", servers);
 
 				job = gebr_job_new_with_id(rid->str, queue->str, servers_str);
 
-				gebr_job_set_title(job, title->str);
 				gebr_job_set_model(job, GTK_TREE_MODEL(gebr.job_control->store));
 				gebr_job_control_add(gebr.job_control, job);
-				gebr_job_set_io(job, input_file->str, output_file->str, log_file->str);
 				g_free(servers_str);
 			}
 
+			gebr_job_set_title(job, title->str);
+			gebr_job_set_io(job, input_file->str, output_file->str, log_file->str);
 			gebr_job_append_task(job, task);
 
 			if (!gebr_job_is_stopped(job)) {

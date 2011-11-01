@@ -71,7 +71,7 @@ gboolean gebr_job_is_stopped(GebrJob *job);
 
 GtkTreeIter *gebr_job_get_iter(GebrJob *job);
 
-const gchar *gebr_job_get_servers(GebrJob *job);
+gchar **gebr_job_get_servers(GebrJob *job, gint *n);
 
 void gebr_job_append_task(GebrJob *job, GebrTask *task);
 
