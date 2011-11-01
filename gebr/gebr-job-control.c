@@ -254,7 +254,7 @@ on_job_status(GebrJob *job,
 	      const gchar *parameter,
 	      GebrJobControl *jc)
 {
-	gebr_jc_update_status_and_time(jc, job, new_status);
+	gebr_job_control_load_details(jc, job);
 }
 
 static void
@@ -1232,9 +1232,9 @@ gebr_job_control_select_job(GebrJobControl *jc, GebrJob *job)
 		if (!gtk_tree_model_filter_convert_child_iter_to_iter(GTK_TREE_MODEL_FILTER(filter), &filter_iter, iter))
 			return;
 
-		GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(jc->view));
-		gtk_tree_selection_unselect_all(selection);
-		gtk_tree_selection_select_iter(selection, &filter_iter);
+		GtkTreePath *path = gtk_tree_model_get_path(GTK_TREE_MODEL(filter), &filter_iter);
+		gtk_tree_view_set_cursor(GTK_TREE_VIEW(jc->view), path, NULL, FALSE);
+		gtk_tree_path_free(path);
 	}
 }
 
