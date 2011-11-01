@@ -197,9 +197,6 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 
 				// Emits the GebrServer::initialized signal
 				gebr_server_emit_initialized (server);
-
-			} else if (comm_server->socket->protocol->waiting_ret_hash == gebr_comm_protocol_defs.run_def.code_hash) {
-			} else if (comm_server->socket->protocol->waiting_ret_hash == gebr_comm_protocol_defs.flw_def.code_hash) {
 			}
 		} else if (message->hash == gebr_comm_protocol_defs.job_def.code_hash) {
 			GList *arguments;
@@ -241,36 +238,12 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 			g_debug("Job found is: %p", job);
 
 			if (!job) {
-				gchar **servers = g_strsplit(server_list->str, ",", 0);
-				gint length = 0;
-
-				while (servers[length])
-					length++;
-
-				gint cmpfun(gconstpointer a, gconstpointer b) {
-					const gchar *aa = *(gchar * const *)a;
-					const gchar *bb = *(gchar * const *)b;
-
-					if (g_strcmp0(aa, "127.0.0.1") == 0)
-						return -1;
-
-					if (g_strcmp0(bb, "127.0.0.1") == 0)
-						return 1;
-
-					return g_strcmp0(aa, bb);
-				}
-
-				qsort(servers, length, sizeof(servers[0]), cmpfun);
-				gchar *servers_str = g_strjoinv(",", servers);
-
-				job = gebr_job_new_with_id(rid->str, queue->str, servers_str);
-
+				job = gebr_job_new_with_id(rid->str, queue->str, server_list->str);
+				gebr_job_set_title(job, title->str);
 				gebr_job_set_model(job, GTK_TREE_MODEL(gebr.job_control->store));
 				gebr_job_control_add(gebr.job_control, job);
-				g_free(servers_str);
 			}
 
-			gebr_job_set_title(job, title->str);
 			gebr_job_set_io(job, input_file->str, output_file->str, log_file->str);
 			gebr_job_append_task(job, task);
 
