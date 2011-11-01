@@ -93,6 +93,13 @@ void gebr_job_control_add(GebrJobControl *jc, GebrJob *job);
 GebrJob *gebr_job_control_find(GebrJobControl *jc, const gchar *rid);
 
 /**
+ * gebr_job_control_save_selected:
+ *
+ * Saves the selected job if applicable.
+ */
+gboolean gebr_job_control_save_selected(GebrJobControl *jc);
+
+/**
  * gebr_job_control_close_selected:
  *
  * Closes the selected job if applicable. See gebr_job_close().

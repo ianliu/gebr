@@ -1061,7 +1061,6 @@ gebr_job_control_save_selected(GebrJobControl *jc)
 	return TRUE;
 }
 
-
 void
 gebr_job_control_stop_selected(GebrJobControl *jc)
 {
