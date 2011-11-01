@@ -40,6 +40,7 @@ libgebr_gui_icons16x16stock_DATA =		\
 	16x16/stock/edit-paste.png	\
 	16x16/stock/edit-preferences.png	\
 	16x16/stock/edit-select-all.png	\
+	16x16/stock/filter.png	\
 	16x16/stock/folder.png	\
 	16x16/stock/go-bottom.png	\
 	16x16/stock/go-previous.png	\
@@ -120,6 +121,7 @@ libgebr_gui_icons22x22stock_DATA =		\
 	22x22/stock/edit-paste.png	\
 	22x22/stock/edit-preferences.png	\
 	22x22/stock/edit-select-all.png	\
+	22x22/stock/filter.png	\
 	22x22/stock/folder.png	\
 	22x22/stock/go-bottom.png	\
 	22x22/stock/go-previous.png	\
@@ -200,6 +202,7 @@ libgebr_gui_icons48x48stock_DATA =		\
 	48x48/stock/edit-paste.png	\
 	48x48/stock/edit-preferences.png	\
 	48x48/stock/edit-select-all.png	\
+	48x48/stock/filter.png	\
 	48x48/stock/folder.png	\
 	48x48/stock/go-bottom.png	\
 	48x48/stock/go-previous.png	\
