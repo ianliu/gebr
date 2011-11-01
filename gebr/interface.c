@@ -149,7 +149,7 @@ static const GtkActionEntry actions_entries_job_control[] = {
 	 * Job control - Job Actions
 	 */
 	{"job_control_save", GTK_STOCK_SAVE, NULL,
-		NULL, N_("Save Job information to a file"), G_CALLBACK(NULL/*on_job_control_queue_save*/)},
+		NULL, N_("Save Job information to a file"), G_CALLBACK(on_job_control_save)},
 	{"job_control_close", "trash-empty", N_("Close"),
 		"Delete", N_("Clear selected Jobs"), G_CALLBACK(on_job_control_close)},
 	{"job_control_stop", GTK_STOCK_STOP, N_("Cancel"),

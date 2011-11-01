@@ -295,12 +295,10 @@ void on_flow_component_status_activate(GtkAction *action,
 	flow_edition_set_io();
 }
 
-//
-//void on_job_control_save(void)
-//{
-//	job_control_save();
-//}
-//
+void on_job_control_save(void)
+{
+	gebr_job_control_save_selected(gebr.job_control);
+}
 
 void on_job_control_close(void)
 {
@@ -315,16 +313,6 @@ void on_job_control_stop(void)
 //void on_job_control_clear(void)
 //{
 //	job_control_clear(FALSE);
-//}
-//
-
-/*
- * Job Control - Queue Actions
- */
-
-//void on_job_control_queue_save(void)
-//{
-//	job_control_queue_save();
 //}
 //
 

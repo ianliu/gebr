@@ -196,7 +196,7 @@ on_job_wait_button(GtkButton *button,
 static gboolean
 on_popup_focus_out(GtkWidget *widget,
 		   GdkEventFocus *focus,
-		   GtkToggleButton *button)
+		   GtkButton *button)
 {
 	gtk_widget_hide(widget);
 	return TRUE;
@@ -220,6 +220,7 @@ on_info_button_clicked(GtkButton *button,
 		popup = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 		g_signal_connect(popup, "focus-out-event",
 				 G_CALLBACK(on_popup_focus_out), button);
+		gtk_window_set_resizable(GTK_WINDOW(popup), FALSE);
 		gtk_window_set_decorated(GTK_WINDOW(popup), FALSE);
 		GtkWidget *widget = GTK_WIDGET(gtk_builder_get_object(jc->priv->builder, "servers_widget"));
 		gtk_container_add(GTK_CONTAINER(popup), widget);
@@ -701,7 +702,7 @@ gebr_job_control_load_details(GebrJobControl *jc,
 
 	/* command-line */
 	gchar *cmdline = gebr_job_get_command_line(job);
-	g_string_append_printf(info_cmd, "\n%s\n%s\n", _("Command line:"), cmdline);
+	g_string_append_printf(info_cmd, "%s\n", cmdline);
 	g_free(cmdline);
 
 	gtk_text_buffer_get_end_iter(jc->cmd_buffer, &end_iter_cmd);
@@ -963,23 +964,13 @@ gebr_job_control_find(GebrJobControl *jc, const gchar *rid)
 	return job;
 }
 
-#if 0
-gboolean job_control_save(void)
+gboolean
+gebr_job_control_save_selected(GebrJobControl *jc)
 {
-	GtkTreeIter iter;
 	GtkWidget *chooser_dialog;
 	GtkFileFilter *filefilter;
-	GtkTreeModel *model;
-
 	gchar *fname;
 	FILE *fp;
-
-	GtkTextIter start_iter;
-	GtkTextIter end_iter;
-	gchar *text;
-	gchar * title;
-
-	GebrJob *job;
 
 	/* run file chooser */
 	chooser_dialog = gebr_gui_save_dialog_new(_("Choose filename to save"), GTK_WINDOW(gebr.window));
@@ -1003,39 +994,73 @@ gboolean job_control_save(void)
 		return TRUE;
 	}
 
-	model = gtk_tree_view_get_model(GTK_TREE_VIEW(gebr.job_control->view));
+	GtkTreeIter iter;
+	GtkTreeModel *model;
+	GebrJob *job;
 
-	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.job_control->view) {
-		GtkTreePath *path = gtk_tree_model_get_path(model, &iter);
-		if (gtk_tree_path_get_depth(path) == 1) {
-			gtk_tree_path_free(path);
-			continue;
-		}
-		gtk_tree_path_free(path);
+	model = gtk_tree_view_get_model(GTK_TREE_VIEW(jc->view));
+
+	gebr_gui_gtk_tree_view_foreach_selected(&iter, jc->view) {
 
 		gtk_tree_model_get(model, &iter, JC_STRUCT, &job, -1);
-		job_load_details(job);
 		
+		gchar * title;
 		title = g_strdup_printf("---------- %s ---------\n", gebr_job_get_title(job));
 		fputs(title, fp);
 		g_free(title);
 
-		gtk_text_buffer_get_start_iter(gebr.job_control->text_buffer, &start_iter);
-		gtk_text_buffer_get_end_iter(gebr.job_control->text_buffer, &end_iter);
-		text = gtk_text_buffer_get_text(gebr.job_control->text_buffer, &start_iter, &end_iter, FALSE);
-		text = g_strdup_printf("%s\n\n", text);
+		/* Start and Finish dates */
+		const gchar *start_date = gebr_job_get_start_date(job);
+		const gchar *finish_date = gebr_job_get_finish_date(job);
+		gchar *dates;
+		dates = g_strdup_printf("\nStart date: %s\nFinish date: %s\n", start_date? gebr_localized_date(start_date): "(None)",
+					finish_date? gebr_localized_date(finish_date) : "(None)");
+		fputs(dates, fp);
+		g_free(dates);
+
+		/* Issues */
+		gchar *issues;
+		gchar *job_issue = gebr_job_get_issues(job);
+		issues = g_strdup_printf("\nIssues:\n%s", strlen(job_issue)? job_issue : "(None)\n");
+		fputs(issues, fp);
+		g_free(issues);
+		g_free(job_issue);
+
+		/* Input, output and log files */
+		gchar *io, *input, *output, *log;
+		gebr_job_get_io(job, &input, &output, &log);
+		io = g_strdup_printf(_("\nInput File: %s\nOutput File: %s\nLog File: %s\n"), input? input : "(None)",
+				     output? output : "(None)", log? log : "(None)");
+		fputs(io, fp);
+		g_free(io);
+		g_free(input);
+		g_free(output);
+		g_free(log);
+
+		/* Command line */
+		gchar *cmd_line;
+		gchar *command = gebr_job_get_command_line(job);
+		cmd_line = g_strdup_printf(_("\nCommand Line:\n%s\n"), strlen(command)? command : "(None)");
+		fputs(cmd_line, fp);
+		g_free(cmd_line);
+		g_free(command);
+
+		/* Output */
+		gchar *text;
+		gchar *output_text = gebr_job_get_output(job);
+		text = g_strdup_printf(_("Output:\n%s\n\n"), strlen(output_text)? output_text : "(None)");
 		fputs(text, fp);
+		g_free(text);
+		g_free(output_text);
 
 		gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Saved Job information at \"%s\"."), fname);
-		
-		g_free(text);
 	}
 	
 	fclose(fp);
 	g_free(fname);
 	return TRUE;
 }
-#endif
+
 
 void
 gebr_job_control_stop_selected(GebrJobControl *jc)
