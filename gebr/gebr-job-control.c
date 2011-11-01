@@ -46,13 +46,24 @@ struct _GebrJobControlPriv {
 	GtkBuilder *builder;
 	LastSelection last_selection;
 
+	GtkTreeModel *group_filter;
 	GtkTreeModel *server_filter;
 	GtkListStore *status_model;
+
+	GtkComboBox *group_combo;
+	GtkComboBox *server_combo;
+	GtkComboBox *status_combo;
 };
 
 enum {
 	JC_STRUCT,
 	JC_N_COLUMN
+};
+
+enum {
+	ST_ICON,
+	ST_TEXT,
+	ST_N_COLUMN
 };
 
 #define BLOCK_SELECTION_CHANGED_SIGNAL(jc) \
@@ -792,10 +803,82 @@ server_filter_visible_func(GtkTreeModel *model,
 			   gpointer data)
 {
 	GebrJobControl *jc = data;
+	GtkTreeIter active;
+	gchar *group_cb;
+	gchar **group_server;
+	gboolean visible = FALSE;
+	gchar *name;
 
-	return TRUE;
+	gtk_tree_model_get (model, iter,
+	                    SERVER_NAME, &name, -1);
+
+	if (!g_strcmp0(name, "Auto-choose"))
+		return FALSE;
+
+	if (!gtk_combo_box_get_active_iter (jc->priv->group_combo, &active))
+		return TRUE;
+
+	gtk_tree_model_get (jc->priv->group_filter, &active,
+	                    TAG_NAME, &group_cb, -1);
+
+	if (!g_strcmp0(group_cb, "All Servers"))
+		return TRUE;
+
+	gchar *groups = gebr_get_groups_of_server(name);
+	group_server = g_strsplit(groups, ",", 0);
+
+	for (gint i = 0; group_server[i]; i++) {
+		if (!g_strcmp0(group_cb, group_server[i])) {
+			visible = TRUE;
+			break;
+		}
+	}
+	g_free(group_cb);
+	g_free(group_server);
+	g_free(groups);
+
+	return visible;
 }
 
+static void
+gebr_jc_populate_status_cb(GebrJobControl *jc)
+{
+	GtkTreeIter iter;
+	GtkListStore *store = jc->priv->status_model;
+
+	gtk_tree_model_get_iter_first(GTK_TREE_MODEL(jc->priv->status_model), &iter);
+
+	gtk_list_store_append(store, &iter);
+	gtk_list_store_set(store, &iter,
+	                   ST_TEXT, "All", -1);
+
+	gtk_list_store_append(store, &iter);
+	gtk_list_store_set(store, &iter,
+	                   ST_ICON, GTK_STOCK_APPLY,
+	                   ST_TEXT, "Finished", -1);
+
+	gtk_list_store_append(store, &iter);
+	gtk_list_store_set(store, &iter,
+	                   ST_ICON, GTK_STOCK_CANCEL,
+	                   ST_TEXT, "Canceled", -1);
+
+	gtk_list_store_append(store, &iter);
+	gtk_list_store_set(store, &iter,
+	                   ST_ICON, GTK_STOCK_EXECUTE,
+	                   ST_TEXT, "Running", -1);
+
+	gtk_list_store_append(store, &iter);
+	gtk_list_store_set(store, &iter,
+	                   ST_ICON, "chronometer",
+	                   ST_TEXT, "Queued", -1);
+}
+
+static void
+on_group_cb_changed(GtkComboBox *combo,
+                    GebrJobControl *jc)
+{
+	gtk_tree_model_filter_refilter(GTK_TREE_MODEL_FILTER(jc->priv->server_filter));
+}
 /* Public methods {{{1 */
 GebrJobControl *
 gebr_job_control_new(void)
@@ -858,19 +941,52 @@ gebr_job_control_new(void)
 	/*
 	 * Filter
 	 */
+
+	/* by Group of servers */
+
 	GtkComboBox *group_cb = GTK_COMBO_BOX(gtk_builder_get_object(jc->priv->builder, "filter-servers-group-cb"));
 	gtk_combo_box_set_row_separator_func(group_cb, server_group_separator_func, NULL, NULL);
-	gtk_combo_box_set_model(group_cb, GTK_TREE_MODEL(gebr.ui_server_list->common.combo_store));
-	GtkCellRenderer *cell = gtk_cell_renderer_text_new();
-	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(group_cb), cell, TRUE);
-	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(group_cb), cell, "text", TAG_NAME);
+	jc->priv->group_filter = GTK_TREE_MODEL(gebr.ui_server_list->common.combo_store);
+	gtk_combo_box_set_model(group_cb, jc->priv->group_filter);
+	jc->priv->group_combo = group_cb;
+	g_signal_connect(jc->priv->group_combo, "changed", G_CALLBACK(on_group_cb_changed), jc);
+
+	GtkCellRenderer *cell_group = gtk_cell_renderer_text_new();
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(group_cb), cell_group, TRUE);
+	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(group_cb), cell_group, "text", TAG_NAME);
+
+	/* by Servers */
 
 	GtkComboBox *server_cb = GTK_COMBO_BOX(gtk_builder_get_object(jc->priv->builder, "filter-servers-cb"));
 	jc->priv->server_filter = gtk_tree_model_filter_new(GTK_TREE_MODEL(gebr.ui_server_list->common.store), NULL);
 	gtk_tree_model_filter_set_visible_func(GTK_TREE_MODEL_FILTER(jc->priv->server_filter), server_filter_visible_func, jc, NULL);
 	gtk_combo_box_set_model(server_cb, GTK_TREE_MODEL(jc->priv->server_filter));
+	jc->priv->server_combo = server_cb;
+
+	GtkCellRenderer *cell_servers = gtk_cell_renderer_text_new();
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(server_cb), cell_servers, TRUE);
+	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(server_cb), cell_servers, "text", SERVER_NAME);
+
+	/* by Status of job */
 
 	GtkComboBox *status_cb = GTK_COMBO_BOX(gtk_builder_get_object(jc->priv->builder, "filter-status-cb"));
+	GtkListStore *store = gtk_list_store_new(ST_N_COLUMN,
+	                                         G_TYPE_STRING,
+	                                         G_TYPE_STRING);
+	jc->priv->status_model = store;
+	gebr_jc_populate_status_cb(jc);
+	gtk_combo_box_set_model(status_cb, GTK_TREE_MODEL(jc->priv->status_model));
+	jc->priv->status_combo = status_cb;
+
+	GtkCellRenderer *cell_status;
+
+	cell_status = gtk_cell_renderer_pixbuf_new();
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(status_cb), cell_status, TRUE);
+	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(status_cb), cell_status, "stock-id", ST_ICON);
+
+	cell_status = gtk_cell_renderer_text_new();
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(status_cb), cell_status, TRUE);
+	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(status_cb), cell_status, "text", ST_TEXT);
 
 	/*
 	 * Right side
