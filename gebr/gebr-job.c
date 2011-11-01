@@ -255,7 +255,7 @@ gebr_job_new_with_id(const gchar *rid,
 	while (job->priv->servers[job->priv->n_servers]) 
 		job->priv->n_servers++;
 	qsort(job->priv->servers, job->priv->n_servers,
-	      sizeof(servers[0]), compare_func);
+	      sizeof(job->priv->servers[0]), compare_func);
 
 	return job;
 }
