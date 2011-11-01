@@ -667,7 +667,6 @@ gebr_job_control_load_details(GebrJobControl *jc,
 	log_file = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "error_label"));
 	job_group = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "job_group"));
 
-
 	gebr_job_get_io(job, &input_file_str, &output_file_str, &log_file_str);
 
 	gchar *markup;
@@ -737,6 +736,42 @@ update_tree_view(gpointer data)
 	return TRUE;
 }
 
+static gint
+tree_sort_func(GtkTreeModel *model,
+	       GtkTreeIter *a,
+	       GtkTreeIter *b,
+	       gpointer user_data)
+{
+	GebrJob *ja, *jb;
+
+
+	gtk_tree_model_get(model, a, JC_STRUCT, &ja, -1);
+	gtk_tree_model_get(model, b, JC_STRUCT, &jb, -1);
+
+	const gchar *ta = gebr_job_get_start_date(ja);
+	const gchar *tb = gebr_job_get_start_date(jb);
+
+	gchar *sa = gtk_tree_model_get_string_from_iter(model, a);
+	gchar *sb = gtk_tree_model_get_string_from_iter(model, b);
+	g_debug("--------------- Comparing %s (%s) with %s (%s)", ta, sa, tb, sb);
+
+	if (!ta && !tb)
+		return 0;
+
+	if (!ta)
+		return 1;
+
+	if (!tb)
+		return -1;
+
+	GTimeVal tva;
+	GTimeVal tvb;
+	g_time_val_from_iso8601(ta, &tva);
+	g_time_val_from_iso8601(tb, &tvb);
+
+	return tvb.tv_usec - tva.tv_usec;
+}
+
 /* Public methods {{{1 */
 GebrJobControl *
 gebr_job_control_new(void)
@@ -759,6 +794,8 @@ gebr_job_control_new(void)
 	 */
 
 	jc->store = gtk_list_store_new(JC_N_COLUMN, G_TYPE_POINTER);
+	gtk_tree_sortable_set_sort_func(GTK_TREE_SORTABLE(jc->store), 0, tree_sort_func, NULL, NULL);
+	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(jc->store), 0, GTK_SORT_ASCENDING);
 
 	GtkTreeModel *filter = gtk_tree_model_filter_new(GTK_TREE_MODEL(jc->store), NULL);
 
@@ -770,7 +807,7 @@ gebr_job_control_new(void)
 					       (GtkTreeModelFilterVisibleFunc)jobs_visible_func,
 					       jc, NULL);
 	g_object_unref(filter);
-	
+
 	jc->view = GTK_WIDGET(treeview);
 
 	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(jc->view)),
