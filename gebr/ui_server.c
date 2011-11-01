@@ -1320,22 +1320,23 @@ gboolean ui_server_ask_for_tags_remove_permission (void){
 	return result;
 }
 
-const gchar *
+gchar *
 gebr_get_groups_of_server(gchar *server_address)
 {
 	GtkTreeIter iter;
 	GtkTreeModel *model;
 	GebrServer *server;
 	gchar * tags;
+	gchar *name;
 
 	model = GTK_TREE_MODEL(gebr.ui_server_list->common.store);
 
 	gebr_gui_gtk_tree_model_foreach(iter, model) {
 		gtk_tree_model_get(model, &iter,
-			   SERVER_POINTER, &server,
+			   SERVER_NAME, &name,
 			   SERVER_TAGS, &tags,
 			   -1);
-		if (!g_strcmp0(server_address, server->comm->address->str))
+		if (!g_strcmp0(server_address, name))
 			return tags;
 	}
 	return NULL;
