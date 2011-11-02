@@ -449,6 +449,8 @@ gebr_post_config(gboolean has_config)
 
 	g_object_set(G_OBJECT(gebr.job_control->text_view), "wrap-mode",
 		     gebr.config.job_log_word_wrap ? GTK_WRAP_WORD : GTK_WRAP_NONE, NULL);
+	g_object_set(G_OBJECT(gebr.job_control->cmd_view), "wrap-mode",
+			     gebr.config.job_log_word_wrap ? GTK_WRAP_WORD : GTK_WRAP_NONE, NULL);
 
 	gebr_config_load_servers ();
 	project_list_populate();
