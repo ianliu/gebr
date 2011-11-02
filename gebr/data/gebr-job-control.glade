@@ -10,7 +10,7 @@
       <object class="GtkFrame" id="frame1">
         <property name="visible">True</property>
         <property name="label_xalign">0</property>
-        <property name="shadow_type">none</property>
+        <property name="shadow_type">out</property>
         <child>
           <object class="GtkScrolledWindow" id="scrolledwindow3">
             <property name="visible">True</property>

@@ -311,7 +311,10 @@ on_group_cb_changed(GtkComboBox *combo,
 				   SERVER_POINTER, &server,
 				   -1);
 
-		if (is_autochoose || !gebr_server_is_in_group(server, group, is_fs))
+		if (!server
+		    || !gebr_comm_server_is_logged(server->comm)
+		    || is_autochoose
+		    || !gebr_server_is_in_group(server, group, is_fs))
 			continue;
 
 		gtk_list_store_append(jc->priv->server_filter, &it);
