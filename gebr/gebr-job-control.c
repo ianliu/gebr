@@ -29,8 +29,6 @@
 #include "gebr.h"
 #include "gebr-job.h"
 
-#define DELIM ", "
-
 typedef struct {
 	GebrJob *job;
 	guint sig_output;
@@ -850,27 +848,27 @@ gebr_jc_populate_status_cb(GebrJobControl *jc)
 
 	gtk_list_store_append(store, &iter);
 	gtk_list_store_set(store, &iter,
-	                   ST_TEXT, "All", -1);
+	                   ST_TEXT, _("Any"), -1);
 
 	gtk_list_store_append(store, &iter);
 	gtk_list_store_set(store, &iter,
 	                   ST_ICON, GTK_STOCK_APPLY,
-	                   ST_TEXT, "Finished", -1);
+	                   ST_TEXT, _("Finished"), -1);
 
 	gtk_list_store_append(store, &iter);
 	gtk_list_store_set(store, &iter,
 	                   ST_ICON, GTK_STOCK_CANCEL,
-	                   ST_TEXT, "Canceled", -1);
+	                   ST_TEXT, _("Canceled"), -1);
 
 	gtk_list_store_append(store, &iter);
 	gtk_list_store_set(store, &iter,
 	                   ST_ICON, GTK_STOCK_EXECUTE,
-	                   ST_TEXT, "Running", -1);
+	                   ST_TEXT, _("Running"), -1);
 
 	gtk_list_store_append(store, &iter);
 	gtk_list_store_set(store, &iter,
 	                   ST_ICON, "chronometer",
-	                   ST_TEXT, "Queued", -1);
+	                   ST_TEXT, _("Queued"), -1);
 }
 
 static void
@@ -981,7 +979,7 @@ gebr_job_control_new(void)
 	GtkCellRenderer *cell_status;
 
 	cell_status = gtk_cell_renderer_pixbuf_new();
-	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(status_cb), cell_status, TRUE);
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(status_cb), cell_status, FALSE);
 	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(status_cb), cell_status, "stock-id", ST_ICON);
 
 	cell_status = gtk_cell_renderer_text_new();
