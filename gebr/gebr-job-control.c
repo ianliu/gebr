@@ -912,6 +912,7 @@ gebr_job_control_new(void)
 					       (GtkTreeModelFilterVisibleFunc)jobs_visible_func,
 					       jc, NULL);
 	g_object_unref(filter);
+	gtk_widget_set_size_request(GTK_WIDGET(treeview), 150, -1);
 
 	jc->view = GTK_WIDGET(treeview);
 
