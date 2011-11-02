@@ -924,7 +924,7 @@ update_tree_view(gpointer data)
 	while (valid)
 	{
 		GtkTreePath *path = gtk_tree_model_get_path(model, &iter);
-		gtk_tree_model_row_changed(GTK_TREE_MODEL(jc->store), path, &iter);
+		gtk_tree_model_row_changed(model, path, &iter);
 		gtk_tree_path_free(path);
 		valid = gtk_tree_model_iter_next(model, &iter);
 	}
