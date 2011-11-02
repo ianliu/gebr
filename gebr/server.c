@@ -486,3 +486,26 @@ void gebr_server_set_ncores (GebrServer *self, gint cores)
 {
 	self->ncores = cores;
 }
+
+gboolean
+gebr_server_is_in_group(GebrServer *server,
+			const gchar *group,
+			gboolean is_fs)
+{
+	if (!group || strlen(group) == 0)
+		return TRUE;
+
+	if (!is_fs)
+		return ui_server_has_tag(server, group);
+
+	gchar *fsid;
+	gtk_tree_model_get (GTK_TREE_MODEL(gebr.ui_server_list->common.store),
+			    &server->iter, SERVER_FS, &fsid, -1);
+	if (g_strcmp0 (fsid, group) == 0) {
+		g_free (fsid);
+		return TRUE;
+	} else {
+		g_free (fsid);
+		return FALSE;
+	}
+}

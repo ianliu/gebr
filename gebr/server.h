@@ -166,6 +166,10 @@ gint gebr_server_get_ncores (GebrServer *self);
  */
 void gebr_server_set_ncores (GebrServer *self, gint cores);
 
+gboolean gebr_server_is_in_group(GebrServer *server,
+				 const gchar *group,
+				 gboolean is_fs);
+
 G_END_DECLS
 
 #endif				//__SERVER_H
