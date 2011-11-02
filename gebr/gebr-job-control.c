@@ -140,15 +140,86 @@ free_and_return:
 }
 
 static gboolean
-jobs_visible_func(GtkTreeModel *model,
-		  GtkTreeIter *iter,
-		  GebrJobControl *jc)
+jobs_visible_for_group(GtkTreeModel *model,
+                       GtkTreeIter *iter,
+                       GebrJobControl *jc)
+{
+	GtkTreeIter active;
+	gchar *combo_group;
+	gboolean visible = FALSE;
+
+	if (!gtk_combo_box_get_active_iter (jc->priv->group_combo, &active))
+		return TRUE;
+
+	gtk_tree_model_get (jc->priv->group_filter, &active,
+	                    TAG_NAME, &combo_group, -1);
+
+	if (!g_strcmp0(combo_group, "All Servers"))
+		return TRUE;
+
+	GebrJob *job;
+	GList *groups;
+
+	gtk_tree_model_get(model, iter, JC_STRUCT, &job, -1);
+
+	groups = gebr_job_get_groups(job);
+
+	for (GList *i = groups; groups; i = i->next) {
+		if (!g_strcmp0(combo_group, i->data)) {
+			visible = TRUE;
+			break;
+		}
+	}
+
+	g_free(combo_group);
+	return visible;
+}
+
+static gboolean
+jobs_visible_for_servers(GtkTreeModel *model,
+                         GtkTreeIter *iter,
+                         GebrJobControl *jc)
+{
+	gboolean visible = FALSE;
+	GtkTreeIter active;
+	GebrServer *combo_server;
+
+	if (!gtk_combo_box_get_active_iter (jc->priv->server_combo, &active))
+		return TRUE;
+
+	gtk_tree_model_get(GTK_TREE_MODEL(jc->priv->server_filter), &active,
+	                   1, &combo_server, -1);
+
+	if (!combo_server)
+		return TRUE;
+
+	GebrJob *job;
+	gchar **servers;
+	gint n_servers;
+
+	gtk_tree_model_get(model, iter, JC_STRUCT, &job, -1);
+
+	servers = gebr_job_get_servers(job, &n_servers);
+
+	for (gint i = 0; i < n_servers; i++) {
+		if (!g_strcmp0(servers[i], combo_server->comm->address->str))
+			visible = TRUE;
+	}
+
+	g_free(servers);
+	return visible;
+}
+
+static gboolean
+jobs_visible_for_status(GtkTreeModel *model,
+                        GtkTreeIter *iter,
+                        GebrJobControl *jc)
 {
 	GtkTreeIter active;
 	enum JobStatus combo_status;
 
 	if (!gtk_combo_box_get_active_iter (jc->priv->status_combo, &active))
-			return TRUE;
+		return TRUE;
 
 	gtk_tree_model_get(GTK_TREE_MODEL(jc->priv->status_model), &active,
 	                   ST_STATUS, &combo_status, -1);
@@ -164,6 +235,24 @@ jobs_visible_func(GtkTreeModel *model,
 		return TRUE;
 
 	return FALSE;
+
+}
+
+static gboolean
+jobs_visible_func(GtkTreeModel *model,
+		  GtkTreeIter *iter,
+		  GebrJobControl *jc)
+{
+	if (!jobs_visible_for_status(model, iter, jc))
+		return FALSE;
+
+	if (!jobs_visible_for_servers(model, iter, jc))
+		return FALSE;
+
+	if (!jobs_visible_for_group(model, iter, jc))
+		return FALSE;
+
+	return TRUE;
 }
 
 static void
