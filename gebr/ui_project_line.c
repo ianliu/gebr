@@ -1614,30 +1614,12 @@ gboolean servers_filter_visible_func (GtkTreeModel *filter,
 
 	group = gebr_geoxml_line_get_group (gebr.line, &is_fs);
 
-	if (!group)
-		return TRUE;
-
-	/* Empty string means all servers */
-	if (strlen (group) == 0)
-		return TRUE;
-
 	gtk_tree_model_get (filter, iter, SERVER_POINTER, &server, -1);
 
 	if (!server)
 		return TRUE;
 
-	if (is_fs) {
-		gtk_tree_model_get (filter, iter, SERVER_FS, &fsid, -1);
-		if (g_strcmp0 (fsid, group) == 0) {
-			g_free (fsid);
-			return TRUE;
-		} else {
-			g_free (fsid);
-			return FALSE;
-		}
-	}
-
-	return ui_server_has_tag (server, group);
+	return gebr_server_is_in_group(server, group, is_fs);
 }
 
 gint servers_sort_func (GtkTreeModel *model,
