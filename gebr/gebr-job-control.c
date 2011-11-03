@@ -159,13 +159,21 @@ jobs_visible_for_group(GtkTreeModel *model,
 	gtk_tree_model_get (jc->priv->group_filter, &active,
 	                    TAG_NAME, &combo_group, -1);
 
-	if (!g_strcmp0(combo_group, "All Servers"))
+	gchar *tmp = gtk_tree_model_get_string_from_iter(jc->priv->group_filter,
+							 &active);
+	gint index = atoi(tmp);
+	g_free(tmp);
+
+	if (index == 0) // All servers
 		return TRUE;
 
 	GebrJob *job;
 	GList *groups;
 
 	gtk_tree_model_get(model, iter, JC_STRUCT, &job, -1);
+
+	if (!job)
+		return FALSE;
 
 	groups = gebr_job_get_groups(job);
 
@@ -204,6 +212,9 @@ jobs_visible_for_servers(GtkTreeModel *model,
 
 	gtk_tree_model_get(model, iter, JC_STRUCT, &job, -1);
 
+	if (!job)
+		return FALSE;
+
 	servers = gebr_job_get_servers(job, &n_servers);
 
 	for (gint i = 0; i < n_servers; i++) {
@@ -234,6 +245,9 @@ jobs_visible_for_status(GtkTreeModel *model,
 	GebrJob *job;
 
 	gtk_tree_model_get(model, iter, JC_STRUCT, &job, -1);
+
+	if (!job)
+		return FALSE;
 
 	if (gebr_job_get_status(job) == combo_status)
 		return TRUE;
