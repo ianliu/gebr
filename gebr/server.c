@@ -487,9 +487,17 @@ gebr_server_is_in_group(GebrServer *server,
 	}
 }
 
+static void
+remove_task(GebrServer *server,
+            GebrTask *task)
+{
+	server->tasks = g_list_remove(server->tasks, task);
+}
+
 void
 gebr_server_append_task(GebrServer *server,
 			gpointer task)
 {
 	server->tasks = g_list_prepend(server->tasks, task);
+	g_object_weak_ref(task, (GWeakNotify)remove_task, server);
 }
