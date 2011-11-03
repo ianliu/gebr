@@ -206,7 +206,6 @@ jobs_visible_for_servers(GtkTreeModel *model,
 			visible = TRUE;
 	}
 
-	g_free(servers);
 	return visible;
 }
 
