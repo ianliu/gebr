@@ -245,6 +245,9 @@ gebr_job_new_with_id(const gchar *rid,
 		     const gchar *queue,
 		     const gchar *servers)
 {
+	g_return_val_if_fail(servers != NULL, NULL);
+	g_return_val_if_fail(strlen(servers) > 0, NULL);
+
 	GebrJob *job = g_object_new(GEBR_TYPE_JOB, NULL);
 
 	job->priv->queue = g_strdup(queue);
@@ -252,8 +255,9 @@ gebr_job_new_with_id(const gchar *rid,
 	job->priv->runid = g_strdup(rid);
 	job->priv->n_servers = 0;
 
-	while (job->priv->servers[job->priv->n_servers]) 
+	while (job->priv->servers[job->priv->n_servers])
 		job->priv->n_servers++;
+
 	qsort(job->priv->servers, job->priv->n_servers,
 	      sizeof(job->priv->servers[0]), compare_func);
 
@@ -274,8 +278,8 @@ gebr_job_get_groups(GebrJob *job)
 		counter = 0;
 		for (GList *k = servers_list; k; k = k->next) {
 			GebrServer *server = k->data;
-			for (j = 0; job->priv->servers[j]; j++) 
-				if (!g_strcmp0(job->priv->servers[j], server->comm->address->str)) 
+			for (j = 0; job->priv->servers[j]; j++)
+				if (!g_strcmp0(job->priv->servers[j], server->comm->address->str))
 					counter++;
 		}
 		if (g_list_length(servers_list) == counter) 
