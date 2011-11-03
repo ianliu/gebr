@@ -176,6 +176,49 @@ void test_gebr_str_replace(void)
 
 }
 
+void test_gebr_calculate_relative_time(void){
+	GTimeVal time1, time2;
+	time1.tv_sec = 0;
+	gchar *string;
+
+	time2.tv_sec = 3;
+	g_assert_cmpstr(gebr_calculate_relative_time(&time1, &time2),==,"A moment ago");
+
+	time2.tv_sec = 20;
+	string = g_strdup_printf(("%ld seconds ago"), time2.tv_sec - time1.tv_sec);
+	g_assert_cmpstr(gebr_calculate_relative_time(&time1, &time2),==, string);
+	g_free(string);
+
+	time2.tv_sec = 70;
+	string = g_strdup_printf(("%ld minutes ago"), (time2.tv_sec - time1.tv_sec)/60);
+	g_assert_cmpstr(gebr_calculate_relative_time(&time1, &time2),==, string);
+	g_free(string);
+
+	time2.tv_sec = 4000;
+	string = g_strdup_printf(("%ld hours ago"), (time2.tv_sec - time1.tv_sec)/3600);
+	g_assert_cmpstr(gebr_calculate_relative_time(&time1, &time2),==, string);
+	g_free(string);
+
+	time2.tv_sec = 90000;
+	string = g_strdup_printf(("%ld days ago"), (time2.tv_sec - time1.tv_sec)/86400);
+	g_assert_cmpstr(gebr_calculate_relative_time(&time1, &time2),==, string);
+	g_free(string);
+
+	time2.tv_sec = 700000;
+	string = g_strdup_printf(("%ld weeks ago"), (time2.tv_sec - time1.tv_sec)/604800);
+	g_assert_cmpstr(gebr_calculate_relative_time(&time1, &time2),==, string);
+	g_free(string);
+
+	time2.tv_sec = 3000000;
+	string = g_strdup_printf(("%ld months ago"), (time2.tv_sec - time1.tv_sec)/32140800);
+	g_assert_cmpstr(gebr_calculate_relative_time(&time1, &time2),==, string);
+	g_free(string);
+
+	time2.tv_sec = 40000000;
+	g_assert_cmpstr(gebr_calculate_relative_time(&time1, &time2),==,"More than a year ago");
+	g_free(string);
+}
+
 int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
@@ -186,6 +229,7 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/utils/str_remove_trailing_zeros", test_gebr_str_remove_trailing_zeros);
 	g_test_add_func("/libgebr/utils/str_canonical_var_name", test_gebr_str_canonical_var_name);
 	g_test_add_func("/libgebr/utils/str_replace", test_gebr_str_replace);
+	g_test_add_func("/libgebr/utils/calculate_relative_time", test_gebr_calculate_relative_time);
 
 	gint ret = g_test_run();
 	gebr_geoxml_finalize();

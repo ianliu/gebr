@@ -765,9 +765,11 @@ gebr_calculate_relative_time (GTimeVal *time1, GTimeVal *time2)
 	else if ( time2->tv_sec - time1->tv_sec < 86400)
 		return (g_strdup_printf(_("%ld hours ago"), (time2->tv_sec - time1->tv_sec)/3600));
 	else if ( time2->tv_sec - time1->tv_sec < 604800)
-		return (g_strdup_printf(_("%ld weeks ago"), (time2->tv_sec - time1->tv_sec)/86400));
+		return (g_strdup_printf(_("%ld days ago"), (time2->tv_sec - time1->tv_sec)/86400));
 	else if ( time2->tv_sec - time1->tv_sec < 2678400)
-		return (g_strdup_printf(_("%ld months ago"), (time2->tv_sec - time1->tv_sec)/604800));
+		return (g_strdup_printf(_("%ld weeks ago"), (time2->tv_sec - time1->tv_sec)/604800));
+	else if ( time2->tv_sec - time1->tv_sec < 32140800)
+		return (g_strdup_printf(_("%ld months ago"), (time2->tv_sec - time1->tv_sec)/32140800));
 	else 
 		return (g_strdup(_("More than a year ago")));
 }
