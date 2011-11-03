@@ -27,8 +27,6 @@ typedef struct _GebrJobControl GebrJobControl;
 typedef struct _GebrJobControlPriv GebrJobControlPriv;
 
 struct _GebrJobControl {
-	GtkListStore *store;
-	GtkWidget *view;
 
 	GtkWidget *label;
 	GtkWidget *text_view;
@@ -141,6 +139,13 @@ void gebr_job_control_open_filter(GebrJobControl *jc,
  */
 void gebr_job_control_remove(GebrJobControl *jc,
 			     GebrJob *job);
+
+/**
+ * gebr_job_control_get_model:
+ *
+ * Returns: The #GtkTreeModel for this job control.
+ */
+GtkTreeModel *gebr_job_control_get_model(GebrJobControl *jc);
 
 G_END_DECLS
 

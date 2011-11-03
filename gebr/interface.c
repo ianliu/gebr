@@ -285,7 +285,6 @@ on_show_toggle(GtkWidget * toggle)
 	g_signal_handlers_block_by_func(toggle, change_niceness, NULL);
 	gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(toggle), gebr.config.flow_exec_speed > 0 ? TRUE : FALSE);
 	g_signal_handlers_unblock_by_func(toggle, change_niceness, NULL);
-
 }
 
 /*

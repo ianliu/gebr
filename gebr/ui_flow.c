@@ -590,7 +590,7 @@ create_jobs_and_run(GebrCommRunner *runner)
 		GString **values = value;
 		GebrJob *job = gebr_job_new_with_id(runid, runner->queue, values[0]->str);
 		gebr_job_set_title(job, values[1]->str);
-		gebr_job_set_model(job, GTK_TREE_MODEL(gebr.job_control->store));
+		gebr_job_set_model(job, gebr_job_control_get_model(gebr.job_control));
 		gebr_job_control_add(gebr.job_control, job);
 		g_string_free((GString *)values[0], TRUE);
 		g_string_free((GString *)values[1], TRUE);
