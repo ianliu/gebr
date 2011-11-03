@@ -957,10 +957,10 @@ tree_sort_func(GtkTreeModel *model,
 		return 0;
 
 	if (!ja)
-		return -1;
+		return 1;
 
 	if (!jb)
-		return 1;
+		return -1;
 
 	const gchar *ta = gebr_job_get_start_date(ja);
 	const gchar *tb = gebr_job_get_start_date(jb);
@@ -969,10 +969,10 @@ tree_sort_func(GtkTreeModel *model,
 		return 0;
 
 	if (!ta)
-		return -1;
+		return 1;
 
 	if (!tb)
-		return 1;
+		return -1;
 
 	GTimeVal tva;
 	GTimeVal tvb;
@@ -1142,7 +1142,7 @@ gebr_job_control_new(void)
 
 	GtkTreeModel *sort = gtk_tree_model_sort_new_with_model(filter);
 	gtk_tree_sortable_set_sort_func(GTK_TREE_SORTABLE(sort), 0, tree_sort_func, NULL, NULL);
-	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(sort), 0, GTK_SORT_DESCENDING);
+	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(sort), 0, GTK_SORT_ASCENDING);
 
 	GtkTreeView *treeview;
 	treeview = GTK_TREE_VIEW(gtk_builder_get_object(jc->priv->builder, "treeview_jobs"));
