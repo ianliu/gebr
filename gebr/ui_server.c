@@ -1325,7 +1325,6 @@ gebr_get_groups_of_server(gchar *server_address)
 {
 	GtkTreeIter iter;
 	GtkTreeModel *model;
-	GebrServer *server;
 	gchar * tags;
 	gchar *name;
 

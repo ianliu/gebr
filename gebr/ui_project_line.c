@@ -1604,7 +1604,6 @@ gboolean servers_filter_visible_func (GtkTreeModel *filter,
 				      GtkTreeIter *iter,
 				      gpointer data)
 {
-	gchar *fsid;
 	gboolean is_fs;
 	const gchar *group;
 	GebrServer *server;
