@@ -27,15 +27,6 @@ typedef struct _GebrJobControl GebrJobControl;
 typedef struct _GebrJobControlPriv GebrJobControlPriv;
 
 struct _GebrJobControl {
-
-	GtkWidget *label;
-	GtkWidget *text_view;
-	GtkTextBuffer *text_buffer;
-	GtkTextTag *issues_title_tag;
-
-	GtkWidget *cmd_view;
-	GtkTextBuffer *cmd_buffer;
-
 	GebrJobControlPriv *priv;
 };
 

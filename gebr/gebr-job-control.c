@@ -39,20 +39,23 @@ typedef struct {
 } LastSelection;
 
 struct _GebrJobControlPriv {
-	GtkListStore *store;
-	GtkWidget *view;
-	guint timeout_source_id;
-	GtkWidget *widget;
 	GtkBuilder *builder;
-	LastSelection last_selection;
-
-	GtkTreeModel *group_filter;
-	GtkListStore *server_filter;
-	GtkListStore *status_model;
-
 	GtkComboBox *group_combo;
 	GtkComboBox *server_combo;
 	GtkComboBox *status_combo;
+	GtkListStore *server_filter;
+	GtkListStore *status_model;
+	GtkListStore *store;
+	GtkTextBuffer *cmd_buffer;
+	GtkTextBuffer *text_buffer;
+	GtkTreeModel *group_filter;
+	GtkWidget *cmd_view;
+	GtkWidget *label;
+	GtkWidget *text_view;
+	GtkWidget *view;
+	GtkWidget *widget;
+	LastSelection last_selection;
+	guint timeout_source_id;
 };
 
 enum {
@@ -439,11 +442,11 @@ on_job_output(GebrJob *job,
 	GtkTextIter end_iter;
 	GtkTextMark *mark;
 
-	gtk_text_buffer_get_end_iter(jc->text_buffer, &end_iter);
-	gtk_text_buffer_insert(jc->text_buffer, &end_iter, output, strlen(output));
+	gtk_text_buffer_get_end_iter(jc->priv->text_buffer, &end_iter);
+	gtk_text_buffer_insert(jc->priv->text_buffer, &end_iter, output, strlen(output));
 	if (gebr.config.job_log_auto_scroll) {
-		mark = gtk_text_buffer_get_mark(jc->text_buffer, "end");
-		gtk_text_view_scroll_mark_onscreen(GTK_TEXT_VIEW(jc->text_view), mark);
+		mark = gtk_text_buffer_get_mark(jc->priv->text_buffer, "end");
+		gtk_text_view_scroll_mark_onscreen(GTK_TEXT_VIEW(jc->priv->text_view), mark);
 	}
 }
 
@@ -473,11 +476,11 @@ on_job_cmd_line_received(GebrJob *job,
 	GtkTextMark *mark;
 	const gchar *cmdline = gebr_job_get_command_line(job);
 
-	gtk_text_buffer_get_end_iter(jc->cmd_buffer, &end_iter);
-	gtk_text_buffer_insert(jc->cmd_buffer, &end_iter, cmdline, strlen(cmdline));
+	gtk_text_buffer_get_end_iter(jc->priv->cmd_buffer, &end_iter);
+	gtk_text_buffer_insert(jc->priv->cmd_buffer, &end_iter, cmdline, strlen(cmdline));
 	if (gebr.config.job_log_auto_scroll) {
-		mark = gtk_text_buffer_get_mark(jc->cmd_buffer, "end");
-		gtk_text_view_scroll_mark_onscreen(GTK_TEXT_VIEW(jc->cmd_view), mark);
+		mark = gtk_text_buffer_get_mark(jc->priv->cmd_buffer, "end");
+		gtk_text_view_scroll_mark_onscreen(GTK_TEXT_VIEW(jc->priv->cmd_view), mark);
 	}
 }
 
@@ -906,22 +909,22 @@ gebr_job_control_load_details(GebrJobControl *jc,
 	gtk_label_set_markup (label, markup);
 	g_free (markup);
 
-	gtk_text_buffer_set_text(jc->text_buffer, "", 0);
-	gtk_text_buffer_set_text(jc->cmd_buffer, "", 0);
+	gtk_text_buffer_set_text(jc->priv->text_buffer, "", 0);
+	gtk_text_buffer_set_text(jc->priv->cmd_buffer, "", 0);
 
 	/* command-line */
 	gchar *cmdline = gebr_job_get_command_line(job);
 	g_string_append_printf(info_cmd, "%s\n", cmdline);
 	g_free(cmdline);
 
-	gtk_text_buffer_get_end_iter(jc->cmd_buffer, &end_iter_cmd);
-	gtk_text_buffer_insert(jc->cmd_buffer, &end_iter_cmd, info_cmd->str, info_cmd->len);
+	gtk_text_buffer_get_end_iter(jc->priv->cmd_buffer, &end_iter_cmd);
+	gtk_text_buffer_insert(jc->priv->cmd_buffer, &end_iter_cmd, info_cmd->str, info_cmd->len);
 
 	/* output */
 	g_string_append(info, gebr_job_get_output(job));
 
-	gtk_text_buffer_get_end_iter(jc->text_buffer, &end_iter);
-	gtk_text_buffer_insert(jc->text_buffer, &end_iter, info->str, info->len);
+	gtk_text_buffer_get_end_iter(jc->priv->text_buffer, &end_iter);
+	gtk_text_buffer_insert(jc->priv->text_buffer, &end_iter, info->str, info->len);
 
 	g_string_free(info, TRUE);
 	g_string_free(info_cmd, TRUE);
@@ -1033,6 +1036,83 @@ gebr_jc_populate_status_cb(GebrJobControl *jc)
 	                   ST_TEXT, _("Queued"),
 	                   ST_STATUS, JOB_STATUS_QUEUED,
 	                   -1);
+}
+
+static void
+on_job_disconnected(GebrJob *job, GebrJobControl *jc)
+{
+	gebr_job_control_remove(jc, job);
+}
+
+static void
+wordwrap_toggled(GtkCheckMenuItem * check_menu_item, GtkTextView * text_view)
+{
+	gebr.config.job_log_word_wrap = gtk_check_menu_item_get_active(check_menu_item);
+	g_object_set(G_OBJECT(text_view), "wrap-mode",
+		     gebr.config.job_log_word_wrap ? GTK_WRAP_WORD : GTK_WRAP_NONE, NULL);
+}
+
+static void
+autoscroll_toggled(GtkCheckMenuItem * check_menu_item)
+{
+	gebr.config.job_log_auto_scroll = gtk_check_menu_item_get_active(check_menu_item);
+}
+
+static void
+on_text_view_populate_popup(GtkTextView * text_view, GtkMenu * menu)
+{
+	GtkWidget *menu_item;
+
+	menu_item = gtk_separator_menu_item_new();
+	gtk_widget_show(menu_item);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+
+	menu_item = gtk_check_menu_item_new_with_label(_("Word-wrap"));
+	gtk_widget_show(menu_item);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+	g_signal_connect(menu_item, "toggled", G_CALLBACK(wordwrap_toggled), text_view);
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item), gebr.config.job_log_word_wrap);
+
+	menu_item = gtk_check_menu_item_new_with_label(_("Auto-scroll"));
+	gtk_widget_show(menu_item);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+	g_signal_connect(menu_item, "toggled", G_CALLBACK(autoscroll_toggled), NULL);
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item), gebr.config.job_log_auto_scroll);
+}
+
+static GtkMenu *
+job_control_popup_menu(GtkWidget * widget, GebrJobControl *jc)
+{
+	GtkWidget *menu;
+	GtkTreeModel *model;
+	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(jc->priv->view));
+	GList *rows = gtk_tree_selection_get_selected_rows(selection, &model);
+
+	menu = gtk_menu_new();
+
+	if (rows) {
+
+		gtk_container_add(GTK_CONTAINER(menu),
+		                  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_save")));
+		gtk_container_add(GTK_CONTAINER(menu),
+		                  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_close")));
+		gtk_container_add(GTK_CONTAINER(menu),
+		                  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_stop")));
+
+		gtk_widget_show_all(menu);
+
+		g_list_foreach(rows, (GFunc)gtk_tree_path_free, NULL);
+		g_list_free(rows);
+
+		return GTK_MENU(menu);
+	}
+	return NULL;
+}
+
+static void
+on_filter_ok_clicked(GtkButton *button, GtkWidget *popup)
+{
+	gtk_widget_hide(popup);
 }
 
 /* Public methods {{{1 */
@@ -1176,48 +1256,45 @@ gebr_job_control_new(void)
 	gtk_toggle_button_set_active(details, FALSE);
 
 	/* Text view of output*/
-	jc->text_buffer = gtk_text_buffer_new(NULL);
-	gtk_text_buffer_get_end_iter(jc->text_buffer, &iter_end);
-	gtk_text_buffer_create_mark(jc->text_buffer, "end", &iter_end, FALSE);
+	jc->priv->text_buffer = gtk_text_buffer_new(NULL);
+	gtk_text_buffer_get_end_iter(jc->priv->text_buffer, &iter_end);
+	gtk_text_buffer_create_mark(jc->priv->text_buffer, "end", &iter_end, FALSE);
 
 	text_view = GTK_WIDGET(gtk_builder_get_object(jc->priv->builder, "textview_output"));
-	gtk_text_view_set_buffer(GTK_TEXT_VIEW(text_view), jc->text_buffer);
+	gtk_text_view_set_buffer(GTK_TEXT_VIEW(text_view), jc->priv->text_buffer);
+	g_object_set(text_view, "wrap-mode", gebr.config.job_log_word_wrap ? GTK_WRAP_WORD : GTK_WRAP_NONE, NULL);
 
 	g_object_set(G_OBJECT(text_view), "editable", FALSE, "cursor-visible", FALSE, NULL);
-	{
-		PangoFontDescription *font;
+	PangoFontDescription *font;
 
-		font = pango_font_description_new();
-		pango_font_description_set_family(font, "monospace");
-		gtk_widget_modify_font(text_view, font);
+	font = pango_font_description_new();
+	pango_font_description_set_family(font, "monospace");
+	gtk_widget_modify_font(text_view, font);
 
-		pango_font_description_free(font);
-	}
+	pango_font_description_free(font);
 
-	jc->text_view = text_view;
-	g_signal_connect(jc->text_view, "populate-popup", G_CALLBACK(on_text_view_populate_popup), jc);
+	jc->priv->text_view = text_view;
+	g_signal_connect(jc->priv->text_view, "populate-popup", G_CALLBACK(on_text_view_populate_popup), jc);
 
 	/* Text view of command line */
-	jc->cmd_buffer = gtk_text_buffer_new(NULL);
-	gtk_text_buffer_get_end_iter(jc->cmd_buffer, &iter_end);
-	gtk_text_buffer_create_mark(jc->cmd_buffer, "end", &iter_end, FALSE);
+	jc->priv->cmd_buffer = gtk_text_buffer_new(NULL);
+	gtk_text_buffer_get_end_iter(jc->priv->cmd_buffer, &iter_end);
+	gtk_text_buffer_create_mark(jc->priv->cmd_buffer, "end", &iter_end, FALSE);
 
 	text_view = GTK_WIDGET(gtk_builder_get_object(jc->priv->builder, "textview_command_line"));
-	gtk_text_view_set_buffer(GTK_TEXT_VIEW(text_view), jc->cmd_buffer);
+	gtk_text_view_set_buffer(GTK_TEXT_VIEW(text_view), jc->priv->cmd_buffer);
+	g_object_set(text_view, "wrap-mode", gebr.config.job_log_word_wrap ? GTK_WRAP_WORD : GTK_WRAP_NONE, NULL);
 
 	g_object_set(G_OBJECT(text_view), "editable", FALSE, "cursor-visible", FALSE, NULL);
-	{
-		PangoFontDescription *font;
 
-		font = pango_font_description_new();
-		pango_font_description_set_family(font, "monospace");
-		gtk_widget_modify_font(text_view, font);
+	font = pango_font_description_new();
+	pango_font_description_set_family(font, "monospace");
+	gtk_widget_modify_font(text_view, font);
 
-		pango_font_description_free(font);
-	}
+	pango_font_description_free(font);
 
-	jc->cmd_view = text_view;
-	g_signal_connect(jc->cmd_view, "populate-popup", G_CALLBACK(on_text_view_populate_popup), jc);
+	jc->priv->cmd_view = text_view;
+	g_signal_connect(jc->priv->cmd_view, "populate-popup", G_CALLBACK(on_text_view_populate_popup), jc);
 
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_close"), FALSE);
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_stop"), FALSE);
@@ -1238,12 +1315,6 @@ GtkWidget *
 gebr_job_control_get_widget(GebrJobControl *jc)
 {
 	return jc->priv->widget;
-}
-
-static void
-on_job_disconnected(GebrJob *job, GebrJobControl *jc)
-{
-	gebr_job_control_remove(jc, job);
 }
 
 void
@@ -1474,92 +1545,6 @@ free_rows:
 	g_list_free(rows);
 }
 
-
-/**
- * \internal
- */
-static void wordwrap_toggled(GtkCheckMenuItem * check_menu_item, GtkTextView * text_view)
-{
-	gebr.config.job_log_word_wrap = gtk_check_menu_item_get_active(check_menu_item);
-	g_object_set(G_OBJECT(text_view), "wrap-mode",
-		     gebr.config.job_log_word_wrap ? GTK_WRAP_WORD : GTK_WRAP_NONE, NULL);
-}
-
-/**
- * \internal
- */
-static void autoscroll_toggled(GtkCheckMenuItem * check_menu_item)
-{
-	gebr.config.job_log_auto_scroll = gtk_check_menu_item_get_active(check_menu_item);
-}
-
-/**
- * \internal
- */
-static void on_text_view_populate_popup(GtkTextView * text_view, GtkMenu * menu)
-{
-	GtkWidget *menu_item;
-
-	menu_item = gtk_separator_menu_item_new();
-	gtk_widget_show(menu_item);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-
-	menu_item = gtk_check_menu_item_new_with_label(_("Word-wrap"));
-	gtk_widget_show(menu_item);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-	g_signal_connect(menu_item, "toggled", G_CALLBACK(wordwrap_toggled), text_view);
-	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item), gebr.config.job_log_word_wrap);
-
-	menu_item = gtk_check_menu_item_new_with_label(_("Auto-scroll"));
-	gtk_widget_show(menu_item);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-	g_signal_connect(menu_item, "toggled", G_CALLBACK(autoscroll_toggled), NULL);
-	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item), gebr.config.job_log_auto_scroll);
-}
-
-#if 0
-/*
- * Queue Actions
- */
-void job_control_queue_save(void)
-{
-	job_control_queue_by_func(job_control_save);
-}
-
-#endif
-
-/**
- * \internal
- * Build popup menu
- */
-static GtkMenu *job_control_popup_menu(GtkWidget * widget, GebrJobControl *jc)
-{
-	GtkWidget *menu;
-	GtkTreeModel *model;
-	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(jc->priv->view));
-	GList *rows = gtk_tree_selection_get_selected_rows(selection, &model);
-
-	menu = gtk_menu_new();
-
-	if(rows) {
-
-		gtk_container_add(GTK_CONTAINER(menu),
-		                  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_save")));
-		gtk_container_add(GTK_CONTAINER(menu),
-		                  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_close")));
-		gtk_container_add(GTK_CONTAINER(menu),
-		                  gtk_action_create_menu_item(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_stop")));
-
-		gtk_widget_show_all(menu);
-
-		g_list_foreach(rows, (GFunc)gtk_tree_path_free, NULL);
-		g_list_free(rows);
-
-		return GTK_MENU(menu);
-	}
-	return NULL;
-}
-
 void
 gebr_job_control_select_job_by_rid(GebrJobControl *jc, const gchar *rid)
 {
@@ -1593,12 +1578,6 @@ gebr_job_control_hide(GebrJobControl *jc)
 {
 	if (jc->priv->timeout_source_id)
 		g_source_remove(jc->priv->timeout_source_id);
-}
-
-static void
-on_filter_ok_clicked(GtkButton *button, GtkWidget *popup)
-{
-	gtk_widget_hide(popup);
 }
 
 void

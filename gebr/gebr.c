@@ -447,11 +447,6 @@ gebr_post_config(gboolean has_config)
 	gtk_window_resize(GTK_WINDOW(gebr.window), gebr.config.width, gebr.config.height);
 	gtk_expander_set_expanded(GTK_EXPANDER(gebr.ui_log->widget), gebr.config.log_expander_state);
 
-	g_object_set(G_OBJECT(gebr.job_control->text_view), "wrap-mode",
-		     gebr.config.job_log_word_wrap ? GTK_WRAP_WORD : GTK_WRAP_NONE, NULL);
-	g_object_set(G_OBJECT(gebr.job_control->cmd_view), "wrap-mode",
-			     gebr.config.job_log_word_wrap ? GTK_WRAP_WORD : GTK_WRAP_NONE, NULL);
-
 	gebr_config_load_servers ();
 	project_list_populate();
 
