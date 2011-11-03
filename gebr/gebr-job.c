@@ -73,6 +73,7 @@ gebr_job_finalize(GObject *object)
 	g_free(job->priv->input_file);
 	g_free(job->priv->output_file);
 	g_free(job->priv->log_file);
+	g_list_foreach(job->priv->tasks, (GFunc)g_object_unref, NULL);
 	g_list_free(job->priv->tasks);
 
 	G_OBJECT_CLASS(gebr_job_parent_class)->finalize(object);
@@ -490,8 +491,6 @@ gebr_job_close(GebrJob *job)
 
 	for (GList *i = job->priv->tasks; i; i = i->next)
 		gebr_task_close(i->data, job->priv->runid);
-
-	g_object_unref(job);
 
 	return TRUE;
 }
