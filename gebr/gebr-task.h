@@ -51,12 +51,10 @@ struct _GebrTaskClass {
 	void (*status_change) (GebrTask *task,
 			       gint old_status,
 			       gint new_status,
-			       const gchar *parameter,
-			       gpointer user_data);
+			       const gchar *parameter);
 
 	void (*output) (GebrTask *task,
-			const gchar *output,
-			gpointer user_data);
+			const gchar *output);
 };
 
 GType gebr_task_get_type(void) G_GNUC_CONST;

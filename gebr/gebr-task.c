@@ -62,6 +62,27 @@ G_DEFINE_TYPE(GebrTask, gebr_task, G_TYPE_OBJECT);
 
 static GHashTable *tasks_map = NULL;
 
+static void
+gebr_task_free(GebrTask *task)
+{
+	g_free(task->priv->rid);
+	g_string_free(task->priv->start_date, TRUE);
+	g_string_free(task->priv->finish_date, TRUE);
+	g_string_free(task->priv->issues, TRUE);
+	g_string_free(task->priv->cmd_line, TRUE);
+	g_string_free(task->priv->moab_jid, TRUE);
+	g_string_free(task->priv->queue_id, TRUE);
+	g_string_free(task->priv->output, TRUE);
+}
+
+static void
+gebr_task_finalize(GObject *object)
+{
+	GebrTask *task = GEBR_TASK(object);
+	gebr_task_free(task);
+	G_OBJECT_CLASS(gebr_task_parent_class)->finalize(object);
+}
+
 static void gebr_task_init(GebrTask *task)
 {
 	task->priv = G_TYPE_INSTANCE_GET_PRIVATE(task,
@@ -82,6 +103,7 @@ static void gebr_task_init(GebrTask *task)
 static void gebr_task_class_init(GebrTaskClass *klass)
 {
 	GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
+	gobject_class->finalize = gebr_task_finalize;
 
 	tasks_map = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
 
@@ -291,19 +313,6 @@ gebr_task_get_output(GebrTask *task)
 	return task->priv->output->str;
 }
 
-static void
-gebr_task_free(GebrTask *task)
-{
-	g_free(task->priv->rid);
-	g_string_free(task->priv->start_date, TRUE);
-	g_string_free(task->priv->finish_date, TRUE);
-	g_string_free(task->priv->issues, TRUE);
-	g_string_free(task->priv->cmd_line, TRUE);
-	g_string_free(task->priv->moab_jid, TRUE);
-	g_string_free(task->priv->queue_id, TRUE);
-	g_string_free(task->priv->output, TRUE);
-}
-
 void
 gebr_task_close(GebrTask *task, const gchar *rid)
 {
@@ -314,7 +323,6 @@ gebr_task_close(GebrTask *task, const gchar *rid)
 						      rid);
 
 	g_hash_table_remove(tasks_map, tid);
-	gebr_task_free(task);
 	g_free(tid);
 }
 
