@@ -843,11 +843,12 @@ gebr_jc_update_status_and_time(GebrJobControl *jc,
 	}
 	else if (status == JOB_STATUS_INITIAL) {
 		gchar *remainings = gebr_job_get_remaining_servers(job);
-		gchar *wait_text = g_strdup_printf(_("Waiting for servers: %s"), remainings);
+		gchar *wait_text = g_strdup_printf(_("Waiting for servers: %s"), remainings? remainings : "");
 		gtk_image_set_from_stock(img, GTK_STOCK_NETWORK, GTK_ICON_SIZE_DIALOG);
 		gtk_label_set_text(subheader, wait_text);
 		gtk_widget_hide(GTK_WIDGET(details_start_date));
-		g_free(remainings);
+		if (remainings)
+			g_free(remainings);
 		g_free(wait_text);
 	}
 

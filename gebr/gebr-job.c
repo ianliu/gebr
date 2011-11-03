@@ -590,6 +590,9 @@ gebr_job_get_remaining_servers(GebrJob *job)
 	gint total, ntasks;
 	GString *remainings = g_string_new(NULL);
 
+	if (!job->priv->tasks)
+		return NULL;
+
 	gebr_task_get_fraction(job->priv->tasks->data, NULL, &total);
 	ntasks = g_list_length(job->priv->tasks);
 
