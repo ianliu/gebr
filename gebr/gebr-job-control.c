@@ -260,18 +260,11 @@ jobs_visible_func(GtkTreeModel *model,
 }
 
 static void
-on_status_cb_changed(GtkComboBox *combo,
-                     GebrJobControl *jc)
+on_cb_changed(GtkComboBox *combo,
+	      GebrJobControl *jc)
 {
-	GtkTreeModel *filter = gtk_tree_view_get_model(GTK_TREE_VIEW(jc->priv->view));
-	gtk_tree_model_filter_refilter(GTK_TREE_MODEL_FILTER(filter));
-}
-
-static void
-on_server_cb_changed(GtkComboBox *combo,
-                     GebrJobControl *jc)
-{
-	GtkTreeModel *filter = gtk_tree_view_get_model(GTK_TREE_VIEW(jc->priv->view));
+	GtkTreeModel *sort = gtk_tree_view_get_model(GTK_TREE_VIEW(jc->priv->view));
+	GtkTreeModel *filter = gtk_tree_model_sort_get_model(GTK_TREE_MODEL_SORT(sort));
 	gtk_tree_model_filter_refilter(GTK_TREE_MODEL_FILTER(filter));
 }
 
@@ -330,8 +323,7 @@ on_group_cb_changed(GtkComboBox *combo,
 
 	gtk_combo_box_set_active(jc->priv->server_combo, 0);
 
-	GtkTreeModel *filter = gtk_tree_view_get_model(GTK_TREE_VIEW(jc->priv->view));
-	gtk_tree_model_filter_refilter(GTK_TREE_MODEL_FILTER(filter));
+	on_cb_changed(combo, jc);
 
 	g_free(group);
 }
@@ -598,7 +590,8 @@ static void
 job_control_on_cursor_changed(GtkTreeSelection *selection,
 			      GebrJobControl *jc)
 {
-	GList *rows = gtk_tree_selection_get_selected_rows(selection, NULL);
+	GtkTreeModel *model;
+	GList *rows = gtk_tree_selection_get_selected_rows(selection, &model);
 	gboolean finished = FALSE, running = FALSE;
 
 	if (!rows) {
@@ -612,8 +605,8 @@ job_control_on_cursor_changed(GtkTreeSelection *selection,
 
 	if (!rows->next) {
 		GtkTreeIter iter;
-		if (gtk_tree_model_get_iter(GTK_TREE_MODEL(jc->priv->store), &iter, (GtkTreePath*)rows->data))
-			gtk_tree_model_get(GTK_TREE_MODEL(jc->priv->store), &iter, JC_STRUCT, &job, -1);
+		if (gtk_tree_model_get_iter(model, &iter, (GtkTreePath*)rows->data))
+			gtk_tree_model_get(model, &iter, JC_STRUCT, &job, -1);
 		else
 			g_warn_if_reached();
 	} else
@@ -957,32 +950,36 @@ tree_sort_func(GtkTreeModel *model,
 {
 	GebrJob *ja, *jb;
 
-
 	gtk_tree_model_get(model, a, JC_STRUCT, &ja, -1);
 	gtk_tree_model_get(model, b, JC_STRUCT, &jb, -1);
 
+	if (!ja && !jb)
+		return 0;
+
+	if (!ja)
+		return -1;
+
+	if (!jb)
+		return 1;
+
 	const gchar *ta = gebr_job_get_start_date(ja);
 	const gchar *tb = gebr_job_get_start_date(jb);
-
-	gchar *sa = gtk_tree_model_get_string_from_iter(model, a);
-	gchar *sb = gtk_tree_model_get_string_from_iter(model, b);
-	g_debug("--------------- Comparing %s (%s) with %s (%s)", ta, sa, tb, sb);
 
 	if (!ta && !tb)
 		return 0;
 
 	if (!ta)
-		return 1;
+		return -1;
 
 	if (!tb)
-		return -1;
+		return 1;
 
 	GTimeVal tva;
 	GTimeVal tvb;
 	g_time_val_from_iso8601(ta, &tva);
 	g_time_val_from_iso8601(tb, &tvb);
 
-	return tvb.tv_usec - tva.tv_usec;
+	return tva.tv_sec - tvb.tv_sec;
 }
 
 static gboolean
@@ -1137,19 +1134,22 @@ gebr_job_control_new(void)
 	 */
 
 	jc->priv->store = gtk_list_store_new(JC_N_COLUMN, G_TYPE_POINTER);
-	gtk_tree_sortable_set_sort_func(GTK_TREE_SORTABLE(jc->priv->store), 0, tree_sort_func, NULL, NULL);
-	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(jc->priv->store), 0, GTK_SORT_ASCENDING);
 
 	GtkTreeModel *filter = gtk_tree_model_filter_new(GTK_TREE_MODEL(jc->priv->store), NULL);
-
-	GtkTreeView *treeview;
-	treeview = GTK_TREE_VIEW(gtk_builder_get_object(jc->priv->builder, "treeview_jobs"));
-	gtk_tree_view_set_model(treeview, filter);
-
 	gtk_tree_model_filter_set_visible_func(GTK_TREE_MODEL_FILTER(filter),
 					       (GtkTreeModelFilterVisibleFunc)jobs_visible_func,
 					       jc, NULL);
+
+	GtkTreeModel *sort = gtk_tree_model_sort_new_with_model(filter);
+	gtk_tree_sortable_set_sort_func(GTK_TREE_SORTABLE(sort), 0, tree_sort_func, NULL, NULL);
+	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(sort), 0, GTK_SORT_DESCENDING);
+
+	GtkTreeView *treeview;
+	treeview = GTK_TREE_VIEW(gtk_builder_get_object(jc->priv->builder, "treeview_jobs"));
+	gtk_tree_view_set_model(treeview, sort);
 	g_object_unref(filter);
+	g_object_unref(sort);
+
 	gtk_widget_set_size_request(GTK_WIDGET(treeview), 150, -1);
 
 	jc->priv->view = GTK_WIDGET(treeview);
@@ -1205,7 +1205,7 @@ gebr_job_control_new(void)
 	/* by Servers */
 	jc->priv->server_filter = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_POINTER);
 	gtk_combo_box_set_model(server_cb, GTK_TREE_MODEL(jc->priv->server_filter));
-	g_signal_connect(jc->priv->server_combo, "changed", G_CALLBACK(on_server_cb_changed), jc);
+	g_signal_connect(jc->priv->server_combo, "changed", G_CALLBACK(on_cb_changed), jc);
 
 	/* by Group of servers */
 	gtk_combo_box_set_row_separator_func(group_cb, server_group_separator_func, NULL, NULL);
@@ -1221,7 +1221,7 @@ gebr_job_control_new(void)
 	jc->priv->status_model = store;
 	gebr_jc_populate_status_cb(jc);
 	gtk_combo_box_set_model(status_cb, GTK_TREE_MODEL(jc->priv->status_model));
-	g_signal_connect(jc->priv->status_combo, "changed", G_CALLBACK(on_status_cb_changed), jc);
+	g_signal_connect(jc->priv->status_combo, "changed", G_CALLBACK(on_cb_changed), jc);
 
 	/*
 	 * Right side
@@ -1555,13 +1555,17 @@ void
 gebr_job_control_select_job(GebrJobControl *jc, GebrJob *job)
 {
 	if (job) {
-		GtkTreeModel *filter = gtk_tree_view_get_model(GTK_TREE_VIEW(jc->priv->view));
-		GtkTreeIter *iter = gebr_job_get_iter(job), filter_iter;
+		GtkTreeModel *sort = gtk_tree_view_get_model(GTK_TREE_VIEW(jc->priv->view));
+		GtkTreeModel *filter = gtk_tree_model_sort_get_model(GTK_TREE_MODEL_SORT(sort));
+		GtkTreeIter *iter = gebr_job_get_iter(job), filter_iter, sort_iter;
 
 		if (!gtk_tree_model_filter_convert_child_iter_to_iter(GTK_TREE_MODEL_FILTER(filter), &filter_iter, iter))
 			return;
 
-		GtkTreePath *path = gtk_tree_model_get_path(GTK_TREE_MODEL(filter), &filter_iter);
+		if (!gtk_tree_model_sort_convert_child_iter_to_iter(GTK_TREE_MODEL_SORT(sort), &sort_iter, &filter_iter))
+			return;
+
+		GtkTreePath *path = gtk_tree_model_get_path(sort, &sort_iter);
 		gtk_tree_view_set_cursor(GTK_TREE_VIEW(jc->priv->view), path, NULL, FALSE);
 		gtk_tree_path_free(path);
 	}
