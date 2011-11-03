@@ -57,6 +57,8 @@ struct _GebrJobClass {
 	void (*output) (GebrJob     *job,
 			GebrTask    *task,
 			const gchar *output);
+
+	void (*disconnect) (GebrJob *job);
 };
 
 GebrJob *gebr_job_new_with_id(const gchar *rid,

@@ -44,6 +44,7 @@ enum {
 	ISSUED,
 	CMD_LINE_RECEIVED,
 	OUTPUT,
+	DISCONNECT,
 	N_SIGNALS
 };
 
@@ -58,6 +59,9 @@ static void gebr_job_change_task_status(GebrTask *task,
                                         gint new_status,
                                         const gchar *parameter,
                                         GebrJob *job);
+
+static void on_task_destroy(GebrJob *job,
+			    GebrTask *task);
 
 G_DEFINE_TYPE(GebrJob, gebr_job, G_TYPE_OBJECT);
 
@@ -130,6 +134,15 @@ gebr_job_class_init(GebrJobClass *klass)
 			     NULL, NULL,
 			     gebr_cclosure_marshal_VOID__OBJECT_STRING,
 			     G_TYPE_NONE, 2, GEBR_TYPE_TASK, G_TYPE_STRING);
+
+	signals[DISCONNECT] =
+		g_signal_new("disconnect",
+			     G_OBJECT_CLASS_TYPE(gobject_class),
+			     G_SIGNAL_RUN_FIRST,
+			     G_STRUCT_OFFSET(GebrJobClass, disconnect),
+			     NULL, NULL,
+			     g_cclosure_marshal_VOID__VOID,
+			     G_TYPE_NONE, 0);
 
 	g_type_class_add_private(klass, sizeof(GebrJobPriv));
 }
@@ -223,6 +236,23 @@ gebr_job_change_task_status(GebrTask *task,
 		gtk_tree_model_row_changed(job->priv->model, path, &job->priv->iter);
 		gtk_tree_path_free(path);
 	}
+}
+
+static void
+on_task_destroy(GebrJob *job,
+		GebrTask *finalized_task)
+{
+	enum JobStatus old_status = job->priv->status;
+	job->priv->status = JOB_STATUS_INITIAL;
+	job->priv->tasks = g_list_remove(job->priv->tasks, finalized_task);
+
+	g_debug("JOB: Task %p disconnected", finalized_task);
+
+	if (!job->priv->tasks)
+		g_signal_emit(job, signals[DISCONNECT], 0);
+	else if (old_status != job->priv->status)
+		g_signal_emit(job, signals[STATUS_CHANGE], 0,
+			      old_status, job->priv->status, "");
 }
 
 static gint
@@ -332,6 +362,7 @@ gebr_job_append_task(GebrJob *job, GebrTask *task)
 
 	g_signal_connect(task, "status-change", G_CALLBACK(gebr_job_change_task_status), job);
 	g_signal_connect(task, "output", G_CALLBACK(gebr_job_append_task_output), job);
+	g_object_weak_ref(G_OBJECT(task), (GWeakNotify)on_task_destroy, job);
 
 	g_signal_emit(job, signals[CMD_LINE_RECEIVED], 0);
 	g_signal_emit(job, signals[OUTPUT], 0, task, gebr_task_get_output(task));

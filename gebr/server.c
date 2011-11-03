@@ -182,6 +182,7 @@ static void gebr_server_init (GebrServer *self)
 
 	self->comm = NULL;
 	self->iter = iter;
+	self->tasks = NULL;
 	self->nfsid = g_string_new ("");
 	self->last_error = g_string_new ("");
 	self->type = GEBR_COMM_SERVER_TYPE_UNKNOWN;
@@ -205,7 +206,13 @@ static void server_log_message(GebrLogMessageType type, const gchar * message)
 	gebr_message(type, TRUE, TRUE, message);
 }
 
-static void server_clear_jobs(GebrServer * server);
+static void
+server_clear_tasks(GebrServer * server)
+{
+	g_list_foreach(server->tasks, (GFunc)g_object_unref, NULL);
+	g_list_free(server->tasks);
+	server->tasks = NULL;
+}
 
 /*
  * \internal
@@ -216,7 +223,7 @@ static void server_state_changed(struct gebr_comm_server *comm_server, GebrServe
 	if (server->comm->state == SERVER_STATE_DISCONNECTED) {
 		gtk_list_store_clear(server->accounts_model);
 		gtk_list_store_clear(server->queues_model);
-		server_clear_jobs(server);
+		server_clear_tasks(server);
 	}
 }
 
@@ -259,36 +266,6 @@ static gboolean server_ssh_question(const gchar * title, const gchar * message)
 	gboolean response = gebr_gui_confirm_action_dialog(title, message);
 	gdk_threads_leave();
 	return response;
-}
-
-/**
- * \internal
- */
-static void server_clear_jobs(GebrServer * server)
-{
-//	gboolean server_free_foreach_job(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter)
-//	{
-//		GebrTask *job;
-//		gchar *server_address;
-//		gboolean is_job;
-//
-//		gtk_tree_model_get(GTK_TREE_MODEL(gebr.job_control->store), iter, JC_SERVER_ADDRESS, &server_address,
-//				   JC_STRUCT, &job, JC_IS_JOB, &is_job, -1);
-//		if (strcmp(server_address, server->comm->address->str)) {
-//			g_free(server_address);
-//			return FALSE;	
-//		}
-//		if (!is_job)
-//			gtk_tree_store_remove(gebr.job_control->store, iter);
-//		else if (job != NULL)
-//			job_delete(job);
-//
-//		g_free(server_address);
-//		return FALSE;
-//	}
-//	/* delete all jobs at server */
-//	gebr_gui_gtk_tree_model_foreach_recursive(GTK_TREE_MODEL(gebr.job_control->store),
-//						  (GtkTreeModelForeachFunc)server_free_foreach_job, NULL); 
 }
 
 gboolean server_find_address (const gchar *address,
@@ -388,7 +365,7 @@ GebrServer *gebr_server_new (const gchar * address, gboolean autoconnect, const 
 
 void server_free(GebrServer *server)
 {
-	server_clear_jobs (server);
+	server_clear_tasks (server);
 
 	gtk_list_store_remove(gebr.ui_server_list->common.store, &server->iter);
 	gtk_list_store_clear(server->accounts_model);
@@ -508,4 +485,11 @@ gebr_server_is_in_group(GebrServer *server,
 		g_free (fsid);
 		return FALSE;
 	}
+}
+
+void
+gebr_server_append_task(GebrServer *server,
+			gpointer task)
+{
+	server->tasks = g_list_prepend(server->tasks, task);
 }

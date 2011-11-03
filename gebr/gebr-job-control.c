@@ -1238,11 +1238,18 @@ gebr_job_control_get_widget(GebrJobControl *jc)
 	return jc->priv->widget;
 }
 
+static void
+on_job_disconnected(GebrJob *job, GebrJobControl *jc)
+{
+	gebr_job_control_remove(jc, job);
+}
+
 void
 gebr_job_control_add(GebrJobControl *jc, GebrJob *job)
 {
 	gtk_list_store_append(jc->store, gebr_job_get_iter(job));
 	gtk_list_store_set(jc->store, gebr_job_get_iter(job), JC_STRUCT, job, -1);
+	g_signal_connect(job, "disconnect", G_CALLBACK(on_job_disconnected), jc);
 }
 
 GebrJob *

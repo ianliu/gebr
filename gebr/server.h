@@ -42,6 +42,7 @@ struct _GebrServer {
 	GObject parent;
 	gint ncores;
 	gdouble clock_cpu;
+	GList *tasks;
 
 	/*< public >*/
 	struct gebr_comm_server *comm;
@@ -169,6 +170,15 @@ void gebr_server_set_ncores (GebrServer *self, gint cores);
 gboolean gebr_server_is_in_group(GebrServer *server,
 				 const gchar *group,
 				 gboolean is_fs);
+
+/**
+ * gebr_server_append_task:
+ *
+ * Appends @task into @server's list of tasks. The list is used to update &
+ * remove the jobs from the interface when this server disconnects.
+ */
+void gebr_server_append_task(GebrServer *server,
+			     gpointer task); // FIXME change gpointer to GebrJob
 
 G_END_DECLS
 
