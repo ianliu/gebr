@@ -164,7 +164,7 @@ jobs_visible_for_group(GtkTreeModel *model,
 
 	groups = gebr_job_get_groups(job);
 
-	for (GList *i = groups; groups; i = i->next) {
+	for (GList *i = groups; i; i = i->next) {
 		if (!g_strcmp0(combo_group, i->data)) {
 			visible = TRUE;
 			break;
