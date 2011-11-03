@@ -1451,7 +1451,7 @@ gebr_job_control_close_selected(GebrJobControl *jc)
 		}
 		gtk_tree_model_get(model, &iter, JC_STRUCT, &job, -1);
 		if (gebr_job_close(job))
-			gtk_list_store_remove(jc->store, gebr_job_get_iter(job));
+			gebr_job_control_remove(jc, job);
 		gtk_tree_path_free(path);
 	}
 
@@ -1626,4 +1626,12 @@ gebr_job_control_open_filter(GebrJobControl *jc,
 	gtk_window_move(GTK_WINDOW(popup), x+a.x, y+a.y+a.height);
 	gtk_widget_show_all(popup);
 	gdk_keyboard_grab(popup->window, TRUE, GDK_CURRENT_TIME);
+}
+
+void
+gebr_job_control_remove(GebrJobControl *jc,
+			GebrJob *job)
+{
+	gtk_list_store_remove(jc->store, gebr_job_get_iter(job));
+	g_object_unref(job);
 }

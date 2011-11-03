@@ -133,6 +133,15 @@ void gebr_job_control_hide(GebrJobControl *jc);
 void gebr_job_control_open_filter(GebrJobControl *jc,
 				  GtkWidget *button);
 
+/**
+ * gebr_job_control_remove:
+ *
+ * Removes @job from the interface and frees its structure, so as its tasks.
+ * Note that the job isn't killed, just cleaned from the interface.
+ */
+void gebr_job_control_remove(GebrJobControl *jc,
+			     GebrJob *job);
+
 G_END_DECLS
 
 #endif /* __GEBR_JOB_CONTROL_H__ */
