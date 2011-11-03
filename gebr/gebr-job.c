@@ -583,3 +583,37 @@ gebr_job_get_resources(GebrJob *job,
 	*nprocs = g_strdup_printf("%d", total_procs);
 	*niceness = g_strdup(gebr_task_get_niceness(job->priv->tasks->data));
 }
+
+gchar *
+gebr_job_get_remaining_servers(GebrJob *job)
+{
+	gint total, ntasks;
+	GString *remainings = g_string_new(NULL);
+
+	gebr_task_get_fraction(job->priv->tasks->data, NULL, &total);
+	ntasks = g_list_length(job->priv->tasks);
+
+	if (ntasks != total) {
+		gchar **servers = job->priv->servers;
+
+		for (gint j = 0; servers[j]; j++) {
+			gboolean has_server = FALSE;
+
+			for (GList *i = job->priv->tasks; i; i = i->next) {
+				GebrServer *server = gebr_task_get_server(i->data);
+				if (!g_strcmp0(servers[j], server->comm->address->str)) {
+					has_server = TRUE;
+					break;
+				}
+			}
+			if (!has_server) {
+				if (remainings->len == 0)
+					g_string_printf(remainings, "%s", servers[j]);
+				else
+					g_string_append_printf(remainings, ", %s", servers[j]);
+			}
+		}
+	}
+
+	return g_string_free(remainings, FALSE);
+}

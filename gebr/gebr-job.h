@@ -137,6 +137,8 @@ void gebr_job_get_resources(GebrJob *job,
                             gchar **nprocs,
                             gchar **niceness);
 
+gchar *gebr_job_get_remaining_servers(GebrJob *job);
+
 G_END_DECLS
 
 #endif /* __GEBR_JOB_H__ */
