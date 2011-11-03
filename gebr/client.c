@@ -248,7 +248,9 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 			gebr_job_set_io(job, input_file->str, output_file->str, log_file->str);
 			gebr_job_append_task(job, task);
 
-			if (!gebr_job_is_stopped(job)) {
+			gint n_servers;
+			g_free(gebr_job_get_servers(job, &n_servers));
+			if (!gebr_job_is_stopped(job) && n_servers == 1) {
 				GString *string = g_string_new("");
 				const gchar *title;
 				GtkTreeIter iter;
