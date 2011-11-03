@@ -68,11 +68,11 @@ enum {
 };
 
 #define BLOCK_SELECTION_CHANGED_SIGNAL(jc) \
-	g_signal_handlers_block_by_func(gtk_tree_view_get_selection(GTK_TREE_VIEW(jc->view)), \
+	g_signal_handlers_block_by_func(gtk_tree_view_get_selection(GTK_TREE_VIEW(jc->priv->view)), \
 					job_control_on_cursor_changed, jc);
 
 #define UNBLOCK_SELECTION_CHANGED_SIGNAL(jc) \
-	g_signal_handlers_unblock_by_func(gtk_tree_view_get_selection(GTK_TREE_VIEW(jc->view)), \
+	g_signal_handlers_unblock_by_func(gtk_tree_view_get_selection(GTK_TREE_VIEW(jc->priv->view)), \
 					  job_control_on_cursor_changed, jc);
 
 /* Prototypes {{{1 */
@@ -1450,6 +1450,7 @@ gebr_job_control_close_selected(GebrJobControl *jc)
 
 	jc->priv->last_selection.job = NULL;
 
+	BLOCK_SELECTION_CHANGED_SIGNAL(jc);
 	for (GList *i = rowrefs; i; i = i->next) {
 		GtkTreePath *path = gtk_tree_row_reference_get_path(i->data);
 
@@ -1463,6 +1464,7 @@ gebr_job_control_close_selected(GebrJobControl *jc)
 			gebr_job_control_remove(jc, job);
 		gtk_tree_path_free(path);
 	}
+	UNBLOCK_SELECTION_CHANGED_SIGNAL(jc);
 
 	g_list_foreach(rowrefs, (GFunc)gtk_tree_row_reference_free, NULL);
 	g_list_free(rowrefs);
