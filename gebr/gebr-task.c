@@ -62,6 +62,15 @@ G_DEFINE_TYPE(GebrTask, gebr_task, G_TYPE_OBJECT);
 
 static GHashTable *tasks_map = NULL;
 
+static GHashTable *
+get_tasks_map(void)
+{
+	if (!tasks_map)
+		tasks_map = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
+
+	return tasks_map;
+}
+
 static void
 gebr_task_free(GebrTask *task)
 {
@@ -104,8 +113,6 @@ static void gebr_task_class_init(GebrTaskClass *klass)
 {
 	GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
 	gobject_class->finalize = gebr_task_finalize;
-
-	tasks_map = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
 
 	signals[OUTPUT] =
 		g_signal_new("output",
@@ -165,7 +172,7 @@ gebr_task_new(GebrServer  *server,
 
 	g_free(frac);
 
-	g_hash_table_insert(tasks_map, gebr_task_get_id(task), task);
+	g_hash_table_insert(get_tasks_map(), gebr_task_get_id(task), task);
 
 	return task;
 }
@@ -227,7 +234,7 @@ gebr_task_find(const gchar *rid, const gchar *frac)
 	g_return_val_if_fail(rid != NULL && frac != NULL, NULL);
 
 	gchar *tid = build_task_id(rid, frac);
-	GebrTask *task = g_hash_table_lookup(tasks_map, tid);
+	GebrTask *task = g_hash_table_lookup(get_tasks_map(), tid);
 	g_free(tid);
 	return task;
 }
@@ -322,7 +329,7 @@ gebr_task_close(GebrTask *task, const gchar *rid)
 						      gebr_comm_protocol_defs.clr_def, 1,
 						      rid);
 
-	g_hash_table_remove(tasks_map, tid);
+	g_hash_table_remove(get_tasks_map(), tid);
 	g_free(tid);
 }
 
