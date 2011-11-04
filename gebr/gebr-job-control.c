@@ -110,7 +110,7 @@ static void gebr_jc_update_status_and_time(GebrJobControl *jc,
                                            GebrJob 	  *job,
                                            enum JobStatus status);
 
-static void on_text_view_populate_popup(GtkTextView * text_view, GtkMenu * menu);
+static void on_text_view_populate_popup(GtkTextView * text_view, GtkMenu * menu, GebrJobControl *jc);
 
 
 static GtkMenu *job_control_popup_menu(GtkWidget * widget, GebrJobControl *job_control);
@@ -1056,11 +1056,13 @@ on_job_disconnected(GebrJob *job, GebrJobControl *jc)
 }
 
 static void
-wordwrap_toggled(GtkCheckMenuItem * check_menu_item, GtkTextView * text_view)
+wordwrap_toggled(GtkCheckMenuItem * check_menu_item, GebrJobControl * jc)
 {
 	gebr.config.job_log_word_wrap = gtk_check_menu_item_get_active(check_menu_item);
-	g_object_set(G_OBJECT(text_view), "wrap-mode",
+	g_object_set(G_OBJECT(jc->priv->text_view), "wrap-mode",
 		     gebr.config.job_log_word_wrap ? GTK_WRAP_WORD : GTK_WRAP_NONE, NULL);
+	g_object_set(G_OBJECT(jc->priv->cmd_view), "wrap-mode",
+			     gebr.config.job_log_word_wrap ? GTK_WRAP_WORD : GTK_WRAP_NONE, NULL);
 }
 
 static void
@@ -1070,7 +1072,7 @@ autoscroll_toggled(GtkCheckMenuItem * check_menu_item)
 }
 
 static void
-on_text_view_populate_popup(GtkTextView * text_view, GtkMenu * menu)
+on_text_view_populate_popup(GtkTextView * text_view, GtkMenu * menu, GebrJobControl *jc)
 {
 	GtkWidget *menu_item;
 
@@ -1081,7 +1083,7 @@ on_text_view_populate_popup(GtkTextView * text_view, GtkMenu * menu)
 	menu_item = gtk_check_menu_item_new_with_label(_("Word-wrap"));
 	gtk_widget_show(menu_item);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-	g_signal_connect(menu_item, "toggled", G_CALLBACK(wordwrap_toggled), text_view);
+	g_signal_connect(menu_item, "toggled", G_CALLBACK(wordwrap_toggled), jc);
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_item), gebr.config.job_log_word_wrap);
 
 	menu_item = gtk_check_menu_item_new_with_label(_("Auto-scroll"));
