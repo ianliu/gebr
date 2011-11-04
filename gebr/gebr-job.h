@@ -70,6 +70,8 @@ GebrJob *gebr_job_new_with_id(const gchar *rid,
 void gebr_job_set_hostname(GebrJob *job,
 			   const gchar *hostname);
 
+const gchar *gebr_job_get_hostname(GebrJob *job);
+
 void gebr_job_show(GebrJob *job);
 
 gboolean gebr_job_is_stopped(GebrJob *job);
@@ -145,6 +147,8 @@ void gebr_job_get_resources(GebrJob *job,
                             gchar **niceness);
 
 gchar *gebr_job_get_remaining_servers(GebrJob *job);
+
+const gchar *gebr_job_get_server_group(GebrJob *job);
 
 gchar *gebr_job_get_running_time(GebrJob *job, const gchar *start_date);
 

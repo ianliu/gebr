@@ -703,3 +703,9 @@ gebr_job_get_running_time(GebrJob *job, const gchar *start_date)
 
 	return gebr_calculate_relative_time(&start_time, &current_time);
 }
+
+const gchar *
+gebr_job_get_server_group(GebrJob *job)
+{
+	return "Foo Group!";
+}

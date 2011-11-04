@@ -522,7 +522,11 @@ job_control_fill_servers_info(GebrJobControl *jc)
 	if (!nprocs || !niceness)
 		g_string_printf(resources, _("Waiting for server(s) details"));
 	else {
-		g_string_append_printf(resources, _("Executed with %s processor(s) on %d server(s)\n"), nprocs, n_servers);
+		g_string_append_printf(resources,
+				       _("Job submitted by %s to %s and executed\n"
+					 "using %s processor(s) distributed on %d servers.\n"),
+				       gebr_job_get_hostname(job), gebr_job_get_server_group(job),
+				       nprocs, n_servers);
 		if (g_strcmp0(niceness, "0"))
 			g_string_append_printf(resources, _("Using all machines resources\n"));
 		else
