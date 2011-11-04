@@ -202,11 +202,11 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 			GList *arguments;
 			GString *hostname, *status, *title, *start_date, *finish_date, *issues, *cmd_line,
 				*output, *queue, *moab_jid, *rid, *frac, *server_list, *n_procs, *niceness,
-				*input_file, *output_file, *log_file, *last_run_date;
+				*input_file, *output_file, *log_file, *last_run_date, *server_group_name;
 			GebrJob *job;
 
 			/* organize message data */
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 20)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 21)) == NULL)
 				goto err;
 			status = g_list_nth_data(arguments, 1);
 			title = g_list_nth_data(arguments, 2);
@@ -227,6 +227,7 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 			output_file= g_list_nth_data(arguments, 17);
 			log_file = g_list_nth_data(arguments, 18);
 			last_run_date = g_list_nth_data(arguments, 19);
+			server_group_name = g_list_nth_data(arguments, 20);
 
 			g_debug("JOB_DEF: Received task %s frac %s status %s after %s",
 				rid->str, frac->str, status->str, queue->str);
@@ -243,6 +244,7 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 				job = gebr_job_new_with_id(rid->str, queue->str, server_list->str);
 				gebr_job_set_title(job, title->str);
 				gebr_job_set_hostname(job, hostname->str);
+				gebr_job_set_server_group(job, server_group_name->str);
 				gebr_job_set_model(job, gebr_job_control_get_model(gebr.job_control));
 				gebr_job_control_add(gebr.job_control, job);
 			}

@@ -107,6 +107,7 @@ gebr_comm_runner_free(GebrCommRunner *self)
 	g_free(self->account);
 	g_free(self->queue);
 	g_free(self->execution_speed);
+	g_free(self->server_group_name);
 	g_free(self);
 }
 
@@ -175,7 +176,8 @@ gebr_comm_runner_run(GebrCommRunner *self)
 						      runflow->run_id,
 						      self->execution_speed,
 						      runflow->frac,
-						      server_list->str);
+						      server_list->str,
+						      self->server_group_name);
 	}
 
 	g_string_free(server_list, TRUE);

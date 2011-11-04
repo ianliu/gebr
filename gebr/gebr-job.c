@@ -712,3 +712,17 @@ gebr_job_get_elapsed_time(GebrJob *job, const gchar *finish_date)
 
 	return gebr_calculate_relative_time(&finish_time, &current_time);
 }
+
+void
+gebr_job_set_server_group(GebrJob *job, const gchar *server_group)
+{
+	if (job->priv->server_group)
+		g_free(job->priv->server_group);
+	job->priv->server_group = g_strdup(server_group);
+}
+
+const gchar *
+gebr_job_get_server_group(GebrJob *job)
+{
+	return job->priv->server_group;
+}

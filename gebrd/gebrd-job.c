@@ -55,6 +55,7 @@ static void gebrd_job_init(GebrdJob * job)
 	job->exec_speed = g_string_new(NULL);
 	job->frac = g_string_new(NULL);
 	job->server_list = g_string_new(NULL);
+	job->server_group_name = g_string_new(NULL);
 }
 
 static void gebrd_job_class_init(GebrdJobClass * klass)
@@ -369,7 +370,8 @@ GebrdJob *job_find(GString * rid)
 }
 
 void job_new(GebrdJob ** _job, struct client * client, GString *queue, GString * account, GString * xml,
-	     GString * n_process, GString * run_id, GString *exec_speed, GString *frac, GString *server_list)
+	     GString * n_process, GString * run_id, GString *exec_speed, GString *frac, GString *server_list,
+	     GString *server_group_name)
 {
 	/* initialization */
 	GebrdJob *job = GEBRD_JOB(g_object_new(GEBRD_JOB_TYPE, NULL, NULL));
@@ -394,6 +396,7 @@ void job_new(GebrdJob ** _job, struct client * client, GString *queue, GString *
 	g_string_assign(job->exec_speed, exec_speed->str);
 	g_string_assign(job->frac, frac->str);
 	g_string_assign(job->server_list, server_list->str);
+	g_string_assign(job->server_group_name, server_group_name->str);
 	job->parent.status = JOB_STATUS_INITIAL;
 
 	*_job = job;
@@ -453,6 +456,8 @@ void job_free(GebrdJob *job)
 	g_string_free(job->buf[0], TRUE);
 	g_string_free(job->buf[1], TRUE);
 	g_string_free(job->frac, TRUE);
+	g_string_free(job->server_list, TRUE);
+	g_string_free(job->server_group_name, TRUE);
 	g_object_unref(job);
 }
 
@@ -695,7 +700,7 @@ void job_notify(GebrdJob *job, struct client *client)
 	gchar *nice = g_strdup_printf("%d", job->niceness);
 
 	gebr_comm_protocol_socket_oldmsg_send(client->socket, FALSE,
-					      gebr_comm_protocol_defs.job_def, 20,
+					      gebr_comm_protocol_defs.job_def, 21,
 					      job->parent.jid->str,
 					      status_enum_to_string(job->parent.status),
 					      job->parent.title->str,
@@ -715,7 +720,8 @@ void job_notify(GebrdJob *job, struct client *client)
 					      input_file,
 					      output_file,
 					      log_file,
-					      gebr_geoxml_flow_get_date_last_run(job->flow));
+					      gebr_geoxml_flow_get_date_last_run(job->flow),
+					      job->server_group_name->str);
 	g_free(nprocs);
 	g_free(nice);
 }

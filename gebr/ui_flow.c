@@ -591,6 +591,7 @@ create_jobs_and_run(GebrCommRunner *runner)
 		GebrJob *job = gebr_job_new_with_id(runid, runner->queue, values[0]->str);
 		gebr_job_set_title(job, values[1]->str);
 		gebr_job_set_hostname(job, g_get_host_name());
+		gebr_job_set_server_group(job, runner->server_group_name);
 		gebr_job_set_model(job, gebr_job_control_get_model(gebr.job_control));
 		gebr_job_control_add(gebr.job_control, job);
 		g_string_free((GString *)values[0], TRUE);
@@ -655,8 +656,10 @@ gebr_ui_flow_run(void)
 	document_save(GEBR_GEOXML_DOCUMENT(flow), FALSE, FALSE);
 	has_mpi = (gebr_geoxml_flow_get_first_mpi_program(flow) != NULL);
 
+	gboolean is_fs;
 	runner = gebr_comm_runner_new();
 	runner->execution_speed = g_strdup_printf("%d", gebr_interface_get_execution_speed());
+	runner->server_group_name = g_strdup(gebr_geoxml_line_get_group(gebr.line, &is_fs));
 
 	if (gebr.ui_flow_edition->autochoose) {
 		send_sys_load_request(get_connected_servers(model), flow, runner, has_mpi);
