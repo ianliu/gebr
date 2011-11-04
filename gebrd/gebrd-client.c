@@ -300,7 +300,7 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			GebrdJob *job;
 
 			/* organize message data */
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 8)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 9)) == NULL)
 				goto err;
 
 			xml = arguments->data;
@@ -311,7 +311,7 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			exec_speed = g_list_nth_data(arguments, 5);
 			frac = g_list_nth_data(arguments, 6);
 			server_list = g_list_nth_data(arguments, 7);
-			server_group_name = g_list_nth_data(arguments, 7);
+			server_group_name = g_list_nth_data(arguments, 8);
 
 			/* try to run and send return */
 			job_new(&job, client, queue, account, xml, n_process, run_id, exec_speed, frac, server_list, server_group_name);

@@ -168,7 +168,7 @@ gebr_comm_runner_run(GebrCommRunner *self)
 	for (GList *i = self->flows; i != NULL; i = g_list_next(i)) {
 		runflow = i->data;
 		gebr_comm_protocol_socket_oldmsg_send(runflow->server->socket, FALSE,
-						      gebr_comm_protocol_defs.run_def, 8,
+						      gebr_comm_protocol_defs.run_def, 9,
 						      runflow->flow_xml,
 						      self->account ? self->account : "",
 						      self->queue ? self->queue : "",

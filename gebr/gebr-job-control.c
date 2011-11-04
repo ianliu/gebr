@@ -522,19 +522,24 @@ job_control_fill_servers_info(GebrJobControl *jc)
 	if (!nprocs || !niceness)
 		g_string_printf(resources, _("Waiting for server(s) details"));
 	else {
-		g_string_append_printf(resources,
-				       _("Job submitted by %s to %s and executed\n"
-					 "using %s processor(s) distributed on %d servers.\n"),
-				       gebr_job_get_hostname(job), gebr_job_get_server_group(job),
-				       nprocs, n_servers);
+		const gchar *groups = gebr_job_get_server_group(job);
+		gchar *markup;
+		markup = g_markup_printf_escaped (_("Job submitted by <b>%s</b> to group <b>%s</b> and executed\n"
+						  "using <b>%s</b> processor(s) distributed on <b>%d</b> servers.\n"),
+						  gebr_job_get_hostname(job), g_strcmp0(groups, "")? groups : _("All Servers"),
+						  nprocs, n_servers);
+		g_string_append(resources, markup);
+
 		if (g_strcmp0(niceness, "0"))
 			g_string_append_printf(resources, _("Using all machines resources\n"));
 		else
 			g_string_append_printf(resources, _("Using the machines idle time\n"));
+
 		g_free(nprocs);
 		g_free(niceness);
+		g_free(markup);
 	}
-	gtk_label_set_text(res_label, resources->str);
+	gtk_label_set_markup (res_label, resources->str);
 
 	g_string_free(resources, TRUE);
 
@@ -909,8 +914,8 @@ gebr_job_control_load_details(GebrJobControl *jc,
 	gtk_label_set_markup (log_file, markup);
 	g_free(markup);
 
-	gchar *msg = g_strdup(gebr_job_get_group(job));
-	if (msg == NULL) 
+	gchar *msg = g_strdup(gebr_job_get_server_group(job));
+	if (!g_strcmp0(msg, ""))
 		msg = g_strdup("All servers");
 	gtk_label_set_markup (job_group, msg);
 
