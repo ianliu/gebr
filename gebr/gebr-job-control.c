@@ -770,8 +770,11 @@ time_column_data_func(GtkTreeViewColumn *tree_column,
 	g_get_current_time(&curr_time);
 
 
-	relative_time_msg = gebr_calculate_relative_time(&start_time, &curr_time);
+	gchar *str_aux = gebr_calculate_relative_time(&start_time, &curr_time);
+	relative_time_msg = g_strconcat( str_aux, _(" ago"), NULL );
+
 	g_object_set(cell, "text", relative_time_msg, NULL);
+	g_free(str_aux);
 	g_free(relative_time_msg);
 
 	return;

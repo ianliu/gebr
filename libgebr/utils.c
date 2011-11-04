@@ -757,19 +757,29 @@ gebr_calculate_relative_time (GTimeVal *time1, GTimeVal *time2)
 	if ( time2->tv_sec < time1->tv_sec) 
 		return NULL;
 	else if ( time2->tv_sec - time1->tv_sec < 5)
-		return (g_strdup(_("A moment ago")));
+		return (g_strdup(_("A moment")));
 	else if ( time2->tv_sec - time1->tv_sec < 60)
-		return (g_strdup_printf(_("%ld seconds ago"), time2->tv_sec - time1->tv_sec));
+		return (g_strdup_printf(_("%ld seconds"), time2->tv_sec - time1->tv_sec));
+	else if ( time2->tv_sec - time1->tv_sec < 60*2)
+		return (g_strdup(_("1 minute")));
 	else if ( time2->tv_sec - time1->tv_sec < 3600)
-		return (g_strdup_printf(_("%ld minutes ago"), (time2->tv_sec - time1->tv_sec)/60));
+		return (g_strdup_printf(_("%ld minutes"), (time2->tv_sec - time1->tv_sec)/60));
+	else if ( time2->tv_sec - time1->tv_sec < 3600*2)
+		return (g_strdup_printf(_("1 hour")));
 	else if ( time2->tv_sec - time1->tv_sec < 86400)
-		return (g_strdup_printf(_("%ld hours ago"), (time2->tv_sec - time1->tv_sec)/3600));
+		return (g_strdup_printf(_("%ld hours"), (time2->tv_sec - time1->tv_sec)/3600));
+	else if ( time2->tv_sec - time1->tv_sec < 86400*2)
+		return (g_strdup_printf(_("1 day")));
 	else if ( time2->tv_sec - time1->tv_sec < 604800)
-		return (g_strdup_printf(_("%ld days ago"), (time2->tv_sec - time1->tv_sec)/86400));
+		return (g_strdup_printf(_("%ld days"), (time2->tv_sec - time1->tv_sec)/86400));
+	else if ( time2->tv_sec - time1->tv_sec < 604800*2)
+		return (g_strdup_printf(_("1 week")));
 	else if ( time2->tv_sec - time1->tv_sec < 2678400)
-		return (g_strdup_printf(_("%ld weeks ago"), (time2->tv_sec - time1->tv_sec)/604800));
+		return (g_strdup_printf(_("%ld weeks"), (time2->tv_sec - time1->tv_sec)/604800));
+	else if ( time2->tv_sec - time1->tv_sec < 2678400*2)
+		return (g_strdup_printf(_("1 month")));
 	else if ( time2->tv_sec - time1->tv_sec < 32140800)
-		return (g_strdup_printf(_("%ld months ago"), (time2->tv_sec - time1->tv_sec)/32140800));
+		return (g_strdup_printf(_("%ld months"), (time2->tv_sec - time1->tv_sec)/2678400));
 	else 
-		return (g_strdup(_("More than a year ago")));
+		return (g_strdup(_("More than a year")));
 }
