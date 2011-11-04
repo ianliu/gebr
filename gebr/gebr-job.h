@@ -146,6 +146,8 @@ void gebr_job_get_resources(GebrJob *job,
 
 gchar *gebr_job_get_remaining_servers(GebrJob *job);
 
+gchar *gebr_job_get_running_time(GebrJob *job, const gchar *start_date);
+
 G_END_DECLS
 
 #endif /* __GEBR_JOB_H__ */

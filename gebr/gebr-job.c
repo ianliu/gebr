@@ -19,6 +19,7 @@
 
 #include <glib/gi18n.h>
 #include <stdlib.h>
+#include <libgebr/utils.h>
 
 #include "gebr.h"
 #include "gebr-marshal.h"
@@ -691,4 +692,14 @@ gebr_job_get_remaining_servers(GebrJob *job)
 	}
 
 	return g_string_free(remainings, FALSE);
+}
+
+gchar *
+gebr_job_get_running_time(GebrJob *job, const gchar *start_date)
+{
+	GTimeVal start_time, current_time;
+	g_time_val_from_iso8601(start_date, &start_time);
+	g_get_current_time(&current_time);
+
+	return gebr_calculate_relative_time(&start_time, &current_time);
 }
