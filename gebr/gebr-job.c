@@ -703,9 +703,12 @@ gebr_job_get_running_time(GebrJob *job, const gchar *start_date)
 
 	return gebr_calculate_relative_time(&start_time, &current_time);
 }
-
-const gchar *
-gebr_job_get_server_group(GebrJob *job)
+gchar *
+gebr_job_get_elapsed_time(GebrJob *job, const gchar *finish_date)
 {
-	return "Foo Group!";
+	GTimeVal finish_time, current_time;
+	g_time_val_from_iso8601(finish_date, &finish_time);
+	g_get_current_time(&current_time);
+
+	return gebr_calculate_relative_time(&finish_time, &current_time);
 }
