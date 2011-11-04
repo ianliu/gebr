@@ -31,6 +31,7 @@ struct _GebrJobPriv {
 	gchar *queue;
 	gchar *hostname;
 	gchar **servers;
+	gchar *server_group;
 	gint n_servers;
 	GtkTreeIter iter;
 	enum JobStatus status;
