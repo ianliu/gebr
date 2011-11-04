@@ -96,7 +96,8 @@ gebr_task_init_details(GebrTask *task,
 		       GString  *moab_jid,
 		       GString  *output,
 		       GString  *n_procs,
-		       GString  *niceness);
+		       GString  *niceness,
+		       GString  *last_run_date);
 
 enum JobStatus gebr_task_get_status(GebrTask *task);
 
@@ -128,6 +129,8 @@ GebrServer *gebr_task_get_server(GebrTask *task);
 const gchar *gebr_task_get_nprocs(GebrTask *task);
 
 const gchar *gebr_task_get_niceness(GebrTask *task);
+
+const gchar *gebr_task_get_last_run_date(GebrTask *task);
 
 G_END_DECLS
 

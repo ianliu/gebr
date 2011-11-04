@@ -56,6 +56,7 @@ struct _GebrTaskPriv {
 	GString *output;
 	GString *n_procs;
 	GString *niceness;
+	GString *last_run_date;
 };
 
 G_DEFINE_TYPE(GebrTask, gebr_task, G_TYPE_OBJECT);
@@ -82,6 +83,8 @@ gebr_task_free(GebrTask *task)
 	g_string_free(task->priv->moab_jid, TRUE);
 	g_string_free(task->priv->queue_id, TRUE);
 	g_string_free(task->priv->output, TRUE);
+	g_string_free(task->priv->niceness, TRUE);
+	g_string_free(task->priv->last_run_date, TRUE);
 }
 
 static void
@@ -107,6 +110,7 @@ static void gebr_task_init(GebrTask *task)
 	task->priv->queue_id = g_string_new(NULL);
 	task->priv->n_procs = g_string_new(NULL);
 	task->priv->niceness = g_string_new(NULL);
+	task->priv->last_run_date = g_string_new(NULL);
 }
 
 static void gebr_task_class_init(GebrTaskClass *klass)
@@ -188,7 +192,8 @@ gebr_task_init_details(GebrTask *task,
 		       GString  *moab_jid,
 		       GString  *output,
 		       GString  *n_procs,
-		       GString  *niceness)
+		       GString  *niceness,
+		       GString  *last_run_date)
 {
 	task->priv->status = job_translate_status(status);
 	g_string_assign(task->priv->start_date, start_date->str);
@@ -200,6 +205,7 @@ gebr_task_init_details(GebrTask *task,
 	g_string_assign(task->priv->output, output->str);
 	g_string_assign(task->priv->n_procs, n_procs->str);
 	g_string_assign(task->priv->niceness, niceness->str);
+	g_string_assign(task->priv->last_run_date, last_run_date->str);
 }
 
 enum JobStatus job_translate_status(GString * status)
@@ -363,4 +369,10 @@ const gchar *
 gebr_task_get_niceness(GebrTask *task)
 {
 	return task->priv->niceness->str;
+}
+
+const gchar *
+gebr_task_get_last_run_date(GebrTask *task)
+{
+	return task->priv->last_run_date->str;
 }
