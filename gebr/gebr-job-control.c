@@ -168,21 +168,17 @@ jobs_visible_for_group(GtkTreeModel *model,
 		return TRUE;
 
 	GebrJob *job;
-	GList *groups;
+	const gchar *group;
 
 	gtk_tree_model_get(model, iter, JC_STRUCT, &job, -1);
 
 	if (!job)
 		return FALSE;
 
-	groups = gebr_job_get_groups(job);
+	group = gebr_job_get_server_group(job);
 
-	for (GList *i = groups; i; i = i->next) {
-		if (!g_strcmp0(combo_group, i->data)) {
-			visible = TRUE;
-			break;
-		}
-	}
+	if (!g_strcmp0(combo_group, group))
+		visible = TRUE;
 
 	g_free(combo_group);
 	return visible;
