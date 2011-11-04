@@ -954,14 +954,10 @@ update_tree_view(gpointer data)
 	}
 
 	GebrJob *job = get_selected_job(jc);
+	enum JobStatus status = gebr_job_get_status(job);
 
-	if (job && gebr_job_get_status(job) == JOB_STATUS_RUNNING) {
-		const gchar *start_date = gebr_job_get_start_date(job);
-		GtkLabel *subheader = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "subheader_label"));
-		gchar *running = g_strdup_printf("%s (%s)", start_date, gebr_job_get_running_time(job, start_date));
-		gtk_label_set_text(subheader, running);
-		g_free(running);
-	}
+	if (job && status == JOB_STATUS_RUNNING)
+		gebr_jc_update_status_and_time(jc, job, status);
 
 	return TRUE;
 }
