@@ -814,7 +814,7 @@ gebr_jc_update_status_and_time(GebrJobControl *jc,
 	job_control_fill_servers_info(jc);
 
 	if (status == JOB_STATUS_FINISHED) {
-		gchar *elapsed_time = g_strdup_printf("%s (Elapsed time: %s)", finish->str, gebr_job_get_elapsed_time(job, finish_date));
+		gchar *elapsed_time = g_strdup_printf("%s (Elapsed time: %s)", finish->str, gebr_job_get_elapsed_time(job));
 		gtk_image_set_from_stock(img, GTK_STOCK_APPLY, GTK_ICON_SIZE_DIALOG);
 		gtk_label_set_text(subheader, elapsed_time);
 		gtk_label_set_text(details_start_date, start->str);
@@ -823,7 +823,7 @@ gebr_jc_update_status_and_time(GebrJobControl *jc,
 	}
 
 	else if (status == JOB_STATUS_RUNNING) {
-		gchar *running = g_strdup_printf("%s (%s)", start->str, gebr_job_get_running_time(job, start_date));
+		gchar *running = g_strdup_printf("%s (Elapsed time: %s)", start->str, gebr_job_get_running_time(job, start_date));
 		gtk_image_set_from_stock(img, GTK_STOCK_EXECUTE, GTK_ICON_SIZE_DIALOG);
 		gtk_label_set_text(subheader, running);
 		gtk_widget_hide(GTK_WIDGET(details_start_date));

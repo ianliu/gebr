@@ -154,7 +154,7 @@ void gebr_job_set_server_group(GebrJob *job, const gchar *server_group);
 
 gchar *gebr_job_get_running_time(GebrJob *job, const gchar *start_date);
 
-gchar *gebr_job_get_elapsed_time(GebrJob *job, const gchar *finish_date);
+gchar *gebr_job_get_elapsed_time(GebrJob *job);
 
 G_END_DECLS
 

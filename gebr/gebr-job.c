@@ -705,13 +705,15 @@ gebr_job_get_running_time(GebrJob *job, const gchar *start_date)
 	return gebr_calculate_relative_time(&start_time, &current_time);
 }
 gchar *
-gebr_job_get_elapsed_time(GebrJob *job, const gchar *finish_date)
+gebr_job_get_elapsed_time(GebrJob *job)
 {
-	GTimeVal finish_time, current_time;
-	g_time_val_from_iso8601(finish_date, &finish_time);
-	g_get_current_time(&current_time);
+	const gchar *start_time = gebr_job_get_start_date(job);
+	const gchar *finish_time = gebr_job_get_finish_date(job);
+	GTimeVal finish, start;
+	g_time_val_from_iso8601(finish_time, &finish);
+	g_time_val_from_iso8601(start_time, &start);
 
-	return gebr_calculate_relative_time(&finish_time, &current_time);
+	return gebr_calculate_relative_time(&start, &finish);
 }
 
 void
