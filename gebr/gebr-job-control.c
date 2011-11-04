@@ -1550,6 +1550,7 @@ gebr_job_control_close_selected(GebrJobControl *jc)
 		gtk_tree_path_free(path);
 	}
 	UNBLOCK_SELECTION_CHANGED_SIGNAL(jc);
+	job_control_on_cursor_changed(gtk_tree_view_get_selection(GTK_TREE_VIEW(jc->priv->view)), jc);
 
 	g_list_foreach(rowrefs, (GFunc)gtk_tree_row_reference_free, NULL);
 	g_list_free(rowrefs);
