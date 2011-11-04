@@ -763,12 +763,7 @@ time_column_data_func(GtkTreeViewColumn *tree_column,
 
 	gtk_tree_model_get(tree_model, iter, JC_STRUCT, &job, -1);
 
-	if (gebr_job_get_status(job) == JOB_STATUS_QUEUED) {
-		g_object_set(cell, "text", "Waiting", NULL);
-		return;
-	}
-
-	start_time_str = gebr_job_get_start_date(job);
+	start_time_str = gebr_job_get_last_run_date(job);
 	if (!start_time_str)
 		return;
 	g_time_val_from_iso8601(start_time_str, &start_time);
@@ -976,8 +971,8 @@ tree_sort_func(GtkTreeModel *model,
 	if (!jb)
 		return -1;
 
-	const gchar *ta = gebr_job_get_start_date(ja);
-	const gchar *tb = gebr_job_get_start_date(jb);
+	const gchar *ta = gebr_job_get_last_run_date(ja);
+	const gchar *tb = gebr_job_get_last_run_date(jb);
 
 	if (!ta && !tb)
 		return 0;

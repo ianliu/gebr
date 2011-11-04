@@ -112,6 +112,8 @@ gchar *gebr_job_get_command_line(GebrJob *job);
 
 gchar *gebr_job_get_output(GebrJob *job);
 
+const gchar *gebr_job_get_last_run_date(GebrJob *job);
+
 const gchar *gebr_job_get_start_date(GebrJob *job);
 
 const gchar *gebr_job_get_finish_date(GebrJob *job);

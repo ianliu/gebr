@@ -450,6 +450,31 @@ gebr_job_get_output(GebrJob *job)
 }
 
 const gchar *
+gebr_job_get_last_run_date(GebrJob *job)
+{
+	const gchar *last_run_date = NULL;
+
+	for (GList *i = job->priv->tasks; i; i = i->next) {
+		GebrTask *task = i->data;
+		GTimeVal new_time, old_time;
+		const gchar *last_run_task_date = gebr_task_get_last_run_date(task);
+
+		if (!last_run_date) {
+			last_run_date = last_run_task_date;
+			continue;
+		}
+
+		g_time_val_from_iso8601(last_run_task_date, &new_time);
+		g_time_val_from_iso8601(last_run_date, &old_time);
+
+		if (new_time.tv_sec < old_time.tv_sec)
+			last_run_date = last_run_task_date;
+	}
+
+	return last_run_date;
+}
+
+const gchar *
 gebr_job_get_start_date(GebrJob *job)
 {
 	const gchar *start_date = NULL;
