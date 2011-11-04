@@ -61,11 +61,14 @@ struct _GebrJobClass {
 	void (*disconnect) (GebrJob *job);
 };
 
+GType gebr_job_get_type() G_GNUC_CONST;
+
 GebrJob *gebr_job_new_with_id(const gchar *rid,
 			      const gchar *queue,
 			      const gchar *servers);
 
-GType gebr_job_get_type() G_GNUC_CONST;
+void gebr_job_set_hostname(GebrJob *job,
+			   const gchar *hostname);
 
 void gebr_job_show(GebrJob *job);
 

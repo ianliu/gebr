@@ -28,6 +28,7 @@ struct _GebrJobPriv {
 	gchar *title;
 	gchar *runid;
 	gchar *queue;
+	gchar *hostname;
 	gchar **servers;
 	gint n_servers;
 	GtkTreeIter iter;
@@ -71,6 +72,7 @@ gebr_job_finalize(GObject *object)
 {
 	GebrJob *job = GEBR_JOB(object);
 	g_free(job->priv->title);
+	g_free(job->priv->hostname);
 	g_free(job->priv->runid);
 	g_free(job->priv->queue);
 	g_strfreev(job->priv->servers);
@@ -293,6 +295,21 @@ gebr_job_new_with_id(const gchar *rid,
 	      sizeof(job->priv->servers[0]), compare_func);
 
 	return job;
+}
+
+void
+gebr_job_set_hostname(GebrJob *job,
+		      const gchar *hostname)
+{
+	if (job->priv->hostname)
+		g_free(job->priv->hostname);
+	job->priv->hostname = g_strdup(hostname);
+}
+
+const gchar *
+gebr_job_get_hostname(GebrJob *job)
+{
+	return job->priv->hostname;
 }
 
 GList *
