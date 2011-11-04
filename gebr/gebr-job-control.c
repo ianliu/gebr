@@ -960,11 +960,11 @@ update_tree_view(gpointer data)
 	}
 
 	GebrJob *job = get_selected_job(jc);
-	enum JobStatus status = gebr_job_get_status(job);
-
-	if (job && status == JOB_STATUS_RUNNING)
-		gebr_jc_update_status_and_time(jc, job, status);
-
+	if (job) {
+		enum JobStatus status = gebr_job_get_status(job);
+		if (status == JOB_STATUS_RUNNING)
+			gebr_jc_update_status_and_time(jc, job, status);
+	}
 	return TRUE;
 }
 
