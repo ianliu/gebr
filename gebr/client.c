@@ -242,6 +242,7 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 			if (!job) {
 				job = gebr_job_new_with_id(rid->str, queue->str, server_list->str);
 				gebr_job_set_title(job, title->str);
+				gebr_job_set_hostname(job, hostname->str);
 				gebr_job_set_model(job, gebr_job_control_get_model(gebr.job_control));
 				gebr_job_control_add(gebr.job_control, job);
 			}
