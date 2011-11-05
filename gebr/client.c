@@ -323,10 +323,8 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 			GebrJob *job;
 			GtkTreeIter iter;
 			gchar *job_id;
-			enum JobStatus job_status;
 
 			job = gebr_job_control_find(gebr.job_control, rid->str);
-			job_status = gebr_job_get_status(job);
 
 			if (gebr_job_is_stopped(job)) {
 				gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(server->queues_model)) {
