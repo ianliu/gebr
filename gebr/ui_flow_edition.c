@@ -19,6 +19,7 @@
 
 #include <glib/gi18n.h>
 #include <libgebr/gui/gui.h>
+#include <libgebr/utils.h>
 #include <libgebr/gebr-iexpr.h>
 #include <libgebr/gebr-expr.h>
 #include <gdk/gdkkeysyms.h>
@@ -81,6 +82,40 @@ static void on_queue_combobox_changed (GtkComboBox *combo, GtkComboBox *server_c
 /*
  * Public functions
  */
+
+static gboolean
+menu_search_func(GtkTreeModel *model,
+		 gint column,
+		 const gchar *key,
+		 GtkTreeIter *iter,
+		 gpointer data)
+{
+	gchar *title, *desc;
+	gchar *lt, *ld, *lk; // Lower case strings
+	gboolean match;
+
+	if (!key)
+		return FALSE;
+
+	gtk_tree_model_get(model, iter,
+			   MENU_TITLE_COLUMN, &title,
+			   MENU_DESC_COLUMN, &desc,
+			   -1);
+
+	lt = title ? g_utf8_strdown(title, -1) : g_strdup("");
+	ld = desc ?  g_utf8_strdown(desc, -1)  : g_strdup("");
+	lk = g_utf8_strdown(key, -1);
+
+	match = gebr_utf8_strstr(lt, key) || gebr_utf8_strstr(ld, key);
+
+	g_free(title);
+	g_free(desc);
+	g_free(lt);
+	g_free(ld);
+	g_free(lk);
+
+	return !match;
+}
 
 struct ui_flow_edition *
 flow_edition_setup_ui(void)
@@ -253,6 +288,8 @@ flow_edition_setup_ui(void)
 	g_signal_connect(GTK_OBJECT(ui_flow_edition->menu_view), "row-activated",
 			 G_CALLBACK(flow_edition_menu_add), ui_flow_edition);
 	gebr_gui_gtk_tree_view_fancy_search(GTK_TREE_VIEW(ui_flow_edition->menu_view), MENU_TITLE_COLUMN);
+	gtk_tree_view_set_search_equal_func(GTK_TREE_VIEW(ui_flow_edition->menu_view),
+					    menu_search_func, NULL, NULL);
 
 	renderer = gtk_cell_renderer_text_new();
 	col = gtk_tree_view_column_new_with_attributes(_("Title"), renderer, NULL);
