@@ -783,3 +783,43 @@ gebr_calculate_relative_time (GTimeVal *time1, GTimeVal *time2)
 	else 
 		return (g_strdup(_("More than a year")));
 }
+
+gchar *
+gebr_utf8_strstr(const gchar *str,
+		 const gchar *search)
+{
+	g_return_val_if_fail(str != NULL, NULL);
+	g_return_val_if_fail(search != NULL, NULL);
+
+	const gchar *i = str;
+	const gchar *j = search;
+	gunichar a, b;
+
+	while (i && *i) {
+		const gchar *k = i;
+		a = g_utf8_get_char(k);
+		b = g_utf8_get_char(j);
+
+		while (TRUE) {
+			if (a != b)
+				break;
+
+			k = g_utf8_next_char(k);
+			j = g_utf8_next_char(j);
+
+			if (!j || !*j)
+				return (gchar*) i;
+
+			if (!k || !*k)
+				return NULL;
+
+			a = g_utf8_get_char(k);
+			b = g_utf8_get_char(j);
+		}
+
+		j = search;
+		i = g_utf8_next_char(i);
+	}
+
+	return NULL;
+}

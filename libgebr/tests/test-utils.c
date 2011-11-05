@@ -241,7 +241,15 @@ void test_gebr_calculate_relative_time(void){
 
 	time2.tv_sec = 32140800;
 	g_assert_cmpstr(gebr_calculate_relative_time(&time1, &time2),==,"More than a year");
-	g_free(string);
+}
+
+static void
+test_gebr_utf8_strstr(void)
+{
+	g_assert_cmpstr(gebr_utf8_strstr("Olá, mundo!", "mundo"), ==, "mundo!");
+	g_assert_cmpstr(gebr_utf8_strstr("Olá, mundo!", "!"), ==, "!");
+	g_assert_cmpstr(gebr_utf8_strstr("Olá, mundo!", "Olá"), ==, "Olá, mundo!");
+	g_assert(gebr_utf8_strstr("Olá, mundo!", "xxxxx") == NULL);
 }
 
 int main(int argc, char *argv[])
@@ -255,6 +263,7 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/utils/str_canonical_var_name", test_gebr_str_canonical_var_name);
 	g_test_add_func("/libgebr/utils/str_replace", test_gebr_str_replace);
 	g_test_add_func("/libgebr/utils/calculate_relative_time", test_gebr_calculate_relative_time);
+	g_test_add_func("/libgebr/utils/gebr_utf8_strstr", test_gebr_utf8_strstr);
 
 	gint ret = g_test_run();
 	gebr_geoxml_finalize();

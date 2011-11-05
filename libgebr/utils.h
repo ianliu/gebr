@@ -198,6 +198,16 @@ gboolean gebr_str_canonical_var_name(const gchar * keyword,
  * than time1.
  */
 gchar *gebr_calculate_relative_time (GTimeVal *time1, GTimeVal *time2);
+
+/**
+ * gebr_utf8_strstr:
+ *
+ * Searches for @needle in @haystack and returns a pointer to the begging of
+ * the substring or %NULL if it was not found.
+ */
+gchar *gebr_utf8_strstr(const gchar *haystack,
+			const gchar *needle);
+
 G_END_DECLS
 
 #endif				//__GEBR_UTILS_H
