@@ -34,6 +34,7 @@
 #include "ui_moab.h"
 
 #include "gebr-task.h"
+#include "interface.h"
 
 /* Prototypes {{{1 */
 static void create_jobs_and_run(GebrCommRunner *runner);
@@ -593,6 +594,7 @@ create_jobs_and_run(GebrCommRunner *runner)
 		gebr_job_set_hostname(job, g_get_host_name());
 		gebr_job_set_server_group(job, runner->server_group_name);
 		gebr_job_set_model(job, gebr_job_control_get_model(gebr.job_control));
+		gebr_job_set_exec_speed(job, gebr_interface_get_execution_speed());
 		gebr_job_control_add(gebr.job_control, job);
 		g_string_free((GString *)values[0], TRUE);
 		g_string_free((GString *)values[1], TRUE);

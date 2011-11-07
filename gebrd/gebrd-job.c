@@ -702,7 +702,7 @@ void job_notify(GebrdJob *job, struct client *client)
 	gchar *nice = g_strdup_printf("%d", job->niceness);
 
 	gebr_comm_protocol_socket_oldmsg_send(client->socket, FALSE,
-					      gebr_comm_protocol_defs.job_def, 21,
+					      gebr_comm_protocol_defs.job_def, 22,
 					      job->parent.jid->str,
 					      status_enum_to_string(job->parent.status),
 					      job->parent.title->str,
@@ -723,7 +723,8 @@ void job_notify(GebrdJob *job, struct client *client)
 					      output_file,
 					      log_file,
 					      gebr_geoxml_flow_get_date_last_run(job->flow),
-					      job->server_group_name->str);
+					      job->server_group_name->str,
+					      job->exec_speed->str);
 	g_free(nprocs);
 	g_free(nice);
 }
