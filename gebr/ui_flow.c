@@ -659,6 +659,7 @@ gebr_ui_flow_run(void)
 	gboolean is_fs;
 	runner = gebr_comm_runner_new();
 	runner->execution_speed = g_strdup_printf("%d", gebr_interface_get_execution_speed());
+	runner->niceness = g_strdup_printf("%d", gebr_interface_get_niceness());
 	runner->server_group_name = g_strdup(gebr_geoxml_line_get_group(gebr.line, &is_fs));
 
 	if (gebr.ui_flow_edition->autochoose) {

@@ -107,6 +107,7 @@ gebr_comm_runner_free(GebrCommRunner *self)
 	g_free(self->account);
 	g_free(self->queue);
 	g_free(self->execution_speed);
+	g_free(self->niceness);
 	g_free(self->server_group_name);
 	g_free(self);
 }
@@ -168,13 +169,14 @@ gebr_comm_runner_run(GebrCommRunner *self)
 	for (GList *i = self->flows; i != NULL; i = g_list_next(i)) {
 		runflow = i->data;
 		gebr_comm_protocol_socket_oldmsg_send(runflow->server->socket, FALSE,
-						      gebr_comm_protocol_defs.run_def, 9,
+						      gebr_comm_protocol_defs.run_def, 10,
 						      runflow->flow_xml,
 						      self->account ? self->account : "",
 						      self->queue ? self->queue : "",
 						      self->num_processes ? self->num_processes : "",
 						      runflow->run_id,
 						      self->execution_speed,
+						      self->niceness,
 						      runflow->frac,
 						      server_list->str,
 						      self->server_group_name);

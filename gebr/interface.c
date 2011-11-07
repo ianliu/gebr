@@ -195,8 +195,7 @@ change_value(GtkRange *range, GtkScrollType scroll, gdouble value, gpointer user
 	min = gtk_adjustment_get_lower(adj);
 	max = gtk_adjustment_get_upper(adj);
 	gint speed = (int) CLAMP(round(value), min, max);
-	int s = gebr.config.flow_exec_speed < 0 ? -1 : 1;
-	gebr.config.flow_exec_speed = s*speed;
+	gebr.config.flow_exec_speed = speed;
 	gtk_range_set_value(range, speed);
 	return TRUE;
 }
@@ -261,8 +260,8 @@ static void
 change_niceness(GtkToggleToolButton *togglebutton,
 		gpointer         user_data)
 { 
-	gboolean active=  gtk_toggle_tool_button_get_active (togglebutton);
-	gebr.config.flow_exec_speed = active ? ABS(gebr.config.flow_exec_speed): -ABS(gebr.config.flow_exec_speed);
+	gboolean active = gtk_toggle_tool_button_get_active (togglebutton);
+	gebr.config.niceness = active ? 0 : 19;
 }
 
 /*
@@ -283,7 +282,7 @@ static void
 on_show_toggle(GtkWidget * toggle)
 {
 	g_signal_handlers_block_by_func(toggle, change_niceness, NULL);
-	gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(toggle), gebr.config.flow_exec_speed > 0 ? TRUE : FALSE);
+	gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(toggle), gebr.config.niceness == 0 ? TRUE : FALSE);
 	g_signal_handlers_unblock_by_func(toggle, change_niceness, NULL);
 }
 
@@ -667,6 +666,12 @@ gint
 gebr_interface_get_execution_speed(void)
 {
 	return gebr.config.flow_exec_speed;
+}
+
+gint
+gebr_interface_get_niceness(void)
+{
+	return gebr.config.niceness;
 }
 
 void

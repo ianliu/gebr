@@ -526,7 +526,7 @@ job_control_fill_servers_info(GebrJobControl *jc)
 						  nprocs, n_servers);
 		g_string_append(resources, markup);
 
-		if (g_strcmp0(niceness, "0"))
+		if (!g_strcmp0(niceness, "0"))
 			g_string_append_printf(resources, _("Using all machines resources\n"));
 		else
 			g_string_append_printf(resources, _("Using the machines idle time\n"));

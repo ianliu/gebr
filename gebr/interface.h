@@ -58,6 +58,8 @@ void gebr_setup_ui(void);
 
 gint gebr_interface_get_execution_speed(void);
 
+gint gebr_interface_get_niceness(void);
+
 void gebr_interface_change_tab(enum NOTEBOOK_PAGE page);
 
 G_END_DECLS

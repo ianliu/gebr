@@ -51,6 +51,7 @@ typedef struct {
 	gchar *queue;
 	gchar *num_processes;
 	gchar *execution_speed;
+	gchar *niceness;
 	gchar *server_group_name;
 	gboolean is_nice;
 	gboolean is_parallelizable;

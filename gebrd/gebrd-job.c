@@ -370,8 +370,8 @@ GebrdJob *job_find(GString * rid)
 }
 
 void job_new(GebrdJob ** _job, struct client * client, GString *queue, GString * account, GString * xml,
-	     GString * n_process, GString * run_id, GString *exec_speed, GString *frac, GString *server_list,
-	     GString *server_group_name)
+	     GString * n_process, GString * run_id, GString *exec_speed, GString *niceness, GString *frac,
+	     GString *server_list, GString *server_group_name)
 {
 	/* initialization */
 	GebrdJob *job = GEBRD_JOB(g_object_new(GEBRD_JOB_TYPE, NULL, NULL));
@@ -385,6 +385,8 @@ void job_new(GebrdJob ** _job, struct client * client, GString *queue, GString *
 	job->buf[1] = g_string_new(NULL);
 	job->timeout[0] = 0;
 	job->timeout[1] = 0;
+
+	job->niceness = g_strcmp0(niceness->str, "0") == 0 ? 0 : 19;
 
 	g_string_assign(job->parent.client_hostname, client->socket->protocol->hostname->str);
 	g_string_assign(job->parent.client_display, client->display->str);
@@ -416,7 +418,7 @@ void job_new(GebrdJob ** _job, struct client * client, GString *queue, GString *
 		gebr_validator_update(gebrd_get_validator(gebrd));
 	}
 
-	gint n = gebrd_app_set_heuristic_aggression(gebrd, atoi(exec_speed->str), &job->niceness);
+	gint n = gebrd_app_set_heuristic_aggression(gebrd, atoi(exec_speed->str));
 
 	if (gebr_geoxml_flow_is_parallelizable(job->flow, gebrd->validator))
 		job->effprocs = n;
