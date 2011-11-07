@@ -342,7 +342,7 @@
                                     <property name="receives_default">True</property>
                                     <property name="relief">none</property>
                                     <child>
-                                      <object class="GtkImage" id="image1">
+                                      <object class="GtkImage" id="info_button_image">
                                         <property name="visible">True</property>
                                         <property name="stock">gtk-info</property>
                                       </object>

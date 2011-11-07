@@ -520,10 +520,13 @@ job_control_fill_servers_info(GebrJobControl *jc)
 	else {
 		const gchar *groups = gebr_job_get_server_group(job);
 		gchar *markup;
+
+		if (g_strcmp0(groups, "") == 0)
+			groups = _("All Servers");
+
 		markup = g_markup_printf_escaped (_("Job submitted by <b>%s</b> to group <b>%s</b> and executed\n"
 						  "using <b>%s</b> processor(s) distributed on <b>%d</b> servers.\n"),
-						  gebr_job_get_hostname(job), g_strcmp0(groups, "")? groups : _("All Servers"),
-						  nprocs, n_servers);
+						  gebr_job_get_hostname(job), groups, nprocs, n_servers);
 		g_string_append(resources, markup);
 
 		if (!g_strcmp0(niceness, "0"))
@@ -885,6 +888,7 @@ gebr_job_control_load_details(GebrJobControl *jc,
 	GString *info_cmd = g_string_new("");
 	GtkTextIter end_iter;
 	GtkTextIter end_iter_cmd;
+	GtkImage *info_button_image;
 	GtkLabel *input_file, *output_file, *log_file, *job_group;
 	gchar *input_file_str, *output_file_str, *log_file_str;
 	enum JobStatus status = gebr_job_get_status(job);
@@ -893,6 +897,7 @@ gebr_job_control_load_details(GebrJobControl *jc,
 	output_file = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "output_label"));
 	log_file = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "error_label"));
 	job_group = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "job_group"));
+	info_button_image = GTK_IMAGE(gtk_builder_get_object(jc->priv->builder, "info_button_image"));
 
 	gebr_job_get_io(job, &input_file_str, &output_file_str, &log_file_str);
 
@@ -914,6 +919,21 @@ gebr_job_control_load_details(GebrJobControl *jc,
 	if (!g_strcmp0(msg, ""))
 		msg = g_strdup("All servers");
 	gtk_label_set_markup (job_group, msg);
+
+	switch (gebr_job_get_exec_speed(job))
+	{
+	case 1:
+		gtk_image_set_from_stock(info_button_image, "gebr-speed-low", GTK_ICON_SIZE_MENU);
+		break;
+	case 2: case 3: case 4:
+		gtk_image_set_from_stock(info_button_image, "gebr-speed-medium", GTK_ICON_SIZE_MENU);
+		break;
+	case 5:
+		gtk_image_set_from_stock(info_button_image, "gebr-speed-high", GTK_ICON_SIZE_MENU);
+		break;
+	default:
+		g_warn_if_reached();
+	}
 
 	gebr_jc_update_status_and_time(jc, job, status);
 
