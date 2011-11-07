@@ -296,11 +296,11 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			job_list(client);
 		} else if (message->hash == gebr_comm_protocol_defs.run_def.code_hash) {
 			GList *arguments;
-			GString *xml, *account, *queue, *n_process, *run_id, *exec_speed, *niceness, *frac, *server_list, *server_group_name;
+			GString *xml, *account, *queue, *n_process, *run_id, *exec_speed, *niceness, *frac, *server_list, *server_group_name, *job_percentage;
 			GebrdJob *job;
 
 			/* organize message data */
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 10)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 11)) == NULL)
 				goto err;
 
 			xml = arguments->data;
@@ -313,9 +313,10 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			frac = g_list_nth_data(arguments, 7);
 			server_list = g_list_nth_data(arguments, 8);
 			server_group_name = g_list_nth_data(arguments, 9);
+			job_percentage = g_list_nth_data(arguments, 10);
 
 			/* try to run and send return */
-			job_new(&job, client, queue, account, xml, n_process, run_id, exec_speed, niceness, frac, server_list, server_group_name);
+			job_new(&job, client, queue, account, xml, n_process, run_id, exec_speed, niceness, frac, server_list, server_group_name, job_percentage);
 
 #ifdef DEBUG
 			gchar *env_delay = getenv("GEBRD_RUN_DELAY_SEC");

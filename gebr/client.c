@@ -203,11 +203,11 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 			GString *hostname, *status, *title, *start_date, *finish_date, *issues, *cmd_line,
 				*output, *queue, *moab_jid, *rid, *frac, *server_list, *n_procs, *niceness,
 				*input_file, *output_file, *log_file, *last_run_date, *server_group_name,
-				*exec_speed;
+			       	*job_percentage, *exec_speed;
 			GebrJob *job;
 
 			/* organize message data */
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 22)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 23)) == NULL)
 				goto err;
 			status = g_list_nth_data(arguments, 1);
 			title = g_list_nth_data(arguments, 2);
@@ -230,6 +230,7 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 			last_run_date = g_list_nth_data(arguments, 19);
 			server_group_name = g_list_nth_data(arguments, 20);
 			exec_speed = g_list_nth_data(arguments, 21);
+			job_percentage = g_list_nth_data(arguments, 22);
 
 			g_debug("JOB_DEF: Received task %s frac %s status %s after %s",
 				rid->str, frac->str, status->str, queue->str);

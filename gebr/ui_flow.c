@@ -254,7 +254,7 @@ add_flows_to_runner(GebrCommRunner *runner,
 
 			runflow = gebr_comm_runner_add_flow(runner, gebr.validator, frac_flow,
 							    sc->server->comm, !last, gebr_get_session_id(),
-							    list->data);
+							    list->data, weights[j-1]);
 
 			gebr_comm_runner_flow_set_frac(runflow, j++, nflows);
 
@@ -273,7 +273,7 @@ add_flows_to_runner(GebrCommRunner *runner,
 		// Use the first server for this flow
 		gebr_comm_runner_add_flow(runner, gebr.validator, gebr.flow,
 					  sc->server->comm, FALSE,
-					  gebr_get_session_id(), servers->data);
+					  gebr_get_session_id(), servers->data, 1);
 	}
 }
 

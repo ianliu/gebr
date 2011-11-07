@@ -31,6 +31,7 @@ typedef struct {
 	gchar *run_id;
 	gchar *frac;
 	gpointer user_data;
+	gchar *job_percentage;
 } GebrCommRunnerFlow;
 
 /**
@@ -81,7 +82,8 @@ GebrCommRunnerFlow * gebr_comm_runner_add_flow(GebrCommRunner *self,
 					       GebrCommServer *server,
 					       gboolean        divided,
 					       const gchar    *sessid,
-					       gpointer        user_data);
+					       gpointer        user_data,
+					       gdouble 	       weight);
 
 void gebr_comm_runner_flow_set_frac(GebrCommRunnerFlow *self, gint frac, gint total);
 

@@ -99,6 +99,7 @@ gebr_comm_runner_free(GebrCommRunner *self)
 		gebr_geoxml_document_ref(GEBR_GEOXML_DOCUMENT(run_flow->flow));
 		g_free(run_flow->flow_xml);
 		g_free(run_flow->frac);
+		g_free(run_flow->job_percentage);
 		g_free(run_flow);
 	}
 
@@ -119,7 +120,9 @@ gebr_comm_runner_add_flow(GebrCommRunner *self,
 			  GebrCommServer *server,
 			  gboolean 	  divided,
 			  const gchar    *sessid,
-			  gpointer        user_data)
+			  gpointer        user_data,
+			  gdouble 	  weight
+			  )
 {
 	static guint run_id = 0;
 	GebrCommRunnerFlow *run_flow = g_new(GebrCommRunnerFlow, 1);
@@ -135,6 +138,7 @@ gebr_comm_runner_add_flow(GebrCommRunner *self,
 	run_flow->flow_xml = xml;
 	run_flow->frac = g_strdup("1:1");
 	run_flow->user_data = user_data;
+	run_flow->job_percentage= g_strdup_printf("%lf", weight);
 
 	if (divided)
 		run_flow->run_id = g_strdup_printf("%u:%s", run_id, sessid);
@@ -179,7 +183,9 @@ gebr_comm_runner_run(GebrCommRunner *self)
 						      self->niceness,
 						      runflow->frac,
 						      server_list->str,
-						      self->server_group_name);
+						      self->server_group_name,
+						      runflow->job_percentage
+						      );
 	}
 
 	g_string_free(server_list, TRUE);

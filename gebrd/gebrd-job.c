@@ -56,6 +56,7 @@ static void gebrd_job_init(GebrdJob * job)
 	job->frac = g_string_new(NULL);
 	job->server_list = g_string_new(NULL);
 	job->server_group_name = g_string_new(NULL);
+	job->job_percentage= g_string_new(NULL);
 }
 
 static void gebrd_job_class_init(GebrdJobClass * klass)
@@ -370,8 +371,8 @@ GebrdJob *job_find(GString * rid)
 }
 
 void job_new(GebrdJob ** _job, struct client * client, GString *queue, GString * account, GString * xml,
-	     GString * n_process, GString * run_id, GString *exec_speed, GString *niceness, GString *frac,
-	     GString *server_list, GString *server_group_name)
+	     GString * n_process, GString * run_id, GString *exec_speed, GString *niceness,
+	     GString *frac, GString *server_list, GString *server_group_name, GString *job_percentage)
 {
 	/* initialization */
 	GebrdJob *job = GEBRD_JOB(g_object_new(GEBRD_JOB_TYPE, NULL, NULL));
@@ -387,7 +388,6 @@ void job_new(GebrdJob ** _job, struct client * client, GString *queue, GString *
 	job->timeout[1] = 0;
 
 	job->niceness = g_strcmp0(niceness->str, "0") == 0 ? 0 : 19;
-
 	g_string_assign(job->parent.client_hostname, client->socket->protocol->hostname->str);
 	g_string_assign(job->parent.client_display, client->display->str);
 	job->parent.server_location = client->server_location;
@@ -399,6 +399,7 @@ void job_new(GebrdJob ** _job, struct client * client, GString *queue, GString *
 	g_string_assign(job->frac, frac->str);
 	g_string_assign(job->server_list, server_list->str);
 	g_string_assign(job->server_group_name, server_group_name->str);
+	g_string_assign(job->job_percentage, job_percentage->str);
 	job->parent.status = JOB_STATUS_INITIAL;
 
 	*_job = job;
@@ -702,7 +703,7 @@ void job_notify(GebrdJob *job, struct client *client)
 	gchar *nice = g_strdup_printf("%d", job->niceness);
 
 	gebr_comm_protocol_socket_oldmsg_send(client->socket, FALSE,
-					      gebr_comm_protocol_defs.job_def, 22,
+					      gebr_comm_protocol_defs.job_def, 23,
 					      job->parent.jid->str,
 					      status_enum_to_string(job->parent.status),
 					      job->parent.title->str,
@@ -724,7 +725,8 @@ void job_notify(GebrdJob *job, struct client *client)
 					      log_file,
 					      gebr_geoxml_flow_get_date_last_run(job->flow),
 					      job->server_group_name->str,
-					      job->exec_speed->str);
+					      job->exec_speed->str,
+					      job->job_percentage->str);
 	g_free(nprocs);
 	g_free(nice);
 }
