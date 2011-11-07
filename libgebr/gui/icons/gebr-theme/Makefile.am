@@ -42,7 +42,9 @@ libgebr_gui_icons16x16stock_DATA =		\
 	16x16/stock/edit-select-all.png	\
 	16x16/stock/filter.png	\
 	16x16/stock/folder.png	\
-	16x16/stock/gebr-speedometer.png	\
+	16x16/stock/gebr-speed-low.png	\
+	16x16/stock/gebr-speed-medium.png	\
+	16x16/stock/gebr-speed-high.png	\
 	16x16/stock/go-bottom.png	\
 	16x16/stock/go-previous.png	\
 	16x16/stock/go-top.png	\
@@ -124,7 +126,9 @@ libgebr_gui_icons22x22stock_DATA =		\
 	22x22/stock/edit-select-all.png	\
 	22x22/stock/filter.png	\
 	22x22/stock/folder.png	\
-	22x22/stock/gebr-speedometer.png	\
+	22x22/stock/gebr-speed-low.png	\
+	22x22/stock/gebr-speed-medium.png	\
+	22x22/stock/gebr-speed-high.png	\
 	22x22/stock/go-bottom.png	\
 	22x22/stock/go-previous.png	\
 	22x22/stock/go-top.png	\
@@ -206,7 +210,9 @@ libgebr_gui_icons48x48stock_DATA =		\
 	48x48/stock/edit-select-all.png	\
 	48x48/stock/filter.png	\
 	48x48/stock/folder.png	\
-	48x48/stock/gebr-speedometer.png	\
+	48x48/stock/gebr-speed-low.png	\
+	48x48/stock/gebr-speed-medium.png	\
+	48x48/stock/gebr-speed-high.png	\
 	48x48/stock/go-bottom.png	\
 	48x48/stock/go-previous.png	\
 	48x48/stock/go-top.png	\
@@ -266,8 +272,10 @@ libgebr_gui_icons48x48stock_DATA =		\
 	48x48/stock/window-close.png
 
 libgebr_gui_iconsscalablestockdir = $(datadir)/libgebr/icons/gebr-theme/scalable/stock
-libgebr_gui_iconsscalablestock_DATA =		\
-	scalable/stock/gebr-speedometer.svg
+libgebr_gui_iconsscalablestock_DATA = \
+	scalable/stock/gebr-speed-low.svg \
+	scalable/stock/gebr-speed-medium.svg \
+	scalable/stock/gebr-speed-high.svg
 
 EXTRA_DIST = 					\
 	$(libgebr_gui_icons_DATA)		\
