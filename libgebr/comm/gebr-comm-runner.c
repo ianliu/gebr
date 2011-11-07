@@ -173,7 +173,7 @@ gebr_comm_runner_run(GebrCommRunner *self)
 	for (GList *i = self->flows; i != NULL; i = g_list_next(i)) {
 		runflow = i->data;
 		gebr_comm_protocol_socket_oldmsg_send(runflow->server->socket, FALSE,
-						      gebr_comm_protocol_defs.run_def, 10,
+						      gebr_comm_protocol_defs.run_def, 11,
 						      runflow->flow_xml,
 						      self->account ? self->account : "",
 						      self->queue ? self->queue : "",
@@ -184,8 +184,7 @@ gebr_comm_runner_run(GebrCommRunner *self)
 						      runflow->frac,
 						      server_list->str,
 						      self->server_group_name,
-						      runflow->job_percentage
-						      );
+						      runflow->job_percentage);
 	}
 
 	g_string_free(server_list, TRUE);
