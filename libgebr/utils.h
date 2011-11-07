@@ -200,6 +200,15 @@ gboolean gebr_str_canonical_var_name(const gchar * keyword,
 gchar *gebr_calculate_relative_time (GTimeVal *time1, GTimeVal *time2);
 
 /**
+ * gebr_calculate_relative_time:
+ * @time1: The first date to compare 
+ * @time2: The second date to compare 
+ *
+ * Returns: A message (string) of the relative time and NULL if time2 is older
+ * than time1.
+ */
+gchar *gebr_calculate_detailed_relative_time(GTimeVal *time1, GTimeVal *time2);
+/**
  * gebr_utf8_strstr:
  *
  * Searches for @needle in @haystack and returns a pointer to the begging of

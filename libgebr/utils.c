@@ -754,34 +754,77 @@ gebr_str_canonical_var_name(const gchar * keyword, gchar ** new_value, GError **
 gchar *
 gebr_calculate_relative_time (GTimeVal *time1, GTimeVal *time2)
 {
-	if ( time2->tv_sec < time1->tv_sec) 
+	glong time_diff = time2->tv_sec - time1->tv_sec;
+	if ( time_diff < 0) 
 		return NULL;
-	else if ( time2->tv_sec - time1->tv_sec < 5)
+	else if ( time_diff < 5)
 		return (g_strdup(_("A moment")));
-	else if ( time2->tv_sec - time1->tv_sec < 60)
-		return (g_strdup_printf(_("%ld seconds"), time2->tv_sec - time1->tv_sec));
-	else if ( time2->tv_sec - time1->tv_sec < 60*2)
+	else if ( time_diff < 60)
+		return (g_strdup_printf(_("%ld seconds"), time_diff));
+	else if ( time_diff < 60*2)
 		return (g_strdup(_("1 minute")));
-	else if ( time2->tv_sec - time1->tv_sec < 3600)
-		return (g_strdup_printf(_("%ld minutes"), (time2->tv_sec - time1->tv_sec)/60));
-	else if ( time2->tv_sec - time1->tv_sec < 3600*2)
+	else if ( time_diff < 3600)
+		return (g_strdup_printf(_("%ld minutes"), (time_diff)/60));
+	else if ( time_diff < 3600*2)
 		return (g_strdup_printf(_("1 hour")));
-	else if ( time2->tv_sec - time1->tv_sec < 86400)
-		return (g_strdup_printf(_("%ld hours"), (time2->tv_sec - time1->tv_sec)/3600));
-	else if ( time2->tv_sec - time1->tv_sec < 86400*2)
+	else if ( time_diff < 86400)
+		return (g_strdup_printf(_("%ld hours"), (time_diff)/3600));
+	else if ( time_diff < 86400*2)
 		return (g_strdup_printf(_("1 day")));
-	else if ( time2->tv_sec - time1->tv_sec < 604800)
-		return (g_strdup_printf(_("%ld days"), (time2->tv_sec - time1->tv_sec)/86400));
-	else if ( time2->tv_sec - time1->tv_sec < 604800*2)
+	else if ( time_diff < 604800)
+		return (g_strdup_printf(_("%ld days"), (time_diff)/86400));
+	else if ( time_diff < 604800*2)
 		return (g_strdup_printf(_("1 week")));
-	else if ( time2->tv_sec - time1->tv_sec < 2678400)
-		return (g_strdup_printf(_("%ld weeks"), (time2->tv_sec - time1->tv_sec)/604800));
-	else if ( time2->tv_sec - time1->tv_sec < 2678400*2)
+	else if ( time_diff < 2678400)
+		return (g_strdup_printf(_("%ld weeks"), (time_diff)/604800));
+	else if ( time_diff < 2678400*2)
 		return (g_strdup_printf(_("1 month")));
-	else if ( time2->tv_sec - time1->tv_sec < 32140800)
-		return (g_strdup_printf(_("%ld months"), (time2->tv_sec - time1->tv_sec)/2678400));
+	else if ( time_diff < 32140800)
+		return (g_strdup_printf(_("%ld months"), (time_diff)/2678400));
 	else 
 		return (g_strdup(_("More than a year")));
+}
+
+gchar *
+gebr_calculate_detailed_relative_time(GTimeVal *time1, GTimeVal *time2)
+{
+	glong time_diff = time2->tv_sec - time1->tv_sec;
+	glong h = time_diff/3600;
+	glong m = (time_diff - h*3600)/60;
+	glong s = (time_diff - h*3600 - m*60);
+
+	if      (h==1 && m==1 && s==1)
+		return g_strdup(_("1 hour, 1 minute and 1 second"));
+	else if (h==1 && m==1 && s)
+		return g_strdup_printf(_("1 hour, 1 minute and %ld seconds"), s);
+	else if (h==1 && m && s==1)
+		return g_strdup_printf(_("1 hour, %ld minute and 1 second"), m);
+	else if (h==1 && m && s)
+		return g_strdup_printf(_("1 hour, %ld minutes and %ld seconds"), m, s);
+	else if (h && m && s)
+		return g_strdup_printf(_("%ld hours, %ld minutes and %ld seconds"), h, m, s);
+	else if (h && m && !s)
+		return g_strdup_printf(_("%ld hour(s) and %ld minutes"), h, m);
+	else if (!h && m==1 && s==1)
+		return g_strdup(_("1 minute and 1 second"));
+	else if (!h && m==1 && s)
+		return g_strdup_printf(_("1 minute and %ld seconds"), s);
+	else if (!h && m && s==1)
+		return g_strdup_printf(_("%ld minutes and 1 second"), m);
+	else if (!h && m && s)
+		return g_strdup_printf(_("%ld minutes and %ld seconds"), m, s);
+	else if (h==1 && !m && s)
+		return g_strdup_printf(_("1 hour and %ld seconds"), s);
+	else if (h && !m && s)
+		return g_strdup_printf(_("%ld hours and %ld seconds"), h, s);
+	else if (h && !m && !s)
+		return g_strdup_printf(_("%ld hours"), h);
+	else if (!h && m==1 && !s)
+		return g_strdup(_("1 minute"));
+	else if (!h && m && !s)
+		return g_strdup_printf(_("%ld minutes"), m);
+	else 
+		return g_strdup_printf(_("%ld seconds"), s);
 }
 
 gchar *
