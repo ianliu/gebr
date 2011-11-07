@@ -156,6 +156,10 @@ gchar *gebr_job_get_running_time(GebrJob *job, const gchar *start_date);
 
 gchar *gebr_job_get_elapsed_time(GebrJob *job);
 
+gint gebr_job_get_exec_speed(GebrJob *job);
+
+void gebr_job_set_exec_speed(GebrJob *job, gint exec_speed);
+
 G_END_DECLS
 
 #endif /* __GEBR_JOB_H__ */

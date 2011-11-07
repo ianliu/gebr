@@ -32,6 +32,7 @@ struct _GebrJobPriv {
 	gchar *hostname;
 	gchar **servers;
 	gchar *server_group;
+	gint exec_speed;
 	gint n_servers;
 	GtkTreeIter iter;
 	enum JobStatus status;
@@ -728,4 +729,16 @@ const gchar *
 gebr_job_get_server_group(GebrJob *job)
 {
 	return job->priv->server_group;
+}
+
+gint
+gebr_job_get_exec_speed(GebrJob *job)
+{
+	return job->priv->exec_speed;
+}
+
+void
+gebr_job_set_exec_speed(GebrJob *job, gint exec_speed)
+{
+	job->priv->exec_speed = exec_speed;
 }
