@@ -33,8 +33,8 @@ gebr_gui_tool_button_toggled(GtkToggleButton *toggle)
 
 	if (!active) {
 		if (gtk_widget_get_visible(button->priv->popup)) {
-			gtk_widget_hide(button->priv->popup);
 			gtk_grab_remove(button->priv->popup);
+			gtk_widget_hide(button->priv->popup);
 		}
 		return;
 	}
@@ -94,10 +94,11 @@ popup_key_press(GtkWidget         *popup,
 
 static void
 popup_grab_notify(GtkWidget *popup,
-		  gboolean was_grabbed)
+		  gboolean was_grabbed,
+		  GebrGuiToolButton *button)
 {
-	if (was_grabbed) {
-		GdkWindow *window = gtk_widget_get_window(popup);
+	GdkWindow *window = gtk_widget_get_window(popup);
+	if (window && was_grabbed) {
 		gdk_keyboard_grab(window, TRUE, GDK_CURRENT_TIME);
 		gdk_pointer_grab(window, TRUE, GDK_BUTTON_PRESS_MASK,
 				 NULL, NULL, GDK_CURRENT_TIME);

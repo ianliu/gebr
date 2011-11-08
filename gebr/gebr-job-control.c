@@ -54,6 +54,7 @@ struct _GebrJobControlPriv {
 	GtkWidget *text_view;
 	GtkWidget *view;
 	GtkWidget *widget;
+	GtkWidget *info_button;
 	LastSelection last_selection;
 	guint timeout_source_id;
 };
@@ -395,44 +396,6 @@ on_job_wait_button(GtkButton *button,
 	job = get_selected_job(jc);
 	parent = gebr_job_control_find(jc, gebr_job_get_queue(job));
 	gebr_job_control_select_job(jc, parent);
-}
-
-static gboolean
-on_popup_focus_out(GtkWidget *widget,
-		   GdkEventFocus *focus,
-		   GtkButton *button)
-{
-	gtk_widget_hide(widget);
-	return TRUE;
-}
-
-static void
-on_info_button_clicked(GtkButton *button,
-		       GebrJobControl *jc)
-{
-	static GtkWidget *popup = NULL;
-
-	GtkWidget *toplevel = gtk_widget_get_toplevel(GTK_WIDGET(button));
-	GdkWindow *window = gtk_widget_get_window(toplevel);
-	GtkAllocation a;
-	gint x, y;
-
-	gdk_window_get_origin(window, &x, &y);
-	gtk_widget_get_allocation(GTK_WIDGET(button), &a);
-
-	if (!popup) {
-		popup = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-		g_signal_connect(popup, "focus-out-event",
-				 G_CALLBACK(on_popup_focus_out), button);
-		gtk_window_set_resizable(GTK_WINDOW(popup), FALSE);
-		gtk_window_set_decorated(GTK_WINDOW(popup), FALSE);
-		GtkWidget *widget = GTK_WIDGET(gtk_builder_get_object(jc->priv->builder, "servers_widget"));
-		gtk_container_add(GTK_CONTAINER(popup), widget);
-	} else
-		gtk_widget_show(popup);
-
-	gtk_window_move(GTK_WINDOW(popup), x+a.x, y+a.y+a.height);
-	gtk_widget_show_all(popup);
 }
 
 static void
@@ -903,7 +866,7 @@ gebr_job_control_load_details(GebrJobControl *jc,
 	output_file = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "output_label"));
 	log_file = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "error_label"));
 	job_group = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "job_group"));
-	info_button_image = GTK_IMAGE(gtk_builder_get_object(jc->priv->builder, "info_button_image"));
+	info_button_image = GTK_IMAGE(gtk_bin_get_child(GTK_BIN(jc->priv->info_button)));
 
 	gebr_job_get_io(job, &input_file_str, &output_file_str, &log_file_str);
 
@@ -929,13 +892,13 @@ gebr_job_control_load_details(GebrJobControl *jc,
 	switch (gebr_job_get_exec_speed(job))
 	{
 	case 1:
-		gtk_image_set_from_stock(info_button_image, "gebr-speed-low", GTK_ICON_SIZE_MENU);
+		gtk_image_set_from_stock(info_button_image, "gebr-speed-low", GTK_ICON_SIZE_LARGE_TOOLBAR);
 		break;
 	case 2: case 3: case 4:
-		gtk_image_set_from_stock(info_button_image, "gebr-speed-medium", GTK_ICON_SIZE_MENU);
+		gtk_image_set_from_stock(info_button_image, "gebr-speed-medium", GTK_ICON_SIZE_LARGE_TOOLBAR);
 		break;
 	case 5:
-		gtk_image_set_from_stock(info_button_image, "gebr-speed-high", GTK_ICON_SIZE_MENU);
+		gtk_image_set_from_stock(info_button_image, "gebr-speed-high", GTK_ICON_SIZE_LARGE_TOOLBAR);
 		break;
 	default:
 		g_warn_if_reached();
@@ -1289,9 +1252,14 @@ gebr_job_control_new(void)
 	wait_button = GTK_BUTTON(gtk_builder_get_object(jc->priv->builder, "subheader_button"));
 	g_signal_connect(wait_button, "clicked", G_CALLBACK(on_job_wait_button), jc);
 
-	GtkButton *info_button;
-	info_button = GTK_BUTTON(gtk_builder_get_object(jc->priv->builder, "info_button"));
-	g_signal_connect(info_button, "clicked", G_CALLBACK(on_info_button_clicked), jc);
+	jc->priv->info_button = gebr_gui_tool_button_new();
+	gtk_button_set_relief(GTK_BUTTON(jc->priv->info_button), GTK_RELIEF_NONE);
+	gtk_container_add(GTK_CONTAINER(jc->priv->info_button), gtk_image_new());
+	gtk_widget_show_all(jc->priv->info_button);
+	GtkBox *box = GTK_BOX(gtk_builder_get_object(jc->priv->builder, "info_box"));
+	GtkWidget *widget = GTK_WIDGET(gtk_builder_get_object(jc->priv->builder, "servers_widget"));
+	gebr_gui_tool_button_add(GEBR_GUI_TOOL_BUTTON(jc->priv->info_button), widget);
+	gtk_box_pack_start(box, jc->priv->info_button, FALSE, TRUE, 0);
 
 	GtkInfoBar *info = GTK_INFO_BAR(gtk_builder_get_object(jc->priv->builder, "issues_info_bar"));
 	if (!gtk_widget_get_visible(GTK_WIDGET(info)))
