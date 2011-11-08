@@ -1163,12 +1163,6 @@ job_control_popup_menu(GtkWidget * widget, GebrJobControl *jc)
 	return NULL;
 }
 
-static void
-on_filter_ok_clicked(GtkButton *button, GtkWidget *popup)
-{
-	gtk_widget_hide(popup);
-}
-
 /* Public methods {{{1 */
 GebrJobControl *
 gebr_job_control_new(void)
@@ -1643,41 +1637,11 @@ gebr_job_control_hide(GebrJobControl *jc)
 }
 
 void
-gebr_job_control_open_filter(GebrJobControl *jc,
-			     GtkWidget *button)
+gebr_job_control_setup_filter_button(GebrJobControl *jc,
+				     GebrGuiToolButton *tool_button)
 {
-	static GtkWidget *popup = NULL;
-
-	GtkWidget *toplevel = gtk_widget_get_toplevel(button);
-	GdkWindow *window = gtk_widget_get_window(toplevel);
-	GtkAllocation a;
-	gint x, y;
-
-	gdk_window_get_origin(window, &x, &y);
-	gtk_widget_get_allocation(button, &a);
-
-	if (!popup) {
-		popup = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-		gtk_window_set_transient_for(GTK_WINDOW(popup), GTK_WINDOW(gebr.window));
-		gtk_window_set_decorated(GTK_WINDOW(popup), FALSE);
-		gtk_window_set_resizable(GTK_WINDOW(popup), FALSE);
-		gtk_window_set_modal(GTK_WINDOW(popup), TRUE);
-		GtkWidget *widget = GTK_WIDGET(gtk_builder_get_object(jc->priv->builder, "tl-filter"));
-		GtkButton *button = GTK_BUTTON(gtk_builder_get_object(jc->priv->builder, "filter-ok"));
-		g_signal_connect(button, "clicked", G_CALLBACK(on_filter_ok_clicked), popup);
-		gtk_container_add(GTK_CONTAINER(popup), widget);
-	} else
-		gtk_widget_show(popup);
-
-	if (gtk_combo_box_get_active(jc->priv->group_combo) == -1)
-		gtk_combo_box_set_active(jc->priv->group_combo, 0);
-
-	if (gtk_combo_box_get_active(jc->priv->status_combo) == -1)
-		gtk_combo_box_set_active(jc->priv->status_combo, 0);
-
-	gtk_window_move(GTK_WINDOW(popup), x+a.x, y+a.y+a.height);
-	gtk_widget_show_all(popup);
-	gdk_keyboard_grab(popup->window, TRUE, GDK_CURRENT_TIME);
+	GtkWidget *widget = GTK_WIDGET(gtk_builder_get_object(jc->priv->builder, "tl-filter"));
+	gebr_gui_tool_button_add(tool_button, widget);
 }
 
 void

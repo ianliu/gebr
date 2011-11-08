@@ -580,6 +580,8 @@ void gebr_setup_ui(void)
 	/*
 	 * Notebook's page "Job control"
 	 */
+	gebr.job_control = gebr_job_control_new();
+
 	toolbar = gtk_toolbar_new();
 	gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_ICONS);
 
@@ -593,11 +595,16 @@ void gebr_setup_ui(void)
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
 					 (gtk_action_group_get_action(gebr.action_group_job_control, "job_control_stop"))), -1);
 
-	GtkWidget *item = gtk_action_create_tool_item(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_filter"));
-	g_signal_connect(item, "clicked", G_CALLBACK(on_job_control_filter), NULL);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(item), -1);
+	GtkWidget *tool_button = gebr_gui_tool_button_new();
+	gtk_container_add(GTK_CONTAINER(tool_button),
+			  gtk_image_new_from_stock("filter", GTK_ICON_SIZE_LARGE_TOOLBAR));
+	gtk_button_set_relief(GTK_BUTTON(tool_button), GTK_RELIEF_NONE);
+	gebr_job_control_setup_filter_button(gebr.job_control, GEBR_GUI_TOOL_BUTTON(tool_button));
 
-	gebr.job_control = gebr_job_control_new();
+	GtkToolItem *item = gtk_tool_item_new();
+	gtk_container_add(GTK_CONTAINER(item), tool_button);
+	gtk_widget_show_all(GTK_WIDGET(item));
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
 
 	vbox = gtk_vbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);

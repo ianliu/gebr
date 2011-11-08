@@ -20,6 +20,7 @@
 
 #include <gtk/gtk.h>
 #include "gebr-job.h"
+#include <libgebr/gui/gui.h>
 
 G_BEGIN_DECLS
 
@@ -117,12 +118,6 @@ void gebr_job_control_show(GebrJobControl *jc);
 void gebr_job_control_hide(GebrJobControl *jc);
 
 /**
- * gebr_job_control_open_filter:
- */
-void gebr_job_control_open_filter(GebrJobControl *jc,
-				  GtkWidget *button);
-
-/**
  * gebr_job_control_remove:
  *
  * Removes @job from the interface and frees its structure, so as its tasks.
@@ -137,6 +132,14 @@ void gebr_job_control_remove(GebrJobControl *jc,
  * Returns: The #GtkTreeModel for this job control.
  */
 GtkTreeModel *gebr_job_control_get_model(GebrJobControl *jc);
+
+/**
+ * gebr_job_control_setup_filter_button:
+ *
+ * Adds the filter widget into @tool_button.
+ */
+void gebr_job_control_setup_filter_button(GebrJobControl *jc,
+					  GebrGuiToolButton *tool_button);
 
 G_END_DECLS
 

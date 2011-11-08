@@ -15,8 +15,8 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __CALLBACKS_H
-#define __CALLBACKS_H
+#ifndef __GEBR_CALLBACKS_H__
+#define __GEBR_CALLBACKS_H__
 
 #include <gtk/gtk.h>
 
@@ -219,7 +219,6 @@ void on_server_common_stop(void);
  */
 void open_url_on_press_event(void);
 
-void on_job_control_filter(GtkWidget *button);
-
 G_END_DECLS
-#endif				//__CALLBACKS_H
+
+#endif /* __GEBR_CALLBACKS_H__ */
