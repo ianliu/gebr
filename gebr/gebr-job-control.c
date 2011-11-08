@@ -1238,6 +1238,7 @@ gebr_job_control_new(void)
 	jc->priv->group_filter = GTK_TREE_MODEL(gebr.ui_server_list->common.combo_store);
 	gtk_combo_box_set_model(group_cb, jc->priv->group_filter);
 	g_signal_connect(jc->priv->group_combo, "changed", G_CALLBACK(on_group_cb_changed), jc);
+	gtk_combo_box_set_active(jc->priv->group_combo, 0);
 
 	/* by Status of job */
 	GtkListStore *store = gtk_list_store_new(ST_N_COLUMN,
@@ -1248,6 +1249,8 @@ gebr_job_control_new(void)
 	gebr_jc_populate_status_cb(jc);
 	gtk_combo_box_set_model(status_cb, GTK_TREE_MODEL(jc->priv->status_model));
 	g_signal_connect(jc->priv->status_combo, "changed", G_CALLBACK(on_cb_changed), jc);
+	gtk_combo_box_set_active(jc->priv->status_combo, 0);
+
 
 	/*
 	 * Right side
