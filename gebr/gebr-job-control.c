@@ -1130,6 +1130,14 @@ job_control_popup_menu(GtkWidget * widget, GebrJobControl *jc)
 	return NULL;
 }
 
+static void
+on_filter_show_unselect_jobs(GtkToggleButton *button,
+			     GebrJobControl *jc)
+{
+	if (gtk_toggle_button_get_active(button))
+		gebr_job_control_select_job(jc, NULL);
+}
+
 /* Public methods {{{1 */
 GebrJobControl *
 gebr_job_control_new(void)
@@ -1592,6 +1600,9 @@ gebr_job_control_select_job(GebrJobControl *jc, GebrJob *job)
 		GtkTreePath *path = gtk_tree_model_get_path(sort, &sort_iter);
 		gtk_tree_view_set_cursor(GTK_TREE_VIEW(jc->priv->view), path, NULL, FALSE);
 		gtk_tree_path_free(path);
+	} else {
+		GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(jc->priv->view));
+		gtk_tree_selection_unselect_all(selection);
 	}
 }
 
@@ -1613,6 +1624,7 @@ gebr_job_control_setup_filter_button(GebrJobControl *jc,
 				     GebrGuiToolButton *tool_button)
 {
 	GtkWidget *widget = GTK_WIDGET(gtk_builder_get_object(jc->priv->builder, "tl-filter"));
+	g_signal_connect(tool_button, "toggled", G_CALLBACK(on_filter_show_unselect_jobs), jc);
 	gebr_gui_tool_button_add(tool_button, widget);
 }
 
