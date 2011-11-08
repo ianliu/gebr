@@ -542,26 +542,32 @@ job_control_fill_servers_info(GebrJobControl *jc)
 
 	g_string_free(resources, TRUE);
 
-	GString *servers_list = g_string_new(NULL);
-	GString *servers_info = g_string_new(NULL);
-	GtkLabel *servers_label = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "servers_text"));
-
+	GtkSizeGroup *sgroup = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
+	GtkBox *servers_box = GTK_BOX(gtk_builder_get_object(jc->priv->builder, "servers_box"));
+	gtk_container_foreach(GTK_CONTAINER(servers_box), (GtkCallback)gtk_widget_destroy, NULL);
 
 	for (i = 0; servers[i]; i++) {
 		const gchar *server;
-		if (!g_strcmp0(servers[i], "127.0.0.1")) {
+		if (!g_strcmp0(servers[i], "127.0.0.1"))
 			 server = server_get_name_from_address(servers[i]);
-		} else
+		else
 			server = servers[i];
-		g_string_append_printf(servers_list, "%s\n", server);
+		GtkWidget *hbox = gtk_hbox_new(FALSE, 5);
+		GtkWidget *pbar = gtk_progress_bar_new();
+		GtkWidget *label = gtk_label_new(server);
+
+		GebrTask *task = gebr_job_get_task_from_server(job, servers[i]);
+
+		gtk_size_group_add_widget(sgroup, label);
+		gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(pbar),
+					      task? gebr_task_get_percentage(task) : 0);
+		gtk_widget_set_size_request(pbar, -1, 5);
+
+		gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, TRUE, 0);
+		gtk_box_pack_start(GTK_BOX(hbox), pbar, FALSE, TRUE, 0);
+		gtk_box_pack_start(servers_box, hbox, FALSE, TRUE, 0);
+		gtk_widget_show_all(hbox);
 	}
-
-	g_string_append(servers_info, servers_list->str);
-
-	gtk_label_set_text(servers_label, servers_info->str);
-
-	g_string_free(servers_info, TRUE);
-	g_string_free(servers_list, TRUE);
 }
 
 static void

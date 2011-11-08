@@ -237,6 +237,7 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 
 			GebrTask *task = gebr_task_new(server, rid->str, frac->str);
 			gebr_task_init_details(task, status, start_date, finish_date, issues, cmd_line, queue, moab_jid, output, n_procs, niceness, last_run_date);
+			gebr_task_set_percentage(task, g_strtod(job_percentage->str, NULL));
 			gebr_server_append_task(server, task);
 
 			job = gebr_job_control_find(gebr.job_control, rid->str);
