@@ -246,7 +246,11 @@ jobs_visible_for_status(GtkTreeModel *model,
 	if (!job)
 		return FALSE;
 
-	if (gebr_job_get_status(job) == combo_status)
+	enum JobStatus status = gebr_job_get_status(job);
+
+	if (status == combo_status)
+		return TRUE;
+	else if (status == JOB_STATUS_FAILED && combo_status == JOB_STATUS_CANCELED)
 		return TRUE;
 
 	return FALSE;
@@ -1032,7 +1036,7 @@ gebr_jc_populate_status_cb(GebrJobControl *jc)
 	gtk_list_store_append(store, &iter);
 	gtk_list_store_set(store, &iter,
 	                   ST_ICON, GTK_STOCK_CANCEL,
-	                   ST_TEXT, _("Canceled"),
+	                   ST_TEXT, _("Canceled/Failed"),
 	                   ST_STATUS, JOB_STATUS_CANCELED,
 	                   -1);
 
