@@ -415,6 +415,12 @@ void on_notebook_switch_page (GtkNotebook     *notebook,
 	case NOTEBOOK_PAGE_JOB_CONTROL:
 		gebr_job_control_hide(gebr.job_control);
 		break;
+	case NOTEBOOK_PAGE_FLOW_BROWSE:
+		gebr_flow_browse_hide(gebr.ui_flow_browse);
+		break;
+	case NOTEBOOK_PAGE_FLOW_EDITION:
+		gebr_flow_edition_hide(gebr.ui_flow_edition);
+		break;
 	default:
 		break;
 	}
@@ -423,6 +429,12 @@ void on_notebook_switch_page (GtkNotebook     *notebook,
 	{
 	case NOTEBOOK_PAGE_JOB_CONTROL:
 		gebr_job_control_show(gebr.job_control);
+		break;
+	case NOTEBOOK_PAGE_FLOW_BROWSE:
+		gebr_flow_browse_show(gebr.ui_flow_browse);
+		break;
+	case NOTEBOOK_PAGE_FLOW_EDITION:
+		gebr_flow_edition_show(gebr.ui_flow_edition);
 		break;
 	default:
 		break;

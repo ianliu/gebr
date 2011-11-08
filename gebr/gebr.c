@@ -127,7 +127,8 @@ gebr_init(gboolean has_config)
 
 	gebr_post_config(has_config);
 
-	gtk_range_set_value(GTK_RANGE(gebr.flow_exec_speed_widget), gebr.config.flow_exec_speed);
+	gtk_adjustment_set_value(gebr.flow_exec_adjustment, gebr.config.flow_exec_speed);
+	gtk_adjustment_value_changed(gebr.flow_exec_adjustment);
 
 	/* check for a menu list change */
 	if (menu_refresh_needed() == TRUE) {

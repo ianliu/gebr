@@ -78,7 +78,7 @@ struct gebr {
 	GHashTable * help_edit_windows;
 	GHashTable * xmls_by_filename;
 
-	GtkWidget *flow_exec_speed_widget;
+	GtkAdjustment *flow_exec_adjustment;
 
 	GebrValidator *validator;
 

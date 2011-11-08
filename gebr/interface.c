@@ -187,17 +187,35 @@ static const GtkActionEntry actions_entries_server[] = {
 
 static void assembly_menus(GtkMenuBar * menu_bar);
 
-static gboolean
-change_value(GtkRange *range, GtkScrollType scroll, gdouble value, gpointer user_data)
+static void
+adjustment_value_changed(GtkAdjustment *adj)
 {
-	GtkAdjustment *adj = gtk_range_get_adjustment(range);
-	gdouble min, max;
-	min = gtk_adjustment_get_lower(adj);
-	max = gtk_adjustment_get_upper(adj);
-	gint speed = (int) CLAMP(round(value), min, max);
-	gebr.config.flow_exec_speed = speed;
-	gtk_range_set_value(range, speed);
-	return TRUE;
+	gdouble value = gtk_adjustment_get_value(adj);
+
+	gebr.config.flow_exec_speed = (int)round(value);
+}
+
+static void
+change_value(GtkRange *range, gpointer user_data)
+{
+	GtkWidget *speed_button = user_data;
+	gdouble value = gtk_range_get_value(range);
+
+	GtkImage *speed_button_image = GTK_IMAGE(gtk_bin_get_child(GTK_BIN(speed_button)));
+	switch ((int) value)
+	{
+	case 1:
+		gtk_image_set_from_stock(speed_button_image, "gebr-speed-low", GTK_ICON_SIZE_LARGE_TOOLBAR);
+		break;
+	case 2: case 3: case 4:
+		gtk_image_set_from_stock(speed_button_image, "gebr-speed-medium", GTK_ICON_SIZE_LARGE_TOOLBAR);
+		break;
+	case 5:
+		gtk_image_set_from_stock(speed_button_image, "gebr-speed-high", GTK_ICON_SIZE_LARGE_TOOLBAR);
+		break;
+	default:
+		g_warn_if_reached();
+	}
 }
 
 static gboolean
@@ -235,6 +253,37 @@ speed_controller_query_tooltip(GtkWidget  *widget,
 	gtk_tooltip_set_text (tooltip, text_tooltip);
 	return TRUE;
 }
+
+static gboolean
+speed_button_tooltip (GtkWidget  *widget,
+                      gint        x,
+                      gint        y,
+                      gboolean    keyboard_mode,
+                      GtkTooltip *tooltip,
+                      gpointer    user_data)
+{
+	gint value = gebr.config.flow_exec_speed;
+
+	const gchar * text_tooltip;
+	switch (value) {
+	case 1:
+		text_tooltip = _("Low performance\nClick here to change execution speed");
+		break;
+	case 2: case 3: case 4:
+		text_tooltip = _("Medium performance\nClick here to change execution speed");
+		break;
+	case 5:
+		text_tooltip = _("High performance\nClick here to change execution speed");
+		break;
+	default:
+		text_tooltip = "";
+		g_return_val_if_reached(FALSE);
+		break;
+	}
+	gtk_tooltip_set_text (tooltip, text_tooltip);
+	return TRUE;
+}
+
 static gboolean
 toggle_button_tooltip (GtkWidget  *widget,
 		       gint        x,
@@ -243,8 +292,8 @@ toggle_button_tooltip (GtkWidget  *widget,
 		       GtkTooltip *tooltip,
 		       gpointer    user_data)
 {
-	GtkToggleToolButton *toggle= GTK_TOGGLE_TOOL_BUTTON(widget);
-	gboolean active=  gtk_toggle_tool_button_get_active (toggle);
+	GtkToggleButton *toggle= GTK_TOGGLE_BUTTON(widget);
+	gboolean active=  gtk_toggle_button_get_active (toggle);
 	const gchar * text_tooltip;
 	if (active)
 		text_tooltip = _("I want to use all resources!");
@@ -257,10 +306,10 @@ toggle_button_tooltip (GtkWidget  *widget,
  *Change the nice of the next execution
  * */
 static void
-change_niceness(GtkToggleToolButton *togglebutton,
+change_niceness(GtkToggleButton *togglebutton,
 		gpointer         user_data)
 { 
-	gboolean active = gtk_toggle_tool_button_get_active (togglebutton);
+	gboolean active = gtk_toggle_button_get_active (togglebutton);
 	gebr.config.niceness = active ? 0 : 19;
 }
 
@@ -270,20 +319,7 @@ change_niceness(GtkToggleToolButton *togglebutton,
 static void 
 on_show_scale(GtkWidget * scale)
 {
-	g_signal_handlers_block_by_func(scale, change_value, NULL);
-	gtk_range_set_value(GTK_RANGE(scale), ABS(gebr.config.flow_exec_speed));
-	g_signal_handlers_unblock_by_func(scale, change_value, NULL);
-}
-
-/*
- * Updates the value of the toggle 
- */
-static void 
-on_show_toggle(GtkWidget * toggle)
-{
-	g_signal_handlers_block_by_func(toggle, change_niceness, NULL);
-	gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(toggle), gebr.config.niceness == 0 ? TRUE : FALSE);
-	g_signal_handlers_unblock_by_func(toggle, change_niceness, NULL);
+	gtk_range_set_value(GTK_RANGE(scale), gebr.config.flow_exec_speed);
 }
 
 /*
@@ -291,43 +327,59 @@ on_show_toggle(GtkWidget * toggle)
  * which is a GtkScale to control the performance of flow execution.
  */
 static void
-insert_speed_controler(GtkToolbar *toolbar)
+insert_speed_controler(GtkToolbar *toolbar, GtkWidget **toggle_button)
 {
-	GtkToolItem *turtle_item = gtk_tool_item_new();
-	GtkToolItem *scale_item = gtk_tool_item_new();
-	GtkToolItem *bunny_item = gtk_tool_item_new();
-	GtkWidget *scale = gtk_hscale_new_with_range(1, 5, 1);
-	GtkToolItem *toggle = gtk_toggle_tool_button_new_from_stock(GTK_STOCK_ADD );
-	GtkAdjustment *adjustment = gtk_range_get_adjustment(GTK_RANGE(scale));
+	if (!gebr.flow_exec_adjustment) {
+		gebr.flow_exec_adjustment = GTK_ADJUSTMENT(gtk_adjustment_new(1, 1, 6, 1, 1, 1));
+		g_signal_connect(gebr.flow_exec_adjustment, "value-changed", G_CALLBACK(adjustment_value_changed), NULL);
+	}
 
-	gtk_adjustment_set_page_increment(adjustment, 1);
+	GtkToolItem *speed_item = gtk_tool_item_new();
+	GtkWidget *speed_button = gebr_gui_tool_button_new();
+	gtk_button_set_relief(GTK_BUTTON(speed_button), GTK_RELIEF_NONE);
+	gtk_container_add(GTK_CONTAINER(speed_button), gtk_image_new());
+
+	GtkWidget *vbox = gtk_hbox_new(FALSE, 5);
+
+	GtkWidget *turtle = gtk_image_new_from_stock("turtle", GTK_ICON_SIZE_LARGE_TOOLBAR);
+	gtk_box_pack_start(GTK_BOX(vbox), turtle, FALSE, FALSE, 0);
+
+	GtkWidget *scale = gtk_hscale_new(gebr.flow_exec_adjustment);
 	gtk_scale_set_draw_value(GTK_SCALE(scale), FALSE);
 	gtk_scale_set_digits(GTK_SCALE(scale), 0);
 	g_object_set(scale, "has-tooltip",TRUE, NULL);
-	gtk_range_set_update_policy(GTK_RANGE(scale), GTK_UPDATE_DISCONTINUOUS);
-	g_signal_connect(scale, "change-value", G_CALLBACK(change_value), NULL);
+
+	g_signal_connect(scale, "value-changed", G_CALLBACK(change_value), speed_button);
 	g_signal_connect(scale, "query-tooltip", G_CALLBACK(speed_controller_query_tooltip), NULL);
 	g_signal_connect(scale, "map", G_CALLBACK(on_show_scale), NULL);
 
+	gtk_widget_set_size_request(GTK_WIDGET(scale), 100, -1);
+	gtk_box_pack_start(GTK_BOX(vbox), scale, FALSE, FALSE, 0);
 
-	gtk_container_add(GTK_CONTAINER(turtle_item), gtk_image_new_from_stock("turtle", GTK_ICON_SIZE_LARGE_TOOLBAR));
-	gtk_container_add(GTK_CONTAINER(bunny_item), gtk_image_new_from_stock("bunny", GTK_ICON_SIZE_LARGE_TOOLBAR));
-	gtk_container_add(GTK_CONTAINER(scale_item), scale);
-	gtk_widget_set_size_request(GTK_WIDGET(scale_item), 100, -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), turtle_item, -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), scale_item, -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), bunny_item, -1);
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), toggle, -1);
+	GtkWidget *bunny = gtk_image_new_from_stock("bunny", GTK_ICON_SIZE_LARGE_TOOLBAR);
+	gtk_box_pack_start(GTK_BOX(vbox), bunny, FALSE, FALSE, 0);
 
+	GtkWidget *toggle = gtk_toggle_button_new();
+	if (toggle_button)
+		*toggle_button = toggle;
+	gtk_button_set_relief(GTK_BUTTON(toggle), GTK_RELIEF_NONE);
+	gtk_container_add(GTK_CONTAINER(toggle), gtk_image_new_from_stock(GTK_STOCK_ADD, GTK_ICON_SIZE_LARGE_TOOLBAR));
 	g_object_set(toggle, "has-tooltip",TRUE, NULL);
+
 	g_signal_connect(toggle, "toggled", G_CALLBACK(change_niceness), NULL);
 	g_signal_connect(toggle, "query-tooltip", G_CALLBACK(toggle_button_tooltip), NULL);
-	g_signal_connect(toggle, "map", G_CALLBACK(on_show_toggle), NULL);
 
-	gtk_container_child_set(GTK_CONTAINER(toolbar), GTK_WIDGET(turtle_item), "homogeneous", TRUE, NULL);
-	gtk_container_child_set(GTK_CONTAINER(toolbar), GTK_WIDGET(bunny_item), "homogeneous", TRUE, NULL);
+	gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(toggle), FALSE, FALSE, 0);
 
-	gebr.flow_exec_speed_widget = scale;
+	gtk_widget_show_all(vbox);
+	gebr_gui_tool_button_add(GEBR_GUI_TOOL_BUTTON(speed_button), vbox);
+
+	g_object_set(speed_button, "has-tooltip",TRUE, NULL);
+	g_signal_connect(speed_button, "query-tooltip", G_CALLBACK(speed_button_tooltip), NULL);
+
+	gtk_widget_show_all(speed_button);
+	gtk_container_add(GTK_CONTAINER(speed_item), speed_button);
+	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), speed_item, -1);
 }
 
 /*
@@ -521,9 +573,10 @@ void gebr_setup_ui(void)
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar),
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
 					 (gtk_action_group_get_action(gebr.action_group_flow, "flow_execute"))), -1);
-	insert_speed_controler(GTK_TOOLBAR(toolbar));
 
 	gebr.ui_flow_browse = flow_browse_setup_ui(menu);
+	insert_speed_controler(GTK_TOOLBAR(toolbar), &gebr.ui_flow_browse->nice_button);
+
 	vbox = gtk_vbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), gebr.ui_flow_browse->widget, TRUE, TRUE, 0);
@@ -568,9 +621,9 @@ void gebr_setup_ui(void)
 			   GTK_TOOL_ITEM(gtk_action_create_tool_item
 					 (gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_execute"))), -1);
 
-	insert_speed_controler(GTK_TOOLBAR(toolbar));
-
 	gebr.ui_flow_edition = flow_edition_setup_ui();
+	insert_speed_controler(GTK_TOOLBAR(toolbar), &gebr.ui_flow_edition->nice_button);
+
 	vbox = gtk_vbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), gebr.ui_flow_edition->widget, TRUE, TRUE, 0);
