@@ -661,3 +661,15 @@ static void flow_browse_on_flow_move(void)
 {
 	document_save(GEBR_GEOXML_DOC(gebr.line), TRUE, TRUE);
 }
+
+void
+gebr_flow_browse_hide(GebrUiFlowBrowse *self)
+{
+	return;
+}
+
+void
+gebr_flow_browse_show(GebrUiFlowBrowse *self)
+{
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(self->nice_button), gebr.config.niceness == 0? TRUE : FALSE);
+}

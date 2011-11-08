@@ -73,6 +73,8 @@ typedef struct {
 		GtkWidget *help_edit;
 		GtkWidget *author;
 	} info;
+
+	GtkWidget *nice_button;
 } GebrUiFlowBrowse;
 
 /**
@@ -115,6 +117,10 @@ void flow_browse_load_revision(GebrGeoXmlRevision * revision, gboolean new);
 void flow_browse_show_help(void);
 
 void flow_browse_edit_help(void);
+
+void gebr_flow_browse_hide(GebrUiFlowBrowse *self);
+
+void gebr_flow_browse_show(GebrUiFlowBrowse *self);
 
 G_END_DECLS
 #endif				//__UI_FLOW_BROWSE_H

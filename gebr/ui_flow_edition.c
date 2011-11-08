@@ -1650,3 +1650,14 @@ void flow_program_check_sensitiveness (void)
 	}
 }
 
+void
+gebr_flow_edition_hide(struct ui_flow_edition *self)
+{
+	return;
+}
+
+void
+gebr_flow_edition_show(struct ui_flow_edition *self)
+{
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(self->nice_button), gebr.config.niceness == 0? TRUE : FALSE);
+}
