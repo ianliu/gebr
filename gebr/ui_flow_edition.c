@@ -106,7 +106,7 @@ menu_search_func(GtkTreeModel *model,
 	ld = desc ?  g_utf8_strdown(desc, -1)  : g_strdup("");
 	lk = g_utf8_strdown(key, -1);
 
-	match = gebr_utf8_strstr(lt, key) || gebr_utf8_strstr(ld, key);
+	match = gebr_utf8_strstr(lt, lk) || gebr_utf8_strstr(ld, lk);
 
 	g_free(title);
 	g_free(desc);
