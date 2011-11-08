@@ -44,6 +44,7 @@ libgebr_gui_la_SOURCES = 		\
 	gebr-gui-program-edit.c		\
 	gebr-gui-save-dialog.c		\
 	gebr-gui-sequence-edit.c	\
+	gebr-gui-tool-button.c		\
 	gebr-gui-utils.c 		\
 	gebr-gui-validatable-widget.c	\
 	gebr-gui-value-sequence-edit.c	\
@@ -66,6 +67,7 @@ libgebr_guisubinclude_HEADERS = 	\
 	gebr-gui-program-edit.h		\
 	gebr-gui-save-dialog.h		\
 	gebr-gui-sequence-edit.h	\
+	gebr-gui-tool-button.h		\
 	gebr-gui-utils.h		\
 	gebr-gui-validatable-widget.h	\
 	gebr-gui-value-sequence-edit.h	\
