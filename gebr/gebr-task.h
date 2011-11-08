@@ -132,6 +132,10 @@ const gchar *gebr_task_get_niceness(GebrTask *task);
 
 const gchar *gebr_task_get_last_run_date(GebrTask *task);
 
+void gebr_task_set_percentage(GebrTask *task, gdouble perc);
+
+gdouble gebr_task_get_percentage(GebrTask *task);
+
 G_END_DECLS
 
 #endif /* __GEBR_TASK_H__ */

@@ -47,6 +47,7 @@ struct _GebrTaskPriv {
 	gchar *rid;
 	gint frac;
 	gint total;
+	gdouble percentage;
 	GString *start_date;
 	GString *finish_date;
 	GString *issues;
@@ -375,4 +376,16 @@ const gchar *
 gebr_task_get_last_run_date(GebrTask *task)
 {
 	return task->priv->last_run_date->str;
+}
+
+void
+gebr_task_set_percentage(GebrTask *task, gdouble perc)
+{
+	task->priv->percentage = perc;
+}
+
+gdouble
+gebr_task_get_percentage(GebrTask *task)
+{
+	return task->priv->percentage;
 }
