@@ -1091,7 +1091,9 @@ gebr_jc_populate_status_cb(GebrJobControl *jc)
 static void
 on_job_disconnected(GebrJob *job, GebrJobControl *jc)
 {
+	BLOCK_SELECTION_CHANGED_SIGNAL(jc);
 	gebr_job_control_remove(jc, job);
+	UNBLOCK_SELECTION_CHANGED_SIGNAL(jc);
 }
 
 static void
