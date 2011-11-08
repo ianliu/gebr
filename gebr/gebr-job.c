@@ -742,3 +742,13 @@ gebr_job_set_exec_speed(GebrJob *job, gint exec_speed)
 {
 	job->priv->exec_speed = exec_speed;
 }
+
+GebrTask *
+gebr_job_get_task_from_server(GebrJob *job,
+			      const gchar *server)
+{
+	for (GList *i = job->priv->tasks; i; i = i->next)
+		if (g_strcmp0(gebr_task_get_server(i->data)->comm->address->str, server) == 0)
+			return i->data;
+	return NULL;
+}
