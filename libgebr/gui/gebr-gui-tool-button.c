@@ -92,6 +92,18 @@ popup_key_press(GtkWidget         *popup,
 	return FALSE;
 }
 
+static void
+popup_grab_notify(GtkWidget *popup,
+		  gboolean was_grabbed)
+{
+	if (was_grabbed) {
+		GdkWindow *window = gtk_widget_get_window(popup);
+		gdk_keyboard_grab(window, TRUE, GDK_CURRENT_TIME);
+		gdk_pointer_grab(window, TRUE, GDK_BUTTON_PRESS_MASK,
+				 NULL, NULL, GDK_CURRENT_TIME);
+	}
+}
+
 /* Class & Instance initialization {{{1 */
 static void
 gebr_gui_tool_button_init(GebrGuiToolButton *button)
@@ -109,6 +121,8 @@ gebr_gui_tool_button_init(GebrGuiToolButton *button)
 			 G_CALLBACK(popup_button_press), button);
 	g_signal_connect(button->priv->popup, "key-press-event",
 			 G_CALLBACK(popup_key_press), button);
+	g_signal_connect(button->priv->popup, "grab-notify",
+			 G_CALLBACK(popup_grab_notify), button);
 	gtk_window_set_resizable(GTK_WINDOW(button->priv->popup), FALSE);
 	gtk_container_add(GTK_CONTAINER(button->priv->popup), frame);
 }
