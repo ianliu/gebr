@@ -315,41 +315,6 @@ gebr_job_get_hostname(GebrJob *job)
 	return job->priv->hostname;
 }
 
-GList *
-gebr_job_get_groups(GebrJob *job)
-{
-	gint counter, i, j;
-	gchar **groups;
-	GList *servers_list, *groups_list = NULL;
-
-	groups = ui_server_get_all_tags(); 
-
-	for (i = 0; groups[i]; i++) {
-		servers_list = ui_server_servers_with_tag(groups[i]);
-		counter = 0;
-		for (GList *k = servers_list; k; k = k->next) {
-			GebrServer *server = k->data;
-			for (j = 0; job->priv->servers[j]; j++)
-				if (!g_strcmp0(job->priv->servers[j], server->comm->address->str))
-					counter++;
-		}
-		if (g_list_length(servers_list) == counter) 
-			groups_list = g_list_prepend(groups_list, g_strdup(groups[i]));
-	}
-
-	groups_list = g_list_sort(groups_list, (GCompareFunc)g_strcmp0);
-	return groups_list;
-}
-
-const gchar *
-gebr_job_get_group(GebrJob *job)
-{
-	GList *list = gebr_job_get_groups(job);
-	if (list)
-		g_debug("on gebr_job_get_group: %s", (gchar*)list->data);
-	return list ? list->data : NULL;
-}
-
 const gchar *
 gebr_job_get_queue(GebrJob *job)
 {
