@@ -264,23 +264,32 @@ speed_button_tooltip (GtkWidget  *widget,
 {
 	gint value = gebr.config.flow_exec_speed;
 
-	const gchar * text_tooltip;
+	gchar *speed;
 	switch (value) {
 	case 1:
-		text_tooltip = _("Low performance\nClick here to change execution speed");
+		speed = g_strdup(_("Very low performance"));
 		break;
-	case 2: case 3: case 4:
-		text_tooltip = _("Medium performance\nClick here to change execution speed");
+	case 2:
+		speed = g_strdup(_("Low performance"));
+		break;
+	case 3:
+		speed = g_strdup(_("Medium performance"));
+		break;
+	case 4:
+		speed = g_strdup(_("High performance"));
 		break;
 	case 5:
-		text_tooltip = _("High performance\nClick here to change execution speed");
+		speed = g_strdup(_("Very high performance"));
 		break;
 	default:
-		text_tooltip = "";
+		speed = g_strdup("");
 		g_return_val_if_reached(FALSE);
 		break;
 	}
+	const gchar * text_tooltip = g_strdup_printf(_("Execution speed: %s"), speed);
 	gtk_tooltip_set_text (tooltip, text_tooltip);
+
+	g_free(speed);
 	return TRUE;
 }
 
