@@ -1088,16 +1088,6 @@ tree_sort_func(GtkTreeModel *model,
 	return tva.tv_sec - tvb.tv_sec;
 }
 
-static gboolean
-server_group_separator_func(GtkTreeModel *model,
-			    GtkTreeIter *iter,
-			    gpointer data)
-{
-	gboolean is_sep;
-	gtk_tree_model_get(model, iter, TAG_SEP, &is_sep, -1);
-	return is_sep;
-}
-
 static void
 gebr_jc_populate_status_cb(GebrJobControl *jc)
 {
@@ -1427,7 +1417,7 @@ gebr_job_control_add(GebrJobControl *jc, GebrJob *job)
 	gtk_list_store_set(jc->priv->store, gebr_job_get_iter(job), JC_STRUCT, job, -1);
 	g_signal_connect(job, "disconnect", G_CALLBACK(on_job_disconnected), jc);
 
-	const gchar *group = gebr_job_get_group(job);
+	const gchar *group = gebr_job_get_server_group(job);
 	if (!group)
 		group = "";
 
