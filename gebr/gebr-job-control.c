@@ -331,7 +331,10 @@ build_servers_filter_list(GebrJobControl *jc)
 				   SERVER_POINTER, &server,
 				   -1);
 
-		if (!server || !gebr_comm_server_is_logged(server->comm) || is_autochoose)
+		if (!server || !server->comm)
+			continue;
+
+		if (!gebr_comm_server_is_logged(server->comm) || is_autochoose)
 			continue;
 
 		gtk_list_store_append(jc->priv->server_filter, &it);
@@ -1214,6 +1217,15 @@ on_filter_show_unselect_jobs(GtkToggleButton *button,
 		gebr_job_control_select_job(jc, NULL);
 }
 
+static void
+on_row_changed_model(GtkTreeModel *tree_model,
+                     GtkTreePath  *path,
+                     GtkTreeIter  *iter,
+                     GebrJobControl *jc)
+{
+	build_servers_filter_list(jc);
+}
+
 /* Public methods {{{1 */
 GebrJobControl *
 gebr_job_control_new(void)
@@ -1308,7 +1320,7 @@ gebr_job_control_new(void)
 	jc->priv->server_filter = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_POINTER);
 	gtk_combo_box_set_model(server_cb, GTK_TREE_MODEL(jc->priv->server_filter));
 	g_signal_connect(jc->priv->server_combo, "changed", G_CALLBACK(on_cb_changed), jc);
-	//g_signal_connect(gebr.ui_server_list->common.store, "row-changed", G_CALLBACK(build_servers_filter_list), jc);
+	g_signal_connect(gebr.ui_server_list->common.store, "row-changed", G_CALLBACK(on_row_changed_model), jc);
 
 	/* by Group of servers */
 	jc->priv->group_filter = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
@@ -1691,7 +1703,6 @@ void
 gebr_job_control_show(GebrJobControl *jc)
 {
 	jc->priv->timeout_source_id = g_timeout_add(5000, update_tree_view, jc);
-	build_servers_filter_list(jc);
 }
 
 void
