@@ -722,13 +722,13 @@ gebr_job_set_server_group(GebrJob *job, const gchar *server_group)
 {
 	if (job->priv->server_group)
 		g_free(job->priv->server_group);
-	job->priv->server_group = g_strdup(server_group);
+	job->priv->server_group = g_strdup(server_group ? server_group : "");
 }
 
 const gchar *
 gebr_job_get_server_group(GebrJob *job)
 {
-	return job->priv->server_group;
+	return job->priv->server_group ? job->priv->server_group : "";
 }
 
 gint

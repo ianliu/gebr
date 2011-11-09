@@ -48,7 +48,7 @@ struct _GebrJobControlPriv {
 	GtkListStore *store;
 	GtkTextBuffer *cmd_buffer;
 	GtkTextBuffer *text_buffer;
-	GtkTreeModel *group_filter;
+	GtkListStore *group_filter;
 	GtkWidget *cmd_view;
 	GtkWidget *label;
 	GtkWidget *text_view;
@@ -118,7 +118,34 @@ static GtkMenu *job_control_popup_menu(GtkWidget * widget, GebrJobControl *job_c
 
 static void job_control_fill_servers_info(GebrJobControl *jc);
 
+
 /* Private methods {{{1 */
+static gboolean
+get_server_group_iter(GebrJobControl *jc, const gchar *group, GtkTreeIter *iter)
+{
+	GtkTreeIter i;
+	GtkTreeModel *model = GTK_TREE_MODEL(jc->priv->group_filter);
+	gchar *g;
+	gboolean valid = gtk_tree_model_get_iter_first(model, &i);
+
+	if (valid)
+		valid = gtk_tree_model_iter_next(model, &i);
+
+	while (valid) {
+		gtk_tree_model_get(model, &i, 1, &g, -1);
+		if (g_strcmp0(g, group) == 0) {
+			if (iter)
+				*iter = i;
+			g_free(g);
+			return TRUE;
+		}
+		g_free(g);
+		valid = gtk_tree_model_iter_next(model, &i);
+	}
+
+	return FALSE;
+}
+
 static GebrJob *
 get_selected_job(GebrJobControl *jc)
 {
@@ -157,15 +184,15 @@ jobs_visible_for_group(GtkTreeModel *model,
 	if (!gtk_combo_box_get_active_iter (jc->priv->group_combo, &active))
 		return TRUE;
 
-	gtk_tree_model_get (jc->priv->group_filter, &active,
-	                    TAG_NAME, &combo_group, -1);
+	gtk_tree_model_get(GTK_TREE_MODEL(jc->priv->group_filter), &active,
+			   1, &combo_group, -1);
 
-	gchar *tmp = gtk_tree_model_get_string_from_iter(jc->priv->group_filter,
+	gchar *tmp = gtk_tree_model_get_string_from_iter(GTK_TREE_MODEL(jc->priv->group_filter),
 							 &active);
 	gint index = atoi(tmp);
 	g_free(tmp);
 
-	if (index == 0) // All servers
+	if (index == 0) // Any
 		return TRUE;
 
 	GebrJob *job;
@@ -284,29 +311,10 @@ on_cb_changed(GtkComboBox *combo,
 }
 
 static void
-on_group_cb_changed(GtkComboBox *combo,
-                    GebrJobControl *jc)
+build_servers_filter_list(GebrJobControl *jc)
 {
-	GtkTreeIter iter, active;
+	GtkTreeIter iter;
 	GtkTreeModel *model = GTK_TREE_MODEL(gebr.ui_server_list->common.store);
-	GtkTreeModel *group_model = gtk_combo_box_get_model(jc->priv->group_combo);
-
-	if (!gtk_combo_box_get_active_iter(jc->priv->group_combo, &active))
-		if (!gtk_tree_model_get_iter_first(group_model, &active))
-			return;
-
-	gboolean is_fs;
-	gchar *group;
-	gchar *tmp = gtk_tree_model_get_string_from_iter(group_model, &active);
-	if (atoi(tmp) == 0) {
-		group = NULL;
-		is_fs = FALSE;
-	} else
-		gtk_tree_model_get(group_model, &active,
-				   TAG_NAME, &group,
-				   TAG_FS, &is_fs,
-				   -1);
-	g_free(tmp);
 
 	gtk_list_store_clear(jc->priv->server_filter);
 
@@ -323,10 +331,7 @@ on_group_cb_changed(GtkComboBox *combo,
 				   SERVER_POINTER, &server,
 				   -1);
 
-		if (!server
-		    || !gebr_comm_server_is_logged(server->comm)
-		    || is_autochoose
-		    || !gebr_server_is_in_group(server, group, is_fs))
+		if (!server || !gebr_comm_server_is_logged(server->comm) || is_autochoose)
 			continue;
 
 		gtk_list_store_append(jc->priv->server_filter, &it);
@@ -337,10 +342,6 @@ on_group_cb_changed(GtkComboBox *combo,
 	}
 
 	gtk_combo_box_set_active(jc->priv->server_combo, 0);
-
-	on_cb_changed(combo, jc);
-
-	g_free(group);
 }
 
 static const gchar *
@@ -1002,16 +1003,6 @@ tree_sort_func(GtkTreeModel *model,
 	return tva.tv_sec - tvb.tv_sec;
 }
 
-static gboolean
-server_group_separator_func(GtkTreeModel *model,
-			    GtkTreeIter *iter,
-			    gpointer data)
-{
-	gboolean is_sep;
-	gtk_tree_model_get(model, iter, TAG_SEP, &is_sep, -1);
-	return is_sep;
-}
-
 static void
 gebr_jc_populate_status_cb(GebrJobControl *jc)
 {
@@ -1210,7 +1201,7 @@ gebr_job_control_new(void)
 	GtkComboBox *group_cb = GTK_COMBO_BOX(gtk_builder_get_object(jc->priv->builder, "filter-servers-group-cb"));
 	cell = gtk_cell_renderer_text_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(group_cb), cell, TRUE);
-	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(group_cb), cell, "text", TAG_NAME);
+	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(group_cb), cell, "text", 0);
 	jc->priv->group_combo = group_cb;
 
 	GtkComboBox *server_cb = GTK_COMBO_BOX(gtk_builder_get_object(jc->priv->builder, "filter-servers-cb"));
@@ -1232,12 +1223,15 @@ gebr_job_control_new(void)
 	jc->priv->server_filter = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_POINTER);
 	gtk_combo_box_set_model(server_cb, GTK_TREE_MODEL(jc->priv->server_filter));
 	g_signal_connect(jc->priv->server_combo, "changed", G_CALLBACK(on_cb_changed), jc);
+	//g_signal_connect(gebr.ui_server_list->common.store, "row-changed", G_CALLBACK(build_servers_filter_list), jc);
 
 	/* by Group of servers */
-	gtk_combo_box_set_row_separator_func(group_cb, server_group_separator_func, NULL, NULL);
-	jc->priv->group_filter = GTK_TREE_MODEL(gebr.ui_server_list->common.combo_store);
-	gtk_combo_box_set_model(group_cb, jc->priv->group_filter);
-	g_signal_connect(jc->priv->group_combo, "changed", G_CALLBACK(on_group_cb_changed), jc);
+	jc->priv->group_filter = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
+	GtkTreeIter iter;
+	gtk_list_store_append(jc->priv->group_filter, &iter);
+	gtk_list_store_set(jc->priv->group_filter, &iter, 0, _("Any"), -1);
+	gtk_combo_box_set_model(group_cb, GTK_TREE_MODEL(jc->priv->group_filter));
+	g_signal_connect(jc->priv->group_combo, "changed", G_CALLBACK(on_cb_changed), jc);
 	gtk_combo_box_set_active(jc->priv->group_combo, 0);
 
 	/* by Status of job */
@@ -1357,6 +1351,25 @@ gebr_job_control_add(GebrJobControl *jc, GebrJob *job)
 	gtk_list_store_append(jc->priv->store, gebr_job_get_iter(job));
 	gtk_list_store_set(jc->priv->store, gebr_job_get_iter(job), JC_STRUCT, job, -1);
 	g_signal_connect(job, "disconnect", G_CALLBACK(on_job_disconnected), jc);
+
+	const gchar *group = gebr_job_get_group(job);
+	if (!group)
+		group = "";
+
+	if (!get_server_group_iter(jc, group, NULL)) {
+		GtkTreeIter iter;
+		const gchar *tmp;
+
+		if (g_strcmp0(group, "") == 0)
+			tmp  = _("All Servers");
+		else
+			tmp = group;
+
+		gtk_list_store_append(jc->priv->group_filter, &iter);
+		gtk_list_store_set(jc->priv->group_filter, &iter,
+				   0, tmp,
+				   1, group, -1);
+	}
 }
 
 GebrJob *
@@ -1613,6 +1626,8 @@ void
 gebr_job_control_show(GebrJobControl *jc)
 {
 	jc->priv->timeout_source_id = g_timeout_add(5000, update_tree_view, jc);
+	build_servers_filter_list(jc);
+	g_debug("SHOWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW");
 }
 
 void
