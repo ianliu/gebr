@@ -752,3 +752,9 @@ gebr_job_get_task_from_server(GebrJob *job,
 			return i->data;
 	return NULL;
 }
+
+GList *
+gebr_job_get_list_of_tasks(GebrJob *job)
+{
+	return job->priv->tasks;
+}

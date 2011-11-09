@@ -160,6 +160,8 @@ gint gebr_job_get_exec_speed(GebrJob *job);
 
 void gebr_job_set_exec_speed(GebrJob *job, gint exec_speed);
 
+GList *gebr_job_get_list_of_tasks(GebrJob *job);
+
 GebrTask *gebr_job_get_task_from_server(GebrJob *job,
 					const gchar *server);
 
