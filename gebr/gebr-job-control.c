@@ -545,13 +545,13 @@ job_control_fill_servers_info(GebrJobControl *jc)
 
 static void
 job_control_disconnect_signals(GebrJobControl *jc,
-                               gboolean finished,
-                               gboolean running,
-                               gboolean saved)
+                               gboolean can_close,
+                               gboolean can_kill,
+                               gboolean can_save)
 {
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_close"), finished);
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_stop"), running);
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_save"), saved);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_close"), can_close);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_stop"), can_kill);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_save"), can_save);
 
 	if (jc->priv->last_selection.job) {
 		g_signal_handler_disconnect(jc->priv->last_selection.job,
@@ -568,21 +568,26 @@ job_control_disconnect_signals(GebrJobControl *jc,
 static void
 gebr_jc_get_jobs_state(GebrJobControl *jc,
                         GList *jobs,
-                        gboolean *finished,
-                        gboolean *running)
+                        gboolean *can_close,
+                        gboolean *can_kill)
 {
-	*finished = FALSE;
-	*running = FALSE;
+	*can_close = FALSE;
+	*can_kill = FALSE;
 	GtkTreeIter iter;
 	GebrJob *job;
 
 	for (GList *i = jobs; i; i = i->next) {
 		if (gtk_tree_model_get_iter(GTK_TREE_MODEL(jc->priv->store), &iter, (GtkTreePath*)i->data)) {
 			gtk_tree_model_get(GTK_TREE_MODEL(jc->priv->store), &iter, JC_STRUCT, &job, -1);
-			if (!(*finished) && gebr_job_is_stopped(job))
-				*finished = TRUE;
-			if (!(*running) && !gebr_job_is_stopped(job))
-				*running = TRUE;
+
+			if (!(*can_close) && gebr_job_can_close(job))
+				*can_close = TRUE;
+
+			if (!(*can_kill) && gebr_job_can_kill(job))
+				*can_kill = TRUE;
+
+			if (*can_close && *can_kill)
+				break;
 		}
 	}
 }
@@ -593,10 +598,10 @@ job_control_on_cursor_changed(GtkTreeSelection *selection,
 {
 	GtkTreeModel *model;
 	GList *rows = gtk_tree_selection_get_selected_rows(selection, &model);
-	gboolean finished = FALSE, running = FALSE;
+	gboolean can_close, can_kill;
 
 	if (!rows) {
-		job_control_disconnect_signals(jc, finished, running, FALSE);
+		job_control_disconnect_signals(jc, FALSE, FALSE, FALSE);
 		jc->priv->last_selection.job = NULL;
 		gebr_job_control_info_set_visible(jc, FALSE, _("Please, select a job at the list on the left"));
 		return;
@@ -604,19 +609,20 @@ job_control_on_cursor_changed(GtkTreeSelection *selection,
 
 	GebrJob *job = NULL;
 
+	gebr_jc_get_jobs_state(jc, rows, &can_close, &can_kill);
+
 	if (!rows->next) {
 		GtkTreeIter iter;
 		if (gtk_tree_model_get_iter(model, &iter, (GtkTreePath*)rows->data))
 			gtk_tree_model_get(model, &iter, JC_STRUCT, &job, -1);
 		else
 			g_warn_if_reached();
-	} else
-		gebr_jc_get_jobs_state(jc, rows, &finished, &running);
+	}
 
 	gboolean has_job = (job != NULL);
 
 	if (!has_job) {
-		job_control_disconnect_signals(jc, finished, running, TRUE);
+		job_control_disconnect_signals(jc, can_close, can_kill, TRUE);
 		jc->priv->last_selection.job = NULL;
 		gebr_job_control_info_set_visible(jc, FALSE, _("Multiple jobs selected"));
 		return;
@@ -626,8 +632,7 @@ job_control_on_cursor_changed(GtkTreeSelection *selection,
 	GebrJob *old_job = jc->priv->last_selection.job;
 
 	if (has_job) {
-		finished = gebr_job_is_stopped(job);
-		job_control_disconnect_signals(jc, finished, !finished, TRUE);
+		job_control_disconnect_signals(jc, can_close, can_kill, TRUE);
 
 		jc->priv->last_selection.job = job;
 		jc->priv->last_selection.sig_output =
