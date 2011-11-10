@@ -793,7 +793,9 @@ gebr_calculate_detailed_relative_time(GTimeVal *time1, GTimeVal *time2)
 	glong m = (time_diff - h*3600)/60;
 	glong s = (time_diff - h*3600 - m*60);
 
-	if      (h==1 && m==1 && s==1)
+	if ( time_diff <= 0) 
+		return "1 second";
+	else if      (h==1 && m==1 && s==1)
 		return g_strdup(_("1 hour, 1 minute and 1 second"));
 	else if (h==1 && m==1 && s)
 		return g_strdup_printf(_("1 hour, 1 minute and %ld seconds"), s);
@@ -804,7 +806,7 @@ gebr_calculate_detailed_relative_time(GTimeVal *time1, GTimeVal *time2)
 	else if (h && m && s)
 		return g_strdup_printf(_("%ld hours, %ld minutes and %ld seconds"), h, m, s);
 	else if (h && m && !s)
-		return g_strdup_printf(_("%ld hour(s) and %ld minutes"), h, m);
+		return g_strdup_printf(_("%ld hours and %ld minutes"), h, m);
 	else if (!h && m==1 && s==1)
 		return g_strdup(_("1 minute and 1 second"));
 	else if (!h && m==1 && s)
