@@ -120,6 +120,17 @@ static void job_control_fill_servers_info(GebrJobControl *jc);
 
 
 /* Private methods {{{1 */
+static void
+update_control_buttons(GebrJobControl *jc,
+		       gboolean can_close,
+		       gboolean can_kill,
+		       gboolean can_save)
+{
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_close"), can_close);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_stop"), can_kill);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_save"), can_save);
+}
+
 static gboolean
 get_server_group_iter(GebrJobControl *jc, const gchar *group, GtkTreeIter *iter)
 {
@@ -550,15 +561,8 @@ job_control_fill_servers_info(GebrJobControl *jc)
 }
 
 static void
-job_control_disconnect_signals(GebrJobControl *jc,
-                               gboolean can_close,
-                               gboolean can_kill,
-                               gboolean can_save)
+job_control_disconnect_signals(GebrJobControl *jc)
 {
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_close"), can_close);
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_stop"), can_kill);
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_save"), can_save);
-
 	if (jc->priv->last_selection.job) {
 		g_signal_handler_disconnect(jc->priv->last_selection.job,
 		                            jc->priv->last_selection.sig_output);
@@ -608,7 +612,8 @@ job_control_on_cursor_changed(GtkTreeSelection *selection,
 	gboolean can_close, can_kill;
 
 	if (!rows) {
-		job_control_disconnect_signals(jc, FALSE, FALSE, FALSE);
+		job_control_disconnect_signals(jc);
+		update_control_buttons(jc, FALSE, FALSE, FALSE);
 		jc->priv->last_selection.job = NULL;
 		gebr_job_control_info_set_visible(jc, FALSE, _("Please, select a job at the list on the left"));
 		return;
@@ -629,7 +634,8 @@ job_control_on_cursor_changed(GtkTreeSelection *selection,
 	gboolean has_job = (job != NULL);
 
 	if (!has_job) {
-		job_control_disconnect_signals(jc, can_close, can_kill, TRUE);
+		job_control_disconnect_signals(jc);
+		update_control_buttons(jc, can_close, can_kill, TRUE);
 		jc->priv->last_selection.job = NULL;
 		gebr_job_control_info_set_visible(jc, FALSE, _("Multiple jobs selected"));
 		return;
@@ -639,7 +645,7 @@ job_control_on_cursor_changed(GtkTreeSelection *selection,
 	GebrJob *old_job = jc->priv->last_selection.job;
 
 	if (has_job) {
-		job_control_disconnect_signals(jc, can_close, can_kill, TRUE);
+		job_control_disconnect_signals(jc);
 
 		jc->priv->last_selection.job = job;
 		jc->priv->last_selection.sig_output =
@@ -983,6 +989,7 @@ gebr_job_control_load_details(GebrJobControl *jc,
 	info_button_image = GTK_IMAGE(gtk_bin_get_child(GTK_BIN(jc->priv->info_button)));
 
 	gebr_job_get_io(job, &input_file_str, &output_file_str, &log_file_str);
+	update_control_buttons(jc, gebr_job_can_close(job), gebr_job_can_kill(job), TRUE);
 
 	gchar *markup;
 
