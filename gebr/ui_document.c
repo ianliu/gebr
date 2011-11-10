@@ -717,9 +717,6 @@ void document_dict_edit_setup_ui(void)
 
 	flow_edition_revalidate_programs();
 
-	for (int i = 0; data->documents[i] != NULL; ++i)
-		document_save(data->documents[i], TRUE, FALSE);
-
 	for (int i = 0; data->documents[i] != NULL; ++i) {
 		GebrGeoXmlSequence *i_parameter;
 
@@ -738,6 +735,10 @@ void document_dict_edit_setup_ui(void)
 		flow_edition_set_io();
 
 	gtk_widget_destroy(dialog);
+
+	for (int i = 0; data->documents[i] != NULL; ++i)
+		document_save(data->documents[i], TRUE, FALSE);
+
 	g_free(data);
 	g_string_free(dialog_title, TRUE);
 
