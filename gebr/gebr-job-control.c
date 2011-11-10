@@ -581,10 +581,11 @@ gebr_jc_get_jobs_state(GebrJobControl *jc,
 	*can_kill = FALSE;
 	GtkTreeIter iter;
 	GebrJob *job;
+	GtkTreeModel *model = gtk_tree_view_get_model(GTK_TREE_VIEW(jc->priv->view));
 
 	for (GList *i = jobs; i; i = i->next) {
-		if (gtk_tree_model_get_iter(GTK_TREE_MODEL(jc->priv->store), &iter, (GtkTreePath*)i->data)) {
-			gtk_tree_model_get(GTK_TREE_MODEL(jc->priv->store), &iter, JC_STRUCT, &job, -1);
+		if (gtk_tree_model_get_iter(model, &iter, (GtkTreePath*)i->data)) {
+			gtk_tree_model_get(model, &iter, JC_STRUCT, &job, -1);
 
 			if (!(*can_close) && gebr_job_can_close(job))
 				*can_close = TRUE;
