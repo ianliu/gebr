@@ -18,12 +18,14 @@
 
 #include <string.h>
 #include <stdlib.h>
+#include <math.h>
 
 #include <glib/gi18n.h>
 #include <libgebr/utils.h>
 #include <libgebr/date.h>
 #include <libgebr/gui/gebr-gui-utils.h>
 #include <libgebr/gui/gebr-gui-save-dialog.h>
+#include <libgebr/gui/gebr-gui-pie.h>
 
 #include "gebr-job-control.h"
 #include "gebr.h"
@@ -491,6 +493,44 @@ gebr_job_control_info_set_visible(GebrJobControl *jc,
 		gtk_label_set_text(empty_label, txt);
 }
 
+typedef struct servers_info {
+	gchar **servers;
+	gdouble *percentages;
+} ServersInfo;
+
+gboolean
+on_pie_tooltip(GebrGuiPie *pie,
+               gint x, gint y,
+               gboolean keyboard,
+               GtkTooltip *tooltip,
+               ServersInfo *infos)
+{
+	gint i = gebr_gui_pie_get_hovered(pie);
+
+	if (i == -1)
+		return FALSE;
+
+	const gchar *server;
+	if (!g_strcmp0(infos->servers[i], "127.0.0.1"))
+		server = server_get_name_from_address(infos->servers[i]);
+	else
+		server = infos->servers[i];
+
+	gchar *t = g_strdup_printf("%s\n%d%% of total", server, (int)round((infos->percentages[i])*100));
+	gtk_tooltip_set_text(tooltip, t);
+	g_free(t);
+
+	return TRUE;
+}
+
+void
+on_pie_clicked(GebrGuiPie *pie, gint index, GtkLabel *label)
+{
+	gchar *text = g_strdup_printf("Clicked at: <b>%d</b>", index);
+	gtk_label_set_markup(label, text);
+	g_free(text);
+}
+
 static void
 job_control_fill_servers_info(GebrJobControl *jc)
 {
@@ -532,9 +572,23 @@ job_control_fill_servers_info(GebrJobControl *jc)
 
 	g_string_free(resources, TRUE);
 
-	GtkSizeGroup *sgroup = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
+	guint *values = g_new(guint, n_servers);
+	GtkWidget *piechart = gebr_gui_pie_new(values, 0);
+
+	ServersInfo *infos = g_new(ServersInfo, 1);
+	infos->servers = servers;
+	infos->percentages = g_new(gdouble, n_servers);
+
+	g_signal_connect(piechart, "query-tooltip", G_CALLBACK(on_pie_tooltip), infos);
+
+	gtk_widget_set_has_tooltip(piechart, TRUE);
+	gtk_widget_set_size_request(piechart, 150, 150);
+
 	GtkBox *servers_box = GTK_BOX(gtk_builder_get_object(jc->priv->builder, "servers_box"));
 	gtk_container_foreach(GTK_CONTAINER(servers_box), (GtkCallback)gtk_widget_destroy, NULL);
+
+	gtk_box_pack_start(servers_box, piechart, TRUE, FALSE, 0);
+	gtk_widget_show_all(piechart);
 
 	for (i = 0; servers[i]; i++) {
 		const gchar *server;
@@ -542,22 +596,19 @@ job_control_fill_servers_info(GebrJobControl *jc)
 			 server = server_get_name_from_address(servers[i]);
 		else
 			server = servers[i];
-		GtkWidget *hbox = gtk_hbox_new(FALSE, 5);
-		GtkWidget *pbar = gtk_progress_bar_new();
+
 		GtkWidget *label = gtk_label_new(server);
 
 		GebrTask *task = gebr_job_get_task_from_server(job, servers[i]);
-
-		gtk_size_group_add_widget(sgroup, label);
-		gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(pbar),
-					      task? gebr_task_get_percentage(task) : 0);
-		gtk_widget_set_size_request(pbar, -1, 5);
-
-		gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, TRUE, 0);
-		gtk_box_pack_start(GTK_BOX(hbox), pbar, FALSE, TRUE, 0);
-		gtk_box_pack_start(servers_box, hbox, FALSE, TRUE, 0);
-		gtk_widget_show_all(hbox);
+		if (task) {
+			gdouble percentage = gebr_task_get_percentage(task);
+			values[i] = (guint)(percentage * 1000);
+			infos->percentages[i] = percentage;
+		}
+		gtk_box_pack_start(servers_box, label, FALSE, FALSE, 0);
+		gtk_widget_show_all(label);
 	}
+	gebr_gui_pie_set_data(GEBR_GUI_PIE(piechart), values, n_servers);
 }
 
 static void
