@@ -171,6 +171,25 @@ gebr_job_is_stopped(GebrJob *job)
 		|| job->priv->status == JOB_STATUS_CANCELED;
 }
 
+gboolean
+gebr_job_can_close(GebrJob *job)
+{
+	enum JobStatus status = gebr_job_get_partial_status(job);
+
+	return status == JOB_STATUS_FINISHED
+		|| status == JOB_STATUS_FAILED
+		|| status == JOB_STATUS_CANCELED;
+}
+
+gboolean
+gebr_job_can_kill(GebrJob *job)
+{
+	enum JobStatus status = gebr_job_get_partial_status(job);
+
+	return status == JOB_STATUS_QUEUED
+		|| status == JOB_STATUS_RUNNING;
+}
+
 static void
 gebr_job_change_task_status(GebrTask *task,
                             gint old_status,
@@ -527,7 +546,7 @@ gebr_job_has_issues(GebrJob *job)
 gboolean
 gebr_job_close(GebrJob *job)
 {
-	if (!gebr_job_is_stopped(job))
+	if (!gebr_job_can_close(job))
 		return FALSE;
 
 	for (GList *i = job->priv->tasks; i; i = i->next)
@@ -539,7 +558,7 @@ gebr_job_close(GebrJob *job)
 void
 gebr_job_kill(GebrJob *job)
 {
-	if (gebr_job_is_stopped(job))
+	if (gebr_job_can_kill(job))
 		return;
 
 	for (GList *i = job->priv->tasks; i; i = i->next)
@@ -722,4 +741,43 @@ GList *
 gebr_job_get_list_of_tasks(GebrJob *job)
 {
 	return job->priv->tasks;
+}
+
+enum JobStatus
+gebr_job_get_partial_status(GebrJob *job)
+{
+	if (!job->priv->tasks)
+		return JOB_STATUS_INITIAL;
+
+	gint total;
+	GebrTask *task = job->priv->tasks->data;
+
+	gebr_task_get_fraction(task, NULL, &total);
+
+	if (g_list_length(job->priv->tasks) == total)
+		return gebr_job_get_status(job);
+
+	gint running = 0;
+	for (GList *i = job->priv->tasks; i; i = i->next) {
+		enum JobStatus sta = gebr_task_get_status(i->data);
+		switch (sta) {
+		case JOB_STATUS_FAILED:
+		case JOB_STATUS_FINISHED:
+		case JOB_STATUS_CANCELED:
+		case JOB_STATUS_QUEUED:
+			return sta;
+		case JOB_STATUS_REQUEUED:
+		case JOB_STATUS_ISSUED:
+		case JOB_STATUS_INITIAL:
+			g_return_val_if_reached(sta);
+		case JOB_STATUS_RUNNING:
+			running++;
+			break;
+		}
+	}
+
+	if (running == total)
+		return JOB_STATUS_RUNNING;
+
+	g_return_val_if_reached(JOB_STATUS_RUNNING);
 }

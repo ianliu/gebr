@@ -76,6 +76,10 @@ void gebr_job_show(GebrJob *job);
 
 gboolean gebr_job_is_stopped(GebrJob *job);
 
+gboolean gebr_job_can_close(GebrJob *job);
+
+gboolean gebr_job_can_kill(GebrJob *job);
+
 GtkTreeIter *gebr_job_get_iter(GebrJob *job);
 
 gchar **gebr_job_get_servers(GebrJob *job, gint *n);
@@ -145,6 +149,23 @@ GList *gebr_job_get_list_of_tasks(GebrJob *job);
 
 GebrTask *gebr_job_get_task_from_server(GebrJob *job,
 					const gchar *server);
+
+/**
+ * gebr_job_get_partial_status:
+ *
+ * If a job does not have all of its tasks appended, it have a "partial"
+ * status, which is the composition of the statuses of the tasks which where
+ * appended.
+ *
+ * For instance, if a job is composed by 4 tasks but only 3 were appended, then
+ * the partial status of this job is the status as if the job were composed by
+ * the 3 appended tasks only.
+ *
+ * If the job is complete, ie all 4 tasks were appended, than
+ * gebr_job_get_partial_status() returns the same value as
+ * gebr_job_get_status().
+ */
+enum JobStatus gebr_job_get_partial_status(GebrJob *job);
 
 G_END_DECLS
 
