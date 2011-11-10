@@ -922,6 +922,7 @@ gebr_job_control_include_cmd_line(GebrJobControl *jc,
 			pango_font_description_free(font);
 
 			g_object_set(task_view, "wrap-mode", GTK_WRAP_WORD, NULL);
+			g_object_set(task_view, "editable", FALSE, "cursor-visible", FALSE, NULL);
 			gtk_container_add (GTK_CONTAINER (expander), task_view);
 			gtk_box_pack_start(GTK_BOX(vbox), expander, FALSE, FALSE, 0);
 
