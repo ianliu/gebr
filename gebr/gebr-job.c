@@ -558,7 +558,7 @@ gebr_job_close(GebrJob *job)
 void
 gebr_job_kill(GebrJob *job)
 {
-	if (gebr_job_can_kill(job))
+	if (!gebr_job_can_kill(job))
 		return;
 
 	for (GList *i = job->priv->tasks; i; i = i->next)
@@ -749,12 +749,13 @@ gebr_job_get_partial_status(GebrJob *job)
 	if (!job->priv->tasks)
 		return JOB_STATUS_INITIAL;
 
-	gint total;
+	gint total, ntasks;
 	GebrTask *task = job->priv->tasks->data;
 
 	gebr_task_get_fraction(task, NULL, &total);
+	ntasks = g_list_length(job->priv->tasks);
 
-	if (g_list_length(job->priv->tasks) == total)
+	if (ntasks == total)
 		return gebr_job_get_status(job);
 
 	gint running = 0;
@@ -776,7 +777,7 @@ gebr_job_get_partial_status(GebrJob *job)
 		}
 	}
 
-	if (running == total)
+	if (running == ntasks)
 		return JOB_STATUS_RUNNING;
 
 	g_return_val_if_reached(JOB_STATUS_RUNNING);
