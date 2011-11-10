@@ -32,7 +32,6 @@ geoxml/sequence.c
 geoxml/value_sequence.c
 geoxml/xml.c
 gui/gebr-gui-about.c
-gui/gebr-gui-tool-button.c
 gui/gebr-gui-enhanced-entry.c
 gui/gebr-gui-file-entry.c
 gui/gebr-gui-help-edit-window.c
@@ -40,10 +39,12 @@ gui/gebr-gui-html-viewer-widget.c
 gui/gebr-gui-html-viewer-window.c
 gui/gebr-gui-icons.c
 gui/gebr-gui-parameter.c
+gui/gebr-gui-pie.c
 gui/gebr-gui-pixmaps.c
 gui/gebr-gui-program-edit.c
 gui/gebr-gui-save-dialog.c
 gui/gebr-gui-sequence-edit.c
+gui/gebr-gui-tool-button.c
 gui/gebr-gui-utils.c
 gui/gebr-gui-validatable-widget.c
 gui/gebr-gui-value-sequence-edit.c

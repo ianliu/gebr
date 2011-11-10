@@ -40,6 +40,7 @@ libgebr_gui_la_SOURCES = 		\
 	gebr-gui-icons.c 		\
 	gebr-gui-js.c			\
 	gebr-gui-parameter.c		\
+	gebr-gui-pie.c 			\
 	gebr-gui-pixmaps.c 		\
 	gebr-gui-program-edit.c		\
 	gebr-gui-save-dialog.c		\
@@ -63,6 +64,7 @@ libgebr_guisubinclude_HEADERS = 	\
 	gebr-gui-icons.h		\
 	gebr-gui-js.h			\
 	gebr-gui-parameter.h		\
+	gebr-gui-pie.c 			\
 	gebr-gui-pixmaps.h		\
 	gebr-gui-program-edit.h		\
 	gebr-gui-save-dialog.h		\
