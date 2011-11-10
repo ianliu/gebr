@@ -475,6 +475,7 @@ gboolean document_save_at(GebrGeoXmlDocument * document, const gchar * path, gbo
 	if (set_modified_date)
 		gebr_geoxml_document_set_date_modified(document, gebr_iso_date());
 
+	g_debug("Saving %s", path);
 	ret = (gebr_geoxml_document_save(document, path) == GEBR_GEOXML_RETV_SUCCESS);
 	if (!ret)
 		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Failed to save the document '%s' at '%s'."),
