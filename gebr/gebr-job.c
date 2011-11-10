@@ -209,6 +209,15 @@ gebr_job_change_task_status(GebrTask *task,
 		return;
 	}
 
+	/* Do not change the status if the job isn't complete.
+	 * But if the new status is Failed or Canceled, let this
+	 * change pass.
+	 */
+	if (ntasks != total &&
+	    (new_status != JOB_STATUS_CANCELED &&
+	     new_status != JOB_STATUS_FAILED))
+		return;
+
 	switch (new_status)
 	{
 	case JOB_STATUS_ISSUED:
