@@ -36,13 +36,14 @@ get_index_at(GebrGuiPie *pie, gdouble px, gdouble py)
 		beta = (sum + pie->priv->data[i]) * scale;
 		xc = x + w / 2.0 + 2*cos((alpha + beta) / 2);
 		yc = y + h / 2.0 + 2*sin((alpha + beta) / 2);
+		yc = yc - 120;
 		xx = px - xc;
 		yy = py - yc;
 		gamma = atan2(yy, xx);
 		if (gamma < 0)
 			gamma = 2*G_PI + gamma;
 		if (gamma >= alpha && gamma <= beta
-		    && (xx*xx + yy*yy <= radius*radius))
+				&& (xx*xx + yy*yy <= radius*radius))
 			return i;
 
 		sum += pie->priv->data[i];
@@ -52,7 +53,7 @@ get_index_at(GebrGuiPie *pie, gdouble px, gdouble py)
 
 static gboolean
 gebr_gui_pie_expose(GtkWidget      *widget,
-		    GdkEventExpose *event)
+                    GdkEventExpose *event)
 {
 	gint i;
 	GebrGuiPie *pie = GEBR_GUI_PIE(widget);
@@ -77,6 +78,7 @@ gebr_gui_pie_expose(GtkWidget      *widget,
 		beta = (sum + pie->priv->data[i]) * scale;
 		xc = x + w / 2. + 2*cos((alpha + beta) / 2);
 		yc = y + h / 2. + 2*sin((alpha + beta) / 2);
+		yc = yc - 120;
 		cairo_move_to(cx, xc, yc);
 		cairo_arc(cx, xc, yc, radius, alpha, beta);
 		cairo_line_to(cx, xc, yc);
@@ -90,15 +92,15 @@ gebr_gui_pie_expose(GtkWidget      *widget,
 }
 
 static gboolean
-gebr_gui_pie_configure(GtkWidget	     *widget,
-		   GdkEventConfigure *event)
+gebr_gui_pie_configure(GtkWidget  	 *widget,
+                       GdkEventConfigure *event)
 {
 	return TRUE;
 }
 
 static gboolean
 gebr_gui_pie_button_release(GtkWidget *widget,
-			GdkEventButton *event)
+                            GdkEventButton *event)
 {
 	gint i = get_index_at(GEBR_GUI_PIE(widget), event->x, event->y);
 
@@ -112,7 +114,7 @@ gebr_gui_pie_button_release(GtkWidget *widget,
 
 static gboolean
 gebr_gui_pie_motion_notify(GtkWidget *widget,
-			   GdkEventMotion *event)
+                           GdkEventMotion *event)
 {
 	GebrGuiPie *pie = GEBR_GUI_PIE(widget);
 	gint hover = get_index_at(GEBR_GUI_PIE(widget), event->x, event->y);
@@ -127,12 +129,12 @@ static void
 gebr_gui_pie_init(GebrGuiPie *pie)
 {
 	gtk_widget_add_events(GTK_WIDGET(pie),
-			      GDK_BUTTON_PRESS_MASK
-			      | GDK_BUTTON_RELEASE_MASK
-			      | GDK_POINTER_MOTION_MASK);
+	                      GDK_BUTTON_PRESS_MASK
+	                      | GDK_BUTTON_RELEASE_MASK
+	                      | GDK_POINTER_MOTION_MASK);
 	pie->priv = G_TYPE_INSTANCE_GET_PRIVATE(pie,
-						GEBR_GUI_TYPE_PIE,
-						GebrGuiPiePriv);
+	                                        GEBR_GUI_TYPE_PIE,
+	                                        GebrGuiPiePriv);
 	pie->priv->hovered = -1;
 }
 
@@ -146,20 +148,20 @@ gebr_gui_pie_class_init(GebrGuiPieClass *klass)
 	widget_class->motion_notify_event = gebr_gui_pie_motion_notify;
 
 	signals[CLICKED] =
-		g_signal_new("clicked",
-			     GEBR_GUI_TYPE_PIE,
-			     G_SIGNAL_RUN_LAST,
-			     G_STRUCT_OFFSET(GebrGuiPieClass, clicked),
-			     NULL, NULL,
-			     g_cclosure_marshal_VOID__INT,
-			     G_TYPE_NONE, 1, G_TYPE_INT);
+			g_signal_new("clicked",
+			             GEBR_GUI_TYPE_PIE,
+			             G_SIGNAL_RUN_LAST,
+			             G_STRUCT_OFFSET(GebrGuiPieClass, clicked),
+			             NULL, NULL,
+			             g_cclosure_marshal_VOID__INT,
+			             G_TYPE_NONE, 1, G_TYPE_INT);
 
 	g_type_class_add_private(klass, sizeof(GebrGuiPiePriv));
 }
 
 GtkWidget *
 gebr_gui_pie_new(guint *data,
-		 gint length)
+                 gint length)
 {
 	GtkWidget *widget = g_object_new(GEBR_GUI_TYPE_PIE, NULL);
 	GebrGuiPie *pie = GEBR_GUI_PIE(widget);
@@ -175,8 +177,8 @@ gebr_gui_pie_get_hovered(GebrGuiPie *pie)
 
 void
 gebr_gui_pie_set_data(GebrGuiPie *pie,
-		  guint *data,
-		  gint length)
+                      guint *data,
+                      gint length)
 {
 	gint i;
 
