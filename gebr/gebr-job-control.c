@@ -1739,7 +1739,26 @@ void
 gebr_job_control_remove(GebrJobControl *jc,
 			GebrJob *job)
 {
+	GtkTreeIter iter;
+	gboolean has_group = FALSE;
+	const gchar *group = gebr_job_get_server_group(job);
+
 	gtk_list_store_remove(jc->priv->store, gebr_job_get_iter(job));
+
+	gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(jc->priv->store)) {
+		GebrJob *j;
+		gtk_tree_model_get(GTK_TREE_MODEL(jc->priv->store), &iter, JC_STRUCT, &j, -1);
+		if (!j)
+			continue;
+		if (g_strcmp0(gebr_job_get_server_group(j), group) == 0) {
+			has_group = TRUE;
+			break;
+		}
+	}
+
+	if (!has_group && get_server_group_iter(jc, group, &iter))
+		gtk_list_store_remove(jc->priv->group_filter, &iter);
+
 	g_object_unref(job);
 }
 
