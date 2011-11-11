@@ -59,6 +59,11 @@ struct _GebrJobControlPriv {
 	GtkWidget *info_button;
 	LastSelection last_selection;
 	guint timeout_source_id;
+
+	struct servers_info {
+		gchar **servers;
+		gdouble *percentages;
+	} servers_info;
 };
 
 enum {
@@ -493,17 +498,12 @@ gebr_job_control_info_set_visible(GebrJobControl *jc,
 		gtk_label_set_text(empty_label, txt);
 }
 
-typedef struct servers_info {
-	gchar **servers;
-	gdouble *percentages;
-} ServersInfo;
-
 gboolean
 on_pie_tooltip(GebrGuiPie *pie,
                gint x, gint y,
                gboolean keyboard,
                GtkTooltip *tooltip,
-               ServersInfo *infos)
+               GebrJobControl *jc)
 {
 	gint i = gebr_gui_pie_get_hovered(pie);
 
@@ -511,12 +511,12 @@ on_pie_tooltip(GebrGuiPie *pie,
 		return FALSE;
 
 	const gchar *server;
-	if (!g_strcmp0(infos->servers[i], "127.0.0.1"))
-		server = server_get_name_from_address(infos->servers[i]);
+	if (!g_strcmp0(jc->priv->servers_info.servers[i], "127.0.0.1"))
+		server = server_get_name_from_address(jc->priv->servers_info.servers[i]);
 	else
-		server = infos->servers[i];
+		server = jc->priv->servers_info.servers[i];
 
-	gchar *t = g_strdup_printf("%s\n%d%% of total", server, (int)round((infos->percentages[i])*100));
+	gchar *t = g_strdup_printf("%s\n%d%% of total", server, (int)round((jc->priv->servers_info.percentages[i])*100));
 	gtk_tooltip_set_text(tooltip, t);
 	g_free(t);
 
@@ -575,11 +575,12 @@ job_control_fill_servers_info(GebrJobControl *jc)
 	guint *values = g_new(guint, n_servers);
 	GtkWidget *piechart = gebr_gui_pie_new(values, 0);
 
-	ServersInfo *infos = g_new(ServersInfo, 1);
-	infos->servers = servers;
-	infos->percentages = g_new(gdouble, n_servers);
+	jc->priv->servers_info.servers = servers;
+	if (jc->priv->servers_info.percentages)
+		g_free(jc->priv->servers_info.percentages);
+	jc->priv->servers_info.percentages = g_new(gdouble, n_servers);
 
-	g_signal_connect(piechart, "query-tooltip", G_CALLBACK(on_pie_tooltip), infos);
+	g_signal_connect(piechart, "query-tooltip", G_CALLBACK(on_pie_tooltip), jc);
 
 	gtk_widget_set_has_tooltip(piechart, TRUE);
 	gtk_widget_set_size_request(piechart, 150, 150);
@@ -603,7 +604,7 @@ job_control_fill_servers_info(GebrJobControl *jc)
 		if (task) {
 			gdouble percentage = gebr_task_get_percentage(task);
 			values[i] = (guint)(percentage * 1000);
-			infos->percentages[i] = percentage;
+			jc->priv->servers_info.percentages[i] = percentage;
 		}
 		gtk_box_pack_start(servers_box, label, FALSE, FALSE, 0);
 		gtk_widget_show_all(label);
@@ -1484,6 +1485,7 @@ void
 gebr_job_control_free(GebrJobControl *jc)
 {
 	g_object_unref(jc->priv->builder);
+	g_free(jc->priv->servers_info.percentages);
 	g_free(jc->priv);
 	g_free(jc);
 }
