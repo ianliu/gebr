@@ -1246,8 +1246,9 @@ wordwrap_toggled(GtkCheckMenuItem * check_menu_item, GebrJobControl * jc)
 	gebr.config.job_log_word_wrap = gtk_check_menu_item_get_active(check_menu_item);
 	g_object_set(G_OBJECT(jc->priv->text_view), "wrap-mode",
 		     gebr.config.job_log_word_wrap ? GTK_WRAP_WORD : GTK_WRAP_NONE, NULL);
-	g_object_set(G_OBJECT(jc->priv->cmd_view), "wrap-mode",
-			     gebr.config.job_log_word_wrap ? GTK_WRAP_WORD : GTK_WRAP_NONE, NULL);
+	if (jc->priv->cmd_view)
+		g_object_set(G_OBJECT(jc->priv->cmd_view), "wrap-mode",
+		             gebr.config.job_log_word_wrap ? GTK_WRAP_WORD : GTK_WRAP_NONE, NULL);
 }
 
 static void
