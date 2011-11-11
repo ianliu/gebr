@@ -17,80 +17,145 @@ static guint signals[LAST_SIGNAL] = { 0, };
 
 G_DEFINE_TYPE(GebrGuiPie, gebr_gui_pie, GTK_TYPE_DRAWING_AREA);
 
+/* PiePartIter {{{1 */
+/*
+ * This struct is used to iterate
+ * over the values of a pie chart.
+ */
+typedef struct {
+	/* private */
+	GebrGuiPie *pie;
+	gdouble scale;
+	gdouble sum;
+	gdouble xc, yc;
+
+	/* public - variables */
+	int i;           /* Current iteration */
+	gdouble alpha;   /* First angle of the current part */
+	gdouble beta;    /* Second angle of the current part */
+	gdouble x, y;    /* Center of the current part */
+} PiePartIter;
+
+/*
+ * pie_part_iter_init:
+ *
+ * Initializes a PiePartIter with an undefined value.
+ * The first usable value is computed when calling pie_part_iter_next().
+ *
+ * Example:
+ *
+ * PiePartIter iter;
+ * pie_part_iter_init(&iter, pie, 10);
+ * for (; pie_part_next(&iter);)
+ *   // Do stuff with iter.alpha, iter.beta, iter.xc and iter.yc!
+ */
+static void
+pie_part_iter_init(PiePartIter *iter,
+		   GebrGuiPie *pie)
+{
+	iter->pie = pie;
+	iter->scale = 2*G_PI / pie->priv->sum;
+	iter->sum = 0;
+	iter->xc = GTK_WIDGET(iter->pie)->allocation.width / 2.;
+	iter->yc = GTK_WIDGET(iter->pie)->allocation.height / 2.;
+
+	iter->i = -1;
+	iter->alpha = 0;
+	iter->beta = 0;
+	iter->x = 0;
+	iter->y = 0;
+}
+
+/*
+ * pie_part_iter_next:
+ *
+ * Calculates the next values of @iter if this is not the last part. In that
+ * case, %TRUE is returned.
+ */
+static gboolean
+pie_part_iter_next(PiePartIter *iter)
+{
+	iter->i++;
+
+	if (iter->i == iter->pie->priv->length)
+		return FALSE;
+
+	iter->alpha = iter->sum * iter->scale;
+	iter->beta = (iter->sum + iter->pie->priv->data[iter->i]) * iter->scale;
+	iter->x = iter->xc + 2 * cos((iter->alpha + iter->beta) / 2);
+	iter->y = iter->yc + 2 * sin((iter->alpha + iter->beta) / 2);
+	iter->sum += iter->pie->priv->data[iter->i];
+	return TRUE;
+}
+
+/* Private methods {{{1 */
 static gint
 get_index_at(GebrGuiPie *pie, gdouble px, gdouble py)
 {
-	gint i;
 	GtkWidget *widget = GTK_WIDGET(pie);
-	gint x = widget->allocation.x;
-	gint y = widget->allocation.y;
+	gdouble radius2, gamma, xx, yy;
 	gint w = widget->allocation.width;
 	gint h = widget->allocation.height;
-	gdouble radius, alpha, beta, xc, yc, gamma, xx, yy;
-	gdouble scale = 2 * G_PI / pie->priv->sum;
-	guint sum = 0;
 
-	radius = MIN(w, h) / 2. - 10 + 2;
-	for (i = 0; i < pie->priv->length; i++) {
-		alpha = (sum) * scale;
-		beta = (sum + pie->priv->data[i]) * scale;
-		xc = x + w / 2.0 + 2*cos((alpha + beta) / 2);
-		yc = y + h / 2.0 + 2*sin((alpha + beta) / 2);
-		yc = yc - 120;
-		xx = px - xc;
-		yy = py - yc;
+	radius2 = MIN(w, h) / 2. - 10 + 2;
+	radius2 *= radius2;
+
+	PiePartIter iter;
+	pie_part_iter_init(&iter, pie);
+	while (pie_part_iter_next(&iter))
+	{
+		xx = px - iter.x;
+		yy = py - iter.y;
+
+		/* Get the angle of the point (px, py) relative to the current
+		 * center */
 		gamma = atan2(yy, xx);
+
+		/* atan2 discontinuity is at 9 o'clock. We must bring it to 3
+		 * o'clock so its equal cairo's discontinuity. */
 		if (gamma < 0)
 			gamma = 2*G_PI + gamma;
-		if (gamma >= alpha && gamma <= beta
-				&& (xx*xx + yy*yy <= radius*radius))
-			return i;
 
-		sum += pie->priv->data[i];
+		if (gamma >= iter.alpha && gamma <= iter.beta
+		    && (xx*xx + yy*yy <= radius2))
+			return iter.i;
 	}
+
 	return -1;
 }
 
+/* Override Gtk.Widget.expose_event {{{1 */
 static gboolean
 gebr_gui_pie_expose(GtkWidget      *widget,
                     GdkEventExpose *event)
 {
-	gint i;
 	GebrGuiPie *pie = GEBR_GUI_PIE(widget);
-	gint x = widget->allocation.x;
-	gint y = widget->allocation.y;
+	cairo_t *cx = gdk_cairo_create(widget->window);
 	gint w = widget->allocation.width;
 	gint h = widget->allocation.height;
-	cairo_t *cx = gdk_cairo_create(widget->window);
-	gdouble xc, yc, radius, alpha, beta;
-	gdouble scale = 2*G_PI / pie->priv->sum;
+	gdouble radius = MIN(w, h) / 2. - 10 + 2;
 	gdouble gray;
-	guint sum = 0;
 
-	radius = MIN(w, h) / 2. - 10 + 2;
-	for (i = 0; i < pie->priv->length; i++) {
-		gray = i * 1.0 / (pie->priv->length - 1);
-		if (i == pie->priv->hovered)
+	PiePartIter iter;
+	pie_part_iter_init(&iter, pie);
+	while (pie_part_iter_next(&iter))
+	{
+		gray = iter.i * 1.0 / (pie->priv->length - 1);
+		if (iter.i == pie->priv->hovered)
 			cairo_set_source_rgb(cx, 1, 0, 0);
 		else
 			cairo_set_source_rgb(cx, gray, gray, gray);
-		alpha = sum * scale;
-		beta = (sum + pie->priv->data[i]) * scale;
-		xc = x + w / 2. + 2*cos((alpha + beta) / 2);
-		yc = y + h / 2. + 2*sin((alpha + beta) / 2);
-		yc = yc - 120;
-		cairo_move_to(cx, xc, yc);
-		cairo_arc(cx, xc, yc, radius, alpha, beta);
-		cairo_line_to(cx, xc, yc);
+		cairo_arc(cx, iter.x, iter.y, radius, iter.alpha, iter.beta);
+		cairo_line_to(cx, iter.x, iter.y);
 		cairo_close_path(cx);
 		cairo_fill(cx);
-		sum += pie->priv->data[i];
 	}
 
 	cairo_destroy(cx);
 	return TRUE;
 }
 
+/* Override Gtk.Widget.configure {{{1 */
 static gboolean
 gebr_gui_pie_configure(GtkWidget  	 *widget,
                        GdkEventConfigure *event)
@@ -98,6 +163,7 @@ gebr_gui_pie_configure(GtkWidget  	 *widget,
 	return TRUE;
 }
 
+/* Override Gtk.Widget.button_release {{{1 */
 static gboolean
 gebr_gui_pie_button_release(GtkWidget *widget,
                             GdkEventButton *event)
@@ -112,6 +178,7 @@ gebr_gui_pie_button_release(GtkWidget *widget,
 	return TRUE;
 }
 
+/* Override Gtk.Widget.motion_notify {{{1 */
 static gboolean
 gebr_gui_pie_motion_notify(GtkWidget *widget,
                            GdkEventMotion *event)
@@ -125,6 +192,7 @@ gebr_gui_pie_motion_notify(GtkWidget *widget,
 	return TRUE;
 }
 
+/* Class & Instance initializations {{{1 */
 static void
 gebr_gui_pie_init(GebrGuiPie *pie)
 {
@@ -159,6 +227,7 @@ gebr_gui_pie_class_init(GebrGuiPieClass *klass)
 	g_type_class_add_private(klass, sizeof(GebrGuiPiePriv));
 }
 
+/* Public methods {{{1 */
 GtkWidget *
 gebr_gui_pie_new(guint *data,
                  gint length)
