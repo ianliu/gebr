@@ -40,37 +40,41 @@ gebr_gui_tool_button_toggled(GtkToggleButton *toggle)
 	}
 
 	gint x, y;
-	GtkAllocation a, popup_info;
+	GtkAllocation a;
 	GtkWidget *widget = GTK_WIDGET(button);
 
 	gtk_widget_get_allocation(widget, &a);
 
 	GdkWindow *window = gtk_widget_get_window(widget);
 	gdk_window_get_origin(window, &x, &y);
-	GdkScreen *my_screen = gdk_drawable_get_screen (GDK_DRAWABLE(window));
+	GdkScreen *my_screen = gdk_drawable_get_screen(GDK_DRAWABLE(window));
+	gint dx = x + a.x;
+	gint dy = y + a.y + a.height;
 
+	GtkRequisition req;
+	GtkWidget *child = gtk_bin_get_child(GTK_BIN(button->priv->popup));
+
+	gtk_widget_show(child);
+	gtk_widget_realize(child);
+	gtk_widget_get_requisition(child, &req);
+
+	gint screen_width = gdk_screen_get_width(my_screen);
+	gint screen_height = gdk_screen_get_height(my_screen);
+
+	if (screen_width < dx + req.width)
+		dx -= req.width - a.width;
+
+	if (screen_height < dy + req.height)
+		dy -= req.height + a.height;
+
+	gtk_window_move(GTK_WINDOW(button->priv->popup), dx, dy);
 	gtk_widget_show(button->priv->popup);
 
 	window = gtk_widget_get_window(button->priv->popup);
-
 	gtk_grab_add(button->priv->popup);
 	gdk_keyboard_grab(window, TRUE, GDK_CURRENT_TIME);
 	gdk_pointer_grab(window, TRUE, GDK_BUTTON_PRESS_MASK,
 			 NULL, NULL, GDK_CURRENT_TIME);
-
-       	gtk_widget_get_allocation(button->priv->popup, &popup_info);
-	gint screen_width = gdk_screen_get_width(my_screen);
-	gint screen_height = gdk_screen_get_height(my_screen);
-
-	gint dx = x + a.x; 
-	gint dy = y + a.y + a.height; 
-	if (screen_width < (x + a.x + popup_info.width) )
-		dx += a.width- popup_info.width;
-	if (screen_height < (y + a.y + popup_info.height) )
-		dy += -a.width - popup_info.height;
-	gtk_window_move(GTK_WINDOW(button->priv->popup),
-			dx,
-			dy);
 }
 
 static gboolean
