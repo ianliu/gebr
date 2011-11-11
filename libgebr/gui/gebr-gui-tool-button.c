@@ -40,17 +40,15 @@ gebr_gui_tool_button_toggled(GtkToggleButton *toggle)
 	}
 
 	gint x, y;
-	GtkAllocation a;
+	GtkAllocation a, popup_info;
 	GtkWidget *widget = GTK_WIDGET(button);
 
 	gtk_widget_get_allocation(widget, &a);
 
 	GdkWindow *window = gtk_widget_get_window(widget);
 	gdk_window_get_origin(window, &x, &y);
+	GdkScreen *my_screen = gdk_drawable_get_screen (GDK_DRAWABLE(window));
 
-	gtk_window_move(GTK_WINDOW(button->priv->popup),
-			x + a.x,
-			y + a.y + a.height);
 	gtk_widget_show(button->priv->popup);
 
 	window = gtk_widget_get_window(button->priv->popup);
@@ -59,6 +57,16 @@ gebr_gui_tool_button_toggled(GtkToggleButton *toggle)
 	gdk_keyboard_grab(window, TRUE, GDK_CURRENT_TIME);
 	gdk_pointer_grab(window, TRUE, GDK_BUTTON_PRESS_MASK,
 			 NULL, NULL, GDK_CURRENT_TIME);
+
+       	gtk_widget_get_allocation(button->priv->popup, &popup_info);
+	gint screen_width = gdk_screen_get_width(my_screen);
+
+	gint dx = x + a.x; 
+	if (screen_width < (x + a.x + popup_info.width) )
+		dx += a.width- popup_info.width;
+	gtk_window_move(GTK_WINDOW(button->priv->popup),
+			dx,
+			y + a.y + a.height);
 }
 
 static gboolean
