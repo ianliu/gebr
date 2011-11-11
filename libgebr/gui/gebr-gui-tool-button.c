@@ -60,13 +60,17 @@ gebr_gui_tool_button_toggled(GtkToggleButton *toggle)
 
        	gtk_widget_get_allocation(button->priv->popup, &popup_info);
 	gint screen_width = gdk_screen_get_width(my_screen);
+	gint screen_height = gdk_screen_get_height(my_screen);
 
 	gint dx = x + a.x; 
+	gint dy = y + a.y + a.height; 
 	if (screen_width < (x + a.x + popup_info.width) )
 		dx += a.width- popup_info.width;
+	if (screen_height < (y + a.y + popup_info.height) )
+		dy += -a.width - popup_info.height;
 	gtk_window_move(GTK_WINDOW(button->priv->popup),
 			dx,
-			y + a.y + a.height);
+			dy);
 }
 
 static gboolean
