@@ -29,6 +29,12 @@ GType gebr_gui_pie_get_type(void) G_GNUC_CONST;
 GtkWidget *gebr_gui_pie_new(guint *data,
 			    gint length);
 
+void gebr_gui_pie_get_color(GebrGuiPie *pie,
+                            gint index,
+                            gdouble *red,
+                            gdouble *green,
+                            gdouble *blue);
+
 gint gebr_gui_pie_get_hovered(GebrGuiPie *pie);
 
 void gebr_gui_pie_set_data(GebrGuiPie *pie,

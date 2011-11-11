@@ -134,17 +134,14 @@ gebr_gui_pie_expose(GtkWidget      *widget,
 	gint w = widget->allocation.width;
 	gint h = widget->allocation.height;
 	gdouble radius = MIN(w, h) / 2. - 10 + 2;
-	gdouble gray;
+	gdouble r, g, b;
 
 	PiePartIter iter;
 	pie_part_iter_init(&iter, pie);
 	while (pie_part_iter_next(&iter))
 	{
-		gray = iter.i * 1.0 / (pie->priv->length - 1);
-		if (iter.i == pie->priv->hovered)
-			cairo_set_source_rgb(cx, 1, 0, 0);
-		else
-			cairo_set_source_rgb(cx, gray, gray, gray);
+		gebr_gui_pie_get_color(pie, iter.i, &r, &g, &b);
+		cairo_set_source_rgb(cx, r, g, b);
 		cairo_arc(cx, iter.x, iter.y, radius, iter.alpha, iter.beta);
 		cairo_line_to(cx, iter.x, iter.y);
 		cairo_close_path(cx);
@@ -236,6 +233,16 @@ gebr_gui_pie_new(guint *data,
 	GebrGuiPie *pie = GEBR_GUI_PIE(widget);
 	gebr_gui_pie_set_data(pie, data, length);
 	return widget;
+}
+
+void
+gebr_gui_pie_get_color(GebrGuiPie *pie,
+                       gint index,
+                       gdouble *red,
+                       gdouble *green,
+                       gdouble *blue)
+{
+	*red = *green = *blue = index * 1.0/(pie->priv->length - 1);
 }
 
 gint
