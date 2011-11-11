@@ -399,6 +399,7 @@
                     <property name="hscrollbar_policy">automatic</property>
                     <property name="vscrollbar_policy">automatic</property>
                     <child>
+                      <placeholder/>
                     </child>
                   </object>
                   <packing>
@@ -493,8 +494,37 @@
           </packing>
         </child>
         <child>
-          <object class="GtkVBox" id="servers_box">
+          <object class="GtkHBox" id="box1">
             <property name="visible">True</property>
+            <child>
+              <object class="GtkVBox" id="servers_box">
+                <property name="visible">True</property>
+                <child>
+                  <placeholder/>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkHBox" id="pie_box">
+                <property name="visible">True</property>
+                <child>
+                  <placeholder/>
+                </child>
+              </object>
+              <packing>
+                <property name="position">1</property>
+              </packing>
+            </child>
           </object>
           <packing>
             <property name="expand">False</property>

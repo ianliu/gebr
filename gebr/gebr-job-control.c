@@ -40,6 +40,10 @@ typedef struct {
 	guint sig_button;
 } LastSelection;
 
+typedef struct {
+	gdouble r, g, b;
+} Color;
+
 struct _GebrJobControlPriv {
 	GtkBuilder *builder;
 	GtkComboBox *group_combo;
@@ -498,7 +502,7 @@ gebr_job_control_info_set_visible(GebrJobControl *jc,
 		gtk_label_set_text(empty_label, txt);
 }
 
-gboolean
+static gboolean
 on_pie_tooltip(GebrGuiPie *pie,
                gint x, gint y,
                gboolean keyboard,
@@ -523,12 +527,16 @@ on_pie_tooltip(GebrGuiPie *pie,
 	return TRUE;
 }
 
-void
-on_pie_clicked(GebrGuiPie *pie, gint index, GtkLabel *label)
+static gboolean
+paint_square(GtkWidget *widget, GdkEventExpose *event, Color *color)
 {
-	gchar *text = g_strdup_printf("Clicked at: <b>%d</b>", index);
-	gtk_label_set_markup(label, text);
-	g_free(text);
+	cairo_t *ctx = gdk_cairo_create(GDK_DRAWABLE(widget->window));
+	cairo_set_source_rgb(ctx, color->r, color->g, color->b);
+	cairo_rectangle(ctx, 0, 0, widget->allocation.width, widget->allocation.height);
+	cairo_fill(ctx);
+	cairo_destroy(ctx);
+
+	return TRUE;
 }
 
 static void
@@ -585,11 +593,25 @@ job_control_fill_servers_info(GebrJobControl *jc)
 	gtk_widget_set_has_tooltip(piechart, TRUE);
 	gtk_widget_set_size_request(piechart, 150, 150);
 
+	GtkBox *pie_box = GTK_BOX(gtk_builder_get_object(jc->priv->builder, "pie_box"));
 	GtkBox *servers_box = GTK_BOX(gtk_builder_get_object(jc->priv->builder, "servers_box"));
-	gtk_container_foreach(GTK_CONTAINER(servers_box), (GtkCallback)gtk_widget_destroy, NULL);
 
-	gtk_box_pack_start(servers_box, piechart, TRUE, FALSE, 0);
+	gtk_container_foreach(GTK_CONTAINER(servers_box), (GtkCallback)gtk_widget_destroy, NULL);
+	gtk_container_foreach(GTK_CONTAINER(pie_box), (GtkCallback)gtk_widget_destroy, NULL);
+
+	gtk_box_pack_start(pie_box, piechart, TRUE, FALSE, 0);
 	gtk_widget_show_all(piechart);
+
+	for (i = 0; servers[i]; i++) {
+		GebrTask *task = gebr_job_get_task_from_server(job, servers[i]);
+		if (task) {
+			gdouble percentage = gebr_task_get_percentage(task);
+			values[i] = (guint)(percentage * 1000);
+			jc->priv->servers_info.percentages[i] = percentage;
+		}
+	}
+	gebr_gui_pie_set_data(GEBR_GUI_PIE(piechart), values, n_servers);
+	g_free(values);
 
 	for (i = 0; servers[i]; i++) {
 		const gchar *server;
@@ -598,18 +620,22 @@ job_control_fill_servers_info(GebrJobControl *jc)
 		else
 			server = servers[i];
 
+		Color *color = g_new(Color, 1);
+		GtkWidget *hbox = gtk_hbox_new(FALSE, 5);
 		GtkWidget *label = gtk_label_new(server);
+		GtkWidget *square = gtk_drawing_area_new();
 
-		GebrTask *task = gebr_job_get_task_from_server(job, servers[i]);
-		if (task) {
-			gdouble percentage = gebr_task_get_percentage(task);
-			values[i] = (guint)(percentage * 1000);
-			jc->priv->servers_info.percentages[i] = percentage;
-		}
-		gtk_box_pack_start(servers_box, label, FALSE, FALSE, 0);
-		gtk_widget_show_all(label);
+		gtk_widget_set_size_request(square, 15, 10);
+		gebr_gui_pie_get_color(GEBR_GUI_PIE(piechart), i, &color->r, &color->g, &color->b);
+		g_signal_connect(square, "expose-event", G_CALLBACK(paint_square), color);
+		g_object_weak_ref(G_OBJECT(label), (GWeakNotify)g_free, color);
+
+		gtk_box_pack_start(GTK_BOX(hbox), square, FALSE, FALSE, 0);
+		gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+
+		gtk_box_pack_start(servers_box, hbox, TRUE, FALSE, 0);
+		gtk_widget_show_all(hbox);
 	}
-	gebr_gui_pie_set_data(GEBR_GUI_PIE(piechart), values, n_servers);
 }
 
 static void
