@@ -1847,9 +1847,10 @@ gebr_job_control_remove(GebrJobControl *jc,
 		}
 	}
 
-	if (!has_group && get_server_group_iter(jc, group, &iter))
+	if (!has_group && get_server_group_iter(jc, group, &iter)) {
 		gtk_list_store_remove(jc->priv->group_filter, &iter);
-
+		gtk_combo_box_set_active(jc->priv->group_combo, 0);
+	}
 	g_object_unref(job);
 }
 
