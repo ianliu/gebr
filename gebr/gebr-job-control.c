@@ -1781,16 +1781,12 @@ gebr_job_control_select_job(GebrJobControl *jc, GebrJob *job)
 		GtkTreeModel *filter = gtk_tree_model_sort_get_model(GTK_TREE_MODEL_SORT(sort));
 		GtkTreeIter *iter = gebr_job_get_iter(job), filter_iter, sort_iter;
 
-		if (!gtk_tree_model_filter_convert_child_iter_to_iter(GTK_TREE_MODEL_FILTER(filter), &filter_iter, iter)) {
-			gtk_combo_box_set_active(jc->priv->group_combo, 0);
-			gtk_combo_box_set_active(jc->priv->server_combo, 0);
-			gtk_combo_box_set_active(jc->priv->status_combo, 0);
-			if (!gtk_tree_model_filter_convert_child_iter_to_iter(GTK_TREE_MODEL_FILTER(filter), &filter_iter, iter))
-				g_return_if_reached();
-		}
-		if (!gtk_tree_model_sort_convert_child_iter_to_iter(GTK_TREE_MODEL_SORT(sort), &sort_iter, &filter_iter))  {
+		if (!gtk_tree_model_filter_convert_child_iter_to_iter(GTK_TREE_MODEL_FILTER(filter), &filter_iter, iter))
+			return;
+
+		if (!gtk_tree_model_sort_convert_child_iter_to_iter(GTK_TREE_MODEL_SORT(sort), &sort_iter, &filter_iter))
 			g_return_if_reached();
-		}
+
 		GtkTreePath *path = gtk_tree_model_get_path(sort, &sort_iter);
 		gtk_tree_view_set_cursor(GTK_TREE_VIEW(jc->priv->view), path, NULL, FALSE);
 		gtk_tree_path_free(path);
