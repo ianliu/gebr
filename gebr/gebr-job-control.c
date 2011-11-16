@@ -55,6 +55,7 @@ struct _GebrJobControlPriv {
 	GtkTextBuffer *text_buffer;
 	GtkListStore *group_filter;
 	GList *cmd_views;
+	GtkWidget *filter_info_bar;
 	GtkWidget *label;
 	GtkWidget *text_view;
 	GtkWidget *view;
@@ -1280,6 +1281,12 @@ on_row_changed_model(GtkTreeModel *tree_model,
 	build_servers_filter_list(jc);
 }
 
+static void
+on_reset_filter()
+{
+	g_debug("Foooooo");
+}
+
 /* Public methods {{{1 */
 GebrJobControl *
 gebr_job_control_new(void)
@@ -1300,6 +1307,16 @@ gebr_job_control_new(void)
 	/*
 	 * Left side
 	 */
+
+	jc->priv->filter_info_bar = gtk_info_bar_new_with_buttons(_("Show all"), GTK_RESPONSE_OK, NULL);
+	g_signal_connect(jc->priv->filter_info_bar, "response", G_CALLBACK(on_reset_filter), jc);
+	gtk_box_pack_start(GTK_BOX(gtk_info_bar_get_content_area(jc->priv->filter_info_bar)),
+			   gtk_label_new(_("Jobs list is filtered")), TRUE, TRUE, 0);
+	gtk_widget_show_all(jc->priv->filter_info_bar);
+
+	GtkBox *left_box = GTK_BOX(gtk_builder_get_object(jc->priv->builder, "left-side-box"));
+	gtk_box_pack_start(left_box, jc->priv->filter_info_bar, FALSE, TRUE, 0);
+	gtk_container_child_set(GTK_CONTAINER(left_box), jc->priv->filter_info_bar, "position", 0, NULL);
 
 	jc->priv->store = gtk_list_store_new(JC_N_COLUMN, G_TYPE_POINTER);
 

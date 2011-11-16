@@ -7,35 +7,40 @@
     <property name="can_focus">True</property>
     <property name="position">200</property>
     <child>
-      <object class="GtkFrame" id="frame1">
+      <object class="GtkVBox" id="left-side-box">
         <property name="visible">True</property>
-        <property name="label_xalign">0</property>
-        <property name="shadow_type">in</property>
         <child>
-          <object class="GtkScrolledWindow" id="scrolledwindow3">
+          <object class="GtkFrame" id="frame1">
             <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="hscrollbar_policy">never</property>
-            <property name="vscrollbar_policy">automatic</property>
+            <property name="label_xalign">0</property>
+            <property name="shadow_type">in</property>
             <child>
-              <object class="GtkTreeView" id="treeview_jobs">
+              <object class="GtkScrolledWindow" id="scrolledwindow3">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="headers_visible">False</property>
-                <property name="headers_clickable">False</property>
-                <property name="show_expanders">False</property>
+                <property name="hscrollbar_policy">never</property>
+                <property name="vscrollbar_policy">automatic</property>
                 <child>
-                  <object class="GtkTreeViewColumn" id="tv_column">
-                    <property name="title">column</property>
+                  <object class="GtkTreeView" id="treeview_jobs">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="headers_visible">False</property>
+                    <property name="headers_clickable">False</property>
+                    <property name="show_expanders">False</property>
                     <child>
-                      <object class="GtkCellRendererPixbuf" id="tv_icon_cell"/>
-                    </child>
-                    <child>
-                      <object class="GtkCellRendererText" id="tv_title_cell"/>
-                    </child>
-                    <child>
-                      <object class="GtkCellRendererText" id="tv_time_cell">
-                        <property name="sensitive">False</property>
+                      <object class="GtkTreeViewColumn" id="tv_column">
+                        <property name="title">column</property>
+                        <child>
+                          <object class="GtkCellRendererPixbuf" id="tv_icon_cell"/>
+                        </child>
+                        <child>
+                          <object class="GtkCellRendererText" id="tv_title_cell"/>
+                        </child>
+                        <child>
+                          <object class="GtkCellRendererText" id="tv_time_cell">
+                            <property name="sensitive">False</property>
+                          </object>
+                        </child>
                       </object>
                     </child>
                   </object>
@@ -43,6 +48,9 @@
               </object>
             </child>
           </object>
+          <packing>
+            <property name="position">1</property>
+          </packing>
         </child>
       </object>
       <packing>
