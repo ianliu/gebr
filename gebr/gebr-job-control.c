@@ -64,6 +64,10 @@ struct _GebrJobControlPriv {
 	LastSelection last_selection;
 	guint timeout_source_id;
 
+	gboolean use_filter_status;
+	gboolean use_filter_servers;
+	gboolean use_filter_group;
+
 	struct {
 		gchar **servers;
 		gdouble *percentages;
@@ -214,8 +218,10 @@ jobs_visible_for_group(GtkTreeModel *model,
 	gint index = atoi(tmp);
 	g_free(tmp);
 
-	if (index == 0) // Any
+	if (index == 0) { // Any
+		jc->priv->use_filter_group = FALSE;
 		return TRUE;
+	}
 
 	GebrJob *job;
 	const gchar *group;
@@ -229,6 +235,11 @@ jobs_visible_for_group(GtkTreeModel *model,
 
 	if (!g_strcmp0(combo_group, group))
 		visible = TRUE;
+
+	jc->priv->use_filter_group = TRUE;
+
+	if (!gtk_widget_get_visible(jc->priv->filter_info_bar))
+		gtk_widget_show_all(jc->priv->filter_info_bar);
 
 	g_free(combo_group);
 	return visible;
@@ -249,9 +260,10 @@ jobs_visible_for_servers(GtkTreeModel *model,
 	gtk_tree_model_get(GTK_TREE_MODEL(jc->priv->server_filter), &active,
 	                   1, &combo_server, -1);
 
-	if (!combo_server)
+	if (!combo_server) {
+		jc->priv->use_filter_servers = FALSE;
 		return TRUE;
-
+	}
 	GebrJob *job;
 	gchar **servers;
 	gint n_servers;
@@ -267,6 +279,11 @@ jobs_visible_for_servers(GtkTreeModel *model,
 		if (!g_strcmp0(servers[i], combo_server->comm->address->str))
 			visible = TRUE;
 	}
+
+	jc->priv->use_filter_servers = TRUE;
+
+	if (!gtk_widget_get_visible(jc->priv->filter_info_bar))
+			gtk_widget_show_all(jc->priv->filter_info_bar);
 
 	return visible;
 }
@@ -285,9 +302,10 @@ jobs_visible_for_status(GtkTreeModel *model,
 	gtk_tree_model_get(GTK_TREE_MODEL(jc->priv->status_model), &active,
 	                   ST_STATUS, &combo_status, -1);
 
-	if (combo_status == -1)
+	if (combo_status == -1) {
+		jc->priv->use_filter_status = FALSE;
 		return TRUE;
-
+	}
 	GebrJob *job;
 
 	gtk_tree_model_get(model, iter, JC_STRUCT, &job, -1);
@@ -296,13 +314,29 @@ jobs_visible_for_status(GtkTreeModel *model,
 		return FALSE;
 
 	enum JobStatus status = gebr_job_get_status(job);
+	gboolean visible = FALSE;
 
 	if (status == combo_status)
-		return TRUE;
+		visible = TRUE;
 	else if (status == JOB_STATUS_FAILED && combo_status == JOB_STATUS_CANCELED)
-		return TRUE;
+		visible = TRUE;
 
-	return FALSE;
+//	GtkWidget *content = gtk_info_bar_get_content_area(GTK_INFO_BAR(jc->priv->filter_info_bar));
+//	GList *labels = gtk_container_get_children(GTK_CONTAINER(content));
+//
+//	gtk_tree_model_get(GTK_TREE_MODEL(combo), &active,
+//	                   ST_TEXT, &combo_text, -1);
+//
+//	const gchar *filters = gtk_label_get_label(GTK_LABEL(labels->data));
+//	const gchar *new_filters = g_strdup_printf("%sStatus: %s\n", filters, combo_text);
+//	gtk_label_set_text(GTK_LABEL(labels->data), new_filters);
+
+	jc->priv->use_filter_status = TRUE;
+
+	if (!gtk_widget_get_visible(jc->priv->filter_info_bar))
+		gtk_widget_show_all(jc->priv->filter_info_bar);
+
+	return visible;
 
 }
 
@@ -336,6 +370,14 @@ on_cb_changed(GtkComboBox *combo,
 	GtkTreeModel *sort = gtk_tree_view_get_model(GTK_TREE_VIEW(jc->priv->view));
 	GtkTreeModel *filter = gtk_tree_model_sort_get_model(GTK_TREE_MODEL_SORT(sort));
 	gtk_tree_model_filter_refilter(GTK_TREE_MODEL_FILTER(filter));
+
+	if (jc->priv->use_filter_status == FALSE &&
+	    jc->priv->use_filter_group == FALSE &&
+	    jc->priv->use_filter_servers == FALSE)
+		gtk_widget_hide(jc->priv->filter_info_bar);
+	else
+		if (!gtk_widget_get_visible(jc->priv->filter_info_bar))
+			gtk_widget_show_all(jc->priv->filter_info_bar);
 }
 
 static void
@@ -1285,9 +1327,17 @@ on_row_changed_model(GtkTreeModel *tree_model,
 }
 
 static void
-on_reset_filter()
+on_reset_filter(GtkInfoBar *info_bar,
+                gint        response_id,
+                gpointer    user_data)
 {
-	g_debug("Foooooo");
+	GebrJobControl *jc = user_data;
+
+	gtk_combo_box_set_active(jc->priv->status_combo, 0);
+	gtk_combo_box_set_active(jc->priv->server_combo, 0);
+	gtk_combo_box_set_active(jc->priv->group_combo, 0);
+
+	gtk_widget_hide(GTK_WIDGET(info_bar));
 }
 
 /* Public methods {{{1 */
@@ -1315,11 +1365,14 @@ gebr_job_control_new(void)
 	g_signal_connect(jc->priv->filter_info_bar, "response", G_CALLBACK(on_reset_filter), jc);
 	gtk_box_pack_start(GTK_BOX(gtk_info_bar_get_content_area(jc->priv->filter_info_bar)),
 			   gtk_label_new(_("Jobs list is filtered")), TRUE, TRUE, 0);
-	gtk_widget_show_all(jc->priv->filter_info_bar);
 
 	GtkBox *left_box = GTK_BOX(gtk_builder_get_object(jc->priv->builder, "left-side-box"));
 	gtk_box_pack_start(left_box, jc->priv->filter_info_bar, FALSE, TRUE, 0);
 	gtk_container_child_set(GTK_CONTAINER(left_box), jc->priv->filter_info_bar, "position", 0, NULL);
+
+	jc->priv->use_filter_group = FALSE;
+	jc->priv->use_filter_servers = FALSE;
+	jc->priv->use_filter_status = FALSE;
 
 	jc->priv->store = gtk_list_store_new(JC_N_COLUMN, G_TYPE_POINTER);
 
