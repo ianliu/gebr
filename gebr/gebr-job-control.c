@@ -193,8 +193,6 @@ on_select_non_single_job(GebrJobControl *jc,
 		gebr_jc_get_jobs_state(jc, rows, &can_close, &can_kill);
 	}
 
-	g_debug("Fooo");
-
 	job_control_disconnect_signals(jc);
 	update_control_buttons(jc, can_close, can_kill, can_save);
 	jc->priv->last_selection.job = NULL;
