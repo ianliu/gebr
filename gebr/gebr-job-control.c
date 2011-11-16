@@ -402,6 +402,8 @@ fill_issues_properties(GebrJobControl *jc,
 		gtk_info_bar_set_message_type(info, GTK_MESSAGE_WARNING);
 
 	gtk_label_set_text(label, issues);
+	gtk_label_set_line_wrap(label, TRUE);
+	gtk_label_set_line_wrap_mode(label, PANGO_WRAP_WORD);
 	gtk_image_set_from_stock(image, stock_id, GTK_ICON_SIZE_DIALOG);
 }
 
