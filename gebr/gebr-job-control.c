@@ -1069,6 +1069,9 @@ gebr_job_control_load_details(GebrJobControl *jc,
 
 	gtk_text_buffer_get_end_iter(jc->priv->text_buffer, &end_iter);
 	gtk_text_buffer_insert(jc->priv->text_buffer, &end_iter, info->str, info->len);
+	if (gebr.config.job_log_auto_scroll)
+		gtk_text_view_scroll_to_iter(GTK_TEXT_VIEW(jc->priv->text_view), &end_iter,
+					     0, FALSE, 0, 0);
 
 	g_string_free(info, TRUE);
 }
