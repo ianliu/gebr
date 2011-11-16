@@ -562,15 +562,11 @@ job_control_fill_servers_info(GebrJobControl *jc)
 		if (g_strcmp0(groups, "") == 0)
 			groups = _("All Servers");
 
-		markup = g_markup_printf_escaped (_("Job submitted by <b>%s</b> to group <b>%s</b> and executed\n"
-						  "using <b>%s</b> processor(s) distributed on <b>%d</b> servers.\n"),
-						  gebr_job_get_hostname(job), groups, nprocs, n_servers);
+		markup = g_markup_printf_escaped (_("Job submitted by <b>%s</b> to group <b>%s</b>.\n"
+						  "Executed using %s<b>%s</b> processor(s) distributed on <b>%d</b> servers.\n"),
+						  gebr_job_get_hostname(job), groups,
+						  g_strcmp0(niceness, "0")? _("idle time of ") : "", nprocs, n_servers);
 		g_string_append(resources, markup);
-
-		if (!g_strcmp0(niceness, "0"))
-			g_string_append_printf(resources, _("Using all machines resources\n"));
-		else
-			g_string_append_printf(resources, _("Using the machines idle time\n"));
 
 		g_free(nprocs);
 		g_free(niceness);
