@@ -52,10 +52,9 @@ struct _GebrJobControlPriv {
 	GtkListStore *server_filter;
 	GtkListStore *status_model;
 	GtkListStore *store;
-	GtkTextBuffer *cmd_buffer;
 	GtkTextBuffer *text_buffer;
 	GtkListStore *group_filter;
-	GtkWidget *cmd_view;
+	GList *cmd_views;
 	GtkWidget *label;
 	GtkWidget *text_view;
 	GtkWidget *view;
@@ -64,7 +63,7 @@ struct _GebrJobControlPriv {
 	LastSelection last_selection;
 	guint timeout_source_id;
 
-	struct servers_info {
+	struct {
 		gchar **servers;
 		gdouble *percentages;
 	} servers_info;
@@ -440,15 +439,13 @@ on_job_output(GebrJob *job,
 	      const gchar *output,
 	      GebrJobControl *jc)
 {
-	GtkTextIter end_iter;
-	GtkTextMark *mark;
+	GtkTextIter end;
 
-	gtk_text_buffer_get_end_iter(jc->priv->text_buffer, &end_iter);
-	gtk_text_buffer_insert(jc->priv->text_buffer, &end_iter, output, strlen(output));
-	if (gebr.config.job_log_auto_scroll) {
-		mark = gtk_text_buffer_get_mark(jc->priv->text_buffer, "end");
-		gtk_text_view_scroll_mark_onscreen(GTK_TEXT_VIEW(jc->priv->text_view), mark);
-	}
+	gtk_text_buffer_get_end_iter(jc->priv->text_buffer, &end);
+	gtk_text_buffer_insert(jc->priv->text_buffer, &end, output, strlen(output));
+	if (gebr.config.job_log_auto_scroll)
+		gtk_text_view_scroll_to_iter(GTK_TEXT_VIEW(jc->priv->text_view), &end,
+					     0, FALSE, 0, 0);
 }
 
 static void
@@ -467,24 +464,6 @@ on_job_issued(GebrJob *job,
 	      GebrJobControl *jc)
 {
 	fill_issues_properties(jc, issues, job);
-}
-
-static void
-on_job_cmd_line_received(GebrJob *job,
-			 GebrJobControl *jc)
-{
-	GtkTextIter end_iter;
-	GtkTextMark *mark;
-	const gchar *cmdline = gebr_job_get_command_line(job);
-
-	if (jc->priv->cmd_view) {
-		gtk_text_buffer_get_end_iter(jc->priv->cmd_buffer, &end_iter);
-		gtk_text_buffer_insert(jc->priv->cmd_buffer, &end_iter, cmdline, strlen(cmdline));
-		if (gebr.config.job_log_auto_scroll) {
-			mark = gtk_text_buffer_get_mark(jc->priv->cmd_buffer, "end");
-			gtk_text_view_scroll_mark_onscreen(GTK_TEXT_VIEW(jc->priv->cmd_view), mark);
-		}
-	}
 }
 
 static void
@@ -644,8 +623,6 @@ job_control_disconnect_signals(GebrJobControl *jc)
 		                            jc->priv->last_selection.sig_status);
 		g_signal_handler_disconnect(jc->priv->last_selection.job,
 		                            jc->priv->last_selection.sig_issued);
-		g_signal_handler_disconnect(jc->priv->last_selection.job,
-		                            jc->priv->last_selection.sig_cmd_line);
 	}
 }
 
@@ -728,8 +705,6 @@ job_control_on_cursor_changed(GtkTreeSelection *selection,
 				g_signal_connect(job, "status-change", G_CALLBACK(on_job_status), jc);
 		jc->priv->last_selection.sig_issued =
 				g_signal_connect(job, "issued", G_CALLBACK(on_job_issued), jc);
-		jc->priv->last_selection.sig_cmd_line =
-				g_signal_connect(job, "cmd-line-received", G_CALLBACK(on_job_cmd_line_received), jc);
 
 		gebr_job_control_load_details(jc, job);
 	}
@@ -953,94 +928,72 @@ static void
 gebr_job_control_include_cmd_line(GebrJobControl *jc,
                                   GebrJob *job)
 {
-	GString *info_cmd = g_string_new("");
-	GtkTextIter end_iter_cmd;
+	GtkTextBuffer *buffer;
 	GtkScrolledWindow *scroll = GTK_SCROLLED_WINDOW(gtk_builder_get_object(jc->priv->builder, "scrolledwindow2"));
-	GtkWidget *text = gtk_bin_get_child(GTK_BIN(scroll));
+	PangoFontDescription *font;
+	font = pango_font_description_new();
+	pango_font_description_set_family(font, "monospace");
+	GtkWrapMode wrapmode = gebr.config.job_log_word_wrap ? GTK_WRAP_WORD : GTK_WRAP_NONE;
 
-	if (text) {
-		GList *child = gtk_container_get_children(GTK_CONTAINER(text));
-		if (child)
-			g_list_free(child);
-		gtk_widget_destroy(text);
-	}
+	GtkWidget *child = gtk_bin_get_child(GTK_BIN(scroll));
+	if (child)
+		gtk_widget_destroy(child);
 
-	/* command-line */
+	g_list_free(jc->priv->cmd_views);
+	jc->priv->cmd_views = NULL;
+
 	GList *tasks = gebr_job_get_list_of_tasks(job);
-	if (tasks && g_list_length(tasks) > 1) {
-		jc->priv->cmd_view = NULL;
+	if (!tasks)
+		g_return_if_reached();
+
+	if (g_list_length(tasks) > 1) {
 		GtkWidget *vbox = gtk_vbox_new(FALSE, 8);
 
-		GtkAdjustment *hadj = gtk_scrolled_window_get_hadjustment(scroll);
-		GtkAdjustment *vadj = gtk_scrolled_window_get_vadjustment(scroll);
-		GtkWidget *viewport = gtk_viewport_new(hadj, vadj);
-
 		for (GList *i = tasks; i; i = i->next) {
-			gint frac, total;
 			GebrTask *task = i->data;
+
+			gint frac, total;
 			gebr_task_get_fraction(task, &frac, &total);
-			GtkWidget *expander;
-
-			GString *new_buf = g_string_new(NULL);
-			g_string_append_printf(new_buf, _("Command line for task %d of %d "), frac, total);
-			g_string_append_printf(new_buf, _(" \(Server: %s)"), (gebr_task_get_server(task))->comm->address->str);
-
-			expander = gtk_expander_new(new_buf->str);
+			gchar *title = g_strdup_printf(_("Command line for task %d of %d (Server: %s)"),
+						       frac, total, gebr_task_get_server(task)->comm->address->str);
+			GtkWidget *expander = gtk_expander_new(title);
 			gtk_expander_set_expanded(GTK_EXPANDER(expander), FALSE);
+			g_free(title);
 
-			GtkTextIter task_iter;
-			GtkTextBuffer *task_buf = gtk_text_buffer_new(NULL);
-			gchar *task_line = g_strdup_printf("%s\n", gebr_task_get_cmd_line(task));
-			gtk_text_buffer_get_end_iter(task_buf, &task_iter);
-			gtk_text_buffer_insert(task_buf, &task_iter, task_line, strlen(task_line));
+			GtkWidget *view = gtk_text_view_new();
+			gtk_widget_modify_font(view, font);
+			g_object_set(view, "wrap-mode", wrapmode, NULL);
+			g_object_set(view, "editable", FALSE, NULL);
+			jc->priv->cmd_views = g_list_prepend(jc->priv->cmd_views, view);
+			buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(view));
+			gtk_text_buffer_set_text(buffer, gebr_task_get_cmd_line(task), -1);
 
-			GtkWidget *task_view = gtk_text_view_new_with_buffer(task_buf);
+			g_signal_connect(view, "populate-popup",
+					 G_CALLBACK(on_text_view_populate_popup), jc);
 
-			PangoFontDescription *font;
-			font = pango_font_description_new();
-			pango_font_description_set_family(font, "monospace");
-			gtk_widget_modify_font(task_view, font);
-			pango_font_description_free(font);
-
-			g_object_set(task_view, "wrap-mode", GTK_WRAP_WORD, NULL);
-			g_object_set(task_view, "editable", FALSE, "cursor-visible", FALSE, NULL);
-			gtk_container_add (GTK_CONTAINER (expander), task_view);
+			gtk_container_add(GTK_CONTAINER(expander), view);
 			gtk_box_pack_start(GTK_BOX(vbox), expander, FALSE, FALSE, 0);
-
-			g_string_free(new_buf, TRUE);
-			g_free(task_line);
 		}
-		gtk_container_add(GTK_CONTAINER(viewport), vbox);
-		gtk_container_add(GTK_CONTAINER(scroll), viewport);
-		gtk_widget_show_all(viewport);
+
+		gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scroll), vbox);
+		gtk_widget_show_all(vbox);
 	} else {
-		GtkTextIter iter_end;
-		jc->priv->cmd_buffer = gtk_text_buffer_new(NULL);
-		gtk_text_buffer_get_end_iter(jc->priv->cmd_buffer, &iter_end);
-		gtk_text_buffer_create_mark(jc->priv->cmd_buffer, "end", &iter_end, FALSE);
-		jc->priv->cmd_view = gtk_text_view_new_with_buffer(jc->priv->cmd_buffer);
-		g_object_set(jc->priv->cmd_view, "wrap-mode", gebr.config.job_log_word_wrap ? GTK_WRAP_WORD : GTK_WRAP_NONE, NULL);
-		g_object_set(G_OBJECT(jc->priv->cmd_view), "editable", FALSE, "cursor-visible", FALSE, NULL);
+		GtkWidget *view = gtk_text_view_new();
+		gtk_widget_modify_font(view, font);
+		g_object_set(view, "wrap-mode", wrapmode, NULL);
+		g_object_set(view, "editable", FALSE, NULL);
+		jc->priv->cmd_views = g_list_prepend(jc->priv->cmd_views, view);
+		buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(view));
+		gtk_text_buffer_set_text(buffer, gebr_task_get_cmd_line(tasks->data), -1);
 
-		PangoFontDescription *font;
-		font = pango_font_description_new();
-		pango_font_description_set_family(font, "monospace");
-		gtk_widget_modify_font(jc->priv->cmd_view, font);
-		pango_font_description_free(font);
+		g_signal_connect(view, "populate-popup",
+				 G_CALLBACK(on_text_view_populate_popup), jc);
 
-		g_signal_connect(jc->priv->cmd_view, "populate-popup", G_CALLBACK(on_text_view_populate_popup), jc);
-
-		gtk_container_add(GTK_CONTAINER(scroll), jc->priv->cmd_view);
-		gtk_widget_show_all(jc->priv->cmd_view);
-
-		gchar *cmdline = gebr_job_get_command_line(job);
-		g_string_append_printf(info_cmd, "%s\n", cmdline);
-		g_free(cmdline);
-
-		gtk_text_buffer_get_end_iter(jc->priv->cmd_buffer, &end_iter_cmd);
-		gtk_text_buffer_insert(jc->priv->cmd_buffer, &end_iter_cmd, info_cmd->str, info_cmd->len);
+		gtk_container_add(GTK_CONTAINER(scroll), view);
+		gtk_widget_show_all(view);
 	}
-	g_string_free(info_cmd, TRUE);
+
+	pango_font_description_free(font);
 }
 
 static void
@@ -1240,11 +1193,12 @@ static void
 wordwrap_toggled(GtkCheckMenuItem * check_menu_item, GebrJobControl * jc)
 {
 	gebr.config.job_log_word_wrap = gtk_check_menu_item_get_active(check_menu_item);
-	g_object_set(G_OBJECT(jc->priv->text_view), "wrap-mode",
-		     gebr.config.job_log_word_wrap ? GTK_WRAP_WORD : GTK_WRAP_NONE, NULL);
-	if (jc->priv->cmd_view)
-		g_object_set(G_OBJECT(jc->priv->cmd_view), "wrap-mode",
-		             gebr.config.job_log_word_wrap ? GTK_WRAP_WORD : GTK_WRAP_NONE, NULL);
+	GtkWrapMode mode = gebr.config.job_log_word_wrap ? GTK_WRAP_WORD : GTK_WRAP_NONE;
+
+	g_object_set(G_OBJECT(jc->priv->text_view), "wrap-mode", mode, NULL);
+
+	for (GList *i = jc->priv->cmd_views; i; i = i->next)
+		g_object_set(i->data, "wrap-mode", mode, NULL);
 }
 
 static void
