@@ -133,8 +133,42 @@ static GtkMenu *job_control_popup_menu(GtkWidget * widget, GebrJobControl *job_c
 
 static void job_control_fill_servers_info(GebrJobControl *jc);
 
+static void job_control_disconnect_signals(GebrJobControl *jc);
+
+static void gebr_job_control_info_set_visible(GebrJobControl *jc,
+					      gboolean visible,
+					      const gchar *txt);
+
 
 /* Private methods {{{1 */
+static void
+gebr_jc_get_jobs_state(GebrJobControl *jc,
+                        GList *jobs,
+                        gboolean *can_close,
+                        gboolean *can_kill)
+{
+	*can_close = FALSE;
+	*can_kill = FALSE;
+	GtkTreeIter iter;
+	GebrJob *job;
+	GtkTreeModel *model = gtk_tree_view_get_model(GTK_TREE_VIEW(jc->priv->view));
+
+	for (GList *i = jobs; i; i = i->next) {
+		if (gtk_tree_model_get_iter(model, &iter, (GtkTreePath*)i->data)) {
+			gtk_tree_model_get(model, &iter, JC_STRUCT, &job, -1);
+
+			if (!(*can_close) && gebr_job_can_close(job))
+				*can_close = TRUE;
+
+			if (!(*can_kill) && gebr_job_can_kill(job))
+				*can_kill = TRUE;
+
+			if (*can_close && *can_kill)
+				break;
+		}
+	}
+}
+
 static void
 update_control_buttons(GebrJobControl *jc,
 		       gboolean can_close,
@@ -144,6 +178,44 @@ update_control_buttons(GebrJobControl *jc,
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_close"), can_close);
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_stop"), can_kill);
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_job_control, "job_control_save"), can_save);
+}
+
+static void
+on_select_non_single_job(GebrJobControl *jc,
+			 GList *rows)
+{
+	gboolean can_close, can_kill, can_save;
+
+	if (!rows)
+		can_close = can_kill = can_save = FALSE;
+	else {
+		can_save = TRUE;
+		gebr_jc_get_jobs_state(jc, rows, &can_close, &can_kill);
+	}
+
+	g_debug("Fooo");
+
+	job_control_disconnect_signals(jc);
+	update_control_buttons(jc, can_close, can_kill, can_save);
+	jc->priv->last_selection.job = NULL;
+
+	gchar *msg;
+	gint real_n = gtk_tree_model_iter_n_children(GTK_TREE_MODEL(jc->priv->store), NULL);
+	gint virt_n = gtk_tree_model_iter_n_children(gtk_tree_view_get_model(GTK_TREE_VIEW(jc->priv->view)), NULL);
+
+	if (!rows) {
+		if (real_n == 0)
+			msg = g_strdup(_("There are no jobs here! Execute a flow to populate this list."));
+		else if (virt_n < real_n)
+			msg = g_strdup_printf(_("%d jobs of %d are hidden because of the filter."),
+					      real_n - virt_n, real_n);
+		else
+			msg = g_strdup(_("Select a job at the list on the left."));
+	} else
+		msg = g_strdup("Multiple jobs are selected.");
+
+	gebr_job_control_info_set_visible(jc, FALSE, msg);
+	g_free(msg);
 }
 
 static gboolean
@@ -378,6 +450,8 @@ on_cb_changed(GtkComboBox *combo,
 	else
 		if (!gtk_widget_get_visible(jc->priv->filter_info_bar))
 			gtk_widget_show_all(jc->priv->filter_info_bar);
+
+	on_select_non_single_job(jc, NULL);
 }
 
 static void
@@ -672,52 +746,18 @@ job_control_disconnect_signals(GebrJobControl *jc)
 }
 
 static void
-gebr_jc_get_jobs_state(GebrJobControl *jc,
-                        GList *jobs,
-                        gboolean *can_close,
-                        gboolean *can_kill)
-{
-	*can_close = FALSE;
-	*can_kill = FALSE;
-	GtkTreeIter iter;
-	GebrJob *job;
-	GtkTreeModel *model = gtk_tree_view_get_model(GTK_TREE_VIEW(jc->priv->view));
-
-	for (GList *i = jobs; i; i = i->next) {
-		if (gtk_tree_model_get_iter(model, &iter, (GtkTreePath*)i->data)) {
-			gtk_tree_model_get(model, &iter, JC_STRUCT, &job, -1);
-
-			if (!(*can_close) && gebr_job_can_close(job))
-				*can_close = TRUE;
-
-			if (!(*can_kill) && gebr_job_can_kill(job))
-				*can_kill = TRUE;
-
-			if (*can_close && *can_kill)
-				break;
-		}
-	}
-}
-
-static void
 job_control_on_cursor_changed(GtkTreeSelection *selection,
 			      GebrJobControl *jc)
 {
 	GtkTreeModel *model;
 	GList *rows = gtk_tree_selection_get_selected_rows(selection, &model);
-	gboolean can_close, can_kill;
 
 	if (!rows) {
-		job_control_disconnect_signals(jc);
-		update_control_buttons(jc, FALSE, FALSE, FALSE);
-		jc->priv->last_selection.job = NULL;
-		gebr_job_control_info_set_visible(jc, FALSE, _("Please, select a job at the list on the left"));
+		on_select_non_single_job(jc, rows);
 		return;
 	}
 
 	GebrJob *job = NULL;
-
-	gebr_jc_get_jobs_state(jc, rows, &can_close, &can_kill);
 
 	if (!rows->next) {
 		GtkTreeIter iter;
@@ -730,10 +770,7 @@ job_control_on_cursor_changed(GtkTreeSelection *selection,
 	gboolean has_job = (job != NULL);
 
 	if (!has_job) {
-		job_control_disconnect_signals(jc);
-		update_control_buttons(jc, can_close, can_kill, TRUE);
-		jc->priv->last_selection.job = NULL;
-		gebr_job_control_info_set_visible(jc, FALSE, _("Multiple jobs selected"));
+		on_select_non_single_job(jc, rows);
 		return;
 	}
 
@@ -1363,7 +1400,7 @@ gebr_job_control_new(void)
 
 	jc->priv->filter_info_bar = gtk_info_bar_new_with_buttons(_("Show all"), GTK_RESPONSE_OK, NULL);
 	g_signal_connect(jc->priv->filter_info_bar, "response", G_CALLBACK(on_reset_filter), jc);
-	gtk_box_pack_start(GTK_BOX(gtk_info_bar_get_content_area(jc->priv->filter_info_bar)),
+	gtk_box_pack_start(GTK_BOX(gtk_info_bar_get_content_area(GTK_INFO_BAR(jc->priv->filter_info_bar))),
 			   gtk_label_new(_("Jobs list is filtered")), TRUE, TRUE, 0);
 
 	GtkBox *left_box = GTK_BOX(gtk_builder_get_object(jc->priv->builder, "left-side-box"));

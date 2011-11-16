@@ -225,8 +225,6 @@ change_value(GtkRange *range, GtkScrollType scroll, gdouble value)
 	GtkAdjustment *adj = gtk_range_get_adjustment(range);
 	gdouble min, max;
 
-	g_debug("%lf", value);
-
 	min = gtk_adjustment_get_lower(adj);
 	max = gtk_adjustment_get_upper(adj);
 
