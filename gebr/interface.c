@@ -196,12 +196,13 @@ adjustment_value_changed(GtkAdjustment *adj)
 }
 
 static void
-change_value(GtkRange *range, gpointer user_data)
+value_changed(GtkRange *range, gpointer user_data)
 {
 	GtkWidget *speed_button = user_data;
+	GtkImage *speed_button_image = GTK_IMAGE(gtk_bin_get_child(GTK_BIN(speed_button)));
+
 	gdouble value = gtk_range_get_value(range);
 
-	GtkImage *speed_button_image = GTK_IMAGE(gtk_bin_get_child(GTK_BIN(speed_button)));
 	switch ((int) value)
 	{
 	case 1:
@@ -216,6 +217,24 @@ change_value(GtkRange *range, gpointer user_data)
 	default:
 		g_warn_if_reached();
 	}
+}
+
+static gboolean
+change_value(GtkRange *range, GtkScrollType scroll, gdouble value)
+{
+	GtkAdjustment *adj = gtk_range_get_adjustment(range);
+	gdouble min, max;
+
+	g_debug("%lf", value);
+
+	min = gtk_adjustment_get_lower(adj);
+	max = gtk_adjustment_get_upper(adj);
+
+	gint speed = (int) CLAMP(round(value), min, max - 1);
+
+	gtk_adjustment_set_value(adj, speed);
+
+	return TRUE;
 }
 
 static gboolean
@@ -358,7 +377,8 @@ insert_speed_controler(GtkToolbar *toolbar, GtkWidget **toggle_button)
 	gtk_scale_set_digits(GTK_SCALE(scale), 0);
 	g_object_set(scale, "has-tooltip",TRUE, NULL);
 
-	g_signal_connect(scale, "value-changed", G_CALLBACK(change_value), speed_button);
+	g_signal_connect(scale, "change-value", G_CALLBACK(change_value), NULL);
+	g_signal_connect(scale, "value-changed", G_CALLBACK(value_changed), speed_button);
 	g_signal_connect(scale, "query-tooltip", G_CALLBACK(speed_controller_query_tooltip), NULL);
 	g_signal_connect(scale, "map", G_CALLBACK(on_show_scale), NULL);
 
