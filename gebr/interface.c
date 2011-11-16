@@ -247,28 +247,8 @@ speed_controller_query_tooltip(GtkWidget  *widget,
 {
 	GtkRange *scale = GTK_RANGE(widget);
 	gint value = (gint) gtk_range_get_value(scale);
-	const gchar * text_tooltip;
-	switch (value) {
-	case 1:
-		text_tooltip = _("Very low performance");
-		break;
-	case 2:
-		text_tooltip = _("Low performance");
-		break;
-	case 3:
-		text_tooltip = _("Medium performance");
-		break;
-	case 4:
-		text_tooltip = _("High performance");
-		break;
-	case 5:
-		text_tooltip = _("Very high performance");
-		break;
-	default:
-		text_tooltip = "";
-		g_return_val_if_reached(FALSE);
-		break;
-	}
+	const gchar *text_tooltip;
+	text_tooltip = set_text_for_performance(value);
 	gtk_tooltip_set_text (tooltip, text_tooltip);
 	return TRUE;
 }
@@ -283,32 +263,12 @@ speed_button_tooltip (GtkWidget  *widget,
 {
 	gint value = gebr.config.flow_exec_speed;
 
-	gchar *speed;
-	switch (value) {
-	case 1:
-		speed = g_strdup(_("Very low performance"));
-		break;
-	case 2:
-		speed = g_strdup(_("Low performance"));
-		break;
-	case 3:
-		speed = g_strdup(_("Medium performance"));
-		break;
-	case 4:
-		speed = g_strdup(_("High performance"));
-		break;
-	case 5:
-		speed = g_strdup(_("Very high performance"));
-		break;
-	default:
-		speed = g_strdup("");
-		g_return_val_if_reached(FALSE);
-		break;
-	}
+	const gchar *speed;
+	speed = set_text_for_performance(value);
 	const gchar * text_tooltip = g_strdup_printf(_("Execution speed: %s"), speed);
 	gtk_tooltip_set_text (tooltip, text_tooltip);
 
-	g_free(speed);
+	//g_free(speed);
 	return TRUE;
 }
 

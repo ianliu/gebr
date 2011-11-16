@@ -141,6 +141,14 @@ GtkTreeModel *gebr_job_control_get_model(GebrJobControl *jc);
 void gebr_job_control_setup_filter_button(GebrJobControl *jc,
 					  GebrGuiToolButton *tool_button);
 
+gboolean
+detail_button_query_tooltip(GtkWidget  *widget,
+			       gint        x,
+			       gint        y,
+			       gboolean    keyboard_mode,
+			       GtkTooltip *tooltip,
+			       GebrJobControl *jc);
+
 G_END_DECLS
 
 #endif /* __GEBR_JOB_CONTROL_H__ */

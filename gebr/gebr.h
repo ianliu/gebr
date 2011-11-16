@@ -193,6 +193,13 @@ void gebr_remove_help_edit_window(GebrGeoXmlDocument * document);
 
 const gchar *gebr_get_session_id(void);
 
+/**
+ * set_text_for_performance:
+ * @value
+ * Sets the text according to @value
+ */
+const gchar *set_text_for_performance (gint value);
+
 G_END_DECLS
 
 #endif				//__GEBR_H

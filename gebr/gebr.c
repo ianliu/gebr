@@ -788,3 +788,24 @@ gebr_get_session_id(void)
 {
 	return SESSIONID;
 }
+
+const gchar *
+set_text_for_performance (gint value)
+{
+	switch (value) {
+	case 1:
+		return  _("Very low performance");
+	case 2:
+		return  _("Low performance");
+	case 3:
+		return  _("Medium performance");
+	case 4:
+		return  _("High performance");
+	case 5:
+		return  _("Very high performance");
+	default:
+		g_return_val_if_reached(FALSE);
+		return  "";
+	}
+}
+

@@ -1215,6 +1215,13 @@ de <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-ima
   <section xml:id="controle_de_tarefas">
     <title>The 
 	<guilabel>Job control</guilabel> tab</title>
+    <para> GêBr presents an interface to the organization and visuzalization of the results.</para>
+    <mediaobject>
+      <caption> Opening of Job Control </caption>
+       <imageobject>
+         <imagedata fileref="../images/GeBR_jc_opening.png"/>
+       </imageobject>
+     </mediaobject>
     <para> As seen in <xref linkend="executar_fluxo"/>, GêBR switches to the
 	<guilabel>Job control</guilabel> tab whenever a Flow is executed. In this tab you can
 	 <emphasis role="bold">follow</emphasis> and, if so desired, <emphasis role="bold">interrupt</emphasis> the Flow's

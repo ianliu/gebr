@@ -1055,6 +1055,9 @@ gebr_job_control_load_details(GebrJobControl *jc,
 		g_warn_if_reached();
 	}
 
+	g_object_set(info_button_image, "has-tooltip",TRUE, NULL);
+	g_signal_connect(info_button_image, "query-tooltip", G_CALLBACK(detail_button_query_tooltip), jc);
+
 	gebr_jc_update_status_and_time(jc, job, status);
 
 	GtkLabel *label = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "header_label"));
@@ -1794,6 +1797,20 @@ gebr_job_control_setup_filter_button(GebrJobControl *jc,
 	gebr_gui_tool_button_add(tool_button, widget);
 }
 
+gboolean
+detail_button_query_tooltip(GtkWidget  *widget,
+			       gint        x,
+			       gint        y,
+			       gboolean    keyboard_mode,
+			       GtkTooltip *tooltip,
+			       GebrJobControl *jc)
+{
+	GebrJob *job = get_selected_job(jc);
+	gint value = gebr_job_get_exec_speed(job);
+	const gchar *text_tooltip = set_text_for_performance(value);
+	gtk_tooltip_set_text (tooltip, text_tooltip);
+	return TRUE;
+}
 void
 gebr_job_control_remove(GebrJobControl *jc,
 			GebrJob *job)
