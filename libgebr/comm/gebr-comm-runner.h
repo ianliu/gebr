@@ -24,46 +24,25 @@
 
 G_BEGIN_DECLS
 
-typedef struct {
-	GebrGeoXmlFlow *flow;
-	GebrCommServer *server;
-	gchar *flow_xml;
-	gchar *run_id;
-	gchar *frac;
-	gpointer user_data;
-	gchar *job_percentage;
-} GebrCommRunnerFlow;
+typedef struct _GebrCommRunner GebrCommRunner;
+typedef struct _GebrCommRunnerPriv GebrCommRunnerPriv;
 
-/**
- * GebrCommRunner:
- * @flows: use gebr_comm_runner_add_flow() to add a flow
- * @parallel: whether this will be executed in a parallel environment
- * @account: account for moab servers
- * @queue: the queue this flow will be appended
- * @num_processes: the number of processes to run in parallel
- * @execution_speed: the absolute value means the number of cores, while its
- * sign means niceness 0 (+) and niceness 19 (-).
- */
-typedef struct {
-	/*< private >*/
-	GList *flows;
-	gboolean parallel;
-	gchar *account;
-	gchar *queue;
-	gchar *num_processes;
-	gchar *execution_speed;
-	gchar *niceness;
-	gchar *server_group_name;
-	gboolean is_nice;
-	gboolean is_parallelizable;
-} GebrCommRunner;
+struct _GebrCommRunner {
+	GebrCommRunnerPriv *priv;
+};
 
 /**
  * gebr_comm_runner_new:
  *
- * Returns: A newly created #GebrCommRunner. See 
+ * Returns: A newly created #GebrCommRunner.
  */
-GebrCommRunner *gebr_comm_runner_new(void);
+GebrCommRunner *gebr_comm_runner_new(GebrGeoXmlDocument *flow,
+				     GList *servers,
+				     const gchar *parent_rid,
+				     const gchar *speed,
+				     const gchar *nice,
+				     const gchar *group,
+				     GebrValidator *validator);
 
 /**
  * gebr_comm_runner_free:
@@ -71,27 +50,13 @@ GebrCommRunner *gebr_comm_runner_new(void);
 void gebr_comm_runner_free(GebrCommRunner *self);
 
 /**
- * gebr_comm_runner_add_flow:
- *
- * Adds @flow to the @self struct and returns it. The @flow referenced once,
- * and unreferenced when gebr_comm_runner_free() is called.
- */
-GebrCommRunnerFlow * gebr_comm_runner_add_flow(GebrCommRunner *self,
-					       GebrValidator  *validator,
-					       GebrGeoXmlFlow *flow,
-					       GebrCommServer *server,
-					       gboolean        divided,
-					       const gchar    *sessid,
-					       gpointer        user_data,
-					       gdouble 	       weight);
-
-void gebr_comm_runner_flow_set_frac(GebrCommRunnerFlow *self, gint frac, gint total);
-
-/**
- * gebr_comm_runner_run:
+ * gebr_comm_runner_run_async:
  * @self:
  */
-void gebr_comm_runner_run(GebrCommRunner *self);
+void gebr_comm_runner_run_async(GebrCommRunner *self,
+				const gchar *id);
+
+const gchar *gebr_comm_runner_get_servers_str(GebrCommRunner *self);
 
 G_END_DECLS
 

@@ -19,21 +19,48 @@
 
 #include <libgebr/geoxml/geoxml.h>
 #include <libgebr/comm/gebr-comm.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+
+typedef struct {
+	GebrCommServer *server;
+	gdouble score;
+} ServerScore;
+
+struct _GebrCommRunnerPriv {
+	gchar *id;
+	GebrGeoXmlDocument *flow;
+	GList *servers;
+	GebrValidator *validator;
+
+	gint requests;
+	gint responses;
+
+	gchar *parent_rid;
+	gchar *speed;
+	gchar *nice;
+	gchar *group;
+	gchar *servers_str;
+
+	gchar *account; // MOAB
+	gchar *num_processes; // MPI
+};
 
 /* Private methods {{{1 */
 /*
- * gebr_comm_server_run_strip_flow:
+ * strip_flow:
  * @validator:
  * @flow: a #GebrGeoXmlFlow.
  *
  * Make a copy of @flow and removes all help strings. All dictionaries from
  * @line and @proj are merged into the copy.
  *
- * Returns: a new flow prepared to run.
+ * Returns: a new flow, in XML string, prepared to run.
  */
-static GebrGeoXmlFlow *
-gebr_comm_server_run_strip_flow(GebrValidator *validator,
-				GebrGeoXmlFlow *flow)
+static gchar *
+strip_flow(GebrValidator *validator,
+	   GebrGeoXmlFlow *flow)
 {
 	GebrGeoXmlSequence *i;
 	GebrGeoXmlDocument *clone;
@@ -76,116 +103,262 @@ gebr_comm_server_run_strip_flow(GebrValidator *validator,
 	gebr_validator_get_documents(validator, NULL, &line, &proj);
 	gebr_geoxml_document_merge_dicts(validator, clone, line, proj, NULL);
 
-	return GEBR_GEOXML_FLOW (clone);
+	gchar *xml;
+	gebr_geoxml_document_to_string(clone, &xml);
+	gebr_geoxml_document_free(clone);
+
+	return xml;
 }
 
 /* Public methods {{{1 */
 GebrCommRunner *
-gebr_comm_runner_new(void)
+gebr_comm_runner_new(GebrGeoXmlDocument *flow,
+		     GList *servers,
+		     const gchar *parent_rid,
+		     const gchar *speed,
+		     const gchar *nice,
+		     const gchar *group,
+		     GebrValidator *validator)
 {
 	GebrCommRunner *self = g_new(GebrCommRunner, 1);
-	self->flows = NULL;
-	self->parallel = FALSE;
-	self->account = self->queue = self->num_processes = NULL;
-	self->is_parallelizable = FALSE;
+	self->priv = g_new0(GebrCommRunnerPriv, 1);
+	self->priv->flow = gebr_geoxml_document_ref(flow);
+	self->priv->parent_rid = g_strdup(parent_rid);
+	self->priv->speed = g_strdup(speed);
+	self->priv->nice = g_strdup(nice);
+	self->priv->group = g_strdup(group);
+	self->priv->validator = validator;
+
+	GString *server_list = g_string_new("");
+	self->priv->servers = NULL;
+	for (GList *i = servers; i; i = i->next) {
+		ServerScore *sc = g_new0(ServerScore, 1);
+		sc->server = i->data;
+		sc->score  = 0;
+		g_string_append_printf(server_list, "%s,", sc->server->address->str);
+	}
+	server_list->str[server_list->len-1] = '\0';
+	self->priv->servers_str = g_string_free(server_list, FALSE);
+
 	return self;
 }
 
 void
 gebr_comm_runner_free(GebrCommRunner *self)
 {
-	void free_each(GebrCommRunnerFlow *run_flow)
-	{
-		gebr_geoxml_document_ref(GEBR_GEOXML_DOCUMENT(run_flow->flow));
-		g_free(run_flow->flow_xml);
-		g_free(run_flow->frac);
-		g_free(run_flow->job_percentage);
-		g_free(run_flow);
-	}
-
-	g_list_foreach(self->flows, (GFunc)free_each, NULL);
-	g_list_free(self->flows);
-	g_free(self->account);
-	g_free(self->queue);
-	g_free(self->execution_speed);
-	g_free(self->niceness);
-	g_free(self->server_group_name);
-	g_free(self);
+	// TODO gebr_comm_runner_free
 }
 
-GebrCommRunnerFlow *
-gebr_comm_runner_add_flow(GebrCommRunner *self,
-			  GebrValidator  *validator,
-			  GebrGeoXmlFlow *flow,
-			  GebrCommServer *server,
-			  gboolean 	  divided,
-			  const gchar    *sessid,
-			  gpointer        user_data,
-			  gdouble 	  weight
-			  )
+/*
+ * Compute the parameters of a polynomial (2nd order) fit
+ */
+void
+create_2ndDegreePoly_model(GList *points, gdouble parameters[])
 {
-	static guint run_id = 0;
-	GebrCommRunnerFlow *run_flow = g_new(GebrCommRunnerFlow, 1);
-	GebrGeoXmlFlow *stripped = gebr_comm_server_run_strip_flow(validator, flow);
-	gchar *xml;
+	gdouble M, MA, MB, MC, **N;
+	gint j;
+	GList *i;
+	N = g_new(gdouble*, 3);
+	for (i = points, j = 0; i; i = i->next, j++) {
+		gdouble *p = i->data;
+		N[j] = g_new(gdouble, 4);
+		N[j][0] = 1;
+		N[j][1] = p[0];
+		N[j][2] = N[j][1]*N[j][1];
+		N[j][3] = p[1];
+	}
 
-	gebr_geoxml_document_to_string(GEBR_GEOXML_DOC(stripped), &xml);
-	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(stripped));
-	gebr_geoxml_document_ref(GEBR_GEOXML_DOCUMENT(flow));
+	M = (N[1][1] - N[0][1]) * (N[2][1] - N[0][1]) * (N[2][1] - N[1][1]);
+	MA = N[2][3]*(N[1][1]-N[0][1]) + N[1][3]*(N[0][1]-N[2][1]) + N[0][3]*(N[2][1]-N[1][1]);
+	MB = N[2][3]*(N[0][2]-N[1][2]) + N[1][3]*(N[2][2]-N[0][2]) + N[0][3]*(N[1][2]-N[2][2]);
+	MC = N[2][3]*(N[0][1]*N[1][2] - N[1][1]*N[0][2]) + N[1][3]*(N[2][1]*N[0][2]-N[0][1]*N[2][2]) + N[0][3]*(N[1][1]*N[2][2]-N[2][1]*N[1][2]);
 
-	run_flow->flow = flow;
-	run_flow->server = server;
-	run_flow->flow_xml = xml;
-	run_flow->frac = g_strdup("1:1");
-	run_flow->user_data = user_data;
-	run_flow->job_percentage= g_strdup_printf("%lf", weight);
+	// Equation Ax2 + Bx + C = 0
+	parameters[0] = MA/M;
+	parameters[1] = MB/M;
+	parameters[2] = MC/M;
 
-	if (divided)
-		run_flow->run_id = g_strdup_printf("%u:%s", run_id, sessid);
+	for (gint j=0; j<3; j++)
+		g_free(N[j]);
+	g_free(N);
+}
+
+/*
+ * Predict the future load
+ */
+static gdouble
+predict_current_load(GList *points, gdouble delay)
+{
+	gdouble prediction;
+	gdouble parameters[3];
+	create_2ndDegreePoly_model(points, parameters);
+	prediction = parameters[0]*delay*delay + parameters[1]*delay + parameters[2];
+
+	return MAX(0, prediction);
+}
+
+/*
+ * Compute the score of a server
+ */
+static gdouble
+calculate_server_score(const gchar *load, gint ncores, gdouble cpu_clock, gint scale, gint nsteps)
+{
+	GList *points = NULL;
+	gdouble delay = 1.0;
+	gdouble p1[2];
+	gdouble p5[2];
+	gdouble p15[2];
+
+	sscanf(load, "%lf %lf %lf", &p1[1], &p5[1], &p15[1]);
+
+	p1[0] = -1.0;
+	p5[0] = -5.0;
+	p15[0] = -15.0;
+
+	points = g_list_prepend(points, p1);
+	points = g_list_prepend(points, p5);
+	points = g_list_prepend(points, p15);
+
+	gdouble current_load = predict_current_load(points, delay);
+	gint eff_ncores = MIN(nsteps, scale*ncores/5);
+
+	gdouble score;
+	if (current_load + eff_ncores > ncores)
+		score = cpu_clock*eff_ncores/(current_load + eff_ncores - ncores + 1);
 	else
-		run_flow->run_id = g_strdup_printf("%u:%s", run_id++, sessid);
+		score = cpu_clock*eff_ncores;
 
-	self->flows = g_list_append(self->flows, run_flow);
+	g_list_free(points);
 
-	return run_flow;
+	return score;
 }
 
-void
-gebr_comm_runner_flow_set_frac(GebrCommRunnerFlow *self, gint frac, gint total)
+static void
+divide_and_run_flows(GebrCommRunner *self)
 {
-	if (self->frac)
-		g_free(self->frac);
-	self->frac = g_strdup_printf("%d:%d", frac, total);
-}
+	gdouble sum = 0;
+	gint n = 0;
 
-void
-gebr_comm_runner_run(GebrCommRunner *self)
-{
-	GString *server_list;
-	GebrCommRunnerFlow *runflow = self->flows->data;
-
-	server_list = g_string_new(runflow->server->address->str);
-	for (GList *i = self->flows->next; i != NULL; i = g_list_next(i)) {
-		runflow = i->data;
-		g_string_append_printf(server_list, ",%s", runflow->server->address->str);
+	for (GList *i = self->priv->servers; i; i = i->next) {
+		ServerScore *sc = i->data;
+		sum += sc->score;
+		n++;
 	}
 
-	for (GList *i = self->flows; i != NULL; i = g_list_next(i)) {
-		runflow = i->data;
-		gebr_comm_protocol_socket_oldmsg_send(runflow->server->socket, FALSE,
+	double *weights = g_new(double, n);
+
+	GList *j = self->priv->servers;
+	for (int i = 0; i < n; i++) {
+		weights[i] = ((ServerScore*)j->data)->score / sum;
+		j = j->next;
+	}
+
+	GList *flows = gebr_geoxml_flow_divide_flows(GEBR_GEOXML_FLOW(self->priv->flow),
+						     self->priv->validator,
+						     weights, n);
+
+	gint frac = 1;
+	GList *i = flows;
+	j = self->priv->servers;
+
+	for (int k = 0; i; k++) {
+		GebrGeoXmlFlow *flow = i->data;
+		ServerScore *sc = j->data;
+		gchar *frac_total = g_strdup_printf("%d:%d", frac, n);
+		gchar *weight = g_strdup_printf("%lf", weights[k]);
+		gchar *flow_xml = strip_flow(self->priv->validator, flow);
+
+		gebr_comm_protocol_socket_oldmsg_send(sc->server->socket, FALSE,
 						      gebr_comm_protocol_defs.run_def, 11,
-						      runflow->flow_xml,
-						      self->account ? self->account : "",
-						      self->queue ? self->queue : "",
-						      self->num_processes ? self->num_processes : "",
-						      runflow->run_id,
-						      self->execution_speed,
-						      self->niceness,
-						      runflow->frac,
-						      server_list->str,
-						      self->server_group_name,
-						      runflow->job_percentage);
-	}
+						      flow_xml,
+						      self->priv->account ? self->priv->account : "",
+						      self->priv->parent_rid ? self->priv->parent_rid : "",
+						      self->priv->num_processes ? self->priv->num_processes : "",
+						      self->priv->id,
+						      self->priv->speed,
+						      self->priv->nice,
+						      frac_total,
+						      self->priv->servers_str,
+						      self->priv->group,
+						      weight);
 
-	g_string_free(server_list, TRUE);
+		g_free(frac_total);
+		g_free(weight);
+		g_free(flow_xml);
+
+		frac++;
+		i = i->next;
+		j = j->next;
+	}
+}
+
+static void
+on_response_received(GebrCommHttpMsg *request,
+		     GebrCommHttpMsg *response,
+		     GebrCommRunner  *self)
+{
+	g_return_if_fail(request->method == GEBR_COMM_HTTP_METHOD_GET);
+
+	GebrCommJsonContent *json = gebr_comm_json_content_new(response->content->str);
+	GString *value = gebr_comm_json_content_to_gstring(json);
+	ServerScore *sc = g_object_get_data(G_OBJECT(request), "current-server");
+
+	gint n;
+	GebrGeoXmlProgram *loop = gebr_geoxml_flow_get_control_program(GEBR_GEOXML_FLOW(self->priv->flow));
+
+	if (loop) {
+		gchar *eval_n;
+		gchar *str_n = gebr_geoxml_program_control_get_n(loop, NULL, NULL);
+		gebr_validator_evaluate(self->priv->validator, str_n,
+					GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
+					GEBR_GEOXML_DOCUMENT_TYPE_LINE, &eval_n, NULL);
+		n = atoi(eval_n);
+		g_free(str_n);
+		g_free(eval_n);
+		gebr_geoxml_object_unref(loop);
+	} else
+		n = 1;
+
+	sc->score = calculate_server_score(value->str,
+					   sc->server->ncores,
+					   sc->server->clock_cpu,
+					   atoi(self->priv->speed),
+					   n);
+
+	self->priv->responses++;
+	if (self->priv->responses == self->priv->requests) {
+		gint comp_func(ServerScore *a, ServerScore *b) {
+			return b->score - a->score;
+		}
+
+		self->priv->servers = g_list_sort(self->priv->servers, (GCompareFunc)comp_func);
+		divide_and_run_flows(self);
+	}
+}
+
+void
+gebr_comm_runner_run_async(GebrCommRunner *self,
+			   const gchar *id)
+{
+	self->priv->requests = 0;
+	self->priv->responses = 0;
+	self->priv->id = g_strdup(id);
+
+	for (GList *i = self->priv->servers; i; i = i->next) {
+		GebrCommHttpMsg *request;
+		ServerScore *sc = i->data;
+		request = gebr_comm_protocol_socket_send_request(sc->server->socket,
+								 GEBR_COMM_HTTP_METHOD_GET,
+								 "/sys-load", NULL);
+		g_object_set_data(G_OBJECT(request), "current-server", sc->server);
+		g_signal_connect(request, "response-received",
+				 G_CALLBACK(on_response_received), self);
+		self->priv->requests++;
+	}
+}
+
+const gchar *
+gebr_comm_runner_get_servers_str(GebrCommRunner *self)
+{
+	return self->priv->servers_str;
 }
