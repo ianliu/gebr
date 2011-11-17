@@ -659,7 +659,7 @@ job_control_fill_servers_info(GebrJobControl *jc)
 			groups = _("All Servers");
 
 		markup = g_markup_printf_escaped (_("Job submitted by <b>%s</b> to group <b>%s</b>.\n"
-						  "Executed using %s<b>%s</b> processor(s) distributed on <b>%d</b> servers.\n"),
+						  "Executed using %s<b>%s</b> processor(s)\ndistributed on <b>%d</b> servers.\n"),
 						  gebr_job_get_hostname(job), groups,
 						  g_strcmp0(niceness, "0")? _("idle time of ") : "", nprocs, n_servers);
 		g_string_append(resources, markup);
