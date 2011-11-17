@@ -1866,7 +1866,7 @@ gebr_job_control_select_job(GebrJobControl *jc, GebrJob *job)
 void
 gebr_job_control_show(GebrJobControl *jc)
 {
-	jc->priv->timeout_source_id = g_timeout_add(5000, update_tree_view, jc);
+	jc->priv->timeout_source_id = g_timeout_add(1000, update_tree_view, jc);
 }
 
 void
