@@ -288,8 +288,17 @@ jobs_visible_for_group(GtkTreeModel *model,
 	gint index = atoi(tmp);
 	g_free(tmp);
 
+	GtkWidget *content = gtk_info_bar_get_content_area(GTK_INFO_BAR(jc->priv->filter_info_bar));
+	GList *box = gtk_container_get_children(GTK_CONTAINER(content));
+	GList *labels = gtk_container_get_children(GTK_CONTAINER(box->data));
+
 	if (index == 0) { // Any
 		jc->priv->use_filter_group = FALSE;
+		for (GList *i = labels; i; i = i->next)
+			if (g_str_has_prefix(gtk_label_get_text(i->data), "Group:"))
+				gtk_widget_destroy(GTK_WIDGET(i->data));
+		g_list_free(box);
+		g_list_free(labels);
 		return TRUE;
 	}
 
@@ -298,19 +307,31 @@ jobs_visible_for_group(GtkTreeModel *model,
 
 	gtk_tree_model_get(model, iter, JC_STRUCT, &job, -1);
 
-	if (!job)
+	if (!job) {
+		g_list_free(box);
+		g_list_free(labels);
 		return FALSE;
-
+	}
 	group = gebr_job_get_server_group(job);
 
 	if (!g_strcmp0(combo_group, group))
 		visible = TRUE;
 
-	jc->priv->use_filter_group = TRUE;
-
-	if (!gtk_widget_get_visible(jc->priv->filter_info_bar))
-		gtk_widget_show_all(jc->priv->filter_info_bar);
-
+	if (!jc->priv->use_filter_group) {
+		const gchar *text = g_strdup_printf(_("Group: %s"), combo_group);
+		gtk_box_pack_start(GTK_BOX(box->data), gtk_label_new(text), FALSE, FALSE, 0);
+		jc->priv->use_filter_group = TRUE;
+	} else {
+		for (GList *i = labels; i; i = i->next) {
+			const gchar *filter = gtk_label_get_text(i->data);
+			if (g_str_has_prefix(filter, "Group:")) {
+				const gchar *new_text = g_strdup_printf(_("Group: %s"), combo_group);
+				gtk_label_set_text(i->data, new_text);
+			}
+		}
+	}
+	g_list_free(box);
+	g_list_free(labels);
 	g_free(combo_group);
 	return visible;
 }
@@ -330,8 +351,17 @@ jobs_visible_for_servers(GtkTreeModel *model,
 	gtk_tree_model_get(GTK_TREE_MODEL(jc->priv->server_filter), &active,
 	                   1, &combo_server, -1);
 
+	GtkWidget *content = gtk_info_bar_get_content_area(GTK_INFO_BAR(jc->priv->filter_info_bar));
+	GList *box = gtk_container_get_children(GTK_CONTAINER(content));
+	GList *labels = gtk_container_get_children(GTK_CONTAINER(box->data));
+
 	if (!combo_server) {
 		jc->priv->use_filter_servers = FALSE;
+		for (GList *i = labels; i; i = i->next)
+			if (g_str_has_prefix(gtk_label_get_text(i->data), "Server:"))
+				gtk_widget_destroy(GTK_WIDGET(i->data));
+		g_list_free(box);
+		g_list_free(labels);
 		return TRUE;
 	}
 	GebrJob *job;
@@ -340,9 +370,11 @@ jobs_visible_for_servers(GtkTreeModel *model,
 
 	gtk_tree_model_get(model, iter, JC_STRUCT, &job, -1);
 
-	if (!job)
+	if (!job) {
+		g_list_free(box);
+		g_list_free(labels);
 		return FALSE;
-
+	}
 	servers = gebr_job_get_servers(job, &n_servers);
 
 	for (gint i = 0; i < n_servers; i++) {
@@ -350,11 +382,21 @@ jobs_visible_for_servers(GtkTreeModel *model,
 			visible = TRUE;
 	}
 
-	jc->priv->use_filter_servers = TRUE;
-
-	if (!gtk_widget_get_visible(jc->priv->filter_info_bar))
-			gtk_widget_show_all(jc->priv->filter_info_bar);
-
+	if (!jc->priv->use_filter_servers) {
+		const gchar *text = g_strdup_printf(_("Server: %s"), combo_server->comm->address->str);
+		gtk_box_pack_start(GTK_BOX(box->data), gtk_label_new(text), FALSE, FALSE, 0);
+		jc->priv->use_filter_servers = TRUE;
+	} else {
+		for (GList *i = labels; i; i = i->next) {
+			const gchar *filter = gtk_label_get_text(i->data);
+			if (g_str_has_prefix(filter, "Server:")) {
+				const gchar *new_text = g_strdup_printf(_("Server: %s"), combo_server->comm->address->str);
+				gtk_label_set_text(i->data, new_text);
+			}
+		}
+	}
+	g_list_free(box);
+	g_list_free(labels);
 	return visible;
 }
 
@@ -365,24 +407,37 @@ jobs_visible_for_status(GtkTreeModel *model,
 {
 	GtkTreeIter active;
 	enum JobStatus combo_status;
+	gchar *combo_text;
 
 	if (!gtk_combo_box_get_active_iter (jc->priv->status_combo, &active))
 		return TRUE;
 
 	gtk_tree_model_get(GTK_TREE_MODEL(jc->priv->status_model), &active,
-	                   ST_STATUS, &combo_status, -1);
+	                   ST_STATUS, &combo_status,
+	                   ST_TEXT, &combo_text, -1);
+
+	GtkWidget *content = gtk_info_bar_get_content_area(GTK_INFO_BAR(jc->priv->filter_info_bar));
+	GList *box = gtk_container_get_children(GTK_CONTAINER(content));
+	GList *labels = gtk_container_get_children(GTK_CONTAINER(box->data));
 
 	if (combo_status == -1) {
+		for (GList *i = labels; i; i = i->next)
+			if (g_str_has_prefix(gtk_label_get_text(i->data), "Status:"))
+				gtk_widget_destroy(GTK_WIDGET(i->data));
 		jc->priv->use_filter_status = FALSE;
+		g_list_free(box);
+		g_list_free(labels);
 		return TRUE;
 	}
 	GebrJob *job;
 
 	gtk_tree_model_get(model, iter, JC_STRUCT, &job, -1);
 
-	if (!job)
+	if (!job) {
+		g_list_free(box);
+		g_list_free(labels);
 		return FALSE;
-
+	}
 	enum JobStatus status = gebr_job_get_status(job);
 	gboolean visible = FALSE;
 
@@ -391,23 +446,22 @@ jobs_visible_for_status(GtkTreeModel *model,
 	else if (status == JOB_STATUS_FAILED && combo_status == JOB_STATUS_CANCELED)
 		visible = TRUE;
 
-//	GtkWidget *content = gtk_info_bar_get_content_area(GTK_INFO_BAR(jc->priv->filter_info_bar));
-//	GList *labels = gtk_container_get_children(GTK_CONTAINER(content));
-//
-//	gtk_tree_model_get(GTK_TREE_MODEL(combo), &active,
-//	                   ST_TEXT, &combo_text, -1);
-//
-//	const gchar *filters = gtk_label_get_label(GTK_LABEL(labels->data));
-//	const gchar *new_filters = g_strdup_printf("%sStatus: %s\n", filters, combo_text);
-//	gtk_label_set_text(GTK_LABEL(labels->data), new_filters);
-
-	jc->priv->use_filter_status = TRUE;
-
-	if (!gtk_widget_get_visible(jc->priv->filter_info_bar))
-		gtk_widget_show_all(jc->priv->filter_info_bar);
-
+	if (!jc->priv->use_filter_status) {
+		const gchar *text = g_strdup_printf(_("Status: %s"), combo_text);
+		gtk_box_pack_start(GTK_BOX(box->data), gtk_label_new(text), FALSE, FALSE, 0);
+		jc->priv->use_filter_status = TRUE;
+	} else {
+		for (GList *i = labels; i; i = i->next) {
+			const gchar *filter = gtk_label_get_text(i->data);
+			if (g_str_has_prefix(filter, "Status:")) {
+				const gchar *new_text = g_strdup_printf(_("Status: %s"), combo_text);
+				gtk_label_set_text(i->data, new_text);
+			}
+		}
+	}
+	g_list_free(box);
+	g_list_free(labels);
 	return visible;
-
 }
 
 static gboolean
@@ -446,8 +500,7 @@ on_cb_changed(GtkComboBox *combo,
 	    jc->priv->use_filter_servers == FALSE)
 		gtk_widget_hide(jc->priv->filter_info_bar);
 	else
-		if (!gtk_widget_get_visible(jc->priv->filter_info_bar))
-			gtk_widget_show_all(jc->priv->filter_info_bar);
+		gtk_widget_show_all(jc->priv->filter_info_bar);
 
 	on_select_non_single_job(jc, NULL);
 }
@@ -1402,8 +1455,8 @@ gebr_job_control_new(void)
 
 	jc->priv->filter_info_bar = gtk_info_bar_new_with_buttons(_("Show all"), GTK_RESPONSE_OK, NULL);
 	g_signal_connect(jc->priv->filter_info_bar, "response", G_CALLBACK(on_reset_filter), jc);
-	gtk_box_pack_start(GTK_BOX(gtk_info_bar_get_content_area(GTK_INFO_BAR(jc->priv->filter_info_bar))),
-			   gtk_label_new(_("Jobs list is filtered")), TRUE, TRUE, 0);
+	GtkWidget *vbox = gtk_vbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(gtk_info_bar_get_content_area(GTK_INFO_BAR(jc->priv->filter_info_bar))), vbox, TRUE, TRUE, 0);
 
 	GtkBox *left_box = GTK_BOX(gtk_builder_get_object(jc->priv->builder, "left-side-box"));
 	gtk_box_pack_start(left_box, jc->priv->filter_info_bar, FALSE, TRUE, 0);
