@@ -120,8 +120,8 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 				clock_cpu = g_list_nth_data (arguments, 8);
 
 				g_string_assign (server->nfsid, nfsid->str);
-				server->ncores = atoi(ncores->str);
-				server->clock_cpu = atof(clock_cpu->str);
+				server->comm->ncores = atoi(ncores->str);
+				server->comm->clock_cpu = atof(clock_cpu->str);
 
 				gtk_list_store_set (gebr.ui_server_list->common.store, &server->iter,
 						    SERVER_CPU, model_name->str,
@@ -245,7 +245,8 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 			g_debug("Job found is: %p", job);
 
 			if (!job) {
-				job = gebr_job_new_with_id(rid->str, queue->str, server_list->str);
+				job = gebr_job_new_with_id(rid->str, queue->str);
+				gebr_job_set_servers(job, server_list->str);
 				gebr_job_set_title(job, title->str);
 				gebr_job_set_hostname(job, hostname->str);
 				gebr_job_set_server_group(job, server_group_name->str);

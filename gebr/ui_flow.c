@@ -63,40 +63,6 @@ get_connected_servers(GtkTreeModel *model)
 	return servers;
 }
 
-/* Heuristics structure and methods {{{1 */
-/*
- * Struct to handle 2D points
- */
-typedef struct {
-	gdouble x;
-	gdouble y;
-} GebrPoint;
-
-/*
- * Compute the linear regression over a given list of points (GebrPoints)
- */
-void
-create_linear_model(GList *points, gdouble **parameters)
-{
-	gint j;
-	GList *i;
-	gdouble weight[] = {1, 1, 1};
-	gdouble sumY=0, sumX=0, sumX2=0, sumXY=0, w=0;
-	for (i = points, j = 0; i; i = i->next, j++) {
-		GebrPoint *point = i->data;
-		sumY += point->y * weight[j];
-		sumX += point->x * weight[j];
-		sumX2 += (point->x*point->x) * weight[j];
-		sumXY += (point->x*point->y) * weight[j];
-		w += weight[j];
-	}
-	// Line Ax + B = 0
-	// A = parameters[0]
-	// B = parameters[1]
-	(*parameters)[0] = (w*sumXY - sumX*sumY)/(w*sumX2 - sumX*sumX);
-	(*parameters)[1] = (sumY - (*parameters)[0]*sumX)/w;
-}
-
 /*
  * Gets the selected queue. Returns %TRUE if no queue was selected, %FALSE
  * otherwise.
@@ -117,6 +83,15 @@ get_selected_queue(void)
 	return queue;
 }
 
+static void
+set_server_list(GebrCommRunner *runner,
+		gpointer job)
+{
+	gebr_job_set_servers(job, gebr_comm_runner_get_servers_str(runner));
+	gebr_interface_change_tab(NOTEBOOK_PAGE_JOB_CONTROL);
+	gebr_job_control_select_job(gebr.job_control, job);
+}
+
 /* Public methods {{{1 */
 void
 gebr_ui_flow_run(void)
@@ -127,11 +102,27 @@ gebr_ui_flow_run(void)
 	GtkTreeModel *model = gtk_combo_box_get_model(GTK_COMBO_BOX(gebr.ui_flow_edition->server_combobox));
 
 	gboolean is_fs;
-	GList *servers = get_connected_servers(model);
 	gchar *parent_rid = get_selected_queue();
 	gchar *speed = g_strdup_printf("%d", gebr_interface_get_execution_speed());
 	gchar *nice = g_strdup_printf("%d", gebr_interface_get_niceness());
 	gchar *group = g_strdup(gebr_geoxml_line_get_group(gebr.line, &is_fs));
+	GList *servers = NULL;
+
+	if (gebr.ui_flow_edition->autochoose)
+		servers = get_connected_servers(model);
+	else {
+		GtkTreeIter iter;
+		if (!gtk_combo_box_get_active_iter(GTK_COMBO_BOX(gebr.ui_flow_edition->server_combobox), &iter)) {
+			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No server selected."));
+			return;
+		}
+
+		GebrServer *server;
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->servers_sort), &iter,
+				   SERVER_POINTER, &server, -1);
+		servers = g_list_prepend(servers, server->comm);
+
+	}
 
 	gebr_geoxml_flow_set_date_last_run(gebr.flow, gebr_iso_date());
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), FALSE, FALSE);
@@ -140,30 +131,26 @@ gebr_ui_flow_run(void)
 						      servers, parent_rid, speed,
 						      nice, group, gebr.validator);
 	
-	GebrJob *job = gebr_job_new(parent_rid, gebr_comm_runner_get_servers_str(runner));
+	gchar *title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.flow));
 
-	if (g_strcmp0(parent_rid, "") == 0)
+	GebrJob *job = gebr_job_new(parent_rid);
+	gebr_job_set_title(job, title);
+	gebr_job_set_hostname(job, g_get_host_name());
+	gebr_job_set_server_group(job, group);
+	gebr_job_set_model(job, gebr_job_control_get_model(gebr.job_control));
+	gebr_job_set_exec_speed(job, gebr_interface_get_execution_speed());
+	gebr_job_control_add(gebr.job_control, job);
+	gebr_comm_runner_set_ran_func(runner, set_server_list, job);
+
+	g_free(title);
+
+	if (g_strcmp0(parent_rid, "") == 0) {
 		gebr_comm_runner_run_async(runner, gebr_job_get_id(job));
-	else
+	} else
 		; // Enfileirar
 
 	g_free(parent_rid);
 	g_free(speed);
 	g_free(nice);
 	g_free(group);
-}
-
-GebrQueueTypes
-gebr_get_queue_type(const gchar *queue_id)
-{
-	if (g_strcmp0(queue_id, "") == 0)
-		return IMMEDIATELY_QUEUE;
-
-//	if (queue_id[0] == 'j')
-//		return AUTOMATIC_QUEUE;
-//
-//	if (queue_id[0] == 'q')
-//		return USER_QUEUE;
-
-	g_return_val_if_reached(IMMEDIATELY_QUEUE);
 }

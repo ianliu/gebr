@@ -63,12 +63,13 @@ struct _GebrJobClass {
 
 GType gebr_job_get_type() G_GNUC_CONST;
 
-GebrJob *gebr_job_new(const gchar *queue,
-		       const gchar *servers);
+GebrJob *gebr_job_new(const gchar *queue);
 
 GebrJob *gebr_job_new_with_id(const gchar *rid,
-			      const gchar *queue,
-			      const gchar *servers);
+			      const gchar *queue);
+
+void gebr_job_set_servers(GebrJob *job,
+			  const gchar *servers);
 
 void gebr_job_set_hostname(GebrJob *job,
 			   const gchar *hostname);

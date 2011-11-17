@@ -79,9 +79,12 @@ void flow_new (void)
 	gebr_geoxml_document_set_email(GEBR_GEOXML_DOC(flow), gebr.config.email->str);
 
 	if (gtk_tree_model_get_iter_first (gebr.ui_project_line->servers_sort, &iter)) {
+		gboolean is_auto;
 		gtk_tree_model_get (gebr.ui_project_line->servers_sort, &iter,
-				    SERVER_POINTER, &server, -1);
-		if (server)
+				    SERVER_POINTER, &server,
+				    SERVER_IS_AUTO_CHOOSE, &is_auto,
+				    -1);
+		if (!is_auto && server)
 			gebr_geoxml_flow_server_set_address (flow, server->comm->address->str);
 	}
 

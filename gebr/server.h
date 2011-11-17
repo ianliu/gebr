@@ -40,8 +40,6 @@ typedef struct _GebrServerClass GebrServerClass;
 struct _GebrServer {
 	/*< private >*/
 	GObject parent;
-	gint ncores;
-	gdouble clock_cpu;
 	GList *tasks;
 
 	/*< public >*/

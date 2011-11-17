@@ -456,12 +456,12 @@ void gebr_server_connect (GebrServer *self)
 
 gint gebr_server_get_ncores (GebrServer *self)
 {
-	return self->ncores;
+	return self->comm->ncores;
 }
 
 void gebr_server_set_ncores (GebrServer *self, gint cores)
 {
-	self->ncores = cores;
+	self->comm->ncores = cores;
 }
 
 gboolean

@@ -312,38 +312,40 @@ compare_func(gconstpointer a, gconstpointer b)
 
 /* Public methods {{{1 */
 GebrJob *
-gebr_job_new(const gchar *queue,
-	     const gchar *servers)
+gebr_job_new(const gchar *queue)
 {
 	static gint id = 0;
 
 	gchar *rid = g_strdup_printf("%d:%s", id++, gebr_get_session_id());
-	GebrJob *job = gebr_job_new_with_id(rid, queue, servers);
+	GebrJob *job = gebr_job_new_with_id(rid, queue);
 	return job;
 }
 
 GebrJob *
 gebr_job_new_with_id(const gchar *rid,
-		     const gchar *queue,
-		     const gchar *servers)
+		     const gchar *queue)
 {
-	g_return_val_if_fail(servers != NULL, NULL);
-	g_return_val_if_fail(strlen(servers) > 0, NULL);
-
 	GebrJob *job = g_object_new(GEBR_TYPE_JOB, NULL);
 
 	job->priv->queue = g_strdup(queue);
-	job->priv->servers = g_strsplit(servers, ",", 0);
 	job->priv->runid = g_strdup(rid);
 	job->priv->n_servers = 0;
+	job->priv->servers = NULL;
+
+	return job;
+}
+
+void
+gebr_job_set_servers(GebrJob *job,
+		     const gchar *servers)
+{
+	job->priv->servers = g_strsplit(servers, ",", 0);
 
 	while (job->priv->servers[job->priv->n_servers])
 		job->priv->n_servers++;
 
 	qsort(job->priv->servers, job->priv->n_servers,
 	      sizeof(job->priv->servers[0]), compare_func);
-
-	return job;
 }
 
 void

@@ -1276,11 +1276,15 @@ static void flow_edition_on_combobox_changed(GtkComboBox * combobox)
 	//gtk_widget_set_sensitive(gebr.ui_flow_edition->queue_combobox, !is_auto_choose);
 
 	if (is_auto_choose) {
+		g_debug("----------------------8<---------------------");
+		g_debug("Changed to Autochoose");
+		g_debug("---------------------->8---------------------");
+
 		GebrServerAutochoose *autochoose;
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->servers_sort), &iter,
 				   SERVER_POINTER, &autochoose,
 				   -1);
-		gebr_geoxml_flow_server_set_address(gebr.flow, _("Auto-choose"));
+		gebr_geoxml_flow_server_set_address(gebr.flow, "");
 		gtk_combo_box_set_model(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox),
 					GTK_TREE_MODEL(autochoose->queues));
 	} else {
@@ -1292,6 +1296,10 @@ static void flow_edition_on_combobox_changed(GtkComboBox * combobox)
 					 GTK_TREE_MODEL (server->queues_model));
 
 		const gchar *addr = server->comm->address->str;
+
+		g_debug("----------------------8<---------------------");
+		g_debug("Changed to %s", addr);
+		g_debug("---------------------->8---------------------");
 
 		gtk_tree_model_get (GTK_TREE_MODEL (gebr.ui_flow_browse->store), &flow_iter,
 				    FB_LAST_QUEUES, &last_queue_hash,
@@ -1485,6 +1493,10 @@ flow_edition_find_flow_server (GebrGeoXmlFlow *flow,
 
 	addr = gebr_geoxml_flow_server_get_address (flow);
 	valid = gtk_tree_model_get_iter_first (model, iter);
+
+	if (g_strcmp0(addr, "") == 0)
+		return valid;
+
 	while (valid)
 	{
 		gboolean is_auto_choose;

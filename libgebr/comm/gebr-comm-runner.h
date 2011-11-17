@@ -44,6 +44,11 @@ GebrCommRunner *gebr_comm_runner_new(GebrGeoXmlDocument *flow,
 				     const gchar *group,
 				     GebrValidator *validator);
 
+void gebr_comm_runner_set_ran_func(GebrCommRunner *self,
+				   void (*func) (GebrCommRunner *runner,
+						 gpointer data),
+				   gpointer data);
+
 /**
  * gebr_comm_runner_free:
  */
