@@ -161,6 +161,8 @@ gboolean ui_server_ask_for_tags_remove_permission (void);
 
 gchar *gebr_get_groups_of_server(gchar *server_address);
 
+GtkListStore *gebr_ui_server_list_get_autochoose_store(struct ui_server_list *sl);
+
 G_END_DECLS
 
 #endif				//__UI_SERVER_H

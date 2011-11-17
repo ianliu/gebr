@@ -1347,3 +1347,16 @@ gebr_get_groups_of_server(gchar *server_address)
 	}
 	return NULL;
 }
+
+GtkListStore *
+gebr_ui_server_list_get_autochoose_store(struct ui_server_list *sl)
+{
+	GtkTreeIter iter;
+
+	if (!gtk_tree_model_get_iter_first(GTK_TREE_MODEL(sl->common.store), &iter))
+		g_return_val_if_reached(NULL);
+
+	GebrServerAutochoose *autochoose;
+	gtk_tree_model_get(GTK_TREE_MODEL(sl->common.store), &iter, SERVER_POINTER, &autochoose, -1);
+	return autochoose->queues;
+}
