@@ -620,8 +620,14 @@ struct ui_server_list *server_list_setup_ui(void)
 						G_TYPE_STRING,
 						G_TYPE_STRING,
 						G_TYPE_POINTER);
-
 	GtkTreeIter iter;
+	gtk_list_store_append(autochoose->queues, &iter);
+	gtk_list_store_set(autochoose->queues, &iter,
+			   SERVER_QUEUE_TITLE, _("Immediately"),
+			   SERVER_QUEUE_ID, "",
+			   SERVER_QUEUE_LAST_RUNNING_JOB, NULL,
+			   -1);
+
 	gtk_list_store_append(ui_server_list->common.store, &iter);
 	gtk_list_store_set(ui_server_list->common.store, &iter,
 			   SERVER_NAME, _("Auto-choose"),
