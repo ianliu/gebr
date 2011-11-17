@@ -398,8 +398,6 @@ gebr/data/gebr.desktop.in
 gebr/po/Makefile.in
 gebr/tests/Makefile
 
-gebr-client/Makefile
-
 debr/Makefile
 debr/data/Makefile
 debr/data/debr.desktop.in

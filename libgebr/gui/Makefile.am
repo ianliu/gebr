@@ -64,7 +64,7 @@ libgebr_guisubinclude_HEADERS = 	\
 	gebr-gui-icons.h		\
 	gebr-gui-js.h			\
 	gebr-gui-parameter.h		\
-	gebr-gui-pie.c 			\
+	gebr-gui-pie.h 			\
 	gebr-gui-pixmaps.h		\
 	gebr-gui-program-edit.h		\
 	gebr-gui-save-dialog.h		\
