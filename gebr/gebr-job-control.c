@@ -302,21 +302,6 @@ jobs_visible_for_group(GtkTreeModel *model,
 		return TRUE;
 	}
 
-	GebrJob *job;
-	const gchar *group;
-
-	gtk_tree_model_get(model, iter, JC_STRUCT, &job, -1);
-
-	if (!job) {
-		g_list_free(box);
-		g_list_free(labels);
-		return FALSE;
-	}
-	group = gebr_job_get_server_group(job);
-
-	if (!g_strcmp0(combo_group, group))
-		visible = TRUE;
-
 	if (!jc->priv->use_filter_group) {
 		const gchar *text = g_strdup_printf(_("Group: %s"), combo_group);
 		gtk_box_pack_start(GTK_BOX(box->data), gtk_label_new(text), FALSE, FALSE, 0);
@@ -330,8 +315,23 @@ jobs_visible_for_group(GtkTreeModel *model,
 			}
 		}
 	}
+
 	g_list_free(box);
 	g_list_free(labels);
+
+	GebrJob *job;
+	const gchar *group;
+
+	gtk_tree_model_get(model, iter, JC_STRUCT, &job, -1);
+
+	if (!job)
+		return FALSE;
+
+	group = gebr_job_get_server_group(job);
+
+	if (!g_strcmp0(combo_group, group))
+		visible = TRUE;
+
 	g_free(combo_group);
 	return visible;
 }
@@ -364,23 +364,6 @@ jobs_visible_for_servers(GtkTreeModel *model,
 		g_list_free(labels);
 		return TRUE;
 	}
-	GebrJob *job;
-	gchar **servers;
-	gint n_servers;
-
-	gtk_tree_model_get(model, iter, JC_STRUCT, &job, -1);
-
-	if (!job) {
-		g_list_free(box);
-		g_list_free(labels);
-		return FALSE;
-	}
-	servers = gebr_job_get_servers(job, &n_servers);
-
-	for (gint i = 0; i < n_servers; i++) {
-		if (!g_strcmp0(servers[i], combo_server->comm->address->str))
-			visible = TRUE;
-	}
 
 	if (!jc->priv->use_filter_servers) {
 		const gchar *text = g_strdup_printf(_("Server: %s"), combo_server->comm->address->str);
@@ -397,6 +380,23 @@ jobs_visible_for_servers(GtkTreeModel *model,
 	}
 	g_list_free(box);
 	g_list_free(labels);
+
+	GebrJob *job;
+	gchar **servers;
+	gint n_servers;
+
+	gtk_tree_model_get(model, iter, JC_STRUCT, &job, -1);
+
+	if (!job)
+		return FALSE;
+
+	servers = gebr_job_get_servers(job, &n_servers);
+
+	for (gint i = 0; i < n_servers; i++) {
+		if (!g_strcmp0(servers[i], combo_server->comm->address->str))
+			visible = TRUE;
+	}
+
 	return visible;
 }
 
@@ -429,22 +429,6 @@ jobs_visible_for_status(GtkTreeModel *model,
 		g_list_free(labels);
 		return TRUE;
 	}
-	GebrJob *job;
-
-	gtk_tree_model_get(model, iter, JC_STRUCT, &job, -1);
-
-	if (!job) {
-		g_list_free(box);
-		g_list_free(labels);
-		return FALSE;
-	}
-	enum JobStatus status = gebr_job_get_status(job);
-	gboolean visible = FALSE;
-
-	if (status == combo_status)
-		visible = TRUE;
-	else if (status == JOB_STATUS_FAILED && combo_status == JOB_STATUS_CANCELED)
-		visible = TRUE;
 
 	if (!jc->priv->use_filter_status) {
 		const gchar *text = g_strdup_printf(_("Status: %s"), combo_text);
@@ -461,6 +445,22 @@ jobs_visible_for_status(GtkTreeModel *model,
 	}
 	g_list_free(box);
 	g_list_free(labels);
+
+	GebrJob *job;
+
+	gtk_tree_model_get(model, iter, JC_STRUCT, &job, -1);
+
+	if (!job)
+		return FALSE;
+
+	enum JobStatus status = gebr_job_get_status(job);
+	gboolean visible = FALSE;
+
+	if (status == combo_status)
+		visible = TRUE;
+	else if (status == JOB_STATUS_FAILED && combo_status == JOB_STATUS_CANCELED)
+		visible = TRUE;
+
 	return visible;
 }
 
@@ -469,16 +469,18 @@ jobs_visible_func(GtkTreeModel *model,
 		  GtkTreeIter *iter,
 		  GebrJobControl *jc)
 {
+	gboolean visible = TRUE;
+
 	if (!jobs_visible_for_status(model, iter, jc))
-		return FALSE;
+		visible = FALSE;
 
 	if (!jobs_visible_for_servers(model, iter, jc))
-		return FALSE;
+		visible = FALSE;
 
 	if (!jobs_visible_for_group(model, iter, jc))
-		return FALSE;
+		visible = FALSE;
 
-	return TRUE;
+	return visible;
 }
 
 static void
