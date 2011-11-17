@@ -24,6 +24,11 @@
 #include "gebr.h"
 #include "gebr-marshal.h"
 
+typedef struct {
+	GebrCommRunner *runner;
+	GebrJob *child;
+} RunnerAndJob;
+
 struct _GebrJobPriv {
 	GList *tasks;
 	gchar *title;
@@ -41,6 +46,8 @@ struct _GebrJobPriv {
 	gchar *input_file;
 	gchar *output_file;
 	gchar *log_file;
+
+	GList *children; // A list of GebrCommRunner
 };
 
 enum {
@@ -89,6 +96,36 @@ gebr_job_finalize(GObject *object)
 }
 
 static void
+gebr_job_status_change_real(GebrJob *job,
+			    gint old_status,
+			    gint new_status,
+			    const gchar *parameter,
+			    gpointer user_data)
+{
+	switch (new_status) {
+	case JOB_STATUS_FINISHED:
+	case JOB_STATUS_FAILED:
+	case JOB_STATUS_CANCELED: {
+		for (GList *i = job->priv->children; i; i = i->next) {
+			RunnerAndJob *raj = i->data;
+			gebr_comm_runner_run_async(raj->runner, gebr_job_get_id(raj->child));
+		}
+		g_list_free(job->priv->children);
+		job->priv->children = NULL;
+		break;
+	}
+	default:
+		break;
+	}
+
+	if (job->priv->model) {
+		GtkTreePath *path = gtk_tree_model_get_path(job->priv->model, &job->priv->iter);
+		gtk_tree_model_row_changed(job->priv->model, path, &job->priv->iter);
+		gtk_tree_path_free(path);
+	}
+}
+
+static void
 gebr_job_init(GebrJob *job)
 {
 	job->priv = G_TYPE_INSTANCE_GET_PRIVATE(job,
@@ -103,6 +140,8 @@ gebr_job_class_init(GebrJobClass *klass)
 {
 	GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
 	gobject_class->finalize = gebr_job_finalize;
+
+	klass->status_change = gebr_job_status_change_real;
 
 	signals[STATUS_CHANGE] =
 		g_signal_new("status-change",
@@ -269,12 +308,6 @@ gebr_job_change_task_status(GebrTask *task,
 		break;
 	default:
 		g_return_if_reached();
-	}
-
-	if (job->priv->model) {
-		GtkTreePath *path = gtk_tree_model_get_path(job->priv->model, &job->priv->iter);
-		gtk_tree_model_row_changed(job->priv->model, path, &job->priv->iter);
-		gtk_tree_path_free(path);
 	}
 }
 
@@ -810,4 +843,17 @@ gebr_job_get_partial_status(GebrJob *job)
 		return JOB_STATUS_RUNNING;
 
 	g_return_val_if_reached(JOB_STATUS_RUNNING);
+}
+
+void
+gebr_job_append_child(GebrJob *job,
+		      GebrCommRunner *runner,
+		      GebrJob *child)
+{
+	g_return_if_fail(gebr_job_can_kill(job));
+
+	RunnerAndJob *raj = g_new(RunnerAndJob, 1);
+	raj->runner = runner;
+	raj->child = child;
+	job->priv->children = g_list_prepend(job->priv->children, raj);
 }

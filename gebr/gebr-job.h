@@ -173,6 +173,16 @@ GebrTask *gebr_job_get_task_from_server(GebrJob *job,
  */
 enum JobStatus gebr_job_get_partial_status(GebrJob *job);
 
+/**
+ * gebr_job_append_child:
+ *
+ * Appends the pair (@runner, @child) into @job's children list. This list will
+ * be executed when @job finishes or gets canceled/failed.
+ */
+void gebr_job_append_child(GebrJob *job,
+			   GebrCommRunner *runner,
+			   GebrJob *child);
+
 G_END_DECLS
 
 #endif /* __GEBR_JOB_H__ */
