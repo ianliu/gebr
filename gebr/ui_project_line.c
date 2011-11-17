@@ -1613,9 +1613,12 @@ gboolean servers_filter_visible_func (GtkTreeModel *filter,
 
 	group = gebr_geoxml_line_get_group (gebr.line, &is_fs);
 
-	gtk_tree_model_get (filter, iter, SERVER_POINTER, &server, -1);
+	gboolean is_auto;
+	gtk_tree_model_get (filter, iter,
+			    SERVER_IS_AUTO_CHOOSE, &is_auto,
+			    SERVER_POINTER, &server, -1);
 
-	if (!server)
+	if (is_auto || !server)
 		return TRUE;
 
 	return gebr_server_is_in_group(server, group, is_fs);
