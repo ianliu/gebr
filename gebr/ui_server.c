@@ -615,10 +615,17 @@ struct ui_server_list *server_list_setup_ui(void)
 							  G_TYPE_BOOLEAN	/* Is auto-choose */
 							 );
 
+	GebrServerAutochoose *autochoose = g_new0(GebrServerAutochoose, 1);
+	autochoose->queues = gtk_list_store_new(SERVER_QUEUE_N_COLUMNS,
+						G_TYPE_STRING,
+						G_TYPE_STRING,
+						G_TYPE_POINTER);
+
 	GtkTreeIter iter;
 	gtk_list_store_append(ui_server_list->common.store, &iter);
 	gtk_list_store_set(ui_server_list->common.store, &iter,
 			   SERVER_NAME, _("Auto-choose"),
+			   SERVER_POINTER, autochoose,
 			   SERVER_IS_AUTO_CHOOSE, TRUE,
 			   -1);
 

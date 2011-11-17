@@ -28,6 +28,12 @@
 
 G_BEGIN_DECLS
 
+typedef struct _GebrServerAutochoose GebrServerAutochoose;
+
+struct _GebrServerAutochoose {
+	GtkListStore *queues;
+};
+
 /* Store field */
 enum {
 	SERVER_STATUS_ICON = 0,
