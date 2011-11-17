@@ -59,15 +59,20 @@ GebrCommServerType gebr_comm_server_get_id(const gchar * name);
  */
 typedef struct gebr_comm_server {
 	GebrCommProtocolSocket *socket;
+
 	/* server address/port */
 	GString *address;
 	guint16 port;
+
 	/* ssh stuff */
 	GString *password;
 	gint16 tunnel_port;
 	gboolean tried_existant_pass;
 	GebrCommTerminalProcess *x11_forward_process;
 	GebrCommProcess *x11_forward_unix;
+
+	gint ncores;
+	gdouble clock_cpu;
 
 	enum gebr_comm_server_state {
 		SERVER_STATE_UNKNOWN,
@@ -77,6 +82,7 @@ typedef struct gebr_comm_server {
 		SERVER_STATE_CONNECT,
 		SERVER_STATE_CONNECTED,
 	} state;
+
 	enum gebr_comm_server_error {
 		SERVER_ERROR_UNKNOWN,
 		SERVER_ERROR_NONE,
@@ -84,6 +90,7 @@ typedef struct gebr_comm_server {
 		SERVER_ERROR_SERVER,
 		SERVER_ERROR_SSH,
 	} error;
+
 	GString *last_error;
 
 	/* virtual methods */
