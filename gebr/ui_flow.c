@@ -88,8 +88,6 @@ set_server_list(GebrCommRunner *runner,
 		gpointer job)
 {
 	gebr_job_set_servers(job, gebr_comm_runner_get_servers_str(runner));
-	gebr_interface_change_tab(NOTEBOOK_PAGE_JOB_CONTROL);
-	gebr_job_control_select_job(gebr.job_control, job);
 }
 
 /* Public methods {{{1 */
@@ -146,8 +144,13 @@ gebr_ui_flow_run(void)
 
 	if (g_strcmp0(parent_rid, "") == 0) {
 		gebr_comm_runner_run_async(runner, gebr_job_get_id(job));
-	} else
-		; // Enfileirar
+	} else {
+		GebrJob *parent = gebr_job_control_find(gebr.job_control, parent_rid);
+		gebr_job_append_child(parent, runner, job);
+	}
+
+	gebr_interface_change_tab(NOTEBOOK_PAGE_JOB_CONTROL);
+	gebr_job_control_select_job(gebr.job_control, job);
 
 	g_free(parent_rid);
 	g_free(speed);

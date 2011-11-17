@@ -345,15 +345,17 @@ jobs_visible_for_servers(GtkTreeModel *model,
 
 	servers = gebr_job_get_servers(job, &n_servers);
 
-	for (gint i = 0; i < n_servers; i++) {
+	if (!servers)
+		return FALSE;
+
+	for (gint i = 0; i < n_servers; i++)
 		if (!g_strcmp0(servers[i], combo_server->comm->address->str))
 			visible = TRUE;
-	}
 
 	jc->priv->use_filter_servers = TRUE;
 
 	if (!gtk_widget_get_visible(jc->priv->filter_info_bar))
-			gtk_widget_show_all(jc->priv->filter_info_bar);
+		gtk_widget_show_all(jc->priv->filter_info_bar);
 
 	return visible;
 }
@@ -676,6 +678,16 @@ job_control_fill_servers_info(GebrJobControl *jc)
 	GtkWidget *piechart = gebr_gui_pie_new(values, 0);
 
 	jc->priv->servers_info.servers = servers;
+
+	GtkBox *pie_box = GTK_BOX(gtk_builder_get_object(jc->priv->builder, "pie_box"));
+	GtkBox *servers_box = GTK_BOX(gtk_builder_get_object(jc->priv->builder, "servers_box"));
+
+	gtk_container_foreach(GTK_CONTAINER(servers_box), (GtkCallback)gtk_widget_destroy, NULL);
+	gtk_container_foreach(GTK_CONTAINER(pie_box), (GtkCallback)gtk_widget_destroy, NULL);
+
+	if (!servers)
+		return;
+
 	if (jc->priv->servers_info.percentages)
 		g_free(jc->priv->servers_info.percentages);
 	jc->priv->servers_info.percentages = g_new(gdouble, n_servers);
@@ -684,12 +696,6 @@ job_control_fill_servers_info(GebrJobControl *jc)
 
 	gtk_widget_set_has_tooltip(piechart, TRUE);
 	gtk_widget_set_size_request(piechart, 150, 150);
-
-	GtkBox *pie_box = GTK_BOX(gtk_builder_get_object(jc->priv->builder, "pie_box"));
-	GtkBox *servers_box = GTK_BOX(gtk_builder_get_object(jc->priv->builder, "servers_box"));
-
-	gtk_container_foreach(GTK_CONTAINER(servers_box), (GtkCallback)gtk_widget_destroy, NULL);
-	gtk_container_foreach(GTK_CONTAINER(pie_box), (GtkCallback)gtk_widget_destroy, NULL);
 
 	gtk_box_pack_start(pie_box, piechart, TRUE, FALSE, 0);
 	gtk_widget_show_all(piechart);
