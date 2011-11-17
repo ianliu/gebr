@@ -1095,8 +1095,10 @@ GList *gebr_geoxml_flow_divide_flows(GebrGeoXmlFlow *flow,
                                      gdouble *weights,
                                      gint n_weights)
 {
-	if (!gebr_geoxml_flow_is_parallelizable(flow, validator))
-		return NULL;
+	if (!gebr_geoxml_flow_is_parallelizable(flow, validator)) {
+		GList *l = NULL;
+		return g_list_prepend(l, flow);
+	}
 
 	GList *flows = NULL;
 	GebrGeoXmlProgram *loop;
