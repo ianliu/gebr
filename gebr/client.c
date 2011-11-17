@@ -259,11 +259,13 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 
 			gint n_servers;
 			gebr_job_get_servers(job, &n_servers);
-			if (!gebr_job_is_stopped(job)) {
+			if (gebr_job_is_queueable(job)) {
 				GtkListStore *store;
 				GString *string = g_string_new("");
 				const gchar *title;
 				GtkTreeIter iter;
+
+				g_debug("Adding queue %s", rid->str);
 
 				title = gebr_job_get_title(job);
 
@@ -338,7 +340,7 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 
 			job = gebr_job_control_find(gebr.job_control, rid->str);
 
-			if (gebr_job_is_stopped(job)) {
+			if (!gebr_job_is_queueable(job)) {
 				GtkListStore *store;
 				gint n_servers;
 				gebr_job_get_servers(job, &n_servers);
@@ -346,6 +348,8 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 					store = server->queues_model;
 				else
 					store = gebr_ui_server_list_get_autochoose_store(gebr.ui_server_list);
+
+				g_debug("Removing queue %s", rid->str);
 
 				gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(store)) {
 
