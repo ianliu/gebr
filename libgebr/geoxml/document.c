@@ -1707,9 +1707,11 @@ void gebr_geoxml_document_set_dtd_dir(const gchar *path)
 	dtd_directory = path;
 }
 
-void gebr_geoxml_document_ref(GebrGeoXmlDocument *self)
+GebrGeoXmlDocument*
+gebr_geoxml_document_ref(GebrGeoXmlDocument *self)
 {
 	gdome_doc_ref((GdomeDocument*)self, &exception);
+	return self;
 }
 
 void gebr_geoxml_document_unref(GebrGeoXmlDocument *self)

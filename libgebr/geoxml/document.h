@@ -423,7 +423,7 @@ gboolean
 gebr_geoxml_document_canonize_dict_parameters(GebrGeoXmlDocument * document,
 					      GHashTable 	** vars_list);
 
-void gebr_geoxml_document_ref(GebrGeoXmlDocument *self);
+GebrGeoXmlDocument *gebr_geoxml_document_ref(GebrGeoXmlDocument *self);
 
 void gebr_geoxml_document_unref(GebrGeoXmlDocument *self);
 
