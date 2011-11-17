@@ -1368,11 +1368,15 @@ on_reset_filter(GtkInfoBar *info_bar,
 {
 	GebrJobControl *jc = user_data;
 
+	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(jc->priv->view));
+
 	gtk_combo_box_set_active(jc->priv->status_combo, 0);
 	gtk_combo_box_set_active(jc->priv->server_combo, 0);
 	gtk_combo_box_set_active(jc->priv->group_combo, 0);
 
 	gtk_widget_hide(GTK_WIDGET(info_bar));
+
+	job_control_on_cursor_changed(selection, jc);
 }
 
 /* Public methods {{{1 */
