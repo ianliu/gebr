@@ -63,6 +63,9 @@ struct _GebrJobClass {
 
 GType gebr_job_get_type() G_GNUC_CONST;
 
+GebrJob *gebr_job_new(const gchar *queue,
+		       const gchar *servers);
+
 GebrJob *gebr_job_new_with_id(const gchar *rid,
 			      const gchar *queue,
 			      const gchar *servers);

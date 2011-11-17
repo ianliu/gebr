@@ -305,6 +305,17 @@ compare_func(gconstpointer a, gconstpointer b)
 
 /* Public methods {{{1 */
 GebrJob *
+gebr_job_new(const gchar *queue,
+	     const gchar *servers)
+{
+	static gint id = 0;
+
+	gchar *rid = g_strdup_printf("%d:%s", id++, gebr_get_session_id());
+	GebrJob *job = gebr_job_new_with_id(rid, queue, servers);
+	return job;
+}
+
+GebrJob *
 gebr_job_new_with_id(const gchar *rid,
 		     const gchar *queue,
 		     const gchar *servers)
