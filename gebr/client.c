@@ -259,19 +259,28 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 
 			gint n_servers;
 			gebr_job_get_servers(job, &n_servers);
-			if (!gebr_job_is_stopped(job) && n_servers == 1) {
+			if (gebr_job_is_queueable(job)) {
+				GtkListStore *store;
 				GString *string = g_string_new("");
 				const gchar *title;
 				GtkTreeIter iter;
 
+				g_debug("Adding queue %s", rid->str);
+
 				title = gebr_job_get_title(job);
 
 				g_string_printf(string, _("After '%s'"), title);
-				gtk_list_store_append(server->queues_model, &iter);
-				gtk_list_store_set(server->queues_model, &iter,
-				                   SERVER_QUEUE_TITLE, string->str,
-				                   SERVER_QUEUE_ID, rid->str,
-				                   SERVER_QUEUE_LAST_RUNNING_JOB, NULL, -1);
+
+				if (n_servers == 1)
+					store = server->queues_model;
+				else
+					store = gebr_ui_server_list_get_autochoose_store(gebr.ui_server_list);
+
+				gtk_list_store_append(store, &iter);
+				gtk_list_store_set(store, &iter,
+						   SERVER_QUEUE_TITLE, string->str,
+						   SERVER_QUEUE_ID, rid->str,
+						   SERVER_QUEUE_LAST_RUNNING_JOB, NULL, -1);
 
 				g_string_free(string, TRUE);
 			}
@@ -331,14 +340,24 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 
 			job = gebr_job_control_find(gebr.job_control, rid->str);
 
-			if (gebr_job_is_stopped(job)) {
-				gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(server->queues_model)) {
+			if (!gebr_job_is_queueable(job)) {
+				GtkListStore *store;
+				gint n_servers;
+				gebr_job_get_servers(job, &n_servers);
+				if (n_servers == 1)
+					store = server->queues_model;
+				else
+					store = gebr_ui_server_list_get_autochoose_store(gebr.ui_server_list);
 
-					gtk_tree_model_get(GTK_TREE_MODEL(server->queues_model), &iter,
+				g_debug("Removing queue %s", rid->str);
+
+				gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(store)) {
+
+					gtk_tree_model_get(GTK_TREE_MODEL(store), &iter,
 					                   SERVER_QUEUE_ID, &job_id, -1);
 
 					if (g_strcmp0(job_id, rid->str) == 0) {
-						gtk_list_store_remove(server->queues_model, &iter);
+						gtk_list_store_remove(store, &iter);
 						g_free(job_id);
 						break;
 					}

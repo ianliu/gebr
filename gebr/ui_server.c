@@ -615,10 +615,23 @@ struct ui_server_list *server_list_setup_ui(void)
 							  G_TYPE_BOOLEAN	/* Is auto-choose */
 							 );
 
+	GebrServerAutochoose *autochoose = g_new0(GebrServerAutochoose, 1);
+	autochoose->queues = gtk_list_store_new(SERVER_QUEUE_N_COLUMNS,
+						G_TYPE_STRING,
+						G_TYPE_STRING,
+						G_TYPE_POINTER);
 	GtkTreeIter iter;
+	gtk_list_store_append(autochoose->queues, &iter);
+	gtk_list_store_set(autochoose->queues, &iter,
+			   SERVER_QUEUE_TITLE, _("Immediately"),
+			   SERVER_QUEUE_ID, "",
+			   SERVER_QUEUE_LAST_RUNNING_JOB, NULL,
+			   -1);
+
 	gtk_list_store_append(ui_server_list->common.store, &iter);
 	gtk_list_store_set(ui_server_list->common.store, &iter,
 			   SERVER_NAME, _("Auto-choose"),
+			   SERVER_POINTER, autochoose,
 			   SERVER_IS_AUTO_CHOOSE, TRUE,
 			   -1);
 
@@ -1339,4 +1352,17 @@ gebr_get_groups_of_server(gchar *server_address)
 			return tags;
 	}
 	return NULL;
+}
+
+GtkListStore *
+gebr_ui_server_list_get_autochoose_store(struct ui_server_list *sl)
+{
+	GtkTreeIter iter;
+
+	if (!gtk_tree_model_get_iter_first(GTK_TREE_MODEL(sl->common.store), &iter))
+		g_return_val_if_reached(NULL);
+
+	GebrServerAutochoose *autochoose;
+	gtk_tree_model_get(GTK_TREE_MODEL(sl->common.store), &iter, SERVER_POINTER, &autochoose, -1);
+	return autochoose->queues;
 }

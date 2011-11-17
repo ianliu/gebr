@@ -172,6 +172,13 @@ gebr_job_is_stopped(GebrJob *job)
 }
 
 gboolean
+gebr_job_is_queueable(GebrJob *job)
+{
+	return job->priv->status == JOB_STATUS_QUEUED
+		|| job->priv->status == JOB_STATUS_RUNNING;
+}
+
+gboolean
 gebr_job_can_close(GebrJob *job)
 {
 	enum JobStatus status = gebr_job_get_partial_status(job);

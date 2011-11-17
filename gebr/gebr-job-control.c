@@ -473,10 +473,10 @@ build_servers_filter_list(GebrJobControl *jc)
 				   SERVER_POINTER, &server,
 				   -1);
 
-		if (!server || !server->comm)
+		if (is_autochoose || !server || !server->comm)
 			continue;
 
-		if (!gebr_comm_server_is_logged(server->comm) || is_autochoose)
+		if (!gebr_comm_server_is_logged(server->comm))
 			continue;
 
 		gtk_list_store_append(jc->priv->server_filter, &it);

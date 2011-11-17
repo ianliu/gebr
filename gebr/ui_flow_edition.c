@@ -1258,7 +1258,6 @@ static void flow_edition_on_combobox_changed(GtkComboBox * combobox)
 {
 	gint lstq;
 	GHashTable *last_queue_hash;
-	GebrServer *server;
 	GtkTreeIter iter;
 	GtkTreeIter flow_iter;
 
@@ -1274,12 +1273,18 @@ static void flow_edition_on_combobox_changed(GtkComboBox * combobox)
 			   -1);
 
 	gebr.ui_flow_edition->autochoose = is_auto_choose;
-	gtk_widget_set_sensitive(gebr.ui_flow_edition->queue_combobox, !is_auto_choose);
+	//gtk_widget_set_sensitive(gebr.ui_flow_edition->queue_combobox, !is_auto_choose);
 
 	if (is_auto_choose) {
+		GebrServerAutochoose *autochoose;
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->servers_sort), &iter,
+				   SERVER_POINTER, &autochoose,
+				   -1);
 		gebr_geoxml_flow_server_set_address(gebr.flow, _("Auto-choose"));
-		gtk_combo_box_set_model(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox), NULL);
+		gtk_combo_box_set_model(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox),
+					GTK_TREE_MODEL(autochoose->queues));
 	} else {
+		GebrServer *server;
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->servers_sort), &iter,
 				   SERVER_POINTER, &server,
 				   -1);

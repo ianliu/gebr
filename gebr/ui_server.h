@@ -28,6 +28,12 @@
 
 G_BEGIN_DECLS
 
+typedef struct _GebrServerAutochoose GebrServerAutochoose;
+
+struct _GebrServerAutochoose {
+	GtkListStore *queues;
+};
+
 /* Store field */
 enum {
 	SERVER_STATUS_ICON = 0,
@@ -154,6 +160,8 @@ GtkWidget *ui_server_create_tag_combo_box (void);
 gboolean ui_server_ask_for_tags_remove_permission (void);
 
 gchar *gebr_get_groups_of_server(gchar *server_address);
+
+GtkListStore *gebr_ui_server_list_get_autochoose_store(struct ui_server_list *sl);
 
 G_END_DECLS
 
