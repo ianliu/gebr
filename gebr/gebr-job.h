@@ -76,6 +76,8 @@ void gebr_job_show(GebrJob *job);
 
 gboolean gebr_job_is_stopped(GebrJob *job);
 
+gboolean gebr_job_is_queueable(GebrJob *job);
+
 gboolean gebr_job_can_close(GebrJob *job);
 
 gboolean gebr_job_can_kill(GebrJob *job);
