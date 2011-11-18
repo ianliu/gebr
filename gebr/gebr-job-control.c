@@ -1434,8 +1434,7 @@ on_row_changed_model(GtkTreeModel *tree_model,
 }
 
 static void
-on_reset_filter(GtkInfoBar *info_bar,
-                gint        response_id,
+on_reset_filter(GtkButton  *button,
                 gpointer    user_data)
 {
 	GebrJobControl *jc = user_data;
@@ -1446,7 +1445,7 @@ on_reset_filter(GtkInfoBar *info_bar,
 	gtk_combo_box_set_active(jc->priv->server_combo, 0);
 	gtk_combo_box_set_active(jc->priv->group_combo, 0);
 
-	gtk_widget_hide(GTK_WIDGET(info_bar));
+	gtk_widget_hide(GTK_WIDGET(jc->priv->filter_info_bar));
 
 	job_control_on_cursor_changed(selection, jc);
 }
@@ -1472,11 +1471,22 @@ gebr_job_control_new(void)
 	 * Left side
 	 */
 
-	jc->priv->filter_info_bar = gtk_info_bar_new_with_buttons(_("Show All"), GTK_RESPONSE_OK, NULL);
-	g_signal_connect(jc->priv->filter_info_bar, "response", G_CALLBACK(on_reset_filter), jc);
+	jc->priv->filter_info_bar = gtk_info_bar_new();
+
+	GtkWidget *content = gtk_info_bar_get_content_area(GTK_INFO_BAR(jc->priv->filter_info_bar));
+	GtkWidget *close_button = gtk_button_new();
+	GtkWidget *image = gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_MENU);
+	GtkWidget *button_box = gtk_vbox_new(FALSE, 0);
+
+	gtk_container_add(GTK_CONTAINER(close_button), image);
+	gtk_button_set_relief(GTK_BUTTON(close_button), GTK_RELIEF_NONE);
+	gtk_box_pack_end(GTK_BOX(button_box), close_button, FALSE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(content), button_box, FALSE, FALSE, 0);
+	g_signal_connect(close_button, "clicked", G_CALLBACK(on_reset_filter), jc);
+
 	GtkWidget *vbox = gtk_vbox_new(FALSE, 2);
 	gtk_box_pack_start(GTK_BOX(vbox), gtk_label_new(_("Jobs filtered by:")), FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(gtk_info_bar_get_content_area(GTK_INFO_BAR(jc->priv->filter_info_bar))), vbox, FALSE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(content), vbox, FALSE, TRUE, 0);
 
 	GtkBox *left_box = GTK_BOX(gtk_builder_get_object(jc->priv->builder, "left-side-box"));
 	gtk_box_pack_start(left_box, jc->priv->filter_info_bar, FALSE, TRUE, 0);
