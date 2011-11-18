@@ -309,6 +309,7 @@ jobs_visible_for_group(GtkTreeModel *model,
 		gchar *text = g_markup_printf_escaped("<span size='x-small'>Group: %s</span>", combo_name);
 		GtkWidget *label = gtk_label_new(NULL);
 		gtk_label_set_markup(GTK_LABEL(label), text);
+		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 		gtk_box_pack_start(GTK_BOX(box->data), label, FALSE, FALSE, 0);
 		jc->priv->use_filter_group = TRUE;
 		g_free(text);
@@ -379,6 +380,7 @@ jobs_visible_for_servers(GtkTreeModel *model,
 		gchar *text = g_markup_printf_escaped("<span size='x-small'>Server: %s</span>", combo_server->comm->address->str);
 		GtkWidget *label = gtk_label_new(NULL);
 		gtk_label_set_markup(GTK_LABEL(label), text);
+		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 		gtk_box_pack_start(GTK_BOX(box->data), label, FALSE, FALSE, 0);
 		jc->priv->use_filter_servers = TRUE;
 		g_free(text);
@@ -449,6 +451,7 @@ jobs_visible_for_status(GtkTreeModel *model,
 		gchar *text = g_markup_printf_escaped("<span size='x-small'>Status: %s</span>", combo_text);
 		GtkWidget *label = gtk_label_new(NULL);
 		gtk_label_set_markup(GTK_LABEL(label), text);
+		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 		gtk_box_pack_start(GTK_BOX(box->data), label, FALSE, FALSE, 0);
 		jc->priv->use_filter_status = TRUE;
 		g_free(text);
