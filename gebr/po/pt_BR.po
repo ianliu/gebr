@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-11-18 16:12-0200\n"
+"POT-Creation-Date: 2011-11-18 16:58-0200\n"
 "PO-Revision-Date: 2011-11-18 16:12-0200\n"
 "Last-Translator: Rodrigo Morelatto <morelatto@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
@@ -1005,15 +1005,23 @@ msgstr "Parar servidor"
 msgid "Execution speed: %s"
 msgstr "Velocidade de execução: %s"
 
-#: ../interface.c:291
-msgid "I want to use all resources!"
-msgstr "Eu quero utilizar todos os recursos"
+#: ../interface.c:344
+msgid "High priority"
+msgstr "Alta prioridade"
 
-#: ../interface.c:293
-msgid "I don't want to perturb!"
-msgstr "Eu não quero perturbar"
+#: ../interface.c:345
+msgid "Low priority"
+msgstr "Baixa prioridade"
 
-#: ../interface.c:397
+#: ../interface.c:350
+msgid "Share available resources"
+msgstr "Dividir os recursos do sistema"
+
+#: ../interface.c:351
+msgid "Wait for free resources"
+msgstr "Utilizar apenas recursos livres"
+
+#: ../interface.c:396
 msgid ""
 "A plug-and-play environment for\n"
 "seismic processing tools"
@@ -1021,31 +1029,31 @@ msgstr ""
 "Um ambiente plug-and-play para\n"
 "ferramentas de processamento sísmico"
 
-#: ../interface.c:523
+#: ../interface.c:522
 msgid "Projects and Lines"
 msgstr "Projetos e Linhas"
 
-#: ../interface.c:552
+#: ../interface.c:551
 msgid "Save or Restore a version of the selected Flows"
 msgstr "Salva ou Restaura uma versão dos Fluxos selecionados"
 
-#: ../interface.c:576
+#: ../interface.c:577
 msgid "Flows"
 msgstr "Fluxos"
 
-#: ../interface.c:623
+#: ../interface.c:626
 msgid "Flow Editor"
 msgstr "Editor de Fluxo"
 
-#: ../interface.c:658
+#: ../interface.c:661
 msgid "Job Control"
 msgstr "Controle de Tarefas"
 
-#: ../interface.c:683
+#: ../interface.c:686
 msgid "_Actions"
 msgstr "_Ações"
 
-#: ../interface.c:698
+#: ../interface.c:701
 msgid "_Help"
 msgstr "A_juda"
 
@@ -1988,6 +1996,9 @@ msgid "Enter group names separated by comma and press ENTER to confirm."
 msgstr ""
 "Digite nomes de grupos separados por vírgula e pressione ENTER para "
 "confirmar."
+
+#~ msgid "I don't want to perturb!"
+#~ msgstr "Eu não quero perturbar"
 
 #~ msgid "Job submitted by <b>%s</b> to group <b>%s</b>.\n"
 #~ msgstr "Fluxo submetido por <b>%s</b> pelo grupo </b>.\n"
