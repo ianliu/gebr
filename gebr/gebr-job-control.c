@@ -208,9 +208,9 @@ on_select_non_single_job(GebrJobControl *jc,
 			msg = g_strdup_printf(_("There are filtered jobs. %d out of %d will not appear in the list."),
 					      real_n - virt_n, real_n);
 		else
-			msg = g_strdup(_("Select a job on the list."));
+			msg = g_strdup(_("Select a job in the list."));
 	} else
-		msg = g_strdup("Multiple jobs are selected.");
+		msg = g_strdup(_("Multiple jobs selected."));
 
 	gebr_job_control_info_set_visible(jc, FALSE, msg);
 	g_free(msg);
@@ -688,7 +688,7 @@ on_pie_tooltip(GebrGuiPie *pie,
 	else
 		server = jc->priv->servers_info.servers[i];
 
-	gchar *t = g_strdup_printf("%s\n%d%% of total", server, (int)round((jc->priv->servers_info.percentages[i])*100));
+	gchar *t = g_strdup_printf(_("%s\n%d%% of total"), server, (int)round((jc->priv->servers_info.percentages[i])*100));
 	gtk_tooltip_set_text(tooltip, t);
 	g_free(t);
 
@@ -1016,7 +1016,7 @@ gebr_jc_update_status_and_time(GebrJobControl *jc,
 	job_control_fill_servers_info(jc);
 
 	if (status == JOB_STATUS_FINISHED) {
-		gchar *elapsed_time = g_strdup_printf("%s\nElapsed time: %s", finish->str, gebr_job_get_elapsed_time(job));
+		gchar *elapsed_time = g_strdup_printf(_("%s\nElapsed time: %s"), finish->str, gebr_job_get_elapsed_time(job));
 		gtk_image_set_from_stock(img, GTK_STOCK_APPLY, GTK_ICON_SIZE_DIALOG);
 		gtk_label_set_text(subheader, elapsed_time);
 		gtk_label_set_text(details_start_date, start->str);
@@ -1025,7 +1025,7 @@ gebr_jc_update_status_and_time(GebrJobControl *jc,
 	}
 
 	else if (status == JOB_STATUS_RUNNING) {
-		gchar *running = g_strdup_printf("%s\nElapsed time: %s", start->str, gebr_job_get_running_time(job, start_date));
+		gchar *running = g_strdup_printf(_("%s\nElapsed time: %s"), start->str, gebr_job_get_running_time(job, start_date));
 		gtk_image_set_from_stock(img, GTK_STOCK_EXECUTE, GTK_ICON_SIZE_DIALOG);
 		gtk_label_set_text(subheader, running);
 		gtk_widget_hide(GTK_WIDGET(details_start_date));
@@ -1053,7 +1053,7 @@ gebr_jc_update_status_and_time(GebrJobControl *jc,
 
 		if (parent) {
 			gtk_image_set_from_stock(img, "chronometer", GTK_ICON_SIZE_DIALOG);
-			gtk_label_set_text(subheader, "Waiting for job");
+			gtk_label_set_text(subheader, _("Waiting for job"));
 
 			gtk_image_set_from_stock(wait_img, job_control_get_icon_for_job(parent), GTK_ICON_SIZE_BUTTON);
 			gtk_label_set_text(wait_label, gebr_job_get_title(parent));
@@ -1172,21 +1172,21 @@ gebr_job_control_load_details(GebrJobControl *jc,
 
 	gchar *markup;
 
-	markup = g_markup_printf_escaped ("<b>Input file</b>: %s", input_file_str ? input_file_str : _("None"));
+	markup = g_markup_printf_escaped (_("<b>Input file</b>: %s"), input_file_str ? input_file_str : _("None"));
 	gtk_label_set_markup (input_file, markup);
 	g_free(markup);
 
-	markup = g_markup_printf_escaped ("<b>Output file</b>: %s", output_file_str ? output_file_str : _("None"));
+	markup = g_markup_printf_escaped (_("<b>Output file</b>: %s"), output_file_str ? output_file_str : _("None"));
 	gtk_label_set_markup (output_file, markup);
 	g_free(markup);
 
-	markup = g_markup_printf_escaped ("<b>Log File</b>: %s", log_file_str ? log_file_str : _("None"));
+	markup = g_markup_printf_escaped (_("<b>Log File</b>: %s"), log_file_str ? log_file_str : _("None"));
 	gtk_label_set_markup (log_file, markup);
 	g_free(markup);
 
 	gchar *msg = g_strdup(gebr_job_get_server_group(job));
 	if (!g_strcmp0(msg, ""))
-		msg = g_strdup("All servers");
+		msg = g_strdup(_("All servers"));
 	gtk_label_set_markup (job_group, msg);
 
 	switch (gebr_job_get_exec_speed(job))
@@ -1782,15 +1782,15 @@ gebr_job_control_save_selected(GebrJobControl *jc)
 		const gchar *start_date = gebr_job_get_start_date(job);
 		const gchar *finish_date = gebr_job_get_finish_date(job);
 		gchar *dates;
-		dates = g_strdup_printf("\nStart date: %s\nFinish date: %s\n", start_date? gebr_localized_date(start_date): "(None)",
-					finish_date? gebr_localized_date(finish_date) : "(None)");
+		dates = g_strdup_printf(_("\nStart date: %s\nFinish date: %s\n"), start_date? gebr_localized_date(start_date): _("(None)"),
+					finish_date? gebr_localized_date(finish_date) : _("(None)"));
 		fputs(dates, fp);
 		g_free(dates);
 
 		/* Issues */
 		gchar *issues;
 		gchar *job_issue = gebr_job_get_issues(job);
-		issues = g_strdup_printf("\nIssues:\n%s", strlen(job_issue)? job_issue : "(None)\n");
+		issues = g_strdup_printf(_("\nIssues:\n%s"), strlen(job_issue)? job_issue : _("(None)\n"));
 		fputs(issues, fp);
 		g_free(issues);
 		g_free(job_issue);
