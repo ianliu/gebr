@@ -81,7 +81,8 @@ struct ui_flow_edition {
 	GtkTreeStore *menu_store;
 
 	gboolean autochoose;
-	GtkWidget *nice_button;
+	GtkWidget *nice_button_high;
+	GtkWidget *nice_button_low;
 };
 
 /**

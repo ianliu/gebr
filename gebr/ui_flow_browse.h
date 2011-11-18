@@ -74,7 +74,8 @@ typedef struct {
 		GtkWidget *author;
 	} info;
 
-	GtkWidget *nice_button;
+	GtkWidget *nice_button_high;
+	GtkWidget *nice_button_low;
 } GebrUiFlowBrowse;
 
 /**

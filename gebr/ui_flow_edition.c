@@ -1674,5 +1674,9 @@ gebr_flow_edition_select_queue(struct ui_flow_edition *self)
 {
 	if (gtk_combo_box_get_active(GTK_COMBO_BOX(self->queue_combobox)) == -1)
 		gtk_combo_box_set_active(GTK_COMBO_BOX(self->queue_combobox), 0);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(self->nice_button), gebr.config.niceness == 0? TRUE : FALSE);
+
+	if (gebr.config.niceness == 0)
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(self->nice_button_high), TRUE);
+	else
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(self->nice_button_low), TRUE);
 }

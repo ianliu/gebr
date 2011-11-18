@@ -1096,7 +1096,7 @@ gebr_job_control_include_cmd_line(GebrJobControl *jc,
 
 	GList *tasks = gebr_job_get_list_of_tasks(job);
 	if (!tasks)
-		g_return_if_reached();
+		return;
 
 	if (g_list_length(tasks) > 1) {
 		GtkWidget *vbox = gtk_vbox_new(FALSE, 8);
