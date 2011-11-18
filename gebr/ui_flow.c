@@ -459,10 +459,6 @@ calculate_server_score(const gchar *load, gint ncores, gdouble cpu_clock, gint s
 	else
 		score = cpu_clock*eff_ncores;
 
-	if (current_load + eff_ncores > ncores)
-		g_debug ("CASE 01, %lf, cpu_clock: %lf, curren_load:%lf, eff_ncores: %d", score, cpu_clock, current_load, eff_ncores);
-	else
-		g_debug ("CASE 02, %lf, cpu_clock: %lf, curren_load:%lf, eff_ncores: %d", score, cpu_clock, current_load, eff_ncores);
 	g_list_free(points);
 
 	return score;

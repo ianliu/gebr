@@ -279,8 +279,6 @@ on_task_destroy(GebrJob *job,
 	job->priv->status = JOB_STATUS_INITIAL;
 	job->priv->tasks = g_list_remove(job->priv->tasks, finalized_task);
 
-	g_debug("JOB: Task %p disconnected", finalized_task);
-
 	if (!job->priv->tasks)
 		g_signal_emit(job, signals[DISCONNECT], 0);
 	else if (old_status != job->priv->status)

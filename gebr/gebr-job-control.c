@@ -507,12 +507,6 @@ jobs_visible_func(GtkTreeModel *model,
 }
 
 static void
-on_group_popup(GtkComboBox *group, GebrJobControl *jc)
-{
-	g_debug("POPUP");
-}
-
-static void
 on_cb_changed(GtkComboBox *combo,
 	      GebrJobControl *jc)
 {
@@ -1573,7 +1567,6 @@ gebr_job_control_new(void)
 	gtk_list_store_append(jc->priv->group_filter, &iter);
 	gtk_list_store_set(jc->priv->group_filter, &iter, 0, _("Any"), -1);
 	gtk_combo_box_set_model(group_cb, GTK_TREE_MODEL(jc->priv->group_filter));
-	g_signal_connect(jc->priv->group_combo, "popup", G_CALLBACK(on_group_popup), jc);
 	g_signal_connect(jc->priv->group_combo, "changed", G_CALLBACK(on_cb_changed), jc);
 	gtk_combo_box_set_active(jc->priv->group_combo, 0);
 
