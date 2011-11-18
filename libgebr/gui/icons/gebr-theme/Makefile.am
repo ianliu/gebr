@@ -42,6 +42,7 @@ libgebr_gui_icons16x16stock_DATA =		\
 	16x16/stock/edit-select-all.png	\
 	16x16/stock/filter.png	\
 	16x16/stock/folder.png	\
+	16x16/stock/gebr-speed-verylow.png	\
 	16x16/stock/gebr-speed-low.png	\
 	16x16/stock/gebr-speed-medium.png	\
 	16x16/stock/gebr-speed-high.png	\
@@ -127,6 +128,7 @@ libgebr_gui_icons22x22stock_DATA =		\
 	22x22/stock/edit-select-all.png	\
 	22x22/stock/filter.png	\
 	22x22/stock/folder.png	\
+	22x22/stock/gebr-speed-verylow.png	\
 	22x22/stock/gebr-speed-low.png	\
 	22x22/stock/gebr-speed-medium.png	\
 	22x22/stock/gebr-speed-high.png	\
@@ -212,6 +214,7 @@ libgebr_gui_icons48x48stock_DATA =		\
 	48x48/stock/edit-select-all.png	\
 	48x48/stock/filter.png	\
 	48x48/stock/folder.png	\
+	48x48/stock/gebr-speed-verylow.png	\
 	48x48/stock/gebr-speed-low.png	\
 	48x48/stock/gebr-speed-medium.png	\
 	48x48/stock/gebr-speed-high.png	\
