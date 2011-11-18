@@ -340,11 +340,11 @@ insert_speed_controler(GtkToolbar *toolbar,
 	hbox = gtk_hbox_new(FALSE, 5);
 
 	GtkRcStyle *style = gtk_rc_style_new();
-	style->xthickness = style->ythickness = 0;
+	//style->xthickness = style->ythickness = 0;
 	GtkWidget *high = gtk_toggle_button_new_with_label(_("High priority"));
 	GtkWidget *low = gtk_toggle_button_new_with_label(_("Low priority"));
-	gtk_button_set_relief(GTK_BUTTON(high), GTK_RELIEF_NONE);
-	gtk_button_set_relief(GTK_BUTTON(low), GTK_RELIEF_NONE);
+	//gtk_button_set_relief(GTK_BUTTON(high), GTK_RELIEF_NONE);
+	//gtk_button_set_relief(GTK_BUTTON(low), GTK_RELIEF_NONE);
 	gtk_widget_modify_style(high, style);
 	gtk_widget_modify_style(low, style);
 	gtk_widget_set_tooltip_text(high, _("Share available resources"));
