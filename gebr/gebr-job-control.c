@@ -275,13 +275,15 @@ jobs_visible_for_group(GtkTreeModel *model,
 {
 	GtkTreeIter active;
 	gchar *combo_group;
+	gchar *combo_name;
 	gboolean visible = FALSE;
 
 	if (!gtk_combo_box_get_active_iter (jc->priv->group_combo, &active))
 		return TRUE;
 
 	gtk_tree_model_get(GTK_TREE_MODEL(jc->priv->group_filter), &active,
-			   1, &combo_group, -1);
+			   0, &combo_name,
+	                   1, &combo_group, -1);
 
 	gchar *tmp = gtk_tree_model_get_string_from_iter(GTK_TREE_MODEL(jc->priv->group_filter),
 							 &active);
@@ -304,7 +306,7 @@ jobs_visible_for_group(GtkTreeModel *model,
 	}
 
 	if (!jc->priv->use_filter_group) {
-		gchar *text = g_markup_printf_escaped("<span size='x-small'>Group: %s</span>", combo_group);
+		gchar *text = g_markup_printf_escaped("<span size='x-small'>Group: %s</span>", combo_name);
 		GtkWidget *label = gtk_label_new(NULL);
 		gtk_label_set_markup(GTK_LABEL(label), text);
 		gtk_box_pack_start(GTK_BOX(box->data), label, FALSE, FALSE, 0);
@@ -314,7 +316,7 @@ jobs_visible_for_group(GtkTreeModel *model,
 		for (GList *i = labels; i; i = i->next) {
 			const gchar *filter = gtk_label_get_text(i->data);
 			if (g_str_has_prefix(filter, "Group:")) {
-				gchar *new_text = g_markup_printf_escaped("<span size='x-small'>Group: %s</span>", combo_group);
+				gchar *new_text = g_markup_printf_escaped("<span size='x-small'>Group: %s</span>", combo_name);
 				gtk_label_set_markup(i->data, new_text);
 				g_free(new_text);
 			}
@@ -323,6 +325,7 @@ jobs_visible_for_group(GtkTreeModel *model,
 
 	g_list_free(box);
 	g_list_free(labels);
+	g_free(combo_name);
 
 	GebrJob *job;
 	const gchar *group;
@@ -338,6 +341,7 @@ jobs_visible_for_group(GtkTreeModel *model,
 		visible = TRUE;
 
 	g_free(combo_group);
+
 	return visible;
 }
 
@@ -460,6 +464,7 @@ jobs_visible_for_status(GtkTreeModel *model,
 	}
 	g_list_free(box);
 	g_list_free(labels);
+	g_free(combo_text);
 
 	GebrJob *job;
 
