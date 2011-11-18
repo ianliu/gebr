@@ -1,3 +1,9 @@
+gebrproject (0.15.4) lucid; urgency=low
+
+  * Speed and niceness icons cleanup.
+
+ -- Fabricio Matheus Goncalves <fmatheus@gebrproject.com>  Fri, 18 Nov 2011 17:24:01 -0200
+
 gebrproject (0.15.3) lucid; urgency=low
 
   * Better menu search at Flow Editor (#963)
