@@ -11,37 +11,37 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libgebr 0.9.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-08 04:43-0300\n"
-"PO-Revision-Date: 2011-09-08 04:44-0300\n"
+"POT-Creation-Date: 2011-11-18 16:04-0200\n"
+"PO-Revision-Date: 2011-11-18 16:09-0200\n"
 "Last-Translator: Fabrício Matheus Gonçalves <fmatheus@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: Generator: Lokalize 0.3\n"
+"Language: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../comm/gebr-comm-server.c:242
+#: ../comm/gebr-comm-server.c:144
 #, c-format
 msgid "Launching server at '%s'."
 msgstr "Iniciando servidor em %s."
 
-#: ../comm/gebr-comm-server.c:257
+#: ../comm/gebr-comm-server.c:159
 msgid "Launching local server."
 msgstr "Iniciando servidor local."
 
-#: ../comm/gebr-comm-server.c:293
+#: ../comm/gebr-comm-server.c:195
 #, c-format
 msgid "Stopping server at '%s'."
 msgstr "Parando servidor em '%s'."
 
 #. log
-#: ../comm/gebr-comm-server.c:362
+#: ../comm/gebr-comm-server.c:264
 #, c-format
 msgid "Redirecting '%s' graphical output."
 msgstr "Redirecionando saída gráfica de '%s'."
 
-#: ../comm/gebr-comm-server.c:421
+#: ../comm/gebr-comm-server.c:304
 #, c-format
 msgid ""
 "Could not launch local server: \n"
@@ -50,7 +50,7 @@ msgstr ""
 "Não foi possível executar o servidor local: \n"
 "%s"
 
-#: ../comm/gebr-comm-server.c:469
+#: ../comm/gebr-comm-server.c:352
 #, c-format
 msgid ""
 "Server '%s' needs SSH login.\n"
@@ -61,7 +61,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../comm/gebr-comm-server.c:472
+#: ../comm/gebr-comm-server.c:355
 #, c-format
 msgid ""
 "Wrong password for server '%s', please try again.\n"
@@ -72,40 +72,40 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../comm/gebr-comm-server.c:475
+#: ../comm/gebr-comm-server.c:358
 msgid "SSH login:"
 msgstr "Login SSH:"
 
-#: ../comm/gebr-comm-server.c:479
+#: ../comm/gebr-comm-server.c:362
 msgid "No password provided."
 msgstr "Nenhuma senha informada."
 
-#: ../comm/gebr-comm-server.c:491
+#: ../comm/gebr-comm-server.c:374
 msgid "SSH host key question:"
 msgstr "Chave do servidor:"
 
-#: ../comm/gebr-comm-server.c:493
+#: ../comm/gebr-comm-server.c:376
 msgid "SSH host key rejected."
 msgstr "A chave SSH do servidor foi rejeitada."
 
 #. last \n
-#: ../comm/gebr-comm-server.c:502
+#: ../comm/gebr-comm-server.c:385
 #, c-format
 msgid "SSH error: %s"
 msgstr "Erro SSH: %s"
 
-#: ../comm/gebr-comm-server.c:503
+#: ../comm/gebr-comm-server.c:386
 #, c-format
 msgid "Received SSH error for server '%s': %s"
 msgstr "O servidor SSH em '%s' reportou o seguinte erro: %s"
 
 #. last \n
-#: ../comm/gebr-comm-server.c:509
+#: ../comm/gebr-comm-server.c:392
 #, c-format
 msgid "Received SSH message for server '%s': %s"
 msgstr "Mensagem SSH recebida do servidor '%s': %s"
 
-#: ../comm/gebr-comm-server.c:520
+#: ../comm/gebr-comm-server.c:403
 #, c-format
 msgid ""
 "SSH reported the following error: \n"
@@ -114,21 +114,21 @@ msgstr ""
 "SSH reportou o seguinte erro:\n"
 "%s"
 
-#: ../comm/gebr-comm-server.c:521
+#: ../comm/gebr-comm-server.c:404
 #, c-format
 msgid "SSH reported the following error for server '%s': %s"
 msgstr "SSH reportou o seguinte erro para o servidor '%s': %s"
 
-#: ../comm/gebr-comm-server.c:580
+#: ../comm/gebr-comm-server.c:463
 msgid "Could not run server."
 msgstr "Não foi possível executar o servidor."
 
-#: ../comm/gebr-comm-server.c:581
+#: ../comm/gebr-comm-server.c:464
 #, c-format
 msgid "Could not run server '%s'."
 msgstr "Não foi possível executar o servidor '%s'."
 
-#: ../comm/gebr-comm-server.c:745
+#: ../comm/gebr-comm-server.c:628
 #, c-format
 msgid "Server '%s' disconnected"
 msgstr "Servidor '%s' desconectado"
@@ -175,7 +175,7 @@ msgstr "Endereço destino desconhecido\n"
 msgid "Channel created successful. Forwarding connections...\n"
 msgstr "Canal criado com sucesso. Encaminhando conexões...\n"
 
-#: ../date.c:70
+#: ../date.c:75
 msgid "Unknown"
 msgstr "Desconhecida"
 
@@ -285,35 +285,35 @@ msgstr "Erro de sintaxe: abre colchete sem par"
 msgid "Expression result is too big"
 msgstr "Resultado da expressão é muito grande"
 
-#: ../gebr-validator.c:534 ../gebr-validator.c:867 ../gebr-validator.c:1000
+#: ../gebr-validator.c:534 ../gebr-validator.c:865 ../gebr-validator.c:998
 #: ../gui/gebr-gui-validatable-widget.c:65
 #, c-format
 msgid "This parameter is required"
 msgstr "Parâmetro obrigatório"
 
-#: ../gebr-validator.c:930
+#: ../gebr-validator.c:928
 #, c-format
 msgid "The variable %s already exists in that scope"
 msgstr "A variável %s já existe neste escopo"
 
-#: ../gebr-validator.c:1382
+#: ../gebr-validator.c:1380
 #, c-format
 msgid "Required parameter"
 msgstr "Parâmetro obrigatório"
 
-#: ../gebr-validator.c:1393
+#: ../gebr-validator.c:1391
 #, c-format
 msgid "Accepts only integer values"
 msgstr "Aceita apenas valores inteiros"
 
-#: ../gebr-validator.c:1401
+#: ../gebr-validator.c:1399
 #, c-format
 msgid "Accepts only positive values"
 msgstr "Aceita apenas valores positivos"
 
 #. FIXME: The message below is untranslatable!
 #. Comment for translators: 1st %s is expression error; 2nd is variable label
-#: ../gebr-validator.c:1447
+#: ../gebr-validator.c:1445
 #, c-format
 msgid "%s on \"%s\""
 msgstr "%s on \"%s\""
@@ -504,36 +504,36 @@ msgstr "O parâmetro de referência faz referência a si próprio."
 msgid "The operation only applies to the first instance of the group."
 msgstr "A operação aplica-se somente à primeira instância do grupo."
 
-#: ../geoxml/flow.c:674 ../geoxml/flow.c:758
+#: ../geoxml/flow.c:675 ../geoxml/flow.c:759
 #, c-format
 msgid "No configured or enabled Programs found in Flow \"%s\"."
 msgstr "Nenhum Programa habilitado ou configurado encontrado no Fluxo \"%s\"."
 
-#: ../geoxml/flow.c:704
+#: ../geoxml/flow.c:705
 #, c-format
 msgid "No input file was specified for the Program \"%s\" in Flow \"%s\"."
 msgstr ""
 "Nenhum arquivo de entrada foi especificado para o Programa \"%s\" no Fluxo "
 "\"%s\"."
 
-#: ../geoxml/flow.c:717
+#: ../geoxml/flow.c:718
 #, c-format
 msgid "Invalid input file specified for the Program \"%s\" in Flow \"%s\"."
 msgstr ""
 "Arquivo de entrada especificado para o Programa \"%s\" no Fluxo \"%s\" é "
 "inválido."
 
-#: ../geoxml/flow.c:734
+#: ../geoxml/flow.c:735
 #, c-format
 msgid "The Flow \"%s\" expects an input file."
 msgstr "O Fluxo \"%s\" espera um arquivo de entrada."
 
-#: ../geoxml/flow.c:742
+#: ../geoxml/flow.c:743
 #, c-format
 msgid "Unexpected output file for the Flow \"%s\"."
 msgstr "Arquivo de saída inexperado para o Fluxo \"%s\"."
 
-#: ../geoxml/flow.c:772
+#: ../geoxml/flow.c:773
 #, c-format
 msgid ""
 "Invalid output file file specified for the Program \"%s\" in Flow \"%s\"."
@@ -541,14 +541,14 @@ msgstr ""
 "Arquivo de saída especificado para o Programa \"%s\" no Fluxo \"%s\" é "
 "inválido."
 
-#: ../geoxml/flow.c:786
+#: ../geoxml/flow.c:787
 #, c-format
 msgid "Invalid error file specified for the Program \"%s\" in Flow \"%s\"."
 msgstr ""
 "Arquivo de log especificado para o Programa \"%s\" no Fluxo \"%s\" é "
 "inválido."
 
-#: ../geoxml/flow.c:856
+#: ../geoxml/flow.c:857
 msgid "Loop iteration counter"
 msgstr "Contador de iterações do Loop"
 
@@ -754,7 +754,7 @@ msgstr "Gerente de desenvolvimento"
 msgid "Developers"
 msgstr "Desenvolvedores"
 
-#: ../gui/gebr-gui-about.c:63
+#: ../gui/gebr-gui-about.c:62
 msgid "Consultants"
 msgstr "Consultores"
 
@@ -762,11 +762,11 @@ msgstr "Consultores"
 msgid "Former members"
 msgstr "Ex-membros"
 
-#: ../gui/gebr-gui-about.c:88
+#: ../gui/gebr-gui-about.c:90
 msgid "GêBR Core Team"
 msgstr "GêBR Core Team"
 
-#: ../gui/gebr-gui-about.c:91
+#: ../gui/gebr-gui-about.c:93
 msgid ""
 "Copyright (C) 2007-2011 GêBR core team (http://www.gebrproject.com/)\n"
 "\n"
@@ -807,7 +807,7 @@ msgstr ""
 "abrl de 1998, e #9610, 19 de fevereiro de 1998, e é registrado no Instituto "
 "Nacional de Propriedade Industrial (INPI) sob número 70156."
 
-#: ../gui/gebr-gui-about.c:109
+#: ../gui/gebr-gui-about.c:111
 msgid "GêBR Home page"
 msgstr "Página da GêBR"
 
@@ -903,20 +903,20 @@ msgstr ""
 msgid "All"
 msgstr "Todos"
 
-#: ../gui/gebr-gui-parameter.c:862
+#: ../gui/gebr-gui-parameter.c:860
 msgid "Edit list"
 msgstr "Editar lista"
 
-#: ../gui/gebr-gui-parameter.c:1007
+#: ../gui/gebr-gui-parameter.c:1005
 msgid "Insert Variable"
 msgstr "Inserir variável"
 
-#: ../gui/gebr-gui-parameter.c:1622
+#: ../gui/gebr-gui-parameter.c:1620
 #, c-format
 msgid "This group has %d error"
 msgstr "Este grupo tem %d erro"
 
-#: ../gui/gebr-gui-parameter.c:1624
+#: ../gui/gebr-gui-parameter.c:1622
 #, c-format
 msgid "This group has %d errors"
 msgstr "Este grupo tem %d erros"
@@ -950,6 +950,139 @@ msgstr "<valor vazio>"
 #: ../gui/gebr-gui-utils.c:1207
 msgid "No such file or directory:"
 msgstr "Arquivo ou diretório não encontrado:"
+
+#: ../utils.c:761
+msgid "A moment"
+msgstr "Um momento"
+
+#: ../utils.c:763 ../utils.c:829
+#, c-format
+msgid "%ld seconds"
+msgstr "%ld segundos"
+
+#: ../utils.c:765 ../utils.c:825
+msgid "1 minute"
+msgstr "1 minuto"
+
+#: ../utils.c:767 ../utils.c:827
+#, c-format
+msgid "%ld minutes"
+msgstr "%ld minutos"
+
+#: ../utils.c:769
+#, c-format
+msgid "1 hour"
+msgstr "1 hora"
+
+#: ../utils.c:771 ../utils.c:823
+#, c-format
+msgid "%ld hours"
+msgstr "%ld horas"
+
+#: ../utils.c:773
+#, c-format
+msgid "1 day"
+msgstr "1 dia"
+
+#: ../utils.c:775
+#, c-format
+msgid "%ld days"
+msgstr "%ld dias"
+
+#: ../utils.c:777
+#, c-format
+msgid "1 week"
+msgstr "1 semana"
+
+#: ../utils.c:779
+#, c-format
+msgid "%ld weeks"
+msgstr "%ld semanas"
+
+#: ../utils.c:781
+#, c-format
+msgid "1 month"
+msgstr "1 mês"
+
+#: ../utils.c:783
+#, c-format
+msgid "%ld months"
+msgstr "%ld meses"
+
+#: ../utils.c:785
+msgid "More than a year"
+msgstr "Mais de um ano"
+
+#: ../utils.c:799
+msgid "1 hour, 1 minute and 1 second"
+msgstr "1 hora, 1 minuto e 1 segundo"
+
+#: ../utils.c:801
+#, c-format
+msgid "1 hour, 1 minute and %ld seconds"
+msgstr "1 hora, 1 minuto e %ld segundos"
+
+#: ../utils.c:803
+#, c-format
+msgid "1 hour, %ld minute and 1 second"
+msgstr "1 hora, %ld minutos e 1 segundo"
+
+#: ../utils.c:805
+#, c-format
+msgid "1 hour, %ld minutes and %ld seconds"
+msgstr "1 hora, %ld minutos e %ld segundos"
+
+#: ../utils.c:807
+#, c-format
+msgid "%ld hours, %ld minutes and %ld seconds"
+msgstr "%ld horas, %ld minutos e %ld segundos"
+
+#: ../utils.c:809
+#, c-format
+msgid "%ld hours and %ld minutes"
+msgstr "%ld horas e %ld minutos"
+
+#: ../utils.c:811
+msgid "1 minute and 1 second"
+msgstr "1 minuto e 1 segundo"
+
+#: ../utils.c:813
+#, c-format
+msgid "1 minute and %ld seconds"
+msgstr "1 minuto e %ld segundos"
+
+#: ../utils.c:815
+#, c-format
+msgid "%ld minutes and 1 second"
+msgstr "%ld minutos e 1 segundo"
+
+#: ../utils.c:817
+#, c-format
+msgid "%ld minutes and %ld seconds"
+msgstr "%ld minutos e %ld segundos"
+
+#: ../utils.c:819
+#, c-format
+msgid "1 hour and %ld seconds"
+msgstr "1 hora e %ld segundos"
+
+#: ../utils.c:821
+#, c-format
+msgid "%ld hours and %ld seconds"
+msgstr "%ld horas e %ld segundos"
+
+#: ../utils.c:831
+msgid "1 second"
+msgstr "1 segundo"
+
+#: ../utils.c:833
+msgid "1 milisecond"
+msgstr "1 milissegundo"
+
+#: ../utils.c:835
+#, c-format
+msgid "%ld miliseconds"
+msgstr "%ld milessegundos"
 
 #: ../validate.c:39
 msgid "File names must be a valid path."
