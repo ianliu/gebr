@@ -203,12 +203,12 @@ on_select_non_single_job(GebrJobControl *jc,
 
 	if (!rows) {
 		if (real_n == 0)
-			msg = g_strdup(_("There are no jobs here! Execute a flow to populate this list."));
+			msg = g_strdup(_("No jobs! Try out one of our demos (go to Help->Samples)."));
 		else if (virt_n < real_n)
-			msg = g_strdup_printf(_("%d jobs of %d are hidden because of the filter."),
+			msg = g_strdup_printf(_("There are filtered jobs. %d out of %d will not appear in the list."),
 					      real_n - virt_n, real_n);
 		else
-			msg = g_strdup(_("Select a job at the list on the left."));
+			msg = g_strdup(_("Select a job on the list."));
 	} else
 		msg = g_strdup("Multiple jobs are selected.");
 
