@@ -206,13 +206,19 @@ value_changed(GtkRange *range, gpointer user_data)
 	switch ((int) value)
 	{
 	case 1:
-		gtk_image_set_from_stock(speed_button_image, "gebr-speed-low", GTK_ICON_SIZE_LARGE_TOOLBAR);
+		gtk_image_set_from_stock(speed_button_image, "gebr-speed-verylow", GTK_ICON_SIZE_LARGE_TOOLBAR);
 		break;
-	case 2: case 3: case 4:
+	case 2:
 		gtk_image_set_from_stock(speed_button_image, "gebr-speed-medium", GTK_ICON_SIZE_LARGE_TOOLBAR);
 		break;
-	case 5:
+	case 3:
+		gtk_image_set_from_stock(speed_button_image, "gebr-speed-medium", GTK_ICON_SIZE_LARGE_TOOLBAR);
+		break;
+	case 4:
 		gtk_image_set_from_stock(speed_button_image, "gebr-speed-high", GTK_ICON_SIZE_LARGE_TOOLBAR);
+		break;
+	case 5:
+		gtk_image_set_from_stock(speed_button_image, "gebr-speed-veryhigh", GTK_ICON_SIZE_LARGE_TOOLBAR);
 		break;
 	default:
 		g_warn_if_reached();
