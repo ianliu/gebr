@@ -179,5 +179,7 @@ void gebr_flow_edition_hide(struct ui_flow_edition *self);
 
 void gebr_flow_edition_show(struct ui_flow_edition *self);
 
+void gebr_flow_edition_select_queue(struct ui_flow_edition *self);
+
 G_END_DECLS
 #endif				//__UI_FLOW_COMPONENT_H

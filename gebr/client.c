@@ -143,6 +143,7 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 							   SERVER_QUEUE_ID, "",
 							   SERVER_QUEUE_LAST_RUNNING_JOB, NULL,
 							   -1);
+					gebr_flow_edition_select_queue(gebr.ui_flow_edition);
 				}
 
 				g_strfreev(accounts);
