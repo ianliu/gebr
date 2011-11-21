@@ -387,6 +387,8 @@ libgebr/json/tests/Makefile
 libgebr/po/Makefile.in
 libgebr/tests/Makefile
 
+maestro/Makefile
+
 gebrd/Makefile
 gebrd/doc/Makefile
 gebrd/po/Makefile.in

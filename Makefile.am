@@ -1,5 +1,5 @@
 # GeBR - An environment for seismic processing.
-# Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
+# Copyright (C) 2007-2011 GeBR core team (http://www.gebrproject.com/)
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@ include $(top_srcdir)/Makefile.decl
 ACLOCAL_AMFLAGS = -I m4
 DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc
 
-SUBDIRS = gtester libgebr gebrd rpm
+SUBDIRS = gtester libgebr maestro gebrd rpm
 if ENABLE_GUI
 SUBDIRS += gebr debr docs
 endif
