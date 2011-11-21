@@ -32,6 +32,8 @@
 
 #include <libgebr/gebr-version.h>
 
+#define GETTEXT_PACKAGE "gebrm"
+
 static gboolean interactive;
 static gboolean show_version;
 
@@ -72,14 +74,13 @@ fork_and_exit_main(void)
 }
 
 int
-main(int argc, const char *argv[])
+main(int argc, char *argv[])
 {
 	GError *error = NULL;
 	GOptionContext *context;
 
 	context = g_option_context_new(_("GêBR Maestro"));
 	g_option_context_add_main_entries(context, entries, GETTEXT_PACKAGE);
-	g_option_context_add_group(context, gtk_get_option_group(TRUE));
 
 	if (!g_option_context_parse(context, &argc, &argv, &error)) {
 		g_print("option parsing failed: %s\n", error->message);
