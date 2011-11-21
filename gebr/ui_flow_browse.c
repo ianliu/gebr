@@ -671,5 +671,8 @@ gebr_flow_browse_hide(GebrUiFlowBrowse *self)
 void
 gebr_flow_browse_show(GebrUiFlowBrowse *self)
 {
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(self->nice_button), gebr.config.niceness == 0? TRUE : FALSE);
+	if (gebr.config.niceness == 0)
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(self->nice_button_high), TRUE);
+	else
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(self->nice_button_low), TRUE);
 }

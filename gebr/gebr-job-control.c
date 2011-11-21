@@ -203,14 +203,14 @@ on_select_non_single_job(GebrJobControl *jc,
 
 	if (!rows) {
 		if (real_n == 0)
-			msg = g_strdup(_("There are no jobs here! Execute a flow to populate this list."));
+			msg = g_strdup(_("No jobs! Try out one of our demos (go to Help->Samples)."));
 		else if (virt_n < real_n)
-			msg = g_strdup_printf(_("%d jobs of %d are hidden because of the filter."),
+			msg = g_strdup_printf(_("There are filtered jobs. %d out of %d will not appear in the list."),
 					      real_n - virt_n, real_n);
 		else
-			msg = g_strdup(_("Select a job at the list on the left."));
+			msg = g_strdup(_("Select a job in the list."));
 	} else
-		msg = g_strdup("Multiple jobs are selected.");
+		msg = g_strdup(_("Multiple jobs selected."));
 
 	gebr_job_control_info_set_visible(jc, FALSE, msg);
 	g_free(msg);
@@ -275,23 +275,58 @@ jobs_visible_for_group(GtkTreeModel *model,
 {
 	GtkTreeIter active;
 	gchar *combo_group;
+	gchar *combo_name;
 	gboolean visible = FALSE;
 
 	if (!gtk_combo_box_get_active_iter (jc->priv->group_combo, &active))
 		return TRUE;
 
 	gtk_tree_model_get(GTK_TREE_MODEL(jc->priv->group_filter), &active,
-			   1, &combo_group, -1);
+			   0, &combo_name,
+	                   1, &combo_group, -1);
 
 	gchar *tmp = gtk_tree_model_get_string_from_iter(GTK_TREE_MODEL(jc->priv->group_filter),
 							 &active);
 	gint index = atoi(tmp);
 	g_free(tmp);
 
+	GtkWidget *content = gtk_info_bar_get_content_area(GTK_INFO_BAR(jc->priv->filter_info_bar));
+	GList *box = gtk_container_get_children(GTK_CONTAINER(content));
+	GList *labels = gtk_container_get_children(GTK_CONTAINER(box->data));
+	labels = labels->next;
+
 	if (index == 0) { // Any
 		jc->priv->use_filter_group = FALSE;
+		for (GList *i = labels; i; i = i->next)
+			if (g_str_has_prefix(gtk_label_get_text(i->data), "Group:"))
+				gtk_widget_destroy(GTK_WIDGET(i->data));
+		g_list_free(box);
+		g_list_free(labels);
 		return TRUE;
 	}
+
+	if (!jc->priv->use_filter_group) {
+		gchar *text = g_markup_printf_escaped("<span size='x-small'>Group: %s</span>", combo_name);
+		GtkWidget *label = gtk_label_new(NULL);
+		gtk_label_set_markup(GTK_LABEL(label), text);
+		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+		gtk_box_pack_start(GTK_BOX(box->data), label, FALSE, FALSE, 0);
+		jc->priv->use_filter_group = TRUE;
+		g_free(text);
+	} else {
+		for (GList *i = labels; i; i = i->next) {
+			const gchar *filter = gtk_label_get_text(i->data);
+			if (g_str_has_prefix(filter, "Group:")) {
+				gchar *new_text = g_markup_printf_escaped("<span size='x-small'>Group: %s</span>", combo_name);
+				gtk_label_set_markup(i->data, new_text);
+				g_free(new_text);
+			}
+		}
+	}
+
+	g_list_free(box);
+	g_list_free(labels);
+	g_free(combo_name);
 
 	GebrJob *job;
 	const gchar *group;
@@ -306,12 +341,8 @@ jobs_visible_for_group(GtkTreeModel *model,
 	if (!g_strcmp0(combo_group, group))
 		visible = TRUE;
 
-	jc->priv->use_filter_group = TRUE;
-
-	if (!gtk_widget_get_visible(jc->priv->filter_info_bar))
-		gtk_widget_show_all(jc->priv->filter_info_bar);
-
 	g_free(combo_group);
+
 	return visible;
 }
 
@@ -330,10 +361,42 @@ jobs_visible_for_servers(GtkTreeModel *model,
 	gtk_tree_model_get(GTK_TREE_MODEL(jc->priv->server_filter), &active,
 	                   1, &combo_server, -1);
 
+	GtkWidget *content = gtk_info_bar_get_content_area(GTK_INFO_BAR(jc->priv->filter_info_bar));
+	GList *box = gtk_container_get_children(GTK_CONTAINER(content));
+	GList *labels = gtk_container_get_children(GTK_CONTAINER(box->data));
+	labels = labels->next;
+
 	if (!combo_server) {
 		jc->priv->use_filter_servers = FALSE;
+		for (GList *i = labels; i; i = i->next)
+			if (g_str_has_prefix(gtk_label_get_text(i->data), "Server:"))
+				gtk_widget_destroy(GTK_WIDGET(i->data));
+		g_list_free(box);
+		g_list_free(labels);
 		return TRUE;
 	}
+
+	if (!jc->priv->use_filter_servers) {
+		gchar *text = g_markup_printf_escaped("<span size='x-small'>Server: %s</span>", combo_server->comm->address->str);
+		GtkWidget *label = gtk_label_new(NULL);
+		gtk_label_set_markup(GTK_LABEL(label), text);
+		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+		gtk_box_pack_start(GTK_BOX(box->data), label, FALSE, FALSE, 0);
+		jc->priv->use_filter_servers = TRUE;
+		g_free(text);
+	} else {
+		for (GList *i = labels; i; i = i->next) {
+			const gchar *filter = gtk_label_get_text(i->data);
+			if (g_str_has_prefix(filter, "Server:")) {
+				gchar *new_text = g_markup_printf_escaped("<span size='x-small'>Server: %s</span>", combo_server->comm->address->str);
+				gtk_label_set_markup(i->data, new_text);
+				g_free(new_text);
+			}
+		}
+	}
+	g_list_free(box);
+	g_list_free(labels);
+
 	GebrJob *job;
 	gchar **servers;
 	gint n_servers;
@@ -348,14 +411,10 @@ jobs_visible_for_servers(GtkTreeModel *model,
 	if (!servers)
 		return FALSE;
 
-	for (gint i = 0; i < n_servers; i++)
+	for (gint i = 0; i < n_servers; i++) {
 		if (!g_strcmp0(servers[i], combo_server->comm->address->str))
 			visible = TRUE;
-
-	jc->priv->use_filter_servers = TRUE;
-
-	if (!gtk_widget_get_visible(jc->priv->filter_info_bar))
-		gtk_widget_show_all(jc->priv->filter_info_bar);
+	}
 
 	return visible;
 }
@@ -367,17 +426,52 @@ jobs_visible_for_status(GtkTreeModel *model,
 {
 	GtkTreeIter active;
 	enum JobStatus combo_status;
+	gchar *combo_text;
 
 	if (!gtk_combo_box_get_active_iter (jc->priv->status_combo, &active))
 		return TRUE;
 
 	gtk_tree_model_get(GTK_TREE_MODEL(jc->priv->status_model), &active,
-	                   ST_STATUS, &combo_status, -1);
+	                   ST_STATUS, &combo_status,
+	                   ST_TEXT, &combo_text, -1);
+
+	GtkWidget *content = gtk_info_bar_get_content_area(GTK_INFO_BAR(jc->priv->filter_info_bar));
+	GList *box = gtk_container_get_children(GTK_CONTAINER(content));
+	GList *labels = gtk_container_get_children(GTK_CONTAINER(box->data));
+	labels = labels->next;
 
 	if (combo_status == -1) {
+		for (GList *i = labels; i; i = i->next)
+			if (g_str_has_prefix(gtk_label_get_text(i->data), "Status:"))
+				gtk_widget_destroy(GTK_WIDGET(i->data));
 		jc->priv->use_filter_status = FALSE;
+		g_list_free(box);
+		g_list_free(labels);
 		return TRUE;
 	}
+
+	if (!jc->priv->use_filter_status) {
+		gchar *text = g_markup_printf_escaped("<span size='x-small'>Status: %s</span>", combo_text);
+		GtkWidget *label = gtk_label_new(NULL);
+		gtk_label_set_markup(GTK_LABEL(label), text);
+		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+		gtk_box_pack_start(GTK_BOX(box->data), label, FALSE, FALSE, 0);
+		jc->priv->use_filter_status = TRUE;
+		g_free(text);
+	} else {
+		for (GList *i = labels; i; i = i->next) {
+			const gchar *filter = gtk_label_get_text(i->data);
+			if (g_str_has_prefix(filter, "Status:")) {
+				gchar *new_text = g_markup_printf_escaped("<span size='x-small'>Status: %s</span>", combo_text);
+				gtk_label_set_markup(i->data, new_text);
+				g_free(new_text);
+			}
+		}
+	}
+	g_list_free(box);
+	g_list_free(labels);
+	g_free(combo_text);
+
 	GebrJob *job;
 
 	gtk_tree_model_get(model, iter, JC_STRUCT, &job, -1);
@@ -393,23 +487,7 @@ jobs_visible_for_status(GtkTreeModel *model,
 	else if (status == JOB_STATUS_FAILED && combo_status == JOB_STATUS_CANCELED)
 		visible = TRUE;
 
-//	GtkWidget *content = gtk_info_bar_get_content_area(GTK_INFO_BAR(jc->priv->filter_info_bar));
-//	GList *labels = gtk_container_get_children(GTK_CONTAINER(content));
-//
-//	gtk_tree_model_get(GTK_TREE_MODEL(combo), &active,
-//	                   ST_TEXT, &combo_text, -1);
-//
-//	const gchar *filters = gtk_label_get_label(GTK_LABEL(labels->data));
-//	const gchar *new_filters = g_strdup_printf("%sStatus: %s\n", filters, combo_text);
-//	gtk_label_set_text(GTK_LABEL(labels->data), new_filters);
-
-	jc->priv->use_filter_status = TRUE;
-
-	if (!gtk_widget_get_visible(jc->priv->filter_info_bar))
-		gtk_widget_show_all(jc->priv->filter_info_bar);
-
 	return visible;
-
 }
 
 static gboolean
@@ -417,22 +495,18 @@ jobs_visible_func(GtkTreeModel *model,
 		  GtkTreeIter *iter,
 		  GebrJobControl *jc)
 {
+	gboolean visible = TRUE;
+
 	if (!jobs_visible_for_status(model, iter, jc))
-		return FALSE;
+		visible = FALSE;
 
 	if (!jobs_visible_for_servers(model, iter, jc))
-		return FALSE;
+		visible = FALSE;
 
 	if (!jobs_visible_for_group(model, iter, jc))
-		return FALSE;
+		visible = FALSE;
 
-	return TRUE;
-}
-
-static void
-on_group_popup(GtkComboBox *group, GebrJobControl *jc)
-{
-	g_debug("POPUP");
+	return visible;
 }
 
 static void
@@ -448,8 +522,7 @@ on_cb_changed(GtkComboBox *combo,
 	    jc->priv->use_filter_servers == FALSE)
 		gtk_widget_hide(jc->priv->filter_info_bar);
 	else
-		if (!gtk_widget_get_visible(jc->priv->filter_info_bar))
-			gtk_widget_show_all(jc->priv->filter_info_bar);
+		gtk_widget_show_all(jc->priv->filter_info_bar);
 
 	on_select_non_single_job(jc, NULL);
 }
@@ -618,7 +691,7 @@ on_pie_tooltip(GebrGuiPie *pie,
 	else
 		server = jc->priv->servers_info.servers[i];
 
-	gchar *t = g_strdup_printf("%s\n%d%% of total", server, (int)round((jc->priv->servers_info.percentages[i])*100));
+	gchar *t = g_strdup_printf(_("%s\n%d%% of total"), server, (int)round((jc->priv->servers_info.percentages[i])*100));
 	gtk_tooltip_set_text(tooltip, t);
 	g_free(t);
 
@@ -661,7 +734,7 @@ job_control_fill_servers_info(GebrJobControl *jc)
 			groups = _("All Servers");
 
 		markup = g_markup_printf_escaped (_("Job submitted by <b>%s</b> to group <b>%s</b>.\n"
-						  "Executed using %s<b>%s</b> processor(s) distributed on <b>%d</b> servers.\n"),
+						  "Executed using %s<b>%s</b> processor(s)\ndistributed on <b>%d</b> servers.\n"),
 						  gebr_job_get_hostname(job), groups,
 						  g_strcmp0(niceness, "0")? _("idle time of ") : "", nprocs, n_servers);
 		g_string_append(resources, markup);
@@ -950,7 +1023,7 @@ gebr_jc_update_status_and_time(GebrJobControl *jc,
 	job_control_fill_servers_info(jc);
 
 	if (status == JOB_STATUS_FINISHED) {
-		gchar *elapsed_time = g_strdup_printf("%s\nElapsed time: %s", finish->str, gebr_job_get_elapsed_time(job));
+		gchar *elapsed_time = g_strdup_printf(_("%s\nElapsed time: %s"), finish->str, gebr_job_get_elapsed_time(job));
 		gtk_image_set_from_stock(img, GTK_STOCK_APPLY, GTK_ICON_SIZE_DIALOG);
 		gtk_label_set_text(subheader, elapsed_time);
 		gtk_label_set_text(details_start_date, start->str);
@@ -959,7 +1032,7 @@ gebr_jc_update_status_and_time(GebrJobControl *jc,
 	}
 
 	else if (status == JOB_STATUS_RUNNING) {
-		gchar *running = g_strdup_printf("%s\nElapsed time: %s", start->str, gebr_job_get_running_time(job, start_date));
+		gchar *running = g_strdup_printf(_("%s\nElapsed time: %s"), start->str, gebr_job_get_running_time(job, start_date));
 		gtk_image_set_from_stock(img, GTK_STOCK_EXECUTE, GTK_ICON_SIZE_DIALOG);
 		gtk_label_set_text(subheader, running);
 		gtk_widget_hide(GTK_WIDGET(details_start_date));
@@ -987,7 +1060,7 @@ gebr_jc_update_status_and_time(GebrJobControl *jc,
 
 		if (parent) {
 			gtk_image_set_from_stock(img, "chronometer", GTK_ICON_SIZE_DIALOG);
-			gtk_label_set_text(subheader, "Waiting for job");
+			gtk_label_set_text(subheader, _("Waiting for job"));
 
 			gtk_image_set_from_stock(wait_img, job_control_get_icon_for_job(parent), GTK_ICON_SIZE_BUTTON);
 			gtk_label_set_text(wait_label, gebr_job_get_title(parent));
@@ -1030,7 +1103,7 @@ gebr_job_control_include_cmd_line(GebrJobControl *jc,
 
 	GList *tasks = gebr_job_get_list_of_tasks(job);
 	if (!tasks)
-		g_return_if_reached();
+		return;
 
 	if (g_list_length(tasks) > 1) {
 		GtkWidget *vbox = gtk_vbox_new(FALSE, 8);
@@ -1106,33 +1179,39 @@ gebr_job_control_load_details(GebrJobControl *jc,
 
 	gchar *markup;
 
-	markup = g_markup_printf_escaped ("<b>Input file</b>: %s", input_file_str ? input_file_str : _("None"));
+	markup = g_markup_printf_escaped (_("<b>Input file</b>: %s"), input_file_str ? input_file_str : _("None"));
 	gtk_label_set_markup (input_file, markup);
 	g_free(markup);
 
-	markup = g_markup_printf_escaped ("<b>Output file</b>: %s", output_file_str ? output_file_str : _("None"));
+	markup = g_markup_printf_escaped (_("<b>Output file</b>: %s"), output_file_str ? output_file_str : _("None"));
 	gtk_label_set_markup (output_file, markup);
 	g_free(markup);
 
-	markup = g_markup_printf_escaped ("<b>Log File</b>: %s", log_file_str ? log_file_str : _("None"));
+	markup = g_markup_printf_escaped (_("<b>Log File</b>: %s"), log_file_str ? log_file_str : _("None"));
 	gtk_label_set_markup (log_file, markup);
 	g_free(markup);
 
 	gchar *msg = g_strdup(gebr_job_get_server_group(job));
 	if (!g_strcmp0(msg, ""))
-		msg = g_strdup("All servers");
+		msg = g_strdup(_("All servers"));
 	gtk_label_set_markup (job_group, msg);
 
 	switch (gebr_job_get_exec_speed(job))
 	{
 	case 1:
+		gtk_image_set_from_stock(info_button_image, "gebr-speed-verylow", GTK_ICON_SIZE_LARGE_TOOLBAR);
+		break;
+	case 2:
 		gtk_image_set_from_stock(info_button_image, "gebr-speed-low", GTK_ICON_SIZE_LARGE_TOOLBAR);
 		break;
-	case 2: case 3: case 4:
+	case 3:
 		gtk_image_set_from_stock(info_button_image, "gebr-speed-medium", GTK_ICON_SIZE_LARGE_TOOLBAR);
 		break;
-	case 5:
+	case 4:
 		gtk_image_set_from_stock(info_button_image, "gebr-speed-high", GTK_ICON_SIZE_LARGE_TOOLBAR);
+		break;
+	case 5:
+		gtk_image_set_from_stock(info_button_image, "gebr-speed-veryhigh", GTK_ICON_SIZE_LARGE_TOOLBAR);
 		break;
 	default:
 		g_warn_if_reached();
@@ -1368,17 +1447,20 @@ on_row_changed_model(GtkTreeModel *tree_model,
 }
 
 static void
-on_reset_filter(GtkInfoBar *info_bar,
-                gint        response_id,
+on_reset_filter(GtkButton  *button,
                 gpointer    user_data)
 {
 	GebrJobControl *jc = user_data;
+
+	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(jc->priv->view));
 
 	gtk_combo_box_set_active(jc->priv->status_combo, 0);
 	gtk_combo_box_set_active(jc->priv->server_combo, 0);
 	gtk_combo_box_set_active(jc->priv->group_combo, 0);
 
-	gtk_widget_hide(GTK_WIDGET(info_bar));
+	gtk_widget_hide(GTK_WIDGET(jc->priv->filter_info_bar));
+
+	job_control_on_cursor_changed(selection, jc);
 }
 
 /* Public methods {{{1 */
@@ -1402,10 +1484,22 @@ gebr_job_control_new(void)
 	 * Left side
 	 */
 
-	jc->priv->filter_info_bar = gtk_info_bar_new_with_buttons(_("Show all"), GTK_RESPONSE_OK, NULL);
-	g_signal_connect(jc->priv->filter_info_bar, "response", G_CALLBACK(on_reset_filter), jc);
-	gtk_box_pack_start(GTK_BOX(gtk_info_bar_get_content_area(GTK_INFO_BAR(jc->priv->filter_info_bar))),
-			   gtk_label_new(_("Jobs list is filtered")), TRUE, TRUE, 0);
+	jc->priv->filter_info_bar = gtk_info_bar_new();
+
+	GtkWidget *content = gtk_info_bar_get_content_area(GTK_INFO_BAR(jc->priv->filter_info_bar));
+	GtkWidget *close_button = gtk_button_new();
+	GtkWidget *image = gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_MENU);
+	GtkWidget *button_box = gtk_vbox_new(FALSE, 0);
+
+	gtk_container_add(GTK_CONTAINER(close_button), image);
+	gtk_button_set_relief(GTK_BUTTON(close_button), GTK_RELIEF_NONE);
+	gtk_box_pack_end(GTK_BOX(button_box), close_button, FALSE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(content), button_box, FALSE, FALSE, 0);
+	g_signal_connect(close_button, "clicked", G_CALLBACK(on_reset_filter), jc);
+
+	GtkWidget *vbox = gtk_vbox_new(FALSE, 2);
+	gtk_box_pack_start(GTK_BOX(vbox), gtk_label_new(_("Jobs filtered by:")), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(content), vbox, FALSE, TRUE, 0);
 
 	GtkBox *left_box = GTK_BOX(gtk_builder_get_object(jc->priv->builder, "left-side-box"));
 	gtk_box_pack_start(left_box, jc->priv->filter_info_bar, FALSE, TRUE, 0);
@@ -1496,7 +1590,6 @@ gebr_job_control_new(void)
 	gtk_list_store_append(jc->priv->group_filter, &iter);
 	gtk_list_store_set(jc->priv->group_filter, &iter, 0, _("Any"), -1);
 	gtk_combo_box_set_model(group_cb, GTK_TREE_MODEL(jc->priv->group_filter));
-	g_signal_connect(jc->priv->group_combo, "popup", G_CALLBACK(on_group_popup), jc);
 	g_signal_connect(jc->priv->group_combo, "changed", G_CALLBACK(on_cb_changed), jc);
 	gtk_combo_box_set_active(jc->priv->group_combo, 0);
 
@@ -1696,15 +1789,15 @@ gebr_job_control_save_selected(GebrJobControl *jc)
 		const gchar *start_date = gebr_job_get_start_date(job);
 		const gchar *finish_date = gebr_job_get_finish_date(job);
 		gchar *dates;
-		dates = g_strdup_printf("\nStart date: %s\nFinish date: %s\n", start_date? gebr_localized_date(start_date): "(None)",
-					finish_date? gebr_localized_date(finish_date) : "(None)");
+		dates = g_strdup_printf(_("\nStart date: %s\nFinish date: %s\n"), start_date? gebr_localized_date(start_date): _("(None)"),
+					finish_date? gebr_localized_date(finish_date) : _("(None)"));
 		fputs(dates, fp);
 		g_free(dates);
 
 		/* Issues */
 		gchar *issues;
 		gchar *job_issue = gebr_job_get_issues(job);
-		issues = g_strdup_printf("\nIssues:\n%s", strlen(job_issue)? job_issue : "(None)\n");
+		issues = g_strdup_printf(_("\nIssues:\n%s"), strlen(job_issue)? job_issue : _("(None)\n"));
 		fputs(issues, fp);
 		g_free(issues);
 		g_free(job_issue);
@@ -1872,7 +1965,7 @@ gebr_job_control_select_job(GebrJobControl *jc, GebrJob *job)
 void
 gebr_job_control_show(GebrJobControl *jc)
 {
-	jc->priv->timeout_source_id = g_timeout_add(5000, update_tree_view, jc);
+	jc->priv->timeout_source_id = g_timeout_add(1000, update_tree_view, jc);
 }
 
 void
