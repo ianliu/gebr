@@ -451,7 +451,7 @@ void gebr_server_set_autoconnect (GebrServer *self, gboolean setting)
 
 void gebr_server_connect (GebrServer *self)
 {
-	gebr_comm_server_connect (self->comm);
+	gebr_comm_server_connect (self->comm, TRUE);
 }
 
 gint gebr_server_get_ncores (GebrServer *self)

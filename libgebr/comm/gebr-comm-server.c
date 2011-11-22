@@ -132,12 +132,20 @@ void gebr_comm_server_free(struct gebr_comm_server *server)
 	g_free(server);
 }
 
-void gebr_comm_server_connect(struct gebr_comm_server *server)
+void gebr_comm_server_connect(struct gebr_comm_server *server,
+			      gboolean maestro)
 {
 	gebr_comm_server_free_for_reuse(server);
 	gebr_comm_server_disconnected_state(server, SERVER_ERROR_NONE, "");
 	gebr_comm_server_change_state(server, SERVER_STATE_RUN);
 	server->tried_existant_pass = FALSE;
+
+	const gchar *binary;
+
+	if (maestro)
+		binary = "gebrm";
+	else
+		binary = "gebrd";
 
 	/* initiate the marathon to communicate to server */
 	if (gebr_comm_server_is_local(server) == FALSE) {
@@ -151,8 +159,8 @@ void gebr_comm_server_connect(struct gebr_comm_server *server)
 		g_signal_connect(process, "finished", G_CALLBACK(gebr_comm_ssh_run_server_finished), server);
 
 		GString *cmd_line = g_string_new(NULL);
-		g_string_printf(cmd_line, "ssh -x %s \"bash -l -c 'gebrd >&3' 3>&1 >/dev/null\"",
-				server->address->str);
+		g_string_printf(cmd_line, "ssh -x %s \"bash -l -c '%s >&3' 3>&1 >/dev/null\"",
+				server->address->str, binary);
 		gebr_comm_terminal_process_start(process, cmd_line);
 		g_string_free(cmd_line, TRUE);
 	} else {
@@ -165,7 +173,7 @@ void gebr_comm_server_connect(struct gebr_comm_server *server)
 		g_signal_connect(process, "finished", G_CALLBACK(local_run_server_finished), server);
 
 		GString *cmd_line = g_string_new(NULL);
-		g_string_printf(cmd_line, "bash -c \"bash -l -c 'gebrd >&3' 3>&1 >/dev/null\"");
+		g_string_printf(cmd_line, "bash -c \"bash -l -c '%s >&3' 3>&1 >/dev/null\"", binary);
 		gebr_comm_process_start(process, cmd_line);
 		g_string_free(cmd_line, TRUE);
 	}

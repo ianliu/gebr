@@ -131,7 +131,8 @@ void gebr_comm_server_free(struct gebr_comm_server *gebr_comm_server);
 
 /**
  */
-void gebr_comm_server_connect(struct gebr_comm_server *gebr_comm_server);
+void gebr_comm_server_connect(struct gebr_comm_server *server,
+			      gboolean maestro);
 
 /**
  */

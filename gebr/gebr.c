@@ -448,7 +448,8 @@ gebr_post_config(gboolean has_config)
 	gtk_window_resize(GTK_WINDOW(gebr.window), gebr.config.width, gebr.config.height);
 	gtk_expander_set_expanded(GTK_EXPANDER(gebr.ui_log->widget), gebr.config.log_expander_state);
 
-	gebr_config_load_servers ();
+	//gebr_config_load_servers ();
+
 	project_list_populate();
 
 	gebr.ui_project_line->servers_filter = gtk_tree_model_filter_new(GTK_TREE_MODEL(gebr.ui_server_list->common.store), NULL);

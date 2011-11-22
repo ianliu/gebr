@@ -316,11 +316,9 @@ static void server_common_setup(struct ui_server_common *ui_server_common)
 	ui_server_common->view = view;
 	gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(view),
 						  (GebrGuiGtkPopupCallback) server_common_popup_menu, ui_server_common);
-#if GTK_CHECK_VERSION(2,12,0)
-	gebr_gui_gtk_tree_view_set_tooltip_callback(GTK_TREE_VIEW(view),
-						    (GebrGuiGtkTreeViewTooltipCallback) server_common_tooltip_callback,
-						    ui_server_common);
-#endif
+	//gebr_gui_gtk_tree_view_set_tooltip_callback(GTK_TREE_VIEW(view),
+	//					    (GebrGuiGtkTreeViewTooltipCallback) server_common_tooltip_callback,
+	//					    ui_server_common);
 
 	renderer = gtk_cell_renderer_pixbuf_new();
 	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
@@ -391,7 +389,7 @@ static void server_common_actions(GtkDialog * dialog, gint arg1, struct ui_serve
 						   SERVER_POINTER, &server, -1);
 
 				if (gebr_comm_server_is_logged(server->comm) == FALSE)
-					gebr_comm_server_connect(server->comm);
+					gebr_comm_server_connect(server->comm, TRUE);
 			}
 
 			break;
@@ -479,7 +477,13 @@ server_list_add(struct ui_server_list *ui_server_list,
 		}
 	}
 
-	gebr_server_new(address, TRUE, "");
+	GebrCommHttpMsg *msg;
+	gchar *url = g_strconcat("/server/", address, NULL);
+	msg = gebr_comm_protocol_socket_send_request(ui_server_list->maestro->socket,
+						     GEBR_COMM_HTTP_METHOD_PUT, url, NULL);
+	g_free(url);
+
+	//gebr_server_new(address, TRUE, "");
 	gtk_tree_model_filter_refilter (GTK_TREE_MODEL_FILTER (gebr.ui_project_line->servers_filter));
 }
 
@@ -583,6 +587,81 @@ static gboolean visible_func (GtkTreeModel *model,
  * Public functions.
  */
 
+void
+log_message(GebrLogMessageType type,
+	    const gchar * message)
+{
+	g_debug("[MAESTRO] LOG_MESSAGE: %s", message);
+}
+
+void
+state_changed(struct gebr_comm_server *server,
+	      gpointer user_data)
+{
+	g_debug("[MAESTRO] STATUS CHANGED");
+}
+
+GString *
+ssh_login(const gchar * title, const gchar * message)
+{
+	g_debug("[MAESTRO] ssh login");
+
+	return g_string_new("");
+}
+
+gboolean
+ssh_question(const gchar * title, const gchar * message)
+{
+	g_debug("[MAESTRO] ssh question: %s", message);
+	return TRUE;
+}
+
+void
+process_request(struct gebr_comm_server * server,
+		GebrCommHttpMsg * request,
+		gpointer user_data)
+{
+	g_debug("[MAESTRO] request");
+}
+
+void
+process_response(struct gebr_comm_server * server, GebrCommHttpMsg * request,
+		 GebrCommHttpMsg * response, gpointer user_data)
+{
+	g_debug("[MAESTRO] response");
+}
+
+void
+parse_messages(struct gebr_comm_server * server, gpointer user_data)
+{
+	g_debug("[MAESTRO] parse messages");
+}
+
+static void
+connect_to_maestro(GtkEntry *entry,
+		   struct ui_server_list *sl)
+{
+	const gchar *addr = gtk_entry_get_text(entry);
+
+	if (sl->maestro) {
+		gebr_comm_server_disconnect(sl->maestro);
+		gebr_comm_server_free(sl->maestro);
+	}
+
+	static const struct gebr_comm_server_ops ops = {
+		.log_message      = log_message,
+		.state_changed    = state_changed,
+		.ssh_login        = ssh_login,
+		.ssh_question     = ssh_question,
+		.process_request  = process_request,
+		.process_response = process_response,
+		.parse_messages   = parse_messages
+	};
+
+	sl->maestro = gebr_comm_server_new(addr, &ops);
+	gebr_comm_server_connect(sl->maestro, TRUE);
+}
+
 /*
  * Function: server_list_setup_ui
  * Assembly the servers configurations dialog.
@@ -602,7 +681,7 @@ struct ui_server_list *server_list_setup_ui(void)
 	GtkWidget *align;
 	GtkWidget *label;
 
-	ui_server_list = g_new(struct ui_server_list, 1);
+	ui_server_list = g_new0(struct ui_server_list, 1);
 	ui_server_list->common.store = gtk_list_store_new(SERVER_N_COLUMN,
 							  GDK_TYPE_PIXBUF,	/* Status icon		*/
 							  G_TYPE_BOOLEAN,	/* Auto connect		*/
@@ -658,6 +737,11 @@ struct ui_server_list *server_list_setup_ui(void)
 
 	server_common_setup(&ui_server_list->common);
 	gtk_tree_model_filter_set_visible_func(GTK_TREE_MODEL_FILTER(ui_server_list->common.filter), visible_func, NULL, NULL);
+
+	GtkWidget *maestro_entry = gtk_entry_new();
+	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), maestro_entry, TRUE, TRUE, 0);
+	g_signal_connect(maestro_entry, "activate", G_CALLBACK(connect_to_maestro), ui_server_list);
+
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), ui_server_list->common.widget, TRUE, TRUE, 0);
 
 	hbox = gtk_hbox_new(FALSE, 3);

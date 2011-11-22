@@ -71,6 +71,7 @@ struct ui_server_common {
 };
 
 struct ui_server_list {
+	GebrCommServer *maestro;
 	struct ui_server_common common;
 };
 

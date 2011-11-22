@@ -455,7 +455,7 @@ void on_server_common_connect(void)
 				    SERVER_POINTER, &server,
 				    -1);
 		if (!server->comm->socket->protocol->logged)
-			gebr_comm_server_connect(server->comm);
+			gebr_comm_server_connect(server->comm, TRUE);
 	}
 }
 
