@@ -29,6 +29,7 @@
 #include <glib.h>
 #include <glib/gi18n.h>
 #include <glib/gstdio.h>
+#include <libgebr/comm/gebr-comm.h>
 
 #include "gebrm-app.h"
 
@@ -112,8 +113,12 @@ main(int argc, char *argv[])
 			exit(1);
 		}
 
-		g_print("%s\n", contents);
-		//exit(0);
+		gint port = atoi(contents);
+
+		if (!gebr_comm_listen_socket_is_local_port_available(port)) {
+			g_print("%s\n", contents);
+			exit(0);
+		}
 	} else if (g_access(lock, F_OK) == 0) {
 		g_critical("Can not read/write into %s", lock);
 		exit(1);
@@ -123,8 +128,11 @@ main(int argc, char *argv[])
 		fork_and_exit_main();
 
 	GebrmApp *app = gebrm_app_singleton_get();
-	gebrm_app_run(app);
-	g_object_unref(app);
+
+	if (!gebrm_app_run(app)) {
+		g_object_unref(app);
+		exit(EXIT_FAILURE);
+	}
 
 	return EXIT_SUCCESS;
 }

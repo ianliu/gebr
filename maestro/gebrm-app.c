@@ -92,11 +92,14 @@ on_client_request(GebrCommProtocolSocket *socket,
 		  GebrCommHttpMsg *request,
 		  GebrmApp *app)
 {
-	g_debug("url '%s'. contents: '%s'", request->url->str, request->content->str);
+	g_debug("URL: '%s' CONTENTS: '%s' TYPE: '%d'",
+		request->url->str,
+		request->content->str,
+		request->method);
 
-	if (request->type == GEBR_COMM_HTTP_METHOD_PUT) {
-		if (g_str_has_prefix(request->url->str, "/server"))
-			g_debug("Adding server %s", request->content->str);
+	if (request->method == GEBR_COMM_HTTP_METHOD_PUT) {
+		if (g_str_has_prefix(request->url->str, "/server/"))
+			g_debug("Adding server %s", request->url->str + strlen("/server/"));
 	}
 }
 
