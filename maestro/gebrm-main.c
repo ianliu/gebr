@@ -19,6 +19,7 @@
  */
 
 #include <config.h>
+#include "gebrm-app.h"
 
 #include <stdio.h>
 #include <unistd.h>
@@ -27,6 +28,7 @@
 #include <sys/stat.h>
 #include <glib.h>
 #include <glib/gi18n.h>
+#include <glib/gstdio.h>
 
 #include "gebrm-app.h"
 
@@ -75,6 +77,7 @@ fork_and_exit_main(void)
 	//close(2);
 }
 
+
 int
 main(int argc, char *argv[])
 {
@@ -95,6 +98,25 @@ main(int argc, char *argv[])
 	if (show_version) {
 		fprintf(stdout, "%s (%s)\n", "0.1.0", gebr_version());
 		exit(EXIT_SUCCESS);
+	}
+
+	const gchar *lock = gebrm_main_get_lock_file();
+
+	if (g_access(lock, R_OK | W_OK) == 0) {
+		gchar *contents;
+		GError *error = NULL;
+		g_file_get_contents(lock, &contents, NULL, &error);
+
+		if (error) {
+			g_critical("Error reading lock: %s", error->message);
+			exit(1);
+		}
+
+		g_print("%s\n", contents);
+		//exit(0);
+	} else if (g_access(lock, F_OK) == 0) {
+		g_critical("Can not read/write into %s", lock);
+		exit(1);
 	}
 
 	if (!interactive)

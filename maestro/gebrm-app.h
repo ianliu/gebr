@@ -113,8 +113,9 @@ GebrmApp *gebrm_app_new(void);
  *
  * Starts the application main loop.
  */
-void gebrm_app_run(GebrmApp *app);
+gboolean gebrm_app_run(GebrmApp *app);
 
+const gchar *gebrm_main_get_lock_file(void);
 /* }}} GebrmApp methods */
 
 G_END_DECLS
