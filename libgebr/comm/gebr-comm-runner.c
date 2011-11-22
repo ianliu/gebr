@@ -246,8 +246,6 @@ divide_and_run_flows(GebrCommRunner *self)
 		n++;
 	}
 
-	g_debug("THE SUM ISSSSSSSSSSSSSSSSSSSSSSSSSSSSS %lf", sum);
-
 	double *weights = g_new(double, n);
 
 	GList *j = self->priv->servers;
@@ -273,8 +271,6 @@ divide_and_run_flows(GebrCommRunner *self)
 		gchar *frac_total = g_strdup_printf("%d:%d", frac, n);
 		gchar *weight = g_strdup_printf("%lf", weights[k]);
 		gchar *flow_xml = strip_flow(self->priv->validator, flow);
-
-		g_debug("GRAAAAAAAAAAAAAAAAAAAA     THE WEIGHT IS %s", weight);
 
 		gebr_comm_protocol_socket_oldmsg_send(sc->server->socket, FALSE,
 						      gebr_comm_protocol_defs.run_def, 11,
@@ -337,8 +333,6 @@ on_response_received(GebrCommHttpMsg *request,
 					   sc->server->clock_cpu,
 					   atoi(self->priv->speed),
 					   n);
-
-	g_debug("SCORE ISSSSSSSSSSSSSSSS %lf", sc->score);
 
 	self->priv->responses++;
 	if (self->priv->responses == self->priv->requests) {
