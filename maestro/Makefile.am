@@ -20,6 +20,7 @@ AM_CPPFLAGS =			\
 	$(GUI_CFLAGS)		\
 	$(GDOME2_CFLAGS)	\
 	$(GEBR_CFLAGS)		\
+	$(GLIB_CFLAGS)		\
 	$(GEBR_GEOXML_CFLAGS)	\
 	$(GEBR_COMM_CFLAGS)	\
 	$(GEBR_GUI_CFLAGS)	\
@@ -33,6 +34,7 @@ gebrm_SOURCES = gebrm-main.c
 gebrm_LDADD =			\
 	$(GDOME2_LIBS)		\
 	$(GEBR_LIBS)		\
+	$(GLIB_LIBS)		\
 	$(GEBR_GEOXML_LIBS)	\
 	$(GEBR_COMM_LIBS)	\
 	$(GEBR_JSON_LIBS)	\
@@ -47,6 +49,7 @@ libmaestro_la_SOURCES = \
 libmaestro_la_LIBADD =		\
 	$(GDOME2_LIBS)		\
 	$(GEBR_LIBS)		\
+	$(GLIB_LIBS)		\
 	$(GEBR_GEOXML_LIBS)	\
 	$(GEBR_COMM_LIBS)	\
 	$(GEBR_JSON_LIBS)	\

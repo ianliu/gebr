@@ -38,8 +38,10 @@ static gboolean interactive;
 static gboolean show_version;
 
 static GOptionEntry entries[] = {
-	{"interactive", 'i', 0, G_OPTION_ARG_NONE, &interactive, N_("Run server in interactive mode, not as a daemon"), NULL},
-	{"version", 'v', 0, G_OPTION_ARG_NONE, &show_version, N_("Show GeBR daemon version"), NULL},
+	{"interactive", 'i', 0, G_OPTION_ARG_NONE, &interactive,
+		N_("Run server in interactive mode, not as a daemon"), NULL},
+	{"version", 'v', 0, G_OPTION_ARG_NONE, &show_version,
+		N_("Show GeBR daemon version"), NULL},
 	{NULL}
 };
 
