@@ -126,7 +126,6 @@ EXTRA_DIST = 				\
 	$(content_files)		\
 	$(HTML_IMAGES)			\
 	$(DOC_MAIN_SGML_FILE)		\
-	$(DOC_MODULE)-sections.txt	\
 	$(DOC_MODULE).types		\
 	version.xml.in
 

@@ -1071,6 +1071,8 @@ gebr_geoxml_flow_calculate_proportional_n(gint total_n,
 		else
 			k++;
 	}
+	for (gint i = 0; i < n_weights; i++)
+		weights[i] = (gdouble)(distributed_n[i])/(gdouble)total_n;
 
 	return distributed_n;
 }

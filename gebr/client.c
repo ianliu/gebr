@@ -143,6 +143,7 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 							   SERVER_QUEUE_ID, "",
 							   SERVER_QUEUE_LAST_RUNNING_JOB, NULL,
 							   -1);
+					gebr_flow_edition_select_queue(gebr.ui_flow_edition);
 				}
 
 				g_strfreev(accounts);
@@ -232,17 +233,12 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 			exec_speed = g_list_nth_data(arguments, 21);
 			job_percentage = g_list_nth_data(arguments, 22);
 
-			g_debug("JOB_DEF: Received task %s frac %s status %s after %s",
-				rid->str, frac->str, status->str, queue->str);
-
 			GebrTask *task = gebr_task_new(server, rid->str, frac->str);
 			gebr_task_init_details(task, status, start_date, finish_date, issues, cmd_line, queue, moab_jid, output, n_procs, niceness, last_run_date);
 			gebr_task_set_percentage(task, g_strtod(job_percentage->str, NULL));
 			gebr_server_append_task(server, task);
 
 			job = gebr_job_control_find(gebr.job_control, rid->str);
-
-			g_debug("Job found is: %p", job);
 
 			if (!job) {
 				job = gebr_job_new_with_id(rid->str, queue->str);
@@ -303,7 +299,6 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 			frac = g_list_nth_data(arguments, 3);
 
 			task = gebr_task_find(rid->str, frac->str);
-			g_debug("OUT_DEF: Found task %p rid %s frac %s output %s", task, rid->str, frac->str, output->str);
 
 			if (task != NULL) {
 				gebr_task_emit_output_signal(task, output->str);
@@ -323,8 +318,6 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 			parameter = g_list_nth_data(arguments, 2);
 			rid = g_list_nth_data(arguments, 3);
 			frac = g_list_nth_data(arguments, 4);
-
-			g_debug("STA_DEF: Task %s frac %s status %s param %s", rid->str, frac->str, status->str, parameter->str);
 
 			task = gebr_task_find(rid->str, frac->str);
 

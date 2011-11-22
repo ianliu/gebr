@@ -27,5 +27,5 @@ glade_DATA = gebr-job-control.glade
 gebr.desktop:gebr.desktop.in $(INTLTOOL_MERGE) $(srcdir)/../po/*.po
 	LC_ALL=C $(INTLTOOL_MERGE) -d -u -c $(builddir)/../po/.intltool-merge-cache $(srcdir)/../po $< $@
 
-EXTRA_DIST = gebr.desktop.in $(gebrmenu_DATA)
+EXTRA_DIST = gebr.desktop.in $(gebrmenu_DATA) $(glade_DATA)
 CLEANFILES = $(desktop_DATA)

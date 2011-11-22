@@ -273,7 +273,7 @@
                               <object class="GtkLabel" id="input_label">
                                 <property name="visible">True</property>
                                 <property name="xalign">0</property>
-                                <property name="label">&lt;b&gt;Input file:&lt;/b&gt; foo/bar.txt</property>
+                                <property name="label" translatable="yes">&lt;b&gt;Input file:&lt;/b&gt; foo/bar.txt</property>
                                 <property name="use_markup">True</property>
                               </object>
                               <packing>
@@ -284,7 +284,7 @@
                               <object class="GtkLabel" id="output_label">
                                 <property name="visible">True</property>
                                 <property name="xalign">0</property>
-                                <property name="label">&lt;b&gt;Output file:&lt;/b&gt; foo/bar.txt</property>
+                                <property name="label" translatable="yes">&lt;b&gt;Output file:&lt;/b&gt; foo/bar.txt</property>
                                 <property name="use_markup">True</property>
                               </object>
                               <packing>
@@ -295,7 +295,7 @@
                               <object class="GtkLabel" id="error_label">
                                 <property name="visible">True</property>
                                 <property name="xalign">0</property>
-                                <property name="label">&lt;b&gt;Log file:&lt;/b&gt; foo/bar.txt</property>
+                                <property name="label" translatable="yes">&lt;b&gt;Log file:&lt;/b&gt; foo/bar.txt</property>
                                 <property name="use_markup">True</property>
                               </object>
                               <packing>
@@ -323,7 +323,7 @@
                             <child>
                               <object class="GtkLabel" id="label8">
                                 <property name="visible">True</property>
-                                <property name="label">&lt;b&gt;Executed at:&lt;/b&gt;</property>
+                                <property name="label" translatable="yes">&lt;b&gt;Executed at:&lt;/b&gt;</property>
                                 <property name="use_markup">True</property>
                               </object>
                               <packing>
@@ -557,7 +557,7 @@
         <child>
           <object class="GtkLabel" id="label5">
             <property name="visible">True</property>
-            <property name="label" translatable="yes">&lt;b&gt;Server group&lt;/b&gt;</property>
+            <property name="label" translatable="yes">&lt;b&gt;Group&lt;/b&gt;</property>
             <property name="use_markup">True</property>
           </object>
           <packing>

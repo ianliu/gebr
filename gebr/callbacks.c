@@ -441,14 +441,6 @@ void on_notebook_switch_page (GtkNotebook     *notebook,
 	}
 
 	if (page_num == NOTEBOOK_PAGE_FLOW_EDITION) {
-		if (!gebr.flow)
-			return;
-
-		GtkTreeIter iter;
-		GtkComboBox *cb = GTK_COMBO_BOX (gebr.ui_flow_edition->server_combobox);
-		GtkTreeModel *model = gtk_combo_box_get_model (cb);
-		flow_edition_find_flow_server (gebr.flow, model, &iter);
-		gtk_combo_box_set_active_iter (cb, &iter);
 	}
 
 	gebr.last_notebook = page_num;

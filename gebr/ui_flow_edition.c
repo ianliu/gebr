@@ -1670,11 +1670,30 @@ void flow_program_check_sensitiveness (void)
 void
 gebr_flow_edition_hide(struct ui_flow_edition *self)
 {
-	return;
 }
 
 void
 gebr_flow_edition_show(struct ui_flow_edition *self)
 {
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(self->nice_button), gebr.config.niceness == 0? TRUE : FALSE);
+	if (!gebr.flow)
+		return;
+
+	GtkTreeIter iter;
+	GtkComboBox *cb = GTK_COMBO_BOX(self->server_combobox);
+	GtkTreeModel *model = gtk_combo_box_get_model(cb);
+	flow_edition_find_flow_server(gebr.flow, model, &iter);
+	gtk_combo_box_set_active_iter(cb, &iter);
+	gebr_flow_edition_select_queue(self);
+}
+
+void
+gebr_flow_edition_select_queue(struct ui_flow_edition *self)
+{
+	if (gtk_combo_box_get_active(GTK_COMBO_BOX(self->queue_combobox)) == -1)
+		gtk_combo_box_set_active(GTK_COMBO_BOX(self->queue_combobox), 0);
+
+	if (gebr.config.niceness == 0)
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(self->nice_button_high), TRUE);
+	else
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(self->nice_button_low), TRUE);
 }

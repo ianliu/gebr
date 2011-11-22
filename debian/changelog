@@ -1,3 +1,16 @@
+gebrproject (0.15.4) lucid; urgency=low
+
+  * Speed and niceness icons cleanup.
+
+ -- Fabricio Matheus Goncalves <fmatheus@gebrproject.com>  Fri, 18 Nov 2011 17:24:01 -0200
+
+gebrproject (0.15.3) lucid; urgency=low
+
+  * Better menu search at Flow Editor (#963)
+  * Job Control interface polishing (#1072) (#1073) (#1074)
+
+ -- Fabricio Matheus Goncalves <fmatheus@gebrproject.com>  Thu, 17 Nov 2011 19:24:10 -0200
+
 gebrproject (0.15.2) lucid; urgency=low
 
   * Flat Job Control interface with filters (#1064)
