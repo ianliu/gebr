@@ -43,8 +43,10 @@ static GebrmApp           *__app = NULL;
 #define GEBRM_LIST_OF_SERVERS_FILENAME "servers.conf"
 
 static void gebrm_config_save_server(gchar *server);
-static gboolean gebrm_add_server_to_list(GList *list, gchar *addr);
-gboolean gebrm_config_load_servers(GList *list, gchar *path);
+
+static gboolean gebrm_add_server_to_list(GebrmApp *app, gchar *addr);
+
+gboolean gebrm_config_load_servers(GebrmApp *app, gchar *path);
 
 G_DEFINE_TYPE(GebrmApp, gebrm_app, G_TYPE_OBJECT);
 
@@ -117,7 +119,157 @@ static void
 gebrm_server_op_parse_messages(GebrCommServer *server,
 			       gpointer user_data)
 {
-	g_debug("[DAEMON] %s", __func__);
+	GList *link;
+	struct gebr_comm_message *message;
+
+	while ((link = g_list_last(server->socket->protocol->messages)) != NULL) {
+		message = link->data;
+
+		if (message->hash == gebr_comm_protocol_defs.err_def.code_hash) {
+			GList *arguments;
+
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 1)) == NULL)
+				goto err;
+
+			GString *last_error = g_list_nth_data(arguments, 0);
+			g_critical("Server '%s' reported the error '%s'.",
+				   server->address->str, last_error->str);
+
+			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
+		}
+		else if (message->hash == gebr_comm_protocol_defs.ret_def.code_hash) {
+			if (server->socket->protocol->waiting_ret_hash == gebr_comm_protocol_defs.ini_def.code_hash) {
+				GList *arguments;
+				GString *hostname;
+				GString *display_port;
+				gchar ** accounts;
+				GString *model_name;
+				GString *total_memory;
+				GString *nfsid;
+				GString *ncores;
+				GString *clock_cpu;
+
+				if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 9)) == NULL)
+					goto err;
+
+				hostname = g_list_nth_data(arguments, 0);
+				display_port = g_list_nth_data(arguments, 1);
+				accounts = g_strsplit(((GString *)g_list_nth_data(arguments, 3))->str, ",", 0);
+				model_name = g_list_nth_data (arguments, 4);
+				total_memory = g_list_nth_data (arguments, 5);
+				nfsid = g_list_nth_data (arguments, 6);
+				ncores = g_list_nth_data (arguments, 7);
+				clock_cpu = g_list_nth_data (arguments, 8);
+
+				g_strfreev(accounts);
+
+				server->ncores = atoi(ncores->str);
+				server->clock_cpu = atof(clock_cpu->str);
+
+				/* say we are logged */
+				server->socket->protocol->logged = TRUE;
+				g_string_assign(server->socket->protocol->hostname, hostname->str);
+
+				if (!gebr_comm_server_is_local(server)) {
+					if (display_port->len) {
+						if (!strcmp(display_port->str, "0"))
+							g_critical("Server '%s' could not add X11 authorization to redirect graphical output.",
+								   server->address->str);
+						else
+							gebr_comm_server_forward_x11(server, atoi(display_port->str));
+					} else 
+						g_critical("Server '%s' could not redirect graphical output.",
+							   server->address->str);
+				}
+
+				gebr_comm_protocol_socket_oldmsg_send(server->socket, FALSE,
+								      gebr_comm_protocol_defs.lst_def, 0);
+
+				gebr_comm_protocol_socket_oldmsg_split_free(arguments);
+			}
+			else if (message->hash == gebr_comm_protocol_defs.job_def.code_hash) {
+				GList *arguments;
+				GString *hostname, *status, *title, *start_date, *finish_date, *issues, *cmd_line,
+					*output, *queue, *moab_jid, *rid, *frac, *server_list, *n_procs, *niceness,
+					*input_file, *output_file, *log_file, *last_run_date, *server_group_name,
+					*job_percentage, *exec_speed;
+
+				if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 23)) == NULL)
+					goto err;
+
+				status = g_list_nth_data(arguments, 1);
+				title = g_list_nth_data(arguments, 2);
+				start_date = g_list_nth_data(arguments, 3);
+				finish_date = g_list_nth_data(arguments, 4);
+				hostname = g_list_nth_data(arguments, 5);
+				issues = g_list_nth_data(arguments, 6);
+				cmd_line = g_list_nth_data(arguments, 7);
+				output = g_list_nth_data(arguments, 8);
+				queue = g_list_nth_data(arguments, 9);
+				moab_jid = g_list_nth_data(arguments, 10);
+				rid = g_list_nth_data(arguments, 11);
+				frac = g_list_nth_data(arguments, 12);
+				server_list = g_list_nth_data(arguments, 13);
+				n_procs = g_list_nth_data(arguments, 14);
+				niceness = g_list_nth_data(arguments, 15);
+				input_file = g_list_nth_data(arguments, 16);
+				output_file= g_list_nth_data(arguments, 17);
+				log_file = g_list_nth_data(arguments, 18);
+				last_run_date = g_list_nth_data(arguments, 19);
+				server_group_name = g_list_nth_data(arguments, 20);
+				exec_speed = g_list_nth_data(arguments, 21);
+				job_percentage = g_list_nth_data(arguments, 22);
+
+				g_debug("JOB DEF! %s", title->str);
+
+				gebr_comm_protocol_socket_oldmsg_split_free(arguments);
+			}
+		} else if (message->hash == gebr_comm_protocol_defs.out_def.code_hash) {
+			GList *arguments;
+			GString *output, *rid, *frac;
+
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 4)) == NULL)
+				goto err;
+
+			output = g_list_nth_data(arguments, 1);
+			rid = g_list_nth_data(arguments, 2);
+			frac = g_list_nth_data(arguments, 3);
+
+			g_debug("OUT_DEF! %s", output->str);
+
+			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
+		} else if (message->hash == gebr_comm_protocol_defs.sta_def.code_hash) {
+			GList *arguments;
+			GString *status, *parameter, *rid, *frac;
+
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 5)) == NULL)
+				goto err;
+
+			status = g_list_nth_data(arguments, 1);
+			parameter = g_list_nth_data(arguments, 2);
+			rid = g_list_nth_data(arguments, 3);
+			frac = g_list_nth_data(arguments, 4);
+
+			g_debug("STA_DEF! %s", status->str);
+
+			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
+		}
+
+		gebr_comm_message_free(message);
+		server->socket->protocol->messages = g_list_delete_link(server->socket->protocol->messages, link);
+	}
+
+	return;
+
+err:	gebr_comm_message_free(message);
+	server->socket->protocol->messages = g_list_delete_link(server->socket->protocol->messages, link);
+
+	if (gebr_comm_server_is_local(server))
+		g_critical("Error communicating with the local server. Please reconnect.");
+	else
+		g_critical("Error communicating with the server '%s'. Please reconnect.", server->address->str);
+	gebr_comm_server_disconnect(server);
+
 }
 
 static struct gebr_comm_server_ops daemon_ops = {
@@ -148,7 +300,7 @@ gebrm_app_init(GebrmApp *app)
 	app->priv->daemons = NULL;
 	gchar *subdir = g_strconcat(GEBRM_LIST_OF_SERVERS_PATH, GEBRM_LIST_OF_SERVERS_FILENAME, NULL);
 	gchar *path = g_build_path ("/", g_get_home_dir (), subdir, NULL);
-	gebrm_config_load_servers(app->priv->daemons, path);
+	gebrm_config_load_servers(app, path);
 	g_free(subdir);
 	g_free(path);
 
@@ -174,10 +326,13 @@ gebrm_app_singleton_get(void)
 	return __app;
 }
 
-static gboolean gebrm_add_server_to_list(GList *list, gchar *addr){
+static gboolean
+gebrm_add_server_to_list(GebrmApp *app, gchar *addr)
+{
+	g_debug("Added server %s", addr);
 	GebrCommServer *daemon = gebr_comm_server_new(addr, &daemon_ops);
-	daemon->user_data = addr;
-	list = g_list_prepend(list, daemon);
+	daemon->user_data = app;
+	app->priv->daemons = g_list_prepend(app->priv->daemons, daemon);
 	gebr_comm_server_connect(daemon, FALSE);
 	return TRUE;
 }
@@ -190,9 +345,9 @@ on_client_request(GebrCommProtocolSocket *socket,
 	g_debug("URL: %s", request->url->str);
 
 	if (request->method == GEBR_COMM_HTTP_METHOD_PUT) {
-		if (g_str_has_prefix(request->url->str, "/server/")){
+		if (g_str_has_prefix(request->url->str, "/server/")) {
 			gchar *addr = request->url->str + strlen("/server/");
-			gebrm_add_server_to_list(app->priv->daemons, addr);
+			gebrm_add_server_to_list(app, addr);
 			gebrm_config_save_server(addr);
 		}
 		else if (g_str_has_prefix(request->url->str, "/run")) {
@@ -215,16 +370,20 @@ on_client_request(GebrCommProtocolSocket *socket,
 			write(STDOUT_FILENO, value->str, MIN(value->len, 100));
 			puts("");
 
-			GebrGeoXmlDocument *flow;
-			gebr_geoxml_document_load_buffer(&flow, value->str);
+			GebrGeoXmlProject **pproj = g_new(GebrGeoXmlProject*, 1);
+			GebrGeoXmlLine **pline = g_new(GebrGeoXmlLine*, 1);
+			GebrGeoXmlFlow **pflow = g_new(GebrGeoXmlFlow*, 1);
 
-			GebrGeoXmlProject *proj = gebr_geoxml_project_new();
-			GebrGeoXmlLine *line = gebr_geoxml_line_new();
-			GebrValidator *validator = gebr_validator_new(&flow,
-								      (GebrGeoXmlDocument **)&line,
-								      (GebrGeoXmlDocument **)&proj);
+			gebr_geoxml_document_load_buffer((GebrGeoXmlDocument **)pflow, value->str);
+			*pproj = gebr_geoxml_project_new();
+			*pline = gebr_geoxml_line_new();
 
-			GebrCommRunner *runner = gebr_comm_runner_new(flow, app->priv->daemons,
+			GebrValidator *validator = gebr_validator_new((GebrGeoXmlDocument **)pflow,
+								      (GebrGeoXmlDocument **)pline,
+								      (GebrGeoXmlDocument **)pproj);
+
+			GebrCommRunner *runner = gebr_comm_runner_new(GEBR_GEOXML_DOCUMENT(*pflow),
+								      app->priv->daemons,
 								      parent_rid, speed, nice, group,
 								      validator);
 			gchar *idstr = g_strdup_printf("%d", id++);
@@ -266,23 +425,16 @@ gebrm_config_save_server(gchar *server){
 
 
 gboolean
-gebrm_config_load_servers(GList *list, gchar *path){
+gebrm_config_load_servers(GebrmApp *app, gchar *path)
+{
 
 	GKeyFile *servers = g_key_file_new();
 	gchar **groups;
-	gboolean has_local_server = FALSE;
 	gboolean succ = g_key_file_load_from_file(servers, path, G_KEY_FILE_NONE, NULL);
 	if (succ) {
 		groups = g_key_file_get_groups(servers, NULL);
-		for (int i = 0; groups[i]; i++) {
-			GString *address = gebr_g_key_file_load_string_key(servers,
-								  groups[i], "address", "");
-			if(g_strcmp0(address->str,"127.0.0.1") == 0)
-				has_local_server = TRUE;
-
-			gebrm_add_server_to_list(list, address->str);
-			g_string_free(address, TRUE);
-		}
+		for (int i = 0; groups[i]; i++)
+			gebrm_add_server_to_list(app, groups[i]);
 		g_key_file_free (servers);
 	}
 	return TRUE;
