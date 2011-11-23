@@ -125,32 +125,42 @@ gebr_ui_flow_run(void)
 	gebr_geoxml_flow_set_date_last_run(gebr.flow, gebr_iso_date());
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), FALSE, FALSE);
 
-	GebrCommRunner *runner = gebr_comm_runner_new(GEBR_GEOXML_DOCUMENT(gebr.flow),
-						      servers, parent_rid, speed,
-						      nice, group, gebr.validator);
-	
-	gchar *title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.flow));
+	gchar *xml;
+	gebr_geoxml_document_to_string(GEBR_GEOXML_DOCUMENT(gebr.flow), &xml);
+	GebrCommJsonContent *content = gebr_comm_json_content_new_from_string(xml);
+	gchar *url = g_strdup_printf("/run?parent_rid=%s;speed=%s;nice=%s;group=%s",
+				     parent_rid, speed, nice, group);
+	gebr_comm_protocol_socket_send_request(gebr.ui_server_list->maestro->socket,
+					       GEBR_COMM_HTTP_METHOD_PUT, url, content);
+	g_free(url);
+	g_free(xml);
 
-	GebrJob *job = gebr_job_new(parent_rid);
-	gebr_job_set_title(job, title);
-	gebr_job_set_hostname(job, g_get_host_name());
-	gebr_job_set_server_group(job, group);
-	gebr_job_set_model(job, gebr_job_control_get_model(gebr.job_control));
-	gebr_job_set_exec_speed(job, gebr_interface_get_execution_speed());
-	gebr_job_control_add(gebr.job_control, job);
-	gebr_comm_runner_set_ran_func(runner, set_server_list, job);
+	//GebrCommRunner *runner = gebr_comm_runner_new(GEBR_GEOXML_DOCUMENT(gebr.flow),
+	//					      servers, parent_rid, speed,
+	//					      nice, group, gebr.validator);
+	//
+	//gchar *title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.flow));
 
-	g_free(title);
+	//GebrJob *job = gebr_job_new(parent_rid);
+	//gebr_job_set_title(job, title);
+	//gebr_job_set_hostname(job, g_get_host_name());
+	//gebr_job_set_server_group(job, group);
+	//gebr_job_set_model(job, gebr_job_control_get_model(gebr.job_control));
+	//gebr_job_set_exec_speed(job, gebr_interface_get_execution_speed());
+	//gebr_job_control_add(gebr.job_control, job);
+	//gebr_comm_runner_set_ran_func(runner, set_server_list, job);
 
-	if (g_strcmp0(parent_rid, "") == 0) {
-		gebr_comm_runner_run_async(runner, gebr_job_get_id(job));
-	} else {
-		GebrJob *parent = gebr_job_control_find(gebr.job_control, parent_rid);
-		gebr_job_append_child(parent, runner, job);
-	}
+	//g_free(title);
 
-	gebr_interface_change_tab(NOTEBOOK_PAGE_JOB_CONTROL);
-	gebr_job_control_select_job(gebr.job_control, job);
+	//if (g_strcmp0(parent_rid, "") == 0) {
+	//	gebr_comm_runner_run_async(runner, gebr_job_get_id(job));
+	//} else {
+	//	GebrJob *parent = gebr_job_control_find(gebr.job_control, parent_rid);
+	//	gebr_job_append_child(parent, runner, job);
+	//}
+
+	//gebr_interface_change_tab(NOTEBOOK_PAGE_JOB_CONTROL);
+	//gebr_job_control_select_job(gebr.job_control, job);
 
 	g_free(parent_rid);
 	g_free(speed);
