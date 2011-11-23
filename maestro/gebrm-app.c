@@ -41,7 +41,7 @@ static GebrmApp           *__app = NULL;
 #define GEBRM_LIST_OF_SERVERS_PATH ".gebr/gebrm/"
 #define GEBRM_LIST_OF_SERVERS_FILENAME "servers.conf"
 
-static void gebrm_config_save_server(gchar *server);
+static void gebrm_config_save_server(const gchar *server);
 
 G_DEFINE_TYPE(GebrmApp, gebrm_app, G_TYPE_OBJECT);
 
@@ -114,6 +114,7 @@ static void
 gebrm_server_op_parse_messages(GebrCommServer *server,
 			       gpointer user_data)
 {
+	// gebr/client.c
 	g_debug("[DAEMON] %s", __func__);
 }
 
@@ -171,9 +172,8 @@ on_client_request(GebrCommProtocolSocket *socket,
 {
 	g_debug("URL: %s", request->url->str);
 
-	gchar **aux_str;
 	if (request->method == GEBR_COMM_HTTP_METHOD_PUT) {
-		if (g_str_has_prefix(request->url->str, "/server/")){
+		if (g_str_has_prefix(request->url->str, "/server/")) {
 			const gchar *addr = request->url->str + strlen("/server/");
 			GebrCommServer *daemon = gebr_comm_server_new(addr, &daemon_ops);
 			daemon->user_data = app;
@@ -183,29 +183,46 @@ on_client_request(GebrCommProtocolSocket *socket,
 		}
 		else if (g_str_has_prefix(request->url->str, "/run")) {
 			GebrCommJsonContent *json;
+			static gint id = 0;
 
 			gchar *tmp = strchr(request->url->str, '?') + 1;
 			gchar **params = g_strsplit(tmp, ";", -1);
+			gchar *parent_rid, *speed, *nice, *group;
 
 			g_debug("I will run this flow:");
 
-			for (gint i = 0; params[i]; i++) {
-				tmp = strchr(params[i], '=');
-				tmp[0] = '\0';
-				tmp++;
-				g_print("    %s : %s\n", params[i], tmp);
-			}
+			parent_rid = strchr(params[0], '=') + 1;
+			speed      = strchr(params[1], '=') + 1;
+			nice       = strchr(params[2], '=') + 1;
+			group      = strchr(params[3], '=') + 1;
 
 			json = gebr_comm_json_content_new(request->content->str);
 			GString *value = gebr_comm_json_content_to_gstring(json);
 			write(STDOUT_FILENO, value->str, MIN(value->len, 100));
 			puts("");
+
+			GebrGeoXmlDocument *flow;
+			gebr_geoxml_document_load_buffer(&flow, value->str);
+
+			GebrGeoXmlProject *proj = gebr_geoxml_project_new();
+			GebrGeoXmlLine *line = gebr_geoxml_line_new();
+			GebrValidator *validator = gebr_validator_new(&flow,
+								      (GebrGeoXmlDocument **)&line,
+								      (GebrGeoXmlDocument **)&proj);
+
+			GebrCommRunner *runner = gebr_comm_runner_new(flow, app->priv->daemons,
+								      parent_rid, speed, nice, group,
+								      validator);
+			gchar *idstr = g_strdup_printf("%d", id++);
+			gebr_comm_runner_run_async(runner, idstr);
+			//gebr_validator_free(validator);
+			g_free(idstr);
 		}
 	}
 }
 
 static void
-gebrm_config_save_server(gchar *server){
+gebrm_config_save_server(const gchar *server) {
 	g_debug("Adding server %s", server);
 
 	gchar *dir, *path, *subdir;
