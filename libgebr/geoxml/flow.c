@@ -1099,7 +1099,7 @@ GList *gebr_geoxml_flow_divide_flows(GebrGeoXmlFlow *flow,
 {
 	if (!gebr_geoxml_flow_is_parallelizable(flow, validator)) {
 		GList *l = NULL;
-		return g_list_prepend(l, flow);
+		return g_list_prepend(l, gebr_geoxml_document_ref(GEBR_GEOXML_DOCUMENT(flow)));
 	}
 
 	GList *flows = NULL;
