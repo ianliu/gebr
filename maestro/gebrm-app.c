@@ -50,10 +50,83 @@ struct _GebrmAppPriv {
 	GebrCommListenSocket *listener;
 	GebrCommSocketAddress address;
 	GList *connections;
+	GList *daemons;
 
 	gint finished_starting_pipe[2];
 	gchar buffer[1024];
 };
+
+/* Operations for GebrCommServer {{{ */
+static void
+gebrm_server_op_log_message(GebrCommServer *server,
+			    GebrLogMessageType type,
+			    const gchar *message,
+			    gpointer user_data)
+{
+	g_debug("[DAEMON] %s: (type: %d) %s", __func__, type, message);
+}
+
+static void
+gebrm_server_op_state_changed(GebrCommServer *server,
+			      gpointer user_data)
+{
+	g_debug("[DAEMON] %s: State %d", __func__, server->state);
+}
+
+static GString *
+gebrm_server_op_ssh_login(GebrCommServer *server,
+			  const gchar *title,
+			  const gchar *message,
+			  gpointer user_data)
+{
+	g_debug("[DAEMON] %s: Login %s %s", __func__, title, message);
+	return NULL;
+}
+
+static gboolean
+gebrm_server_op_ssh_question(GebrCommServer *server,
+			     const gchar *title,
+			     const gchar *message,
+			     gpointer user_data)
+{
+	g_debug("[DAEMON] %s: Question %s %s", __func__, title, message);
+	return TRUE;
+}
+
+static void
+gebrm_server_op_process_request(GebrCommServer *server,
+				GebrCommHttpMsg *request,
+				gpointer user_data)
+{
+	g_debug("[DAEMON] %s", __func__);
+}
+
+static void
+gebrm_server_op_process_response(GebrCommServer *server,
+				 GebrCommHttpMsg *request,
+				 GebrCommHttpMsg *response,
+				 gpointer user_data)
+{
+	g_debug("[DAEMON] %s", __func__);
+}
+
+static void
+gebrm_server_op_parse_messages(GebrCommServer *server,
+			       gpointer user_data)
+{
+	g_debug("[DAEMON] %s", __func__);
+}
+
+static struct gebr_comm_server_ops daemon_ops = {
+	.log_message      = gebrm_server_op_log_message,
+	.state_changed    = gebrm_server_op_state_changed,
+	.ssh_login        = gebrm_server_op_ssh_login,
+	.ssh_question     = gebrm_server_op_ssh_question,
+	.process_request  = gebrm_server_op_process_request,
+	.process_response = gebrm_server_op_process_response,
+	.parse_messages   = gebrm_server_op_parse_messages
+};
+/* }}} Operations for GebrCommServer */
 
 static void
 gebrm_app_class_init(GebrmAppClass *klass)
@@ -96,23 +169,37 @@ on_client_request(GebrCommProtocolSocket *socket,
 		  GebrCommHttpMsg *request,
 		  GebrmApp *app)
 {
-	g_debug("URL: '%s' CONTENTS: '%s' TYPE: '%d'",
-		request->url->str,
-		request->content->str,
-		request->method);
+	g_debug("URL: %s", request->url->str);
 
 	gchar **aux_str;
 	if (request->method == GEBR_COMM_HTTP_METHOD_PUT) {
 		if (g_str_has_prefix(request->url->str, "/server/")){
+			const gchar *addr = request->url->str + strlen("/server/");
+			GebrCommServer *daemon = gebr_comm_server_new(addr, &daemon_ops);
+			daemon->user_data = app;
+			app->priv->daemons = g_list_prepend(app->priv->daemons, daemon);
+			gebr_comm_server_connect(daemon, FALSE);
+			gebrm_config_save_server(addr);
+		}
+		else if (g_str_has_prefix(request->url->str, "/run")) {
+			GebrCommJsonContent *json;
 
-			const gchar *aux = request->url->str;
+			gchar *tmp = strchr(request->url->str, '?') + 1;
+			gchar **params = g_strsplit(tmp, ";", -1);
 
-			g_debug("passing here aux:%s", aux);
+			g_debug("I will run this flow:");
 
-			aux_str = g_strsplit( aux, "/", 3);
+			for (gint i = 0; params[i]; i++) {
+				tmp = strchr(params[i], '=');
+				tmp[0] = '\0';
+				tmp++;
+				g_print("    %s : %s\n", params[i], tmp);
+			}
 
-			g_debug("passing here aux_str[0]:%s aux_str[1]:%s", aux_str[0], aux_str[1]);
-			gebrm_config_save_server(aux_str[2]);
+			json = gebr_comm_json_content_new(request->content->str);
+			GString *value = gebr_comm_json_content_to_gstring(json);
+			write(STDOUT_FILENO, value->str, MIN(value->len, 100));
+			puts("");
 		}
 	}
 }
@@ -162,9 +249,12 @@ on_new_connection(GebrCommListenSocket *listener,
 	g_debug("New connection!");
 
 	while ((client = gebr_comm_listen_socket_get_next_pending_connection(listener))) {
-		GebrCommProtocolSocket *protocol = gebr_comm_protocol_socket_new_from_socket(client);
-		g_signal_connect(protocol, "disconnected", G_CALLBACK(on_client_disconnect), app);
-		g_signal_connect(protocol, "process-request", G_CALLBACK(on_client_request), app);
+		GebrCommProtocolSocket *protocol =
+			gebr_comm_protocol_socket_new_from_socket(client);
+		g_signal_connect(protocol, "disconnected",
+				 G_CALLBACK(on_client_disconnect), app);
+		g_signal_connect(protocol, "process-request",
+				 G_CALLBACK(on_client_request), app);
 	}
 }
 
@@ -190,7 +280,8 @@ gebrm_app_run(GebrmApp *app)
 		return FALSE;
 	}
 
-	app->priv->address = gebr_comm_socket_get_address(GEBR_COMM_SOCKET(app->priv->listener));
+	app->priv->address =
+		gebr_comm_socket_get_address(GEBR_COMM_SOCKET(app->priv->listener));
 	guint16 port = gebr_comm_socket_address_get_ip_port(&app->priv->address);
 	gchar *portstr = g_strdup_printf("%d", port);
 
@@ -218,7 +309,8 @@ gebrm_main_get_lock_file(void)
 
 	if (!lock) {
 		gchar *fname = g_strconcat("lock-", g_get_host_name(), NULL);
-		gchar *dirname = g_build_filename(g_get_home_dir(), ".gebr", "gebrm", NULL);
+		gchar *dirname = g_build_filename(g_get_home_dir(), ".gebr",
+						  "gebrm", NULL);
 		if(!g_file_test(dirname, G_FILE_TEST_EXISTS))
 			g_mkdir_with_parents(dirname, 0755);
 		lock = g_build_filename(g_get_home_dir(), ".gebr", "gebrm", fname, NULL);
