@@ -201,7 +201,11 @@ static void gebr_server_init (GebrServer *self)
 /**
  * \internal
  */
-static void server_log_message(GebrLogMessageType type, const gchar * message)
+static void
+server_log_message(GebrCommServer *server,
+		   GebrLogMessageType type,
+		   const gchar *message,
+		   gpointer user_data)
 {
 	gebr_message(type, TRUE, TRUE, message);
 }
@@ -217,8 +221,11 @@ server_clear_tasks(GebrServer * server)
 /*
  * \internal
  */
-static void server_state_changed(struct gebr_comm_server *comm_server, GebrServer * server)
+static void
+server_state_changed(GebrCommServer *comm_server,
+		     gpointer user_data)
 {
+	GebrServer *server = user_data;
 	server_list_updated_status(server);
 	if (server->comm->state == SERVER_STATE_DISCONNECTED) {
 		gtk_list_store_clear(server->accounts_model);
@@ -230,7 +237,11 @@ static void server_state_changed(struct gebr_comm_server *comm_server, GebrServe
 /**
  * \internal
  */
-static GString *server_ssh_login(const gchar * title, const gchar * message)
+static GString *
+server_ssh_login(GebrCommServer *server,
+		 const gchar *title,
+		 const gchar *message,
+		 gpointer user_data)
 {
 	gdk_threads_enter();
 	GtkWidget *dialog = gtk_dialog_new_with_buttons(title, GTK_WINDOW(gebr.window),
@@ -260,7 +271,11 @@ static GString *server_ssh_login(const gchar * title, const gchar * message)
 /**
  * \internal
  */
-static gboolean server_ssh_question(const gchar * title, const gchar * message)
+static gboolean
+server_ssh_question(GebrCommServer *server,
+		    const gchar *title,
+		    const gchar *message,
+		    gpointer user_data)
 {
 	gdk_threads_enter();
 	gboolean response = gebr_gui_confirm_action_dialog(title, message);
@@ -335,12 +350,12 @@ GebrServer *gebr_server_new (const gchar * address, gboolean autoconnect, const 
 
 	static const struct gebr_comm_server_ops ops = {
 		.log_message      = server_log_message,
-		.state_changed    = (typeof(ops.state_changed)) server_state_changed,
+		.state_changed    = server_state_changed,
 		.ssh_login        = server_ssh_login,
 		.ssh_question     = server_ssh_question,
-		.process_request  = (typeof(ops.process_request)) client_process_server_request,
-		.process_response = (typeof(ops.process_response)) client_process_server_response,
-		.parse_messages   = (typeof(ops.parse_messages)) client_parse_server_messages
+		.process_request  = client_process_server_request,
+		.process_response = client_process_server_response,
+		.parse_messages   = client_parse_server_messages
 	};
 
 	self = g_object_new (GEBR_TYPE_SERVER,

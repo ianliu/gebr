@@ -29,12 +29,18 @@
 #include "gebr-task.h"
 #include "gebr-job.h"
 
-void client_process_server_request(struct gebr_comm_server *comm_server, GebrCommHttpMsg *request, GebrServer *server)
+void
+client_process_server_request(GebrCommServer *server,
+			      GebrCommHttpMsg *request,
+			      gpointer user_data)
 {
 }
 
-void client_process_server_response(struct gebr_comm_server *comm_server, GebrCommHttpMsg *request,
-				   GebrCommHttpMsg *response, GebrServer *server)
+void
+client_process_server_response(GebrCommServer *server,
+			       GebrCommHttpMsg *request,
+			       GebrCommHttpMsg *response,
+			       gpointer user_data)
 {
 }
 
@@ -73,10 +79,13 @@ void on_fs_nickname_msg(GebrCommHttpMsg *request, GebrCommHttpMsg *response, Geb
 	}
 }
 
-gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, GebrServer *server)
+void
+client_parse_server_messages(GebrCommServer *comm_server,
+			     gpointer user_data)
 {
 	GList *link;
 	struct gebr_comm_message *message;
+	GebrServer *server = user_data;
 
 	while ((link = g_list_last(comm_server->socket->protocol->messages)) != NULL) {
 		message = (struct gebr_comm_message *)link->data;
@@ -365,7 +374,7 @@ gboolean client_parse_server_messages(struct gebr_comm_server *comm_server, Gebr
 		comm_server->socket->protocol->messages = g_list_delete_link(comm_server->socket->protocol->messages, link);
 	}
 
-	return TRUE;
+	return;
 
 err:	gebr_comm_message_free(message);
 	comm_server->socket->protocol->messages = g_list_delete_link(comm_server->socket->protocol->messages, link);
@@ -375,6 +384,4 @@ err:	gebr_comm_message_free(message);
 		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Error communicating with the server '%s'. Please reconnect."),
 			     comm_server->address->str);
 	gebr_comm_server_disconnect(comm_server);
-
-	return FALSE;
 }

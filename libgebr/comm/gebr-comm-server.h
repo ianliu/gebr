@@ -55,9 +55,8 @@ gchar * gebr_comm_server_get_user(const char * address);
  */
 GebrCommServerType gebr_comm_server_get_id(const gchar * name);
 
-/**
- */
-typedef struct gebr_comm_server {
+typedef struct gebr_comm_server GebrCommServer;
+struct gebr_comm_server {
 	GebrCommProtocolSocket *socket;
 
 	/* server address/port */
@@ -95,14 +94,35 @@ typedef struct gebr_comm_server {
 
 	/* virtual methods */
 	const struct gebr_comm_server_ops {
-		void (*log_message) (GebrLogMessageType type, const gchar * message);
-		void (*state_changed) (struct gebr_comm_server *server, gpointer user_data);
-		GString *(*ssh_login) (const gchar * title, const gchar * message);
-		gboolean(*ssh_question) (const gchar * title, const gchar * message);
-		void (*process_request) (struct gebr_comm_server * server, GebrCommHttpMsg * request, gpointer user_data);
-		void (*process_response) (struct gebr_comm_server * server, GebrCommHttpMsg * request,
-					  GebrCommHttpMsg * response, gpointer user_data);
-		void (*parse_messages) (struct gebr_comm_server * server, gpointer user_data);
+		void     (*log_message)      (GebrCommServer *server,
+					      GebrLogMessageType type,
+					      const gchar *message,
+					      gpointer user_data);
+
+		void     (*state_changed)    (GebrCommServer *server,
+					      gpointer user_data);
+
+		GString *(*ssh_login)        (GebrCommServer *server,
+					      const gchar *title,
+					      const gchar *message,
+					      gpointer user_data);
+
+		gboolean (*ssh_question)     (GebrCommServer *server,
+					      const gchar *title,
+					      const gchar *message,
+					      gpointer user_data);
+
+		void     (*process_request)  (GebrCommServer *server,
+					      GebrCommHttpMsg *request,
+					      gpointer user_data);
+
+		void     (*process_response) (GebrCommServer *server,
+					      GebrCommHttpMsg *request,
+					      GebrCommHttpMsg *response,
+					      gpointer user_data);
+
+		void     (*parse_messages)   (GebrCommServer *server,
+					      gpointer user_data);
 	} *ops;
 	gpointer user_data;
 
@@ -119,7 +139,7 @@ typedef struct gebr_comm_server {
 		} data;
 	} process;
 	guint tunnel_pooling_source;
-} GebrCommServer;
+};
 
 /**
  */

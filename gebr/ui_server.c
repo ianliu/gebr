@@ -588,21 +588,25 @@ static gboolean visible_func (GtkTreeModel *model,
  */
 
 void
-log_message(GebrLogMessageType type,
-	    const gchar * message)
+log_message(GebrCommServer *server,
+	    GebrLogMessageType type,
+	    const gchar *message,
+	    gpointer user_data)
 {
 	g_debug("[MAESTRO] LOG_MESSAGE: %s", message);
 }
 
 void
-state_changed(struct gebr_comm_server *server,
+state_changed(GebrCommServer *server,
 	      gpointer user_data)
 {
 	g_debug("[MAESTRO] STATUS CHANGED");
 }
 
 GString *
-ssh_login(const gchar * title, const gchar * message)
+ssh_login(GebrCommServer *server,
+	  const gchar *title, const gchar *message,
+	  gpointer user_data)
 {
 	g_debug("[MAESTRO] ssh login");
 
@@ -610,29 +614,35 @@ ssh_login(const gchar * title, const gchar * message)
 }
 
 gboolean
-ssh_question(const gchar * title, const gchar * message)
+ssh_question(GebrCommServer *server,
+	     const gchar *title,
+	     const gchar *message,
+	     gpointer user_data)
 {
 	g_debug("[MAESTRO] ssh question: %s", message);
 	return TRUE;
 }
 
 void
-process_request(struct gebr_comm_server * server,
-		GebrCommHttpMsg * request,
+process_request(GebrCommServer *server,
+		GebrCommHttpMsg *request,
 		gpointer user_data)
 {
 	g_debug("[MAESTRO] request");
 }
 
 void
-process_response(struct gebr_comm_server * server, GebrCommHttpMsg * request,
-		 GebrCommHttpMsg * response, gpointer user_data)
+process_response(GebrCommServer *server,
+		 GebrCommHttpMsg *request,
+		 GebrCommHttpMsg *response,
+		 gpointer user_data)
 {
 	g_debug("[MAESTRO] response");
 }
 
 void
-parse_messages(struct gebr_comm_server * server, gpointer user_data)
+parse_messages(GebrCommServer *server,
+	       gpointer user_data)
 {
 	g_debug("[MAESTRO] parse messages");
 }

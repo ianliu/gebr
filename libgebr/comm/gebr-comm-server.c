@@ -288,7 +288,7 @@ gebr_comm_server_log_message(struct gebr_comm_server *server, GebrLogMessageType
 	va_list argp;
 	va_start(argp, message);
 	gchar *string = g_strdup_vprintf(message, argp);
-	server->ops->log_message(type, string);
+	server->ops->log_message(server, type, string, server->user_data);
 	g_free(string);
 	va_end(argp);
 }
@@ -363,7 +363,8 @@ gebr_comm_ssh_parse_output(GebrCommTerminalProcess * process, struct gebr_comm_s
 			g_string_printf(string, _("Wrong password for server '%s', please try again.\n\n%s"),
 					server->address->str, output->str);
 
-		password = server->ops->ssh_login(_("SSH login:"), string->str);
+		password = server->ops->ssh_login(server, _("SSH login:"), string->str,
+						  server->user_data);
 		if (password == NULL) {
 			g_string_assign(server->password, "");
 
@@ -379,7 +380,8 @@ gebr_comm_ssh_parse_output(GebrCommTerminalProcess * process, struct gebr_comm_s
 		g_string_free(string, TRUE);
 	} else if (output->str[output->len - 2] == '?') {
 		GString *answer = g_string_new(NULL);
-		if (server->ops->ssh_question(_("SSH host key question:"), output->str) == FALSE) {
+		if (server->ops->ssh_question(server, _("SSH host key question:"),
+					      output->str, server->user_data) == FALSE) {
 			g_string_assign(answer, "no\n");
 			gebr_comm_server_disconnected_state(server, SERVER_ERROR_SSH, _("SSH host key rejected."));
 		} else
