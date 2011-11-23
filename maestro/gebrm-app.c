@@ -29,6 +29,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include <libgebr/comm/gebr-comm.h>
+#include <glib/gi18n.h>
 
 /*
  * Global variables to implement GebrmAppSingleton methods.
@@ -37,7 +38,10 @@ static GebrmAppFactory __factory = NULL;
 static gpointer           __data = NULL;
 static GebrmApp           *__app = NULL;
 
+#define GEBRM_LIST_OF_SERVERS_PATH ".gebr/gebrm/"
+#define GEBRM_LIST_OF_SERVERS_FILENAME "servers.conf"
 
+static void gebrm_config_save_server(gchar *server);
 
 G_DEFINE_TYPE(GebrmApp, gebrm_app, G_TYPE_OBJECT);
 
@@ -97,10 +101,49 @@ on_client_request(GebrCommProtocolSocket *socket,
 		request->content->str,
 		request->method);
 
+	gchar **aux_str;
 	if (request->method == GEBR_COMM_HTTP_METHOD_PUT) {
-		if (g_str_has_prefix(request->url->str, "/server/"))
-			g_debug("Adding server %s", request->url->str + strlen("/server/"));
+		if (g_str_has_prefix(request->url->str, "/server/")){
+
+			const gchar *aux = request->url->str;
+
+			g_debug("passing here aux:%s", aux);
+
+			aux_str = g_strsplit( aux, "/", 3);
+
+			g_debug("passing here aux_str[0]:%s aux_str[1]:%s", aux_str[0], aux_str[1]);
+			gebrm_config_save_server(aux_str[2]);
+		}
 	}
+}
+
+static void
+gebrm_config_save_server(gchar *server){
+	g_debug("Adding server %s", server);
+
+	gchar *dir, *path, *subdir;
+	gchar *final_list_str;
+	GKeyFile *servers;
+	gboolean ret;
+
+	servers = g_key_file_new ();
+
+	dir = g_build_path ("/", g_get_home_dir (), GEBRM_LIST_OF_SERVERS_PATH, NULL);
+	if(!g_file_test(dir, G_FILE_TEST_EXISTS))
+		g_mkdir_with_parents(dir, 755);
+
+	subdir = g_strconcat(GEBRM_LIST_OF_SERVERS_PATH, GEBRM_LIST_OF_SERVERS_FILENAME, NULL);
+	path = g_build_path ("/", g_get_home_dir (), subdir, NULL);
+
+	g_key_file_load_from_file (servers, path, G_KEY_FILE_NONE, NULL);
+	g_key_file_set_string(servers, server, "address", server);
+
+	final_list_str= g_key_file_to_data (servers, NULL, NULL);
+	ret = g_file_set_contents (path, final_list_str, -1, NULL);
+	g_free (final_list_str);
+	g_free (path);
+	g_free (subdir);
+	g_key_file_free (servers);
 }
 
 static void

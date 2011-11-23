@@ -159,7 +159,7 @@ void gebr_comm_server_connect(struct gebr_comm_server *server,
 		g_signal_connect(process, "finished", G_CALLBACK(gebr_comm_ssh_run_server_finished), server);
 
 		GString *cmd_line = g_string_new(NULL);
-		g_string_printf(cmd_line, "ssh -x %s \"bash -l -c '%s >&3' 3>&1 >/dev/null\"",
+		g_string_printf(cmd_line, "ssh -x %s \"bash -l -c '%s >&3' 3>&1 >/dev/null 2>&1\"",
 				server->address->str, binary);
 		gebr_comm_terminal_process_start(process, cmd_line);
 		g_string_free(cmd_line, TRUE);
@@ -173,7 +173,7 @@ void gebr_comm_server_connect(struct gebr_comm_server *server,
 		g_signal_connect(process, "finished", G_CALLBACK(local_run_server_finished), server);
 
 		GString *cmd_line = g_string_new(NULL);
-		g_string_printf(cmd_line, "bash -c \"bash -l -c '%s >&3' 3>&1 >/dev/null\"", binary);
+		g_string_printf(cmd_line, "bash -c \"bash -l -c '%s >&3' 3>&1 >/dev/null 2>&1\"", binary);
 		gebr_comm_process_start(process, cmd_line);
 		g_string_free(cmd_line, TRUE);
 	}
