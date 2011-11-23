@@ -127,12 +127,14 @@ main(int argc, char *argv[])
 	if (!interactive)
 		fork_and_exit_main();
 
+	gebr_geoxml_init();
 	GebrmApp *app = gebrm_app_singleton_get();
 
 	if (!gebrm_app_run(app)) {
 		g_object_unref(app);
 		exit(EXIT_FAILURE);
 	}
+	gebr_geoxml_finalize();
 
 	return EXIT_SUCCESS;
 }
