@@ -116,6 +116,7 @@ GebrmApp *gebrm_app_new(void);
 gboolean gebrm_app_run(GebrmApp *app);
 
 const gchar *gebrm_main_get_lock_file(void);
+
 /* }}} GebrmApp methods */
 
 G_END_DECLS

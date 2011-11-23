@@ -29,6 +29,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include <libgebr/comm/gebr-comm.h>
+#include <libgebr/utils.h>
 #include <glib/gi18n.h>
 
 /*
@@ -41,7 +42,9 @@ static GebrmApp           *__app = NULL;
 #define GEBRM_LIST_OF_SERVERS_PATH ".gebr/gebrm/"
 #define GEBRM_LIST_OF_SERVERS_FILENAME "servers.conf"
 
-static void gebrm_config_save_server(const gchar *server);
+static void gebrm_config_save_server(gchar *server);
+static gboolean gebrm_add_server_to_list(GList *list, gchar *addr);
+gboolean gebrm_config_load_servers(GList *list, gchar *path);
 
 G_DEFINE_TYPE(GebrmApp, gebrm_app, G_TYPE_OBJECT);
 
@@ -114,7 +117,6 @@ static void
 gebrm_server_op_parse_messages(GebrCommServer *server,
 			       gpointer user_data)
 {
-	// gebr/client.c
 	g_debug("[DAEMON] %s", __func__);
 }
 
@@ -143,6 +145,13 @@ gebrm_app_init(GebrmApp *app)
 						GebrmAppPriv);
 	app->priv->main_loop = g_main_loop_new(NULL, FALSE);
 	app->priv->connections = NULL;
+	app->priv->daemons = NULL;
+	gchar *subdir = g_strconcat(GEBRM_LIST_OF_SERVERS_PATH, GEBRM_LIST_OF_SERVERS_FILENAME, NULL);
+	gchar *path = g_build_path ("/", g_get_home_dir (), subdir, NULL);
+	gebrm_config_load_servers(app->priv->daemons, path);
+	g_free(subdir);
+	g_free(path);
+
 }
 
 void
@@ -165,6 +174,14 @@ gebrm_app_singleton_get(void)
 	return __app;
 }
 
+static gboolean gebrm_add_server_to_list(GList *list, gchar *addr){
+	GebrCommServer *daemon = gebr_comm_server_new(addr, &daemon_ops);
+	daemon->user_data = addr;
+	list = g_list_prepend(list, daemon);
+	gebr_comm_server_connect(daemon, FALSE);
+	return TRUE;
+}
+
 static void
 on_client_request(GebrCommProtocolSocket *socket,
 		  GebrCommHttpMsg *request,
@@ -173,12 +190,9 @@ on_client_request(GebrCommProtocolSocket *socket,
 	g_debug("URL: %s", request->url->str);
 
 	if (request->method == GEBR_COMM_HTTP_METHOD_PUT) {
-		if (g_str_has_prefix(request->url->str, "/server/")) {
-			const gchar *addr = request->url->str + strlen("/server/");
-			GebrCommServer *daemon = gebr_comm_server_new(addr, &daemon_ops);
-			daemon->user_data = app;
-			app->priv->daemons = g_list_prepend(app->priv->daemons, daemon);
-			gebr_comm_server_connect(daemon, FALSE);
+		if (g_str_has_prefix(request->url->str, "/server/")){
+			gchar *addr = request->url->str + strlen("/server/");
+			gebrm_add_server_to_list(app->priv->daemons, addr);
 			gebrm_config_save_server(addr);
 		}
 		else if (g_str_has_prefix(request->url->str, "/run")) {
@@ -222,7 +236,7 @@ on_client_request(GebrCommProtocolSocket *socket,
 }
 
 static void
-gebrm_config_save_server(const gchar *server) {
+gebrm_config_save_server(gchar *server){
 	g_debug("Adding server %s", server);
 
 	gchar *dir, *path, *subdir;
@@ -248,6 +262,30 @@ gebrm_config_save_server(const gchar *server) {
 	g_free (path);
 	g_free (subdir);
 	g_key_file_free (servers);
+}
+
+
+gboolean
+gebrm_config_load_servers(GList *list, gchar *path){
+
+	GKeyFile *servers = g_key_file_new();
+	gchar **groups;
+	gboolean has_local_server = FALSE;
+	gboolean succ = g_key_file_load_from_file(servers, path, G_KEY_FILE_NONE, NULL);
+	if (succ) {
+		groups = g_key_file_get_groups(servers, NULL);
+		for (int i = 0; groups[i]; i++) {
+			GString *address = gebr_g_key_file_load_string_key(servers,
+								  groups[i], "address", "");
+			if(g_strcmp0(address->str,"127.0.0.1") == 0)
+				has_local_server = TRUE;
+
+			gebrm_add_server_to_list(list, address->str);
+			g_string_free(address, TRUE);
+		}
+		g_key_file_free (servers);
+	}
+	return TRUE;
 }
 
 static void
