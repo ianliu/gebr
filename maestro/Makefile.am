@@ -42,10 +42,14 @@ gebrm_LDADD =			\
 	$(NULL)
 
 noinst_LTLIBRARIES = libmaestro.la
-libmaestro_la_SOURCES = \
-	gebrm-app.c	\
-	gebrm-app.h	\
+
+libmaestro_la_SOURCES =        \
+	gebrm-app.c	       \
+	gebrm-app.h	       \
+	gebrm-job-controller.c \
+	gebrm-job-controller.h \
 	$(NULL)
+
 libmaestro_la_LIBADD =		\
 	$(GDOME2_LIBS)		\
 	$(GEBR_LIBS)		\
