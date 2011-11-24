@@ -343,14 +343,22 @@ gebrm_app_singleton_get(void)
 }
 
 static gboolean
-gebrm_add_server_to_list(GebrmApp *app, gchar *addr)
+gebrm_add_server_to_list(GebrmApp *app, gchar *address)
 {
-	g_debug("Added server %s", addr);
+	if (!g_strcmp0(address, "127.0.0.1"))
+		addr = g_strdup("localhost");
+	else
+		addr = address;
+
 	GebrCommServer *daemon = gebr_comm_server_new(addr, &daemon_ops);
 	daemon->user_data = app;
-	app->priv->daemons = g_list_prepend(app->priv->daemons, daemon);
-	gebr_comm_server_connect(daemon, FALSE);
-	return TRUE;
+	if (!g_list_find_custom(app->priv->daemons, daemon, (GCompareFunc)g_strcmp0)){
+		app->priv->daemons = g_list_prepend(app->priv->daemons, daemon);
+		gebr_comm_server_connect(daemon, FALSE);
+		g_debug("Added server %s", addr);
+		return TRUE;
+	}
+	return FALSE;
 }
 
 static void
@@ -411,13 +419,19 @@ on_client_request(GebrCommProtocolSocket *socket,
 }
 
 static void
-gebrm_config_save_server(gchar *server){
-	g_debug("Adding server %s", server);
+gebrm_config_save_server(gchar *serv){
 
-	gchar *dir, *path, *subdir;
+	gchar *dir, *path, *subdir, *server;
 	gchar *final_list_str;
 	GKeyFile *servers;
 	gboolean ret;
+
+	if (!g_strcmp0(serv, "127.0.0.1"))
+		server = g_strdup("localhost");
+	else
+		server = serv;
+
+	g_debug("Adding server %s to file", server);
 
 	servers = g_key_file_new ();
 
@@ -429,6 +443,10 @@ gebrm_config_save_server(gchar *server){
 	path = g_build_path ("/", g_get_home_dir (), subdir, NULL);
 
 	g_key_file_load_from_file (servers, path, G_KEY_FILE_NONE, NULL);
+	   
+	if(g_key_file_has_group(servers,server))
+		g_debug("Already has:%s", server);
+
 	g_key_file_set_string(servers, server, "address", server);
 
 	final_list_str= g_key_file_to_data (servers, NULL, NULL);
