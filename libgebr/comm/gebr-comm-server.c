@@ -708,3 +708,29 @@ static void gebr_comm_server_free_for_reuse(struct gebr_comm_server *server)
 	}
 	server->process.use = COMM_SERVER_PROCESS_NONE;
 }
+
+static const gchar *state_hash[] = {
+	"unknown",
+	"disconnected",
+	"run",
+	"open_tunnel",
+	"connect",
+	"connected",
+	NULL
+};
+
+const gchar *
+gebr_comm_server_state_to_string(enum gebr_comm_server_state state)
+{
+	return state_hash[state];
+}
+
+enum gebr_comm_server_state
+gebr_comm_server_state_from_string(const gchar *string)
+{
+	for (int i = 0; state_hash[i]; i++)
+		if (g_strcmp0(state_hash[i], string) == 0)
+			return (enum gebr_comm_server_state) i;
+
+	return SERVER_STATE_UNKNOWN;
+}

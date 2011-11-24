@@ -177,6 +177,10 @@ void gebr_comm_server_kill(struct gebr_comm_server *gebr_comm_server);
  */
 gboolean gebr_comm_server_forward_x11(struct gebr_comm_server *gebr_comm_server, guint16 port);
 
+const gchar *gebr_comm_server_state_to_string(enum gebr_comm_server_state state);
+
+enum gebr_comm_server_state gebr_comm_server_state_from_string(const gchar *string);
+
 G_END_DECLS
 
 #endif				//__GEBR_COMM_SERVER_H
