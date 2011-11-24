@@ -601,35 +601,6 @@ state_changed(GebrCommServer *comm_server,
 	      gpointer user_data)
 {
 	g_debug("[MAESTRO] STATUS CHANGED");
-	GList *link;
-	struct gebr_comm_message *message;
-	GebrServer *server = user_data;
-
-	while ((link = g_list_last(comm_server->socket->protocol->messages)) != NULL) {
-		message = (struct gebr_comm_message *)link->data;
-		if (message->hash == gebr_comm_protocol_defs.ssta_def.code_hash) {
-			g_debug("on function state_changed, ssta_def");
-			GList *arguments;
-			GString *addr, *ssta;
-			GebrTask *task;
-
-			/* organize message data */
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
-				g_warn_if_reached();
-			addr = g_list_nth_data(arguments, 1);
-			ssta = g_list_nth_data(arguments, 2);
-			GtkTreeIter * iter;
-			gboolean found;
-			g_debug("addr: %s, ssta:%s",addr->str, ssta->str);
-			//if (server_find_address(addr, iter, "", TRUE)){
-				//model = GTK_TREE_MODEL (gebr.ui_server_list->common.store);
-			//}
-
-
-
-			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
-		}
-	}
 }
 
 GString *
@@ -670,10 +641,44 @@ process_response(GebrCommServer *server,
 }
 
 void
-parse_messages(GebrCommServer *server,
+parse_messages(GebrCommServer *comm_server,
 	       gpointer user_data)
 {
 	g_debug("[MAESTRO] parse messages");
+	GList *link;
+	struct gebr_comm_message *message;
+
+	while ((link = g_list_last(comm_server->socket->protocol->messages)) != NULL) {
+		message = (struct gebr_comm_message *)link->data;
+		if (message->hash == gebr_comm_protocol_defs.ssta_def.code_hash) {
+			g_debug("on function state_changed, ssta_def");
+			GList *arguments;
+			GString *addr, *ssta;
+
+			/* organize message data */
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
+				goto err;
+
+			addr = g_list_nth_data(arguments, 0);
+			ssta = g_list_nth_data(arguments, 1);
+			g_debug("addr: %s, ssta:%s",addr->str, ssta->str);
+			//if (server_find_address(addr, iter, "", TRUE)){
+				//model = GTK_TREE_MODEL (gebr.ui_server_list->common.store);
+			//}
+
+			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
+		}
+
+		gebr_comm_message_free(message);
+		comm_server->socket->protocol->messages = g_list_delete_link(comm_server->socket->protocol->messages, link);
+	}
+
+	return;
+
+err:
+	gebr_comm_message_free(message);
+	comm_server->socket->protocol->messages = g_list_delete_link(comm_server->socket->protocol->messages, link);
+	gebr_comm_server_disconnect(comm_server);
 }
 
 static void
