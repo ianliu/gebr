@@ -54,6 +54,7 @@ struct gebr_comm_protocol_defs {
 	struct gebr_comm_message_def kil_def;
 	struct gebr_comm_message_def out_def;
 	struct gebr_comm_message_def sta_def;
+	struct gebr_comm_message_def ssta_def; // Server status change
 };
 
 struct gebr_comm_message {
