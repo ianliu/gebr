@@ -72,10 +72,26 @@ gebrm_server_op_log_message(GebrCommServer *server,
 }
 
 static void
+send_server_status_message(GebrCommProtocolSocket *socket,
+			   GebrCommServer *server)
+{
+	const gchar *state = gebr_comm_server_state_to_string(server->state);
+	gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
+					      gebr_comm_protocol_defs.ssta_def, 2,
+					      server->address->str,
+					      state);
+}
+
+static void
 gebrm_server_op_state_changed(GebrCommServer *server,
 			      gpointer user_data)
 {
-	g_debug("[DAEMON] %s: State %d", __func__, server->state);
+	GebrmApp *app = user_data;
+	const gchar *state = gebr_comm_server_state_to_string(server->state);
+	g_debug("[DAEMON] %s: State %s", __func__, state);
+
+	for (GList *i = app->priv->connections; i; i = i->next)
+		send_server_status_message(i->data, server);
 }
 
 static GString *
@@ -458,6 +474,12 @@ on_new_connection(GebrCommListenSocket *listener,
 	while ((client = gebr_comm_listen_socket_get_next_pending_connection(listener))) {
 		GebrCommProtocolSocket *protocol =
 			gebr_comm_protocol_socket_new_from_socket(client);
+
+		app->priv->connections = g_list_prepend(app->priv->connections, protocol);
+
+		for (GList *i = app->priv->daemons; i; i = i->next)
+			send_server_status_message(protocol, i->data);
+
 		g_signal_connect(protocol, "disconnected",
 				 G_CALLBACK(on_client_disconnect), app);
 		g_signal_connect(protocol, "process-request",
