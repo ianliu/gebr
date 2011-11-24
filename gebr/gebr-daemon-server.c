@@ -34,6 +34,7 @@ enum {
 	PROP_0,
 	PROP_ADDRESS,
 	PROP_MAESTRO,
+	PROP_STATE,
 };
 
 G_DEFINE_TYPE(GebrDaemonServer, gebr_daemon_server, G_TYPE_OBJECT);
@@ -54,6 +55,9 @@ gebr_daemon_server_get(GObject    *object,
 	case PROP_MAESTRO:
 		g_value_take_object(value, daemon->priv->maestro);
 		break;
+	case PROP_STATE:
+		g_value_set_int(value, gebr_daemon_server_get_state(daemon));
+		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 		break;
@@ -72,9 +76,14 @@ gebr_daemon_server_set(GObject      *object,
 	{
 	case PROP_ADDRESS:
 		daemon->priv->address = g_value_dup_string(value);
+		if (!daemon->priv->address)
+			daemon->priv->address = g_strdup("");
 		break;
 	case PROP_MAESTRO:
 		daemon->priv->maestro = g_value_dup_object(value);
+		break;
+	case PROP_STATE:
+		gebr_daemon_server_set_state(daemon, g_value_get_int(value));
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -117,6 +126,15 @@ gebr_daemon_server_class_init(GebrDaemonServerClass *klass)
 							    GEBR_TYPE_MAESTRO_SERVER,
 							    G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 
+	g_object_class_install_property(object_class,
+					PROP_STATE,
+					g_param_spec_int("state",
+							 "State",
+							 "State",
+							 0, 100,
+							 SERVER_STATE_UNKNOWN,
+							 G_PARAM_READWRITE));
+
 	g_type_class_add_private(klass, sizeof(GebrDaemonServerPriv));
 }
 
@@ -136,6 +154,7 @@ gebr_daemon_server_new(GObject *maestro,
 	return g_object_new(GEBR_TYPE_DAEMON_SERVER,
 			    "address", address,
 			    "maestro", maestro,
+			    "state", state,
 			    NULL);
 }
 
@@ -192,4 +211,10 @@ gebr_daemon_server_disconnect(GebrDaemonServer *daemon)
 					       GEBR_COMM_HTTP_METHOD_PUT,
 					       url, NULL);
 	g_free(url);
+}
+
+gboolean
+gebr_daemon_server_is_autochoose(GebrDaemonServer *daemon)
+{
+	return g_strcmp0(daemon->priv->address, "") == 0;
 }

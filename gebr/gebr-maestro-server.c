@@ -21,7 +21,6 @@
 
 #include "gebr-maestro-server.h"
 
-#include <gtk/gtk.h>
 #include <libgebr/gui/gui.h>
 
 struct _GebrMaestroServerPriv {
@@ -160,7 +159,7 @@ parse_messages(GebrCommServer *comm_server,
 			GebrDaemonServer *daemon = gebr_maestro_server_get_daemon(maestro, addr->str);
 
 			if (!daemon) {
-				daemon = gebr_daemon_server_new(maestro, addr->str, state);
+				daemon = gebr_daemon_server_new(G_OBJECT(maestro), addr->str, state);
 				gebr_maestro_server_add_daemon(maestro, daemon);
 			} else
 				gebr_daemon_server_set_state(daemon, state);
@@ -213,6 +212,7 @@ gebr_maestro_server_set(GObject      *object,
 	case PROP_ADDRESS:
 		maestro->priv->server = gebr_comm_server_new(g_value_get_string(value),
 							     &maestro_ops);
+		maestro->priv->server->user_data = maestro;
 		gebr_comm_server_connect(maestro->priv->server, TRUE);
 		break;
 	default:
@@ -259,6 +259,10 @@ gebr_maestro_server_init(GebrMaestroServer *maestro)
 						    GebrMaestroServerPriv);
 
 	maestro->priv->store = gtk_list_store_new(1, G_TYPE_POINTER);
+
+	GebrDaemonServer *autochoose =
+		gebr_daemon_server_new(G_OBJECT(maestro), NULL, SERVER_STATE_UNKNOWN);
+	gebr_maestro_server_add_daemon(maestro, autochoose);
 }
 
 GebrMaestroServer *
@@ -274,7 +278,6 @@ gebr_maestro_server_add_daemon(GebrMaestroServer *maestro,
 			       GebrDaemonServer *daemon)
 {
 	GtkTreeIter iter;
-
 	gtk_list_store_append(maestro->priv->store, &iter);
 	gtk_list_store_set(maestro->priv->store, &iter, 0, daemon, -1);
 }
@@ -303,4 +306,10 @@ GebrCommServer *
 gebr_maestro_server_get_server(GebrMaestroServer *maestro)
 {
 	return maestro->priv->server;
+}
+
+GtkTreeModel *
+gebr_maestro_server_get_model(GebrMaestroServer *maestro)
+{
+	return GTK_TREE_MODEL(maestro->priv->store);
 }

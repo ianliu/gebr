@@ -291,6 +291,48 @@ static void on_ac_toggled (GtkCellRendererToggle *cell_renderer,
 	gebr_server_set_autoconnect (server, !ac);
 }
 
+static void
+daemon_server_address_func(GtkTreeViewColumn *tree_column,
+			   GtkCellRenderer *cell,
+			   GtkTreeModel *model,
+			   GtkTreeIter *iter,
+			   gpointer data)
+{
+	GebrDaemonServer *daemon;
+	gtk_tree_model_get(model, iter, 0, &daemon, -1);
+	gchar *addr = gebr_daemon_server_get_display_address(daemon);
+	g_object_set(cell, "text", addr, NULL);
+	g_free(addr);
+}
+
+static void
+daemon_server_status_func(GtkTreeViewColumn *tree_column,
+			  GtkCellRenderer *cell,
+			  GtkTreeModel *model,
+			  GtkTreeIter *iter,
+			  gpointer data)
+{
+	GebrDaemonServer *daemon;
+	gtk_tree_model_get(model, iter, 0, &daemon, -1);
+	enum gebr_comm_server_state state = gebr_daemon_server_get_state(daemon);
+	const gchar *stock_id;
+
+	switch (state) {
+	case SERVER_STATE_UNKNOWN:
+	case SERVER_STATE_DISCONNECTED:
+	case SERVER_STATE_RUN:
+	case SERVER_STATE_OPEN_TUNNEL:
+	case SERVER_STATE_CONNECTED:
+		stock_id = GTK_STOCK_DISCONNECT;
+		break;
+	case SERVER_STATE_CONNECT:
+		stock_id = GTK_STOCK_CONNECT;
+		break;
+	}
+
+	g_object_set(cell, "stock-id", stock_id, NULL);
+}
+
 /* Function: server_common_setup
  * Setup common server dialogs stuff
  */
@@ -309,66 +351,32 @@ static void server_common_setup(struct ui_server_common *ui_server_common)
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
 				       GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 
-	view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_server_common->sort_store));
-	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(view)),
-				    GTK_SELECTION_MULTIPLE);
-	gtk_container_add(GTK_CONTAINER(scrolled_window), view);
+	view = gtk_tree_view_new();
 	ui_server_common->view = view;
-	gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(view),
-						  (GebrGuiGtkPopupCallback) server_common_popup_menu, ui_server_common);
+	gtk_container_add(GTK_CONTAINER(scrolled_window), view);
+
+	//gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(view)),
+	//			    GTK_SELECTION_MULTIPLE);
+	//gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(view),
+	//					  (GebrGuiGtkPopupCallback) server_common_popup_menu, ui_server_common);
 	//gebr_gui_gtk_tree_view_set_tooltip_callback(GTK_TREE_VIEW(view),
 	//					    (GebrGuiGtkTreeViewTooltipCallback) server_common_tooltip_callback,
 	//					    ui_server_common);
 
+	col = gtk_tree_view_column_new();
+	gtk_tree_view_column_set_title(col, _("Address"));
+
 	renderer = gtk_cell_renderer_pixbuf_new();
-	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
-	gtk_tree_view_column_add_attribute(col, renderer, "pixbuf", SERVER_STATUS_ICON);
-
-	renderer = gtk_cell_renderer_toggle_new();
-	g_object_set (renderer, "activatable", TRUE, NULL);
-	g_signal_connect (renderer, "toggled", G_CALLBACK (on_ac_toggled), ui_server_common);
-	col = gtk_tree_view_column_new_with_attributes(_("AC"), renderer, NULL);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
-	gtk_tree_view_column_add_attribute(col, renderer, "active", SERVER_AUTOCONNECT);
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(col), renderer, FALSE);
+	gtk_tree_view_column_set_cell_data_func(col, renderer, daemon_server_status_func,
+						NULL, NULL);
 
 	renderer = gtk_cell_renderer_text_new();
-	col = gtk_tree_view_column_new_with_attributes(_("Address"), renderer, NULL);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
-	gtk_tree_view_column_add_attribute(col, renderer, "text", SERVER_NAME);
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(col), renderer, TRUE);
+	gtk_tree_view_column_set_cell_data_func(col, renderer, daemon_server_address_func,
+						NULL, NULL);
 
-	renderer = gtk_cell_renderer_text_new();
-	g_object_set(G_OBJECT(renderer), "ellipsize", PANGO_ELLIPSIZE_END, NULL);
-	g_object_set(G_OBJECT(renderer), "ellipsize-set", TRUE, NULL);
-	col = gtk_tree_view_column_new_with_attributes(_("CPU"), renderer, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
-	gtk_tree_view_column_add_attribute(col, renderer, "text", SERVER_CPU);
-	gtk_tree_view_column_set_sort_column_id(col, SERVER_CPU);
-	gtk_tree_view_column_set_sort_indicator(col, TRUE);
-	gtk_tree_view_column_set_resizable(col, TRUE);
-	gtk_tree_view_column_set_min_width (col, 100);
-	renderer = gtk_cell_renderer_text_new();
-	col = gtk_tree_view_column_new_with_attributes(_("Memory"), renderer, NULL);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
-	gtk_tree_view_column_add_attribute(col, renderer, "text", SERVER_MEM);
-	gtk_tree_view_column_set_sort_column_id(col, SERVER_MEM);
-	gtk_tree_view_column_set_sort_indicator(col, TRUE);
-
-	renderer = gtk_cell_renderer_text_new();
-	col = gtk_tree_view_column_new_with_attributes(_("File System"), renderer, NULL);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
-	gtk_tree_view_column_add_attribute(col, renderer, "text", SERVER_FS);
-
-	renderer = gtk_cell_renderer_text_new();
-	g_object_set (renderer, "editable", TRUE, NULL);
-	g_signal_connect (renderer, "edited",
-			  G_CALLBACK (on_tags_edited), ui_server_common->sort_store);
-	g_signal_connect (renderer, "editing-started",
-			  G_CALLBACK (on_tags_editing_started), ui_server_common->sort_store);
-	col = gtk_tree_view_column_new_with_attributes(_("Groups"), renderer, NULL);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
-	gtk_tree_view_column_add_attribute(col, renderer, "text", SERVER_TAGS);
-	gtk_tree_view_column_set_expand (col, TRUE);
 }
 
 /*
@@ -597,6 +605,8 @@ connect_to_maestro(GtkEntry *entry,
 	if (sl->maestro)
 		g_object_unref(sl->maestro);
 	sl->maestro = gebr_maestro_server_new(addr);
+	gtk_tree_view_set_model(GTK_TREE_VIEW(sl->common.view),
+				gebr_maestro_server_get_model(sl->maestro));
 }
 
 /*

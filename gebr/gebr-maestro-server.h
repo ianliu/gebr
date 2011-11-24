@@ -23,6 +23,7 @@
 
 #include <glib-object.h>
 
+#include <gtk/gtk.h>
 #include "gebr-daemon-server.h"
 
 G_BEGIN_DECLS
@@ -58,6 +59,8 @@ GebrDaemonServer *gebr_maestro_server_get_daemon(GebrMaestroServer *maestro,
 						 const gchar *addr);
 
 GebrCommServer *gebr_maestro_server_get_server(GebrMaestroServer *maestro);
+
+GtkTreeModel *gebr_maestro_server_get_model(GebrMaestroServer *maestro);
 
 G_END_DECLS
 

@@ -91,6 +91,8 @@ void gebr_daemon_server_connect(GebrDaemonServer *server);
  */
 void gebr_daemon_server_disconnect(GebrDaemonServer *server);
 
+gboolean gebr_daemon_server_is_autochoose(GebrDaemonServer *daemon);
+
 G_END_DECLS
 
 #endif /* __GEBR_SERVER_H__ */
