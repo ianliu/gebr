@@ -87,6 +87,7 @@ client_parse_server_messages(GebrCommServer *comm_server,
 	struct gebr_comm_message *message;
 	GebrServer *server = user_data;
 
+	g_debug("on __function__");
 	while ((link = g_list_last(comm_server->socket->protocol->messages)) != NULL) {
 		message = (struct gebr_comm_message *)link->data;
 
@@ -368,7 +369,29 @@ client_parse_server_messages(GebrCommServer *comm_server,
 			}
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
+		} else if (message->hash == gebr_comm_protocol_defs.ssta_def.code_hash) {
+			GList *arguments;
+			GString *addr, *ssta;
+			GebrTask *task;
+
+			/* organize message data */
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
+				goto err;
+			addr = g_list_nth_data(arguments, 1);
+			ssta = g_list_nth_data(arguments, 2);
+			GtkTreeIter * iter;
+			gboolean found;
+			g_debug("addr: %s, ssta:%s",addr->str, ssta->str);
+			//if (server_find_address(addr, iter, "", TRUE)){
+				//model = GTK_TREE_MODEL (gebr.ui_server_list->common.store);
+			//}
+
+
+
+			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
+
 		}
+
 
 		gebr_comm_message_free(message);
 		comm_server->socket->protocol->messages = g_list_delete_link(comm_server->socket->protocol->messages, link);
