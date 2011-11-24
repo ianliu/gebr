@@ -1,0 +1,297 @@
+/*
+ * gebr-maestro-server.c
+ * This file is part of GêBR Project
+ *
+ * Copyright (C) 2011 - GêBR Core team (www.gebrproject.com)
+ *
+ * GêBR Project is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * GêBR Project is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with GêBR Project. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
+#include "gebr-maestro-server.h"
+
+#include <gtk/gtk.h>
+#include <libgebr/gui/gui.h>
+
+struct _GebrMaestroServerPriv {
+	GebrCommServer *server;
+	GtkListStore *store;
+};
+
+static void      log_message(GebrCommServer *server,
+			     GebrLogMessageType type,
+			     const gchar *message,
+			     gpointer user_data);
+
+static void      state_changed(GebrCommServer *comm_server,
+			       gpointer user_data);
+
+static GString  *ssh_login(GebrCommServer *server,
+			   const gchar *title,
+			   const gchar *message,
+			   gpointer user_data);
+
+static gboolean  ssh_question(GebrCommServer *server,
+			      const gchar *title,
+			      const gchar *message,
+			      gpointer user_data);
+
+static void      process_request(GebrCommServer *server,
+				 GebrCommHttpMsg *request,
+				 gpointer user_data);
+
+static void      process_response(GebrCommServer *server,
+				  GebrCommHttpMsg *request,
+				  GebrCommHttpMsg *response,
+				  gpointer user_data);
+
+static void      parse_messages(GebrCommServer *comm_server,
+				gpointer user_data);
+
+enum {
+	PROP_0,
+	PROP_ADDRESS,
+};
+
+static const struct gebr_comm_server_ops maestro_ops = {
+	.log_message      = log_message,
+	.state_changed    = state_changed,
+	.ssh_login        = ssh_login,
+	.ssh_question     = ssh_question,
+	.process_request  = process_request,
+	.process_response = process_response,
+	.parse_messages   = parse_messages
+};
+
+G_DEFINE_TYPE(GebrMaestroServer, gebr_maestro_server, G_TYPE_OBJECT);
+
+void
+log_message(GebrCommServer *server,
+	    GebrLogMessageType type,
+	    const gchar *message,
+	    gpointer user_data)
+{
+	g_debug("[MAESTRO] LOG_MESSAGE: %s", message);
+}
+
+void
+state_changed(GebrCommServer *comm_server,
+	      gpointer user_data)
+{
+	g_debug("[MAESTRO] STATUS CHANGED");
+}
+
+GString *
+ssh_login(GebrCommServer *server,
+	  const gchar *title, const gchar *message,
+	  gpointer user_data)
+{
+	g_debug("[MAESTRO] ssh login");
+
+	return g_string_new("");
+}
+
+gboolean
+ssh_question(GebrCommServer *server,
+	     const gchar *title,
+	     const gchar *message,
+	     gpointer user_data)
+{
+	g_debug("[MAESTRO] ssh question: %s", message);
+	return TRUE;
+}
+
+void
+process_request(GebrCommServer *server,
+		GebrCommHttpMsg *request,
+		gpointer user_data)
+{
+	g_debug("[MAESTRO] request");
+}
+
+void
+process_response(GebrCommServer *server,
+		 GebrCommHttpMsg *request,
+		 GebrCommHttpMsg *response,
+		 gpointer user_data)
+{
+	g_debug("[MAESTRO] response");
+}
+
+void
+parse_messages(GebrCommServer *comm_server,
+	       gpointer user_data)
+{
+	g_debug("[MAESTRO] parse messages");
+	GList *link;
+	struct gebr_comm_message *message;
+
+	while ((link = g_list_last(comm_server->socket->protocol->messages)) != NULL) {
+		message = (struct gebr_comm_message *)link->data;
+		if (message->hash == gebr_comm_protocol_defs.ssta_def.code_hash) {
+			g_debug("on function state_changed, ssta_def");
+			GList *arguments;
+			GString *addr, *ssta;
+
+			/* organize message data */
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
+				goto err;
+
+			addr = g_list_nth_data(arguments, 0);
+			ssta = g_list_nth_data(arguments, 1);
+			g_debug("addr: %s, ssta:%s",addr->str, ssta->str);
+
+			//if (server_find_address(addr, iter, "", TRUE)){
+				//model = GTK_TREE_MODEL (gebr.ui_server_list->common.store);
+			//}
+
+			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
+		}
+
+		gebr_comm_message_free(message);
+		comm_server->socket->protocol->messages = g_list_delete_link(comm_server->socket->protocol->messages, link);
+	}
+
+	return;
+
+err:
+	gebr_comm_message_free(message);
+	comm_server->socket->protocol->messages = g_list_delete_link(comm_server->socket->protocol->messages, link);
+	gebr_comm_server_disconnect(comm_server);
+}
+
+
+static void
+gebr_maestro_server_get(GObject    *object,
+			guint       prop_id,
+			GValue     *value,
+			GParamSpec *pspec)
+{
+	GebrMaestroServer *maestro = GEBR_MAESTRO_SERVER(object);
+
+	switch (prop_id)
+	{
+	case PROP_ADDRESS:
+		g_value_set_string(value, maestro->priv->server->address->str);
+		break;
+	default:
+		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+		break;
+	}
+}
+
+static void
+gebr_maestro_server_set(GObject      *object,
+			guint         prop_id,
+			const GValue *value,
+			GParamSpec   *pspec)
+{
+	GebrMaestroServer *maestro = GEBR_MAESTRO_SERVER(object);
+
+	switch (prop_id)
+	{
+	case PROP_ADDRESS:
+		maestro->priv->server = gebr_comm_server_new(g_value_get_string(value),
+							     &maestro_ops);
+		gebr_comm_server_connect(maestro->priv->server, TRUE);
+		break;
+	default:
+		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+		break;
+	}
+}
+
+static void
+gebr_maestro_server_finalize(GObject *object)
+{
+	GebrMaestroServer *maestro = GEBR_MAESTRO_SERVER(object);
+
+	gtk_list_store_clear(maestro->priv->store);
+	g_object_unref(maestro->priv->store);
+
+	G_OBJECT_CLASS(gebr_maestro_server_parent_class)->finalize(object);
+}
+
+static void
+gebr_maestro_server_class_init(GebrMaestroServerClass *klass)
+{
+	GObjectClass *object_class = G_OBJECT_CLASS(klass);
+	object_class->get_property = gebr_maestro_server_get;
+	object_class->set_property = gebr_maestro_server_set;
+	object_class->finalize = gebr_maestro_server_finalize;
+
+	g_object_class_install_property(object_class,
+					PROP_ADDRESS,
+					g_param_spec_string("address",
+							    "Address",
+							    "Server address",
+							    NULL,
+							    G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+
+	g_type_class_add_private(klass, sizeof(GebrMaestroServerPriv));
+}
+
+static void
+gebr_maestro_server_init(GebrMaestroServer *maestro)
+{
+	maestro->priv = G_TYPE_INSTANCE_GET_PRIVATE(maestro,
+						    GEBR_TYPE_MAESTRO_SERVER,
+						    GebrMaestroServerPriv);
+
+	maestro->priv->store = gtk_list_store_new(1, G_TYPE_POINTER);
+}
+
+GebrMaestroServer *
+gebr_maestro_server_new(const gchar *addr)
+{
+	return g_object_new(GEBR_TYPE_MAESTRO_SERVER,
+			    "address", addr,
+			    NULL);
+}
+
+void
+gebr_maestro_add_daemon(GebrMaestroServer *maestro,
+			GebrDaemonServer *daemon)
+{
+	GtkTreeIter iter;
+
+	gtk_list_store_append(maestro->priv->store, &iter);
+	gtk_list_store_set(maestro->priv->store, &iter, 0, daemon, -1);
+}
+
+GebrDaemonServer *
+gebr_maestro_get_daemon(GebrMaestroServer *maestro,
+			const gchar *addr)
+{
+	GtkTreeIter iter;
+	GebrDaemonServer *daemon;
+	GtkTreeModel *model = GTK_TREE_MODEL(maestro->priv->store);
+	const gchar *daddr;
+
+	gebr_gui_gtk_tree_model_foreach(iter, model) {
+		gtk_tree_model_get(model, &iter, 0, &daemon, -1);
+		daddr = gebr_daemon_server_get_address(daemon);
+
+		if (g_strcmp0(daddr, addr) == 0)
+			return daemon;
+	}
+
+	return NULL;
+}
+
+GebrCommServer *
+gebr_maestro_server_get_server(GebrMaestroServer *maestro)
+{
+	return maestro->priv->server;
+}

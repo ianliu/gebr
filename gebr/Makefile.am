@@ -45,6 +45,10 @@ libgebr_la_SOURCES =		\
 	document.h		\
 	flow.c			\
 	flow.h			\
+	gebr-daemon-server.h	\
+	gebr-daemon-server.c	\
+	gebr-maestro-server.h	\
+	gebr-maestro-server.c	\
 	gebr-gettext.h		\
 	gebr-help-edit-widget.c	\
 	gebr-help-edit-widget.h	\
