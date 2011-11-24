@@ -157,7 +157,7 @@ parse_messages(GebrCommServer *comm_server,
 
 			enum gebr_comm_server_state state = gebr_comm_server_state_from_string(ssta->str);
 
-			GebrDaemonServer *daemon = gebr_maestro_get_daemon(maestro, addr->str);
+			GebrDaemonServer *daemon = gebr_maestro_server_get_daemon(maestro, addr->str);
 
 			if (!daemon) {
 				daemon = gebr_daemon_server_new(maestro, addr->str, state);

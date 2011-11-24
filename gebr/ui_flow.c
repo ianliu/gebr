@@ -130,7 +130,8 @@ gebr_ui_flow_run(void)
 	GebrCommJsonContent *content = gebr_comm_json_content_new_from_string(xml);
 	gchar *url = g_strdup_printf("/run?parent_rid=%s;speed=%s;nice=%s;group=%s",
 				     parent_rid, speed, nice, group);
-	gebr_comm_protocol_socket_send_request(gebr.ui_server_list->maestro->socket,
+	GebrCommServer *server = gebr_maestro_server_get_server(gebr.ui_server_list->maestro);
+	gebr_comm_protocol_socket_send_request(server->socket,
 					       GEBR_COMM_HTTP_METHOD_PUT, url, content);
 	g_free(url);
 	g_free(xml);

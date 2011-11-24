@@ -479,7 +479,8 @@ server_list_add(struct ui_server_list *ui_server_list,
 
 	GebrCommHttpMsg *msg;
 	gchar *url = g_strconcat("/server/", address, NULL);
-	msg = gebr_comm_protocol_socket_send_request(ui_server_list->maestro->socket,
+	GebrCommServer *server = gebr_maestro_server_get_server(ui_server_list->maestro);
+	msg = gebr_comm_protocol_socket_send_request(server->socket,
 						     GEBR_COMM_HTTP_METHOD_PUT, url, NULL);
 	g_free(url);
 
