@@ -457,7 +457,6 @@ gebr_post_config(gboolean has_config)
 	gtk_tree_model_filter_set_visible_func(GTK_TREE_MODEL_FILTER(gebr.ui_project_line->servers_filter), servers_filter_visible_func, NULL, NULL);
 	gtk_tree_sortable_set_sort_func(GTK_TREE_SORTABLE(gebr.ui_project_line->servers_sort), 0, servers_sort_func, NULL, NULL);
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(gebr.ui_project_line->servers_sort), 0, GTK_SORT_ASCENDING);
-	gtk_combo_box_set_model(GTK_COMBO_BOX(gebr.ui_flow_edition->server_combobox), gebr.ui_project_line->servers_sort);
 
 	GtkTreeIter iter;
 	gboolean project_line_selected;

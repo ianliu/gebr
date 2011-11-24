@@ -168,12 +168,10 @@ flow_edition_setup_ui(void)
 	renderer = gtk_cell_renderer_pixbuf_new();
 	g_object_set(renderer, "stock-size", GTK_ICON_SIZE_MENU, NULL);
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(combobox), renderer, FALSE);
-	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(combobox), renderer, "pixbuf", SERVER_STATUS_ICON);
 	gtk_cell_layout_set_cell_data_func (GTK_CELL_LAYOUT (combobox), renderer, on_server_disconnected_set_row_insensitive, NULL, NULL);
 
 	renderer = gtk_cell_renderer_text_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(combobox), renderer, TRUE);
-	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(combobox), renderer, "text", SERVER_NAME);
 	gtk_cell_layout_set_cell_data_func (GTK_CELL_LAYOUT (combobox), renderer, on_server_disconnected_set_row_insensitive, NULL, NULL);
 
 	frame = gtk_frame_new(NULL);
@@ -1427,16 +1425,26 @@ on_server_disconnected_set_row_insensitive(GtkCellLayout   *cell_layout,
 					   gpointer         data)
 {
 
-	GebrServer *server;
-	gboolean is_auto_choose;
+	GebrDaemonServer *daemon;
 
-	gtk_tree_model_get (tree_model, iter, SERVER_POINTER, &server,
-			    SERVER_IS_AUTO_CHOOSE, &is_auto_choose, -1);
+	gtk_tree_model_get(tree_model, iter, 0, &daemon, -1);
 
-	if (is_auto_choose)
+	if (!daemon)
+		return;
+
+	gboolean is_connected = gebr_daemon_server_get_state(daemon) == SERVER_STATE_CONNECT;
+
+	if (GTK_IS_CELL_RENDERER_TEXT(cell))
+		g_object_set(cell, "text", gebr_daemon_server_get_display_address(daemon), NULL);
+	else
+		g_object_set(cell, "stock-id", is_connected ? GTK_STOCK_CONNECT : GTK_STOCK_DISCONNECT, NULL);
+
+	if (gebr_daemon_server_is_autochoose(daemon)) {
 		g_object_set(cell, "sensitive", TRUE, NULL);
-	else if (server && server->comm)
-		g_object_set(cell, "sensitive", gebr_comm_server_is_logged (server->comm), NULL);
+		return;
+	}
+
+	g_object_set(cell, "sensitive", is_connected, NULL);
 }
 
 static void on_queue_combobox_changed (GtkComboBox *combo, GtkComboBox *server_combo)

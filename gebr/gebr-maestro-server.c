@@ -263,7 +263,7 @@ gebr_maestro_server_init(GebrMaestroServer *maestro)
 	maestro->priv->store = gtk_list_store_new(1, G_TYPE_POINTER);
 
 	GebrDaemonServer *autochoose =
-		gebr_daemon_server_new(G_OBJECT(maestro), NULL, SERVER_STATE_UNKNOWN);
+		gebr_daemon_server_new(G_OBJECT(maestro), NULL, SERVER_STATE_CONNECT);
 	gebr_maestro_server_add_daemon(maestro, autochoose);
 }
 

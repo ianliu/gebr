@@ -607,6 +607,9 @@ connect_to_maestro(GtkEntry *entry,
 	sl->maestro = gebr_maestro_server_new(addr);
 	gtk_tree_view_set_model(GTK_TREE_VIEW(sl->common.view),
 				gebr_maestro_server_get_model(sl->maestro, FALSE));
+
+	gtk_combo_box_set_model(GTK_COMBO_BOX(gebr.ui_flow_edition->server_combobox),
+				gebr_maestro_server_get_model(sl->maestro, TRUE));
 }
 
 /*
