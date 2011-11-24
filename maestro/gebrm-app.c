@@ -42,9 +42,9 @@ static GebrmApp           *__app = NULL;
 #define GEBRM_LIST_OF_SERVERS_PATH ".gebr/gebrm/"
 #define GEBRM_LIST_OF_SERVERS_FILENAME "servers.conf"
 
-static void gebrm_config_save_server(gchar *server);
+static void gebrm_config_save_server(const gchar *server);
 
-static gboolean gebrm_add_server_to_list(GebrmApp *app, gchar *addr);
+static gboolean gebrm_add_server_to_list(GebrmApp *app, const gchar *addr);
 
 gboolean gebrm_config_load_servers(GebrmApp *app, gchar *path);
 
@@ -343,12 +343,14 @@ gebrm_app_singleton_get(void)
 }
 
 static gboolean
-gebrm_add_server_to_list(GebrmApp *app, gchar *address)
+gebrm_add_server_to_list(GebrmApp *app, const gchar *address)
 {
+	gchar *addr;
+	gboolean succ = FALSE;
 	if (!g_strcmp0(address, "127.0.0.1"))
 		addr = g_strdup("localhost");
 	else
-		addr = address;
+		addr = g_strdup(address);
 
 	GebrCommServer *daemon = gebr_comm_server_new(addr, &daemon_ops);
 	daemon->user_data = app;
@@ -356,9 +358,10 @@ gebrm_add_server_to_list(GebrmApp *app, gchar *address)
 		app->priv->daemons = g_list_prepend(app->priv->daemons, daemon);
 		gebr_comm_server_connect(daemon, FALSE);
 		g_debug("Added server %s", addr);
-		return TRUE;
+		g_free(addr);
+		succ =  TRUE;
 	}
-	return FALSE;
+	return succ;
 }
 
 static void
@@ -419,18 +422,13 @@ on_client_request(GebrCommProtocolSocket *socket,
 }
 
 static void
-gebrm_config_save_server(gchar *serv){
-
+gebrm_config_save_server(const gchar *serv){
 	gchar *dir, *path, *subdir, *server;
 	gchar *final_list_str;
 	GKeyFile *servers;
 	gboolean ret;
 
-	if (!g_strcmp0(serv, "127.0.0.1"))
-		server = g_strdup("localhost");
-	else
-		server = serv;
-
+	server = g_strcmp0(serv, "127.0.0.1") ? g_strdup(serv): g_strdup("localhost");
 	g_debug("Adding server %s to file", server);
 
 	servers = g_key_file_new ();
@@ -451,6 +449,7 @@ gebrm_config_save_server(gchar *serv){
 
 	final_list_str= g_key_file_to_data (servers, NULL, NULL);
 	ret = g_file_set_contents (path, final_list_str, -1, NULL);
+	g_free (server);
 	g_free (final_list_str);
 	g_free (path);
 	g_free (subdir);
