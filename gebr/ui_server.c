@@ -587,123 +587,15 @@ static gboolean visible_func (GtkTreeModel *model,
  * Public functions.
  */
 
-void
-log_message(GebrCommServer *server,
-	    GebrLogMessageType type,
-	    const gchar *message,
-	    gpointer user_data)
-{
-	g_debug("[MAESTRO] LOG_MESSAGE: %s", message);
-}
-
-void
-state_changed(GebrCommServer *comm_server,
-	      gpointer user_data)
-{
-	g_debug("[MAESTRO] STATUS CHANGED");
-}
-
-GString *
-ssh_login(GebrCommServer *server,
-	  const gchar *title, const gchar *message,
-	  gpointer user_data)
-{
-	g_debug("[MAESTRO] ssh login");
-
-	return g_string_new("");
-}
-
-gboolean
-ssh_question(GebrCommServer *server,
-	     const gchar *title,
-	     const gchar *message,
-	     gpointer user_data)
-{
-	g_debug("[MAESTRO] ssh question: %s", message);
-	return TRUE;
-}
-
-void
-process_request(GebrCommServer *server,
-		GebrCommHttpMsg *request,
-		gpointer user_data)
-{
-	g_debug("[MAESTRO] request");
-}
-
-void
-process_response(GebrCommServer *server,
-		 GebrCommHttpMsg *request,
-		 GebrCommHttpMsg *response,
-		 gpointer user_data)
-{
-	g_debug("[MAESTRO] response");
-}
-
-void
-parse_messages(GebrCommServer *comm_server,
-	       gpointer user_data)
-{
-	g_debug("[MAESTRO] parse messages");
-	GList *link;
-	struct gebr_comm_message *message;
-
-	while ((link = g_list_last(comm_server->socket->protocol->messages)) != NULL) {
-		message = (struct gebr_comm_message *)link->data;
-		if (message->hash == gebr_comm_protocol_defs.ssta_def.code_hash) {
-			g_debug("on function state_changed, ssta_def");
-			GList *arguments;
-			GString *addr, *ssta;
-
-			/* organize message data */
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
-				goto err;
-
-			addr = g_list_nth_data(arguments, 0);
-			ssta = g_list_nth_data(arguments, 1);
-			g_debug("addr: %s, ssta:%s",addr->str, ssta->str);
-			//if (server_find_address(addr, iter, "", TRUE)){
-				//model = GTK_TREE_MODEL (gebr.ui_server_list->common.store);
-			//}
-
-			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
-		}
-
-		gebr_comm_message_free(message);
-		comm_server->socket->protocol->messages = g_list_delete_link(comm_server->socket->protocol->messages, link);
-	}
-
-	return;
-
-err:
-	gebr_comm_message_free(message);
-	comm_server->socket->protocol->messages = g_list_delete_link(comm_server->socket->protocol->messages, link);
-	gebr_comm_server_disconnect(comm_server);
-}
-
 static void
 connect_to_maestro(GtkEntry *entry,
 		   struct ui_server_list *sl)
 {
 	const gchar *addr = gtk_entry_get_text(entry);
 
-	if (sl->maestro) {
-		gebr_comm_server_disconnect(sl->maestro);
-		gebr_comm_server_free(sl->maestro);
-	}
-
-	static const struct gebr_comm_server_ops ops = {
-		.log_message      = log_message,
-		.state_changed    = state_changed,
-		.ssh_login        = ssh_login,
-		.ssh_question     = ssh_question,
-		.process_request  = process_request,
-		.process_response = process_response,
-		.parse_messages   = parse_messages
-	};
-
-	sl->maestro = gebr_comm_server_new(addr, &ops);
-	gebr_comm_server_connect(sl->maestro, TRUE);
+	if (sl->maestro)
+		g_object_unref(sl->maestro);
+	sl->maestro = gebr_maestro_server_new(addr);
 }
 
 /*

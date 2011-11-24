@@ -25,6 +25,7 @@
 #include <gtk/gtk.h>
 
 #include "server.h"
+#include "gebr-maestro-server.h"
 
 G_BEGIN_DECLS
 
@@ -71,7 +72,7 @@ struct ui_server_common {
 };
 
 struct ui_server_list {
-	GebrCommServer *maestro;
+	GebrMaestroServer *maestro;
 	struct ui_server_common common;
 };
 

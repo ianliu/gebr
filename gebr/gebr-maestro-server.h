@@ -51,11 +51,11 @@ GType gebr_maestro_server_get_type(void) G_GNUC_CONST;
 
 GebrMaestroServer *gebr_maestro_server_new(const gchar *addr);
 
-void gebr_maestro_add_daemon(GebrMaestroServer *maestro,
-			     GebrDaemonServer *daemon);
+void gebr_maestro_server_add_daemon(GebrMaestroServer *maestro,
+				    GebrDaemonServer *daemon);
 
-GebrDaemonServer *gebr_maestro_get_daemon(GebrMaestroServer *maestro,
-					  const gchar *addr);
+GebrDaemonServer *gebr_maestro_server_get_daemon(GebrMaestroServer *maestro,
+						 const gchar *addr);
 
 GebrCommServer *gebr_maestro_server_get_server(GebrMaestroServer *maestro);
 

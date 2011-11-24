@@ -137,6 +137,8 @@ parse_messages(GebrCommServer *comm_server,
 	GList *link;
 	struct gebr_comm_message *message;
 
+	GebrMaestroServer *maestro = user_data;
+
 	while ((link = g_list_last(comm_server->socket->protocol->messages)) != NULL) {
 		message = (struct gebr_comm_message *)link->data;
 		if (message->hash == gebr_comm_protocol_defs.ssta_def.code_hash) {
@@ -150,11 +152,18 @@ parse_messages(GebrCommServer *comm_server,
 
 			addr = g_list_nth_data(arguments, 0);
 			ssta = g_list_nth_data(arguments, 1);
+
 			g_debug("addr: %s, ssta:%s",addr->str, ssta->str);
 
-			//if (server_find_address(addr, iter, "", TRUE)){
-				//model = GTK_TREE_MODEL (gebr.ui_server_list->common.store);
-			//}
+			enum gebr_comm_server_state state = gebr_comm_server_state_from_string(ssta->str);
+
+			GebrDaemonServer *daemon = gebr_maestro_get_daemon(maestro, addr->str);
+
+			if (!daemon) {
+				daemon = gebr_daemon_server_new(maestro, addr->str, state);
+				gebr_maestro_server_add_daemon(maestro, daemon);
+			} else
+				gebr_daemon_server_set_state(daemon, state);
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}
@@ -261,8 +270,8 @@ gebr_maestro_server_new(const gchar *addr)
 }
 
 void
-gebr_maestro_add_daemon(GebrMaestroServer *maestro,
-			GebrDaemonServer *daemon)
+gebr_maestro_server_add_daemon(GebrMaestroServer *maestro,
+			       GebrDaemonServer *daemon)
 {
 	GtkTreeIter iter;
 
@@ -271,8 +280,8 @@ gebr_maestro_add_daemon(GebrMaestroServer *maestro,
 }
 
 GebrDaemonServer *
-gebr_maestro_get_daemon(GebrMaestroServer *maestro,
-			const gchar *addr)
+gebr_maestro_server_get_daemon(GebrMaestroServer *maestro,
+			       const gchar *addr)
 {
 	GtkTreeIter iter;
 	GebrDaemonServer *daemon;
