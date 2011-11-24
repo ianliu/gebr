@@ -26,6 +26,7 @@
 struct _GebrMaestroServerPriv {
 	GebrCommServer *server;
 	GtkListStore *store;
+	GtkTreeModel *filter;
 };
 
 static void      log_message(GebrCommServer *server,
@@ -228,6 +229,7 @@ gebr_maestro_server_finalize(GObject *object)
 
 	gtk_list_store_clear(maestro->priv->store);
 	g_object_unref(maestro->priv->store);
+	g_object_unref(maestro->priv->filter);
 
 	G_OBJECT_CLASS(gebr_maestro_server_parent_class)->finalize(object);
 }
@@ -308,8 +310,31 @@ gebr_maestro_server_get_server(GebrMaestroServer *maestro)
 	return maestro->priv->server;
 }
 
-GtkTreeModel *
-gebr_maestro_server_get_model(GebrMaestroServer *maestro)
+static gboolean
+tree_model_filter_visible_func(GtkTreeModel *model,
+			       GtkTreeIter *iter,
+			       gpointer data)
 {
-	return GTK_TREE_MODEL(maestro->priv->store);
+	GebrDaemonServer *daemon;
+	gtk_tree_model_get(model, iter, 0, &daemon, -1);
+
+	return daemon && !gebr_daemon_server_is_autochoose(daemon);
+}
+
+GtkTreeModel *
+gebr_maestro_server_get_model(GebrMaestroServer *maestro,
+			      gboolean include_autochoose)
+{
+	GtkTreeModel *model = GTK_TREE_MODEL(maestro->priv->store);
+
+	if (include_autochoose)
+		return model;
+
+	if (!maestro->priv->filter) {
+		maestro->priv->filter = gtk_tree_model_filter_new(model, NULL);
+		gtk_tree_model_filter_set_visible_func(GTK_TREE_MODEL_FILTER(maestro->priv->filter),
+						       tree_model_filter_visible_func, NULL, NULL);
+	}
+
+	return maestro->priv->filter;
 }

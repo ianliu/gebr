@@ -60,7 +60,8 @@ GebrDaemonServer *gebr_maestro_server_get_daemon(GebrMaestroServer *maestro,
 
 GebrCommServer *gebr_maestro_server_get_server(GebrMaestroServer *maestro);
 
-GtkTreeModel *gebr_maestro_server_get_model(GebrMaestroServer *maestro);
+GtkTreeModel *gebr_maestro_server_get_model(GebrMaestroServer *maestro,
+					    gboolean include_autochoose);
 
 G_END_DECLS
 
