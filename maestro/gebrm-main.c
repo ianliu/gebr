@@ -73,11 +73,15 @@ fork_and_exit_main(void)
 		exit(EXIT_FAILURE);
 	}
 
-	//close(0);
-	//close(1);
-	//close(2);
+	close(STDIN_FILENO);
 }
 
+static void
+gebrm_remove_lock_and_quit(int sig)
+{
+	g_unlink(gebrm_main_get_lock_file());
+	exit(0);
+}
 
 int
 main(int argc, char *argv[])
@@ -126,6 +130,16 @@ main(int argc, char *argv[])
 
 	if (!interactive)
 		fork_and_exit_main();
+
+	struct sigaction sa;
+	sa.sa_handler = gebrm_remove_lock_and_quit;
+	sigemptyset(&sa.sa_mask);
+	sa.sa_flags = 0;
+
+	if (sigaction(SIGTERM, &sa, NULL)
+	    || sigaction(SIGINT, &sa, NULL)
+	    || sigaction(SIGQUIT, &sa, NULL))
+		perror("sigaction");
 
 	gebr_geoxml_init();
 	GebrmApp *app = gebrm_app_singleton_get();
