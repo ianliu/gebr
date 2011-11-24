@@ -1,18 +1,21 @@
-/*   libgebr - GeBR Library
- *   Copyright (C) 2011 GeBR core team (http://www.gebrproject.com/)
+/*
+ * gebr-comm-runner.c
+ * This file is part of GêBR Project
  *
- *   This program is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
+ * Copyright (C) 2011 - GêBR core team (http://www.gebrproject.com)
  *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
+ * GêBR Project is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
- *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * GêBR Project is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with GêBR Project. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "gebr-comm-runner.h"
@@ -333,6 +336,8 @@ on_response_received(GebrCommHttpMsg *request,
 					   sc->server->clock_cpu,
 					   atoi(self->priv->speed),
 					   n);
+
+	g_debug("Score for %s: %lf", sc->server->address->str, sc->score);
 
 	self->priv->responses++;
 	if (self->priv->responses == self->priv->requests) {

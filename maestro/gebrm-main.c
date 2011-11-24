@@ -130,10 +130,10 @@ main(int argc, char *argv[])
 	gebr_geoxml_init();
 	GebrmApp *app = gebrm_app_singleton_get();
 
-	if (!gebrm_app_run(app)) {
-		g_object_unref(app);
+	if (!gebrm_app_run(app))
 		exit(EXIT_FAILURE);
-	}
+
+	g_object_unref(app);
 	gebr_geoxml_finalize();
 
 	return EXIT_SUCCESS;

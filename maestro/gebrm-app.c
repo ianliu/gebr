@@ -220,7 +220,7 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 				exec_speed = g_list_nth_data(arguments, 21);
 				job_percentage = g_list_nth_data(arguments, 22);
 
-				g_debug("JOB DEF! %s", title->str);
+				g_debug("[%s] JOB DEF! %s", server->address->str, title->str);
 
 				gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 			}
@@ -235,7 +235,7 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 			rid = g_list_nth_data(arguments, 2);
 			frac = g_list_nth_data(arguments, 3);
 
-			g_debug("OUT_DEF! %s", output->str);
+			g_debug("[%s] OUT_DEF! %s", server->address->str, output->str);
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		} else if (message->hash == gebr_comm_protocol_defs.sta_def.code_hash) {
@@ -250,7 +250,7 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 			rid = g_list_nth_data(arguments, 3);
 			frac = g_list_nth_data(arguments, 4);
 
-			g_debug("STA_DEF! %s", status->str);
+			g_debug("[%s] STA_DEF! %s", server->address->str, status->str);
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}
