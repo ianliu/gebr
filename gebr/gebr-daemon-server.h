@@ -22,7 +22,7 @@
 #define __GEBR_SERVER_H__
 
 #include <glib-object.h>
-
+#include "gebr-connectable.h"
 #include <libgebr/comm/gebr-comm.h>
 
 G_BEGIN_DECLS
@@ -49,7 +49,7 @@ struct _GebrDaemonServerClass {
 
 GType gebr_daemon_server_get_type(void) G_GNUC_CONST;
 
-GebrDaemonServer *gebr_daemon_server_new(GObject *maestro,
+GebrDaemonServer *gebr_daemon_server_new(GebrConnectable *connectable,
 					 const gchar *address,
 					 GebrCommServerState state);
 

@@ -45,10 +45,10 @@ libgebr_la_SOURCES =		\
 	document.h		\
 	flow.c			\
 	flow.h			\
-	gebr-daemon-server.h	\
+	gebr-connectable.c	\
+	gebr-connectable.h	\
 	gebr-daemon-server.c	\
-	gebr-maestro-server.h	\
-	gebr-maestro-server.c	\
+	gebr-daemon-server.h	\
 	gebr-gettext.h		\
 	gebr-help-edit-widget.c	\
 	gebr-help-edit-widget.h	\
@@ -56,6 +56,8 @@ libgebr_la_SOURCES =		\
 	gebr-job-control.h	\
 	gebr-job.c		\
 	gebr-job.h		\
+	gebr-maestro-server.c	\
+	gebr-maestro-server.h	\
 	gebr-marshal.c		\
 	gebr-marshal.h		\
 	gebr-task.c		\

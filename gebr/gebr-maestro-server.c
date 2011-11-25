@@ -59,6 +59,8 @@ static void      process_response(GebrCommServer *server,
 static void      parse_messages(GebrCommServer *comm_server,
 				gpointer user_data);
 
+static void gebr_maestro_server_connectable_init(GebrConnectableIface *iface);
+
 enum {
 	PROP_0,
 	PROP_ADDRESS,
@@ -74,7 +76,9 @@ static const struct gebr_comm_server_ops maestro_ops = {
 	.parse_messages   = parse_messages
 };
 
-G_DEFINE_TYPE(GebrMaestroServer, gebr_maestro_server, G_TYPE_OBJECT);
+G_DEFINE_TYPE_WITH_CODE(GebrMaestroServer, gebr_maestro_server, G_TYPE_OBJECT,
+			G_IMPLEMENT_INTERFACE(GEBR_TYPE_CONNECTABLE,
+					      gebr_maestro_server_connectable_init));
 
 void
 log_message(GebrCommServer *server,
@@ -160,7 +164,8 @@ parse_messages(GebrCommServer *comm_server,
 			GebrDaemonServer *daemon = gebr_maestro_server_get_daemon(maestro, addr->str);
 
 			if (!daemon) {
-				daemon = gebr_daemon_server_new(G_OBJECT(maestro), addr->str, state);
+				daemon = gebr_daemon_server_new(GEBR_CONNECTABLE(maestro),
+								addr->str, state);
 				gebr_maestro_server_add_daemon(maestro, daemon);
 			} else
 				gebr_daemon_server_set_state(daemon, state);
@@ -263,9 +268,42 @@ gebr_maestro_server_init(GebrMaestroServer *maestro)
 	maestro->priv->store = gtk_list_store_new(1, G_TYPE_POINTER);
 
 	GebrDaemonServer *autochoose =
-		gebr_daemon_server_new(G_OBJECT(maestro), NULL, SERVER_STATE_CONNECT);
+		gebr_daemon_server_new(GEBR_CONNECTABLE(maestro), NULL, SERVER_STATE_CONNECT);
 	gebr_maestro_server_add_daemon(maestro, autochoose);
 }
+
+/* Implementation of GebrConnectable interface {{{ */
+static void
+gebr_maestro_server_connect(GebrConnectable *connectable,
+			    const gchar *address)
+{
+	GebrMaestroServer *maestro = GEBR_MAESTRO_SERVER(connectable);
+	gchar *url = g_strconcat("/server/", address, NULL);
+	gebr_comm_protocol_socket_send_request(maestro->priv->server->socket,
+					       GEBR_COMM_HTTP_METHOD_PUT,
+					       url, NULL);
+	g_free(url);
+}
+
+static void
+gebr_maestro_server_disconnect(GebrConnectable *connectable,
+			       const gchar *address)
+{
+	GebrMaestroServer *maestro = GEBR_MAESTRO_SERVER(connectable);
+	gchar *url = g_strconcat("/disconnect/", address, NULL);
+	gebr_comm_protocol_socket_send_request(maestro->priv->server->socket,
+					       GEBR_COMM_HTTP_METHOD_PUT,
+					       url, NULL);
+	g_free(url);
+}
+
+static void
+gebr_maestro_server_connectable_init(GebrConnectableIface *iface)
+{
+	iface->connect = gebr_maestro_server_connect;
+	iface->disconnect = gebr_maestro_server_disconnect;
+}
+/* }}} */
 
 GebrMaestroServer *
 gebr_maestro_server_new(const gchar *addr)

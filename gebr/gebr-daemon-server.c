@@ -22,10 +22,9 @@
 
 #include <glib/gi18n.h>
 #include <libgebr/comm/gebr-comm.h>
-#include "gebr-maestro-server.h"
 
 struct _GebrDaemonServerPriv {
-	GebrMaestroServer *maestro;
+	GebrConnectable *connectable;
 	gchar *address;
 	GebrCommServerState state;
 };
@@ -33,7 +32,7 @@ struct _GebrDaemonServerPriv {
 enum {
 	PROP_0,
 	PROP_ADDRESS,
-	PROP_MAESTRO,
+	PROP_CONNECTABLE,
 	PROP_STATE,
 };
 
@@ -52,8 +51,8 @@ gebr_daemon_server_get(GObject    *object,
 	case PROP_ADDRESS:
 		g_value_set_string(value, daemon->priv->address);
 		break;
-	case PROP_MAESTRO:
-		g_value_take_object(value, daemon->priv->maestro);
+	case PROP_CONNECTABLE:
+		g_value_take_object(value, daemon->priv->connectable);
 		break;
 	case PROP_STATE:
 		g_value_set_int(value, gebr_daemon_server_get_state(daemon));
@@ -79,8 +78,8 @@ gebr_daemon_server_set(GObject      *object,
 		if (!daemon->priv->address)
 			daemon->priv->address = g_strdup("");
 		break;
-	case PROP_MAESTRO:
-		daemon->priv->maestro = g_value_dup_object(value);
+	case PROP_CONNECTABLE:
+		daemon->priv->connectable = g_value_dup_object(value);
 		break;
 	case PROP_STATE:
 		gebr_daemon_server_set_state(daemon, g_value_get_int(value));
@@ -97,7 +96,7 @@ gebr_daemon_server_finalize(GObject *object)
 	GebrDaemonServer *daemon = GEBR_DAEMON_SERVER(object);
 
 	g_free(daemon->priv->address);
-	g_object_unref(daemon->priv->maestro);
+	g_object_unref(daemon->priv->connectable);
 
 	G_OBJECT_CLASS(gebr_daemon_server_parent_class)->finalize(object);
 }
@@ -119,11 +118,11 @@ gebr_daemon_server_class_init(GebrDaemonServerClass *klass)
 							    G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 
 	g_object_class_install_property(object_class,
-					PROP_MAESTRO,
-					g_param_spec_object("maestro",
-							    "Maestro",
-							    "Maestro",
-							    GEBR_TYPE_MAESTRO_SERVER,
+					PROP_CONNECTABLE,
+					g_param_spec_object("connectable",
+							    "Connectable",
+							    "Connectable",
+							    G_TYPE_OBJECT,
 							    G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 
 	g_object_class_install_property(object_class,
@@ -147,13 +146,13 @@ gebr_daemon_server_init(GebrDaemonServer *daemon)
 }
 
 GebrDaemonServer *
-gebr_daemon_server_new(GObject *maestro,
+gebr_daemon_server_new(GebrConnectable *connectable,
 		       const gchar *address,
 		       GebrCommServerState state)
 {
 	return g_object_new(GEBR_TYPE_DAEMON_SERVER,
 			    "address", address,
-			    "maestro", maestro,
+			    "connectable", connectable,
 			    "state", state,
 			    NULL);
 }
@@ -194,23 +193,15 @@ gebr_daemon_server_get_state(GebrDaemonServer *daemon)
 void
 gebr_daemon_server_connect(GebrDaemonServer *daemon)
 {
-	gchar *url = g_strconcat("/server/", daemon->priv->address, NULL);
-	GebrCommServer *server = gebr_maestro_server_get_server(daemon->priv->maestro);
-	gebr_comm_protocol_socket_send_request(server->socket,
-					       GEBR_COMM_HTTP_METHOD_PUT,
-					       url, NULL);
-	g_free(url);
+	gebr_connectable_connect(daemon->priv->connectable,
+				 daemon->priv->address);
 }
 
 void
 gebr_daemon_server_disconnect(GebrDaemonServer *daemon)
 {
-	gchar *url = g_strconcat("/disconnect/", daemon->priv->address, NULL);
-	GebrCommServer *server = gebr_maestro_server_get_server(daemon->priv->maestro);
-	gebr_comm_protocol_socket_send_request(server->socket,
-					       GEBR_COMM_HTTP_METHOD_PUT,
-					       url, NULL);
-	g_free(url);
+	gebr_connectable_disconnect(daemon->priv->connectable,
+				    daemon->priv->address);
 }
 
 gboolean
