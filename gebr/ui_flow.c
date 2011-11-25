@@ -70,17 +70,17 @@ get_connected_servers(GtkTreeModel *model)
 static gchar *
 get_selected_queue(void)
 {
-	GtkTreeIter queue_iter;
-	gchar *queue;
+//	GtkTreeIter queue_iter;
+//	gchar *queue;
+//
+//	if (!gtk_combo_box_get_active_iter(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox), &queue_iter))
+//		return g_strdup("");
+//	else {
+//		GtkTreeModel *model = gtk_combo_box_get_model(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox));
+//		gtk_tree_model_get(model, &queue_iter, SERVER_QUEUE_ID, &queue, -1);
+//	}
 
-	if (!gtk_combo_box_get_active_iter(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox), &queue_iter))
-		return g_strdup("");
-	else {
-		GtkTreeModel *model = gtk_combo_box_get_model(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox));
-		gtk_tree_model_get(model, &queue_iter, SERVER_QUEUE_ID, &queue, -1);
-	}
-
-	return queue;
+	return g_strdup("");
 }
 
 static void
@@ -104,23 +104,6 @@ gebr_ui_flow_run(void)
 	gchar *speed = g_strdup_printf("%d", gebr_interface_get_execution_speed());
 	gchar *nice = g_strdup_printf("%d", gebr_interface_get_niceness());
 	gchar *group = g_strdup(gebr_geoxml_line_get_group(gebr.line, &is_fs));
-	GList *servers = NULL;
-
-	if (gebr.ui_flow_edition->autochoose)
-		servers = get_connected_servers(model);
-	else {
-		GtkTreeIter iter;
-		if (!gtk_combo_box_get_active_iter(GTK_COMBO_BOX(gebr.ui_flow_edition->server_combobox), &iter)) {
-			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No server selected."));
-			return;
-		}
-
-		GebrServer *server;
-		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->servers_sort), &iter,
-				   SERVER_POINTER, &server, -1);
-		servers = g_list_prepend(servers, server->comm);
-
-	}
 
 	gebr_geoxml_flow_set_date_last_run(gebr.flow, gebr_iso_date());
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), FALSE, FALSE);
@@ -130,6 +113,7 @@ gebr_ui_flow_run(void)
 	GebrCommJsonContent *content = gebr_comm_json_content_new_from_string(xml);
 	gchar *url = g_strdup_printf("/run?parent_rid=%s;speed=%s;nice=%s;group=%s",
 				     parent_rid, speed, nice, group);
+
 	GebrCommServer *server = gebr_maestro_server_get_server(gebr.ui_server_list->maestro);
 	gebr_comm_protocol_socket_send_request(server->socket,
 					       GEBR_COMM_HTTP_METHOD_PUT, url, content);

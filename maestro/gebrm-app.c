@@ -49,6 +49,10 @@ static GebrmDaemon *gebrm_add_server_to_list(GebrmApp *app,
 					     const gchar *addr,
 					     const gchar *tags);
 
+static void gebrm_config_delete_server(const gchar *serv);
+
+static gboolean gebrm_remove_server_from_list(GebrmApp *app, const gchar *address);
+
 gboolean gebrm_config_load_servers(GebrmApp *app, gchar *path);
 
 G_DEFINE_TYPE(GebrmApp, gebrm_app, G_TYPE_OBJECT);
@@ -317,10 +321,10 @@ gebrm_app_init(GebrmApp *app)
 	app->priv->main_loop = g_main_loop_new(NULL, FALSE);
 	app->priv->connections = NULL;
 	app->priv->daemons = NULL;
-	gchar *subdir = g_strconcat(GEBRM_LIST_OF_SERVERS_PATH, GEBRM_LIST_OF_SERVERS_FILENAME, NULL);
-	gchar *path = g_build_path ("/", g_get_home_dir (), subdir, NULL);
+	gchar *path = g_build_filename(g_get_home_dir(),
+				       GEBRM_LIST_OF_SERVERS_PATH,
+				       GEBRM_LIST_OF_SERVERS_FILENAME, NULL);
 	gebrm_config_load_servers(app, path);
-	g_free(subdir);
 	g_free(path);
 
 }
@@ -387,6 +391,28 @@ get_comm_servers_list(GebrmApp *app)
 	return servers;
 }
 
+static gboolean
+gebrm_remove_server_from_list(GebrmApp *app, const gchar *addr)
+{
+	gboolean succ = FALSE;
+
+	gint compare_daemons(GebrCommServer *a, GebrCommServer *b){
+		return g_strcmp0(a->address->str, b->address->str);
+	}
+
+	if (!g_list_find_custom(app->priv->daemons, daemon, (GCompareFunc)compare_daemons )){
+		GebrCommServer *daemon = gebr_comm_server_new(addr, &daemon_ops);
+		daemon->user_data = app;
+		app->priv->daemons = g_list_remove(app->priv->daemons,
+						    daemon);
+		gebr_comm_server_disconnect(daemon);
+		gebr_comm_server_free(daemon);
+		g_debug("Removed server %s", addr);
+		succ =  TRUE;
+	}
+	return succ;
+}
+
 static void
 on_client_request(GebrCommProtocolSocket *socket,
 		  GebrCommHttpMsg *request,
@@ -399,6 +425,12 @@ on_client_request(GebrCommProtocolSocket *socket,
 			gchar *addr = request->url->str + strlen("/server/");
 			GebrmDaemon *d = gebrm_add_server_to_list(app, addr, NULL);
 			gebrm_config_save_server(d);
+		}
+		else if (g_str_has_prefix(request->url->str, "/disconnect/")) {
+			const gchar *addr = request->url->str + strlen("/server/");
+			gebrm_remove_server_from_list(app, addr);
+			gebrm_config_delete_server(addr);
+			g_debug(">> on %s, disconecting %s", __func__, addr) 	;
 		}
 		else if (g_str_has_prefix(request->url->str, "/run")) {
 			GebrCommJsonContent *json;
@@ -471,6 +503,46 @@ gebrm_config_save_server(GebrmDaemon *daemon)
 	g_free(path);
 	g_free(tags);
 	g_key_file_free(servers);
+}
+
+static void
+gebrm_config_delete_server(const gchar *serv)
+{
+	gchar *dir, *path, *subdir, *server;
+	gchar *final_list_str;
+	GKeyFile *servers;
+	gboolean ret;
+
+	server = g_strcmp0(serv, "127.0.0.1") ? g_strdup(serv): g_strdup("localhost");
+	g_debug("Adding server %s to file", server);
+
+	servers = g_key_file_new ();
+
+	dir = g_build_path ("/", g_get_home_dir (), GEBRM_LIST_OF_SERVERS_PATH, NULL);
+	if(!g_file_test(dir, G_FILE_TEST_EXISTS))
+		g_mkdir_with_parents(dir, 755);
+
+	subdir = g_strconcat(GEBRM_LIST_OF_SERVERS_PATH, GEBRM_LIST_OF_SERVERS_FILENAME, NULL);
+	path = g_build_path ("/", g_get_home_dir (), subdir, NULL);
+
+	g_key_file_load_from_file (servers, path, G_KEY_FILE_NONE, NULL);
+
+	if(g_key_file_has_group(servers,server))
+		g_debug("File doesn't have:%s", server);
+
+	g_key_file_remove_group(servers, server, NULL);
+	   
+	if(g_key_file_has_group(servers,server))
+		g_debug("Already has:%s", server);
+
+
+	final_list_str= g_key_file_to_data (servers, NULL, NULL);
+	ret = g_file_set_contents (path, final_list_str, -1, NULL);
+	g_free (server);
+	g_free (final_list_str);
+	g_free (path);
+	g_free (subdir);
+	g_key_file_free (servers);
 }
 
 gboolean
