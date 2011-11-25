@@ -55,7 +55,17 @@ gchar * gebr_comm_server_get_user(const char * address);
  */
 GebrCommServerType gebr_comm_server_get_id(const gchar * name);
 
+typedef enum {
+	SERVER_STATE_UNKNOWN,
+	SERVER_STATE_DISCONNECTED,
+	SERVER_STATE_RUN,
+	SERVER_STATE_OPEN_TUNNEL,
+	SERVER_STATE_CONNECT,
+	SERVER_STATE_CONNECTED,
+} GebrCommServerState;
+
 typedef struct gebr_comm_server GebrCommServer;
+
 struct gebr_comm_server {
 	GebrCommProtocolSocket *socket;
 
@@ -73,14 +83,7 @@ struct gebr_comm_server {
 	gint ncores;
 	gdouble clock_cpu;
 
-	enum gebr_comm_server_state {
-		SERVER_STATE_UNKNOWN,
-		SERVER_STATE_DISCONNECTED,
-		SERVER_STATE_RUN,
-		SERVER_STATE_OPEN_TUNNEL,
-		SERVER_STATE_CONNECT,
-		SERVER_STATE_CONNECTED,
-	} state;
+	GebrCommServerState state;
 
 	enum gebr_comm_server_error {
 		SERVER_ERROR_UNKNOWN,
@@ -177,9 +180,9 @@ void gebr_comm_server_kill(struct gebr_comm_server *gebr_comm_server);
  */
 gboolean gebr_comm_server_forward_x11(struct gebr_comm_server *gebr_comm_server, guint16 port);
 
-const gchar *gebr_comm_server_state_to_string(enum gebr_comm_server_state state);
+const gchar *gebr_comm_server_state_to_string(GebrCommServerState state);
 
-enum gebr_comm_server_state gebr_comm_server_state_from_string(const gchar *string);
+GebrCommServerState gebr_comm_server_state_from_string(const gchar *string);
 
 G_END_DECLS
 

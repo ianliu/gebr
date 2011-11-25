@@ -314,7 +314,7 @@ daemon_server_status_func(GtkTreeViewColumn *tree_column,
 {
 	GebrDaemonServer *daemon;
 	gtk_tree_model_get(model, iter, 0, &daemon, -1);
-	enum gebr_comm_server_state state = gebr_daemon_server_get_state(daemon);
+	GebrCommServerState state = gebr_daemon_server_get_state(daemon);
 	const gchar *stock_id;
 
 	switch (state) {

@@ -27,7 +27,7 @@
 struct _GebrDaemonServerPriv {
 	GebrMaestroServer *maestro;
 	gchar *address;
-	enum gebr_comm_server_state state;
+	GebrCommServerState state;
 };
 
 enum {
@@ -149,7 +149,7 @@ gebr_daemon_server_init(GebrDaemonServer *daemon)
 GebrDaemonServer *
 gebr_daemon_server_new(GObject *maestro,
 		       const gchar *address,
-		       enum gebr_comm_server_state state)
+		       GebrCommServerState state)
 {
 	return g_object_new(GEBR_TYPE_DAEMON_SERVER,
 			    "address", address,
@@ -180,12 +180,12 @@ gebr_daemon_server_get_display_address(GebrDaemonServer *daemon)
 
 void
 gebr_daemon_server_set_state(GebrDaemonServer *daemon,
-			     enum gebr_comm_server_state state)
+			     GebrCommServerState state)
 {
 	daemon->priv->state = state;
 }
 
-enum gebr_comm_server_state
+GebrCommServerState
 gebr_daemon_server_get_state(GebrDaemonServer *daemon)
 {
 	return daemon->priv->state;

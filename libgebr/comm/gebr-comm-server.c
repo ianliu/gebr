@@ -55,7 +55,7 @@ gebr_comm_ssh_open_tunnel_pool(struct gebr_comm_server *server);
 
 static void gebr_comm_server_disconnected_state(struct gebr_comm_server *server, enum gebr_comm_server_error error,
 						const gchar * message, ...);
-static void gebr_comm_server_change_state(struct gebr_comm_server *server, enum gebr_comm_server_state state);
+static void gebr_comm_server_change_state(struct gebr_comm_server *server, GebrCommServerState state);
 static void gebr_comm_server_socket_connected(GebrCommProtocolSocket * socket, struct gebr_comm_server *server);
 static void gebr_comm_server_socket_disconnected(GebrCommProtocolSocket * socket, struct gebr_comm_server *server);
 static void gebr_comm_server_socket_process_request(GebrCommProtocolSocket * socket, GebrCommHttpMsg *request,
@@ -561,7 +561,7 @@ static void gebr_comm_server_disconnected_state(struct gebr_comm_server *server,
 	gebr_comm_server_change_state(server, SERVER_STATE_DISCONNECTED);
 }
 
-static void gebr_comm_server_change_state(struct gebr_comm_server *server, enum gebr_comm_server_state state)
+static void gebr_comm_server_change_state(struct gebr_comm_server *server, GebrCommServerState state)
 {
 	if (server->state != SERVER_STATE_UNKNOWN) {
 		server->state = state;
@@ -720,17 +720,17 @@ static const gchar *state_hash[] = {
 };
 
 const gchar *
-gebr_comm_server_state_to_string(enum gebr_comm_server_state state)
+gebr_comm_server_state_to_string(GebrCommServerState state)
 {
 	return state_hash[state];
 }
 
-enum gebr_comm_server_state
+GebrCommServerState
 gebr_comm_server_state_from_string(const gchar *string)
 {
 	for (int i = 0; state_hash[i]; i++)
 		if (g_strcmp0(state_hash[i], string) == 0)
-			return (enum gebr_comm_server_state) i;
+			return (GebrCommServerState) i;
 
 	return SERVER_STATE_UNKNOWN;
 }

@@ -51,7 +51,7 @@ GType gebr_daemon_server_get_type(void) G_GNUC_CONST;
 
 GebrDaemonServer *gebr_daemon_server_new(GObject *maestro,
 					 const gchar *address,
-					 enum gebr_comm_server_state state);
+					 GebrCommServerState state);
 
 /**
  * gebr_daemon_server_get_address:
@@ -73,9 +73,9 @@ const gchar *gebr_daemon_server_get_address(GebrDaemonServer *server);
 gchar *gebr_daemon_server_get_display_address(GebrDaemonServer *server);
 
 void gebr_daemon_server_set_state(GebrDaemonServer *server,
-				  enum gebr_comm_server_state state);
+				  GebrCommServerState state);
 
-enum gebr_comm_server_state gebr_daemon_server_get_state(GebrDaemonServer *server);
+GebrCommServerState gebr_daemon_server_get_state(GebrDaemonServer *server);
 
 /**
  * gebr_daemon_server_connect:

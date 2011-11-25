@@ -155,7 +155,7 @@ parse_messages(GebrCommServer *comm_server,
 
 			g_debug("addr: %s, ssta:%s",addr->str, ssta->str);
 
-			enum gebr_comm_server_state state = gebr_comm_server_state_from_string(ssta->str);
+			GebrCommServerState state = gebr_comm_server_state_from_string(ssta->str);
 
 			GebrDaemonServer *daemon = gebr_maestro_server_get_daemon(maestro, addr->str);
 
