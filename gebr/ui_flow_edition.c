@@ -150,8 +150,8 @@ flow_edition_setup_ui(void)
 
 	ui_flow_edition->server_combobox = combobox = gtk_combo_box_new ();
 	ui_flow_edition->queue_combobox = gtk_combo_box_new ();
-	g_signal_connect (ui_flow_edition->queue_combobox, "changed",
-			  G_CALLBACK (on_queue_combobox_changed), combobox);
+//	g_signal_connect (ui_flow_edition->queue_combobox, "changed",
+//			  G_CALLBACK (on_queue_combobox_changed), combobox);
 
 	renderer = gtk_cell_renderer_text_new();
 
@@ -1265,65 +1265,14 @@ static void flow_edition_on_combobox_changed(GtkComboBox * combobox)
 	if (!gtk_combo_box_get_active_iter (combobox, &iter))
 		return;
 
-	gboolean is_auto_choose;
-	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->servers_sort), &iter,
-			   SERVER_IS_AUTO_CHOOSE, &is_auto_choose,
-			   -1);
+	GebrDaemonServer *daemon;
+	GtkTreeModel *model = gtk_combo_box_get_model(combobox);
+	gtk_tree_model_get(model, &iter, 0, &daemon, -1);
 
-	gebr.ui_flow_edition->autochoose = is_auto_choose;
-	//gtk_widget_set_sensitive(gebr.ui_flow_edition->queue_combobox, !is_auto_choose);
+	gebr.ui_flow_edition->autochoose = gebr_daemon_server_is_autochoose(daemon);
 
-	if (is_auto_choose) {
-		g_debug("----------------------8<---------------------");
-		g_debug("Changed to Autochoose");
-		g_debug("---------------------->8---------------------");
-
-		GebrServerAutochoose *autochoose;
-		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->servers_sort), &iter,
-				   SERVER_POINTER, &autochoose,
-				   -1);
-		gebr_geoxml_flow_server_set_address(gebr.flow, "");
-		gtk_combo_box_set_model(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox),
-					GTK_TREE_MODEL(autochoose->queues));
-	} else {
-		GebrServer *server;
-		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->servers_sort), &iter,
-				   SERVER_POINTER, &server,
-				   -1);
-		gtk_combo_box_set_model (GTK_COMBO_BOX (gebr.ui_flow_edition->queue_combobox),
-					 GTK_TREE_MODEL (server->queues_model));
-
-		const gchar *addr = server->comm->address->str;
-
-		g_debug("----------------------8<---------------------");
-		g_debug("Changed to %s", addr);
-		g_debug("---------------------->8---------------------");
-
-		gtk_tree_model_get (GTK_TREE_MODEL (gebr.ui_flow_browse->store), &flow_iter,
-				    FB_LAST_QUEUES, &last_queue_hash,
-				    -1);
-
-		if (!last_queue_hash) {
-			last_queue_hash = g_hash_table_new_full (g_str_hash,
-								 g_str_equal,
-								 (GDestroyNotify) g_free,
-								 NULL);
-			g_hash_table_insert (last_queue_hash,
-					     g_strdup (addr),
-					     GINT_TO_POINTER (0));
-
-			gtk_list_store_set (gebr.ui_flow_browse->store, &flow_iter,
-					    FB_LAST_QUEUES, last_queue_hash,
-					    -1);
-			g_object_weak_ref (G_OBJECT (gebr.ui_flow_browse->store),
-					   (GWeakNotify) g_hash_table_destroy, last_queue_hash);
-		}
-
-		lstq = GPOINTER_TO_INT (g_hash_table_lookup (last_queue_hash, addr));
-		gtk_combo_box_set_active(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox), lstq);
-
-		gebr_geoxml_flow_server_set_address (gebr.flow, addr);
-	}
+	const gchar *addr = gebr_daemon_server_get_address(daemon);
+	gebr_geoxml_flow_server_set_address (gebr.flow, addr);
 
 	flow_edition_set_io();
 	flow_browse_info_update();
@@ -1446,7 +1395,7 @@ on_server_disconnected_set_row_insensitive(GtkCellLayout   *cell_layout,
 
 	g_object_set(cell, "sensitive", is_connected, NULL);
 }
-
+#if 0
 static void on_queue_combobox_changed (GtkComboBox *combo, GtkComboBox *server_combo)
 {
 	gint index;
@@ -1489,7 +1438,7 @@ static void on_queue_combobox_changed (GtkComboBox *combo, GtkComboBox *server_c
 			     g_strdup (server->comm->address->str),
 			     GINT_TO_POINTER (index));
 }
-
+#endif
 gboolean
 flow_edition_find_flow_server (GebrGeoXmlFlow *flow,
 			       GtkTreeModel   *model,
@@ -1497,7 +1446,6 @@ flow_edition_find_flow_server (GebrGeoXmlFlow *flow,
 {
 	const gchar *addr;
 	gboolean     valid;
-	GebrServer  *server;
 
 	addr = gebr_geoxml_flow_server_get_address (flow);
 	valid = gtk_tree_model_get_iter_first (model, iter);
@@ -1507,22 +1455,21 @@ flow_edition_find_flow_server (GebrGeoXmlFlow *flow,
 
 	while (valid)
 	{
-		gboolean is_auto_choose;
-		gtk_tree_model_get (model, iter, SERVER_IS_AUTO_CHOOSE, &is_auto_choose, -1);
+		GebrDaemonServer *daemon;
+		gtk_tree_model_get (model, iter, 0, &daemon, -1);
 
-		if (is_auto_choose) {
+		if(!daemon) {
 			valid = gtk_tree_model_iter_next (model, iter);
 			continue;
 		}
 
-		gtk_tree_model_get (model, iter, SERVER_POINTER, &server, -1);
-		if (g_strcmp0 (server->comm->address->str, addr) == 0)
+		if (g_strcmp0 (gebr_daemon_server_get_address(daemon), addr) == 0)
 			return TRUE;
+
 		valid = gtk_tree_model_iter_next (model, iter);
 	}
 
-	gtk_tree_model_get_iter_first (model, iter);
-	return FALSE;
+	return gtk_tree_model_get_iter_first (model, iter);
 }
 
 void
@@ -1691,7 +1638,7 @@ gebr_flow_edition_show(struct ui_flow_edition *self)
 	GtkTreeModel *model = gtk_combo_box_get_model(cb);
 	flow_edition_find_flow_server(gebr.flow, model, &iter);
 	gtk_combo_box_set_active_iter(cb, &iter);
-	gebr_flow_edition_select_queue(self);
+//	gebr_flow_edition_select_queue(self);
 }
 
 void
