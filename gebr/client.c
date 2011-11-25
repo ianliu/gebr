@@ -211,10 +211,14 @@ client_parse_server_messages(GebrCommServer *comm_server,
 			}
 		} else if (message->hash == gebr_comm_protocol_defs.job_def.code_hash) {
 			GList *arguments;
-			GString *hostname, *status, *title, *start_date, *finish_date, *issues, *cmd_line,
-				*output, *queue, *moab_jid, *rid, *frac, *server_list, *n_procs, *niceness,
-				*input_file, *output_file, *log_file, *last_run_date, *server_group_name,
-			       	*job_percentage, *exec_speed;
+
+			GString *status, *start_date, *finish_date, *output;
+			GString *hostname, *title, *queue, *rid, *server_list,
+				*n_procs, *niceness, *input_file, *output_file,
+				*log_file, *last_run_date, *server_group_name,
+				*cmd_line, *exec_speed, *issues, *frac,
+				*job_percentage, *moab_jid;
+
 			GebrJob *job;
 
 			/* organize message data */

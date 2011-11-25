@@ -19,6 +19,10 @@
  */
 
 #include "gebrm-daemon.h"
+#include "gebrm-marshal.h"
+#include <stdlib.h>
+#include "gebrm-job.h"
+#include "gebrm-task.h"
 
 struct _GebrmDaemonPriv {
 	GTree *tags;
@@ -31,7 +35,243 @@ enum {
 	PROP_SERVER,
 };
 
+enum {
+	STATE_CHANGE,
+	TASK_DEFINE,
+	LAST_SIGNAL
+};
+
+static guint signals[LAST_SIGNAL] = { 0, };
+
 G_DEFINE_TYPE(GebrmDaemon, gebrm_daemon, G_TYPE_OBJECT);
+
+/* Operations for GebrCommServer {{{ */
+static void
+gebrm_server_op_log_message(GebrCommServer *server,
+			    GebrLogMessageType type,
+			    const gchar *message,
+			    gpointer user_data)
+{
+	g_debug("[DAEMON] %s: (type: %d) %s", __func__, type, message);
+}
+
+static void
+gebrm_server_op_state_changed(GebrCommServer *server,
+			      gpointer user_data)
+{
+	GebrmDaemon *daemon = user_data;
+	g_signal_emit(daemon, signals[STATE_CHANGE], 0, server->state);
+}
+
+static GString *
+gebrm_server_op_ssh_login(GebrCommServer *server,
+			  const gchar *title,
+			  const gchar *message,
+			  gpointer user_data)
+{
+	g_debug("[DAEMON] %s: Login %s %s", __func__, title, message);
+	return NULL;
+}
+
+static gboolean
+gebrm_server_op_ssh_question(GebrCommServer *server,
+			     const gchar *title,
+			     const gchar *message,
+			     gpointer user_data)
+{
+	g_debug("[DAEMON] %s: Question %s %s", __func__, title, message);
+	return TRUE;
+}
+
+static void
+gebrm_server_op_process_request(GebrCommServer *server,
+				GebrCommHttpMsg *request,
+				gpointer user_data)
+{
+	g_debug("[DAEMON] %s", __func__);
+}
+
+static void
+gebrm_server_op_process_response(GebrCommServer *server,
+				 GebrCommHttpMsg *request,
+				 GebrCommHttpMsg *response,
+				 gpointer user_data)
+{
+	g_debug("[DAEMON] %s", __func__);
+}
+
+static void
+gebrm_server_op_parse_messages(GebrCommServer *server,
+			       gpointer user_data)
+{
+	GList *link;
+	struct gebr_comm_message *message;
+	GebrmDaemon *daemon = user_data;
+
+	while ((link = g_list_last(server->socket->protocol->messages)) != NULL) {
+		message = link->data;
+
+		if (message->hash == gebr_comm_protocol_defs.err_def.code_hash) {
+			GList *arguments;
+
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 1)) == NULL)
+				goto err;
+
+			GString *last_error = g_list_nth_data(arguments, 0);
+			g_critical("Server '%s' reported the error '%s'.",
+				   server->address->str, last_error->str);
+
+			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
+		}
+		else if (message->hash == gebr_comm_protocol_defs.ret_def.code_hash) {
+			if (server->socket->protocol->waiting_ret_hash == gebr_comm_protocol_defs.ini_def.code_hash) {
+				GList *arguments;
+				GString *hostname;
+				GString *display_port;
+				gchar ** accounts;
+				GString *model_name;
+				GString *total_memory;
+				GString *nfsid;
+				GString *ncores;
+				GString *clock_cpu;
+
+				if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 9)) == NULL)
+					goto err;
+
+				hostname = g_list_nth_data(arguments, 0);
+				display_port = g_list_nth_data(arguments, 1);
+				accounts = g_strsplit(((GString *)g_list_nth_data(arguments, 3))->str, ",", 0);
+				model_name = g_list_nth_data (arguments, 4);
+				total_memory = g_list_nth_data (arguments, 5);
+				nfsid = g_list_nth_data (arguments, 6);
+				ncores = g_list_nth_data (arguments, 7);
+				clock_cpu = g_list_nth_data (arguments, 8);
+
+				g_strfreev(accounts);
+
+				server->ncores = atoi(ncores->str);
+				server->clock_cpu = atof(clock_cpu->str);
+
+				/* say we are logged */
+				server->socket->protocol->logged = TRUE;
+				g_string_assign(server->socket->protocol->hostname, hostname->str);
+
+				if (!gebr_comm_server_is_local(server)) {
+					if (display_port->len) {
+						if (!strcmp(display_port->str, "0"))
+							g_critical("Server '%s' could not add X11 authorization to redirect graphical output.",
+								   server->address->str);
+						else
+							gebr_comm_server_forward_x11(server, atoi(display_port->str));
+					} else 
+						g_critical("Server '%s' could not redirect graphical output.",
+							   server->address->str);
+				}
+
+				gebr_comm_protocol_socket_oldmsg_send(server->socket, FALSE,
+								      gebr_comm_protocol_defs.lst_def, 0);
+
+				gebr_comm_protocol_socket_oldmsg_split_free(arguments);
+			}
+		}
+		else if (message->hash == gebr_comm_protocol_defs.job_def.code_hash) {
+			GList *arguments;
+
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 23)) == NULL)
+				goto err;
+
+			GString *status          = g_list_nth_data(arguments, 1);
+			GString *start_date      = g_list_nth_data(arguments, 3);
+			GString *finish_date     = g_list_nth_data(arguments, 4);
+			GString *issues          = g_list_nth_data(arguments, 6);
+			GString *cmd_line        = g_list_nth_data(arguments, 7);
+			GString *output          = g_list_nth_data(arguments, 8);
+			GString *moab_jid        = g_list_nth_data(arguments, 10);
+			GString *rid             = g_list_nth_data(arguments, 11);
+			GString *frac            = g_list_nth_data(arguments, 12);
+			GString *n_procs         = g_list_nth_data(arguments, 14);
+			GString *task_percentage = g_list_nth_data(arguments, 22);
+
+			GebrmJobInfo info = {
+				.id		= ((GString*)g_list_nth_data(arguments, 11))->str,
+				.title		= ((GString*)g_list_nth_data(arguments,  2))->str,
+				.hostname	= ((GString*)g_list_nth_data(arguments,  5))->str,
+				.parent_id	= ((GString*)g_list_nth_data(arguments,  9))->str,
+				.servers	= ((GString*)g_list_nth_data(arguments, 13))->str,
+				.nice		= ((GString*)g_list_nth_data(arguments, 15))->str,
+				.input		= ((GString*)g_list_nth_data(arguments, 16))->str,
+				.output		= ((GString*)g_list_nth_data(arguments, 17))->str,
+				.error		= ((GString*)g_list_nth_data(arguments, 18))->str,
+				.submit_date	= ((GString*)g_list_nth_data(arguments, 19))->str,
+				.group		= ((GString*)g_list_nth_data(arguments, 20))->str,
+				.speed		= ((GString*)g_list_nth_data(arguments, 21))->str,
+			};
+
+			GebrmTask *task = gebrm_task_new(daemon, rid->str, frac->str);
+			gebrm_task_init_details(task, status, start_date, finish_date,
+						issues, cmd_line, moab_jid, output, n_procs);
+			gebrm_task_set_percentage(task, g_strtod(task_percentage->str, NULL));
+
+			g_signal_emit(daemon, signals[TASK_DEFINE], 0, task, &info);
+			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
+		} else if (message->hash == gebr_comm_protocol_defs.out_def.code_hash) {
+			GList *arguments;
+			GString *output, *rid, *frac;
+
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 4)) == NULL)
+				goto err;
+
+			output = g_list_nth_data(arguments, 1);
+			rid = g_list_nth_data(arguments, 2);
+			frac = g_list_nth_data(arguments, 3);
+
+			g_debug("[%s] OUT_DEF! %s", server->address->str, output->str);
+
+			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
+		} else if (message->hash == gebr_comm_protocol_defs.sta_def.code_hash) {
+			GList *arguments;
+			GString *status, *parameter, *rid, *frac;
+
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 5)) == NULL)
+				goto err;
+
+			status = g_list_nth_data(arguments, 1);
+			parameter = g_list_nth_data(arguments, 2);
+			rid = g_list_nth_data(arguments, 3);
+			frac = g_list_nth_data(arguments, 4);
+
+			g_debug("[%s] STA_DEF! %s", server->address->str, status->str);
+
+			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
+		}
+
+		gebr_comm_message_free(message);
+		server->socket->protocol->messages = g_list_delete_link(server->socket->protocol->messages, link);
+	}
+
+	return;
+
+err:	gebr_comm_message_free(message);
+	server->socket->protocol->messages = g_list_delete_link(server->socket->protocol->messages, link);
+
+	if (gebr_comm_server_is_local(server))
+		g_critical("Error communicating with the local server. Please reconnect.");
+	else
+		g_critical("Error communicating with the server '%s'. Please reconnect.", server->address->str);
+	gebr_comm_server_disconnect(server);
+
+}
+
+static struct gebr_comm_server_ops daemon_ops = {
+	.log_message      = gebrm_server_op_log_message,
+	.state_changed    = gebrm_server_op_state_changed,
+	.ssh_login        = gebrm_server_op_ssh_login,
+	.ssh_question     = gebrm_server_op_ssh_question,
+	.process_request  = gebrm_server_op_process_request,
+	.process_response = gebrm_server_op_process_response,
+	.parse_messages   = gebrm_server_op_parse_messages
+};
+/* }}} Operations for GebrCommServer */
 
 static void
 gebrm_daemon_get(GObject    *object,
@@ -65,8 +305,10 @@ gebrm_daemon_set(GObject      *object,
 
 	switch (prop_id)
 	{
-	case PROP_SERVER:
-		daemon->priv->server = g_value_get_pointer(value);
+	case PROP_ADDRESS:
+		daemon->priv->server = gebr_comm_server_new(g_value_get_string(value),
+							    &daemon_ops);
+		daemon->priv->server->user_data = daemon;
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -81,20 +323,40 @@ gebrm_daemon_class_init(GebrmDaemonClass *klass)
 	object_class->get_property = gebrm_daemon_get;
 	object_class->set_property = gebrm_daemon_set;
 
+	signals[STATE_CHANGE] =
+		g_signal_new("state-change",
+			     G_OBJECT_CLASS_TYPE (object_class),
+			     G_SIGNAL_RUN_FIRST,
+			     G_STRUCT_OFFSET(GebrmDaemonClass, state_change),
+			     NULL, NULL,
+			     g_cclosure_marshal_VOID__INT,
+			     G_TYPE_NONE,
+			     1, G_TYPE_INT);
+
+	signals[TASK_DEFINE] =
+		g_signal_new("task-define",
+			     G_OBJECT_CLASS_TYPE (object_class),
+			     G_SIGNAL_RUN_FIRST,
+			     G_STRUCT_OFFSET(GebrmDaemonClass, task_define),
+			     NULL, NULL,
+			     gebrm_cclosure_marshal_VOID__OBJECT_POINTER,
+			     G_TYPE_NONE,
+			     2, GEBRM_TYPE_TASK, G_TYPE_POINTER);
+
 	g_object_class_install_property(object_class,
 					PROP_ADDRESS,
 					g_param_spec_string("address",
 							    "Address",
 							    "Server address",
 							    NULL,
-							    G_PARAM_READABLE));
+							    G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 
 	g_object_class_install_property(object_class,
 					PROP_SERVER,
 					g_param_spec_pointer("server",
 							     "Server",
 							     "Server",
-							     G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+							     G_PARAM_READABLE));
 
 	g_type_class_add_private(klass, sizeof(GebrmDaemonPriv));
 }
@@ -110,10 +372,10 @@ gebrm_daemon_init(GebrmDaemon *daemon)
 }
 
 GebrmDaemon *
-gebrm_daemon_new(GebrCommServer *server)
+gebrm_daemon_new(const gchar *address)
 {
 	return g_object_new(GEBRM_TYPE_DAEMON,
-			    "server", server,
+			    "address", address,
 			    NULL);
 }
 
@@ -162,4 +424,16 @@ void
 gebrm_daemon_connect(GebrmDaemon *daemon)
 {
 	gebr_comm_server_connect(daemon->priv->server, FALSE);
+}
+
+void
+gebrm_daemon_disconnect(GebrmDaemon *daemon)
+{
+	gebr_comm_server_disconnect(daemon->priv->server);
+}
+
+GebrCommServer *
+gebrm_daemon_get_server(GebrmDaemon *daemon)
+{
+	return daemon->priv->server;
 }

@@ -21,6 +21,7 @@
 #include <config.h>
 #include "gebrm-app.h"
 #include "gebrm-daemon.h"
+#include "gebrm-job.h"
 
 #include <gio/gio.h>
 #include <stdlib.h>
@@ -64,19 +65,26 @@ struct _GebrmAppPriv {
 	GList *connections;
 	GList *daemons;
 
-	gint finished_starting_pipe[2];
-	gchar buffer[1024];
+	// Job controller
+	GHashTable *jobs;
 };
 
-/* Operations for GebrCommServer {{{ */
-static void
-gebrm_server_op_log_message(GebrCommServer *server,
-			    GebrLogMessageType type,
-			    const gchar *message,
-			    gpointer user_data)
+
+// Refactor this method to GebrmJobController {{{
+static GebrmJob *
+gebrm_app_job_controller_find(GebrmApp *app, const gchar *id)
 {
-	g_debug("[DAEMON] %s: (type: %d) %s", __func__, type, message);
+	return g_hash_table_lookup(app->priv->jobs, id);
 }
+
+static void
+gebrm_app_job_controller_add(GebrmApp *app, GebrmJob *job)
+{
+	g_hash_table_insert(app->priv->jobs,
+			    g_strdup(gebrm_job_get_id(job)),
+			    job);
+}
+// }}}
 
 static void
 send_server_status_message(GebrCommProtocolSocket *socket,
@@ -90,225 +98,44 @@ send_server_status_message(GebrCommProtocolSocket *socket,
 }
 
 static void
-gebrm_server_op_state_changed(GebrCommServer *server,
-			      gpointer user_data)
+gebrm_app_job_controller_on_task_def(GebrmDaemon *daemon,
+				     GebrmTask *task,
+				     GebrmJobInfo *job_info,
+				     GebrmApp* app)
 {
-	GebrmApp *app = user_data;
-	const gchar *state = gebr_comm_server_state_to_string(server->state);
-	g_debug("[DAEMON] %s: State %s", __func__, state);
+	const gchar *rid = gebrm_task_get_job_id(task);
+	GebrmJob *job = gebrm_app_job_controller_find(app, rid);
 
+	if (!job)
+		job = gebrm_job_new();
+	gebrm_job_init_details(job, job_info);
+	gebrm_job_append_task(job, task);
+}
+
+static void
+gebrm_app_daemon_on_state_change(GebrmDaemon *daemon,
+				 GebrCommServerState state,
+				 GebrmApp *app)
+{
 	for (GList *i = app->priv->connections; i; i = i->next)
-		send_server_status_message(i->data, server);
-}
-
-static GString *
-gebrm_server_op_ssh_login(GebrCommServer *server,
-			  const gchar *title,
-			  const gchar *message,
-			  gpointer user_data)
-{
-	g_debug("[DAEMON] %s: Login %s %s", __func__, title, message);
-	return NULL;
-}
-
-static gboolean
-gebrm_server_op_ssh_question(GebrCommServer *server,
-			     const gchar *title,
-			     const gchar *message,
-			     gpointer user_data)
-{
-	g_debug("[DAEMON] %s: Question %s %s", __func__, title, message);
-	return TRUE;
+		send_server_status_message(i->data, gebrm_daemon_get_server(daemon));
 }
 
 static void
-gebrm_server_op_process_request(GebrCommServer *server,
-				GebrCommHttpMsg *request,
-				gpointer user_data)
+gebrm_app_finalize(GObject *object)
 {
-	g_debug("[DAEMON] %s", __func__);
+	GebrmApp *app = GEBRM_APP(object);
+	g_hash_table_unref(app->priv->jobs);
+	g_list_free(app->priv->connections);
+	g_list_free(app->priv->daemons);
+	G_OBJECT_CLASS(gebrm_app_parent_class)->finalize(object);
 }
-
-static void
-gebrm_server_op_process_response(GebrCommServer *server,
-				 GebrCommHttpMsg *request,
-				 GebrCommHttpMsg *response,
-				 gpointer user_data)
-{
-	g_debug("[DAEMON] %s", __func__);
-}
-
-static void
-gebrm_server_op_parse_messages(GebrCommServer *server,
-			       gpointer user_data)
-{
-	GList *link;
-	struct gebr_comm_message *message;
-
-	while ((link = g_list_last(server->socket->protocol->messages)) != NULL) {
-		message = link->data;
-
-		if (message->hash == gebr_comm_protocol_defs.err_def.code_hash) {
-			GList *arguments;
-
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 1)) == NULL)
-				goto err;
-
-			GString *last_error = g_list_nth_data(arguments, 0);
-			g_critical("Server '%s' reported the error '%s'.",
-				   server->address->str, last_error->str);
-
-			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
-		}
-		else if (message->hash == gebr_comm_protocol_defs.ret_def.code_hash) {
-			if (server->socket->protocol->waiting_ret_hash == gebr_comm_protocol_defs.ini_def.code_hash) {
-				GList *arguments;
-				GString *hostname;
-				GString *display_port;
-				gchar ** accounts;
-				GString *model_name;
-				GString *total_memory;
-				GString *nfsid;
-				GString *ncores;
-				GString *clock_cpu;
-
-				if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 9)) == NULL)
-					goto err;
-
-				hostname = g_list_nth_data(arguments, 0);
-				display_port = g_list_nth_data(arguments, 1);
-				accounts = g_strsplit(((GString *)g_list_nth_data(arguments, 3))->str, ",", 0);
-				model_name = g_list_nth_data (arguments, 4);
-				total_memory = g_list_nth_data (arguments, 5);
-				nfsid = g_list_nth_data (arguments, 6);
-				ncores = g_list_nth_data (arguments, 7);
-				clock_cpu = g_list_nth_data (arguments, 8);
-
-				g_strfreev(accounts);
-
-				server->ncores = atoi(ncores->str);
-				server->clock_cpu = atof(clock_cpu->str);
-
-				/* say we are logged */
-				server->socket->protocol->logged = TRUE;
-				g_string_assign(server->socket->protocol->hostname, hostname->str);
-
-				if (!gebr_comm_server_is_local(server)) {
-					if (display_port->len) {
-						if (!strcmp(display_port->str, "0"))
-							g_critical("Server '%s' could not add X11 authorization to redirect graphical output.",
-								   server->address->str);
-						else
-							gebr_comm_server_forward_x11(server, atoi(display_port->str));
-					} else 
-						g_critical("Server '%s' could not redirect graphical output.",
-							   server->address->str);
-				}
-
-				gebr_comm_protocol_socket_oldmsg_send(server->socket, FALSE,
-								      gebr_comm_protocol_defs.lst_def, 0);
-
-				gebr_comm_protocol_socket_oldmsg_split_free(arguments);
-			}
-			else if (message->hash == gebr_comm_protocol_defs.job_def.code_hash) {
-				GList *arguments;
-				GString *hostname, *status, *title, *start_date, *finish_date, *issues, *cmd_line,
-					*output, *queue, *moab_jid, *rid, *frac, *server_list, *n_procs, *niceness,
-					*input_file, *output_file, *log_file, *last_run_date, *server_group_name,
-					*job_percentage, *exec_speed;
-
-				if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 23)) == NULL)
-					goto err;
-
-				status = g_list_nth_data(arguments, 1);
-				title = g_list_nth_data(arguments, 2);
-				start_date = g_list_nth_data(arguments, 3);
-				finish_date = g_list_nth_data(arguments, 4);
-				hostname = g_list_nth_data(arguments, 5);
-				issues = g_list_nth_data(arguments, 6);
-				cmd_line = g_list_nth_data(arguments, 7);
-				output = g_list_nth_data(arguments, 8);
-				queue = g_list_nth_data(arguments, 9);
-				moab_jid = g_list_nth_data(arguments, 10);
-				rid = g_list_nth_data(arguments, 11);
-				frac = g_list_nth_data(arguments, 12);
-				server_list = g_list_nth_data(arguments, 13);
-				n_procs = g_list_nth_data(arguments, 14);
-				niceness = g_list_nth_data(arguments, 15);
-				input_file = g_list_nth_data(arguments, 16);
-				output_file= g_list_nth_data(arguments, 17);
-				log_file = g_list_nth_data(arguments, 18);
-				last_run_date = g_list_nth_data(arguments, 19);
-				server_group_name = g_list_nth_data(arguments, 20);
-				exec_speed = g_list_nth_data(arguments, 21);
-				job_percentage = g_list_nth_data(arguments, 22);
-
-				g_debug("[%s] JOB DEF! %s", server->address->str, title->str);
-
-				gebr_comm_protocol_socket_oldmsg_split_free(arguments);
-			}
-		} else if (message->hash == gebr_comm_protocol_defs.out_def.code_hash) {
-			GList *arguments;
-			GString *output, *rid, *frac;
-
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 4)) == NULL)
-				goto err;
-
-			output = g_list_nth_data(arguments, 1);
-			rid = g_list_nth_data(arguments, 2);
-			frac = g_list_nth_data(arguments, 3);
-
-			g_debug("[%s] OUT_DEF! %s", server->address->str, output->str);
-
-			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
-		} else if (message->hash == gebr_comm_protocol_defs.sta_def.code_hash) {
-			GList *arguments;
-			GString *status, *parameter, *rid, *frac;
-
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 5)) == NULL)
-				goto err;
-
-			status = g_list_nth_data(arguments, 1);
-			parameter = g_list_nth_data(arguments, 2);
-			rid = g_list_nth_data(arguments, 3);
-			frac = g_list_nth_data(arguments, 4);
-
-			g_debug("[%s] STA_DEF! %s", server->address->str, status->str);
-
-			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
-		}
-
-		gebr_comm_message_free(message);
-		server->socket->protocol->messages = g_list_delete_link(server->socket->protocol->messages, link);
-	}
-
-	return;
-
-err:	gebr_comm_message_free(message);
-	server->socket->protocol->messages = g_list_delete_link(server->socket->protocol->messages, link);
-
-	if (gebr_comm_server_is_local(server))
-		g_critical("Error communicating with the local server. Please reconnect.");
-	else
-		g_critical("Error communicating with the server '%s'. Please reconnect.", server->address->str);
-	gebr_comm_server_disconnect(server);
-
-}
-
-static struct gebr_comm_server_ops daemon_ops = {
-	.log_message      = gebrm_server_op_log_message,
-	.state_changed    = gebrm_server_op_state_changed,
-	.ssh_login        = gebrm_server_op_ssh_login,
-	.ssh_question     = gebrm_server_op_ssh_question,
-	.process_request  = gebrm_server_op_process_request,
-	.process_response = gebrm_server_op_process_response,
-	.parse_messages   = gebrm_server_op_parse_messages
-};
-/* }}} Operations for GebrCommServer */
 
 static void
 gebrm_app_class_init(GebrmAppClass *klass)
 {
+	GObjectClass *object_class = G_OBJECT_CLASS(klass);
+	object_class->finalize = gebrm_app_finalize;
 	g_type_class_add_private(klass, sizeof(GebrmAppPriv));
 }
 
@@ -321,6 +148,9 @@ gebrm_app_init(GebrmApp *app)
 	app->priv->main_loop = g_main_loop_new(NULL, FALSE);
 	app->priv->connections = NULL;
 	app->priv->daemons = NULL;
+	app->priv->jobs = g_hash_table_new_full(g_str_hash, g_str_equal,
+						g_free, NULL);
+
 	gchar *path = g_build_filename(g_get_home_dir(),
 				       GEBRM_LIST_OF_SERVERS_PATH,
 				       GEBRM_LIST_OF_SERVERS_FILENAME, NULL);
@@ -362,9 +192,11 @@ gebrm_add_server_to_list(GebrmApp *app,
 			return NULL;
 	}
 
-	GebrCommServer *server = gebr_comm_server_new(address, &daemon_ops);
-	server->user_data = app;
-	daemon = gebrm_daemon_new(server);
+	daemon = gebrm_daemon_new(address);
+	g_signal_connect(daemon, "state-change",
+			 G_CALLBACK(gebrm_app_daemon_on_state_change), app);
+	g_signal_connect(daemon, "task-define",
+			 G_CALLBACK(gebrm_app_job_controller_on_task_def), app);
 
 	gchar **tagsv = tags ? g_strsplit(tags, ",", -1) : NULL;
 	if (tagsv) {
@@ -394,23 +226,16 @@ get_comm_servers_list(GebrmApp *app)
 static gboolean
 gebrm_remove_server_from_list(GebrmApp *app, const gchar *addr)
 {
-	gboolean succ = FALSE;
-
-	gint compare_daemons(GebrCommServer *a, GebrCommServer *b){
-		return g_strcmp0(a->address->str, b->address->str);
+	for (GList *i = app->priv->daemons; i; i = i->next) {
+		GebrmDaemon *daemon = i->data;
+		if (g_strcmp0(gebrm_daemon_get_address(daemon), addr) == 0) {
+			app->priv->daemons = g_list_delete_link(app->priv->daemons, i);
+			gebrm_daemon_disconnect(daemon);
+			g_object_unref(daemon);
+			return TRUE;
+		}
 	}
-
-	if (!g_list_find_custom(app->priv->daemons, daemon, (GCompareFunc)compare_daemons )){
-		GebrCommServer *daemon = gebr_comm_server_new(addr, &daemon_ops);
-		daemon->user_data = app;
-		app->priv->daemons = g_list_remove(app->priv->daemons,
-						    daemon);
-		gebr_comm_server_disconnect(daemon);
-		gebr_comm_server_free(daemon);
-		g_debug("Removed server %s", addr);
-		succ =  TRUE;
-	}
-	return succ;
+	return FALSE;
 }
 
 static void
@@ -434,18 +259,16 @@ on_client_request(GebrCommProtocolSocket *socket,
 		}
 		else if (g_str_has_prefix(request->url->str, "/run")) {
 			GebrCommJsonContent *json;
-			static gint id = 0;
-
 			gchar *tmp = strchr(request->url->str, '?') + 1;
 			gchar **params = g_strsplit(tmp, ";", -1);
-			gchar *parent_rid, *speed, *nice, *group;
+			gchar *parent_id, *speed, *nice, *group;
 
 			g_debug("I will run this flow:");
 
-			parent_rid = strchr(params[0], '=') + 1;
-			speed      = strchr(params[1], '=') + 1;
-			nice       = strchr(params[2], '=') + 1;
-			group      = strchr(params[3], '=') + 1;
+			parent_id = strchr(params[0], '=') + 1;
+			speed     = strchr(params[1], '=') + 1;
+			nice      = strchr(params[2], '=') + 1;
+			group     = strchr(params[3], '=') + 1;
 
 			json = gebr_comm_json_content_new(request->content->str);
 			GString *value = gebr_comm_json_content_to_gstring(json);
@@ -467,14 +290,32 @@ on_client_request(GebrCommProtocolSocket *socket,
 			GList *servers = get_comm_servers_list(app);
 			GebrCommRunner *runner = gebr_comm_runner_new(GEBR_GEOXML_DOCUMENT(*pflow),
 								      servers,
-								      parent_rid, speed, nice, group,
+								      parent_id, speed, nice, group,
 								      validator);
 			g_list_free(servers);
 
-			gchar *idstr = g_strdup_printf("%d", id++);
-			gebr_comm_runner_run_async(runner, idstr);
+			gchar *title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(*pflow));
+
+			GebrmJobInfo info = { 0, };
+			info.title = title;
+			info.hostname = "FixHostName";
+			info.parent_id = parent_id;
+			info.servers = "";
+			info.nice = nice;
+			info.input = gebr_geoxml_flow_io_get_input(*pflow);
+			info.output = gebr_geoxml_flow_io_get_output(*pflow);
+			info.error = gebr_geoxml_flow_io_get_error(*pflow);
+			info.group = group;
+			info.speed = speed;
+
+			GebrmJob *job = gebrm_job_new();
+			gebrm_job_init_details(job, &info);
+			gebrm_app_job_controller_add(app, job);
+
+			g_free(title);
+
+			gebr_comm_runner_run_async(runner, gebrm_job_get_id(job));
 			//gebr_validator_free(validator);
-			g_free(idstr);
 		}
 	}
 }

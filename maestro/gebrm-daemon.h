@@ -44,11 +44,17 @@ struct _GebrmDaemon {
 
 struct _GebrmDaemonClass {
 	GObjectClass parent_class;
+
+	void (*state_change) (GebrmDaemon *daemon,
+			      GebrCommServerState new_state);
+
+	void (*task_define) (GebrmDaemon *daemon,
+			     GObject *task);
 };
 
 GType gebrm_daemon_get_type(void) G_GNUC_CONST;
 
-GebrmDaemon *gebrm_daemon_new(GebrCommServer *server);
+GebrmDaemon *gebrm_daemon_new(const gchar *address);
 
 const gchar *gebrm_daemon_get_address(GebrmDaemon *daemon);
 
@@ -81,6 +87,10 @@ gchar *gebrm_daemon_get_tags(GebrmDaemon *daemon);
  * Connects to this @daemon.
  */
 void gebrm_daemon_connect(GebrmDaemon *daemon);
+
+void gebrm_daemon_disconnect(GebrmDaemon *daemon);
+
+GebrCommServer *gebrm_daemon_get_server(GebrmDaemon *daemon);
 
 G_END_DECLS
 

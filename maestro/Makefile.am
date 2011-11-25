@@ -15,6 +15,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 include $(top_srcdir)/Makefile.decl
 
+BUILT_SOURCES =
+EXTRA_DIST =
+CLEANFILES =
+DISTCLEANFILES =
+EXTRADIR =
+
 AM_CFLAGS = $(COMMON_CFLAGS)
 AM_CPPFLAGS =			\
 	$(GUI_CFLAGS)		\
@@ -50,6 +56,12 @@ libmaestro_la_SOURCES =        \
 	gebrm-daemon.h	       \
 	gebrm-job-controller.c \
 	gebrm-job-controller.h \
+	gebrm-job.c	       \
+	gebrm-job.h	       \
+	gebrm-marshal.c        \
+	gebrm-marshal.h        \
+	gebrm-task.c	       \
+	gebrm-task.h	       \
 	$(NULL)
 
 libmaestro_la_LIBADD =		\
@@ -60,3 +72,10 @@ libmaestro_la_LIBADD =		\
 	$(GEBR_COMM_LIBS)	\
 	$(GEBR_JSON_LIBS)	\
 	$(NULL)
+
+# glib-genmarshal rules
+glib_marshal_list = gebrm-marshal.list
+glib_marshal_prefix = gebrm_cclosure_marshal
+include $(top_srcdir)/Makefile.am.marshal
+
+EXTRA_DIST += gebrm-marshal.list
