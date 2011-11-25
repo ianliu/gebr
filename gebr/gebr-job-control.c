@@ -124,7 +124,7 @@ static void on_toggled_more_details(GtkToggleButton *button,
 
 static void gebr_jc_update_status_and_time(GebrJobControl *jc,
                                            GebrJob 	  *job,
-                                           enum JobStatus status);
+                                           GebrCommJobStatus status);
 
 static void on_text_view_populate_popup(GtkTextView * text_view, GtkMenu * menu, GebrJobControl *jc);
 
@@ -425,7 +425,7 @@ jobs_visible_for_status(GtkTreeModel *model,
                         GebrJobControl *jc)
 {
 	GtkTreeIter active;
-	enum JobStatus combo_status;
+	GebrCommJobStatus combo_status;
 	gchar *combo_text;
 
 	if (!gtk_combo_box_get_active_iter (jc->priv->status_combo, &active))
@@ -479,7 +479,7 @@ jobs_visible_for_status(GtkTreeModel *model,
 	if (!job)
 		return FALSE;
 
-	enum JobStatus status = gebr_job_get_status(job);
+	GebrCommJobStatus status = gebr_job_get_status(job);
 	gboolean visible = FALSE;
 
 	if (status == combo_status)
@@ -642,8 +642,8 @@ on_job_output(GebrJob *job,
 
 static void
 on_job_status(GebrJob *job,
-	      enum JobStatus old_status,
-	      enum JobStatus new_status,
+	      GebrCommJobStatus old_status,
+	      GebrCommJobStatus new_status,
 	      const gchar *parameter,
 	      GebrJobControl *jc)
 {
@@ -996,7 +996,7 @@ time_column_data_func(GtkTreeViewColumn *tree_column,
 static void
 gebr_jc_update_status_and_time(GebrJobControl *jc,
                                GebrJob 	      *job,
-                               enum JobStatus status)
+                               GebrCommJobStatus status)
 {
 	const gchar *start_date = gebr_job_get_start_date(job);
 	const gchar *finish_date = gebr_job_get_finish_date(job);
@@ -1166,7 +1166,7 @@ gebr_job_control_load_details(GebrJobControl *jc,
 	GtkImage *info_button_image;
 	GtkLabel *input_file, *output_file, *log_file, *job_group;
 	gchar *input_file_str, *output_file_str, *log_file_str;
-	enum JobStatus status = gebr_job_get_status(job);
+	GebrCommJobStatus status = gebr_job_get_status(job);
 
 	input_file = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "input_label"));
 	output_file = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "output_label"));
@@ -1262,7 +1262,7 @@ update_tree_view(gpointer data)
 
 	GebrJob *job = get_selected_job(jc);
 	if (job) {
-		enum JobStatus status = gebr_job_get_status(job);
+		GebrCommJobStatus status = gebr_job_get_status(job);
 		if (status == JOB_STATUS_RUNNING)
 			gebr_jc_update_status_and_time(jc, job, status);
 	}

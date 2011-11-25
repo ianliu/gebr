@@ -40,7 +40,7 @@ struct _GebrJobPriv {
 	gint exec_speed;
 	gint n_servers;
 	GtkTreeIter iter;
-	enum JobStatus status;
+	GebrCommJobStatus status;
 	gboolean has_issued;
 	GtkTreeModel *model;
 	gchar *input_file;
@@ -220,7 +220,7 @@ gebr_job_is_queueable(GebrJob *job)
 gboolean
 gebr_job_can_close(GebrJob *job)
 {
-	enum JobStatus status = gebr_job_get_partial_status(job);
+	GebrCommJobStatus status = gebr_job_get_partial_status(job);
 
 	return status == JOB_STATUS_FINISHED
 		|| status == JOB_STATUS_FAILED
@@ -230,7 +230,7 @@ gebr_job_can_close(GebrJob *job)
 gboolean
 gebr_job_can_kill(GebrJob *job)
 {
-	enum JobStatus status = gebr_job_get_partial_status(job);
+	GebrCommJobStatus status = gebr_job_get_partial_status(job);
 
 	return status == JOB_STATUS_QUEUED
 		|| status == JOB_STATUS_RUNNING;
@@ -244,7 +244,7 @@ gebr_job_change_task_status(GebrTask *task,
                             GebrJob *job)
 {
 	GList *i;
-	enum JobStatus old = job->priv->status;
+	GebrCommJobStatus old = job->priv->status;
 	gint frac, total, ntasks;
 
 	gebr_task_get_fraction(task, &frac, &total);
@@ -315,7 +315,7 @@ static void
 on_task_destroy(GebrJob *job,
 		GebrTask *finalized_task)
 {
-	enum JobStatus old_status = job->priv->status;
+	GebrCommJobStatus old_status = job->priv->status;
 	job->priv->status = JOB_STATUS_INITIAL;
 	job->priv->tasks = g_list_remove(job->priv->tasks, finalized_task);
 
@@ -422,7 +422,7 @@ gebr_job_append_task(GebrJob *job, GebrTask *task)
 	gint frac, total;
 	gebr_task_get_fraction(task, &frac, &total);
 	const gchar *issues = gebr_task_get_issues(task);
-	enum JobStatus status = gebr_task_get_status(task);
+	GebrCommJobStatus status = gebr_task_get_status(task);
 
 	g_signal_connect(task, "status-change", G_CALLBACK(gebr_job_change_task_status), job);
 	g_signal_connect(task, "output", G_CALLBACK(gebr_job_append_task_output), job);
@@ -456,7 +456,7 @@ gebr_job_append_task(GebrJob *job, GebrTask *task)
 	}
 }
 
-enum JobStatus
+GebrCommJobStatus
 gebr_job_get_status(GebrJob *job)
 {
 	return job->priv->status;
@@ -803,7 +803,7 @@ gebr_job_get_list_of_tasks(GebrJob *job)
 	return job->priv->tasks;
 }
 
-enum JobStatus
+GebrCommJobStatus
 gebr_job_get_partial_status(GebrJob *job)
 {
 	if (!job->priv->tasks)
@@ -820,7 +820,7 @@ gebr_job_get_partial_status(GebrJob *job)
 
 	gint running = 0;
 	for (GList *i = job->priv->tasks; i; i = i->next) {
-		enum JobStatus sta = gebr_task_get_status(i->data);
+		GebrCommJobStatus sta = gebr_task_get_status(i->data);
 		switch (sta) {
 		case JOB_STATUS_FAILED:
 		case JOB_STATUS_FINISHED:

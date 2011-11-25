@@ -36,19 +36,21 @@ GType gebr_comm_job_get_type(void);
 typedef struct _GebrCommJob GebrCommJob;
 typedef struct _GebrCommJobClass GebrCommJobClass;
 
+typedef enum {
+	JOB_STATUS_INITIAL = 0, /* before the sending of jid to clients */
+	JOB_STATUS_QUEUED,
+	JOB_STATUS_FAILED,
+	JOB_STATUS_RUNNING,
+	JOB_STATUS_FINISHED,
+	JOB_STATUS_CANCELED,
+	JOB_STATUS_REQUEUED, /* false status */
+	JOB_STATUS_ISSUED, /* false status */
+} GebrCommJobStatus;
+
 struct _GebrCommJob {
 	GObject parent;
 
-	enum JobStatus {
-		JOB_STATUS_INITIAL = 0, /* before the sending of jid to clients */
-		JOB_STATUS_QUEUED,
-		JOB_STATUS_FAILED,
-		JOB_STATUS_RUNNING,
-		JOB_STATUS_FINISHED,
-		JOB_STATUS_CANCELED,
-		JOB_STATUS_REQUEUED, /* false status */
-		JOB_STATUS_ISSUED, /* false status */
-	} status;
+	GebrCommJobStatus status;
 
 	/* sent by the client */
 	GString *client_hostname; // the hostname of the client that ran it

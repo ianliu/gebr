@@ -43,7 +43,7 @@ static guint signals[N_SIGNALS] = { 0, };
 
 struct _GebrTaskPriv {
 	GebrServer *server;
-	enum JobStatus status;
+	GebrCommJobStatus status;
 	gchar *rid;
 	gint frac;
 	gint total;
@@ -209,9 +209,9 @@ gebr_task_init_details(GebrTask *task,
 	g_string_assign(task->priv->last_run_date, last_run_date->str);
 }
 
-enum JobStatus job_translate_status(GString * status)
+GebrCommJobStatus job_translate_status(GString * status)
 {
-	enum JobStatus translated_status;
+	GebrCommJobStatus translated_status;
 
 	if (!strcmp(status->str, "unknown"))
 		translated_status = JOB_STATUS_INITIAL;
@@ -258,7 +258,7 @@ gebr_task_get_fraction(GebrTask *task, gint *frac, gint *total)
 		*total = task->priv->total;
 }
 
-enum JobStatus
+GebrCommJobStatus
 gebr_task_get_status(GebrTask *task)
 {
 	return task->priv->status;
@@ -274,10 +274,10 @@ gebr_task_emit_output_signal(GebrTask *task,
 
 void
 gebr_task_emit_status_changed_signal(GebrTask *task,
-				     enum JobStatus new_status,
+				     GebrCommJobStatus new_status,
 				     const gchar *parameter)
 {
-	enum JobStatus old_status;
+	GebrCommJobStatus old_status;
 
 	old_status = task->priv->status;
 	task->priv->status = new_status;

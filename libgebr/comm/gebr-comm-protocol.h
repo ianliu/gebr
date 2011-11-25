@@ -24,9 +24,8 @@
 
 G_BEGIN_DECLS
 
-/* DEPRECATED */
-
 extern struct gebr_comm_protocol_defs gebr_comm_protocol_defs;
+
 #define PROTOCOL_VERSION "1.1.0"
 
 struct gebr_comm_message_def {

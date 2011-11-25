@@ -197,7 +197,7 @@ parse_messages(GebrCommServer *comm_server,
 			status = g_list_nth_data(arguments, 1);
 			parameter = g_list_nth_data(arguments, 2);
 
-			enum JobStatus status_enum;
+			GebrCommJobStatus status_enum;
 			status_enum = job_translate_status(status);
 
 			g_debug("STATUS from %s: %s", rid->str, status->str);

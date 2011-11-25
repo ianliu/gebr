@@ -100,7 +100,7 @@ void gebr_job_set_title(GebrJob *job, const gchar *title);
 
 const gchar *gebr_job_get_queue(GebrJob *job);
 
-enum JobStatus gebr_job_get_status(GebrJob *job);
+GebrCommJobStatus gebr_job_get_status(GebrJob *job);
 
 const gchar *gebr_job_get_id(GebrJob *job);
 
@@ -171,7 +171,7 @@ GebrTask *gebr_job_get_task_from_server(GebrJob *job,
  * gebr_job_get_partial_status() returns the same value as
  * gebr_job_get_status().
  */
-enum JobStatus gebr_job_get_partial_status(GebrJob *job);
+GebrCommJobStatus gebr_job_get_partial_status(GebrJob *job);
 
 /**
  * gebr_job_append_child:

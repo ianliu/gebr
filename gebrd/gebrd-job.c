@@ -179,7 +179,7 @@ moab_process_read_stdout(GebrCommProcess *process, GebrdJob *job)
 /*
  * \internal
  */
-static const gchar *status_enum_to_string(enum JobStatus status)
+static const gchar *status_enum_to_string(GebrCommJobStatus status)
 {
 	static const gchar * enum_to_string [] = {
 		"unknown", "queued", "failed", "running", "finished", "canceled", "requeued", "issued", NULL };
@@ -191,7 +191,7 @@ static const gchar *status_enum_to_string(enum JobStatus status)
  */
 static void job_status_notify_finished(GebrdJob *job)
 {
-	enum JobStatus new_status = (job->user_finished == FALSE) ? JOB_STATUS_FINISHED : JOB_STATUS_CANCELED;
+	GebrCommJobStatus new_status = (job->user_finished == FALSE) ? JOB_STATUS_FINISHED : JOB_STATUS_CANCELED;
 	if (new_status == job->parent.status)
 		return;
 
@@ -473,7 +473,7 @@ gebrd_job_get_parent(GebrdJob *job)
 	return job_find(job->parent.queue_id);
 }
 
-void job_status_set(GebrdJob *job, enum JobStatus status)
+void job_status_set(GebrdJob *job, GebrCommJobStatus status)
 {
 	if (job->parent.status == status) {
 		//occurs frequently with netuno
@@ -504,7 +504,7 @@ void job_status_set(GebrdJob *job, enum JobStatus status)
 	}
 }
 
-void job_status_notify(GebrdJob *job, enum JobStatus status, const gchar *_parameter, ...)
+void job_status_notify(GebrdJob *job, GebrCommJobStatus status, const gchar *_parameter, ...)
 {
 	va_list argp;
 	va_start(argp, _parameter);

@@ -331,7 +331,7 @@ client_parse_server_messages(GebrCommServer *comm_server,
 			task = gebr_task_find(rid->str, frac->str);
 
 			if (task != NULL) {
-				enum JobStatus status_enum;
+				GebrCommJobStatus status_enum;
 
 				status_enum = job_translate_status(status);
 				gebr_task_emit_status_changed_signal(task, status_enum, parameter->str);

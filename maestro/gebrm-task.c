@@ -41,7 +41,7 @@ static guint signals[N_SIGNALS] = { 0, };
 
 struct _GebrmTaskPriv {
 	GebrmDaemon *daemon;
-	enum JobStatus status;
+	GebrCommJobStatus status;
 	gchar *rid;
 	gint n_procs;
 	gint frac;
@@ -199,9 +199,9 @@ gebrm_task_init_details(GebrmTask *task,
 	g_string_assign(task->priv->output, output->str);
 }
 
-enum JobStatus gebrm_task_translate_status(GString *status)
+GebrCommJobStatus gebrm_task_translate_status(GString *status)
 {
-	enum JobStatus translated_status;
+	GebrCommJobStatus translated_status;
 
 	if (!strcmp(status->str, "unknown"))
 		translated_status = JOB_STATUS_INITIAL;
@@ -250,7 +250,7 @@ gebrm_task_get_fraction(GebrmTask *task, gint *frac, gint *total)
 		*total = task->priv->total;
 }
 
-enum JobStatus
+GebrCommJobStatus
 gebrm_task_get_status(GebrmTask *task)
 {
 	return task->priv->status;
@@ -266,10 +266,10 @@ gebrm_task_emit_output_signal(GebrmTask *task,
 
 void
 gebrm_task_emit_status_changed_signal(GebrmTask *task,
-				     enum JobStatus new_status,
+				     GebrCommJobStatus new_status,
 				     const gchar *parameter)
 {
-	enum JobStatus old_status;
+	GebrCommJobStatus old_status;
 
 	old_status = task->priv->status;
 	task->priv->status = new_status;

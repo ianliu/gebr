@@ -104,11 +104,11 @@ void job_free(GebrdJob *job);
 
 /**
  */
-void job_status_set(GebrdJob *job, enum JobStatus status);
+void job_status_set(GebrdJob *job, GebrCommJobStatus status);
 /**
  * Change status and notify clients about it
  */
-void job_status_notify(GebrdJob *job, enum JobStatus status, const gchar *parameter, ...);
+void job_status_notify(GebrdJob *job, GebrCommJobStatus status, const gchar *parameter, ...);
 /**
  * Remember not to send any message to clients here as the job wasn't created
  */

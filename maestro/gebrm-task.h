@@ -83,7 +83,7 @@ void gebrm_task_get_fraction(GebrmTask *task,
  *
  * Translate a @status protocol string to a status enumeration .
  */
-enum JobStatus gebrm_task_translate_status(GString *status);
+GebrCommJobStatus gebrm_task_translate_status(GString *status);
 
 /**
  */
@@ -98,13 +98,13 @@ gebrm_task_init_details(GebrmTask *task,
 			GString   *output,
 			GString   *n_procs);
 
-enum JobStatus gebrm_task_get_status(GebrmTask *task);
+GebrCommJobStatus gebrm_task_get_status(GebrmTask *task);
 
 void gebrm_task_emit_output_signal(GebrmTask *task,
 				  const gchar *output);
 
 void gebrm_task_emit_status_changed_signal(GebrmTask *task,
-					  enum JobStatus new_status,
+					  GebrCommJobStatus new_status,
 					  const gchar *parameter);
 
 const gchar *gebrm_task_get_job_id(GebrmTask *task);
