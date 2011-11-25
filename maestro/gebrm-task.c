@@ -165,6 +165,8 @@ gebrm_task_new(GebrmDaemon  *server,
 
 	g_free(frac);
 
+	g_debug("Inserting task %s, rid %s into TASKS hash table (%s)",
+		_frac, rid, gebrm_task_get_id(task));
 	g_hash_table_insert(get_tasks_map(), gebrm_task_get_id(task), task);
 
 	return task;
@@ -188,7 +190,7 @@ gebrm_task_init_details(GebrmTask *task,
 			GString   *n_procs)
 {
 	task->priv->n_procs = atoi(n_procs->str);
-	task->priv->status = job_translate_status(status);
+	task->priv->status = gebrm_task_translate_status(status);
 	g_string_assign(task->priv->start_date, start_date->str);
 	g_string_assign(task->priv->finish_date, finish_date->str);
 	g_string_assign(task->priv->issues, issues->str);
@@ -197,7 +199,7 @@ gebrm_task_init_details(GebrmTask *task,
 	g_string_assign(task->priv->output, output->str);
 }
 
-enum JobStatus job_translate_status(GString * status)
+enum JobStatus gebrm_task_translate_status(GString *status)
 {
 	enum JobStatus translated_status;
 
@@ -229,6 +231,8 @@ gebrm_task_find(const gchar *rid, const gchar *frac)
 	g_return_val_if_fail(rid != NULL && frac != NULL, NULL);
 
 	gchar *tid = build_task_id(rid, frac);
+	g_debug("Looking for task %s, rid %s (%s)",
+		frac, rid, tid);
 	GebrmTask *task = g_hash_table_lookup(get_tasks_map(), tid);
 	g_free(tid);
 	return task;
@@ -365,4 +369,5 @@ gebrm_task_get_percentage(GebrmTask *task)
 gint
 gebrm_task_get_nprocs(GebrmTask *task)
 {
+	return task->priv->n_procs;
 }

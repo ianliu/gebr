@@ -172,6 +172,38 @@ parse_messages(GebrCommServer *comm_server,
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}
+		else if (message->hash == gebr_comm_protocol_defs.out_def.code_hash) {
+			GList *arguments;
+			GString *output, *rid;
+
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
+				goto err;
+
+			rid = g_list_nth_data(arguments, 0);
+			output = g_list_nth_data(arguments, 1);
+			g_debug("OUTPUT from %s: %s", rid->str, output->str);
+
+			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
+		}
+		else if (message->hash == gebr_comm_protocol_defs.sta_def.code_hash) {
+			GList *arguments;
+			GString *status, *parameter, *rid;
+
+			/* organize message data */
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 3)) == NULL)
+				goto err;
+
+			rid = g_list_nth_data(arguments, 0);
+			status = g_list_nth_data(arguments, 1);
+			parameter = g_list_nth_data(arguments, 2);
+
+			enum JobStatus status_enum;
+			status_enum = job_translate_status(status);
+
+			g_debug("STATUS from %s: %s", rid->str, status->str);
+
+			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
+		}
 
 		gebr_comm_message_free(message);
 		comm_server->socket->protocol->messages = g_list_delete_link(comm_server->socket->protocol->messages, link);

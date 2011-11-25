@@ -306,17 +306,12 @@ client_parse_server_messages(GebrCommServer *comm_server,
 			GebrTask *task;
 
 			/* organize message data */
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 4)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
 				goto err;
+
+			rid = g_list_nth_data(arguments, 0);
 			output = g_list_nth_data(arguments, 1);
-			rid = g_list_nth_data(arguments, 2);
-			frac = g_list_nth_data(arguments, 3);
-
-			task = gebr_task_find(rid->str, frac->str);
-
-			if (task != NULL) {
-				gebr_task_emit_output_signal(task, output->str);
-			}
+			g_debug("OUTPUT from %s: %s", rid->str, output->str);
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		} else if (message->hash == gebr_comm_protocol_defs.sta_def.code_hash) {

@@ -328,12 +328,13 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 				/* send job message (job is created -promoted from waiting server response- at the client) */
 				g_debug("RUN_DEF: run task with rid %s, after %s",
 					run_id->str, queue->str);
+				job_send_clients_job_notify(job);
+
 				GebrdJob *after = job_find(queue);
 				if (after)
 					gebrd_job_append(after, job);
 				else
 					job_run_flow(job);
-				job_send_clients_job_notify(job);
 			} else {
 				/* ask moab to run */
 				job_run_flow(job);

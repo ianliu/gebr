@@ -79,9 +79,11 @@ void gebrm_task_get_fraction(GebrmTask *task,
 			     gint *total);
 
 /**
- * Translate a \p status protocol string to a status enumeration 
+ * gebrm_task_translate_status:
+ *
+ * Translate a @status protocol string to a status enumeration .
  */
-enum JobStatus job_translate_status(GString * status);
+enum JobStatus gebrm_task_translate_status(GString *status);
 
 /**
  */

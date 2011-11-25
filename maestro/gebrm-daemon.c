@@ -38,6 +38,8 @@ enum {
 enum {
 	STATE_CHANGE,
 	TASK_DEFINE,
+	TASK_STATUS,
+	TASK_OUTPUT,
 	LAST_SIGNAL
 };
 
@@ -177,6 +179,8 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 		else if (message->hash == gebr_comm_protocol_defs.job_def.code_hash) {
 			GList *arguments;
 
+			g_debug("--JOB_DEF COMING FROM DAEMON!!!!!--");
+
 			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 23)) == NULL)
 				goto err;
 
@@ -225,6 +229,9 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 			rid = g_list_nth_data(arguments, 2);
 			frac = g_list_nth_data(arguments, 3);
 
+			GebrmTask *task = gebrm_task_find(rid->str, frac->str);
+			g_signal_emit(daemon, signals[TASK_OUTPUT], 0, task, output->str);
+
 			g_debug("[%s] OUT_DEF! %s", server->address->str, output->str);
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
@@ -239,6 +246,10 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 			parameter = g_list_nth_data(arguments, 2);
 			rid = g_list_nth_data(arguments, 3);
 			frac = g_list_nth_data(arguments, 4);
+
+			GebrmTask *task = gebrm_task_find(rid->str, frac->str);
+			g_signal_emit(daemon, signals[TASK_STATUS], 0, task,
+				      status->str, parameter->str);
 
 			g_debug("[%s] STA_DEF! %s", server->address->str, status->str);
 
@@ -342,6 +353,26 @@ gebrm_daemon_class_init(GebrmDaemonClass *klass)
 			     gebrm_cclosure_marshal_VOID__OBJECT_POINTER,
 			     G_TYPE_NONE,
 			     2, GEBRM_TYPE_TASK, G_TYPE_POINTER);
+
+	signals[TASK_OUTPUT] =
+		g_signal_new("task-output",
+			     G_OBJECT_CLASS_TYPE (object_class),
+			     G_SIGNAL_RUN_FIRST,
+			     G_STRUCT_OFFSET(GebrmDaemonClass, task_output),
+			     NULL, NULL,
+			     gebrm_cclosure_marshal_VOID__OBJECT_STRING,
+			     G_TYPE_NONE,
+			     2, GEBRM_TYPE_TASK, G_TYPE_STRING);
+
+	signals[TASK_STATUS] =
+		g_signal_new("task-status",
+			     G_OBJECT_CLASS_TYPE (object_class),
+			     G_SIGNAL_RUN_FIRST,
+			     G_STRUCT_OFFSET(GebrmDaemonClass, task_status),
+			     NULL, NULL,
+			     gebrm_cclosure_marshal_VOID__OBJECT_STRING_STRING,
+			     G_TYPE_NONE,
+			     3, GEBRM_TYPE_TASK, G_TYPE_STRING, G_TYPE_STRING);
 
 	g_object_class_install_property(object_class,
 					PROP_ADDRESS,

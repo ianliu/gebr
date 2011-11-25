@@ -113,6 +113,36 @@ gebrm_app_job_controller_on_task_def(GebrmDaemon *daemon,
 }
 
 static void
+gebrm_app_job_controller_on_task_output(GebrmDaemon *daemon,
+					GebrmTask *task,
+					const gchar *output,
+					GebrmApp *app)
+{
+	for (GList *i = app->priv->connections; i; i = i->next) {
+		gebr_comm_protocol_socket_oldmsg_send(i->data, FALSE,
+						      gebr_comm_protocol_defs.out_def, 2,
+						      gebrm_task_get_job_id(task),
+						      output);
+	}
+}
+
+static void
+gebrm_app_job_controller_on_task_status(GebrmDaemon *daemon,
+					GebrmTask *task,
+					const gchar *status,
+					const gchar *parameter,
+					GebrmApp *app)
+{
+	for (GList *i = app->priv->connections; i; i = i->next) {
+		gebr_comm_protocol_socket_oldmsg_send(i->data, FALSE,
+						      gebr_comm_protocol_defs.sta_def, 3,
+						      gebrm_task_get_job_id(task),
+						      status,
+						      parameter);
+	}
+}
+
+static void
 gebrm_app_daemon_on_state_change(GebrmDaemon *daemon,
 				 GebrCommServerState state,
 				 GebrmApp *app)
@@ -197,6 +227,10 @@ gebrm_add_server_to_list(GebrmApp *app,
 			 G_CALLBACK(gebrm_app_daemon_on_state_change), app);
 	g_signal_connect(daemon, "task-define",
 			 G_CALLBACK(gebrm_app_job_controller_on_task_def), app);
+	g_signal_connect(daemon, "task-output",
+			 G_CALLBACK(gebrm_app_job_controller_on_task_output), app);
+	g_signal_connect(daemon, "task-status",
+			 G_CALLBACK(gebrm_app_job_controller_on_task_status), app);
 
 	gchar **tagsv = tags ? g_strsplit(tags, ",", -1) : NULL;
 	if (tagsv) {
