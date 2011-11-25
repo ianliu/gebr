@@ -20,6 +20,7 @@
 
 #include <config.h>
 #include "gebrm-app.h"
+#include "gebrm-daemon.h"
 
 #include <gio/gio.h>
 #include <stdlib.h>
@@ -44,7 +45,7 @@ static GebrmApp           *__app = NULL;
 
 static void gebrm_config_save_server(const gchar *server);
 
-static gboolean gebrm_add_server_to_list(GebrmApp *app, const gchar *addr);
+static gboolean gebrm_add_server_to_list(GebrmApp *app, const gchar *addr, const gchar *tags);
 
 gboolean gebrm_config_load_servers(GebrmApp *app, gchar *path);
 
@@ -343,25 +344,45 @@ gebrm_app_singleton_get(void)
 }
 
 static gboolean
-gebrm_add_server_to_list(GebrmApp *app, const gchar *address)
+gebrm_add_server_to_list(GebrmApp *app,
+			 const gchar *address,
+			 const gchar *tags)
 {
-	gchar *addr;
-	gboolean succ = FALSE;
-	if (!g_strcmp0(address, "127.0.0.1"))
-		addr = g_strdup("localhost");
-	else
-		addr = g_strdup(address);
+	GebrmDaemon *daemon;
 
-	GebrCommServer *daemon = gebr_comm_server_new(addr, &daemon_ops);
-	daemon->user_data = app;
-	if (!g_list_find_custom(app->priv->daemons, daemon, (GCompareFunc)g_strcmp0)){
-		app->priv->daemons = g_list_prepend(app->priv->daemons, daemon);
-		gebr_comm_server_connect(daemon, FALSE);
-		g_debug("Added server %s", addr);
-		g_free(addr);
-		succ =  TRUE;
+	for (GList *i = app->priv->daemons; i; i = i->next) {
+		daemon = i->data;
+		if (g_strcmp0(address, gebrm_daemon_get_address(daemon)) == 0)
+			return FALSE;
 	}
-	return succ;
+
+	GebrCommServer *server = gebr_comm_server_new(address, &daemon_ops);
+	server->user_data = app;
+	daemon = gebrm_daemon_new(server);
+
+	gchar **tagsv = tags ? g_strsplit(tags, ",", -1) : NULL;
+	if (tagsv) {
+		for (int i = 0; tagsv[i]; i++)
+			gebrm_daemon_add_tag(daemon, tagsv[i]);
+	}
+
+	app->priv->daemons = g_list_prepend(app->priv->daemons, daemon);
+	gebrm_daemon_connect(daemon);
+
+	return TRUE;
+}
+
+static GList *
+get_comm_servers_list(GebrmApp *app)
+{
+	GList *servers = NULL;
+	GebrCommServer *server;
+	for (GList *i = app->priv->daemons; i; i = i->next) {
+		g_object_get(i->data, "server", &server, NULL);
+		servers = g_list_prepend(servers, server);
+	}
+
+	return servers;
 }
 
 static void
@@ -374,7 +395,7 @@ on_client_request(GebrCommProtocolSocket *socket,
 	if (request->method == GEBR_COMM_HTTP_METHOD_PUT) {
 		if (g_str_has_prefix(request->url->str, "/server/")) {
 			gchar *addr = request->url->str + strlen("/server/");
-			gebrm_add_server_to_list(app, addr);
+			gebrm_add_server_to_list(app, addr, NULL);
 			gebrm_config_save_server(addr);
 		}
 		else if (g_str_has_prefix(request->url->str, "/run")) {
@@ -409,10 +430,13 @@ on_client_request(GebrCommProtocolSocket *socket,
 								      (GebrGeoXmlDocument **)pline,
 								      (GebrGeoXmlDocument **)pproj);
 
+			GList *servers = get_comm_servers_list(app);
 			GebrCommRunner *runner = gebr_comm_runner_new(GEBR_GEOXML_DOCUMENT(*pflow),
-								      app->priv->daemons,
+								      servers,
 								      parent_rid, speed, nice, group,
 								      validator);
+			g_list_free(servers);
+
 			gchar *idstr = g_strdup_printf("%d", id++);
 			gebr_comm_runner_run_async(runner, idstr);
 			//gebr_validator_free(validator);
@@ -466,8 +490,10 @@ gebrm_config_load_servers(GebrmApp *app, gchar *path)
 	gboolean succ = g_key_file_load_from_file(servers, path, G_KEY_FILE_NONE, NULL);
 	if (succ) {
 		groups = g_key_file_get_groups(servers, NULL);
-		for (int i = 0; groups[i]; i++)
-			gebrm_add_server_to_list(app, groups[i]);
+		for (int i = 0; groups[i]; i++) {
+			gchar *tags = g_key_file_get_string(servers, groups[i], "tags", NULL);
+			gebrm_add_server_to_list(app, groups[i], tags);
+		}
 		g_key_file_free (servers);
 	}
 	return TRUE;
@@ -494,8 +520,11 @@ on_new_connection(GebrCommListenSocket *listener,
 
 		app->priv->connections = g_list_prepend(app->priv->connections, protocol);
 
-		for (GList *i = app->priv->daemons; i; i = i->next)
-			send_server_status_message(protocol, i->data);
+		for (GList *i = app->priv->daemons; i; i = i->next) {
+			GebrCommServer *server;
+			g_object_get(i->data, "server", &server, NULL);
+			send_server_status_message(protocol, server);
+		}
 
 		g_signal_connect(protocol, "disconnected",
 				 G_CALLBACK(on_client_disconnect), app);

@@ -46,6 +46,8 @@ noinst_LTLIBRARIES = libmaestro.la
 libmaestro_la_SOURCES =        \
 	gebrm-app.c	       \
 	gebrm-app.h	       \
+	gebrm-daemon.c	       \
+	gebrm-daemon.h	       \
 	gebrm-job-controller.c \
 	gebrm-job-controller.h \
 	$(NULL)
