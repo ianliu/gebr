@@ -94,6 +94,8 @@ m4/ltsugar.m4
 m4/ltversion.m4
 m4/lt~obsolete.m4
 maestro/gebrm
+maestro/gebrm-marshal.c
+maestro/gebrm-marshal.h
 marshalers.[ch]
 missing
 rpm/gebrproject.*.spec
