@@ -31,8 +31,9 @@ typedef struct {
 struct _GebrmJobPriv {
 	GebrmJobInfo info;
 	GList *tasks;
-	gchar **servers;
-	gint n_servers;
+	gchar *servers;
+	gchar *nprocs;
+	gint total;
 	GebrCommJobStatus status;
 	gboolean has_issued;
 	GList *children; // A list of GebrCommRunner
@@ -74,7 +75,6 @@ gebrm_job_finalize(GObject *object)
 	g_free(job->priv->info.title);
 	g_free(job->priv->info.hostname);
 	g_free(job->priv->info.parent_id);
-	g_free(job->priv->info.servers);
 	g_free(job->priv->info.nice);
 	g_free(job->priv->info.input);
 	g_free(job->priv->info.output);
@@ -82,7 +82,8 @@ gebrm_job_finalize(GObject *object)
 	g_free(job->priv->info.submit_date);
 	g_free(job->priv->info.group);
 	g_free(job->priv->info.speed);
-	g_strfreev(job->priv->servers);
+	g_free(job->priv->servers);
+	g_free(job->priv->nprocs);
 	g_list_foreach(job->priv->tasks, (GFunc)g_object_unref, NULL);
 	g_list_free(job->priv->tasks);
 
@@ -155,8 +156,8 @@ gebrm_job_class_init(GebrmJobClass *klass)
 			     G_SIGNAL_RUN_FIRST,
 			     G_STRUCT_OFFSET(GebrmJobClass, cmd_line_received),
 			     NULL, NULL,
-			     g_cclosure_marshal_VOID__VOID,
-			     G_TYPE_NONE, 0);
+			     gebrm_cclosure_marshal_VOID__OBJECT_STRING,
+			     G_TYPE_NONE, 2, GEBRM_TYPE_TASK, G_TYPE_STRING);
 
 	signals[OUTPUT] =
 		g_signal_new("output",
@@ -235,7 +236,8 @@ gebrm_job_change_task_status(GebrmTask *task,
 	GebrCommJobStatus old = job->priv->status;
 	gint frac, total, ntasks;
 
-	gebrm_task_get_fraction(task, &frac, &total);
+	frac = gebrm_task_get_fraction(task);
+	total = job->priv->total;
 	ntasks = g_list_length(job->priv->tasks);
 
 	if (gebrm_job_is_stopped(job)) {
@@ -314,21 +316,6 @@ on_task_destroy(GebrmJob *job,
 			      old_status, job->priv->status, "");
 }
 
-static gint
-compare_func(gconstpointer a, gconstpointer b)
-{
-	const gchar *aa = *(gchar * const *)a;
-	const gchar *bb = *(gchar * const *)b;
-
-	if (g_strcmp0(aa, "127.0.0.1") == 0)
-		return -1;
-
-	if (g_strcmp0(bb, "127.0.0.1") == 0)
-		return 1;
-
-	return g_strcmp0(aa, bb);
-}
-
 /* Public methods {{{1 */
 GebrmJob *
 gebrm_job_new(void)
@@ -349,7 +336,6 @@ gebrm_job_init_details(GebrmJob *job, GebrmJobInfo *info)
 	job->priv->info.title = g_strdup(info->title);
 	job->priv->info.hostname = g_strdup(info->hostname);
 	job->priv->info.parent_id = g_strdup(info->parent_id);
-	job->priv->info.servers = g_strdup(info->servers);
 	job->priv->info.nice = g_strdup(info->nice);
 	job->priv->info.input = g_strdup(info->input);
 	job->priv->info.output = g_strdup(info->output);
@@ -357,21 +343,6 @@ gebrm_job_init_details(GebrmJob *job, GebrmJobInfo *info)
 	job->priv->info.submit_date = g_strdup(info->submit_date);
 	job->priv->info.group = g_strdup(info->group);
 	job->priv->info.speed = g_strdup(info->speed);
-
-	gebrm_job_set_servers(job, info->servers);
-}
-
-void
-gebrm_job_set_servers(GebrmJob *job,
-		      const gchar *servers)
-{
-	job->priv->servers = g_strsplit(servers, ",", 0);
-
-	while (job->priv->servers[job->priv->n_servers])
-		job->priv->n_servers++;
-
-	qsort(job->priv->servers, job->priv->n_servers,
-	      sizeof(job->priv->servers[0]), compare_func);
 }
 
 const gchar *
@@ -398,7 +369,9 @@ gebrm_job_append_task(GebrmJob *job, GebrmTask *task)
 	job->priv->tasks = g_list_prepend(job->priv->tasks, task);
 
 	gint frac, total;
-	gebrm_task_get_fraction(task, &frac, &total);
+
+	total = job->priv->total;
+	frac = gebrm_task_get_fraction(task);
 	const gchar *issues = gebrm_task_get_issues(task);
 	GebrCommJobStatus status = gebrm_task_get_status(task);
 
@@ -406,7 +379,7 @@ gebrm_job_append_task(GebrmJob *job, GebrmTask *task)
 	g_signal_connect(task, "output", G_CALLBACK(gebrm_job_append_task_output), job);
 	g_object_weak_ref(G_OBJECT(task), (GWeakNotify)on_task_destroy, job);
 
-	g_signal_emit(job, signals[CMD_LINE_RECEIVED], 0);
+	g_signal_emit(job, signals[CMD_LINE_RECEIVED], 0, task, gebrm_task_get_cmd_line(task));
 	g_signal_emit(job, signals[OUTPUT], 0, task, gebrm_task_get_output(task));
 
 	if (strlen(issues))
@@ -446,14 +419,6 @@ gebrm_job_get_id(GebrmJob *job)
 	return job->priv->info.id;
 }
 
-gchar **
-gebrm_job_get_servers(GebrmJob *job, gint *n)
-{
-	if (n)
-		*n = job->priv->n_servers;
-	return job->priv->servers;
-}
-
 gchar *
 gebrm_job_get_command_line(GebrmJob *job)
 {
@@ -463,7 +428,9 @@ gebrm_job_get_command_line(GebrmJob *job)
 		gint frac, total;
 		GebrmTask *task = i->data;
 
-		gebrm_task_get_fraction(task, &frac, &total);
+		total = job->priv->total;
+		frac = gebrm_task_get_fraction(task);
+
 		if (total != 1) {
 			g_string_append_printf(buf, _("Command line for task %d of %d "), frac, total);
 			g_string_append_printf(buf, _(" \(Server: %s)\n"),
@@ -627,64 +594,10 @@ gebrm_job_get_io(GebrmJob *job,
 	}
 }
 
-void
-gebrm_job_get_resources(GebrmJob *job,
-			gchar **nprocs,
-			gchar **niceness)
+const gchar *
+gebrm_job_get_nice(GebrmJob *job)
 {
-	gint total_procs = 0;
-
-	if (!job->priv->tasks) {
-		*nprocs = NULL;
-		*niceness = NULL;
-		return;
-	}
-
-	for (GList *i = job->priv->tasks; i; i = i->next) {
-		GebrmTask *task = i->data;
-		gint n = gebrm_task_get_nprocs(task);
-		total_procs += n;
-	}
-
-	*nprocs = g_strdup_printf("%d", total_procs);
-	*niceness = g_strdup(job->priv->info.nice);
-}
-
-gchar *
-gebrm_job_get_remaining_servers(GebrmJob *job)
-{
-	gint total, ntasks;
-	GString *remainings = g_string_new(NULL);
-
-	if (!job->priv->tasks)
-		return NULL;
-
-	gebrm_task_get_fraction(job->priv->tasks->data, NULL, &total);
-	ntasks = g_list_length(job->priv->tasks);
-
-	if (ntasks != total) {
-		gchar **servers = job->priv->servers;
-
-		for (gint j = 0; servers[j]; j++) {
-			gboolean has_server = FALSE;
-
-			for (GList *i = job->priv->tasks; i; i = i->next) {
-				GebrCommServer *server = gebrm_task_get_server(i->data);
-				if (!g_strcmp0(servers[j], server->address->str)) {
-					has_server = TRUE;
-					break;
-				}
-			}
-			if (!has_server) {
-				if (remainings->len == 0)
-					g_string_printf(remainings, "%s", servers[j]);
-				else
-					g_string_append_printf(remainings, ", %s", servers[j]);
-			}
-		}
-	}
-
-	return g_string_free(remainings, FALSE);
+	return job->priv->info.nice;
 }
 
 gchar *
@@ -743,9 +656,8 @@ gebrm_job_get_partial_status(GebrmJob *job)
 		return JOB_STATUS_INITIAL;
 
 	gint total, ntasks;
-	GebrmTask *task = job->priv->tasks->data;
 
-	gebrm_task_get_fraction(task, NULL, &total);
+	total = job->priv->total;
 	ntasks = g_list_length(job->priv->tasks);
 
 	if (ntasks == total)
@@ -787,4 +699,40 @@ gebrm_job_append_child(GebrmJob *job,
 	raj->runner = runner;
 	raj->child = child;
 	job->priv->children = g_list_prepend(job->priv->children, raj);
+}
+
+void
+gebrm_job_set_servers_list(GebrmJob *job,
+			   const gchar *servers)
+{
+	if (job->priv->servers)
+		g_free(job->priv->servers);
+	job->priv->servers = g_strdup(servers);
+}
+
+void
+gebrm_job_set_nprocs(GebrmJob *job,
+		     const gchar *nprocs)
+{
+	if (job->priv->nprocs)
+		g_free(job->priv->nprocs);
+	job->priv->nprocs = g_strdup(nprocs);
+}
+
+const gchar *
+gebrm_job_get_nprocs(GebrmJob *job)
+{
+	return job->priv->nprocs;
+}
+
+const gchar *
+gebrm_job_get_servers_list(GebrmJob *job)
+{
+	return job->priv->servers;
+}
+
+void
+gebrm_job_set_total_tasks(GebrmJob *job, gint total)
+{
+	job->priv->total = total;
 }

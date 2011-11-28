@@ -50,15 +50,6 @@ struct _GebrmDaemonClass {
 
 	void (*task_define) (GebrmDaemon *daemon,
 			     GObject *task);
-
-	void (*task_output) (GebrmDaemon *daemon,
-			     GObject *task,
-			     const gchar *output);
-
-	void (*task_status) (GebrmDaemon *daemon,
-			     GObject *task,
-			     const gchar *status,
-			     const gchar *parameter);
 };
 
 GType gebrm_daemon_get_type(void) G_GNUC_CONST;

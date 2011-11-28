@@ -43,10 +43,7 @@ struct _GebrmTaskPriv {
 	GebrmDaemon *daemon;
 	GebrCommJobStatus status;
 	gchar *rid;
-	gint n_procs;
 	gint frac;
-	gint total;
-	gdouble percentage;
 	GString *start_date;
 	GString *finish_date;
 	GString *issues;
@@ -94,6 +91,7 @@ static void gebrm_task_init(GebrmTask *task)
 	                                         GEBRM_TYPE_TASK,
 	                                         GebrmTaskPriv);
 
+	task->priv->status = JOB_STATUS_INITIAL;
 	task->priv->output = g_string_new(NULL);
 	task->priv->start_date = g_string_new(NULL);
 	task->priv->finish_date = g_string_new(NULL);
@@ -138,35 +136,25 @@ build_task_id(const gchar *rid,
 static gchar *
 gebrm_task_get_id(GebrmTask *task)
 {
-	return g_strdup_printf("%s:%d:%d",
+	return g_strdup_printf("%s:%d",
 			       task->priv->rid,
-			       task->priv->frac,
-			       task->priv->total);
+			       task->priv->frac);
 }
 
 GebrmTask *
 gebrm_task_new(GebrmDaemon  *server,
 	       const gchar *rid,
-	       const gchar *_frac)
+	       const gchar *frac)
 {
-	gchar *frac, *total;
 	GebrmTask *task = g_object_new(GEBRM_TYPE_TASK, NULL);
-
-	frac = g_strdup(_frac);
-	total = strchr(frac, ':');
-	total[0] = '\0';
-	total++;
 
 	task->priv->status = JOB_STATUS_INITIAL; 
 	task->priv->daemon = server;
 	task->priv->rid = g_strdup(rid);
 	task->priv->frac = atoi(frac);
-	task->priv->total = atoi(total);
-
-	g_free(frac);
 
 	g_debug("Inserting task %s, rid %s into TASKS hash table (%s)",
-		_frac, rid, gebrm_task_get_id(task));
+		frac, rid, gebrm_task_get_id(task));
 	g_hash_table_insert(get_tasks_map(), gebrm_task_get_id(task), task);
 
 	return task;
@@ -180,26 +168,17 @@ gebrm_task_get_job_id(GebrmTask *task)
 
 void
 gebrm_task_init_details(GebrmTask *task,
-			GString   *status,
-			GString   *start_date,
-			GString   *finish_date,
 			GString   *issues,
 			GString   *cmd_line,
-			GString   *moab_jid,
-			GString   *output,
-			GString   *n_procs)
+			GString   *moab_jid)
 {
-	task->priv->n_procs = atoi(n_procs->str);
-	task->priv->status = gebrm_task_translate_status(status);
-	g_string_assign(task->priv->start_date, start_date->str);
-	g_string_assign(task->priv->finish_date, finish_date->str);
 	g_string_assign(task->priv->issues, issues->str);
 	g_string_assign(task->priv->cmd_line, cmd_line->str);
 	g_string_assign(task->priv->moab_jid, moab_jid->str);
-	g_string_assign(task->priv->output, output->str);
 }
 
-GebrCommJobStatus gebrm_task_translate_status(GString *status)
+GebrCommJobStatus
+gebrm_task_translate_status(GString *status)
 {
 	GebrCommJobStatus translated_status;
 
@@ -238,16 +217,10 @@ gebrm_task_find(const gchar *rid, const gchar *frac)
 	return task;
 }
 
-void
-gebrm_task_get_fraction(GebrmTask *task, gint *frac, gint *total)
+gint
+gebrm_task_get_fraction(GebrmTask *task)
 {
-	g_return_if_fail(frac != NULL || total != NULL);
-
-	if (frac)
-		*frac = task->priv->frac;
-
-	if (total)
-		*total = task->priv->total;
+	return task->priv->frac;
 }
 
 GebrCommJobStatus
@@ -266,8 +239,8 @@ gebrm_task_emit_output_signal(GebrmTask *task,
 
 void
 gebrm_task_emit_status_changed_signal(GebrmTask *task,
-				     GebrCommJobStatus new_status,
-				     const gchar *parameter)
+				      GebrCommJobStatus new_status,
+				      const gchar *parameter)
 {
 	GebrCommJobStatus old_status;
 
@@ -352,22 +325,4 @@ GebrCommServer *
 gebrm_task_get_server(GebrmTask *task)
 {
 	return gebrm_daemon_get_server(task->priv->daemon);
-}
-
-void
-gebrm_task_set_percentage(GebrmTask *task, gdouble perc)
-{
-	task->priv->percentage = perc;
-}
-
-gdouble
-gebrm_task_get_percentage(GebrmTask *task)
-{
-	return task->priv->percentage;
-}
-
-gint
-gebrm_task_get_nprocs(GebrmTask *task)
-{
-	return task->priv->n_procs;
 }

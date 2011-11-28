@@ -83,13 +83,6 @@ get_selected_queue(void)
 	return g_strdup("");
 }
 
-static void
-set_server_list(GebrCommRunner *runner,
-		gpointer job)
-{
-	gebr_job_set_servers(job, gebr_comm_runner_get_servers_str(runner));
-}
-
 /* Public methods {{{1 */
 void
 gebr_ui_flow_run(void)
@@ -111,8 +104,8 @@ gebr_ui_flow_run(void)
 	gchar *xml;
 	gebr_geoxml_document_to_string(GEBR_GEOXML_DOCUMENT(gebr.flow), &xml);
 	GebrCommJsonContent *content = gebr_comm_json_content_new_from_string(xml);
-	gchar *url = g_strdup_printf("/run?parent_rid=%s;speed=%s;nice=%s;group=%s",
-				     parent_rid, speed, nice, group);
+	gchar *url = g_strdup_printf("/run?parent_rid=%s;speed=%s;nice=%s;group=%s;host=%s",
+				     parent_rid, speed, nice, group, g_get_host_name());
 
 	GebrCommServer *server = gebr_maestro_server_get_server(gebr.ui_server_list->maestro);
 	gebr_comm_protocol_socket_send_request(server->socket,

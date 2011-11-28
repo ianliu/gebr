@@ -74,9 +74,7 @@ GebrmTask *gebrm_task_new(GebrmDaemon *daemon,
 			  const gchar *rid,
 			  const gchar *frac);
 
-void gebrm_task_get_fraction(GebrmTask *task,
-			     gint *frac,
-			     gint *total);
+gint gebrm_task_get_fraction(GebrmTask *task);
 
 /**
  * gebrm_task_translate_status:
@@ -89,14 +87,9 @@ GebrCommJobStatus gebrm_task_translate_status(GString *status);
  */
 void
 gebrm_task_init_details(GebrmTask *task,
-			GString   *status,
-			GString   *start_date,
-			GString   *finish_date,
 			GString   *issues,
 			GString   *cmd_line,
-			GString   *moab_jid,
-			GString   *output,
-			GString   *n_procs);
+			GString   *moab_jid);
 
 GebrCommJobStatus gebrm_task_get_status(GebrmTask *task);
 
@@ -132,12 +125,6 @@ GebrCommServer *gebrm_task_get_server(GebrmTask *task);
 const gchar *gebrm_task_get_niceness(GebrmTask *task);
 
 const gchar *gebrm_task_get_last_run_date(GebrmTask *task);
-
-void gebrm_task_set_percentage(GebrmTask *task, gdouble perc);
-
-gdouble gebrm_task_get_percentage(GebrmTask *task);
-
-gint gebrm_task_get_nprocs(GebrmTask *task);
 
 G_END_DECLS
 

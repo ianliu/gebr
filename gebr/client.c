@@ -212,91 +212,97 @@ client_parse_server_messages(GebrCommServer *comm_server,
 		} else if (message->hash == gebr_comm_protocol_defs.job_def.code_hash) {
 			GList *arguments;
 
-			GString *status, *start_date, *finish_date, *output;
-			GString *hostname, *title, *queue, *rid, *server_list,
-				*n_procs, *niceness, *input_file, *output_file,
-				*log_file, *last_run_date, *server_group_name,
-				*cmd_line, *exec_speed, *issues, *frac,
-				*job_percentage, *moab_jid;
+			// Daemon
+			//GString *cmd_line, *issues, *status, *start_date,
+			//	*finish_date, *output, *moab_jid;
+
+			//// Maestro
+			//GString *rid, *n_procs, (*server, *job_percentage),
+
+			//// Gebr
+			//GString *hostname, *title, *queue, *niceness,
+			//	*input_file, *output_file, *log_file,
+			//	*last_run_date, *server_group_name,
+			//	*exec_speed;
 
 			GebrJob *job;
 
 			/* organize message data */
 			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 23)) == NULL)
 				goto err;
-			status = g_list_nth_data(arguments, 1);
-			title = g_list_nth_data(arguments, 2);
-			start_date = g_list_nth_data(arguments, 3);
-			finish_date = g_list_nth_data(arguments, 4);
-			hostname = g_list_nth_data(arguments, 5);
-			issues = g_list_nth_data(arguments, 6);
-			cmd_line = g_list_nth_data(arguments, 7);
-			output = g_list_nth_data(arguments, 8);
-			queue = g_list_nth_data(arguments, 9);
-			moab_jid = g_list_nth_data(arguments, 10);
-			rid = g_list_nth_data(arguments, 11);
-			frac = g_list_nth_data(arguments, 12);
-			server_list = g_list_nth_data(arguments, 13);
-			n_procs = g_list_nth_data(arguments, 14);
-			niceness = g_list_nth_data(arguments, 15);
-			input_file = g_list_nth_data(arguments, 16);
-			output_file= g_list_nth_data(arguments, 17);
-			log_file = g_list_nth_data(arguments, 18);
-			last_run_date = g_list_nth_data(arguments, 19);
-			server_group_name = g_list_nth_data(arguments, 20);
-			exec_speed = g_list_nth_data(arguments, 21);
-			job_percentage = g_list_nth_data(arguments, 22);
+			//status = g_list_nth_data(arguments, 1);
+			//title = g_list_nth_data(arguments, 2);
+			//start_date = g_list_nth_data(arguments, 3);
+			//finish_date = g_list_nth_data(arguments, 4);
+			//hostname = g_list_nth_data(arguments, 5);
+			//issues = g_list_nth_data(arguments, 6);
+			//cmd_line = g_list_nth_data(arguments, 7);
+			//output = g_list_nth_data(arguments, 8);
+			//queue = g_list_nth_data(arguments, 9);
+			//moab_jid = g_list_nth_data(arguments, 10);
+			//rid = g_list_nth_data(arguments, 11);
+			//frac = g_list_nth_data(arguments, 12);
+			//server_list = g_list_nth_data(arguments, 13);
+			//n_procs = g_list_nth_data(arguments, 14);
+			//niceness = g_list_nth_data(arguments, 15);
+			//input_file = g_list_nth_data(arguments, 16);
+			//output_file= g_list_nth_data(arguments, 17);
+			//log_file = g_list_nth_data(arguments, 18);
+			//last_run_date = g_list_nth_data(arguments, 19);
+			//server_group_name = g_list_nth_data(arguments, 20);
+			//exec_speed = g_list_nth_data(arguments, 21);
+			//job_percentage = g_list_nth_data(arguments, 22);
 
-			GebrTask *task = gebr_task_new(server, rid->str, frac->str);
-			gebr_task_init_details(task, status, start_date, finish_date, issues, cmd_line, queue, moab_jid, output, n_procs, niceness, last_run_date);
-			gebr_task_set_percentage(task, g_strtod(job_percentage->str, NULL));
-			gebr_server_append_task(server, task);
+			//GebrTask *task = gebr_task_new(server, rid->str, frac->str);
+			//gebr_task_init_details(task, status, start_date, finish_date, issues, cmd_line, queue, moab_jid, output, n_procs, niceness, last_run_date);
+			//gebr_task_set_percentage(task, g_strtod(job_percentage->str, NULL));
+			//gebr_server_append_task(server, task);
 
-			job = gebr_job_control_find(gebr.job_control, rid->str);
+			//job = gebr_job_control_find(gebr.job_control, rid->str);
 
-			if (!job) {
-				job = gebr_job_new_with_id(rid->str, queue->str);
-				gebr_job_set_servers(job, server_list->str);
-				gebr_job_set_title(job, title->str);
-				gebr_job_set_hostname(job, hostname->str);
-				gebr_job_set_server_group(job, server_group_name->str);
-				gebr_job_set_model(job, gebr_job_control_get_model(gebr.job_control));
-				gebr_job_set_exec_speed(job, atoi(exec_speed->str));
-				gebr_job_control_add(gebr.job_control, job);
-			}
+			//if (!job) {
+			//	job = gebr_job_new_with_id(rid->str, queue->str);
+			//	gebr_job_set_servers(job, server_list->str);
+			//	gebr_job_set_title(job, title->str);
+			//	gebr_job_set_hostname(job, hostname->str);
+			//	gebr_job_set_server_group(job, server_group_name->str);
+			//	gebr_job_set_model(job, gebr_job_control_get_model(gebr.job_control));
+			//	gebr_job_set_exec_speed(job, atoi(exec_speed->str));
+			//	gebr_job_control_add(gebr.job_control, job);
+			//}
 
-			gebr_job_set_io(job, input_file->str, output_file->str, log_file->str);
-			gebr_job_append_task(job, task);
+			//gebr_job_set_io(job, input_file->str, output_file->str, log_file->str);
+			//gebr_job_append_task(job, task);
 
-			gint n_servers;
-			gebr_job_get_servers(job, &n_servers);
-			if (gebr_job_is_queueable(job)) {
-				GtkListStore *store;
-				GString *string = g_string_new("");
-				const gchar *title;
-				GtkTreeIter iter;
+			//gint n_servers;
+			//gebr_job_get_servers(job, &n_servers);
+			//if (gebr_job_is_queueable(job)) {
+			//	GtkListStore *store;
+			//	GString *string = g_string_new("");
+			//	const gchar *title;
+			//	GtkTreeIter iter;
 
-				g_debug("Adding queue %s", rid->str);
+			//	g_debug("Adding queue %s", rid->str);
 
-				title = gebr_job_get_title(job);
+			//	title = gebr_job_get_title(job);
 
-				g_string_printf(string, _("After '%s'"), title);
+			//	g_string_printf(string, _("After '%s'"), title);
 
-				if (n_servers == 1)
-					store = server->queues_model;
-				else
-					store = gebr_ui_server_list_get_autochoose_store(gebr.ui_server_list);
+			//	if (n_servers == 1)
+			//		store = server->queues_model;
+			//	else
+			//		store = gebr_ui_server_list_get_autochoose_store(gebr.ui_server_list);
 
-				gtk_list_store_append(store, &iter);
-				gtk_list_store_set(store, &iter,
-						   SERVER_QUEUE_TITLE, string->str,
-						   SERVER_QUEUE_ID, rid->str,
-						   SERVER_QUEUE_LAST_RUNNING_JOB, NULL, -1);
+			//	gtk_list_store_append(store, &iter);
+			//	gtk_list_store_set(store, &iter,
+			//			   SERVER_QUEUE_TITLE, string->str,
+			//			   SERVER_QUEUE_ID, rid->str,
+			//			   SERVER_QUEUE_LAST_RUNNING_JOB, NULL, -1);
 
-				g_string_free(string, TRUE);
-			}
+			//	g_string_free(string, TRUE);
+			//}
 
-			gtk_combo_box_set_active(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox), 0);
+			//gtk_combo_box_set_active(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox), 0);
 
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);

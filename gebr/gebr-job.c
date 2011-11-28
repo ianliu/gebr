@@ -35,10 +35,8 @@ struct _GebrJobPriv {
 	gchar *runid;
 	gchar *queue;
 	gchar *hostname;
-	gchar **servers;
 	gchar *server_group;
 	gint exec_speed;
-	gint n_servers;
 	GtkTreeIter iter;
 	GebrCommJobStatus status;
 	gboolean has_issued;
@@ -46,6 +44,11 @@ struct _GebrJobPriv {
 	gchar *input_file;
 	gchar *output_file;
 	gchar *log_file;
+
+	/* Task info */
+	gdouble *percentages;
+	gchar **servers;
+	gint n_servers;
 
 	GList *children; // A list of GebrCommRunner
 };
@@ -326,21 +329,6 @@ on_task_destroy(GebrJob *job,
 			      old_status, job->priv->status, "");
 }
 
-static gint
-compare_func(gconstpointer a, gconstpointer b)
-{
-	const gchar *aa = *(gchar * const *)a;
-	const gchar *bb = *(gchar * const *)b;
-
-	if (g_strcmp0(aa, "127.0.0.1") == 0)
-		return -1;
-
-	if (g_strcmp0(bb, "127.0.0.1") == 0)
-		return 1;
-
-	return g_strcmp0(aa, bb);
-}
-
 /* Public methods {{{1 */
 GebrJob *
 gebr_job_new(const gchar *queue)
@@ -370,13 +358,19 @@ void
 gebr_job_set_servers(GebrJob *job,
 		     const gchar *servers)
 {
-	job->priv->servers = g_strsplit(servers, ",", 0);
+	gchar **split = g_strsplit(servers, ",", 0);
 
-	while (job->priv->servers[job->priv->n_servers])
+	while (split[job->priv->n_servers])
 		job->priv->n_servers++;
+	job->priv->n_servers /= 2;
 
-	qsort(job->priv->servers, job->priv->n_servers,
-	      sizeof(job->priv->servers[0]), compare_func);
+	job->priv->servers = g_new0(gchar *, job->priv->n_servers + 1);
+	job->priv->percentages = g_new0(gdouble, job->priv->n_servers);
+
+	for (int i = 0; i < job->priv->n_servers; i++) {
+		job->priv->servers[i] = split[i*2];
+		job->priv->percentages[i] = g_strtod(split[i*2 + 1], NULL);
+	}
 }
 
 void

@@ -100,44 +100,74 @@ send_server_status_message(GebrCommProtocolSocket *socket,
 static void
 gebrm_app_job_controller_on_task_def(GebrmDaemon *daemon,
 				     GebrmTask *task,
-				     GebrmJobInfo *job_info,
 				     GebrmApp* app)
 {
 	const gchar *rid = gebrm_task_get_job_id(task);
 	GebrmJob *job = gebrm_app_job_controller_find(app, rid);
 
 	if (!job)
-		job = gebrm_job_new();
-	gebrm_job_init_details(job, job_info);
+		g_return_if_reached();
+
 	gebrm_job_append_task(job, task);
 }
 
 static void
-gebrm_app_job_controller_on_task_output(GebrmDaemon *daemon,
-					GebrmTask *task,
-					const gchar *output,
-					GebrmApp *app)
+gebrm_app_job_controller_on_issued(GebrmJob    *job,
+				   const gchar *issues,
+				   GebrmApp    *app)
+{
+	for (GList *i = app->priv->connections; i; i = i->next) {
+		gebr_comm_protocol_socket_oldmsg_send(i->data, FALSE,
+						      gebr_comm_protocol_defs.iss_def, 2,
+						      gebrm_job_get_id(job),
+						      issues);
+	}
+}
+
+static void
+gebrm_app_job_controller_on_cmd_line_received(GebrmJob *job,
+					      GebrmTask *task,
+					      const gchar *cmd,
+					      GebrmApp *app)
+{
+	gchar *frac;
+	for (GList *i = app->priv->connections; i; i = i->next) {
+		frac = g_strdup_printf("%d", gebrm_task_get_fraction(task));
+		gebr_comm_protocol_socket_oldmsg_send(i->data, FALSE,
+						      gebr_comm_protocol_defs.cmd_def, 3,
+						      gebrm_job_get_id(job),
+						      frac,
+						      cmd);
+		g_free(frac);
+	}
+}
+
+static void
+gebrm_app_job_controller_on_output(GebrmJob *job,
+				   GebrmTask *task,
+				   const gchar *output,
+				   GebrmApp *app)
 {
 	for (GList *i = app->priv->connections; i; i = i->next) {
 		gebr_comm_protocol_socket_oldmsg_send(i->data, FALSE,
 						      gebr_comm_protocol_defs.out_def, 2,
-						      gebrm_task_get_job_id(task),
+						      gebrm_job_get_id(job),
 						      output);
 	}
 }
 
 static void
-gebrm_app_job_controller_on_task_status(GebrmDaemon *daemon,
-					GebrmTask *task,
-					const gchar *status,
-					const gchar *parameter,
-					GebrmApp *app)
+gebrm_app_job_controller_on_status_change(GebrmJob *job,
+					  gint old_status,
+					  gint new_status,
+					  const gchar *parameter,
+					  GebrmApp *app)
 {
 	for (GList *i = app->priv->connections; i; i = i->next) {
 		gebr_comm_protocol_socket_oldmsg_send(i->data, FALSE,
 						      gebr_comm_protocol_defs.sta_def, 3,
-						      gebrm_task_get_job_id(task),
-						      status,
+						      gebrm_job_get_id(job),
+						      gebr_comm_job_get_string_from_status(new_status),
 						      parameter);
 	}
 }
@@ -227,10 +257,6 @@ gebrm_add_server_to_list(GebrmApp *app,
 			 G_CALLBACK(gebrm_app_daemon_on_state_change), app);
 	g_signal_connect(daemon, "task-define",
 			 G_CALLBACK(gebrm_app_job_controller_on_task_def), app);
-	g_signal_connect(daemon, "task-output",
-			 G_CALLBACK(gebrm_app_job_controller_on_task_output), app);
-	g_signal_connect(daemon, "task-status",
-			 G_CALLBACK(gebrm_app_job_controller_on_task_status), app);
 
 	gchar **tagsv = tags ? g_strsplit(tags, ",", -1) : NULL;
 	if (tagsv) {
@@ -272,6 +298,47 @@ gebrm_remove_server_from_list(GebrmApp *app, const gchar *addr)
 	return FALSE;
 }
 
+typedef struct {
+	GebrmApp *app;
+	GebrmJob *job;
+} AppAndJob;
+
+static void
+on_execution_response(GebrCommRunner *runner,
+		      gpointer data)
+{
+	AppAndJob *aap = data;
+
+	gchar *infile, *outfile, *logfile;
+	gebrm_job_get_io(aap->job, &infile, &outfile, &logfile);
+
+	gebrm_job_set_total_tasks(aap->job, gebr_comm_runner_get_total(runner));
+	gebrm_job_set_servers_list(aap->job, gebr_comm_runner_get_servers_list(runner));
+	gebrm_job_set_nprocs(aap->job, gebr_comm_runner_get_nprocs(runner));
+
+	for (GList *i = aap->app->priv->connections; i; i = i->next) {
+		gebr_comm_protocol_socket_oldmsg_send(i->data, FALSE,
+						      gebr_comm_protocol_defs.job_def, 13,
+						      gebrm_job_get_id(aap->job),
+						      gebrm_job_get_nprocs(aap->job),
+						      gebrm_job_get_servers_list(aap->job),
+						      gebrm_job_get_hostname(aap->job),
+						      gebrm_job_get_title(aap->job),
+						      gebrm_job_get_queue(aap->job),
+						      gebrm_job_get_nice(aap->job),
+						      infile,
+						      outfile,
+						      logfile,
+						      gebrm_job_get_submit_date(aap->job),
+						      gebrm_job_get_server_group(aap->job),
+						      gebrm_job_get_exec_speed(aap->job));
+	}
+
+	gebr_validator_free(gebr_comm_runner_get_validator(runner));
+	gebr_comm_runner_free(runner);
+	g_free(aap);
+}
+
 static void
 on_client_request(GebrCommProtocolSocket *socket,
 		  GebrCommHttpMsg *request,
@@ -295,7 +362,7 @@ on_client_request(GebrCommProtocolSocket *socket,
 			GebrCommJsonContent *json;
 			gchar *tmp = strchr(request->url->str, '?') + 1;
 			gchar **params = g_strsplit(tmp, ";", -1);
-			gchar *parent_id, *speed, *nice, *group;
+			gchar *parent_id, *speed, *nice, *group, *host;
 
 			g_debug("I will run this flow:");
 
@@ -303,6 +370,7 @@ on_client_request(GebrCommProtocolSocket *socket,
 			speed     = strchr(params[1], '=') + 1;
 			nice      = strchr(params[2], '=') + 1;
 			group     = strchr(params[3], '=') + 1;
+			host      = strchr(params[4], '=') + 1;
 
 			json = gebr_comm_json_content_new(request->content->str);
 			GString *value = gebr_comm_json_content_to_gstring(json);
@@ -332,7 +400,7 @@ on_client_request(GebrCommProtocolSocket *socket,
 
 			GebrmJobInfo info = { 0, };
 			info.title = title;
-			info.hostname = "FixHostName";
+			info.hostname = host;
 			info.parent_id = parent_id;
 			info.servers = "";
 			info.nice = nice;
@@ -342,38 +410,27 @@ on_client_request(GebrCommProtocolSocket *socket,
 			info.group = group;
 			info.speed = speed;
 
+			g_free(title);
+
 			GebrmJob *job = gebrm_job_new();
+
+			g_signal_connect(job, "status-change",
+					 G_CALLBACK(gebrm_app_job_controller_on_status_change), app);
+			g_signal_connect(job, "issued",
+					 G_CALLBACK(gebrm_app_job_controller_on_issued), app);
+			g_signal_connect(job, "cmd-line-received",
+					 G_CALLBACK(gebrm_app_job_controller_on_cmd_line_received), app);
+			g_signal_connect(job, "output",
+					 G_CALLBACK(gebrm_app_job_controller_on_output), app);
+
 			gebrm_job_init_details(job, &info);
 			gebrm_app_job_controller_add(app, job);
 
-			g_debug("SEND MESSAGE OF JOB_DEF");
-
-			gchar *infile, *outfile, *logfile;
-			gebrm_job_get_io(job, &infile, &outfile, &logfile);
-
-			for (GList *i = app->priv->connections; i; i = i->next) {
-				gebr_comm_protocol_socket_oldmsg_send(i->data, FALSE,
-				                                      gebr_comm_protocol_defs.job_def, 14,
-				                                      gebrm_job_get_title(job),
-				                                      gebrm_job_get_start_date(job),
-				                                      gebrm_job_get_hostname(job),
-				                                      "",
-				                                      gebrm_job_get_id(job),
-				                                      "",
-				                                      "10",
-				                                      nice,
-				                                      infile,
-				                                      outfile,
-				                                      logfile,
-				                                      gebrm_job_get_submit_date(job),
-				                                      "",
-				                                      gebrm_job_get_exec_speed(job));
-			}
-
-			g_free(title);
-
+			AppAndJob *aap = g_new(AppAndJob, 1);
+			aap->app = app;
+			aap->job = job;
+			gebr_comm_runner_set_ran_func(runner, on_execution_response, aap);
 			gebr_comm_runner_run_async(runner, gebrm_job_get_id(job));
-			//gebr_validator_free(validator);
 		}
 	}
 }

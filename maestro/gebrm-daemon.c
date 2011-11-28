@@ -38,8 +38,6 @@ enum {
 enum {
 	STATE_CHANGE,
 	TASK_DEFINE,
-	TASK_STATUS,
-	TASK_OUTPUT,
 	LAST_SIGNAL
 };
 
@@ -176,47 +174,22 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 				gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 			}
 		}
-		else if (message->hash == gebr_comm_protocol_defs.job_def.code_hash) {
+		else if (message->hash == gebr_comm_protocol_defs.tsk_def.code_hash) {
 			GList *arguments;
 
-			g_debug("--JOB_DEF COMING FROM DAEMON!!!!!--");
-
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 23)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 5)) == NULL)
 				goto err;
 
-			GString *status          = g_list_nth_data(arguments, 1);
-			GString *start_date      = g_list_nth_data(arguments, 3);
-			GString *finish_date     = g_list_nth_data(arguments, 4);
-			GString *issues          = g_list_nth_data(arguments, 6);
-			GString *cmd_line        = g_list_nth_data(arguments, 7);
-			GString *output          = g_list_nth_data(arguments, 8);
-			GString *moab_jid        = g_list_nth_data(arguments, 10);
-			GString *rid             = g_list_nth_data(arguments, 11);
-			GString *frac            = g_list_nth_data(arguments, 12);
-			GString *n_procs         = g_list_nth_data(arguments, 14);
-			GString *task_percentage = g_list_nth_data(arguments, 22);
+			GString *id = g_list_nth_data(arguments, 0);
+			GString *frac = g_list_nth_data(arguments, 1);
+			GString *issues = g_list_nth_data(arguments, 2);
+			GString *cmd = g_list_nth_data(arguments, 3);
+			GString *moab_jid = g_list_nth_data(arguments, 4);
 
-			GebrmJobInfo info = {
-				.id		= ((GString*)g_list_nth_data(arguments, 11))->str,
-				.title		= ((GString*)g_list_nth_data(arguments,  2))->str,
-				.hostname	= ((GString*)g_list_nth_data(arguments,  5))->str,
-				.parent_id	= ((GString*)g_list_nth_data(arguments,  9))->str,
-				.servers	= ((GString*)g_list_nth_data(arguments, 13))->str,
-				.nice		= ((GString*)g_list_nth_data(arguments, 15))->str,
-				.input		= ((GString*)g_list_nth_data(arguments, 16))->str,
-				.output		= ((GString*)g_list_nth_data(arguments, 17))->str,
-				.error		= ((GString*)g_list_nth_data(arguments, 18))->str,
-				.submit_date	= ((GString*)g_list_nth_data(arguments, 19))->str,
-				.group		= ((GString*)g_list_nth_data(arguments, 20))->str,
-				.speed		= ((GString*)g_list_nth_data(arguments, 21))->str,
-			};
+			GebrmTask *task = gebrm_task_new(daemon, id->str, frac->str);
+			gebrm_task_init_details(task, issues, cmd, moab_jid);
+			g_signal_emit(daemon, signals[TASK_DEFINE], 0, task);
 
-			GebrmTask *task = gebrm_task_new(daemon, rid->str, frac->str);
-			gebrm_task_init_details(task, status, start_date, finish_date,
-						issues, cmd_line, moab_jid, output, n_procs);
-			gebrm_task_set_percentage(task, g_strtod(task_percentage->str, NULL));
-
-			g_signal_emit(daemon, signals[TASK_DEFINE], 0, task, &info);
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		} else if (message->hash == gebr_comm_protocol_defs.out_def.code_hash) {
 			GList *arguments;
@@ -230,7 +203,7 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 			frac = g_list_nth_data(arguments, 3);
 
 			GebrmTask *task = gebrm_task_find(rid->str, frac->str);
-			g_signal_emit(daemon, signals[TASK_OUTPUT], 0, task, output->str);
+			gebrm_task_emit_output_signal(task, output->str);
 
 			g_debug("[%s] OUT_DEF! %s", server->address->str, output->str);
 
@@ -248,8 +221,8 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 			frac = g_list_nth_data(arguments, 4);
 
 			GebrmTask *task = gebrm_task_find(rid->str, frac->str);
-			g_signal_emit(daemon, signals[TASK_STATUS], 0, task,
-				      status->str, parameter->str);
+			gebrm_task_emit_status_changed_signal(task, gebrm_task_translate_status(status),
+							      parameter->str);
 
 			g_debug("[%s] STA_DEF! %s", server->address->str, status->str);
 
@@ -350,29 +323,9 @@ gebrm_daemon_class_init(GebrmDaemonClass *klass)
 			     G_SIGNAL_RUN_FIRST,
 			     G_STRUCT_OFFSET(GebrmDaemonClass, task_define),
 			     NULL, NULL,
-			     gebrm_cclosure_marshal_VOID__OBJECT_POINTER,
+			     g_cclosure_marshal_VOID__OBJECT,
 			     G_TYPE_NONE,
-			     2, GEBRM_TYPE_TASK, G_TYPE_POINTER);
-
-	signals[TASK_OUTPUT] =
-		g_signal_new("task-output",
-			     G_OBJECT_CLASS_TYPE (object_class),
-			     G_SIGNAL_RUN_FIRST,
-			     G_STRUCT_OFFSET(GebrmDaemonClass, task_output),
-			     NULL, NULL,
-			     gebrm_cclosure_marshal_VOID__OBJECT_STRING,
-			     G_TYPE_NONE,
-			     2, GEBRM_TYPE_TASK, G_TYPE_STRING);
-
-	signals[TASK_STATUS] =
-		g_signal_new("task-status",
-			     G_OBJECT_CLASS_TYPE (object_class),
-			     G_SIGNAL_RUN_FIRST,
-			     G_STRUCT_OFFSET(GebrmDaemonClass, task_status),
-			     NULL, NULL,
-			     gebrm_cclosure_marshal_VOID__OBJECT_STRING_STRING,
-			     G_TYPE_NONE,
-			     3, GEBRM_TYPE_TASK, G_TYPE_STRING, G_TYPE_STRING);
+			     1, GEBRM_TYPE_TASK);
 
 	g_object_class_install_property(object_class,
 					PROP_ADDRESS,

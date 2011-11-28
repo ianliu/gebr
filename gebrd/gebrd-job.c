@@ -370,11 +370,17 @@ GebrdJob *job_find(GString * rid)
 	return job;
 }
 
-void job_new(GebrdJob ** _job, struct client * client, GString *queue, GString * account, GString * xml,
-	     GString * n_process, GString * run_id, GString *exec_speed, GString *niceness,
-	     GString *frac, GString *server_list, GString *server_group_name, GString *job_percentage)
+void
+job_new(GebrdJob **_job,
+	struct client *client,
+	GString *id,
+	GString *frac,
+	GString *speed,
+	GString *nice,
+	GString *flow_xml,
+	GString *account,
+	GString *num_processes)
 {
-	/* initialization */
 	GebrdJob *job = GEBRD_JOB(g_object_new(GEBRD_JOB_TYPE, NULL, NULL));
 	job->process = gebr_comm_process_new();
 	job->tail_process = NULL;
@@ -387,26 +393,22 @@ void job_new(GebrdJob ** _job, struct client * client, GString *queue, GString *
 	job->timeout[0] = 0;
 	job->timeout[1] = 0;
 
-	job->niceness = g_strcmp0(niceness->str, "0") == 0 ? 0 : 19;
 	g_string_assign(job->parent.client_hostname, client->socket->protocol->hostname->str);
 	g_string_assign(job->parent.client_display, client->display->str);
 	job->parent.server_location = client->server_location;
-	g_string_assign(job->parent.run_id, run_id->str);
-	g_string_assign(job->parent.moab_account, account->str);
-	g_string_assign(job->parent.n_process, n_process->str);
-	g_string_assign(job->parent.queue_id, queue->str);
-	g_string_assign(job->exec_speed, exec_speed->str);
+	g_string_assign(job->parent.run_id, id->str);
 	g_string_assign(job->frac, frac->str);
-	g_string_assign(job->server_list, server_list->str);
-	g_string_assign(job->server_group_name, server_group_name->str);
-	g_string_assign(job->job_percentage, job_percentage->str);
+	g_string_assign(job->exec_speed, speed->str);
+	job->niceness = g_strcmp0(nice->str, "0") == 0 ? 0 : 19;
 	job->parent.status = JOB_STATUS_INITIAL;
+	g_string_assign(job->parent.moab_account, account->str);
+	g_string_assign(job->parent.n_process, num_processes->str);
 
 	*_job = job;
 	gebrd->user->jobs = g_list_append(gebrd->user->jobs, job);
 
 	GebrGeoXmlDocument *document;
-	int ret = gebr_geoxml_document_load_buffer(&document, xml->str);
+	int ret = gebr_geoxml_document_load_buffer(&document, flow_xml->str);
 	job->flow = GEBR_GEOXML_FLOW(document);
 	gebrd->flow = document;
 
@@ -419,7 +421,7 @@ void job_new(GebrdJob ** _job, struct client * client, GString *queue, GString *
 		gebr_validator_update(gebrd_get_validator(gebrd));
 	}
 
-	gint n = gebrd_app_set_heuristic_aggression(gebrd, atoi(exec_speed->str));
+	gint n = gebrd_app_set_heuristic_aggression(gebrd, atoi(speed->str));
 
 	if (gebr_geoxml_flow_is_parallelizable(job->flow, gebrd->validator))
 		job->effprocs = n;
@@ -685,52 +687,14 @@ void job_kill(GebrdJob *job)
 
 void job_notify(GebrdJob *job, struct client *client)
 {
-	if (job->parent.status == JOB_STATUS_INITIAL)
-		job_status_set(job, JOB_STATUS_QUEUED);
-
-	gchar *input_file = gebr_geoxml_flow_io_get_input(job->flow);
-	gchar *output_file = gebr_geoxml_flow_io_get_output(job->flow);
-	gchar *log_file = gebr_geoxml_flow_io_get_error(job->flow);
-
-	const gchar *rid;
-	GebrdJob *parent = gebrd_job_get_parent(job);
-	if (parent)
-		rid = parent->parent.run_id->str;
-	else
-		rid = "";
-
-	gchar *nprocs = g_strdup_printf("%d", job->effprocs);
-	gchar *nice = g_strdup_printf("%d", job->niceness);
-
 	gebr_comm_protocol_socket_oldmsg_send(client->socket, FALSE,
-					      gebr_comm_protocol_defs.job_def, 23,
-					      job->parent.jid->str,
-					      status_enum_to_string(job->parent.status),
-					      job->parent.title->str,
-					      job->parent.start_date->str,
-					      job->parent.finish_date->str,
-					      job->parent.client_hostname->str,
-					      job->parent.issues->str,
-					      job->parent.cmd_line->str,
-					      job->parent.output->str,
-					      rid,
-					      job->parent.moab_jid->str,
+					      gebr_comm_protocol_defs.tsk_def, 5,
 					      job->parent.run_id->str,
 					      job->frac->str,
-					      job->server_list->str,
-					      nprocs,
-					      nice,
-					      input_file,
-					      output_file,
-					      log_file,
-					      gebr_geoxml_flow_get_date_last_run(job->flow),
-					      job->server_group_name->str,
-					      job->exec_speed->str,
-					      job->job_percentage->str);
-	g_free(nprocs);
-	g_free(nice);
+					      job->parent.issues->str,
+					      job->parent.cmd_line->str,
+					      job->parent.moab_jid->str);
 }
-
 
 void job_list(struct client *client)
 {

@@ -85,9 +85,15 @@ GebrdJob *job_find(GString * jid);
 
 /**
  */
-void job_new(GebrdJob ** _job, struct client * client, GString *queue, GString * account, GString * xml,
-	     GString * n_process, GString * run_id, GString *exec_speed, GString *niceness, GString *frac, GString *server_list,
-	     GString *server_group_name, GString *job_percentage);
+void job_new(GebrdJob **_job,
+	     struct client *client,
+	     GString *id,
+	     GString *frac,
+	     GString *speed,
+	     GString *nice,
+	     GString *flow_xml,
+	     GString *account,
+	     GString *num_processes);
 
 /**
  * gebrd_job_append:

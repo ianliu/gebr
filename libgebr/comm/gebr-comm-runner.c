@@ -29,6 +29,7 @@
 typedef struct {
 	GebrCommServer *server;
 	gdouble score;
+	gint eff_ncores;
 } ServerScore;
 
 struct _GebrCommRunnerPriv {
@@ -40,11 +41,15 @@ struct _GebrCommRunnerPriv {
 	gint requests;
 	gint responses;
 
+	gint total;
+	gchar *ncores;
 	gchar *parent_rid;
 	gchar *speed;
 	gchar *nice;
 	gchar *group;
 	gchar *servers_str;
+	gchar *nprocs;
+	gchar *servers_list;
 
 	void (*ran_func) (GebrCommRunner *runner,
 			  gpointer data);
@@ -205,7 +210,7 @@ predict_current_load(GList *points, gdouble delay)
  * Compute the score of a server
  */
 static gdouble
-calculate_server_score(const gchar *load, gint ncores, gdouble cpu_clock, gint scale, gint nsteps)
+calculate_server_score(const gchar *load, gint ncores, gdouble cpu_clock, gint scale, gint nsteps, gint *eff_ncores)
 {
 	GList *points = NULL;
 	gdouble delay = 1.0;
@@ -224,13 +229,13 @@ calculate_server_score(const gchar *load, gint ncores, gdouble cpu_clock, gint s
 	points = g_list_prepend(points, p15);
 
 	gdouble current_load = predict_current_load(points, delay);
-	gint eff_ncores = MAX(1, MIN(nsteps, scale*ncores/5));
+	*eff_ncores = MAX(1, MIN(nsteps, scale*ncores/5));
 
 	gdouble score;
-	if (current_load + eff_ncores > ncores)
-		score = cpu_clock*eff_ncores/(current_load + eff_ncores - ncores + 1);
+	if (current_load + (*eff_ncores) > ncores)
+		score = cpu_clock*(*eff_ncores)/(current_load + (*eff_ncores) - ncores + 1);
 	else
-		score = cpu_clock*eff_ncores;
+		score = cpu_clock*(*eff_ncores);
 
 	g_list_free(points);
 
@@ -242,12 +247,16 @@ divide_and_run_flows(GebrCommRunner *self)
 {
 	gdouble sum = 0;
 	gint n = 0;
+	gint ncores = 0;
 
 	for (GList *i = self->priv->servers; i; i = i->next) {
 		ServerScore *sc = i->data;
 		sum += sc->score;
+		ncores += sc->eff_ncores;
 		n++;
 	}
+
+	self->priv->ncores = g_strdup_printf("%d", ncores);
 
 	double *weights = g_new(double, n);
 
@@ -269,36 +278,34 @@ divide_and_run_flows(GebrCommRunner *self)
 	for (int k = 0; i; k++) {
 		GebrGeoXmlFlow *flow = i->data;
 		ServerScore *sc = j->data;
-		g_string_append_printf(server_list, "%s,",
-				       sc->server->address->str);
-		gchar *frac_total = g_strdup_printf("%d:%d", frac, n);
-		gchar *weight = g_strdup_printf("%lf", weights[k]);
+		gchar *frac_str = g_strdup_printf("%d", frac);
 		gchar *flow_xml = strip_flow(self->priv->validator, flow);
 
+		g_string_append_printf(server_list, "%s,%lf,",
+				       sc->server->address->str, weights[k]);
+
 		gebr_comm_protocol_socket_oldmsg_send(sc->server->socket, FALSE,
-						      gebr_comm_protocol_defs.run_def, 11,
-						      flow_xml,
-						      self->priv->account ? self->priv->account : "",
-						      self->priv->parent_rid ? self->priv->parent_rid : "",
-						      self->priv->num_processes ? self->priv->num_processes : "",
+						      gebr_comm_protocol_defs.run_def, 7,
 						      self->priv->id,
+						      frac_str,
 						      self->priv->speed,
 						      self->priv->nice,
-						      frac_total,
-						      self->priv->servers_str,
-						      self->priv->group,
-						      weight);
+						      flow_xml,
 
-		g_free(frac_total);
-		g_free(weight);
+						      /* Moab and MPI settings */
+						      self->priv->account ? self->priv->account : "",
+						      self->priv->num_processes ? self->priv->num_processes : "");
+
+		g_free(frac_str);
 		g_free(flow_xml);
 
 		frac++;
 		i = i->next;
 		j = j->next;
 	}
-	server_list->str[server_list->len-1] = '\0';
-	self->priv->servers_str = g_string_free(server_list, FALSE);
+
+	self->priv->total = frac - 1;
+	g_string_erase(server_list, server_list->len-1, 1);
 
 	if (self->priv->ran_func)
 		self->priv->ran_func(self, self->priv->user_data);
@@ -335,7 +342,7 @@ on_response_received(GebrCommHttpMsg *request,
 					   sc->server->ncores,
 					   sc->server->clock_cpu,
 					   atoi(self->priv->speed),
-					   n);
+					   n, &sc->eff_ncores);
 
 	g_debug("Score for %s: %lf", sc->server->address->str, sc->score);
 
@@ -381,8 +388,26 @@ gebr_comm_runner_run_async(GebrCommRunner *self,
 	}
 }
 
-const gchar *
-gebr_comm_runner_get_servers_str(GebrCommRunner *self)
+GebrValidator *
+gebr_comm_runner_get_validator(GebrCommRunner *self)
 {
-	return self->priv->servers_str;
+	return self->priv->validator;
+}
+
+const gchar *
+gebr_comm_runner_get_nprocs(GebrCommRunner *self)
+{
+	return self->priv->nprocs;
+}
+
+const gchar *
+gebr_comm_runner_get_servers_list(GebrCommRunner *self)
+{
+	return self->priv->servers_list;
+}
+
+gint
+gebr_comm_runner_get_total(GebrCommRunner *self)
+{
+	return self->priv->total;
 }

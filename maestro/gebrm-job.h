@@ -52,7 +52,9 @@ struct _GebrmJobClass {
 	void (*issued) (GebrmJob     *job,
 			const gchar *issues);
 
-	void (*cmd_line_received) (GebrmJob *job);
+	void (*cmd_line_received) (GebrmJob    *job,
+				   GebrmTask   *task,
+				   const gchar *cmd);
 
 	void (*output) (GebrmJob     *job,
 			GebrmTask    *task,
@@ -88,9 +90,6 @@ GebrmJob *gebrm_job_new(void);
 void gebrm_job_init_details(GebrmJob *job,
 			    GebrmJobInfo *info);
 
-void gebrm_job_set_servers(GebrmJob *job,
-			   const gchar *servers);
-
 void gebrm_job_set_hostname(GebrmJob *job,
 			    const gchar *hostname);
 
@@ -105,8 +104,6 @@ gboolean gebrm_job_is_queueable(GebrmJob *job);
 gboolean gebrm_job_can_close(GebrmJob *job);
 
 gboolean gebrm_job_can_kill(GebrmJob *job);
-
-gchar **gebrm_job_get_servers(GebrmJob *job, gint *n);
 
 void gebrm_job_append_task(GebrmJob *job, GebrmTask *task);
 
@@ -150,11 +147,7 @@ void gebrm_job_set_io(GebrmJob *job,
 void gebrm_job_get_io(GebrmJob *job, gchar **input_file, gchar **output_file,
 		      gchar **log_file);
 
-void gebrm_job_get_resources(GebrmJob *job,
-			     gchar **nprocs,
-			     gchar **niceness);
-
-gchar *gebrm_job_get_remaining_servers(GebrmJob *job);
+const gchar *gebrm_job_get_nice(GebrmJob *job);
 
 const gchar *gebrm_job_get_server_group(GebrmJob *job);
 
@@ -199,6 +192,18 @@ GebrCommJobStatus gebrm_job_get_partial_status(GebrmJob *job);
 void gebrm_job_append_child(GebrmJob *job,
 			    GebrCommRunner *runner,
 			    GebrmJob *child);
+
+void gebrm_job_set_servers_list(GebrmJob *job,
+				const gchar *servers);
+
+void gebrm_job_set_nprocs(GebrmJob *job,
+			  const gchar *nprocs);
+
+const gchar *gebrm_job_get_nprocs(GebrmJob *job);
+
+const gchar *gebrm_job_get_servers_list(GebrmJob *job);
+
+void gebrm_job_set_total_tasks(GebrmJob *job, gint total);
 
 G_END_DECLS
 

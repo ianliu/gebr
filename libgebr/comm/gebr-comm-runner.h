@@ -67,7 +67,13 @@ void gebr_comm_runner_free(GebrCommRunner *self);
 void gebr_comm_runner_run_async(GebrCommRunner *self,
 				const gchar *id);
 
-const gchar *gebr_comm_runner_get_servers_str(GebrCommRunner *self);
+GebrValidator *gebr_comm_runner_get_validator(GebrCommRunner *self);
+
+const gchar *gebr_comm_runner_get_nprocs(GebrCommRunner *self);
+
+const gchar *gebr_comm_runner_get_servers_list(GebrCommRunner *self);
+
+gint gebr_comm_runner_get_total(GebrCommRunner *self);
 
 G_END_DECLS
 

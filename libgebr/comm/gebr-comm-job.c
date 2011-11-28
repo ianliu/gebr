@@ -170,4 +170,20 @@ GebrCommJob * gebr_comm_job_new(void)
 	return GEBR_COMM_JOB(g_object_new(GEBR_COMM_JOB_TYPE, NULL));
 }
 
+const gchar *
+gebr_comm_job_get_string_from_status(GebrCommJobStatus status)
+{
+	static const gchar *enum_to_string[] = {
+		"unknown",
+		"queued",
+		"failed",
+		"running",
+		"finished",
+		"canceled",
+		"requeued",
+		"issued",
+		NULL
+	};
 
+	return enum_to_string[status];
+}

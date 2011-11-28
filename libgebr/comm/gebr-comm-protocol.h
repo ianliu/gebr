@@ -44,8 +44,6 @@ struct gebr_comm_protocol_defs {
 	struct gebr_comm_message_def err_def;
 	struct gebr_comm_message_def qut_def;
 	struct gebr_comm_message_def lst_def;
-	struct gebr_comm_message_def job_def;
-	struct gebr_comm_message_def run_def;
 	struct gebr_comm_message_def rnq_def;
 	struct gebr_comm_message_def flw_def;
 	struct gebr_comm_message_def clr_def;
@@ -53,7 +51,14 @@ struct gebr_comm_protocol_defs {
 	struct gebr_comm_message_def kil_def;
 	struct gebr_comm_message_def out_def;
 	struct gebr_comm_message_def sta_def;
-	struct gebr_comm_message_def ssta_def; // Server status change
+
+	struct gebr_comm_message_def run_def;  // Run request          Maestro -> Daemon
+	struct gebr_comm_message_def tsk_def;  // Task definition      Daemon  -> Maestro
+
+	struct gebr_comm_message_def job_def;  // Job definition       Maestro -> GeBR
+	struct gebr_comm_message_def ssta_def; // Server status change Maestro -> GeBR
+	struct gebr_comm_message_def cmd_def;  // Command line         Maestro -> GeBR
+	struct gebr_comm_message_def iss_def;  // Issues               Maestro -> GeBR
 };
 
 struct gebr_comm_message {

@@ -296,27 +296,25 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			job_list(client);
 		} else if (message->hash == gebr_comm_protocol_defs.run_def.code_hash) {
 			GList *arguments;
-			GString *xml, *account, *queue, *n_process, *run_id, *exec_speed, *niceness, *frac, *server_list, *server_group_name, *job_percentage;
+
 			GebrdJob *job;
+			GString *id, *frac, *speed, *nice, *flow_xml;
+			GString *account, *num_processes; /* Moab & MPI settings */
 
 			/* organize message data */
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 11)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 7)) == NULL)
 				goto err;
 
-			xml = arguments->data;
-			account = g_list_nth_data(arguments, 1);
-			queue = g_list_nth_data(arguments, 2);
-			n_process = g_list_nth_data(arguments, 3);
-			run_id = g_list_nth_data(arguments, 4);
-			exec_speed = g_list_nth_data(arguments, 5);
-			niceness = g_list_nth_data(arguments, 6);
-			frac = g_list_nth_data(arguments, 7);
-			server_list = g_list_nth_data(arguments, 8);
-			server_group_name = g_list_nth_data(arguments, 9);
-			job_percentage = g_list_nth_data(arguments, 10);
+			id = g_list_nth_data(arguments, 0);
+			frac = g_list_nth_data(arguments, 1);
+			speed = g_list_nth_data(arguments, 2);
+			nice = g_list_nth_data(arguments, 3);
+			flow_xml = g_list_nth_data(arguments, 4);
+			account = g_list_nth_data(arguments, 5);
+			num_processes = g_list_nth_data(arguments, 6);
 
 			/* try to run and send return */
-			job_new(&job, client, queue, account, xml, n_process, run_id, exec_speed, niceness, frac, server_list, server_group_name, job_percentage);
+			job_new(&job, client, id, frac, speed, nice, flow_xml, account, num_processes);
 
 #ifdef DEBUG
 			gchar *env_delay = getenv("GEBRD_RUN_DELAY_SEC");
@@ -326,15 +324,9 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 
 			if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_REGULAR) {
 				/* send job message (job is created -promoted from waiting server response- at the client) */
-				g_debug("RUN_DEF: run task with rid %s, after %s",
-					run_id->str, queue->str);
+				g_debug("RUN_DEF: run task with rid %s", id->str);
 				job_send_clients_job_notify(job);
-
-				GebrdJob *after = job_find(queue);
-				if (after)
-					gebrd_job_append(after, job);
-				else
-					job_run_flow(job);
+				job_run_flow(job);
 			} else {
 				/* ask moab to run */
 				job_run_flow(job);
