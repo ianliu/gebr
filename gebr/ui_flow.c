@@ -120,32 +120,7 @@ gebr_ui_flow_run(void)
 	g_free(url);
 	g_free(xml);
 
-	//GebrCommRunner *runner = gebr_comm_runner_new(GEBR_GEOXML_DOCUMENT(gebr.flow),
-	//					      servers, parent_rid, speed,
-	//					      nice, group, gebr.validator);
-	//
-	//gchar *title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.flow));
-
-	//GebrJob *job = gebr_job_new(parent_rid);
-	//gebr_job_set_title(job, title);
-	//gebr_job_set_hostname(job, g_get_host_name());
-	//gebr_job_set_server_group(job, group);
-	//gebr_job_set_model(job, gebr_job_control_get_model(gebr.job_control));
-	//gebr_job_set_exec_speed(job, gebr_interface_get_execution_speed());
-	//gebr_job_control_add(gebr.job_control, job);
-	//gebr_comm_runner_set_ran_func(runner, set_server_list, job);
-
-	//g_free(title);
-
-	//if (g_strcmp0(parent_rid, "") == 0) {
-	//	gebr_comm_runner_run_async(runner, gebr_job_get_id(job));
-	//} else {
-	//	GebrJob *parent = gebr_job_control_find(gebr.job_control, parent_rid);
-	//	gebr_job_append_child(parent, runner, job);
-	//}
-
-	//gebr_interface_change_tab(NOTEBOOK_PAGE_JOB_CONTROL);
-	//gebr_job_control_select_job(gebr.job_control, job);
+	gebr_interface_change_tab(NOTEBOOK_PAGE_JOB_CONTROL);
 
 	g_free(parent_rid);
 	g_free(speed);

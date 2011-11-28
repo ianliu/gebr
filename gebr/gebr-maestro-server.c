@@ -20,7 +20,10 @@
 
 
 #include "gebr-maestro-server.h"
+#include "gebr-job.h"
+#include "gebr.h"
 
+#include <stdlib.h>
 #include <libgebr/gui/gui.h>
 
 struct _GebrMaestroServerPriv {
@@ -169,6 +172,56 @@ parse_messages(GebrCommServer *comm_server,
 				gebr_maestro_server_add_daemon(maestro, daemon);
 			} else
 				gebr_daemon_server_set_state(daemon, state);
+
+			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
+		}
+		else if (message->hash == gebr_comm_protocol_defs.job_def.code_hash) {
+			GList *arguments;
+
+			GString *status, *start_date, *finish_date, *output;
+			GString *hostname, *title, *queue, *rid, *server_list,
+			*n_procs, *niceness, *input_file, *output_file,
+			*log_file, *last_run_date, *server_group_name,
+			*cmd_line, *exec_speed, *issues, *frac,
+			*job_percentage, *moab_jid;
+
+			/* organize message data */
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 14)) == NULL)
+				goto err;
+
+			title = g_list_nth_data(arguments, 0);
+			start_date = g_list_nth_data(arguments, 1);
+			hostname = g_list_nth_data(arguments, 2);
+			queue = g_list_nth_data(arguments, 3);
+			rid = g_list_nth_data(arguments, 4);
+			server_list = g_list_nth_data(arguments, 5);
+			n_procs = g_list_nth_data(arguments, 6);
+			niceness = g_list_nth_data(arguments, 7);
+			input_file = g_list_nth_data(arguments, 8);
+			output_file= g_list_nth_data(arguments, 9);
+			log_file = g_list_nth_data(arguments, 10);
+			last_run_date = g_list_nth_data(arguments, 11);
+			server_group_name = g_list_nth_data(arguments, 12);
+			exec_speed = g_list_nth_data(arguments, 13);
+
+			GebrJob *job;
+
+			job = gebr_job_control_find(gebr.job_control, rid->str);
+
+			if (!job) {
+				job = gebr_job_new_with_id(rid->str, queue->str);
+				gebr_job_set_servers(job, server_list->str);
+				gebr_job_set_title(job, title->str);
+				gebr_job_set_hostname(job, hostname->str);
+				gebr_job_set_server_group(job, server_group_name->str);
+				gebr_job_set_model(job, gebr_job_control_get_model(gebr.job_control));
+				gebr_job_set_exec_speed(job, atoi(exec_speed->str));
+				gebr_job_control_add(gebr.job_control, job);
+			}
+
+			gebr_job_set_io(job, input_file->str, output_file->str, log_file->str);
+
+			g_debug("CREATE JOB %s ON GEBR", title->str);
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}

@@ -346,6 +346,30 @@ on_client_request(GebrCommProtocolSocket *socket,
 			gebrm_job_init_details(job, &info);
 			gebrm_app_job_controller_add(app, job);
 
+			g_debug("SEND MESSAGE OF JOB_DEF");
+
+			gchar *infile, *outfile, *logfile;
+			gebrm_job_get_io(job, &infile, &outfile, &logfile);
+
+			for (GList *i = app->priv->connections; i; i = i->next) {
+				gebr_comm_protocol_socket_oldmsg_send(i->data, FALSE,
+				                                      gebr_comm_protocol_defs.job_def, 14,
+				                                      gebrm_job_get_title(job),
+				                                      gebrm_job_get_start_date(job),
+				                                      gebrm_job_get_hostname(job),
+				                                      "",
+				                                      gebrm_job_get_id(job),
+				                                      "",
+				                                      "10",
+				                                      nice,
+				                                      infile,
+				                                      outfile,
+				                                      logfile,
+				                                      gebrm_job_get_submit_date(job),
+				                                      "",
+				                                      gebrm_job_get_exec_speed(job));
+			}
+
 			g_free(title);
 
 			gebr_comm_runner_run_async(runner, gebrm_job_get_id(job));
