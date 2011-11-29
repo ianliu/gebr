@@ -187,3 +187,26 @@ gebr_comm_job_get_string_from_status(GebrCommJobStatus status)
 
 	return enum_to_string[status];
 }
+
+GebrCommJobStatus
+gebr_comm_job_get_status_from_string(const gchar *status)
+{
+	if (!g_strcmp0(status, "unknown"))
+		return JOB_STATUS_INITIAL;
+	else if (!g_strcmp0(status, "queued"))
+		return JOB_STATUS_QUEUED;
+	else if (!g_strcmp0(status, "failed"))
+		return JOB_STATUS_FAILED;
+	else if (!g_strcmp0(status, "running"))
+		return JOB_STATUS_RUNNING;
+	else if (!g_strcmp0(status, "finished"))
+		return JOB_STATUS_FINISHED;
+	else if (!g_strcmp0(status, "canceled"))
+		return JOB_STATUS_CANCELED;
+	else if (!g_strcmp0(status, "requeued"))
+		return JOB_STATUS_REQUEUED;
+	else if (!g_strcmp0(status, "issued"))
+		return JOB_STATUS_ISSUED;
+	else
+		return JOB_STATUS_INITIAL;
+}
