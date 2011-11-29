@@ -986,9 +986,10 @@ time_column_data_func(GtkTreeViewColumn *tree_column,
 }
 
 static void
-gebr_jc_update_status_and_time(GebrJobControl *jc,
-                               GebrJob 	      *job,
-                               GebrCommJobStatus status)
+compute_subheader_label(GebrJob *job,
+			GebrCommJobStatus status,
+			gchar **subheader,
+			gchar **start_detail)
 {
 	const gchar *start_date = gebr_job_get_start_date(job);
 	const gchar *finish_date = gebr_job_get_finish_date(job);
@@ -997,77 +998,121 @@ gebr_jc_update_status_and_time(GebrJobControl *jc,
 
 	/* start date (may have failed, never started) */
 	if (start_date && strlen(start_date))
-		g_string_append_printf(start, "%s %s", _("Started at"),
-		                       gebr_localized_date(start_date));
+		g_string_append_printf(start, "Started at %s", gebr_localized_date(start_date));
 
 	/* finish date */
-	if (finish_date && strlen(finish_date))
-		g_string_append_printf(finish, "%s %s", status == JOB_STATUS_FINISHED ?
-				       _("Finished at") : _("Canceled at"),
-				       gebr_localized_date(finish_date));
+	if (finish_date && strlen(finish_date)) {
+		const gchar *tmp = gebr_localized_date(finish_date);
+		if (status == JOB_STATUS_FINISHED)
+			g_string_append_printf(finish, _("Finished at %s"), tmp);
+		else
+			g_string_append_printf(finish, _("Canceled at %s"), tmp);
+	}
 
+	if (status == JOB_STATUS_FINISHED) {
+		g_string_append_c(finish, '\n');
+		g_string_append_printf(finish, _("Elapsed time: %s"),
+				       gebr_job_get_elapsed_time(job));
+		*subheader = g_string_free(finish, FALSE);
+		*start_detail = g_string_free(start, FALSE);
+		return;
+	}
+
+	if (status == JOB_STATUS_RUNNING) {
+		g_string_append_c(start, '\n');
+		g_string_append_printf(start, _("Elapsed time: %s"),
+				       gebr_job_get_running_time(job, start_date));
+		*subheader = g_string_free(start, FALSE);
+		*start_detail = NULL;
+		g_string_free(finish, TRUE);
+		return;
+	}
+
+	if (status == JOB_STATUS_CANCELED) {
+		*subheader = g_string_free(finish, FALSE);
+		*start_detail = g_string_free(start, FALSE);
+		return;
+	}
+
+	if (status == JOB_STATUS_FAILED) {
+		*subheader = g_strdup(_("Job failed"));
+		*start_detail = g_string_free(start, FALSE);
+		g_string_free(finish, TRUE);
+		return;
+	}
+
+	if (status == JOB_STATUS_QUEUED) {
+		*subheader = _("Waiting for job");
+		*start_detail = NULL;
+		g_string_free(start, TRUE);
+		g_string_free(finish, TRUE);
+		return;
+	}
+
+	if (status == JOB_STATUS_INITIAL) {
+		*subheader = _("Waiting for servers");
+		*start_detail = NULL;
+		g_string_free(start, TRUE);
+		g_string_free(finish, TRUE);
+		return;
+	}
+
+	*subheader = NULL;
+	*start_detail = NULL;
+	g_string_free(start, TRUE);
+	g_string_free(finish, TRUE);
+	return;
+}
+
+static void
+gebr_jc_update_status_and_time(GebrJobControl *jc,
+                               GebrJob 	      *job,
+                               GebrCommJobStatus status)
+{
+	gchar *subheader_str, *start_detail_str;
 	GtkImage *img = GTK_IMAGE(gtk_builder_get_object(jc->priv->builder, "status_image"));
 	GtkLabel *subheader = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "subheader_label"));
 	GtkButton *queued_button = GTK_BUTTON(gtk_builder_get_object(jc->priv->builder, "subheader_button"));
 	GtkLabel *details_start_date = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "detail_start_date"));
 	gtk_widget_hide(GTK_WIDGET(queued_button));
 
-	job_control_fill_servers_info(jc);
+	compute_subheader_label(job, status, &subheader_str, &start_detail_str);
 
-	if (status == JOB_STATUS_FINISHED) {
-		gchar *elapsed_time = g_strdup_printf(_("%s\nElapsed time: %s"), finish->str, gebr_job_get_elapsed_time(job));
-		gtk_image_set_from_stock(img, GTK_STOCK_APPLY, GTK_ICON_SIZE_DIALOG);
-		gtk_label_set_text(subheader, elapsed_time);
-		gtk_label_set_text(details_start_date, start->str);
+	if (subheader_str) {
+		gtk_label_set_text(subheader, subheader_str);
+		gtk_widget_show(GTK_WIDGET(subheader));
+	} else
+		gtk_widget_hide(GTK_WIDGET(subheader));
+
+	if (start_detail_str) {
+		gtk_label_set_text(details_start_date, start_detail_str);
 		gtk_widget_show(GTK_WIDGET(details_start_date));
-		g_free(elapsed_time);
-	}
-
-	else if (status == JOB_STATUS_RUNNING) {
-		gchar *running = g_strdup_printf(_("%s\nElapsed time: %s"), start->str, gebr_job_get_running_time(job, start_date));
-		gtk_image_set_from_stock(img, GTK_STOCK_EXECUTE, GTK_ICON_SIZE_DIALOG);
-		gtk_label_set_text(subheader, running);
+	} else
 		gtk_widget_hide(GTK_WIDGET(details_start_date));
-		g_free(running);
-	}
 
-	else if (status == JOB_STATUS_CANCELED) {
+	if (status == JOB_STATUS_FINISHED)
+		gtk_image_set_from_stock(img, GTK_STOCK_APPLY, GTK_ICON_SIZE_DIALOG);
+	else if (status == JOB_STATUS_INITIAL)
+		gtk_image_set_from_stock(img, GTK_STOCK_NETWORK, GTK_ICON_SIZE_DIALOG);
+	else if (status == JOB_STATUS_RUNNING)
+		gtk_image_set_from_stock(img, GTK_STOCK_EXECUTE, GTK_ICON_SIZE_DIALOG);
+	else if (status == JOB_STATUS_CANCELED)
 		gtk_image_set_from_stock(img, GTK_STOCK_CANCEL, GTK_ICON_SIZE_DIALOG);
-		gtk_label_set_text(subheader, finish->str);
-		gtk_label_set_text(details_start_date, start->str);
-	}
-
-	else if (status == JOB_STATUS_FAILED) {
+	else if (status == JOB_STATUS_FAILED)
 		gtk_image_set_from_stock(img, GTK_STOCK_CANCEL, GTK_ICON_SIZE_DIALOG);
-		gtk_label_set_text(subheader, _("Job failed"));
-		gtk_label_set_text(details_start_date, start->str);
-	}
-
 	else if (status == JOB_STATUS_QUEUED) {
 		GebrJob *parent;
 		GtkImage *wait_img = GTK_IMAGE(gtk_builder_get_object(jc->priv->builder, "subheader_button_img"));
 		GtkLabel *wait_label = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "subheader_button_lbl"));
 
 		parent = gebr_job_control_find(jc, gebr_job_get_queue(job));
-
 		if (parent) {
 			gtk_image_set_from_stock(img, "chronometer", GTK_ICON_SIZE_DIALOG);
-			gtk_label_set_text(subheader, _("Waiting for job"));
-
 			gtk_image_set_from_stock(wait_img, job_control_get_icon_for_job(parent), GTK_ICON_SIZE_BUTTON);
 			gtk_label_set_text(wait_label, gebr_job_get_title(parent));
-
 			gtk_widget_show(GTK_WIDGET(queued_button));
 		}
 	}
-	else if (status == JOB_STATUS_INITIAL) {
-		gtk_image_set_from_stock(img, GTK_STOCK_NETWORK, GTK_ICON_SIZE_DIALOG);
-		gtk_label_set_text(subheader, _("Waiting for servers"));
-		gtk_widget_hide(GTK_WIDGET(details_start_date));
-	}
-
-	g_string_free(start, FALSE);
-	g_string_free(finish, FALSE);
 }
 
 static void
@@ -1206,6 +1251,7 @@ gebr_job_control_load_details(GebrJobControl *jc,
 	g_object_set(info_button_image, "has-tooltip",TRUE, NULL);
 	g_signal_connect(info_button_image, "query-tooltip", G_CALLBACK(detail_button_query_tooltip), jc);
 
+	job_control_fill_servers_info(jc);
 	gebr_jc_update_status_and_time(jc, job, status);
 
 	GtkLabel *label = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "header_label"));
@@ -1247,11 +1293,9 @@ update_tree_view(gpointer data)
 	}
 
 	GebrJob *job = get_selected_job(jc);
-	if (job) {
-		GebrCommJobStatus status = gebr_job_get_status(job);
-		if (status == JOB_STATUS_RUNNING)
-			gebr_jc_update_status_and_time(jc, job, status);
-	}
+	if (job && gebr_job_get_status(job) == JOB_STATUS_RUNNING)
+		gebr_jc_update_status_and_time(jc, job, JOB_STATUS_RUNNING);
+
 	return TRUE;
 }
 
