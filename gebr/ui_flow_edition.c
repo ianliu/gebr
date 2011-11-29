@@ -1639,6 +1639,11 @@ gebr_flow_edition_show(struct ui_flow_edition *self)
 	flow_edition_find_flow_server(gebr.flow, model, &iter);
 	gtk_combo_box_set_active_iter(cb, &iter);
 //	gebr_flow_edition_select_queue(self);
+
+	if (gebr.config.niceness == 0)
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(self->nice_button_high), TRUE);
+	else
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(self->nice_button_low), TRUE);
 }
 
 void
