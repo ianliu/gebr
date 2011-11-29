@@ -370,6 +370,8 @@ gebr_job_get_issues(GebrJob *job)
 gboolean
 gebr_job_has_issues(GebrJob *job)
 {
+	if (!job->priv->issues)
+		return FALSE;
 	return job->priv->issues[0] == '\0' ? FALSE : TRUE;
 }
 
