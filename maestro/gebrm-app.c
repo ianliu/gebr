@@ -329,7 +329,7 @@ on_execution_response(GebrCommRunner *runner,
 
 	gebrm_job_set_total_tasks(aap->job, gebr_comm_runner_get_total(runner));
 	gebrm_job_set_servers_list(aap->job, gebr_comm_runner_get_servers_list(runner));
-	gebrm_job_set_nprocs(aap->job, gebr_comm_runner_get_nprocs(runner));
+	gebrm_job_set_nprocs(aap->job, gebr_comm_runner_get_ncores(runner));
 
 	const gchar *start_date = gebrm_job_get_start_date(aap->job);
 	const gchar *finish_date = gebrm_job_get_finish_date(aap->job);
