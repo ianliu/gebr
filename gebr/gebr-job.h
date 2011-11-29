@@ -70,6 +70,7 @@ typedef struct {
 	gchar *server;
 	gchar *cmd_line;
 	gdouble percentage;
+	GString *output;
 } GebrJobTask;
 
 GType gebr_job_get_type() G_GNUC_CONST;
@@ -164,12 +165,25 @@ gint gebr_job_get_total(GebrJob *job);
 
 GebrJobTask *gebr_job_get_tasks(GebrJob *job, gint *n);
 
-void gebr_job_set_status(GebrJob *job, GebrCommJobStatus status);
+void gebr_job_set_static_status(GebrJob *job, GebrCommJobStatus status);
+
+void gebr_job_set_status(GebrJob *job, GebrCommJobStatus status, const gchar *parameter);
 
 void gebr_job_set_start_date(GebrJob *job, const gchar *start_date);
 
 void gebr_job_set_finish_date(GebrJob *job, const gchar *finish_date);
 
+void gebr_job_set_nprocs(GebrJob *job, const gchar *nprocs);
+
+void gebr_job_set_nice(GebrJob *job, const gchar *nice);
+
+void gebr_job_set_submit_date(GebrJob *job, const gchar *submit_date);
+
+void gebr_job_set_cmd_line(GebrJob *job, gint frac, const gchar *cmd_line);
+
+void gebr_job_set_issues(GebrJob *job, const gchar *issues);
+
+void gebr_job_append_output(GebrJob *job, gint frac, const gchar *output);
 
 G_END_DECLS
 

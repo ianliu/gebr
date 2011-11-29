@@ -306,6 +306,7 @@ divide_and_run_flows(GebrCommRunner *self)
 
 	self->priv->total = frac - 1;
 	g_string_erase(server_list, server_list->len-1, 1);
+	self->priv->servers_list = g_string_free(server_list, FALSE);
 
 	if (self->priv->ran_func)
 		self->priv->ran_func(self, self->priv->user_data);

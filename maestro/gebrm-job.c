@@ -334,6 +334,7 @@ gebrm_job_init_details(GebrmJob *job, GebrmJobInfo *info)
 		job->priv->info.id = g_strdup(info->id);
 
 	job->priv->info.title = g_strdup(info->title);
+	g_debug("THIS IS THE TITLE: %s", job->priv->info.title);
 	job->priv->info.hostname = g_strdup(info->hostname);
 	job->priv->info.parent_id = g_strdup(info->parent_id);
 	job->priv->info.nice = g_strdup(info->nice);

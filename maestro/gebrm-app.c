@@ -149,10 +149,13 @@ gebrm_app_job_controller_on_output(GebrmJob *job,
 				   GebrmApp *app)
 {
 	for (GList *i = app->priv->connections; i; i = i->next) {
+		gchar *frac = g_strdup_printf("%d", gebrm_task_get_fraction(task));
 		gebr_comm_protocol_socket_oldmsg_send(i->data, FALSE,
-						      gebr_comm_protocol_defs.out_def, 2,
+						      gebr_comm_protocol_defs.out_def, 3,
 						      gebrm_job_get_id(job),
+						      frac,
 						      output);
+		g_free(frac);
 	}
 }
 
@@ -429,8 +432,6 @@ on_client_request(GebrCommProtocolSocket *socket,
 			info.group = group;
 			info.speed = speed;
 
-			g_free(title);
-
 			GebrmJob *job = gebrm_job_new();
 
 			g_signal_connect(job, "status-change",
@@ -450,6 +451,8 @@ on_client_request(GebrCommProtocolSocket *socket,
 			aap->job = job;
 			gebr_comm_runner_set_ran_func(runner, on_execution_response, aap);
 			gebr_comm_runner_run_async(runner, gebrm_job_get_id(job));
+
+			g_free(title);
 		}
 	}
 }
@@ -581,15 +584,22 @@ send_messages_of_jobs(gpointer key,
 	                                      start_date? start_date : "",
 	                                      finish_date? finish_date : "");
 
+	GList *tasks = gebrm_job_get_list_of_tasks(job);
+	
 	/* Output message*/
-	gebr_comm_protocol_socket_oldmsg_send(protocol, FALSE,
-	                                      gebr_comm_protocol_defs.out_def, 2,
-	                                      id,
-	                                      gebrm_job_get_output(job));
+	gchar *frac;
+	for(GList *i = tasks; i; i = i->next) {
+		frac = g_strdup_printf("%d", gebrm_task_get_fraction(i->data));
+		gebr_comm_protocol_socket_oldmsg_send(protocol, FALSE,
+						      gebr_comm_protocol_defs.out_def, 3,
+						      id,
+						      frac,
+						      gebrm_task_get_output(i->data));
+
+		g_free(frac);
+	}
 
 	/* Command line message */
-	GList *tasks = gebrm_job_get_list_of_tasks(job);
-	gchar *frac;
 	for(GList *i = tasks; i; i = i->next) {
 		frac = g_strdup_printf("%d", gebrm_task_get_fraction(i->data));
 		gebr_comm_protocol_socket_oldmsg_send(protocol, FALSE,

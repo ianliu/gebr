@@ -246,6 +246,7 @@ gebr_job_set_servers(GebrJob *job,
 		job->priv->tasks[i].percentage = g_strtod(split[i*2 + 1], NULL);
 		job->priv->tasks[i].cmd_line = NULL;
 		job->priv->tasks[i].frac = i+1;
+		job->priv->tasks[i].output = g_string_new("");
 	}
 }
 
@@ -336,8 +337,10 @@ gebr_job_get_command_line(GebrJob *job)
 gchar *
 gebr_job_get_output(GebrJob *job)
 {
-	g_warning("TODO: Implement %s", __func__);
-	return g_strdup("");
+	GString *output = g_string_new("");
+	for (int i = 0; i < job->priv->n_servers; i++)
+		g_string_append(output, job->priv->tasks[i].output->str);
+	return g_string_free(output, FALSE);
 }
 
 const gchar *
@@ -503,19 +506,84 @@ gebr_job_set_exec_speed(GebrJob *job, gint exec_speed)
 }
 
 void
-gebr_job_set_status(GebrJob *job, GebrCommJobStatus status)
+gebr_job_set_static_status(GebrJob *job, GebrCommJobStatus status)
 {
 	job->priv->status = status;
 }
 
 void
+gebr_job_set_status(GebrJob *job, GebrCommJobStatus status, const gchar *parameter)
+{
+	GebrCommJobStatus old = job->priv->status;
+	job->priv->status = status;
+	g_signal_emit(job, signals[STATUS_CHANGE], 0, old, status, parameter);
+}
+
+void
 gebr_job_set_start_date(GebrJob *job, const gchar *start_date)
 {
-	job->priv->start_date = start_date;
+	if (job->priv->start_date)
+		g_free(job->priv->start_date);
+	job->priv->start_date = g_strdup(start_date);
 }
 
 void
 gebr_job_set_finish_date(GebrJob *job, const gchar *finish_date)
 {
-	job->priv->finish_date = finish_date;
+	if (job->priv->finish_date)
+		g_free(job->priv->finish_date);
+	job->priv->finish_date = g_strdup(finish_date);
+}
+
+void
+gebr_job_set_nprocs(GebrJob *job,
+		    const gchar *nprocs)
+{
+	if (job->priv->nprocs)
+		g_free(job->priv->nprocs);
+	job->priv->nprocs = g_strdup(nprocs);
+}
+
+void
+gebr_job_set_nice(GebrJob *job,
+		  const gchar *nice)
+{
+	if (job->priv->nice)
+		g_free(job->priv->nice);
+	job->priv->nice = g_strdup(nice);
+}
+
+void
+gebr_job_set_submit_date(GebrJob *job,
+			 const gchar *submit_date)
+{
+	if (job->priv->submit_date)
+		g_free(job->priv->submit_date);
+	job->priv->submit_date = g_strdup(submit_date);
+}
+
+void
+gebr_job_set_cmd_line(GebrJob *job, gint frac, const gchar *cmd_line)
+{
+	if (job->priv->tasks[frac].cmd_line)
+		g_free(job->priv->tasks[frac].cmd_line);
+	job->priv->tasks[frac].cmd_line = g_strdup(cmd_line);
+	g_signal_emit(job, signals[CMD_LINE_RECEIVED], 0, frac, cmd_line);
+}
+
+void
+gebr_job_set_issues(GebrJob *job, const gchar *issues)
+{
+	if (job->priv->issues)
+		g_free(job->priv->issues);
+	job->priv->issues = g_strdup(issues);
+	g_signal_emit(job, signals[ISSUED], 0, issues);
+}
+
+void
+gebr_job_append_output(GebrJob *job, gint frac,
+		       const gchar *output)
+{
+	g_string_append(job->priv->tasks[frac].output, output);
+	g_signal_emit(job, signals[OUTPUT], 0, frac, output);
 }

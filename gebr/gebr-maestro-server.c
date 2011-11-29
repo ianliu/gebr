@@ -20,54 +20,50 @@
 
 
 #include "gebr-maestro-server.h"
-#include "gebr-job.h"
-#include "gebr.h"
 
-#include <stdlib.h>
 #include <libgebr/gui/gui.h>
+#include <stdlib.h>
 
 struct _GebrMaestroServerPriv {
 	GebrCommServer *server;
 	GtkListStore *store;
 	GtkTreeModel *filter;
+	GHashTable *jobs;
 };
 
-static void      log_message(GebrCommServer *server,
-			     GebrLogMessageType type,
-			     const gchar *message,
-			     gpointer user_data);
+enum {
+	JOB_DEFINE,
+	LAST_SIGNAL
+};
 
-static void      state_changed(GebrCommServer *comm_server,
-			       gpointer user_data);
-
-static GString  *ssh_login(GebrCommServer *server,
-			   const gchar *title,
-			   const gchar *message,
-			   gpointer user_data);
-
-static gboolean  ssh_question(GebrCommServer *server,
-			      const gchar *title,
-			      const gchar *message,
-			      gpointer user_data);
-
-static void      process_request(GebrCommServer *server,
-				 GebrCommHttpMsg *request,
-				 gpointer user_data);
-
-static void      process_response(GebrCommServer *server,
-				  GebrCommHttpMsg *request,
-				  GebrCommHttpMsg *response,
-				  gpointer user_data);
-
-static void      parse_messages(GebrCommServer *comm_server,
-				gpointer user_data);
-
-static void gebr_maestro_server_connectable_init(GebrConnectableIface *iface);
+guint signals[LAST_SIGNAL] = { 0, };
 
 enum {
 	PROP_0,
 	PROP_ADDRESS,
 };
+
+static void log_message(GebrCommServer *server, GebrLogMessageType type,
+			     const gchar *message, gpointer user_data);
+
+static void state_changed(GebrCommServer *comm_server,
+			       gpointer user_data);
+
+static GString *ssh_login(GebrCommServer *server, const gchar *title,
+			   const gchar *message, gpointer user_data);
+
+static gboolean ssh_question(GebrCommServer *server, const gchar *title,
+			      const gchar *message, gpointer user_data);
+
+static void process_request(GebrCommServer *server, GebrCommHttpMsg *request,
+			    gpointer user_data);
+
+static void process_response(GebrCommServer *server, GebrCommHttpMsg *request,
+			     GebrCommHttpMsg *response, gpointer user_data);
+
+static void parse_messages(GebrCommServer *comm_server, gpointer user_data);
+
+static void gebr_maestro_server_connectable_init(GebrConnectableIface *iface);
 
 static const struct gebr_comm_server_ops maestro_ops = {
 	.log_message      = log_message,
@@ -178,54 +174,61 @@ parse_messages(GebrCommServer *comm_server,
 		else if (message->hash == gebr_comm_protocol_defs.job_def.code_hash) {
 			GList *arguments;
 
-			GString *hostname, *title, *queue, *rid, *server_list,
-				*n_procs, *niceness, *input_file, *output_file,
-				*log_file, *last_run_date, *server_group_name,
-				*exec_speed, *status, *start_date, *finish_date;
-
 			/* organize message data */
 			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 16)) == NULL)
 				goto err;
 
-			rid = g_list_nth_data(arguments, 0);
-			n_procs = g_list_nth_data(arguments, 1);
-			server_list = g_list_nth_data(arguments, 2);
-			hostname = g_list_nth_data(arguments, 3);
-			title = g_list_nth_data(arguments, 4);
-			queue = g_list_nth_data(arguments, 5);
-			niceness = g_list_nth_data(arguments, 6);
-			input_file = g_list_nth_data(arguments, 7);
-			output_file = g_list_nth_data(arguments, 8);
-			log_file = g_list_nth_data(arguments, 9);
-			last_run_date = g_list_nth_data(arguments, 10);
-			server_group_name = g_list_nth_data(arguments, 11);
-			exec_speed = g_list_nth_data(arguments, 12);
-			status = g_list_nth_data(arguments, 13);
-			start_date = g_list_nth_data(arguments, 14);
-			finish_date = g_list_nth_data(arguments, 15);
+			GString *id          = g_list_nth_data(arguments, 0);
+			GString *nprocs      = g_list_nth_data(arguments, 1);
+			GString *server_list = g_list_nth_data(arguments, 2);
+			GString *hostname    = g_list_nth_data(arguments, 3);
+			GString *title       = g_list_nth_data(arguments, 4);
+			GString *parent_id   = g_list_nth_data(arguments, 5);
+			GString *nice        = g_list_nth_data(arguments, 6);
+			GString *input       = g_list_nth_data(arguments, 7);
+			GString *output      = g_list_nth_data(arguments, 8);
+			GString *error       = g_list_nth_data(arguments, 9);
+			GString *submit_date = g_list_nth_data(arguments, 10);
+			GString *group       = g_list_nth_data(arguments, 11);
+			GString *speed       = g_list_nth_data(arguments, 12);
+			GString *status      = g_list_nth_data(arguments, 13);
+			GString *start_date  = g_list_nth_data(arguments, 14);
+			GString *finish_date = g_list_nth_data(arguments, 15);
 
-			GebrJob *job;
+			GebrJob *job = g_hash_table_lookup(maestro->priv->jobs, id->str);
+			gboolean init = (job == NULL);
 
-			job = gebr_job_control_find(gebr.job_control, rid->str);
+			if (!job)
+				job = gebr_job_new_with_id(id->str, parent_id->str);
 
-			if (!job) {
-				job = gebr_job_new_with_id(rid->str, queue->str);
-				gebr_job_set_servers(job, server_list->str);
-				gebr_job_set_title(job, title->str);
+			/* These properties are computed after Maestro sent the
+			 * tasks to its Daemons, so they can not be set before
+			 * that. The interface should update this properties.
+			 */
+			gebr_job_set_servers(job, server_list->str);
+			gebr_job_set_submit_date(job, submit_date->str);
+			gebr_job_set_nprocs(job, nprocs->str);
+
+			if (init) {
+				/* Creates a job and populates some of its information.
+				 * This condition happens when GeBR connects to Maestro.
+				 */
 				gebr_job_set_hostname(job, hostname->str);
-				gebr_job_set_server_group(job, server_group_name->str);
-				gebr_job_set_exec_speed(job, atoi(exec_speed->str));
-				gebr_job_set_io(job, input_file->str, output_file->str, log_file->str);
-				gebr_job_set_status(job, gebr_comm_job_get_status_from_string(status->str));
+				gebr_job_set_title(job, title->str);
+				gebr_job_set_nice(job, nice->str);
+				gebr_job_set_io(job, input->str, output->str, error->str);
+				gebr_job_set_server_group(job, group->str);
+				gebr_job_set_exec_speed(job, atoi(speed->str));
+				gebr_job_set_static_status(job, gebr_comm_job_get_status_from_string(status->str));
 				if (start_date->len > 0)
-					gebr_job_set_start_date(job, start_date);
+					gebr_job_set_start_date(job, start_date->str);
 				if (finish_date->len > 0)
-					gebr_job_set_finish_date(job, finish_date);
+					gebr_job_set_finish_date(job, finish_date->str);
 
-				gebr_job_set_model(job, gebr_job_control_get_model(gebr.job_control));
-				gebr_job_control_add(gebr.job_control, job);
+				g_hash_table_insert(maestro->priv->jobs, g_strdup(id->str), job);
 			}
 
+			g_signal_emit(maestro, signals[JOB_DEFINE], 0, job);
 			g_debug("CREATE JOB %s ON GEBR", title->str);
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
@@ -236,9 +239,13 @@ parse_messages(GebrCommServer *comm_server,
 			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
 				goto err;
 
-			GString *rid = g_list_nth_data(arguments, 0);
+			GString *id = g_list_nth_data(arguments, 0);
 			GString *issues = g_list_nth_data(arguments, 1);
-			g_debug("ISSUES from %s: %s", rid->str, issues->str);
+
+			GebrJob *job = g_hash_table_lookup(maestro->priv->jobs, id->str);
+			gebr_job_set_issues(job, issues->str);
+
+			g_debug("ISSUES from %s: %s", id->str, issues->str);
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}
@@ -248,43 +255,49 @@ parse_messages(GebrCommServer *comm_server,
 			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 3)) == NULL)
 				goto err;
 
-			GString *rid = g_list_nth_data(arguments, 0);
+			GString *id = g_list_nth_data(arguments, 0);
 			GString *frac = g_list_nth_data(arguments, 1);
 			GString *cmd = g_list_nth_data(arguments, 2);
 
-			g_debug("CMDLINE from %s(%s): %s", rid->str, frac->str, cmd->str);
+			GebrJob *job = g_hash_table_lookup(maestro->priv->jobs, id->str);
+			gebr_job_set_cmd_line(job, atoi(frac->str) - 1, cmd->str);
+			g_debug("CMDLINE from %s(%s): %s", id->str, frac->str, cmd->str);
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}
 		else if (message->hash == gebr_comm_protocol_defs.out_def.code_hash) {
 			GList *arguments;
-			GString *output, *rid;
 
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 3)) == NULL)
 				goto err;
 
-			rid = g_list_nth_data(arguments, 0);
-			output = g_list_nth_data(arguments, 1);
-			g_debug("OUTPUT from %s: %s", rid->str, output->str);
+			GString *id = g_list_nth_data(arguments, 0);
+			GString *frac = g_list_nth_data(arguments, 1);
+			GString *output = g_list_nth_data(arguments, 2);
+
+			GebrJob *job = g_hash_table_lookup(maestro->priv->jobs, id->str);
+			gebr_job_append_output(job, atoi(frac->str) - 1, output->str);
+			g_debug("OUTPUT from %s: %s", id->str, output->str);
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}
 		else if (message->hash == gebr_comm_protocol_defs.sta_def.code_hash) {
 			GList *arguments;
-			GString *status, *parameter, *rid;
 
 			/* organize message data */
 			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 3)) == NULL)
 				goto err;
 
-			rid = g_list_nth_data(arguments, 0);
-			status = g_list_nth_data(arguments, 1);
-			parameter = g_list_nth_data(arguments, 2);
+			GString *id = g_list_nth_data(arguments, 0);
+			GString *status = g_list_nth_data(arguments, 1);
+			GString *parameter = g_list_nth_data(arguments, 2);
 
+			GebrJob *job = g_hash_table_lookup(maestro->priv->jobs, id->str);
 			GebrCommJobStatus status_enum;
 			status_enum = gebr_comm_job_get_status_from_string(status->str);
+			gebr_job_set_status(job, gebr_comm_job_get_status_from_string(status->str), parameter->str);
 
-			g_debug("STATUS from %s: %s", rid->str, status->str);
+			g_debug("STATUS from %s: %s", id->str, status->str);
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}
@@ -351,6 +364,7 @@ gebr_maestro_server_finalize(GObject *object)
 	gtk_list_store_clear(maestro->priv->store);
 	g_object_unref(maestro->priv->store);
 	g_object_unref(maestro->priv->filter);
+	g_hash_table_unref(maestro->priv->jobs);
 
 	G_OBJECT_CLASS(gebr_maestro_server_parent_class)->finalize(object);
 }
@@ -362,6 +376,15 @@ gebr_maestro_server_class_init(GebrMaestroServerClass *klass)
 	object_class->get_property = gebr_maestro_server_get;
 	object_class->set_property = gebr_maestro_server_set;
 	object_class->finalize = gebr_maestro_server_finalize;
+
+	signals[JOB_DEFINE] =
+		g_signal_new("job-define",
+			     G_OBJECT_CLASS_TYPE(object_class),
+			     G_SIGNAL_RUN_LAST,
+			     G_STRUCT_OFFSET(GebrMaestroServerClass, job_define),
+			     NULL, NULL,
+			     g_cclosure_marshal_VOID__OBJECT,
+			     G_TYPE_NONE, 1, GEBR_TYPE_JOB);
 
 	g_object_class_install_property(object_class,
 					PROP_ADDRESS,
@@ -382,6 +405,7 @@ gebr_maestro_server_init(GebrMaestroServer *maestro)
 						    GebrMaestroServerPriv);
 
 	maestro->priv->store = gtk_list_store_new(1, G_TYPE_POINTER);
+	maestro->priv->jobs = g_hash_table_new(g_str_hash, g_str_equal);
 
 	GebrDaemonServer *autochoose =
 		gebr_daemon_server_new(GEBR_CONNECTABLE(maestro), NULL, SERVER_STATE_CONNECT);

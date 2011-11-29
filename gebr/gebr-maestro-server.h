@@ -21,10 +21,10 @@
 #ifndef __GEBR_MAESTRO_H__
 #define __GEBR_MAESTRO_H__
 
-#include <glib-object.h>
-
 #include <gtk/gtk.h>
+
 #include "gebr-daemon-server.h"
+#include "gebr-job.h"
 
 G_BEGIN_DECLS
 
@@ -41,6 +41,9 @@ typedef struct _GebrMaestroServerClass GebrMaestroServerClass;
 
 struct _GebrMaestroServerClass {
 	GObjectClass parent_class;
+
+	void (*job_define) (GebrMaestroServer *maestro,
+			    GebrJob           *job);
 };
 
 struct _GebrMaestroServer {
