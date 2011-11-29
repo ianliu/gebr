@@ -641,7 +641,7 @@ on_job_status(GebrJob *job,
 	      const gchar *parameter,
 	      GebrJobControl *jc)
 {
-	gebr_job_control_load_details(jc, job);
+	gebr_jc_update_status_and_time(jc, job, new_status);
 }
 
 static void
@@ -1248,9 +1248,6 @@ gebr_job_control_load_details(GebrJobControl *jc,
 		g_warn_if_reached();
 	}
 
-	g_object_set(info_button_image, "has-tooltip",TRUE, NULL);
-	g_signal_connect(info_button_image, "query-tooltip", G_CALLBACK(detail_button_query_tooltip), jc);
-
 	job_control_fill_servers_info(jc);
 	gebr_jc_update_status_and_time(jc, job, status);
 
@@ -1653,6 +1650,9 @@ gebr_job_control_new(void)
 	jc->priv->info_button = gebr_gui_tool_button_new();
 	gtk_button_set_relief(GTK_BUTTON(jc->priv->info_button), GTK_RELIEF_NONE);
 	gtk_container_add(GTK_CONTAINER(jc->priv->info_button), gtk_image_new());
+	g_object_set(jc->priv->info_button, "has-tooltip",TRUE, NULL);
+	g_signal_connect(jc->priv->info_button, "query-tooltip", G_CALLBACK(detail_button_query_tooltip), jc);
+
 	gtk_widget_show_all(jc->priv->info_button);
 	GtkBox *box = GTK_BOX(gtk_builder_get_object(jc->priv->builder, "info_box"));
 	GtkWidget *widget = GTK_WIDGET(gtk_builder_get_object(jc->priv->builder, "servers_widget"));
@@ -2036,6 +2036,7 @@ detail_button_query_tooltip(GtkWidget  *widget,
 	gtk_tooltip_set_text (tooltip, text_tooltip);
 	return TRUE;
 }
+
 void
 gebr_job_control_remove(GebrJobControl *jc,
 			GebrJob *job)

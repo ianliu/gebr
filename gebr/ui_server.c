@@ -487,7 +487,6 @@ on_job_define(GebrMaestroServer *maestro,
 	      struct ui_server_list *sl)
 {
 	gebr_job_control_add(gebr.job_control, job);
-	gebr_job_control_select_job(gebr.job_control, job);
 }
 
 void
