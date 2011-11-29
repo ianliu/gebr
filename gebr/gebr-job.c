@@ -518,6 +518,20 @@ gebr_job_set_status(GebrJob *job, GebrCommJobStatus status, const gchar *paramet
 {
 	GebrCommJobStatus old = job->priv->status;
 	job->priv->status = status;
+
+	switch(status) {
+	case JOB_STATUS_RUNNING:
+		gebr_job_set_start_date(job, parameter);
+		break;
+	case JOB_STATUS_CANCELED:
+	case JOB_STATUS_FAILED:
+	case JOB_STATUS_FINISHED:
+		gebr_job_set_finish_date(job, parameter);
+		break;
+	default:
+		break;
+	}
+
 	g_signal_emit(job, signals[STATUS_CHANGE], 0, old, status, parameter);
 }
 
