@@ -141,12 +141,14 @@ gboolean gebr_quit(gboolean save_config)
 	if (save_config)
 		gebr_config_save(FALSE);
 
-	GtkTreeModel *model = gebr_maestro_server_get_model(gebr.ui_server_list->maestro, FALSE);
+	if (gebr.ui_server_list->maestro) {
+		GtkTreeModel *model = gebr_maestro_server_get_model(gebr.ui_server_list->maestro, FALSE);
 
-	gebr_gui_gtk_tree_model_foreach_hyg(iter, model, 1) {
-		GebrDaemonServer *daemon;
-		gtk_tree_model_get(model, &iter, 0, &daemon, -1);
-		g_object_unref(daemon);
+		gebr_gui_gtk_tree_model_foreach_hyg(iter, model, 1) {
+			GebrDaemonServer *daemon;
+			gtk_tree_model_get(model, &iter, 0, &daemon, -1);
+			g_object_unref(daemon);
+		}
 	}
 
 	if (gebr.flow_clipboard != NULL) {
