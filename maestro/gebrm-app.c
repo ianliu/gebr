@@ -271,13 +271,25 @@ gebrm_add_server_to_list(GebrmApp *app,
 }
 
 static GList *
-get_comm_servers_list(GebrmApp *app)
+get_comm_servers_list(GebrmApp *app, const gchar *address)
 {
 	GList *servers = NULL;
 	GebrCommServer *server;
-	for (GList *i = app->priv->daemons; i; i = i->next) {
-		g_object_get(i->data, "server", &server, NULL);
-		servers = g_list_prepend(servers, server);
+	gboolean is_autochoose = (address[0] == '\0');
+
+	if (!is_autochoose) {
+		for (GList *i = app->priv->daemons; i; i = i->next) {
+			if (g_str_equal(gebrm_daemon_get_address(i->data), address)) {
+				g_object_get(i->data, "server", &server, NULL);
+				servers = g_list_prepend(servers, server);
+				break;
+			}
+		}
+	} else {
+		for (GList *i = app->priv->daemons; i; i = i->next) {
+			g_object_get(i->data, "server", &server, NULL);
+			servers = g_list_prepend(servers, server);
+		}
 	}
 
 	return servers;
@@ -362,15 +374,16 @@ on_client_request(GebrCommProtocolSocket *socket,
 			GebrCommJsonContent *json;
 			gchar *tmp = strchr(request->url->str, '?') + 1;
 			gchar **params = g_strsplit(tmp, ";", -1);
-			gchar *parent_id, *speed, *nice, *group, *host;
+			gchar *address, *parent_id, *speed, *nice, *group, *host;
 
 			g_debug("I will run this flow:");
 
-			parent_id = strchr(params[0], '=') + 1;
-			speed     = strchr(params[1], '=') + 1;
-			nice      = strchr(params[2], '=') + 1;
-			group     = strchr(params[3], '=') + 1;
-			host      = strchr(params[4], '=') + 1;
+			address   = strchr(params[0], '=') + 1;
+			parent_id = strchr(params[1], '=') + 1;
+			speed     = strchr(params[2], '=') + 1;
+			nice      = strchr(params[3], '=') + 1;
+			group     = strchr(params[4], '=') + 1;
+			host      = strchr(params[5], '=') + 1;
 
 			json = gebr_comm_json_content_new(request->content->str);
 			GString *value = gebr_comm_json_content_to_gstring(json);
@@ -389,7 +402,7 @@ on_client_request(GebrCommProtocolSocket *socket,
 								      (GebrGeoXmlDocument **)pline,
 								      (GebrGeoXmlDocument **)pproj);
 
-			GList *servers = get_comm_servers_list(app);
+			GList *servers = get_comm_servers_list(app, address);
 			GebrCommRunner *runner = gebr_comm_runner_new(GEBR_GEOXML_DOCUMENT(*pflow),
 								      servers,
 								      parent_id, speed, nice, group,
