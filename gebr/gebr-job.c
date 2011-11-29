@@ -381,7 +381,11 @@ gebr_job_close(GebrJob *job)
 	if (!gebr_job_can_close(job))
 		return FALSE;
 
-	g_warning("TODO: Implement %s", __func__);
+	gchar *url = g_strdup_printf("/close?id=%s", gebr_job_get_id(job));
+
+	GebrCommServer *server = gebr_maestro_server_get_server(gebr.ui_server_list->maestro);
+	gebr_comm_protocol_socket_send_request(server->socket,
+	                                       GEBR_COMM_HTTP_METHOD_PUT, url, NULL);
 	return TRUE;
 }
 
@@ -391,7 +395,11 @@ gebr_job_kill(GebrJob *job)
 	if (!gebr_job_can_kill(job))
 		return;
 
-	g_warning("TODO: Implement %s", __func__);
+	gchar *url = g_strdup_printf("/kill?id=%s", gebr_job_get_id(job));
+
+	GebrCommServer *server = gebr_maestro_server_get_server(gebr.ui_server_list->maestro);
+	gebr_comm_protocol_socket_send_request(server->socket,
+	                                       GEBR_COMM_HTTP_METHOD_PUT, url, NULL);
 }
 
 void

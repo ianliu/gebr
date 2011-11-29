@@ -379,6 +379,27 @@ on_client_request(GebrCommProtocolSocket *socket,
 			gebrm_config_delete_server(addr);
 			g_debug(">> on %s, disconecting %s", __func__, addr) 	;
 		}
+		else if (g_str_has_prefix(request->url->str, "/close")) {
+			gchar *tmp = strchr(request->url->str, '?') + 1;
+			gchar *id = strchr(tmp, '=') + 1;
+
+			GebrmJob *job = g_hash_table_lookup(app->priv->jobs, id);
+			if (job) {
+				gebrm_job_close(job);
+				g_hash_table_remove(app->priv->jobs, id);
+				g_debug("CLOSE JOB WITH ID %s", id);
+			}
+		}
+		else if (g_str_has_prefix(request->url->str, "/kill")) {
+			gchar *tmp = strchr(request->url->str, '?') + 1;
+			gchar *id = strchr(tmp, '=') + 1;
+
+			GebrmJob *job = g_hash_table_lookup(app->priv->jobs, id);
+			if (job) {
+				gebrm_job_kill(job);
+				g_debug("KILL JOB WITH ID %s", id);
+			}
+		}
 		else if (g_str_has_prefix(request->url->str, "/run")) {
 			GebrCommJsonContent *json;
 			gchar *tmp = strchr(request->url->str, '?') + 1;
