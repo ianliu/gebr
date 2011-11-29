@@ -328,9 +328,12 @@ on_execution_response(GebrCommRunner *runner,
 	gebrm_job_set_servers_list(aap->job, gebr_comm_runner_get_servers_list(runner));
 	gebrm_job_set_nprocs(aap->job, gebr_comm_runner_get_nprocs(runner));
 
+	const gchar *start_date = gebrm_job_get_start_date(aap->job);
+	const gchar *finish_date = gebrm_job_get_finish_date(aap->job);
+
 	for (GList *i = aap->app->priv->connections; i; i = i->next) {
 		gebr_comm_protocol_socket_oldmsg_send(i->data, FALSE,
-						      gebr_comm_protocol_defs.job_def, 13,
+						      gebr_comm_protocol_defs.job_def, 16,
 						      gebrm_job_get_id(aap->job),
 						      gebrm_job_get_nprocs(aap->job),
 						      gebrm_job_get_servers_list(aap->job),
@@ -343,7 +346,10 @@ on_execution_response(GebrCommRunner *runner,
 						      logfile,
 						      gebrm_job_get_submit_date(aap->job),
 						      gebrm_job_get_server_group(aap->job),
-						      gebrm_job_get_exec_speed(aap->job));
+						      gebrm_job_get_exec_speed(aap->job),
+						      gebr_comm_job_get_string_from_status(gebrm_job_get_status(aap->job)),
+						      start_date? start_date : "",
+						      finish_date? finish_date : "");
 	}
 
 	gebr_validator_free(gebr_comm_runner_get_validator(runner));
@@ -540,6 +546,74 @@ on_client_disconnect(GebrCommProtocolSocket *socket,
 }
 
 static void
+send_messages_of_jobs(gpointer key,
+                      gpointer value,
+                      gpointer data)
+{
+	GebrCommProtocolSocket *protocol = data;
+	const gchar *id = key;
+	GebrmJob *job = value;
+
+	gchar *infile, *outfile, *logfile;
+
+	gebrm_job_get_io(job, &infile, &outfile, &logfile);
+
+	const gchar *start_date = gebrm_job_get_start_date(job);
+	const gchar *finish_date = gebrm_job_get_finish_date(job);
+
+	/* Job def message */
+	gebr_comm_protocol_socket_oldmsg_send(protocol, FALSE,
+	                                      gebr_comm_protocol_defs.job_def, 16,
+	                                      id,
+	                                      gebrm_job_get_nprocs(job),
+	                                      gebrm_job_get_servers_list(job),
+	                                      gebrm_job_get_hostname(job),
+	                                      gebrm_job_get_title(job),
+	                                      gebrm_job_get_queue(job),
+	                                      gebrm_job_get_nice(job),
+	                                      infile,
+	                                      outfile,
+	                                      logfile,
+	                                      gebrm_job_get_submit_date(job),
+	                                      gebrm_job_get_server_group(job),
+	                                      gebrm_job_get_exec_speed(job),
+	                                      gebr_comm_job_get_string_from_status(gebrm_job_get_status(job)),
+	                                      start_date? start_date : "",
+	                                      finish_date? finish_date : "");
+
+	/* Output message*/
+	gebr_comm_protocol_socket_oldmsg_send(protocol, FALSE,
+	                                      gebr_comm_protocol_defs.out_def, 2,
+	                                      id,
+	                                      gebrm_job_get_output(job));
+
+	/* Command line message */
+	GList *tasks = gebrm_job_get_list_of_tasks(job);
+	gchar *frac;
+	for(GList *i = tasks; i; i = i->next) {
+		frac = g_strdup_printf("%d", gebrm_task_get_fraction(i->data));
+		gebr_comm_protocol_socket_oldmsg_send(protocol, FALSE,
+		                                      gebr_comm_protocol_defs.cmd_def, 3,
+		                                      id,
+		                                      frac,
+		                                      gebrm_task_get_cmd_line(i->data));
+		g_free(frac);
+	}
+
+	/* Issues message */
+	const gchar *issues = gebrm_job_get_issues(job);
+	if (*issues)
+		gebr_comm_protocol_socket_oldmsg_send(protocol, FALSE,
+		                                      gebr_comm_protocol_defs.iss_def, 2,
+		                                      id,
+		                                      issues);
+
+	g_free(infile);
+	g_free(outfile);
+	g_free(logfile);
+}
+
+static void
 on_new_connection(GebrCommListenSocket *listener,
 		  GebrmApp *app)
 {
@@ -563,6 +637,8 @@ on_new_connection(GebrCommListenSocket *listener,
 				 G_CALLBACK(on_client_disconnect), app);
 		g_signal_connect(protocol, "process-request",
 				 G_CALLBACK(on_client_request), app);
+
+		g_hash_table_foreach(app->priv->jobs, (GHFunc)send_messages_of_jobs, protocol);
 	}
 }
 

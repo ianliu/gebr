@@ -501,3 +501,21 @@ gebr_job_set_exec_speed(GebrJob *job, gint exec_speed)
 {
 	job->priv->exec_speed = exec_speed;
 }
+
+void
+gebr_job_set_status(GebrJob *job, GebrCommJobStatus status)
+{
+	job->priv->status = status;
+}
+
+void
+gebr_job_set_start_date(GebrJob *job, const gchar *start_date)
+{
+	job->priv->start_date = start_date;
+}
+
+void
+gebr_job_set_finish_date(GebrJob *job, const gchar *finish_date)
+{
+	job->priv->finish_date = finish_date;
+}

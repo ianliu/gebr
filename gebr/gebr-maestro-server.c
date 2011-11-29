@@ -181,10 +181,10 @@ parse_messages(GebrCommServer *comm_server,
 			GString *hostname, *title, *queue, *rid, *server_list,
 				*n_procs, *niceness, *input_file, *output_file,
 				*log_file, *last_run_date, *server_group_name,
-				*exec_speed;
+				*exec_speed, *status, *start_date, *finish_date;
 
 			/* organize message data */
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 13)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 16)) == NULL)
 				goto err;
 
 			rid = g_list_nth_data(arguments, 0);
@@ -200,6 +200,9 @@ parse_messages(GebrCommServer *comm_server,
 			last_run_date = g_list_nth_data(arguments, 10);
 			server_group_name = g_list_nth_data(arguments, 11);
 			exec_speed = g_list_nth_data(arguments, 12);
+			status = g_list_nth_data(arguments, 13);
+			start_date = g_list_nth_data(arguments, 14);
+			finish_date = g_list_nth_data(arguments, 15);
 
 			GebrJob *job;
 
@@ -213,6 +216,11 @@ parse_messages(GebrCommServer *comm_server,
 				gebr_job_set_server_group(job, server_group_name->str);
 				gebr_job_set_exec_speed(job, atoi(exec_speed->str));
 				gebr_job_set_io(job, input_file->str, output_file->str, log_file->str);
+				gebr_job_set_status(job, gebr_comm_job_get_status_from_string(status->str));
+				if (start_date->len > 0)
+					gebr_job_set_start_date(job, start_date);
+				if (finish_date->len > 0)
+					gebr_job_set_finish_date(job, finish_date);
 
 				gebr_job_set_model(job, gebr_job_control_get_model(gebr.job_control));
 				gebr_job_control_add(gebr.job_control, job);

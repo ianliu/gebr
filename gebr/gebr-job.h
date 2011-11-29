@@ -164,6 +164,13 @@ gint gebr_job_get_total(GebrJob *job);
 
 GebrJobTask *gebr_job_get_tasks(GebrJob *job, gint *n);
 
+void gebr_job_set_status(GebrJob *job, GebrCommJobStatus status);
+
+void gebr_job_set_start_date(GebrJob *job, const gchar *start_date);
+
+void gebr_job_set_finish_date(GebrJob *job, const gchar *finish_date);
+
+
 G_END_DECLS
 
 #endif /* __GEBR_JOB_H__ */
