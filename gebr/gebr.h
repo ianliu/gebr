@@ -105,6 +105,7 @@ struct gebr {
 		GKeyFile *key_file;
 		GString *path;
 
+		GString *maestro_address;
 		GString *username;
 		GString *email;
 		GString *usermenus;

@@ -154,6 +154,9 @@ gchar *gebr_get_groups_of_server(gchar *server_address);
 
 GtkListStore *gebr_ui_server_list_get_autochoose_store(struct ui_server_list *sl);
 
+void gebr_ui_server_list_connect(struct ui_server_list *sl,
+				 const gchar *addr);
+
 G_END_DECLS
 
 #endif				//__UI_SERVER_H

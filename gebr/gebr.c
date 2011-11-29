@@ -41,6 +41,7 @@
 #include "document.h"
 #include "flow.h"
 #include "ui_project_line.h"
+#include "gebr-maestro-server.h"
 
 struct gebr gebr;
 
@@ -257,6 +258,7 @@ gebr_config_load(void)
 		if (!g_key_file_load_from_file(gebr.config.key_file, gebr.config.path->str, G_KEY_FILE_NONE, NULL))
 			gebr_config_load_from_gengetopt();
 
+	gebr.config.maestro_address  = gebr_g_key_file_load_string_key(gebr.config.key_file, "maestro", "address", "127.0.0.1");
 	gebr.config.username  = gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "name", g_get_real_name());
 	gebr.config.email     = gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "email", g_get_user_name());
 	gebr.config.usermenus = gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "usermenus", usermenus);
@@ -311,6 +313,9 @@ gebr_post_config(gboolean has_config)
 	gebr_path_resolve_home_variable(gebr.config.usermenus);
 	if (!g_file_test(gebr.config.usermenus->str, G_FILE_TEST_EXISTS))
 		g_mkdir_with_parents(gebr.config.usermenus->str, 0755);
+
+	gebr_ui_server_list_connect(gebr.ui_server_list,
+				    gebr.config.maestro_address->str);
 
 	/* DEPRECATED: old directory structure migration */
 	if (g_str_has_suffix(gebr.config.data->str, ".gebr/gebrdata"))
@@ -385,6 +390,7 @@ void gebr_config_save(gboolean verbose)
 	g_key_file_free(gebr.config.key_file);
 	gebr.config.key_file = g_key_file_new();
 
+	g_key_file_set_string(gebr.config.key_file, "maestro", "address", gebr.config.maestro_address->str);
 	g_key_file_set_string(gebr.config.key_file, "general", "name", gebr.config.username->str);
 	g_key_file_set_string(gebr.config.key_file, "general", "email", gebr.config.email->str);
 	g_key_file_set_string(gebr.config.key_file, "general", "editor", gebr.config.editor->str);

@@ -489,12 +489,10 @@ on_job_define(GebrMaestroServer *maestro,
 	gebr_job_control_add(gebr.job_control, job);
 }
 
-static void
-connect_to_maestro(GtkEntry *entry,
-		   struct ui_server_list *sl)
+void
+gebr_ui_server_list_connect(struct ui_server_list *sl,
+			    const gchar *addr)
 {
-	const gchar *addr = gtk_entry_get_text(entry);
-
 	if (sl->maestro)
 		g_object_unref(sl->maestro);
 
@@ -508,6 +506,15 @@ connect_to_maestro(GtkEntry *entry,
 
 	gtk_combo_box_set_model(GTK_COMBO_BOX(gebr.ui_flow_edition->server_combobox),
 				gebr_maestro_server_get_model(sl->maestro, TRUE));
+
+	g_string_assign(gebr.config.maestro_address, addr);
+}
+
+static void
+connect_to_maestro(GtkEntry *entry,
+		   struct ui_server_list *sl)
+{
+	gebr_ui_server_list_connect(sl, gtk_entry_get_text(entry));
 }
 
 /*
@@ -551,6 +558,7 @@ struct ui_server_list *server_list_setup_ui(void)
 	server_common_setup(&ui_server_list->common);
 
 	GtkWidget *maestro_entry = gtk_entry_new();
+	gtk_entry_set_text(GTK_ENTRY(maestro_entry), gebr.config.maestro_address->str);
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), maestro_entry, TRUE, TRUE, 0);
 	g_signal_connect(maestro_entry, "activate", G_CALLBACK(connect_to_maestro), ui_server_list);
 
