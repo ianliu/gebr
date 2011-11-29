@@ -46,11 +46,11 @@ server_list_add(struct ui_server_list *ui_server_list,
 
 static void on_combo_changed(gpointer user_data);
 
+#if 0
 static gboolean groups_separator_func (GtkTreeModel *model,
 				       GtkTreeIter *iter,
 				       gpointer data);
 
-#if 0
 static GtkWidget *_ui_server_create_tag_combo_box (struct ui_server_list *server_list);
 
 static void on_tags_editing_started (GtkCellRenderer *cell,
@@ -482,6 +482,14 @@ static void on_combo_changed (gpointer user_data)
  */
 
 static void
+on_job_define(GebrMaestroServer *maestro,
+	      GebrJob *job,
+	      struct ui_server_list *sl)
+{
+	gebr_job_control_add(gebr.job_control, job);
+}
+
+static void
 connect_to_maestro(GtkEntry *entry,
 		   struct ui_server_list *sl)
 {
@@ -489,7 +497,12 @@ connect_to_maestro(GtkEntry *entry,
 
 	if (sl->maestro)
 		g_object_unref(sl->maestro);
+
 	sl->maestro = gebr_maestro_server_new(addr);
+
+	g_signal_connect(sl->maestro, "job-define",
+			 G_CALLBACK(on_job_define), sl);
+
 	gtk_tree_view_set_model(GTK_TREE_VIEW(sl->common.view),
 				gebr_maestro_server_get_model(sl->maestro, FALSE));
 
@@ -611,6 +624,9 @@ ui_server_list_tag (GebrServer *server)
 
 	return tag_list;
 }
+#endif
+
+#if 0
 
 GList *
 ui_server_servers_with_tag (const gchar *tag)
@@ -680,6 +696,9 @@ ui_server_has_tag (GebrServer *server,
 
 	return retval;
 }
+#endif
+
+#if 0
 
 /*
  * Sorts @tags_str and removes duplicate tags.
@@ -770,6 +789,9 @@ ui_server_get_all_tags (void)
 
 	return retval;
 }
+#endif
+
+#if 0
 
 gchar **
 ui_server_get_all_fsid (void)
@@ -806,6 +828,9 @@ ui_server_get_all_fsid (void)
 
 	return retval;
 }
+#endif
+
+#if 0
 
 /**
  * tag_is_heterogeneous:
@@ -879,6 +904,9 @@ tag_is_heterogeneous (const gchar *tag)
 
 	return retval;
 }
+#endif
+
+#if 0
 
 void ui_server_update_tags_combobox (void)
 {
@@ -952,6 +980,9 @@ void ui_server_update_tags_combobox (void)
 
 	gtk_combo_box_set_active (combo, active);
 }
+#endif
+
+#if 0
 
 static gboolean groups_separator_func (GtkTreeModel *model,
 				       GtkTreeIter *iter,
@@ -994,6 +1025,9 @@ GtkWidget *ui_server_create_tag_combo_box (void)
 {
 	return _ui_server_create_tag_combo_box (NULL);
 }
+#endif
+
+#if 0
 
 static void on_tags_editing_started (GtkCellRenderer *cell,
 				     GtkEntry *entry,
@@ -1007,6 +1041,9 @@ static void on_tags_editing_started (GtkCellRenderer *cell,
 	gtk_entry_set_icon_tooltip_text (entry, GTK_ENTRY_ICON_SECONDARY,
 					 _("Enter group names separated by comma and press ENTER to confirm."));
 }
+#endif
+
+#if 0
 
 static GList *ui_server_tags_removed (const gchar *last_tags, const gchar *new_tags)
 {
@@ -1034,6 +1071,9 @@ static GList *ui_server_tags_removed (const gchar *last_tags, const gchar *new_t
 
 	return list;
 }
+#endif
+
+#if 0
 
 gboolean ui_server_ask_for_tags_remove_permission (void){
 	GtkTreeIter iter;
@@ -1198,6 +1238,9 @@ gboolean ui_server_ask_for_tags_remove_permission (void){
 	g_string_free(removed_tags, TRUE);
 	return result;
 }
+#endif
+
+#if 0
 
 gchar *
 gebr_get_groups_of_server(gchar *server_address)

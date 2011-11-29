@@ -1674,6 +1674,14 @@ gebr_job_control_get_widget(GebrJobControl *jc)
 void
 gebr_job_control_add(GebrJobControl *jc, GebrJob *job)
 {
+	GebrJob *tmp = gebr_job_control_find(jc, gebr_job_get_id(job));
+	if (tmp) {
+		GtkTreePath *path = gtk_tree_model_get_path(GTK_TREE_MODEL(jc->priv->store), gebr_job_get_iter(tmp));
+		gtk_tree_model_row_changed(GTK_TREE_MODEL(jc->priv->store), path, gebr_job_get_iter(tmp));
+		gtk_tree_path_free(path);
+		return;
+	}
+
 	gtk_list_store_append(jc->priv->store, gebr_job_get_iter(job));
 	gtk_list_store_set(jc->priv->store, gebr_job_get_iter(job), JC_STRUCT, job, -1);
 	g_signal_connect(job, "disconnect", G_CALLBACK(on_job_disconnected), jc);
