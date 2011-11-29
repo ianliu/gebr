@@ -69,7 +69,7 @@ void gebr_comm_runner_run_async(GebrCommRunner *self,
 
 GebrValidator *gebr_comm_runner_get_validator(GebrCommRunner *self);
 
-const gchar *gebr_comm_runner_get_nprocs(GebrCommRunner *self);
+const gchar *gebr_comm_runner_get_ncores(GebrCommRunner *self);
 
 const gchar *gebr_comm_runner_get_servers_list(GebrCommRunner *self);
 

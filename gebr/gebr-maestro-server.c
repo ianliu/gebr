@@ -198,6 +198,8 @@ parse_messages(GebrCommServer *comm_server,
 			GebrJob *job = g_hash_table_lookup(maestro->priv->jobs, id->str);
 			gboolean init = (job == NULL);
 
+			g_debug(">>>>>>>>>>>>>>> On gebr-maestro-server.c, %s, nprocs: %s", __func__, nprocs->str);
+
 			if (!job)
 				job = gebr_job_new_with_id(id->str, parent_id->str);
 

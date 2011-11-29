@@ -48,7 +48,6 @@ struct _GebrCommRunnerPriv {
 	gchar *nice;
 	gchar *group;
 	gchar *servers_str;
-	gchar *nprocs;
 	gchar *servers_list;
 
 	void (*ran_func) (GebrCommRunner *runner,
@@ -396,9 +395,9 @@ gebr_comm_runner_get_validator(GebrCommRunner *self)
 }
 
 const gchar *
-gebr_comm_runner_get_nprocs(GebrCommRunner *self)
+gebr_comm_runner_get_ncores(GebrCommRunner *self)
 {
-	return self->priv->nprocs;
+	return self->priv->ncores;
 }
 
 const gchar *

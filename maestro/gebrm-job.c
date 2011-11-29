@@ -361,6 +361,7 @@ gebrm_job_get_queue(GebrmJob *job)
 const gchar *
 gebrm_job_get_title(GebrmJob *job)
 {
+	g_debug("On %s", __func__);
 	return job->priv->info.title;
 }
 
