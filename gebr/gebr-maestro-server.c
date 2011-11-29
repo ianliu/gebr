@@ -212,12 +212,11 @@ parse_messages(GebrCommServer *comm_server,
 				gebr_job_set_hostname(job, hostname->str);
 				gebr_job_set_server_group(job, server_group_name->str);
 				gebr_job_set_exec_speed(job, atoi(exec_speed->str));
+				gebr_job_set_io(job, input_file->str, output_file->str, log_file->str);
 
 				gebr_job_set_model(job, gebr_job_control_get_model(gebr.job_control));
 				gebr_job_control_add(gebr.job_control, job);
 			}
-
-			gebr_job_set_io(job, input_file->str, output_file->str, log_file->str);
 
 			g_debug("CREATE JOB %s ON GEBR", title->str);
 
@@ -275,7 +274,7 @@ parse_messages(GebrCommServer *comm_server,
 			parameter = g_list_nth_data(arguments, 2);
 
 			GebrCommJobStatus status_enum;
-			status_enum = job_translate_status(status);
+			status_enum = gebr_comm_job_get_status_from_string(status->str);
 
 			g_debug("STATUS from %s: %s", rid->str, status->str);
 

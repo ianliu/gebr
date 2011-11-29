@@ -337,7 +337,9 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 
 		model = GTK_TREE_MODEL (gebr.ui_server_list->common.combo_store);
 		gtk_tree_model_get_iter_first (model, &active);
-		data->groups_combo = groups_combo = ui_server_create_tag_combo_box ();
+
+		g_warning("[Server Group combobox] Fix me, please!");
+		data->groups_combo = groups_combo = gtk_combo_box_new(); //ui_server_create_tag_combo_box ();
 		curr_group = gebr_geoxml_line_get_group (GEBR_GEOXML_LINE (document), &is_fs);
 
 		/* If group is empty, select All Servers */

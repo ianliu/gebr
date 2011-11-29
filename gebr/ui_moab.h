@@ -19,7 +19,6 @@
 #define __UI_MOAB_H
 
 #include <gtk/gtk.h>
-#include "server.h"
 
 G_BEGIN_DECLS
 

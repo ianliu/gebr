@@ -46,14 +46,11 @@ server_list_add(struct ui_server_list *ui_server_list,
 
 static void on_combo_changed(gpointer user_data);
 
-static gboolean visible_func (GtkTreeModel *model,
-                              GtkTreeIter  *iter,
-                              gpointer      data);
-
 static gboolean groups_separator_func (GtkTreeModel *model,
 				       GtkTreeIter *iter,
 				       gpointer data);
 
+#if 0
 static GtkWidget *_ui_server_create_tag_combo_box (struct ui_server_list *server_list);
 
 static void on_tags_editing_started (GtkCellRenderer *cell,
@@ -64,6 +61,7 @@ static void on_tags_editing_started (GtkCellRenderer *cell,
 static gchar *sort_and_remove_doubles (const gchar *tags_str);
 
 static GList *ui_server_tags_removed (const gchar *last_tags, const gchar *new_tags);
+#endif
 
 /*
  * Section: Private
@@ -73,6 +71,7 @@ static GList *ui_server_tags_removed (const gchar *last_tags, const gchar *new_t
 /* Function: server_common_tooltip_callback
  * Callback for tree view tooltip
  */
+#if 0
 static gboolean
 server_common_tooltip_callback(GtkTreeView * tree_view, GtkTooltip * tooltip,
 			       GtkTreeIter * iter, GtkTreeViewColumn * column, struct ui_server_common *ui)
@@ -105,7 +104,9 @@ server_common_tooltip_callback(GtkTreeView * tree_view, GtkTooltip * tooltip,
 
 	return FALSE;
 }
+#endif
 
+#if 0
 /* Function; server_common_popup_menu
  * Context menu for server tree view
  */
@@ -157,7 +158,9 @@ static GtkMenu *server_common_popup_menu(GtkWidget * widget, struct ui_server_co
 
 	return GTK_MENU (menu);
 }
+#endif
 
+#if 0
 static void on_tags_edited (GtkCellRendererText *cell,
 			    gchar *pathstr,
 			    gchar *new_text,
@@ -271,7 +274,9 @@ static void on_tags_edited (GtkCellRendererText *cell,
 
 	g_free (new_tags);
 }
+#endif
 
+#if 0
 static void on_ac_toggled (GtkCellRendererToggle *cell_renderer,
 			   gchar *path,
 			   struct ui_server_common *ui_server_common)
@@ -290,6 +295,7 @@ static void on_ac_toggled (GtkCellRendererToggle *cell_renderer,
 	ac = gebr_server_get_autoconnect (server);
 	gebr_server_set_autoconnect (server, !ac);
 }
+#endif
 
 static void
 daemon_server_address_func(GtkTreeViewColumn *tree_column,
@@ -387,38 +393,10 @@ static void server_common_setup(struct ui_server_common *ui_server_common)
 static void server_common_actions(GtkDialog * dialog, gint arg1, struct ui_server_common *ui_server_common)
 {
 	switch (arg1) {
-	case RESPONSE_CONNECT_ALL:{
-			GtkTreeIter iter;
-
-			gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(ui_server_common->filter)) {
-				GebrServer *server;
-
-				gtk_tree_model_get(GTK_TREE_MODEL(ui_server_common->filter), &iter,
-						   SERVER_POINTER, &server, -1);
-
-				if (gebr_comm_server_is_logged(server->comm) == FALSE)
-					gebr_comm_server_connect(server->comm, TRUE);
-			}
-
-			break;
-		}
-	case RESPONSE_DISCONNECT_ALL:{
-			GtkTreeIter iter;
-
-			gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(ui_server_common->filter)) {
-				GebrServer *server;
-
-				gtk_tree_model_get(GTK_TREE_MODEL(ui_server_common->filter), &iter,
-						   SERVER_POINTER, &server, -1);
-
-				if (gebr_comm_server_is_logged(server->comm) == TRUE){
-					gebr_comm_server_disconnect(server->comm);
-					ui_server_update_tags_combobox ();
-				}
-			}
-
-			break;
-		}
+	case RESPONSE_CONNECT_ALL:
+	case RESPONSE_DISCONNECT_ALL:
+		g_debug("TODO: Implement %s", __func__);
+		break;
 	case GTK_RESPONSE_DELETE_EVENT:
 	case GTK_RESPONSE_CANCEL:
 		if (dialog != GTK_DIALOG(gebr.ui_server_list->common.dialog))
@@ -445,46 +423,6 @@ static void
 server_list_add(struct ui_server_list *ui_server_list,
 		const gchar * address)
 {
-	gboolean ret;
-	GtkTreeIter iter;
-	GtkTreeIter filter_iter;
-	GtkTreeIter sort_iter;
-
-	/* check if it is already in list */
-	gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(ui_server_list->common.store)) {
-		GebrServer *server;
-		gboolean is_auto_choose = FALSE;
-
-		gtk_tree_model_get(GTK_TREE_MODEL(ui_server_list->common.store), &iter, SERVER_POINTER, &server, -1);
-		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter,
-		   				   SERVER_IS_AUTO_CHOOSE, &is_auto_choose, -1);
-
-		if (is_auto_choose)
-			continue;
-
-		if (g_strcmp0 (server->comm->address->str, address) == 0)
-		{
-			ret = gtk_tree_model_filter_convert_child_iter_to_iter (
-					GTK_TREE_MODEL_FILTER (ui_server_list->common.filter),
-					&filter_iter, &iter);
-
-			if (!ret)
-				return;
-
-			ret = gtk_tree_model_sort_convert_child_iter_to_iter (
-					GTK_TREE_MODEL_SORT (ui_server_list->common.sort_store),
-					&sort_iter, &filter_iter);
-
-			if (!ret)
-				return;
-
-			gebr_gui_gtk_tree_view_select_iter (
-					GTK_TREE_VIEW (ui_server_list->common.view), &sort_iter);
-
-			return;
-		}
-	}
-
 	GebrCommHttpMsg *msg;
 	gchar *url = g_strconcat("/server/", address, NULL);
 	GebrCommServer *server = gebr_maestro_server_get_server(ui_server_list->maestro);
@@ -492,7 +430,6 @@ server_list_add(struct ui_server_list *ui_server_list,
 						     GEBR_COMM_HTTP_METHOD_PUT, url, NULL);
 	g_free(url);
 
-	//gebr_server_new(address, TRUE, "");
 	gtk_tree_model_filter_refilter (GTK_TREE_MODEL_FILTER (gebr.ui_project_line->servers_filter));
 }
 
@@ -539,58 +476,6 @@ static void on_combo_changed (gpointer user_data)
 	gtk_tree_model_filter_refilter (GTK_TREE_MODEL_FILTER (gebr.ui_server_list->common.filter));
 }
 
-static gboolean visible_func (GtkTreeModel *model,
-                              GtkTreeIter  *iter,
-			      gpointer      data)
-{
-	gchar *tag;
-	gchar *fsid;
-	gboolean is_fs;
-	gboolean is_auto_choose;
-	GtkTreeIter active;
-	GtkComboBox *combo;
-	GtkTreeModel *combo_model;
-	GebrServer *server;
-
-	combo = GTK_COMBO_BOX (gebr.ui_server_list->common.combo);
-	combo_model = gtk_combo_box_get_model (combo);
-
-	gtk_tree_model_get(model, iter, SERVER_IS_AUTO_CHOOSE, &is_auto_choose, -1);
-	if (is_auto_choose)
-		return FALSE;
-
-	if (!gtk_combo_box_get_active_iter (combo, &active))
-		return TRUE;
-
-	// Means we selected 'All servers'
-	if (gtk_combo_box_get_active (combo) == 0)
-		return TRUE;
-
-	gtk_tree_model_get (combo_model, &active,
-			    TAG_FS, &is_fs, -1);
-
-	gtk_tree_model_get (model, iter,
-			    SERVER_POINTER, &server,
-			    SERVER_FS, &fsid,
-			    -1);
-
-	gtk_tree_model_get (combo_model, &active,
-			    0, &tag, -1);
-
-	if (!server) {
-		g_free (fsid);
-		return FALSE;
-	}
-
-	if (is_fs) {
-		gboolean ret = g_strcmp0 (fsid, tag) == 0;
-		g_free (fsid);
-		return ret;
-	}
-
-	return ui_server_has_tag (server, tag);
-}
-
 /*
  * Section: Public
  * Public functions.
@@ -632,41 +517,6 @@ struct ui_server_list *server_list_setup_ui(void)
 	GtkWidget *label;
 
 	ui_server_list = g_new0(struct ui_server_list, 1);
-	ui_server_list->common.store = gtk_list_store_new(SERVER_N_COLUMN,
-							  GDK_TYPE_PIXBUF,	/* Status icon		*/
-							  G_TYPE_BOOLEAN,	/* Auto connect		*/
-							  G_TYPE_STRING,	/* Server name		*/
-							  G_TYPE_POINTER,	/* Server pointer	*/
-							  G_TYPE_STRING,	/* Tag List		*/
-							  G_TYPE_STRING,	/* CPU Info		*/
-							  G_TYPE_STRING, 	/* Memory Info		*/
-							  G_TYPE_STRING, 	/* File System Group	*/
-							  G_TYPE_BOOLEAN	/* Is auto-choose */
-							 );
-
-	GebrServerAutochoose *autochoose = g_new0(GebrServerAutochoose, 1);
-	autochoose->queues = gtk_list_store_new(SERVER_QUEUE_N_COLUMNS,
-						G_TYPE_STRING,
-						G_TYPE_STRING,
-						G_TYPE_POINTER);
-	GtkTreeIter iter;
-	gtk_list_store_append(autochoose->queues, &iter);
-	gtk_list_store_set(autochoose->queues, &iter,
-			   SERVER_QUEUE_TITLE, _("Immediately"),
-			   SERVER_QUEUE_ID, "",
-			   SERVER_QUEUE_LAST_RUNNING_JOB, NULL,
-			   -1);
-
-	gtk_list_store_append(ui_server_list->common.store, &iter);
-	gtk_list_store_set(ui_server_list->common.store, &iter,
-			   SERVER_NAME, _("Auto-choose"),
-			   SERVER_POINTER, autochoose,
-			   SERVER_IS_AUTO_CHOOSE, TRUE,
-			   -1);
-
-	ui_server_list->common.filter = gtk_tree_model_filter_new(GTK_TREE_MODEL(ui_server_list->common.store), NULL);
-
-	ui_server_list->common.sort_store = gtk_tree_model_sort_new_with_model(GTK_TREE_MODEL(ui_server_list->common.filter));
 
 	dialog = gtk_dialog_new_with_buttons(_("Servers configuration"),
 					     GTK_WINDOW(gebr.window),
@@ -686,7 +536,6 @@ struct ui_server_list *server_list_setup_ui(void)
 	g_signal_connect(dialog, "response", G_CALLBACK(server_common_actions), &ui_server_list->common);
 
 	server_common_setup(&ui_server_list->common);
-	gtk_tree_model_filter_set_visible_func(GTK_TREE_MODEL_FILTER(ui_server_list->common.filter), visible_func, NULL, NULL);
 
 	GtkWidget *maestro_entry = gtk_entry_new();
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), maestro_entry, TRUE, TRUE, 0);
@@ -712,7 +561,9 @@ struct ui_server_list *server_list_setup_ui(void)
 								G_TYPE_BOOLEAN,
 								G_TYPE_BOOLEAN);
 
+#if 0
 	ui_server_list->common.combo = _ui_server_create_tag_combo_box (ui_server_list);
+#endif
 	g_signal_connect(ui_server_list->common.combo, "changed", G_CALLBACK(on_combo_changed), NULL);
 
 	align = gtk_alignment_new (0, 0, 1, 1);
@@ -741,26 +592,7 @@ void server_list_show(struct ui_server_list *ui_server_list)
 	gtk_widget_show_all(ui_server_list->common.dialog);
 }
 
-void
-server_list_updated_status(GebrServer *server)
-{
-	GdkPixbuf *status_icon;
-	GtkTreePath *path;
-
-	if (server == NULL)
-		return;
-
-	status_icon = (server->last_error->len || server->comm->last_error->len)
-	    ? gebr.pixmaps.stock_warning : (server->comm->socket->protocol->logged == TRUE)
-	    ? gebr.pixmaps.stock_connect : gebr.pixmaps.stock_disconnect;
-
-	gtk_list_store_set(gebr.ui_server_list->common.store, &server->iter, SERVER_STATUS_ICON, status_icon, -1);
-
-	/* update view */
-	path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &server->iter);
-	gtk_tree_model_row_changed(GTK_TREE_MODEL(gebr.ui_server_list->common.store), path, &server->iter);
-}
-
+#if 0
 gchar **
 ui_server_list_tag (GebrServer *server)
 {
@@ -1387,6 +1219,7 @@ gebr_get_groups_of_server(gchar *server_address)
 	}
 	return NULL;
 }
+#endif
 
 GtkListStore *
 gebr_ui_server_list_get_autochoose_store(struct ui_server_list *sl)

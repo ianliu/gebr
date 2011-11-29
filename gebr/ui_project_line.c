@@ -1600,30 +1600,30 @@ gchar * gebr_line_generate_header(GebrGeoXmlDocument * document)
 	return g_string_free(dump, FALSE);
 }
 
+#if 0
 gboolean servers_filter_visible_func (GtkTreeModel *filter,
 				      GtkTreeIter *iter,
 				      gpointer data)
 {
 	gboolean is_fs;
 	const gchar *group;
-	GebrServer *server;
+	GebrDaemonServer *daemon;
 
 	if (!gebr.line)
 		return FALSE;
 
 	group = gebr_geoxml_line_get_group (gebr.line, &is_fs);
 
-	gboolean is_auto;
-	gtk_tree_model_get (filter, iter,
-			    SERVER_IS_AUTO_CHOOSE, &is_auto,
-			    SERVER_POINTER, &server, -1);
+	gtk_tree_model_get (filter, iter, 0, &daemon, -1);
 
-	if (is_auto || !server)
+	if (!server)
 		return TRUE;
 
-	return gebr_server_is_in_group(server, group, is_fs);
+	return TRUE; // gebr_server_is_in_group(server, group, is_fs);
 }
+#endif
 
+#if 0
 gint servers_sort_func (GtkTreeModel *model,
 			GtkTreeIter *a,
 			GtkTreeIter *b,
@@ -1665,3 +1665,4 @@ gint servers_sort_func (GtkTreeModel *model,
 	// If states are equal, order alfabetically
 	return g_strcmp0 (sa->comm->address->str, sb->comm->address->str);
 }
+#endif

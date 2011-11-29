@@ -24,7 +24,6 @@
 
 #include <gtk/gtk.h>
 
-#include "server.h"
 #include "gebr-maestro-server.h"
 
 G_BEGIN_DECLS
@@ -80,23 +79,12 @@ struct ui_server_list *server_list_setup_ui(void);
 
 void server_list_show(struct ui_server_list *ui_server_list);
 
-/**
- * server_list_updated_status:
- * @server: Pointer to an server
- *
- * Update status of @server in store
- */
-void
-server_list_updated_status(GebrServer *server);
-
 struct ui_server_select {
 	struct ui_server_common common;
-
-	GebrServer *selected;
-
 	GtkWidget *ok_button;
 };
 
+#if 0
 /**
  * ui_server_list_tag:
  * @server: Pointer to an server
@@ -162,6 +150,7 @@ GtkWidget *ui_server_create_tag_combo_box (void);
 gboolean ui_server_ask_for_tags_remove_permission (void);
 
 gchar *gebr_get_groups_of_server(gchar *server_address);
+#endif
 
 GtkListStore *gebr_ui_server_list_get_autochoose_store(struct ui_server_list *sl);
 

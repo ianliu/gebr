@@ -15,54 +15,14 @@
  *   along with this program. If not, see
  *   <http://www.gnu.org/licenses/>.
  */
-
-#include <glib/gi18n.h>
-#include <glib/gprintf.h>
-#include <libgebr/date.h>
-#include <libgebr/gui/gui.h>
-#include <libgebr/comm/gebr-comm.h>
-#include <stdlib.h>
-
 #include "ui_flow.h"
-#include "gebr.h"
-#include "gebr-job.h"
-#include "flow.h"
-#include "document.h"
-#include "ui_flow_browse.h"
-#include "ui_flow_edition.h"
-#include "ui_server.h"
-#include "ui_moab.h"
 
-#include "gebr-task.h"
-#include "interface.h"
+#include <libgebr/geoxml/geoxml.h>
+#include <libgebr/date.h>
+#include "gebr.h"
+#include "ui_flow_browse.h"
 
 /* Private methods {{{1 */
-/*
- * Returns: a GList containing ServerScore structs with the score field set to 0.
- */
-static GList *
-get_connected_servers(GtkTreeModel *model)
-{
-	GtkTreeIter iter;
-	GList *servers = NULL;
-
-	gebr_gui_gtk_tree_model_foreach(iter, model) {
-		gboolean is_auto_choose;
-		GebrServer *server;
-
-		gtk_tree_model_get(model, &iter, SERVER_POINTER, &server,
-				   SERVER_IS_AUTO_CHOOSE, &is_auto_choose, -1);
-
-		if (is_auto_choose)
-			continue;
-
-		if (server->comm->socket->protocol->logged)
-			servers = g_list_prepend(servers, server->comm);
-	}
-
-	return servers;
-}
-
 /*
  * Gets the selected queue. Returns %TRUE if no queue was selected, %FALSE
  * otherwise.

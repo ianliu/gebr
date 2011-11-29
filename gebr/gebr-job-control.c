@@ -353,20 +353,20 @@ jobs_visible_for_servers(GtkTreeModel *model,
 {
 	gboolean visible = FALSE;
 	GtkTreeIter active;
-	GebrServer *combo_server;
+	GebrDaemonServer *daemon;
 
 	if (!gtk_combo_box_get_active_iter (jc->priv->server_combo, &active))
 		return TRUE;
 
 	gtk_tree_model_get(GTK_TREE_MODEL(jc->priv->server_filter), &active,
-	                   1, &combo_server, -1);
+	                   1, &daemon, -1);
 
 	GtkWidget *content = gtk_info_bar_get_content_area(GTK_INFO_BAR(jc->priv->filter_info_bar));
 	GList *box = gtk_container_get_children(GTK_CONTAINER(content));
 	GList *labels = gtk_container_get_children(GTK_CONTAINER(box->data));
 	labels = labels->next;
 
-	if (!combo_server) {
+	if (!daemon) {
 		jc->priv->use_filter_servers = FALSE;
 		for (GList *i = labels; i; i = i->next)
 			if (g_str_has_prefix(gtk_label_get_text(i->data), "Server:"))
@@ -377,7 +377,8 @@ jobs_visible_for_servers(GtkTreeModel *model,
 	}
 
 	if (!jc->priv->use_filter_servers) {
-		gchar *text = g_markup_printf_escaped("<span size='x-small'>Server: %s</span>", combo_server->comm->address->str);
+		gchar *text = g_markup_printf_escaped("<span size='x-small'>Server: %s</span>",
+						      gebr_daemon_server_get_display_address(daemon));
 		GtkWidget *label = gtk_label_new(NULL);
 		gtk_label_set_markup(GTK_LABEL(label), text);
 		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
@@ -388,7 +389,8 @@ jobs_visible_for_servers(GtkTreeModel *model,
 		for (GList *i = labels; i; i = i->next) {
 			const gchar *filter = gtk_label_get_text(i->data);
 			if (g_str_has_prefix(filter, "Server:")) {
-				gchar *new_text = g_markup_printf_escaped("<span size='x-small'>Server: %s</span>", combo_server->comm->address->str);
+				gchar *new_text = g_markup_printf_escaped("<span size='x-small'>Server: %s</span>",
+									  gebr_daemon_server_get_display_address(daemon));
 				gtk_label_set_markup(i->data, new_text);
 				g_free(new_text);
 			}
@@ -412,7 +414,7 @@ jobs_visible_for_servers(GtkTreeModel *model,
 		return FALSE;
 
 	for (gint i = 0; i < n_servers; i++) {
-		if (!g_strcmp0(servers[i], combo_server->comm->address->str))
+		if (!g_strcmp0(servers[i], gebr_daemon_server_get_address(daemon)))
 			visible = TRUE;
 	}
 
@@ -531,7 +533,7 @@ static void
 build_servers_filter_list(GebrJobControl *jc)
 {
 	GtkTreeIter iter;
-	GtkTreeModel *model = GTK_TREE_MODEL(gebr.ui_server_list->common.store);
+	GtkTreeModel *model = GTK_TREE_MODEL(gebr_maestro_server_get_model(gebr.ui_server_list->maestro, FALSE));
 
 	gtk_list_store_clear(jc->priv->server_filter);
 
@@ -540,24 +542,16 @@ build_servers_filter_list(GebrJobControl *jc)
 	gtk_list_store_set(jc->priv->server_filter, &it, 0, _("Any"), -1);
 
 	gebr_gui_gtk_tree_model_foreach(iter, model) {
-		gboolean is_autochoose;
-		GebrServer *server;
+		GebrDaemonServer *daemon;
+		gtk_tree_model_get(model, &iter, 0, &daemon, -1);
 
-		gtk_tree_model_get(model, &iter,
-				   SERVER_IS_AUTO_CHOOSE, &is_autochoose,
-				   SERVER_POINTER, &server,
-				   -1);
-
-		if (is_autochoose || !server || !server->comm)
-			continue;
-
-		if (!gebr_comm_server_is_logged(server->comm))
+		if (!daemon)
 			continue;
 
 		gtk_list_store_append(jc->priv->server_filter, &it);
 		gtk_list_store_set(jc->priv->server_filter, &it,
-				   0, server->comm->address->str,
-				   1, server,
+				   0, gebr_daemon_server_get_address(daemon),
+				   1, daemon,
 				   -1);
 	}
 
@@ -627,7 +621,7 @@ on_job_wait_button(GtkButton *button,
 
 static void
 on_job_output(GebrJob *job,
-	      GebrTask *task,
+	      gint frac,
 	      const gchar *output,
 	      GebrJobControl *jc)
 {
@@ -687,7 +681,7 @@ on_pie_tooltip(GebrGuiPie *pie,
 
 	const gchar *server;
 	if (!g_strcmp0(jc->priv->servers_info.servers[i], "127.0.0.1"))
-		server = server_get_name_from_address(jc->priv->servers_info.servers[i]);
+		server = _("Local Server");
 	else
 		server = jc->priv->servers_info.servers[i];
 
@@ -773,21 +767,19 @@ job_control_fill_servers_info(GebrJobControl *jc)
 	gtk_box_pack_start(pie_box, piechart, TRUE, FALSE, 0);
 	gtk_widget_show_all(piechart);
 
-	for (i = 0; servers[i]; i++) {
-		GebrTask *task = gebr_job_get_task_from_server(job, servers[i]);
-		if (task) {
-			gdouble percentage = gebr_task_get_percentage(task);
-			values[i] = (guint)(percentage * 1000);
-			jc->priv->servers_info.percentages[i] = percentage;
-		}
-	}
+	gint len;
+	gdouble *percs = gebr_job_get_percentages(job, &len);
+	jc->priv->servers_info.percentages = percs;
+	for (i = 0; i < len; i++)
+		values[i] = (guint)(percs[i] * 1000);
+
 	gebr_gui_pie_set_data(GEBR_GUI_PIE(piechart), values, n_servers);
 	g_free(values);
 
 	for (i = 0; servers[i]; i++) {
 		const gchar *server;
 		if (!g_strcmp0(servers[i], "127.0.0.1"))
-			 server = server_get_name_from_address(servers[i]);
+			 server = _("Local Server");
 		else
 			server = servers[i];
 
@@ -1069,14 +1061,9 @@ gebr_jc_update_status_and_time(GebrJobControl *jc,
 		}
 	}
 	else if (status == JOB_STATUS_INITIAL) {
-		gchar *remainings = gebr_job_get_remaining_servers(job);
-		gchar *wait_text = g_strdup_printf(_("Waiting for servers: %s"), remainings? remainings : "");
 		gtk_image_set_from_stock(img, GTK_STOCK_NETWORK, GTK_ICON_SIZE_DIALOG);
-		gtk_label_set_text(subheader, wait_text);
+		gtk_label_set_text(subheader, _("Waiting for servers"));
 		gtk_widget_hide(GTK_WIDGET(details_start_date));
-		if (remainings)
-			g_free(remainings);
-		g_free(wait_text);
 	}
 
 	g_string_free(start, FALSE);
@@ -1101,20 +1088,19 @@ gebr_job_control_include_cmd_line(GebrJobControl *jc,
 	g_list_free(jc->priv->cmd_views);
 	jc->priv->cmd_views = NULL;
 
-	GList *tasks = gebr_job_get_list_of_tasks(job);
-	if (!tasks)
+	gint total;
+	GebrJobTask *job_tasks = gebr_job_get_tasks(job, &total);
+	if (!job_tasks)
 		return;
 
-	if (g_list_length(tasks) > 1) {
+	if (total > 1) {
 		GtkWidget *vbox = gtk_vbox_new(FALSE, 8);
 
-		for (GList *i = tasks; i; i = i->next) {
-			GebrTask *task = i->data;
+		for (int i = 0; i < total; i++) {
+			GebrJobTask *task = job_tasks + i;
 
-			gint frac, total;
-			gebr_task_get_fraction(task, &frac, &total);
 			gchar *title = g_strdup_printf(_("Command line for task %d of %d (Server: %s)"),
-						       frac, total, gebr_task_get_server(task)->comm->address->str);
+						       task->frac, total, task->server);
 			GtkWidget *expander = gtk_expander_new(title);
 			gtk_expander_set_expanded(GTK_EXPANDER(expander), FALSE);
 			g_free(title);
@@ -1125,7 +1111,7 @@ gebr_job_control_include_cmd_line(GebrJobControl *jc,
 			g_object_set(view, "editable", FALSE, NULL);
 			jc->priv->cmd_views = g_list_prepend(jc->priv->cmd_views, view);
 			buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(view));
-			gtk_text_buffer_set_text(buffer, gebr_task_get_cmd_line(task), -1);
+			gtk_text_buffer_set_text(buffer, task->cmd_line, -1);
 
 			g_signal_connect(view, "populate-popup",
 					 G_CALLBACK(on_text_view_populate_popup), jc);
@@ -1143,7 +1129,7 @@ gebr_job_control_include_cmd_line(GebrJobControl *jc,
 		g_object_set(view, "editable", FALSE, NULL);
 		jc->priv->cmd_views = g_list_prepend(jc->priv->cmd_views, view);
 		buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(view));
-		gtk_text_buffer_set_text(buffer, gebr_task_get_cmd_line(tasks->data), -1);
+		gtk_text_buffer_set_text(buffer, job_tasks->cmd_line, -1);
 
 		g_signal_connect(view, "populate-popup",
 				 G_CALLBACK(on_text_view_populate_popup), jc);

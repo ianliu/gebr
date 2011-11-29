@@ -42,8 +42,6 @@
 #include "gebr.h"
 #include "menu.h"
 #include "document.h"
-#include "server.h"
-#include "gebr-task.h"
 #include "callbacks.h"
 #include "ui_flow.h"
 #include "ui_document.h"
@@ -63,7 +61,6 @@ void flow_new (void)
 
 	const gchar *line_title;
 
-	GebrServer *server;
 	GebrGeoXmlFlow *flow;
 	GebrGeoXmlLineFlow *line_flow;
 
@@ -77,16 +74,6 @@ void flow_new (void)
 	gebr_geoxml_document_set_title(GEBR_GEOXML_DOC(flow), _("New Flow"));
 	gebr_geoxml_document_set_author(GEBR_GEOXML_DOC(flow), gebr.config.username->str);
 	gebr_geoxml_document_set_email(GEBR_GEOXML_DOC(flow), gebr.config.email->str);
-
-	if (gtk_tree_model_get_iter_first (gebr.ui_project_line->servers_sort, &iter)) {
-		gboolean is_auto;
-		gtk_tree_model_get (gebr.ui_project_line->servers_sort, &iter,
-				    SERVER_POINTER, &server,
-				    SERVER_IS_AUTO_CHOOSE, &is_auto,
-				    -1);
-		if (!is_auto && server)
-			gebr_geoxml_flow_server_set_address (flow, server->comm->address->str);
-	}
 
 	line_flow = gebr_geoxml_line_append_flow(gebr.line, gebr_geoxml_document_get_filename(GEBR_GEOXML_DOC(flow)));
 	iter = line_append_flow_iter(flow, line_flow);

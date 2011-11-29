@@ -331,7 +331,7 @@ void flow_browse_info_update(void)
 
 	/* Server */
 	gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.server),
-			   server_get_name_from_address(gebr_geoxml_flow_server_get_address(gebr.flow)));
+			   gebr_geoxml_flow_server_get_address(gebr.flow));
 
 	/* Input file */
 	if (strlen(gebr_geoxml_flow_io_get_input(gebr.flow)))

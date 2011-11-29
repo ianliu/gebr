@@ -37,8 +37,6 @@ noinst_LTLIBRARIES = libgebr.la
 libgebr_la_SOURCES =		\
 	callbacks.c		\
 	callbacks.h		\
-	client.c		\
-	client.h		\
 	cmdline.c		\
 	cmdline.h		\
 	document.c		\
@@ -60,8 +58,6 @@ libgebr_la_SOURCES =		\
 	gebr-maestro-server.h	\
 	gebr-marshal.c		\
 	gebr-marshal.h		\
-	gebr-task.c		\
-	gebr-task.h		\
 	gebr.c			\
 	gebr.h			\
 	interface.c		\
@@ -72,8 +68,6 @@ libgebr_la_SOURCES =		\
 	menu.h			\
 	project.c		\
 	project.h		\
-	server.c		\
-	server.h		\
 	ui_document.c		\
 	ui_document.h		\
 	ui_flow.c		\
@@ -86,8 +80,6 @@ libgebr_la_SOURCES =		\
 	ui_help.h		\
 	ui_log.c		\
 	ui_log.h		\
-	ui_moab.c		\
-	ui_moab.h		\
 	ui_parameters.c		\
 	ui_parameters.h		\
 	ui_paths.c		\

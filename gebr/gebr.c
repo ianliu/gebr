@@ -36,8 +36,6 @@
 
 #include "gebr.h"
 #include "project.h"
-#include "server.h"
-#include "gebr-task.h"
 #include "menu.h"
 #include "callbacks.h"
 #include "document.h"
@@ -51,10 +49,6 @@ static void gebr_log_load(void);
 static void gebr_migrate_data_dir(void);
 
 static gboolean gebr_config_load_from_gengetopt(void);
-
-static void gebr_config_load_servers(void);
-
-static void gebr_config_save_servers(void);
 
 static void gebr_post_config(gboolean has_config);
 
@@ -146,22 +140,13 @@ gboolean gebr_quit(gboolean save_config)
 	if (save_config)
 		gebr_config_save(FALSE);
 
-	/* Free servers structs */
-	gebr_gui_gtk_tree_model_foreach_hyg(iter, GTK_TREE_MODEL(gebr.ui_server_list->common.store), 1) {
-		GebrServer *server;
-		gboolean is_auto_choose;
+	GtkTreeModel *model = gebr_maestro_server_get_model(gebr.ui_server_list->maestro, FALSE);
 
-		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter,
-				   SERVER_IS_AUTO_CHOOSE, &is_auto_choose, -1);
-
-		if (is_auto_choose)
-			continue;
-
-		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_server_list->common.store), &iter,
-				   SERVER_POINTER, &server, -1);
-		server_free(server);
+	gebr_gui_gtk_tree_model_foreach_hyg(iter, model, 1) {
+		GebrDaemonServer *daemon;
+		gtk_tree_model_get(model, &iter, 0, &daemon, -1);
+		g_object_unref(daemon);
 	}
-//	job_control_clear(TRUE);
 
 	if (gebr.flow_clipboard != NULL) {
 		g_list_foreach(gebr.flow_clipboard, (GFunc) g_free, NULL);
@@ -246,116 +231,6 @@ gboolean gebr_quit(gboolean save_config)
 	gtk_main_quit();
 
 	return FALSE;
-}
-
-static void gebr_config_load_servers(void)
-{
-	gchar *path;
-	gchar **groups;
-	GString *address;
-	GKeyFile *servers;
-	gboolean autoconnect;
-	gboolean ret;
-	GString *tags;
-	gboolean has_local_server = FALSE;
-
-	// Migrate servers from old config file to the new servers file
-	groups = g_key_file_get_groups(gebr.config.key_file, NULL);
-	for (gint i = 0; groups[i] != NULL; ++i) {
-		if (!g_str_has_prefix(groups[i], "server-"))
-			continue;
-		address = gebr_g_key_file_load_string_key(gebr.config.key_file,
-							  groups[i], "address", "");
-		if (address->len) {
-			autoconnect = gebr_g_key_file_load_boolean_key(
-					gebr.config.key_file, groups[i], "autoconnect", TRUE);
-
-			tags = gebr_g_key_file_load_string_key(
-					gebr.config.key_file, groups[i], "tags", "");
-
-			gebr_server_new (address->str, autoconnect, tags->str);
-			g_string_free (tags, TRUE);
-		}
-		g_string_free(address, TRUE);
-		g_key_file_remove_group (gebr.config.key_file, groups[i], NULL);
-	}
-	g_strfreev(groups);
-
-	path = g_build_path ("/", g_get_home_dir (), SERVERS_PATH, NULL);
-	servers = g_key_file_new ();
-	ret = g_key_file_load_from_file (servers, path, G_KEY_FILE_NONE, NULL);
-	g_free (path);
-
-	if (ret) {
-		groups = g_key_file_get_groups(servers, NULL);
-		for (int i = 0; groups[i]; i++) {
-			address = gebr_g_key_file_load_string_key(servers,
-								  groups[i], "address", "");
-			if(g_strcmp0(address->str,"127.0.0.1") == 0)
-				has_local_server = TRUE;
-			autoconnect = gebr_g_key_file_load_boolean_key (
-					servers, groups[i], "autoconnect", TRUE);
-
-			tags = gebr_g_key_file_load_string_key(
-					servers, groups[i], "tags", "");
-
-			gebr_server_new (groups[i], autoconnect, tags->str);
-			g_string_free(address, TRUE);
-			g_string_free (tags, TRUE);
-		}
-		g_key_file_free (servers);
-	}
-	if (!has_local_server)
-		gebr_server_new("127.0.0.1", TRUE, "");
-
-	ui_server_update_tags_combobox ();
-}
-
-static void gebr_config_save_servers(void)
-{
-	gchar *path;
-	gchar *contents;
-	GtkTreeIter iter;
-	GKeyFile *servers;
-	GtkTreeModel *model;
-	GebrServer *server;
-	gboolean autoconnect;
-	gboolean ret;
-	gchar * tags;
-
-	model = GTK_TREE_MODEL(gebr.ui_server_list->common.store);
-	servers = g_key_file_new ();
-
-	gebr_gui_gtk_tree_model_foreach(iter, model) {
-		gboolean is_auto_choose;
-
-		gtk_tree_model_get(model, &iter, SERVER_IS_AUTO_CHOOSE, &is_auto_choose, -1);
-		if (is_auto_choose)
-			continue;
-		
-		gtk_tree_model_get(model, &iter,
-				   SERVER_POINTER, &server,
-				   SERVER_AUTOCONNECT, &autoconnect,
-				   SERVER_TAGS, &tags,
-				   -1);
-		g_key_file_set_string(servers, server->comm->address->str,
-				      "address", server->comm->address->str);
-		g_key_file_set_boolean(servers, server->comm->address->str,
-				       "autoconnect", autoconnect);
-		g_key_file_set_string(servers, server->comm->address->str,
-				      "tags", tags);
-	}
-
-	path = g_build_path ("/", g_get_home_dir (), SERVERS_PATH, NULL);
-	contents = g_key_file_to_data (servers, NULL, NULL);
-	ret = g_file_set_contents (path, contents, -1, NULL);
-	g_free (contents);
-	g_free (path);
-	g_key_file_free (servers);
-
-	if (!ret)
-		gebr_message (GEBR_LOG_ERROR, TRUE, TRUE,
-			      _("Could not save configuration."));
 }
 
 /**
@@ -448,15 +323,13 @@ gebr_post_config(gboolean has_config)
 	gtk_window_resize(GTK_WINDOW(gebr.window), gebr.config.width, gebr.config.height);
 	gtk_expander_set_expanded(GTK_EXPANDER(gebr.ui_log->widget), gebr.config.log_expander_state);
 
-	//gebr_config_load_servers ();
-
 	project_list_populate();
 
 	gebr.ui_project_line->servers_filter = gtk_tree_model_filter_new(GTK_TREE_MODEL(gebr.ui_server_list->common.store), NULL);
 	gebr.ui_project_line->servers_sort = gtk_tree_model_sort_new_with_model(gebr.ui_project_line->servers_filter);
-	gtk_tree_model_filter_set_visible_func(GTK_TREE_MODEL_FILTER(gebr.ui_project_line->servers_filter), servers_filter_visible_func, NULL, NULL);
-	gtk_tree_sortable_set_sort_func(GTK_TREE_SORTABLE(gebr.ui_project_line->servers_sort), 0, servers_sort_func, NULL, NULL);
-	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(gebr.ui_project_line->servers_sort), 0, GTK_SORT_ASCENDING);
+	//gtk_tree_model_filter_set_visible_func(GTK_TREE_MODEL_FILTER(gebr.ui_project_line->servers_filter), servers_filter_visible_func, NULL, NULL);
+	//gtk_tree_sortable_set_sort_func(GTK_TREE_SORTABLE(gebr.ui_project_line->servers_sort), 0, servers_sort_func, NULL, NULL);
+	//gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(gebr.ui_project_line->servers_sort), 0, GTK_SORT_ASCENDING);
 
 	GtkTreeIter iter;
 	gboolean project_line_selected;
@@ -548,8 +421,6 @@ void gebr_config_save(gboolean verbose)
 	g_key_file_set_integer(gebr.config.key_file, "general", "niceness", gebr.config.niceness);
 
 	g_key_file_set_integer(gebr.config.key_file, "state", "notebook", gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook)));
-
-	gebr_config_save_servers ();
 
 	/* Save selected documents */
 	if (project_line_get_selected(&iter, DontWarnUnselection)) {

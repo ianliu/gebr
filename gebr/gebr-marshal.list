@@ -22,4 +22,5 @@
 #   BOOL        deprecated alias for BOOLEAN
 
 VOID:INT,INT,STRING
+VOID:INT,STRING
 VOID:OBJECT,STRING

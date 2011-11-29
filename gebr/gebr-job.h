@@ -21,9 +21,8 @@
 #ifndef __GEBR_JOB_H__
 #define __GEBR_JOB_H__
 
+#include <gtk/gtk.h>
 #include <libgebr/comm/gebr-comm.h>
-
-#include "gebr-task.h"
 
 #define GEBR_TYPE_JOB			(gebr_job_get_type())
 #define GEBR_JOB(obj)			(G_TYPE_CHECK_INSTANCE_CAST ((obj), GEBR_TYPE_JOB, GebrJob))
@@ -55,14 +54,23 @@ struct _GebrJobClass {
 	void (*issued) (GebrJob     *job,
 			const gchar *issues);
 
-	void (*cmd_line_received) (GebrJob *job);
+	void (*cmd_line_received) (GebrJob     *job,
+				   gint         frac,
+				   const gchar *cmd);
 
 	void (*output) (GebrJob     *job,
-			GebrTask    *task,
+			gint         frac,
 			const gchar *output);
 
 	void (*disconnect) (GebrJob *job);
 };
+
+typedef struct {
+	gint frac;
+	gchar *server;
+	gchar *cmd_line;
+	gdouble percentage;
+} GebrJobTask;
 
 GType gebr_job_get_type() G_GNUC_CONST;
 
@@ -93,7 +101,7 @@ GtkTreeIter *gebr_job_get_iter(GebrJob *job);
 
 gchar **gebr_job_get_servers(GebrJob *job, gint *n);
 
-void gebr_job_append_task(GebrJob *job, GebrTask *task);
+gdouble *gebr_job_get_percentages(GebrJob *job, gint *length);
 
 GebrJob *gebr_job_find(const gchar *rid);
 
@@ -140,8 +148,6 @@ void gebr_job_get_resources(GebrJob *job,
                             gchar **nprocs,
                             gchar **niceness);
 
-gchar *gebr_job_get_remaining_servers(GebrJob *job);
-
 const gchar *gebr_job_get_server_group(GebrJob *job);
 
 void gebr_job_set_server_group(GebrJob *job, const gchar *server_group);
@@ -154,37 +160,9 @@ gint gebr_job_get_exec_speed(GebrJob *job);
 
 void gebr_job_set_exec_speed(GebrJob *job, gint exec_speed);
 
-GList *gebr_job_get_list_of_tasks(GebrJob *job);
+gint gebr_job_get_total(GebrJob *job);
 
-GebrTask *gebr_job_get_task_from_server(GebrJob *job,
-					const gchar *server);
-
-/**
- * gebr_job_get_partial_status:
- *
- * If a job does not have all of its tasks appended, it have a "partial"
- * status, which is the composition of the statuses of the tasks which where
- * appended.
- *
- * For instance, if a job is composed by 4 tasks but only 3 were appended, then
- * the partial status of this job is the status as if the job were composed by
- * the 3 appended tasks only.
- *
- * If the job is complete, ie all 4 tasks were appended, than
- * gebr_job_get_partial_status() returns the same value as
- * gebr_job_get_status().
- */
-GebrCommJobStatus gebr_job_get_partial_status(GebrJob *job);
-
-/**
- * gebr_job_append_child:
- *
- * Appends the pair (@runner, @child) into @job's children list. This list will
- * be executed when @job finishes or gets canceled/failed.
- */
-void gebr_job_append_child(GebrJob *job,
-			   GebrCommRunner *runner,
-			   GebrJob *child);
+GebrJobTask *gebr_job_get_tasks(GebrJob *job, gint *n);
 
 G_END_DECLS
 
