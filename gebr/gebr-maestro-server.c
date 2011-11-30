@@ -303,7 +303,7 @@ parse_messages(GebrCommServer *comm_server,
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}
-		else if (message->hash == gebr_comm_protocol_defs.agpr_def.code_hash) {
+		else if (message->hash == gebr_comm_protocol_defs.agrp_def.code_hash) {
 			GList *arguments;
 
 			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
@@ -316,7 +316,7 @@ parse_messages(GebrCommServer *comm_server,
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}
-		else if (message->hash == gebr_comm_protocol_defs.dgpr_def.code_hash) {
+		else if (message->hash == gebr_comm_protocol_defs.dgrp_def.code_hash) {
 			GList *arguments;
 
 			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
