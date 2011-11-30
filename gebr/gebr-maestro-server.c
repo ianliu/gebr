@@ -651,7 +651,7 @@ gebr_maestro_server_get_all_tags(GebrMaestroServer *maestro)
 {
 	GtkTreeIter iter;
 	GtkTreeModel *daemons = gebr_maestro_server_get_model(maestro, FALSE);
-	GTree *tree = g_tree_new((GCompareDataFunc)g_strcmp0);
+	GTree *tree = g_tree_new((GCompareFunc)g_strcmp0);
 	GList *groups = NULL;
 
 	gebr_gui_gtk_tree_model_foreach(iter, daemons) {
@@ -665,6 +665,7 @@ gebr_maestro_server_get_all_tags(GebrMaestroServer *maestro)
 
 	gboolean foreach_func(gpointer key, gpointer value, gpointer data) {
 		groups = g_list_prepend(groups, g_strdup((gchar*)(key)));
+		return FALSE;
 	}
 
 	g_tree_foreach(tree, foreach_func, NULL);
