@@ -489,6 +489,43 @@ on_job_define(GebrMaestroServer *maestro,
 	gebr_job_control_add(gebr.job_control, job);
 }
 
+static void
+on_server_group_changed(GebrMaestroServer *maestro,
+			GTree *groups,
+			struct ui_server_list *sl)
+{
+	gchar *title;
+	GtkTreeIter iter;
+	gchar *display;
+
+	gtk_list_store_clear(sl->group_store);
+
+	gboolean traverse_func(gpointer key, gpointer value, gpointer data)
+	{
+		display = gebr_maestro_server_get_display_address(maestro);
+		// Comment for translators: [group] at [Maestro]
+		title = g_strdup_printf(_("%s at %s"), (gchar*)key, display);
+		g_free(display);
+		gtk_list_store_append(sl->group_store, &iter);
+		gtk_list_store_set(sl->group_store, &iter,
+				   GEBR_UI_SERVER_GROUP_TITLE, title,
+				   GEBR_UI_SERVER_GROUP_MAESTRO, maestro,
+				   GEBR_UI_SERVER_GROUP_GROUP, key,
+				   -1);
+		return FALSE;
+	}
+
+	display = gebr_maestro_server_get_display_address(maestro);
+	gtk_list_store_append(sl->group_store, &iter);
+	gtk_list_store_set(sl->group_store, &iter,
+			   GEBR_UI_SERVER_GROUP_TITLE, display,
+			   GEBR_UI_SERVER_GROUP_MAESTRO, maestro,
+			   GEBR_UI_SERVER_GROUP_GROUP, "",
+			   -1);
+	g_free(display);
+	g_tree_foreach(groups, traverse_func, NULL);
+}
+
 void
 gebr_ui_server_list_connect(struct ui_server_list *sl,
 			    const gchar *addr)
@@ -500,6 +537,8 @@ gebr_ui_server_list_connect(struct ui_server_list *sl,
 
 	g_signal_connect(sl->maestro, "job-define",
 			 G_CALLBACK(on_job_define), sl);
+	g_signal_connect(sl->maestro, "group-changed",
+			 G_CALLBACK(on_server_group_changed), sl);
 
 	gtk_tree_view_set_model(GTK_TREE_VIEW(sl->common.view),
 				gebr_maestro_server_get_model(sl->maestro, FALSE));
@@ -556,6 +595,11 @@ struct ui_server_list *server_list_setup_ui(void)
 	g_signal_connect(dialog, "response", G_CALLBACK(server_common_actions), &ui_server_list->common);
 
 	server_common_setup(&ui_server_list->common);
+
+	ui_server_list->group_store = gtk_list_store_new(GEBR_UI_SERVER_GROUP_N,
+							 G_TYPE_STRING,
+							 GEBR_TYPE_MAESTRO_SERVER,
+							 G_TYPE_STRING);
 
 	GtkWidget *maestro_entry = gtk_entry_new();
 	gtk_entry_set_text(GTK_ENTRY(maestro_entry), gebr.config.maestro_address->str);
@@ -1283,4 +1327,10 @@ gebr_ui_server_list_get_autochoose_store(struct ui_server_list *sl)
 	GebrServerAutochoose *autochoose;
 	gtk_tree_model_get(GTK_TREE_MODEL(sl->common.store), &iter, SERVER_POINTER, &autochoose, -1);
 	return autochoose->queues;
+}
+
+GtkTreeModel *
+gebr_ui_server_list_get_groups_model(struct ui_server_list *sl)
+{
+	return GTK_TREE_MODEL(sl->group_store);
 }

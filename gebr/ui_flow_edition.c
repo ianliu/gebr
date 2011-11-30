@@ -1254,8 +1254,6 @@ static GtkMenu *flow_edition_menu_popup_menu(GtkWidget * widget, struct ui_flow_
  */
 static void flow_edition_on_combobox_changed(GtkComboBox * combobox)
 {
-	gint lstq;
-	GHashTable *last_queue_hash;
 	GtkTreeIter iter;
 	GtkTreeIter flow_iter;
 

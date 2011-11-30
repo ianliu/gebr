@@ -70,8 +70,16 @@ struct ui_server_common {
 	GtkTreeModel *sort_store;
 };
 
+enum {
+	GEBR_UI_SERVER_GROUP_TITLE,
+	GEBR_UI_SERVER_GROUP_MAESTRO,
+	GEBR_UI_SERVER_GROUP_GROUP,
+	GEBR_UI_SERVER_GROUP_N,
+};
+
 struct ui_server_list {
 	GebrMaestroServer *maestro;
+	GtkListStore *group_store;
 	struct ui_server_common common;
 };
 
@@ -156,6 +164,8 @@ GtkListStore *gebr_ui_server_list_get_autochoose_store(struct ui_server_list *sl
 
 void gebr_ui_server_list_connect(struct ui_server_list *sl,
 				 const gchar *addr);
+
+GtkTreeModel *gebr_ui_server_list_get_groups_model(struct ui_server_list *sl);
 
 G_END_DECLS
 

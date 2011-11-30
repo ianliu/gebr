@@ -313,7 +313,8 @@ void project_line_info_update(void)
 		gtk_label_set_markup(GTK_LABEL(gebr.ui_project_line->info.group_label), markup);
 		g_free(markup);
 
-		group = gebr_geoxml_line_get_group_label(GEBR_GEOXML_LINE(gebr.project_line));
+		g_warning("TODO: Implement me pleaaase %s", __func__);
+		group = "GROUP: Implement me pleaseee"; // gebr_geoxml_line_get_group_label(GEBR_GEOXML_LINE(gebr.project_line));
 
 		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.group), group);
 	}

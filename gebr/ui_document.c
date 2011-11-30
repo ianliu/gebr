@@ -330,48 +330,40 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 	data->groups_combo = NULL;
 	if (gebr_geoxml_document_get_type(document) == GEBR_GEOXML_DOCUMENT_TYPE_LINE)
 	{
-		gboolean is_fs, is_fs2;
 		GtkTreeIter active, iter;
-		const gchar *curr_group;
-		GtkTreeModel *model;
+		gchar *curr_group, *maestro_addr;
 
-		model = GTK_TREE_MODEL (gebr.ui_server_list->common.combo_store);
+		GtkTreeModel *model = gebr_ui_server_list_get_groups_model(gebr.ui_server_list);
 		gtk_tree_model_get_iter_first (model, &active);
+		data->groups_combo = groups_combo = gtk_combo_box_new_with_model(model);
+		gebr_geoxml_line_get_group(GEBR_GEOXML_LINE(document), &maestro_addr, &curr_group);
 
-		g_warning("[Server Group combobox] Fix me, please!");
-		data->groups_combo = groups_combo = gtk_combo_box_new(); //ui_server_create_tag_combo_box ();
-		curr_group = gebr_geoxml_line_get_group (GEBR_GEOXML_LINE (document), &is_fs);
-
-		/* If group is empty, select All Servers */
-		if (strlen (curr_group) == 0)
-			gtk_combo_box_set_active_iter (GTK_COMBO_BOX (groups_combo), &active);
-		else {
-			/* Otherwise, skip the first entry and search for the current group */
-			gboolean valid;
-			iter = active;
-			valid = gtk_tree_model_iter_next (model, &iter);
-			while (valid) {
-				gboolean is_sep;
-				gchar *name;
-				gtk_tree_model_get (model, &iter,
-						    TAG_SEP, &is_sep,
-						    TAG_NAME, &name,
-						    TAG_FS, &is_fs2,
-						    -1);
-				if (!is_sep && is_fs == is_fs2 && g_strcmp0 (name, curr_group) == 0) {
-					active = iter;
-					g_free (name);
-					break;
-				}
-				g_free (name);
-				valid = gtk_tree_model_iter_next (model, &iter);
+		/* Otherwise, skip the first entry and search for the current group */
+		gboolean valid;
+		iter = active;
+		valid = gtk_tree_model_iter_next (model, &iter);
+		while (valid) {
+			gchar *name;
+			GebrMaestroServer *maestro;
+			gtk_tree_model_get(model, &iter,
+					   GEBR_UI_SERVER_GROUP_GROUP, &name,
+					   GEBR_UI_SERVER_GROUP_MAESTRO, &maestro,
+					   -1);
+			if (g_strcmp0(maestro_addr, gebr_maestro_server_get_address(maestro)) == 0
+			    && g_strcmp0(name, curr_group) == 0)
+			{
+				active = iter;
+				g_free(name);
+				break;
 			}
-			/* If valid = TRUE, we found the group */
-			if (valid || is_new)
-				gtk_combo_box_set_active_iter (GTK_COMBO_BOX (groups_combo), &active);
-			else
-				gtk_combo_box_set_active (GTK_COMBO_BOX (groups_combo), -1);
+			g_free(name);
+			valid = gtk_tree_model_iter_next(model, &iter);
 		}
+		/* If valid = TRUE, we found the group */
+		if (valid || is_new)
+			gtk_combo_box_set_active_iter (GTK_COMBO_BOX (groups_combo), &active);
+		else
+			gtk_combo_box_set_active (GTK_COMBO_BOX (groups_combo), -1);
 
 		data->previous_active_group = gtk_combo_box_get_active(GTK_COMBO_BOX(groups_combo));
 
@@ -1654,13 +1646,11 @@ static void on_file_entry_activate (GtkEntry *entry, GebrGuiSequenceEdit *sequen
 	g_signal_emit_by_name (sequence_edit, "add-request");
 }
 
-static void on_groups_combo_box_changed (GtkComboBox *combo, GebrGuiValueSequenceEdit *edit)
+static void on_groups_combo_box_changed(GtkComboBox *combo, GebrGuiValueSequenceEdit *edit)
 {
-	gint *index;
 	gchar *group;
-	gboolean is_fs;
+	GebrMaestroServer *maestro;
 	GtkTreeIter iter;
-	GtkTreePath *path;
 	GtkTreeModel *model;
 
 	if (!gebr.line)
@@ -1669,26 +1659,27 @@ static void on_groups_combo_box_changed (GtkComboBox *combo, GebrGuiValueSequenc
 	if (!gtk_combo_box_get_active_iter (combo, &iter))
 		return;
 
-	model = gtk_combo_box_get_model (combo);
-	path = gtk_tree_model_get_path (model, &iter);
-	index = gtk_tree_path_get_indices (path);
+	model = gtk_combo_box_get_model(combo);
 
-	gtk_tree_model_get (model, &iter,
-			    TAG_NAME, &group,
-			    TAG_FS, &is_fs,
-			    -1);
+	gtk_tree_model_get(model, &iter,
+			   GEBR_UI_SERVER_GROUP_GROUP, &group,
+			   GEBR_UI_SERVER_GROUP_MAESTRO, &maestro,
+			   -1);
 
 	/* Empty string means all servers */
-	if (!group || index[0] == 0)
-		gebr_geoxml_line_set_group (gebr.line, "", FALSE);
+	if (!group || group[0] == '\0')
+		gebr_geoxml_line_set_group(gebr.line,
+					   gebr_maestro_server_get_address(maestro), "");
 	else
-		gebr_geoxml_line_set_group (gebr.line, group, is_fs);
+		gebr_geoxml_line_set_group(gebr.line,
+					   gebr_maestro_server_get_address(maestro), group);
 
-	gtk_tree_model_filter_refilter (
-			GTK_TREE_MODEL_FILTER (gebr.ui_project_line->servers_filter));
+	g_debug("TODO: Fix me! %s", __func__);
+
+	//gtk_tree_model_filter_refilter(
+	//		GTK_TREE_MODEL_FILTER(gebr.ui_project_line->servers_filter));
 
 	g_free (group);
-	gtk_tree_path_free (path);
 }
 
 static gboolean dict_edit_reorder(GtkTreeView            *tree_view,

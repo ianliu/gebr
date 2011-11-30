@@ -66,11 +66,12 @@ gebr_ui_flow_run(void)
 	if (!flow_browse_get_selected(NULL, TRUE))
 		return;
 
-	gboolean is_fs;
 	gchar *parent_rid = get_selected_queue();
 	gchar *speed = g_strdup_printf("%d", gebr_interface_get_execution_speed());
 	gchar *nice = g_strdup_printf("%d", gebr_interface_get_niceness());
-	gchar *group = g_strdup(gebr_geoxml_line_get_group(gebr.line, &is_fs));
+
+	gchar *group;
+	gebr_geoxml_line_get_group(gebr.line, NULL, &group);
 
 	gebr_geoxml_flow_set_date_last_run(gebr.flow, gebr_iso_date());
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), FALSE, FALSE);
