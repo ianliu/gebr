@@ -32,6 +32,7 @@
 #include <errno.h>
 #include <libgebr/comm/gebr-comm.h>
 #include <libgebr/utils.h>
+#include <libgebr/date.h>
 #include <glib/gi18n.h>
 
 /*
@@ -452,6 +453,7 @@ on_client_request(GebrCommProtocolSocket *socket,
 			info.error = gebr_geoxml_flow_io_get_error(*pflow);
 			info.group = group;
 			info.speed = speed;
+			info.submit_date = gebr_iso_date();
 
 			GebrmJob *job = gebrm_job_new();
 
