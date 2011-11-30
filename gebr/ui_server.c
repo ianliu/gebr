@@ -267,7 +267,7 @@ daemon_server_group_func(GtkTreeViewColumn *tree_column,
 	for (GList *i = groups; i; i = i->next)
 		g_debug("PRESENTING GROUP %s", (gchar*)i->data);
 
-	groups = g_list_sort(groups, (GCompareFunc)g_strcmp0);
+	//groups = g_list_sort(groups, (GCompareFunc)g_strcmp0);
 
 	g_debug("-----");
 	for (GList *i = groups; i; i = i->next)
