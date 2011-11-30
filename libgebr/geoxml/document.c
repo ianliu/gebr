@@ -746,6 +746,10 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 				iter = iter->next;
 			}
 			g_slist_free(refer);
+		} else if (gebr_geoxml_document_get_type(((GebrGeoXmlDocument *) *document)) == GEBR_GEOXML_DOCUMENT_TYPE_LINE) {
+			__gebr_geoxml_set_attr_value(root_element, "version", "0.3.5");
+			GSList *group = __gebr_geoxml_get_elements_by_tag(root_element, "server-group");
+			__gebr_geoxml_set_element_value(group->data, "", __gebr_geoxml_create_TextNode);
 		}
 	}
 	/* 0.3.5 to 0.3.6 */ 

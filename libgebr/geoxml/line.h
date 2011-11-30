@@ -156,23 +156,21 @@ glong gebr_geoxml_line_get_paths_number(GebrGeoXmlLine * line);
 /**
  * gebr_geoxml_line_set_group:
  * @line:
- * @group: the group of server this line will see
+ * @maestro_group: the Maestro address.
+ * @group: the group of server this line will see.
  */
-void gebr_geoxml_line_set_group (GebrGeoXmlLine *line, const gchar *group, gboolean is_fs);
+void gebr_geoxml_line_set_group(GebrGeoXmlLine *line,
+				const gchar *maestro_addr,
+				const gchar *group);
 
 /**
  * gebr_geoxml_line_get_group:
- * @line:
- * @is_fs:
- *
- * Returns: the server group associated with this line
+ * @maestro_addr: Return location for the maestro server address.
+ * @group_id: Return location for the group id.
  */
-const gchar *gebr_geoxml_line_get_group (GebrGeoXmlLine *line, gboolean *is_fs);
-
-/**
- * Returns: the group label, if group is empty string, returns "All servers".
- */
-const gchar *gebr_geoxml_line_get_group_label (GebrGeoXmlLine *line);
+void gebr_geoxml_line_get_group(GebrGeoXmlLine *line,
+				gchar **maestro_addr,
+				gchar **group_id);
 
 G_END_DECLS
 #endif				//__GEBR_GEOXML_LINE_H
