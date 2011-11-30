@@ -182,7 +182,7 @@ void gebr_geoxml_line_get_group(GebrGeoXmlLine *line,
 	GdomeElement *group_el;
 
 	g_return_if_fail(line != NULL);
-	g_return_if_fail(maestro_addr != NULL && group_id != NULL);
+	g_return_if_fail(maestro_addr != NULL || group_id != NULL);
 
 	root = gebr_geoxml_document_root_element (line);
 	group_el = __gebr_geoxml_get_first_element(root, "server-group");
