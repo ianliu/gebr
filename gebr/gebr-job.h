@@ -146,8 +146,8 @@ void gebr_job_get_io(GebrJob *job, gchar **input_file, gchar **output_file,
 		gchar **log_file);
 
 void gebr_job_get_resources(GebrJob *job,
-                            gchar **nprocs,
-                            gchar **niceness);
+			    const gchar **nprocs,
+			    const gchar **nice);
 
 const gchar *gebr_job_get_server_group(GebrJob *job);
 

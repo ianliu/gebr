@@ -459,8 +459,8 @@ gebr_job_get_io(GebrJob *job,
 
 void
 gebr_job_get_resources(GebrJob *job,
-                       gchar **nprocs,
-                       gchar **nice)
+                       const gchar **nprocs,
+                       const gchar **nice)
 {
 	if (nprocs)
 		*nprocs = job->priv->nprocs;

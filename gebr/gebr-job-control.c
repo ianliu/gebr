@@ -710,7 +710,8 @@ job_control_fill_servers_info(GebrJobControl *jc)
 	GebrJob *job = get_selected_job(jc);
 	GString *resources = g_string_new(NULL);
 	GtkLabel *res_label = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "resources_text"));
-	gchar *nprocs, *niceness;
+	const gchar *nprocs;
+	const gchar *niceness;
 	gint n_servers, i;
 	gchar **servers;
 
@@ -732,9 +733,6 @@ job_control_fill_servers_info(GebrJobControl *jc)
 						  gebr_job_get_hostname(job), groups,
 						  g_strcmp0(niceness, "0")? _("idle time of ") : "", nprocs, n_servers);
 		g_string_append(resources, markup);
-
-		g_free(nprocs);
-		g_free(niceness);
 		g_free(markup);
 	}
 	gtk_label_set_markup (res_label, resources->str);
