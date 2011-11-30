@@ -52,6 +52,9 @@ struct gebr_comm_protocol_defs {
 	struct gebr_comm_message_def out_def;
 	struct gebr_comm_message_def sta_def;
 
+	struct gebr_comm_message_def agpr_def;  // Add group on GeBR
+	struct gebr_comm_message_def dgpr_def;  // Delete group on GeBR
+
 	struct gebr_comm_message_def run_def;  // Run request          Maestro -> Daemon
 	struct gebr_comm_message_def tsk_def;  // Task definition      Daemon  -> Maestro
 

@@ -303,6 +303,31 @@ parse_messages(GebrCommServer *comm_server,
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}
+		else if (message->hash == gebr_comm_protocol_defs.agpr_def.code_hash) {
+			GList *arguments;
+
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
+				goto err;
+
+			GString *group = g_list_nth_data(arguments, 0);
+			GString *servers = g_list_nth_data(arguments, 1);
+
+			g_debug("ADD GROUP %s WITH SERVERS %s", group->str, servers->str);
+
+			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
+		}
+		else if (message->hash == gebr_comm_protocol_defs.dgpr_def.code_hash) {
+			GList *arguments;
+
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
+				goto err;
+
+			GString *group = g_list_nth_data(arguments, 0);
+
+			g_debug("REMOVE GROUP %s", group->str);
+
+			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
+		}
 
 		gebr_comm_message_free(message);
 		comm_server->socket->protocol->messages = g_list_delete_link(comm_server->socket->protocol->messages, link);
