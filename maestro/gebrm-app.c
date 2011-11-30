@@ -23,6 +23,7 @@
 #include "gebrm-daemon.h"
 #include "gebrm-job.h"
 
+#include <glib/gprintf.h>
 #include <gio/gio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -494,7 +495,11 @@ on_client_request(GebrCommProtocolSocket *socket,
 
 			g_debug("RECEIVED GROUPS %s of SERVER %s", tags, server);
 
-			gboolean updated = gebrm_config_update_tags_on_server(app, server, tags);
+			if (gebrm_config_update_tags_on_server(app, server, tags)) {
+				gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
+								      gebr_comm_protocol_defs.agrp_def, 2,
+								      server, tags);
+			}
 		}
 	}
 }

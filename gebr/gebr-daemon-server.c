@@ -27,6 +27,7 @@ struct _GebrDaemonServerPriv {
 	GebrConnectable *connectable;
 	gchar *address;
 	GebrCommServerState state;
+	GList *tags;
 };
 
 enum {
@@ -97,6 +98,8 @@ gebr_daemon_server_finalize(GObject *object)
 
 	g_free(daemon->priv->address);
 	g_object_unref(daemon->priv->connectable);
+	g_list_foreach(daemon->priv->tags, (GFunc)g_free, NULL);
+	g_list_free(daemon->priv->tags);
 
 	G_OBJECT_CLASS(gebr_daemon_server_parent_class)->finalize(object);
 }
@@ -143,6 +146,7 @@ gebr_daemon_server_init(GebrDaemonServer *daemon)
 	daemon->priv = G_TYPE_INSTANCE_GET_PRIVATE(daemon,
 						   GEBR_TYPE_DAEMON_SERVER,
 						   GebrDaemonServerPriv);
+	daemon->priv->tags = NULL;
 }
 
 GebrDaemonServer *
@@ -208,4 +212,26 @@ gboolean
 gebr_daemon_server_is_autochoose(GebrDaemonServer *daemon)
 {
 	return g_strcmp0(daemon->priv->address, "") == 0;
+}
+
+void
+gebr_daemon_server_set_tags(GebrDaemonServer *daemon,
+			    gchar **tags)
+{
+	g_list_foreach(daemon->priv->tags, (GFunc)g_free, NULL);
+	g_list_free(daemon->priv->tags);
+
+	g_debug("Adding tags for %s", daemon->priv->address);
+	daemon->priv->tags = NULL;
+	for (int i = 0; tags[i]; i++) {
+		g_debug("MMMMMMMMMMMMM >>>>>> %s", tags[i]);
+		daemon->priv->tags = g_list_prepend(daemon->priv->tags,
+						    g_strdup(tags[i]));
+	}
+}
+
+GList *
+gebr_daemon_server_get_tags(GebrDaemonServer *daemon)
+{
+	return daemon->priv->tags;
 }

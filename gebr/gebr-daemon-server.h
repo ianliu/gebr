@@ -93,6 +93,10 @@ void gebr_daemon_server_disconnect(GebrDaemonServer *server);
 
 gboolean gebr_daemon_server_is_autochoose(GebrDaemonServer *daemon);
 
+void gebr_daemon_server_set_tags(GebrDaemonServer *daemon, gchar **tags);
+
+GList *gebr_daemon_server_get_tags(GebrDaemonServer *daemon);
+
 G_END_DECLS
 
 #endif /* __GEBR_SERVER_H__ */

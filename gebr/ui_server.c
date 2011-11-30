@@ -154,25 +154,27 @@ static GtkMenu *server_common_popup_menu(GtkWidget * widget, struct ui_server_co
 }
 #endif
 
-static void on_tags_edited (GtkCellRendererText *cell,
-			    gchar *pathstr,
-			    gchar *new_text,
-			    GtkTreeModel *model)
+static void on_tags_edited(GtkCellRendererText *cell,
+			   gchar *pathstr,
+			   gchar *new_text,
+			   struct ui_server_list *sl)
 {
 	GtkTreeIter iter;
 	gboolean ret;
 	GebrDaemonServer *daemon;
+	GtkTreeModel *model = gebr_maestro_server_get_model(sl->maestro, FALSE);
 
 	gtk_window_add_accel_group(GTK_WINDOW(gebr.ui_server_list->common.dialog), gebr.accel_group_array[ACCEL_SERVER]);
 
-	ret = gtk_tree_model_get_iter_from_string (model, &iter, pathstr);
+	ret = gtk_tree_model_get_iter_from_string(model, &iter, pathstr);
+	g_debug("MAis informativo: %s", __func__);
 
 	if (!ret)
 		return;
 
 	gtk_tree_model_get(model, &iter, 0, &daemon,-1);
 
-	gchar *new_tags = sort_and_remove_doubles (new_text);
+	gchar *new_tags = sort_and_remove_doubles(new_text);
 
 	GebrCommHttpMsg *msg;
 	gchar *url = g_strdup_printf("/server-tags?server=%s;tags=%s;", gebr_daemon_server_get_address(daemon), new_tags);
@@ -246,14 +248,6 @@ daemon_server_status_func(GtkTreeViewColumn *tree_column,
 	g_object_set(cell, "stock-id", stock_id, NULL);
 }
 
-GList *
-gebr_daemon_server_get_groups(GebrDaemonServer *daemon)
-{
-	GList *list = NULL;
-
-	return g_list_append(list, "Grupo1");
-}
-
 static void
 daemon_server_group_func(GtkTreeViewColumn *tree_column,
                          GtkCellRenderer *cell,
@@ -264,20 +258,35 @@ daemon_server_group_func(GtkTreeViewColumn *tree_column,
 	GebrDaemonServer *daemon;
 	gtk_tree_model_get(model, iter, 0, &daemon, -1);
 
-	GList *groups = gebr_daemon_server_get_groups(daemon);
-	GString *group_list= g_string_new("");
+	if (!daemon)
+		return;
+
+	GList *groups = gebr_daemon_server_get_tags(daemon);
+
+	g_debug("+++++");
+	for (GList *i = groups; i; i = i->next)
+		g_debug("PRESENTING GROUP %s", (gchar*)i->data);
+
+	groups = g_list_sort(groups, (GCompareFunc)g_strcmp0);
+
+	g_debug("-----");
+	for (GList *i = groups; i; i = i->next)
+		g_debug("PRESENTING GROUP %s", (gchar*)i->data);
+
+	GString *group_list = g_string_new("");
 
 	for (GList *i = groups; i; i = i->next)
 		g_string_append_printf(group_list, "%s,", (gchar*)i->data);
 	g_string_erase(group_list, group_list->len-1, 1);
 
-	g_object_set(cell, "text", g_string_free(group_list, FALSE), NULL);
+	g_object_set(cell, "text", group_list->str, NULL);
+	g_string_free(group_list, TRUE);
 }
 
 /* Function: server_common_setup
  * Setup common server dialogs stuff
  */
-static void server_common_setup(struct ui_server_common *ui_server_common)
+static void server_common_setup(struct ui_server_common *ui_server_common, struct ui_server_list *sl)
 {
 	GtkWidget *scrolled_window;
 	GtkWidget *view;
@@ -327,7 +336,8 @@ static void server_common_setup(struct ui_server_common *ui_server_common)
 	g_object_set(renderer, "editable", TRUE, NULL);
 	gtk_tree_view_column_set_cell_data_func(col, renderer, daemon_server_group_func,
 	                                        NULL, NULL);
-	g_signal_connect(renderer, "editing-started", G_CALLBACK(on_tags_editing_started), NULL);
+	g_signal_connect(renderer, "editing-started", G_CALLBACK(on_tags_editing_started), sl);
+	g_signal_connect(renderer, "edited", G_CALLBACK(on_tags_edited), sl);
 
 	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
 
@@ -495,11 +505,6 @@ gebr_ui_server_list_connect(struct ui_server_list *sl,
 				gebr_maestro_server_get_model(sl->maestro, TRUE));
 
 	g_string_assign(gebr.config.maestro_address, addr);
-
-	GtkTreeViewColumn *col = gtk_tree_view_get_column(GTK_TREE_VIEW(sl->common.view), 1);
-	GList *cell = gtk_tree_view_column_get_cell_renderers(col);
-	g_signal_connect(cell->data, "edited", G_CALLBACK(on_tags_edited), gebr_maestro_server_get_model(sl->maestro, FALSE));
-	g_list_free(cell);
 }
 
 static void
@@ -547,7 +552,7 @@ struct ui_server_list *server_list_setup_ui(void)
 	/* Take the apropriate action when a button is pressed */
 	g_signal_connect(dialog, "response", G_CALLBACK(server_common_actions), &ui_server_list->common);
 
-	server_common_setup(&ui_server_list->common);
+	server_common_setup(&ui_server_list->common, ui_server_list);
 
 	ui_server_list->group_store = gtk_list_store_new(GEBR_UI_SERVER_GROUP_N,
 							 G_TYPE_STRING,
@@ -1026,6 +1031,7 @@ static void on_tags_editing_started (GtkCellRenderer *cell,
 				     gchar *path,
 				     gpointer data)
 {
+	g_debug("Editing Started");
         gtk_window_remove_accel_group(GTK_WINDOW(gebr.ui_server_list->common.dialog), gebr.accel_group_array[ACCEL_SERVER]);
 
 	gtk_entry_set_icon_from_stock (entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_HELP);

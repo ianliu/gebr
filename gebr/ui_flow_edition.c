@@ -77,8 +77,6 @@ static void on_server_disconnected_set_row_insensitive(GtkCellLayout   *cell_lay
 						       GtkTreeIter     *iter,
 						       gpointer         data);
 
-static void on_queue_combobox_changed (GtkComboBox *combo, GtkComboBox *server_combo);
-
 /*
  * Public functions
  */

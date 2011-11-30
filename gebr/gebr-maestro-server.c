@@ -135,6 +135,26 @@ process_response(GebrCommServer *server,
 	g_debug("[MAESTRO] response");
 }
 
+static GebrDaemonServer *
+get_daemon_from_address(GebrMaestroServer *server,
+			const gchar *address,
+			GtkTreeIter *_iter)
+{
+	GtkTreeIter iter;
+	GtkTreeModel *model = GTK_TREE_MODEL(server->priv->store);
+
+	gebr_gui_gtk_tree_model_foreach(iter, model) {
+		GebrDaemonServer *daemon;
+		gtk_tree_model_get(model, &iter, 0, &daemon, -1);
+		if (g_strcmp0(address, gebr_daemon_server_get_address(daemon)) == 0) {
+			if (_iter)
+				*_iter = iter;
+			return daemon;
+		}
+	}
+	return NULL;
+}
+
 void
 parse_messages(GebrCommServer *comm_server,
 	       gpointer user_data)
@@ -312,19 +332,29 @@ parse_messages(GebrCommServer *comm_server,
 			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
 				goto err;
 
-			GString *group = g_list_nth_data(arguments, 0);
-			GString *servers = g_list_nth_data(arguments, 1);
-			gchar **tagsv = g_strsplit(servers->str, ",", -1);
+			GString *addr = g_list_nth_data(arguments, 0);
+			GString *tags = g_list_nth_data(arguments, 1);
+			gchar **tagsv = g_strsplit(tags->str, ",", -1);
 
-			GList *l = NULL;
-			for (int i = 0; tagsv[i]; i++)
-				l = g_list_prepend(l, tagsv[i]);
-			g_tree_insert(maestro->priv->groups, g_strdup(group->str), l);
-			g_signal_emit(maestro, signals[GROUP_CHANGED], 0, maestro->priv->groups);
+			g_debug("GEBR RECEIVED addr:%s tags:%s", addr->str, tags->str);
 
-			g_free(tagsv);
-			g_debug("ADD GROUP %s WITH SERVERS %s", group->str, servers->str);
+			GtkTreeIter iter;
+			GebrDaemonServer *daemon = get_daemon_from_address(maestro, addr->str, &iter);
+			gebr_daemon_server_set_tags(daemon, tagsv);
 
+			for (int i = 0; tagsv[i]; i++) {
+				GList *l = g_tree_lookup(maestro->priv->groups, tagsv[i]);
+				l = g_list_prepend(l, g_strdup(gebr_daemon_server_get_address(daemon)));
+				g_tree_insert(maestro->priv->groups, g_strdup(tagsv[i]), l);
+			}
+
+			GtkTreePath *path = gtk_tree_model_get_path(GTK_TREE_MODEL(maestro->priv->store), &iter);
+			gtk_tree_model_row_changed(GTK_TREE_MODEL(maestro->priv->store), path, &iter);
+			gtk_tree_path_free(path);
+
+			//g_signal_emit(maestro, signals[GROUP_CHANGED], 0, maestro->priv->groups);
+
+			g_strfreev(tagsv);
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}
 		else if (message->hash == gebr_comm_protocol_defs.dgrp_def.code_hash) {
@@ -445,14 +475,6 @@ gebr_maestro_server_class_init(GebrMaestroServerClass *klass)
 }
 
 static void
-free_string_list(gpointer data)
-{
-	GList *list = data;
-	g_list_foreach(list, (GFunc)g_free, NULL);
-	g_list_free(list);
-}
-
-static void
 gebr_maestro_server_init(GebrMaestroServer *maestro)
 {
 	maestro->priv = G_TYPE_INSTANCE_GET_PRIVATE(maestro,
@@ -462,7 +484,7 @@ gebr_maestro_server_init(GebrMaestroServer *maestro)
 	maestro->priv->store = gtk_list_store_new(1, G_TYPE_POINTER);
 	maestro->priv->jobs = g_hash_table_new(g_str_hash, g_str_equal);
 	maestro->priv->groups = g_tree_new_full((GCompareDataFunc) g_strcmp0, NULL,
-						g_free, free_string_list);
+						g_free, NULL);
 
 	GebrDaemonServer *autochoose =
 		gebr_daemon_server_new(GEBR_CONNECTABLE(maestro), NULL, SERVER_STATE_CONNECT);
