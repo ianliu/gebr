@@ -44,6 +44,9 @@ struct _GebrMaestroServerClass {
 
 	void (*job_define) (GebrMaestroServer *maestro,
 			    GebrJob           *job);
+
+	void (*group_changed) (GebrMaestroServer *maestro,
+			       GTree             *groups);
 };
 
 struct _GebrMaestroServer {
@@ -65,6 +68,10 @@ GebrCommServer *gebr_maestro_server_get_server(GebrMaestroServer *maestro);
 
 GtkTreeModel *gebr_maestro_server_get_model(GebrMaestroServer *maestro,
 					    gboolean include_autochoose);
+
+const gchar *gebr_maestro_server_get_address(GebrMaestroServer *maestro);
+
+gchar *gebr_maestro_server_get_display_address(GebrMaestroServer *maestro);
 
 G_END_DECLS
 

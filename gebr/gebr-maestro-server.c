@@ -21,6 +21,7 @@
 
 #include "gebr-maestro-server.h"
 
+#include <glib/gi18n.h>
 #include <libgebr/gui/gui.h>
 #include <stdlib.h>
 
@@ -29,10 +30,12 @@ struct _GebrMaestroServerPriv {
 	GtkListStore *store;
 	GtkTreeModel *filter;
 	GHashTable *jobs;
+	GTree *groups;
 };
 
 enum {
 	JOB_DEFINE,
+	GROUP_CHANGED,
 	LAST_SIGNAL
 };
 
@@ -311,7 +314,15 @@ parse_messages(GebrCommServer *comm_server,
 
 			GString *group = g_list_nth_data(arguments, 0);
 			GString *servers = g_list_nth_data(arguments, 1);
+			gchar **tagsv = g_strsplit(servers->str, ",", -1);
 
+			GList *l = NULL;
+			for (int i = 0; tagsv[i]; i++)
+				l = g_list_prepend(l, tagsv[i]);
+			g_tree_insert(maestro->priv->groups, g_strdup(group->str), l);
+			g_signal_emit(maestro, signals[GROUP_CHANGED], 0, maestro->priv->groups);
+
+			g_free(tagsv);
 			g_debug("ADD GROUP %s WITH SERVERS %s", group->str, servers->str);
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
@@ -319,12 +330,12 @@ parse_messages(GebrCommServer *comm_server,
 		else if (message->hash == gebr_comm_protocol_defs.dgrp_def.code_hash) {
 			GList *arguments;
 
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 1)) == NULL)
 				goto err;
 
 			GString *group = g_list_nth_data(arguments, 0);
 
-			g_debug("REMOVE GROUP %s", group->str);
+			g_debug("TODO: Impelement or remove? %s", group->str);
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}
@@ -413,6 +424,15 @@ gebr_maestro_server_class_init(GebrMaestroServerClass *klass)
 			     g_cclosure_marshal_VOID__OBJECT,
 			     G_TYPE_NONE, 1, GEBR_TYPE_JOB);
 
+	signals[GROUP_CHANGED] =
+		g_signal_new("group-changed",
+			     G_OBJECT_CLASS_TYPE(object_class),
+			     G_SIGNAL_RUN_LAST,
+			     G_STRUCT_OFFSET(GebrMaestroServerClass, group_changed),
+			     NULL, NULL,
+			     g_cclosure_marshal_VOID__POINTER,
+			     G_TYPE_NONE, 1, G_TYPE_POINTER);
+
 	g_object_class_install_property(object_class,
 					PROP_ADDRESS,
 					g_param_spec_string("address",
@@ -425,6 +445,14 @@ gebr_maestro_server_class_init(GebrMaestroServerClass *klass)
 }
 
 static void
+free_string_list(gpointer data)
+{
+	GList *list = data;
+	g_list_foreach(list, (GFunc)g_free, NULL);
+	g_list_free(list);
+}
+
+static void
 gebr_maestro_server_init(GebrMaestroServer *maestro)
 {
 	maestro->priv = G_TYPE_INSTANCE_GET_PRIVATE(maestro,
@@ -433,6 +461,8 @@ gebr_maestro_server_init(GebrMaestroServer *maestro)
 
 	maestro->priv->store = gtk_list_store_new(1, G_TYPE_POINTER);
 	maestro->priv->jobs = g_hash_table_new(g_str_hash, g_str_equal);
+	maestro->priv->groups = g_tree_new_full((GCompareDataFunc) g_strcmp0, NULL,
+						g_free, free_string_list);
 
 	GebrDaemonServer *autochoose =
 		gebr_daemon_server_new(GEBR_CONNECTABLE(maestro), NULL, SERVER_STATE_CONNECT);
@@ -542,4 +572,21 @@ gebr_maestro_server_get_model(GebrMaestroServer *maestro,
 	}
 
 	return maestro->priv->filter;
+}
+
+const gchar *
+gebr_maestro_server_get_address(GebrMaestroServer *maestro)
+{
+	return maestro->priv->server->address->str;
+}
+
+gchar *
+gebr_maestro_server_get_display_address(GebrMaestroServer *maestro)
+{
+	const gchar *addr = maestro->priv->server->address->str;
+
+	if (g_strcmp0(addr, "127.0.0.1") == 0)
+		return g_strdup(_("Local Maestro"));
+
+	return g_strdup_printf(_("Maestro %s"), addr);
 }
