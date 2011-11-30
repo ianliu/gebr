@@ -30,7 +30,8 @@ struct _GebrMaestroServerPriv {
 	GtkListStore *store;
 	GtkTreeModel *filter;
 	GHashTable *jobs;
-	GTree *groups;
+
+	GtkListStore *queues_model;
 };
 
 enum {
@@ -156,6 +157,41 @@ get_daemon_from_address(GebrMaestroServer *server,
 }
 
 void
+update_queues_model(GebrMaestroServer *maestro, GebrJob *job)
+{
+	GebrCommJobStatus stat = gebr_job_get_status(job);
+
+	gboolean has_job = FALSE;
+	GtkTreeIter iter, found;
+	GtkTreeModel *model = GTK_TREE_MODEL(maestro->priv->queues_model);
+	gebr_gui_gtk_tree_model_foreach(iter, model) {
+		GebrJob *j;
+		gtk_tree_model_get(model, &iter, 0, &j, -1);
+		if (j == job) {
+			has_job = TRUE;
+			found = iter;
+			break;
+		}
+	}
+
+	switch (stat) {
+	case JOB_STATUS_CANCELED:
+	case JOB_STATUS_FINISHED:
+	case JOB_STATUS_FAILED:
+		if (has_job)
+			gtk_list_store_remove(maestro->priv->queues_model, &found);
+		break;
+	case JOB_STATUS_RUNNING:
+	case JOB_STATUS_QUEUED:
+		gtk_list_store_append(maestro->priv->queues_model, &iter);
+		gtk_list_store_set(maestro->priv->queues_model, &iter, 0, job, -1);
+		break;
+	default:
+		break;
+	}
+}
+
+void
 parse_messages(GebrCommServer *comm_server,
 	       gpointer user_data)
 {
@@ -253,6 +289,8 @@ parse_messages(GebrCommServer *comm_server,
 				g_hash_table_insert(maestro->priv->jobs, g_strdup(id->str), job);
 			}
 
+			update_queues_model(maestro, job);
+
 			g_signal_emit(maestro, signals[JOB_DEFINE], 0, job);
 			g_debug("CREATE JOB %s ON GEBR", title->str);
 
@@ -322,6 +360,8 @@ parse_messages(GebrCommServer *comm_server,
 			status_enum = gebr_comm_job_get_status_from_string(status->str);
 			gebr_job_set_status(job, gebr_comm_job_get_status_from_string(status->str), parameter->str);
 
+			update_queues_model(maestro, job);
+
 			g_debug("STATUS from %s: %s", id->str, status->str);
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
@@ -342,17 +382,11 @@ parse_messages(GebrCommServer *comm_server,
 			GebrDaemonServer *daemon = get_daemon_from_address(maestro, addr->str, &iter);
 			gebr_daemon_server_set_tags(daemon, tagsv);
 
-			for (int i = 0; tagsv[i]; i++) {
-				GList *l = g_tree_lookup(maestro->priv->groups, tagsv[i]);
-				l = g_list_prepend(l, g_strdup(gebr_daemon_server_get_address(daemon)));
-				g_tree_insert(maestro->priv->groups, g_strdup(tagsv[i]), l);
-			}
-
 			GtkTreePath *path = gtk_tree_model_get_path(GTK_TREE_MODEL(maestro->priv->store), &iter);
 			gtk_tree_model_row_changed(GTK_TREE_MODEL(maestro->priv->store), path, &iter);
 			gtk_tree_path_free(path);
 
-			//g_signal_emit(maestro, signals[GROUP_CHANGED], 0, maestro->priv->groups);
+			g_signal_emit(maestro, signals[GROUP_CHANGED], 0);
 
 			g_strfreev(tagsv);
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
@@ -460,8 +494,8 @@ gebr_maestro_server_class_init(GebrMaestroServerClass *klass)
 			     G_SIGNAL_RUN_LAST,
 			     G_STRUCT_OFFSET(GebrMaestroServerClass, group_changed),
 			     NULL, NULL,
-			     g_cclosure_marshal_VOID__POINTER,
-			     G_TYPE_NONE, 1, G_TYPE_POINTER);
+			     g_cclosure_marshal_VOID__VOID,
+			     G_TYPE_NONE, 0);
 
 	g_object_class_install_property(object_class,
 					PROP_ADDRESS,
@@ -483,8 +517,7 @@ gebr_maestro_server_init(GebrMaestroServer *maestro)
 
 	maestro->priv->store = gtk_list_store_new(1, G_TYPE_POINTER);
 	maestro->priv->jobs = g_hash_table_new(g_str_hash, g_str_equal);
-	maestro->priv->groups = g_tree_new_full((GCompareDataFunc) g_strcmp0, NULL,
-						g_free, NULL);
+	maestro->priv->queues_model = gtk_list_store_new(1, GEBR_TYPE_JOB);
 
 	GebrDaemonServer *autochoose =
 		gebr_daemon_server_new(GEBR_CONNECTABLE(maestro), NULL, SERVER_STATE_CONNECT);
@@ -611,4 +644,36 @@ gebr_maestro_server_get_display_address(GebrMaestroServer *maestro)
 		return g_strdup(_("Local Maestro"));
 
 	return g_strdup_printf(_("Maestro %s"), addr);
+}
+
+GList *
+gebr_maestro_server_get_all_tags(GebrMaestroServer *maestro)
+{
+	GtkTreeIter iter;
+	GtkTreeModel *daemons = gebr_maestro_server_get_model(maestro, FALSE);
+	GTree *tree = g_tree_new((GCompareDataFunc)g_strcmp0);
+	GList *groups = NULL;
+
+	gebr_gui_gtk_tree_model_foreach(iter, daemons) {
+		GebrDaemonServer *daemon;
+		gtk_tree_model_get(daemons, &iter, 0, &daemon, -1);
+
+		GList *tags = gebr_daemon_server_get_tags(daemon);
+		for (GList *i = tags; i; i = i->next)
+			g_tree_insert(tree, i->data, GUINT_TO_POINTER(TRUE));
+	}
+
+	gboolean foreach_func(gpointer key, gpointer value, gpointer data) {
+		groups = g_list_prepend(groups, g_strdup((gchar*)(key)));
+	}
+
+	g_tree_foreach(tree, foreach_func, NULL);
+	g_tree_unref(tree);
+	return groups;
+}
+
+GtkTreeModel *
+gebr_maestro_get_queues_model(GebrMaestroServer *maestro)
+{
+	return GTK_TREE_MODEL(maestro->priv->queues_model);
 }

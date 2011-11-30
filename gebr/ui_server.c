@@ -447,41 +447,47 @@ on_job_define(GebrMaestroServer *maestro,
 	gebr_job_control_add(gebr.job_control, job);
 }
 
+
 static void
-on_server_group_changed(GebrMaestroServer *maestro,
-			GTree *groups,
-			struct ui_server_list *sl)
+ui_server_update_groups_model(struct ui_server_list *sl)
 {
-	gchar *title;
 	GtkTreeIter iter;
 	gchar *display;
+	gchar *title;
 
 	gtk_list_store_clear(sl->group_store);
 
-	gboolean traverse_func(gpointer key, gpointer value, gpointer data)
+	void traverse_func(gpointer value, gpointer data)
 	{
-		display = gebr_maestro_server_get_display_address(maestro);
+		display = gebr_maestro_server_get_display_address(sl->maestro);
 		// Comment for translators: [group] at [Maestro]
-		title = g_strdup_printf(_("%s at %s"), (gchar*)key, display);
+		title = g_strdup_printf(_("%s at %s"), (gchar*)value, display);
 		g_free(display);
 		gtk_list_store_append(sl->group_store, &iter);
 		gtk_list_store_set(sl->group_store, &iter,
 				   GEBR_UI_SERVER_GROUP_TITLE, title,
-				   GEBR_UI_SERVER_GROUP_MAESTRO, maestro,
-				   GEBR_UI_SERVER_GROUP_GROUP, key,
+				   GEBR_UI_SERVER_GROUP_MAESTRO, sl->maestro,
+				   GEBR_UI_SERVER_GROUP_GROUP, value,
 				   -1);
-		return FALSE;
 	}
 
-	display = gebr_maestro_server_get_display_address(maestro);
+	GList *groups = gebr_maestro_server_get_all_tags(sl->maestro);
+	display = gebr_maestro_server_get_display_address(sl->maestro);
 	gtk_list_store_append(sl->group_store, &iter);
 	gtk_list_store_set(sl->group_store, &iter,
 			   GEBR_UI_SERVER_GROUP_TITLE, display,
-			   GEBR_UI_SERVER_GROUP_MAESTRO, maestro,
+			   GEBR_UI_SERVER_GROUP_MAESTRO, sl->maestro,
 			   GEBR_UI_SERVER_GROUP_GROUP, "",
 			   -1);
 	g_free(display);
-	g_tree_foreach(groups, traverse_func, NULL);
+	g_list_foreach(groups, traverse_func, NULL);
+}
+
+static void
+on_server_group_changed(GebrMaestroServer *maestro,
+			struct ui_server_list *sl)
+{
+	ui_server_update_groups_model(sl);
 }
 
 void

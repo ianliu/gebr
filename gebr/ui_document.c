@@ -336,6 +336,12 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 		GtkTreeModel *model = gebr_ui_server_list_get_groups_model(gebr.ui_server_list);
 		gtk_tree_model_get_iter_first (model, &active);
 		data->groups_combo = groups_combo = gtk_combo_box_new_with_model(model);
+
+		GtkCellRenderer *cell = gtk_cell_renderer_text_new();
+		gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(groups_combo), cell, TRUE);
+		gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(groups_combo), cell,
+					      "text", GEBR_UI_SERVER_GROUP_TITLE);
+
 		gebr_geoxml_line_get_group(GEBR_GEOXML_LINE(document), &maestro_addr, &curr_group);
 
 		/* Otherwise, skip the first entry and search for the current group */
