@@ -1,7 +1,6 @@
 # List of source files containing translatable strings.
 [encoding: UTF-8]
 callbacks.c
-client.c
 cmdline.c
 data/gebr-job-control.glade
 data/gebr.desktop.in.in
@@ -17,7 +16,6 @@ line.c
 main.c
 menu.c
 project.c
-server.c
 ui_document.c
 ui_flow.c
 ui_flow_browse.c
