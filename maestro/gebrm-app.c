@@ -275,6 +275,7 @@ gebrm_add_server_to_list(GebrmApp *app,
 			GList *l = g_tree_lookup(app->priv->groups, tagsv[i]);
 			l = g_list_prepend(l, daemon);
 			g_tree_insert(app->priv->groups, g_strdup(tagsv[i]), l);
+			g_debug("Inserting daemon %s into group %s", gebrm_daemon_get_address(daemon), tagsv[i]);
 		}
 	}
 
@@ -663,14 +664,17 @@ send_groups_definitions(gpointer key, gpointer value, gpointer data)
 	const gchar *group = key;
 	GList *daemons = value;
 	GString *buffer = g_string_new("");
+
+
 	for (GList *i = daemons; i; i = i->next)
 		g_string_append_printf(buffer, "%s,", gebrm_daemon_get_address(i->data));
 	g_string_erase(buffer, buffer->len-1, 1);
+	g_debug("Sending group %s (%s) to gebr", group, buffer->str);
 	gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
 					      gebr_comm_protocol_defs.agrp_def, 2,
 					      group, buffer->str);
 	g_string_free(buffer, TRUE);
-	return TRUE;
+	return FALSE;
 }
 
 static void
