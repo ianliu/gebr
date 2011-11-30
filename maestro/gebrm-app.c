@@ -66,6 +66,9 @@ struct _GebrmAppPriv {
 	GList *connections;
 	GList *daemons;
 
+	// Server groups: gchar -> GList<GebrDaemon>
+	GTree *groups;
+
 	// Job controller
 	GHashTable *jobs;
 };
@@ -88,7 +91,8 @@ gebrm_app_job_controller_add(GebrmApp *app, GebrmJob *job)
 // }}}
 
 static void
-send_server_status_message(GebrCommProtocolSocket *socket,
+send_server_status_message(GebrmApp *app,
+			   GebrCommProtocolSocket *socket,
 			   GebrCommServer *server)
 {
 	const gchar *state = gebr_comm_server_state_to_string(server->state);
@@ -182,7 +186,7 @@ gebrm_app_daemon_on_state_change(GebrmDaemon *daemon,
 				 GebrmApp *app)
 {
 	for (GList *i = app->priv->connections; i; i = i->next)
-		send_server_status_message(i->data, gebrm_daemon_get_server(daemon));
+		send_server_status_message(app, i->data, gebrm_daemon_get_server(daemon));
 }
 
 static void
@@ -214,6 +218,8 @@ gebrm_app_init(GebrmApp *app)
 	app->priv->daemons = NULL;
 	app->priv->jobs = g_hash_table_new_full(g_str_hash, g_str_equal,
 						g_free, NULL);
+	app->priv->groups = g_tree_new_full((GCompareDataFunc) g_strcmp0, NULL,
+					    g_free, NULL);
 
 	gchar *path = g_build_filename(g_get_home_dir(),
 				       GEBRM_LIST_OF_SERVERS_PATH,
@@ -264,8 +270,12 @@ gebrm_add_server_to_list(GebrmApp *app,
 
 	gchar **tagsv = tags ? g_strsplit(tags, ",", -1) : NULL;
 	if (tagsv) {
-		for (int i = 0; tagsv[i]; i++)
+		for (int i = 0; tagsv[i]; i++) {
 			gebrm_daemon_add_tag(daemon, tagsv[i]);
+			GList *l = g_tree_lookup(app->priv->groups, tagsv[i]);
+			l = g_list_prepend(l, daemon);
+			g_tree_insert(app->priv->groups, g_strdup(tagsv[i]), l);
+		}
 	}
 
 	app->priv->daemons = g_list_prepend(app->priv->daemons, daemon);
@@ -646,6 +656,23 @@ send_messages_of_jobs(gpointer key,
 	g_free(logfile);
 }
 
+static gboolean
+send_groups_definitions(gpointer key, gpointer value, gpointer data)
+{
+	GebrCommProtocolSocket *socket = data;
+	const gchar *group = key;
+	GList *daemons = value;
+	GString *buffer = g_string_new("");
+	for (GList *i = daemons; i; i = i->next)
+		g_string_append_printf(buffer, "%s,", gebrm_daemon_get_address(i->data));
+	g_string_erase(buffer, buffer->len-1, 1);
+	gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
+					      gebr_comm_protocol_defs.agrp_def, 2,
+					      group, buffer->str);
+	g_string_free(buffer, TRUE);
+	return TRUE;
+}
+
 static void
 on_new_connection(GebrCommListenSocket *listener,
 		  GebrmApp *app)
@@ -655,23 +682,24 @@ on_new_connection(GebrCommListenSocket *listener,
 	g_debug("New connection!");
 
 	while ((client = gebr_comm_listen_socket_get_next_pending_connection(listener))) {
-		GebrCommProtocolSocket *protocol =
+		GebrCommProtocolSocket *socket =
 			gebr_comm_protocol_socket_new_from_socket(client);
 
-		app->priv->connections = g_list_prepend(app->priv->connections, protocol);
+		app->priv->connections = g_list_prepend(app->priv->connections, socket);
 
 		for (GList *i = app->priv->daemons; i; i = i->next) {
 			GebrCommServer *server;
 			g_object_get(i->data, "server", &server, NULL);
-			send_server_status_message(protocol, server);
+			send_server_status_message(app, socket, server);
 		}
 
-		g_signal_connect(protocol, "disconnected",
+		g_signal_connect(socket, "disconnected",
 				 G_CALLBACK(on_client_disconnect), app);
-		g_signal_connect(protocol, "process-request",
+		g_signal_connect(socket, "process-request",
 				 G_CALLBACK(on_client_request), app);
 
-		g_hash_table_foreach(app->priv->jobs, (GHFunc)send_messages_of_jobs, protocol);
+		g_hash_table_foreach(app->priv->jobs, (GHFunc)send_messages_of_jobs, socket);
+		g_tree_foreach(app->priv->groups, send_groups_definitions, socket);
 	}
 }
 
