@@ -47,6 +47,10 @@ static GebrmApp           *__app = NULL;
 
 static void gebrm_config_save_server(GebrmDaemon *daemon);
 
+static gboolean gebrm_config_update_tags_on_server(GebrmApp *app,
+                                                   gchar *server,
+                                                   gchar *tags);
+
 static GebrmDaemon *gebrm_add_server_to_list(GebrmApp *app,
 					     const gchar *addr,
 					     const gchar *tags);
@@ -220,13 +224,6 @@ gebrm_app_init(GebrmApp *app)
 						g_free, NULL);
 	app->priv->groups = g_tree_new_full((GCompareDataFunc) g_strcmp0, NULL,
 					    g_free, NULL);
-
-	gchar *path = g_build_filename(g_get_home_dir(),
-				       GEBRM_LIST_OF_SERVERS_PATH,
-				       GEBRM_LIST_OF_SERVERS_FILENAME, NULL);
-	gebrm_config_load_servers(app, path);
-	g_free(path);
-
 }
 
 void
@@ -487,9 +484,57 @@ on_client_request(GebrCommProtocolSocket *socket,
 			gebr_comm_runner_run_async(runner, gebrm_job_get_id(job));
 
 			g_free(title);
+		} else if (g_str_has_prefix(request->url->str, "/server-tags")) {
+			gchar *tmp = strchr(request->url->str, '?') + 1;
+			gchar **params = g_strsplit(tmp, ";", -1);
+			gchar *server, *tags;
+
+			server = strchr(params[0], '=') + 1;
+			tags   = strchr(params[1], '=') + 1;
+
+			g_debug("RECEIVED GROUPS %s of SERVER %s", tags, server);
+
+			gboolean updated = gebrm_config_update_tags_on_server(app, server, tags);
 		}
 	}
 }
+
+static gboolean
+gebrm_config_update_tags_on_server(GebrmApp *app,
+                                   gchar *server,
+                                   gchar *tags)
+{
+	GKeyFile *servers = g_key_file_new();
+	gchar **groups;
+	gchar *content;
+	gchar *path = g_build_filename(g_get_home_dir(),
+	                               GEBRM_LIST_OF_SERVERS_PATH,
+	                               GEBRM_LIST_OF_SERVERS_FILENAME, NULL);
+
+	gboolean succ = g_key_file_load_from_file(servers, path, G_KEY_FILE_NONE, NULL);
+
+	if (succ) {
+		groups = g_key_file_get_groups(servers, NULL);
+		for (int i = 0; groups[i]; i++)
+			if (g_strcmp0(server, groups[i]) == 0) {
+				g_key_file_set_string(servers, groups[i], "tags", tags);
+				break;
+			}
+
+		content = g_key_file_to_data(servers, NULL, NULL);
+		if (content)
+			g_file_set_contents(path, content, -1, NULL);
+	}
+	g_key_file_free (servers);
+	g_free(path);
+	g_free(content);
+	for (int i = 0; groups[i]; i++)
+		g_free(groups[i]);
+	g_free(groups);
+
+	return succ;
+}
+
 
 static void
 gebrm_config_save_server(GebrmDaemon *daemon)
@@ -572,6 +617,9 @@ gebrm_config_load_servers(GebrmApp *app, gchar *path)
 		}
 		g_key_file_free (servers);
 	}
+	for (int i = 0; groups[i]; i++)
+		g_free(groups[i]);
+	g_free(groups);
 	return TRUE;
 }
 
@@ -657,24 +705,17 @@ send_messages_of_jobs(gpointer key,
 	g_free(logfile);
 }
 
-static gboolean
-send_groups_definitions(gpointer key, gpointer value, gpointer data)
+static void
+send_groups_definitions(GebrCommProtocolSocket *client, GebrmDaemon *daemon)
 {
-	GebrCommProtocolSocket *socket = data;
-	const gchar *group = key;
-	GList *daemons = value;
-	GString *buffer = g_string_new("");
+	const gchar *server = gebrm_daemon_get_address(daemon);
+	const gchar *tags = gebrm_daemon_get_tags(daemon);
 
-
-	for (GList *i = daemons; i; i = i->next)
-		g_string_append_printf(buffer, "%s,", gebrm_daemon_get_address(i->data));
-	g_string_erase(buffer, buffer->len-1, 1);
-	g_debug("Sending group %s (%s) to gebr", group, buffer->str);
-	gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
+	g_debug("Sending groups %s (%s) to gebr", tags, server);
+	gebr_comm_protocol_socket_oldmsg_send(client, FALSE,
 					      gebr_comm_protocol_defs.agrp_def, 2,
-					      group, buffer->str);
-	g_string_free(buffer, TRUE);
-	return FALSE;
+					      server, tags);
+
 }
 
 static void
@@ -695,6 +736,7 @@ on_new_connection(GebrCommListenSocket *listener,
 			GebrCommServer *server;
 			g_object_get(i->data, "server", &server, NULL);
 			send_server_status_message(app, socket, server);
+			send_groups_definitions(socket, i->data);
 		}
 
 		g_signal_connect(socket, "disconnected",
@@ -703,7 +745,6 @@ on_new_connection(GebrCommListenSocket *listener,
 				 G_CALLBACK(on_client_request), app);
 
 		g_hash_table_foreach(app->priv->jobs, (GHFunc)send_messages_of_jobs, socket);
-		g_tree_foreach(app->priv->groups, send_groups_definitions, socket);
 	}
 }
 
@@ -743,8 +784,13 @@ gebrm_app_run(GebrmApp *app)
 	}
 
 	/* success, send port */
-	g_debug("Server started at %u port",
-		gebr_comm_socket_address_get_ip_port(&app->priv->address));
+	g_printf("%u\n", gebr_comm_socket_address_get_ip_port(&app->priv->address));
+
+	gchar *path = g_build_filename(g_get_home_dir(),
+	                               GEBRM_LIST_OF_SERVERS_PATH,
+	                               GEBRM_LIST_OF_SERVERS_FILENAME, NULL);
+	gebrm_config_load_servers(app, path);
+	g_free(path);
 
 	g_main_loop_run(app->priv->main_loop);
 
