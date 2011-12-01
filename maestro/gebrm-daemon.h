@@ -89,6 +89,9 @@ gboolean gebrm_daemon_has_tag(GebrmDaemon *daemon,
  */
 gchar *gebrm_daemon_get_tags(GebrmDaemon *daemon);
 
+gboolean gebrm_daemon_has_group(GebrmDaemon *daemon,
+                                const gchar *group);
+
 /**
  * gebrm_daemon_connect:
  *

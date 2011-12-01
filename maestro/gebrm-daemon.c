@@ -423,6 +423,23 @@ gebrm_daemon_get_tags(GebrmDaemon *daemon)
 	return g_string_free(buf, FALSE);
 }
 
+gboolean
+gebrm_daemon_has_group(GebrmDaemon *daemon,
+                       const gchar *group)
+{
+	gboolean has_group = FALSE;
+	gchar *tags = gebrm_daemon_get_tags(daemon);
+	gchar **split = g_strsplit(tags, ",", -1);
+
+	for (int i = 0; split[i]; i++)
+		if (g_strcmp0(group, split[i]) == 0)
+			has_group = TRUE;
+
+	g_free(tags);
+	g_free(split);
+	return has_group;
+}
+
 void
 gebrm_daemon_connect(GebrmDaemon *daemon)
 {

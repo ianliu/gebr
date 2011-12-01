@@ -329,7 +329,7 @@ gebrm_update_tags_on_list_of_servers(GebrmApp *app,
 }
 
 static GList *
-get_comm_servers_list(GebrmApp *app, const gchar *address)
+get_comm_servers_list(GebrmApp *app, const gchar *address, const gchar *group)
 {
 	GList *servers = NULL;
 	GebrCommServer *server;
@@ -337,6 +337,8 @@ get_comm_servers_list(GebrmApp *app, const gchar *address)
 
 	if (!is_autochoose) {
 		for (GList *i = app->priv->daemons; i; i = i->next) {
+			if (!gebrm_daemon_has_group(i->data, group))
+				continue;
 			if (g_str_equal(gebrm_daemon_get_address(i->data), address)) {
 				g_object_get(i->data, "server", &server, NULL);
 				servers = g_list_prepend(servers, server);
@@ -345,6 +347,8 @@ get_comm_servers_list(GebrmApp *app, const gchar *address)
 		}
 	} else {
 		for (GList *i = app->priv->daemons; i; i = i->next) {
+			if (!gebrm_daemon_has_group(i->data, group))
+				continue;
 			g_object_get(i->data, "server", &server, NULL);
 			if (gebr_comm_server_is_logged(server))
 				servers = g_list_prepend(servers, server);
@@ -491,7 +495,7 @@ on_client_request(GebrCommProtocolSocket *socket,
 								      (GebrGeoXmlDocument **)pline,
 								      (GebrGeoXmlDocument **)pproj);
 
-			GList *servers = get_comm_servers_list(app, address);
+			GList *servers = get_comm_servers_list(app, address, group);
 			GebrCommRunner *runner = gebr_comm_runner_new(GEBR_GEOXML_DOCUMENT(*pflow),
 								      servers,
 								      parent_id, speed, nice, group,
