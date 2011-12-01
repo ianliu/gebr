@@ -7,6 +7,7 @@ data/gebr.desktop.in.in
 document.c
 flow.c
 gebr-daemon-server.c
+gebr-flow-edition.c
 gebr-job-control.c
 gebr-job.c
 gebr-maestro-server.c
@@ -19,7 +20,6 @@ project.c
 ui_document.c
 ui_flow.c
 ui_flow_browse.c
-ui_flow_edition.c
 ui_help.c
 ui_log.c
 ui_moab.c

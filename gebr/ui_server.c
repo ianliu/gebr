@@ -44,8 +44,6 @@ static void
 server_list_add(struct ui_server_list *ui_server_list,
 		const gchar * address);
 
-static void on_combo_changed(gpointer user_data);
-
 //static GtkWidget *_ui_server_create_tag_combo_box (struct ui_server_list *server_list);
 
 static void on_tags_editing_started (GtkCellRenderer *cell,

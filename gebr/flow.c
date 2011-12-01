@@ -46,7 +46,7 @@
 #include "ui_flow.h"
 #include "ui_document.h"
 #include "ui_flow_browse.h"
-#include "ui_flow_edition.h"
+#include "gebr-flow-edition.h"
 #include "ui_project_line.h"
 
 static void on_properties_response(gboolean accept)

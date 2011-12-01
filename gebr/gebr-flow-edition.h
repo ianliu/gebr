@@ -1,5 +1,5 @@
 /*
- * ui_flow_edition.h
+ * gebr-flow-edition.h
  * This file is part of GêBR Project
  *
  * Copyright (C) 2011 - GêBR Core Team (www.gebrproject.com)
@@ -22,6 +22,8 @@
 #define __GEBR_FLOW_EDITION_H__
 
 #include <gtk/gtk.h>
+
+#include <libgebr/geoxml/geoxml.h>
 
 G_BEGIN_DECLS
 

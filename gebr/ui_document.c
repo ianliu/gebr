@@ -36,7 +36,7 @@
 
 #include "ui_parameters.h"
 #include "ui_document.h"
-#include "ui_flow_edition.h"
+#include "gebr-flow-edition.h"
 #include "gebr.h"
 #include "flow.h"
 #include "ui_help.h"

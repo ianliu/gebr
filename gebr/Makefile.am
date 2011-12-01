@@ -47,6 +47,8 @@ libgebr_la_SOURCES =		\
 	gebr-connectable.h	\
 	gebr-daemon-server.c	\
 	gebr-daemon-server.h	\
+	gebr-flow-edition.c	\
+	gebr-flow-edition.h	\
 	gebr-gettext.h		\
 	gebr-help-edit-widget.c	\
 	gebr-help-edit-widget.h	\
@@ -74,8 +76,6 @@ libgebr_la_SOURCES =		\
 	ui_flow.h		\
 	ui_flow_browse.c	\
 	ui_flow_browse.h	\
-	ui_flow_edition.c	\
-	ui_flow_edition.h	\
 	ui_help.c		\
 	ui_help.h		\
 	ui_log.c		\

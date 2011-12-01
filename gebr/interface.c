@@ -31,7 +31,7 @@
 #include <libgebr/gui/gebr-gui-utils.h>
 #include <libgebr/utils.h>
 
-#include "ui_flow_edition.h"
+#include "gebr-flow-edition.h"
 #include "interface.h"
 #include "gebr.h"
 #include "flow.h"

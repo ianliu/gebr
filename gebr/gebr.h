@@ -34,7 +34,7 @@
 #include "interface.h"
 #include "ui_flow.h"
 #include "ui_flow_browse.h"
-#include "ui_flow_edition.h"
+#include "gebr-flow-edition.h"
 #include "ui_help.h"
 #include "gebr-job-control.h"
 #include "ui_log.h"
