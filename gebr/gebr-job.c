@@ -54,8 +54,6 @@ struct _GebrJobPriv {
 
 	/* Task info */
 	GebrJobTask *tasks;
-	gdouble *percentages;
-	gchar **servers;
 	gint n_servers;
 };
 
@@ -81,7 +79,6 @@ gebr_job_finalize(GObject *object)
 	g_free(job->priv->hostname);
 	g_free(job->priv->runid);
 	g_free(job->priv->queue);
-	g_strfreev(job->priv->servers);
 	g_free(job->priv->input_file);
 	g_free(job->priv->output_file);
 	g_free(job->priv->log_file);
@@ -218,7 +215,6 @@ gebr_job_new_with_id(const gchar *rid,
 	job->priv->queue = g_strdup(queue);
 	job->priv->runid = g_strdup(rid);
 	job->priv->n_servers = 0;
-	job->priv->servers = NULL;
 
 	return job;
 }
@@ -236,14 +232,10 @@ gebr_job_set_servers(GebrJob *job,
 		job->priv->n_servers++;
 	job->priv->n_servers /= 2;
 
-	job->priv->servers = g_new0(gchar *, job->priv->n_servers + 1);
-	job->priv->percentages = g_new0(gdouble, job->priv->n_servers);
 	job->priv->tasks = g_new0(GebrJobTask, job->priv->n_servers);
 
 	g_warning("Remove job->priv->servers and ->percentages!");
 	for (int i = 0; i < job->priv->n_servers; i++) {
-		job->priv->servers[i] = split[i*2];
-		job->priv->percentages[i] = g_strtod(split[i*2 + 1], NULL);
 
 		job->priv->tasks[i].server = split[i*2];
 		job->priv->tasks[i].percentage = g_strtod(split[i*2 + 1], NULL);
@@ -309,9 +301,15 @@ gebr_job_get_iter(GebrJob *job)
 gchar **
 gebr_job_get_servers(GebrJob *job, gint *n)
 {
-	if (n)
-		*n = job->priv->n_servers;
-	return job->priv->servers;
+	g_return_val_if_fail(n!= NULL, NULL);
+	GebrJobTask *tasks = gebr_job_get_tasks(job, n);
+	gchar **servers = g_new0(gchar*, *n+1);
+	for (int i=0; i < *n; i++){
+		g_debug("getting server '%s'", tasks[i].server);
+		servers[i] = g_strdup(tasks[i].server);
+	}
+	servers[*n] = NULL;
+	return servers;
 }
 
 GebrJobTask *
@@ -323,11 +321,15 @@ gebr_job_get_tasks(GebrJob *job, gint *n)
 }
 
 gdouble *
-gebr_job_get_percentages(GebrJob *job, gint *length)
+gebr_job_get_percentages(GebrJob *job, gint *n)
 {
-	g_return_val_if_fail(length != NULL, NULL);
-	*length = job->priv->n_servers;
-	return job->priv->percentages;
+	g_return_val_if_fail(n!= NULL, NULL);
+	GebrJobTask *tasks = gebr_job_get_tasks(job, n);
+	gdouble *percs = g_new(gdouble, *n);
+	for (int i=0; i < *n; i++){
+		percs[i] = tasks[i].percentage;
+	}
+	return percs;
 }
 
 gchar *
