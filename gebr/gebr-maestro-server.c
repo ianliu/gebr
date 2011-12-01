@@ -518,6 +518,10 @@ gebr_maestro_server_init(GebrMaestroServer *maestro)
 	maestro->priv->store = gtk_list_store_new(1, G_TYPE_POINTER);
 	maestro->priv->jobs = g_hash_table_new(g_str_hash, g_str_equal);
 	maestro->priv->queues_model = gtk_list_store_new(1, GEBR_TYPE_JOB);
+	// Insert queue Immediately
+	GtkTreeIter iter;
+	gtk_list_store_append(maestro->priv->queues_model, &iter);
+	gtk_list_store_set(maestro->priv->queues_model, &iter, 0, NULL, -1);
 
 	GebrDaemonServer *autochoose =
 		gebr_daemon_server_new(GEBR_CONNECTABLE(maestro), NULL, SERVER_STATE_CONNECT);
@@ -674,7 +678,7 @@ gebr_maestro_server_get_all_tags(GebrMaestroServer *maestro)
 }
 
 GtkTreeModel *
-gebr_maestro_get_queues_model(GebrMaestroServer *maestro)
+gebr_maestro_server_get_queues_model(GebrMaestroServer *maestro)
 {
 	return GTK_TREE_MODEL(maestro->priv->queues_model);
 }

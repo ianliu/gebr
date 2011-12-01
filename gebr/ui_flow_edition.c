@@ -77,6 +77,14 @@ static void on_server_disconnected_set_row_insensitive(GtkCellLayout   *cell_lay
 						       GtkTreeIter     *iter,
 						       gpointer         data);
 
+static void on_queue_set_text(GtkCellLayout   *cell_layout,
+                              GtkCellRenderer *cell,
+                              GtkTreeModel    *tree_model,
+                              GtkTreeIter     *iter,
+                              gpointer         data);
+
+static void on_queue_combobox_changed (GtkComboBox *combo, GtkComboBox *server_combo);
+
 /*
  * Public functions
  */
@@ -148,18 +156,14 @@ flow_edition_setup_ui(void)
 
 	ui_flow_edition->server_combobox = combobox = gtk_combo_box_new ();
 	ui_flow_edition->queue_combobox = gtk_combo_box_new ();
-//	g_signal_connect (ui_flow_edition->queue_combobox, "changed",
-//			  G_CALLBACK (on_queue_combobox_changed), combobox);
+	g_signal_connect (ui_flow_edition->queue_combobox, "changed",
+			  G_CALLBACK (on_queue_combobox_changed), combobox);
 
 	renderer = gtk_cell_renderer_text_new();
 
-	gtk_cell_layout_pack_start (
-			GTK_CELL_LAYOUT (ui_flow_edition->queue_combobox),
-			renderer, TRUE);
-
-	gtk_cell_layout_add_attribute (
-			GTK_CELL_LAYOUT (ui_flow_edition->queue_combobox),
-			renderer, "text", 0);
+	gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (ui_flow_edition->queue_combobox), renderer, TRUE);
+	gtk_cell_layout_set_cell_data_func(GTK_CELL_LAYOUT (ui_flow_edition->queue_combobox), renderer,
+	                                   on_queue_set_text, NULL, NULL);
 
 	gtk_widget_show (ui_flow_edition->queue_combobox);
 
@@ -187,7 +191,6 @@ flow_edition_setup_ui(void)
 	label = gtk_label_new_with_mnemonic(_("Queue"));
 	gtk_alignment_set_padding(GTK_ALIGNMENT(alignment), 0, 4, 5, 5);
 	ui_flow_edition->queue_bin = GTK_BIN(alignment);
-	gtk_widget_set_sensitive(ui_flow_edition->queue_combobox, TRUE);
 	gtk_container_add(GTK_CONTAINER(ui_flow_edition->queue_bin), ui_flow_edition->queue_combobox);
 	gtk_frame_set_label_widget(GTK_FRAME(frame), label);
 	gtk_container_add(GTK_CONTAINER(frame), alignment);
@@ -1362,6 +1365,27 @@ set_tooltip:
  * \internal
  * If the server was not connected, the combo box item stay insensitive
  */
+
+static void
+on_queue_set_text(GtkCellLayout   *cell_layout,
+                  GtkCellRenderer *cell,
+                  GtkTreeModel    *tree_model,
+                  GtkTreeIter     *iter,
+                  gpointer         data)
+{
+	GebrJob *job;
+	const gchar *name_queue;
+
+	gtk_tree_model_get(tree_model, iter, 0, &job, -1);
+
+	if(!job)
+		name_queue = g_strdup(_("Immediately"));
+	else
+		name_queue = g_strdup_printf(_("After %s"), gebr_job_get_title(job));
+
+	g_object_set(cell, "text", name_queue, NULL);
+}
+
 static void
 on_server_disconnected_set_row_insensitive(GtkCellLayout   *cell_layout,
 					   GtkCellRenderer *cell,
@@ -1391,15 +1415,14 @@ on_server_disconnected_set_row_insensitive(GtkCellLayout   *cell_layout,
 
 	g_object_set(cell, "sensitive", is_connected, NULL);
 }
-#if 0
+
 static void on_queue_combobox_changed (GtkComboBox *combo, GtkComboBox *server_combo)
 {
 	gint index;
-	GebrServer *server;
+	GebrJob *job;
 	GtkTreeIter iter;
 	GtkTreeIter server_iter;
 	GtkTreeModel *server_model;
-	GHashTable *last_queue_hash;
 
 	if (!flow_browse_get_selected (&iter, FALSE))
 		return;
@@ -1409,32 +1432,16 @@ static void on_queue_combobox_changed (GtkComboBox *combo, GtkComboBox *server_c
 
 	server_model = gtk_combo_box_get_model (server_combo);
 
-	gboolean is_auto_choose;
-
-	gtk_tree_model_get (server_model, &server_iter, SERVER_IS_AUTO_CHOOSE, &is_auto_choose, -1);
-	if (is_auto_choose)
-		return;
-
 	gtk_tree_model_get (server_model, &server_iter,
-			    SERVER_POINTER, &server,
+			    0, &job,
 			    -1);
 
 	index = gtk_combo_box_get_active (combo);
-	gtk_tree_model_get (GTK_TREE_MODEL (gebr.ui_flow_browse->store), &iter,
-			    FB_LAST_QUEUES, &last_queue_hash,
-			    -1);
-
-	if (!last_queue_hash)
-		return;
 
 	if (index < 0)
 		index = 0;
-
-	g_hash_table_insert (last_queue_hash,
-			     g_strdup (server->comm->address->str),
-			     GINT_TO_POINTER (index));
 }
-#endif
+
 gboolean
 flow_edition_find_flow_server (GebrGeoXmlFlow *flow,
 			       GtkTreeModel   *model,
@@ -1634,7 +1641,7 @@ gebr_flow_edition_show(struct ui_flow_edition *self)
 	GtkTreeModel *model = gtk_combo_box_get_model(cb);
 	flow_edition_find_flow_server(gebr.flow, model, &iter);
 	gtk_combo_box_set_active_iter(cb, &iter);
-//	gebr_flow_edition_select_queue(self);
+	gebr_flow_edition_select_queue(self);
 
 	if (gebr.config.niceness == 0)
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(self->nice_button_high), TRUE);

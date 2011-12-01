@@ -467,7 +467,6 @@ static void flow_browse_load(void)
 		gebr_validator_update(gebr.validator);
 
 	/* free previous flow and load it */
-	gtk_widget_set_sensitive(gebr.ui_flow_edition->queue_combobox, TRUE);
 	gtk_widget_set_sensitive(gebr.ui_flow_edition->server_combobox, TRUE);
 	flow_edition_load_components();
 

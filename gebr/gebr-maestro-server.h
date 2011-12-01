@@ -74,6 +74,8 @@ gchar *gebr_maestro_server_get_display_address(GebrMaestroServer *maestro);
 
 GList *gebr_maestro_server_get_all_tags(GebrMaestroServer *maestro);
 
+GtkTreeModel *gebr_maestro_server_get_queues_model(GebrMaestroServer *maestro);
+
 G_END_DECLS
 
 #endif /* __GEBR_MAESTRO_H__ */

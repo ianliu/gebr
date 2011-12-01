@@ -1680,10 +1680,8 @@ static void on_groups_combo_box_changed(GtkComboBox *combo, GebrGuiValueSequence
 		gebr_geoxml_line_set_group(gebr.line,
 					   gebr_maestro_server_get_address(maestro), group);
 
-	g_debug("TODO: Fix me! %s", __func__);
-
-	//gtk_tree_model_filter_refilter(
-	//		GTK_TREE_MODEL_FILTER(gebr.ui_project_line->servers_filter));
+	gtk_combo_box_set_model(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox), gebr_maestro_server_get_queues_model(maestro));
+	gtk_combo_box_set_model(GTK_COMBO_BOX(gebr.ui_flow_edition->server_combobox), gebr_maestro_server_get_model(maestro, TRUE));
 
 	g_free (group);
 }
