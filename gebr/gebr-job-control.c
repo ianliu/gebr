@@ -1607,7 +1607,7 @@ gebr_job_control_new(void)
 	jc->priv->server_filter = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_POINTER);
 	gtk_combo_box_set_model(server_cb, GTK_TREE_MODEL(jc->priv->server_filter));
 	g_signal_connect(jc->priv->server_combo, "changed", G_CALLBACK(on_cb_changed), jc);
-	g_signal_connect(gebr.ui_server_list->common.store, "row-changed", G_CALLBACK(on_row_changed_model), jc);
+//	g_signal_connect(gebr.ui_server_list->common.store, "row-changed", G_CALLBACK(on_row_changed_model), jc);
 
 	/* by Group of servers */
 	jc->priv->group_filter = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);

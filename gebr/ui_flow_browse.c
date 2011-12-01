@@ -480,7 +480,7 @@ static void flow_browse_load(void)
 
 	model = gebr.ui_project_line->servers_sort;
 	flow_edition_find_flow_server (gebr.flow, model, &iter);
-	gtk_combo_box_set_active_iter (GTK_COMBO_BOX (gebr.ui_flow_edition->server_combobox), &iter);
+//	gtk_combo_box_set_active_iter (GTK_COMBO_BOX (gebr.ui_flow_edition->server_combobox), &iter);
 
 	flow_edition_on_server_changed();
 	flow_browse_info_update();

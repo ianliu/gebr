@@ -265,7 +265,8 @@ daemon_server_group_func(GtkTreeViewColumn *tree_column,
 
 	for (GList *i = groups; i; i = i->next)
 		g_string_append_printf(group_list, "%s,", (gchar*)i->data);
-	g_string_erase(group_list, group_list->len-1, 1);
+	if (group_list->len)
+		g_string_erase(group_list, group_list->len-1, 1);
 
 	g_object_set(cell, "text", group_list->str, NULL);
 	g_string_free(group_list, TRUE);
@@ -580,12 +581,12 @@ struct ui_server_list *server_list_setup_ui(void)
 
 #if 0
 	ui_server_list->common.combo = _ui_server_create_tag_combo_box (ui_server_list);
-#endif
 	g_signal_connect(ui_server_list->common.combo, "changed", G_CALLBACK(on_combo_changed), NULL);
+#endif
 
 	align = gtk_alignment_new (0, 0, 1, 1);
 	gtk_alignment_set_padding (GTK_ALIGNMENT (align), 0, 0, 10, 0);
-	gtk_container_add (GTK_CONTAINER (align), ui_server_list->common.combo);
+//	gtk_container_add (GTK_CONTAINER (align), ui_server_list->common.combo);
 
 	frame = gtk_frame_new (_("<b>Filter by group</b>"));
 	gtk_container_set_border_width (GTK_CONTAINER (frame), 5);

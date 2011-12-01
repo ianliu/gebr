@@ -1451,10 +1451,12 @@ flow_edition_find_flow_server (GebrGeoXmlFlow *flow,
 	gboolean     valid;
 
 	addr = gebr_geoxml_flow_server_get_address (flow);
+/*
 	valid = gtk_tree_model_get_iter_first (model, iter);
 
 	if (g_strcmp0(addr, "") == 0)
 		return valid;
+
 
 	while (valid)
 	{
@@ -1473,6 +1475,8 @@ flow_edition_find_flow_server (GebrGeoXmlFlow *flow,
 	}
 
 	return gtk_tree_model_get_iter_first (model, iter);
+*/
+	return FALSE;
 }
 
 void
@@ -1635,12 +1639,13 @@ gebr_flow_edition_show(struct ui_flow_edition *self)
 {
 	if (!gebr.flow)
 		return;
-
+/*
 	GtkTreeIter iter;
 	GtkComboBox *cb = GTK_COMBO_BOX(self->server_combobox);
 	GtkTreeModel *model = gtk_combo_box_get_model(cb);
 	flow_edition_find_flow_server(gebr.flow, model, &iter);
 	gtk_combo_box_set_active_iter(cb, &iter);
+*/
 	gebr_flow_edition_select_queue(self);
 
 	if (gebr.config.niceness == 0)
