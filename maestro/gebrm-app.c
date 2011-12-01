@@ -437,7 +437,7 @@ on_client_request(GebrCommProtocolSocket *socket,
 			gebrm_config_save_server(d);
 		}
 		else if (g_str_has_prefix(request->url->str, "/disconnect/")) {
-			const gchar *addr = request->url->str + strlen("/server/");
+			const gchar *addr = request->url->str + strlen("/disconnect/");
 			gebrm_remove_server_from_list(app, addr);
 			gebrm_config_delete_server(addr);
 			g_debug(">> on %s, disconecting %s", __func__, addr) 	;

@@ -338,13 +338,37 @@ static void server_common_setup(struct ui_server_common *ui_server_common, struc
  * Take the appropriate action when the server dialog emmits
  * a response signal.
  */
-static void server_common_actions(GtkDialog * dialog, gint arg1, struct ui_server_common *ui_server_common)
+static void server_common_actions(GtkDialog * dialog, gint arg1, struct ui_server_list *sl)
 {
 	switch (arg1) {
 	case RESPONSE_CONNECT_ALL:
-	case RESPONSE_DISCONNECT_ALL:
-		g_debug("TODO: Implement %s", __func__);
+	{
+		GtkTreeIter iter;
+		GtkTreeModel *model = gebr_maestro_server_get_model(sl->maestro, FALSE, NULL);
+		gebr_gui_gtk_tree_model_foreach(iter, model) {
+			GebrDaemonServer *daemon;
+			gtk_tree_model_get(model, &iter, 0, &daemon, -1);
+			if(gebr_daemon_server_get_state(daemon) == SERVER_STATE_CONNECT)
+				continue;
+			gebr_connectable_connect(GEBR_CONNECTABLE(sl->maestro), gebr_daemon_server_get_address(daemon));
+		}
+		g_object_unref(model);
 		break;
+	}
+	case RESPONSE_DISCONNECT_ALL:
+	{
+		GtkTreeIter iter;
+		GtkTreeModel *model = gebr_maestro_server_get_model(sl->maestro, FALSE, NULL);
+		gebr_gui_gtk_tree_model_foreach(iter, model) {
+			GebrDaemonServer *daemon;
+			gtk_tree_model_get(model, &iter, 0, &daemon, -1);
+			if(gebr_daemon_server_get_state(daemon) == SERVER_STATE_DISCONNECTED)
+				continue;
+			gebr_connectable_disconnect(GEBR_CONNECTABLE(sl->maestro), gebr_daemon_server_get_address(daemon));
+		}
+		g_object_unref(model);
+		break;
+	}
 	case GTK_RESPONSE_DELETE_EVENT:
 	case GTK_RESPONSE_CANCEL:
 		if (dialog != GTK_DIALOG(gebr.ui_server_list->common.dialog))
@@ -545,7 +569,7 @@ struct ui_server_list *server_list_setup_ui(void)
 	g_signal_connect(dialog, "delete-event", G_CALLBACK(gtk_widget_hide_on_delete), NULL);
 	ui_server_list->common.dialog = dialog;
 	/* Take the apropriate action when a button is pressed */
-	g_signal_connect(dialog, "response", G_CALLBACK(server_common_actions), &ui_server_list->common);
+	g_signal_connect(dialog, "response", G_CALLBACK(server_common_actions), ui_server_list);
 
 	server_common_setup(&ui_server_list->common, ui_server_list);
 
