@@ -407,6 +407,15 @@ gebr_job_kill(GebrJob *job)
 }
 
 void
+gebr_job_set_runid (GebrJob *job,
+		    gchar *id)
+{
+	if (job->priv->runid)
+		g_free(job->priv->runid);
+	job->priv->runid = g_strdup(id);
+}
+
+void
 gebr_job_set_model(GebrJob *job,
                    GtkTreeModel *model)
 {
@@ -572,6 +581,14 @@ gebr_job_set_nprocs(GebrJob *job,
 	job->priv->nprocs = g_strdup(nprocs);
 }
 
+void
+gebr_job_set_queue(GebrJob *job,
+		    const gchar *queue)
+{
+	if (job->priv->queue)
+		g_free(job->priv->queue);
+	job->priv->queue= g_strdup(queue);
+}
 void
 gebr_job_set_nice(GebrJob *job,
 		  const gchar *nice)

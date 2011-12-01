@@ -384,8 +384,9 @@ send_job_def_to_clients(GebrmApp *app, GebrmJob *job)
 
 	for (GList *i = app->priv->connections; i; i = i->next) {
 		gebr_comm_protocol_socket_oldmsg_send(i->data, FALSE,
-						      gebr_comm_protocol_defs.job_def, 16,
+						      gebr_comm_protocol_defs.job_def, 17,
 						      gebrm_job_get_id(job),
+						      gebrm_job_get_temp_id(job),
 						      gebrm_job_get_nprocs(job),
 						      gebrm_job_get_servers_list(job),
 						      gebrm_job_get_hostname(job),
@@ -467,7 +468,8 @@ on_client_request(GebrCommProtocolSocket *socket,
 			GebrCommJsonContent *json;
 			gchar *tmp = strchr(request->url->str, '?') + 1;
 			gchar **params = g_strsplit(tmp, ";", -1);
-			gchar *address, *parent_id, *speed, *nice, *group, *host;
+			gchar *address, *parent_id, *speed, *nice, *group;
+			gchar *host, *temp_id;
 
 			g_debug("I will run this flow:");
 
@@ -477,6 +479,7 @@ on_client_request(GebrCommProtocolSocket *socket,
 			nice      = strchr(params[3], '=') + 1;
 			group     = strchr(params[4], '=') + 1;
 			host      = strchr(params[5], '=') + 1;
+			temp_id   = strchr(params[6], '=') + 1;
 
 			json = gebr_comm_json_content_new(request->content->str);
 			GString *value = gebr_comm_json_content_to_gstring(json);
@@ -506,6 +509,7 @@ on_client_request(GebrCommProtocolSocket *socket,
 
 			GebrmJobInfo info = { 0, };
 			info.title = title;
+			info.temp_id = temp_id;
 			info.hostname = host;
 			info.parent_id = parent_id;
 			info.servers = "";
@@ -725,8 +729,9 @@ send_messages_of_jobs(gpointer key,
 
 	/* Job def message */
 	gebr_comm_protocol_socket_oldmsg_send(protocol, FALSE,
-	                                      gebr_comm_protocol_defs.job_def, 16,
+	                                      gebr_comm_protocol_defs.job_def, 17,
 	                                      id,
+					      gebrm_job_get_temp_id(job),
 	                                      gebrm_job_get_nprocs(job),
 	                                      gebrm_job_get_servers_list(job),
 	                                      gebrm_job_get_hostname(job),

@@ -65,6 +65,7 @@ struct _GebrmJobClass {
 
 typedef struct {
 	gchar *id;
+	gchar *temp_id;
 	gchar *title;
 	gchar *hostname;
 	gchar *parent_id;
@@ -204,6 +205,8 @@ const gchar *gebrm_job_get_nprocs(GebrmJob *job);
 const gchar *gebrm_job_get_servers_list(GebrmJob *job);
 
 void gebrm_job_set_total_tasks(GebrmJob *job, gint total);
+
+const gchar * gebrm_job_get_temp_id(GebrmJob *job);
 
 G_END_DECLS
 

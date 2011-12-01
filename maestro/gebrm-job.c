@@ -301,6 +301,7 @@ gebrm_job_init_details(GebrmJob *job, GebrmJobInfo *info)
 		job->priv->info.id = g_strdup(info->id);
 
 	job->priv->info.title = g_strdup(info->title);
+	job->priv->info.temp_id = g_strdup(info->temp_id);
 	job->priv->info.hostname = g_strdup(info->hostname);
 	job->priv->info.parent_id = g_strdup(info->parent_id);
 	job->priv->info.nice = g_strdup(info->nice);
@@ -708,4 +709,10 @@ void
 gebrm_job_set_total_tasks(GebrmJob *job, gint total)
 {
 	job->priv->total = total;
+}
+
+const gchar *
+gebrm_job_get_temp_id(GebrmJob *job)
+{
+	return job->priv->info.temp_id;
 }

@@ -30,6 +30,7 @@ struct _GebrMaestroServerPriv {
 	GtkListStore *store;
 	GtkTreeModel *filter;
 	GHashTable *jobs;
+	GHashTable *temp_jobs;
 	gchar *address;
 
 	GtkListStore *queues_model;
@@ -262,27 +263,38 @@ parse_messages(GebrCommServer *comm_server,
 			GList *arguments;
 
 			/* organize message data */
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 16)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 17)) == NULL)
 				goto err;
 
 			GString *id          = g_list_nth_data(arguments, 0);
-			GString *nprocs      = g_list_nth_data(arguments, 1);
-			GString *server_list = g_list_nth_data(arguments, 2);
-			GString *hostname    = g_list_nth_data(arguments, 3);
-			GString *title       = g_list_nth_data(arguments, 4);
-			GString *parent_id   = g_list_nth_data(arguments, 5);
-			GString *nice        = g_list_nth_data(arguments, 6);
-			GString *input       = g_list_nth_data(arguments, 7);
-			GString *output      = g_list_nth_data(arguments, 8);
-			GString *error       = g_list_nth_data(arguments, 9);
-			GString *submit_date = g_list_nth_data(arguments, 10);
-			GString *group       = g_list_nth_data(arguments, 11);
-			GString *speed       = g_list_nth_data(arguments, 12);
-			GString *status      = g_list_nth_data(arguments, 13);
-			GString *start_date  = g_list_nth_data(arguments, 14);
-			GString *finish_date = g_list_nth_data(arguments, 15);
+			GString *temp_id     = g_list_nth_data(arguments, 1);
+			GString *nprocs      = g_list_nth_data(arguments, 2);
+			GString *server_list = g_list_nth_data(arguments, 3);
+			GString *hostname    = g_list_nth_data(arguments, 4);
+			GString *title       = g_list_nth_data(arguments, 5);
+			GString *parent_id   = g_list_nth_data(arguments, 6);
+			GString *nice        = g_list_nth_data(arguments, 7);
+			GString *input       = g_list_nth_data(arguments, 8);
+			GString *output      = g_list_nth_data(arguments, 9);
+			GString *error       = g_list_nth_data(arguments, 10);
+			GString *submit_date = g_list_nth_data(arguments, 11);
+			GString *group       = g_list_nth_data(arguments, 12);
+			GString *speed       = g_list_nth_data(arguments, 13);
+			GString *status      = g_list_nth_data(arguments, 14);
+			GString *start_date  = g_list_nth_data(arguments, 15);
+			GString *finish_date = g_list_nth_data(arguments, 16);
 
 			GebrJob *job = g_hash_table_lookup(maestro->priv->jobs, id->str);
+
+			if (!job) {
+				job = g_hash_table_lookup(maestro->priv->temp_jobs, temp_id->str);
+				if (job) {
+					g_hash_table_remove(maestro->priv->temp_jobs, temp_id->str);
+					gebr_job_set_runid(job, id->str);
+					g_hash_table_insert(maestro->priv->jobs, g_strdup(id->str), job);
+				}
+			}
+
 			gboolean init = (job == NULL);
 
 			if (!job)
@@ -468,6 +480,7 @@ gebr_maestro_server_finalize(GObject *object)
 	gtk_list_store_clear(maestro->priv->store);
 	g_object_unref(maestro->priv->store);
 	g_hash_table_unref(maestro->priv->jobs);
+	g_hash_table_unref(maestro->priv->temp_jobs);
 
 	G_OBJECT_CLASS(gebr_maestro_server_parent_class)->finalize(object);
 }
@@ -518,6 +531,7 @@ gebr_maestro_server_init(GebrMaestroServer *maestro)
 
 	maestro->priv->store = gtk_list_store_new(1, G_TYPE_POINTER);
 	maestro->priv->jobs = g_hash_table_new(g_str_hash, g_str_equal);
+	maestro->priv->temp_jobs = g_hash_table_new(g_str_hash, g_str_equal);
 	maestro->priv->queues_model = gtk_list_store_new(1, GEBR_TYPE_JOB);
 	// Insert queue Immediately
 	GtkTreeIter iter;
@@ -723,4 +737,12 @@ gebr_maestro_server_connect(GebrMaestroServer *maestro)
 						     &maestro_ops);
 	maestro->priv->server->user_data = maestro;
 	gebr_comm_server_connect(maestro->priv->server, TRUE);
+}
+
+void
+gebr_maestro_server_add_temporary_job(GebrMaestroServer *maestro, 
+				      GebrJob *job)
+{
+	g_hash_table_insert(maestro->priv->temp_jobs,
+			    g_strdup(gebr_job_get_id(job)), job);
 }

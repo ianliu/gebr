@@ -238,7 +238,6 @@ void project_line_info_update(void)
 {
 	gchar *markup;
 	GString *text;
-	const gchar *group;
 	gboolean is_project;
 
 	if (gebr.project_line == NULL) {
@@ -313,8 +312,13 @@ void project_line_info_update(void)
 		gtk_label_set_markup(GTK_LABEL(gebr.ui_project_line->info.group_label), markup);
 		g_free(markup);
 
-	//	g_warning("TODO: Implement me pleaaase %s", __func__);
-		group = "GROUP: Implement me pleaseee"; // gebr_geoxml_line_get_group_label(GEBR_GEOXML_LINE(gebr.project_line));
+		gchar *addr, *group;
+		gebr_geoxml_line_get_group(gebr.line, &addr, &group);
+		if (group[0] == '\0'){
+			g_free(group);
+			group = g_strdup(_("All servers from Maestro"));
+		}
+			
 
 		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.group), group);
 	}

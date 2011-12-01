@@ -134,6 +134,8 @@ gboolean gebr_job_close(GebrJob *job);
 
 void gebr_job_kill(GebrJob *job);
 
+void gebr_job_set_runid (GebrJob *job, gchar *id);
+
 void gebr_job_set_model(GebrJob *job,
                         GtkTreeModel *model);
 
@@ -174,6 +176,8 @@ void gebr_job_set_start_date(GebrJob *job, const gchar *start_date);
 void gebr_job_set_finish_date(GebrJob *job, const gchar *finish_date);
 
 void gebr_job_set_nprocs(GebrJob *job, const gchar *nprocs);
+
+void gebr_job_set_queue(GebrJob *job, const gchar *queue);
 
 void gebr_job_set_nice(GebrJob *job, const gchar *nice);
 
