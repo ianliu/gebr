@@ -1834,7 +1834,7 @@ gebr_job_control_save_selected(GebrJobControl *jc)
 		/* Issues */
 		gchar *issues;
 		gchar *job_issue = gebr_job_get_issues(job);
-		issues = g_strdup_printf(_("\nIssues:\n%s"), strlen(job_issue)? job_issue : _("(None)\n"));
+		issues = g_strdup_printf(_("\nIssues:\n%s"), job_issue? job_issue : _("(None)\n"));
 		fputs(issues, fp);
 		g_free(issues);
 		g_free(job_issue);

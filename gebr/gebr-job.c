@@ -234,7 +234,6 @@ gebr_job_set_servers(GebrJob *job,
 
 	job->priv->tasks = g_new0(GebrJobTask, job->priv->n_servers);
 
-	g_warning("Remove job->priv->servers and ->percentages!");
 	for (int i = 0; i < job->priv->n_servers; i++) {
 
 		job->priv->tasks[i].server = split[i*2];
