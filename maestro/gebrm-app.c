@@ -760,7 +760,7 @@ gebrm_app_new(void)
 }
 
 gboolean
-gebrm_app_run(GebrmApp *app)
+gebrm_app_run(GebrmApp *app, int fd)
 {
 	GError *error = NULL;
 
@@ -789,7 +789,9 @@ gebrm_app_run(GebrmApp *app)
 	}
 
 	/* success, send port */
-	g_printf("%u\n", gebr_comm_socket_address_get_ip_port(&app->priv->address));
+	gchar *port_str = g_strdup_printf("%u\n", port);
+	write(fd, port_str, strlen(port_str));
+	g_free(port_str);
 
 	gchar *path = g_build_filename(g_get_home_dir(),
 	                               GEBRM_LIST_OF_SERVERS_PATH,

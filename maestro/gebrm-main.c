@@ -30,6 +30,7 @@
 #include <glib/gi18n.h>
 #include <glib/gstdio.h>
 #include <libgebr/comm/gebr-comm.h>
+#include <fcntl.h>
 
 #include "gebrm-app.h"
 
@@ -39,6 +40,7 @@
 
 static gboolean interactive;
 static gboolean show_version;
+static int output_fd = STDOUT_FILENO;
 
 static GOptionEntry entries[] = {
 	{"interactive", 'i', 0, G_OPTION_ARG_NONE, &interactive,
@@ -51,6 +53,13 @@ static GOptionEntry entries[] = {
 void
 fork_and_exit_main(void)
 {
+	int fd[2];
+
+	if (pipe(fd) == -1) {
+		perror("pipe");
+		exit(EXIT_FAILURE);
+	}
+
 	pid_t pid = fork();
 
 	if (pid == (pid_t)-1) {
@@ -58,8 +67,20 @@ fork_and_exit_main(void)
 		exit(EXIT_FAILURE);
 	}
 
-	if (pid != 0)
+	if (pid != 0) {
+		char c;
+		GString *buf = g_string_sized_new(10);
+		while (read(fd[0], &c, 1) > 0) {
+			g_string_append_c(buf, c);
+			if (c == '\n') {
+				g_string_append_c(buf, '\0');
+				break;
+			}
+		}
+		printf("%s", buf->str);
+		g_string_free(buf, TRUE);
 		exit(EXIT_SUCCESS);
+	}
 
 	umask(0);
 
@@ -73,7 +94,11 @@ fork_and_exit_main(void)
 		exit(EXIT_FAILURE);
 	}
 
-	close(STDIN_FILENO);
+	output_fd = fd[1];
+	int null = open("/dev/null", O_RDWR);
+	(void)dup2(null, STDIN_FILENO);
+	(void)dup2(null, STDOUT_FILENO);
+	(void)dup2(null, STDERR_FILENO);
 }
 
 static void
@@ -144,7 +169,7 @@ main(int argc, char *argv[])
 	gebr_geoxml_init();
 	GebrmApp *app = gebrm_app_singleton_get();
 
-	if (!gebrm_app_run(app))
+	if (!gebrm_app_run(app, output_fd))
 		exit(EXIT_FAILURE);
 
 	g_object_unref(app);

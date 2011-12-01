@@ -111,9 +111,9 @@ GebrmApp *gebrm_app_new(void);
 /**
  * gebrm_app_run:
  *
- * Starts the application main loop.
+ * Writes the port in @fd and starts the application main loop.
  */
-gboolean gebrm_app_run(GebrmApp *app);
+gboolean gebrm_app_run(GebrmApp *app, int fd);
 
 const gchar *gebrm_main_get_lock_file(void);
 
