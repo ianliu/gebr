@@ -183,8 +183,10 @@ update_queues_model(GebrMaestroServer *maestro, GebrJob *job)
 		break;
 	case JOB_STATUS_RUNNING:
 	case JOB_STATUS_QUEUED:
-		gtk_list_store_append(maestro->priv->queues_model, &iter);
-		gtk_list_store_set(maestro->priv->queues_model, &iter, 0, job, -1);
+		if (!has_job) {
+			gtk_list_store_append(maestro->priv->queues_model, &iter);
+			gtk_list_store_set(maestro->priv->queues_model, &iter, 0, job, -1);
+		}
 		break;
 	default:
 		break;

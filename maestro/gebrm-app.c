@@ -36,6 +36,30 @@
 #include <libgebr/date.h>
 #include <glib/gi18n.h>
 
+struct _GebrmAppPriv {
+	GMainLoop *main_loop;
+	GebrCommListenSocket *listener;
+	GebrCommSocketAddress address;
+	GList *connections;
+	GList *daemons;
+
+	// Server groups: gchar -> GList<GebrDaemon>
+	GTree *groups;
+
+	// Job controller
+	GHashTable *jobs;
+};
+
+typedef struct {
+	GebrmApp *app;
+	GebrmJob *job;
+} AppAndJob;
+
+typedef struct {
+	GebrCommRunner *runner;
+	GebrmJob *job;
+} RunnerAndJob;
+
 /*
  * Global variables to implement GebrmAppSingleton methods.
  */
@@ -66,21 +90,6 @@ static gboolean gebrm_remove_server_from_list(GebrmApp *app, const gchar *addres
 gboolean gebrm_config_load_servers(GebrmApp *app, gchar *path);
 
 G_DEFINE_TYPE(GebrmApp, gebrm_app, G_TYPE_OBJECT);
-
-struct _GebrmAppPriv {
-	GMainLoop *main_loop;
-	GebrCommListenSocket *listener;
-	GebrCommSocketAddress address;
-	GList *connections;
-	GList *daemons;
-
-	// Server groups: gchar -> GList<GebrDaemon>
-	GTree *groups;
-
-	// Job controller
-	GHashTable *jobs;
-};
-
 
 // Refactor this method to GebrmJobController {{{
 static GebrmJob *
@@ -179,6 +188,19 @@ gebrm_app_job_controller_on_status_change(GebrmJob *job,
 					  const gchar *parameter,
 					  GebrmApp *app)
 {
+	if (new_status == JOB_STATUS_FINISHED
+	    || new_status == JOB_STATUS_FAILED
+	    || new_status == JOB_STATUS_CANCELED) {
+		GList *children = g_object_get_data(G_OBJECT(job), "children");
+		for (GList *i = children; i; i = i->next) {
+			RunnerAndJob *raj = i->data;
+			gebr_comm_runner_run_async(raj->runner, gebrm_job_get_id(raj->job));
+		}
+		g_list_foreach(children, (GFunc)g_free, NULL);
+		g_list_free(children);
+		g_object_set_data(G_OBJECT(job), "children", NULL);
+	}
+
 	for (GList *i = app->priv->connections; i; i = i->next) {
 		gebr_comm_protocol_socket_oldmsg_send(i->data, FALSE,
 						      gebr_comm_protocol_defs.sta_def, 3,
@@ -186,6 +208,7 @@ gebrm_app_job_controller_on_status_change(GebrmJob *job,
 						      gebr_comm_job_get_string_from_status(new_status),
 						      parameter);
 	}
+
 }
 
 static void
@@ -323,7 +346,8 @@ get_comm_servers_list(GebrmApp *app, const gchar *address)
 	} else {
 		for (GList *i = app->priv->daemons; i; i = i->next) {
 			g_object_get(i->data, "server", &server, NULL);
-			servers = g_list_prepend(servers, server);
+			if (gebr_comm_server_is_logged(server))
+				servers = g_list_prepend(servers, server);
 		}
 	}
 
@@ -345,10 +369,36 @@ gebrm_remove_server_from_list(GebrmApp *app, const gchar *addr)
 	return FALSE;
 }
 
-typedef struct {
-	GebrmApp *app;
-	GebrmJob *job;
-} AppAndJob;
+static void
+send_job_def_to_clients(GebrmApp *app, GebrmJob *job)
+{
+	gchar *infile, *outfile, *logfile;
+	gebrm_job_get_io(job, &infile, &outfile, &logfile);
+
+	const gchar *start_date = gebrm_job_get_start_date(job);
+	const gchar *finish_date = gebrm_job_get_finish_date(job);
+
+	for (GList *i = app->priv->connections; i; i = i->next) {
+		gebr_comm_protocol_socket_oldmsg_send(i->data, FALSE,
+						      gebr_comm_protocol_defs.job_def, 16,
+						      gebrm_job_get_id(job),
+						      gebrm_job_get_nprocs(job),
+						      gebrm_job_get_servers_list(job),
+						      gebrm_job_get_hostname(job),
+						      gebrm_job_get_title(job),
+						      gebrm_job_get_queue(job),
+						      gebrm_job_get_nice(job),
+						      infile,
+						      outfile,
+						      logfile,
+						      gebrm_job_get_submit_date(job),
+						      gebrm_job_get_server_group(job),
+						      gebrm_job_get_exec_speed(job),
+						      gebr_comm_job_get_string_from_status(gebrm_job_get_status(job)),
+						      start_date? start_date : "",
+						      finish_date? finish_date : "");
+	}
+}
 
 static void
 on_execution_response(GebrCommRunner *runner,
@@ -356,36 +406,12 @@ on_execution_response(GebrCommRunner *runner,
 {
 	AppAndJob *aap = data;
 
-	gchar *infile, *outfile, *logfile;
-	gebrm_job_get_io(aap->job, &infile, &outfile, &logfile);
-
 	gebrm_job_set_total_tasks(aap->job, gebr_comm_runner_get_total(runner));
 	gebrm_job_set_servers_list(aap->job, gebr_comm_runner_get_servers_list(runner));
 	gebrm_job_set_nprocs(aap->job, gebr_comm_runner_get_ncores(runner));
 
-	const gchar *start_date = gebrm_job_get_start_date(aap->job);
-	const gchar *finish_date = gebrm_job_get_finish_date(aap->job);
-
-	for (GList *i = aap->app->priv->connections; i; i = i->next) {
-		gebr_comm_protocol_socket_oldmsg_send(i->data, FALSE,
-						      gebr_comm_protocol_defs.job_def, 16,
-						      gebrm_job_get_id(aap->job),
-						      gebrm_job_get_nprocs(aap->job),
-						      gebrm_job_get_servers_list(aap->job),
-						      gebrm_job_get_hostname(aap->job),
-						      gebrm_job_get_title(aap->job),
-						      gebrm_job_get_queue(aap->job),
-						      gebrm_job_get_nice(aap->job),
-						      infile,
-						      outfile,
-						      logfile,
-						      gebrm_job_get_submit_date(aap->job),
-						      gebrm_job_get_server_group(aap->job),
-						      gebrm_job_get_exec_speed(aap->job),
-						      gebr_comm_job_get_string_from_status(gebrm_job_get_status(aap->job)),
-						      start_date? start_date : "",
-						      finish_date? finish_date : "");
-	}
+	g_debug("Sending job_def to clients");
+	send_job_def_to_clients(aap->app, aap->job);
 
 	gebr_validator_free(gebr_comm_runner_get_validator(runner));
 	gebr_comm_runner_free(runner);
@@ -505,7 +531,22 @@ on_client_request(GebrCommProtocolSocket *socket,
 			aap->app = app;
 			aap->job = job;
 			gebr_comm_runner_set_ran_func(runner, on_execution_response, aap);
-			gebr_comm_runner_run_async(runner, gebrm_job_get_id(job));
+
+			g_debug("Queue: '%s'", parent_id);
+
+			if (parent_id[0] == '\0') {
+				g_debug("Running immediately");
+				gebr_comm_runner_run_async(runner, gebrm_job_get_id(job));
+			} else {
+				GebrmJob *parent = gebrm_app_job_controller_find(app, parent_id);
+				GList *l = g_object_get_data(G_OBJECT(parent), "children");
+				RunnerAndJob *raj = g_new(RunnerAndJob, 1);
+				raj->runner = runner;
+				raj->job = job;
+				l = g_list_prepend(l, raj);
+				g_object_set_data(G_OBJECT(parent), "children", l);
+				send_job_def_to_clients(app, job);
+			}
 
 			g_free(title);
 	/*	if (g_str_has_prefix(request->url->str, "/server/")) {

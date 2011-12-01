@@ -229,6 +229,9 @@ gebr_job_set_servers(GebrJob *job,
 {
 	gchar **split = g_strsplit(servers, ",", 0);
 
+	if (!split)
+		return;
+
 	while (split[job->priv->n_servers])
 		job->priv->n_servers++;
 	job->priv->n_servers /= 2;

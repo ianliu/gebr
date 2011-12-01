@@ -91,30 +91,6 @@ gebrm_job_finalize(GObject *object)
 }
 
 static void
-gebrm_job_status_change_real(GebrmJob *job,
-			     gint old_status,
-			     gint new_status,
-			     const gchar *parameter,
-			     gpointer user_data)
-{
-	switch (new_status) {
-	case JOB_STATUS_FINISHED:
-	case JOB_STATUS_FAILED:
-	case JOB_STATUS_CANCELED: {
-		for (GList *i = job->priv->children; i; i = i->next) {
-			RunnerAndJob *raj = i->data;
-			gebr_comm_runner_run_async(raj->runner, gebrm_job_get_id(raj->child));
-		}
-		g_list_free(job->priv->children);
-		job->priv->children = NULL;
-		break;
-	}
-	default:
-		break;
-	}
-}
-
-static void
 gebrm_job_init(GebrmJob *job)
 {
 	job->priv = G_TYPE_INSTANCE_GET_PRIVATE(job,
@@ -122,6 +98,8 @@ gebrm_job_init(GebrmJob *job)
 						GebrmJobPriv);
 	job->priv->status = JOB_STATUS_INITIAL;
 	job->priv->has_issued = FALSE;
+	job->priv->nprocs = g_strdup("");
+	job->priv->servers = g_strdup("");
 }
 
 static void
@@ -129,8 +107,6 @@ gebrm_job_class_init(GebrmJobClass *klass)
 {
 	GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
 	gobject_class->finalize = gebrm_job_finalize;
-
-	klass->status_change = gebrm_job_status_change_real;
 
 	signals[STATUS_CHANGE] =
 		g_signal_new("status-change",
@@ -267,19 +243,6 @@ gebrm_job_change_task_status(GebrmTask *task,
 		g_signal_emit(job, signals[STATUS_CHANGE], 0,
 			      old, job->priv->status, parameter);
 		break;
-	case JOB_STATUS_REQUEUED:
-		g_debug("The task %d:%d was requeued to %s",
-			frac, total, parameter);
-		break;
-	case JOB_STATUS_QUEUED:
-		if (total != 1)
-			g_critical("A job with multiple tasks can't be queued");
-		else {
-			job->priv->status = JOB_STATUS_QUEUED;
-			g_signal_emit(job, signals[STATUS_CHANGE], 0,
-				      old, job->priv->status, parameter);
-		}
-		break;
 	case JOB_STATUS_CANCELED:
 	case JOB_STATUS_FAILED:
 		job->priv->status = new_status;
@@ -296,6 +259,10 @@ gebrm_job_change_task_status(GebrmTask *task,
 				      old, job->priv->status, parameter);
 		}
 		break;
+	case JOB_STATUS_QUEUED:
+	case JOB_STATUS_REQUEUED:
+		g_critical("The task %d:%d emitted QUEUED or REQUEUED", frac, total);
+		return;
 	default:
 		g_return_if_reached();
 	}
@@ -343,6 +310,9 @@ gebrm_job_init_details(GebrmJob *job, GebrmJobInfo *info)
 	job->priv->info.submit_date = g_strdup(info->submit_date);
 	job->priv->info.group = g_strdup(info->group);
 	job->priv->info.speed = g_strdup(info->speed);
+
+	if (job->priv->info.parent_id && job->priv->info.parent_id[0] != '\0')
+		job->priv->status = JOB_STATUS_QUEUED;
 }
 
 const gchar *
@@ -360,7 +330,6 @@ gebrm_job_get_queue(GebrmJob *job)
 const gchar *
 gebrm_job_get_title(GebrmJob *job)
 {
-	g_debug("On %s", __func__);
 	return job->priv->info.title;
 }
 

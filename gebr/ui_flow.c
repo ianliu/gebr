@@ -31,17 +31,16 @@
 static gchar *
 get_selected_queue(void)
 {
-//	GtkTreeIter queue_iter;
-//	gchar *queue;
-//
-//	if (!gtk_combo_box_get_active_iter(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox), &queue_iter))
-//		return g_strdup("");
-//	else {
-//		GtkTreeModel *model = gtk_combo_box_get_model(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox));
-//		gtk_tree_model_get(model, &queue_iter, SERVER_QUEUE_ID, &queue, -1);
-//	}
+	GtkTreeIter queue_iter;
 
-	return g_strdup("");
+	if (!gtk_combo_box_get_active_iter(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox), &queue_iter))
+		return g_strdup("");
+	else {
+		GebrJob *job;
+		GtkTreeModel *model = gtk_combo_box_get_model(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox));
+		gtk_tree_model_get(model, &queue_iter, 0, &job, -1);
+		return g_strdup(job ? gebr_job_get_id(job) : "");
+	}
 }
 
 static const gchar *
