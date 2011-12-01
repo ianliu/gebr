@@ -376,8 +376,27 @@ gebrm_daemon_add_tag(GebrmDaemon *daemon,
 	g_debug("Adding %s", tag);
 	g_tree_insert(daemon->priv->tags, g_strdup(tag),
 		      GINT_TO_POINTER(1));
+	
 }
 
+gboolean
+gebrm_daemon_update_tags(GebrmDaemon *daemon,
+		     gchar **tagsv){
+	
+	if (!tagsv)
+		return FALSE;
+
+	g_tree_unref(daemon->priv->tags);
+	daemon->priv->tags = g_tree_new_full((GCompareDataFunc)g_strcmp0,
+					     NULL, g_free, NULL);
+
+		g_debug("On %s, Updating daemon %s", __func__, gebrm_daemon_get_address(daemon));
+	for (int i = 0; tagsv[i]; i++){
+		gebrm_daemon_add_tag(daemon, tagsv[i]);
+	}
+
+	return TRUE;
+}
 gboolean
 gebrm_daemon_has_tag(GebrmDaemon *daemon,
 		     const gchar *tag)

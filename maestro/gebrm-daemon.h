@@ -67,6 +67,14 @@ void gebrm_daemon_add_tag(GebrmDaemon *daemon,
 			  const gchar *tag);
 
 /**
+ * gebrm_daemon_update_tag:
+ *
+ * Update @tag into @daemon's tags list if it does not exists.
+ */
+gboolean
+gebrm_daemon_update_tags(GebrmDaemon *daemon, gchar **tags);
+
+/**
  * gebrm_daemon_has_tag:
  *
  * Returns: %TRUE if @daemon has @tag.
