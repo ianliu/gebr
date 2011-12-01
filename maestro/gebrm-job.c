@@ -482,7 +482,10 @@ gebrm_job_get_finish_date(GebrmJob *job)
 gchar *
 gebrm_job_get_issues(GebrmJob *job)
 {
-	return g_strdup(gebrm_task_get_issues(job->priv->tasks->data));
+	if (job->priv->tasks)
+		return g_strdup(gebrm_task_get_issues(job->priv->tasks->data));
+
+	return NULL;
 }
 
 gboolean

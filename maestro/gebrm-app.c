@@ -595,7 +595,7 @@ gebrm_config_update_tags_on_server(GebrmApp *app,
 
 	if (succ) {
 		groups = g_key_file_get_groups(servers, NULL);
-		for (int i = 0; groups[i]; i++)
+		for (int i = 0; groups && groups[i]; i++)
 			if (g_strcmp0(server, groups[i]) == 0) {
 				g_key_file_set_string(servers, groups[i], "tags", tags);
 				break;
@@ -604,13 +604,12 @@ gebrm_config_update_tags_on_server(GebrmApp *app,
 		content = g_key_file_to_data(servers, NULL, NULL);
 		if (content)
 			g_file_set_contents(path, content, -1, NULL);
+		g_strfreev(groups);
+		g_free(content);
 	}
-	g_key_file_free (servers);
+
+	g_key_file_free(servers);
 	g_free(path);
-	g_free(content);
-	for (int i = 0; groups[i]; i++)
-		g_free(groups[i]);
-	g_free(groups);
 
 	return succ;
 }
@@ -691,15 +690,13 @@ gebrm_config_load_servers(GebrmApp *app, gchar *path)
 	gboolean succ = g_key_file_load_from_file(servers, path, G_KEY_FILE_NONE, NULL);
 	if (succ) {
 		groups = g_key_file_get_groups(servers, NULL);
-		for (int i = 0; groups[i]; i++) {
+		for (int i = 0; groups && groups[i]; i++) {
 			gchar *tags = g_key_file_get_string(servers, groups[i], "tags", NULL);
 			gebrm_add_server_to_list(app, groups[i], tags);
 		}
 		g_key_file_free (servers);
+		g_strfreev(groups);
 	}
-	for (int i = 0; groups[i]; i++)
-		g_free(groups[i]);
-	g_free(groups);
 	return TRUE;
 }
 
@@ -774,7 +771,7 @@ send_messages_of_jobs(gpointer key,
 
 	/* Issues message */
 	const gchar *issues = gebrm_job_get_issues(job);
-	if (*issues)
+	if (issues && *issues)
 		gebr_comm_protocol_socket_oldmsg_send(protocol, FALSE,
 		                                      gebr_comm_protocol_defs.iss_def, 2,
 		                                      id,

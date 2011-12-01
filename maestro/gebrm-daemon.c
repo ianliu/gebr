@@ -427,6 +427,9 @@ gboolean
 gebrm_daemon_has_group(GebrmDaemon *daemon,
                        const gchar *group)
 {
+	if (!*group)
+		return TRUE;
+
 	gboolean has_group = FALSE;
 	gchar *tags = gebrm_daemon_get_tags(daemon);
 	gchar **split = g_strsplit(tags, ",", -1);
