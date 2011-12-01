@@ -167,7 +167,6 @@ static void on_tags_edited(GtkCellRendererText *cell,
 	gtk_window_add_accel_group(GTK_WINDOW(gebr.ui_server_list->common.dialog), gebr.accel_group_array[ACCEL_SERVER]);
 
 	ret = gtk_tree_model_get_iter_from_string(model, &iter, pathstr);
-	g_debug("MAis informativo: %s", __func__);
 
 	if (!ret)
 		return;
@@ -262,17 +261,6 @@ daemon_server_group_func(GtkTreeViewColumn *tree_column,
 		return;
 
 	GList *groups = gebr_daemon_server_get_tags(daemon);
-
-	g_debug("+++++");
-	for (GList *i = groups; i; i = i->next)
-		g_debug("PRESENTING GROUP %s", (gchar*)i->data);
-
-	//groups = g_list_sort(groups, (GCompareFunc)g_strcmp0);
-
-	g_debug("-----");
-	for (GList *i = groups; i; i = i->next)
-		g_debug("PRESENTING GROUP %s", (gchar*)i->data);
-
 	GString *group_list = g_string_new("");
 
 	for (GList *i = groups; i; i = i->next)
