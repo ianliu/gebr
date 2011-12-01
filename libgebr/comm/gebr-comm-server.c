@@ -1,18 +1,21 @@
-/*   libgebr - GeBR Library
- *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
+/*
+ * gebr-comm-server.c
+ * This file is part of GêBR Project
  *
- *   This program is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
+ * Copyright (C) 2007-2011 - GêBR Core Team (www.gebrproject.com)
  *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
+ * GêBR Project is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
- *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * GêBR Project is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with GêBR Project. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <string.h>
@@ -95,7 +98,7 @@ struct gebr_comm_server *gebr_comm_server_new(const gchar * _address, const stru
 	server->socket = gebr_comm_protocol_socket_new();
 	server->address = g_string_new(_address);
 	server->port = 0;
-	server->password = g_string_new("");
+	server->password = NULL;
 	server->x11_forward_process = NULL;
 	server->x11_forward_unix = NULL;
 	server->ops = ops;
@@ -127,7 +130,7 @@ void gebr_comm_server_free(struct gebr_comm_server *server)
 	g_string_free(server->last_error, TRUE);
 	gebr_comm_server_free_for_reuse(server);
 	g_string_free(server->address, TRUE);
-	g_string_free(server->password, TRUE);
+	g_free(server->password);
 	g_object_unref (server->socket);
 	g_free(server);
 }
@@ -335,12 +338,24 @@ static void local_run_server_finished(GebrCommProcess * process, gint status, st
 	gebr_comm_protocol_socket_connect(server->socket, &socket_address, FALSE);
 }
 
+static void
+write_pass_in_process(GebrCommTerminalProcess *process,
+		      const gchar *pass)
+{
+	gsize len = strlen(pass);
+	GString p = {(gchar*)pass, len, len};
+	gebr_comm_terminal_process_write_string(process, &p);
+	p.str = "\n";
+	p.len = p.allocated_len = 1;
+	gebr_comm_terminal_process_write_string(process, &p);
+}
+
 /**
- * \internal
  * Return TRUE if callee should not proceed.
  */
 static gboolean
-gebr_comm_ssh_parse_output(GebrCommTerminalProcess * process, struct gebr_comm_server *server,
+gebr_comm_ssh_parse_output(GebrCommTerminalProcess *process,
+			   struct gebr_comm_server *server,
 			   GString * output)
 {
 	if (output->len <= 2)
@@ -349,8 +364,9 @@ gebr_comm_ssh_parse_output(GebrCommTerminalProcess * process, struct gebr_comm_s
 		GString *string;
 		GString *password;
 
-		if (server->password->len && server->tried_existant_pass == FALSE) {
-			gebr_comm_terminal_process_write_string(process, server->password);
+		if (server->password && *server->password
+		    && !server->tried_existant_pass) {
+			write_pass_in_process(process, server->password);
 			server->tried_existant_pass = TRUE;
 			goto out;
 		}
@@ -366,13 +382,14 @@ gebr_comm_ssh_parse_output(GebrCommTerminalProcess * process, struct gebr_comm_s
 		password = server->ops->ssh_login(server, _("SSH login:"), string->str,
 						  server->user_data);
 		if (password == NULL) {
-			g_string_assign(server->password, "");
+			g_free(server->password);
+			server->password = NULL;
 
 			gebr_comm_server_disconnected_state(server, SERVER_ERROR_SSH, _("No password provided."));
 			gebr_comm_terminal_process_kill(process);
 		} else {
-			g_string_printf(server->password, "%s\n", password->str);
-			gebr_comm_terminal_process_write_string(process, server->password);
+			gebr_comm_server_set_password(server, password->str);
+			write_pass_in_process(process, password->str);
 			g_string_free(password, TRUE);
 		}
 		server->tried_existant_pass = FALSE;
@@ -739,4 +756,10 @@ GebrCommServerState
 gebr_comm_server_get_state(GebrCommServer *server)
 {
 	return server->state;
+}
+
+void
+gebr_comm_server_set_password(GebrCommServer *server, const gchar *pass)
+{
+	server->password = g_strdup(pass);
 }

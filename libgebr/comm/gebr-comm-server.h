@@ -74,9 +74,9 @@ struct gebr_comm_server {
 	guint16 port;
 
 	/* ssh stuff */
-	GString *password;
-	gint16 tunnel_port;
+	gchar *password;
 	gboolean tried_existant_pass;
+	gint16 tunnel_port;
 	GebrCommTerminalProcess *x11_forward_process;
 	GebrCommProcess *x11_forward_unix;
 
@@ -185,6 +185,9 @@ const gchar *gebr_comm_server_state_to_string(GebrCommServerState state);
 GebrCommServerState gebr_comm_server_state_from_string(const gchar *string);
 
 GebrCommServerState gebr_comm_server_get_state(GebrCommServer *server);
+
+void gebr_comm_server_set_password(GebrCommServer *server,
+				   const gchar *pass);
 
 G_END_DECLS
 
