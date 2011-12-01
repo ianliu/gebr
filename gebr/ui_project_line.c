@@ -1270,8 +1270,7 @@ static void project_line_load(void)
 				   PL_XMLPOINTER, &gebr.line, -1);
 
 		gebr.project_line = GEBR_GEOXML_DOC(gebr.line);
-		gtk_combo_box_set_model(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox), gebr_maestro_server_get_queues_model(gebr.ui_server_list->maestro));
-		gtk_combo_box_set_model(GTK_COMBO_BOX(gebr.ui_flow_edition->server_combobox), gebr_maestro_server_get_model(gebr.ui_server_list->maestro, TRUE));
+		gebr_flow_edition_update_server_and_queue(gebr.ui_flow_edition);
 		line_load_flows();
 	} else {
 		gebr.project_line = GEBR_GEOXML_DOC(gebr.project);

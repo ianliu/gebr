@@ -1665,3 +1665,25 @@ gebr_flow_edition_select_queue(struct ui_flow_edition *self)
 	else
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(self->nice_button_low), TRUE);
 }
+
+void
+gebr_flow_edition_update_server_and_queue(struct ui_flow_edition *fe)
+{
+	gchar *addr, *group;
+	GtkTreeModel *server_model, *queue_model;
+	GebrMaestroServer *maestro = gebr.ui_server_list->maestro;
+
+	// FIXME: Use @addr to choose a MaestroServer.
+	gebr_geoxml_line_get_group(gebr.line, &addr, &group);
+
+	server_model = gebr_maestro_server_get_model(maestro, TRUE, group);
+	queue_model = gebr_maestro_server_get_queues_model(maestro, group);
+
+	gtk_combo_box_set_model(GTK_COMBO_BOX(fe->queue_combobox), queue_model);
+	gtk_combo_box_set_model(GTK_COMBO_BOX(fe->server_combobox), server_model);
+
+	g_object_unref(server_model);
+	g_object_unref(queue_model);
+	g_free(addr);
+	g_free(group);
+}

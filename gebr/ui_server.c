@@ -162,7 +162,7 @@ static void on_tags_edited(GtkCellRendererText *cell,
 	GtkTreeIter iter;
 	gboolean ret;
 	GebrDaemonServer *daemon;
-	GtkTreeModel *model = gebr_maestro_server_get_model(sl->maestro, FALSE);
+	GtkTreeModel *model = gebr_maestro_server_get_model(sl->maestro, FALSE, NULL);
 
 	gtk_window_add_accel_group(GTK_WINDOW(gebr.ui_server_list->common.dialog), gebr.accel_group_array[ACCEL_SERVER]);
 
@@ -181,7 +181,8 @@ static void on_tags_edited(GtkCellRendererText *cell,
 	msg = gebr_comm_protocol_socket_send_request(server->socket,
 	                                             GEBR_COMM_HTTP_METHOD_PUT, url, NULL);
 	g_free(url);
-	g_free (new_tags);
+	g_free(new_tags);
+	g_object_unref(model);
 }
 
 #if 0
@@ -493,13 +494,10 @@ gebr_ui_server_list_connect(struct ui_server_list *sl,
 	g_signal_connect(sl->maestro, "group-changed",
 			 G_CALLBACK(on_server_group_changed), sl);
 
-	gtk_tree_view_set_model(GTK_TREE_VIEW(sl->common.view),
-				gebr_maestro_server_get_model(sl->maestro, FALSE));
-
-	gtk_combo_box_set_model(GTK_COMBO_BOX(gebr.ui_flow_edition->server_combobox),
-				gebr_maestro_server_get_model(sl->maestro, TRUE));
-
+	GtkTreeModel *model = gebr_maestro_server_get_model(sl->maestro, FALSE, NULL);
+	gtk_tree_view_set_model(GTK_TREE_VIEW(sl->common.view), model);
 	g_string_assign(gebr.config.maestro_address, addr);
+	g_object_unref(model);
 }
 
 static void

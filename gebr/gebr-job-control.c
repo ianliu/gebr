@@ -533,7 +533,7 @@ static void
 build_servers_filter_list(GebrJobControl *jc)
 {
 	GtkTreeIter iter;
-	GtkTreeModel *model = GTK_TREE_MODEL(gebr_maestro_server_get_model(gebr.ui_server_list->maestro, FALSE));
+	GtkTreeModel *model = GTK_TREE_MODEL(gebr_maestro_server_get_model(gebr.ui_server_list->maestro, FALSE, NULL));
 
 	gtk_list_store_clear(jc->priv->server_filter);
 
@@ -555,6 +555,7 @@ build_servers_filter_list(GebrJobControl *jc)
 				   -1);
 	}
 
+	g_object_unref(model);
 	gtk_combo_box_set_active(jc->priv->server_combo, 0);
 }
 

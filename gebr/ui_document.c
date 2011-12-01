@@ -1673,15 +1673,11 @@ static void on_groups_combo_box_changed(GtkComboBox *combo, GebrGuiValueSequence
 			   -1);
 
 	/* Empty string means all servers */
-	if (!group || group[0] == '\0')
-		gebr_geoxml_line_set_group(gebr.line,
-					   gebr_maestro_server_get_address(maestro), "");
-	else
-		gebr_geoxml_line_set_group(gebr.line,
-					   gebr_maestro_server_get_address(maestro), group);
+	if (!group)
+		group = "";
 
-	gtk_combo_box_set_model(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox), gebr_maestro_server_get_queues_model(maestro));
-	gtk_combo_box_set_model(GTK_COMBO_BOX(gebr.ui_flow_edition->server_combobox), gebr_maestro_server_get_model(maestro, TRUE));
+	gebr_geoxml_line_set_group(gebr.line, gebr_maestro_server_get_address(maestro), group);
+	gebr_flow_edition_update_server_and_queue(gebr.ui_flow_edition);
 
 	g_free (group);
 }

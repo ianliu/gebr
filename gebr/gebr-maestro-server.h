@@ -66,7 +66,8 @@ GebrDaemonServer *gebr_maestro_server_get_daemon(GebrMaestroServer *maestro,
 GebrCommServer *gebr_maestro_server_get_server(GebrMaestroServer *maestro);
 
 GtkTreeModel *gebr_maestro_server_get_model(GebrMaestroServer *maestro,
-					    gboolean include_autochoose);
+					    gboolean include_autochoose,
+					    const gchar *group);
 
 const gchar *gebr_maestro_server_get_address(GebrMaestroServer *maestro);
 
@@ -74,7 +75,8 @@ gchar *gebr_maestro_server_get_display_address(GebrMaestroServer *maestro);
 
 GList *gebr_maestro_server_get_all_tags(GebrMaestroServer *maestro);
 
-GtkTreeModel *gebr_maestro_server_get_queues_model(GebrMaestroServer *maestro);
+GtkTreeModel *gebr_maestro_server_get_queues_model(GebrMaestroServer *maestro,
+						   const gchar *group);
 
 G_END_DECLS
 

@@ -467,7 +467,6 @@ gebr_maestro_server_finalize(GObject *object)
 
 	gtk_list_store_clear(maestro->priv->store);
 	g_object_unref(maestro->priv->store);
-	g_object_unref(maestro->priv->filter);
 	g_hash_table_unref(maestro->priv->jobs);
 
 	G_OBJECT_CLASS(gebr_maestro_server_parent_class)->finalize(object);
@@ -606,33 +605,58 @@ gebr_maestro_server_get_server(GebrMaestroServer *maestro)
 	return maestro->priv->server;
 }
 
-static gboolean
-tree_model_filter_visible_func(GtkTreeModel *model,
-			       GtkTreeIter *iter,
-			       gpointer data)
+typedef struct {
+	gboolean include_auto;
+	gchar *group;
+} GroupAndAutochoose;
+
+static void
+free_group_and_autochoose(gpointer data)
 {
+	GroupAndAutochoose *gaa = data;
+	g_free(gaa->group);
+	g_free(gaa);
+}
+
+static gboolean
+visible_servers_func(GtkTreeModel *model,
+		     GtkTreeIter *iter,
+		     gpointer data)
+{
+	GroupAndAutochoose *gaa = data;
 	GebrDaemonServer *daemon;
+
 	gtk_tree_model_get(model, iter, 0, &daemon, -1);
 
-	return daemon && !gebr_daemon_server_is_autochoose(daemon);
+	if (!daemon)
+		return FALSE;
+
+	if (gebr_daemon_server_is_autochoose(daemon))
+		return gaa->include_auto;
+
+	return gebr_daemon_server_has_tag(daemon, gaa->group);
 }
 
 GtkTreeModel *
 gebr_maestro_server_get_model(GebrMaestroServer *maestro,
-			      gboolean include_autochoose)
+			      gboolean include_autochoose,
+			      const gchar *group)
 {
 	GtkTreeModel *model = GTK_TREE_MODEL(maestro->priv->store);
 
-	if (include_autochoose)
-		return model;
+	if (include_autochoose && (!group || !*group))
+		return g_object_ref(model);
 
-	if (!maestro->priv->filter) {
-		maestro->priv->filter = gtk_tree_model_filter_new(model, NULL);
-		gtk_tree_model_filter_set_visible_func(GTK_TREE_MODEL_FILTER(maestro->priv->filter),
-						       tree_model_filter_visible_func, NULL, NULL);
-	}
+	GroupAndAutochoose *gaa = g_new(GroupAndAutochoose, 1);
+	gaa->include_auto = include_autochoose;
+	gaa->group = g_strdup(group);
 
-	return maestro->priv->filter;
+	GtkTreeModel *filter = gtk_tree_model_filter_new(model, NULL);
+	gtk_tree_model_filter_set_visible_func(GTK_TREE_MODEL_FILTER(filter),
+					       visible_servers_func, gaa,
+					       free_group_and_autochoose);
+
+	return filter;
 }
 
 const gchar *
@@ -656,7 +680,7 @@ GList *
 gebr_maestro_server_get_all_tags(GebrMaestroServer *maestro)
 {
 	GtkTreeIter iter;
-	GtkTreeModel *daemons = gebr_maestro_server_get_model(maestro, FALSE);
+	GtkTreeModel *daemons = gebr_maestro_server_get_model(maestro, FALSE, NULL);
 	GTree *tree = g_tree_new((GCompareFunc)g_strcmp0);
 	GList *groups = NULL;
 
@@ -675,12 +699,39 @@ gebr_maestro_server_get_all_tags(GebrMaestroServer *maestro)
 	}
 
 	g_tree_foreach(tree, foreach_func, NULL);
+	g_object_unref(daemons);
 	g_tree_unref(tree);
 	return groups;
 }
 
-GtkTreeModel *
-gebr_maestro_server_get_queues_model(GebrMaestroServer *maestro)
+static gboolean
+visible_queue_func(GtkTreeModel *model,
+		   GtkTreeIter *iter,
+		   gpointer data)
 {
-	return GTK_TREE_MODEL(maestro->priv->queues_model);
+	GebrJob *job;
+	const gchar *group = data;
+	gtk_tree_model_get(model, iter, 0, &job, -1);
+
+	if (!job)
+		return TRUE;
+
+	const gchar *jgroup = gebr_job_get_server_group(job);
+	return g_strcmp0(group, jgroup) == 0;
+}
+
+GtkTreeModel *
+gebr_maestro_server_get_queues_model(GebrMaestroServer *maestro,
+				     const gchar *group)
+{
+	GtkTreeModel *model = GTK_TREE_MODEL(maestro->priv->queues_model);
+
+	if (!group || !*group)
+		return g_object_ref(model);
+
+	GtkTreeModel *filter = gtk_tree_model_filter_new(model, NULL);
+	gtk_tree_model_filter_set_visible_func(GTK_TREE_MODEL_FILTER(filter),
+					       visible_queue_func,
+					       g_strdup(group), g_free);
+	return filter;
 }

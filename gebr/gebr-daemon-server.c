@@ -235,3 +235,15 @@ gebr_daemon_server_get_tags(GebrDaemonServer *daemon)
 {
 	return daemon->priv->tags;
 }
+
+gboolean
+gebr_daemon_server_has_tag(GebrDaemonServer *daemon, const gchar *tag)
+{
+	if (!tag || !*tag)
+		return TRUE;
+
+	for (GList *i = daemon->priv->tags; i; i = i->next)
+		if (g_strcmp0(i->data, tag) == 0)
+			return TRUE;
+	return FALSE;
+}

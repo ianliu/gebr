@@ -97,6 +97,8 @@ void gebr_daemon_server_set_tags(GebrDaemonServer *daemon, gchar **tags);
 
 GList *gebr_daemon_server_get_tags(GebrDaemonServer *daemon);
 
+gboolean gebr_daemon_server_has_tag(GebrDaemonServer *daemon, const gchar *tag);
+
 G_END_DECLS
 
 #endif /* __GEBR_SERVER_H__ */
