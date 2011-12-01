@@ -60,9 +60,6 @@ GebrMaestroServer *gebr_maestro_server_new(const gchar *addr);
 void gebr_maestro_server_add_daemon(GebrMaestroServer *maestro,
 				    GebrDaemonServer *daemon);
 
-GebrDaemonServer *gebr_maestro_server_get_daemon(GebrMaestroServer *maestro,
-						 const gchar *addr);
-
 GebrCommServer *gebr_maestro_server_get_server(GebrMaestroServer *maestro);
 
 GtkTreeModel *gebr_maestro_server_get_model(GebrMaestroServer *maestro,
@@ -77,6 +74,8 @@ GList *gebr_maestro_server_get_all_tags(GebrMaestroServer *maestro);
 
 GtkTreeModel *gebr_maestro_server_get_queues_model(GebrMaestroServer *maestro,
 						   const gchar *group);
+
+void gebr_maestro_server_connect(GebrMaestroServer *maestro);
 
 G_END_DECLS
 

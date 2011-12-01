@@ -734,3 +734,9 @@ gebr_comm_server_state_from_string(const gchar *string)
 
 	return SERVER_STATE_UNKNOWN;
 }
+
+GebrCommServerState
+gebr_comm_server_get_state(GebrCommServer *server)
+{
+	return server->state;
+}

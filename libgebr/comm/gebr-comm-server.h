@@ -184,6 +184,8 @@ const gchar *gebr_comm_server_state_to_string(GebrCommServerState state);
 
 GebrCommServerState gebr_comm_server_state_from_string(const gchar *string);
 
+GebrCommServerState gebr_comm_server_get_state(GebrCommServer *server);
+
 G_END_DECLS
 
 #endif				//__GEBR_COMM_SERVER_H

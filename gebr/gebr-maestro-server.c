@@ -30,6 +30,7 @@ struct _GebrMaestroServerPriv {
 	GtkListStore *store;
 	GtkTreeModel *filter;
 	GHashTable *jobs;
+	gchar *address;
 
 	GtkListStore *queues_model;
 };
@@ -83,6 +84,30 @@ G_DEFINE_TYPE_WITH_CODE(GebrMaestroServer, gebr_maestro_server, G_TYPE_OBJECT,
 			G_IMPLEMENT_INTERFACE(GEBR_TYPE_CONNECTABLE,
 					      gebr_maestro_server_connectable_init));
 
+static GebrDaemonServer *
+gebr_maestro_server_get_daemon(GebrMaestroServer *maestro,
+			       const gchar *addr,
+			       GtkTreeIter *_iter)
+{
+	GtkTreeIter iter;
+	GebrDaemonServer *daemon;
+	GtkTreeModel *model = GTK_TREE_MODEL(maestro->priv->store);
+	const gchar *daddr;
+
+	gebr_gui_gtk_tree_model_foreach(iter, model) {
+		gtk_tree_model_get(model, &iter, 0, &daemon, -1);
+		daddr = gebr_daemon_server_get_address(daemon);
+
+		if (g_strcmp0(daddr, addr) == 0) {
+			if (_iter)
+				*_iter = iter;
+			return daemon;
+		}
+	}
+
+	return NULL;
+}
+
 void
 log_message(GebrCommServer *server,
 	    GebrLogMessageType type,
@@ -97,6 +122,11 @@ state_changed(GebrCommServer *comm_server,
 	      gpointer user_data)
 {
 	g_debug("[MAESTRO] STATUS CHANGED");
+
+	GebrMaestroServer *maestro = user_data;
+
+	if (gebr_comm_server_get_state(comm_server))
+		g_signal_emit(maestro, signals[GROUP_CHANGED], 0);
 }
 
 GString *
@@ -219,16 +249,20 @@ parse_messages(GebrCommServer *comm_server,
 
 			g_debug("addr: %s, ssta:%s",addr->str, ssta->str);
 
+			GtkTreeIter iter;
 			GebrCommServerState state = gebr_comm_server_state_from_string(ssta->str);
-
-			GebrDaemonServer *daemon = gebr_maestro_server_get_daemon(maestro, addr->str);
+			GebrDaemonServer *daemon = gebr_maestro_server_get_daemon(maestro, addr->str, &iter);
 
 			if (!daemon) {
 				daemon = gebr_daemon_server_new(GEBR_CONNECTABLE(maestro),
 								addr->str, state);
 				gebr_maestro_server_add_daemon(maestro, daemon);
-			} else
+			} else {
+				GtkTreePath *path = gtk_tree_model_get_path(GTK_TREE_MODEL(maestro->priv->store), &iter);
 				gebr_daemon_server_set_state(daemon, state);
+				gtk_tree_model_row_changed(GTK_TREE_MODEL(maestro->priv->store), path, &iter);
+				gtk_tree_path_free(path);
+			}
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}
@@ -449,10 +483,7 @@ gebr_maestro_server_set(GObject      *object,
 	switch (prop_id)
 	{
 	case PROP_ADDRESS:
-		maestro->priv->server = gebr_comm_server_new(g_value_get_string(value),
-							     &maestro_ops);
-		maestro->priv->server->user_data = maestro;
-		gebr_comm_server_connect(maestro->priv->server, TRUE);
+		maestro->priv->address = g_value_dup_string(value);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -531,8 +562,8 @@ gebr_maestro_server_init(GebrMaestroServer *maestro)
 
 /* Implementation of GebrConnectable interface {{{ */
 static void
-gebr_maestro_server_connect(GebrConnectable *connectable,
-			    const gchar *address)
+gebr_maestro_server_connectable_connect(GebrConnectable *connectable,
+					const gchar *address)
 {
 	GebrMaestroServer *maestro = GEBR_MAESTRO_SERVER(connectable);
 	gchar *url = g_strconcat("/server/", address, NULL);
@@ -557,7 +588,7 @@ gebr_maestro_server_disconnect(GebrConnectable *connectable,
 static void
 gebr_maestro_server_connectable_init(GebrConnectableIface *iface)
 {
-	iface->connect = gebr_maestro_server_connect;
+	iface->connect = gebr_maestro_server_connectable_connect;
 	iface->disconnect = gebr_maestro_server_disconnect;
 }
 /* }}} */
@@ -577,26 +608,6 @@ gebr_maestro_server_add_daemon(GebrMaestroServer *maestro,
 	GtkTreeIter iter;
 	gtk_list_store_append(maestro->priv->store, &iter);
 	gtk_list_store_set(maestro->priv->store, &iter, 0, daemon, -1);
-}
-
-GebrDaemonServer *
-gebr_maestro_server_get_daemon(GebrMaestroServer *maestro,
-			       const gchar *addr)
-{
-	GtkTreeIter iter;
-	GebrDaemonServer *daemon;
-	GtkTreeModel *model = GTK_TREE_MODEL(maestro->priv->store);
-	const gchar *daddr;
-
-	gebr_gui_gtk_tree_model_foreach(iter, model) {
-		gtk_tree_model_get(model, &iter, 0, &daemon, -1);
-		daddr = gebr_daemon_server_get_address(daemon);
-
-		if (g_strcmp0(daddr, addr) == 0)
-			return daemon;
-	}
-
-	return NULL;
 }
 
 GebrCommServer *
@@ -734,4 +745,13 @@ gebr_maestro_server_get_queues_model(GebrMaestroServer *maestro,
 					       visible_queue_func,
 					       g_strdup(group), g_free);
 	return filter;
+}
+
+void
+gebr_maestro_server_connect(GebrMaestroServer *maestro)
+{
+	maestro->priv->server = gebr_comm_server_new(maestro->priv->address,
+						     &maestro_ops);
+	maestro->priv->server->user_data = maestro;
+	gebr_comm_server_connect(maestro->priv->server, TRUE);
 }

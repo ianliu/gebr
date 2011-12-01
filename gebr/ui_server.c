@@ -494,6 +494,8 @@ gebr_ui_server_list_connect(struct ui_server_list *sl,
 	g_signal_connect(sl->maestro, "group-changed",
 			 G_CALLBACK(on_server_group_changed), sl);
 
+	gebr_maestro_server_connect(sl->maestro);
+
 	GtkTreeModel *model = gebr_maestro_server_get_model(sl->maestro, FALSE, NULL);
 	gtk_tree_view_set_model(GTK_TREE_VIEW(sl->common.view), model);
 	g_string_assign(gebr.config.maestro_address, addr);
