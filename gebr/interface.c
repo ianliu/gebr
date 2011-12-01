@@ -175,10 +175,10 @@ static const GtkActionEntry actions_entries_server[] = {
 		NULL, N_("Connect to the server"), G_CALLBACK(on_server_common_connect)},
 	{"server_disconnect", GTK_STOCK_DISCONNECT, N_("Disconnect"),
 		NULL, N_("Disconnect from server"), G_CALLBACK(on_server_common_disconnect)},
-	{"server_remove", GTK_STOCK_REMOVE, N_("Remove"),
-		"Delete", N_("Remove server from list"), G_CALLBACK(on_server_common_remove)},
-	{"server_stop", GTK_STOCK_STOP, N_("Stop server"),
-		NULL, N_("Stop server from running"), G_CALLBACK(on_server_common_stop)},
+//	{"server_remove", GTK_STOCK_REMOVE, N_("Remove"),
+//		"Delete", N_("Remove server from list"), G_CALLBACK(on_server_common_remove)},
+//	{"server_stop", GTK_STOCK_STOP, N_("Stop server"),
+//		NULL, N_("Stop server from running"), G_CALLBACK(on_server_common_stop)},
 };
 
 /*

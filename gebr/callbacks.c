@@ -448,12 +448,58 @@ void on_notebook_switch_page (GtkNotebook     *notebook,
 
 void on_server_common_connect(void)
 {
-	g_warning("TODO: Implement %s", __func__);
+	GtkTreeIter iter;
+	GebrDaemonServer *daemon;
+	GebrMaestroServer *maestro = gebr.ui_server_list->maestro;
+	GtkTreeModel *model;
+
+	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_server_list->common.view));
+	GList *rows = gtk_tree_selection_get_selected_rows(selection, &model);
+
+	for (GList *i = rows; i; i = i->next) {
+		GtkTreePath *path = i->data;
+
+		if (!gtk_tree_model_get_iter(model, &iter, path))
+			continue;
+
+		gtk_tree_model_get(model, &iter, 0, &daemon, -1);
+
+		if (!daemon)
+			continue;
+
+		if (gebr_daemon_server_get_state(daemon) == SERVER_STATE_CONNECT)
+			continue;
+
+		gebr_connectable_connect(GEBR_CONNECTABLE(maestro), gebr_daemon_server_get_address(daemon));
+	}
 }
 
 void on_server_common_disconnect(void)
 {
-	g_warning("TODO: Implement %s", __func__);
+	GtkTreeIter iter;
+	GebrDaemonServer *daemon;
+	GebrMaestroServer *maestro = gebr.ui_server_list->maestro;
+	GtkTreeModel *model;
+
+	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_server_list->common.view));
+	GList *rows = gtk_tree_selection_get_selected_rows(selection, &model);
+
+	for (GList *i = rows; i; i = i->next) {
+		GtkTreePath *path = i->data;
+
+		if (!gtk_tree_model_get_iter(model, &iter, path))
+			continue;
+
+		gtk_tree_model_get(model, &iter, 0, &daemon, -1);
+
+		if (!daemon)
+			continue;
+
+		if (gebr_daemon_server_get_state(daemon) == SERVER_STATE_DISCONNECTED)
+			continue;
+
+		gebr_connectable_disconnect(GEBR_CONNECTABLE(maestro), gebr_daemon_server_get_address(daemon));
+	}
 }
 
 void on_server_common_autoconnect_changed(void)
@@ -461,15 +507,15 @@ void on_server_common_autoconnect_changed(void)
 	g_warning("TODO: Implement %s", __func__);
 }
 
-void on_server_common_remove(void)
-{
-	g_warning("TODO: Implement %s", __func__);
-}
-
-void on_server_common_stop(void)
-{
-	g_warning("TODO: Implement %s", __func__);
-}
+//void on_server_common_remove(void)
+//{
+//	g_warning("TODO: Implement %s", __func__);
+//}
+//
+//void on_server_common_stop(void)
+//{
+//	g_warning("TODO: Implement %s", __func__);
+//}
 
 void open_url_on_press_event(void)
 {
