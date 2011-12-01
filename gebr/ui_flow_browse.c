@@ -467,7 +467,6 @@ static void flow_browse_load(void)
 		gebr_validator_update(gebr.validator);
 
 	/* free previous flow and load it */
-	gtk_widget_set_sensitive(gebr.ui_flow_edition->server_combobox, TRUE);
 	flow_edition_load_components();
 
 	/* load revisions */
@@ -482,7 +481,6 @@ static void flow_browse_load(void)
 	flow_edition_find_flow_server (gebr.flow, model, &iter);
 //	gtk_combo_box_set_active_iter (GTK_COMBO_BOX (gebr.ui_flow_edition->server_combobox), &iter);
 
-	flow_edition_on_server_changed();
 	flow_browse_info_update();
 
 	g_free(filename);

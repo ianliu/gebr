@@ -1,26 +1,25 @@
-/*   GeBR - An environment for seismic processing.
- *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
+/*
+ * ui_flow_edition.h
+ * This file is part of GêBR Project
  *
- *   This program is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
+ * Copyright (C) 2011 - GêBR Core Team (www.gebrproject.com)
  *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
+ * GêBR Project is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
- *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * GêBR Project is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with GêBR Project. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * @file ui_flow_edition.c Interface functions and callbacks for the "Flow Edition" page.
- */
-
-#ifndef __UI_FLOW_COMPONENT_H
-#define __UI_FLOW_COMPONENT_H
+#ifndef __GEBR_FLOW_EDITION_H__
+#define __GEBR_FLOW_EDITION_H__
 
 #include <gtk/gtk.h>
 
@@ -58,13 +57,13 @@ enum {
 	MENU_FILEPATH_COLUMN,
 	MENU_N_COLUMN
 };
+typedef struct _GebrFlowEdition GebrFlowEdition;
+typedef struct _GebrFlowEditionPriv GebrFlowEditionPriv;
 
-/**
- */
-typedef struct {
+struct _GebrFlowEdition {
+	GebrFlowEditionPriv *priv;
+
 	GtkWidget *widget;
-	GtkWidget *server_combobox;
-	GtkWidget *queue_combobox;
 	GtkBin *queue_bin;
 
 	GtkTreeIter input_iter;
@@ -83,7 +82,7 @@ typedef struct {
 	gboolean autochoose;
 	GtkWidget *nice_button_high;
 	GtkWidget *nice_button_low;
-} GebrFlowEdition;
+};
 
 /**
  * Assembly the flow edit ui_flow_edition->widget.
@@ -135,11 +134,6 @@ void flow_edition_change_iter_status(GebrGeoXmlProgramStatus status, GtkTreeIter
 void flow_edition_status_changed(guint status);
 
 /**
- * Update flow edition interface with information of the current selected server.
- */
-void flow_edition_on_server_changed(void);
-
-/**
  * flow_edition_select_server:
  * @flow: a flow with a server
  * @model: the model where @flow's server will be searched
@@ -184,5 +178,10 @@ void gebr_flow_edition_select_queue(GebrFlowEdition *self);
 
 void gebr_flow_edition_update_server_and_queue(GebrFlowEdition *self);
 
+const gchar *gebr_flow_edition_get_selected_queue(GebrFlowEdition *fe);
+
+const gchar *gebr_flow_edition_get_selected_server(GebrFlowEdition *fe);
+
 G_END_DECLS
-#endif				//__UI_FLOW_COMPONENT_H
+
+#endif /* __GEBR_FLOW_EDITION_H__ */

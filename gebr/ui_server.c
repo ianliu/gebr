@@ -443,11 +443,6 @@ static void on_add_clicked(GtkButton * button, struct ui_server_list *ui_server_
 	g_free(data);
 }
 
-static void on_combo_changed (gpointer user_data)
-{
-	gtk_tree_model_filter_refilter (GTK_TREE_MODEL_FILTER (gebr.ui_server_list->common.filter));
-}
-
 /*
  * Section: Public
  * Public functions.
@@ -603,14 +598,8 @@ struct ui_server_list *server_list_setup_ui(void)
 								G_TYPE_BOOLEAN,
 								G_TYPE_BOOLEAN);
 
-#if 0
-	ui_server_list->common.combo = _ui_server_create_tag_combo_box (ui_server_list);
-	g_signal_connect(ui_server_list->common.combo, "changed", G_CALLBACK(on_combo_changed), NULL);
-#endif
-
 	align = gtk_alignment_new (0, 0, 1, 1);
 	gtk_alignment_set_padding (GTK_ALIGNMENT (align), 0, 0, 10, 0);
-//	gtk_container_add (GTK_CONTAINER (align), ui_server_list->common.combo);
 
 	frame = gtk_frame_new (_("<b>Filter by group</b>"));
 	gtk_container_set_border_width (GTK_CONTAINER (frame), 5);

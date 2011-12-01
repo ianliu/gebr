@@ -23,49 +23,13 @@
 #include "ui_flow_browse.h"
 #include "document.h"
 
-/* Private methods {{{1 */
-/*
- * Gets the selected queue. Returns %TRUE if no queue was selected, %FALSE
- * otherwise.
- */
-static gchar *
-get_selected_queue(void)
-{
-	GtkTreeIter queue_iter;
-
-	if (!gtk_combo_box_get_active_iter(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox), &queue_iter))
-		return g_strdup("");
-	else {
-		GebrJob *job;
-		GtkTreeModel *model = gtk_combo_box_get_model(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox));
-		gtk_tree_model_get(model, &queue_iter, 0, &job, -1);
-		return g_strdup(job ? gebr_job_get_id(job) : "");
-	}
-}
-
-static const gchar *
-get_selected_server(void)
-{
-	GtkTreeIter iter;
-	GtkComboBox *combo = GTK_COMBO_BOX(gebr.ui_flow_edition->server_combobox);
-	GtkTreeModel *model = gtk_combo_box_get_model(combo);
-
-	if (!gtk_combo_box_get_active_iter(combo, &iter))
-		return "";
-
-	GebrDaemonServer *daemon;
-	gtk_tree_model_get(model, &iter, 0, &daemon, -1);
-	return gebr_daemon_server_get_address(daemon);
-}
-
-/* Public methods {{{1 */
 void
 gebr_ui_flow_run(void)
 {
 	if (!flow_browse_get_selected(NULL, TRUE))
 		return;
 
-	gchar *parent_rid = get_selected_queue();
+	const gchar *parent_rid = gebr_flow_edition_get_selected_queue(gebr.ui_flow_edition);
 	gchar *speed = g_strdup_printf("%d", gebr_interface_get_execution_speed());
 	gchar *nice = g_strdup_printf("%d", gebr_interface_get_niceness());
 
@@ -79,8 +43,8 @@ gebr_ui_flow_run(void)
 	gebr_geoxml_document_to_string(GEBR_GEOXML_DOCUMENT(gebr.flow), &xml);
 	GebrCommJsonContent *content = gebr_comm_json_content_new_from_string(xml);
 	gchar *url = g_strdup_printf("/run?address=%s;parent_rid=%s;speed=%s;nice=%s;group=%s;host=%s",
-				     get_selected_server(), parent_rid, speed, nice, group,
-				     g_get_host_name());
+				     gebr_flow_edition_get_selected_server(gebr.ui_flow_edition),
+				     parent_rid, speed, nice, group, g_get_host_name());
 
 	GebrCommServer *server = gebr_maestro_server_get_server(gebr.ui_server_list->maestro);
 	gebr_comm_protocol_socket_send_request(server->socket,
@@ -90,7 +54,6 @@ gebr_ui_flow_run(void)
 
 	gebr_interface_change_tab(NOTEBOOK_PAGE_JOB_CONTROL);
 
-	g_free(parent_rid);
 	g_free(speed);
 	g_free(nice);
 	g_free(group);

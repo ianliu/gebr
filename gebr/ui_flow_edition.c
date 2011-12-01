@@ -39,6 +39,11 @@
  * Prototypes
  */
 
+struct _GebrFlowEditionPriv {
+	GtkWidget *server_combobox;
+	GtkWidget *queue_combobox;
+};
+
 static gboolean flow_edition_may_reorder(GtkTreeView *tree_view,
 					 GtkTreeIter *iter,
 					 GtkTreeIter * position,
@@ -62,7 +67,7 @@ static void flow_edition_menu_show_help(void);
 
 static GtkMenu *flow_edition_component_popup_menu(GtkWidget * widget, GebrFlowEdition *ui_flow_edition);
 static GtkMenu *flow_edition_menu_popup_menu(GtkWidget * widget, GebrFlowEdition *ui_flow_edition);
-static void flow_edition_on_combobox_changed(GtkComboBox * combobox);
+static void on_server_combobox_changed(GtkComboBox * combobox);
 
 static gboolean on_flow_sequence_query_tooltip(GtkTreeView * treeview,
 					       gint x,
@@ -126,7 +131,7 @@ menu_search_func(GtkTreeModel *model,
 GebrFlowEdition *
 flow_edition_setup_ui(void)
 {
-	GebrFlowEdition *ui_flow_edition;
+	GebrFlowEdition *fe;
 
 	GtkWidget *hpanel;
 	GtkWidget *frame;
@@ -135,17 +140,17 @@ flow_edition_setup_ui(void)
 	GtkWidget *left_vbox;
 	GtkWidget *scrolled_window;
 	GtkWidget *vbox;
-	GtkWidget *combobox;
 	GtkTreeViewColumn *col;
 	GtkCellRenderer *renderer;
 
 	/* alloc */
-	ui_flow_edition = g_new(GebrFlowEdition, 1);
+	fe = g_new(GebrFlowEdition, 1);
+	fe->priv = g_new0(GebrFlowEditionPriv, 1);
 
-	/* Create flow edit ui_flow_edition->widget */
-	ui_flow_edition->widget = gtk_vbox_new(FALSE, 0);
+	/* Create flow edit fe->widget */
+	fe->widget = gtk_vbox_new(FALSE, 0);
 	hpanel = gtk_hpaned_new();
-	gtk_container_add(GTK_CONTAINER(ui_flow_edition->widget), hpanel);
+	gtk_container_add(GTK_CONTAINER(fe->widget), hpanel);
 
 	/*
 	 * Left side: flow components
@@ -154,26 +159,33 @@ flow_edition_setup_ui(void)
 	gtk_paned_pack1(GTK_PANED(hpanel), left_vbox, FALSE, FALSE);
 	gtk_widget_set_size_request(left_vbox, 150, -1);
 
-	ui_flow_edition->server_combobox = combobox = gtk_combo_box_new ();
-	g_debug("Queue combo box created");
-	ui_flow_edition->queue_combobox = gtk_combo_box_new ();
-	g_signal_connect (ui_flow_edition->queue_combobox, "changed",
-			  G_CALLBACK (on_queue_combobox_changed), combobox);
-
+	/*
+	 * Creates the QUEUE combobox
+	 */
+	fe->priv->queue_combobox = gtk_combo_box_new();
+	g_signal_connect(fe->priv->queue_combobox, "changed",
+			 G_CALLBACK(on_queue_combobox_changed), fe);
 	renderer = gtk_cell_renderer_text_new();
-	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(ui_flow_edition->queue_combobox), renderer, TRUE);
-	gtk_cell_layout_set_cell_data_func(GTK_CELL_LAYOUT(ui_flow_edition->queue_combobox), renderer,
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(fe->priv->queue_combobox), renderer, TRUE);
+	gtk_cell_layout_set_cell_data_func(GTK_CELL_LAYOUT(fe->priv->queue_combobox), renderer,
 	                                   on_queue_set_text, NULL, NULL);
-	gtk_widget_show(ui_flow_edition->queue_combobox);
+	gtk_widget_show(fe->priv->queue_combobox);
 
+	/*
+	 * Creates the SERVER combobox
+	 */
+	fe->priv->server_combobox = gtk_combo_box_new();
+	g_signal_connect(fe->priv->server_combobox, "changed",
+			 G_CALLBACK(on_server_combobox_changed), fe);
 	renderer = gtk_cell_renderer_pixbuf_new();
 	g_object_set(renderer, "stock-size", GTK_ICON_SIZE_MENU, NULL);
-	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(combobox), renderer, FALSE);
-	gtk_cell_layout_set_cell_data_func (GTK_CELL_LAYOUT (combobox), renderer, on_server_disconnected_set_row_insensitive, NULL, NULL);
-
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(fe->priv->server_combobox), renderer, FALSE);
+	gtk_cell_layout_set_cell_data_func(GTK_CELL_LAYOUT(fe->priv->server_combobox), renderer,
+					   on_server_disconnected_set_row_insensitive, NULL, NULL);
 	renderer = gtk_cell_renderer_text_new();
-	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(combobox), renderer, TRUE);
-	gtk_cell_layout_set_cell_data_func (GTK_CELL_LAYOUT (combobox), renderer, on_server_disconnected_set_row_insensitive, NULL, NULL);
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(fe->priv->server_combobox), renderer, TRUE);
+	gtk_cell_layout_set_cell_data_func(GTK_CELL_LAYOUT(fe->priv->server_combobox), renderer,
+					   on_server_disconnected_set_row_insensitive, NULL, NULL);
 
 	frame = gtk_frame_new(NULL);
 	alignment = gtk_alignment_new(0.5, 0.5, 1, 1);
@@ -181,16 +193,15 @@ flow_edition_setup_ui(void)
 	gtk_alignment_set_padding(GTK_ALIGNMENT(alignment), 0, 4, 5, 5);
 	gtk_frame_set_label_widget(GTK_FRAME(frame), label);
 	gtk_container_add(GTK_CONTAINER(frame), alignment);
-	gtk_container_add(GTK_CONTAINER(alignment), combobox);
+	gtk_container_add(GTK_CONTAINER(alignment), fe->priv->server_combobox);
 	gtk_box_pack_start(GTK_BOX(left_vbox), frame, FALSE, TRUE, 0);
-	g_signal_connect(combobox, "changed", G_CALLBACK(flow_edition_on_combobox_changed), NULL);
 
 	frame = gtk_frame_new(NULL);
 	alignment = gtk_alignment_new(0.5, 0.5, 1, 1);
 	label = gtk_label_new_with_mnemonic(_("Queue"));
 	gtk_alignment_set_padding(GTK_ALIGNMENT(alignment), 0, 4, 5, 5);
-	ui_flow_edition->queue_bin = GTK_BIN(alignment);
-	gtk_container_add(GTK_CONTAINER(ui_flow_edition->queue_bin), ui_flow_edition->queue_combobox);
+	fe->queue_bin = GTK_BIN(alignment);
+	gtk_container_add(GTK_CONTAINER(fe->queue_bin), fe->priv->queue_combobox);
 	gtk_frame_set_label_widget(GTK_FRAME(frame), label);
 	gtk_container_add(GTK_CONTAINER(frame), alignment);
 	gtk_box_pack_start(GTK_BOX(left_vbox), frame, FALSE, TRUE, 0);
@@ -205,7 +216,7 @@ flow_edition_setup_ui(void)
 				       GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 	gtk_box_pack_start(GTK_BOX(vbox), scrolled_window, TRUE, TRUE, 0);
 
-	ui_flow_edition->fseq_store = gtk_list_store_new(FSEQ_N_COLUMN,
+	fe->fseq_store = gtk_list_store_new(FSEQ_N_COLUMN,
 							 G_TYPE_STRING,
 							 G_TYPE_STRING,
 							 G_TYPE_POINTER,
@@ -214,29 +225,29 @@ flow_edition_setup_ui(void)
 							 G_TYPE_BOOLEAN,
 							 G_TYPE_STRING,
 							 G_TYPE_BOOLEAN);
-	ui_flow_edition->fseq_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_flow_edition->fseq_store));
-	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_flow_edition->fseq_view)),
+	fe->fseq_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(fe->fseq_store));
+	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(fe->fseq_view)),
 				    GTK_SELECTION_MULTIPLE);
-	gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(ui_flow_edition->fseq_view),
+	gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(fe->fseq_view),
 						  (GebrGuiGtkPopupCallback) flow_edition_component_popup_menu,
-						  ui_flow_edition);
-	gebr_gui_gtk_tree_view_set_reorder_callback(GTK_TREE_VIEW(ui_flow_edition->fseq_view),
+						  fe);
+	gebr_gui_gtk_tree_view_set_reorder_callback(GTK_TREE_VIEW(fe->fseq_view),
 						    (GebrGuiGtkTreeViewReorderCallback) flow_edition_reorder,
 						    (GebrGuiGtkTreeViewReorderCallback) flow_edition_may_reorder,
-						    ui_flow_edition);
-	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(ui_flow_edition->fseq_view), FALSE);
+						    fe);
+	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(fe->fseq_view), FALSE);
 
 	renderer = gtk_cell_renderer_pixbuf_new();
 	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(ui_flow_edition->fseq_view), col);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(fe->fseq_view), col);
 	gtk_tree_view_column_add_attribute(col, renderer, "stock-id", FSEQ_ICON_COLUMN);
 
-	g_object_set(G_OBJECT(ui_flow_edition->fseq_view), "has-tooltip", TRUE, NULL);
-	g_signal_connect(G_OBJECT(ui_flow_edition->fseq_view), "query-tooltip", G_CALLBACK(on_flow_sequence_query_tooltip), ui_flow_edition);
+	g_object_set(G_OBJECT(fe->fseq_view), "has-tooltip", TRUE, NULL);
+	g_signal_connect(G_OBJECT(fe->fseq_view), "query-tooltip", G_CALLBACK(on_flow_sequence_query_tooltip), fe);
 
-	ui_flow_edition->text_renderer = renderer = gtk_cell_renderer_text_new();
+	fe->text_renderer = renderer = gtk_cell_renderer_text_new();
 	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(ui_flow_edition->fseq_view), col);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(fe->fseq_view), col);
 	gtk_tree_view_column_add_attribute(col, renderer, "markup", FSEQ_TITLE_COLUMN);
 	gtk_tree_view_column_add_attribute(col, renderer, "editable", FSEQ_EDITABLE);
 	gtk_tree_view_column_add_attribute(col, renderer, "ellipsize", FSEQ_ELLIPSIZE);
@@ -247,16 +258,16 @@ flow_edition_setup_ui(void)
 	g_signal_connect(renderer, "editing-canceled", G_CALLBACK(flow_edition_component_editing_canceled), NULL);
 
 	/* Space key pressed on flow component changes its configured status */
-	g_signal_connect(ui_flow_edition->fseq_view, "key-press-event",
-			 G_CALLBACK(flow_edition_component_key_pressed), ui_flow_edition);
+	g_signal_connect(fe->fseq_view, "key-press-event",
+			 G_CALLBACK(flow_edition_component_key_pressed), fe);
 
 	/* Double click on flow component open its parameter window */
-	g_signal_connect(ui_flow_edition->fseq_view, "row-activated",
-			 G_CALLBACK(flow_edition_component_activated), ui_flow_edition);
-	g_signal_connect(gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_flow_edition->fseq_view)), "changed",
-			 G_CALLBACK(flow_edition_component_selected), ui_flow_edition);
+	g_signal_connect(fe->fseq_view, "row-activated",
+			 G_CALLBACK(flow_edition_component_activated), fe);
+	g_signal_connect(gtk_tree_view_get_selection(GTK_TREE_VIEW(fe->fseq_view)), "changed",
+			 G_CALLBACK(flow_edition_component_selected), fe);
 
-	gtk_container_add(GTK_CONTAINER(scrolled_window), ui_flow_edition->fseq_view);
+	gtk_container_add(GTK_CONTAINER(scrolled_window), fe->fseq_view);
 	gtk_widget_set_size_request(GTK_WIDGET(scrolled_window), 180, 30);
 
 	/*
@@ -274,36 +285,36 @@ flow_edition_setup_ui(void)
 				       GTK_POLICY_AUTOMATIC);
 	gtk_container_add(GTK_CONTAINER(vbox), scrolled_window);
 
-	ui_flow_edition->menu_store = gtk_tree_store_new(MENU_N_COLUMN, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
-	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(ui_flow_edition->menu_store), MENU_TITLE_COLUMN, GTK_SORT_ASCENDING);
-	ui_flow_edition->menu_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_flow_edition->menu_store));
-	gtk_container_add(GTK_CONTAINER(scrolled_window), ui_flow_edition->menu_view);
-	gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(ui_flow_edition->menu_view),
+	fe->menu_store = gtk_tree_store_new(MENU_N_COLUMN, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
+	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(fe->menu_store), MENU_TITLE_COLUMN, GTK_SORT_ASCENDING);
+	fe->menu_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(fe->menu_store));
+	gtk_container_add(GTK_CONTAINER(scrolled_window), fe->menu_view);
+	gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(fe->menu_view),
 						  (GebrGuiGtkPopupCallback) flow_edition_menu_popup_menu,
-						  ui_flow_edition);
-	g_signal_connect(ui_flow_edition->menu_view, "key-press-event",
-			 G_CALLBACK(flow_edition_component_key_pressed), ui_flow_edition);
-	g_signal_connect(GTK_OBJECT(ui_flow_edition->menu_view), "row-activated",
-			 G_CALLBACK(flow_edition_menu_add), ui_flow_edition);
-	gebr_gui_gtk_tree_view_fancy_search(GTK_TREE_VIEW(ui_flow_edition->menu_view), MENU_TITLE_COLUMN);
-	gtk_tree_view_set_search_equal_func(GTK_TREE_VIEW(ui_flow_edition->menu_view),
+						  fe);
+	g_signal_connect(fe->menu_view, "key-press-event",
+			 G_CALLBACK(flow_edition_component_key_pressed), fe);
+	g_signal_connect(GTK_OBJECT(fe->menu_view), "row-activated",
+			 G_CALLBACK(flow_edition_menu_add), fe);
+	gebr_gui_gtk_tree_view_fancy_search(GTK_TREE_VIEW(fe->menu_view), MENU_TITLE_COLUMN);
+	gtk_tree_view_set_search_equal_func(GTK_TREE_VIEW(fe->menu_view),
 					    menu_search_func, NULL, NULL);
 
 	renderer = gtk_cell_renderer_text_new();
 	col = gtk_tree_view_column_new_with_attributes(_("Title"), renderer, NULL);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(ui_flow_edition->menu_view), col);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(fe->menu_view), col);
 	gtk_tree_view_column_add_attribute(col, renderer, "markup", MENU_TITLE_COLUMN);
 	gtk_tree_view_column_set_sort_column_id(col, MENU_TITLE_COLUMN);
 	gtk_tree_view_column_set_sort_indicator(col, TRUE);
 
 	renderer = gtk_cell_renderer_text_new();
 	col = gtk_tree_view_column_new_with_attributes(_("Description"), renderer, NULL);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(ui_flow_edition->menu_view), col);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(fe->menu_view), col);
 	gtk_tree_view_column_add_attribute(col, renderer, "text", MENU_DESC_COLUMN);
 
 	gtk_paned_set_position(GTK_PANED(hpanel), 150);
 
-	return ui_flow_edition;
+	return fe;
 }
 
 void flow_edition_load_components(void)
@@ -810,11 +821,6 @@ void flow_edition_status_changed(guint status)
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
 }
 
-void flow_edition_on_server_changed(void)
-{
-	flow_edition_on_combobox_changed(GTK_COMBO_BOX(gebr.ui_flow_edition->server_combobox));
-}
-
 /**
  * \internal
  * Return TRUE if there is a selected menu and put it into _iter_
@@ -1252,7 +1258,7 @@ static GtkMenu *flow_edition_menu_popup_menu(GtkWidget * widget, GebrFlowEdition
 /**
  * \internal
  */
-static void flow_edition_on_combobox_changed(GtkComboBox * combobox)
+static void on_server_combobox_changed(GtkComboBox * combobox)
 {
 	GtkTreeIter iter;
 	GtkTreeIter flow_iter;
@@ -1270,7 +1276,7 @@ static void flow_edition_on_combobox_changed(GtkComboBox * combobox)
 	gebr.ui_flow_edition->autochoose = gebr_daemon_server_is_autochoose(daemon);
 
 	const gchar *addr = gebr_daemon_server_get_address(daemon);
-	gebr_geoxml_flow_server_set_address (gebr.flow, addr);
+	gebr_geoxml_flow_server_set_address(gebr.flow, addr);
 
 	flow_edition_set_io();
 	flow_browse_info_update();
@@ -1375,7 +1381,6 @@ on_queue_set_text(GtkCellLayout   *cell_layout,
 	GebrJob *job;
 	gchar *name_queue;
 
-	g_debug("------ Model is %p", tree_model);
 	gtk_tree_model_get(tree_model, iter, 0, &job, -1);
 
 	if (!job)
@@ -1638,7 +1643,7 @@ gebr_flow_edition_show(GebrFlowEdition *self)
 		return;
 
 	GtkTreeIter iter;
-	GtkComboBox *cb = GTK_COMBO_BOX(self->server_combobox);
+	GtkComboBox *cb = GTK_COMBO_BOX(self->priv->server_combobox);
 	GtkTreeModel *model = gtk_combo_box_get_model(cb);
 
 	flow_edition_find_flow_server(gebr.flow, model, &iter);
@@ -1654,8 +1659,8 @@ gebr_flow_edition_show(GebrFlowEdition *self)
 void
 gebr_flow_edition_select_queue(GebrFlowEdition *self)
 {
-	if (gtk_combo_box_get_active(GTK_COMBO_BOX(self->queue_combobox)) == -1)
-		gtk_combo_box_set_active(GTK_COMBO_BOX(self->queue_combobox), 0);
+	if (gtk_combo_box_get_active(GTK_COMBO_BOX(self->priv->queue_combobox)) == -1)
+		gtk_combo_box_set_active(GTK_COMBO_BOX(self->priv->queue_combobox), 0);
 
 	if (gebr.config.niceness == 0)
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(self->nice_button_high), TRUE);
@@ -1677,13 +1682,42 @@ gebr_flow_edition_update_server_and_queue(GebrFlowEdition *fe)
 	server_model = gebr_maestro_server_get_model(maestro, TRUE, group);
 	queue_model = gebr_maestro_server_get_queues_model(maestro, group);
 
-	g_debug("------ Updated queue combobox %p", queue_model);
-
-	gtk_combo_box_set_model(GTK_COMBO_BOX(fe->queue_combobox), queue_model);
-	gtk_combo_box_set_model(GTK_COMBO_BOX(fe->server_combobox), server_model);
+	gtk_combo_box_set_model(GTK_COMBO_BOX(fe->priv->queue_combobox), queue_model);
+	gtk_combo_box_set_model(GTK_COMBO_BOX(fe->priv->server_combobox), server_model);
 
 	g_object_unref(server_model);
 	g_object_unref(queue_model);
 	g_free(addr);
 	g_free(group);
+}
+
+const gchar *
+gebr_flow_edition_get_selected_queue(GebrFlowEdition *fe)
+{
+	GtkTreeIter iter;
+	GtkComboBox *combo = GTK_COMBO_BOX(fe->priv->queue_combobox);
+
+	if (!gtk_combo_box_get_active_iter(combo, &iter))
+		return "";
+	else {
+		GebrJob *job;
+		GtkTreeModel *model = gtk_combo_box_get_model(combo);
+		gtk_tree_model_get(model, &iter, 0, &job, -1);
+		return job ? gebr_job_get_id(job) : "";
+	}
+}
+
+const gchar *
+gebr_flow_edition_get_selected_server(GebrFlowEdition *fe)
+{
+	GtkTreeIter iter;
+	GtkComboBox *combo = GTK_COMBO_BOX(fe->priv->server_combobox);
+	GtkTreeModel *model = gtk_combo_box_get_model(combo);
+
+	if (!gtk_combo_box_get_active_iter(combo, &iter))
+		return "";
+
+	GebrDaemonServer *daemon;
+	gtk_tree_model_get(model, &iter, 0, &daemon, -1);
+	return gebr_daemon_server_get_address(daemon);
 }
