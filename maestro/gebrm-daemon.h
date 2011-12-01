@@ -50,6 +50,8 @@ struct _GebrmDaemonClass {
 
 	void (*task_define) (GebrmDaemon *daemon,
 			     GObject *task);
+
+	void (*password_request) (GebrmDaemon *daemon);
 };
 
 GType gebrm_daemon_get_type(void) G_GNUC_CONST;
@@ -94,10 +96,17 @@ gboolean gebrm_daemon_has_group(GebrmDaemon *daemon,
 
 /**
  * gebrm_daemon_connect:
+ * @daemon: The daemon to connect.
+ * @pass:   The password to connecto to @daemon.
+ * @client: The client that made this requisition.
  *
- * Connects to this @daemon.
+ * Connects to this @daemon sending @pass as password. If @pass is %NULL and
+ * @daemon needs a password, then @client will be asked for a password.
+ * Otherwise @client and @pass are not used.
  */
-void gebrm_daemon_connect(GebrmDaemon *daemon);
+void gebrm_daemon_connect(GebrmDaemon            *daemon,
+			  const gchar            *pass,
+			  GebrCommProtocolSocket *client);
 
 void gebrm_daemon_disconnect(GebrmDaemon *daemon);
 

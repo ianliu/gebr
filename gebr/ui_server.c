@@ -105,7 +105,6 @@ static GtkMenu *server_common_popup_menu(GtkWidget * widget, struct ui_server_li
 {
 	GList *rows;
 	GtkWidget *menu;
-	GtkTreeIter iter;
 	GtkTreeModel *model;
 	GtkTreeSelection *selection;
 
@@ -344,7 +343,7 @@ static void server_common_actions(GtkDialog * dialog, gint arg1, struct ui_serve
 		gebr_gui_gtk_tree_model_foreach(iter, model) {
 			GebrDaemonServer *daemon;
 			gtk_tree_model_get(model, &iter, 0, &daemon, -1);
-			if(gebr_daemon_server_get_state(daemon) == SERVER_STATE_CONNECT)
+			if (gebr_daemon_server_get_state(daemon) == SERVER_STATE_CONNECT)
 				continue;
 			gebr_connectable_connect(GEBR_CONNECTABLE(sl->maestro), gebr_daemon_server_get_address(daemon));
 		}
@@ -391,11 +390,10 @@ static void
 server_list_add(struct ui_server_list *ui_server_list,
 		const gchar * address)
 {
-	GebrCommHttpMsg *msg;
-	gchar *url = g_strconcat("/server/", address, NULL);
+	gchar *url = g_strdup_printf("/server?address=%s;pass=", address);
 	GebrCommServer *server = gebr_maestro_server_get_server(ui_server_list->maestro);
-	msg = gebr_comm_protocol_socket_send_request(server->socket,
-						     GEBR_COMM_HTTP_METHOD_PUT, url, NULL);
+	gebr_comm_protocol_socket_send_request(server->socket,
+					       GEBR_COMM_HTTP_METHOD_PUT, url, NULL);
 	g_free(url);
 
 	gtk_tree_model_filter_refilter (GTK_TREE_MODEL_FILTER (gebr.ui_project_line->servers_filter));
@@ -495,6 +493,37 @@ on_server_group_changed(GebrMaestroServer *maestro,
 	ui_server_update_groups_model(sl);
 }
 
+static const gchar *
+on_password_request(GebrMaestroServer *maestro,
+		    const gchar *address)
+{
+	gdk_threads_enter();
+	GtkWidget *dialog = gtk_dialog_new_with_buttons(_("Enter password"),
+							GTK_WINDOW(gebr.window),
+							(GtkDialogFlags)(GTK_DIALOG_MODAL |
+									 GTK_DIALOG_DESTROY_WITH_PARENT),
+							GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OK,
+							GTK_RESPONSE_OK, NULL);
+	gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
+
+	gchar *message = g_strdup_printf(_("Server %s is asking for password. Enter it below."), address);
+	GtkWidget *label = gtk_label_new(message);
+	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), label, FALSE, TRUE, 0);
+
+	GtkWidget *entry = gtk_entry_new();
+	gtk_entry_set_activates_default(GTK_ENTRY(entry), TRUE);
+	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), entry, FALSE, TRUE, 0);
+	gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
+
+	gtk_widget_show_all(dialog);
+	gboolean confirmed = gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_OK;
+	gchar *password = confirmed ? g_strdup(gtk_entry_get_text(GTK_ENTRY(entry))) : NULL;
+
+	gtk_widget_destroy(dialog);
+	gdk_threads_leave();
+	return password;
+}
+
 void
 gebr_ui_server_list_connect(struct ui_server_list *sl,
 			    const gchar *addr)
@@ -508,6 +537,8 @@ gebr_ui_server_list_connect(struct ui_server_list *sl,
 			 G_CALLBACK(on_job_define), sl);
 	g_signal_connect(sl->maestro, "group-changed",
 			 G_CALLBACK(on_server_group_changed), sl);
+	g_signal_connect(sl->maestro, "password-request",
+			 G_CALLBACK(on_password_request), sl);
 
 	gebr_maestro_server_connect(sl->maestro);
 

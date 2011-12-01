@@ -78,6 +78,7 @@ static gboolean gebrm_config_update_tags_on_server(GebrmApp *app,
 
 static GebrmDaemon *gebrm_add_server_to_list(GebrmApp *app,
 					     const gchar *addr,
+					     const gchar *pass,
 					     const gchar *tags);
 
 static gboolean gebrm_update_tags_on_list_of_servers(GebrmApp *app,
@@ -274,14 +275,16 @@ gebrm_app_singleton_get(void)
 static GebrmDaemon *
 gebrm_add_server_to_list(GebrmApp *app,
 			 const gchar *address,
+			 const gchar *pass,
 			 const gchar *tags)
 {
 	GebrmDaemon *daemon;
 
 	for (GList *i = app->priv->daemons; i; i = i->next) {
 		daemon = i->data;
-		if (g_strcmp0(address, gebrm_daemon_get_address(daemon)) == 0)
-			return NULL;
+		if (g_strcmp0(address, gebrm_daemon_get_address(daemon)) == 0) {
+			return daemon;
+		}
 	}
 
 	daemon = gebrm_daemon_new(address);
@@ -299,7 +302,6 @@ gebrm_add_server_to_list(GebrmApp *app,
 	}
 
 	app->priv->daemons = g_list_prepend(app->priv->daemons, daemon);
-	gebrm_daemon_connect(daemon);
 
 	return daemon;
 }
@@ -431,11 +433,16 @@ on_client_request(GebrCommProtocolSocket *socket,
 	g_debug("URL: %s", request->url->str);
 
 	if (request->method == GEBR_COMM_HTTP_METHOD_PUT) {
-		if (g_str_has_prefix(request->url->str, "/server/")) {
-			gchar *addr = request->url->str + strlen("/server/");
-			GebrmDaemon *d = gebrm_add_server_to_list(app, addr, NULL);
-			g_debug("on %s, inserting '%s'", __func__, gebrm_daemon_get_address(d));
+		if (g_str_has_prefix(request->url->str, "/server")) {
+			gchar *tmp = strchr(request->url->str, '?') + 1;
+			gchar **params = g_strsplit(tmp, ";", -1);
+			gchar *addr = strchr(params[0], '=') + 1;
+			gchar *pass = strchr(params[1], '=') + 1;
+
+			GebrmDaemon *d = gebrm_add_server_to_list(app, addr, pass, NULL);
+			gebrm_daemon_connect(d, pass, socket);
 			gebrm_config_save_server(d);
+			g_strfreev(params);
 		}
 		else if (g_str_has_prefix(request->url->str, "/disconnect/")) {
 			const gchar *addr = request->url->str + strlen("/disconnect/");
@@ -556,13 +563,8 @@ on_client_request(GebrCommProtocolSocket *socket,
 				send_job_def_to_clients(app, job);
 			}
 
+			g_strfreev(params);
 			g_free(title);
-	/*	if (g_str_has_prefix(request->url->str, "/server/")) {
-			gchar *addr = request->url->str + strlen("/server/");
-			GebrmDaemon *d = gebrm_add_server_to_list(app, addr, NULL);
-			g_debug("on %s, inserting '%s'", __func__, gebrm_daemon_get_address(d));
-			gebrm_config_save_server(d);
-		}*/
 		} else if (g_str_has_prefix(request->url->str, "/server-tags")) {
 			gchar *tmp = strchr(request->url->str, '?') + 1;
 			gchar **params = g_strsplit(tmp, ";", -1);
@@ -579,6 +581,7 @@ on_client_request(GebrCommProtocolSocket *socket,
 								      server, tags);
 				gebrm_update_tags_on_list_of_servers(app, server, tags);
 			}
+			g_strfreev(params);
 		}
 	}
 }
@@ -696,7 +699,8 @@ gebrm_config_load_servers(GebrmApp *app, gchar *path)
 		groups = g_key_file_get_groups(servers, NULL);
 		for (int i = 0; groups && groups[i]; i++) {
 			gchar *tags = g_key_file_get_string(servers, groups[i], "tags", NULL);
-			gebrm_add_server_to_list(app, groups[i], tags);
+			GebrmDaemon *daemon = gebrm_add_server_to_list(app, groups[i], NULL, tags);
+			gebrm_daemon_connect(daemon, NULL, NULL);
 		}
 		g_key_file_free (servers);
 		g_strfreev(groups);

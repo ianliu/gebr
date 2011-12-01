@@ -21,6 +21,7 @@
 
 #include "gebr-maestro-server.h"
 
+#include "gebr-marshal.h"
 #include <glib/gi18n.h>
 #include <libgebr/gui/gui.h>
 #include <stdlib.h>
@@ -39,6 +40,7 @@ struct _GebrMaestroServerPriv {
 enum {
 	JOB_DEFINE,
 	GROUP_CHANGED,
+	PASSWORD_REQUEST,
 	LAST_SIGNAL
 };
 
@@ -420,6 +422,26 @@ parse_messages(GebrCommServer *comm_server,
 			g_strfreev(tagsv);
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}
+		else if (message->hash == gebr_comm_protocol_defs.pss_def.code_hash) {
+			GList *arguments;
+
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 1)) == NULL)
+				goto err;
+
+			GString *addr = arguments->data;
+			gchar *password;
+			g_signal_emit(maestro, signals[PASSWORD_REQUEST], 0, addr->str, &password);
+
+			if (password) {
+				g_debug("Sending password %s", password);
+				gchar *url = g_strdup_printf("/server?address=%s;pass=%s", addr->str, password);
+				gebr_comm_protocol_socket_send_request(comm_server->socket,
+								       GEBR_COMM_HTTP_METHOD_PUT, url, NULL);
+				g_free(url);
+			}
+
+			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
+		}
 
 		gebr_comm_message_free(message);
 		comm_server->socket->protocol->messages = g_list_delete_link(comm_server->socket->protocol->messages, link);
@@ -511,6 +533,15 @@ gebr_maestro_server_class_init(GebrMaestroServerClass *klass)
 			     g_cclosure_marshal_VOID__VOID,
 			     G_TYPE_NONE, 0);
 
+	signals[PASSWORD_REQUEST] =
+		g_signal_new("password-request",
+			     G_OBJECT_CLASS_TYPE(object_class),
+			     G_SIGNAL_RUN_LAST,
+			     G_STRUCT_OFFSET(GebrMaestroServerClass, password_request),
+			     NULL, NULL,
+			     gebr_cclosure_marshal_STRING__STRING,
+			     G_TYPE_STRING, 1, G_TYPE_STRING);
+
 	g_object_class_install_property(object_class,
 					PROP_ADDRESS,
 					g_param_spec_string("address",
@@ -549,7 +580,7 @@ gebr_maestro_server_connectable_connect(GebrConnectable *connectable,
 					const gchar *address)
 {
 	GebrMaestroServer *maestro = GEBR_MAESTRO_SERVER(connectable);
-	gchar *url = g_strconcat("/server/", address, NULL);
+	gchar *url = g_strdup_printf("/server?address=%s;pass=", address);
 	gebr_comm_protocol_socket_send_request(maestro->priv->server->socket,
 					       GEBR_COMM_HTTP_METHOD_PUT,
 					       url, NULL);

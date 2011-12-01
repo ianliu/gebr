@@ -27,6 +27,7 @@
 struct _GebrmDaemonPriv {
 	GTree *tags;
 	GebrCommServer *server;
+	GebrCommProtocolSocket *client;
 };
 
 enum {
@@ -69,7 +70,12 @@ gebrm_server_op_ssh_login(GebrCommServer *server,
 			  const gchar *message,
 			  gpointer user_data)
 {
-	g_debug("[DAEMON] %s: Login %s %s", __func__, title, message);
+	GebrmDaemon *daemon = user_data;
+
+	if (daemon->priv->client)
+		gebr_comm_protocol_socket_oldmsg_send(daemon->priv->client, FALSE,
+						      gebr_comm_protocol_defs.pss_def, 1,
+						      server->address->str);
 	return NULL;
 }
 
@@ -444,8 +450,16 @@ gebrm_daemon_has_group(GebrmDaemon *daemon,
 }
 
 void
-gebrm_daemon_connect(GebrmDaemon *daemon)
+gebrm_daemon_connect(GebrmDaemon *daemon,
+		     const gchar *pass,
+		     GebrCommProtocolSocket *client)
 {
+	if (pass && *pass) {
+		g_debug("Password is %s", pass);
+		gebr_comm_server_set_password(daemon->priv->server, pass);
+		g_debug("-----------------");
+	}
+	daemon->priv->client = client;
 	gebr_comm_server_connect(daemon->priv->server, FALSE);
 }
 

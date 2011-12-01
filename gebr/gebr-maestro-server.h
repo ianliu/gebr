@@ -46,6 +46,9 @@ struct _GebrMaestroServerClass {
 			    GebrJob           *job);
 
 	void (*group_changed) (GebrMaestroServer *maestro);
+
+	gchar * (*password_request) (GebrMaestroServer *maestro,
+				     const gchar       *address);
 };
 
 struct _GebrMaestroServer {
