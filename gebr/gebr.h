@@ -96,7 +96,7 @@ struct gebr {
 	GtkWidget *navigation_box_label;
 	struct ui_project_line *ui_project_line;
 	GebrUiFlowBrowse *ui_flow_browse;
-	struct ui_flow_edition *ui_flow_edition;
+	GebrFlowEdition *ui_flow_edition;
 	GebrJobControl *job_control;
 	struct ui_log *ui_log;
 	struct ui_server_list *ui_server_list;

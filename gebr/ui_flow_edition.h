@@ -61,7 +61,7 @@ enum {
 
 /**
  */
-struct ui_flow_edition {
+typedef struct {
 	GtkWidget *widget;
 	GtkWidget *server_combobox;
 	GtkWidget *queue_combobox;
@@ -83,14 +83,14 @@ struct ui_flow_edition {
 	gboolean autochoose;
 	GtkWidget *nice_button_high;
 	GtkWidget *nice_button_low;
-};
+} GebrFlowEdition;
 
 /**
  * Assembly the flow edit ui_flow_edition->widget.
  *
  * @return The structure containing relevant data.
  */
-struct ui_flow_edition *flow_edition_setup_ui(void);
+GebrFlowEdition *flow_edition_setup_ui(void);
 
 /**
  * Load current flow's (gebr.flow) programs.
@@ -176,13 +176,13 @@ void flow_add_program_sequence_to_view(GebrGeoXmlSequence * program,
  */
 void flow_program_check_sensitiveness (void);
 
-void gebr_flow_edition_hide(struct ui_flow_edition *self);
+void gebr_flow_edition_hide(GebrFlowEdition *self);
 
-void gebr_flow_edition_show(struct ui_flow_edition *self);
+void gebr_flow_edition_show(GebrFlowEdition *self);
 
-void gebr_flow_edition_select_queue(struct ui_flow_edition *self);
+void gebr_flow_edition_select_queue(GebrFlowEdition *self);
 
-void gebr_flow_edition_update_server_and_queue(struct ui_flow_edition *self);
+void gebr_flow_edition_update_server_and_queue(GebrFlowEdition *self);
 
 G_END_DECLS
 #endif				//__UI_FLOW_COMPONENT_H
