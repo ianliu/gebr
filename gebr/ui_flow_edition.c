@@ -155,13 +155,14 @@ flow_edition_setup_ui(void)
 	gtk_widget_set_size_request(left_vbox, 150, -1);
 
 	ui_flow_edition->server_combobox = combobox = gtk_combo_box_new ();
+	g_debug("Queue combo box created");
 	ui_flow_edition->queue_combobox = gtk_combo_box_new ();
 	g_signal_connect (ui_flow_edition->queue_combobox, "changed",
 			  G_CALLBACK (on_queue_combobox_changed), combobox);
 
 	renderer = gtk_cell_renderer_text_new();
 
-	gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (ui_flow_edition->queue_combobox), renderer, TRUE);
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT (ui_flow_edition->queue_combobox), renderer, TRUE);
 	gtk_cell_layout_set_cell_data_func(GTK_CELL_LAYOUT (ui_flow_edition->queue_combobox), renderer,
 	                                   on_queue_set_text, NULL, NULL);
 
@@ -1450,33 +1451,29 @@ flow_edition_find_flow_server (GebrGeoXmlFlow *flow,
 	const gchar *addr;
 	gboolean     valid;
 
-	addr = gebr_geoxml_flow_server_get_address (flow);
-/*
-	valid = gtk_tree_model_get_iter_first (model, iter);
+	addr = gebr_geoxml_flow_server_get_address(flow);
+	valid = gtk_tree_model_get_iter_first(model, iter);
 
 	if (g_strcmp0(addr, "") == 0)
 		return valid;
 
-
 	while (valid)
 	{
 		GebrDaemonServer *daemon;
-		gtk_tree_model_get (model, iter, 0, &daemon, -1);
+		gtk_tree_model_get(model, iter, 0, &daemon, -1);
 
-		if(!daemon) {
-			valid = gtk_tree_model_iter_next (model, iter);
+		if (!daemon) {
+			valid = gtk_tree_model_iter_next(model, iter);
 			continue;
 		}
 
-		if (g_strcmp0 (gebr_daemon_server_get_address(daemon), addr) == 0)
+		if (g_strcmp0(gebr_daemon_server_get_address(daemon), addr) == 0)
 			return TRUE;
 
-		valid = gtk_tree_model_iter_next (model, iter);
+		valid = gtk_tree_model_iter_next(model, iter);
 	}
 
-	return gtk_tree_model_get_iter_first (model, iter);
-*/
-	return FALSE;
+	return gtk_tree_model_get_iter_first(model, iter);
 }
 
 void
@@ -1639,13 +1636,13 @@ gebr_flow_edition_show(struct ui_flow_edition *self)
 {
 	if (!gebr.flow)
 		return;
-/*
+
 	GtkTreeIter iter;
 	GtkComboBox *cb = GTK_COMBO_BOX(self->server_combobox);
 	GtkTreeModel *model = gtk_combo_box_get_model(cb);
+
 	flow_edition_find_flow_server(gebr.flow, model, &iter);
 	gtk_combo_box_set_active_iter(cb, &iter);
-*/
 	gebr_flow_edition_select_queue(self);
 
 	if (gebr.config.niceness == 0)
@@ -1672,6 +1669,8 @@ gebr_flow_edition_update_server_and_queue(struct ui_flow_edition *fe)
 	gchar *addr, *group;
 	GtkTreeModel *server_model, *queue_model;
 	GebrMaestroServer *maestro = gebr.ui_server_list->maestro;
+
+	g_debug("Updated queue combobox");
 
 	// FIXME: Use @addr to choose a MaestroServer.
 	gebr_geoxml_line_get_group(gebr.line, &addr, &group);

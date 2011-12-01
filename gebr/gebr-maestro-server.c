@@ -114,15 +114,12 @@ log_message(GebrCommServer *server,
 	    const gchar *message,
 	    gpointer user_data)
 {
-	g_debug("[MAESTRO] LOG_MESSAGE: %s", message);
 }
 
 void
 state_changed(GebrCommServer *comm_server,
 	      gpointer user_data)
 {
-	g_debug("[MAESTRO] STATUS CHANGED");
-
 	GebrMaestroServer *maestro = user_data;
 
 	if (gebr_comm_server_get_state(comm_server))
@@ -134,7 +131,7 @@ ssh_login(GebrCommServer *server,
 	  const gchar *title, const gchar *message,
 	  gpointer user_data)
 {
-	g_debug("[MAESTRO] ssh login");
+	g_debug("[MAESTRO] ssh login: %s", message);
 
 	return g_string_new("");
 }
@@ -163,7 +160,6 @@ process_response(GebrCommServer *server,
 		 GebrCommHttpMsg *response,
 		 gpointer user_data)
 {
-	g_debug("[MAESTRO] response");
 }
 
 static GebrDaemonServer *
@@ -227,7 +223,6 @@ void
 parse_messages(GebrCommServer *comm_server,
 	       gpointer user_data)
 {
-	g_debug("[MAESTRO] parse messages");
 	GList *link;
 	struct gebr_comm_message *message;
 
@@ -236,7 +231,6 @@ parse_messages(GebrCommServer *comm_server,
 	while ((link = g_list_last(comm_server->socket->protocol->messages)) != NULL) {
 		message = (struct gebr_comm_message *)link->data;
 		if (message->hash == gebr_comm_protocol_defs.ssta_def.code_hash) {
-			g_debug("on function state_changed, ssta_def");
 			GList *arguments;
 			GString *addr, *ssta;
 
@@ -246,8 +240,6 @@ parse_messages(GebrCommServer *comm_server,
 
 			addr = g_list_nth_data(arguments, 0);
 			ssta = g_list_nth_data(arguments, 1);
-
-			g_debug("addr: %s, ssta:%s",addr->str, ssta->str);
 
 			GtkTreeIter iter;
 			GebrCommServerState state = gebr_comm_server_state_from_string(ssta->str);
@@ -293,8 +285,6 @@ parse_messages(GebrCommServer *comm_server,
 			GebrJob *job = g_hash_table_lookup(maestro->priv->jobs, id->str);
 			gboolean init = (job == NULL);
 
-			g_debug(">>>>>>>>>>>>>>> On gebr-maestro-server.c, %s, nprocs: %s", __func__, nprocs->str);
-
 			if (!job)
 				job = gebr_job_new_with_id(id->str, parent_id->str);
 
@@ -328,7 +318,6 @@ parse_messages(GebrCommServer *comm_server,
 			update_queues_model(maestro, job);
 
 			g_signal_emit(maestro, signals[JOB_DEFINE], 0, job);
-			g_debug("CREATE JOB %s ON GEBR", title->str);
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}
@@ -344,8 +333,6 @@ parse_messages(GebrCommServer *comm_server,
 			GebrJob *job = g_hash_table_lookup(maestro->priv->jobs, id->str);
 			gebr_job_set_issues(job, issues->str);
 
-			g_debug("ISSUES from %s: %s", id->str, issues->str);
-
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}
 		else if (message->hash == gebr_comm_protocol_defs.cmd_def.code_hash) {
@@ -360,7 +347,6 @@ parse_messages(GebrCommServer *comm_server,
 
 			GebrJob *job = g_hash_table_lookup(maestro->priv->jobs, id->str);
 			gebr_job_set_cmd_line(job, atoi(frac->str) - 1, cmd->str);
-			g_debug("CMDLINE from %s(%s): %s", id->str, frac->str, cmd->str);
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}
@@ -376,7 +362,6 @@ parse_messages(GebrCommServer *comm_server,
 
 			GebrJob *job = g_hash_table_lookup(maestro->priv->jobs, id->str);
 			gebr_job_append_output(job, atoi(frac->str) - 1, output->str);
-			g_debug("OUTPUT from %s: %s", id->str, output->str);
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}
@@ -398,8 +383,6 @@ parse_messages(GebrCommServer *comm_server,
 
 			update_queues_model(maestro, job);
 
-			g_debug("STATUS from %s: %s", id->str, status->str);
-
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}
 		else if (message->hash == gebr_comm_protocol_defs.agrp_def.code_hash) {
@@ -412,8 +395,6 @@ parse_messages(GebrCommServer *comm_server,
 			GString *tags = g_list_nth_data(arguments, 1);
 			gchar **tagsv = g_strsplit(tags->str, ",", -1);
 
-			g_debug("GEBR RECEIVED addr:%s tags:%s", addr->str, tags->str);
-
 			GtkTreeIter iter;
 			GebrDaemonServer *daemon = get_daemon_from_address(maestro, addr->str, &iter);
 			gebr_daemon_server_set_tags(daemon, tagsv);
@@ -425,18 +406,6 @@ parse_messages(GebrCommServer *comm_server,
 			g_signal_emit(maestro, signals[GROUP_CHANGED], 0);
 
 			g_strfreev(tagsv);
-			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
-		}
-		else if (message->hash == gebr_comm_protocol_defs.dgrp_def.code_hash) {
-			GList *arguments;
-
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 1)) == NULL)
-				goto err;
-
-			GString *group = g_list_nth_data(arguments, 0);
-
-			g_debug("TODO: Impelement or remove? %s", group->str);
-
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}
 
