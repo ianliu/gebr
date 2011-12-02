@@ -309,6 +309,7 @@ parse_messages(GebrCommServer *comm_server,
 			gebr_job_set_servers(job, server_list->str);
 			gebr_job_set_submit_date(job, submit_date->str);
 			gebr_job_set_nprocs(job, nprocs->str);
+			gebr_job_set_static_status(job, gebr_comm_job_get_status_from_string(status->str));
 
 			if (init) {
 				/* Creates a job and populates some of its information.
