@@ -1721,6 +1721,7 @@ gebr_job_control_add(GebrJobControl *jc, GebrJob *job)
 	if (tmp) {
 		GtkTreePath *path = gtk_tree_model_get_path(GTK_TREE_MODEL(jc->priv->store), gebr_job_get_iter(tmp));
 		gtk_tree_model_row_changed(GTK_TREE_MODEL(jc->priv->store), path, gebr_job_get_iter(tmp));
+		gebr_job_control_load_details(jc, job);
 		gtk_tree_path_free(path);
 		return;
 	}
