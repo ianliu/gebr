@@ -33,6 +33,8 @@ gebr_ui_flow_run(void)
 	gint speed = gebr_interface_get_execution_speed();
 	gchar *speed_str = g_strdup_printf("%d", speed);
 	gchar *nice = g_strdup_printf("%d", gebr_interface_get_niceness());
+	gchar *hostname = g_get_host_name();
+
 
 	gchar *group;
 	gebr_geoxml_line_get_group(gebr.line, NULL, &group);
@@ -47,17 +49,18 @@ gebr_ui_flow_run(void)
 	GebrCommJsonContent *content = gebr_comm_json_content_new_from_string(xml);
 	gchar *url = g_strdup_printf("/run?address=%s;parent_rid=%s;speed=%s;nice=%s;group=%s;host=%s;temp_id=%s",
 				     gebr_flow_edition_get_selected_server(gebr.ui_flow_edition),
-				     parent_rid, speed_str, nice, group, g_get_host_name(), gebr_job_get_id(job));
+				     parent_rid, speed_str, nice, group, hostname, gebr_job_get_id(job));
 
 	GebrCommServer *server = gebr_maestro_server_get_server(gebr.ui_server_list->maestro);
 	gebr_comm_protocol_socket_send_request(server->socket,
 					       GEBR_COMM_HTTP_METHOD_PUT, url, content);
 
+	gebr_job_set_hostname(job, hostname);
 	gebr_job_set_exec_speed(job, speed);
-	gebr_job_set_submit_date(job, g_strdup(submit_date));
+	gebr_job_set_submit_date(job, submit_date);
 	gebr_job_set_title(job, gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.flow)));
-	gebr_job_set_nice(job, g_strdup(nice));
-	gebr_job_set_server_group(job, g_strdup(group));
+	gebr_job_set_nice(job, nice);
+	gebr_job_set_server_group(job, group);
 	
 	gebr_job_control_add(gebr.job_control, job);
 	gebr_job_control_select_job(gebr.job_control, job);
@@ -70,4 +73,5 @@ gebr_ui_flow_run(void)
 	g_free(speed_str);
 	g_free(nice);
 	g_free(group);
+	g_free(hostname);
 }
