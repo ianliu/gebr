@@ -139,6 +139,8 @@ static void gebr_job_control_info_set_visible(GebrJobControl *jc,
 					      gboolean visible,
 					      const gchar *txt);
 
+static void gebr_job_control_include_cmd_line(GebrJobControl *jc,
+                                              GebrJob *job);
 
 /* Private methods {{{1 */
 static void
@@ -654,6 +656,15 @@ on_job_issued(GebrJob *job,
 }
 
 static void
+on_job_cmd_line(GebrJob *job,
+                gint frac,
+                const gchar *cmd,
+                GebrJobControl *jc)
+{
+	gebr_job_control_include_cmd_line(jc, job);
+}
+
+static void
 gebr_job_control_info_set_visible(GebrJobControl *jc,
 				  gboolean visible,
 				  const gchar *txt)
@@ -810,6 +821,8 @@ job_control_disconnect_signals(GebrJobControl *jc)
 		                            jc->priv->last_selection.sig_status);
 		g_signal_handler_disconnect(jc->priv->last_selection.job,
 		                            jc->priv->last_selection.sig_issued);
+		g_signal_handler_disconnect(jc->priv->last_selection.job,
+		                            jc->priv->last_selection.sig_cmd_line);
 	}
 }
 
@@ -855,6 +868,8 @@ job_control_on_cursor_changed(GtkTreeSelection *selection,
 				g_signal_connect(job, "status-change", G_CALLBACK(on_job_status), jc);
 		jc->priv->last_selection.sig_issued =
 				g_signal_connect(job, "issued", G_CALLBACK(on_job_issued), jc);
+		jc->priv->last_selection.sig_cmd_line =
+				g_signal_connect(job, "cmd-line-received", G_CALLBACK(on_job_cmd_line), jc);
 
 		gebr_job_control_load_details(jc, job);
 	}
@@ -1112,6 +1127,8 @@ gebr_jc_update_status_and_time(GebrJobControl *jc,
 			gtk_widget_show(GTK_WIDGET(queued_button));
 		}
 	}
+
+	update_control_buttons(jc, gebr_job_can_close(job), gebr_job_can_kill(job), TRUE);
 }
 
 static void
@@ -1142,6 +1159,9 @@ gebr_job_control_include_cmd_line(GebrJobControl *jc,
 
 		for (int i = 0; i < total; i++) {
 			GebrJobTask *task = job_tasks + i;
+
+			if (!task->cmd_line)
+				continue;
 
 			gchar *title = g_strdup_printf(_("Command line for task %d of %d (Server: %s)"),
 						       task->frac, total, task->server);
@@ -1205,7 +1225,6 @@ gebr_job_control_load_details(GebrJobControl *jc,
 	info_button_image = GTK_IMAGE(gtk_bin_get_child(GTK_BIN(jc->priv->info_button)));
 
 	gebr_job_get_io(job, &input_file_str, &output_file_str, &log_file_str);
-	update_control_buttons(jc, gebr_job_can_close(job), gebr_job_can_kill(job), TRUE);
 
 	gchar *markup;
 
