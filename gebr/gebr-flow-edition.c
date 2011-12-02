@@ -91,7 +91,7 @@ static void on_queue_set_text(GtkCellLayout   *cell_layout,
                               GtkTreeIter     *iter,
                               gpointer         data);
 
-static void on_queue_combobox_changed (GtkComboBox *combo, GtkComboBox *server_combo);
+static void on_queue_combobox_changed (GtkComboBox *combo, GebrFlowEdition *fe);
 
 /*
  * Public functions
@@ -1425,7 +1425,7 @@ on_server_disconnected_set_row_insensitive(GtkCellLayout   *cell_layout,
 	g_object_set(cell, "sensitive", is_connected, NULL);
 }
 
-static void on_queue_combobox_changed (GtkComboBox *combo, GtkComboBox *server_combo)
+static void on_queue_combobox_changed (GtkComboBox *combo, GebrFlowEdition *fe)
 {
 	gint index;
 	GebrJob *job;
@@ -1436,10 +1436,10 @@ static void on_queue_combobox_changed (GtkComboBox *combo, GtkComboBox *server_c
 	if (!flow_browse_get_selected (&iter, FALSE))
 		return;
 
-	if (!gtk_combo_box_get_active_iter (server_combo, &server_iter))
+	if (!gtk_combo_box_get_active_iter (GTK_COMBO_BOX(fe->priv->server_combobox), &server_iter))
 		return;
 
-	server_model = gtk_combo_box_get_model (server_combo);
+	server_model = gtk_combo_box_get_model (GTK_COMBO_BOX(fe->priv->server_combobox));
 
 	gtk_tree_model_get (server_model, &server_iter,
 			    0, &job,
