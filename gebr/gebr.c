@@ -92,6 +92,7 @@ gebr_init(gboolean has_config)
 
 	gebr.help_edit_windows = g_hash_table_new(NULL, NULL);
 	gebr.xmls_by_filename = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
+	gebr.maestro_controller = gebr_maestro_controller_new();
 
 	gebr.validator = gebr_validator_new((GebrGeoXmlDocument**)&gebr.flow,
 	                                    (GebrGeoXmlDocument**)&gebr.line,
@@ -320,8 +321,8 @@ gebr_post_config(gboolean has_config)
 	if (!g_file_test(gebr.config.usermenus->str, G_FILE_TEST_EXISTS))
 		g_mkdir_with_parents(gebr.config.usermenus->str, 0755);
 
-	gebr_ui_server_list_connect(gebr.ui_server_list,
-				    gebr.config.maestro_address->str);
+	gebr_maestro_controller_connect(gebr.maestro_controller,
+					gebr.config.maestro_address->str);
 
 	/* DEPRECATED: old directory structure migration */
 	if (g_str_has_suffix(gebr.config.data->str, ".gebr/gebrdata"))

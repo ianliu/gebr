@@ -56,6 +56,8 @@ libgebr_la_SOURCES =		\
 	gebr-job-control.h	\
 	gebr-job.c		\
 	gebr-job.h		\
+	gebr-maestro-controller.c	\
+	gebr-maestro-controller.h	\
 	gebr-maestro-server.c	\
 	gebr-maestro-server.h	\
 	gebr-marshal.c		\

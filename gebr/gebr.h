@@ -1,23 +1,21 @@
-/*   GeBR - An environment for seismic processing.
- *   Copyright (C) 2007-2011 GeBR core team (http://www.gebrproject.com/)
+/*
+ * gebr.h
+ * This file is part of GêBR Project
  *
- *   This program is free software: you can redistribute it and/or
- *   modify it under the terms of the GNU General Public License as
- *   published by the Free Software Foundation, either version 3 of
- *   the License, or (at your option) any later version.
+ * Copyright (C) 2007-2011 - GêBR Core Team (www.gebrproject.com)
  *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *   General Public License for more details.
+ * GêBR Project is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
- *   You should have received a copy of the GNU General Public License
- *   along with this program. If not, see
- *   <http://www.gnu.org/licenses/>.
- */
-
-/**
- * \file gebr.c General purpose functions
+ * GêBR Project is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with GêBR Project. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef __GEBR_H
@@ -41,6 +39,8 @@
 #include "ui_preferences.h"
 #include "ui_project_line.h"
 #include "ui_server.h"
+
+#include "gebr-maestro-controller.h"
 
 G_BEGIN_DECLS
 
@@ -91,6 +91,8 @@ struct gebr {
 	GList *flow_clipboard;
 	GebrLog *log;
 	GSList *tmpfiles;
+
+	GebrMaestroController *maestro_controller;
 
 	/* Persistent GUI */
 	GtkWidget *navigation_box_label;

@@ -10,6 +10,7 @@ gebr-daemon-server.c
 gebr-flow-edition.c
 gebr-job-control.c
 gebr-job.c
+gebr-maestro-controller.c
 gebr-maestro-server.c
 gebr.c
 interface.c

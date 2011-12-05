@@ -33,8 +33,7 @@ gebr_ui_flow_run(void)
 	gint speed = gebr_interface_get_execution_speed();
 	gchar *speed_str = g_strdup_printf("%d", speed);
 	gchar *nice = g_strdup_printf("%d", gebr_interface_get_niceness());
-	gchar *hostname = g_get_host_name();
-
+	const gchar *hostname = g_get_host_name();
 
 	gchar *group;
 	gebr_geoxml_line_get_group(gebr.line, NULL, &group);
@@ -73,5 +72,4 @@ gebr_ui_flow_run(void)
 	g_free(speed_str);
 	g_free(nice);
 	g_free(group);
-	g_free(hostname);
 }

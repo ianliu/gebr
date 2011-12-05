@@ -310,12 +310,6 @@ void on_job_control_stop(void)
 	gebr_job_control_stop_selected(gebr.job_control);
 }
 
-//void on_job_control_clear(void)
-//{
-//	job_control_clear(FALSE);
-//}
-//
-
 void on_configure_preferences_activate(void)
 {
 	preferences_setup_ui(FALSE);
@@ -323,9 +317,9 @@ void on_configure_preferences_activate(void)
 
 void on_configure_servers_activate(void)
 {
-	server_list_show(gebr.ui_server_list);
-        gtk_window_remove_accel_group(GTK_WINDOW(gebr.window), gebr.accel_group_array[gebr.last_notebook]);
-	gtk_window_add_accel_group(GTK_WINDOW(gebr.ui_server_list->common.dialog), gebr.accel_group_array[ACCEL_SERVER]);
+	GtkDialog *dialog = gebr_maestro_controller_create_dialog(gebr.maestro_controller);
+	gtk_dialog_run(dialog);
+	gtk_widget_destroy(GTK_WIDGET(dialog));
 }
 
 void on_help_contents_activate(void)
