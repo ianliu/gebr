@@ -1186,7 +1186,7 @@ gebr_job_control_include_cmd_line(GebrJobControl *jc,
 
 		gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scroll), vbox);
 		gtk_widget_show_all(vbox);
-	} else {
+	} else if (job_tasks->cmd_line){
 		GtkWidget *view = gtk_text_view_new();
 		gtk_widget_modify_font(view, font);
 		g_object_set(view, "wrap-mode", wrapmode, NULL);
