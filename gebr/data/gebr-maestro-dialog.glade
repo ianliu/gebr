@@ -5,7 +5,7 @@
   <object class="GtkDialog" id="dialog_maestro">
     <property name="border_width">5</property>
     <property name="default_width">600</property>
-    <property name="default_height">400</property>
+    <property name="default_height">500</property>
     <property name="type_hint">normal</property>
     <property name="has_separator">False</property>
     <child internal-child="vbox">
@@ -106,11 +106,16 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <child>
-                  <object class="GtkLabel" id="label5">
+                  <object class="GtkEventBox" id="eventbox_drop">
                     <property name="visible">True</property>
-                    <property name="sensitive">False</property>
-                    <property name="label" translatable="yes">&lt;i&gt;Drop a server to create a group!&lt;/i&gt;</property>
-                    <property name="use_markup">True</property>
+                    <child>
+                      <object class="GtkLabel" id="label5">
+                        <property name="visible">True</property>
+                        <property name="sensitive">False</property>
+                        <property name="label" translatable="yes">&lt;i&gt;Drop a server to create a group!&lt;/i&gt;</property>
+                        <property name="use_markup">True</property>
+                      </object>
+                    </child>
                   </object>
                 </child>
                 <child type="tab">
