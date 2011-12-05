@@ -22,7 +22,10 @@ desktopdir = $(datadir)/applications
 desktop_DATA = gebr.desktop
 
 gladedir = $(datadir)/gebr/glade
-glade_DATA = gebr-job-control.glade
+glade_DATA = \
+	gebr-job-control.glade \
+	gebr-maestro-dialog.glade \
+	$(NULL)
 
 gebr.desktop:gebr.desktop.in $(INTLTOOL_MERGE) $(srcdir)/../po/*.po
 	LC_ALL=C $(INTLTOOL_MERGE) -d -u -c $(builddir)/../po/.intltool-merge-cache $(srcdir)/../po $< $@

@@ -1,0 +1,246 @@
+<?xml version="1.0"?>
+<interface>
+  <requires lib="gtk+" version="2.16"/>
+  <!-- interface-naming-policy project-wide -->
+  <object class="GtkListStore" id="liststore1">
+    <columns>
+      <!-- column-name icon -->
+      <column type="gchararray"/>
+      <!-- column-name address -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">gtk-connect</col>
+        <col id="1" translatable="yes">Local Server</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">gtk-connect</col>
+        <col id="1" translatable="yes">dell2</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes"></col>
+        <col id="1" translatable="yes">New</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkWindow" id="window1">
+    <child>
+      <object class="GtkVBox" id="vbox1">
+        <property name="visible">True</property>
+        <child>
+          <object class="GtkFrame" id="frame1">
+            <property name="visible">True</property>
+            <property name="label_xalign">0</property>
+            <property name="shadow_type">none</property>
+            <child>
+              <object class="GtkHBox" id="hbox1">
+                <property name="visible">True</property>
+                <child>
+                  <object class="GtkComboBoxEntry" id="comboboxentry1">
+                    <property name="visible">True</property>
+                  </object>
+                  <packing>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkButton" id="button1">
+                    <property name="label" translatable="yes">button</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+              </object>
+            </child>
+            <child type="label">
+              <object class="GtkLabel" id="label1">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">&lt;b&gt;Maestro&lt;/b&gt;</property>
+                <property name="use_markup">True</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkScrolledWindow" id="scrolledwindow1">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="hscrollbar_policy">automatic</property>
+            <property name="vscrollbar_policy">automatic</property>
+            <property name="shadow_type">in</property>
+            <child>
+              <object class="GtkTreeView" id="treeview1">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="model">liststore1</property>
+                <child>
+                  <object class="GtkTreeViewColumn" id="treeviewcolumn1">
+                    <property name="title">Address</property>
+                    <child>
+                      <object class="GtkCellRendererPixbuf" id="cellrendererpixbuf1"/>
+                      <attributes>
+                        <attribute name="stock-id">0</attribute>
+                      </attributes>
+                    </child>
+                    <child>
+                      <object class="GtkCellRendererText" id="cellrenderertext1"/>
+                      <attributes>
+                        <attribute name="text">1</attribute>
+                      </attributes>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkHSeparator" id="hseparator1">
+            <property name="visible">True</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="label6">
+            <property name="visible">True</property>
+            <property name="xalign">0</property>
+            <property name="label" translatable="yes">&lt;b&gt;Groups&lt;/b&gt;</property>
+            <property name="use_markup">True</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="position">3</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkNotebook" id="notebook1">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <child>
+              <object class="GtkScrolledWindow" id="scrolledwindow2">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="hscrollbar_policy">automatic</property>
+                <property name="vscrollbar_policy">automatic</property>
+                <property name="shadow_type">out</property>
+                <child>
+                  <object class="GtkTreeView" id="treeview2">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="model">liststore2</property>
+                    <property name="headers_clickable">False</property>
+                    <property name="search_column">0</property>
+                    <child>
+                      <object class="GtkTreeViewColumn" id="treeviewcolumn2">
+                        <property name="title">Address</property>
+                        <child>
+                          <object class="GtkCellRendererPixbuf" id="cellrendererpixbuf2"/>
+                          <attributes>
+                            <attribute name="sensitive">2</attribute>
+                            <attribute name="pixbuf-expander-closed">0</attribute>
+                            <attribute name="stock-id">0</attribute>
+                          </attributes>
+                        </child>
+                        <child>
+                          <object class="GtkCellRendererText" id="cellrenderertext2"/>
+                          <attributes>
+                            <attribute name="sensitive">2</attribute>
+                            <attribute name="markup">1</attribute>
+                          </attributes>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child type="tab">
+              <object class="GtkLabel" id="label3">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">G1</property>
+              </object>
+              <packing>
+                <property name="tab_fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+            <child type="tab">
+              <object class="GtkLabel" id="label4">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">G2</property>
+              </object>
+              <packing>
+                <property name="position">1</property>
+                <property name="tab_fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="label5">
+                <property name="visible">True</property>
+                <property name="sensitive">False</property>
+                <property name="label" translatable="yes">&lt;i&gt;Drop a server to create a group!&lt;/i&gt;</property>
+                <property name="use_markup">True</property>
+              </object>
+              <packing>
+                <property name="position">2</property>
+              </packing>
+            </child>
+            <child type="tab">
+              <object class="GtkImage" id="image1">
+                <property name="visible">True</property>
+                <property name="stock">gtk-add</property>
+              </object>
+              <packing>
+                <property name="position">2</property>
+                <property name="tab_fill">False</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="position">4</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+  <object class="GtkListStore" id="liststore2">
+    <columns>
+      <!-- column-name icon -->
+      <column type="gchararray"/>
+      <!-- column-name text -->
+      <column type="gchararray"/>
+      <!-- column-name sensitive -->
+      <column type="gboolean"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">gtk-connect</col>
+        <col id="1" translatable="yes">Local Server</col>
+        <col id="2">True</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes"/>
+        <col id="1" translatable="yes">&lt;i&gt;Drop a server to increment this group!&lt;/i&gt;</col>
+        <col id="2">False</col>
+      </row>
+    </data>
+  </object>
+</interface>
