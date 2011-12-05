@@ -41,6 +41,7 @@ enum {
 	JOB_DEFINE,
 	GROUP_CHANGED,
 	PASSWORD_REQUEST,
+	DAEMONS_CHANGED,
 	LAST_SIGNAL
 };
 
@@ -259,6 +260,7 @@ parse_messages(GebrCommServer *comm_server,
 				gtk_tree_path_free(path);
 			}
 
+			g_signal_emit(maestro, signals[DAEMONS_CHANGED], 0);
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}
 		else if (message->hash == gebr_comm_protocol_defs.job_def.code_hash) {
@@ -543,8 +545,17 @@ gebr_maestro_server_class_init(GebrMaestroServerClass *klass)
 			     gebr_cclosure_marshal_STRING__STRING,
 			     G_TYPE_STRING, 1, G_TYPE_STRING);
 
+	signals[DAEMONS_CHANGED] =
+			g_signal_new("daemons-changed",
+			             G_OBJECT_CLASS_TYPE(object_class),
+			             G_SIGNAL_RUN_LAST,
+			             G_STRUCT_OFFSET(GebrMaestroServerClass, daemons_changed),
+			             NULL, NULL,
+			             g_cclosure_marshal_VOID__VOID,
+			             G_TYPE_NONE, 0);
+
 	g_object_class_install_property(object_class,
-					PROP_ADDRESS,
+	                                PROP_ADDRESS,
 					g_param_spec_string("address",
 							    "Address",
 							    "Server address",
