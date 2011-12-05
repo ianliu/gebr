@@ -232,7 +232,6 @@ daemon_server_status_func(GtkTreeViewColumn *tree_column,
 	case SERVER_STATE_DISCONNECTED:
 	case SERVER_STATE_RUN:
 	case SERVER_STATE_OPEN_TUNNEL:
-	case SERVER_STATE_CONNECTED:
 		stock_id = GTK_STOCK_DISCONNECT;
 		break;
 	case SERVER_STATE_CONNECT:

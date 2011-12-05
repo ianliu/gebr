@@ -42,6 +42,7 @@ enum {
 	GROUP_CHANGED,
 	PASSWORD_REQUEST,
 	DAEMONS_CHANGED,
+	STATE_CHANGE,
 	LAST_SIGNAL
 };
 
@@ -126,8 +127,13 @@ state_changed(GebrCommServer *comm_server,
 {
 	GebrMaestroServer *maestro = user_data;
 
-	if (gebr_comm_server_get_state(comm_server))
+	GebrCommServerState state = gebr_comm_server_get_state(comm_server);
+
+	if (state == SERVER_STATE_CONNECT
+	    || state == SERVER_STATE_DISCONNECTED)
 		g_signal_emit(maestro, signals[GROUP_CHANGED], 0);
+
+	g_signal_emit(maestro, signals[STATE_CHANGE], 0);
 }
 
 GString *
@@ -554,8 +560,17 @@ gebr_maestro_server_class_init(GebrMaestroServerClass *klass)
 			             g_cclosure_marshal_VOID__VOID,
 			             G_TYPE_NONE, 0);
 
+	signals[STATE_CHANGE] =
+		g_signal_new("state-change",
+			     G_OBJECT_CLASS_TYPE(object_class),
+			     G_SIGNAL_RUN_LAST,
+			     G_STRUCT_OFFSET(GebrMaestroServerClass, state_change),
+			     NULL, NULL,
+			     g_cclosure_marshal_VOID__VOID,
+			     G_TYPE_NONE, 0);
+
 	g_object_class_install_property(object_class,
-	                                PROP_ADDRESS,
+					PROP_ADDRESS,
 					g_param_spec_string("address",
 							    "Address",
 							    "Server address",

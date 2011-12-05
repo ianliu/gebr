@@ -51,6 +51,8 @@ struct _GebrMaestroServerClass {
 				     const gchar       *address);
 
 	void (*daemons_changed) (GebrMaestroServer *maestro);
+
+	void    (*state_change) (GebrMaestroServer *maestro);
 };
 
 struct _GebrMaestroServer {

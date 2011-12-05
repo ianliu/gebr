@@ -61,7 +61,6 @@ typedef enum {
 	SERVER_STATE_RUN,
 	SERVER_STATE_OPEN_TUNNEL,
 	SERVER_STATE_CONNECT,
-	SERVER_STATE_CONNECTED,
 } GebrCommServerState;
 
 typedef struct gebr_comm_server GebrCommServer;
