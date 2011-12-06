@@ -535,7 +535,8 @@ static void
 build_servers_filter_list(GebrJobControl *jc)
 {
 	GtkTreeIter iter;
-	GtkTreeModel *model = GTK_TREE_MODEL(gebr_maestro_server_get_model(gebr.ui_server_list->maestro, FALSE, NULL));
+	GList *m = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+	GtkTreeModel *model = GTK_TREE_MODEL(gebr_maestro_server_get_model(m->data, FALSE, NULL));
 
 	gtk_list_store_clear(jc->priv->server_filter);
 

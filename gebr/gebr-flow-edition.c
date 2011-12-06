@@ -1676,8 +1676,8 @@ gebr_flow_edition_update_server_and_queue(GebrFlowEdition *fe)
 {
 	gchar *addr, *group;
 	GtkTreeModel *server_model, *queue_model;
-	GebrMaestroServer *maestro = gebr.ui_server_list->maestro;
-
+	GList *i = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+	GebrMaestroServer *maestro = i->data;
 
 	// FIXME: Use @addr to choose a MaestroServer.
 	gebr_geoxml_line_get_group(gebr.line, &addr, &group);

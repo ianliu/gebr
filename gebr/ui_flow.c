@@ -50,7 +50,8 @@ gebr_ui_flow_run(void)
 				     gebr_flow_edition_get_selected_server(gebr.ui_flow_edition),
 				     parent_rid, speed_str, nice, group, hostname, gebr_job_get_id(job));
 
-	GebrCommServer *server = gebr_maestro_server_get_server(gebr.ui_server_list->maestro);
+	GList *m = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+	GebrCommServer *server = gebr_maestro_server_get_server(m->data);
 	gebr_comm_protocol_socket_send_request(server->socket,
 					       GEBR_COMM_HTTP_METHOD_PUT, url, content);
 
@@ -63,7 +64,7 @@ gebr_ui_flow_run(void)
 	
 	gebr_job_control_add(gebr.job_control, job);
 	gebr_job_control_select_job(gebr.job_control, job);
-	gebr_maestro_server_add_temporary_job(gebr.ui_server_list->maestro, job);
+	gebr_maestro_server_add_temporary_job(m->data, job);
 
 	gebr_interface_change_tab(NOTEBOOK_PAGE_JOB_CONTROL);
 	
