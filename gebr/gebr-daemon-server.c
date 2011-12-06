@@ -170,6 +170,8 @@ gebr_daemon_server_get_address(GebrDaemonServer *daemon)
 gchar *
 gebr_daemon_server_get_display_address(GebrDaemonServer *daemon)
 {
+	g_return_val_if_fail(GEBR_IS_DAEMON_SERVER(daemon), NULL);
+
 	const gchar *addr = daemon->priv->address;
 
 	if (g_strcmp0(addr, "") == 0)

@@ -166,6 +166,27 @@ set_widget_drag_dest(GebrMaestroServer *maestro, GtkWidget *widget)
 }
 
 static void
+notebook_group_show_icon(GtkTreeViewColumn *tree_column,
+			 GtkCellRenderer *cell,
+			 GtkTreeModel *tree_model,
+			 GtkTreeIter *iter,
+			 gpointer data)
+{
+	GebrDaemonServer *daemon;
+
+	gtk_tree_model_get(tree_model, iter,
+			   MAESTRO_CONTROLLER_DAEMON, &daemon,
+			   -1);
+
+	if (!daemon)
+		g_object_set(cell, "stock-id", NULL, NULL);
+	else if (gebr_daemon_server_get_state(daemon) == SERVER_STATE_CONNECT)
+		g_object_set(cell, "stock-id", GTK_STOCK_CONNECT, NULL);
+	else
+		g_object_set(cell, "stock-id", GTK_STOCK_DISCONNECT, NULL);
+}
+
+static void
 notebook_group_show_address(GtkTreeViewColumn *tree_column,
 			    GtkCellRenderer *cell,
 			    GtkTreeModel *tree_model,
@@ -173,12 +194,26 @@ notebook_group_show_address(GtkTreeViewColumn *tree_column,
 			    gpointer data)
 {
 	GebrDaemonServer *daemon;
-	gtk_tree_model_get(tree_model, iter, 0, &daemon, -1);
+	gchar *label;
 
-	if (!daemon)
-		return;
+	gtk_tree_model_get(tree_model, iter,
+			   MAESTRO_CONTROLLER_DAEMON, &daemon,
+			   MAESTRO_CONTROLLER_ADDR, &label,
+			   -1);
 
-	g_object_set(cell, "text", gebr_daemon_server_get_display_address(daemon), NULL);
+	if (daemon) {
+		g_object_set(cell,
+			     "text", gebr_daemon_server_get_display_address(daemon),
+			     "sensitive", TRUE,
+			     NULL);
+		g_object_unref(daemon);
+	} else if (label) {
+		g_object_set(cell,
+			     "text", label,
+			     "sensitive", FALSE,
+			     NULL);
+		g_free(label);
+	}
 }
 
 static GtkTreeModel *
@@ -189,7 +224,7 @@ copy_model_for_groups(GtkTreeModel *orig_model)
 	GebrDaemonServer *daemon;
 
 	new_model = gtk_list_store_new(2,
-                                       G_TYPE_OBJECT,
+                                       GEBR_TYPE_DAEMON_SERVER,
                                        G_TYPE_STRING);
 
 	gebr_gui_gtk_tree_model_foreach(iter, orig_model) {
@@ -220,6 +255,7 @@ on_server_group_changed(GebrMaestroServer *maestro,
 
 	GtkNotebook *nb = GTK_NOTEBOOK(gtk_builder_get_object(self->priv->builder, "notebook_groups"));
 	gint n = gtk_notebook_get_n_pages(nb);
+	gint current = gtk_notebook_get_current_page(nb);
 
 	for (int i = 0; i < n-1; i++)
 		gtk_notebook_remove_page(nb, 0);
@@ -231,14 +267,22 @@ on_server_group_changed(GebrMaestroServer *maestro,
 		GtkWidget *label = gtk_label_new(tag);
 		GtkTreeModel *model = gebr_maestro_server_get_model(maestro, FALSE, tag);
 		GtkTreeModel *new_model = copy_model_for_groups(model);
-		g_object_unref(model);
 
-		GtkWidget *view = gtk_tree_view_new_with_model(model);
+		GtkWidget *view = gtk_tree_view_new_with_model(new_model);
+		g_object_unref(model);
+		g_object_unref(new_model);
+
 		GtkTreeViewColumn *col = gtk_tree_view_column_new();
-		GtkCellRenderer *cell = gtk_cell_renderer_text_new();
 		gtk_tree_view_column_set_title(col, _("Address"));
+
+		GtkCellRenderer *cell = gtk_cell_renderer_pixbuf_new();
+		gtk_tree_view_column_pack_start(col, cell, FALSE);
+		gtk_tree_view_column_set_cell_data_func(col, cell, notebook_group_show_icon, self, NULL);
+
+		cell = gtk_cell_renderer_text_new();
 		gtk_tree_view_column_pack_start(col, cell, TRUE);
 		gtk_tree_view_column_set_cell_data_func(col, cell, notebook_group_show_address, self, NULL);
+
 		gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
 		gtk_notebook_prepend_page(nb, view, label);
 		gtk_widget_show(label);
@@ -249,6 +293,8 @@ on_server_group_changed(GebrMaestroServer *maestro,
 		g_object_weak_ref(G_OBJECT(view), (GWeakNotify)g_free, tagdup);
 		set_widget_drag_dest(maestro, view);
 	}
+
+	gtk_notebook_set_current_page(nb, current);
 }
 
 static void
@@ -440,7 +486,7 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 	GebrMaestroServer *maestro = self->priv->maestros->data;
 	GtkComboBoxEntry *combo = GTK_COMBO_BOX_ENTRY(gtk_builder_get_object(self->priv->builder, "combo_maestro"));
 	GtkEntry *entry = GTK_ENTRY(gtk_bin_get_child(GTK_BIN(combo)));
-	gtk_entry_set_text(entry, gebr_maestro_server_get_display_address(maestro));
+	gtk_entry_set_text(entry, gebr_maestro_server_get_address(maestro));
 	g_signal_connect(entry, "activate", G_CALLBACK(connect_to_maestro), self);
 	on_state_change(maestro, self);
 
