@@ -28,7 +28,9 @@
 
 struct _GebrMaestroControllerPriv {
 	GList *maestros;
+	GtkListStore *maestro_model;
 	GtkBuilder *builder;
+
 	GtkListStore *model;
 };
 
@@ -308,6 +310,8 @@ gebr_maestro_controller_init(GebrMaestroController *self)
 	                                       G_TYPE_OBJECT,
 	                                       G_TYPE_STRING,
 	                                       G_TYPE_BOOLEAN);
+
+	self->priv->maestro_model = gtk_list_store_new(1, G_TYPE_OBJECT);
 }
 
 static void
@@ -556,8 +560,6 @@ on_connect_to_maestro_clicked( GtkButton *button,
 	GtkComboBoxEntry *combo = GTK_COMBO_BOX_ENTRY(gtk_builder_get_object(self->priv->builder, "combo_maestro"));
 	GtkEntry *entry = GTK_ENTRY(gtk_bin_get_child(GTK_BIN(combo)));
 	connect_to_maestro(entry, self);
-
-
 }
 
 static void
@@ -720,7 +722,7 @@ gebr_maestro_controller_connect(GebrMaestroController *self,
 	}
 	GList *list= g_list_find_custom(self->priv->maestros, address,
 					(GCompareFunc) cmp_maestro_servers);
-	if (list==NULL){
+	if (list==NULL) {
 		maestro = gebr_maestro_server_new(address);
 		self->priv->maestros = g_list_prepend(self->priv->maestros, maestro);
 
@@ -734,8 +736,13 @@ gebr_maestro_controller_connect(GebrMaestroController *self,
 				 G_CALLBACK(on_daemons_changed), self);
 		g_signal_connect(maestro, "state-change",
 				 G_CALLBACK(on_state_change), self);
-	}
-	else{
+
+		GtkTreeIter iter;
+		gtk_list_store_append(self->priv->maestro_model, &iter);
+		gtk_list_store_set(self->priv->maestro_model, &iter,
+		                   0, maestro, -1);
+
+	} else {
 		gpointer data = list->data;
 		self->priv->maestros = g_list_delete_link(self->priv->maestros, list);
 		self->priv->maestros = g_list_prepend(self->priv->maestros, data);
@@ -752,4 +759,10 @@ gebr_maestro_controller_connect(GebrMaestroController *self,
 GList *gebr_maestro_controller_get_maestro(GebrMaestroController *self)
 {
 	return self->priv->maestros;
+}
+
+GtkTreeModel *
+gebr_maestro_controller_get_maestros_model(GebrMaestroController *self)
+{
+	return GTK_TREE_MODEL(self->priv->maestro_model);
 }

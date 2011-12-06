@@ -64,6 +64,8 @@ GList *gebr_maestro_controller_get_maestro(GebrMaestroController *self);
 void gebr_maestro_controller_connect(GebrMaestroController *self,
 				     const gchar *address);
 
+GtkTreeModel *gebr_maestro_controller_get_maestros_model(GebrMaestroController *self);
+
 G_END_DECLS
 
 #endif /* __GEBR_MAESTRO_CONTROLLER_H__ */

@@ -333,7 +333,7 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 		GtkTreeIter active, iter;
 		gchar *curr_group, *maestro_addr;
 
-		GtkTreeModel *model = gebr_ui_server_list_get_groups_model(gebr.ui_server_list);
+		GtkTreeModel *model = gebr_maestro_controller_get_maestros_model(gebr.maestro_controller);
 		gtk_tree_model_get_iter_first (model, &active);
 		data->groups_combo = groups_combo = gtk_combo_box_new_with_model(model);
 
