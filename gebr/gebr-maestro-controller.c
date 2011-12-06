@@ -181,6 +181,36 @@ notebook_group_show_address(GtkTreeViewColumn *tree_column,
 	g_object_set(cell, "text", gebr_daemon_server_get_display_address(daemon), NULL);
 }
 
+static GtkTreeModel *
+copy_model_for_groups(GtkTreeModel *orig_model)
+{
+	GtkTreeIter iter, new_iter;
+	GtkListStore *new_model;
+	GebrDaemonServer *daemon;
+
+	new_model = gtk_list_store_new(2,
+                                       G_TYPE_OBJECT,
+                                       G_TYPE_STRING);
+
+	gebr_gui_gtk_tree_model_foreach(iter, orig_model) {
+		gtk_tree_model_get(orig_model, &iter, 0, &daemon, -1);
+
+		gtk_list_store_append(new_model, &new_iter);
+		gtk_list_store_set(new_model, &new_iter,
+		                   MAESTRO_CONTROLLER_DAEMON, daemon,
+		                   MAESTRO_CONTROLLER_ADDR, gebr_daemon_server_get_display_address(daemon),
+		                   -1);
+	}
+
+	gtk_list_store_append(new_model, &new_iter);
+	gtk_list_store_set(new_model, &new_iter,
+	                   MAESTRO_CONTROLLER_DAEMON, NULL,
+	                   MAESTRO_CONTROLLER_ADDR, _("Drop servers to increment this group!"),
+	                   -1);
+
+	return GTK_TREE_MODEL(new_model);
+}
+
 static void
 on_server_group_changed(GebrMaestroServer *maestro,
 			GebrMaestroController *self)
@@ -200,6 +230,9 @@ on_server_group_changed(GebrMaestroServer *maestro,
 		const gchar *tag = i->data;
 		GtkWidget *label = gtk_label_new(tag);
 		GtkTreeModel *model = gebr_maestro_server_get_model(maestro, FALSE, tag);
+		GtkTreeModel *new_model = copy_model_for_groups(model);
+		g_object_unref(model);
+
 		GtkWidget *view = gtk_tree_view_new_with_model(model);
 		GtkTreeViewColumn *col = gtk_tree_view_column_new();
 		GtkCellRenderer *cell = gtk_cell_renderer_text_new();
@@ -277,6 +310,7 @@ on_daemons_changed(GebrMaestroServer *maestro,
 		                   MAESTRO_CONTROLLER_EDITABLE, FALSE,
 		                   -1);
 	}
+	insert_new_entry(mc);
 	g_object_unref(model);
 }
 
