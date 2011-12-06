@@ -36,6 +36,7 @@ struct ui_preferences {
 	GtkWidget *log_load;
 	GtkWidget *built_in_radio_button;
 	GtkWidget *user_radio_button;
+	GtkWidget *maestro_entry;
 };
 
 struct ui_preferences *preferences_setup_ui(gboolean first_run);

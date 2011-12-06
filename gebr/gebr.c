@@ -322,9 +322,6 @@ gebr_post_config(gboolean has_config)
 	if (!g_file_test(gebr.config.usermenus->str, G_FILE_TEST_EXISTS))
 		g_mkdir_with_parents(gebr.config.usermenus->str, 0755);
 
-	gebr_maestro_controller_connect(gebr.maestro_controller,
-					gebr.config.maestro_address->str);
-
 	/* DEPRECATED: old directory structure migration */
 	if (g_str_has_suffix(gebr.config.data->str, ".gebr/gebrdata"))
 		g_string_printf(gebr.config.data, "%s/.gebr/gebr/data", g_get_home_dir());
@@ -376,8 +373,12 @@ gebr_post_config(gboolean has_config)
 
 	if (!has_config)
 		preferences_setup_ui(TRUE);
-	else
+	else {
+		gebr_maestro_controller_connect(gebr.maestro_controller,
+						gebr.config.maestro_address->str);
 		gebr_config_save(FALSE);
+	}
+
 }
 
 void gebr_config_apply(void)
