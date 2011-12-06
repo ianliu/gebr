@@ -4,9 +4,8 @@
 
 <!ELEMENT date (created, modified)>
 
-<!ELEMENT server-group (#PCDATA)>
-<!ATTLIST server-group maestro-address CDATA #IMPLIED
-                       group-id        CDATA #IMPLIED>
+<!ELEMENT server-maestro (#PCDATA)>
+<!ATTLIST server-maestro address CDATA #IMPLIED>
 
 <!-- Path for input/output/error of flows -->
 <!ELEMENT path             (#PCDATA)>

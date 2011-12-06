@@ -748,8 +748,15 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 			g_slist_free(refer);
 		} else if (gebr_geoxml_document_get_type(((GebrGeoXmlDocument *) *document)) == GEBR_GEOXML_DOCUMENT_TYPE_LINE) {
 			__gebr_geoxml_set_attr_value(root_element, "version", "0.3.5");
-			GSList *group = __gebr_geoxml_get_elements_by_tag(root_element, "server-group");
-			__gebr_geoxml_set_element_value(group->data, "", __gebr_geoxml_create_TextNode);
+
+			GdomeElement *el = __gebr_geoxml_get_first_element(root_element, "server-group");
+			GdomeElement *new_el = __gebr_geoxml_insert_new_element(root_element, "server-maestro", NULL);
+			gdome_n_unref(gdome_el_insertBefore_protected(root_element, (GdomeNode*)new_el, (GdomeNode*)el,
+								      &exception), &exception);
+
+			gdome_n_unref(gdome_el_removeChild(root_element, (GdomeNode*) el, &exception), &exception);
+			gdome_el_unref(el, &exception);
+			gdome_el_unref(new_el, &exception);
 		}
 	}
 	/* 0.3.5 to 0.3.6 */ 
