@@ -592,8 +592,6 @@ gebrm_config_update_tags_on_server(GebrmApp *app,
                                    gchar *tags)
 {
 	GKeyFile *servers = g_key_file_new();
-	gchar **groups;
-	gchar *content;
 	gchar *path = g_build_filename(g_get_home_dir(),
 	                               GEBRM_LIST_OF_SERVERS_PATH,
 	                               GEBRM_LIST_OF_SERVERS_FILENAME, NULL);
@@ -601,17 +599,10 @@ gebrm_config_update_tags_on_server(GebrmApp *app,
 	gboolean succ = g_key_file_load_from_file(servers, path, G_KEY_FILE_NONE, NULL);
 
 	if (succ) {
-		groups = g_key_file_get_groups(servers, NULL);
-		for (int i = 0; groups && groups[i]; i++)
-			if (g_strcmp0(server, groups[i]) == 0) {
-				g_key_file_set_string(servers, groups[i], "tags", tags);
-				break;
-			}
-
-		content = g_key_file_to_data(servers, NULL, NULL);
+		g_key_file_set_string(servers, server, "tags", tags);
+		gchar *content = g_key_file_to_data(servers, NULL, NULL);
 		if (content)
 			g_file_set_contents(path, content, -1, NULL);
-		g_strfreev(groups);
 		g_free(content);
 	}
 
