@@ -86,6 +86,10 @@ void gebr_maestro_server_connect(GebrMaestroServer *maestro);
 
 void gebr_maestro_server_add_temporary_job(GebrMaestroServer *maestro, GebrJob *job);
 
+void gebr_maestro_server_add_tag_to(GebrMaestroServer *maestro,
+				    GebrDaemonServer *daemon,
+				    const gchar *tag);
+
 G_END_DECLS
 
 #endif /* __GEBR_MAESTRO_H__ */

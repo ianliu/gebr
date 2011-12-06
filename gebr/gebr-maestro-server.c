@@ -804,3 +804,16 @@ gebr_maestro_server_add_temporary_job(GebrMaestroServer *maestro,
 	g_hash_table_insert(maestro->priv->temp_jobs,
 			    g_strdup(gebr_job_get_id(job)), job);
 }
+
+void
+gebr_maestro_server_add_tag_to(GebrMaestroServer *maestro,
+			       GebrDaemonServer *daemon,
+			       const gchar *tag)
+{
+	gchar *url = g_strdup_printf("/tag-insert?server=%s;tag=%s",
+				     gebr_daemon_server_get_address(daemon), tag);
+
+	gebr_comm_protocol_socket_send_request(maestro->priv->server->socket,
+					       GEBR_COMM_HTTP_METHOD_PUT, url, NULL);
+	g_free(url);
+}

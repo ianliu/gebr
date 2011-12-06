@@ -76,14 +76,20 @@ static gboolean gebrm_config_update_tags_on_server(GebrmApp *app,
                                                    gchar *server,
                                                    gchar *tags);
 
+static gboolean gebrm_config_insert_tag_on_server(GebrmApp *app,
+						  gchar *server,
+						  gchar *tag,
+						  gchar **_tags);
+
 static GebrmDaemon *gebrm_add_server_to_list(GebrmApp *app,
 					     const gchar *addr,
 					     const gchar *pass,
 					     const gchar *tags);
 
 static gboolean gebrm_update_tags_on_list_of_servers(GebrmApp *app,
-							  const gchar *address,
-							  const gchar *tags);
+						     const gchar *address,
+						     const gchar *tags);
+
 static void gebrm_config_delete_server(const gchar *serv);
 
 static gboolean gebrm_remove_server_from_list(GebrmApp *app, const gchar *address);
@@ -308,20 +314,21 @@ gebrm_add_server_to_list(GebrmApp *app,
 
 static gboolean 
 gebrm_update_tags_on_list_of_servers(GebrmApp *app,
-			 const gchar *address,
-			 const gchar *tags)
+				     const gchar *address,
+				     const gchar *tags)
 {
 	GebrmDaemon *daemon;
 	gboolean exist = FALSE;
 
 	for (GList *i = app->priv->daemons; i; i = i->next) {
 		daemon = i->data;
-		if (g_strcmp0(address, gebrm_daemon_get_address(daemon)) == 0){
+		if (g_strcmp0(address, gebrm_daemon_get_address(daemon)) == 0) {
 			exist = TRUE;
 			break;
 		}
 	}
-	if(!exist)
+
+	if (!exist)
 		g_warn_if_reached();
 
 	gchar **tagsv = tags ? g_strsplit(tags, ",", -1) : NULL;
@@ -582,7 +589,61 @@ on_client_request(GebrCommProtocolSocket *socket,
 				gebrm_update_tags_on_list_of_servers(app, server, tags);
 			}
 			g_strfreev(params);
+		} else if (g_str_has_prefix(request->url->str, "/tag-insert")) {
+			gchar *tmp = strchr(request->url->str, '?') + 1;
+			gchar **params = g_strsplit(tmp, ";", -1);
+			gchar *server, *tag;
+
+			server = strchr(params[0], '=') + 1;
+			tag    = strchr(params[1], '=') + 1;
+
+			g_debug("Inserting tag '%s' on server '%s'", tag, server);
+
+			gchar *tags;
+			if (gebrm_config_insert_tag_on_server(app, server, tag, &tags)) {
+				gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
+								      gebr_comm_protocol_defs.agrp_def, 2,
+								      server, tags);
+				gebrm_update_tags_on_list_of_servers(app, server, tags);
+				g_free(tags);
+			}
+			g_strfreev(params);
 		}
+	}
+}
+
+static GKeyFile *
+load_servers_keyfile(void)
+{
+	gchar *path = g_build_filename(g_get_home_dir(),
+	                               GEBRM_LIST_OF_SERVERS_PATH,
+	                               GEBRM_LIST_OF_SERVERS_FILENAME, NULL);
+
+	GKeyFile *keyfile = g_key_file_new();
+
+	if (!g_key_file_load_from_file(keyfile, path, G_KEY_FILE_NONE, NULL)) {
+		g_key_file_free(keyfile);
+		g_free(path);
+		return NULL;
+	}
+
+	g_free(path);
+
+	return keyfile;
+}
+
+static void
+save_servers_keyfile(GKeyFile *keyfile)
+{
+	gchar *content = g_key_file_to_data(keyfile, NULL, NULL);
+
+	if (content) {
+		gchar *path = g_build_filename(g_get_home_dir(),
+					       GEBRM_LIST_OF_SERVERS_PATH,
+					       GEBRM_LIST_OF_SERVERS_FILENAME, NULL);
+		g_file_set_contents(path, content, -1, NULL);
+		g_free(content);
+		g_free(path);
 	}
 }
 
@@ -591,27 +652,66 @@ gebrm_config_update_tags_on_server(GebrmApp *app,
                                    gchar *server,
                                    gchar *tags)
 {
-	GKeyFile *servers = g_key_file_new();
-	gchar *path = g_build_filename(g_get_home_dir(),
-	                               GEBRM_LIST_OF_SERVERS_PATH,
-	                               GEBRM_LIST_OF_SERVERS_FILENAME, NULL);
+	GKeyFile *keyfile = load_servers_keyfile();
 
-	gboolean succ = g_key_file_load_from_file(servers, path, G_KEY_FILE_NONE, NULL);
+	if (!keyfile)
+		return FALSE;
 
-	if (succ) {
-		g_key_file_set_string(servers, server, "tags", tags);
-		gchar *content = g_key_file_to_data(servers, NULL, NULL);
-		if (content)
-			g_file_set_contents(path, content, -1, NULL);
-		g_free(content);
-	}
+	g_key_file_set_string(keyfile, server, "tags", tags);
+	save_servers_keyfile(keyfile);
+	g_key_file_free(keyfile);
 
-	g_key_file_free(servers);
-	g_free(path);
-
-	return succ;
+	return TRUE;
 }
 
+static gboolean
+gebrm_config_insert_tag_on_server(GebrmApp *app,
+				  gchar *server,
+				  gchar *tag,
+				  gchar **_tags)
+{
+	GKeyFile *keyfile = load_servers_keyfile();
+
+	if (!keyfile)
+		return FALSE;
+
+	gboolean has_tag = FALSE;
+	gchar *tmp = g_key_file_get_string(keyfile, server, "tags", NULL);
+	gchar **tags = g_strsplit(tmp, ",", -1);
+	g_free(tmp);
+
+	for (int i = 0; tags[i]; i++)
+		if (g_strcmp0(tags[i], tag) == 0)
+			has_tag = TRUE;
+
+	if (!has_tag) {
+		gchar *tmp = g_strjoinv(",", tags);
+		gchar *str;
+
+		if (*tmp)
+			str = g_strconcat(tmp, ",", tag, NULL);
+		else
+			str = g_strdup(tag);
+
+
+		g_debug("Before %s | After %s", tmp, str);
+
+		g_key_file_set_string(keyfile, server, "tags", str);
+		g_free(tmp);
+
+		if (_tags)
+			*_tags = str;
+		else
+			g_free(str);
+
+		save_servers_keyfile(keyfile);
+	}
+
+	g_key_file_free(keyfile);
+	g_strfreev(tags);
+
+	return !has_tag;
+}
 
 static void
 gebrm_config_save_server(GebrmDaemon *daemon)
