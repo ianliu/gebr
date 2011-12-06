@@ -44,9 +44,14 @@ enum {
 	LAST_SIGNAL
 };
 
+G_DEFINE_TYPE(GebrMaestroController, gebr_maestro_controller, G_TYPE_OBJECT);
+
 static guint signals[LAST_SIGNAL] = { 0, };
 
-G_DEFINE_TYPE(GebrMaestroController, gebr_maestro_controller, G_TYPE_OBJECT);
+static GtkTargetEntry entries[] = {
+	{"POINTER", GTK_TARGET_SAME_APP, 0},
+};
+static guint n_entries = G_N_ELEMENTS(entries);
 
 static void connect_to_maestro(GtkEntry *entry, GebrMaestroController *self);
 
@@ -62,6 +67,87 @@ insert_new_entry(GebrMaestroController *mc)
 	                   MAESTRO_CONTROLLER_ADDR, _("New"),
 	                   MAESTRO_CONTROLLER_EDITABLE, TRUE,
 	                   -1);
+}
+
+static void
+drag_data_received_handl(GtkWidget *widget, GdkDragContext *context, gint x, gint y,
+			 GtkSelectionData *selection_data, guint target_type, guint time,
+			 gpointer data)
+{
+	gpointer *daemon;
+
+        gboolean dnd_success = FALSE;
+        gboolean delete_selection_data = FALSE;
+
+        if (selection_data && (selection_data->length >= 0)) {
+		daemon = (gpointer *)selection_data->data;
+		dnd_success = TRUE;
+        }
+
+        if (!dnd_success)
+		g_warn_if_reached();
+
+	g_debug("Got Address %p: %s", *daemon, gebr_daemon_server_get_address(*daemon));
+
+        gtk_drag_finish(context, dnd_success, delete_selection_data, time);
+	g_signal_stop_emission_by_name(widget, "drag-data-received");
+}
+
+static gboolean
+drag_drop_handl (GtkWidget *widget,
+		 GdkDragContext *context,
+		 gint x, gint y,
+		 guint time,
+		 gpointer user_data)
+{
+        gboolean is_valid_drop_site;
+        GdkAtom target_type;
+
+        is_valid_drop_site = TRUE;
+
+        if (context->targets) {
+                target_type = GDK_POINTER_TO_ATOM(g_list_nth_data(context->targets, 0));
+                gtk_drag_get_data(widget, context, target_type, time);
+        } else
+                is_valid_drop_site = FALSE;
+
+        return  is_valid_drop_site;
+}
+
+static void
+drag_data_get_handl(GtkWidget *widget,
+		    GdkDragContext *context,
+		    GtkSelectionData *selection_data,
+		    guint target_type,
+		    guint time,
+		    gpointer user_data)
+{
+	GtkTreeView *tv = GTK_TREE_VIEW(widget);
+	GtkTreeSelection *selection = gtk_tree_view_get_selection(tv);
+	GtkTreeModel *model;
+	GtkTreeIter iter;
+
+	gpointer daemon;
+	gtk_tree_selection_get_selected(selection, &model, &iter);
+	gtk_tree_model_get(model, &iter, 0, &daemon, -1);
+
+	g_debug("Sending %p: %s", daemon, gebr_daemon_server_get_address(daemon));
+
+	gtk_selection_data_set(selection_data, selection_data->target,
+			       sizeof(gpointer) * 8, (guchar*)&daemon, sizeof(gpointer));
+}
+
+static void
+set_widget_drag_dest(GtkWidget *widget)
+{
+        g_signal_connect(widget, "drag-data-received",
+			 G_CALLBACK(drag_data_received_handl), NULL);
+        g_signal_connect(widget, "drag-drop",
+			 G_CALLBACK(drag_drop_handl), NULL);
+
+	gtk_drag_dest_set(widget, GTK_DEST_DEFAULT_MOTION
+			  | GTK_DEST_DEFAULT_HIGHLIGHT,
+			  entries, n_entries, GDK_ACTION_COPY);
 }
 
 static void
@@ -109,6 +195,7 @@ on_server_group_changed(GebrMaestroServer *maestro,
 		gtk_notebook_prepend_page(nb, view, label);
 		gtk_widget_show(label);
 		gtk_widget_show(view);
+		set_widget_drag_dest(view);
 	}
 }
 
@@ -315,6 +402,10 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 	gtk_tree_view_set_model(view, model);
 	insert_new_entry(self);
 
+        gtk_drag_source_set(GTK_WIDGET(view), GDK_BUTTON1_MASK, entries, n_entries, GDK_ACTION_COPY);
+        g_signal_connect(view, "drag-data-get", G_CALLBACK(drag_data_get_handl), NULL);
+	gtk_drag_source_set_icon_stock(GTK_WIDGET(view), GTK_STOCK_NETWORK);
+
 	GtkTreeViewColumn *col;
 	GtkCellRenderer *renderer;
 
@@ -338,6 +429,9 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
 
 	on_server_group_changed(maestro, self);
+
+	GtkEventBox *event = GTK_EVENT_BOX(gtk_builder_get_object(self->priv->builder, "eventbox_drop"));
+	set_widget_drag_dest(GTK_WIDGET(event));
 
 	GtkDialog *dialog = GTK_DIALOG(gtk_builder_get_object(self->priv->builder, "dialog_maestro"));
 	g_signal_connect(dialog, "response", G_CALLBACK(on_dialog_response), self);
