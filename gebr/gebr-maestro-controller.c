@@ -368,6 +368,8 @@ server_group_popup_menu(GtkWidget * widget,
 
 	GtkTreeIter iter;
 	GebrDaemonServer *daemon;
+
+	gtk_tree_model_get_iter(model, &iter, rows->data);
 	gtk_tree_model_get(model, &iter, MAESTRO_CONTROLLER_DAEMON, &daemon, -1);
 
 	menu = gtk_menu_new ();
