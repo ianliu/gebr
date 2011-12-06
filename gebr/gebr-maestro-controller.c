@@ -21,6 +21,7 @@
 #include "gebr-maestro-controller.h"
 #include <config.h>
 
+#include <gdk/gdkkeysyms.h>
 #include <glib/gi18n.h>
 #include "gebr-maestro-server.h"
 #include "gebr-marshal.h"
@@ -72,13 +73,79 @@ insert_new_entry(GebrMaestroController *mc)
 }
 
 static void
+cancel_group_creation(GtkWidget *widget,
+		      GebrMaestroController *mc)
+{
+	GtkNotebook *nb = GTK_NOTEBOOK(gtk_builder_get_object(mc->priv->builder, "notebook_groups"));
+	GtkWidget *dummy = g_object_get_data(G_OBJECT(widget), "dummy-widget");
+	gint page = gtk_notebook_page_num(nb, dummy);
+
+	if (page != -1)
+		gtk_notebook_remove_page(nb, page);
+}
+
+static void
+finish_group_creation(GtkWidget *widget,
+		      GebrMaestroController *mc)
+{
+	GtkEntry *entry = GTK_ENTRY(widget);
+	const gchar *tag = gtk_entry_get_text(entry);
+	GebrDaemonServer *daemon = g_object_get_data(G_OBJECT(widget), "daemon");
+
+	if (!*tag) {
+		cancel_group_creation(widget, mc);
+		return;
+	}
+
+	GtkWidget *box = gtk_hbox_new(FALSE, 5);
+	GtkWidget *spinner = gtk_spinner_new();
+
+	gtk_box_pack_start(GTK_BOX(box), spinner, FALSE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(box), gtk_label_new(tag), TRUE, TRUE, 0);
+	gtk_spinner_start(GTK_SPINNER(spinner));
+	gtk_widget_show_all(box);
+
+	GtkNotebook *nb = GTK_NOTEBOOK(gtk_builder_get_object(mc->priv->builder, "notebook_groups"));
+	GtkWidget *dummy = g_object_get_data(G_OBJECT(widget), "dummy-widget");
+	gtk_notebook_set_tab_label(nb, dummy, box);
+	gebr_maestro_server_add_tag_to(mc->priv->maestros->data, daemon, tag);
+}
+
+static gboolean
+on_group_creation_entry_key_press(GtkWidget *widget,
+				  GdkEventKey *event,
+				  GebrMaestroController *mc)
+{
+	switch (event->keyval) {
+	case GDK_Escape:
+		cancel_group_creation(widget, mc);
+		return TRUE;
+	case GDK_Return:
+		gtk_window_set_focus(GTK_WINDOW(gtk_widget_get_toplevel(widget)),
+				     NULL);
+		return TRUE;
+	default:
+		return FALSE;
+	}
+}
+
+static gboolean
+on_group_creation_entry_focus_out(GtkWidget *widget,
+				  GdkEventFocus *event,
+				  GebrMaestroController *mc)
+{
+	finish_group_creation(widget, mc);
+	return FALSE;
+}
+
+static void
 drag_data_received_handl(GtkWidget *widget,
 			 GdkDragContext *context,
 			 gint x, gint y,
 			 GtkSelectionData *selection_data,
 			 guint target_type,
 			 guint time,
-			 GebrMaestroServer *maestro)
+			 GebrMaestroController *mc)
 {
 	gpointer *daemon;
 
@@ -95,11 +162,31 @@ drag_data_received_handl(GtkWidget *widget,
 
 	g_debug("Got Address %p: %s", *daemon, gebr_daemon_server_get_address(*daemon));
 
-	if (GTK_IS_LABEL(widget))
-		g_warning("Implement me %s:%d", __FILE__, __LINE__);
-	else if (GTK_IS_TREE_VIEW(widget)) {
+	if (GTK_IS_TREE_VIEW(widget)) {
 		const gchar *tag = g_object_get_data(G_OBJECT(widget), "tag");
-		gebr_maestro_server_add_tag_to(maestro, *daemon, tag);
+		gebr_maestro_server_add_tag_to(mc->priv->maestros->data, *daemon, tag);
+	} else {
+		GtkNotebook *nb = GTK_NOTEBOOK(gtk_builder_get_object(mc->priv->builder, "notebook_groups"));
+		gint n = gtk_notebook_get_n_pages(nb);
+
+		GtkWidget *dummy = gtk_label_new(_("Choose the group name and press ENTER"));
+		GtkWidget *entry = gtk_entry_new();
+		g_object_set_data(G_OBJECT(entry), "dummy-widget", dummy);
+		g_object_set_data(G_OBJECT(entry), "daemon", *daemon);
+
+		GtkBorder border = { 0, };
+		gtk_entry_set_has_frame(GTK_ENTRY(entry), FALSE);
+		gtk_entry_set_inner_border(GTK_ENTRY(entry), &border);
+		gtk_notebook_insert_page(nb, dummy, entry, n-1);
+		gtk_widget_show(dummy);
+		gtk_widget_show(entry);
+		gtk_notebook_set_current_page(nb, n-1);
+		gtk_widget_grab_focus(entry);
+
+		g_signal_connect(entry, "key-press-event",
+				 G_CALLBACK(on_group_creation_entry_key_press), mc);
+		g_signal_connect(entry, "focus-out-event",
+				 G_CALLBACK(on_group_creation_entry_focus_out), mc);
 	}
 
         gtk_drag_finish(context, dnd_success, delete_selection_data, time);
@@ -155,10 +242,10 @@ drag_data_get_handl(GtkWidget *widget,
 }
 
 static void
-set_widget_drag_dest(GebrMaestroServer *maestro, GtkWidget *widget)
+set_widget_drag_dest(GebrMaestroController *mc, GtkWidget *widget)
 {
         g_signal_connect(widget, "drag-data-received",
-			 G_CALLBACK(drag_data_received_handl), maestro);
+			 G_CALLBACK(drag_data_received_handl), mc);
         g_signal_connect(widget, "drag-drop",
 			 G_CALLBACK(drag_drop_handl), NULL);
 
@@ -293,7 +380,7 @@ on_server_group_changed(GebrMaestroServer *maestro,
 		gchar *tagdup = g_strdup(tag);
 		g_object_set_data(G_OBJECT(view), "tag", tagdup);
 		g_object_weak_ref(G_OBJECT(view), (GWeakNotify)g_free, tagdup);
-		set_widget_drag_dest(maestro, view);
+		set_widget_drag_dest(self, view);
 	}
 
 	gtk_notebook_set_current_page(nb, current);
@@ -631,7 +718,7 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 	on_server_group_changed(maestro, self);
 
 	GtkEventBox *event = GTK_EVENT_BOX(gtk_builder_get_object(self->priv->builder, "eventbox_drop"));
-	set_widget_drag_dest(maestro, GTK_WIDGET(event));
+	set_widget_drag_dest(self, GTK_WIDGET(event));
 
 	GtkDialog *dialog = GTK_DIALOG(gtk_builder_get_object(self->priv->builder, "dialog_maestro"));
 	g_signal_connect(dialog, "response", G_CALLBACK(on_dialog_response), self);
