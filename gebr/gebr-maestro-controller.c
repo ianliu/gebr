@@ -336,6 +336,64 @@ copy_model_for_groups(GtkTreeModel *orig_model)
 }
 
 static void
+on_server_group_remove(GtkMenuItem *menuitem,
+                       GebrMaestroController *mc)
+{
+	GebrMaestroServer *maestro = mc->priv->maestros->data;
+
+	const gchar *tag = g_object_get_data(G_OBJECT(menuitem), "tag");
+	GebrDaemonServer *daemon = g_object_get_data(G_OBJECT(menuitem), "daemon");
+
+	gebr_maestro_server_remove_tag_from(maestro, daemon, tag);
+}
+
+static GtkMenu *
+server_group_popup_menu(GtkWidget * widget,
+                        GebrMaestroController *mc)
+{
+	GList *rows;
+	GtkWidget *menu;
+	GtkTreeModel *model;
+	GtkTreeSelection *selection;
+
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(widget));
+	rows = gtk_tree_selection_get_selected_rows (selection, &model);
+
+	if (!rows || g_list_length(rows) > 1)
+		return NULL;
+
+	GtkNotebook *nb = GTK_NOTEBOOK(gtk_builder_get_object(mc->priv->builder, "notebook_groups"));
+	GtkWidget *label = gtk_notebook_get_tab_label(nb, widget);
+	const gchar *tag = gtk_label_get_text(GTK_LABEL(label));
+
+	GtkTreeIter iter;
+	GebrDaemonServer *daemon;
+	gtk_tree_model_get(model, &iter, MAESTRO_CONTROLLER_DAEMON, &daemon, -1);
+
+	menu = gtk_menu_new ();
+
+	GtkWidget *item;
+
+	item = gtk_menu_item_new_with_mnemonic(_("_Remove Group"));
+	gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+	g_signal_connect(item, "activate", G_CALLBACK(on_server_group_remove), mc);
+
+	gchar *tagdup = g_strdup(tag);
+	g_object_set_data(G_OBJECT(item), "tag", tagdup);
+	g_object_weak_ref(G_OBJECT(item), (GWeakNotify)g_free, tagdup);
+
+	g_object_set_data(G_OBJECT(item), "daemon", daemon);
+	g_object_weak_ref(G_OBJECT(item), (GWeakNotify)g_object_unref, tagdup);
+
+	gtk_widget_show_all (menu);
+	g_list_foreach (rows, (GFunc) gtk_tree_path_free, NULL);
+	g_list_free (rows);
+
+	return GTK_MENU (menu);
+
+}
+
+static void
 on_server_group_changed(GebrMaestroServer *maestro,
 			GebrMaestroController *self)
 {
@@ -381,6 +439,9 @@ on_server_group_changed(GebrMaestroServer *maestro,
 		g_object_set_data(G_OBJECT(view), "tag", tagdup);
 		g_object_weak_ref(G_OBJECT(view), (GWeakNotify)g_free, tagdup);
 		set_widget_drag_dest(self, view);
+
+		gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(view),
+		                                          (GebrGuiGtkPopupCallback) server_group_popup_menu, self);
 	}
 
 	gtk_notebook_set_current_page(nb, current);

@@ -90,6 +90,10 @@ void gebr_maestro_server_add_tag_to(GebrMaestroServer *maestro,
 				    GebrDaemonServer *daemon,
 				    const gchar *tag);
 
+void gebr_maestro_server_remove_tag_from(GebrMaestroServer *maestro,
+                                         GebrDaemonServer *daemon,
+                                         const gchar *tag);
+
 G_END_DECLS
 
 #endif /* __GEBR_MAESTRO_H__ */

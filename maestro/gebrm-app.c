@@ -81,6 +81,11 @@ static gboolean gebrm_config_insert_tag_on_server(GebrmApp *app,
 						  gchar *tag,
 						  gchar **_tags);
 
+static gboolean gebrm_config_remove_tag_of_server(GebrmApp *app,
+                                                  gchar *server,
+                                                  gchar *tag,
+                                                  gchar **_tags);
+
 static GebrmDaemon *gebrm_add_server_to_list(GebrmApp *app,
 					     const gchar *addr,
 					     const gchar *pass,
@@ -602,8 +607,27 @@ on_client_request(GebrCommProtocolSocket *socket,
 			gchar *tags;
 			if (gebrm_config_insert_tag_on_server(app, server, tag, &tags)) {
 				gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
-								      gebr_comm_protocol_defs.agrp_def, 2,
-								      server, tags);
+				                                      gebr_comm_protocol_defs.agrp_def, 2,
+				                                      server, tags);
+				gebrm_update_tags_on_list_of_servers(app, server, tags);
+				g_free(tags);
+			}
+			g_strfreev(params);
+		} else if (g_str_has_prefix(request->url->str, "/tag-remove")) {
+			gchar *tmp = strchr(request->url->str, '?') + 1;
+			gchar **params = g_strsplit(tmp, ";", -1);
+			gchar *server, *tag;
+
+			server = strchr(params[0], '=') + 1;
+			tag    = strchr(params[1], '=') + 1;
+
+			g_debug("Removing server'%s' of tag '%s'", server, tag);
+
+			gchar *tags;
+			if (gebrm_config_remove_tag_of_server(app, server, tag, &tags)) {
+				gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
+				                                      gebr_comm_protocol_defs.agrp_def, 2,
+				                                      server, tags);
 				gebrm_update_tags_on_list_of_servers(app, server, tags);
 				g_free(tags);
 			}
@@ -711,6 +735,48 @@ gebrm_config_insert_tag_on_server(GebrmApp *app,
 	g_strfreev(tags);
 
 	return !has_tag;
+}
+
+static gboolean
+gebrm_config_remove_tag_of_server(GebrmApp *app,
+                                  gchar *server,
+                                  gchar *tag,
+                                  gchar **_tags)
+{
+	GKeyFile *keyfile = load_servers_keyfile();
+
+	if (!keyfile)
+		return FALSE;
+
+	gboolean has_tag = FALSE;
+	gchar *tmp = g_key_file_get_string(keyfile, server, "tags", NULL);
+	gchar **tags = g_strsplit(tmp, ",", -1);
+	g_free(tmp);
+
+	GString *buf = g_string_new("");
+	for (int i = 0; tags[i]; i++) {
+		if (g_strcmp0(tags[i], tag) != 0)
+			g_string_append_printf(buf, "%s,", tags[i]);
+		else
+			has_tag = TRUE;
+	}
+
+	if (has_tag) {
+		if(buf->len)
+			g_string_erase(buf, buf->len -1, 1);
+
+		g_key_file_set_string(keyfile, server, "tags", buf->str);
+		save_servers_keyfile(keyfile);
+
+		if(_tags)
+			*_tags = g_strdup(buf->str);
+	}
+
+	g_key_file_free(keyfile);
+	g_strfreev(tags);
+	g_string_free(buf, TRUE);
+
+	return has_tag;
 }
 
 static void

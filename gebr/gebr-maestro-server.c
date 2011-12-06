@@ -817,3 +817,17 @@ gebr_maestro_server_add_tag_to(GebrMaestroServer *maestro,
 					       GEBR_COMM_HTTP_METHOD_PUT, url, NULL);
 	g_free(url);
 }
+
+void
+gebr_maestro_server_remove_tag_from(GebrMaestroServer *maestro,
+                                    GebrDaemonServer *daemon,
+                                    const gchar *tag)
+{
+	gchar *url = g_strdup_printf("/tag-remove?server=%s;tag=%s",
+				     gebr_daemon_server_get_address(daemon), tag);
+
+	gebr_comm_protocol_socket_send_request(maestro->priv->server->socket,
+					       GEBR_COMM_HTTP_METHOD_PUT, url, NULL);
+	g_free(url);
+}
+
