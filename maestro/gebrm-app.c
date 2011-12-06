@@ -852,12 +852,12 @@ gebrm_config_load_servers(GebrmApp *app, gchar *path)
 	GKeyFile *servers = g_key_file_new();
 	gchar **groups;
 	gboolean succ = g_key_file_load_from_file(servers, path, G_KEY_FILE_NONE, NULL);
+
 	if (succ) {
 		groups = g_key_file_get_groups(servers, NULL);
-		if (!groups) {
-			GebrmDaemon *daemon = gebrm_add_server_to_list(app, "127.0.0.1", NULL, "");
-			gebrm_daemon_connect(daemon, NULL, NULL);
-		} else {
+		if (!groups)
+			succ = FALSE;
+		else {
 			for (int i = 0; groups[i]; i++) {
 				gchar *tags = g_key_file_get_string(servers, groups[i], "tags", NULL);
 				GebrmDaemon *daemon = gebrm_add_server_to_list(app, groups[i], NULL, tags);
@@ -867,6 +867,12 @@ gebrm_config_load_servers(GebrmApp *app, gchar *path)
 		g_key_file_free (servers);
 		g_strfreev(groups);
 	}
+
+	if (!succ) {
+		GebrmDaemon *daemon = gebrm_add_server_to_list(app, "127.0.0.1", NULL, "");
+		gebrm_daemon_connect(daemon, NULL, NULL);
+	}
+
 	return TRUE;
 }
 
