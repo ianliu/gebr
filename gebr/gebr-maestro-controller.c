@@ -334,6 +334,103 @@ gebr_maestro_controller_new(void)
 	return g_object_new(GEBR_TYPE_MAESTRO_CONTROLLER, NULL);
 }
 
+static void on_server_connect(GtkMenuItem *menuitem,
+                              GebrMaestroController *mc)
+{
+	GtkTreeIter iter;
+	GebrDaemonServer *daemon;
+	GebrMaestroServer *maestro = mc->priv->maestros->data;
+	GtkTreeModel *model;
+
+	GtkTreeView *view = GTK_TREE_VIEW(gtk_builder_get_object(mc->priv->builder, "treeview_servers"));
+	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(view));
+	GList *rows = gtk_tree_selection_get_selected_rows(selection, &model);
+
+	for (GList *i = rows; i; i = i->next) {
+		GtkTreePath *path = i->data;
+
+		if (!gtk_tree_model_get_iter(model, &iter, path))
+			continue;
+
+		gtk_tree_model_get(model, &iter,
+		                   MAESTRO_CONTROLLER_DAEMON, &daemon,-1);
+
+		if (!daemon)
+			continue;
+
+		if (gebr_daemon_server_get_state(daemon) == SERVER_STATE_CONNECT)
+			continue;
+
+		gebr_connectable_connect(GEBR_CONNECTABLE(maestro), gebr_daemon_server_get_address(daemon));
+	}
+}
+
+void on_server_disconnect(GtkMenuItem *menuitem,
+                          GebrMaestroController *mc)
+{
+	GtkTreeIter iter;
+	GebrDaemonServer *daemon;
+	GebrMaestroServer *maestro = mc->priv->maestros->data;
+	GtkTreeModel *model;
+
+	GtkTreeView *view = GTK_TREE_VIEW(gtk_builder_get_object(mc->priv->builder, "treeview_servers"));
+	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(view));
+	GList *rows = gtk_tree_selection_get_selected_rows(selection, &model);
+
+	for (GList *i = rows; i; i = i->next) {
+		GtkTreePath *path = i->data;
+
+		if (!gtk_tree_model_get_iter(model, &iter, path))
+			continue;
+
+		gtk_tree_model_get(model, &iter,
+		                   MAESTRO_CONTROLLER_DAEMON, &daemon, -1);
+
+		if (!daemon)
+			continue;
+
+		if (gebr_daemon_server_get_state(daemon) == SERVER_STATE_DISCONNECTED)
+			continue;
+
+		gebr_connectable_disconnect(GEBR_CONNECTABLE(maestro), gebr_daemon_server_get_address(daemon));
+	}
+}
+
+
+static GtkMenu *
+server_popup_menu(GtkWidget * widget,
+                  GebrMaestroController *mc)
+{
+	GList *rows;
+	GtkWidget *menu;
+	GtkTreeModel *model;
+	GtkTreeSelection *selection;
+
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(widget));
+	rows = gtk_tree_selection_get_selected_rows (selection, &model);
+
+	if (!rows)
+		return NULL;
+
+	menu = gtk_menu_new ();
+
+	GtkWidget *item;
+
+	item = gtk_menu_item_new_with_mnemonic(_("_Connect"));
+	gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+	g_signal_connect(item, "activate", G_CALLBACK(on_server_connect), mc);
+
+	item = gtk_menu_item_new_with_mnemonic(_("_Disconnect"));
+	gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+	g_signal_connect(item, "activate", G_CALLBACK(on_server_disconnect), mc);
+
+	gtk_widget_show_all (menu);
+	g_list_foreach (rows, (GFunc) gtk_tree_path_free, NULL);
+	g_list_free (rows);
+
+	return GTK_MENU (menu);
+}
+
 static void
 on_daemons_changed(GebrMaestroServer *maestro,
                    GebrMaestroController *mc)
@@ -503,6 +600,9 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
         gtk_drag_source_set(GTK_WIDGET(view), GDK_BUTTON1_MASK, entries, n_entries, GDK_ACTION_COPY);
         g_signal_connect(view, "drag-data-get", G_CALLBACK(drag_data_get_handl), NULL);
 	gtk_drag_source_set_icon_stock(GTK_WIDGET(view), GTK_STOCK_NETWORK);
+
+	gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(view),
+	                                          (GebrGuiGtkPopupCallback) server_popup_menu, self);
 
 	GtkTreeViewColumn *col;
 	GtkCellRenderer *renderer;
