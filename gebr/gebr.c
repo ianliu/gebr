@@ -392,12 +392,15 @@ void gebr_config_save(gboolean verbose)
 	gsize length;
 	gchar *string;
 	FILE *configfp;
+	
+	GList *list = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+	const gchar *maestro_addr = gebr_maestro_server_get_address(list->data);
 
 	/* reset key_file, cause we do not sync servers automatically */
 	g_key_file_free(gebr.config.key_file);
 	gebr.config.key_file = g_key_file_new();
 
-	g_key_file_set_string(gebr.config.key_file, "maestro", "address", gebr.config.maestro_address->str);
+	g_key_file_set_string(gebr.config.key_file, "maestro", "address", maestro_addr);
 	g_key_file_set_string(gebr.config.key_file, "general", "name", gebr.config.username->str);
 	g_key_file_set_string(gebr.config.key_file, "general", "email", gebr.config.email->str);
 	g_key_file_set_string(gebr.config.key_file, "general", "editor", gebr.config.editor->str);

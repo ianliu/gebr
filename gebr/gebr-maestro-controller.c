@@ -608,25 +608,42 @@ void
 gebr_maestro_controller_connect(GebrMaestroController *self,
 				const gchar *address)
 {
-	GebrMaestroServer *maestro = gebr_maestro_server_new(address);
-	self->priv->maestros = g_list_prepend(self->priv->maestros, maestro);
+	GebrMaestroServer *maestro;
+	gint cmp_maestro_servers(GebrMaestroServer *server, gchar *b){
+		return g_strcmp0(gebr_maestro_server_get_address(server), b);
+	}
+	GList *list= g_list_find_custom(self->priv->maestros, address,
+					(GCompareFunc) cmp_maestro_servers);
+	if (list==NULL){
+		maestro = gebr_maestro_server_new(address);
+		self->priv->maestros = g_list_prepend(self->priv->maestros, maestro);
 
-	g_signal_connect(maestro, "job-define",
-			 G_CALLBACK(on_job_define), self);
-	g_signal_connect(maestro, "group-changed",
-			 G_CALLBACK(on_server_group_changed), self);
-	g_signal_connect(maestro, "password-request",
-			 G_CALLBACK(on_password_request), self);
-	g_signal_connect(maestro, "daemons-changed",
+		g_signal_connect(maestro, "job-define",
+				 G_CALLBACK(on_job_define), self);
+		g_signal_connect(maestro, "group-changed",
+				 G_CALLBACK(on_server_group_changed), self);
+		g_signal_connect(maestro, "password-request",
+				 G_CALLBACK(on_password_request), self);
+		g_signal_connect(maestro, "daemons-changed",
 				 G_CALLBACK(on_daemons_changed), self);
-	g_signal_connect(maestro, "state-change",
-			 G_CALLBACK(on_state_change), self);
-	gebr_maestro_server_connect(maestro);
+		g_signal_connect(maestro, "state-change",
+				 G_CALLBACK(on_state_change), self);
+	}
+	else{
+		gpointer data = list->data;
+		self->priv->maestros = g_list_delete_link(self->priv->maestros, list);
+		self->priv->maestros = g_list_prepend(self->priv->maestros, data);
+	}
+	gebr_maestro_server_connect(self->priv->maestros->data);
 
-	GtkTreeModel *model = gebr_maestro_server_get_model(maestro, FALSE, NULL);
+	GtkTreeModel *model = gebr_maestro_server_get_model(self->priv->maestros->data, FALSE, NULL);
 	GtkTreeView  *view = GTK_TREE_VIEW(gtk_builder_get_object(self->priv->builder, 
-								 "treeview_servers"));
+								  "treeview_servers"));
 	gtk_tree_view_set_model(GTK_TREE_VIEW(view), model);
 	g_object_unref(model);
-	g_object_unref(model);
+}
+GList *gebr_maestro_controller_get_maestro(GebrMaestroController *self){
+	return self->priv->maestros;
+
+
 }
