@@ -117,6 +117,7 @@ gboolean gebrm_app_run(GebrmApp *app, int fd);
 
 const gchar *gebrm_main_get_lock_file(void);
 
+
 /* }}} GebrmApp methods */
 
 G_END_DECLS

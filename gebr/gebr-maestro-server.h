@@ -94,6 +94,10 @@ void gebr_maestro_server_remove_tag_from(GebrMaestroServer *maestro,
                                          GebrDaemonServer *daemon,
                                          const gchar *tag);
 
+void gebr_maestro_server_set_autoconnect(GebrMaestroServer *maestro,
+					 GebrDaemonServer *daemon,
+					 const gchar *ac);
+
 G_END_DECLS
 
 #endif /* __GEBR_MAESTRO_H__ */

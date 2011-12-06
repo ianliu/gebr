@@ -831,3 +831,15 @@ gebr_maestro_server_remove_tag_from(GebrMaestroServer *maestro,
 	g_free(url);
 }
 
+void
+gebr_maestro_server_set_autoconnect(GebrMaestroServer *maestro,
+                                    GebrDaemonServer *daemon,
+                                    const gchar *ac)
+{
+	gchar *url = g_strdup_printf("/autoconnect?server=%s;ac=%s",
+				     gebr_daemon_server_get_address(daemon), ac);
+
+	gebr_comm_protocol_socket_send_request(maestro->priv->server->socket,
+					       GEBR_COMM_HTTP_METHOD_PUT, url, NULL);
+	g_free(url);
+}

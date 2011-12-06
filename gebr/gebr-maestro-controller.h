@@ -53,6 +53,18 @@ struct _GebrMaestroControllerClass {
 			    GebrJob *job);
 };
 
+enum {
+	SERVER_STATUS_ICON = 0,
+	SERVER_AUTOCONNECT,
+	SERVER_ADDRESS,
+	SERVER_POINTER,
+	SERVER_TAGS,
+	SERVER_CPU,
+	SERVER_MEM,
+	SERVER_FS,
+	SERVER_IS_AUTO_CHOOSE,
+	SERVER_N_COLUMN
+};
 GType gebr_maestro_controller_get_type(void) G_GNUC_CONST;
 
 GebrMaestroController *gebr_maestro_controller_new(void);

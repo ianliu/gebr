@@ -38,6 +38,7 @@ struct _GebrMaestroControllerPriv {
 enum {
 	MAESTRO_CONTROLLER_DAEMON,
 	MAESTRO_CONTROLLER_ADDR,
+	MAESTRO_CONTROLLER_AUTOCONN,
 	MAESTRO_CONTROLLER_EDITABLE,
 	N_COLUMN
 };
@@ -68,6 +69,7 @@ insert_new_entry(GebrMaestroController *mc)
 	gtk_list_store_set(mc->priv->model, &iter,
 	                   MAESTRO_CONTROLLER_DAEMON, NULL,
 	                   MAESTRO_CONTROLLER_ADDR, _("New"),
+	                   MAESTRO_CONTROLLER_AUTOCONN, TRUE,
 	                   MAESTRO_CONTROLLER_EDITABLE, TRUE,
 	                   -1);
 }
@@ -288,6 +290,7 @@ notebook_group_show_address(GtkTreeViewColumn *tree_column,
 	gtk_tree_model_get(tree_model, iter,
 			   MAESTRO_CONTROLLER_DAEMON, &daemon,
 			   MAESTRO_CONTROLLER_ADDR, &label,
+			   MAESTRO_CONTROLLER_AUTOCONN, NULL,
 			   -1);
 
 	if (daemon) {
@@ -323,6 +326,7 @@ copy_model_for_groups(GtkTreeModel *orig_model)
 		gtk_list_store_set(new_model, &new_iter,
 		                   MAESTRO_CONTROLLER_DAEMON, daemon,
 		                   MAESTRO_CONTROLLER_ADDR, gebr_daemon_server_get_display_address(daemon),
+				   MAESTRO_CONTROLLER_AUTOCONN, TRUE,
 		                   -1);
 	}
 
@@ -330,6 +334,7 @@ copy_model_for_groups(GtkTreeModel *orig_model)
 	gtk_list_store_set(new_model, &new_iter,
 	                   MAESTRO_CONTROLLER_DAEMON, NULL,
 	                   MAESTRO_CONTROLLER_ADDR, _("Drop servers to increment this group!"),
+	                   MAESTRO_CONTROLLER_AUTOCONN, TRUE,
 	                   -1);
 
 	return GTK_TREE_MODEL(new_model);
@@ -456,12 +461,11 @@ gebr_maestro_controller_init(GebrMaestroController *self)
 						 GEBR_TYPE_MAESTRO_CONTROLLER,
 						 GebrMaestroControllerPriv);
 
-	self->priv->model = gtk_list_store_new(3,
+	self->priv->model = gtk_list_store_new(N_COLUMN,
 	                                       G_TYPE_OBJECT,
 	                                       G_TYPE_STRING,
-	                                       G_TYPE_BOOLEAN);
-
-	self->priv->maestro_model = gtk_list_store_new(1, G_TYPE_OBJECT);
+	                                       G_TYPE_BOOLEAN,
+					       G_TYPE_BOOLEAN);
 }
 
 static void
@@ -710,6 +714,8 @@ on_connect_to_maestro_clicked( GtkButton *button,
 	GtkComboBoxEntry *combo = GTK_COMBO_BOX_ENTRY(gtk_builder_get_object(self->priv->builder, "combo_maestro"));
 	GtkEntry *entry = GTK_ENTRY(gtk_bin_get_child(GTK_BIN(combo)));
 	connect_to_maestro(entry, self);
+
+
 }
 
 static void
@@ -721,8 +727,29 @@ on_dialog_response(GtkDialog *dialog,
 	self->priv->builder = NULL;
 }
 
+static void 
+on_ac_toggled (GtkCellRendererToggle *cell_renderer,
+	       gchar *path,
+	       GtkTreeModel *model)
+{
+	gboolean ac;
+	GebrDaemonServer *server;
+	GtkTreeIter iter;
+
+	if (!gtk_tree_model_get_iter_from_string (model, &iter, path))
+		return;
+
+	gtk_tree_model_get(model, &iter,
+			   MAESTRO_CONTROLLER_AUTOCONN, &server, -1);
+	if (server==NULL){
+		g_debug("Fix here. Shouldn't get here");
+		return;
+	}
+	ac = gebr_daemon_server_get_ac(server);
+	gebr_daemon_server_set_ac(server, !ac);
+}
 GtkDialog *
-gebr_maestro_controller_create_dialog(GebrMaestroController *self)
+gebr_maestro_controller_create_dialog (GebrMaestroController *self)
 {
 	self->priv->builder = gtk_builder_new();
 	gtk_builder_add_from_file(self->priv->builder,
@@ -748,6 +775,7 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 	GtkTreeModel *model = GTK_TREE_MODEL(self->priv->model);
 	GtkTreeView *view = GTK_TREE_VIEW(gtk_builder_get_object(self->priv->builder, "treeview_servers"));
 	gtk_tree_view_set_model(view, model);
+	GtkCellRenderer *renderer ;
 
         gtk_drag_source_set(GTK_WIDGET(view), GDK_BUTTON1_MASK, entries, n_entries, GDK_ACTION_COPY);
         g_signal_connect(view, "drag-data-get", G_CALLBACK(drag_data_get_handl), NULL);
@@ -757,7 +785,6 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 	                                          (GebrGuiGtkPopupCallback) server_popup_menu, self);
 
 	GtkTreeViewColumn *col;
-	GtkCellRenderer *renderer;
 
 	col = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_title(col, _("Address"));
@@ -777,6 +804,18 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 	g_signal_connect(renderer, "edited", G_CALLBACK(on_servers_edited), self);
 
 	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
+
+	renderer = gtk_cell_renderer_pixbuf_new();
+	GtkTreeViewColumn *ac_column = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(view), ac_column);
+	gtk_tree_view_column_add_attribute(ac_column, renderer, "pixbuf", SERVER_STATUS_ICON);
+
+	renderer = gtk_cell_renderer_toggle_new();
+	g_object_set (renderer, "activatable", TRUE, NULL);
+	g_signal_connect (renderer, "toggled", G_CALLBACK (on_ac_toggled), model);
+	ac_column = gtk_tree_view_column_new_with_attributes(_("AutoConnect"), renderer, NULL);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(view), ac_column);
+	gtk_tree_view_column_add_attribute(ac_column, renderer, "active", SERVER_AUTOCONNECT);
 
 	on_server_group_changed(maestro, self);
 

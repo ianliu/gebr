@@ -71,6 +71,7 @@ struct gebr_comm_server {
 	/* server address/port */
 	GString *address;
 	guint16 port;
+	gboolean ac;
 
 	/* ssh stuff */
 	gchar *password;

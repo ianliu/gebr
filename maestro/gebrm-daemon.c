@@ -28,6 +28,7 @@ struct _GebrmDaemonPriv {
 	GTree *tags;
 	GebrCommServer *server;
 	GebrCommProtocolSocket *client;
+	gboolean ac;
 };
 
 enum {
@@ -359,6 +360,7 @@ gebrm_daemon_init(GebrmDaemon *daemon)
 						   GebrmDaemonPriv);
 	daemon->priv->tags = g_tree_new_full((GCompareDataFunc)g_strcmp0,
 					     NULL, g_free, NULL);
+	daemon->priv->ac = TRUE;
 }
 
 GebrmDaemon *
@@ -469,4 +471,9 @@ GebrCommServer *
 gebrm_daemon_get_server(GebrmDaemon *daemon)
 {
 	return daemon->priv->server;
+}
+
+void
+gebrm_config_set_autoconnect(GebrmDaemon *daemon, gboolean ac){
+	daemon->priv->ac = ac;
 }

@@ -85,6 +85,9 @@ static gboolean gebrm_config_remove_tag_of_server(GebrmApp *app,
                                                   gchar *server,
                                                   gchar *tag,
                                                   gchar **_tags);
+static gboolean gebrm_config_set_autoconnect(GebrmApp *app,
+					     gchar *server,
+					     gboolean ac);
 
 static GebrmDaemon *gebrm_add_server_to_list(GebrmApp *app,
 					     const gchar *addr,
@@ -632,6 +635,23 @@ on_client_request(GebrCommProtocolSocket *socket,
 				g_free(tags);
 			}
 			g_strfreev(params);
+		} else if (g_str_has_prefix(request->url->str, "/autoconnect")) {
+			gchar *tmp = strchr(request->url->str, '?') + 1;
+			gchar **params = g_strsplit(tmp, ";", -1);
+			gchar *server, *is_ac;
+
+			server = strchr(params[0], '=') + 1;
+			is_ac  = strchr(params[1], '=') + 1;
+
+			g_debug("Setting autoconnect:'%s' of server:'%s'", is_ac, server);
+
+			gboolean ac = g_strcmp0(is_ac, "1")==0 ? TRUE:FALSE;
+			if (gebrm_config_set_autoconnect(app, server, ac)) {
+				gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
+				                                      gebr_comm_protocol_defs.ac_def, 2,
+				                                      server, "1" );
+			}
+			g_strfreev(params);
 		}
 	}
 }
@@ -656,19 +676,21 @@ load_servers_keyfile(void)
 	return keyfile;
 }
 
-static void
+static gboolean 
 save_servers_keyfile(GKeyFile *keyfile)
 {
 	gchar *content = g_key_file_to_data(keyfile, NULL, NULL);
+	gboolean succ = FALSE;
 
 	if (content) {
 		gchar *path = g_build_filename(g_get_home_dir(),
 					       GEBRM_LIST_OF_SERVERS_PATH,
 					       GEBRM_LIST_OF_SERVERS_FILENAME, NULL);
-		g_file_set_contents(path, content, -1, NULL);
+		succ = g_file_set_contents(path, content, -1, NULL);
 		g_free(content);
 		g_free(path);
 	}
+	return succ;
 }
 
 static gboolean
@@ -779,6 +801,27 @@ gebrm_config_remove_tag_of_server(GebrmApp *app,
 	return has_tag;
 }
 
+static gboolean
+gebrm_config_set_autoconnect(GebrmApp *app,
+			     gchar *server,
+			     gboolean ac)
+{
+	g_debug("///////////////////////// Must implement %s", __func__);
+	GKeyFile *keyfile = load_servers_keyfile();
+
+	if (!keyfile)
+		return FALSE;
+
+	gchar *is_ac = ac? g_strdup_printf("yes") : g_strdup_printf("no");
+
+	g_key_file_set_string(keyfile, server, "autoconnect", is_ac);
+	gboolean succ = save_servers_keyfile(keyfile);
+
+	g_key_file_free(keyfile);
+	g_free(is_ac);
+
+	return succ;
+}
 static void
 gebrm_config_save_server(GebrmDaemon *daemon)
 {

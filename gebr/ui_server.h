@@ -35,18 +35,6 @@ struct _GebrServerAutochoose {
 };
 
 /* Store field */
-enum {
-	SERVER_STATUS_ICON = 0,
-	SERVER_AUTOCONNECT,
-	SERVER_NAME,
-	SERVER_POINTER,
-	SERVER_TAGS,
-	SERVER_CPU,
-	SERVER_MEM,
-	SERVER_FS,
-	SERVER_IS_AUTO_CHOOSE,
-	SERVER_N_COLUMN
-};
 
 enum {
 	TAG_NAME,

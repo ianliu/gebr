@@ -26,6 +26,7 @@
 struct _GebrDaemonServerPriv {
 	GebrConnectable *connectable;
 	gchar *address;
+	gboolean ac;
 	GebrCommServerState state;
 	GList *tags;
 };
@@ -33,6 +34,7 @@ struct _GebrDaemonServerPriv {
 enum {
 	PROP_0,
 	PROP_ADDRESS,
+	PROP_AC,
 	PROP_CONNECTABLE,
 	PROP_STATE,
 };
@@ -51,6 +53,9 @@ gebr_daemon_server_get(GObject    *object,
 	{
 	case PROP_ADDRESS:
 		g_value_set_string(value, daemon->priv->address);
+		break;
+	case PROP_AC:
+		g_value_set_boolean(value, daemon->priv->ac);
 		break;
 	case PROP_CONNECTABLE:
 		g_value_take_object(value, daemon->priv->connectable);
@@ -147,6 +152,7 @@ gebr_daemon_server_init(GebrDaemonServer *daemon)
 						   GEBR_TYPE_DAEMON_SERVER,
 						   GebrDaemonServerPriv);
 	daemon->priv->tags = NULL;
+	daemon->priv->ac = TRUE;
 }
 
 GebrDaemonServer *
@@ -246,4 +252,14 @@ gebr_daemon_server_has_tag(GebrDaemonServer *daemon, const gchar *tag)
 		if (g_strcmp0(i->data, tag) == 0)
 			return TRUE;
 	return FALSE;
+}
+gboolean
+gebr_daemon_server_get_ac(GebrDaemonServer *daemon)
+{
+	return daemon->priv->ac;
+}
+gboolean
+gebr_daemon_server_set_ac(GebrDaemonServer *daemon, gboolean ac)
+{
+	return daemon->priv->ac = ac;
 }
