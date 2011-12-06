@@ -151,14 +151,15 @@ void test_gebr_geoxml_line_get_path(void)
 void test_gebr_geoxml_line_get_group(void)
 {
 	GebrGeoXmlLine *line = NULL;
-	gchar *group, *addr;
+	gchar *addr;
 
 	line = gebr_geoxml_line_new();
-	gebr_geoxml_line_set_group(line, "foo", "bar");
-	gebr_geoxml_line_get_group(line, &addr, &group);
+	gebr_geoxml_line_set_maestro(line, "foo");
+	addr = gebr_geoxml_line_get_maestro(line);
 
 	g_assert_cmpstr(addr, ==, "foo");
-	g_assert_cmpstr(group, ==, "bar");
+
+	g_free(addr);
 }
 
 int main(int argc, char *argv[])

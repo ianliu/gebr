@@ -474,9 +474,6 @@ static void flow_browse_load(void)
 	for (; revision != NULL; gebr_geoxml_sequence_next(&revision))
 		flow_browse_load_revision(GEBR_GEOXML_REVISION(revision), FALSE);
 
-	/* select last edited server */
-	GtkTreeModel *model;
-
 	flow_browse_info_update();
 
 	g_free(filename);

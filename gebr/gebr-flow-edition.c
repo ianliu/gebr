@@ -1674,24 +1674,27 @@ gebr_flow_edition_select_queue(GebrFlowEdition *self)
 void
 gebr_flow_edition_update_server_and_queue(GebrFlowEdition *fe)
 {
-	gchar *addr, *group;
-	GtkTreeModel *server_model, *queue_model;
-	GList *i = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
-	GebrMaestroServer *maestro = i->data;
+	g_warning("%s:%d (%s) %s", __FILE__, __LINE__, __func__, "Implement me please!");
 
-	// FIXME: Use @addr to choose a MaestroServer.
-	gebr_geoxml_line_get_group(gebr.line, &addr, &group);
+	//gchar *addr, *group;
+	//GtkTreeModel *server_model, *queue_model;
+	//GList *i = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+	//GebrMaestroServer *maestro = i->data;
 
-	server_model = gebr_maestro_server_get_model(maestro, TRUE, group);
-	queue_model = gebr_maestro_server_get_queues_model(maestro, group);
+	//gchar *addr = gebr_geoxml_line_get_group(gebr.line);
+	//GebrMaestroServer *maestro = gebr_maestro_controller_get_by_address(gebr.maestro_controller, addr);
+	//g_free(addr);
 
-	gtk_combo_box_set_model(GTK_COMBO_BOX(fe->priv->queue_combobox), queue_model);
-	gtk_combo_box_set_model(GTK_COMBO_BOX(fe->priv->server_combobox), server_model);
+	//server_model = gebr_maestro_server_get_model(maestro, TRUE, group);
+	//queue_model = gebr_maestro_server_get_queues_model(maestro, group);
 
-	g_object_unref(server_model);
-	g_object_unref(queue_model);
-	g_free(addr);
-	g_free(group);
+	//gtk_combo_box_set_model(GTK_COMBO_BOX(fe->priv->queue_combobox), queue_model);
+	//gtk_combo_box_set_model(GTK_COMBO_BOX(fe->priv->server_combobox), server_model);
+
+	//g_object_unref(server_model);
+	//g_object_unref(queue_model);
+	//g_free(addr);
+	//g_free(group);
 }
 
 const gchar *

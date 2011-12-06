@@ -36,7 +36,7 @@ gebr_ui_flow_run(void)
 	const gchar *hostname = g_get_host_name();
 
 	gchar *group;
-	gebr_geoxml_line_get_group(gebr.line, NULL, &group);
+	group = g_strdup("Foo Group"); //gebr_geoxml_line_get_group(gebr.line, NULL, &group);
 	gchar *submit_date = gebr_iso_date();
 	gebr_geoxml_flow_set_date_last_run(gebr.flow, g_strdup(submit_date));
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), FALSE, FALSE);

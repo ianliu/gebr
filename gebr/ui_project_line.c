@@ -308,19 +308,13 @@ void project_line_info_update(void)
 
 	/* Line's server group */
 	if (!is_project) {
-		markup = g_markup_printf_escaped("<b>%s</b>", _("Server group:"));
+		markup = g_markup_printf_escaped("<b>%s</b>", _("Server maestro:"));
 		gtk_label_set_markup(GTK_LABEL(gebr.ui_project_line->info.group_label), markup);
 		g_free(markup);
 
-		gchar *addr, *group;
-		gebr_geoxml_line_get_group(gebr.line, &addr, &group);
-		if (group[0] == '\0'){
-			g_free(group);
-			group = g_strdup(_("All servers from Maestro"));
-		}
-			
-
-		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.group), group);
+		gchar *addr = gebr_geoxml_line_get_maestro(gebr.line);
+		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.group), addr);
+		g_free(addr);
 	}
 
 	/* Line's paths */

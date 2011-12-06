@@ -206,6 +206,22 @@ GebrGeoXmlDocument *document_get_current(void)
 	}
 }
 
+static void
+maestro_combo_show_address(GtkCellLayout *cell_layout,
+			   GtkCellRenderer *cell,
+			   GtkTreeModel *tree_model,
+			   GtkTreeIter *iter,
+			   gpointer data)
+{
+	GebrMaestroServer *maestro;
+	gtk_tree_model_get(tree_model, iter, 0, &maestro, -1);
+
+	if (!maestro)
+		return;
+
+	g_object_set(cell, "text", gebr_maestro_server_get_display_address(maestro), NULL);
+}
+
 void document_properties_setup_ui (GebrGeoXmlDocument * document,
 				   GebrPropertiesResponseFunc func,
 				   gboolean is_new)
@@ -331,40 +347,32 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 	if (gebr_geoxml_document_get_type(document) == GEBR_GEOXML_DOCUMENT_TYPE_LINE)
 	{
 		GtkTreeIter active, iter;
-		gchar *curr_group, *maestro_addr;
-
 		GtkTreeModel *model = gebr_maestro_controller_get_maestros_model(gebr.maestro_controller);
 		gtk_tree_model_get_iter_first (model, &active);
 		data->groups_combo = groups_combo = gtk_combo_box_new_with_model(model);
 
 		GtkCellRenderer *cell = gtk_cell_renderer_text_new();
 		gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(groups_combo), cell, TRUE);
-		gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(groups_combo), cell,
-					      "text", GEBR_UI_SERVER_GROUP_TITLE);
+		gtk_cell_layout_set_cell_data_func(GTK_CELL_LAYOUT(groups_combo), cell,
+						   maestro_combo_show_address, NULL, NULL);
 
-		gebr_geoxml_line_get_group(GEBR_GEOXML_LINE(document), &maestro_addr, &curr_group);
+		gchar *maestro_addr = gebr_geoxml_line_get_maestro(GEBR_GEOXML_LINE(document));
 
 		/* Otherwise, skip the first entry and search for the current group */
 		gboolean valid;
 		iter = active;
 		valid = gtk_tree_model_iter_next (model, &iter);
 		while (valid) {
-			gchar *name;
 			GebrMaestroServer *maestro;
-			gtk_tree_model_get(model, &iter,
-					   GEBR_UI_SERVER_GROUP_GROUP, &name,
-					   GEBR_UI_SERVER_GROUP_MAESTRO, &maestro,
-					   -1);
-			if (g_strcmp0(maestro_addr, gebr_maestro_server_get_address(maestro)) == 0
-			    && g_strcmp0(name, curr_group) == 0)
+			gtk_tree_model_get(model, &iter, 0, &maestro, -1);
+			if (g_strcmp0(maestro_addr, gebr_maestro_server_get_address(maestro)) == 0)
 			{
 				active = iter;
-				g_free(name);
 				break;
 			}
-			g_free(name);
 			valid = gtk_tree_model_iter_next(model, &iter);
 		}
+
 		/* If valid = TRUE, we found the group */
 		if (valid || is_new)
 			gtk_combo_box_set_active_iter (GTK_COMBO_BOX (groups_combo), &active);
@@ -1654,7 +1662,6 @@ static void on_file_entry_activate (GtkEntry *entry, GebrGuiSequenceEdit *sequen
 
 static void on_groups_combo_box_changed(GtkComboBox *combo, GebrGuiValueSequenceEdit *edit)
 {
-	gchar *group;
 	GebrMaestroServer *maestro;
 	GtkTreeIter iter;
 	GtkTreeModel *model;
@@ -1667,19 +1674,10 @@ static void on_groups_combo_box_changed(GtkComboBox *combo, GebrGuiValueSequence
 
 	model = gtk_combo_box_get_model(combo);
 
-	gtk_tree_model_get(model, &iter,
-			   GEBR_UI_SERVER_GROUP_GROUP, &group,
-			   GEBR_UI_SERVER_GROUP_MAESTRO, &maestro,
-			   -1);
+	gtk_tree_model_get(model, &iter, 0, &maestro, -1);
 
-	/* Empty string means all servers */
-	if (!group)
-		group = "";
-
-	gebr_geoxml_line_set_group(gebr.line, gebr_maestro_server_get_address(maestro), group);
+	gebr_geoxml_line_set_maestro(gebr.line, gebr_maestro_server_get_address(maestro));
 	gebr_flow_edition_update_server_and_queue(gebr.ui_flow_edition);
-
-	g_free (group);
 }
 
 static gboolean dict_edit_reorder(GtkTreeView            *tree_view,

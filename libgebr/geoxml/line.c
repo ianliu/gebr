@@ -154,49 +154,36 @@ glong gebr_geoxml_line_get_paths_number(GebrGeoXmlLine * line)
 	return retval;
 }
 
-void gebr_geoxml_line_set_group(GebrGeoXmlLine *line,
-				const gchar *addr,
-				const gchar *group)
+gchar *
+gebr_geoxml_line_get_maestro(GebrGeoXmlLine *line)
+{
+	GdomeElement *root;
+	GdomeElement *group_el;
+
+	g_return_val_if_fail(line != NULL, NULL);
+
+	root = gebr_geoxml_document_root_element(line);
+	group_el = __gebr_geoxml_get_first_element(root, "server-maestro");
+	gchar *addr = __gebr_geoxml_get_attr_value(group_el, "address");
+	gdome_el_unref(root, &exception);
+	gdome_el_unref(group_el, &exception);
+
+	return addr;
+}
+
+void
+gebr_geoxml_line_set_maestro(GebrGeoXmlLine *line,
+			     const gchar *addr)
 {
 	GdomeElement *root;
 	GdomeElement *group_el;
 
 	g_return_if_fail(line != NULL);
 	g_return_if_fail(addr != NULL);
-	g_return_if_fail(group != NULL);
 
 	root = gebr_geoxml_document_root_element(line);
-	group_el = __gebr_geoxml_get_first_element(root, "server-group");
-	__gebr_geoxml_set_attr_value(group_el, "maestro-address", addr);
-	__gebr_geoxml_set_attr_value(group_el, "group-id", group);
-	gdome_el_unref(root, &exception);
-	gdome_el_unref(group_el, &exception);
-}
-
-void gebr_geoxml_line_get_group(GebrGeoXmlLine *line,
-				gchar **maestro_addr,
-				gchar **group_id)
-{
-	gchar *tmp;
-	GdomeElement *root;
-	GdomeElement *group_el;
-
-	g_return_if_fail(line != NULL);
-	g_return_if_fail(maestro_addr != NULL || group_id != NULL);
-
-	root = gebr_geoxml_document_root_element (line);
-	group_el = __gebr_geoxml_get_first_element(root, "server-group");
-
-	if (maestro_addr) {
-		tmp = __gebr_geoxml_get_attr_value(group_el, "maestro-address");
-		*maestro_addr = tmp ? tmp : g_strdup("");
-	}
-
-	if (group_id) {
-		tmp = __gebr_geoxml_get_attr_value(group_el, "group-id");
-		*group_id = tmp ? tmp : g_strdup("");
-	}
-
+	group_el = __gebr_geoxml_get_first_element(root, "server-maestro");
+	__gebr_geoxml_set_attr_value(group_el, "address", addr);
 	gdome_el_unref(root, &exception);
 	gdome_el_unref(group_el, &exception);
 }
