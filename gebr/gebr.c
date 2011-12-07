@@ -142,7 +142,7 @@ gboolean gebr_quit(gboolean save_config)
 	if (save_config)
 		gebr_config_save(FALSE);
 
-	GList *m = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+	GList *m = gebr_maestro_controller_get_maestros(gebr.maestro_controller);
 	if (m->data) {
 		GtkTreeModel *model = gebr_maestro_server_get_model(m->data, TRUE, NULL);
 
@@ -395,7 +395,7 @@ void gebr_config_save(gboolean verbose)
 	gchar *string;
 	FILE *configfp;
 	
-	GList *list = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+	GList *list = gebr_maestro_controller_get_maestros(gebr.maestro_controller);
 	const gchar *maestro_addr = gebr_maestro_server_get_address(list->data);
 
 	/* reset key_file, cause we do not sync servers automatically */

@@ -93,9 +93,9 @@ static void on_queue_set_text(GtkCellLayout   *cell_layout,
 
 static void on_queue_combobox_changed (GtkComboBox *combo, GebrFlowEdition *fe);
 
-/*
- * Public functions
- */
+
+
+
 
 static gboolean
 menu_search_func(GtkTreeModel *model,

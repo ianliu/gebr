@@ -50,7 +50,7 @@ gebr_ui_flow_run(void)
 				     gebr_flow_edition_get_selected_server(gebr.ui_flow_edition),
 				     parent_rid, speed_str, nice, group, hostname, gebr_job_get_id(job));
 
-	GList *m = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+	GList *m = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
 	GebrCommServer *server = gebr_maestro_server_get_server(m->data);
 	gebr_comm_protocol_socket_send_request(server->socket,
 					       GEBR_COMM_HTTP_METHOD_PUT, url, content);
