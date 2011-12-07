@@ -847,5 +847,45 @@ gebr_maestro_server_set_autoconnect(GebrMaestroServer *maestro,
 GtkTreeModel *
 gebr_maestro_server_get_groups_model(GebrMaestroServer *maestro)
 {
-	return NULL;
+	GtkTreeIter iter;
+	GtkListStore *store = gtk_list_store_new(MAESTRO_SERVER_N,
+	                                         G_TYPE_INT,
+	                                         G_TYPE_STRING);
+
+	gtk_list_store_append(store, &iter);
+	gtk_list_store_set(store, &iter,
+	                   MAESTRO_SERVER_TYPE, MAESTR_SERVER_TYPE_GROUP,
+	                   MAESTRO_SERVER_NAME, "",
+	                   -1);
+
+	GList *groups = gebr_maestro_server_get_all_tags(maestro);
+
+	for(GList *g = groups; g; g = g->next) {
+		const gchar *tag = g->data;
+
+		gtk_list_store_append(store, &iter);
+		gtk_list_store_set(store, &iter,
+		                   MAESTRO_SERVER_TYPE, MAESTR_SERVER_TYPE_GROUP,
+		                   MAESTRO_SERVER_NAME, tag,
+		                   -1);
+	}
+
+	GtkTreeIter daemons_iter;
+	GtkTreeModel *daemons_model = gebr_maestro_server_get_model(maestro, FALSE, NULL);
+
+	gebr_gui_gtk_tree_model_foreach(daemons_iter, daemons_model) {
+		GebrDaemonServer *daemon;
+
+		gtk_tree_model_get(daemons_model, &daemons_iter,
+		                   0, &daemon, -1);
+
+		gtk_list_store_append(store, &iter);
+		gtk_list_store_set(store, &iter,
+		                   MAESTRO_SERVER_TYPE, MAESTR_SERVER_TYPE_DAEMON,
+		                   MAESTRO_SERVER_NAME, gebr_daemon_server_get_address(daemon),
+		                   -1);
+	}
+	g_object_unref(daemons_model);
+
+	return GTK_TREE_MODEL(store);
 }
