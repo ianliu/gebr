@@ -105,11 +105,14 @@ typedef enum {
 } GebrMaestroServerGroupColumns;
 
 typedef enum {
-	MAESTR_SERVER_TYPE_GROUP,
-	MAESTR_SERVER_TYPE_DAEMON,
+	MAESTRO_SERVER_TYPE_GROUP,
+	MAESTRO_SERVER_TYPE_DAEMON,
 } GebrMaestroServerGroupType;
 
 GtkTreeModel *gebr_maestro_server_get_groups_model(GebrMaestroServer *maestro);
+
+GebrDaemonServer *gebr_maestro_server_get_daemon(GebrMaestroServer *server,
+						 const gchar *address);
 
 G_END_DECLS
 

@@ -37,6 +37,7 @@
 #include "ui_help.h"
 #include "callbacks.h"
 #include "ui_document.h"
+#include "gebr-maestro-server.h"
 
 /*
  * Prototypes
@@ -192,7 +193,7 @@ flow_edition_setup_ui(void)
 
 	frame = gtk_frame_new(NULL);
 	alignment = gtk_alignment_new(0.5, 0.5, 1, 1);
-	label = gtk_label_new_with_mnemonic(_("Server"));
+	label = gtk_label_new_with_mnemonic(_("Server group"));
 	gtk_alignment_set_padding(GTK_ALIGNMENT(alignment), 0, 4, 5, 5);
 	gtk_frame_set_label_widget(GTK_FRAME(frame), label);
 	gtk_container_add(GTK_CONTAINER(frame), alignment);
@@ -1263,6 +1264,7 @@ static GtkMenu *flow_edition_menu_popup_menu(GtkWidget * widget, GebrFlowEdition
  */
 static void on_server_combobox_changed(GtkComboBox * combobox)
 {
+#if 0
 	GtkTreeIter iter;
 	GtkTreeIter flow_iter;
 
@@ -1283,6 +1285,7 @@ static void on_server_combobox_changed(GtkComboBox * combobox)
 
 	flow_edition_set_io();
 	flow_browse_info_update();
+#endif
 }
 
 /**
@@ -1402,24 +1405,50 @@ on_server_disconnected_set_row_insensitive(GtkCellLayout   *cell_layout,
 					   GtkTreeIter     *iter,
 					   gpointer         data)
 {
+	gchar *name;
+	GebrMaestroServerGroupType type;
+
+	gtk_tree_model_get(tree_model, iter,
+			   MAESTRO_SERVER_TYPE, &type,
+			   MAESTRO_SERVER_NAME, &name,
+			   -1);
 
 	GebrDaemonServer *daemon;
+	GebrMaestroServer *maestro;
+	gboolean is_connected = TRUE;
 
-	gtk_tree_model_get(tree_model, iter, 0, &daemon, -1);
+	maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller,
+							       gebr.line);
 
-	if (!daemon)
-		return;
+	if (type == MAESTRO_SERVER_TYPE_DAEMON) {
+		daemon = gebr_maestro_server_get_daemon(maestro, name);
+		is_connected = gebr_daemon_server_get_state(daemon) == SERVER_STATE_CONNECT;
+	}
 
-	gboolean is_connected = gebr_daemon_server_get_state(daemon) == SERVER_STATE_CONNECT;
+	if (GTK_IS_CELL_RENDERER_TEXT(cell)) {
+		const gchar *txt;
 
-	if (GTK_IS_CELL_RENDERER_TEXT(cell))
-		g_object_set(cell, "text", gebr_daemon_server_get_display_address(daemon), NULL);
-	else
-		g_object_set(cell, "stock-id", is_connected ? GTK_STOCK_CONNECT : GTK_STOCK_DISCONNECT, NULL);
+		if (type == MAESTRO_SERVER_TYPE_GROUP) {
+			if (*name)
+				txt = name;
+			else
+				txt = gebr_maestro_server_get_display_address(maestro);
+		} else
+			txt = gebr_daemon_server_get_display_address(daemon);
 
-	if (gebr_daemon_server_is_autochoose(daemon)) {
-		g_object_set(cell, "sensitive", TRUE, NULL);
-		return;
+		g_object_set(cell, "text", txt, NULL);
+	} else {
+		const gchar *stock_id;
+		if (type == MAESTRO_SERVER_TYPE_GROUP)
+			stock_id = GTK_STOCK_NETWORK;
+		else {
+			if (is_connected)
+				stock_id = GTK_STOCK_CONNECT;
+			else
+				stock_id = GTK_STOCK_DISCONNECT;
+		}
+
+		g_object_set(cell, "stock-id", stock_id, NULL);
 	}
 
 	g_object_set(cell, "sensitive", is_connected, NULL);
@@ -1672,29 +1701,18 @@ gebr_flow_edition_select_queue(GebrFlowEdition *self)
 }
 
 void
-gebr_flow_edition_update_server_and_queue(GebrFlowEdition *fe)
+gebr_flow_edition_update_server(GebrFlowEdition *fe)
 {
-	g_warning("%s:%d (%s) %s", __FILE__, __LINE__, __func__, "Implement me please!");
+	GebrMaestroServer *maestro =
+		gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller,
+							     gebr.line);
 
-	//gchar *addr, *group;
-	//GtkTreeModel *server_model, *queue_model;
-	//GList *i = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
-	//GebrMaestroServer *maestro = i->data;
+	if (!maestro)
+		return;
 
-	//gchar *addr = gebr_geoxml_line_get_group(gebr.line);
-	//GebrMaestroServer *maestro = gebr_maestro_controller_get_by_address(gebr.maestro_controller, addr);
-	//g_free(addr);
-
-	//server_model = gebr_maestro_server_get_model(maestro, TRUE, group);
-	//queue_model = gebr_maestro_server_get_queues_model(maestro, group);
-
-	//gtk_combo_box_set_model(GTK_COMBO_BOX(fe->priv->queue_combobox), queue_model);
-	//gtk_combo_box_set_model(GTK_COMBO_BOX(fe->priv->server_combobox), server_model);
-
-	//g_object_unref(server_model);
-	//g_object_unref(queue_model);
-	//g_free(addr);
-	//g_free(group);
+	GtkTreeModel *model = gebr_maestro_server_get_groups_model(maestro);
+	gtk_combo_box_set_model(GTK_COMBO_BOX(fe->priv->server_combobox), model);
+	g_object_unref(model);
 }
 
 const gchar *

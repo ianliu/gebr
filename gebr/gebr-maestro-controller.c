@@ -466,6 +466,8 @@ gebr_maestro_controller_init(GebrMaestroController *self)
 	                                       G_TYPE_STRING,
 	                                       G_TYPE_BOOLEAN,
 					       G_TYPE_BOOLEAN);
+
+	self->priv->maestro_model = gtk_list_store_new(1, GEBR_TYPE_MAESTRO_SERVER);
 }
 
 static void

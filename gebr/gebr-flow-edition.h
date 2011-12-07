@@ -178,7 +178,7 @@ void gebr_flow_edition_show(GebrFlowEdition *self);
 
 void gebr_flow_edition_select_queue(GebrFlowEdition *self);
 
-void gebr_flow_edition_update_server_and_queue(GebrFlowEdition *self);
+void gebr_flow_edition_update_server(GebrFlowEdition *self);
 
 const gchar *gebr_flow_edition_get_selected_queue(GebrFlowEdition *fe);
 

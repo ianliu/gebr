@@ -89,30 +89,6 @@ G_DEFINE_TYPE_WITH_CODE(GebrMaestroServer, gebr_maestro_server, G_TYPE_OBJECT,
 			G_IMPLEMENT_INTERFACE(GEBR_TYPE_CONNECTABLE,
 					      gebr_maestro_server_connectable_init));
 
-static GebrDaemonServer *
-gebr_maestro_server_get_daemon(GebrMaestroServer *maestro,
-			       const gchar *addr,
-			       GtkTreeIter *_iter)
-{
-	GtkTreeIter iter;
-	GebrDaemonServer *daemon;
-	GtkTreeModel *model = GTK_TREE_MODEL(maestro->priv->store);
-	const gchar *daddr;
-
-	gebr_gui_gtk_tree_model_foreach(iter, model) {
-		gtk_tree_model_get(model, &iter, 0, &daemon, -1);
-		daddr = gebr_daemon_server_get_address(daemon);
-
-		if (g_strcmp0(daddr, addr) == 0) {
-			if (_iter)
-				*_iter = iter;
-			return daemon;
-		}
-	}
-
-	return NULL;
-}
-
 void
 log_message(GebrCommServer *server,
 	    GebrLogMessageType type,
@@ -253,7 +229,7 @@ parse_messages(GebrCommServer *comm_server,
 
 			GtkTreeIter iter;
 			GebrCommServerState state = gebr_comm_server_state_from_string(ssta->str);
-			GebrDaemonServer *daemon = gebr_maestro_server_get_daemon(maestro, addr->str, &iter);
+			GebrDaemonServer *daemon = get_daemon_from_address(maestro, addr->str, &iter);
 
 			if (!daemon) {
 				daemon = gebr_daemon_server_new(GEBR_CONNECTABLE(maestro),
@@ -856,7 +832,7 @@ gebr_maestro_server_get_groups_model(GebrMaestroServer *maestro)
 
 	gtk_list_store_append(store, &iter);
 	gtk_list_store_set(store, &iter,
-	                   MAESTRO_SERVER_TYPE, MAESTR_SERVER_TYPE_GROUP,
+	                   MAESTRO_SERVER_TYPE, MAESTRO_SERVER_TYPE_GROUP,
 	                   MAESTRO_SERVER_NAME, "",
 	                   -1);
 
@@ -867,7 +843,7 @@ gebr_maestro_server_get_groups_model(GebrMaestroServer *maestro)
 
 		gtk_list_store_append(store, &iter);
 		gtk_list_store_set(store, &iter,
-		                   MAESTRO_SERVER_TYPE, MAESTR_SERVER_TYPE_GROUP,
+		                   MAESTRO_SERVER_TYPE, MAESTRO_SERVER_TYPE_GROUP,
 		                   MAESTRO_SERVER_NAME, tag,
 		                   -1);
 	}
@@ -883,11 +859,18 @@ gebr_maestro_server_get_groups_model(GebrMaestroServer *maestro)
 
 		gtk_list_store_append(store, &iter);
 		gtk_list_store_set(store, &iter,
-		                   MAESTRO_SERVER_TYPE, MAESTR_SERVER_TYPE_DAEMON,
+		                   MAESTRO_SERVER_TYPE, MAESTRO_SERVER_TYPE_DAEMON,
 		                   MAESTRO_SERVER_NAME, gebr_daemon_server_get_address(daemon),
 		                   -1);
 	}
 	g_object_unref(daemons_model);
 
 	return GTK_TREE_MODEL(store);
+}
+
+GebrDaemonServer *
+gebr_maestro_server_get_daemon(GebrMaestroServer *server,
+			       const gchar *address)
+{
+	return get_daemon_from_address(server, address, NULL);
 }

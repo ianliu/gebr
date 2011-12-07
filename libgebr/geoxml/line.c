@@ -56,7 +56,7 @@ GebrGeoXmlLine *gebr_geoxml_line_new()
 {
 	GebrGeoXmlDocument *document = gebr_geoxml_document_new("line", GEBR_GEOXML_LINE_VERSION);
 	GdomeElement *root = gebr_geoxml_document_root_element(document);
-	gdome_el_unref(__gebr_geoxml_insert_new_element(root, "server-group", NULL), &exception);
+	gdome_el_unref(__gebr_geoxml_insert_new_element(root, "server-maestro", NULL), &exception);
 	gdome_el_unref(root, &exception);
 	return GEBR_GEOXML_LINE(document);
 }

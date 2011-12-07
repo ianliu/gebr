@@ -1,4 +1,4 @@
-<!ELEMENT line (title, description, help, author, email, dict, date, server-group, path*, flow*)>
+<!ELEMENT line (title, description, help, author, email, dict, date, server-maestro, path*, flow*)>
 <!ATTLIST line
 	version CDATA #FIXED "0.3.5">
 

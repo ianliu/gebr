@@ -1268,7 +1268,7 @@ static void project_line_load(void)
 				   PL_XMLPOINTER, &gebr.line, -1);
 
 		gebr.project_line = GEBR_GEOXML_DOC(gebr.line);
-		gebr_flow_edition_update_server_and_queue(gebr.ui_flow_edition);
+		gebr_flow_edition_update_server(gebr.ui_flow_edition);
 		line_load_flows();
 	} else {
 		gebr.project_line = GEBR_GEOXML_DOC(gebr.project);
