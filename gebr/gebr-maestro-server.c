@@ -843,3 +843,9 @@ gebr_maestro_server_set_autoconnect(GebrMaestroServer *maestro,
 					       GEBR_COMM_HTTP_METHOD_PUT, url, NULL);
 	g_free(url);
 }
+
+GtkTreeModel *
+gebr_maestro_server_get_groups_model(GebrMaestroServer *maestro)
+{
+	return NULL;
+}

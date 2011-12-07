@@ -98,6 +98,19 @@ void gebr_maestro_server_set_autoconnect(GebrMaestroServer *maestro,
 					 GebrDaemonServer *daemon,
 					 const gchar *ac);
 
+typedef enum {
+	MAESTRO_SERVER_TYPE,
+	MAESTRO_SERVER_NAME,
+	MAESTRO_SERVER_N
+} GebrMaestroServerGroupColumns;
+
+typedef enum {
+	MAESTR_SERVER_TYPE_GROUP,
+	MAESTR_SERVER_TYPE_DAEMON,
+} GebrMaestroServerGroupType;
+
+GtkTreeModel *gebr_maestro_server_get_groups_model(GebrMaestroServer *maestro);
+
 G_END_DECLS
 
 #endif /* __GEBR_MAESTRO_H__ */
