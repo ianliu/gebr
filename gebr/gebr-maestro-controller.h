@@ -71,12 +71,18 @@ GebrMaestroController *gebr_maestro_controller_new(void);
 
 GtkDialog *gebr_maestro_controller_create_dialog(GebrMaestroController *self);
 
-GList *gebr_maestro_controller_get_maestro(GebrMaestroController *self);
+GList *gebr_maestro_controller_get_maestros(GebrMaestroController *self);
 
 void gebr_maestro_controller_connect(GebrMaestroController *self,
 				     const gchar *address);
 
 GtkTreeModel *gebr_maestro_controller_get_maestros_model(GebrMaestroController *self);
+
+GebrMaestroServer *gebr_maestro_controller_get_maestro_for_address(GebrMaestroController *mc,
+								   const gchar *address);
+
+GebrMaestroServer *gebr_maestro_controller_get_maestro_for_line(GebrMaestroController *mc,
+								GebrGeoXmlLine *line);
 
 G_END_DECLS
 

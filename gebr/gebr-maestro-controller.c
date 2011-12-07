@@ -901,16 +901,20 @@ on_state_change(GebrMaestroServer *maestro,
 	}
 }
 
+static gint
+cmp_maestro_servers(GebrMaestroServer *server, gchar *b)
+{
+	return g_strcmp0(gebr_maestro_server_get_address(server), b);
+}
+
 void
 gebr_maestro_controller_connect(GebrMaestroController *self,
 				const gchar *address)
 {
 	GebrMaestroServer *maestro;
-	gint cmp_maestro_servers(GebrMaestroServer *server, gchar *b){
-		return g_strcmp0(gebr_maestro_server_get_address(server), b);
-	}
-	GList *list= g_list_find_custom(self->priv->maestros, address,
-					(GCompareFunc) cmp_maestro_servers);
+	GList *list = g_list_find_custom(self->priv->maestros, address,
+					 (GCompareFunc)cmp_maestro_servers);
+
 	if (list==NULL) {
 		maestro = gebr_maestro_server_new(address);
 		self->priv->maestros = g_list_prepend(self->priv->maestros, maestro);
@@ -945,7 +949,8 @@ gebr_maestro_controller_connect(GebrMaestroController *self,
 	g_object_unref(model);
 }
 
-GList *gebr_maestro_controller_get_maestro(GebrMaestroController *self)
+GList *
+gebr_maestro_controller_get_maestros(GebrMaestroController *self)
 {
 	return self->priv->maestros;
 }
@@ -954,4 +959,26 @@ GtkTreeModel *
 gebr_maestro_controller_get_maestros_model(GebrMaestroController *self)
 {
 	return GTK_TREE_MODEL(self->priv->maestro_model);
+}
+
+GebrMaestroServer *
+gebr_maestro_controller_get_maestro_for_address(GebrMaestroController *mc,
+						const gchar *address)
+{
+	GList *list = g_list_find_custom(mc->priv->maestros, address,
+					 (GCompareFunc)cmp_maestro_servers);
+	if (list)
+		return list->data;
+	return NULL;
+}
+
+GebrMaestroServer *
+gebr_maestro_controller_get_maestro_for_line(GebrMaestroController *mc,
+					     GebrGeoXmlLine *line)
+{
+	gchar *address = gebr_geoxml_line_get_maestro(line);
+	GebrMaestroServer *maestro =
+		gebr_maestro_controller_get_maestro_for_address(mc, address);
+	g_free(address);
+	return maestro;
 }
