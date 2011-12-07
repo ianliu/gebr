@@ -1727,3 +1727,9 @@ gebr_flow_edition_get_selected_server(GebrFlowEdition *fe)
 	gtk_tree_model_get(model, &iter, 0, &daemon, -1);
 	return gebr_daemon_server_get_address(daemon);
 }
+
+void 
+gebr_flow_edition_get_current_group(gchar **group, gchar **group_type){
+	return;
+}
+

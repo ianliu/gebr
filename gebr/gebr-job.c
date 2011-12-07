@@ -38,6 +38,7 @@ struct _GebrJobPriv {
 	gchar *queue;
 	gchar *hostname;
 	gchar *server_group;
+	gchar *server_group_type;
 	gchar *input_file;
 	gchar *output_file;
 	gchar *log_file;
@@ -512,6 +513,11 @@ gebr_job_set_server_group(GebrJob *job, const gchar *server_group)
 	if (job->priv->server_group)
 		g_free(job->priv->server_group);
 	job->priv->server_group = g_strdup(server_group ? server_group : "");
+}
+
+void
+gebr_job_set_server_group_type(GebrJob *job, const gchar *group_type){
+	job->priv->server_group_type = g_strdup(group_type);
 }
 
 const gchar *

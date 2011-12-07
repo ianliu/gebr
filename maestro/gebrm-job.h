@@ -76,6 +76,7 @@ typedef struct {
 	gchar *error;
 	gchar *submit_date;
 	gchar *group;
+	gchar *group_type;
 	gchar *speed;
 } GebrmJobInfo;
 
@@ -152,7 +153,11 @@ const gchar *gebrm_job_get_nice(GebrmJob *job);
 
 const gchar *gebrm_job_get_server_group(GebrmJob *job);
 
+const gchar *gebrm_job_get_server_group_type(GebrmJob *job);
+
 void gebrm_job_set_server_group(GebrmJob *job, const gchar *server_group);
+
+void gebrm_job_set_server_group_type(GebrmJob *job, const gchar *server_group_type);
 
 gchar *gebrm_job_get_running_time(GebrmJob *job, const gchar *start_date);
 

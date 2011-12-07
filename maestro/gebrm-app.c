@@ -346,17 +346,17 @@ gebrm_update_tags_on_list_of_servers(GebrmApp *app,
 }
 
 static GList *
-get_comm_servers_list(GebrmApp *app, const gchar *address, const gchar *group)
+get_comm_servers_list(GebrmApp *app, const gchar *group, const gchar *group_type)
 {
 	GList *servers = NULL;
 	GebrCommServer *server;
-	gboolean is_autochoose = (address[0] == '\0');
+	gboolean is_single = g_strcmp0(group_type, "1")==0;
 
-	if (!is_autochoose) {
+	if (is_single) { 
 		for (GList *i = app->priv->daemons; i; i = i->next) {
 			if (!gebrm_daemon_has_group(i->data, group))
 				continue;
-			if (g_str_equal(gebrm_daemon_get_address(i->data), address)) {
+			if (g_str_equal(gebrm_daemon_get_address(i->data), group)) {
 				g_object_get(i->data, "server", &server, NULL);
 				servers = g_list_prepend(servers, server);
 				break;
@@ -401,7 +401,7 @@ send_job_def_to_clients(GebrmApp *app, GebrmJob *job)
 
 	for (GList *i = app->priv->connections; i; i = i->next) {
 		gebr_comm_protocol_socket_oldmsg_send(i->data, FALSE,
-						      gebr_comm_protocol_defs.job_def, 17,
+						      gebr_comm_protocol_defs.job_def, 18,
 						      gebrm_job_get_id(job),
 						      gebrm_job_get_temp_id(job),
 						      gebrm_job_get_nprocs(job),
@@ -491,17 +491,18 @@ on_client_request(GebrCommProtocolSocket *socket,
 			gchar *tmp = strchr(request->url->str, '?') + 1;
 			gchar **params = g_strsplit(tmp, ";", -1);
 			gchar *address, *parent_id, *speed, *nice, *group;
-			gchar *host, *temp_id;
+			gchar *host, *temp_id, *group_type;
 
 			g_debug("I will run this flow:");
 
-			address   = strchr(params[0], '=') + 1;
-			parent_id = strchr(params[1], '=') + 1;
-			speed     = strchr(params[2], '=') + 1;
-			nice      = strchr(params[3], '=') + 1;
-			group     = strchr(params[4], '=') + 1;
-			host      = strchr(params[5], '=') + 1;
-			temp_id   = strchr(params[6], '=') + 1;
+			address    = strchr(params[0], '=') + 1;
+			parent_id  = strchr(params[1], '=') + 1;
+			speed      = strchr(params[2], '=') + 1;
+			nice       = strchr(params[3], '=') + 1;
+			group      = strchr(params[4], '=') + 1;
+			group_type = strchr(params[5], '=') + 1;
+			host       = strchr(params[6], '=') + 1;
+			temp_id    = strchr(params[7], '=') + 1;
 
 			json = gebr_comm_json_content_new(request->content->str);
 			GString *value = gebr_comm_json_content_to_gstring(json);
@@ -520,7 +521,7 @@ on_client_request(GebrCommProtocolSocket *socket,
 								      (GebrGeoXmlDocument **)pline,
 								      (GebrGeoXmlDocument **)pproj);
 
-			GList *servers = get_comm_servers_list(app, address, group);
+			GList *servers = get_comm_servers_list(app, group, group_type);
 			GebrCommRunner *runner = gebr_comm_runner_new(GEBR_GEOXML_DOCUMENT(*pflow),
 								      servers,
 								      parent_id, speed, nice, group,
@@ -540,6 +541,7 @@ on_client_request(GebrCommProtocolSocket *socket,
 			info.output = gebr_geoxml_flow_io_get_output(*pflow);
 			info.error = gebr_geoxml_flow_io_get_error(*pflow);
 			info.group = group;
+			info.group_type = group_type;
 			info.speed = speed;
 			info.submit_date = gebr_iso_date();
 
@@ -944,7 +946,7 @@ send_messages_of_jobs(gpointer key,
 
 	/* Job def message */
 	gebr_comm_protocol_socket_oldmsg_send(protocol, FALSE,
-	                                      gebr_comm_protocol_defs.job_def, 17,
+	                                      gebr_comm_protocol_defs.job_def, 18,
 	                                      id,
 					      gebrm_job_get_temp_id(job),
 	                                      gebrm_job_get_nprocs(job),
@@ -958,6 +960,7 @@ send_messages_of_jobs(gpointer key,
 	                                      logfile,
 	                                      gebrm_job_get_submit_date(job),
 	                                      gebrm_job_get_server_group(job),
+	                                      gebrm_job_get_server_group_type(job),
 	                                      gebrm_job_get_exec_speed(job),
 	                                      gebr_comm_job_get_string_from_status(gebrm_job_get_status(job)),
 	                                      start_date? start_date : "",

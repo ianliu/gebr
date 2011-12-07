@@ -81,6 +81,7 @@ gebrm_job_finalize(GObject *object)
 	g_free(job->priv->info.error);
 	g_free(job->priv->info.submit_date);
 	g_free(job->priv->info.group);
+	g_free(job->priv->info.group_type);
 	g_free(job->priv->info.speed);
 	g_free(job->priv->servers);
 	g_free(job->priv->nprocs);
@@ -310,6 +311,7 @@ gebrm_job_init_details(GebrmJob *job, GebrmJobInfo *info)
 	job->priv->info.error = g_strdup(info->error);
 	job->priv->info.submit_date = g_strdup(info->submit_date);
 	job->priv->info.group = g_strdup(info->group);
+	job->priv->info.group_type = g_strdup(info->group_type);
 	job->priv->info.speed = g_strdup(info->speed);
 
 	if (job->priv->info.parent_id && job->priv->info.parent_id[0] != '\0')
@@ -599,6 +601,12 @@ const gchar *
 gebrm_job_get_server_group(GebrmJob *job)
 {
 	return job->priv->info.group ? job->priv->info.group : "";
+}
+
+const gchar * 
+gebrm_job_get_server_group_type(GebrmJob *job)
+{
+	return job->priv->info.group_type;
 }
 
 const gchar *

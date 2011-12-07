@@ -273,7 +273,7 @@ parse_messages(GebrCommServer *comm_server,
 			GList *arguments;
 
 			/* organize message data */
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 17)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 18)) == NULL)
 				goto err;
 
 			GString *id          = g_list_nth_data(arguments, 0);
@@ -289,10 +289,11 @@ parse_messages(GebrCommServer *comm_server,
 			GString *error       = g_list_nth_data(arguments, 10);
 			GString *submit_date = g_list_nth_data(arguments, 11);
 			GString *group       = g_list_nth_data(arguments, 12);
-			GString *speed       = g_list_nth_data(arguments, 13);
-			GString *status      = g_list_nth_data(arguments, 14);
-			GString *start_date  = g_list_nth_data(arguments, 15);
-			GString *finish_date = g_list_nth_data(arguments, 16);
+			GString *group_type  = g_list_nth_data(arguments, 13);
+			GString *speed       = g_list_nth_data(arguments, 14);
+			GString *status      = g_list_nth_data(arguments, 15);
+			GString *start_date  = g_list_nth_data(arguments, 16);
+			GString *finish_date = g_list_nth_data(arguments, 17);
 
 			GebrJob *job = g_hash_table_lookup(maestro->priv->jobs, id->str);
 
@@ -328,6 +329,7 @@ parse_messages(GebrCommServer *comm_server,
 				gebr_job_set_nice(job, nice->str);
 				gebr_job_set_io(job, input->str, output->str, error->str);
 				gebr_job_set_server_group(job, group->str);
+				gebr_job_set_server_group_type(job, group_type->str);
 				gebr_job_set_exec_speed(job, atoi(speed->str));
 				gebr_job_set_static_status(job, gebr_comm_job_get_status_from_string(status->str));
 				if (start_date->len > 0)
