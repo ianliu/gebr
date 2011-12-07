@@ -111,21 +111,24 @@ fixture_teardown(Fixture *fixture, gconstpointer data)
 }
 
 
-void test_gebr_geoxml_flow_server_get_and_set_address(void){
-	const gchar *address;
+void test_gebr_geoxml_flow_server_get_and_set_group(void)
+{
+	gchar *type, *name;
 	GebrGeoXmlFlow *flow = NULL;
 
 	flow = gebr_geoxml_flow_new ();
-	address = gebr_geoxml_flow_server_get_address(flow);
-	g_assert_cmpstr(address, ==, "");
+	gebr_geoxml_flow_server_get_group(flow, &type, &name);
+	g_assert_cmpstr(type, ==, "");
+	g_assert_cmpstr(name, ==, "");
+	g_free(type);
+	g_free(name);
 
-	gebr_geoxml_flow_server_set_address(flow, "abc/def");
-	address = gebr_geoxml_flow_server_get_address(flow);
-	g_assert_cmpstr(address, ==, "abc/def");
-
-	gebr_geoxml_flow_server_set_address(flow, "asdf/fdsa");
-	address = gebr_geoxml_flow_server_get_address(flow);
-	g_assert_cmpstr(address, ==, "asdf/fdsa");
+	gebr_geoxml_flow_server_set_group(flow, "abc", "def");
+	gebr_geoxml_flow_server_get_group(flow, &type, &name);
+	g_assert_cmpstr(type, ==, "abc");
+	g_assert_cmpstr(name, ==, "def");
+	g_free(type);
+	g_free(name);
 
 	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
 }
@@ -730,7 +733,7 @@ int main(int argc, char *argv[])
 		           test_gebr_geoxml_flow_divide_flows,
 		           fixture_teardown);
 
-	g_test_add_func("/libgebr/geoxml/flow/server_get_and_set_address", test_gebr_geoxml_flow_server_get_and_set_address);
+	g_test_add_func("/libgebr/geoxml/flow/server_get_and_set_address", test_gebr_geoxml_flow_server_get_and_set_group);
 	g_test_add_func("/libgebr/geoxml/flow/get_categories_number", test_gebr_geoxml_flow_get_categories_number);
 	g_test_add_func("/libgebr/geoxml/flow/duplicate_categories", test_duplicate_categories);
 	g_test_add_func("/libgebr/geoxml/flow/flow_get_and_set_date_last_run", test_gebr_geoxml_flow_get_and_set_date_last_run);

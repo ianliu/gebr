@@ -794,6 +794,7 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 		}
 	}
 
+	/* 0.3.6 to 0.3.7 */ 
 	if (strcmp(version, "0.3.7") < 0) {
 		if (gebr_geoxml_document_get_type(GEBR_GEOXML_DOCUMENT(*document)) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW) {
 			GHashTable * keys_to_canonized = NULL;
@@ -870,6 +871,18 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 			gdome_el_unref(io, &exception);
 			gdome_el_unref(server, &exception);
 			gdome_el_unref(servers, &exception);
+		}
+	}
+
+	/* 0.3.7 to 0.3.8 */
+	if (strcmp(version, "0.3.8") < 0) {
+		if (gebr_geoxml_document_get_type(GEBR_GEOXML_DOCUMENT(*document)) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW) {
+			__gebr_geoxml_set_attr_value(root_element, "version", "0.3.8");
+			GdomeElement *el = __gebr_geoxml_get_first_element(root_element, "server");
+			__gebr_geoxml_remove_attr(el, "address");
+			__gebr_geoxml_set_attr_value(el, "group-type", "");
+			__gebr_geoxml_set_attr_value(el, "group-name", "");
+			gdome_el_unref(el, &exception);
 		}
 	}
 
