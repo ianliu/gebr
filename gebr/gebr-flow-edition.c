@@ -1765,7 +1765,18 @@ gebr_flow_edition_get_selected_server(GebrFlowEdition *fe)
 }
 
 void 
-gebr_flow_edition_get_current_group(gchar **group, gchar **group_type){
-	return;
-}
+gebr_flow_edition_get_current_group(GebrFlowEdition *fe,
+				    GebrMaestroServerGroupType *type,
+				    gchar **name)
+{
+	GtkTreeIter iter;
+	GtkTreeModel *model = gtk_combo_box_get_model(GTK_COMBO_BOX(fe->priv->server_combobox));
 
+	if (!gtk_combo_box_get_active_iter(GTK_COMBO_BOX(fe->priv->server_combobox), &iter))
+		gtk_tree_model_get_iter_first(model, &iter);
+
+	gtk_tree_model_get(model, &iter,
+			   MAESTRO_SERVER_TYPE, type,
+			   MAESTRO_SERVER_NAME, name,
+			   -1);
+}

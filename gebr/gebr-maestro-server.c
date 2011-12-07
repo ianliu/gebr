@@ -318,6 +318,8 @@ parse_messages(GebrCommServer *comm_server,
 
 			update_queues_model(maestro, job);
 
+			g_debug("On Job define FROM MAESTRO SERVER!!!!");
+
 			g_signal_emit(maestro, signals[JOB_DEFINE], 0, job);
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);

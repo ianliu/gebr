@@ -24,6 +24,7 @@
 #include <gtk/gtk.h>
 
 #include <libgebr/geoxml/geoxml.h>
+#include "gebr-maestro-server.h"
 
 G_BEGIN_DECLS
 
@@ -183,7 +184,9 @@ const gchar *gebr_flow_edition_get_selected_queue(GebrFlowEdition *fe);
 
 const gchar *gebr_flow_edition_get_selected_server(GebrFlowEdition *fe);
 
-void gebr_flow_edition_get_current_group(gchar **group, gchar **group_type);
+void gebr_flow_edition_get_current_group(GebrFlowEdition *fe,
+					 GebrMaestroServerGroupType *type,
+					 gchar **name);
 
 G_END_DECLS
 

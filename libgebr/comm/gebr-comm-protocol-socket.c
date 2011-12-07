@@ -64,6 +64,9 @@ static void gebr_comm_protocol_socket_read(GebrCommStreamSocket *socket, GebrCom
 {
 	GString *data = gebr_comm_socket_read_string_all(GEBR_COMM_SOCKET(socket));
 
+	if (!data)
+		return;
+
 	gboolean parse_http_msg()
 	{
 		self->priv->incoming_msg = gebr_comm_http_msg_new_parsing(self->priv->incoming_msg, data);

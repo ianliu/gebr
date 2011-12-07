@@ -388,9 +388,10 @@ gebr_job_close(GebrJob *job)
 
 	gchar *url = g_strdup_printf("/close?id=%s", gebr_job_get_id(job));
 
-	GList *m = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller,
-								gebr.line);
-	GebrCommServer *server = gebr_maestro_server_get_server(m->data);
+	GebrMaestroServer *maestro =
+		gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller,
+							     gebr.line);
+	GebrCommServer *server = gebr_maestro_server_get_server(maestro);
 	gebr_comm_protocol_socket_send_request(server->socket,
 	                                       GEBR_COMM_HTTP_METHOD_PUT, url, NULL);
 	return TRUE;
@@ -404,9 +405,10 @@ gebr_job_kill(GebrJob *job)
 
 	gchar *url = g_strdup_printf("/kill?id=%s", gebr_job_get_id(job));
 
-	GList *m = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller,
-								gebr.line);
-	GebrCommServer *server = gebr_maestro_server_get_server(m->data);
+	GebrMaestroServer *maestro =
+		gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller,
+							     gebr.line);
+	GebrCommServer *server = gebr_maestro_server_get_server(maestro);
 	gebr_comm_protocol_socket_send_request(server->socket,
 	                                       GEBR_COMM_HTTP_METHOD_PUT, url, NULL);
 }
@@ -516,7 +518,8 @@ gebr_job_set_server_group(GebrJob *job, const gchar *server_group)
 }
 
 void
-gebr_job_set_server_group_type(GebrJob *job, const gchar *group_type){
+gebr_job_set_server_group_type(GebrJob *job, const gchar *group_type)
+{
 	job->priv->server_group_type = g_strdup(group_type);
 }
 

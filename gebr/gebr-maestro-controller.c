@@ -843,6 +843,7 @@ on_job_define(GebrMaestroServer *maestro,
 	      GebrJob *job,
 	      GebrMaestroController *self)
 {
+	g_debug("On job define from MAESTRO CONTROLLER");
 	g_signal_emit(self, signals[JOB_DEFINE], 0, maestro, job);
 }
 
@@ -917,7 +918,7 @@ gebr_maestro_controller_connect(GebrMaestroController *self,
 	GList *list = g_list_find_custom(self->priv->maestros, address,
 					 (GCompareFunc)cmp_maestro_servers);
 
-	if (list==NULL) {
+	if (list == NULL) {
 		maestro = gebr_maestro_server_new(address);
 		self->priv->maestros = g_list_prepend(self->priv->maestros, maestro);
 

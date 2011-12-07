@@ -85,6 +85,7 @@ static gboolean gebrm_config_remove_tag_of_server(GebrmApp *app,
                                                   gchar *server,
                                                   gchar *tag,
                                                   gchar **_tags);
+
 static gboolean gebrm_config_set_autoconnect(GebrmApp *app,
 					     gchar *server,
 					     gboolean ac);
@@ -350,12 +351,10 @@ get_comm_servers_list(GebrmApp *app, const gchar *group, const gchar *group_type
 {
 	GList *servers = NULL;
 	GebrCommServer *server;
-	gboolean is_single = g_strcmp0(group_type, "1")==0;
+	gboolean is_single = g_strcmp0(group_type, "daemon") == 0;
 
 	if (is_single) { 
 		for (GList *i = app->priv->daemons; i; i = i->next) {
-			if (!gebrm_daemon_has_group(i->data, group))
-				continue;
 			if (g_str_equal(gebrm_daemon_get_address(i->data), group)) {
 				g_object_get(i->data, "server", &server, NULL);
 				servers = g_list_prepend(servers, server);
@@ -363,12 +362,20 @@ get_comm_servers_list(GebrmApp *app, const gchar *group, const gchar *group_type
 			}
 		}
 	} else {
-		for (GList *i = app->priv->daemons; i; i = i->next) {
-			if (!gebrm_daemon_has_group(i->data, group))
-				continue;
-			g_object_get(i->data, "server", &server, NULL);
-			if (gebr_comm_server_is_logged(server))
-				servers = g_list_prepend(servers, server);
+		if (g_strcmp0(group,"")==0) {	//All servers from maestro 
+			for (GList *i = app->priv->daemons; i; i = i->next) {
+				g_object_get(i->data, "server", &server, NULL);
+				if (gebr_comm_server_is_logged(server))
+					servers = g_list_prepend(servers, server);
+			}
+		} else {		//All servers from a group
+			for (GList *i = app->priv->daemons; i; i = i->next) {
+				if (!gebrm_daemon_has_group(i->data, group))
+					continue;
+				g_object_get(i->data, "server", &server, NULL);
+				if (gebr_comm_server_is_logged(server))
+					servers = g_list_prepend(servers, server);
+			}
 		}
 	}
 
@@ -415,6 +422,7 @@ send_job_def_to_clients(GebrmApp *app, GebrmJob *job)
 						      logfile,
 						      gebrm_job_get_submit_date(job),
 						      gebrm_job_get_server_group(job),
+						      gebrm_job_get_server_group_type(job),
 						      gebrm_job_get_exec_speed(job),
 						      gebr_comm_job_get_string_from_status(gebrm_job_get_status(job)),
 						      start_date? start_date : "",
@@ -490,20 +498,18 @@ on_client_request(GebrCommProtocolSocket *socket,
 			GebrCommJsonContent *json;
 			gchar *tmp = strchr(request->url->str, '?') + 1;
 			gchar **params = g_strsplit(tmp, ";", -1);
-			gchar *address, *parent_id, *speed, *nice, *group;
+			gchar  *parent_id, *speed, *nice, *name;
 			gchar *host, *temp_id, *group_type;
 
+			parent_id  = strchr(params[0], '=') + 1;
+			speed      = strchr(params[1], '=') + 1;
+			nice       = strchr(params[2], '=') + 1;
+			name       = strchr(params[3], '=') + 1;
+			group_type = strchr(params[4], '=') + 1;
+			host       = strchr(params[5], '=') + 1;
+			temp_id    = strchr(params[6], '=') + 1;
+
 			g_debug("I will run this flow:");
-
-			address    = strchr(params[0], '=') + 1;
-			parent_id  = strchr(params[1], '=') + 1;
-			speed      = strchr(params[2], '=') + 1;
-			nice       = strchr(params[3], '=') + 1;
-			group      = strchr(params[4], '=') + 1;
-			group_type = strchr(params[5], '=') + 1;
-			host       = strchr(params[6], '=') + 1;
-			temp_id    = strchr(params[7], '=') + 1;
-
 			json = gebr_comm_json_content_new(request->content->str);
 			GString *value = gebr_comm_json_content_to_gstring(json);
 			write(STDOUT_FILENO, value->str, MIN(value->len, 100));
@@ -521,10 +527,10 @@ on_client_request(GebrCommProtocolSocket *socket,
 								      (GebrGeoXmlDocument **)pline,
 								      (GebrGeoXmlDocument **)pproj);
 
-			GList *servers = get_comm_servers_list(app, group, group_type);
+			GList *servers = get_comm_servers_list(app, name, group_type);
 			GebrCommRunner *runner = gebr_comm_runner_new(GEBR_GEOXML_DOCUMENT(*pflow),
 								      servers,
-								      parent_id, speed, nice, group,
+								      parent_id, speed, nice, name,
 								      validator);
 			g_list_free(servers);
 
@@ -540,7 +546,7 @@ on_client_request(GebrCommProtocolSocket *socket,
 			info.input = gebr_geoxml_flow_io_get_input(*pflow);
 			info.output = gebr_geoxml_flow_io_get_output(*pflow);
 			info.error = gebr_geoxml_flow_io_get_error(*pflow);
-			info.group = group;
+			info.group = name;
 			info.group_type = group_type;
 			info.speed = speed;
 			info.submit_date = gebr_iso_date();
@@ -687,7 +693,8 @@ save_servers_keyfile(GKeyFile *keyfile)
 	if (content) {
 		gchar *path = g_build_filename(g_get_home_dir(),
 					       GEBRM_LIST_OF_SERVERS_PATH,
-					       GEBRM_LIST_OF_SERVERS_FILENAME, NULL);
+					       GEBRM_LIST_OF_SERVERS_FILENAME,
+					       NULL);
 		succ = g_file_set_contents(path, content, -1, NULL);
 		g_free(content);
 		g_free(path);
@@ -824,6 +831,7 @@ gebrm_config_set_autoconnect(GebrmApp *app,
 
 	return succ;
 }
+
 static void
 gebrm_config_save_server(GebrmDaemon *daemon)
 {
@@ -893,13 +901,11 @@ gebrm_config_delete_server(const gchar *serv)
 gboolean
 gebrm_config_load_servers(GebrmApp *app, gchar *path)
 {
-
-	GKeyFile *servers = g_key_file_new();
-	gchar **groups;
-	gboolean succ = g_key_file_load_from_file(servers, path, G_KEY_FILE_NONE, NULL);
+	GKeyFile *servers = load_servers_keyfile();
+	gboolean succ = servers != NULL;
 
 	if (succ) {
-		groups = g_key_file_get_groups(servers, NULL);
+		gchar **groups = g_key_file_get_groups(servers, NULL);
 		if (!groups)
 			succ = FALSE;
 		else {
@@ -916,6 +922,7 @@ gebrm_config_load_servers(GebrmApp *app, gchar *path)
 	if (!succ) {
 		GebrmDaemon *daemon = gebrm_add_server_to_list(app, "127.0.0.1", NULL, "");
 		gebrm_daemon_connect(daemon, NULL, NULL);
+		gebrm_config_save_server(daemon);
 	}
 
 	return TRUE;

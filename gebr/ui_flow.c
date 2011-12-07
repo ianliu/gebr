@@ -35,14 +35,13 @@ gebr_ui_flow_run(void)
 	gchar *nice = g_strdup_printf("%d", gebr_interface_get_niceness());
 	const gchar *hostname = g_get_host_name();
 
-	gchar *group, *group_type;
-	gebr_flow_edition_get_current_group(&group, &group_type);
-
-	g_debug("must implement gebr_flow_edition_get_current_group");
-	group = g_strdup("Foo Group. Must Change."); 
-	group_type = g_strdup("1");
+	GebrMaestroServerGroupType type;
+	gchar *name;
+	gebr_flow_edition_get_current_group(gebr.ui_flow_edition, &type, &name);
+	const gchar *group_type = gebr_maestro_server_group_enum_to_str(type);
 
 	gchar *submit_date = gebr_iso_date();
+	g_debug("checkpoint %s", __func__);
 	gebr_geoxml_flow_set_date_last_run(gebr.flow, g_strdup(submit_date));
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), FALSE, FALSE);
 
@@ -51,34 +50,37 @@ gebr_ui_flow_run(void)
 
 	gebr_geoxml_document_to_string(GEBR_GEOXML_DOCUMENT(gebr.flow), &xml);
 	GebrCommJsonContent *content = gebr_comm_json_content_new_from_string(xml);
-	gchar *url = g_strdup_printf("/run?address=%s;parent_rid=%s;speed=%s;nice=%s;group=%s;type=%s;host=%s;temp_id=%s",
-				     gebr_flow_edition_get_selected_server(gebr.ui_flow_edition),
-				     parent_rid, speed_str, nice, group, group_type, hostname, gebr_job_get_id(job));
+	g_debug("checkpoint2 %s", __func__);
+	gchar *url = g_strdup_printf("/run?parent_rid=%s;speed=%s;nice=%s;name=%s;type=%s;host=%s;temp_id=%s",
+				     parent_rid,
+				     speed_str,
+				     nice,
+				     name,
+				     group_type,
+				     hostname,
+				     gebr_job_get_id(job));
 
-	GList *m = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
-	GebrCommServer *server = gebr_maestro_server_get_server(m->data);
-	gebr_comm_protocol_socket_send_request(server->socket,
-					       GEBR_COMM_HTTP_METHOD_PUT, url, content);
+	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
+	GebrCommServer *server = gebr_maestro_server_get_server(maestro);
+	gebr_comm_protocol_socket_send_request(server->socket, GEBR_COMM_HTTP_METHOD_PUT, url, content);
 
-	g_debug("Resta tratar informacoes do group_type e do grupo para inserir no gebr-job");
 	gebr_job_set_hostname(job, hostname);
 	gebr_job_set_exec_speed(job, speed);
 	gebr_job_set_submit_date(job, submit_date);
 	gebr_job_set_title(job, gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.flow)));
 	gebr_job_set_nice(job, nice);
-	gebr_job_set_server_group(job, group);
+	gebr_job_set_server_group(job, name);
 	gebr_job_set_server_group_type(job, group_type);
 	
 	gebr_job_control_add(gebr.job_control, job);
 	gebr_job_control_select_job(gebr.job_control, job);
-	gebr_maestro_server_add_temporary_job(m->data, job);
+	gebr_maestro_server_add_temporary_job(maestro, job);
 
 	gebr_interface_change_tab(NOTEBOOK_PAGE_JOB_CONTROL);
 	
+	g_free(name);
 	g_free(url);
 	g_free(xml);
 	g_free(speed_str);
 	g_free(nice);
-	g_free(group);
-	g_free(group_type);
 }

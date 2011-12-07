@@ -1511,6 +1511,17 @@ on_reset_filter(GtkButton  *button,
 	job_control_on_cursor_changed(selection, jc);
 }
 
+
+static void
+on_job_define(GebrMaestroController *mc,
+	      GebrMaestroServer *maestro,
+	      GebrJob *job,
+	      GebrJobControl *jc)
+{
+	g_debug("On Job define from JOB CONTROLLLLL!!!!");
+	gebr_job_control_add(jc, job);
+}
+
 /* Public methods {{{1 */
 GebrJobControl *
 gebr_job_control_new(void)
@@ -1523,6 +1534,8 @@ gebr_job_control_new(void)
 	jc = g_new(GebrJobControl, 1);
 	jc->priv = g_new0(GebrJobControlPriv, 1);
 
+	g_signal_connect(gebr.maestro_controller, "job-define",
+			 G_CALLBACK(on_job_define), jc);
 	jc->priv->builder = gtk_builder_new();
 	gtk_builder_add_from_file(jc->priv->builder, GEBR_GLADE_DIR"/gebr-job-control.glade", NULL);
 

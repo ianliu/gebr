@@ -213,6 +213,10 @@ void gebrm_job_set_total_tasks(GebrmJob *job, gint total);
 
 const gchar * gebrm_job_get_temp_id(GebrmJob *job);
 
+const gchar *gebrm_job_get_server_group(GebrmJob *job);
+
+const gchar *gebrm_job_get_server_group_type(GebrmJob *job);
+
 G_END_DECLS
 
 #endif /* __GEBRM_JOB_H__ */

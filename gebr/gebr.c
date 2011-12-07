@@ -92,7 +92,6 @@ gebr_init(gboolean has_config)
 
 	gebr.help_edit_windows = g_hash_table_new(NULL, NULL);
 	gebr.xmls_by_filename = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
-	gebr.maestro_controller = gebr_maestro_controller_new();
 
 	gebr.validator = gebr_validator_new((GebrGeoXmlDocument**)&gebr.flow,
 	                                    (GebrGeoXmlDocument**)&gebr.line,
@@ -255,6 +254,8 @@ gebr_config_load(void)
 	gboolean has_config;
 	gchar *usermenus = g_strdup_printf("%s/GeBR-Menus", g_get_home_dir());
 	gchar *datadir = g_strdup_printf("%s/.gebr/gebr/data", g_get_home_dir());
+
+	gebr.maestro_controller = gebr_maestro_controller_new();
 
 	gebr.config.path = g_string_new(NULL);
 	g_string_printf(gebr.config.path, "%s/.gebr/gebr/gebr.conf", g_get_home_dir());
