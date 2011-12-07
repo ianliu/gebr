@@ -119,15 +119,19 @@ void gebr_geoxml_flow_set_date_last_run(GebrGeoXmlFlow * flow, const gchar * las
 gchar *gebr_geoxml_flow_get_date_last_run(GebrGeoXmlFlow * flow);
 
 /**
- * Sets the address of this flow server.
+ * Sets the group of this flow server.
  */
-void gebr_geoxml_flow_server_set_address(GebrGeoXmlFlow *flow, const gchar * address);
+void gebr_geoxml_flow_server_set_group(GebrGeoXmlFlow *flow,
+				       const gchar *type,
+				       const gchar *name);
 
 /**
- * Returns the address of this flow server.
- * The string must be freed with g_free() .
+ * Returns the group of this flow server.
+ * The strings must be freed with g_free().
  */
-gchar *gebr_geoxml_flow_server_get_address(GebrGeoXmlFlow *flow);
+void gebr_geoxml_flow_server_get_group(GebrGeoXmlFlow *flow,
+				       gchar **type,
+				       gchar **name);
 
 /**
  * gebr_geoxml_flow_server_set_date_last_run:

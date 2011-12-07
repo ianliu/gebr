@@ -60,6 +60,22 @@ struct _GebrMaestroServer {
 	GebrMaestroServerPriv *priv;
 };
 
+typedef enum {
+	MAESTRO_SERVER_TYPE,
+	MAESTRO_SERVER_NAME,
+	MAESTRO_SERVER_N
+} GebrMaestroServerGroupColumns;
+
+/*
+ * ** IMPORTANT **
+ *
+ * Keep the order of this enum equal the string list in the source file!
+ */
+typedef enum {
+	MAESTRO_SERVER_TYPE_GROUP,
+	MAESTRO_SERVER_TYPE_DAEMON,
+} GebrMaestroServerGroupType;
+
 GType gebr_maestro_server_get_type(void) G_GNUC_CONST;
 
 GebrMaestroServer *gebr_maestro_server_new(const gchar *addr);
@@ -80,7 +96,8 @@ gchar *gebr_maestro_server_get_display_address(GebrMaestroServer *maestro);
 GList *gebr_maestro_server_get_all_tags(GebrMaestroServer *maestro);
 
 GtkTreeModel *gebr_maestro_server_get_queues_model(GebrMaestroServer *maestro,
-						   const gchar *group);
+						   GebrMaestroServerGroupType type,
+						   const gchar *name);
 
 void gebr_maestro_server_connect(GebrMaestroServer *maestro);
 
@@ -98,16 +115,9 @@ void gebr_maestro_server_set_autoconnect(GebrMaestroServer *maestro,
 					 GebrDaemonServer *daemon,
 					 const gchar *ac);
 
-typedef enum {
-	MAESTRO_SERVER_TYPE,
-	MAESTRO_SERVER_NAME,
-	MAESTRO_SERVER_N
-} GebrMaestroServerGroupColumns;
+GebrMaestroServerGroupType gebr_maestro_server_group_str_to_enum(const gchar *str);
 
-typedef enum {
-	MAESTRO_SERVER_TYPE_GROUP,
-	MAESTRO_SERVER_TYPE_DAEMON,
-} GebrMaestroServerGroupType;
+const gchar *gebr_maestro_server_group_enum_to_str(GebrMaestroServerGroupType type);
 
 GtkTreeModel *gebr_maestro_server_get_groups_model(GebrMaestroServer *maestro);
 

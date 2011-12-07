@@ -355,7 +355,8 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 	gtk_widget_show_all(dialog);
 	gint response;
 	gboolean keep_dialog = FALSE;
-	gdk_threads_enter();
+
+	//gdk_threads_enter();
 	do switch ((response = gtk_dialog_run(GTK_DIALOG(dialog)))) {
 	case 1: { /* Export */
 		gchar * export_path;
@@ -453,7 +454,7 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 		keep_dialog = FALSE;
 		break;
 	} while (keep_dialog);
-	gdk_threads_leave();
+	//gdk_threads_leave();
 
 	/* frees */
 	if (*document) {

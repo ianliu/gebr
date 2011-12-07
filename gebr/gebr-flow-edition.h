@@ -81,7 +81,6 @@ struct _GebrFlowEdition {
 	GtkWidget *menu_view;
 	GtkTreeStore *menu_store;
 
-	gboolean autochoose;
 	GtkWidget *nice_button_high;
 	GtkWidget *nice_button_low;
 };

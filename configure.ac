@@ -70,7 +70,7 @@ PROJECT_VERSION=0.3.3
 AC_SUBST(PROJECT_VERSION)
 LINE_VERSION=0.3.5
 AC_SUBST(LINE_VERSION)
-FLOW_VERSION=0.3.7
+FLOW_VERSION=0.3.8
 AC_SUBST(FLOW_VERSION)
 
 dnl ============================================================================
