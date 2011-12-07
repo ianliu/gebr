@@ -53,6 +53,9 @@ struct _GebrMaestroServerClass {
 	void (*daemons_changed) (GebrMaestroServer *maestro);
 
 	void    (*state_change) (GebrMaestroServer *maestro);
+
+	void    (*ac_change) (GebrMaestroServer *maestro,
+			      gboolean	         is_ac);
 };
 
 struct _GebrMaestroServer {
@@ -112,8 +115,8 @@ void gebr_maestro_server_remove_tag_from(GebrMaestroServer *maestro,
                                          const gchar *tag);
 
 void gebr_maestro_server_set_autoconnect(GebrMaestroServer *maestro,
-					 GebrDaemonServer *daemon,
-					 const gchar *ac);
+                                         GebrDaemonServer *daemon,
+                                         gboolean ac);
 
 GebrMaestroServerGroupType gebr_maestro_server_group_str_to_enum(const gchar *str);
 

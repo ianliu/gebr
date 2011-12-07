@@ -43,6 +43,7 @@ enum {
 	PASSWORD_REQUEST,
 	DAEMONS_CHANGED,
 	STATE_CHANGE,
+	AC_CHANGE,
 	LAST_SIGNAL
 };
 
@@ -218,14 +219,15 @@ parse_messages(GebrCommServer *comm_server,
 		message = (struct gebr_comm_message *)link->data;
 		if (message->hash == gebr_comm_protocol_defs.ssta_def.code_hash) {
 			GList *arguments;
-			GString *addr, *ssta;
+			GString *addr, *ssta, *ac;
 
 			/* organize message data */
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 3)) == NULL)
 				goto err;
 
 			addr = g_list_nth_data(arguments, 0);
 			ssta = g_list_nth_data(arguments, 1);
+			ac = g_list_nth_data(arguments, 2);
 
 			GtkTreeIter iter;
 			GebrCommServerState state = gebr_comm_server_state_from_string(ssta->str);
@@ -242,7 +244,13 @@ parse_messages(GebrCommServer *comm_server,
 				gtk_tree_path_free(path);
 			}
 
+			gboolean is_ac = g_strcmp0(ac->str, "on") == 0 ? TRUE : FALSE;
+
+			g_debug("SERVER %s RECEIVED MESSAGE OF AC: %s", addr->str, ac->str);
+
 			g_signal_emit(maestro, signals[DAEMONS_CHANGED], 0);
+			g_signal_emit(maestro, signals[AC_CHANGE], 0, is_ac, daemon);
+
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}
 		else if (message->hash == gebr_comm_protocol_defs.job_def.code_hash) {
@@ -431,6 +439,24 @@ parse_messages(GebrCommServer *comm_server,
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}
+		else if (message->hash == gebr_comm_protocol_defs.ac_def.code_hash) {
+			GList *arguments;
+
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
+				goto err;
+
+			GString *addr = g_list_nth_data(arguments, 0);
+			GString *ac = g_list_nth_data(arguments, 1);
+			gboolean is_ac = g_strcmp0(ac->str, "on") == 0 ? TRUE : FALSE;
+
+			GebrDaemonServer *daemon = get_daemon_from_address(maestro, addr->str, NULL);
+
+			g_debug("Emit signal to change AC!!!!!");
+
+			g_signal_emit(maestro, signals[AC_CHANGE], 0, is_ac, daemon);
+
+			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
+		}
 
 		gebr_comm_message_free(message);
 		comm_server->socket->protocol->messages = g_list_delete_link(comm_server->socket->protocol->messages, link);
@@ -548,6 +574,15 @@ gebr_maestro_server_class_init(GebrMaestroServerClass *klass)
 			     NULL, NULL,
 			     g_cclosure_marshal_VOID__VOID,
 			     G_TYPE_NONE, 0);
+
+	signals[AC_CHANGE] =
+			g_signal_new("ac-change",
+			             G_OBJECT_CLASS_TYPE(object_class),
+			             G_SIGNAL_RUN_LAST,
+			             G_STRUCT_OFFSET(GebrMaestroServerClass, ac_change),
+			             NULL, NULL,
+			             gebr_cclosure_marshal_VOID__INT_OBJECT,
+			             G_TYPE_NONE, 2, G_TYPE_INT, GEBR_TYPE_DAEMON_SERVER);
 
 	g_object_class_install_property(object_class,
 					PROP_ADDRESS,
@@ -832,10 +867,10 @@ gebr_maestro_server_remove_tag_from(GebrMaestroServer *maestro,
 void
 gebr_maestro_server_set_autoconnect(GebrMaestroServer *maestro,
                                     GebrDaemonServer *daemon,
-                                    const gchar *ac)
+                                    gboolean ac)
 {
 	gchar *url = g_strdup_printf("/autoconnect?server=%s;ac=%s",
-				     gebr_daemon_server_get_address(daemon), ac);
+				     gebr_daemon_server_get_address(daemon), ac? "on" : "off");
 
 	gebr_comm_protocol_socket_send_request(maestro->priv->server->socket,
 					       GEBR_COMM_HTTP_METHOD_PUT, url, NULL);

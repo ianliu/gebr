@@ -101,8 +101,8 @@ gboolean gebr_daemon_server_has_tag(GebrDaemonServer *daemon, const gchar *tag);
 
 gboolean gebr_daemon_server_get_ac(GebrDaemonServer *daemon);
 
-gboolean gebr_daemon_server_set_ac(GebrDaemonServer *daemon, 
-				   gboolean ac);
+void gebr_daemon_server_set_ac(GebrDaemonServer *daemon,
+                               gboolean ac);
 G_END_DECLS
 
 #endif /* __GEBR_SERVER_H__ */

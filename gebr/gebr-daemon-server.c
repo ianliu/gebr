@@ -253,13 +253,15 @@ gebr_daemon_server_has_tag(GebrDaemonServer *daemon, const gchar *tag)
 			return TRUE;
 	return FALSE;
 }
+
 gboolean
 gebr_daemon_server_get_ac(GebrDaemonServer *daemon)
 {
 	return daemon->priv->ac;
 }
-gboolean
+
+void
 gebr_daemon_server_set_ac(GebrDaemonServer *daemon, gboolean ac)
 {
-	return daemon->priv->ac = ac;
+	daemon->priv->ac = ac;
 }

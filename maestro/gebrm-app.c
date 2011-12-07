@@ -88,7 +88,7 @@ static gboolean gebrm_config_remove_tag_of_server(GebrmApp *app,
 
 static gboolean gebrm_config_set_autoconnect(GebrmApp *app,
 					     gchar *server,
-					     gboolean ac);
+					     gchar *ac);
 
 static GebrmDaemon *gebrm_add_server_to_list(GebrmApp *app,
 					     const gchar *addr,
@@ -126,13 +126,15 @@ gebrm_app_job_controller_add(GebrmApp *app, GebrmJob *job)
 static void
 send_server_status_message(GebrmApp *app,
 			   GebrCommProtocolSocket *socket,
-			   GebrCommServer *server)
+			   GebrCommServer *server,
+			   const gchar *ac)
 {
 	const gchar *state = gebr_comm_server_state_to_string(server->state);
 	gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
-					      gebr_comm_protocol_defs.ssta_def, 2,
+					      gebr_comm_protocol_defs.ssta_def, 3,
 					      server->address->str,
-					      state);
+					      state,
+					      ac);
 }
 
 static void
@@ -233,7 +235,7 @@ gebrm_app_daemon_on_state_change(GebrmDaemon *daemon,
 				 GebrmApp *app)
 {
 	for (GList *i = app->priv->connections; i; i = i->next)
-		send_server_status_message(app, i->data, gebrm_daemon_get_server(daemon));
+		send_server_status_message(app, i->data, gebrm_daemon_get_server(daemon), gebrm_daemon_get_autoconnect(daemon));
 }
 
 static void
@@ -653,11 +655,21 @@ on_client_request(GebrCommProtocolSocket *socket,
 
 			g_debug("Setting autoconnect:'%s' of server:'%s'", is_ac, server);
 
-			gboolean ac = g_strcmp0(is_ac, "1")==0 ? TRUE:FALSE;
-			if (gebrm_config_set_autoconnect(app, server, ac)) {
+			GebrmDaemon *daemon;
+			for (GList *i = app->priv->daemons; i; i = i->next) {
+				const gchar *addr = gebrm_daemon_get_address(i->data);
+				if (g_strcmp0(addr, server) == 0) {
+					daemon = i->data;
+					break;
+				}
+			}
+			gebrm_daemon_set_autoconnect(daemon, is_ac);
+
+			if (gebrm_config_set_autoconnect(app, server, is_ac)) {
 				gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
 				                                      gebr_comm_protocol_defs.ac_def, 2,
-				                                      server, "1" );
+				                                      server,
+				                                      is_ac);
 			}
 			g_strfreev(params);
 		}
@@ -813,21 +825,17 @@ gebrm_config_remove_tag_of_server(GebrmApp *app,
 static gboolean
 gebrm_config_set_autoconnect(GebrmApp *app,
 			     gchar *server,
-			     gboolean ac)
+			     gchar *ac)
 {
-	g_debug("///////////////////////// Must implement %s", __func__);
 	GKeyFile *keyfile = load_servers_keyfile();
 
 	if (!keyfile)
 		return FALSE;
 
-	gchar *is_ac = ac? g_strdup_printf("yes") : g_strdup_printf("no");
-
-	g_key_file_set_string(keyfile, server, "autoconnect", is_ac);
+	g_key_file_set_string(keyfile, server, "autoconnect", ac);
 	gboolean succ = save_servers_keyfile(keyfile);
 
 	g_key_file_free(keyfile);
-	g_free(is_ac);
 
 	return succ;
 }
@@ -847,6 +855,8 @@ gebrm_config_save_server(GebrmDaemon *daemon)
 	g_key_file_load_from_file(servers, path, G_KEY_FILE_NONE, NULL);
 	g_key_file_set_string(servers, gebrm_daemon_get_address(daemon),
 			      "tags", tags);
+	g_key_file_set_string(servers, gebrm_daemon_get_address(daemon),
+	                      "autoconnect", gebrm_daemon_get_autoconnect(daemon));
 
 	gchar *content = g_key_file_to_data(servers, NULL, NULL);
 	if (content)
@@ -910,9 +920,12 @@ gebrm_config_load_servers(GebrmApp *app, gchar *path)
 			succ = FALSE;
 		else {
 			for (int i = 0; groups[i]; i++) {
-				gchar *tags = g_key_file_get_string(servers, groups[i], "tags", NULL);
+				const gchar *tags = g_key_file_get_string(servers, groups[i], "tags", NULL);
+				const gchar *ac = g_key_file_get_string(servers, groups[i], "autoconnect", NULL);
 				GebrmDaemon *daemon = gebrm_add_server_to_list(app, groups[i], NULL, tags);
-				gebrm_daemon_connect(daemon, NULL, NULL);
+				gebrm_daemon_set_autoconnect(daemon, ac);
+				if (g_strcmp0(ac, "on") == 0)
+					gebrm_daemon_connect(daemon, NULL, NULL);
 			}
 		}
 		g_key_file_free (servers);
@@ -1042,7 +1055,7 @@ on_new_connection(GebrCommListenSocket *listener,
 		for (GList *i = app->priv->daemons; i; i = i->next) {
 			GebrCommServer *server;
 			g_object_get(i->data, "server", &server, NULL);
-			send_server_status_message(app, socket, server);
+			send_server_status_message(app, socket, server, gebrm_daemon_get_autoconnect(i->data));
 			send_groups_definitions(socket, i->data);
 		}
 
