@@ -471,8 +471,13 @@ on_client_request(GebrCommProtocolSocket *socket,
 		}
 		else if (g_str_has_prefix(request->url->str, "/disconnect/")) {
 			const gchar *addr = request->url->str + strlen("/disconnect/");
-			gebrm_remove_server_from_list(app, addr);
-			gebrm_config_delete_server(addr);
+			for (GList *i = app->priv->daemons; i; i = i->next) {
+				GebrmDaemon *daemon = i->data;
+				if (g_strcmp0(gebrm_daemon_get_address(daemon), addr) == 0) 
+					gebrm_daemon_disconnect(daemon);
+			}
+			//gebrm_remove_server_from_list(app, addr);
+			//gebrm_config_delete_server(addr);
 			g_debug(">> on %s, disconecting %s", __func__, addr) 	;
 		}
 		else if (g_str_has_prefix(request->url->str, "/close")) {
