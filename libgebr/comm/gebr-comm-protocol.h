@@ -61,6 +61,7 @@ struct gebr_comm_protocol_defs {
 
 	struct gebr_comm_message_def job_def;  // Job definition       Maestro -> GeBR
 	struct gebr_comm_message_def ssta_def; // Server status change Maestro -> GeBR
+	struct gebr_comm_message_def srm_def;  // Server remove	       Maestro -> GeBR
 	struct gebr_comm_message_def cmd_def;  // Command line         Maestro -> GeBR
 	struct gebr_comm_message_def iss_def;  // Issues               Maestro -> GeBR
 

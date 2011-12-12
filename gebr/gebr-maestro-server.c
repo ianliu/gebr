@@ -457,6 +457,30 @@ parse_messages(GebrCommServer *comm_server,
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}
+		else if (message->hash == gebr_comm_protocol_defs.srm_def.code_hash) {
+			GList *arguments;
+
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 1)) == NULL)
+				goto err;
+
+			GString *addr = g_list_nth_data(arguments, 0);
+
+			g_debug("Removing server %s", addr->str);
+
+			GtkTreeIter iter;
+			GebrDaemonServer *daemon;
+			GtkTreeModel *model = GTK_TREE_MODEL(maestro->priv->store);
+
+			gebr_gui_gtk_tree_model_foreach(iter, model) {
+				gtk_tree_model_get(model, &iter, 0, &daemon, -1);
+				if (g_strcmp0(addr->str, gebr_daemon_server_get_address(daemon)) == 0)
+					gtk_list_store_remove(maestro->priv->store, &iter);
+			}
+
+			g_signal_emit(maestro, signals[DAEMONS_CHANGED], 0);
+
+			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
+		}
 
 		gebr_comm_message_free(message);
 		comm_server->socket->protocol->messages = g_list_delete_link(comm_server->socket->protocol->messages, link);

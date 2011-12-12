@@ -483,9 +483,15 @@ on_client_request(GebrCommProtocolSocket *socket,
 		}
 		else if (g_str_has_prefix(request->url->str, "/remove/")) {
 			const gchar *addr = request->url->str + strlen("/remove/");
+
 			gebrm_remove_server_from_list(app, addr);
 			gebrm_config_delete_server(addr);
-			g_debug(">> on %s, removing %s", __func__, addr) 	;
+
+			gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
+			                                      gebr_comm_protocol_defs.srm_def, 1,
+			                                      addr);
+
+			g_debug(">> on %s, removing %s", __func__, addr);
 		}
 		else if (g_str_has_prefix(request->url->str, "/close")) {
 			gchar *tmp = strchr(request->url->str, '?') + 1;
@@ -883,40 +889,32 @@ gebrm_config_save_server(GebrmDaemon *daemon)
 static void
 gebrm_config_delete_server(const gchar *serv)
 {
-	gchar *dir, *path, *subdir, *server;
+	gchar *server;
 	gchar *final_list_str;
 	GKeyFile *servers;
 	gboolean ret;
 
 	server = g_strcmp0(serv, "127.0.0.1") ? g_strdup(serv): g_strdup("localhost");
-	g_debug("Adding server %s to file", server);
 
 	servers = g_key_file_new ();
 
-	dir = g_build_path ("/", g_get_home_dir (), GEBRM_LIST_OF_SERVERS_PATH, NULL);
-	if(!g_file_test(dir, G_FILE_TEST_EXISTS))
-		g_mkdir_with_parents(dir, 755);
-
-	subdir = g_strconcat(GEBRM_LIST_OF_SERVERS_PATH, GEBRM_LIST_OF_SERVERS_FILENAME, NULL);
-	path = g_build_path ("/", g_get_home_dir (), subdir, NULL);
+	gchar *dir = g_build_filename(g_get_home_dir(),
+	                              GEBRM_LIST_OF_SERVERS_PATH, NULL);
+	gchar *path = g_build_filename(dir, GEBRM_LIST_OF_SERVERS_FILENAME, NULL);
 
 	g_key_file_load_from_file (servers, path, G_KEY_FILE_NONE, NULL);
 
-	if(g_key_file_has_group(servers,server))
+	if(!g_key_file_has_group(servers, server))
 		g_debug("File doesn't have:%s", server);
 
-	g_key_file_remove_group(servers, server, NULL);
-	   
-	if(g_key_file_has_group(servers,server))
-		g_debug("Already has:%s", server);
-
+	if(g_key_file_remove_group(servers, server, NULL))
+		g_debug("Remove server %s from file", server);
 
 	final_list_str= g_key_file_to_data (servers, NULL, NULL);
 	ret = g_file_set_contents (path, final_list_str, -1, NULL);
 	g_free (server);
 	g_free (final_list_str);
 	g_free (path);
-	g_free (subdir);
 	g_key_file_free (servers);
 }
 

@@ -490,7 +490,8 @@ gebr_maestro_controller_new(void)
 	return g_object_new(GEBR_TYPE_MAESTRO_CONTROLLER, NULL);
 }
 
-static void on_server_connect(GtkMenuItem *menuitem,
+static void
+on_server_connect(GtkMenuItem *menuitem,
                               GebrMaestroController *mc)
 {
 	GtkTreeIter iter;
@@ -521,8 +522,9 @@ static void on_server_connect(GtkMenuItem *menuitem,
 	}
 }
 
-void on_server_disconnect(GtkMenuItem *menuitem,
-                          GebrMaestroController *mc)
+static void
+on_server_disconnect(GtkMenuItem *menuitem,
+                     GebrMaestroController *mc)
 {
 	GtkTreeIter iter;
 	GebrDaemonServer *daemon;
@@ -552,6 +554,34 @@ void on_server_disconnect(GtkMenuItem *menuitem,
 	}
 }
 
+static void
+on_server_remove(GtkMenuItem *menuitem,
+                 GebrMaestroController *mc)
+{
+	GtkTreeIter iter;
+	GebrDaemonServer *daemon;
+	GebrMaestroServer *maestro = mc->priv->maestros->data;
+	GtkTreeModel *model;
+
+	GtkTreeView *view = GTK_TREE_VIEW(gtk_builder_get_object(mc->priv->builder, "treeview_servers"));
+	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(view));
+	GList *rows = gtk_tree_selection_get_selected_rows(selection, &model);
+
+	for (GList *i = rows; i; i = i->next) {
+		GtkTreePath *path = i->data;
+
+		if (!gtk_tree_model_get_iter(model, &iter, path))
+			continue;
+
+		gtk_tree_model_get(model, &iter,
+		                   MAESTRO_CONTROLLER_DAEMON, &daemon, -1);
+
+		if (!daemon)
+			continue;
+
+		gebr_connectable_remove(GEBR_CONNECTABLE(maestro), gebr_daemon_server_get_address(daemon));
+	}
+}
 
 static GtkMenu *
 server_popup_menu(GtkWidget * widget,
@@ -568,6 +598,14 @@ server_popup_menu(GtkWidget * widget,
 	if (!rows)
 		return NULL;
 
+	GtkTreeIter iter;
+	GebrDaemonServer *daemon;
+	gtk_tree_model_get_iter(model, &iter, rows->data);
+	gtk_tree_model_get(model, &iter, MAESTRO_CONTROLLER_DAEMON, &daemon, -1);
+
+	if (!daemon)
+		return NULL;
+
 	menu = gtk_menu_new ();
 
 	GtkWidget *item;
@@ -579,6 +617,10 @@ server_popup_menu(GtkWidget * widget,
 	item = gtk_menu_item_new_with_mnemonic(_("_Disconnect"));
 	gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
 	g_signal_connect(item, "activate", G_CALLBACK(on_server_disconnect), mc);
+
+	item = gtk_menu_item_new_with_mnemonic(_("_Remove"));
+	gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+	g_signal_connect(item, "activate", G_CALLBACK(on_server_remove), mc);
 
 	gtk_widget_show_all (menu);
 	g_list_foreach (rows, (GFunc) gtk_tree_path_free, NULL);
