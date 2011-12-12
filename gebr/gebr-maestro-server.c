@@ -642,10 +642,22 @@ gebr_maestro_server_disconnect(GebrConnectable *connectable,
 }
 
 static void
+gebr_maestro_server_remove(GebrConnectable *connectable,
+			       const gchar *address)
+{
+	GebrMaestroServer *maestro = GEBR_MAESTRO_SERVER(connectable);
+	gchar *url = g_strconcat("/remove/", address, NULL);
+	gebr_comm_protocol_socket_send_request(maestro->priv->server->socket,
+					       GEBR_COMM_HTTP_METHOD_PUT,
+					       url, NULL);
+	g_free(url);
+}
+static void
 gebr_maestro_server_connectable_init(GebrConnectableIface *iface)
 {
 	iface->connect = gebr_maestro_server_connectable_connect;
 	iface->disconnect = gebr_maestro_server_disconnect;
+	iface->remove = gebr_maestro_server_remove;
 }
 /* }}} */
 

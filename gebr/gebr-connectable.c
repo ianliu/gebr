@@ -46,3 +46,9 @@ gebr_connectable_disconnect(GebrConnectable *connectable,
 {
 	GEBR_CONNECTABLE_GET_IFACE(connectable)->disconnect(connectable, address);
 }
+void
+gebr_connectable_remove(GebrConnectable *connectable,
+			    const gchar     *address)
+{
+	GEBR_CONNECTABLE_GET_IFACE(connectable)->remove(connectable, address);
+}
