@@ -309,6 +309,37 @@ gebr_config_load(void)
 	return has_config;
 }
 
+static void
+restore_project_line_flow_selection(void)
+{
+	GtkTreeIter iter;
+	gboolean project_line_selected;
+
+	if (gebr_g_key_file_has_key(gebr.config.key_file, "general", "notebook")) {
+		GString *project_line_string = gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "project_line_string", "");
+		project_line_selected = (project_line_string->len &&
+					 gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(gebr.ui_project_line->store),
+									     &iter, project_line_string->str));
+		g_string_free(project_line_string, FALSE);
+	} else {
+		project_line_selected = (gebr.config.project_line_filename->len &&
+					 gebr_gui_gtk_tree_model_find_by_column(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter,
+										PL_FILENAME, gebr.config.project_line_filename->str));
+	}
+
+	if (project_line_selected) {
+		project_line_select_iter(&iter);
+
+		if (gebr.config.flow_treepath_string->len &&
+		    gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
+							gebr.config.flow_treepath_string->str))
+		{
+			flow_browse_select_iter(&iter);
+			gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), gebr.config.current_notebook);
+		}
+	}
+}
+
 /*
  * The config load order must be: log, load file servers, projects/line/flows,
  * menus. New config check must be after all default values loaded.
@@ -336,47 +367,14 @@ gebr_post_config(gboolean has_config)
 
 	project_list_populate();
 
-//	gebr.ui_project_line->servers_filter = gtk_tree_model_filter_new(GTK_TREE_MODEL(gebr.ui_server_list->common.store), NULL);
-//	gebr.ui_project_line->servers_sort = gtk_tree_model_sort_new_with_model(gebr.ui_project_line->servers_filter);
-	//gtk_tree_model_filter_set_visible_func(GTK_TREE_MODEL_FILTER(gebr.ui_project_line->servers_filter), servers_filter_visible_func, NULL, NULL);
-	//gtk_tree_sortable_set_sort_func(GTK_TREE_SORTABLE(gebr.ui_project_line->servers_sort), 0, servers_sort_func, NULL, NULL);
-	//gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(gebr.ui_project_line->servers_sort), 0, GTK_SORT_ASCENDING);
-
-	GtkTreeIter iter;
-	gboolean project_line_selected;
-
-	if (gebr_g_key_file_has_key(gebr.config.key_file, "general", "notebook")) {
-		GString *project_line_string = gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "project_line_string", "");
-		project_line_selected = (project_line_string->len &&
-					 gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(gebr.ui_project_line->store),
-									     &iter, project_line_string->str));
-		g_string_free(project_line_string, FALSE);
-	} else {
-		project_line_selected = (gebr.config.project_line_filename->len &&
-					 gebr_gui_gtk_tree_model_find_by_column(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter,
-										PL_FILENAME, gebr.config.project_line_filename->str));
-	}
-
-	if (project_line_selected) {
-		project_line_select_iter(&iter);
-
-		if (gebr.config.flow_treepath_string->len &&
-		    gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(gebr.ui_flow_browse->store), &iter,
-							gebr.config.flow_treepath_string->str))
-		{
-			flow_browse_select_iter(&iter);
-			gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), gebr.config.current_notebook);
-		}
-	}
-
 	menu_list_populate();
-//	job_control_selected();
 
 	if (!has_config)
 		preferences_setup_ui(TRUE);
 	else {
 		gebr_maestro_controller_connect(gebr.maestro_controller,
 						gebr.config.maestro_address->str);
+		restore_project_line_flow_selection();
 		gebr_config_save(FALSE);
 	}
 

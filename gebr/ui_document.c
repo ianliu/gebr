@@ -1676,7 +1676,7 @@ on_groups_combo_box_changed(GtkComboBox *combo)
 	gtk_tree_model_get(model, &iter, 0, &maestro, -1);
 
 	gebr_geoxml_line_set_maestro(gebr.line, gebr_maestro_server_get_address(maestro));
-	gebr_flow_edition_update_server(gebr.ui_flow_edition);
+	gebr_flow_edition_update_server(gebr.ui_flow_edition, maestro);
 }
 
 static gboolean dict_edit_reorder(GtkTreeView            *tree_view,

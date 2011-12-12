@@ -1440,7 +1440,7 @@ on_server_disconnected_set_row_insensitive(GtkCellLayout   *cell_layout,
 		const gchar *txt;
 
 		if (type == MAESTRO_SERVER_TYPE_GROUP) {
-			if (*name)
+			if (name && *name)
 				txt = name;
 			else
 				txt = gebr_maestro_server_get_display_address(maestro);
@@ -1719,14 +1719,10 @@ gebr_flow_edition_select_queue(GebrFlowEdition *self)
 }
 
 void
-gebr_flow_edition_update_server(GebrFlowEdition *fe)
+gebr_flow_edition_update_server(GebrFlowEdition *fe,
+				GebrMaestroServer *maestro)
 {
-	GebrMaestroServer *maestro =
-		gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller,
-							     gebr.line);
-
-	if (!maestro)
-		return;
+	g_return_if_fail(maestro);
 
 	GtkTreeModel *model = gebr_maestro_server_get_groups_model(maestro);
 	gtk_combo_box_set_model(GTK_COMBO_BOX(fe->priv->server_combobox), model);

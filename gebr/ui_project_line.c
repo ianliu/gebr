@@ -1227,8 +1227,7 @@ void project_line_free(void)
 }
 
 
-/**
- * \internal
+/*
  * Load the selected project or line from file.
  */
 static void project_line_load(void)
@@ -1248,7 +1247,7 @@ static void project_line_load(void)
 	is_line = gtk_tree_path_get_depth(path) == 2 ? TRUE : FALSE;
 	gtk_tree_path_free(path);
 
-	if (is_line == TRUE) {
+	if (is_line) {
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter,
 				   PL_FILENAME, &line_filename, -1);
 
@@ -1263,12 +1262,15 @@ static void project_line_load(void)
 
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter,
 			   PL_XMLPOINTER, &gebr.project, -1);
-	if (is_line == TRUE) {
+	if (is_line) {
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), &child,
 				   PL_XMLPOINTER, &gebr.line, -1);
-
 		gebr.project_line = GEBR_GEOXML_DOC(gebr.line);
-		gebr_flow_edition_update_server(gebr.ui_flow_edition);
+
+		GebrMaestroServer *maestro =
+			gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller,
+								     gebr.line);
+		gebr_flow_edition_update_server(gebr.ui_flow_edition, maestro);
 		line_load_flows();
 	} else {
 		gebr.project_line = GEBR_GEOXML_DOC(gebr.project);
@@ -1278,7 +1280,7 @@ static void project_line_load(void)
 	project_line_info_update();
 
 	g_free(project_filename);
-	if (is_line == TRUE)
+	if (is_line)
 		g_free(line_filename);
 }
 

@@ -34,6 +34,7 @@ struct _GebrMaestroServerPriv {
 	GHashTable *temp_jobs;
 	gchar *address;
 
+	GtkListStore *groups_store;
 	GtkListStore *queues_model;
 };
 
@@ -89,6 +90,49 @@ static const struct gebr_comm_server_ops maestro_ops = {
 G_DEFINE_TYPE_WITH_CODE(GebrMaestroServer, gebr_maestro_server, G_TYPE_OBJECT,
 			G_IMPLEMENT_INTERFACE(GEBR_TYPE_CONNECTABLE,
 					      gebr_maestro_server_connectable_init));
+
+static void
+update_groups_store(GebrMaestroServer *maestro)
+{
+	GtkTreeIter iter; 
+
+	gtk_list_store_clear(maestro->priv->groups_store);
+
+	gtk_list_store_append(maestro->priv->groups_store, &iter);
+	gtk_list_store_set(maestro->priv->groups_store, &iter,
+	                   MAESTRO_SERVER_TYPE, MAESTRO_SERVER_TYPE_GROUP,
+	                   MAESTRO_SERVER_NAME, "",
+	                   -1);
+
+	GList *groups = gebr_maestro_server_get_all_tags(maestro);
+
+	for (GList *g = groups; g; g = g->next) {
+		const gchar *tag = g->data;
+
+		gtk_list_store_append(maestro->priv->groups_store, &iter);
+		gtk_list_store_set(maestro->priv->groups_store, &iter,
+		                   MAESTRO_SERVER_TYPE, MAESTRO_SERVER_TYPE_GROUP,
+		                   MAESTRO_SERVER_NAME, tag,
+		                   -1);
+	}
+
+	GtkTreeIter daemons_iter;
+	GtkTreeModel *daemons_model = gebr_maestro_server_get_model(maestro, FALSE, NULL);
+
+	gebr_gui_gtk_tree_model_foreach(daemons_iter, daemons_model) {
+		GebrDaemonServer *daemon;
+
+		gtk_tree_model_get(daemons_model, &daemons_iter,
+		                   0, &daemon, -1);
+
+		gtk_list_store_append(maestro->priv->groups_store, &iter);
+		gtk_list_store_set(maestro->priv->groups_store, &iter,
+		                   MAESTRO_SERVER_TYPE, MAESTRO_SERVER_TYPE_DAEMON,
+		                   MAESTRO_SERVER_NAME, gebr_daemon_server_get_address(daemon),
+		                   -1);
+	}
+	g_object_unref(daemons_model);
+}
 
 void
 log_message(GebrCommServer *server,
@@ -156,6 +200,9 @@ get_daemon_from_address(GebrMaestroServer *server,
 {
 	GtkTreeIter iter;
 	GtkTreeModel *model = GTK_TREE_MODEL(server->priv->store);
+
+	if (!address)
+		return NULL;
 
 	gebr_gui_gtk_tree_model_foreach(iter, model) {
 		GebrDaemonServer *daemon;
@@ -547,12 +594,27 @@ gebr_maestro_server_finalize(GObject *object)
 }
 
 static void
+gebr_maestro_server_group_changed_real(GebrMaestroServer *maestro)
+{
+	update_groups_store(maestro);
+}
+
+static void
+gebr_maestro_server_state_change_real(GebrMaestroServer *maestro)
+{
+	update_groups_store(maestro);
+}
+
+static void
 gebr_maestro_server_class_init(GebrMaestroServerClass *klass)
 {
 	GObjectClass *object_class = G_OBJECT_CLASS(klass);
 	object_class->get_property = gebr_maestro_server_get;
 	object_class->set_property = gebr_maestro_server_set;
 	object_class->finalize = gebr_maestro_server_finalize;
+
+	klass->group_changed = gebr_maestro_server_group_changed_real;
+	klass->state_change  = gebr_maestro_server_state_change_real;
 
 	signals[JOB_DEFINE] =
 		g_signal_new("job-define",
@@ -630,10 +692,15 @@ gebr_maestro_server_init(GebrMaestroServer *maestro)
 	maestro->priv->jobs = g_hash_table_new(g_str_hash, g_str_equal);
 	maestro->priv->temp_jobs = g_hash_table_new(g_str_hash, g_str_equal);
 	maestro->priv->queues_model = gtk_list_store_new(1, GEBR_TYPE_JOB);
-	// Insert queue Immediately
+
+	// Insert queue 'Immediately'
 	GtkTreeIter iter;
 	gtk_list_store_append(maestro->priv->queues_model, &iter);
 	gtk_list_store_set(maestro->priv->queues_model, &iter, 0, NULL, -1);
+
+	maestro->priv->groups_store = gtk_list_store_new(MAESTRO_SERVER_N,
+							 G_TYPE_INT,
+							 G_TYPE_STRING);
 
 	GebrDaemonServer *autochoose =
 		gebr_daemon_server_new(GEBR_CONNECTABLE(maestro), NULL, SERVER_STATE_CONNECT);
@@ -916,47 +983,7 @@ gebr_maestro_server_set_autoconnect(GebrMaestroServer *maestro,
 GtkTreeModel *
 gebr_maestro_server_get_groups_model(GebrMaestroServer *maestro)
 {
-	GtkTreeIter iter;
-	GtkListStore *store = gtk_list_store_new(MAESTRO_SERVER_N,
-	                                         G_TYPE_INT,
-	                                         G_TYPE_STRING);
-
-	gtk_list_store_append(store, &iter);
-	gtk_list_store_set(store, &iter,
-	                   MAESTRO_SERVER_TYPE, MAESTRO_SERVER_TYPE_GROUP,
-	                   MAESTRO_SERVER_NAME, "",
-	                   -1);
-
-	GList *groups = gebr_maestro_server_get_all_tags(maestro);
-
-	for(GList *g = groups; g; g = g->next) {
-		const gchar *tag = g->data;
-
-		gtk_list_store_append(store, &iter);
-		gtk_list_store_set(store, &iter,
-		                   MAESTRO_SERVER_TYPE, MAESTRO_SERVER_TYPE_GROUP,
-		                   MAESTRO_SERVER_NAME, tag,
-		                   -1);
-	}
-
-	GtkTreeIter daemons_iter;
-	GtkTreeModel *daemons_model = gebr_maestro_server_get_model(maestro, FALSE, NULL);
-
-	gebr_gui_gtk_tree_model_foreach(daemons_iter, daemons_model) {
-		GebrDaemonServer *daemon;
-
-		gtk_tree_model_get(daemons_model, &daemons_iter,
-		                   0, &daemon, -1);
-
-		gtk_list_store_append(store, &iter);
-		gtk_list_store_set(store, &iter,
-		                   MAESTRO_SERVER_TYPE, MAESTRO_SERVER_TYPE_DAEMON,
-		                   MAESTRO_SERVER_NAME, gebr_daemon_server_get_address(daemon),
-		                   -1);
-	}
-	g_object_unref(daemons_model);
-
-	return GTK_TREE_MODEL(store);
+	return GTK_TREE_MODEL(maestro->priv->groups_store);
 }
 
 /*
