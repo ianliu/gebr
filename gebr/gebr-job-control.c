@@ -302,7 +302,7 @@ jobs_visible_for_maestro(GtkTreeModel *model,
 	if (index == 0) { // Any
 		jc->priv->use_filter_group = FALSE;
 		for (GList *i = labels; i; i = i->next)
-			if (g_str_has_prefix(gtk_label_get_text(i->data), "Group:"))
+			if (g_str_has_prefix(gtk_label_get_text(i->data), "Maestro:"))
 				gtk_widget_destroy(GTK_WIDGET(i->data));
 		g_list_free(box);
 		g_list_free(labels);
@@ -310,7 +310,7 @@ jobs_visible_for_maestro(GtkTreeModel *model,
 	}
 
 	if (!jc->priv->use_filter_group) {
-		gchar *text = g_markup_printf_escaped("<span size='x-small'>Group: %s</span>", combo_name);
+		gchar *text = g_markup_printf_escaped("<span size='x-small'>Maestro: %s</span>", combo_name);
 		GtkWidget *label = gtk_label_new(NULL);
 		gtk_label_set_markup(GTK_LABEL(label), text);
 		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
@@ -320,8 +320,8 @@ jobs_visible_for_maestro(GtkTreeModel *model,
 	} else {
 		for (GList *i = labels; i; i = i->next) {
 			const gchar *filter = gtk_label_get_text(i->data);
-			if (g_str_has_prefix(filter, "Group:")) {
-				gchar *new_text = g_markup_printf_escaped("<span size='x-small'>Group: %s</span>", combo_name);
+			if (g_str_has_prefix(filter, "Maestro:")) {
+				gchar *new_text = g_markup_printf_escaped("<span size='x-small'>Maestro: %s</span>", combo_name);
 				gtk_label_set_markup(i->data, new_text);
 				g_free(new_text);
 			}
@@ -378,7 +378,7 @@ jobs_visible_for_servers(GtkTreeModel *model,
 	if (!name) {
 		jc->priv->use_filter_servers = FALSE;
 		for (GList *i = labels; i; i = i->next)
-			if (g_str_has_prefix(gtk_label_get_text(i->data), "Server:"))
+			if (g_str_has_prefix(gtk_label_get_text(i->data), "Server/Group:"))
 				gtk_widget_destroy(GTK_WIDGET(i->data));
 		g_list_free(box);
 		g_list_free(labels);
@@ -387,7 +387,7 @@ jobs_visible_for_servers(GtkTreeModel *model,
 
 
 	if (!jc->priv->use_filter_servers) {
-		gchar *text = g_markup_printf_escaped("<span size='x-small'>Server: %s</span>", display);
+		gchar *text = g_markup_printf_escaped("<span size='x-small'>Server/Group: %s</span>", display);
 		GtkWidget *label = gtk_label_new(NULL);
 		gtk_label_set_markup(GTK_LABEL(label), text);
 		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
@@ -398,7 +398,7 @@ jobs_visible_for_servers(GtkTreeModel *model,
 		for (GList *i = labels; i; i = i->next) {
 			const gchar *filter = gtk_label_get_text(i->data);
 			if (g_str_has_prefix(filter, "Server:")) {
-				gchar *new_text = g_markup_printf_escaped("<span size='x-small'>Server: %s</span>", display);
+				gchar *new_text = g_markup_printf_escaped("<span size='x-small'>Server/Group: %s</span>", display);
 				gtk_label_set_markup(i->data, new_text);
 				g_free(new_text);
 			}
@@ -701,15 +701,22 @@ job_control_fill_servers_info(GebrJobControl *jc)
 	if (!nprocs || !niceness)
 		g_string_printf(resources, _("Waiting for server(s) details"));
 	else {
+		const gchar *type_str = gebr_job_get_server_group_type(job);
 		const gchar *groups = gebr_job_get_server_group(job);
+		GebrMaestroServerGroupType type = gebr_maestro_server_group_str_to_enum(type_str);
+
+		const gchar *maddr = gebr_job_get_maestro_address(job);
+		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_address(gebr.maestro_controller, maddr);
+
 		gchar *markup;
 
-		if (g_strcmp0(groups, "") == 0)
-			groups = _("All Servers");
+		if (type == MAESTRO_SERVER_TYPE_GROUP)
+			if (g_strcmp0(groups, "") == 0)
+				groups = g_strdup_printf(_("%s"), gebr_maestro_server_get_display_address(maestro));
 
-		markup = g_markup_printf_escaped (_("Job submitted by <b>%s</b> to group <b>%s</b>.\n"
+		markup = g_markup_printf_escaped (_("Job submitted by <b>%s</b> to %s <b>%s</b>.\n"
 						  "Executed using %s<b>%s</b> processor(s)\ndistributed on <b>%d</b> servers.\n"),
-						  gebr_job_get_hostname(job), groups,
+						  gebr_job_get_hostname(job), type == MAESTRO_SERVER_TYPE_DAEMON? "server" : "group", groups,
 						  g_strcmp0(niceness, "0")? _("idle time of ") : "", nprocs, n_servers);
 		g_string_append(resources, markup);
 		g_free(markup);
@@ -1208,8 +1215,12 @@ gebr_job_control_load_details(GebrJobControl *jc,
 	g_free(markup);
 
 	gchar *msg = g_strdup(gebr_job_get_server_group(job));
+
+	const gchar *maddr = gebr_job_get_maestro_address(job);
+	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_address(gebr.maestro_controller, maddr);
+
 	if (!g_strcmp0(msg, ""))
-		msg = g_strdup(_("All servers"));
+		msg = g_strdup_printf("%s", gebr_maestro_server_get_display_address(maestro));
 	gtk_label_set_markup (job_group, msg);
 
 	switch (gebr_job_get_exec_speed(job))
@@ -1515,11 +1526,16 @@ on_maestro_filter_changed(GtkComboBox *combo,
 						   MAESTRO_SERVER_NAME, &name,
 						   -1);
 
-				gchar *display = g_strdup_printf(_("%s on %s"), name,
-								 gebr_maestro_server_get_display_address(maestro));
+				gchar *display;
+				if (!*name)
+					display = g_strdup_printf(_("%s"), gebr_maestro_server_get_display_address(maestro));
+				else
+					display = g_strdup_printf(_("%s on %s"), name,
+					                          gebr_maestro_server_get_display_address(maestro));
+
 				gtk_list_store_append(jc->priv->server_filter, &iter);
 				gtk_list_store_set(jc->priv->server_filter, &iter,
-						   0, display,
+				                   0, display,
 						   1, type,
 						   2, name);
 				g_free(display);
@@ -1539,6 +1555,9 @@ on_maestro_filter_changed(GtkComboBox *combo,
 					   MAESTRO_SERVER_TYPE, &type,
 					   MAESTRO_SERVER_NAME, &name,
 					   -1);
+
+			if (!*name)
+				name = gebr_maestro_server_get_display_address(maestro);
 
 			gtk_list_store_append(jc->priv->server_filter, &iter);
 			gtk_list_store_set(jc->priv->server_filter, &iter,
@@ -1815,25 +1834,6 @@ gebr_job_control_add(GebrJobControl *jc, GebrJob *job)
 	gtk_list_store_append(jc->priv->store, gebr_job_get_iter(job));
 	gtk_list_store_set(jc->priv->store, gebr_job_get_iter(job), JC_STRUCT, job, -1);
 	g_signal_connect(job, "disconnect", G_CALLBACK(on_job_disconnected), jc);
-
-	const gchar *group = gebr_job_get_server_group(job);
-	if (!group)
-		group = "";
-
-	if (!get_server_group_iter(jc, group, NULL)) {
-		GtkTreeIter iter;
-		const gchar *tmp;
-
-		if (g_strcmp0(group, "") == 0)
-			tmp  = _("All Servers");
-		else
-			tmp = group;
-
-		gtk_list_store_append(jc->priv->maestro_filter, &iter);
-		gtk_list_store_set(jc->priv->maestro_filter, &iter,
-				   0, tmp,
-				   1, group, -1);
-	}
 }
 
 GebrJob *
