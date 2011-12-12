@@ -313,7 +313,7 @@ void project_line_info_update(void)
 		g_free(markup);
 
 		gchar *addr = gebr_geoxml_line_get_maestro(gebr.line);
-		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.group), addr);
+		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.group), g_strcmp0(addr,"127.0.0.1") == 0? "Local Maestro" : addr);
 		g_free(addr);
 	}
 

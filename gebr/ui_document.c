@@ -163,7 +163,7 @@ void on_properties_destroy(GtkWindow * window, GebrPropertiesData * data);
 
 static void on_file_entry_activate (GtkEntry *entry, GebrGuiSequenceEdit *sequence_edit);
 
-static void on_groups_combo_box_changed (GtkComboBox *combo, GebrGuiValueSequenceEdit *edit);
+static void on_groups_combo_box_changed (GtkComboBox *combo);
 
 static gboolean dict_edit_reorder(GtkTreeView            *tree_view,
 				  GtkTreeIter            *iter,
@@ -377,7 +377,7 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 		if (valid || is_new)
 			gtk_combo_box_set_active_iter (GTK_COMBO_BOX (groups_combo), &active);
 		else
-			gtk_combo_box_set_active (GTK_COMBO_BOX (groups_combo), -1);
+			gtk_combo_box_set_active (GTK_COMBO_BOX (groups_combo), 0);
 
 		data->previous_active_group = gtk_combo_box_get_active(GTK_COMBO_BOX(groups_combo));
 
@@ -404,9 +404,6 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 		gebr_gui_value_sequence_edit_load(GEBR_GUI_VALUE_SEQUENCE_EDIT(path_sequence_edit), path_sequence,
 						  (ValueSequenceSetFunction) gebr_geoxml_value_sequence_set,
 						  (ValueSequenceGetFunction) gebr_geoxml_value_sequence_get, NULL);
-
-		g_signal_connect (groups_combo, "changed",
-				  G_CALLBACK (on_groups_combo_box_changed), path_sequence_edit);
 
 		g_signal_connect (GEBR_GUI_FILE_ENTRY (file_entry)->entry, "activate",
 				  G_CALLBACK (on_file_entry_activate), path_sequence_edit);
@@ -1622,6 +1619,7 @@ void on_response_ok(GtkButton * button, GebrPropertiesData * data)
 				flow_browse_reload_selected();
 			}
 		}
+		on_groups_combo_box_changed(GTK_COMBO_BOX(data->groups_combo));
 	} case GEBR_GEOXML_DOCUMENT_TYPE_PROJECT: {
 		project_line_get_selected(&iter, DontWarnUnselection);
 		gtk_tree_store_set(gebr.ui_project_line->store, &iter,
@@ -1661,8 +1659,7 @@ static void on_file_entry_activate (GtkEntry *entry, GebrGuiSequenceEdit *sequen
 }
 
 static void
-on_groups_combo_box_changed(GtkComboBox *combo,
-			    GebrGuiValueSequenceEdit *edit)
+on_groups_combo_box_changed(GtkComboBox *combo)
 {
 	GebrMaestroServer *maestro;
 	GtkTreeIter iter;
