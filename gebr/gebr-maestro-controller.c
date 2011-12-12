@@ -176,7 +176,7 @@ drag_data_received_handl(GtkWidget *widget,
 		g_object_set_data(G_OBJECT(entry), "daemon", *daemon);
 
 		GtkBorder border = { 0, };
-		gtk_entry_set_has_frame(GTK_ENTRY(entry), FALSE);
+		//gtk_entry_set_has_frame(GTK_ENTRY(entry), FALSE);
 		gtk_entry_set_inner_border(GTK_ENTRY(entry), &border);
 		gtk_notebook_insert_page(nb, dummy, entry, n-1);
 		gtk_widget_show(dummy);
