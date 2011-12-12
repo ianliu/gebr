@@ -64,6 +64,7 @@ gebr_ui_flow_run(void)
 	GebrCommServer *server = gebr_maestro_server_get_server(maestro);
 	gebr_comm_protocol_socket_send_request(server->socket, GEBR_COMM_HTTP_METHOD_PUT, url, content);
 
+	gebr_job_set_maestro_address(job, gebr_maestro_server_get_address(maestro));
 	gebr_job_set_hostname(job, hostname);
 	gebr_job_set_exec_speed(job, speed);
 	gebr_job_set_submit_date(job, submit_date);

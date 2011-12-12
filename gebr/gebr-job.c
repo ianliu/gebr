@@ -48,6 +48,7 @@ struct _GebrJobPriv {
 	gchar *issues;
 	gchar *nice;
 	gchar *nprocs;
+	gchar *maestro_address;
 
 	/* Interface properties */
 	GtkTreeIter iter;
@@ -509,6 +510,12 @@ gebr_job_get_elapsed_time(GebrJob *job)
 	return gebr_calculate_detailed_relative_time(&start, &finish);
 }
 
+const gchar *
+gebr_job_get_server_group_type(GebrJob *job)
+{
+	return job->priv->server_group_type;
+}
+
 void
 gebr_job_set_server_group(GebrJob *job, const gchar *server_group)
 {
@@ -520,6 +527,8 @@ gebr_job_set_server_group(GebrJob *job, const gchar *server_group)
 void
 gebr_job_set_server_group_type(GebrJob *job, const gchar *group_type)
 {
+	if (job->priv->server_group_type)
+		g_free(job->priv->server_group_type);
 	job->priv->server_group_type = g_strdup(group_type);
 }
 
@@ -644,4 +653,18 @@ gebr_job_append_output(GebrJob *job, gint frac,
 {
 	g_string_append(job->priv->tasks[frac].output, output);
 	g_signal_emit(job, signals[OUTPUT], 0, frac, output);
+}
+
+void
+gebr_job_set_maestro_address(GebrJob *job, const gchar *address)
+{
+	if (job->priv->maestro_address)
+		g_free(job->priv->maestro_address);
+	job->priv->maestro_address = g_strdup(address);
+}
+
+const gchar *
+gebr_job_get_maestro_address(GebrJob *job)
+{
+	return job->priv->maestro_address;
 }

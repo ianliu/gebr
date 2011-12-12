@@ -45,6 +45,7 @@ enum {
 
 enum {
 	JOB_DEFINE,
+	MAESTRO_LIST_CHANGED,
 	LAST_SIGNAL
 };
 
@@ -475,11 +476,20 @@ gebr_maestro_controller_class_init(GebrMaestroControllerClass *klass)
 		g_signal_new("job-define",
 			     G_OBJECT_CLASS_TYPE(object_class),
 			     G_SIGNAL_RUN_LAST,
-			     G_STRUCT_OFFSET(GebrMaestroServerClass, job_define),
+			     G_STRUCT_OFFSET(GebrMaestroControllerClass, job_define),
 			     NULL, NULL,
 			     gebr_cclosure_marshal_VOID__OBJECT_OBJECT,
 			     G_TYPE_NONE, 2,
 			     GEBR_TYPE_MAESTRO_SERVER, GEBR_TYPE_JOB);
+
+	signals[MAESTRO_LIST_CHANGED] =
+		g_signal_new("maestro-list-changed",
+			     G_OBJECT_CLASS_TYPE(object_class),
+			     G_SIGNAL_RUN_LAST,
+			     G_STRUCT_OFFSET(GebrMaestroControllerClass, maestro_list_changed),
+			     NULL, NULL,
+			     g_cclosure_marshal_VOID__VOID,
+			     G_TYPE_NONE, 0);
 
 	g_type_class_add_private(klass, sizeof(GebrMaestroControllerPriv));
 }
@@ -1051,6 +1061,7 @@ gebr_maestro_controller_connect(GebrMaestroController *self,
 		gtk_list_store_set(self->priv->maestro_model, &iter,
 		                   0, maestro, -1);
 
+		g_signal_emit(self, signals[MAESTRO_LIST_CHANGED], 0);
 	} else {
 		gpointer data = list->data;
 		self->priv->maestros = g_list_delete_link(self->priv->maestros, list);

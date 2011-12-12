@@ -355,6 +355,7 @@ parse_messages(GebrCommServer *comm_server,
 				/* Creates a job and populates some of its information.
 				 * This condition happens when GeBR connects to Maestro.
 				 */
+				gebr_job_set_maestro_address(job, gebr_maestro_server_get_address(maestro));
 				gebr_job_set_hostname(job, hostname->str);
 				gebr_job_set_title(job, title->str);
 				gebr_job_set_nice(job, nice->str);
@@ -832,13 +833,13 @@ gebr_maestro_server_get_model(GebrMaestroServer *maestro,
 const gchar *
 gebr_maestro_server_get_address(GebrMaestroServer *maestro)
 {
-	return maestro->priv->server->address->str;
+	return maestro->priv->address;
 }
 
 gchar *
 gebr_maestro_server_get_display_address(GebrMaestroServer *maestro)
 {
-	const gchar *addr = maestro->priv->server->address->str;
+	const gchar *addr = maestro->priv->address;
 
 	if (g_strcmp0(addr, "127.0.0.1") == 0)
 		return g_strdup(_("Local Maestro"));

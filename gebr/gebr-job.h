@@ -153,6 +153,8 @@ void gebr_job_get_resources(GebrJob *job,
 
 const gchar *gebr_job_get_server_group(GebrJob *job);
 
+const gchar *gebr_job_get_server_group_type(GebrJob *job);
+
 void gebr_job_set_server_group(GebrJob *job, const gchar *server_group);
 
 void gebr_job_set_server_group_type(GebrJob *job, const gchar *group_type);
@@ -190,6 +192,10 @@ void gebr_job_set_cmd_line(GebrJob *job, gint frac, const gchar *cmd_line);
 void gebr_job_set_issues(GebrJob *job, const gchar *issues);
 
 void gebr_job_append_output(GebrJob *job, gint frac, const gchar *output);
+
+void gebr_job_set_maestro_address(GebrJob *job, const gchar *address);
+
+const gchar *gebr_job_get_maestro_address(GebrJob *job);
 
 G_END_DECLS
 
