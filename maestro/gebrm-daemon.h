@@ -112,6 +112,8 @@ void gebrm_daemon_disconnect(GebrmDaemon *daemon);
 
 GebrCommServer *gebrm_daemon_get_server(GebrmDaemon *daemon);
 
+GebrCommServerState gebrm_daemon_get_state(GebrmDaemon *daemon);
+
 void gebrm_daemon_set_autoconnect(GebrmDaemon *daemon, const gchar *ac);
 
 const gchar *gebrm_daemon_get_autoconnect(GebrmDaemon *daemon);

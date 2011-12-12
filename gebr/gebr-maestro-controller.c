@@ -741,10 +741,29 @@ on_connect_to_maestro_clicked( GtkButton *button,
 
 }
 
+static gboolean
+server_tooltip_callback(GtkTreeView * tree_view, GtkTooltip * tooltip,
+                        GtkTreeIter * iter, GtkTreeViewColumn * column, GebrMaestroController *self)
+{
+	if (gtk_tree_view_get_column(tree_view, 0) == column) {
+		gboolean autoconnect;
+
+		gtk_tree_model_get(GTK_TREE_MODEL(self->priv->model), iter, MAESTRO_CONTROLLER_AUTOCONN, &autoconnect, -1);
+
+		if (autoconnect)
+			gtk_tooltip_set_text(tooltip, _("Autoconnect ON"));
+		else
+			gtk_tooltip_set_text(tooltip, _("Autoconnect OFF"));
+
+		return TRUE;
+	}
+	return FALSE;
+}
+
 static void
 on_dialog_response(GtkDialog *dialog,
-		   gint response,
-		   GebrMaestroController *self)
+                   gint response,
+                   GebrMaestroController *self)
 {
 	g_object_unref(self->priv->builder);
 	self->priv->builder = NULL;
@@ -807,6 +826,19 @@ gebr_maestro_controller_create_dialog (GebrMaestroController *self)
 
 	gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(view),
 	                                          (GebrGuiGtkPopupCallback) server_popup_menu, self);
+	gebr_gui_gtk_tree_view_set_tooltip_callback(GTK_TREE_VIEW(view),
+	                                            (GebrGuiGtkTreeViewTooltipCallback) server_tooltip_callback, self);
+
+	GtkTreeViewColumn *ac_col = gtk_tree_view_column_new();
+	gtk_tree_view_column_set_title(ac_col, _("AC"));
+
+	renderer = gtk_cell_renderer_toggle_new();
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(ac_col), renderer, FALSE);
+	gtk_tree_view_column_set_cell_data_func(ac_col, renderer, daemon_server_ac_func,
+	                                        NULL, NULL);
+	g_signal_connect(renderer, "toggled", G_CALLBACK (on_ac_toggled), self);
+
+	gtk_tree_view_append_column(GTK_TREE_VIEW(view), ac_col);
 
 	GtkTreeViewColumn *col;
 
@@ -828,17 +860,6 @@ gebr_maestro_controller_create_dialog (GebrMaestroController *self)
 	g_signal_connect(renderer, "edited", G_CALLBACK(on_servers_edited), self);
 
 	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
-
-	GtkTreeViewColumn *ac_col = gtk_tree_view_column_new();
-	gtk_tree_view_column_set_title(ac_col, _("Auto-Connect"));
-
-	renderer = gtk_cell_renderer_toggle_new();
-	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(ac_col), renderer, FALSE);
-	gtk_tree_view_column_set_cell_data_func(ac_col, renderer, daemon_server_ac_func,
-	                                        NULL, NULL);
-	g_signal_connect(renderer, "toggled", G_CALLBACK (on_ac_toggled), self);
-
-	gtk_tree_view_append_column(GTK_TREE_VIEW(view), ac_col);
 
 	on_server_group_changed(maestro, self);
 

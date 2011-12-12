@@ -126,13 +126,14 @@ gebrm_app_job_controller_add(GebrmApp *app, GebrmJob *job)
 static void
 send_server_status_message(GebrmApp *app,
 			   GebrCommProtocolSocket *socket,
-			   GebrCommServer *server,
+			   GebrmDaemon *daemon,
 			   const gchar *ac)
 {
-	const gchar *state = gebr_comm_server_state_to_string(server->state);
+	const gchar *state = gebr_comm_server_state_to_string(gebrm_daemon_get_state(daemon));
+
 	gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
 					      gebr_comm_protocol_defs.ssta_def, 3,
-					      server->address->str,
+					      gebrm_daemon_get_address(daemon),
 					      state,
 					      ac);
 }
@@ -235,7 +236,7 @@ gebrm_app_daemon_on_state_change(GebrmDaemon *daemon,
 				 GebrmApp *app)
 {
 	for (GList *i = app->priv->connections; i; i = i->next)
-		send_server_status_message(app, i->data, gebrm_daemon_get_server(daemon), gebrm_daemon_get_autoconnect(daemon));
+		send_server_status_message(app, i->data, daemon, gebrm_daemon_get_autoconnect(daemon));
 }
 
 static void
@@ -1064,10 +1065,12 @@ on_new_connection(GebrCommListenSocket *listener,
 		app->priv->connections = g_list_prepend(app->priv->connections, socket);
 
 		for (GList *i = app->priv->daemons; i; i = i->next) {
-			GebrCommServer *server;
-			g_object_get(i->data, "server", &server, NULL);
-			send_server_status_message(app, socket, server, gebrm_daemon_get_autoconnect(i->data));
+			send_server_status_message(app, socket, i->data, gebrm_daemon_get_autoconnect(i->data));
 			send_groups_definitions(socket, i->data);
+
+			if (gebrm_daemon_get_state(i->data) == SERVER_STATE_DISCONNECTED &&
+			    g_strcmp0(gebrm_daemon_get_autoconnect(i->data), "on") == 0)
+				gebrm_daemon_connect(i->data, NULL, NULL);
 		}
 
 		g_signal_connect(socket, "disconnected",
