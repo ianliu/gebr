@@ -45,6 +45,7 @@ libgebr_comm_la_SOURCES = \
 	gebr-comm-socketaddress.c	\
 	gebr-comm-streamsocket.c	\
 	gebr-comm-terminalprocess.c	\
+	gebr-comm-uri.c			\
 	$(NULL)
 
 libgebr_commsubincludedir = $(includedir)/libgebr/comm
@@ -64,6 +65,7 @@ libgebr_commsubinclude_HEADERS = \
 	gebr-comm-socketaddress.h	\
 	gebr-comm-streamsocket.h	\
 	gebr-comm-terminalprocess.h	\
+	gebr-comm-uri.h			\
 	$(NULL)
 
 noinst_HEADERS = \
