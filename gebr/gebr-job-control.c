@@ -1553,6 +1553,7 @@ on_maestro_filter_changed(GtkComboBox *combo,
 
 		gebr_gui_gtk_tree_model_foreach(it, groups) {
 			gchar *name;
+			const gchar *display;
 			GebrMaestroServerGroupType type;
 
 			gtk_tree_model_get(groups, &it,
@@ -1561,11 +1562,13 @@ on_maestro_filter_changed(GtkComboBox *combo,
 					   -1);
 
 			if (!*name)
-				name = gebr_maestro_server_get_display_address(maestro);
+				display = gebr_maestro_server_get_display_address(maestro);
+			else
+				display = name;
 
 			gtk_list_store_append(jc->priv->server_filter, &iter);
 			gtk_list_store_set(jc->priv->server_filter, &iter,
-					   0, name,
+					   0, display,
 					   1, type,
 					   2, name);
 		}
