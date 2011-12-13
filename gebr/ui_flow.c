@@ -22,6 +22,7 @@
 #include "gebr.h"
 #include "ui_flow_browse.h"
 #include "document.h"
+#include <libgebr/comm/gebr-comm-uri.h>
 
 void
 gebr_ui_flow_run(void)
@@ -51,6 +52,19 @@ gebr_ui_flow_run(void)
 	gebr_geoxml_document_to_string(GEBR_GEOXML_DOCUMENT(gebr.flow), &xml);
 	GebrCommJsonContent *content = gebr_comm_json_content_new_from_string(xml);
 	g_debug("checkpoint2 %s", __func__);
+
+	GebrCommUri *uri = gebr_comm_uri_new();
+	gebr_comm_uri_set_prefix(uri, "/run");
+	gebr_comm_uri_add_param(uri, "parent_rid", parent_rid);
+	gebr_comm_uri_add_param(uri, "speed", speed_str);
+	gebr_comm_uri_add_param(uri, "nice", nice);
+	gebr_comm_uri_add_param(uri, "name", name);
+	gebr_comm_uri_add_param(uri, "type", group_type);
+	gebr_comm_uri_add_param(uri, "host", hostname);
+	gebr_comm_uri_add_param(uri, "temp_id", gebr_job_get_id(job));
+	gchar *url = gebr_comm_uri_to_string(uri);
+
+	/*
 	gchar *url = g_strdup_printf("/run?parent_rid=%s;speed=%s;nice=%s;name=%s;type=%s;host=%s;temp_id=%s",
 				     parent_rid,
 				     speed_str,
@@ -59,6 +73,7 @@ gebr_ui_flow_run(void)
 				     group_type,
 				     hostname,
 				     gebr_job_get_id(job));
+				     */
 
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
 	GebrCommServer *server = gebr_maestro_server_get_server(maestro);
