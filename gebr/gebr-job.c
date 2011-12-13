@@ -50,6 +50,8 @@ struct _GebrJobPriv {
 	gchar *nprocs;
 	gchar *maestro_address;
 
+	gboolean is_fake;
+
 	/* Interface properties */
 	GtkTreeIter iter;
 	GtkTreeModel *model;
@@ -109,6 +111,7 @@ gebr_job_init(GebrJob *job)
 						GEBR_TYPE_JOB,
 						GebrJobPriv);
 	job->priv->status = JOB_STATUS_INITIAL;
+	job->priv->is_fake = TRUE;
 }
 
 static void
@@ -187,6 +190,7 @@ gebr_job_can_close(GebrJob *job)
 {
 	return job->priv->status == JOB_STATUS_FINISHED
 		|| job->priv->status == JOB_STATUS_FAILED
+		|| job->priv->status == JOB_STATUS_INITIAL
 		|| job->priv->status == JOB_STATUS_CANCELED;
 }
 
@@ -389,6 +393,9 @@ gebr_job_close(GebrJob *job)
 	if (!gebr_job_can_close(job))
 		return FALSE;
 
+	if (job->priv->is_fake)
+		return TRUE;
+
 	gchar *url = g_strdup_printf("/close?id=%s", gebr_job_get_id(job));
 
 	GebrMaestroServer *maestro =
@@ -423,6 +430,7 @@ gebr_job_set_runid (GebrJob *job,
 	if (job->priv->runid)
 		g_free(job->priv->runid);
 	job->priv->runid = g_strdup(id);
+	job->priv->is_fake = FALSE;
 }
 
 void
