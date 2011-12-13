@@ -53,6 +53,9 @@ struct _GebrMaestroControllerClass {
 			    GebrJob *job);
 
 	void (*maestro_list_changed) (GebrMaestroController *self);
+
+	void (*group_changed) (GebrMaestroController *self,
+			       GebrMaestroServer     *maestro);
 };
 
 enum {

@@ -46,6 +46,7 @@ enum {
 enum {
 	JOB_DEFINE,
 	MAESTRO_LIST_CHANGED,
+	GROUP_CHANGED,
 	LAST_SIGNAL
 };
 
@@ -398,8 +399,8 @@ server_group_popup_menu(GtkWidget * widget,
 }
 
 static void
-on_server_group_changed(GebrMaestroServer *maestro,
-			GebrMaestroController *self)
+gebr_maestro_controller_group_changed_real(GebrMaestroController *self,
+                                           GebrMaestroServer *maestro)
 {
 	if (!self->priv->builder)
 		return;
@@ -452,6 +453,14 @@ on_server_group_changed(GebrMaestroServer *maestro,
 }
 
 static void
+on_server_group_changed(GebrMaestroServer *maestro,
+			GebrMaestroController *self)
+{
+	g_debug("EMIT SIGNAL OF GROUP CHANGED TO JOB CONTROL");
+	g_signal_emit(self, signals[GROUP_CHANGED], 0, maestro);
+}
+
+static void
 gebr_maestro_controller_init(GebrMaestroController *self)
 {
 	self->priv = G_TYPE_INSTANCE_GET_PRIVATE(self,
@@ -472,6 +481,8 @@ gebr_maestro_controller_class_init(GebrMaestroControllerClass *klass)
 {
 	GObjectClass *object_class = G_OBJECT_CLASS(klass);
 
+	klass->group_changed = gebr_maestro_controller_group_changed_real;
+
 	signals[JOB_DEFINE] =
 		g_signal_new("job-define",
 			     G_OBJECT_CLASS_TYPE(object_class),
@@ -490,6 +501,15 @@ gebr_maestro_controller_class_init(GebrMaestroControllerClass *klass)
 			     NULL, NULL,
 			     g_cclosure_marshal_VOID__VOID,
 			     G_TYPE_NONE, 0);
+
+	signals[GROUP_CHANGED] =
+		g_signal_new("group-changed",
+		             G_OBJECT_CLASS_TYPE(object_class),
+		             G_SIGNAL_RUN_FIRST,
+		             G_STRUCT_OFFSET(GebrMaestroControllerClass, group_changed),
+		             NULL, NULL,
+		             g_cclosure_marshal_VOID__OBJECT,
+		             G_TYPE_NONE, 1, GEBR_TYPE_MAESTRO_SERVER);
 
 	g_type_class_add_private(klass, sizeof(GebrMaestroControllerPriv));
 }
