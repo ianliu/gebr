@@ -62,6 +62,29 @@ gebr_ui_flow_run(void)
 
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
 	GebrCommServer *server = gebr_maestro_server_get_server(maestro);
+
+	gboolean has_servers = FALSE;
+	GtkTreeIter iter;
+	GebrDaemonServer *daemon;
+	GtkTreeModel *model = gebr_maestro_server_get_model(maestro, FALSE, NULL);
+	gebr_gui_gtk_tree_model_foreach(iter, model) {
+		gtk_tree_model_get(model, &iter, 0, &daemon, -1);
+
+		if(gebr_daemon_server_get_state(daemon) == SERVER_STATE_CONNECT) {
+			has_servers = TRUE;
+			break;
+		}
+	}
+	if (!has_servers) {
+		GtkWidget *dialog  = gtk_message_dialog_new_with_markup(GTK_WINDOW(gebr.window), GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+		                                                        GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+		                                                        "<span size='large' weight='bold'>There are no connected servers on maestro %s.</span>",
+		                                                        gebr_maestro_server_get_display_address(maestro));
+		gtk_dialog_run(GTK_DIALOG(dialog));
+		gtk_widget_destroy(dialog);
+		return;
+	}
+
 	gebr_comm_protocol_socket_send_request(server->socket, GEBR_COMM_HTTP_METHOD_PUT, url, content);
 
 	gebr_job_set_maestro_address(job, gebr_maestro_server_get_address(maestro));
