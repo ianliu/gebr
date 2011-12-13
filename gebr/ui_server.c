@@ -170,11 +170,16 @@ static void on_tags_edited(GtkCellRendererText *cell,
 
 	gchar *new_tags = sort_and_remove_doubles(new_text);
 
-	GebrCommHttpMsg *msg;
-	gchar *url = g_strdup_printf("/server-tags?server=%s;tags=%s;", gebr_daemon_server_get_address(daemon), new_tags);
+	GebrCommUri *uri = gebr_comm_uri_new();
+	gebr_comm_uri_set_prefix(uri, "/server-tags");
+	gebr_comm_uri_add_param(uri, "server", gebr_daemon_server_get_address(daemon));
+	gebr_comm_uri_add_param(uri, "tags", new_tags);
+	gchar *url = gebr_comm_uri_to_string(uri);
+	gebr_comm_uri_free(uri);
+
 	GebrCommServer *server = gebr_maestro_server_get_server(gebr.ui_server_list->maestro);
-	msg = gebr_comm_protocol_socket_send_request(server->socket,
-	                                             GEBR_COMM_HTTP_METHOD_PUT, url, NULL);
+	gebr_comm_protocol_socket_send_request(server->socket,
+					       GEBR_COMM_HTTP_METHOD_PUT, url, NULL);
 	g_free(url);
 	g_free(new_tags);
 	g_object_unref(model);

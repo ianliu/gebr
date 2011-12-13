@@ -453,24 +453,21 @@ on_client_request(GebrCommProtocolSocket *socket,
 		  GebrCommHttpMsg *request,
 		  GebrmApp *app)
 {
-	gchar *url = g_uri_unescape_string(request->url->str, NULL);
-	request->url = g_string_assign(request->url, url);
+	GebrCommUri *uri = gebr_comm_uri_new();
+	gebr_comm_uri_parse(uri, request->url->str);
+	const gchar *prefix = gebr_comm_uri_get_prefix(uri);
 
 	if (request->method == GEBR_COMM_HTTP_METHOD_PUT) {
-		if (g_str_has_prefix(request->url->str, "/server")) {
-			g_debug("************* on %s, unescaped message '%s'", __func__, url);
-			gchar **params = g_strsplit(url, ";", -1);
-			gchar *addr = strchr(params[0], '=') + 1;
-			gchar *pass = strchr(params[1], '=') + 1;
+		if (g_strcmp0(prefix, "/server") == 0) {
+			const gchar *addr = gebr_comm_uri_get_param(uri, "addr");
+			const gchar *pass = gebr_comm_uri_get_param(uri, "pass");
 
 			GebrmDaemon *d = gebrm_add_server_to_list(app, addr, pass, NULL);
 			gebrm_daemon_connect(d, pass, socket);
 			gebrm_config_save_server(d);
-			g_strfreev(params);
-			g_free(url);
 		}
-		else if (g_str_has_prefix(request->url->str, "/disconnect/")) {
-			const gchar *addr = request->url->str + strlen("/disconnect/");
+		else if (g_strcmp0(prefix, "/disconnect") == 0) {
+			const gchar *addr = gebr_comm_uri_get_param(uri, "address");
 			for (GList *i = app->priv->daemons; i; i = i->next) {
 				GebrmDaemon *daemon = i->data;
 				if (g_strcmp0(gebrm_daemon_get_address(daemon), addr) == 0) {
@@ -478,11 +475,9 @@ on_client_request(GebrCommProtocolSocket *socket,
 					break;
 				}
 			}
-			g_debug(">> on %s, disconecting %s", __func__, addr) 	;
 		}
-		else if (g_str_has_prefix(request->url->str, "/remove/")) {
-			const gchar *addr = request->url->str + strlen("/remove/");
-
+		else if (g_strcmp0(prefix, "/remove") == 0) {
+			const gchar *addr = gebr_comm_uri_get_param(uri, "address");
 			gebrm_remove_server_from_list(app, addr);
 			gebrm_config_delete_server(addr);
 
@@ -494,50 +489,34 @@ on_client_request(GebrCommProtocolSocket *socket,
 			gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
 			                                      gebr_comm_protocol_defs.srm_def, 1,
 			                                      addr);
-
-			g_debug(">> on %s, removing %s", __func__, addr);
 		}
-		else if (g_str_has_prefix(request->url->str, "/close")) {
-			gchar *tmp = strchr(request->url->str, '?') + 1;
-			gchar *id = strchr(tmp, '=') + 1;
-
+		else if (g_strcmp0(prefix, "/close") == 0) {
+			const gchar *id = gebr_comm_uri_get_param(uri, "id");
 			GebrmJob *job = g_hash_table_lookup(app->priv->jobs, id);
 			if (job) {
 				gebrm_job_close(job);
 				g_hash_table_remove(app->priv->jobs, id);
-				g_debug("CLOSE JOB WITH ID %s", id);
 			}
 		}
-		else if (g_str_has_prefix(request->url->str, "/kill")) {
-			gchar *tmp = strchr(request->url->str, '?') + 1;
-			gchar *id = strchr(tmp, '=') + 1;
-
+		else if (g_strcmp0(prefix, "/kill") == 0) {
+			const gchar *id = gebr_comm_uri_get_param(uri, "id");
 			GebrmJob *job = g_hash_table_lookup(app->priv->jobs, id);
-			if (job) {
+			if (job)
 				gebrm_job_kill(job);
-				g_debug("KILL JOB WITH ID %s", id);
-			}
 		}
-		else if (g_str_has_prefix(request->url->str, "/run")) {
+		else if (g_strcmp0(prefix, "/run") == 0) {
 			GebrCommJsonContent *json;
-			gchar *tmp = strchr(request->url->str, '?') + 1;
-			gchar **params = g_strsplit(tmp, ";", -1);
-			gchar  *parent_id, *speed, *nice, *name;
-			gchar *host, *temp_id, *group_type;
 
-			parent_id  = strchr(params[0], '=') + 1;
-			speed      = strchr(params[1], '=') + 1;
-			nice       = strchr(params[2], '=') + 1;
-			name       = strchr(params[3], '=') + 1;
-			group_type = strchr(params[4], '=') + 1;
-			host       = strchr(params[5], '=') + 1;
-			temp_id    = strchr(params[6], '=') + 1;
+			const gchar *parent_id  = gebr_comm_uri_get_param(uri, "parent_id");
+			const gchar *speed      = gebr_comm_uri_get_param(uri, "speed");
+			const gchar *nice       = gebr_comm_uri_get_param(uri, "nice");
+			const gchar *name       = gebr_comm_uri_get_param(uri, "name");
+			const gchar *group_type = gebr_comm_uri_get_param(uri, "group_type");
+			const gchar *host       = gebr_comm_uri_get_param(uri, "host");
+			const gchar *temp_id    = gebr_comm_uri_get_param(uri, "temp_id");
 
-			g_debug("I will run this flow:");
 			json = gebr_comm_json_content_new(request->content->str);
 			GString *value = gebr_comm_json_content_to_gstring(json);
-			write(STDOUT_FILENO, value->str, MIN(value->len, 100));
-			puts("");
 
 			GebrGeoXmlProject **pproj = g_new(GebrGeoXmlProject*, 1);
 			GebrGeoXmlLine **pline = g_new(GebrGeoXmlLine*, 1);
@@ -610,17 +589,10 @@ on_client_request(GebrCommProtocolSocket *socket,
 				send_job_def_to_clients(app, job);
 			}
 
-			g_strfreev(params);
 			g_free(title);
-		} else if (g_str_has_prefix(request->url->str, "/server-tags")) {
-			gchar *tmp = strchr(request->url->str, '?') + 1;
-			gchar **params = g_strsplit(tmp, ";", -1);
-			gchar *server, *tags;
-
-			server = strchr(params[0], '=') + 1;
-			tags   = strchr(params[1], '=') + 1;
-
-			g_debug("RECEIVED GROUPS %s of SERVER %s", tags, server);
+		} else if (g_strcmp0(prefix, "/server-tags") == 0) {
+			const gchar *server = gebr_comm_uri_get_param(uri, "address");
+			const gchar *tags   = gebr_comm_uri_get_param(uri, "tags");
 
 			if (gebrm_config_update_tags_on_server(app, server, tags)) {
 				gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
@@ -628,16 +600,9 @@ on_client_request(GebrCommProtocolSocket *socket,
 								      server, tags);
 				gebrm_update_tags_on_list_of_servers(app, server, tags);
 			}
-			g_strfreev(params);
-		} else if (g_str_has_prefix(request->url->str, "/tag-insert")) {
-			gchar *tmp = strchr(request->url->str, '?') + 1;
-			gchar **params = g_strsplit(tmp, ";", -1);
-			gchar *server, *tag;
-
-			server = strchr(params[0], '=') + 1;
-			tag    = strchr(params[1], '=') + 1;
-
-			g_debug("Inserting tag '%s' on server '%s'", tag, server);
+		} else if (g_strcmp0(prefix, "/server-tags") == 0) {
+			const gchar *server = gebr_comm_uri_get_param(uri, "server");
+			const gchar *tag    = gebr_comm_uri_get_param(uri, "tag");
 
 			gchar *tags;
 			if (gebrm_config_insert_tag_on_server(app, server, tag, &tags)) {
@@ -647,16 +612,9 @@ on_client_request(GebrCommProtocolSocket *socket,
 				gebrm_update_tags_on_list_of_servers(app, server, tags);
 				g_free(tags);
 			}
-			g_strfreev(params);
-		} else if (g_str_has_prefix(request->url->str, "/tag-remove")) {
-			gchar *tmp = strchr(request->url->str, '?') + 1;
-			gchar **params = g_strsplit(tmp, ";", -1);
-			gchar *server, *tag;
-
-			server = strchr(params[0], '=') + 1;
-			tag    = strchr(params[1], '=') + 1;
-
-			g_debug("Removing server'%s' of tag '%s'", server, tag);
+		} else if (g_strcmp0(prefix, "/tag-remove") == 0) {
+			const gchar *server = gebr_comm_uri_get_param(uri, "server");
+			const gchar *tag    = gebr_comm_uri_get_param(uri, "tag");
 
 			gchar *tags;
 			if (gebrm_config_remove_tag_of_server(app, server, tag, &tags)) {
@@ -666,16 +624,9 @@ on_client_request(GebrCommProtocolSocket *socket,
 				gebrm_update_tags_on_list_of_servers(app, server, tags);
 				g_free(tags);
 			}
-			g_strfreev(params);
-		} else if (g_str_has_prefix(request->url->str, "/autoconnect")) {
-			gchar *tmp = strchr(request->url->str, '?') + 1;
-			gchar **params = g_strsplit(tmp, ";", -1);
-			gchar *server, *is_ac;
-
-			server = strchr(params[0], '=') + 1;
-			is_ac  = strchr(params[1], '=') + 1;
-
-			g_debug("Setting autoconnect:'%s' of server:'%s'", is_ac, server);
+		} else if (g_strcmp0(prefix, "/autoconnect") == 0) {
+			const gchar *server = gebr_comm_uri_get_param(uri, "server");
+			const gchar *is_ac  = gebr_comm_uri_get_param(uri, "ac");
 
 			GebrmDaemon *daemon;
 			for (GList *i = app->priv->daemons; i; i = i->next) {
@@ -693,7 +644,6 @@ on_client_request(GebrCommProtocolSocket *socket,
 				                                      server,
 				                                      is_ac);
 			}
-			g_strfreev(params);
 		}
 	}
 }

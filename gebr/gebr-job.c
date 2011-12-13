@@ -396,7 +396,10 @@ gebr_job_close(GebrJob *job)
 	if (job->priv->is_fake)
 		return TRUE;
 
-	gchar *url = g_strdup_printf("/close?id=%s", gebr_job_get_id(job));
+	GebrCommUri *uri = gebr_comm_uri_new();
+	gebr_comm_uri_set_prefix(uri, "/close");
+	gebr_comm_uri_add_param(uri, "id", gebr_job_get_id(job));
+	gchar *url = gebr_comm_uri_to_string(uri);
 
 	GebrMaestroServer *maestro =
 		gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller,
@@ -404,6 +407,8 @@ gebr_job_close(GebrJob *job)
 	GebrCommServer *server = gebr_maestro_server_get_server(maestro);
 	gebr_comm_protocol_socket_send_request(server->socket,
 	                                       GEBR_COMM_HTTP_METHOD_PUT, url, NULL);
+	g_free(url);
+
 	return TRUE;
 }
 
