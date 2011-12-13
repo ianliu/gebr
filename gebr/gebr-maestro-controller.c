@@ -208,21 +208,10 @@ drag_drop_handl(GtkWidget *widget,
 		guint time,
 		GebrMaestroController *mc)
 {
-	GtkTreeIter iter;
-	GtkTreeModel *model;
-	GtkTreeView *view = GTK_TREE_VIEW(gtk_builder_get_object(mc->priv->builder, "treeview_servers"));
-	GtkTreeSelection *sel = gtk_tree_view_get_selection(view);
-
-	if (!gtk_tree_selection_get_selected(sel, &model, &iter))
-		return FALSE;
-
-	gboolean editable;
-	gtk_tree_model_get(model, &iter, MAESTRO_CONTROLLER_EDITABLE, &editable, -1);
-
         gboolean is_valid_drop_site;
         GdkAtom target_type;
 
-        if (editable && context->targets) {
+        if (context->targets) {
                 target_type = GDK_POINTER_TO_ATOM(g_list_nth_data(context->targets, 0));
                 gtk_drag_get_data(widget, context, target_type, time);
 		is_valid_drop_site = TRUE;
