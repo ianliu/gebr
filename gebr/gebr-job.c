@@ -303,6 +303,8 @@ gchar **
 gebr_job_get_servers(GebrJob *job, gint *n)
 {
 	g_return_val_if_fail(n!= NULL, NULL);
+	g_return_val_if_fail(job!= NULL, NULL);
+
 	GebrJobTask *tasks = gebr_job_get_tasks(job, n);
 	gchar **servers = g_new0(gchar*, *n+1);
 	for (int i=0; i < *n; i++){

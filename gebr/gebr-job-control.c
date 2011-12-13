@@ -1499,7 +1499,8 @@ on_maestro_filter_changed(GtkComboBox *combo,
 	GtkTreeModel *model = gtk_combo_box_get_model(combo);
 
 	if (!gtk_combo_box_get_active_iter(combo, &iter))
-		gtk_tree_model_get_iter_first(model, &iter);
+		if(!gtk_tree_model_get_iter_first(model, &iter))
+			return;
 
 	gchar *address;
 	gtk_tree_model_get(model, &iter, 1, &address, -1);

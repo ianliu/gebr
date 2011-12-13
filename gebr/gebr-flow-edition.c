@@ -1433,6 +1433,8 @@ on_server_disconnected_set_row_insensitive(GtkCellLayout   *cell_layout,
 
 	if (type == MAESTRO_SERVER_TYPE_DAEMON) {
 		daemon = gebr_maestro_server_get_daemon(maestro, name);
+		if (!daemon)
+			return;
 		is_connected = gebr_daemon_server_get_state(daemon) == SERVER_STATE_CONNECT;
 	}
 
