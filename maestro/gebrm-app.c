@@ -456,12 +456,14 @@ on_client_request(GebrCommProtocolSocket *socket,
 		  GebrCommHttpMsg *request,
 		  GebrmApp *app)
 {
-	g_debug("URL: %s", request->url->str);
+	gchar *url = g_uri_unescape_string(request->url->str, NULL);
+	request->url = g_string_assign(request->url, url);
 
 	if (request->method == GEBR_COMM_HTTP_METHOD_PUT) {
 		if (g_str_has_prefix(request->url->str, "/server")) {
-			gchar *tmp = strchr(request->url->str, '?') + 1;
-			gchar **params = g_strsplit(tmp, ";", -1);
+			g_debug("************* on %s, unescaped message '%s'", __func__, url);
+			gchar *tmp = strchr(url, '?') + 1;
+			gchar **params = g_strsplit(url, ";", -1);
 			gchar *addr = strchr(params[0], '=') + 1;
 			gchar *pass = strchr(params[1], '=') + 1;
 
@@ -469,6 +471,7 @@ on_client_request(GebrCommProtocolSocket *socket,
 			gebrm_daemon_connect(d, pass, socket);
 			gebrm_config_save_server(d);
 			g_strfreev(params);
+			g_free(url);
 		}
 		else if (g_str_has_prefix(request->url->str, "/disconnect/")) {
 			const gchar *addr = request->url->str + strlen("/disconnect/");
