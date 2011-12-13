@@ -379,7 +379,7 @@ server_group_popup_menu(GtkWidget * widget,
 
 	GtkWidget *item;
 
-	item = gtk_menu_item_new_with_mnemonic(_("_Remove Group"));
+	item = gtk_menu_item_new_with_mnemonic(_("_Remove from group"));
 	gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
 	g_signal_connect(item, "activate", G_CALLBACK(on_server_group_remove), mc);
 
