@@ -886,6 +886,12 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 				  GEBR_GLADE_DIR"/gebr-maestro-dialog.glade",
 				  NULL);
 
+	GtkTreeModel *mmodel = gebr_maestro_server_get_model(self->priv->maestros->data, FALSE, NULL);
+	GtkTreeView *view = GTK_TREE_VIEW(gtk_builder_get_object(self->priv->builder, 
+								  "treeview_servers"));
+	gtk_tree_view_set_model(GTK_TREE_VIEW(view), mmodel);
+	g_object_unref(mmodel);
+
 	/*
 	 * Maestro combobox
 	 */
@@ -903,7 +909,6 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 	 * Servers treeview
 	 */
 	GtkTreeModel *model = GTK_TREE_MODEL(self->priv->model);
-	GtkTreeView *view = GTK_TREE_VIEW(gtk_builder_get_object(self->priv->builder, "treeview_servers"));
 	gtk_tree_view_set_model(view, model);
 	GtkCellRenderer *renderer ;
 
@@ -1103,12 +1108,6 @@ gebr_maestro_controller_connect(GebrMaestroController *self,
 		self->priv->maestros = g_list_prepend(self->priv->maestros, data);
 	}
 	gebr_maestro_server_connect(self->priv->maestros->data);
-
-	GtkTreeModel *model = gebr_maestro_server_get_model(self->priv->maestros->data, FALSE, NULL);
-	GtkTreeView  *view = GTK_TREE_VIEW(gtk_builder_get_object(self->priv->builder, 
-								  "treeview_servers"));
-	gtk_tree_view_set_model(GTK_TREE_VIEW(view), model);
-	g_object_unref(model);
 }
 
 GList *
