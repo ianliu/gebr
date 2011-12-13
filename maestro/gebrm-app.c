@@ -67,9 +67,6 @@ static GebrmAppFactory __factory = NULL;
 static gpointer           __data = NULL;
 static GebrmApp           *__app = NULL;
 
-#define GEBRM_LIST_OF_SERVERS_PATH ".gebr/gebrm"
-#define GEBRM_LIST_OF_SERVERS_FILENAME "servers.conf"
-
 static void gebrm_config_save_server(GebrmDaemon *daemon);
 
 static gboolean gebrm_config_update_tags_on_server(GebrmApp *app,
@@ -103,7 +100,7 @@ static void gebrm_config_delete_server(const gchar *serv);
 
 static gboolean gebrm_remove_server_from_list(GebrmApp *app, const gchar *address);
 
-gboolean gebrm_config_load_servers(GebrmApp *app, gchar *path);
+gboolean gebrm_config_load_servers(GebrmApp *app, const gchar *path);
 
 G_DEFINE_TYPE(GebrmApp, gebrm_app, G_TYPE_OBJECT);
 
@@ -462,7 +459,6 @@ on_client_request(GebrCommProtocolSocket *socket,
 	if (request->method == GEBR_COMM_HTTP_METHOD_PUT) {
 		if (g_str_has_prefix(request->url->str, "/server")) {
 			g_debug("************* on %s, unescaped message '%s'", __func__, url);
-			gchar *tmp = strchr(url, '?') + 1;
 			gchar **params = g_strsplit(url, ";", -1);
 			gchar *addr = strchr(params[0], '=') + 1;
 			gchar *pass = strchr(params[1], '=') + 1;
@@ -705,19 +701,13 @@ on_client_request(GebrCommProtocolSocket *socket,
 static GKeyFile *
 load_servers_keyfile(void)
 {
-	gchar *path = g_build_filename(g_get_home_dir(),
-	                               GEBRM_LIST_OF_SERVERS_PATH,
-	                               GEBRM_LIST_OF_SERVERS_FILENAME, NULL);
-
+	const gchar *path = gebrm_app_get_servers_file();
 	GKeyFile *keyfile = g_key_file_new();
 
 	if (!g_key_file_load_from_file(keyfile, path, G_KEY_FILE_NONE, NULL)) {
 		g_key_file_free(keyfile);
-		g_free(path);
 		return NULL;
 	}
-
-	g_free(path);
 
 	return keyfile;
 }
@@ -729,13 +719,9 @@ save_servers_keyfile(GKeyFile *keyfile)
 	gboolean succ = FALSE;
 
 	if (content) {
-		gchar *path = g_build_filename(g_get_home_dir(),
-					       GEBRM_LIST_OF_SERVERS_PATH,
-					       GEBRM_LIST_OF_SERVERS_FILENAME,
-					       NULL);
+		const gchar *path = gebrm_app_get_servers_file();
 		succ = g_file_set_contents(path, content, -1, NULL);
 		g_free(content);
-		g_free(path);
 	}
 	return succ;
 }
@@ -870,12 +856,7 @@ static void
 gebrm_config_save_server(GebrmDaemon *daemon)
 {
 	GKeyFile *servers = g_key_file_new ();
-	gchar *dir = g_build_filename(g_get_home_dir(),
-				      GEBRM_LIST_OF_SERVERS_PATH, NULL);
-	if (!g_file_test(dir, G_FILE_TEST_EXISTS))
-		g_mkdir_with_parents(dir, 755);
-
-	gchar *path = g_build_filename(dir, GEBRM_LIST_OF_SERVERS_FILENAME, NULL);
+	const gchar *path = gebrm_app_get_servers_file();
 	gchar *tags = gebrm_daemon_get_tags(daemon);
 
 	g_key_file_load_from_file(servers, path, G_KEY_FILE_NONE, NULL);
@@ -889,7 +870,6 @@ gebrm_config_save_server(GebrmDaemon *daemon)
 		g_file_set_contents(path, content, -1, NULL);
 
 	g_free(content);
-	g_free(path);
 	g_free(tags);
 	g_key_file_free(servers);
 }
@@ -906,9 +886,7 @@ gebrm_config_delete_server(const gchar *serv)
 
 	servers = g_key_file_new ();
 
-	gchar *dir = g_build_filename(g_get_home_dir(),
-	                              GEBRM_LIST_OF_SERVERS_PATH, NULL);
-	gchar *path = g_build_filename(dir, GEBRM_LIST_OF_SERVERS_FILENAME, NULL);
+	const gchar *path = gebrm_app_get_servers_file();
 
 	g_key_file_load_from_file (servers, path, G_KEY_FILE_NONE, NULL);
 
@@ -922,12 +900,11 @@ gebrm_config_delete_server(const gchar *serv)
 	ret = g_file_set_contents (path, final_list_str, -1, NULL);
 	g_free (server);
 	g_free (final_list_str);
-	g_free (path);
 	g_key_file_free (servers);
 }
 
 gboolean
-gebrm_config_load_servers(GebrmApp *app, gchar *path)
+gebrm_config_load_servers(GebrmApp *app, const gchar *path)
 {
 	GKeyFile *servers = load_servers_keyfile();
 	gboolean succ = servers != NULL;
@@ -1115,7 +1092,7 @@ gebrm_app_run(GebrmApp *app, int fd)
 	guint16 port = gebr_comm_socket_address_get_ip_port(&app->priv->address);
 	gchar *portstr = g_strdup_printf("%d", port);
 
-	g_file_set_contents(gebrm_main_get_lock_file(),
+	g_file_set_contents(gebrm_app_get_lock_file(),
 			    portstr, -1, &error);
 
 	if (error) {
@@ -1128,32 +1105,47 @@ gebrm_app_run(GebrmApp *app, int fd)
 	write(fd, port_str, strlen(port_str));
 	g_free(port_str);
 
-	gchar *path = g_build_filename(g_get_home_dir(),
-	                               GEBRM_LIST_OF_SERVERS_PATH,
-	                               GEBRM_LIST_OF_SERVERS_FILENAME, NULL);
+	const gchar *path = gebrm_app_get_servers_file();
 	gebrm_config_load_servers(app, path);
-	g_free(path);
 
 	g_main_loop_run(app->priv->main_loop);
 
 	return TRUE;
 }
 
+static gchar *
+get_gebrm_dir_name(void)
+{
+	gchar *dirname = g_build_filename(g_get_home_dir(), ".gebr", "gebrm", g_get_host_name(), NULL);
+	if (!g_file_test(dirname, G_FILE_TEST_EXISTS))
+		g_mkdir_with_parents(dirname, 0755);
+	return dirname;
+}
+
 const gchar *
-gebrm_main_get_lock_file(void)
+gebrm_app_get_lock_file(void)
 {
 	static gchar *lock = NULL;
 
 	if (!lock) {
-		gchar *fname = g_strconcat("lock-", g_get_host_name(), NULL);
-		gchar *dirname = g_build_filename(g_get_home_dir(), ".gebr",
-						  "gebrm", NULL);
-		if(!g_file_test(dirname, G_FILE_TEST_EXISTS))
-			g_mkdir_with_parents(dirname, 0755);
-		lock = g_build_filename(g_get_home_dir(), ".gebr", "gebrm", fname, NULL);
+		gchar *dirname = get_gebrm_dir_name();
+		lock = g_build_filename(dirname, "lock", NULL);
 		g_free(dirname);
-		g_free(fname);
 	}
 
 	return lock;
+}
+
+const gchar *
+gebrm_app_get_servers_file(void)
+{
+	static gchar *path = NULL;
+
+	if (!path) {
+		gchar *dirname = get_gebrm_dir_name();
+		path = g_build_filename(dirname, "servers.conf", NULL);
+		g_free(dirname);
+	}
+
+	return path;
 }

@@ -104,7 +104,7 @@ fork_and_exit_main(void)
 static void
 gebrm_remove_lock_and_quit(int sig)
 {
-	g_unlink(gebrm_main_get_lock_file());
+	g_unlink(gebrm_app_get_lock_file());
 	exit(0);
 }
 
@@ -130,7 +130,7 @@ main(int argc, char *argv[])
 		exit(EXIT_SUCCESS);
 	}
 
-	const gchar *lock = gebrm_main_get_lock_file();
+	const gchar *lock = gebrm_app_get_lock_file();
 
 	if (g_access(lock, R_OK | W_OK) == 0) {
 		gchar *contents;
