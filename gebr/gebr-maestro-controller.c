@@ -611,6 +611,7 @@ on_server_remove(GtkMenuItem *menuitem,
 
 		gebr_connectable_remove(GEBR_CONNECTABLE(maestro), gebr_daemon_server_get_address(daemon));
 	}
+	on_server_group_changed(maestro, mc);
 }
 
 static GtkMenu *

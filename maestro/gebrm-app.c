@@ -490,6 +490,11 @@ on_client_request(GebrCommProtocolSocket *socket,
 			gebrm_remove_server_from_list(app, addr);
 			gebrm_config_delete_server(addr);
 
+			// Clean tags for this server
+			gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
+			                                      gebr_comm_protocol_defs.agrp_def, 2,
+			                                      addr, "");
+
 			gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
 			                                      gebr_comm_protocol_defs.srm_def, 1,
 			                                      addr);
