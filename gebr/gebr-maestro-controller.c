@@ -157,11 +157,12 @@ drag_data_received_handl(GtkWidget *widget,
 
         if (selection_data && (selection_data->length >= 0)) {
 		daemon = (gpointer *)selection_data->data;
-		dnd_success = TRUE;
+		if (*daemon)
+			dnd_success = TRUE;
         }
 
         if (!dnd_success)
-		g_warn_if_reached();
+		return;
 
 	g_debug("Got Address %p: %s", *daemon, gebr_daemon_server_get_address(*daemon));
 
@@ -205,20 +206,30 @@ drag_drop_handl(GtkWidget *widget,
 		GdkDragContext *context,
 		gint x, gint y,
 		guint time,
-		gpointer user_data)
+		GebrMaestroController *mc)
 {
+	GtkTreeIter iter;
+	GtkTreeModel *model;
+	GtkTreeView *view = GTK_TREE_VIEW(gtk_builder_get_object(mc->priv->builder, "treeview_servers"));
+	GtkTreeSelection *sel = gtk_tree_view_get_selection(view);
+
+	if (!gtk_tree_selection_get_selected(sel, &model, &iter))
+		return FALSE;
+
+	gboolean editable;
+	gtk_tree_model_get(model, &iter, MAESTRO_CONTROLLER_EDITABLE, &editable, -1);
+
         gboolean is_valid_drop_site;
         GdkAtom target_type;
 
-        is_valid_drop_site = TRUE;
-
-        if (context->targets) {
+        if (editable && context->targets) {
                 target_type = GDK_POINTER_TO_ATOM(g_list_nth_data(context->targets, 0));
                 gtk_drag_get_data(widget, context, target_type, time);
+		is_valid_drop_site = TRUE;
         } else
                 is_valid_drop_site = FALSE;
 
-        return  is_valid_drop_site;
+        return is_valid_drop_site;
 }
 
 static void
@@ -238,8 +249,6 @@ drag_data_get_handl(GtkWidget *widget,
 	gtk_tree_selection_get_selected(selection, &model, &iter);
 	gtk_tree_model_get(model, &iter, 0, &daemon, -1);
 
-	g_debug("Sending %p: %s", daemon, gebr_daemon_server_get_address(daemon));
-
 	gtk_selection_data_set(selection_data, selection_data->target,
 			       sizeof(gpointer) * 8, (guchar*)&daemon, sizeof(gpointer));
 }
@@ -250,7 +259,7 @@ set_widget_drag_dest(GebrMaestroController *mc, GtkWidget *widget)
         g_signal_connect(widget, "drag-data-received",
 			 G_CALLBACK(drag_data_received_handl), mc);
         g_signal_connect(widget, "drag-drop",
-			 G_CALLBACK(drag_drop_handl), NULL);
+			 G_CALLBACK(drag_drop_handl), mc);
 
 	gtk_drag_dest_set(widget, GTK_DEST_DEFAULT_MOTION
 			  | GTK_DEST_DEFAULT_HIGHLIGHT,
@@ -870,7 +879,7 @@ on_ac_toggled (GtkCellRendererToggle *cell_renderer,
 	gebr_maestro_server_set_autoconnect(mc->priv->maestros->data, daemon, !ac);
 }
 GtkDialog *
-gebr_maestro_controller_create_dialog (GebrMaestroController *self)
+gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 {
 	self->priv->builder = gtk_builder_new();
 	gtk_builder_add_from_file(self->priv->builder,
