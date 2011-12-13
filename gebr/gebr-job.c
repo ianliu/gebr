@@ -400,6 +400,7 @@ gebr_job_close(GebrJob *job)
 	gebr_comm_uri_set_prefix(uri, "/close");
 	gebr_comm_uri_add_param(uri, "id", gebr_job_get_id(job));
 	gchar *url = gebr_comm_uri_to_string(uri);
+	gebr_comm_uri_free(uri);
 
 	GebrMaestroServer *maestro =
 		gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller,
@@ -418,7 +419,11 @@ gebr_job_kill(GebrJob *job)
 	if (!gebr_job_can_kill(job))
 		return;
 
-	gchar *url = g_strdup_printf("/kill?id=%s", gebr_job_get_id(job));
+	GebrCommUri *uri = gebr_comm_uri_new();
+	gebr_comm_uri_set_prefix(uri, "/kill");
+	gebr_comm_uri_add_param(uri, "id", gebr_job_get_id(job));
+	gchar *url = gebr_comm_uri_to_string(uri);
+	gebr_comm_uri_free(uri);
 
 	GebrMaestroServer *maestro =
 		gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller,
@@ -426,6 +431,7 @@ gebr_job_kill(GebrJob *job)
 	GebrCommServer *server = gebr_maestro_server_get_server(maestro);
 	gebr_comm_protocol_socket_send_request(server->socket,
 	                                       GEBR_COMM_HTTP_METHOD_PUT, url, NULL);
+	g_free(url);
 }
 
 void

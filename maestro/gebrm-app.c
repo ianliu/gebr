@@ -70,22 +70,22 @@ static GebrmApp           *__app = NULL;
 static void gebrm_config_save_server(GebrmDaemon *daemon);
 
 static gboolean gebrm_config_update_tags_on_server(GebrmApp *app,
-                                                   gchar *server,
-                                                   gchar *tags);
+                                                   const gchar *server,
+                                                   const gchar *tags);
 
 static gboolean gebrm_config_insert_tag_on_server(GebrmApp *app,
-						  gchar *server,
-						  gchar *tag,
+						  const gchar *server,
+						  const gchar *tag,
 						  gchar **_tags);
 
 static gboolean gebrm_config_remove_tag_of_server(GebrmApp *app,
-                                                  gchar *server,
-                                                  gchar *tag,
+                                                  const gchar *server,
+                                                  const gchar *tag,
                                                   gchar **_tags);
 
 static gboolean gebrm_config_set_autoconnect(GebrmApp *app,
-					     gchar *server,
-					     gchar *ac);
+					     const gchar *server,
+					     const gchar *ac);
 
 static GebrmDaemon *gebrm_add_server_to_list(GebrmApp *app,
 					     const gchar *addr,
@@ -457,9 +457,11 @@ on_client_request(GebrCommProtocolSocket *socket,
 	gebr_comm_uri_parse(uri, request->url->str);
 	const gchar *prefix = gebr_comm_uri_get_prefix(uri);
 
+	g_debug("Prefix %s", prefix);
+
 	if (request->method == GEBR_COMM_HTTP_METHOD_PUT) {
 		if (g_strcmp0(prefix, "/server") == 0) {
-			const gchar *addr = gebr_comm_uri_get_param(uri, "addr");
+			const gchar *addr = gebr_comm_uri_get_param(uri, "address");
 			const gchar *pass = gebr_comm_uri_get_param(uri, "pass");
 
 			GebrmDaemon *d = gebrm_add_server_to_list(app, addr, pass, NULL);
@@ -540,19 +542,19 @@ on_client_request(GebrCommProtocolSocket *socket,
 			gchar *title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(*pflow));
 
 			GebrmJobInfo info = { 0, };
-			info.title = title;
-			info.temp_id = temp_id;
-			info.hostname = host;
-			info.parent_id = parent_id;
-			info.servers = "";
-			info.nice = nice;
+			info.title = g_strdup(title);
+			info.temp_id = g_strdup(temp_id);
+			info.hostname = g_strdup(host);
+			info.parent_id = g_strdup(parent_id);
+			info.servers = g_strdup("");
+			info.nice = g_strdup(nice);
 			info.input = gebr_geoxml_flow_io_get_input(*pflow);
 			info.output = gebr_geoxml_flow_io_get_output(*pflow);
 			info.error = gebr_geoxml_flow_io_get_error(*pflow);
-			info.group = name;
-			info.group_type = group_type;
-			info.speed = speed;
-			info.submit_date = gebr_iso_date();
+			info.group = g_strdup(name);
+			info.group_type = g_strdup(group_type);
+			info.speed = g_strdup(speed);
+			info.submit_date = g_strdup(gebr_iso_date());
 
 			GebrmJob *job = gebrm_job_new();
 
@@ -566,6 +568,7 @@ on_client_request(GebrCommProtocolSocket *socket,
 					 G_CALLBACK(gebrm_app_job_controller_on_output), app);
 
 			gebrm_job_init_details(job, &info);
+			gebrm_job_info_free(&info);
 			gebrm_app_job_controller_add(app, job);
 
 			AppAndJob *aap = g_new(AppAndJob, 1);
@@ -591,7 +594,7 @@ on_client_request(GebrCommProtocolSocket *socket,
 
 			g_free(title);
 		} else if (g_strcmp0(prefix, "/server-tags") == 0) {
-			const gchar *server = gebr_comm_uri_get_param(uri, "address");
+			const gchar *server = gebr_comm_uri_get_param(uri, "server");
 			const gchar *tags   = gebr_comm_uri_get_param(uri, "tags");
 
 			if (gebrm_config_update_tags_on_server(app, server, tags)) {
@@ -600,7 +603,7 @@ on_client_request(GebrCommProtocolSocket *socket,
 								      server, tags);
 				gebrm_update_tags_on_list_of_servers(app, server, tags);
 			}
-		} else if (g_strcmp0(prefix, "/server-tags") == 0) {
+		} else if (g_strcmp0(prefix, "/tag-insert") == 0) {
 			const gchar *server = gebr_comm_uri_get_param(uri, "server");
 			const gchar *tag    = gebr_comm_uri_get_param(uri, "tag");
 
@@ -678,8 +681,8 @@ save_servers_keyfile(GKeyFile *keyfile)
 
 static gboolean
 gebrm_config_update_tags_on_server(GebrmApp *app,
-                                   gchar *server,
-                                   gchar *tags)
+                                   const gchar *server,
+                                   const gchar *tags)
 {
 	GKeyFile *keyfile = load_servers_keyfile();
 
@@ -695,8 +698,8 @@ gebrm_config_update_tags_on_server(GebrmApp *app,
 
 static gboolean
 gebrm_config_insert_tag_on_server(GebrmApp *app,
-				  gchar *server,
-				  gchar *tag,
+				  const gchar *server,
+				  const gchar *tag,
 				  gchar **_tags)
 {
 	GKeyFile *keyfile = load_servers_keyfile();
@@ -744,8 +747,8 @@ gebrm_config_insert_tag_on_server(GebrmApp *app,
 
 static gboolean
 gebrm_config_remove_tag_of_server(GebrmApp *app,
-                                  gchar *server,
-                                  gchar *tag,
+                                  const gchar *server,
+                                  const gchar *tag,
                                   gchar **_tags)
 {
 	GKeyFile *keyfile = load_servers_keyfile();
@@ -786,8 +789,8 @@ gebrm_config_remove_tag_of_server(GebrmApp *app,
 
 static gboolean
 gebrm_config_set_autoconnect(GebrmApp *app,
-			     gchar *server,
-			     gchar *ac)
+			     const gchar *server,
+			     const gchar *ac)
 {
 	GKeyFile *keyfile = load_servers_keyfile();
 

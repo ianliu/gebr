@@ -724,3 +724,22 @@ gebrm_job_get_temp_id(GebrmJob *job)
 {
 	return job->priv->info.temp_id;
 }
+
+void
+gebrm_job_info_free(GebrmJobInfo *info)
+{
+	g_free(info->id);
+	g_free(info->temp_id);
+	g_free(info->title);
+	g_free(info->hostname);
+	g_free(info->parent_id);
+	g_free(info->servers);
+	g_free(info->nice);
+	g_free(info->input);
+	g_free(info->output);
+	g_free(info->error);
+	g_free(info->submit_date);
+	g_free(info->group);
+	g_free(info->group_type);
+	g_free(info->speed);
+}

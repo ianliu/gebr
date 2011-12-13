@@ -773,11 +773,6 @@ static void
 server_list_add(GebrMaestroController *mc,
 		const gchar * address)
 {
-	/*
-	gchar *url_aux = g_strdup_printf("/server?address=%s;pass=", address);
-	gchar *url = g_uri_escape_string(url_aux, NULL, FALSE);
-	*/
-
 	GebrCommUri *uri = gebr_comm_uri_new();
 	gebr_comm_uri_set_prefix(uri, "/server");
 	gebr_comm_uri_add_param(uri, "address", address);

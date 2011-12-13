@@ -378,13 +378,18 @@ gebr_comm_runner_run_async(GebrCommRunner *self,
 	for (GList *i = self->priv->servers; i; i = i->next) {
 		GebrCommHttpMsg *request;
 		ServerScore *sc = i->data;
+		GebrCommUri *uri = gebr_comm_uri_new();
+		gebr_comm_uri_set_prefix(uri, "/sys-load");
+		gchar *url = gebr_comm_uri_to_string(uri);
+		gebr_comm_uri_free(uri);
 		request = gebr_comm_protocol_socket_send_request(sc->server->socket,
 								 GEBR_COMM_HTTP_METHOD_GET,
-								 "/sys-load", NULL);
+								 url, NULL);
 		g_object_set_data(G_OBJECT(request), "current-server", sc);
 		g_signal_connect(request, "response-received",
 				 G_CALLBACK(on_response_received), self);
 		self->priv->requests++;
+		g_free(url);
 	}
 }
 

@@ -479,8 +479,13 @@ parse_messages(GebrCommServer *comm_server,
 			g_signal_emit(maestro, signals[PASSWORD_REQUEST], 0, addr->str, &password);
 
 			if (password) {
-				g_debug("Sending password %s", password);
-				gchar *url = g_strdup_printf("/server?address=%s;pass=%s", addr->str, password);
+				GebrCommUri *uri = gebr_comm_uri_new();
+				gebr_comm_uri_set_prefix(uri, "/server");
+				gebr_comm_uri_add_param(uri, "address", addr->str);
+				gebr_comm_uri_add_param(uri, "pass", password);
+				gchar *url = gebr_comm_uri_to_string(uri);
+				gebr_comm_uri_free(uri);
+
 				gebr_comm_protocol_socket_send_request(comm_server->socket,
 								       GEBR_COMM_HTTP_METHOD_PUT, url, NULL);
 				g_free(url);
@@ -715,7 +720,14 @@ gebr_maestro_server_connectable_connect(GebrConnectable *connectable,
 					const gchar *address)
 {
 	GebrMaestroServer *maestro = GEBR_MAESTRO_SERVER(connectable);
-	gchar *url = g_strdup_printf("/server?address=%s;pass=", address);
+
+	GebrCommUri *uri = gebr_comm_uri_new();
+	gebr_comm_uri_set_prefix(uri, "/server");
+	gebr_comm_uri_add_param(uri, "address", address);
+	gebr_comm_uri_add_param(uri, "pass", "");
+	gchar *url = gebr_comm_uri_to_string(uri);
+	gebr_comm_uri_free(uri);
+
 	gebr_comm_protocol_socket_send_request(maestro->priv->server->socket,
 					       GEBR_COMM_HTTP_METHOD_PUT,
 					       url, NULL);
@@ -726,8 +738,13 @@ static void
 gebr_maestro_server_disconnect(GebrConnectable *connectable,
 			       const gchar *address)
 {
+	GebrCommUri *uri = gebr_comm_uri_new();
+	gebr_comm_uri_set_prefix(uri, "/disconnect");
+	gebr_comm_uri_add_param(uri, "address", address);
+	gchar *url = gebr_comm_uri_to_string(uri);
+	gebr_comm_uri_free(uri);
+
 	GebrMaestroServer *maestro = GEBR_MAESTRO_SERVER(connectable);
-	gchar *url = g_strconcat("/disconnect/", address, NULL);
 	gebr_comm_protocol_socket_send_request(maestro->priv->server->socket,
 					       GEBR_COMM_HTTP_METHOD_PUT,
 					       url, NULL);
@@ -738,8 +755,13 @@ static void
 gebr_maestro_server_remove(GebrConnectable *connectable,
 			       const gchar *address)
 {
+	GebrCommUri *uri = gebr_comm_uri_new();
+	gebr_comm_uri_set_prefix(uri, "/remove");
+	gebr_comm_uri_add_param(uri, "address", address);
+	gchar *url = gebr_comm_uri_to_string(uri);
+	gebr_comm_uri_free(uri);
+
 	GebrMaestroServer *maestro = GEBR_MAESTRO_SERVER(connectable);
-	gchar *url = g_strconcat("/remove/", address, NULL);
 	gebr_comm_protocol_socket_send_request(maestro->priv->server->socket,
 					       GEBR_COMM_HTTP_METHOD_PUT,
 					       url, NULL);
@@ -948,16 +970,12 @@ gebr_maestro_server_add_tag_to(GebrMaestroServer *maestro,
 			       GebrDaemonServer *daemon,
 			       const gchar *tag)
 {
-	/*
-	gchar *url_aux = g_strdup_printf("/tag-insert?server=%s;tag=%s",
-				     gebr_daemon_server_get_address(daemon), tag);
-	gchar *url = g_uri_escape_string(url_aux, NULL, FALSE);
-	*/
 	GebrCommUri *uri = gebr_comm_uri_new();
 	gebr_comm_uri_set_prefix(uri, "/tag-insert");
 	gebr_comm_uri_add_param(uri, "server", gebr_daemon_server_get_address(daemon));
 	gebr_comm_uri_add_param(uri, "tag", tag);
 	gchar *url = gebr_comm_uri_to_string(uri);
+	gebr_comm_uri_free(uri);
 
 	gebr_comm_protocol_socket_send_request(maestro->priv->server->socket,
 					       GEBR_COMM_HTTP_METHOD_PUT, url, NULL);

@@ -241,8 +241,9 @@ void gebr_comm_protocol_socket_disconnect(GebrCommProtocolSocket * self)
 	gebr_comm_stream_socket_disconnect(self->priv->socket);
 }
 
-GebrCommHttpMsg *gebr_comm_protocol_socket_send_request(GebrCommProtocolSocket * self, GebrCommHttpRequestMethod method,
-							const gchar *url, GebrCommJsonContent *_content)
+GebrCommHttpMsg *
+gebr_comm_protocol_socket_send_request(GebrCommProtocolSocket * self, GebrCommHttpRequestMethod method,
+				       const gchar *url, GebrCommJsonContent *_content)
 {
 	const gchar *content = _content ? _content->data->str : "";
 	GHashTable *headers = g_hash_table_new(g_str_hash, g_str_equal);

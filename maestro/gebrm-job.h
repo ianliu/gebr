@@ -80,6 +80,8 @@ typedef struct {
 	gchar *speed;
 } GebrmJobInfo;
 
+void gebrm_job_info_free(GebrmJobInfo *info);
+
 GType gebrm_job_get_type() G_GNUC_CONST;
 
 /**
