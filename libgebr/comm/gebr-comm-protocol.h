@@ -52,20 +52,21 @@ struct gebr_comm_protocol_defs {
 	struct gebr_comm_message_def out_def;
 	struct gebr_comm_message_def sta_def;
 
-	struct gebr_comm_message_def ac_def;  //Autoconnect option of the daemons
+	struct gebr_comm_message_def ac_def;    // Autoconnect option of the daemons
 	struct gebr_comm_message_def agrp_def;  // Add group on GeBR
 	struct gebr_comm_message_def dgrp_def;  // Delete group on GeBR
 
-	struct gebr_comm_message_def run_def;  // Run request          Maestro -> Daemon
-	struct gebr_comm_message_def tsk_def;  // Task definition      Daemon  -> Maestro
+	struct gebr_comm_message_def run_def;   // Run request          Maestro -> Daemon
+	struct gebr_comm_message_def tsk_def;   // Task definition      Daemon  -> Maestro
 
-	struct gebr_comm_message_def job_def;  // Job definition       Maestro -> GeBR
-	struct gebr_comm_message_def ssta_def; // Server status change Maestro -> GeBR
-	struct gebr_comm_message_def srm_def;  // Server remove	       Maestro -> GeBR
-	struct gebr_comm_message_def cmd_def;  // Command line         Maestro -> GeBR
-	struct gebr_comm_message_def iss_def;  // Issues               Maestro -> GeBR
+	struct gebr_comm_message_def job_def;   // Job definition       Maestro -> GeBR
+	struct gebr_comm_message_def ssta_def;  // Server status change Maestro -> GeBR
+	struct gebr_comm_message_def srm_def;   // Server remove	Maestro -> GeBR
+	struct gebr_comm_message_def cmd_def;   // Command line         Maestro -> GeBR
+	struct gebr_comm_message_def iss_def;   // Issues               Maestro -> GeBR
 
-	struct gebr_comm_message_def pss_def;  // Password request     Maestro -> GeBR
+	struct gebr_comm_message_def qst_def;   // Question request     Maestro -> GeBR
+	struct gebr_comm_message_def pss_def;   // Password request     Maestro -> GeBR
 };
 
 struct gebr_comm_message {
