@@ -296,7 +296,7 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 
 	/* Title */
 	label = gtk_label_new(_("Title"));
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	data->title = title = gtk_entry_new();
 	gtk_entry_set_activates_default(GTK_ENTRY(title), TRUE);
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, row, row+1, GTK_FILL, GTK_FILL, 3, 3);
@@ -308,7 +308,7 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 
 	/* Description */
 	label = gtk_label_new(_("Description"));
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	data->description = description = gtk_entry_new();
 	gtk_entry_set_activates_default(GTK_ENTRY(description), TRUE);
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, row, row+1, GTK_FILL, GTK_FILL, 3, 3);
@@ -320,7 +320,7 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 
 	/* Author */
 	label = gtk_label_new(_("Author"));
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	data->author = author = gtk_entry_new();
 	gtk_entry_set_activates_default(GTK_ENTRY(author), TRUE);
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, row, row+1, GTK_FILL, GTK_FILL, 3, 3);
@@ -332,7 +332,7 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 
 	/* User email */
 	label = gtk_label_new(_("Email"));
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	data->email = email = gtk_entry_new();
 	gtk_entry_set_activates_default(GTK_ENTRY(email), TRUE);
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, row, row+1, GTK_FILL, GTK_FILL, 3, 3);
@@ -381,18 +381,19 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 
 		data->previous_active_group = gtk_combo_box_get_active(GTK_COMBO_BOX(groups_combo));
 
-		label = gtk_label_new (_("Server group"));
+		label = gtk_label_new (_("Maestro"));
 		gtk_table_attach (GTK_TABLE (table), label, 0, 1, row, row+1, GTK_FILL, GTK_FILL, 3, 3);
 		gtk_table_attach (GTK_TABLE (table), groups_combo, 1, 2, row, row+1, GTK_FILL, GTK_FILL, 3, 3);
 		row++;
 		gtk_widget_show (label);
 		gtk_widget_show (groups_combo);
+		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 
 		/* Line Path's*/
-		line_path_label = gtk_label_new(_("Path:"));
+		line_path_label = gtk_label_new(_("Path"));
 		gtk_widget_show(line_path_label);
 		gtk_table_attach(GTK_TABLE(table), line_path_label, 0, 1, row, row+1, GTK_FILL, GTK_FILL, 3, 3);
-		gtk_misc_set_alignment(GTK_MISC(line_path_label), 0, 0);
+		gtk_misc_set_alignment(GTK_MISC(line_path_label), 0, 0.05);
 
 		file_entry = gebr_gui_file_entry_new(NULL, NULL);
 
