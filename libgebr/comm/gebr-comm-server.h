@@ -170,7 +170,7 @@ GType gebr_comm_server_get_type(void) G_GNUC_CONST;
 GebrCommServer *gebr_comm_server_new(const gchar *_address,
 				     const struct gebr_comm_server_ops *ops);
 
-const gchar *gebr_comm_server_get_last_error(struct gebr_comm_server *server);
+const gchar *gebr_comm_server_get_last_error(GebrCommServer *server);
 
 void gebr_comm_server_free(GebrCommServer *gebr_comm_server);
 
