@@ -648,6 +648,7 @@ on_client_request(GebrCommProtocolSocket *socket,
 				                                      is_ac);
 			}
 		}
+	gebr_comm_uri_free(uri);
 	}
 }
 

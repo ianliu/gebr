@@ -25,7 +25,6 @@
 #include <glib/gi18n.h>
 #include <libgebr/gui/gui.h>
 #include <stdlib.h>
-#include <libgebr/comm/gebr-comm-uri.h>
 
 struct _GebrMaestroServerPriv {
 	GebrCommServer *server;
@@ -998,6 +997,7 @@ gebr_maestro_server_remove_tag_from(GebrMaestroServer *maestro,
 	gebr_comm_uri_add_param(uri, "server", gebr_daemon_server_get_address(daemon));
 	gebr_comm_uri_add_param(uri, "tag", tag);
 	gchar *url = gebr_comm_uri_to_string(uri);
+	gebr_comm_uri_free(uri);
 	gebr_comm_protocol_socket_send_request(maestro->priv->server->socket,
 					       GEBR_COMM_HTTP_METHOD_PUT, url, NULL);
 	g_free(url);

@@ -26,7 +26,6 @@
 #include "gebr-maestro-server.h"
 #include "gebr-marshal.h"
 #include <libgebr/gui/gebr-gui-utils.h>
-#include <libgebr/comm/gebr-comm-uri.h>
 
 struct _GebrMaestroControllerPriv {
 	GList *maestros;
@@ -778,6 +777,7 @@ server_list_add(GebrMaestroController *mc,
 	gebr_comm_uri_add_param(uri, "address", address);
 	gebr_comm_uri_add_param(uri, "pass", "");
 	gchar *url = gebr_comm_uri_to_string(uri);
+	gebr_comm_uri_free(uri);
 
 	g_debug("************* on %s, sending message '%s'", __func__, url);
 	GebrCommServer *server = gebr_maestro_server_get_server(mc->priv->maestros->data);

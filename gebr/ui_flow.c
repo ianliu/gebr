@@ -22,7 +22,6 @@
 #include "gebr.h"
 #include "ui_flow_browse.h"
 #include "document.h"
-#include <libgebr/comm/gebr-comm-uri.h>
 
 void
 gebr_ui_flow_run(void)
@@ -63,6 +62,7 @@ gebr_ui_flow_run(void)
 	gebr_comm_uri_add_param(uri, "host", hostname);
 	gebr_comm_uri_add_param(uri, "temp_id", gebr_job_get_id(job));
 	gchar *url = gebr_comm_uri_to_string(uri);
+	gebr_comm_uri_free(uri);
 
 	/*
 	gchar *url = g_strdup_printf("/run?parent_rid=%s;speed=%s;nice=%s;name=%s;type=%s;host=%s;temp_id=%s",

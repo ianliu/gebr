@@ -28,7 +28,6 @@
 #include <glib/gi18n.h>
 #include <libgebr/gui/gebr-gui-utils.h>
 #include <libgebr/gui/gebr-gui-enhanced-entry.h>
-#include <libgebr/comm/gebr-comm-uri.h>
 
 #include "ui_server.h"
 #include "gebr.h"
@@ -178,6 +177,7 @@ static void on_tags_edited(GtkCellRendererText *cell,
 	gebr_comm_uri_add_param(uri, "server", gebr_daemon_server_get_address(daemon));
 	gebr_comm_uri_add_param(uri, "tags", new_tags);
 	gchar *url = gebr_comm_uri_to_string(uri);
+	gebr_comm_uri_free(uri);
 
 	GebrCommServer *server = gebr_maestro_server_get_server(gebr.ui_server_list->maestro);
 	msg = gebr_comm_protocol_socket_send_request(server->socket,
@@ -401,6 +401,7 @@ server_list_add(struct ui_server_list *ui_server_list,
 	gebr_comm_uri_add_param(uri, "address", address);
 	gebr_comm_uri_add_param(uri, "pass", "");
 	gchar *url = gebr_comm_uri_to_string(uri);
+	gebr_comm_uri_free(uri);
 
 	GebrCommServer *server = gebr_maestro_server_get_server(ui_server_list->maestro);
 	gebr_comm_protocol_socket_send_request(server->socket,
