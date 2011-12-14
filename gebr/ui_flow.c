@@ -54,7 +54,7 @@ gebr_ui_flow_run(void)
 
 	GebrCommUri *uri = gebr_comm_uri_new();
 	gebr_comm_uri_set_prefix(uri, "/run");
-	gebr_comm_uri_add_param(uri, "parent_rid", parent_rid);
+	gebr_comm_uri_add_param(uri, "parent_id", parent_rid);
 	gebr_comm_uri_add_param(uri, "speed", speed_str);
 	gebr_comm_uri_add_param(uri, "nice", nice);
 	gebr_comm_uri_add_param(uri, "name", name);
