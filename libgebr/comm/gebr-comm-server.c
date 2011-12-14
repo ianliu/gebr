@@ -179,6 +179,12 @@ GebrCommServerType gebr_comm_server_get_id(const gchar * name)
 		return GEBR_COMM_SERVER_TYPE_UNKNOWN;
 }
 
+const gchar *
+gebr_comm_server_get_last_error(GebrCommServer *server)
+{
+	return server->last_error->str;
+}
+
 GebrCommServer *
 gebr_comm_server_new(const gchar * _address, const struct gebr_comm_server_ops *ops)
 {
@@ -195,7 +201,7 @@ gebr_comm_server_new(const gchar * _address, const struct gebr_comm_server_ops *
 	server->user_data = NULL;
 	server->tunnel_pooling_source = 0;
 	server->process.use = COMM_SERVER_PROCESS_NONE;
-	server->last_error = g_string_new("");
+	server->last_error = g_string_new(NULL);
 	server->state = SERVER_STATE_UNKNOWN;
 	server->error = SERVER_ERROR_UNKNOWN;
 	gebr_comm_server_free_for_reuse(server);
@@ -421,6 +427,11 @@ static void local_run_server_finished(GebrCommProcess * process, gint status, Ge
 	gebr_comm_process_free(process);
 
 	gebr_comm_server_log_message(server, GEBR_LOG_DEBUG, "local_run_server_finished");
+
+	if (server->port == 0)
+		gebr_comm_server_disconnected_state(server, SERVER_ERROR_SERVER,
+						    _("Could not find maestro"));
+
 	if (server->error != SERVER_ERROR_NONE)
 		return;
 
@@ -662,7 +673,8 @@ out:	server->tunnel_pooling_source = 0;
 /**
  * \internal
  */
-static void gebr_comm_server_disconnected_state(GebrCommServer *server, enum gebr_comm_server_error error,
+static void gebr_comm_server_disconnected_state(GebrCommServer *server,
+						enum gebr_comm_server_error error,
 						const gchar * message, ...)
 {
 	if (error != SERVER_ERROR_UNKNOWN) {
@@ -694,7 +706,9 @@ static void gebr_comm_server_change_state(GebrCommServer *server, GebrCommServer
 /**
  * \internal
  */
-static void gebr_comm_server_socket_connected(GebrCommProtocolSocket * socket, GebrCommServer *server)
+static void
+gebr_comm_server_socket_connected(GebrCommProtocolSocket * socket,
+				  GebrCommServer *server)
 {
 	gchar hostname[256];
 	gchar *display;
@@ -750,38 +764,35 @@ static void gebr_comm_server_socket_connected(GebrCommProtocolSocket * socket, G
 	}
 }
 
-/**
- * \internal
- */
-static void gebr_comm_server_socket_disconnected(GebrCommProtocolSocket * socket, GebrCommServer *server)
+static void
+gebr_comm_server_socket_disconnected(GebrCommProtocolSocket *socket,
+				     GebrCommServer *server)
 {
 	gebr_comm_server_disconnected_state(server, SERVER_ERROR_UNKNOWN, "");
 	gebr_comm_server_log_message(server, GEBR_LOG_WARNING, _("Server '%s' disconnected"), 
 				     server->address->str);
 }
 
-/**
- * \internal
- */
-static void gebr_comm_server_socket_process_request(GebrCommProtocolSocket * socket, GebrCommHttpMsg *request,
-						    GebrCommServer *server)
+static void
+gebr_comm_server_socket_process_request(GebrCommProtocolSocket *socket,
+					GebrCommHttpMsg *request,
+					GebrCommServer *server)
 {
 	server->ops->process_request(server, request, server->user_data);
 }
 
-/**
- * \internal
- */
-static void gebr_comm_server_socket_process_response(GebrCommProtocolSocket * socket, GebrCommHttpMsg *request,
-						     GebrCommHttpMsg *response, GebrCommServer *server)
+static void
+gebr_comm_server_socket_process_response(GebrCommProtocolSocket *socket,
+					 GebrCommHttpMsg *request,
+					 GebrCommHttpMsg *response,
+					 GebrCommServer *server)
 {
 	server->ops->process_response(server, request, response, server->user_data);
 }
 
-/**
- * \internal
- */
-static void gebr_comm_server_socket_old_parse_messages(GebrCommProtocolSocket * socket, GebrCommServer *server)
+static void
+gebr_comm_server_socket_old_parse_messages(GebrCommProtocolSocket *socket,
+					   GebrCommServer *server)
 {
 	server->ops->parse_messages(server, server->user_data);
 }

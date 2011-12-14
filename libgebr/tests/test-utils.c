@@ -244,6 +244,17 @@ void test_gebr_calculate_relative_time(void){
 }
 
 static void
+test_gebr_utf8_is_asc_alnum(void)
+{
+	g_assert(gebr_utf8_is_asc_alnum("Grupo") == TRUE);
+	g_assert(gebr_utf8_is_asc_alnum("Grupo1") == TRUE);
+	g_assert(gebr_utf8_is_asc_alnum("groups") == TRUE);
+	g_assert(gebr_utf8_is_asc_alnum("grupoímpar") == FALSE);
+	g_assert(gebr_utf8_is_asc_alnum("Ímpar") == FALSE);
+	g_assert(gebr_utf8_is_asc_alnum("grupo,2") == FALSE);
+}
+
+static void
 test_gebr_utf8_strstr(void)
 {
 	g_assert_cmpstr(gebr_utf8_strstr("Olá, mundo!", "mundo"), ==, "mundo!");
@@ -263,6 +274,7 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/utils/str_canonical_var_name", test_gebr_str_canonical_var_name);
 	g_test_add_func("/libgebr/utils/str_replace", test_gebr_str_replace);
 	g_test_add_func("/libgebr/utils/calculate_relative_time", test_gebr_calculate_relative_time);
+	g_test_add_func("/libgebr/utils/gebr_utf8_is_asc_alnum", test_gebr_utf8_is_asc_alnum);
 	g_test_add_func("/libgebr/utils/gebr_utf8_strstr", test_gebr_utf8_strstr);
 
 	gint ret = g_test_run();

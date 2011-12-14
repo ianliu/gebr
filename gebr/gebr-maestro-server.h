@@ -132,6 +132,8 @@ GtkTreeModel *gebr_maestro_server_get_groups_model(GebrMaestroServer *maestro);
 GebrDaemonServer *gebr_maestro_server_get_daemon(GebrMaestroServer *server,
 						 const gchar *address);
 
+const gchar *gebr_maestro_server_get_error(GebrMaestroServer *maestro);
+
 G_END_DECLS
 
 #endif /* __GEBR_MAESTRO_H__ */

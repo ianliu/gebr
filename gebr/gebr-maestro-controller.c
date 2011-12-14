@@ -26,6 +26,7 @@
 #include "gebr-maestro-server.h"
 #include "gebr-marshal.h"
 #include <libgebr/gui/gebr-gui-utils.h>
+#include <libgebr/utils.h>
 
 struct _GebrMaestroControllerPriv {
 	GList *maestros;
@@ -92,11 +93,20 @@ finish_group_creation(GtkWidget *widget,
 		      GebrMaestroController *mc)
 {
 	GtkEntry *entry = GTK_ENTRY(widget);
-	const gchar *tag = gtk_entry_get_text(entry);
+	gchar *tag = g_strdup(gtk_entry_get_text(entry));
 	GebrDaemonServer *daemon = g_object_get_data(G_OBJECT(widget), "daemon");
 
+	g_strstrip(tag);
 	if (!*tag) {
 		cancel_group_creation(widget, mc);
+		return;
+	}
+
+	if (!gebr_utf8_is_asc_alnum(tag)) {
+		gtk_entry_set_icon_from_stock(GTK_ENTRY(widget), GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIALOG_WARNING);
+		gtk_entry_set_icon_tooltip_text(GTK_ENTRY(widget), GTK_ENTRY_ICON_SECONDARY, "Name of group is not alpha-numerical.");
+		gtk_widget_grab_focus(widget);
+ 		g_free(tag);
 		return;
 	}
 
@@ -112,6 +122,8 @@ finish_group_creation(GtkWidget *widget,
 	GtkWidget *dummy = g_object_get_data(G_OBJECT(widget), "dummy-widget");
 	gtk_notebook_set_tab_label(nb, dummy, box);
 	gebr_maestro_server_add_tag_to(mc->priv->maestros->data, daemon, tag);
+
+	g_free(tag);
 }
 
 static gboolean
@@ -1064,11 +1076,22 @@ on_state_change(GebrMaestroServer *maestro,
 
 	GebrCommServer *server = gebr_maestro_server_get_server(maestro);
 	GebrCommServerState state = gebr_comm_server_get_state(server);
-	if (state == SERVER_STATE_DISCONNECTED)
-		gtk_entry_set_icon_from_stock(entry,
-					      GTK_ENTRY_ICON_SECONDARY,
-					      GTK_STOCK_DISCONNECT);
-	else if (state == SERVER_STATE_CONNECT) {
+	if (state == SERVER_STATE_DISCONNECTED) {
+		const gchar *error = gebr_maestro_server_get_error(maestro);
+		if (!error)
+			gtk_entry_set_icon_from_stock(entry,
+			                              GTK_ENTRY_ICON_SECONDARY,
+			                              GTK_STOCK_DISCONNECT);
+		else {
+			gtk_entry_set_icon_from_stock(entry,
+			                              GTK_ENTRY_ICON_SECONDARY,
+			                              GTK_STOCK_DIALOG_WARNING);
+			gtk_entry_set_icon_tooltip_text(entry,
+			                              GTK_ENTRY_ICON_SECONDARY,
+			                              error);
+			gtk_widget_grab_focus(GTK_WIDGET(entry));
+		}
+	} else if (state == SERVER_STATE_CONNECT) {
 		gtk_entry_set_icon_from_stock(entry,
 					      GTK_ENTRY_ICON_SECONDARY,
 					      GTK_STOCK_CONNECT);
