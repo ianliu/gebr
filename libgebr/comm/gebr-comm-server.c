@@ -89,6 +89,10 @@ GebrCommServerType gebr_comm_server_get_id(const gchar * name)
 		return GEBR_COMM_SERVER_TYPE_UNKNOWN;
 }
 
+const gchar *gebr_comm_server_get_last_error(struct gebr_comm_server *server)
+{
+	return server->last_error->str;
+}
 struct gebr_comm_server *gebr_comm_server_new(const gchar * _address, const struct gebr_comm_server_ops *ops)
 {
 	struct gebr_comm_server *server;
@@ -105,7 +109,7 @@ struct gebr_comm_server *gebr_comm_server_new(const gchar * _address, const stru
 	server->user_data = NULL;
 	server->tunnel_pooling_source = 0;
 	server->process.use = COMM_SERVER_PROCESS_NONE;
-	server->last_error = g_string_new("");
+	server->last_error = g_string_new(NULL);
 	server->state = SERVER_STATE_UNKNOWN;
 	server->error = SERVER_ERROR_UNKNOWN;
 	gebr_comm_server_free_for_reuse(server);

@@ -150,6 +150,9 @@ struct gebr_comm_server *gebr_comm_server_new(const gchar * _address, const stru
 
 /**
  */
+const gchar *gebr_comm_server_get_last_error(struct gebr_comm_server *server);
+/**
+ */
 void gebr_comm_server_free(struct gebr_comm_server *gebr_comm_server);
 
 /**
