@@ -478,6 +478,12 @@ static gboolean _project_line_import_path(const gchar *filename, GList **line_pa
 		}
 		gdk_threads_leave();
 
+		GList *maestros = gebr_maestro_controller_get_maestros(gebr.maestro_controller);
+		if (maestros) {
+			const gchar *addr = gebr_maestro_server_get_address(maestros->data);
+			gebr_geoxml_line_set_maestro(*line, addr);
+		}
+
 		gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) line, GEBR_GEOXML_DOCUMENT_TYPE_LINE, FALSE);
 
 		gdk_threads_enter();
@@ -1270,7 +1276,11 @@ static void project_line_load(void)
 		GebrMaestroServer *maestro =
 			gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller,
 								     gebr.line);
-		gebr_flow_edition_update_server(gebr.ui_flow_edition, maestro);
+		if (maestro)
+			gebr_flow_edition_update_server(gebr.ui_flow_edition, maestro);
+		else
+			gebr_message(GEBR_LOG_WARNING, TRUE, FALSE, "Could not find maestro for this line");
+
 		line_load_flows();
 	} else {
 		gebr.project_line = GEBR_GEOXML_DOC(gebr.project);

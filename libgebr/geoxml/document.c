@@ -751,6 +751,7 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 
 			GdomeElement *el = __gebr_geoxml_get_first_element(root_element, "server-group");
 			GdomeElement *new_el = __gebr_geoxml_insert_new_element(root_element, "server-maestro", NULL);
+			__gebr_geoxml_set_attr_value(new_el, "address", "");
 			gdome_n_unref(gdome_el_insertBefore_protected(root_element, (GdomeNode*)new_el, (GdomeNode*)el,
 								      &exception), &exception);
 
@@ -880,7 +881,7 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 			__gebr_geoxml_set_attr_value(root_element, "version", "0.3.8");
 			GdomeElement *el = __gebr_geoxml_get_first_element(root_element, "server");
 			__gebr_geoxml_remove_attr(el, "address");
-			__gebr_geoxml_set_attr_value(el, "group-type", "");
+			__gebr_geoxml_set_attr_value(el, "group-type", "group");
 			__gebr_geoxml_set_attr_value(el, "group-name", "");
 			gdome_el_unref(el, &exception);
 		}
