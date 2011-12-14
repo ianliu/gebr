@@ -330,6 +330,11 @@ static void local_run_server_finished(GebrCommProcess * process, gint status, st
 	gebr_comm_process_free(process);
 
 	gebr_comm_server_log_message(server, GEBR_LOG_DEBUG, "local_run_server_finished");
+
+	if (server->port == 0)
+		gebr_comm_server_disconnected_state(server, SERVER_ERROR_SERVER,
+						    _("Could not find maestro"));
+
 	if (server->error != SERVER_ERROR_NONE)
 		return;
 
@@ -558,7 +563,8 @@ out:	server->tunnel_pooling_source = 0;
 /**
  * \internal
  */
-static void gebr_comm_server_disconnected_state(struct gebr_comm_server *server, enum gebr_comm_server_error error,
+static void gebr_comm_server_disconnected_state(struct gebr_comm_server *server,
+						enum gebr_comm_server_error error,
 						const gchar * message, ...)
 {
 	if (error != SERVER_ERROR_UNKNOWN) {
