@@ -61,6 +61,7 @@ json-marshal.[ch]
 libgebr/comm/socketchannel/gebr-comm-socketchannel
 libgebr/comm/tests/test-protocol
 libgebr/comm/tests/test-socket
+libgebr/comm/tests/test-uri
 libgebr/geoxml-utils/gebr-geoxml-flow-dump
 libgebr/geoxml-utils/gebr-geoxml-menu-diff
 libgebr/geoxml-utils/gebr-geoxml-menu-edit
