@@ -42,6 +42,7 @@ struct _GebrmAppPriv {
 	GebrCommSocketAddress address;
 	GList *connections;
 	GList *daemons;
+	gchar *nfsid;
 
 	// Server groups: gchar -> GList<GebrDaemon>
 	GTree *groups;
@@ -287,6 +288,21 @@ gebrm_app_singleton_get(void)
 	return __app;
 }
 
+static void
+on_receive_nfsid(GebrmDaemon *daemon,
+		 GParamSpec *pspec,
+		 GebrmApp *app)
+{
+	const gchar *nfsid = gebrm_daemon_get_nfsid(daemon);
+
+	g_debug("Received nfsid: %s", nfsid);
+
+	if (!app->priv->nfsid)
+		app->priv->nfsid = g_strdup(nfsid);
+	else if (g_strcmp0(app->priv->nfsid, nfsid) != 0)
+		gebrm_daemon_disconnect(daemon);
+}
+
 static GebrmDaemon *
 gebrm_add_server_to_list(GebrmApp *app,
 			 const gchar *address,
@@ -307,6 +323,8 @@ gebrm_add_server_to_list(GebrmApp *app,
 			 G_CALLBACK(gebrm_app_daemon_on_state_change), app);
 	g_signal_connect(daemon, "task-define",
 			 G_CALLBACK(gebrm_app_job_controller_on_task_def), app);
+	g_signal_connect(daemon, "notify::nfsid",
+			 G_CALLBACK(on_receive_nfsid), app);
 
 	gchar **tagsv = tags ? g_strsplit(tags, ",", -1) : NULL;
 	if (tagsv) {

@@ -118,6 +118,12 @@ void gebrm_daemon_set_autoconnect(GebrmDaemon *daemon, const gchar *ac);
 
 const gchar *gebrm_daemon_get_autoconnect(GebrmDaemon *daemon);
 
+const gchar *gebrm_daemon_get_nfsid(GebrmDaemon *daemon);
+
+gint gebrm_daemon_get_ncores(GebrmDaemon *daemon);
+
+gdouble gebrm_daemon_get_clock(GebrmDaemon *daemon);
+
 G_END_DECLS
 
 #endif /* __GEBRM_DAEMON_H__ */

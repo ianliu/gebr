@@ -29,12 +29,17 @@ struct _GebrmDaemonPriv {
 	GebrCommServer *server;
 	GebrCommProtocolSocket *client;
 	gchar *ac;
+
+	gchar *nfsid;
 };
 
 enum {
 	PROP_0,
 	PROP_ADDRESS,
 	PROP_SERVER,
+	PROP_NFSID,
+	PROP_CLOCK,
+	PROP_NCORES,
 };
 
 enum {
@@ -46,6 +51,33 @@ enum {
 static guint signals[LAST_SIGNAL] = { 0, };
 
 G_DEFINE_TYPE(GebrmDaemon, gebrm_daemon, G_TYPE_OBJECT);
+
+static void
+gebrm_daemon_set_nfsid(GebrmDaemon *daemon,
+		       const gchar *nfsid)
+{
+	g_return_if_fail(GEBRM_IS_DAEMON(daemon));
+	g_return_if_fail(daemon->priv->nfsid == NULL);
+
+	daemon->priv->nfsid = g_strdup(nfsid);
+	g_object_notify(G_OBJECT(daemon), "nfsid");
+}
+
+static void
+gebrm_daemon_set_clock_cpu(GebrmDaemon *daemon,
+			   gdouble clock)
+{
+	daemon->priv->server->clock_cpu = clock;
+	g_object_notify(G_OBJECT(daemon), "cpu-clock");
+}
+
+static void
+gebrm_daemon_set_ncores(GebrmDaemon *daemon,
+			gint ncores)
+{
+	daemon->priv->server->ncores = ncores;
+	g_object_notify(G_OBJECT(daemon), "cores");
+}
 
 /* Operations for GebrCommServer {{{ */
 static void
@@ -133,36 +165,28 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 		else if (message->hash == gebr_comm_protocol_defs.ret_def.code_hash) {
 			if (server->socket->protocol->waiting_ret_hash == gebr_comm_protocol_defs.ini_def.code_hash) {
 				GList *arguments;
-				GString *hostname;
-				GString *display_port;
-				gchar ** accounts;
-				GString *model_name;
-				GString *total_memory;
-				GString *nfsid;
-				GString *ncores;
-				GString *clock_cpu;
 
 				if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 9)) == NULL)
 					goto err;
 
-				hostname = g_list_nth_data(arguments, 0);
-				display_port = g_list_nth_data(arguments, 1);
-				accounts = g_strsplit(((GString *)g_list_nth_data(arguments, 3))->str, ",", 0);
-				model_name = g_list_nth_data (arguments, 4);
-				total_memory = g_list_nth_data (arguments, 5);
-				nfsid = g_list_nth_data (arguments, 6);
-				ncores = g_list_nth_data (arguments, 7);
-				clock_cpu = g_list_nth_data (arguments, 8);
+				GString *hostname     = g_list_nth_data(arguments, 0);
+				GString *display_port = g_list_nth_data(arguments, 1);
+				gchar  **accounts     = g_strsplit(((GString *)g_list_nth_data(arguments, 3))->str, ",", 0);
+				GString *model_name   = g_list_nth_data (arguments, 4);
+				GString *total_memory = g_list_nth_data (arguments, 5);
+				GString *nfsid        = g_list_nth_data (arguments, 6);
+				GString *ncores       = g_list_nth_data (arguments, 7);
+				GString *clock_cpu    = g_list_nth_data (arguments, 8);
 
-				g_strfreev(accounts);
-
-				server->ncores = atoi(ncores->str);
-				server->clock_cpu = atof(clock_cpu->str);
-
-				/* say we are logged */
+				gebrm_daemon_set_nfsid(daemon, nfsid->str);
+				gebrm_daemon_set_ncores(daemon, atoi(ncores->str));
+				gebrm_daemon_set_clock_cpu(daemon, atof(clock_cpu->str));
 				server->socket->protocol->logged = TRUE;
 				g_string_assign(server->socket->protocol->hostname, hostname->str);
 
+				/* Try to forwad X11 display
+				 * FIXME: This should be revised because now we have Maestro in the middle!
+				 */
 				if (!gebr_comm_server_is_local(server)) {
 					if (display_port->len) {
 						if (!strcmp(display_port->str, "0"))
@@ -178,6 +202,7 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 				gebr_comm_protocol_socket_oldmsg_send(server->socket, FALSE,
 								      gebr_comm_protocol_defs.lst_def, 0);
 
+				g_strfreev(accounts);
 				gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 			}
 		}
@@ -265,10 +290,10 @@ static struct gebr_comm_server_ops daemon_ops = {
 /* }}} Operations for GebrCommServer */
 
 static void
-gebrm_daemon_get(GObject    *object,
-		 guint       prop_id,
-		 GValue     *value,
-		 GParamSpec *pspec)
+gebrm_daemon_get_property(GObject    *object,
+			  guint       prop_id,
+			  GValue     *value,
+			  GParamSpec *pspec)
 {
 	GebrmDaemon *daemon = GEBRM_DAEMON(object);
 
@@ -280,6 +305,15 @@ gebrm_daemon_get(GObject    *object,
 	case PROP_SERVER:
 		g_value_set_pointer(value, daemon->priv->server);
 		break;
+	case PROP_NFSID:
+		g_value_set_string(value, gebrm_daemon_get_nfsid(daemon));
+		break;
+	case PROP_CLOCK:
+		g_value_set_double(value, gebrm_daemon_get_clock(daemon));
+		break;
+	case PROP_NCORES:
+		g_value_set_int(value, gebrm_daemon_get_ncores(daemon));
+		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 		break;
@@ -287,10 +321,10 @@ gebrm_daemon_get(GObject    *object,
 }
 
 static void
-gebrm_daemon_set(GObject      *object,
-		 guint         prop_id,
-		 const GValue *value,
-		 GParamSpec   *pspec)
+gebrm_daemon_set_property(GObject      *object,
+			  guint         prop_id,
+			  const GValue *value,
+			  GParamSpec   *pspec)
 {
 	GebrmDaemon *daemon = GEBRM_DAEMON(object);
 
@@ -308,11 +342,26 @@ gebrm_daemon_set(GObject      *object,
 }
 
 static void
+gebrm_daemon_finalize(GObject *object)
+{
+	GebrmDaemon *daemon = GEBRM_DAEMON(object);
+
+	gebr_comm_server_disconnect(daemon->priv->server);
+	gebr_comm_server_free(daemon->priv->server);
+	g_free(daemon->priv->nfsid);
+	if (daemon->priv->client)
+		g_object_unref(daemon->priv->client);
+
+	G_OBJECT_CLASS(gebrm_daemon_parent_class)->finalize(object);
+}
+
+static void
 gebrm_daemon_class_init(GebrmDaemonClass *klass)
 {
 	GObjectClass *object_class = G_OBJECT_CLASS(klass);
-	object_class->get_property = gebrm_daemon_get;
-	object_class->set_property = gebrm_daemon_set;
+	object_class->get_property = gebrm_daemon_get_property;
+	object_class->set_property = gebrm_daemon_set_property;
+	object_class->finalize = gebrm_daemon_finalize;
 
 	signals[STATE_CHANGE] =
 		g_signal_new("state-change",
@@ -348,6 +397,32 @@ gebrm_daemon_class_init(GebrmDaemonClass *klass)
 							     "Server",
 							     "Server",
 							     G_PARAM_READABLE));
+
+	g_object_class_install_property(object_class,
+					PROP_NFSID,
+					g_param_spec_string("nfsid",
+							    "NFS id",
+							    "The daemon's NFS id",
+							    NULL,
+							    G_PARAM_READABLE));
+
+	g_object_class_install_property(object_class,
+					PROP_CLOCK,
+					g_param_spec_double("cpu-clock",
+							    "CPU Clock",
+							    "The daemon's CPU Clock",
+							    0, G_MAXDOUBLE,
+							    0,
+							    G_PARAM_READABLE));
+
+	g_object_class_install_property(object_class,
+					PROP_NCORES,
+					g_param_spec_int("cores",
+							 "n-cores",
+							 "Number of daemon's cores",
+							 0, G_MAXINT,
+							 0,
+							 G_PARAM_READABLE));
 
 	g_type_class_add_private(klass, sizeof(GebrmDaemonPriv));
 }
@@ -457,7 +532,7 @@ gebrm_daemon_connect(GebrmDaemon *daemon,
 		gebr_comm_server_set_password(daemon->priv->server, pass);
 		g_debug("-----------------");
 	}
-	daemon->priv->client = client;
+	daemon->priv->client = g_object_ref(client);
 	gebr_comm_server_connect(daemon->priv->server, FALSE);
 }
 
@@ -491,4 +566,22 @@ const gchar *
 gebrm_daemon_get_autoconnect(GebrmDaemon *daemon)
 {
 	return daemon->priv->ac;
+}
+
+const gchar *
+gebrm_daemon_get_nfsid(GebrmDaemon *daemon)
+{
+	return daemon->priv->nfsid;
+}
+
+gint
+gebrm_daemon_get_ncores(GebrmDaemon *daemon)
+{
+	return daemon->priv->server->ncores;
+}
+
+gdouble
+gebrm_daemon_get_clock(GebrmDaemon *daemon)
+{
+	return daemon->priv->server->clock_cpu;
 }
