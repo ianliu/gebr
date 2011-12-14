@@ -26,6 +26,7 @@
 #include <string.h>
 #include <config.h>
 
+#include <libgebr/marshalers.h>
 #include "../libgebr-gettext.h"
 #include <glib/gi18n-lib.h>
 #include <libgebr/utils.h>
@@ -38,39 +39,128 @@
  * Declarations
  */
 
+typedef enum {
+	ISTATE_NONE,
+	ISTATE_PASS,
+	ISTATE_QUESTION,
+} InteractiveState;
+
+struct _GebrCommServerPriv {
+	gboolean is_interactive;
+	InteractiveState istate;
+};
+
+G_DEFINE_TYPE(GebrCommServer, gebr_comm_server, G_TYPE_OBJECT);
+
+enum {
+	PASSWORD_REQUEST,
+	QUESTION_REQUEST,
+	LAST_SIGNAL
+};
+
+static guint signals[LAST_SIGNAL] = { 0, };
+
+static void	gebr_comm_server_log_message	(GebrCommServer *server,
+						 GebrLogMessageType type,
+						 const gchar * message, ...);
+
+static void	local_run_server_read		(GebrCommProcess *process,
+						 GebrCommServer *server);
+
+static void	local_run_server_finished	(GebrCommProcess *process,
+						 gint status,
+						 GebrCommServer *server);
+
+static gboolean	gebr_comm_ssh_parse_output	(GebrCommTerminalProcess *process,
+						 GebrCommServer *server,
+						 GString *output);
+
+static void	gebr_comm_ssh_read		(GebrCommTerminalProcess *process,
+						 GebrCommServer *server);
+
+static void	gebr_comm_ssh_finished		(GebrCommTerminalProcess *process,
+						 GebrCommServer *server);
+
+static void	gebr_comm_ssh_run_server_read	(GebrCommTerminalProcess *process,
+						 GebrCommServer *server);
+
+static void	gebr_comm_ssh_run_server_finished(GebrCommTerminalProcess *process,
+						  GebrCommServer *server);
+
+static gboolean	gebr_comm_ssh_open_tunnel_pool	(GebrCommServer *server);
+
+static void	gebr_comm_server_disconnected_state(GebrCommServer *server,
+						    enum gebr_comm_server_error error,
+						    const gchar * message, ...);
+
+static void	gebr_comm_server_change_state	(GebrCommServer *server,
+						 GebrCommServerState state);
+
+static void	gebr_comm_server_socket_connected(GebrCommProtocolSocket * socket,
+						  GebrCommServer *server);
+
+static void	gebr_comm_server_socket_disconnected(GebrCommProtocolSocket * socket,
+						     GebrCommServer *server);
+
+static void	gebr_comm_server_socket_process_request(GebrCommProtocolSocket * socket,
+							GebrCommHttpMsg *request,
+							GebrCommServer *server);
+
+static void	gebr_comm_server_socket_process_response(GebrCommProtocolSocket *socket,
+							 GebrCommHttpMsg *request,
+							 GebrCommHttpMsg *response,
+							 GebrCommServer *server);
+
+static void	gebr_comm_server_socket_old_parse_messages(GebrCommProtocolSocket *socket,
+							   GebrCommServer *server);
+
+static void	gebr_comm_server_free_x11_forward(GebrCommServer *server);
+
+static void	gebr_comm_server_free_for_reuse	(GebrCommServer *server);
+
+
 static void
-gebr_comm_server_log_message(GebrCommServer *server, GebrLogMessageType type,
-			     const gchar * message, ...);
+gebr_comm_server_init(GebrCommServer *server)
+{
+	server->priv = G_TYPE_INSTANCE_GET_PRIVATE(server,
+						   GEBR_COMM_TYPE_SERVER,
+						   GebrCommServerPriv);
 
-static void local_run_server_read(GebrCommProcess * process, GebrCommServer *server);
-static void local_run_server_finished(GebrCommProcess * process, gint status, GebrCommServer *server);
+	server->priv->istate = ISTATE_NONE;
+	server->priv->is_interactive = FALSE;
+}
 
-static gboolean
-gebr_comm_ssh_parse_output(GebrCommTerminalProcess * process, GebrCommServer *server,
-			   GString * output);
-static void gebr_comm_ssh_read(GebrCommTerminalProcess * process, GebrCommServer *server);
-static void gebr_comm_ssh_finished(GebrCommTerminalProcess * process, GebrCommServer *server);
-static void gebr_comm_ssh_run_server_read(GebrCommTerminalProcess * process, GebrCommServer *server);
 static void
-gebr_comm_ssh_run_server_finished(GebrCommTerminalProcess * process, GebrCommServer *server);
-static gboolean
-gebr_comm_ssh_open_tunnel_pool(GebrCommServer *server);
+gebr_comm_server_class_init(GebrCommServerClass *klass)
+{
+	GObjectClass *object_class = G_OBJECT_CLASS(klass);
 
-static void gebr_comm_server_disconnected_state(GebrCommServer *server, enum gebr_comm_server_error error,
-						const gchar * message, ...);
-static void gebr_comm_server_change_state(GebrCommServer *server, GebrCommServerState state);
-static void gebr_comm_server_socket_connected(GebrCommProtocolSocket * socket, GebrCommServer *server);
-static void gebr_comm_server_socket_disconnected(GebrCommProtocolSocket * socket, GebrCommServer *server);
-static void gebr_comm_server_socket_process_request(GebrCommProtocolSocket * socket, GebrCommHttpMsg *request,
-						    GebrCommServer *server);
-static void gebr_comm_server_socket_process_response(GebrCommProtocolSocket * socket, GebrCommHttpMsg *request,
-						     GebrCommHttpMsg *response, GebrCommServer *server);
-static void gebr_comm_server_socket_old_parse_messages(GebrCommProtocolSocket * socket, GebrCommServer *server);
+	signals[PASSWORD_REQUEST] =
+		g_signal_new("password-request",
+			     G_OBJECT_CLASS_TYPE(object_class),
+			     G_SIGNAL_RUN_LAST,
+			     G_STRUCT_OFFSET(GebrCommServerClass, password_request),
+			     NULL, NULL,
+			     _gebr_gui_marshal_VOID__STRING_STRING,
+			     G_TYPE_NONE, 2,
+			     G_TYPE_STRING, G_TYPE_STRING);
 
-static void gebr_comm_server_free_x11_forward(GebrCommServer *server);
-static void gebr_comm_server_free_for_reuse(GebrCommServer *server);
+	signals[QUESTION_REQUEST] =
+		g_signal_new("question-request",
+			     G_OBJECT_CLASS_TYPE(object_class),
+			     G_SIGNAL_RUN_LAST,
+			     G_STRUCT_OFFSET(GebrCommServerClass, question_request),
+			     NULL, NULL,
+			     _gebr_gui_marshal_VOID__STRING_STRING,
+			     G_TYPE_NONE, 2,
+			     G_TYPE_STRING, G_TYPE_STRING);
 
-gchar * gebr_comm_server_get_user(const gchar * address)
+	g_type_class_add_private(klass, sizeof(GebrCommServerPriv));
+}
+
+
+gchar *
+gebr_comm_server_get_user(const gchar *address)
 {
 	gchar *addr_temp;
 
@@ -89,12 +179,12 @@ GebrCommServerType gebr_comm_server_get_id(const gchar * name)
 		return GEBR_COMM_SERVER_TYPE_UNKNOWN;
 }
 
-GebrCommServer *gebr_comm_server_new(const gchar * _address, const struct gebr_comm_server_ops *ops)
+GebrCommServer *
+gebr_comm_server_new(const gchar * _address, const struct gebr_comm_server_ops *ops)
 {
 	GebrCommServer *server;
+	server = g_object_new(GEBR_COMM_TYPE_SERVER, NULL);
 
-	/* initialize */
-	server = g_new(GebrCommServer, 1);
 	server->socket = gebr_comm_protocol_socket_new();
 	server->address = g_string_new(_address);
 	server->port = 0;
@@ -125,14 +215,15 @@ GebrCommServer *gebr_comm_server_new(const gchar * _address, const struct gebr_c
 	return server;
 }
 
-void gebr_comm_server_free(GebrCommServer *server)
+void
+gebr_comm_server_free(GebrCommServer *server)
 {
 	g_string_free(server->last_error, TRUE);
 	gebr_comm_server_free_for_reuse(server);
 	g_string_free(server->address, TRUE);
 	g_free(server->password);
-	g_object_unref (server->socket);
-	g_free(server);
+	g_object_unref(server->socket);
+	g_object_unref(server);
 }
 
 void gebr_comm_server_connect(GebrCommServer *server,
@@ -350,7 +441,7 @@ write_pass_in_process(GebrCommTerminalProcess *process,
 	gebr_comm_terminal_process_write_string(process, &p);
 }
 
-/**
+/*
  * Return TRUE if callee should not proceed.
  */
 static gboolean
@@ -379,32 +470,45 @@ gebr_comm_ssh_parse_output(GebrCommTerminalProcess *process,
 			g_string_printf(string, _("Wrong password for server '%s', please try again.\n\n%s"),
 					server->address->str, output->str);
 
-		password = server->ops->ssh_login(server, _("SSH login:"), string->str,
-						  server->user_data);
-		if (password == NULL) {
-			g_free(server->password);
-			server->password = NULL;
-
-			gebr_comm_server_disconnected_state(server, SERVER_ERROR_SSH, _("No password provided."));
-			gebr_comm_terminal_process_kill(process);
+		if (server->priv->is_interactive) {
+			server->priv->istate = ISTATE_PASS;
+			g_signal_emit(server, signals[PASSWORD_REQUEST], 0,
+				      _("Please, enter password"), string->str);
 		} else {
-			gebr_comm_server_set_password(server, password->str);
-			write_pass_in_process(process, password->str);
-			g_string_free(password, TRUE);
+			password = server->ops->ssh_login(server, _("SSH login:"), string->str,
+							  server->user_data);
+			if (password == NULL) {
+				g_free(server->password);
+				server->password = NULL;
+
+				gebr_comm_server_disconnected_state(server, SERVER_ERROR_SSH, _("No password provided."));
+				gebr_comm_terminal_process_kill(process);
+			} else {
+				gebr_comm_server_set_password(server, password->str);
+				write_pass_in_process(process, password->str);
+				g_string_free(password, TRUE);
+			}
+			server->tried_existant_pass = FALSE;
 		}
-		server->tried_existant_pass = FALSE;
 
 		g_string_free(string, TRUE);
 	} else if (output->str[output->len - 2] == '?') {
-		GString *answer = g_string_new(NULL);
-		if (server->ops->ssh_question(server, _("SSH host key question:"),
-					      output->str, server->user_data) == FALSE) {
-			g_string_assign(answer, "no\n");
-			gebr_comm_server_disconnected_state(server, SERVER_ERROR_SSH, _("SSH host key rejected."));
-		} else
-			g_string_assign(answer, "yes\n");
-		gebr_comm_terminal_process_write_string(process, answer);
-		g_string_free(answer, TRUE);
+		if (server->priv->is_interactive) {
+			g_debug("On question interactive!!!!");
+			server->priv->istate = ISTATE_QUESTION;
+			g_signal_emit(server, signals[QUESTION_REQUEST], 0,
+				      _("Please, answer the question"), output->str);
+		} else {
+			GString *answer = g_string_new(NULL);
+			if (server->ops->ssh_question(server, _("SSH host key question:"),
+						      output->str, server->user_data) == FALSE) {
+				g_string_assign(answer, "no\n");
+				gebr_comm_server_disconnected_state(server, SERVER_ERROR_SSH, _("SSH host key rejected."));
+			} else
+				g_string_assign(answer, "yes\n");
+			gebr_comm_terminal_process_write_string(process, answer);
+			g_string_free(answer, TRUE);
+		}
 	} else if (g_str_has_prefix(output->str, "@@@")) {
 		gebr_g_string_replace(output, "\r\n", "\n");
 		g_string_erase(output, strlen(output->str)-1, 1); //last \n
@@ -762,4 +866,25 @@ void
 gebr_comm_server_set_password(GebrCommServer *server, const gchar *pass)
 {
 	server->password = g_strdup(pass);
+
+	if (server->priv->is_interactive
+	    && server->priv->istate == ISTATE_PASS)
+		write_pass_in_process(server->process.data.terminal, pass);
+}
+
+void
+gebr_comm_server_answer_question(GebrCommServer *server,
+				 gboolean response)
+{
+	GString *answer = g_string_new(response ? "yes\n" : "no\n");
+
+	if (server->priv->is_interactive
+	    && server->priv->istate == ISTATE_QUESTION)
+		gebr_comm_terminal_process_write_string(server->process.data.terminal, answer);
+}
+
+void
+gebr_comm_server_set_interactive(GebrCommServer *server, gboolean setting)
+{
+	server->priv->is_interactive = setting;
 }
