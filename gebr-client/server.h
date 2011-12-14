@@ -25,8 +25,7 @@
 G_BEGIN_DECLS
 
 struct server {
-	struct gebr_comm_server *comm;
-
+	GebrCommServer *comm;
 };
 
 /**

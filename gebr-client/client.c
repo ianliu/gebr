@@ -21,7 +21,7 @@
 #include "gebrclient.h"
 #include "server.h"
 
-gboolean client_parse_server_messages(struct gebr_comm_server *gebr_comm_server, struct server *server)
+gboolean client_parse_server_messages(GebrCommServer *gebr_comm_server, struct server *server)
 {
 	GList *link;
 	struct gebr_comm_message *message;

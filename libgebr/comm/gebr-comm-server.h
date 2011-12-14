@@ -63,9 +63,9 @@ typedef enum {
 	SERVER_STATE_CONNECT,
 } GebrCommServerState;
 
-typedef struct gebr_comm_server GebrCommServer;
+typedef struct _GebrCommServer GebrCommServer;
 
-struct gebr_comm_server {
+struct _GebrCommServer {
 	GebrCommProtocolSocket *socket;
 
 	/* server address/port */
@@ -146,39 +146,39 @@ struct gebr_comm_server {
 
 /**
  */
-struct gebr_comm_server *gebr_comm_server_new(const gchar * _address, const struct gebr_comm_server_ops *ops);
+GebrCommServer *gebr_comm_server_new(const gchar * _address, const struct gebr_comm_server_ops *ops);
 
 /**
  */
-void gebr_comm_server_free(struct gebr_comm_server *gebr_comm_server);
+void gebr_comm_server_free(GebrCommServer *gebr_comm_server);
 
 /**
  */
-void gebr_comm_server_connect(struct gebr_comm_server *server,
+void gebr_comm_server_connect(GebrCommServer *server,
 			      gboolean maestro);
 
 /**
  */
-void gebr_comm_server_disconnect(struct gebr_comm_server *gebr_comm_server);
+void gebr_comm_server_disconnect(GebrCommServer *gebr_comm_server);
 
 /**
  */
-gboolean gebr_comm_server_is_logged(struct gebr_comm_server *gebr_comm_server);
+gboolean gebr_comm_server_is_logged(GebrCommServer *gebr_comm_server);
 
 /**
  */
-gboolean gebr_comm_server_is_local(struct gebr_comm_server *gebr_comm_server);
+gboolean gebr_comm_server_is_local(GebrCommServer *gebr_comm_server);
 
 /**
  */
-void gebr_comm_server_kill(struct gebr_comm_server *gebr_comm_server);
+void gebr_comm_server_kill(GebrCommServer *gebr_comm_server);
 
 /**
  * For the logged _gebr_comm_server_ forward x11 server _port_ to user display
  * Fail if user's display is not set, returning FALSE.
  * If any other x11 redirect was previously made it is unmade
  */
-gboolean gebr_comm_server_forward_x11(struct gebr_comm_server *gebr_comm_server, guint16 port);
+gboolean gebr_comm_server_forward_x11(GebrCommServer *gebr_comm_server, guint16 port);
 
 const gchar *gebr_comm_server_state_to_string(GebrCommServerState state);
 
