@@ -142,7 +142,7 @@ gboolean gebr_quit(gboolean save_config)
 		gebr_config_save(FALSE);
 
 	GList *m = gebr_maestro_controller_get_maestros(gebr.maestro_controller);
-	if (m->data) {
+	if (m && m->data) {
 		GtkTreeModel *model = gebr_maestro_server_get_model(m->data, TRUE, NULL);
 
 		gebr_gui_gtk_tree_model_foreach_hyg(iter, model, 1) {
