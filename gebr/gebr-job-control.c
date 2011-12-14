@@ -417,6 +417,19 @@ jobs_visible_for_servers(GtkTreeModel *model,
 	const gchar *tname = gebr_job_get_server_group(job);
 	GebrMaestroServerGroupType ttype = gebr_maestro_server_group_str_to_enum(type_str);
 
+	if (type == MAESTRO_SERVER_TYPE_DAEMON) {
+		gboolean has_server = FALSE;
+		gint n;
+		gchar **servers = gebr_job_get_servers(job, &n);
+
+		for (int i = 0; i < n; i++)
+			if (g_strcmp0(servers[i], name) == 0)
+				has_server = TRUE;
+
+		g_strfreev(servers);
+		return has_server;
+	}
+
 	return type == ttype && g_strcmp0(tname, name) == 0;
 }
 
