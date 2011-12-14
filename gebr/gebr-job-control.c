@@ -1710,11 +1710,14 @@ gebr_job_control_new(void)
 
 	GtkCellRenderer *cell;
 
-	GtkComboBox *group_cb = GTK_COMBO_BOX(gtk_builder_get_object(jc->priv->builder, "filter-servers-group-cb"));
+	GtkLabel *label = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "label5"));
+	gtk_widget_hide(GTK_WIDGET(label));
+	GtkComboBox *maestro_cb = GTK_COMBO_BOX(gtk_builder_get_object(jc->priv->builder, "filter-servers-group-cb"));
 	cell = gtk_cell_renderer_text_new();
-	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(group_cb), cell, TRUE);
-	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(group_cb), cell, "text", 0);
-	jc->priv->maestro_combo = group_cb;
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(maestro_cb), cell, TRUE);
+	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(maestro_cb), cell, "text", 0);
+	jc->priv->maestro_combo = maestro_cb;
+	gtk_widget_hide(GTK_WIDGET(maestro_cb));
 
 	GtkComboBox *server_cb = GTK_COMBO_BOX(gtk_builder_get_object(jc->priv->builder, "filter-servers-cb"));
 	cell = gtk_cell_renderer_text_new();
@@ -1734,9 +1737,9 @@ gebr_job_control_new(void)
 	g_signal_connect(gebr.maestro_controller, "maestro-list-changed",
 			 G_CALLBACK(on_maestro_list_changed), jc);
 
-	/* by Group of servers */
+	/* by Maestri */
 	jc->priv->maestro_filter = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
-	gtk_combo_box_set_model(group_cb, GTK_TREE_MODEL(jc->priv->maestro_filter));
+	gtk_combo_box_set_model(maestro_cb, GTK_TREE_MODEL(jc->priv->maestro_filter));
 	g_signal_connect(jc->priv->maestro_combo, "changed",
 			 G_CALLBACK(on_maestro_filter_changed), jc);
 
