@@ -1054,11 +1054,22 @@ on_state_change(GebrMaestroServer *maestro,
 
 	GebrCommServer *server = gebr_maestro_server_get_server(maestro);
 	GebrCommServerState state = gebr_comm_server_get_state(server);
-	if (state == SERVER_STATE_DISCONNECTED)
-		gtk_entry_set_icon_from_stock(entry,
-					      GTK_ENTRY_ICON_SECONDARY,
-					      GTK_STOCK_DISCONNECT);
-	else if (state == SERVER_STATE_CONNECT) {
+	if (state == SERVER_STATE_DISCONNECTED) {
+		const gchar *error = gebr_maestro_server_get_error(maestro);
+		if (!error)
+			gtk_entry_set_icon_from_stock(entry,
+			                              GTK_ENTRY_ICON_SECONDARY,
+			                              GTK_STOCK_DISCONNECT);
+		else {
+			gtk_entry_set_icon_from_stock(entry,
+			                              GTK_ENTRY_ICON_SECONDARY,
+			                              GTK_STOCK_DIALOG_WARNING);
+			gtk_entry_set_icon_tooltip_text(entry,
+			                              GTK_ENTRY_ICON_SECONDARY,
+			                              error);
+			gtk_widget_grab_focus(GTK_WIDGET(entry));
+		}
+	} else if (state == SERVER_STATE_CONNECT) {
 		gtk_entry_set_icon_from_stock(entry,
 					      GTK_ENTRY_ICON_SECONDARY,
 					      GTK_STOCK_CONNECT);

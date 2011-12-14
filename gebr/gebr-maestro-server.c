@@ -1058,3 +1058,9 @@ gebr_maestro_server_get_daemon(GebrMaestroServer *server,
 {
 	return get_daemon_from_address(server, address, NULL);
 }
+
+const gchar *
+gebr_maestro_server_get_error(GebrMaestroServer *maestro)
+{
+	return gebr_comm_server_get_last_error(maestro->priv->server);
+}
