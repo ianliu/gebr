@@ -78,6 +78,7 @@ fork_and_exit_main(void)
 			}
 		}
 		printf("%s", buf->str);
+
 		g_string_free(buf, TRUE);
 		exit(EXIT_SUCCESS);
 	}
@@ -99,6 +100,12 @@ fork_and_exit_main(void)
 	(void)dup2(null, STDIN_FILENO);
 	(void)dup2(null, STDOUT_FILENO);
 	(void)dup2(null, STDERR_FILENO);
+
+	/* Gebr opens the file des number 3 when calling
+	 * Maestro's binary. We close it as a workaround
+	 * to the double-connection bug.
+	 */
+	close(3);
 }
 
 static void
