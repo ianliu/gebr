@@ -167,7 +167,7 @@ GebrGeoXmlFlow *gebr_geoxml_flow_new()
 
 	root = gebr_geoxml_document_root_element(document);
 	server = __gebr_geoxml_insert_new_element(root, "server", NULL);
-	__gebr_geoxml_set_attr_value (server, "group-type", "");
+	__gebr_geoxml_set_attr_value (server, "group-type", "group");
 	__gebr_geoxml_set_attr_value (server, "group-name", "");
 
 	io = __gebr_geoxml_insert_new_element(server, "io", NULL);
