@@ -295,6 +295,7 @@ parse_messages(GebrCommServer *comm_server,
 
 			g_debug("SERVER %s RECEIVED MESSAGE OF AC: %s", addr->str, ac->str);
 
+			g_signal_emit(maestro, signals[GROUP_CHANGED], 0);
 			g_signal_emit(maestro, signals[DAEMONS_CHANGED], 0);
 			g_signal_emit(maestro, signals[AC_CHANGE], 0, is_ac, daemon);
 
@@ -531,6 +532,7 @@ parse_messages(GebrCommServer *comm_server,
 			}
 
 			g_signal_emit(maestro, signals[DAEMONS_CHANGED], 0);
+			g_signal_emit(maestro, signals[GROUP_CHANGED], 0);
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}
