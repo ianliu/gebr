@@ -835,6 +835,21 @@ gebr_calculate_detailed_relative_time(GTimeVal *time1, GTimeVal *time2)
 		return g_strdup_printf(_("%ld miliseconds"), ms);
 }
 
+gboolean
+gebr_utf8_is_asc_alnum(const gchar *str)
+{
+	const gchar *name = str;
+	while (name && *name) {
+		gunichar c = g_utf8_get_char(name);
+
+		if (!((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')))
+			return FALSE;
+
+		name = g_utf8_next_char(name);
+	}
+	return TRUE;
+}
+
 gchar *
 gebr_utf8_strstr(const gchar *str,
 		 const gchar *search)

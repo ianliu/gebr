@@ -208,6 +208,15 @@ gchar *gebr_calculate_relative_time (GTimeVal *time1, GTimeVal *time2);
  * than time1.
  */
 gchar *gebr_calculate_detailed_relative_time(GTimeVal *time1, GTimeVal *time2);
+
+/**
+ * gebr_utf8_is_asc_alnum:
+ * @str: The string to check
+ *
+ * Returns: %TRUE if @str is ASC and alpha-numerical.
+ */
+gboolean gebr_utf8_is_asc_alnum(const gchar *str);
+
 /**
  * gebr_utf8_strstr:
  *
