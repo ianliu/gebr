@@ -24,8 +24,20 @@
 #include "gebr-comm-protocol_p.h"
 #include "../marshalers.h"
 
+#define gebr_comm_return_if_not_connected(obj) \
+	G_STMT_START { \
+		if (gebr_comm_socket_get_state(GEBR_COMM_SOCKET((obj)->priv->socket)) \
+		    != GEBR_COMM_SOCKET_STATE_CONNECTED) \
+			return; \
+       	} G_STMT_END
 
-/* GOBJECT STUFF */
+#define gebr_comm_return_val_if_not_connected(obj, val) \
+	G_STMT_START { \
+		if (gebr_comm_socket_get_state(GEBR_COMM_SOCKET((obj)->priv->socket)) \
+		    != GEBR_COMM_SOCKET_STATE_CONNECTED) \
+			return (val); \
+       	} G_STMT_END
+
 #define GEBR_COMM_PROTOCOL_SOCKET_GET_PRIVATE(o) \
 	(G_TYPE_INSTANCE_GET_PRIVATE((o), GEBR_COMM_PROTOCOL_SOCKET_TYPE, GebrCommProtocolSocketPrivate))
 struct _GebrCommProtocolSocketPrivate {
@@ -236,15 +248,20 @@ gboolean gebr_comm_protocol_socket_connect(GebrCommProtocolSocket *self, GebrCom
 {
 	return gebr_comm_stream_socket_connect(self->priv->socket, socket_address, wait);
 }
+
 void gebr_comm_protocol_socket_disconnect(GebrCommProtocolSocket * self)
 {
 	gebr_comm_stream_socket_disconnect(self->priv->socket);
 }
 
 GebrCommHttpMsg *
-gebr_comm_protocol_socket_send_request(GebrCommProtocolSocket * self, GebrCommHttpRequestMethod method,
-				       const gchar *url, GebrCommJsonContent *_content)
+gebr_comm_protocol_socket_send_request(GebrCommProtocolSocket * self,
+				       GebrCommHttpRequestMethod method,
+				       const gchar *url,
+				       GebrCommJsonContent *_content)
 {
+	gebr_comm_return_val_if_not_connected(self, NULL);
+
 	const gchar *content = _content ? _content->data->str : "";
 	GHashTable *headers = g_hash_table_new(g_str_hash, g_str_equal);
 	if (content)
@@ -260,6 +277,8 @@ gebr_comm_protocol_socket_send_request(GebrCommProtocolSocket * self, GebrCommHt
 
 void gebr_comm_protocol_socket_send_response(GebrCommProtocolSocket * self, int status_code, GebrCommJsonContent *_content)
 {
+	gebr_comm_return_if_not_connected(self);
+
 	const gchar *content = _content ? _content->data->str : "";
 	GHashTable *headers = g_hash_table_new(g_str_hash, g_str_equal);
 	if (content)
@@ -276,6 +295,8 @@ void gebr_comm_protocol_socket_oldmsg_send(GebrCommProtocolSocket * self, gboole
 {
 	va_list ap;
 	GString * message;
+
+	gebr_comm_return_if_not_connected(self);
 
 	va_start(ap, n_params);
 	message = gebr_comm_protocol_build_messagev(gebr_comm_message_def, n_params, ap);

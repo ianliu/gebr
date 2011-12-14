@@ -40,6 +40,7 @@ typedef struct _GebrCommStreamSocketClass GebrCommStreamSocketClass;
 struct _GebrCommStreamSocket {
 	GebrCommSocket parent;
 };
+
 struct _GebrCommStreamSocketClass {
 	GebrCommSocketClass parent;
 
