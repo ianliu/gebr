@@ -30,6 +30,7 @@ struct _GebrmDaemonPriv {
 	GebrCommProtocolSocket *client;
 	gchar *ac;
 
+	gchar *display_port;
 	gchar *nfsid;
 };
 
@@ -178,32 +179,18 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 				GString *ncores       = g_list_nth_data (arguments, 7);
 				GString *clock_cpu    = g_list_nth_data (arguments, 8);
 
-				gebrm_daemon_set_nfsid(daemon, nfsid->str);
+				g_string_assign(server->socket->protocol->hostname, hostname->str);
 				gebrm_daemon_set_ncores(daemon, atoi(ncores->str));
 				gebrm_daemon_set_clock_cpu(daemon, atof(clock_cpu->str));
 				server->socket->protocol->logged = TRUE;
-				g_string_assign(server->socket->protocol->hostname, hostname->str);
-
-				/* Try to forwad X11 display
-				 * FIXME: This should be revised because now we have Maestro in the middle!
-				 */
-				if (!gebr_comm_server_is_local(server)) {
-					if (display_port->len) {
-						if (!strcmp(display_port->str, "0"))
-							g_critical("Server '%s' could not add X11 authorization to redirect graphical output.",
-								   server->address->str);
-						else
-							gebr_comm_server_forward_x11(server, atoi(display_port->str));
-					} else 
-						g_critical("Server '%s' could not redirect graphical output.",
-							   server->address->str);
-				}
-
-				gebr_comm_protocol_socket_oldmsg_send(server->socket, FALSE,
-								      gebr_comm_protocol_defs.lst_def, 0);
+				daemon->priv->display_port = g_strdup(display_port->str);
+				gebrm_daemon_set_nfsid(daemon, nfsid->str);
 
 				g_strfreev(accounts);
 				gebr_comm_protocol_socket_oldmsg_split_free(arguments);
+
+				if (gebrm_daemon_get_state(daemon) == SERVER_STATE_DISCONNECTED)
+					return;
 			}
 		}
 		else if (message->hash == gebr_comm_protocol_defs.tsk_def.code_hash) {
@@ -349,6 +336,7 @@ gebrm_daemon_finalize(GObject *object)
 	gebr_comm_server_disconnect(daemon->priv->server);
 	gebr_comm_server_free(daemon->priv->server);
 	g_free(daemon->priv->nfsid);
+	g_free(daemon->priv->display_port);
 	if (daemon->priv->client)
 		g_object_unref(daemon->priv->client);
 
@@ -584,4 +572,26 @@ gdouble
 gebrm_daemon_get_clock(GebrmDaemon *daemon)
 {
 	return daemon->priv->server->clock_cpu;
+}
+
+void
+gebrm_daemon_list_tasks_and_forward_x(GebrmDaemon *daemon)
+{
+	/* Try to forwad X11 display
+	 * FIXME: This should be revised because now we have Maestro in the middle!
+	 */
+	if (!gebr_comm_server_is_local(daemon->priv->server)) {
+		if (daemon->priv->display_port && *daemon->priv->display_port) {
+			if (!strcmp(daemon->priv->display_port, "0"))
+				g_critical("Server '%s' could not add X11 authorization to redirect graphical output.",
+					   gebrm_daemon_get_address(daemon));
+			else
+				gebr_comm_server_forward_x11(daemon->priv->server, atoi(daemon->priv->display_port));
+		} else 
+			g_critical("Server '%s' could not redirect graphical output.",
+				   gebrm_daemon_get_address(daemon));
+	}
+
+	gebr_comm_protocol_socket_oldmsg_send(daemon->priv->server->socket, FALSE,
+					      gebr_comm_protocol_defs.lst_def, 0);
 }

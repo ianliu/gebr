@@ -301,6 +301,8 @@ on_receive_nfsid(GebrmDaemon *daemon,
 		app->priv->nfsid = g_strdup(nfsid);
 	else if (g_strcmp0(app->priv->nfsid, nfsid) != 0)
 		gebrm_daemon_disconnect(daemon);
+	else
+		gebrm_daemon_list_tasks_and_forward_x(daemon);
 }
 
 static GebrmDaemon *
