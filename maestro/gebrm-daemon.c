@@ -173,8 +173,8 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 				GString *hostname     = g_list_nth_data(arguments, 0);
 				GString *display_port = g_list_nth_data(arguments, 1);
 				gchar  **accounts     = g_strsplit(((GString *)g_list_nth_data(arguments, 3))->str, ",", 0);
-				GString *model_name   = g_list_nth_data (arguments, 4);
-				GString *total_memory = g_list_nth_data (arguments, 5);
+				//GString *model_name   = g_list_nth_data (arguments, 4);
+				//GString *total_memory = g_list_nth_data (arguments, 5);
 				GString *nfsid        = g_list_nth_data (arguments, 6);
 				GString *ncores       = g_list_nth_data (arguments, 7);
 				GString *clock_cpu    = g_list_nth_data (arguments, 8);
@@ -308,6 +308,33 @@ gebrm_daemon_get_property(GObject    *object,
 }
 
 static void
+on_password_request(GebrCommServer *server,
+		    const gchar *title,
+		    const gchar *question,
+		    GebrmDaemon *daemon)
+{
+	if (daemon->priv->client)
+		gebr_comm_protocol_socket_oldmsg_send(daemon->priv->client, FALSE,
+						      gebr_comm_protocol_defs.pss_def, 1,
+						      server->address->str);
+}
+
+static void
+on_question_request(GebrCommServer *server,
+		    const gchar *title,
+		    const gchar *question,
+		    GebrmDaemon *daemon)
+{
+	g_debug("---------------------------- on question: %s", title);
+	if (daemon->priv->client) {
+		g_debug("============================ on question, iffff");
+		gebr_comm_protocol_socket_oldmsg_send(daemon->priv->client, FALSE,
+						      gebr_comm_protocol_defs.qst_def, 3,
+						      server->address->str, title, question);
+	}
+}
+
+static void
 gebrm_daemon_set_property(GObject      *object,
 			  guint         prop_id,
 			  const GValue *value,
@@ -320,6 +347,11 @@ gebrm_daemon_set_property(GObject      *object,
 	case PROP_ADDRESS:
 		daemon->priv->server = gebr_comm_server_new(g_value_get_string(value),
 							    &daemon_ops);
+		g_signal_connect(daemon->priv->server, "password-request",
+				 G_CALLBACK(on_password_request), daemon);
+		g_signal_connect(daemon->priv->server, "question-request",
+				 G_CALLBACK(on_question_request), daemon);
+		gebr_comm_server_set_interactive(daemon->priv->server, TRUE);
 		daemon->priv->server->user_data = daemon;
 		break;
 	default:
@@ -515,11 +547,11 @@ gebrm_daemon_connect(GebrmDaemon *daemon,
 		     const gchar *pass,
 		     GebrCommProtocolSocket *client)
 {
-	if (pass && *pass) {
-		g_debug("Password is %s", pass);
+	if (pass && *pass)
 		gebr_comm_server_set_password(daemon->priv->server, pass);
-		g_debug("-----------------");
-	}
+
+	if (daemon->priv->client)
+		g_object_unref(daemon->priv->client);
 	daemon->priv->client = g_object_ref(client);
 	gebr_comm_server_connect(daemon->priv->server, FALSE);
 }
@@ -594,4 +626,12 @@ gebrm_daemon_list_tasks_and_forward_x(GebrmDaemon *daemon)
 
 	gebr_comm_protocol_socket_oldmsg_send(daemon->priv->server->socket, FALSE,
 					      gebr_comm_protocol_defs.lst_def, 0);
+}
+
+void
+gebrm_daeamon_answer_question(GebrmDaemon *daemon,
+			      const gchar *resp)
+{
+	gboolean response = g_strcmp0(resp, "true") == 0;
+	gebr_comm_server_answer_question(daemon->priv->server, response);
 }

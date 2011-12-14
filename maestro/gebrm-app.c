@@ -488,6 +488,17 @@ on_client_request(GebrCommProtocolSocket *socket,
 			gebrm_daemon_connect(d, pass, socket);
 			gebrm_config_save_server(d);
 		}
+		if (g_strcmp0(prefix, "/ssh-answer") == 0) {
+			GebrmDaemon *daemon = NULL;
+			const gchar *addr = gebr_comm_uri_get_param(uri, "address");
+			const gchar *resp = gebr_comm_uri_get_param(uri, "response");
+
+			for (GList *i = app->priv->daemons; !daemon && i; i = i->next)
+				if (g_strcmp0(addr, gebrm_daemon_get_address(i->data)) == 0)
+					daemon = i->data;
+			if (daemon)
+				gebrm_daeamon_answer_question(daemon, resp);
+		}
 		else if (g_strcmp0(prefix, "/disconnect") == 0) {
 			const gchar *addr = gebr_comm_uri_get_param(uri, "address");
 			for (GList *i = app->priv->daemons; i; i = i->next) {
@@ -1027,7 +1038,7 @@ on_new_connection(GebrCommListenSocket *listener,
 
 			if (gebrm_daemon_get_state(i->data) == SERVER_STATE_DISCONNECTED &&
 			    g_strcmp0(gebrm_daemon_get_autoconnect(i->data), "on") == 0)
-				gebrm_daemon_connect(i->data, NULL, NULL);
+				gebrm_daemon_connect(i->data, NULL, socket);
 		}
 
 		g_signal_connect(socket, "disconnected",

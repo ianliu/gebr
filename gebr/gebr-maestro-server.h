@@ -47,6 +47,11 @@ struct _GebrMaestroServerClass {
 
 	void (*group_changed) (GebrMaestroServer *maestro);
 
+	gboolean (*question_request) (GebrMaestroServer *maestro,
+				      const gchar       *address,
+				      const gchar       *title,
+				      const gchar       *question);
+
 	gchar * (*password_request) (GebrMaestroServer *maestro,
 				     const gchar       *address);
 

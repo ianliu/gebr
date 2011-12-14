@@ -41,6 +41,7 @@ struct _GebrMaestroServerPriv {
 enum {
 	JOB_DEFINE,
 	GROUP_CHANGED,
+	QUESTION_REQUEST,
 	PASSWORD_REQUEST,
 	DAEMONS_CHANGED,
 	STATE_CHANGE,
@@ -467,6 +468,36 @@ parse_messages(GebrCommServer *comm_server,
 			g_strfreev(tagsv);
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}
+		else if (message->hash == gebr_comm_protocol_defs.qst_def.code_hash) {
+			GList *arguments, *i;
+
+			if ((i = arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 3)) == NULL)
+				goto err;
+
+			GString *addr = i->data; i = i->next;
+			GString *title = i->data; i = i->next;
+			GString *question = i->data; i = i->next;
+			gboolean *response;
+
+			g_debug("Question request: \"%s\" =======>%s<=======", title->str, question->str);
+			g_signal_emit(maestro, signals[QUESTION_REQUEST], 0,
+				      addr->str, title->str, question->str, &response);
+
+			const gchar *resp = response ? "true" : "false";
+
+			GebrCommUri *uri = gebr_comm_uri_new();
+			gebr_comm_uri_set_prefix(uri, "/ssh-answer");
+			gebr_comm_uri_add_param(uri, "address", addr->str);
+			gebr_comm_uri_add_param(uri, "response", resp);
+			gchar *url = gebr_comm_uri_to_string(uri);
+			gebr_comm_uri_free(uri);
+
+			gebr_comm_protocol_socket_send_request(comm_server->socket,
+							       GEBR_COMM_HTTP_METHOD_PUT, url, NULL);
+			g_free(url);
+
+			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
+		}
 		else if (message->hash == gebr_comm_protocol_defs.pss_def.code_hash) {
 			GList *arguments;
 
@@ -639,6 +670,16 @@ gebr_maestro_server_class_init(GebrMaestroServerClass *klass)
 			     NULL, NULL,
 			     g_cclosure_marshal_VOID__VOID,
 			     G_TYPE_NONE, 0);
+
+	signals[QUESTION_REQUEST] =
+		g_signal_new("question-request",
+			     G_OBJECT_CLASS_TYPE(object_class),
+			     G_SIGNAL_RUN_LAST,
+			     G_STRUCT_OFFSET(GebrMaestroServerClass, question_request),
+			     NULL, NULL,
+			     gebr_cclosure_marshal_BOOL__STRING_STRING_STRING,
+			     G_TYPE_BOOLEAN, 3,
+			     G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
 
 	signals[PASSWORD_REQUEST] =
 		g_signal_new("password-request",

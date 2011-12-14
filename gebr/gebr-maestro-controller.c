@@ -972,6 +972,28 @@ on_job_define(GebrMaestroServer *maestro,
 	g_signal_emit(self, signals[JOB_DEFINE], 0, maestro, job);
 }
 
+static gboolean
+on_question_request(GebrMaestroServer *maestro,
+		    const gchar *address,
+		    const gchar *title,
+		    const gchar *question)
+{
+	gdk_threads_enter();
+	GtkWidget *dialog = gtk_message_dialog_new_with_markup(NULL,
+							       GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+							       GTK_MESSAGE_QUESTION,
+							       GTK_BUTTONS_YES_NO,
+							       _("<span size='large'>%s</span>\n%s"),
+							       title, question);
+
+	gint response = gtk_dialog_run(GTK_DIALOG(dialog));
+	g_debug("USER ANSWERED %d RESPONSE!!!!!!", response);
+	gtk_widget_destroy(dialog);
+	gdk_threads_leave();
+
+	return response == GTK_RESPONSE_YES;
+}
+
 static const gchar *
 on_password_request(GebrMaestroServer *maestro,
 		    const gchar *address)
@@ -1078,6 +1100,8 @@ gebr_maestro_controller_connect(GebrMaestroController *self,
 				 G_CALLBACK(on_job_define), self);
 		g_signal_connect(maestro, "group-changed",
 				 G_CALLBACK(on_server_group_changed), self);
+		g_signal_connect(maestro, "question-request",
+				 G_CALLBACK(on_question_request), self);
 		g_signal_connect(maestro, "password-request",
 				 G_CALLBACK(on_password_request), self);
 		g_signal_connect(maestro, "daemons-changed",
