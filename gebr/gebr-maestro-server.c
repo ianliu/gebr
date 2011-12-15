@@ -151,6 +151,9 @@ state_changed(GebrCommServer *comm_server,
 
 	GebrCommServerState state = gebr_comm_server_get_state(comm_server);
 
+	if (state == SERVER_STATE_DISCONNECTED)
+		gtk_list_store_clear(maestro->priv->groups_store);
+
 	if (state == SERVER_STATE_CONNECT
 	    || state == SERVER_STATE_DISCONNECTED)
 		g_signal_emit(maestro, signals[GROUP_CHANGED], 0);
