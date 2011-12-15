@@ -179,7 +179,7 @@ ssh_question(GebrCommServer *server,
 	     const gchar *question,
 	     gpointer user_data)
 {
-	gboolean *response;
+	gboolean response;
 	GebrMaestroServer *maestro = user_data;
 
 	g_signal_emit(maestro, signals[QUESTION_REQUEST], 0,
