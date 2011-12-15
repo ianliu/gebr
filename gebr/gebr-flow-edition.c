@@ -792,7 +792,7 @@ void flow_edition_change_iter_status(GebrGeoXmlProgramStatus status, GtkTreeIter
 	if (is_control) {
 		GebrGeoXmlSequence *parameter;
 
-		if(status == GEBR_GEOXML_PROGRAM_STATUS_DISABLED) {
+		if (status == GEBR_GEOXML_PROGRAM_STATUS_DISABLED) {
 			parameter = gebr_geoxml_document_get_dict_parameter(GEBR_GEOXML_DOCUMENT(gebr.flow));
 			gebr_validator_remove(gebr.validator, GEBR_GEOXML_PARAMETER(parameter), NULL, NULL);
 		} else {
