@@ -220,6 +220,12 @@ maestro_combo_show_address(GtkCellLayout *cell_layout,
 		return;
 
 	g_object_set(cell, "text", gebr_maestro_server_get_display_address(maestro), NULL);
+
+	GebrCommServer *server = gebr_maestro_server_get_server(maestro);
+	if (!server || gebr_comm_server_get_state(server) != SERVER_STATE_CONNECT)
+		g_object_set(cell, "sensitive", FALSE, NULL);
+	else
+		g_object_set(cell, "sensitive", TRUE, NULL);
 }
 
 void document_properties_setup_ui (GebrGeoXmlDocument * document,
