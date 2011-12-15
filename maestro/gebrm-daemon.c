@@ -635,3 +635,9 @@ gebrm_daeamon_answer_question(GebrmDaemon *daemon,
 	gboolean response = g_strcmp0(resp, "true") == 0;
 	gebr_comm_server_answer_question(daemon->priv->server, response);
 }
+
+const gchar *
+gebrm_daemon_get_error(GebrmDaemon *daemon)
+{
+	return gebr_comm_server_get_last_error(daemon->priv->server);
+}

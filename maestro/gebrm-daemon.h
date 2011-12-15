@@ -129,6 +129,7 @@ void gebrm_daemon_list_tasks_and_forward_x(GebrmDaemon *daemon);
 void gebrm_daeamon_answer_question(GebrmDaemon *daemon,
 				   const gchar *resp);
 
+const gchar *gebrm_daemon_get_error(GebrmDaemon *daemon);
 G_END_DECLS
 
 #endif /* __GEBRM_DAEMON_H__ */

@@ -737,6 +737,10 @@ daemon_server_status_func(GtkTreeViewColumn *tree_column,
 	switch (state) {
 	case SERVER_STATE_UNKNOWN:
 	case SERVER_STATE_DISCONNECTED:
+		 stock_id = GTK_STOCK_DIALOG_WARNING;
+		 //g_object_set(cell, "tooltip", gebr_daemon_server_get_error(daemon), NULL);
+		 g_debug("on %s, error '%s'", __func__, gebr_daemon_server_get_error(daemon));
+		 break;
 	case SERVER_STATE_RUN:
 	case SERVER_STATE_OPEN_TUNNEL:
 		stock_id = GTK_STOCK_DISCONNECT;

@@ -103,6 +103,11 @@ gboolean gebr_daemon_server_get_ac(GebrDaemonServer *daemon);
 
 void gebr_daemon_server_set_ac(GebrDaemonServer *daemon,
                                gboolean ac);
+
+void gebr_daemon_server_set_error(GebrDaemonServer *daemon, 
+		const gchar *error);
+
+const gchar *gebr_daemon_server_get_error(GebrDaemonServer *daemon);
 G_END_DECLS
 
 #endif /* __GEBR_SERVER_H__ */

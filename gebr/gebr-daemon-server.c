@@ -27,6 +27,7 @@ struct _GebrDaemonServerPriv {
 	GebrConnectable *connectable;
 	gchar *address;
 	gboolean ac;
+	gchar *error;
 	GebrCommServerState state;
 	GList *tags;
 };
@@ -264,4 +265,13 @@ void
 gebr_daemon_server_set_ac(GebrDaemonServer *daemon, gboolean ac)
 {
 	daemon->priv->ac = ac;
+}
+void
+gebr_daemon_server_set_error(GebrDaemonServer *daemon, const gchar *error)
+{
+	daemon->priv->error = g_strdup(error);
+}
+const gchar *gebr_daemon_server_get_error(GebrDaemonServer *daemon)
+{
+	return daemon->priv->error;
 }
