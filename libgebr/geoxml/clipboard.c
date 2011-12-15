@@ -51,6 +51,31 @@ void gebr_geoxml_clipboard_copy(GebrGeoXmlObject * object)
 	gdome_el_appendChild(document_element, imported_node, &exception);
 }
 
+gboolean
+gebr_geoxml_clipboard_has_forloop(void)
+{
+	gboolean has_forloop = FALSE;
+	GdomeElement *docel = gdome_doc_documentElement(clipboard_document, &exception);
+	GdomeElement *el = __gebr_geoxml_get_first_element(docel, "*");
+
+	for (; el; el = __gebr_geoxml_next_element(el)) {
+		GdomeDOMString *str = gdome_el_tagName(el, &exception);
+
+		if (g_strcmp0(str->str, "program") != 0)
+			continue;
+
+		GebrGeoXmlProgramControl cont =
+			gebr_geoxml_program_get_control(GEBR_GEOXML_PROGRAM(el));
+		if (cont == GEBR_GEOXML_PROGRAM_CONTROL_FOR) {
+			has_forloop = TRUE;
+			goto out;
+		}
+	}
+
+out:
+	return has_forloop;
+}
+
 GebrGeoXmlObject *
 gebr_geoxml_clipboard_paste(GebrGeoXmlObject *object)
 {
@@ -85,7 +110,6 @@ gebr_geoxml_clipboard_paste(GebrGeoXmlObject *object)
 			    !strcmp(gdome_el_tagName(container_element, &exception)->str, child_parent[i][1])) {
 				GdomeNode *imported;
 				GdomeDocument *document;
-				gboolean insert_iter = FALSE;
 
 				document = gdome_el_ownerDocument(container_element, &exception);
 
@@ -93,25 +117,18 @@ gebr_geoxml_clipboard_paste(GebrGeoXmlObject *object)
 					flow = GEBR_GEOXML_FLOW(document);
 					prog = GEBR_GEOXML_PROGRAM(paste_element);
 					cont = gebr_geoxml_program_get_control(prog);
-					gboolean has_control = gebr_geoxml_flow_has_control_program(flow);
 
-					if (cont != GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY) {
-						if (has_control)
+					if (gebr_geoxml_flow_has_control_program(flow)
+					    && cont != GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY)
 							break;
-						insert_iter = TRUE;
-					}
 				}
 
 				imported = gdome_doc_importNode(document, (GdomeNode*)paste_element, TRUE, &exception);
 				if (!strlen(child_parent[i][2]))
 					gdome_el_appendChild(container_element, imported, &exception);
 				else
-					gdome_el_appendChild(__gebr_geoxml_get_first_element
-							     (container_element, child_parent[i][2]), imported,
+					gdome_el_appendChild(__gebr_geoxml_get_first_element(container_element, child_parent[i][2]), imported,
 							     &exception);
-
-				if (insert_iter)
-					gebr_geoxml_flow_insert_iter_dict(flow);
 
 				if (first_paste == NULL)
 					first_paste = GEBR_GEOXML_OBJECT(imported);
