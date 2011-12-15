@@ -160,22 +160,33 @@ state_changed(GebrCommServer *comm_server,
 
 GString *
 ssh_login(GebrCommServer *server,
-	  const gchar *title, const gchar *message,
+	  const gchar *title,
+	  const gchar *message,
 	  gpointer user_data)
 {
-	g_debug("[MAESTRO] ssh login: %s", message);
+	gchar *password;
+	GebrMaestroServer *maestro = user_data;
 
-	return g_string_new("");
+	g_signal_emit(maestro, signals[PASSWORD_REQUEST], 0,
+		      gebr_maestro_server_get_display_address(maestro), &password);
+
+	return g_string_new(password);
 }
 
 gboolean
 ssh_question(GebrCommServer *server,
 	     const gchar *title,
-	     const gchar *message,
+	     const gchar *question,
 	     gpointer user_data)
 {
-	g_debug("[MAESTRO] ssh question: %s", message);
-	return TRUE;
+	gboolean *response;
+	GebrMaestroServer *maestro = user_data;
+
+	g_signal_emit(maestro, signals[QUESTION_REQUEST], 0,
+		      gebr_maestro_server_get_display_address(maestro),
+		      title, question, &response);
+
+	return response;
 }
 
 void
@@ -480,7 +491,6 @@ parse_messages(GebrCommServer *comm_server,
 			GString *question = i->data; i = i->next;
 			gboolean *response;
 
-			g_debug("Question request: \"%s\" =======>%s<=======", title->str, question->str);
 			g_signal_emit(maestro, signals[QUESTION_REQUEST], 0,
 				      addr->str, title->str, question->str, &response);
 
