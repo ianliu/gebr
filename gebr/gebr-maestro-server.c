@@ -787,8 +787,8 @@ gebr_maestro_server_connectable_connect(GebrConnectable *connectable,
 }
 
 static void
-gebr_maestro_server_disconnect(GebrConnectable *connectable,
-			       const gchar *address)
+gebr_maestro_server_connectable_disconnect(GebrConnectable *connectable,
+                                           const gchar *address)
 {
 	GebrCommUri *uri = gebr_comm_uri_new();
 	gebr_comm_uri_set_prefix(uri, "/disconnect");
@@ -823,7 +823,7 @@ static void
 gebr_maestro_server_connectable_init(GebrConnectableIface *iface)
 {
 	iface->connect = gebr_maestro_server_connectable_connect;
-	iface->disconnect = gebr_maestro_server_disconnect;
+	iface->disconnect = gebr_maestro_server_connectable_disconnect;
 	iface->remove = gebr_maestro_server_remove;
 }
 /* }}} */
