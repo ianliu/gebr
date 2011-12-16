@@ -178,7 +178,7 @@ static gboolean __gebr_comm_socket_write(GIOChannel * source, GIOCondition condi
 		/* TODO: */
 		goto out;
 	}
-	if (socket->state != GEBR_COMM_SOCKET_STATE_CONNECTED && !gebr_comm_socket_bytes_available(socket)) {
+	if (socket->state != GEBR_COMM_SOCKET_STATE_CONNECTED) {
 		GebrCommSocketClass *klass;
 
 		klass = GEBR_COMM_SOCKET_GET_CLASS(socket);
