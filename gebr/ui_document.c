@@ -219,7 +219,7 @@ maestro_combo_show_address(GtkCellLayout *cell_layout,
 	if (!maestro)
 		return;
 
-	g_object_set(cell, "text", gebr_maestro_server_get_display_address(maestro), NULL);
+	g_object_set(cell, "text", gebr_maestro_server_get_address(maestro), NULL);
 
 	GebrCommServer *server = gebr_maestro_server_get_server(maestro);
 	if (!server || gebr_comm_server_get_state(server) != SERVER_STATE_CONNECT)
