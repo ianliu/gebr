@@ -308,7 +308,7 @@ void project_line_info_update(void)
 
 	/* Line's server group */
 	if (!is_project) {
-		markup = g_markup_printf_escaped("<b>%s</b>", _("Server maestro:"));
+		markup = g_markup_printf_escaped("<b>%s</b>", _("Maestro:"));
 		gtk_label_set_markup(GTK_LABEL(gebr.ui_project_line->info.group_label), markup);
 		g_free(markup);
 
