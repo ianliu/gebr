@@ -68,7 +68,7 @@ static void
 insert_new_entry(GebrMaestroController *mc)
 {
 	GtkTreeIter iter;
-	gtk_list_store_append(mc->priv->model, &iter);
+	gtk_list_store_prepend(mc->priv->model, &iter);
 	gtk_list_store_set(mc->priv->model, &iter,
 	                   MAESTRO_CONTROLLER_DAEMON, NULL,
 	                   MAESTRO_CONTROLLER_ADDR, _("New"),
@@ -1052,6 +1052,8 @@ on_ac_change(GebrMaestroServer *maestro,
 	gebr_gui_gtk_tree_model_foreach(iter, model) {
 		gtk_tree_model_get(model, &iter,
 		                   MAESTRO_CONTROLLER_DAEMON, &d, -1);
+		if (!d)
+			continue;
 		if (g_strcmp0(addr, gebr_daemon_server_get_address(d)) == 0) {
 			has_daemon = TRUE;
 			break;
