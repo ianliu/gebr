@@ -58,7 +58,7 @@ gebr_ui_flow_run(void)
 	gebr_comm_uri_add_param(uri, "speed", speed_str);
 	gebr_comm_uri_add_param(uri, "nice", nice);
 	gebr_comm_uri_add_param(uri, "name", name);
-	gebr_comm_uri_add_param(uri, "type", group_type);
+	gebr_comm_uri_add_param(uri, "group_type", group_type);
 	gebr_comm_uri_add_param(uri, "host", hostname);
 	gebr_comm_uri_add_param(uri, "temp_id", gebr_job_get_id(job));
 	gchar *url = gebr_comm_uri_to_string(uri);
