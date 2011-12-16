@@ -192,6 +192,19 @@ flow_edition_setup_ui(void)
 					   on_server_disconnected_set_row_insensitive, NULL, NULL);
 
 	frame = gtk_frame_new(NULL);
+	vbox = gtk_vbox_new(FALSE, 5);
+	gtk_container_add(GTK_CONTAINER(frame), vbox);
+	label = gtk_label_new_with_mnemonic(_("Run"));
+	alignment = gtk_alignment_new(0.5, 0.5, 1, 1);
+	gtk_alignment_set_padding(GTK_ALIGNMENT(alignment), 0, 4, 5, 5);
+	gtk_frame_set_label_widget(GTK_FRAME(frame), label);
+	gtk_container_add(GTK_CONTAINER(vbox), alignment);
+	gtk_container_add(GTK_CONTAINER(vbox), fe->priv->queue_combobox);
+	gtk_container_add(GTK_CONTAINER(vbox), fe->priv->server_combobox);
+	gtk_container_add(GTK_CONTAINER(fe->queue_bin), fe->priv->queue_combobox);
+	gtk_box_pack_start(GTK_BOX(left_vbox), frame, FALSE, TRUE, 0);
+
+	/*
 	alignment = gtk_alignment_new(0.5, 0.5, 1, 1);
 	label = gtk_label_new_with_mnemonic(_("Server group"));
 	gtk_alignment_set_padding(GTK_ALIGNMENT(alignment), 0, 4, 5, 5);
@@ -209,6 +222,7 @@ flow_edition_setup_ui(void)
 	gtk_frame_set_label_widget(GTK_FRAME(frame), label);
 	gtk_container_add(GTK_CONTAINER(frame), alignment);
 	gtk_box_pack_start(GTK_BOX(left_vbox), frame, FALSE, TRUE, 0);
+	*/
 
 	frame = gtk_frame_new(_("Flow sequence"));
 	gtk_box_pack_start(GTK_BOX(left_vbox), frame, TRUE, TRUE, 0);
