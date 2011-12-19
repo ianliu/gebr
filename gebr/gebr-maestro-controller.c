@@ -708,28 +708,21 @@ daemon_server_address_func(GtkTreeViewColumn *tree_column,
 	gtk_tree_model_get(model, iter, MAESTRO_CONTROLLER_ADDR, &addr, -1);
 	g_object_set(cell, "text", addr, NULL);
 }
-
-static void
-daemon_server_status_func(GtkTreeViewColumn *tree_column,
-			  GtkCellRenderer *cell,
-			  GtkTreeModel *model,
-			  GtkTreeIter *iter,
-			  gpointer data)
+static gboolean
+daemon_tooltip_callback(GtkTreeView * tree_view, GtkTooltip * tooltip,
+                        GtkTreeIter * iter, GtkTreeViewColumn * column, GebrMaestroController *self)
 {
+
 	gboolean editable;
+	GtkTreeModel *model = GTK_TREE_MODEL(self->priv->model);
 	GebrDaemonServer *daemon;
 	gtk_tree_model_get(model, iter,
 	                   MAESTRO_CONTROLLER_DAEMON, &daemon,
 	                   MAESTRO_CONTROLLER_EDITABLE, &editable,
 	                   -1);
 
-	if(editable) {
-		g_object_set(cell, "stock-id", NULL, NULL);
-		return;
-	}
-
 	if (!daemon)
-		return;
+		return FALSE;
 
 	GebrCommServerState state = gebr_daemon_server_get_state(daemon);
 	const gchar *stock_id;
@@ -738,20 +731,39 @@ daemon_server_status_func(GtkTreeViewColumn *tree_column,
 	case SERVER_STATE_UNKNOWN:
 	case SERVER_STATE_DISCONNECTED:
 		 stock_id = GTK_STOCK_DIALOG_WARNING;
-		 //g_object_set(cell, "tooltip", gebr_daemon_server_get_error(daemon), NULL);
+		gtk_tooltip_set_text(tooltip, g_strdup(gebr_daemon_server_get_error(daemon)));
 		 g_debug("on %s, error '%s'", __func__, gebr_daemon_server_get_error(daemon));
 		 break;
 	case SERVER_STATE_RUN:
 	case SERVER_STATE_OPEN_TUNNEL:
 		stock_id = GTK_STOCK_DISCONNECT;
+		gtk_tooltip_set_text(tooltip, _("Disconnected"));
 		break;
 	case SERVER_STATE_CONNECT:
 		stock_id = GTK_STOCK_CONNECT;
+		gtk_tooltip_set_text(tooltip, _("Connected"));
 		break;
 	}
 
 	g_object_set(cell, "stock-id", stock_id, NULL);
+	return TRUE;
+
+
 }
+
+static void
+daemon_server_status_func(GtkTreeViewColumn *tree_column,
+			  GtkCellRenderer *cell,
+			  GtkTreeModel *model,
+			  GtkTreeIter *iter,
+			  GebrMaestroController *mc)
+{
+	GtkTreeView *view = GTK_TREE_VIEW(gtk_builder_get_object(mc->priv->builder, "treeview_servers"));
+
+	gebr_gui_gtk_tree_view_set_tooltip_callback(GTK_TREE_VIEW(view),
+						    (GebrGuiGtkTreeViewTooltipCallback) daemon_tooltip_callback, mc);
+}
+
 
 static void
 daemon_server_ac_func(GtkTreeViewColumn *tree_column,
