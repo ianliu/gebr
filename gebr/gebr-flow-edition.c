@@ -1753,6 +1753,12 @@ gebr_flow_edition_update_server(GebrFlowEdition *fe,
 	gtk_widget_set_sensitive(fe->priv->queue_combobox, sensitive);
 	gtk_widget_set_sensitive(fe->priv->server_combobox, sensitive);
 
+	GtkAction *action = gtk_action_group_get_action(gebr.action_group_flow, "flow_execute");
+	gtk_action_set_sensitive(action, sensitive);
+
+	action = gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_execute");
+	gtk_action_set_sensitive(action, sensitive);
+
 	if (maestro) {
 		GtkTreeModel *model = gebr_maestro_server_get_groups_model(maestro);
 		gtk_combo_box_set_model(GTK_COMBO_BOX(fe->priv->server_combobox), model);
