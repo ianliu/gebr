@@ -686,7 +686,7 @@ gebr_maestro_server_class_init(GebrMaestroServerClass *klass)
 	signals[GROUP_CHANGED] =
 		g_signal_new("group-changed",
 			     G_OBJECT_CLASS_TYPE(object_class),
-			     G_SIGNAL_RUN_LAST,
+			     G_SIGNAL_RUN_FIRST,
 			     G_STRUCT_OFFSET(GebrMaestroServerClass, group_changed),
 			     NULL, NULL,
 			     g_cclosure_marshal_VOID__VOID,
