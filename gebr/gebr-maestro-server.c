@@ -862,6 +862,12 @@ gebr_maestro_server_add_daemon(GebrMaestroServer *maestro,
 	gtk_list_store_set(maestro->priv->store, &iter, 0, daemon, -1);
 }
 
+GebrCommServerState
+gebr_maestro_server_get_state(GebrMaestroServer *maestro)
+{
+	return maestro->priv->server->state;
+}
+
 GebrCommServer *
 gebr_maestro_server_get_server(GebrMaestroServer *maestro)
 {

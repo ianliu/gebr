@@ -139,6 +139,8 @@ GebrDaemonServer *gebr_maestro_server_get_daemon(GebrMaestroServer *server,
 
 const gchar *gebr_maestro_server_get_error(GebrMaestroServer *maestro);
 
+GebrCommServerState gebr_maestro_server_get_state(GebrMaestroServer *maestro);
+
 G_END_DECLS
 
 #endif /* __GEBR_MAESTRO_H__ */
