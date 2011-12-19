@@ -129,6 +129,25 @@ void gebrm_daemon_list_tasks_and_forward_x(GebrmDaemon *daemon);
 void gebrm_daeamon_answer_question(GebrmDaemon *daemon,
 				   const gchar *resp);
 
+/**
+ * gebrm_daemon_continue_stuck_connection:
+ *
+ * If connection on @daemon was already asked with gebrm_daemon_connect()
+ * without a client (ie client parameter was %NULL) and @daemon is still not
+ * connected, it is probably requesting user interaction; asking for password,
+ * for instance. As the client did not exist, @daemon will be stuck there.
+ *
+ * This method is needed in this situation so @daemon can continue the
+ * connection process with the interested client, represented by @socket.
+ *
+ * Note that @daemon must not have a client already, set by
+ * gebrm_daemon_connect() method. Also, @daemon must be in the
+ * @SERVER_STATE_RUN state. All these requirements are achieved by calling
+ * gebrm_daemon_connect() with the parameter client equal to %NULL.
+ */
+void gebrm_daemon_continue_stuck_connection(GebrmDaemon *daemon,
+					    GebrCommProtocolSocket *socket);
+
 G_END_DECLS
 
 #endif /* __GEBRM_DAEMON_H__ */

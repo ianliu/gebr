@@ -638,3 +638,14 @@ gebrm_daeamon_answer_question(GebrmDaemon *daemon,
 	gboolean response = g_strcmp0(resp, "true") == 0;
 	gebr_comm_server_answer_question(daemon->priv->server, response);
 }
+
+void
+gebrm_daemon_continue_stuck_connection(GebrmDaemon *daemon,
+				       GebrCommProtocolSocket *socket)
+{
+	g_return_if_fail(daemon->priv->client == NULL);
+	g_return_if_fail(gebrm_daemon_get_state(daemon) == SERVER_STATE_RUN);
+
+	daemon->priv->client = g_object_ref(socket);
+	gebr_comm_server_emit_interactive_state_signals(daemon->priv->server);
+}
