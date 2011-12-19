@@ -1445,6 +1445,14 @@ on_server_disconnected_set_row_insensitive(GtkCellLayout   *cell_layout,
 	maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller,
 							       gebr.line);
 
+	if (!maestro) {
+		if (GTK_IS_CELL_RENDERER_TEXT(cell))
+			g_object_set(cell, "text", "", NULL);
+		else
+			g_object_set(cell, "stock-id", NULL, NULL);
+		return;
+	}
+
 	if (type == MAESTRO_SERVER_TYPE_DAEMON) {
 		daemon = gebr_maestro_server_get_daemon(maestro, name);
 		if (!daemon)
