@@ -1121,8 +1121,10 @@ gebr_maestro_controller_connect(GebrMaestroController *self,
 {
 	GebrMaestroServer *maestro;
 
-	if (self->priv->maestro)
-		g_debug("FIXME: Disconnect the old maestro here %s:%d", __FILE__, __LINE__);
+	if (self->priv->maestro) {
+		gebr_maestro_server_disconnect(self->priv->maestro);
+		g_object_unref(self->priv->maestro);
+	}
 
 	maestro = gebr_maestro_server_new(address);
 	self->priv->maestro = maestro;
