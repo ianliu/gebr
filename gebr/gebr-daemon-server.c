@@ -29,6 +29,7 @@ struct _GebrDaemonServerPriv {
 	gboolean ac;
 	GebrCommServerState state;
 	GList *tags;
+	gchar *maestro_addr;
 };
 
 enum {
@@ -37,6 +38,7 @@ enum {
 	PROP_AC,
 	PROP_CONNECTABLE,
 	PROP_STATE,
+	PROP_MAESTRO_ADDR,
 };
 
 G_DEFINE_TYPE(GebrDaemonServer, gebr_daemon_server, G_TYPE_OBJECT);
@@ -62,6 +64,9 @@ gebr_daemon_server_get(GObject    *object,
 		break;
 	case PROP_STATE:
 		g_value_set_int(value, gebr_daemon_server_get_state(daemon));
+		break;
+	case PROP_MAESTRO_ADDR:
+		g_value_set_string(value, daemon->priv->maestro_addr);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -90,6 +95,11 @@ gebr_daemon_server_set(GObject      *object,
 	case PROP_STATE:
 		gebr_daemon_server_set_state(daemon, g_value_get_int(value));
 		break;
+	case PROP_MAESTRO_ADDR:
+		daemon->priv->maestro_addr= g_value_dup_string(value);
+		if (!daemon->priv->maestro_addr)
+			daemon->priv->maestro_addr = g_strdup("");
+		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 		break;
@@ -105,6 +115,7 @@ gebr_daemon_server_finalize(GObject *object)
 	g_object_unref(daemon->priv->connectable);
 	g_list_foreach(daemon->priv->tags, (GFunc)g_free, NULL);
 	g_list_free(daemon->priv->tags);
+	g_free(daemon->priv->maestro_addr);
 
 	G_OBJECT_CLASS(gebr_daemon_server_parent_class)->finalize(object);
 }
@@ -142,6 +153,14 @@ gebr_daemon_server_class_init(GebrDaemonServerClass *klass)
 							 SERVER_STATE_UNKNOWN,
 							 G_PARAM_READWRITE));
 
+	g_object_class_install_property(object_class,
+					PROP_MAESTRO_ADDR,
+					g_param_spec_string("maestro_addr",
+							    "Maestro_addr",
+							    "Maestro address",
+							    NULL,
+							    G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+
 	g_type_class_add_private(klass, sizeof(GebrDaemonServerPriv));
 }
 
@@ -152,18 +171,21 @@ gebr_daemon_server_init(GebrDaemonServer *daemon)
 						   GEBR_TYPE_DAEMON_SERVER,
 						   GebrDaemonServerPriv);
 	daemon->priv->tags = NULL;
+	daemon->priv->maestro_addr = NULL;
 	daemon->priv->ac = TRUE;
 }
 
 GebrDaemonServer *
 gebr_daemon_server_new(GebrConnectable *connectable,
 		       const gchar *address,
-		       GebrCommServerState state)
+		       GebrCommServerState state,
+		       const gchar *maestro_addr)
 {
 	return g_object_new(GEBR_TYPE_DAEMON_SERVER,
 			    "address", address,
 			    "connectable", connectable,
 			    "state", state,
+			    "maestro_addr", maestro_addr,
 			    NULL);
 }
 
@@ -183,8 +205,9 @@ gebr_daemon_server_get_display_address(GebrDaemonServer *daemon)
 	if (g_strcmp0(addr, "") == 0)
 		return g_strdup(_("Auto-choose"));
 
-	if (g_strcmp0(addr, "127.0.0.1") == 0)
-		return g_strdup(_("Local Server"));
+	if (g_strcmp0(addr, "127.0.0.1") == 0 || g_strcmp0(addr, "localhost") == 0 )
+		//return g_strdup(_("Local Server"));
+		return g_strdup(daemon->priv->maestro_addr);
 
 	return g_strdup(addr);
 }

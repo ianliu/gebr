@@ -283,6 +283,7 @@ parse_messages(GebrCommServer *comm_server,
 		if (message->hash == gebr_comm_protocol_defs.ssta_def.code_hash) {
 			GList *arguments;
 			GString *addr, *ssta, *ac;
+			const gchar *maestro_addr = gebr_maestro_server_get_address(maestro);
 
 			/* organize message data */
 			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 3)) == NULL)
@@ -298,7 +299,7 @@ parse_messages(GebrCommServer *comm_server,
 
 			if (!daemon) {
 				daemon = gebr_daemon_server_new(GEBR_CONNECTABLE(maestro),
-								addr->str, state);
+								addr->str, state, maestro_addr);
 				gebr_maestro_server_add_daemon(maestro, daemon);
 			} else {
 				GtkTreePath *path = gtk_tree_model_get_path(GTK_TREE_MODEL(maestro->priv->store), &iter);
@@ -779,7 +780,10 @@ gebr_maestro_server_init(GebrMaestroServer *maestro)
 							 G_TYPE_STRING);
 
 	GebrDaemonServer *autochoose =
-		gebr_daemon_server_new(GEBR_CONNECTABLE(maestro), NULL, SERVER_STATE_CONNECT);
+		gebr_daemon_server_new(GEBR_CONNECTABLE(maestro), 
+				       NULL, 
+				       SERVER_STATE_CONNECT, 
+				       gebr_maestro_server_get_address(maestro));
 	gebr_maestro_server_add_daemon(maestro, autochoose);
 }
 

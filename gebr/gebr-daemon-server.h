@@ -51,7 +51,8 @@ GType gebr_daemon_server_get_type(void) G_GNUC_CONST;
 
 GebrDaemonServer *gebr_daemon_server_new(GebrConnectable *connectable,
 					 const gchar *address,
-					 GebrCommServerState state);
+					 GebrCommServerState state,
+					 const gchar *maestro_addr);
 
 /**
  * gebr_daemon_server_get_address:
