@@ -731,9 +731,10 @@ job_control_fill_servers_info(GebrJobControl *jc)
 			if (g_strcmp0(groups, "") == 0)
 				groups = g_strdup_printf(_("%s"), gebr_maestro_server_get_display_address(maestro));
 
-		markup = g_markup_printf_escaped (_("Job submitted by <b>%s</b> to %s <b>%s</b>.\n"
+		markup = g_markup_printf_escaped (_("Job submitted by <b>%s</b> to Maestro <b>%s</b>,\nto be executed on %s <b>%s</b>.\n"
 						  "Executed using %s<b>%s</b> processor(s)\ndistributed on <b>%d</b> servers.\n"),
-						  gebr_job_get_hostname(job), type == MAESTRO_SERVER_TYPE_DAEMON? "server" : "group", groups,
+						  gebr_job_get_hostname(job), gebr_job_get_maestro_address(job),
+						  type == MAESTRO_SERVER_TYPE_DAEMON? "server" : "group", groups,
 						  g_strcmp0(niceness, "0")? _("idle time of ") : "", nprocs, n_servers);
 		g_string_append(resources, markup);
 		g_free(markup);
