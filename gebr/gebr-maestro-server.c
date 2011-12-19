@@ -46,6 +46,7 @@ enum {
 	DAEMONS_CHANGED,
 	STATE_CHANGE,
 	AC_CHANGE,
+	NFS_ERROR,
 	LAST_SIGNAL
 };
 
@@ -558,16 +559,20 @@ parse_messages(GebrCommServer *comm_server,
 		else if (message->hash == gebr_comm_protocol_defs.srm_def.code_hash) {
 			GList *arguments;
 
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 1)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
 				goto err;
 
 			GString *addr = g_list_nth_data(arguments, 0);
+			GString *error = g_list_nth_data(arguments, 1);
 
 			g_debug("Removing server %s", addr->str);
 
 			GtkTreeIter iter;
 			GebrDaemonServer *daemon;
 			GtkTreeModel *model = GTK_TREE_MODEL(maestro->priv->store);
+
+			if(g_strcmp0(error->str, "") != 0)
+				g_signal_emit(maestro, signals[NFS_ERROR], 0, addr->str);
 
 			gebr_gui_gtk_tree_model_foreach(iter, model) {
 				gtk_tree_model_get(model, &iter, 0, &daemon, -1);
@@ -731,6 +736,15 @@ gebr_maestro_server_class_init(GebrMaestroServerClass *klass)
 			             NULL, NULL,
 			             gebr_cclosure_marshal_VOID__INT_OBJECT,
 			             G_TYPE_NONE, 2, G_TYPE_INT, GEBR_TYPE_DAEMON_SERVER);
+
+	signals[NFS_ERROR] =
+			g_signal_new("nfs-error",
+			             G_OBJECT_CLASS_TYPE(object_class),
+			             G_SIGNAL_RUN_LAST,
+			             G_STRUCT_OFFSET(GebrMaestroServerClass, nfs_error),
+			             NULL, NULL,
+			             g_cclosure_marshal_VOID__STRING,
+			             G_TYPE_NONE, 1, G_TYPE_STRING);
 
 	g_object_class_install_property(object_class,
 					PROP_ADDRESS,

@@ -1037,6 +1037,19 @@ on_password_request(GebrMaestroServer *maestro,
 }
 
 static void
+on_nfs_error(GebrMaestroServer *maestro,
+             const gchar *addr,
+             GebrMaestroController *mc)
+{
+	GtkWidget *dialog  = gtk_message_dialog_new_with_markup(NULL, GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+	                                                        GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+	                                                        "<span size='large' weight='bold'>The selected maestro cannot manage the server"
+	                                                        "%s, because it has a different NFS.</span>", addr);
+	gtk_dialog_run(GTK_DIALOG(dialog));
+	gtk_widget_destroy(dialog);
+}
+
+static void
 on_ac_change(GebrMaestroServer *maestro,
              gboolean ac,
              GebrDaemonServer *daemon,
@@ -1135,6 +1148,8 @@ gebr_maestro_controller_connect(GebrMaestroController *self,
 				 G_CALLBACK(on_state_change), self);
 		g_signal_connect(maestro, "ac-change",
 		                 G_CALLBACK(on_ac_change), self);
+		g_signal_connect(maestro, "nfs-error",
+		                 G_CALLBACK(on_nfs_error), self);
 
 		GtkTreeIter iter;
 		gtk_list_store_append(self->priv->maestro_model, &iter);

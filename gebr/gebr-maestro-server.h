@@ -61,6 +61,9 @@ struct _GebrMaestroServerClass {
 
 	void    (*ac_change) (GebrMaestroServer *maestro,
 			      gboolean	         is_ac);
+
+	void    (*nfs_error) (GebrMaestroServer *maestro,
+			      const gchar       *addr);
 };
 
 struct _GebrMaestroServer {

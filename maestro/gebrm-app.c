@@ -299,9 +299,19 @@ on_receive_nfsid(GebrmDaemon *daemon,
 
 	if (!app->priv->nfsid)
 		app->priv->nfsid = g_strdup(nfsid);
-	else if (g_strcmp0(app->priv->nfsid, nfsid) != 0)
+	else if (g_strcmp0(app->priv->nfsid, nfsid) != 0) {
+		const gchar *addr = gebrm_daemon_get_address(daemon);
 		gebrm_daemon_disconnect(daemon);
-	else
+		gebrm_remove_server_from_list(app, addr);
+		gebrm_config_delete_server(addr);
+
+		for (GList *i = app->priv->connections; i; i = i->next)
+			gebr_comm_protocol_socket_oldmsg_send(i->data, FALSE,
+			                                      gebr_comm_protocol_defs.srm_def, 2,
+			                                      addr,
+			                                      "nfs:yes");
+
+	} else
 		gebrm_daemon_list_tasks_and_forward_x(daemon);
 }
 
@@ -520,8 +530,9 @@ on_client_request(GebrCommProtocolSocket *socket,
 			                                      addr, "");
 
 			gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
-			                                      gebr_comm_protocol_defs.srm_def, 1,
-			                                      addr);
+			                                      gebr_comm_protocol_defs.srm_def, 2,
+			                                      addr,
+			                                      "");
 		}
 		else if (g_strcmp0(prefix, "/close") == 0) {
 			const gchar *id = gebr_comm_uri_get_param(uri, "id");
