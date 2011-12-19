@@ -368,6 +368,7 @@ parse_messages(GebrCommServer *comm_server,
 			gebr_job_set_submit_date(job, submit_date->str);
 			gebr_job_set_nprocs(job, nprocs->str);
 			gebr_job_set_static_status(job, gebr_comm_job_get_status_from_string(status->str));
+			gebr_job_set_io(job, input->str, output->str, error->str);
 
 			if (init) {
 				/* Creates a job and populates some of its information.
@@ -377,7 +378,6 @@ parse_messages(GebrCommServer *comm_server,
 				gebr_job_set_hostname(job, hostname->str);
 				gebr_job_set_title(job, title->str);
 				gebr_job_set_nice(job, nice->str);
-				gebr_job_set_io(job, input->str, output->str, error->str);
 				gebr_job_set_server_group(job, group->str);
 				gebr_job_set_server_group_type(job, group_type->str);
 				gebr_job_set_exec_speed(job, atoi(speed->str));
