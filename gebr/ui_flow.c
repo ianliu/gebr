@@ -41,16 +41,24 @@ gebr_ui_flow_run(void)
 	const gchar *group_type = gebr_maestro_server_group_enum_to_str(type);
 
 	gchar *submit_date = gebr_iso_date();
-	g_debug("checkpoint %s", __func__);
+
 	gebr_geoxml_flow_set_date_last_run(gebr.flow, g_strdup(submit_date));
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), FALSE, FALSE);
 
 	gchar *xml;
 	GebrJob *job = gebr_job_new(parent_rid);
 
-	gebr_geoxml_document_to_string(GEBR_GEOXML_DOCUMENT(gebr.flow), &xml);
+	GebrGeoXmlDocument *clone = gebr_geoxml_document_clone(GEBR_GEOXML_DOCUMENT(gebr.flow));
+
+	gebr_geoxml_document_merge_dicts(gebr.validator,
+	                                 clone,
+	                                 GEBR_GEOXML_DOCUMENT(gebr.line),
+	                                 GEBR_GEOXML_DOCUMENT(gebr.project),
+	                                 NULL);
+
+	gebr_geoxml_document_to_string(clone, &xml);
 	GebrCommJsonContent *content = gebr_comm_json_content_new_from_string(xml);
-	g_debug("checkpoint2 %s", __func__);
+	gebr_geoxml_document_unref(clone);
 
 	GebrCommUri *uri = gebr_comm_uri_new();
 	gebr_comm_uri_set_prefix(uri, "/run");

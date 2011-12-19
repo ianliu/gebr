@@ -570,6 +570,11 @@ on_client_request(GebrCommProtocolSocket *socket,
 			*pproj = gebr_geoxml_project_new();
 			*pline = gebr_geoxml_line_new();
 
+			gebr_geoxml_document_split_dict(*((GebrGeoXmlDocument **)pflow),
+			                                *((GebrGeoXmlDocument **)pline),
+			                                *((GebrGeoXmlDocument **)pproj),
+			                                NULL);
+
 			GebrValidator *validator = gebr_validator_new((GebrGeoXmlDocument **)pflow,
 								      (GebrGeoXmlDocument **)pline,
 								      (GebrGeoXmlDocument **)pproj);
