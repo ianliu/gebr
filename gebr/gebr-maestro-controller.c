@@ -948,7 +948,7 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 
 	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
 
-	on_server_group_changed(maestro, self);
+	gebr_maestro_controller_group_changed_real(self, maestro);
 
 	GtkEventBox *event = GTK_EVENT_BOX(gtk_builder_get_object(self->priv->builder, "eventbox_drop"));
 	set_widget_drag_dest(self, GTK_WIDGET(event));
