@@ -518,7 +518,10 @@ gebrm_daemon_get_tags(GebrmDaemon *daemon)
 
 	GString *buf = g_string_new("");
 	g_tree_foreach(daemon->priv->tags, traverse, buf);
-	g_string_erase(buf, buf->len - 1, 1);
+
+	if (buf->len > 0)
+		g_string_erase(buf, buf->len - 1, 1);
+
 	return g_string_free(buf, FALSE);
 }
 
