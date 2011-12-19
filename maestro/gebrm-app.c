@@ -1052,9 +1052,18 @@ on_new_connection(GebrCommListenSocket *listener,
 			send_server_status_message(app, socket, i->data, gebrm_daemon_get_autoconnect(i->data));
 			send_groups_definitions(socket, i->data);
 
-			if (gebrm_daemon_get_state(i->data) == SERVER_STATE_DISCONNECTED &&
-			    g_strcmp0(gebrm_daemon_get_autoconnect(i->data), "on") == 0)
-				gebrm_daemon_connect(i->data, NULL, socket);
+			if (g_strcmp0(gebrm_daemon_get_autoconnect(i->data), "on") == 0) {
+				switch (gebrm_daemon_get_state(i->data)) {
+				case SERVER_STATE_DISCONNECTED:
+					gebrm_daemon_connect(i->data, NULL, socket);
+					break;
+				case SERVER_STATE_RUN:
+					gebrm_daemon_continue_stuck_connection(i->data, socket);
+					break;
+				default:
+					break;
+				}
+			}
 		}
 
 		g_signal_connect(socket, "disconnected",
