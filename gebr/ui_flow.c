@@ -39,6 +39,7 @@ gebr_ui_flow_run(void)
 	gchar *name;
 	gebr_flow_edition_get_current_group(gebr.ui_flow_edition, &type, &name);
 	const gchar *group_type = gebr_maestro_server_group_enum_to_str(type);
+	gebr_geoxml_flow_server_set_group(gebr.flow, group_type, name);
 
 	gchar *submit_date = gebr_iso_date();
 
