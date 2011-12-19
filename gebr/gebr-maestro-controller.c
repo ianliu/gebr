@@ -815,14 +815,12 @@ on_servers_edited(GtkCellRendererText *cell,
 }
 
 static void 
-on_connect_to_maestro_clicked( GtkButton *button,
-			       GebrMaestroController *self)
+on_connect_to_maestro_clicked(GtkButton *button,
+			      GebrMaestroController *self)
 {
 	GtkComboBoxEntry *combo = GTK_COMBO_BOX_ENTRY(gtk_builder_get_object(self->priv->builder, "combo_maestro"));
 	GtkEntry *entry = GTK_ENTRY(gtk_bin_get_child(GTK_BIN(combo)));
 	connect_to_maestro(entry, self);
-
-
 }
 
 static gboolean
@@ -1122,6 +1120,10 @@ gebr_maestro_controller_connect(GebrMaestroController *self,
 	GebrMaestroServer *maestro;
 
 	if (self->priv->maestro) {
+		if (g_strcmp0(address, gebr_maestro_server_get_address(self->priv->maestro)) == 0 &&
+		    gebr_maestro_server_get_state(self->priv->maestro) == SERVER_STATE_CONNECT)
+			return;
+
 		gebr_maestro_server_disconnect(self->priv->maestro);
 		g_object_unref(self->priv->maestro);
 	}
