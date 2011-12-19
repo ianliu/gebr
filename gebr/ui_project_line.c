@@ -1276,10 +1276,7 @@ static void project_line_load(void)
 		GebrMaestroServer *maestro =
 			gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller,
 								     gebr.line);
-		if (maestro)
-			gebr_flow_edition_update_server(gebr.ui_flow_edition, maestro);
-		else
-			gebr_message(GEBR_LOG_WARNING, TRUE, FALSE, "Could not find maestro for this line");
+		gebr_flow_edition_update_server(gebr.ui_flow_edition, maestro);
 
 		line_load_flows();
 	} else {

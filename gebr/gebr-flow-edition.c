@@ -1283,7 +1283,7 @@ on_groups_combobox_changed(GtkComboBox *combobox,
 	if (!flow_browse_get_selected(&flow_iter, TRUE))
 		return;
 
-	if (!gtk_combo_box_get_active_iter (combobox, &iter))
+	if (!gtk_combo_box_get_active_iter(combobox, &iter))
 		return;
 
 	GtkTreeModel *model = gtk_combo_box_get_model(combobox);
@@ -1291,6 +1291,9 @@ on_groups_combobox_changed(GtkComboBox *combobox,
 	GebrMaestroServer *maestro =
 		gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller,
 							     gebr.line);
+
+	if (!maestro)
+		return;
 
 	gchar *name;
 	GebrMaestroServerGroupType type;
@@ -1746,11 +1749,15 @@ void
 gebr_flow_edition_update_server(GebrFlowEdition *fe,
 				GebrMaestroServer *maestro)
 {
-	g_return_if_fail(maestro);
+	gboolean sensitive = maestro != NULL;
+	gtk_widget_set_sensitive(fe->priv->queue_combobox, sensitive);
+	gtk_widget_set_sensitive(fe->priv->server_combobox, sensitive);
 
-	GtkTreeModel *model = gebr_maestro_server_get_groups_model(maestro);
-	gtk_combo_box_set_model(GTK_COMBO_BOX(fe->priv->server_combobox), model);
-	g_object_unref(model);
+	if (maestro) {
+		GtkTreeModel *model = gebr_maestro_server_get_groups_model(maestro);
+		gtk_combo_box_set_model(GTK_COMBO_BOX(fe->priv->server_combobox), model);
+		g_object_unref(model);
+	}
 }
 
 const gchar *
