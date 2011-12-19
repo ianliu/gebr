@@ -478,9 +478,9 @@ static gboolean _project_line_import_path(const gchar *filename, GList **line_pa
 		}
 		gdk_threads_leave();
 
-		GList *maestros = gebr_maestro_controller_get_maestros(gebr.maestro_controller);
-		if (maestros) {
-			const gchar *addr = gebr_maestro_server_get_address(maestros->data);
+		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+		if (maestro) {
+			const gchar *addr = gebr_maestro_server_get_address(maestro);
 			gebr_geoxml_line_set_maestro(*line, addr);
 		}
 

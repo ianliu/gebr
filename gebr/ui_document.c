@@ -353,7 +353,8 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 	if (gebr_geoxml_document_get_type(document) == GEBR_GEOXML_DOCUMENT_TYPE_LINE)
 	{
 		GtkTreeIter active, iter;
-		GtkTreeModel *model = gebr_maestro_controller_get_maestros_model(gebr.maestro_controller);
+		GtkListStore *store = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
+		GtkTreeModel *model = GTK_TREE_MODEL(store);
 		gtk_tree_model_get_iter_first (model, &active);
 		data->groups_combo = groups_combo = gtk_combo_box_new_with_model(model);
 

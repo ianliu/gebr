@@ -1526,66 +1526,35 @@ on_maestro_filter_changed(GtkComboBox *combo,
 			   2, NULL,    // Name
 			   -1);
 
-	if (!address) {
-		GtkTreeIter _it;
-		GtkTreeModel *maestros = gebr_maestro_controller_get_maestros_model(gebr.maestro_controller);
+	GebrMaestroServer *maestro;
+	maestro = gebr_maestro_controller_get_maestro_for_address(gebr.maestro_controller,
+								  address);
 
-		gebr_gui_gtk_tree_model_foreach(_it, maestros) {
-			GebrMaestroServer *maestro;
-			gtk_tree_model_get(maestros, &_it, 0, &maestro, -1);
+	if (!maestro)
+		return;
 
-			GtkTreeModel *groups = gebr_maestro_server_get_groups_model(maestro);
-			gebr_gui_gtk_tree_model_foreach(it, groups) {
-				gchar *name;
-				GebrMaestroServerGroupType type;
+	GtkTreeModel *groups = gebr_maestro_server_get_groups_model(maestro);
 
-				gtk_tree_model_get(groups, &it,
-						   MAESTRO_SERVER_TYPE, &type,
-						   MAESTRO_SERVER_NAME, &name,
-						   -1);
+	gebr_gui_gtk_tree_model_foreach(it, groups) {
+		gchar *name;
+		const gchar *display;
+		GebrMaestroServerGroupType type;
 
-				gchar *display;
-				if (!*name)
-					display = g_strdup_printf(_("%s"), gebr_maestro_server_get_display_address(maestro));
-				else
-					display = g_strdup_printf(_("%s on %s"), name,
-					                          gebr_maestro_server_get_display_address(maestro));
+		gtk_tree_model_get(groups, &it,
+				   MAESTRO_SERVER_TYPE, &type,
+				   MAESTRO_SERVER_NAME, &name,
+				   -1);
 
-				gtk_list_store_append(jc->priv->server_filter, &iter);
-				gtk_list_store_set(jc->priv->server_filter, &iter,
-				                   0, display,
-						   1, type,
-						   2, name);
-				g_free(display);
-			}
-		}
-	} else {
-		GebrMaestroServer *maestro;
-		maestro = gebr_maestro_controller_get_maestro_for_address(gebr.maestro_controller,
-									  address);
-		GtkTreeModel *groups = gebr_maestro_server_get_groups_model(maestro);
+		if (!*name)
+			display = gebr_maestro_server_get_display_address(maestro);
+		else
+			display = name;
 
-		gebr_gui_gtk_tree_model_foreach(it, groups) {
-			gchar *name;
-			const gchar *display;
-			GebrMaestroServerGroupType type;
-
-			gtk_tree_model_get(groups, &it,
-					   MAESTRO_SERVER_TYPE, &type,
-					   MAESTRO_SERVER_NAME, &name,
-					   -1);
-
-			if (!*name)
-				display = gebr_maestro_server_get_display_address(maestro);
-			else
-				display = name;
-
-			gtk_list_store_append(jc->priv->server_filter, &iter);
-			gtk_list_store_set(jc->priv->server_filter, &iter,
-					   0, display,
-					   1, type,
-					   2, name);
-		}
+		gtk_list_store_append(jc->priv->server_filter, &iter);
+		gtk_list_store_set(jc->priv->server_filter, &iter,
+				   0, display,
+				   1, type,
+				   2, name);
 	}
 
 	gtk_combo_box_set_active(jc->priv->server_combo, 0);
@@ -1603,14 +1572,12 @@ on_maestro_list_changed(GebrMaestroController *mc,
 	gtk_list_store_append(jc->priv->maestro_filter, &iter);
 	gtk_list_store_set(jc->priv->maestro_filter, &iter, 0, _("Any"), -1);
 
-	GList *maestros = gebr_maestro_controller_get_maestros(mc);
-	for (GList *i = maestros; i; i = i->next) {
-		gtk_list_store_append(jc->priv->maestro_filter, &iter);
-		gtk_list_store_set(jc->priv->maestro_filter, &iter,
-				   0, gebr_maestro_server_get_display_address(i->data),
-				   1, gebr_maestro_server_get_address(i->data),
-				   -1);
-	}
+	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(mc);
+	gtk_list_store_append(jc->priv->maestro_filter, &iter);
+	gtk_list_store_set(jc->priv->maestro_filter, &iter,
+			   0, gebr_maestro_server_get_display_address(maestro),
+			   1, gebr_maestro_server_get_address(maestro),
+			   -1);
 
 	gtk_combo_box_set_active(jc->priv->maestro_combo, 0);
 }
@@ -1753,8 +1720,8 @@ gebr_job_control_new(void)
 	/* by Maestri */
 	jc->priv->maestro_filter = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
 	gtk_combo_box_set_model(maestro_cb, GTK_TREE_MODEL(jc->priv->maestro_filter));
-	g_signal_connect(jc->priv->maestro_combo, "changed",
-			 G_CALLBACK(on_maestro_filter_changed), jc);
+	//g_signal_connect(jc->priv->maestro_combo, "changed",
+	//		 G_CALLBACK(on_maestro_filter_changed), jc);
 
 	/* by Servers */
 	jc->priv->server_filter = gtk_list_store_new(3, G_TYPE_STRING, G_TYPE_INT, G_TYPE_STRING);
