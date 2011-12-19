@@ -1018,6 +1018,12 @@ gebr_maestro_server_get_queues_model(GebrMaestroServer *maestro,
 }
 
 void
+gebr_maestro_server_disconnect(GebrMaestroServer *maestro)
+{
+	gebr_comm_server_disconnect(maestro->priv->server);
+}
+
+void
 gebr_maestro_server_connect(GebrMaestroServer *maestro)
 {
 	maestro->priv->server = gebr_comm_server_new(maestro->priv->address,
