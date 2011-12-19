@@ -67,7 +67,6 @@ struct _GebrFlowEdition {
 	GebrFlowEditionPriv *priv;
 
 	GtkWidget *widget;
-	GtkBin *queue_bin;
 
 	GtkTreeIter input_iter;
 	GtkTreeIter output_iter;

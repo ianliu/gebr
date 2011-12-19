@@ -201,28 +201,7 @@ flow_edition_setup_ui(void)
 	gtk_container_add(GTK_CONTAINER(vbox), alignment);
 	gtk_container_add(GTK_CONTAINER(vbox), fe->priv->queue_combobox);
 	gtk_container_add(GTK_CONTAINER(vbox), fe->priv->server_combobox);
-	gtk_container_add(GTK_CONTAINER(fe->queue_bin), fe->priv->queue_combobox);
 	gtk_box_pack_start(GTK_BOX(left_vbox), frame, FALSE, TRUE, 0);
-
-	/*
-	alignment = gtk_alignment_new(0.5, 0.5, 1, 1);
-	label = gtk_label_new_with_mnemonic(_("Server group"));
-	gtk_alignment_set_padding(GTK_ALIGNMENT(alignment), 0, 4, 5, 5);
-	gtk_frame_set_label_widget(GTK_FRAME(frame), label);
-	gtk_container_add(GTK_CONTAINER(frame), alignment);
-	gtk_container_add(GTK_CONTAINER(alignment), fe->priv->server_combobox);
-	gtk_box_pack_start(GTK_BOX(left_vbox), frame, FALSE, TRUE, 0);
-
-	frame = gtk_frame_new(NULL);
-	alignment = gtk_alignment_new(0.5, 0.5, 1, 1);
-	label = gtk_label_new_with_mnemonic(_("Queue"));
-	gtk_alignment_set_padding(GTK_ALIGNMENT(alignment), 0, 4, 5, 5);
-	fe->queue_bin = GTK_BIN(alignment);
-	gtk_container_add(GTK_CONTAINER(fe->queue_bin), fe->priv->queue_combobox);
-	gtk_frame_set_label_widget(GTK_FRAME(frame), label);
-	gtk_container_add(GTK_CONTAINER(frame), alignment);
-	gtk_box_pack_start(GTK_BOX(left_vbox), frame, FALSE, TRUE, 0);
-	*/
 
 	frame = gtk_frame_new(_("Flow sequence"));
 	gtk_box_pack_start(GTK_BOX(left_vbox), frame, TRUE, TRUE, 0);
@@ -1723,9 +1702,11 @@ gebr_flow_edition_show(GebrFlowEdition *self)
 	GtkComboBox *cb = GTK_COMBO_BOX(self->priv->server_combobox);
 	GtkTreeModel *model = gtk_combo_box_get_model(cb);
 
-	flow_edition_find_flow_server(gebr.flow, model, &iter);
-	gtk_combo_box_set_active_iter(cb, &iter);
-	gebr_flow_edition_select_queue(self);
+	if (model) {
+		flow_edition_find_flow_server(gebr.flow, model, &iter);
+		gtk_combo_box_set_active_iter(cb, &iter);
+		gebr_flow_edition_select_queue(self);
+	}
 
 	if (gebr.config.niceness == 0)
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(self->nice_button_high), TRUE);
