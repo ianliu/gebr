@@ -1041,12 +1041,17 @@ on_nfs_error(GebrMaestroServer *maestro,
              const gchar *addr,
              GebrMaestroController *mc)
 {
+	gdk_threads_enter();
 	GtkWidget *dialog  = gtk_message_dialog_new_with_markup(NULL, GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
 	                                                        GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
-	                                                        "<span size='large' weight='bold'>The selected maestro cannot manage the server"
+	                                                        "<span size='large' weight='bold'>The selected maestro cannot manage the server "
 	                                                        "%s, because it has a different NFS.</span>", addr);
+	gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
+
 	gtk_dialog_run(GTK_DIALOG(dialog));
+
 	gtk_widget_destroy(dialog);
+	gdk_threads_leave();
 }
 
 static void
