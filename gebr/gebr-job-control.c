@@ -1510,14 +1510,6 @@ on_maestro_filter_changed(GtkComboBox *combo,
 			  GebrJobControl *jc)
 {
 	GtkTreeIter iter, it;
-	GtkTreeModel *model = gtk_combo_box_get_model(combo);
-
-	if (!gtk_combo_box_get_active_iter(combo, &iter))
-		if(!gtk_tree_model_get_iter_first(model, &iter))
-			return;
-
-	gchar *address;
-	gtk_tree_model_get(model, &iter, 1, &address, -1);
 
 	gtk_list_store_clear(jc->priv->server_filter);
 	gtk_list_store_append(jc->priv->server_filter, &iter);
@@ -1528,8 +1520,7 @@ on_maestro_filter_changed(GtkComboBox *combo,
 			   -1);
 
 	GebrMaestroServer *maestro;
-	maestro = gebr_maestro_controller_get_maestro_for_address(gebr.maestro_controller,
-								  address);
+	maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 
 	if (!maestro)
 		return;
