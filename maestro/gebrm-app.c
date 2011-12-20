@@ -288,18 +288,39 @@ gebrm_app_singleton_get(void)
 	return __app;
 }
 
-static void
-on_receive_nfsid(GebrmDaemon *daemon,
-		 GParamSpec *pspec,
-		 GebrmApp *app)
+static gboolean
+has_duplicated_daemons(GebrmApp *app, GebrmDaemon *daemon)
 {
+	const gchar *id = gebrm_daemon_get_id(daemon);
+
+	for (GList *i = app->priv->daemons; i; i = i->next) {
+		const gchar *tmp = gebrm_daemon_get_id(i->data);
+		if (daemon != i->data && g_strcmp0(tmp, id) == 0)
+			return TRUE;
+	}
+
+	return FALSE;
+}
+
+static void
+on_daemon_init(GebrmDaemon *daemon, GebrmApp *app)
+{
+	const gchar *error = NULL;
 	const gchar *nfsid = gebrm_daemon_get_nfsid(daemon);
 
 	g_debug("Received nfsid: %s", nfsid);
 
-	if (!app->priv->nfsid)
+	if (!app->priv->nfsid) {
 		app->priv->nfsid = g_strdup(nfsid);
-	else if (g_strcmp0(app->priv->nfsid, nfsid) != 0) {
+	} else if (g_strcmp0(app->priv->nfsid, nfsid) != 0)
+		error = "error:nfs";
+
+	if (!error && has_duplicated_daemons(app, daemon)) {
+		g_debug("Duplicate daemons found!");
+		error = "error:id";
+	}
+
+	if (error) {
 		const gchar *addr = gebrm_daemon_get_address(daemon);
 		gebrm_daemon_disconnect(daemon);
 		gebrm_remove_server_from_list(app, addr);
@@ -309,10 +330,8 @@ on_receive_nfsid(GebrmDaemon *daemon,
 			gebr_comm_protocol_socket_oldmsg_send(i->data, FALSE,
 			                                      gebr_comm_protocol_defs.srm_def, 2,
 			                                      addr,
-			                                      "nfs:yes");
-
-	} else
-		gebrm_daemon_list_tasks_and_forward_x(daemon);
+			                                      error);
+	}
 }
 
 static GebrmDaemon *
@@ -335,8 +354,8 @@ gebrm_add_server_to_list(GebrmApp *app,
 			 G_CALLBACK(gebrm_app_daemon_on_state_change), app);
 	g_signal_connect(daemon, "task-define",
 			 G_CALLBACK(gebrm_app_job_controller_on_task_def), app);
-	g_signal_connect(daemon, "notify::nfsid",
-			 G_CALLBACK(on_receive_nfsid), app);
+	g_signal_connect(daemon, "daemon-init",
+			 G_CALLBACK(on_daemon_init), app);
 
 	gchar **tagsv = tags ? g_strsplit(tags, ",", -1) : NULL;
 	if (tagsv) {

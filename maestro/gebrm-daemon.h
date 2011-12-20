@@ -52,6 +52,8 @@ struct _GebrmDaemonClass {
 			     GObject *task);
 
 	void (*password_request) (GebrmDaemon *daemon);
+
+	void (*daemon_init) (GebrmDaemon *daemon);
 };
 
 GType gebrm_daemon_get_type(void) G_GNUC_CONST;
@@ -147,6 +149,11 @@ void gebrm_daeamon_answer_question(GebrmDaemon *daemon,
  */
 void gebrm_daemon_continue_stuck_connection(GebrmDaemon *daemon,
 					    GebrCommProtocolSocket *socket);
+
+void gebrm_daemon_set_id(GebrmDaemon *daemon,
+			 const gchar *id);
+
+const gchar *gebrm_daemon_get_id(GebrmDaemon *daemon);
 
 G_END_DECLS
 

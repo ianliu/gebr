@@ -46,7 +46,7 @@ enum {
 	DAEMONS_CHANGED,
 	STATE_CHANGE,
 	AC_CHANGE,
-	NFS_ERROR,
+	ERROR,
 	LAST_SIGNAL
 };
 
@@ -572,8 +572,13 @@ parse_messages(GebrCommServer *comm_server,
 			GebrDaemonServer *daemon;
 			GtkTreeModel *model = GTK_TREE_MODEL(maestro->priv->store);
 
-			if(g_strcmp0(error->str, "") != 0)
-				g_signal_emit(maestro, signals[NFS_ERROR], 0, addr->str);
+			if (g_str_has_prefix(error->str, "error:")) {
+				gint offset = strlen("error:");
+				if (g_strcmp0(error->str + offset, "nfs") == 0)
+					g_signal_emit(maestro, signals[ERROR], 0, addr->str, "nfs");
+				else if (g_strcmp0(error->str + offset, "id") == 0)
+					g_signal_emit(maestro, signals[ERROR], 0, addr->str, "id");
+			}
 
 			gebr_gui_gtk_tree_model_foreach(iter, model) {
 				gtk_tree_model_get(model, &iter, 0, &daemon, -1);
@@ -738,14 +743,14 @@ gebr_maestro_server_class_init(GebrMaestroServerClass *klass)
 			             gebr_cclosure_marshal_VOID__INT_OBJECT,
 			             G_TYPE_NONE, 2, G_TYPE_INT, GEBR_TYPE_DAEMON_SERVER);
 
-	signals[NFS_ERROR] =
-			g_signal_new("nfs-error",
+	signals[ERROR] =
+			g_signal_new("error",
 			             G_OBJECT_CLASS_TYPE(object_class),
 			             G_SIGNAL_RUN_LAST,
-			             G_STRUCT_OFFSET(GebrMaestroServerClass, nfs_error),
+			             G_STRUCT_OFFSET(GebrMaestroServerClass, error),
 			             NULL, NULL,
-			             g_cclosure_marshal_VOID__STRING,
-			             G_TYPE_NONE, 1, G_TYPE_STRING);
+			             gebr_cclosure_marshal_VOID__STRING_STRING,
+			             G_TYPE_NONE, 2, G_TYPE_STRING, G_TYPE_STRING);
 
 	g_object_class_install_property(object_class,
 					PROP_ADDRESS,

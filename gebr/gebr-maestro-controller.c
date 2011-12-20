@@ -1046,17 +1046,26 @@ on_password_request(GebrMaestroServer *maestro,
 }
 
 static void
-on_nfs_error(GebrMaestroServer *maestro,
-             const gchar *addr,
-             GebrMaestroController *mc)
+on_maestro_error(GebrMaestroServer *maestro,
+		 const gchar *addr,
+		 const gchar *error_type,
+		 GebrMaestroController *mc)
 {
-	gdk_threads_enter();
+	const gchar *error_msg;
+
+	if (g_strcmp0(error_type, "nfs") == 0)
+		error_msg = N_("<span size='large' weight='bold'>The selected maestro cannot manage the server "
+			       "%s, because it has a different NFS.</span>");
+	else if (g_strcmp0(error_type, "id") == 0)
+		error_msg = N_("<span size='large' weight='bold'>The selected maestro cannot manage the server "
+			       "%s, because it was already added.</span>");
+
 	GtkWidget *dialog  = gtk_message_dialog_new_with_markup(NULL, GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
 	                                                        GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
-	                                                        "<span size='large' weight='bold'>The selected maestro cannot manage the server "
-	                                                        "%s, because it has a different NFS.</span>", addr);
+	                                                        _(error_msg), addr);
 	gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
 
+	gdk_threads_enter();
 	gtk_dialog_run(GTK_DIALOG(dialog));
 
 	gtk_widget_destroy(dialog);
@@ -1169,8 +1178,8 @@ gebr_maestro_controller_connect(GebrMaestroController *self,
 			 G_CALLBACK(on_state_change), self);
 	g_signal_connect(maestro, "ac-change",
 			 G_CALLBACK(on_ac_change), self);
-	g_signal_connect(maestro, "nfs-error",
-			 G_CALLBACK(on_nfs_error), self);
+	g_signal_connect(maestro, "error",
+			 G_CALLBACK(on_maestro_error), self);
 
 	g_signal_emit(self, signals[MAESTRO_LIST_CHANGED], 0);
 
