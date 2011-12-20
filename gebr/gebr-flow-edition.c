@@ -347,14 +347,19 @@ static void
 set_run_widgets_sensitiveness(GebrFlowEdition *fe,
 			      gboolean sensitive)
 {
+	const gchar *tooltip = _("Maestro of this line is disconnected.\nReconnect it or change the maestro\n associated to this line");
 	gtk_widget_set_sensitive(fe->priv->queue_combobox, sensitive);
 	gtk_widget_set_sensitive(fe->priv->server_combobox, sensitive);
 
 	GtkAction *action = gtk_action_group_get_action(gebr.action_group_flow, "flow_execute");
 	gtk_action_set_sensitive(action, sensitive);
+	if(!sensitive)
+		gtk_action_set_tooltip(action, tooltip);
 
 	action = gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_execute");
 	gtk_action_set_sensitive(action, sensitive);
+	if(!sensitive)
+		gtk_action_set_tooltip(action, tooltip);
 }
 
 void flow_edition_load_components(void)
