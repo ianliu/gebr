@@ -432,6 +432,12 @@ gebr_maestro_controller_group_changed_real(GebrMaestroController *self,
 		GtkTreeModel *new_model = copy_model_for_groups(model);
 
 		GtkWidget *view = gtk_tree_view_new_with_model(new_model);
+
+		GtkWidget *scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
+		                               GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+
+		gtk_container_add(GTK_CONTAINER(scrolled_window), view);
 		g_object_unref(model);
 		g_object_unref(new_model);
 
@@ -447,9 +453,10 @@ gebr_maestro_controller_group_changed_real(GebrMaestroController *self,
 		gtk_tree_view_column_set_cell_data_func(col, cell, notebook_group_show_address, self, NULL);
 
 		gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
-		gtk_notebook_prepend_page(nb, view, label);
+		gtk_notebook_prepend_page(nb, scrolled_window, label);
+
 		gtk_widget_show(label);
-		gtk_widget_show(view);
+		gtk_widget_show_all(scrolled_window);
 
 		gchar *tagdup = g_strdup(tag);
 		g_object_set_data(G_OBJECT(view), "tag", tagdup);
