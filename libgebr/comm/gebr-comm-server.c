@@ -870,7 +870,6 @@ static const gchar *state_hash[] = {
 	"run",
 	"open_tunnel",
 	"connect",
-	"connected",
 	NULL
 };
 

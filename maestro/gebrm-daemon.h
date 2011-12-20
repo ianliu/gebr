@@ -155,6 +155,8 @@ void gebrm_daemon_set_id(GebrmDaemon *daemon,
 
 const gchar *gebrm_daemon_get_id(GebrmDaemon *daemon);
 
+const gchar *gebrm_daemon_get_error(GebrmDaemon *daemon);
+
 G_END_DECLS
 
 #endif /* __GEBRM_DAEMON_H__ */

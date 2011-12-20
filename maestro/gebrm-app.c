@@ -128,11 +128,12 @@ send_server_status_message(GebrmApp *app,
 			   const gchar *ac)
 {
 	const gchar *state = gebr_comm_server_state_to_string(gebrm_daemon_get_state(daemon));
-
+	const gchar *error = gebrm_daemon_get_error(daemon);
 	gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
-					      gebr_comm_protocol_defs.ssta_def, 3,
+					      gebr_comm_protocol_defs.ssta_def, 4,
 					      gebrm_daemon_get_address(daemon),
 					      state,
+					      error,
 					      ac);
 }
 

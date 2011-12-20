@@ -696,3 +696,9 @@ gebrm_daemon_get_id(GebrmDaemon *daemon)
 {
 	return daemon->priv->id;
 }
+
+const gchar *
+gebrm_daemon_get_error(GebrmDaemon *daemon)
+{
+	return gebr_comm_server_get_last_error(daemon->priv->server);
+}

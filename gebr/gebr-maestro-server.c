@@ -297,20 +297,24 @@ parse_messages(GebrCommServer *comm_server,
 		}
 		else if (message->hash == gebr_comm_protocol_defs.ssta_def.code_hash) {
 			GList *arguments;
-			GString *addr, *ssta, *ac;
+			GString *addr, *ssta, *ac, *error;
 			const gchar *maestro_addr = gebr_maestro_server_get_address(maestro);
 
 			/* organize message data */
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 3)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 4)) == NULL)
 				goto err;
 
 			addr = g_list_nth_data(arguments, 0);
 			ssta = g_list_nth_data(arguments, 1);
-			ac = g_list_nth_data(arguments, 2);
+			error = g_list_nth_data(arguments, 2);
+			ac = g_list_nth_data(arguments, 3);
+			g_debug("on '%s', receiving from '%s' error '%s'", __func__, addr->str, error->str);
 
 			GtkTreeIter iter;
 			GebrCommServerState state = gebr_comm_server_state_from_string(ssta->str);
 			GebrDaemonServer *daemon = get_daemon_from_address(maestro, addr->str, &iter);
+			if(daemon)
+				gebr_daemon_server_set_error(daemon, error->str);
 
 			if (!daemon) {
 				daemon = gebr_daemon_server_new(GEBR_CONNECTABLE(maestro),
