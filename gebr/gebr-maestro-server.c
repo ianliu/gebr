@@ -473,8 +473,6 @@ parse_messages(GebrCommServer *comm_server,
 			GString *parameter = g_list_nth_data(arguments, 2);
 
 			GebrJob *job = g_hash_table_lookup(maestro->priv->jobs, id->str);
-			GebrCommJobStatus status_enum;
-			status_enum = gebr_comm_job_get_status_from_string(status->str);
 			gebr_job_set_status(job, gebr_comm_job_get_status_from_string(status->str), parameter->str);
 
 			update_queues_model(maestro, job);

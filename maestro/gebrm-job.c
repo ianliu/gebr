@@ -341,10 +341,6 @@ gebrm_job_append_task(GebrmJob *job, GebrmTask *task)
 {
 	job->priv->tasks = g_list_prepend(job->priv->tasks, task);
 
-	gint frac, total;
-
-	total = job->priv->total;
-	frac = gebrm_task_get_fraction(task);
 	const gchar *issues = gebrm_task_get_issues(task);
 	GebrCommJobStatus status = gebrm_task_get_status(task);
 

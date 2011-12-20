@@ -901,10 +901,8 @@ gebrm_config_delete_server(const gchar *serv)
 	gchar *server;
 	gchar *final_list_str;
 	GKeyFile *servers;
-	gboolean ret;
 
 	server = g_strcmp0(serv, "127.0.0.1") ? g_strdup(serv): g_strdup("localhost");
-
 	servers = g_key_file_new ();
 
 	const gchar *path = gebrm_app_get_servers_file();
@@ -918,7 +916,7 @@ gebrm_config_delete_server(const gchar *serv)
 		g_debug("Remove server %s from file", server);
 
 	final_list_str= g_key_file_to_data (servers, NULL, NULL);
-	ret = g_file_set_contents (path, final_list_str, -1, NULL);
+	g_file_set_contents (path, final_list_str, -1, NULL);
 	g_free (server);
 	g_free (final_list_str);
 	g_key_file_free (servers);
