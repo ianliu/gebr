@@ -1,19 +1,21 @@
-/*   GeBR - An environment for seismic processing.
- *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
+/*
+ * ui_document.c
+ * This file is part of GêBR Project
  *
- *   This program is free software: you can redistribute it and/or
- *   modify it under the terms of the GNU General Public License as
- *   published by the Free Software Foundation, either version 3 of
- *   the License, or * (at your option) any later version.
+ * Copyright (C) 2007-2011 - GêBR Core Team (www.gebrproject.com)
  *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *   General Public License for more details.
+ * GêBR Project is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
- *   You should have received a copy of the GNU General Public License
- *   along with this program. If not, see
- *   <http://www.gnu.org/licenses/>.
+ * GêBR Project is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with GêBR Project. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -214,7 +216,7 @@ document_properties_create_maestro_combobox(GebrGeoXmlLine *line)
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 
 	GtkWidget *combo = gtk_combo_box_new_with_model(GTK_TREE_MODEL(store));
-	//gtk_widget_set_sensitive(combo, FALSE);
+	gtk_widget_set_sensitive(combo, FALSE);
 
 	GtkCellRenderer *renderer = gtk_cell_renderer_pixbuf_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(combo), renderer, FALSE);
@@ -256,6 +258,15 @@ document_properties_create_maestro_combobox(GebrGeoXmlLine *line)
 
 
 	return combo;
+}
+
+static void
+on_lock_button_toggled(GtkToggleButton *button,
+		       GtkWidget *widget)
+{
+	gboolean active = gtk_toggle_button_get_active(button);
+	gtk_button_set_label(GTK_BUTTON(button), active ? "U" : "O");
+	gtk_widget_set_sensitive(widget, active);
 }
 
 void document_properties_setup_ui (GebrGeoXmlDocument * document,
@@ -384,12 +395,21 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 		data->maestro_combo = document_properties_create_maestro_combobox(GEBR_GEOXML_LINE(document));
 		data->previous_active_group = gtk_combo_box_get_active(GTK_COMBO_BOX(data->maestro_combo));
 
+		GtkWidget *lock_button = gtk_toggle_button_new_with_label(_("O"));
+		g_signal_connect(lock_button, "toggled",
+				 G_CALLBACK(on_lock_button_toggled), data->maestro_combo);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(lock_button), FALSE);
+
+		GtkWidget *hbox = gtk_hbox_new(FALSE, 5);
+		gtk_box_pack_start(GTK_BOX(hbox), data->maestro_combo, TRUE, TRUE, 0);
+		gtk_box_pack_start(GTK_BOX(hbox), lock_button, FALSE, TRUE, 0);
+
 		label = gtk_label_new(_("Maestro"));
 		gtk_table_attach(GTK_TABLE (table), label, 0, 1, row, row+1, GTK_FILL, GTK_FILL, 3, 3);
-		gtk_table_attach(GTK_TABLE (table), data->maestro_combo, 1, 2, row, row+1, GTK_FILL, GTK_FILL, 3, 3);
+		gtk_table_attach(GTK_TABLE (table), hbox, 1, 2, row, row+1, GTK_FILL, GTK_FILL, 3, 3);
 		row++;
 		gtk_widget_show(label);
-		gtk_widget_show(data->maestro_combo);
+		gtk_widget_show_all(hbox);
 		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 
 		/* Line Path's*/
