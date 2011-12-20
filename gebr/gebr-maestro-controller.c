@@ -920,7 +920,7 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 	GtkTreeView *view = GTK_TREE_VIEW(gtk_builder_get_object(self->priv->builder, 
 								 "treeview_servers"));
 
-	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(view), GTK_SELECTION_MULTIPLE);
+//	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(view), GTK_SELECTION_MULTIPLE);
 
 	/*
 	 * Maestro combobox
