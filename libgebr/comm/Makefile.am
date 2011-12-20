@@ -31,7 +31,7 @@ libcomminclude_HEADERS=gebr-comm.h
 touch:
 	if [ -d $(top_srcdir)/.hg ]; \
 	then \
-	  touch $(srcdir)/main.c -r $(top_srcdir)/.hg; \
+	  touch $(srcdir)/gebr-comm-protocol.c -r $(top_srcdir)/.hg; \
 	fi
 
 gebr-comm-protocol.c: touch
