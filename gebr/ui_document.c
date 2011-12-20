@@ -230,9 +230,13 @@ document_properties_create_maestro_combobox(GebrGeoXmlLine *line)
 		const gchar *stockid;
 		if (gebr_maestro_server_get_state(maestro) == SERVER_STATE_CONNECT)
 			stockid = GTK_STOCK_CONNECT;
-		else
-			stockid = GTK_STOCK_DISCONNECT;
-
+		else {
+			const gchar *error = gebr_maestro_server_get_error(maestro);
+			if (!error || !*error)
+				stockid = GTK_STOCK_DISCONNECT;
+			else
+				stockid = GTK_STOCK_DIALOG_WARNING;
+		}
 		gebr_maestro_server_get_server(maestro);
 		gtk_list_store_append(store, &iter);
 		gtk_list_store_set(store, &iter,

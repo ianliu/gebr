@@ -1848,14 +1848,18 @@ gebr_flow_edition_update_server(GebrFlowEdition *fe,
 {
 	gboolean sensitive = maestro != NULL;
 
-	set_run_widgets_sensitiveness(fe, sensitive);
-
 	if (maestro) {
-		GtkTreeModel *model = gebr_maestro_server_get_groups_model(maestro);
+		const gchar *error = gebr_maestro_server_get_error(maestro);
+		if (!error || !*error) {
+			GtkTreeModel *model = gebr_maestro_server_get_groups_model(maestro);
 
-		gtk_combo_box_set_model(GTK_COMBO_BOX(fe->priv->server_combobox), model);
-		g_object_unref(model);
+			gtk_combo_box_set_model(GTK_COMBO_BOX(fe->priv->server_combobox), model);
+			g_object_unref(model);
+		}
+		else
+			sensitive = FALSE;
 	}
+	set_run_widgets_sensitiveness(fe, sensitive);
 }
 
 const gchar *

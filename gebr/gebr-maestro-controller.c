@@ -1151,6 +1151,10 @@ gebr_maestro_controller_maestro_state_changed_real(GebrMaestroController *mc,
 			                              GTK_ENTRY_ICON_SECONDARY,
 			                              error);
 			gtk_widget_grab_focus(GTK_WIDGET(entry));
+
+			gtk_list_store_clear(mc->priv->model);
+			GtkTreeView *view = GTK_TREE_VIEW(gtk_builder_get_object(mc->priv->builder, "treeview_servers"));
+			gtk_tree_view_set_model(view, GTK_TREE_MODEL(mc->priv->model));
 		}
 	} else if (state == SERVER_STATE_CONNECT) {
 		gtk_entry_set_icon_from_stock(entry,
