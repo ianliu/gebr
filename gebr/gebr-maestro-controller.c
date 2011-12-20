@@ -713,60 +713,53 @@ daemon_server_address_func(GtkTreeViewColumn *tree_column,
 	gtk_tree_model_get(model, iter, MAESTRO_CONTROLLER_ADDR, &addr, -1);
 	g_object_set(cell, "text", addr, NULL);
 }
-static gboolean
-daemon_tooltip_callback(GtkTreeView * tree_view, GtkTooltip * tooltip,
-                        GtkTreeIter * iter, GtkTreeViewColumn * column, GebrMaestroController *self)
-{
-
-	gboolean editable;
-	GtkTreeModel *model = GTK_TREE_MODEL(self->priv->model);
-	GebrDaemonServer *daemon;
-	gtk_tree_model_get(model, iter,
-	                   MAESTRO_CONTROLLER_DAEMON, &daemon,
-	                   MAESTRO_CONTROLLER_EDITABLE, &editable,
-	                   -1);
-
-	if (!daemon)
-		return FALSE;
-
-	GebrCommServerState state = gebr_daemon_server_get_state(daemon);
-	const gchar *stock_id;
-
-	switch (state) {
-	case SERVER_STATE_UNKNOWN:
-	case SERVER_STATE_DISCONNECTED:
-		 stock_id = GTK_STOCK_DIALOG_WARNING;
-		gtk_tooltip_set_text(tooltip, g_strdup(gebr_daemon_server_get_error(daemon)));
-		 g_debug("on %s, error '%s'", __func__, gebr_daemon_server_get_error(daemon));
-		 break;
-	case SERVER_STATE_RUN:
-	case SERVER_STATE_OPEN_TUNNEL:
-		stock_id = GTK_STOCK_DISCONNECT;
-		gtk_tooltip_set_text(tooltip, _("Disconnected"));
-		break;
-	case SERVER_STATE_CONNECT:
-		stock_id = GTK_STOCK_CONNECT;
-		gtk_tooltip_set_text(tooltip, _("Connected"));
-		break;
-	}
-
-	g_object_set(cell, "stock-id", stock_id, NULL);
-	return TRUE;
-
-
-}
 
 static void
 daemon_server_status_func(GtkTreeViewColumn *tree_column,
 			  GtkCellRenderer *cell,
 			  GtkTreeModel *model,
 			  GtkTreeIter *iter,
-			  GebrMaestroController *mc)
+			  gpointer data)
 {
-	GtkTreeView *view = GTK_TREE_VIEW(gtk_builder_get_object(mc->priv->builder, "treeview_servers"));
+	gboolean editable;
 
-	gebr_gui_gtk_tree_view_set_tooltip_callback(GTK_TREE_VIEW(view),
-						    (GebrGuiGtkTreeViewTooltipCallback) daemon_tooltip_callback, mc);
+	GebrDaemonServer *daemon;
+	gtk_tree_model_get(model, iter,
+	                   MAESTRO_CONTROLLER_DAEMON, &daemon,
+	                   MAESTRO_CONTROLLER_EDITABLE, &editable,
+	                   -1);
+
+	if(editable) {
+		g_object_set(cell, "stock-id", NULL, NULL);
+		return;
+	}
+
+	if (!daemon)
+		return;
+
+	GebrCommServerState state = gebr_daemon_server_get_state(daemon);
+	const gchar *stock_id;
+
+	const gchar *error = gebr_daemon_server_get_error(daemon);
+
+	if (!error || !*error)
+	{
+		switch (state) {
+		case SERVER_STATE_UNKNOWN:
+		case SERVER_STATE_DISCONNECTED:
+		case SERVER_STATE_RUN:
+		case SERVER_STATE_OPEN_TUNNEL:
+			stock_id = GTK_STOCK_DISCONNECT;
+			break;
+		case SERVER_STATE_CONNECT:
+			stock_id = GTK_STOCK_CONNECT;
+			break;
+		}
+	}
+	else
+		stock_id = GTK_STOCK_DIALOG_WARNING;
+
+	g_object_set(cell, "stock-id", stock_id, NULL);
 }
 
 static void
@@ -863,6 +856,22 @@ server_tooltip_callback(GtkTreeView * tree_view, GtkTooltip * tooltip,
 		else
 			gtk_tooltip_set_text(tooltip, _("Autoconnect OFF"));
 
+		return TRUE;
+	}
+	else if (gtk_tree_view_get_column(tree_view, 1) == column) {
+		GebrDaemonServer *daemon;
+
+		gtk_tree_model_get(GTK_TREE_MODEL(self->priv->model), iter, MAESTRO_CONTROLLER_DAEMON, &daemon, -1);
+
+		if (!daemon)
+			return FALSE;
+
+		const gchar *error = gebr_daemon_server_get_error(daemon);
+
+		if (!error || !*error)
+			return FALSE;
+
+		gtk_tooltip_set_text(tooltip, error);
 		return TRUE;
 	}
 	return FALSE;
