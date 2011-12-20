@@ -1592,6 +1592,34 @@ on_group_changed(GebrMaestroController *mc,
 	on_maestro_filter_changed(jc->priv->maestro_combo, jc);
 }
 
+static void
+clear_jobs_for_maestro(GebrJobControl *jc,
+		       GebrMaestroServer *maestro)
+{
+	GtkTreeIter iter;
+	GtkTreeModel *model = GTK_TREE_MODEL(jc->priv->store);
+	const gchar *addr1 = gebr_maestro_server_get_address(maestro);
+	const gchar *addr2;
+
+	gebr_gui_gtk_tree_model_foreach(iter, model) {
+		GebrJob *job;
+		gtk_tree_model_get(model, &iter, 0, &job, -1);
+		addr2 = gebr_job_get_maestro_address(job);
+
+		if (g_strcmp0(addr1, addr2) == 0)
+			gebr_job_control_remove(jc, job);
+	}
+}
+
+static void
+on_maestro_state_changed(GebrMaestroController *mc,
+			 GebrMaestroServer *maestro,
+			 GebrJobControl *jc)
+{
+	if (gebr_maestro_server_get_state(maestro) == SERVER_STATE_DISCONNECTED)
+		clear_jobs_for_maestro(jc, maestro);
+}
+
 /* Public methods {{{1 */
 GebrJobControl *
 gebr_job_control_new(void)
@@ -1608,6 +1636,8 @@ gebr_job_control_new(void)
 	                 G_CALLBACK(on_job_define), jc);
 	g_signal_connect(gebr.maestro_controller, "group-changed",
 	                 G_CALLBACK(on_group_changed), jc);
+	g_signal_connect(gebr.maestro_controller, "maestro-state-changed",
+			 G_CALLBACK(on_maestro_state_changed), jc);
 
 	jc->priv->builder = gtk_builder_new();
 	gtk_builder_add_from_file(jc->priv->builder, GEBR_GLADE_DIR"/gebr-job-control.glade", NULL);
