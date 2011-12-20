@@ -541,7 +541,7 @@ gebr_maestro_controller_new(void)
 
 static void
 on_server_connect(GtkMenuItem *menuitem,
-                              GebrMaestroController *mc)
+                  GebrMaestroController *mc)
 {
 	GtkTreeIter iter;
 	GebrDaemonServer *daemon;
@@ -651,9 +651,6 @@ server_popup_menu(GtkWidget * widget,
 	GebrDaemonServer *daemon;
 	gtk_tree_model_get_iter(model, &iter, rows->data);
 	gtk_tree_model_get(model, &iter, MAESTRO_CONTROLLER_DAEMON, &daemon, -1);
-
-	if (!daemon)
-		return NULL;
 
 	menu = gtk_menu_new ();
 
@@ -898,6 +895,8 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 
 	GtkTreeView *view = GTK_TREE_VIEW(gtk_builder_get_object(self->priv->builder, 
 								 "treeview_servers"));
+
+	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(view), GTK_SELECTION_MULTIPLE);
 
 	/*
 	 * Maestro combobox
