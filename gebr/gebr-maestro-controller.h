@@ -56,6 +56,9 @@ struct _GebrMaestroControllerClass {
 
 	void (*group_changed) (GebrMaestroController *self,
 			       GebrMaestroServer     *maestro);
+
+	void (*maestro_state_changed) (GebrMaestroController *self,
+				       GebrMaestroServer     *maestro);
 };
 
 enum {
@@ -76,12 +79,10 @@ GebrMaestroController *gebr_maestro_controller_new(void);
 
 GtkDialog *gebr_maestro_controller_create_dialog(GebrMaestroController *self);
 
-GList *gebr_maestro_controller_get_maestros(GebrMaestroController *self);
+GebrMaestroServer * gebr_maestro_controller_get_maestro(GebrMaestroController *self);
 
 void gebr_maestro_controller_connect(GebrMaestroController *self,
 				     const gchar *address);
-
-GtkTreeModel *gebr_maestro_controller_get_maestros_model(GebrMaestroController *self);
 
 GebrMaestroServer *gebr_maestro_controller_get_maestro_for_address(GebrMaestroController *mc,
 								   const gchar *address);

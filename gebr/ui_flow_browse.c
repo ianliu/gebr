@@ -476,6 +476,9 @@ static void flow_browse_load(void)
 	for (; revision != NULL; gebr_geoxml_sequence_next(&revision))
 		flow_browse_load_revision(GEBR_GEOXML_REVISION(revision), FALSE);
 
+	gebr_flow_edition_select_group_for_flow(gebr.ui_flow_edition,
+						gebr.flow);
+
 	flow_browse_info_update();
 
 	g_free(filename);

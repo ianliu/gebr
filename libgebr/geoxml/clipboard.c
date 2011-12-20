@@ -51,7 +51,33 @@ void gebr_geoxml_clipboard_copy(GebrGeoXmlObject * object)
 	gdome_el_appendChild(document_element, imported_node, &exception);
 }
 
-GebrGeoXmlObject *gebr_geoxml_clipboard_paste(GebrGeoXmlObject * object)
+gboolean
+gebr_geoxml_clipboard_has_forloop(void)
+{
+	gboolean has_forloop = FALSE;
+	GdomeElement *docel = gdome_doc_documentElement(clipboard_document, &exception);
+	GdomeElement *el = __gebr_geoxml_get_first_element(docel, "*");
+
+	for (; el; el = __gebr_geoxml_next_element(el)) {
+		GdomeDOMString *str = gdome_el_tagName(el, &exception);
+
+		if (g_strcmp0(str->str, "program") != 0)
+			continue;
+
+		GebrGeoXmlProgramControl cont =
+			gebr_geoxml_program_get_control(GEBR_GEOXML_PROGRAM(el));
+		if (cont == GEBR_GEOXML_PROGRAM_CONTROL_FOR) {
+			has_forloop = TRUE;
+			goto out;
+		}
+	}
+
+out:
+	return has_forloop;
+}
+
+GebrGeoXmlObject *
+gebr_geoxml_clipboard_paste(GebrGeoXmlObject *object)
 {
 	if (object == NULL)
 		return NULL;
@@ -62,6 +88,7 @@ GebrGeoXmlObject *gebr_geoxml_clipboard_paste(GebrGeoXmlObject * object)
 		{  "parameter",     "program",             "parameters"},
 		{  NULL, NULL, NULL}
 	};
+
 	GdomeElement *paste_element;
 	GdomeElement *container_element;
 	GebrGeoXmlObject *first_paste = NULL;
@@ -69,9 +96,14 @@ GebrGeoXmlObject *gebr_geoxml_clipboard_paste(GebrGeoXmlObject * object)
 	GebrGeoXmlProgram *prog;
 	GebrGeoXmlProgramControl cont;
 
-	container_element = gdome_n_nodeType((GdomeNode *) object, &exception) == GDOME_DOCUMENT_NODE
-	    ? gdome_doc_documentElement((GdomeDocument *) object, &exception) : (GdomeElement *) object;
-	paste_element = __gebr_geoxml_get_first_element(gdome_doc_documentElement(clipboard_document, &exception), "*");
+	if (gdome_n_nodeType((GdomeNode *) object, &exception) == GDOME_DOCUMENT_NODE)
+		container_element = gdome_doc_documentElement((GdomeDocument *) object, &exception);
+	else
+		container_element = (GdomeElement *) object;
+
+	GdomeElement *docel = gdome_doc_documentElement(clipboard_document, &exception);
+
+	paste_element = __gebr_geoxml_get_first_element(docel, "*");
 	for (; paste_element != NULL; paste_element = __gebr_geoxml_next_element(paste_element)) {
 		for (int i = 0; child_parent[i][0] != NULL; ++i) {
 			if (!strcmp(gdome_el_tagName(paste_element, &exception)->str, child_parent[i][0]) &&
@@ -82,21 +114,22 @@ GebrGeoXmlObject *gebr_geoxml_clipboard_paste(GebrGeoXmlObject * object)
 				document = gdome_el_ownerDocument(container_element, &exception);
 
 				if (strcmp(child_parent[i][0], "program") == 0) {
-					flow = GEBR_GEOXML_FLOW (document);
-					prog = GEBR_GEOXML_PROGRAM (paste_element);
-					cont = gebr_geoxml_program_get_control (prog);
-					if (gebr_geoxml_flow_has_control_program (flow)
+					flow = GEBR_GEOXML_FLOW(document);
+					prog = GEBR_GEOXML_PROGRAM(paste_element);
+					cont = gebr_geoxml_program_get_control(prog);
+
+					if (gebr_geoxml_flow_has_control_program(flow)
 					    && cont != GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY)
-						break;
+							break;
 				}
 
 				imported = gdome_doc_importNode(document, (GdomeNode*)paste_element, TRUE, &exception);
 				if (!strlen(child_parent[i][2]))
 					gdome_el_appendChild(container_element, imported, &exception);
 				else
-					gdome_el_appendChild(__gebr_geoxml_get_first_element
-							     (container_element, child_parent[i][2]), imported,
+					gdome_el_appendChild(__gebr_geoxml_get_first_element(container_element, child_parent[i][2]), imported,
 							     &exception);
+
 				if (first_paste == NULL)
 					first_paste = GEBR_GEOXML_OBJECT(imported);
 				break;

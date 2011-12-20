@@ -157,6 +157,30 @@ gboolean server_init(void)
 	else if (already_running)
 		return FALSE;
 
+	/* Daemon Id */
+	gchar *contents;
+	gchar *gebrd_dir = g_build_filename(g_get_home_dir(), ".gebr", "gebrd", g_get_host_name(), NULL);
+	gchar *id_path = g_build_filename(gebrd_dir, "id", NULL);
+
+	if (g_access(id_path, R_OK | W_OK) == 0) {
+		if (!g_file_get_contents(id_path, &contents, NULL, NULL)) {
+			g_warning("Could not read %s contents", id_path);
+			exit(1);
+		}
+	} else {
+		g_mkdir_with_parents(gebrd_dir, 0700);
+		contents = gebr_id_random_create(32);
+		if (!g_file_set_contents(id_path, contents, -1, NULL)) {
+			g_warning("Could not write into %s", id_path);
+			exit(1);
+		}
+	}
+
+	gebrd_user_set_daemon_id(gebrd->user, contents);
+	g_free(contents);
+	g_free(gebrd_dir);
+	g_free(id_path);
+
 	/* fs lock */
 	if (!server_fs_lock())
 		goto err;

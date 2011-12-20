@@ -32,6 +32,7 @@ struct _GebrmDaemonPriv {
 
 	gchar *display_port;
 	gchar *nfsid;
+	gchar *id;
 };
 
 enum {
@@ -46,6 +47,7 @@ enum {
 enum {
 	STATE_CHANGE,
 	TASK_DEFINE,
+	DAEMON_INIT,
 	LAST_SIGNAL
 };
 
@@ -167,7 +169,7 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 			if (server->socket->protocol->waiting_ret_hash == gebr_comm_protocol_defs.ini_def.code_hash) {
 				GList *arguments;
 
-				if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 9)) == NULL)
+				if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 10)) == NULL)
 					goto err;
 
 				GString *hostname     = g_list_nth_data(arguments, 0);
@@ -178,6 +180,7 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 				GString *nfsid        = g_list_nth_data (arguments, 6);
 				GString *ncores       = g_list_nth_data (arguments, 7);
 				GString *clock_cpu    = g_list_nth_data (arguments, 8);
+				GString *daemon_id    = g_list_nth_data (arguments, 9);
 
 				g_string_assign(server->socket->protocol->hostname, hostname->str);
 				gebrm_daemon_set_ncores(daemon, atoi(ncores->str));
@@ -185,6 +188,9 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 				server->socket->protocol->logged = TRUE;
 				daemon->priv->display_port = g_strdup(display_port->str);
 				gebrm_daemon_set_nfsid(daemon, nfsid->str);
+				gebrm_daemon_set_id(daemon, daemon_id->str);
+
+				g_signal_emit(daemon, signals[DAEMON_INIT], 0);
 
 				g_strfreev(accounts);
 				gebr_comm_protocol_socket_oldmsg_split_free(arguments);
@@ -368,6 +374,7 @@ gebrm_daemon_finalize(GObject *object)
 	gebr_comm_server_disconnect(daemon->priv->server);
 	gebr_comm_server_free(daemon->priv->server);
 	g_free(daemon->priv->nfsid);
+	g_free(daemon->priv->id);
 	g_free(daemon->priv->display_port);
 	if (daemon->priv->client)
 		g_object_unref(daemon->priv->client);
@@ -402,6 +409,15 @@ gebrm_daemon_class_init(GebrmDaemonClass *klass)
 			     g_cclosure_marshal_VOID__OBJECT,
 			     G_TYPE_NONE,
 			     1, GEBRM_TYPE_TASK);
+
+	signals[DAEMON_INIT] =
+		g_signal_new("daemon-init",
+			     G_OBJECT_CLASS_TYPE (object_class),
+			     G_SIGNAL_RUN_FIRST,
+			     G_STRUCT_OFFSET(GebrmDaemonClass, daemon_init),
+			     NULL, NULL,
+			     g_cclosure_marshal_VOID__VOID,
+			     G_TYPE_NONE, 0);
 
 	g_object_class_install_property(object_class,
 					PROP_ADDRESS,
@@ -518,7 +534,10 @@ gebrm_daemon_get_tags(GebrmDaemon *daemon)
 
 	GString *buf = g_string_new("");
 	g_tree_foreach(daemon->priv->tags, traverse, buf);
-	g_string_erase(buf, buf->len - 1, 1);
+
+	if (buf->len > 0)
+		g_string_erase(buf, buf->len - 1, 1);
+
 	return g_string_free(buf, FALSE);
 }
 
@@ -634,6 +653,31 @@ gebrm_daeamon_answer_question(GebrmDaemon *daemon,
 {
 	gboolean response = g_strcmp0(resp, "true") == 0;
 	gebr_comm_server_answer_question(daemon->priv->server, response);
+}
+
+void
+gebrm_daemon_continue_stuck_connection(GebrmDaemon *daemon,
+				       GebrCommProtocolSocket *socket)
+{
+	g_return_if_fail(daemon->priv->client == NULL);
+	g_return_if_fail(gebrm_daemon_get_state(daemon) == SERVER_STATE_RUN);
+
+	daemon->priv->client = g_object_ref(socket);
+	gebr_comm_server_emit_interactive_state_signals(daemon->priv->server);
+}
+
+void
+gebrm_daemon_set_id(GebrmDaemon *daemon,
+		    const gchar *id)
+{
+	g_return_if_fail(daemon->priv->id == NULL);
+	daemon->priv->id = g_strdup(id);
+}
+
+const gchar *
+gebrm_daemon_get_id(GebrmDaemon *daemon)
+{
+	return daemon->priv->id;
 }
 
 const gchar *

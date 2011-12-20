@@ -46,6 +46,7 @@ enum {
 	DAEMONS_CHANGED,
 	STATE_CHANGE,
 	AC_CHANGE,
+	ERROR,
 	LAST_SIGNAL
 };
 
@@ -151,6 +152,9 @@ state_changed(GebrCommServer *comm_server,
 
 	GebrCommServerState state = gebr_comm_server_get_state(comm_server);
 
+	if (state == SERVER_STATE_DISCONNECTED)
+		gtk_list_store_clear(maestro->priv->groups_store);
+
 	if (state == SERVER_STATE_CONNECT
 	    || state == SERVER_STATE_DISCONNECTED)
 		g_signal_emit(maestro, signals[GROUP_CHANGED], 0);
@@ -179,7 +183,7 @@ ssh_question(GebrCommServer *server,
 	     const gchar *question,
 	     gpointer user_data)
 {
-	gboolean *response;
+	gboolean response;
 	GebrMaestroServer *maestro = user_data;
 
 	g_signal_emit(maestro, signals[QUESTION_REQUEST], 0,
@@ -279,6 +283,7 @@ parse_messages(GebrCommServer *comm_server,
 		if (message->hash == gebr_comm_protocol_defs.ssta_def.code_hash) {
 			GList *arguments;
 			GString *addr, *ssta, *ac, *error;
+			const gchar *maestro_addr = gebr_maestro_server_get_address(maestro);
 
 			/* organize message data */
 			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 4)) == NULL)
@@ -298,7 +303,7 @@ parse_messages(GebrCommServer *comm_server,
 
 			if (!daemon) {
 				daemon = gebr_daemon_server_new(GEBR_CONNECTABLE(maestro),
-								addr->str, state);
+								addr->str, state, maestro_addr);
 				gebr_maestro_server_add_daemon(maestro, daemon);
 			} else {
 				GtkTreePath *path = gtk_tree_model_get_path(GTK_TREE_MODEL(maestro->priv->store), &iter);
@@ -367,6 +372,7 @@ parse_messages(GebrCommServer *comm_server,
 			gebr_job_set_submit_date(job, submit_date->str);
 			gebr_job_set_nprocs(job, nprocs->str);
 			gebr_job_set_static_status(job, gebr_comm_job_get_status_from_string(status->str));
+			gebr_job_set_io(job, input->str, output->str, error->str);
 
 			if (init) {
 				/* Creates a job and populates some of its information.
@@ -376,7 +382,6 @@ parse_messages(GebrCommServer *comm_server,
 				gebr_job_set_hostname(job, hostname->str);
 				gebr_job_set_title(job, title->str);
 				gebr_job_set_nice(job, nice->str);
-				gebr_job_set_io(job, input->str, output->str, error->str);
 				gebr_job_set_server_group(job, group->str);
 				gebr_job_set_server_group_type(job, group_type->str);
 				gebr_job_set_exec_speed(job, atoi(speed->str));
@@ -559,16 +564,25 @@ parse_messages(GebrCommServer *comm_server,
 		else if (message->hash == gebr_comm_protocol_defs.srm_def.code_hash) {
 			GList *arguments;
 
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 1)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
 				goto err;
 
 			GString *addr = g_list_nth_data(arguments, 0);
+			GString *error = g_list_nth_data(arguments, 1);
 
 			g_debug("Removing server %s", addr->str);
 
 			GtkTreeIter iter;
 			GebrDaemonServer *daemon;
 			GtkTreeModel *model = GTK_TREE_MODEL(maestro->priv->store);
+
+			if (g_str_has_prefix(error->str, "error:")) {
+				gint offset = strlen("error:");
+				if (g_strcmp0(error->str + offset, "nfs") == 0)
+					g_signal_emit(maestro, signals[ERROR], 0, addr->str, "nfs");
+				else if (g_strcmp0(error->str + offset, "id") == 0)
+					g_signal_emit(maestro, signals[ERROR], 0, addr->str, "id");
+			}
 
 			gebr_gui_gtk_tree_model_foreach(iter, model) {
 				gtk_tree_model_get(model, &iter, 0, &daemon, -1);
@@ -681,7 +695,7 @@ gebr_maestro_server_class_init(GebrMaestroServerClass *klass)
 	signals[GROUP_CHANGED] =
 		g_signal_new("group-changed",
 			     G_OBJECT_CLASS_TYPE(object_class),
-			     G_SIGNAL_RUN_LAST,
+			     G_SIGNAL_RUN_FIRST,
 			     G_STRUCT_OFFSET(GebrMaestroServerClass, group_changed),
 			     NULL, NULL,
 			     g_cclosure_marshal_VOID__VOID,
@@ -733,6 +747,15 @@ gebr_maestro_server_class_init(GebrMaestroServerClass *klass)
 			             gebr_cclosure_marshal_VOID__INT_OBJECT,
 			             G_TYPE_NONE, 2, G_TYPE_INT, GEBR_TYPE_DAEMON_SERVER);
 
+	signals[ERROR] =
+			g_signal_new("error",
+			             G_OBJECT_CLASS_TYPE(object_class),
+			             G_SIGNAL_RUN_LAST,
+			             G_STRUCT_OFFSET(GebrMaestroServerClass, error),
+			             NULL, NULL,
+			             gebr_cclosure_marshal_VOID__STRING_STRING,
+			             G_TYPE_NONE, 2, G_TYPE_STRING, G_TYPE_STRING);
+
 	g_object_class_install_property(object_class,
 					PROP_ADDRESS,
 					g_param_spec_string("address",
@@ -766,7 +789,10 @@ gebr_maestro_server_init(GebrMaestroServer *maestro)
 							 G_TYPE_STRING);
 
 	GebrDaemonServer *autochoose =
-		gebr_daemon_server_new(GEBR_CONNECTABLE(maestro), NULL, SERVER_STATE_CONNECT);
+		gebr_daemon_server_new(GEBR_CONNECTABLE(maestro), 
+				       NULL, 
+				       SERVER_STATE_CONNECT, 
+				       gebr_maestro_server_get_address(maestro));
 	gebr_maestro_server_add_daemon(maestro, autochoose);
 }
 
@@ -791,8 +817,8 @@ gebr_maestro_server_connectable_connect(GebrConnectable *connectable,
 }
 
 static void
-gebr_maestro_server_disconnect(GebrConnectable *connectable,
-			       const gchar *address)
+gebr_maestro_server_connectable_disconnect(GebrConnectable *connectable,
+                                           const gchar *address)
 {
 	GebrCommUri *uri = gebr_comm_uri_new();
 	gebr_comm_uri_set_prefix(uri, "/disconnect");
@@ -827,7 +853,7 @@ static void
 gebr_maestro_server_connectable_init(GebrConnectableIface *iface)
 {
 	iface->connect = gebr_maestro_server_connectable_connect;
-	iface->disconnect = gebr_maestro_server_disconnect;
+	iface->disconnect = gebr_maestro_server_connectable_disconnect;
 	iface->remove = gebr_maestro_server_remove;
 }
 /* }}} */
@@ -847,6 +873,12 @@ gebr_maestro_server_add_daemon(GebrMaestroServer *maestro,
 	GtkTreeIter iter;
 	gtk_list_store_append(maestro->priv->store, &iter);
 	gtk_list_store_set(maestro->priv->store, &iter, 0, daemon, -1);
+}
+
+GebrCommServerState
+gebr_maestro_server_get_state(GebrMaestroServer *maestro)
+{
+	return maestro->priv->server->state;
 }
 
 GebrCommServer *
@@ -1002,6 +1034,12 @@ gebr_maestro_server_get_queues_model(GebrMaestroServer *maestro,
 					       visible_queue_func,
 					       group_id, group_id_free);
 	return filter;
+}
+
+void
+gebr_maestro_server_disconnect(GebrMaestroServer *maestro)
+{
+	gebr_comm_server_disconnect(maestro->priv->server);
 }
 
 void

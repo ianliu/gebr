@@ -61,6 +61,10 @@ struct _GebrMaestroServerClass {
 
 	void    (*ac_change) (GebrMaestroServer *maestro,
 			      gboolean	         is_ac);
+
+	void    (*error) (GebrMaestroServer *maestro,
+			  const gchar       *addr,
+			  const gchar       *error_type);
 };
 
 struct _GebrMaestroServer {
@@ -107,6 +111,8 @@ GtkTreeModel *gebr_maestro_server_get_queues_model(GebrMaestroServer *maestro,
 						   GebrMaestroServerGroupType type,
 						   const gchar *name);
 
+void gebr_maestro_server_disconnect(GebrMaestroServer *maestro);
+
 void gebr_maestro_server_connect(GebrMaestroServer *maestro);
 
 void gebr_maestro_server_add_temporary_job(GebrMaestroServer *maestro, GebrJob *job);
@@ -133,6 +139,8 @@ GebrDaemonServer *gebr_maestro_server_get_daemon(GebrMaestroServer *server,
 						 const gchar *address);
 
 const gchar *gebr_maestro_server_get_error(GebrMaestroServer *maestro);
+
+GebrCommServerState gebr_maestro_server_get_state(GebrMaestroServer *maestro);
 
 G_END_DECLS
 

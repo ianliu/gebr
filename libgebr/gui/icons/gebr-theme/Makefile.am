@@ -98,6 +98,8 @@ libgebr_gui_icons16x16stock_DATA =		\
 	16x16/stock/list-add.png	\
 	16x16/stock/list-remove.png	\
 	16x16/stock/media-playback-start.png	\
+	16x16/stock/object-locked.png   \
+	16x16/stock/object-unlocked.png   \
 	16x16/stock/process-stop.png	\
 	16x16/stock/system-run.png	\
 	16x16/stock/view-refresh.png	\
@@ -184,6 +186,8 @@ libgebr_gui_icons22x22stock_DATA =		\
 	22x22/stock/list-add.png	\
 	22x22/stock/list-remove.png	\
 	22x22/stock/media-playback-start.png	\
+	22x22/stock/object-locked.png   \
+	22x22/stock/object-unlocked.png   \
 	22x22/stock/process-stop.png	\
 	22x22/stock/system-run.png	\
 	22x22/stock/view-refresh.png	\
@@ -270,6 +274,8 @@ libgebr_gui_icons48x48stock_DATA =		\
 	48x48/stock/list-add.png	\
 	48x48/stock/list-remove.png	\
 	48x48/stock/media-playback-start.png	\
+	48x48/stock/object-locked.png   \
+	48x48/stock/object-unlocked.png   \
 	48x48/stock/process-stop.png	\
 	48x48/stock/system-run.png	\
 	48x48/stock/view-refresh.png	\
@@ -283,7 +289,10 @@ libgebr_gui_iconsscalablestock_DATA = \
 	scalable/stock/gebr-speed-low.svg \
 	scalable/stock/gebr-speed-medium.svg \
 	scalable/stock/gebr-speed-high.svg \
-	scalable/stock/gebr-speed-veryhigh.svg
+	scalable/stock/gebr-speed-veryhigh.svg \
+	scalable/stock/object-locked.svgz   \
+	scalable/stock/object-unlocked.svgz   \
+	$(NULL)
 
 EXTRA_DIST = 					\
 	$(libgebr_gui_icons_DATA)		\

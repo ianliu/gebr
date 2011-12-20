@@ -29,8 +29,7 @@
 #include <libgebr/utils.h>
 
 struct _GebrMaestroControllerPriv {
-	GList *maestros;
-	GtkListStore *maestro_model;
+	GebrMaestroServer *maestro;
 	GtkBuilder *builder;
 
 	GtkListStore *model;
@@ -48,6 +47,7 @@ enum {
 	JOB_DEFINE,
 	MAESTRO_LIST_CHANGED,
 	GROUP_CHANGED,
+	MAESTRO_STATE_CHANGED,
 	LAST_SIGNAL
 };
 
@@ -64,11 +64,14 @@ static void connect_to_maestro(GtkEntry *entry, GebrMaestroController *self);
 
 static void on_state_change(GebrMaestroServer *maestro, GebrMaestroController *self);
 
+static void gebr_maestro_controller_maestro_state_changed_real(GebrMaestroController *mc,
+							       GebrMaestroServer *maestro);
+
 static void
 insert_new_entry(GebrMaestroController *mc)
 {
 	GtkTreeIter iter;
-	gtk_list_store_append(mc->priv->model, &iter);
+	gtk_list_store_prepend(mc->priv->model, &iter);
 	gtk_list_store_set(mc->priv->model, &iter,
 	                   MAESTRO_CONTROLLER_DAEMON, NULL,
 	                   MAESTRO_CONTROLLER_ADDR, _("New"),
@@ -121,7 +124,7 @@ finish_group_creation(GtkWidget *widget,
 	GtkNotebook *nb = GTK_NOTEBOOK(gtk_builder_get_object(mc->priv->builder, "notebook_groups"));
 	GtkWidget *dummy = g_object_get_data(G_OBJECT(widget), "dummy-widget");
 	gtk_notebook_set_tab_label(nb, dummy, box);
-	gebr_maestro_server_add_tag_to(mc->priv->maestros->data, daemon, tag);
+	gebr_maestro_server_add_tag_to(mc->priv->maestro, daemon, tag);
 
 	g_free(tag);
 }
@@ -180,7 +183,7 @@ drag_data_received_handl(GtkWidget *widget,
 
 	if (GTK_IS_TREE_VIEW(widget)) {
 		const gchar *tag = g_object_get_data(G_OBJECT(widget), "tag");
-		gebr_maestro_server_add_tag_to(mc->priv->maestros->data, *daemon, tag);
+		gebr_maestro_server_add_tag_to(mc->priv->maestro, *daemon, tag);
 	} else {
 		GtkNotebook *nb = GTK_NOTEBOOK(gtk_builder_get_object(mc->priv->builder, "notebook_groups"));
 		gint n = gtk_notebook_get_n_pages(nb);
@@ -352,12 +355,10 @@ static void
 on_server_group_remove(GtkMenuItem *menuitem,
                        GebrMaestroController *mc)
 {
-	GebrMaestroServer *maestro = mc->priv->maestros->data;
-
 	const gchar *tag = g_object_get_data(G_OBJECT(menuitem), "tag");
 	GebrDaemonServer *daemon = g_object_get_data(G_OBJECT(menuitem), "daemon");
 
-	gebr_maestro_server_remove_tag_from(maestro, daemon, tag);
+	gebr_maestro_server_remove_tag_from(mc->priv->maestro, daemon, tag);
 }
 
 static GtkMenu *
@@ -482,8 +483,6 @@ gebr_maestro_controller_init(GebrMaestroController *self)
 	                                       G_TYPE_STRING,
 	                                       G_TYPE_BOOLEAN,
 					       G_TYPE_BOOLEAN);
-
-	self->priv->maestro_model = gtk_list_store_new(1, GEBR_TYPE_MAESTRO_SERVER);
 }
 
 static void
@@ -492,6 +491,7 @@ gebr_maestro_controller_class_init(GebrMaestroControllerClass *klass)
 	GObjectClass *object_class = G_OBJECT_CLASS(klass);
 
 	klass->group_changed = gebr_maestro_controller_group_changed_real;
+	klass->maestro_state_changed = gebr_maestro_controller_maestro_state_changed_real;
 
 	signals[JOB_DEFINE] =
 		g_signal_new("job-define",
@@ -521,6 +521,15 @@ gebr_maestro_controller_class_init(GebrMaestroControllerClass *klass)
 		             g_cclosure_marshal_VOID__OBJECT,
 		             G_TYPE_NONE, 1, GEBR_TYPE_MAESTRO_SERVER);
 
+	signals[MAESTRO_STATE_CHANGED] =
+		g_signal_new("maestro-state-changed",
+		             G_OBJECT_CLASS_TYPE(object_class),
+		             G_SIGNAL_RUN_LAST,
+		             G_STRUCT_OFFSET(GebrMaestroControllerClass, maestro_state_changed),
+		             NULL, NULL,
+		             g_cclosure_marshal_VOID__OBJECT,
+		             G_TYPE_NONE, 1, GEBR_TYPE_MAESTRO_SERVER);
+
 	g_type_class_add_private(klass, sizeof(GebrMaestroControllerPriv));
 }
 
@@ -532,11 +541,10 @@ gebr_maestro_controller_new(void)
 
 static void
 on_server_connect(GtkMenuItem *menuitem,
-                              GebrMaestroController *mc)
+                  GebrMaestroController *mc)
 {
 	GtkTreeIter iter;
 	GebrDaemonServer *daemon;
-	GebrMaestroServer *maestro = mc->priv->maestros->data;
 	GtkTreeModel *model;
 
 	GtkTreeView *view = GTK_TREE_VIEW(gtk_builder_get_object(mc->priv->builder, "treeview_servers"));
@@ -558,7 +566,8 @@ on_server_connect(GtkMenuItem *menuitem,
 		if (gebr_daemon_server_get_state(daemon) == SERVER_STATE_CONNECT)
 			continue;
 
-		gebr_connectable_connect(GEBR_CONNECTABLE(maestro), gebr_daemon_server_get_address(daemon));
+		gebr_connectable_connect(GEBR_CONNECTABLE(mc->priv->maestro),
+					 gebr_daemon_server_get_address(daemon));
 	}
 }
 
@@ -568,7 +577,6 @@ on_server_disconnect(GtkMenuItem *menuitem,
 {
 	GtkTreeIter iter;
 	GebrDaemonServer *daemon;
-	GebrMaestroServer *maestro = mc->priv->maestros->data;
 	GtkTreeModel *model;
 
 	GtkTreeView *view = GTK_TREE_VIEW(gtk_builder_get_object(mc->priv->builder, "treeview_servers"));
@@ -590,7 +598,8 @@ on_server_disconnect(GtkMenuItem *menuitem,
 		if (gebr_daemon_server_get_state(daemon) == SERVER_STATE_DISCONNECTED)
 			continue;
 
-		gebr_connectable_disconnect(GEBR_CONNECTABLE(maestro), gebr_daemon_server_get_address(daemon));
+		gebr_connectable_disconnect(GEBR_CONNECTABLE(mc->priv->maestro),
+					    gebr_daemon_server_get_address(daemon));
 	}
 }
 
@@ -600,7 +609,6 @@ on_server_remove(GtkMenuItem *menuitem,
 {
 	GtkTreeIter iter;
 	GebrDaemonServer *daemon;
-	GebrMaestroServer *maestro = mc->priv->maestros->data;
 	GtkTreeModel *model;
 
 	GtkTreeView *view = GTK_TREE_VIEW(gtk_builder_get_object(mc->priv->builder, "treeview_servers"));
@@ -619,9 +627,9 @@ on_server_remove(GtkMenuItem *menuitem,
 		if (!daemon)
 			continue;
 
-		gebr_connectable_remove(GEBR_CONNECTABLE(maestro), gebr_daemon_server_get_address(daemon));
+		gebr_connectable_remove(GEBR_CONNECTABLE(mc->priv->maestro), gebr_daemon_server_get_address(daemon));
 	}
-	on_server_group_changed(maestro, mc);
+	on_server_group_changed(mc->priv->maestro, mc);
 }
 
 static GtkMenu *
@@ -643,9 +651,6 @@ server_popup_menu(GtkWidget * widget,
 	GebrDaemonServer *daemon;
 	gtk_tree_model_get_iter(model, &iter, rows->data);
 	gtk_tree_model_get(model, &iter, MAESTRO_CONTROLLER_DAEMON, &daemon, -1);
-
-	if (!daemon)
-		return NULL;
 
 	menu = gtk_menu_new ();
 
@@ -764,7 +769,6 @@ daemon_server_status_func(GtkTreeViewColumn *tree_column,
 						    (GebrGuiGtkTreeViewTooltipCallback) daemon_tooltip_callback, mc);
 }
 
-
 static void
 daemon_server_ac_func(GtkTreeViewColumn *tree_column,
                       GtkCellRenderer *cell,
@@ -808,7 +812,7 @@ server_list_add(GebrMaestroController *mc,
 	gebr_comm_uri_free(uri);
 
 	g_debug("************* on %s, sending message '%s'", __func__, url);
-	GebrCommServer *server = gebr_maestro_server_get_server(mc->priv->maestros->data);
+	GebrCommServer *server = gebr_maestro_server_get_server(mc->priv->maestro);
 	gebr_comm_protocol_socket_send_request(server->socket,
 					       GEBR_COMM_HTTP_METHOD_PUT, url, NULL);
 	g_free(url);
@@ -837,14 +841,12 @@ on_servers_edited(GtkCellRendererText *cell,
 }
 
 static void 
-on_connect_to_maestro_clicked( GtkButton *button,
-			       GebrMaestroController *self)
+on_connect_to_maestro_clicked(GtkButton *button,
+			      GebrMaestroController *self)
 {
 	GtkComboBoxEntry *combo = GTK_COMBO_BOX_ENTRY(gtk_builder_get_object(self->priv->builder, "combo_maestro"));
 	GtkEntry *entry = GTK_ENTRY(gtk_bin_get_child(GTK_BIN(combo)));
 	connect_to_maestro(entry, self);
-
-
 }
 
 static gboolean
@@ -895,8 +897,9 @@ on_ac_toggled (GtkCellRendererToggle *cell_renderer,
 
 	ac = gtk_cell_renderer_toggle_get_active(cell_renderer);
 
-	gebr_maestro_server_set_autoconnect(mc->priv->maestros->data, daemon, !ac);
+	gebr_maestro_server_set_autoconnect(mc->priv->maestro, daemon, !ac);
 }
+
 GtkDialog *
 gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 {
@@ -905,16 +908,15 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 				  GEBR_GLADE_DIR"/gebr-maestro-dialog.glade",
 				  NULL);
 
-	GtkTreeModel *mmodel = gebr_maestro_server_get_model(self->priv->maestros->data, FALSE, NULL);
 	GtkTreeView *view = GTK_TREE_VIEW(gtk_builder_get_object(self->priv->builder, 
-								  "treeview_servers"));
-	gtk_tree_view_set_model(GTK_TREE_VIEW(view), mmodel);
-	g_object_unref(mmodel);
+								 "treeview_servers"));
+
+	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(view), GTK_SELECTION_MULTIPLE);
 
 	/*
 	 * Maestro combobox
 	 */
-	GebrMaestroServer *maestro = self->priv->maestros->data;
+	GebrMaestroServer *maestro = self->priv->maestro;
 	GtkComboBoxEntry *combo = GTK_COMBO_BOX_ENTRY(gtk_builder_get_object(self->priv->builder, "combo_maestro"));
 	GtkEntry *entry = GTK_ENTRY(gtk_bin_get_child(GTK_BIN(combo)));
 	gtk_entry_set_text(entry, gebr_maestro_server_get_address(maestro));
@@ -972,7 +974,7 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 
 	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
 
-	on_server_group_changed(maestro, self);
+	gebr_maestro_controller_group_changed_real(self, maestro);
 
 	GtkEventBox *event = GTK_EVENT_BOX(gtk_builder_get_object(self->priv->builder, "eventbox_drop"));
 	set_widget_drag_dest(self, GTK_WIDGET(event));
@@ -987,8 +989,14 @@ static void
 connect_to_maestro(GtkEntry *entry,
 		   GebrMaestroController *self)
 {
-	g_debug(".............Maestro Entry: %s",gtk_entry_get_text(entry));
-	gebr_maestro_controller_connect(self, gtk_entry_get_text(entry));
+	const gchar *entry_text = gtk_entry_get_text(entry);
+	const gchar *address;
+	if (g_strcmp0(entry_text, "127.0.0.1")==0 || g_strcmp0(entry_text, "localhost")==0)
+		address = g_get_host_name();
+	else
+		address = entry_text;
+	g_debug(".............Maestro Entry: %s",address) ;
+	gebr_maestro_controller_connect(self, address);
 }
 
 static void
@@ -996,7 +1004,6 @@ on_job_define(GebrMaestroServer *maestro,
 	      GebrJob *job,
 	      GebrMaestroController *self)
 {
-	g_debug("On job define from MAESTRO CONTROLLER");
 	g_signal_emit(self, signals[JOB_DEFINE], 0, maestro, job);
 }
 
@@ -1053,6 +1060,33 @@ on_password_request(GebrMaestroServer *maestro,
 }
 
 static void
+on_maestro_error(GebrMaestroServer *maestro,
+		 const gchar *addr,
+		 const gchar *error_type,
+		 GebrMaestroController *mc)
+{
+	const gchar *error_msg;
+
+	if (g_strcmp0(error_type, "nfs") == 0)
+		error_msg = N_("<span size='large' weight='bold'>The selected maestro cannot manage the server "
+			       "%s, because it has a different NFS.</span>");
+	else if (g_strcmp0(error_type, "id") == 0)
+		error_msg = N_("<span size='large' weight='bold'>The selected maestro cannot manage the server "
+			       "%s, because it was already added.</span>");
+
+	GtkWidget *dialog  = gtk_message_dialog_new_with_markup(NULL, GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+	                                                        GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+	                                                        _(error_msg), addr);
+	gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
+
+	gdk_threads_enter();
+	gtk_dialog_run(GTK_DIALOG(dialog));
+
+	gtk_widget_destroy(dialog);
+	gdk_threads_leave();
+}
+
+static void
 on_ac_change(GebrMaestroServer *maestro,
              gboolean ac,
              GebrDaemonServer *daemon,
@@ -1068,6 +1102,8 @@ on_ac_change(GebrMaestroServer *maestro,
 	gebr_gui_gtk_tree_model_foreach(iter, model) {
 		gtk_tree_model_get(model, &iter,
 		                   MAESTRO_CONTROLLER_DAEMON, &d, -1);
+		if (!d)
+			continue;
 		if (g_strcmp0(addr, gebr_daemon_server_get_address(d)) == 0) {
 			has_daemon = TRUE;
 			break;
@@ -1079,14 +1115,14 @@ on_ac_change(GebrMaestroServer *maestro,
 	}
 }
 
-static void 
-on_state_change(GebrMaestroServer *maestro,
-		GebrMaestroController *self)
+static void
+gebr_maestro_controller_maestro_state_changed_real(GebrMaestroController *mc,
+						   GebrMaestroServer *maestro)
 {
-	if (!self->priv->builder)
+	if (!mc->priv->builder)
 		return;
 
-	GtkComboBoxEntry *combo = GTK_COMBO_BOX_ENTRY(gtk_builder_get_object(self->priv->builder, 
+	GtkComboBoxEntry *combo = GTK_COMBO_BOX_ENTRY(gtk_builder_get_object(mc->priv->builder, 
 									     "combo_maestro"));
 	GtkEntry *entry = GTK_ENTRY(gtk_bin_get_child(GTK_BIN(combo)));
 
@@ -1111,16 +1147,17 @@ on_state_change(GebrMaestroServer *maestro,
 		gtk_entry_set_icon_from_stock(entry,
 					      GTK_ENTRY_ICON_SECONDARY,
 					      GTK_STOCK_CONNECT);
-		on_daemons_changed(maestro, self);
-		GtkTreeView *view = GTK_TREE_VIEW(gtk_builder_get_object(self->priv->builder, "treeview_servers"));
-		gtk_tree_view_set_model(view, GTK_TREE_MODEL(self->priv->model));
+		on_daemons_changed(maestro, mc);
+		GtkTreeView *view = GTK_TREE_VIEW(gtk_builder_get_object(mc->priv->builder, "treeview_servers"));
+		gtk_tree_view_set_model(view, GTK_TREE_MODEL(mc->priv->model));
 	}
 }
 
-static gint
-cmp_maestro_servers(GebrMaestroServer *server, gchar *b)
+static void 
+on_state_change(GebrMaestroServer *maestro,
+		GebrMaestroController *self)
 {
-	return g_strcmp0(gebr_maestro_server_get_address(server), b);
+	g_signal_emit(self, signals[MAESTRO_STATE_CHANGED], 0, maestro);
 }
 
 void
@@ -1128,62 +1165,56 @@ gebr_maestro_controller_connect(GebrMaestroController *self,
 				const gchar *address)
 {
 	GebrMaestroServer *maestro;
-	GList *list = g_list_find_custom(self->priv->maestros, address,
-					 (GCompareFunc)cmp_maestro_servers);
 
-	if (list == NULL) {
-		maestro = gebr_maestro_server_new(address);
-		self->priv->maestros = g_list_prepend(self->priv->maestros, maestro);
+	if (self->priv->maestro) {
+		if (g_strcmp0(address, gebr_maestro_server_get_address(self->priv->maestro)) == 0 &&
+		    gebr_maestro_server_get_state(self->priv->maestro) == SERVER_STATE_CONNECT)
+			return;
 
-		g_signal_connect(maestro, "job-define",
-				 G_CALLBACK(on_job_define), self);
-		g_signal_connect(maestro, "group-changed",
-				 G_CALLBACK(on_server_group_changed), self);
-		g_signal_connect(maestro, "question-request",
-				 G_CALLBACK(on_question_request), self);
-		g_signal_connect(maestro, "password-request",
-				 G_CALLBACK(on_password_request), self);
-		g_signal_connect(maestro, "daemons-changed",
-				 G_CALLBACK(on_daemons_changed), self);
-		g_signal_connect(maestro, "state-change",
-				 G_CALLBACK(on_state_change), self);
-		g_signal_connect(maestro, "ac-change",
-		                 G_CALLBACK(on_ac_change), self);
-
-		GtkTreeIter iter;
-		gtk_list_store_append(self->priv->maestro_model, &iter);
-		gtk_list_store_set(self->priv->maestro_model, &iter,
-		                   0, maestro, -1);
-
-		g_signal_emit(self, signals[MAESTRO_LIST_CHANGED], 0);
-	} else {
-		gpointer data = list->data;
-		self->priv->maestros = g_list_delete_link(self->priv->maestros, list);
-		self->priv->maestros = g_list_prepend(self->priv->maestros, data);
+		gebr_maestro_server_disconnect(self->priv->maestro);
+		g_object_unref(self->priv->maestro);
 	}
-	gebr_maestro_server_connect(self->priv->maestros->data);
+
+	maestro = gebr_maestro_server_new(address);
+	self->priv->maestro = maestro;
+
+	g_signal_connect(maestro, "job-define",
+			 G_CALLBACK(on_job_define), self);
+	g_signal_connect(maestro, "group-changed",
+			 G_CALLBACK(on_server_group_changed), self);
+	g_signal_connect(maestro, "question-request",
+			 G_CALLBACK(on_question_request), self);
+	g_signal_connect(maestro, "password-request",
+			 G_CALLBACK(on_password_request), self);
+	g_signal_connect(maestro, "daemons-changed",
+			 G_CALLBACK(on_daemons_changed), self);
+	g_signal_connect(maestro, "state-change",
+			 G_CALLBACK(on_state_change), self);
+	g_signal_connect(maestro, "ac-change",
+			 G_CALLBACK(on_ac_change), self);
+	g_signal_connect(maestro, "error",
+			 G_CALLBACK(on_maestro_error), self);
+
+	g_signal_emit(self, signals[MAESTRO_LIST_CHANGED], 0);
+
+	gebr_maestro_server_connect(self->priv->maestro);
 }
 
-GList *
-gebr_maestro_controller_get_maestros(GebrMaestroController *self)
+GebrMaestroServer *
+gebr_maestro_controller_get_maestro(GebrMaestroController *self)
 {
-	return self->priv->maestros;
-}
-
-GtkTreeModel *
-gebr_maestro_controller_get_maestros_model(GebrMaestroController *self)
-{
-	return GTK_TREE_MODEL(self->priv->maestro_model);
+	return self->priv->maestro;
 }
 
 GebrMaestroServer *
 gebr_maestro_controller_get_maestro_for_address(GebrMaestroController *mc,
 						const gchar *address)
 {
-	GList *list = g_list_find_custom(mc->priv->maestros, address,
-					 (GCompareFunc)cmp_maestro_servers);
-	if (list)
-		return list->data;
+	const gchar *addr = gebr_maestro_server_get_address(mc->priv->maestro);
+
+	if (g_strcmp0(addr, address) == 0)
+		return mc->priv->maestro;
+
 	return NULL;
 }
 

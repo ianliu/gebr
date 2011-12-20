@@ -730,10 +730,19 @@ void flow_program_paste(void)
 {
 	GebrGeoXmlSequence *pasted;
 
+	gboolean flow_has_loop = gebr_geoxml_flow_has_control_program(gebr.flow);
 	pasted = GEBR_GEOXML_SEQUENCE(gebr_geoxml_clipboard_paste(GEBR_GEOXML_OBJECT(gebr.flow)));
 	if (pasted == NULL) {
 		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Could not paste program."));
 		return;
+	}
+
+	if (gebr_geoxml_clipboard_has_forloop() && !flow_has_loop)
+	{
+		GebrGeoXmlParameter *parameter;
+		gebr_geoxml_flow_insert_iter_dict(gebr.flow);
+		parameter = GEBR_GEOXML_PARAMETER(gebr_geoxml_document_get_dict_parameter(GEBR_GEOXML_DOCUMENT(gebr.flow)));
+		gebr_validator_insert(gebr.validator, GEBR_GEOXML_PARAMETER(parameter), NULL, NULL);
 	}
 
 	flow_add_program_sequence_to_view(GEBR_GEOXML_SEQUENCE(pasted), TRUE, FALSE);

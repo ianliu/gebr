@@ -229,6 +229,7 @@ calculate_server_score(const gchar *load, gint ncores, gdouble cpu_clock, gint s
 
 	gdouble current_load = predict_current_load(points, delay);
 	*eff_ncores = MAX(1, MIN(nsteps, scale*ncores/5));
+	g_debug("on '%s', eff_ncores: '%d'", __func__, *eff_ncores);
 
 	gdouble score;
 	if (current_load + (*eff_ncores) > ncores)
@@ -248,12 +249,16 @@ divide_and_run_flows(GebrCommRunner *self)
 	gint n = 0;
 	gint ncores = 0;
 
-	for (GList *i = self->priv->servers; i; i = i->next) {
-		ServerScore *sc = i->data;
-		sum += sc->score;
-		ncores += sc->eff_ncores;
-		n++;
-	}
+		for (GList *i = self->priv->servers; i; i = i->next) {
+			ServerScore *sc = i->data;
+			sum += sc->score;
+			ncores += sc->eff_ncores;
+			n++;
+			g_debug(">>>>>>>>>>>>>>>>>>on '%s', n: %d, ncores: '%d'", __func__, n, ncores);
+			if (!gebr_geoxml_flow_is_parallelizable(GEBR_GEOXML_FLOW(self->priv->flow),
+								self->priv->validator))
+				break;
+		}
 
 	self->priv->ncores = g_strdup_printf("%d", ncores);
 

@@ -308,7 +308,7 @@ void project_line_info_update(void)
 
 	/* Line's server group */
 	if (!is_project) {
-		markup = g_markup_printf_escaped("<b>%s</b>", _("Server maestro:"));
+		markup = g_markup_printf_escaped("<b>%s</b>", _("Maestro:"));
 		gtk_label_set_markup(GTK_LABEL(gebr.ui_project_line->info.group_label), markup);
 		g_free(markup);
 
@@ -478,9 +478,9 @@ static gboolean _project_line_import_path(const gchar *filename, GList **line_pa
 		}
 		gdk_threads_leave();
 
-		GList *maestros = gebr_maestro_controller_get_maestros(gebr.maestro_controller);
-		if (maestros) {
-			const gchar *addr = gebr_maestro_server_get_address(maestros->data);
+		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+		if (maestro) {
+			const gchar *addr = gebr_maestro_server_get_address(maestro);
 			gebr_geoxml_line_set_maestro(*line, addr);
 		}
 
@@ -1276,10 +1276,7 @@ static void project_line_load(void)
 		GebrMaestroServer *maestro =
 			gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller,
 								     gebr.line);
-		if (maestro)
-			gebr_flow_edition_update_server(gebr.ui_flow_edition, maestro);
-		else
-			gebr_message(GEBR_LOG_WARNING, TRUE, FALSE, "Could not find maestro for this line");
+		gebr_flow_edition_update_server(gebr.ui_flow_edition, maestro);
 
 		line_load_flows();
 	} else {

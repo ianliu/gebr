@@ -46,8 +46,11 @@ typedef enum {
 } InteractiveState;
 
 struct _GebrCommServerPriv {
+	/* Interactive state variables */
 	gboolean is_interactive;
 	InteractiveState istate;
+	gchar *title;
+	gchar *description;
 };
 
 G_DEFINE_TYPE(GebrCommServer, gebr_comm_server, G_TYPE_OBJECT);
@@ -483,8 +486,19 @@ gebr_comm_ssh_parse_output(GebrCommTerminalProcess *process,
 
 		if (server->priv->is_interactive) {
 			server->priv->istate = ISTATE_PASS;
+
+			if (server->priv->title)
+				g_free(server->priv->title);
+
+			if (server->priv->description)
+				g_free(server->priv->description);
+
+			server->priv->title = g_strdup(_("Please, enter password"));
+			server->priv->description = g_strdup(string->str);
+
 			g_signal_emit(server, signals[PASSWORD_REQUEST], 0,
-				      _("Please, enter password"), string->str);
+				      server->priv->title,
+				      server->priv->description);
 		} else {
 			password = server->ops->ssh_login(server, _("SSH login:"), string->str,
 							  server->user_data);
@@ -505,10 +519,19 @@ gebr_comm_ssh_parse_output(GebrCommTerminalProcess *process,
 		g_string_free(string, TRUE);
 	} else if (output->str[output->len - 2] == '?') {
 		if (server->priv->is_interactive) {
-			g_debug("On question interactive!!!!");
+			if (server->priv->title)
+				g_free(server->priv->title);
+
+			if (server->priv->description)
+				g_free(server->priv->description);
+
+			server->priv->title = g_strdup(_("Please, answer the question"));
+			server->priv->description = g_strdup(output->str);
+
 			server->priv->istate = ISTATE_QUESTION;
 			g_signal_emit(server, signals[QUESTION_REQUEST], 0,
-				      _("Please, answer the question"), output->str);
+				      server->priv->title,
+				      server->priv->description);
 		} else {
 			GString *answer = g_string_new(NULL);
 			if (server->ops->ssh_question(server, _("SSH host key question:"),
@@ -897,4 +920,26 @@ void
 gebr_comm_server_set_interactive(GebrCommServer *server, gboolean setting)
 {
 	server->priv->is_interactive = setting;
+}
+
+void
+gebr_comm_server_emit_interactive_state_signals(GebrCommServer *server)
+{
+	g_return_if_fail(server->priv->is_interactive);
+
+	switch (server->priv->istate)
+	{
+	case ISTATE_NONE:
+		break;
+	case ISTATE_PASS:
+		g_signal_emit(server, signals[PASSWORD_REQUEST], 0,
+			      server->priv->title,
+			      server->priv->description);
+		break;
+	case ISTATE_QUESTION:
+		g_signal_emit(server, signals[QUESTION_REQUEST], 0,
+			      server->priv->title,
+			      server->priv->description);
+		break;
+	}
 }

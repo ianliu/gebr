@@ -37,10 +37,13 @@ GType gebrd_user_get_type(void);
 #define GEBRD_USER_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), GEBRD_USER_TYPE, GebrdUserClass))
 
 typedef struct _GebrdUser GebrdUser;
+typedef struct _GebrdUserPriv GebrdUserPriv;
 typedef struct _GebrdUserClass GebrdUserClass;
 
 struct _GebrdUser {
 	GObject parent;
+
+	GebrdUserPriv *priv;
 
 	GString *fs_nickname;
 	GList *jobs;
@@ -49,6 +52,10 @@ struct _GebrdUser {
 struct _GebrdUserClass {
 	GObjectClass parent;
 };
+
+const gchar *gebrd_user_get_daemon_id(GebrdUser *self);
+
+void gebrd_user_set_daemon_id(GebrdUser *self, const gchar *id);
 
 G_END_DECLS
 #endif //__GEBRD_USER_H
