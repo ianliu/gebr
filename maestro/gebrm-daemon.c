@@ -199,6 +199,23 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 					return;
 			}
 		}
+		else if (message->hash == gebr_comm_protocol_defs.err_def.code_hash) {
+				GList *arguments;
+
+				if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
+					goto err;
+
+				GString *error_type = g_list_nth_data(arguments, 0);
+				GString *error_msg  = g_list_nth_data(arguments, 1);
+
+				if (daemon->priv->client)
+					gebr_comm_protocol_socket_oldmsg_send(daemon->priv->client, FALSE,
+									      gebr_comm_protocol_defs.err_def, 3,
+									      server->address->str,
+									      error_type->str, error_msg->str);
+
+				gebr_comm_protocol_socket_oldmsg_split_free(arguments);
+		}
 		else if (message->hash == gebr_comm_protocol_defs.tsk_def.code_hash) {
 			GList *arguments;
 

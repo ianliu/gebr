@@ -280,7 +280,22 @@ parse_messages(GebrCommServer *comm_server,
 
 	while ((link = g_list_last(comm_server->socket->protocol->messages)) != NULL) {
 		message = (struct gebr_comm_message *)link->data;
-		if (message->hash == gebr_comm_protocol_defs.ssta_def.code_hash) {
+		if (message->hash == gebr_comm_protocol_defs.err_def.code_hash) {
+			GList *arguments;
+
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 3)) == NULL)
+				goto err;
+
+			GString *addr = g_list_nth_data(arguments, 0);
+			GString *type = g_list_nth_data(arguments, 1);
+			GString *msg = g_list_nth_data(arguments, 2);
+
+			g_debug("<<< DAEMON ERROR >>> Daemon %s reported an error of type %s : %s",
+				addr->str, type->str, msg->str);
+
+			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
+		}
+		else if (message->hash == gebr_comm_protocol_defs.ssta_def.code_hash) {
 			GList *arguments;
 			GString *addr, *ssta, *ac;
 			const gchar *maestro_addr = gebr_maestro_server_get_address(maestro);

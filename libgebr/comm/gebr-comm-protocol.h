@@ -26,7 +26,7 @@ G_BEGIN_DECLS
 
 extern struct gebr_comm_protocol_defs gebr_comm_protocol_defs;
 
-#define PROTOCOL_VERSION "1.1.0"
+#define PROTOCOL_VERSION "1.1.0+" NANOVERSION
 
 struct gebr_comm_message_def {
 	guint		code_hash;

@@ -209,8 +209,9 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 
 			if (strcmp(version->str, PROTOCOL_VERSION)) {
 				gebr_comm_protocol_socket_oldmsg_send(client->socket, TRUE,
-								      gebr_comm_protocol_defs.err_def, 1,
-								      "Client/server version mismatch (GeBRd version is "GEBRD_VERSION")");
+								      gebr_comm_protocol_defs.err_def, 2,
+								      "protocol",
+								      "Client/server version mismatch (Protocol version is " PROTOCOL_VERSION ")");
 				goto err;
 			}
 
