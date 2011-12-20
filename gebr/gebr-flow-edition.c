@@ -52,9 +52,13 @@ struct _GebrFlowEditionPriv {
 	GebrMaestroServerGroupType type;
 };
 
-void on_group_changed(GebrMaestroController *mc,
-		      GebrMaestroServer *maestro,
-		      GebrFlowEdition *fe);
+static void on_controller_maestro_state_changed(GebrMaestroController *mc,
+						GebrMaestroServer *maestro,
+						GebrFlowEdition *fe);
+
+static void on_group_changed(GebrMaestroController *mc,
+			     GebrMaestroServer *maestro,
+			     GebrFlowEdition *fe);
 
 static gboolean flow_edition_find_by_group(GebrFlowEdition *fe,
 					   GebrMaestroServerGroupType type,
@@ -173,6 +177,8 @@ flow_edition_setup_ui(void)
 
 	g_signal_connect_after(gebr.maestro_controller, "group-changed",
 			       G_CALLBACK(on_group_changed), fe);
+	g_signal_connect_after(gebr.maestro_controller, "maestro-state-changed",
+			       G_CALLBACK(on_controller_maestro_state_changed), fe);
 
 	/* Create flow edit fe->widget */
 	fe->widget = gtk_vbox_new(FALSE, 0);
@@ -335,6 +341,20 @@ flow_edition_setup_ui(void)
 	gtk_paned_set_position(GTK_PANED(hpanel), 150);
 
 	return fe;
+}
+
+static void
+set_run_widgets_sensitiveness(GebrFlowEdition *fe,
+			      gboolean sensitive)
+{
+	gtk_widget_set_sensitive(fe->priv->queue_combobox, sensitive);
+	gtk_widget_set_sensitive(fe->priv->server_combobox, sensitive);
+
+	GtkAction *action = gtk_action_group_get_action(gebr.action_group_flow, "flow_execute");
+	gtk_action_set_sensitive(action, sensitive);
+
+	action = gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_execute");
+	gtk_action_set_sensitive(action, sensitive);
 }
 
 void flow_edition_load_components(void)
@@ -1725,11 +1745,6 @@ void flow_program_check_sensitiveness (void)
 	}
 }
 
-void
-gebr_flow_edition_hide(GebrFlowEdition *self)
-{
-}
-
 static void
 restore_last_selection(GebrFlowEdition *fe)
 {
@@ -1740,7 +1755,7 @@ restore_last_selection(GebrFlowEdition *fe)
 		gtk_combo_box_set_active_iter(GTK_COMBO_BOX(fe->priv->server_combobox), &iter);
 }
 
-void
+static void
 on_group_changed(GebrMaestroController *mc,
 		 GebrMaestroServer *maestro,
 		 GebrFlowEdition *fe)
@@ -1767,16 +1782,47 @@ on_group_changed(GebrMaestroController *mc,
 	}
 }
 
-void
-gebr_flow_edition_show(GebrFlowEdition *self)
+static void
+on_controller_maestro_state_changed(GebrMaestroController *mc,
+				    GebrMaestroServer *maestro,
+				    GebrFlowEdition *fe)
 {
-	if (!gebr.flow)
+	if (!gebr.line)
 		return;
 
+	gchar *addr1 = gebr_geoxml_line_get_maestro(gebr.line);
+	const gchar *addr2 = gebr_maestro_server_get_address(maestro);
+
+	if (g_strcmp0(addr1, addr2) != 0)
+		goto out;
+
+	switch (gebr_maestro_server_get_state(maestro)) {
+	case SERVER_STATE_DISCONNECTED:
+		set_run_widgets_sensitiveness(fe, FALSE);
+		break;
+	case SERVER_STATE_CONNECT:
+		gebr_flow_edition_update_server(fe, maestro);
+		break;
+	default:
+		break;
+	}
+
+out:
+	g_free(addr1);
+}
+
+void
+gebr_flow_edition_show(GebrFlowEdition *fe)
+{
 	if (gebr.config.niceness == 0)
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(self->nice_button_high), TRUE);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(fe->nice_button_high), TRUE);
 	else
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(self->nice_button_low), TRUE);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(fe->nice_button_low), TRUE);
+}
+
+void
+gebr_flow_edition_hide(GebrFlowEdition *self)
+{
 }
 
 void
@@ -1796,17 +1842,12 @@ gebr_flow_edition_update_server(GebrFlowEdition *fe,
 				GebrMaestroServer *maestro)
 {
 	gboolean sensitive = maestro != NULL;
-	gtk_widget_set_sensitive(fe->priv->queue_combobox, sensitive);
-	gtk_widget_set_sensitive(fe->priv->server_combobox, sensitive);
 
-	GtkAction *action = gtk_action_group_get_action(gebr.action_group_flow, "flow_execute");
-	gtk_action_set_sensitive(action, sensitive);
-
-	action = gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_execute");
-	gtk_action_set_sensitive(action, sensitive);
+	set_run_widgets_sensitiveness(fe, sensitive);
 
 	if (maestro) {
 		GtkTreeModel *model = gebr_maestro_server_get_groups_model(maestro);
+
 		gtk_combo_box_set_model(GTK_COMBO_BOX(fe->priv->server_combobox), model);
 		g_object_unref(model);
 	}

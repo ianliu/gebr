@@ -64,6 +64,9 @@ static void connect_to_maestro(GtkEntry *entry, GebrMaestroController *self);
 
 static void on_state_change(GebrMaestroServer *maestro, GebrMaestroController *self);
 
+static void gebr_maestro_controller_maestro_state_changed_real(GebrMaestroController *mc,
+							       GebrMaestroServer *maestro);
+
 static void
 insert_new_entry(GebrMaestroController *mc)
 {
@@ -488,6 +491,7 @@ gebr_maestro_controller_class_init(GebrMaestroControllerClass *klass)
 	GObjectClass *object_class = G_OBJECT_CLASS(klass);
 
 	klass->group_changed = gebr_maestro_controller_group_changed_real;
+	klass->maestro_state_changed = gebr_maestro_controller_maestro_state_changed_real;
 
 	signals[JOB_DEFINE] =
 		g_signal_new("job-define",
@@ -883,6 +887,7 @@ on_ac_toggled (GtkCellRendererToggle *cell_renderer,
 
 	gebr_maestro_server_set_autoconnect(mc->priv->maestro, daemon, !ac);
 }
+
 GtkDialog *
 gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 {
@@ -891,11 +896,8 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 				  GEBR_GLADE_DIR"/gebr-maestro-dialog.glade",
 				  NULL);
 
-	GtkTreeModel *mmodel = gebr_maestro_server_get_model(self->priv->maestro, FALSE, NULL);
 	GtkTreeView *view = GTK_TREE_VIEW(gtk_builder_get_object(self->priv->builder, 
-								  "treeview_servers"));
-	gtk_tree_view_set_model(GTK_TREE_VIEW(view), mmodel);
-	g_object_unref(mmodel);
+								 "treeview_servers"));
 
 	/*
 	 * Maestro combobox
@@ -1090,16 +1092,14 @@ on_ac_change(GebrMaestroServer *maestro,
 	}
 }
 
-static void 
-on_state_change(GebrMaestroServer *maestro,
-		GebrMaestroController *self)
+static void
+gebr_maestro_controller_maestro_state_changed_real(GebrMaestroController *mc,
+						   GebrMaestroServer *maestro)
 {
-	g_signal_emit(self, signals[MAESTRO_STATE_CHANGED], 0, maestro);
-
-	if (!self->priv->builder)
+	if (!mc->priv->builder)
 		return;
 
-	GtkComboBoxEntry *combo = GTK_COMBO_BOX_ENTRY(gtk_builder_get_object(self->priv->builder, 
+	GtkComboBoxEntry *combo = GTK_COMBO_BOX_ENTRY(gtk_builder_get_object(mc->priv->builder, 
 									     "combo_maestro"));
 	GtkEntry *entry = GTK_ENTRY(gtk_bin_get_child(GTK_BIN(combo)));
 
@@ -1124,10 +1124,17 @@ on_state_change(GebrMaestroServer *maestro,
 		gtk_entry_set_icon_from_stock(entry,
 					      GTK_ENTRY_ICON_SECONDARY,
 					      GTK_STOCK_CONNECT);
-		on_daemons_changed(maestro, self);
-		GtkTreeView *view = GTK_TREE_VIEW(gtk_builder_get_object(self->priv->builder, "treeview_servers"));
-		gtk_tree_view_set_model(view, GTK_TREE_MODEL(self->priv->model));
+		on_daemons_changed(maestro, mc);
+		GtkTreeView *view = GTK_TREE_VIEW(gtk_builder_get_object(mc->priv->builder, "treeview_servers"));
+		gtk_tree_view_set_model(view, GTK_TREE_MODEL(mc->priv->model));
 	}
+}
+
+static void 
+on_state_change(GebrMaestroServer *maestro,
+		GebrMaestroController *self)
+{
+	g_signal_emit(self, signals[MAESTRO_STATE_CHANGED], 0, maestro);
 }
 
 void
