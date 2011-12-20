@@ -293,6 +293,8 @@ parse_messages(GebrCommServer *comm_server,
 			g_debug("<<< DAEMON ERROR >>> Daemon %s reported an error of type %s : %s",
 				addr->str, type->str, msg->str);
 
+			g_signal_emit(maestro, signals[ERROR], 0, addr->str, type->str);
+
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}
 		else if (message->hash == gebr_comm_protocol_defs.ssta_def.code_hash) {
