@@ -153,19 +153,7 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 	while ((link = g_list_last(server->socket->protocol->messages)) != NULL) {
 		message = link->data;
 
-		if (message->hash == gebr_comm_protocol_defs.err_def.code_hash) {
-			GList *arguments;
-
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 1)) == NULL)
-				goto err;
-
-			GString *last_error = g_list_nth_data(arguments, 0);
-			g_critical("Server '%s' reported the error '%s'.",
-				   server->address->str, last_error->str);
-
-			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
-		}
-		else if (message->hash == gebr_comm_protocol_defs.ret_def.code_hash) {
+		if (message->hash == gebr_comm_protocol_defs.ret_def.code_hash) {
 			if (server->socket->protocol->waiting_ret_hash == gebr_comm_protocol_defs.ini_def.code_hash) {
 				GList *arguments;
 
@@ -207,6 +195,9 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 
 				GString *error_type = g_list_nth_data(arguments, 0);
 				GString *error_msg  = g_list_nth_data(arguments, 1);
+
+				g_debug("<<< Daemon Error >>> Daemon %s returned error %s, %s",
+					gebrm_daemon_get_address(daemon), error_type->str, error_msg->str);
 
 				if (daemon->priv->client)
 					gebr_comm_protocol_socket_oldmsg_send(daemon->priv->client, FALSE,
