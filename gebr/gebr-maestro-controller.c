@@ -47,6 +47,7 @@ enum {
 	JOB_DEFINE,
 	MAESTRO_LIST_CHANGED,
 	GROUP_CHANGED,
+	MAESTRO_STATE_CHANGED,
 	LAST_SIGNAL
 };
 
@@ -516,6 +517,15 @@ gebr_maestro_controller_class_init(GebrMaestroControllerClass *klass)
 		             g_cclosure_marshal_VOID__OBJECT,
 		             G_TYPE_NONE, 1, GEBR_TYPE_MAESTRO_SERVER);
 
+	signals[MAESTRO_STATE_CHANGED] =
+		g_signal_new("maestro-state-changed",
+		             G_OBJECT_CLASS_TYPE(object_class),
+		             G_SIGNAL_RUN_LAST,
+		             G_STRUCT_OFFSET(GebrMaestroControllerClass, maestro_state_changed),
+		             NULL, NULL,
+		             g_cclosure_marshal_VOID__OBJECT,
+		             G_TYPE_NONE, 1, GEBR_TYPE_MAESTRO_SERVER);
+
 	g_type_class_add_private(klass, sizeof(GebrMaestroControllerPriv));
 }
 
@@ -963,7 +973,7 @@ static void
 connect_to_maestro(GtkEntry *entry,
 		   GebrMaestroController *self)
 {
-	g_debug(".............Maestro Entry: %s",gtk_entry_get_text(entry));
+	g_debug(".............Maestro Entry: %s", gtk_entry_get_text(entry));
 	gebr_maestro_controller_connect(self, gtk_entry_get_text(entry));
 }
 
@@ -972,7 +982,6 @@ on_job_define(GebrMaestroServer *maestro,
 	      GebrJob *job,
 	      GebrMaestroController *self)
 {
-	g_debug("On job define from MAESTRO CONTROLLER");
 	g_signal_emit(self, signals[JOB_DEFINE], 0, maestro, job);
 }
 
@@ -1079,6 +1088,8 @@ static void
 on_state_change(GebrMaestroServer *maestro,
 		GebrMaestroController *self)
 {
+	g_signal_emit(self, signals[MAESTRO_STATE_CHANGED], 0, maestro);
+
 	if (!self->priv->builder)
 		return;
 
