@@ -15,8 +15,8 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GEBR_COMM_PROTOCOL_H
-#define __GEBR_COMM_PROTOCOL_H
+#ifndef __GEBR_COMM_PROTOCOL_H__
+#define __GEBR_COMM_PROTOCOL_H__
 
 #include <glib.h>
 
@@ -25,8 +25,6 @@
 G_BEGIN_DECLS
 
 extern struct gebr_comm_protocol_defs gebr_comm_protocol_defs;
-
-#define PROTOCOL_VERSION "1.1.0+" NANOVERSION
 
 struct gebr_comm_message_def {
 	guint		code_hash;
@@ -93,7 +91,11 @@ struct gebr_comm_protocol {
 };
 
 void gebr_comm_protocol_reset(struct gebr_comm_protocol *protocol);
+
 void gebr_comm_message_free(struct gebr_comm_message *message);
 
+const gchar *gebr_comm_protocol_get_version(void);
+
 G_END_DECLS
-#endif				//__GEBR_COMM_PROTOCOL_H
+
+#endif /* __GEBR_COMM_PROTOCOL_H__ */

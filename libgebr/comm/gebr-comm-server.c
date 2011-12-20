@@ -777,12 +777,16 @@ gebr_comm_server_socket_connected(GebrCommProtocolSocket * socket,
 
 		/* send INI */
 		gebr_comm_protocol_socket_oldmsg_send(server->socket, FALSE,
-					     gebr_comm_protocol_defs.ini_def, 4, PROTOCOL_VERSION, hostname, "remote",
+					     gebr_comm_protocol_defs.ini_def, 4,
+					     gebr_comm_protocol_get_version(),
+					     hostname, "remote",
 					     mcookie_str);
 	} else {
 		/* send INI */
 		gebr_comm_protocol_socket_oldmsg_send(server->socket, FALSE,
-					     gebr_comm_protocol_defs.ini_def, 4, PROTOCOL_VERSION, hostname, "local",
+					     gebr_comm_protocol_defs.ini_def, 4,
+					     gebr_comm_protocol_get_version(),
+					     hostname, "local",
 					     display);
 	}
 }

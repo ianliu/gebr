@@ -207,14 +207,14 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			place = g_list_nth_data(arguments, 2);
 			x11 = g_list_nth_data(arguments, 3);
 
-			g_debug("Current protocol version is: %s", PROTOCOL_VERSION);
+			g_debug("Current protocol version is: %s", gebr_comm_protocol_get_version());
 			g_debug("Received protocol version:   %s", version->str);
 
-			if (strcmp(version->str, PROTOCOL_VERSION)) {
+			if (strcmp(version->str, gebr_comm_protocol_get_version())) {
 				gebr_comm_protocol_socket_oldmsg_send(client->socket, TRUE,
 								      gebr_comm_protocol_defs.err_def, 2,
 								      "protocol",
-								      "Client/server version mismatch (Protocol version is " PROTOCOL_VERSION ")");
+								      gebr_comm_protocol_get_version());
 				goto err;
 			}
 

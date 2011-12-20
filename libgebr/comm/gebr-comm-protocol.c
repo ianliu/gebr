@@ -311,3 +311,9 @@ void gebr_comm_protocol_split_free(GList * split)
 	g_list_foreach(split, (GFunc)gebr_comm_protocol_split_free_each, NULL);
 	g_list_free(split);
 }
+
+const gchar *
+gebr_comm_protocol_get_version(void)
+{
+	return "1.1.0" NANOVERSION;
+}

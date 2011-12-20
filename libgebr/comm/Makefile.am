@@ -28,6 +28,14 @@ EXTRA_DIST = gebr-comm.pc
 libcommincludedir=$(includedir)/libgebr
 libcomminclude_HEADERS=gebr-comm.h
 
+touch:
+	if [ -d $(top_srcdir)/.hg ]; \
+	then \
+	  touch $(srcdir)/main.c -r $(top_srcdir)/.hg; \
+	fi
+
+gebr-comm-protocol.c: touch
+
 lib_LTLIBRARIES = libgebr_comm.la
 libgebr_comm_la_SOURCES = \
 	gebr-comm-channelsocket.c	\
