@@ -265,7 +265,8 @@ on_lock_button_toggled(GtkToggleButton *button,
 		       GtkWidget *widget)
 {
 	gboolean active = gtk_toggle_button_get_active(button);
-	gtk_button_set_label(GTK_BUTTON(button), active ? "U" : "O");
+	GtkWidget *image = gtk_bin_get_child(GTK_BIN(button));
+	gtk_image_set_from_stock(GTK_IMAGE(image), active ? "object-unlocked" : "object-locked", GTK_ICON_SIZE_BUTTON);
 	gtk_widget_set_sensitive(widget, active);
 }
 
@@ -395,7 +396,9 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 		data->maestro_combo = document_properties_create_maestro_combobox(GEBR_GEOXML_LINE(document));
 		data->previous_active_group = gtk_combo_box_get_active(GTK_COMBO_BOX(data->maestro_combo));
 
-		GtkWidget *lock_button = gtk_toggle_button_new_with_label(_("O"));
+		GtkWidget *lock_button = gtk_toggle_button_new();
+		GtkWidget *image = gtk_image_new_from_stock("object-locked", GTK_ICON_SIZE_BUTTON);
+		gtk_container_add(GTK_CONTAINER(lock_button), image);
 		g_signal_connect(lock_button, "toggled",
 				 G_CALLBACK(on_lock_button_toggled), data->maestro_combo);
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(lock_button), FALSE);
