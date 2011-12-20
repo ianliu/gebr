@@ -973,8 +973,14 @@ static void
 connect_to_maestro(GtkEntry *entry,
 		   GebrMaestroController *self)
 {
-	g_debug(".............Maestro Entry: %s", gtk_entry_get_text(entry));
-	gebr_maestro_controller_connect(self, gtk_entry_get_text(entry));
+	const gchar *entry_text = gtk_entry_get_text(entry);
+	const gchar *address;
+	if (g_strcmp0(entry_text, "127.0.0.1")==0 || g_strcmp0(entry_text, "localhost")==0)
+		address = g_get_host_name();
+	else
+		address = entry_text;
+	g_debug(".............Maestro Entry: %s",address) ;
+	gebr_maestro_controller_connect(self, address);
 }
 
 static void
