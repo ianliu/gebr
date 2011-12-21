@@ -711,6 +711,9 @@ job_control_fill_servers_info(GebrJobControl *jc)
 	gint n_servers, i;
 	gchar **servers;
 
+	if (!job)
+		return;
+
 	servers = gebr_job_get_servers(job, &n_servers);
 
 	gebr_job_get_resources(job, &nprocs, &niceness);
@@ -2015,7 +2018,8 @@ gebr_job_control_stop_selected(GebrJobControl *jc)
 			asked = TRUE;
 		}
 
-		gchar *servers = g_strjoinv(", ", gebr_job_get_servers(job, NULL));
+		gint n;
+		gchar *servers = g_strjoinv(", ", gebr_job_get_servers(job, &n));
 
 		gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Asking server to cancel Job."));
 		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Asking server(s) \"%s\" to cancel Job \"%s\"."),
