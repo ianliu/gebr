@@ -662,6 +662,9 @@ server_popup_menu(GtkWidget * widget,
 	gtk_tree_model_get_iter(model, &iter, rows->data);
 	gtk_tree_model_get(model, &iter, MAESTRO_CONTROLLER_DAEMON, &daemon, -1);
 
+	if(!daemon)
+		return NULL;
+
 	menu = gtk_menu_new ();
 
 	GtkWidget *item;
