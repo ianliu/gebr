@@ -33,6 +33,8 @@ struct _GebrMaestroControllerPriv {
 	GtkBuilder *builder;
 
 	GtkListStore *model;
+
+	gchar *last_tag;
 };
 
 enum {
@@ -125,6 +127,10 @@ finish_group_creation(GtkWidget *widget,
 	GtkWidget *dummy = g_object_get_data(G_OBJECT(widget), "dummy-widget");
 	gtk_notebook_set_tab_label(nb, dummy, box);
 	gebr_maestro_server_add_tag_to(mc->priv->maestro, daemon, tag);
+
+	if (mc->priv->last_tag)
+		g_free(mc->priv->last_tag);
+	mc->priv->last_tag = g_strdup(tag);
 
 	g_free(tag);
 }
@@ -471,6 +477,12 @@ gebr_maestro_controller_group_changed_real(GebrMaestroController *self,
 		                                          (GebrGuiGtkPopupCallback) server_group_popup_menu, self);
 	}
 
+	for (int i = 0; i < n-1; i++) {
+		GtkWidget *child = gtk_notebook_get_nth_page(nb, i);
+		const gchar *tmp = gtk_notebook_get_tab_label_text(nb, child);
+		if (tmp && g_strcmp0(tmp, self->priv->last_tag) == 0)
+			current = i;
+	}
 	gtk_notebook_set_current_page(nb, current);
 }
 
