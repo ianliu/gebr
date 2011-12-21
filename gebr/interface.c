@@ -109,7 +109,7 @@ static const GtkActionEntry actions_entries_flow[] = {
 	{"flow_export", "document-export", N_("Export"),
 		NULL, N_("Export selected Flows"), G_CALLBACK(on_flow_export_activate)},
 	{"flow_execute", GTK_STOCK_EXECUTE, NULL,
-		"<Control>R", N_("Execute selected Flows in sequence"), G_CALLBACK(on_flow_execute_activate)},
+		"<Control>R", N_("Execute"), G_CALLBACK(on_flow_execute_activate)},
 	{"flow_copy", GTK_STOCK_COPY, N_("Copy"),
 		NULL, N_("Copy selected Flows to clipboard"), G_CALLBACK(on_copy_activate)},
 	{"flow_paste", GTK_STOCK_PASTE, N_("Paste"),

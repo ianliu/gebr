@@ -348,7 +348,7 @@ set_run_widgets_sensitiveness(GebrFlowEdition *fe,
 			      gboolean sensitive)
 {
 	const gchar *tooltip_disconn = _("Maestro of this line is disconnected.\nReconnect it or change the maestro\n associated to this line");
-	const gchar *tooltip_execute = _("Execute this flow");
+	const gchar *tooltip_execute = _("Execute");
 
 	gtk_widget_set_sensitive(fe->priv->queue_combobox, sensitive);
 	gtk_widget_set_sensitive(fe->priv->server_combobox, sensitive);
