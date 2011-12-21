@@ -406,6 +406,8 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 		g_signal_connect(lock_button, "toggled",
 				 G_CALLBACK(on_lock_button_toggled), data->maestro_combo);
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(lock_button), FALSE);
+		gtk_widget_set_tooltip_text(image, "Click to Lock/Unlock the Maestro of this line");
+
 
 		GtkWidget *hbox = gtk_hbox_new(FALSE, 5);
 		gtk_box_pack_start(GTK_BOX(hbox), data->maestro_combo, TRUE, TRUE, 0);
