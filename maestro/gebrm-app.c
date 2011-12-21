@@ -312,7 +312,7 @@ on_daemon_init(GebrmDaemon *daemon,
 	const gchar *error = NULL;
 	const gchar *nfsid = gebrm_daemon_get_nfsid(daemon);
 
-	if (g_strcmp0(error_type, "protocol")) {
+	if (g_strcmp0(error_type, "protocol") == 0) {
 		error = "error:protocol";
 		goto err;
 	}
