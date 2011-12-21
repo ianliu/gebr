@@ -676,8 +676,11 @@ on_pie_tooltip(GebrGuiPie *pie,
 		return FALSE;
 
 	const gchar *server;
+
+	GebrJob *job = get_selected_job(jc);
+
 	if (!g_strcmp0(jc->priv->servers_info.servers[i], "127.0.0.1"))
-		server = g_get_host_name();
+		server = gebr_job_get_maestro_address(job);
 	else
 		server = jc->priv->servers_info.servers[i];
 
@@ -718,6 +721,7 @@ job_control_fill_servers_info(GebrJobControl *jc)
 
 	gebr_job_get_resources(job, &nprocs, &niceness);
 
+	const gchar *maddr = gebr_job_get_maestro_address(job);
 	if (!nprocs || !niceness)
 		g_string_printf(resources, _("Waiting for server(s) details"));
 	else {
@@ -725,7 +729,6 @@ job_control_fill_servers_info(GebrJobControl *jc)
 		const gchar *groups = gebr_job_get_server_group(job);
 		GebrMaestroServerGroupType type = gebr_maestro_server_group_str_to_enum(type_str);
 
-		const gchar *maddr = gebr_job_get_maestro_address(job);
 		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_address(gebr.maestro_controller, maddr);
 
 		gchar *markup;
@@ -784,7 +787,7 @@ job_control_fill_servers_info(GebrJobControl *jc)
 	for (i = 0; servers[i]; i++) {
 		const gchar *server;
 		if (!g_strcmp0(servers[i], "127.0.0.1"))
-			 server = g_get_host_name(); 
+			 server = maddr; 
 		else
 			server = servers[i];
 
