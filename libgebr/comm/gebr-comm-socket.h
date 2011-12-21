@@ -63,6 +63,7 @@ struct _GebrCommSocket {
 
 	GIOChannel *io_channel;
 	guint write_watch_id;
+	guint read_watch_id;
 	GByteArray *queue_write_bytes;
 
 	enum GebrCommSocketAddressType address_type;
