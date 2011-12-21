@@ -1602,6 +1602,8 @@ clear_jobs_for_maestro(GebrJobControl *jc,
 	const gchar *addr1 = gebr_maestro_server_get_address(maestro);
 	const gchar *addr2;
 
+	gebr_job_control_select_job(jc, NULL);
+
 	gebr_gui_gtk_tree_model_foreach(iter, model) {
 		GebrJob *job;
 		gtk_tree_model_get(model, &iter, 0, &job, -1);
