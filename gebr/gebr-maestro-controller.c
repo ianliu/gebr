@@ -138,6 +138,7 @@ on_group_creation_entry_key_press(GtkWidget *widget,
 	case GDK_Escape:
 		cancel_group_creation(widget, mc);
 		return TRUE;
+	case GDK_KP_Enter:
 	case GDK_Return:
 		gtk_window_set_focus(GTK_WINDOW(gtk_widget_get_toplevel(widget)),
 				     NULL);
