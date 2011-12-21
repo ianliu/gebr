@@ -630,6 +630,9 @@ gebrm_job_get_list_of_tasks(GebrmJob *job)
 GebrCommJobStatus
 gebrm_job_get_partial_status(GebrmJob *job)
 {
+	if (job->priv->status == JOB_STATUS_QUEUED)
+		return JOB_STATUS_QUEUED;
+
 	if (!job->priv->tasks)
 		return JOB_STATUS_INITIAL;
 
@@ -719,6 +722,16 @@ const gchar *
 gebrm_job_get_temp_id(GebrmJob *job)
 {
 	return job->priv->info.temp_id;
+}
+
+void
+gebrm_job_unqueue(GebrmJob *job)
+{
+	g_return_if_fail(job->priv->status == JOB_STATUS_QUEUED);
+
+	job->priv->status = JOB_STATUS_CANCELED;
+	g_signal_emit(job, signals[STATUS_CHANGE], 0,
+	              JOB_STATUS_QUEUED, job->priv->status, NULL);
 }
 
 void

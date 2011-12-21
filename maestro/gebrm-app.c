@@ -576,8 +576,26 @@ on_client_request(GebrCommProtocolSocket *socket,
 		else if (g_strcmp0(prefix, "/kill") == 0) {
 			const gchar *id = gebr_comm_uri_get_param(uri, "id");
 			GebrmJob *job = g_hash_table_lookup(app->priv->jobs, id);
-			if (job)
-				gebrm_job_kill(job);
+			if (job) {
+				if (gebrm_job_get_status(job) == JOB_STATUS_QUEUED) {
+					const gchar *parent_id = gebrm_job_get_queue(job);
+					GebrmJob *parent = gebrm_app_job_controller_find(app, parent_id);
+
+					GList *l = g_object_get_data(G_OBJECT(parent), "children");
+
+					for (GList *i = l; i; i = i->next) {
+						RunnerAndJob *rj = i->data;
+						if (job == rj->job) {
+							l = g_list_remove(l, rj);
+							break;
+						}
+					}
+					g_object_set_data(G_OBJECT(parent), "children", l);
+					gebrm_job_unqueue(job);
+				}
+				else
+					gebrm_job_kill(job);
+			}
 		}
 		else if (g_strcmp0(prefix, "/run") == 0) {
 			GebrCommJsonContent *json;
@@ -662,6 +680,7 @@ on_client_request(GebrCommProtocolSocket *socket,
 			} else {
 				GebrmJob *parent = gebrm_app_job_controller_find(app, parent_id);
 				GList *l = g_object_get_data(G_OBJECT(parent), "children");
+
 				RunnerAndJob *raj = g_new(RunnerAndJob, 1);
 				raj->runner = runner;
 				raj->job = job;
