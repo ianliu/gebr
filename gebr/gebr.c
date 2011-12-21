@@ -267,7 +267,7 @@ gebr_config_load(void)
 		if (!g_key_file_load_from_file(gebr.config.key_file, gebr.config.path->str, G_KEY_FILE_NONE, NULL))
 			gebr_config_load_from_gengetopt();
 
-	gebr.config.maestro_address  = gebr_g_key_file_load_string_key(gebr.config.key_file, "maestro", "address", "127.0.0.1");
+	gebr.config.maestro_address  = gebr_g_key_file_load_string_key(gebr.config.key_file, "maestro", "address", g_get_host_name());
 	gebr.config.username  = gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "name", g_get_real_name());
 	gebr.config.email     = gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "email", g_get_user_name());
 	gebr.config.usermenus = gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "usermenus", usermenus);
