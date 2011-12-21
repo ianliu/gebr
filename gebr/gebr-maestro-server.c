@@ -1004,54 +1004,10 @@ gebr_maestro_server_get_all_tags(GebrMaestroServer *maestro)
 	return groups;
 }
 
-typedef struct {
-	GebrMaestroServerGroupType type;
-	gchar *name;
-} GroupId;
-
-static gboolean
-visible_queue_func(GtkTreeModel *model,
-		   GtkTreeIter *iter,
-		   gpointer data)
-{
-	GebrJob *job;
-	GroupId *group_id = data;
-	gtk_tree_model_get(model, iter, 0, &job, -1);
-
-	if (!job)
-		return TRUE;
-
-	const gchar *jgroup = gebr_job_get_server_group(job);
-	return g_strcmp0(group_id->name, jgroup) == 0;
-}
-
-static void
-group_id_free(gpointer data)
-{
-	GroupId *id = data;
-	g_free(id->name);
-	g_free(id);
-}
-
 GtkTreeModel *
-gebr_maestro_server_get_queues_model(GebrMaestroServer *maestro,
-				     GebrMaestroServerGroupType type,
-				     const gchar *name)
+gebr_maestro_server_get_queues_model(GebrMaestroServer *maestro)
 {
-	GtkTreeModel *model = GTK_TREE_MODEL(maestro->priv->queues_model);
-
-	if (!name || !*name)
-		return g_object_ref(model);
-
-	GroupId *group_id = g_new0(GroupId, 1);
-	group_id->type = type;
-	group_id->name = g_strdup(name);
-
-	GtkTreeModel *filter = gtk_tree_model_filter_new(model, NULL);
-	gtk_tree_model_filter_set_visible_func(GTK_TREE_MODEL_FILTER(filter),
-					       visible_queue_func,
-					       group_id, group_id_free);
-	return filter;
+	return GTK_TREE_MODEL(maestro->priv->queues_model);
 }
 
 void

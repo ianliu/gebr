@@ -1340,11 +1340,6 @@ on_groups_combobox_changed(GtkComboBox *combobox,
 	fe->priv->name = name;
 	fe->priv->type = type;
 
-	GtkTreeModel *queue_model = gebr_maestro_server_get_queues_model(maestro, type, name);
-	gtk_combo_box_set_model(GTK_COMBO_BOX(fe->priv->queue_combobox), queue_model);
-	gtk_combo_box_set_active(GTK_COMBO_BOX(fe->priv->queue_combobox), 0);
-	g_object_unref(queue_model);
-
 	flow_edition_set_io();
 	flow_browse_info_update();
 }
@@ -1853,8 +1848,13 @@ gebr_flow_edition_update_server(GebrFlowEdition *fe,
 	if (maestro) {
 		const gchar *error = gebr_maestro_server_get_error(maestro);
 		if (!error || !*error) {
+			/* Set groups/servers model for Maestro */
 			GtkTreeModel *model = gebr_maestro_server_get_groups_model(maestro);
 			gtk_combo_box_set_model(GTK_COMBO_BOX(fe->priv->server_combobox), model);
+
+			/* Set queues model for Maestro */
+			GtkTreeModel *queue_model = gebr_maestro_server_get_queues_model(maestro);
+			gtk_combo_box_set_model(GTK_COMBO_BOX(fe->priv->queue_combobox), queue_model);
 		}
 		else
 			sensitive = FALSE;
