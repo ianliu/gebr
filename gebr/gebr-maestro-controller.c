@@ -376,8 +376,9 @@ server_group_popup_menu(GtkWidget * widget,
 	if (!rows || g_list_length(rows) > 1)
 		return NULL;
 
+	GtkWidget *parent = gtk_widget_get_parent(widget);
 	GtkNotebook *nb = GTK_NOTEBOOK(gtk_builder_get_object(mc->priv->builder, "notebook_groups"));
-	GtkWidget *label = gtk_notebook_get_tab_label(nb, widget);
+	GtkWidget *label = gtk_notebook_get_tab_label(nb, parent);
 	const gchar *tag = gtk_label_get_text(GTK_LABEL(label));
 
 	GtkTreeIter iter;
@@ -385,6 +386,9 @@ server_group_popup_menu(GtkWidget * widget,
 
 	gtk_tree_model_get_iter(model, &iter, rows->data);
 	gtk_tree_model_get(model, &iter, MAESTRO_CONTROLLER_DAEMON, &daemon, -1);
+
+	if (!daemon)
+		return NULL;
 
 	menu = gtk_menu_new ();
 
@@ -406,7 +410,6 @@ server_group_popup_menu(GtkWidget * widget,
 	g_list_free (rows);
 
 	return GTK_MENU (menu);
-
 }
 
 static void
