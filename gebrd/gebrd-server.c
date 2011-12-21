@@ -1,18 +1,21 @@
-/*   GeBR Daemon - Process and control execution of flows
- *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
+/*
+ * gebrd-server.c
+ * This file is part of GêBR Project
  *
- *   This program is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
+ * Copyright (C) 2007-2011 - GêBR Core Team (www.gebrproject.com)
  *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
+ * GêBR Project is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
- *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * GêBR Project is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with GêBR Project. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #define _GNU_SOURCE
@@ -82,10 +85,12 @@ static gboolean server_run_lock(gboolean *already_running)
 	/* init the server socket and listen */
 	GebrCommSocketAddress socket_address = gebr_comm_socket_address_ipv4_local(0);
 	gebrd->listen_socket = gebr_comm_listen_socket_new();
-	if (gebr_comm_listen_socket_listen(gebrd->listen_socket, &socket_address) == FALSE) {
+
+	if (!gebr_comm_listen_socket_listen(gebrd->listen_socket, &socket_address)) {
 		gebrd_message(GEBR_LOG_ERROR, _("Could not listen for connections.\n"));
 		goto err;
 	}
+
 	gebrd->socket_address = gebr_comm_socket_get_address(GEBR_COMM_SOCKET(gebrd->listen_socket));
 	g_signal_connect(gebrd->listen_socket, "new-connection", G_CALLBACK(server_new_connection), NULL);
 
@@ -225,10 +230,22 @@ void server_quit(void)
 
 void server_new_connection(void)
 {
-	GebrCommStreamSocket *client_socket;
+	GebrCommStreamSocket *socket;
+	GebrCommProtocolSocket *client;
 
-	while ((client_socket = gebr_comm_listen_socket_get_next_pending_connection(gebrd->listen_socket)) != NULL)
-		client_add(client_socket);
+	socket = gebr_comm_listen_socket_get_next_pending_connection(gebrd->listen_socket);
+	client = gebr_comm_protocol_socket_new_from_socket(socket);
+
+	if (!gebrd_user_has_connection(gebrd->user)) {
+		client_add(client);
+		gebrd_message(GEBR_LOG_DEBUG, "client_add");
+	} else {
+		g_debug("YOU SHALL NOT CONNECT!!!!");
+		gebr_comm_protocol_socket_oldmsg_send(client, TRUE,
+						      gebr_comm_protocol_defs.err_def, 2,
+						      "connection-refused", "");
+		g_object_unref(client);
+	}
 
 	gebrd_message(GEBR_LOG_DEBUG, "server_new_connection");
 }

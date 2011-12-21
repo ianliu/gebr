@@ -1125,6 +1125,9 @@ on_maestro_error(GebrMaestroServer *maestro,
 	else if (g_strcmp0(error_type, "protocol") == 0)
 		error_msg = N_("<span size='large' weight='bold'>The selected maestro cannot manage the server "
 			       "%s, because it is using a different protocol version.</span>");
+	else if (g_strcmp0(error_type, "connection-refused") == 0)
+		error_msg = N_("<span size='large' weight='bold'>The selected maestro cannot manage the server "
+			       "%s, because it is already registered at another maestro.</span>");
 
 	GtkWidget *dialog  = gtk_message_dialog_new_with_markup(NULL, GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
 	                                                        GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,

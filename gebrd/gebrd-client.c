@@ -54,21 +54,24 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
  * Public functions
  */
 
-void client_add(GebrCommStreamSocket * socket)
+void client_add(GebrCommProtocolSocket * client)
 {
-	struct client *client;
+	struct client *c;
 
-	client = g_new(struct client, 1);
-	client->socket = gebr_comm_protocol_socket_new_from_socket(socket);
-	client->display = g_string_new(NULL);
+	c = g_new(struct client, 1);
+	c->socket = client;
+	c->display = g_string_new(NULL);
 
-	gebrd->clients = g_list_prepend(gebrd->clients, client);
-	g_signal_connect(client->socket, "disconnected", G_CALLBACK(client_disconnected), client);
-	g_signal_connect(client->socket, "process-request", G_CALLBACK(client_process_request), client);
-	g_signal_connect(client->socket, "process-response", G_CALLBACK(client_process_response), client);
-	g_signal_connect(client->socket, "old-parse-messages", G_CALLBACK(client_old_parse_messages), client);
+	gebrd_user_set_connection(gebrd->user, c);
 
-	gebrd_message(GEBR_LOG_DEBUG, "client_add");
+	g_signal_connect(c->socket, "disconnected",
+			 G_CALLBACK(client_disconnected), c);
+	g_signal_connect(c->socket, "process-request",
+			 G_CALLBACK(client_process_request), c);
+	g_signal_connect(c->socket, "process-response",
+			 G_CALLBACK(client_process_response), c);
+	g_signal_connect(c->socket, "old-parse-messages",
+			 G_CALLBACK(client_old_parse_messages), c);
 }
 
 void client_free(struct client *client)
@@ -81,9 +84,7 @@ void client_free(struct client *client)
 static void client_disconnected(GebrCommProtocolSocket * socket, struct client *client)
 {
 	gebrd_message(GEBR_LOG_DEBUG, "client_disconnected");
-
-	gebrd->clients = g_list_remove(gebrd->clients, client);
-	client_free(client);
+	gebrd_user_set_connection(gebrd->user, NULL);
 }
 
 static void client_process_request(GebrCommProtocolSocket * socket, GebrCommHttpMsg * request, struct client *client)

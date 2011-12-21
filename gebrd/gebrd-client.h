@@ -33,7 +33,7 @@ struct client {
 	GString *display;
 };
 
-void client_add(GebrCommStreamSocket * stream_socket);
+void client_add(GebrCommProtocolSocket *client);
 
 void client_free(struct client *client);
 

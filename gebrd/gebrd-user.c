@@ -47,6 +47,7 @@ enum {
 
 struct _GebrdUserPriv {
 	gchar *id;
+	struct client *connection;
 };
 
 G_DEFINE_TYPE(GebrdUser, gebrd_user, G_TYPE_OBJECT);
@@ -57,8 +58,6 @@ gebrd_user_init(GebrdUser *self)
 	self->priv = G_TYPE_INSTANCE_GET_PRIVATE(self,
 						 GEBRD_USER_TYPE,
 						 GebrdUserPriv);
-
-	self->priv->id = NULL;
 
 	self->fs_nickname = g_string_new("");
 	self->queues = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
@@ -160,4 +159,22 @@ gebrd_user_set_daemon_id(GebrdUser *self,
 	g_return_if_fail(self->priv->id == NULL);
 
 	self->priv->id = g_strdup(id);
+}
+
+gboolean
+gebrd_user_has_connection(GebrdUser *user)
+{
+	return user->priv->connection != NULL;
+}
+
+void
+gebrd_user_set_connection(GebrdUser *user,
+			  struct client *connection)
+{
+	g_return_if_fail(user->priv->connection == NULL || connection == NULL);
+
+	if (user->priv->connection)
+		client_free(user->priv->connection);
+
+	user->priv->connection = connection;
 }
