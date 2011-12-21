@@ -667,6 +667,7 @@ gebr_maestro_server_finalize(GObject *object)
 {
 	GebrMaestroServer *maestro = GEBR_MAESTRO_SERVER(object);
 
+	gebr_comm_server_free(maestro->priv->server);
 	gtk_list_store_clear(maestro->priv->store);
 	g_object_unref(maestro->priv->store);
 	g_hash_table_unref(maestro->priv->jobs);

@@ -1852,9 +1852,7 @@ gebr_flow_edition_update_server(GebrFlowEdition *fe,
 		const gchar *error = gebr_maestro_server_get_error(maestro);
 		if (!error || !*error) {
 			GtkTreeModel *model = gebr_maestro_server_get_groups_model(maestro);
-
 			gtk_combo_box_set_model(GTK_COMBO_BOX(fe->priv->server_combobox), model);
-			g_object_unref(model);
 		}
 		else
 			sensitive = FALSE;
