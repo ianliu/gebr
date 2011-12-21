@@ -38,7 +38,6 @@ enum {
 	PROP_0,
 	PROP_FS_NICKNAME,
 	PROP_SYS_LOAD,
-	PROP_DAEMON_ID,
 	LAST_PROPERTY
 };
 
@@ -58,6 +57,8 @@ gebrd_user_init(GebrdUser *self)
 	self->priv = G_TYPE_INSTANCE_GET_PRIVATE(self,
 						 GEBRD_USER_TYPE,
 						 GebrdUserPriv);
+
+	self->priv->id = NULL;
 
 	self->fs_nickname = g_string_new("");
 	self->queues = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
@@ -87,9 +88,6 @@ gebrd_user_set_property(GObject      *object,
 	case PROP_FS_NICKNAME:
 		g_string_assign(self->fs_nickname, g_value_get_string(value));
 		break;
-	case PROP_DAEMON_ID:
-		gebrd_user_set_daemon_id(self, g_value_get_string(value));
-		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
 		break;
@@ -104,9 +102,6 @@ gebrd_user_get_property(GObject * object, guint property_id, GValue * value, GPa
 	switch (property_id) {
 	case PROP_FS_NICKNAME:
 		g_value_set_string(value, self->fs_nickname->str);
-		break;
-	case PROP_DAEMON_ID:
-		g_value_set_string(value, gebrd_user_get_daemon_id(self));
 		break;
 	case PROP_SYS_LOAD: {
 		gchar *loads;
@@ -148,12 +143,6 @@ gebrd_user_class_init(GebrdUserClass *klass)
 					g_param_spec_string("sys-load",
 							    "", "", "",
 							    G_PARAM_READABLE));
-
-	g_object_class_install_property(gobject_class,
-					PROP_DAEMON_ID,
-					g_param_spec_string("daemon-id",
-							    "", "", "",
-							    G_PARAM_READWRITE));
 
 	g_type_class_add_private(klass, sizeof(GebrdUserPriv));
 }
