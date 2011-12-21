@@ -677,7 +677,7 @@ on_pie_tooltip(GebrGuiPie *pie,
 
 	const gchar *server;
 	if (!g_strcmp0(jc->priv->servers_info.servers[i], "127.0.0.1"))
-		server = _("Local Server");
+		server = g_get_host_name();
 	else
 		server = jc->priv->servers_info.servers[i];
 
@@ -784,7 +784,7 @@ job_control_fill_servers_info(GebrJobControl *jc)
 	for (i = 0; servers[i]; i++) {
 		const gchar *server;
 		if (!g_strcmp0(servers[i], "127.0.0.1"))
-			 server = _("Local Server");
+			 server = g_get_host_name(); 
 		else
 			server = servers[i];
 
