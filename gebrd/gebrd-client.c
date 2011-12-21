@@ -81,10 +81,14 @@ void client_free(struct client *client)
 	g_free(client);
 }
 
-static void client_disconnected(GebrCommProtocolSocket * socket, struct client *client)
+static void
+client_disconnected(GebrCommProtocolSocket * socket,
+		    struct client *client)
 {
 	gebrd_message(GEBR_LOG_DEBUG, "client_disconnected");
-	gebrd_user_set_connection(gebrd->user, NULL);
+	exit(0);
+
+	//gebrd_user_set_connection(gebrd->user, NULL);
 }
 
 static void client_process_request(GebrCommProtocolSocket * socket, GebrCommHttpMsg * request, struct client *client)
