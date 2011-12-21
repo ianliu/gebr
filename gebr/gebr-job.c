@@ -403,8 +403,7 @@ gebr_job_close(GebrJob *job)
 	gebr_comm_uri_free(uri);
 
 	GebrMaestroServer *maestro =
-		gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller,
-							     gebr.line);
+		gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 	GebrCommServer *server = gebr_maestro_server_get_server(maestro);
 	gebr_comm_protocol_socket_send_request(server->socket,
 	                                       GEBR_COMM_HTTP_METHOD_PUT, url, NULL);
@@ -426,8 +425,8 @@ gebr_job_kill(GebrJob *job)
 	gebr_comm_uri_free(uri);
 
 	GebrMaestroServer *maestro =
-		gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller,
-							     gebr.line);
+			gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+
 	GebrCommServer *server = gebr_maestro_server_get_server(maestro);
 	gebr_comm_protocol_socket_send_request(server->socket,
 	                                       GEBR_COMM_HTTP_METHOD_PUT, url, NULL);
