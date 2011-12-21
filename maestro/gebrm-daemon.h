@@ -53,7 +53,9 @@ struct _GebrmDaemonClass {
 
 	void (*password_request) (GebrmDaemon *daemon);
 
-	void (*daemon_init) (GebrmDaemon *daemon);
+	void (*daemon_init) (GebrmDaemon *daemon,
+			     const gchar *error_type,
+			     const gchar *error_msg);
 };
 
 GType gebrm_daemon_get_type(void) G_GNUC_CONST;

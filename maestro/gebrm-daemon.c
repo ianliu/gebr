@@ -25,6 +25,8 @@
 #include "gebrm-task.h"
 
 struct _GebrmDaemonPriv {
+	gboolean is_initialized;
+
 	GTree *tags;
 	GebrCommServer *server;
 	GebrCommProtocolSocket *client;
@@ -170,6 +172,8 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 				GString *clock_cpu    = g_list_nth_data (arguments, 8);
 				GString *daemon_id    = g_list_nth_data (arguments, 9);
 
+				daemon->priv->is_initialized = TRUE;
+
 				g_string_assign(server->socket->protocol->hostname, hostname->str);
 				gebrm_daemon_set_ncores(daemon, atoi(ncores->str));
 				gebrm_daemon_set_clock_cpu(daemon, atof(clock_cpu->str));
@@ -178,7 +182,7 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 				gebrm_daemon_set_nfsid(daemon, nfsid->str);
 				gebrm_daemon_set_id(daemon, daemon_id->str);
 
-				g_signal_emit(daemon, signals[DAEMON_INIT], 0);
+				g_signal_emit(daemon, signals[DAEMON_INIT], 0, NULL, NULL);
 
 				g_strfreev(accounts);
 				gebr_comm_protocol_socket_oldmsg_split_free(arguments);
@@ -196,14 +200,9 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 				GString *error_type = g_list_nth_data(arguments, 0);
 				GString *error_msg  = g_list_nth_data(arguments, 1);
 
-				g_debug("<<< Daemon Error >>> Daemon %s returned error %s, %s",
-					gebrm_daemon_get_address(daemon), error_type->str, error_msg->str);
-
-				if (daemon->priv->client)
-					gebr_comm_protocol_socket_oldmsg_send(daemon->priv->client, FALSE,
-									      gebr_comm_protocol_defs.err_def, 3,
-									      server->address->str,
-									      error_type->str, error_msg->str);
+				if (!daemon->priv->is_initialized)
+					g_signal_emit(daemon, signals[DAEMON_INIT], 0,
+						      error_type->str, error_msg->str);
 
 				gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}
@@ -424,8 +423,8 @@ gebrm_daemon_class_init(GebrmDaemonClass *klass)
 			     G_SIGNAL_RUN_FIRST,
 			     G_STRUCT_OFFSET(GebrmDaemonClass, daemon_init),
 			     NULL, NULL,
-			     g_cclosure_marshal_VOID__VOID,
-			     G_TYPE_NONE, 0);
+			     gebrm_cclosure_marshal_VOID__STRING_STRING,
+			     G_TYPE_NONE, 2, G_TYPE_STRING, G_TYPE_STRING);
 
 	g_object_class_install_property(object_class,
 					PROP_ADDRESS,
@@ -480,6 +479,7 @@ gebrm_daemon_init(GebrmDaemon *daemon)
 	daemon->priv->tags = g_tree_new_full((GCompareDataFunc)g_strcmp0,
 					     NULL, g_free, NULL);
 	daemon->priv->ac = g_strdup("on");
+	daemon->priv->is_initialized = FALSE;
 }
 
 GebrmDaemon *
@@ -579,7 +579,10 @@ gebrm_daemon_connect(GebrmDaemon *daemon,
 
 	if (daemon->priv->client)
 		g_object_unref(daemon->priv->client);
-	daemon->priv->client = g_object_ref(client);
+
+	if (client)
+		daemon->priv->client = g_object_ref(client);
+
 	gebr_comm_server_connect(daemon->priv->server, FALSE);
 }
 

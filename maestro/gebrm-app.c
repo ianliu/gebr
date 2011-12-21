@@ -304,24 +304,35 @@ has_duplicated_daemons(GebrmApp *app, GebrmDaemon *daemon)
 }
 
 static void
-on_daemon_init(GebrmDaemon *daemon, GebrmApp *app)
+on_daemon_init(GebrmDaemon *daemon,
+	       const gchar *error_type,
+	       const gchar *error_msg,
+	       GebrmApp *app)
 {
 	const gchar *error = NULL;
 	const gchar *nfsid = gebrm_daemon_get_nfsid(daemon);
 
-	g_debug("Received nfsid: %s", nfsid);
+	if (g_strcmp0(error_type, "protocol")) {
+		error = "error:protocol";
+		goto err;
+	}
 
 	if (!app->priv->nfsid) {
 		app->priv->nfsid = g_strdup(nfsid);
-	} else if (g_strcmp0(app->priv->nfsid, nfsid) != 0)
+	} else if (g_strcmp0(app->priv->nfsid, nfsid) != 0) {
 		error = "error:nfs";
-
-	if (!error && has_duplicated_daemons(app, daemon)) {
-		g_debug("Duplicate daemons found!");
-		error = "error:id";
+		goto err;
 	}
 
+	if (has_duplicated_daemons(app, daemon)) {
+		error = "error:id";
+		goto err;
+	}
+
+err:
 	if (error) {
+		g_debug(" ------- Error: %s", error);
+
 		const gchar *addr = gebrm_daemon_get_address(daemon);
 		gebrm_daemon_disconnect(daemon);
 		gebrm_remove_server_from_list(app, addr);
@@ -909,17 +920,17 @@ gebrm_config_delete_server(const gchar *serv)
 
 	g_key_file_load_from_file (servers, path, G_KEY_FILE_NONE, NULL);
 
-	if(!g_key_file_has_group(servers, server))
+	if (!g_key_file_has_group(servers, server))
 		g_debug("File doesn't have:%s", server);
 
-	if(g_key_file_remove_group(servers, server, NULL))
+	if (g_key_file_remove_group(servers, server, NULL))
 		g_debug("Remove server %s from file", server);
 
-	final_list_str= g_key_file_to_data (servers, NULL, NULL);
-	g_file_set_contents (path, final_list_str, -1, NULL);
-	g_free (server);
-	g_free (final_list_str);
-	g_key_file_free (servers);
+	final_list_str = g_key_file_to_data(servers, NULL, NULL);
+	g_file_set_contents(path, final_list_str, -1, NULL);
+	g_free(server);
+	g_free(final_list_str);
+	g_key_file_free(servers);
 }
 
 gboolean

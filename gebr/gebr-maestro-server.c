@@ -592,11 +592,13 @@ parse_messages(GebrCommServer *comm_server,
 			GtkTreeModel *model = GTK_TREE_MODEL(maestro->priv->store);
 
 			if (g_str_has_prefix(error->str, "error:")) {
-				gint offset = strlen("error:");
-				if (g_strcmp0(error->str + offset, "nfs") == 0)
+				gchar *offset = error->str + strlen("error:");
+				if (g_strcmp0(offset, "nfs") == 0)
 					g_signal_emit(maestro, signals[ERROR], 0, addr->str, "nfs");
-				else if (g_strcmp0(error->str + offset, "id") == 0)
+				else if (g_strcmp0(offset, "id") == 0)
 					g_signal_emit(maestro, signals[ERROR], 0, addr->str, "id");
+				else if (g_strcmp0(offset, "protocol") == 0)
+					g_signal_emit(maestro, signals[ERROR], 0, addr->str, "protocol");
 			}
 
 			gebr_gui_gtk_tree_model_foreach(iter, model) {
