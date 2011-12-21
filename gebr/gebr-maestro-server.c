@@ -366,6 +366,7 @@ parse_messages(GebrCommServer *comm_server,
 			GString *finish_date = g_list_nth_data(arguments, 17);
 
 			GebrJob *job = g_hash_table_lookup(maestro->priv->jobs, id->str);
+			gboolean prev_exist = FALSE;
 
 			if (!job) {
 				job = g_hash_table_lookup(maestro->priv->temp_jobs, temp_id->str);
@@ -373,6 +374,7 @@ parse_messages(GebrCommServer *comm_server,
 					g_hash_table_remove(maestro->priv->temp_jobs, temp_id->str);
 					gebr_job_set_runid(job, id->str);
 					g_hash_table_insert(maestro->priv->jobs, g_strdup(id->str), job);
+					prev_exist = TRUE;
 				}
 			}
 
@@ -410,12 +412,13 @@ parse_messages(GebrCommServer *comm_server,
 
 				g_hash_table_insert(maestro->priv->jobs, g_strdup(id->str), job);
 			}
+			
+			if (init || prev_exist)
+				g_signal_emit(maestro, signals[JOB_DEFINE], 0, job);
 
 			update_queues_model(maestro, job);
 
 			g_debug("On Job define FROM MAESTRO SERVER!!!!");
-
-			g_signal_emit(maestro, signals[JOB_DEFINE], 0, job);
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}
