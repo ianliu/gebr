@@ -106,10 +106,18 @@ finish_group_creation(GtkWidget *widget,
 		cancel_group_creation(widget, mc);
 		return;
 	}
+	GList *tags = gebr_maestro_server_get_all_tags(mc->priv->maestro);
+	gboolean group_exists = g_list_find_custom(tags, tag, (GCompareFunc)g_strcmp0) ==0 ? FALSE: TRUE;
+	gboolean name_valid = gebr_utf8_is_asc_alnum(tag);
+	if(group_exists)
+		g_debug("group exists");
+	if(!name_valid)
+		g_debug("Name invalid");
 
-	if (!gebr_utf8_is_asc_alnum(tag)) {
+	if (group_exists || !name_valid) {
 		gtk_entry_set_icon_from_stock(GTK_ENTRY(widget), GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIALOG_WARNING);
-		gtk_entry_set_icon_tooltip_text(GTK_ENTRY(widget), GTK_ENTRY_ICON_SECONDARY, "Name of group is not alpha-numerical.");
+		const gchar *toolt = group_exists ? "Already existent group" : "Name of group is not alpha-numerical." ;
+		gtk_entry_set_icon_tooltip_text(GTK_ENTRY(widget), GTK_ENTRY_ICON_SECONDARY, toolt);
 		gtk_widget_grab_focus(widget);
  		g_free(tag);
 		return;
