@@ -1245,6 +1245,10 @@ gebr_job_control_load_details(GebrJobControl *jc,
 
 	if (!g_strcmp0(msg, ""))
 		msg = g_strdup_printf("%s", gebr_maestro_server_get_display_address(maestro));
+	if (!g_strcmp0(msg, "127.0.0.1"))
+		msg = g_strdup(maddr); 
+
+
 	gtk_label_set_markup (job_group, msg);
 
 	switch (gebr_job_get_exec_speed(job))
