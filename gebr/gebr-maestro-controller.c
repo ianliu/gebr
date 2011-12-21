@@ -1064,6 +1064,9 @@ on_question_request(GebrMaestroServer *maestro,
 							       _("<span size='large'>%s</span>\n%s"),
 							       title, question);
 
+	gchar *win_title = g_strdup_printf(_("SSH question from %s"), address);
+	gtk_window_set_title(GTK_WINDOW(dialog), win_title);
+
 	gint response = gtk_dialog_run(GTK_DIALOG(dialog));
 	g_debug("USER ANSWERED %d RESPONSE!!!!!!", response);
 	gtk_widget_destroy(dialog);
@@ -1083,6 +1086,9 @@ on_password_request(GebrMaestroServer *maestro,
 							GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OK,
 							GTK_RESPONSE_OK, NULL);
 	gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
+
+	gchar *title = g_strdup_printf(_("Trying to connect on %s"), address);
+	gtk_window_set_title(GTK_WINDOW(dialog), title);
 
 	gchar *message = g_strdup_printf(_("Server %s is asking for password. Enter it below."), address);
 	GtkWidget *label = gtk_label_new(message);
