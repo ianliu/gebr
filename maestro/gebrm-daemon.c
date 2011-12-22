@@ -696,3 +696,11 @@ gebrm_daemon_get_error(GebrmDaemon *daemon)
 {
 	return gebr_comm_server_get_last_error(daemon->priv->server);
 }
+
+void
+gebrm_daemon_send_magic_cookie(GebrmDaemon *daemon, const gchar *cookie)
+{
+	gebr_comm_protocol_socket_oldmsg_send(daemon->priv->server->socket, FALSE,
+					      gebr_comm_protocol_defs.mck_def, 1,
+					      cookie);
+}

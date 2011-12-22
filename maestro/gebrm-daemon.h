@@ -159,6 +159,8 @@ const gchar *gebrm_daemon_get_id(GebrmDaemon *daemon);
 
 const gchar *gebrm_daemon_get_error(GebrmDaemon *daemon);
 
+void gebrm_daemon_send_magic_cookie(GebrmDaemon *daemon, const gchar *cookie);
+
 G_END_DECLS
 
 #endif /* __GEBRM_DAEMON_H__ */
