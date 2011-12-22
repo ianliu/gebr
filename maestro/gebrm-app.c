@@ -1038,7 +1038,7 @@ gebrm_config_load_servers(GebrmApp *app, const gchar *path)
 	}
 
 	if (!succ) {
-		GebrmDaemon *daemon = gebrm_add_server_to_list(app, "127.0.0.1", NULL, "");
+		GebrmDaemon *daemon = gebrm_add_server_to_list(app, g_get_host_name(), NULL, "");
 		gebrm_daemon_connect(daemon, NULL, NULL);
 		gebrm_config_save_server(daemon);
 	}

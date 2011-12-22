@@ -44,5 +44,5 @@ case $1 in
       kgebrm
       ;;
     *)
-      echo Usage: [gebrd|gebrm|all]
+      echo "Usage: [gebrd|gebrm|all]"
 esac
