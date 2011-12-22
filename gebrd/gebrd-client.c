@@ -86,9 +86,7 @@ client_disconnected(GebrCommProtocolSocket * socket,
 		    struct client *client)
 {
 	gebrd_message(GEBR_LOG_DEBUG, "client_disconnected");
-	exit(0);
-
-	//gebrd_user_set_connection(gebrd->user, NULL);
+	gebrd_quit();
 }
 
 static void client_process_request(GebrCommProtocolSocket * socket, GebrCommHttpMsg * request, struct client *client)
