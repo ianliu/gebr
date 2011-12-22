@@ -50,6 +50,7 @@ struct gebr_comm_protocol_defs {
 	struct gebr_comm_message_def out_def;
 	struct gebr_comm_message_def sta_def;
 
+	struct gebr_comm_message_def prt_def;   // Maestro port         Maestro -> GeBR
 	struct gebr_comm_message_def mck_def;   // Magic Cookie         Maestro -> Daemon
 
 	struct gebr_comm_message_def ac_def;    // Autoconnect option of the daemons

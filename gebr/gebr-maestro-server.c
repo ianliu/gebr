@@ -339,7 +339,22 @@ parse_messages(GebrCommServer *comm_server,
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}
-		else if (message->hash == gebr_comm_protocol_defs.job_def.code_hash) {
+		else if (message->hash == gebr_comm_protocol_defs.prt_def.code_hash) {
+			GList *arguments;
+
+			/* organize message data */
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
+				goto err;
+
+			GString *addr = g_list_nth_data(arguments, 0);
+			GString *port = g_list_nth_data(arguments, 1);
+
+			g_debug("Gebr received port %s from %s!! Redirecting X11", port->str, addr->str);
+
+			gebr_comm_server_forward_x11(maestro->priv->server, atoi(port->str));
+
+			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
+		} else if (message->hash == gebr_comm_protocol_defs.job_def.code_hash) {
 			GList *arguments;
 
 			/* organize message data */

@@ -56,6 +56,9 @@ struct _GebrmDaemonClass {
 	void (*daemon_init) (GebrmDaemon *daemon,
 			     const gchar *error_type,
 			     const gchar *error_msg);
+
+	void (*port_avaiable) (GebrmDaemon *daemon,
+			       guint16 port);
 };
 
 GType gebrm_daemon_get_type(void) G_GNUC_CONST;

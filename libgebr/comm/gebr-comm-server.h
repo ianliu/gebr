@@ -261,6 +261,16 @@ void gebr_comm_server_set_interactive(GebrCommServer *server,
  */
 void gebr_comm_server_emit_interactive_state_signals(GebrCommServer *server);
 
+/**
+ * gebr_comm_server_forward_remote_port:
+ *
+ * This method forwards any connections made to @server in @port to the local
+ * port returned by the method.
+ *
+ * Returns: The local port that will receive @server / @port connections.
+ */
+guint16 gebr_comm_server_forward_remote_port(GebrCommServer *server, guint16 port);
+
 G_END_DECLS
 
 #endif /* __GEBR_COMM_SERVER_H__ */

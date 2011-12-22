@@ -50,6 +50,7 @@ enum {
 	STATE_CHANGE,
 	TASK_DEFINE,
 	DAEMON_INIT,
+	PORT_AVAILABLE,
 	LAST_SIGNAL
 };
 
@@ -198,6 +199,14 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 
 				if (daemon->priv->display_port)
 					g_warn_if_reached();
+
+				guint16 port;
+				port = gebr_comm_server_forward_remote_port(daemon->priv->server,
+									    atoi(display_port->str));
+
+				g_debug("I should send the port %d to gebr", port);
+
+				g_signal_emit(daemon, signals[PORT_AVAILABLE], 0, port);
 
 				daemon->priv->display_port = g_strdup(display_port->str);
 
@@ -423,7 +432,7 @@ gebrm_daemon_class_init(GebrmDaemonClass *klass)
 			     G_TYPE_NONE,
 			     1, G_TYPE_INT);
 
-	signals[TASK_DEFINE] =
+	signals[TASK_DEFINE] g_signal_emit_valist:=
 		g_signal_new("task-define",
 			     G_OBJECT_CLASS_TYPE (object_class),
 			     G_SIGNAL_RUN_FIRST,
@@ -441,6 +450,16 @@ gebrm_daemon_class_init(GebrmDaemonClass *klass)
 			     NULL, NULL,
 			     gebrm_cclosure_marshal_VOID__STRING_STRING,
 			     G_TYPE_NONE, 2, G_TYPE_STRING, G_TYPE_STRING);
+
+	signals[PORT_AVAILABLE] =
+		g_signal_new("port-available",
+			     G_OBJECT_CLASS_TYPE (object_class),
+			     G_SIGNAL_RUN_FIRST,
+			     G_STRUCT_OFFSET(GebrmDaemonClass, port_avaiable),
+			     NULL, NULL,
+			     g_cclosure_marshal_VOID__INT,
+			     G_TYPE_NONE,
+			     1, G_TYPE_INT);
 
 	g_object_class_install_property(object_class,
 					PROP_ADDRESS,

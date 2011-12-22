@@ -48,6 +48,9 @@ typedef enum {
 struct _GebrCommServerPriv {
 	gboolean is_maestro;
 
+	/* Daemon -> Maestro Forward */
+	GebrCommTerminalProcess *daemon_maestro_forward;
+
 	/* Interactive state variables */
 	gboolean is_interactive;
 	InteractiveState istate;
@@ -881,4 +884,36 @@ gebr_comm_server_emit_interactive_state_signals(GebrCommServer *server)
 			      server->priv->description);
 		break;
 	}
+}
+
+guint16
+gebr_comm_server_forward_remote_port(GebrCommServer *server,
+				     guint16 port)
+{
+	guint16 p = 3000;
+
+	if (server->priv->daemon_maestro_forward) {
+		gebr_comm_terminal_process_kill(server->priv->daemon_maestro_forward);
+		gebr_comm_terminal_process_free(server->priv->daemon_maestro_forward);
+		server->priv->daemon_maestro_forward = NULL;
+	}
+
+	while (!gebr_comm_listen_socket_is_local_port_available(p))
+		p++;
+
+	server->priv->daemon_maestro_forward = gebr_comm_terminal_process_new();
+
+	g_signal_connect(server->priv->daemon_maestro_forward, "ready-read",
+			 G_CALLBACK(gebr_comm_ssh_read), server);
+
+	GString *string = g_string_new(NULL);
+	g_string_printf(string, "ssh -x -R %d:127.0.0.1:%d %s -N", port, p,
+			server->address->str);
+
+	g_debug("Redirecting: %s", string->str);
+
+	gebr_comm_terminal_process_start(server->priv->daemon_maestro_forward, string);
+	g_string_free(string, TRUE);
+
+	return p;
 }

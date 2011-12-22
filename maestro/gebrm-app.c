@@ -351,6 +351,21 @@ err:
 	}
 }
 
+static void
+on_daemon_port_available(GebrmDaemon *daemon,
+			 guint16 port,
+			 GebrmApp *app)
+{
+	for (GList *i = app->priv->connections; i; i = i->next) {
+		gchar *port_str = g_strdup_printf("%d", port);
+		gebr_comm_protocol_socket_oldmsg_send(i->data, FALSE,
+						      gebr_comm_protocol_defs.prt_def, 2,
+						      gebrm_daemon_get_address(daemon),
+						      port_str);
+		g_free(port_str);
+	}
+}
+
 static GebrmDaemon *
 gebrm_add_server_to_list(GebrmApp *app,
 			 const gchar *address,
@@ -373,6 +388,8 @@ gebrm_add_server_to_list(GebrmApp *app,
 			 G_CALLBACK(gebrm_app_job_controller_on_task_def), app);
 	g_signal_connect(daemon, "daemon-init",
 			 G_CALLBACK(on_daemon_init), app);
+	g_signal_connect(daemon, "port-available",
+			 G_CALLBACK(on_daemon_port_available), app);
 
 	gchar **tagsv = tags ? g_strsplit(tags, ",", -1) : NULL;
 	if (tagsv) {
