@@ -224,6 +224,7 @@ gboolean gebr_comm_terminal_process_start(GebrCommTerminalProcess * terminal_pro
 
 	ret = TRUE;
 	terminal_process->pid = pid;
+	terminal_process->is_running = TRUE;
 	/* monitor exit */
 	terminal_process->ptm_io_channel = NULL;
 	terminal_process->finish_watch_id =
