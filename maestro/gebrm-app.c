@@ -44,6 +44,8 @@ struct _GebrmAppPriv {
 	GList *daemons;
 	gchar *nfsid;
 
+	guint16 x11_port;
+
 	// Server groups: gchar -> GList<GebrDaemon>
 	GTree *groups;
 
@@ -267,6 +269,10 @@ gebrm_app_init(GebrmApp *app)
 	app->priv->daemons = NULL;
 	app->priv->jobs = g_hash_table_new_full(g_str_hash, g_str_equal,
 						g_free, NULL);
+
+	app->priv->x11_port = 3000;
+	while (!gebr_comm_listen_socket_is_local_port_available(app->priv->x11_port))
+		app->priv->x11_port++;
 }
 
 void
@@ -351,21 +357,6 @@ err:
 	}
 }
 
-static void
-on_daemon_port_available(GebrmDaemon *daemon,
-			 guint16 port,
-			 GebrmApp *app)
-{
-	for (GList *i = app->priv->connections; i; i = i->next) {
-		gchar *port_str = g_strdup_printf("%d", port);
-		gebr_comm_protocol_socket_oldmsg_send(i->data, FALSE,
-						      gebr_comm_protocol_defs.prt_def, 2,
-						      gebrm_daemon_get_address(daemon),
-						      port_str);
-		g_free(port_str);
-	}
-}
-
 static GebrmDaemon *
 gebrm_add_server_to_list(GebrmApp *app,
 			 const gchar *address,
@@ -381,15 +372,13 @@ gebrm_add_server_to_list(GebrmApp *app,
 		}
 	}
 
-	daemon = gebrm_daemon_new(address);
+	daemon = gebrm_daemon_new(address, app->priv->x11_port);
 	g_signal_connect(daemon, "state-change",
 			 G_CALLBACK(gebrm_app_daemon_on_state_change), app);
 	g_signal_connect(daemon, "task-define",
 			 G_CALLBACK(gebrm_app_job_controller_on_task_def), app);
 	g_signal_connect(daemon, "daemon-init",
 			 G_CALLBACK(on_daemon_init), app);
-	g_signal_connect(daemon, "port-available",
-			 G_CALLBACK(on_daemon_port_available), app);
 
 	gchar **tagsv = tags ? g_strsplit(tags, ",", -1) : NULL;
 	if (tagsv) {
@@ -794,6 +783,12 @@ on_client_parse_messages(GebrCommProtocolSocket *client,
 
 			for (GList *i = app->priv->daemons; i; i = i->next)
 				gebrm_daemon_send_magic_cookie(i->data, cookie->str);
+
+			gchar *port_str = g_strdup_printf("%d", app->priv->x11_port);
+			gebr_comm_protocol_socket_oldmsg_send(client, FALSE,
+							      gebr_comm_protocol_defs.ret_def, 1,
+							      port_str);
+			g_free(port_str);
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}

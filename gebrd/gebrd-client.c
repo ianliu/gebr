@@ -195,6 +195,8 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 
 			GString *accounts_list = g_string_new("");
 			GString *queue_list = g_string_new("");
+			GString *display_port = g_string_new("");
+			guint16 display;
 
 			/* organize message data */
 			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
@@ -224,8 +226,20 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 				/* Get info from the MOAB cluster */
 				server_moab_read_credentials(accounts_list, queue_list);
 				server_type = "moab";
-			} else
+			} else {
+				/* figure out a free display */
+				display = gebrd_get_x11_redirect_display();
+				client->display_port = display;
+
+				if (display) {
+					g_string_printf(display_port, "%d", 6000 + display);
+					g_string_printf(client->display, ":%d", display);
+					g_debug("I've got this port for you %s", display_port->str);
+				} else
+					g_string_assign(client->display, "");
+
 				server_type = "regular";
+			}
 
 			/* send return */
 			const gchar *model_name;
@@ -238,7 +252,7 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			total_memory = gebrd_mem_info_get (meminfo, "MemTotal");
 			gchar *ncores = g_strdup_printf("%d", gebrd_cpu_info_n_procs(cpuinfo));
 			gebr_comm_protocol_socket_oldmsg_send(client->socket, FALSE,
-							      gebr_comm_protocol_defs.ret_def, 9,
+							      gebr_comm_protocol_defs.ret_def, 10,
 							      gebrd->hostname,
 							      server_type,
 							      accounts_list->str,
@@ -247,12 +261,14 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 							      gebrd->fs_lock->str,
 							      ncores,
 							      cpu_clock,
-							      gebrd_user_get_daemon_id(gebrd->user));
+							      gebrd_user_get_daemon_id(gebrd->user),
+							      display_port->str);
 			gebrd_cpu_info_free (cpuinfo);
 			gebrd_mem_info_free (meminfo);
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 			g_string_free(accounts_list, TRUE);
 			g_string_free(queue_list, TRUE);
+			g_string_free(display_port, TRUE);
 			g_free(ncores);
 		}
 		else if (message->hash == gebr_comm_protocol_defs.mck_def.code_hash) {
@@ -263,21 +279,13 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 				goto err;
 
 			GString *cookie = arguments->data;
-			GString *display_port = g_string_new("");
-			guint16 display;
 
 			g_debug("I've received this cookie! %s", cookie->str);
-			g_debug("Let me calculate the port now....");
 
-			/* figure out a free display */
-			display = gebrd_get_x11_redirect_display();
-			if (cookie->len && display && gebrd_get_server_type() != GEBR_COMM_SERVER_TYPE_MOAB) {
-				g_string_printf(display_port, "%d", 6000 + display);
-				g_string_printf(client->display, ":%d", display);
-
+			if (cookie->len && gebrd_get_server_type() != GEBR_COMM_SERVER_TYPE_MOAB) {
 				/* add client magic cookie */
 				gint i = 0;
-				while (i++ < 5 && gebr_system("xauth add :%d . %s", display, cookie->str)) {
+				while (i++ < 5 && gebr_system("xauth add :%d . %s", client->display_port, cookie->str)) {
 					gebrd_message(GEBR_LOG_ERROR, "Failed to add X11 authorization.");
 					usleep(200*1000);
 				}
@@ -285,19 +293,11 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 				/* failed to add X11 authorization */
 				if (i == 5) {
 					g_debug("X authorization failed");
-					g_string_assign(display_port, "0");
+					g_string_assign(client->display, "0");
 				} else
 					gebrd_message(GEBR_LOG_DEBUG, "xauth authorized");
-			} else
-				g_string_assign(client->display, "");
+			}
 
-			g_debug("                                  I've got this port for you %s", display_port->str);
-
-			gebr_comm_protocol_socket_oldmsg_send(client->socket, FALSE,
-							      gebr_comm_protocol_defs.ret_def, 1,
-							      display_port->str);
-
-			g_string_free(display_port, TRUE);
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		} else if (client->socket->protocol->logged == FALSE) {
 			/* not logged! */

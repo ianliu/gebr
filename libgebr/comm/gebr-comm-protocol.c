@@ -55,7 +55,7 @@ void gebr_comm_protocol_init(void)
 	gebr_comm_protocol_defs.kil_def  = gebr_comm_message_def_create("KIL", FALSE,  1);
 	gebr_comm_protocol_defs.out_def  = gebr_comm_message_def_create("OUT", FALSE,  4);
 	gebr_comm_protocol_defs.sta_def  = gebr_comm_message_def_create("STA", FALSE,  5);
-	gebr_comm_protocol_defs.mck_def  = gebr_comm_message_def_create("MCK", TRUE,   1);
+	gebr_comm_protocol_defs.mck_def  = gebr_comm_message_def_create("MCK", FALSE,  1);
 	gebr_comm_protocol_defs.prt_def  = gebr_comm_message_def_create("PRT", FALSE,  1);
 
 	gebr_comm_protocol_defs.ssta_def = gebr_comm_message_def_create("SST", FALSE,  5);

@@ -152,8 +152,10 @@ state_changed(GebrCommServer *comm_server,
 
 	GebrCommServerState state = gebr_comm_server_get_state(comm_server);
 
-	if (state == SERVER_STATE_DISCONNECTED)
+	if (state == SERVER_STATE_DISCONNECTED) {
+		gebr_comm_server_close_x11_forward(comm_server);
 		gtk_list_store_clear(maestro->priv->groups_store);
+	}
 
 	if (state == SERVER_STATE_CONNECT
 	    || state == SERVER_STATE_DISCONNECTED)
@@ -280,7 +282,19 @@ parse_messages(GebrCommServer *comm_server,
 
 	while ((link = g_list_last(comm_server->socket->protocol->messages)) != NULL) {
 		message = (struct gebr_comm_message *)link->data;
-		if (message->hash == gebr_comm_protocol_defs.err_def.code_hash) {
+		if (message->hash == gebr_comm_protocol_defs.ret_def.code_hash) {
+			if (comm_server->socket->protocol->waiting_ret_hash == gebr_comm_protocol_defs.ini_def.code_hash) {
+				GList *arguments;
+
+				if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 1)) == NULL)
+					goto err;
+
+				GString *port = arguments->data;
+				gebr_comm_server_forward_x11(maestro->priv->server, atoi(port->str));
+
+				gebr_comm_protocol_socket_oldmsg_split_free(arguments);
+			}
+		} else if (message->hash == gebr_comm_protocol_defs.err_def.code_hash) {
 			GList *arguments;
 
 			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 3)) == NULL)
@@ -339,22 +353,7 @@ parse_messages(GebrCommServer *comm_server,
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}
-		else if (message->hash == gebr_comm_protocol_defs.prt_def.code_hash) {
-			GList *arguments;
-
-			/* organize message data */
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
-				goto err;
-
-			GString *addr = g_list_nth_data(arguments, 0);
-			GString *port = g_list_nth_data(arguments, 1);
-
-			g_debug("Gebr received port %s from %s!! Redirecting X11", port->str, addr->str);
-
-			gebr_comm_server_forward_x11(maestro->priv->server, atoi(port->str));
-
-			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
-		} else if (message->hash == gebr_comm_protocol_defs.job_def.code_hash) {
+		else if (message->hash == gebr_comm_protocol_defs.job_def.code_hash) {
 			GList *arguments;
 
 			/* organize message data */

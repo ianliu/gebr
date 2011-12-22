@@ -35,6 +35,8 @@ struct _GebrmDaemonPriv {
 	gchar *display_port;
 	gchar *nfsid;
 	gchar *id;
+
+	guint16 x11_port;
 };
 
 enum {
@@ -43,6 +45,7 @@ enum {
 	PROP_SERVER,
 	PROP_NFSID,
 	PROP_CLOCK,
+	PROP_X11_PORT,
 	PROP_NCORES,
 };
 
@@ -160,7 +163,7 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 			if (server->socket->protocol->waiting_ret_hash == gebr_comm_protocol_defs.ini_def.code_hash) {
 				GList *arguments;
 
-				if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 9)) == NULL)
+				if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 10)) == NULL)
 					goto err;
 
 				GString *hostname     = g_list_nth_data(arguments, 0);
@@ -171,6 +174,7 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 				GString *ncores       = g_list_nth_data (arguments, 6);
 				GString *clock_cpu    = g_list_nth_data (arguments, 7);
 				GString *daemon_id    = g_list_nth_data (arguments, 8);
+				GString *display_port = g_list_nth_data (arguments, 9);
 
 				daemon->priv->is_initialized = TRUE;
 
@@ -181,35 +185,15 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 				gebrm_daemon_set_nfsid(daemon, nfsid->str);
 				gebrm_daemon_set_id(daemon, daemon_id->str);
 
-				g_signal_emit(daemon, signals[DAEMON_INIT], 0, NULL, NULL);
-
-				g_strfreev(accounts);
-				gebr_comm_protocol_socket_oldmsg_split_free(arguments);
-			}
-			else if (server->socket->protocol->waiting_ret_hash == gebr_comm_protocol_defs.mck_def.code_hash) {
-				GList *arguments;
-
-				if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 1)) == NULL)
-					goto err;
-
-				GString *display_port = arguments->data;
-
-				g_debug("I've got this display_port %s!! Now, whenever a client connects on me", display_port->str);
-				g_debug("I should send the Maestro Port, which I need to calculate...");
-
-				if (daemon->priv->display_port)
-					g_warn_if_reached();
-
-				guint16 port;
-				port = gebr_comm_server_forward_remote_port(daemon->priv->server,
-									    atoi(display_port->str));
-
-				g_debug("I should send the port %d to gebr", port);
-
-				g_signal_emit(daemon, signals[PORT_AVAILABLE], 0, port);
+				gebr_comm_server_forward_remote_port(daemon->priv->server,
+								     atoi(display_port->str),
+								     daemon->priv->x11_port);
 
 				daemon->priv->display_port = g_strdup(display_port->str);
 
+				g_signal_emit(daemon, signals[DAEMON_INIT], 0, NULL, NULL);
+
+				g_strfreev(accounts);
 				gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 			}
 		}
@@ -382,6 +366,9 @@ gebrm_daemon_set_property(GObject      *object,
 
 	switch (prop_id)
 	{
+	case PROP_X11_PORT:
+		daemon->priv->x11_port = g_value_get_int(value);
+		break;
 	case PROP_ADDRESS:
 		daemon->priv->server = gebr_comm_server_new(g_value_get_string(value),
 							    &daemon_ops);
@@ -502,6 +489,14 @@ gebrm_daemon_class_init(GebrmDaemonClass *klass)
 							 0,
 							 G_PARAM_READABLE));
 
+	g_object_class_install_property(object_class,
+					PROP_X11_PORT,
+					g_param_spec_int("x11-port",
+							 "X11 Port",
+							 "X11 Port",
+							 3000, G_MAXUINT16, 3000,
+							 G_PARAM_WRITABLE | G_PARAM_CONSTRUCT));
+
 	g_type_class_add_private(klass, sizeof(GebrmDaemonPriv));
 }
 
@@ -518,10 +513,12 @@ gebrm_daemon_init(GebrmDaemon *daemon)
 }
 
 GebrmDaemon *
-gebrm_daemon_new(const gchar *address)
+gebrm_daemon_new(const gchar *address,
+		 guint16 x11_port)
 {
 	return g_object_new(GEBRM_TYPE_DAEMON,
 			    "address", address,
+			    "x11-port", x11_port,
 			    NULL);
 }
 

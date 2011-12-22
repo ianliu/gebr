@@ -63,7 +63,8 @@ struct _GebrmDaemonClass {
 
 GType gebrm_daemon_get_type(void) G_GNUC_CONST;
 
-GebrmDaemon *gebrm_daemon_new(const gchar *address);
+GebrmDaemon *gebrm_daemon_new(const gchar *address,
+			      guint16 x11_port);
 
 const gchar *gebrm_daemon_get_address(GebrmDaemon *daemon);
 

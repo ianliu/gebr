@@ -354,6 +354,7 @@ gboolean gebr_comm_server_forward_x11(GebrCommServer *server, guint16 port)
 	server->x11_forward_process = gebr_comm_terminal_process_new();
 	g_signal_connect(server->x11_forward_process, "ready-read", G_CALLBACK(gebr_comm_ssh_read), server);
 	g_string_printf(string, "ssh -x -R %d:%s:%d %s -N", port, display_host->str, redirect_display_port, server->address->str);
+	g_debug("Forwarding %s", string->str);
 	gebr_comm_terminal_process_start(server->x11_forward_process, string);
 
 	/* log */
@@ -364,6 +365,16 @@ gboolean gebr_comm_server_forward_x11(GebrCommServer *server, guint16 port)
  out:	g_string_free(string, TRUE);
 
 	return ret;
+}
+
+void
+gebr_comm_server_close_x11_forward(GebrCommServer *server)
+{
+	if (server->x11_forward_process) {
+		gebr_comm_terminal_process_kill(server->x11_forward_process);
+		gebr_comm_terminal_process_free(server->x11_forward_process);
+		server->x11_forward_process = NULL;
+	}
 }
 
 /**
@@ -886,34 +897,29 @@ gebr_comm_server_emit_interactive_state_signals(GebrCommServer *server)
 	}
 }
 
-guint16
+void
 gebr_comm_server_forward_remote_port(GebrCommServer *server,
-				     guint16 port)
+				     guint16 remote_port,
+				     guint16 local_port)
 {
-	guint16 p = 3000;
-
 	if (server->priv->daemon_maestro_forward) {
 		gebr_comm_terminal_process_kill(server->priv->daemon_maestro_forward);
 		gebr_comm_terminal_process_free(server->priv->daemon_maestro_forward);
 		server->priv->daemon_maestro_forward = NULL;
 	}
-
-	while (!gebr_comm_listen_socket_is_local_port_available(p))
-		p++;
-
 	server->priv->daemon_maestro_forward = gebr_comm_terminal_process_new();
 
 	g_signal_connect(server->priv->daemon_maestro_forward, "ready-read",
 			 G_CALLBACK(gebr_comm_ssh_read), server);
 
 	GString *string = g_string_new(NULL);
-	g_string_printf(string, "ssh -x -R %d:127.0.0.1:%d %s -N", port, p,
+	g_string_printf(string, "ssh -x -R %d:127.0.0.1:%d %s -N",
+			remote_port,
+			local_port,
 			server->address->str);
 
 	g_debug("Redirecting: %s", string->str);
 
 	gebr_comm_terminal_process_start(server->priv->daemon_maestro_forward, string);
 	g_string_free(string, TRUE);
-
-	return p;
 }
