@@ -296,13 +296,11 @@ gebrm_app_singleton_get(void)
 }
 
 static gboolean
-has_duplicated_daemons(GebrmApp *app, GebrmDaemon *daemon)
+has_duplicated_daemons(GebrmApp *app, const gchar *id)
 {
-	const gchar *id = gebrm_daemon_get_id(daemon);
-
 	for (GList *i = app->priv->daemons; i; i = i->next) {
 		const gchar *tmp = gebrm_daemon_get_id(i->data);
-		if (daemon != i->data && g_strcmp0(tmp, id) == 0)
+		if (g_strcmp0(tmp, id) == 0)
 			return TRUE;
 	}
 
@@ -319,7 +317,10 @@ on_daemon_init(GebrmDaemon *daemon,
 	const gchar *nfsid = gebrm_daemon_get_nfsid(daemon);
 
 	if (g_strcmp0(error_type, "connection-refused") == 0) {
-		error = "error:connection-refused";
+		if (has_duplicated_daemons(app, error_msg))
+			error = "error:id";
+		else
+			error = "error:connection-refused";
 		goto err;
 	}
 
@@ -332,11 +333,6 @@ on_daemon_init(GebrmDaemon *daemon,
 		app->priv->nfsid = g_strdup(nfsid);
 	} else if (g_strcmp0(app->priv->nfsid, nfsid) != 0) {
 		error = "error:nfs";
-		goto err;
-	}
-
-	if (has_duplicated_daemons(app, daemon)) {
-		error = "error:id";
 		goto err;
 	}
 
