@@ -159,18 +159,17 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 			if (server->socket->protocol->waiting_ret_hash == gebr_comm_protocol_defs.ini_def.code_hash) {
 				GList *arguments;
 
-				if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 10)) == NULL)
+				if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 9)) == NULL)
 					goto err;
 
 				GString *hostname     = g_list_nth_data(arguments, 0);
-				GString *display_port = g_list_nth_data(arguments, 1);
-				gchar  **accounts     = g_strsplit(((GString *)g_list_nth_data(arguments, 3))->str, ",", 0);
-				//GString *model_name   = g_list_nth_data (arguments, 4);
-				//GString *total_memory = g_list_nth_data (arguments, 5);
-				GString *nfsid        = g_list_nth_data (arguments, 6);
-				GString *ncores       = g_list_nth_data (arguments, 7);
-				GString *clock_cpu    = g_list_nth_data (arguments, 8);
-				GString *daemon_id    = g_list_nth_data (arguments, 9);
+				gchar  **accounts     = g_strsplit(((GString *)g_list_nth_data(arguments, 2))->str, ",", 0);
+				//GString *model_name   = g_list_nth_data (arguments, 3);
+				//GString *total_memory = g_list_nth_data (arguments, 4);
+				GString *nfsid        = g_list_nth_data (arguments, 5);
+				GString *ncores       = g_list_nth_data (arguments, 6);
+				GString *clock_cpu    = g_list_nth_data (arguments, 7);
+				GString *daemon_id    = g_list_nth_data (arguments, 8);
 
 				daemon->priv->is_initialized = TRUE;
 
@@ -178,13 +177,30 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 				gebrm_daemon_set_ncores(daemon, atoi(ncores->str));
 				gebrm_daemon_set_clock_cpu(daemon, atof(clock_cpu->str));
 				server->socket->protocol->logged = TRUE;
-				daemon->priv->display_port = g_strdup(display_port->str);
 				gebrm_daemon_set_nfsid(daemon, nfsid->str);
 				gebrm_daemon_set_id(daemon, daemon_id->str);
 
 				g_signal_emit(daemon, signals[DAEMON_INIT], 0, NULL, NULL);
 
 				g_strfreev(accounts);
+				gebr_comm_protocol_socket_oldmsg_split_free(arguments);
+			}
+			else if (server->socket->protocol->waiting_ret_hash == gebr_comm_protocol_defs.mck_def.code_hash) {
+				GList *arguments;
+
+				if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 1)) == NULL)
+					goto err;
+
+				GString *display_port = arguments->data;
+
+				g_debug("I've got this display_port %s!! Now, whenever a client connects on me", display_port->str);
+				g_debug("I should send the Maestro Port, which I need to calculate...");
+
+				if (daemon->priv->display_port)
+					g_warn_if_reached();
+
+				daemon->priv->display_port = g_strdup(display_port->str);
+
 				gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 			}
 		}

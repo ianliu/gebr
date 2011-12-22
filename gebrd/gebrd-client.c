@@ -192,23 +192,16 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 		/* check login */
 		if (message->hash == gebr_comm_protocol_defs.ini_def.code_hash) {
 			GList *arguments;
-			GString *version, *hostname, *place, *x11;
-			GString *display_port;
-			GString *accounts_list;
-			GString *queue_list;
-			gchar *server_type;
 
-			display_port = g_string_new("");
-			accounts_list = g_string_new("");
-			queue_list = g_string_new("");
+			GString *accounts_list = g_string_new("");
+			GString *queue_list = g_string_new("");
 
 			/* organize message data */
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 4)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
 				goto err;
-			version = g_list_nth_data(arguments, 0);
-			hostname = g_list_nth_data(arguments, 1);
-			place = g_list_nth_data(arguments, 2);
-			x11 = g_list_nth_data(arguments, 3);
+
+			GString *version = g_list_nth_data(arguments, 0);
+			GString *hostname = g_list_nth_data(arguments, 1);
 
 			g_debug("Current protocol version is: %s", gebr_comm_protocol_get_version());
 			g_debug("Received protocol version:   %s", version->str);
@@ -224,39 +217,9 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			/* set client info */
 			client->socket->protocol->logged = TRUE;
 			g_string_assign(client->socket->protocol->hostname, hostname->str);
-			if (!strcmp(place->str, "local"))
-				client->server_location = GEBR_COMM_SERVER_LOCATION_LOCAL;
-			else if (!strcmp(place->str, "remote"))
-				client->server_location = GEBR_COMM_SERVER_LOCATION_REMOTE;
-			else
-				goto err;
+			client->server_location = GEBR_COMM_SERVER_LOCATION_REMOTE;
 
-			if (client->server_location == GEBR_COMM_SERVER_LOCATION_REMOTE) {
-				guint16 display;
-
-				/* figure out a free display */
-				display = gebrd_get_x11_redirect_display();
-				if (x11->len && display && gebrd_get_server_type() != GEBR_COMM_SERVER_TYPE_MOAB) {
-					g_string_printf(display_port, "%d", 6000 + display);
-					g_string_printf(client->display, ":%d", display);
-
-					/* add client magic cookie */
-					gint i = 0;
-					while (i++ < 5 && gebr_system("xauth add :%d . %s", display, x11->str)) {
-						gebrd_message(GEBR_LOG_ERROR, "Failed to add X11 authorization.");
-						usleep(200*1000);
-					}
-					/* failed to add X11 authorization */
-					if (i == 5)
-						g_string_assign(display_port, "0");
-
-					gebrd_message(GEBR_LOG_DEBUG, "xauth authorized");
-				} else
-					g_string_assign(client->display, "");
-			} else {
-				g_string_assign(client->display, x11->str);
-			}
-
+			const gchar *server_type;
 			if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_MOAB) {
 				/* Get info from the MOAB cluster */
 				server_moab_read_credentials(accounts_list, queue_list);
@@ -275,9 +238,8 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			total_memory = gebrd_mem_info_get (meminfo, "MemTotal");
 			gchar *ncores = g_strdup_printf("%d", gebrd_cpu_info_n_procs(cpuinfo));
 			gebr_comm_protocol_socket_oldmsg_send(client->socket, FALSE,
-							      gebr_comm_protocol_defs.ret_def, 10,
+							      gebr_comm_protocol_defs.ret_def, 9,
 							      gebrd->hostname,
-							      display_port->str,
 							      server_type,
 							      accounts_list->str,
 							      model_name,
@@ -289,10 +251,54 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			gebrd_cpu_info_free (cpuinfo);
 			gebrd_mem_info_free (meminfo);
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
-			g_string_free(display_port, TRUE);
 			g_string_free(accounts_list, TRUE);
 			g_string_free(queue_list, TRUE);
 			g_free(ncores);
+		}
+		else if (message->hash == gebr_comm_protocol_defs.mck_def.code_hash) {
+			GList *arguments;
+
+			/* organize message data */
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 1)) == NULL)
+				goto err;
+
+			GString *cookie = arguments->data;
+			GString *display_port = g_string_new("");
+			guint16 display;
+
+			g_debug("I've received this cookie! %s", cookie->str);
+			g_debug("Let me calculate the port now....");
+
+			/* figure out a free display */
+			display = gebrd_get_x11_redirect_display();
+			if (cookie->len && display && gebrd_get_server_type() != GEBR_COMM_SERVER_TYPE_MOAB) {
+				g_string_printf(display_port, "%d", 6000 + display);
+				g_string_printf(client->display, ":%d", display);
+
+				/* add client magic cookie */
+				gint i = 0;
+				while (i++ < 5 && gebr_system("xauth add :%d . %s", display, cookie->str)) {
+					gebrd_message(GEBR_LOG_ERROR, "Failed to add X11 authorization.");
+					usleep(200*1000);
+				}
+
+				/* failed to add X11 authorization */
+				if (i == 5) {
+					g_debug("X authorization failed");
+					g_string_assign(display_port, "0");
+				} else
+					gebrd_message(GEBR_LOG_DEBUG, "xauth authorized");
+			} else
+				g_string_assign(client->display, "");
+
+			g_debug("                                  I've got this port for you %s", display_port->str);
+
+			gebr_comm_protocol_socket_oldmsg_send(client->socket, FALSE,
+							      gebr_comm_protocol_defs.ret_def, 1,
+							      display_port->str);
+
+			g_string_free(display_port, TRUE);
+			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		} else if (client->socket->protocol->logged == FALSE) {
 			/* not logged! */
 			goto err;

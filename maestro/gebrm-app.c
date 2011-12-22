@@ -754,6 +754,45 @@ on_client_request(GebrCommProtocolSocket *socket,
 	}
 }
 
+static void
+on_client_parse_messages(GebrCommProtocolSocket *client,
+			 GebrmApp *app)
+{
+	GList *link;
+	struct gebr_comm_message *message;
+
+	while ((link = g_list_last(client->protocol->messages)) != NULL) {
+		message = link->data;
+
+		if (message->hash == gebr_comm_protocol_defs.ini_def.code_hash) {
+			GList *arguments;
+
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 1)) == NULL)
+				goto err;
+
+			GString *cookie = arguments->data;
+
+			g_debug("Maestro received a X11 cookie: %s", cookie->str);
+			g_debug("Send this to the daemons! MCK_DEF");
+
+			for (GList *i = app->priv->daemons; i; i = i->next)
+				gebrm_daemon_send_magic_cookie(i->data, cookie->str);
+
+			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
+		}
+
+		gebr_comm_message_free(message);
+		client->protocol->messages = g_list_delete_link(client->protocol->messages, link);
+	}
+
+	return;
+
+err:
+	gebr_comm_message_free(message);
+	client->protocol->messages = g_list_delete_link(client->protocol->messages, link);
+	g_object_unref(client);
+}
+
 static GKeyFile *
 load_servers_keyfile(void)
 {
@@ -1123,6 +1162,8 @@ on_new_connection(GebrCommListenSocket *listener,
 				 G_CALLBACK(on_client_disconnect), app);
 		g_signal_connect(socket, "process-request",
 				 G_CALLBACK(on_client_request), app);
+		g_signal_connect(socket, "old-parse-messages",
+				 G_CALLBACK(on_client_parse_messages), app);
 
 		g_hash_table_foreach(app->priv->jobs, (GHFunc)send_messages_of_jobs, socket);
 	}

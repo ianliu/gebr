@@ -661,68 +661,68 @@ static void gebr_comm_server_change_state(GebrCommServer *server, GebrCommServer
 		server->state = state;
 }
 
-/**
- * \internal
+/*
+ * get this X session magic cookie
  */
+gchar *
+get_xauth_cookie(const gchar *display_number)
+{
+	if (!display_number)
+		return g_strdup("");
+
+	gchar *mcookie_str = g_new(gchar, 33);
+	GString *cmd_line = g_string_new(NULL);
+
+	g_string_printf(cmd_line, "xauth list %s | awk '{print $3}'", display_number);
+
+	/* WORKAROUND: if xauth is already executing it will lock
+	 * the auth file and it will fail to retrieve the m-cookie.
+	 * So, as a workaround, we try to get the m-cookie many times.
+	 */
+	gint i;
+	for (i = 0; i < 5; i++) {
+		FILE *output_fp = popen(cmd_line->str, "r");
+		if (fscanf(output_fp, "%32s", mcookie_str) != 1)
+			usleep(100*1000);
+		else
+			break;
+		pclose(output_fp);
+
+	}
+
+	if (i == 5)
+		strcpy(mcookie_str, "");
+
+	g_string_free(cmd_line, TRUE);
+
+	return mcookie_str;
+}
+
 static void
 gebr_comm_server_socket_connected(GebrCommProtocolSocket * socket,
 				  GebrCommServer *server)
 {
-	gchar hostname[256];
-	gchar *display;
+	const gchar *display;
 	gchar *display_number = NULL;
+	const gchar *hostname = g_get_host_name();
 
-	/* initialization */
-	gethostname(hostname, 255);
 	display = getenv("DISPLAY");
-	if (display == NULL)
+	if (!display)
 		display = "";
 	else
 		display_number = strchr(display, ':');
 
-	if (gebr_comm_server_is_local(server) == FALSE) {
-		gchar mcookie_str[33];
-
-		if (display_number != NULL) {
-			/* get this X session magic cookie */
-			GString *cmd_line = g_string_new(NULL);
-			g_string_printf(cmd_line, "xauth list %s | awk '{print $3}'", display_number);
-			/* WORKAROUND: if xauth is already executing it will lock
-			 * the auth file and it will fail to retrieve the m-cookie.
-			 * So, as a workaround, we try to get the m-cookie many times.
-			 */
-			for (gint try = 0;;) {
-				FILE *output_fp = popen(cmd_line->str, "r");
-				if (fscanf(output_fp, "%32s", mcookie_str) != 1) {
-					g_warning("%s:%d: Error fetching authorization code for display %s",
-						  __FILE__, __LINE__, display);
-					usleep(100*1000);
-				} else
-					break;
-				pclose(output_fp);
-
-				if (++try == 5) {
-					strcpy(mcookie_str, "");
-					break;
-				}
-			}
-			g_string_free(cmd_line, TRUE);
-		} else
-			strcpy(mcookie_str, "");
-
-		/* send INI */
+	if (server->priv->is_maestro) {
+		gchar *mcookie_str = get_xauth_cookie(display_number);
 		gebr_comm_protocol_socket_oldmsg_send(server->socket, FALSE,
-					     gebr_comm_protocol_defs.ini_def, 4,
-					     gebr_comm_protocol_get_version(),
-					     hostname, "remote",
-					     mcookie_str);
+						      gebr_comm_protocol_defs.ini_def, 1,
+						      mcookie_str);
+		g_free(mcookie_str);
 	} else {
-		/* send INI */
 		gebr_comm_protocol_socket_oldmsg_send(server->socket, FALSE,
-					     gebr_comm_protocol_defs.ini_def, 4,
-					     gebr_comm_protocol_get_version(),
-					     hostname, "local",
-					     display);
+						      gebr_comm_protocol_defs.ini_def, 3,
+						      gebr_comm_protocol_get_version(),
+						      hostname);
 	}
 }
 
