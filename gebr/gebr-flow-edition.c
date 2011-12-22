@@ -1855,6 +1855,8 @@ gebr_flow_edition_update_server(GebrFlowEdition *fe,
 			/* Set queues model for Maestro */
 			GtkTreeModel *queue_model = gebr_maestro_server_get_queues_model(maestro);
 			gtk_combo_box_set_model(GTK_COMBO_BOX(fe->priv->queue_combobox), queue_model);
+
+			gebr_flow_edition_select_group_for_flow(fe, gebr.flow);
 		}
 		else
 			sensitive = FALSE;
