@@ -432,7 +432,7 @@ gebrm_daemon_class_init(GebrmDaemonClass *klass)
 			     G_TYPE_NONE,
 			     1, G_TYPE_INT);
 
-	signals[TASK_DEFINE] g_signal_emit_valist:=
+	signals[TASK_DEFINE] =
 		g_signal_new("task-define",
 			     G_OBJECT_CLASS_TYPE (object_class),
 			     G_SIGNAL_RUN_FIRST,
