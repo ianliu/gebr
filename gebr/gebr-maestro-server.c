@@ -602,6 +602,8 @@ parse_messages(GebrCommServer *comm_server,
 					g_signal_emit(maestro, signals[ERROR], 0, addr->str, "id");
 				else if (g_strcmp0(offset, "protocol") == 0)
 					g_signal_emit(maestro, signals[ERROR], 0, addr->str, "protocol");
+				else if (g_strcmp0(offset, "connection-refused") == 0)
+					g_signal_emit(maestro, signals[ERROR], 0, addr->str, "connection-refused");
 			}
 
 			gebr_gui_gtk_tree_model_foreach(iter, model) {

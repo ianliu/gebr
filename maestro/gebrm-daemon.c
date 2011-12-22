@@ -186,9 +186,6 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 
 				g_strfreev(accounts);
 				gebr_comm_protocol_socket_oldmsg_split_free(arguments);
-
-				if (gebrm_daemon_get_state(daemon) == SERVER_STATE_DISCONNECTED)
-					return;
 			}
 		}
 		else if (message->hash == gebr_comm_protocol_defs.err_def.code_hash) {
@@ -260,6 +257,9 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}
+
+		if (gebrm_daemon_get_state(daemon) == SERVER_STATE_DISCONNECTED)
+			return;
 
 		gebr_comm_message_free(message);
 		server->socket->protocol->messages = g_list_delete_link(server->socket->protocol->messages, link);
