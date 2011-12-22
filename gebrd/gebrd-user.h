@@ -73,6 +73,8 @@ gboolean gebrd_user_has_connection(GebrdUser *user);
  */
 void gebrd_user_set_connection(GebrdUser *user, struct client *connection);
 
+struct client *gebrd_user_get_connection(GebrdUser *user);
+
 G_END_DECLS
 
 #endif /* __GEBRD_USER_H__ */

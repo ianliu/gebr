@@ -64,7 +64,6 @@ static void gebrd_app_init(GebrdApp * self)
 
 	self->run_filename = g_string_new(NULL);
 	self->fs_lock = g_string_new(NULL);
-	self->clients = NULL;
 
 	gethostname(self->hostname, 255);
 	g_random_set_seed((guint32) time(NULL));
@@ -85,9 +84,7 @@ static void gebrd_app_finalize(GObject * object)
 	g_string_free(self->user_data_filename, TRUE);
 	g_string_free(self->run_filename, TRUE);
 	g_string_free(self->fs_lock, TRUE);
-	/* client */
-	g_list_foreach(self->clients, (GFunc) client_free, NULL);
-	g_list_free(self->clients);
+
 	if (self->validator)
 		gebr_validator_free(self->validator);
 

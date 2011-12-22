@@ -178,3 +178,9 @@ gebrd_user_set_connection(GebrdUser *user,
 
 	user->priv->connection = connection;
 }
+
+struct client *
+gebrd_user_get_connection(GebrdUser *user)
+{
+	return user->priv->connection;
+}

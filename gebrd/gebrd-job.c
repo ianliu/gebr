@@ -96,12 +96,10 @@ static void job_send_clients_output(GebrdJob *job, GString * output)
 	if (!job->parent.jid->len)
 		return;
 
-	for (GList *link = gebrd->clients; link != NULL; link = g_list_next(link)) {
-		struct client *client = (struct client *)link->data;
-		gebr_comm_protocol_socket_oldmsg_send(client->socket, FALSE,
-						      gebr_comm_protocol_defs.out_def, 4, job->parent.jid->str, output->str,
-						      job->parent.run_id->str, job->frac->str);
-	}
+	struct client *client = gebrd_user_get_connection(gebrd->user);
+	gebr_comm_protocol_socket_oldmsg_send(client->socket, FALSE,
+					      gebr_comm_protocol_defs.out_def, 4, job->parent.jid->str, output->str,
+					      job->parent.run_id->str, job->frac->str);
 }
 
 /**
@@ -516,14 +514,11 @@ void job_status_notify(GebrdJob *job, GebrCommJobStatus status, const gchar *_pa
 	job_status_set(job, status);
 
 	/* warn all clients of the new status */
-	for (GList *link = gebrd->clients; link != NULL; link = g_list_next(link)) {
-		struct client *client = (struct client *)link->data;
-		gebr_comm_protocol_socket_oldmsg_send(client->socket, FALSE,
-						      gebr_comm_protocol_defs.sta_def, 5,
-						      job->parent.jid->str, status_enum_to_string(status),
-						      parameter, job->parent.run_id->str, job->frac->str);
-
-	}
+	struct client *client = gebrd_user_get_connection(gebrd->user);
+	gebr_comm_protocol_socket_oldmsg_send(client->socket, FALSE,
+					      gebr_comm_protocol_defs.sta_def, 5,
+					      job->parent.jid->str, status_enum_to_string(status),
+					      parameter, job->parent.run_id->str, job->frac->str);
 
 	g_free(parameter);
 }
@@ -706,10 +701,8 @@ void job_list(struct client *client)
 
 void job_send_clients_job_notify(GebrdJob *job)
 {
-	for (GList *link = gebrd->clients; link != NULL; link = g_list_next(link)) {
-		struct client *client = (struct client *)link->data;
-		job_notify(job, client);
-	}
+	struct client *client = gebrd_user_get_connection(gebrd->user);
+	job_notify(job, client);
 }
 
 /**
