@@ -723,7 +723,7 @@ gebr_comm_server_socket_connected(GebrCommProtocolSocket * socket,
 		g_free(mcookie_str);
 	} else {
 		gebr_comm_protocol_socket_oldmsg_send(server->socket, FALSE,
-						      gebr_comm_protocol_defs.ini_def, 3,
+						      gebr_comm_protocol_defs.ini_def, 2,
 						      gebr_comm_protocol_get_version(),
 						      hostname);
 	}
