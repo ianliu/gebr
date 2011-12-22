@@ -46,6 +46,8 @@ typedef enum {
 } InteractiveState;
 
 struct _GebrCommServerPriv {
+	gboolean is_maestro;
+
 	/* Interactive state variables */
 	gboolean is_interactive;
 	InteractiveState istate;
@@ -66,13 +68,6 @@ static guint signals[LAST_SIGNAL] = { 0, };
 static void	gebr_comm_server_log_message	(GebrCommServer *server,
 						 GebrLogMessageType type,
 						 const gchar * message, ...);
-
-static void	local_run_server_read		(GebrCommProcess *process,
-						 GebrCommServer *server);
-
-static void	local_run_server_finished	(GebrCommProcess *process,
-						 gint status,
-						 GebrCommServer *server);
 
 static gboolean	gebr_comm_ssh_parse_output	(GebrCommTerminalProcess *process,
 						 GebrCommServer *server,
@@ -245,41 +240,28 @@ void gebr_comm_server_connect(GebrCommServer *server,
 
 	const gchar *binary;
 
+	server->priv->is_maestro = maestro;
+
 	if (maestro)
 		binary = "gebrm";
 	else
 		binary = "gebrd";
 
 	/* initiate the marathon to communicate to server */
-	if (gebr_comm_server_is_local(server) == FALSE) {
-		gebr_comm_server_log_message(server, GEBR_LOG_INFO, _("Launching server at '%s'."),
-					     server->address->str);
+	gebr_comm_server_log_message(server, GEBR_LOG_INFO, _("Launching server at '%s'."),
+				     server->address->str);
 
-		GebrCommTerminalProcess *process;
-		server->process.use = COMM_SERVER_PROCESS_TERMINAL;
-		server->process.data.terminal = process = gebr_comm_terminal_process_new();
-		g_signal_connect(process, "ready-read", G_CALLBACK(gebr_comm_ssh_run_server_read), server);
-		g_signal_connect(process, "finished", G_CALLBACK(gebr_comm_ssh_run_server_finished), server);
+	GebrCommTerminalProcess *process;
+	server->process.use = COMM_SERVER_PROCESS_TERMINAL;
+	server->process.data.terminal = process = gebr_comm_terminal_process_new();
+	g_signal_connect(process, "ready-read", G_CALLBACK(gebr_comm_ssh_run_server_read), server);
+	g_signal_connect(process, "finished", G_CALLBACK(gebr_comm_ssh_run_server_finished), server);
 
-		GString *cmd_line = g_string_new(NULL);
-		g_string_printf(cmd_line, "ssh -x %s \"bash -l -c '%s >&3' 3>&1 >/dev/null 2>&1\"",
-				server->address->str, binary);
-		gebr_comm_terminal_process_start(process, cmd_line);
-		g_string_free(cmd_line, TRUE);
-	} else {
-		gebr_comm_server_log_message(server, GEBR_LOG_INFO, _("Launching local server."));
-
-		GebrCommProcess *process;
-		server->process.use = COMM_SERVER_PROCESS_REGULAR;
-		server->process.data.regular = process = gebr_comm_process_new();
-		g_signal_connect(process, "ready-read-stdout", G_CALLBACK(local_run_server_read), server);
-		g_signal_connect(process, "finished", G_CALLBACK(local_run_server_finished), server);
-
-		GString *cmd_line = g_string_new(NULL);
-		g_string_printf(cmd_line, "bash -c \"bash -l -c '%s >&3' 3>&1 >/dev/null 2>&1\"", binary);
-		gebr_comm_process_start(process, cmd_line);
-		g_string_free(cmd_line, TRUE);
-	}
+	GString *cmd_line = g_string_new(NULL);
+	g_string_printf(cmd_line, "ssh -x %s \"bash -l -c '%s >&3' 3>&1 >/dev/null 2>&1\"",
+			server->address->str, binary);
+	gebr_comm_terminal_process_start(process, cmd_line);
+	g_string_free(cmd_line, TRUE);
 }
 
 void gebr_comm_server_disconnect(GebrCommServer *server)
@@ -394,53 +376,6 @@ gebr_comm_server_log_message(GebrCommServer *server, GebrLogMessageType type,
 	server->ops->log_message(server, type, string, server->user_data);
 	g_free(string);
 	va_end(argp);
-}
-
-/**
- * \internal
- */
-static void local_run_server_read(GebrCommProcess * process, GebrCommServer *server)
-{
-	GString *output;
-	gchar *strtol_endptr;
-	guint16 port;
-
-	output = gebr_comm_process_read_stdout_string_all(process);
-	port = strtol(output->str, &strtol_endptr, 10);
-	if (port) {
-		server->port = port;
-		gebr_comm_server_log_message(server, GEBR_LOG_DEBUG, "local_run_server_read: %d", port);
-	} else {
-		gebr_comm_server_disconnected_state(server, SERVER_ERROR_SERVER,
-						    _("Could not launch local server: \n%s"), output->str);
-		gebr_comm_server_log_message(server, GEBR_LOG_ERROR, server->last_error->str);
-	}
-
-	g_string_free(output, TRUE);
-}
-
-/**
- * \internal
- */
-static void local_run_server_finished(GebrCommProcess * process, gint status, GebrCommServer *server)
-{
-	GebrCommSocketAddress socket_address;
-
-	server->process.use = COMM_SERVER_PROCESS_NONE;
-	gebr_comm_process_free(process);
-
-	gebr_comm_server_log_message(server, GEBR_LOG_DEBUG, "local_run_server_finished");
-
-	if (server->port == 0)
-		gebr_comm_server_disconnected_state(server, SERVER_ERROR_SERVER,
-						    _("Could not find maestro"));
-
-	if (server->error != SERVER_ERROR_NONE)
-		return;
-
-	gebr_comm_server_change_state(server, SERVER_STATE_CONNECT);
-	socket_address = gebr_comm_socket_address_ipv4_local(server->port);
-	gebr_comm_protocol_socket_connect(server->socket, &socket_address, FALSE);
 }
 
 static void
