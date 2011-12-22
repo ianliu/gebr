@@ -38,7 +38,6 @@
 #include "ui_log.h"
 #include "ui_preferences.h"
 #include "ui_project_line.h"
-#include "ui_server.h"
 
 #include "gebr-maestro-controller.h"
 
@@ -65,7 +64,6 @@ struct gebr {
 	GtkActionGroup *action_group_flow_edition;
 	GtkActionGroup *action_group_job_control;
 	GtkActionGroup *action_group_status;
-	GtkActionGroup *action_group_server;
 
 	struct gebr_report {
 		GtkWidget *report_wind;

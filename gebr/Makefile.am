@@ -90,8 +90,6 @@ libgebr_la_SOURCES =		\
 	ui_preferences.h	\
 	ui_project_line.c	\
 	ui_project_line.h	\
-	ui_server.c		\
-	ui_server.h		\
 	$(NULL)
 
 libgebr_la_LIBADD =		\
