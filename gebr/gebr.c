@@ -362,18 +362,16 @@ gebr_post_config(gboolean has_config)
 	gtk_window_resize(GTK_WINDOW(gebr.window), gebr.config.width, gebr.config.height);
 	gtk_expander_set_expanded(GTK_EXPANDER(gebr.ui_log->widget), gebr.config.log_expander_state);
 
-
-	menu_list_populate();
-
 	if (!has_config)
 		preferences_setup_ui(TRUE);
 	else {
 		gebr_maestro_controller_connect(gebr.maestro_controller,
 						gebr.config.maestro_address->str);
+		project_list_populate();
+		menu_list_populate();
 		restore_project_line_flow_selection();
 		gebr_config_save(FALSE);
 	}
-	project_list_populate();
 
 }
 
