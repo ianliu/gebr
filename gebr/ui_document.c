@@ -105,6 +105,7 @@ typedef struct {
 	/* line stuff */
 	GtkWidget *path_sequence_edit;
 	GtkWidget *maestro_combo;
+	GtkWidget *maestro_box;
 	gint previous_active_group;
 
 	GebrPropertiesResponseFunc func;
@@ -216,7 +217,6 @@ document_properties_create_maestro_combobox(GebrGeoXmlLine *line)
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 
 	GtkWidget *combo = gtk_combo_box_new_with_model(GTK_TREE_MODEL(store));
-	gtk_widget_set_sensitive(combo, FALSE);
 
 	GtkCellRenderer *renderer = gtk_cell_renderer_pixbuf_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(combo), renderer, FALSE);
@@ -265,13 +265,55 @@ document_properties_create_maestro_combobox(GebrGeoXmlLine *line)
 }
 
 static void
+on_maestro_box_clear(GtkWidget *widget,
+                     gpointer data)
+{
+	if (!GTK_IS_TOGGLE_BUTTON(widget))
+		gtk_widget_destroy(widget);
+}
+
+static void
 on_lock_button_toggled(GtkToggleButton *button,
-		       GtkWidget *widget)
+                       GebrPropertiesData *data)
 {
 	gboolean active = gtk_toggle_button_get_active(button);
 	GtkWidget *image = gtk_bin_get_child(GTK_BIN(button));
+
+	gtk_container_foreach(GTK_CONTAINER(data->maestro_box), (GtkCallback)on_maestro_box_clear, NULL);
+
 	gtk_image_set_from_stock(GTK_IMAGE(image), active ? "object-unlocked" : "object-locked", GTK_ICON_SIZE_BUTTON);
-	gtk_widget_set_sensitive(widget, active);
+
+	if (active) {
+		data->maestro_combo = document_properties_create_maestro_combobox(GEBR_GEOXML_LINE(data->document));
+		gtk_box_pack_start(GTK_BOX(data->maestro_box), data->maestro_combo, TRUE, TRUE, 0);
+	} else {
+		// Label for maestro, when lock are closed
+		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+
+		if (maestro) {
+			gchar *addr = gebr_maestro_server_get_display_address(maestro);
+			GtkWidget *label = gtk_label_new(addr);
+			gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+
+			const gchar *stockid;
+			if (gebr_maestro_server_get_state(maestro) == SERVER_STATE_CONNECT)
+				stockid = GTK_STOCK_CONNECT;
+			else {
+				const gchar *error = gebr_maestro_server_get_error(maestro);
+				if (!error || !*error)
+					stockid = GTK_STOCK_DISCONNECT;
+				else
+					stockid = GTK_STOCK_DIALOG_WARNING;
+			}
+			GtkWidget *image = gtk_image_new_from_stock(stockid, GTK_ICON_SIZE_BUTTON);
+
+			gtk_box_pack_start(GTK_BOX(data->maestro_box), image, FALSE, FALSE, 0);
+			gtk_box_pack_start(GTK_BOX(data->maestro_box), label, TRUE, TRUE, 0);
+		}
+	}
+
+	gtk_box_reorder_child(GTK_BOX(data->maestro_box), GTK_WIDGET(button), -1);
+	gtk_widget_show_all(data->maestro_box);
 }
 
 void document_properties_setup_ui (GebrGeoXmlDocument * document,
@@ -395,6 +437,7 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 
 	data->previous_active_group = 0;
 	data->maestro_combo = NULL;
+	data->maestro_box = NULL;
 
 	if (gebr_geoxml_document_get_type(document) == GEBR_GEOXML_DOCUMENT_TYPE_LINE) {
 		data->maestro_combo = document_properties_create_maestro_combobox(GEBR_GEOXML_LINE(document));
@@ -404,14 +447,39 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 		GtkWidget *image = gtk_image_new_from_stock("object-locked", GTK_ICON_SIZE_BUTTON);
 		gtk_container_add(GTK_CONTAINER(lock_button), image);
 		g_signal_connect(lock_button, "toggled",
-				 G_CALLBACK(on_lock_button_toggled), data->maestro_combo);
+				 G_CALLBACK(on_lock_button_toggled), data);
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(lock_button), FALSE);
 		gtk_widget_set_tooltip_text(image, "Click to Lock/Unlock the Maestro of this line");
 
-
 		GtkWidget *hbox = gtk_hbox_new(FALSE, 5);
-		gtk_box_pack_start(GTK_BOX(hbox), data->maestro_combo, TRUE, TRUE, 0);
+
+		// Label for maestro, when lock are closed
+		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+
+		if (maestro) {
+			gchar *addr = gebr_maestro_server_get_display_address(maestro);
+			GtkWidget *label = gtk_label_new(addr);
+			gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+
+			const gchar *stockid;
+			if (gebr_maestro_server_get_state(maestro) == SERVER_STATE_CONNECT)
+				stockid = GTK_STOCK_CONNECT;
+			else {
+				const gchar *error = gebr_maestro_server_get_error(maestro);
+				if (!error || !*error)
+					stockid = GTK_STOCK_DISCONNECT;
+				else
+					stockid = GTK_STOCK_DIALOG_WARNING;
+			}
+			GtkWidget *image = gtk_image_new_from_stock(stockid, GTK_ICON_SIZE_BUTTON);
+
+			gtk_box_pack_start(GTK_BOX(hbox), image, FALSE, FALSE, 0);
+			gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
+		} else
+			gtk_box_pack_start(GTK_BOX(hbox), data->maestro_combo, TRUE, TRUE, 0);
+
 		gtk_box_pack_start(GTK_BOX(hbox), lock_button, FALSE, TRUE, 0);
+		data->maestro_box = hbox;
 
 		label = gtk_label_new(_("Maestro"));
 		gtk_table_attach(GTK_TABLE (table), label, 0, 1, row, row+1, GTK_FILL, GTK_FILL, 3, 3);
