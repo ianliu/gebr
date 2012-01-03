@@ -138,6 +138,14 @@ GtkTreeIter project_load_with_lines(GebrGeoXmlProject *project)
 
 		line_source = gebr_geoxml_project_get_line_source(GEBR_GEOXML_PROJECT_LINE(project_line));
 		int ret = document_load_with_parent((GebrGeoXmlDocument**)(&line), line_source, &project_iter, FALSE);
+		gchar *proj_maestro = gebr_geoxml_line_get_maestro(line);
+		if (g_strcmp0(proj_maestro, "") == 0){
+			g_debug("................................ SEM MAETRO");
+			const gchar *actual_maestro_addr = gebr_maestro_server_get_address(
+					gebr_maestro_controller_get_maestro(gebr.maestro_controller));
+			gebr_geoxml_line_set_maestro(line, actual_maestro_addr);
+			document_save(GEBR_GEOXML_DOC(line), TRUE,FALSE);
+		}
 		if (ret) {
 			project_line = next;
 			continue;
