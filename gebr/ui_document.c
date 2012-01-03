@@ -287,15 +287,16 @@ on_lock_button_toggled(GtkToggleButton *button,
 		data->maestro_combo = document_properties_create_maestro_combobox(GEBR_GEOXML_LINE(data->document));
 		gtk_box_pack_start(GTK_BOX(data->maestro_box), data->maestro_combo, TRUE, TRUE, 0);
 	} else {
-		// Label for maestro, when lock are closed
-		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, GEBR_GEOXML_LINE(data->document));
+		const gchar *addr = gebr_geoxml_line_get_maestro(GEBR_GEOXML_LINE(data->document));
+		const gchar *stockid;
+
+		if (!maestro && !strlen(addr)) {
+			maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+			addr = gebr_maestro_server_get_address(maestro);
+		}
 
 		if (maestro) {
-			gchar *addr = gebr_maestro_server_get_display_address(maestro);
-			GtkWidget *label = gtk_label_new(addr);
-			gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-
-			const gchar *stockid;
 			if (gebr_maestro_server_get_state(maestro) == SERVER_STATE_CONNECT)
 				stockid = GTK_STOCK_CONNECT;
 			else {
@@ -305,11 +306,15 @@ on_lock_button_toggled(GtkToggleButton *button,
 				else
 					stockid = GTK_STOCK_DIALOG_WARNING;
 			}
-			GtkWidget *image = gtk_image_new_from_stock(stockid, GTK_ICON_SIZE_BUTTON);
+		} else
+			stockid = GTK_STOCK_DISCONNECT;
 
-			gtk_box_pack_start(GTK_BOX(data->maestro_box), image, FALSE, FALSE, 0);
-			gtk_box_pack_start(GTK_BOX(data->maestro_box), label, TRUE, TRUE, 0);
-		}
+		GtkWidget *image = gtk_image_new_from_stock(stockid, GTK_ICON_SIZE_BUTTON);
+		GtkWidget *label = gtk_label_new(addr);
+		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+
+		gtk_box_pack_start(GTK_BOX(data->maestro_box), image, FALSE, FALSE, 0);
+		gtk_box_pack_start(GTK_BOX(data->maestro_box), label, TRUE, TRUE, 0);
 	}
 
 	gtk_box_reorder_child(GTK_BOX(data->maestro_box), GTK_WIDGET(button), -1);
@@ -453,15 +458,16 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 
 		GtkWidget *hbox = gtk_hbox_new(FALSE, 5);
 
-		// Label for maestro, when lock are closed
-		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, GEBR_GEOXML_LINE(document));
+		const gchar *addr = gebr_geoxml_line_get_maestro(GEBR_GEOXML_LINE(document));
+		const gchar *stockid;
+
+		if (!maestro && !strlen(addr)) {
+			maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+			addr = gebr_maestro_server_get_address(maestro);
+		}
 
 		if (maestro) {
-			gchar *addr = gebr_maestro_server_get_display_address(maestro);
-			GtkWidget *label = gtk_label_new(addr);
-			gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-
-			const gchar *stockid;
 			if (gebr_maestro_server_get_state(maestro) == SERVER_STATE_CONNECT)
 				stockid = GTK_STOCK_CONNECT;
 			else {
@@ -471,12 +477,15 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 				else
 					stockid = GTK_STOCK_DIALOG_WARNING;
 			}
-			GtkWidget *image = gtk_image_new_from_stock(stockid, GTK_ICON_SIZE_BUTTON);
-
-			gtk_box_pack_start(GTK_BOX(hbox), image, FALSE, FALSE, 0);
-			gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
 		} else
-			gtk_box_pack_start(GTK_BOX(hbox), data->maestro_combo, TRUE, TRUE, 0);
+			stockid = GTK_STOCK_DISCONNECT;
+
+		GtkWidget *maestro_img = gtk_image_new_from_stock(stockid, GTK_ICON_SIZE_BUTTON);
+		GtkWidget *label = gtk_label_new(addr);
+		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+
+		gtk_box_pack_start(GTK_BOX(hbox), maestro_img, FALSE, FALSE, 0);
+		gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
 
 		gtk_box_pack_start(GTK_BOX(hbox), lock_button, FALSE, TRUE, 0);
 		data->maestro_box = hbox;
