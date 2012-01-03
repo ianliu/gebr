@@ -103,6 +103,10 @@ gebrm_server_op_state_changed(GebrCommServer *server,
 			      gpointer user_data)
 {
 	GebrmDaemon *daemon = user_data;
+
+	if (server->state == SERVER_STATE_DISCONNECTED)
+		daemon->priv->is_initialized = FALSE;
+
 	g_signal_emit(daemon, signals[STATE_CHANGE], 0, server->state);
 }
 

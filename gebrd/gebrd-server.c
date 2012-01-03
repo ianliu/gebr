@@ -240,8 +240,6 @@ void server_new_connection(void)
 		client_add(client);
 		gebrd_message(GEBR_LOG_DEBUG, "client_add");
 	} else {
-		g_debug("YOU SHALL NOT CONNECT!!!!");
-		g_usleep(G_USEC_PER_SEC);
 		gebr_comm_protocol_socket_oldmsg_send(client, TRUE,
 						      gebr_comm_protocol_defs.err_def, 2,
 						      "connection-refused",
