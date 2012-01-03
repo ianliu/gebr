@@ -20,6 +20,7 @@
 
 #include "gebr-maestro-controller.h"
 #include <config.h>
+#include <gebr.h>
 
 #include <gdk/gdkkeysyms.h>
 #include <glib/gi18n.h>
@@ -1257,6 +1258,7 @@ gebr_maestro_controller_connect(GebrMaestroController *self,
 	g_signal_emit(self, signals[MAESTRO_LIST_CHANGED], 0);
 
 	gebr_maestro_server_connect(self->priv->maestro);
+	gebr_config_save(FALSE);
 }
 
 GebrMaestroServer *
