@@ -1544,20 +1544,26 @@ gchar * gebr_line_generate_header(GebrGeoXmlDocument * document)
 	g_free(title);
 	g_free(description);
 
+	gchar *maestro = gebr_geoxml_line_get_maestro(GEBR_GEOXML_LINE(document));
 	gchar *author = gebr_geoxml_document_get_author(document);
 	gchar *email = gebr_geoxml_document_get_email(document);
 	g_string_append_printf(dump,
 			       "<p class=\"credits\">%s <span class=\"gebr-author\">%s</span> "
 			       "<span class=\"gebr-email\">%s</span>, "
+	                       "<class=\"where\">%s <span class=\"gebr-maestro\">%s</span>, "
 			       "<span class=\"gebr-date\">%s</span></p>\n",
 			       // Comment for translators:
 			       // "By" as in "By John McClane"
 			       _("By"),
 			       author, email,
+			       _("at"),
+			       maestro,
 			       gebr_localized_date(gebr_iso_date()));
+
 	g_free(author);
 	g_free(email);
-			
+	g_free(maestro);
+
 
 	g_string_append_printf (dump, "<div class=\"gebr-flows-list\">\n   <p>%s</p>\n   <ul>\n", _("Line composed by the Flow(s):"));
 	gebr_geoxml_line_get_flow (GEBR_GEOXML_LINE (document), &sequence, 0);
