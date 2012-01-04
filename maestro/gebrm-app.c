@@ -20,8 +20,10 @@
 
 #include <config.h>
 #include "gebrm-app.h"
+
 #include "gebrm-daemon.h"
 #include "gebrm-job.h"
+#include "gebrm-client.h"
 
 #include <glib/gprintf.h>
 #include <gio/gio.h>
@@ -157,7 +159,8 @@ gebrm_app_job_controller_on_issued(GebrmJob    *job,
 				   GebrmApp    *app)
 {
 	for (GList *i = app->priv->connections; i; i = i->next) {
-		gebr_comm_protocol_socket_oldmsg_send(i->data, FALSE,
+		GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(i->data);
+		gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
 						      gebr_comm_protocol_defs.iss_def, 2,
 						      gebrm_job_get_id(job),
 						      issues);
@@ -173,7 +176,8 @@ gebrm_app_job_controller_on_cmd_line_received(GebrmJob *job,
 	gchar *frac;
 	for (GList *i = app->priv->connections; i; i = i->next) {
 		frac = g_strdup_printf("%d", gebrm_task_get_fraction(task));
-		gebr_comm_protocol_socket_oldmsg_send(i->data, FALSE,
+		GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(i->data);
+		gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
 						      gebr_comm_protocol_defs.cmd_def, 3,
 						      gebrm_job_get_id(job),
 						      frac,
@@ -190,7 +194,8 @@ gebrm_app_job_controller_on_output(GebrmJob *job,
 {
 	for (GList *i = app->priv->connections; i; i = i->next) {
 		gchar *frac = g_strdup_printf("%d", gebrm_task_get_fraction(task));
-		gebr_comm_protocol_socket_oldmsg_send(i->data, FALSE,
+		GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(i->data);
+		gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
 						      gebr_comm_protocol_defs.out_def, 3,
 						      gebrm_job_get_id(job),
 						      frac,
@@ -220,7 +225,8 @@ gebrm_app_job_controller_on_status_change(GebrmJob *job,
 	}
 
 	for (GList *i = app->priv->connections; i; i = i->next) {
-		gebr_comm_protocol_socket_oldmsg_send(i->data, FALSE,
+		GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(i->data);
+		gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
 						      gebr_comm_protocol_defs.sta_def, 3,
 						      gebrm_job_get_id(job),
 						      gebr_comm_job_get_string_from_status(new_status),
@@ -234,8 +240,10 @@ gebrm_app_daemon_on_state_change(GebrmDaemon *daemon,
 				 GebrCommServerState state,
 				 GebrmApp *app)
 {
-	for (GList *i = app->priv->connections; i; i = i->next)
-		send_server_status_message(app, i->data, daemon, gebrm_daemon_get_autoconnect(daemon));
+	for (GList *i = app->priv->connections; i; i = i->next) {
+		GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(i->data);
+		send_server_status_message(app, socket, daemon, gebrm_daemon_get_autoconnect(daemon));
+	}
 }
 
 static void
@@ -243,6 +251,7 @@ gebrm_app_finalize(GObject *object)
 {
 	GebrmApp *app = GEBRM_APP(object);
 	g_hash_table_unref(app->priv->jobs);
+	g_list_foreach(app->priv->connections, (GFunc)g_object_unref, NULL);
 	g_list_free(app->priv->connections);
 	g_list_free(app->priv->daemons);
 	G_OBJECT_CLASS(gebrm_app_parent_class)->finalize(object);
@@ -343,11 +352,13 @@ err:
 		gebrm_remove_server_from_list(app, addr);
 		gebrm_config_delete_server(addr);
 
-		for (GList *i = app->priv->connections; i; i = i->next)
-			gebr_comm_protocol_socket_oldmsg_send(i->data, FALSE,
+		for (GList *i = app->priv->connections; i; i = i->next) {
+			GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(i->data);
+			gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
 			                                      gebr_comm_protocol_defs.srm_def, 2,
 			                                      addr,
 			                                      error);
+		}
 	}
 }
 
@@ -473,7 +484,8 @@ send_job_def_to_clients(GebrmApp *app, GebrmJob *job)
 	const gchar *finish_date = gebrm_job_get_finish_date(job);
 
 	for (GList *i = app->priv->connections; i; i = i->next) {
-		gebr_comm_protocol_socket_oldmsg_send(i->data, FALSE,
+		GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(i->data);
+		gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
 						      gebr_comm_protocol_defs.job_def, 18,
 						      gebrm_job_get_id(job),
 						      gebrm_job_get_temp_id(job),
@@ -1130,15 +1142,16 @@ static void
 on_new_connection(GebrCommListenSocket *listener,
 		  GebrmApp *app)
 {
-	GebrCommStreamSocket *client;
+	GebrCommStreamSocket *stream;
 
 	g_debug("New connection!");
 
-	while ((client = gebr_comm_listen_socket_get_next_pending_connection(listener))) {
-		GebrCommProtocolSocket *socket =
-			gebr_comm_protocol_socket_new_from_socket(client);
+	while ((stream = gebr_comm_listen_socket_get_next_pending_connection(listener))) {
+		GebrmClient *client = gebrm_client_new(stream);
+		GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(client);
+		g_object_unref(stream);
 
-		app->priv->connections = g_list_prepend(app->priv->connections, socket);
+		app->priv->connections = g_list_prepend(app->priv->connections, client);
 
 		for (GList *i = app->priv->daemons; i; i = i->next) {
 			send_server_status_message(app, socket, i->data, gebrm_daemon_get_autoconnect(i->data));

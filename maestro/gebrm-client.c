@@ -100,7 +100,7 @@ gebrm_client_set_property(GObject      *object,
 	switch (prop_id)
 	{
 	case PROP_STREAM:
-		gebrm_client_set_stream_socket(client, g_value_get_object(value));
+		gebrm_client_set_stream_socket(client, g_value_dup_object(value));
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
