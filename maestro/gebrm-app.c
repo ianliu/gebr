@@ -597,6 +597,10 @@ on_client_request(GebrCommProtocolSocket *socket,
 						}
 						gebrm_daemon_disconnect(daemon);
 					}
+					else if (g_strcmp0(confirm, "remove") == 0)
+						gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
+						                                      gebr_comm_protocol_defs.cfrm_def, 2,
+						                                      addr, "remove");
 					else
 						gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
 										      gebr_comm_protocol_defs.cfrm_def, 2,
@@ -1031,7 +1035,7 @@ gebrm_config_save_server(GebrmDaemon *daemon)
 
 	    gchar *content = g_key_file_to_data(servers, NULL, NULL);
 	    if (content)
-	    g_file_set_contents(path, content, -1, NULL);
+	    	g_file_set_contents(path, content, -1, NULL);
 
 	    g_free(content);
 	}

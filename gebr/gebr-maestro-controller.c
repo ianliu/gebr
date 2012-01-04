@@ -659,7 +659,12 @@ on_server_remove(GtkMenuItem *menuitem,
 		if (!daemon)
 			continue;
 
-		gebr_connectable_remove(GEBR_CONNECTABLE(mc->priv->maestro), gebr_daemon_server_get_address(daemon));
+		if (gebr_daemon_server_get_state(daemon) == SERVER_STATE_CONNECT) {
+			gebr_connectable_disconnect(GEBR_CONNECTABLE(mc->priv->maestro),
+			                            gebr_daemon_server_get_address(daemon),
+			                            "remove");
+		} else
+			gebr_connectable_remove(GEBR_CONNECTABLE(mc->priv->maestro), gebr_daemon_server_get_address(daemon));
 	}
 	on_server_group_changed(mc->priv->maestro, mc);
 }
@@ -1034,7 +1039,6 @@ connect_to_maestro(GtkEntry *entry,
 {
 	const gchar *entry_text = gtk_entry_get_text(entry);
 	const gchar *address;
-	g_debug("on %s, %s", entry_text);
 	if (g_strcmp0(entry_text, "127.0.0.1")==0 || g_strcmp0(entry_text, "localhost")==0)
 		address = g_get_host_name();
 	else
@@ -1119,6 +1123,9 @@ on_maestro_confirm(GebrMaestroServer *maestro,
 	if (g_strcmp0(type, "disconnect") == 0)
 		msg = N_("<span size='large' weight='bold'>The daemon %s is executing tasks.\n"
 			 "Do you really want to disconnect it?</span>");
+	else if (g_strcmp0(type, "remove") == 0)
+		msg = N_("<span size='large' weight='bold'>The daemon %s is executing tasks.\n"
+			 "Do you really want to remove it?</span>");
 
 	GtkWidget *dialog  = gtk_message_dialog_new_with_markup(NULL, GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
 	                                                        GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
@@ -1130,6 +1137,9 @@ on_maestro_confirm(GebrMaestroServer *maestro,
 	if (response == GTK_RESPONSE_YES) {
 		gebr_connectable_disconnect(GEBR_CONNECTABLE(mc->priv->maestro),
 		                            addr, "yes");
+
+		if (g_strcmp0(type, "remove") == 0)
+			gebr_connectable_remove(GEBR_CONNECTABLE(mc->priv->maestro), addr);
 	}
 	gtk_widget_destroy(dialog);
 	gdk_threads_leave();
