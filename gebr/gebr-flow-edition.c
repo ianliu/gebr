@@ -1309,8 +1309,6 @@ on_groups_combobox_changed(GtkComboBox *combobox,
 	GtkTreeIter iter;
 	GtkTreeIter flow_iter;
 
-	gint active = gtk_combo_box_get_active(combobox);
-
 	if (!flow_browse_get_selected(&flow_iter, TRUE))
 		return;
 

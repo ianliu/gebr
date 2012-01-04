@@ -355,6 +355,20 @@ err:
 			                                      addr,
 			                                      error);
 		}
+	} else {
+		for (GList *i = app->priv->connections; i; i = i->next) {
+			GebrmClient *client = i->data;
+			guint16 daemon_display_port = gebrm_daemon_get_display_port(daemon);
+			guint16 client_display_port = gebrm_client_get_display_port(client);
+
+			if (daemon_display_port == 0)
+				continue;
+
+			GebrCommServer *server = gebrm_daemon_get_server(daemon);
+			gebr_comm_server_forward_remote_port(server,
+							     daemon_display_port,
+							     client_display_port);
+		}
 	}
 }
 
@@ -811,9 +825,14 @@ on_client_parse_messages(GebrCommProtocolSocket *socket,
 
 			for (GList *i = app->priv->daemons; i; i = i->next) {
 				GebrmDaemon *daemon = i->data;
+				guint16 daemon_display_port = gebrm_daemon_get_display_port(daemon);
+
+				if (daemon_display_port == 0)
+					continue;
+
 				GebrCommServer *server = gebrm_daemon_get_server(daemon);
 				gebr_comm_server_forward_remote_port(server,
-								     gebrm_daemon_get_display_port(daemon),
+								     daemon_display_port,
 								     client_display_port);
 			}
 
