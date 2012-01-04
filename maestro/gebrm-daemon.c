@@ -27,6 +27,8 @@
 struct _GebrmDaemonPriv {
 	gboolean is_initialized;
 
+	GHashTable *tasks;
+
 	GTree *tags;
 	GebrCommServer *server;
 	GebrCommProtocolSocket *client;
@@ -36,6 +38,7 @@ struct _GebrmDaemonPriv {
 	gchar *nfsid;
 	gchar *id;
 
+	gint uncompleted_tasks;
 	guint16 x11_port;
 };
 
@@ -104,8 +107,10 @@ gebrm_server_op_state_changed(GebrCommServer *server,
 {
 	GebrmDaemon *daemon = user_data;
 
-	if (server->state == SERVER_STATE_DISCONNECTED)
+	if (server->state == SERVER_STATE_DISCONNECTED) {
 		daemon->priv->is_initialized = FALSE;
+		daemon->priv->uncompleted_tasks = 0;
+	}
 
 	g_signal_emit(daemon, signals[STATE_CHANGE], 0, server->state);
 }
@@ -150,6 +155,29 @@ gebrm_server_op_process_response(GebrCommServer *server,
 				 gpointer user_data)
 {
 	g_debug("[DAEMON] %s", __func__);
+}
+
+static void
+gebrm_daemon_on_task_status_change(GebrmTask *task,
+				   gint old_status,
+				   gint new_status,
+				   const gchar *parameter,
+				   GebrmDaemon *daemon)
+{
+	switch (new_status) {
+	case JOB_STATUS_FAILED:
+	case JOB_STATUS_FINISHED:
+	case JOB_STATUS_CANCELED:
+		daemon->priv->uncompleted_tasks--;
+		break;
+
+	case JOB_STATUS_INITIAL:
+	case JOB_STATUS_QUEUED:
+	case JOB_STATUS_RUNNING:
+	case JOB_STATUS_ISSUED:
+	case JOB_STATUS_REQUEUED:
+		break;
+	}
 }
 
 static void
@@ -228,8 +256,13 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 			GString *cmd = g_list_nth_data(arguments, 3);
 			GString *moab_jid = g_list_nth_data(arguments, 4);
 
+			daemon->priv->uncompleted_tasks++;
 			GebrmTask *task = gebrm_task_new(daemon, id->str, frac->str);
+			g_signal_connect(task, "status-change",
+					 G_CALLBACK(gebrm_daemon_on_task_status_change), daemon);
 			gebrm_task_init_details(task, issues, cmd, moab_jid);
+
+			g_hash_table_insert(daemon->priv->tasks, gebrm_task_build_id(id->str, frac->str), task);
 			g_signal_emit(daemon, signals[TASK_DEFINE], 0, task);
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
@@ -399,6 +432,7 @@ gebrm_daemon_finalize(GObject *object)
 	g_free(daemon->priv->nfsid);
 	g_free(daemon->priv->id);
 	g_free(daemon->priv->display_port);
+	g_hash_table_destroy(daemon->priv->tasks);
 	if (daemon->priv->client)
 		g_object_unref(daemon->priv->client);
 
@@ -514,6 +548,7 @@ gebrm_daemon_init(GebrmDaemon *daemon)
 					     NULL, g_free, NULL);
 	daemon->priv->ac = g_strdup("on");
 	daemon->priv->is_initialized = FALSE;
+	daemon->priv->tasks = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
 }
 
 GebrmDaemon *
@@ -739,4 +774,27 @@ gebrm_daemon_send_magic_cookie(GebrmDaemon *daemon, const gchar *cookie)
 	gebr_comm_protocol_socket_oldmsg_send(daemon->priv->server->socket, FALSE,
 					      gebr_comm_protocol_defs.mck_def, 1,
 					      cookie);
+}
+
+gint
+gebrm_daemon_get_uncompleted_tasks(GebrmDaemon *daemon)
+{
+	return daemon->priv->uncompleted_tasks;
+}
+
+GList *
+gebrm_daemon_get_list_of_jobs(GebrmDaemon *daemon)
+{
+	GList *jobs = NULL;
+
+	void get_jobs(gpointer key, gpointer value)
+	{
+		GebrmTask *task = value;
+
+		jobs = g_list_prepend(jobs, g_strdup(gebrm_task_get_job_id(task)));
+	}
+
+	g_hash_table_foreach(daemon->priv->tasks, (GHFunc)get_jobs, NULL);
+
+	return jobs;
 }

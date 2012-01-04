@@ -42,7 +42,9 @@ struct _GebrConnectableIface {
 			    const gchar     *address);
 
 	void (*disconnect) (GebrConnectable *connectable,
-			    const gchar     *address);
+			    const gchar     *address,
+			    const gchar     *confirm);
+
 	void (*remove) (GebrConnectable *connectable,
 			    const gchar     *address);
 };
@@ -63,7 +65,8 @@ void  gebr_connectable_connect       (GebrConnectable *connectable,
  * Asks @connectable to disconnect from @address.
  */
 void  gebr_connectable_disconnect    (GebrConnectable *connectable,
-				      const gchar     *address);
+				      const gchar     *address,
+				      const gchar     *confirm);
 
 
 /**

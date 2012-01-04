@@ -47,6 +47,7 @@ enum {
 	STATE_CHANGE,
 	AC_CHANGE,
 	ERROR,
+	CONFIRM,
 	LAST_SIGNAL
 };
 
@@ -631,6 +632,19 @@ parse_messages(GebrCommServer *comm_server,
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}
+		else if (message->hash == gebr_comm_protocol_defs.cfrm_def.code_hash) {
+			GList *arguments;
+
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
+				goto err;
+
+			GString *addr = g_list_nth_data(arguments, 0);
+			GString *type = g_list_nth_data(arguments, 1);
+
+			g_signal_emit(maestro, signals[CONFIRM], 0, addr->str, type->str);
+
+			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
+		}
 
 		gebr_comm_message_free(message);
 		comm_server->socket->protocol->messages = g_list_delete_link(comm_server->socket->protocol->messages, link);
@@ -793,6 +807,15 @@ gebr_maestro_server_class_init(GebrMaestroServerClass *klass)
 			             gebr_cclosure_marshal_VOID__STRING_STRING,
 			             G_TYPE_NONE, 2, G_TYPE_STRING, G_TYPE_STRING);
 
+	signals[CONFIRM] =
+			g_signal_new("confirm",
+			             G_OBJECT_CLASS_TYPE(object_class),
+			             G_SIGNAL_RUN_LAST,
+			             G_STRUCT_OFFSET(GebrMaestroServerClass, confirm),
+			             NULL, NULL,
+			             gebr_cclosure_marshal_VOID__STRING_STRING,
+			             G_TYPE_NONE, 2, G_TYPE_STRING, G_TYPE_STRING);
+
 	g_object_class_install_property(object_class,
 					PROP_ADDRESS,
 					g_param_spec_string("address",
@@ -855,11 +878,13 @@ gebr_maestro_server_connectable_connect(GebrConnectable *connectable,
 
 static void
 gebr_maestro_server_connectable_disconnect(GebrConnectable *connectable,
-                                           const gchar *address)
+                                           const gchar *address,
+                                           const gchar *confirm)
 {
 	GebrCommUri *uri = gebr_comm_uri_new();
 	gebr_comm_uri_set_prefix(uri, "/disconnect");
 	gebr_comm_uri_add_param(uri, "address", address);
+	gebr_comm_uri_add_param(uri, "confirm", confirm);
 	gchar *url = gebr_comm_uri_to_string(uri);
 	gebr_comm_uri_free(uri);
 

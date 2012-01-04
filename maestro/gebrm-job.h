@@ -141,6 +141,8 @@ gboolean gebrm_job_has_issues(GebrmJob *job);
 
 gboolean gebrm_job_close(GebrmJob *job);
 
+void gebrm_job_kill_immediately(GebrmJob *job);
+
 void gebrm_job_kill(GebrmJob *job);
 
 void gebrm_job_set_io(GebrmJob *job,

@@ -60,6 +60,12 @@ struct _GebrmTaskClass {
 GType gebrm_task_get_type(void) G_GNUC_CONST;
 
 /**
+ * gebrm_task_build_id:
+ */
+gchar *gebrm_task_build_id(const gchar *rid,
+                           const gchar *frac);
+
+/**
  * gebrm_task_find:
  */
 GebrmTask *gebrm_task_find(const gchar *rid,

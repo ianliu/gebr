@@ -561,10 +561,24 @@ on_client_request(GebrCommProtocolSocket *socket,
 		}
 		else if (g_strcmp0(prefix, "/disconnect") == 0) {
 			const gchar *addr = gebr_comm_uri_get_param(uri, "address");
+			const gchar *confirm = gebr_comm_uri_get_param(uri, "confirm");
 			for (GList *i = app->priv->daemons; i; i = i->next) {
 				GebrmDaemon *daemon = i->data;
 				if (g_strcmp0(gebrm_daemon_get_address(daemon), addr) == 0) {
-					gebrm_daemon_disconnect(daemon);
+					if (g_strcmp0(confirm, "yes") == 0
+					    || gebrm_daemon_get_uncompleted_tasks(daemon) <= 0) {
+						GList *jobs = gebrm_daemon_get_list_of_jobs(daemon);
+						for (GList *i = jobs; i; i = i->next) {
+							GebrmJob *job = g_hash_table_lookup(app->priv->jobs, i->data);
+							if (job && gebrm_job_can_kill(job))
+								gebrm_job_kill_immediately(job);
+						}
+						gebrm_daemon_disconnect(daemon);
+					}
+					else
+						gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
+										      gebr_comm_protocol_defs.cfrm_def, 2,
+										      addr, "disconnect");
 					break;
 				}
 			}

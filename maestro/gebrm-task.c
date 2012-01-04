@@ -126,9 +126,9 @@ static void gebrm_task_class_init(GebrmTaskClass *klass)
 	g_type_class_add_private(klass, sizeof(GebrmTaskPriv));
 }
 
-static gchar *
-build_task_id(const gchar *rid,
-	      const gchar *frac)
+gchar *
+gebrm_task_build_id(const gchar *rid,
+                    const gchar *frac)
 {
 	return g_strconcat(rid, ":", frac, NULL);
 }
@@ -136,9 +136,10 @@ build_task_id(const gchar *rid,
 static gchar *
 gebrm_task_get_id(GebrmTask *task)
 {
-	return g_strdup_printf("%s:%d",
-			       task->priv->rid,
-			       task->priv->frac);
+	gchar *frac = g_strdup_printf("%d", task->priv->frac);
+	gchar *ret = gebrm_task_build_id(task->priv->rid, frac);
+	g_free(frac);
+	return ret;
 }
 
 GebrmTask *
@@ -209,7 +210,7 @@ gebrm_task_find(const gchar *rid, const gchar *frac)
 {
 	g_return_val_if_fail(rid != NULL && frac != NULL, NULL);
 
-	gchar *tid = build_task_id(rid, frac);
+	gchar *tid = gebrm_task_build_id(rid, frac);
 	g_debug("Looking for task %s, rid %s (%s)",
 		frac, rid, tid);
 	GebrmTask *task = g_hash_table_lookup(get_tasks_map(), tid);

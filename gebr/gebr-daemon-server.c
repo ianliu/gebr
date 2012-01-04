@@ -237,7 +237,8 @@ void
 gebr_daemon_server_disconnect(GebrDaemonServer *daemon)
 {
 	gebr_connectable_disconnect(daemon->priv->connectable,
-				    daemon->priv->address);
+				    daemon->priv->address,
+				    "");
 }
 
 gboolean

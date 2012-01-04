@@ -509,6 +509,17 @@ gebrm_job_close(GebrmJob *job)
 }
 
 void
+gebrm_job_kill_immediately(GebrmJob *job)
+{
+	GebrCommJobStatus old = job->priv->status;
+	gebrm_job_kill(job);
+
+	job->priv->status = JOB_STATUS_CANCELED;
+	g_signal_emit(job, signals[STATUS_CHANGE], 0,
+	              old, job->priv->status, NULL);
+}
+
+void
 gebrm_job_kill(GebrmJob *job)
 {
 	if (!gebrm_job_can_kill(job))

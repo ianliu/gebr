@@ -631,7 +631,8 @@ on_server_disconnect(GtkMenuItem *menuitem,
 			continue;
 
 		gebr_connectable_disconnect(GEBR_CONNECTABLE(mc->priv->maestro),
-					    gebr_daemon_server_get_address(daemon));
+					    gebr_daemon_server_get_address(daemon),
+					    "");
 	}
 }
 
@@ -1110,6 +1111,33 @@ on_password_request(GebrMaestroServer *maestro,
 }
 
 static void
+on_maestro_confirm(GebrMaestroServer *maestro,
+                   const gchar *addr,
+                   const gchar *type,
+                   GebrMaestroController *mc)
+{
+	const gchar *msg;
+
+	if (g_strcmp0(type, "disconnect") == 0)
+		msg = N_("<span size='large' weight='bold'>The daemon %s is executing tasks.\n"
+			 "Do you really want to disconnect it?</span>");
+
+	GtkWidget *dialog  = gtk_message_dialog_new_with_markup(NULL, GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+	                                                        GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
+	                                                        _(msg), addr);
+
+	gdk_threads_enter();
+	gint response = gtk_dialog_run(GTK_DIALOG(dialog));
+
+	if (response == GTK_RESPONSE_YES) {
+		gebr_connectable_disconnect(GEBR_CONNECTABLE(mc->priv->maestro),
+		                            addr, "yes");
+	}
+	gtk_widget_destroy(dialog);
+	gdk_threads_leave();
+}
+
+static void
 on_maestro_error(GebrMaestroServer *maestro,
 		 const gchar *addr,
 		 const gchar *error_type,
@@ -1254,6 +1282,8 @@ gebr_maestro_controller_connect(GebrMaestroController *self,
 			 G_CALLBACK(on_ac_change), self);
 	g_signal_connect(maestro, "error",
 			 G_CALLBACK(on_maestro_error), self);
+	g_signal_connect(maestro, "confirm",
+	                 G_CALLBACK(on_maestro_confirm), self);
 
 	g_signal_emit(self, signals[MAESTRO_LIST_CHANGED], 0);
 
