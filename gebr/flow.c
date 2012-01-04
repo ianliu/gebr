@@ -85,6 +85,8 @@ void flow_new (void)
 
 	flow_edition_set_io();
 
+	flow_edition_set_run_widgets_sensitiveness(gebr.ui_flow_edition, TRUE, FALSE);
+
 	gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("New Flow added to Line '%s'."), line_title);
 	document_properties_setup_ui(GEBR_GEOXML_DOCUMENT(gebr.flow), on_properties_response, TRUE);
 }
@@ -164,6 +166,9 @@ void flow_delete(gboolean confirm)
 	}
 	if (valid)
 		flow_browse_select_iter(&iter);
+
+	if (gebr_geoxml_line_get_flows_number(gebr.line) == 0)
+		flow_edition_set_run_widgets_sensitiveness(gebr.ui_flow_edition, FALSE, FALSE);
 }
 
 static gboolean flow_import_single (const gchar *path)

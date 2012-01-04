@@ -156,6 +156,10 @@ void flow_add_program_sequence_to_view(GebrGeoXmlSequence * program,
  */
 void flow_program_check_sensitiveness (void);
 
+void flow_edition_set_run_widgets_sensitiveness(GebrFlowEdition *fe,
+                                                gboolean sensitive,
+                                                gboolean maestro_err);
+
 void gebr_flow_edition_hide(GebrFlowEdition *self);
 
 void gebr_flow_edition_show(GebrFlowEdition *self);

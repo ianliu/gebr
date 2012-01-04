@@ -343,12 +343,37 @@ flow_edition_setup_ui(void)
 	return fe;
 }
 
-static void
-set_run_widgets_sensitiveness(GebrFlowEdition *fe,
-			      gboolean sensitive)
+void
+flow_edition_set_run_widgets_sensitiveness(GebrFlowEdition *fe,
+                                           gboolean sensitive,
+                                           gboolean maestro_err)
 {
-	const gchar *tooltip_disconn = _("Maestro of this line is disconnected.\nReconnect it or change the maestro\n associated to this line");
-	const gchar *tooltip_execute = _("Execute");
+	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
+
+	if (!maestro) {
+		if (sensitive == TRUE) {
+			sensitive = FALSE;
+			maestro_err = TRUE;
+		}
+		else if (!maestro_err)
+			maestro_err = TRUE;
+	}
+
+	if (maestro && gebr_geoxml_line_get_flows_number(gebr.line) == 0 && sensitive == TRUE) {
+		sensitive = FALSE;
+		maestro_err = FALSE;
+	}
+
+	const gchar *tooltip_disconn;
+	const gchar *tooltip_execute;
+
+	if (maestro_err) {
+		tooltip_disconn = _("Maestro of this line is disconnected.\nReconnect it or change the maestro\n associated to this line");
+		tooltip_execute = _("Execute");
+	} else {
+		tooltip_disconn = _("This line does not contain flows\nCreate a flow to execute this line");
+		tooltip_execute = _("Execute");
+	}
 
 	gtk_widget_set_sensitive(fe->priv->queue_combobox, sensitive);
 	gtk_widget_set_sensitive(fe->priv->server_combobox, sensitive);
@@ -1581,6 +1606,9 @@ flow_edition_find_flow_server(GebrFlowEdition *fe,
 			      GtkTreeModel   *model,
 			      GtkTreeIter    *iter)
 {
+	if (!flow)
+		return FALSE;
+
 	gboolean ret;
 	gchar *tmp, *name;
 	GebrMaestroServerGroupType type;
@@ -1798,7 +1826,7 @@ on_controller_maestro_state_changed(GebrMaestroController *mc,
 
 	switch (gebr_maestro_server_get_state(maestro)) {
 	case SERVER_STATE_DISCONNECTED:
-		set_run_widgets_sensitiveness(fe, FALSE);
+		flow_edition_set_run_widgets_sensitiveness(fe, FALSE, TRUE);
 		break;
 	case SERVER_STATE_CONNECT:
 		gebr_flow_edition_update_server(fe, maestro);
@@ -1860,7 +1888,10 @@ gebr_flow_edition_update_server(GebrFlowEdition *fe,
 		else
 			sensitive = FALSE;
 	}
-	set_run_widgets_sensitiveness(fe, sensitive);
+	if (gebr_geoxml_line_get_flows_number(gebr.line) > 0)
+		flow_edition_set_run_widgets_sensitiveness(fe, sensitive, TRUE);
+	else
+		flow_edition_set_run_widgets_sensitiveness(fe, FALSE, FALSE);
 }
 
 const gchar *
