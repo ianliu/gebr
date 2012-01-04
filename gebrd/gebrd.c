@@ -75,6 +75,8 @@ static void gebrd_app_init(GebrdApp * self)
 	GebrdCpuInfo *cpu = gebrd_cpu_info_new();
 	self->nprocs = gebrd_cpu_info_n_procs(cpu);
 	gebrd_cpu_info_free(cpu);
+
+	self->display_ports = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
 }
 
 static void gebrd_app_finalize(GObject * object)
@@ -84,6 +86,7 @@ static void gebrd_app_finalize(GObject * object)
 	g_string_free(self->user_data_filename, TRUE);
 	g_string_free(self->run_filename, TRUE);
 	g_string_free(self->fs_lock, TRUE);
+	g_hash_table_destroy(self->display_ports);
 
 	if (self->validator)
 		gebr_validator_free(self->validator);

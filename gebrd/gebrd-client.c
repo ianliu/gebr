@@ -271,6 +271,27 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			g_string_free(display_port, TRUE);
 			g_free(ncores);
 		}
+		else if (message->hash == gebr_comm_protocol_defs.gid_def.code_hash) {
+			GList *arguments;
+
+			/* organize message data */
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 1)) == NULL)
+				goto err;
+
+			GString *gid = arguments->data;
+			guint16 display = gebrd_get_x11_redirect_display();
+			g_hash_table_insert(gebrd->display_ports, g_strdup(gid->str), GINT_TO_POINTER(display));
+
+			g_debug("Received gid: %s", gid->str);
+
+			gchar *display_str = g_strdup_printf("%d", display + 6000);
+			gebr_comm_protocol_socket_oldmsg_send(client->socket, FALSE,
+							      gebr_comm_protocol_defs.ret_def, 2,
+							      gid->str, display_str);
+			g_free(display_str);
+
+			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
+		}
 		else if (message->hash == gebr_comm_protocol_defs.mck_def.code_hash) {
 			GList *arguments;
 

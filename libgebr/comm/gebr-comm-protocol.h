@@ -50,6 +50,8 @@ struct gebr_comm_protocol_defs {
 	struct gebr_comm_message_def out_def;
 	struct gebr_comm_message_def sta_def;
 
+	struct gebr_comm_message_def gid_def;   // Gebr id              Maestro -> Daemon
+
 	struct gebr_comm_message_def cfrm_def;
 
 	struct gebr_comm_message_def prt_def;   // Maestro port         Maestro -> GeBR

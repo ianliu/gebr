@@ -76,6 +76,10 @@ GebrCommProtocolSocket *gebrm_client_get_protocol_socket(GebrmClient *client);
  */
 guint16 gebrm_client_get_display_port(GebrmClient *client);
 
+void gebrm_client_set_id(GebrmClient *client, const gchar *id);
+
+const gchar *gebrm_client_get_id(GebrmClient *client);
+
 
 G_END_DECLS
 

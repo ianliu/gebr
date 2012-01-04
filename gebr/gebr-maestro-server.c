@@ -26,6 +26,8 @@
 #include <libgebr/gui/gui.h>
 #include <stdlib.h>
 
+#include "gebr.h" // for gebr_get_session_id()
+
 struct _GebrMaestroServerPriv {
 	GebrCommServer *server;
 	GtkListStore *store;
@@ -154,6 +156,7 @@ state_changed(GebrCommServer *comm_server,
 	GebrCommServerState state = gebr_comm_server_get_state(comm_server);
 
 	if (state == SERVER_STATE_DISCONNECTED) {
+		g_debug("Disconnected");
 		gebr_comm_server_close_x11_forward(comm_server);
 		gtk_list_store_clear(maestro->priv->groups_store);
 	}
@@ -1059,6 +1062,7 @@ void
 gebr_maestro_server_connect(GebrMaestroServer *maestro)
 {
 	maestro->priv->server = gebr_comm_server_new(maestro->priv->address,
+						     gebr_get_session_id(),
 						     &maestro_ops);
 	maestro->priv->server->user_data = maestro;
 	gebr_comm_server_connect(maestro->priv->server, TRUE);

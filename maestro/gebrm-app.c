@@ -356,19 +356,30 @@ err:
 			                                      error);
 		}
 	} else {
-		for (GList *i = app->priv->connections; i; i = i->next) {
-			GebrmClient *client = i->data;
-			guint16 daemon_display_port = gebrm_daemon_get_display_port(daemon);
-			guint16 client_display_port = gebrm_client_get_display_port(client);
+		for (GList *i = app->priv->connections; i; i = i->next)
+			gebrm_daemon_send_gebr_id(daemon, gebrm_client_get_id(i->data));
+	}
+}
 
-			if (daemon_display_port == 0)
-				continue;
-
-			GebrCommServer *server = gebrm_daemon_get_server(daemon);
-			gebr_comm_server_forward_remote_port(server,
-							     daemon_display_port,
-							     client_display_port);
+static void
+on_daemon_port_define(GebrmDaemon *daemon,
+		      const gchar *gid,
+		      const gchar *port,
+		      GebrmApp *app)
+{
+	GebrmClient *client = NULL;
+	for (GList *i = app->priv->connections; i; i = i->next) {
+		const gchar *id = gebrm_client_get_id(i->data);
+		if (g_strcmp0(id, gid) == 0) {
+			client = i->data;
+			break;
 		}
+	}
+
+	if (client) {
+		GebrCommServer *server = gebrm_daemon_get_server(daemon);
+		gebr_comm_server_forward_remote_port(server, atoi(port),
+						     gebrm_client_get_display_port(client));
 	}
 }
 
@@ -394,6 +405,8 @@ gebrm_add_server_to_list(GebrmApp *app,
 			 G_CALLBACK(gebrm_app_job_controller_on_task_def), app);
 	g_signal_connect(daemon, "daemon-init",
 			 G_CALLBACK(on_daemon_init), app);
+	g_signal_connect(daemon, "port-define",
+			 G_CALLBACK(on_daemon_port_define), app);
 
 	gchar **tagsv = tags ? g_strsplit(tags, ",", -1) : NULL;
 	if (tagsv) {
@@ -805,16 +818,20 @@ on_client_parse_messages(GebrCommProtocolSocket *socket,
 		if (message->hash == gebr_comm_protocol_defs.ini_def.code_hash) {
 			GList *arguments;
 
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 1)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
 				goto err;
 
 			GString *cookie = arguments->data;
+			GString *gebr_id = arguments->next->data;
 
 			g_debug("Maestro received a X11 cookie: %s", cookie->str);
-			g_debug("Send this to the daemons! MCK_DEF");
 
-			for (GList *i = app->priv->daemons; i; i = i->next)
+			gebrm_client_set_id(client, gebr_id->str);
+
+			for (GList *i = app->priv->daemons; i; i = i->next) {
 				gebrm_daemon_send_magic_cookie(i->data, cookie->str);
+				gebrm_daemon_send_gebr_id(i->data, gebr_id->str);
+			}
 
 			guint16 client_display_port = gebrm_client_get_display_port(client);
 			gchar *port_str = g_strdup_printf("%d", client_display_port);
@@ -822,19 +839,6 @@ on_client_parse_messages(GebrCommProtocolSocket *socket,
 							      gebr_comm_protocol_defs.ret_def, 1,
 							      port_str);
 			g_free(port_str);
-
-			for (GList *i = app->priv->daemons; i; i = i->next) {
-				GebrmDaemon *daemon = i->data;
-				guint16 daemon_display_port = gebrm_daemon_get_display_port(daemon);
-
-				if (daemon_display_port == 0)
-					continue;
-
-				GebrCommServer *server = gebrm_daemon_get_server(daemon);
-				gebr_comm_server_forward_remote_port(server,
-								     daemon_display_port,
-								     client_display_port);
-			}
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}

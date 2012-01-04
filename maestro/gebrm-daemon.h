@@ -57,8 +57,9 @@ struct _GebrmDaemonClass {
 			     const gchar *error_type,
 			     const gchar *error_msg);
 
-	void (*port_avaiable) (GebrmDaemon *daemon,
-			       guint16 port);
+	void (*port_define) (GebrmDaemon *daemon,
+			     const gchar *gid,
+			     const gchar *port);
 };
 
 GType gebrm_daemon_get_type(void) G_GNUC_CONST;
@@ -169,6 +170,8 @@ guint16 gebrm_daemon_get_display_port(GebrmDaemon *daemon);
 gint gebrm_daemon_get_uncompleted_tasks(GebrmDaemon *daemon);
 
 GList *gebrm_daemon_get_list_of_jobs(GebrmDaemon *daemon);
+
+void gebrm_daemon_send_gebr_id(GebrmDaemon *daemon, const gchar *id);
 
 G_END_DECLS
 

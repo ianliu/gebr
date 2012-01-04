@@ -25,6 +25,7 @@ G_DEFINE_TYPE(GebrmClient, gebrm_client, G_TYPE_OBJECT);
 struct _GebrmClientPriv {
 	guint16 display_port;
 	GebrCommProtocolSocket *socket;
+	gchar *id;
 };
 
 enum {
@@ -162,4 +163,18 @@ gebrm_client_get_display_port(GebrmClient *client)
 	}
 
 	return client->priv->display_port;
+}
+
+void
+gebrm_client_set_id(GebrmClient *client,
+		    const gchar *id)
+{
+	g_return_if_fail(client->priv->id == NULL);
+	client->priv->id = g_strdup(id);
+}
+
+const gchar *
+gebrm_client_get_id(GebrmClient *client)
+{
+	return client->priv->id;
 }

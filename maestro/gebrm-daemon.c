@@ -54,7 +54,7 @@ enum {
 	STATE_CHANGE,
 	TASK_DEFINE,
 	DAEMON_INIT,
-	PORT_AVAILABLE,
+	PORT_DEFINE,
 	LAST_SIGNAL
 };
 
@@ -221,6 +221,21 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 				g_strfreev(accounts);
 				gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 			}
+			else if (server->socket->protocol->waiting_ret_hash == gebr_comm_protocol_defs.gid_def.code_hash) {
+				GList *arguments;
+
+				if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
+					goto err;
+
+				GString *gid  = g_list_nth_data(arguments, 0);
+				GString *port = g_list_nth_data(arguments, 1);
+
+				g_debug("Got port %s for gid %s", port->str, gid->str);
+
+				g_signal_emit(daemon, signals[PORT_DEFINE], 0, gid->str, port->str);
+
+				gebr_comm_protocol_socket_oldmsg_split_free(arguments);
+			}
 		}
 		else if (message->hash == gebr_comm_protocol_defs.err_def.code_hash) {
 				GList *arguments;
@@ -377,9 +392,7 @@ on_question_request(GebrCommServer *server,
 		    const gchar *question,
 		    GebrmDaemon *daemon)
 {
-	g_debug("---------------------------- on question: %s", title);
 	if (daemon->priv->client) {
-		g_debug("============================ on question, iffff");
 		gebr_comm_protocol_socket_oldmsg_send(daemon->priv->client, FALSE,
 						      gebr_comm_protocol_defs.qst_def, 3,
 						      server->address->str, title, question);
@@ -398,7 +411,7 @@ gebrm_daemon_set_property(GObject      *object,
 	{
 	case PROP_ADDRESS:
 		daemon->priv->server = gebr_comm_server_new(g_value_get_string(value),
-							    &daemon_ops);
+							    NULL, &daemon_ops);
 		g_signal_connect(daemon->priv->server, "password-request",
 				 G_CALLBACK(on_password_request), daemon);
 		g_signal_connect(daemon->priv->server, "question-request",
@@ -465,15 +478,15 @@ gebrm_daemon_class_init(GebrmDaemonClass *klass)
 			     gebrm_cclosure_marshal_VOID__STRING_STRING,
 			     G_TYPE_NONE, 2, G_TYPE_STRING, G_TYPE_STRING);
 
-	signals[PORT_AVAILABLE] =
-		g_signal_new("port-available",
+	signals[PORT_DEFINE] =
+		g_signal_new("port-define",
 			     G_OBJECT_CLASS_TYPE (object_class),
 			     G_SIGNAL_RUN_FIRST,
-			     G_STRUCT_OFFSET(GebrmDaemonClass, port_avaiable),
+			     G_STRUCT_OFFSET(GebrmDaemonClass, port_define),
 			     NULL, NULL,
-			     g_cclosure_marshal_VOID__INT,
+			     gebrm_cclosure_marshal_VOID__STRING_STRING,
 			     G_TYPE_NONE,
-			     1, G_TYPE_INT);
+			     2, G_TYPE_STRING, G_TYPE_STRING);
 
 	g_object_class_install_property(object_class,
 					PROP_ADDRESS,
@@ -778,4 +791,12 @@ gebrm_daemon_get_list_of_jobs(GebrmDaemon *daemon)
 	g_hash_table_foreach(daemon->priv->tasks, (GHFunc)get_jobs, NULL);
 
 	return jobs;
+}
+
+void
+gebrm_daemon_send_gebr_id(GebrmDaemon *daemon, const gchar *id)
+{
+	gebr_comm_protocol_socket_oldmsg_send(daemon->priv->server->socket, FALSE,
+					      gebr_comm_protocol_defs.gid_def, 1,
+					      id);
 }

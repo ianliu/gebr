@@ -81,6 +81,8 @@ struct _GebrdApp {
 	GebrGeoXmlDocument *proj;
 	GebrValidator *validator;
 
+	GHashTable *display_ports;
+
 	gint nprocs;
 };
 
