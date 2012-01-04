@@ -1311,8 +1311,6 @@ on_groups_combobox_changed(GtkComboBox *combobox,
 
 	gint active = gtk_combo_box_get_active(combobox);
 
-	g_debug("I've been called!! %d", active);
-
 	if (!flow_browse_get_selected(&flow_iter, TRUE))
 		return;
 

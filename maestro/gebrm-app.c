@@ -46,8 +46,6 @@ struct _GebrmAppPriv {
 	GList *daemons;
 	gchar *nfsid;
 
-	guint16 x11_port;
-
 	// Server groups: gchar -> GList<GebrDaemon>
 	GTree *groups;
 
@@ -278,10 +276,6 @@ gebrm_app_init(GebrmApp *app)
 	app->priv->daemons = NULL;
 	app->priv->jobs = g_hash_table_new_full(g_str_hash, g_str_equal,
 						g_free, NULL);
-
-	app->priv->x11_port = 3000;
-	while (!gebr_comm_listen_socket_is_local_port_available(app->priv->x11_port))
-		app->priv->x11_port++;
 }
 
 void
@@ -379,7 +373,7 @@ gebrm_add_server_to_list(GebrmApp *app,
 		}
 	}
 
-	daemon = gebrm_daemon_new(address, app->priv->x11_port);
+	daemon = gebrm_daemon_new(address);
 	g_signal_connect(daemon, "state-change",
 			 G_CALLBACK(gebrm_app_daemon_on_state_change), app);
 	g_signal_connect(daemon, "task-define",
@@ -783,13 +777,15 @@ on_client_request(GebrCommProtocolSocket *socket,
 }
 
 static void
-on_client_parse_messages(GebrCommProtocolSocket *client,
+on_client_parse_messages(GebrCommProtocolSocket *socket,
 			 GebrmApp *app)
 {
 	GList *link;
 	struct gebr_comm_message *message;
 
-	while ((link = g_list_last(client->protocol->messages)) != NULL) {
+	GebrmClient *client = g_object_get_data(G_OBJECT(socket), "client");
+
+	while ((link = g_list_last(socket->protocol->messages)) != NULL) {
 		message = link->data;
 
 		if (message->hash == gebr_comm_protocol_defs.ini_def.code_hash) {
@@ -806,24 +802,33 @@ on_client_parse_messages(GebrCommProtocolSocket *client,
 			for (GList *i = app->priv->daemons; i; i = i->next)
 				gebrm_daemon_send_magic_cookie(i->data, cookie->str);
 
-			gchar *port_str = g_strdup_printf("%d", app->priv->x11_port);
-			gebr_comm_protocol_socket_oldmsg_send(client, FALSE,
+			guint16 client_display_port = gebrm_client_get_display_port(client);
+			gchar *port_str = g_strdup_printf("%d", client_display_port);
+			gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
 							      gebr_comm_protocol_defs.ret_def, 1,
 							      port_str);
 			g_free(port_str);
+
+			for (GList *i = app->priv->daemons; i; i = i->next) {
+				GebrmDaemon *daemon = i->data;
+				GebrCommServer *server = gebrm_daemon_get_server(daemon);
+				gebr_comm_server_forward_remote_port(server,
+								     gebrm_daemon_get_display_port(daemon),
+								     client_display_port);
+			}
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}
 
 		gebr_comm_message_free(message);
-		client->protocol->messages = g_list_delete_link(client->protocol->messages, link);
+		socket->protocol->messages = g_list_delete_link(socket->protocol->messages, link);
 	}
 
 	return;
 
 err:
 	gebr_comm_message_free(message);
-	client->protocol->messages = g_list_delete_link(client->protocol->messages, link);
+	socket->protocol->messages = g_list_delete_link(socket->protocol->messages, link);
 	g_object_unref(client);
 }
 
@@ -1171,6 +1176,7 @@ on_new_connection(GebrCommListenSocket *listener,
 	while ((stream = gebr_comm_listen_socket_get_next_pending_connection(listener))) {
 		GebrmClient *client = gebrm_client_new(stream);
 		GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(client);
+		g_object_set_data(G_OBJECT(socket), "client", client);
 		g_object_unref(stream);
 
 		app->priv->connections = g_list_prepend(app->priv->connections, client);

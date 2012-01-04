@@ -34,12 +34,11 @@ struct _GebrmDaemonPriv {
 	GebrCommProtocolSocket *client;
 	gchar *ac;
 
-	gchar *display_port;
+	guint16 display_port;
 	gchar *nfsid;
 	gchar *id;
 
 	gint uncompleted_tasks;
-	guint16 x11_port;
 };
 
 enum {
@@ -48,7 +47,6 @@ enum {
 	PROP_SERVER,
 	PROP_NFSID,
 	PROP_CLOCK,
-	PROP_X11_PORT,
 	PROP_NCORES,
 };
 
@@ -216,12 +214,7 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 				server->socket->protocol->logged = TRUE;
 				gebrm_daemon_set_nfsid(daemon, nfsid->str);
 				gebrm_daemon_set_id(daemon, daemon_id->str);
-
-				gebr_comm_server_forward_remote_port(daemon->priv->server,
-								     atoi(display_port->str),
-								     daemon->priv->x11_port);
-
-				daemon->priv->display_port = g_strdup(display_port->str);
+				daemon->priv->display_port = atoi(display_port->str);
 
 				g_signal_emit(daemon, signals[DAEMON_INIT], 0, NULL, NULL);
 
@@ -403,9 +396,6 @@ gebrm_daemon_set_property(GObject      *object,
 
 	switch (prop_id)
 	{
-	case PROP_X11_PORT:
-		daemon->priv->x11_port = g_value_get_int(value);
-		break;
 	case PROP_ADDRESS:
 		daemon->priv->server = gebr_comm_server_new(g_value_get_string(value),
 							    &daemon_ops);
@@ -431,7 +421,6 @@ gebrm_daemon_finalize(GObject *object)
 	gebr_comm_server_free(daemon->priv->server);
 	g_free(daemon->priv->nfsid);
 	g_free(daemon->priv->id);
-	g_free(daemon->priv->display_port);
 	g_hash_table_destroy(daemon->priv->tasks);
 	if (daemon->priv->client)
 		g_object_unref(daemon->priv->client);
@@ -527,14 +516,6 @@ gebrm_daemon_class_init(GebrmDaemonClass *klass)
 							 0,
 							 G_PARAM_READABLE));
 
-	g_object_class_install_property(object_class,
-					PROP_X11_PORT,
-					g_param_spec_int("x11-port",
-							 "X11 Port",
-							 "X11 Port",
-							 3000, G_MAXUINT16, 3000,
-							 G_PARAM_WRITABLE | G_PARAM_CONSTRUCT));
-
 	g_type_class_add_private(klass, sizeof(GebrmDaemonPriv));
 }
 
@@ -552,12 +533,10 @@ gebrm_daemon_init(GebrmDaemon *daemon)
 }
 
 GebrmDaemon *
-gebrm_daemon_new(const gchar *address,
-		 guint16 x11_port)
+gebrm_daemon_new(const gchar *address)
 {
 	return g_object_new(GEBRM_TYPE_DAEMON,
 			    "address", address,
-			    "x11-port", x11_port,
 			    NULL);
 }
 
@@ -714,15 +693,11 @@ gebrm_daemon_list_tasks_and_forward_x(GebrmDaemon *daemon)
 	 * FIXME: This should be revised because now we have Maestro in the middle!
 	 */
 	if (!gebr_comm_server_is_local(daemon->priv->server)) {
-		if (daemon->priv->display_port && *daemon->priv->display_port) {
-			if (!strcmp(daemon->priv->display_port, "0"))
-				g_critical("Server '%s' could not add X11 authorization to redirect graphical output.",
-					   gebrm_daemon_get_address(daemon));
-			else
-				gebr_comm_server_forward_x11(daemon->priv->server, atoi(daemon->priv->display_port));
-		} else 
-			g_critical("Server '%s' could not redirect graphical output.",
+		if (daemon->priv->display_port == 0)
+			g_critical("Server '%s' could not add X11 authorization to redirect graphical output.",
 				   gebrm_daemon_get_address(daemon));
+		else
+			gebr_comm_server_forward_x11(daemon->priv->server, daemon->priv->display_port);
 	}
 
 	gebr_comm_protocol_socket_oldmsg_send(daemon->priv->server->socket, FALSE,
@@ -774,6 +749,12 @@ gebrm_daemon_send_magic_cookie(GebrmDaemon *daemon, const gchar *cookie)
 	gebr_comm_protocol_socket_oldmsg_send(daemon->priv->server->socket, FALSE,
 					      gebr_comm_protocol_defs.mck_def, 1,
 					      cookie);
+}
+
+guint16
+gebrm_daemon_get_display_port(GebrmDaemon *daemon)
+{
+	return daemon->priv->display_port;
 }
 
 gint

@@ -1514,7 +1514,6 @@ on_job_define(GebrMaestroController *mc,
 	      GebrJob *job,
 	      GebrJobControl *jc)
 {
-	g_debug("On Job define from JOB CONTROLLLLL!!!!");
 	gebr_job_control_add(jc, job);
 }
 

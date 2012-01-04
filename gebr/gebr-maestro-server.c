@@ -430,8 +430,6 @@ parse_messages(GebrCommServer *comm_server,
 
 			update_queues_model(maestro, job);
 
-			g_debug("On Job define FROM MAESTRO SERVER!!!!");
-
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}
 		else if (message->hash == gebr_comm_protocol_defs.iss_def.code_hash) {

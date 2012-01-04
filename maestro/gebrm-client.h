@@ -70,20 +70,11 @@ GebrCommProtocolSocket *gebrm_client_get_protocol_socket(GebrmClient *client);
 /**
  * gebrm_client_get_display_port:
  *
- * The display port is calculated when a client is created. It is used to
- * redirect X11 through the socket connection.
+ * The display is used to redirect X11 through the socket connection.
  *
  * Returns: The display port for this client.
  */
 guint16 gebrm_client_get_display_port(GebrmClient *client);
-
-/**
- * gebrm_client_send_display_port:
- *
- * Sends the display port of this client through the socket connection. See
- * gebrm_client_get_display_port().
- */
-void gebrm_client_send_display_port(GebrmClient *client);
 
 
 G_END_DECLS

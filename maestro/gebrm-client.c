@@ -154,10 +154,12 @@ gebrm_client_get_protocol_socket(GebrmClient *client)
 guint16
 gebrm_client_get_display_port(GebrmClient *client)
 {
-	return client->priv->display_port;
-}
+	if (client->priv->display_port == 0) {
+		static guint16 p = 3000;
+		while (!gebr_comm_listen_socket_is_local_port_available(p))
+			p++;
+		client->priv->display_port = p;
+	}
 
-void
-gebrm_client_send_display_port(GebrmClient *client)
-{
+	return client->priv->display_port;
 }
