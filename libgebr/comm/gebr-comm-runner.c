@@ -262,6 +262,7 @@ divide_and_run_flows(GebrCommRunner *self)
 		}
 	}
 
+				g_debug("/////on %s ncores:%d",__func__,  ncores);
 	self->priv->ncores = g_strdup_printf("%d", ncores);
 
 	double *weights = g_new(double, n);

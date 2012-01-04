@@ -1016,18 +1016,25 @@ gebrm_config_save_server(GebrmDaemon *daemon)
 	GKeyFile *servers = g_key_file_new ();
 	const gchar *path = gebrm_app_get_servers_file();
 	gchar *tags = gebrm_daemon_get_tags(daemon);
+	const gchar *daemon_addr = gebrm_daemon_get_address(daemon);
+
+	if (g_strcmp0(daemon_addr, "127.0.0.1") == 0 || 
+	    g_strcmp0(daemon_addr,"localhost") == 0 )
+		daemon_addr = g_get_host_name(); 
 
 	g_key_file_load_from_file(servers, path, G_KEY_FILE_NONE, NULL);
-	g_key_file_set_string(servers, gebrm_daemon_get_address(daemon),
-			      "tags", tags);
-	g_key_file_set_string(servers, gebrm_daemon_get_address(daemon),
-	                      "autoconnect", gebrm_daemon_get_autoconnect(daemon));
+	if (!g_key_file_has_group(servers, daemon_addr)){
+	    g_key_file_set_string(servers, gebrm_daemon_get_address(daemon),
+				  "tags", tags);
+	    g_key_file_set_string(servers, gebrm_daemon_get_address(daemon),
+				  "autoconnect", gebrm_daemon_get_autoconnect(daemon));
 
-	gchar *content = g_key_file_to_data(servers, NULL, NULL);
-	if (content)
-		g_file_set_contents(path, content, -1, NULL);
+	    gchar *content = g_key_file_to_data(servers, NULL, NULL);
+	    if (content)
+	    g_file_set_contents(path, content, -1, NULL);
 
-	g_free(content);
+	    g_free(content);
+	}
 	g_free(tags);
 	g_key_file_free(servers);
 }

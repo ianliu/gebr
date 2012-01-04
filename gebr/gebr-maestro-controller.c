@@ -1034,6 +1034,7 @@ connect_to_maestro(GtkEntry *entry,
 {
 	const gchar *entry_text = gtk_entry_get_text(entry);
 	const gchar *address;
+	g_debug("on %s, %s", entry_text);
 	if (g_strcmp0(entry_text, "127.0.0.1")==0 || g_strcmp0(entry_text, "localhost")==0)
 		address = g_get_host_name();
 	else
