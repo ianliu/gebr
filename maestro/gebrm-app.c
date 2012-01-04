@@ -508,6 +508,7 @@ send_job_def_to_clients(GebrmApp *app, GebrmJob *job)
 
 	for (GList *i = app->priv->connections; i; i = i->next) {
 		GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(i->data);
+		g_debug("-----------------------%s",gebrm_job_get_nprocs(job));
 		gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
 						      gebr_comm_protocol_defs.job_def, 18,
 						      gebrm_job_get_id(job),
@@ -539,9 +540,9 @@ on_execution_response(GebrCommRunner *runner,
 
 	gebrm_job_set_total_tasks(aap->job, gebr_comm_runner_get_total(runner));
 	gebrm_job_set_servers_list(aap->job, gebr_comm_runner_get_servers_list(runner));
+	g_debug("on %s, ncores:%s", __func__, gebr_comm_runner_get_ncores(runner));
 	gebrm_job_set_nprocs(aap->job, gebr_comm_runner_get_ncores(runner));
 
-	g_debug("Sending job_def to clients");
 	send_job_def_to_clients(aap->app, aap->job);
 
 	gebr_validator_free(gebr_comm_runner_get_validator(runner));

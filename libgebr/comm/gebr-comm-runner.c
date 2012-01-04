@@ -254,10 +254,12 @@ divide_and_run_flows(GebrCommRunner *self)
 			sum += sc->score;
 			ncores += sc->eff_ncores;
 			n++;
-			g_debug(">>>>>>>>>>>>>>>>>>on '%s', n: %d, ncores: '%d'", __func__, n, ncores);
 			if (!gebr_geoxml_flow_is_parallelizable(GEBR_GEOXML_FLOW(self->priv->flow),
-								self->priv->validator))
+								self->priv->validator)){
+				g_debug("///// IT IS NOT PARALLELLIZABLE, ncores:%d", ncores);
+				ncores = 1;
 				break;
+			}
 		}
 
 	self->priv->ncores = g_strdup_printf("%d", ncores);
