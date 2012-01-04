@@ -249,18 +249,18 @@ divide_and_run_flows(GebrCommRunner *self)
 	gint n = 0;
 	gint ncores = 0;
 
-		for (GList *i = self->priv->servers; i; i = i->next) {
-			ServerScore *sc = i->data;
-			sum += sc->score;
-			ncores += sc->eff_ncores;
-			n++;
-			if (!gebr_geoxml_flow_is_parallelizable(GEBR_GEOXML_FLOW(self->priv->flow),
-								self->priv->validator)){
-				g_debug("///// IT IS NOT PARALLELLIZABLE, ncores:%d", ncores);
-				ncores = 1;
-				break;
-			}
+	for (GList *i = self->priv->servers; i; i = i->next) {
+		ServerScore *sc = i->data;
+		sum += sc->score;
+		ncores += sc->eff_ncores;
+		n++;
+		if (!gebr_geoxml_flow_is_parallelizable(GEBR_GEOXML_FLOW(self->priv->flow),
+		                                        self->priv->validator)){
+			g_debug("///// IT IS NOT PARALLELLIZABLE, ncores:%d", ncores);
+			ncores = 1;
+			break;
 		}
+	}
 
 	self->priv->ncores = g_strdup_printf("%d", ncores);
 
@@ -272,9 +272,13 @@ divide_and_run_flows(GebrCommRunner *self)
 		j = j->next;
 	}
 
+	gint n_steps;
+
 	GList *flows = gebr_geoxml_flow_divide_flows(GEBR_GEOXML_FLOW(self->priv->flow),
 						     self->priv->validator,
-						     weights, n);
+						     weights, n, &n_steps);
+
+	self->priv->ncores = g_strdup_printf("%d", MIN(n_steps, atoi(self->priv->ncores)));
 
 	gint frac = 1;
 	GList *i = flows;

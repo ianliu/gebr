@@ -1107,7 +1107,8 @@ gdouble *gebr_geoxml_flow_calulate_weights(gint n_servers,
 GList *gebr_geoxml_flow_divide_flows(GebrGeoXmlFlow *flow,
                                      GebrValidator *validator,
                                      gdouble *weights,
-                                     gint n_weights)
+                                     gint n_weights,
+                                     gint *n_steps)
 {
 	if (!gebr_geoxml_flow_is_parallelizable(flow, validator)) {
 		GList *l = NULL;
@@ -1157,6 +1158,9 @@ GList *gebr_geoxml_flow_divide_flows(GebrGeoXmlFlow *flow,
 		gebr_geoxml_object_unref(div_loop);
 		ini_int = end+1;
 	}
+
+	if (n_steps)
+		*n_steps = total_n;
 
 	g_free(eval_n);
 	g_free(ini);

@@ -660,7 +660,7 @@ void test_gebr_geoxml_flow_divide_flows (Fixture *fixture, gconstpointer data)
 
 	//falta 1 passo que irá para posição 0
 
-	flows = gebr_geoxml_flow_divide_flows(GEBR_GEOXML_FLOW(fixture->flow), fixture->validator, weigths, 4);
+	flows = gebr_geoxml_flow_divide_flows(GEBR_GEOXML_FLOW(fixture->flow), fixture->validator, weigths, 4, NULL);
 
 	GebrGeoXmlProgram *control1 = gebr_geoxml_flow_get_control_program(flows->data);
 	GebrGeoXmlProgram *control2 = gebr_geoxml_flow_get_control_program(flows->next->data);

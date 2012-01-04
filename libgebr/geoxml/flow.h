@@ -517,7 +517,8 @@ gebr_geoxml_flow_is_parallelizable(GebrGeoXmlFlow *flow,
 GList *gebr_geoxml_flow_divide_flows(GebrGeoXmlFlow *flow,
                                      GebrValidator *validator,
                                      gdouble *weights,
-                                     gint n_weights);
+                                     gint n_weights,
+                                     gint *n_steps);
 
 /**
  * gebr_geoxml_flow_calculate_weights:
