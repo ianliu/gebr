@@ -499,7 +499,6 @@ static void
 on_server_group_changed(GebrMaestroServer *maestro,
 			GebrMaestroController *self)
 {
-	g_debug("EMIT SIGNAL OF GROUP CHANGED TO JOB CONTROL");
 	g_signal_emit(self, signals[GROUP_CHANGED], 0, maestro);
 }
 
@@ -715,7 +714,6 @@ static void
 on_daemons_changed(GebrMaestroServer *maestro,
                    GebrMaestroController *mc)
 {
-	g_debug("DAEMONS CHANGED");
 	GtkTreeIter iter;
 	GtkTreeIter new_iter;
 	GebrDaemonServer *daemon;
@@ -1040,7 +1038,6 @@ connect_to_maestro(GtkEntry *entry,
 		address = g_get_host_name();
 	else
 		address = entry_text;
-	g_debug(".............Maestro Entry: %s",address) ;
 	gebr_maestro_controller_connect(self, address);
 }
 

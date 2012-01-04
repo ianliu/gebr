@@ -254,7 +254,6 @@ gebr_daemon_server_set_tags(GebrDaemonServer *daemon,
 	g_list_foreach(daemon->priv->tags, (GFunc)g_free, NULL);
 	g_list_free(daemon->priv->tags);
 
-	g_debug("Adding tags for %s", daemon->priv->address);
 	daemon->priv->tags = NULL;
 	for (int i = 0; tags[i]; i++)
 		daemon->priv->tags = g_list_prepend(daemon->priv->tags,

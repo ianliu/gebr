@@ -1592,7 +1592,6 @@ on_group_changed(GebrMaestroController *mc,
                  GebrMaestroServer *maestro,
                  GebrJobControl *jc)
 {
-	g_debug("ENTER ON SIGNAL ON GROUP CHANGED OF JOB CONTROL");
 	on_maestro_filter_changed(jc->priv->maestro_combo, jc);
 }
 

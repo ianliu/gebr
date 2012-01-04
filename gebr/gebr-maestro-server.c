@@ -325,7 +325,6 @@ parse_messages(GebrCommServer *comm_server,
 			ssta = g_list_nth_data(arguments, 1);
 			error = g_list_nth_data(arguments, 2);
 			ac = g_list_nth_data(arguments, 3);
-			g_debug("on '%s', receiving from '%s' error '%s'", __func__, addr->str, error->str);
 
 			GtkTreeIter iter;
 			GebrCommServerState state = gebr_comm_server_state_from_string(ssta->str);
@@ -345,8 +344,6 @@ parse_messages(GebrCommServer *comm_server,
 			}
 
 			gboolean is_ac = g_strcmp0(ac->str, "on") == 0 ? TRUE : FALSE;
-
-			g_debug("SERVER %s RECEIVED MESSAGE OF AC: %s", addr->str, ac->str);
 
 			g_signal_emit(maestro, signals[GROUP_CHANGED], 0);
 			g_signal_emit(maestro, signals[DAEMONS_CHANGED], 0);
