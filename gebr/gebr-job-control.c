@@ -1228,17 +1228,17 @@ gebr_job_control_load_details(GebrJobControl *jc,
 
 	markup = g_markup_printf_escaped (_("<b>Input file</b>: %s"), input_file_str ? input_file_str : _("None"));
 	gtk_label_set_markup (input_file, markup);
-	gtk_widget_set_tooltip_text(input_file, input_file_str);
+	gtk_widget_set_tooltip_text(GTK_WIDGET(input_file), input_file_str);
 	g_free(markup);
 
 	markup = g_markup_printf_escaped (_("<b>Output file</b>: %s"), output_file_str ? output_file_str : _("None"));
 	gtk_label_set_markup (output_file, markup);
-	gtk_widget_set_tooltip_text(output_file, output_file_str);
+	gtk_widget_set_tooltip_text(GTK_WIDGET(output_file), output_file_str);
 	g_free(markup);
 
 	markup = g_markup_printf_escaped (_("<b>Log File</b>: %s"), log_file_str ? log_file_str : _("None"));
 	gtk_label_set_markup (log_file, markup);
-	gtk_widget_set_tooltip_text(log_file, log_file_str);
+	gtk_widget_set_tooltip_text(GTK_WIDGET(log_file), log_file_str);
 	g_free(markup);
 
 	gchar *msg = g_strdup(gebr_job_get_server_group(job));
