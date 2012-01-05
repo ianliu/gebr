@@ -267,11 +267,15 @@ drag_data_get_handl(GtkWidget *widget,
 	GtkTreeIter iter;
 
 	gpointer daemon;
-	gtk_tree_selection_get_selected(selection, &model, &iter);
-	gtk_tree_model_get(model, &iter, 0, &daemon, -1);
+	GList *rows = gtk_tree_selection_get_selected_rows(selection, &model);
 
-	gtk_selection_data_set(selection_data, selection_data->target,
-			       sizeof(gpointer) * 8, (guchar*)&daemon, sizeof(gpointer));
+	for (GList *i = rows; i; i = i->next) {
+		gtk_tree_model_get_iter(model, &iter, i->data);
+		gtk_tree_model_get(model, &iter, 0, &daemon, -1);
+
+		gtk_selection_data_set(selection_data, selection_data->target,
+		                       sizeof(gpointer) * 8, (guchar*)&daemon, sizeof(gpointer));
+	}
 }
 
 static void
@@ -971,7 +975,7 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 	GtkTreeView *view = GTK_TREE_VIEW(gtk_builder_get_object(self->priv->builder, 
 								 "treeview_servers"));
 
-//	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(view), GTK_SELECTION_MULTIPLE);
+	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(view), GTK_SELECTION_MULTIPLE);
 
 	/*
 	 * Maestro combobox
