@@ -36,10 +36,6 @@
 
 #define GEBRD_CONF_FILE "/etc/gebr/gebrd.conf"
 
-#define MAX_NICE 19
-#define MIN_NICE 0
-#define DEFAULT_NPROCS 1
-
 GebrdApp *gebrd = NULL;
 
 /* GOBJECT STUFF */
@@ -406,5 +402,5 @@ gint
 gebrd_app_set_heuristic_aggression(GebrdApp *self,
 				   gint aggressive)
 {
-	return (self->nprocs - DEFAULT_NPROCS) * (aggressive-1)/4 + DEFAULT_NPROCS;
+	return gebr_calculate_number_of_processors(self->nprocs, aggressive);
 }

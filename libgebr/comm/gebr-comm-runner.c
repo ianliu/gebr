@@ -20,6 +20,7 @@
 
 #include "gebr-comm-runner.h"
 
+#include <libgebr/utils.h>
 #include <libgebr/geoxml/geoxml.h>
 #include <libgebr/comm/gebr-comm.h>
 #include <stdio.h>
@@ -228,7 +229,7 @@ calculate_server_score(const gchar *load, gint ncores, gdouble cpu_clock, gint s
 	points = g_list_prepend(points, p15);
 
 	gdouble current_load = predict_current_load(points, delay);
-	*eff_ncores = MAX(1, MIN(nsteps, scale*ncores/5));
+	*eff_ncores = MAX(1, MIN(nsteps, gebr_calculate_number_of_processors(ncores, scale)));
 	g_debug("on '%s', eff_ncores: '%d'", __func__, *eff_ncores);
 
 	gdouble score;

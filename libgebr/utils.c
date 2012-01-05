@@ -38,6 +38,8 @@
 
 #include "utils.h"
 
+#define DEFAULT_NPROCS 1
+
 void
 gebr_g_string_replace(GString * string,
 		      const gchar * oldtext,
@@ -888,4 +890,11 @@ gebr_utf8_strstr(const gchar *str,
 	}
 
 	return NULL;
+}
+
+gint
+gebr_calculate_number_of_processors(gint total_nprocs,
+                                    gint aggressive)
+{
+	return (total_nprocs - DEFAULT_NPROCS) * (aggressive-1)/4 + DEFAULT_NPROCS;
 }
