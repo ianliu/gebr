@@ -253,6 +253,7 @@ calculate_server_score(const gchar *load, gint ncores, gdouble cpu_clock, gint s
 static void
 divide_and_run_flows(GebrCommRunner *self)
 {
+	gboolean parallel = TRUE;
 	gdouble sum = 0;
 	gint n = 0;
 	gint ncores = 0;
@@ -264,13 +265,11 @@ divide_and_run_flows(GebrCommRunner *self)
 		n++;
 		if (!gebr_geoxml_flow_is_parallelizable(GEBR_GEOXML_FLOW(self->priv->flow),
 		                                        self->priv->validator)){
-			g_debug("///// IT IS NOT PARALLELLIZABLE, ncores:%d", ncores);
+			parallel = FALSE;
 			ncores = 1;
 			break;
 		}
 	}
-
-				g_debug("/////on %s ncores:%d",__func__,  ncores);
 	self->priv->ncores = g_strdup_printf("%d", ncores);
 
 	double *weights = g_new(double, n);
@@ -287,7 +286,8 @@ divide_and_run_flows(GebrCommRunner *self)
 						     self->priv->validator,
 						     weights, n, &n_steps);
 
-	self->priv->ncores = g_strdup_printf("%d", MIN(n_steps, atoi(self->priv->ncores)));
+	if (parallel)
+		self->priv->ncores = g_strdup_printf("%d", MIN(n_steps, atoi(self->priv->ncores)));
 
 	gint frac = 1;
 	GList *i = flows;
