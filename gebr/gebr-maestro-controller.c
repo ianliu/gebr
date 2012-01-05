@@ -1120,12 +1120,20 @@ on_maestro_confirm(GebrMaestroServer *maestro,
 {
 	const gchar *msg;
 
+	if (g_strcmp0(type, "remove-immediately") == 0) {
+		gebr_connectable_disconnect(GEBR_CONNECTABLE(mc->priv->maestro),
+		                            addr, "yes");
+		gebr_connectable_remove(GEBR_CONNECTABLE(mc->priv->maestro), addr);
+
+		return;
+	}
+
 	if (g_strcmp0(type, "disconnect") == 0)
-		msg = N_("<span size='large' weight='bold'>The daemon %s is executing tasks.\n"
-			 "Do you really want to disconnect it?</span>");
+		msg = N_("<span size='large' weight='bold'>The daemon %s is executing jobs.\n"
+			 "Do you really want to disconnect it and cancel these jobs?</span>");
 	else if (g_strcmp0(type, "remove") == 0)
-		msg = N_("<span size='large' weight='bold'>The daemon %s is executing tasks.\n"
-			 "Do you really want to remove it?</span>");
+		msg = N_("<span size='large' weight='bold'>The daemon %s is executing jobs.\n"
+			 "Do you really want to remove it and cancel these jobs?</span>");
 
 	GtkWidget *dialog  = gtk_message_dialog_new_with_markup(NULL, GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
 	                                                        GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
