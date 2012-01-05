@@ -51,6 +51,7 @@ enum {
 	MAESTRO_LIST_CHANGED,
 	GROUP_CHANGED,
 	MAESTRO_STATE_CHANGED,
+	DAEMONS_CHANGED,
 	LAST_SIGNAL
 };
 
@@ -561,6 +562,15 @@ gebr_maestro_controller_class_init(GebrMaestroControllerClass *klass)
 		             g_cclosure_marshal_VOID__OBJECT,
 		             G_TYPE_NONE, 1, GEBR_TYPE_MAESTRO_SERVER);
 
+	signals[DAEMONS_CHANGED] =
+			g_signal_new("daemons-changed",
+			             G_OBJECT_CLASS_TYPE(object_class),
+			             G_SIGNAL_RUN_LAST,
+			             G_STRUCT_OFFSET(GebrMaestroControllerClass, daemons_changed),
+			             NULL, NULL,
+			             g_cclosure_marshal_VOID__VOID,
+			             G_TYPE_NONE, 0);
+
 	g_type_class_add_private(klass, sizeof(GebrMaestroControllerPriv));
 }
 
@@ -739,6 +749,8 @@ on_daemons_changed(GebrMaestroServer *maestro,
 	}
 	insert_new_entry(mc);
 	g_object_unref(model);
+
+	g_signal_emit(mc, signals[DAEMONS_CHANGED], 0);
 }
 
 static void

@@ -59,6 +59,8 @@ struct _GebrMaestroControllerClass {
 
 	void (*maestro_state_changed) (GebrMaestroController *self,
 				       GebrMaestroServer     *maestro);
+
+	void (*daemons_changed) (GebrMaestroController *self);
 };
 
 enum {

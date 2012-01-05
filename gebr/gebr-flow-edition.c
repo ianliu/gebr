@@ -56,6 +56,9 @@ static void on_controller_maestro_state_changed(GebrMaestroController *mc,
 						GebrMaestroServer *maestro,
 						GebrFlowEdition *fe);
 
+static void on_daemons_changed(GebrMaestroController *mc,
+                               GebrFlowEdition *fe);
+
 static void on_group_changed(GebrMaestroController *mc,
 			     GebrMaestroServer *maestro,
 			     GebrFlowEdition *fe);
@@ -179,6 +182,8 @@ flow_edition_setup_ui(void)
 			       G_CALLBACK(on_group_changed), fe);
 	g_signal_connect_after(gebr.maestro_controller, "maestro-state-changed",
 			       G_CALLBACK(on_controller_maestro_state_changed), fe);
+	g_signal_connect(gebr.maestro_controller, "daemons-changed",
+			       G_CALLBACK(on_daemons_changed), fe);
 
 	/* Create flow edit fe->widget */
 	fe->widget = gtk_vbox_new(FALSE, 0);
@@ -1808,6 +1813,13 @@ on_group_changed(GebrMaestroController *mc,
 		}
 		gebr_flow_edition_select_queue(fe);
 	}
+}
+
+static void
+on_daemons_changed(GebrMaestroController *mc,
+                   GebrFlowEdition *fe)
+{
+	gebr_flow_edition_select_group_for_flow(fe, gebr.flow);
 }
 
 static void
