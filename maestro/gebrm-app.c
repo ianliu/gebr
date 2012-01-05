@@ -658,6 +658,7 @@ on_client_request(GebrCommProtocolSocket *socket,
 		else if (g_strcmp0(prefix, "/run") == 0) {
 			GebrCommJsonContent *json;
 
+			const gchar *gid        = gebr_comm_uri_get_param(uri, "gid");
 			const gchar *parent_id  = gebr_comm_uri_get_param(uri, "parent_id");
 			const gchar *speed      = gebr_comm_uri_get_param(uri, "speed");
 			const gchar *nice       = gebr_comm_uri_get_param(uri, "nice");
