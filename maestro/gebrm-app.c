@@ -566,6 +566,9 @@ on_client_request(GebrCommProtocolSocket *socket,
 			const gchar *pass = gebr_comm_uri_get_param(uri, "pass");
 
 			GebrmDaemon *d = gebrm_add_server_to_list(app, addr, pass, NULL);
+			if (g_strcmp0(addr, "127.0.0.1")==0 || g_strcmp0(addr, "localhost")==0) 
+				addr = g_get_host_name();
+
 			gebrm_daemon_connect(d, pass, socket);
 			gebrm_config_save_server(d);
 		}
