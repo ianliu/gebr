@@ -263,6 +263,7 @@ void gebr_comm_terminal_process_kill(GebrCommTerminalProcess * terminal_process)
 	if (!terminal_process->pid)
 		return;
 	killpg(terminal_process->pid, SIGKILL);
+	waitpid(terminal_process->pid, NULL, 0);
 }
 
 void gebr_comm_terminal_process_terminate(GebrCommTerminalProcess * terminal_process)
