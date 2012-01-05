@@ -54,22 +54,33 @@ static gboolean server_run_lock(gboolean *already_running)
 {
 	*already_running = FALSE;
 	/* check if there is another daemon running for this user and hostname */
-	g_string_printf(gebrd->run_filename, "%s/.gebr/run/gebrd-%s.run", g_get_home_dir(), gebrd->hostname);
-	if (g_file_test(gebrd->run_filename->str, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_REGULAR) == TRUE) {
-		gchar *contents;
-		GError *error = NULL;
-		if (!g_file_get_contents(gebrd->run_filename->str, &contents, NULL, &error))
-			g_warning("%s:%d: Failed to retrieve contents of '%s' file",
-				  __FILE__, __LINE__, gebrd->run_filename->str);
+	gchar *gebrd_dir = g_build_filename(g_get_home_dir(), ".gebr", "gebrd", g_get_host_name(), NULL);
+	gchar *lock_file = g_build_filename(gebrd_dir, "lock", NULL);
 
-		guint16 port = atoi(contents);
-		g_free(contents);
+	/* init the server socket and listen */
+	GebrCommSocketAddress socket_address = gebr_comm_socket_address_ipv4_local(0);
+	GebrCommListenSocket *listen = gebr_comm_listen_socket_new();
+
+	if (!gebr_comm_listen_socket_listen(listen, &socket_address)) {
+		gebrd_message(GEBR_LOG_ERROR, _("Could not listen for connections.\n"));
+		goto err;
+	}
+
+	GString *port_gstring = g_string_new("");
+
+	socket_address = gebr_comm_socket_get_address(GEBR_COMM_SOCKET(listen));
+	g_string_printf(port_gstring, "%d\n", gebr_comm_socket_address_get_ip_port(&socket_address));
+
+	gchar *lock = gebr_lock_file(lock_file, port_gstring->str, FALSE);
+
+	if (lock && (g_strcmp0(lock, port_gstring->str) != 0)) {
+		guint16 port = atoi(lock);
 
 		/* is this port really being used (open)?? */
 		if (gebr_comm_listen_socket_is_local_port_available(port) == FALSE) {
 			if (gebrd->options.foreground == TRUE) {
 				gebrd_message(GEBR_LOG_ERROR,
-					      _("Cannot run interactive server, GêBR daemon is already running"));
+				              _("Cannot run interactive server, GêBR daemon is already running"));
 			} else {
 				gchar buffer[100];
 				snprintf(buffer, sizeof(buffer), "%d\n", port);
@@ -78,33 +89,17 @@ static gboolean server_run_lock(gboolean *already_running)
 			}
 
 			*already_running = TRUE;
+			gebr_comm_listen_socket_free(listen);
 			goto out;
 		}
-	}
-	
-	/* init the server socket and listen */
-	GebrCommSocketAddress socket_address = gebr_comm_socket_address_ipv4_local(0);
-	gebrd->listen_socket = gebr_comm_listen_socket_new();
-
-	if (!gebr_comm_listen_socket_listen(gebrd->listen_socket, &socket_address)) {
-		gebrd_message(GEBR_LOG_ERROR, _("Could not listen for connections.\n"));
-		goto err;
-	}
-
-	gebrd->socket_address = gebr_comm_socket_get_address(GEBR_COMM_SOCKET(gebrd->listen_socket));
-	g_signal_connect(gebrd->listen_socket, "new-connection", G_CALLBACK(server_new_connection), NULL);
-
-	GError *error = NULL;
-	GString *port_gstring = g_string_new("");
-	g_string_printf(port_gstring, "%d\n", gebr_comm_socket_address_get_ip_port(&gebrd->socket_address));
-	gboolean ret = g_file_set_contents(gebrd->run_filename->str, port_gstring->str, port_gstring->len, &error);
-	g_string_free(port_gstring, TRUE);
-	if (!ret) {
-		gebrd_message(GEBR_LOG_ERROR, _("Could not write run file."));
-		goto err;
+	} else {
+		gebrd->listen_socket = listen;
+		g_signal_connect(gebrd->listen_socket, "new-connection", G_CALLBACK(server_new_connection), NULL);
+		gebrd->socket_address = socket_address;
 	}
 
 out:
+	g_string_free(port_gstring, TRUE);
 	return TRUE;
 err:
 	return FALSE;
@@ -221,6 +216,10 @@ void server_free(void)
 	/* delete run lock
 	 * fs lock must not be deleted, as it can be used throught multiple sessions */
 	g_unlink(gebrd->run_filename->str);
+
+	gchar *gebrd_lock = g_build_filename(g_get_home_dir(), ".gebr", "gebrd", g_get_host_name(), "lock", NULL);
+	g_unlink(gebrd_lock);
+	g_free(gebrd_lock);
 }
 
 void server_quit(void)
