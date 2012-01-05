@@ -144,6 +144,9 @@ gboolean gebr_quit(gboolean save_config)
 
 	GebrMaestroServer *m = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 	if (m) {
+		// Disconnect client from maestro
+		gebr_maestro_server_disconnect(m);
+
 		GtkTreeModel *model = gebr_maestro_server_get_model(m, TRUE, NULL);
 
 		gebr_gui_gtk_tree_model_foreach_hyg(iter, model, 1) {
