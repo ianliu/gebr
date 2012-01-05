@@ -69,6 +69,7 @@ void
 gebr_init(gboolean has_config)
 {
 	SESSIONID = gebr_generate_session_id();
+	g_debug("Session id: %s", SESSIONID);
 
 	gebr.project_line = NULL;
 	gebr.project = NULL;

@@ -263,11 +263,17 @@ void gebr_comm_server_set_interactive(GebrCommServer *server,
 void gebr_comm_server_emit_interactive_state_signals(GebrCommServer *server);
 
 /**
- * gebr_comm_server_forward_remote_port:
+ * gebr_comm_forward_remote_port:
+ * @server: A #GebrCommServer.
+ * @remote_port: The remote port in which connections will be made.
+ * @local_port: The local port to be listened.
+ *
+ * Returns: The #GebrCommTerminalProcess of the ssh tunnel. You can call
+ * gebr_comm_terminal_process_kill() to close the tunnel.
  */
-void gebr_comm_server_forward_remote_port(GebrCommServer *server,
-					  guint16 remote_port,
-					  guint16 local_port);
+GebrCommTerminalProcess *gebr_comm_server_forward_remote_port(GebrCommServer *server,
+							      guint16 remote_port,
+							      guint16 local_port);
 
 void gebr_comm_server_close_x11_forward(GebrCommServer *server);
 

@@ -378,8 +378,7 @@ on_daemon_port_define(GebrmDaemon *daemon,
 
 	if (client) {
 		GebrCommServer *server = gebrm_daemon_get_server(daemon);
-		gebr_comm_server_forward_remote_port(server, atoi(port),
-						     gebrm_client_get_display_port(client));
+		gebrm_client_add_forward(client, server, atoi(port));
 	}
 }
 
@@ -1107,7 +1106,9 @@ static void
 on_client_disconnect(GebrCommProtocolSocket *socket,
 		     GebrmApp *app)
 {
-	g_debug("Client disconnected!");
+	g_debug("Client disconnect!");
+	GebrmClient *client = g_object_get_data(G_OBJECT(socket), "client");
+	gebrm_client_remove_forwards(client);
 }
 
 static void

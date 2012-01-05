@@ -50,9 +50,6 @@ struct _GebrCommServerPriv {
 
 	gchar *gebr_id;
 
-	/* Daemon -> Maestro Forward */
-	GebrCommTerminalProcess *daemon_maestro_forward;
-
 	/* Interactive state variables */
 	gboolean is_interactive;
 	InteractiveState istate;
@@ -902,19 +899,14 @@ gebr_comm_server_emit_interactive_state_signals(GebrCommServer *server)
 	}
 }
 
-void
+GebrCommTerminalProcess *
 gebr_comm_server_forward_remote_port(GebrCommServer *server,
 				     guint16 remote_port,
 				     guint16 local_port)
 {
-	if (server->priv->daemon_maestro_forward) {
-		gebr_comm_terminal_process_kill(server->priv->daemon_maestro_forward);
-		gebr_comm_terminal_process_free(server->priv->daemon_maestro_forward);
-		server->priv->daemon_maestro_forward = NULL;
-	}
-	server->priv->daemon_maestro_forward = gebr_comm_terminal_process_new();
+	GebrCommTerminalProcess *proc = gebr_comm_terminal_process_new();
 
-	g_signal_connect(server->priv->daemon_maestro_forward, "ready-read",
+	g_signal_connect(proc, "ready-read",
 			 G_CALLBACK(gebr_comm_ssh_read), server);
 
 	GString *string = g_string_new(NULL);
@@ -925,6 +917,8 @@ gebr_comm_server_forward_remote_port(GebrCommServer *server,
 
 	g_debug("Simple forward: %s", string->str);
 
-	gebr_comm_terminal_process_start(server->priv->daemon_maestro_forward, string);
+	gebr_comm_terminal_process_start(proc, string);
 	g_string_free(string, TRUE);
+
+	return proc;
 }
