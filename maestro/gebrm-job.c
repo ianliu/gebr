@@ -20,6 +20,7 @@
 #include <glib/gi18n.h>
 #include <stdlib.h>
 #include <libgebr/utils.h>
+#include <libgebr/date.h>
 
 #include "gebrm-marshal.h"
 
@@ -515,8 +516,9 @@ gebrm_job_kill_immediately(GebrmJob *job)
 	gebrm_job_kill(job);
 
 	job->priv->status = JOB_STATUS_CANCELED;
+	gchar *finish_date = gebr_iso_date();
 	g_signal_emit(job, signals[STATUS_CHANGE], 0,
-	              old, job->priv->status, NULL);
+	              old, job->priv->status, finish_date);
 }
 
 void
