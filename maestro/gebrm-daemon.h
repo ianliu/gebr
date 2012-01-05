@@ -165,8 +165,6 @@ const gchar *gebrm_daemon_get_error(GebrmDaemon *daemon);
 
 void gebrm_daemon_send_magic_cookie(GebrmDaemon *daemon, const gchar *cookie);
 
-guint16 gebrm_daemon_get_display_port(GebrmDaemon *daemon);
-
 gint gebrm_daemon_get_uncompleted_tasks(GebrmDaemon *daemon);
 
 GList *gebrm_daemon_get_list_of_jobs(GebrmDaemon *daemon);

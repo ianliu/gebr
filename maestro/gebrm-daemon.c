@@ -34,7 +34,6 @@ struct _GebrmDaemonPriv {
 	GebrCommProtocolSocket *client;
 	gchar *ac;
 
-	guint16 display_port;
 	gchar *nfsid;
 	gchar *id;
 
@@ -700,17 +699,6 @@ gebrm_daemon_get_clock(GebrmDaemon *daemon)
 void
 gebrm_daemon_list_tasks_and_forward_x(GebrmDaemon *daemon)
 {
-	/* Try to forwad X11 display
-	 * FIXME: This should be revised because now we have Maestro in the middle!
-	 */
-	if (!gebr_comm_server_is_local(daemon->priv->server)) {
-		if (daemon->priv->display_port == 0)
-			g_critical("Server '%s' could not add X11 authorization to redirect graphical output.",
-				   gebrm_daemon_get_address(daemon));
-		else
-			gebr_comm_server_forward_x11(daemon->priv->server, daemon->priv->display_port);
-	}
-
 	gebr_comm_protocol_socket_oldmsg_send(daemon->priv->server->socket, FALSE,
 					      gebr_comm_protocol_defs.lst_def, 0);
 }
@@ -760,12 +748,6 @@ gebrm_daemon_send_magic_cookie(GebrmDaemon *daemon, const gchar *cookie)
 	gebr_comm_protocol_socket_oldmsg_send(daemon->priv->server->socket, FALSE,
 					      gebr_comm_protocol_defs.mck_def, 1,
 					      cookie);
-}
-
-guint16
-gebrm_daemon_get_display_port(GebrmDaemon *daemon)
-{
-	return daemon->priv->display_port;
 }
 
 gint
