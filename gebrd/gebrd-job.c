@@ -57,6 +57,7 @@ static void gebrd_job_init(GebrdJob * job)
 	job->server_list = g_string_new(NULL);
 	job->server_group_name = g_string_new(NULL);
 	job->job_percentage= g_string_new(NULL);
+	job->gid = g_string_new(NULL);
 }
 
 static void gebrd_job_class_init(GebrdJobClass * klass)
@@ -371,6 +372,7 @@ GebrdJob *job_find(GString * rid)
 void
 job_new(GebrdJob **_job,
 	struct client *client,
+	GString *gid,
 	GString *id,
 	GString *frac,
 	GString *speed,
@@ -391,6 +393,7 @@ job_new(GebrdJob **_job,
 	job->timeout[0] = 0;
 	job->timeout[1] = 0;
 
+	g_string_assign(job->gid, gid->str);
 	g_string_assign(job->parent.client_hostname, client->socket->protocol->hostname->str);
 	g_string_assign(job->parent.client_display, client->display->str);
 	job->parent.server_location = client->server_location;
@@ -539,18 +542,21 @@ void job_run_flow(GebrdJob *job)
 	/* command-line */
 	gsize bytes_written;
 	gchar *localized_cmd_line = g_filename_from_utf8(job->parent.cmd_line->str, -1, NULL, &bytes_written, NULL);
-	if (job->parent.client_display->len) {
+	guint16 display_port = GPOINTER_TO_UINT(g_hash_table_lookup(gebrd->display_ports, job->gid->str));
+	g_debug("Looking for display port for gid %s: %d", job->gid->str, display_port);
+	if (display_port != 0) {
 		GString *to_quote;
 
 		to_quote = g_string_new(NULL);
 		if (job->parent.server_location == GEBR_COMM_SERVER_LOCATION_LOCAL) {
-			g_string_printf(to_quote, "export DISPLAY=%s; %s", job->parent.client_display->str, localized_cmd_line);
+			g_string_printf(to_quote, "export DISPLAY=:%d; %s", display_port, localized_cmd_line);
+			g_debug("I will run a flow on DISPLAY=:%d", display_port);
 			gchar * quoted = g_shell_quote(to_quote->str);
 			g_string_printf(cmd_line, "bash -l -c %s", quoted);
 			g_free(quoted);
-		}
-		else{
-			g_string_printf(to_quote, "export DISPLAY=127.0.0.1%s; %s", job->parent.client_display->str, localized_cmd_line);
+		} else {
+			g_string_printf(to_quote, "export DISPLAY=127.0.0.1:%d; %s", display_port, localized_cmd_line);
+			g_debug("I will run a flow on DISPLAY=127.0.0.1:%d", display_port);
 			gchar * quoted = g_shell_quote(to_quote->str);
 			g_string_printf(cmd_line, "bash -l -c %s", quoted);
 			g_free(quoted);

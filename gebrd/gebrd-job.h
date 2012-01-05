@@ -64,6 +64,7 @@ struct _GebrdJob {
 	gint effprocs;
 	gint niceness;
 
+	GString *gid;
 	GString *exec_speed;
 	GString *frac;
 	GString *server_list;
@@ -87,6 +88,7 @@ GebrdJob *job_find(GString * jid);
  */
 void job_new(GebrdJob **_job,
 	     struct client *client,
+	     GString *gid,
 	     GString *id,
 	     GString *frac,
 	     GString *speed,
