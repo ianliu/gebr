@@ -80,6 +80,15 @@ void gebrm_client_set_id(GebrmClient *client, const gchar *id);
 
 const gchar *gebrm_client_get_id(GebrmClient *client);
 
+/**
+ * gebrm_client_add_forward:
+ */
+void gebrm_client_add_forward(GebrmClient *client,
+			      GebrCommServer *server,
+			      guint16 remote_port);
+
+void gebrm_client_remove_forwards(GebrmClient *client);
+
 
 G_END_DECLS
 

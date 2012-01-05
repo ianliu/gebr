@@ -26,6 +26,7 @@ struct _GebrmClientPriv {
 	guint16 display_port;
 	GebrCommProtocolSocket *socket;
 	gchar *id;
+	GList *forwards;
 };
 
 enum {
@@ -34,6 +35,8 @@ enum {
 	PROP_PROTOCOL_SOCKET,
 	PROP_DISPLAY_PORT,
 };
+
+static void gebrm_client_finalize(GObject *object);
 
 static void gebrm_client_set_property(GObject      *object,
 				      guint         prop_id,
@@ -52,6 +55,7 @@ static void
 gebrm_client_class_init(GebrmClientClass *klass)
 {
 	GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
+	gobject_class->finalize = gebrm_client_finalize;
 	gobject_class->set_property = gebrm_client_set_property;
 	gobject_class->get_property = gebrm_client_get_property;
 
@@ -88,6 +92,20 @@ gebrm_client_init(GebrmClient *client)
 	client->priv = G_TYPE_INSTANCE_GET_PRIVATE(client,
 						   GEBRM_TYPE_CLIENT,
 						   GebrmClientPriv);
+}
+
+static void
+gebrm_client_finalize(GObject *object)
+{
+	GebrmClient *client = GEBRM_CLIENT(object);
+	
+	g_list_foreach(client->priv->forwards,
+		       (GFunc)gebr_comm_terminal_process_free, NULL);
+	g_list_free(client->priv->forwards);
+	g_object_unref(client->priv->socket);
+	g_free(client->priv->id);
+
+	G_OBJECT_CLASS(gebrm_client_parent_class)->finalize(object);
 }
 
 static void
@@ -177,4 +195,26 @@ const gchar *
 gebrm_client_get_id(GebrmClient *client)
 {
 	return client->priv->id;
+}
+
+void
+gebrm_client_add_forward(GebrmClient *client,
+			 GebrCommServer *server,
+			 guint16 remote_port)
+{
+	GebrCommTerminalProcess *proc;
+	guint16 cp = gebrm_client_get_display_port(client);
+	proc = gebr_comm_server_forward_remote_port(server, remote_port, cp);
+	client->priv->forwards = g_list_prepend(client->priv->forwards, proc);
+}
+
+void
+gebrm_client_remove_forwards(GebrmClient *client)
+{
+	g_debug("Removing client %s forwards...", client->priv->id);
+
+	g_list_foreach(client->priv->forwards,
+		       (GFunc)gebr_comm_terminal_process_free, NULL);
+	g_list_free(client->priv->forwards);
+	client->priv->forwards = NULL;
 }
