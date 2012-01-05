@@ -1222,6 +1222,9 @@ gebr_maestro_controller_maestro_state_changed_real(GebrMaestroController *mc,
 	GebrCommServerState state = gebr_comm_server_get_state(server);
 	if (state == SERVER_STATE_DISCONNECTED) {
 		const gchar *error = gebr_maestro_server_get_error(maestro);
+		if( g_strcmp0(error, "")==0)
+			error = _("It seems there is no GêBR-maestro installed on this machine");
+			
 		if (!error)
 			gtk_entry_set_icon_from_stock(entry,
 			                              GTK_ENTRY_ICON_SECONDARY,
@@ -1243,6 +1246,9 @@ gebr_maestro_controller_maestro_state_changed_real(GebrMaestroController *mc,
 		gtk_entry_set_icon_from_stock(entry,
 					      GTK_ENTRY_ICON_SECONDARY,
 					      GTK_STOCK_CONNECT);
+		gtk_entry_set_icon_tooltip_text(entry,
+						GTK_ENTRY_ICON_SECONDARY,
+						"Connected");
 		on_daemons_changed(maestro, mc);
 		GtkTreeView *view = GTK_TREE_VIEW(gtk_builder_get_object(mc->priv->builder, "treeview_servers"));
 		gtk_tree_view_set_model(view, GTK_TREE_MODEL(mc->priv->model));
