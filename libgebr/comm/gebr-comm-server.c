@@ -732,7 +732,7 @@ gebr_comm_server_socket_connected(GebrCommProtocolSocket * socket,
 		gchar *mcookie_str = get_xauth_cookie(display_number);
 		gebr_comm_protocol_socket_oldmsg_send(server->socket, FALSE,
 						      gebr_comm_protocol_defs.ini_def, 2,
-						      server->priv->gebr_id, mcookie_str);
+						      mcookie_str, server->priv->gebr_id);
 		g_free(mcookie_str);
 	} else {
 		gebr_comm_protocol_socket_oldmsg_send(server->socket, FALSE,
