@@ -317,22 +317,22 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			job_list(client);
 		} else if (message->hash == gebr_comm_protocol_defs.run_def.code_hash) {
 			GList *arguments;
-
 			GebrdJob *job;
-			GString *id, *frac, *speed, *nice, *flow_xml;
-			GString *account, *num_processes; /* Moab & MPI settings */
 
 			/* organize message data */
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 7)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 8)) == NULL)
 				goto err;
 
-			id = g_list_nth_data(arguments, 0);
-			frac = g_list_nth_data(arguments, 1);
-			speed = g_list_nth_data(arguments, 2);
-			nice = g_list_nth_data(arguments, 3);
-			flow_xml = g_list_nth_data(arguments, 4);
-			account = g_list_nth_data(arguments, 5);
-			num_processes = g_list_nth_data(arguments, 6);
+			GString *gid = g_list_nth_data(arguments, 0);
+			GString *id = g_list_nth_data(arguments, 1);
+			GString *frac = g_list_nth_data(arguments, 2);
+			GString *speed = g_list_nth_data(arguments, 3);
+			GString *nice = g_list_nth_data(arguments, 4);
+			GString *flow_xml = g_list_nth_data(arguments, 5);
+
+			/* Moab & MPI settings */
+			GString *account = g_list_nth_data(arguments, 6);
+			GString *num_processes = g_list_nth_data(arguments, 7);
 
 			/* try to run and send return */
 			job_new(&job, client, id, frac, speed, nice, flow_xml, account, num_processes);

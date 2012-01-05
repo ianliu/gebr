@@ -44,6 +44,7 @@ struct _GebrCommRunnerPriv {
 
 	gint total;
 	gchar *ncores;
+	gchar *gid;
 	gchar *parent_rid;
 	gchar *speed;
 	gchar *nice;
@@ -126,6 +127,7 @@ strip_flow(GebrValidator *validator,
 GebrCommRunner *
 gebr_comm_runner_new(GebrGeoXmlDocument *flow,
 		     GList *servers,
+		     const gchar *gid,
 		     const gchar *parent_rid,
 		     const gchar *speed,
 		     const gchar *nice,
@@ -135,6 +137,7 @@ gebr_comm_runner_new(GebrGeoXmlDocument *flow,
 	GebrCommRunner *self = g_new(GebrCommRunner, 1);
 	self->priv = g_new0(GebrCommRunnerPriv, 1);
 	self->priv->flow = gebr_geoxml_document_ref(flow);
+	self->priv->gid = g_strdup(gid);
 	self->priv->parent_rid = g_strdup(parent_rid);
 	self->priv->speed = g_strdup(speed);
 	self->priv->nice = g_strdup(nice);
@@ -155,7 +158,11 @@ gebr_comm_runner_new(GebrGeoXmlDocument *flow,
 void
 gebr_comm_runner_free(GebrCommRunner *self)
 {
-	// TODO gebr_comm_runner_free
+	g_free(self->priv->gid);
+	g_free(self->priv->parent_rid);
+	g_free(self->priv->speed);
+	g_free(self->priv->nice);
+	g_free(self->priv->group);
 }
 
 /*
@@ -297,7 +304,8 @@ divide_and_run_flows(GebrCommRunner *self)
 				       sc->server->address->str, weights[k]);
 
 		gebr_comm_protocol_socket_oldmsg_send(sc->server->socket, FALSE,
-						      gebr_comm_protocol_defs.run_def, 7,
+						      gebr_comm_protocol_defs.run_def, 8,
+						      self->priv->gid,
 						      self->priv->id,
 						      frac_str,
 						      self->priv->speed,

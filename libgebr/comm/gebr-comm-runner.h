@@ -38,6 +38,7 @@ struct _GebrCommRunner {
  */
 GebrCommRunner *gebr_comm_runner_new(GebrGeoXmlDocument *flow,
 				     GList *servers,
+				     const gchar *gid,
 				     const gchar *parent_rid,
 				     const gchar *speed,
 				     const gchar *nice,

@@ -689,9 +689,8 @@ on_client_request(GebrCommProtocolSocket *socket,
 
 			GList *servers = get_comm_servers_list(app, name, group_type);
 			GebrCommRunner *runner = gebr_comm_runner_new(GEBR_GEOXML_DOCUMENT(*pflow),
-								      servers,
-								      parent_id, speed, nice, name,
-								      validator);
+								      servers, gid, parent_id,
+								      speed, nice, name, validator);
 			g_list_free(servers);
 
 			gchar *title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(*pflow));
