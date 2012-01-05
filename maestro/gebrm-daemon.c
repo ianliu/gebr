@@ -193,7 +193,7 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 			if (server->socket->protocol->waiting_ret_hash == gebr_comm_protocol_defs.ini_def.code_hash) {
 				GList *arguments;
 
-				if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 10)) == NULL)
+				if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 9)) == NULL)
 					goto err;
 
 				GString *hostname     = g_list_nth_data(arguments, 0);
@@ -204,7 +204,6 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 				GString *ncores       = g_list_nth_data (arguments, 6);
 				GString *clock_cpu    = g_list_nth_data (arguments, 7);
 				GString *daemon_id    = g_list_nth_data (arguments, 8);
-				GString *display_port = g_list_nth_data (arguments, 9);
 
 				daemon->priv->is_initialized = TRUE;
 
@@ -214,7 +213,6 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 				server->socket->protocol->logged = TRUE;
 				gebrm_daemon_set_nfsid(daemon, nfsid->str);
 				gebrm_daemon_set_id(daemon, daemon_id->str);
-				daemon->priv->display_port = atoi(display_port->str);
 
 				g_signal_emit(daemon, signals[DAEMON_INIT], 0, NULL, NULL);
 

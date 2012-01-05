@@ -196,7 +196,6 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			GString *accounts_list = g_string_new("");
 			GString *queue_list = g_string_new("");
 			GString *display_port = g_string_new("");
-			guint16 display;
 
 			/* organize message data */
 			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
@@ -226,20 +225,8 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 				/* Get info from the MOAB cluster */
 				server_moab_read_credentials(accounts_list, queue_list);
 				server_type = "moab";
-			} else {
-				/* figure out a free display */
-				display = gebrd_get_x11_redirect_display();
-				client->display_port = display;
-
-				if (display) {
-					g_string_printf(display_port, "%d", 6000 + display);
-					g_string_printf(client->display, ":%d", display);
-					g_debug("I've got this port for you %s", display_port->str);
-				} else
-					g_string_assign(client->display, "");
-
+			} else
 				server_type = "regular";
-			}
 
 			/* send return */
 			const gchar *model_name;
@@ -252,7 +239,7 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			total_memory = gebrd_mem_info_get (meminfo, "MemTotal");
 			gchar *ncores = g_strdup_printf("%d", gebrd_cpu_info_n_procs(cpuinfo));
 			gebr_comm_protocol_socket_oldmsg_send(client->socket, FALSE,
-							      gebr_comm_protocol_defs.ret_def, 10,
+							      gebr_comm_protocol_defs.ret_def, 9,
 							      gebrd->hostname,
 							      server_type,
 							      accounts_list->str,
@@ -261,8 +248,7 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 							      gebrd->fs_lock->str,
 							      ncores,
 							      cpu_clock,
-							      gebrd_user_get_daemon_id(gebrd->user),
-							      display_port->str);
+							      gebrd_user_get_daemon_id(gebrd->user));
 			gebrd_cpu_info_free (cpuinfo);
 			gebrd_mem_info_free (meminfo);
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
