@@ -30,7 +30,7 @@ touch:
 	then \
 	  touch $(srcdir)/main.c -r $(top_srcdir)/.hg; \
 	fi
-client.c: touch
+cmdline.c: touch
 
 #TODO: remove cmdline.{c,h} in future versions (remove old config format support)
 noinst_LTLIBRARIES = libgebr.la
