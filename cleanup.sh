@@ -3,12 +3,12 @@ shopt -s nullglob
 shopt -s extglob
 signal=${2--15}
 
-function kgebrd() {
-echo Killing gebrd...
-for lock in $HOME/.gebr/run/!(*fslock.run); do
-    server=`basename ${lock/*-} .run`;
-    echo -en "$server\t"
-    ssh $server fuser -sk $signal '$(cat '$lock')/tcp';
+function killg() {
+echo Killing $1...
+for lock in $HOME/.gebr/$1/*/lock; do
+    host=`basename ${lock%lock}`;
+    echo -en "$host\t"
+    ssh $host fuser -sk $signal '$(cat '$lock')/tcp'
     sync
     if [ -e $lock ]; then
 	echo -e "CRASH"; rm -rf $lock
@@ -18,31 +18,20 @@ for lock in $HOME/.gebr/run/!(*fslock.run); do
 done
 }
 
-function kgebrm() {
-echo Killing gebrm...
-for lock in $HOME/.gebr/gebrm/*/lock; do
-    maestro=`basename ${lock%lock}`;
-    echo -en "$maestro\t"
-    ssh $maestro fuser -sk $signal '$(cat '$lock')/tcp'
-    if [ -e $lock ]; then
-	echo -e "CRASH"; rm -rf $lock
-    else
-	echo -e "OK"
-    fi
-done
-}
+sync
 
-case $1 in
-    gebrd)
-      kgebrd
+case x$1 in
+    xgebrd)
+      killg gebrd
       ;;
-    gebrm)
-      kgebrm
+    xgebrm)
+      killg gebrm
       ;;
-    all)
-      kgebrd
-      kgebrm
+    x-h)
+      echo "Usage: [-h|gebrd|gebrm|all]"
       ;;
-    *)
-      echo "Usage: [gebrd|gebrm|all]"
+    xall | x)
+      killg gebrd
+      killg gebrm
+      ;;
 esac
