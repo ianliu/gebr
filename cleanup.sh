@@ -9,8 +9,7 @@ for lock in $HOME/.gebr/$1/*/lock; do
     host=`basename ${lock%lock}`;
     echo -en "$host\t"
     ssh $host fuser -sk $signal '$(cat '$lock')/tcp'
-    sync
-    if [ -e $lock ]; then
+    if [ $? -eq 1 ]; then
 	echo -e "CRASH"; rm -rf $lock
     else
 	echo -e "OK"
