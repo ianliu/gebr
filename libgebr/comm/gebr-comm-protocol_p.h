@@ -28,6 +28,7 @@ G_BEGIN_DECLS
 #define gebr_comm_message_def_create(code, resp, arg_number) ((struct gebr_comm_message_def){g_str_hash(code), code, resp, arg_number})
 
 void gebr_comm_protocol_init(void);
+
 void gebr_comm_protocol_destroy(void);
 
 struct gebr_comm_message *gebr_comm_message_new(void);
@@ -38,8 +39,9 @@ void gebr_comm_protocol_free(struct gebr_comm_protocol *protocol);
 
 gboolean gebr_comm_protocol_receive_data(struct gebr_comm_protocol *protocol, GString * data);
 
-GString * gebr_comm_protocol_build_messagev(struct gebr_comm_message_def msg_def, guint n_params, va_list ap);
-GString * gebr_comm_protocol_build_message(struct gebr_comm_message_def msg_def, guint n_params, ...);
+GString *gebr_comm_protocol_build_messagev(struct gebr_comm_message_def msg_def, guint n_params, va_list ap);
+
+GString *gebr_comm_protocol_build_message(struct gebr_comm_message_def msg_def, guint n_params, ...);
 
 GList *gebr_comm_protocol_split_new(GString * arguments, guint parts);
 

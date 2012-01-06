@@ -98,23 +98,6 @@ static void __gebr_comm_stream_socket_disconnected(GebrCommStreamSocket * stream
 	g_signal_emit(stream_socket, object_signals[DISCONNECTED], 0);
 }
 
-// static void
-// __gebr_comm_stream_socket_lookup(GSocketInfo * host_info, GebrCommStreamSocket * stream_socket)
-// {
-//      GebrCommSocketAddress * socket_address;
-// 
-//      if (gebr_comm_host_info_error(host_info)) {
-//              _gebr_comm_socket_emit_error(&stream_socket->parent, GEBR_COMM_SOCKET_ERROR_LOOKUP);
-//              stream_socket->parent.state = GEBR_COMM_SOCKET_STATE_UNCONNECTED;
-//              goto out;
-//      }
-// 
-//      socket_address = gebr_comm_host_info_first_address(host_info);
-//      gebr_comm_stream_socket_connect(stream_socket, socket_address, ntohs(stream_socket->parent.sockaddr_in.sin_port), FALSE);
-// 
-// out: gebr_comm_host_info_free(host_info);
-// }
-
 /*
  * private functions
  */
@@ -188,18 +171,6 @@ gebr_comm_stream_socket_connect(GebrCommStreamSocket * stream_socket, GebrCommSo
 
 	return ret;
 }
-
-// void
-// gebr_comm_stream_socket_connect_by_name(GebrCommStreamSocket * stream_socket, GString * hostname, guint16 port)
-// {
-//	g_return_if_fail(GEBR_COMM_IS_STREAM_SOCKET(stream_socket));
-//
-//      stream_socket->parent.sockaddr_in.sin_port = htons(port);
-// 
-//      stream_socket->parent.state = GEBR_COMM_SOCKET_STATE_LOOKINGUP;
-//      stream_socket->parent.last_error = GEBR_COMM_SOCKET_ERROR_NONE;
-//      gebr_comm_host_info_lookup(hostname, (GSocketInfoFunc)__gebr_comm_stream_socket_lookup, stream_socket);
-// }
 
 void gebr_comm_stream_socket_disconnect(GebrCommStreamSocket * stream_socket)
 {

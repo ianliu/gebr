@@ -1,3 +1,10 @@
+gebrproject (0.15.5) lucid; urgency=low
+
+  * New maestro to orchestrate job execution in GeBR's behalf. (#1097)
+  * Improved configuration of servers groups. (#1095) (#1096)
+
+ -- Fabricio Matheus Goncalves <fmatheus@gebrproject.com>  Fri, 06 Jan 2012 19:37:51 -0200
+
 gebrproject (0.15.4) lucid; urgency=low
 
   * Speed and niceness icons cleanup.

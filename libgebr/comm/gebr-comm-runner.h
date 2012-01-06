@@ -38,12 +38,19 @@ struct _GebrCommRunner {
  */
 GebrCommRunner *gebr_comm_runner_new(GebrGeoXmlDocument *flow,
 				     GList *servers,
+				     const gchar *gid,
 				     const gchar *parent_rid,
 				     const gchar *speed,
 				     const gchar *nice,
 				     const gchar *group,
 				     GebrValidator *validator);
 
+/**
+ * gebr_comm_runner_set_ran_func:
+ *
+ * Set @data to be called when this #GebrCommRunner finishes submitting its
+ * job.
+ */
 void gebr_comm_runner_set_ran_func(GebrCommRunner *self,
 				   void (*func) (GebrCommRunner *runner,
 						 gpointer data),
@@ -61,7 +68,13 @@ void gebr_comm_runner_free(GebrCommRunner *self);
 void gebr_comm_runner_run_async(GebrCommRunner *self,
 				const gchar *id);
 
-const gchar *gebr_comm_runner_get_servers_str(GebrCommRunner *self);
+GebrValidator *gebr_comm_runner_get_validator(GebrCommRunner *self);
+
+const gchar *gebr_comm_runner_get_ncores(GebrCommRunner *self);
+
+const gchar *gebr_comm_runner_get_servers_list(GebrCommRunner *self);
+
+gint gebr_comm_runner_get_total(GebrCommRunner *self);
 
 G_END_DECLS
 

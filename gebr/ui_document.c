@@ -1,19 +1,21 @@
-/*   GeBR - An environment for seismic processing.
- *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
+/*
+ * ui_document.c
+ * This file is part of GêBR Project
  *
- *   This program is free software: you can redistribute it and/or
- *   modify it under the terms of the GNU General Public License as
- *   published by the Free Software Foundation, either version 3 of
- *   the License, or * (at your option) any later version.
+ * Copyright (C) 2007-2011 - GêBR Core Team (www.gebrproject.com)
  *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *   General Public License for more details.
+ * GêBR Project is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
- *   You should have received a copy of the GNU General Public License
- *   along with this program. If not, see
- *   <http://www.gnu.org/licenses/>.
+ * GêBR Project is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with GêBR Project. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -36,7 +38,7 @@
 
 #include "ui_parameters.h"
 #include "ui_document.h"
-#include "ui_flow_edition.h"
+#include "gebr-flow-edition.h"
 #include "gebr.h"
 #include "flow.h"
 #include "ui_help.h"
@@ -102,7 +104,8 @@ typedef struct {
 
 	/* line stuff */
 	GtkWidget *path_sequence_edit;
-	GtkWidget *groups_combo;
+	GtkWidget *maestro_combo;
+	GtkWidget *maestro_box;
 	gint previous_active_group;
 
 	GebrPropertiesResponseFunc func;
@@ -163,7 +166,7 @@ void on_properties_destroy(GtkWindow * window, GebrPropertiesData * data);
 
 static void on_file_entry_activate (GtkEntry *entry, GebrGuiSequenceEdit *sequence_edit);
 
-static void on_groups_combo_box_changed (GtkComboBox *combo, GebrGuiValueSequenceEdit *edit);
+static void on_groups_combo_box_changed (GtkComboBox *combo);
 
 static gboolean dict_edit_reorder(GtkTreeView            *tree_view,
 				  GtkTreeIter            *iter,
@@ -206,6 +209,118 @@ GebrGeoXmlDocument *document_get_current(void)
 	}
 }
 
+static GtkWidget *
+document_properties_create_maestro_combobox(GebrGeoXmlLine *line)
+{
+	GtkTreeIter iter;
+	GtkListStore *store = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
+	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+
+	GtkWidget *combo = gtk_combo_box_new_with_model(GTK_TREE_MODEL(store));
+
+	GtkCellRenderer *renderer = gtk_cell_renderer_pixbuf_new();
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(combo), renderer, FALSE);
+	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(combo), renderer, "stock-id", 0);
+
+	renderer = gtk_cell_renderer_text_new();
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(combo), renderer, TRUE);
+	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(combo), renderer, "text", 1);
+
+	if (maestro) {
+		const gchar *stockid;
+		if (gebr_maestro_server_get_state(maestro) == SERVER_STATE_CONNECT)
+			stockid = GTK_STOCK_CONNECT;
+		else {
+			const gchar *error = gebr_maestro_server_get_error(maestro);
+			if (!error || !*error)
+				stockid = GTK_STOCK_DISCONNECT;
+			else
+				stockid = GTK_STOCK_DIALOG_WARNING;
+		}
+		gebr_maestro_server_get_server(maestro);
+		gtk_list_store_append(store, &iter);
+		gtk_list_store_set(store, &iter,
+				   0, stockid,
+				   1, gebr_maestro_server_get_address(maestro),
+				   -1);
+		gtk_combo_box_set_active_iter(GTK_COMBO_BOX(combo), &iter);
+	}
+
+	if (!gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, line)) {
+		gchar *maddr = gebr_geoxml_line_get_maestro(line);
+
+		if (maddr && *maddr) {
+			gtk_list_store_append(store, &iter);
+			gtk_list_store_set(store, &iter,
+					   0, GTK_STOCK_DISCONNECT,
+					   1, maddr,
+					   -1);
+			g_free(maddr);
+			gtk_combo_box_set_active_iter(GTK_COMBO_BOX(combo), &iter);
+		}
+	}
+
+
+	return combo;
+}
+
+static void
+on_maestro_box_clear(GtkWidget *widget,
+                     gpointer data)
+{
+	if (!GTK_IS_TOGGLE_BUTTON(widget))
+		gtk_widget_destroy(widget);
+}
+
+static void
+on_lock_button_toggled(GtkToggleButton *button,
+                       GebrPropertiesData *data)
+{
+	gboolean active = gtk_toggle_button_get_active(button);
+	GtkWidget *image = gtk_bin_get_child(GTK_BIN(button));
+
+	gtk_container_foreach(GTK_CONTAINER(data->maestro_box), (GtkCallback)on_maestro_box_clear, NULL);
+
+	gtk_image_set_from_stock(GTK_IMAGE(image), active ? "object-unlocked" : "object-locked", GTK_ICON_SIZE_BUTTON);
+
+	if (active) {
+		data->maestro_combo = document_properties_create_maestro_combobox(GEBR_GEOXML_LINE(data->document));
+		gtk_box_pack_start(GTK_BOX(data->maestro_box), data->maestro_combo, TRUE, TRUE, 0);
+	} else {
+		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, GEBR_GEOXML_LINE(data->document));
+		const gchar *addr = gebr_geoxml_line_get_maestro(GEBR_GEOXML_LINE(data->document));
+		const gchar *stockid;
+
+		if (!maestro && !strlen(addr)) {
+			maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+			addr = gebr_maestro_server_get_address(maestro);
+		}
+
+		if (maestro) {
+			if (gebr_maestro_server_get_state(maestro) == SERVER_STATE_CONNECT)
+				stockid = GTK_STOCK_CONNECT;
+			else {
+				const gchar *error = gebr_maestro_server_get_error(maestro);
+				if (!error || !*error)
+					stockid = GTK_STOCK_DISCONNECT;
+				else
+					stockid = GTK_STOCK_DIALOG_WARNING;
+			}
+		} else
+			stockid = GTK_STOCK_DISCONNECT;
+
+		GtkWidget *image = gtk_image_new_from_stock(stockid, GTK_ICON_SIZE_BUTTON);
+		GtkWidget *label = gtk_label_new(addr);
+		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+
+		gtk_box_pack_start(GTK_BOX(data->maestro_box), image, FALSE, FALSE, 0);
+		gtk_box_pack_start(GTK_BOX(data->maestro_box), label, TRUE, TRUE, 0);
+	}
+
+	gtk_box_reorder_child(GTK_BOX(data->maestro_box), GTK_WIDGET(button), -1);
+	gtk_widget_show_all(data->maestro_box);
+}
+
 void document_properties_setup_ui (GebrGeoXmlDocument * document,
 				   GebrPropertiesResponseFunc func,
 				   gboolean is_new)
@@ -228,7 +343,6 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 	GtkWidget *line_path_label;
 	GtkWidget *file_entry;
 	GtkWidget *path_sequence_edit;
-	GtkWidget *groups_combo;
 	GebrGeoXmlSequence *path_sequence;
 
 	if (document == NULL)
@@ -280,7 +394,7 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 
 	/* Title */
 	label = gtk_label_new(_("Title"));
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	data->title = title = gtk_entry_new();
 	gtk_entry_set_activates_default(GTK_ENTRY(title), TRUE);
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, row, row+1, GTK_FILL, GTK_FILL, 3, 3);
@@ -292,7 +406,7 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 
 	/* Description */
 	label = gtk_label_new(_("Description"));
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	data->description = description = gtk_entry_new();
 	gtk_entry_set_activates_default(GTK_ENTRY(description), TRUE);
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, row, row+1, GTK_FILL, GTK_FILL, 3, 3);
@@ -304,7 +418,7 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 
 	/* Author */
 	label = gtk_label_new(_("Author"));
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	data->author = author = gtk_entry_new();
 	gtk_entry_set_activates_default(GTK_ENTRY(author), TRUE);
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, row, row+1, GTK_FILL, GTK_FILL, 3, 3);
@@ -316,7 +430,7 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 
 	/* User email */
 	label = gtk_label_new(_("Email"));
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	data->email = email = gtk_entry_new();
 	gtk_entry_set_activates_default(GTK_ENTRY(email), TRUE);
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, row, row+1, GTK_FILL, GTK_FILL, 3, 3);
@@ -327,64 +441,68 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 	gtk_entry_set_text(GTK_ENTRY(email), gebr_geoxml_document_get_email(document));
 
 	data->previous_active_group = 0;
-	data->groups_combo = NULL;
-	if (gebr_geoxml_document_get_type(document) == GEBR_GEOXML_DOCUMENT_TYPE_LINE)
-	{
-		gboolean is_fs, is_fs2;
-		GtkTreeIter active, iter;
-		const gchar *curr_group;
-		GtkTreeModel *model;
+	data->maestro_combo = NULL;
+	data->maestro_box = NULL;
 
-		model = GTK_TREE_MODEL (gebr.ui_server_list->common.combo_store);
-		gtk_tree_model_get_iter_first (model, &active);
-		data->groups_combo = groups_combo = ui_server_create_tag_combo_box ();
-		curr_group = gebr_geoxml_line_get_group (GEBR_GEOXML_LINE (document), &is_fs);
+	if (gebr_geoxml_document_get_type(document) == GEBR_GEOXML_DOCUMENT_TYPE_LINE) {
+		data->maestro_combo = document_properties_create_maestro_combobox(GEBR_GEOXML_LINE(document));
+		data->previous_active_group = gtk_combo_box_get_active(GTK_COMBO_BOX(data->maestro_combo));
 
-		/* If group is empty, select All Servers */
-		if (strlen (curr_group) == 0)
-			gtk_combo_box_set_active_iter (GTK_COMBO_BOX (groups_combo), &active);
-		else {
-			/* Otherwise, skip the first entry and search for the current group */
-			gboolean valid;
-			iter = active;
-			valid = gtk_tree_model_iter_next (model, &iter);
-			while (valid) {
-				gboolean is_sep;
-				gchar *name;
-				gtk_tree_model_get (model, &iter,
-						    TAG_SEP, &is_sep,
-						    TAG_NAME, &name,
-						    TAG_FS, &is_fs2,
-						    -1);
-				if (!is_sep && is_fs == is_fs2 && g_strcmp0 (name, curr_group) == 0) {
-					active = iter;
-					g_free (name);
-					break;
-				}
-				g_free (name);
-				valid = gtk_tree_model_iter_next (model, &iter);
-			}
-			/* If valid = TRUE, we found the group */
-			if (valid || is_new)
-				gtk_combo_box_set_active_iter (GTK_COMBO_BOX (groups_combo), &active);
-			else
-				gtk_combo_box_set_active (GTK_COMBO_BOX (groups_combo), -1);
+		GtkWidget *lock_button = gtk_toggle_button_new();
+		GtkWidget *image = gtk_image_new_from_stock("object-locked", GTK_ICON_SIZE_BUTTON);
+		gtk_container_add(GTK_CONTAINER(lock_button), image);
+		g_signal_connect(lock_button, "toggled",
+				 G_CALLBACK(on_lock_button_toggled), data);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(lock_button), FALSE);
+		gtk_widget_set_tooltip_text(image, "Click to Lock/Unlock the Maestro of this line");
+
+		GtkWidget *hbox = gtk_hbox_new(FALSE, 5);
+
+		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, GEBR_GEOXML_LINE(document));
+		const gchar *addr = gebr_geoxml_line_get_maestro(GEBR_GEOXML_LINE(document));
+		const gchar *stockid;
+
+		if (!maestro && !strlen(addr)) {
+			maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+			addr = gebr_maestro_server_get_address(maestro);
 		}
 
-		data->previous_active_group = gtk_combo_box_get_active(GTK_COMBO_BOX(groups_combo));
+		if (maestro) {
+			if (gebr_maestro_server_get_state(maestro) == SERVER_STATE_CONNECT)
+				stockid = GTK_STOCK_CONNECT;
+			else {
+				const gchar *error = gebr_maestro_server_get_error(maestro);
+				if (!error || !*error)
+					stockid = GTK_STOCK_DISCONNECT;
+				else
+					stockid = GTK_STOCK_DIALOG_WARNING;
+			}
+		} else
+			stockid = GTK_STOCK_DISCONNECT;
 
-		label = gtk_label_new (_("Server group"));
-		gtk_table_attach (GTK_TABLE (table), label, 0, 1, row, row+1, GTK_FILL, GTK_FILL, 3, 3);
-		gtk_table_attach (GTK_TABLE (table), groups_combo, 1, 2, row, row+1, GTK_FILL, GTK_FILL, 3, 3);
+		GtkWidget *maestro_img = gtk_image_new_from_stock(stockid, GTK_ICON_SIZE_BUTTON);
+		GtkWidget *label = gtk_label_new(addr);
+		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+
+		gtk_box_pack_start(GTK_BOX(hbox), maestro_img, FALSE, FALSE, 0);
+		gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
+
+		gtk_box_pack_start(GTK_BOX(hbox), lock_button, FALSE, TRUE, 0);
+		data->maestro_box = hbox;
+
+		label = gtk_label_new(_("Maestro"));
+		gtk_table_attach(GTK_TABLE (table), label, 0, 1, row, row+1, GTK_FILL, GTK_FILL, 3, 3);
+		gtk_table_attach(GTK_TABLE (table), hbox, 1, 2, row, row+1, GTK_FILL, GTK_FILL, 3, 3);
 		row++;
-		gtk_widget_show (label);
-		gtk_widget_show (groups_combo);
+		gtk_widget_show(label);
+		gtk_widget_show_all(hbox);
+		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 
 		/* Line Path's*/
-		line_path_label = gtk_label_new(_("Path:"));
+		line_path_label = gtk_label_new(_("Path"));
 		gtk_widget_show(line_path_label);
 		gtk_table_attach(GTK_TABLE(table), line_path_label, 0, 1, row, row+1, GTK_FILL, GTK_FILL, 3, 3);
-		gtk_misc_set_alignment(GTK_MISC(line_path_label), 0, 0);
+		gtk_misc_set_alignment(GTK_MISC(line_path_label), 0, 0.05);
 
 		file_entry = gebr_gui_file_entry_new(NULL, NULL);
 
@@ -396,9 +514,6 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 		gebr_gui_value_sequence_edit_load(GEBR_GUI_VALUE_SEQUENCE_EDIT(path_sequence_edit), path_sequence,
 						  (ValueSequenceSetFunction) gebr_geoxml_value_sequence_set,
 						  (ValueSequenceGetFunction) gebr_geoxml_value_sequence_get, NULL);
-
-		g_signal_connect (groups_combo, "changed",
-				  G_CALLBACK (on_groups_combo_box_changed), path_sequence_edit);
 
 		g_signal_connect (GEBR_GUI_FILE_ENTRY (file_entry)->entry, "activate",
 				  G_CALLBACK (on_file_entry_activate), path_sequence_edit);
@@ -1589,7 +1704,7 @@ void on_response_ok(GtkButton * button, GebrPropertiesData * data)
 	case GEBR_GEOXML_DOCUMENT_TYPE_LINE: {
 		GebrGeoXmlLine *line = GEBR_GEOXML_LINE(data->document);
 
-		gint current_active_group = gtk_combo_box_get_active(GTK_COMBO_BOX(data->groups_combo));
+		gint current_active_group = gtk_combo_box_get_active(GTK_COMBO_BOX(data->maestro_combo));
 		gboolean emptyness = gebr_geoxml_line_get_paths_number(line) == 0 && gebr_geoxml_line_get_flows_number(line) == 0;
 		if (!emptyness && current_active_group != data->previous_active_group) {
 			gboolean clean = gebr_gui_message_dialog (GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
@@ -1614,6 +1729,7 @@ void on_response_ok(GtkButton * button, GebrPropertiesData * data)
 				flow_browse_reload_selected();
 			}
 		}
+		on_groups_combo_box_changed(GTK_COMBO_BOX(data->maestro_combo));
 	} case GEBR_GEOXML_DOCUMENT_TYPE_PROJECT: {
 		project_line_get_selected(&iter, DontWarnUnselection);
 		gtk_tree_store_set(gebr.ui_project_line->store, &iter,
@@ -1652,13 +1768,12 @@ static void on_file_entry_activate (GtkEntry *entry, GebrGuiSequenceEdit *sequen
 	g_signal_emit_by_name (sequence_edit, "add-request");
 }
 
-static void on_groups_combo_box_changed (GtkComboBox *combo, GebrGuiValueSequenceEdit *edit)
+static void
+on_groups_combo_box_changed(GtkComboBox *combo)
 {
-	gint *index;
-	gchar *group;
-	gboolean is_fs;
+	gchar *addr;
+	GebrMaestroServer *maestro;
 	GtkTreeIter iter;
-	GtkTreePath *path;
 	GtkTreeModel *model;
 
 	if (!gebr.line)
@@ -1667,26 +1782,13 @@ static void on_groups_combo_box_changed (GtkComboBox *combo, GebrGuiValueSequenc
 	if (!gtk_combo_box_get_active_iter (combo, &iter))
 		return;
 
-	model = gtk_combo_box_get_model (combo);
-	path = gtk_tree_model_get_path (model, &iter);
-	index = gtk_tree_path_get_indices (path);
+	model = gtk_combo_box_get_model(combo);
 
-	gtk_tree_model_get (model, &iter,
-			    TAG_NAME, &group,
-			    TAG_FS, &is_fs,
-			    -1);
+	gtk_tree_model_get(model, &iter, 1, &addr, -1);
 
-	/* Empty string means all servers */
-	if (!group || index[0] == 0)
-		gebr_geoxml_line_set_group (gebr.line, "", FALSE);
-	else
-		gebr_geoxml_line_set_group (gebr.line, group, is_fs);
-
-	gtk_tree_model_filter_refilter (
-			GTK_TREE_MODEL_FILTER (gebr.ui_project_line->servers_filter));
-
-	g_free (group);
-	gtk_tree_path_free (path);
+	gebr_geoxml_line_set_maestro(gebr.line, addr);
+	maestro = gebr_maestro_controller_get_maestro_for_address(gebr.maestro_controller, addr);
+	gebr_flow_edition_update_server(gebr.ui_flow_edition, maestro);
 }
 
 static gboolean dict_edit_reorder(GtkTreeView            *tree_view,

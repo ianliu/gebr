@@ -51,7 +51,8 @@ static void on_custom_radio_toggled(GtkToggleButton *togglebutton, GtkWidget *ht
  *
  * \return The structure containing relevant data. It will be automatically freed when the dialog closes.
  */
-struct ui_preferences *preferences_setup_ui(gboolean first_run)
+struct ui_preferences *
+preferences_setup_ui(gboolean first_run)
 {
 	struct ui_preferences *ui_preferences;
 
@@ -137,9 +138,42 @@ struct ui_preferences *preferences_setup_ui(gboolean first_run)
 		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(ui_preferences->usermenus),
 						    gebr.config.usermenus->str);
 
+	GtkWidget *expander = gtk_expander_new(_("Advanced settings"));
+	gtk_table_attach(GTK_TABLE(table), expander, 0, 2, row, row+1,
+			 GTK_FILL | GTK_EXPAND,
+			 GTK_FILL | GTK_EXPAND, 3, 3);
+
+	table = gtk_table_new(6, 2, FALSE);
+
 	/*
 	 * Editor
 	 */
+	row = 0;
+
+	label = gtk_label_new(_("Maestro server"));
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+	gtk_table_attach(GTK_TABLE(table), label, 0, 1, row, row + 1, (GtkAttachOptions)GTK_FILL,
+			 (GtkAttachOptions)GTK_FILL, 3, 3);
+
+	GtkWidget *temp;
+	GtkWidget *entry = gtk_entry_new();
+	ui_preferences->maestro_entry = entry;
+	gtk_widget_set_sensitive(entry, first_run);
+
+	if (first_run)
+		temp = entry;
+	else {
+		temp = gtk_hbox_new(FALSE, 5);
+		GtkWidget *img = gtk_image_new_from_stock(GTK_STOCK_INFO, GTK_ICON_SIZE_BUTTON);
+		gtk_widget_set_tooltip_text(img, _("To edit the maestro server, select Actions > Servers."));
+		gtk_box_pack_start(GTK_BOX(temp), img, FALSE, TRUE, 0);
+		gtk_box_pack_start(GTK_BOX(temp), entry, TRUE, TRUE, 0);
+	}
+
+	gtk_entry_set_text(GTK_ENTRY(entry), gebr.config.maestro_address->str);
+	gtk_table_attach(GTK_TABLE(table), temp, 1, 2, row, row + 1, (GtkAttachOptions)GTK_FILL,
+			 (GtkAttachOptions)GTK_FILL, 3, 3), ++row;
+
 	label = gtk_label_new(_("HTML editor"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, row, row + 1, (GtkAttachOptions)GTK_FILL,
@@ -180,6 +214,8 @@ struct ui_preferences *preferences_setup_ui(gboolean first_run)
 
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(label), gebr.config.log_load);
 
+	gtk_container_add(GTK_CONTAINER(expander), table);
+
 	/* finally... */
 	gtk_widget_show_all(ui_preferences->dialog);
 
@@ -201,6 +237,14 @@ static void preferences_actions(GtkDialog * dialog, gint arg1, struct ui_prefere
 		g_string_assign(gebr.config.username, gtk_entry_get_text(GTK_ENTRY(ui_preferences->username)));
 		g_string_assign(gebr.config.email, gtk_entry_get_text(GTK_ENTRY(ui_preferences->email)));
 		g_string_assign(gebr.config.editor, gtk_entry_get_text(GTK_ENTRY(ui_preferences->editor)));
+
+		if (ui_preferences->first_run) {
+			g_string_assign(gebr.config.maestro_address,
+					gtk_entry_get_text(GTK_ENTRY(ui_preferences->maestro_entry)));
+			gebr_maestro_controller_connect(gebr.maestro_controller,
+							gebr.config.maestro_address->str);
+		}
+
 		gebr.config.native_editor = !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(ui_preferences->user_radio_button));
 
 		gebr.config.log_load = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(ui_preferences->log_load));

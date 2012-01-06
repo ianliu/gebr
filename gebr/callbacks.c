@@ -310,12 +310,6 @@ void on_job_control_stop(void)
 	gebr_job_control_stop_selected(gebr.job_control);
 }
 
-//void on_job_control_clear(void)
-//{
-//	job_control_clear(FALSE);
-//}
-//
-
 void on_configure_preferences_activate(void)
 {
 	preferences_setup_ui(FALSE);
@@ -323,9 +317,9 @@ void on_configure_preferences_activate(void)
 
 void on_configure_servers_activate(void)
 {
-	server_list_show(gebr.ui_server_list);
-        gtk_window_remove_accel_group(GTK_WINDOW(gebr.window), gebr.accel_group_array[gebr.last_notebook]);
-	gtk_window_add_accel_group(GTK_WINDOW(gebr.ui_server_list->common.dialog), gebr.accel_group_array[ACCEL_SERVER]);
+	GtkDialog *dialog = gebr_maestro_controller_create_dialog(gebr.maestro_controller);
+	gtk_dialog_run(dialog);
+	gtk_widget_destroy(GTK_WIDGET(dialog));
 }
 
 void on_help_contents_activate(void)
@@ -446,107 +440,20 @@ void on_notebook_switch_page (GtkNotebook     *notebook,
 	gebr.last_notebook = page_num;
 }
 
-void on_server_common_connect(void)
-{
-	GebrServer *server;
-	GtkTreeIter iter;
-	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_server_list->common.view) {
-		gtk_tree_model_get (gebr.ui_server_list->common.sort_store, &iter,
-				    SERVER_POINTER, &server,
-				    -1);
-		if (!server->comm->socket->protocol->logged)
-			gebr_comm_server_connect(server->comm);
-	}
-}
-
-void on_server_common_disconnect(void)
-{
-	GebrServer *server;
-	GtkTreeIter iter;
-	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_server_list->common.view) {
-		gtk_tree_model_get (gebr.ui_server_list->common.sort_store, &iter,
-				    SERVER_POINTER, &server,
-				    -1);
-		gebr_comm_server_disconnect(server->comm);
-		ui_server_update_tags_combobox ();
-	}
-}
-
 void on_server_common_autoconnect_changed(void)
 {
-	GebrServer *server;
-	GtkTreeIter iter;
-	gboolean ac;
-
-	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_server_list->common.view) {
-		gtk_tree_model_get (gebr.ui_server_list->common.sort_store, &iter,
-				    SERVER_POINTER, &server,
-				    -1);
-		ac = gebr_server_get_autoconnect (server);
-		gebr_server_set_autoconnect (server, !ac);
-	}
+	g_warning("TODO: Implement %s", __func__);
 }
 
-void on_server_common_remove(void)
-{
-	GebrServer *server;
-	GtkTreeIter iter;
-	GtkTreePath *path;
-	GtkTreeRowReference *ref;
-	GtkTreeModel *sort_model;
-	GtkTreeSelection *selection;
-	GList *rows = NULL;
-
-	if (!ui_server_ask_for_tags_remove_permission())
-		return;
-
-	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (gebr.ui_server_list->common.view));
-	rows = gtk_tree_selection_get_selected_rows (selection, &sort_model);
-
-	for (GList *i = rows; i; i = i->next) {
-		path = i->data;
-		ref = gtk_tree_row_reference_new (sort_model, path);
-		gtk_tree_path_free (path);
-		i->data = ref;
-	}
-
-	for (GList *i = rows; i; i = i->next) {
-		ref = i->data;
-		path = gtk_tree_row_reference_get_path (ref);
-
-		if (!gtk_tree_model_get_iter (sort_model, &iter, path)) {
-			gtk_tree_path_free (path);
-			gtk_tree_row_reference_free (ref);
-			continue;
-		}
-		gtk_tree_model_get (sort_model, &iter, SERVER_POINTER, &server, -1);
-		if (server && g_strcmp0 (server->comm->address->str, "127.0.0.1") != 0)
-			server_free (server);
-		gtk_tree_path_free (path);
-		gtk_tree_row_reference_free (ref);
-	}
-
-	ui_server_update_tags_combobox ();
-	gtk_tree_model_filter_refilter (GTK_TREE_MODEL_FILTER (gebr.ui_project_line->servers_filter));
-
-	if (gtk_notebook_get_current_page (GTK_NOTEBOOK (gebr.notebook)) == NOTEBOOK_PAGE_FLOW_EDITION) {
-		GtkComboBox *cb = GTK_COMBO_BOX (gebr.ui_flow_edition->server_combobox);
-		if (gtk_combo_box_get_active (cb) == -1)
-			gtk_combo_box_set_active (cb, 0);
-	}
-}
-
-void on_server_common_stop(void)
-{
-	GebrServer *server;
-	GtkTreeIter iter;
-	gebr_gui_gtk_tree_view_foreach_selected(&iter, gebr.ui_server_list->common.view) {
-		gtk_tree_model_get (gebr.ui_server_list->common.sort_store, &iter,
-				    SERVER_POINTER, &server,
-				    -1);
-		gebr_comm_server_kill(server->comm);
-	}
-}
+//void on_server_common_remove(void)
+//{
+//	g_warning("TODO: Implement %s", __func__);
+//}
+//
+//void on_server_common_stop(void)
+//{
+//	g_warning("TODO: Implement %s", __func__);
+//}
 
 void open_url_on_press_event(void)
 {

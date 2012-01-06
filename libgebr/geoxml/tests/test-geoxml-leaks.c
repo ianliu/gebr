@@ -299,17 +299,6 @@ test_gebr_geoxml_flow_set_get_date_last_run(void)
 }
 
 static void
-test_gebr_geoxml_flow_server_set_get_address(void)
-{
-	GebrGeoXmlFlow *flow = gebr_geoxml_flow_new();
-
-	gebr_geoxml_flow_server_set_address(flow, "adress-str");
-	gchar *str = gebr_geoxml_flow_server_get_address(flow);
-	g_free(str);
-	gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
-}
-
-static void
 test_gebr_geoxml_flow_server_set_get_date_last_run(void)
 {
 	GebrGeoXmlFlow *flow = gebr_geoxml_flow_new();
@@ -506,7 +495,6 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/geoxml/leaks/flow_foreach_parameter", test_gebr_geoxml_leaks_flow_foreach_parameter);
 	g_test_add_func("/libgebr/geoxml/leaks/dict/set_keyword", test_gebr_geoxml_leaks_set_dict_keyword);
 	g_test_add_func("/libgebr/geoxml/leaks/flow_set_get_data_last_run", test_gebr_geoxml_flow_set_get_date_last_run);
-	g_test_add_func("/libgebr/geoxml/leaks/flow_server_set_get_address", test_gebr_geoxml_flow_server_set_get_address);
 	g_test_add_func("/libgebr/geoxml/leaks/flow_server_set_get_date_last_run", test_gebr_geoxml_flow_server_set_get_date_last_run);
 	g_test_add_func("/libgebr/geoxml/leaks/dict/append_parameter", test_gebr_geoxml_leaks_append_parameter);
 	g_test_add_func("/libgebr/geoxml/leaks/program_foreach", test_gebr_geoxml_leaks_program_foreach);

@@ -208,6 +208,15 @@ gchar *gebr_calculate_relative_time (GTimeVal *time1, GTimeVal *time2);
  * than time1.
  */
 gchar *gebr_calculate_detailed_relative_time(GTimeVal *time1, GTimeVal *time2);
+
+/**
+ * gebr_utf8_is_asc_alnum:
+ * @str: The string to check
+ *
+ * Returns: %TRUE if @str is ASC and alpha-numerical.
+ */
+gboolean gebr_utf8_is_asc_alnum(const gchar *str);
+
 /**
  * gebr_utf8_strstr:
  *
@@ -216,6 +225,16 @@ gchar *gebr_calculate_detailed_relative_time(GTimeVal *time1, GTimeVal *time2);
  */
 gchar *gebr_utf8_strstr(const gchar *haystack,
 			const gchar *needle);
+
+/**
+ * gebr_calculate_number_of_processors:
+ * @total_nprocs: Number of processors of a server
+ * @aggressive: Aggressive percentage (slider)
+ *
+ * Calculate real number of processors will be used
+ */
+gint gebr_calculate_number_of_processors(gint total_nprocs,
+                                         gint aggressive);
 
 G_END_DECLS
 

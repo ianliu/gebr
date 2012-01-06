@@ -61,6 +61,7 @@ json-marshal.[ch]
 libgebr/comm/socketchannel/gebr-comm-socketchannel
 libgebr/comm/tests/test-protocol
 libgebr/comm/tests/test-socket
+libgebr/comm/tests/test-uri
 libgebr/geoxml-utils/gebr-geoxml-flow-dump
 libgebr/geoxml-utils/gebr-geoxml-menu-diff
 libgebr/geoxml-utils/gebr-geoxml-menu-edit
@@ -93,6 +94,9 @@ m4/ltoptions.m4
 m4/ltsugar.m4
 m4/ltversion.m4
 m4/lt~obsolete.m4
+maestro/gebrm
+maestro/gebrm-marshal.c
+maestro/gebrm-marshal.h
 marshalers.[ch]
 missing
 rpm/gebrproject.*.spec

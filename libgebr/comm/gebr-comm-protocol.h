@@ -15,8 +15,8 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GEBR_COMM_PROTOCOL_H
-#define __GEBR_COMM_PROTOCOL_H
+#ifndef __GEBR_COMM_PROTOCOL_H__
+#define __GEBR_COMM_PROTOCOL_H__
 
 #include <glib.h>
 
@@ -24,10 +24,7 @@
 
 G_BEGIN_DECLS
 
-/* DEPRECATED */
-
 extern struct gebr_comm_protocol_defs gebr_comm_protocol_defs;
-#define PROTOCOL_VERSION "1.1.0"
 
 struct gebr_comm_message_def {
 	guint		code_hash;
@@ -45,8 +42,6 @@ struct gebr_comm_protocol_defs {
 	struct gebr_comm_message_def err_def;
 	struct gebr_comm_message_def qut_def;
 	struct gebr_comm_message_def lst_def;
-	struct gebr_comm_message_def job_def;
-	struct gebr_comm_message_def run_def;
 	struct gebr_comm_message_def rnq_def;
 	struct gebr_comm_message_def flw_def;
 	struct gebr_comm_message_def clr_def;
@@ -54,6 +49,29 @@ struct gebr_comm_protocol_defs {
 	struct gebr_comm_message_def kil_def;
 	struct gebr_comm_message_def out_def;
 	struct gebr_comm_message_def sta_def;
+
+	struct gebr_comm_message_def gid_def;   // Gebr id              Maestro -> Daemon
+
+	struct gebr_comm_message_def cfrm_def;
+
+	struct gebr_comm_message_def prt_def;   // Maestro port         Maestro -> GeBR
+	struct gebr_comm_message_def mck_def;   // Magic Cookie         Maestro -> Daemon
+
+	struct gebr_comm_message_def ac_def;    // Autoconnect option of the daemons
+	struct gebr_comm_message_def agrp_def;  // Add group on GeBR
+	struct gebr_comm_message_def dgrp_def;  // Delete group on GeBR
+
+	struct gebr_comm_message_def run_def;   // Run request          Maestro -> Daemon
+	struct gebr_comm_message_def tsk_def;   // Task definition      Daemon  -> Maestro
+
+	struct gebr_comm_message_def job_def;   // Job definition       Maestro -> GeBR
+	struct gebr_comm_message_def ssta_def;  // Server status change Maestro -> GeBR
+	struct gebr_comm_message_def srm_def;   // Server remove	Maestro -> GeBR
+	struct gebr_comm_message_def cmd_def;   // Command line         Maestro -> GeBR
+	struct gebr_comm_message_def iss_def;   // Issues               Maestro -> GeBR
+
+	struct gebr_comm_message_def qst_def;   // Question request     Maestro -> GeBR
+	struct gebr_comm_message_def pss_def;   // Password request     Maestro -> GeBR
 };
 
 struct gebr_comm_message {
@@ -80,7 +98,11 @@ struct gebr_comm_protocol {
 };
 
 void gebr_comm_protocol_reset(struct gebr_comm_protocol *protocol);
+
 void gebr_comm_message_free(struct gebr_comm_message *message);
 
+const gchar *gebr_comm_protocol_get_version(void);
+
 G_END_DECLS
-#endif				//__GEBR_COMM_PROTOCOL_H
+
+#endif /* __GEBR_COMM_PROTOCOL_H__ */

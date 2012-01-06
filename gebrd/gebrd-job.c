@@ -57,6 +57,7 @@ static void gebrd_job_init(GebrdJob * job)
 	job->server_list = g_string_new(NULL);
 	job->server_group_name = g_string_new(NULL);
 	job->job_percentage= g_string_new(NULL);
+	job->gid = g_string_new(NULL);
 }
 
 static void gebrd_job_class_init(GebrdJobClass * klass)
@@ -96,12 +97,10 @@ static void job_send_clients_output(GebrdJob *job, GString * output)
 	if (!job->parent.jid->len)
 		return;
 
-	for (GList *link = gebrd->clients; link != NULL; link = g_list_next(link)) {
-		struct client *client = (struct client *)link->data;
-		gebr_comm_protocol_socket_oldmsg_send(client->socket, FALSE,
-						      gebr_comm_protocol_defs.out_def, 4, job->parent.jid->str, output->str,
-						      job->parent.run_id->str, job->frac->str);
-	}
+	struct client *client = gebrd_user_get_connection(gebrd->user);
+	gebr_comm_protocol_socket_oldmsg_send(client->socket, FALSE,
+					      gebr_comm_protocol_defs.out_def, 4, job->parent.jid->str, output->str,
+					      job->parent.run_id->str, job->frac->str);
 }
 
 /**
@@ -179,7 +178,7 @@ moab_process_read_stdout(GebrCommProcess *process, GebrdJob *job)
 /*
  * \internal
  */
-static const gchar *status_enum_to_string(enum JobStatus status)
+static const gchar *status_enum_to_string(GebrCommJobStatus status)
 {
 	static const gchar * enum_to_string [] = {
 		"unknown", "queued", "failed", "running", "finished", "canceled", "requeued", "issued", NULL };
@@ -191,7 +190,7 @@ static const gchar *status_enum_to_string(enum JobStatus status)
  */
 static void job_status_notify_finished(GebrdJob *job)
 {
-	enum JobStatus new_status = (job->user_finished == FALSE) ? JOB_STATUS_FINISHED : JOB_STATUS_CANCELED;
+	GebrCommJobStatus new_status = (job->user_finished == FALSE) ? JOB_STATUS_FINISHED : JOB_STATUS_CANCELED;
 	if (new_status == job->parent.status)
 		return;
 
@@ -370,11 +369,18 @@ GebrdJob *job_find(GString * rid)
 	return job;
 }
 
-void job_new(GebrdJob ** _job, struct client * client, GString *queue, GString * account, GString * xml,
-	     GString * n_process, GString * run_id, GString *exec_speed, GString *niceness,
-	     GString *frac, GString *server_list, GString *server_group_name, GString *job_percentage)
+void
+job_new(GebrdJob **_job,
+	struct client *client,
+	GString *gid,
+	GString *id,
+	GString *frac,
+	GString *speed,
+	GString *nice,
+	GString *flow_xml,
+	GString *account,
+	GString *num_processes)
 {
-	/* initialization */
 	GebrdJob *job = GEBRD_JOB(g_object_new(GEBRD_JOB_TYPE, NULL, NULL));
 	job->process = gebr_comm_process_new();
 	job->tail_process = NULL;
@@ -387,26 +393,23 @@ void job_new(GebrdJob ** _job, struct client * client, GString *queue, GString *
 	job->timeout[0] = 0;
 	job->timeout[1] = 0;
 
-	job->niceness = g_strcmp0(niceness->str, "0") == 0 ? 0 : 19;
+	g_string_assign(job->gid, gid->str);
 	g_string_assign(job->parent.client_hostname, client->socket->protocol->hostname->str);
 	g_string_assign(job->parent.client_display, client->display->str);
 	job->parent.server_location = client->server_location;
-	g_string_assign(job->parent.run_id, run_id->str);
-	g_string_assign(job->parent.moab_account, account->str);
-	g_string_assign(job->parent.n_process, n_process->str);
-	g_string_assign(job->parent.queue_id, queue->str);
-	g_string_assign(job->exec_speed, exec_speed->str);
+	g_string_assign(job->parent.run_id, id->str);
 	g_string_assign(job->frac, frac->str);
-	g_string_assign(job->server_list, server_list->str);
-	g_string_assign(job->server_group_name, server_group_name->str);
-	g_string_assign(job->job_percentage, job_percentage->str);
+	g_string_assign(job->exec_speed, speed->str);
+	job->niceness = g_strcmp0(nice->str, "0") == 0 ? 0 : 19;
 	job->parent.status = JOB_STATUS_INITIAL;
+	g_string_assign(job->parent.moab_account, account->str);
+	g_string_assign(job->parent.n_process, num_processes->str);
 
 	*_job = job;
 	gebrd->user->jobs = g_list_append(gebrd->user->jobs, job);
 
 	GebrGeoXmlDocument *document;
-	int ret = gebr_geoxml_document_load_buffer(&document, xml->str);
+	int ret = gebr_geoxml_document_load_buffer(&document, flow_xml->str);
 	job->flow = GEBR_GEOXML_FLOW(document);
 	gebrd->flow = document;
 
@@ -419,7 +422,7 @@ void job_new(GebrdJob ** _job, struct client * client, GString *queue, GString *
 		gebr_validator_update(gebrd_get_validator(gebrd));
 	}
 
-	gint n = gebrd_app_set_heuristic_aggression(gebrd, atoi(exec_speed->str));
+	gint n = gebrd_app_set_heuristic_aggression(gebrd, atoi(speed->str));
 
 	if (gebr_geoxml_flow_is_parallelizable(job->flow, gebrd->validator))
 		job->effprocs = n;
@@ -473,7 +476,7 @@ gebrd_job_get_parent(GebrdJob *job)
 	return job_find(job->parent.queue_id);
 }
 
-void job_status_set(GebrdJob *job, enum JobStatus status)
+void job_status_set(GebrdJob *job, GebrCommJobStatus status)
 {
 	if (job->parent.status == status) {
 		//occurs frequently with netuno
@@ -504,7 +507,7 @@ void job_status_set(GebrdJob *job, enum JobStatus status)
 	}
 }
 
-void job_status_notify(GebrdJob *job, enum JobStatus status, const gchar *_parameter, ...)
+void job_status_notify(GebrdJob *job, GebrCommJobStatus status, const gchar *_parameter, ...)
 {
 	va_list argp;
 	va_start(argp, _parameter);
@@ -514,14 +517,11 @@ void job_status_notify(GebrdJob *job, enum JobStatus status, const gchar *_param
 	job_status_set(job, status);
 
 	/* warn all clients of the new status */
-	for (GList *link = gebrd->clients; link != NULL; link = g_list_next(link)) {
-		struct client *client = (struct client *)link->data;
-		gebr_comm_protocol_socket_oldmsg_send(client->socket, FALSE,
-						      gebr_comm_protocol_defs.sta_def, 5,
-						      job->parent.jid->str, status_enum_to_string(status),
-						      parameter, job->parent.run_id->str, job->frac->str);
-
-	}
+	struct client *client = gebrd_user_get_connection(gebrd->user);
+	gebr_comm_protocol_socket_oldmsg_send(client->socket, FALSE,
+					      gebr_comm_protocol_defs.sta_def, 5,
+					      job->parent.jid->str, status_enum_to_string(status),
+					      parameter, job->parent.run_id->str, job->frac->str);
 
 	g_free(parameter);
 }
@@ -542,18 +542,26 @@ void job_run_flow(GebrdJob *job)
 	/* command-line */
 	gsize bytes_written;
 	gchar *localized_cmd_line = g_filename_from_utf8(job->parent.cmd_line->str, -1, NULL, &bytes_written, NULL);
-	if (job->parent.client_display->len) {
+	guint16 display_port = GPOINTER_TO_UINT(g_hash_table_lookup(gebrd->display_ports, job->gid->str));
+	g_debug("Looking for display port for gid %s: %d", job->gid->str, display_port);
+	if (display_port != 0) {
 		GString *to_quote;
+		const gchar *xauth_file = "$HOME/.gebr/Xauthority";
 
 		to_quote = g_string_new(NULL);
 		if (job->parent.server_location == GEBR_COMM_SERVER_LOCATION_LOCAL) {
-			g_string_printf(to_quote, "export DISPLAY=%s; %s", job->parent.client_display->str, localized_cmd_line);
+			g_string_printf(to_quote, "export DISPLAY=:%d; export XAUTHORITY=%s; %s",
+					display_port, xauth_file, localized_cmd_line);
+			g_debug("I will run a flow on DISPLAY=:%d", display_port);
 			gchar * quoted = g_shell_quote(to_quote->str);
 			g_string_printf(cmd_line, "bash -l -c %s", quoted);
 			g_free(quoted);
-		}
-		else{
-			g_string_printf(to_quote, "export DISPLAY=127.0.0.1%s; %s", job->parent.client_display->str, localized_cmd_line);
+		} else {
+			g_string_printf(to_quote, "export DISPLAY=127.0.0.1:%d; export XAUTHORITY=%s; ",
+					display_port, xauth_file);
+			g_debug("Environment variables: %s", to_quote->str);
+
+			g_string_append(to_quote, localized_cmd_line);
 			gchar * quoted = g_shell_quote(to_quote->str);
 			g_string_printf(cmd_line, "bash -l -c %s", quoted);
 			g_free(quoted);
@@ -685,52 +693,14 @@ void job_kill(GebrdJob *job)
 
 void job_notify(GebrdJob *job, struct client *client)
 {
-	if (job->parent.status == JOB_STATUS_INITIAL)
-		job_status_set(job, JOB_STATUS_QUEUED);
-
-	gchar *input_file = gebr_geoxml_flow_io_get_input(job->flow);
-	gchar *output_file = gebr_geoxml_flow_io_get_output(job->flow);
-	gchar *log_file = gebr_geoxml_flow_io_get_error(job->flow);
-
-	const gchar *rid;
-	GebrdJob *parent = gebrd_job_get_parent(job);
-	if (parent)
-		rid = parent->parent.run_id->str;
-	else
-		rid = "";
-
-	gchar *nprocs = g_strdup_printf("%d", job->effprocs);
-	gchar *nice = g_strdup_printf("%d", job->niceness);
-
 	gebr_comm_protocol_socket_oldmsg_send(client->socket, FALSE,
-					      gebr_comm_protocol_defs.job_def, 23,
-					      job->parent.jid->str,
-					      status_enum_to_string(job->parent.status),
-					      job->parent.title->str,
-					      job->parent.start_date->str,
-					      job->parent.finish_date->str,
-					      job->parent.client_hostname->str,
-					      job->parent.issues->str,
-					      job->parent.cmd_line->str,
-					      job->parent.output->str,
-					      rid,
-					      job->parent.moab_jid->str,
+					      gebr_comm_protocol_defs.tsk_def, 5,
 					      job->parent.run_id->str,
 					      job->frac->str,
-					      job->server_list->str,
-					      nprocs,
-					      nice,
-					      input_file,
-					      output_file,
-					      log_file,
-					      gebr_geoxml_flow_get_date_last_run(job->flow),
-					      job->server_group_name->str,
-					      job->exec_speed->str,
-					      job->job_percentage->str);
-	g_free(nprocs);
-	g_free(nice);
+					      job->parent.issues->str,
+					      job->parent.cmd_line->str,
+					      job->parent.moab_jid->str);
 }
-
 
 void job_list(struct client *client)
 {
@@ -742,10 +712,8 @@ void job_list(struct client *client)
 
 void job_send_clients_job_notify(GebrdJob *job)
 {
-	for (GList *link = gebrd->clients; link != NULL; link = g_list_next(link)) {
-		struct client *client = (struct client *)link->data;
-		job_notify(job, client);
-	}
+	struct client *client = gebrd_user_get_connection(gebrd->user);
+	job_notify(job, client);
 }
 
 /**

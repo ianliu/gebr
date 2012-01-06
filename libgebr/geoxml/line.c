@@ -56,7 +56,7 @@ GebrGeoXmlLine *gebr_geoxml_line_new()
 {
 	GebrGeoXmlDocument *document = gebr_geoxml_document_new("line", GEBR_GEOXML_LINE_VERSION);
 	GdomeElement *root = gebr_geoxml_document_root_element(document);
-	gdome_el_unref(__gebr_geoxml_insert_new_element(root, "server-group", NULL), &exception);
+	gdome_el_unref(__gebr_geoxml_insert_new_element(root, "server-maestro", NULL), &exception);
 	gdome_el_unref(root, &exception);
 	return GEBR_GEOXML_LINE(document);
 }
@@ -154,62 +154,36 @@ glong gebr_geoxml_line_get_paths_number(GebrGeoXmlLine * line)
 	return retval;
 }
 
-void gebr_geoxml_line_set_group (GebrGeoXmlLine *line, const gchar *group, gboolean is_fs)
+gchar *
+gebr_geoxml_line_get_maestro(GebrGeoXmlLine *line)
 {
-	gchar *gen;
-	const gchar *prefix;
 	GdomeElement *root;
 	GdomeElement *group_el;
 
-	prefix = is_fs? "fs:":"g:";
-	gen = g_strconcat (prefix, group, NULL);
-	root = gebr_geoxml_document_root_element (line);
-	group_el = __gebr_geoxml_get_first_element (root, "server-group");
-	__gebr_geoxml_set_element_value (group_el, gen,
-					 __gebr_geoxml_create_TextNode);
-	g_free (gen);
-}
+	g_return_val_if_fail(line != NULL, NULL);
 
-const gchar *gebr_geoxml_line_get_group (GebrGeoXmlLine *line, gboolean *is_fs)
-{
-	gchar *name;
-	gchar *group;
-	GdomeElement *root;
-	GdomeElement *group_el;
-
-	g_return_val_if_fail (line != NULL, NULL);
-	g_return_val_if_fail (is_fs != NULL, NULL);
-
-	root = gebr_geoxml_document_root_element (line);
-	group_el = __gebr_geoxml_get_first_element (root, "server-group");
-	group = __gebr_geoxml_get_element_value (group_el);
-
+	root = gebr_geoxml_document_root_element(line);
+	group_el = __gebr_geoxml_get_first_element(root, "server-maestro");
+	gchar *addr = __gebr_geoxml_get_attr_value(group_el, "address");
 	gdome_el_unref(root, &exception);
 	gdome_el_unref(group_el, &exception);
 
-	if (g_str_has_prefix (group, "fs:")) {
-		*is_fs = TRUE;
-		name = g_strdup(group + 3);
-		g_free(group);
-		return name;
-	} else if (g_str_has_prefix (group, "g:")) {
-		*is_fs = FALSE;
-		name = g_strdup(group + 2);
-		g_free(group);
-		return name;
-	} else {
-		*is_fs = FALSE;
-		return group;
-	}
+	return addr;
 }
 
-const gchar *gebr_geoxml_line_get_group_label (GebrGeoXmlLine *line)
+void
+gebr_geoxml_line_set_maestro(GebrGeoXmlLine *line,
+			     const gchar *addr)
 {
-	gboolean is_fs;
-	const gchar *group = gebr_geoxml_line_get_group(line, &is_fs);
+	GdomeElement *root;
+	GdomeElement *group_el;
 
-	if(g_strcmp0(group, "") == 0) {
-		return _("All Servers");
-	}
-	return group;
+	g_return_if_fail(line != NULL);
+	g_return_if_fail(addr != NULL);
+
+	root = gebr_geoxml_document_root_element(line);
+	group_el = __gebr_geoxml_get_first_element(root, "server-maestro");
+	__gebr_geoxml_set_attr_value(group_el, "address", addr);
+	gdome_el_unref(root, &exception);
+	gdome_el_unref(group_el, &exception);
 }

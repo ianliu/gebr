@@ -30,24 +30,35 @@ typedef struct {
 } RunnerAndJob;
 
 struct _GebrJobPriv {
-	GList *tasks;
-	gchar *title;
 	gchar *runid;
+	GebrCommJobStatus status;
+
+	gint exec_speed;
+	gchar *title;
 	gchar *queue;
 	gchar *hostname;
-	gchar **servers;
 	gchar *server_group;
-	gint exec_speed;
-	gint n_servers;
-	GtkTreeIter iter;
-	enum JobStatus status;
-	gboolean has_issued;
-	GtkTreeModel *model;
+	gchar *server_group_type;
 	gchar *input_file;
 	gchar *output_file;
 	gchar *log_file;
+	gchar *submit_date;
+	gchar *start_date;
+	gchar *finish_date;
+	gchar *issues;
+	gchar *nice;
+	gchar *nprocs;
+	gchar *maestro_address;
 
-	GList *children; // A list of GebrCommRunner
+	gboolean is_fake;
+
+	/* Interface properties */
+	GtkTreeIter iter;
+	GtkTreeModel *model;
+
+	/* Task info */
+	GebrJobTask *tasks;
+	gint n_servers;
 };
 
 enum {
@@ -61,19 +72,6 @@ enum {
 
 static guint signals[N_SIGNALS] = { 0, };
 
-static void gebr_job_append_task_output(GebrTask *task,
-					const gchar *output,
-					GebrJob *job);
-
-static void gebr_job_change_task_status(GebrTask *task,
-                                        gint old_status,
-                                        gint new_status,
-                                        const gchar *parameter,
-                                        GebrJob *job);
-
-static void on_task_destroy(GebrJob *job,
-			    GebrTask *task);
-
 G_DEFINE_TYPE(GebrJob, gebr_job, G_TYPE_OBJECT);
 
 /* Private methods {{{1 */
@@ -85,12 +83,9 @@ gebr_job_finalize(GObject *object)
 	g_free(job->priv->hostname);
 	g_free(job->priv->runid);
 	g_free(job->priv->queue);
-	g_strfreev(job->priv->servers);
 	g_free(job->priv->input_file);
 	g_free(job->priv->output_file);
 	g_free(job->priv->log_file);
-	g_list_foreach(job->priv->tasks, (GFunc)g_object_unref, NULL);
-	g_list_free(job->priv->tasks);
 
 	G_OBJECT_CLASS(gebr_job_parent_class)->finalize(object);
 }
@@ -102,22 +97,6 @@ gebr_job_status_change_real(GebrJob *job,
 			    const gchar *parameter,
 			    gpointer user_data)
 {
-	switch (new_status) {
-	case JOB_STATUS_FINISHED:
-	case JOB_STATUS_FAILED:
-	case JOB_STATUS_CANCELED: {
-		for (GList *i = job->priv->children; i; i = i->next) {
-			RunnerAndJob *raj = i->data;
-			gebr_comm_runner_run_async(raj->runner, gebr_job_get_id(raj->child));
-		}
-		g_list_free(job->priv->children);
-		job->priv->children = NULL;
-		break;
-	}
-	default:
-		break;
-	}
-
 	if (job->priv->model) {
 		GtkTreePath *path = gtk_tree_model_get_path(job->priv->model, &job->priv->iter);
 		gtk_tree_model_row_changed(job->priv->model, path, &job->priv->iter);
@@ -132,7 +111,7 @@ gebr_job_init(GebrJob *job)
 						GEBR_TYPE_JOB,
 						GebrJobPriv);
 	job->priv->status = JOB_STATUS_INITIAL;
-	job->priv->has_issued = FALSE;
+	job->priv->is_fake = TRUE;
 }
 
 static void
@@ -167,8 +146,8 @@ gebr_job_class_init(GebrJobClass *klass)
 			     G_SIGNAL_RUN_FIRST,
 			     G_STRUCT_OFFSET(GebrJobClass, cmd_line_received),
 			     NULL, NULL,
-			     g_cclosure_marshal_VOID__VOID,
-			     G_TYPE_NONE, 0);
+			     gebr_cclosure_marshal_VOID__INT_STRING,
+			     G_TYPE_NONE, 2, G_TYPE_INT, G_TYPE_STRING);
 
 	signals[OUTPUT] =
 		g_signal_new("output",
@@ -176,8 +155,8 @@ gebr_job_class_init(GebrJobClass *klass)
 			     G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
 			     G_STRUCT_OFFSET(GebrJobClass, output),
 			     NULL, NULL,
-			     gebr_cclosure_marshal_VOID__OBJECT_STRING,
-			     G_TYPE_NONE, 2, GEBR_TYPE_TASK, G_TYPE_STRING);
+			     gebr_cclosure_marshal_VOID__INT_STRING,
+			     G_TYPE_NONE, 2, G_TYPE_INT, G_TYPE_STRING);
 
 	signals[DISCONNECT] =
 		g_signal_new("disconnect",
@@ -189,17 +168,6 @@ gebr_job_class_init(GebrJobClass *klass)
 			     G_TYPE_NONE, 0);
 
 	g_type_class_add_private(klass, sizeof(GebrJobPriv));
-}
-
-static void
-gebr_job_append_task_output(GebrTask *task,
-                            const gchar *output,
-                            GebrJob *job)
-{
-	if (!*output)
-		return;
-
-	g_signal_emit(job, signals[OUTPUT], 0, task, output);
 }
 
 gboolean
@@ -220,125 +188,17 @@ gebr_job_is_queueable(GebrJob *job)
 gboolean
 gebr_job_can_close(GebrJob *job)
 {
-	enum JobStatus status = gebr_job_get_partial_status(job);
-
-	return status == JOB_STATUS_FINISHED
-		|| status == JOB_STATUS_FAILED
-		|| status == JOB_STATUS_CANCELED;
+	return job->priv->status == JOB_STATUS_FINISHED
+		|| job->priv->status == JOB_STATUS_FAILED
+		|| job->priv->status == JOB_STATUS_INITIAL
+		|| job->priv->status == JOB_STATUS_CANCELED;
 }
 
 gboolean
 gebr_job_can_kill(GebrJob *job)
 {
-	enum JobStatus status = gebr_job_get_partial_status(job);
-
-	return status == JOB_STATUS_QUEUED
-		|| status == JOB_STATUS_RUNNING;
-}
-
-static void
-gebr_job_change_task_status(GebrTask *task,
-                            gint old_status,
-                            gint new_status,
-                            const gchar *parameter,
-                            GebrJob *job)
-{
-	GList *i;
-	enum JobStatus old = job->priv->status;
-	gint frac, total, ntasks;
-
-	gebr_task_get_fraction(task, &frac, &total);
-	ntasks = g_list_length(job->priv->tasks);
-
-	if (gebr_job_is_stopped(job)) {
-		gebr_task_kill(task);
-		return;
-	}
-
-	/* Do not change the status if the job isn't complete.
-	 * But if the new status is Failed or Canceled, let this
-	 * change pass.
-	 */
-	if (ntasks != total &&
-	    (new_status != JOB_STATUS_CANCELED &&
-	     new_status != JOB_STATUS_FAILED))
-		return;
-
-	switch (new_status)
-	{
-	case JOB_STATUS_ISSUED:
-		if (!job->priv->has_issued) {
-			job->priv->has_issued = TRUE;
-			g_signal_emit(job, signals[ISSUED], 0, parameter);
-		}
-		break;
-	case JOB_STATUS_RUNNING:
-		job->priv->status = JOB_STATUS_RUNNING;
-		g_signal_emit(job, signals[STATUS_CHANGE], 0,
-			      old, job->priv->status, parameter);
-		break;
-	case JOB_STATUS_REQUEUED:
-		g_debug("The task %d:%d was requeued to %s",
-			frac, total, parameter);
-		break;
-	case JOB_STATUS_QUEUED:
-		if (total != 1)
-			g_critical("A job with multiple tasks can't be queued");
-		else {
-			job->priv->status = JOB_STATUS_QUEUED;
-			g_signal_emit(job, signals[STATUS_CHANGE], 0,
-				      old, job->priv->status, parameter);
-		}
-		break;
-	case JOB_STATUS_CANCELED:
-	case JOB_STATUS_FAILED:
-		job->priv->status = new_status;
-		g_signal_emit(job, signals[STATUS_CHANGE], 0,
-			      old, job->priv->status, parameter);
-		break;
-	case JOB_STATUS_FINISHED:
-		for (i = job->priv->tasks; i; i = i->next)
-			if (gebr_task_get_status(i->data) != JOB_STATUS_FINISHED)
-				break;
-		if (ntasks == total && i == NULL) { // If i == NULL, all tasks are finished
-			job->priv->status = JOB_STATUS_FINISHED;
-			g_signal_emit(job, signals[STATUS_CHANGE], 0,
-				      old, job->priv->status, parameter);
-		}
-		break;
-	default:
-		g_return_if_reached();
-	}
-}
-
-static void
-on_task_destroy(GebrJob *job,
-		GebrTask *finalized_task)
-{
-	enum JobStatus old_status = job->priv->status;
-	job->priv->status = JOB_STATUS_INITIAL;
-	job->priv->tasks = g_list_remove(job->priv->tasks, finalized_task);
-
-	if (!job->priv->tasks)
-		g_signal_emit(job, signals[DISCONNECT], 0);
-	else if (old_status != job->priv->status)
-		g_signal_emit(job, signals[STATUS_CHANGE], 0,
-			      old_status, job->priv->status, "");
-}
-
-static gint
-compare_func(gconstpointer a, gconstpointer b)
-{
-	const gchar *aa = *(gchar * const *)a;
-	const gchar *bb = *(gchar * const *)b;
-
-	if (g_strcmp0(aa, "127.0.0.1") == 0)
-		return -1;
-
-	if (g_strcmp0(bb, "127.0.0.1") == 0)
-		return 1;
-
-	return g_strcmp0(aa, bb);
+	return job->priv->status == JOB_STATUS_QUEUED
+		|| job->priv->status == JOB_STATUS_RUNNING;
 }
 
 /* Public methods {{{1 */
@@ -361,7 +221,6 @@ gebr_job_new_with_id(const gchar *rid,
 	job->priv->queue = g_strdup(queue);
 	job->priv->runid = g_strdup(rid);
 	job->priv->n_servers = 0;
-	job->priv->servers = NULL;
 
 	return job;
 }
@@ -370,13 +229,25 @@ void
 gebr_job_set_servers(GebrJob *job,
 		     const gchar *servers)
 {
-	job->priv->servers = g_strsplit(servers, ",", 0);
+	gchar **split = g_strsplit(servers, ",", 0);
 
-	while (job->priv->servers[job->priv->n_servers])
+	if (!split)
+		return;
+
+	while (split[job->priv->n_servers])
 		job->priv->n_servers++;
+	job->priv->n_servers /= 2;
 
-	qsort(job->priv->servers, job->priv->n_servers,
-	      sizeof(job->priv->servers[0]), compare_func);
+	job->priv->tasks = g_new0(GebrJobTask, job->priv->n_servers);
+
+	for (int i = 0; i < job->priv->n_servers; i++) {
+
+		job->priv->tasks[i].server = split[i*2];
+		job->priv->tasks[i].percentage = g_strtod(split[i*2 + 1], NULL);
+		job->priv->tasks[i].cmd_line = NULL;
+		job->priv->tasks[i].frac = i+1;
+		job->priv->tasks[i].output = g_string_new("");
+	}
 }
 
 void
@@ -397,7 +268,7 @@ gebr_job_get_hostname(GebrJob *job)
 const gchar *
 gebr_job_get_queue(GebrJob *job)
 {
-	return gebr_task_get_queue(job->priv->tasks->data);
+	return job->priv->queue;
 }
 
 void
@@ -414,49 +285,7 @@ gebr_job_get_title(GebrJob *job)
 	return job->priv->title;
 }
 
-void
-gebr_job_append_task(GebrJob *job, GebrTask *task)
-{
-	job->priv->tasks = g_list_prepend(job->priv->tasks, task);
-
-	gint frac, total;
-	gebr_task_get_fraction(task, &frac, &total);
-	const gchar *issues = gebr_task_get_issues(task);
-	enum JobStatus status = gebr_task_get_status(task);
-
-	g_signal_connect(task, "status-change", G_CALLBACK(gebr_job_change_task_status), job);
-	g_signal_connect(task, "output", G_CALLBACK(gebr_job_append_task_output), job);
-	g_object_weak_ref(G_OBJECT(task), (GWeakNotify)on_task_destroy, job);
-
-	g_signal_emit(job, signals[CMD_LINE_RECEIVED], 0);
-	g_signal_emit(job, signals[OUTPUT], 0, task, gebr_task_get_output(task));
-
-	if (strlen(issues))
-		gebr_job_change_task_status(task, job->priv->status,
-					    JOB_STATUS_ISSUED, issues, job);
-
-	switch(status)
-	{
-	case JOB_STATUS_FAILED:
-		gebr_job_change_task_status(task, job->priv->status, status, "", job);
-		break;
-	case JOB_STATUS_FINISHED:
-	case JOB_STATUS_CANCELED:
-		gebr_job_change_task_status(task, job->priv->status, status, gebr_task_get_finish_date(task), job);
-		break;
-	case JOB_STATUS_QUEUED:
-		gebr_job_change_task_status(task, job->priv->status, status, gebr_job_get_queue(job), job);
-		break;
-	case JOB_STATUS_RUNNING:
-		gebr_job_change_task_status(task, job->priv->status, status, gebr_task_get_start_date(task), job);
-		break;
-	default:
-		g_warn_if_reached();
-		break;
-	}
-}
-
-enum JobStatus
+GebrCommJobStatus
 gebr_job_get_status(GebrJob *job)
 {
 	return job->priv->status;
@@ -477,130 +306,85 @@ gebr_job_get_iter(GebrJob *job)
 gchar **
 gebr_job_get_servers(GebrJob *job, gint *n)
 {
+	g_return_val_if_fail(n != NULL, NULL);
+	g_return_val_if_fail(job != NULL, NULL);
+
+	GebrJobTask *tasks = gebr_job_get_tasks(job, n);
+	gchar **servers = g_new0(gchar*, *n+1);
+	for (int i=0; i < *n; i++){
+		g_debug("getting server '%s'", tasks[i].server);
+		servers[i] = g_strdup(tasks[i].server);
+	}
+	servers[*n] = NULL;
+	return servers;
+}
+
+GebrJobTask *
+gebr_job_get_tasks(GebrJob *job, gint *n)
+{
 	if (n)
 		*n = job->priv->n_servers;
-	return job->priv->servers;
+	return job->priv->tasks;
+}
+
+gdouble *
+gebr_job_get_percentages(GebrJob *job, gint *n)
+{
+	g_return_val_if_fail(n!= NULL, NULL);
+	GebrJobTask *tasks = gebr_job_get_tasks(job, n);
+	gdouble *percs = g_new(gdouble, *n);
+	for (int i=0; i < *n; i++){
+		percs[i] = tasks[i].percentage;
+	}
+	return percs;
 }
 
 gchar *
 gebr_job_get_command_line(GebrJob *job)
 {
-	GString *buf = g_string_new(NULL);
-
-	for (GList *i = job->priv->tasks; i; i = i->next) {
-		gint frac, total;
-		GebrTask *task = i->data;
-
-		gebr_task_get_fraction(task, &frac, &total);
-		if (total != 1) {
-			g_string_append_printf(buf, _("Command line for task %d of %d "), frac, total);
-			g_string_append_printf(buf, _(" \(Server: %s)\n"), (gebr_task_get_server(task))->comm->address->str);
-		}
-		g_string_append_printf(buf, "%s\n\n", gebr_task_get_cmd_line(task));
-	}
-
-	return g_string_free(buf, FALSE);
+	g_warning("TODO: Implement %s", __func__);
+	return g_strdup("");
 }
 
 gchar *
 gebr_job_get_output(GebrJob *job)
 {
-	GString *output = g_string_new(NULL);
-
-	for (GList *i = job->priv->tasks; i; i = i->next)
-		g_string_append(output, gebr_task_get_output(i->data));
-
+	GString *output = g_string_new("");
+	for (int i = 0; i < job->priv->n_servers; i++)
+		g_string_append(output, job->priv->tasks[i].output->str);
 	return g_string_free(output, FALSE);
 }
 
 const gchar *
 gebr_job_get_last_run_date(GebrJob *job)
 {
-	const gchar *last_run_date = NULL;
-
-	for (GList *i = job->priv->tasks; i; i = i->next) {
-		GebrTask *task = i->data;
-		GTimeVal new_time, old_time;
-		const gchar *last_run_task_date = gebr_task_get_last_run_date(task);
-
-		if (!last_run_date) {
-			last_run_date = last_run_task_date;
-			continue;
-		}
-
-		g_time_val_from_iso8601(last_run_task_date, &new_time);
-		g_time_val_from_iso8601(last_run_date, &old_time);
-
-		if (new_time.tv_sec < old_time.tv_sec)
-			last_run_date = last_run_task_date;
-	}
-
-	return last_run_date;
+	return job->priv->submit_date;
 }
 
 const gchar *
 gebr_job_get_start_date(GebrJob *job)
 {
-	const gchar *start_date = NULL;
-
-	for (GList *i = job->priv->tasks; i; i = i->next) {
-		GebrTask *task = i->data;
-		GTimeVal new_time, old_time;
-		const gchar *start_task_date = gebr_task_get_start_date(task);
-
-		if (!start_date) {
-			start_date = start_task_date;
-			continue;
-		}
-
-		g_time_val_from_iso8601(start_task_date, &new_time);
-		g_time_val_from_iso8601(start_date, &old_time);
-
-		if (new_time.tv_sec < old_time.tv_sec)
-			start_date = start_task_date;
-	}
-
-	return start_date;
+	return job->priv->start_date;
 }
 
 const gchar *
 gebr_job_get_finish_date(GebrJob *job)
 {
-	const gchar *finish_date = NULL;
-
-	for (GList *i = job->priv->tasks; i; i = i->next) {
-		GebrTask *task = i->data;
-		GTimeVal new_time, old_time;
-		const gchar *finish_task_date = gebr_task_get_finish_date(task);
-
-		if (!finish_date) {
-			finish_date = finish_task_date;
-			continue;
-		}
-
-		g_time_val_from_iso8601(finish_task_date, &new_time);
-		g_time_val_from_iso8601(finish_date, &old_time);
-
-		if (new_time.tv_sec > old_time.tv_sec)
-			finish_date = finish_task_date;
-	}
-
-	return finish_date;
+	return job->priv->finish_date;
 }
 
 gchar *
 gebr_job_get_issues(GebrJob *job)
 {
-	return g_strdup(gebr_task_get_issues(job->priv->tasks->data));
+	return job->priv->issues;
 }
 
 gboolean
 gebr_job_has_issues(GebrJob *job)
 {
-	if (!job->priv->tasks)
+	if (!job->priv->issues)
 		return FALSE;
-
-	return gebr_task_get_issues(job->priv->tasks->data)[0] == '\0' ? FALSE : TRUE;
+	return job->priv->issues[0] == '\0' ? FALSE : TRUE;
 }
 
 gboolean
@@ -609,8 +393,21 @@ gebr_job_close(GebrJob *job)
 	if (!gebr_job_can_close(job))
 		return FALSE;
 
-	for (GList *i = job->priv->tasks; i; i = i->next)
-		gebr_task_close(i->data, job->priv->runid);
+	if (job->priv->is_fake)
+		return TRUE;
+
+	GebrCommUri *uri = gebr_comm_uri_new();
+	gebr_comm_uri_set_prefix(uri, "/close");
+	gebr_comm_uri_add_param(uri, "id", gebr_job_get_id(job));
+	gchar *url = gebr_comm_uri_to_string(uri);
+	gebr_comm_uri_free(uri);
+
+	GebrMaestroServer *maestro =
+		gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+	GebrCommServer *server = gebr_maestro_server_get_server(maestro);
+	gebr_comm_protocol_socket_send_request(server->socket,
+	                                       GEBR_COMM_HTTP_METHOD_PUT, url, NULL);
+	g_free(url);
 
 	return TRUE;
 }
@@ -621,8 +418,29 @@ gebr_job_kill(GebrJob *job)
 	if (!gebr_job_can_kill(job))
 		return;
 
-	for (GList *i = job->priv->tasks; i; i = i->next)
-		gebr_task_kill(i->data);
+	GebrCommUri *uri = gebr_comm_uri_new();
+	gebr_comm_uri_set_prefix(uri, "/kill");
+	gebr_comm_uri_add_param(uri, "id", gebr_job_get_id(job));
+	gchar *url = gebr_comm_uri_to_string(uri);
+	gebr_comm_uri_free(uri);
+
+	GebrMaestroServer *maestro =
+			gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+
+	GebrCommServer *server = gebr_maestro_server_get_server(maestro);
+	gebr_comm_protocol_socket_send_request(server->socket,
+	                                       GEBR_COMM_HTTP_METHOD_PUT, url, NULL);
+	g_free(url);
+}
+
+void
+gebr_job_set_runid (GebrJob *job,
+		    gchar *id)
+{
+	if (job->priv->runid)
+		g_free(job->priv->runid);
+	job->priv->runid = g_strdup(id);
+	job->priv->is_fake = FALSE;
 }
 
 void
@@ -682,62 +500,13 @@ gebr_job_get_io(GebrJob *job,
 
 void
 gebr_job_get_resources(GebrJob *job,
-                       gchar **nprocs,
-                       gchar **niceness)
+                       const gchar **nprocs,
+                       const gchar **nice)
 {
-	gint total_procs = 0;
-
-	if (!job->priv->tasks) {
-		*nprocs = NULL;
-		*niceness = NULL;
-		return;
-	}
-
-	for (GList *i = job->priv->tasks; i; i = i->next) {
-		GebrTask *task = i->data;
-		gint n = atoi(gebr_task_get_nprocs(task));
-		total_procs += n;
-	}
-
-	*nprocs = g_strdup_printf("%d", total_procs);
-	*niceness = g_strdup(gebr_task_get_niceness(job->priv->tasks->data));
-}
-
-gchar *
-gebr_job_get_remaining_servers(GebrJob *job)
-{
-	gint total, ntasks;
-	GString *remainings = g_string_new(NULL);
-
-	if (!job->priv->tasks)
-		return NULL;
-
-	gebr_task_get_fraction(job->priv->tasks->data, NULL, &total);
-	ntasks = g_list_length(job->priv->tasks);
-
-	if (ntasks != total) {
-		gchar **servers = job->priv->servers;
-
-		for (gint j = 0; servers[j]; j++) {
-			gboolean has_server = FALSE;
-
-			for (GList *i = job->priv->tasks; i; i = i->next) {
-				GebrServer *server = gebr_task_get_server(i->data);
-				if (!g_strcmp0(servers[j], server->comm->address->str)) {
-					has_server = TRUE;
-					break;
-				}
-			}
-			if (!has_server) {
-				if (remainings->len == 0)
-					g_string_printf(remainings, "%s", servers[j]);
-				else
-					g_string_append_printf(remainings, ", %s", servers[j]);
-			}
-		}
-	}
-
-	return g_string_free(remainings, FALSE);
+	if (nprocs)
+		*nprocs = job->priv->nprocs;
+	if (nice)
+		*nice = job->priv->nice;
 }
 
 gchar *
@@ -761,12 +530,26 @@ gebr_job_get_elapsed_time(GebrJob *job)
 	return gebr_calculate_detailed_relative_time(&start, &finish);
 }
 
+const gchar *
+gebr_job_get_server_group_type(GebrJob *job)
+{
+	return job->priv->server_group_type;
+}
+
 void
 gebr_job_set_server_group(GebrJob *job, const gchar *server_group)
 {
 	if (job->priv->server_group)
 		g_free(job->priv->server_group);
 	job->priv->server_group = g_strdup(server_group ? server_group : "");
+}
+
+void
+gebr_job_set_server_group_type(GebrJob *job, const gchar *group_type)
+{
+	if (job->priv->server_group_type)
+		g_free(job->priv->server_group_type);
+	job->priv->server_group_type = g_strdup(group_type);
 }
 
 const gchar *
@@ -787,71 +570,121 @@ gebr_job_set_exec_speed(GebrJob *job, gint exec_speed)
 	job->priv->exec_speed = exec_speed;
 }
 
-GebrTask *
-gebr_job_get_task_from_server(GebrJob *job,
-			      const gchar *server)
+void
+gebr_job_set_static_status(GebrJob *job, GebrCommJobStatus status)
 {
-	for (GList *i = job->priv->tasks; i; i = i->next)
-		if (g_strcmp0(gebr_task_get_server(i->data)->comm->address->str, server) == 0)
-			return i->data;
-	return NULL;
-}
-
-GList *
-gebr_job_get_list_of_tasks(GebrJob *job)
-{
-	return job->priv->tasks;
-}
-
-enum JobStatus
-gebr_job_get_partial_status(GebrJob *job)
-{
-	if (!job->priv->tasks)
-		return JOB_STATUS_INITIAL;
-
-	gint total, ntasks;
-	GebrTask *task = job->priv->tasks->data;
-
-	gebr_task_get_fraction(task, NULL, &total);
-	ntasks = g_list_length(job->priv->tasks);
-
-	if (ntasks == total)
-		return gebr_job_get_status(job);
-
-	gint running = 0;
-	for (GList *i = job->priv->tasks; i; i = i->next) {
-		enum JobStatus sta = gebr_task_get_status(i->data);
-		switch (sta) {
-		case JOB_STATUS_FAILED:
-		case JOB_STATUS_FINISHED:
-		case JOB_STATUS_CANCELED:
-		case JOB_STATUS_QUEUED:
-			return sta;
-		case JOB_STATUS_REQUEUED:
-		case JOB_STATUS_ISSUED:
-		case JOB_STATUS_INITIAL:
-			g_return_val_if_reached(sta);
-		case JOB_STATUS_RUNNING:
-			running++;
-			break;
-		}
-	}
-
-	if (running == ntasks)
-		return JOB_STATUS_RUNNING;
-
-	g_return_val_if_reached(JOB_STATUS_RUNNING);
+	job->priv->status = status;
 }
 
 void
-gebr_job_append_child(GebrJob *job,
-		      GebrCommRunner *runner,
-		      GebrJob *child)
+gebr_job_set_status(GebrJob *job, GebrCommJobStatus status, const gchar *parameter)
 {
-	g_return_if_fail(gebr_job_can_kill(job));
+	GebrCommJobStatus old = job->priv->status;
+	job->priv->status = status;
 
-	RunnerAndJob *raj = g_new(RunnerAndJob, 1);
-	raj->runner = runner;
-	raj->child = child;
-	job->priv->children = g_list_prepend(job->priv->children, raj);
+	switch(status) {
+	case JOB_STATUS_RUNNING:
+		gebr_job_set_start_date(job, parameter);
+		break;
+	case JOB_STATUS_CANCELED:
+	case JOB_STATUS_FAILED:
+	case JOB_STATUS_FINISHED:
+		gebr_job_set_finish_date(job, parameter);
+		break;
+	default:
+		break;
+	}
+
+	g_signal_emit(job, signals[STATUS_CHANGE], 0, old, status, parameter);
+}
+
+void
+gebr_job_set_start_date(GebrJob *job, const gchar *start_date)
+{
+	if (job->priv->start_date)
+		g_free(job->priv->start_date);
+	job->priv->start_date = g_strdup(start_date);
+}
+
+void
+gebr_job_set_finish_date(GebrJob *job, const gchar *finish_date)
+{
+	if (job->priv->finish_date)
+		g_free(job->priv->finish_date);
+	job->priv->finish_date = g_strdup(finish_date);
+}
+
+void
+gebr_job_set_nprocs(GebrJob *job,
+		    const gchar *nprocs)
+{
+	if (job->priv->nprocs)
+		g_free(job->priv->nprocs);
+	job->priv->nprocs = g_strdup(nprocs);
+}
+
+void
+gebr_job_set_queue(GebrJob *job,
+		    const gchar *queue)
+{
+	if (job->priv->queue)
+		g_free(job->priv->queue);
+	job->priv->queue= g_strdup(queue);
+}
+void
+gebr_job_set_nice(GebrJob *job,
+		  const gchar *nice)
+{
+	if (job->priv->nice)
+		g_free(job->priv->nice);
+	job->priv->nice = g_strdup(nice);
+}
+
+void
+gebr_job_set_submit_date(GebrJob *job,
+			 const gchar *submit_date)
+{
+	if (job->priv->submit_date)
+		g_free(job->priv->submit_date);
+	job->priv->submit_date = g_strdup(submit_date);
+}
+
+void
+gebr_job_set_cmd_line(GebrJob *job, gint frac, const gchar *cmd_line)
+{
+	if (job->priv->tasks[frac].cmd_line)
+		g_free(job->priv->tasks[frac].cmd_line);
+	job->priv->tasks[frac].cmd_line = g_strdup(cmd_line);
+	g_signal_emit(job, signals[CMD_LINE_RECEIVED], 0, frac, cmd_line);
+}
+
+void
+gebr_job_set_issues(GebrJob *job, const gchar *issues)
+{
+	if (job->priv->issues)
+		g_free(job->priv->issues);
+	job->priv->issues = g_strdup(issues);
+	g_signal_emit(job, signals[ISSUED], 0, issues);
+}
+
+void
+gebr_job_append_output(GebrJob *job, gint frac,
+		       const gchar *output)
+{
+	g_string_append(job->priv->tasks[frac].output, output);
+	g_signal_emit(job, signals[OUTPUT], 0, frac, output);
+}
+
+void
+gebr_job_set_maestro_address(GebrJob *job, const gchar *address)
+{
+	if (job->priv->maestro_address)
+		g_free(job->priv->maestro_address);
+	job->priv->maestro_address = g_strdup(address);
+}
+
+const gchar *
+gebr_job_get_maestro_address(GebrJob *job)
+{
+	return job->priv->maestro_address;
 }

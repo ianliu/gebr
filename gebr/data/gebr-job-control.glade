@@ -548,16 +548,16 @@
   <object class="GtkVBox" id="tl-filter">
     <property name="visible">True</property>
     <property name="spacing">4</property>
+    <property name="border-width">5</property>
     <child>
       <object class="GtkTable" id="table1">
         <property name="visible">True</property>
         <property name="n_rows">2</property>
         <property name="n_columns">3</property>
-        <property name="homogeneous">True</property>
         <child>
           <object class="GtkLabel" id="label5">
             <property name="visible">True</property>
-            <property name="label" translatable="yes">&lt;b&gt;Group&lt;/b&gt;</property>
+            <property name="label" translatable="yes">&lt;b&gt;Maestro&lt;/b&gt;</property>
             <property name="use_markup">True</property>
           </object>
           <packing>
@@ -567,7 +567,7 @@
         <child>
           <object class="GtkLabel" id="label7">
             <property name="visible">True</property>
-            <property name="label" translatable="yes">&lt;b&gt;Server&lt;/b&gt;</property>
+            <property name="label" translatable="yes">&lt;b&gt;Group/Server&lt;/b&gt;</property>
             <property name="use_markup">True</property>
           </object>
           <packing>

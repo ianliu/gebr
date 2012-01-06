@@ -1,26 +1,28 @@
-/*   GeBR - An environment for seismic processing.
- *   Copyright (C) 2011 GeBR core team (http://www.gebrproject.com/)
+/*
+ * gebr-job.h
+ * This file is part of GêBR Project
  *
- *   This program is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
+ * Copyright (C) 2011 - GêBR Core Team (www.gebrproject.com)
  *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
+ * GêBR Project is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
- *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * GêBR Project is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with GêBR Project. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef __GEBR_JOB_H__
 #define __GEBR_JOB_H__
 
+#include <gtk/gtk.h>
 #include <libgebr/comm/gebr-comm.h>
-
-#include "gebr-task.h"
 
 #define GEBR_TYPE_JOB			(gebr_job_get_type())
 #define GEBR_JOB(obj)			(G_TYPE_CHECK_INSTANCE_CAST ((obj), GEBR_TYPE_JOB, GebrJob))
@@ -52,14 +54,24 @@ struct _GebrJobClass {
 	void (*issued) (GebrJob     *job,
 			const gchar *issues);
 
-	void (*cmd_line_received) (GebrJob *job);
+	void (*cmd_line_received) (GebrJob     *job,
+				   gint         frac,
+				   const gchar *cmd);
 
 	void (*output) (GebrJob     *job,
-			GebrTask    *task,
+			gint         frac,
 			const gchar *output);
 
 	void (*disconnect) (GebrJob *job);
 };
+
+typedef struct {
+	gint frac;
+	gchar *server;
+	gchar *cmd_line;
+	gdouble percentage;
+	GString *output;
+} GebrJobTask;
 
 GType gebr_job_get_type() G_GNUC_CONST;
 
@@ -90,7 +102,7 @@ GtkTreeIter *gebr_job_get_iter(GebrJob *job);
 
 gchar **gebr_job_get_servers(GebrJob *job, gint *n);
 
-void gebr_job_append_task(GebrJob *job, GebrTask *task);
+gdouble *gebr_job_get_percentages(GebrJob *job, gint *length);
 
 GebrJob *gebr_job_find(const gchar *rid);
 
@@ -100,7 +112,7 @@ void gebr_job_set_title(GebrJob *job, const gchar *title);
 
 const gchar *gebr_job_get_queue(GebrJob *job);
 
-enum JobStatus gebr_job_get_status(GebrJob *job);
+GebrCommJobStatus gebr_job_get_status(GebrJob *job);
 
 const gchar *gebr_job_get_id(GebrJob *job);
 
@@ -122,6 +134,8 @@ gboolean gebr_job_close(GebrJob *job);
 
 void gebr_job_kill(GebrJob *job);
 
+void gebr_job_set_runid (GebrJob *job, gchar *id);
+
 void gebr_job_set_model(GebrJob *job,
                         GtkTreeModel *model);
 
@@ -134,14 +148,16 @@ void gebr_job_get_io(GebrJob *job, gchar **input_file, gchar **output_file,
 		gchar **log_file);
 
 void gebr_job_get_resources(GebrJob *job,
-                            gchar **nprocs,
-                            gchar **niceness);
-
-gchar *gebr_job_get_remaining_servers(GebrJob *job);
+			    const gchar **nprocs,
+			    const gchar **nice);
 
 const gchar *gebr_job_get_server_group(GebrJob *job);
 
+const gchar *gebr_job_get_server_group_type(GebrJob *job);
+
 void gebr_job_set_server_group(GebrJob *job, const gchar *server_group);
+
+void gebr_job_set_server_group_type(GebrJob *job, const gchar *group_type);
 
 gchar *gebr_job_get_running_time(GebrJob *job, const gchar *start_date);
 
@@ -151,37 +167,35 @@ gint gebr_job_get_exec_speed(GebrJob *job);
 
 void gebr_job_set_exec_speed(GebrJob *job, gint exec_speed);
 
-GList *gebr_job_get_list_of_tasks(GebrJob *job);
+gint gebr_job_get_total(GebrJob *job);
 
-GebrTask *gebr_job_get_task_from_server(GebrJob *job,
-					const gchar *server);
+GebrJobTask *gebr_job_get_tasks(GebrJob *job, gint *n);
 
-/**
- * gebr_job_get_partial_status:
- *
- * If a job does not have all of its tasks appended, it have a "partial"
- * status, which is the composition of the statuses of the tasks which where
- * appended.
- *
- * For instance, if a job is composed by 4 tasks but only 3 were appended, then
- * the partial status of this job is the status as if the job were composed by
- * the 3 appended tasks only.
- *
- * If the job is complete, ie all 4 tasks were appended, than
- * gebr_job_get_partial_status() returns the same value as
- * gebr_job_get_status().
- */
-enum JobStatus gebr_job_get_partial_status(GebrJob *job);
+void gebr_job_set_static_status(GebrJob *job, GebrCommJobStatus status);
 
-/**
- * gebr_job_append_child:
- *
- * Appends the pair (@runner, @child) into @job's children list. This list will
- * be executed when @job finishes or gets canceled/failed.
- */
-void gebr_job_append_child(GebrJob *job,
-			   GebrCommRunner *runner,
-			   GebrJob *child);
+void gebr_job_set_status(GebrJob *job, GebrCommJobStatus status, const gchar *parameter);
+
+void gebr_job_set_start_date(GebrJob *job, const gchar *start_date);
+
+void gebr_job_set_finish_date(GebrJob *job, const gchar *finish_date);
+
+void gebr_job_set_nprocs(GebrJob *job, const gchar *nprocs);
+
+void gebr_job_set_queue(GebrJob *job, const gchar *queue);
+
+void gebr_job_set_nice(GebrJob *job, const gchar *nice);
+
+void gebr_job_set_submit_date(GebrJob *job, const gchar *submit_date);
+
+void gebr_job_set_cmd_line(GebrJob *job, gint frac, const gchar *cmd_line);
+
+void gebr_job_set_issues(GebrJob *job, const gchar *issues);
+
+void gebr_job_append_output(GebrJob *job, gint frac, const gchar *output);
+
+void gebr_job_set_maestro_address(GebrJob *job, const gchar *address);
+
+const gchar *gebr_job_get_maestro_address(GebrJob *job);
 
 G_END_DECLS
 

@@ -330,8 +330,10 @@ void flow_browse_info_update(void)
 	g_free(markup);
 
 	/* Server */
-	gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.server),
-			   server_get_name_from_address(gebr_geoxml_flow_server_get_address(gebr.flow)));
+	gchar *group;
+	gebr_geoxml_flow_server_get_group(gebr.flow, NULL, &group);
+	gtk_label_set_text(GTK_LABEL(gebr.ui_flow_browse->info.server), group);
+	g_free(group);
 
 	/* Input file */
 	if (strlen(gebr_geoxml_flow_io_get_input(gebr.flow)))
@@ -467,8 +469,6 @@ static void flow_browse_load(void)
 		gebr_validator_update(gebr.validator);
 
 	/* free previous flow and load it */
-	gtk_widget_set_sensitive(gebr.ui_flow_edition->queue_combobox, TRUE);
-	gtk_widget_set_sensitive(gebr.ui_flow_edition->server_combobox, TRUE);
 	flow_edition_load_components();
 
 	/* load revisions */
@@ -476,14 +476,9 @@ static void flow_browse_load(void)
 	for (; revision != NULL; gebr_geoxml_sequence_next(&revision))
 		flow_browse_load_revision(GEBR_GEOXML_REVISION(revision), FALSE);
 
-	/* select last edited server */
-	GtkTreeModel *model;
+	gebr_flow_edition_select_group_for_flow(gebr.ui_flow_edition,
+						gebr.flow);
 
-	model = gebr.ui_project_line->servers_sort;
-	flow_edition_find_flow_server (gebr.flow, model, &iter);
-	gtk_combo_box_set_active_iter (GTK_COMBO_BOX (gebr.ui_flow_edition->server_combobox), &iter);
-
-	flow_edition_on_server_changed();
 	flow_browse_info_update();
 
 	g_free(filename);

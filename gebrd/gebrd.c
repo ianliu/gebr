@@ -36,10 +36,6 @@
 
 #define GEBRD_CONF_FILE "/etc/gebr/gebrd.conf"
 
-#define MAX_NICE 19
-#define MIN_NICE 0
-#define DEFAULT_NPROCS 1
-
 GebrdApp *gebrd = NULL;
 
 /* GOBJECT STUFF */
@@ -64,7 +60,6 @@ static void gebrd_app_init(GebrdApp * self)
 
 	self->run_filename = g_string_new(NULL);
 	self->fs_lock = g_string_new(NULL);
-	self->clients = NULL;
 
 	gethostname(self->hostname, 255);
 	g_random_set_seed((guint32) time(NULL));
@@ -76,6 +71,8 @@ static void gebrd_app_init(GebrdApp * self)
 	GebrdCpuInfo *cpu = gebrd_cpu_info_new();
 	self->nprocs = gebrd_cpu_info_n_procs(cpu);
 	gebrd_cpu_info_free(cpu);
+
+	self->display_ports = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
 }
 
 static void gebrd_app_finalize(GObject * object)
@@ -85,9 +82,8 @@ static void gebrd_app_finalize(GObject * object)
 	g_string_free(self->user_data_filename, TRUE);
 	g_string_free(self->run_filename, TRUE);
 	g_string_free(self->fs_lock, TRUE);
-	/* client */
-	g_list_foreach(self->clients, (GFunc) client_free, NULL);
-	g_list_free(self->clients);
+	g_hash_table_destroy(self->display_ports);
+
 	if (self->validator)
 		gebr_validator_free(self->validator);
 
@@ -406,5 +402,5 @@ gint
 gebrd_app_set_heuristic_aggression(GebrdApp *self,
 				   gint aggressive)
 {
-	return (self->nprocs - DEFAULT_NPROCS) * (aggressive-1)/4 + DEFAULT_NPROCS;
+	return gebr_calculate_number_of_processors(self->nprocs, aggressive);
 }

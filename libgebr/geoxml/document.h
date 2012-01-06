@@ -358,11 +358,11 @@ void gebr_geoxml_document_merge_dicts(GebrValidator *validator, GebrGeoXmlDocume
  *       with @first's dictionary parameters.
  *
  * If @first has dictionary parameters separated by the function
- * gebr_geoxml_document_merge_dicts(), make sure the list @... have enougth
+ * gebr_geoxml_document_merge_dicts(), make sure the list @... have enough
  * documents to hold them. If that is not the case, the function returns
  * %FALSE.
  *
- * Returns: %TRUE if the document list was large enougth to hold @first's
+ * Returns: %TRUE if the document list was large enough to hold @first's
  * dictionary parameters, %FALSE otherwise.
  */
 gboolean gebr_geoxml_document_split_dict(GebrGeoXmlDocument *first,

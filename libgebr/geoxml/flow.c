@@ -167,7 +167,8 @@ GebrGeoXmlFlow *gebr_geoxml_flow_new()
 
 	root = gebr_geoxml_document_root_element(document);
 	server = __gebr_geoxml_insert_new_element(root, "server", NULL);
-	__gebr_geoxml_set_attr_value (server, "address", "");
+	__gebr_geoxml_set_attr_value (server, "group-type", "group");
+	__gebr_geoxml_set_attr_value (server, "group-name", "");
 
 	io = __gebr_geoxml_insert_new_element(server, "io", NULL);
 	gdome_el_unref(__gebr_geoxml_insert_new_element(io, "input", NULL), &exception);
@@ -273,14 +274,25 @@ gchar *gebr_geoxml_flow_get_date_last_run(GebrGeoXmlFlow * flow)
 	return get_flow_tag_property(flow, "date", "lastrun");
 }
 
-void gebr_geoxml_flow_server_set_address(GebrGeoXmlFlow *flow, const gchar * address)
+void
+gebr_geoxml_flow_server_set_group(GebrGeoXmlFlow *flow,
+				  const gchar *type,
+				  const gchar *name)
 {
-	set_flow_attr_property(flow, "server", "address", address);
+	set_flow_attr_property(flow, "server", "group-type", type);
+	set_flow_attr_property(flow, "server", "group-name", name);
 }
 
-gchar *gebr_geoxml_flow_server_get_address(GebrGeoXmlFlow *flow)
+void
+gebr_geoxml_flow_server_get_group(GebrGeoXmlFlow *flow,
+				  gchar **type,
+				  gchar **name)
 {
-	return get_flow_attr_property(flow, "server", "address");
+	if (type)
+		*type = get_flow_attr_property(flow, "server", "group-type");
+
+	if (name)
+		*name = get_flow_attr_property(flow, "server", "group-name");
 }
 
 void gebr_geoxml_flow_server_set_date_last_run(GebrGeoXmlFlow *flow, const gchar * date)
@@ -1095,11 +1107,12 @@ gdouble *gebr_geoxml_flow_calulate_weights(gint n_servers,
 GList *gebr_geoxml_flow_divide_flows(GebrGeoXmlFlow *flow,
                                      GebrValidator *validator,
                                      gdouble *weights,
-                                     gint n_weights)
+                                     gint n_weights,
+                                     gint *n_steps)
 {
 	if (!gebr_geoxml_flow_is_parallelizable(flow, validator)) {
 		GList *l = NULL;
-		return g_list_prepend(l, flow);
+		return g_list_prepend(l, gebr_geoxml_document_ref(GEBR_GEOXML_DOCUMENT(flow)));
 	}
 
 	GList *flows = NULL;
@@ -1145,6 +1158,9 @@ GList *gebr_geoxml_flow_divide_flows(GebrGeoXmlFlow *flow,
 		gebr_geoxml_object_unref(div_loop);
 		ini_int = end+1;
 	}
+
+	if (n_steps)
+		*n_steps = total_n;
 
 	g_free(eval_n);
 	g_free(ini);

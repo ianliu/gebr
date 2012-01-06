@@ -600,5 +600,6 @@ void __gebr_geoxml_to_string(GdomeElement * el)
 {
 	gchar * str;
 	str = __gebr_geoxml_to_string_recursive(el, 1);
+	puts(str);
 	g_free(str);
 }

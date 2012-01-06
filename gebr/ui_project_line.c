@@ -238,7 +238,6 @@ void project_line_info_update(void)
 {
 	gchar *markup;
 	GString *text;
-	const gchar *group;
 	gboolean is_project;
 
 	if (gebr.project_line == NULL) {
@@ -309,13 +308,13 @@ void project_line_info_update(void)
 
 	/* Line's server group */
 	if (!is_project) {
-		markup = g_markup_printf_escaped("<b>%s</b>", _("Server group:"));
+		markup = g_markup_printf_escaped("<b>%s</b>", _("Maestro:"));
 		gtk_label_set_markup(GTK_LABEL(gebr.ui_project_line->info.group_label), markup);
 		g_free(markup);
 
-		group = gebr_geoxml_line_get_group_label(GEBR_GEOXML_LINE(gebr.project_line));
-
-		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.group), group);
+		gchar *addr = gebr_geoxml_line_get_maestro(gebr.line);
+		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.group), g_strcmp0(addr,"127.0.0.1") == 0? "Local Maestro" : addr);
+		g_free(addr);
 	}
 
 	/* Line's paths */
@@ -478,6 +477,12 @@ static gboolean _project_line_import_path(const gchar *filename, GList **line_pa
 			return ret;
 		}
 		gdk_threads_leave();
+
+		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+		if (maestro) {
+			const gchar *addr = gebr_maestro_server_get_address(maestro);
+			gebr_geoxml_line_set_maestro(*line, addr);
+		}
 
 		gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) line, GEBR_GEOXML_DOCUMENT_TYPE_LINE, FALSE);
 
@@ -1228,8 +1233,7 @@ void project_line_free(void)
 }
 
 
-/**
- * \internal
+/*
  * Load the selected project or line from file.
  */
 static void project_line_load(void)
@@ -1249,7 +1253,7 @@ static void project_line_load(void)
 	is_line = gtk_tree_path_get_depth(path) == 2 ? TRUE : FALSE;
 	gtk_tree_path_free(path);
 
-	if (is_line == TRUE) {
+	if (is_line) {
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter,
 				   PL_FILENAME, &line_filename, -1);
 
@@ -1264,12 +1268,16 @@ static void project_line_load(void)
 
 	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter,
 			   PL_XMLPOINTER, &gebr.project, -1);
-	if (is_line == TRUE) {
+	if (is_line) {
 		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), &child,
 				   PL_XMLPOINTER, &gebr.line, -1);
-
 		gebr.project_line = GEBR_GEOXML_DOC(gebr.line);
-		gtk_tree_model_filter_refilter (GTK_TREE_MODEL_FILTER (gebr.ui_project_line->servers_filter));
+
+		GebrMaestroServer *maestro =
+			gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller,
+								     gebr.line);
+		gebr_flow_edition_update_server(gebr.ui_flow_edition, maestro);
+
 		line_load_flows();
 	} else {
 		gebr.project_line = GEBR_GEOXML_DOC(gebr.project);
@@ -1279,7 +1287,7 @@ static void project_line_load(void)
 	project_line_info_update();
 
 	g_free(project_filename);
-	if (is_line == TRUE)
+	if (is_line)
 		g_free(line_filename);
 }
 
@@ -1536,20 +1544,26 @@ gchar * gebr_line_generate_header(GebrGeoXmlDocument * document)
 	g_free(title);
 	g_free(description);
 
+	gchar *maestro = gebr_geoxml_line_get_maestro(GEBR_GEOXML_LINE(document));
 	gchar *author = gebr_geoxml_document_get_author(document);
 	gchar *email = gebr_geoxml_document_get_email(document);
 	g_string_append_printf(dump,
 			       "<p class=\"credits\">%s <span class=\"gebr-author\">%s</span> "
 			       "<span class=\"gebr-email\">%s</span>, "
+	                       "<class=\"where\">%s <span class=\"gebr-maestro\">%s</span>, "
 			       "<span class=\"gebr-date\">%s</span></p>\n",
 			       // Comment for translators:
 			       // "By" as in "By John McClane"
 			       _("By"),
 			       author, email,
+			       _("at"),
+			       maestro,
 			       gebr_localized_date(gebr_iso_date()));
+
 	g_free(author);
 	g_free(email);
-			
+	g_free(maestro);
+
 
 	g_string_append_printf (dump, "<div class=\"gebr-flows-list\">\n   <p>%s</p>\n   <ul>\n", _("Line composed by the Flow(s):"));
 	gebr_geoxml_line_get_flow (GEBR_GEOXML_LINE (document), &sequence, 0);
@@ -1600,30 +1614,30 @@ gchar * gebr_line_generate_header(GebrGeoXmlDocument * document)
 	return g_string_free(dump, FALSE);
 }
 
+#if 0
 gboolean servers_filter_visible_func (GtkTreeModel *filter,
 				      GtkTreeIter *iter,
 				      gpointer data)
 {
 	gboolean is_fs;
 	const gchar *group;
-	GebrServer *server;
+	GebrDaemonServer *daemon;
 
 	if (!gebr.line)
 		return FALSE;
 
 	group = gebr_geoxml_line_get_group (gebr.line, &is_fs);
 
-	gboolean is_auto;
-	gtk_tree_model_get (filter, iter,
-			    SERVER_IS_AUTO_CHOOSE, &is_auto,
-			    SERVER_POINTER, &server, -1);
+	gtk_tree_model_get (filter, iter, 0, &daemon, -1);
 
-	if (is_auto || !server)
+	if (!server)
 		return TRUE;
 
-	return gebr_server_is_in_group(server, group, is_fs);
+	return TRUE; // gebr_server_is_in_group(server, group, is_fs);
 }
+#endif
 
+#if 0
 gint servers_sort_func (GtkTreeModel *model,
 			GtkTreeIter *a,
 			GtkTreeIter *b,
@@ -1665,3 +1679,4 @@ gint servers_sort_func (GtkTreeModel *model,
 	// If states are equal, order alfabetically
 	return g_strcmp0 (sa->comm->address->str, sb->comm->address->str);
 }
+#endif

@@ -1,28 +1,30 @@
-/*   GeBR - An environment for seismic processing.
- *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
+/*
+ * gebr-flow-edition.h
+ * This file is part of GêBR Project
  *
- *   This program is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
+ * Copyright (C) 2011 - GêBR Core Team (www.gebrproject.com)
  *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
+ * GêBR Project is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
- *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * GêBR Project is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with GêBR Project. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * @file ui_flow_edition.c Interface functions and callbacks for the "Flow Edition" page.
- */
-
-#ifndef __UI_FLOW_COMPONENT_H
-#define __UI_FLOW_COMPONENT_H
+#ifndef __GEBR_FLOW_EDITION_H__
+#define __GEBR_FLOW_EDITION_H__
 
 #include <gtk/gtk.h>
+
+#include <libgebr/geoxml/geoxml.h>
+#include "gebr-maestro-server.h"
 
 G_BEGIN_DECLS
 
@@ -58,14 +60,13 @@ enum {
 	MENU_FILEPATH_COLUMN,
 	MENU_N_COLUMN
 };
+typedef struct _GebrFlowEdition GebrFlowEdition;
+typedef struct _GebrFlowEditionPriv GebrFlowEditionPriv;
 
-/**
- */
-struct ui_flow_edition {
+struct _GebrFlowEdition {
+	GebrFlowEditionPriv *priv;
+
 	GtkWidget *widget;
-	GtkWidget *server_combobox;
-	GtkWidget *queue_combobox;
-	GtkBin *queue_bin;
 
 	GtkTreeIter input_iter;
 	GtkTreeIter output_iter;
@@ -80,7 +81,6 @@ struct ui_flow_edition {
 	GtkWidget *menu_view;
 	GtkTreeStore *menu_store;
 
-	gboolean autochoose;
 	GtkWidget *nice_button_high;
 	GtkWidget *nice_button_low;
 };
@@ -90,7 +90,7 @@ struct ui_flow_edition {
  *
  * @return The structure containing relevant data.
  */
-struct ui_flow_edition *flow_edition_setup_ui(void);
+GebrFlowEdition *flow_edition_setup_ui(void);
 
 /**
  * Load current flow's (gebr.flow) programs.
@@ -135,26 +135,6 @@ void flow_edition_change_iter_status(GebrGeoXmlProgramStatus status, GtkTreeIter
 void flow_edition_status_changed(guint status);
 
 /**
- * Update flow edition interface with information of the current selected server.
- */
-void flow_edition_on_server_changed(void);
-
-/**
- * flow_edition_select_server:
- * @flow: a flow with a server
- * @model: the model where @flow's server will be searched
- * @iter: return location for the found server
- *
- * Searches for the @flow's server in @model. All connected servers should be sorted first in the @model.
- * If the server is not found, @iter is changed to point to the first item in @model and %FALSE is returned.
- *
- * Returns: %TRUE if the server was found, %FALSE otherwise.
- */
-gboolean flow_edition_find_flow_server (GebrGeoXmlFlow *flow,
-					GtkTreeModel   *model,
-					GtkTreeIter    *iter);
-
-/**
  * flow_edition_revalidate_programs:
  */
 void flow_edition_revalidate_programs(void);
@@ -176,11 +156,30 @@ void flow_add_program_sequence_to_view(GebrGeoXmlSequence * program,
  */
 void flow_program_check_sensitiveness (void);
 
-void gebr_flow_edition_hide(struct ui_flow_edition *self);
+void flow_edition_set_run_widgets_sensitiveness(GebrFlowEdition *fe,
+                                                gboolean sensitive,
+                                                gboolean maestro_err);
 
-void gebr_flow_edition_show(struct ui_flow_edition *self);
+void gebr_flow_edition_hide(GebrFlowEdition *self);
 
-void gebr_flow_edition_select_queue(struct ui_flow_edition *self);
+void gebr_flow_edition_show(GebrFlowEdition *self);
+
+void gebr_flow_edition_select_queue(GebrFlowEdition *self);
+
+void gebr_flow_edition_update_server(GebrFlowEdition *fe,
+				     GebrMaestroServer *maestro);
+
+const gchar *gebr_flow_edition_get_selected_queue(GebrFlowEdition *fe);
+
+const gchar *gebr_flow_edition_get_selected_server(GebrFlowEdition *fe);
+
+void gebr_flow_edition_get_current_group(GebrFlowEdition *fe,
+					 GebrMaestroServerGroupType *type,
+					 gchar **name);
+
+void gebr_flow_edition_select_group_for_flow(GebrFlowEdition *fe,
+					     GebrGeoXmlFlow *flow);
 
 G_END_DECLS
-#endif				//__UI_FLOW_COMPONENT_H
+
+#endif /* __GEBR_FLOW_EDITION_H__ */

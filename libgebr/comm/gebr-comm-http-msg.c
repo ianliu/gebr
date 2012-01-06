@@ -202,7 +202,12 @@ GebrCommHttpMsg *gebr_comm_http_msg_new_parsing(GebrCommHttpMsg *partial, GStrin
 			g_string_append(full_data, data->str);
 
 			/* parse headers */
-			gchar *header_end = strstr(full_data->str, "\n\n");
+			gchar *header_end;
+
+			header_end = strstr(full_data->str, "\n\n");
+			if (!header_end)
+				header_end = strstr(full_data->str, "\r\n\r\n");
+
 			if (!header_end)
 				g_string_append(msg->raw, data->str);
 			else {

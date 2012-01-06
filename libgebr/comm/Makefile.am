@@ -28,6 +28,14 @@ EXTRA_DIST = gebr-comm.pc
 libcommincludedir=$(includedir)/libgebr
 libcomminclude_HEADERS=gebr-comm.h
 
+touch:
+	if [ -d $(top_srcdir)/.hg ]; \
+	then \
+	  touch $(srcdir)/gebr-comm-protocol.c -r $(top_srcdir)/.hg; \
+	fi
+
+gebr-comm-protocol.c: touch
+
 lib_LTLIBRARIES = libgebr_comm.la
 libgebr_comm_la_SOURCES = \
 	gebr-comm-channelsocket.c	\
@@ -45,6 +53,7 @@ libgebr_comm_la_SOURCES = \
 	gebr-comm-socketaddress.c	\
 	gebr-comm-streamsocket.c	\
 	gebr-comm-terminalprocess.c	\
+	gebr-comm-uri.c			\
 	$(NULL)
 
 libgebr_commsubincludedir = $(includedir)/libgebr/comm
@@ -64,6 +73,7 @@ libgebr_commsubinclude_HEADERS = \
 	gebr-comm-socketaddress.h	\
 	gebr-comm-streamsocket.h	\
 	gebr-comm-terminalprocess.h	\
+	gebr-comm-uri.h			\
 	$(NULL)
 
 noinst_HEADERS = \
@@ -78,6 +88,7 @@ AM_CPPFLAGS =			\
 	$(GEBR_JSON_CFLAGS)	\
 	$(GEBR_GEOXML_CFLAGS)	\
 	@DEBUG_CFLAGS@		\
+	-DNANOVERSION=\"$(NANOVERSION)\" \
 	$(NULL)
 
 AM_CFLAGS = $(COMMON_CFLAGS) -fPIC

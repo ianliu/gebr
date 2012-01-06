@@ -224,6 +224,7 @@ gboolean gebr_comm_terminal_process_start(GebrCommTerminalProcess * terminal_pro
 
 	ret = TRUE;
 	terminal_process->pid = pid;
+	terminal_process->is_running = TRUE;
 	/* monitor exit */
 	terminal_process->ptm_io_channel = NULL;
 	terminal_process->finish_watch_id =
@@ -262,6 +263,7 @@ void gebr_comm_terminal_process_kill(GebrCommTerminalProcess * terminal_process)
 	if (!terminal_process->pid)
 		return;
 	killpg(terminal_process->pid, SIGKILL);
+	waitpid(terminal_process->pid, NULL, 0);
 }
 
 void gebr_comm_terminal_process_terminate(GebrCommTerminalProcess * terminal_process)

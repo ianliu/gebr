@@ -1,26 +1,26 @@
 # List of source files containing translatable strings.
 [encoding: UTF-8]
 callbacks.c
-client.c
 cmdline.c
 data/gebr-job-control.glade
 data/gebr.desktop.in.in
 document.c
 flow.c
+gebr-daemon-server.c
+gebr-flow-edition.c
 gebr-job-control.c
 gebr-job.c
-gebr-task.c
+gebr-maestro-controller.c
+gebr-maestro-server.c
 gebr.c
 interface.c
 line.c
 main.c
 menu.c
 project.c
-server.c
 ui_document.c
 ui_flow.c
 ui_flow_browse.c
-ui_flow_edition.c
 ui_help.c
 ui_log.c
 ui_moab.c

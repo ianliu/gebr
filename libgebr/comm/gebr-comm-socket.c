@@ -178,7 +178,7 @@ static gboolean __gebr_comm_socket_write(GIOChannel * source, GIOCondition condi
 		/* TODO: */
 		goto out;
 	}
-	if (socket->state != GEBR_COMM_SOCKET_STATE_CONNECTED && !gebr_comm_socket_bytes_available(socket)) {
+	if (socket->state != GEBR_COMM_SOCKET_STATE_CONNECTED) {
 		GebrCommSocketClass *klass;
 
 		klass = GEBR_COMM_SOCKET_GET_CLASS(socket);
@@ -213,6 +213,7 @@ void _gebr_comm_socket_init(GebrCommSocket * socket, int fd, enum GebrCommSocket
 
 	error = NULL;
 	socket->write_watch_id = 0;
+	socket->read_watch_id = 0;
 	socket->address_type = address_type;
 	socket->state = GEBR_COMM_SOCKET_STATE_NONE;
 	socket->last_error = GEBR_COMM_SOCKET_ERROR_NONE;
@@ -232,6 +233,9 @@ void _gebr_comm_socket_close(GebrCommSocket * socket)
 		if (socket->write_watch_id)
 			g_source_remove(socket->write_watch_id);
 
+		if (socket->read_watch_id)
+			g_source_remove(socket->read_watch_id);
+
 		error = NULL;
 		g_io_channel_shutdown(socket->io_channel, FALSE, &error);
 		g_io_channel_unref(socket->io_channel);
@@ -247,8 +251,8 @@ int _gebr_comm_socket_get_fd(GebrCommSocket * socket)
 
 void _gebr_comm_socket_enable_read_watch(GebrCommSocket * socket)
 {
-	g_io_add_watch(socket->io_channel, G_IO_IN | G_IO_PRI | G_IO_HUP | G_IO_ERR | G_IO_NVAL,
-		       (GIOFunc) __gebr_comm_socket_read, socket);
+	socket->read_watch_id = g_io_add_watch(socket->io_channel, G_IO_IN | G_IO_PRI | G_IO_HUP | G_IO_ERR | G_IO_NVAL,
+					       (GIOFunc) __gebr_comm_socket_read, socket);
 }
 
 void _gebr_comm_socket_enable_write_watch(GebrCommSocket * socket)

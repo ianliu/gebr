@@ -54,21 +54,24 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
  * Public functions
  */
 
-void client_add(GebrCommStreamSocket * socket)
+void client_add(GebrCommProtocolSocket * client)
 {
-	struct client *client;
+	struct client *c;
 
-	client = g_new(struct client, 1);
-	client->socket = gebr_comm_protocol_socket_new_from_socket(socket);
-	client->display = g_string_new(NULL);
+	c = g_new(struct client, 1);
+	c->socket = client;
+	c->display = g_string_new(NULL);
 
-	gebrd->clients = g_list_prepend(gebrd->clients, client);
-	g_signal_connect(client->socket, "disconnected", G_CALLBACK(client_disconnected), client);
-	g_signal_connect(client->socket, "process-request", G_CALLBACK(client_process_request), client);
-	g_signal_connect(client->socket, "process-response", G_CALLBACK(client_process_response), client);
-	g_signal_connect(client->socket, "old-parse-messages", G_CALLBACK(client_old_parse_messages), client);
+	gebrd_user_set_connection(gebrd->user, c);
 
-	gebrd_message(GEBR_LOG_DEBUG, "client_add");
+	g_signal_connect(c->socket, "disconnected",
+			 G_CALLBACK(client_disconnected), c);
+	g_signal_connect(c->socket, "process-request",
+			 G_CALLBACK(client_process_request), c);
+	g_signal_connect(c->socket, "process-response",
+			 G_CALLBACK(client_process_response), c);
+	g_signal_connect(c->socket, "old-parse-messages",
+			 G_CALLBACK(client_old_parse_messages), c);
 }
 
 void client_free(struct client *client)
@@ -78,12 +81,12 @@ void client_free(struct client *client)
 	g_free(client);
 }
 
-static void client_disconnected(GebrCommProtocolSocket * socket, struct client *client)
+static void
+client_disconnected(GebrCommProtocolSocket * socket,
+		    struct client *client)
 {
 	gebrd_message(GEBR_LOG_DEBUG, "client_disconnected");
-
-	gebrd->clients = g_list_remove(gebrd->clients, client);
-	client_free(client);
+	gebrd_quit();
 }
 
 static void client_process_request(GebrCommProtocolSocket * socket, GebrCommHttpMsg * request, struct client *client)
@@ -189,67 +192,35 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 		/* check login */
 		if (message->hash == gebr_comm_protocol_defs.ini_def.code_hash) {
 			GList *arguments;
-			GString *version, *hostname, *place, *x11;
-			GString *display_port;
-			GString *accounts_list;
-			GString *queue_list;
-			gchar *server_type;
 
-			display_port = g_string_new("");
-			accounts_list = g_string_new("");
-			queue_list = g_string_new("");
+			GString *accounts_list = g_string_new("");
+			GString *queue_list = g_string_new("");
+			GString *display_port = g_string_new("");
 
 			/* organize message data */
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 4)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
 				goto err;
-			version = g_list_nth_data(arguments, 0);
-			hostname = g_list_nth_data(arguments, 1);
-			place = g_list_nth_data(arguments, 2);
-			x11 = g_list_nth_data(arguments, 3);
 
-			if (strcmp(version->str, PROTOCOL_VERSION)) {
+			GString *version = g_list_nth_data(arguments, 0);
+			GString *hostname = g_list_nth_data(arguments, 1);
+
+			g_debug("Current protocol version is: %s", gebr_comm_protocol_get_version());
+			g_debug("Received protocol version:   %s", version->str);
+
+			if (strcmp(version->str, gebr_comm_protocol_get_version())) {
 				gebr_comm_protocol_socket_oldmsg_send(client->socket, TRUE,
-								      gebr_comm_protocol_defs.err_def, 1,
-								      "Client/server version mismatch (GeBRd version is "GEBRD_VERSION")");
+								      gebr_comm_protocol_defs.err_def, 2,
+								      "protocol",
+								      gebr_comm_protocol_get_version());
 				goto err;
 			}
 
 			/* set client info */
 			client->socket->protocol->logged = TRUE;
 			g_string_assign(client->socket->protocol->hostname, hostname->str);
-			if (!strcmp(place->str, "local"))
-				client->server_location = GEBR_COMM_SERVER_LOCATION_LOCAL;
-			else if (!strcmp(place->str, "remote"))
-				client->server_location = GEBR_COMM_SERVER_LOCATION_REMOTE;
-			else
-				goto err;
+			client->server_location = GEBR_COMM_SERVER_LOCATION_REMOTE;
 
-			if (client->server_location == GEBR_COMM_SERVER_LOCATION_REMOTE) {
-				guint16 display;
-
-				/* figure out a free display */
-				display = gebrd_get_x11_redirect_display();
-				if (x11->len && display && gebrd_get_server_type() != GEBR_COMM_SERVER_TYPE_MOAB) {
-					g_string_printf(display_port, "%d", 6000 + display);
-					g_string_printf(client->display, ":%d", display);
-
-					/* add client magic cookie */
-					gint i = 0;
-					while (i++ < 5 && gebr_system("xauth add :%d . %s", display, x11->str)) {
-						gebrd_message(GEBR_LOG_ERROR, "Failed to add X11 authorization.");
-						usleep(200*1000);
-					}
-					/* failed to add X11 authorization */
-					if (i == 5)
-						g_string_assign(display_port, "0");
-
-					gebrd_message(GEBR_LOG_DEBUG, "xauth authorized");
-				} else
-					g_string_assign(client->display, "");
-			} else {
-				g_string_assign(client->display, x11->str);
-			}
-
+			const gchar *server_type;
 			if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_MOAB) {
 				/* Get info from the MOAB cluster */
 				server_moab_read_credentials(accounts_list, queue_list);
@@ -270,22 +241,65 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			gebr_comm_protocol_socket_oldmsg_send(client->socket, FALSE,
 							      gebr_comm_protocol_defs.ret_def, 9,
 							      gebrd->hostname,
-							      display_port->str,
 							      server_type,
 							      accounts_list->str,
 							      model_name,
 							      total_memory,
 							      gebrd->fs_lock->str,
 							      ncores,
-							      cpu_clock);
+							      cpu_clock,
+							      gebrd_user_get_daemon_id(gebrd->user));
 			gebrd_cpu_info_free (cpuinfo);
 			gebrd_mem_info_free (meminfo);
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
-			g_string_free(display_port, TRUE);
 			g_string_free(accounts_list, TRUE);
 			g_string_free(queue_list, TRUE);
+			g_string_free(display_port, TRUE);
 			g_free(ncores);
-		} else if (client->socket->protocol->logged == FALSE) {
+		}
+		else if (message->hash == gebr_comm_protocol_defs.gid_def.code_hash) {
+			GList *arguments;
+
+			/* organize message data */
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
+				goto err;
+
+			GString *gid = g_list_nth_data(arguments, 0);
+			GString *cookie = g_list_nth_data(arguments, 1);
+			guint16 display = gebrd_get_x11_redirect_display();
+			g_hash_table_insert(gebrd->display_ports, g_strdup(gid->str), GINT_TO_POINTER(display));
+
+			g_debug("Received gid %s with cookie %s", gid->str, cookie->str);
+
+			if (cookie->len && gebrd_get_server_type() != GEBR_COMM_SERVER_TYPE_MOAB) {
+				/* add client magic cookie */
+				gint i = 0;
+				gchar *cmd = g_strdup_printf("XAUTHORITY=$HOME/.gebr/Xauthority xauth add :%d . %s",
+							     display, cookie->str);
+				g_debug("%s", cmd);
+				while (i++ < 5 && gebr_system(cmd)) {
+					gebrd_message(GEBR_LOG_ERROR, "Failed to add X11 authorization.");
+					usleep(200*1000);
+				}
+				g_free(cmd);
+
+				/* failed to add X11 authorization */
+				if (i == 5) {
+					g_debug("X authorization failed");
+					g_string_assign(client->display, "0");
+				} else
+					gebrd_message(GEBR_LOG_DEBUG, "xauth authorized");
+			}
+
+			gchar *display_str = g_strdup_printf("%d", display + 6000);
+			gebr_comm_protocol_socket_oldmsg_send(client->socket, FALSE,
+							      gebr_comm_protocol_defs.ret_def, 2,
+							      gid->str, display_str);
+			g_free(display_str);
+
+			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
+		}
+		else if (client->socket->protocol->logged == FALSE) {
 			/* not logged! */
 			goto err;
 		} else if (message->hash == gebr_comm_protocol_defs.qut_def.code_hash) {
@@ -296,27 +310,25 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			job_list(client);
 		} else if (message->hash == gebr_comm_protocol_defs.run_def.code_hash) {
 			GList *arguments;
-			GString *xml, *account, *queue, *n_process, *run_id, *exec_speed, *niceness, *frac, *server_list, *server_group_name, *job_percentage;
 			GebrdJob *job;
 
 			/* organize message data */
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 11)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 8)) == NULL)
 				goto err;
 
-			xml = arguments->data;
-			account = g_list_nth_data(arguments, 1);
-			queue = g_list_nth_data(arguments, 2);
-			n_process = g_list_nth_data(arguments, 3);
-			run_id = g_list_nth_data(arguments, 4);
-			exec_speed = g_list_nth_data(arguments, 5);
-			niceness = g_list_nth_data(arguments, 6);
-			frac = g_list_nth_data(arguments, 7);
-			server_list = g_list_nth_data(arguments, 8);
-			server_group_name = g_list_nth_data(arguments, 9);
-			job_percentage = g_list_nth_data(arguments, 10);
+			GString *gid = g_list_nth_data(arguments, 0);
+			GString *id = g_list_nth_data(arguments, 1);
+			GString *frac = g_list_nth_data(arguments, 2);
+			GString *speed = g_list_nth_data(arguments, 3);
+			GString *nice = g_list_nth_data(arguments, 4);
+			GString *flow_xml = g_list_nth_data(arguments, 5);
+
+			/* Moab & MPI settings */
+			GString *account = g_list_nth_data(arguments, 6);
+			GString *num_processes = g_list_nth_data(arguments, 7);
 
 			/* try to run and send return */
-			job_new(&job, client, queue, account, xml, n_process, run_id, exec_speed, niceness, frac, server_list, server_group_name, job_percentage);
+			job_new(&job, client, gid, id, frac, speed, nice, flow_xml, account, num_processes);
 
 #ifdef DEBUG
 			gchar *env_delay = getenv("GEBRD_RUN_DELAY_SEC");
@@ -326,14 +338,9 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 
 			if (gebrd_get_server_type() == GEBR_COMM_SERVER_TYPE_REGULAR) {
 				/* send job message (job is created -promoted from waiting server response- at the client) */
-				g_debug("RUN_DEF: run task with rid %s, after %s",
-					run_id->str, queue->str);
-				GebrdJob *after = job_find(queue);
-				if (after)
-					gebrd_job_append(after, job);
-				else
-					job_run_flow(job);
+				g_debug("RUN_DEF: run task with rid %s", id->str);
 				job_send_clients_job_notify(job);
+				job_run_flow(job);
 			} else {
 				/* ask moab to run */
 				job_run_flow(job);

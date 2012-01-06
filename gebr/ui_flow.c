@@ -15,145 +15,164 @@
  *   along with this program. If not, see
  *   <http://www.gnu.org/licenses/>.
  */
-
-#include <glib/gi18n.h>
-#include <glib/gprintf.h>
-#include <libgebr/date.h>
-#include <libgebr/gui/gui.h>
-#include <libgebr/comm/gebr-comm.h>
-#include <stdlib.h>
-
 #include "ui_flow.h"
+
+#include <libgebr/geoxml/geoxml.h>
+#include <libgebr/date.h>
+#include <glib/gi18n.h>
 #include "gebr.h"
-#include "gebr-job.h"
-#include "flow.h"
-#include "document.h"
 #include "ui_flow_browse.h"
-#include "ui_flow_edition.h"
-#include "ui_server.h"
-#include "ui_moab.h"
+#include "document.h"
 
-#include "gebr-task.h"
-#include "interface.h"
-
-/* Private methods {{{1 */
-/*
- * Returns: a GList containing ServerScore structs with the score field set to 0.
- */
-static GList *
-get_connected_servers(GtkTreeModel *model)
+static gboolean
+is_group_connected(GtkTreeModel *model,
+		   const gchar *group)
 {
 	GtkTreeIter iter;
-	GList *servers = NULL;
-
+	GebrDaemonServer *daemon;
 	gebr_gui_gtk_tree_model_foreach(iter, model) {
-		gboolean is_auto_choose;
-		GebrServer *server;
-
-		gtk_tree_model_get(model, &iter, SERVER_POINTER, &server,
-				   SERVER_IS_AUTO_CHOOSE, &is_auto_choose, -1);
-
-		if (is_auto_choose)
-			continue;
-
-		if (server->comm->socket->protocol->logged)
-			servers = g_list_prepend(servers, server->comm);
+		gtk_tree_model_get(model, &iter, 0, &daemon, -1);
+		if (gebr_daemon_server_has_tag(daemon, group))
+			if (gebr_daemon_server_get_state(daemon) == SERVER_STATE_CONNECT)
+				return TRUE;
 	}
 
-	return servers;
+	return FALSE;
 }
 
-/*
- * Gets the selected queue. Returns %TRUE if no queue was selected, %FALSE
- * otherwise.
- */
-static gchar *
-get_selected_queue(void)
+static gboolean
+is_address_connected(GtkTreeModel *model,
+		     const gchar *address)
 {
-	GtkTreeIter queue_iter;
-	gchar *queue;
+	GtkTreeIter iter;
+	GebrDaemonServer *daemon;
+	gebr_gui_gtk_tree_model_foreach(iter, model) {
+		gtk_tree_model_get(model, &iter, 0, &daemon, -1);
+		const gchar *addr = gebr_daemon_server_get_address(daemon);
+		if (g_strcmp0(addr, address) == 0)
+			return gebr_daemon_server_get_state(daemon) == SERVER_STATE_CONNECT;
+	}
+	return FALSE;
+}
 
-	if (!gtk_combo_box_get_active_iter(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox), &queue_iter))
-		return g_strdup("");
-	else {
-		GtkTreeModel *model = gtk_combo_box_get_model(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox));
-		gtk_tree_model_get(model, &queue_iter, SERVER_QUEUE_ID, &queue, -1);
+static gboolean
+has_connected_server(GebrMaestroServer *maestro,
+		     GebrMaestroServerGroupType type,
+		     const gchar *name)
+{
+	gboolean result = FALSE;
+	GtkTreeModel *model = gebr_maestro_server_get_model(maestro, FALSE, NULL);
+
+	switch (type)
+	{
+	case MAESTRO_SERVER_TYPE_GROUP:
+		result = is_group_connected(model, name);
+		break;
+	case MAESTRO_SERVER_TYPE_DAEMON:
+		result = is_address_connected(model, name);
+		break;
 	}
 
-	return queue;
+	g_object_unref(model);
+
+	return result;
 }
 
-static void
-set_server_list(GebrCommRunner *runner,
-		gpointer job)
-{
-	gebr_job_set_servers(job, gebr_comm_runner_get_servers_str(runner));
-}
-
-/* Public methods {{{1 */
 void
 gebr_ui_flow_run(void)
 {
 	if (!flow_browse_get_selected(NULL, TRUE))
 		return;
 
-	GtkTreeModel *model = gtk_combo_box_get_model(GTK_COMBO_BOX(gebr.ui_flow_edition->server_combobox));
-
-	gboolean is_fs;
-	gchar *parent_rid = get_selected_queue();
-	gchar *speed = g_strdup_printf("%d", gebr_interface_get_execution_speed());
+	const gchar *parent_rid = gebr_flow_edition_get_selected_queue(gebr.ui_flow_edition);
+	gint speed = gebr_interface_get_execution_speed();
+	gchar *speed_str = g_strdup_printf("%d", speed);
 	gchar *nice = g_strdup_printf("%d", gebr_interface_get_niceness());
-	gchar *group = g_strdup(gebr_geoxml_line_get_group(gebr.line, &is_fs));
-	GList *servers = NULL;
+	const gchar *hostname = g_get_host_name();
 
-	if (gebr.ui_flow_edition->autochoose)
-		servers = get_connected_servers(model);
-	else {
-		GtkTreeIter iter;
-		if (!gtk_combo_box_get_active_iter(GTK_COMBO_BOX(gebr.ui_flow_edition->server_combobox), &iter)) {
-			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No server selected."));
-			return;
-		}
+	GebrMaestroServerGroupType type;
+	gchar *name;
+	gebr_flow_edition_get_current_group(gebr.ui_flow_edition, &type, &name);
+	const gchar *group_type = gebr_maestro_server_group_enum_to_str(type);
+	gebr_geoxml_flow_server_set_group(gebr.flow, group_type, name);
 
-		GebrServer *server;
-		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->servers_sort), &iter,
-				   SERVER_POINTER, &server, -1);
-		servers = g_list_prepend(servers, server->comm);
+	gchar *submit_date = gebr_iso_date();
 
-	}
-
-	gebr_geoxml_flow_set_date_last_run(gebr.flow, gebr_iso_date());
+	gebr_geoxml_flow_set_date_last_run(gebr.flow, g_strdup(submit_date));
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), FALSE, FALSE);
 
-	GebrCommRunner *runner = gebr_comm_runner_new(GEBR_GEOXML_DOCUMENT(gebr.flow),
-						      servers, parent_rid, speed,
-						      nice, group, gebr.validator);
-	
-	gchar *title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.flow));
-
+	gchar *xml;
 	GebrJob *job = gebr_job_new(parent_rid);
-	gebr_job_set_title(job, title);
-	gebr_job_set_hostname(job, g_get_host_name());
-	gebr_job_set_server_group(job, group);
-	gebr_job_set_model(job, gebr_job_control_get_model(gebr.job_control));
-	gebr_job_set_exec_speed(job, gebr_interface_get_execution_speed());
-	gebr_job_control_add(gebr.job_control, job);
-	gebr_comm_runner_set_ran_func(runner, set_server_list, job);
 
-	g_free(title);
+	GebrGeoXmlDocument *clone = gebr_geoxml_document_clone(GEBR_GEOXML_DOCUMENT(gebr.flow));
 
-	if (g_strcmp0(parent_rid, "") == 0) {
-		gebr_comm_runner_run_async(runner, gebr_job_get_id(job));
-	} else {
-		GebrJob *parent = gebr_job_control_find(gebr.job_control, parent_rid);
-		gebr_job_append_child(parent, runner, job);
+	gebr_geoxml_document_merge_dicts(gebr.validator,
+	                                 clone,
+	                                 GEBR_GEOXML_DOCUMENT(gebr.line),
+	                                 GEBR_GEOXML_DOCUMENT(gebr.project),
+	                                 NULL);
+
+	gebr_geoxml_document_to_string(clone, &xml);
+	GebrCommJsonContent *content = gebr_comm_json_content_new_from_string(xml);
+	gebr_geoxml_document_unref(clone);
+
+	GebrCommUri *uri = gebr_comm_uri_new();
+	gebr_comm_uri_set_prefix(uri, "/run");
+	gebr_comm_uri_add_param(uri, "gid", gebr_get_session_id());
+	gebr_comm_uri_add_param(uri, "parent_id", parent_rid);
+	gebr_comm_uri_add_param(uri, "speed", speed_str);
+	gebr_comm_uri_add_param(uri, "nice", nice);
+	gebr_comm_uri_add_param(uri, "name", name);
+	gebr_comm_uri_add_param(uri, "group_type", group_type);
+	gebr_comm_uri_add_param(uri, "host", hostname);
+	gebr_comm_uri_add_param(uri, "temp_id", gebr_job_get_id(job));
+	gchar *url = gebr_comm_uri_to_string(uri);
+	gebr_comm_uri_free(uri);
+
+	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
+	GebrCommServer *server = gebr_maestro_server_get_server(maestro);
+
+	if (!has_connected_server(maestro, type, name)) {
+		gchar *msg;
+		switch (type) {
+		case MAESTRO_SERVER_TYPE_GROUP:
+			msg = g_strdup_printf(_("There are no connected servers on group %s."), name);
+			break;
+		case MAESTRO_SERVER_TYPE_DAEMON:
+			msg = g_strdup_printf(_("The selected server (%s) is not connected."), name);
+			break;
+		}
+
+		GtkWidget *dialog  = gtk_message_dialog_new_with_markup(GTK_WINDOW(gebr.window),
+									GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+		                                                        GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+		                                                        "<span size='large' weight='bold'>%s</span>", msg);
+		g_free(msg);
+		gtk_dialog_run(GTK_DIALOG(dialog));
+		gtk_widget_destroy(dialog);
+		return;
 	}
 
-	gebr_interface_change_tab(NOTEBOOK_PAGE_JOB_CONTROL);
-	gebr_job_control_select_job(gebr.job_control, job);
+	gebr_comm_protocol_socket_send_request(server->socket, GEBR_COMM_HTTP_METHOD_PUT, url, content);
 
-	g_free(parent_rid);
-	g_free(speed);
+	gebr_job_set_maestro_address(job, gebr_maestro_server_get_address(maestro));
+	gebr_job_set_hostname(job, hostname);
+	gebr_job_set_exec_speed(job, speed);
+	gebr_job_set_submit_date(job, submit_date);
+	gebr_job_set_title(job, gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.flow)));
+	gebr_job_set_nice(job, nice);
+	gebr_job_set_server_group(job, name);
+	gebr_job_set_server_group_type(job, group_type);
+	
+	gebr_job_control_add(gebr.job_control, job);
+	gebr_job_control_select_job(gebr.job_control, job);
+	gebr_maestro_server_add_temporary_job(maestro, job);
+
+	gebr_interface_change_tab(NOTEBOOK_PAGE_JOB_CONTROL);
+	
+	g_free(name);
+	g_free(url);
+	g_free(xml);
+	g_free(speed_str);
 	g_free(nice);
-	g_free(group);
 }

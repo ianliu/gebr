@@ -187,17 +187,6 @@ void on_notebook_switch_page (GtkNotebook     *notebook,
 			      guint            page_num,
 			      gpointer         user_data);
 
-
-/* Function: on server_common_connect
- * Callback for popup menu action
- */
-void on_server_common_connect(void);
-
-/* Function: on_server_common_disconnect
- * Callback for popup menu action
- */
-void on_server_common_disconnect(void);
-
 /* Function: on_server_common_autoconnect_changed
  * Callback for popup menu action
  */

@@ -64,6 +64,7 @@ struct _GebrdJob {
 	gint effprocs;
 	gint niceness;
 
+	GString *gid;
 	GString *exec_speed;
 	GString *frac;
 	GString *server_list;
@@ -85,9 +86,16 @@ GebrdJob *job_find(GString * jid);
 
 /**
  */
-void job_new(GebrdJob ** _job, struct client * client, GString *queue, GString * account, GString * xml,
-	     GString * n_process, GString * run_id, GString *exec_speed, GString *niceness, GString *frac, GString *server_list,
-	     GString *server_group_name, GString *job_percentage);
+void job_new(GebrdJob **_job,
+	     struct client *client,
+	     GString *gid,
+	     GString *id,
+	     GString *frac,
+	     GString *speed,
+	     GString *nice,
+	     GString *flow_xml,
+	     GString *account,
+	     GString *num_processes);
 
 /**
  * gebrd_job_append:
@@ -104,11 +112,11 @@ void job_free(GebrdJob *job);
 
 /**
  */
-void job_status_set(GebrdJob *job, enum JobStatus status);
+void job_status_set(GebrdJob *job, GebrCommJobStatus status);
 /**
  * Change status and notify clients about it
  */
-void job_status_notify(GebrdJob *job, enum JobStatus status, const gchar *parameter, ...);
+void job_status_notify(GebrdJob *job, GebrCommJobStatus status, const gchar *parameter, ...);
 /**
  * Remember not to send any message to clients here as the job wasn't created
  */

@@ -1,19 +1,21 @@
-/*   GeBR - An environment for seismic processing.
- *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
+/*
+ * gebr-job-control.c
+ * This file is part of GêBR Project
  *
- *   This program is free software: you can redistribute it and/or
- *   modify it under the terms of the GNU General Public License as
- *   published by the Free Software Foundation, either version 3 of
- *   the License, or * (at your option) any later version.
+ * Copyright (C) 2011 - GêBR Core Team (www.gebrproject.com)
  *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *   General Public License for more details.
+ * GêBR Project is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
- *   You should have received a copy of the GNU General Public License
- *   along with this program. If not, see
- *   <http://www.gnu.org/licenses/>.
+ * GêBR Project is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with GêBR Project. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <string.h>
@@ -46,14 +48,14 @@ typedef struct {
 
 struct _GebrJobControlPriv {
 	GtkBuilder *builder;
-	GtkComboBox *group_combo;
+	GtkComboBox *maestro_combo;
 	GtkComboBox *server_combo;
 	GtkComboBox *status_combo;
 	GtkListStore *server_filter;
 	GtkListStore *status_model;
 	GtkListStore *store;
 	GtkTextBuffer *text_buffer;
-	GtkListStore *group_filter;
+	GtkListStore *maestro_filter;
 	GList *cmd_views;
 	GtkWidget *filter_info_bar;
 	GtkWidget *label;
@@ -124,7 +126,7 @@ static void on_toggled_more_details(GtkToggleButton *button,
 
 static void gebr_jc_update_status_and_time(GebrJobControl *jc,
                                            GebrJob 	  *job,
-                                           enum JobStatus status);
+                                           GebrCommJobStatus status);
 
 static void on_text_view_populate_popup(GtkTextView * text_view, GtkMenu * menu, GebrJobControl *jc);
 
@@ -139,13 +141,15 @@ static void gebr_job_control_info_set_visible(GebrJobControl *jc,
 					      gboolean visible,
 					      const gchar *txt);
 
+static void gebr_job_control_include_cmd_line(GebrJobControl *jc,
+                                              GebrJob *job);
 
 /* Private methods {{{1 */
 static void
 gebr_jc_get_jobs_state(GebrJobControl *jc,
-                        GList *jobs,
-                        gboolean *can_close,
-                        gboolean *can_kill)
+		       GList *jobs,
+		       gboolean *can_close,
+		       gboolean *can_kill)
 {
 	*can_close = FALSE;
 	*can_kill = FALSE;
@@ -220,7 +224,7 @@ static gboolean
 get_server_group_iter(GebrJobControl *jc, const gchar *group, GtkTreeIter *iter)
 {
 	GtkTreeIter i;
-	GtkTreeModel *model = GTK_TREE_MODEL(jc->priv->group_filter);
+	GtkTreeModel *model = GTK_TREE_MODEL(jc->priv->maestro_filter);
 	gchar *g;
 	gboolean valid = gtk_tree_model_get_iter_first(model, &i);
 
@@ -269,23 +273,23 @@ free_and_return:
 }
 
 static gboolean
-jobs_visible_for_group(GtkTreeModel *model,
-                       GtkTreeIter *iter,
-                       GebrJobControl *jc)
+jobs_visible_for_maestro(GtkTreeModel *model,
+			 GtkTreeIter *iter,
+			 GebrJobControl *jc)
 {
 	GtkTreeIter active;
 	gchar *combo_group;
 	gchar *combo_name;
 	gboolean visible = FALSE;
 
-	if (!gtk_combo_box_get_active_iter (jc->priv->group_combo, &active))
+	if (!gtk_combo_box_get_active_iter (jc->priv->maestro_combo, &active))
 		return TRUE;
 
-	gtk_tree_model_get(GTK_TREE_MODEL(jc->priv->group_filter), &active,
+	gtk_tree_model_get(GTK_TREE_MODEL(jc->priv->maestro_filter), &active,
 			   0, &combo_name,
 	                   1, &combo_group, -1);
 
-	gchar *tmp = gtk_tree_model_get_string_from_iter(GTK_TREE_MODEL(jc->priv->group_filter),
+	gchar *tmp = gtk_tree_model_get_string_from_iter(GTK_TREE_MODEL(jc->priv->maestro_filter),
 							 &active);
 	gint index = atoi(tmp);
 	g_free(tmp);
@@ -298,7 +302,7 @@ jobs_visible_for_group(GtkTreeModel *model,
 	if (index == 0) { // Any
 		jc->priv->use_filter_group = FALSE;
 		for (GList *i = labels; i; i = i->next)
-			if (g_str_has_prefix(gtk_label_get_text(i->data), "Group:"))
+			if (g_str_has_prefix(gtk_label_get_text(i->data), "Maestro:"))
 				gtk_widget_destroy(GTK_WIDGET(i->data));
 		g_list_free(box);
 		g_list_free(labels);
@@ -306,7 +310,7 @@ jobs_visible_for_group(GtkTreeModel *model,
 	}
 
 	if (!jc->priv->use_filter_group) {
-		gchar *text = g_markup_printf_escaped("<span size='x-small'>Group: %s</span>", combo_name);
+		gchar *text = g_markup_printf_escaped("<span size='x-small'>Maestro: %s</span>", combo_name);
 		GtkWidget *label = gtk_label_new(NULL);
 		gtk_label_set_markup(GTK_LABEL(label), text);
 		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
@@ -316,8 +320,8 @@ jobs_visible_for_group(GtkTreeModel *model,
 	} else {
 		for (GList *i = labels; i; i = i->next) {
 			const gchar *filter = gtk_label_get_text(i->data);
-			if (g_str_has_prefix(filter, "Group:")) {
-				gchar *new_text = g_markup_printf_escaped("<span size='x-small'>Group: %s</span>", combo_name);
+			if (g_str_has_prefix(filter, "Maestro:")) {
+				gchar *new_text = g_markup_printf_escaped("<span size='x-small'>Maestro: %s</span>", combo_name);
 				gtk_label_set_markup(i->data, new_text);
 				g_free(new_text);
 			}
@@ -329,16 +333,16 @@ jobs_visible_for_group(GtkTreeModel *model,
 	g_free(combo_name);
 
 	GebrJob *job;
-	const gchar *group;
+	const gchar *maddr;
 
 	gtk_tree_model_get(model, iter, JC_STRUCT, &job, -1);
 
 	if (!job)
 		return FALSE;
 
-	group = gebr_job_get_server_group(job);
+	maddr = gebr_job_get_maestro_address(job);
 
-	if (!g_strcmp0(combo_group, group))
+	if (!g_strcmp0(combo_group, maddr))
 		visible = TRUE;
 
 	g_free(combo_group);
@@ -351,33 +355,39 @@ jobs_visible_for_servers(GtkTreeModel *model,
                          GtkTreeIter *iter,
                          GebrJobControl *jc)
 {
-	gboolean visible = FALSE;
 	GtkTreeIter active;
-	GebrServer *combo_server;
 
-	if (!gtk_combo_box_get_active_iter (jc->priv->server_combo, &active))
+	gchar *display;
+	GebrMaestroServerGroupType type;
+	gchar *name;
+
+	if (!gtk_combo_box_get_active_iter(jc->priv->server_combo, &active))
 		return TRUE;
 
 	gtk_tree_model_get(GTK_TREE_MODEL(jc->priv->server_filter), &active,
-	                   1, &combo_server, -1);
+			   0, &display,
+	                   1, &type,
+			   2, &name,
+			   -1);
 
 	GtkWidget *content = gtk_info_bar_get_content_area(GTK_INFO_BAR(jc->priv->filter_info_bar));
 	GList *box = gtk_container_get_children(GTK_CONTAINER(content));
 	GList *labels = gtk_container_get_children(GTK_CONTAINER(box->data));
 	labels = labels->next;
 
-	if (!combo_server) {
+	if (!name) {
 		jc->priv->use_filter_servers = FALSE;
 		for (GList *i = labels; i; i = i->next)
-			if (g_str_has_prefix(gtk_label_get_text(i->data), "Server:"))
+			if (g_str_has_prefix(gtk_label_get_text(i->data), "Group/Server:"))
 				gtk_widget_destroy(GTK_WIDGET(i->data));
 		g_list_free(box);
 		g_list_free(labels);
 		return TRUE;
 	}
 
+
 	if (!jc->priv->use_filter_servers) {
-		gchar *text = g_markup_printf_escaped("<span size='x-small'>Server: %s</span>", combo_server->comm->address->str);
+		gchar *text = g_markup_printf_escaped("<span size='x-small'>Group/Server: %s</span>", display);
 		GtkWidget *label = gtk_label_new(NULL);
 		gtk_label_set_markup(GTK_LABEL(label), text);
 		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
@@ -387,8 +397,8 @@ jobs_visible_for_servers(GtkTreeModel *model,
 	} else {
 		for (GList *i = labels; i; i = i->next) {
 			const gchar *filter = gtk_label_get_text(i->data);
-			if (g_str_has_prefix(filter, "Server:")) {
-				gchar *new_text = g_markup_printf_escaped("<span size='x-small'>Server: %s</span>", combo_server->comm->address->str);
+			if (g_str_has_prefix(filter, "Group/")) {
+				gchar *new_text = g_markup_printf_escaped("<span size='x-small'>Group/Server: %s</span>", display);
 				gtk_label_set_markup(i->data, new_text);
 				g_free(new_text);
 			}
@@ -396,27 +406,31 @@ jobs_visible_for_servers(GtkTreeModel *model,
 	}
 	g_list_free(box);
 	g_list_free(labels);
-
 	GebrJob *job;
-	gchar **servers;
-	gint n_servers;
 
 	gtk_tree_model_get(model, iter, JC_STRUCT, &job, -1);
 
 	if (!job)
 		return FALSE;
 
-	servers = gebr_job_get_servers(job, &n_servers);
+	const gchar *type_str = gebr_job_get_server_group_type(job);
+	const gchar *tname = gebr_job_get_server_group(job);
+	GebrMaestroServerGroupType ttype = gebr_maestro_server_group_str_to_enum(type_str);
 
-	if (!servers)
-		return FALSE;
+	if (type == MAESTRO_SERVER_TYPE_DAEMON) {
+		gboolean has_server = FALSE;
+		gint n;
+		gchar **servers = gebr_job_get_servers(job, &n);
 
-	for (gint i = 0; i < n_servers; i++) {
-		if (!g_strcmp0(servers[i], combo_server->comm->address->str))
-			visible = TRUE;
+		for (int i = 0; i < n; i++)
+			if (g_strcmp0(servers[i], name) == 0)
+				has_server = TRUE;
+
+		g_strfreev(servers);
+		return has_server;
 	}
 
-	return visible;
+	return type == ttype && g_strcmp0(tname, name) == 0;
 }
 
 static gboolean
@@ -425,7 +439,7 @@ jobs_visible_for_status(GtkTreeModel *model,
                         GebrJobControl *jc)
 {
 	GtkTreeIter active;
-	enum JobStatus combo_status;
+	GebrCommJobStatus combo_status;
 	gchar *combo_text;
 
 	if (!gtk_combo_box_get_active_iter (jc->priv->status_combo, &active))
@@ -479,7 +493,7 @@ jobs_visible_for_status(GtkTreeModel *model,
 	if (!job)
 		return FALSE;
 
-	enum JobStatus status = gebr_job_get_status(job);
+	GebrCommJobStatus status = gebr_job_get_status(job);
 	gboolean visible = FALSE;
 
 	if (status == combo_status)
@@ -503,7 +517,7 @@ jobs_visible_func(GtkTreeModel *model,
 	if (!jobs_visible_for_servers(model, iter, jc))
 		visible = FALSE;
 
-	if (!jobs_visible_for_group(model, iter, jc))
+	if (!jobs_visible_for_maestro(model, iter, jc))
 		visible = FALSE;
 
 	return visible;
@@ -525,43 +539,6 @@ on_cb_changed(GtkComboBox *combo,
 		gtk_widget_show_all(jc->priv->filter_info_bar);
 
 	on_select_non_single_job(jc, NULL);
-}
-
-static void
-build_servers_filter_list(GebrJobControl *jc)
-{
-	GtkTreeIter iter;
-	GtkTreeModel *model = GTK_TREE_MODEL(gebr.ui_server_list->common.store);
-
-	gtk_list_store_clear(jc->priv->server_filter);
-
-	GtkTreeIter it;
-	gtk_list_store_append(jc->priv->server_filter, &it);
-	gtk_list_store_set(jc->priv->server_filter, &it, 0, _("Any"), -1);
-
-	gebr_gui_gtk_tree_model_foreach(iter, model) {
-		gboolean is_autochoose;
-		GebrServer *server;
-
-		gtk_tree_model_get(model, &iter,
-				   SERVER_IS_AUTO_CHOOSE, &is_autochoose,
-				   SERVER_POINTER, &server,
-				   -1);
-
-		if (is_autochoose || !server || !server->comm)
-			continue;
-
-		if (!gebr_comm_server_is_logged(server->comm))
-			continue;
-
-		gtk_list_store_append(jc->priv->server_filter, &it);
-		gtk_list_store_set(jc->priv->server_filter, &it,
-				   0, server->comm->address->str,
-				   1, server,
-				   -1);
-	}
-
-	gtk_combo_box_set_active(jc->priv->server_combo, 0);
 }
 
 static const gchar *
@@ -627,7 +604,7 @@ on_job_wait_button(GtkButton *button,
 
 static void
 on_job_output(GebrJob *job,
-	      GebrTask *task,
+	      gint frac,
 	      const gchar *output,
 	      GebrJobControl *jc)
 {
@@ -642,12 +619,16 @@ on_job_output(GebrJob *job,
 
 static void
 on_job_status(GebrJob *job,
-	      enum JobStatus old_status,
-	      enum JobStatus new_status,
+	      GebrCommJobStatus old_status,
+	      GebrCommJobStatus new_status,
 	      const gchar *parameter,
 	      GebrJobControl *jc)
 {
-	gebr_job_control_load_details(jc, job);
+	gebr_jc_update_status_and_time(jc, job, new_status);
+
+	GtkTreeIter *iter = gebr_job_get_iter(job);
+	GtkTreePath *path = gtk_tree_model_get_path(GTK_TREE_MODEL(jc->priv->store), iter);
+	gtk_tree_model_row_changed(GTK_TREE_MODEL(jc->priv->store), path, iter);
 }
 
 static void
@@ -656,6 +637,15 @@ on_job_issued(GebrJob *job,
 	      GebrJobControl *jc)
 {
 	fill_issues_properties(jc, issues, job);
+}
+
+static void
+on_job_cmd_line(GebrJob *job,
+                gint frac,
+                const gchar *cmd,
+                GebrJobControl *jc)
+{
+	gebr_job_control_include_cmd_line(jc, job);
 }
 
 static void
@@ -686,8 +676,11 @@ on_pie_tooltip(GebrGuiPie *pie,
 		return FALSE;
 
 	const gchar *server;
+
+	GebrJob *job = get_selected_job(jc);
+
 	if (!g_strcmp0(jc->priv->servers_info.servers[i], "127.0.0.1"))
-		server = server_get_name_from_address(jc->priv->servers_info.servers[i]);
+		server = gebr_job_get_maestro_address(job);
 	else
 		server = jc->priv->servers_info.servers[i];
 
@@ -716,31 +709,40 @@ job_control_fill_servers_info(GebrJobControl *jc)
 	GebrJob *job = get_selected_job(jc);
 	GString *resources = g_string_new(NULL);
 	GtkLabel *res_label = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "resources_text"));
-	gchar *nprocs, *niceness;
+	const gchar *nprocs;
+	const gchar *niceness;
 	gint n_servers, i;
 	gchar **servers;
+
+	if (!job)
+		return;
 
 	servers = gebr_job_get_servers(job, &n_servers);
 
 	gebr_job_get_resources(job, &nprocs, &niceness);
 
+	const gchar *maddr = gebr_job_get_maestro_address(job);
 	if (!nprocs || !niceness)
 		g_string_printf(resources, _("Waiting for server(s) details"));
 	else {
+		const gchar *type_str = gebr_job_get_server_group_type(job);
 		const gchar *groups = gebr_job_get_server_group(job);
+		GebrMaestroServerGroupType type = gebr_maestro_server_group_str_to_enum(type_str);
+
+		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_address(gebr.maestro_controller, maddr);
+
 		gchar *markup;
 
-		if (g_strcmp0(groups, "") == 0)
-			groups = _("All Servers");
+		if (type == MAESTRO_SERVER_TYPE_GROUP)
+			if (g_strcmp0(groups, "") == 0)
+				groups = g_strdup_printf(_("%s"), gebr_maestro_server_get_display_address(maestro));
 
-		markup = g_markup_printf_escaped (_("Job submitted by <b>%s</b> to group <b>%s</b>.\n"
+		markup = g_markup_printf_escaped (_("Job submitted by <b>%s</b> to Maestro <b>%s</b>,\nto be executed on %s <b>%s</b>.\n"
 						  "Executed using %s<b>%s</b> processor(s)\ndistributed on <b>%d</b> servers.\n"),
-						  gebr_job_get_hostname(job), groups,
+						  gebr_job_get_hostname(job), gebr_job_get_maestro_address(job),
+						  type == MAESTRO_SERVER_TYPE_DAEMON? "server" : "group", groups,
 						  g_strcmp0(niceness, "0")? _("idle time of ") : "", nprocs, n_servers);
 		g_string_append(resources, markup);
-
-		g_free(nprocs);
-		g_free(niceness);
 		g_free(markup);
 	}
 	gtk_label_set_markup (res_label, resources->str);
@@ -773,21 +775,19 @@ job_control_fill_servers_info(GebrJobControl *jc)
 	gtk_box_pack_start(pie_box, piechart, TRUE, FALSE, 0);
 	gtk_widget_show_all(piechart);
 
-	for (i = 0; servers[i]; i++) {
-		GebrTask *task = gebr_job_get_task_from_server(job, servers[i]);
-		if (task) {
-			gdouble percentage = gebr_task_get_percentage(task);
-			values[i] = (guint)(percentage * 1000);
-			jc->priv->servers_info.percentages[i] = percentage;
-		}
-	}
+	gint len;
+	gdouble *percs = gebr_job_get_percentages(job, &len);
+	jc->priv->servers_info.percentages = percs;
+	for (i = 0; i < len; i++)
+		values[i] = (guint)(percs[i] * 1000);
+
 	gebr_gui_pie_set_data(GEBR_GUI_PIE(piechart), values, n_servers);
 	g_free(values);
 
 	for (i = 0; servers[i]; i++) {
 		const gchar *server;
 		if (!g_strcmp0(servers[i], "127.0.0.1"))
-			 server = server_get_name_from_address(servers[i]);
+			 server = maddr; 
 		else
 			server = servers[i];
 
@@ -819,6 +819,8 @@ job_control_disconnect_signals(GebrJobControl *jc)
 		                            jc->priv->last_selection.sig_status);
 		g_signal_handler_disconnect(jc->priv->last_selection.job,
 		                            jc->priv->last_selection.sig_issued);
+		g_signal_handler_disconnect(jc->priv->last_selection.job,
+		                            jc->priv->last_selection.sig_cmd_line);
 	}
 }
 
@@ -864,6 +866,8 @@ job_control_on_cursor_changed(GtkTreeSelection *selection,
 				g_signal_connect(job, "status-change", G_CALLBACK(on_job_status), jc);
 		jc->priv->last_selection.sig_issued =
 				g_signal_connect(job, "issued", G_CALLBACK(on_job_issued), jc);
+		jc->priv->last_selection.sig_cmd_line =
+				g_signal_connect(job, "cmd-line-received", G_CALLBACK(on_job_cmd_line), jc);
 
 		gebr_job_control_load_details(jc, job);
 	}
@@ -994,9 +998,10 @@ time_column_data_func(GtkTreeViewColumn *tree_column,
 }
 
 static void
-gebr_jc_update_status_and_time(GebrJobControl *jc,
-                               GebrJob 	      *job,
-                               enum JobStatus status)
+compute_subheader_label(GebrJob *job,
+			GebrCommJobStatus status,
+			gchar **subheader,
+			gchar **start_detail)
 {
 	const gchar *start_date = gebr_job_get_start_date(job);
 	const gchar *finish_date = gebr_job_get_finish_date(job);
@@ -1005,82 +1010,123 @@ gebr_jc_update_status_and_time(GebrJobControl *jc,
 
 	/* start date (may have failed, never started) */
 	if (start_date && strlen(start_date))
-		g_string_append_printf(start, "%s %s", _("Started at"),
-		                       gebr_localized_date(start_date));
+		g_string_append_printf(start, "Started at %s", gebr_localized_date(start_date));
 
 	/* finish date */
-	if (finish_date && strlen(finish_date))
-		g_string_append_printf(finish, "%s %s", status == JOB_STATUS_FINISHED ?
-				       _("Finished at") : _("Canceled at"),
-				       gebr_localized_date(finish_date));
+	if (finish_date && strlen(finish_date)) {
+		const gchar *tmp = gebr_localized_date(finish_date);
+		if (status == JOB_STATUS_FINISHED)
+			g_string_append_printf(finish, _("Finished at %s"), tmp);
+		else
+			g_string_append_printf(finish, _("Canceled at %s"), tmp);
+	}
 
+	if (status == JOB_STATUS_FINISHED) {
+		g_string_append_c(finish, '\n');
+		g_string_append_printf(finish, _("Elapsed time: %s"),
+				       gebr_job_get_elapsed_time(job));
+		*subheader = g_string_free(finish, FALSE);
+		*start_detail = g_string_free(start, FALSE);
+		return;
+	}
+
+	if (status == JOB_STATUS_RUNNING) {
+		g_string_append_c(start, '\n');
+		g_string_append_printf(start, _("Elapsed time: %s"),
+				       gebr_job_get_running_time(job, start_date));
+		*subheader = g_string_free(start, FALSE);
+		*start_detail = NULL;
+		g_string_free(finish, TRUE);
+		return;
+	}
+
+	if (status == JOB_STATUS_CANCELED) {
+		*subheader = g_string_free(finish, FALSE);
+		*start_detail = g_string_free(start, FALSE);
+		return;
+	}
+
+	if (status == JOB_STATUS_FAILED) {
+		*subheader = g_strdup(_("Job failed"));
+		*start_detail = g_string_free(start, FALSE);
+		g_string_free(finish, TRUE);
+		return;
+	}
+
+	if (status == JOB_STATUS_QUEUED) {
+		*subheader = _("Waiting for job");
+		*start_detail = NULL;
+		g_string_free(start, TRUE);
+		g_string_free(finish, TRUE);
+		return;
+	}
+
+	if (status == JOB_STATUS_INITIAL) {
+		*subheader = _("Waiting for servers");
+		*start_detail = NULL;
+		g_string_free(start, TRUE);
+		g_string_free(finish, TRUE);
+		return;
+	}
+
+	*subheader = NULL;
+	*start_detail = NULL;
+	g_string_free(start, TRUE);
+	g_string_free(finish, TRUE);
+	return;
+}
+
+static void
+gebr_jc_update_status_and_time(GebrJobControl *jc,
+                               GebrJob 	      *job,
+                               GebrCommJobStatus status)
+{
+	gchar *subheader_str, *start_detail_str;
 	GtkImage *img = GTK_IMAGE(gtk_builder_get_object(jc->priv->builder, "status_image"));
 	GtkLabel *subheader = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "subheader_label"));
 	GtkButton *queued_button = GTK_BUTTON(gtk_builder_get_object(jc->priv->builder, "subheader_button"));
 	GtkLabel *details_start_date = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "detail_start_date"));
 	gtk_widget_hide(GTK_WIDGET(queued_button));
 
-	job_control_fill_servers_info(jc);
+	compute_subheader_label(job, status, &subheader_str, &start_detail_str);
 
-	if (status == JOB_STATUS_FINISHED) {
-		gchar *elapsed_time = g_strdup_printf(_("%s\nElapsed time: %s"), finish->str, gebr_job_get_elapsed_time(job));
-		gtk_image_set_from_stock(img, GTK_STOCK_APPLY, GTK_ICON_SIZE_DIALOG);
-		gtk_label_set_text(subheader, elapsed_time);
-		gtk_label_set_text(details_start_date, start->str);
+	if (subheader_str) {
+		gtk_label_set_text(subheader, subheader_str);
+		gtk_widget_show(GTK_WIDGET(subheader));
+	} else
+		gtk_widget_hide(GTK_WIDGET(subheader));
+
+	if (start_detail_str) {
+		gtk_label_set_text(details_start_date, start_detail_str);
 		gtk_widget_show(GTK_WIDGET(details_start_date));
-		g_free(elapsed_time);
-	}
-
-	else if (status == JOB_STATUS_RUNNING) {
-		gchar *running = g_strdup_printf(_("%s\nElapsed time: %s"), start->str, gebr_job_get_running_time(job, start_date));
-		gtk_image_set_from_stock(img, GTK_STOCK_EXECUTE, GTK_ICON_SIZE_DIALOG);
-		gtk_label_set_text(subheader, running);
+	} else
 		gtk_widget_hide(GTK_WIDGET(details_start_date));
-		g_free(running);
-	}
 
-	else if (status == JOB_STATUS_CANCELED) {
+	if (status == JOB_STATUS_FINISHED)
+		gtk_image_set_from_stock(img, GTK_STOCK_APPLY, GTK_ICON_SIZE_DIALOG);
+	else if (status == JOB_STATUS_INITIAL)
+		gtk_image_set_from_stock(img, GTK_STOCK_NETWORK, GTK_ICON_SIZE_DIALOG);
+	else if (status == JOB_STATUS_RUNNING)
+		gtk_image_set_from_stock(img, GTK_STOCK_EXECUTE, GTK_ICON_SIZE_DIALOG);
+	else if (status == JOB_STATUS_CANCELED)
 		gtk_image_set_from_stock(img, GTK_STOCK_CANCEL, GTK_ICON_SIZE_DIALOG);
-		gtk_label_set_text(subheader, finish->str);
-		gtk_label_set_text(details_start_date, start->str);
-	}
-
-	else if (status == JOB_STATUS_FAILED) {
+	else if (status == JOB_STATUS_FAILED)
 		gtk_image_set_from_stock(img, GTK_STOCK_CANCEL, GTK_ICON_SIZE_DIALOG);
-		gtk_label_set_text(subheader, _("Job failed"));
-		gtk_label_set_text(details_start_date, start->str);
-	}
-
 	else if (status == JOB_STATUS_QUEUED) {
 		GebrJob *parent;
 		GtkImage *wait_img = GTK_IMAGE(gtk_builder_get_object(jc->priv->builder, "subheader_button_img"));
 		GtkLabel *wait_label = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "subheader_button_lbl"));
 
 		parent = gebr_job_control_find(jc, gebr_job_get_queue(job));
-
 		if (parent) {
 			gtk_image_set_from_stock(img, "chronometer", GTK_ICON_SIZE_DIALOG);
-			gtk_label_set_text(subheader, _("Waiting for job"));
-
 			gtk_image_set_from_stock(wait_img, job_control_get_icon_for_job(parent), GTK_ICON_SIZE_BUTTON);
 			gtk_label_set_text(wait_label, gebr_job_get_title(parent));
-
 			gtk_widget_show(GTK_WIDGET(queued_button));
 		}
 	}
-	else if (status == JOB_STATUS_INITIAL) {
-		gchar *remainings = gebr_job_get_remaining_servers(job);
-		gchar *wait_text = g_strdup_printf(_("Waiting for servers: %s"), remainings? remainings : "");
-		gtk_image_set_from_stock(img, GTK_STOCK_NETWORK, GTK_ICON_SIZE_DIALOG);
-		gtk_label_set_text(subheader, wait_text);
-		gtk_widget_hide(GTK_WIDGET(details_start_date));
-		if (remainings)
-			g_free(remainings);
-		g_free(wait_text);
-	}
 
-	g_string_free(start, FALSE);
-	g_string_free(finish, FALSE);
+	update_control_buttons(jc, gebr_job_can_close(job), gebr_job_can_kill(job), TRUE);
 }
 
 static void
@@ -1101,20 +1147,22 @@ gebr_job_control_include_cmd_line(GebrJobControl *jc,
 	g_list_free(jc->priv->cmd_views);
 	jc->priv->cmd_views = NULL;
 
-	GList *tasks = gebr_job_get_list_of_tasks(job);
-	if (!tasks)
+	gint total;
+	GebrJobTask *job_tasks = gebr_job_get_tasks(job, &total);
+	if (!job_tasks)
 		return;
 
-	if (g_list_length(tasks) > 1) {
+	if (total > 1) {
 		GtkWidget *vbox = gtk_vbox_new(FALSE, 8);
 
-		for (GList *i = tasks; i; i = i->next) {
-			GebrTask *task = i->data;
+		for (int i = 0; i < total; i++) {
+			GebrJobTask *task = job_tasks + i;
 
-			gint frac, total;
-			gebr_task_get_fraction(task, &frac, &total);
+			if (!task->cmd_line)
+				continue;
+
 			gchar *title = g_strdup_printf(_("Command line for task %d of %d (Server: %s)"),
-						       frac, total, gebr_task_get_server(task)->comm->address->str);
+						       task->frac, total, task->server);
 			GtkWidget *expander = gtk_expander_new(title);
 			gtk_expander_set_expanded(GTK_EXPANDER(expander), FALSE);
 			g_free(title);
@@ -1125,7 +1173,7 @@ gebr_job_control_include_cmd_line(GebrJobControl *jc,
 			g_object_set(view, "editable", FALSE, NULL);
 			jc->priv->cmd_views = g_list_prepend(jc->priv->cmd_views, view);
 			buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(view));
-			gtk_text_buffer_set_text(buffer, gebr_task_get_cmd_line(task), -1);
+			gtk_text_buffer_set_text(buffer, task->cmd_line, -1);
 
 			g_signal_connect(view, "populate-popup",
 					 G_CALLBACK(on_text_view_populate_popup), jc);
@@ -1136,14 +1184,14 @@ gebr_job_control_include_cmd_line(GebrJobControl *jc,
 
 		gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scroll), vbox);
 		gtk_widget_show_all(vbox);
-	} else {
+	} else if (job_tasks->cmd_line){
 		GtkWidget *view = gtk_text_view_new();
 		gtk_widget_modify_font(view, font);
 		g_object_set(view, "wrap-mode", wrapmode, NULL);
 		g_object_set(view, "editable", FALSE, NULL);
 		jc->priv->cmd_views = g_list_prepend(jc->priv->cmd_views, view);
 		buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(view));
-		gtk_text_buffer_set_text(buffer, gebr_task_get_cmd_line(tasks->data), -1);
+		gtk_text_buffer_set_text(buffer, job_tasks->cmd_line, -1);
 
 		g_signal_connect(view, "populate-popup",
 				 G_CALLBACK(on_text_view_populate_popup), jc);
@@ -1166,7 +1214,7 @@ gebr_job_control_load_details(GebrJobControl *jc,
 	GtkImage *info_button_image;
 	GtkLabel *input_file, *output_file, *log_file, *job_group;
 	gchar *input_file_str, *output_file_str, *log_file_str;
-	enum JobStatus status = gebr_job_get_status(job);
+	GebrCommJobStatus status = gebr_job_get_status(job);
 
 	input_file = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "input_label"));
 	output_file = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "output_label"));
@@ -1175,25 +1223,54 @@ gebr_job_control_load_details(GebrJobControl *jc,
 	info_button_image = GTK_IMAGE(gtk_bin_get_child(GTK_BIN(jc->priv->info_button)));
 
 	gebr_job_get_io(job, &input_file_str, &output_file_str, &log_file_str);
-	update_control_buttons(jc, gebr_job_can_close(job), gebr_job_can_kill(job), TRUE);
 
 	gchar *markup;
+	gchar *result;
 
 	markup = g_markup_printf_escaped (_("<b>Input file</b>: %s"), input_file_str ? input_file_str : _("None"));
-	gtk_label_set_markup (input_file, markup);
+	gtk_label_set_markup(input_file, markup);
 	g_free(markup);
+
+	if (gebr_validator_evaluate(gebr.validator, input_file_str,
+				    GEBR_GEOXML_PARAMETER_TYPE_STRING,
+				    GEBR_GEOXML_DOCUMENT_TYPE_FLOW, &result, NULL)) {
+		gtk_widget_set_tooltip_text(GTK_WIDGET(input_file), result);
+		g_free(result);
+	}
 
 	markup = g_markup_printf_escaped (_("<b>Output file</b>: %s"), output_file_str ? output_file_str : _("None"));
 	gtk_label_set_markup (output_file, markup);
 	g_free(markup);
 
+	if (gebr_validator_evaluate(gebr.validator, output_file_str,
+				    GEBR_GEOXML_PARAMETER_TYPE_STRING,
+				    GEBR_GEOXML_DOCUMENT_TYPE_FLOW, &result, NULL)) {
+		gtk_widget_set_tooltip_text(GTK_WIDGET(output_file), result);
+		g_free(result);
+	}
+
 	markup = g_markup_printf_escaped (_("<b>Log File</b>: %s"), log_file_str ? log_file_str : _("None"));
 	gtk_label_set_markup (log_file, markup);
 	g_free(markup);
 
+	if (gebr_validator_evaluate(gebr.validator, log_file_str,
+				    GEBR_GEOXML_PARAMETER_TYPE_STRING,
+				    GEBR_GEOXML_DOCUMENT_TYPE_FLOW, &result, NULL)) {
+		gtk_widget_set_tooltip_text(GTK_WIDGET(log_file), result);
+		g_free(result);
+	}
+
 	gchar *msg = g_strdup(gebr_job_get_server_group(job));
+
+	const gchar *maddr = gebr_job_get_maestro_address(job);
+	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_address(gebr.maestro_controller, maddr);
+
 	if (!g_strcmp0(msg, ""))
-		msg = g_strdup(_("All servers"));
+		msg = g_strdup_printf("%s", gebr_maestro_server_get_display_address(maestro));
+	if (!g_strcmp0(msg, "127.0.0.1"))
+		msg = g_strdup(maddr); 
+
+
 	gtk_label_set_markup (job_group, msg);
 
 	switch (gebr_job_get_exec_speed(job))
@@ -1217,9 +1294,7 @@ gebr_job_control_load_details(GebrJobControl *jc,
 		g_warn_if_reached();
 	}
 
-	g_object_set(info_button_image, "has-tooltip",TRUE, NULL);
-	g_signal_connect(info_button_image, "query-tooltip", G_CALLBACK(detail_button_query_tooltip), jc);
-
+	job_control_fill_servers_info(jc);
 	gebr_jc_update_status_and_time(jc, job, status);
 
 	GtkLabel *label = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "header_label"));
@@ -1261,11 +1336,9 @@ update_tree_view(gpointer data)
 	}
 
 	GebrJob *job = get_selected_job(jc);
-	if (job) {
-		enum JobStatus status = gebr_job_get_status(job);
-		if (status == JOB_STATUS_RUNNING)
-			gebr_jc_update_status_and_time(jc, job, status);
-	}
+	if (job && gebr_job_get_status(job) == JOB_STATUS_RUNNING)
+		gebr_jc_update_status_and_time(jc, job, JOB_STATUS_RUNNING);
+
 	return TRUE;
 }
 
@@ -1438,15 +1511,6 @@ on_filter_show_unselect_jobs(GtkToggleButton *button,
 }
 
 static void
-on_row_changed_model(GtkTreeModel *tree_model,
-                     GtkTreePath  *path,
-                     GtkTreeIter  *iter,
-                     GebrJobControl *jc)
-{
-	build_servers_filter_list(jc);
-}
-
-static void
 on_reset_filter(GtkButton  *button,
                 gpointer    user_data)
 {
@@ -1456,11 +1520,127 @@ on_reset_filter(GtkButton  *button,
 
 	gtk_combo_box_set_active(jc->priv->status_combo, 0);
 	gtk_combo_box_set_active(jc->priv->server_combo, 0);
-	gtk_combo_box_set_active(jc->priv->group_combo, 0);
+	gtk_combo_box_set_active(jc->priv->maestro_combo, 0);
 
 	gtk_widget_hide(GTK_WIDGET(jc->priv->filter_info_bar));
 
 	job_control_on_cursor_changed(selection, jc);
+}
+
+static void
+on_job_define(GebrMaestroController *mc,
+	      GebrMaestroServer *maestro,
+	      GebrJob *job,
+	      GebrJobControl *jc)
+{
+	gebr_job_control_add(jc, job);
+}
+
+static void
+on_maestro_filter_changed(GtkComboBox *combo,
+			  GebrJobControl *jc)
+{
+	GtkTreeIter iter, it;
+
+	gtk_list_store_clear(jc->priv->server_filter);
+	gtk_list_store_append(jc->priv->server_filter, &iter);
+	gtk_list_store_set(jc->priv->server_filter, &iter,
+			   0, _("Any"),// Display name
+			   1, -1,      // Type
+			   2, NULL,    // Name
+			   -1);
+
+	GebrMaestroServer *maestro;
+	maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+
+	if (!maestro)
+		return;
+
+	GtkTreeModel *groups = gebr_maestro_server_get_groups_model(maestro);
+
+	gebr_gui_gtk_tree_model_foreach(it, groups) {
+		gchar *name;
+		const gchar *display;
+		GebrMaestroServerGroupType type;
+
+		gtk_tree_model_get(groups, &it,
+				   MAESTRO_SERVER_TYPE, &type,
+				   MAESTRO_SERVER_NAME, &name,
+				   -1);
+
+		if (!*name)
+			display = gebr_maestro_server_get_display_address(maestro);
+		else
+			display = name;
+
+		gtk_list_store_append(jc->priv->server_filter, &iter);
+		gtk_list_store_set(jc->priv->server_filter, &iter,
+				   0, display,
+				   1, type,
+				   2, name);
+	}
+
+	gtk_combo_box_set_active(jc->priv->server_combo, 0);
+	on_cb_changed(combo, jc);
+}
+
+static void
+on_maestro_list_changed(GebrMaestroController *mc,
+			GebrJobControl *jc)
+{
+	GtkTreeIter iter;
+
+	gtk_list_store_clear(jc->priv->maestro_filter);
+
+	gtk_list_store_append(jc->priv->maestro_filter, &iter);
+	gtk_list_store_set(jc->priv->maestro_filter, &iter, 0, _("Any"), -1);
+
+	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(mc);
+	gtk_list_store_append(jc->priv->maestro_filter, &iter);
+	gtk_list_store_set(jc->priv->maestro_filter, &iter,
+			   0, gebr_maestro_server_get_display_address(maestro),
+			   1, gebr_maestro_server_get_address(maestro),
+			   -1);
+
+	gtk_combo_box_set_active(jc->priv->maestro_combo, 0);
+}
+
+static void
+on_group_changed(GebrMaestroController *mc,
+                 GebrMaestroServer *maestro,
+                 GebrJobControl *jc)
+{
+	on_maestro_filter_changed(jc->priv->maestro_combo, jc);
+}
+
+static void
+clear_jobs_for_maestro(GebrJobControl *jc,
+		       GebrMaestroServer *maestro)
+{
+	GtkTreeIter iter;
+	GtkTreeModel *model = GTK_TREE_MODEL(jc->priv->store);
+	const gchar *addr1 = gebr_maestro_server_get_address(maestro);
+	const gchar *addr2;
+
+	gebr_job_control_select_job(jc, NULL);
+
+	gebr_gui_gtk_tree_model_foreach(iter, model) {
+		GebrJob *job;
+		gtk_tree_model_get(model, &iter, 0, &job, -1);
+		addr2 = gebr_job_get_maestro_address(job);
+
+		if (g_strcmp0(addr1, addr2) == 0)
+			gebr_job_control_remove(jc, job);
+	}
+}
+
+static void
+on_maestro_state_changed(GebrMaestroController *mc,
+			 GebrMaestroServer *maestro,
+			 GebrJobControl *jc)
+{
+	if (gebr_maestro_server_get_state(maestro) == SERVER_STATE_DISCONNECTED)
+		clear_jobs_for_maestro(jc, maestro);
 }
 
 /* Public methods {{{1 */
@@ -1474,6 +1654,13 @@ gebr_job_control_new(void)
 
 	jc = g_new(GebrJobControl, 1);
 	jc->priv = g_new0(GebrJobControlPriv, 1);
+
+	g_signal_connect(gebr.maestro_controller, "job-define",
+	                 G_CALLBACK(on_job_define), jc);
+	g_signal_connect(gebr.maestro_controller, "group-changed",
+	                 G_CALLBACK(on_group_changed), jc);
+	g_signal_connect(gebr.maestro_controller, "maestro-state-changed",
+			 G_CALLBACK(on_maestro_state_changed), jc);
 
 	jc->priv->builder = gtk_builder_new();
 	gtk_builder_add_from_file(jc->priv->builder, GEBR_GLADE_DIR"/gebr-job-control.glade", NULL);
@@ -1557,11 +1744,14 @@ gebr_job_control_new(void)
 
 	GtkCellRenderer *cell;
 
-	GtkComboBox *group_cb = GTK_COMBO_BOX(gtk_builder_get_object(jc->priv->builder, "filter-servers-group-cb"));
+	GtkLabel *label = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "label5"));
+	gtk_widget_hide(GTK_WIDGET(label));
+	GtkComboBox *maestro_cb = GTK_COMBO_BOX(gtk_builder_get_object(jc->priv->builder, "filter-servers-group-cb"));
 	cell = gtk_cell_renderer_text_new();
-	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(group_cb), cell, TRUE);
-	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(group_cb), cell, "text", 0);
-	jc->priv->group_combo = group_cb;
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(maestro_cb), cell, TRUE);
+	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(maestro_cb), cell, "text", 0);
+	jc->priv->maestro_combo = maestro_cb;
+	gtk_widget_hide(GTK_WIDGET(maestro_cb));
 
 	GtkComboBox *server_cb = GTK_COMBO_BOX(gtk_builder_get_object(jc->priv->builder, "filter-servers-cb"));
 	cell = gtk_cell_renderer_text_new();
@@ -1578,20 +1768,19 @@ gebr_job_control_new(void)
 	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(status_cb), cell, "text", ST_TEXT);
 	jc->priv->status_combo = status_cb;
 
+	g_signal_connect(gebr.maestro_controller, "maestro-list-changed",
+			 G_CALLBACK(on_maestro_list_changed), jc);
+
+	/* by Maestri */
+	jc->priv->maestro_filter = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
+	gtk_combo_box_set_model(maestro_cb, GTK_TREE_MODEL(jc->priv->maestro_filter));
+	//g_signal_connect(jc->priv->maestro_combo, "changed",
+	//		 G_CALLBACK(on_maestro_filter_changed), jc);
+
 	/* by Servers */
-	jc->priv->server_filter = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_POINTER);
+	jc->priv->server_filter = gtk_list_store_new(3, G_TYPE_STRING, G_TYPE_INT, G_TYPE_STRING);
 	gtk_combo_box_set_model(server_cb, GTK_TREE_MODEL(jc->priv->server_filter));
 	g_signal_connect(jc->priv->server_combo, "changed", G_CALLBACK(on_cb_changed), jc);
-	g_signal_connect(gebr.ui_server_list->common.store, "row-changed", G_CALLBACK(on_row_changed_model), jc);
-
-	/* by Group of servers */
-	jc->priv->group_filter = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
-	GtkTreeIter iter;
-	gtk_list_store_append(jc->priv->group_filter, &iter);
-	gtk_list_store_set(jc->priv->group_filter, &iter, 0, _("Any"), -1);
-	gtk_combo_box_set_model(group_cb, GTK_TREE_MODEL(jc->priv->group_filter));
-	g_signal_connect(jc->priv->group_combo, "changed", G_CALLBACK(on_cb_changed), jc);
-	gtk_combo_box_set_active(jc->priv->group_combo, 0);
 
 	/* by Status of job */
 	GtkListStore *store = gtk_list_store_new(ST_N_COLUMN,
@@ -1623,6 +1812,9 @@ gebr_job_control_new(void)
 	jc->priv->info_button = gebr_gui_tool_button_new();
 	gtk_button_set_relief(GTK_BUTTON(jc->priv->info_button), GTK_RELIEF_NONE);
 	gtk_container_add(GTK_CONTAINER(jc->priv->info_button), gtk_image_new());
+	g_object_set(jc->priv->info_button, "has-tooltip",TRUE, NULL);
+	g_signal_connect(jc->priv->info_button, "query-tooltip", G_CALLBACK(detail_button_query_tooltip), jc);
+
 	gtk_widget_show_all(jc->priv->info_button);
 	GtkBox *box = GTK_BOX(gtk_builder_get_object(jc->priv->builder, "info_box"));
 	GtkWidget *widget = GTK_WIDGET(gtk_builder_get_object(jc->priv->builder, "servers_widget"));
@@ -1688,28 +1880,18 @@ gebr_job_control_get_widget(GebrJobControl *jc)
 void
 gebr_job_control_add(GebrJobControl *jc, GebrJob *job)
 {
+	GebrJob *tmp = gebr_job_control_find(jc, gebr_job_get_id(job));
+	if (tmp) {
+		GtkTreePath *path = gtk_tree_model_get_path(GTK_TREE_MODEL(jc->priv->store), gebr_job_get_iter(tmp));
+		gtk_tree_model_row_changed(GTK_TREE_MODEL(jc->priv->store), path, gebr_job_get_iter(tmp));
+		gebr_job_control_load_details(jc, job);
+		gtk_tree_path_free(path);
+		return;
+	}
+
 	gtk_list_store_append(jc->priv->store, gebr_job_get_iter(job));
 	gtk_list_store_set(jc->priv->store, gebr_job_get_iter(job), JC_STRUCT, job, -1);
 	g_signal_connect(job, "disconnect", G_CALLBACK(on_job_disconnected), jc);
-
-	const gchar *group = gebr_job_get_server_group(job);
-	if (!group)
-		group = "";
-
-	if (!get_server_group_iter(jc, group, NULL)) {
-		GtkTreeIter iter;
-		const gchar *tmp;
-
-		if (g_strcmp0(group, "") == 0)
-			tmp  = _("All Servers");
-		else
-			tmp = group;
-
-		gtk_list_store_append(jc->priv->group_filter, &iter);
-		gtk_list_store_set(jc->priv->group_filter, &iter,
-				   0, tmp,
-				   1, group, -1);
-	}
 }
 
 GebrJob *
@@ -1797,7 +1979,7 @@ gebr_job_control_save_selected(GebrJobControl *jc)
 		/* Issues */
 		gchar *issues;
 		gchar *job_issue = gebr_job_get_issues(job);
-		issues = g_strdup_printf(_("\nIssues:\n%s"), strlen(job_issue)? job_issue : _("(None)\n"));
+		issues = g_strdup_printf(_("\nIssues:\n%s"), job_issue? job_issue : _("(None)\n"));
 		fputs(issues, fp);
 		g_free(issues);
 		g_free(job_issue);
@@ -1865,7 +2047,8 @@ gebr_job_control_stop_selected(GebrJobControl *jc)
 			asked = TRUE;
 		}
 
-		gchar *servers = g_strjoinv(", ", gebr_job_get_servers(job, NULL));
+		gint n;
+		gchar *servers = g_strjoinv(", ", gebr_job_get_servers(job, &n));
 
 		gebr_message(GEBR_LOG_INFO, TRUE, FALSE, _("Asking server to cancel Job."));
 		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Asking server(s) \"%s\" to cancel Job \"%s\"."),
@@ -1998,6 +2181,7 @@ detail_button_query_tooltip(GtkWidget  *widget,
 	gtk_tooltip_set_text (tooltip, text_tooltip);
 	return TRUE;
 }
+
 void
 gebr_job_control_remove(GebrJobControl *jc,
 			GebrJob *job)
@@ -2020,8 +2204,8 @@ gebr_job_control_remove(GebrJobControl *jc,
 	}
 
 	if (!has_group && get_server_group_iter(jc, group, &iter)) {
-		gtk_list_store_remove(jc->priv->group_filter, &iter);
-		gtk_combo_box_set_active(jc->priv->group_combo, 0);
+		gtk_list_store_remove(jc->priv->maestro_filter, &iter);
+		gtk_combo_box_set_active(jc->priv->maestro_combo, 0);
 	}
 	g_object_unref(job);
 }

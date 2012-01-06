@@ -42,13 +42,11 @@
 #include "gebr.h"
 #include "menu.h"
 #include "document.h"
-#include "server.h"
-#include "gebr-task.h"
 #include "callbacks.h"
 #include "ui_flow.h"
 #include "ui_document.h"
 #include "ui_flow_browse.h"
-#include "ui_flow_edition.h"
+#include "gebr-flow-edition.h"
 #include "ui_project_line.h"
 
 static void on_properties_response(gboolean accept)
@@ -63,7 +61,6 @@ void flow_new (void)
 
 	const gchar *line_title;
 
-	GebrServer *server;
 	GebrGeoXmlFlow *flow;
 	GebrGeoXmlLineFlow *line_flow;
 
@@ -78,16 +75,6 @@ void flow_new (void)
 	gebr_geoxml_document_set_author(GEBR_GEOXML_DOC(flow), gebr.config.username->str);
 	gebr_geoxml_document_set_email(GEBR_GEOXML_DOC(flow), gebr.config.email->str);
 
-	if (gtk_tree_model_get_iter_first (gebr.ui_project_line->servers_sort, &iter)) {
-		gboolean is_auto;
-		gtk_tree_model_get (gebr.ui_project_line->servers_sort, &iter,
-				    SERVER_POINTER, &server,
-				    SERVER_IS_AUTO_CHOOSE, &is_auto,
-				    -1);
-		if (!is_auto && server)
-			gebr_geoxml_flow_server_set_address (flow, server->comm->address->str);
-	}
-
 	line_flow = gebr_geoxml_line_append_flow(gebr.line, gebr_geoxml_document_get_filename(GEBR_GEOXML_DOC(flow)));
 	iter = line_append_flow_iter(flow, line_flow);
 
@@ -97,6 +84,8 @@ void flow_new (void)
 	flow_browse_select_iter(&iter);
 
 	flow_edition_set_io();
+
+	flow_edition_set_run_widgets_sensitiveness(gebr.ui_flow_edition, TRUE, FALSE);
 
 	gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("New Flow added to Line '%s'."), line_title);
 	document_properties_setup_ui(GEBR_GEOXML_DOCUMENT(gebr.flow), on_properties_response, TRUE);
@@ -118,10 +107,6 @@ void flow_free(void)
 		valid = gtk_list_store_remove(gebr.ui_flow_edition->fseq_store, &iter);
 	}
 	gtk_tree_view_set_model(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view), model);
-
-	gtk_combo_box_set_model(GTK_COMBO_BOX(gebr.ui_flow_edition->queue_combobox), NULL);
-	gtk_widget_set_sensitive(gebr.ui_flow_edition->queue_combobox, FALSE);
-	gtk_widget_set_sensitive(gebr.ui_flow_edition->server_combobox, FALSE);
 	gtk_container_foreach(GTK_CONTAINER(gebr.ui_flow_browse->revisions_menu),
 			      (GtkCallback) gtk_widget_destroy, NULL);
 	flow_browse_info_update();
@@ -181,6 +166,9 @@ void flow_delete(gboolean confirm)
 	}
 	if (valid)
 		flow_browse_select_iter(&iter);
+
+	if (gebr_geoxml_line_get_flows_number(gebr.line) == 0)
+		flow_edition_set_run_widgets_sensitiveness(gebr.ui_flow_edition, FALSE, FALSE);
 }
 
 static gboolean flow_import_single (const gchar *path)
@@ -747,10 +735,19 @@ void flow_program_paste(void)
 {
 	GebrGeoXmlSequence *pasted;
 
+	gboolean flow_has_loop = gebr_geoxml_flow_has_control_program(gebr.flow);
 	pasted = GEBR_GEOXML_SEQUENCE(gebr_geoxml_clipboard_paste(GEBR_GEOXML_OBJECT(gebr.flow)));
 	if (pasted == NULL) {
 		gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("Could not paste program."));
 		return;
+	}
+
+	if (gebr_geoxml_clipboard_has_forloop() && !flow_has_loop)
+	{
+		GebrGeoXmlParameter *parameter;
+		gebr_geoxml_flow_insert_iter_dict(gebr.flow);
+		parameter = GEBR_GEOXML_PARAMETER(gebr_geoxml_document_get_dict_parameter(GEBR_GEOXML_DOCUMENT(gebr.flow)));
+		gebr_validator_insert(gebr.validator, GEBR_GEOXML_PARAMETER(parameter), NULL, NULL);
 	}
 
 	flow_add_program_sequence_to_view(GEBR_GEOXML_SEQUENCE(pasted), TRUE, FALSE);

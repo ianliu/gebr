@@ -22,7 +22,6 @@
 #ifndef __FLOW_H
 #define __FLOW_H
 
-#include "server.h"
 #include <libgebr/gui/gebr-gui-html-viewer-widget.h>
 #include <libgebr/comm/gebr-comm.h>
 

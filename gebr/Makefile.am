@@ -30,21 +30,25 @@ touch:
 	then \
 	  touch $(srcdir)/main.c -r $(top_srcdir)/.hg; \
 	fi
-client.c: touch
+cmdline.c: touch
 
 #TODO: remove cmdline.{c,h} in future versions (remove old config format support)
 noinst_LTLIBRARIES = libgebr.la
 libgebr_la_SOURCES =		\
 	callbacks.c		\
 	callbacks.h		\
-	client.c		\
-	client.h		\
 	cmdline.c		\
 	cmdline.h		\
 	document.c		\
 	document.h		\
 	flow.c			\
 	flow.h			\
+	gebr-connectable.c	\
+	gebr-connectable.h	\
+	gebr-daemon-server.c	\
+	gebr-daemon-server.h	\
+	gebr-flow-edition.c	\
+	gebr-flow-edition.h	\
 	gebr-gettext.h		\
 	gebr-help-edit-widget.c	\
 	gebr-help-edit-widget.h	\
@@ -52,10 +56,12 @@ libgebr_la_SOURCES =		\
 	gebr-job-control.h	\
 	gebr-job.c		\
 	gebr-job.h		\
+	gebr-maestro-controller.c	\
+	gebr-maestro-controller.h	\
+	gebr-maestro-server.c	\
+	gebr-maestro-server.h	\
 	gebr-marshal.c		\
 	gebr-marshal.h		\
-	gebr-task.c		\
-	gebr-task.h		\
 	gebr.c			\
 	gebr.h			\
 	interface.c		\
@@ -66,22 +72,16 @@ libgebr_la_SOURCES =		\
 	menu.h			\
 	project.c		\
 	project.h		\
-	server.c		\
-	server.h		\
 	ui_document.c		\
 	ui_document.h		\
 	ui_flow.c		\
 	ui_flow.h		\
 	ui_flow_browse.c	\
 	ui_flow_browse.h	\
-	ui_flow_edition.c	\
-	ui_flow_edition.h	\
 	ui_help.c		\
 	ui_help.h		\
 	ui_log.c		\
 	ui_log.h		\
-	ui_moab.c		\
-	ui_moab.h		\
 	ui_parameters.c		\
 	ui_parameters.h		\
 	ui_paths.c		\
@@ -90,8 +90,6 @@ libgebr_la_SOURCES =		\
 	ui_preferences.h	\
 	ui_project_line.c	\
 	ui_project_line.h	\
-	ui_server.c		\
-	ui_server.h		\
 	$(NULL)
 
 libgebr_la_LIBADD =		\

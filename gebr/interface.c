@@ -31,7 +31,7 @@
 #include <libgebr/gui/gebr-gui-utils.h>
 #include <libgebr/utils.h>
 
-#include "ui_flow_edition.h"
+#include "gebr-flow-edition.h"
 #include "interface.h"
 #include "gebr.h"
 #include "flow.h"
@@ -109,7 +109,7 @@ static const GtkActionEntry actions_entries_flow[] = {
 	{"flow_export", "document-export", N_("Export"),
 		NULL, N_("Export selected Flows"), G_CALLBACK(on_flow_export_activate)},
 	{"flow_execute", GTK_STOCK_EXECUTE, NULL,
-		"<Control>R", N_("Execute selected Flows in sequence"), G_CALLBACK(on_flow_execute_activate)},
+		"<Control>R", N_("Execute"), G_CALLBACK(on_flow_execute_activate)},
 	{"flow_copy", GTK_STOCK_COPY, N_("Copy"),
 		NULL, N_("Copy selected Flows to clipboard"), G_CALLBACK(on_copy_activate)},
 	{"flow_paste", GTK_STOCK_PASTE, N_("Paste"),
@@ -165,20 +165,6 @@ static const GtkActionEntry status_action_entries[] = {
 		NULL, N_("Change the selected Programs status to disabled"), NULL},
 	{"flow_edition_status_unconfigured", NULL, N_("Not configured"),
 		NULL, N_("Change the selected Programs status to not configured"), NULL}
-};
-
-static const GtkActionEntry actions_entries_server[] = {
-	/*
-	 *  Server Configurations
-	 */
-	{"server_connect", GTK_STOCK_CONNECT, N_("Connect"),
-		NULL, N_("Connect to the server"), G_CALLBACK(on_server_common_connect)},
-	{"server_disconnect", GTK_STOCK_DISCONNECT, N_("Disconnect"),
-		NULL, N_("Disconnect from server"), G_CALLBACK(on_server_common_disconnect)},
-	{"server_remove", GTK_STOCK_REMOVE, N_("Remove"),
-		"Delete", N_("Remove server from list"), G_CALLBACK(on_server_common_remove)},
-	{"server_stop", GTK_STOCK_STOP, N_("Stop server"),
-		NULL, N_("Stop server from running"), G_CALLBACK(on_server_common_stop)},
 };
 
 /*
@@ -394,7 +380,6 @@ void gebr_setup_ui(void)
 	GtkAction *action;
 
 	gebr.about = gebr_gui_about_setup_ui("GêBR", _("A plug-and-play environment for\nseismic processing tools"));
-	gebr.ui_server_list = server_list_setup_ui();
 
 	/* Create the main window */
 	gtk_window_set_default_icon(gebr_gui_pixmaps_gebr_icon_16x16());
@@ -439,12 +424,6 @@ void gebr_setup_ui(void)
 	gtk_action_group_add_actions(gebr.action_group_status, status_action_entries, G_N_ELEMENTS(status_action_entries), NULL);
 	gebr.accel_group_array[ACCEL_STATUS] = gtk_accel_group_new();
 	gebr_gui_gtk_action_group_set_accel_group(gebr.action_group_status, gebr.accel_group_array[ACCEL_STATUS]);
-
-	gebr.action_group_server = gtk_action_group_new("Server Configuration");
-	gtk_action_group_set_translation_domain(gebr.action_group_server, GETTEXT_PACKAGE);
-	gtk_action_group_add_actions(gebr.action_group_server, actions_entries_server, G_N_ELEMENTS(actions_entries_server), NULL);
-	gebr.accel_group_array[ACCEL_SERVER] = gtk_accel_group_new();
-	gebr_gui_gtk_action_group_set_accel_group(gebr.action_group_server, gebr.accel_group_array[ACCEL_SERVER]);
 
 	/* Signals */
 	g_signal_connect(GTK_OBJECT(gebr.window), "delete_event", G_CALLBACK(on_quit_activate), NULL);
@@ -645,8 +624,10 @@ void gebr_setup_ui(void)
 					 (gtk_action_group_get_action(gebr.action_group_job_control, "job_control_stop"))), -1);
 
 	GtkWidget *tool_button = gebr_gui_tool_button_new();
-	gtk_container_add(GTK_CONTAINER(tool_button),
-			  gtk_image_new_from_stock("filter", GTK_ICON_SIZE_LARGE_TOOLBAR));
+	GtkWidget *filter_button = gtk_image_new_from_stock("filter", GTK_ICON_SIZE_LARGE_TOOLBAR);
+	gtk_container_add(GTK_CONTAINER(tool_button), filter_button);
+	gtk_widget_set_tooltip_text( filter_button, "Filter jobs by server group, server and status");
+
 	gtk_button_set_relief(GTK_BUTTON(tool_button), GTK_RELIEF_NONE);
 	gebr_job_control_setup_filter_button(gebr.job_control, GEBR_GUI_TOOL_BUTTON(tool_button));
 

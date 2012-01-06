@@ -54,7 +54,6 @@ struct _GebrdApp {
 	GObject parent;
 
 	GebrCommListenSocket *listen_socket;
-	GList *clients;
 	GList * mpi_flavors;
 	GebrdUser *user;
 	GString *user_data_filename;
@@ -81,6 +80,8 @@ struct _GebrdApp {
 	GebrGeoXmlDocument *line;
 	GebrGeoXmlDocument *proj;
 	GebrValidator *validator;
+
+	GHashTable *display_ports;
 
 	gint nprocs;
 };
