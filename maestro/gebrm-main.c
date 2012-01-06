@@ -133,7 +133,7 @@ main(int argc, char *argv[])
 	g_thread_init(NULL);
 
 	if (show_version) {
-		fprintf(stdout, "%s (%s)\n", "0.1.0", gebr_version());
+		fprintf(stdout, "%s (%s)\n", GEBR_VERSION NANOVERSION, gebr_version());
 		exit(EXIT_SUCCESS);
 	}
 
