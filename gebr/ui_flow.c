@@ -19,9 +19,64 @@
 
 #include <libgebr/geoxml/geoxml.h>
 #include <libgebr/date.h>
+#include <glib/gi18n.h>
 #include "gebr.h"
 #include "ui_flow_browse.h"
 #include "document.h"
+
+static gboolean
+is_group_connected(GtkTreeModel *model,
+		   const gchar *group)
+{
+	GtkTreeIter iter;
+	GebrDaemonServer *daemon;
+	gebr_gui_gtk_tree_model_foreach(iter, model) {
+		gtk_tree_model_get(model, &iter, 0, &daemon, -1);
+		if (gebr_daemon_server_has_tag(daemon, group))
+			if (gebr_daemon_server_get_state(daemon) == SERVER_STATE_CONNECT)
+				return TRUE;
+	}
+
+	return FALSE;
+}
+
+static gboolean
+is_address_connected(GtkTreeModel *model,
+		     const gchar *address)
+{
+	GtkTreeIter iter;
+	GebrDaemonServer *daemon;
+	gebr_gui_gtk_tree_model_foreach(iter, model) {
+		gtk_tree_model_get(model, &iter, 0, &daemon, -1);
+		const gchar *addr = gebr_daemon_server_get_address(daemon);
+		if (g_strcmp0(addr, address) == 0)
+			return gebr_daemon_server_get_state(daemon) == SERVER_STATE_CONNECT;
+	}
+	return FALSE;
+}
+
+static gboolean
+has_connected_server(GebrMaestroServer *maestro,
+		     GebrMaestroServerGroupType type,
+		     const gchar *name)
+{
+	gboolean result = FALSE;
+	GtkTreeModel *model = gebr_maestro_server_get_model(maestro, FALSE, NULL);
+
+	switch (type)
+	{
+	case MAESTRO_SERVER_TYPE_GROUP:
+		result = is_group_connected(model, name);
+		break;
+	case MAESTRO_SERVER_TYPE_DAEMON:
+		result = is_address_connected(model, name);
+		break;
+	}
+
+	g_object_unref(model);
+
+	return result;
+}
 
 void
 gebr_ui_flow_run(void)
@@ -74,37 +129,25 @@ gebr_ui_flow_run(void)
 	gchar *url = gebr_comm_uri_to_string(uri);
 	gebr_comm_uri_free(uri);
 
-	/*
-	gchar *url = g_strdup_printf("/run?parent_rid=%s;speed=%s;nice=%s;name=%s;type=%s;host=%s;temp_id=%s",
-				     parent_rid,
-				     speed_str,
-				     nice,
-				     name,
-				     group_type,
-				     hostname,
-				     gebr_job_get_id(job));
-				     */
-
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
 	GebrCommServer *server = gebr_maestro_server_get_server(maestro);
 
-	gboolean has_servers = FALSE;
-	GtkTreeIter iter;
-	GebrDaemonServer *daemon;
-	GtkTreeModel *model = gebr_maestro_server_get_model(maestro, FALSE, NULL);
-	gebr_gui_gtk_tree_model_foreach(iter, model) {
-		gtk_tree_model_get(model, &iter, 0, &daemon, -1);
-
-		if(gebr_daemon_server_get_state(daemon) == SERVER_STATE_CONNECT) {
-			has_servers = TRUE;
+	if (!has_connected_server(maestro, type, name)) {
+		gchar *msg;
+		switch (type) {
+		case MAESTRO_SERVER_TYPE_GROUP:
+			msg = g_strdup_printf(_("There are no connected servers on group %s."), name);
+			break;
+		case MAESTRO_SERVER_TYPE_DAEMON:
+			msg = g_strdup_printf(_("The selected server (%s) is not connected."), name);
 			break;
 		}
-	}
-	if (!has_servers) {
-		GtkWidget *dialog  = gtk_message_dialog_new_with_markup(GTK_WINDOW(gebr.window), GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+
+		GtkWidget *dialog  = gtk_message_dialog_new_with_markup(GTK_WINDOW(gebr.window),
+									GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
 		                                                        GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
-		                                                        "<span size='large' weight='bold'>There are no connected servers on maestro %s.</span>",
-		                                                        gebr_maestro_server_get_display_address(maestro));
+		                                                        "<span size='large' weight='bold'>%s</span>", msg);
+		g_free(msg);
 		gtk_dialog_run(GTK_DIALOG(dialog));
 		gtk_widget_destroy(dialog);
 		return;
