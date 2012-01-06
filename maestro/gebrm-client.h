@@ -80,6 +80,11 @@ void gebrm_client_set_id(GebrmClient *client, const gchar *id);
 
 const gchar *gebrm_client_get_id(GebrmClient *client);
 
+void gebrm_client_set_magic_cookie(GebrmClient *client,
+				   const gchar *cookie);
+
+const gchar *gebrm_client_get_magic_cookie(GebrmClient *client);
+
 /**
  * gebrm_client_add_forward:
  */
