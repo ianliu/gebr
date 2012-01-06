@@ -546,17 +546,22 @@ void job_run_flow(GebrdJob *job)
 	g_debug("Looking for display port for gid %s: %d", job->gid->str, display_port);
 	if (display_port != 0) {
 		GString *to_quote;
+		const gchar *xauth_file = "$HOME/.gebr/Xauthority";
 
 		to_quote = g_string_new(NULL);
 		if (job->parent.server_location == GEBR_COMM_SERVER_LOCATION_LOCAL) {
-			g_string_printf(to_quote, "export DISPLAY=:%d; %s", display_port, localized_cmd_line);
+			g_string_printf(to_quote, "export DISPLAY=:%d; export XAUTHORITY=%s; %s",
+					display_port, xauth_file, localized_cmd_line);
 			g_debug("I will run a flow on DISPLAY=:%d", display_port);
 			gchar * quoted = g_shell_quote(to_quote->str);
 			g_string_printf(cmd_line, "bash -l -c %s", quoted);
 			g_free(quoted);
 		} else {
-			g_string_printf(to_quote, "export DISPLAY=127.0.0.1:%d; %s", display_port, localized_cmd_line);
-			g_debug("I will run a flow on DISPLAY=127.0.0.1:%d", display_port);
+			g_string_printf(to_quote, "export DISPLAY=127.0.0.1:%d; export XAUTHORITY=%s; ",
+					display_port, xauth_file);
+			g_debug("Environment variables: %s", to_quote->str);
+
+			g_string_append(to_quote, localized_cmd_line);
 			gchar * quoted = g_shell_quote(to_quote->str);
 			g_string_printf(cmd_line, "bash -l -c %s", quoted);
 			g_free(quoted);
