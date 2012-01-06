@@ -357,7 +357,8 @@ err:
 		}
 	} else {
 		for (GList *i = app->priv->connections; i; i = i->next)
-			gebrm_daemon_send_gebr_id(daemon, gebrm_client_get_id(i->data));
+			gebrm_daemon_send_client_info(daemon, gebrm_client_get_id(i->data),
+						      gebrm_client_get_magic_cookie(i->data));
 	}
 }
 
@@ -839,11 +840,10 @@ on_client_parse_messages(GebrCommProtocolSocket *socket,
 			g_debug("Maestro received a X11 cookie: %s", cookie->str);
 
 			gebrm_client_set_id(client, gebr_id->str);
+			gebrm_client_set_magic_cookie(client, cookie->str);
 
-			for (GList *i = app->priv->daemons; i; i = i->next) {
-				gebrm_daemon_send_magic_cookie(i->data, cookie->str);
-				gebrm_daemon_send_gebr_id(i->data, gebr_id->str);
-			}
+			for (GList *i = app->priv->daemons; i; i = i->next)
+				gebrm_daemon_send_client_info(i->data, gebr_id->str, cookie->str);
 
 			guint16 client_display_port = gebrm_client_get_display_port(client);
 			gchar *port_str = g_strdup_printf("%d", client_display_port);

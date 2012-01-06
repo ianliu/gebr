@@ -742,14 +742,6 @@ gebrm_daemon_get_error(GebrmDaemon *daemon)
 	return gebr_comm_server_get_last_error(daemon->priv->server);
 }
 
-void
-gebrm_daemon_send_magic_cookie(GebrmDaemon *daemon, const gchar *cookie)
-{
-	gebr_comm_protocol_socket_oldmsg_send(daemon->priv->server->socket, FALSE,
-					      gebr_comm_protocol_defs.mck_def, 1,
-					      cookie);
-}
-
 gint
 gebrm_daemon_get_uncompleted_tasks(GebrmDaemon *daemon)
 {
@@ -774,9 +766,11 @@ gebrm_daemon_get_list_of_jobs(GebrmDaemon *daemon)
 }
 
 void
-gebrm_daemon_send_gebr_id(GebrmDaemon *daemon, const gchar *id)
+gebrm_daemon_send_client_info(GebrmDaemon *daemon,
+			      const gchar *id,
+			      const gchar *cookie)
 {
 	gebr_comm_protocol_socket_oldmsg_send(daemon->priv->server->socket, FALSE,
-					      gebr_comm_protocol_defs.gid_def, 1,
-					      id);
+					      gebr_comm_protocol_defs.gid_def, 2,
+					      id, cookie);
 }

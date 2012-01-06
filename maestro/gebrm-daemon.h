@@ -163,13 +163,13 @@ const gchar *gebrm_daemon_get_id(GebrmDaemon *daemon);
 
 const gchar *gebrm_daemon_get_error(GebrmDaemon *daemon);
 
-void gebrm_daemon_send_magic_cookie(GebrmDaemon *daemon, const gchar *cookie);
-
 gint gebrm_daemon_get_uncompleted_tasks(GebrmDaemon *daemon);
 
 GList *gebrm_daemon_get_list_of_jobs(GebrmDaemon *daemon);
 
-void gebrm_daemon_send_gebr_id(GebrmDaemon *daemon, const gchar *id);
+void gebrm_daemon_send_client_info(GebrmDaemon *daemon,
+				   const gchar *id,
+				   const gchar *cookie);
 
 G_END_DECLS
 

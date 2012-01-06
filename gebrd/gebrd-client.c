@@ -261,41 +261,27 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			GList *arguments;
 
 			/* organize message data */
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 1)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
 				goto err;
 
-			GString *gid = arguments->data;
+			GString *gid = g_list_nth_data(arguments, 0);
+			GString *cookie = g_list_nth_data(arguments, 1);
 			guint16 display = gebrd_get_x11_redirect_display();
 			g_hash_table_insert(gebrd->display_ports, g_strdup(gid->str), GINT_TO_POINTER(display));
 
-			g_debug("Received gid: %s", gid->str);
-
-			gchar *display_str = g_strdup_printf("%d", display + 6000);
-			gebr_comm_protocol_socket_oldmsg_send(client->socket, FALSE,
-							      gebr_comm_protocol_defs.ret_def, 2,
-							      gid->str, display_str);
-			g_free(display_str);
-
-			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
-		}
-		else if (message->hash == gebr_comm_protocol_defs.mck_def.code_hash) {
-			GList *arguments;
-
-			/* organize message data */
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 1)) == NULL)
-				goto err;
-
-			GString *cookie = arguments->data;
-
-			g_debug("I've received this cookie! %s", cookie->str);
+			g_debug("Received gid %s with cookie %s", gid->str, cookie->str);
 
 			if (cookie->len && gebrd_get_server_type() != GEBR_COMM_SERVER_TYPE_MOAB) {
 				/* add client magic cookie */
 				gint i = 0;
-				while (i++ < 5 && gebr_system("xauth add :%d . %s", client->display_port, cookie->str)) {
+				gchar *cmd = g_strdup_printf("XAUTHORITY=$HOME/.gebr/Xauthority xauth add :%d . %s",
+							     display, cookie->str);
+				g_debug("%s", cmd);
+				while (i++ < 5 && gebr_system(cmd)) {
 					gebrd_message(GEBR_LOG_ERROR, "Failed to add X11 authorization.");
 					usleep(200*1000);
 				}
+				g_free(cmd);
 
 				/* failed to add X11 authorization */
 				if (i == 5) {
@@ -305,8 +291,15 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 					gebrd_message(GEBR_LOG_DEBUG, "xauth authorized");
 			}
 
+			gchar *display_str = g_strdup_printf("%d", display + 6000);
+			gebr_comm_protocol_socket_oldmsg_send(client->socket, FALSE,
+							      gebr_comm_protocol_defs.ret_def, 2,
+							      gid->str, display_str);
+			g_free(display_str);
+
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
-		} else if (client->socket->protocol->logged == FALSE) {
+		}
+		else if (client->socket->protocol->logged == FALSE) {
 			/* not logged! */
 			goto err;
 		} else if (message->hash == gebr_comm_protocol_defs.qut_def.code_hash) {
