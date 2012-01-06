@@ -2,7 +2,7 @@
  * gebrm-app.c
  * This file is part of GêBR Project
  *
- * Copyright (C) 2011 - GêBR Team
+ * Copyright (C) 2011-2012 - GêBR Team
  *
  * GêBR Project is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -132,7 +132,8 @@ send_server_status_message(GebrmApp *app,
 	const gchar *state = gebr_comm_server_state_to_string(gebrm_daemon_get_state(daemon));
 	const gchar *error = gebrm_daemon_get_error(daemon);
 	gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
-					      gebr_comm_protocol_defs.ssta_def, 4,
+					      gebr_comm_protocol_defs.ssta_def, 5,
+					      gebrm_daemon_get_hostname(daemon),
 					      gebrm_daemon_get_address(daemon),
 					      state,
 					      error,
@@ -356,9 +357,13 @@ err:
 			                                      error);
 		}
 	} else {
-		for (GList *i = app->priv->connections; i; i = i->next)
+		for (GList *i = app->priv->connections; i; i = i->next) {
+			GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(i->data);
+			send_server_status_message(app, socket, daemon, gebrm_daemon_get_autoconnect(daemon));
+
 			gebrm_daemon_send_client_info(daemon, gebrm_client_get_id(i->data),
 						      gebrm_client_get_magic_cookie(i->data));
+		}
 	}
 }
 
@@ -567,8 +572,6 @@ on_client_request(GebrCommProtocolSocket *socket,
 			const gchar *pass = gebr_comm_uri_get_param(uri, "pass");
 
 			GebrmDaemon *d = gebrm_add_server_to_list(app, addr, pass, NULL);
-			if (g_strcmp0(addr, "127.0.0.1")==0 || g_strcmp0(addr, "localhost")==0) 
-				addr = g_get_host_name();
 
 			gebrm_daemon_connect(d, pass, socket);
 			gebrm_config_save_server(d);

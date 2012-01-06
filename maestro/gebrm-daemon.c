@@ -2,7 +2,7 @@
  * gebrm-daemon.c
  * This file is part of GêBR Project
  *
- * Copyright (C) 2011 - GêBR Core Team (www.gebrproject.com)
+ * Copyright (C) 2011-2012 - GêBR Core Team (www.gebrproject.com)
  *
  * GêBR Project is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -206,7 +206,7 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 
 				daemon->priv->is_initialized = TRUE;
 
-				g_string_assign(server->socket->protocol->hostname, hostname->str);
+				server->socket->protocol->hostname = g_string_assign(server->socket->protocol->hostname, hostname->str);
 				gebrm_daemon_set_ncores(daemon, atoi(ncores->str));
 				gebrm_daemon_set_clock_cpu(daemon, atof(clock_cpu->str));
 				server->socket->protocol->logged = TRUE;
@@ -773,4 +773,10 @@ gebrm_daemon_send_client_info(GebrmDaemon *daemon,
 	gebr_comm_protocol_socket_oldmsg_send(daemon->priv->server->socket, FALSE,
 					      gebr_comm_protocol_defs.gid_def, 2,
 					      id, cookie);
+}
+
+const gchar *
+gebrm_daemon_get_hostname(GebrmDaemon *daemon)
+{
+	return daemon->priv->server->socket->protocol->hostname->str;
 }

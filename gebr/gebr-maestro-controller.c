@@ -2,7 +2,7 @@
  * gebr-maestro-controller.c
  * This file is part of GêBR Project
  *
- * Copyright (C) 2011 - GêBR Core Team (www.gebrproject.com)
+ * Copyright (C) 2011-2012 - GêBR Core Team (www.gebrproject.com)
  *
  * GêBR Project is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -348,6 +348,7 @@ copy_model_for_groups(GtkTreeModel *orig_model)
 	GtkTreeIter iter, new_iter;
 	GtkListStore *new_model;
 	GebrDaemonServer *daemon;
+	const gchar *hostname;
 
 	new_model = gtk_list_store_new(2,
                                        GEBR_TYPE_DAEMON_SERVER,
@@ -356,10 +357,12 @@ copy_model_for_groups(GtkTreeModel *orig_model)
 	gebr_gui_gtk_tree_model_foreach(iter, orig_model) {
 		gtk_tree_model_get(orig_model, &iter, 0, &daemon, -1);
 
+		hostname = gebr_daemon_server_get_hostname(daemon);
+
 		gtk_list_store_append(new_model, &new_iter);
 		gtk_list_store_set(new_model, &new_iter,
 		                   MAESTRO_CONTROLLER_DAEMON, daemon,
-		                   MAESTRO_CONTROLLER_ADDR, gebr_daemon_server_get_display_address(daemon),
+		                   MAESTRO_CONTROLLER_ADDR, !g_strcmp0(hostname, "")? gebr_daemon_server_get_address(daemon) : hostname,
 		                   -1);
 	}
 
@@ -737,16 +740,19 @@ on_daemons_changed(GebrMaestroServer *maestro,
 	GtkTreeIter new_iter;
 	GebrDaemonServer *daemon;
 	GtkTreeModel *model = gebr_maestro_server_get_model(maestro, FALSE, NULL);
+	const gchar *hostname;
 
 	gtk_list_store_clear(mc->priv->model);
 
 	gebr_gui_gtk_tree_model_foreach(iter, model) {
 		gtk_tree_model_get(model, &iter, 0, &daemon, -1);
 
+		hostname = gebr_daemon_server_get_hostname(daemon);
+
 		gtk_list_store_append(mc->priv->model, &new_iter);
 		gtk_list_store_set(mc->priv->model, &new_iter,
 		                   MAESTRO_CONTROLLER_DAEMON, daemon,
-		                   MAESTRO_CONTROLLER_ADDR, gebr_daemon_server_get_display_address(daemon),
+		                   MAESTRO_CONTROLLER_ADDR, !g_strcmp0(hostname, "")? gebr_daemon_server_get_address(daemon) : hostname,
 		                   MAESTRO_CONTROLLER_AUTOCONN, gebr_daemon_server_get_ac(daemon),
 		                   MAESTRO_CONTROLLER_EDITABLE, FALSE,
 		                   -1);

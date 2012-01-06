@@ -2,7 +2,7 @@
  * gebr-maestro-server.c
  * This file is part of GêBR Project
  *
- * Copyright (C) 2011 - GêBR Core team (www.gebrproject.com)
+ * Copyright (C) 2011-2012 - GêBR Core team (www.gebrproject.com)
  *
  * GêBR Project is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -317,21 +317,25 @@ parse_messages(GebrCommServer *comm_server,
 		}
 		else if (message->hash == gebr_comm_protocol_defs.ssta_def.code_hash) {
 			GList *arguments;
-			GString *addr, *ssta, *ac, *error;
+			GString *addr, *ssta, *ac, *error, *hostname;
 			const gchar *maestro_addr = gebr_maestro_server_get_address(maestro);
 
 			/* organize message data */
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 4)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 5)) == NULL)
 				goto err;
 
-			addr = g_list_nth_data(arguments, 0);
-			ssta = g_list_nth_data(arguments, 1);
-			error = g_list_nth_data(arguments, 2);
-			ac = g_list_nth_data(arguments, 3);
+			hostname = g_list_nth_data(arguments, 0);
+			addr = g_list_nth_data(arguments, 1);
+			ssta = g_list_nth_data(arguments, 2);
+			error = g_list_nth_data(arguments, 3);
+			ac = g_list_nth_data(arguments, 4);
 
 			GtkTreeIter iter;
 			GebrCommServerState state = gebr_comm_server_state_from_string(ssta->str);
 			GebrDaemonServer *daemon = get_daemon_from_address(maestro, addr->str, &iter);
+
+			g_debug("HOSTNAME IS %s", hostname->str);
+
 			if(daemon)
 				gebr_daemon_server_set_error(daemon, error->str);
 
@@ -346,6 +350,7 @@ parse_messages(GebrCommServer *comm_server,
 				gtk_tree_path_free(path);
 			}
 
+			gebr_daemon_server_set_hostname(daemon, hostname->str);
 			gboolean is_ac = g_strcmp0(ac->str, "on") == 0 ? TRUE : FALSE;
 
 			g_signal_emit(maestro, signals[GROUP_CHANGED], 0);

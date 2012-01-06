@@ -2,7 +2,7 @@
  * gebr-server.h
  * This file is part of GêBR Project
  *
- * Copyright (C) 2011 - GêBR core team (www.gebrproject.com)
+ * Copyright (C) 2011-2012 - GêBR core team (www.gebrproject.com)
  *
  * GêBR Project is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -109,6 +109,11 @@ void gebr_daemon_server_set_error(GebrDaemonServer *daemon,
 		const gchar *error);
 
 const gchar *gebr_daemon_server_get_error(GebrDaemonServer *daemon);
+
+void gebr_daemon_server_set_hostname(GebrDaemonServer *daemon, const gchar *hostname);
+
+const gchar *gebr_daemon_server_get_hostname(GebrDaemonServer *daemon);
+
 G_END_DECLS
 
 #endif /* __GEBR_SERVER_H__ */

@@ -2,7 +2,7 @@
  * gebrm-daemon.h
  * This file is part of GêBR Project
  *
- * Copyright (C) 2011 - GêBR Core Team (www.gebrproject.com)
+ * Copyright (C) 2011-2012 - GêBR Core Team (www.gebrproject.com)
  *
  * GêBR Project is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -170,6 +170,8 @@ GList *gebrm_daemon_get_list_of_jobs(GebrmDaemon *daemon);
 void gebrm_daemon_send_client_info(GebrmDaemon *daemon,
 				   const gchar *id,
 				   const gchar *cookie);
+
+const gchar *gebrm_daemon_get_hostname(GebrmDaemon *daemon);
 
 G_END_DECLS
 

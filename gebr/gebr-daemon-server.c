@@ -2,7 +2,7 @@
  * gebr-daemon-server.c
  * This file is part of GêBR Project
  *
- * Copyright (C) 2011 - GêBR core team (www.gebrproject.com)
+ * Copyright (C) 2011-2012 - GêBR core team (www.gebrproject.com)
  *
  * GêBR Project is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
 struct _GebrDaemonServerPriv {
 	GebrConnectable *connectable;
 	gchar *address;
+	gchar *hostname;
 	gboolean ac;
 	gchar *error;
 	GebrCommServerState state;
@@ -113,6 +114,7 @@ gebr_daemon_server_finalize(GObject *object)
 	GebrDaemonServer *daemon = GEBR_DAEMON_SERVER(object);
 
 	g_free(daemon->priv->address);
+	g_free(daemon->priv->hostname);
 	g_object_unref(daemon->priv->connectable);
 	g_list_foreach(daemon->priv->tags, (GFunc)g_free, NULL);
 	g_list_free(daemon->priv->tags);
@@ -297,4 +299,16 @@ gebr_daemon_server_set_error(GebrDaemonServer *daemon, const gchar *error)
 const gchar *gebr_daemon_server_get_error(GebrDaemonServer *daemon)
 {
 	return daemon->priv->error;
+}
+
+void
+gebr_daemon_server_set_hostname(GebrDaemonServer *daemon, const gchar *hostname)
+{
+	daemon->priv->hostname = g_strdup(hostname);
+}
+
+const gchar *
+gebr_daemon_server_get_hostname(GebrDaemonServer *daemon)
+{
+	return daemon->priv->hostname;
 }
