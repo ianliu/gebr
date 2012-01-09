@@ -455,31 +455,27 @@ static GList *
 get_comm_servers_list(GebrmApp *app, const gchar *group, const gchar *group_type)
 {
 	GList *servers = NULL;
-	GebrCommServer *server;
 	gboolean is_single = g_strcmp0(group_type, "daemon") == 0;
 
 	if (is_single) { 
 		for (GList *i = app->priv->daemons; i; i = i->next) {
 			if (g_str_equal(gebrm_daemon_get_address(i->data), group)) {
-				g_object_get(i->data, "server", &server, NULL);
-				servers = g_list_prepend(servers, server);
+				servers = g_list_prepend(servers, i->data);
 				break;
 			}
 		}
 	} else {
 		if (g_strcmp0(group,"")==0) {	//All servers from maestro 
 			for (GList *i = app->priv->daemons; i; i = i->next) {
-				g_object_get(i->data, "server", &server, NULL);
-				if (gebr_comm_server_is_logged(server))
-					servers = g_list_prepend(servers, server);
+				if (gebr_comm_server_is_logged(gebrm_daemon_get_server(i->data)))
+					servers = g_list_prepend(servers, i->data);
 			}
 		} else {		//All servers from a group
 			for (GList *i = app->priv->daemons; i; i = i->next) {
 				if (!gebrm_daemon_has_group(i->data, group))
 					continue;
-				g_object_get(i->data, "server", &server, NULL);
-				if (gebr_comm_server_is_logged(server))
-					servers = g_list_prepend(servers, server);
+				if (gebr_comm_server_is_logged(gebrm_daemon_get_server(i->data)))
+					servers = g_list_prepend(servers, i->data);
 			}
 		}
 	}
