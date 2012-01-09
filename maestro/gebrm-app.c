@@ -352,9 +352,8 @@ err:
 		for (GList *i = app->priv->connections; i; i = i->next) {
 			GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(i->data);
 			gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
-			                                      gebr_comm_protocol_defs.srm_def, 2,
-			                                      addr,
-			                                      error);
+			                                      gebr_comm_protocol_defs.err_def, 2,
+			                                      addr, error);
 		}
 	} else {
 		for (GList *i = app->priv->connections; i; i = i->next) {
