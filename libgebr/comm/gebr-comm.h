@@ -18,6 +18,7 @@
 /* include all gebr_comm library's headers. */
 
 #include <comm/gebr-comm-channelsocket.h>
+#include <comm/gebr-comm-daemon.h>
 #include <comm/gebr-comm-hostinfo.h>
 #include <comm/gebr-comm-http-msg.h>
 #include <comm/gebr-comm-job.h>

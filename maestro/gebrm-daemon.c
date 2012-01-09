@@ -24,6 +24,8 @@
 #include "gebrm-job.h"
 #include "gebrm-task.h"
 
+#include <libgebr/comm/gebr-comm.h>
+
 struct _GebrmDaemonPriv {
 	gboolean is_initialized;
 
@@ -59,7 +61,30 @@ enum {
 
 static guint signals[LAST_SIGNAL] = { 0, };
 
-G_DEFINE_TYPE(GebrmDaemon, gebrm_daemon, G_TYPE_OBJECT);
+static void gebrm_daemon_init_iface(GebrCommDaemonIface *iface);
+
+G_DEFINE_TYPE_WITH_CODE(GebrmDaemon, gebrm_daemon, G_TYPE_OBJECT,
+			G_IMPLEMENT_INTERFACE(GEBR_COMM_TYPE_DAEMON, gebrm_daemon_init_iface));
+
+
+GebrCommServer *
+gebrm_daemon_iface_get_server(GebrCommDaemon *daemon)
+{
+	return gebrm_daemon_get_server(GEBRM_DAEMON(daemon));
+}
+
+gint
+gebrm_daemon_iface_get_n_running_jobs(GebrCommDaemon *daemon)
+{
+	return gebrm_daemon_get_uncompleted_tasks(GEBRM_DAEMON(daemon));
+}
+
+static void
+gebrm_daemon_init_iface(GebrCommDaemonIface *iface)
+{
+	iface->get_server = gebrm_daemon_iface_get_server;
+	iface->get_n_running_jobs = gebrm_daemon_iface_get_n_running_jobs;
+}
 
 static void
 gebrm_daemon_set_nfsid(GebrmDaemon *daemon,
