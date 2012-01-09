@@ -94,6 +94,13 @@ void gebrm_client_add_forward(GebrmClient *client,
 
 void gebrm_client_remove_forwards(GebrmClient *client);
 
+void gebrm_client_add_temp_id(GebrmClient *client,
+			      const gchar *temp_id,
+			      const gchar *job_id);
+
+const gchar *gebrm_client_get_job_id_from_temp(GebrmClient *client,
+					       const gchar *temp_id);
+
 
 G_END_DECLS
 

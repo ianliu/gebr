@@ -28,6 +28,7 @@ struct _GebrmClientPriv {
 	gchar *id;
 	gchar *cookie;
 	GList *forwards;
+	GHashTable *job_ids;
 };
 
 enum {
@@ -93,6 +94,8 @@ gebrm_client_init(GebrmClient *client)
 	client->priv = G_TYPE_INSTANCE_GET_PRIVATE(client,
 						   GEBRM_TYPE_CLIENT,
 						   GebrmClientPriv);
+
+	client->priv->job_ids = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 }
 
 static void
@@ -105,6 +108,7 @@ gebrm_client_finalize(GObject *object)
 	g_list_free(client->priv->forwards);
 	g_object_unref(client->priv->socket);
 	g_free(client->priv->id);
+	g_hash_table_destroy(client->priv->job_ids);
 
 	G_OBJECT_CLASS(gebrm_client_parent_class)->finalize(object);
 }
@@ -232,4 +236,21 @@ gebrm_client_remove_forwards(GebrmClient *client)
 		       (GFunc)gebr_comm_terminal_process_free, NULL);
 	g_list_free(client->priv->forwards);
 	client->priv->forwards = NULL;
+}
+
+void
+gebrm_client_add_temp_id(GebrmClient *client,
+			 const gchar *temp_id,
+			 const gchar *job_id)
+{
+	g_hash_table_insert(client->priv->job_ids,
+			    g_strdup(temp_id),
+			    g_strdup(job_id));
+}
+
+const gchar *
+gebrm_client_get_job_id_from_temp(GebrmClient *client,
+				  const gchar *temp_id)
+{
+	return g_hash_table_lookup(client->priv->job_ids, temp_id);
 }

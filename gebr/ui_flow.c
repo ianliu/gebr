@@ -78,11 +78,12 @@ has_connected_server(GebrMaestroServer *maestro,
 	return result;
 }
 
-void
-gebr_ui_flow_run(void)
+static const gchar *
+run_flow(GebrGeoXmlFlow *flow,
+	 const gchar *after)
 {
 	if (!flow_browse_get_selected(NULL, TRUE))
-		return;
+		return NULL;
 
 	const gchar *parent_rid = gebr_flow_edition_get_selected_queue(gebr.ui_flow_edition);
 	gint speed = gebr_interface_get_execution_speed();
@@ -94,17 +95,17 @@ gebr_ui_flow_run(void)
 	gchar *name;
 	gebr_flow_edition_get_current_group(gebr.ui_flow_edition, &type, &name);
 	const gchar *group_type = gebr_maestro_server_group_enum_to_str(type);
-	gebr_geoxml_flow_server_set_group(gebr.flow, group_type, name);
+	gebr_geoxml_flow_server_set_group(flow, group_type, name);
 
 	gchar *submit_date = gebr_iso_date();
 
-	gebr_geoxml_flow_set_date_last_run(gebr.flow, g_strdup(submit_date));
-	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), FALSE, FALSE);
+	gebr_geoxml_flow_set_date_last_run(flow, g_strdup(submit_date));
+	document_save(GEBR_GEOXML_DOCUMENT(flow), FALSE, FALSE);
 
 	gchar *xml;
 	GebrJob *job = gebr_job_new(parent_rid);
 
-	GebrGeoXmlDocument *clone = gebr_geoxml_document_clone(GEBR_GEOXML_DOCUMENT(gebr.flow));
+	GebrGeoXmlDocument *clone = gebr_geoxml_document_clone(GEBR_GEOXML_DOCUMENT(flow));
 
 	gebr_geoxml_document_merge_dicts(gebr.validator,
 	                                 clone,
@@ -119,7 +120,12 @@ gebr_ui_flow_run(void)
 	GebrCommUri *uri = gebr_comm_uri_new();
 	gebr_comm_uri_set_prefix(uri, "/run");
 	gebr_comm_uri_add_param(uri, "gid", gebr_get_session_id());
-	gebr_comm_uri_add_param(uri, "parent_id", parent_rid);
+
+	if (after)
+		gebr_comm_uri_add_param(uri, "temp_parent", after);
+	else
+		gebr_comm_uri_add_param(uri, "parent_id", parent_rid);
+
 	gebr_comm_uri_add_param(uri, "speed", speed_str);
 	gebr_comm_uri_add_param(uri, "nice", nice);
 	gebr_comm_uri_add_param(uri, "name", name);
@@ -134,8 +140,7 @@ gebr_ui_flow_run(void)
 
 	if (!has_connected_server(maestro, type, name)) {
 		gchar *msg;
-		switch (type) {
-		case MAESTRO_SERVER_TYPE_GROUP:
+		switch (type) { case MAESTRO_SERVER_TYPE_GROUP:
 			msg = g_strdup_printf(_("There are no connected servers on group %s."), name);
 			break;
 		case MAESTRO_SERVER_TYPE_DAEMON:
@@ -150,7 +155,7 @@ gebr_ui_flow_run(void)
 		g_free(msg);
 		gtk_dialog_run(GTK_DIALOG(dialog));
 		gtk_widget_destroy(dialog);
-		return;
+		return NULL;
 	}
 
 	gebr_comm_protocol_socket_send_request(server->socket, GEBR_COMM_HTTP_METHOD_PUT, url, content);
@@ -159,7 +164,7 @@ gebr_ui_flow_run(void)
 	gebr_job_set_hostname(job, hostname);
 	gebr_job_set_exec_speed(job, speed);
 	gebr_job_set_submit_date(job, submit_date);
-	gebr_job_set_title(job, gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.flow)));
+	gebr_job_set_title(job, gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(flow)));
 	gebr_job_set_nice(job, nice);
 	gebr_job_set_server_group(job, name);
 	gebr_job_set_server_group_type(job, group_type);
@@ -175,4 +180,36 @@ gebr_ui_flow_run(void)
 	g_free(xml);
 	g_free(speed_str);
 	g_free(nice);
+
+	return gebr_job_get_id(job);
+}
+
+void
+gebr_ui_flow_run(gboolean is_parallel)
+{
+	GList *rows;
+	GtkTreeModel *model;
+	GtkTreeSelection *selection;
+	const gchar *id = NULL;
+
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gebr.ui_flow_browse->view));
+	rows = gtk_tree_selection_get_selected_rows(selection, &model);
+
+	for (GList *i = rows; i; i = i->next) {
+		GtkTreePath *path = i->data;
+		GebrGeoXmlFlow *flow;
+		GtkTreeIter iter;
+		gtk_tree_model_get_iter(model, &iter, path);
+		gtk_tree_model_get(model, &iter, FB_XMLPOINTER, &flow, -1);
+
+		g_debug("Running after %s", id);
+
+		if (is_parallel)
+			id = run_flow(flow, NULL);
+		else
+			id = run_flow(flow, id);
+
+		if (!id)
+			return;
+	}
 }

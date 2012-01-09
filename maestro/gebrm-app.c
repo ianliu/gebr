@@ -556,6 +556,7 @@ on_client_request(GebrCommProtocolSocket *socket,
 		  GebrCommHttpMsg *request,
 		  GebrmApp *app)
 {
+	GebrmClient *client = g_object_get_data(G_OBJECT(socket), "client");
 	GebrCommUri *uri = gebr_comm_uri_new();
 	gebr_comm_uri_parse(uri, request->url->str);
 	const gchar *prefix = gebr_comm_uri_get_prefix(uri);
@@ -666,14 +667,21 @@ on_client_request(GebrCommProtocolSocket *socket,
 		else if (g_strcmp0(prefix, "/run") == 0) {
 			GebrCommJsonContent *json;
 
-			const gchar *gid        = gebr_comm_uri_get_param(uri, "gid");
-			const gchar *parent_id  = gebr_comm_uri_get_param(uri, "parent_id");
-			const gchar *speed      = gebr_comm_uri_get_param(uri, "speed");
-			const gchar *nice       = gebr_comm_uri_get_param(uri, "nice");
-			const gchar *name       = gebr_comm_uri_get_param(uri, "name");
-			const gchar *group_type = gebr_comm_uri_get_param(uri, "group_type");
-			const gchar *host       = gebr_comm_uri_get_param(uri, "host");
-			const gchar *temp_id    = gebr_comm_uri_get_param(uri, "temp_id");
+			const gchar *gid         = gebr_comm_uri_get_param(uri, "gid");
+			const gchar *parent_id   = gebr_comm_uri_get_param(uri, "parent_id");
+			const gchar *temp_parent = gebr_comm_uri_get_param(uri, "temp_parent");
+			const gchar *speed       = gebr_comm_uri_get_param(uri, "speed");
+			const gchar *nice        = gebr_comm_uri_get_param(uri, "nice");
+			const gchar *name        = gebr_comm_uri_get_param(uri, "name");
+			const gchar *group_type  = gebr_comm_uri_get_param(uri, "group_type");
+			const gchar *host        = gebr_comm_uri_get_param(uri, "host");
+			const gchar *temp_id     = gebr_comm_uri_get_param(uri, "temp_id");
+
+			if (temp_parent) {
+				parent_id = gebrm_client_get_job_id_from_temp(client,
+									      temp_parent);
+				g_debug("Got parent_id %s from temp id %s", parent_id, temp_parent);
+			}
 
 			json = gebr_comm_json_content_new(request->content->str);
 			GString *value = gebr_comm_json_content_to_gstring(json);
@@ -719,6 +727,8 @@ on_client_request(GebrCommProtocolSocket *socket,
 			info.submit_date = g_strdup(gebr_iso_date());
 
 			GebrmJob *job = gebrm_job_new();
+			gebrm_client_add_temp_id(client, temp_id, gebrm_job_get_id(job));
+			g_debug("Associating temp_id %s with id %s", temp_id, gebrm_job_get_id(job));
 
 			g_signal_connect(job, "status-change",
 					 G_CALLBACK(gebrm_app_job_controller_on_status_change), app);
