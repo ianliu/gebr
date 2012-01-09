@@ -344,16 +344,11 @@ err:
 	if (error) {
 		g_debug(" ------- Error: %s", error);
 
-		const gchar *addr = gebrm_daemon_get_address(daemon);
-		gebrm_daemon_disconnect(daemon);
-		gebrm_remove_server_from_list(app, addr);
-		gebrm_config_delete_server(addr);
-
 		for (GList *i = app->priv->connections; i; i = i->next) {
 			GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(i->data);
 			gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
 			                                      gebr_comm_protocol_defs.err_def, 2,
-			                                      addr, error);
+			                                      gebrm_daemon_get_address(daemon), error);
 		}
 	} else {
 		for (GList *i = app->priv->connections; i; i = i->next) {
