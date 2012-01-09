@@ -3,6 +3,7 @@
 callbacks.c
 cmdline.c
 data/gebr-job-control.glade
+data/gebr-maestro-dialog.glade
 data/gebr.desktop.in.in
 document.c
 flow.c
@@ -28,4 +29,3 @@ ui_parameters.c
 ui_paths.c
 ui_preferences.c
 ui_project_line.c
-ui_server.c

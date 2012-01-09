@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libgebr 0.9.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-11-18 16:04-0200\n"
+"POT-Creation-Date: 2012-01-09 17:03-0200\n"
 "PO-Revision-Date: 2011-11-18 16:09-0200\n"
 "Last-Translator: Fabrício Matheus Gonçalves <fmatheus@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
@@ -21,36 +21,24 @@ msgstr ""
 "Language: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../comm/gebr-comm-server.c:144
+#. initiate the marathon to communicate to server
+#: ../comm/gebr-comm-server.c:256
 #, c-format
 msgid "Launching server at '%s'."
 msgstr "Iniciando servidor em %s."
 
-#: ../comm/gebr-comm-server.c:159
-msgid "Launching local server."
-msgstr "Iniciando servidor local."
-
-#: ../comm/gebr-comm-server.c:195
+#: ../comm/gebr-comm-server.c:293
 #, c-format
 msgid "Stopping server at '%s'."
 msgstr "Parando servidor em '%s'."
 
 #. log
-#: ../comm/gebr-comm-server.c:264
+#: ../comm/gebr-comm-server.c:363
 #, c-format
 msgid "Redirecting '%s' graphical output."
 msgstr "Redirecionando saída gráfica de '%s'."
 
-#: ../comm/gebr-comm-server.c:304
-#, c-format
-msgid ""
-"Could not launch local server: \n"
-"%s"
-msgstr ""
-"Não foi possível executar o servidor local: \n"
-"%s"
-
-#: ../comm/gebr-comm-server.c:352
+#: ../comm/gebr-comm-server.c:432
 #, c-format
 msgid ""
 "Server '%s' needs SSH login.\n"
@@ -61,7 +49,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../comm/gebr-comm-server.c:355
+#: ../comm/gebr-comm-server.c:435
 #, c-format
 msgid ""
 "Wrong password for server '%s', please try again.\n"
@@ -72,40 +60,48 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../comm/gebr-comm-server.c:358
+#: ../comm/gebr-comm-server.c:447
+msgid "Please, enter password"
+msgstr ""
+
+#: ../comm/gebr-comm-server.c:454
 msgid "SSH login:"
 msgstr "Login SSH:"
 
-#: ../comm/gebr-comm-server.c:362
+#: ../comm/gebr-comm-server.c:460
 msgid "No password provided."
 msgstr "Nenhuma senha informada."
 
-#: ../comm/gebr-comm-server.c:374
+#: ../comm/gebr-comm-server.c:479
+msgid "Please, answer the question"
+msgstr ""
+
+#: ../comm/gebr-comm-server.c:488
 msgid "SSH host key question:"
 msgstr "Chave do servidor:"
 
-#: ../comm/gebr-comm-server.c:376
+#: ../comm/gebr-comm-server.c:491
 msgid "SSH host key rejected."
 msgstr "A chave SSH do servidor foi rejeitada."
 
 #. last \n
-#: ../comm/gebr-comm-server.c:385
+#: ../comm/gebr-comm-server.c:501
 #, c-format
 msgid "SSH error: %s"
 msgstr "Erro SSH: %s"
 
-#: ../comm/gebr-comm-server.c:386
+#: ../comm/gebr-comm-server.c:502
 #, c-format
 msgid "Received SSH error for server '%s': %s"
 msgstr "O servidor SSH em '%s' reportou o seguinte erro: %s"
 
 #. last \n
-#: ../comm/gebr-comm-server.c:392
+#: ../comm/gebr-comm-server.c:508
 #, c-format
 msgid "Received SSH message for server '%s': %s"
 msgstr "Mensagem SSH recebida do servidor '%s': %s"
 
-#: ../comm/gebr-comm-server.c:403
+#: ../comm/gebr-comm-server.c:519
 #, c-format
 msgid ""
 "SSH reported the following error: \n"
@@ -114,21 +110,21 @@ msgstr ""
 "SSH reportou o seguinte erro:\n"
 "%s"
 
-#: ../comm/gebr-comm-server.c:404
+#: ../comm/gebr-comm-server.c:520
 #, c-format
 msgid "SSH reported the following error for server '%s': %s"
 msgstr "SSH reportou o seguinte erro para o servidor '%s': %s"
 
-#: ../comm/gebr-comm-server.c:463
+#: ../comm/gebr-comm-server.c:579
 msgid "Could not run server."
 msgstr "Não foi possível executar o servidor."
 
-#: ../comm/gebr-comm-server.c:464
+#: ../comm/gebr-comm-server.c:580
 #, c-format
 msgid "Could not run server '%s'."
 msgstr "Não foi possível executar o servidor '%s'."
 
-#: ../comm/gebr-comm-server.c:628
+#: ../comm/gebr-comm-server.c:750
 #, c-format
 msgid "Server '%s' disconnected"
 msgstr "Servidor '%s' desconectado"
@@ -504,36 +500,36 @@ msgstr "O parâmetro de referência faz referência a si próprio."
 msgid "The operation only applies to the first instance of the group."
 msgstr "A operação aplica-se somente à primeira instância do grupo."
 
-#: ../geoxml/flow.c:675 ../geoxml/flow.c:759
+#: ../geoxml/flow.c:687 ../geoxml/flow.c:771
 #, c-format
 msgid "No configured or enabled Programs found in Flow \"%s\"."
 msgstr "Nenhum Programa habilitado ou configurado encontrado no Fluxo \"%s\"."
 
-#: ../geoxml/flow.c:705
+#: ../geoxml/flow.c:717
 #, c-format
 msgid "No input file was specified for the Program \"%s\" in Flow \"%s\"."
 msgstr ""
 "Nenhum arquivo de entrada foi especificado para o Programa \"%s\" no Fluxo "
 "\"%s\"."
 
-#: ../geoxml/flow.c:718
+#: ../geoxml/flow.c:730
 #, c-format
 msgid "Invalid input file specified for the Program \"%s\" in Flow \"%s\"."
 msgstr ""
 "Arquivo de entrada especificado para o Programa \"%s\" no Fluxo \"%s\" é "
 "inválido."
 
-#: ../geoxml/flow.c:735
+#: ../geoxml/flow.c:747
 #, c-format
 msgid "The Flow \"%s\" expects an input file."
 msgstr "O Fluxo \"%s\" espera um arquivo de entrada."
 
-#: ../geoxml/flow.c:743
+#: ../geoxml/flow.c:755
 #, c-format
 msgid "Unexpected output file for the Flow \"%s\"."
 msgstr "Arquivo de saída inexperado para o Fluxo \"%s\"."
 
-#: ../geoxml/flow.c:773
+#: ../geoxml/flow.c:785
 #, c-format
 msgid ""
 "Invalid output file file specified for the Program \"%s\" in Flow \"%s\"."
@@ -541,14 +537,14 @@ msgstr ""
 "Arquivo de saída especificado para o Programa \"%s\" no Fluxo \"%s\" é "
 "inválido."
 
-#: ../geoxml/flow.c:787
+#: ../geoxml/flow.c:799
 #, c-format
 msgid "Invalid error file specified for the Program \"%s\" in Flow \"%s\"."
 msgstr ""
 "Arquivo de log especificado para o Programa \"%s\" no Fluxo \"%s\" é "
 "inválido."
 
-#: ../geoxml/flow.c:857
+#: ../geoxml/flow.c:869
 msgid "Loop iteration counter"
 msgstr "Contador de iterações do Loop"
 
@@ -697,10 +693,6 @@ msgstr ""
 #: ../geoxml/gebr-geoxml-validate.c:463
 msgid "   [Instantiable]\n"
 msgstr "   [Instanciável]\n"
-
-#: ../geoxml/line.c:212
-msgid "All Servers"
-msgstr "Todos os Servidores"
 
 #: ../geoxml/parameter.c:359
 msgid "string"
@@ -951,135 +943,135 @@ msgstr "<valor vazio>"
 msgid "No such file or directory:"
 msgstr "Arquivo ou diretório não encontrado:"
 
-#: ../utils.c:761
+#: ../utils.c:763
 msgid "A moment"
 msgstr "Um momento"
 
-#: ../utils.c:763 ../utils.c:829
+#: ../utils.c:765 ../utils.c:831
 #, c-format
 msgid "%ld seconds"
 msgstr "%ld segundos"
 
-#: ../utils.c:765 ../utils.c:825
+#: ../utils.c:767 ../utils.c:827
 msgid "1 minute"
 msgstr "1 minuto"
 
-#: ../utils.c:767 ../utils.c:827
+#: ../utils.c:769 ../utils.c:829
 #, c-format
 msgid "%ld minutes"
 msgstr "%ld minutos"
 
-#: ../utils.c:769
+#: ../utils.c:771
 #, c-format
 msgid "1 hour"
 msgstr "1 hora"
 
-#: ../utils.c:771 ../utils.c:823
+#: ../utils.c:773 ../utils.c:825
 #, c-format
 msgid "%ld hours"
 msgstr "%ld horas"
 
-#: ../utils.c:773
+#: ../utils.c:775
 #, c-format
 msgid "1 day"
 msgstr "1 dia"
 
-#: ../utils.c:775
+#: ../utils.c:777
 #, c-format
 msgid "%ld days"
 msgstr "%ld dias"
 
-#: ../utils.c:777
+#: ../utils.c:779
 #, c-format
 msgid "1 week"
 msgstr "1 semana"
 
-#: ../utils.c:779
+#: ../utils.c:781
 #, c-format
 msgid "%ld weeks"
 msgstr "%ld semanas"
 
-#: ../utils.c:781
+#: ../utils.c:783
 #, c-format
 msgid "1 month"
 msgstr "1 mês"
 
-#: ../utils.c:783
+#: ../utils.c:785
 #, c-format
 msgid "%ld months"
 msgstr "%ld meses"
 
-#: ../utils.c:785
+#: ../utils.c:787
 msgid "More than a year"
 msgstr "Mais de um ano"
 
-#: ../utils.c:799
+#: ../utils.c:801
 msgid "1 hour, 1 minute and 1 second"
 msgstr "1 hora, 1 minuto e 1 segundo"
 
-#: ../utils.c:801
+#: ../utils.c:803
 #, c-format
 msgid "1 hour, 1 minute and %ld seconds"
 msgstr "1 hora, 1 minuto e %ld segundos"
 
-#: ../utils.c:803
+#: ../utils.c:805
 #, c-format
 msgid "1 hour, %ld minute and 1 second"
 msgstr "1 hora, %ld minutos e 1 segundo"
 
-#: ../utils.c:805
+#: ../utils.c:807
 #, c-format
 msgid "1 hour, %ld minutes and %ld seconds"
 msgstr "1 hora, %ld minutos e %ld segundos"
 
-#: ../utils.c:807
+#: ../utils.c:809
 #, c-format
 msgid "%ld hours, %ld minutes and %ld seconds"
 msgstr "%ld horas, %ld minutos e %ld segundos"
 
-#: ../utils.c:809
+#: ../utils.c:811
 #, c-format
 msgid "%ld hours and %ld minutes"
 msgstr "%ld horas e %ld minutos"
 
-#: ../utils.c:811
+#: ../utils.c:813
 msgid "1 minute and 1 second"
 msgstr "1 minuto e 1 segundo"
 
-#: ../utils.c:813
+#: ../utils.c:815
 #, c-format
 msgid "1 minute and %ld seconds"
 msgstr "1 minuto e %ld segundos"
 
-#: ../utils.c:815
+#: ../utils.c:817
 #, c-format
 msgid "%ld minutes and 1 second"
 msgstr "%ld minutos e 1 segundo"
 
-#: ../utils.c:817
+#: ../utils.c:819
 #, c-format
 msgid "%ld minutes and %ld seconds"
 msgstr "%ld minutos e %ld segundos"
 
-#: ../utils.c:819
+#: ../utils.c:821
 #, c-format
 msgid "1 hour and %ld seconds"
 msgstr "1 hora e %ld segundos"
 
-#: ../utils.c:821
+#: ../utils.c:823
 #, c-format
 msgid "%ld hours and %ld seconds"
 msgstr "%ld horas e %ld segundos"
 
-#: ../utils.c:831
+#: ../utils.c:833
 msgid "1 second"
 msgstr "1 segundo"
 
-#: ../utils.c:833
+#: ../utils.c:835
 msgid "1 milisecond"
 msgstr "1 milissegundo"
 
-#: ../utils.c:835
+#: ../utils.c:837
 #, c-format
 msgid "%ld miliseconds"
 msgstr "%ld milessegundos"
@@ -1303,6 +1295,19 @@ msgid ""
 msgstr ""
 "\n"
 " - Existem tabulações"
+
+#~ msgid "Launching local server."
+#~ msgstr "Iniciando servidor local."
+
+#~ msgid ""
+#~ "Could not launch local server: \n"
+#~ "%s"
+#~ msgstr ""
+#~ "Não foi possível executar o servidor local: \n"
+#~ "%s"
+
+#~ msgid "All Servers"
+#~ msgstr "Todos os Servidores"
 
 #~ msgid "Variable %s use different type"
 #~ msgstr "Variável %s usa tipos diferentes"
