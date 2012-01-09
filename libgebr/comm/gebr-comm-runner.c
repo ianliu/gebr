@@ -368,7 +368,14 @@ on_response_received(GebrCommHttpMsg *request,
 					   atoi(self->priv->speed),
 					   n, &sc->eff_ncores);
 
-	g_debug("Score for %s: %lf", server->address->str, sc->score);
+	gdouble factor_correction = 0.8;
+	gint n_jobs = gebr_comm_daemon_get_n_running_jobs(GEBR_COMM_DAEMON(sc->server));
+	g_debug("_____________________________________");
+	g_debug("Score of %s, njobs:%d, before:%lf",  server->address->str, n_jobs, sc->score) ;
+	if (n_jobs >0)
+		sc->score *=  factor_correction * n_jobs;
+	g_debug("after: %lf",  sc->score);
+	g_debug("_____________________________________");
 
 	self->priv->responses++;
 	if (self->priv->responses == self->priv->requests) {
