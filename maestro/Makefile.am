@@ -66,6 +66,10 @@ libmaestro_la_SOURCES =        \
 	gebrm-task.h	       \
 	$(NULL)
 
+touch:
+	if [ -d $(top_srcdir)/.hg ]; then touch $(srcdir)/gebrm-main.c -r $(top_srcdir)/.hg; fi
+gebrm-client.c: touch
+
 libmaestro_la_LIBADD =		\
 	$(GDOME2_LIBS)		\
 	$(GEBR_LIBS)		\
