@@ -1590,6 +1590,10 @@ servers_filter_sort_func(GtkTreeModel *model,
 				g_free(g1);
 				g_free(g2);
 				return -1;
+			} else if (g_strcmp0(g2, "") == 0) {
+				g_free(g1);
+				g_free(g2);
+				return 1;
 			}
 			g_free(g1);
 			g_free(g2);
@@ -1658,6 +1662,23 @@ on_maestro_filter_changed(GtkComboBox *combo,
 		                   0, display,
 		                   1, type,
 		                   2, group);
+
+		if (type == MAESTRO_SERVER_TYPE_GROUP) {
+			gint n;
+			gchar **servers = gebr_job_get_servers(job, &n);
+			const gchar *tstr = gebr_maestro_server_group_enum_to_str(MAESTRO_SERVER_TYPE_DAEMON);
+
+			for (gint i = 0; i < n; i++) {
+				if (get_server_group_iter(jc, servers[i], tstr, &iter))
+					continue;
+
+				gtk_list_store_append(jc->priv->server_filter, &iter);
+				gtk_list_store_set(jc->priv->server_filter, &iter,
+				                   0, servers[i],
+				                   1, MAESTRO_SERVER_TYPE_DAEMON,
+				                   2, servers[i]);
+			}
+		}
 	}
 
 	gtk_combo_box_set_active(jc->priv->server_combo, 0);
