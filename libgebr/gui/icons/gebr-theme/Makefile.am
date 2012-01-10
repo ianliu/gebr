@@ -121,6 +121,7 @@ libgebr_gui_icons22x22stock_DATA =		\
 	22x22/stock/document-revert.png	\
 	22x22/stock/document-save-as.png	\
 	22x22/stock/document-save.png	\
+	22x22/stock/execute-warn.png	\
 	22x22/stock/edit-clear.png	\
 	22x22/stock/edit-copy.png	\
 	22x22/stock/edit-cut.png	\
@@ -209,6 +210,7 @@ libgebr_gui_icons48x48stock_DATA =		\
 	48x48/stock/document-revert.png	\
 	48x48/stock/document-save-as.png	\
 	48x48/stock/document-save.png	\
+	48x48/stock/execute-warn.png	\
 	48x48/stock/edit-clear.png	\
 	48x48/stock/edit-copy.png	\
 	48x48/stock/edit-cut.png	\
