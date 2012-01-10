@@ -25,6 +25,7 @@
 #include <libgebr/comm/gebr-comm.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 #include "gebr-comm-daemon.h"
 
 
@@ -368,12 +369,13 @@ on_response_received(GebrCommHttpMsg *request,
 					   atoi(self->priv->speed),
 					   n, &sc->eff_ncores);
 
-	gdouble factor_correction = 0.8;
+	gdouble factor_correction = 0.9;
 	gint n_jobs = gebr_comm_daemon_get_n_running_jobs(GEBR_COMM_DAEMON(sc->server));
 	g_debug("_____________________________________");
-	g_debug("Score of %s, njobs:%d, before:%lf",  server->address->str, n_jobs, sc->score) ;
+	g_debug("Score of %s, njobs:%d",  server->address->str, n_jobs) ;
+	g_debug("before:%lf",  sc->score) ;
 	if (n_jobs >0)
-		sc->score *=  factor_correction * n_jobs;
+		sc->score *=  pow(factor_correction, n_jobs);
 	g_debug("after: %lf",  sc->score);
 	g_debug("_____________________________________");
 
