@@ -149,7 +149,7 @@ gebrm_task_new(GebrmDaemon  *server,
 {
 	GebrmTask *task = g_object_new(GEBRM_TYPE_TASK, NULL);
 
-	task->priv->status = JOB_STATUS_INITIAL; 
+	task->priv->status = JOB_STATUS_RUNNING;
 	task->priv->daemon = server;
 	task->priv->rid = g_strdup(rid);
 	task->priv->frac = atoi(frac);
