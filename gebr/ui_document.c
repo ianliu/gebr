@@ -454,7 +454,9 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 		g_signal_connect(lock_button, "toggled",
 				 G_CALLBACK(on_lock_button_toggled), data);
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(lock_button), FALSE);
-		gtk_widget_set_tooltip_text(image, "Click to Lock/Unlock the Maestro of this line");
+		gtk_widget_set_tooltip_text(image, "Click to Lock/Unlock the Maestro of this Line.\n"
+						    "If you change the Maestro of this Line, some paths of"
+						    " this Line and its respective Flows can be broken.");
 
 		GtkWidget *hbox = gtk_hbox_new(FALSE, 5);
 
@@ -1708,28 +1710,14 @@ void on_response_ok(GtkButton * button, GebrPropertiesData * data)
 		gboolean emptyness = gebr_geoxml_line_get_paths_number(line) == 0 && gebr_geoxml_line_get_flows_number(line) == 0;
 		if (!emptyness && current_active_group != data->previous_active_group) {
 			gboolean clean = gebr_gui_message_dialog (GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
-								  _("Clear Line and Flow(s) path(s)?"),
-								  _("Do you wish to clear all paths from"
-								    " this Line and its respective Flows?"));
-			if (clean) {
-				GebrGeoXmlDocument *flow;
-				GebrGeoXmlSequence *sequence;
-
-				gebr_geoxml_line_get_flow (gebr.line, &sequence, 0);
-				while (sequence) {
-					const gchar *fname;
-					fname = gebr_geoxml_line_get_flow_source (GEBR_GEOXML_LINE_FLOW (sequence));
-					if (document_load (&flow, fname, TRUE) == GEBR_GEOXML_RETV_SUCCESS)
-						flow_set_paths_to_empty (GEBR_GEOXML_FLOW (flow));
-					gebr_geoxml_sequence_next (&sequence);
-				}
-
-				line_set_paths_to_empty (gebr.line);
-				gebr_gui_value_sequence_edit_clear (GEBR_GUI_VALUE_SEQUENCE_EDIT(data->path_sequence_edit));
-				flow_browse_reload_selected();
-			}
+			                                          _("Change of Maestro"),
+								  _("Are you sure you want to change the maestro of this Line?"
+								    "\n\nIf you choose to change the maestro of this Line,"
+								    " be sure to correct the paths of this Line "
+								    "and its respective Flows that can be broken."));
+			if (clean)
+				on_groups_combo_box_changed(GTK_COMBO_BOX(data->maestro_combo));
 		}
-		on_groups_combo_box_changed(GTK_COMBO_BOX(data->maestro_combo));
 	} case GEBR_GEOXML_DOCUMENT_TYPE_PROJECT: {
 		project_line_get_selected(&iter, DontWarnUnselection);
 		gtk_tree_store_set(gebr.ui_project_line->store, &iter,
