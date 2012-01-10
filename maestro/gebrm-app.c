@@ -130,14 +130,18 @@ send_server_status_message(GebrmApp *app,
 			   const gchar *ac)
 {
 	const gchar *state = gebr_comm_server_state_to_string(gebrm_daemon_get_state(daemon));
-	const gchar *error = gebrm_daemon_get_error(daemon);
 	gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
-					      gebr_comm_protocol_defs.ssta_def, 5,
+					      gebr_comm_protocol_defs.ssta_def, 4,
 					      gebrm_daemon_get_hostname(daemon),
 					      gebrm_daemon_get_address(daemon),
 					      state,
-					      error,
 					      ac);
+
+	gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
+	                                      gebr_comm_protocol_defs.err_def, 3,
+	                                      gebrm_daemon_get_address(daemon),
+	                                      gebrm_daemon_get_error_type(daemon),
+	                                      gebrm_daemon_get_error_msg(daemon));
 }
 
 static void
@@ -341,14 +345,17 @@ on_daemon_init(GebrmDaemon *daemon,
 	}
 
 err:
+	gebrm_daemon_set_error_type(daemon, error);
+	gebrm_daemon_set_error_msg(daemon, error_msg);
+
 	if (error) {
 		g_debug(" ------- Error: %s", error);
 
 		for (GList *i = app->priv->connections; i; i = i->next) {
 			GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(i->data);
 			gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
-			                                      gebr_comm_protocol_defs.err_def, 2,
-			                                      gebrm_daemon_get_address(daemon), error);
+			                                      gebr_comm_protocol_defs.err_def, 3,
+			                                      gebrm_daemon_get_address(daemon), error, error_msg);
 		}
 	} else {
 		for (GList *i = app->priv->connections; i; i = i->next) {
@@ -622,9 +629,8 @@ on_client_request(GebrCommProtocolSocket *socket,
 			                                      addr, "");
 
 			gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
-			                                      gebr_comm_protocol_defs.srm_def, 2,
-			                                      addr,
-			                                      "");
+			                                      gebr_comm_protocol_defs.srm_def, 1,
+			                                      addr);
 		}
 		else if (g_strcmp0(prefix, "/close") == 0) {
 			const gchar *id = gebr_comm_uri_get_param(uri, "id");

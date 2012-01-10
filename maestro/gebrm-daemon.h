@@ -161,7 +161,15 @@ void gebrm_daemon_set_id(GebrmDaemon *daemon,
 
 const gchar *gebrm_daemon_get_id(GebrmDaemon *daemon);
 
-const gchar *gebrm_daemon_get_error(GebrmDaemon *daemon);
+const gchar *gebrm_daemon_get_error_type(GebrmDaemon *daemon);
+
+const gchar *gebrm_daemon_get_error_msg(GebrmDaemon *daemon);
+
+void gebrm_daemon_set_error_type(GebrmDaemon *daemon,
+                                 const gchar *error_type);
+
+void gebrm_daemon_set_error_msg(GebrmDaemon *daemon,
+                                const gchar *error_msg);
 
 gint gebrm_daemon_get_uncompleted_tasks(GebrmDaemon *daemon);
 

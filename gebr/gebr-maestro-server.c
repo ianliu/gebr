@@ -311,33 +311,27 @@ parse_messages(GebrCommServer *comm_server,
 			g_debug("<<< DAEMON ERROR >>> Daemon %s reported an error of type %s : %s",
 				addr->str, type->str, msg->str);
 
-			g_signal_emit(maestro, signals[ERROR], 0, addr->str, type->str);
+			g_signal_emit(maestro, signals[ERROR], 0, addr->str, type->str, msg->str);
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}
 		else if (message->hash == gebr_comm_protocol_defs.ssta_def.code_hash) {
 			GList *arguments;
-			GString *addr, *ssta, *ac, *error, *hostname;
+			GString *addr, *ssta, *ac, *hostname;
 			const gchar *maestro_addr = gebr_maestro_server_get_address(maestro);
 
 			/* organize message data */
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 5)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 4)) == NULL)
 				goto err;
 
 			hostname = g_list_nth_data(arguments, 0);
 			addr = g_list_nth_data(arguments, 1);
 			ssta = g_list_nth_data(arguments, 2);
-			error = g_list_nth_data(arguments, 3);
-			ac = g_list_nth_data(arguments, 4);
+			ac = g_list_nth_data(arguments, 3);
 
 			GtkTreeIter iter;
 			GebrCommServerState state = gebr_comm_server_state_from_string(ssta->str);
 			GebrDaemonServer *daemon = get_daemon_from_address(maestro, addr->str, &iter);
-
-			g_debug("HOSTNAME IS %s", hostname->str);
-
-			if(daemon)
-				gebr_daemon_server_set_error(daemon, error->str);
 
 			if (!daemon) {
 				daemon = gebr_daemon_server_new(GEBR_CONNECTABLE(maestro),
@@ -600,29 +594,16 @@ parse_messages(GebrCommServer *comm_server,
 		else if (message->hash == gebr_comm_protocol_defs.srm_def.code_hash) {
 			GList *arguments;
 
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 1)) == NULL)
 				goto err;
 
 			GString *addr = g_list_nth_data(arguments, 0);
-			GString *error = g_list_nth_data(arguments, 1);
 
 			g_debug("Removing server %s", addr->str);
 
 			GtkTreeIter iter;
 			GebrDaemonServer *daemon;
 			GtkTreeModel *model = GTK_TREE_MODEL(maestro->priv->store);
-
-			if (g_str_has_prefix(error->str, "error:")) {
-				gchar *offset = error->str + strlen("error:");
-				if (g_strcmp0(offset, "nfs") == 0)
-					g_signal_emit(maestro, signals[ERROR], 0, addr->str, "nfs");
-				else if (g_strcmp0(offset, "id") == 0)
-					g_signal_emit(maestro, signals[ERROR], 0, addr->str, "id");
-				else if (g_strcmp0(offset, "protocol") == 0)
-					g_signal_emit(maestro, signals[ERROR], 0, addr->str, "protocol");
-				else if (g_strcmp0(offset, "connection-refused") == 0)
-					g_signal_emit(maestro, signals[ERROR], 0, addr->str, "connection-refused");
-			}
 
 			gebr_gui_gtk_tree_model_foreach(iter, model) {
 				gtk_tree_model_get(model, &iter, 0, &daemon, -1);
@@ -807,8 +788,8 @@ gebr_maestro_server_class_init(GebrMaestroServerClass *klass)
 			             G_SIGNAL_RUN_LAST,
 			             G_STRUCT_OFFSET(GebrMaestroServerClass, error),
 			             NULL, NULL,
-			             gebr_cclosure_marshal_VOID__STRING_STRING,
-			             G_TYPE_NONE, 2, G_TYPE_STRING, G_TYPE_STRING);
+			             gebr_cclosure_marshal_VOID__STRING_STRING_STRING,
+			             G_TYPE_NONE, 3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
 
 	signals[CONFIRM] =
 			g_signal_new("confirm",

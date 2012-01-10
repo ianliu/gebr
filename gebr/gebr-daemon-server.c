@@ -294,6 +294,8 @@ gebr_daemon_server_set_ac(GebrDaemonServer *daemon, gboolean ac)
 void
 gebr_daemon_server_set_error(GebrDaemonServer *daemon, const gchar *error)
 {
+	if (daemon->priv->error)
+		g_free(daemon->priv->error);
 	daemon->priv->error = g_strdup(error);
 }
 const gchar *gebr_daemon_server_get_error(GebrDaemonServer *daemon)

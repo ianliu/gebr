@@ -39,6 +39,9 @@ struct _GebrmDaemonPriv {
 	gchar *nfsid;
 	gchar *id;
 
+	gchar *error_type;
+	gchar *error_msg;
+
 	gint uncompleted_tasks;
 };
 
@@ -130,8 +133,16 @@ gebrm_server_op_state_changed(GebrCommServer *server,
 	GebrmDaemon *daemon = user_data;
 
 	if (server->state == SERVER_STATE_DISCONNECTED) {
+		if (server->last_error->len) {
+			gebrm_daemon_set_error_type(daemon, "error:ssh");
+			gebrm_daemon_set_error_msg(daemon, server->last_error->str);
+		}
 		daemon->priv->is_initialized = FALSE;
 		daemon->priv->uncompleted_tasks = 0;
+	}
+	else if (server->state == SERVER_STATE_CONNECT) {
+		gebrm_daemon_set_error_type(daemon, NULL);
+		gebrm_daemon_set_error_msg(daemon, NULL);
 	}
 
 	g_signal_emit(daemon, signals[STATE_CHANGE], 0, server->state);
@@ -456,6 +467,8 @@ gebrm_daemon_finalize(GObject *object)
 	gebr_comm_server_free(daemon->priv->server);
 	g_free(daemon->priv->nfsid);
 	g_free(daemon->priv->id);
+	g_free(daemon->priv->error_msg);
+	g_free(daemon->priv->error_type);
 	g_hash_table_destroy(daemon->priv->tasks);
 	if (daemon->priv->client)
 		g_object_unref(daemon->priv->client);
@@ -762,9 +775,33 @@ gebrm_daemon_get_id(GebrmDaemon *daemon)
 }
 
 const gchar *
-gebrm_daemon_get_error(GebrmDaemon *daemon)
+gebrm_daemon_get_error_type(GebrmDaemon *daemon)
 {
-	return gebr_comm_server_get_last_error(daemon->priv->server);
+	return daemon->priv->error_type;
+}
+
+const gchar *
+gebrm_daemon_get_error_msg(GebrmDaemon *daemon)
+{
+	return daemon->priv->error_msg;
+}
+
+void
+gebrm_daemon_set_error_type(GebrmDaemon *daemon,
+                            const gchar *error_type)
+{
+	if (daemon->priv->error_type)
+		g_free(daemon->priv->error_type);
+	daemon->priv->error_type = g_strdup(error_type);
+}
+
+void
+gebrm_daemon_set_error_msg(GebrmDaemon *daemon,
+                           const gchar *error_msg)
+{
+	if (daemon->priv->error_msg)
+		g_free(daemon->priv->error_msg);
+	daemon->priv->error_msg = g_strdup(error_msg);
 }
 
 gint
