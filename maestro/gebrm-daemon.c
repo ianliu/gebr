@@ -39,6 +39,7 @@ struct _GebrmDaemonPriv {
 	gchar *nfsid;
 	gchar *id;
 
+	gchar *last_error_type;
 	gchar *error_type;
 	gchar *error_msg;
 
@@ -797,8 +798,10 @@ void
 gebrm_daemon_set_error_type(GebrmDaemon *daemon,
                             const gchar *error_type)
 {
-	if (daemon->priv->error_type)
-		g_free(daemon->priv->error_type);
+	if (daemon->priv->last_error_type)
+		g_free(daemon->priv->last_error_type);
+
+	daemon->priv->last_error_type = daemon->priv->error_type;
 	daemon->priv->error_type = g_strdup(error_type);
 }
 
@@ -848,4 +851,16 @@ const gchar *
 gebrm_daemon_get_hostname(GebrmDaemon *daemon)
 {
 	return daemon->priv->server->socket->protocol->hostname->str;
+}
+
+void
+gebrm_daemon_send_error_message(GebrmDaemon *daemon,
+                                GebrCommProtocolSocket *socket)
+{
+	if (g_strcmp0(daemon->priv->last_error_type, daemon->priv->error_type) != 0)
+		gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
+		                                      gebr_comm_protocol_defs.err_def, 3,
+		                                      gebrm_daemon_get_address(daemon),
+		                                      gebrm_daemon_get_error_type(daemon),
+		                                      gebrm_daemon_get_error_msg(daemon));
 }

@@ -137,11 +137,7 @@ send_server_status_message(GebrmApp *app,
 					      state,
 					      ac);
 
-	gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
-	                                      gebr_comm_protocol_defs.err_def, 3,
-	                                      gebrm_daemon_get_address(daemon),
-	                                      gebrm_daemon_get_error_type(daemon),
-	                                      gebrm_daemon_get_error_msg(daemon));
+	gebrm_daemon_send_error_message(daemon, socket);
 }
 
 static void

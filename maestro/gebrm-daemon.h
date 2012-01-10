@@ -181,6 +181,9 @@ void gebrm_daemon_send_client_info(GebrmDaemon *daemon,
 
 const gchar *gebrm_daemon_get_hostname(GebrmDaemon *daemon);
 
+void gebrm_daemon_send_error_message(GebrmDaemon *daemon,
+                                     GebrCommProtocolSocket *socket);
+
 G_END_DECLS
 
 #endif /* __GEBRM_DAEMON_H__ */
