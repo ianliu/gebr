@@ -1010,7 +1010,7 @@ compute_subheader_label(GebrJob *job,
 
 	/* start date (may have failed, never started) */
 	if (start_date && strlen(start_date))
-		g_string_append_printf(start, "Started at %s", gebr_localized_date(start_date));
+		g_string_append_printf(start, _("Started at %s"), gebr_localized_date(start_date));
 
 	/* finish date */
 	if (finish_date && strlen(finish_date)) {

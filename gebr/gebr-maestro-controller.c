@@ -1295,7 +1295,7 @@ gebr_maestro_controller_maestro_state_changed_real(GebrMaestroController *mc,
 					      GTK_STOCK_CONNECT);
 		gtk_entry_set_icon_tooltip_text(entry,
 						GTK_ENTRY_ICON_SECONDARY,
-						"Connected");
+						_("Connected"));
 		on_daemons_changed(maestro, mc);
 		GtkTreeView *view = GTK_TREE_VIEW(gtk_builder_get_object(mc->priv->builder, "treeview_servers"));
 		gtk_tree_view_set_model(view, GTK_TREE_MODEL(mc->priv->model));
