@@ -917,7 +917,7 @@ gebr_maestro_server_add_daemon(GebrMaestroServer *maestro,
 			       GebrDaemonServer *daemon)
 {
 	GtkTreeIter iter;
-	gtk_list_store_append(maestro->priv->store, &iter);
+	gtk_list_store_prepend(maestro->priv->store, &iter);
 	gtk_list_store_set(maestro->priv->store, &iter, 0, daemon, -1);
 }
 
