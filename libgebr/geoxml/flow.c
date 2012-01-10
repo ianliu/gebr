@@ -1072,7 +1072,16 @@ gebr_geoxml_flow_calculate_proportional_n(gint total_n,
 		distributed_n[i] = partial_n;
 	}
 
-	gint k = n_weights -1;
+	gint k;
+	if (total_n <= n_weights) 
+		k = total_n-1;
+	else
+		k = n_weights-1; 
+
+	if (total_n <= n_weights) 
+		k = total_n-1;
+	else
+		k = n_weights-1; 
 	while (aux_total_n > 0)
 	{
 		distributed_n[k]++;
