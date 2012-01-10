@@ -228,22 +228,16 @@ document_properties_create_maestro_combobox(GebrGeoXmlLine *line)
 
 	if (maestro) {
 		const gchar *stockid;
-		if (gebr_maestro_server_get_state(maestro) == SERVER_STATE_CONNECT)
+		if (gebr_maestro_server_get_state(maestro) == SERVER_STATE_CONNECT) {
 			stockid = GTK_STOCK_CONNECT;
-		else {
-			const gchar *error = gebr_maestro_server_get_error(maestro);
-			if (!error || !*error)
-				stockid = GTK_STOCK_DISCONNECT;
-			else
-				stockid = GTK_STOCK_DIALOG_WARNING;
+			gebr_maestro_server_get_server(maestro);
+			gtk_list_store_append(store, &iter);
+			gtk_list_store_set(store, &iter,
+			                   0, stockid,
+			                   1, gebr_maestro_server_get_address(maestro),
+			                   -1);
+			gtk_combo_box_set_active_iter(GTK_COMBO_BOX(combo), &iter);
 		}
-		gebr_maestro_server_get_server(maestro);
-		gtk_list_store_append(store, &iter);
-		gtk_list_store_set(store, &iter,
-				   0, stockid,
-				   1, gebr_maestro_server_get_address(maestro),
-				   -1);
-		gtk_combo_box_set_active_iter(GTK_COMBO_BOX(combo), &iter);
 	}
 
 	if (!gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, line)) {
@@ -259,7 +253,6 @@ document_properties_create_maestro_combobox(GebrGeoXmlLine *line)
 			gtk_combo_box_set_active_iter(GTK_COMBO_BOX(combo), &iter);
 		}
 	}
-
 
 	return combo;
 }
