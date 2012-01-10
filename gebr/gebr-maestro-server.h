@@ -64,7 +64,8 @@ struct _GebrMaestroServerClass {
 
 	void    (*error) (GebrMaestroServer *maestro,
 			  const gchar       *addr,
-			  const gchar       *error_type);
+			  const gchar       *error_type,
+			  const gchar       *error_msg);
 
 	void (*confirm) (GebrMaestroServer *maestro,
 			 const gchar *addr,

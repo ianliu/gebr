@@ -27,7 +27,7 @@ G_BEGIN_DECLS
  *
  * This method runs the selected flows according to the interface setup.
  */
-void gebr_ui_flow_run(void);
+void gebr_ui_flow_run(gboolean is_parallel);
 
 G_END_DECLS
 

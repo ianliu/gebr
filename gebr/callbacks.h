@@ -77,6 +77,9 @@ void on_project_line_export_activate(void);
  * Call #flow_import> from #flow.c
  */
 void on_flow_import_activate(void);
+
+void on_flow_execute_parallel_activate(void);
+
 /**
  * Call #flow_export> from #flow.c
  */

@@ -80,20 +80,18 @@ gint channel_do(const gchar * source, const gchar * destination)
 		fprintf(stderr, _("Unknown source address\n"));
 		return -2;
 	}
+
 	GebrCommSocketAddress destinationaddress = gebr_comm_socket_address_parse_from_string(destination);
 	if (gebr_comm_socket_address_get_type(&destinationaddress) == GEBR_COMM_SOCKET_ADDRESS_TYPE_UNKNOWN) {
 		fprintf(stderr, _("Unknown destination address\n"));
 		return -3;
 	}
+
 	GebrCommChannelSocket *channel = gebr_comm_channel_socket_new();
 	gebr_comm_channel_socket_start(channel, &sourceaddress, &destinationaddress);
-	//	fprintf(stderr, _("Could not create channel\n"));
-	//	return -4;
-	//}
 	fprintf(stdout, _("Channel created successful. Forwarding connections...\n"));
 
 	g_main_loop_run(loop);
 
 	return 0;
-	}
-
+}

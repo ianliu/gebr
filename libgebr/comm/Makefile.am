@@ -39,6 +39,7 @@ gebr-comm-protocol.c: touch
 lib_LTLIBRARIES = libgebr_comm.la
 libgebr_comm_la_SOURCES = \
 	gebr-comm-channelsocket.c	\
+	gebr-comm-daemon.c		\
 	gebr-comm-hostinfo.c		\
 	gebr-comm-http-msg.c 		\
 	gebr-comm-job.c			\
@@ -59,6 +60,7 @@ libgebr_comm_la_SOURCES = \
 libgebr_commsubincludedir = $(includedir)/libgebr/comm
 libgebr_commsubinclude_HEADERS = \
 	gebr-comm-channelsocket.h	\
+	gebr-comm-daemon.h		\
 	gebr-comm-hostinfo.h		\
 	gebr-comm-http-msg.h 		\
 	gebr-comm-job.h			\

@@ -130,14 +130,18 @@ send_server_status_message(GebrmApp *app,
 			   const gchar *ac)
 {
 	const gchar *state = gebr_comm_server_state_to_string(gebrm_daemon_get_state(daemon));
-	const gchar *error = gebrm_daemon_get_error(daemon);
 	gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
-					      gebr_comm_protocol_defs.ssta_def, 5,
+					      gebr_comm_protocol_defs.ssta_def, 4,
 					      gebrm_daemon_get_hostname(daemon),
 					      gebrm_daemon_get_address(daemon),
 					      state,
-					      error,
 					      ac);
+
+	gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
+	                                      gebr_comm_protocol_defs.err_def, 3,
+	                                      gebrm_daemon_get_address(daemon),
+	                                      gebrm_daemon_get_error_type(daemon),
+	                                      gebrm_daemon_get_error_msg(daemon));
 }
 
 static void
@@ -341,20 +345,17 @@ on_daemon_init(GebrmDaemon *daemon,
 	}
 
 err:
+	gebrm_daemon_set_error_type(daemon, error);
+	gebrm_daemon_set_error_msg(daemon, error_msg);
+
 	if (error) {
 		g_debug(" ------- Error: %s", error);
-
-		const gchar *addr = gebrm_daemon_get_address(daemon);
-		gebrm_daemon_disconnect(daemon);
-		gebrm_remove_server_from_list(app, addr);
-		gebrm_config_delete_server(addr);
 
 		for (GList *i = app->priv->connections; i; i = i->next) {
 			GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(i->data);
 			gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
-			                                      gebr_comm_protocol_defs.srm_def, 2,
-			                                      addr,
-			                                      error);
+			                                      gebr_comm_protocol_defs.err_def, 3,
+			                                      gebrm_daemon_get_address(daemon), error, error_msg);
 		}
 	} else {
 		for (GList *i = app->priv->connections; i; i = i->next) {
@@ -455,31 +456,27 @@ static GList *
 get_comm_servers_list(GebrmApp *app, const gchar *group, const gchar *group_type)
 {
 	GList *servers = NULL;
-	GebrCommServer *server;
 	gboolean is_single = g_strcmp0(group_type, "daemon") == 0;
 
 	if (is_single) { 
 		for (GList *i = app->priv->daemons; i; i = i->next) {
 			if (g_str_equal(gebrm_daemon_get_address(i->data), group)) {
-				g_object_get(i->data, "server", &server, NULL);
-				servers = g_list_prepend(servers, server);
+				servers = g_list_prepend(servers, i->data);
 				break;
 			}
 		}
 	} else {
 		if (g_strcmp0(group,"")==0) {	//All servers from maestro 
 			for (GList *i = app->priv->daemons; i; i = i->next) {
-				g_object_get(i->data, "server", &server, NULL);
-				if (gebr_comm_server_is_logged(server))
-					servers = g_list_prepend(servers, server);
+				if (gebr_comm_server_is_logged(gebrm_daemon_get_server(i->data)))
+					servers = g_list_prepend(servers, i->data);
 			}
 		} else {		//All servers from a group
 			for (GList *i = app->priv->daemons; i; i = i->next) {
 				if (!gebrm_daemon_has_group(i->data, group))
 					continue;
-				g_object_get(i->data, "server", &server, NULL);
-				if (gebr_comm_server_is_logged(server))
-					servers = g_list_prepend(servers, server);
+				if (gebr_comm_server_is_logged(gebrm_daemon_get_server(i->data)))
+					servers = g_list_prepend(servers, i->data);
 			}
 		}
 	}
@@ -560,6 +557,7 @@ on_client_request(GebrCommProtocolSocket *socket,
 		  GebrCommHttpMsg *request,
 		  GebrmApp *app)
 {
+	GebrmClient *client = g_object_get_data(G_OBJECT(socket), "client");
 	GebrCommUri *uri = gebr_comm_uri_new();
 	gebr_comm_uri_parse(uri, request->url->str);
 	const gchar *prefix = gebr_comm_uri_get_prefix(uri);
@@ -631,9 +629,8 @@ on_client_request(GebrCommProtocolSocket *socket,
 			                                      addr, "");
 
 			gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
-			                                      gebr_comm_protocol_defs.srm_def, 2,
-			                                      addr,
-			                                      "");
+			                                      gebr_comm_protocol_defs.srm_def, 1,
+			                                      addr);
 		}
 		else if (g_strcmp0(prefix, "/close") == 0) {
 			const gchar *id = gebr_comm_uri_get_param(uri, "id");
@@ -670,14 +667,21 @@ on_client_request(GebrCommProtocolSocket *socket,
 		else if (g_strcmp0(prefix, "/run") == 0) {
 			GebrCommJsonContent *json;
 
-			const gchar *gid        = gebr_comm_uri_get_param(uri, "gid");
-			const gchar *parent_id  = gebr_comm_uri_get_param(uri, "parent_id");
-			const gchar *speed      = gebr_comm_uri_get_param(uri, "speed");
-			const gchar *nice       = gebr_comm_uri_get_param(uri, "nice");
-			const gchar *name       = gebr_comm_uri_get_param(uri, "name");
-			const gchar *group_type = gebr_comm_uri_get_param(uri, "group_type");
-			const gchar *host       = gebr_comm_uri_get_param(uri, "host");
-			const gchar *temp_id    = gebr_comm_uri_get_param(uri, "temp_id");
+			const gchar *gid         = gebr_comm_uri_get_param(uri, "gid");
+			const gchar *parent_id   = gebr_comm_uri_get_param(uri, "parent_id");
+			const gchar *temp_parent = gebr_comm_uri_get_param(uri, "temp_parent");
+			const gchar *speed       = gebr_comm_uri_get_param(uri, "speed");
+			const gchar *nice        = gebr_comm_uri_get_param(uri, "nice");
+			const gchar *name        = gebr_comm_uri_get_param(uri, "name");
+			const gchar *group_type  = gebr_comm_uri_get_param(uri, "group_type");
+			const gchar *host        = gebr_comm_uri_get_param(uri, "host");
+			const gchar *temp_id     = gebr_comm_uri_get_param(uri, "temp_id");
+
+			if (temp_parent) {
+				parent_id = gebrm_client_get_job_id_from_temp(client,
+									      temp_parent);
+				g_debug("Got parent_id %s from temp id %s", parent_id, temp_parent);
+			}
 
 			json = gebr_comm_json_content_new(request->content->str);
 			GString *value = gebr_comm_json_content_to_gstring(json);
@@ -723,6 +727,8 @@ on_client_request(GebrCommProtocolSocket *socket,
 			info.submit_date = g_strdup(gebr_iso_date());
 
 			GebrmJob *job = gebrm_job_new();
+			gebrm_client_add_temp_id(client, temp_id, gebrm_job_get_id(job));
+			g_debug("Associating temp_id %s with id %s", temp_id, gebrm_job_get_id(job));
 
 			g_signal_connect(job, "status-change",
 					 G_CALLBACK(gebrm_app_job_controller_on_status_change), app);
