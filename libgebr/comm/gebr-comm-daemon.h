@@ -42,6 +42,8 @@ struct _GebrCommDaemonIface {
 	GebrCommServer * (*get_server) (GebrCommDaemon *daemon);
 
 	gint (*get_n_running_jobs) (GebrCommDaemon *daemon);
+
+	const gchar * (*get_hostname) (GebrCommDaemon *daemon);
 };
 
 GType gebr_comm_daemon_get_type(void) G_GNUC_CONST;
@@ -50,5 +52,6 @@ GebrCommServer *gebr_comm_daemon_get_server(GebrCommDaemon *daemon);
 
 gint gebr_comm_daemon_get_n_running_jobs(GebrCommDaemon *daemon);
 
+const gchar *gebr_comm_daemon_get_hostname(GebrCommDaemon *daemon);
 
 #endif /* __GEBR_COMM_DAEMON_H__ */

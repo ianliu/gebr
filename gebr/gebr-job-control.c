@@ -423,14 +423,14 @@ jobs_visible_for_servers(GtkTreeModel *model,
 		gchar **servers = gebr_job_get_servers(job, &n);
 
 		for (int i = 0; i < n; i++)
-			if (g_strcmp0(servers[i], name) == 0)
+			if (g_strcmp0(servers[i], display) == 0)
 				has_server = TRUE;
 
 		g_strfreev(servers);
 		return has_server;
 	}
 
-	return type == ttype && g_strcmp0(tname, name) == 0;
+	return type == ttype && g_strcmp0(tname, display) == 0;
 }
 
 static gboolean
@@ -1559,19 +1559,24 @@ on_maestro_filter_changed(GtkComboBox *combo,
 	GtkTreeModel *groups = gebr_maestro_server_get_groups_model(maestro);
 
 	gebr_gui_gtk_tree_model_foreach(it, groups) {
-		gchar *name;
+		gchar *name, *host;
 		const gchar *display;
 		GebrMaestroServerGroupType type;
 
 		gtk_tree_model_get(groups, &it,
 				   MAESTRO_SERVER_TYPE, &type,
 				   MAESTRO_SERVER_NAME, &name,
+				   MAESTRO_SERVER_HOST, &host,
 				   -1);
 
 		if (!*name)
 			display = gebr_maestro_server_get_display_address(maestro);
-		else
-			display = name;
+		else {
+			if (type == MAESTRO_SERVER_TYPE_DAEMON)
+				display = host;
+			else
+				display = name;
+		}
 
 		gtk_list_store_append(jc->priv->server_filter, &iter);
 		gtk_list_store_set(jc->priv->server_filter, &iter,

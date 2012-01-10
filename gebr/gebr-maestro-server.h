@@ -80,6 +80,7 @@ struct _GebrMaestroServer {
 typedef enum {
 	MAESTRO_SERVER_TYPE,
 	MAESTRO_SERVER_NAME,
+	MAESTRO_SERVER_HOST,
 	MAESTRO_SERVER_N
 } GebrMaestroServerGroupColumns;
 

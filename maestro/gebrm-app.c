@@ -673,6 +673,7 @@ on_client_request(GebrCommProtocolSocket *socket,
 			const gchar *speed       = gebr_comm_uri_get_param(uri, "speed");
 			const gchar *nice        = gebr_comm_uri_get_param(uri, "nice");
 			const gchar *name        = gebr_comm_uri_get_param(uri, "name");
+			const gchar *server_host = gebr_comm_uri_get_param(uri, "server-hostname");
 			const gchar *group_type  = gebr_comm_uri_get_param(uri, "group_type");
 			const gchar *host        = gebr_comm_uri_get_param(uri, "host");
 			const gchar *temp_id     = gebr_comm_uri_get_param(uri, "temp_id");
@@ -721,7 +722,10 @@ on_client_request(GebrCommProtocolSocket *socket,
 			info.input = gebr_geoxml_flow_io_get_input(*pflow);
 			info.output = gebr_geoxml_flow_io_get_output(*pflow);
 			info.error = gebr_geoxml_flow_io_get_error(*pflow);
-			info.group = g_strdup(name);
+			if (server_host)
+				info.group = g_strdup(server_host);
+			else
+				info.group = g_strdup(name);
 			info.group_type = g_strdup(group_type);
 			info.speed = g_strdup(speed);
 			info.submit_date = g_strdup(gebr_iso_date());

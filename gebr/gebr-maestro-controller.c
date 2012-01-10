@@ -329,7 +329,7 @@ notebook_group_show_address(GtkTreeViewColumn *tree_column,
 
 	if (daemon) {
 		g_object_set(cell,
-			     "text", gebr_daemon_server_get_display_address(daemon),
+			     "text", gebr_daemon_server_get_hostname(daemon),
 			     "sensitive", TRUE,
 			     NULL);
 		g_object_unref(daemon);
@@ -362,7 +362,7 @@ copy_model_for_groups(GtkTreeModel *orig_model)
 		gtk_list_store_append(new_model, &new_iter);
 		gtk_list_store_set(new_model, &new_iter,
 		                   MAESTRO_CONTROLLER_DAEMON, daemon,
-		                   MAESTRO_CONTROLLER_ADDR, !g_strcmp0(hostname, "")? gebr_daemon_server_get_address(daemon) : hostname,
+		                   MAESTRO_CONTROLLER_ADDR, gebr_daemon_server_get_address(daemon),
 		                   -1);
 	}
 

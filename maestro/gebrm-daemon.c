@@ -82,11 +82,18 @@ gebrm_daemon_iface_get_n_running_jobs(GebrCommDaemon *daemon)
 	return gebrm_daemon_get_uncompleted_tasks(GEBRM_DAEMON(daemon));
 }
 
+const gchar *
+gebrm_daemon_iface_get_hostname(GebrCommDaemon *daemon)
+{
+	return gebrm_daemon_get_hostname(GEBRM_DAEMON(daemon));
+}
+
 static void
 gebrm_daemon_init_iface(GebrCommDaemonIface *iface)
 {
 	iface->get_server = gebrm_daemon_iface_get_server;
 	iface->get_n_running_jobs = gebrm_daemon_iface_get_n_running_jobs;
+	iface->get_hostname = gebrm_daemon_iface_get_hostname;
 }
 
 static void

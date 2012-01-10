@@ -302,9 +302,10 @@ divide_and_run_flows(GebrCommRunner *self)
 		GebrCommServer *server = gebr_comm_daemon_get_server(sc->server);
 		gchar *frac_str = g_strdup_printf("%d", frac);
 		gchar *flow_xml = strip_flow(self->priv->validator, flow);
+		const gchar *hostname = gebr_comm_daemon_get_hostname(sc->server);
 
 		g_string_append_printf(server_list, "%s,%lf,",
-				       server->address->str, weights[k]);
+				       hostname, weights[k]);
 
 		gebr_comm_protocol_socket_oldmsg_send(server->socket, FALSE,
 						      gebr_comm_protocol_defs.run_def, 8,

@@ -1525,9 +1525,11 @@ on_server_disconnected_set_row_insensitive(GtkCellLayout   *cell_layout,
 				txt = name;
 			else
 				txt = gebr_maestro_server_get_display_address(maestro);
-		} else
-			txt = gebr_daemon_server_get_display_address(daemon);
-
+		} else  {
+			txt = gebr_daemon_server_get_hostname(daemon);
+			if (!txt || !*txt)
+				txt = gebr_daemon_server_get_address(daemon);
+		}
 		g_object_set(cell, "text", txt, NULL);
 	} else {
 		const gchar *stock_id;
@@ -1951,6 +1953,21 @@ gebr_flow_edition_get_current_group(GebrFlowEdition *fe,
 	gtk_tree_model_get(model, &iter,
 			   MAESTRO_SERVER_TYPE, type,
 			   MAESTRO_SERVER_NAME, name,
+			   -1);
+}
+
+void
+gebr_flow_edition_get_server_hostname(GebrFlowEdition *fe,
+                                      gchar **host)
+{
+	GtkTreeIter iter;
+	GtkTreeModel *model = gtk_combo_box_get_model(GTK_COMBO_BOX(fe->priv->server_combobox));
+
+	if (!gtk_combo_box_get_active_iter(GTK_COMBO_BOX(fe->priv->server_combobox), &iter))
+		gtk_tree_model_get_iter_first(model, &iter);
+
+	gtk_tree_model_get(model, &iter,
+			   MAESTRO_SERVER_HOST, host,
 			   -1);
 }
 

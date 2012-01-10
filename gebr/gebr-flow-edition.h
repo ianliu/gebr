@@ -177,6 +177,9 @@ void gebr_flow_edition_get_current_group(GebrFlowEdition *fe,
 					 GebrMaestroServerGroupType *type,
 					 gchar **name);
 
+void gebr_flow_edition_get_server_hostname(GebrFlowEdition *fe,
+                                           gchar **host);
+
 void gebr_flow_edition_select_group_for_flow(GebrFlowEdition *fe,
 					     GebrGeoXmlFlow *flow);
 

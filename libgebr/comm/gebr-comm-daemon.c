@@ -44,3 +44,9 @@ gebr_comm_daemon_get_n_running_jobs(GebrCommDaemon *daemon)
 {
 	return GEBR_COMM_DAEMON_GET_IFACE(daemon)->get_n_running_jobs(daemon);
 }
+
+const gchar *
+gebr_comm_daemon_get_hostname(GebrCommDaemon *daemon)
+{
+	return GEBR_COMM_DAEMON_GET_IFACE(daemon)->get_hostname(daemon);
+}

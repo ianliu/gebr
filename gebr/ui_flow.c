@@ -92,8 +92,12 @@ run_flow(GebrGeoXmlFlow *flow,
 	const gchar *hostname = g_get_host_name();
 
 	GebrMaestroServerGroupType type;
-	gchar *name;
+	gchar *name, *host = NULL;
 	gebr_flow_edition_get_current_group(gebr.ui_flow_edition, &type, &name);
+
+	if (type == MAESTRO_SERVER_TYPE_DAEMON)
+		gebr_flow_edition_get_server_hostname(gebr.ui_flow_edition, &host);
+
 	const gchar *group_type = gebr_maestro_server_group_enum_to_str(type);
 	gebr_geoxml_flow_server_set_group(flow, group_type, name);
 
@@ -116,24 +120,6 @@ run_flow(GebrGeoXmlFlow *flow,
 	gebr_geoxml_document_to_string(clone, &xml);
 	GebrCommJsonContent *content = gebr_comm_json_content_new_from_string(xml);
 	gebr_geoxml_document_unref(clone);
-
-	GebrCommUri *uri = gebr_comm_uri_new();
-	gebr_comm_uri_set_prefix(uri, "/run");
-	gebr_comm_uri_add_param(uri, "gid", gebr_get_session_id());
-
-	if (after)
-		gebr_comm_uri_add_param(uri, "temp_parent", after);
-	else
-		gebr_comm_uri_add_param(uri, "parent_id", parent_rid);
-
-	gebr_comm_uri_add_param(uri, "speed", speed_str);
-	gebr_comm_uri_add_param(uri, "nice", nice);
-	gebr_comm_uri_add_param(uri, "name", name);
-	gebr_comm_uri_add_param(uri, "group_type", group_type);
-	gebr_comm_uri_add_param(uri, "host", hostname);
-	gebr_comm_uri_add_param(uri, "temp_id", gebr_job_get_id(job));
-	gchar *url = gebr_comm_uri_to_string(uri);
-	gebr_comm_uri_free(uri);
 
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
 	GebrCommServer *server = gebr_maestro_server_get_server(maestro);
@@ -158,6 +144,26 @@ run_flow(GebrGeoXmlFlow *flow,
 		return NULL;
 	}
 
+	GebrCommUri *uri = gebr_comm_uri_new();
+	gebr_comm_uri_set_prefix(uri, "/run");
+	gebr_comm_uri_add_param(uri, "gid", gebr_get_session_id());
+
+	if (after)
+		gebr_comm_uri_add_param(uri, "temp_parent", after);
+	else
+		gebr_comm_uri_add_param(uri, "parent_id", parent_rid);
+
+	gebr_comm_uri_add_param(uri, "speed", speed_str);
+	gebr_comm_uri_add_param(uri, "nice", nice);
+	gebr_comm_uri_add_param(uri, "name", name);
+	if (host)
+		gebr_comm_uri_add_param(uri, "server-hostname", host);
+	gebr_comm_uri_add_param(uri, "group_type", group_type);
+	gebr_comm_uri_add_param(uri, "host", hostname);
+	gebr_comm_uri_add_param(uri, "temp_id", gebr_job_get_id(job));
+	gchar *url = gebr_comm_uri_to_string(uri);
+	gebr_comm_uri_free(uri);
+
 	gebr_comm_protocol_socket_send_request(server->socket, GEBR_COMM_HTTP_METHOD_PUT, url, content);
 
 	gebr_job_set_maestro_address(job, gebr_maestro_server_get_address(maestro));
@@ -166,7 +172,10 @@ run_flow(GebrGeoXmlFlow *flow,
 	gebr_job_set_submit_date(job, submit_date);
 	gebr_job_set_title(job, gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(flow)));
 	gebr_job_set_nice(job, nice);
-	gebr_job_set_server_group(job, name);
+	if (host)
+		gebr_job_set_server_group(job, host);
+	else
+		gebr_job_set_server_group(job, name);
 	gebr_job_set_server_group_type(job, group_type);
 	
 	gebr_job_control_add(gebr.job_control, job);

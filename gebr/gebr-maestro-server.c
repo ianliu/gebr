@@ -134,6 +134,7 @@ update_groups_store(GebrMaestroServer *maestro)
 		gtk_list_store_set(maestro->priv->groups_store, &iter,
 		                   MAESTRO_SERVER_TYPE, MAESTRO_SERVER_TYPE_DAEMON,
 		                   MAESTRO_SERVER_NAME, gebr_daemon_server_get_address(daemon),
+		                   MAESTRO_SERVER_HOST, gebr_daemon_server_get_hostname(daemon),
 		                   -1);
 	}
 	g_object_unref(daemons_model);
@@ -830,6 +831,7 @@ gebr_maestro_server_init(GebrMaestroServer *maestro)
 
 	maestro->priv->groups_store = gtk_list_store_new(MAESTRO_SERVER_N,
 							 G_TYPE_INT,
+							 G_TYPE_STRING,
 							 G_TYPE_STRING);
 
 	GebrDaemonServer *autochoose =
