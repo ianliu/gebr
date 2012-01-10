@@ -430,7 +430,7 @@ jobs_visible_for_servers(GtkTreeModel *model,
 		return has_server;
 	}
 
-	return type == ttype && g_strcmp0(tname, display) == 0;
+	return type == ttype && g_strcmp0(tname, name) == 0;
 }
 
 static gboolean
