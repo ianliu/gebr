@@ -128,6 +128,9 @@ static void gebr_jc_update_status_and_time(GebrJobControl *jc,
                                            GebrJob 	  *job,
                                            GebrCommJobStatus status);
 
+static void on_maestro_filter_changed(GtkComboBox *combo,
+                                      GebrJobControl *jc);
+
 static void on_text_view_populate_popup(GtkTextView * text_view, GtkMenu * menu, GebrJobControl *jc);
 
 
@@ -221,25 +224,32 @@ on_select_non_single_job(GebrJobControl *jc,
 }
 
 static gboolean
-get_server_group_iter(GebrJobControl *jc, const gchar *group, GtkTreeIter *iter)
+get_server_group_iter(GebrJobControl *jc, const gchar *group, const gchar *type_str, GtkTreeIter *iter)
 {
 	GtkTreeIter i;
-	GtkTreeModel *model = GTK_TREE_MODEL(jc->priv->maestro_filter);
-	gchar *g;
+	GtkTreeModel *model = GTK_TREE_MODEL(jc->priv->server_filter);
+	gchar *name;
+	GebrMaestroServerGroupType type, type_job;
 	gboolean valid = gtk_tree_model_get_iter_first(model, &i);
+
+	type_job = gebr_maestro_server_group_str_to_enum(type_str);
 
 	if (valid)
 		valid = gtk_tree_model_iter_next(model, &i);
 
 	while (valid) {
-		gtk_tree_model_get(model, &i, 1, &g, -1);
-		if (g_strcmp0(g, group) == 0) {
+		gtk_tree_model_get(model, &i,
+		                   1, &type,
+		                   2, &name,
+		                   -1);
+
+		if (type == type_job && g_strcmp0(name, group) == 0) {
 			if (iter)
 				*iter = i;
-			g_free(g);
+			g_free(name);
 			return TRUE;
 		}
-		g_free(g);
+		g_free(name);
 		valid = gtk_tree_model_iter_next(model, &i);
 	}
 
@@ -365,7 +375,7 @@ jobs_visible_for_servers(GtkTreeModel *model,
 		return TRUE;
 
 	gtk_tree_model_get(GTK_TREE_MODEL(jc->priv->server_filter), &active,
-			   0, &display,
+	                   0, &display,
 	                   1, &type,
 			   2, &name,
 			   -1);
@@ -410,27 +420,36 @@ jobs_visible_for_servers(GtkTreeModel *model,
 
 	gtk_tree_model_get(model, iter, JC_STRUCT, &job, -1);
 
-	if (!job)
+	if (!job) {
+		g_free(name);
+		g_free(display);
 		return FALSE;
-
+	}
 	const gchar *type_str = gebr_job_get_server_group_type(job);
 	const gchar *tname = gebr_job_get_server_group(job);
 	GebrMaestroServerGroupType ttype = gebr_maestro_server_group_str_to_enum(type_str);
 
+	gboolean has_server = FALSE;
+
 	if (type == MAESTRO_SERVER_TYPE_DAEMON) {
-		gboolean has_server = FALSE;
 		gint n;
 		gchar **servers = gebr_job_get_servers(job, &n);
 
 		for (int i = 0; i < n; i++)
-			if (g_strcmp0(servers[i], display) == 0)
+			if (g_strcmp0(servers[i], name) == 0)
 				has_server = TRUE;
 
 		g_strfreev(servers);
+		g_free(name);
+		g_free(display);
 		return has_server;
 	}
 
-	return type == ttype && g_strcmp0(tname, name) == 0;
+	has_server = (type == ttype && g_strcmp0(tname, name) == 0);
+
+	g_free(name);
+	g_free(display);
+	return has_server;
 }
 
 static gboolean
@@ -1534,7 +1553,64 @@ on_job_define(GebrMaestroController *mc,
 	      GebrJobControl *jc)
 {
 	gebr_job_control_add(jc, job);
+	on_maestro_filter_changed(jc->priv->maestro_combo, jc);
 }
+
+
+static gint
+servers_filter_sort_func(GtkTreeModel *model,
+                         GtkTreeIter *a,
+                         GtkTreeIter *b,
+                         gpointer user_data)
+{
+	gchar *g1, *g2;
+	GebrMaestroServerGroupType t1, t2;
+
+	gtk_tree_model_get(model, a,
+	                   1, &t1,
+	                   2, &g1,
+	                   -1);
+
+	gtk_tree_model_get(model, b,
+	                   1, &t2,
+	                   2, &g2,
+	                   -1);
+
+	if (!g1) {
+		g_free(g2);
+		return -1;
+	} else if (!g2) {
+		g_free(g1);
+		return 1;
+	}
+
+	if (t1 == MAESTRO_SERVER_TYPE_GROUP) {
+		if (t1 == t2) {
+			if (g_strcmp0(g1, "") == 0) {
+				g_free(g1);
+				g_free(g2);
+				return -1;
+			}
+			g_free(g1);
+			g_free(g2);
+			return g_strcmp0(g1, g2);
+		}
+		g_free(g1);
+		g_free(g2);
+		return -1;
+	}
+	else if (t2 == MAESTRO_SERVER_TYPE_GROUP) {
+		g_free(g1);
+		g_free(g2);
+		return 1;
+	} else {
+		gint ret = g_strcmp0(g1, g2);
+		g_free(g1);
+		g_free(g2);
+		return ret;
+	}
+}
+
 
 static void
 on_maestro_filter_changed(GtkComboBox *combo,
@@ -1543,6 +1619,7 @@ on_maestro_filter_changed(GtkComboBox *combo,
 	GtkTreeIter iter, it;
 
 	gtk_list_store_clear(jc->priv->server_filter);
+
 	gtk_list_store_append(jc->priv->server_filter, &iter);
 	gtk_list_store_set(jc->priv->server_filter, &iter,
 			   0, _("Any"),// Display name
@@ -1556,33 +1633,31 @@ on_maestro_filter_changed(GtkComboBox *combo,
 	if (!maestro)
 		return;
 
-	GtkTreeModel *groups = gebr_maestro_server_get_groups_model(maestro);
-
-	gebr_gui_gtk_tree_model_foreach(it, groups) {
-		gchar *name, *host;
-		const gchar *display;
+	GtkTreeModel *model = GTK_TREE_MODEL(jc->priv->store);
+	gebr_gui_gtk_tree_model_foreach(it, model) {
+		GebrJob *job;
+		const gchar *group, *type_str, *display;
 		GebrMaestroServerGroupType type;
 
-		gtk_tree_model_get(groups, &it,
-				   MAESTRO_SERVER_TYPE, &type,
-				   MAESTRO_SERVER_NAME, &name,
-				   MAESTRO_SERVER_HOST, &host,
-				   -1);
+		gtk_tree_model_get(model, &it, JC_STRUCT, &job, -1);
 
-		if (!*name)
+		group = gebr_job_get_server_group(job);
+		type_str = gebr_job_get_server_group_type(job);
+		type = gebr_maestro_server_group_str_to_enum(type_str);
+
+		if (get_server_group_iter(jc, group, type_str, &iter))
+			continue;
+
+		if (!*group && type == MAESTRO_SERVER_TYPE_GROUP)
 			display = gebr_maestro_server_get_display_address(maestro);
-		else {
-			if (type == MAESTRO_SERVER_TYPE_DAEMON)
-				display = host;
-			else
-				display = name;
-		}
+		else
+			display = group;
 
 		gtk_list_store_append(jc->priv->server_filter, &iter);
 		gtk_list_store_set(jc->priv->server_filter, &iter,
-				   0, display,
-				   1, type,
-				   2, name);
+		                   0, display,
+		                   1, type,
+		                   2, group);
 	}
 
 	gtk_combo_box_set_active(jc->priv->server_combo, 0);
@@ -1615,7 +1690,6 @@ on_group_changed(GebrMaestroController *mc,
                  GebrMaestroServer *maestro,
                  GebrJobControl *jc)
 {
-	on_maestro_filter_changed(jc->priv->maestro_combo, jc);
 }
 
 static void
@@ -1776,7 +1850,7 @@ gebr_job_control_new(void)
 	g_signal_connect(gebr.maestro_controller, "maestro-list-changed",
 			 G_CALLBACK(on_maestro_list_changed), jc);
 
-	/* by Maestri */
+	/* by Maestro */
 	jc->priv->maestro_filter = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
 	gtk_combo_box_set_model(maestro_cb, GTK_TREE_MODEL(jc->priv->maestro_filter));
 	//g_signal_connect(jc->priv->maestro_combo, "changed",
@@ -1784,6 +1858,8 @@ gebr_job_control_new(void)
 
 	/* by Servers */
 	jc->priv->server_filter = gtk_list_store_new(3, G_TYPE_STRING, G_TYPE_INT, G_TYPE_STRING);
+	gtk_tree_sortable_set_sort_func(GTK_TREE_SORTABLE(jc->priv->server_filter), 0, servers_filter_sort_func, NULL, NULL);
+	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(jc->priv->server_filter), 0, GTK_SORT_ASCENDING);
 	gtk_combo_box_set_model(server_cb, GTK_TREE_MODEL(jc->priv->server_filter));
 	g_signal_connect(jc->priv->server_combo, "changed", G_CALLBACK(on_cb_changed), jc);
 
@@ -2194,6 +2270,7 @@ gebr_job_control_remove(GebrJobControl *jc,
 	GtkTreeIter iter;
 	gboolean has_group = FALSE;
 	const gchar *group = gebr_job_get_server_group(job);
+	const gchar *type = gebr_job_get_server_group_type(job);
 
 	gtk_list_store_remove(jc->priv->store, gebr_job_get_iter(job));
 
@@ -2208,9 +2285,9 @@ gebr_job_control_remove(GebrJobControl *jc,
 		}
 	}
 
-	if (!has_group && get_server_group_iter(jc, group, &iter)) {
-		gtk_list_store_remove(jc->priv->maestro_filter, &iter);
-		gtk_combo_box_set_active(jc->priv->maestro_combo, 0);
+	if (!has_group && get_server_group_iter(jc, group, type, &iter)) {
+		gtk_list_store_remove(jc->priv->server_filter, &iter);
+		gtk_combo_box_set_active(jc->priv->server_combo, 0);
 	}
 	g_object_unref(job);
 }
