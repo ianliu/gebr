@@ -382,7 +382,13 @@ on_response_received(GebrCommHttpMsg *request,
 	self->priv->responses++;
 	if (self->priv->responses == self->priv->requests) {
 		gint comp_func(ServerScore *a, ServerScore *b) {
-			return b->score - a->score;
+			gdouble res = b->score - a->score;
+			if(res< 0)
+				return -1;
+			else if (res>0)
+				return +1;
+			else
+				return 0;
 		}
 
 		self->priv->servers = g_list_sort(self->priv->servers, (GCompareFunc)comp_func);
