@@ -892,6 +892,12 @@ on_servers_edited(GtkCellRendererText *cell,
 
 	server_list_add(mc, new_text);
 	insert_new_entry(mc);
+
+	GtkTreeIter iter;
+	GtkTreeView *view = GTK_TREE_VIEW(gtk_builder_get_object(mc->priv->builder, "treeview_servers"));
+
+	gtk_tree_model_get_iter_first(GTK_TREE_MODEL(mc->priv->model), &iter);
+	gebr_gui_gtk_tree_view_select_iter(view, &iter);
 }
 
 static void 
