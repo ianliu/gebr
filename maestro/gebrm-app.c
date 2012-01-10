@@ -581,6 +581,7 @@ on_client_request(GebrCommProtocolSocket *socket,
 			if (daemon)
 				gebrm_daeamon_answer_question(daemon, resp);
 		}
+
 		else if (g_strcmp0(prefix, "/disconnect") == 0) {
 			const gchar *addr = gebr_comm_uri_get_param(uri, "address");
 			const gchar *confirm = gebr_comm_uri_get_param(uri, "confirm");
@@ -601,6 +602,7 @@ on_client_request(GebrCommProtocolSocket *socket,
 								gebrm_job_kill_immediately(job);
 						}
 						gebrm_daemon_disconnect(daemon);
+						gebrm_client_kill_forward_by_address(client, addr);
 					}
 					else if (g_strcmp0(confirm, "remove") == 0)
 						gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
@@ -614,6 +616,7 @@ on_client_request(GebrCommProtocolSocket *socket,
 				}
 			}
 		}
+
 		else if (g_strcmp0(prefix, "/remove") == 0) {
 			const gchar *addr = gebr_comm_uri_get_param(uri, "address");
 			gebrm_remove_server_from_list(app, addr);

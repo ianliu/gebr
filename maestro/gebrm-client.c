@@ -225,6 +225,22 @@ gebrm_client_add_forward(GebrmClient *client,
 	guint16 cp = gebrm_client_get_display_port(client);
 	proc = gebr_comm_server_forward_remote_port(server, remote_port, cp);
 	client->priv->forwards = g_list_prepend(client->priv->forwards, proc);
+
+	gchar *address = g_strdup(server->address->str);
+	g_object_weak_ref(G_OBJECT(proc), (GWeakNotify)g_free, address);
+	g_object_set_data(G_OBJECT(proc), "address", address);
+}
+
+void
+gebrm_client_kill_forward_by_address(GebrmClient *client,
+				     const gchar *addr)
+{
+	for (GList *i = client->priv->forwards; i; i = i->next) {
+		GebrCommTerminalProcess *proc = GEBR_COMM_TERMINAL_PROCESS(i->data);
+		const gchar *address = g_object_get_data(G_OBJECT(proc), "address");
+		if (g_strcmp0(address, addr) == 0)
+			gebr_comm_terminal_process_free(i->data);
+	}
 }
 
 void
