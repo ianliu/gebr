@@ -1231,7 +1231,7 @@ gebr_job_control_load_details(GebrJobControl *jc,
 	gtk_label_set_markup(input_file, markup);
 	g_free(markup);
 
-	if (gebr_validator_evaluate(gebr.validator, input_file_str,
+	if (input_file_str && gebr_validator_evaluate(gebr.validator, input_file_str,
 				    GEBR_GEOXML_PARAMETER_TYPE_STRING,
 				    GEBR_GEOXML_DOCUMENT_TYPE_FLOW, &result, NULL)) {
 		gtk_widget_set_tooltip_text(GTK_WIDGET(input_file), result);
@@ -1242,7 +1242,7 @@ gebr_job_control_load_details(GebrJobControl *jc,
 	gtk_label_set_markup (output_file, markup);
 	g_free(markup);
 
-	if (gebr_validator_evaluate(gebr.validator, output_file_str,
+	if (output_file_str && gebr_validator_evaluate(gebr.validator, output_file_str,
 				    GEBR_GEOXML_PARAMETER_TYPE_STRING,
 				    GEBR_GEOXML_DOCUMENT_TYPE_FLOW, &result, NULL)) {
 		gtk_widget_set_tooltip_text(GTK_WIDGET(output_file), result);
@@ -1253,7 +1253,7 @@ gebr_job_control_load_details(GebrJobControl *jc,
 	gtk_label_set_markup (log_file, markup);
 	g_free(markup);
 
-	if (gebr_validator_evaluate(gebr.validator, log_file_str,
+	if (log_file_str && gebr_validator_evaluate(gebr.validator, log_file_str,
 				    GEBR_GEOXML_PARAMETER_TYPE_STRING,
 				    GEBR_GEOXML_DOCUMENT_TYPE_FLOW, &result, NULL)) {
 		gtk_widget_set_tooltip_text(GTK_WIDGET(log_file), result);
