@@ -116,9 +116,9 @@ void test_gebr_geoxml_flow_server_get_and_set_group(void)
 	gchar *type, *name;
 	GebrGeoXmlFlow *flow = NULL;
 
-	flow = gebr_geoxml_flow_new ();
+	flow = gebr_geoxml_flow_new();
 	gebr_geoxml_flow_server_get_group(flow, &type, &name);
-	g_assert_cmpstr(type, ==, "");
+	g_assert_cmpstr(type, ==, "group");
 	g_assert_cmpstr(name, ==, "");
 	g_free(type);
 	g_free(name);

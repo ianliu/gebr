@@ -24,7 +24,6 @@ ui_flow.c
 ui_flow_browse.c
 ui_help.c
 ui_log.c
-ui_moab.c
 ui_parameters.c
 ui_paths.c
 ui_preferences.c
