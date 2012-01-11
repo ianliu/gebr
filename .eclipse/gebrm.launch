@@ -16,7 +16,7 @@
 <booleanAttribute key="org.eclipse.cdt.launch.DEBUGGER_STOP_AT_MAIN" value="true"/>
 <stringAttribute key="org.eclipse.cdt.launch.DEBUGGER_STOP_AT_MAIN_SYMBOL" value="main"/>
 <stringAttribute key="org.eclipse.cdt.launch.PROGRAM_ARGUMENTS" value="-i"/>
-<stringAttribute key="org.eclipse.cdt.launch.PROGRAM_NAME" value="gebrd/.libs/gebrd"/>
+<stringAttribute key="org.eclipse.cdt.launch.PROGRAM_NAME" value="maestro/.libs/gebrm"/>
 <stringAttribute key="org.eclipse.cdt.launch.PROJECT_ATTR" value="gebrproject"/>
 <stringAttribute key="org.eclipse.cdt.launch.PROJECT_BUILD_CONFIG_ID_ATTR" value=""/>
 <booleanAttribute key="org.eclipse.cdt.launch.use_terminal" value="true"/>
