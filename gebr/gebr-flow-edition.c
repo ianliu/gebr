@@ -372,13 +372,13 @@ flow_edition_set_run_widgets_sensitiveness(GebrFlowEdition *fe,
 	const gchar *tooltip_disconn;
 	const gchar *tooltip_execute;
 
-	if (maestro_err) {
+	if (!gebr.line)
+		tooltip_disconn = _("Select a line of this project to execute a flow");
+	else if (maestro_err)
 		tooltip_disconn = _("Maestro of this line is disconnected.\nReconnect it or change the maestro\n associated to this line");
-		tooltip_execute = _("Execute");
-	} else {
+	else
 		tooltip_disconn = _("This line does not contain flows\nCreate a flow to execute this line");
-		tooltip_execute = _("Execute");
-	}
+	tooltip_execute = _("Execute");
 
 	gtk_widget_set_sensitive(fe->priv->queue_combobox, sensitive);
 	gtk_widget_set_sensitive(fe->priv->server_combobox, sensitive);

@@ -1373,6 +1373,9 @@ GebrMaestroServer *
 gebr_maestro_controller_get_maestro_for_line(GebrMaestroController *mc,
 					     GebrGeoXmlLine *line)
 {
+	if (!line)
+		return NULL;
+
 	gchar *address = gebr_geoxml_line_get_maestro(line);
 	GebrMaestroServer *maestro =
 		gebr_maestro_controller_get_maestro_for_address(mc, address);

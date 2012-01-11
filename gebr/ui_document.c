@@ -1697,11 +1697,9 @@ void on_response_ok(GtkButton * button, GebrPropertiesData * data)
 	/* Update title in apropriated store */
 	switch ((type = gebr_geoxml_document_get_type(data->document))) {
 	case GEBR_GEOXML_DOCUMENT_TYPE_LINE: {
-		GebrGeoXmlLine *line = GEBR_GEOXML_LINE(data->document);
-
 		gint current_active_group = gtk_combo_box_get_active(GTK_COMBO_BOX(data->maestro_combo));
-		gboolean emptyness = gebr_geoxml_line_get_paths_number(line) == 0 && gebr_geoxml_line_get_flows_number(line) == 0;
-		if (!emptyness && current_active_group != data->previous_active_group) {
+//		gboolean emptyness = gebr_geoxml_line_get_paths_number(line) == 0 && gebr_geoxml_line_get_flows_number(line) == 0;
+		if (current_active_group != data->previous_active_group) {
 			gboolean clean = gebr_gui_message_dialog (GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
 			                                          _("Change of Maestro"),
 								  _("Are you sure you want to change the maestro of this Line?"
