@@ -147,6 +147,36 @@ void on_flow_delete_activate(void)
 	flow_delete(TRUE);
 }
 
+static gboolean
+flows_check_maestro_connected(void)
+{
+	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
+
+	if (maestro && gebr_maestro_server_get_state(maestro) == SERVER_STATE_CONNECT)
+		return TRUE;
+
+	gchar *maestro_line = gebr_geoxml_line_get_maestro(gebr.line);
+
+	GtkWidget *dialog = gtk_message_dialog_new_with_markup(NULL,
+	                                                       GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+	                                                       GTK_MESSAGE_WARNING,
+	                                                       GTK_BUTTONS_OK,
+	                                                       _("<span size='large'><b>The maestro of this line is disconnected.</b></span>\n\n"
+	                                                	 "Connect to maestro <b>%s</b> to execute this line."), maestro_line);
+
+	gchar *win_title = g_strdup_printf(_("Maestro disconnected"));
+	gtk_window_set_title(GTK_WINDOW(dialog), win_title);
+
+	gtk_dialog_run(GTK_DIALOG(dialog));
+	gtk_widget_destroy(dialog);
+
+	g_free(maestro_line);
+
+	on_configure_servers_activate();
+
+	return FALSE;
+}
+
 /*
  * Returns TRUE if all flows at "Flows" tab
  * can be executed. If they can't, return false
@@ -203,6 +233,9 @@ static gboolean flows_check_before_execution(void)
 void on_flow_execute_activate(void)
 {
 	if (!flows_check_before_execution())
+		return;
+
+	if (!flows_check_maestro_connected())
 		return;
 
 	gebr_ui_flow_run(FALSE);

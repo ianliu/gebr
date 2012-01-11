@@ -372,10 +372,11 @@ flow_edition_set_run_widgets_sensitiveness(GebrFlowEdition *fe,
 	const gchar *tooltip_disconn;
 	const gchar *tooltip_execute;
 
-	if (!gebr.line)
+	if (!gebr.line) {
 		tooltip_disconn = _("Select a line of this project to execute a flow");
-	else if (maestro_err)
-		tooltip_disconn = _("Maestro of this line is disconnected.\nReconnect it or change the maestro\n associated to this line");
+		maestro_err = FALSE;
+	} else if (maestro_err)
+		tooltip_disconn = _("Maestro of this line is disconnected.\nClick here to reconnect it\nor change the maestro associated to this line");
 	else
 		tooltip_disconn = _("This line does not contain flows\nCreate a flow to execute this line");
 	tooltip_execute = _("Execute");
@@ -383,15 +384,36 @@ flow_edition_set_run_widgets_sensitiveness(GebrFlowEdition *fe,
 	gtk_widget_set_sensitive(fe->priv->queue_combobox, sensitive);
 	gtk_widget_set_sensitive(fe->priv->server_combobox, sensitive);
 
-	GtkAction *action = gtk_action_group_get_action(gebr.action_group_flow, "flow_execute");
-	const gchar *tooltip = sensitive ? tooltip_execute : tooltip_disconn;
+	if (maestro_err) {
+		GtkAction *action = gtk_action_group_get_action(gebr.action_group_flow, "flow_execute");
+		const gchar *tooltip = sensitive ? tooltip_execute : tooltip_disconn;
+		gtk_action_set_sensitive(action, TRUE);
 
-	gtk_action_set_sensitive(action, sensitive);
-	gtk_action_set_tooltip(action, tooltip);
+		if (!sensitive)
+			gtk_action_set_stock_id(action, "execute-warn");
+		else
+			gtk_action_set_stock_id(action, "gtk-execute");
+		gtk_action_set_tooltip(action, tooltip);
 
-	action = gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_execute");
-	gtk_action_set_sensitive(action, sensitive);
-	gtk_action_set_tooltip(action, tooltip);
+		action = gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_execute");
+		gtk_action_set_sensitive(action, TRUE);
+		if (!sensitive)
+			gtk_action_set_stock_id(action, "execute-warn");
+		else
+			gtk_action_set_stock_id(action, "gtk-execute");
+		gtk_action_set_tooltip(action, tooltip);
+	}
+	else {
+		GtkAction *action = gtk_action_group_get_action(gebr.action_group_flow, "flow_execute");
+		const gchar *tooltip = sensitive ? tooltip_execute : tooltip_disconn;
+
+		gtk_action_set_sensitive(action, sensitive);
+		gtk_action_set_tooltip(action, tooltip);
+
+		action = gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_execute");
+		gtk_action_set_sensitive(action, sensitive);
+		gtk_action_set_tooltip(action, tooltip);
+	}
 }
 
 void flow_edition_load_components(void)
