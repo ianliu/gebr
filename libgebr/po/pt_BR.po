@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libgebr 0.9.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-01-09 17:03-0200\n"
+"POT-Creation-Date: 2012-01-11 10:39-0200\n"
 "PO-Revision-Date: 2011-11-18 16:09-0200\n"
 "Last-Translator: Fabrício Matheus Gonçalves <fmatheus@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
@@ -62,7 +62,7 @@ msgstr ""
 
 #: ../comm/gebr-comm-server.c:447
 msgid "Please, enter password"
-msgstr ""
+msgstr "Por favor, digite sua senha"
 
 #: ../comm/gebr-comm-server.c:454
 msgid "SSH login:"
@@ -74,7 +74,7 @@ msgstr "Nenhuma senha informada."
 
 #: ../comm/gebr-comm-server.c:479
 msgid "Please, answer the question"
-msgstr ""
+msgstr "Por favor, responda a pergunta"
 
 #: ../comm/gebr-comm-server.c:488
 msgid "SSH host key question:"
@@ -158,15 +158,12 @@ msgstr ""
 msgid "Unknown source address\n"
 msgstr "Endereço origem desconhecido\n"
 
-#: ../comm/socketchannel/socketchannel.c:85
+#: ../comm/socketchannel/socketchannel.c:86
 #, c-format
 msgid "Unknown destination address\n"
 msgstr "Endereço destino desconhecido\n"
 
-#. fprintf(stderr, _("Could not create channel\n"));
-#. return -4;
-#. }
-#: ../comm/socketchannel/socketchannel.c:93
+#: ../comm/socketchannel/socketchannel.c:92
 #, c-format
 msgid "Channel created successful. Forwarding connections...\n"
 msgstr "Canal criado com sucesso. Encaminhando conexões...\n"
@@ -1295,31 +1292,3 @@ msgid ""
 msgstr ""
 "\n"
 " - Existem tabulações"
-
-#~ msgid "Launching local server."
-#~ msgstr "Iniciando servidor local."
-
-#~ msgid ""
-#~ "Could not launch local server: \n"
-#~ "%s"
-#~ msgstr ""
-#~ "Não foi possível executar o servidor local: \n"
-#~ "%s"
-
-#~ msgid "All Servers"
-#~ msgstr "Todos os Servidores"
-
-#~ msgid "Variable %s use different type"
-#~ msgstr "Variável %s usa tipos diferentes"
-
-#~ msgid "Hello, world!"
-#~ msgstr "Olá, mundo!"
-
-#~ msgid "File path value"
-#~ msgstr "Caminho de arquivo"
-
-#~ msgid "Real value"
-#~ msgstr "Número real"
-
-#~ msgid "Text value"
-#~ msgstr "Texto"
