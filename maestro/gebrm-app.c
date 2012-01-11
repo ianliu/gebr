@@ -662,16 +662,28 @@ on_client_request(GebrCommProtocolSocket *socket,
 					const gchar *parent_id = gebrm_job_get_queue(job);
 					GebrmJob *parent = gebrm_app_job_controller_find(app, parent_id);
 
-					GList *l = g_object_get_data(G_OBJECT(parent), "children");
-
-					for (GList *i = l; i; i = i->next) {
+					GList *child_parent = g_object_get_data(G_OBJECT(parent), "children");
+					for (GList *i = child_parent; i; i = i->next) {
 						RunnerAndJob *rj = i->data;
 						if (job == rj->job) {
-							l = g_list_remove(l, rj);
+							child_parent = g_list_remove(child_parent, rj);
 							break;
 						}
 					}
-					g_object_set_data(G_OBJECT(parent), "children", l);
+
+					GList *child_job = g_object_get_data(G_OBJECT(job), "children");
+					for (GList *i = child_job; i; i = i->next) {
+						RunnerAndJob *rj = i->data;
+
+						child_job = g_list_remove(child_job, rj);
+						gebrm_job_set_queue(rj->job, parent_id);
+						child_parent = g_list_prepend(child_parent, rj);
+						send_job_def_to_clients(app, rj->job);
+					}
+
+					g_object_set_data(G_OBJECT(parent), "children", child_parent);
+					g_object_set_data(G_OBJECT(job), "children", child_job);
+
 					gebrm_job_unqueue(job);
 				}
 				else

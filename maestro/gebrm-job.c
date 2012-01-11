@@ -325,6 +325,14 @@ gebrm_job_get_hostname(GebrmJob *job)
 	return job->priv->info.hostname;
 }
 
+void
+gebrm_job_set_queue(GebrmJob *job, const gchar *parent_id)
+{
+	if (job->priv->info.parent_id)
+		g_free(job->priv->info.parent_id);
+	job->priv->info.parent_id = g_strdup(parent_id);
+}
+
 const gchar *
 gebrm_job_get_queue(GebrmJob *job)
 {
@@ -744,7 +752,7 @@ gebrm_job_unqueue(GebrmJob *job)
 
 	job->priv->status = JOB_STATUS_CANCELED;
 	g_signal_emit(job, signals[STATUS_CHANGE], 0,
-	              JOB_STATUS_QUEUED, job->priv->status, NULL);
+	              JOB_STATUS_QUEUED, job->priv->status, gebr_iso_date());
 }
 
 void

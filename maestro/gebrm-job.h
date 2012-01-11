@@ -117,6 +117,8 @@ const gchar *gebrm_job_get_title(GebrmJob *job);
 
 void gebrm_job_set_title(GebrmJob *job, const gchar *title);
 
+void gebrm_job_set_queue(GebrmJob *job, const gchar *parent_id);
+
 const gchar *gebrm_job_get_queue(GebrmJob *job);
 
 GebrCommJobStatus gebrm_job_get_status(GebrmJob *job);
