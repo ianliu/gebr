@@ -1620,6 +1620,7 @@ static void
 on_maestro_filter_changed(GtkComboBox *combo,
 			  GebrJobControl *jc)
 {
+	g_signal_handlers_block_by_func(jc->priv->server_combo, on_cb_changed, jc);
 	GtkTreeIter iter, it;
 
 	gtk_list_store_clear(jc->priv->server_filter);
@@ -1682,7 +1683,7 @@ on_maestro_filter_changed(GtkComboBox *combo,
 	}
 
 	gtk_combo_box_set_active(jc->priv->server_combo, 0);
-	on_cb_changed(combo, jc);
+	g_signal_handlers_unblock_by_func(jc->priv->server_combo, on_cb_changed, jc);
 }
 
 static void
@@ -2295,22 +2296,7 @@ gebr_job_control_remove(GebrJobControl *jc,
 
 	gtk_list_store_remove(jc->priv->store, gebr_job_get_iter(job));
 
-	gebr_gui_gtk_tree_model_foreach(iter, GTK_TREE_MODEL(jc->priv->store)) {
-		GebrJob *j;
-		gtk_tree_model_get(GTK_TREE_MODEL(jc->priv->store), &iter, JC_STRUCT, &j, -1);
-		if (!j)
-			continue;
-		if (g_strcmp0(gebr_job_get_server_group(j), group) == 0) {
-			has_group = TRUE;
-			break;
-		}
-	}
-
-	if (!has_group && get_server_group_iter(jc, group, type, &iter)) {
-		gtk_list_store_remove(jc->priv->server_filter, &iter);
-		gtk_combo_box_set_active(jc->priv->server_combo, 0);
-	}
-	g_object_unref(job);
+	on_maestro_filter_changed(jc->priv->server_combo, jc);
 }
 
 GtkTreeModel *
