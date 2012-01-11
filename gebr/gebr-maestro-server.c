@@ -389,6 +389,7 @@ parse_messages(GebrCommServer *comm_server,
 					g_hash_table_remove(maestro->priv->temp_jobs, temp_id->str);
 					gebr_job_set_runid(job, id->str);
 					g_hash_table_insert(maestro->priv->jobs, g_strdup(id->str), job);
+					gebr_job_set_queue(job, parent_id->str);
 					prev_exist = TRUE;
 				}
 			}

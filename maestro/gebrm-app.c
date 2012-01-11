@@ -46,6 +46,8 @@ struct _GebrmAppPriv {
 	GList *daemons;
 	gchar *nfsid;
 
+	GQueue *job_def_queue;
+
 	// Server groups: gchar -> GList<GebrDaemon>
 	GTree *groups;
 
@@ -104,6 +106,8 @@ static void gebrm_config_delete_server(const gchar *serv);
 static gboolean gebrm_remove_server_from_list(GebrmApp *app, const gchar *address);
 
 gboolean gebrm_config_load_servers(GebrmApp *app, const gchar *path);
+
+static void send_job_def_to_clients(GebrmApp *app, GebrmJob *job);
 
 G_DEFINE_TYPE(GebrmApp, gebrm_app, G_TYPE_OBJECT);
 
@@ -232,6 +236,14 @@ gebrm_app_job_controller_on_status_change(GebrmJob *job,
 						      gebrm_job_get_id(job),
 						      gebr_comm_job_get_string_from_status(new_status),
 						      parameter);
+
+		if (old_status == JOB_STATUS_INITIAL && new_status == JOB_STATUS_RUNNING) {
+			GebrmJob *j;
+			while (!g_queue_is_empty(app->priv->job_def_queue)) {
+				j = g_queue_pop_head(app->priv->job_def_queue);
+				send_job_def_to_clients(app, j);
+			}
+		}
 	}
 
 }
@@ -255,6 +267,7 @@ gebrm_app_finalize(GObject *object)
 	g_list_foreach(app->priv->connections, (GFunc)g_object_unref, NULL);
 	g_list_free(app->priv->connections);
 	g_list_free(app->priv->daemons);
+	g_queue_free(app->priv->job_def_queue);
 	G_OBJECT_CLASS(gebrm_app_parent_class)->finalize(object);
 }
 
@@ -277,6 +290,7 @@ gebrm_app_init(GebrmApp *app)
 	app->priv->daemons = NULL;
 	app->priv->jobs = g_hash_table_new_full(g_str_hash, g_str_equal,
 						g_free, NULL);
+	app->priv->job_def_queue = g_queue_new();
 }
 
 void
@@ -541,6 +555,7 @@ on_execution_response(GebrCommRunner *runner,
 	g_debug("on %s, ncores:%s", __func__, gebr_comm_runner_get_ncores(runner));
 	gebrm_job_set_nprocs(aap->job, gebr_comm_runner_get_ncores(runner));
 
+	g_queue_pop_head(aap->app->priv->job_def_queue);
 	send_job_def_to_clients(aap->app, aap->job);
 
 	gebr_validator_free(gebr_comm_runner_get_validator(runner));
@@ -755,9 +770,14 @@ on_client_request(GebrCommProtocolSocket *socket,
 
 			if (parent_id[0] == '\0') {
 				g_debug("Running immediately");
+				g_queue_push_head(app->priv->job_def_queue, job);
 				gebr_comm_runner_run_async(runner, gebrm_job_get_id(job));
 			} else {
 				GebrmJob *parent = gebrm_app_job_controller_find(app, parent_id);
+				GList *parent_on_queue = g_queue_find(app->priv->job_def_queue, parent);
+				if (parent_on_queue)
+					g_queue_insert_after(app->priv->job_def_queue, parent_on_queue, job);
+
 				GList *l = g_object_get_data(G_OBJECT(parent), "children");
 
 				RunnerAndJob *raj = g_new(RunnerAndJob, 1);
@@ -765,7 +785,9 @@ on_client_request(GebrCommProtocolSocket *socket,
 				raj->job = job;
 				l = g_list_prepend(l, raj);
 				g_object_set_data(G_OBJECT(parent), "children", l);
-				send_job_def_to_clients(app, job);
+
+				if (g_queue_is_empty(app->priv->job_def_queue))
+					send_job_def_to_clients(app, job);
 			}
 
 			g_free(title);
