@@ -328,10 +328,12 @@ notebook_group_show_address(GtkTreeViewColumn *tree_column,
 			   -1);
 
 	if (daemon) {
+		const gchar *host = gebr_daemon_server_get_hostname(daemon);
 		g_object_set(cell,
-			     "text", gebr_daemon_server_get_hostname(daemon),
+			     "text", !*host ? label : host,
 			     "sensitive", TRUE,
 			     NULL);
+		g_free(label);
 		g_object_unref(daemon);
 	} else if (label) {
 		g_object_set(cell,
@@ -348,7 +350,6 @@ copy_model_for_groups(GtkTreeModel *orig_model)
 	GtkTreeIter iter, new_iter;
 	GtkListStore *new_model;
 	GebrDaemonServer *daemon;
-	const gchar *hostname;
 
 	new_model = gtk_list_store_new(2,
                                        GEBR_TYPE_DAEMON_SERVER,
@@ -356,8 +357,6 @@ copy_model_for_groups(GtkTreeModel *orig_model)
 
 	gebr_gui_gtk_tree_model_foreach(iter, orig_model) {
 		gtk_tree_model_get(orig_model, &iter, 0, &daemon, -1);
-
-		hostname = gebr_daemon_server_get_hostname(daemon);
 
 		gtk_list_store_append(new_model, &new_iter);
 		gtk_list_store_set(new_model, &new_iter,
