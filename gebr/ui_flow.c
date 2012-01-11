@@ -33,7 +33,7 @@ is_group_connected(GtkTreeModel *model,
 	gebr_gui_gtk_tree_model_foreach(iter, model) {
 		gtk_tree_model_get(model, &iter, 0, &daemon, -1);
 		if (gebr_daemon_server_has_tag(daemon, group))
-			if (gebr_daemon_server_get_state(daemon) == SERVER_STATE_CONNECT)
+			if (gebr_daemon_server_get_state(daemon) == SERVER_STATE_LOGGED)
 				return TRUE;
 	}
 
@@ -50,7 +50,7 @@ is_address_connected(GtkTreeModel *model,
 		gtk_tree_model_get(model, &iter, 0, &daemon, -1);
 		const gchar *addr = gebr_daemon_server_get_address(daemon);
 		if (g_strcmp0(addr, address) == 0)
-			return gebr_daemon_server_get_state(daemon) == SERVER_STATE_CONNECT;
+			return gebr_daemon_server_get_state(daemon) == SERVER_STATE_LOGGED;
 	}
 	return FALSE;
 }

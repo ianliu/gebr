@@ -1538,7 +1538,7 @@ on_server_disconnected_set_row_insensitive(GtkCellLayout   *cell_layout,
 		daemon = gebr_maestro_server_get_daemon(maestro, name);
 		if (!daemon)
 			return;
-		is_connected = gebr_daemon_server_get_state(daemon) == SERVER_STATE_CONNECT;
+		is_connected = gebr_daemon_server_get_state(daemon) == SERVER_STATE_LOGGED;
 	}
 
 	if (GTK_IS_CELL_RENDERER_TEXT(cell)) {
@@ -1866,7 +1866,7 @@ on_controller_maestro_state_changed(GebrMaestroController *mc,
 	case SERVER_STATE_DISCONNECTED:
 		flow_edition_set_run_widgets_sensitiveness(fe, FALSE, TRUE);
 		break;
-	case SERVER_STATE_CONNECT:
+	case SERVER_STATE_LOGGED:
 		gebr_flow_edition_update_server(fe, maestro);
 		break;
 	default:

@@ -306,7 +306,7 @@ notebook_group_show_icon(GtkTreeViewColumn *tree_column,
 
 	if (!daemon)
 		g_object_set(cell, "stock-id", NULL, NULL);
-	else if (gebr_daemon_server_get_state(daemon) == SERVER_STATE_CONNECT)
+	else if (gebr_daemon_server_get_state(daemon) == SERVER_STATE_LOGGED)
 		g_object_set(cell, "stock-id", GTK_STOCK_CONNECT, NULL);
 	else
 		g_object_set(cell, "stock-id", GTK_STOCK_DISCONNECT, NULL);
@@ -610,7 +610,7 @@ on_server_connect(GtkMenuItem *menuitem,
 		if (!daemon)
 			continue;
 
-		if (gebr_daemon_server_get_state(daemon) == SERVER_STATE_CONNECT)
+		if (gebr_daemon_server_get_state(daemon) == SERVER_STATE_LOGGED)
 			continue;
 
 		gebr_connectable_connect(GEBR_CONNECTABLE(mc->priv->maestro),
@@ -675,7 +675,7 @@ on_server_remove(GtkMenuItem *menuitem,
 		if (!daemon)
 			continue;
 
-		if (gebr_daemon_server_get_state(daemon) == SERVER_STATE_CONNECT) {
+		if (gebr_daemon_server_get_state(daemon) == SERVER_STATE_LOGGED) {
 			gebr_connectable_disconnect(GEBR_CONNECTABLE(mc->priv->maestro),
 			                            gebr_daemon_server_get_address(daemon),
 			                            "remove");
@@ -807,11 +807,12 @@ daemon_server_status_func(GtkTreeViewColumn *tree_column,
 		switch (state) {
 		case SERVER_STATE_UNKNOWN:
 		case SERVER_STATE_DISCONNECTED:
+		case SERVER_STATE_CONNECT:
 		case SERVER_STATE_RUN:
 		case SERVER_STATE_OPEN_TUNNEL:
 			stock_id = GTK_STOCK_DISCONNECT;
 			break;
-		case SERVER_STATE_CONNECT:
+		case SERVER_STATE_LOGGED:
 			stock_id = GTK_STOCK_CONNECT;
 			break;
 		}
@@ -1288,7 +1289,7 @@ gebr_maestro_controller_maestro_state_changed_real(GebrMaestroController *mc,
 			GtkTreeView *view = GTK_TREE_VIEW(gtk_builder_get_object(mc->priv->builder, "treeview_servers"));
 			gtk_tree_view_set_model(view, GTK_TREE_MODEL(mc->priv->model));
 		}
-	} else if (state == SERVER_STATE_CONNECT) {
+	} else if (state == SERVER_STATE_LOGGED) {
 		gtk_entry_set_icon_from_stock(entry,
 					      GTK_ENTRY_ICON_SECONDARY,
 					      GTK_STOCK_CONNECT);

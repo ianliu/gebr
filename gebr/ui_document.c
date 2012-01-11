@@ -228,7 +228,7 @@ document_properties_create_maestro_combobox(GebrGeoXmlLine *line)
 
 	if (maestro) {
 		const gchar *stockid;
-		if (gebr_maestro_server_get_state(maestro) == SERVER_STATE_CONNECT) {
+		if (gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED) {
 			stockid = GTK_STOCK_CONNECT;
 			gebr_maestro_server_get_server(maestro);
 			gtk_list_store_append(store, &iter);
@@ -290,7 +290,7 @@ on_lock_button_toggled(GtkToggleButton *button,
 		}
 
 		if (maestro) {
-			if (gebr_maestro_server_get_state(maestro) == SERVER_STATE_CONNECT)
+			if (gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED)
 				stockid = GTK_STOCK_CONNECT;
 			else {
 				const gchar *error = gebr_maestro_server_get_error(maestro);
@@ -463,7 +463,7 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 		}
 
 		if (maestro) {
-			if (gebr_maestro_server_get_state(maestro) == SERVER_STATE_CONNECT)
+			if (gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED)
 				stockid = GTK_STOCK_CONNECT;
 			else {
 				const gchar *error = gebr_maestro_server_get_error(maestro);

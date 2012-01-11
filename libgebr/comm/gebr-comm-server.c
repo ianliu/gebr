@@ -276,9 +276,17 @@ void gebr_comm_server_disconnect(GebrCommServer *server)
 	gebr_comm_protocol_socket_disconnect(server->socket);
 }
 
-gboolean gebr_comm_server_is_logged(GebrCommServer *server)
+gboolean
+gebr_comm_server_is_logged(GebrCommServer *server)
 {
 	return server->socket->protocol->logged;
+}
+
+void
+gebr_comm_server_set_logged(GebrCommServer *server)
+{
+	server->socket->protocol->logged = TRUE;
+	gebr_comm_server_change_state(server, SERVER_STATE_LOGGED);
 }
 
 gboolean gebr_comm_server_is_local(GebrCommServer *server)
@@ -825,6 +833,7 @@ static const gchar *state_hash[] = {
 	"run",
 	"open_tunnel",
 	"connect",
+	"logged",
 	NULL
 };
 

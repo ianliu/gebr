@@ -162,7 +162,7 @@ state_changed(GebrCommServer *comm_server,
 		gtk_list_store_clear(maestro->priv->groups_store);
 	}
 
-	if (state == SERVER_STATE_CONNECT
+	if (state == SERVER_STATE_LOGGED
 	    || state == SERVER_STATE_DISCONNECTED)
 		g_signal_emit(maestro, signals[GROUP_CHANGED], 0);
 
@@ -295,8 +295,8 @@ parse_messages(GebrCommServer *comm_server,
 					goto err;
 
 				GString *port = arguments->data;
+				gebr_comm_server_set_logged(comm_server);
 				gebr_comm_server_forward_x11(maestro->priv->server, atoi(port->str));
-
 				gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 			}
 		} else if (message->hash == gebr_comm_protocol_defs.err_def.code_hash) {
@@ -842,7 +842,7 @@ gebr_maestro_server_init(GebrMaestroServer *maestro)
 	GebrDaemonServer *autochoose =
 		gebr_daemon_server_new(GEBR_CONNECTABLE(maestro), 
 				       NULL, 
-				       SERVER_STATE_CONNECT, 
+				       SERVER_STATE_LOGGED, 
 				       gebr_maestro_server_get_address(maestro));
 	gebr_maestro_server_add_daemon(maestro, autochoose);
 }

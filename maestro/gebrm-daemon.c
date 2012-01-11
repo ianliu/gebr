@@ -248,12 +248,13 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 				GString *clock_cpu    = g_list_nth_data (arguments, 7);
 				GString *daemon_id    = g_list_nth_data (arguments, 8);
 
+				gebr_comm_server_set_logged(server);
+
 				daemon->priv->is_initialized = TRUE;
 
 				server->socket->protocol->hostname = g_string_assign(server->socket->protocol->hostname, hostname->str);
 				gebrm_daemon_set_ncores(daemon, atoi(ncores->str));
 				gebrm_daemon_set_clock_cpu(daemon, atof(clock_cpu->str));
-				server->socket->protocol->logged = TRUE;
 				gebrm_daemon_set_nfsid(daemon, nfsid->str);
 				gebrm_daemon_set_id(daemon, daemon_id->str);
 

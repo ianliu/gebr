@@ -59,12 +59,15 @@ gchar *gebr_comm_server_get_user(const char *address);
 
 GebrCommServerType gebr_comm_server_get_id(const gchar * name);
 
+// If you change these states, don't forget to update
+// the gebr_comm_server_state_to_string() method.
 typedef enum {
 	SERVER_STATE_UNKNOWN,
 	SERVER_STATE_DISCONNECTED,
 	SERVER_STATE_RUN,
 	SERVER_STATE_OPEN_TUNNEL,
 	SERVER_STATE_CONNECT,
+	SERVER_STATE_LOGGED,
 } GebrCommServerState;
 
 typedef struct _GebrCommServer GebrCommServer;
@@ -181,6 +184,8 @@ void gebr_comm_server_connect(GebrCommServer *server,
 void gebr_comm_server_disconnect(GebrCommServer *gebr_comm_server);
 
 gboolean gebr_comm_server_is_logged(GebrCommServer *gebr_comm_server);
+
+void gebr_comm_server_set_logged(GebrCommServer *server);
 
 gboolean gebr_comm_server_is_local(GebrCommServer *gebr_comm_server);
 
