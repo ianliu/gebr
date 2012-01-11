@@ -407,10 +407,12 @@ flow_edition_set_run_widgets_sensitiveness(GebrFlowEdition *fe,
 		GtkAction *action = gtk_action_group_get_action(gebr.action_group_flow, "flow_execute");
 		const gchar *tooltip = sensitive ? tooltip_execute : tooltip_disconn;
 
+		gtk_action_set_stock_id(action, "gtk-execute");
 		gtk_action_set_sensitive(action, sensitive);
 		gtk_action_set_tooltip(action, tooltip);
 
 		action = gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_execute");
+		gtk_action_set_stock_id(action, "gtk-execute");
 		gtk_action_set_sensitive(action, sensitive);
 		gtk_action_set_tooltip(action, tooltip);
 	}

@@ -1708,7 +1708,8 @@ void on_response_ok(GtkButton * button, GebrPropertiesData * data)
 								    "and its respective Flows that can be broken."));
 			if (clean)
 				on_groups_combo_box_changed(GTK_COMBO_BOX(data->maestro_combo));
-		}
+		} else
+			on_groups_combo_box_changed(GTK_COMBO_BOX(data->maestro_combo));
 	} case GEBR_GEOXML_DOCUMENT_TYPE_PROJECT: {
 		project_line_get_selected(&iter, DontWarnUnselection);
 		gtk_tree_store_set(gebr.ui_project_line->store, &iter,
