@@ -67,6 +67,7 @@ enum {
 	CMD_LINE_RECEIVED,
 	OUTPUT,
 	DISCONNECT,
+	JOB_REMOVE,
 	N_SIGNALS
 };
 
@@ -123,49 +124,58 @@ gebr_job_class_init(GebrJobClass *klass)
 	klass->status_change = gebr_job_status_change_real;
 
 	signals[STATUS_CHANGE] =
-		g_signal_new("status-change",
-			     G_OBJECT_CLASS_TYPE(gobject_class),
-			     G_SIGNAL_RUN_FIRST,
-			     G_STRUCT_OFFSET(GebrJobClass, status_change),
-			     NULL, NULL,
-			     gebr_cclosure_marshal_VOID__INT_INT_STRING,
-			     G_TYPE_NONE, 3, G_TYPE_INT, G_TYPE_INT, G_TYPE_STRING);
+			g_signal_new("status-change",
+			             G_OBJECT_CLASS_TYPE(gobject_class),
+			             G_SIGNAL_RUN_FIRST,
+			             G_STRUCT_OFFSET(GebrJobClass, status_change),
+			             NULL, NULL,
+			             gebr_cclosure_marshal_VOID__INT_INT_STRING,
+			             G_TYPE_NONE, 3, G_TYPE_INT, G_TYPE_INT, G_TYPE_STRING);
 
 	signals[ISSUED] =
-		g_signal_new("issued",
-			     G_OBJECT_CLASS_TYPE(gobject_class),
-			     G_SIGNAL_RUN_FIRST,
-			     G_STRUCT_OFFSET(GebrJobClass, issued),
-			     NULL, NULL,
-			     g_cclosure_marshal_VOID__STRING,
-			     G_TYPE_NONE, 1, G_TYPE_STRING);
+			g_signal_new("issued",
+			             G_OBJECT_CLASS_TYPE(gobject_class),
+			             G_SIGNAL_RUN_FIRST,
+			             G_STRUCT_OFFSET(GebrJobClass, issued),
+			             NULL, NULL,
+			             g_cclosure_marshal_VOID__STRING,
+			             G_TYPE_NONE, 1, G_TYPE_STRING);
 
 	signals[CMD_LINE_RECEIVED] =
-		g_signal_new("cmd-line-received",
-			     G_OBJECT_CLASS_TYPE(gobject_class),
-			     G_SIGNAL_RUN_FIRST,
-			     G_STRUCT_OFFSET(GebrJobClass, cmd_line_received),
-			     NULL, NULL,
-			     gebr_cclosure_marshal_VOID__INT_STRING,
-			     G_TYPE_NONE, 2, G_TYPE_INT, G_TYPE_STRING);
+			g_signal_new("cmd-line-received",
+			             G_OBJECT_CLASS_TYPE(gobject_class),
+			             G_SIGNAL_RUN_FIRST,
+			             G_STRUCT_OFFSET(GebrJobClass, cmd_line_received),
+			             NULL, NULL,
+			             gebr_cclosure_marshal_VOID__INT_STRING,
+			             G_TYPE_NONE, 2, G_TYPE_INT, G_TYPE_STRING);
 
 	signals[OUTPUT] =
-		g_signal_new("output",
-			     G_OBJECT_CLASS_TYPE(gobject_class),
-			     G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
-			     G_STRUCT_OFFSET(GebrJobClass, output),
-			     NULL, NULL,
-			     gebr_cclosure_marshal_VOID__INT_STRING,
-			     G_TYPE_NONE, 2, G_TYPE_INT, G_TYPE_STRING);
+			g_signal_new("output",
+			             G_OBJECT_CLASS_TYPE(gobject_class),
+			             G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
+			             G_STRUCT_OFFSET(GebrJobClass, output),
+			             NULL, NULL,
+			             gebr_cclosure_marshal_VOID__INT_STRING,
+			             G_TYPE_NONE, 2, G_TYPE_INT, G_TYPE_STRING);
 
 	signals[DISCONNECT] =
-		g_signal_new("disconnect",
-			     G_OBJECT_CLASS_TYPE(gobject_class),
-			     G_SIGNAL_RUN_FIRST,
-			     G_STRUCT_OFFSET(GebrJobClass, disconnect),
-			     NULL, NULL,
-			     g_cclosure_marshal_VOID__VOID,
-			     G_TYPE_NONE, 0);
+			g_signal_new("disconnect",
+			             G_OBJECT_CLASS_TYPE(gobject_class),
+			             G_SIGNAL_RUN_FIRST,
+			             G_STRUCT_OFFSET(GebrJobClass, disconnect),
+			             NULL, NULL,
+			             g_cclosure_marshal_VOID__VOID,
+			             G_TYPE_NONE, 0);
+
+	signals[JOB_REMOVE] =
+			g_signal_new("job-remove",
+			             G_OBJECT_CLASS_TYPE(gobject_class),
+			             G_SIGNAL_RUN_FIRST,
+			             G_STRUCT_OFFSET(GebrJobClass, job_remove),
+			             NULL, NULL,
+			             g_cclosure_marshal_VOID__VOID,
+			             G_TYPE_NONE, 0);
 
 	g_type_class_add_private(klass, sizeof(GebrJobPriv));
 }
@@ -574,6 +584,12 @@ void
 gebr_job_set_static_status(GebrJob *job, GebrCommJobStatus status)
 {
 	job->priv->status = status;
+}
+
+void
+gebr_job_remove(GebrJob *job)
+{
+	g_signal_emit(job, signals[JOB_REMOVE], 0);
 }
 
 void

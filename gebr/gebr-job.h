@@ -63,6 +63,8 @@ struct _GebrJobClass {
 			const gchar *output);
 
 	void (*disconnect) (GebrJob *job);
+
+	void (*job_remove) (GebrJob *job);
 };
 
 typedef struct {

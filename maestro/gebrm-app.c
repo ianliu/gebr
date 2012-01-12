@@ -656,6 +656,13 @@ on_client_request(GebrCommProtocolSocket *socket,
 			if (job) {
 				gebrm_job_close(job);
 				g_hash_table_remove(app->priv->jobs, id);
+
+				for (GList *i = app->priv->connections; i; i = i->next) {
+					GebrCommProtocolSocket *socket_client = gebrm_client_get_protocol_socket(i->data);
+					gebr_comm_protocol_socket_oldmsg_send(socket_client, FALSE,
+					                                      gebr_comm_protocol_defs.jcl_def, 1,
+					                                      id);
+				}
 			}
 		}
 		else if (g_strcmp0(prefix, "/kill") == 0) {

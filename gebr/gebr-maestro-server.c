@@ -503,6 +503,21 @@ parse_messages(GebrCommServer *comm_server,
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}
+		else if (message->hash == gebr_comm_protocol_defs.jcl_def.code_hash) {
+			GList *arguments;
+
+			/* organize message data */
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 1)) == NULL)
+				goto err;
+
+			GString *id = g_list_nth_data(arguments, 0);
+
+			GebrJob *job = g_hash_table_lookup(maestro->priv->jobs, id->str);
+
+			gebr_job_remove(job);
+
+			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
+		}
 		else if (message->hash == gebr_comm_protocol_defs.agrp_def.code_hash) {
 			GList *arguments;
 

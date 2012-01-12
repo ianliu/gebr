@@ -52,6 +52,7 @@ void gebr_comm_protocol_init(void)
 	gebr_comm_protocol_defs.rnq_def  = gebr_comm_message_def_create("RNQ", FALSE,  2);
 	gebr_comm_protocol_defs.clr_def  = gebr_comm_message_def_create("CLR", FALSE,  1);
 	gebr_comm_protocol_defs.end_def  = gebr_comm_message_def_create("END", FALSE,  1);
+	gebr_comm_protocol_defs.jcl_def  = gebr_comm_message_def_create("JCL", FALSE, 1);
 	gebr_comm_protocol_defs.kil_def  = gebr_comm_message_def_create("KIL", FALSE,  1);
 	gebr_comm_protocol_defs.out_def  = gebr_comm_message_def_create("OUT", FALSE,  4);
 	gebr_comm_protocol_defs.sta_def  = gebr_comm_message_def_create("STA", FALSE,  5);
@@ -88,6 +89,7 @@ void gebr_comm_protocol_init(void)
 	g_hash_table_insert(gebr_comm_protocol_defs.hash_table, (gpointer)gebr_comm_protocol_defs.flw_def.code,  &gebr_comm_protocol_defs.flw_def);
 	g_hash_table_insert(gebr_comm_protocol_defs.hash_table, (gpointer)gebr_comm_protocol_defs.clr_def.code,  &gebr_comm_protocol_defs.clr_def);
 	g_hash_table_insert(gebr_comm_protocol_defs.hash_table, (gpointer)gebr_comm_protocol_defs.end_def.code,  &gebr_comm_protocol_defs.end_def);
+	g_hash_table_insert(gebr_comm_protocol_defs.hash_table, (gpointer)gebr_comm_protocol_defs.jcl_def.code,  &gebr_comm_protocol_defs.jcl_def);
 	g_hash_table_insert(gebr_comm_protocol_defs.hash_table, (gpointer)gebr_comm_protocol_defs.kil_def.code,  &gebr_comm_protocol_defs.kil_def);
 	g_hash_table_insert(gebr_comm_protocol_defs.hash_table, (gpointer)gebr_comm_protocol_defs.out_def.code,  &gebr_comm_protocol_defs.out_def);
 	g_hash_table_insert(gebr_comm_protocol_defs.hash_table, (gpointer)gebr_comm_protocol_defs.sta_def.code,  &gebr_comm_protocol_defs.sta_def);

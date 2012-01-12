@@ -1445,6 +1445,15 @@ gebr_jc_populate_status_cb(GebrJobControl *jc)
 }
 
 static void
+on_job_remove(GebrJob *job, GebrJobControl *jc)
+{
+	BLOCK_SELECTION_CHANGED_SIGNAL(jc);
+	gebr_job_control_remove(jc, job);
+	UNBLOCK_SELECTION_CHANGED_SIGNAL(jc);
+	job_control_on_cursor_changed(gtk_tree_view_get_selection(GTK_TREE_VIEW(jc->priv->view)), jc);
+}
+
+static void
 on_job_disconnected(GebrJob *job, GebrJobControl *jc)
 {
 	BLOCK_SELECTION_CHANGED_SIGNAL(jc);
@@ -1995,7 +2004,7 @@ gebr_job_control_add(GebrJobControl *jc, GebrJob *job)
 	gtk_list_store_append(jc->priv->store, gebr_job_get_iter(job));
 	gtk_list_store_set(jc->priv->store, gebr_job_get_iter(job), JC_STRUCT, job, -1);
 	g_signal_connect(job, "disconnect", G_CALLBACK(on_job_disconnected), jc);
-}
+	g_signal_connect(job, "job-remove", G_CALLBACK(on_job_remove), jc);}
 
 GebrJob *
 gebr_job_control_find(GebrJobControl *jc, const gchar *rid)
@@ -2194,7 +2203,6 @@ gebr_job_control_close_selected(GebrJobControl *jc)
 
 	jc->priv->last_selection.job = NULL;
 
-	BLOCK_SELECTION_CHANGED_SIGNAL(jc);
 	for (GList *i = rowrefs; i; i = i->next) {
 		GtkTreePath *path = gtk_tree_row_reference_get_path(i->data);
 
@@ -2204,12 +2212,9 @@ gebr_job_control_close_selected(GebrJobControl *jc)
 			continue;
 		}
 		gtk_tree_model_get(model, &iter, JC_STRUCT, &job, -1);
-		if (gebr_job_close(job))
-			gebr_job_control_remove(jc, job);
+		gebr_job_close(job);
 		gtk_tree_path_free(path);
 	}
-	UNBLOCK_SELECTION_CHANGED_SIGNAL(jc);
-	job_control_on_cursor_changed(gtk_tree_view_get_selection(GTK_TREE_VIEW(jc->priv->view)), jc);
 
 	g_list_foreach(rowrefs, (GFunc)gtk_tree_row_reference_free, NULL);
 	g_list_free(rowrefs);

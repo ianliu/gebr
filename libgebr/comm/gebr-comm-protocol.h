@@ -64,6 +64,7 @@ struct gebr_comm_protocol_defs {
 	struct gebr_comm_message_def run_def;   // Run request          Maestro -> Daemon
 	struct gebr_comm_message_def tsk_def;   // Task definition      Daemon  -> Maestro
 
+	struct gebr_comm_message_def jcl_def;   // Job Close 		Maestro -> GeBR
 	struct gebr_comm_message_def job_def;   // Job definition       Maestro -> GeBR
 	struct gebr_comm_message_def ssta_def;  // Server status change Maestro -> GeBR
 	struct gebr_comm_message_def srm_def;   // Server remove	Maestro -> GeBR
