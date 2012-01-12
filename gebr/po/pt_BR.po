@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-01-11 16:00-0200\n"
+"POT-Creation-Date: 2012-01-12 12:10-0200\n"
 "PO-Revision-Date: 2011-11-18 16:12-0200\n"
 "Last-Translator: Rodrigo Morelatto <morelatto@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
@@ -19,20 +19,20 @@ msgstr ""
 "Language: \n"
 
 #: ../callbacks.c:164
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "<span size='large'><b>The maestro of this line is disconnected.</b></span>\n"
 "\n"
 "Connect to maestro <b>%s</b> to execute this line."
 msgstr ""
-"O maestro da linha está desconectado.\n"
-"Reconecte-o ou altere o maestro\n"
-"associado a esta linha."
+"<span size='large'><b>O maestro da linha está desconectado.</b></span>\n"
+"\n"
+"Conecte ao maestro <b>%s</b> to execute this line."
 
 #: ../callbacks.c:167
-#, fuzzy, c-format
+#, c-format
 msgid "Maestro disconnected"
-msgstr "Servidor do maestro"
+msgstr "Maestro desconectado"
 
 #: ../callbacks.c:214
 msgid "Broken Flow"
@@ -443,10 +443,9 @@ msgstr "Descrição"
 
 #: ../gebr-flow-edition.c:376
 msgid "Select a line of this project to execute a flow"
-msgstr ""
+msgstr "Selecione a linha deste projeto para executar um fluxo."
 
 #: ../gebr-flow-edition.c:379
-#, fuzzy
 msgid ""
 "Maestro of this line is disconnected.\n"
 "Click here to reconnect it\n"
@@ -871,7 +870,7 @@ msgstr "Solte servidores para incrementar o grupo!"
 msgid "_Remove from group"
 msgstr "Remover do grupo"
 
-#: ../gebr-maestro-controller.c:471 ../gebr-maestro-controller.c:1034
+#: ../gebr-maestro-controller.c:471 ../gebr-maestro-controller.c:1035
 msgid "Address"
 msgstr "Endereço"
 
@@ -887,19 +886,19 @@ msgstr "Desconectar"
 msgid "_Remove"
 msgstr "Remover"
 
-#: ../gebr-maestro-controller.c:921
+#: ../gebr-maestro-controller.c:922
 msgid "Autoconnect ON"
 msgstr "Autoconectar ativado"
 
-#: ../gebr-maestro-controller.c:923
+#: ../gebr-maestro-controller.c:924
 msgid "Autoconnect OFF"
 msgstr "Autoconectar desativado"
 
-#: ../gebr-maestro-controller.c:1021
+#: ../gebr-maestro-controller.c:1022
 msgid "AC"
 msgstr "AC"
 
-#: ../gebr-maestro-controller.c:1095
+#: ../gebr-maestro-controller.c:1096
 #, c-format
 msgid ""
 "<span size='large'>%s</span>\n"
@@ -908,26 +907,26 @@ msgstr ""
 "<span size='large'>%s</span>\n"
 "%s"
 
-#: ../gebr-maestro-controller.c:1098
+#: ../gebr-maestro-controller.c:1099
 #, c-format
 msgid "SSH question from %s"
 msgstr "Pergunta do SSH %s"
 
-#: ../gebr-maestro-controller.c:1114
+#: ../gebr-maestro-controller.c:1115
 msgid "Enter password"
 msgstr "Entre com a senha"
 
-#: ../gebr-maestro-controller.c:1121
+#: ../gebr-maestro-controller.c:1122
 #, c-format
 msgid "Trying to connect on %s"
 msgstr "Tentando conectar-se a %s"
 
-#: ../gebr-maestro-controller.c:1124
+#: ../gebr-maestro-controller.c:1125
 #, c-format
 msgid "Server %s is asking for password. Enter it below."
 msgstr "Servidor %s requer senha. Senha:"
 
-#: ../gebr-maestro-controller.c:1159
+#: ../gebr-maestro-controller.c:1160
 #, c-format
 msgid ""
 "<span size='large' weight='bold'>The daemon %s is executing jobs.\n"
@@ -936,7 +935,7 @@ msgstr ""
 "<span size='large' weight='bold'>O servidor %s está executando tarefas.\n"
 "Deseja realmente desconectá-lo e cancelar suas tarefas?</span>"
 
-#: ../gebr-maestro-controller.c:1162
+#: ../gebr-maestro-controller.c:1163
 #, c-format
 msgid ""
 "<span size='large' weight='bold'>The daemon %s is executing jobs.\n"
@@ -945,18 +944,18 @@ msgstr ""
 "<span size='large' weight='bold'>O servidor %s está executando tarefas.\n"
 "Deseja realmente removê-lo e cancelar suas tarefas?</span>"
 
-#: ../gebr-maestro-controller.c:1197
+#: ../gebr-maestro-controller.c:1198
 msgid ""
 "The selected maestro cannot manage the server, because it has a different "
 "NFS."
 msgstr "O maestro atual não pode gerir o servidor porque tem um NFS diferente."
 
-#: ../gebr-maestro-controller.c:1199
+#: ../gebr-maestro-controller.c:1200
 msgid ""
 "The selected maestro cannot manage the server, because it was already added."
 msgstr "O maestro atual não pode gerir o servidor porque já foi adicionado."
 
-#: ../gebr-maestro-controller.c:1201
+#: ../gebr-maestro-controller.c:1202
 msgid ""
 "The selected maestro cannot manage the server, because it is using a "
 "different protocol version."
@@ -964,7 +963,7 @@ msgstr ""
 "O maestro selecionado não pode gerir o servidor, pois utiliza um protocolo "
 "diferente."
 
-#: ../gebr-maestro-controller.c:1203
+#: ../gebr-maestro-controller.c:1204
 msgid ""
 "The selected maestro cannot manage the server, because it is already "
 "registered at another maestro."
@@ -972,19 +971,19 @@ msgstr ""
 "O maestro selecionado não pode gerir o servidor, pois ele já\n"
 "está conectado a outro maestro."
 
-#: ../gebr-maestro-controller.c:1272
+#: ../gebr-maestro-controller.c:1273
 msgid "It seems there is no GêBR-maestro installed on this machine"
 msgstr "Aparentemente não há GêBR-maestro instalado nesta máquina."
 
-#: ../gebr-maestro-controller.c:1297
+#: ../gebr-maestro-controller.c:1298
 msgid "Connected"
 msgstr "Conectado"
 
-#: ../gebr-maestro-server.c:1005
+#: ../gebr-maestro-server.c:1010
 msgid "Local Maestro"
 msgstr "Maestro local"
 
-#: ../gebr-maestro-server.c:1007
+#: ../gebr-maestro-server.c:1012
 #, c-format
 msgid "Maestro %s"
 msgstr "Maestro %s"
@@ -1449,7 +1448,7 @@ msgstr ""
 "Se você alterar o Maestro desta linha, alguns caminhos desta linha e seus "
 "respectivos Fluxos podem ser quebrados."
 
-#: ../ui_document.c:488
+#: ../ui_document.c:488 ../ui_preferences.c:153
 msgid "Maestro"
 msgstr "Maestro"
 
@@ -1797,10 +1796,6 @@ msgstr "Caminho para procurar menus particulares do usuário"
 msgid "Advanced settings"
 msgstr "Configurações avançadas."
 
-#: ../ui_preferences.c:153
-msgid "Maestro server"
-msgstr "Servidor do maestro"
-
 #: ../ui_preferences.c:168
 msgid "To edit the maestro server, select Actions > Servers."
 msgstr "Para editar o maestro, vá em Ações > Servidores"
@@ -2000,3 +1995,6 @@ msgstr "Linha composta pelo(s) Fluxo(s):"
 #: ../ui_project_line.c:1603
 msgid "Line paths:"
 msgstr "Caminhos da linha:"
+
+#~ msgid "Maestro server"
+#~ msgstr "Servidor do maestro"

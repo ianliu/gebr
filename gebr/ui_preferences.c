@@ -150,7 +150,7 @@ preferences_setup_ui(gboolean first_run)
 	 */
 	row = 0;
 
-	label = gtk_label_new(_("Maestro server"));
+	label = gtk_label_new(_("Maestro"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, row, row + 1, (GtkAttachOptions)GTK_FILL,
 			 (GtkAttachOptions)GTK_FILL, 3, 3);
