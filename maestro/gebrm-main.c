@@ -30,6 +30,7 @@
 #include <glib/gi18n.h>
 #include <glib/gstdio.h>
 #include <libgebr/comm/gebr-comm.h>
+#include <libgebr/log.h>
 #include <fcntl.h>
 
 #include "gebrm-app.h"
@@ -174,6 +175,12 @@ main(int argc, char *argv[])
 		perror("sigaction");
 
 	gebr_geoxml_init();
+
+	gchar *path = g_build_filename(g_get_home_dir(), ".gebr", "gebrm",
+				       g_get_host_name(), "log", NULL);
+	gebr_log_set_default(path);
+	g_free(path);
+
 	GebrmApp *app = gebrm_app_singleton_get();
 
 	if (!gebrm_app_run(app, output_fd))
