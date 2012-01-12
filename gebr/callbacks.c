@@ -152,7 +152,7 @@ flows_check_maestro_connected(void)
 {
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
 
-	if (maestro && gebr_maestro_server_get_state(maestro) == SERVER_STATE_CONNECT)
+	if (maestro && gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED)
 		return TRUE;
 
 	gchar *maestro_line = gebr_geoxml_line_get_maestro(gebr.line);
