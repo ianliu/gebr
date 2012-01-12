@@ -1316,8 +1316,9 @@ gebr_maestro_controller_connect(GebrMaestroController *self,
 	GebrMaestroServer *maestro;
 
 	if (self->priv->maestro) {
+		GebrCommServerState state = gebr_maestro_server_get_state(self->priv->maestro);
 		if (g_strcmp0(address, gebr_maestro_server_get_address(self->priv->maestro)) == 0 &&
-		    gebr_maestro_server_get_state(self->priv->maestro) == SERVER_STATE_CONNECT)
+		    (state == SERVER_STATE_CONNECT || state == SERVER_STATE_LOGGED))
 			return;
 
 		gebr_maestro_server_disconnect(self->priv->maestro);
