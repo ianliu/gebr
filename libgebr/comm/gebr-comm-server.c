@@ -253,8 +253,8 @@ void gebr_comm_server_connect(GebrCommServer *server,
 		binary = "gebrd";
 
 	/* initiate the marathon to communicate to server */
-	gebr_comm_server_log_message(server, GEBR_LOG_INFO, _("Launching server at '%s'."),
-				     server->address->str);
+	gebr_comm_server_log_message(server, GEBR_LOG_INFO, _("%p: Launching server at '%s'."),
+				     server->socket, server->address->str);
 
 	GebrCommTerminalProcess *process;
 	server->process.use = COMM_SERVER_PROCESS_TERMINAL;
@@ -397,8 +397,10 @@ gebr_comm_server_log_message(GebrCommServer *server, GebrLogMessageType type,
 	va_list argp;
 	va_start(argp, message);
 	gchar *string = g_strdup_vprintf(message, argp);
-	server->ops->log_message(server, type, string, server->user_data);
+	gchar *msg = g_strdup_printf("%s: %s", server->address->str, string);
+	server->ops->log_message(server, type, msg, server->user_data);
 	g_free(string);
+	g_free(msg);
 	va_end(argp);
 }
 
@@ -581,8 +583,6 @@ static void gebr_comm_ssh_run_server_read(GebrCommTerminalProcess * process, Geb
 	port = strtol(output->str, &strtol_endptr, 10);
 	if (port) {
 		server->port = port;
-		gebr_comm_server_log_message(server, GEBR_LOG_DEBUG, "gebr_comm_ssh_run_server_read: %d",
-					     port);
 	} else {
 		gebr_comm_server_disconnected_state(server, SERVER_ERROR_SERVER, _("Could not run server."));
 		gebr_comm_server_log_message(server, GEBR_LOG_ERROR, _("Could not run server '%s'."), server->address->str);
@@ -604,6 +604,13 @@ gebr_comm_ssh_run_server_finished(GebrCommTerminalProcess * process, GebrCommSer
 
 	if (server->error != SERVER_ERROR_NONE)
 		return;
+
+	if (!server->port) {
+		gebr_comm_server_log_message(server, GEBR_LOG_DEBUG, "%s: Missing port number!", __func__);
+		gebr_comm_server_disconnected_state(server, SERVER_ERROR_SERVER, _("Could not run server."));
+		gebr_comm_server_log_message(server, GEBR_LOG_ERROR, _("Could not run server '%s'."), server->address->str);
+		return;
+	}
 
 	server->tried_existant_pass = FALSE;
 	server->process.use = COMM_SERVER_PROCESS_TERMINAL;
