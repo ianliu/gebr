@@ -69,6 +69,13 @@ static void gebr_comm_terminal_process_class_init(GebrCommTerminalProcessClass *
 
 static void gebr_comm_terminal_process_init(GebrCommTerminalProcess * terminal_process)
 {
+	terminal_process->pid = 0;
+	terminal_process->is_running = FALSE;
+	terminal_process->exit_code = 0;
+	terminal_process->ptm_io_channel = NULL;
+	terminal_process->ptm_watch_id = 0;
+	terminal_process->finish_watch_id = 0;
+
 	__gebr_comm_terminal_process_stop_state(terminal_process);
 }
 
