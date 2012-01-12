@@ -232,9 +232,9 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 	while ((link = g_list_last(server->socket->protocol->messages)) != NULL) {
 		message = link->data;
 
-		guint ret_hash = GPOINTER_TO_UINT(g_queue_pop_head(server->socket->protocol->waiting_ret_hashs));
-
 		if (message->hash == gebr_comm_protocol_defs.ret_def.code_hash) {
+			guint ret_hash = GPOINTER_TO_UINT(g_queue_pop_head(server->socket->protocol->waiting_ret_hashs));
+
 			if (ret_hash == gebr_comm_protocol_defs.ini_def.code_hash) {
 				GList *arguments;
 

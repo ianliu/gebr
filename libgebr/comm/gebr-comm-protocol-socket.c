@@ -302,8 +302,9 @@ void gebr_comm_protocol_socket_oldmsg_send(GebrCommProtocolSocket * self, gboole
 	message = gebr_comm_protocol_build_messagev(gebr_comm_message_def, n_params, ap);
 
 	/* does this message need return? */
-	guint ret_hash = gebr_comm_message_def.returns ? gebr_comm_message_def.code_hash : 0;
-	g_queue_push_tail(self->protocol->waiting_ret_hashs, GUINT_TO_POINTER(ret_hash));
+	if (gebr_comm_message_def.returns)
+		g_queue_push_tail(self->protocol->waiting_ret_hashs,
+				  GUINT_TO_POINTER(gebr_comm_message_def.code_hash));
 
 	/* send it */
 	if (blocking)
