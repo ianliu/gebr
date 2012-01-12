@@ -637,14 +637,18 @@ on_client_request(GebrCommProtocolSocket *socket,
 			gebrm_remove_server_from_list(app, addr);
 			gebrm_config_delete_server(addr);
 
-			// Clean tags for this server
-			gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
-			                                      gebr_comm_protocol_defs.agrp_def, 2,
-			                                      addr, "");
+			for (GList *i = app->priv->connections; i; i = i->next) {
+				GebrCommProtocolSocket *socket_client = gebrm_client_get_protocol_socket(i->data);
 
-			gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
-			                                      gebr_comm_protocol_defs.srm_def, 1,
-			                                      addr);
+				// Clean tags for this server
+				gebr_comm_protocol_socket_oldmsg_send(socket_client, FALSE,
+				                                      gebr_comm_protocol_defs.agrp_def, 2,
+				                                      addr, "");
+
+				gebr_comm_protocol_socket_oldmsg_send(socket_client, FALSE,
+				                                      gebr_comm_protocol_defs.srm_def, 1,
+				                                      addr);
+			}
 		}
 		else if (g_strcmp0(prefix, "/close") == 0) {
 			const gchar *id = gebr_comm_uri_get_param(uri, "id");
@@ -808,9 +812,12 @@ on_client_request(GebrCommProtocolSocket *socket,
 			const gchar *tags   = gebr_comm_uri_get_param(uri, "tags");
 
 			if (gebrm_config_update_tags_on_server(app, server, tags)) {
-				gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
-								      gebr_comm_protocol_defs.agrp_def, 2,
-								      server, tags);
+				for (GList *i = app->priv->connections; i; i = i->next) {
+					GebrCommProtocolSocket *socket_client = gebrm_client_get_protocol_socket(i->data);
+					gebr_comm_protocol_socket_oldmsg_send(socket_client, FALSE,
+					                                      gebr_comm_protocol_defs.agrp_def, 2,
+					                                      server, tags);
+				}
 				gebrm_update_tags_on_list_of_servers(app, server, tags);
 			}
 		} else if (g_strcmp0(prefix, "/tag-insert") == 0) {
@@ -819,9 +826,12 @@ on_client_request(GebrCommProtocolSocket *socket,
 
 			gchar *tags;
 			if (gebrm_config_insert_tag_on_server(app, server, tag, &tags)) {
-				gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
-				                                      gebr_comm_protocol_defs.agrp_def, 2,
-				                                      server, tags);
+				for (GList *i = app->priv->connections; i; i = i->next) {
+					GebrCommProtocolSocket *socket_client = gebrm_client_get_protocol_socket(i->data);
+					gebr_comm_protocol_socket_oldmsg_send(socket_client, FALSE,
+					                                      gebr_comm_protocol_defs.agrp_def, 2,
+					                                      server, tags);
+				}
 				gebrm_update_tags_on_list_of_servers(app, server, tags);
 				g_free(tags);
 			}
@@ -831,9 +841,12 @@ on_client_request(GebrCommProtocolSocket *socket,
 
 			gchar *tags;
 			if (gebrm_config_remove_tag_of_server(app, server, tag, &tags)) {
-				gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
-				                                      gebr_comm_protocol_defs.agrp_def, 2,
-				                                      server, tags);
+				for (GList *i = app->priv->connections; i; i = i->next) {
+					GebrCommProtocolSocket *socket_client = gebrm_client_get_protocol_socket(i->data);
+					gebr_comm_protocol_socket_oldmsg_send(socket_client, FALSE,
+					                                      gebr_comm_protocol_defs.agrp_def, 2,
+					                                      server, tags);
+				}
 				gebrm_update_tags_on_list_of_servers(app, server, tags);
 				g_free(tags);
 			}
@@ -852,10 +865,13 @@ on_client_request(GebrCommProtocolSocket *socket,
 			gebrm_daemon_set_autoconnect(daemon, is_ac);
 
 			if (gebrm_config_set_autoconnect(app, server, is_ac)) {
-				gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
-				                                      gebr_comm_protocol_defs.ac_def, 2,
-				                                      server,
-				                                      is_ac);
+				for (GList *i = app->priv->connections; i; i = i->next) {
+					GebrCommProtocolSocket *socket_client = gebrm_client_get_protocol_socket(i->data);
+					gebr_comm_protocol_socket_oldmsg_send(socket_client, FALSE,
+					                                      gebr_comm_protocol_defs.ac_def, 2,
+					                                      server,
+					                                      is_ac);
+				}
 			}
 		}
 	gebr_comm_uri_free(uri);
