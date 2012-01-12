@@ -254,3 +254,26 @@ gebr_log_message_get_type(GebrLogMessage *message)
 {
 	return message->type;
 }
+
+static GebrLog *singleton_log = NULL;
+
+void
+gebr_log_set_default(const gchar *path)
+{
+	g_return_if_fail(singleton_log == NULL);
+	singleton_log = gebr_log_open(path);
+}
+
+void
+gebr_log(GebrLogMessageType type, const gchar *format, ...)
+{
+	g_return_if_fail(singleton_log != NULL);
+
+	va_list args;
+	va_start(args, format);
+	gchar *msg = g_strdup_vprintf(format, args);
+	va_end(args);
+
+	gebr_log_add_message(singleton_log, type, msg);
+	g_free(msg);
+}

@@ -1,22 +1,25 @@
-/*   libgebr - GeBR Library
- *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
+/*
+ * log.h
+ * This file is part of GêBR Project
  *
- *   This program is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
+ * Copyright (C) 2007-2012 - GêBR Core Team (www.gebrproject.com)
  *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
+ * GêBR Project is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
- *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * GêBR Project is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with GêBR Project. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GEBR_GEBR_LOG_H
-#define __GEBR_GEBR_LOG_H
+#ifndef __GEBR_GEBR_LOG_H__
+#define __GEBR_GEBR_LOG_H__
 
 #include <glib.h>
 
@@ -57,6 +60,20 @@ GebrLogMessageType gebr_log_message_get_type(GebrLogMessage *message);
 
 void gebr_log_message_free(GebrLogMessage *message);
 
+/**
+ * gebr_log_set_default:
+ *
+ * Sets the default @path for logging.
+ */
+void gebr_log_set_default(const gchar *path);
+
+/**
+ * gebr_log:
+ *
+ * Logs into the default path. See gebr_log_set_default().
+ */
+void gebr_log(GebrLogMessageType type, const gchar *msg, ...);
+
 G_END_DECLS
 
-#endif				//__GEBR_GEBR_LOG_H
+#endif /* __GEBR_GEBR_LOG_H__ */
