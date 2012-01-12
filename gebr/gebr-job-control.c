@@ -1398,7 +1398,11 @@ tree_sort_func(GtkTreeModel *model,
 	g_time_val_from_iso8601(ta, &tva);
 	g_time_val_from_iso8601(tb, &tvb);
 
-	return tva.tv_sec - tvb.tv_sec;
+	glong timestamp = tva.tv_sec - tvb.tv_sec;
+
+	if (timestamp == 0)
+		return tva.tv_usec - tvb.tv_usec;
+	return timestamp;
 }
 
 static void
@@ -2294,11 +2298,6 @@ void
 gebr_job_control_remove(GebrJobControl *jc,
 			GebrJob *job)
 {
-	GtkTreeIter iter;
-	gboolean has_group = FALSE;
-	const gchar *group = gebr_job_get_server_group(job);
-	const gchar *type = gebr_job_get_server_group_type(job);
-
 	gtk_list_store_remove(jc->priv->store, gebr_job_get_iter(job));
 
 	on_maestro_filter_changed(jc->priv->server_combo, jc);
