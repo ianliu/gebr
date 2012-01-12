@@ -90,7 +90,7 @@ struct gebr_comm_protocol {
 	/* received messages to be parsed */
 	GList *messages;
 	/* waiting for return of message with "hash"; 0 if it is not waiting responses */
-	guint waiting_ret_hash;
+	GQueue *waiting_ret_hashs;
 	/* logged in with INI and RET? */
 	gboolean logged;
 	/* if we are logged, we received a host name from the peer */

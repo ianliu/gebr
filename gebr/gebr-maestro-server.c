@@ -286,9 +286,10 @@ parse_messages(GebrCommServer *comm_server,
 	GebrMaestroServer *maestro = user_data;
 
 	while ((link = g_list_last(comm_server->socket->protocol->messages)) != NULL) {
+		guint ret_hash = GPOINTER_TO_UINT(g_queue_pop_head(comm_server->socket->protocol->waiting_ret_hashs));
 		message = (struct gebr_comm_message *)link->data;
 		if (message->hash == gebr_comm_protocol_defs.ret_def.code_hash) {
-			if (comm_server->socket->protocol->waiting_ret_hash == gebr_comm_protocol_defs.ini_def.code_hash) {
+			if (ret_hash == gebr_comm_protocol_defs.ini_def.code_hash) {
 				GList *arguments;
 
 				if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 1)) == NULL)

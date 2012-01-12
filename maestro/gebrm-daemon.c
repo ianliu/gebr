@@ -232,8 +232,10 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 	while ((link = g_list_last(server->socket->protocol->messages)) != NULL) {
 		message = link->data;
 
+		guint ret_hash = GPOINTER_TO_UINT(g_queue_pop_head(server->socket->protocol->waiting_ret_hashs));
+
 		if (message->hash == gebr_comm_protocol_defs.ret_def.code_hash) {
-			if (server->socket->protocol->waiting_ret_hash == gebr_comm_protocol_defs.ini_def.code_hash) {
+			if (ret_hash == gebr_comm_protocol_defs.ini_def.code_hash) {
 				GList *arguments;
 
 				if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 9)) == NULL)
@@ -263,7 +265,7 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 				g_strfreev(accounts);
 				gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 			}
-			else if (server->socket->protocol->waiting_ret_hash == gebr_comm_protocol_defs.gid_def.code_hash) {
+			else if (ret_hash == gebr_comm_protocol_defs.gid_def.code_hash) {
 				GList *arguments;
 
 				if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)

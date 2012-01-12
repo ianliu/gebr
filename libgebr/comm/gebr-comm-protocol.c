@@ -142,6 +142,7 @@ struct gebr_comm_protocol *gebr_comm_protocol_new(void)
 	protocol->message = NULL;
 	protocol->messages = NULL;
 	protocol->hostname = g_string_new(NULL);
+	protocol->waiting_ret_hashs = g_queue_new();
 
 	gebr_comm_protocol_reset(protocol);
 
@@ -168,6 +169,7 @@ void gebr_comm_protocol_free(struct gebr_comm_protocol *protocol)
 	g_list_foreach(protocol->messages, (GFunc)gebr_comm_message_free, NULL);
 	g_list_free(protocol->messages);
 	g_string_free(protocol->hostname, TRUE);
+	g_queue_free(protocol->waiting_ret_hashs);
 	g_free(protocol);
 }
 
