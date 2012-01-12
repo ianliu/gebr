@@ -1,3 +1,15 @@
+2011-10-31  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Partially fix 'po' makefile's bug
+
+2011-10-28  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Disable gebr-client and fixes many gcc warnings
+
+2011-10-19  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* GeBR now compiles in Ubuntu 11.10
+
 2011-09-16  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
 
 	* Update changelogs before release.

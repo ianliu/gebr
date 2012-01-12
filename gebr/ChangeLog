@@ -1,3 +1,1649 @@
+2012-01-06  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.15.5 with maestro to orchestrate job execution in GeBR's
+	behalf. [Sprint 47]
+
+2012-01-06  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Disallow execution of flow on group with no connected servers
+
+2012-01-06  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Return hostname of daemon to gebr after daemons init
+
+2012-01-06  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Evaluate IO expressions in job control tooltips
+
+2012-01-06  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fix the gebr version sync with mercurial.
+
+2012-01-05  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Enable multiple selection on maestro controller (again)
+
+2012-01-05  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Fixing populate menus
+
+2012-01-05  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix recovery server of last execution for flow when open Gebr
+	* Fix bug of remove connected server when doesn't has running jobs
+
+2012-01-05  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add tooltip of gebr trying to connect to a machine with no gebrm-
+	maestro installed
+
+2012-01-05  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Send gebr id in /run message
+
+2012-01-05  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* DIsconnect client from maestro when quit gebr
+
+2012-01-05  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Forwards are kept in GebrmClient now
+
+2012-01-04  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Disconnect from server when try to remove it
+
+2012-01-04  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Standardize hostname in servers.conf file of daemons configuration
+
+2012-01-04  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change sensitiveness of run widgets when line doesn't have flows
+
+2012-01-04  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Daemon has a port for each client in Maestro
+	* Fix a bug in which Maestro was forwarding the port zero
+	* Give a unique port for each connected client in Maestro
+
+2012-01-04  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Show dialog when try to disconnect daemon with executing jobs
+
+2012-01-04  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Remove several debugs
+
+2012-01-04  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix warnings of castings of set_tooltip
+
+2012-01-03  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix bug on selected maestro in properties line
+
+2012-01-03  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Fixing restoring status of Jobs
+
+2012-01-03  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change combo-box of maestro on properties of line to Label when it's
+	locked
+
+2012-01-03  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Addind tooltip at job information at JobControl
+
+2012-01-03  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Write to disk immediately when the user connects to a maestro
+	* Fix issue of old lines not associated to any maestro
+
+2012-01-03  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Including maestro in line report
+
+2011-12-22  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix queues selection after execute flows in sequence
+	* Select runs combo-box when change maestro for line
+
+2011-12-22  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix X forwarding in Gebr
+
+2011-12-22  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Maestro sends port to GeBR
+	* Remove gebr/ui_server.h and its remainings
+	* Fix segfault when a Maestro connects into an already owned Daemon
+
+2011-12-21  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Daemon accepts only one connection
+
+2011-12-21  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Fixing tooltip of maestro lock on properties of line
+
+2011-12-21  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Deselect all jobs when change maestro on Servers Dialog
+	* FIx inconsistency on rigth side of JobControl when execute queues
+	jobs
+
+2011-12-21  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix label of ServersGroup from 127.0.0.1 to hostname
+	* Fix previous commit of Server Info in Job Control UI
+
+2011-12-21  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Get Maestro form MaestroController and not from line on GebrJob
+	* Improvement window title from message of SSH
+
+2011-12-21  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Change all tooltips of the Run button to 'Execute'
+	* Change Job Details (in Job control UI) 'Local Server' > hostname'
+	* Avoids creation of two groups with the same name
+
+2011-12-21  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change paradigm of queues. Now queues are selected by maestro
+
+2011-12-21  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Fixing tooltip of Filter button at Job Control
+
+2011-12-21  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Recover tooltip of 'Execute this flow' of Run button
+
+2011-12-21  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Fixing title of maestro/servers window.
+
+2011-12-21  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Return when job is null on JobControll_fill_servers_info
+	* Select correct notebook page when creates a new group
+
+2011-12-21  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Remove daemon from maestro if its protocol version differs
+
+2011-12-21  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add the right functionality of the Enter button (keypad) in group
+	creation
+	* Modify the starting mestro to hostname (instead of 127.0.0.1)
+
+2011-12-21  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix wrong unref on groups model of maestro
+	* Do not show popup menu on 'New' from Servers Configuration
+	* FIx criticals when try to remove server from group
+
+2011-12-20  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Include scrolled window on view of groups in Servers Configuration
+	* Revert multiple selection on Servers Configuration (Fix segFault
+	when use DnD)
+	* Update Servers/Groups combo-box on Filter of JobControl
+	* Clear model when connect on maestro with error and change
+	sensitiveness
+
+2011-12-20  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Gebr displays a dialog when a daemon with different version connects
+	* Remove several unused variables
+
+2011-12-20  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add tooltip to insensitive Run button
+
+2011-12-20  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Merge with Daemon-report-issues
+
+2011-12-20  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Set tooltip and icon when servers has an SSH error
+	* Merge with Maestro
+
+2011-12-20  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Use err_def to pass error messages between gebr, maestro and daemon
+
+2011-12-20  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Enabled multiple selection on Servers Configuration dialog
+
+2011-12-20  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Maestro disconnects daemons with the same Id to avoid double
+	connections
+	* Fix sensitiveness of "Run widgets" when maestro state changes
+
+2011-12-20  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Standardize the localhost and 127.0.0.1 to hostname
+
+2011-12-20  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Insert lock icon on properties of line
+
+2011-12-20  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Clear maestro jobs when it disconnects
+	* Add GebrMaestroController::maestro_state_changed signal
+	* Add lock/unlock button in line properties
+
+2011-12-19  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix some problems with group selection
+
+2011-12-19  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix bug of IO informations in JobControl UI
+
+2011-12-19  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Do nothing when try to connect in same maestro
+
+2011-12-19  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Record the last group used to execute flow
+	* Change GebrMaestroServer::group-changed emission phase
+	* Do not emit group-changed signal when opening maestro dialog
+
+2011-12-19  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Change ambigous name 'Local Server' to Maestro_address
+
+2011-12-19  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Remove several GTK warnings due to disconnected maestro
+	* Disable execution button when maestro is disconnected for current
+	line
+	* Disable server and queue combobox's in flow edition if maestro is
+	disconnected
+
+2011-12-19  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add maestro information to Job Details on JobControl UI
+
+2011-12-19  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix a segfault when changing to flow edition tab
+	* Line properties combobox shows its maestro and gebr's maestro
+
+2011-12-19  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Disconnects old maestro when connects on another one
+	* Implement method GebrMaestroServer_disconnect
+
+2011-12-19  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Remove list of maestros in GebrMaestroController
+
+2011-12-19  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Merge variable of project and line to flow on gebr and split that on
+	maestro
+
+2011-12-19  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix gtk threads issues for nfs error dialog
+	* Create signal to show dialog when try to connect on server with
+	different NFS
+
+2011-12-19  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Half-inserting tooltip of Daemon Issue in Servers Configuration UI
+
+2011-12-16  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix parameter group_type in message /run to maestro
+
+2011-12-16  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Use GtkHPaned in maestro/daemons dialog
+
+2011-12-16  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Change label of servers to run in Flow Editor tab
+
+2011-12-16  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Include "New" to add a new server to top of Servers Configuration
+	window
+
+2011-12-16  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Remove label 'Maestro' in maestros drop down
+
+2011-12-16  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix name 'Server maestro'=>'Maestro'
+
+2011-12-15  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Daemons and maestro communicate the daemons error
+
+2011-12-15  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Remove sensitiveness on maestro combobox when disconnected
+	* When a maestro disconnects, clear its daemons list store
+	* Rename gebr_maestro_server_disconnect
+	* Revalidate the flow when pasting a Forloop in it
+	* Fix typo in variable type
+	* Gebr asks password and questions when SSH requests them
+
+2011-12-14  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Merge SSH question change
+	* Maestro sends SSH questions to GeBR
+
+2011-12-14  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Show errors when try to connect on maestro with invalid address
+	* Validate name of group in Maestro Controller and only accepts ASC
+	alpha-numerical strings
+
+2011-12-14  Giuliano Roberto Pinheiro <giuliano@gebrproject.com>
+
+	* Correcting label alignments in Line properties dialog.
+
+2011-12-14  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Update servers combo-box when add or remove a new server on Maestro
+	* Change filter by serves on Job control to filter jobs to execute
+	partially or totally on selected server
+	* Hide combo-box to filter by maestro on Job Control
+	* Fix DTD promotion of line and flow to set maestro and group default
+	* Fix message to maestro for run a job (wrong parameter parent_rid)
+
+2011-12-14  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix SegFault of double EscEsc on first-time using Gebr
+	* Remove double includes of gebr-comm-uri.h
+
+2011-12-13  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix all messages to use GebrCommUri
+
+2011-12-13  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Maestro uses the new GebrCommUri structure
+
+2011-12-13  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Use GebrCommUri class to send/receive http messages
+
+2011-12-13  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix regression when creating groups
+	* Set the servers list model only when opening the dialog
+	* Allow closing jobs they are waiting for servers
+	* Fix a segfault when dragging 'New' row into group tab
+
+2011-12-13  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Gebr don't send message to run a job if there are no connected
+	server on maestro
+
+2011-12-13  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Escape url of group-changed callbacks
+
+2011-12-13  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Update groups when remove server from maestro
+	* Include protection of null pointers on several function
+	* Fix label of context menu when remove server from group
+
+2011-12-13  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix segFault of escaping of the url
+
+2011-12-13  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix a bug when filtering by group 'Local maestro'
+
+2011-12-13  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Create callback to update groups/servers combo-box filter, and fix
+	some issues of interface
+	* Implement signal group-changed of MaestroController to update
+	groups/servers combo-box in JobControl
+
+2011-12-12  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix empty entry on filters and infos of servers in a job
+
+2011-12-12  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Job control may filter by Maestro, Groups and Statuses
+	* Groups combobox is now updated when Gebr starts
+
+2011-12-12  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add frame to the entry of new group name in ServersUI
+
+2011-12-12  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change maestro model with line when clicked ok on preferences
+	* Include remove server on context menu and implement response message
+	for maestro to gebr
+	* Change interface of auto-connect and fix messages and connections
+	using ac in maestro
+
+2011-12-12  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Create back-end of right-click menu function 'Remove Server' on
+	Servers UI
+
+2011-12-07  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Implement signal to autoconnect and fix some interface problems
+
+2011-12-07  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix job_def message and create jobs when GeBR runs
+	* Queues are now changed when the server grup changes
+	* Flow edition now shows a list of server groups
+
+2011-12-07  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add group_type client=>maestro, maestro=>client
+
+2011-12-07  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Use the new methods where appropriate
+	* Add methods to get a maestro for a line
+
+2011-12-07  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Implement method to get groups model from maestro
+
+2011-12-07  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add method to get groups model in GebrMaestroServer
+
+2011-12-06  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add autoconnect to interface (malfunc)
+
+2011-12-06  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Change gebr_geoxml_line_(get|set)_group to (get|set)_maestro
+	* Add an entry to fill maestro server in gebr preferences
+
+2011-12-06  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix last commit 5626, initialization iter before use
+	* Create signal and context menu to remove tag of server
+
+2011-12-06  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Drop a server into Plus tab to create a new group
+
+2011-12-06  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Create maestros model to use in combo box of line
+	* Change old global variable of maestro to new getter from
+	maestro_controller
+	* Insert context menu to connect and disconnect servers
+
+2011-12-06  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix some problems in Servers treeview, and update model when connect
+	in maestro
+
+2011-12-06  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Avoid creation of two maestros with the same name
+
+2011-12-06  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Use the copied model in Groups tab
+	* Merge with Jorge changes
+	* Drop servers into group tabs to change groups
+
+2011-12-06  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Create a new model for groups to insert another row
+
+2011-12-06  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Implement DnD in maestro dialog
+
+2011-12-05  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add groups notebook pages
+
+2011-12-05  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Implement gebr-maestro-controller functions to connect to maestro
+
+2011-12-05  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Include new model of maestro-controller and create signal of
+	daemons-changed
+
+2011-12-05  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add event box on Drop label
+	* Change default size of maestro dialog
+	* Add new GebrMaestroController and gebr-maestro-dialog.glade
+	* Add gebr-maestro-dialog.glade
+
+2011-12-05  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix cmd_line Critical
+	* Undo previous wrong commit
+	* Fix Critical in gebr-job-control.c
+
+2011-12-02  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Create callback to command line received on job control and fix
+	sensitivity of button
+	* Fix critical on queue combobox changed
+	* FIx critical when flow browse load
+
+2011-12-02  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Update status of temp_job after receiving job_def
+
+2011-12-02  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Include hostname on temp joj
+	* Update job control when add an exist job on it
+
+2011-12-01  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Impelement password chat between Maestro and Gebr
+
+2011-12-01  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* GebrJobControl update to the last flow executed when we click in RUN
+
+2011-12-01  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Move ui_flow_edition.[ch] to gebr-flow-edition.[ch]
+
+2011-12-01  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Enable popup menu to connect and disconnect a server on Servers
+	configuration
+
+2011-12-01  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Hide queue and server comboboxes from Flow edition
+
+2011-12-01  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix segFault ouf save output in Job Control
+
+2011-12-01  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Enabled buttons "Connect All" and "Disconnect All" on servers
+	configurations
+
+2011-12-01  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Rename struct ui_flow_edition to GebrFlowEdition
+	* Fix server selection in Flow edition
+	* Update groups model when Maestro connects
+
+2011-12-01  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Remove attritutes 'servers' and 'percentage' of GebrJob
+
+2011-12-01  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Update servers and queues models when appropriate
+
+2011-12-01  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Remove some of the Criticals in Gebr-client
+
+2011-12-01  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Remove debugs in ui_server.c
+
+2011-12-01  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Semi-persistent queues are working
+
+2011-12-01  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Populate combox of queues when change group on line
+
+2011-11-30  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix return of foearch_func when building maestro tags
+	* Fix corruption of internal GebrDaemonServer memory
+	* Add groups into Line properties combo box
+	* Maestro sends group changes to GeBR
+
+2011-11-30  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Connect group on servers configuration and change messages of groups
+
+2011-11-30  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix calls for gebr_geoxml_line_(set|get)_group
+	* GebrMaestroServer builds a tree of groups
+	* Remove client.c and server.c from gebr's POTFILES
+
+2011-11-30  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix name of group messages agpr -> agrp and dgpr -> dgrp
+	* Create messages of add group (agpr) and delete group (dgpr)
+
+2011-11-30  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix some prohibited free's
+
+2011-11-29  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix niceness button of Flow Editor tab
+
+2011-11-29  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix some extra signals connections
+
+2011-11-29  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix number of cores in job_def (remove duplicate property 'nprocs')
+
+2011-11-29  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix a segfault when selecting a running job
+
+2011-11-29  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Select a job on job_control when run a flow
+	* Send messages of close and kill a job to maestro from gebr
+	* Fix segault when quit gebr and don't have struct of maestro yet
+	* Update job before emit signal of status change
+
+2011-11-29  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add protection to gebr_job_has_issue
+
+2011-11-29  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add configuration entry for Maestro
+	* Create jobs on GebrMaestroServer::job-define
+	* GebrMaestroServer emits GebrJob signals
+
+2011-11-29  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Send message with jobs when Gebr connects on maestro
+
+2011-11-29  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Gebr sends the selected server to Maestro
+	* Remove GebrTask and GebrServer modules
+
+2011-11-28  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix communications between Daemons & Maestro and implemented Maestro
+	& GeBR
+
+2011-11-28  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Send response message of run to gebr from GebrMaestro
+
+2011-11-25  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Rename enum JobStatus to GebrCommJobStatus
+	* Maestro reports job changes to GeBR
+	* Use the GebrmJob and GebrmTask in GebrmApp
+
+2011-11-25  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Disable queues combo-box on flow edition and fix some merge errors
+
+2011-11-25  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add GebrConnectable interface
+	* Rename 'enum gebr_comm_server_state' to GebrCommServerState
+
+2011-11-24  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Show connected servers in Flow Edition
+	* Do not include 'Auto-choose' in servers list
+	* Gebr populates the servers list with maestro servers
+
+2011-11-24  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix compilation errors on ui_server, ui_flow and GebrMaestroServer
+
+2011-11-24  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* GebrMaestroServer listens for Daemons state changes
+	* Add GebrMaestroServer and GebrDaemonServer in GeBR
+	* Fix parse_messages in GeBR
+
+2011-11-24  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add function to parse the new message ssta from server status
+
+2011-11-23  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Gebr sends '/run' to maestro
+	* All gebr_comm_server_ops methods receive GebrCommServer and
+	user_data
+
+2011-11-22  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Temporary interface for connecting to Maestro and registering
+	servers
+
+2011-11-21  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Merge with 0.15.4
+
+2011-11-18  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Last minute translations.
+	* Priority buttons without relif is not nice at sunray.
+
+2011-11-18  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Revamp execution speed/nice interface
+
+2011-11-18  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Internationalization of libgebr
+	* Internationalization of Job control
+
+2011-11-18  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* New speed icons
+
+2011-11-18  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Change user message in Job Control
+
+2011-11-18  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Include icons verylow and veryhigh on toolbar and info button
+
+2011-11-18  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Selects 'Immediately' when queue's combobox does not have a
+	selection
+
+2011-11-18  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change button of reset filter to Icon Close
+
+2011-11-18  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Remove debug information from Gebr
+
+2011-11-18  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Set alignment of labels on Filter's info bar to left
+	* FIx bug on Info bar of filter to show group All Servers
+
+2011-11-18  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Change 'Server Group' to 'Group' in filter label
+
+2011-11-17  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Autchoose's queue is working
+	* GebrJob supports queues now
+	* Fix distcheck
+
+2011-11-17  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Improvements on Info bar message of filters
+	* Fix bug on info bar of filters
+
+2011-11-17  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix execution of immediately flows
+
+2011-11-17  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Include more information on Info Bar of filter
+
+2011-11-17  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Include break line on message of resources in servers info
+
+2011-11-17  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Merge GebrCommRunner refactor
+	* Refactor most logic of gebr_ui_flow_run to GebrCommRunner
+
+2011-11-17  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix bug when clicked in Show All and lost information on rigth side
+
+2011-11-17  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add gebr_job_new
+
+2011-11-17  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Change elapsed time pulse to 1 second.
+
+2011-11-17  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Enable queue combobox when autochoose is selected
+	* Fix segfaults when assuming autochoose's pointer is NULL
+	* Insert 'Immediately' into autochoose's list
+	* Create gebr_job_is_queueable method
+	* Populate Autochoose's queue list
+	* Create GebrServerAutochoose structure
+
+2011-11-16  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Remove debugging information
+	* Better labels at job control's right side
+
+2011-11-16  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Show and hide info bar of filter when necessary
+
+2011-11-16  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add tooltip to Details performance button
+
+2011-11-16  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add filter info bar
+
+2011-11-16  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Include line wrap on label of issues info bar
+
+2011-11-16  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix autoscroll bug when clicking on a job
+	* Job control command lines obey Word Wrap settings
+
+2011-11-16  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Revert commit 5425
+	* Improvement on message of servers info resources
+	* Fix bug on group combo box of filters to select first row after
+	remove another
+	* Include one more signal on slider of execution speed to insert tics
+
+2011-11-11  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix bug when list of jobs was filtered and the job has executed not
+	appear
+	* Fix warning on wordwrap_toggled
+	* Change widget InfoServers to Hbox and add caption of pie graph
+	* Include struct of servers_info on GebrJobControlPriv
+
+2011-11-10  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Include a GebrGuiPie widget on Servers info
+
+2011-11-10  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Correctly update job control buttons sensitiveness
+
+2011-11-10  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Modify serversGroup filter
+
+2011-11-10  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix a bug when computing if a job can be killed or closed
+	* Do not report statuses change if job is not complete
+
+2011-11-10  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Command line of tasks cannot be edited
+
+2011-11-10  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add debug when a document is saved
+	* Fix gebr_job_kill and gebr_job_get_partial_status
+	* Do not save invalid XML when closing dictionary dialog (Fixes issue
+	1084)
+	* Update job control actions according to partial job statuses
+	* Add methods to fetch partial job statuses
+
+2011-11-09  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix bug on server combo box in job control
+	* Fix GebrJobControl.add to use method GebrJob.get_server_group to get
+	group of a job
+	* Removed unused methods GebrJob.get_group and GebrJob.get_groups
+	* Include expanders for tasks command_line and remove TextView of
+	command line from Glade
+	* Include getter for list of tasks of a job
+
+2011-11-09  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Change ServerGroup filter
+
+2011-11-09  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Improvement tooltip for button of execution speed
+
+2011-11-08  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix menu search function
+	* Selects first items in filter's comboboxes
+	* Unselect jobs when filtering
+
+2011-11-08  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Include status Failed on filter of jobs
+	* Include slider and nice_button on widget GebrGuiToolButton
+	* Create methods to show and hide FlowEdition and FlowBrowse
+
+2011-11-08  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Use GebrGuiToolButton in servers info
+	* Remove OK button from filter window
+	* Use GebrGuiToolButton widget in job filter
+
+2011-11-08  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix segfault
+
+2011-11-08  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Show percentage of job running at each server
+	* Add method for retrieving a task from a server name
+	* Add getter/setter for task percentage
+
+2011-11-07  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Create function to calculate elapsed time (more detailed version) in
+	libgebr/utils.c
+
+2011-11-07  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Server information icon is dependent on execution speed
+
+2011-11-07  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add proportion of the job (job_proportion) to the message
+	client->daemon and daemon->client
+
+2011-11-07  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add execution speed in job_def message
+	* Add getter/setter for execution speed in GebrJob
+
+2011-11-07  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Complete separation of niceness from slider of execution speed (and
+	update unit tests)
+
+2011-11-05  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add better search function for menus
+	* Remove unused variable
+
+2011-11-04  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change label of button more_details to "Details"
+	* Fix filter by server group on Job Control
+	* Fix bugs on number of messages on daemon and use correct name of
+	groups on info
+
+2011-11-04  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix gebr_job_get_elapsed_time
+	* Fix previous commit
+
+2011-11-04  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Server group is now sent to daemon and back from job_def
+
+2011-11-04  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix segfault when job is NULL on update_tree_view
+
+2011-11-04  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add information of elapsed time
+
+2011-11-04  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix bug on update running time
+
+2011-11-04  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Change server information message on job control
+	* Fix typo when setting job's hostname
+
+2011-11-04  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Include running time on right side when job is running
+
+2011-11-04  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix singular/plural of calculate_relative_time
+
+2011-11-04  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Set job hostname when appropriate
+	* Add getters and setters for GebrJob.hostname
+
+2011-11-04  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Using last_run_date to update time for jobs on left side
+
+2011-11-04  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add last_run_date into job_def message
+	* Add last_run_date property to GebrTask
+
+2011-11-04  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* FIx bug of word-wrap on TextView's
+
+2011-11-04  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Update right side of job control when closing jobs
+	* Change sort order for job control list
+
+2011-11-04  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Include one more line in end of each command line
+
+2011-11-04  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Change 'More details' to '...'
+
+2011-11-03  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Remove 'Jobs' label from job control's frame
+	* Fix segfault when executing a job with a filter enabled
+	* Change sort ordering to match old gebr behavior
+	* Fix job ordering in job control
+	* GebrJobControl members are now private
+
+2011-11-03  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Include weak_ref on list of tasks to fix critical when close gebr
+	* Create getter for tasks_map to fix critical
+	* Fix macro of block/unblock changed_signal and include it on
+	JobControl.close_selected
+	* Fix invalid free on gebr client
+
+2011-11-03  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Make JobControl.store and .view private
+
+2011-11-03  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Include flow on queues only when it have one server selected
+
+2011-11-03  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Disconnecting a server removes its tasks
+
+2011-11-03  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix segfault on get_remainings_job when job don't have task yet
+	* Insert treatment for JOB_STATUS_INITIAL on JobControl.load_details
+	* Create method to get remaining servers for a Job
+
+2011-11-03  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add method for removing jobs from job control's list
+	* Remove unsed variables
+	* gebr_job_close no longer unref's it
+	* gebr_task_close no longer unref's it
+	* Add guards into gebr_job_new_with_id
+	* Fix incorrectly free of GebrJob.servers array
+	* Fix segfault when traversing a list
+
+2011-11-02  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Include header of "command line for task" only when flow have more
+	than one task
+	* Fix bug of word-wrap on command line text
+
+2011-11-02  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Do not show disconnected servers in job control filter
+
+2011-11-02  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix segfault when apply some filter and update time after 5 seconds
+	* Create methods to filter jobs for servers, group and status
+
+2011-11-02  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Merge filtering logic
+	* Build GtkTreeModel's for job control filter
+	* Replace server's filter logic by the new method
+	* Refactor logic for checking if a server is in a group
+
+2011-11-02  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add minimum width of left pane of JC
+
+2011-11-02  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Align status combo box texts to left
+
+2011-11-01  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Insert models on combo_box of status and create method
+	filter_visible_func
+	* Fix method gebr_get_groups_of_server
+
+2011-11-01  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add filter dialog in job control
+
+2011-11-01  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Include declaration of method gebr_job_control_save_selected (fix
+	warning)
+	* Enabled save job action on job control and set resizable false on
+	info window
+
+2011-11-01  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix bug in gebr/gebr-job.c
+
+2011-11-01  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add job control filter widget to glade file
+	* Fix IO update bug in job control
+	* Remove server list parse in JOB_DEF message
+	* Add sort function for job control
+	* Fix argument types for gebr_job_set_io
+
+2011-11-01  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix gebr_job_get_groups to update the group of servers appropriately
+
+2011-10-31  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Order servers and improvement text of resources on widget info
+	servers
+
+2011-10-31  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add some spacing in servers info window
+	* Correctly set servers information in Job control
+	* Fix getters for number of processor in GebrJob and GebrTask
+	* Change servers info toggle button to a normal button
+	* Fix segfaults in protocol and GebrTask
+	* Fix removed elements in job control glade file
+
+2011-10-31  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Create method to fill information of servers and a toplevel widget
+	on glade
+	* Insert messages of nprocs and niceness on run_def (daemon) and
+	job_def (client)
+	* Create method to get resources (nprocs and nice) of a job
+
+2011-10-31  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Modify gebr_job_control_load_details to update group of servers
+
+2011-10-31  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change relative time when job status are queued
+
+2011-10-31  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add function to get the groups of a job gebr_job_get_group
+
+2011-10-31  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Remove wait button signal when selection changes
+	* Fix GebrJob.get_queue
+	* Create getter for GebrTask queue
+
+2011-10-31  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Interface for queued jobs
+
+2011-10-31  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Remove more multiple execution code
+	* Remove multiple flow execution
+	* Fix queue creation in gebr's job_def
+	* Remove named queues from daemon
+
+2011-10-31  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Create queues on combo-box and send rid on queue_id
+	* Change name of method is_job_stopped to gebr_is_job_stopped
+
+2011-10-31  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Partially fix 'po' makefile's bug
+
+2011-10-28  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix unit tests
+	* Disable gebr-client and fixes many gcc warnings
+
+2011-10-27  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add function gebr_get_group_of_server in ui_server.c
+
+2011-10-27  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Enabled context menu on right side of job_control, and treatment all
+	sensitivities
+	* Method job_is_stopped now is public and fixes job_close and job_kill
+	* Fix critical warning when open GêBR
+
+2011-10-27  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Failed jobs do not have finish date
+
+2011-10-27  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Improvements on info bar of issues and refactoring some codes of
+	cursor_change method
+	* Create method gebr_job_has_issues
+
+2011-10-27  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix failed merge
+	* Update job control's treeview every 5 seconds
+
+2011-10-27  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix minor issues and change name of the function
+	calculate_relative_time
+
+2011-10-27  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Update relative time of a job automatically (warning: causing 100%
+	cpu)
+	* Enabled context menu on output view and command line view
+
+2011-10-27  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Aplly relative_time of the start of the job to the status
+
+2011-10-27  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Insert warning icon on job_control to show issues again
+
+2011-10-27  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add image for job control's info bar
+	* Show info bar when 'issued' signal is emitted
+	* Add info bar into glade file
+	* Remove several 'translatable' attributes from glade file
+	* Fix multiple selection bug when running jobs
+	* Fix issued signal emission
+	* Fix signal disconnection warnings
+
+2011-10-26  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix input, output and log file bugs in job control
+	* Don't block selection change signal when closing jobs
+	* Fix double free in GebrJob
+	* Hide job details when none or multiple jobs are selected
+
+2011-10-26  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Append output on task in job_load_details
+
+2011-10-26  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix log_file warning on load_details
+	* Add input_file, output_file, log_file in the details tab
+
+2011-10-26  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Set tree_model on job struct when run a flow
+	* Implement callbacks of job_output, job_status_changed and
+	job_cmd_line
+	* Fixes problems of start and finish date of tasks
+	* Remove output, start and finish date and insert tree_model in job
+	struct
+	* Insert output in task_initial_details and move emit_signals to
+	append_task
+
+2011-10-26  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix job control's close buttom
+	* Add dummy callback for cmd-line-received
+	* Create the GebrJob::cmd-line-received signal
+	* Clean up GebrJobControl module
+
+2011-10-26  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add input_file, output_file, log_file to the protocol
+
+2011-10-26  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Connect signals on selected job for online update
+	* Emit GebrJob::issued signal on job_def
+	* GebrJob is now disconnected from interface
+
+2011-10-26  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Start heuristic of relative time (temporally in gebr.c)
+
+2011-10-25  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add output signal to GebrJob
+	* Fix some typos in GebrTask
+
+2011-10-25  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix details widget visible and size of left-side of job_control
+	* Update status and date when a job is selected
+
+2011-10-25  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Remove unused functions in gebr-job-control
+	* Do not show all job control in gebr/interface.c
+	* Set job title when submitting
+	* Create jobs and select them when executing
+	* Change tree model type for JobControl and remove JC_VISIBLE column
+	* Remove compilation warning
+	* GebrJob receives a GtkTreeModel instead of GtkTreeStore
+	* Rename gebr.ui_job_control to gebr.job_control
+	* Rename gebr/ui_job_control.[ch] to gebr/gebr-job-control.[ch]
+	* GebrJob no longer inserts itself into JobControl
+	* Add private struct into GebrJobControl
+	* Rename struct ui_job_control to GebrJobControl
+	* GebrJob is now a GObject class
+
+2011-10-24  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix job_close and job_stop and remove queues treatments of
+	job_control
+	* Remove queue of left-side on job_control
+	* Insert scrolled windows and remove expander on left-side of
+	job_control
+	* Insert Frame and scrolled window on file of job_control in glade
+	* Insert preview left-side and output/cmd_line on right-side of
+	job_control
+	* Connect glade file on tab of job_control
+
+2011-10-24  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add GEBR_GLADE_DIR macro and gebr-job-control.glade file
+
+2011-10-24  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Kill job when task failed or canceled
+
+2011-10-24  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Don't close running jobs
+
+2011-10-24  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix score of servers at ui_flow.c
+
+2011-10-21  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Do not send flows with 0 number of iterations
+	* Enables job kill button
+	* Fixes heuristic and wrong assumption of GList data
+
+2011-10-20  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixes closing jobs
+
+2011-10-20  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fixes next run_id when flow is paralellizable
+	* Add action on button to close job on job control
+	* Fixes compilations problems
+
+2011-10-20  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add methods for closing jobs and tasks
+	* Clean old functions in GebrTask
+	* Set job control label with job information when a job is selected
+	* Show job's start and finish date and issues
+	* Add getters for start, finish and issues in GebrJob and Task
+	* Show job details in job control when selected
+	* Add getter for command line in GebrTask
+	* Create method for changing gebr tabs
+	* Create jobs at submission time
+	* Now jobs are organized by 'queue at list of servers'
+	* Unify immediately queues
+	* Change get_queue_type method to public
+	* Jobs are created in the interface with correct icons
+	* Remove server_queue_find_at_job_control
+	* Create job control toolbar buttons
+
+2011-10-19  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* GeBR now compiles in Ubuntu 11.10
+	* Disables job control interface and implement GebrJob + GebrTask
+
+2011-10-19  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Create methods to append_task, change_output and change_task_status
+	on gebr_job
+	* Include group on job_def and change create job function
+
+2011-10-19  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Changes gebr-marshal to accept an additional string parameter
+
+2011-10-19  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change gebr_client to receive rid and frac and create task
+
+2011-10-19  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixes automake error
+	* Adds gebr_jc_get_queue_group_iter method to ui_job_control module
+	* Adds gebr-marshal for GebrTask signals
+	* Adds GebrJob class
+	* Renames some GebrTask methods
+
+2011-10-18  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Renames GebrJob to GebrTask
+	* Renamed gebr/job.[ch] to gebr/gebr-task.[ch]
+	* More fixes towards tasks unification
+	* Fixes invalid free
+	* Fixes execution of a single flow
+
+2011-10-18  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fixes calculate_weigths method to use scores
+
+2011-10-18  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix non-compilation from the last commit
+
+2011-10-18  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Renames job_new_from_flow to gebr_job_new
+	* Changes job_find to search for RIDs only
+
+2011-10-18  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix ui_flow.c defunction related to flows with no loops
+
+2011-10-18  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Adds static modifier to gebr_generate_session_id
+	* Merges Eric changes
+	* Fixes gebr/ui_flow.c to conform with the new GebrCommRunner api
+	* Changes job message protocol to include run id and job fraction
+	* Adds gebr_get_session_id() method
+
+2011-10-17  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Change the heuristic of computing the score of each server
+
+2011-10-13  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Automatic update of last run date of flows
+	* Identation commit (removed trailing spaces)
+	* Fixed bug that changed value of iter variable divided flow exec.
+
+2011-10-12  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change fill_runner_struct, to calculate weights and split flow
+
+2011-10-12  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Join tasks outputs in one RID
+	* Fixes wrong variable in gtk_tree_model_get
+	* Changes gebr_job_bind to gebr_job_hash_bind
+	* Creates method for associating jids with rids
+	* Create only onde job entry when running a divided flow
+	* Rename 'scores' to 'runinfo'
+	* Change job_new_from_flow argument type
+
+2011-10-11  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add ordered list of servers in GebrCommRunner
+
+2011-10-10  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Change computation of auto-choose score
+	* Add cpu_clock to the heuristics of Auto-choose
+	* Add cpu_clock to the protocol
+
+2011-10-06  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Portuguese translation of the new interface features
+	* Fixed bug that prevented insertion of new groups
+
+2011-10-04  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix sorting of list of servers
+
+2011-10-03  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix frozen dialogs on GeBR (revert commit 5026)
+
+2011-10-03  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Merge run refactor
+	* Create jobs when running flows
+
+2011-10-03  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix previously created 2ndDegreePolynomial
+
+2011-10-03  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Refactor gebr_ui_flow_run to use the new GebrCommRunner struct
+	* Rename GebrCommRunConfig to GebrCommRunner
+
+2011-09-30  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Addition of the 2ndDegreePolynomial regression to AutoChoose
+	heuristic
+
+2011-09-30  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Prevented problems with autochoose at server_find_address function
+	* Little improvement at server function string compability
+	* Better protection to function gebr_server_get_property against auto-
+	choose server
+	* Prevented NULL pointer problems and "autochoose" server problems at
+	func gebr_server_set_property
+	* Fixed segfault when servers are removed
+	* Cleaned up old debug messages from code
+	* Fixed server order in server sort function
+
+2011-09-29  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix compilation warnings in geoxml
+
+2011-09-29  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix order of resolve home variables on menus directory
+
+2011-09-29  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Rename gebr_comm_server_run_config_new to gebr_comm_run_config_new
+	* Fix compilation
+	* Rename GebrCommServerRunConfig to GebrCommRunConfig
+
+2011-09-29  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Fixed bug that prevented the creation of new groups
+
+2011-09-29  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Remove unused enumeration from ui_flow.h
+	* Move some functions from ui_flow.h to ui_flow_edition.h
+	* Remove unused ui_flow_io structure and its methods
+	* Refactor flow_io_run to gebr_ui_flow_run
+
+2011-09-29  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Prevented problems with ui_server_ask_for_tags_remove_permission and
+	"autochoose" server
+	* Better description of newly created docs about server tags.
+	* Better documentation and parameter check of function
+	tag_is_heterogeneous
+	* Moved newly created function docs. to the correct header file
+	* Added minimal documentation to function ui_server_get_all_fsid
+	* Protected function ui_server_get_all_tags against the "autochoose"
+	server
+	* Minimal documentation for function ui_server_get_all_tags
+	* Updated minimal documentation for fuction ui_server_set_tags
+	* Protected funct. ui_server_set_tags against NULL arguments
+	* Improvements at ui_server_servers_with_tag and ui_server_has_tag
+	docs
+	* Null pointer and invalid values checks at fuct. ui_server_has_tag
+	* Improvements at function ui_server_list_tag docs and identation
+	* Protection against NULL pointer deref. in function
+	ui_server_list_tag
+	* Improved docs of function server_list_updated_status
+	* Added protection against NULL pointer deref. in function
+	server_list_updated_status
+	* Improvements at server_list_add function docs and identation
+	* Prevented null pointer dereferentiation at server_list_add fuction
+
+2011-09-28  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Auto-choose is inside servers combobox
+
+2011-09-28  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix on save selected documents when close gebr
+
+2011-09-28  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix linear regression formula
+
+2011-09-27  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Executes flow on server with best score in autochoose option
+
+2011-09-27  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Addition of a function to calculate a linear regression based on
+	/proc/avgload
+
+2011-09-27  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Request servers load before executing
+
 2011-09-16  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
 
 	* Update changelogs before release.

@@ -1,3 +1,182 @@
+2012-01-06  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix a bug in which the Daemon was authorizing the wrong port in the
+	wrong file
+	* Fix printf's parameters order in GebrdJob.run_flow
+
+2012-01-05  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Include lock on gebrd to avoid problems of competition
+
+2012-01-05  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Use gebr id in Daemon to select the display port
+	* Add gebr id into GebrCommRunner struct and RUN message
+
+2012-01-05  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Refactored method to calculate number of processors and used on
+	maestro
+
+2012-01-05  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Daemon no longer computes display port on INI message
+
+2012-01-04  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Daemon has a port for each client in Maestro
+
+2012-01-03  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix GebrmDaemon.is_initialized state variable and remove sleep
+	workaround
+
+2011-12-22  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix race condition when sending err_def from Daemon to Maestro
+	* Fix X forwarding in Gebr
+
+2011-12-22  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Magic cookie is sent to Maestro's daemons, which returns the display
+	port
+	* Remove gebrd->clients and use gebrd_user_get_connection instead
+	* Daemon removes its lock file when disconnecting
+
+2011-12-21  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Daemon exits when its connection finishes
+	* Daemon accepts only one connection
+	* Remove GebrdUser::daemon-id gobject property
+
+2011-12-20  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add rule to build gebr-comm-protocol
+	* Remove extra err_def condition from GebrmDaemon
+	* Use err_def to pass error messages between gebr, maestro and daemon
+	* Maestro disconnects daemons with the same Id to avoid double
+	connections
+	* Gebrd now creates an Id for its host
+	* Add daemon-id property in GebrdUser
+
+2011-11-28  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix communications between Daemons & Maestro and implemented Maestro
+	& GeBR
+
+2011-11-25  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Rename enum JobStatus to GebrCommJobStatus
+	* Maestro reports job changes to GeBR
+
+2011-11-17  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix distcheck
+
+2011-11-07  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Server information icon is dependent on execution speed
+
+2011-11-07  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add proportion of the job (job_proportion) to the message
+	client->daemon and daemon->client
+
+2011-11-07  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add execution speed in job_def message
+
+2011-11-07  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Complete separation of niceness from slider of execution speed (and
+	update unit tests)
+
+2011-11-04  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix bugs on number of messages on daemon and use correct name of
+	groups on info
+
+2011-11-04  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Server group is now sent to daemon and back from job_def
+	* Add last_run_date into job_def message
+
+2011-10-31  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fixes bug of nprocs with not parallelizable flows
+
+2011-10-31  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Number of processors and niceness are calculated in job_new
+	* Fix segfaults in protocol and GebrTask
+
+2011-10-31  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Insert messages of nprocs and niceness on run_def (daemon) and
+	job_def (client)
+
+2011-10-31  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Build job queues before notifying clients
+	* Daemon jobs keep their queues
+	* Remove gebrd-queues.h and gebrd-job-queue.h includes
+	* Remove named queues from daemon
+	* Remove gebrd's queue tests
+	* Add GebrdJob method to append children jobs
+	* Daemon does not report queues list to client
+	* Partially fix 'po' makefile's bug
+
+2011-10-27  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* GeBRd no longer issues missing output
+
+2011-10-26  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add input_file, output_file, log_file to the protocol
+
+2011-10-21  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix range clamp in gebrd
+
+2011-10-20  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixes closing jobs
+	* Now jobs are organized by 'queue at list of servers'
+
+2011-10-19  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* GeBR now compiles in Ubuntu 11.10
+	* Disables job control interface and implement GebrJob + GebrTask
+
+2011-10-19  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add runid and frac to the sta_def and out_def
+
+2011-10-18  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixes execution of a single flow
+	* Fixes gebr/ui_flow.c to conform with the new GebrCommRunner api
+	* Changes job message protocol to include run id and job fraction
+	* Changes in GebrComm methods
+
+2011-10-10  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add cpu_clock to the protocol
+
+2011-10-03  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Daemon sends output each second to avoid intense socket traffic
+	* Merge 0.14 into default
+	* Round range values when digits are set to zero (Fixes issue 234)
+
+2011-09-30  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Cleaned up old debug messages from code
+
+2011-09-29  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix compilation warnings in geoxml
+
 2011-09-16  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
 
 	* Update changelogs before release.

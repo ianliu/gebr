@@ -1,3 +1,488 @@
+2012-01-05  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix bug on ncores when flow is not parallelizable
+
+2012-01-05  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add gebr id into GebrCommRunner struct and RUN message
+	* Fix parameters order for INI message
+
+2012-01-05  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Refactored method to calculate number of processors and used on
+	maestro
+	* Wait for terminal process termination to avoid ssh's <defunct>
+
+2012-01-05  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Forwards are kept in GebrmClient now
+
+2012-01-04  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Standardize hostname in servers.conf file of daemons configuration
+
+2012-01-04  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix wrong number of procs when steps of loop are lower than
+	effective cores
+
+2012-01-04  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix wrong number of cores (>1) in flows with non-activated loop
+
+2012-01-04  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Daemon has a port for each client in Maestro
+
+2012-01-04  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Show dialog when try to disconnect daemon with executing jobs
+
+2011-12-22  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix X forwarding in Gebr
+	* Initiate the process state in GebrCommTerminalProcess
+
+2011-12-22  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix segfault on maestro. Wrong number of arguments on ini_def
+
+2011-12-22  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Maestro sends port to GeBR
+	* Magic cookie is sent to Maestro's daemons, which returns the display
+	port
+	* GebrCommServer always connects through ssh
+	* Add mck_def message to pass a Magic Cookie from Maestro to Daemon
+
+2011-12-21  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Remove the read watch in GebrCommSocket
+
+2011-12-20  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix typo in Makefile
+	* Add rule to build gebr-comm-protocol
+
+2011-12-20  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Merge with Maestro
+
+2011-12-20  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Use err_def to pass error messages between gebr, maestro and daemon
+
+2011-12-20  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Include lock icons on gebr-theme
+
+2011-12-19  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Merge variable of project and line to flow on gebr and split that on
+	maestro
+
+2011-12-19  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix bug of wrong number of processors
+
+2011-12-19  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add method in GebrCommServer to reemit interactive signals
+
+2011-12-16  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix interface freeze bug
+
+2011-12-15  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Daemons and maestro communicate the daemons error
+
+2011-12-15  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add gebr_geoxml_clipboard_has_forloop
+	* Insert `iter' variable when pasting the loop program
+
+2011-12-14  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Remove remaining reference to struct gebr_comm_server
+	* Merge SSH question change
+	* Add QST_DEF message so Maestro can make a question to GeBR
+	* GebrCommServer now has an interactive state to input asynchronous
+	data
+
+2011-12-14  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add getter of last_error of gebr-comm-server.c
+	* Fix wrong GebrCommServer state change to connected
+
+2011-12-14  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Create method to check if string utf8 is ASC alpha-numerical
+
+2011-12-14  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Rename struct gebr_comm_server to GebrCommServer
+	* Methods that send messages check if socket is connected
+
+2011-12-14  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Include default group when create a new flow
+	* Fix DTD promotion of line and flow to set maestro and group default
+
+2011-12-13  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix all messages to use GebrCommUri
+	* Add class to handle URIs
+
+2011-12-12  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Include remove server on context menu and implement response message
+	for maestro to gebr
+
+2011-12-07  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix job_def message and create jobs when GeBR runs
+	* Queues are now changed when the server grup changes
+	* Flows keeps the last used group instead of a server
+	* Flow edition now shows a list of server groups
+
+2011-12-07  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add group_type client=>maestro, maestro=>client
+
+2011-12-06  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add autoconnect to interface (malfunc)
+
+2011-12-06  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Change gebr_geoxml_line_(get|set)_group to (get|set)_maestro
+	* Change tag name from server-group to server-maestro in Line DTD
+
+2011-12-05  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Implement gebr-maestro-controller functions to connect to maestro
+
+2011-12-01  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add gebr_comm_server_set_password
+	* Add password message in protocol
+	* Update groups model when Maestro connects
+
+2011-11-30  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix conditions on method line_get_group
+
+2011-11-30  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add line-0.3.5.dtd and fix unit tests
+
+2011-11-30  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix name of group messages agpr -> agrp and dgpr -> dgrp
+	* Create messages of add group (agpr) and delete group (dgpr)
+
+2011-11-29  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix number of cores in job_def (remove duplicate property 'nprocs')
+
+2011-11-29  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* GebrMaestroServer emits GebrJob signals
+	* Add gebr_comm_job_get_status_from_string method
+
+2011-11-28  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix communications between Daemons & Maestro and implemented Maestro
+	& GeBR
+
+2011-11-25  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Rename enum JobStatus to GebrCommJobStatus
+	* Rename 'enum gebr_comm_server_state' to GebrCommServerState
+
+2011-11-24  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix parse_messages in GeBR
+	* Add new protocol message ssta for server status changes
+	* Add methods to convert server states to/from strings
+	* Add some usefull debugging information
+
+2011-11-23  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add a reference to the flow in GeoXmlFlow.divide_flows
+	* Remove a bad debug message
+
+2011-11-23  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add method of gebrm to save servers in servers.conf
+
+2011-11-23  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* All gebr_comm_server_ops methods receive GebrCommServer and
+	user_data
+
+2011-11-22  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Temporary interface for connecting to Maestro and registering
+	servers
+	* Allow CR+LF line feeds for GebrCommHttpMsg
+	* Merge changes from default
+
+2011-11-21  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Merge with 0.15.4
+
+2011-11-18  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Internationalization of libgebr
+
+2011-11-18  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* New speed icons
+	* Add veryhigh and verylow for speed icons
+	* Update about dialog
+
+2011-11-18  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix precision of pie chart
+
+2011-11-17  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix distcheck
+
+2011-11-17  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix execution of immediately flows
+	* Refactor most logic of gebr_ui_flow_run to GebrCommRunner
+	* Add ncores and clock_cpu into GebrCommServer structure
+	* GebrGeoXmlFlow.divide method returns the whole flow if not
+	parallelizable
+	* gebr_geoxml_document_ref returns the document
+
+2011-11-16  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Change images from button of flow_exec_speed
+	* Increase precision of gebr_calculate_detailed_relative_time to
+	miliseconds
+
+2011-11-11  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix positioning of the ToolButton popup
+
+2011-11-11  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Create method GebrGuiPie.get_color
+
+2011-11-11  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Extend previous fix of popup collision to the vertical direction
+
+2011-11-11  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix GebrGuiPie to draw on center
+
+2011-11-11  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix servers info popup from colliding in the border of the screen
+
+2011-11-10  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix indentation and add a provisional fix on pie_expose to draw on
+	center of widget (subtract 120 of y-center)
+
+2011-11-10  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add files of libgebr/gui/gebr-gui-pie
+
+2011-11-10  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add GebrGuiPie widget
+
+2011-11-10  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix minor issue of calculate_detailed_relative_time
+
+2011-11-08  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Use GebrGuiToolButton in servers info
+	* Fix GebrGuiToolButton when recovering a grab
+	* Add GebrGuiToolButton widget
+
+2011-11-07  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Create function to calculate elapsed time (more detailed version) in
+	libgebr/utils.c
+
+2011-11-07  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix number of arguments when sending run_def
+
+2011-11-07  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add proportion of the job (job_proportion) to the message
+	client->daemon and daemon->client
+
+2011-11-07  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Complete separation of niceness from slider of execution speed (and
+	update unit tests)
+
+2011-11-07  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add speedometers icons
+	* Add gebr-speedometer icons
+
+2011-11-05  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add utility function gebr_utf8_strstr
+
+2011-11-04  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix bugs on number of messages on daemon and use correct name of
+	groups on info
+
+2011-11-04  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Server group is now sent to daemon and back from job_def
+
+2011-11-04  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix singular/plural of calculate_relative_time
+
+2011-11-03  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix calculate_relative_time
+
+2011-11-01  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change makefile of icons to show filter_icon
+
+2011-11-01  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add stock_images of the filter
+
+2011-10-31  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Bump protocol version
+	* Partially fix 'po' makefile's bug
+
+2011-10-28  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix unit tests
+	* Disable gebr-client and fixes many gcc warnings
+
+2011-10-27  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix bug on flow_is_parallelizable method
+
+2011-10-27  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix a bug with gebr_geoxml_flow_is_parallelizable
+
+2011-10-27  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix minor issues and change name of the function
+	calculate_relative_time
+
+2011-10-27  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Update relative time of a job automatically (warning: causing 100%
+	cpu)
+
+2011-10-27  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Aplly relative_time of the start of the job to the status
+
+2011-10-26  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Create function calculate_relative_time in libgebr
+
+2011-10-26  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebr_comm_runner_add_flow refs the xml document to avoid early free
+
+2011-10-26  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add input_file, output_file, log_file to the protocol
+
+2011-10-21  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Do not send flows with 0 number of iterations
+	* Fixes heuristic and wrong assumption of GList data
+
+2011-10-20  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Create jobs at submission time
+	* Now jobs are organized by 'queue at list of servers'
+
+2011-10-19  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* GeBR now compiles in Ubuntu 11.10
+
+2011-10-19  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add runid and frac to the sta_def and out_def
+
+2011-10-18  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixes execution of a single flow
+
+2011-10-18  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fixes calculate_weigths method to use scores
+
+2011-10-18  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fixes api doc for tree_model_foreach_recursive
+	* Fixes some type errors in GebrCommRunner
+	* Changes in GebrComm methods
+
+2011-10-13  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Use evaluate on loop parameters of the divided flows
+
+2011-10-13  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Modify boundaries of the divided flows according to the weights
+
+2011-10-12  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add is_parallelizable on CommRunner struct, and run on multiple
+	servers
+	* Create unit test to calculate weights
+	* Create function to calculate weights
+
+2011-10-12  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Used glib functions to convert string to numbers
+
+2011-10-11  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Create function to divide flows according to weights, and unit test
+
+2011-10-10  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add cpu_clock to the protocol
+
+2011-10-03  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Create jobs when running flows
+	* Refactor gebr_ui_flow_run to use the new GebrCommRunner struct
+	* Rename GebrCommRunConfig to GebrCommRunner
+
+2011-09-30  Rodrigo Morelatto  <morelatto@gebrproject.com>
+
+	* Cleaned up old debug messages from code
+
+2011-09-29  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Refactor GebrCommRunConfig struct to GebrCommRunner module
+	* Fix compilation warnings in geoxml
+	* Rename gebr_comm_server_run_config_new to gebr_comm_run_config_new
+	* Fix compilation
+	* Rename GebrCommServerRunConfig to GebrCommRunConfig
+
 2011-09-16  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
 
 	* Update changelogs before release.

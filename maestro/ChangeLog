@@ -1,0 +1,355 @@
+2012-01-06  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Return hostname of daemon to gebr after daemons init
+
+2012-01-06  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix Maestro version
+	* Fix a bug in which the Daemon was authorizing the wrong port in the
+	wrong file
+	* Add getter/setter for magic cookie in GebrmClient
+
+2012-01-05  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Resolve 'localhost' and '127.0.0.1' to dell1
+
+2012-01-05  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix bug of remove connected server when doesn't has running jobs
+
+2012-01-05  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add gebr id into GebrCommRunner struct and RUN message
+	* Send gebr id in /run message
+
+2012-01-05  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Include finish date when disconnect a server with running job
+
+2012-01-05  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Forwards are kept in GebrmClient now
+	* Remove gebrm_daemon_get_display_port
+	* Add methods for creating and destrying forwards in GebrmClient
+	* Daemon no longer computes display port on INI message
+
+2012-01-04  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Disconnect from server when try to remove it
+
+2012-01-04  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Standardize hostname in servers.conf file of daemons configuration
+	* Fix wrong number of cores (>1) in flows with non-activated loop
+
+2012-01-04  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Daemon has a port for each client in Maestro
+	* Fix a bug in which Maestro was forwarding the port zero
+	* Give a unique port for each connected client in Maestro
+
+2012-01-04  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Show dialog when try to disconnect daemon with executing jobs
+
+2012-01-04  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Merge GebrmClient class
+	* Use GebrmClient class in GebrmApp
+	* Add GebrmClient class
+
+2012-01-03  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix GebrmDaemon.is_initialized state variable and remove sleep
+	workaround
+
+2011-12-22  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix race condition when sending err_def from Daemon to Maestro
+	* Fix X forwarding in Gebr
+
+2011-12-22  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Change starting daemon name 127.0.0.1 => dell1
+
+2011-12-22  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix compile error on Maestro
+
+2011-12-22  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Maestro sends port to GeBR
+	* Magic cookie is sent to Maestro's daemons, which returns the display
+	port
+	* Add method in GebrmDaemon to send GeBR's magic cookie to a Daemon
+	* Fix segfault when a Maestro connects into an already owned Daemon
+
+2011-12-21  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Daemon accepts only one connection
+
+2011-12-21  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Insert treatment on maestro to cancel jobs queued
+
+2011-12-21  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix a string comparison problem
+	* Remove daemon from maestro if its protocol version differs
+
+2011-12-20  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Remove several unused variables
+	* Remove extra err_def condition from GebrmDaemon
+
+2011-12-20  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Merge with Daemon-report-issues
+
+2011-12-20  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Merge with Maestro
+
+2011-12-20  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Use err_def to pass error messages between gebr, maestro and daemon
+	* Maestro disconnects daemons with the same Id to avoid double
+	connections
+
+2011-12-19  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Merge variable of project and line to flow on gebr and split that on
+	maestro
+
+2011-12-19  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix a bug when a server would not ask user interaction when GeBR
+	started
+	* Add a method in GebrmDaemon to continue a paused connection process
+	* Fix a bug when trying to erase a comma of an empty list of groups
+
+2011-12-19  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Create signal to show dialog when try to connect on server with
+	different NFS
+
+2011-12-15  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Daemons and maestro communicate the daemons error
+
+2011-12-14  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Maestro sends SSH questions to GeBR
+	* Maestro disconnects from a Daemon if its NFS id does not match
+	* Close file des 3 in Maestro to avoid double-connection bug
+	* Maestro keeps the first Daemon's NFS id and disconnects foregin
+	daemons
+
+2011-12-14  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Remove double includes of gebr-comm-uri.h
+
+2011-12-13  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix all messages to use GebrCommUri
+
+2011-12-13  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Maestro uses the new GebrCommUri structure
+
+2011-12-13  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Maestro's conf files are now separated by hostname
+
+2011-12-13  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Update groups when remove server from maestro
+
+2011-12-13  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix segFault of escaping of the url
+
+2011-12-12  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Include remove server on context menu and implement response message
+	for maestro to gebr
+	* Change interface of auto-connect and fix messages and connections
+	using ac in maestro
+
+2011-12-12  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Create back-end of right-click menu function 'Remove Server' on
+	Servers UI
+	* Change semantic of message 'disconnect' of client->maestro
+
+2011-12-07  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Implement signal to autoconnect and fix some interface problems
+
+2011-12-07  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix job_def message and create jobs when GeBR runs
+
+2011-12-07  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add group_type client=>maestro, maestro=>client
+
+2011-12-06  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add autoconnect to interface (malfunc)
+
+2011-12-06  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix a bug when the gebrm/servers.conf does not exists
+	* Maestro registers local server when no servers are present
+
+2011-12-06  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Create signal and context menu to remove tag of server
+
+2011-12-06  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Drop servers into group tabs to change groups
+	* Remove unecessary loop when saving server tags in Maestro
+
+2011-12-01  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Impelement password chat between Maestro and Gebr
+
+2011-12-01  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* GebrJobControl update to the last flow executed when we click in RUN
+
+2011-12-01  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Enabled buttons "Connect All" and "Disconnect All" on servers
+	configurations
+
+2011-12-01  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix segfaul when there are no servers in Maestro
+
+2011-12-01  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Use group to get list of servers on Maestro
+
+2011-12-01  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Semi-persistent queues are working
+
+2011-12-01  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix bug of not updating tags Servers configuration
+
+2011-12-01  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Maestro no longer prints debug informations in non-interactive mode
+
+2011-11-30  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Maestro sends group changes to GeBR
+
+2011-11-30  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Connect group on servers configuration and change messages of groups
+
+2011-11-30  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix return value for g_tree_foreach callback when sending groups
+	* Maestro reports groups definitions to GeBR
+
+2011-11-30  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Set submit date of a job on Maestro
+
+2011-11-29  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix previous commit
+	* Fix number of cores in job_def (remove duplicate property 'nprocs')
+
+2011-11-29  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Send messages of close and kill a job to maestro from gebr
+
+2011-11-29  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* GebrMaestroServer emits GebrJob signals
+
+2011-11-29  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Send message with jobs when Gebr connects on maestro
+
+2011-11-29  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Gebr sends the selected server to Maestro
+
+2011-11-28  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix communications between Daemons & Maestro and implemented Maestro
+	& GeBR
+
+2011-11-28  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Send response message of run to gebr from GebrMaestro
+
+2011-11-25  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Rename enum JobStatus to GebrCommJobStatus
+	* Maestro reports job changes to GeBR
+	* Use the GebrmJob and GebrmTask in GebrmApp
+	* Add GebrmJob class into Maestro
+	* Add GebrmTask class into Maestro
+	* Add gebrm-marshal.list into Maestro
+	* Merge with Eric changes
+	* Save tags in Maestro servers.conf
+	* Add GebrmDaemon and support for tags in Maestro
+
+2011-11-25  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add function in maestro to disconnect daemons
+
+2011-11-24  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix function of gebrm-app
+	* Avoid two connections in the same daemon by the maestro
+
+2011-11-24  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Maestro remove its lock file when closing
+	* Maestro reports servers state changes
+	* Add some usefull debugging information
+
+2011-11-23  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Treat Daemon messages in Maestro
+	* Initialize GeoXml before running maestro
+
+2011-11-23  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add function gebrm_config_load_servers to load servers from file
+
+2011-11-23  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Maestro execute flows on its daemons!
+	* Add GebrmJobController
+	* Maestro accepts '/run?parent_rid=%s;speed=%s;nice=%s;group=%s'
+
+2011-11-23  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add method of gebrm to save servers in servers.conf
+
+2011-11-22  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Send 'PUT /server/%s' to Maestro to register a server
+	* Maestro now listens for connections in the old way
+	* Maestro listens for new connections
+
+2011-11-21  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix compilation
+
+2011-11-21  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Create 'maestro' subproject
+
+
