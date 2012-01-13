@@ -33,7 +33,7 @@ m4_define([gebr_binary_age],
 m4_define(gebr_version, gebr_major_version.gebr_minor_version.gebr_micro_version)
 
 AC_INIT([gebrproject], [gebr_version], [http://code.google.com/p/gebr/issues/list])
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE([1.9 tar-pax])
 
 AC_CONFIG_SRCDIR([libgebr/libgebr.h])
 AC_CONFIG_MACRO_DIR([m4])
