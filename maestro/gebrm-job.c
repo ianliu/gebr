@@ -398,29 +398,6 @@ gebrm_job_get_id(GebrmJob *job)
 }
 
 gchar *
-gebrm_job_get_command_line(GebrmJob *job)
-{
-	GString *buf = g_string_new(NULL);
-
-	for (GList *i = job->priv->tasks; i; i = i->next) {
-		gint frac, total;
-		GebrmTask *task = i->data;
-
-		total = job->priv->total;
-		frac = gebrm_task_get_fraction(task);
-
-		if (total != 1) {
-			g_string_append_printf(buf, _("Command line for task %d of %d "), frac, total);
-			g_string_append_printf(buf, _(" \(Server: %s)\n"),
-					       gebrm_daemon_get_address(gebrm_task_get_daemon(task)));
-		}
-		g_string_append_printf(buf, "%s\n\n", gebrm_task_get_cmd_line(task));
-	}
-
-	return g_string_free(buf, FALSE);
-}
-
-gchar *
 gebrm_job_get_output(GebrmJob *job)
 {
 	GString *output = g_string_new(NULL);

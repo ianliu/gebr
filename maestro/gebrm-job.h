@@ -125,8 +125,6 @@ GebrCommJobStatus gebrm_job_get_status(GebrmJob *job);
 
 const gchar *gebrm_job_get_id(GebrmJob *job);
 
-gchar *gebrm_job_get_command_line(GebrmJob *job);
-
 gchar *gebrm_job_get_output(GebrmJob *job);
 
 const gchar *gebrm_job_get_submit_date(GebrmJob *job);
