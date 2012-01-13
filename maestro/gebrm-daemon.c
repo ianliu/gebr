@@ -685,8 +685,14 @@ gebrm_daemon_connect(GebrmDaemon *daemon,
 		     const gchar *pass,
 		     GebrCommProtocolSocket *client)
 {
-	if (pass && *pass)
+	if (pass && *pass) {
 		gebr_comm_server_set_password(daemon->priv->server, pass);
+
+		// This server is already connected, but its waiting for a
+		// password.
+		if (gebrm_daemon_get_state(daemon) == SERVER_STATE_RUN)
+			return;
+	}
 
 	if (daemon->priv->client)
 		g_object_unref(daemon->priv->client);

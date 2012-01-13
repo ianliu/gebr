@@ -111,6 +111,10 @@ gboolean gebrm_daemon_has_group(GebrmDaemon *daemon,
  * Connects to this @daemon sending @pass as password. If @pass is %NULL and
  * @daemon needs a password, then @client will be asked for a password.
  * Otherwise @client and @pass are not used.
+ *
+ * If @pass and @client are %NULL and @daemon needs a password, then @daemon
+ * will wait for future user interaction, provided by
+ * gebrm_daemon_continue_stuck_connection().
  */
 void gebrm_daemon_connect(GebrmDaemon            *daemon,
 			  const gchar            *pass,
