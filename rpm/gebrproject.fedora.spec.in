@@ -120,7 +120,31 @@ What GeBR does:
     * Act as an interface to many freely-available seismic-processing
       packages (Seismic Unix, Madagascar, etc)
 
-GeBRD is server for executing flows
+This package provides GeBR's flow execution and should be present in all machines
+than collaborates with one GeBR Maestro
+
+
+################################################################################
+#### GeBR Maestro Package
+################################################################################
+%package -n gebr-maestro
+Group: Application/Misc
+Requires: libgebr = %{version}
+Summary: GeBR Maestro coordinates the flow execution between groups of machines
+
+%description -n gebr-maestro
+GeBR is an environment to seismic processing based on open-source
+technologies, designed to easily assembly and run processing flows.
+
+What GeBR does:
+
+    * Handle projects and lines
+    * Assembly and run processing flows
+    * Act as an interface to many freely-available seismic-processing
+      packages (Seismic Unix, Madagascar, etc)
+
+This package provides GeBR's flow execution coordinator and should be present in at
+least one machine of your network.
 
 ################################################################################
 #### DeBR Package
@@ -191,7 +215,6 @@ rm -rf %{buildroot}
 %defattr(-, root, root)
 %doc AUTHORS COPYING NEWS README
 %{_bindir}/gebr
-%{_bindir}/gebr-client
 %{_datadir}/gebr/*
 %{_datadir}/locale/*/*/gebr.mo
 %{_datadir}/applications/gebr.desktop
@@ -208,6 +231,11 @@ rm -rf %{buildroot}
 %{_bindir}/gebrd
 %{_datadir}/doc/gebrd/examples/*
 %{_datadir}/locale/*/*/gebrd.mo
+
+%files -n gebr-maestro
+%defattr(-, root, root)
+%doc AUTHORS COPYING NEWS README
+%{_bindir}/gebrm
 
 %files -n debr
 %defattr(-, root, root)
