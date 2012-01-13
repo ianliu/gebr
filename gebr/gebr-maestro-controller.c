@@ -128,11 +128,14 @@ finish_group_creation(GtkWidget *widget,
 	}
 
 	GtkWidget *box = gtk_hbox_new(FALSE, 5);
-	GtkWidget *spinner = gtk_spinner_new();
 
+#if GTK_CHECK_VERSION(2,20,0)
+	GtkWidget *spinner = gtk_spinner_new();
 	gtk_box_pack_start(GTK_BOX(box), spinner, FALSE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(box), gtk_label_new(tag), TRUE, TRUE, 0);
 	gtk_spinner_start(GTK_SPINNER(spinner));
+#endif
+
+	gtk_box_pack_start(GTK_BOX(box), gtk_label_new(tag), TRUE, TRUE, 0);
 	gtk_widget_show_all(box);
 
 	GtkNotebook *nb = GTK_NOTEBOOK(gtk_builder_get_object(mc->priv->builder, "notebook_groups"));
