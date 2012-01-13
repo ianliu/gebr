@@ -661,7 +661,6 @@ gebr_comm_ssh_open_tunnel_pool(GebrCommServer *server)
 	if (server->error != SERVER_ERROR_NONE)
 		goto out;
 
-	gebr_comm_server_change_state(server, SERVER_STATE_CONNECT);
 	socket_address = gebr_comm_socket_address_ipv4_local(server->tunnel_port);
 	gebr_comm_protocol_socket_connect(server->socket, &socket_address, FALSE);
 
@@ -754,6 +753,8 @@ gebr_comm_server_socket_connected(GebrCommProtocolSocket * socket,
 		display = "";
 	else
 		display_number = strchr(display, ':');
+
+	gebr_comm_server_change_state(server, SERVER_STATE_CONNECT);
 
 	if (server->priv->is_maestro) {
 		gchar *mcookie_str = get_xauth_cookie(display_number);
