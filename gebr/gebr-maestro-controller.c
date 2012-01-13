@@ -71,6 +71,12 @@ static void on_state_change(GebrMaestroServer *maestro, GebrMaestroController *s
 static void gebr_maestro_controller_maestro_state_changed_real(GebrMaestroController *mc,
 							       GebrMaestroServer *maestro);
 
+static void on_maestro_error(GebrMaestroServer *maestro,
+			     const gchar *addr,
+			     const gchar *error_type,
+			     const gchar *error_msg,
+			     GebrMaestroController *mc);
+
 static void
 insert_new_entry(GebrMaestroController *mc)
 {
@@ -999,7 +1005,12 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 	GtkEntry *entry = GTK_ENTRY(gtk_bin_get_child(GTK_BIN(combo)));
 	gtk_entry_set_text(entry, gebr_maestro_server_get_address(maestro));
 	g_signal_connect(entry, "activate", G_CALLBACK(connect_to_maestro), self);
-	on_state_change(maestro, self);
+
+	const gchar *error_type, *error_msg;
+	gebr_maestro_server_get_error(maestro, &error_type, &error_msg);
+	on_maestro_error(maestro, gebr_maestro_server_get_address(maestro),
+			 error_type, error_msg, self);
+	gebr_maestro_controller_maestro_state_changed_real(self, maestro);
 
 	GtkButton *connect_button = GTK_BUTTON(gtk_builder_get_object(self->priv->builder, "btn_connect"));
 	g_signal_connect(connect_button, "clicked", G_CALLBACK(on_connect_to_maestro_clicked), self);
@@ -1185,10 +1196,59 @@ on_maestro_confirm(GebrMaestroServer *maestro,
 
 static void
 on_maestro_error(GebrMaestroServer *maestro,
-		 const gchar *addr,
-		 const gchar *error_type,
-		 const gchar *error_msg,
-		 GebrMaestroController *mc)
+		const gchar *addr,
+		const gchar *error_type,
+		const gchar *error_msg,
+		GebrMaestroController *mc)
+{
+	if (!mc->priv->builder)
+		return;
+
+	gchar *message = NULL;
+
+	if (g_strcmp0(error_type, "error:protocol") == 0)
+		message = g_strdup_printf(_("Protocol version mismatch: %s"), error_msg);
+	else if (g_strcmp0(error_type, "error:ssh") == 0)
+		message = g_strdup(error_msg);
+
+	GtkComboBoxEntry *combo = GTK_COMBO_BOX_ENTRY(gtk_builder_get_object(mc->priv->builder, 
+									     "combo_maestro"));
+	GtkEntry *entry = GTK_ENTRY(gtk_bin_get_child(GTK_BIN(combo)));
+	GebrCommServer *server = gebr_maestro_server_get_server(maestro);
+	GebrCommServerState state = gebr_comm_server_get_state(server);
+
+	if (state == SERVER_STATE_DISCONNECTED) {
+		if (!message) {
+			gtk_entry_set_icon_from_stock(entry,
+			                              GTK_ENTRY_ICON_SECONDARY,
+			                              GTK_STOCK_DISCONNECT);
+		} else {
+			gtk_entry_set_icon_from_stock(entry,
+						      GTK_ENTRY_ICON_SECONDARY,
+						      GTK_STOCK_DIALOG_WARNING);
+			gtk_entry_set_icon_tooltip_text(entry,
+							GTK_ENTRY_ICON_SECONDARY,
+							message);
+		}
+	} else if (state == SERVER_STATE_LOGGED) {
+		gtk_entry_set_icon_from_stock(entry,
+					      GTK_ENTRY_ICON_SECONDARY,
+					      GTK_STOCK_CONNECT);
+		gtk_entry_set_icon_tooltip_text(entry,
+						GTK_ENTRY_ICON_SECONDARY,
+						_("Connected"));
+	}
+
+	if (message)
+		g_free(message);
+}
+
+static void
+on_daemon_error(GebrMaestroServer *maestro,
+		const gchar *addr,
+		const gchar *error_type,
+		const gchar *error_msg,
+		GebrMaestroController *mc)
 {
 	GtkTreeIter iter;
 	GtkTreeModel *model = GTK_TREE_MODEL(mc->priv->model);
@@ -1263,45 +1323,16 @@ gebr_maestro_controller_maestro_state_changed_real(GebrMaestroController *mc,
 	if (!mc->priv->builder)
 		return;
 
-	GtkComboBoxEntry *combo = GTK_COMBO_BOX_ENTRY(gtk_builder_get_object(mc->priv->builder, 
-									     "combo_maestro"));
-	GtkEntry *entry = GTK_ENTRY(gtk_bin_get_child(GTK_BIN(combo)));
-
 	GebrCommServer *server = gebr_maestro_server_get_server(maestro);
 	GebrCommServerState state = gebr_comm_server_get_state(server);
-	if (state == SERVER_STATE_DISCONNECTED) {
-		const gchar *error = gebr_maestro_server_get_error(maestro);
-		if( g_strcmp0(error, "")==0)
-			error = _("It seems there is no GêBR-maestro installed on this machine");
-			
-		if (!error)
-			gtk_entry_set_icon_from_stock(entry,
-			                              GTK_ENTRY_ICON_SECONDARY,
-			                              GTK_STOCK_DISCONNECT);
-		else {
-			gtk_entry_set_icon_from_stock(entry,
-			                              GTK_ENTRY_ICON_SECONDARY,
-			                              GTK_STOCK_DIALOG_WARNING);
-			gtk_entry_set_icon_tooltip_text(entry,
-			                              GTK_ENTRY_ICON_SECONDARY,
-			                              error);
-			gtk_widget_grab_focus(GTK_WIDGET(entry));
+	GtkTreeView *view = GTK_TREE_VIEW(gtk_builder_get_object(mc->priv->builder, "treeview_servers"));
 
-			gtk_list_store_clear(mc->priv->model);
-			GtkTreeView *view = GTK_TREE_VIEW(gtk_builder_get_object(mc->priv->builder, "treeview_servers"));
-			gtk_tree_view_set_model(view, GTK_TREE_MODEL(mc->priv->model));
-		}
-	} else if (state == SERVER_STATE_LOGGED) {
-		gtk_entry_set_icon_from_stock(entry,
-					      GTK_ENTRY_ICON_SECONDARY,
-					      GTK_STOCK_CONNECT);
-		gtk_entry_set_icon_tooltip_text(entry,
-						GTK_ENTRY_ICON_SECONDARY,
-						_("Connected"));
+	if (state == SERVER_STATE_DISCONNECTED)
+		gtk_list_store_clear(mc->priv->model);
+	else if (state == SERVER_STATE_LOGGED)
 		on_daemons_changed(maestro, mc);
-		GtkTreeView *view = GTK_TREE_VIEW(gtk_builder_get_object(mc->priv->builder, "treeview_servers"));
-		gtk_tree_view_set_model(view, GTK_TREE_MODEL(mc->priv->model));
-	}
+
+	gtk_tree_view_set_model(view, GTK_TREE_MODEL(mc->priv->model));
 }
 
 static void 
@@ -1344,7 +1375,9 @@ gebr_maestro_controller_connect(GebrMaestroController *self,
 			 G_CALLBACK(on_state_change), self);
 	g_signal_connect(maestro, "ac-change",
 			 G_CALLBACK(on_ac_change), self);
-	g_signal_connect(maestro, "error",
+	g_signal_connect(maestro, "daemon-error",
+			 G_CALLBACK(on_daemon_error), self);
+	g_signal_connect(maestro, "maestro-error",
 			 G_CALLBACK(on_maestro_error), self);
 	g_signal_connect(maestro, "confirm",
 	                 G_CALLBACK(on_maestro_confirm), self);

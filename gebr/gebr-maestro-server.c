@@ -35,6 +35,8 @@ struct _GebrMaestroServerPriv {
 	GHashTable *jobs;
 	GHashTable *temp_jobs;
 	gchar *address;
+	gchar *error_type;
+	gchar *error_msg;
 
 	GtkListStore *groups_store;
 	GtkListStore *queues_model;
@@ -48,7 +50,8 @@ enum {
 	DAEMONS_CHANGED,
 	STATE_CHANGE,
 	AC_CHANGE,
-	ERROR,
+	DAEMON_ERROR,
+	MAESTRO_ERROR,
 	CONFIRM,
 	LAST_SIGNAL
 };
@@ -148,22 +151,61 @@ log_message(GebrCommServer *server,
 {
 }
 
+static void
+gebr_maestro_server_set_error(GebrMaestroServer *maestro,
+			      const gchar *error_type,
+			      const gchar *error_msg)
+{
+	if (maestro->priv->error_type)
+		g_free(maestro->priv->error_type);
+
+	if (maestro->priv->error_msg)
+		g_free(maestro->priv->error_msg);
+
+	maestro->priv->error_type = g_strdup(error_type);
+	maestro->priv->error_msg = g_strdup(error_msg);
+}
+
+void
+gebr_maestro_server_get_error(GebrMaestroServer *maestro,
+			      const gchar **error_type,
+			      const gchar **error_msg)
+{
+	if (error_type)
+		*error_type = maestro->priv->error_type;
+
+	if (error_msg)
+		*error_msg = maestro->priv->error_msg;
+}
+
 void
 state_changed(GebrCommServer *comm_server,
 	      gpointer user_data)
 {
 	GebrMaestroServer *maestro = user_data;
 	GebrCommServerState state = gebr_comm_server_get_state(comm_server);
+	const gchar *error_msg = NULL;
+	const gchar *error_type = "error:none";
 
 	if (state == SERVER_STATE_DISCONNECTED) {
-		g_debug("Disconnected");
 		gebr_comm_server_close_x11_forward(comm_server);
 		gtk_list_store_clear(maestro->priv->groups_store);
+
+		const gchar *err = gebr_comm_server_get_last_error(maestro->priv->server);
+		if (err && *err) {
+			error_type = "error:ssh";
+			error_msg = err;
+		}
 	}
 
 	if (state == SERVER_STATE_LOGGED
-	    || state == SERVER_STATE_DISCONNECTED)
+	    || state == SERVER_STATE_DISCONNECTED) {
+		gebr_maestro_server_set_error(maestro, error_type, error_msg);
+
 		g_signal_emit(maestro, signals[GROUP_CHANGED], 0);
+		g_signal_emit(maestro, signals[MAESTRO_ERROR], 0,
+			      maestro->priv->address, error_type, error_msg);
+	}
 
 	g_signal_emit(maestro, signals[STATE_CHANGE], 0);
 }
@@ -316,7 +358,12 @@ parse_messages(GebrCommServer *comm_server,
 			g_debug("<<< DAEMON ERROR >>> Daemon %s reported an error of type %s : %s",
 				addr->str, type->str, msg->str);
 
-			g_signal_emit(maestro, signals[ERROR], 0, addr->str, type->str, msg->str);
+			if (g_strcmp0(prog->str, "daemon") == 0)
+				g_signal_emit(maestro, signals[DAEMON_ERROR], 0,
+					      addr->str, type->str, msg->str);
+			else
+				g_signal_emit(maestro, signals[MAESTRO_ERROR], 0,
+					      maestro->priv->address, type->str, msg->str);
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}
@@ -807,11 +854,20 @@ gebr_maestro_server_class_init(GebrMaestroServerClass *klass)
 			             gebr_cclosure_marshal_VOID__INT_OBJECT,
 			             G_TYPE_NONE, 2, G_TYPE_INT, GEBR_TYPE_DAEMON_SERVER);
 
-	signals[ERROR] =
-			g_signal_new("error",
+	signals[DAEMON_ERROR] =
+			g_signal_new("daemon-error",
 			             G_OBJECT_CLASS_TYPE(object_class),
 			             G_SIGNAL_RUN_LAST,
-			             G_STRUCT_OFFSET(GebrMaestroServerClass, error),
+			             G_STRUCT_OFFSET(GebrMaestroServerClass, daemon_error),
+			             NULL, NULL,
+			             gebr_cclosure_marshal_VOID__STRING_STRING_STRING,
+			             G_TYPE_NONE, 3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
+
+	signals[MAESTRO_ERROR] =
+			g_signal_new("maestro-error",
+			             G_OBJECT_CLASS_TYPE(object_class),
+			             G_SIGNAL_RUN_LAST,
+			             G_STRUCT_OFFSET(GebrMaestroServerClass, maestro_error),
 			             NULL, NULL,
 			             gebr_cclosure_marshal_VOID__STRING_STRING_STRING,
 			             G_TYPE_NONE, 3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
@@ -847,6 +903,8 @@ gebr_maestro_server_init(GebrMaestroServer *maestro)
 	maestro->priv->jobs = g_hash_table_new(g_str_hash, g_str_equal);
 	maestro->priv->temp_jobs = g_hash_table_new(g_str_hash, g_str_equal);
 	maestro->priv->queues_model = gtk_list_store_new(1, GEBR_TYPE_JOB);
+
+	gebr_maestro_server_set_error(maestro, "error:none", NULL);
 
 	// Insert queue 'Immediately'
 	GtkTreeIter iter;
@@ -1179,10 +1237,4 @@ gebr_maestro_server_get_daemon(GebrMaestroServer *server,
 			       const gchar *address)
 {
 	return get_daemon_from_address(server, address, NULL);
-}
-
-const gchar *
-gebr_maestro_server_get_error(GebrMaestroServer *maestro)
-{
-	return gebr_comm_server_get_last_error(maestro->priv->server);
 }

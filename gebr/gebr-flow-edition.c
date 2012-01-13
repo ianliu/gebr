@@ -1913,8 +1913,11 @@ gebr_flow_edition_update_server(GebrFlowEdition *fe,
 	gboolean sensitive = maestro != NULL;
 
 	if (maestro) {
-		const gchar *error = gebr_maestro_server_get_error(maestro);
-		if (!error || !*error) {
+		const gchar *type, *msg;
+
+		gebr_maestro_server_get_error(maestro, &type, &msg);
+
+		if (g_strcmp0(type, "error:none") == 0) {
 			/* Set groups/servers model for Maestro */
 			GtkTreeModel *model = gebr_maestro_server_get_groups_model(maestro);
 			gtk_combo_box_set_model(GTK_COMBO_BOX(fe->priv->server_combobox), model);

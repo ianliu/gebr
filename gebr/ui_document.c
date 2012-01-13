@@ -293,8 +293,10 @@ on_lock_button_toggled(GtkToggleButton *button,
 			if (gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED)
 				stockid = GTK_STOCK_CONNECT;
 			else {
-				const gchar *error = gebr_maestro_server_get_error(maestro);
-				if (!error || !*error)
+				const gchar *type;
+				gebr_maestro_server_get_error(maestro, &type, NULL);
+
+				if (g_strcmp0(type, "error:none") == 0)
 					stockid = GTK_STOCK_DISCONNECT;
 				else
 					stockid = GTK_STOCK_DIALOG_WARNING;
@@ -466,8 +468,9 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 			if (gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED)
 				stockid = GTK_STOCK_CONNECT;
 			else {
-				const gchar *error = gebr_maestro_server_get_error(maestro);
-				if (!error || !*error)
+				const gchar *type;
+				gebr_maestro_server_get_error(maestro, &type, NULL);
+				if (g_strcmp0(type, "error:none") == 0)
 					stockid = GTK_STOCK_DISCONNECT;
 				else
 					stockid = GTK_STOCK_DIALOG_WARNING;

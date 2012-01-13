@@ -62,10 +62,15 @@ struct _GebrMaestroServerClass {
 	void    (*ac_change) (GebrMaestroServer *maestro,
 			      gboolean	         is_ac);
 
-	void    (*error) (GebrMaestroServer *maestro,
-			  const gchar       *addr,
-			  const gchar       *error_type,
-			  const gchar       *error_msg);
+	void    (*daemon_error) (GebrMaestroServer *maestro,
+				 const gchar       *addr,
+				 const gchar       *error_type,
+				 const gchar       *error_msg);
+
+	void    (*maestro_error) (GebrMaestroServer *maestro,
+				  const gchar       *addr,
+				  const gchar       *error_type,
+				  const gchar       *error_msg);
 
 	void (*confirm) (GebrMaestroServer *maestro,
 			 const gchar *addr,
@@ -142,9 +147,11 @@ GtkTreeModel *gebr_maestro_server_get_groups_model(GebrMaestroServer *maestro);
 GebrDaemonServer *gebr_maestro_server_get_daemon(GebrMaestroServer *server,
 						 const gchar *address);
 
-const gchar *gebr_maestro_server_get_error(GebrMaestroServer *maestro);
-
 GebrCommServerState gebr_maestro_server_get_state(GebrMaestroServer *maestro);
+
+void gebr_maestro_server_get_error(GebrMaestroServer *maestro,
+				   const gchar **error_type,
+				   const gchar **error_msg);
 
 G_END_DECLS
 
