@@ -98,6 +98,7 @@ static gboolean server_run_lock(gboolean *already_running)
 				goto err;
 			}
 			gebrd->listen_socket = listen;
+			g_signal_connect(gebrd->listen_socket, "new-connection", G_CALLBACK(server_new_connection), NULL);
 		}
 	} else {
 		gebrd->listen_socket = listen;

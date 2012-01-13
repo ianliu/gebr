@@ -167,7 +167,7 @@ void gebr_comm_listen_socket_free(GebrCommListenSocket * listen_socket)
 	g_slist_foreach(listen_socket->pending_connections, (GFunc) g_object_unref, NULL);
 	g_slist_free(listen_socket->pending_connections);
 	gebr_comm_socket_close(&listen_socket->parent);
-	g_free(listen_socket);
+	g_object_unref(listen_socket);
 }
 
 gboolean gebr_comm_listen_socket_listen(GebrCommListenSocket * listen_socket, GebrCommSocketAddress * socket_address)
