@@ -631,6 +631,10 @@ static void test_gebr_geoxml_flow_is_parallelizable (void)
 	gebr_geoxml_program_set_status(forloop, GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED);
 	gebr_geoxml_object_unref(forloop);
 
+	GebrGeoXmlProgram *program = gebr_geoxml_flow_append_program(flow);
+	gebr_geoxml_program_set_status(program, GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED);
+	gebr_geoxml_program_set_stdout(program, TRUE);
+
 	gebr_geoxml_flow_insert_iter_dict(flow);
 	GebrGeoXmlParameter *iter_param = GEBR_GEOXML_PARAMETER(gebr_geoxml_document_get_dict_parameter(GEBR_GEOXML_DOCUMENT(flow)));
 	gebr_validator_insert(validator, iter_param, NULL, NULL);
