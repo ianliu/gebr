@@ -91,13 +91,19 @@ static gboolean server_run_lock(gboolean *already_running)
 			*already_running = TRUE;
 			gebr_comm_listen_socket_free(listen);
 			goto out;
+		} else {
+			gebrd->socket_address = gebr_comm_socket_address_ipv4_local(port);
+			if (!gebr_comm_listen_socket_listen(listen, &gebrd->socket_address)) {
+				gebrd_message(GEBR_LOG_ERROR, _("Could not listen for connections.\n"));
+				goto err;
+			}
+			gebrd->listen_socket = listen;
 		}
 	} else {
 		gebrd->listen_socket = listen;
 		g_signal_connect(gebrd->listen_socket, "new-connection", G_CALLBACK(server_new_connection), NULL);
 		gebrd->socket_address = socket_address;
 	}
-
 out:
 	g_string_free(port_gstring, TRUE);
 	return TRUE;
