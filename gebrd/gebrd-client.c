@@ -273,7 +273,7 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			if (cookie->len && gebrd_get_server_type() != GEBR_COMM_SERVER_TYPE_MOAB) {
 				struct flock fl = {F_WRLCK, SEEK_SET, 0, 0, 0};
 				int fd;
-				gchar *xauth_dir = g_build_filename(g_get_home_dir(), "Xauthority", NULL);
+				gchar *xauth_dir = g_build_filename(g_get_home_dir(), ".gebr", "Xauthority", NULL);
 
 				fl.l_pid = getpid();
 
