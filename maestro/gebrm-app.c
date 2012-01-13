@@ -377,8 +377,11 @@ err:
 		for (GList *i = app->priv->connections; i; i = i->next) {
 			GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(i->data);
 			gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
-			                                      gebr_comm_protocol_defs.err_def, 3,
-			                                      gebrm_daemon_get_address(daemon), error, error_msg);
+			                                      gebr_comm_protocol_defs.err_def, 4,
+			                                      gebrm_daemon_get_address(daemon),
+							      "daemon",
+							      error,
+							      error_msg);
 		}
 	} else {
 		for (GList *i = app->priv->connections; i; i = i->next) {
@@ -921,6 +924,19 @@ on_client_parse_messages(GebrCommProtocolSocket *socket,
 			GString *gebr_id = g_list_nth_data(arguments, 2);
 
 			g_debug("Maestro received a X11 cookie: %s", cookie->str);
+
+			if (g_strcmp0(version->str, GEBR_VERSION NANOVERSION) != 0) {
+				g_debug("Gebr's version mismatch! Got: %s Expected: %s",
+					version->str, GEBR_VERSION NANOVERSION);
+
+				gebr_comm_protocol_socket_oldmsg_send(socket, TRUE,
+								      gebr_comm_protocol_defs.err_def, 4,
+								      g_get_host_name(),
+								      "maestro",
+								      "error:protocol",
+								      GEBR_VERSION NANOVERSION);
+				goto err;
+			}
 
 			gebrm_client_set_id(client, gebr_id->str);
 			gebrm_client_set_magic_cookie(client, cookie->str);

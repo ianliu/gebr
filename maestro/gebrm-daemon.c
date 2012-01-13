@@ -872,11 +872,12 @@ void
 gebrm_daemon_send_error_message(GebrmDaemon *daemon,
                                 GebrCommProtocolSocket *socket)
 {
-	if (g_strcmp0(daemon->priv->last_error_type, daemon->priv->error_type) != 0){
+	if (g_strcmp0(daemon->priv->last_error_type, daemon->priv->error_type) != 0) {
 		g_debug("enviando erroi: %s", gebrm_daemon_get_error_msg(daemon));
 		gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
-		                                      gebr_comm_protocol_defs.err_def, 3,
+		                                      gebr_comm_protocol_defs.err_def, 4,
 		                                      gebrm_daemon_get_address(daemon),
+						      "daemon",
 		                                      gebrm_daemon_get_error_type(daemon),
 		                                      gebrm_daemon_get_error_msg(daemon));
 	}

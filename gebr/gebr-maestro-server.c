@@ -153,7 +153,6 @@ state_changed(GebrCommServer *comm_server,
 	      gpointer user_data)
 {
 	GebrMaestroServer *maestro = user_data;
-
 	GebrCommServerState state = gebr_comm_server_get_state(comm_server);
 
 	if (state == SERVER_STATE_DISCONNECTED) {
@@ -306,12 +305,13 @@ parse_messages(GebrCommServer *comm_server,
 		} else if (message->hash == gebr_comm_protocol_defs.err_def.code_hash) {
 			GList *arguments;
 
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 3)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 4)) == NULL)
 				goto err;
 
 			GString *addr = g_list_nth_data(arguments, 0);
-			GString *type = g_list_nth_data(arguments, 1);
-			GString *msg = g_list_nth_data(arguments, 2);
+			GString *prog = g_list_nth_data(arguments, 1);
+			GString *type = g_list_nth_data(arguments, 2);
+			GString *msg  = g_list_nth_data(arguments, 3);
 
 			g_debug("<<< DAEMON ERROR >>> Daemon %s reported an error of type %s : %s",
 				addr->str, type->str, msg->str);
