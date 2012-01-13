@@ -34,4 +34,4 @@ TEST_PROGS += test-gebr-validator
 test_gebr_validator_SOURCES = test-gebr-validator.c
 
 EXTRA_DIST = tar-test.tar.gz forloop.mnu
-DISTCLEANFILES = tar-create-test.tar.gz forloop.mnu
+DISTCLEANFILES = tar-create-test.tar.gz
