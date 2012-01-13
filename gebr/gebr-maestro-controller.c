@@ -117,14 +117,10 @@ finish_group_creation(GtkWidget *widget,
 	GList *tags = gebr_maestro_server_get_all_tags(mc->priv->maestro);
 	gboolean group_exists = g_list_find_custom(tags, tag, (GCompareFunc)g_strcmp0) ==0 ? FALSE: TRUE;
 	gboolean name_valid = gebr_utf8_is_asc_alnum(tag);
-	if(group_exists)
-		g_debug("group exists");
-	if(!name_valid)
-		g_debug("Name invalid");
 
 	if (group_exists || !name_valid) {
 		gtk_entry_set_icon_from_stock(GTK_ENTRY(widget), GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIALOG_WARNING);
-		const gchar *toolt = group_exists ? "Already existent group" : "Name of group is not alpha-numerical." ;
+		const gchar *toolt = group_exists ? _("The group name already exists") : _("The group name must be alphanumeric") ;
 		gtk_entry_set_icon_tooltip_text(GTK_ENTRY(widget), GTK_ENTRY_ICON_SECONDARY, toolt);
 		gtk_widget_grab_focus(widget);
  		g_free(tag);
@@ -152,12 +148,23 @@ finish_group_creation(GtkWidget *widget,
 }
 
 static gboolean
+on_group_creation_entry_focus_out(GtkWidget *widget,
+				  GdkEventFocus *event,
+				  GebrMaestroController *mc)
+{
+	finish_group_creation(widget, mc);
+	return FALSE;
+}
+
+static gboolean
 on_group_creation_entry_key_press(GtkWidget *widget,
 				  GdkEventKey *event,
 				  GebrMaestroController *mc)
 {
 	switch (event->keyval) {
 	case GDK_Escape:
+		g_signal_handlers_disconnect_by_func(widget, on_group_creation_entry_key_press, mc);
+		g_signal_handlers_disconnect_by_func(widget, on_group_creation_entry_focus_out, mc);
 		cancel_group_creation(widget, mc);
 		return TRUE;
 	case GDK_KP_Enter:
@@ -168,15 +175,6 @@ on_group_creation_entry_key_press(GtkWidget *widget,
 	default:
 		return FALSE;
 	}
-}
-
-static gboolean
-on_group_creation_entry_focus_out(GtkWidget *widget,
-				  GdkEventFocus *event,
-				  GebrMaestroController *mc)
-{
-	finish_group_creation(widget, mc);
-	return FALSE;
 }
 
 static void
@@ -927,9 +925,9 @@ server_tooltip_callback(GtkTreeView * tree_view, GtkTooltip * tooltip,
 		gtk_tree_model_get(GTK_TREE_MODEL(self->priv->model), iter, MAESTRO_CONTROLLER_AUTOCONN, &autoconnect, -1);
 
 		if (autoconnect)
-			gtk_tooltip_set_text(tooltip, _("Autoconnect ON"));
+			gtk_tooltip_set_text(tooltip, _("Connect server when GêBR starts"));
 		else
-			gtk_tooltip_set_text(tooltip, _("Autoconnect OFF"));
+			gtk_tooltip_set_text(tooltip, _("Do not connect server when GêBR starts"));
 
 		return TRUE;
 	}
@@ -1257,15 +1255,15 @@ on_daemon_error(GebrMaestroServer *maestro,
 	if (!*error_type)
 		message = NULL;
 	else if (g_strcmp0(error_type, "error:nfs") == 0)
-		message = _("The selected maestro cannot manage the server, because it has a different NFS.");
+		message = _("This server has a different NFS");
 	else if (g_strcmp0(error_type, "error:id") == 0)
-		message = _("The selected maestro cannot manage the server, because it was already added.");
+		message = _("This server was already added at this maestro");
 	else if (g_strcmp0(error_type, "error:protocol") == 0)
-		message = _("The selected maestro cannot manage the server, because it is using a different protocol version.");
+		message = _("This server is using a different protocol version");
 	else if (g_strcmp0(error_type, "error:connection-refused") == 0)
-		message = _("The selected maestro cannot manage the server, because it is already registered at another maestro.");
+		message = _("This server is already registered at another maestro");
 	else if (g_strcmp0(error_type, "error:ssh") == 0)
-		message = _(error_msg);
+		message = error_msg;
 
 
 	GebrDaemonServer *daemon;
