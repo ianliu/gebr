@@ -1049,7 +1049,28 @@ gebr_geoxml_flow_is_parallelizable(GebrGeoXmlFlow *flow,
 
 	const gchar *output = gebr_geoxml_flow_io_get_output(flow);
 
-	if (!strlen(output) || gebr_validator_use_iter(validator, output, GEBR_GEOXML_PARAMETER_TYPE_STRING, GEBR_GEOXML_DOCUMENT_TYPE_FLOW))
+	if (!strlen(output))
+		return TRUE;
+
+	GebrGeoXmlSequence *program;
+	gboolean has_stdout = FALSE;
+
+	gebr_geoxml_flow_get_program(flow, &program, 0);
+
+	for (; program != NULL; gebr_geoxml_sequence_next(&program)) {
+		GebrGeoXmlProgramControl control = gebr_geoxml_program_get_control (GEBR_GEOXML_PROGRAM (program));
+
+		if (control != GEBR_GEOXML_PROGRAM_CONTROL_ORDINARY)
+			continue;
+
+		if (gebr_geoxml_program_get_status (GEBR_GEOXML_PROGRAM(program)) == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED)
+			has_stdout = gebr_geoxml_program_get_stdout(GEBR_GEOXML_PROGRAM(program));
+	}
+
+	if (!has_stdout)
+		return TRUE;
+
+	if (gebr_validator_use_iter(validator, output, GEBR_GEOXML_PARAMETER_TYPE_STRING, GEBR_GEOXML_DOCUMENT_TYPE_FLOW))
 		return TRUE;
 
 	return FALSE;
