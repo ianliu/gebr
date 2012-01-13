@@ -144,6 +144,20 @@ send_server_status_message(GebrmApp *app,
 }
 
 static void
+send_groups_definitions(GebrCommProtocolSocket *client, GebrmDaemon *daemon)
+{
+	const gchar *server = gebrm_daemon_get_address(daemon);
+	const gchar *tags = gebrm_daemon_get_tags(daemon);
+
+	g_debug("Sending groups %s (%s) to gebr", tags, server);
+	gebr_comm_protocol_socket_oldmsg_send(client, FALSE,
+					      gebr_comm_protocol_defs.agrp_def, 2,
+					      server, tags);
+
+}
+
+
+static void
 gebrm_app_job_controller_on_task_def(GebrmDaemon *daemon,
 				     GebrmTask *task,
 				     GebrmApp* app)
@@ -918,6 +932,12 @@ on_client_parse_messages(GebrCommProtocolSocket *socket,
 			gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
 							      gebr_comm_protocol_defs.ret_def, 1,
 							      port_str);
+
+			for (GList *i = app->priv->daemons; i; i = i->next) {
+				send_server_status_message(app, socket, i->data, gebrm_daemon_get_autoconnect(i->data));
+				send_groups_definitions(socket, i->data);
+			}
+
 			g_free(port_str);
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
@@ -1265,19 +1285,6 @@ send_messages_of_jobs(gpointer key,
 }
 
 static void
-send_groups_definitions(GebrCommProtocolSocket *client, GebrmDaemon *daemon)
-{
-	const gchar *server = gebrm_daemon_get_address(daemon);
-	const gchar *tags = gebrm_daemon_get_tags(daemon);
-
-	g_debug("Sending groups %s (%s) to gebr", tags, server);
-	gebr_comm_protocol_socket_oldmsg_send(client, FALSE,
-					      gebr_comm_protocol_defs.agrp_def, 2,
-					      server, tags);
-
-}
-
-static void
 on_new_connection(GebrCommListenSocket *listener,
 		  GebrmApp *app)
 {
@@ -1294,9 +1301,6 @@ on_new_connection(GebrCommListenSocket *listener,
 		app->priv->connections = g_list_prepend(app->priv->connections, client);
 
 		for (GList *i = app->priv->daemons; i; i = i->next) {
-			send_server_status_message(app, socket, i->data, gebrm_daemon_get_autoconnect(i->data));
-			send_groups_definitions(socket, i->data);
-
 			if (g_strcmp0(gebrm_daemon_get_autoconnect(i->data), "on") == 0) {
 				switch (gebrm_daemon_get_state(i->data)) {
 				case SERVER_STATE_DISCONNECTED:
