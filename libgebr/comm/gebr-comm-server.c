@@ -759,8 +759,9 @@ gebr_comm_server_socket_connected(GebrCommProtocolSocket * socket,
 	if (server->priv->is_maestro) {
 		gchar *mcookie_str = get_xauth_cookie(display_number);
 		gebr_comm_protocol_socket_oldmsg_send(server->socket, FALSE,
-						      gebr_comm_protocol_defs.ini_def, 2,
-						      mcookie_str, server->priv->gebr_id);
+						      gebr_comm_protocol_defs.ini_def, 3,
+						      GEBR_VERSION NANOVERSION, mcookie_str,
+						      server->priv->gebr_id);
 		g_free(mcookie_str);
 	} else {
 		gebr_comm_protocol_socket_oldmsg_send(server->socket, FALSE,

@@ -913,11 +913,12 @@ on_client_parse_messages(GebrCommProtocolSocket *socket,
 		if (message->hash == gebr_comm_protocol_defs.ini_def.code_hash) {
 			GList *arguments;
 
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 3)) == NULL)
 				goto err;
 
-			GString *cookie = arguments->data;
-			GString *gebr_id = arguments->next->data;
+			GString *version = g_list_nth_data(arguments, 0);
+			GString *cookie  = g_list_nth_data(arguments, 1);
+			GString *gebr_id = g_list_nth_data(arguments, 2);
 
 			g_debug("Maestro received a X11 cookie: %s", cookie->str);
 
