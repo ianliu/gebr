@@ -273,13 +273,17 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			if (cookie->len && gebrd_get_server_type() != GEBR_COMM_SERVER_TYPE_MOAB) {
 				struct flock fl = {F_WRLCK, SEEK_SET, 0, 0, 0};
 				int fd;
+				gchar *xauth_dir = g_build_filename(g_get_home_dir(), "Xauthority", NULL);
 
 				fl.l_pid = getpid();
 
-				if ((fd = open("/home/ian/.gebr/Xauthority", O_RDWR | O_CREAT, 0600)) == -1) {
+				if ((fd = open(xauth_dir, O_RDWR | O_CREAT, 0600)) == -1) {
 					perror("open");
+					g_free(xauth_dir);
 					exit(1);
 				}
+
+				g_free(xauth_dir);
 
 				if (fcntl(fd, F_SETLKW, &fl) == -1) {
 					perror("fcntl");
