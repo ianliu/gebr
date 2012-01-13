@@ -68,15 +68,38 @@ Description: GeBRD is a server for executing flows
      * Act as an interface to many freely-available seismic-processing
        packages (such as Seismic Unix, Madagascar, etc)
  .
- GeBRD is a server for executing flows
+ This package provides GeBR's flow execution and should be present in all machines
+ than collaborates with one GeBR Maestro
+ .
+
+Package: gebr-maestro
+Section: science
+Architecture: any
+Depends: libgebr0 (= ${binary:Version})
+Recommends: ssh-server, ssh-client
+Suggests: gebrd, gebr
+Description: GeBR Maestro coordinates the flow execution between groups of machines
+ GêBR is a simple graphical interface which facilitates geophysical data processing. 
+ GêBR is not a package for processing, rather it is designed to integrate a large 
+ variety of free processing packages.
+ .
+ What can GeBR do:
+     * Handle Projects and Lines
+     * Assemble and run processing sequences
+     * Act as an interface to many freely-available seismic-processing
+       packages (such as Seismic Unix, Madagascar, etc)
+ .
+ This package provides GeBR's flow execution coordinator and should be present in at
+ least one machine of your network.
  .
 
 Package: gebr
 Section: science
 Architecture: any
 Depends: libgebr0 (= ${binary:Version})
-Recommends: gebrd (= ${binary:Version}), gebr-doc (= ${binary:Version}), ssh-client
-Conflicts: gebrd (<< ${binary:Version})
+Recommends: gebrd (= ${binary:Version}), gebr-doc (= ${binary:Version}), ssh-client,
+ gebr-maestro (= ${binary:Version})
+Conflicts: gebrd (<< ${binary:Version}), gebr-maestro (<< ${binary:Version})
 Suggests: debr, gebr-menus-su, gebr-menus-shtools
 Description: Seismic processing environment
  GêBR is a simple graphical interface which facilitates geophysical data processing. 
