@@ -56,7 +56,7 @@ gebr_gui_tool_button_toggled(GtkToggleButton *toggle)
 
 	gtk_widget_show(child);
 	gtk_widget_realize(child);
-	gtk_widget_get_requisition(child, &req);
+	req = child->requisition;
 
 	gint screen_width = gdk_screen_get_width(my_screen);
 	gint screen_height = gdk_screen_get_height(my_screen);
