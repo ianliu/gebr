@@ -156,14 +156,15 @@ gebr_maestro_server_set_error(GebrMaestroServer *maestro,
 			      const gchar *error_type,
 			      const gchar *error_msg)
 {
+	gchar *tmp = g_strdup(error_type);
 	if (maestro->priv->error_type)
 		g_free(maestro->priv->error_type);
+	maestro->priv->error_type = tmp;
 
+	tmp = g_strdup(error_msg);
 	if (maestro->priv->error_msg)
 		g_free(maestro->priv->error_msg);
-
-	maestro->priv->error_type = g_strdup(error_type);
-	maestro->priv->error_msg = g_strdup(error_msg);
+	maestro->priv->error_msg = tmp;
 }
 
 void
@@ -184,24 +185,23 @@ state_changed(GebrCommServer *comm_server,
 {
 	GebrMaestroServer *maestro = user_data;
 	GebrCommServerState state = gebr_comm_server_get_state(comm_server);
-	const gchar *error_msg = NULL;
-	const gchar *error_type = "error:none";
 
 	if (state == SERVER_STATE_DISCONNECTED) {
 		gebr_comm_server_close_x11_forward(comm_server);
 		gtk_list_store_clear(maestro->priv->groups_store);
 
 		const gchar *err = gebr_comm_server_get_last_error(maestro->priv->server);
-		if (err && *err) {
-			error_type = "error:ssh";
-			error_msg = err;
-		}
+		if (err && *err)
+			gebr_maestro_server_set_error(maestro, "error:ssh", err);
+	} else if (state == SERVER_STATE_LOGGED) {
+		gebr_maestro_server_set_error(maestro, "error:none", NULL);
 	}
+
+	const gchar *error_type = maestro->priv->error_type;
+	const gchar *error_msg = maestro->priv->error_msg;
 
 	if (state == SERVER_STATE_LOGGED
 	    || state == SERVER_STATE_DISCONNECTED) {
-		gebr_maestro_server_set_error(maestro, error_type, error_msg);
-
 		g_signal_emit(maestro, signals[GROUP_CHANGED], 0);
 		g_signal_emit(maestro, signals[MAESTRO_ERROR], 0,
 			      maestro->priv->address, error_type, error_msg);
@@ -358,12 +358,15 @@ parse_messages(GebrCommServer *comm_server,
 			g_debug("<<< DAEMON ERROR >>> Daemon %s reported an error of type %s : %s",
 				addr->str, type->str, msg->str);
 
-			if (g_strcmp0(prog->str, "daemon") == 0)
+
+			if (g_strcmp0(prog->str, "daemon") == 0) {
 				g_signal_emit(maestro, signals[DAEMON_ERROR], 0,
 					      addr->str, type->str, msg->str);
-			else
+			} else {
+				gebr_maestro_server_set_error(maestro, type->str, msg->str);
 				g_signal_emit(maestro, signals[MAESTRO_ERROR], 0,
 					      maestro->priv->address, type->str, msg->str);
+			}
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}
