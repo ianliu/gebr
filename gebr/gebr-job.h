@@ -199,6 +199,8 @@ void gebr_job_set_maestro_address(GebrJob *job, const gchar *address);
 
 const gchar *gebr_job_get_maestro_address(GebrJob *job);
 
+void gebr_job_remove(GebrJob *job);
+
 G_END_DECLS
 
 #endif /* __GEBR_JOB_H__ */
