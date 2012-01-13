@@ -238,8 +238,10 @@ gebrm_client_kill_forward_by_address(GebrmClient *client,
 	for (GList *i = client->priv->forwards; i; i = i->next) {
 		GebrCommTerminalProcess *proc = GEBR_COMM_TERMINAL_PROCESS(i->data);
 		const gchar *address = g_object_get_data(G_OBJECT(proc), "address");
-		if (g_strcmp0(address, addr) == 0)
+		if (g_strcmp0(address, addr) == 0) {
 			gebr_comm_terminal_process_free(i->data);
+			client->priv->forwards = g_list_delete_link(client->priv->forwards, i);
+		}
 	}
 }
 

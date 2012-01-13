@@ -706,6 +706,10 @@ gebrm_daemon_connect(GebrmDaemon *daemon,
 void
 gebrm_daemon_disconnect(GebrmDaemon *daemon)
 {
+	g_free(daemon->priv->nfsid);
+	g_free(daemon->priv->id);
+	daemon->priv->nfsid = NULL;
+	daemon->priv->id = NULL;
 	gebr_comm_server_disconnect(daemon->priv->server);
 }
 
