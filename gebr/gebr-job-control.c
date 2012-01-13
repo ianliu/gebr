@@ -645,6 +645,9 @@ on_job_status(GebrJob *job,
 {
 	gebr_jc_update_status_and_time(jc, job, new_status);
 
+	if (old_status == JOB_STATUS_QUEUED && new_status == JOB_STATUS_RUNNING)
+		job_control_fill_servers_info(jc);
+
 	GtkTreeIter *iter = gebr_job_get_iter(job);
 	GtkTreePath *path = gtk_tree_model_get_path(GTK_TREE_MODEL(jc->priv->store), iter);
 	gtk_tree_model_row_changed(GTK_TREE_MODEL(jc->priv->store), path, iter);

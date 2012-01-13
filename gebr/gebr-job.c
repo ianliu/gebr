@@ -321,10 +321,8 @@ gebr_job_get_servers(GebrJob *job, gint *n)
 
 	GebrJobTask *tasks = gebr_job_get_tasks(job, n);
 	gchar **servers = g_new0(gchar*, *n+1);
-	for (int i=0; i < *n; i++){
-		g_debug("getting server '%s'", tasks[i].server);
+	for (int i=0; i < *n; i++)
 		servers[i] = g_strdup(tasks[i].server);
-	}
 	servers[*n] = NULL;
 	return servers;
 }
