@@ -17,7 +17,6 @@
 
 #include "gebrm-job.h"
 
-#include <glib/gi18n.h>
 #include <stdlib.h>
 #include <libgebr/utils.h>
 #include <libgebr/date.h>

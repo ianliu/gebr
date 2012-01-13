@@ -24,7 +24,6 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-#include <glib/gi18n.h>
 #include <libgebr/gui/gebr-gui-utils.h>
 #include <libgebr/utils.h>
 #include <libgebr/date.h>

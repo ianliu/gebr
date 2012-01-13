@@ -27,7 +27,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <glib.h>
-#include <glib/gi18n.h>
 #include <glib/gstdio.h>
 #include <libgebr/comm/gebr-comm.h>
 #include <libgebr/log.h>
@@ -45,9 +44,9 @@ static int output_fd = STDOUT_FILENO;
 
 static GOptionEntry entries[] = {
 	{"interactive", 'i', 0, G_OPTION_ARG_NONE, &interactive,
-		N_("Run server in interactive mode, not as a daemon"), NULL},
+		"Run server in interactive mode, not as a daemon", NULL},
 	{"version", 'v', 0, G_OPTION_ARG_NONE, &show_version,
-		N_("Show GeBR daemon version"), NULL},
+		"Show GeBR daemon version", NULL},
 	{NULL}
 };
 
@@ -122,7 +121,7 @@ main(int argc, char *argv[])
 	GError *error = NULL;
 	GOptionContext *context;
 
-	context = g_option_context_new(_("GêBR Maestro"));
+	context = g_option_context_new("GêBR Maestro");
 	g_option_context_add_main_entries(context, entries, GETTEXT_PACKAGE);
 
 	if (!g_option_context_parse(context, &argc, &argv, &error)) {

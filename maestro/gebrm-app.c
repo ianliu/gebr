@@ -36,7 +36,6 @@
 #include <libgebr/comm/gebr-comm.h>
 #include <libgebr/utils.h>
 #include <libgebr/date.h>
-#include <glib/gi18n.h>
 
 struct _GebrmAppPriv {
 	GMainLoop *main_loop;
