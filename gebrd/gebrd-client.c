@@ -19,25 +19,24 @@
 # include <config.h>
 #endif
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <netdb.h>
-#include <sys/socket.h>
-#include <arpa/inet.h>
-
-#include <glib/gi18n.h>
-#include <gdome.h>
-
-#include <libgebr/utils.h>
-#include <libgebr/comm/gebr-comm-protocol.h>
-
 #include "gebrd-client.h"
-#include "gebrd.h"
 #include "gebrd-job.h"
 #include "gebrd-server.h"
 #include "gebrd-sysinfo.h"
+#include "gebrd.h"
+#include <arpa/inet.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <gdome.h>
+#include <glib/gi18n.h>
+#include <libgebr/comm/gebr-comm-protocol.h>
+#include <libgebr/utils.h>
+#include <netdb.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/socket.h>
+#include <unistd.h>
 
 /*
  * Private functions
@@ -272,23 +271,43 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			g_debug("Received gid %s with cookie %s", gid->str, cookie->str);
 
 			if (cookie->len && gebrd_get_server_type() != GEBR_COMM_SERVER_TYPE_MOAB) {
+				struct flock fl = {F_WRLCK, SEEK_SET, 0, 0, 0};
+				int fd;
+
+				fl.l_pid = getpid();
+
+				if ((fd = open("/home/ian/.gebr/Xauthority", O_RDWR | O_CREAT, 0600)) == -1) {
+					perror("open");
+					exit(1);
+				}
+
+				if (fcntl(fd, F_SETLKW, &fl) == -1) {
+					perror("fcntl");
+					exit(1);
+				}
+
+				gebrd_message(GEBR_LOG_DEBUG, "got lock");
+
 				/* add client magic cookie */
-				gint i = 0;
 				gchar *cmd = g_strdup_printf("XAUTHORITY=$HOME/.gebr/Xauthority xauth add :%d . %s",
 							     display, cookie->str);
 				g_debug("%s", cmd);
-				while (i++ < 5 && gebr_system(cmd)) {
+				if (gebr_system(cmd))
 					gebrd_message(GEBR_LOG_ERROR, "Failed to add X11 authorization.");
-					usleep(200*1000);
-				}
+				else
+					gebrd_message(GEBR_LOG_ERROR, "X authorized!");
 				g_free(cmd);
 
-				/* failed to add X11 authorization */
-				if (i == 5) {
-					g_debug("X authorization failed");
-					g_string_assign(client->display, "0");
-				} else
-					gebrd_message(GEBR_LOG_DEBUG, "xauth authorized");
+				fl.l_type = F_UNLCK;
+
+				if (fcntl(fd, F_SETLK, &fl) == -1) {
+					perror("fcntl");
+					exit(1);
+				}
+
+				gebrd_message(GEBR_LOG_DEBUG, "release lock");
+
+				close(fd);
 			}
 
 			gchar *display_str = g_strdup_printf("%d", display + 6000);
