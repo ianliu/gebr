@@ -138,6 +138,15 @@ static gboolean server_fs_lock(void)
 	return TRUE;
 }
 
+static void
+gebrd_on_sigsegvt(int sig)
+{
+	gchar *gebrd_lock = g_build_filename(g_get_home_dir(), ".gebr", "gebrd", g_get_host_name(), "lock", NULL);
+	unlink(gebrd_lock);
+	g_free(gebrd_lock);
+	exit(1);
+}
+
 /*
  * Public
  */
@@ -197,6 +206,9 @@ gboolean server_init(void)
 	sigemptyset(&act.sa_mask);
 	sigaction(SIGTERM, &act, NULL);
 	sigaction(SIGINT, &act, NULL);
+	act.sa_sigaction = (typeof(act.sa_sigaction)) & gebrd_on_sigsegvt;
+	sigemptyset(&act.sa_mask);
+	sigaction(SIGSEGV, &act, NULL);
 
 	/* success, send port */
 	gebrd_message(GEBR_LOG_START, _("Server started at %u port"),
