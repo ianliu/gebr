@@ -181,6 +181,9 @@ ssh_login(GebrCommServer *server,
 	g_signal_emit(maestro, signals[PASSWORD_REQUEST], 0,
 		      gebr_maestro_server_get_display_address(maestro), &password);
 
+	if (!password)
+		return NULL;
+
 	return g_string_new(password);
 }
 
