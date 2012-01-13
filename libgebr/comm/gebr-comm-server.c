@@ -430,8 +430,18 @@ gebr_comm_ssh_parse_output(GebrCommTerminalProcess *process,
 		GString *string;
 		GString *password;
 
-		if (server->password && *server->password
-		    && !server->tried_existant_pass) {
+		// FIXME: This is a workaround to a problem faced when using this
+		// method for other SSH connections other than the server connection
+		// itself. See gebr_comm_server_forward_remote_port() for an example.
+		//
+		// If the server is already connected, the cached password is correct
+		// so we can just write it into the process.
+		gboolean is_connected = (server->state == SERVER_STATE_CONNECT
+					 || server->state == SERVER_STATE_LOGGED);
+
+		gboolean has_password = server->password && *server->password;
+
+		if (is_connected || (has_password && !server->tried_existant_pass)) {
 			write_pass_in_process(process, server->password);
 			server->tried_existant_pass = TRUE;
 			goto out;
@@ -922,6 +932,9 @@ gebr_comm_server_forward_remote_port(GebrCommServer *server,
 				     guint16 remote_port,
 				     guint16 local_port)
 {
+	g_return_val_if_fail(server->state == SERVER_STATE_CONNECT
+			     || server->state == SERVER_STATE_LOGGED, NULL);
+
 	GebrCommTerminalProcess *proc = gebr_comm_terminal_process_new();
 
 	g_signal_connect(proc, "ready-read",
