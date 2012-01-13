@@ -1607,6 +1607,9 @@ flow_edition_find_by_group(GebrFlowEdition *fe,
 			   GtkTreeIter *iter)
 {
 	GtkTreeModel *model = gtk_combo_box_get_model(GTK_COMBO_BOX(fe->priv->server_combobox));
+	if (!model)
+		return FALSE;
+
 	gboolean valid = gtk_tree_model_get_iter_first(model, iter);
 
 	while (valid)

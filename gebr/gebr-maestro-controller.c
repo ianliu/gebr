@@ -495,9 +495,11 @@ gebr_maestro_controller_group_changed_real(GebrMaestroController *self,
 
 	for (int i = 0; i < n-1; i++) {
 		GtkWidget *child = gtk_notebook_get_nth_page(nb, i);
-		const gchar *tmp = gtk_notebook_get_tab_label_text(nb, child);
-		if (tmp && g_strcmp0(tmp, self->priv->last_tag) == 0)
-			current = i;
+		if (child) {
+			const gchar *tmp = gtk_notebook_get_tab_label_text(nb, child);
+			if (tmp && g_strcmp0(tmp, self->priv->last_tag) == 0)
+				current = i;
+		}
 	}
 	gtk_notebook_set_current_page(nb, current);
 }
