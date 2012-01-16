@@ -233,16 +233,15 @@ if test "$enable_gui" = "yes"; then
 		gtk+-2.0   >= 2.18.0
 		webkit-1.0 >= 1.0.1
 	])
-	PKG_CHECK_MODULES([JSCORE], [
-		javascriptcoregtk-1.0 >= 1.6.1
-	],
-	[need_jscore=yes],
-	[need_jscore=no])
 
-	if [ $need_jscore = yes ]
-	then
-		GUI_LIBS="$GUI_LIBS JSCORE_LIBS"
-		GUI_CFLAGS="$GUI_CFLAGS JSCORE_CFLAGS"
+	PKG_CHECK_MODULES([JSCORE],
+			  [javascriptcoregtk-1.0],
+			  [need_jscore=yes],
+			  [need_jscore=no])
+
+	if test "x$need_jscore" = "xyes" ; then
+		GUI_LIBS="$GUI_LIBS $JSCORE_LIBS"
+		GUI_CFLAGS="$GUI_CFLAGS $JSCORE_CFLAGS"
 	fi
 
 	AC_SUBST(GUI_LIBS)
