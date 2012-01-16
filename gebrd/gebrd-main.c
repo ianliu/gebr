@@ -71,7 +71,7 @@ int main(int argc, char **argv)
 	}
 
 	if (show_version == TRUE) {
-		fprintf(stdout, "%s (%s)\n", GEBRD_VERSION NANOVERSION, gebr_version());
+		fprintf(stdout, "%s (%s)\n", GEBR_VERSION NANOVERSION, gebr_version());
 		return 0;
 	}
 

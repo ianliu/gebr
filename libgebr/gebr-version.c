@@ -30,8 +30,8 @@ const gchar *
 gebr_version(void)
 {
 #ifdef DEBUG
-	return LIBGEBR_VERSION NANOVERSION;
+	return GEBR_VERSION NANOVERSION;
 #else
-	return LIBGEBR_VERSION;
+	return GEBR_VERSION;
 #endif
 }

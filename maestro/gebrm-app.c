@@ -36,6 +36,7 @@
 #include <libgebr/comm/gebr-comm.h>
 #include <libgebr/utils.h>
 #include <libgebr/date.h>
+#include <libgebr/gebr-version.h>
 
 struct _GebrmAppPriv {
 	GMainLoop *main_loop;
@@ -933,16 +934,16 @@ on_client_parse_messages(GebrCommProtocolSocket *socket,
 
 			g_debug("Maestro received a X11 cookie: %s", cookie->str);
 
-			if (g_strcmp0(version->str, GEBR_VERSION NANOVERSION) != 0) {
+			if (g_strcmp0(version->str, gebr_version()) != 0) {
 				g_debug("Gebr's version mismatch! Got: %s Expected: %s",
-					version->str, GEBR_VERSION NANOVERSION);
+					version->str, gebr_version());
 
 				gebr_comm_protocol_socket_oldmsg_send(socket, TRUE,
 								      gebr_comm_protocol_defs.err_def, 4,
 								      g_get_host_name(),
 								      "maestro",
 								      "error:protocol",
-								      GEBR_VERSION NANOVERSION);
+								      gebr_version());
 				goto err;
 			}
 
