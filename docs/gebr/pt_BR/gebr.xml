@@ -9,37 +9,37 @@
     geofísicos. Ela <emphasis role="bold">não é um pacote de processamento</emphasis>, mas foi desenhada
     para <emphasis role="bold">integrar</emphasis> diversos pacotes de processamento livres, como <emphasis>Seismic
     Un*x</emphasis> e <emphasis>Madagascar</emphasis>.</para>
-    <para>A GêBR permite gerenciar projetos e linhas, montar e executar fluxos, acompanhar os resultados do
+    <para>A GêBR permite gerenciar Projetos e Linhas, montar e executar Fluxos, acompanhar os resultados do
     processamento, tudo de forma simples e amigável.</para>
     <para>Sendo um <emphasis role="bold">software livre</emphasis>, qualquer pessoa pode usar e customizar a GêBR, sem
     custo, nos termos da <emphasis>GNU Public License</emphasis>. Isso a torna especialmente atrativa para propósitos
     de pesquisa acadêmica e adoção em cursos.</para>
     <section>
       <title>Projeto GêBR</title>
-      <para>A interface GêBR é um dos subprojetos do <emphasis>Projeto GêBR</emphasis>. O principal objetivo deste
+      <para>O principal objetivo deste
       projeto é estimular a integração da comunidade geofísica no Brasil, por meio do desenvolvimento de ferramentas
       que facilitem a disseminação das pesquisas na área.</para>
       <para>Para obter mais informações, visite a página oficial do
       projeto: <emphasis><link xlink:href="http://www.gebrproject.com">www.gebrproject.com</link></emphasis>.</para>
     </section>
     <section>
-	    	    <title>Novidades na versão 0.14.0</title>
-	    <para>A versão 0.14.0 está mais estável e apresenta novas funcionalidades:</para>
+	    	    <title>Novidades na versão 0.16.0</title>
+	    <para>A versão 0.16.0 está mais estável e apresenta novas funcionalidades:</para>
 	    <itemizedlist>
-		    <listitem>
-			    O dicionário de variáveis e os parâmetros dos programas aceitam expressões aritméticas (veja seção <xref linkend="variaveis_dicionario"/>).
-		    </listitem>
-		    <listitem>
-			   A GêBR automatiza fluxos repetitivos através de loops (veja seção <xref linkend="loop"/>).
-		    </listitem>
-		    <listitem>
-			     Exemplos de projetos podem ser importados na seção Exemplos (seção <xref linkend="import_samples"/>).
-		    </listitem>
+        <listitem>Nasce o conceito de maestro, permitindo que a GêBR execute trabalhos em múltiplas máquinas.
+          (veja <xref linkend="servers_configuration" /> e <xref linkend="multiple_machines" />).
+        </listitem>
+        <listitem>
+          Agora é possível controlar a prioridade e o número de processadores usados na execução de trabalhos (veja <xref linkend="multi_cores" /> e <xref linkend="priority_execution" />).
+        </listitem>
+        <listitem>
+          A interface renovada adiciona novas funcionalidades e melhora a usabilidade da GêBR.
+        </listitem>
 	    </itemizedlist>
     </section>
     <section>
       <title>Informações técnicas</title>
-      <para>Este guia refere-se à <emphasis role="bold">versão 0.14.0</emphasis> da GêBR. As telas usadas no guia foram
+      <para>Este guia refere-se à <emphasis role="bold">versão 0.16.0</emphasis> da GêBR. As telas usadas no guia foram
 	capturadas em um sistema <emphasis role="bold">Ubuntu 10.04</emphasis>. Por isso, podem apresentar pequenas
 	diferenças em relação a outros sistemas operacionais. Para obter instruções de instalação específicas para cada
 	sistema, leia o <emphasis><link xlink:href="http://www.gebrproject.com/install-guide">guia de
@@ -57,47 +57,43 @@
         </listitem>
       </itemizedlist>
       <para>
+        <emphasis role="bold">Gerente de desenvolvimento:</emphasis>
+      </para>
+      <itemizedlist>
+        <listitem>
+          <para>Fabrício Matheus Gonçalves <email>fmatheus@gebrproject.com</email></para>
+        </listitem>
+      </itemizedlist>
+      <para>
         <emphasis role="bold">Desenvolvedores:</emphasis>
       </para>
       <itemizedlist>
         <listitem>
-          <para>Alexandre Baaklini <email>abaaklini@gebrproject.com</email></para>
-        </listitem>
-        <listitem>
-          <para>Bráulio Oliveira <email>brauliobo@gebrproject.com</email></para>
-        </listitem>
-        <listitem>
-          <para>Davi Clemente <email>davi.clemente@gebrproject.com</email></para>
-        </listitem>
-        <listitem>
-          <para>Fábio Azevedo <email>fabioaz@gebrproject.com</email></para>
-        </listitem>
-        <listitem>
-          <para>Fabrício Matheus Gonçalves <email>fmatheus@gebrproject.com</email></para>
-        </listitem>
-        <listitem>
-          <para>Gabriel Sobral <email>sobral@gebrproject.com</email></para>
+          <para>Eric Keiji <email>keiji.eric@gebrproject.com</email></para>
         </listitem>
         <listitem>
           <para>Ian Liu Rodrigues <email>ian.liu@gebrproject.com</email></para>
         </listitem>
         <listitem>
+          <para>Igor Henrique Soares Nunes <email>igor.snunes@gebrproject.com</email></para>
+        </listitem>
+        <listitem>
           <para>Jorge Pizzolatto <email>jorge.pzt@gebrproject.com</email></para>
         </listitem>
         <listitem>
-          <para>Priscila Moraes <email>pris.moraess@gebrproject.com</email></para>
+          <para>Júlia Koury Marques <email>julia@gebrproject.com</email></para>
         </listitem>
         <listitem>
-          <para>Renan Giarola <email>renangiarola@gebrproject.com</email></para>
-        </listitem>
-        <listitem>
-          <para>Rodrigo Morelatto <email>morelatto@gebrproject.com</email></para>
+          <para>Vinícius Oliveira Querência <email>querencia@gebrproject.com</email></para>
         </listitem>
       </itemizedlist>
       <para>
         <emphasis role="bold">Consultores:</emphasis>
       </para>
       <itemizedlist>
+        <listitem>
+          <para>Bráulio Oliveira <email>brauliobo@gebrproject.com</email></para>
+        </listitem>
         <listitem>
           <para>Eduardo Filpo <email>efilpo@gmail.com</email></para>
         </listitem>
@@ -109,6 +105,35 @@
         </listitem>
         <listitem>
           <para>Rodrigo Portugal <email>rosoport@gmail.com</email></para>
+        </listitem>
+      </itemizedlist>
+      <para>
+        <emphasis role="bold">Ex-membros:</emphasis>
+      </para>
+      <itemizedlist>
+        <listitem>
+          <para>Alexandre Baaklini</para>
+        </listitem>
+        <listitem>
+          <para>Davi Clemente</para>
+        </listitem>
+        <listitem>
+          <para>Fábio Azevedo</para>
+        </listitem>
+        <listitem>
+          <para>Gabriel Sobral</para>
+        </listitem>
+        <listitem>
+          <para>Giuliano Roberto Pinheiros</para>
+        </listitem>
+        <listitem>
+          <para>Priscila Moraes</para>
+        </listitem>
+        <listitem>
+          <para>Renan Giarola</para>
+        </listitem>
+        <listitem>
+          <para>Rodrigo Morelatto</para>
         </listitem>
       </itemizedlist>
       <para>Muito obrigado por usar a GêBR!</para>
@@ -199,7 +224,12 @@
       </procedure>
       <figure>
         <mediaobject>
-          <caption>Janela de Propriedades da linha; além de adicionar informações sobre a linha como descrição, autor e email, é possível adicionar caminhos preferenciais no campo caminhos.</caption>
+          <caption>
+            Janela de Propriedades da linha; você pode definir informações
+            sobre a linha como descrição, autor, e-mail, o maestro da linha
+            (veja <xref linkend="changing_the_maestro_of_a_line" />) e
+            adicionar caminhos preferenciais no campo caminhos.
+          </caption>
           <imageobject>
             <imagedata fileref="../images/janela_properties_line.png"/>
           </imageobject>
