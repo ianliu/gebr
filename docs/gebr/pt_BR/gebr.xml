@@ -168,7 +168,7 @@
                   botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_criar_projeto.png"/></imageobject></inlinemediaobject></guiicon></para>
         </step>
         <step>
-          <para>Na janela <guilabel>Propriedades para projeto</guilabel>, digite um
+          <para>Na janela <guilabel>Propriedades do projeto</guilabel>, digite um
             <emphasis>título</emphasis> para o projeto (por exemplo, <userinput>Meu primeiro
               projeto</userinput>).</para>
         </step>
@@ -231,7 +231,7 @@
             adicionar caminhos preferenciais no campo caminhos.
           </caption>
           <imageobject>
-            <imagedata fileref="../images/janela_properties_line.png"/>
+            <imagedata fileref="../images/GeBR_line_properties.png"/>
           </imageobject>
         </mediaobject>
       </figure>
@@ -353,9 +353,14 @@
             seguir:</para>
           <figure>
             <mediaobject>
-              <caption>Na aba Editor de Fluxo, no canto esquerdo da janela, pode-se alterar a ordem dos programas como no exemplo.</caption>
+              <caption>
+                Na aba Editor de Fluxo, no lado direito da janela você verá a
+                lista de Menus. A partir dessa lista você pode adicionar
+                programas no seu Fluxo, que aparecerão no lado esquerdo da
+                janela.
+              </caption>
               <imageobject>
-                <imagedata fileref="../images/janela_flow_edition_2.png"/>
+                <imagedata fileref="../images/GeBR_flow_browser_flow_assembling.png"/>
               </imageobject>
             </mediaobject>
           </figure>
