@@ -70,6 +70,9 @@ static void on_state_change(GebrMaestroServer *maestro, GebrMaestroController *s
 
 static void gebr_maestro_controller_maestro_state_changed_real(GebrMaestroController *mc,
 							       GebrMaestroServer *maestro);
+static void update_maestro_view(GebrMaestroController *mc,
+                                GebrMaestroServer *maestro,
+                                gboolean emit_daemon_changed);
 
 static void on_maestro_error(GebrMaestroServer *maestro,
 			     const gchar *addr,
@@ -741,8 +744,8 @@ server_popup_menu(GtkWidget * widget,
 }
 
 static void
-on_daemons_changed(GebrMaestroServer *maestro,
-                   GebrMaestroController *mc)
+update_daemon_model(GebrMaestroServer *maestro,
+                    GebrMaestroController *mc)
 {
 	GtkTreeIter iter;
 	GtkTreeIter new_iter;
@@ -761,12 +764,19 @@ on_daemons_changed(GebrMaestroServer *maestro,
 		gtk_list_store_set(mc->priv->model, &new_iter,
 		                   MAESTRO_CONTROLLER_DAEMON, daemon,
 		                   MAESTRO_CONTROLLER_ADDR, !g_strcmp0(hostname, "")? gebr_daemon_server_get_address(daemon) : hostname,
-		                   MAESTRO_CONTROLLER_AUTOCONN, gebr_daemon_server_get_ac(daemon),
-		                   MAESTRO_CONTROLLER_EDITABLE, FALSE,
-		                   -1);
+		                		   MAESTRO_CONTROLLER_AUTOCONN, gebr_daemon_server_get_ac(daemon),
+		                		   MAESTRO_CONTROLLER_EDITABLE, FALSE,
+		                		   -1);
 	}
 	insert_new_entry(mc);
 	g_object_unref(model);
+}
+
+static void
+on_daemons_changed(GebrMaestroServer *maestro,
+                   GebrMaestroController *mc)
+{
+	update_daemon_model(maestro, mc);
 
 	g_signal_emit(mc, signals[DAEMONS_CHANGED], 0);
 }
@@ -1011,7 +1021,7 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 	gebr_maestro_server_get_error(maestro, &error_type, &error_msg);
 	on_maestro_error(maestro, gebr_maestro_server_get_address(maestro),
 			 error_type, error_msg, self);
-	gebr_maestro_controller_maestro_state_changed_real(self, maestro);
+	update_maestro_view(self, maestro, FALSE);
 
 	GtkButton *connect_button = GTK_BUTTON(gtk_builder_get_object(self->priv->builder, "btn_connect"));
 	g_signal_connect(connect_button, "clicked", G_CALLBACK(on_connect_to_maestro_clicked), self);
@@ -1318,8 +1328,9 @@ on_ac_change(GebrMaestroServer *maestro,
 }
 
 static void
-gebr_maestro_controller_maestro_state_changed_real(GebrMaestroController *mc,
-						   GebrMaestroServer *maestro)
+update_maestro_view(GebrMaestroController *mc,
+                    GebrMaestroServer *maestro,
+                    gboolean emit_daemon_changed)
 {
 	if (!mc->priv->builder)
 		return;
@@ -1330,10 +1341,21 @@ gebr_maestro_controller_maestro_state_changed_real(GebrMaestroController *mc,
 
 	if (state == SERVER_STATE_DISCONNECTED)
 		gtk_list_store_clear(mc->priv->model);
-	else if (state == SERVER_STATE_LOGGED)
-		on_daemons_changed(maestro, mc);
+	else if (state == SERVER_STATE_LOGGED) {
+		if (emit_daemon_changed)
+			on_daemons_changed(maestro, mc);
+		else
+			update_daemon_model(maestro, mc);
+	}
 
 	gtk_tree_view_set_model(view, GTK_TREE_MODEL(mc->priv->model));
+}
+
+static void
+gebr_maestro_controller_maestro_state_changed_real(GebrMaestroController *mc,
+						   GebrMaestroServer *maestro)
+{
+	update_maestro_view(mc, maestro, TRUE);
 }
 
 static void 
