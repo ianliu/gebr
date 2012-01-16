@@ -89,12 +89,19 @@ gebrm_daemon_iface_get_hostname(GebrCommDaemon *daemon)
 	return gebrm_daemon_get_hostname(GEBRM_DAEMON(daemon));
 }
 
+void
+gebrm_daemon_iface_add_task(GebrCommDaemon *daemon)
+{
+	GEBRM_DAEMON(daemon)->priv->uncompleted_tasks++;
+}
+
 static void
 gebrm_daemon_init_iface(GebrCommDaemonIface *iface)
 {
 	iface->get_server = gebrm_daemon_iface_get_server;
 	iface->get_n_running_jobs = gebrm_daemon_iface_get_n_running_jobs;
 	iface->get_hostname = gebrm_daemon_iface_get_hostname;
+	iface->add_task = gebrm_daemon_iface_add_task;
 }
 
 static void
@@ -228,7 +235,6 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 	GList *link;
 	struct gebr_comm_message *message;
 	GebrmDaemon *daemon = user_data;
-	g_debug("Estou em %s", __func__);
 
 	while ((link = g_list_last(server->socket->protocol->messages)) != NULL) {
 		message = link->data;
@@ -310,7 +316,6 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 			GString *cmd = g_list_nth_data(arguments, 3);
 			GString *moab_jid = g_list_nth_data(arguments, 4);
 
-			daemon->priv->uncompleted_tasks++;
 			GebrmTask *task = gebrm_task_new(daemon, id->str, frac->str);
 			g_signal_connect(task, "status-change",
 					 G_CALLBACK(gebrm_daemon_on_task_status_change), daemon);
@@ -334,8 +339,6 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 			GebrmTask *task = gebrm_task_find(rid->str, frac->str);
 			gebrm_task_emit_output_signal(task, output->str);
 
-			g_debug("[%s] OUT_DEF! %s", server->address->str, output->str);
-
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		} else if (message->hash == gebr_comm_protocol_defs.sta_def.code_hash) {
 			GList *arguments;
@@ -352,8 +355,6 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 			GebrmTask *task = gebrm_task_find(rid->str, frac->str);
 			gebrm_task_emit_status_changed_signal(task, gebrm_task_translate_status(status),
 							      parameter->str);
-
-			g_debug("[%s] STA_DEF! %s", server->address->str, status->str);
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}

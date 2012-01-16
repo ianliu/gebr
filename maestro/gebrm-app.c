@@ -46,6 +46,7 @@ struct _GebrmAppPriv {
 	gchar *nfsid;
 
 	GQueue *job_def_queue;
+	GQueue *job_run_queue;
 
 	// Server groups: gchar -> GList<GebrDaemon>
 	GTree *groups;
@@ -235,7 +236,7 @@ gebrm_app_job_controller_on_status_change(GebrmJob *job,
 		GList *children = g_object_get_data(G_OBJECT(job), "children");
 		for (GList *i = children; i; i = i->next) {
 			RunnerAndJob *raj = i->data;
-			gebr_comm_runner_run_async(raj->runner, gebrm_job_get_id(raj->job));
+			gebr_comm_runner_run_async(raj->runner);
 		}
 		g_list_foreach(children, (GFunc)g_free, NULL);
 		g_list_free(children);
@@ -281,6 +282,7 @@ gebrm_app_finalize(GObject *object)
 	g_list_free(app->priv->connections);
 	g_list_free(app->priv->daemons);
 	g_queue_free(app->priv->job_def_queue);
+	g_queue_free(app->priv->job_run_queue);
 	G_OBJECT_CLASS(gebrm_app_parent_class)->finalize(object);
 }
 
@@ -304,6 +306,7 @@ gebrm_app_init(GebrmApp *app)
 	app->priv->jobs = g_hash_table_new_full(g_str_hash, g_str_equal,
 						g_free, NULL);
 	app->priv->job_def_queue = g_queue_new();
+	app->priv->job_run_queue = g_queue_new();
 }
 
 void
@@ -574,6 +577,11 @@ on_execution_response(GebrCommRunner *runner,
 	g_queue_pop_head(aap->app->priv->job_def_queue);
 	send_job_def_to_clients(aap->app, aap->job);
 
+	g_queue_pop_head(aap->app->priv->job_run_queue);
+	GebrCommRunner *next_run = g_queue_peek_head(aap->app->priv->job_run_queue);
+	if (next_run)
+		gebr_comm_runner_run_async(next_run);
+
 	gebr_validator_free(gebr_comm_runner_get_validator(runner));
 	gebr_comm_runner_free(runner);
 	g_free(aap);
@@ -588,8 +596,6 @@ on_client_request(GebrCommProtocolSocket *socket,
 	GebrCommUri *uri = gebr_comm_uri_new();
 	gebr_comm_uri_parse(uri, request->url->str);
 	const gchar *prefix = gebr_comm_uri_get_prefix(uri);
-
-	g_debug("Prefix %s", prefix);
 
 	if (request->method == GEBR_COMM_HTTP_METHOD_PUT) {
 		if (g_strcmp0(prefix, "/server") == 0) {
@@ -757,12 +763,6 @@ on_client_request(GebrCommProtocolSocket *socket,
 								      (GebrGeoXmlDocument **)pline,
 								      (GebrGeoXmlDocument **)pproj);
 
-			GList *servers = get_comm_servers_list(app, name, group_type);
-			GebrCommRunner *runner = gebr_comm_runner_new(GEBR_GEOXML_DOCUMENT(*pflow),
-								      servers, gid, parent_id,
-								      speed, nice, name, validator);
-			g_list_free(servers);
-
 			gchar *title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(*pflow));
 
 			GebrmJobInfo info = { 0, };
@@ -800,6 +800,12 @@ on_client_request(GebrCommProtocolSocket *socket,
 			gebrm_job_info_free(&info);
 			gebrm_app_job_controller_add(app, job);
 
+			GList *servers = get_comm_servers_list(app, name, group_type);
+			GebrCommRunner *runner = gebr_comm_runner_new(GEBR_GEOXML_DOCUMENT(*pflow),
+			                                              servers, gebrm_job_get_id(job), gid, parent_id,
+			                                              speed, nice, name, validator);
+			g_list_free(servers);
+
 			AppAndJob *aap = g_new(AppAndJob, 1);
 			aap->app = app;
 			aap->job = job;
@@ -810,7 +816,9 @@ on_client_request(GebrCommProtocolSocket *socket,
 			if (parent_id[0] == '\0') {
 				g_debug("Running immediately");
 				g_queue_push_head(app->priv->job_def_queue, job);
-				gebr_comm_runner_run_async(runner, gebrm_job_get_id(job));
+				if (g_queue_is_empty(app->priv->job_run_queue))
+					gebr_comm_runner_run_async(runner);
+				g_queue_push_tail(app->priv->job_run_queue, runner);
 			} else {
 				GebrmJob *parent = gebrm_app_job_controller_find(app, parent_id);
 				GList *parent_on_queue = g_queue_find(app->priv->job_def_queue, parent);

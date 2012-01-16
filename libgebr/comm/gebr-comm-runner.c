@@ -129,6 +129,7 @@ strip_flow(GebrValidator *validator,
 GebrCommRunner *
 gebr_comm_runner_new(GebrGeoXmlDocument *flow,
 		     GList *servers,
+                     const gchar *id,
 		     const gchar *gid,
 		     const gchar *parent_rid,
 		     const gchar *speed,
@@ -139,6 +140,7 @@ gebr_comm_runner_new(GebrGeoXmlDocument *flow,
 	GebrCommRunner *self = g_new(GebrCommRunner, 1);
 	self->priv = g_new0(GebrCommRunnerPriv, 1);
 	self->priv->flow = gebr_geoxml_document_ref(flow);
+	self->priv->id = g_strdup(id);
 	self->priv->gid = g_strdup(gid);
 	self->priv->parent_rid = g_strdup(parent_rid);
 	self->priv->speed = g_strdup(speed);
@@ -304,6 +306,8 @@ divide_and_run_flows(GebrCommRunner *self)
 		gchar *flow_xml = strip_flow(self->priv->validator, flow);
 		const gchar *hostname = gebr_comm_daemon_get_hostname(sc->server);
 
+		gebr_comm_daemon_add_task(GEBR_COMM_DAEMON(sc->server));
+
 		g_string_append_printf(server_list, "%s,%lf,",
 				       hostname, weights[k]);
 
@@ -375,7 +379,7 @@ on_response_received(GebrCommHttpMsg *request,
 	g_debug("_____________________________________");
 	g_debug("Score of %s, njobs:%d",  server->address->str, n_jobs) ;
 	g_debug("before:%lf",  sc->score) ;
-	if (n_jobs >0)
+	if (n_jobs > 0)
 		sc->score *=  pow(factor_correction, n_jobs);
 	g_debug("after: %lf",  sc->score);
 	g_debug("_____________________________________");
@@ -408,12 +412,10 @@ gebr_comm_runner_set_ran_func(GebrCommRunner *self,
 }
 
 void
-gebr_comm_runner_run_async(GebrCommRunner *self,
-			   const gchar *id)
+gebr_comm_runner_run_async(GebrCommRunner *self)
 {
 	self->priv->requests = 0;
 	self->priv->responses = 0;
-	self->priv->id = g_strdup(id);
 
 	for (GList *i = self->priv->servers; i; i = i->next) {
 		GebrCommHttpMsg *request;

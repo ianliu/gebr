@@ -38,6 +38,7 @@ struct _GebrCommRunner {
  */
 GebrCommRunner *gebr_comm_runner_new(GebrGeoXmlDocument *flow,
 				     GList *servers,
+				     const gchar *id,
 				     const gchar *gid,
 				     const gchar *parent_rid,
 				     const gchar *speed,
@@ -65,8 +66,7 @@ void gebr_comm_runner_free(GebrCommRunner *self);
  * gebr_comm_runner_run_async:
  * @self:
  */
-void gebr_comm_runner_run_async(GebrCommRunner *self,
-				const gchar *id);
+void gebr_comm_runner_run_async(GebrCommRunner *self);
 
 GebrValidator *gebr_comm_runner_get_validator(GebrCommRunner *self);
 

@@ -210,8 +210,6 @@ gebrm_task_find(const gchar *rid, const gchar *frac)
 	g_return_val_if_fail(rid != NULL && frac != NULL, NULL);
 
 	gchar *tid = gebrm_task_build_id(rid, frac);
-	g_debug("Looking for task %s, rid %s (%s)",
-		frac, rid, tid);
 	GebrmTask *task = g_hash_table_lookup(get_tasks_map(), tid);
 	g_free(tid);
 	return task;
