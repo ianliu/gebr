@@ -29,7 +29,7 @@ What can GeBR do:
 rm -rf %{buildroot}
 rm -rf /opt/gebrproject
 mkdir -p %{buildroot}/opt
-GEBR_VERSION=%{version} TMP_DIR=%{buildroot}/../gebr-tmp-dir ./rpm/gebr-centos-install.sh --prefix=/opt/gebrproject
+GEBR_VERSION=%{version} TMP_DIR=/root/gebr-tmp-dir ./rpm/gebr-centos-install.sh --prefix=/opt/gebrproject
 mv /opt/gebrproject %{buildroot}/opt
 
 %clean
