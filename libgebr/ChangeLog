@@ -1,3 +1,118 @@
+2012-01-16  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Unify Libgebr, Gebrd and Gebr's versions
+
+2012-01-16  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix divide jobs on server in parallel multiple execution (and remove
+	some unused debugs)
+
+2012-01-13  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Remove gtk-2.20 method, gtk_widget_get_requisition
+
+2012-01-13  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix test of GebrGeoXml.is_parallelizable
+
+2012-01-13  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Send GeBR's version to maestro on INI message
+
+2012-01-13  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* FIx segfault and treatment of new-connection of daemon on already
+	exist port in lock file
+
+2012-01-13  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fixed wrong file been erased on distclean.
+
+2012-01-13  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* FIx logical error on GebrGeoXmlFlor.is_parallelizable (check if last
+	configured program use stdout)
+
+2012-01-13  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Change GebrServer state to connected only when the socket connects
+	* Do not ask password if GebrServer is already connected
+	* Remove unused message, MCK_DEF
+
+2012-01-12  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fixed two more fuzzy translations.
+	* Update changelogs to 0.15.5
+
+2012-01-12  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Emit signal to all connected gebr when close job on maestro
+	* Clean queue of ret_hash when disconnect server
+
+2012-01-12  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix a bug with the new RET messages queue
+
+2012-01-12  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Changing credits message
+	* Updating names of staff of GeBR
+
+2012-01-12  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix a racing bug when protocol messages expects a return
+	* Initiate state of GebrCommTerminalProcess
+	* In GebrCommServer, check if port is non-zero before establishing a
+	connection
+	* Add singleton log instance in GebrLog
+
+2012-01-11  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Update divide_flows integration test.
+
+2012-01-11  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add SERVER_STATE_LOGGED
+
+2012-01-11  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Adding two new translated messages at pt_BR.po in libgebr/po
+
+2012-01-10  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add execute-warn icons
+
+2012-01-10  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix bug of running a job with loop of size less than the number of
+	machines
+
+2012-01-10  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change all server address to hostname on MaestroController,
+	FlowEdition, JobControl and send that information to Maestro
+
+2012-01-10  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix inconsistent distribution of jobs in gebr-comm-runner
+
+2012-01-10  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix distcheck target
+
+2012-01-10  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix wrong heuristic of pondering
+
+2012-01-09  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Translate potfiles in folder gebr
+	* Add heuristic near to RoundRobin to multiple execution
+
+2012-01-09  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add GebrCommDaemon interface and implement in GebrmDaemon
+
 2012-01-05  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
 
 	* Fix bug on ncores when flow is not parallelizable

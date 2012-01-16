@@ -1,3 +1,9 @@
+gebrproject (0.15.6) lucid; urgency=low
+
+  * Feature freeze.
+
+ -- Fabricio Matheus Goncalves <fmatheus@gebrproject.com>  Mon, 16 Jan 2012 15:25:13 -0200
+
 gebrproject (0.15.5) lucid; urgency=low
 
   * New maestro to orchestrate job execution in GeBR's behalf. (#1097)

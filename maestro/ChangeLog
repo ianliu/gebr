@@ -1,3 +1,98 @@
+2012-01-16  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Unify Libgebr, Gebrd and Gebr's versions
+
+2012-01-16  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix divide jobs on server in parallel multiple execution (and remove
+	some unused debugs)
+
+2012-01-13  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Maestro sends another type in ERR message identifying who sent the
+	error
+	* Send GeBR's version to maestro on INI message
+	* Send group definitions after returning from INI
+
+2012-01-13  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Remove some critical errors and warnings from maestro
+
+2012-01-13  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Remove i18n from Maestro
+	* Remove unused method gebrm_job_get_command_line
+	* Fix a bug when continuing a Daemon's stuck connection
+
+2012-01-12  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Update changelogs to 0.15.5
+
+2012-01-12  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Emit signal to all connected gebr when close job on maestro
+	* Send messages to all clients connected on respective maestro
+
+2012-01-12  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Change in Preferences 'Maestro Server'=> 'Maestro'
+
+2012-01-12  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix a bug with the new RET messages queue
+
+2012-01-12  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix a racing bug when protocol messages expects a return
+	* Set log file for Maestro
+
+2012-01-11  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix kill queued jobs starting new executions
+	* Fix bug of queue status on Gebr, and create queue to send job_def to
+	client on maestro
+
+2012-01-11  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add SERVER_STATE_LOGGED
+
+2012-01-10  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Kill SSH tunnels when disconnecting a Daemon
+
+2012-01-10  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Insert last_error on GebrmDaemon to fix many message of err_def to
+	gebr
+	* Change all server address to hostname on MaestroController,
+	FlowEdition, JobControl and send that information to Maestro
+
+2012-01-10  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Tasks start in running state
+
+2012-01-10  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change pop-up errors to icon warning on servers configuration
+
+2012-01-09  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fixed maestro nanoversion sync with mercurial.
+
+2012-01-09  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Do not remove daemons with error on maestro
+	* Maestro send err_def instead of srm_def on error
+	* Enable multiple execution in GeBR
+
+2012-01-09  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix segFault on server list generation
+
+2012-01-09  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add GebrCommDaemon interface and implement in GebrmDaemon
+
 2012-01-06  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
 
 	* Return hostname of daemon to gebr after daemons init

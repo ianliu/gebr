@@ -1,3 +1,25 @@
+2012-01-16  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Unify Libgebr, Gebrd and Gebr's versions
+
+2012-01-13  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* FIx segfault and treatment of new-connection of daemon on already
+	exist port in lock file
+	* Remove lock file of GeBRd when received SIGSEGV signal
+	* Fix commit 2b24a391b61a - include ".gebr" on path
+	* Fix path to create file Xauthority on GeBRd
+	* FIx connection on GeBRd to port write on lock file
+
+2012-01-13  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix racing condition when adding X11 cookies
+
+2012-01-12  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fixed two more fuzzy translations.
+	* Update changelogs to 0.15.5
+
 2012-01-06  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
 
 	* Fix a bug in which the Daemon was authorizing the wrong port in the

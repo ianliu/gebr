@@ -1,3 +1,145 @@
+2012-01-16  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix bug on update servers model when create servers dialog
+
+2012-01-13  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix inconsistency on servers info of job control when job change
+	from queued to running (and remove unnecessary debug)
+
+2012-01-13  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Include GtkSpinner for gtk-2.20 or greater only
+
+2012-01-13  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Update pt_BR.po to gebr directory
+	* Improvements on error messages of daemon and fix some critical
+	errors on edit canceled of groups
+
+2012-01-13  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Maestro disconnects from Gebr if version mismatches
+	* Change GebrMaestroServer::error signal to ::daemon-error and add
+	::maestro-error
+	* Maestro sends another type in ERR message identifying who sent the
+	error
+
+2012-01-13  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix gtk criticals on GeBR
+	* Fix bug to cancel dialog of ssh password request
+
+2012-01-13  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add gebr_job_remove prototype into gebr-job.h
+
+2012-01-12  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Update changelogs to 0.15.5
+
+2012-01-12  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix order of jobs on JobControl when using multiple execution
+	* Emit signal to all connected gebr when close job on maestro
+	* Fix check if maestro is connected to maestro is logged when execute
+	a flow
+	* Clean queue of ret_hash when disconnect server
+
+2012-01-12  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Change in Preferences 'Maestro Server'=> 'Maestro'
+
+2012-01-12  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix a bug with the new RET messages queue
+
+2012-01-12  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix a racing bug when protocol messages expects a return
+
+2012-01-11  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix kill queued jobs starting new executions
+
+2012-01-11  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Fixing translated message at job control
+
+2012-01-11  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix bug of queue status on Gebr, and create queue to send job_def to
+	client on maestro
+	* FIx bug on line created without maestro
+
+2012-01-11  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add SERVER_STATE_LOGGED
+
+2012-01-11  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Insert dialog to change maestro when execute a flow with
+	disconnected maestro
+	* Update run widgets when select a project and create treatments for
+	that
+	* Show address of daemon on group's model when daemon doesn't have
+	hostname yet
+	* Update servers filter combo when remove a Job and block callback
+	when include new element on that combo
+
+2012-01-10  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Insert servers of selected group to run a job
+
+2012-01-10  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Adding new translated messages at Job Control and LineProperties
+
+2012-01-10  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fill Servers Filter combo-box on Job Control with jobs information
+
+2012-01-10  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Updating tooltip of padlock icon at LineProperties and removing
+	cleaning of path at change of maestro.
+	* Updating tooltip of padlock icon at LineProperties and removing
+	cleaning of path at change of maestro.
+
+2012-01-10  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix filter jobs on Job Control of Maestro Group
+
+2012-01-10  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Translate many itens (PO files)
+
+2012-01-10  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Select "New" entry after insert a new server
+	* Change all server address to hostname on MaestroController,
+	FlowEdition, JobControl and send that information to Maestro
+	* Fix critical of GebrValidator.evaluate on JobControl
+	* Allow to change maestro for line only if current maestro are
+	connected
+	* Insert daemon on model before others and after "new" entry
+
+2012-01-10  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix distcheck target
+
+2012-01-10  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change pop-up errors to icon warning on servers configuration
+
+2012-01-09  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Translate potfiles in folder gebr
+
+2012-01-09  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Enable multiple execution in GeBR
+
 2012-01-06  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
 
 	* Release 0.15.5 with maestro to orchestrate job execution in GeBR's
