@@ -1639,6 +1639,10 @@ on_maestro_filter_changed(GtkComboBox *combo,
 	g_signal_handlers_block_by_func(jc->priv->server_combo, on_cb_changed, jc);
 	GtkTreeIter iter, it;
 
+	gchar *prev_selected = gtk_combo_box_get_active_text(jc->priv->server_combo);
+	gint new_select = 0;
+	gint index = 0;
+
 	gtk_list_store_clear(jc->priv->server_filter);
 
 	gtk_list_store_append(jc->priv->server_filter, &iter);
@@ -1647,6 +1651,8 @@ on_maestro_filter_changed(GtkComboBox *combo,
 			   1, -1,      // Type
 			   2, NULL,    // Name
 			   -1);
+
+	index++;
 
 	GebrMaestroServer *maestro;
 	maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
@@ -1680,6 +1686,9 @@ on_maestro_filter_changed(GtkComboBox *combo,
 		                   1, type,
 		                   2, group);
 
+		if (g_strcmp0(display, prev_selected) == 0)
+			new_select = index;
+		index++;
 		if (type == MAESTRO_SERVER_TYPE_GROUP) {
 			gint n;
 			gchar **servers = gebr_job_get_servers(job, &n);
@@ -1694,12 +1703,15 @@ on_maestro_filter_changed(GtkComboBox *combo,
 				                   0, servers[i],
 				                   1, MAESTRO_SERVER_TYPE_DAEMON,
 				                   2, servers[i]);
+
+				if (g_strcmp0(servers[i], prev_selected) == 0)
+					new_select = index;
+				index++;
 			}
 		}
 	}
-
-	gtk_combo_box_set_active(jc->priv->server_combo, 0);
 	g_signal_handlers_unblock_by_func(jc->priv->server_combo, on_cb_changed, jc);
+	gtk_combo_box_set_active(jc->priv->server_combo, new_select);
 }
 
 static void
