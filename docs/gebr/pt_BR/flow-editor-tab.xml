@@ -399,7 +399,6 @@
     <para>No momento em que um Fluxo é executado, a GêBR troca para a aba de
       <guilabel>Controle de Tarefas automaticamente</guilabel>, local onde
       informações sobre a execução podem ser consultadas.</para>
-    </para>
   </section>
 
   <section xml:id="multi_cores">

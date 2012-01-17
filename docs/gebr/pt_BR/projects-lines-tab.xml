@@ -179,21 +179,23 @@
       passos abaixo:
     </para>
     <itemizedlist>
-      <listitem>
+    <procedure>
+      <step>
         <para>Abra a janela de propriedades da Linha.</para>
-      </listitem>
-      <listitem>
+      </step>
+      <step>
         <para>Clique sobre o ícone de cadeado para habilitar a edição de maestro nesta linha.</para>
-      </listitem>
-      <listitem>
+      </step>
+      <step>
         <para>Escolha o maestro desejado.</para>
-      </listitem>
-      <listitem>
+      </step>
+      <step>
         <para>Clique OK para fechar a janela.</para>
-      </listitem>
-      <listitem>
-        <para>Clique Sim para confirmar a operação.</para>
-      </listitem>
+      </step>
+      <step>
+        <para>Clique Sim para confirmar a operação ou Não para cancelar.</para>
+      </step>
+    </procedure>
     </itemizedlist>
     <imageobject>
       <imagedata fileref="../images/GeBR_line_properties_changing_maestro.png" />
@@ -253,7 +255,7 @@
     </procedure>
   </section>
   <section xml:id="editar_comentarios">
-    <title>Editar comentários na aba Projetos e Linhas</title>
+    <title>Editar comentários</title>
     <para>Pode-se editar comentários no relatório, atribuindo informações adicionais sobre o projeto ou sobre a
       linha. Para <emphasis role="bold">editar um comentário</emphasis>:</para>
     <procedure>
@@ -300,10 +302,10 @@
     </para>
   </section>
   <section xml:id="visualizar_relatorio">
-    <title>Visualizar relatório na aba Projetos e Linhas</title>
-    <para>Como explorado na <xref linkend="editar_comentarios"/>, pode-se criar e editar informações adicionais sobre
+    <title>Visualizar relatório</title>
+    <para>Como explorado na seção anterior, pode-se criar e editar informações adicionais sobre
       projetos e linhas. Para visualizar o relatório que você criou, clique no botão Visualizar relatório, na parte
-      de baixo da caixa Detalhes, no lado direito da janela principal.</para>
+      de baixo da caixa <guilabel>Detalhes</guilabel>, no lado direito da janela principal.</para>
     <para>Na janela que se abre após o usuário clicar em <guilabel>Visualizar relatório</guilabel>, em Arquivo, é
       possível:</para>
     <procedure>
