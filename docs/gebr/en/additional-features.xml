@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<section
+  xmlns="http://docbook.org/ns/docbook"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  xmlns:xlink="http://www.w3.org/1999/xlink"
+  lang="en"
+  version="5.0"
+  xml:id="additional_features">
+
+  <title>Additional features</title>
+  <section xml:id="menu">
+    <title>The 
+      <guimenu>Action</guimenu>menu</title>
+    <para>From the 
+      <guimenu>Actions</guimenu>menu you can access your 
+      <guimenuitem>Preferences</guimenuitem>and configure 
+      <guimenuitem>Servers</guimenuitem>. If your enthusiasm for GêBR has lead you to read the
+      whole manual, you have probably used almost all available features found in these options.
+      But just in case, below you will find the documentation for these options.</para>
+    <section>
+      <title>Preferences</title>
+      <para>The details you provide in the 
+        <guimenuitem>Preferences</guimenuitem>dialog box will be adopted as the default by GêBR.
+        Specifically:</para>
+      <itemizedlist>
+        <listitem>
+          <para>
+            <guilabel>User name:</guilabel>will be used as the default for 
+            <guilabel>Author:</guilabel>when you create Projects, Lines and Flows.</para>
+        </listitem>
+        <listitem>
+          <para>
+            <guilabel>Email:</guilabel>will be used as the default for 
+            <guilabel>Email:</guilabel>when you create Projects, Lines and Flows.</para>
+        </listitem>
+        <listitem>
+          <para>
+            <guilabel>User's menus directory:</guilabel>will be the default directory where 
+            <emphasis>GêBR's Menus</emphasis>are maintained ( 
+            <filename class="extension">mnu</filename>files).</para>
+        </listitem>
+      </itemizedlist>
+      <figure>
+        <mediaobject>
+          <caption>Preferences menu opens a dialog box where you edit the user name, email,
+            menu's directory and the HTML editor.</caption>
+          <imageobject>
+            <imagedata fileref="../images/GeBR_preferences.png" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+      <para>Advanced settings in Preferences menu expands the dialog box where you edit the
+        maestro server and HTML editor.</para>
+      <para>
+        <emphasis role="bold">Advanced Settings</emphasis>
+      </para>
+      <mediaobject>
+        <caption>Advanced Settings of Preferences menu</caption>
+        <imageobject>
+          <imagedata fileref="../images/GeBR_preferences_advanced.png" />
+        </imageobject>
+      </mediaobject>
+      <itemizedlist>
+        <listitem>
+          <para>Maestro Server: will be the default for Maestro Server when you start GêBR, the
+            localhost is the default for Maestro Server when you connect GêBR for the first
+            time.</para>
+        </listitem>
+        <listitem>
+          <para>HTML editor: the default text editor that GêBR will open when creating reports on
+            Projects, Lines and Flows.</para>
+        </listitem>
+      </itemizedlist>
+    </section>
+  </section>
+  <section xml:id="servers_configuration">
+    <title>Servers configuration</title>
+    <para>GêBR can take benefit of the resources of multiple machines. To handle it, GêBR is
+      segmented in three layers:</para>
+    <itemizedlist>
+      <listitem>The host machine (GêBR-client), from where the user sends requests</listitem>
+      <listitem>An intermediate layer (GêBR-maestro), where all the jobs are coordinated</listitem>
+      <listitem>Executors (GêBR-daemons), where the jobs are executed</listitem>
+    </itemizedlist>
+    <mediaobject>
+      <caption>Layers of execution of GêBR</caption>
+      <imageobject>
+        <imagedata fileref="../images/GeBR_servers_maestro_diagram.png" />
+      </imageobject>
+    </mediaobject>
+    <para>The user can be connected to one maestro at once. Each maestro, in turn, can be connected
+      to many daemons. To ease the task of handling of files by the maestro, one requirement is that
+      all the daemons must be in the same Network File System (NFS).</para>
+    <para>The Servers Interface has three parts: 
+      <itemizedlist>
+        <listitem>
+          <para>Maestro entry- central unit of coordination of multiple machines</para>
+        </listitem>
+        <listitem>
+          <para>Servers configuration - choose the daemons associated to the current maestro</para>
+        </listitem>
+        <listitem>
+          <para>Groups configuration- configure the groups of daemons on the current maestro</para>
+        </listitem>
+    </itemizedlist></para>
+    <section>
+      <title>Maestro Entry</title>
+      <mediaobject>
+        <caption>Maestro entry</caption>
+        <imageobject>
+          <imagedata fileref="../images/GeBR_servers_maestro_entry.png" />
+        </imageobject>
+      </mediaobject>
+      <para>In the upper part of the Servers Interface, there is an entry in which the user can put
+        the desired machine to use as maestro. A requirement is that the package GêBR-maestro must be
+        installed on that machine. The state of the connection between GêBR and the maestro is shown
+        by the right-side icon: 
+        <itemizedlist>
+          <listitem><para>connected (<inlinemediaobject>
+                <imageobject>
+                  <imagedata fileref="../../common-images/gtk-connect.png" />
+                </imageobject>
+          </inlinemediaobject>)</para></listitem>
+          <listitem><para>disconnected (<inlinemediaobject>
+                <imageobject>
+                  <imagedata fileref="../../common-images/gtk-disconnect.png" />
+                </imageobject>
+          </inlinemediaobject>)</para></listitem>
+          <listitem><para>error (<inlinemediaobject>
+                <imageobject>
+                  <imagedata fileref="../../common-images/gtk-dialog-warning.png" />
+                </imageobject>
+          </inlinemediaobject>)</para></listitem>
+      </itemizedlist></para>
+    </section>
+    <section>
+      <title>Servers configuration</title>
+      <mediaobject>
+        <caption>Servers</caption>
+        <imageobject>
+          <imagedata fileref="../images/GeBR_servers_daemons.png" />
+        </imageobject>
+      </mediaobject>
+      <para>Once selected a coordinator machine (maestro), the user can associate machines to that
+        maestro.</para>
+      <para>The lines represent the machines associated to the maestro. Each line has two columns:
+        the first column shows if the option Auto-connect is activated or not; the second column
+        shows the name (hostname) of the machine. The user can add a new machine by clicking over New
+        and entering the name of address of the machine.</para>
+    </section>
+    <section>
+      <title>Groups configuration</title>
+      <para>The user can use just a couple of the machines associated to the maestro. Using
+        different subsets of machines can be managed through the creation of groups of
+        machines.</para>
+      <para>In the bottom part of the Servers interface, the user can create/edit daemons groups.
+        The functionality is through mouse Drag and Drop.</para>
+      <mediaobject>
+        <caption>Groups</caption>
+        <imageobject>
+          <imagedata fileref="../images/GeBR_servers_groups_new.png" />
+        </imageobject>
+      </mediaobject>
+      <para>To create a group, the user needs to click over a server in the list and drag it to the
+        + icon. A text box is going to be prompted for the name of the group. Groups with same names
+        are not accepted.</para>
+    </section>
+  </section>
+  <section xml:id="execution_log">
+    <title>The execution log</title>
+    <para>GêBR remembers most of the users actions, as well as the results of these actions, in
+      the so called 
+      <emphasis>execution log</emphasis>. This log is shown at the bottom of the main window, which
+      can be presented in the collapsed form (default) or the expanded form like the window
+      below.</para>
+    <figure>
+      <mediaobject>
+        <caption>At the bottom of GêBR's main window you will find the execution log, which
+          displays information on all of GêBR processes.</caption>
+        <imageobject>
+          <imagedata fileref="../images/janela_log_execucao.png" />
+        </imageobject>
+      </mediaobject>
+    </figure>
+    <tip>
+      <para>In 
+        <menuchoice>
+          <guimenu>Actions</guimenu>
+          <guimenuitem>Preferences</guimenuitem>
+        </menuchoice>at the bottom of the dialog box, we can see the box 
+        <guilabel>Load past-execution log</guilabel>. By checking this box we choose to exhibit the
+        whole log, including actions from past dates. By leaving the box unchecked we choose to
+        have a compact log, which only shows actions that have taken place since GêBR's last
+        initialization.</para>
+    </tip>
+  </section>
+  <section xml:id="import_samples">
+    <title>Sample projects</title>
+    <para>In the Help menu, besides the general Help section, we can import available
+      samples:</para>
+    <figure>
+      <mediaobject>
+        <caption>Screenshot of the Samples Menu</caption>
+        <imageobject>
+          <imagedata fileref="../images/samples_en.png" />
+        </imageobject>
+      </mediaobject>
+    </figure>
+  </section>
+</section>

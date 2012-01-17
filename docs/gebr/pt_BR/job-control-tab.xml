@@ -1,67 +1,76 @@
-  <section xml:id="controle_de_tarefas">
-    <title>A aba 
-	<guilabel>Controle de tarefas</guilabel></title>
-    <para>Como vimos em <xref linkend="executar_fluxo"/>, a aba
-	<guilabel>Controle de tarefas</guilabel> é acionada toda vez que um fluxo é executado. Por meio dela
-	pode-se <emphasis role="bold">acompanhar</emphasis> e, se necessário ou
-	desejável, <emphasis role="bold">interromper</emphasis> a execução dos fluxos. Vejamos os comandos
-	disponíveis:</para>
-    <itemizedlist>
-      <listitem>
-        <para>
-          <link linkend="sec_3_4_1">Salvar informação da tarefa em arquivo</link>
-        </para>
-      </listitem>
-      <listitem>
-        <para>
-          <link linkend="sec_3_4_2">Limpar tarefa</link>
-        </para>
-      </listitem>
-      <listitem>
-        <para>
-          <link linkend="sec_3_4_3">Pedir para o servidor cancelar a tarefa</link>
-        </para>
-      </listitem>
-    </itemizedlist>
-    <para>Vimos nas seções <emphasis role="bold">3.2.10</emphasis> e <emphasis role="bold">3.3.7</emphasis> a
-	abordagem do conceito de filas na GêBR nas abas <emphasis role="bold">Fluxos</emphasis>
-	e <emphasis role="bold">Editor de Fluxo</emphasis>. Finalizando, na aba <emphasis role="bold">Controle de
-	tarefas</emphasis>, é possível visualizar cada fila em andamento, cada qual de execução independente uma da
-	outra, bem como o relatório (log) da execução de cada programa. Ver figura abaixo:</para>
-    <figure>
-      <mediaobject>
-        <caption>Na aba Controle de Tarefas à esquerda da janela podemos visualizar uma lista das tarefas em execução, executadas, canceladas e falhas.
-	   À direita, são dadas informações detalhadas sobre a tarefa selecionada.</caption>
-        <imageobject>
-          <imagedata fileref="../images/janela_aba_controle_de_tarefas.png"/>
-        </imageobject>
-      </mediaobject>
-    </figure>
-    <section xml:id="sec_3_4_1">
-      <title>Salvar informação da tarefa em arquivo</title>
-      <para>Toda vez que um fluxo é executado, surge na caixa 
-          <guilabel>Tarefas</guilabel>, dentro da aba 
-          <guilabel>Controle de tarefas</guilabel>, uma tarefa identificada com o título do fluxo.</para>
-      <para>Para salvar a informação da tarefa em um arquivo, selecione-a na caixa 
-          <guilabel>Tarefas</guilabel> e clique no
-          botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_salvar_log.png"/></imageobject></inlinemediaobject></guiicon>.</para>
-    </section>
-    <section xml:id="sec_3_4_2">
-      <title>Limpar tarefa</title>
-      <para>Para remover o log de uma tarefa, selecione-a na caixa 
-          <guilabel>Tarefas</guilabel> e clique no
-          botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_limpar_log_atual.png"/></imageobject></inlinemediaobject></guiicon>.</para>
-      <para>Só podem ser excluídas as tarefas que não estiverem em execução (sinalizadas
-                com <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_tarefa_concluida_sucesso.png"/></imageobject></inlinemediaobject></guiicon> ou
-          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_tarefa_terminada_erro.png"/></imageobject></inlinemediaobject></guiicon>).</para>
-    </section>
-    <section xml:id="sec_3_4_3">
-      <title>Pedir para o servidor cancelar a tarefa</title>
-      <para>Em geral, tarefas complexas levam algum tempo para serem executadas. Se por alguma razão for necessário
-          forçar o término de uma tarefa antes que ela termine naturalmente, selecione a tarefa em execução (sinalizada
-          com <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_tarefa_em_execucao.png"/></imageobject></inlinemediaobject></guiicon>) na caixa <guilabel>Tarefas</guilabel> e clique no botão
-          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_terminar_tarefa.png"/></imageobject></inlinemediaobject></guiicon>.</para>
-      <para>Quando terminada dessa forma, a tarefa é sinalizada
-                com <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_tarefa_terminada_erro.png"/></imageobject></inlinemediaobject></guiicon>.</para>
-    </section>
+<?xml version="1.0" encoding="utf-8" ?>
+
+<section
+  xmlns="http://docbook.org/ns/docbook"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  xmlns:xlink="http://www.w3.org/1999/xlink"
+  lang="pt_BR"
+  version="5.0"
+  xml:id="controle_de_tarefas">
+
+  <title>A aba 
+    <guilabel>Controle de tarefas</guilabel></title>
+  <para>Como vimos em <xref linkend="executar_fluxo"/>, a aba
+    <guilabel>Controle de tarefas</guilabel> é acionada toda vez que um fluxo é executado. Por meio dela
+    pode-se <emphasis role="bold">acompanhar</emphasis> e, se necessário ou
+    desejável, <emphasis role="bold">interromper</emphasis> a execução dos fluxos. Vejamos os comandos
+    disponíveis:</para>
+  <itemizedlist>
+    <listitem>
+      <para>
+        <link linkend="sec_3_4_1">Salvar informação da tarefa em arquivo</link>
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        <link linkend="sec_3_4_2">Limpar tarefa</link>
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        <link linkend="sec_3_4_3">Pedir para o servidor cancelar a tarefa</link>
+      </para>
+    </listitem>
+  </itemizedlist>
+  <para>Vimos nas seções <emphasis role="bold">3.2.10</emphasis> e <emphasis role="bold">3.3.7</emphasis> a
+    abordagem do conceito de filas na GêBR nas abas <emphasis role="bold">Fluxos</emphasis>
+    e <emphasis role="bold">Editor de Fluxo</emphasis>. Finalizando, na aba <emphasis role="bold">Controle de
+      tarefas</emphasis>, é possível visualizar cada fila em andamento, cada qual de execução independente uma da
+    outra, bem como o relatório (log) da execução de cada programa. Ver figura abaixo:</para>
+  <figure>
+    <mediaobject>
+      <caption>Na aba Controle de Tarefas à esquerda da janela podemos visualizar uma lista das tarefas em execução, executadas, canceladas e falhas.
+        À direita, são dadas informações detalhadas sobre a tarefa selecionada.</caption>
+      <imageobject>
+        <imagedata fileref="../images/janela_aba_controle_de_tarefas.png"/>
+      </imageobject>
+    </mediaobject>
+  </figure>
+  <section xml:id="sec_3_4_1">
+    <title>Salvar informação da tarefa em arquivo</title>
+    <para>Toda vez que um fluxo é executado, surge na caixa 
+      <guilabel>Tarefas</guilabel>, dentro da aba 
+      <guilabel>Controle de tarefas</guilabel>, uma tarefa identificada com o título do fluxo.</para>
+    <para>Para salvar a informação da tarefa em um arquivo, selecione-a na caixa 
+      <guilabel>Tarefas</guilabel> e clique no
+      botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_salvar_log.png"/></imageobject></inlinemediaobject></guiicon>.</para>
   </section>
+  <section xml:id="sec_3_4_2">
+    <title>Limpar tarefa</title>
+    <para>Para remover o log de uma tarefa, selecione-a na caixa 
+      <guilabel>Tarefas</guilabel> e clique no
+      botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_limpar_log_atual.png"/></imageobject></inlinemediaobject></guiicon>.</para>
+    <para>Só podem ser excluídas as tarefas que não estiverem em execução (sinalizadas
+      com <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_tarefa_concluida_sucesso.png"/></imageobject></inlinemediaobject></guiicon> ou
+      <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_tarefa_terminada_erro.png"/></imageobject></inlinemediaobject></guiicon>).</para>
+  </section>
+  <section xml:id="sec_3_4_3">
+    <title>Pedir para o servidor cancelar a tarefa</title>
+    <para>Em geral, tarefas complexas levam algum tempo para serem executadas. Se por alguma razão for necessário
+      forçar o término de uma tarefa antes que ela termine naturalmente, selecione a tarefa em execução (sinalizada
+      com <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_tarefa_em_execucao.png"/></imageobject></inlinemediaobject></guiicon>) na caixa <guilabel>Tarefas</guilabel> e clique no botão
+      <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_terminar_tarefa.png"/></imageobject></inlinemediaobject></guiicon>.</para>
+    <para>Quando terminada dessa forma, a tarefa é sinalizada
+      com <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_tarefa_terminada_erro.png"/></imageobject></inlinemediaobject></guiicon>.</para>
+  </section>
+</section>

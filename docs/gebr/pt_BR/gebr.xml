@@ -11,7 +11,7 @@
     <title>GêBR - Guia do Usuário</title>
   </info>
 
-  <!-- O que é a GêBR? (What is GêBR?) -->
+  <!-- O que é a GêBR? -->
   <xi:include href="what-is-gebr.xml" />
   
   <!-- Projetos, Linhas e Fluxos: uma visão geral -->
@@ -24,7 +24,7 @@
   <xi:include href="flows-tab.xml" />
   
   <!-- A aba Editor de Fluxo -->
-  <xi:include href="flows-editor-tab.xml" />
+  <xi:include href="flow-editor-tab.xml" />
   
   <!-- A aba Controle de Tarefas -->
   <xi:include href="job-control-tab.xml" />
