@@ -19,35 +19,50 @@
     de pesquisa acadêmica e adoção em cursos.</para>
   <section>
     <title>Projeto GêBR</title>
-    <para>O principal objetivo deste
-      projeto é estimular a integração da comunidade geofísica no Brasil, por meio do desenvolvimento de ferramentas
-      que facilitem a disseminação das pesquisas na área.</para>
-    <para>Para obter mais informações, visite a página oficial do
-      projeto: <emphasis><link xlink:href="http://www.gebrproject.com">www.gebrproject.com</link></emphasis>.</para>
+    <para>
+      O principal objetivo deste projeto é estimular a integração da comunidade
+      geofísica no Brasil, por meio do desenvolvimento de ferramentas que
+      facilitem a disseminação das pesquisas na área.
+    </para>
+    <para>
+      Para obter mais informações, visite a página oficial do projeto:
+      <link xlink:href="http://www.gebrproject.com">www.gebrproject.com</link>.
+    </para>
   </section>
   <section>
     <title>Novidades na versão 0.16.0</title>
-    <para>A versão 0.16.0 está mais estável e apresenta novas funcionalidades:</para>
+    <para>
+      A versão 0.16.0 está mais estável e apresenta novas funcionalidades:
+    </para>
     <itemizedlist>
-      <listitem>Nasce o conceito de maestro, permitindo que a GêBR execute trabalhos em múltiplas máquinas.
-        (veja <xref linkend="servers_configuration" /> e <xref linkend="multiple_machines" />).
+      <listitem>
+        Nasce o conceito de maestro, permitindo que a GêBR execute trabalhos em
+        múltiplas máquinas.  (veja <xref linkend="servers_configuration" /> e
+        <xref linkend="multiple_machines" />).
       </listitem>
       <listitem>
-        Agora é possível controlar a prioridade e o número de processadores usados na execução de trabalhos (veja <xref linkend="multi_cores" /> e <xref linkend="priority_execution" />).
+        Agora é possível controlar a prioridade e o número de processadores
+        usados na execução de trabalhos (veja <xref linkend="multi_cores" /> e
+        <xref linkend="priority_execution" />).
       </listitem>
       <listitem>
-        A interface renovada adiciona novas funcionalidades e melhora a usabilidade da GêBR.
+        A interface renovada adiciona novas funcionalidades e melhora a
+        usabilidade da GêBR.
       </listitem>
     </itemizedlist>
   </section>
   <section>
     <title>Informações técnicas</title>
-    <para>Este guia refere-se à <emphasis role="bold">versão 0.16.0</emphasis> da GêBR. As telas usadas no guia foram
-      capturadas em um sistema <emphasis role="bold">Ubuntu 10.04</emphasis>. Por isso, podem apresentar pequenas
-      diferenças em relação a outros sistemas operacionais. Para obter instruções de instalação específicas para cada
-      sistema, leia o <emphasis><link xlink:href="http://www.gebrproject.com/install-guide">guia de
-          instalação</link></emphasis>, disponível na <emphasis><link xlink:href="http://www.gebrproject.com">página
-          oficial do projeto</link></emphasis>.</para>
+    <para>
+      Este guia refere-se à <emphasis role="bold">versão 0.16.0</emphasis> da
+      GêBR. As telas usadas no guia foram capturadas em um sistema
+      <emphasis role="bold">Ubuntu 10.04</emphasis>. Por isso, podem apresentar
+      pequenas diferenças em relação a outros sistemas operacionais. Para obter
+      instruções de instalação específicas para cada sistema, leia o
+      <link xlink:href="http://www.gebrproject.com/install-guide">guia de instalação</link>,
+      disponível na
+      <link xlink:href="http://www.gebrproject.com">página oficial do projeto</link>.
+    </para>
   </section>
 
   <!-- Time da GêBR (GêBR Team) -->
