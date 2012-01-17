@@ -31,10 +31,9 @@ UINST_DEP =
 endif
 
 html-ok: gebr.xml
-	xsltproc -o $(builddir)/html/index.html \
+	xsltproc --xinclude -o $(builddir)/html/index.html \
 		$(srcdir)/../gebr-guide.xsl \
-		$(srcdir)/gebr.xml
-	touch html-ok
+		$(srcdir)/gebr.xml && touch html-ok
 
 dist-ok: html-ok
 	cp -Rp $(builddir)/html $(srcdir)/images $(distdir)

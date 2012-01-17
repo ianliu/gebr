@@ -1,0 +1,106 @@
+  <section xml:id="sec_4">
+    <title>Recursos adicionais</title>
+    
+    <section xml:id="menu">
+      <title>O menu 
+	<guimenu>Ações</guimenu></title>
+      <para>A partir do menu 
+	<guimenu>Ações</guimenu> você acessa as janelas 
+	<guimenuitem>Preferências</guimenuitem> e 
+	<guimenuitem>Servidores</guimenuitem>. Se você leu todo o manual, provavelmente já usou quase todos os recursos
+	disponíveis nessas duas janelas. De qualquer forma, segue a documentação.</para>
+      <section>
+        <title>Preferências</title>
+        <para>As definições que você faz na janela 
+          <guimenuitem>Preferências</guimenuitem> são adotadas como padrão pela GêBR. Vejamos os detalhes:</para>
+        <itemizedlist>
+          <listitem>
+            <para><guilabel>Nome do Usuário:</guilabel> Padrão adotado no campo 
+              <guilabel>Autor:</guilabel> durante a criação de projetos, linhas e fluxos.</para>
+          </listitem>
+          <listitem>
+            <para><guilabel>Email:</guilabel> Padrão adotado no campo 
+              <guilabel>Email</guilabel> durante a criação de projetos, linhas e fluxos.</para>
+          </listitem>
+          <listitem>
+            <para><guilabel>Diretório de menus do usuário:</guilabel> Pasta padrão usada para manutenção
+            de <emphasis>Menus GêBR</emphasis> (arquivos <filename class="extension">mnu</filename>).</para>
+          </listitem>
+          <listitem>
+            <para><guilabel>editor HTML:</guilabel> Editor de textos padrão adotado pela GêBR para criação de relatórios de
+              informações de projetos, linhas e fluxos.</para>
+          </listitem>
+        </itemizedlist>
+        <figure>
+          <mediaobject>
+            <caption>Em Preferências, abre-se uma janela em que é possível editar informações como nome de usuário, e-mail, diretório de menus do usuário e editor HTML.</caption>
+            <imageobject>
+              <imagedata fileref="../images/janela_preferences.png"/>
+            </imageobject>
+          </mediaobject>
+        </figure>
+      </section>
+      <section>
+        <title>Servidores</title>
+        <para>Use a janela <guilabel>Configuração de servidores</guilabel> para configurar o servidor local e os
+          servidores remotos que você adicionar.</para>
+        <para>O servidor local, identificado como <emphasis>Servidor local</emphasis>, é criado e conectado
+          automaticamente pela GêBR na inicialização. Ele é a máquina padrão usada para a execução dos fluxos.</para>
+        <para>Servidores remotos podem ser adicionados, para execução remota dos fluxos. Para adicionar um servidor,
+          digite o endereço na parte de baixo da janela <guilabel>Configuração de servidores</guilabel> e clique no
+          botão <guibutton>Adicionar</guibutton>.</para>
+        <figure>
+          <mediaobject>
+            <caption>Em servidores, adiciona-se, conecta-se e desconeta-se servidores. </caption>
+            <imageobject>
+              <imagedata fileref="../images/janela_servers_configuration.png"/>
+            </imageobject>
+          </mediaobject>
+        </figure>
+        <important>
+          <para>Todos os servidores definidos na janela 
+            <guilabel>Configuração de servidores</guilabel> ficam visíveis na aba 
+            <guilabel>Editor de Fluxo</guilabel> (você seleciona o servidor na caixa 
+            <guilabel>Servidor</guilabel>, logo acima da caixa 
+            <guilabel>Sequência de fluxo</guilabel>, no lado esquerdo da janela principal) e também na janela 
+            <guilabel>Entrada/Saída do fluxo</guilabel> (aquela em que os arquivos de entrada e saída do fluxo são
+            definidos).</para>
+        </important>
+      </section>
+    </section>
+    <section xml:id="sec_4_3">
+      <title>O log de execução</title>
+      <para>A GêBR grava grande parte das ações executadas pelo usuário, bem como os resultados dessas ações, no
+	chamado <emphasis>log de execução</emphasis>. Este log é mostrado na parte inferior da janela principal. Pode
+	ser apresentado na forma contraída (padrão) ou expandida (como na janela abaixo).</para>
+      <figure>
+        <mediaobject>
+          <caption>No canto inferior das janelas principais da GêBR, encontra-se o log de execução, que carrega as informações dos processamentos da GêBR.</caption>
+          <imageobject>
+            <imagedata fileref="../images/janela_log_execucao.png"/>
+          </imageobject>
+        </mediaobject>
+      </figure>
+      <tip>
+        <para>Em 
+          <menuchoice><guimenu>Ações</guimenu><guimenuitem>Preferências</guimenuitem></menuchoice> (no canto inferior da janela principal), campo 
+          <guilabel>Carregar o log das execuções anteriores</guilabel>, você escolhe entre exibir o log completo,
+          incluindo ações de datas passadas, o log compacto, que mostra apenas as ações a partir da última
+          inicialização.</para>
+      </tip>
+    </section>    <section xml:id="import_samples"><title>Exemplos de projeto</title>
+	<para>Na seção Ajuda, além da seção de Ajuda geral, podemos importar exemplos já existentes:</para>
+    
+      <figure>
+        <mediaobject>
+          <caption>Captura de tela do menu Exemplos</caption>
+          <imageobject>
+            <imagedata fileref="../images/samples_pt.png"/>
+          </imageobject>
+        </mediaobject>
+      </figure>
+    
+    </section>
+
+
+  </section>

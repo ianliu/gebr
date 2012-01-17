@@ -1,0 +1,331 @@
+  <section xml:id="sec_3_3">
+    <title>A aba 
+	<guilabel>Editor de Fluxo</guilabel></title>
+    <para>Todo fluxo criado na GêBR nasce vazio, isto é, <emphasis role="bold">sem programas</emphasis> que descrevam
+	uma sequência funcional de operações. Para um fluxo tornar-se funcional, é
+	preciso <emphasis role="bold">adicionar programas</emphasis> a ele. Além disso, é
+	preciso <emphasis role="bold">configurar os programas</emphasis>, para que realizem tarefas específicas. Tudo
+	isso é feito na aba
+	<guilabel>Editor de Fluxo</guilabel>.</para>
+    <para>Na <xref linkend="criando_fluxos"/> vimos que os menus padrão da
+      GêBR são separados em treze categorias, listadas na caixa <guilabel>Menu</guilabel>, no lado direito da janela
+      principal:</para>
+    <itemizedlist>
+      <listitem>
+        <para>Data Compression</para>
+      </listitem>
+      <listitem>
+        <para>Editing, Sorting and Manipulation</para>
+      </listitem>
+      <listitem>
+        <para>File tools</para>
+      </listitem>
+      <listitem>
+        <para>Filtering, Transforms and Attributes</para>
+      </listitem>
+      <listitem>
+        <para>Gain, NMO, Stack and Standard Processes</para>
+      </listitem>
+      <listitem>
+        <para>Graphics</para>
+      </listitem>
+      <listitem>
+        <para>Import/Export</para>
+      </listitem>
+	  <listitem>
+        <para>Loops</para>
+      </listitem>
+      <listitem>
+        <para>Migration and Dip Moveout</para>
+      </listitem>
+      <listitem>
+        <para>Multiple Supression</para>
+      </listitem>
+      <listitem>
+        <para>Seismic Unix</para>
+      </listitem>
+      <listitem>
+        <para>Simulation and Model Building</para>
+      </listitem>
+      <listitem>
+        <para>Utilities</para>
+      </listitem>
+    </itemizedlist>
+    <para>Por padrão, as categorias são mostradas na forma contraída, ocultando os componentes. Para exibir os
+	componentes de uma categoria, você deve expandí-la clicando no
+  ícone <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_colapsado.png"/></imageobject></inlinemediaobject></guiicon> à esquerda da categoria.</para>
+    <para>Para <emphasis role="bold">adicionar um programa</emphasis> ao fluxo, siga o seguinte procedimento:</para>
+    <procedure>
+      <step>
+        <para>Selecione um fluxo na aba 
+            <guilabel>Fluxos</guilabel>. Depois selecione a aba 
+            <guilabel>Editor de Fluxo</guilabel>.</para>
+        <tip>
+          <para>Quando estiver na aba 
+              <guilabel>Fluxos</guilabel>, experimente dar um clique duplo no fluxo. Assim você alterna mais rapidamente
+              para a aba 
+              <guilabel>Editor de Fluxo.</guilabel>.</para>
+        </tip>
+      </step>
+      <step>
+        <para>Expanda uma categoria e dê um clique duplo em um de seus componentes (dependendo da categoria, talvez
+            você precise rolar a janela <guilabel>Menu</guilabel> para ver todos os componentes). O componente
+            selecionado é adicionado à caixa <guilabel>Sequência do fluxo</guilabel> como programa(s) do fluxo, no lado
+            esquerdo da janela principal.</para>
+        <tip>
+          <para>Você pode consultar a <emphasis role="bold">documentação do componente</emphasis> antes de adicioná-lo
+              ao fluxo. Para isso, clique no componente com o <emphasis role="bold">botão direito do mouse</emphasis> e
+              escolha <guilabel>Ajuda</guilabel>.</para>
+        </tip>
+      </step>
+    </procedure>
+    <tip>
+      <para>Observe a <emphasis role="bold">barra de informações</emphasis> na parte de cima da janela principal, logo
+        abaixo do menu <guimenu>Ações</guimenu>. Ela mostra o fluxo selecionado atualmente, sem que você tenha que sair
+        da aba <guilabel>Editor de Fluxo</guilabel>.</para>
+    </tip>
+    <tip>
+      <para>Você pode <emphasis role="bold">mudar a posição</emphasis> de um programa na caixa <guilabel>Sequência do
+        fluxo</guilabel>. Para isso, <emphasis role="bold">arraste-o com o mouse</emphasis> para a posição
+        desejada.</para>
+    </tip>
+    <para>Agora que já sabemos como adicionar programas ao fluxo, precisamos configurá-los. Vejamos então as demais
+	ferramentas da aba <guilabel>Editor de Fluxo</guilabel>:</para>
+    <itemizedlist>
+      <listitem>
+        <para>
+          <link linkend="copiar_programa_para_area_de_transferencia">Copiar programa(s) selecionado(s) para a área de transferência</link>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <link linkend="sec_3_3_2">Colar programa(s) selecionado(s) da área de transferência</link>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <link linkend="sec_3_3_3">Deletar programa</link>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <link linkend="editar_parametros_programa">Editar os parâmetros de um programa</link>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <link linkend="sec_3_3_5">Mudar o estado de um programa</link>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <link linkend="editar_arquivos_entrada_saida_fluxo">Editar arquivos de entrada e saída do fluxo</link>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <link linkend="executar_fluxo">Executar um fluxo</link>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <link linkend="execution_speed">Velocidade de execução</link>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <link linkend="sec_3_2_11">Editar Comentários</link>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <link linkend="visualizar_relatorio_fluxo">Visualizar Relatório</link>
+        </para>
+      </listitem>
+    </itemizedlist>
+    <tip>
+      <para>Experimente usar <emphasis role="bold">menus de contexto</emphasis> no lugar dos botões de comando. Para
+          isso, <emphasis role="bold">clique com o botão direito do mouse</emphasis> nos programas que você
+          adicionar. Você vai notar que diversos comandos podem ser acionados por este método. Em determinados casos,
+          isso é mais <emphasis role="bold">fácil e rápido</emphasis> do que usar os botões.</para>
+    </tip>
+    <section xml:id="copiar_programa_para_area_de_transferencia">
+      <title>Copiar programas para a área de transferência</title>
+      <para>Da mesma forma que se faz com fluxos (veja a <xref linkend="copiar_fluxos_area_tranferencia"/>), um programa (ou um conjunto de programas) pode ser copiado para a área de
+          transferência por meio do
+          botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_copiar_fluxo.png"/></imageobject></inlinemediaobject></guiicon> ou, mais prático, pelo conhecido atalho
+          <keycombo><keycap>Ctrl</keycap><keycap>C</keycap></keycombo>.</para>
+      <tip>
+        <para>Você pode selecionar vários programas para serem copiados simultaneamente usando 
+            <keycombo><keycap>Ctrl</keycap><mousebutton>Clique</mousebutton></keycombo> ou 
+            <keycombo><keycap>Shift</keycap><mousebutton>Clique</mousebutton></keycombo>.</para>
+      </tip>
+    </section>
+    <section xml:id="sec_3_3_2">
+      <title>Colar programas da área de transferência</title>
+      <para>Depois de ter sido selecionado e copiado <xref linkend="copiar_programa_para_area_de_transferencia"/>, um programa (ou
+          um conjunto de programas) pode ser colado por meio do
+          botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_colar_fluxo.png"/></imageobject></inlinemediaobject></guiicon> ou, mais prático, pelo conhecido atalho
+          <keycombo><keycap>Ctrl</keycap><keycap>V</keycap></keycombo>.</para>
+      <tip>
+        <para>O programa (ou conjunto de programas) copiado anteriormente para a área de transferência pode ser colado
+            em <emphasis role="bold">qualquer fluxo</emphasis> existente, e não só no fluxo de origem. Basta alternar
+            para a aba <guilabel>Fluxos</guilabel>, selecionar o fluxo desejado, voltar para a aba <guilabel>Editor de
+            Fluxo</guilabel> e colar o(s) programas(s).</para>
+      </tip>
+    </section>
+    <section xml:id="sec_3_3_3">
+      <title>Deletar programas</title>
+      <para>Para excluir um programa (ou um conjunto de programas), selecione-o e clique no
+                botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_apagar_projeto.png"/></imageobject></inlinemediaobject></guiicon>.</para>
+      <tip>
+        <para>Você pode selecionar vários programas para serem excluidos simultaneamente usando 
+            <keycombo><keycap>Ctrl</keycap><mousebutton>Clique</mousebutton></keycombo> ou 
+            <keycombo><keycap>Shift</keycap><mousebutton>Clique</mousebutton></keycombo>.</para>
+      </tip>
+      <caution>
+        <para>A GêBR  <emphasis role="bold">não emite aviso</emphasis> antes de deletar programas.</para>
+      </caution>
+    </section>
+    <section xml:id="editar_parametros_programa">
+      <title>Editar os parâmetros de um programa</title>
+      <para>Para editar os parâmetros de um programa:</para>
+      <procedure>
+        <step>
+          <para>Selecione-o na caixa <guilabel>Sequência de fluxo</guilabel> e clique no
+                    botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_editar_propriedades_projeto.png"/></imageobject></inlinemediaobject></guiicon>, ou dê um clique duplo no programa.</para>
+        </step>
+        <step>
+          <para>Na janela <guilabel>Parâmetros</guilabel>, edite os parâmetros do programa. Note que os parâmetros
+              variam bastante de um programa para outro, tanto em quantidade como em tipo.</para>
+          <tip>
+            <para>Clique no botão <guibutton>Ajuda</guibutton> (canto inferior esquerdo da janela
+		<guilabel>Parâmetros</guilabel>) para visualizar a <emphasis role="bold">documentação do
+		programa</emphasis>. Isso pode ser útil durante a edição de parâmetros.</para>
+          </tip>
+          <tip>
+            <para>Clique no botão <guibutton>Padrão</guibutton> quando quiser retornar para a configuração padrão do
+              programa.</para>
+          </tip>
+        </step>
+        <step>
+          <para>Clique em <guibutton>OK</guibutton>.</para>
+        </step>
+      </procedure>
+    </section>
+    <section xml:id="sec_3_3_5">
+      <title>Mudar o estado de um programa</title>
+      <para>Após realizar o procedimento da <xref linkend="editar_parametros_programa"/>, note que o programa passa a ser sinalizado
+                por <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_configurado.png"/></imageobject></inlinemediaobject></guiicon> em vez
+        de <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_nao_configurado.png"/></imageobject></inlinemediaobject></guiicon>. Isso indica que o programa passou do
+        estado <emphasis role="bold">Não configurado</emphasis> para o
+        estado <emphasis role="bold">Configurado</emphasis>. Além desses dois estados, um programa pode assumir ainda o
+        estado <emphasis role="bold">Desabilitado</emphasis>
+        (<guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_desabilitado.png"/></imageobject></inlinemediaobject></guiicon>). Você pode alternar entre estes estados de duas maneiras,
+        <mousebutton>clique com botão direito</mousebutton> sobre o programa e selecione o estado desejado a partir do menu de contexto ou
+        use o atalho <keycombo><keycap>Espaço</keycap></keycombo> para trocar entre os possíveis estados dos programas selecionados.</para>
+      <tip>
+        <para>Você pode mudar o estado de vários programas simultaneamente, selecionando-os com 
+            <keycombo><keycap>Ctrl</keycap><mousebutton>Clique</mousebutton></keycombo> ou 
+            <keycombo><keycap>Shift</keycap><mousebutton>Clique</mousebutton></keycombo>.</para>
+      </tip>
+      <tip>
+        <para>Mudar o estado do programa não altera a configuração dos parâmetros. Você pode alternar com segurança
+            entre os estados, os parâmetros serão preservados.</para>
+      </tip>
+      <important>
+        <para>Programas <emphasis role="bold">Desabilitados</emphasis>
+                  (<guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_desabilitado.png"/></imageobject></inlinemediaobject></guiicon>) são ignorados durante a execução do fluxo. Dessa forma, você
+	    pode <emphasis role="bold">habilitar ou desabilitar pedaços de um fluxo</emphasis>, conforme a
+	    conveniência.</para>
+      </important>
+    </section>
+    <section xml:id="editar_arquivos_entrada_saida_fluxo">
+      <title>Editar arquivos de entrada e saída do fluxo</title>
+      <para>No exemplo da <xref linkend="criando_fluxos"/> criamos um fluxo
+          muito simples, que não precisava "ler" nenhum arquivo, e que gerava como resultado uma saída de tela. Porém,
+          há situações em que o fluxo precisa extrair dados de um arquivo de entrada e gerar como resultado um arquivo
+          de saída ou de erro, caso ocorra algum problema durante a execução.</para>
+      <para>Para associar arquivos de entrada, saída e erro a um fluxo:</para>
+      <figure>
+        <mediaobject>
+          <caption>Na aba Editor de Fluxo, no campo Sequência de fluxo, edita-se os arquivos de entrada, saída e log para esta
+	   sequência de Fluxo.</caption>
+          <imageobject>
+            <imagedata fileref="../images/GeBR_flow_editor_input_file.png"/>
+          </imageobject>
+        </mediaobject>
+      </figure>
+      <procedure>
+        <step>
+          <para>Certifique-se de ter selecionado o fluxo e, na aba Editor de Fluxo, no campo Sequência de fluxo,
+              pode-se editar os caminhos de entrada, saída e erro através de um clique duplo nos botões. Ver figura: 
+            </para>
+        </step>
+        <step>
+          <para>Edite os caminhos ou clique no
+                    ícone <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_escolher_arquivo.png"/></imageobject></inlinemediaobject></guiicon> e navegue pela janela <guilabel>Escolha um
+            arquivo</guilabel>.</para>
+        </step>
+      </procedure>
+      <para>Ao sair da janela 
+          <guilabel>Entrada/Saída do fluxo</guilabel>, note que os arquivos de entrada e saída que você associou ao
+          fluxo aparecem na caixa <guilabel>Sequência de fluxo</guilabel>, sinalizados com os ícones
+          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_arquivo_entrada.png"/></imageobject></inlinemediaobject></guiicon> e
+          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_arquivo_saida.png"/></imageobject></inlinemediaobject></guiicon>, abaixo e acima dos programas do fluxo (se houver algum).</para>
+      <note>
+        <para>Se quiser <emphasis role="bold">remover um conjunto</emphasis> da lista, selecione-o com
+          o <emphasis role="bold">botão direito</emphasis> do mouse e clique em
+            <guimenuitem>Excluir</guimenuitem>.</para>
+      </note>
+    </section>
+    <section xml:id="executar_fluxo">
+      <title>Executar um fluxo</title>
+      <para>Para executar o fluxo atual, clique no botão 
+                <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_executar_fluxo.png"/></imageobject></inlinemediaobject></guiicon>.</para>
+      <para>Por padrão, os fluxos são executados na máquina de origem, identificada automaticamente pela GêBR
+          como <emphasis role="bold">Servidor local</emphasis>. Entretanto, a GêBR também
+          permite <emphasis role="bold">executar fluxos em máquinas remotas</emphasis>. Veja mais detalhes sobre
+          definição e seleção de servidores em <xref linkend="menu"/>.</para>
+      <para>Na aba Editor de Fluxo, ainda que se tenha selecionado vários fluxos na aba Fluxos, ao se clicar no
+                botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_executar_fluxo.png"/></imageobject></inlinemediaobject></guiicon> será
+							      executado apenas o primeiro fluxo selecionado.</para>
+      <para>Nessa versão da GêBR, surge o conceito de filas, conceito também abordado
+          em <xref linkend="executar_fluxo_aba_fluxos"/>. Nessa aba é possível
+          escolher no campo Fila em qual fila o fluxo será executado. Pode-se escolher e nomear a fila em que se quer
+          executar um fluxo, conforme figura:</para>
+      <figure>
+        <mediaobject>
+          <caption>Na aba Editor de Fluxo, no campo Fila, pode-se selecionar a fila em que este Fluxo será executado.</caption>
+          <imageobject>
+            <imagedata fileref="../images/janela_filas_edicao_de_fluxo.png"/>
+          </imageobject>
+        </mediaobject>
+      </figure>
+      <para>No momento em que o fluxo começa a ser executado, a GêBR alterna imediatamente para a aba
+          <guilabel>Controle de tarefas</guilabel>, que mostra o relatório (<emphasis>log</emphasis>) da execução.</para>
+    </section>
+    <section xml:id="loop">
+      <title>Executando um fluxo múltiplas vezes</title>
+      <para>O programa <emphasis>Loop</emphasis> (que pertence a categoria <emphasis role="bold">Loops</emphasis>) é tratado de uma maneira especial comparado aos outros programas da GêBR. Vamos ver a seguir
+      algumas destas diferenças.</para>
+      <para>Ao adicionarmos o programa Loop, nota-se que ele sempre aparece no topo do fluxo, isso ocorre para representar 
+      que aquele fluxo será executado repetidamente, de acordo com o preenchimento dos parâmetros do programa (visto na seção <xref linkend="editar_parametros_programa"/>).</para>
+        <mediaobject>
+          <caption>Na aba Editor de Fluxo, após o programa <emphasis>Loop</emphasis> ser adicionado e configurado.</caption>
+          <imageobject>
+            <imagedata fileref="../images/loop_adicionado.png"/>
+          </imageobject>
+        </mediaobject>
+      <para>Após o <emphasis>Loop</emphasis> ser adicionado, teremos acesso a uma nova variável, chamada <emphasis role="bold">iter</emphasis>, que tem seu valor alterado a cada iteração,
+      de acordo com o preenchimento de seus parâmetros.</para>
+      <mediaobject>
+          <caption>Janela de edição de parâmetros do programa <emphasis>Loop</emphasis>, com um exemplo simples do preenchimento.</caption>
+          <imageobject>
+            <imagedata fileref="../images/loop_parametros.png"/>
+          </imageobject>
+        </mediaobject>
+      <tip>Maiores informações sobre a variável <emphasis role="bold">iter</emphasis> estão disponíveis na seção <xref linkend="variavel_iter"/>.</tip>
+    </section>
+    
+  </section>

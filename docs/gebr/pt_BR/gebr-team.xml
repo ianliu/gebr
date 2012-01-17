@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<section
+  xmlns="http://docbook.org/ns/docbook"
+  lang="pt_BR"
+  version="5.0">
+
+  <title>Time da GêBR</title>
+  <para>
+    <emphasis role="bold">Coordenador:</emphasis>
+  </para>
+  <itemizedlist>
+    <listitem>
+      <para>Ricardo Biloti <email>biloti@gebrproject.com</email></para>
+    </listitem>
+  </itemizedlist>
+  <para>
+    <emphasis role="bold">Gerente de desenvolvimento:</emphasis>
+  </para>
+  <itemizedlist>
+    <listitem>
+      <para>Fabrício Matheus Gonçalves <email>fmatheus@gebrproject.com</email></para>
+    </listitem>
+  </itemizedlist>
+  <para>
+    <emphasis role="bold">Desenvolvedores:</emphasis>
+  </para>
+  <itemizedlist>
+    <listitem>
+      <para>Eric Keiji <email>keiji.eric@gebrproject.com</email></para>
+    </listitem>
+    <listitem>
+      <para>Ian Liu Rodrigues <email>ian.liu@gebrproject.com</email></para>
+    </listitem>
+    <listitem>
+      <para>Igor Henrique Soares Nunes <email>igor.snunes@gebrproject.com</email></para>
+    </listitem>
+    <listitem>
+      <para>Jorge Pizzolatto <email>jorge.pzt@gebrproject.com</email></para>
+    </listitem>
+    <listitem>
+      <para>Júlia Koury Marques <email>julia@gebrproject.com</email></para>
+    </listitem>
+    <listitem>
+      <para>Vinícius Oliveira Querência <email>querencia@gebrproject.com</email></para>
+    </listitem>
+  </itemizedlist>
+  <para>
+    <emphasis role="bold">Consultores:</emphasis>
+  </para>
+  <itemizedlist>
+    <listitem>
+      <para>Bráulio Oliveira <email>brauliobo@gebrproject.com</email></para>
+    </listitem>
+    <listitem>
+      <para>Eduardo Filpo <email>efilpo@gmail.com</email></para>
+    </listitem>
+    <listitem>
+      <para>Fernando Roxo <email>roxo@roxo.org</email></para>
+    </listitem>
+    <listitem>
+      <para>Luis Alberto D'Afonseca <email>luis.dafonseca@gebrproject.com</email></para>
+    </listitem>
+    <listitem>
+      <para>Rodrigo Portugal <email>rosoport@gmail.com</email></para>
+    </listitem>
+  </itemizedlist>
+  <para>
+    <emphasis role="bold">Ex-membros:</emphasis>
+  </para>
+  <itemizedlist>
+    <listitem>
+      <para>Alexandre Baaklini</para>
+    </listitem>
+    <listitem>
+      <para>Davi Clemente</para>
+    </listitem>
+    <listitem>
+      <para>Fábio Azevedo</para>
+    </listitem>
+    <listitem>
+      <para>Gabriel Sobral</para>
+    </listitem>
+    <listitem>
+      <para>Giuliano Roberto Pinheiros</para>
+    </listitem>
+    <listitem>
+      <para>Priscila Moraes</para>
+    </listitem>
+    <listitem>
+      <para>Renan Giarola</para>
+    </listitem>
+    <listitem>
+      <para>Rodrigo Morelatto</para>
+    </listitem>
+  </itemizedlist>
+  <para>Muito obrigado por usar a GêBR!</para>
+</section>

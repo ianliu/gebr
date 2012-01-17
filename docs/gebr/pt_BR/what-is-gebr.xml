@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<section
+  xmlns="http://docbook.org/ns/docbook"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  xmlns:xlink="http://www.w3.org/1999/xlink"
+  lang="pt_BR"
+  version="5.0">
+
+  <title>O que é a GêBR</title>
+  <para>A GêBR é uma interface gráfica simples que <emphasis role="bold">facilita o processamento</emphasis> de dados
+    geofísicos. Ela <emphasis role="bold">não é um pacote de processamento</emphasis>, mas foi desenhada
+    para <emphasis role="bold">integrar</emphasis> diversos pacotes de processamento livres, como <emphasis>Seismic
+      Un*x</emphasis> e <emphasis>Madagascar</emphasis>.</para>
+  <para>A GêBR permite gerenciar Projetos e Linhas, montar e executar Fluxos, acompanhar os resultados do
+    processamento, tudo de forma simples e amigável.</para>
+  <para>Sendo um <emphasis role="bold">software livre</emphasis>, qualquer pessoa pode usar e customizar a GêBR, sem
+    custo, nos termos da <emphasis>GNU Public License</emphasis>. Isso a torna especialmente atrativa para propósitos
+    de pesquisa acadêmica e adoção em cursos.</para>
+  <section>
+    <title>Projeto GêBR</title>
+    <para>O principal objetivo deste
+      projeto é estimular a integração da comunidade geofísica no Brasil, por meio do desenvolvimento de ferramentas
+      que facilitem a disseminação das pesquisas na área.</para>
+    <para>Para obter mais informações, visite a página oficial do
+      projeto: <emphasis><link xlink:href="http://www.gebrproject.com">www.gebrproject.com</link></emphasis>.</para>
+  </section>
+  <section>
+    <title>Novidades na versão 0.16.0</title>
+    <para>A versão 0.16.0 está mais estável e apresenta novas funcionalidades:</para>
+    <itemizedlist>
+      <listitem>Nasce o conceito de maestro, permitindo que a GêBR execute trabalhos em múltiplas máquinas.
+        (veja <xref linkend="servers_configuration" /> e <xref linkend="multiple_machines" />).
+      </listitem>
+      <listitem>
+        Agora é possível controlar a prioridade e o número de processadores usados na execução de trabalhos (veja <xref linkend="multi_cores" /> e <xref linkend="priority_execution" />).
+      </listitem>
+      <listitem>
+        A interface renovada adiciona novas funcionalidades e melhora a usabilidade da GêBR.
+      </listitem>
+    </itemizedlist>
+  </section>
+  <section>
+    <title>Informações técnicas</title>
+    <para>Este guia refere-se à <emphasis role="bold">versão 0.16.0</emphasis> da GêBR. As telas usadas no guia foram
+      capturadas em um sistema <emphasis role="bold">Ubuntu 10.04</emphasis>. Por isso, podem apresentar pequenas
+      diferenças em relação a outros sistemas operacionais. Para obter instruções de instalação específicas para cada
+      sistema, leia o <emphasis><link xlink:href="http://www.gebrproject.com/install-guide">guia de
+          instalação</link></emphasis>, disponível na <emphasis><link xlink:href="http://www.gebrproject.com">página
+          oficial do projeto</link></emphasis>.</para>
+  </section>
+
+  <!-- Time da GêBR (GêBR Team) -->
+  <xi:include href="gebr-team.xml" />
+  
+</section>

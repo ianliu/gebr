@@ -1,0 +1,270 @@
+  <section xml:id="projetos_linhas_fluxo_visao_geral">
+    <title>Projetos, linhas e fluxos: uma visão geral</title>
+    <para>Na GêBR, os <emphasis role="bold">fluxos de processamento</emphasis> são organizados em unidades maiores,
+      chamadas <emphasis role="bold">linhas</emphasis>. As linhas, por sua vez, são organizadas em unidades maiores,
+      chamadas <emphasis role="bold">projetos</emphasis>. Em outras palavras:</para>
+    <itemizedlist>
+      <listitem>
+        <para>Um <emphasis role="bold">projeto</emphasis> é um conjunto
+          de <emphasis role="bold">linhas</emphasis></para>
+      </listitem>
+      <listitem>
+        <para>Uma <emphasis role="bold">linha</emphasis> é um conjunto de <emphasis role="bold">fluxos</emphasis></para>
+      </listitem>
+    </itemizedlist>
+    <para>Por isso, antes de montar e executar fluxos, é necessário <emphasis role="bold">criar projetos e
+	linhas</emphasis>.</para>
+    <section xml:id="editar_projetos_e_linhas">
+      <title>Criando projetos e linhas</title>
+      <para>Para criar um <emphasis role="bold">novo projeto</emphasis>:</para>
+      <procedure>
+        <step>
+          <para>Selecione a aba 
+            <guilabel>Projetos e Linhas</guilabel>.</para>
+        </step>
+        <step>
+          <para>Clique no
+                  botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_criar_projeto.png"/></imageobject></inlinemediaobject></guiicon></para>
+        </step>
+        <step>
+          <para>Na janela <guilabel>Propriedades do projeto</guilabel>, digite um
+            <emphasis>título</emphasis> para o projeto (por exemplo, <userinput>Meu primeiro
+              projeto</userinput>).</para>
+        </step>
+        <step>
+          <para>Se desejar, digite também uma breve <emphasis>descrição</emphasis> do projeto, o
+            <emphasis>autor</emphasis> e um <emphasis>e-mail</emphasis> para contato.</para>
+        </step>
+        <step>
+          <para>Clique <emphasis role="bold">OK</emphasis>.</para>
+        </step>
+      </procedure>
+      <figure xml:id="janela_properties_project">
+        <mediaobject>
+          <caption>Janela Propriedades do projeto em que se pode editar informações como título, descrição, autor e email.</caption>
+          <imageobject>
+            <imagedata fileref="../images/janela_properties_project.png"/>
+          </imageobject>
+        </mediaobject>
+      </figure>
+      <para>Depois de criado, o projeto fica acessível no lado esquerdo da janela principal da GêBR. Na caixa 
+	<guilabel>Detalhes</guilabel>, no lado direito da janela principal, são exibidas informações sobre o projeto.
+	Você notará que algumas dessas informações foram inseridas por você na janela
+	<guilabel>Propriedades para projeto</guilabel>, no momento da criação do projeto. Outras, como a data da criação
+	e a data da última modificação, são geradas automaticamente pela GêBR.</para>
+      <figure>
+        <mediaobject>
+          <caption>Um exemplo de um Projeto chamado "Meu primeiro projeto". À esquerda vemos a lista de Projetos e Linhas, enquanto que à direita vemos os detalhes do Projeto ou da Linha selecionada.</caption>
+          <imageobject>
+            <imagedata fileref="../images/janela_principal_1.png"/>
+          </imageobject>
+        </mediaobject>
+      </figure>
+      <para>Agora que o projeto está criado, você deve <emphasis role="bold">criar linhas</emphasis> dentro dele. Para
+      criar uma <emphasis role="bold">nova linha</emphasis>:</para>
+      <procedure>
+        <step>
+          <para>Certifique-se de que o projeto que você criou está selecionado, como mostrado na janela acima.</para>
+        </step>
+        <step>
+          <para>Clique no
+                  botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_criar_linha.png"/></imageobject></inlinemediaobject></guiicon>.</para>
+        </step>
+        <step>
+          <para>Na janela 
+            <guilabel>Propriedades para linha</guilabel>, digite um  <emphasis>título</emphasis> para a linha (por exemplo, 
+            <userinput>Minha primeira linha</userinput>).</para>
+        </step>
+        <step>
+          <para>Se desejar, digite também uma breve <emphasis>descrição</emphasis> da linha,
+            o <emphasis>autor</emphasis>, um <emphasis>e-mail</emphasis> para contato. Pode-se adicionar ainda caminhos
+            personalizados de linha, assunto melhor abordado na <xref linkend="editar_caminhos_preferenciais_da_linha"/>.</para>
+        </step>
+      </procedure>
+      <figure>
+        <mediaobject>
+          <caption>
+            Janela de Propriedades da linha; você pode definir informações
+            sobre a linha como descrição, autor, e-mail, o maestro da linha
+            (veja <xref linkend="changing_the_maestro_of_a_line" />) e
+            adicionar caminhos preferenciais no campo caminhos.
+          </caption>
+          <imageobject>
+            <imagedata fileref="../images/GeBR_line_properties.png"/>
+          </imageobject>
+        </mediaobject>
+      </figure>
+      <para>Depois de criar a primeira linha, sua janela da GêBR deve se parecer com a janela abaixo. Note que quando a
+	linha está selecionada, as informações sobre ela são mostradas na caixa <guilabel>Detalhes</guilabel>, no lado
+	direito da janela principal.</para>
+      <figure>
+        <mediaobject>
+          <caption>Na aba Projetos e Linhas, teremos à direita da janela em Detalhes, as informações da Linha selecionada.</caption>
+          <imageobject>
+            <imagedata fileref="../images/janela_principal_2.png"/>
+          </imageobject>
+        </mediaobject>
+      </figure>
+      <tip>
+        <para>Acesse <menuchoice><guimenu>Ações</guimenu><guimenuitem>Preferências</guimenuitem></menuchoice> (no
+        canto superior esquerdo da janela principal da GêBR) e digite seus dados nos campos <guilabel>Nome de
+        Usuário</guilabel> e <guilabel>Email</guilabel>. Novos projetos e linhas assumirão estes valores como
+        padrão.</para>
+      </tip>
+      <para>Agora que existe uma estrutura básica de projeto e linha, você já pode <emphasis role="bold">criar seu
+      primeiro fluxo</emphasis>.</para>
+    </section>
+    <section xml:id="criando_fluxos">
+      <title>Criando fluxos</title>
+      <para>Na GêBR, um <emphasis role="bold">fluxo</emphasis> é uma <emphasis role="bold">sequência de
+	operações</emphasis> selecionadas pelo usuário. Estas operações, também chamadas
+	de <emphasis role="bold">programas</emphasis> do fluxo, são separadas nas
+	seguintes <emphasis role="bold">categorias</emphasis>, de acordo com o propósito:</para>
+      <itemizedlist>
+        <listitem>
+          <para>Data Compression</para>
+        </listitem>
+        <listitem>
+          <para>Editing, Sorting and Manipulation</para>
+        </listitem>
+        <listitem>
+          <para>File tools</para>
+        </listitem>
+        <listitem>
+          <para>Filtering, Transforms and Attributes</para>
+        </listitem>
+        <listitem>
+          <para>Gain, NMO, Stack and Standard Processes</para>
+        </listitem>
+        <listitem>
+          <para>Graphics</para>
+        </listitem>
+        <listitem>
+          <para>Import/Export</para>
+        </listitem>
+        <listitem>
+          <para>Loops</para>
+        </listitem>
+        <listitem>
+          <para>Migration and Dip Moveout</para>
+        </listitem>
+        <listitem>
+          <para>Multiple Supression</para>
+        </listitem>
+        <listitem>
+          <para>Seismic Unix</para>
+        </listitem>
+        <listitem>
+          <para>Simulation and Model Building</para>
+        </listitem>
+        <listitem>
+          <para>Utilities</para>
+        </listitem>
+      </itemizedlist>
+      <para><emphasis role="bold">Criar um fluxo</emphasis> significa <emphasis role="bold">selecionar e ordenar
+	programas</emphasis>, a partir das categorias acima. Vejamos como se faz na prática:</para>
+      <procedure>
+        <step>
+          <para>Na aba <guilabel>Projetos e Linhas</guilabel>, certifique-se de que a linha <emphasis>Minha primeira
+          linha</emphasis>, criada anteriormente, está selecionada.</para>
+        </step>
+        <step>
+          <para>Selecione a aba <guilabel>Fluxos</guilabel> e, em seguida, clique no
+            botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_criar_fluxo.png"/></imageobject></inlinemediaobject></guiicon>.</para>
+        </step>
+        <step>
+          <para>Na janela <guilabel>Propriedade para Fluxo</guilabel>, digite um <emphasis>título</emphasis> para o
+          fluxo (por exemplo, <userinput>Meu primeiro fluxo</userinput>). Se desejar, digite também uma
+          breve <emphasis>descrição</emphasis> do fluxo, o <emphasis>autor</emphasis> e um <emphasis>e-mail</emphasis>
+          para contato. Feito isso, clique <guibutton>OK</guibutton>.</para>
+        </step>
+        <step>
+          <para>Selecione a aba <guilabel>Editor de Fluxo</guilabel> e em seguida, expanda a categoria
+            <guimenu>Graphics</guimenu> e dê um clique duplo no menu <guimenuitem>SU Simple X
+            Image</guimenuitem>. Fazendo isso você adiciona este menu ao seu fluxo (note que o programa
+            <guimenuitem>SU Simple X Image</guimenuitem> agora aparece na caixa <guilabel>Sequência de fluxo</guilabel>,
+            no lado esquerdo da janela). Neste momento, sua janela deve se parecer com esta:</para>
+        </step>
+        <step>
+          <para>Expanda a categoria 
+            <guimenu>Seismic Unix</guimenu> e dê um clique duplo no menu 
+            <guimenuitem>SU Plane</guimenuitem> (provavelmente você precisará rolar a janela 
+            <guilabel>Fluxos</guilabel> para alcançar este menu). Fazendo isso você adiciona o programa 
+            <guimenuitem>SU Plane</guimenuitem> ao fluxo. Note que 
+            <guimenuitem>SU Plane</guimenuitem> ficará posicionado abaixo de 
+            <guimenuitem>SU Simple X Image</guimenuitem> na lista 
+            <guilabel>Sequência de fluxo</guilabel>.</para>
+        </step>
+        <step>
+          <para>Para este exemplo funcionar, é necessário que 
+            <guimenuitem>SU Plane</guimenuitem> venha antes de 
+            <guimenuitem>SU Simple X Image</guimenuitem> na sequência do fluxo. Por isso, você
+            deve <emphasis role="bold">arrastar o programa</emphasis> para a posição desejada, como mostra a janela a
+            seguir:</para>
+          <figure>
+            <mediaobject>
+              <caption>
+                Na aba Editor de Fluxo, no lado direito da janela você verá a
+                lista de Menus. A partir dessa lista você pode adicionar
+                programas no seu Fluxo, que aparecerão no lado esquerdo da
+                janela.
+              </caption>
+              <imageobject>
+                <imagedata fileref="../images/GeBR_flow_browser_flow_assembling.png"/>
+              </imageobject>
+            </mediaobject>
+          </figure>
+        </step>
+        <step>
+          <para>Agora que o programa <guimenuitem>SU Plane</guimenuitem> está no topo da lista
+            <guilabel>Sequência de fluxo</guilabel>, clique sobre ele com o botão direito do mouse. No menu que se abre,
+            selecione a opção <guilabel>Configurado</guilabel>. Isso muda o estado do programa, que passa a ser
+            sinalizado por <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_configurado.png"/></imageobject></inlinemediaobject></guiicon> em vez
+            de <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_nao_configurado.png"/></imageobject></inlinemediaobject></guiicon>. Depois faça o mesmo para o programa
+            <guimenuitem>SU Simple X Image</guimenuitem>.</para>
+          <figure>
+            <mediaobject>
+              <caption>
+                Na aba Editor de Fluxo, no lado direito da janela você verá a
+                lista de Menus. A partir dessa lista você pode adicionar
+                programas no seu Fluxo, que aparecerão no lado esquerdo da
+                janela.
+              </caption>
+              <imageobject>
+                <imagedata fileref="../images/GeBR_flow_browser_flow_assembling_02.png"/>
+              </imageobject>
+            </mediaobject>
+          </figure>
+          <tip>
+            <para>Se você quiser mudar o estado de todos (ou de alguns) programas simultaneamente, selecione-os usando
+              <keycombo><keycap>Ctrl</keycap><mousebutton>Clique</mousebutton></keycombo>. Depois clique com o botão direito do mouse em um dos programas selecionados e, no menu que se
+              abre, escolha a opção <guilabel>Configurado</guilabel>. Todos os programas que você selecionou serão
+              alterados
+              para <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_configurado.png"/></imageobject></inlinemediaobject></guiicon>.</para>
+          </tip>
+          <important>
+            <para>Para este fluxo funcionar, é necessário que <emphasis role="bold">todos os programas</emphasis>
+            listados na caixa <guilabel>Sequência de fluxo</guilabel> estejam no
+            estado <emphasis role="bold">Configurado</emphasis>
+            (<guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_configurado.png"/></imageobject></inlinemediaobject></guiicon>). Sem isso, o fluxo não será executado como esperado.</para>
+          </important>
+          <important>
+            <para>Um estado de um fluxo ou um conjunto de fluxos pode ser alterado através da
+            hotkey <emphasis role="bold">space</emphasis>. O status do fluxo selecionado variará na
+            ordem <emphasis role="bold">não configurado</emphasis>, <emphasis role="bold">desabilitado</emphasis>
+            e <emphasis role="bold">configurado</emphasis>. Tal funcionalidade será mais explorada adiante.</para>
+          </important>
+        </step>
+      </procedure>
+      <para>Pronto. O fluxo foi criado e configurado. Para executá-lo, clique no botão 
+              <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_executar_fluxo.png"/></imageobject></inlinemediaobject></guiicon>. O resultado que você verá é o seguinte:</para>
+      <figure>
+        <mediaobject>
+          <caption>Exemplo de um Fluxo sendo executado.</caption>
+          <imageobject>
+            <imagedata fileref="../images/janela_ximage.png"/>
+          </imageobject>
+        </mediaobject>
+      </figure>
+    </section>
+  </section>
