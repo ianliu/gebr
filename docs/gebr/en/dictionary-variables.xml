@@ -15,11 +15,11 @@
       ends.</para>
     <para>Now the dictionary accepts expressions as input. This way more complex variables can be
       defined. In this section we will show some examples of variables usage in a flow.</para>
-    <para>Follows a simple example of how to define a variable in the dictionary:</para>
+    <para>Follow this simple example of how to define a variable in the dictionary:</para>
     <procedure>
       <step>
         <para>Create a flow and insert a program called 
-          <guimenuitem>Echo</guimenuitem>. Echo's basic function is to show text in the screen.
+          <guimenuitem>Echo</guimenuitem>. Echo's basic function is to show text on the screen
           (you can find this program at 
           <guimenu>Shell tools</guimenu>category, at 
           <guilabel>Flow Editor</guilabel>tab).</para>
@@ -55,12 +55,12 @@
       </step>
       <step>
         <para>At the window that pops up (
-          <guilabel>Variables dictionary for flow</guilabel>), click in 
+          <guilabel>Variables dictionary for flow</guilabel>), click on 
           <emphasis>New</emphasis>at 
           <emphasis role="bold">Flow</emphasis>scope. Fill the field 
           <emphasis>keyword</emphasis>with the variable's name 
           <emphasis role="bold">var1</emphasis>. Then, press enter to proceed to the next field, 
-          <emphasis>Value</emphasis>. Before fill it, you must choose a data type to your new
+          <emphasis>Value</emphasis>. Before filling it, you must choose a data type to your new
           variable (
           <guimenuitem>Number</guimenuitem>or 
           <guimenuitem>Text</guimenuitem>), choose 
@@ -78,7 +78,7 @@
             </imageobject>
           </mediaobject>
         </figure>
-        <tip>To better understand about variables definition, check section 
+        <tip>To a better understanding about variables, check section 
           <xref linkend="definindo_variaveis" />.</tip>
         <tip>Positioning the pointer on the icon of the variable type, we can check the solved
           expression.</tip>
@@ -123,7 +123,7 @@
             </imageobject>
           </mediaobject>
         </figure>
-        <tip>In order to use the variables in fields like 
+        <tip>To use the variables in fields like 
           <guimenuitem>Text</guimenuitem>, you must put the variable name embraced by square
           brackets 
           <emphasis role="bold">[</emphasis>name-of-the-variable
@@ -145,7 +145,7 @@
         </figure>
       </step>
     </procedure>
-    <tip>In order to validate a field of an expression or a variable, you just need to use the
+    <tip>To validate a field of an expression or a variable, you just need to use the
       key 
       <keycap>Enter</keycap>.</tip>
     <tip>To see all the available variables for auto-completion, we just need to type the
@@ -157,10 +157,10 @@
         <guilabel>Line</guilabel>and 
         <guilabel>Flow</guilabel>. Variables from the list 
         <guilabel>Project</guilabel>are visible to 
-        <emphasis role="bold">every flow</emphasis>of every line of the chosen project 
-        <guilabel>Line</guilabel>are visible just for the 
+        <emphasis role="bold">every flow</emphasis>of every line of the chosen project.
+        <guilabel>Lines</guilabel>are visible just for the 
         <emphasis role="bold">flows of the selected flow</emphasis>. Variables from the list 
-        <guilabel>Flow</guilabel>are visible just for the 
+        <guilabel>Flows</guilabel>are visible just for the 
         <emphasis role="bold">chosen flow</emphasis>.</para>
     </important>
   </section>
@@ -174,7 +174,7 @@
       variable:</para>
     <procedure>
       <step>
-        <para>Suppose we want to know in which week days the turns of next 5 years will be. To
+        <para>Suppose we want to know in which week days the turns of the next 5 years will be. To
           this end, we need the calendar of December from these 5 years. We are going to use the
           program 
           <guimenuitem>Calendar</guimenuitem>(it can be found in the 

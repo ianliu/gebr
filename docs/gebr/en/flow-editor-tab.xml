@@ -115,7 +115,7 @@
   </section>
   <section xml:id="sec_3_3_3">
     <title>Deleting programs</title>
-    <para>To remove a program (or set of programs), select them then click on 
+    <para>To remove a program (or set of programs), select them and click on 
       <guiicon>
         <inlinemediaobject>
           <imageobject>
@@ -141,8 +141,8 @@
     </caution>
   </section>
   <section xml:id="editar_parametros_programa">
-    <title>Editing a program's parameters</title>
-    <para>To edit a program's parameters:</para>
+    <title>Editing program's parameters</title>
+    <para>To edit program's parameters:</para>
     <procedure>
       <step>
         <para>Select the program from the 
@@ -158,12 +158,12 @@
       <step>
         <para>The 
           <guilabel>Parameters</guilabel>dialog box will appear. Notice that each program's
-          parameters vary greatly both in size and type.</para>
+          parameter vary greatly both in size and type.</para>
         <tip>
           <para>Click on the 
             <guibutton>Help</guibutton>button ( bottom left corner of the dialog box) to view the 
             <emphasis role="bold">program's documentation</emphasis>. This will certainly be useful
-            when your editing the programs parameters.</para>
+            when you are editing the programs parameters.</para>
         </tip>
         <tip>
           <para>Click on the 
@@ -172,7 +172,7 @@
         </tip>
       </step>
       <step>
-        <para>When your done click on the 
+        <para>When you are done click on the 
           <guibutton>OK</guibutton>button.</para>
       </step>
     </procedure>
@@ -209,7 +209,7 @@
       <mousebutton>right-click</mousebutton>on the program and then select from the context menu
       the desired state, or by using the shortcut 
       <keycombo>
-        <keycap>Space</keycap>
+        <keycap>Spacebar</keycap>
     </keycombo>to change the state(s) of the selected programs.</para>
     <tip>
       <para>You can select several programs whose state you wish to change by holding 
@@ -242,15 +242,13 @@
   </section>
   <section xml:id="editar_arquivos_entrada_saida_fluxo">
     <title>Editing the Flow's input and output files</title>
-    <para>In the example 
-      <xref linkend="creating_flows" />we created a very simple Flow, which do not need to "read"
-      any file, and that generates a graphical result. However on many occasions in which you will
+    <para>On many occasions in which you will
       need to extract data from an input file and/or generate as a result an output file, or even
       an log file in case an error occurs.</para>
     <para>How to associate an input, output and error file to a Flow:</para>
     <figure>
       <mediaobject>
-        <caption>Select the Flow editor tab, in the Flow sequence box you can edit the input,
+        <caption>Select the Flow Editor Tab, in the Flow sequence box you can edit the input,
           output and log files for this Flow sequence.</caption>
         <imageobject>
           <imagedata fileref="../images/GeBR_flow_editor_input_file.png" />
@@ -271,8 +269,7 @@
                 <imagedata fileref="../../common-images/icone_escolher_arquivo.png" />
               </imageobject>
             </inlinemediaobject>
-          </guiicon>and browse for the in the 
-          <guilabel>Choose a file</guilabel>dialog box.</para>
+          </guiicon>to browse for the file.</para>
       </step>
     </procedure>
     <para>When you have chosen a path for your 
@@ -309,9 +306,9 @@
           </imageobject>
         </inlinemediaobject>
     </guiicon>.</para>
-    <para>In the Flow Editor Tab, the user can execute a flow 
-      <emphasis role="bold">after</emphasis>another flow, this way, can creating a queue of
-      execution. To execute after a specific flow, instead of executing 
+    <para>In the Flow Editor Tab, the user can execute a Flow 
+      <emphasis role="bold">after</emphasis>another Flow, this way, can creating a queue of
+      execution. To execute after a specific Flow, instead of executing 
       <emphasis>"Immediately"</emphasis>, switch to the Flow Editor Tab and choose the "After 
       <emphasis>Flow A</emphasis>".</para>
     <para>By default the Flows are executed on the machine of origin. However, GêBR does permit
@@ -319,7 +316,7 @@
       <emphasis role="bold">execute Flows on remote machines</emphasis>. More details on the
       definition and selection of servers can be found in 
       <xref linkend="menu" />.</para>
-    <para>In the Flow editor tab, even if you have selected several Flow from the Flows tab, when
+    <para>In the Flow Editor Tab, even if you have selected several Flow from the Flows Tab, when
       you click on 
       <guiicon>
         <inlinemediaobject>
@@ -330,7 +327,7 @@
     </guiicon>only the first selected Flow will be executed.</para>
     <figure>
       <mediaobject>
-        <caption>Screenshot of the Flow editor tab. From the Queue fields you can determine in
+        <caption>Screenshot of the Flow Editor Tab. From the Queue fields you can determine in
           which queue a Flow will be executed.</caption>
         <imageobject>
           <imagedata fileref="../images/GeBR_flow_editor_queue.png" />
@@ -338,20 +335,21 @@
       </mediaobject>
     </figure>
     <para>At the moment the Flow is executed, GêBR automatically switch to the 
-      <guilabel>Job control</guilabel> tab and displays a report of the execution of the Flow .</para>
+      <guilabel>Job Control</guilabel> Tab and displays a report of the execution of the Flow .</para>
   </section>
   <!--  Falta Traduzir -->
   <section xml:id="multi_cores">
     <title>Multiple cores</title>
     <para>GêBR optimizes the execution of loops in multi-core machines</para>
-    <para>GeBR takes advantage of the multi-core feature of most of the recent machines in the
-      execution of repetitive flows. If the flow has Loops and is parallelizable (given some
-      criteria, shown below), then the user can adjust the execution's degree of performance based
-      on the number of processors.</para>
-    <para>To be considered parallelizable, besides having a loop, a flow must achieve one, and
+    <para>GêBR takes advantage of the multi-core feature of most of the recent machines. The execution of
+	    repetitive flows can be optimized by this resource. If the Flow has Loops and is 
+	    parallelizable (given some
+	    criteria, shown below), then the user can adjust the execution's degree of performance based
+	    on the number of processors.</para>
+    <para>To be considered parallelizable, besides having a loop, a Flow must achieve one, and
       just one, of these criteria:</para>
     <itemizedlist>
-      <listitem>The flow does not have an output file;</listitem>
+      <listitem>The Flow does not have an output file;</listitem>
       <listitem>The output of each step of the loop is not the input of any other step of the
         loop.</listitem>
     </itemizedlist>
@@ -369,18 +367,18 @@
       and decrease its performance. Seismic processing, particularly, can exhaust the computer
       resources.</para>
     <para>GêBR has a feature that overcomes the issue of overloading due to multitasking, by
-      enabling the execution of the flows in a <emphasis>Low Priority</emphasis> states:</para>
+      enabling the execution of the Flows in a <emphasis>Low Priority</emphasis> states:</para>
     <imageobject>
       <imagedata fileref="../images/GeBR_flow_editor_priority_execution.png" />
     </imageobject>
     <para>Two options are available: </para>
     <itemizedlist>
-      <listitem>Low priority (the flow is going to wait its turn to execute and try not to
+      <listitem>Low priority (the Flow is going to wait its turn to execute and try not to
         overload the system)</listitem>
-      <listitem>High priority (the execution of the flow is going to dispute for the computer
+      <listitem>High priority (the execution of the Flow is going to dispute for the computer
         resources with the other active programs)</listitem>
     </itemizedlist>
-    <para>If the user leaves the button <emphasis>unpressed</emphasis>, then the next execution of a flow is going to
+    <para>If the user leaves the button <emphasis>unpressed</emphasis>, then the next execution of a Flow is going to
       be done in a polite way. Otherwise, in case the button is left pressed, then the next
       execution is going to fight for the computer resources.</para>
     <para>Technically, when running in "Low Priority" mode, GêBR will reduce the run priority of the
@@ -396,18 +394,18 @@
       some jobs are left to be done for the next morning.</para>
   </section>
   <section xml:id="loop">
-    <title>Executing a flow multiple times</title>
+    <title>Executing a Flow multiple times</title>
     <para>The program 
       <emphasis>Loop</emphasis>(from the category 
       <emphasis role="bold">Loops</emphasis>) has a totally different usage compared to the
       remaining programs from GêBR. We are going to see some of these differences.</para>
-    <para>When we add the program Loop, we can see it always appears in the top of the flow. That
-      happens to indicate that the flow is going to be executed more than once, according to the
+    <para>When we add the program Loop, we can see it always appears in the top of the Flow. That
+      happens to indicate that the Flow is going to be executed more than once, according to the
       parameters set for the program. (see 
       <xref linkend="editar_parametros_programa" />for further details).</para>
     <mediaobject>
       <caption>Screenshot of program 
-        <emphasis>Loop</emphasis>, added to a flow and properly configured.</caption>
+        <emphasis>Loop</emphasis>, added to a Flow and properly configured.</caption>
       <imageobject>
         <imagedata fileref="../images/GeBR_flow_editor_loop.png" />
       </imageobject>
@@ -429,29 +427,28 @@
   </section>
   <section xml:id="multiple_machines">
     <title>Multiple machines</title>
-    <para>GêBR can optimize the execution of loops in multiple machines. 
-      <para></para>If GêBR is connected to multiple machines through the Servers Configuration
-      interface, and the selected flow is parallelizable (see below the criteria to be
+      <para>If GêBR is connected to multiple machines through the Servers Configuration
+      interface, and the selected Flow is parallelizable (see below the criteria to be
       parallelizable), then the option Auto-choose mean that GêBR is going to run it in a
       distributed way.</para>
-    <para>To be considered parallelizable, besides having a loop, a flow must achieve one
+    <para>To be considered parallelizable, besides having a loop, a Flow must achieve one
       of these criteria:</para>
     <itemizedlist>
       <listitem>
-        <para>The flow does not have an output file;</para>
+        <para>The Flow does not have an output file;</para>
       </listitem>
       <listitem>
         <para>The output of each step of the loop is not the input of any other step of the
           loop.</para>
       </listitem>
     </itemizedlist>
-    <para>In case the flow is not parallelizable (i.e., does not fit one of the above conditions),
+    <para>In case the Flow is not parallelizable (i.e., does not fit one of the above conditions),
       GêBR will run the job in the best machine 
       at the time of execution (GêBR rank them based mainly in availability and speed). In a distributed
-      execution, it may be important to differentiate the Priority mode. When the flow is
+      execution, it may be important to differentiate the Priority mode. When the Flow is
       parallelizable, it is the split up and distributed between the available machines according
       to their ranking.</para>
-    <para>If the user wants to run a flow in a specified machine, then he can force the execution
+    <para>If the user wants to run a Flow in a specified machine, then he can force the execution
       by going to Flow Editor tab, as choosing the machine of execution as shown
       below.</para>
   </section>

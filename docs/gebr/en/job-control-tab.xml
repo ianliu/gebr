@@ -9,7 +9,7 @@
   xml:id="controle_de_tarefas">
 
   <title>The 
-    <guilabel>Job control</guilabel> tab</title>
+    <guilabel>Job Control</guilabel> Tab</title>
   <para>GêBr presents an interface to the organization and visualization of the results.</para>
   <mediaobject>
     <caption>Opening of Job Control</caption>
@@ -19,7 +19,7 @@
   </mediaobject>
   <para>As seen in 
     <xref linkend="executar_fluxo" />, GêBR switches to the 
-    <guilabel>Job control</guilabel>tab whenever a Flow is executed.</para>
+    <guilabel>Job Control</guilabel> Tab whenever a Flow is executed.</para>
   <para>This tab has three sections:</para>
   <itemizedlist>
     <listitem>Toolbar: Operations over jobs</listitem>

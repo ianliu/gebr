@@ -51,7 +51,7 @@
         </mediaobject>
       </figure>
       <para>Advanced settings in Preferences menu expands the dialog box where you edit the
-        maestro server and HTML editor.</para>
+        Maestro Server and HTML editor.</para>
       <para>
         <emphasis role="bold">Advanced Settings</emphasis>
       </para>
@@ -170,8 +170,7 @@
   <section xml:id="execution_log">
     <title>The execution log</title>
     <para>GêBR remembers most of the users actions, as well as the results of these actions, in
-      the so called 
-      <emphasis>execution log</emphasis>. This log is shown at the bottom of the main window, which
+      the <emphasis>execution log</emphasis>. This log is shown at the bottom of the main window, which
       can be presented in the collapsed form (default) or the expanded form like the window
       below.</para>
     <figure>
