@@ -11,34 +11,34 @@
   <title>Additional features</title>
   <section xml:id="menu">
     <title>The 
-      <guimenu>Action</guimenu>menu</title>
+      <guimenu>Action</guimenu> menu</title>
     <para>From the 
-      <guimenu>Actions</guimenu>menu you can access your 
-      <guimenuitem>Preferences</guimenuitem>and configure 
+      <guimenu>Actions</guimenu> menu you can access your 
+      <guimenuitem>Preferences</guimenuitem> and configure 
       <guimenuitem>Servers</guimenuitem>. If your enthusiasm for GêBR has lead you to read the
       whole manual, you have probably used almost all available features found in these options.
       But just in case, below you will find the documentation for these options.</para>
     <section>
       <title>Preferences</title>
       <para>The details you provide in the 
-        <guimenuitem>Preferences</guimenuitem>dialog box will be adopted as the default by GêBR.
+        <guimenuitem>Preferences</guimenuitem> dialog box will be adopted as the default by GêBR.
         Specifically:</para>
       <itemizedlist>
         <listitem>
           <para>
-            <guilabel>User name:</guilabel>will be used as the default for 
-            <guilabel>Author:</guilabel>when you create Projects, Lines and Flows.</para>
+            <guilabel>User name:</guilabel> will be used as the default for 
+            <guilabel>Author:</guilabel> when you create Projects, Lines and Flows.</para>
         </listitem>
         <listitem>
           <para>
-            <guilabel>Email:</guilabel>will be used as the default for 
-            <guilabel>Email:</guilabel>when you create Projects, Lines and Flows.</para>
+            <guilabel>Email:</guilabel> will be used as the default for 
+            <guilabel>Email:</guilabel> when you create Projects, Lines and Flows.</para>
         </listitem>
         <listitem>
           <para>
-            <guilabel>User's menus directory:</guilabel>will be the default directory where 
-            <emphasis>GêBR's Menus</emphasis>are maintained ( 
-            <filename class="extension">mnu</filename>files).</para>
+            <guilabel>User's menus directory:</guilabel> will be the default directory where 
+            <emphasis>GêBR's Menus</emphasis> are maintained ( 
+            <filename class="extension">mnu</filename> files).</para>
         </listitem>
       </itemizedlist>
       <figure>
@@ -89,7 +89,7 @@
         <imagedata fileref="../images/GeBR_servers_maestro_diagram.png" />
       </imageobject>
     </mediaobject>
-    <para>The user can be connected to one maestro at once. Each maestro, in turn, can be connected
+    <para>GêBR can be connected to one maestro at once. Each maestro, in turn, can be connected
       to many daemons. To ease the task of handling of files by the maestro, one requirement is that
       all the daemons must be in the same Network File System (NFS).</para>
     <para>The Servers Interface has three parts: 
@@ -187,7 +187,7 @@
         <menuchoice>
           <guimenu>Actions</guimenu>
           <guimenuitem>Preferences</guimenuitem>
-        </menuchoice>at the bottom of the dialog box, we can see the box 
+        </menuchoice> at the bottom of the dialog box, we can see the box 
         <guilabel>Load past-execution log</guilabel>. By checking this box we choose to exhibit the
         whole log, including actions from past dates. By leaving the box unchecked we choose to
         have a compact log, which only shows actions that have taken place since GêBR's last

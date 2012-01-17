@@ -9,9 +9,9 @@
   xml:id="sec_3_2">
 
   <title>The 
-    <guilabel>Flows</guilabel>tab</title>
+    <guilabel>Flows</guilabel> tab</title>
   <para>Just bellow the 
-    <guilabel>Flows</guilabel>tab there are nine buttons, plus two more buttons at the bottom of
+    <guilabel>Flows</guilabel> tab there are nine buttons, plus two more buttons at the bottom of
     the Details box. These buttons will allow you to:</para>
   <itemizedlist>
     <listitem>
@@ -73,16 +73,16 @@
   <tip>
     <para>Instead of these buttons, try using the 
       <emphasis role="bold">context menu</emphasis>. To do so, 
-      <emphasis role="bold">right-click</emphasis>on a Flow you have created, notice that many
+      <emphasis role="bold">right-click</emphasis> on a Flow you have created, notice that many
       features can be accessed through this method. For certain cases this is an 
-      <emphasis role="bold">easier and simpler</emphasis>choice.</para>
+      <emphasis role="bold">easier and simpler</emphasis> choice.</para>
   </tip>
   <section xml:id="sec_3_2_1">
     <title>Creating a new Flow</title>
     <para>To create a new Flow first check that you have already 
-      <emphasis role="bold">created and selected a Line</emphasis>in the 
-      <guilabel>Projects and Lines</guilabel>tab. When you have done this, select the 
-      <guilabel>Flows</guilabel>tab and left-click on 
+      <emphasis role="bold">created and selected a Line</emphasis> in the 
+      <guilabel>Projects and Lines</guilabel> tab. When you have done this, select the 
+      <guilabel>Flows</guilabel> tab and left-click on 
       <guiicon>
         <inlinemediaobject>
           <imageobject>
@@ -94,23 +94,23 @@
       <guibutton>OK</guibutton>. For more details see 
       <xref linkend="creating_flows" />.</para>
     <para>There is 
-      <emphasis role="bold">no limit</emphasis>on the number of Flows you can have inside one Line
+      <emphasis role="bold">no limit</emphasis> on the number of Flows you can have inside one Line
       or in total.</para>
     <para>After you have created a Flow it will be 
-      <emphasis role="bold">visible on the left side of the main window</emphasis>when the 
-      <guilabel>Flows</guilabel>tab is selected. The 
-      <guilabel>Details</guilabel>box, found on the right side of the main window, shows
+      <emphasis role="bold">visible on the left side of the main window</emphasis> when the 
+      <guilabel>Flows</guilabel> tab is selected. The 
+      <guilabel>Details</guilabel> box, found on the right side of the main window, shows
       information on the selected Flow .</para>
     <tip>
       <para>You can alter 
-        <emphasis role="bold">the position</emphasis>of the Flow in the list by 
-        <emphasis role="bold">dragging the Flow with the mouse</emphasis>to the desired
+        <emphasis role="bold">the position</emphasis> of the Flow in the list by 
+        <emphasis role="bold">dragging the Flow with the mouse</emphasis> to the desired
         position.</para>
     </tip>
     <tip>
       <para>Observe that the 
-        <emphasis role="bold">information bar</emphasis>just bellow the menu 
-        <guimenu>Actions</guimenu>shows the complete Flow tree of the selected Flow.</para>
+        <emphasis role="bold">information bar</emphasis> just bellow the menu 
+        <guimenu>Actions</guimenu> shows the complete Flow tree of the selected Flow.</para>
     </tip>
   </section>
   <section xml:id="copiar_fluxos_area_tranferencia">
@@ -124,7 +124,7 @@
             <imagedata fileref="../../common-images/botao_copiar_fluxo.png" />
           </imageobject>
         </inlinemediaobject>
-      </guiicon>or by using the known shortcut 
+      </guiicon> or by using the known shortcut 
       <keycombo>
         <keycap>Ctrl</keycap>
         <keycap>C</keycap>
@@ -134,7 +134,7 @@
         <keycombo>
           <keycap>Ctrl</keycap>
           <mousebutton>Left-click</mousebutton>
-        </keycombo>or 
+        </keycombo> or 
         <keycombo>
           <keycap>Shift</keycap>
           <mousebutton>Left-click</mousebutton>
@@ -152,7 +152,7 @@
             <imagedata fileref="../../common-images/botao_colar_fluxo.png" />
           </imageobject>
         </inlinemediaobject>
-      </guiicon>or by simply using the shortcut 
+      </guiicon> or by simply using the shortcut 
       <keycombo>
         <keycap>Ctrl</keycap>
         <keycap>V</keycap>
@@ -160,8 +160,8 @@
     <tip>
       <para>Any Flow (or a set of Flows) that has been copied to the clipboard can be pasted to 
         <emphasis role="bold">any Line</emphasis>. Simply switch to the 
-        <guilabel>Projects and Lines</guilabel>tab, select the desired Line, then go back to the 
-        <guilabel>Flows</guilabel>tab and paste the Flow(s).</para>
+        <guilabel>Projects and Lines</guilabel> tab, select the desired Line, then go back to the 
+        <guilabel>Flows</guilabel> tab and paste the Flow(s).</para>
     </tip>
   </section>
   <section xml:id="sec_3_2_4">
@@ -179,7 +179,7 @@
         <keycombo>
           <keycap>Ctrl</keycap>
           <mousebutton>Left-click</mousebutton>
-        </keycombo>or 
+        </keycombo> or 
         <keycombo>
           <keycap>Shift</keycap>
           <mousebutton>Left-click</mousebutton>
@@ -197,7 +197,7 @@
         </inlinemediaobject>
     </guiicon>.</para>
     <para>In the 
-      <guilabel>Flows properties</guilabel>dialog box you can edit the fields 
+      <guilabel>Flows properties</guilabel> dialog box you can edit the fields 
       <guilabel>Title, Description, Author and Email</guilabel>.</para>
   </section>
   <section xml:id="sec_3_2_6">
@@ -240,7 +240,7 @@
     </procedure>
     <note>
       <para>There is 
-        <emphasis role="bold">no limit</emphasis>on the number of states for each Flow.</para>
+        <emphasis role="bold">no limit</emphasis> on the number of states for each Flow.</para>
     </note>
     <para>To open the list of saved states left-click on 
       <guiicon>
@@ -258,8 +258,8 @@
         </inlinemediaobject>
       </guiicon>, then select the state you wish to recover. Whenever you select a saved state from
       the list, the dialog 
-      <emphasis>Backup Current State</emphasis>will appear. If you click on 
-      <guibutton>Yes</guibutton>the dialog
+      <emphasis>Backup Current State</emphasis> will appear. If you click on 
+      <guibutton>Yes</guibutton> the dialog
       <emphasis>Save the Flow's State</emphasis> will appear, where you can save this new state. If
       you click on 
       <guibutton>No</guibutton>, GêBR will simply revert to the chosen state without saving the
@@ -272,7 +272,7 @@
     <caution>
       <para>GêBR continuously saves the list of Flow states. Even if you turn off your computer
         this list will be recovered when you open GêBR again. However, if you 
-        <emphasis role="bold">delete the Flow</emphasis>all the saved states will 
+        <emphasis role="bold">delete the Flow</emphasis> all the saved states will 
         <emphasis role="bold">immediately disappear forever</emphasis>.</para>
     </caution>
   </section>
@@ -287,12 +287,12 @@
           <guilabel>Projects and Lines</guilabel>. Remember that Flows can only exist inside Lines
           (see this concept in Section 
           <xref linkend="projetos_linhas_fluxo_visao_geral" />). To import a Flow you must first 
-          <emphasis role="bold">select a Line</emphasis>(or 
+          <emphasis role="bold">select a Line</emphasis> (or 
           <xref linkend="criar_nova_linha" />, if one does not exist).</para>
       </step>
       <step>
         <para>Select the tab 
-          <guilabel>Flows</guilabel>and left-click on 
+          <guilabel>Flows</guilabel> and left-click on 
           <guiicon>
             <inlinemediaobject>
               <imageobject>
@@ -303,9 +303,9 @@
       </step>
       <step>
         <para>Navigate through the 
-          <guilabel>Choose a Flow to import</guilabel>and select a Flow you wish to import (only
+          <guilabel>Choose a Flow to import</guilabel> and select a Flow you wish to import (only
           the file types 
-          <filename class="extension">flw</filename>will appear).</para>
+          <filename class="extension">flw</filename> will appear).</para>
       </step>
       <step>
         <para>Left-click on the button 
@@ -374,25 +374,25 @@
         </mediaobject>
     </figure></para>
     <tip>You can select several Flows and execute them 
-      <emphasis role="bold">sequentially</emphasis>by pressing Ctrl+R.</tip>
+      <emphasis role="bold">sequentially</emphasis> by pressing Ctrl+R.</tip>
     <tip>You can select several Flows and execute them 
-      <emphasis role="bold">parallelly</emphasis>by pressing Ctrl+Shift+R.</tip>
+      <emphasis role="bold">parallelly</emphasis> by pressing Ctrl+Shift+R.</tip>
     <caution>When executing multiple flows, the configuration of the first flow (when and where
       to execute) is going to be replicated to the other flows.</caution>
   </section>
   <section xml:id="sec_3_2_11">
     <title>Editing comments</title>
     <para>This button appears in the 
-      <guilabel>Projects and Lines</guilabel>tab and in 
-      <guilabel>Flows</guilabel>tab. This button allows the user to add comments about the selected
+      <guilabel>Projects and Lines</guilabel> tab and in 
+      <guilabel>Flows</guilabel> tab. This button allows the user to add comments about the selected
       Line or Flow. See 
       <xref linkend="editar_comentarios" />.</para>
   </section>
   <section xml:id="visualizar_relatorio_fluxo">
     <title>View Report</title>
     <para>This button appears in the 
-      <guilabel>Projects and Lines</guilabel>tab and in 
-      <guilabel>Flows</guilabel>tab. This button allows the user to View the report on the Line or
+      <guilabel>Projects and Lines</guilabel> tab and in 
+      <guilabel>Flows</guilabel> tab. This button allows the user to View the report on the Line or
       Flow in question, with the difference that the Line's report can include the Flow's report.
       All other functions are described in 
       <xref linkend="visualizar_relatorio" />.</para>

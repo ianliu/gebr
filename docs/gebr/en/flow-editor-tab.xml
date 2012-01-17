@@ -9,11 +9,11 @@
   xml:id="sec_3_3">
 
   <title>The 
-    <guilabel>Flow editor</guilabel>tab</title>
+    <guilabel>Flow editor</guilabel> tab</title>
   <para>To create a new Flow, you can follow the instructions of <xref linkend="creating_flows" /></para>
   <para>Now that we know how to add programs to the Flow let us learn how to configure these
     programs, and investigate the other tools found in the 
-    <guilabel>Flow editor</guilabel>tab:</para>
+    <guilabel>Flow editor</guilabel> tab:</para>
   <itemizedlist>
     <listitem>
       <para>
@@ -56,9 +56,9 @@
   <tip>
     <para>Instead of command buttons, try using 
       <emphasis role="bold">context menus</emphasis>. To do so, 
-      <emphasis role="bold">right-click</emphasis>on a program you have added. Notice that many
+      <emphasis role="bold">right-click</emphasis> on a program you have added. Notice that many
       command can be accessed through this menu. For certain cases this method is 
-      <emphasis role="bold">easier and faster</emphasis>then using command buttons.</para>
+      <emphasis role="bold">easier and faster</emphasis> then using command buttons.</para>
   </tip>
   <section xml:id="copiar_programa_para_area_de_transferencia">
     <title>Copying programs to the clipboard</title>
@@ -71,7 +71,7 @@
             <imagedata fileref="../../common-images/botao_copiar_fluxo.png" />
           </imageobject>
         </inlinemediaobject>
-      </guiicon>or by using the shortcut 
+      </guiicon> or by using the shortcut 
       <keycombo>
         <keycap>Ctrl</keycap>
         <keycap>C</keycap>
@@ -81,7 +81,7 @@
         <keycombo>
           <keycap>Ctrl</keycap>
           <mousebutton>Clique</mousebutton>
-        </keycombo>or 
+        </keycombo> or 
         <keycombo>
           <keycap>Shift</keycap>
           <mousebutton>Clique</mousebutton>
@@ -99,7 +99,7 @@
             <imagedata fileref="../../common-images/botao_colar_fluxo.png" />
           </imageobject>
         </inlinemediaobject>
-      </guiicon>or by using the shortcut 
+      </guiicon> or by using the shortcut 
       <keycombo>
         <keycap>Ctrl</keycap>
         <keycap>V</keycap>
@@ -109,8 +109,8 @@
         to 
         <emphasis role="bold">any Flow</emphasis>, and not just the Flow of origin. Simply switch
         to the 
-        <guilabel>Flows</guilabel>tab, select the desired Flow, go back to the 
-        <guilabel>Flow editor</guilabel>tab and paste the program(s).</para>
+        <guilabel>Flows</guilabel> tab, select the desired Flow, go back to the 
+        <guilabel>Flow editor</guilabel> tab and paste the program(s).</para>
     </tip>
   </section>
   <section xml:id="sec_3_3_3">
@@ -128,7 +128,7 @@
         <keycombo>
           <keycap>Ctrl</keycap>
           <mousebutton>Clique</mousebutton>
-        </keycombo>or 
+        </keycombo> or 
         <keycombo>
           <keycap>Shift</keycap>
           <mousebutton>Clique</mousebutton>
@@ -136,7 +136,7 @@
     </tip>
     <caution>
       <para>GêBR 
-        <emphasis role="bold">does not issue a warning</emphasis>before deleting the selected
+        <emphasis role="bold">does not issue a warning</emphasis> before deleting the selected
         programs.</para>
     </caution>
   </section>
@@ -146,7 +146,7 @@
     <procedure>
       <step>
         <para>Select the program from the 
-          <guilabel>Flow sequence</guilabel>box then click on 
+          <guilabel>Flow sequence</guilabel> box then click on 
           <guiicon>
             <inlinemediaobject>
               <imageobject>
@@ -157,23 +157,23 @@
       </step>
       <step>
         <para>The 
-          <guilabel>Parameters</guilabel>dialog box will appear. Notice that each program's
+          <guilabel>Parameters</guilabel> dialog box will appear. Notice that each program's
           parameter vary greatly both in size and type.</para>
         <tip>
           <para>Click on the 
-            <guibutton>Help</guibutton>button ( bottom left corner of the dialog box) to view the 
+            <guibutton>Help</guibutton> button ( bottom left corner of the dialog box) to view the 
             <emphasis role="bold">program's documentation</emphasis>. This will certainly be useful
             when you are editing the programs parameters.</para>
         </tip>
         <tip>
           <para>Click on the 
-            <guibutton>Default</guibutton>button when you want the program to return to its default
+            <guibutton>Default</guibutton> button when you want the program to return to its default
             configurations.</para>
         </tip>
       </step>
       <step>
         <para>When you are done click on the 
-          <guibutton>OK</guibutton>button.</para>
+          <guibutton>OK</guibutton> button.</para>
       </step>
     </procedure>
   </section>
@@ -187,7 +187,7 @@
             <imagedata fileref="../../common-images/icone_configurado.png" />
           </imageobject>
         </inlinemediaobject>
-      </guiicon>instead of de 
+      </guiicon> instead of de 
       <guiicon>
         <inlinemediaobject>
           <imageobject>
@@ -195,10 +195,10 @@
           </imageobject>
         </inlinemediaobject>
       </guiicon>. This means that the program's state has gone from 
-      <emphasis role="bold">Not configured</emphasis>to the 
-      <emphasis role="bold">Configured</emphasis>state. Besides these two states the program can
+      <emphasis role="bold">Not configured</emphasis> to the 
+      <emphasis role="bold">Configured</emphasis> state. Besides these two states the program can
       also be set to the 
-      <emphasis role="bold">Disabled</emphasis>state (
+      <emphasis role="bold">Disabled</emphasis> state (
       <guiicon>
         <inlinemediaobject>
           <imageobject>
@@ -206,17 +206,17 @@
           </imageobject>
         </inlinemediaobject>
       </guiicon>). You can alternate between these states by using two methods, you can either 
-      <mousebutton>right-click</mousebutton>on the program and then select from the context menu
+      <mousebutton>right-click</mousebutton> on the program and then select from the context menu
       the desired state, or by using the shortcut 
       <keycombo>
         <keycap>Spacebar</keycap>
-    </keycombo>to change the state(s) of the selected programs.</para>
+    </keycombo> to change the state(s) of the selected programs.</para>
     <tip>
       <para>You can select several programs whose state you wish to change by holding 
         <keycombo>
           <keycap>Ctrl</keycap>
           <mousebutton>Clique</mousebutton>
-        </keycombo>or 
+        </keycombo> or 
         <keycombo>
           <keycap>Shift</keycap>
           <mousebutton>Clique</mousebutton>
@@ -228,7 +228,7 @@
     </tip>
     <important>
       <para>
-        <emphasis role="bold">Disabled</emphasis>programs (
+        <emphasis role="bold">Disabled</emphasis> programs (
         <guiicon>
           <inlinemediaobject>
             <imageobject>
@@ -236,7 +236,7 @@
             </imageobject>
           </inlinemediaobject>
         </guiicon>) will be ignored when you execute your Flow. With this you can 
-        <emphasis role="bold">enable and disable parts of your Flow</emphasis>as you see
+        <emphasis role="bold">enable and disable parts of your Flow</emphasis> as you see
         fit.</para>
     </important>
   </section>
@@ -269,19 +269,19 @@
                 <imagedata fileref="../../common-images/icone_escolher_arquivo.png" />
               </imageobject>
             </inlinemediaobject>
-          </guiicon>to browse for the file.</para>
+          </guiicon> to browse for the file.</para>
       </step>
     </procedure>
     <para>When you have chosen a path for your 
-      <guilabel>Flow's input/output</guilabel>note that their file paths will appear in the 
-      <guilabel>Flow sequence</guilabel>box, indicate with the marks 
+      <guilabel>Flow's input/output</guilabel> note that their file paths will appear in the 
+      <guilabel>Flow sequence</guilabel> box, indicate with the marks 
       <guiicon>
         <inlinemediaobject>
           <imageobject>
             <imagedata fileref="../../common-images/icone_arquivo_entrada.png" />
           </imageobject>
         </inlinemediaobject>
-      </guiicon>and 
+      </guiicon> and 
       <guiicon>
         <inlinemediaobject>
           <imageobject>
@@ -291,8 +291,8 @@
     </guiicon>, below and above the Flow's programs (if there are any).</para>
     <note>
       <para>If you wish to 
-        <emphasis role="bold">remove a set</emphasis>from the list, select them by pressing 
-        <emphasis role="bold">right-click</emphasis>then click on 
+        <emphasis role="bold">remove a set</emphasis> from the list, select them by pressing 
+        <emphasis role="bold">right-click</emphasis> then click on 
         <guimenuitem>Exclude</guimenuitem>.</para>
     </note>
   </section>
@@ -306,15 +306,13 @@
           </imageobject>
         </inlinemediaobject>
     </guiicon>.</para>
-    <para>In the Flow Editor Tab, the user can execute a Flow 
-      <emphasis role="bold">after</emphasis>another Flow, this way, can creating a queue of
+    <para>In the Flow Editor Tab, you can execute a Flow 
+      <emphasis>after</emphasis> another Flow, creating a queue of
       execution. To execute after a specific Flow, instead of executing 
       <emphasis>"Immediately"</emphasis>, switch to the Flow Editor Tab and choose the "After 
       <emphasis>Flow A</emphasis>".</para>
-    <para>By default the Flows are executed on the machine of origin. However, GêBR does permit
-      that you 
-      <emphasis role="bold">execute Flows on remote machines</emphasis>. More details on the
-      definition and selection of servers can be found in 
+    <para>By default the Flows are executed on the Maestro group <xref linkend="servers_configuration">. 
+      More details on the definition and selection of servers and groups of servers can be found in 
       <xref linkend="menu" />.</para>
     <para>In the Flow Editor Tab, even if you have selected several Flow from the Flows Tab, when
       you click on 
@@ -324,11 +322,11 @@
             <imagedata fileref="../../common-images/botao_executar_fluxo.png" />
           </imageobject>
         </inlinemediaobject>
-    </guiicon>only the first selected Flow will be executed.</para>
+    </guiicon> only the first selected Flow will be executed.</para>
     <figure>
       <mediaobject>
-        <caption>Screenshot of the Flow Editor Tab. From the Queue fields you can determine in
-          which queue a Flow will be executed.</caption>
+	      <caption>Screenshot of the Flow Editor Tab. In the first menu of the <emphasis>Run</emphasis>, you can 
+          choose after which flow it will be executed.</caption>
         <imageobject>
           <imagedata fileref="../images/GeBR_flow_editor_queue.png" />
         </imageobject>
@@ -344,7 +342,7 @@
     <para>GêBR takes advantage of the multi-core feature of most of the recent machines. The execution of
 	    repetitive flows can be optimized by this resource. If the Flow has Loops and is 
 	    parallelizable (given some
-	    criteria, shown below), then the user can adjust the execution's degree of performance based
+	    criteria, shown below), then you can adjust the execution's degree of performance based
 	    on the number of processors.</para>
     <para>To be considered parallelizable, besides having a loop, a Flow must achieve one, and
       just one, of these criteria:</para>
@@ -378,7 +376,7 @@
       <listitem>High priority (the execution of the Flow is going to dispute for the computer
         resources with the other active programs)</listitem>
     </itemizedlist>
-    <para>If the user leaves the button <emphasis>unpressed</emphasis>, then the next execution of a Flow is going to
+    <para>If you leave the button <emphasis>unpressed</emphasis>, then the next execution of a Flow is going to
       be done in a polite way. Otherwise, in case the button is left pressed, then the next
       execution is going to fight for the computer resources.</para>
     <para>Technically, when running in "Low Priority" mode, GêBR will reduce the run priority of the
@@ -396,7 +394,7 @@
   <section xml:id="loop">
     <title>Executing a Flow multiple times</title>
     <para>The program 
-      <emphasis>Loop</emphasis>(from the category 
+      <emphasis>Loop</emphasis> (from the category 
       <emphasis role="bold">Loops</emphasis>) has a totally different usage compared to the
       remaining programs from GêBR. We are going to see some of these differences.</para>
     <para>When we add the program Loop, we can see it always appears in the top of the Flow. That
@@ -411,18 +409,18 @@
       </imageobject>
     </mediaobject>
     <para>After the 
-      <emphasis>Loop</emphasis>is added, the user has access to a new variable, the 
+      <emphasis>Loop</emphasis> is added, you have access to a new variable, the 
       <emphasis role="bold">iter</emphasis>. This special variable changes its value on each
       iteration, according to the parameters set.</para>
     <mediaobject>
       <caption>Screenshot of the edition from parameters of 
-        <emphasis>Loop</emphasis>program , with a simple example of parameters setting.</caption>
+        <emphasis>Loop</emphasis> program , with a simple example of parameters setting.</caption>
       <imageobject>
         <imagedata fileref="../images/loop_parametros.png" />
       </imageobject>
     </mediaobject>
     <tip>Further information about the variable 
-      <emphasis role="bold">iter</emphasis>are available in section 
+      <emphasis role="bold">iter</emphasis> are available in section 
       <xref linkend="variavel_iter" />.</tip>
   </section>
   <section xml:id="multiple_machines">
@@ -448,7 +446,7 @@
       execution, it may be important to differentiate the Priority mode. When the Flow is
       parallelizable, it is the split up and distributed between the available machines according
       to their ranking.</para>
-    <para>If the user wants to run a Flow in a specified machine, then he can force the execution
+    <para>If you want to run a Flow in a specified machine, then he can force the execution
       by going to Flow Editor tab, as choosing the machine of execution as shown
       below.</para>
   </section>

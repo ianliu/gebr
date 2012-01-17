@@ -11,8 +11,8 @@
   <para>GêBR is a simple graphical interface which 
     <emphasis role="bold">facilitates geophysical data processing</emphasis>. GêBR is 
     <emphasis role="bold">not a package for processing</emphasis>, it is designed to 
-    <emphasis role="bold">integrate</emphasis>a large variety of free processing packages, such as 
-    <emphasis>Seismic Un*x</emphasis>and 
+    <emphasis role="bold">integrate</emphasis> a large variety of free processing packages, such as 
+    <emphasis>Seismic Un*x</emphasis> and 
     <emphasis>Madagascar</emphasis>.</para>
   <para>GêBR can manage Projects and Lines, assemble and execute Flows and follow the results of
     your data processing. Everything in a simple and friendly way.</para>
@@ -26,7 +26,7 @@
     <para>Our main objective is to help bring together the Brazilian
       geophysics community, by developing tools to aid in the dissemination of research in the
       area.</para>
-    <para>For more information, visit the project's official site: 
+    <para>For more information, visit the project's official site:
       <emphasis>
         <link xlink:href="http://www.gebrproject.com">www.gebrproject.com</link>
     </emphasis>.</para>

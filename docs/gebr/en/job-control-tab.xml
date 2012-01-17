@@ -1,235 +1,247 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <section
-  xmlns="http://docbook.org/ns/docbook"
-  xmlns:xi="http://www.w3.org/2001/XInclude"
-  xmlns:xlink="http://www.w3.org/1999/xlink"
-  lang="en"
-  version="5.0"
-  xml:id="controle_de_tarefas">
+	xmlns="http://docbook.org/ns/docbook"
+	xmlns:xi="http://www.w3.org/2001/XInclude"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	lang="en"
+	version="5.0"
+	xml:id="controle_de_tarefas">
 
-  <title>The 
-    <guilabel>Job Control</guilabel> Tab</title>
-  <para>GêBr presents an interface to the organization and visualization of the results.</para>
-  <mediaobject>
-    <caption>Opening of Job Control</caption>
-    <imageobject>
-      <imagedata fileref="../images/GeBR_jc_opening.png" />
-    </imageobject>
-  </mediaobject>
-  <para>As seen in 
-    <xref linkend="executar_fluxo" />, GêBR switches to the 
-    <guilabel>Job Control</guilabel> Tab whenever a Flow is executed.</para>
-  <para>This tab has three sections:</para>
-  <itemizedlist>
-    <listitem>Toolbar: Operations over jobs</listitem>
-    <listitem>Left Panel: List of jobs</listitem>
-    <listitem>Righ Panel: Details of a selected job</listitem>
-  </itemizedlist>
-  <section xml:id="sec_6_1">
-    <title>Toolbar</title>
-    <mediaobject>
-      <caption>Toolbar of Job Control</caption>
-      <imageobject>
-        <imagedata fileref="../images/GeBR_jc_toolbar.png" />
-      </imageobject>
-    </mediaobject>
-    <para>In this tab you can 
-      <emphasis role="bold">follow</emphasis>and, if so desired, 
-      <emphasis role="bold">interrupt</emphasis>the Flow's execution. The available commands
-      are:</para>
-    <itemizedlist>
-      <listitem>
-        <para>Save the Job's information in a file</para>
-      </listitem>
-      <listitem>
-        <para>Clear Job</para>
-      </listitem>
-      <listitem>
-        <para>Cancel this Job</para>
-      </listitem>
-      <listitem>
-        <para>Filter Jobs</para>
-      </listitem>
-    </itemizedlist>
-    <section xml:id="sec_6_1_1">
-      <title>Save 
-        <guiicon>
-          <inlinemediaobject>
-            <imageobject>
-              <imagedata fileref="../../common-images/botao_salvar_log.png" />
-            </imageobject>
-          </inlinemediaobject>
-      </guiicon></title>
-      <para>Save to disk the output of the selected flow up to the moment.</para>
-    </section>
-    <section xml:id="sec_6_1_2">
-      <title>Clear 
-        <guiicon>
-          <inlinemediaobject>
-            <imageobject>
-              <imagedata fileref="../../common-images/trash-empty.png" />
-            </imageobject>
-          </inlinemediaobject>
-      </guiicon></title>
-      <para>Eliminate from the job Control the selected Job. Caution is needed because the
-        process is irreversible.</para>
-      <para>You can only clear jobs that are not being executed ( 
-        <guiicon>
-          <inlinemediaobject>
-            <imageobject>
-              <imagedata fileref="../../common-images/icone_tarefa_concluida_sucesso.png" />
-            </imageobject>
-          </inlinemediaobject>
-        </guiicon>or 
-        <guiicon>
-          <inlinemediaobject>
-            <imageobject>
-              <imagedata fileref="../../common-images/icone_tarefa_terminada_erro.png" />
-            </imageobject>
-          </inlinemediaobject>
-      </guiicon>).</para>
-    </section>
-    <section xml:id="sec_6_1_3">
-      <title>Cancel 
-        <guiicon>
-          <inlinemediaobject>
-            <imageobject>
-              <imagedata fileref="../../common-images/botao_terminar_tarefa.png" />
-            </imageobject>
-          </inlinemediaobject>
-      </guiicon></title>
-      <para>The user can cancel a running or queued job. When a Job is terminated in this manner,
-        the Job will be marked with 
-        <guiicon>
-          <inlinemediaobject>
-            <imageobject>
-              <imagedata fileref="../../common-images/icone_tarefa_terminada_erro.png" />
-            </imageobject>
-          </inlinemediaobject>
-      </guiicon>.</para>
-    </section>
-    <section xml:id="sec_6_1_4">
-      <title>Filter 
-        <guiicon>
-          <inlinemediaobject>
-            <imageobject>
-              <imagedata fileref="../../common-images/filter.png" />
-            </imageobject>
-          </inlinemediaobject>
-      </guiicon></title>
-      <para>GêBR offers the option to see just the desired results, by some criteria.</para>
-      <para>The user can filter the results by two criteria:</para>
-      <itemizedlist>
-        <listitem>Group/Server</listitem>
-        <listitem>Status</listitem>
-      </itemizedlist>
-      <mediaobject>
-        <imageobject>
-          <imagedata fileref="../images/GeBR_jc_filter.png" />
-        </imageobject>
-      </mediaobject>
-    </section>
-    <tip>As in anywhere else in GêBR, many of the toolbar functionalities can be accessed through
-      the context menu, using the mice right button.</tip>
-  </section>
-  <section>
-    <title>Left Panel</title>
-    <para>In the left panel, GêBR presents a list of flows executed by the user, ordered by
-      moment of execution. Each exhibited flow can be in one of three states:</para>
-    <itemizedlist>
-      <listitem>Running (
-        <guiicon>
-          <inlinemediaobject>
-            <imageobject>
-              <imagedata fileref="../../common-images/icone_tarefa_em_execucao.png" />
-            </imageobject>
-          </inlinemediaobject>
-      </guiicon>): job in execution;</listitem>
-      <listitem>Finished (
-        <guiicon>
-          <inlinemediaobject>
-            <imageobject>
-              <imagedata fileref="../../common-images/icone_tarefa_concluida_sucesso.png" />
-            </imageobject>
-          </inlinemediaobject>
-      </guiicon>): already completed job;</listitem>
-      <listitem>Canceled (
-        <guiicon>
-          <inlinemediaobject>
-            <imageobject>
-              <imagedata fileref="../../common-images/icone_tarefa_terminada_erro.png" />
-            </imageobject>
-          </inlinemediaobject>
-      </guiicon>): stopped by the user</listitem>
-      <listitem>Queued (
-        <guiicon>
-          <inlinemediaobject>
-            <imageobject>
-              <imagedata fileref="../../common-images/chronometer.png" />
-            </imageobject>
-          </inlinemediaobject>
-      </guiicon>: waiting for another job.</listitem>
-    </itemizedlist>
-    <mediaobject>
-      <imageobject>
-        <imagedata fileref="../images/GeBR_jc_left_pane_right_click.png" />
-      </imageobject>
-    </mediaobject>
-  </section>
-  <section>
-    <title>Right panel</title>
-    <mediaobject>
-      <imageobject>
-        <imagedata fileref="../images/GeBR_jc_details.png" />
-      </imageobject>
-    </mediaobject>
-    <para>In the upper part, information of the selected flow is exhibited. More informations are
-      shown clicking over <emphasis>Details</emphasis>. Among the exhibited information there are:</para>
-    <itemizedlist>
-      <listitem><para>moment of start/finish of the flow</para></listitem>
-      <listitem><para>input/output files</para></listitem>
-      <listitem><para>servers group in which the flow were executed</para></listitem>
-    </itemizedlist>
-    <para>You can also consult which machines were
-      effectively used in the group and how the distribution of the work was done by clicking over 
-      <guiicon>
-        <inlinemediaobject>
-          <imageobject>
-            <imagedata fileref="../../common-images/gebr-speed-verylow.png" />
-          </imageobject>
-        </inlinemediaobject>
-    </guiicon>.</para>
+	<title>The 
+		<guilabel>Job Control</guilabel> Tab</title>
+	<para>GêBr presents an interface to the organization and visualization of the results.</para>
+	<mediaobject>
+		<caption>Opening of Job Control</caption>
+		<imageobject>
+			<imagedata fileref="../images/GeBR_jc_opening.png" />
+		</imageobject>
+	</mediaobject>
+	<para>As seen in 
+		<xref linkend="executar_fluxo" />, GêBR switches to the 
+		<guilabel>Job Control</guilabel> Tab whenever a Flow is executed.</para>
+	<para>This tab has three sections:</para>
+	<itemizedlist>
+		<listitem><para>Toolbar: Operations over jobs</para></listitem>
+		<listitem><para>Left Panel: List of jobs</para></listitem>
+		<listitem><para>Righ Panel: Details of a selected job</para></listitem>
+	</itemizedlist>
+	<section xml:id="sec_6_1">
+		<title>Toolbar</title>
+		<mediaobject>
+			<caption>Toolbar of Job Control</caption>
+			<imageobject>
+				<imagedata fileref="../images/GeBR_jc_toolbar.png" />
+			</imageobject>
+		</mediaobject>
+		<para>In this tab you can 
+			<emphasis role="bold">follow</emphasis> and, if so desired, 
+			<emphasis role="bold">interrupt</emphasis> the Flow's execution. The available commands
+			are:</para>
+		<itemizedlist>
+			<listitem>
+				<para>Save the Job's information in a file</para>
+			</listitem>
+			<listitem>
+				<para>Clear Job</para>
+			</listitem>
+			<listitem>
+				<para>Cancel this Job</para>
+			</listitem>
+			<listitem>
+				<para>Filter Jobs</para>
+			</listitem>
+		</itemizedlist>
+		<section xml:id="sec_6_1_1">
+			<title>Save 
+				<guiicon>
+					<inlinemediaobject>
+						<imageobject>
+							<imagedata fileref="../../common-images/botao_salvar_log.png" />
+						</imageobject>
+					</inlinemediaobject>
+			</guiicon></title>
+			<para>Save to disk the output of the selected flow up to the moment.</para>
+		</section>
+		<section xml:id="sec_6_1_2">
+			<title>Clear 
+				<guiicon>
+					<inlinemediaobject>
+						<imageobject>
+							<imagedata fileref="../../common-images/trash-empty.png" />
+						</imageobject>
+					</inlinemediaobject>
+			</guiicon></title>
+			<para>Eliminate from the job Control the selected Job. Caution is needed because the
+				process is irreversible.</para>
+			<para>You can only clear jobs that are not being executed ( 
+				<guiicon>
+					<inlinemediaobject>
+						<imageobject>
+							<imagedata fileref="../../common-images/icone_tarefa_concluida_sucesso.png" />
+						</imageobject>
+					</inlinemediaobject>
+				</guiicon> or 
+				<guiicon>
+					<inlinemediaobject>
+						<imageobject>
+							<imagedata fileref="../../common-images/icone_tarefa_terminada_erro.png" />
+						</imageobject>
+					</inlinemediaobject>
+			</guiicon>).</para>
+		</section>
+		<section xml:id="sec_6_1_3">
+			<title>Cancel 
+				<guiicon>
+					<inlinemediaobject>
+						<imageobject>
+							<imagedata fileref="../../common-images/botao_terminar_tarefa.png" />
+						</imageobject>
+					</inlinemediaobject>
+			</guiicon></title>
+			<para>You can cancel a running or queued job. When a Job is terminated in this manner,
+				the Job will be marked with 
+				<guiicon>
+					<inlinemediaobject>
+						<imageobject>
+							<imagedata fileref="../../common-images/icone_tarefa_terminada_erro.png" />
+						</imageobject>
+					</inlinemediaobject>
+			</guiicon>.</para>
+		</section>
+		<section xml:id="sec_6_1_4">
+			<title>Filter 
+				<guiicon>
+					<inlinemediaobject>
+						<imageobject>
+							<imagedata fileref="../../common-images/filter.png" />
+						</imageobject>
+					</inlinemediaobject>
+			</guiicon></title>
+			<para>GêBR offers the option to see just the desired results, by some criteria.</para>
+			<para>You can filter the results by two criteria:</para>
+			<itemizedlist>
+				<listitem><para>Group/Server</para></listitem>
+				<listitem><para>Status</para></listitem>
+			</itemizedlist>
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="../images/GeBR_jc_filter.png" />
+				</imageobject>
+			</mediaobject>
+		</section>
+		<tip>As in anywhere else in GêBR, many of the toolbar functionalities can be accessed through
+			the context menu, using the mice right button.</tip>
+	</section>
+	<section>
+		<title>Left Panel</title>
+		<para>In the left panel, GêBR presents a list of flows executed by you, ordered by
+			moment of execution. Each exhibited flow can be in one of three states:</para>
+		<itemizedlist>
+			<listitem>
+				<para>
+					Running (
+					<guiicon>
+						<inlinemediaobject>
+							<imageobject>
+								<imagedata fileref="../../common-images/icone_tarefa_em_execucao.png" />
+							</imageobject>
+						</inlinemediaobject>
+					</guiicon>): job in execution;
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					Finished (
+					<guiicon>
+						<inlinemediaobject>
+							<imageobject>
+								<imagedata fileref="../../common-images/icone_tarefa_concluida_sucesso.png" />
+							</imageobject>
+						</inlinemediaobject>
+					</guiicon>): already completed job;
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					Canceled (
+					<guiicon>
+						<inlinemediaobject>
+							<imageobject>
+								<imagedata fileref="../../common-images/icone_tarefa_terminada_erro.png" />
+							</imageobject>
+						</inlinemediaobject>
+					</guiicon>): stopped by the you 
+				</para>
+			</listitem>
+			<listitem>Queued (
+				<guiicon>
+					<inlinemediaobject>
+						<imageobject>
+							<imagedata fileref="../../common-images/chronometer.png" />
+						</imageobject>
+					</inlinemediaobject>
+			</guiicon>: waiting for another job.</listitem>
+		</itemizedlist>
+		<mediaobject>
+			<imageobject>
+				<imagedata fileref="../images/GeBR_jc_left_pane_right_click.png" />
+			</imageobject>
+		</mediaobject>
+	</section>
+	<section>
+		<title>Right panel</title>
+		<mediaobject>
+			<imageobject>
+				<imagedata fileref="../images/GeBR_jc_details.png" />
+			</imageobject>
+		</mediaobject>
+		<para>In the upper part, information of the selected flow is exhibited. More informations are
+			shown clicking over <emphasis>Details</emphasis>. Among the exhibited information there are:</para>
+		<itemizedlist>
+			<listitem><para>moment of start/finish of the flow</para></listitem>
+			<listitem><para>input/output files</para></listitem>
+			<listitem><para>servers group in which the flow were executed</para></listitem>
+		</itemizedlist>
+		<para>You can also consult which machines were
+			effectively used in the group and how the distribution of the work was done by clicking over 
+			<guiicon>
+				<inlinemediaobject>
+					<imageobject>
+						<imagedata fileref="../../common-images/gebr-speed-verylow.png" />
+					</imageobject>
+				</inlinemediaobject>
+		</guiicon>.</para>
 
-    <mediaobject>
-      <imageobject>
-        <imagedata fileref="../images/GeBR_jc_more_details.png" />
-      </imageobject>
-    </mediaobject>
-    The provided informations are:
-    <itemizedlist>
-      <listitem> GêBR-maestro machine</listitem>
-      <listitem> GêBR-client machine</listitem>
-      <listitem> Total number of processors used in the execution</listitem>
-      <listitem> Distributions of the jobs to the servers</listitem>
-    </itemizedlist>
+		<mediaobject>
+			<imageobject>
+				<imagedata fileref="../images/GeBR_jc_more_details.png" />
+			</imageobject>
+		</mediaobject>
+		The provided informations are:
+		<itemizedlist>
+			<listitem> <para>GêBR-maestro machine</para></listitem>
+			<listitem> <para>GêBR-client machine</para></listitem>
+			<listitem> <para>Total number of processors used in the execution</para></listitem>
+			<listitem> <para>Distributions of the jobs to the servers</para></listitem>
+		</itemizedlist>
 
-    <mediaobject>
-      <imageobject>
-        <imagedata fileref="../images/GeBR_jc_output.png" />
-      </imageobject>
-    </mediaobject>
-    <para>The results (standard output) of the flow are shown. The redirected output are not
-      exhibited. Right-clicking on this window, an options menu is exhibited, by which the user can
-      enable the automatic word wrap and the automatic scroll of window as the output is being
-      shown.</para>
-    <mediaobject>
-      <imageobject>
-        <imagedata fileref="../images/GeBR_jc_command_line.png" />
-      </imageobject>
-    </mediaobject>
-    <para>The user can also consult the command lines executed by GêBR. The user just need to
-      visit the tab Command line. The command lines are portable and can be copy-pasted through a
-      execution terminal.</para>
-  </section>
+		<mediaobject>
+			<imageobject>
+				<imagedata fileref="../images/GeBR_jc_output.png" />
+			</imageobject>
+		</mediaobject>
+		<para>The results (standard output) of the flow are shown. The redirected output are not
+			exhibited. Right-clicking on this window, an options menu is exhibited, by which you can
+			enable the automatic word wrap and the automatic scroll of window as the output is being
+			shown.</para>
+		<mediaobject>
+			<imageobject>
+				<imagedata fileref="../images/GeBR_jc_command_line.png" />
+			</imageobject>
+		</mediaobject>
+		<para>You can also consult the command lines executed by GêBR. You just need to
+			visit the tab Command line. The command lines are portable and can be copy-pasted through a
+			execution terminal.</para>
+	</section>
 </section>

@@ -9,9 +9,9 @@
   xml:id="project_line">
 
   <title>The 
-    <guilabel>Projects and Lines</guilabel>tab</title>
+    <guilabel>Projects and Lines</guilabel> tab</title>
   <para>The tab 
-    <guilabel>Projects and Lines</guilabel>has nine command buttons just below the tab. These
+    <guilabel>Projects and Lines</guilabel> has nine command buttons just below the tab. These
     command buttons will allow you to:</para>
   <itemizedlist>
     <listitem>
@@ -62,11 +62,11 @@
   </itemizedlist>
   <tip>
     <para>Try using a 
-      <emphasis role="bold">context menu</emphasis>instead of command buttons. To do so, 
-      <emphasis role="bold">right-click</emphasis>on one of the Projects or Lines you have created.
+      <emphasis role="bold">context menu</emphasis> instead of command buttons. To do so, 
+      <emphasis role="bold">right-click</emphasis> on one of the Projects or Lines you have created.
       Notice that many commands can be found in this context menu. For certain cases this method is
 
-      <emphasis role="bold">easier and faster</emphasis>then using command buttons.</para>
+      <emphasis role="bold">easier and faster</emphasis> then using command buttons.</para>
   </tip>
   <section xml:id="criar_novo_projeto">
     <title>New Project</title>
@@ -80,11 +80,11 @@
       </guiicon>, more details are given in 
       <xref linkend="editar_projetos_e_linhas" />.</para>
     <para>There is 
-      <emphasis role="bold">no limitation</emphasis>on the number of Projects in GêBR. You can have
+      <emphasis role="bold">no limitation</emphasis> on the number of Projects in GêBR. You can have
       as many as you desire.</para>
     <para>After creating a Project it will be 
       <emphasis role="bold">visible on the left side of GêBR's main window</emphasis>. The 
-      <guilabel>Details</guilabel>box, on the right side of the main window, will show information
+      <guilabel>Details</guilabel> box, on the right side of the main window, will show information
       about the selected Project.</para>
   </section>
   <section xml:id="criar_nova_linha">
@@ -101,17 +101,17 @@
       <xref linkend="editar_projetos_e_linhas" />. A new Line will appear in the selected
       Project.</para>
     <para>There is 
-      <emphasis role="bold">no limitation</emphasis>on the number of Lines in GêBR. You can have as
+      <emphasis role="bold">no limitation</emphasis> on the number of Lines in GêBR. You can have as
       many Lines in a Project as you desire.</para>
     <para>Lines that you have created will be 
-      <emphasis role="bold">visible on the left side of GêBR's main window</emphasis>inside their
+      <emphasis role="bold">visible on the left side of GêBR's main window</emphasis> inside their
       respective Projects. The 
-      <guilabel>Details</guilabel>box, localized on the right side of the main window, exhibits
+      <guilabel>Details</guilabel> box, localized on the right side of the main window, exhibits
       information on the selected Line.</para>
     <tip>
       <para>In GêBR you can 
-        <emphasis role="bold">collapse</emphasis>or 
-        <emphasis role="bold">expand</emphasis>a Project. When collapsed 
+        <emphasis role="bold">collapse</emphasis> or 
+        <emphasis role="bold">expand</emphasis> a Project. When collapsed 
         <emphasis role="bold">the Projects Lines are hidden</emphasis>, when expanded 
         <emphasis role="bold">the Project's Lines are visible</emphasis>. To collapse click on the
         icon 
@@ -121,7 +121,7 @@
               <imagedata fileref="../../common-images/icone_expandido.png" />
             </imageobject>
           </inlinemediaobject>
-        </guiicon>immediately to the left of the Projects name. To expand, click on the icon 
+        </guiicon> immediately to the left of the Projects name. To expand, click on the icon 
         <guiicon>
           <inlinemediaobject>
             <imageobject>
@@ -162,8 +162,8 @@
         </inlinemediaobject>
     </guiicon>.</para>
     <para>In the 
-      <guilabel>Project properties</guilabel>or 
-      <guilabel>Line properties</guilabel>dialog box you can edit the fields 
+      <guilabel>Project properties</guilabel> or 
+      <guilabel>Line properties</guilabel> dialog box you can edit the fields 
       <guilabel>Title</guilabel>, 
       <guilabel>Description</guilabel>, 
       <guilabel>Author</guilabel> and 
@@ -193,7 +193,7 @@
         </inlinemediaobject>
       </guiicon>, in the tool bar, or open the popup context menu and select the option 
       <guilabel>Properties</guilabel>. In the 
-      <guilabel>Line's properties</guilabel>window, in the field 
+      <guilabel>Line's properties</guilabel> window, in the field 
       <guilabel>Paths</guilabel>, write the path to the directory you want and then left-click on 
       <guiicon>
         <inlinemediaobject>
@@ -209,33 +209,33 @@
             <imagedata fileref="../../common-images/icone_caminho_personalizado.png" />
           </imageobject>
         </inlinemediaobject>
-    </guiicon>and then choosing a directory.</para>
+    </guiicon> and then choosing a directory.</para>
     <para>When you completed editing the preferred paths click 
       <guibutton>OK</guibutton>.</para>
     <para>
-      <emphasis role="bold">There is no Limit</emphasis>to the number of paths you can add.</para>
+      <emphasis role="bold">There is no Limit</emphasis> to the number of paths you can add.</para>
     <tip>
       <para>The path at the top of the list will be set as the standard path, which will be
-        opened when the user clicks on the icon 
+        opened when you click on the icon 
         <guiicon>
           <inlinemediaobject>
             <imageobject>
               <imagedata fileref="../../common-images/icone_caminho_personalizado.png" />
             </imageobject>
           </inlinemediaobject>
-      </guiicon>as to search for a file or directory.</para>
+      </guiicon> as to search for a file or directory.</para>
     </tip>
     <tip>
       <para>To 
-        <emphasis role="bold">remove a path</emphasis>from the list, select it by pressing the 
-        <emphasis role="bold">right-click</emphasis>and then left-click on 
-        <guimenuitem>Remove</guimenuitem>or 
+        <emphasis role="bold">remove a path</emphasis> from the list, select it by pressing the 
+        <emphasis role="bold">right-click</emphasis> and then left-click on 
+        <guimenuitem>Remove</guimenuitem> or 
         <guimenuitem>Delete</guimenuitem>.</para>
     </tip>
     <tip>
       <para>To change a 
-        <emphasis role="bold">path's position</emphasis>in the list, with the mouse simply 
-        <emphasis role="bold">drag it</emphasis>to its new position.</para>
+        <emphasis role="bold">path's position</emphasis> in the list, with the mouse simply 
+        <emphasis role="bold">drag it</emphasis> to its new position.</para>
     </tip>
     <para>You can also use hotkeys to add paths (
       <keycombo>
@@ -285,15 +285,14 @@
           <para>Click OK to close the dialog box.</para>
         </step>
         <step>
-          <para>Click Yes to confirm the change of Maestro of this Line or click No to
-            cancel.</para>
+          <para>Click Yes to confirm the change of Maestro of this Line.</para>
         </step>
       </procedure>
     </itemizedlist>
     <imageobject>
       <imagedata fileref="../images/GeBR_line_properties_changing_maestro.png" />
     </imageobject>
-    <caution>The user is going to need to review the paths of the line, potentially broken by the
+    <caution>You are going to need to review the paths of the line, potentially broken by the
       change of the maestro.</caution>
   </section>
   <section xml:id="sec_3_1_7">
@@ -314,8 +313,8 @@
       <step>
         <para>Select the project or line you want to import at window 
           <guilabel>Choose project/line to open</guilabel>. Only files with extension 
-          <filename class="extension">prjz</filename>or 
-          <filename class="extension">lnez</filename>will be show.</para>
+          <filename class="extension">prjz</filename> or 
+          <filename class="extension">lnez</filename> will be show.</para>
       </step>
       <step>
         <para>Click at button 
@@ -359,8 +358,8 @@
         <para>A dialog box will appear where you can 
           <guilabel>choose the name of the file that will be saved</guilabel>; select a directory
           then type the file name, GêBR determines the extension automatically, 
-          <filename class="extension">prjz</filename>for Projects or 
-          <filename class="extension">lnez</filename>for Lines.</para>
+          <filename class="extension">prjz</filename> for Projects or 
+          <filename class="extension">lnez</filename> for Lines.</para>
       </step>
       <step>
         <para>Left-click on 
@@ -378,8 +377,8 @@
         <para>Left-click on 
           <guibutton>Edit comments</guibutton>, which is located just below 
           <guilabel>Details</guilabel>, in the 
-          <guilabel>Project's properties</guilabel>or 
-          <guilabel>Line's Properties</guilabel>dialog box.</para>
+          <guilabel>Project's properties</guilabel> or 
+          <guilabel>Line's Properties</guilabel> dialog box.</para>
       </step>
       <step>
         <para>Fill in your comment in the text editor that appeared, when you have finished save
@@ -401,14 +400,14 @@
         <menuchoice>
           <guimenu>Actions</guimenu>
           <guimenuitem>Preferences</guimenuitem>
-        </menuchoice>(the top left corner of GêBR's main window) you can determine the text editor
+        </menuchoice> (the top left corner of GêBR's main window) you can determine the text editor
         that will be used to edit reports. The standard editor is 
         <application>gedit</application>. To use another editor, type the name of the editor in 
         <guilabel>HTML Editor</guilabel>.</para>
     </tip>
     <note>
       <para>You can only have 
-        <emphasis role="bold">one comment</emphasis>for each Project or Line.</para>
+        <emphasis role="bold">one comment</emphasis> for each Project or Line.</para>
     </note>
     <para>
       <important>
@@ -418,7 +417,7 @@
           <listitem>
             <para>Select a Project or a Line and click the button 
               <guibutton>View Report</guibutton>, found at the bottom of the 
-              <guilabel>Details</guilabel>box, which is on the right side of the main
+              <guilabel>Details</guilabel> box, which is on the right side of the main
               window.</para>
           </listitem>
         </itemizedlist>
@@ -430,7 +429,7 @@
     <para>As explained in the above section, you can edit a report containing additional
       information about the Project or Line. To view the report left-click on View Report, found at
       the bottom of the 
-      <guilabel>Details</guilabel>box, which is on the right side of the main window.</para>
+      <guilabel>Details</guilabel> box, which is on the right side of the main window.</para>
     <para>After clicking on 
       <guilabel>View Report</guilabel>, a window will appear where you can:</para>
     <procedure>
@@ -444,7 +443,7 @@
     <para>In the menu Options you can:</para>
     <procedure>
       <step>
-        <para>Include user comments;</para>
+        <para>Include your comments;</para>
       </step>
       <step>
         <para>Include the Flow's report;</para>
@@ -460,7 +459,7 @@
     <figure>
       <mediaobject>
         <caption>In the view report window, you can print or save to a file this report. In the
-          options menu, as is shown above, you can include: the user's comments, the Flow's report,
+          options menu, as is shown above, you can include: your comments, the Flow's report,
           the parameter table and choose from a few pre-defined styles for the report.</caption>
         <imageobject>
           <imagedata fileref="../images/janela_visualizar_relatorio.png" />

@@ -21,8 +21,8 @@
         <para>Create a flow and insert a program called 
           <guimenuitem>Echo</guimenuitem>. Echo's basic function is to show text on the screen
           (you can find this program at 
-          <guimenu>Shell tools</guimenu>category, at 
-          <guilabel>Flow Editor</guilabel>tab).</para>
+          <guimenu>Shell tools</guimenu> category, at 
+          <guilabel>Flow Editor</guilabel> tab).</para>
         <figure>
           <mediaobject>
             <caption>Screenshot of the creation of flow "Example flow".</caption>
@@ -50,23 +50,23 @@
                 <imagedata fileref="../../common-images/botao_dicionario_projeto.png" />
               </imageobject>
             </inlinemediaobject>
-          </guiicon>to 
+          </guiicon> to 
           <emphasis role="bold">edit the variables dictionary</emphasis>.</para>
       </step>
       <step>
         <para>At the window that pops up (
           <guilabel>Variables dictionary for flow</guilabel>), click on 
-          <emphasis>New</emphasis>at 
-          <emphasis role="bold">Flow</emphasis>scope. Fill the field 
-          <emphasis>keyword</emphasis>with the variable's name 
+          <emphasis>New</emphasis> at 
+          <emphasis role="bold">Flow</emphasis> scope. Fill the field 
+          <emphasis>keyword</emphasis> with the variable's name 
           <emphasis role="bold">var1</emphasis>. Then, press enter to proceed to the next field, 
           <emphasis>Value</emphasis>. Before filling it, you must choose a data type to your new
           variable (
-          <guimenuitem>Number</guimenuitem>or 
+          <guimenuitem>Number</guimenuitem> or 
           <guimenuitem>Text</guimenuitem>), choose 
           <guimenuitem>Number</guimenuitem>. The mouse cursor will be located at field 
           <emphasis>Value</emphasis>. Fill that field with 
-          <emphasis role="bold">10</emphasis>and press enter again.</para>The last field is the 
+          <emphasis role="bold">10</emphasis> and press enter again.</para> The last field is the 
         <emphasis>Comments</emphasis>. Fill it with some description of your newly created
         variable. Remember: The comments are optional, you can leave this field empty if you want. 
         <para>When you finish, your window must look like with this one:</para>
@@ -84,7 +84,7 @@
           expression.</tip>
         <tip>We can navigate over the fields using the keys 
           <keycap>Enter</keycap>, 
-          <keycap>Tab</keycap>or with the 
+          <keycap>Tab</keycap> or with the 
           <mousebutton>Left button of the mouse</mousebutton>.</tip></step>
     </procedure>
   </section>
@@ -97,7 +97,7 @@
       <step>
         <para>Variable named 
           <emphasis role="bold">var2</emphasis>, type 
-          <guimenuitem>Number</guimenuitem>and value 
+          <guimenuitem>Number</guimenuitem> and value 
           <emphasis role="bold">var1 + 10</emphasis>.</para>
         <figure>
           <mediaobject>
@@ -112,12 +112,12 @@
       <step>
         <para>Variable named 
           <emphasis role="bold">string</emphasis>, of type 
-          <guimenuitem>Text</guimenuitem>and value 
+          <guimenuitem>Text</guimenuitem> and value 
           <emphasis role="bold">Variable 2 is equal to [var2]</emphasis>.</para>
         <figure>
           <mediaobject>
             <caption>Screenshot of the creation of variable 
-              <emphasis role="bold">string</emphasis>and verification of the result.</caption>
+              <emphasis role="bold">string</emphasis> and verification of the result.</caption>
             <imageobject>
               <imagedata fileref="../images/exemplo_variaveis_5.png" />
             </imageobject>
@@ -126,13 +126,13 @@
         <tip>To use the variables in fields like 
           <guimenuitem>Text</guimenuitem>, you must put the variable name embraced by square
           brackets 
-          <emphasis role="bold">[</emphasis>name-of-the-variable
+          <emphasis role="bold">[</emphasis> name-of-the-variable
           <emphasis role="bold">]</emphasis>.</tip>
       </step>
       <step>
         <para>Now we can use the variables in our newly-created "Example Flow".</para>
         <para>In the Flow Editor, double click 
-          <guilabel>Echo</guilabel>in the parameters editor window and use the variable 
+          <guilabel>Echo</guilabel> in the parameters editor window and use the variable 
           <emphasis role="bold">string</emphasis>.</para>
         <figure>
           <mediaobject>
@@ -154,13 +154,13 @@
     <important>
       <para>We can define the visibility of the variables, managing them in the lists 
         <guilabel>Project</guilabel>, 
-        <guilabel>Line</guilabel>and 
+        <guilabel>Line</guilabel> and 
         <guilabel>Flow</guilabel>. Variables from the list 
-        <guilabel>Project</guilabel>are visible to 
-        <emphasis role="bold">every flow</emphasis>of every line of the chosen project.
-        <guilabel>Lines</guilabel>are visible just for the 
+        <guilabel>Project</guilabel> are visible to 
+        <emphasis role="bold">every flow</emphasis> of every line of the chosen project.
+        <guilabel>Lines</guilabel> are visible just for the 
         <emphasis role="bold">flows of the selected flow</emphasis>. Variables from the list 
-        <guilabel>Flows</guilabel>are visible just for the 
+        <guilabel>Flows</guilabel> are visible just for the 
         <emphasis role="bold">chosen flow</emphasis>.</para>
     </important>
   </section>
@@ -177,16 +177,16 @@
         <para>Suppose we want to know in which week days the turns of the next 5 years will be. To
           this end, we need the calendar of December from these 5 years. We are going to use the
           program 
-          <guimenuitem>Calendar</guimenuitem>(it can be found in the 
-          <guimenu>Shell Tools</guimenu>category, in the 
-          <guilabel>Flow Editor</guilabel>tab).</para>
+          <guimenuitem>Calendar</guimenuitem> (it can be found in the 
+          <guimenu>Shell Tools</guimenu> category, in the 
+          <guilabel>Flow Editor</guilabel> tab).</para>
         <para>Using the examples about the filling of parameters in section 
           <xref linkend="loop" />, we are going to end up with the variable 
-          <emphasis role="bold">iter</emphasis>in the dictionary as in the following window.</para>
+          <emphasis role="bold">iter</emphasis> in the dictionary as in the following window.</para>
         <figure>
           <mediaobject>
             <caption>Screenshot of variable 
-              <emphasis role="bold">iter</emphasis>and its solved expression.</caption>
+              <emphasis role="bold">iter</emphasis> and its solved expression.</caption>
             <imageobject>
               <imagedata fileref="../images/exemplo_iter_1.png" />
             </imageobject>
@@ -197,12 +197,12 @@
         <para>We can define a variable in the dictionary that represents the present year,
           facilitating the process of year choice. We define the variable in the line, with the
           name of 
-          <emphasis role="bold">ano_atual</emphasis>and value 
+          <emphasis role="bold">ano_atual</emphasis> and value 
           <emphasis role="bold">2011</emphasis>.</para>
         <figure>
           <mediaobject>
             <caption>Screenshot of variable 
-              <emphasis role="bold">ano_atual</emphasis>defined in the dictionary.</caption>
+              <emphasis role="bold">ano_atual</emphasis> defined in the dictionary.</caption>
             <imageobject>
               <imagedata fileref="../images/exemplo_iter_2.png" />
             </imageobject>
@@ -212,7 +212,7 @@
       <step>
         <para>After defining this variable, we improve the parameters of the program 
           <guimenuitem>Loop</guimenuitem>, so the variable 
-          <emphasis role="bold">iter</emphasis>has a better behaviour on the purpose of the
+          <emphasis role="bold">iter</emphasis> has a better behaviour on the purpose of the
           problem.</para>
         <para>In the Initial Value we are going to include a variable 
           <emphasis role="bold">ano_atual</emphasis>. We fill the parameter Step (step of each
@@ -222,7 +222,7 @@
         <figure>
           <mediaobject>
             <caption>Screenshot of 
-              <guimenuitem>Loop</guimenuitem>program with its parameters filled in.</caption>
+              <guimenuitem>Loop</guimenuitem> program with its parameters filled in.</caption>
             <imageobject>
               <imagedata fileref="../images/exemplo_iter_3.png" />
             </imageobject>
@@ -230,20 +230,20 @@
         </figure>
         <important>
           <para>The program 
-            <guimenuitem>Loop</guimenuitem>can only use variables defined at its Line or
+            <guimenuitem>Loop</guimenuitem> can only use variables defined at its Line or
             Project.</para>
         </important>
       </step>
       <step>
         <para>Now we open program 
-          <guimenuitem>Calendar</guimenuitem>to fill its parameters. We gonna fill only two
+          <guimenuitem>Calendar</guimenuitem> to fill its parameters. We gonna fill only two
           parameters, Month with value 
-          <emphasis>December</emphasis>and Year with the variable 
+          <emphasis>December</emphasis> and Year with the variable 
           <emphasis role="bold">iter</emphasis>.</para>
         <figure>
           <mediaobject>
             <caption>Screenshot of 
-              <guimenuitem>Calendar</guimenuitem>program parameters filled in.</caption>
+              <guimenuitem>Calendar</guimenuitem> program parameters filled in.</caption>
             <imageobject>
               <imagedata fileref="../images/exemplo_iter_4.png" />
             </imageobject>
@@ -276,7 +276,7 @@
       </step>
     </procedure>
     <para>That was a simple example of 
-      <emphasis role="bold">iter</emphasis>variable usage in a flow. We can notice that loops and
+      <emphasis role="bold">iter</emphasis> variable usage in a flow. We can notice that loops and
       variables ease the execution of repetitive tasks.</para>
   </section>
   <section xml:id="variaveis_recursos">
@@ -375,7 +375,7 @@
             <figure>
               <mediaobject>
                 <caption>Screenshot of the variable 
-                  <emphasis role="bold">ano_atual</emphasis>using a non-existent variable in its
+                  <emphasis role="bold">ano_atual</emphasis> using a non-existent variable in its
                   expression.</caption>
                 <imageobject>
                   <imagedata fileref="../images/recurso_dict_2.png" />
