@@ -162,11 +162,11 @@
         valores como padrão.</para>
     </tip>
     <para>Agora que existe uma estrutura básica de projeto e linha, você já
-      pode <emphasis role="bold">criar seu primeiro fluxo</emphasis>.</para>
+      pode <emphasis>criar seu primeiro fluxo</emphasis>.</para>
   </section>
-  <section xml:id="criando_fluxos">
+  <section xml:id="creating-flows">
     <title>Criando fluxos</title>
-    <para>Na GêBR, um <emphasis role="bold">fluxo</emphasis> é uma <emphasis role="bold">sequência de
+    <para>Na GêBR, um <emphasis>fluxo</emphasis> é uma <emphasis role="bold">sequência de
         operações</emphasis> selecionadas pelo usuário. Estas operações, também chamadas
       de <emphasis role="bold">programas</emphasis> do fluxo, são separadas nas
       seguintes <emphasis role="bold">categorias</emphasis>, de acordo com o propósito:</para>

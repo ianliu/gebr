@@ -1,0 +1,2669 @@
+diff -r f274932e41d2 docs/gebr/en/gebr.xml
+--- a/docs/gebr/en/gebr.xml	Tue Jan 17 10:00:57 2012 -0200
++++ b/docs/gebr/en/gebr.xml	Tue Jan 17 10:45:43 2012 -0200
+@@ -1,38 +1,2634 @@
+ <?xml version="1.0" encoding="utf-8"?>
+-
+-<article
+-  xmlns="http://docbook.org/ns/docbook"
+-  xmlns:xi="http://www.w3.org/2001/XInclude"
+-  xmlns:xlink="http://www.w3.org/1999/xlink"
+-  lang="en"
+-  version="5.0">
+-
++<article xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" lang="en"
++version="5.0">
+   <info>
+     <title>GêBR - User Guide</title>
+   </info>
++  <section>
++    <title>What is GêBR?</title>
++    <para>GêBR is a simple graphical interface which 
++    <emphasis role="bold">facilitates geophysical data processing</emphasis>. GêBR is 
++    <emphasis role="bold">not a package for processing</emphasis>, it is designed to 
++    <emphasis role="bold">integrate</emphasis>a large variety of free processing packages, such as 
++    <emphasis>Seismic Un*x</emphasis>and 
++    <emphasis>Madagascar</emphasis>.</para>
++    <para>GêBR can manage Projects and Lines, assemble and execute Flows and follow the results of
++    your data processing. Everything in a simple and friendly way.</para>
++    <para>Being a 
++    <emphasis role="bold">free software</emphasis>, anyone can use and customize GêBR for free,
++    according to the terms of the 
++    <emphasis>GNU Public License</emphasis>. That makes this software very attractive for academic
++    research and for use in courses.</para>
++    <section>
++      <title>GêBR Project</title>
++      <para>Our main objective is to help bring together the Brazilian
++      geophysics community, by developing tools to aid in the dissemination of research in the
++      area.</para>
++      <para>For more information, visit the project's official site: 
++      <emphasis>
++        <link xlink:href="http://www.gebrproject.com">www.gebrproject.com</link>
++      </emphasis>.</para>
++    </section>
++    <section>
++      <title>What's new in version 0.16.0</title>
++      <para>The release of GêBR (0.16.0) suffered some changes. GêBR is more stable and present
++      some new functionalities:</para>
++      <itemizedlist>
++        <listitem>The maestro concept is born allowing to execute GêBR jobs in multiples machines.
++        (see 
++        <xref linkend="servers_configuration" />and 
++        <xref linkend="multiple_machines" />).</listitem>
++        <listitem>Now it is possible to control the number of cores used by the jobs of GêBR and
++        change the priority of execution of a job (see 
++        <xref linkend="multi_cores" />and 
++        <xref linkend="priority_execution" />).</listitem>
++        <listitem>Renewed interface adds new functionalities and improve usability in
++        GêBR.</listitem>
++      </itemizedlist>
++    </section>
++    <section>
++      <title>Technical Information</title>
++      <para>This guide is for GêBR 
++      <emphasis role="bold">version 0.16.0</emphasis>. The images used in this guide where captured
++      in the system 
++      <emphasis role="bold">Ubuntu 10.04</emphasis>. Therefore you may observe slight differences
++      if you are using another operating system. For specific installation instructions for each
++      operating system, see the 
++      <emphasis>
++        <link xlink:href="http://www.gebrproject.com/install-guide">install guide</link>
++      </emphasis>, in the 
++      <emphasis>
++        <link xlink:href="http://www.gebrproject.com">project's official site</link>
++      </emphasis>.</para>
++    </section>
++    <section>
++      <title>GêBR Core Team</title>
++      <para>
++        <emphasis role="bold">Director:</emphasis>
++      </para>
++      <itemizedlist>
++        <listitem>
++          <para>Ricardo Biloti 
++          <email>biloti@gebrproject.com</email></para>
++        </listitem>
++      </itemizedlist>
++      <para>
++        <emphasis role="bold">Developer manager:</emphasis>
++      </para>
++      <itemizedlist>
++        <listitem>
++          <para>Fabrício Matheus Gonçalves 
++          <email>fmatheus@gebrproject.com</email></para>
++        </listitem>
++      </itemizedlist>
++      <para>
++        <emphasis role="bold">Developers:</emphasis>
++      </para>
++      <itemizedlist>
++        <listitem>
++          <para>Eric Keiji 
++          <email>keiji.eric@gebrproject.com</email></para>
++        </listitem>
++        <listitem>
++          <para>Ian Liu Rodrigues 
++          <email>ian.liu@gebrproject.com</email></para>
++        </listitem>
++        <listitem>
++          <para>Igor Henrique Soares Nunes 
++          <email>igor.snunes@gebrproject.com</email></para>
++        </listitem>
++        <listitem>
++          <para>Jorge Pizzolatto 
++          <email>jorge.pzt@gebrproject.com</email></para>
++        </listitem>
++        <listitem>
++          <para>Júlia Koury Marques 
++          <email>julia@gebrproject.com</email></para>
++        </listitem>
++        <listitem>
++          <para>Vinícius Oliveira Querência 
++          <email>querencia@gebrproject.com</email></para>
++        </listitem>
++      </itemizedlist>
++      <para>
++        <emphasis role="bold">Consultants:</emphasis>
++      </para>
++      <itemizedlist>
++        <listitem>
++          <para>Bráulio Oliveira 
++          <email>brauliobo@gebrproject.com</email></para>
++        </listitem>
++        <listitem>
++          <para>Eduardo Filpo 
++          <email>efilpo@gmail.com</email></para>
++        </listitem>
++        <listitem>
++          <para>Fernando Roxo 
++          <email>roxo@roxo.org</email></para>
++        </listitem>
++        <listitem>
++          <para>Luis Alberto D'Afonseca 
++          <email>luis.dafonseca@gebrproject.com</email></para>
++        </listitem>
++        <listitem>
++          <para>Rodrigo Portugal 
++          <email>rosoport@gmail.com</email></para>
++        </listitem>
++      </itemizedlist>
++      <para>
++        <emphasis role="bold">Former members:</emphasis>
++      </para>
++      <itemizedlist>
++        <listitem>
++          <para>Alexandre Baaklini</para>
++        </listitem>
++        <listitem>
++          <para>Davi Clemente</para>
++        </listitem>
++        <listitem>
++          <para>Fábio Azevedo</para>
++        </listitem>
++        <listitem>
++          <para>Gabriel Sobral</para>
++        </listitem>
++        <listitem>
++          <para>Giuliano Roberto Pinheiros</para>
++        </listitem>
++        <listitem>
++          <para>Priscila Moraes</para>
++        </listitem>
++        <listitem>
++          <para>Renan Giarola</para>
++        </listitem>
++        <listitem>
++          <para>Rodrigo Morelatto</para>
++        </listitem>
++      </itemizedlist>
++      <para>Thank you for using GêBR!</para>
++    </section>
++  </section>
++  <section xml:id="projetos_linhas_fluxo_visao_geral">
++    <title>Projects, Lines and Flows: an overview</title>
++    <para>In GêBR each 
++    <emphasis role="bold">processing Flow</emphasis>is organized into larger units called 
++    <emphasis role="bold">Lines</emphasis>. Lines are grouped together into 
++    <emphasis role="bold">Projects</emphasis>. In other words:</para>
++    <itemizedlist>
++      <listitem>
++        <para>A 
++        <emphasis role="bold">Project</emphasis>is a set of 
++        <emphasis role="bold">Lines</emphasis></para>
++      </listitem>
++      <listitem>
++        <para>A 
++        <emphasis role="bold">Line</emphasis>is a set of 
++        <emphasis role="bold">Flows</emphasis></para>
++      </listitem>
++    </itemizedlist>
++    <para>Before you can organize and execute a Flow, you must first 
++    <emphasis role="bold">Create a Project and a Line</emphasis>.</para>
++    <section xml:id="editar_projetos_e_linhas">
++      <title>Creating Projects and Lines</title>
++      <para>To create a 
++      <emphasis role="bold">New Project</emphasis>:</para>
++      <procedure>
++        <step>
++          <para>Select the tab 
++          <guilabel>Projects and Lines</guilabel>.</para>
++        </step>
++        <step>
++          <para>Left-click on 
++          <guiicon>
++            <inlinemediaobject>
++              <imageobject>
++                <imagedata fileref="../../common-images/botao_criar_projeto.png" />
++              </imageobject>
++            </inlinemediaobject>
++          </guiicon></para>
++        </step>
++        <step>
++          <para>In the 
++          <guilabel>Project properties</guilabel> dialog box, fill in the Project's 
++          <emphasis>title</emphasis> ( for example, 
++          <userinput>My First Project</userinput>).</para>
++        </step>
++        <step>
++          <para>You can also give a brief 
++          <emphasis>Description</emphasis> of the Project, the 
++          <emphasis>Author</emphasis> and an 
++          <emphasis>e-mail</emphasis> for contact.</para>
++        </step>
++        <step>
++          <para>Click 
++          <emphasis role="bold">OK</emphasis>.</para>
++        </step>
++      </procedure>
++      <figure xml:id="janela_properties_project">
++        <mediaobject>
++          <caption>In the Project's properties dialog box you can edit the title, description,
++          author and email.</caption>
++          <imageobject>
++            <imagedata fileref="../images/janela_properties_project.png" />
++          </imageobject>
++        </mediaobject>
++      </figure>
++      <para>The Project title should have appeared on the left hand side of GêBR's main window.
++      Information about the Project is shown in the 
++      <guilabel>Details</guilabel>box on the right hand side of GêBR's main window. Notice that
++      some of this information comes from what you inserted in the 
++      <guilabel>Project 'New Project' properties</guilabel>dialog box when you created the Project.
++      Details such as creation date and modified date, the date of the last change, are
++      automatically generated by GêBR.</para>
++      <figure>
++        <mediaobject>
++          <caption>This is an example of one Project called "My first project", to the left is the
++          list of Projects and Lines, at the moment only one Project. To the right you will see the
++          details box which exhibits information on the currently selected Project or
++          Line.</caption>
++          <imageobject>
++            <imagedata fileref="../images/janela_principal_1.png" />
++          </imageobject>
++        </mediaobject>
++      </figure>
++      <para>Now that you have created a Project, you can create 
++      <emphasis role="bold">Lines</emphasis> inside this Project. To add a 
++      <emphasis role="bold">New Line</emphasis>:</para>
++      <procedure>
++        <step>
++          <para>Check that you have selected the Project you created, just like in the window
++          above.</para>
++        </step>
++        <step>
++          <para>Click on the button 
++          <guiicon>
++            <inlinemediaobject>
++              <imageobject>
++                <imagedata fileref="../../common-images/botao_criar_linha.png" />
++              </imageobject>
++            </inlinemediaobject>
++          </guiicon></para>
++        </step>
++        <step>
++          <para>In the dialog box 
++          <guilabel>Line properties</guilabel>, fill in the Line's 
++          <emphasis>Title</emphasis> ( for example, 
++          <userinput>My First Line</userinput>).</para>
++        </step>
++        <step>
++          <para>You can also give a brief 
++          <emphasis>Description</emphasis>of the Project, the 
++          <emphasis>Author</emphasis> and an 
++          <emphasis>e-mail</emphasis>for contact. You can also add paths to directorys that are
++          relevant for this Line, this will be explained in greater detail in 
++          <xref linkend="editar_caminhos_preferenciais_da_linha" />.</para>
++        </step>
++      </procedure>
++      <figure>
++        <mediaobject>
++          <caption>The Line's property dialog box; the user can add information such as the Line's
++          description, author and email, the maestro of the line (see 
++          <xref linkend="changing_the_maestro_of_a_line" />) and the preferred paths in the path
++          text box.</caption>
++          <imageobject>
++            <imagedata fileref="../images/GeBR_line_properties.png" />
++          </imageobject>
++        </mediaobject>
++      </figure>
++      <para>After creating your first Line your GêBR window should look something like the window
++      below. Notice that when a Line is selected the 
++      <guilabel>Details</guilabel>box, on the right of the main window, will show information about
++      this selected Line.</para>
++      <figure>
++        <mediaobject>
++          <caption>In the Projects and Lines tab, you will find information about the currently
++          selected Line in the Details box on the right side of the main window.</caption>
++          <imageobject>
++            <imagedata fileref="../images/janela_principal_2.png" />
++          </imageobject>
++        </mediaobject>
++      </figure>
++      <tip>
++        <para>At the top left corner, 
++        <menuchoice>
++          <guimenu>Actions</guimenu>
++          <guimenuitem>Preferences</guimenuitem>
++        </menuchoice>then fill in your details in the fields 
++        <guilabel>User name</guilabel>and 
++        <guilabel>Email</guilabel>. New Projects and Lines by default will use this
++        information.</para>
++      </tip>
++      <para>Now that you have the basic Project and Line structure you can 
++      <emphasis role="bold">create your first Flow</emphasis>.</para>
++    </section>
++    <section xml:id="creating_flows">
++      <title>Creating Flows</title>
++      <para>In GêBR a 
++      <emphasis role="bold">Flow</emphasis> is a  
++      <emphasis role="bold">sequence of operations</emphasis> defined by the user. These operations,
++      also called the Flow's 
++      <emphasis role="bold">programs</emphasis>, are organized into the following 
++      <emphasis role="bold">categories</emphasis> according to their purpose:</para>
++      <itemizedlist>
++        <listitem>
++          <para>Data Compression</para>
++        </listitem>
++        <listitem>
++          <para>Editing, Sorting and Manipulation</para>
++        </listitem>
++        <listitem>
++          <para>File tools</para>
++        </listitem>
++        <listitem>
++          <para>Filtering, Transforms and Attributes</para>
++        </listitem>
++        <listitem>
++          <para>Gain, NMO, Stack and Standard Processes</para>
++        </listitem>
++        <listitem>
++          <para>Graphics</para>
++        </listitem>
++        <listitem>
++          <para>Import/Export</para>
++        </listitem>
++        <listitem>
++          <para>Migration and Dip Moveout</para>
++        </listitem>
++        <listitem>
++          <para>Multiple Supression</para>
++        </listitem>
++        <listitem>
++          <para>Seismic Unix</para>
++        </listitem>
++        <listitem>
++          <para>Simulation and Model Building</para>
++        </listitem>
++        <listitem>
++          <para>Utilities</para>
++        </listitem>
++      </itemizedlist>
++      <para>To 
++      <emphasis role="bold">create a Flow</emphasis> you must 
++      <emphasis role="bold">select and order programs</emphasis> from the above categories. Let us
++      see how this is done:</para>
++      <procedure>
++        <step>
++          <para>In the tab 
++          <guilabel>Projects and Lines</guilabel>, check that you have selected 
++          <emphasis>My First Line</emphasis>, the Line you created before.</para>
++        </step>
++        <step>
++          <para>Now click on the tab 
++          <guilabel>Flows</guilabel>, then left-click on 
++          <guiicon>
++            <inlinemediaobject>
++              <imageobject>
++                <imagedata fileref="../../common-images/botao_criar_fluxo.png" />
++              </imageobject>
++            </inlinemediaobject>
++          </guiicon>.</para>
++        </step>
++        <step>
++          <para>The dialog box 
++          <guilabel>Flow "New Flow" Properties</guilabel>will appear, fill in a 
++          <emphasis>title</emphasis>for this Flow (for example, 
++          <userinput>My First Flow</userinput>). You can also give a brief 
++          <emphasis>description</emphasis>of the Flow, the 
++          <emphasis>author</emphasis>and an 
++          <emphasis>e-mail</emphasis>for contact. If you are done filling in this Flows properties
++          click on 
++          <guibutton>OK</guibutton>.</para>
++        </step>
++        <step>
++          <para>Now select the tab 
++          <guilabel>Flow Editor</guilabel>. On the right side it will be shown a menu with several programs.
++	  Choose one of them and include it in your flow with a double-click.
++  </para>
++        </step>
++        <step>
++		<para>
++			If you need a specific order to the selected programs of your flow, you just need to
++			drag and drop the desired programs.
++		</para>
++          <figure>
++            <mediaobject>
++              <caption>In the Flow editor, on the right side of the main window you will see the
++              Menus box. From this box you can add programs to your Flow, which will appear in the
++              Flow sequence box on the left side of the main window.</caption>
++              <imageobject>
++                <imagedata fileref="../images/GeBR_flow_browser_flow_assembling.png" />
++              </imageobject>
++            </mediaobject>
++          </figure>
++        </step>
++        <step>
++	  <para> To enable a program of your flow, you will have to right-click over it and select the
++		  <emphasis>Configured </emphasis> option.
++		  The icon will change from 
++          <guiicon>
++            <inlinemediaobject>
++              <imageobject>
++                <imagedata fileref="../../common-images/icone_nao_configurado.png" />
++              </imageobject>
++            </inlinemediaobject>
++          </guiicon>
++	  to
++          <guiicon>
++            <inlinemediaobject>
++              <imageobject>
++                <imagedata fileref="../../common-images/icone_configurado.png" />
++              </imageobject>
++            </inlinemediaobject>
++          </guiicon>.  </para>
++          <figure>
++            <mediaobject>
++              <caption>In the Flow editor, on the right side of the main window you will see the
++              Menus box. You can add programs to your Flow, which appear in the
++              Flow sequence box, on the left side of the main window. To enable a program, select the Configured option.</caption>
++              <imageobject>
++                <imagedata fileref="../images/GeBR_flow_browser_flow_assembling_02.png" />
++              </imageobject>
++            </mediaobject>
++          </figure>
++          <tip>
++            <para>If you want to change all programs, or a few, to the configured state
++            simultaneously, select them by using 
++            <keycombo>
++              <keycap>Ctrl</keycap>
++              <mousebutton>Click</mousebutton>
++            </keycombo>. Then right-click on one of the selected programs, choose the option 
++            <guilabel>Configured</guilabel>from the menu that appeared. All the programs that were
++            selected will be altered to the state 
++            <guiicon>
++              <inlinemediaobject>
++                <imageobject>
++                  <imagedata fileref="../../common-images/icone_configurado.png" />
++                </imageobject>
++              </inlinemediaobject>
++            </guiicon>.</para>
++          </tip>
++          <important>
++            <para>To run a Flow 
++            <emphasis role="bold">all the programs</emphasis>listed in the 
++            <guilabel>Flow sequence</guilabel>box must be 
++            <emphasis role="bold">Configured</emphasis>(
++            <guiicon>
++              <inlinemediaobject>
++                <imageobject>
++                  <imagedata fileref="../../common-images/icone_configurado.png" />
++                </imageobject>
++              </inlinemediaobject>
++            </guiicon>). Otherwise the Flow will not be executed as expected.</para>
++          </important>
++          <important>
++            <para>The state of a Flow, or a set of Flows, can be changed by using the hotkey 
++            <emphasis role="bold">spacebar</emphasis>, which alters the state of the selected Flows
++            in the order 
++            <emphasis role="bold">Not configured</emphasis>, 
++            <emphasis role="bold">Disabled</emphasis>and 
++            <emphasis role="bold">Configured</emphasis>. The meaning of these states will be
++            further described later on.</para>
++          </important>
++        </step>
++      </procedure>
++      <para>Your flow is ready to be execute. Click on 
++      <guiicon>
++        <inlinemediaobject>
++          <imageobject>
++            <imagedata fileref="../../common-images/botao_executar_fluxo.png" />
++          </imageobject>
++        </inlinemediaobject>
++      </guiicon> to execute it. You should see the following:</para>
++      <figure>
++        <mediaobject>
++          <caption>Example of a Flow being executed.</caption>
++          <imageobject>
++            <imagedata fileref="../images/janela_ximage.png" />
++          </imageobject>
++        </mediaobject>
++      </figure>
++    </section>
++  </section>
++  <section xml:id="project_line">
++    <title>The 
++    <guilabel>Projects and Lines</guilabel>tab</title>
++    <para>The tab 
++    <guilabel>Projects and Lines</guilabel>has nine command buttons just below the tab. These
++    command buttons will allow you to:</para>
++    <itemizedlist>
++      <listitem>
++        <para>
++          <link linkend="criar_novo_projeto">Create a New Project</link>
++        </para>
++      </listitem>
++      <listitem>
++        <para>
++          <link linkend="criar_nova_linha">Create a New Line</link>
++        </para>
++      </listitem>
++      <listitem>
++        <para>
++          <link linkend="sec_3_1_3">Delete a selected Project or Line</link>
++        </para>
++      </listitem>
++      <listitem>
++        <para>
++          <link linkend="sec_3_1_4">Edit selected Project or Lines properties</link>
++        </para>
++      </listitem>
++      <listitem>
++        <para>
++          <link linkend="sec_3_1_5">Edit selected Project or Line parameter dictionary</link>
++        </para>
++      </listitem>
++      <listitem>
++        <para>
++          <link linkend="sec_3_1_7">Import a Project or a Line</link>
++        </para>
++      </listitem>
++      <listitem>
++        <para>
++          <link linkend="exportar_um_projeto_ou_linha">Export a Project or a Line</link>
++        </para>
++      </listitem>
++      <listitem>
++        <para>
++          <link linkend="editar_comentarios">Edit comments</link>
++        </para>
++      </listitem>
++      <listitem>
++        <para>
++          <link linkend="visualizar_relatorio">View Report</link>
++        </para>
++      </listitem>
++    </itemizedlist>
++    <tip>
++      <para>Try using a 
++      <emphasis role="bold">context menu</emphasis>instead of command buttons. To do so, 
++      <emphasis role="bold">right-click</emphasis>on one of the Projects or Lines you have created.
++      Notice that many commands can be found in this context menu. For certain cases this method is
++      
++      <emphasis role="bold">easier and faster</emphasis>then using command buttons.</para>
++    </tip>
++    <section xml:id="criar_novo_projeto">
++	    <title>New Project</title>
++	    <para>To create a new Project click on the button 
++		    <guiicon>
++			    <inlinemediaobject>
++				    <imageobject>
++					    <imagedata fileref="../../common-images/botao_criar_projeto.png" />
++				    </imageobject>
++			    </inlinemediaobject>
++		    </guiicon>, more details are given in 
++		    <xref linkend="editar_projetos_e_linhas" />.</para>
++	    <para>There is 
++		    <emphasis role="bold">no limitation</emphasis>on the number of Projects in GêBR. You can have
++		    as many as you desire.</para>
++	    <para>After creating a Project it will be 
++		    <emphasis role="bold">visible on the left side of GêBR's main window</emphasis>. The 
++		    <guilabel>Details</guilabel>box, on the right side of the main window, will show information
++		    about the selected Project.</para>
++    </section>
++    <section xml:id="criar_nova_linha">
++	    <title>New Line</title>
++	    <para>To create a new Line, 
++		    <emphasis role="bold">select an existing Project</emphasis> and left-click on 
++		    <guiicon>
++			    <inlinemediaobject>
++				    <imageobject>
++					    <imagedata fileref="../../common-images/botao_criar_linha.png" />
++				    </imageobject>
++			    </inlinemediaobject>
++		    </guiicon>, more details are given in 
++		    <xref linkend="editar_projetos_e_linhas" />. A new Line will appear in the selected
++		    Project.</para>
++	    <para>There is 
++		    <emphasis role="bold">no limitation</emphasis>on the number of Lines in GêBR. You can have as
++		    many Lines in a Project as you desire.</para>
++	    <para>Lines that you have created will be 
++		    <emphasis role="bold">visible on the left side of GêBR's main window</emphasis>inside their
++		    respective Projects. The 
++		    <guilabel>Details</guilabel>box, localized on the right side of the main window, exhibits
++		    information on the selected Line.</para>
++	    <tip>
++		    <para>In GêBR you can 
++			    <emphasis role="bold">collapse</emphasis>or 
++			    <emphasis role="bold">expand</emphasis>a Project. When collapsed 
++			    <emphasis role="bold">the Projects Lines are hidden</emphasis>, when expanded 
++			    <emphasis role="bold">the Project's Lines are visible</emphasis>. To collapse click on the
++			    icon 
++			    <guiicon>
++				    <inlinemediaobject>
++					    <imageobject>
++						    <imagedata fileref="../../common-images/icone_expandido.png" />
++					    </imageobject>
++				    </inlinemediaobject>
++			    </guiicon>immediately to the left of the Projects name. To expand, click on the icon 
++			    <guiicon>
++				    <inlinemediaobject>
++					    <imageobject>
++						    <imagedata fileref="../../common-images/icone_colapsado.png" />
++					    </imageobject>
++				    </inlinemediaobject>
++		    </guiicon>.</para>
++	    </tip>
++    </section>
++    <section xml:id="sec_3_1_3">
++	    <title>Deleting a Project or a Line</title>
++	    <para>To remove a Line or Project select the Project or Line then left-click on 
++		    <guiicon>
++			    <inlinemediaobject>
++				    <imageobject>
++					    <imagedata fileref="../../common-images/botao_apagar_projeto.png" />
++				    </imageobject>
++			    </inlinemediaobject>
++	    </guiicon>.</para>
++	    <note>
++		    <para>To delete a Project you must first delete all of its Lines. A Project can only be
++			    deleted if it is Empty.</para>
++	    </note>
++	    <caution>
++		    <para>When you delete a Line you are also 
++			    <emphasis role="bold">deleting all of its Flows</emphasis>.</para>
++	    </caution>
++    </section>
++    <section xml:id="sec_3_1_4">
++	    <title>Editing Project's or Line's properties</title>
++	    <para>To edit Project's or Line's properties, first select the Project of Line and then
++		    click on button 
++		    <guiicon>
++			    <inlinemediaobject>
++				    <imageobject>
++					    <imagedata fileref="../../common-images/botao_editar_propriedades_projeto.png" />
++				    </imageobject>
++			    </inlinemediaobject>
++	    </guiicon>.</para>
++	    <para>In the 
++		    <guilabel>Project properties</guilabel>or 
++		    <guilabel>Line properties</guilabel>dialog box you can edit the fields 
++		    <guilabel>Title</guilabel>, 
++		    <guilabel>Description</guilabel>, 
++		    <guilabel>Author</guilabel> and 
++		    <guilabel>Email</guilabel> and 
++		    <guilabel>Maestro</guilabel>. Line's properties also has the option of adding a 
++		    <guilabel>Path</guilabel>, which will be explained in 
++		    <xref linkend="editar_caminhos_preferenciais_da_linha" />.</para>
++    </section>
++    <section xml:id="sec_3_1_5">
++	    <title>Editing the Project's or Line's parameter dictionary</title>
++	    <para>This feature is documented in the Section 
++		    <xref linkend="variaveis_dicionario" />.</para>
++    </section>
++    <section xml:id="editar_caminhos_preferenciais_da_linha">
++	    <title>Editing the Line's preferred paths</title>
++	    <para>The Section 
++		    <xref linkend="editar_arquivos_entrada_saida_fluxo" />will show how a Flow can be associated
++		    to some data files, this association is simpler if we add preferred paths to the Line.</para>
++	    <para>The Line's preferred paths are defined in the 
++		    <guilabel>Line's properties</guilabel> dialog box. To open this dialog box select the Line
++		    then click on the icon 
++		    <guiicon>
++			    <inlinemediaobject>
++				    <imageobject>
++					    <imagedata fileref="../../common-images/botao_editar_propriedades_projeto.png" />
++				    </imageobject>
++			    </inlinemediaobject>
++		    </guiicon>, in the tool bar, or open the popup context menu and select the option 
++		    <guilabel>Properties</guilabel>. In the 
++		    <guilabel>Line's properties</guilabel>window, in the field 
++		    <guilabel>Paths</guilabel>, write the path to the directory you want and then left-click on 
++		    <guiicon>
++			    <inlinemediaobject>
++				    <imageobject>
++					    <imagedata fileref="../../common-images/botao_adicionar_caminho.png" />
++				    </imageobject>
++			    </inlinemediaobject>
++	    </guiicon>.</para>
++	    <para>You can also add preferred paths by clicking on the button 
++		    <guiicon>
++			    <inlinemediaobject>
++				    <imageobject>
++					    <imagedata fileref="../../common-images/icone_caminho_personalizado.png" />
++				    </imageobject>
++			    </inlinemediaobject>
++	    </guiicon>and then choosing a directory.</para>
++	    <para>When you completed editing the preferred paths click 
++		    <guibutton>OK</guibutton>.</para>
++	    <para>
++		    <emphasis role="bold">There is no Limit</emphasis>to the number of paths you can add.</para>
++	    <tip>
++		    <para>The path at the top of the list will be set as the standard path, which will be
++			    opened when the user clicks on the icon 
++			    <guiicon>
++				    <inlinemediaobject>
++					    <imageobject>
++						    <imagedata fileref="../../common-images/icone_caminho_personalizado.png" />
++					    </imageobject>
++				    </inlinemediaobject>
++		    </guiicon>as to search for a file or directory.</para>
++	    </tip>
++	    <tip>
++		    <para>To 
++			    <emphasis role="bold">remove a path</emphasis>from the list, select it by pressing the 
++			    <emphasis role="bold">right-click</emphasis>and then left-click on 
++			    <guimenuitem>Remove</guimenuitem>or 
++			    <guimenuitem>Delete</guimenuitem>.</para>
++	    </tip>
++	    <tip>
++		    <para>To change a 
++			    <emphasis role="bold">path's position</emphasis>in the list, with the mouse simply 
++			    <emphasis role="bold">drag it</emphasis>to its new position.</para>
++	    </tip>
++	    <para>You can also use hotkeys to add paths (
++		    <keycombo>
++			    <keycap>Enter</keycap>
++		    </keycombo>), move paths up and down (
++		    <keycombo>
++			    <keycap>Ctrl</keycap>
++			    <keycap>arrow up/down</keycap>
++		    </keycombo>), send a path to the top of the list (
++		    <keycombo>
++			    <keycap>Ctrl</keycap>
++			    <keycap>Home</keycap>
++		    </keycombo>) and send a path to the bottom of the list (
++		    <keycombo>
++			    <keycap>Ctrl</keycap>
++			    <keycap>End</keycap>
++	    </keycombo>).</para>
++	    <figure>
++		    <mediaobject>
++			    <caption>In the Line's properties dialog box, other than add useful information such as
++				    the Line's description, author and email, you can also add the Line's preferred paths in
++				    the paths text box.</caption>
++			    <imageobject>
++				    <imagedata fileref="../images/janela_path_list.png" />
++			    </imageobject>
++		    </mediaobject>
++	    </figure>
++    </section>
++    <section xml:id="changing_the_maestro_of_a_line">
++	    <title>Changing the maestro of a line</title>
++	    <para>You can change the maestro of a line when the connected maestro is different from
++		    maestro that was originally configured for this line. You should follow the steps
++		    below:</para>
++	    <itemizedlist>
++		    <procedure>
++			    <step>
++				    <para>Open the dialog box of Line's properties.</para>
++			    </step>
++			    <step>
++				    <para>Click at padlock icon to unlock the reference of this maestro in this
++					    line.</para>
++			    </step>
++			    <step>
++				    <para>Choose the correct maestro for this line.</para>
++			    </step>
++			    <step>
++				    <para>Click OK to close the dialog box.</para>
++			    </step>
++			    <step>
++				    <para>Click Yes to confirm the change of Maestro of this Line or click No to
++					    cancel.</para>
++			    </step>
++		    </procedure>
++		    </itemizedlist>
++		    <imageobject>
++			    <imagedata fileref="../images/GeBR_line_properties_changing_maestro.png" />
++		    </imageobject>
++		    <caution>The user is going to need to review the paths of the line, potentially broken by the
++			    change of the maestro.</caution>
++	    </section>
++	    <section xml:id="sec_3_1_7">
++		    <title>Import a Project or a Line</title>
++		    <para>In GêBR you can import Projects or Lines that were previously exported 
++			    <xref linkend="exportar_um_projeto_ou_linha" />. To do so:</para>
++		    <procedure>
++			    <step>
++				    <para>Click on the button 
++					    <guiicon>
++						    <inlinemediaobject>
++							    <imageobject>
++								    <imagedata fileref="../../common-images/botao_importar_projeto.png" />
++							    </imageobject>
++						    </inlinemediaobject>
++				    </guiicon></para>
++			    </step>
++			    <step>
++				    <para>Select the project or line you want to import at window 
++					    <guilabel>Choose project/line to open</guilabel>. Only files with extension 
++					    <filename class="extension">prjz</filename>or 
++					    <filename class="extension">lnez</filename>will be show.</para>
++			    </step>
++			    <step>
++				    <para>Click at button 
++					    <guibutton>Open</guibutton>.</para>
++			    </step>
++		    </procedure>
++		    <para>The imported project is added to the list of projects, found on the left of the main
++			    window. An imported Line joins the other Lines, if they exist, of the Project that was
++			    selected when the Line was imported. In both cases the imported item is identified with the
++			    suffix 
++			    <emphasis role="bold">Imported</emphasis>.</para>
++		    <note>
++			    <para>In GêBR, Lines may only exist inside a Project, see this concept in the Section 
++				    <xref linkend="projetos_linhas_fluxo_visao_geral" />. Therefore to import a Line you must
++				    first 
++				    <emphasis role="bold">select an existing Project</emphasis>. (If there does not exist one
++				    then 
++				    <xref linkend="criar_novo_projeto" />).</para>
++		    </note>
++	    </section>
++	    <section xml:id="exportar_um_projeto_ou_linha">
++		    <title>Exporting a Project or a Line</title>
++		    <para>Although GêBR continuously saves all data, some times it is desirable to have copies of
++			    your Project and Lines in a file (for example, to share with others or to make backups). To
++			    export a Project or a Line:</para>
++		    <procedure>
++			    <step>
++				    <para>Select the Line or Project you wish to save.</para>
++			    </step>
++			    <step>
++				    <para>Left-click on 
++					    <guiicon>
++						    <inlinemediaobject>
++							    <imageobject>
++								    <imagedata fileref="../../common-images/botao_exportar_projeto.png" />
++							    </imageobject>
++						    </inlinemediaobject>
++				    </guiicon></para>
++			    </step>
++			    <step>
++				    <para>A dialog box will appear where you can 
++					    <guilabel>choose the name of the file that will be saved</guilabel>; select a directory
++					    then type the file name, GêBR determines the extension automatically, 
++					    <filename class="extension">prjz</filename>for Projects or 
++					    <filename class="extension">lnez</filename>for Lines.</para>
++			    </step>
++			    <step>
++				    <para>Left-click on 
++					    <guibutton>Save</guibutton>.</para>
++			    </step>
++		    </procedure>
++	    </section>
++	    <section xml:id="editar_comentarios">
++		    <title>Editing comments</title>
++		    <para>You can edit comments on the report to specify information about a Project or a Line.
++			    To 
++			    <emphasis role="bold">edit a comment</emphasis>:</para>
++		    <procedure>
++			    <step>
++				    <para>Left-click on 
++					    <guibutton>Edit comments</guibutton>, which is located just below 
++					    <guilabel>Details</guilabel>, in the 
++					    <guilabel>Project's properties</guilabel>or 
++					    <guilabel>Line's Properties</guilabel>dialog box.</para>
++			    </step>
++			    <step>
++				    <para>Fill in your comment in the text editor that appeared, when you have finished save
++					    your comment then close the editor.</para>
++				    <para>In this editor you can save, print and pre-visualize your comment(s) by pressing
++					    one of the icons in the tool bar, or by using the editors menu.</para>
++			    </step>
++		    </procedure>
++		    <figure>
++			    <mediaobject>
++				    <caption>The comment editor window.</caption>
++				    <imageobject>
++					    <imagedata fileref="../images/janela_comentarios_de_linha.png" />
++				    </imageobject>
++			    </mediaobject>
++		    </figure>
++		    <tip>
++			    <para>In 
++				    <menuchoice>
++					    <guimenu>Actions</guimenu>
++					    <guimenuitem>Preferences</guimenuitem>
++				    </menuchoice>(the top left corner of GêBR's main window) you can determine the text editor
++				    that will be used to edit reports. The standard editor is 
++				    <application>gedit</application>. To use another editor, type the name of the editor in 
++				    <guilabel>HTML Editor</guilabel>.</para>
++		    </tip>
++		    <note>
++			    <para>You can only have 
++				    <emphasis role="bold">one comment</emphasis>for each Project or Line.</para>
++		    </note>
++		    <para>
++			    <important>
++				    <para>To 
++					    <emphasis role="bold">view a report</emphasis>:</para>
++				    <itemizedlist>
++					    <listitem>
++						    <para>Select a Project or a Line and click the button 
++							    <guibutton>View Report</guibutton>, found at the bottom of the 
++							    <guilabel>Details</guilabel>box, which is on the right side of the main
++							    window.</para>
++					    </listitem>
++				    </itemizedlist>
++			    </important>
++		    </para>
++	    </section>
++	    <section xml:id="visualizar_relatorio">
++		    <title>View Report</title>
++		    <para>As explained in the above section, you can edit a report containing additional
++			    information about the Project or Line. To view the report left-click on View Report, found at
++			    the bottom of the 
++			    <guilabel>Details</guilabel>box, which is on the right side of the main window.</para>
++		    <para>After clicking on 
++			    <guilabel>View Report</guilabel>, a window will appear where you can:</para>
++		    <procedure>
++			    <step>
++				    <para>Save;</para>
++			    </step>
++			    <step>
++				    <para>Print the report.</para>
++			    </step>
++		    </procedure>
++		    <para>In the menu Options you can:</para>
++		    <procedure>
++			    <step>
++				    <para>Include user comments;</para>
++			    </step>
++			    <step>
++				    <para>Include the Flow's report;</para>
++			    </step>
++			    <step>
++				    <para>Configure the parameter table pertaining to the Flow's programs;</para>
++			    </step>
++			    <step>
++				    <para>Choose the presentation style of the report, as well as include other
++					    styles.</para>
++			    </step>
++		    </procedure>
++		    <figure>
++			    <mediaobject>
++				    <caption>In the view report window, you can print or save to a file this report. In the
++					    options menu, as is shown above, you can include: the user's comments, the Flow's report,
++					    the parameter table and choose from a few pre-defined styles for the report.</caption>
++				    <imageobject>
++					    <imagedata fileref="../images/janela_visualizar_relatorio.png" />
++				    </imageobject>
++			    </mediaobject>
++		    </figure>
++		    <para>
++			    <xref linkend="visualizar_relatorio_fluxo" />explains in greater detail the View Report tool
++			    for Flows, which is very similar to the Line's and Project's View Report except that in this
++			    one you can add the Flow's report.</para>
++	    </section>
++    </section>
++    <section xml:id="sec_3_2">
++	    <title>The 
++		    <guilabel>Flows</guilabel>tab</title>
++	    <para>Just bellow the 
++		    <guilabel>Flows</guilabel>tab there are nine buttons, plus two more buttons at the bottom of
++		    the Details box. These buttons will allow you to:</para>
++	    <itemizedlist>
++		    <listitem>
++			    <para>
++				    <link linkend="sec_3_2_1">Create a new Flow</link>
++			    </para>
++		    </listitem>
++		    <listitem>
++			    <para>
++				    <link linkend="copiar_fluxos_area_tranferencia">Copy Flows to the clipboard</link>
++			    </para>
++		    </listitem>
++		    <listitem>
++			    <para>
++				    <link linkend="colar_fluxos_area_tranferencia">Paste Flows from the clipboard</link>
++			    </para>
++		    </listitem>
++		    <listitem>
++			    <para>
++				    <link linkend="sec_3_2_4">Delete Flows</link>
++			    </para>
++		    </listitem>
++		    <listitem>
++			    <para>
++				    <link linkend="editar_propriedades_fluxo">Edit Flow's properties</link>
++			    </para>
++		    </listitem>
++		    <listitem>
++			    <para>
++				    <link linkend="sec_3_2_7">Save a Flow's state</link>
++			    </para>
++		    </listitem>
++		    <listitem>
++			    <para>
++				    <link linkend="sec_3_2_8">Import a Flow</link>
++			    </para>
++		    </listitem>
++		    <listitem>
++			    <para>
++				    <link linkend="exportar_fluxo">Export a Flow</link>
++			    </para>
++		    </listitem>
++		    <listitem>
++			    <para>
++				    <link linkend="executar_fluxo">Execute a Flow</link>
++			    </para>
++		    </listitem>
++		    <listitem>
++			    <para>
++				    <link linkend="sec_3_2_11">Edit comments</link>
++			    </para>
++		    </listitem>
++		    <listitem>
++			    <para>
++				    <link linkend="visualizar_relatorio_fluxo">View Report</link>
++			    </para>
++		    </listitem>
++	    </itemizedlist>
++	    <tip>
++		    <para>Instead of these buttons, try using the 
++			    <emphasis role="bold">context menu</emphasis>. To do so, 
++			    <emphasis role="bold">right-click</emphasis>on a Flow you have created, notice that many
++			    features can be accessed through this method. For certain cases this is an 
++			    <emphasis role="bold">easier and simpler</emphasis>choice.</para>
++	    </tip>
++	    <section xml:id="sec_3_2_1">
++		    <title>Creating a new Flow</title>
++		    <para>To create a new Flow first check that you have already 
++			    <emphasis role="bold">created and selected a Line</emphasis>in the 
++			    <guilabel>Projects and Lines</guilabel>tab. When you have done this, select the 
++			    <guilabel>Flows</guilabel>tab and left-click on 
++			    <guiicon>
++				    <inlinemediaobject>
++					    <imageobject>
++						    <imagedata fileref="../../common-images/botao_criar_fluxo.png" />
++					    </imageobject>
++				    </inlinemediaobject>
++			    </guiicon>. In the dialog box that opens, 
++			    <xref linkend="editar_propriedades_fluxo" />, fill in the required information then click on 
++			    <guibutton>OK</guibutton>. For more details see 
++			    <xref linkend="creating_flows" />.</para>
++		    <para>There is 
++			    <emphasis role="bold">no limit</emphasis>on the number of Flows you can have inside one Line
++			    or in total.</para>
++		    <para>After you have created a Flow it will be 
++			    <emphasis role="bold">visible on the left side of the main window</emphasis>when the 
++			    <guilabel>Flows</guilabel>tab is selected. The 
++			    <guilabel>Details</guilabel>box, found on the right side of the main window, shows
++			    information on the selected Flow .</para>
++		    <tip>
++			    <para>You can alter 
++				    <emphasis role="bold">the position</emphasis>of the Flow in the list by 
++				    <emphasis role="bold">dragging the Flow with the mouse</emphasis>to the desired
++				    position.</para>
++		    </tip>
++		    <tip>
++			    <para>Observe that the 
++				    <emphasis role="bold">information bar</emphasis>just bellow the menu 
++				    <guimenu>Actions</guimenu>shows the complete Flow tree of the selected Flow.</para>
++		    </tip>
++	    </section>
++	    <section xml:id="copiar_fluxos_area_tranferencia">
++		    <title>Copying Flows to the clipboard</title>
++		    <para>The clipboard provides the popular set of tools known as 
++			    <emphasis role="bold">copying and pasting</emphasis>. In GêBR a Flow (or set of Flows) can be
++			    copied to the clipboard by using the button 
++			    <guiicon>
++				    <inlinemediaobject>
++					    <imageobject>
++						    <imagedata fileref="../../common-images/botao_copiar_fluxo.png" />
++					    </imageobject>
++				    </inlinemediaobject>
++			    </guiicon>or by using the known shortcut 
++			    <keycombo>
++				    <keycap>Ctrl</keycap>
++				    <keycap>C</keycap>
++		    </keycombo>.</para>
++		    <tip>
++			    <para>You can select several Flows and then copy all of them to the clipboard by holding 
++				    <keycombo>
++					    <keycap>Ctrl</keycap>
++					    <mousebutton>Left-click</mousebutton>
++				    </keycombo>or 
++				    <keycombo>
++					    <keycap>Shift</keycap>
++					    <mousebutton>Left-click</mousebutton>
++			    </keycombo>.</para>
++		    </tip>
++	    </section>
++	    <section xml:id="colar_fluxos_area_tranferencia">
++		    <title>Pasting Flows from the clipboard</title>
++		    <para>After copying 
++			    <xref linkend="copiar_fluxos_area_tranferencia" />, a Flow (or a set of Flows) you can paste
++			    it by clicking on the button 
++			    <guiicon>
++				    <inlinemediaobject>
++					    <imageobject>
++						    <imagedata fileref="../../common-images/botao_colar_fluxo.png" />
++					    </imageobject>
++				    </inlinemediaobject>
++			    </guiicon>or by simply using the shortcut 
++			    <keycombo>
++				    <keycap>Ctrl</keycap>
++				    <keycap>V</keycap>
++		    </keycombo>.</para>
++		    <tip>
++			    <para>Any Flow (or a set of Flows) that has been copied to the clipboard can be pasted to 
++				    <emphasis role="bold">any Line</emphasis>. Simply switch to the 
++				    <guilabel>Projects and Lines</guilabel>tab, select the desired Line, then go back to the 
++				    <guilabel>Flows</guilabel>tab and paste the Flow(s).</para>
++		    </tip>
++	    </section>
++	    <section xml:id="sec_3_2_4">
++		    <title>Deleting Flows</title>
++		    <para>To delete a Flow (or set of Flows), select them and click on 
++			    <guiicon>
++				    <inlinemediaobject>
++					    <imageobject>
++						    <imagedata fileref="../../common-images/botao_apagar_projeto.png" />
++					    </imageobject>
++				    </inlinemediaobject>
++		    </guiicon>.</para>
++		    <tip>
++			    <para>You can select several Flows at once and then delete them by holding 
++				    <keycombo>
++					    <keycap>Ctrl</keycap>
++					    <mousebutton>Left-click</mousebutton>
++				    </keycombo>or 
++				    <keycombo>
++					    <keycap>Shift</keycap>
++					    <mousebutton>Left-click</mousebutton>
++			    </keycombo>.</para>
++		    </tip>
++	    </section>
++	    <section xml:id="editar_propriedades_fluxo">
++		    <title>Editing Flow's properties</title>
++		    <para>To edit Flow's properties you must first select the Flow, then left-click on 
++			    <guiicon>
++				    <inlinemediaobject>
++					    <imageobject>
++						    <imagedata fileref="../../common-images/botao_editar_propriedades_projeto.png" />
++					    </imageobject>
++				    </inlinemediaobject>
++		    </guiicon>.</para>
++		    <para>In the 
++			    <guilabel>Flows properties</guilabel>dialog box you can edit the fields 
++			    <guilabel>Title, Description, Author and Email</guilabel>.</para>
++	    </section>
++	    <section xml:id="sec_3_2_6">
++		    <title>Editing the Flow's parameter dictionary</title>
++		    <para>This feature is documented in the section 
++			    <xref linkend="variaveis_dicionario" />.</para>
++	    </section>
++	    <section xml:id="sec_3_2_7">
++		    <title>Saving a Flow's state</title>
++		    <para>Working with GêBR you will encounter situations where it will be useful to use an
++			    existing Flow as a basis to create new Flows. For example, you might want to experiment with
++			    Flows that are only slightly different from one another, however without having to discard or
++			    modify the original Flow.</para>
++		    <para>One way of doing this is to copy and paste the Flow (see the section 
++			    <xref linkend="copiar_fluxos_area_tranferencia" />and 
++			    <xref linkend="colar_fluxos_area_tranferencia" />).  
++			    Another way is to save the state of the original Flow, then edit it to your heart desire,
++			    and when you wish you can return the Flow to its original state. To 
++			    <emphasis role="bold">save the Flow's state</emphasis>:</para>
++		    <procedure>
++			    <step>
++				    <para>Select the Flow and left-click on 
++					    <guiicon>
++						    <inlinemediaobject>
++							    <imageobject>
++								    <imagedata fileref="../../common-images/botao_salvar_estado.png" />
++							    </imageobject>
++						    </inlinemediaobject>
++				    </guiicon>.</para>
++			    </step>
++			    <step>
++				    <para>If you want, you can write a comment on the state in the dialog box 
++					    <guilabel>Save the Flow's state</guilabel>, as to identify this saved state later
++					    on.</para>
++			    </step>
++			    <step>
++				    <para>Left-click on 
++					    <guibutton>OK</guibutton>.</para>
++			    </step>
++		    </procedure>
++		    <note>
++			    <para>There is 
++				    <emphasis role="bold">no limit</emphasis>on the number of states for each Flow.</para>
++		    </note>
++		    <para>To open the list of saved states left-click on 
++			    <guiicon>
++				    <inlinemediaobject>
++					    <imageobject>
++						    <imagedata fileref="../../common-images/botao_salvar_estado_lista.png" />
++					    </imageobject>
++				    </inlinemediaobject>
++			    </guiicon>, to the right of the button 
++			    <guiicon>
++				    <inlinemediaobject>
++					    <imageobject>
++						    <imagedata fileref="../../common-images/botao_salvar_estado.png" />
++					    </imageobject>
++				    </inlinemediaobject>
++			    </guiicon>, then select the state you wish to recover. Whenever you select a saved state from
++			    the list, the dialog 
++			    <emphasis>Backup Current State</emphasis>will appear. If you click on 
++			    <guibutton>Yes</guibutton>the dialog
++			    <emphasis>Save the Flow's State</emphasis> will appear, where you can save this new state. If
++			    you click on 
++			    <guibutton>No</guibutton>, GêBR will simply revert to the chosen state without saving the
++			    current state.</para>
++		    <tip>
++			    <para>If you are sure you have saved your current state, we recommend that you click on 
++				    <guibutton>No</guibutton>, in the dialog box 
++				    <emphasis>Backup Current State</emphasis>, as to avoid a bloated state list.</para>
++		    </tip>
++		    <caution>
++			    <para>GêBR continuously saves the list of Flow states. Even if you turn off your computer
++				    this list will be recovered when you open GêBR again. However, if you 
++				    <emphasis role="bold">delete the Flow</emphasis>all the saved states will 
++				    <emphasis role="bold">immediately disappear forever</emphasis>.</para>
++		    </caution>
++	    </section>
++	    <section xml:id="sec_3_2_8">
++		    <title>Importing a Flow</title>
++		    <para>GêBR allows you to import Flows that were previously exported 
++			    <xref linkend="exportar_fluxo" />. To do so:</para>
++		    <procedure>
++			    <step>
++				    <para>Check that you have already 
++					    <emphasis role="bold">created and selected a Line</emphasis>, in the tab 
++					    <guilabel>Projects and Lines</guilabel>. Remember that Flows can only exist inside Lines
++					    (see this concept in Section 
++					    <xref linkend="projetos_linhas_fluxo_visao_geral" />). To import a Flow you must first 
++					    <emphasis role="bold">select a Line</emphasis>(or 
++					    <xref linkend="criar_nova_linha" />, if one does not exist).</para>
++			    </step>
++			    <step>
++				    <para>Select the tab 
++					    <guilabel>Flows</guilabel>and left-click on 
++					    <guiicon>
++						    <inlinemediaobject>
++							    <imageobject>
++								    <imagedata fileref="../../common-images/botao_importar_projeto.png" />
++							    </imageobject>
++						    </inlinemediaobject>
++				    </guiicon>.</para>
++			    </step>
++			    <step>
++				    <para>Navigate through the 
++					    <guilabel>Choose a Flow to import</guilabel>and select a Flow you wish to import (only
++					    the file types 
++					    <filename class="extension">flw</filename>will appear).</para>
++			    </step>
++			    <step>
++				    <para>Left-click on the button 
++					    <guibutton>Open</guibutton>.</para>
++			    </step>
++		    </procedure>
++		    <para>The imported Flow will be listed along with any other Flows of the selected
++			    Line.</para>
++	    </section>
++	    <section xml:id="exportar_fluxo">
++		    <title>Exporting a Flow</title>
++		    <para>Although GêBR maintains all your data, you still might wish to copy your Flows to file
++			    (perhaps to share with others or as a backup). To export a Flow:</para>
++		    <procedure>
++			    <step>
++				    <para>Select the Flow you wish to save.</para>
++			    </step>
++			    <step>
++				    <para>Left-click on 
++					    <guiicon>
++						    <inlinemediaobject>
++							    <imageobject>
++								    <imagedata fileref="../../common-images/botao_exportar_projeto.png" />
++							    </imageobject>
++						    </inlinemediaobject>
++				    </guiicon>.</para>
++			    </step>
++			    <step>
++				    <para>In the window 
++					    <guilabel>Save Flow</guilabel>, navigate to the directory you desire and type a name for
++					    the file (GêBR will automatically determine the extension 
++					    <filename class="extension">flw</filename>).</para>
++			    </step>
++			    <step>
++				    <para>Left-click on the button 
++					    <guibutton>Save</guibutton>.</para>
++			    </step>
++		    </procedure>
++	    </section>
++	    <section xml:id="executar_fluxo_aba_fluxos">
++		    <title>Executing a Flow</title>
++		    <para>This command is present in the tab 
++			    <guilabel>Flows</guilabel> and in the tab 
++			    <guilabel>Flow editor</guilabel> through the button 
++			    <guiicon>
++				    <inlinemediaobject>
++					    <imageobject>
++						    <imagedata fileref="../../common-images/botao_executar_fluxo.png" />
++					    </imageobject>
++				    </inlinemediaobject>
++			    </guiicon>. 
++			    <figure>
++				    <mediaobject>
++					    <caption>In the tab Flows you are able to execute several Flows sequentially by first:
++						    selecting the Flows you wish to use, and then left-click on 
++						    <guiicon>
++							    <inlinemediaobject>
++								    <imageobject>
++									    <imagedata fileref="../../common-images/botao_executar_fluxo.png" />
++								    </imageobject>
++							    </inlinemediaobject>
++					    </guiicon>.</caption>
++					    <imageobject>
++						    <imagedata fileref="../images/GeBR_flow_browser.png" />
++					    </imageobject>
++				    </mediaobject>
++		    </figure></para>
++		    <tip>You can select several Flows and execute them 
++			    <emphasis role="bold">sequentially</emphasis>by pressing Ctrl+R.</tip>
++		    <tip>You can select several Flows and execute them 
++			    <emphasis role="bold">parallelly</emphasis>by pressing Ctrl+Shift+R.</tip>
++		    <caution>When executing multiple flows, the configuration of the first flow (when and where
++			    to execute) is going to be replicated to the other flows.</caution>
++	    </section>
++	    <section xml:id="sec_3_2_11">
++		    <title>Editing comments</title>
++		    <para>This button appears in the 
++			    <guilabel>Projects and Lines</guilabel>tab and in 
++			    <guilabel>Flows</guilabel>tab. This button allows the user to add comments about the selected
++			    Line or Flow. See 
++			    <xref linkend="editar_comentarios" />.</para>
++	    </section>
++	    <section xml:id="visualizar_relatorio_fluxo">
++		    <title>View Report</title>
++		    <para>This button appears in the 
++			    <guilabel>Projects and Lines</guilabel>tab and in 
++			    <guilabel>Flows</guilabel>tab. This button allows the user to View the report on the Line or
++			    Flow in question, with the difference that the Line's report can include the Flow's report.
++			    All other functions are described in 
++			    <xref linkend="visualizar_relatorio" />.</para>
++	    </section>
++    </section>
++    <section xml:id="sec_3_3">
++	    <title>The 
++		    <guilabel>Flow editor</guilabel>tab</title>
++	    <para>To create a new Flow, you can follow the instructions of <xref linkend="creating_flows" /></para>
++	    <para>Now that we know how to add programs to the Flow let us learn how to configure these
++		    programs, and investigate the other tools found in the 
++		    <guilabel>Flow editor</guilabel>tab:</para>
++	    <itemizedlist>
++		    <listitem>
++			    <para>
++				    <link linkend="copiar_programa_para_area_de_transferencia">Copy selected program(s) to
++					    the clipboard</link>
++			    </para>
++		    </listitem>
++		    <listitem>
++			    <para>
++				    <link linkend="sec_3_3_2">Paste program(s) from the clipboard</link>
++			    </para>
++		    </listitem>
++		    <listitem>
++			    <para>
++				    <link linkend="sec_3_3_3">Delete program(s)</link>
++			    </para>
++		    </listitem>
++		    <listitem>
++			    <para>
++				    <link linkend="editar_parametros_programa">Edit a program's parameters</link>
++			    </para>
++		    </listitem>
++		    <listitem>
++			    <para>
++				    <link linkend="sec_3_3_5">Change a program's state</link>
++			    </para>
++		    </listitem>
++		    <listitem>
++			    <para>
++				    <link linkend="editar_arquivos_entrada_saida_fluxo">Edit the Flow's input file and output
++					    file</link>
++			    </para>
++		    </listitem>
++		    <listitem>
++			    <para>
++				    <link linkend="executar_fluxo">Execute a Flow</link>
++			    </para>
++		    </listitem>
++	    </itemizedlist>
++	    <tip>
++		    <para>Instead of command buttons, try using 
++			    <emphasis role="bold">context menus</emphasis>. To do so, 
++			    <emphasis role="bold">right-click</emphasis>on a program you have added. Notice that many
++			    command can be accessed through this menu. For certain cases this method is 
++			    <emphasis role="bold">easier and faster</emphasis>then using command buttons.</para>
++	    </tip>
++	    <section xml:id="copiar_programa_para_area_de_transferencia">
++		    <title>Copying programs to the clipboard</title>
++		    <para>In the same manner we copy and paste Flows (see 
++			    <xref linkend="copiar_fluxos_area_tranferencia" />), a program (or set of programs) can be
++			    copied to the clipboard by clicking 
++			    <guiicon>
++				    <inlinemediaobject>
++					    <imageobject>
++						    <imagedata fileref="../../common-images/botao_copiar_fluxo.png" />
++					    </imageobject>
++				    </inlinemediaobject>
++			    </guiicon>or by using the shortcut 
++			    <keycombo>
++				    <keycap>Ctrl</keycap>
++				    <keycap>C</keycap>
++		    </keycombo>.</para>
++		    <tip>
++			    <para>You can select several programs to be copied by holding 
++				    <keycombo>
++					    <keycap>Ctrl</keycap>
++					    <mousebutton>Clique</mousebutton>
++				    </keycombo>or 
++				    <keycombo>
++					    <keycap>Shift</keycap>
++					    <mousebutton>Clique</mousebutton>
++			    </keycombo>.</para>
++		    </tip>
++	    </section>
++	    <section xml:id="sec_3_3_2">
++		    <title>Pasting programs from the clipboard</title>
++		    <para>After selecting and copying (
++			    <xref linkend="copiar_programa_para_area_de_transferencia" />) a program (or a set of programs)
++			    you can paste them by clicking on 
++			    <guiicon>
++				    <inlinemediaobject>
++					    <imageobject>
++						    <imagedata fileref="../../common-images/botao_colar_fluxo.png" />
++					    </imageobject>
++				    </inlinemediaobject>
++			    </guiicon>or by using the shortcut 
++			    <keycombo>
++				    <keycap>Ctrl</keycap>
++				    <keycap>V</keycap>
++		    </keycombo>.</para>
++		    <tip>
++			    <para>A program (or set of programs) that have been copied to the clipboard can be pasted
++				    to 
++				    <emphasis role="bold">any Flow</emphasis>, and not just the Flow of origin. Simply switch
++				    to the 
++				    <guilabel>Flows</guilabel>tab, select the desired Flow, go back to the 
++				    <guilabel>Flow editor</guilabel>tab and paste the program(s).</para>
++		    </tip>
++	    </section>
++	    <section xml:id="sec_3_3_3">
++		    <title>Deleting programs</title>
++		    <para>To remove a program (or set of programs), select them then click on 
++			    <guiicon>
++				    <inlinemediaobject>
++					    <imageobject>
++						    <imagedata fileref="../../common-images/botao_apagar_projeto.png" />
++					    </imageobject>
++				    </inlinemediaobject>
++		    </guiicon>.</para>
++		    <tip>
++			    <para>You can select several programs to be deleted by holding 
++				    <keycombo>
++					    <keycap>Ctrl</keycap>
++					    <mousebutton>Clique</mousebutton>
++				    </keycombo>or 
++				    <keycombo>
++					    <keycap>Shift</keycap>
++					    <mousebutton>Clique</mousebutton>
++			    </keycombo>.</para>
++		    </tip>
++		    <caution>
++			    <para>GêBR 
++				    <emphasis role="bold">does not issue a warning</emphasis>before deleting the selected
++				    programs.</para>
++		    </caution>
++	    </section>
++	    <section xml:id="editar_parametros_programa">
++		    <title>Editing program's parameters</title>
++		    <para>To edit program's parameters:</para>
++		    <procedure>
++			    <step>
++				    <para>Select the program from the 
++					    <guilabel>Flow sequence</guilabel>box then click on 
++					    <guiicon>
++						    <inlinemediaobject>
++							    <imageobject>
++								    <imagedata fileref="../../common-images/botao_editar_propriedades_projeto.png" />
++							    </imageobject>
++						    </inlinemediaobject>
++				    </guiicon>, or just double-click on the program.</para>
++			    </step>
++			    <step>
++				    <para>The 
++					    <guilabel>Parameters</guilabel>dialog box will appear. Notice that each program's
++					    parameter vary greatly both in size and type.</para>
++				    <tip>
++					    <para>Click on the 
++						    <guibutton>Help</guibutton>button ( bottom left corner of the dialog box) to view the 
++						    <emphasis role="bold">program's documentation</emphasis>. This will certainly be useful
++						    when you are editing the programs parameters.</para>
++				    </tip>
++				    <tip>
++					    <para>Click on the 
++						    <guibutton>Default</guibutton>button when you want the program to return to its default
++						    configurations.</para>
++				    </tip>
++			    </step>
++			    <step>
++				    <para>When you are done click on the 
++					    <guibutton>OK</guibutton>button.</para>
++			    </step>
++		    </procedure>
++	    </section>
++	    <section xml:id="sec_3_3_5">
++		    <title>Changing a program's state</title>
++		    <para>After you have carried out process of 
++			    <xref linkend="editar_parametros_programa" />the program's mark is changed to 
++			    <guiicon>
++				    <inlinemediaobject>
++					    <imageobject>
++						    <imagedata fileref="../../common-images/icone_configurado.png" />
++					    </imageobject>
++				    </inlinemediaobject>
++			    </guiicon>instead of de 
++			    <guiicon>
++				    <inlinemediaobject>
++					    <imageobject>
++						    <imagedata fileref="../../common-images/icone_nao_configurado.png" />
++					    </imageobject>
++				    </inlinemediaobject>
++			    </guiicon>. This means that the program's state has gone from 
++			    <emphasis role="bold">Not configured</emphasis>to the 
++			    <emphasis role="bold">Configured</emphasis>state. Besides these two states the program can
++			    also be set to the 
++			    <emphasis role="bold">Disabled</emphasis>state (
++			    <guiicon>
++				    <inlinemediaobject>
++					    <imageobject>
++						    <imagedata fileref="../../common-images/icone_desabilitado.png" />
++					    </imageobject>
++				    </inlinemediaobject>
++			    </guiicon>). You can alternate between these states by using two methods, you can either 
++			    <mousebutton>right-click</mousebutton>on the program and then select from the context menu
++			    the desired state, or by using the shortcut 
++			    <keycombo>
++				    <keycap>Spacebar</keycap>
++		    </keycombo>to change the state(s) of the selected programs.</para>
++		    <tip>
++			    <para>You can select several programs whose state you wish to change by holding 
++				    <keycombo>
++					    <keycap>Ctrl</keycap>
++					    <mousebutton>Clique</mousebutton>
++				    </keycombo>or 
++				    <keycombo>
++					    <keycap>Shift</keycap>
++					    <mousebutton>Clique</mousebutton>
++			    </keycombo>.</para>
++		    </tip>
++		    <tip>
++			    <para>Changing a program state does not alter its parameter configuration. You can safely
++				    alternate between the states and the parameters will continue the same.</para>
++		    </tip>
++		    <important>
++			    <para>
++				    <emphasis role="bold">Disabled</emphasis>programs (
++				    <guiicon>
++					    <inlinemediaobject>
++						    <imageobject>
++							    <imagedata fileref="../../common-images/icone_desabilitado.png" />
++						    </imageobject>
++					    </inlinemediaobject>
++				    </guiicon>) will be ignored when you execute your Flow. With this you can 
++				    <emphasis role="bold">enable and disable parts of your Flow</emphasis>as you see
++				    fit.</para>
++		    </important>
++	    </section>
++	    <section xml:id="editar_arquivos_entrada_saida_fluxo">
++		    <title>Editing the Flow's input and output files</title>
++		    <para>In the example 
++			    <xref linkend="creating_flows" />we created a very simple Flow, which do not need to "read"
++			    any file, and that generates a graphical result. However on many occasions in which you will
++			    need to extract data from an input file and/or generate as a result an output file, or even
++			    an log file in case an error occurs.</para>
++		    <para>How to associate an input, output and error file to a Flow:</para>
++		    <figure>
++			    <mediaobject>
++				    <caption>Select the Flow editor tab, in the Flow sequence box you can edit the input,
++					    output and log files for this Flow sequence.</caption>
++				    <imageobject>
++					    <imagedata fileref="../images/GeBR_flow_editor_input_file.png" />
++				    </imageobject>
++			    </mediaobject>
++		    </figure>
++		    <procedure>
++			    <step>
++				    <para>Check you have selected a Flow, then select the Flow editor tab, in the Flow
++					    sequence box you can edit the input, output and log files paths by double clicking on
++					    them. See figure:</para>
++			    </step>
++			    <step>
++				    <para>Type in the path or click on the icon 
++					    <guiicon>
++						    <inlinemediaobject>
++							    <imageobject>
++								    <imagedata fileref="../../common-images/icone_escolher_arquivo.png" />
++							    </imageobject>
++						    </inlinemediaobject>
++					    </guiicon>and browse for the in the 
++					    <guilabel>Choose a file</guilabel>dialog box.</para>
++			    </step>
++		    </procedure>
++		    <para>When you have chosen a path for your 
++			    <guilabel>Flow's input/output</guilabel>note that their file paths will appear in the 
++			    <guilabel>Flow sequence</guilabel>box, indicate with the marks 
++			    <guiicon>
++				    <inlinemediaobject>
++					    <imageobject>
++						    <imagedata fileref="../../common-images/icone_arquivo_entrada.png" />
++					    </imageobject>
++				    </inlinemediaobject>
++			    </guiicon>and 
++			    <guiicon>
++				    <inlinemediaobject>
++					    <imageobject>
++						    <imagedata fileref="../../common-images/icone_arquivo_saida.png" />
++					    </imageobject>
++				    </inlinemediaobject>
++		    </guiicon>, below and above the Flow's programs (if there are any).</para>
++		    <note>
++			    <para>If you wish to 
++				    <emphasis role="bold">remove a set</emphasis>from the list, select them by pressing 
++				    <emphasis role="bold">right-click</emphasis>then click on 
++				    <guimenuitem>Exclude</guimenuitem>.</para>
++		    </note>
++	    </section>
++	    <section xml:id="executar_fluxo">
++		    <title>Executing a Flow</title>
++		    <para>To execute the current Flow click on 
++			    <guiicon>
++				    <inlinemediaobject>
++					    <imageobject>
++						    <imagedata fileref="../../common-images/botao_executar_fluxo.png" />
++					    </imageobject>
++				    </inlinemediaobject>
++		    </guiicon>.</para>
++		    <para>In the Flow Editor Tab, the user can execute a flow 
++			    <emphasis role="bold">after</emphasis>another flow, this way, can creating a queue of
++			    execution. To execute after a specific flow, instead of executing 
++			    <emphasis>"Immediately"</emphasis>, switch to the Flow Editor Tab and choose the "After 
++			    <emphasis>Flow A</emphasis>".</para>
++		    <para>By default the Flows are executed on the machine of origin. However, GêBR does permit
++			    that you 
++			    <emphasis role="bold">execute Flows on remote machines</emphasis>. More details on the
++			    definition and selection of servers can be found in 
++			    <xref linkend="menu" />.</para>
++		    <para>In the Flow editor tab, even if you have selected several Flow from the Flows tab, when
++			    you click on 
++			    <guiicon>
++				    <inlinemediaobject>
++					    <imageobject>
++						    <imagedata fileref="../../common-images/botao_executar_fluxo.png" />
++					    </imageobject>
++				    </inlinemediaobject>
++		    </guiicon>only the first selected Flow will be executed.</para>
++		    <figure>
++			    <mediaobject>
++				    <caption>Screenshot of the Flow editor tab. From the Queue fields you can determine in
++					    which queue a Flow will be executed.</caption>
++				    <imageobject>
++					    <imagedata fileref="../images/GeBR_flow_editor_queue.png" />
++				    </imageobject>
++			    </mediaobject>
++		    </figure>
++		    <para>At the moment the Flow is executed, GêBR automatically switch to the 
++			    <guilabel>Job control</guilabel> tab and displays a report of the execution of the Flow .</para>
++	    </section>
++	    <!--  Falta Traduzir -->
++	    <section xml:id="multi_cores">
++		    <title>Multiple cores</title>
++		    <para>GêBR optimizes the execution of loops in multi-core machines</para>
++		    <para>GeBR takes advantage of the multi-core feature of most of the recent machines in the
++			    execution of repetitive flows. If the flow has Loops and is parallelizable (given some
++			    criteria, shown below), then the user can adjust the execution's degree of performance based
++			    on the number of processors.</para>
++		    <para>To be considered parallelizable, besides having a loop, a flow must achieve one, and
++			    just one, of these criteria:</para>
++		    <itemizedlist>
++			    <listitem>The flow does not have an output file;</listitem>
++			    <listitem>The output of each step of the loop is not the input of any other step of the
++				    loop.</listitem>
++		    </itemizedlist>
++		    <para>We choose the amount of processors through an adjustment bar, next to the Run
++			    button.</para>
++		    <imageobject>
++			    <imagedata fileref="../images/GeBR_flow_editor_flow_exec_speed.png" />
++		    </imageobject>
++		    <para>Each level of the adjustment bar corresponds to a a number of cores used by the job.</para>
++	    </section>
++	    <section xml:id="priority_execution">
++		    <title>Priority of execution</title>
++		    <para>Computers, nowadays, are multitasked, what means that multiple things can be done at
++			    the same time. When many tasks are executed at the same time, the computer can get overloaded
++			    and decrease its performance. Seismic processing, particularly, can exhaust the computer
++			    resources.</para>
++		    <para>GêBR has a feature that overcomes the issue of overloading due to multitasking, by
++			    enabling the execution of the flows in a <emphasis>Low Priority</emphasis> states:</para>
++		    <imageobject>
++			    <imagedata fileref="../images/GeBR_flow_editor_priority_execution.png" />
++		    </imageobject>
++		    <para>Two options are available: </para>
++		    <itemizedlist>
++			    <listitem>Low priority (the flow is going to wait its turn to execute and try not to
++				    overload the system)</listitem>
++			    <listitem>High priority (the execution of the flow is going to dispute for the computer
++				    resources with the other active programs)</listitem>
++		    </itemizedlist>
++		    <para>If the user leaves the button <emphasis>unpressed</emphasis>, then the next execution of a flow is going to
++			    be done in a polite way. Otherwise, in case the button is left pressed, then the next
++			    execution is going to fight for the computer resources.</para>
++		    <para>Technically, when running in "Low Priority" mode, GêBR will reduce the run priority of the
++			    task, meaning it will tell the computer that "it can wait more important things to be done".
++			    This is the case when you have other things to do while you wait your calculations to be done.
++			    The "High Priority" mode means GêBR will use greater run priority for the task, and that implies
++			    it will act as a foreground process, demanding more resources. It's the "I need this done"
++			    mode, when you need the job to be finished as soon as possible, and you don't care if it will
++			    fight for resources with other programs.</para>
++		    <para>If GêBR is the only program executing on your machine, i.e., it doesn't have a
++			    challenger for the computer resources, then both states corresponds to the same situation.
++			    This is the "nightly job" situation, when (theoretically) no one is using the machines and
++			    some jobs are left to be done for the next morning.</para>
++	    </section>
++	    <section xml:id="loop">
++		    <title>Executing a flow multiple times</title>
++		    <para>The program 
++			    <emphasis>Loop</emphasis>(from the category 
++			    <emphasis role="bold">Loops</emphasis>) has a totally different usage compared to the
++			    remaining programs from GêBR. We are going to see some of these differences.</para>
++		    <para>When we add the program Loop, we can see it always appears in the top of the flow. That
++			    happens to indicate that the flow is going to be executed more than once, according to the
++			    parameters set for the program. (see 
++			    <xref linkend="editar_parametros_programa" />for further details).</para>
++		    <mediaobject>
++			    <caption>Screenshot of program 
++				    <emphasis>Loop</emphasis>, added to a flow and properly configured.</caption>
++			    <imageobject>
++				    <imagedata fileref="../images/GeBR_flow_editor_loop.png" />
++			    </imageobject>
++		    </mediaobject>
++		    <para>After the 
++			    <emphasis>Loop</emphasis>is added, the user has access to a new variable, the 
++			    <emphasis role="bold">iter</emphasis>. This special variable changes its value on each
++			    iteration, according to the parameters set.</para>
++		    <mediaobject>
++			    <caption>Screenshot of the edition from parameters of 
++				    <emphasis>Loop</emphasis>program , with a simple example of parameters setting.</caption>
++			    <imageobject>
++				    <imagedata fileref="../images/loop_parametros.png" />
++			    </imageobject>
++		    </mediaobject>
++		    <tip>Further information about the variable 
++			    <emphasis role="bold">iter</emphasis>are available in section 
++			    <xref linkend="variavel_iter" />.</tip>
++	    </section>
++	    <section xml:id="multiple_machines">
++		    <title>Multiple machines</title>
++		    <para>GêBR can optimize the execution of loops in multiple machines. 
++			    <para></para>If GêBR is connected to multiple machines through the Servers Configuration
++			    interface, and the selected flow is parallelizable (see below the criteria to be
++			    parallelizable), then the option Auto-choose mean that GêBR is going to run it in a
++			    distributed way.</para>
++		    <para>To be considered parallelizable, besides having a loop, a flow must achieve one
++			    of these criteria:</para>
++		    <itemizedlist>
++			    <listitem>
++				    <para>The flow does not have an output file;</para>
++			    </listitem>
++			    <listitem>
++				    <para>The output of each step of the loop is not the input of any other step of the
++					    loop.</para>
++			    </listitem>
++		    </itemizedlist>
++		    <para>In case the flow is not parallelizable (i.e., does not fit one of the above conditions),
++			    GêBR will run the job in the best machine 
++			    at the time of execution (GêBR rank them based mainly in availability and speed). In a distributed
++			    execution, it may be important to differentiate the Priority mode. When the flow is
++			    parallelizable, it is the split up and distributed between the available machines according
++			    to their ranking.</para>
++		    <para>If the user wants to run a flow in a specified machine, then he can force the execution
++			    by going to Flow Editor tab, as choosing the machine of execution as shown
++			    below.</para>
++	    </section>
++    </section>
++    <section xml:id="controle_de_tarefas">
++	    <title>The 
++		    <guilabel>Job control</guilabel> tab</title>
++	    <para>GêBr presents an interface to the organization and visualization of the results.</para>
++	    <mediaobject>
++		    <caption>Opening of Job Control</caption>
++		    <imageobject>
++			    <imagedata fileref="../images/GeBR_jc_opening.png" />
++		    </imageobject>
++	    </mediaobject>
++	    <para>As seen in 
++		    <xref linkend="executar_fluxo" />, GêBR switches to the 
++		    <guilabel>Job control</guilabel>tab whenever a Flow is executed.</para>
++	    <para>This tab has three sections:</para>
++	    <itemizedlist>
++		    <listitem>Toolbar: Operations over jobs</listitem>
++		    <listitem>Left Panel: List of jobs</listitem>
++		    <listitem>Righ Panel: Details of a selected job</listitem>
++	    </itemizedlist>
++	    <section xml:id="sec_6_1">
++		    <title>Toolbar</title>
++		    <mediaobject>
++			    <caption>Toolbar of Job Control</caption>
++			    <imageobject>
++				    <imagedata fileref="../images/GeBR_jc_toolbar.png" />
++			    </imageobject>
++		    </mediaobject>
++		    <para>In this tab you can 
++			    <emphasis role="bold">follow</emphasis>and, if so desired, 
++			    <emphasis role="bold">interrupt</emphasis>the Flow's execution. The available commands
++			    are:</para>
++		    <itemizedlist>
++			    <listitem>
++				    <para>Save the Job's information in a file</para>
++			    </listitem>
++			    <listitem>
++				    <para>Clear Job</para>
++			    </listitem>
++			    <listitem>
++				    <para>Cancel this Job</para>
++			    </listitem>
++			    <listitem>
++				    <para>Filter Jobs</para>
++			    </listitem>
++		    </itemizedlist>
++		    <section xml:id="sec_6_1_1">
++			    <title>Save 
++				    <guiicon>
++					    <inlinemediaobject>
++						    <imageobject>
++							    <imagedata fileref="../../common-images/botao_salvar_log.png" />
++						    </imageobject>
++					    </inlinemediaobject>
++			    </guiicon></title>
++			    <para>Save to disk the output of the selected flow up to the moment.</para>
++		    </section>
++		    <section xml:id="sec_6_1_2">
++			    <title>Clear 
++				    <guiicon>
++					    <inlinemediaobject>
++						    <imageobject>
++							    <imagedata fileref="../../common-images/trash-empty.png" />
++						    </imageobject>
++					    </inlinemediaobject>
++			    </guiicon></title>
++			    <para>Eliminate from the job Control the selected Job. Caution is needed because the
++				    process is irreversible.</para>
++			    <para>You can only clear jobs that are not being executed ( 
++				    <guiicon>
++					    <inlinemediaobject>
++						    <imageobject>
++							    <imagedata fileref="../../common-images/icone_tarefa_concluida_sucesso.png" />
++						    </imageobject>
++					    </inlinemediaobject>
++				    </guiicon>or 
++				    <guiicon>
++					    <inlinemediaobject>
++						    <imageobject>
++							    <imagedata fileref="../../common-images/icone_tarefa_terminada_erro.png" />
++						    </imageobject>
++					    </inlinemediaobject>
++			    </guiicon>).</para>
++		    </section>
++		    <section xml:id="sec_6_1_3">
++			    <title>Cancel 
++				    <guiicon>
++					    <inlinemediaobject>
++						    <imageobject>
++							    <imagedata fileref="../../common-images/botao_terminar_tarefa.png" />
++						    </imageobject>
++					    </inlinemediaobject>
++			    </guiicon></title>
++			    <para>The user can cancel a running or queued job. When a Job is terminated in this manner,
++				    the Job will be marked with 
++				    <guiicon>
++					    <inlinemediaobject>
++						    <imageobject>
++							    <imagedata fileref="../../common-images/icone_tarefa_terminada_erro.png" />
++						    </imageobject>
++					    </inlinemediaobject>
++			    </guiicon>.</para>
++		    </section>
++		    <section xml:id="sec_6_1_4">
++			    <title>Filter 
++				    <guiicon>
++					    <inlinemediaobject>
++						    <imageobject>
++							    <imagedata fileref="../../common-images/filter.png" />
++						    </imageobject>
++					    </inlinemediaobject>
++			    </guiicon></title>
++			    <para>GêBR offers the option to see just the desired results, by some criteria.</para>
++			    <para>The user can filter the results by two criteria:</para>
++			    <itemizedlist>
++				    <listitem>Group/Server</listitem>
++				    <listitem>Status</listitem>
++			    </itemizedlist>
++			    <mediaobject>
++				    <imageobject>
++					    <imagedata fileref="../images/GeBR_jc_filter.png" />
++				    </imageobject>
++			    </mediaobject>
++		    </section>
++		    <tip>As in anywhere else in GêBR, many of the toolbar functionalities can be accessed through
++			    the context menu, using the mice right button.</tip>
++	    </section>
++	    <section>
++		    <title>Left Panel</title>
++		    <para>In the left panel, GêBR presents a list of flows executed by the user, ordered by
++			    moment of execution. Each exhibited flow can be in one of three states:</para>
++		    <itemizedlist>
++			    <listitem>Running (
++				    <guiicon>
++					    <inlinemediaobject>
++						    <imageobject>
++							    <imagedata fileref="../../common-images/icone_tarefa_em_execucao.png" />
++						    </imageobject>
++					    </inlinemediaobject>
++			    </guiicon>): job in execution;</listitem>
++			    <listitem>Finished (
++				    <guiicon>
++					    <inlinemediaobject>
++						    <imageobject>
++							    <imagedata fileref="../../common-images/icone_tarefa_concluida_sucesso.png" />
++						    </imageobject>
++					    </inlinemediaobject>
++			    </guiicon>): already completed job;</listitem>
++			    <listitem>Canceled (
++				    <guiicon>
++					    <inlinemediaobject>
++						    <imageobject>
++							    <imagedata fileref="../../common-images/icone_tarefa_terminada_erro.png" />
++						    </imageobject>
++					    </inlinemediaobject>
++			    </guiicon>): stopped by the user</listitem>
++			    <listitem>Queued (
++				    <guiicon>
++					    <inlinemediaobject>
++						    <imageobject>
++							    <imagedata fileref="../../common-images/chronometer.png" />
++						    </imageobject>
++					    </inlinemediaobject>
++			    </guiicon>: waiting for another job.</listitem>
++		    </itemizedlist>
++		    <mediaobject>
++			    <imageobject>
++				    <imagedata fileref="../images/GeBR_jc_left_pane_right_click.png" />
++			    </imageobject>
++		    </mediaobject>
++	    </section>
++	    <section>
++		    <title>Right panel</title>
++		    <mediaobject>
++			    <imageobject>
++				    <imagedata fileref="../images/GeBR_jc_details.png" />
++			    </imageobject>
++		    </mediaobject>
++		    <para>In the upper part, information of the selected flow is exhibited. More informations are
++			    shown clicking over <emphasis>Details</emphasis>. Among the exhibited information there are:</para>
++		    <itemizedlist>
++			    <listitem><para>moment of start/finish of the flow</para></listitem>
++			    <listitem><para>input/output files</para></listitem>
++			    <listitem><para>servers group in which the flow were executed</para></listitem>
++		    </itemizedlist>
++		    <para>You can also consult which machines were
++			    effectively used in the group and how the distribution of the work was done by clicking over 
++			    <guiicon>
++				    <inlinemediaobject>
++					    <imageobject>
++						    <imagedata fileref="../../common-images/gebr-speed-verylow.png" />
++					    </imageobject>
++				    </inlinemediaobject>
++		    </guiicon>.</para>
+ 
+-  <!-- O que é a GêBR? -->
+-  <xi:include href="what-is-gebr.xml" />
++      <mediaobject>
++        <imageobject>
++          <imagedata fileref="../images/GeBR_jc_more_details.png" />
++        </imageobject>
++      </mediaobject>
++	  The provided informations are:
++	  <itemizedlist>
++	  <listitem> GêBR-maestro machine</listitem>
++	  <listitem> GêBR-client machine</listitem>
++	  <listitem> Total number of processors used in the execution</listitem>
++	  <listitem> Distributions of the jobs to the servers</listitem>
++	  </itemizedlist>
+ 
+-  <!-- Projetos, Linhas e Fluxos: uma visão geral -->
+-  <xi:include href="projects-lines-flows.xml" />
+-  
+-  <!-- A aba Projetos e Linhas -->
+-  <xi:include href="projects-lines-tab.xml" />
+-  
+-  <!-- A aba Fluxos -->
+-  <xi:include href="flows-tab.xml" />
+-  
+-  <!-- A aba Editor de Fluxo -->
+-  <xi:include href="flow-editor-tab.xml" />
+-  
+-  <!-- A aba Controle de Tarefas -->
+-  <xi:include href="job-control-tab.xml" />
+-  
+-  <!-- Variáveis -->
+-  <xi:include href="dictionary-variables.xml" />
+-  
+-  <!-- Recursos adicionais -->
+-  <xi:include href="additional-features.xml" />
+-
++      <mediaobject>
++        <imageobject>
++          <imagedata fileref="../images/GeBR_jc_output.png" />
++        </imageobject>
++      </mediaobject>
++      <para>The results (standard output) of the flow are shown. The redirected output are not
++      exhibited. Right-clicking on this window, an options menu is exhibited, by which the user can
++      enable the automatic word wrap and the automatic scroll of window as the output is being
++      shown.</para>
++      <mediaobject>
++        <imageobject>
++          <imagedata fileref="../images/GeBR_jc_command_line.png" />
++        </imageobject>
++      </mediaobject>
++      <para>The user can also consult the command lines executed by GêBR. The user just need to
++      visit the tab Command line. The command lines are portable and can be copy-pasted through a
++      execution terminal.</para>
++    </section>
++  </section>
++  <section xml:id="variaveis_dicionario">
++    <title>Variables</title>
++    <section xml:id="janela_dicionario">
++      <title>The dictionary</title>
++      <para>The dictionary is a very flexible feature, that can be used in many forms and to many
++      ends.</para>
++      <para>Now the dictionary accepts expressions as input. This way more complex variables can be
++      defined. In this section we will show some examples of variables usage in a flow.</para>
++      <para>Follows a simple example of how to define a variable in the dictionary:</para>
++      <procedure>
++        <step>
++          <para>Create a flow and insert a program called 
++          <guimenuitem>Echo</guimenuitem>. Echo's basic function is to show text in the screen.
++          (you can find this program at 
++          <guimenu>Shell tools</guimenu>category, at 
++          <guilabel>Flow Editor</guilabel>tab).</para>
++          <figure>
++            <mediaobject>
++              <caption>Screenshot of the creation of flow "Example flow".</caption>
++              <imageobject>
++                <imagedata fileref="../images/exemplo_variaveis_1.png" />
++              </imageobject>
++            </mediaobject>
++          </figure>
++          <figure>
++            <mediaobject>
++              <caption>Screenshot of Flow Editor tab showing the insertion of the Echo
++              program</caption>
++              <imageobject>
++                <imagedata fileref="../images/exemplo_variaveis_2.png" />
++              </imageobject>
++            </mediaobject>
++          </figure>
++        </step>
++        <step>
++          <para>At the 
++          <guilabel>Flow Editor</guilabel>, click at button 
++          <guiicon>
++            <inlinemediaobject>
++              <imageobject>
++                <imagedata fileref="../../common-images/botao_dicionario_projeto.png" />
++              </imageobject>
++            </inlinemediaobject>
++          </guiicon>to 
++          <emphasis role="bold">edit the variables dictionary</emphasis>.</para>
++        </step>
++        <step>
++        <para>At the window that pops up (
++        <guilabel>Variables dictionary for flow</guilabel>), click in 
++        <emphasis>New</emphasis>at 
++        <emphasis role="bold">Flow</emphasis>scope. Fill the field 
++        <emphasis>keyword</emphasis>with the variable's name 
++        <emphasis role="bold">var1</emphasis>. Then, press enter to proceed to the next field, 
++        <emphasis>Value</emphasis>. Before fill it, you must choose a data type to your new
++        variable (
++        <guimenuitem>Number</guimenuitem>or 
++        <guimenuitem>Text</guimenuitem>), choose 
++        <guimenuitem>Number</guimenuitem>. The mouse cursor will be located at field 
++        <emphasis>Value</emphasis>. Fill that field with 
++        <emphasis role="bold">10</emphasis>and press enter again.</para>The last field is the 
++        <emphasis>Comments</emphasis>. Fill it with some description of your newly created
++        variable. Remember: The comments are optional, you can leave this field empty if you want. 
++        <para>When you finish, your window must look like with this one:</para>
++        <figure>
++          <mediaobject>
++            <caption>Screenshot of the parameters window.</caption>
++            <imageobject>
++              <imagedata fileref="../images/exemplo_variaveis_3.png" />
++            </imageobject>
++          </mediaobject>
++        </figure>
++        <tip>To better understand about variables definition, check section 
++        <xref linkend="definindo_variaveis" />.</tip>
++        <tip>Positioning the pointer on the icon of the variable type, we can check the solved
++        expression.</tip>
++        <tip>We can navigate over the fields using the keys 
++        <keycap>Enter</keycap>, 
++        <keycap>Tab</keycap>or with the 
++        <mousebutton>Left button of the mouse</mousebutton>.</tip></step>
++      </procedure>
++    </section>
++    <section xml:id="definindo_variaveis">
++      <title>Defining and using variables</title>
++      <para>We can use the dictionary to define more complex variables. Using the same idea from
++      the creation of variables in 
++      <xref linkend="janela_dicionario" />, we can define two more variables:</para>
++      <procedure>
++        <step>
++          <para>Variable named 
++          <emphasis role="bold">var2</emphasis>, type 
++          <guimenuitem>Number</guimenuitem>and value 
++          <emphasis role="bold">var1 + 10</emphasis>.</para>
++          <figure>
++            <mediaobject>
++              <caption>Screenshot of the creation of the variable 
++              <emphasis role="bold">var2</emphasis>, using auto-completion.</caption>
++              <imageobject>
++                <imagedata fileref="../images/exemplo_variaveis_4.png" />
++              </imageobject>
++            </mediaobject>
++          </figure>
++        </step>
++        <step>
++          <para>Variable named 
++          <emphasis role="bold">string</emphasis>, of type 
++          <guimenuitem>Text</guimenuitem>and value 
++          <emphasis role="bold">Variable 2 is equal to [var2]</emphasis>.</para>
++          <figure>
++            <mediaobject>
++              <caption>Screenshot of the creation of variable 
++              <emphasis role="bold">string</emphasis>and verification of the result.</caption>
++              <imageobject>
++                <imagedata fileref="../images/exemplo_variaveis_5.png" />
++              </imageobject>
++            </mediaobject>
++          </figure>
++          <tip>In order to use the variables in fields like 
++          <guimenuitem>Text</guimenuitem>, you must put the variable name embraced by square
++          brackets 
++          <emphasis role="bold">[</emphasis>name-of-the-variable
++          <emphasis role="bold">]</emphasis>.</tip>
++        </step>
++        <step>
++          <para>Now we can use the variables in our newly-created "Example Flow".</para>
++          <para>In the Flow Editor, double click 
++          <guilabel>Echo</guilabel>in the parameters editor window and use the variable 
++          <emphasis role="bold">string</emphasis>.</para>
++          <figure>
++            <mediaobject>
++              <caption>Screenshot of the parameters editor of the program Echo with the variable 
++              <emphasis role="bold">string</emphasis>.</caption>
++              <imageobject>
++                <imagedata fileref="../images/exemplo_variaveis_6.png" />
++              </imageobject>
++            </mediaobject>
++          </figure>
++        </step>
++      </procedure>
++      <tip>In order to validate a field of an expression or a variable, you just need to use the
++      key 
++      <keycap>Enter</keycap>.</tip>
++      <tip>To see all the available variables for auto-completion, we just need to type the
++      character 
++      <emphasis role="bold">[</emphasis>' (open brackets).</tip>
++      <important>
++        <para>We can define the visibility of the variables, managing them in the lists 
++        <guilabel>Project</guilabel>, 
++        <guilabel>Line</guilabel>and 
++        <guilabel>Flow</guilabel>. Variables from the list 
++        <guilabel>Project</guilabel>are visible to 
++        <emphasis role="bold">every flow</emphasis>of every line of the chosen project 
++        <guilabel>Line</guilabel>are visible just for the 
++        <emphasis role="bold">flows of the selected flow</emphasis>. Variables from the list 
++        <guilabel>Flow</guilabel>are visible just for the 
++        <emphasis role="bold">chosen flow</emphasis>.</para>
++      </important>
++    </section>
++    <section xml:id="variavel_iter">
++      <title>The variable iter</title>
++      <para>As we saw in the section 
++      <xref linkend="loop" />, GêBR allows the use of loops, through the program 
++      <guimenuitem>Loop</guimenuitem>. With this program, we have access to a special variable
++      called 
++      <emphasis role="bold">iter</emphasis>. Then we can show an example of the use of this
++      variable:</para>
++      <procedure>
++        <step>
++          <para>Suppose we want to know in which week days the turns of next 5 years will be. To
++          this end, we need the calendar of December from these 5 years. We are going to use the
++          program 
++          <guimenuitem>Calendar</guimenuitem>(it can be found in the 
++          <guimenu>Shell Tools</guimenu>category, in the 
++          <guilabel>Flow Editor</guilabel>tab).</para>
++          <para>Using the examples about the filling of parameters in section 
++          <xref linkend="loop" />, we are going to end up with the variable 
++          <emphasis role="bold">iter</emphasis>in the dictionary as in the following window.</para>
++          <figure>
++            <mediaobject>
++              <caption>Screenshot of variable 
++              <emphasis role="bold">iter</emphasis>and its solved expression.</caption>
++              <imageobject>
++                <imagedata fileref="../images/exemplo_iter_1.png" />
++              </imageobject>
++            </mediaobject>
++          </figure>
++        </step>
++        <step>
++          <para>We can define a variable in the dictionary that represents the present year,
++          facilitating the process of year choice. We define the variable in the line, with the
++          name of 
++          <emphasis role="bold">ano_atual</emphasis>and value 
++          <emphasis role="bold">2011</emphasis>.</para>
++          <figure>
++            <mediaobject>
++              <caption>Screenshot of variable 
++              <emphasis role="bold">ano_atual</emphasis>defined in the dictionary.</caption>
++              <imageobject>
++                <imagedata fileref="../images/exemplo_iter_2.png" />
++              </imageobject>
++            </mediaobject>
++          </figure>
++        </step>
++        <step>
++          <para>After defining this variable, we improve the parameters of the program 
++          <guimenuitem>Loop</guimenuitem>, so the variable 
++          <emphasis role="bold">iter</emphasis>has a better behaviour on the purpose of the
++          problem.</para>
++          <para>In the Initial Value we are going to include a variable 
++          <emphasis role="bold">ano_atual</emphasis>. We fill the parameter Step (step of each
++          iteration) with 1, since we look for consecutive years. We fill the parameter Total
++          number of steps with 5, so the Loop will be repeated five times, covering years 2011 to
++          2016.</para>
++          <figure>
++            <mediaobject>
++              <caption>Screenshot of 
++              <guimenuitem>Loop</guimenuitem>program with its parameters filled in.</caption>
++              <imageobject>
++                <imagedata fileref="../images/exemplo_iter_3.png" />
++              </imageobject>
++            </mediaobject>
++          </figure>
++          <important>
++            <para>The program 
++            <guimenuitem>Loop</guimenuitem>can only use variables defined at its Line or
++            Project.</para>
++          </important>
++        </step>
++        <step>
++          <para>Now we open program 
++          <guimenuitem>Calendar</guimenuitem>to fill its parameters. We gonna fill only two
++          parameters, Month with value 
++          <emphasis>December</emphasis>and Year with the variable 
++          <emphasis role="bold">iter</emphasis>.</para>
++          <figure>
++            <mediaobject>
++              <caption>Screenshot of 
++              <guimenuitem>Calendar</guimenuitem>program parameters filled in.</caption>
++              <imageobject>
++                <imagedata fileref="../images/exemplo_iter_4.png" />
++              </imageobject>
++            </mediaobject>
++          </figure>
++          <para>We can verify the solved value of the variable 
++          <emphasis role="bold">iter</emphasis> through the tooltip of parameter Year 
++          <guiicon>
++            <inlinemediaobject>
++              <imageobject>
++                <imagedata fileref="../images/exemplo_iter_5.png" />
++              </imageobject>
++            </inlinemediaobject>
++          </guiicon> by positioning the pointer over the Year icon. This way, we can verify the which
++          years we are walking through.</para>
++        </step>
++        <step>
++          <para>Now, with all the parameters set, we can run the flow (as in section 
++          <xref linkend="executar_fluxo" />), to see in which week days the holidays are going to
++          be for the next five years.</para>
++          <figure>
++            <mediaobject>
++              <caption>Screenshot of execution of flow, in the tab 
++              <guilabel>Job Control</guilabel>.</caption>
++              <imageobject>
++                <imagedata fileref="../images/exemplo_iter_6.png" />
++              </imageobject>
++            </mediaobject>
++          </figure>
++        </step>
++      </procedure>
++      <para>That was a simple example of 
++      <emphasis role="bold">iter</emphasis>variable usage in a flow. We can notice that loops and
++      variables ease the execution of repetitive tasks.</para>
++    </section>
++    <section xml:id="variaveis_recursos">
++      <title>Dictionary features</title>
++      <para>The dictionary has a big list of resources that increments its functionality. We are
++      going to list some of these resources:</para>
++      <itemizedlist>
++        <listitem>
++          <para>
++            <emphasis role="bold">Function</emphasis>
++          </para>
++          <para>Besides using variables and expressions, we can use some predefined
++          functions:</para>
++          <table>
++            <title>Available functions</title>
++            <tgroup cols='2'>
++              <thead>
++                <row>
++                  <entry>Function</entry>
++                  <entry>Sintax</entry>
++                </row>
++              </thead>
++              <tbody>
++                <row>
++                  <entry>Square root</entry>
++                  <entry>sqrt(
++                  <emphasis>value</emphasis>)</entry>
++                </row>
++                <row>
++                  <entry>Sine</entry>
++                  <entry>s(
++                  <emphasis>value</emphasis>)</entry>
++                </row>
++                <row>
++                  <entry>Cosine</entry>
++                  <entry>c(
++                  <emphasis>value</emphasis>)</entry>
++                </row>
++                <row>
++                  <entry>Arctangent</entry>
++                  <entry>a(
++                  <emphasis>value</emphasis>)</entry>
++                </row>
++                <row>
++                  <entry>Natural Logarithm</entry>
++                  <entry>l(
++                  <emphasis>value</emphasis>)</entry>
++                </row>
++                <row>
++                  <entry>Exponencial</entry>
++                  <entry>e(
++                  <emphasis>value</emphasis>)</entry>
++                </row>
++                <row>
++                  <entry>Bessel</entry>
++                  <entry>j(
++                  <emphasis>order, value)</emphasis></entry>
++                </row>
++              </tbody>
++            </tgroup>
++          </table>
++        </listitem>
++        <listitem>
++          <para>
++            <emphasis role="bold">Drag and Drop</emphasis>
++          </para>
++          <itemizedlist>
++            <listitem>
++              <para>We can reorder the dictionary variables through the drag and drop. Since a
++              variable can just use another variable above it, this features turns the declaration
++              of variables more flexible and dynamic.</para>
++              <figure>
++                <mediaobject>
++                  <caption>Screenshot of the flow execution in the tab 
++                  <guilabel>Job Control</guilabel>.</caption>
++                  <imageobject>
++                    <imagedata fileref="../images/recurso_dict_1.png" />
++                  </imageobject>
++                </mediaobject>
++              </figure>
++            </listitem>
++          </itemizedlist>
++        </listitem>
++        <listitem>
++          <para>
++            <emphasis role="bold">Dynamic Validation</emphasis>
++          </para>
++          <itemizedlist>
++            <listitem>
++              <para>The dictionary validates the variables in a dynamic way, revalidating them you
++              change the name, the value and the position. On this way, it is much simpler to keep
++              everything in order.</para>
++              <para>Programs with variables with errors are automatically revalidated, changing its
++              state configuration (see 
++              <xref linkend="sec_3_3_5" />).</para>
++              <figure>
++                <mediaobject>
++                  <caption>Screenshot of the variable 
++                  <emphasis role="bold">ano_atual</emphasis>using a non-existent variable in its
++                  expression.</caption>
++                  <imageobject>
++                    <imagedata fileref="../images/recurso_dict_2.png" />
++                  </imageobject>
++                </mediaobject>
++              </figure>
++            </listitem>
++          </itemizedlist>
++          <tip>Every field, from program parameters or variables, is going to exhibit the icon 
++          <guiicon>
++            <inlinemediaobject>
++              <imageobject>
++                <imagedata fileref="../../common-images/icone_nao_configurado.png" />
++              </imageobject>
++            </inlinemediaobject>
++          </guiicon>, and an explanation of the error.</tip>
++        </listitem>
++      </itemizedlist>
++    </section>
++  </section>
++  <section xml:id="additional_features">
++    <title>Additional features</title>
++    <section xml:id="menu">
++      <title>The 
++      <guimenu>Action</guimenu>menu</title>
++      <para>From the 
++      <guimenu>Actions</guimenu>menu you can access your 
++      <guimenuitem>Preferences</guimenuitem>and configure 
++      <guimenuitem>Servers</guimenuitem>. If your enthusiasm for GêBR has lead you to read the
++      whole manual, you have probably used almost all available features found in these options.
++      But just in case, below you will find the documentation for these options.</para>
++      <section>
++        <title>Preferences</title>
++        <para>The details you provide in the 
++        <guimenuitem>Preferences</guimenuitem>dialog box will be adopted as the default by GêBR.
++        Specifically:</para>
++        <itemizedlist>
++          <listitem>
++            <para>
++            <guilabel>User name:</guilabel>will be used as the default for 
++            <guilabel>Author:</guilabel>when you create Projects, Lines and Flows.</para>
++          </listitem>
++          <listitem>
++            <para>
++            <guilabel>Email:</guilabel>will be used as the default for 
++            <guilabel>Email:</guilabel>when you create Projects, Lines and Flows.</para>
++          </listitem>
++          <listitem>
++            <para>
++            <guilabel>User's menus directory:</guilabel>will be the default directory where 
++            <emphasis>GêBR's Menus</emphasis>are maintained ( 
++            <filename class="extension">mnu</filename>files).</para>
++          </listitem>
++        </itemizedlist>
++        <figure>
++          <mediaobject>
++            <caption>Preferences menu opens a dialog box where you edit the user name, email,
++            menu's directory and the HTML editor.</caption>
++            <imageobject>
++              <imagedata fileref="../images/GeBR_preferences.png" />
++            </imageobject>
++          </mediaobject>
++        </figure>
++        <para>Advanced settings in Preferences menu expands the dialog box where you edit the
++        maestro server and HTML editor.</para>
++        <para>
++          <emphasis role="bold">Advanced Settings</emphasis>
++        </para>
++        <mediaobject>
++          <caption>Advanced Settings of Preferences menu</caption>
++          <imageobject>
++            <imagedata fileref="../images/GeBR_preferences_advanced.png" />
++          </imageobject>
++        </mediaobject>
++        <itemizedlist>
++          <listitem>
++            <para>Maestro Server: will be the default for Maestro Server when you start GêBR, the
++            localhost is the default for Maestro Server when you connect GêBR for the first
++            time.</para>
++          </listitem>
++          <listitem>
++            <para>HTML editor: the default text editor that GêBR will open when creating reports on
++            Projects, Lines and Flows.</para>
++          </listitem>
++        </itemizedlist>
++      </section>
++    </section>
++  <section xml:id="servers_configuration">
++    <title>Servers configuration</title>
++    <para>GêBR can take benefit of the resources of multiple machines. To handle it, GêBR is
++    segmented in three layers:</para>
++    <itemizedlist>
++      <listitem>The host machine (GêBR-client), from where the user sends requests</listitem>
++      <listitem>An intermediate layer (GêBR-maestro), where all the jobs are coordinated</listitem>
++      <listitem>Executors (GêBR-daemons), where the jobs are executed</listitem>
++    </itemizedlist>
++        <mediaobject>
++		<caption>Layers of execution of GêBR</caption>
++          <imageobject>
++		  <imagedata fileref="../images/GeBR_servers_maestro_diagram.png" />
++          </imageobject>
++        </mediaobject>
++    <para>The user can be connected to one maestro at once. Each maestro, in turn, can be connected
++    to many daemons. To ease the task of handling of files by the maestro, one requirement is that
++    all the daemons must be in the same Network File System (NFS).</para>
++    <para>The Servers Interface has three parts: 
++    <itemizedlist>
++      <listitem>
++        <para>Maestro entry- central unit of coordination of multiple machines</para>
++      </listitem>
++      <listitem>
++        <para>Servers configuration - choose the daemons associated to the current maestro</para>
++      </listitem>
++      <listitem>
++        <para>Groups configuration- configure the groups of daemons on the current maestro</para>
++      </listitem>
++    </itemizedlist></para>
++    <section>
++      <title>Maestro Entry</title>
++        <mediaobject>
++		<caption>Maestro entry</caption>
++          <imageobject>
++		  <imagedata fileref="../images/GeBR_servers_maestro_entry.png" />
++          </imageobject>
++        </mediaobject>
++      <para>In the upper part of the Servers Interface, there is an entry in which the user can put
++      the desired machine to use as maestro. A requirement is that the package GêBR-maestro must be
++      installed on that machine. The state of the connection between GêBR and the maestro is shown
++      by the right-side icon: 
++      <itemizedlist>
++        <listitem><para>connected (<inlinemediaobject>
++            <imageobject>
++              <imagedata fileref="../../common-images/gtk-connect.png" />
++            </imageobject>
++	  </inlinemediaobject>)</para></listitem>
++        <listitem><para>disconnected (<inlinemediaobject>
++            <imageobject>
++              <imagedata fileref="../../common-images/gtk-disconnect.png" />
++            </imageobject>
++	  </inlinemediaobject>)</para></listitem>
++        <listitem><para>error (<inlinemediaobject>
++            <imageobject>
++              <imagedata fileref="../../common-images/gtk-dialog-warning.png" />
++            </imageobject>
++	  </inlinemediaobject>)</para></listitem>
++      </itemizedlist></para>
++    </section>
++    <section>
++      <title>Servers configuration</title>
++        <mediaobject>
++		<caption>Servers</caption>
++          <imageobject>
++		  <imagedata fileref="../images/GeBR_servers_daemons.png" />
++          </imageobject>
++        </mediaobject>
++      <para>Once selected a coordinator machine (maestro), the user can associate machines to that
++      maestro.</para>
++      <para>The lines represent the machines associated to the maestro. Each line has two columns:
++      the first column shows if the option Auto-connect is activated or not; the second column
++      shows the name (hostname) of the machine. The user can add a new machine by clicking over New
++      and entering the name of address of the machine.</para>
++    </section>
++    <section>
++      <title>Groups configuration</title>
++      <para>The user can use just a couple of the machines associated to the maestro. Using
++      different subsets of machines can be managed through the creation of groups of
++      machines.</para>
++      <para>In the bottom part of the Servers interface, the user can create/edit daemons groups.
++      The functionality is through mouse Drag and Drop.</para>
++        <mediaobject>
++		<caption>Groups</caption>
++          <imageobject>
++		  <imagedata fileref="../images/GeBR_servers_groups_new.png" />
++          </imageobject>
++        </mediaobject>
++      <para>To create a group, the user needs to click over a server in the list and drag it to the
++      + icon. A text box is going to be prompted for the name of the group. Groups with same names
++      are not accepted.</para>
++    </section>
++  </section>
++    <section xml:id="execution_log">
++      <title>The execution log</title>
++      <para>GêBR remembers most of the users actions, as well as the results of these actions, in
++      the so called 
++      <emphasis>execution log</emphasis>. This log is shown at the bottom of the main window, which
++      can be presented in the collapsed form (default) or the expanded form like the window
++      below.</para>
++      <figure>
++        <mediaobject>
++          <caption>At the bottom of GêBR's main window you will find the execution log, which
++          displays information on all of GêBR processes.</caption>
++          <imageobject>
++            <imagedata fileref="../images/janela_log_execucao.png" />
++          </imageobject>
++        </mediaobject>
++      </figure>
++      <tip>
++        <para>In 
++        <menuchoice>
++          <guimenu>Actions</guimenu>
++          <guimenuitem>Preferences</guimenuitem>
++        </menuchoice>at the bottom of the dialog box, we can see the box 
++        <guilabel>Load past-execution log</guilabel>. By checking this box we choose to exhibit the
++        whole log, including actions from past dates. By leaving the box unchecked we choose to
++        have a compact log, which only shows actions that have taken place since GêBR's last
++        initialization.</para>
++      </tip>
++    </section>
++    <section xml:id="import_samples">
++      <title>Sample projects</title>
++      <para>In the Help menu, besides the general Help section, we can import available
++      samples:</para>
++      <figure>
++        <mediaobject>
++          <caption>Screenshot of the Samples Menu</caption>
++          <imageobject>
++            <imagedata fileref="../images/samples_en.png" />
++          </imageobject>
++        </mediaobject>
++      </figure>
++    </section>
++  </section>
+ </article>

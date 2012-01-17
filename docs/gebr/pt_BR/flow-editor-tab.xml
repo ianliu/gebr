@@ -10,94 +10,8 @@
 
   <title>A aba 
     <guilabel>Editor de Fluxo</guilabel></title>
-  <para>Todo fluxo criado na GêBR nasce vazio, isto é, <emphasis>sem programas</emphasis> que descrevam
-    uma sequência funcional de operações. Para um fluxo tornar-se funcional, é
-    preciso <emphasis>adicionar programas</emphasis> a ele. Além disso, é
-    preciso <emphasis>configurar os programas</emphasis>, para que realizem tarefas específicas. Tudo
-    isso é feito na aba
-    <guilabel>Editor de Fluxo</guilabel>.</para>
-  <para>Na <xref linkend="criando_fluxos"/> vimos que os menus padrão da
-    GêBR são separados em treze categorias, listadas na caixa <guilabel>Menu</guilabel>, no lado direito da janela
-    principal:</para>
-  <itemizedlist>
-    <listitem>
-      <para>Data Compression</para>
-    </listitem>
-    <listitem>
-      <para>Editing, Sorting and Manipulation</para>
-    </listitem>
-    <listitem>
-      <para>File tools</para>
-    </listitem>
-    <listitem>
-      <para>Filtering, Transforms and Attributes</para>
-    </listitem>
-    <listitem>
-      <para>Gain, NMO, Stack and Standard Processes</para>
-    </listitem>
-    <listitem>
-      <para>Graphics</para>
-    </listitem>
-    <listitem>
-      <para>Import/Export</para>
-    </listitem>
-    <listitem>
-      <para>Loops</para>
-    </listitem>
-    <listitem>
-      <para>Migration and Dip Moveout</para>
-    </listitem>
-    <listitem>
-      <para>Multiple Supression</para>
-    </listitem>
-    <listitem>
-      <para>Seismic Unix</para>
-    </listitem>
-    <listitem>
-      <para>Simulation and Model Building</para>
-    </listitem>
-    <listitem>
-      <para>Utilities</para>
-    </listitem>
-  </itemizedlist>
-  <para>Por padrão, as categorias são mostradas na forma contraída, ocultando os componentes. Para exibir os
-    componentes de uma categoria, você deve expandí-la clicando no
-    ícone <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_colapsado.png"/></imageobject></inlinemediaobject></guiicon> à esquerda da categoria.</para>
-  <para>Para <emphasis>adicionar um programa</emphasis> ao fluxo, siga o seguinte procedimento:</para>
-  <procedure>
-    <step>
-      <para>Selecione um fluxo na aba 
-        <guilabel>Fluxos</guilabel>. Depois selecione a aba 
-        <guilabel>Editor de Fluxo</guilabel>.</para>
-      <tip>
-        <para>Quando estiver na aba 
-          <guilabel>Fluxos</guilabel>, experimente dar um clique duplo no fluxo. Assim você alterna mais rapidamente
-          para a aba 
-          <guilabel>Editor de Fluxo.</guilabel>.</para>
-      </tip>
-    </step>
-    <step>
-      <para>Expanda uma categoria e dê um clique duplo em um de seus componentes (dependendo da categoria, talvez
-        você precise rolar a janela <guilabel>Menu</guilabel> para ver todos os componentes). O componente
-        selecionado é adicionado à caixa <guilabel>Sequência do fluxo</guilabel> como programa(s) do fluxo, no lado
-        esquerdo da janela principal.</para>
-      <tip>
-        <para>Você pode consultar a <emphasis>documentação do componente</emphasis> antes de adicioná-lo
-          ao fluxo. Para isso, clique no componente com o <emphasis>botão direito do mouse</emphasis> e
-          escolha <guilabel>Ajuda</guilabel>.</para>
-      </tip>
-    </step>
-  </procedure>
-  <tip>
-    <para>Observe a <emphasis>barra de informações</emphasis> na parte de cima da janela principal, logo
-      abaixo do menu <guimenu>Ações</guimenu>. Ela mostra o fluxo selecionado atualmente, sem que você tenha que sair
-      da aba <guilabel>Editor de Fluxo</guilabel>.</para>
-  </tip>
-  <tip>
-    <para>Você pode <emphasis>mudar a posição</emphasis> de um programa na caixa <guilabel>Sequência do
-        fluxo</guilabel>. Para isso, <emphasis>arraste-o com o mouse</emphasis> para a posição
-      desejada.</para>
-  </tip>
+    <para>Para criar um fluxo, siga as instruções em <xref linkend="creating-flows" />.
+    </para>
   <para>Agora que já sabemos como adicionar programas ao fluxo, precisamos configurá-los. Vejamos então as demais
     ferramentas da aba <guilabel>Editor de Fluxo</guilabel>:</para>
   <itemizedlist>
@@ -251,7 +165,7 @@
   </section>
   <section xml:id="editar_arquivos_entrada_saida_fluxo">
     <title>Editar arquivos de entrada e saída do fluxo</title>
-    <para>No exemplo da <xref linkend="criando_fluxos"/> criamos um fluxo
+    <para>No exemplo da <xref linkend="creating-flows"/> criamos um fluxo
       muito simples, que não precisava "ler" nenhum arquivo, e que gerava como resultado uma saída de tela. Porém,
       há situações em que o fluxo precisa extrair dados de um arquivo de entrada e gerar como resultado um arquivo
       de saída ou de erro, caso ocorra algum problema durante a execução.</para>
@@ -299,20 +213,71 @@
     <para>Na aba Editor de Fluxo, ainda que se tenha selecionado vários fluxos na aba Fluxos, ao se clicar no
       botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_executar_fluxo.png"/></imageobject></inlinemediaobject></guiicon> será
       executado apenas o primeiro fluxo selecionado.</para>
-    <para>Nessa versão da GêBR, surge o conceito de filas, conceito também abordado
-      em <xref linkend="executar_fluxo_aba_fluxos"/>. Nessa aba é possível
-      escolher no campo Fila em qual fila o fluxo será executado. Pode-se escolher e nomear a fila em que se quer
-      executar um fluxo, conforme figura:</para>
     <figure>
       <mediaobject>
-        <caption>Na aba Editor de Fluxo, no campo Fila, pode-se selecionar a fila em que este Fluxo será executado.</caption>
+	      <caption>Na segundo campo de <guilabel>Executar</guilabel>, você pode selecionar <emphasis>após
+	      </emphasis> qual fluxo deseja executar.</caption>
         <imageobject>
-          <imagedata fileref="../images/janela_filas_edicao_de_fluxo.png"/>
+          <imagedata fileref="../images/GeBR_flow_editor_queue.png"/>
         </imageobject>
       </mediaobject>
     </figure>
     <para>No momento em que o fluxo começa a ser executado, a GêBR alterna imediatamente para a aba
       <guilabel>Controle de tarefas</guilabel>, que mostra o relatório (<emphasis>log</emphasis>) da execução.</para>
+  </section>
+  <section xml:id="multi_cores">
+    <title>Multiplos núcelos</title>
+    <para>GêBR otimiza a execução de laços em máquina com processadores de múltiplos núcleos.</para>
+    <para>GêBR tira vantagem dos recursos múltiplos-núcleos das máquinas.
+	    A execução de laços repetitivos pode ser otimizado por este recurso. 
+	    Se o fluxo tem laços e é paralelizável (i.e., satisfaz os critérios abaixo)
+	    então você pode ajustar o número de processadores a serem utilizados.
+	    </para>
+	    <para>Para ser considerado paralelizável, além de ter um laço, o Fluxo precisa
+		    satisfazer um destes critérios:</para>
+    <itemizedlist>
+      <listitem>O Fluxo não tem arquivo de saída;</listitem>
+      <listitem>A saída de cada passo do laço não é entrada de outro passo do laço
+        .</listitem>
+    </itemizedlist>
+    <para>Você pode ajustar o número de processadores a ser utilizado através da barra de ajuste
+      .</para>
+    <imageobject>
+      <imagedata fileref="../images/GeBR_flow_editor_flow_exec_speed.png" />
+    </imageobject>
+    <para>Cada nível da barra de ajuste corresponde a um número de núcleos utilizado pela tarefa.</para>
+  </section>
+  <section xml:id="priority_execution">
+    <title>Prioridade de execução</title>
+    <para>Computadores são multitarefas, o que significa que podem executar várias tarefas
+      concorrentemente. Quando muitas tarefas são executadas ao mesmo tempo, o computador 
+      se sobrecarrega e diminui seu desempenho. Fluxos de processamento sísmico, em particular,
+      exigem muitos recursos das máquinas.</para>
+      <para>Para prevenir o sobrecarregamento das máquinas, a GêBR oferece a possibilidade de 
+	      executar um fluxo em estado de <guilabel>Baixa prioridade</guilabel>.  </para>
+      
+    <imageobject>
+      <imagedata fileref="../images/GeBR_flow_editor_priority_execution.png" />
+    </imageobject>
+    <para>Há duas opções: </para>
+    <itemizedlist>
+      <listitem>Baixa prioridade (o fluxo irá esperar recursos livres para executar
+       , de modo a não sobrecarregar o sistema)</listitem>
+      <listitem>Alta prioridade (a execução disputará com outros programas ativos 
+	      por recursos do sistema)</listitem>
+    </itemizedlist>
+    <para>Tecnicamente, rodar em modo de "Baixa prioridade" significa reduzir a prioridade de
+	    execução da tarefa, algo como dizer ao computador para "esperar outras coisas mais
+	    importantes serem executadas primeiro". Este é o caso quando o usuário faz outras
+	    coisas enquando processa seus fluxos na GêBR. O modo de "Alta Prioridade"
+	    significa que a GêBR terá maior prioridade sobre os outros processos, algo como
+	    "Eu quero este processamento da GêBR pronto o mais rápido possível".
+    </para>
+    <para>
+	    Se a GêBR é o único programa sendo executado nos servidores, i.e., não 
+	    há competidores por recursos do sistema, então ambos estados correspodem ao
+	    mesmo modo.
+      </para>
   </section>
   <section xml:id="loop">
     <title>Executando um fluxo múltiplas vezes</title>
@@ -323,7 +288,7 @@
     <mediaobject>
       <caption>Na aba Editor de Fluxo, após o programa <emphasis>Loop</emphasis> ser adicionado e configurado.</caption>
       <imageobject>
-        <imagedata fileref="../images/loop_adicionado.png"/>
+        <imagedata fileref="../images/GeBR_flow_editor_loop.png"/>
       </imageobject>
     </mediaobject>
     <para>Após o <emphasis>Loop</emphasis> ser adicionado, teremos acesso a uma nova variável, chamada <emphasis>iter</emphasis>, que tem seu valor alterado a cada iteração,

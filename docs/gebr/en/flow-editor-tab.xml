@@ -376,9 +376,6 @@
       <listitem>High priority (the execution of the Flow is going to dispute for the computer
         resources with the other active programs)</listitem>
     </itemizedlist>
-    <para>If you leave the button <emphasis>unpressed</emphasis>, then the next execution of a Flow is going to
-      be done in a polite way. Otherwise, in case the button is left pressed, then the next
-      execution is going to fight for the computer resources.</para>
     <para>Technically, when running in "Low Priority" mode, GêBR will reduce the run priority of the
       task, meaning it will tell the computer that "it can wait more important things to be done".
       This is the case when you have other things to do while you wait your calculations to be done.
