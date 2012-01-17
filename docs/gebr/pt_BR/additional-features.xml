@@ -1,115 +1,205 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
 <section
-  xmlns="http://docbook.org/ns/docbook"
-  xmlns:xi="http://www.w3.org/2001/XInclude"
-  xmlns:xlink="http://www.w3.org/1999/xlink"
-  lang="pt_BR"
-  version="5.0"
-  xml:id="sec_4">
+	xmlns="http://docbook.org/ns/docbook"
+	xmlns:xi="http://www.w3.org/2001/XInclude"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	lang="pt_BR"
+	version="5.0"
+	xml:id="sec_4">
 
-  <title>Recursos adicionais</title>
+	<title>Recursos adicionais</title>
 
-  <section xml:id="menu">
-    <title>O menu 
-      <guimenu>Ações</guimenu></title>
-    <para>A partir do menu 
-      <guimenu>Ações</guimenu> você acessa as janelas 
-      <guimenuitem>Preferências</guimenuitem> e 
-      <guimenuitem>Servidores</guimenuitem>. Se você leu todo o manual, provavelmente já usou quase todos os recursos
-      disponíveis nessas duas janelas. De qualquer forma, segue a documentação.</para>
-    <section>
-      <title>Preferências</title>
-      <para>As definições que você faz na janela 
-        <guimenuitem>Preferências</guimenuitem> são adotadas como padrão pela GêBR. Vejamos os detalhes:</para>
-      <itemizedlist>
-        <listitem>
-          <para><guilabel>Nome do Usuário:</guilabel> Padrão adotado no campo 
-            <guilabel>Autor:</guilabel> durante a criação de projetos, linhas e fluxos.</para>
-        </listitem>
-        <listitem>
-          <para><guilabel>Email:</guilabel> Padrão adotado no campo 
-            <guilabel>Email</guilabel> durante a criação de projetos, linhas e fluxos.</para>
-        </listitem>
-        <listitem>
-          <para><guilabel>Diretório de menus do usuário:</guilabel> Pasta padrão usada para manutenção
-            de <emphasis>Menus GêBR</emphasis> (arquivos <filename class="extension">mnu</filename>).</para>
-        </listitem>
-        <listitem>
-          <para><guilabel>editor HTML:</guilabel> Editor de textos padrão adotado pela GêBR para criação de relatórios de
-            informações de projetos, linhas e fluxos.</para>
-        </listitem>
-      </itemizedlist>
-      <figure>
-        <mediaobject>
-          <caption>Em Preferências, abre-se uma janela em que é possível editar informações como nome de usuário, e-mail, diretório de menus do usuário e editor HTML.</caption>
-          <imageobject>
-            <imagedata fileref="../images/janela_preferences.png"/>
-          </imageobject>
-        </mediaobject>
-      </figure>
-    </section>
-    <section>
-      <title>Servidores</title>
-      <para>Use a janela <guilabel>Configuração de servidores</guilabel> para configurar o servidor local e os
-        servidores remotos que você adicionar.</para>
-      <para>O servidor local, identificado como <emphasis>Servidor local</emphasis>, é criado e conectado
-        automaticamente pela GêBR na inicialização. Ele é a máquina padrão usada para a execução dos fluxos.</para>
-      <para>Servidores remotos podem ser adicionados, para execução remota dos fluxos. Para adicionar um servidor,
-        digite o endereço na parte de baixo da janela <guilabel>Configuração de servidores</guilabel> e clique no
-        botão <guibutton>Adicionar</guibutton>.</para>
-      <figure>
-        <mediaobject>
-          <caption>Em servidores, adiciona-se, conecta-se e desconeta-se servidores. </caption>
-          <imageobject>
-            <imagedata fileref="../images/janela_servers_configuration.png"/>
-          </imageobject>
-        </mediaobject>
-      </figure>
-      <important>
-        <para>Todos os servidores definidos na janela 
-          <guilabel>Configuração de servidores</guilabel> ficam visíveis na aba 
-          <guilabel>Editor de Fluxo</guilabel> (você seleciona o servidor na caixa 
-          <guilabel>Servidor</guilabel>, logo acima da caixa 
-          <guilabel>Sequência de fluxo</guilabel>, no lado esquerdo da janela principal) e também na janela 
-          <guilabel>Entrada/Saída do fluxo</guilabel> (aquela em que os arquivos de entrada e saída do fluxo são
-          definidos).</para>
-      </important>
-    </section>
-  </section>
-  <section xml:id="sec_4_3">
-    <title>O log de execução</title>
-    <para>A GêBR grava grande parte das ações executadas pelo usuário, bem como os resultados dessas ações, no
-      chamado <emphasis>log de execução</emphasis>. Este log é mostrado na parte inferior da janela principal. Pode
-      ser apresentado na forma contraída (padrão) ou expandida (como na janela abaixo).</para>
-    <figure>
-      <mediaobject>
-        <caption>No canto inferior das janelas principais da GêBR, encontra-se o log de execução, que carrega as informações dos processamentos da GêBR.</caption>
-        <imageobject>
-          <imagedata fileref="../images/janela_log_execucao.png"/>
-        </imageobject>
-      </mediaobject>
-    </figure>
-    <tip>
-      <para>Em 
-        <menuchoice><guimenu>Ações</guimenu><guimenuitem>Preferências</guimenuitem></menuchoice> (no canto inferior da janela principal), campo 
-        <guilabel>Carregar o log das execuções anteriores</guilabel>, você escolhe entre exibir o log completo,
-        incluindo ações de datas passadas, o log compacto, que mostra apenas as ações a partir da última
-        inicialização.</para>
-    </tip>
-    </section>    <section xml:id="import_samples"><title>Exemplos de projeto</title>
-    <para>Na seção Ajuda, além da seção de Ajuda geral, podemos importar exemplos já existentes:</para>
-
-    <figure>
-      <mediaobject>
-        <caption>Captura de tela do menu Exemplos</caption>
-        <imageobject>
-          <imagedata fileref="../images/samples_pt.png"/>
-        </imageobject>
-      </mediaobject>
-    </figure>
-
-  </section>
+	<section xml:id="menu">
+		<title>O menu 
+			<guimenu>Ações</guimenu></title>
+		<para>A partir do menu 
+			<guimenu>Ações</guimenu> você acessa as janelas 
+			<guimenuitem>Preferências</guimenuitem> e 
+			<guimenuitem>Servidores</guimenuitem>. Se você leu todo o manual, provavelmente já usou quase todos os recursos
+			disponíveis nessas duas janelas. De qualquer forma, segue a documentação.</para>
+		<section>
+			<title>Preferências</title>
+			<para>As definições que você faz na janela 
+				<guimenuitem>Preferências</guimenuitem> são adotadas como padrão pela GêBR. Vejamos os detalhes:</para>
+			<itemizedlist>
+				<listitem>
+					<para><guilabel>Nome do Usuário:</guilabel> Padrão adotado no campo 
+						<guilabel>Autor:</guilabel> durante a criação de projetos, linhas e fluxos.</para>
+				</listitem>
+				<listitem>
+					<para><guilabel>Email:</guilabel> Padrão adotado no campo 
+						<guilabel>Email</guilabel> durante a criação de projetos, linhas e fluxos.</para>
+				</listitem>
+				<listitem>
+					<para><guilabel>Diretório de menus do usuário:</guilabel> Pasta padrão usada para manutenção
+						de <emphasis>Menus GêBR</emphasis> (arquivos <filename class="extension">mnu</filename>).</para>
+				</listitem>
+			</itemizedlist>
+			<figure>
+				<mediaobject>
+					<caption>Em Preferências, abre-se uma janela em que é possível 
+						editar informações como nome de usuário, e-mail, diretório de menus do usuário e editor HTML.</caption>
+					<imageobject>
+						<imagedata fileref="../images/GeBR_preferences.png"/>
+					</imageobject>
+				</mediaobject>
+			</figure>
 
 
-</section>
+			<para>
+				<emphasis role="bold">Configurações Avançadas</emphasis>
+				<para>Ao clicar sobre <guilabel>Configurações avançadas</guilabel>, a janela 
+					é expandida para uma janela para edição do Maestro e do Editor HTML.
+				</para>
+			</para>
+			<mediaobject>
+				<caption>Configurações avançadas do menu de Preferências</caption>
+				<imageobject>
+					<imagedata fileref="../images/GeBR_preferences_advanced.png" />
+				</imageobject>
+			</mediaobject>
+			<itemizedlist>
+				<listitem>
+					<para><guilabel>Maestro</guilabel>: maestro conectado a GêBR. Na primeira vez que se inicia a GêBR, 
+						o maestro vem por padrão a máquina de onde se abre a GêBR.</para>
+				</listitem>
+				<listitem>
+					<para><guilabel>Editor HTML:</guilabel> Editor de textos padrão adotado pela GêBR para criação de relatórios de
+						informações de projetos, linhas e fluxos.</para>
+				</listitem>
+			</itemizedlist>
+
+
+		</section>
+
+	</section>
+	<section xml:id="servers_configuration">
+		<title>Configurações de servidores</title>
+		<para>GêBR utiliza o recurso disponível pelas máquinas que você tem acesso. Para isso, a GêBR
+			é dividida em três camadas:</para>
+		<itemizedlist>
+			<listitem><para>Camada local (GêBR-client), de onde você abre a interface da GêBR e envia requisições ao maestro.</para></listitem>
+			<listitem><para>Camada intermediária (GêBR-maestro), onde todas tarefas da GêBR são coordenados.</para></listitem>
+			<listitem><para>Camada de execução (GêBR-daemon), onde as tarefas são, efetivamente, executadas.</para></listitem>
+		</itemizedlist>
+		<mediaobject>
+			<caption>Camadas de execução da GêBR</caption>
+			<imageobject>
+				<imagedata fileref="../images/GeBR_servers_maestro_diagram.png" />
+			</imageobject>
+		</mediaobject>
+		<para>GêBR pode estar conectada a um maestro por vez. Cada maestro, por sua vez, pode estar conectado a vários
+			servidores. Um requisito é que os servidores estejam no mesmo sistema de arquivos (NFS).</para>
+		<para>A janela de Configurações de servidores é dividida em três partes:
+			<itemizedlist>
+				<listitem>
+					<para>Caixa de edição do maestro</para>
+				</listitem>
+				<listitem>
+					<para>Janela de Servidores</para>
+				</listitem>
+				<listitem>
+					<para>Janela de Grupos de servidores</para>
+				</listitem>
+		</itemizedlist></para>
+		<section>
+			<title>Caixa de edição do maestro</title>
+			<mediaobject>
+				<caption>Caixa de edição do maestro</caption>
+				<imageobject>
+					<imagedata fileref="../images/GeBR_servers_maestro_entry.png" />
+				</imageobject>
+			</mediaobject>
+			<para>Na parte superior da janela das Configurações de Servidores, há uma
+				caixa para edição da máquina a ser utilizada como maestro. Para que 
+				a máquina possa ser utilizada como maestro, ela deve ter o pacote
+				GêBR-maestro instalado. O estado do maestro é indicado pela ícone
+				ao lado direito:
+				<itemizedlist>
+					<listitem><para>conectado (<inlinemediaobject>
+								<imageobject>
+									<imagedata fileref="../../common-images/gtk-connect.png" />
+								</imageobject>
+					</inlinemediaobject>)</para></listitem>
+					<listitem><para>disconectado (<inlinemediaobject>
+								<imageobject>
+									<imagedata fileref="../../common-images/gtk-disconnect.png" />
+								</imageobject>
+					</inlinemediaobject>)</para></listitem>
+					<listitem><para>erro (<inlinemediaobject>
+								<imageobject>
+									<imagedata fileref="../../common-images/gtk-dialog-warning.png" />
+								</imageobject>
+					</inlinemediaobject>)</para></listitem>
+			</itemizedlist></para>
+		</section>
+		<section>
+			<title>Servidores</title>
+			<mediaobject>
+				<caption>Janela de Servidores</caption>
+				<imageobject>
+					<imagedata fileref="../images/GeBR_servers_daemons.png" />
+				</imageobject>
+			</mediaobject>
+			<para>Uma vez escolhido a máquina que irá coordenar as tarefas (GêBR-maestro), você
+				poderá associar máquinas àquele maestro.</para>
+			<para>Cada entrada representa um servidor associado a aquele maestro. Cada linha tem duas
+				colunas: a primeira coluna exibe a opção de <guilabel>Auto-Conexão</guilabel> e a
+				coluna exibe a nome (hostname) do servidor. O usuário pode adicionar uma nova
+				máquina clicando sobre <guilabel>Novo</guilabel>.</para>
+		</section>
+		<section>
+			<title>Configurações de grupos</title>
+			<para>Você pode optar por utilizar apenas um subconjunto das máquinas do maestro conectado.
+				A criação/edição de grupos é feita através da janela de <guilabel>Configurações de grupos</guilabel>
+				e possibilita este recurso.</para>
+					<para>A funcionalidade é através do Arrastar-e-soltar do mouse.</para>
+					<mediaobject>
+						<caption>Criação de um grupo</caption>
+						<imageobject>
+							<imagedata fileref="../images/GeBR_servers_groups_new.png" />
+						</imageobject>
+					</mediaobject>
+					<para>Para criar um grupo, o usuário precisa clicar sobre um servidor da 
+						<guilabel>Configurações de grupos</guilabel> e arrastar para o ícone + .
+						Você poderá adicionar um nome para o novo grupo. Grupos com o mesmo nome
+						não são aceitos.</para>
+				</section>
+			</section>
+			<section xml:id="sec_4_3">
+				<title>O log de execução</title>
+				<para>A GêBR grava grande parte das ações executadas pelo usuário, bem como os resultados dessas ações, no
+					chamado <emphasis>log de execução</emphasis>. Este log é mostrado na parte inferior da janela principal. Pode
+					ser apresentado na forma contraída (padrão) ou expandida (como na janela abaixo).</para>
+				<figure>
+					<mediaobject>
+						<caption>No canto inferior das janelas principais da GêBR, encontra-se o log de execução, que carrega as informações dos processamentos da GêBR.</caption>
+						<imageobject>
+							<imagedata fileref="../images/janela_log_execucao.png"/>
+						</imageobject>
+					</mediaobject>
+				</figure>
+				<tip>
+					<para>Em 
+						<menuchoice><guimenu>Ações</guimenu><guimenuitem>Preferências</guimenuitem></menuchoice> (no canto inferior da janela principal), campo 
+						<guilabel>Carregar o log das execuções anteriores</guilabel>, você escolhe entre exibir o log completo,
+						incluindo ações de datas passadas, o log compacto, que mostra apenas as ações a partir da última
+						inicialização.</para>
+				</tip>
+				</section>    <section xml:id="import_samples"><title>Exemplos de projeto</title>
+				<para>Na seção Ajuda, além da seção de Ajuda geral, podemos importar exemplos já existentes:</para>
+
+				<figure>
+					<mediaobject>
+						<caption>Captura de tela do menu Exemplos</caption>
+						<imageobject>
+							<imagedata fileref="../images/samples_pt.png"/>
+						</imageobject>
+					</mediaobject>
+				</figure>
+
+			</section>
+
+
+		</section>

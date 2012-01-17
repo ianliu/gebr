@@ -37,7 +37,7 @@
         <listitem>
           <para>
             <guilabel>User's menus directory:</guilabel> will be the default directory where 
-            <emphasis>GêBR's Menus</emphasis> are maintained ( 
+            <emphasis>GêBR's Menus</emphasis> are maintained (
             <filename class="extension">mnu</filename> files).</para>
         </listitem>
       </itemizedlist>
@@ -95,17 +95,17 @@
     <para>The Servers Interface has three parts: 
       <itemizedlist>
         <listitem>
-          <para>Maestro entry- central unit of coordination of multiple machines</para>
+          <para>Maestro - central unit of coordination of multiple machines</para>
         </listitem>
         <listitem>
-          <para>Servers configuration - choose the daemons associated to the current maestro</para>
+          <para>Servers - choose the servers associated to the current maestro</para>
         </listitem>
         <listitem>
-          <para>Groups configuration- configure the groups of daemons on the current maestro</para>
+          <para>Groups of Servers - configure the groups of daemons on the current maestro</para>
         </listitem>
     </itemizedlist></para>
     <section>
-      <title>Maestro Entry</title>
+      <title>Maestro</title>
       <mediaobject>
         <caption>Maestro entry</caption>
         <imageobject>
@@ -135,9 +135,9 @@
       </itemizedlist></para>
     </section>
     <section>
-      <title>Servers configuration</title>
+      <title>Servers</title>
       <mediaobject>
-        <caption>Servers</caption>
+        <caption>Servers interface</caption>
         <imageobject>
           <imagedata fileref="../images/GeBR_servers_daemons.png" />
         </imageobject>
@@ -150,14 +150,14 @@
         and entering the name of address of the machine.</para>
     </section>
     <section>
-      <title>Groups configuration</title>
+      <title>Groups</title>
       <para>The user can use just a couple of the machines associated to the maestro. Using
         different subsets of machines can be managed through the creation of groups of
         machines.</para>
       <para>In the bottom part of the Servers interface, the user can create/edit daemons groups.
         The functionality is through mouse Drag and Drop.</para>
       <mediaobject>
-        <caption>Groups</caption>
+        <caption>Groups interface</caption>
         <imageobject>
           <imagedata fileref="../images/GeBR_servers_groups_new.png" />
         </imageobject>
