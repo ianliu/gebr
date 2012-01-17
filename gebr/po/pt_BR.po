@@ -983,7 +983,7 @@ msgstr "<span size='large' weight='bold'>O servidor %s está executando tarefas.
 #: ../gebr-maestro-controller.c:1206
 #, c-format
 msgid "Protocol version mismatch: %s"
-msgstr "Versão do protocolo imcompátivel"
+msgstr "Versão do protocolo incompátivel"
 
 #: ../gebr-maestro-controller.c:1235
 msgid "Connected"
