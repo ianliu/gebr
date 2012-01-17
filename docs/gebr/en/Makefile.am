@@ -30,7 +30,7 @@ INST_DEP =
 UINST_DEP =
 endif
 
-html-ok: gebr.xml
+html-ok: *.xml
 	xsltproc --xinclude -o $(builddir)/html/index.html \
 		$(srcdir)/../gebr-guide.xsl \
 		$(srcdir)/gebr.xml && touch html-ok
