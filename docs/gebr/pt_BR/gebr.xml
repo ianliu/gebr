@@ -325,15 +325,6 @@
             Image</guimenuitem>. Fazendo isso você adiciona este menu ao seu fluxo (note que o programa
             <guimenuitem>SU Simple X Image</guimenuitem> agora aparece na caixa <guilabel>Sequência de fluxo</guilabel>,
             no lado esquerdo da janela). Neste momento, sua janela deve se parecer com esta:</para>
-          <figure>
-            <mediaobject>
-              <caption>Na aba Editor de Fluxo no campo direito da janela chamado Menus, acrescenta-se um programa desejado
-		 que ficará visível para configuração no campo esquerdo da janela chamado Sequência de Fluxo.</caption>
-              <imageobject>
-                <imagedata fileref="../images/janela_flow_edition_1.png"/>
-              </imageobject>
-            </mediaobject>
-          </figure>
         </step>
         <step>
           <para>Expanda a categoria 
@@ -374,9 +365,14 @@
             <guimenuitem>SU Simple X Image</guimenuitem>.</para>
           <figure>
             <mediaobject>
-              <caption>Na aba Editor de Fluxo, configura-se os programas do fluxo em questão como não configurado, desabilitado e configurado através do menu de contexto.</caption>
+              <caption>
+                Na aba Editor de Fluxo, no lado direito da janela você verá a
+                lista de Menus. A partir dessa lista você pode adicionar
+                programas no seu Fluxo, que aparecerão no lado esquerdo da
+                janela.
+              </caption>
               <imageobject>
-                <imagedata fileref="../images/janela_flow_edition_3.png"/>
+                <imagedata fileref="../images/GeBR_flow_browser_flow_assembling_02.png"/>
               </imageobject>
             </mediaobject>
           </figure>
@@ -522,8 +518,8 @@
                 botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_editar_propriedades_projeto.png"/></imageobject></inlinemediaobject></guiicon>.</para>
       <para>Na janela <guilabel>Propriedades para projeto</guilabel> ou <guilabel>Propriedades para linha</guilabel>
         (dependendo do caso) você pode editar os
-        campos <guilabel>Título</guilabel>, <guilabel>Descrição</guilabel>, <guilabel>Autor</guilabel>
-        e <guilabel>Email</guilabel>. Para o caso de edição de propriedades de linha, pode-se adicionar caminhos
+        campos <guilabel>Título</guilabel>, <guilabel>Descrição</guilabel>, <guilabel>Autor</guilabel> e
+        <guilabel>Email</guilabel>. Para o caso de edição de propriedades de linha, pode-se editar o <guilabel>Maestro</guilabel> e adicionar caminhos
         personalizados, cujo detalhamento será abordado na <xref linkend="editar_caminhos_preferenciais_da_linha"/>.</para>
     </section>
     <section xml:id="sec_3_1_5">
@@ -576,6 +572,35 @@
           </imageobject>
         </mediaobject>
       </figure>
+    </section>
+    <section xml:id="changing_the_maestro_of_a_line">
+      <title>Alterando o maestro de uma linha</title>
+      <para>
+        Você pode alterar o maestro de uma linha quando o maestro atualmente
+        conectado é diferente do maestro configurado para esta linha. Siga os
+        passos abaixo:
+      </para>
+      <itemizedlist>
+        <listitem>
+          <para>Abra a janela de propriedades da Linha.</para>
+        </listitem>
+        <listitem>
+          <para>Clique sobre o ícone de cadeado para habilitar a edição de maestro nesta linha.</para>
+        </listitem>
+        <listitem>
+          <para>Escolha o maestro desejado.</para>
+        </listitem>
+        <listitem>
+          <para>Clique OK para fechar a janela.</para>
+        </listitem>
+        <listitem>
+          <para>Clique Sim para confirmar a operação.</para>
+        </listitem>
+      </itemizedlist>
+      <imageobject>
+        <imagedata fileref="../images/GeBR_line_properties_changing_maestro.png" />
+      </imageobject>
+      <caution>Você deverá rever os caminhos dos seus fluxos, pois ao trocar de Maestro eles poderão não existir.</caution>
     </section>
     <section xml:id="sec_3_1_7">
       <title>Importar um projeto ou linha</title>
@@ -958,27 +983,32 @@
       </procedure>
     </section>
     <section xml:id="executar_fluxo_aba_fluxos">
-      <title>Executar vários fluxos</title>
-      <para>Este comando aparece repetidamente nas abas <guilabel>Fluxos</guilabel> e
-          <guilabel>Editor de Fluxo</guilabel> de duas formas distintas. Nessa aba Fluxos, o
-          botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_executar_fluxo.png"/></imageobject></inlinemediaobject></guiicon> executa vários fluxos em sequência. Ver
-          figura: 
-	<figure><mediaobject><caption>Na aba Fluxos, entre outras funções, é possível executar vários Fluxos sequencialmente. Primeiro selecionando os Fluxos
-	 desejados e então clicando em <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_executar_fluxo.png"/></imageobject></inlinemediaobject></guiicon>.</caption><imageobject><imagedata fileref="../images/janela_execucao_de_fluxo.png"/></imageobject></mediaobject></figure></para>
-      <para>Nessa versão da GêBR, surge o conceito de filas, através do qual pode-se rodar um fluxo ou uma sequência
-          de fluxos em diferentes filas:</para>
-      <procedure>
-        <step>
-          <para> Nessa aba, a cada execução de um fluxo ou um grupo de fluxos, é criada uma fila.</para>
-        </step>
-        <step>
-          <para> Cada fila fica visível no campo Filas da aba Editor de Fluxos conforme explicado na <xref linkend="executar_fluxo"/>.</para>
-        </step>
-        <step>
-          <para> As filas também ficam visíveis na aba Controle de tarefas. Ver 
-          <xref linkend="controle_de_tarefas"/>.</para>
-        </step>
-      </procedure>
+      <title>Executando fluxos</title>
+      <para>O botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_executar_fluxo.png" /></imageobject></inlinemediaobject></guiicon>
+        é utilizado para executar fluxos, e está presente tanto na aba <guilabel>Fluxos</guilabel> quanto na aba <guilabel>Editor de Fluxo</guilabel>.
+        <figure>
+          <mediaobject>
+            <caption>
+              Na aba Fluxos, entre outras funções, é possível executar vários Fluxos
+              sequencialmente. Primeiro selecione os Fluxos desejados e clique em 
+              <guiicon>
+                <inlinemediaobject>
+                  <imageobject>
+                    <imagedata fileref="../../common-images/botao_executar_fluxo.png" />
+                  </imageobject>
+                </inlinemediaobject>
+            </guiicon>.</caption>
+            <imageobject>
+              <imagedata fileref="../images/GeBR_flow_browser.png" />
+            </imageobject>
+          </mediaobject>
+        </figure>
+      </para>
+      <tip>Você pode selecionar vários Fluxos e executá-los
+      <emphasis role="bold">sequencialmente</emphasis> clicando Ctrl+R.</tip>
+      <tip>Você pode selecionar vários Fluxos e executá-los
+      <emphasis role="bold">paralelamente</emphasis> clicando Ctrl+Shift+R.</tip>
+      <caution>Ao executar vários Fluxos, a configuração do primeiro será utilizada em todos os Fluxos.</caution>
     </section>
     <section xml:id="sec_3_2_11">
       <title>Editar comentários da aba Fluxos</title>
@@ -1123,6 +1153,21 @@
           <link linkend="executar_fluxo">Executar um fluxo</link>
         </para>
       </listitem>
+      <listitem>
+        <para>
+          <link linkend="execution_speed">Velocidade de execução</link>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <link linkend="sec_3_2_11">Editar Comentários</link>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <link linkend="visualizar_relatorio_fluxo">Visualizar Relatório</link>
+        </para>
+      </listitem>
     </itemizedlist>
     <tip>
       <para>Experimente usar <emphasis role="bold">menus de contexto</emphasis> no lugar dos botões de comando. Para
@@ -1233,7 +1278,7 @@
           <caption>Na aba Editor de Fluxo, no campo Sequência de fluxo, edita-se os arquivos de entrada, saída e log para esta
 	   sequência de Fluxo.</caption>
           <imageobject>
-            <imagedata fileref="../images/janela_arquivos_entrada_saida.png"/>
+            <imagedata fileref="../images/GeBR_flow_editor_input_file.png"/>
           </imageobject>
         </mediaobject>
       </figure>
