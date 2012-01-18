@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-01-13 16:20-0200\n"
+"POT-Creation-Date: 2012-01-18 15:40-0200\n"
 "PO-Revision-Date: 2011-11-18 16:12-0200\n"
 "Last-Translator: Rodrigo Morelatto <morelatto@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
@@ -194,25 +194,25 @@ msgid ""
 msgstr "O arquivo %s de %s%s (arquivo %s) não pode ser carregado.\n"
 "%s"
 
-#: ../document.c:350
+#: ../document.c:348
 msgid "Ignore"
 msgstr "Ignorar"
 
-#: ../document.c:351
+#: ../document.c:349
 #: ../interface.c:85
 #: ../interface.c:109
 msgid "Export"
 msgstr "Exportar"
 
-#: ../document.c:353
+#: ../document.c:351
 msgid "Delete"
 msgstr "Apagar"
 
-#: ../document.c:365
+#: ../document.c:362
 msgid "Choose the filename to export"
 msgstr "Escolha o nome do arquivo para exportar"
 
-#: ../document.c:378
+#: ../document.c:375
 #, c-format
 msgid ""
 "Failed to export the file '%s':\n"
@@ -220,16 +220,16 @@ msgid ""
 msgstr "Falha ao exportar o arquivo '%s':\n"
 "%s."
 
-#: ../document.c:402
+#: ../document.c:399
 msgid "Orphan Lines"
 msgstr "Linhas órfãs"
 
-#: ../document.c:420
-#: ../document.c:434
+#: ../document.c:417
+#: ../document.c:431
 msgid "Orphan Flows"
 msgstr "Fluxos órfãos"
 
-#: ../document.c:481
+#: ../document.c:477
 #, c-format
 msgid "Failed to save the document '%s' at '%s'."
 msgstr "Falha ao salvar o documento '%s' em '%s'."
@@ -633,7 +633,7 @@ msgstr "Selecione um fluxo da lista."
 msgid "Multiple jobs selected."
 msgstr "Múltiplos fluxos selecionados."
 
-#: ../gebr-job-control.c:706
+#: ../gebr-job-control.c:709
 #, c-format
 msgid ""
 "%s\n"
@@ -641,17 +641,17 @@ msgid ""
 msgstr "%s\n"
 "%d%% do total"
 
-#: ../gebr-job-control.c:745
+#: ../gebr-job-control.c:748
 #, c-format
 msgid "Waiting for server(s) details"
 msgstr "Esperando detalhes do(s) servidor(es)"
 
-#: ../gebr-job-control.c:757
+#: ../gebr-job-control.c:760
 #, c-format
 msgid "%s"
 msgstr "%s"
 
-#: ../gebr-job-control.c:759
+#: ../gebr-job-control.c:762
 #, c-format
 msgid ""
 "Job submitted by <b>%s</b> to Maestro <b>%s</b>,\n"
@@ -663,125 +663,125 @@ msgstr "Fluxo submetido por <b>%s</b> ao Maestro <b>%s</b>.\n"
 "Executado utilizando %s<b>%s</b> processador(es)\n"
 "distribuído em <b>%d</b> servidor(es).\n"
 
-#: ../gebr-job-control.c:763
+#: ../gebr-job-control.c:766
 msgid "idle time of "
 msgstr "tempo ocioso de "
 
-#: ../gebr-job-control.c:1010
+#: ../gebr-job-control.c:1013
 msgid " ago"
 msgstr " atrás"
 
-#: ../gebr-job-control.c:1032
+#: ../gebr-job-control.c:1035
 #, c-format
 msgid "Started at %s"
 msgstr "Iniciado em %s"
 
-#: ../gebr-job-control.c:1038
+#: ../gebr-job-control.c:1041
 #, c-format
 msgid "Finished at %s"
 msgstr "Finalizado em %s"
 
-#: ../gebr-job-control.c:1040
+#: ../gebr-job-control.c:1043
 #, c-format
 msgid "Canceled at %s"
 msgstr "Cancelado em %s"
 
-#: ../gebr-job-control.c:1045
-#: ../gebr-job-control.c:1054
+#: ../gebr-job-control.c:1048
+#: ../gebr-job-control.c:1057
 #, c-format
 msgid "Elapsed time: %s"
 msgstr "Tempo decorrido: %s"
 
-#: ../gebr-job-control.c:1069
+#: ../gebr-job-control.c:1072
 msgid "Job failed"
 msgstr "Arquivo falhou"
 
-#: ../gebr-job-control.c:1076
+#: ../gebr-job-control.c:1079
 msgid "Waiting for job"
 msgstr "Esperando pela tarefa"
 
-#: ../gebr-job-control.c:1084
+#: ../gebr-job-control.c:1087
 msgid "Waiting for servers"
 msgstr "Esperando resposta do(s) servidor(es)"
 
-#: ../gebr-job-control.c:1183
+#: ../gebr-job-control.c:1186
 #, c-format
 msgid "Command line for task %d of %d (Server: %s)"
 msgstr "Linha de comando para tarefa %d de %d (Servidor: %s)"
 
-#: ../gebr-job-control.c:1249
+#: ../gebr-job-control.c:1252
 #, c-format
 msgid "<b>Input file</b>: %s"
 msgstr "<b>Arquivo de entrada</b>: %s"
 
-#: ../gebr-job-control.c:1249
-#: ../gebr-job-control.c:1260
-#: ../gebr-job-control.c:1271
+#: ../gebr-job-control.c:1252
+#: ../gebr-job-control.c:1263
+#: ../gebr-job-control.c:1274
 #: ../ui_help.c:446
 #: ../ui_project_line.c:340
 #. There is no path, put "None"
 msgid "None"
 msgstr "Nenhum"
 
-#: ../gebr-job-control.c:1260
+#: ../gebr-job-control.c:1263
 #, c-format
 msgid "<b>Output file</b>: %s"
 msgstr "<b>Arquivo de saída</b>: %s"
 
-#: ../gebr-job-control.c:1271
+#: ../gebr-job-control.c:1274
 #, c-format
 msgid "<b>Log File</b>: %s"
 msgstr "<b>Arquivo de log:</b> %s"
 
-#: ../gebr-job-control.c:1418
-#: ../gebr-job-control.c:1643
-#: ../gebr-job-control.c:1711
+#: ../gebr-job-control.c:1421
+#: ../gebr-job-control.c:1648
+#: ../gebr-job-control.c:1733
 msgid "Any"
 msgstr "Qualquer"
 
-#: ../gebr-job-control.c:1425
+#: ../gebr-job-control.c:1428
 msgid "Finished"
 msgstr "Finalizado"
 
-#: ../gebr-job-control.c:1432
+#: ../gebr-job-control.c:1435
 msgid "Canceled/Failed"
 msgstr "Cancelado/Falhado"
 
-#: ../gebr-job-control.c:1439
+#: ../gebr-job-control.c:1442
 msgid "Running"
 msgstr "Executando"
 
-#: ../gebr-job-control.c:1446
+#: ../gebr-job-control.c:1449
 msgid "Queued"
 msgstr "Em fila"
 
-#: ../gebr-job-control.c:1495
+#: ../gebr-job-control.c:1498
 msgid "Word-wrap"
 msgstr "Quebra de linha automática"
 
-#: ../gebr-job-control.c:1501
+#: ../gebr-job-control.c:1504
 msgid "Auto-scroll"
 msgstr "Auto-rolagem"
 
-#: ../gebr-job-control.c:1802
+#: ../gebr-job-control.c:1824
 msgid "Jobs filtered by:"
 msgstr "Tarefas filtradas por:"
 
-#: ../gebr-job-control.c:2050
+#: ../gebr-job-control.c:2072
 #: ../ui_project_line.c:909
 #. run file chooser
 msgid "Choose filename to save"
 msgstr "Escolha o nome do arquivo para salvar"
 
-#: ../gebr-job-control.c:2054
+#: ../gebr-job-control.c:2076
 msgid "Text (*.txt)"
 msgstr "Texto (*.txt)"
 
-#: ../gebr-job-control.c:2066
+#: ../gebr-job-control.c:2088
 msgid "Could not write file."
 msgstr "Não foi possível escrever o arquivo."
 
-#: ../gebr-job-control.c:2090
+#: ../gebr-job-control.c:2112
 #, c-format
 msgid ""
 "\n"
@@ -791,12 +791,12 @@ msgstr "\n"
 "Iniciado em: %s\n"
 "Finalizado em: %s\n"
 
-#: ../gebr-job-control.c:2090
-#: ../gebr-job-control.c:2091
+#: ../gebr-job-control.c:2112
+#: ../gebr-job-control.c:2113
 msgid "(None)"
 msgstr "(Nenhum)"
 
-#: ../gebr-job-control.c:2098
+#: ../gebr-job-control.c:2120
 #, c-format
 msgid ""
 "\n"
@@ -806,11 +806,11 @@ msgstr "\n"
 "Informes:\n"
 "%s"
 
-#: ../gebr-job-control.c:2098
+#: ../gebr-job-control.c:2120
 msgid "(None)\n"
 msgstr "(Nenhum)\n"
 
-#: ../gebr-job-control.c:2106
+#: ../gebr-job-control.c:2128
 #, c-format
 msgid ""
 "\n"
@@ -822,17 +822,7 @@ msgstr "\n"
 "Arquivo de saída: %s\n"
 "Arquivo de log:%s\n"
 
-#: ../gebr-job-control.c:2117
-#, c-format
-msgid ""
-"\n"
-"Command Line:\n"
-"%s\n"
-msgstr "\n"
-"Linha de comando:\n"
-"%s\n"
-
-#: ../gebr-job-control.c:2125
+#: ../gebr-job-control.c:2147
 #, c-format
 msgid ""
 "Output:\n"
@@ -842,102 +832,106 @@ msgstr "Saída:\n"
 "%s\n"
 "\n"
 
-#: ../gebr-job-control.c:2130
+#: ../gebr-job-control.c:2152
 #, c-format
 msgid "Saved Job information at \"%s\"."
 msgstr "Salvou informação da Tarefa em \"%s\"."
 
-#: ../gebr-job-control.c:2155
-#: ../gebr-job-control.c:2160
+#: ../gebr-job-control.c:2177
+#: ../gebr-job-control.c:2182
 msgid "Cancel Job"
 msgstr "Cancelar Tarefa"
 
-#: ../gebr-job-control.c:2156
+#: ../gebr-job-control.c:2178
 #, c-format
 msgid "Are you sure you want to cancel Job \"%s\"?"
 msgstr "Tem certeza que quer cancelar a Tarefa \"%s\"?"
 
-#: ../gebr-job-control.c:2161
+#: ../gebr-job-control.c:2183
 msgid "Are you sure you want to cancel the selected Jobs?"
 msgstr "Tem certeza que quer cancelar as Tarefas selecionadas?"
 
-#: ../gebr-job-control.c:2169
+#: ../gebr-job-control.c:2191
 msgid "Asking server to cancel Job."
 msgstr "Pedindo para o servidor cancelar a Tarefa."
 
-#: ../gebr-job-control.c:2170
+#: ../gebr-job-control.c:2192
 #, c-format
 msgid "Asking server(s) \"%s\" to cancel Job \"%s\"."
 msgstr "Requisitando ao servidor \"%s\" o cancelamento da Tarefa \"%s\"."
 
-#: ../gebr-job-control.c:2194
-#: ../gebr-job-control.c:2198
+#: ../gebr-job-control.c:2216
+#: ../gebr-job-control.c:2220
 msgid "Clear Job"
 msgstr "Limpar Tarefa"
 
-#: ../gebr-job-control.c:2195
+#: ../gebr-job-control.c:2217
 #, c-format
 msgid "Are you sure you want to clear Job \"%s\"?"
 msgstr "Tem certeza que quer limpar a Tarefa \"%s\"?"
 
-#: ../gebr-job-control.c:2199
+#: ../gebr-job-control.c:2221
 msgid "Are you sure you want to clear the selected Jobs?"
 msgstr "Tem certeza que quer limpar as Tarefas selecionadas?"
 
-#: ../gebr-maestro-controller.c:87
+#: ../gebr-job.c:362
+msgid "Command line (server %s):\n"
+msgstr "Linha de comando (servidor %s):\n"
+
+#: ../gebr-maestro-controller.c:90
 msgid "New"
 msgstr "Novo"
 
-#: ../gebr-maestro-controller.c:123
+#: ../gebr-maestro-controller.c:126
 msgid "The group name already exists"
 msgstr "O nome do grupo já existe"
 
-#: ../gebr-maestro-controller.c:123
+#: ../gebr-maestro-controller.c:126
 msgid "The group name must be alphanumeric"
 msgstr "O nome do grupo deve ser alfanumérico"
 
-#: ../gebr-maestro-controller.c:210
+#: ../gebr-maestro-controller.c:218
 msgid "Choose the group name and press ENTER"
 msgstr "Escolha o nome do grupo e pressione ENTER."
 
-#: ../gebr-maestro-controller.c:373
+#: ../gebr-maestro-controller.c:381
 msgid "Drop servers to increment this group!"
 msgstr "Solte servidores para incrementar o grupo!"
 
-#: ../gebr-maestro-controller.c:422
+#: ../gebr-maestro-controller.c:430
 msgid "_Remove from group"
 msgstr "Remover do grupo"
 
-#: ../gebr-maestro-controller.c:473
-#: ../gebr-maestro-controller.c:1044
+#: ../gebr-maestro-controller.c:481
+#: ../gebr-maestro-controller.c:1059
 msgid "Address"
 msgstr "Endereço"
 
-#: ../gebr-maestro-controller.c:719
+#: ../gebr-maestro-controller.c:727
 msgid "_Connect"
 msgstr "Conectar"
 
-#: ../gebr-maestro-controller.c:723
+#: ../gebr-maestro-controller.c:731
 msgid "_Disconnect"
 msgstr "Desconectar"
 
-#: ../gebr-maestro-controller.c:727
+#: ../gebr-maestro-controller.c:735
 msgid "_Remove"
 msgstr "Remover"
 
-#: ../gebr-maestro-controller.c:926
+#: ../gebr-maestro-controller.c:941
 msgid "Connect server when GêBR starts"
 msgstr "Conecta no servidor ao iniciar a GêBR"
 
-#: ../gebr-maestro-controller.c:928
+#: ../gebr-maestro-controller.c:943
 msgid "Do not connect server when GêBR starts"
 msgstr "Não conecta no servidor ao iniciar a GêBR"
 
-#: ../gebr-maestro-controller.c:1031
+#: ../gebr-maestro-controller.c:1046
 msgid "AC"
 msgstr "AC"
 
-#: ../gebr-maestro-controller.c:1105
+#: ../gebr-maestro-controller.c:1120
 #, c-format
 msgid ""
 "<span size='large'>%s</span>\n"
@@ -945,26 +939,26 @@ msgid ""
 msgstr "<span size='large'>%s</span>\n"
 "%s"
 
-#: ../gebr-maestro-controller.c:1108
+#: ../gebr-maestro-controller.c:1123
 #, c-format
 msgid "SSH question from %s"
 msgstr "Pergunta do SSH %s"
 
-#: ../gebr-maestro-controller.c:1124
+#: ../gebr-maestro-controller.c:1139
 msgid "Enter password"
 msgstr "Entre com a senha"
 
-#: ../gebr-maestro-controller.c:1131
+#: ../gebr-maestro-controller.c:1146
 #, c-format
 msgid "Trying to connect on %s"
 msgstr "Tentando conectar-se a %s"
 
-#: ../gebr-maestro-controller.c:1134
+#: ../gebr-maestro-controller.c:1149
 #, c-format
 msgid "Server %s is asking for password. Enter it below."
 msgstr "Servidor %s requer senha. Senha:"
 
-#: ../gebr-maestro-controller.c:1169
+#: ../gebr-maestro-controller.c:1184
 #, c-format
 msgid ""
 "<span size='large' weight='bold'>The daemon %s is executing jobs.\n"
@@ -972,7 +966,7 @@ msgid ""
 msgstr "<span size='large' weight='bold'>O servidor %s está executando tarefas.\n"
 "Deseja realmente desconectá-lo e cancelar suas tarefas?</span>"
 
-#: ../gebr-maestro-controller.c:1172
+#: ../gebr-maestro-controller.c:1187
 #, c-format
 msgid ""
 "<span size='large' weight='bold'>The daemon %s is executing jobs.\n"
@@ -980,36 +974,36 @@ msgid ""
 msgstr "<span size='large' weight='bold'>O servidor %s está executando tarefas.\n"
 "Deseja realmente removê-lo e cancelar suas tarefas?</span>"
 
-#: ../gebr-maestro-controller.c:1206
+#: ../gebr-maestro-controller.c:1221
 #, c-format
 msgid "Protocol version mismatch: %s"
 msgstr "Versão do protocolo incompátivel"
 
-#: ../gebr-maestro-controller.c:1235
+#: ../gebr-maestro-controller.c:1250
 msgid "Connected"
 msgstr "Conectado"
 
-#: ../gebr-maestro-controller.c:1256
+#: ../gebr-maestro-controller.c:1271
 msgid "This server has a different NFS"
 msgstr "Este servidor tem um NFS diferente"
 
-#: ../gebr-maestro-controller.c:1258
+#: ../gebr-maestro-controller.c:1273
 msgid "This server was already added at this maestro"
 msgstr "Este servidor já está adicionado neste maestro"
 
-#: ../gebr-maestro-controller.c:1260
+#: ../gebr-maestro-controller.c:1275
 msgid "This server is using a different protocol version"
 msgstr "Este servidor usa uma versão de protocolo diferente"
 
-#: ../gebr-maestro-controller.c:1262
+#: ../gebr-maestro-controller.c:1277
 msgid "This server is already registered at another maestro"
 msgstr "Este servidor já está registrado em um outro maestro"
 
-#: ../gebr-maestro-server.c:1086
+#: ../gebr-maestro-server.c:1090
 msgid "Local Maestro"
 msgstr "Maestro local"
 
-#: ../gebr-maestro-server.c:1088
+#: ../gebr-maestro-server.c:1092
 #, c-format
 msgid "Maestro %s"
 msgstr "Maestro %s"
