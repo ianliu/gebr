@@ -46,6 +46,8 @@ struct _GebrCommDaemonIface {
 	const gchar * (*get_hostname) (GebrCommDaemon *daemon);
 
 	void  (*add_task) (GebrCommDaemon *daemon);
+
+	gboolean  (*can_execute) (GebrCommDaemon *daemon);
 };
 
 GType gebr_comm_daemon_get_type(void) G_GNUC_CONST;
@@ -57,5 +59,7 @@ gint gebr_comm_daemon_get_n_running_jobs(GebrCommDaemon *daemon);
 const gchar *gebr_comm_daemon_get_hostname(GebrCommDaemon *daemon);
 
 void gebr_comm_daemon_add_task(GebrCommDaemon *daemon);
+
+gboolean gebr_comm_daemon_can_execute(GebrCommDaemon *daemon);
 
 #endif /* __GEBR_COMM_DAEMON_H__ */

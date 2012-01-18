@@ -411,15 +411,20 @@ gebr_comm_runner_set_ran_func(GebrCommRunner *self,
 	self->priv->user_data = data;
 }
 
-void
+gboolean
 gebr_comm_runner_run_async(GebrCommRunner *self)
 {
 	self->priv->requests = 0;
 	self->priv->responses = 0;
+	gboolean has_connected = FALSE;
 
 	for (GList *i = self->priv->servers; i; i = i->next) {
-		GebrCommHttpMsg *request;
 		ServerScore *sc = i->data;
+
+		if (!gebr_comm_daemon_can_execute(sc->server))
+			continue;
+
+		GebrCommHttpMsg *request;
 		GebrCommServer *server = gebr_comm_daemon_get_server(sc->server);
 		GebrCommUri *uri = gebr_comm_uri_new();
 		gebr_comm_uri_set_prefix(uri, "/sys-load");
@@ -428,12 +433,19 @@ gebr_comm_runner_run_async(GebrCommRunner *self)
 		request = gebr_comm_protocol_socket_send_request(server->socket,
 								 GEBR_COMM_HTTP_METHOD_GET,
 								 url, NULL);
+
+		if (!request)
+			continue;
+
+		has_connected = TRUE;
 		g_object_set_data(G_OBJECT(request), "current-server", sc);
 		g_signal_connect(request, "response-received",
 				 G_CALLBACK(on_response_received), self);
 		self->priv->requests++;
 		g_free(url);
 	}
+
+	return has_connected;
 }
 
 GebrValidator *
@@ -458,4 +470,10 @@ gint
 gebr_comm_runner_get_total(GebrCommRunner *self)
 {
 	return self->priv->total;
+}
+
+const gchar *
+gebr_comm_runner_get_id(GebrCommRunner *self)
+{
+	return self->priv->id;
 }

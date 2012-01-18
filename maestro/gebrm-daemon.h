@@ -188,6 +188,11 @@ const gchar *gebrm_daemon_get_hostname(GebrmDaemon *daemon);
 void gebrm_daemon_send_error_message(GebrmDaemon *daemon,
                                      GebrCommProtocolSocket *socket);
 
+void gebrm_daemon_set_disconnecting(GebrmDaemon *daemon,
+				    gboolean setting);
+
+gboolean gebrm_daemon_get_disconnecting(GebrmDaemon *daemon);
+
 G_END_DECLS
 
 #endif /* __GEBRM_DAEMON_H__ */

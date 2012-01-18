@@ -28,6 +28,7 @@
 
 struct _GebrmDaemonPriv {
 	gboolean is_initialized;
+	gboolean is_disconnecting;
 
 	GHashTable *tasks;
 
@@ -95,6 +96,16 @@ gebrm_daemon_iface_add_task(GebrCommDaemon *daemon)
 	GEBRM_DAEMON(daemon)->priv->uncompleted_tasks++;
 }
 
+gboolean
+gebrm_daemon_iface_can_execute(GebrCommDaemon *idaemon)
+{
+	GebrmDaemon *daemon = GEBRM_DAEMON(idaemon);
+	if (daemon->priv->is_disconnecting ||
+	    daemon->priv->server->state != SERVER_STATE_LOGGED)
+		return FALSE;
+	return TRUE;
+}
+
 static void
 gebrm_daemon_init_iface(GebrCommDaemonIface *iface)
 {
@@ -102,6 +113,7 @@ gebrm_daemon_init_iface(GebrCommDaemonIface *iface)
 	iface->get_n_running_jobs = gebrm_daemon_iface_get_n_running_jobs;
 	iface->get_hostname = gebrm_daemon_iface_get_hostname;
 	iface->add_task = gebrm_daemon_iface_add_task;
+	iface->can_execute = gebrm_daemon_iface_can_execute;
 }
 
 static void
@@ -882,4 +894,17 @@ gebrm_daemon_send_error_message(GebrmDaemon *daemon,
 		                                      gebrm_daemon_get_error_type(daemon),
 		                                      gebrm_daemon_get_error_msg(daemon));
 	}
+}
+
+void
+gebrm_daemon_set_disconnecting(GebrmDaemon *daemon,
+			       gboolean setting)
+{
+	daemon->priv->is_disconnecting = setting;
+}
+
+gboolean
+gebrm_daemon_get_disconnecting(GebrmDaemon *daemon)
+{
+	return daemon->priv->is_disconnecting;
 }

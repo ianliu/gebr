@@ -54,5 +54,11 @@ gebr_comm_daemon_get_hostname(GebrCommDaemon *daemon)
 void
 gebr_comm_daemon_add_task(GebrCommDaemon *daemon)
 {
-	return GEBR_COMM_DAEMON_GET_IFACE(daemon)->add_task(daemon);
+	GEBR_COMM_DAEMON_GET_IFACE(daemon)->add_task(daemon);
+}
+
+gboolean
+gebr_comm_daemon_can_execute(GebrCommDaemon *daemon)
+{
+	return GEBR_COMM_DAEMON_GET_IFACE(daemon)->can_execute(daemon);
 }
