@@ -1264,38 +1264,54 @@ on_daemon_error(GebrMaestroServer *maestro,
 	GtkTreeIter iter;
 	GtkTreeModel *model = GTK_TREE_MODEL(mc->priv->model);
 	const gchar *message;
+	gchar *second = NULL;
+	gboolean show_dialog = FALSE;
 
-	if (!*error_type)
+	if (!*error_type) {
 		message = NULL;
-	else if (g_strcmp0(error_type, "error:nfs") == 0)
+	} else if (g_strcmp0(error_type, "error:nfs") == 0) {
 		message = _("This server has a different NFS");
-	else if (g_strcmp0(error_type, "error:id") == 0)
-		message = _("This server was already added at this maestro");
-	else if (g_strcmp0(error_type, "error:protocol") == 0)
+	} else if (g_strcmp0(error_type, "error:id") == 0) {
+		message = _("Server already added");
+		second = g_strdup_printf(_("The server %s was already added in"
+					   " this maestro. It will be"
+					   " automatically removed."), addr);
+		show_dialog = TRUE;
+	} else if (g_strcmp0(error_type, "error:protocol") == 0) {
 		message = _("This server is using a different protocol version");
-	else if (g_strcmp0(error_type, "error:connection-refused") == 0)
+	} else if (g_strcmp0(error_type, "error:connection-refused") == 0) {
 		message = _("This server is already registered at another maestro");
-	else if (g_strcmp0(error_type, "error:ssh") == 0)
+	} else if (g_strcmp0(error_type, "error:ssh") == 0) {
 		message = error_msg;
+	}
 
+	if (show_dialog) {
+		gdk_threads_enter();
+		gebr_gui_message_dialog(GTK_MESSAGE_WARNING, GTK_BUTTONS_OK,
+					message, second);
+		gdk_threads_leave();
+	} else {
+		GebrDaemonServer *daemon;
+		gebr_gui_gtk_tree_model_foreach(iter, model) {
+			gtk_tree_model_get(model, &iter,
+					   MAESTRO_CONTROLLER_DAEMON, &daemon, -1);
 
-	GebrDaemonServer *daemon;
-	gebr_gui_gtk_tree_model_foreach(iter, model) {
-		gtk_tree_model_get(model, &iter,
-		                   MAESTRO_CONTROLLER_DAEMON, &daemon, -1);
+			if (!daemon)
+				continue;
 
-		if (!daemon)
-			continue;
+			if (g_strcmp0(addr, gebr_daemon_server_get_address(daemon)) == 0) {
+				gebr_daemon_server_set_error(daemon, message);
 
-		if (g_strcmp0(addr, gebr_daemon_server_get_address(daemon)) == 0) {
-			gebr_daemon_server_set_error(daemon, message);
+				GtkTreePath *path = gtk_tree_model_get_path(model, &iter);
+				gtk_tree_model_row_changed(model, path, &iter);
 
-			GtkTreePath *path = gtk_tree_model_get_path(model, &iter);
-			gtk_tree_model_row_changed(model, path, &iter);
-
-			break;
+				break;
+			}
 		}
 	}
+
+	if (second)
+		g_free(second);
 }
 
 static void

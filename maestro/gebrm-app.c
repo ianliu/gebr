@@ -158,6 +158,25 @@ send_groups_definitions(GebrCommProtocolSocket *client, GebrmDaemon *daemon)
 
 }
 
+static void
+remove_daemon(GebrmApp *app, const gchar *addr)
+{
+	gebrm_remove_server_from_list(app, addr);
+	gebrm_config_delete_server(addr);
+
+	for (GList *i = app->priv->connections; i; i = i->next) {
+		GebrCommProtocolSocket *socket_client = gebrm_client_get_protocol_socket(i->data);
+
+		// Clean tags for this server
+		gebr_comm_protocol_socket_oldmsg_send(socket_client, FALSE,
+						      gebr_comm_protocol_defs.agrp_def, 2,
+						      addr, "");
+
+		gebr_comm_protocol_socket_oldmsg_send(socket_client, FALSE,
+						      gebr_comm_protocol_defs.srm_def, 1,
+						      addr);
+	}
+}
 
 static void
 gebrm_app_job_controller_on_task_def(GebrmDaemon *daemon,
@@ -351,12 +370,15 @@ on_daemon_init(GebrmDaemon *daemon,
 {
 	const gchar *error = NULL;
 	const gchar *nfsid = gebrm_daemon_get_nfsid(daemon);
+	gboolean remove = FALSE;
 
 	if (g_strcmp0(error_type, "connection-refused") == 0) {
-		if (has_duplicated_daemons(app, error_msg))
+		if (has_duplicated_daemons(app, error_msg)) {
 			error = "error:id";
-		else
+			remove = TRUE;
+		} else {
 			error = "error:connection-refused";
+		}
 		goto err;
 	}
 
@@ -377,17 +399,13 @@ err:
 	gebrm_daemon_set_error_msg(daemon, error_msg);
 
 	if (error) {
-		g_debug(" ------- Error: %s", error);
-
 		for (GList *i = app->priv->connections; i; i = i->next) {
 			GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(i->data);
-			gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
-			                                      gebr_comm_protocol_defs.err_def, 4,
-			                                      gebrm_daemon_get_address(daemon),
-							      "daemon",
-							      error,
-							      error_msg);
+			gebrm_daemon_send_error_message(daemon, socket);
 		}
+
+		if (remove)
+			remove_daemon(app, gebrm_daemon_get_address(daemon));
 	} else {
 		for (GList *i = app->priv->connections; i; i = i->next) {
 			GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(i->data);
@@ -663,21 +681,7 @@ on_client_request(GebrCommProtocolSocket *socket,
 
 		else if (g_strcmp0(prefix, "/remove") == 0) {
 			const gchar *addr = gebr_comm_uri_get_param(uri, "address");
-			gebrm_remove_server_from_list(app, addr);
-			gebrm_config_delete_server(addr);
-
-			for (GList *i = app->priv->connections; i; i = i->next) {
-				GebrCommProtocolSocket *socket_client = gebrm_client_get_protocol_socket(i->data);
-
-				// Clean tags for this server
-				gebr_comm_protocol_socket_oldmsg_send(socket_client, FALSE,
-				                                      gebr_comm_protocol_defs.agrp_def, 2,
-				                                      addr, "");
-
-				gebr_comm_protocol_socket_oldmsg_send(socket_client, FALSE,
-				                                      gebr_comm_protocol_defs.srm_def, 1,
-				                                      addr);
-			}
+			remove_daemon(app, addr);
 		}
 		else if (g_strcmp0(prefix, "/close") == 0) {
 			const gchar *id = gebr_comm_uri_get_param(uri, "id");

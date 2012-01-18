@@ -831,6 +831,10 @@ gebrm_daemon_set_error_type(GebrmDaemon *daemon,
 
 	daemon->priv->last_error_type = daemon->priv->error_type;
 	daemon->priv->error_type = g_strdup(error_type);
+
+	g_debug("-------- LAST ERROR %s, NEW ERROR: %s -----------",
+		daemon->priv->last_error_type,
+		error_type);
 }
 
 void
@@ -885,15 +889,30 @@ void
 gebrm_daemon_send_error_message(GebrmDaemon *daemon,
                                 GebrCommProtocolSocket *socket)
 {
-	if (g_strcmp0(daemon->priv->last_error_type, daemon->priv->error_type) != 0) {
-		g_debug("enviando erroi: %s", gebrm_daemon_get_error_msg(daemon));
-		gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
-		                                      gebr_comm_protocol_defs.err_def, 4,
-		                                      gebrm_daemon_get_address(daemon),
-						      "daemon",
-		                                      gebrm_daemon_get_error_type(daemon),
-		                                      gebrm_daemon_get_error_msg(daemon));
-	}
+	if (g_strcmp0(daemon->priv->last_error_type, daemon->priv->error_type) == 0)
+		return;
+
+	if (daemon->priv->server->state == SERVER_STATE_DISCONNECTED
+	    && g_strcmp0(daemon->priv->error_type, "error:ssh") == 0)
+		goto send_error;
+
+	if (daemon->priv->server->state == SERVER_STATE_CONNECT
+	    && g_strcmp0(daemon->priv->error_type, "error:ssh") != 0)
+		goto send_error;
+
+	return;
+
+send_error:
+	g_debug("Enviando erro do typo %s : %s",
+		gebrm_daemon_get_error_type(daemon),
+		gebrm_daemon_get_error_msg(daemon));
+
+	gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
+					      gebr_comm_protocol_defs.err_def, 4,
+					      gebrm_daemon_get_address(daemon),
+					      "daemon",
+					      gebrm_daemon_get_error_type(daemon),
+					      gebrm_daemon_get_error_msg(daemon));
 }
 
 void

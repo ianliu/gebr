@@ -695,6 +695,11 @@ static void gebr_comm_server_disconnected_state(GebrCommServer *server,
 
 static void gebr_comm_server_change_state(GebrCommServer *server, GebrCommServerState state)
 {
+	g_debug("State of server %s changed from %s to %s",
+		server->address->str,
+		gebr_comm_server_state_to_string(server->state),
+		gebr_comm_server_state_to_string(state));
+
 	if (server->state != SERVER_STATE_UNKNOWN) {
 		if (state == SERVER_STATE_DISCONNECTED)
 			g_queue_clear(server->socket->protocol->waiting_ret_hashs);
