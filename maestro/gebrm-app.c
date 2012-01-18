@@ -1237,6 +1237,7 @@ on_client_disconnect(GebrCommProtocolSocket *socket,
 {
 	g_debug("Client disconnect!");
 	GebrmClient *client = g_object_get_data(G_OBJECT(socket), "client");
+	app->priv->connections = g_list_remove(app->priv->connections, client);
 	gebrm_client_remove_forwards(client);
 }
 
