@@ -418,11 +418,16 @@ gebr_comm_runner_run_async(GebrCommRunner *self)
 	self->priv->responses = 0;
 	gboolean has_connected = FALSE;
 
-	for (GList *i = self->priv->servers; i; i = i->next) {
+	GList *i = self->priv->servers;
+	while (i) {
 		ServerScore *sc = i->data;
 
-		if (!gebr_comm_daemon_can_execute(sc->server))
+		if (!gebr_comm_daemon_can_execute(sc->server)) {
+			GList *aux = i->next;
+			self->priv->servers = g_list_remove_link(self->priv->servers, i);
+			i = aux;
 			continue;
+		}
 
 		GebrCommHttpMsg *request;
 		GebrCommServer *server = gebr_comm_daemon_get_server(sc->server);
@@ -434,8 +439,12 @@ gebr_comm_runner_run_async(GebrCommRunner *self)
 								 GEBR_COMM_HTTP_METHOD_GET,
 								 url, NULL);
 
-		if (!request)
+		if (!request) {
+			GList *aux = i->next;
+			self->priv->servers = g_list_remove_link(self->priv->servers, i);
+			i = aux;
 			continue;
+		}
 
 		has_connected = TRUE;
 		g_object_set_data(G_OBJECT(request), "current-server", sc);
@@ -443,6 +452,8 @@ gebr_comm_runner_run_async(GebrCommRunner *self)
 				 G_CALLBACK(on_response_received), self);
 		self->priv->requests++;
 		g_free(url);
+
+		i = i->next;
 	}
 
 	return has_connected;
