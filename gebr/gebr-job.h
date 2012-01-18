@@ -88,6 +88,9 @@ void gebr_job_set_servers(GebrJob *job,
 void gebr_job_set_hostname(GebrJob *job,
 			   const gchar *hostname);
 
+void gebr_job_set_is_fake(GebrJob *job,
+                          gboolean setting);
+
 const gchar *gebr_job_get_hostname(GebrJob *job);
 
 void gebr_job_show(GebrJob *job);
