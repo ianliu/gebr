@@ -10,7 +10,7 @@
 
   <title>A aba 
     <guilabel>Editor de Fluxo</guilabel></title>
-    <para>Para criar um fluxo, siga as instruções em <xref linkend="creating-flows" />.
+    <para>Para criar um fluxo, siga as instruções em <xref linkend="creating_flows" />.
     </para>
   <para>Agora que já sabemos como adicionar programas ao fluxo, precisamos configurá-los. Vejamos então as demais
     ferramentas da aba <guilabel>Editor de Fluxo</guilabel>:</para>
@@ -52,7 +52,7 @@
     </listitem>
     <listitem>
       <para>
-        <link linkend="execution_speed">Velocidade de execução</link>
+        <link linkend="multi_cores">Velocidade de execução</link>
       </para>
     </listitem>
     <listitem>
@@ -165,7 +165,7 @@
   </section>
   <section xml:id="editar_arquivos_entrada_saida_fluxo">
     <title>Editar arquivos de entrada e saída do fluxo</title>
-    <para>No exemplo da <xref linkend="creating-flows"/> criamos um fluxo
+    <para>No exemplo da <xref linkend="creating_flows"/> criamos um fluxo
       muito simples, que não precisava "ler" nenhum arquivo, e que gerava como resultado uma saída de tela. Porém,
       há situações em que o fluxo precisa extrair dados de um arquivo de entrada e gerar como resultado um arquivo
       de saída ou de erro, caso ocorra algum problema durante a execução.</para>
@@ -226,8 +226,8 @@
       <guilabel>Controle de tarefas</guilabel>, que mostra o relatório (<emphasis>log</emphasis>) da execução.</para>
   </section>
   <section xml:id="multi_cores">
-    <title>Multiplos núcelos</title>
-    <para>GêBR otimiza a execução de laços em máquina com processadores de múltiplos núcleos.</para>
+    <title>Multiplos processadores</title>
+    <para>GêBR otimiza a execução de laços em máquina com múltiplos processadores (cores).</para>
     <para>GêBR tira vantagem dos recursos múltiplos-núcleos das máquinas.
 	    A execução de laços repetitivos pode ser otimizado por este recurso. 
 	    Se o fluxo tem laços e é paralelizável (i.e., satisfaz os critérios abaixo)
@@ -300,6 +300,34 @@
       </imageobject>
     </mediaobject>
     <tip>Maiores informações sobre a variável <emphasis>iter</emphasis> estão disponíveis na seção <xref linkend="variavel_iter"/>.</tip>
+  </section>
+
+ <section xml:id="multiple_machines">
+    <title>Execução em várias máquinas</title>
+    <para>Se a GêBR estiver conectada a várias máquinas (configuração através do
+      <xref linkend="servers_configuration" />, e o fluxo for paralelizável (veja 
+      abaixo os critérios para um fluxo ser paralelizável), então o usuário tem a
+      opção de executar o fluxo de forma distribuída.</para>
+    <para>Para ser <emphasis>paralelizável</emphasis>, o fluxo precisa satisfazer um
+      destes critérios:</para>
+    <itemizedlist>
+      <listitem>
+        <para>O Fluxo não tem arquivos de saída;</para>
+      </listitem>
+      <listitem>
+        <para>Se existirem arquivos de saída, eles devem ser independentes, i.e., 
+          o arquivo de saída de um passo do laço não deve servir de entrada para
+          outro passo do laço.</para>
+      </listitem>
+    </itemizedlist>
+    <para>No caso de o fluxo não ser paralelizável, a GêBR irá executar o fluxo na melhor 
+      melhor máquina no memomento de execução (GêBR ordena as máquinas baseado na 
+      disponibilidade e na velocidade). Numa execução distribuída, é importante distinguir 
+      os modos de Prioridade. Quando o fluxo é paralelizável, o fluxo é dividido e 
+      distribuído entre as máquinas disponíveis de acordo com sua ordenação).</para>
+    <para>Se você deseja executar um fluxo (paralelizado ou não) em um servidor 
+      em específico, você pode forçar sua execução indo à aba <guilabel>Editor de
+        Fluxo</guilabel> e escolhendo o servidor desejado.</para>
   </section>
 
 </section>

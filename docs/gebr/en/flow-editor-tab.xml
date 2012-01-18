@@ -432,7 +432,7 @@
 		<title>Multiple machines</title>
 		<para>If GêBR is connected to multiple machines through the Servers Configuration
 			interface, and the selected Flow is parallelizable (see below the criteria to be
-			parallelizable), then the option Auto-choose mean that GêBR is going to run it in a
+			parallelizable), then you have the option to run in a  
 			distributed way.</para>
 		<para>To be considered parallelizable, besides having a loop, a Flow must achieve one
 			of these criteria:</para>

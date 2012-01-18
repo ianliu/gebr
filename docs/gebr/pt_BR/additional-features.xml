@@ -76,20 +76,20 @@
 	</section>
 	<section xml:id="servers_configuration">
 		<title>Configurações de servidores</title>
-		<para>GêBR utiliza o recurso disponível pelas máquinas que você tem acesso. Para isso, a GêBR
-			é dividida em três camadas:</para>
+		<para>GêBR utiliza o recurso disponível pelas máquinas que você tem acesso. Para tanto, a GêBR
+			tem três componentes:</para>
 		<itemizedlist>
-			<listitem><para>Camada local (GêBR-client), de onde você abre a interface da GêBR e envia requisições ao maestro.</para></listitem>
-			<listitem><para>Camada intermediária (GêBR-maestro), onde todas tarefas da GêBR são coordenados.</para></listitem>
-			<listitem><para>Camada de execução (GêBR-daemon), onde as tarefas são, efetivamente, executadas.</para></listitem>
+			<listitem><para>GêBR local (GêBR-client), de onde você abre a interface da GêBR e envia requisições ao maestro.</para></listitem>
+			<listitem><para>GêBR coordenador (GêBR-maestro), onde todas tarefas da GêBR são coordenadas.</para></listitem>
+			<listitem><para>GêBR servidor (GêBR-daemon), onde as tarefas são, efetivamente, executadas.</para></listitem>
 		</itemizedlist>
 		<mediaobject>
-			<caption>Camadas de execução da GêBR</caption>
+			<caption>Componentes da GêBR</caption>
 			<imageobject>
 				<imagedata fileref="../images/GeBR_servers_maestro_diagram.png" />
 			</imageobject>
 		</mediaobject>
-		<para>GêBR pode estar conectada a um maestro por vez. Cada maestro, por sua vez, pode estar conectado a vários
+		<para>A GêBR pode estar conectada a um maestro por vez. Cada maestro, por sua vez, pode estar conectado a vários
 			servidores. Um requisito é que os servidores estejam no mesmo sistema de arquivos (NFS).</para>
 		<para>A janela de Configurações de servidores é dividida em três partes:
 			<itemizedlist>
@@ -117,12 +117,12 @@
 				GêBR-maestro instalado. O estado do maestro é indicado pela ícone
 				ao lado direito:
 				<itemizedlist>
-					<listitem><para>conectado (<inlinemediaobject>
-								<imageobject>
+          <listitem><para>conectado (
+              <inlinemediaobject> <imageobject>
 									<imagedata fileref="../../common-images/gtk-connect.png" />
 								</imageobject>
 					</inlinemediaobject>)</para></listitem>
-					<listitem><para>disconectado (<inlinemediaobject>
+					<listitem><para>desconectado (<inlinemediaobject>
 								<imageobject>
 									<imagedata fileref="../../common-images/gtk-disconnect.png" />
 								</imageobject>

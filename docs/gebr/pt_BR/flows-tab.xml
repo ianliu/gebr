@@ -81,7 +81,7 @@
       <guilabel>Fluxos</guilabel> e clique no
       botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_criar_fluxo.png"/></imageobject></inlinemediaobject></guiicon>. Na janela que se abre (<guilabel>Propriedades para
         fluxos</guilabel>), <xref linkend="editar_propriedades_fluxo"/> e clique em
-      <guibutton>OK</guibutton>. Para mais detalhes, veja <xref linkend="criando_fluxos"/>).</para>
+      <guibutton>OK</guibutton>. Para mais detalhes, veja <xref linkend="creating_flows"/>).</para>
     <para><emphasis role="bold">Não há limitação</emphasis> para o número de fluxos na GêBR. Você pode criar quantos
       fluxos quiser dentro de uma linha.</para>
     <para>Depois de criados, os fluxos ficam <emphasis role="bold">visíveis no lado esquerdo da janela

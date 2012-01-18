@@ -83,7 +83,7 @@
       Você notará que algumas dessas informações foram inseridas por você na
       janela <guilabel>Propriedades do projeto</guilabel>, no momento da
       criação do projeto. Outras informações, como a data da criação e a data
-      da última modificação, são geradas automaticamente pela GêBR.
+      da última modificação, são geradas e atualizadas automaticamente pela GêBR.
     </para>
     <figure>
       <mediaobject>
@@ -129,7 +129,7 @@
           Janela de Propriedades da linha; você pode definir informações
           sobre a linha como descrição, autor, e-mail, o maestro da linha
           (veja <xref linkend="changing_the_maestro_of_a_line" />) e
-          adicionar caminhos preferenciais no campo caminhos.
+          adicionar caminhos preferenciais no campo <gulabel>Caminho</gulabel>.
         </caption>
         <imageobject>
           <imagedata fileref="../images/GeBR_line_properties.png"/>
@@ -164,7 +164,7 @@
     <para>Agora que existe uma estrutura básica de projeto e linha, você já
       pode <emphasis>criar seu primeiro fluxo</emphasis>.</para>
   </section>
-  <section xml:id="creating-flows">
+  <section xml:id="creating_flows">
     <title>Criando fluxos</title>
     <para>Na GêBR, um <emphasis>fluxo</emphasis> é uma <emphasis role="bold">sequência de
         operações</emphasis> selecionadas pelo usuário. Estas operações, também chamadas
