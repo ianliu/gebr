@@ -1,3 +1,13 @@
+2012-01-18  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Remove a server from GebrCommRunner's list if it is not able to
+	execute
+	* Add method GebrCommDaemon.can_execute
+
+2012-01-16  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Update changelog and bump version to 0.15.6.
+
 2012-01-16  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
 
 	* Unify Libgebr, Gebrd and Gebr's versions

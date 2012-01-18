@@ -1,3 +1,9 @@
+gebrproject (0.15.8) lucid; urgency=low
+
+  * Updated user guide.
+
+ -- Fabricio Matheus Goncalves <fmatheus@gebrproject.com>  Wed, 18 Jan 2012 10:46:32 -0200
+
 gebrproject (0.15.6) lucid; urgency=low
 
   * Feature freeze.

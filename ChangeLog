@@ -1,3 +1,66 @@
+2012-01-18  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* minor modifications in documentation
+
+2012-01-18  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Remove a server from GebrCommRunner's list if it is not able to
+	execute
+	* Add a new state to GebrmDaemon to kill a job if there are no
+	connected servers
+	* Add method GebrCommDaemon.can_execute
+
+2012-01-17  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Final documentation in portuguese
+
+2012-01-17  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* fixing a translated word
+
+2012-01-17  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add additional-features section in portuguese documentation
+
+2012-01-17  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix filter of job control lost label after new execution
+
+2012-01-17  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Translate some sections of documentation of GeBR to portuguese
+
+2012-01-17  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Synchrone half of flow-editor-tab.xml
+
+2012-01-17  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Update of images of english documentation of GeBR
+
+2012-01-17  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Synchronize pt_BR's projects-lines-flows.xml with english
+	* Fix indentation of pt_BR's what-is-gebr.xml
+
+2012-01-17  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Modifications of english documentation
+
+2012-01-17  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix dependency of user documentation's makefile
+	* Fix compilation of english user documentation
+	* Divide english sections of documentation
+	* Divide pt_BR document into several parts
+	* Remove Makefile from hg
+	* Standardize some images names; add 'Changing Maestro' section
+
+2012-01-16  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Added tag 0.15.6 for changeset 13066c22fabf
+	* Update changelog and bump version to 0.15.6.
+
 2012-01-16  Eric Keiji <keiji.eric@gebrproject.com>
 
 	* Minor modifications in Gebr documentation (english)
