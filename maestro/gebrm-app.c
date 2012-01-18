@@ -237,7 +237,8 @@ gebrm_app_job_controller_on_status_change(GebrmJob *job,
 		GList *children = g_object_get_data(G_OBJECT(job), "children");
 		for (GList *i = children; i; i = i->next) {
 			RunnerAndJob *raj = i->data;
-			gebr_comm_runner_run_async(raj->runner);
+			if (!gebr_comm_runner_run_async(raj->runner))
+				gebrm_job_kill_immediately(raj->job);
 		}
 		g_list_foreach(children, (GFunc)g_free, NULL);
 		g_list_free(children);
@@ -580,8 +581,11 @@ on_execution_response(GebrCommRunner *runner,
 
 	g_queue_pop_head(aap->app->priv->job_run_queue);
 	GebrCommRunner *next_run = g_queue_peek_head(aap->app->priv->job_run_queue);
-	if (next_run)
-		gebr_comm_runner_run_async(next_run);
+	if (next_run && !gebr_comm_runner_run_async(next_run)) {
+		const gchar *id = gebr_comm_runner_get_id(next_run);
+		GebrmJob *job = gebrm_app_job_controller_find(aap->app, id);
+		gebrm_job_kill_immediately(job);
+	}
 
 	gebr_validator_free(gebr_comm_runner_get_validator(runner));
 	gebr_comm_runner_free(runner);
@@ -629,23 +633,25 @@ on_client_request(GebrCommProtocolSocket *socket,
 					if (g_strcmp0(confirm, "remove") == 0 &&
 					    gebrm_daemon_get_uncompleted_tasks(daemon) <= 0)
 						gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
-						                                      gebr_comm_protocol_defs.cfrm_def, 2,
-						                                      addr, "remove-immediately");
+										      gebr_comm_protocol_defs.cfrm_def, 2,
+										      addr, "remove-immediately");
 					else if (g_strcmp0(confirm, "yes") == 0
-					    || gebrm_daemon_get_uncompleted_tasks(daemon) <= 0) {
+						 || gebrm_daemon_get_uncompleted_tasks(daemon) <= 0) {
+						gebrm_daemon_set_disconnecting(daemon, TRUE);
 						GList *jobs = gebrm_daemon_get_list_of_jobs(daemon);
 						for (GList *i = jobs; i; i = i->next) {
 							GebrmJob *job = g_hash_table_lookup(app->priv->jobs, i->data);
 							if (job && gebrm_job_can_kill(job))
 								gebrm_job_kill_immediately(job);
 						}
+						gebrm_daemon_set_disconnecting(daemon, FALSE);
 						gebrm_daemon_disconnect(daemon);
 						gebrm_client_kill_forward_by_address(client, addr);
 					}
 					else if (g_strcmp0(confirm, "remove") == 0)
 						gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
-						                                      gebr_comm_protocol_defs.cfrm_def, 2,
-						                                      addr, "remove");
+										      gebr_comm_protocol_defs.cfrm_def, 2,
+										      addr, "remove");
 					else
 						gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
 										      gebr_comm_protocol_defs.cfrm_def, 2,
@@ -817,8 +823,9 @@ on_client_request(GebrCommProtocolSocket *socket,
 			if (parent_id[0] == '\0') {
 				g_debug("Running immediately");
 				g_queue_push_head(app->priv->job_def_queue, job);
-				if (g_queue_is_empty(app->priv->job_run_queue))
-					gebr_comm_runner_run_async(runner);
+				if (g_queue_is_empty(app->priv->job_run_queue)
+				    && !gebr_comm_runner_run_async(runner))
+					gebrm_job_kill_immediately(job);
 				g_queue_push_tail(app->priv->job_run_queue, runner);
 			} else {
 				GebrmJob *parent = gebrm_app_job_controller_find(app, parent_id);
