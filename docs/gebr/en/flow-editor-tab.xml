@@ -8,443 +8,451 @@
   version="5.0"
   xml:id="sec_3_3">
 
-  <title>The 
-    <guilabel>Flow editor</guilabel> tab</title>
-  <para>To create a new Flow, you can follow the instructions of <xref linkend="creating_flows" /></para>
-  <para>Now that we know how to add programs to the Flow let us learn how to configure these
-    programs, and investigate the other tools found in the 
-    <guilabel>Flow editor</guilabel> tab:</para>
-  <itemizedlist>
-    <listitem>
-      <para>
-        <link linkend="copiar_programa_para_area_de_transferencia">Copy selected program(s) to
-          the clipboard</link>
-      </para>
-    </listitem>
-    <listitem>
-      <para>
-        <link linkend="sec_3_3_2">Paste program(s) from the clipboard</link>
-      </para>
-    </listitem>
-    <listitem>
-      <para>
-        <link linkend="sec_3_3_3">Delete program(s)</link>
-      </para>
-    </listitem>
-    <listitem>
-      <para>
-        <link linkend="editar_parametros_programa">Edit a program's parameters</link>
-      </para>
-    </listitem>
-    <listitem>
-      <para>
-        <link linkend="sec_3_3_5">Change a program's state</link>
-      </para>
-    </listitem>
-    <listitem>
-      <para>
-        <link linkend="editar_arquivos_entrada_saida_fluxo">Edit the Flow's input file and output
-          file</link>
-      </para>
-    </listitem>
-    <listitem>
-      <para>
-        <link linkend="executar_fluxo">Execute a Flow</link>
-      </para>
-    </listitem>
-  </itemizedlist>
-  <tip>
-    <para>Instead of command buttons, try using 
-      <emphasis role="bold">context menus</emphasis>. To do so, 
-      <emphasis role="bold">right-click</emphasis> on a program you have added. Notice that many
-      command can be accessed through this menu. For certain cases this method is 
-      <emphasis role="bold">easier and faster</emphasis> then using command buttons.</para>
-  </tip>
-  <section xml:id="copiar_programa_para_area_de_transferencia">
-    <title>Copying programs to the clipboard</title>
-    <para>In the same manner we copy and paste Flows (see 
-      <xref linkend="copiar_fluxos_area_tranferencia" />), a program (or set of programs) can be
-      copied to the clipboard by clicking 
-      <guiicon>
-        <inlinemediaobject>
-          <imageobject>
-            <imagedata fileref="../../common-images/botao_copiar_fluxo.png" />
-          </imageobject>
-        </inlinemediaobject>
-      </guiicon> or by using the shortcut 
-      <keycombo>
-        <keycap>Ctrl</keycap>
-        <keycap>C</keycap>
-    </keycombo>.</para>
-    <tip>
-      <para>You can select several programs to be copied by holding 
-        <keycombo>
-          <keycap>Ctrl</keycap>
-          <mousebutton>Clique</mousebutton>
-        </keycombo> or 
-        <keycombo>
-          <keycap>Shift</keycap>
-          <mousebutton>Clique</mousebutton>
-      </keycombo>.</para>
-    </tip>
-  </section>
-  <section xml:id="sec_3_3_2">
-    <title>Pasting programs from the clipboard</title>
-    <para>After selecting and copying (
-      <xref linkend="copiar_programa_para_area_de_transferencia" />) a program (or a set of programs)
-      you can paste them by clicking on 
-      <guiicon>
-        <inlinemediaobject>
-          <imageobject>
-            <imagedata fileref="../../common-images/botao_colar_fluxo.png" />
-          </imageobject>
-        </inlinemediaobject>
-      </guiicon> or by using the shortcut 
-      <keycombo>
-        <keycap>Ctrl</keycap>
-        <keycap>V</keycap>
-    </keycombo>.</para>
-    <tip>
-      <para>A program (or set of programs) that have been copied to the clipboard can be pasted
-        to 
-        <emphasis role="bold">any Flow</emphasis>, and not just the Flow of origin. Simply switch
-        to the 
-        <guilabel>Flows</guilabel> tab, select the desired Flow, go back to the 
-        <guilabel>Flow editor</guilabel> tab and paste the program(s).</para>
-    </tip>
-  </section>
-  <section xml:id="sec_3_3_3">
-    <title>Deleting programs</title>
-    <para>To remove a program (or set of programs), select them and click on 
-      <guiicon>
-        <inlinemediaobject>
-          <imageobject>
-            <imagedata fileref="../../common-images/botao_apagar_projeto.png" />
-          </imageobject>
-        </inlinemediaobject>
-    </guiicon>.</para>
-    <tip>
-      <para>You can select several programs to be deleted by holding 
-        <keycombo>
-          <keycap>Ctrl</keycap>
-          <mousebutton>Clique</mousebutton>
-        </keycombo> or 
-        <keycombo>
-          <keycap>Shift</keycap>
-          <mousebutton>Clique</mousebutton>
-      </keycombo>.</para>
-    </tip>
-    <caution>
-      <para>GêBR 
-        <emphasis role="bold">does not issue a warning</emphasis> before deleting the selected
-        programs.</para>
-    </caution>
-  </section>
-  <section xml:id="editar_parametros_programa">
-    <title>Editing program's parameters</title>
-    <para>To edit program's parameters:</para>
-    <procedure>
-      <step>
-        <para>Select the program from the 
-          <guilabel>Flow sequence</guilabel> box then click on 
-          <guiicon>
-            <inlinemediaobject>
-              <imageobject>
-                <imagedata fileref="../../common-images/botao_editar_propriedades_projeto.png" />
-              </imageobject>
-            </inlinemediaobject>
-        </guiicon>, or just double-click on the program.</para>
-      </step>
-      <step>
-        <para>The 
-          <guilabel>Parameters</guilabel> dialog box will appear. Notice that each program's
-          parameter vary greatly both in size and type.</para>
-        <tip>
-          <para>Click on the 
-            <guibutton>Help</guibutton> button ( bottom left corner of the dialog box) to view the 
-            <emphasis role="bold">program's documentation</emphasis>. This will certainly be useful
-            when you are editing the programs parameters.</para>
-        </tip>
-        <tip>
-          <para>Click on the 
-            <guibutton>Default</guibutton> button when you want the program to return to its default
-            configurations.</para>
-        </tip>
-      </step>
-      <step>
-        <para>When you are done click on the 
-          <guibutton>OK</guibutton> button.</para>
-      </step>
-    </procedure>
-  </section>
-  <section xml:id="sec_3_3_5">
-    <title>Changing a program's state</title>
-    <para>After you have carried out process of 
-      <xref linkend="editar_parametros_programa" />the program's mark is changed to 
-      <guiicon>
-        <inlinemediaobject>
-          <imageobject>
-            <imagedata fileref="../../common-images/icone_configurado.png" />
-          </imageobject>
-        </inlinemediaobject>
-      </guiicon> instead of de 
-      <guiicon>
-        <inlinemediaobject>
-          <imageobject>
-            <imagedata fileref="../../common-images/icone_nao_configurado.png" />
-          </imageobject>
-        </inlinemediaobject>
-      </guiicon>. This means that the program's state has gone from 
-      <emphasis role="bold">Not configured</emphasis> to the 
-      <emphasis role="bold">Configured</emphasis> state. Besides these two states the program can
-      also be set to the 
-      <emphasis role="bold">Disabled</emphasis> state (
-      <guiicon>
-        <inlinemediaobject>
-          <imageobject>
-            <imagedata fileref="../../common-images/icone_desabilitado.png" />
-          </imageobject>
-        </inlinemediaobject>
-      </guiicon>). You can alternate between these states by using two methods, you can either 
-      <mousebutton>right-click</mousebutton> on the program and then select from the context menu
-      the desired state, or by using the shortcut 
-      <keycombo>
-        <keycap>Spacebar</keycap>
-    </keycombo> to change the state(s) of the selected programs.</para>
-    <tip>
-      <para>You can select several programs whose state you wish to change by holding 
-        <keycombo>
-          <keycap>Ctrl</keycap>
-          <mousebutton>Clique</mousebutton>
-        </keycombo> or 
-        <keycombo>
-          <keycap>Shift</keycap>
-          <mousebutton>Clique</mousebutton>
-      </keycombo>.</para>
-    </tip>
-    <tip>
-      <para>Changing a program state does not alter its parameter configuration. You can safely
-        alternate between the states and the parameters will continue the same.</para>
-    </tip>
-    <important>
-      <para>
-        <emphasis role="bold">Disabled</emphasis> programs (
-        <guiicon>
-          <inlinemediaobject>
-            <imageobject>
-              <imagedata fileref="../../common-images/icone_desabilitado.png" />
-            </imageobject>
-          </inlinemediaobject>
-        </guiicon>) will be ignored when you execute your Flow. With this you can 
-        <emphasis role="bold">enable and disable parts of your Flow</emphasis> as you see
-        fit.</para>
-    </important>
-  </section>
-  <section xml:id="editar_arquivos_entrada_saida_fluxo">
-    <title>Editing the Flow's input and output files</title>
-    <para>On many occasions in which you will
-      need to extract data from an input file and/or generate as a result an output file, or even
-      an log file in case an error occurs.</para>
-    <para>How to associate an input, output and error file to a Flow:</para>
-    <figure>
-      <mediaobject>
-        <caption>Select the Flow Editor Tab, in the Flow sequence box you can edit the input,
-          output and log files for this Flow sequence.</caption>
-        <imageobject>
-          <imagedata fileref="../images/GeBR_flow_editor_input_file.png" />
-        </imageobject>
-      </mediaobject>
-    </figure>
-    <procedure>
-      <step>
-        <para>Check you have selected a Flow, then select the Flow editor tab, in the Flow
-          sequence box you can edit the input, output and log files paths by double clicking on
-          them. See figure:</para>
-      </step>
-      <step>
-        <para>Type in the path or click on the icon 
-          <guiicon>
-            <inlinemediaobject>
-              <imageobject>
-                <imagedata fileref="../../common-images/icone_escolher_arquivo.png" />
-              </imageobject>
-            </inlinemediaobject>
-          </guiicon> to browse for the file.</para>
-      </step>
-    </procedure>
-    <para>When you have chosen a path for your 
-      <guilabel>Flow's input/output</guilabel> note that their file paths will appear in the 
-      <guilabel>Flow sequence</guilabel> box, indicate with the marks 
-      <guiicon>
-        <inlinemediaobject>
-          <imageobject>
-            <imagedata fileref="../../common-images/icone_arquivo_entrada.png" />
-          </imageobject>
-        </inlinemediaobject>
-      </guiicon> and 
-      <guiicon>
-        <inlinemediaobject>
-          <imageobject>
-            <imagedata fileref="../../common-images/icone_arquivo_saida.png" />
-          </imageobject>
-        </inlinemediaobject>
-    </guiicon>, below and above the Flow's programs (if there are any).</para>
-    <note>
-      <para>If you wish to 
-        <emphasis role="bold">remove a set</emphasis> from the list, select them by pressing 
-        <emphasis role="bold">right-click</emphasis> then click on 
-        <guimenuitem>Exclude</guimenuitem>.</para>
-    </note>
-  </section>
-  <section xml:id="executar_fluxo">
-    <title>Executing a Flow</title>
-    <para>To execute the current Flow click on 
-      <guiicon>
-        <inlinemediaobject>
-          <imageobject>
-            <imagedata fileref="../../common-images/botao_executar_fluxo.png" />
-          </imageobject>
-        </inlinemediaobject>
-    </guiicon>.</para>
-    <para>In the Flow Editor Tab, you can execute a Flow 
-      <emphasis>after</emphasis> another Flow, creating a queue of
-      execution. To execute after a specific Flow, instead of executing 
-      <emphasis>"Immediately"</emphasis>, switch to the Flow Editor Tab and choose the "After 
-      <emphasis>Flow A</emphasis>".</para>
-    <para>By default the Flows are executed on the Maestro group <xref linkend="servers_configuration">. 
-      More details on the definition and selection of servers and groups of servers can be found in 
-      <xref linkend="menu" />.</para>
-    <para>In the Flow Editor Tab, even if you have selected several Flow from the Flows Tab, when
-      you click on 
-      <guiicon>
-        <inlinemediaobject>
-          <imageobject>
-            <imagedata fileref="../../common-images/botao_executar_fluxo.png" />
-          </imageobject>
-        </inlinemediaobject>
-    </guiicon> only the first selected Flow will be executed.</para>
-    <figure>
-      <mediaobject>
-	      <caption>Screenshot of the Flow Editor Tab. In the first menu of the <emphasis>Run</emphasis>, you can 
-          choose after which flow it will be executed.</caption>
-        <imageobject>
-          <imagedata fileref="../images/GeBR_flow_editor_queue.png" />
-        </imageobject>
-      </mediaobject>
-    </figure>
-    <para>At the moment the Flow is executed, GêBR automatically switch to the 
-      <guilabel>Job Control</guilabel> Tab and displays a report of the execution of the Flow .</para>
-  </section>
-  <!--  Falta Traduzir -->
-  <section xml:id="multi_cores">
-    <title>Multiple cores</title>
-    <para>GêBR optimizes the execution of loops in multi-core machines</para>
-    <para>GêBR takes advantage of the multi-core feature of most of the recent machines. The execution of
-	    repetitive flows can be optimized by this resource. If the Flow has Loops and is 
-	    parallelizable (given some
-	    criteria, shown below), then you can adjust the execution's degree of performance based
-	    on the number of processors.</para>
-    <para>To be considered parallelizable, besides having a loop, a Flow must achieve one, and
-      just one, of these criteria:</para>
-    <itemizedlist>
-      <listitem>The Flow does not have an output file;</listitem>
-      <listitem>The output of each step of the loop is not the input of any other step of the
-        loop.</listitem>
-    </itemizedlist>
-    <para>We choose the amount of processors through an adjustment bar, next to the Run
-      button.</para>
-    <imageobject>
-      <imagedata fileref="../images/GeBR_flow_editor_flow_exec_speed.png" />
-    </imageobject>
-    <para>Each level of the adjustment bar corresponds to a a number of cores used by the job.</para>
-  </section>
-  <section xml:id="priority_execution">
-    <title>Priority of execution</title>
-    <para>Computers, nowadays, are multitasked, what means that multiple things can be done at
-      the same time. When many tasks are executed at the same time, the computer can get overloaded
-      and decrease its performance. Seismic processing, particularly, can exhaust the computer
-      resources.</para>
-    <para>GêBR has a feature that overcomes the issue of overloading due to multitasking, by
-      enabling the execution of the Flows in a <emphasis>Low Priority</emphasis> states:</para>
-    <imageobject>
-      <imagedata fileref="../images/GeBR_flow_editor_priority_execution.png" />
-    </imageobject>
-    <para>Two options are available: </para>
-    <itemizedlist>
-      <listitem>Low priority (the Flow is going to wait its turn to execute and try not to
-        overload the system)</listitem>
-      <listitem>High priority (the execution of the Flow is going to dispute for the computer
-        resources with the other active programs)</listitem>
-    </itemizedlist>
-    <para>Technically, when running in "Low Priority" mode, GêBR will reduce the run priority of the
-      task, meaning it will tell the computer that "it can wait more important things to be done".
-      This is the case when you have other things to do while you wait your calculations to be done.
-      The "High Priority" mode means GêBR will use greater run priority for the task, and that implies
-      it will act as a foreground process, demanding more resources. It's the "I need this done"
-      mode, when you need the job to be finished as soon as possible, and you don't care if it will
-      fight for resources with other programs.</para>
-    <para>If GêBR is the only program executing on your machine, i.e., it doesn't have a
-      challenger for the computer resources, then both states corresponds to the same situation.
-      This is the "nightly job" situation, when (theoretically) no one is using the machines and
-      some jobs are left to be done for the next morning.</para>
-  </section>
-  <section xml:id="loop">
-    <title>Executing a Flow multiple times</title>
-    <para>The program 
-      <emphasis>Loop</emphasis> (from the category 
-      <emphasis role="bold">Loops</emphasis>) has a totally different usage compared to the
-      remaining programs from GêBR. We are going to see some of these differences.</para>
-    <para>When we add the program Loop, we can see it always appears in the top of the Flow. That
-      happens to indicate that the Flow is going to be executed more than once, according to the
-      parameters set for the program. (see 
-      <xref linkend="editar_parametros_programa" />for further details).</para>
-    <mediaobject>
-      <caption>Screenshot of program 
-        <emphasis>Loop</emphasis>, added to a Flow and properly configured.</caption>
-      <imageobject>
-        <imagedata fileref="../images/GeBR_flow_editor_loop.png" />
-      </imageobject>
-    </mediaobject>
-    <para>After the 
-      <emphasis>Loop</emphasis> is added, you have access to a new variable, the 
-      <emphasis role="bold">iter</emphasis>. This special variable changes its value on each
-      iteration, according to the parameters set.</para>
-    <mediaobject>
-      <caption>Screenshot of the edition from parameters of 
-        <emphasis>Loop</emphasis> program , with a simple example of parameters setting.</caption>
-      <imageobject>
-        <imagedata fileref="../images/loop_parametros.png" />
-      </imageobject>
-    </mediaobject>
-    <tip>Further information about the variable 
-      <emphasis role="bold">iter</emphasis> are available in section 
-      <xref linkend="variavel_iter" />.</tip>
-  </section>
-  <section xml:id="multiple_machines">
-    <title>Multiple machines</title>
-      <para>If GêBR is connected to multiple machines through the Servers Configuration
-      interface, and the selected Flow is parallelizable (see below the criteria to be
-      parallelizable), then the option Auto-choose mean that GêBR is going to run it in a
-      distributed way.</para>
-    <para>To be considered parallelizable, besides having a loop, a Flow must achieve one
-      of these criteria:</para>
-    <itemizedlist>
-      <listitem>
-        <para>The Flow does not have an output file;</para>
-      </listitem>
-      <listitem>
-        <para>The output of each step of the loop is not the input of any other step of the
-          loop.</para>
-      </listitem>
-    </itemizedlist>
-    <para>In case the Flow is not parallelizable (i.e., does not fit one of the above conditions),
-      GêBR will run the job in the best machine 
-      at the time of execution (GêBR rank them based mainly in availability and speed). In a distributed
-      execution, it may be important to differentiate the Priority mode. When the Flow is
-      parallelizable, it is the split up and distributed between the available machines according
-      to their ranking.</para>
-    <para>If you want to run a Flow in a specified machine, then he can force the execution
-      by going to Flow Editor tab, as choosing the machine of execution as shown
-      below.</para>
-  </section>
+	<title>The 
+		<guilabel>Flow editor</guilabel> tab</title>
+	<para>To create a new Flow, you can follow the instructions of <xref linkend="creating_flows" /></para>
+	<para>Now that we know how to add programs to the Flow let us learn how to configure these
+		programs, and investigate the other tools found in the 
+		<guilabel>Flow editor</guilabel> tab:</para>
+	<itemizedlist>
+		<listitem>
+			<para>
+				<link linkend="copiar_programa_para_area_de_transferencia">Copy selected program(s) to
+					the clipboard</link>
+			</para>
+		</listitem>
+		<listitem>
+			<para>
+				<link linkend="sec_3_3_2">Paste program(s) from the clipboard</link>
+			</para>
+		</listitem>
+		<listitem>
+			<para>
+				<link linkend="sec_3_3_3">Delete program(s)</link>
+			</para>
+		</listitem>
+		<listitem>
+			<para>
+				<link linkend="editar_parametros_programa">Edit a program's parameters</link>
+			</para>
+		</listitem>
+		<listitem>
+			<para>
+				<link linkend="sec_3_3_5">Change a program's state</link>
+			</para>
+		</listitem>
+		<listitem>
+			<para>
+				<link linkend="editing_input_output">Edit the Flow's input file and output
+					file</link>
+			</para>
+		</listitem>
+		<listitem>
+			<para>
+				<link linkend="executar_fluxo">Execute a Flow</link>
+			</para>
+		</listitem>
+	</itemizedlist>
+	<tip>
+		<para>Instead of command buttons, try using 
+			<emphasis role="bold">context menus</emphasis>. To do so, 
+			<emphasis role="bold">right-click</emphasis> on a program you have added. Notice that many
+			command can be accessed through this menu. For certain cases this method is 
+			<emphasis role="bold">easier and faster</emphasis> then using command buttons.</para>
+	</tip>
+	<section xml:id="copiar_programa_para_area_de_transferencia">
+		<title>Copying programs to the clipboard</title>
+		<para>In the same manner we copy and paste Flows (see 
+			<xref linkend="copiar_fluxos_area_tranferencia" />), a program (or set of programs) can be
+			copied to the clipboard by clicking 
+			<guiicon>
+				<inlinemediaobject>
+					<imageobject>
+						<imagedata fileref="../../common-images/botao_copiar_fluxo.png" />
+					</imageobject>
+				</inlinemediaobject>
+			</guiicon> or by using the shortcut 
+			<keycombo>
+				<keycap>Ctrl</keycap>
+				<keycap>C</keycap>
+		</keycombo>.</para>
+		<tip>
+			<para>You can select several programs to be copied by holding 
+				<keycombo>
+					<keycap>Ctrl</keycap>
+					<mousebutton>Clique</mousebutton>
+				</keycombo> or 
+				<keycombo>
+					<keycap>Shift</keycap>
+					<mousebutton>Clique</mousebutton>
+			</keycombo>.</para>
+		</tip>
+	</section>
+	<section xml:id="sec_3_3_2">
+		<title>Pasting programs from the clipboard</title>
+		<para>After selecting and copying (
+			<xref linkend="copiar_programa_para_area_de_transferencia" />) a program (or a set of programs)
+			you can paste them by clicking on 
+			<guiicon>
+				<inlinemediaobject>
+					<imageobject>
+						<imagedata fileref="../../common-images/botao_colar_fluxo.png" />
+					</imageobject>
+				</inlinemediaobject>
+			</guiicon> or by using the shortcut 
+			<keycombo>
+				<keycap>Ctrl</keycap>
+				<keycap>V</keycap>
+		</keycombo>.</para>
+		<tip>
+			<para>A program (or set of programs) that have been copied to the clipboard can be pasted
+				to 
+				<emphasis role="bold">any Flow</emphasis>, and not just the Flow of origin. Simply switch
+				to the 
+				<guilabel>Flows</guilabel> tab, select the desired Flow, go back to the 
+				<guilabel>Flow editor</guilabel> tab and paste the program(s).</para>
+		</tip>
+	</section>
+	<section xml:id="sec_3_3_3">
+		<title>Deleting programs</title>
+		<para>To remove a program (or set of programs), select them and click on 
+			<guiicon>
+				<inlinemediaobject>
+					<imageobject>
+						<imagedata fileref="../../common-images/botao_apagar_projeto.png" />
+					</imageobject>
+				</inlinemediaobject>
+		</guiicon>.</para>
+		<tip>
+			<para>You can select several programs to be deleted by holding 
+				<keycombo>
+					<keycap>Ctrl</keycap>
+					<mousebutton>Clique</mousebutton>
+				</keycombo> or 
+				<keycombo>
+					<keycap>Shift</keycap>
+					<mousebutton>Clique</mousebutton>
+			</keycombo>.</para>
+		</tip>
+		<caution>
+			<para>GêBR 
+				<emphasis role="bold">does not issue a warning</emphasis> before deleting the selected
+				programs.</para>
+		</caution>
+	</section>
+	<section xml:id="editar_parametros_programa">
+		<title>Editing program's parameters</title>
+		<para>To edit program's parameters:</para>
+		<procedure>
+			<step>
+				<para>Select the program from the 
+					<guilabel>Flow sequence</guilabel> box then click on 
+					<guiicon>
+						<inlinemediaobject>
+							<imageobject>
+								<imagedata fileref="../../common-images/botao_editar_propriedades_projeto.png" />
+							</imageobject>
+						</inlinemediaobject>
+				</guiicon>, or just double-click on the program.</para>
+			</step>
+			<step>
+				<para>The 
+					<guilabel>Parameters</guilabel> dialog box will appear. Notice that each program's
+					parameter vary greatly both in size and type.</para>
+				<tip>
+					<para>Click on the 
+						<guibutton>Help</guibutton> button ( bottom left corner of the dialog box) to view the 
+						<emphasis role="bold">program's documentation</emphasis>. This will certainly be useful
+						when you are editing the programs parameters.</para>
+				</tip>
+				<tip>
+					<para>Click on the 
+						<guibutton>Default</guibutton> button when you want the program to return to its default
+						configurations.</para>
+				</tip>
+			</step>
+			<step>
+				<para>When you are done click on the 
+					<guibutton>OK</guibutton> button.</para>
+			</step>
+		</procedure>
+	</section>
+	<section xml:id="sec_3_3_5">
+		<title>Changing a program's state</title>
+		<para>After you have carried out process of 
+			<xref linkend="editar_parametros_programa" />the program's mark is changed to 
+			<guiicon>
+				<inlinemediaobject>
+					<imageobject>
+						<imagedata fileref="../../common-images/icone_configurado.png" />
+					</imageobject>
+				</inlinemediaobject>
+			</guiicon> instead of de 
+			<guiicon>
+				<inlinemediaobject>
+					<imageobject>
+						<imagedata fileref="../../common-images/icone_nao_configurado.png" />
+					</imageobject>
+				</inlinemediaobject>
+			</guiicon>. This means that the program's state has gone from 
+			<emphasis role="bold">Not configured</emphasis> to the 
+			<emphasis role="bold">Configured</emphasis> state. Besides these two states the program can
+			also be set to the 
+			<emphasis role="bold">Disabled</emphasis> state (
+			<guiicon>
+				<inlinemediaobject>
+					<imageobject>
+						<imagedata fileref="../../common-images/icone_desabilitado.png" />
+					</imageobject>
+				</inlinemediaobject>
+			</guiicon>). You can alternate between these states by using two methods, you can either 
+			<mousebutton>right-click</mousebutton> on the program and then select from the context menu
+			the desired state, or by using the shortcut 
+			<keycombo>
+				<keycap>Spacebar</keycap>
+		</keycombo> to change the state(s) of the selected programs.</para>
+		<tip>
+			<para>You can select several programs whose state you wish to change by holding 
+				<keycombo>
+					<keycap>Ctrl</keycap>
+					<mousebutton>Clique</mousebutton>
+				</keycombo> or 
+				<keycombo>
+					<keycap>Shift</keycap>
+					<mousebutton>Clique</mousebutton>
+			</keycombo>.</para>
+		</tip>
+		<tip>
+			<para>Changing a program state does not alter its parameter configuration. You can safely
+				alternate between the states and the parameters will continue the same.</para>
+		</tip>
+		<important>
+			<para>
+				<emphasis role="bold">Disabled</emphasis> programs (
+				<guiicon>
+					<inlinemediaobject>
+						<imageobject>
+							<imagedata fileref="../../common-images/icone_desabilitado.png" />
+						</imageobject>
+					</inlinemediaobject>
+				</guiicon>) will be ignored when you execute your Flow. With this you can 
+				<emphasis role="bold">enable and disable parts of your Flow</emphasis> as you see
+				fit.</para>
+		</important>
+	</section>
+	<section xml:id="editing_input_output">
+		<title>Editing the Flow's input and output files</title>
+		<para>On many occasions in which you will
+			need to extract data from an input file and/or generate as a result an output file, or even
+			an log file in case an error occurs.</para>
+		<para>How to associate an input, output and error file to a Flow:</para>
+		<figure>
+			<mediaobject>
+				<caption>Select the Flow Editor Tab, in the Flow sequence box you can edit the input,
+					output and log files for this Flow sequence.</caption>
+				<imageobject>
+					<imagedata fileref="../images/GeBR_flow_editor_input_file.png" />
+				</imageobject>
+			</mediaobject>
+		</figure>
+		<procedure>
+			<step>
+				<para>Check you have selected a Flow, then select the Flow editor tab, in the Flow
+					sequence box you can edit the input, output and log files paths by double clicking on
+					them. See figure:</para>
+			</step>
+			<step>
+				<para>Type in the path or click on the icon 
+					<guiicon>
+						<inlinemediaobject>
+							<imageobject>
+								<imagedata fileref="../../common-images/icone_escolher_arquivo.png" />
+							</imageobject>
+						</inlinemediaobject>
+				</guiicon> to browse for the file.</para>
+			</step>
+		</procedure>
+		<para>When you have chosen a path for your 
+			<guilabel>Flow's input/output</guilabel> note that their file paths will appear in the 
+			<guilabel>Flow sequence</guilabel> box, indicate with the marks 
+			<guiicon>
+				<inlinemediaobject>
+					<imageobject>
+						<imagedata fileref="../../common-images/icone_arquivo_entrada.png" />
+					</imageobject>
+				</inlinemediaobject>
+			</guiicon> and 
+			<guiicon>
+				<inlinemediaobject>
+					<imageobject>
+						<imagedata fileref="../../common-images/icone_arquivo_saida.png" />
+					</imageobject>
+				</inlinemediaobject>
+		</guiicon>, below and above the Flow's programs (if there are any).</para>
+		<note>
+			<para>If you wish to 
+				<emphasis role="bold">remove a set</emphasis> from the list, select them by pressing 
+				<emphasis role="bold">right-click</emphasis> then click on 
+				<guimenuitem>Exclude</guimenuitem>.</para>
+		</note>
+	</section>
+	<section xml:id="executar_fluxo">
+		<title>Executing a Flow</title>
+		<para>To execute the current Flow click on 
+			<guiicon>
+				<inlinemediaobject>
+					<imageobject>
+						<imagedata fileref="../../common-images/botao_executar_fluxo.png" />
+					</imageobject>
+				</inlinemediaobject>
+		</guiicon>.</para>
+		<para>In the Flow Editor Tab, you can execute a Flow 
+			<emphasis>after</emphasis> another Flow, creating a queue of
+			execution. To execute after a specific Flow, instead of executing 
+			<emphasis>"Immediately"</emphasis>, switch to the Flow Editor Tab and choose the "After 
+			<emphasis>Flow A</emphasis>".</para>
+		<para>By default the Flows are executed on the Maestro group <xref linkend="servers_configuration"/>. 
+			More details on the definition and selection of servers and groups of servers can be found in 
+			<xref linkend="menu" />.</para>
+		<para>In the Flow Editor Tab, even if you have selected several Flow from the Flows Tab, when
+			you click on 
+			<guiicon>
+				<inlinemediaobject>
+					<imageobject>
+						<imagedata fileref="../../common-images/botao_executar_fluxo.png" />
+					</imageobject>
+				</inlinemediaobject>
+		</guiicon> only the first selected Flow will be executed.</para>
+		<figure>
+			<mediaobject>
+				<caption>Screenshot of the Flow Editor Tab. In the first menu of the <emphasis>Run</emphasis>, you can 
+					choose after which flow it will be executed.</caption>
+				<imageobject>
+					<imagedata fileref="../images/GeBR_flow_editor_queue.png" />
+				</imageobject>
+			</mediaobject>
+		</figure>
+		<para>At the moment the Flow is executed, GêBR automatically switch to the 
+			<guilabel>Job Control</guilabel> Tab and displays a report of the execution of the Flow .</para>
+	</section>
+	<!--  Falta Traduzir -->
+	<section xml:id="multi_cores">
+		<title>Multiple cores</title>
+		<para>GêBR optimizes the execution of loops in multi-core machines</para>
+		<para>GêBR takes advantage of the multi-core feature of most of the recent machines. The execution of
+			repetitive flows can be optimized by this resource. If the Flow has Loops and is 
+			parallelizable (given some
+			criteria, shown below), then you can adjust the execution's degree of performance based
+			on the number of processors.</para>
+		<para>To be considered parallelizable, besides having a loop, a Flow must achieve one, and
+			just one, of these criteria:</para>
+		<itemizedlist>
+			<listitem>The Flow does not have an output file;</listitem>
+			<listitem>The output of each step of the loop is not the input of any other step of the
+				loop.</listitem>
+		</itemizedlist>
+		<para>We choose the amount of processors through an adjustment bar, next to the Run
+			button.</para>
+		<imageobject>
+			<imagedata fileref="../images/GeBR_flow_editor_flow_exec_speed.png" />
+		</imageobject>
+		<para>Each level of the adjustment bar corresponds to a a number of cores used by the job.</para>
+	</section>
+	<section xml:id="priority_execution">
+		<title>Priority of execution</title>
+		<para>Computers, nowadays, are multitasked, what means that multiple things can be done at
+			the same time. When many tasks are executed at the same time, the computer can get overloaded
+			and decrease its performance. Seismic processing, particularly, can exhaust the computer
+			resources.</para>
+		<para>GêBR has a feature that overcomes the issue of overloading due to multitasking, by
+			enabling the execution of the Flows in a <emphasis>Low Priority</emphasis> states:</para>
+		<imageobject>
+			<imagedata fileref="../images/GeBR_flow_editor_priority_execution.png" />
+		</imageobject>
+		<para>Two options are available: </para>
+		<itemizedlist>
+			<listitem>
+				<para>
+					Low priority (the Flow is going to wait its turn to execute and try not to
+					overload the system)
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					High priority (the execution of the Flow is going to dispute for the computer
+					resources with the other active programs)
+				</para>
+			</listitem>
+		</itemizedlist>
+		<para>Technically, when running in "Low Priority" mode, GêBR will reduce the run priority of the
+			task, meaning it will tell the computer that "it can wait more important things to be done".
+			This is the case when you have other things to do while you wait your calculations to be done.
+			The "High Priority" mode means GêBR will use greater run priority for the task, and that implies
+			it will act as a foreground process, demanding more resources. It's the "I need this done"
+			mode, when you need the job to be finished as soon as possible, and you don't care if it will
+			fight for resources with other programs.</para>
+		<para>If GêBR is the only program executing on your machine, i.e., it doesn't have a
+			challenger for the computer resources, then both states corresponds to the same situation.
+			This is the "nightly job" situation, when (theoretically) no one is using the machines and
+			some jobs are left to be done for the next morning.</para>
+	</section>
+	<section xml:id="loop">
+		<title>Executing a Flow multiple times</title>
+		<para>The program 
+			<emphasis>Loop</emphasis> (from the category 
+			<emphasis role="bold">Loops</emphasis>) has a totally different usage compared to the
+			remaining programs from GêBR. We are going to see some of these differences.</para>
+		<para>When we add the program Loop, we can see it always appears in the top of the Flow. That
+			happens to indicate that the Flow is going to be executed more than once, according to the
+			parameters set for the program. (see 
+			<xref linkend="editar_parametros_programa" /> for further details).</para>
+		<mediaobject>
+			<caption>Screenshot of program 
+				<emphasis>Loop</emphasis>, added to a Flow and properly configured.</caption>
+			<imageobject>
+				<imagedata fileref="../images/GeBR_flow_editor_loop.png" />
+			</imageobject>
+		</mediaobject>
+		<para>After the 
+			<emphasis>Loop</emphasis> is added, you have access to a new variable, the 
+			<emphasis role="bold">iter</emphasis>. This special variable changes its value on each
+			iteration, according to the parameters set.</para>
+		<mediaobject>
+			<caption>Screenshot of the edition from parameters of 
+				<emphasis>Loop</emphasis> program , with a simple example of parameters setting.</caption>
+			<imageobject>
+				<imagedata fileref="../images/loop_parametros.png" />
+			</imageobject>
+		</mediaobject>
+		<tip>Further information about the variable 
+			<emphasis role="bold">iter</emphasis> are available in section 
+			<xref linkend="variavel_iter" />.</tip>
+	</section>
+	<section xml:id="multiple_machines">
+		<title>Multiple machines</title>
+		<para>If GêBR is connected to multiple machines through the Servers Configuration
+			interface, and the selected Flow is parallelizable (see below the criteria to be
+			parallelizable), then the option Auto-choose mean that GêBR is going to run it in a
+			distributed way.</para>
+		<para>To be considered parallelizable, besides having a loop, a Flow must achieve one
+			of these criteria:</para>
+		<itemizedlist>
+			<listitem>
+				<para>The Flow does not have an output file;</para>
+			</listitem>
+			<listitem>
+				<para>The output of each step of the loop is not the input of any other step of the
+					loop.</para>
+			</listitem>
+		</itemizedlist>
+		<para>In case the Flow is not parallelizable (i.e., does not fit one of the above conditions),
+			GêBR will run the job in the best machine 
+			at the time of execution (GêBR rank them based mainly in availability and speed). In a distributed
+			execution, it may be important to differentiate the Priority mode. When the Flow is
+			parallelizable, it is the split up and distributed between the available machines according
+			to their ranking.</para>
+		<para>If you want to run a Flow in a specified machine, then he can force the execution
+			by going to Flow Editor tab, as choosing the machine of execution as shown
+			below.</para>
+	</section>
 </section>

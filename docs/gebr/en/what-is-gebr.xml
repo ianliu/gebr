@@ -28,8 +28,8 @@
       area.</para>
     <para>For more information, visit the project's official site:
       <emphasis>
-        <link xlink:href="http://www.gebrproject.com">www.gebrproject.com</link>
-    </emphasis>.</para>
+	      <link xlink:href="http://www.gebrproject.com">www.gebrproject.com</link>
+	      </emphasis>.</para>
   </section>
   <section>
     <title>What's new in version 0.16.0</title>
@@ -38,13 +38,13 @@
     <itemizedlist>
       <listitem>The maestro concept is born allowing to execute GêBR jobs in multiples machines.
         (see 
-        <xref linkend="servers_configuration" />and 
+        <xref linkend="servers_configuration" /> and 
         <xref linkend="multiple_machines" />).</listitem>
       <listitem>Now it is possible to control the number of cores used by the jobs of GêBR and
         change the priority of execution of a job (see 
-        <xref linkend="multi_cores" />and 
+        <xref linkend="multi_cores" /> and 
         <xref linkend="priority_execution" />).</listitem>
-      <listitem>Renewed interface adds new functionalities and improve usability in
+      <listitem>Renewed interface adds new functionalities and improves usability in
         GêBR.</listitem>
     </itemizedlist>
   </section>

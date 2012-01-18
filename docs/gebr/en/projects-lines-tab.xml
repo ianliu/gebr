@@ -180,7 +180,7 @@
   <section xml:id="editar_caminhos_preferenciais_da_linha">
     <title>Editing the Line's preferred paths</title>
     <para>The Section 
-      <xref linkend="editar_arquivos_entrada_saida_fluxo" />will show how a Flow can be associated
+      <xref linkend="editing_input_output" />will show how a Flow can be associated
       to some data files, this association is simpler if we add preferred paths to the Line.</para>
     <para>The Line's preferred paths are defined in the 
       <guilabel>Line's properties</guilabel> dialog box. To open this dialog box select the Line
