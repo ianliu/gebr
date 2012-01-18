@@ -261,6 +261,13 @@ gebr_job_set_servers(GebrJob *job,
 }
 
 void
+gebr_job_set_is_fake(GebrJob *job,
+                     gboolean setting)
+{
+	job->priv->is_fake = setting;
+}
+
+void
 gebr_job_set_hostname(GebrJob *job,
 		      const gchar *hostname)
 {

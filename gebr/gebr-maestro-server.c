@@ -471,6 +471,7 @@ parse_messages(GebrCommServer *comm_server,
 				/* Creates a job and populates some of its information.
 				 * This condition happens when GeBR connects to Maestro.
 				 */
+				gebr_job_set_is_fake(job, FALSE);
 				gebr_job_set_maestro_address(job, gebr_maestro_server_get_address(maestro));
 				gebr_job_set_hostname(job, hostname->str);
 				gebr_job_set_title(job, title->str);
