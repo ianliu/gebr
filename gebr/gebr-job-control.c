@@ -2136,7 +2136,7 @@ gebr_job_control_save_selected(GebrJobControl *jc)
 		/* Command line */
 		gchar *cmd_line;
 		gchar *command = gebr_job_get_command_line(job);
-		cmd_line = g_strdup_printf(_("\nCommand Line:\n%s\n"), strlen(command)? command : "(None)");
+		cmd_line = g_strdup_printf("\n%s\n", strlen(command)? command : "(None)");
 		fputs(cmd_line, fp);
 		g_free(cmd_line);
 		g_free(command);

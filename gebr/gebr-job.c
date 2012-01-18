@@ -357,8 +357,12 @@ gebr_job_get_percentages(GebrJob *job, gint *n)
 gchar *
 gebr_job_get_command_line(GebrJob *job)
 {
-	g_warning("TODO: Implement %s", __func__);
-	return g_strdup("");
+	GString *cmd_line = g_string_new("");
+	for (int i = 0; i < job->priv->n_servers; i++) {
+		g_string_append_printf(cmd_line, _("Command line (server %s):\n"), job->priv->tasks[i].server);
+		g_string_append_printf(cmd_line, "%s\n\n", job->priv->tasks[i].cmd_line);
+	}
+	return g_string_free(cmd_line, FALSE);
 }
 
 gchar *
