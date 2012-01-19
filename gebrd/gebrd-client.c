@@ -336,7 +336,7 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			GebrdJob *job;
 
 			/* organize message data */
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 8)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 9)) == NULL)
 				goto err;
 
 			GString *gid = g_list_nth_data(arguments, 0);
@@ -345,6 +345,7 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			GString *speed = g_list_nth_data(arguments, 3);
 			GString *nice = g_list_nth_data(arguments, 4);
 			GString *flow_xml = g_list_nth_data(arguments, 5);
+			GString *paths = g_list_nth_data(arguments, 6);
 
 			/* Moab & MPI settings */
 			GString *account = g_list_nth_data(arguments, 6);

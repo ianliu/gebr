@@ -317,13 +317,14 @@ divide_and_run_flows(GebrCommRunner *self)
 				       hostname, weights[k]);
 
 		gebr_comm_protocol_socket_oldmsg_send(server->socket, FALSE,
-						      gebr_comm_protocol_defs.run_def, 8,
+						      gebr_comm_protocol_defs.run_def, 9,
 						      self->priv->gid,
 						      self->priv->id,
 						      frac_str,
 						      self->priv->speed,
 						      self->priv->nice,
 						      flow_xml,
+						      self->priv->paths,
 
 						      /* Moab and MPI settings */
 						      self->priv->account ? self->priv->account : "",
