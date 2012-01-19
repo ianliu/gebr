@@ -1150,8 +1150,6 @@ gebr_jc_update_status_and_time(GebrJobControl *jc,
 			gtk_widget_show(GTK_WIDGET(queued_button));
 		}
 	}
-
-	update_control_buttons(jc, gebr_job_can_close(job), gebr_job_can_kill(job), TRUE);
 }
 
 static void
@@ -1321,6 +1319,7 @@ gebr_job_control_load_details(GebrJobControl *jc,
 
 	job_control_fill_servers_info(jc);
 	gebr_jc_update_status_and_time(jc, job, status);
+	update_control_buttons(jc, gebr_job_can_close(job), gebr_job_can_kill(job), TRUE);
 
 	GtkLabel *label = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "header_label"));
 	const gchar *title = gebr_job_get_title(job);
@@ -2018,6 +2017,22 @@ gebr_job_control_get_widget(GebrJobControl *jc)
 	return jc->priv->widget;
 }
 
+static void
+on_status_update_toolbar_buttons(GebrJob *job,
+                                 GebrCommJobStatus old_status,
+                                 GebrCommJobStatus new_status,
+                                 const gchar *parameter,
+                                 GebrJobControl *jc)
+{
+	gboolean can_close, can_kill;
+	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(jc->priv->view));
+	GList *rows = gtk_tree_selection_get_selected_rows(selection, NULL);
+
+	gebr_jc_get_jobs_state(jc, rows, &can_close, &can_kill);
+
+	update_control_buttons(jc, can_close, can_kill, TRUE);
+}
+
 void
 gebr_job_control_add(GebrJobControl *jc, GebrJob *job)
 {
@@ -2033,7 +2048,9 @@ gebr_job_control_add(GebrJobControl *jc, GebrJob *job)
 	gtk_list_store_append(jc->priv->store, gebr_job_get_iter(job));
 	gtk_list_store_set(jc->priv->store, gebr_job_get_iter(job), JC_STRUCT, job, -1);
 	g_signal_connect(job, "disconnect", G_CALLBACK(on_job_disconnected), jc);
-	g_signal_connect(job, "job-remove", G_CALLBACK(on_job_remove), jc);}
+	g_signal_connect(job, "job-remove", G_CALLBACK(on_job_remove), jc);
+	g_signal_connect(job, "status-change", G_CALLBACK(on_status_update_toolbar_buttons), jc);
+}
 
 GebrJob *
 gebr_job_control_find(GebrJobControl *jc, const gchar *rid)
