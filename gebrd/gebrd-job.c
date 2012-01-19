@@ -58,6 +58,7 @@ static void gebrd_job_init(GebrdJob * job)
 	job->server_group_name = g_string_new(NULL);
 	job->job_percentage= g_string_new(NULL);
 	job->gid = g_string_new(NULL);
+	job->paths = g_string_new(NULL);
 }
 
 static void gebrd_job_class_init(GebrdJobClass * klass)
@@ -379,7 +380,8 @@ job_new(GebrdJob **_job,
 	GString *nice,
 	GString *flow_xml,
 	GString *account,
-	GString *num_processes)
+	GString *num_processes,
+	GString *paths)
 {
 	GebrdJob *job = GEBRD_JOB(g_object_new(GEBRD_JOB_TYPE, NULL, NULL));
 	job->process = gebr_comm_process_new();
@@ -404,6 +406,7 @@ job_new(GebrdJob **_job,
 	job->parent.status = JOB_STATUS_INITIAL;
 	g_string_assign(job->parent.moab_account, account->str);
 	g_string_assign(job->parent.n_process, num_processes->str);
+	g_string_assign(job->paths, paths->str);
 
 	*_job = job;
 	gebrd->user->jobs = g_list_append(gebrd->user->jobs, job);
@@ -1440,6 +1443,7 @@ static void job_assembly_cmdline(GebrdJob *job)
 			}
 		}
 	}
+
 	if (has_control && n) {
 		gchar *prefix;
 		gchar *remove;
@@ -1491,6 +1495,15 @@ static void job_assembly_cmdline(GebrdJob *job)
 		g_string_prepend(job->parent.cmd_line, str_buf->str);
 		g_string_prepend(job->parent.cmd_line, expr_buf->str);
 	}
+
+	/* Creating Line paths */
+	GString *mkdir = g_string_new("");
+	gchar **paths = g_strsplit(job->paths->str, ",", 0);
+	for (int i = 0; paths[i]; i++)
+		g_string_append_printf(mkdir, "mkdir -p %s\n", paths[i]);
+	g_strfreev(paths);
+	g_string_prepend(job->parent.cmd_line, mkdir->str);
+	g_string_free(mkdir, TRUE);
 
 	job->critical_error = FALSE;
 	g_string_free(expr_buf, TRUE);

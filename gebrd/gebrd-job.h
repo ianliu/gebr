@@ -71,6 +71,7 @@ struct _GebrdJob {
 	GString *server_group_name;
 	gboolean is_parallelizable;
 	GString *job_percentage;
+	GString *paths;
 
 	GString *buf[2];
 	gint timeout[2];
@@ -95,7 +96,8 @@ void job_new(GebrdJob **_job,
 	     GString *nice,
 	     GString *flow_xml,
 	     GString *account,
-	     GString *num_processes);
+	     GString *num_processes,
+	     GString *paths);
 
 /**
  * gebrd_job_append:
