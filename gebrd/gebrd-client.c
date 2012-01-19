@@ -220,7 +220,8 @@ run_xauth_command(gchar **argv)
 		gebrd_message(GEBR_LOG_ERROR, "Error running `xauth': %s", error->message);
 		g_error_free(error);
 	} else if (WEXITSTATUS(exit_status) != 0) {
-		gebrd_message(GEBR_LOG_ERROR, "xauth command: %s", err);
+		gebrd_message(GEBR_LOG_ERROR, "xauth command exited with %d: %s",
+			      WEXITSTATUS(exit_status), err);
 	} else {
 		gebrd_message(GEBR_LOG_INFO, "xauth command succeeded");
 	}
@@ -341,6 +342,28 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 							      gebr_comm_protocol_defs.ret_def, 2,
 							      gid->str, display_str);
 			g_free(display_str);
+
+			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
+		}
+		else if (message->hash == gebr_comm_protocol_defs.rmck_def.code_hash) {
+			GList *arguments;
+
+			/* organize message data */
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
+				goto err;
+
+			GString *gid = g_list_nth_data(arguments, 0);
+			GString *cookie = g_list_nth_data(arguments, 1);
+			guint16 display = GPOINTER_TO_UINT(g_hash_table_lookup(gebrd->display_ports, gid->str));
+
+			//if (display) {
+			//	gchar *xauth = g_build_filename(g_get_home_dir(), ".gebr", "Xauthority", NULL);
+			//	gchar *cmd = g_strdup_printf("XAUTHORITY=%s xauth remove :%d . %s",
+			//				     xauth, display, cookie->str);
+			//	run_xauth_command(cmd, xauth);
+			//	g_free(cmd);
+			//	g_free(xauth);
+			//}
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}

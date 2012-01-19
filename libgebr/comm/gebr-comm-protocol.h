@@ -51,6 +51,7 @@ struct gebr_comm_protocol_defs {
 	struct gebr_comm_message_def sta_def;
 
 	struct gebr_comm_message_def gid_def;   // Gebr id              Maestro -> Daemon
+	struct gebr_comm_message_def rmck_def;  // Remove cookie        Maestro -> Daemon
 
 	struct gebr_comm_message_def cfrm_def;
 

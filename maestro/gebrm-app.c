@@ -1245,6 +1245,12 @@ on_client_disconnect(GebrCommProtocolSocket *socket,
 	GebrmClient *client = g_object_get_data(G_OBJECT(socket), "client");
 	app->priv->connections = g_list_remove(app->priv->connections, client);
 	gebrm_client_remove_forwards(client);
+
+	for (GList *i = app->priv->daemons; i; i = i->next)
+		gebr_comm_protocol_socket_oldmsg_send(gebrm_daemon_get_server(i->data)->socket, FALSE,
+						      gebr_comm_protocol_defs.rmck_def, 2,
+						      gebrm_client_get_id(client),
+						      gebrm_client_get_magic_cookie(client));
 }
 
 static void
