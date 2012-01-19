@@ -6,7 +6,7 @@
   xmlns:xlink="http://www.w3.org/1999/xlink"
   lang="pt_BR"
   version="5.0"
-  xml:id="sec_3_2">
+  xml:id="flows_tab">
 
   <title>A aba <guilabel>Fluxos</guilabel></title>
   <para>A aba <guilabel>Fluxos</guilabel> dispõe de nove botões de comando, localizados logo abaixo da aba, mais
@@ -14,155 +14,322 @@
   <itemizedlist>
     <listitem>
       <para>
-        <link linkend="sec_3_2_1">Criar um novo fluxo</link>
+        <link linkend="flows_browser_create_flow">Criar um novo Fluxo</link>
       </para>
     </listitem>
     <listitem>
       <para>
-        <link linkend="copiar_fluxos_area_tranferencia">Copiar fluxos para a área de transferência</link>
+        <link linkend="flows_browser_copy_flow">Copiar Fluxos</link>
       </para>
     </listitem>
     <listitem>
       <para>
-        <link linkend="colar_fluxos_area_tranferencia">Colar fluxos da área de transferência</link>
+        <link linkend="flows_browser_paste_flow">Colar Fluxos</link>
       </para>
     </listitem>
     <listitem>
       <para>
-        <link linkend="sec_3_2_4">Apagar fluxos</link>
+        <link linkend="flows_browser_delete_flow">Apagar Fluxos</link>
       </para>
     </listitem>
     <listitem>
       <para>
-        <link linkend="editar_propriedades_fluxo">Editar as propriedades de um fluxo</link>
+        <link linkend="flows_browser_edit_properties_flow">Editar as propriedades de um Fluxo</link>
       </para>
     </listitem>
     <listitem>
       <para>
-        <link linkend="sec_3_2_7">Salvar o estado de um fluxo</link>
+        <link linkend="flows_browser_save_state_flow">Salvar o estado de um Fluxo</link>
       </para>
     </listitem>
     <listitem>
       <para>
-        <link linkend="sec_3_2_8">Importar um fluxo</link>
+        <link linkend="flows_browser_import_flow">Importar um Fluxo</link>
       </para>
     </listitem>
     <listitem>
       <para>
-        <link linkend="exportar_fluxo">Exportar um fluxo</link>
+        <link linkend="flows_browser_export_flow">Exportar um Fluxo</link>
       </para>
     </listitem>
     <listitem>
       <para>
-        <xref xrefstyle="select: title" linkend="executar_fluxo_aba_fluxos"/>
+        <xref xrefstyle="select: title" linkend="flows_browser_execute_flow"/>
       </para>
     </listitem>
     <listitem>
       <para>
-        <link linkend="sec_3_2_11">Editar comentários</link>
+        <link linkend="flows_browser_edit_comments_flow">Editar comentários</link>
       </para>
     </listitem>
     <listitem>
       <para>
-        <link linkend="visualizar_relatorio_fluxo">Visualizar relatório</link>
+        <link linkend="flows_browser_view_report_flow">Visualizar relatório</link>
       </para>
     </listitem>
   </itemizedlist>
   <tip>
     <para>Experimente usar <emphasis role="bold">menus de contexto</emphasis> no lugar dos botões de comando. Para
-      isso, <emphasis role="bold">clique com o botão direito do mouse</emphasis> nos fluxos que você criar. Você vai
+      isso, <emphasis role="bold">clique com o botão direito do mouse</emphasis> nos Fluxos que você criar. Você vai
       notar que diversos comandos podem ser acionados por este método. Em determinados casos, isso é
       mais <emphasis role="bold">fácil e rápido</emphasis> do que usar os botões.</para>
-  </tip>
-  <section xml:id="sec_3_2_1">
-    <title>Criar um novo fluxo</title>
-    <para>Para criar um novo fluxo, primeiro certifique-se de ter <emphasis role="bold">criado e selecionado uma
-        linha</emphasis>, na aba <guilabel>Projetos e Linhas</guilabel>. Feito isso, selecione a aba
-      <guilabel>Fluxos</guilabel> e clique no
-      botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_criar_fluxo.png"/></imageobject></inlinemediaobject></guiicon>. Na janela que se abre (<guilabel>Propriedades para
-        fluxos</guilabel>), <xref linkend="editar_propriedades_fluxo"/> e clique em
-      <guibutton>OK</guibutton>. Para mais detalhes, veja <xref linkend="creating_flows"/>).</para>
-    <para><emphasis role="bold">Não há limitação</emphasis> para o número de fluxos na GêBR. Você pode criar quantos
-      fluxos quiser dentro de uma linha.</para>
-    <para>Depois de criados, os fluxos ficam <emphasis role="bold">visíveis no lado esquerdo da janela
+    </tip>
+    <section xml:id="flows_browser_create_flow">
+      <title>Criando Fluxos</title>
+      <para>Na GêBR, um <emphasis>Fluxo</emphasis> é uma <emphasis role="bold">sequência de
+          operações</emphasis> selecionadas pelo usuário. Estas operações, também chamadas
+        de <emphasis role="bold">programas</emphasis> do Fluxo, são separadas nas
+        seguintes <emphasis role="bold">categorias</emphasis>, de acordo com o propósito:</para>
+      <itemizedlist>
+        <listitem>
+          <para>Data Compression</para>
+        </listitem>
+        <listitem>
+          <para>Editing, Sorting and Manipulation</para>
+        </listitem>
+        <listitem>
+          <para>File tools</para>
+        </listitem>
+        <listitem>
+          <para>Filtering, Transforms and Attributes</para>
+        </listitem>
+        <listitem>
+          <para>Gain, NMO, Stack and Standard Processes</para>
+        </listitem>
+        <listitem>
+          <para>Graphics</para>
+        </listitem>
+        <listitem>
+          <para>Import/Export</para>
+        </listitem>
+        <listitem>
+          <para>Loops</para>
+        </listitem>
+        <listitem>
+          <para>Migration and Dip Moveout</para>
+        </listitem>
+        <listitem>
+          <para>Multiple Supression</para>
+        </listitem>
+        <listitem>
+          <para>Seismic Unix</para>
+        </listitem>
+        <listitem>
+          <para>Simulation and Model Building</para>
+        </listitem>
+        <listitem>
+          <para>Utilities</para>
+        </listitem>
+      </itemizedlist>
+      <para><emphasis role="bold">Criar um Fluxo</emphasis> significa <emphasis role="bold">selecionar e ordenar
+          programas</emphasis>, a partir das categorias acima. Vejamos como se faz na prática:</para>
+      <procedure>
+        <step>
+          <para>Na aba <guilabel>Projetos e Linhas</guilabel>, certifique-se de que a linha <emphasis>Minha primeira
+              linha</emphasis>, criada anteriormente, está selecionada.</para>
+        </step>
+        <step>
+          <para>Selecione a aba <guilabel>Fluxos</guilabel> e, em seguida, clique no
+            botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_criar_Fluxo.png"/></imageobject></inlinemediaobject></guiicon>.</para>
+        </step>
+        <step>
+          <para>
+            Na janela <guilabel>Propriedade para Fluxo</guilabel>, digite um
+            <emphasis>título</emphasis> para o Fluxo (por exemplo,
+            <userinput>Meu primeiro Fluxo</userinput>). Se desejar, digite também
+            uma breve <emphasis>descrição</emphasis> do Fluxo, o
+            <emphasis>autor</emphasis> e um <emphasis>e-mail</emphasis> para
+            contato. Feito isso, clique <guibutton>OK</guibutton>.
+          </para>
+        </step>
+        <step>
+          <para>
+            Selecione a aba <guilabel>Editor de Fluxo</guilabel>.  No lado
+            direito há uma lista com vários menus divididos em categorias.
+            Expanda uma categoria e escolha um menu para incluir no seu Fluxo
+            dando um duplo-clique sobre o item.
+          </para>
+        </step>
+        <step>
+          <para>
+            Se você precisar reordenar os programas, basta clicar sobre um item,
+            arrasta-lo para a posição desejada e solta-lo.
+          </para>
+          <figure>
+            <mediaobject>
+              <caption>
+                Na aba Editor de Fluxo, no lado direito da janela você verá a
+                lista de Menus. A partir dessa lista você pode adicionar
+                programas no seu Fluxo, que aparecerão no lado esquerdo da
+                janela.
+              </caption>
+              <imageobject>
+                <imagedata fileref="../images/GeBR_flow_browser_flow_assembling.png" />
+              </imageobject>
+            </mediaobject>
+          </figure>
+        </step>
+
+
+        <step>
+          <para>
+            Para habilitar um programa no seu Fluxo, você precisa clicar com o botão direito sobre ele e selecionar a opção
+            <emphasis>Configurado</emphasis>.
+
+            O ícone vai se alterar de
+            <guiicon>
+              <inlinemediaobject>
+                <imageobject>
+                  <imagedata fileref="../../common-images/icone_nao_configurado.png" />
+                </imageobject>
+              </inlinemediaobject>
+            </guiicon>
+            para
+            <guiicon>
+              <inlinemediaobject>
+                <imageobject>
+                  <imagedata fileref="../../common-images/icone_configurado.png" />
+                </imageobject>
+              </inlinemediaobject>
+            </guiicon>.
+          </para>
+          <figure>
+            <mediaobject>
+              <caption>
+                Para habilitar um programa, selecione a opção <guilabel>Configurado</guilabel>.
+              </caption>
+              <imageobject>
+                <imagedata fileref="../images/GeBR_flow_browser_flow_assembling_02.png" />
+              </imageobject>
+            </mediaobject>
+          </figure>
+          <tip>
+            <para>
+              Se você quer alterar a configuração de vários programas, selecione eles usando
+              <keycombo>
+                <keycap>Ctrl</keycap>
+                <mousebutton>Clique</mousebutton>
+              </keycombo>.
+              Depois clique com o botão direito sobre um dos programas
+              selecionados e escolha a opção <guilabel>Configurado</guilabel>.
+
+              <guiicon>
+                <inlinemediaobject>
+                  <imageobject>
+                    <imagedata fileref="../../common-images/icone_configurado.png" />
+                  </imageobject>
+                </inlinemediaobject>
+              </guiicon>.
+            </para>
+          </tip>
+          <important>
+            <para>
+              Para executar um Fluxo <emphasis role="bold">todos os programas</emphasis>
+              listados devem estar <emphasis role="bold">configurados</emphasis> (
+              <guiicon>
+                <inlinemediaobject>
+                  <imageobject>
+                    <imagedata fileref="../../common-images/icone_configurado.png" />
+                  </imageobject>
+                </inlinemediaobject>
+              </guiicon>).
+              Senão o Fluxo não será executado.
+            </para>
+          </important>
+          <important>
+            <para>
+              O estado de um programa também pode ser alterado utilizando a tecla
+              <emphasis>espaço</emphasis>, que cicla entre as três configurações,
+              nesta ordem: <emphasis>Não Configurado</emphasis>,
+              <emphasis>Desabilitado</emphasis> e
+              <emphasis>Configurado</emphasis>.  O significado desses estados
+              será descrito mais à frente.
+            </para>
+          </important>
+        </step>
+      </procedure>
+
+    <para><emphasis role="bold">Não há limitação</emphasis> para o número de Fluxos na GêBR. Você pode criar quantos
+      Fluxos quiser dentro de uma linha.</para>
+    <para>Depois de criados, os Fluxos ficam <emphasis role="bold">visíveis no lado esquerdo da janela
         principal</emphasis>, quando a aba <guilabel>Fluxos</guilabel> está selecionada. A caixa
-      <guilabel>Detalhes</guilabel>, localizada no lado direito da janela principal, exibe informações sobre o fluxo
+      <guilabel>Detalhes</guilabel>, localizada no lado direito da janela principal, exibe informações sobre o Fluxo
       selecionado.</para>
     <tip>
-      <para>Você pode <emphasis role="bold">mudar a posição</emphasis> de um fluxo na
+      <para>Você pode <emphasis role="bold">mudar a posição</emphasis> de um Fluxo na
         lista <emphasis role="bold">arrastando-o com o mouse</emphasis> para a posição desejada.</para>
     </tip>
     <tip>
       <para>Observe a <emphasis role="bold">barra de informações</emphasis> na parte de cima da janela principal,
-        logo abaixo do menu <guimenu>Ações</guimenu>. Ela mostra a árvore completa do fluxo que estiver
+        logo abaixo do menu <guimenu>Ações</guimenu>. Ela mostra a árvore completa do Fluxo que estiver
         selecionado.</para>
     </tip>
   </section>
-  <section xml:id="copiar_fluxos_area_tranferencia">
-    <title>Copiar fluxos para a área de transferência</title>
-    <para>A área de transferência provê o recurso popularmente conhecido como <emphasis role="bold">copiar e
-        colar</emphasis>. Na GêBR, um fluxo (ou um conjunto de fluxos) pode ser copiado para a área de transferência
+  <section xml:id="flows_browser_copy_flow">
+    <title>Copiar Fluxos</title>
+    <para>Na GêBR, um Fluxo (ou um conjunto de Fluxos) pode ser copiado para a área de transferência
       por meio do
-      botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_copiar_fluxo.png"/></imageobject></inlinemediaobject></guiicon> ou, mais prático, pelo conhecido atalho
+      botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_copiar_Fluxo.png"/></imageobject></inlinemediaobject></guiicon> ou, mais prático, pelo conhecido atalho
       <keycombo><keycap>Ctrl</keycap><keycap>C</keycap></keycombo>.</para>
     <tip>
-      <para>Você pode selecionar vários fluxos para serem copiados simultaneamente usando 
-        <keycombo><keycap>Ctrl</keycap><mousebutton>Clique com botão esquerdo do mouse</mousebutton></keycombo> ou 
+      <para>Você pode selecionar vários Fluxos para serem copiados simultaneamente usando 
+        <keycombo><keycap>Ctrl</keycap><mousebutton>Clique</mousebutton></keycombo> ou 
         <keycombo><keycap>Shift</keycap><mousebutton>Clique com botão esquerdo do mouse</mousebutton></keycombo>.</para>
     </tip>
   </section>
-  <section xml:id="colar_fluxos_area_tranferencia">
-    <title>Colar fluxos da área de transferência</title>
-    <para>Depois de ter sido selecionado e copiado <xref linkend="copiar_fluxos_area_tranferencia"/>, um fluxo (ou um
-      conjunto de fluxos) pode ser colado por meio do
-      botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_colar_fluxo.png"/></imageobject></inlinemediaobject></guiicon> ou, mais prático, pelo conhecido atalho
+  <section xml:id="flows_browser_paste_flow">
+    <title>Colar Fluxos</title>
+    <para>Depois de ter sido selecionado e copiado (<xref linkend="flows_browser_copy_flow"/>), um Fluxo (ou um
+      conjunto de Fluxos) pode ser colado por meio do
+      botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_colar_Fluxo.png"/></imageobject></inlinemediaobject></guiicon> ou, mais prático, pelo conhecido atalho
       <keycombo><keycap>Ctrl</keycap><keycap>V</keycap></keycombo>.</para>
     <tip>
-      <para>O fluxo (ou conjunto de fluxos) copiado anteriormente para a área de transferência pode ser colado
+      <para>O Fluxo (ou conjunto de Fluxos) copiado anteriormente para a área de transferência pode ser colado
         em <emphasis role="bold">qualquer linha</emphasis> existente, e não só na linha de origem. Basta alternar
         para a aba <guilabel>Projetos e Linhas</guilabel>, selecionar a linha desejada, voltar para a aba
-        <guilabel>Fluxos</guilabel> e colar o(s) fluxo(s).</para>
+        <guilabel>Fluxos</guilabel> e colar o(s) Fluxo(s). Desta forma a montagem de um Fluxo em uma linha
+      podem ser reaproveitada em outra linha.</para>
     </tip>
   </section>
-  <section xml:id="sec_3_2_4">
-    <title>Deletar fluxos</title>
-    <para>Para excluir um fluxo (ou um conjunto de fluxos), selecione-o e clique no botão 
+  <section xml:id="flows_browser_delete_flow">
+    <title>Deletar Fluxos</title>
+    <para>Para excluir um Fluxo (ou um conjunto de Fluxos), selecione-o e clique no botão 
       <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_apagar_projeto.png"/></imageobject></inlinemediaobject></guiicon>.</para>
     <tip>
-      <para>Você pode selecionar vários fluxos para serem excluidos simultaneamente usando 
+      <para>Você pode selecionar vários Fluxos para serem excluidos simultaneamente usando 
         <keycombo><keycap>Ctrl</keycap><mousebutton>Clique com botão esquerdo do mouse</mousebutton></keycombo> ou 
         <keycombo><keycap>Shift</keycap><mousebutton>Clique com botão esquerdo do mouse</mousebutton></keycombo>.</para>
     </tip>
   </section>
-  <section xml:id="editar_propriedades_fluxo">
-    <title>Editar as propriedades de um fluxo</title>
-    <para>Para editar as propriedades de um fluxo, selecione-o e clique no
+  <section xml:id="flows_browser_edit_properties_flow">
+    <title>Editar as propriedades de um Fluxo</title>
+    <para>Para editar as propriedades de um Fluxo, selecione-o e clique no
       botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_editar_propriedades_projeto.png"/></imageobject></inlinemediaobject></guiicon>.</para>
     <para>Na janela <guilabel>Propriedades para Fluxo</guilabel> você pode editar os campos
-      <guilabel>Título, Descrição, Autor e Email</guilabel>.</para>
+      <emphasis><guilabel>Título, Descrição, Autor</guilabel></emphasis> e <emphasis><guilabel>Email</guilabel></emphasis>.</para>
   </section>
-  <section xml:id="sec_3_2_6">
-    <title>Editar o dicionário de variáveis de um fluxo</title>
-    <para>Este recurso está documentado na <xref linkend="variaveis_dicionario"/>.</para>
+  <section xml:id="flows_browser_edit_dictionary">
+    <title>Editar o dicionário de variáveis de um Fluxo</title>
+    <para>Este recurso está documentado na <xref linkend="dictionary_variables"/>.</para>
   </section>
-  <section xml:id="sec_3_2_7">
-    <title>Salvar o estado de um fluxo</title>
-    <para>Ao trabalhar com fluxos na GêBR, você encontrará diversas situações em que é interessante usar um fluxo
-      existente como base para a criação de novos fluxos. Por exemplo, você pode querer fazer experiências com um
-      fluxo sutilmente diferente de um outro que já existe, mas sem ter que descartar ou modificar o fluxo
+  <section xml:id="flows_browser_save_state_flow">
+    <title>Salvar o estado de um Fluxo</title>
+    <para>Ao trabalhar com Fluxos na GêBR, você encontrará diversas situações em que é interessante usar um Fluxo
+      existente como base para a criação de novos Fluxos. Por exemplo, você pode querer fazer experiências com um
+      Fluxo sutilmente diferente de um outro que já existe, mas sem ter que descartar ou modificar o Fluxo
       original.</para>
-    <para>Uma forma de fazer isso é copiar e colar o fluxo (veja
-      as seções <xref linkend="copiar_fluxos_area_tranferencia"/>
-      e <xref linkend="colar_fluxos_area_tranferencia"/>), guardando o fluxo original e
-      editando a cópia. Outra forma é salvar o estado atual do fluxo, para poder editá-lo e, quando desejar,
-      retornar ao estado inicial. Para <emphasis role="bold">salvar o estado</emphasis> de um fluxo:</para>
+    <para>Uma forma de fazer isso é através de cópia-colagem de Fluxo (veja
+      as seções <xref linkend="flows_browser_copy_flow"/>
+      e <xref linkend="flows_browser_paste_flow"/>), guardando o Fluxo original e
+      editando a cópia. Outra forma é salvar o estado atual do Fluxo, para poder editá-lo e, quando desejar,
+      retornar ao estado inicial. Para <emphasis role="bold">salvar o estado</emphasis> de um Fluxo:</para>
     <procedure>
       <step>
-        <para>Selecione o fluxo e clique no
+        <para>Selecione o Fluxo e clique no
           botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_salvar_estado.png"/></imageobject></inlinemediaobject></guiicon>.</para>
       </step>
       <step>
-        <para>Se desejar, digite um comentário na janela <guilabel>Salvar estado do fluxo</guilabel>, para
+        <para>Se desejar, digite um comentário na janela <emphasis><guilabel>Salvar Estado do Fluxo</guilabel></emphasis>, para
           identificar o estado salvo.</para>
       </step>
       <step>
@@ -172,37 +339,37 @@
     </procedure>
     <note>
       <para><emphasis role="bold">Não há limitação</emphasis> para o número de estados. Você pode salvar quantos
-        estados quiser de um fluxo.</para>
+        estados quiser de um Fluxo.</para>
     </note>
     <para>Para abrir a lista de estados salvos, clique no
       botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_salvar_estado_lista.png"/></imageobject></inlinemediaobject></guiicon>, à direita do
       botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_salvar_estado.png"/></imageobject></inlinemediaobject></guiicon>, e então selecione o estado para o qual quer retornar. Sempre que
-      você selecionar um estado salvo na lista, o diálogo <guilabel>Fazer backup do estado atual?</guilabel> será
-      exibido. Se clicar em <guibutton>Sim</guibutton>, a janela <guilabel>Salvar estado do fluxo</guilabel> se
+      você selecionar um estado salvo na lista, o diálogo <emphasis><guilabel>Fazer backup do estado atual</guilabel></emphasis> será
+      exibido. Se clicar em <guibutton>Sim</guibutton>, a janela <emphasis><guilabel>Salvar estado do Fluxo</guilabel></emphasis> se
       abrirá, e você poderá salvar um novo estado. Se clicar em <guibutton>Não</guibutton>, a GêBR apenas reverterá
       para o estado escolhido, sem salvar o atual.</para>
     <tip>
       <para>Se você tem certeza de já ter salvo o estado atual, pode clicar com segurança
-        em <guibutton>Não</guibutton>, na janela <guilabel>Fazer backup do estado atual?</guilabel>. Isso evita encher
+        em <guibutton>Não</guibutton>, na janela <emphasis><guilabel>Fazer backup do estado atual?</guilabel></emphasis>. Isso evita encher
         a lista com estados redundantes.</para>
     </tip>
     <caution>
       <para>A GêBR preserva continuamente a lista de estados salvos. Mesmo que você desligue o computador, a lista
         será recuperada quando a GêBR for aberta novamente. Porém, se você <emphasis role="bold">deletar o
-          fluxo</emphasis>, os estados salvos serão <emphasis role="bold">perdidos imediatamente</emphasis>.</para>
+          Fluxo</emphasis>, os estados salvos serão <emphasis role="bold">perdidos imediatamente</emphasis>.</para>
     </caution>
   </section>
-  <section xml:id="sec_3_2_8">
-    <title>Importar um fluxo</title>
-    <para>A GêBR permite importar fluxos que tenham sido exportados
-      <xref linkend="exportar_fluxo"/>. Para fazer isso:</para>
+  <section xml:id="flows_browser_import_flow">
+    <title>Importar um Fluxo</title>
+    <para>A GêBR permite importar Fluxos que tenham sido exportados
+      <xref linkend="flows_browser_export_flow"/>. Para fazer isso:</para>
     <procedure>
       <step>
         <para>Certifique-se de ter  <emphasis role="bold">criado e selecionado uma linha</emphasis>, na aba 
-          <guilabel>Projetos e Linhas</guilabel>. Lembre-se que, na GêBR, fluxos só podem existir dentro de linhas
-          (veja este conceito na <xref linkend="projetos_linhas_fluxo_visao_geral"/>). Portanto,
-          para importar um fluxo é necessário <emphasis role="bold">selecionar uma linha existente</emphasis> (ou
-          <xref linkend="criar_nova_linha"/>, caso não exista nenhuma).</para>
+          <guilabel>Projetos e Linhas</guilabel>. Lembre-se que, na GêBR, Fluxos só podem existir dentro de linhas
+          (veja este conceito na <xref linkend="general_view"/>). Portanto,
+          para importar um Fluxo é necessário <emphasis role="bold">selecionar uma linha existente</emphasis> (ou
+          <xref linkend="flows_browser_create_flow"/>, caso não exista nenhuma).</para>
       </step>
       <step>
         <para>Selecione a aba 
@@ -210,7 +377,7 @@
           botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_importar_projeto.png"/></imageobject></inlinemediaobject></guiicon>.</para>
       </step>
       <step>
-        <para>Navegue pela janela <guilabel>Escolha arquivo para abrir</guilabel> e selecione o fluxo que deseja
+        <para>Navegue pela janela <emphasis><guilabel>Escolha arquivo para abrir</guilabel></emphasis> e selecione o Fluxo que deseja
           importar (apenas arquivos do tipo <filename class="extension">flw</filename> serão mostrados).</para>
       </step>
       <step>
@@ -218,16 +385,16 @@
           <guibutton>Abrir</guibutton>.</para>
       </step>
     </procedure>
-    <para>O fluxo importado é adicionado aos demais fluxos (se existirem) da linha que estiver selecionada no
+    <para>O Fluxo importado é adicionado aos demais Fluxos (se existirem) da linha que estiver selecionada no
       momento da importação.</para>
   </section>
-  <section xml:id="exportar_fluxo">
-    <title>Exportar um fluxo</title>
-    <para>Embora a GêBR preserve continuamente todos os dados, às vezes é desejável manter os fluxos em arquivos
-      (para compartilhamento ou cópia de segurança, por exemplo). Para exportar um fluxo:</para>
+  <section xml:id="flows_browser_export_flow">
+    <title>Exportar um Fluxo</title>
+    <para>Embora a GêBR preserve continuamente todos os dados, às vezes é desejável manter os Fluxos em arquivos
+      (para compartilhamento ou cópia de segurança, por exemplo). Para exportar um Fluxo:</para>
     <procedure>
       <step>
-        <para>Selecione o fluxo que deseja salvar.</para>
+        <para>Selecione o Fluxo que deseja salvar.</para>
       </step>
       <step>
         <para>Clique no
@@ -235,7 +402,7 @@
       </step>
       <step>
         <para>Na janela 
-          <guilabel>Escolha arquivo para salvar</guilabel>, selecione uma pasta e digite um nome para o arquivo (a
+          <emphasis><guilabel>Escolha arquivo para salvar</guilabel></emphasis>, selecione uma pasta e digite um nome para o arquivo (a
           GêBR determina automaticamente a extensão <filename class="extension">flw</filename>).</para>
       </step>
       <step>
@@ -244,45 +411,63 @@
       </step>
     </procedure>
   </section>
-  <section xml:id="executar_fluxo_aba_fluxos">
-    <title>Executando fluxos</title>
-    <para>O botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_executar_fluxo.png" /></imageobject></inlinemediaobject></guiicon>
-      é utilizado para executar fluxos, e está presente tanto na aba <guilabel>Fluxos</guilabel> quanto na aba <guilabel>Editor de Fluxo</guilabel>.
+  <section xml:id="flows_browser_execute_flow">
+    <title>Executando Fluxos</title>
+    <para>O botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_executar_Fluxo.png" /></imageobject></inlinemediaobject></guiicon>
+      é utilizado para executar Fluxos, e está presente tanto na aba <emphasis><guilabel>Fluxos</guilabel></emphasis> quanto na aba <emphasis><guilabel>Editor de Fluxo</guilabel></emphasis>.
       <figure>
         <mediaobject>
           <caption>
-            Na aba Fluxos, entre outras funções, é possível executar vários Fluxos
-            sequencialmente. Primeiro selecione os Fluxos desejados e clique em 
-            <guiicon>
-              <inlinemediaobject>
-                <imageobject>
-                  <imagedata fileref="../../common-images/botao_executar_fluxo.png" />
-                </imageobject>
-              </inlinemediaobject>
-          </guiicon>.</caption>
+            Na aba Fluxos você possível selecionar vários Fluxos 
+            para execução. 
+          .</caption>
+
           <imageobject>
             <imagedata fileref="../images/GeBR_flow_browser.png" />
           </imageobject>
         </mediaobject>
       </figure>
     </para>
-    <tip>Você pode selecionar vários Fluxos e executá-los
+      <para>A execução múltipla pode ocorrer de dois modos:
+      </para>
+    <itemizedlist>
+      <listitem><para>
+        Sequencial: os Fluxos são executados na ordem em que estão posicionados 
+        na lista de Fluxos ao lado esquerdo da janela. Se você deseja executá-los em 
+        ordem, basta reordenar os Fluxos através do mouse (arrastar e soltar). 
+        Para executar neste modo, clique em
+        <guiicon>
+          <inlinemediaobject>
+            <imageobject>
+              <imagedata fileref="../../common-images/botao_executar_Fluxo.png" />
+            </imageobject>
+          </inlinemediaobject>
+        </guiicon> ou utilize a combinação Ctrl+R.
+      </para></listitem>
+      <listitem><para>
+        Paralela: os Fluxos são executados de modo simultâneo. Este é o caso quando 
+        não existe interdependência entre os Fluxos. Para executar neste modo, 
+        utilize a combinação Ctrl+Shift+R.
+      </para></listitem>
+    </itemizedlist>
+    <para>
+    </para>
+    <tip>Você pode executar vários Fluxos  
       <emphasis role="bold">sequencialmente</emphasis> clicando Ctrl+R.</tip>
-    <tip>Você pode selecionar vários Fluxos e executá-los
+    <tip>Você pode executar vários Fluxos 
       <emphasis role="bold">paralelamente</emphasis> clicando Ctrl+Shift+R.</tip>
-    <caution>Ao executar vários Fluxos, a configuração do primeiro será utilizada em todos os Fluxos.</caution>
+    <important>Ao executar vários Fluxos, as configurações do primeiro será utilizada em todos os Fluxos.</important>
   </section>
-  <section xml:id="sec_3_2_11">
+  <section xml:id="flows_browser_edit_comments_flow">
     <title>Editar comentários da aba Fluxos</title>
-    <para>Este comando aparece repetidamente nas abas <guilabel>Projetos e Linhas</guilabel> e em
-      <guilabel>Fluxos</guilabel>. Através dele, o usuário pode adicionar comentários à linha ou ao fluxo criados.
-      Ver <xref linkend="editar_comentarios"/>.</para>
+    <para>Através desta opção, o usuário pode adicionar comentários à linha ou ao Fluxo criados.
+      Veja <xref linkend="projects_lines_edit_comments_project"/>.</para>
   </section>
-  <section xml:id="visualizar_relatorio_fluxo">
+  <section xml:id="flows_browser_view_report_flow">
     <title>Visualizar relatório da aba Fluxos</title>
     <para>Este comando aparece repetidamente nas abas <guilabel>Projetos e Linhas</guilabel> e em
       <guilabel>Fluxos</guilabel>. Através dele, em ambas abas, pode-se gerar/visualizar o relatório da linha ou do
-      fluxo em questão, com a pequena diferença de que é possível englobar o relatório do fluxo no relatório da
-      linha. As demais funcionalidades são descritas na <xref linkend="visualizar_relatorio"/>.</para>
+      Fluxo em questão, com a pequena diferença de que é possível englobar o relatório do Fluxo no relatório da
+      linha. As demais funcionalidades são descritas na <xref linkend="projects_lines_view_report_project"/>.</para>
   </section>
 </section>

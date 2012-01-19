@@ -18,225 +18,222 @@
     </imageobject>
   </mediaobject> 
   <para>Como visto na  
-    <xref linkend="executar_fluxo" />, a GêBR troca para a aba 
+    <xref linkend="flow_editor_execute_flow" />, a GêBR troca para a aba 
     <guilabel>Controle de tarefas</guilabel> sempre que um Fluxo for executado.</para>
-    <para>Esta aba contém três seções:</para>
-  	<itemizedlist>
-      <listitem><para>Barra de ferramentas: Operações nas tarefas</para></listitem>
-      <listitem><para>Painel esquerdo: Lista de tarefas</para></listitem>
-      <listitem><para>Painel direito: Detalhes de uma tarefa selecionada</para></listitem>
-  	</itemizedlist>
-  	
-    <section xml:id="sec_6_1">
-      <title>Barra de ferramentas</title>
-      <mediaobject>
-        <caption>Barra de ferramentas da aba <guilabel>Controle de Tarefas</guilabel></caption>
-        <imageobject>
-          <imagedata fileref="../images/GeBR_jc_toolbar.png" />
-        </imageobject>
-      </mediaobject>
-      <para>Nesta aba você pode 
-        <emphasis role="bold">acompanhar</emphasis> e, se desejar, 
-        <emphasis role="bold">interromper</emphasis> a execução da tarefa. 
-        Os comandos disponíveis são:
-        are:</para>
-      <itemizedlist>
-        <listitem>
-          <para>Salvar as informações da tarefa em um arquivo</para>
-        </listitem>
-        <listitem>
-          <para>Apagar uma tarefa</para>
-        </listitem>
-        <listitem>
-          <para>Cancelar uma tarefa</para>
-        </listitem>
-        <listitem>
-          <para>Filtrar as tarefas</para>
-        </listitem>
-      </itemizedlist>
-      <section xml:id="sec_6_1_1">
-        <title>Salvar 
-          <guiicon>
-            <inlinemediaobject>
-              <imageobject>
-                <imagedata fileref="../../common-images/botao_salvar_log.png" />
-              </imageobject>
-            </inlinemediaobject>
-        </guiicon></title>
-        <para>Salvar em disco a saída da tarefa selecionada.</para>
-      </section>
-      <section xml:id="sec_6_1_2">
-        <title>Apagar 
-          <guiicon>
-            <inlinemediaobject>
-              <imageobject>
-                <imagedata fileref="../../common-images/trash-empty.png" />
-              </imageobject>
-            </inlinemediaobject>
-        </guiicon></title>
-        <para>Apaga a tarefa selecionada do <guilabel>Controle de Tarefas</guilabel>. 
-          É necessário cautela pois este processo é irreversível.</para>
-        <para>Você pode apenas apagar tarefas que não estão em execução ( 
-          <guiicon>
-            <inlinemediaobject>
-              <imageobject>
-                <imagedata fileref="../../common-images/icone_tarefa_concluida_sucesso.png" />
-              </imageobject>
-            </inlinemediaobject>
-          </guiicon> ou 
-          <guiicon>
-            <inlinemediaobject>
-              <imageobject>
-                <imagedata fileref="../../common-images/icone_tarefa_terminada_erro.png" />
-              </imageobject>
-            </inlinemediaobject>
-        </guiicon> ).</para>
-      </section>
-      <section xml:id="sec_6_1_3">
-        <title>Cancelar 
-          <guiicon>
-            <inlinemediaobject>
-              <imageobject>
-                <imagedata fileref="../../common-images/botao_terminar_tarefa.png" />
-              </imageobject>
-            </inlinemediaobject>
-        </guiicon></title>
-        <para>Você pode cancelar uma tarefa que está executando ou em espera.
-          Quando uma tarefa terminar desta maneira, ela irá aparecer marcada com
-          <guiicon>
-            <inlinemediaobject>
-              <imageobject>
-                <imagedata fileref="../../common-images/icone_tarefa_terminada_erro.png" />
-              </imageobject>
-            </inlinemediaobject>
-        </guiicon>.</para>
-      </section>
-      <section xml:id="sec_6_1_4">
-        <title>Filtro 
-          <guiicon>
-            <inlinemediaobject>
-              <imageobject>
-                <imagedata fileref="../../common-images/filter.png" />
-              </imageobject>
-            </inlinemediaobject>
-        </guiicon></title>
-        <para>A GêBR oferece a opção de ver apenas os resultados desejados.</para>
-        <para>Você pode filtrar os resultados por dois critérios:</para>
+  <para>Esta aba contém três seções:</para>
+  <itemizedlist>
+    <listitem><para>Barra de ferramentas: Operações nas tarefas</para></listitem>
+    <listitem><para>Painel esquerdo: Lista de tarefas</para></listitem>
+    <listitem><para>Painel direito: Detalhes de uma tarefa selecionada</para></listitem>
+  </itemizedlist>
+
+  <section xml:id="sec_6_1">
+    <title>Barra de ferramentas</title>
+    <mediaobject>
+      <caption>Barra de ferramentas da aba <guilabel>Controle de Tarefas</guilabel></caption>
+      <imageobject>
+        <imagedata fileref="../images/GeBR_jc_toolbar.png" />
+      </imageobject>
+    </mediaobject>
+    <para>Nesta aba você pode 
+      <emphasis role="bold">acompanhar</emphasis> e, se desejar, 
+      <emphasis role="bold">interromper</emphasis> a execução da tarefa. 
+      Os comandos disponíveis são:</para>
         <itemizedlist>
-          <listitem>Grupo/Servidor</listitem>
-          <listitem>Estado</listitem>
+          <listitem>
+            <para>Salvar as informações da tarefa em um arquivo</para>
+          </listitem>
+          <listitem>
+            <para>Apagar uma tarefa</para>
+          </listitem>
+          <listitem>
+            <para>Cancelar uma tarefa</para>
+          </listitem>
+          <listitem>
+            <para>Filtrar as tarefas</para>
+          </listitem>
         </itemizedlist>
-        <mediaobject>
-          <imageobject>
-            <imagedata fileref="../images/GeBR_jc_filter.png" />
-          </imageobject>
-        </mediaobject>
-      </section>
-      <tip>Como em qualquer outro lugar na GêBR, muitas das funcionalidades da barra de tarefas
-        podem ser acessadas no menu de contexto, usando o botão direito do mouse.</tip>
-    </section>
-    <section xml:id="sec_6_2">
-      <title>Painel Esquerdo</title>
-      <para>No painel esquerdo, a GêBR aparesenta a lista de tarefas executadas pelo usuário,
-        ordenada pelo momento de execução. Cada tarefa pode ser exibida em um dos três estados:
-      </para>
-      <itemizedlist>
-        <listitem><para>Executando (
+        <section xml:id="sec_6_1_1">
+          <title>Salvar 
             <guiicon>
               <inlinemediaobject>
                 <imageobject>
-                  <imagedata fileref="../../common-images/icone_tarefa_em_execucao.png" />
+                  <imagedata fileref="../../common-images/botao_salvar_log.png" />
                 </imageobject>
               </inlinemediaobject>
-        </guiicon>): tarefa em execução;</para></listitem>
-        <listitem><para>Finalizado (
+          </guiicon></title>
+          <para>Salvar em disco a saída da tarefa selecionada.</para>
+        </section>
+        <section xml:id="sec_6_1_2">
+          <title>Apagar 
+            <guiicon>
+              <inlinemediaobject>
+                <imageobject>
+                  <imagedata fileref="../../common-images/trash-empty.png" />
+                </imageobject>
+              </inlinemediaobject>
+          </guiicon></title>
+          <para>Apaga a tarefa selecionada do <guilabel>Controle de Tarefas</guilabel>. 
+            É necessário cautela pois este processo é irreversível e pode comprometer a execução de outras tarefas.</para>
+          <para>Você pode apenas apagar tarefas que não estão em execução ( 
             <guiicon>
               <inlinemediaobject>
                 <imageobject>
                   <imagedata fileref="../../common-images/icone_tarefa_concluida_sucesso.png" />
                 </imageobject>
               </inlinemediaobject>
-        </guiicon>): tarefa já concluída;</para></listitem>
-        <listitem><para>Cancelado (
+            </guiicon> ou 
             <guiicon>
               <inlinemediaobject>
                 <imageobject>
                   <imagedata fileref="../../common-images/icone_tarefa_terminada_erro.png" />
                 </imageobject>
               </inlinemediaobject>
-        </guiicon>): tarefa interrompida pelo usuário</para></listitem>
-        <listitem><para>Em Fila (
+          </guiicon> ).</para>
+        </section>
+        <section xml:id="sec_6_1_3">
+          <title>Cancelar 
             <guiicon>
               <inlinemediaobject>
                 <imageobject>
-                  <imagedata fileref="../../common-images/chronometer.png" />
+                  <imagedata fileref="../../common-images/botao_terminar_tarefa.png" />
                 </imageobject>
               </inlinemediaobject>
-        </guiicon>): esperando por outra tarefa.</para></listitem>
-      </itemizedlist>
-      <mediaobject>
-        <imageobject>
-          <imagedata fileref="../images/GeBR_jc_left_pane.png" />
-        </imageobject>
-      </mediaobject>
-    </section>
-    <section>
-      <title>Painel Direito</title>
-      <mediaobject>
-        <imageobject>
-          <imagedata fileref="../images/GeBR_jc_details.png" />
-        </imageobject>
-      </mediaobject>
-      <para>Na parte superior, são exibidas informações da tarefa selecionada.
-        Mais informações são exibidas clicando em <emphasis>Detalhes</emphasis>.
-        Entre as informações exibidas estão:</para>
-      <itemizedlist>
-        <listitem><para>momento em que a tarefa começou/finalizou</para></listitem>
-        <listitem><para>arquivos de entra/saída/erro</para></listitem>
-        <listitem><para>grupo de servidores onde a tarefa foi executada</para></listitem>
-      </itemizedlist>
-      <para>Você ainda pode consultar quais maquina foram efetivamente usadadas do grupo
-        e como foi feita a distribuição do trabalho, clicando em
-        <guiicon>
-          <inlinemediaobject>
+          </guiicon></title>
+          <para>Você pode cancelar uma tarefa que está executando ou em espera.
+            Quando uma tarefa terminar desta maneira, ela irá aparecer marcada com
+            <guiicon>
+              <inlinemediaobject>
+                <imageobject>
+                  <imagedata fileref="../../common-images/icone_tarefa_terminada_erro.png" />
+                </imageobject>
+              </inlinemediaobject>
+          </guiicon>.</para>
+        </section>
+        <section xml:id="sec_6_1_4">
+          <title>Filtro 
+            <guiicon>
+              <inlinemediaobject>
+                <imageobject>
+                  <imagedata fileref="../../common-images/filter.png" />
+                </imageobject>
+              </inlinemediaobject>
+          </guiicon></title>
+          <para>A GêBR oferece a opção de ver apenas os resultados desejados.</para>
+          <para>Você pode filtrar os resultados por dois critérios:</para>
+          <itemizedlist>
+            <listitem>Grupo/Servidor</listitem>
+            <listitem>Estado</listitem>
+          </itemizedlist>
+          <mediaobject>
             <imageobject>
-              <imagedata fileref="../../common-images/gebr-speed-verylow.png" />
+              <imagedata fileref="../images/GeBR_jc_filter.png" />
             </imageobject>
-          </inlinemediaobject>
-      </guiicon>.</para>
-      <mediaobject>
-        <imageobject>
-          <imagedata fileref="../images/GeBR_jc_more_details.png" />
-        </imageobject>
-      </mediaobject>
-      As informações fornecidas são:
-      <itemizedlist>
-        <listitem> <para>Servidor do GêBR-maestro</para></listitem>
-        <listitem> <para>Máquina da GêBR</para></listitem>
-        <listitem> <para>Número de processadores totais utilizados na execução</para></listitem>
-        <listitem> <para>Distribuição das tarefas nos servidores</para></listitem>
-      </itemizedlist>
+          </mediaobject>
+        </section>
+        <tip>Como em qualquer outro lugar na GêBR, muitas das funcionalidades da barra de tarefas
+          podem ser acessadas no menu de contexto, usando o botão direito do mouse.</tip>
+      
+      </section>
+      <section xml:id="sec_6_2">
+        <title>Painel Esquerdo</title>
+        <para>No painel esquerdo, a GêBR apresenta a lista de tarefas executadas pelo usuário,
+          ordenada pelo momento de execução. Cada tarefa pode ser exibida em um dos três estados:
+        </para>
+        <itemizedlist>
+          <listitem><para>Executando (
+              <guiicon>
+                <inlinemediaobject>
+                  <imageobject>
+                    <imagedata fileref="../../common-images/icone_tarefa_em_execucao.png" />
+                  </imageobject>
+                </inlinemediaobject>
+          </guiicon>): tarefa em execução;</para></listitem>
+          <listitem><para>Finalizado (
+              <guiicon>
+                <inlinemediaobject>
+                  <imageobject>
+                    <imagedata fileref="../../common-images/icone_tarefa_concluida_sucesso.png" />
+                  </imageobject>
+                </inlinemediaobject>
+          </guiicon>): tarefa já concluída;</para></listitem>
+          <listitem><para>Cancelado (
+              <guiicon>
+                <inlinemediaobject>
+                  <imageobject>
+                    <imagedata fileref="../../common-images/icone_tarefa_terminada_erro.png" />
+                  </imageobject>
+                </inlinemediaobject>
+          </guiicon>): tarefa interrompida pelo usuário</para></listitem>
+          <listitem><para>Em Fila (
+              <guiicon>
+                <inlinemediaobject>
+                  <imageobject>
+                    <imagedata fileref="../../common-images/chronometer.png" />
+                  </imageobject>
+                </inlinemediaobject>
+          </guiicon>): esperando por outra tarefa.</para></listitem>
+        </itemizedlist>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="../images/GeBR_jc_left_pane.png" />
+          </imageobject>
+        </mediaobject>
+      </section>
+      <section>
+        <title>Painel Direito</title>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="../images/GeBR_jc_details.png" />
+          </imageobject>
+        </mediaobject>
+        <para>Na parte superior, são exibidas informações da tarefa selecionada.
+          Mais informações são exibidas clicando em <emphasis>Detalhes</emphasis>.
+          Entre as informações exibidas estão:</para>
+        <itemizedlist>
+          <listitem><para>momento em que a tarefa começou/finalizou</para></listitem>
+          <listitem><para>arquivos de entra/saída/erro</para></listitem>
+          <listitem><para>grupo de servidores onde a tarefa foi executada</para></listitem>
+        </itemizedlist>
+        <para>Você ainda pode consultar quais maquina foram efetivamente usadadas do grupo
+          e como foi feita a distribuição do trabalho, clicando em
+          <guiicon>
+            <inlinemediaobject>
+              <imageobject>
+                <imagedata fileref="../../common-images/gebr-speed-verylow.png" />
+              </imageobject>
+            </inlinemediaobject>
+        </guiicon>.</para>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="../images/GeBR_jc_more_details.png" />
+          </imageobject>
+        </mediaobject>
+        As informações fornecidas são:
+        <itemizedlist>
+          <listitem> <para>Servidor do GêBR-maestro</para></listitem>
+          <listitem> <para>Máquina da GêBR</para></listitem>
+          <listitem> <para>Número de processadores totais utilizados na execução</para></listitem>
+          <listitem> <para>Distribuição das tarefas nos servidores</para></listitem>
+        </itemizedlist>
 
-      <mediaobject>
-        <imageobject>
-          <imagedata fileref="../images/GeBR_jc_output.png" />
-        </imageobject>
-      </mediaobject>
-      <para>Os resultados (saída padrão) da tarefa são mostrados. 
-        A saída redirecionada não é exibida.  
-        The results (standard output) of the flow are shown. The redirected output are not
-        exhibited. Clicando com o botão direito do mouse nesta janela, um menu de opção é exibido,
-        onde você pode habilitar/desabilidar quebra de linha automática e rolagem automática da janela
-        conforme a saída é gerada.</para>
-      <mediaobject>
-        <imageobject>
-          <imagedata fileref="../images/GeBR_jc_command_line.png" />
-        </imageobject>
-      </mediaobject>
-      <para>Você pode também consultar as linhas de comando executadas pela GêBR.
-        Você precisa apenas mudar para a aba Linha de Comando.
-        As linhas de comando são portáveis e podem ser copiadas-coladas em um terminal.</para>
-    </section>
-  </section>
-  
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="../images/GeBR_jc_output.png" />
+          </imageobject>
+        </mediaobject>
+        <para>Os resultados (saída padrão) da tarefa são mostrados. 
+          A saída redirecionada não é exibida. Clicando com o botão direito do mouse nesta janela, um menu de opção é exibido,
+          onde você pode habilitar/desabilitar quebra de linha automática e rolagem automática da janela
+          conforme a saída é gerada.</para>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="../images/GeBR_jc_command_line.png" />
+          </imageobject>
+        </mediaobject>
+        <para>Você pode também consultar as linhas de comando executadas pela GêBR.
+          As linhas de comando são portáveis e podem ser copiadas-coladas em um terminal. Para isso, vá à aba <guilabel>Linha de Comando</guilabel>, na parte inferior da janela do <guilabel>Controle de Tarefas</guilabel> e consultar as linhas de comando dos fluxo. No caso de fluxos paralelizáveis, as linhas de comando estarão separadas de acordo com a divisão de tarefas realizada pela GêBR.</para>
+          </section>
+        </section>
+
 

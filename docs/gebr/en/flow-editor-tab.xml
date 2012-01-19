@@ -311,9 +311,8 @@
 			execution. To execute after a specific Flow, instead of executing 
 			<emphasis>"Immediately"</emphasis>, switch to the Flow Editor Tab and choose the "After 
 			<emphasis>Flow A</emphasis>".</para>
-		<para>By default the Flows are executed on the Maestro group <xref linkend="servers_configuration"/>. 
-			More details on the definition and selection of servers and groups of servers can be found in 
-			<xref linkend="menu" />.</para>
+		<para>By default the Flows are executed on the Maestro group . 
+			More details on the definition and selection of servers and groups of servers can be found in <xref linkend="servers_configuration"/>.</para>
 		<para>In the Flow Editor Tab, even if you have selected several Flow from the Flows Tab, when
 			you click on 
 			<guiicon>

@@ -38,12 +38,12 @@
       <listitem>
         Nasce o conceito de maestro, permitindo que a GêBR execute trabalhos em
         múltiplas máquinas.  (veja <xref linkend="servers_configuration" /> e
-        <xref linkend="multiple_machines" />).
+        <xref linkend="flow_editor_multiple_machines" />).
       </listitem>
       <listitem>
         Agora é possível controlar a prioridade e o número de processadores
-        usados na execução de trabalhos (veja <xref linkend="multi_cores" /> e
-        <xref linkend="priority_execution" />).
+        usados na execução de trabalhos (veja <xref linkend="flow_editor_multicores" /> e
+        <xref linkend="flow_editor_priority_execution" />).
       </listitem>
       <listitem>
         A interface renovada adiciona novas funcionalidades e melhora a

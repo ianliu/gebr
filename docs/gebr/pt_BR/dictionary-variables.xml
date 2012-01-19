@@ -6,19 +6,23 @@
   xmlns:xlink="http://www.w3.org/1999/xlink"
   lang="pt_BR"
   version="5.0"
-  xml:id="variaveis_dicionario">
+  xml:id="dictionary_variables">
 
   <title>Variáveis</title>
+<para>
+  A GêBR estende o conceito de variavéis da programação computacional à manipulação de projetos, linhas e fluxos. A utilização de variáveis pode auxiliar na legibilidade e de código, portabilidade e na edição dinâmica de propriedades dentro de seu processamento.
+  
+</para>
   <section xml:id="janela_dicionario">
-    <title>O dicionário</title>
-    <para>O dicionário é um recurso muito flexível, que pode ser utilizado de formas diferentes e para diversos fins, e foi totalmente reformulado na 
-      <emphasis role="bold">versão 0.14 da GêBR</emphasis>.</para>
-    <para>Agora o dicionário, como os parâmetros de programa, aceita expressões, podendo assim definir variáveis mais complexas,
-      tornando-se uma ferramenta muito interessante na construção de fluxos. Durante esta seção vamos apresentar exemplos do uso de variáveis em um fluxo.</para>
+    <title>O dicionário de variáveis</title>
+  
+
+    <para>O dicionário é um recurso muito flexível, que pode ser utilizado com diversos fins.</para>
+    <para>O dicionário, assim como os parâmetros de programa, aceita expressões, e pode definir variáveis mais complexas, tornando-se uma ferramenta muito interessante na construção de Fluxos. Nesta seção vamos apresentar exemplos do uso de variáveis em um Fluxo.</para>
     <para>A seguir um exemplo simples de como definir uma variável no dicionário:</para>
     <procedure>
       <step>
-        <para>Crie um fluxo e insira nele um programa muito simples chamado 
+        <para>Crie um Fluxo e insira nele um programa muito simples chamado 
           <guimenuitem>Echo</guimenuitem>, cuja única função é mostrar na saída o texto escrito
           (você encontra este programa na categoria 
           <guimenu>Shell tools</guimenu>, na aba 
@@ -46,10 +50,10 @@
           para <emphasis role="bold">editar o dicionário de variáveis</emphasis>.</para>
       </step>
       <step>
-        <para>Na janela que se abre (<guilabel>Dicionário de variáveis para fluxo</guilabel>), clique em <emphasis>Nova</emphasis> no escopo de <emphasis role="bold">Fluxo</emphasis>.
-          Preencha o campo <emphasis>Palavra-chave</emphasis> (este será o nome de sua variável) com <emphasis role="bold">var1</emphasis>. Em seguida, aperte enter para prosseguir para o próximo campo, o campo <emphasis>Valor</emphasis>. Antes de preenchê-lo, será 
+        <para>Na janela que se abre (<guilabel>Dicionário de variáveis para Fluxo</guilabel>), clique em <emphasis>Nova</emphasis> no escopo de <emphasis role="bold">Fluxo</emphasis>.
+          Preencha o campo <emphasis>Palavra-chave</emphasis> (este será o nome de sua variável) com <emphasis role="bold">var1</emphasis>. Em seguida, aperte <keycap>Enter</keycap> para prosseguir para o próximo campo, o campo <emphasis>Valor</emphasis>. Antes de preenchê-lo, será 
           necessário escolher um tipo de dado para a sua variável recém criada (<guimenuitem>Número</guimenuitem> ou <guimenuitem>Texto</guimenuitem>), escolha <guimenuitem>Número</guimenuitem>. O cursor do mouse agora estará localizado no campo <emphasis>Valor</emphasis>, preencha esse campo com o número 
-          <emphasis role="bold">10</emphasis> e pressione enter novamente.</para> O último campo é o campo <emphasis>Comentário</emphasis>. Preencha esse campo com algum comentário, descrevendo a função da sua variável recém criada. Lembrando que o comentário é opcional e pode ser deixado em branco.
+          <emphasis role="bold">10</emphasis> e pressione <keycap>Enter</keycap> novamente.</para> O último campo é o campo <emphasis>Comentário</emphasis>. Preencha esse campo com algum comentário, descrevendo a função da sua variável recém criada. Lembrando que o comentário é opcional e pode ser deixado em branco.
         <para>Ao terminar, sua janela deve se parecer com a seguinte:</para>
         <figure>
           <mediaobject>
@@ -119,24 +123,24 @@
     <important>
       <para>Você pode definir a visibilidade das variáveis, compartimentando-as nas listas
         <guilabel>Projeto</guilabel>, <guilabel>Linha</guilabel> e <guilabel>Fluxo</guilabel>. Variáveis pertencentes
-        à lista <guilabel>Projeto</guilabel> são visíveis para <emphasis role="bold">todos os fluxos</emphasis> de
+        à lista <guilabel>Projeto</guilabel> são visíveis para <emphasis role="bold">todos os Fluxos</emphasis> de
         todas as linhas do projeto selecionado. Variáveis pertencentes à lista <guilabel>Linha</guilabel> são visíveis
-        apenas para os <emphasis role="bold">fluxos da linha selecionada</emphasis>. Variáveis pertencentes à
-        lista <guilabel>Fluxo</guilabel> são visíveis apenas para o <emphasis role="bold">fluxo
+        apenas para os <emphasis role="bold">Fluxos da linha selecionada</emphasis>. Variáveis pertencentes à
+        lista <guilabel>Fluxo</guilabel> são visíveis apenas para o <emphasis role="bold">Fluxo
           selecionado</emphasis>.</para>
     </important>
   </section>
 
   <section xml:id="variavel_iter">
     <title>A variável iter</title>
-    <para>Como vimos na seção <xref linkend="loop"/>, a GêBR permite o uso de loops, através do programa <guimenuitem>Loop</guimenuitem>. Juntamente com esse programa, temos acesso a uma variável
+    <para>Como vimos na seção <xref linkend="flow_editor_loop"/>, a GêBR permite o uso de loops, através do programa <guimenuitem>Loop</guimenuitem>. Juntamente com esse programa, temos acesso a uma variável
       especial, chamada <emphasis role="bold">iter</emphasis>. A seguir, mostraremos um exemplo de uso desta variável:</para>
     <procedure>
       <step>
         <para>Vamos supor que queiramos saber em qual dia da semana serão as festas de fim de ano nos próximos 5 anos. Para esse fim, necessitamos do calendário do mês de Dezembro desses anos.
           Para isso, utilizaremos o programa <guimenuitem>Calendar</guimenuitem> (você encontra este programa na categoria <guimenu>Shell tools</guimenu>, 
           na aba <guilabel>Editor de Fluxo</guilabel>).</para>
-        <para>Portanto, utilizando o preenchimento dos parâmetros proposto no exemplo da seção <xref linkend="loop"/>, teremos a variável <emphasis role="bold">iter</emphasis>
+        <para>Portanto, utilizando o preenchimento dos parâmetros proposto no exemplo da seção <xref linkend="flow_editor_loop"/>, teremos a variável <emphasis role="bold">iter</emphasis>
           no dicionário como na janela a seguir.</para>
         <figure>
           <mediaobject>
@@ -175,7 +179,7 @@
           </mediaobject>
         </figure>
         <important>
-          <para>O programa <guimenuitem>Loop</guimenuitem> pode usar apenas variáveis definidas na Linha e no Projeto, os quais aquele fluxo pertence.</para>  
+          <para>O programa <guimenuitem>Loop</guimenuitem> pode usar apenas variáveis definidas na Linha e no Projeto, os quais aquele Fluxo pertence.</para>  
         </important>
       </step>
       <step>
@@ -198,11 +202,11 @@
           o valor resolvido da variável <emphasis role="bold">iter</emphasis>, assim podemos verificar que iremos percorrer os anos que queriamos.</para>
       </step>
       <step>
-        <para>Agora, com o programa preenchido corretamente, executamos o programa (assunto abordado na seção <xref linkend="executar_fluxo"/>), 
+        <para>Agora, com o programa preenchido corretamente, executamos o programa (assunto abordado na seção <xref linkend="flow_editor_execute_flow"/>), 
           e visualizar quando serão as festas de fim de ano para os próximos 5 anos.</para>
         <figure>
           <mediaobject>
-            <caption>Resultado da execução do fluxo, na aba <guilabel>Controle de Tarefas</guilabel>.</caption>
+            <caption>Resultado da execução do Fluxo, na aba <guilabel>Controle de Tarefas</guilabel>.</caption>
             <imageobject>
               <imagedata fileref="../images/exemplo_iter_6.png"/>
             </imageobject>
@@ -210,7 +214,7 @@
         </figure>
       </step>
     </procedure>
-    <para>Este foi um exemplo simples do uso da variável <emphasis role="bold">iter</emphasis> em um fluxo, mas podemos notar que o uso de loop e de variáveis
+    <para>Este foi um exemplo simples do uso da variável <emphasis role="bold">iter</emphasis> em um Fluxo, mas podemos notar que o uso de loop e de variáveis
       definidas no dicionário podem facilitar muito nossas tarefas, deixando todo o processo mais dinâmico.</para>
   </section>	
   <section xml:id="variaveis_recursos">
@@ -245,7 +249,7 @@
               mais flexível e dinâmica, dado que uma variável só pode utilizar uma outra que está definida acima dela, tornando assim este recurso muito importante.</para>
             <figure>
               <mediaobject>
-                <caption>Resultado da execução do fluxo, na aba <guilabel>Controle de Tarefas</guilabel>.</caption>
+                <caption>Resultado da execução do Fluxo, na aba <guilabel>Controle de Tarefas</guilabel>.</caption>
                 <imageobject>
                   <imagedata fileref="../images/recurso_dict_1.png"/>
                 </imageobject>
@@ -260,7 +264,7 @@
           <listitem>
             <para>O dicionário conta com uma validação de suas variáveis de uma forma totalmente dinâmica, ocorrendo revalidação quando se altera o nome, 
               o valor e a posição de uma variável, deixando assim, muito mais prático de definir tudo na ordem correta.</para>
-            <para>Programas que utilizam variáveis com erros, também são automaticamente validados, mudando seu estado de configuração (assunto abordado na seção <xref linkend="sec_3_3_5"/>).</para>
+            <para>Programas que utilizam variáveis com erros, também são automaticamente validados, mudando seu estado de configuração (assunto abordado na seção <xref linkend="flow_editor_change_state_program"/>).</para>
             <figure>
               <mediaobject>
                 <caption>A Variável <emphasis role="bold">ano_atual</emphasis> está usando uma variável que não existe na sua expressão,
