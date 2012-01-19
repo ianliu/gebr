@@ -676,8 +676,11 @@ gebr_job_control_info_set_visible(GebrJobControl *jc,
 				  const gchar *txt)
 {
 	GtkWidget *job_info = GTK_WIDGET(gtk_builder_get_object(jc->priv->builder, "job_info_widget"));
+	GtkInfoBar *info = GTK_INFO_BAR(gtk_builder_get_object(jc->priv->builder, "issues_info_bar"));
 	GtkLabel *empty_label = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "empty_job_selection_label"));
 
+	if (!visible)
+		gtk_widget_hide(GTK_WIDGET(info));
 	gtk_widget_set_visible(job_info, visible);
 	gtk_widget_set_visible(GTK_WIDGET(empty_label), !visible);
 
