@@ -19,25 +19,32 @@
 
 #include <libgebr/geoxml/geoxml.h>
 #include <libgebr/date.h>
+#include <libgebr/utils.h>
 #include <glib/gi18n.h>
 #include "gebr.h"
 #include "ui_flow_browse.h"
 #include "document.h"
+#include "flow.h"
 
 gchar *
 get_line_paths(GebrGeoXmlLine *line)
 {
 	GebrGeoXmlSequence *seq;
 	GString *buf = g_string_new(NULL);
+	GString *p = g_string_new(NULL);
 
 	gebr_geoxml_line_get_path(line, &seq, 0);
 	for (; seq; gebr_geoxml_sequence_next(&seq)) {
 		g_string_append_c(buf, ',');
 		GebrGeoXmlValueSequence *path = GEBR_GEOXML_VALUE_SEQUENCE(seq);
 		gchar *value = gebr_geoxml_value_sequence_get(path);
-		g_string_append(buf, value);
+		g_string_assign(p, value);
+		gebr_path_use_home_variable(p);
+		g_string_append(buf, p->str);
 		g_free(value);
 	}
+
+	g_string_free(p, TRUE);
 
 	if (buf->len)
 		g_string_erase(buf, 0, 1);
@@ -131,6 +138,7 @@ run_flow(GebrGeoXmlFlow *flow,
 	GebrJob *job = gebr_job_new(parent_rid);
 
 	GebrGeoXmlDocument *clone = gebr_geoxml_document_clone(GEBR_GEOXML_DOCUMENT(flow));
+	flow_set_paths_to_relative(GEBR_GEOXML_FLOW(clone), TRUE);
 
 	gebr_geoxml_document_merge_dicts(gebr.validator,
 	                                 clone,
