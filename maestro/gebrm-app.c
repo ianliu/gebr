@@ -747,6 +747,7 @@ on_client_request(GebrCommProtocolSocket *socket,
 			const gchar *group_type  = gebr_comm_uri_get_param(uri, "group_type");
 			const gchar *host        = gebr_comm_uri_get_param(uri, "host");
 			const gchar *temp_id     = gebr_comm_uri_get_param(uri, "temp_id");
+			const gchar *paths       = gebr_comm_uri_get_param(uri, "paths");
 
 			if (temp_parent) {
 				parent_id = gebrm_client_get_job_id_from_temp(client,

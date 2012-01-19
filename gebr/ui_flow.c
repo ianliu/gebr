@@ -24,6 +24,27 @@
 #include "ui_flow_browse.h"
 #include "document.h"
 
+gchar *
+get_line_paths(GebrGeoXmlLine *line)
+{
+	GebrGeoXmlSequence *seq;
+	GString *buf = g_string_new(NULL);
+
+	gebr_geoxml_line_get_path(line, &seq, 0);
+	for (; seq; gebr_geoxml_sequence_next(&seq)) {
+		g_string_append_c(buf, ',');
+		GebrGeoXmlValueSequence *path = GEBR_GEOXML_VALUE_SEQUENCE(seq);
+		gchar *value = gebr_geoxml_value_sequence_get(path);
+		g_string_append(buf, value);
+		g_free(value);
+	}
+
+	if (buf->len)
+		g_string_erase(buf, 0, 1);
+
+	return g_string_free(buf, FALSE);
+}
+
 static gboolean
 is_group_connected(GtkTreeModel *model,
 		   const gchar *group)
@@ -161,6 +182,11 @@ run_flow(GebrGeoXmlFlow *flow,
 	gebr_comm_uri_add_param(uri, "group_type", group_type);
 	gebr_comm_uri_add_param(uri, "host", hostname);
 	gebr_comm_uri_add_param(uri, "temp_id", gebr_job_get_id(job));
+
+	gchar *paths = get_line_paths(gebr.line);
+	gebr_comm_uri_add_param(uri, "paths", paths);
+	g_free(paths);
+
 	gchar *url = gebr_comm_uri_to_string(uri);
 	gebr_comm_uri_free(uri);
 
