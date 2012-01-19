@@ -53,6 +53,7 @@ struct _GebrCommRunnerPriv {
 	gchar *group;
 	gchar *servers_str;
 	gchar *servers_list;
+	gchar *paths;
 
 	void (*ran_func) (GebrCommRunner *runner,
 			  gpointer data);
@@ -135,6 +136,7 @@ gebr_comm_runner_new(GebrGeoXmlDocument *flow,
 		     const gchar *speed,
 		     const gchar *nice,
 		     const gchar *group,
+		     const gchar *paths,
 		     GebrValidator *validator)
 {
 	GebrCommRunner *self = g_new(GebrCommRunner, 1);
@@ -146,6 +148,7 @@ gebr_comm_runner_new(GebrGeoXmlDocument *flow,
 	self->priv->speed = g_strdup(speed);
 	self->priv->nice = g_strdup(nice);
 	self->priv->group = g_strdup(group);
+	self->priv->paths = g_strdup(paths);
 	self->priv->validator = validator;
 
 	self->priv->servers = NULL;
@@ -162,11 +165,13 @@ gebr_comm_runner_new(GebrGeoXmlDocument *flow,
 void
 gebr_comm_runner_free(GebrCommRunner *self)
 {
+	g_free(self->priv->id);
 	g_free(self->priv->gid);
 	g_free(self->priv->parent_rid);
 	g_free(self->priv->speed);
 	g_free(self->priv->nice);
 	g_free(self->priv->group);
+	g_free(self->priv->paths);
 }
 
 /*

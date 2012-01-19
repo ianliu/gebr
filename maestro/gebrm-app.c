@@ -814,8 +814,9 @@ on_client_request(GebrCommProtocolSocket *socket,
 
 			GList *servers = get_comm_servers_list(app, name, group_type);
 			GebrCommRunner *runner = gebr_comm_runner_new(GEBR_GEOXML_DOCUMENT(*pflow),
-			                                              servers, gebrm_job_get_id(job), gid, parent_id,
-			                                              speed, nice, name, validator);
+			                                              servers, gebrm_job_get_id(job),
+								      gid, parent_id, speed, nice,
+								      name, paths, validator);
 			g_list_free(servers);
 
 			AppAndJob *aap = g_new(AppAndJob, 1);

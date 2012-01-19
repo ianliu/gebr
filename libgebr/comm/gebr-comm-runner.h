@@ -44,6 +44,7 @@ GebrCommRunner *gebr_comm_runner_new(GebrGeoXmlDocument *flow,
 				     const gchar *speed,
 				     const gchar *nice,
 				     const gchar *group,
+				     const gchar *paths,
 				     GebrValidator *validator);
 
 /**
