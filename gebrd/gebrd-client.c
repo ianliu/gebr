@@ -20,6 +20,7 @@
 #endif
 
 #include "gebrd-client.h"
+
 #include "gebrd-job.h"
 #include "gebrd-server.h"
 #include "gebrd-sysinfo.h"
@@ -36,6 +37,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/socket.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 #include <unistd.h>
 
 /*
@@ -180,6 +183,62 @@ static void server_moab_read_credentials(GString *accounts, GString *queue_list)
 	g_free(std_err);
 }
 
+static void
+run_xauth_command(gchar **argv)
+{
+	int fd;
+	struct flock fl = {F_WRLCK, SEEK_SET, 0, 0, 0};
+	gchar *xauth = g_build_filename(g_get_home_dir(), ".gebr", "Xauthority", NULL);
+	gchar *xauthority = g_strconcat("XAUTHORITY=", xauth, NULL);
+	gchar *envp[] = {xauthority, NULL};
+
+	fl.l_pid = getpid();
+
+	if ((fd = open(xauth, O_RDWR | O_APPEND | O_CREAT, 0600)) == -1) {
+		perror("open");
+		exit(1);
+	}
+
+	if (fcntl(fd, F_SETLKW, &fl) == -1) {
+		perror("fcntl");
+		exit(1);
+	}
+
+	gebrd_message(GEBR_LOG_DEBUG, "got lock");
+
+	/* add client magic cookie */
+
+	GError *error = NULL;
+	gchar *err = NULL;
+	gint exit_status;
+
+	g_spawn_sync(g_get_current_dir(), argv, envp,
+		     G_SPAWN_SEARCH_PATH, NULL, NULL,
+		     NULL, &err, &exit_status, &error);
+
+	if (error) {
+		gebrd_message(GEBR_LOG_ERROR, "Error running `xauth': %s", error->message);
+		g_error_free(error);
+	} else if (WEXITSTATUS(exit_status) != 0) {
+		gebrd_message(GEBR_LOG_ERROR, "xauth command: %s", err);
+	} else {
+		gebrd_message(GEBR_LOG_INFO, "xauth command succeeded");
+	}
+
+	g_free(err);
+
+	fl.l_type = F_UNLCK;
+
+	if (fcntl(fd, F_SETLK, &fl) == -1) {
+		perror("fcntl");
+		exit(1);
+	}
+
+	gebrd_message(GEBR_LOG_DEBUG, "release lock");
+
+	close(fd);
+}
+
 static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct client *client)
 {
 	GList *link;
@@ -271,47 +330,10 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			g_debug("Received gid %s with cookie %s", gid->str, cookie->str);
 
 			if (cookie->len && gebrd_get_server_type() != GEBR_COMM_SERVER_TYPE_MOAB) {
-				struct flock fl = {F_WRLCK, SEEK_SET, 0, 0, 0};
-				int fd;
-				gchar *xauth_dir = g_build_filename(g_get_home_dir(), ".gebr", "Xauthority", NULL);
-
-				fl.l_pid = getpid();
-
-				if ((fd = open(xauth_dir, O_RDWR | O_CREAT, 0600)) == -1) {
-					perror("open");
-					g_free(xauth_dir);
-					exit(1);
-				}
-
-				g_free(xauth_dir);
-
-				if (fcntl(fd, F_SETLKW, &fl) == -1) {
-					perror("fcntl");
-					exit(1);
-				}
-
-				gebrd_message(GEBR_LOG_DEBUG, "got lock");
-
-				/* add client magic cookie */
-				gchar *cmd = g_strdup_printf("XAUTHORITY=$HOME/.gebr/Xauthority xauth add :%d . %s",
-							     display, cookie->str);
-				g_debug("%s", cmd);
-				if (gebr_system(cmd))
-					gebrd_message(GEBR_LOG_ERROR, "Failed to add X11 authorization.");
-				else
-					gebrd_message(GEBR_LOG_ERROR, "X authorized!");
-				g_free(cmd);
-
-				fl.l_type = F_UNLCK;
-
-				if (fcntl(fd, F_SETLK, &fl) == -1) {
-					perror("fcntl");
-					exit(1);
-				}
-
-				gebrd_message(GEBR_LOG_DEBUG, "release lock");
-
-				close(fd);
+				gchar *tmp = g_strdup_printf(":%d", display);
+				gchar *argv[] = {"xauth", "-i", "add", tmp, ".", cookie->str, NULL};
+				run_xauth_command(argv);
+				g_free(tmp);
 			}
 
 			gchar *display_str = g_strdup_printf("%d", display + 6000);
