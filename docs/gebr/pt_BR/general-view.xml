@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<section
+  xmlns="http://docbook.org/ns/docbook"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  xmlns:xlink="http://www.w3.org/1999/xlink"
+  lang="pt_BR"
+  version="5.0"
+  xml:id="general_view">
+
+  <title>Uma visão geral</title>
+  <para>
+    Na GêBR, os <emphasis role="bold">Fluxos de Processamento Sísmico</emphasis> são
+    organizados em unidades maiores, chamadas <emphasis role="bold">Linhas</emphasis>.
+    As Linhas, por sua vez, são organizadas em 
+    <emphasis role="bold">Projetos</emphasis>. Entenda por Fluxos os 
+    <emphasis>Fluxos de Processamento Sísmico</emphasis>. 
+  </para>
+  <itemizedlist>
+    <listitem>
+      <para>
+        Um <emphasis role="bold">Projeto</emphasis> é um conjunto de
+        <emphasis role="bold">Linhas</emphasis>
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Uma <emphasis role="bold">Linha</emphasis> é um conjunto de
+        <emphasis role="bold">Fluxos</emphasis>
+      </para>
+    </listitem>
+  </itemizedlist>
+  <para>
+    Por isso, antes de montar e executar Fluxos, é necessário
+    <emphasis role="bold"> criar projetos e linhas</emphasis>. Veja em <xref linkend="projects_lines_create_projects_and_lines"/> como criar um projeto e uma linha e em <xref linkend="flows_browser_create_flow"/> como criar um Fluxo.
+  </para>
+  A interface da GêBR se divide em abas:
+  <itemizedlist>
+    <listitem>
+      <guilabel>
+        Projetos e Linhas
+      </guilabel>: hierarquização de Fluxos em Linhas e de Linhas em Projetos;
+    </listitem>
+    <listitem>
+      <guilabel>
+        Fluxos
+      </guilabel>: criação e execução de Fluxos;
+    </listitem>
+    <listitem>
+      <guilabel>
+        Editor de Fluxo
+      </guilabel>: edição e execução de um Fluxo;
+    </listitem>
+    <listitem>
+      <guilabel>
+        Controle de Tarefas
+      </guilabel>: visuzalização dos resultados.
+    </listitem>
+
+    </itemizedlist>
+    <figure>
+      <mediaobject>
+        <caption>Abas da GêBR</caption>
+        <imageobject>
+          <imagedata fileref="../images/GeBR_tabs.png"/>
+        </imageobject>
+      </mediaobject>
+    </figure>
+    <para>
+      Além disso, a GêBR apresenta recursos adicionais através da barra de menus, localizada no topo da janela. 
+      <itemizedlist>
+        <listitem>
+          Ações
+          <itemizedlist>
+            <listitem>
+              <guilabel>
+                Preferências 
+              </guilabel>: preferências do usuário;
+            </listitem>
+            <listitem>
+              <guilabel>
+                Servidores 
+              </guilabel>: Configurações de maestro, servidores e grupo de servidores; 
+            </listitem>
+            <listitem>
+              <guilabel>
+                Sair 
+              </guilabel>: encerrar a GêBR.
+            </listitem>
+          </itemizedlist>
+        </listitem>
+        <listitem>
+          Ajuda 
+          <itemizedlist>
+            <listitem>
+              <guilabel>
+                Ajuda
+              </guilabel> : documentação da GêBR;
+            </listitem>
+            <listitem>
+              <guilabel>
+                Exemplos
+              </guilabel>: exemplos de processamento sísmico;
+            </listitem>
+            <listitem>
+              <guilabel>
+                Sobre
+              </guilabel>: versão da GêBR
+            </listitem>
+          </itemizedlist>
+        </listitem>
+      </itemizedlist>
+
+    </para>
+    <figure>
+      <mediaobject>
+        <caption>Barra de menus da GêBR</caption>
+        <imageobject>
+          <imagedata fileref="../images/GeBR_menubar.png"/>
+        </imageobject>
+      </mediaobject>
+    </figure>
+  
+</section>

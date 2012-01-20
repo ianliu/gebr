@@ -36,7 +36,7 @@
     </para>
     <itemizedlist>
       <listitem>
-        Nasce o conceito de maestro, permitindo que a GêBR execute trabalhos em
+        Surge o conceito de maestro, permitindo que a GêBR execute trabalhos em
         múltiplas máquinas.  (veja <xref linkend="servers_configuration" /> e
         <xref linkend="flow_editor_multiple_machines" />).
       </listitem>
@@ -46,7 +46,7 @@
         <xref linkend="flow_editor_priority_execution" />).
       </listitem>
       <listitem>
-        A interface renovada adiciona novas funcionalidades e melhora a
+        A interface renovada adiciona funcionalidades e melhora a
         usabilidade da GêBR.
       </listitem>
     </itemizedlist>

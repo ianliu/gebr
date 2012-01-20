@@ -15,7 +15,7 @@
   <xi:include href="what-is-gebr.xml" />
   
   <!-- Projetos, Linhas e Fluxos: uma visão geral -->
-  <xi:include href="projects-lines-flows.xml" />
+  <xi:include href="general-view.xml" />
   
   <!-- A aba Projetos e Linhas -->
   <xi:include href="projects-lines-tab.xml" />
@@ -30,7 +30,6 @@
   <xi:include href="job-control-tab.xml" />
   
   <!-- Variáveis -->
-  <xi:include href="dictionary-variables.xml" />
   
   <!-- Recursos adicionais -->
   <xi:include href="additional-features.xml" />

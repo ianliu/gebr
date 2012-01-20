@@ -1,205 +1,484 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
 <section
-	xmlns="http://docbook.org/ns/docbook"
-	xmlns:xi="http://www.w3.org/2001/XInclude"
-	xmlns:xlink="http://www.w3.org/1999/xlink"
-	lang="pt_BR"
-	version="5.0"
-	xml:id="sec_4">
+  xmlns="http://docbook.org/ns/docbook"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  xmlns:xlink="http://www.w3.org/1999/xlink"
+  lang="pt_BR"
+  version="5.0"
+  xml:id="sec_4">
 
-	<title>Recursos adicionais</title>
+  <title>Recursos adicionais</title>
 
-	<section xml:id="menu">
-		<title>O menu 
-			<guimenu>Ações</guimenu></title>
-		<para>A partir do menu 
-			<guimenu>Ações</guimenu> você acessa as janelas 
-			<guimenuitem>Preferências</guimenuitem> e 
-			<guimenuitem>Servidores</guimenuitem>. Se você leu todo o manual, provavelmente já usou quase todos os recursos
-			disponíveis nessas duas janelas. De qualquer forma, segue a documentação.</para>
-		<section>
-			<title>Preferências</title>
-			<para>As definições que você faz na janela 
-				<guimenuitem>Preferências</guimenuitem> são adotadas como padrão pela GêBR. Vejamos os detalhes:</para>
-			<itemizedlist>
-				<listitem>
-					<para><guilabel>Nome do Usuário:</guilabel> Padrão adotado no campo 
-						<guilabel>Autor:</guilabel> durante a criação de projetos, linhas e fluxos.</para>
-				</listitem>
-				<listitem>
-					<para><guilabel>Email:</guilabel> Padrão adotado no campo 
-						<guilabel>Email</guilabel> durante a criação de projetos, linhas e fluxos.</para>
-				</listitem>
-				<listitem>
-					<para><guilabel>Diretório de menus do usuário:</guilabel> Pasta padrão usada para manutenção
-						de <emphasis>Menus GêBR</emphasis> (arquivos <filename class="extension">mnu</filename>).</para>
-				</listitem>
-			</itemizedlist>
-			<figure>
-				<mediaobject>
-					<caption>Em Preferências, abre-se uma janela em que é possível 
-						editar informações como nome de usuário, e-mail, diretório de menus do usuário e editor HTML.</caption>
-					<imageobject>
-						<imagedata fileref="../images/GeBR_preferences.png"/>
-					</imageobject>
-				</mediaobject>
-			</figure>
-
-
-			<para>
-				<emphasis role="bold">Configurações Avançadas</emphasis>
-				<para>Ao clicar sobre <guilabel>Configurações avançadas</guilabel>, a janela 
-					é expandida para uma janela para edição do Maestro e do Editor HTML.
-				</para>
-			</para>
-			<mediaobject>
-				<caption>Configurações avançadas do menu de Preferências</caption>
-				<imageobject>
-					<imagedata fileref="../images/GeBR_preferences_advanced.png" />
-				</imageobject>
-			</mediaobject>
-			<itemizedlist>
-				<listitem>
-					<para><guilabel>Maestro</guilabel>: maestro conectado a GêBR. Na primeira vez que se inicia a GêBR, 
-						o maestro vem por padrão a máquina de onde se abre a GêBR.</para>
-				</listitem>
-				<listitem>
-					<para><guilabel>Editor HTML:</guilabel> Editor de textos padrão adotado pela GêBR para criação de relatórios de
-						informações de projetos, linhas e fluxos.</para>
-				</listitem>
-			</itemizedlist>
+  <section xml:id="menu">
+    <title>O menu 
+      <guimenu>Ações</guimenu></title>
+    <para>A partir do menu 
+      <guimenu>Ações</guimenu> você acessa as janelas 
+      <guimenuitem>Preferências</guimenuitem> e 
+      <guimenuitem>Servidores</guimenuitem>. Se você leu todo o manual, provavelmente já usou quase todos os recursos
+      disponíveis nessas duas janelas. De qualquer forma, segue a documentação.</para>
+    <section>
+      <title>Preferências</title>
+      <para>As definições que você faz na janela 
+        <guimenuitem>Preferências</guimenuitem> são adotadas como padrão pela GêBR. Vejamos os detalhes:</para>
+      <itemizedlist>
+        <listitem>
+          <para><guilabel>Nome do Usuário:</guilabel> Padrão adotado no campo 
+            <guilabel>Autor:</guilabel> durante a criação de Projetos, Linhas e Fluxos.</para>
+        </listitem>
+        <listitem>
+          <para><guilabel>Email:</guilabel> Padrão adotado no campo 
+            <guilabel>Email</guilabel> durante a criação de Projetos, Linhas e Fluxos.</para>
+        </listitem>
+        <listitem>
+          <para><guilabel>Diretório de menus do usuário:</guilabel> Pasta padrão usada para manutenção
+            de <emphasis>Menus GêBR</emphasis> (arquivos <filename class="extension">mnu</filename>).</para>
+        </listitem>
+      </itemizedlist>
+      <figure>
+        <mediaobject>
+          <caption>Em Preferências, abre-se uma janela em que é possível 
+            editar informações como nome de usuário, e-mail, diretório de menus do usuário e editor HTML.</caption>
+          <imageobject>
+            <imagedata fileref="../images/GeBR_preferences.png"/>
+          </imageobject>
+        </mediaobject>
+      </figure>
 
 
-		</section>
+      <para>
+        <emphasis role="bold">Configurações Avançadas</emphasis>
+        <para>Ao clicar sobre <guilabel>Configurações avançadas</guilabel>, a janela 
+          é expandida para uma janela para <guilabel>Edição do Maestro</guilabel> e do <guilabel>Editor HTML</guilabel>.
+        </para>
+      </para>
+      <mediaobject>
+        <caption>Configurações avançadas do menu de Preferências</caption>
+        <imageobject>
+          <imagedata fileref="../images/GeBR_preferences_advanced.png" />
+        </imageobject>
+      </mediaobject>
+      <itemizedlist>
+        <listitem>
+          <para><guilabel>Maestro</guilabel>: maestro conectado a GêBR. Na primeira vez que se inicia a GêBR, 
+            o maestro vem por padrão a máquina de onde se abre a GêBR.</para>
+        </listitem>
+        <listitem>
+          <para><guilabel>Editor HTML:</guilabel> Editor de textos padrão adotado pela GêBR para criação de relatórios de
+            informações de projetos, linhas e fluxos.</para>
+        </listitem>
+      </itemizedlist>
 
-	</section>
-	<section xml:id="servers_configuration">
-		<title>Configurações de servidores</title>
-		<para>GêBR utiliza o recurso disponível pelas máquinas que você tem acesso. Para tanto, a GêBR
-			tem três componentes:</para>
-		<itemizedlist>
-			<listitem><para>GêBR local (GêBR-client), de onde você abre a interface da GêBR e envia requisições ao maestro.</para></listitem>
-			<listitem><para>GêBR coordenador (GêBR-maestro), onde todas tarefas da GêBR são coordenadas.</para></listitem>
-			<listitem><para>GêBR servidor (GêBR-daemon), onde as tarefas são, efetivamente, executadas.</para></listitem>
-		</itemizedlist>
-		<mediaobject>
-			<caption>Componentes da GêBR</caption>
-			<imageobject>
-				<imagedata fileref="../images/GeBR_servers_maestro_diagram.png" />
-			</imageobject>
-		</mediaobject>
-		<para>A GêBR pode estar conectada a um maestro por vez. Cada maestro, por sua vez, pode estar conectado a vários
-			servidores. Um requisito é que os servidores estejam no mesmo sistema de arquivos (NFS).</para>
-		<para>A janela de Configurações de servidores é dividida em três partes:
-			<itemizedlist>
-				<listitem>
-					<para>Caixa de edição do maestro</para>
-				</listitem>
-				<listitem>
-					<para>Janela de Servidores</para>
-				</listitem>
-				<listitem>
-					<para>Janela de Grupos de servidores</para>
-				</listitem>
-		</itemizedlist></para>
-		<section>
-			<title>Caixa de edição do maestro</title>
-			<mediaobject>
-				<caption>Caixa de edição do maestro</caption>
-				<imageobject>
-					<imagedata fileref="../images/GeBR_servers_maestro_entry.png" />
-				</imageobject>
-			</mediaobject>
-			<para>Na parte superior da janela das Configurações de Servidores, há uma
-				caixa para edição da máquina a ser utilizada como maestro. Para que 
-				a máquina possa ser utilizada como maestro, ela deve ter o pacote
-				GêBR-maestro instalado. O estado do maestro é indicado pela ícone
-				ao lado direito:
-				<itemizedlist>
+
+    </section>
+
+  </section>
+  <section xml:id="servers_configuration">
+    <title>Configurações de servidores</title>
+    <para>GêBR utiliza o recurso disponível pelas máquinas que você tem acesso. Para tanto, a GêBR
+      tem três componentes:</para>
+    <itemizedlist>
+      <listitem><para>GêBR local (GêBR-client), de onde você abre a interface da GêBR e envia requisições ao maestro.</para></listitem>
+      <listitem><para>GêBR coordenador (GêBR-maestro), onde todas tarefas da GêBR são coordenadas.</para></listitem>
+      <listitem><para>GêBR servidor (GêBR-daemon), onde as tarefas são, efetivamente, executadas.</para></listitem>
+    </itemizedlist>
+    <mediaobject>
+      <caption>Componentes da GêBR</caption>
+      <imageobject>
+        <imagedata fileref="../images/GeBR_servers_maestro_diagram.png" />
+      </imageobject>
+    </mediaobject>
+    <para>A GêBR pode estar conectada a um maestro por vez. Cada maestro, por sua vez, pode estar conectado a vários
+      servidores. Um requisito é que os servidores estejam no mesmo sistema de arquivos (NFS).</para>
+    <para>A janela de Configurações de servidores é dividida em três partes:
+      <itemizedlist>
+        <listitem>
+          <para>Caixa de edição do maestro</para>
+        </listitem>
+        <listitem>
+          <para>Janela de Servidores</para>
+        </listitem>
+        <listitem>
+          <para>Janela de Grupos de servidores</para>
+        </listitem>
+    </itemizedlist></para>
+    <section>
+      <title>Caixa de edição do maestro</title>
+      <mediaobject>
+        <caption>Caixa de edição do maestro</caption>
+        <imageobject>
+          <imagedata fileref="../images/GeBR_servers_maestro_entry.png" />
+        </imageobject>
+      </mediaobject>
+      <para>Na parte superior da janela das Configurações de Servidores, há uma
+        caixa para edição da máquina a ser utilizada como maestro. Para que 
+        a máquina possa ser utilizada como maestro, ela deve ter o pacote
+        GêBR-maestro instalado. O estado do maestro é indicado pela ícone
+        ao lado direito:
+        <itemizedlist>
           <listitem><para>conectado (
               <inlinemediaobject> <imageobject>
-									<imagedata fileref="../../common-images/gtk-connect.png" />
-								</imageobject>
-					</inlinemediaobject>)</para></listitem>
-					<listitem><para>desconectado (<inlinemediaobject>
-								<imageobject>
-									<imagedata fileref="../../common-images/gtk-disconnect.png" />
-								</imageobject>
-					</inlinemediaobject>)</para></listitem>
-					<listitem><para>erro (<inlinemediaobject>
-								<imageobject>
-									<imagedata fileref="../../common-images/gtk-dialog-warning.png" />
-								</imageobject>
-					</inlinemediaobject>)</para></listitem>
-			</itemizedlist></para>
-		</section>
-		<section>
-			<title>Servidores</title>
-			<mediaobject>
-				<caption>Janela de Servidores</caption>
-				<imageobject>
-					<imagedata fileref="../images/GeBR_servers_daemons.png" />
-				</imageobject>
-			</mediaobject>
-			<para>Uma vez escolhido a máquina que irá coordenar as tarefas (GêBR-maestro), você
-				poderá associar máquinas àquele maestro.</para>
-			<para>Cada entrada representa um servidor associado a aquele maestro. Cada linha tem duas
-				colunas: a primeira coluna exibe a opção de <guilabel>Auto-Conexão</guilabel> e a
-				coluna exibe a nome (hostname) do servidor. O usuário pode adicionar uma nova
-				máquina clicando sobre <guilabel>Novo</guilabel>.</para>
-		</section>
-		<section>
-			<title>Configurações de grupos</title>
-			<para>Você pode optar por utilizar apenas um subconjunto das máquinas do maestro conectado.
-				A criação/edição de grupos é feita através da janela de <guilabel>Configurações de grupos</guilabel>
-				e possibilita este recurso.</para>
-					<para>A funcionalidade é através do Arrastar-e-soltar do mouse.</para>
-					<mediaobject>
-						<caption>Criação de um grupo</caption>
-						<imageobject>
-							<imagedata fileref="../images/GeBR_servers_groups_new.png" />
-						</imageobject>
-					</mediaobject>
-					<para>Para criar um grupo, o usuário precisa clicar sobre um servidor da 
-						<guilabel>Configurações de grupos</guilabel> e arrastar para o ícone + .
-						Você poderá adicionar um nome para o novo grupo. Grupos com o mesmo nome
-						não são aceitos.</para>
-				</section>
-			</section>
-			<section xml:id="sec_4_3">
-				<title>O log de execução</title>
-				<para>A GêBR grava grande parte das ações executadas pelo usuário, bem como os resultados dessas ações, no
-					chamado <emphasis>log de execução</emphasis>. Este log é mostrado na parte inferior da janela principal. Pode
-					ser apresentado na forma contraída (padrão) ou expandida (como na janela abaixo).</para>
-				<figure>
-					<mediaobject>
-						<caption>No canto inferior das janelas principais da GêBR, encontra-se o log de execução, que carrega as informações dos processamentos da GêBR.</caption>
-						<imageobject>
-							<imagedata fileref="../images/janela_log_execucao.png"/>
-						</imageobject>
-					</mediaobject>
-				</figure>
-				<tip>
-					<para>Em 
-						<menuchoice><guimenu>Ações</guimenu><guimenuitem>Preferências</guimenuitem></menuchoice> (no canto inferior da janela principal), campo 
-						<guilabel>Carregar o log das execuções anteriores</guilabel>, você escolhe entre exibir o log completo,
-						incluindo ações de datas passadas, o log compacto, que mostra apenas as ações a partir da última
-						inicialização.</para>
-				</tip>
-				</section>    <section xml:id="import_samples"><title>Exemplos de projeto</title>
-				<para>Na seção Ajuda, além da seção de Ajuda geral, podemos importar exemplos já existentes:</para>
+                  <imagedata fileref="../../common-images/gtk-connect.png" />
+                </imageobject>
+          </inlinemediaobject>)</para></listitem>
+          <listitem><para>desconectado (<inlinemediaobject>
+                <imageobject>
+                  <imagedata fileref="../../common-images/gtk-disconnect.png" />
+                </imageobject>
+          </inlinemediaobject>)</para></listitem>
+          <listitem><para>erro (<inlinemediaobject>
+                <imageobject>
+                  <imagedata fileref="../../common-images/gtk-dialog-warning.png" />
+                </imageobject>
+          </inlinemediaobject>)</para></listitem>
+      </itemizedlist></para>
+    </section>
+    <section>
+      <title>Servidores</title>
+      <mediaobject>
+        <caption>Janela de Servidores</caption>
+        <imageobject>
+          <imagedata fileref="../images/GeBR_servers_daemons.png" />
+        </imageobject>
+      </mediaobject>
+      <para>Uma vez escolhido a máquina que irá coordenar as tarefas (GêBR-maestro), você
+        poderá associar máquinas àquele maestro.</para>
+      <para>Cada entrada representa um servidor associado a aquele maestro. Cada linha tem duas
+        colunas: a primeira coluna exibe a opção de <guilabel>Auto-Conexão</guilabel> e a
+        segunda coluna exibe a nome (hostname) do servidor. O usuário pode adicionar uma nova
+        máquina clicando sobre <guilabel>Novo</guilabel>.</para>
+    </section>
+    <section>
+      <title>Configurações de grupos</title>
+      <para>Você pode optar por utilizar apenas um subconjunto das máquinas do maestro conectado.
+        A criação/edição de grupos é feita através da janela de <guilabel>Configurações de grupos</guilabel>
+        e possibilita este recurso.</para>
+      <para>A funcionalidade é através do Arrastar-e-soltar do mouse.</para>
+      <mediaobject>
+        <caption>Criação de um grupo</caption>
+        <imageobject>
+          <imagedata fileref="../images/GeBR_servers_groups_new.png" />
+        </imageobject>
+      </mediaobject>
+      <para>Para criar um grupo, o usuário precisa clicar sobre um servidor da 
+        <guilabel>Configurações de grupos</guilabel> e arrastar para o ícone + .
+        Você poderá adicionar um nome para o novo grupo. Grupos com o mesmo nome
+        não são aceitos.</para>
+    </section>
+  </section>
+  <section xml:id="dictionary_variables">
+    <title>Dicionário de Variáveis</title>
+    <para>
+      A GêBR estende o conceito de variavéis da programação computacional à manipulação de projetos, linhas e fluxos. A utilização de variáveis pode auxiliar na legibilidade e de código, portabilidade e na edição dinâmica de propriedades dentro de seu processamento.
 
-				<figure>
-					<mediaobject>
-						<caption>Captura de tela do menu Exemplos</caption>
-						<imageobject>
-							<imagedata fileref="../images/samples_pt.png"/>
-						</imageobject>
-					</mediaobject>
-				</figure>
+    </para>
+    <section xml:id="janela_dicionario">
+      <title>O dicionário de variáveis</title>
+      <para>O dicionário é um recurso muito flexível, que pode ser utilizado com diversos fins.</para>
+      <para>O dicionário, assim como os parâmetros de programa, aceita expressões, e pode definir variáveis mais complexas, tornando-se uma ferramenta muito interessante na construção de Fluxos. Nesta seção vamos apresentar exemplos do uso de variáveis em um Fluxo.</para>
+      <para>A seguir um exemplo simples de como definir uma variável no dicionário:</para>
+      <procedure>
+        <step>
+          <para>Crie um Fluxo e insira nele um programa muito simples chamado 
+            <guimenuitem>Echo</guimenuitem>, cuja única função é mostrar na saída o texto escrito
+            (você encontra este programa na categoria 
+            <guimenu>Shell tools</guimenu>, na aba 
+            <guilabel>Editor de Fluxo</guilabel>).</para>
+          <figure>
+            <mediaobject>
+              <caption>Na aba Fluxos, acrescentamos "Fluxo Exemplo" à "Linha teste 1", utilizado no próximo exemplo. </caption>
+              <imageobject>
+                <imagedata fileref="../images/exemplo_variaveis_1.png"/>
+              </imageobject>
+            </mediaobject>
+          </figure>
+          <figure>
+            <mediaobject>
+              <caption>Na aba Editor de Fluxo, adiciona-se um programa chamado "Echo" ao "Fluxo Exemplo".</caption>
+              <imageobject>
+                <imagedata fileref="../images/exemplo_variaveis_2.png"/>
+              </imageobject>
+            </mediaobject>
+          </figure>
+        </step>
+        <step>
+          <para>Na aba <guilabel>Editor de Fluxo</guilabel>, clique no
+            botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_dicionario_projeto.png"/></imageobject></inlinemediaobject></guiicon> 
+            para <emphasis role="bold">editar o dicionário de variáveis</emphasis>.</para>
+        </step>
+        <step>
+          <para>Na janela que se abre (<guilabel>Dicionário de variáveis para Fluxo</guilabel>), clique em <emphasis>Nova</emphasis> no escopo de <emphasis role="bold">Fluxo</emphasis>.
+            Preencha o campo <emphasis>Palavra-chave</emphasis> (este será o nome de sua variável) com <emphasis role="bold">var1</emphasis>. Em seguida, aperte <keycap>Enter</keycap> para prosseguir para o próximo campo, o campo <emphasis>Valor</emphasis>. Antes de preenchê-lo, será 
+            necessário escolher um tipo de dado para a sua variável recém criada (<guimenuitem>Número</guimenuitem> ou <guimenuitem>Texto</guimenuitem>), escolha <guimenuitem>Número</guimenuitem>. O cursor do mouse agora estará localizado no campo <emphasis>Valor</emphasis>, preencha esse campo com o número 
+            <emphasis role="bold">10</emphasis> e pressione <keycap>Enter</keycap> novamente.</para> O último campo é o campo <emphasis>Comentário</emphasis>. Preencha esse campo com algum comentário, descrevendo a função da sua variável recém criada. Lembrando que o comentário é opcional e pode ser deixado em branco.
+          <para>Ao terminar, sua janela deve se parecer com a seguinte:</para>
+          <figure>
+            <mediaobject>
+              <caption>Na janela de Dicionário de Variáveis para Fluxo, é possível editar variáveis para este Fluxo, para sua Linha ou seu Projeto.</caption>
+              <imageobject>
+                <imagedata fileref="../images/exemplo_variaveis_3.png"/>
+              </imageobject>
+            </mediaobject>
+          </figure>
+          <tip>Para entender melhor sobre a definição de variáveis, veja a seção <xref linkend="definindo_variaveis"/>.</tip>
+          <tip>Posicionando o mouse em cima do ícone do tipo da variável, podemos ver a expressão resolvida.</tip>
+          <tip>Podemos navegar entre os campos do dicionário utilizando as teclas <keycap>Enter</keycap>, <keycap>Tab</keycap> ou com o 
+            <mousebutton>Botão esquerdo do mouse</mousebutton>.</tip>
+        </step>
+      </procedure>
+    </section>
 
-			</section>
+    <section xml:id="definindo_variaveis">
+      <title>Definindo e usando variáveis</title>
+      <para>Agora que já temos uma variável simples no dicionário, vamos utilizá-la para definir outras variáveis mais complexas.
+        Utilizando a mesma idéia de criação de uma variável, visto na seção <xref linkend="janela_dicionario"/>, vamos definir mais duas variáveis:</para>
+      <procedure>
+        <step>
+          <para>Variável de nome <emphasis role="bold">var2</emphasis>, tipo <guimenuitem>Número</guimenuitem> e valor 
+            <emphasis role="bold">var1 + 10</emphasis>.
+          </para>
+          <figure>
+            <mediaobject>
+              <caption>Criando a variável <emphasis role="bold">var2</emphasis>, usando auto-completação.</caption>
+              <imageobject>
+                <imagedata fileref="../images/exemplo_variaveis_4.png"/>
+              </imageobject>
+            </mediaobject>
+          </figure>
+        </step>
+        <step>
+          <para>Variável de nome <emphasis role="bold">string</emphasis>, tipo <guimenuitem>Texto</guimenuitem> e valor 
+            <emphasis role="bold">Variável 2 vale [var2]</emphasis>.
+          </para>
+          <figure>
+            <mediaobject>
+              <caption>Criando a variável <emphasis role="bold">string</emphasis>, e verificando o resultado.</caption>
+              <imageobject>
+                <imagedata fileref="../images/exemplo_variaveis_5.png"/>
+              </imageobject>
+            </mediaobject>
+          </figure>
+          <tip>Para utilizar variáveis em campos do tipo <guimenuitem>Texto</guimenuitem>, deve-se colocar o nome da variável cercada de colchetes 
+            <emphasis role="bold">[</emphasis>nome-da-variável<emphasis role="bold">]</emphasis>.</tip>
+        </step>
+        <step>
+          <para>Agora com as variáveis criadas, vamos utiliza-las no nosso "Fluxo Exemplo" já criado.
+            Na aba Editor de Fluxo, dê um clique duplo no programa <guilabel>Echo</guilabel>, na janela de edição de parâmetros, 
+            vamos utilizar a variável <emphasis role="bold">string</emphasis>.</para>
+          <figure>
+            <mediaobject>
+              <caption>Preenchendo o parâmetro com a variável <emphasis role="bold">string</emphasis> do dicionário.</caption>
+              <imageobject>
+                <imagedata fileref="../images/exemplo_variaveis_6.png"/>
+              </imageobject>
+            </mediaobject>
+          </figure>
+        </step>
+        <step>
+          Agora basta executar. Os valores utilizados pelos seus programas com variáveis serão os 
+          definidos no <guilabel>Dicionário de Variáveis</guilabel>. Assim, alterar o valor de 
+          uma variáveis do dicionário significa alterar os parâmetros dos programas que utilizam 
+          esta variável.
+      </step>    </procedure>
+      <tip>Para validar uma expressão ou uma variável, em qualquer campo, basta utilizar a tecla <keycap>Enter</keycap>.</tip>
+      <tip>Para ver todas as variáveis disponíveis para auto-completação, basta digitar no campo o caracter '<emphasis role="bold">[</emphasis>' (abrir colchete).</tip>
+      <important>
+        <para>Você pode definir a visibilidade das variáveis, compartimentando-as nas listas
+          <guilabel>Projeto</guilabel>, <guilabel>Linha</guilabel> e <guilabel>Fluxo</guilabel>. Variáveis pertencentes
+          à lista <guilabel>Projeto</guilabel> são visíveis para <emphasis role="bold">todos os Fluxos</emphasis> de
+          todas as linhas do projeto selecionado. Variáveis pertencentes à lista <guilabel>Linha</guilabel> são visíveis
+          apenas para os <emphasis role="bold">Fluxos da linha selecionada</emphasis>. Variáveis pertencentes à
+          lista <guilabel>Fluxo</guilabel> são visíveis apenas para o <emphasis role="bold">Fluxo
+            selecionado</emphasis>.</para>
+      </important>
+    </section>
+
+    <section xml:id="variavel_iter">
+      <title>A variável iter</title>
+      <para>Como vimos na seção <xref linkend="flow_editor_loop"/>, a GêBR permite o uso de loops, através do programa <guimenuitem>Loop</guimenuitem>. Juntamente com esse programa, temos acesso a uma variável
+        especial, chamada <emphasis role="bold">iter</emphasis>. A seguir, mostraremos um exemplo de uso desta variável:</para>
+      <procedure>
+        <step>
+          <para>Vamos supor que queiramos saber em qual dia da semana serão as festas de fim de ano nos próximos 5 anos. Para esse fim, necessitamos do calendário do mês de Dezembro desses anos.
+            Para isso, utilizaremos o programa <guimenuitem>Calendar</guimenuitem> (você encontra este programa na categoria <guimenu>Shell tools</guimenu>, 
+            na aba <guilabel>Editor de Fluxo</guilabel>).</para>
+          <para>Portanto, utilizando o preenchimento dos parâmetros proposto no exemplo da seção <xref linkend="flow_editor_loop"/>, teremos a variável <emphasis role="bold">iter</emphasis>
+            no dicionário como na janela a seguir.</para>
+          <figure>
+            <mediaobject>
+              <caption>A variavel <emphasis role="bold">iter</emphasis> com sua expressão resolvida.</caption>
+              <imageobject>
+                <imagedata fileref="../images/exemplo_iter_1.png"/>
+              </imageobject>
+            </mediaobject>
+          </figure>
+        </step>
+        <step>
+          <para>Agora iremos definir uma variável no dicionário que representará o ano atual, facilitando o processo de escolha do ano.
+            Vamos definir a variável na Linha, com o nome de <emphasis role="bold">ano_atual</emphasis> e valor <emphasis role="bold">2011</emphasis>.</para>
+          <figure>
+            <mediaobject>
+              <caption>A variavel <emphasis role="bold">ano_atual</emphasis> definida no dicionário.</caption>
+              <imageobject>
+                <imagedata fileref="../images/exemplo_iter_2.png"/>
+              </imageobject>
+            </mediaobject>
+          </figure>
+        </step>
+        <step>
+          <para>Após definirmos esta variável, vamos melhorar os parâmetros do programa <guimenuitem>Loop</guimenuitem>, para que a variável 
+            <emphasis>iter</emphasis> tenha um comportamento melhor para o propósito do problema.
+            Logo, no parâmetro Initial value (valor inicial) iremos incluir a variável <emphasis>ano_atual</emphasis>.
+            No parâmetro Step (passo de cada iteração), preencheremos com 1, pois queremos anos seguidos.
+            No parâmetro Total number of steps (número total de passos), colocaremos o valor 5, para que realize está repetição 5 vezes, desta forma,
+            pegando os 5 próximos anos, a partir de 2011.</para>
+          <figure>
+            <mediaobject>
+              <caption>Parâmetros do programa <guimenuitem>Loop</guimenuitem> preenchidos.</caption>
+              <imageobject>
+                <imagedata fileref="../images/exemplo_iter_3.png"/>
+              </imageobject>
+            </mediaobject>
+          </figure>
+          <important>
+            <para>O programa <guimenuitem>Loop</guimenuitem> pode usar apenas variáveis definidas na Linha e no Projeto, aos quais aquele Fluxo pertence.</para>  
+          </important>
+        </step>
+        <step>
+          <para>Agora, abrimos o programa <guimenuitem>Calendar</guimenuitem> e vamos preencher seus parâmetros.
+            Iremos apenas preencher dois parâmetros, o Month com o valor <emphasis>December</emphasis>, e o Year com a variável <emphasis role="bold">iter</emphasis>.</para>
+          <figure>
+            <mediaobject>
+              <caption>Parâmetros do programa <guimenuitem>Calendar</guimenuitem> preenchidos.</caption>
+              <imageobject>
+                <imagedata fileref="../images/exemplo_iter_4.png"/>
+              </imageobject>
+            </mediaobject>
+          </figure>
+          <para>Ao colocarmos o mouse sobre o ícone de tipo do parâmetro Year, podemos verificar através da tooltip 
+            <guiicon><inlinemediaobject>
+                <imageobject>
+                  <imagedata fileref="../images/exemplo_iter_5.png"/>
+                </imageobject>
+            </inlinemediaobject></guiicon>
+            o valor resolvido da variável <emphasis role="bold">iter</emphasis>, assim podemos verificar que iremos percorrer os anos que queriamos.</para>
+        </step>
+        <step>
+          <para>Agora, com o programa preenchido corretamente, executamos o programa (assunto abordado na seção <xref linkend="flow_editor_execute_flow"/>), 
+            e podemos visualizar quando serão as festas de fim de ano para os próximos 5 anos.</para>
+          <figure>
+            <mediaobject>
+              <caption>Resultado da execução do Fluxo, na aba <guilabel>Controle de Tarefas</guilabel>.</caption>
+              <imageobject>
+                <imagedata fileref="../images/exemplo_iter_6.png"/>
+              </imageobject>
+            </mediaobject>
+          </figure>
+        </step>
+      </procedure>
+      <para>Este foi um exemplo simples do uso da variável <emphasis role="bold">iter</emphasis> em um Fluxo, mas podemos notar que o uso de loop e de variáveis
+        definidas no dicionário podem facilitar muito nossas tarefas, deixando todo o processo mais dinâmico.</para>
+    </section>	
+    <section xml:id="variaveis_recursos">
+      <title>Recursos no dicionário</title>
+      <para>O dicionário conta com recursos que facilitam bastante sua usabilidade, vamos listar alguns destes recursos:</para>
+      <itemizedlist>
+        <listitem>
+          <para><emphasis role="bold">Funções</emphasis></para>
+          <para>Além de utilizar variáveis e expressões para preencher os
+            valores, podemos também usar algumas funções pré-definidas:</para>
+          <table><title>Funções disponíveis</title>
+            <tgroup cols='2'>
+              <thead>
+                <row><entry>Nome da função</entry> <entry>Sintaxe</entry></row>
+              </thead>
+              <tbody>
+                <row><entry>Raiz quadrada     </entry> <entry>sqrt (<emphasis>valor</emphasis>)</entry></row>
+                <row><entry>Seno              </entry> <entry>   s (<emphasis>valor</emphasis>)</entry></row>
+                <row><entry>Cosseno           </entry> <entry>   c (<emphasis>valor</emphasis>)</entry></row>
+                <row><entry>Arcotangente      </entry> <entry>   a (<emphasis>valor</emphasis>)</entry></row>
+                <row><entry>Logarítimo Natural</entry> <entry>   l (<emphasis>valor</emphasis>)</entry></row>
+                <row><entry>Função exponencial</entry> <entry>   e (<emphasis>valor</emphasis>)</entry></row>
+                <row><entry>Função de Bessel  </entry> <entry>   j (<emphasis>ordem, valor)</emphasis></entry></row>
+              </tbody>
+            </tgroup>
+          </table>
+        </listitem>
+        <listitem>
+          <para><emphasis role="bold">Arrastar e soltar</emphasis></para>
+          <itemizedlist>
+            <listitem><para>É possível reordenar as variáveis do dicionário utilizando-se o recurso de <emphasis>arrastar-soltar</emphasis> (clicar, arrastar e soltar) do mouse. Como uma variável só pode utilizar uma outra que esta definida acima dela, este recurso é fundamental. Para utilizar este recurso, clique sobre uma variável que deseja reordenar e arraste-a para onde deseja movê-la.<figure>
+                  <mediaobject>
+                    <caption>Resultado da execução do Fluxo, na aba <guilabel>Controle de Tarefas</guilabel>.</caption>
+                    <imageobject>
+                      <imagedata fileref="../images/recurso_dict_1.png"/>
+                    </imageobject>
+                  </mediaobject>
+                </figure>
+              </para>
+            </listitem>
+          </itemizedlist>
+        </listitem>
+        <listitem>
+          <para><emphasis role="bold">Validação dinâmica</emphasis></para>
+          <itemizedlist>
+            <listitem>
+              <para>O dicionário conta com uma validação de suas variáveis de uma forma totalmente dinâmica, ocorrendo revalidação quando se altera o nome, 
+                o valor e a posição de uma variável, deixando assim, muito mais prático de definir tudo na ordem correta.</para>
+              <para>Programas que utilizam variáveis com erros, também são automaticamente validados, mudando seu estado de configuração (assunto abordado na seção <xref linkend="flow_editor_change_state_program"/>).</para>
+              <figure>
+                <mediaobject>
+                  <caption>A Variável <emphasis role="bold">ano_atual</emphasis> está usando uma variável que não existe na sua expressão,
+                    por isso ela fica em um estado de erro.</caption>
+                  <imageobject>
+                    <imagedata fileref="../images/recurso_dict_2.png"/>
+                  </imageobject>
+                </mediaobject>
+              </figure>
+            </listitem>
+          </itemizedlist>
+          <tip>Todos os campos, sejam eles parâmetros de programa ou variáveis, se contiverem algum, automaticamente exibirão o ícone 
+            <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_nao_configurado.png"/></imageobject></inlinemediaobject></guiicon>,
+            que contém em sua tooltip, uma explicação do erro.</tip>
+        </listitem>
+      </itemizedlist>
+    </section>	
+  </section>
+
+  <section xml:id="sec_4_3">
+    <title>O log de execução</title>
+    <para>A GêBR grava grande parte das ações executadas pelo usuário, bem como os resultados dessas ações, no
+      chamado <emphasis>log de execução</emphasis>. Este log é mostrado na parte inferior da janela principal. Pode
+      ser apresentado na forma contraída (padrão) ou expandida (como na janela abaixo).</para>
+    <figure>
+      <mediaobject>
+        <caption>No canto inferior das janelas principais da GêBR, encontra-se o log de execução, que carrega as informações dos processamentos da GêBR.</caption>
+        <imageobject>
+          <imagedata fileref="../images/janela_log_execucao.png"/>
+        </imageobject>
+      </mediaobject>
+    </figure>
+    <tip>
+      <para>Em 
+        <menuchoice><guimenu>Ações</guimenu><guimenuitem>Preferências</guimenuitem></menuchoice> (no canto inferior da janela principal), campo 
+        <guilabel>Carregar o log das execuções anteriores</guilabel>, você escolhe entre exibir o log completo,
+        incluindo ações de datas passadas, o log compacto, que mostra apenas as ações a partir da última
+        inicialização.</para>
+    </tip>
+    </section>    <section xml:id="import_samples"><title>Exemplos de projeto</title>
+    <para>Na seção Ajuda, além da seção de Ajuda geral, podemos importar exemplos já existentes:</para>
+
+    <figure>
+      <mediaobject>
+        <caption>Captura de tela do menu Exemplos</caption>
+        <imageobject>
+          <imagedata fileref="../images/samples_pt.png"/>
+        </imageobject>
+      </mediaobject>
+    </figure>
+
+  </section>
 
 
-		</section>
+</section>
