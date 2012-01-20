@@ -1,18 +1,21 @@
-/*   GeBR Daemon - Process and control execution of flows
- *   Copyright (C) 2007-2009 GeBR core team (http://www.gebrproject.com/)
+/*
+ * gebrd-client.c
+ * This file is part of GêBR Project
  *
- *   This program is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
+ * Copyright (C) 2007-2012 - GêBR Core Team (www.gebrproject.com)
  *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
+ * GêBR Project is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
- *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * GêBR Project is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with GêBR Project. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -183,8 +186,9 @@ static void server_moab_read_credentials(GString *accounts, GString *queue_list)
 	g_free(std_err);
 }
 
-static void
-run_xauth_command(gchar **argv)
+static gboolean
+run_xauth_command(gchar **argv,
+		  gchar **out)
 {
 	int fd;
 	struct flock fl = {F_WRLCK, SEEK_SET, 0, 0, 0};
@@ -196,25 +200,25 @@ run_xauth_command(gchar **argv)
 
 	if ((fd = open(xauth, O_RDWR | O_APPEND | O_CREAT, 0600)) == -1) {
 		perror("open");
-		exit(1);
+		return FALSE;
 	}
 
 	if (fcntl(fd, F_SETLKW, &fl) == -1) {
 		perror("fcntl");
-		exit(1);
+		close(fd);
+		return FALSE;
 	}
 
 	gebrd_message(GEBR_LOG_DEBUG, "got lock");
 
-	/* add client magic cookie */
-
 	GError *error = NULL;
 	gchar *err = NULL;
 	gint exit_status;
+	gboolean retval = FALSE;
 
 	g_spawn_sync(g_get_current_dir(), argv, envp,
 		     G_SPAWN_SEARCH_PATH, NULL, NULL,
-		     NULL, &err, &exit_status, &error);
+		     out, &err, &exit_status, &error);
 
 	if (error) {
 		gebrd_message(GEBR_LOG_ERROR, "Error running `xauth': %s", error->message);
@@ -224,12 +228,10 @@ run_xauth_command(gchar **argv)
 			      WEXITSTATUS(exit_status), err);
 	} else {
 		gebrd_message(GEBR_LOG_INFO, "xauth command succeeded");
+		retval = TRUE;
 	}
 
-	g_free(err);
-
 	fl.l_type = F_UNLCK;
-
 	if (fcntl(fd, F_SETLK, &fl) == -1) {
 		perror("fcntl");
 		exit(1);
@@ -238,6 +240,9 @@ run_xauth_command(gchar **argv)
 	gebrd_message(GEBR_LOG_DEBUG, "release lock");
 
 	close(fd);
+	g_free(err);
+
+	return retval;
 }
 
 static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct client *client)
@@ -333,7 +338,8 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			if (cookie->len && gebrd_get_server_type() != GEBR_COMM_SERVER_TYPE_MOAB) {
 				gchar *tmp = g_strdup_printf(":%d", display);
 				gchar *argv[] = {"xauth", "-i", "add", tmp, ".", cookie->str, NULL};
-				run_xauth_command(argv);
+				if (!run_xauth_command(argv, NULL))
+					display = 0;
 				g_free(tmp);
 			}
 
@@ -356,14 +362,34 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			GString *cookie = g_list_nth_data(arguments, 1);
 			guint16 display = GPOINTER_TO_UINT(g_hash_table_lookup(gebrd->display_ports, gid->str));
 
-			//if (display) {
-			//	gchar *xauth = g_build_filename(g_get_home_dir(), ".gebr", "Xauthority", NULL);
-			//	gchar *cmd = g_strdup_printf("XAUTHORITY=%s xauth remove :%d . %s",
-			//				     xauth, display, cookie->str);
-			//	run_xauth_command(cmd, xauth);
-			//	g_free(cmd);
-			//	g_free(xauth);
-			//}
+			if (display) {
+				gchar *output = NULL;
+				gchar *args[] = {"xauth", "list", NULL};
+
+				if (run_xauth_command(args, &output)) {
+					gchar **lines = g_strsplit(output, "\n", 0);
+					guint len = g_strv_length(lines);
+					gchar **args = g_new0(gchar *, len + 3);
+					args[0] = "xauth";
+					args[1] = "remove";
+
+					for (int i = 0; lines[i]; i++) {
+						if (strstr(lines[i], cookie->str)) {
+							args[i + 2] = lines[i];
+							gchar *ptr = strchr(lines[i], ' ');
+							ptr[0] = '\0';
+							gebrd_message(GEBR_LOG_DEBUG, "Got display %s for cookie %s",
+								      args[i+2], cookie->str);
+						}
+					}
+
+					if (args[2])
+						run_xauth_command(args, NULL);
+
+					g_free(args);
+					g_strfreev(lines);
+				}
+			}
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}
