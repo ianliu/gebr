@@ -18,7 +18,7 @@
 		</imageobject>
 	</mediaobject>
 	<para>As seen in 
-		<xref linkend="executar_fluxo" />, GêBR switches to the 
+		<xref linkend="flows_browser_execute_flow" />, GêBR switches to the 
 		<guilabel>Job Control</guilabel> Tab whenever a Flow is executed.</para>
 	<para>This tab has three sections:</para>
 	<itemizedlist>

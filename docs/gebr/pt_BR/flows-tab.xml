@@ -367,7 +367,7 @@
       <step>
         <para>Certifique-se de ter  <emphasis role="bold">criado e selecionado uma linha</emphasis>, na aba 
           <guilabel>Projetos e Linhas</guilabel>. Lembre-se que, na GêBR, Fluxos só podem existir dentro de linhas
-          (veja este conceito na <xref linkend="general_view"/>). Portanto,
+          (veja este conceito na <xref linkend="overview"/>). Portanto,
           para importar um Fluxo é necessário <emphasis role="bold">selecionar uma linha existente</emphasis> (ou
           <xref linkend="flows_browser_create_flow"/>, caso não exista nenhuma).</para>
       </step>

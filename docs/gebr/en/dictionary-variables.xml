@@ -167,7 +167,7 @@
   <section xml:id="variavel_iter">
     <title>The variable iter</title>
     <para>As we saw in the section 
-      <xref linkend="loop" />, GêBR allows the use of loops, through the program 
+      <xref linkend="flow_editor_loop" />, GêBR allows the use of loops, through the program 
       <guimenuitem>Loop</guimenuitem>. With this program, we have access to a special variable
       called 
       <emphasis role="bold">iter</emphasis>. Then we can show an example of the use of this
@@ -181,7 +181,7 @@
           <guimenu>Shell Tools</guimenu> category, in the 
           <guilabel>Flow Editor</guilabel> tab).</para>
         <para>Using the examples about the filling of parameters in section 
-          <xref linkend="loop" />, we are going to end up with the variable 
+          <xref linkend="flow_editor_loop" />, we are going to end up with the variable 
           <emphasis role="bold">iter</emphasis> in the dictionary as in the following window.</para>
         <figure>
           <mediaobject>
@@ -262,7 +262,7 @@
       </step>
       <step>
         <para>Now, with all the parameters set, we can run the flow (as in section 
-          <xref linkend="executar_fluxo" />), to see in which week days the holidays are going to
+          <xref linkend="flows_browser_execute_flow" />), to see in which week days the holidays are going to
           be for the next five years.</para>
         <figure>
           <mediaobject>
@@ -371,7 +371,7 @@
               everything in order.</para>
             <para>Programs with variables with errors are automatically revalidated, changing its
               state configuration (see 
-              <xref linkend="sec_3_3_5" />).</para>
+              <xref linkend="flow_editor_change_state_program" />).</para>
             <figure>
               <mediaobject>
                 <caption>Screenshot of the variable 

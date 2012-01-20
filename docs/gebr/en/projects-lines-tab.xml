@@ -11,64 +11,203 @@
   <title>The 
     <guilabel>Projects and Lines</guilabel> tab</title>
   <para>The tab 
-    <guilabel>Projects and Lines</guilabel> has nine command buttons just below the tab. These
-    command buttons will allow you to:</para>
+    <guilabel>Projects and Lines</guilabel> is splitted up in three parts: 
+    toolbar, list of Projects/Lines and Details.</para>
+    
+  <para>The toolbar remains right below the tabs and has seven buttons, which
+    allows you to:</para>
   <itemizedlist>
     <listitem>
       <para>
-        <link linkend="criar_novo_projeto">Create a New Project</link>
+        <link linkend="projects_lines_create_project">Create a New Project</link>
       </para>
     </listitem>
     <listitem>
       <para>
-        <link linkend="criar_nova_linha">Create a New Line</link>
+        <link linkend="projects_lines_create_line">Create a New Line</link>
       </para>
     </listitem>
     <listitem>
       <para>
-        <link linkend="sec_3_1_3">Delete a selected Project or Line</link>
+        <link linkend="projects_lines_edit_properties">Delete a selected Project or Line</link>
       </para>
     </listitem>
     <listitem>
       <para>
-        <link linkend="sec_3_1_4">Edit selected Project or Lines properties</link>
+        <link linkend="projects_lines_edit_properties">Edit selected Project or Lines properties</link>
       </para>
     </listitem>
     <listitem>
       <para>
-        <link linkend="sec_3_1_5">Edit selected Project or Line parameter dictionary</link>
+        <link linkend="projects_lines_dictionary">Edit selected Project or Line parameter dictionary</link>
       </para>
     </listitem>
     <listitem>
       <para>
-        <link linkend="sec_3_1_7">Import a Project or a Line</link>
+        <link linkend="projects_lines_import_project">Import a Project or a Line</link>
       </para>
     </listitem>
     <listitem>
       <para>
-        <link linkend="exportar_um_projeto_ou_linha">Export a Project or a Line</link>
+        <link linkend="projects_lines_export_project">Export a Project or a Line</link>
+      </para>
+    </listitem>
+  </itemizedlist>
+    <para>The right-side window offers two more options: </para>
+  <itemizedlist>
+    <listitem>
+      <para>
+        <link linkend="projects_lines_edit_comments_project">Edit comments</link>
       </para>
     </listitem>
     <listitem>
       <para>
-        <link linkend="editar_comentarios">Edit comments</link>
-      </para>
-    </listitem>
-    <listitem>
-      <para>
-        <link linkend="visualizar_relatorio">View Report</link>
+        <link linkend="projects_lines_view_report_project">View Report</link>
       </para>
     </listitem>
   </itemizedlist>
   <tip>
     <para>Try using a 
-      <emphasis role="bold">context menu</emphasis> instead of command buttons. To do so, 
-      <emphasis role="bold">right-click</emphasis> on one of the Projects or Lines you have created.
+      <emphasis>context menu</emphasis> instead of command buttons. To do so, 
+      <emphasis>right-click</emphasis> on one of the Projects or Lines you have created.
       Notice that many commands can be found in this context menu. For certain cases this method is
 
-      <emphasis role="bold">easier and faster</emphasis> then using command buttons.</para>
+      <emphasis>easier and faster</emphasis> then using command buttons.</para>
   </tip>
-  <section xml:id="criar_novo_projeto">
+<section xml:id="projects_lines_create_projects_and_lines">
+    <title>Creating Projects and Lines</title>
+    <para>To create a 
+      <emphasis role="bold">New Project</emphasis>:</para>
+    <procedure>
+      <step>
+        <para>Select the tab 
+          <guilabel>Projects and Lines</guilabel>.</para>
+      </step>
+      <step>
+        <para>Left-click on 
+          <guiicon>
+            <inlinemediaobject>
+              <imageobject>
+                <imagedata fileref="../../common-images/botao_criar_projeto.png" />
+              </imageobject>
+            </inlinemediaobject>
+        </guiicon></para>
+      </step>
+      <step>
+        <para>In the 
+          <guilabel>Project properties</guilabel> dialog box, fill in the Project's 
+          <emphasis>title</emphasis> (for example, 
+          <userinput>My First Project</userinput>).</para>
+      </step>
+      <step>
+        <para>You can also give a brief 
+          <emphasis>Description</emphasis> of the Project, the 
+          <emphasis>Author</emphasis> and an 
+          <emphasis>e-mail</emphasis> for contact.</para>
+      </step>
+      <step>
+        <para>Click 
+          <emphasis role="bold">OK</emphasis>.</para>
+      </step>
+    </procedure>
+    <figure>
+      <mediaobject>
+        <caption>In the Project's properties dialog box you can edit the title, description,
+          author and email.</caption>
+        <imageobject>
+          <imagedata fileref="../images/janela_properties_project.png" />
+        </imageobject>
+      </mediaobject>
+    </figure>
+    <para>The Project title should have appeared on the left hand side of GêBR's main window.
+      Information about the Project is shown in the 
+      <guilabel>Details</guilabel> box on the right hand side of GêBR's main window. Notice that
+      some of this information comes from what you inserted in the 
+      <guilabel>Project 'New Project' properties</guilabel> dialog box when you created the Project.
+      Details such as creation date and modified date, the date of the last change, are
+      automatically generated by GêBR.</para>
+    <figure>
+      <mediaobject>
+        <caption>This is an example of one Project called "My first project", to the left is the
+          list of Projects and Lines, at the moment only one Project. To the right you will see the
+          details box which exhibits information on the currently selected Project or
+          Line.</caption>
+        <imageobject>
+          <imagedata fileref="../images/janela_principal_1.png" />
+        </imageobject>
+      </mediaobject>
+    </figure>
+    <para>Now that you have created a Project, you can create 
+      <emphasis role="bold">Lines</emphasis> inside this Project. To add a 
+      <emphasis role="bold">New Line</emphasis>:</para>
+    <procedure>
+      <step>
+        <para>Check that you have selected the Project you created, just like in the window
+          above.</para>
+      </step>
+      <step>
+        <para>Click on the button 
+          <guiicon>
+            <inlinemediaobject>
+              <imageobject>
+                <imagedata fileref="../../common-images/botao_criar_linha.png" />
+              </imageobject>
+            </inlinemediaobject>
+        </guiicon></para>
+      </step>
+      <step>
+        <para>In the dialog box 
+          <guilabel>Line properties</guilabel>, fill in the Line's 
+          <emphasis>Title</emphasis> ( for example, 
+          <userinput>My First Line</userinput>).</para>
+      </step>
+      <step>
+        <para>You can also give a brief 
+          <emphasis>Description</emphasis> of the Project, the 
+          <emphasis>Author</emphasis> and an 
+          <emphasis>e-mail</emphasis> for contact. You can also add paths to directories that are
+          relevant for this Line, this will be explained in greater detail in 
+          <xref linkend="projects_lines_edit_paths" />.</para>
+      </step>
+    </procedure>
+    <figure>
+      <mediaobject>
+        <caption>The Line's property dialog box; you can add information such as the Line's
+          description, author and email, the maestro of the line (see 
+          <xref linkend="projects_lines_change_the_maestro_of_a_line" />) and the preferred paths in the path
+          text box.</caption>
+        <imageobject>
+          <imagedata fileref="../images/GeBR_line_properties.png" />
+        </imageobject>
+      </mediaobject>
+    </figure>
+    <para>After creating your first Line your GêBR window should look something like the window
+      below. Notice that when a Line is selected the 
+      <guilabel>Details</guilabel> box, on the right of the main window, will show information about
+      this selected Line.</para>
+    <figure>
+      <mediaobject>
+        <caption>In the Projects and Lines tab, you will find information about the currently
+          selected Line in the Details box on the right side of the main window.</caption>
+        <imageobject>
+          <imagedata fileref="../images/janela_principal_2.png" />
+        </imageobject>
+      </mediaobject>
+    </figure>
+    <tip>
+      <para>At the top left corner, 
+        <menuchoice>
+          <guimenu>Actions</guimenu>
+          <guimenuitem>Preferences</guimenuitem>
+        </menuchoice> then fill in your details in the fields 
+        <guilabel>User name</guilabel> and 
+        <guilabel>Email</guilabel>. New Projects and Lines by default will use this
+        information.</para>
+    </tip>
+    <para>Now that you have the basic Project and Line structure you can 
+      <emphasis role="bold">create your first Flow</emphasis>.</para>
+  </section>
+  <section xml:id="projects_lines_create_project">
     <title>New Project</title>
     <para>To create a new Project click on the button 
       <guiicon>
@@ -78,7 +217,7 @@
           </imageobject>
         </inlinemediaobject>
       </guiicon>, more details are given in 
-      <xref linkend="editar_projetos_e_linhas" />.</para>
+      <xref linkend="projects_lines_create_projects_and_lines" />.</para>
     <para>There is 
       <emphasis role="bold">no limitation</emphasis> on the number of Projects in GêBR. You can have
       as many as you desire.</para>
@@ -87,7 +226,7 @@
       <guilabel>Details</guilabel> box, on the right side of the main window, will show information
       about the selected Project.</para>
   </section>
-  <section xml:id="criar_nova_linha">
+  <section xml:id="projects_lines_create_line">
     <title>New Line</title>
     <para>To create a new Line, 
       <emphasis role="bold">select an existing Project</emphasis> and left-click on 
@@ -98,7 +237,7 @@
           </imageobject>
         </inlinemediaobject>
       </guiicon>, more details are given in 
-      <xref linkend="editar_projetos_e_linhas" />. A new Line will appear in the selected
+      <xref linkend="projects_lines_create_projects_and_lines" />. A new Line will appear in the selected
       Project.</para>
     <para>There is 
       <emphasis role="bold">no limitation</emphasis> on the number of Lines in GêBR. You can have as
@@ -131,7 +270,7 @@
       </guiicon>.</para>
     </tip>
   </section>
-  <section xml:id="sec_3_1_3">
+  <section xml:id="projects_lines_delete_project">
     <title>Deleting a Project or a Line</title>
     <para>To remove a Line or Project select the Project or Line then left-click on 
       <guiicon>
@@ -150,7 +289,7 @@
         <emphasis role="bold">deleting all of its Flows</emphasis>.</para>
     </caution>
   </section>
-  <section xml:id="sec_3_1_4">
+  <section xml:id="projects_lines_edit_properties">
     <title>Editing Project's or Line's properties</title>
     <para>To edit Project's or Line's properties, first select the Project of Line and then
       click on button 
@@ -170,17 +309,17 @@
       <guilabel>Email</guilabel> and 
       <guilabel>Maestro</guilabel>. Line's properties also has the option of adding a 
       <guilabel>Path</guilabel>, which will be explained in 
-      <xref linkend="editar_caminhos_preferenciais_da_linha" />.</para>
+      <xref linkend="projects_lines_edit_paths" />.</para>
   </section>
-  <section xml:id="sec_3_1_5">
+  <section xml:id="projects_lines_dictionary">
     <title>Editing the Project's or Line's parameter dictionary</title>
     <para>This feature is documented in the Section 
-      <xref linkend="variaveis_dicionario" />.</para>
+      <xref linkend="dictionary_variables" />.</para>
   </section>
-  <section xml:id="editar_caminhos_preferenciais_da_linha">
+  <section xml:id="projects_lines_edit_paths">
     <title>Editing the Line's preferred paths</title>
     <para>The Section 
-      <xref linkend="editing_input_output" />will show how a Flow can be associated
+      <xref linkend="flow_editor_edit_input_output" />will show how a Flow can be associated
       to some data files, this association is simpler if we add preferred paths to the Line.</para>
     <para>The Line's preferred paths are defined in the 
       <guilabel>Line's properties</guilabel> dialog box. To open this dialog box select the Line
@@ -234,8 +373,8 @@
     </tip>
     <tip>
       <para>To change a 
-        <emphasis role="bold">path's position</emphasis> in the list, with the mouse simply 
-        <emphasis role="bold">drag it</emphasis> to its new position.</para>
+        <emphasis>path's position</emphasis> in the list, with the mouse simply 
+        <emphasis>drag it</emphasis> to its new position.</para>
     </tip>
     <para>You can also use hotkeys to add paths (
       <keycombo>
@@ -264,7 +403,7 @@
       </mediaobject>
     </figure>
   </section>
-  <section xml:id="changing_the_maestro_of_a_line">
+  <section xml:id="projects_lines_change_the_maestro_of_a_line">
     <title>Changing the maestro of a line</title>
     <para>You can change the maestro of a line when the connected maestro is different from
       maestro that was originally configured for this line. You should follow the steps
@@ -295,10 +434,10 @@
     <caution>You are going to need to review the paths of the line, potentially broken by the
       change of the maestro.</caution>
   </section>
-  <section xml:id="sec_3_1_7">
+  <section xml:id="projects_lines_import_project">
     <title>Import a Project or a Line</title>
     <para>In GêBR you can import Projects or Lines that were previously exported 
-      <xref linkend="exportar_um_projeto_ou_linha" />. To do so:</para>
+      <xref linkend="projects_lines_export_project" />. To do so:</para>
     <procedure>
       <step>
         <para>Click on the button 
@@ -328,14 +467,14 @@
       <emphasis role="bold">Imported</emphasis>.</para>
     <note>
       <para>In GêBR, Lines may only exist inside a Project, see this concept in the Section 
-        <xref linkend="projetos_linhas_fluxo_visao_geral" />. Therefore to import a Line you must
+        <xref linkend="overview" />. Therefore to import a Line you must
         first 
         <emphasis role="bold">select an existing Project</emphasis>. (If there does not exist one
         then 
-        <xref linkend="criar_novo_projeto" />).</para>
+        <xref linkend="projects_lines_create_project" />).</para>
     </note>
   </section>
-  <section xml:id="exportar_um_projeto_ou_linha">
+  <section xml:id="projects_lines_export_project">
     <title>Exporting a Project or a Line</title>
     <para>Although GêBR continuously saves all data, some times it is desirable to have copies of
       your Project and Lines in a file (for example, to share with others or to make backups). To
@@ -367,7 +506,7 @@
       </step>
     </procedure>
   </section>
-  <section xml:id="editar_comentarios">
+  <section xml:id="projects_lines_edit_comments_project">
     <title>Editing comments</title>
     <para>You can edit comments on the report to specify information about a Project or a Line.
       To 
@@ -424,7 +563,7 @@
       </important>
     </para>
   </section>
-  <section xml:id="visualizar_relatorio">
+  <section xml:id="projects_lines_view_report_project">
     <title>View Report</title>
     <para>As explained in the above section, you can edit a report containing additional
       information about the Project or Line. To view the report left-click on View Report, found at
@@ -467,7 +606,7 @@
       </mediaobject>
     </figure>
     <para>
-      <xref linkend="visualizar_relatorio_fluxo" />explains in greater detail the View Report tool
+      <xref linkend="flows_browser_view_report_flow" />explains in greater detail the View Report tool
       for Flows, which is very similar to the Line's and Project's View Report except that in this
       one you can add the Flow's report.</para>
   </section>

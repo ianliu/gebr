@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<section
+  xmlns="http://docbook.org/ns/docbook"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  xmlns:xlink="http://www.w3.org/1999/xlink"
+  lang="en"
+  version="5.0"
+  xml:id="overview">
+
+  <title>Projects, Lines and Flows: an overview</title>
+  <para>In GêBR each 
+    <emphasis>Processing Flow</emphasis> is organized into larger units called 
+    <emphasis>Lines</emphasis>. Lines are grouped together into 
+    <emphasis>Projects</emphasis>. In other words:</para>
+  <itemizedlist>
+    <listitem>
+      <para>A 
+        <emphasis>Project</emphasis> is a set of 
+        <emphasis>Lines</emphasis></para>
+    </listitem>
+    <listitem>
+      <para>A 
+        <emphasis>Line</emphasis> is a set of 
+        <emphasis>Flows</emphasis></para>
+    </listitem>
+  </itemizedlist>
+  <para>Before you execute a Flow, you must first 
+    Create a Project and a Line.</para>
+    See in <xref linkend="projects_lines_create_projects_and_lines"/> how to create a project and a line and in <xref linkend="flows_browser_create_flow"/> how to create a Flow.
+  
+</section>

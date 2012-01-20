@@ -5,19 +5,20 @@
   xmlns:xi="http://www.w3.org/2001/XInclude"
   xmlns:xlink="http://www.w3.org/1999/xlink"
   lang="en"
-  version="5.0">
+  version="5.0"
+  xml:id="what_is_gebr">
 
   <title>What is GêBR?</title>
   <para>GêBR is a simple graphical interface which 
-    <emphasis role="bold">facilitates geophysical data processing</emphasis>. GêBR is 
-    <emphasis role="bold">not a package for processing</emphasis>, it is designed to 
-    <emphasis role="bold">integrate</emphasis> a large variety of free processing packages, such as 
+    <emphasis>facilitates geophysical data processing</emphasis>. GêBR is 
+    <emphasis>not a package for processing</emphasis>, it is designed to 
+    <emphasis>integrate</emphasis> a large variety of free processing packages, such as 
     <emphasis>Seismic Un*x</emphasis> and 
     <emphasis>Madagascar</emphasis>.</para>
   <para>GêBR can manage Projects and Lines, assemble and execute Flows and follow the results of
     your data processing. Everything in a simple and friendly way.</para>
   <para>Being a 
-    <emphasis role="bold">free software</emphasis>, anyone can use and customize GêBR for free,
+    <emphasis>free software</emphasis>, anyone can use and customize GêBR for free,
     according to the terms of the 
     <emphasis>GNU Public License</emphasis>. That makes this software very attractive for academic
     research and for use in courses.</para>
@@ -39,11 +40,11 @@
       <listitem>The maestro concept is born allowing to execute GêBR jobs in multiples machines.
         (see 
         <xref linkend="servers_configuration" /> and 
-        <xref linkend="multiple_machines" />).</listitem>
+        <xref linkend="flow_editor_multiple_machines" />).</listitem>
       <listitem>Now it is possible to control the number of cores used by the jobs of GêBR and
         change the priority of execution of a job (see 
-        <xref linkend="multi_cores" /> and 
-        <xref linkend="priority_execution" />).</listitem>
+        <xref linkend="flow_editor_multicores" /> and 
+        <xref linkend="flow_editor_priority_execution" />).</listitem>
       <listitem>Renewed interface adds new functionalities and improves usability in
         GêBR.</listitem>
     </itemizedlist>
@@ -51,9 +52,9 @@
   <section>
     <title>Technical Information</title>
     <para>This guide is for GêBR 
-      <emphasis role="bold">version 0.16.0</emphasis>. The images used in this guide where captured
+      <emphasis>version 0.16.0</emphasis>. The images used in this guide where captured
       in the system 
-      <emphasis role="bold">Ubuntu 10.04</emphasis>. Therefore you may observe slight differences
+      <emphasis>Ubuntu 10.04</emphasis>. Therefore you may observe slight differences
       if you are using another operating system. For specific installation instructions for each
       operating system, see the 
       <emphasis>
@@ -63,109 +64,7 @@
         <link xlink:href="http://www.gebrproject.com">project's official site</link>
     </emphasis>.</para>
   </section>
-  <section>
-    <title>GêBR Core Team</title>
-    <para>
-      <emphasis role="bold">Director:</emphasis>
-    </para>
-    <itemizedlist>
-      <listitem>
-        <para>Ricardo Biloti 
-          <email>biloti@gebrproject.com</email></para>
-      </listitem>
-    </itemizedlist>
-    <para>
-      <emphasis role="bold">Developer manager:</emphasis>
-    </para>
-    <itemizedlist>
-      <listitem>
-        <para>Fabrício Matheus Gonçalves 
-          <email>fmatheus@gebrproject.com</email></para>
-      </listitem>
-    </itemizedlist>
-    <para>
-      <emphasis role="bold">Developers:</emphasis>
-    </para>
-    <itemizedlist>
-      <listitem>
-        <para>Eric Keiji 
-          <email>keiji.eric@gebrproject.com</email></para>
-      </listitem>
-      <listitem>
-        <para>Ian Liu Rodrigues 
-          <email>ian.liu@gebrproject.com</email></para>
-      </listitem>
-      <listitem>
-        <para>Igor Henrique Soares Nunes 
-          <email>igor.snunes@gebrproject.com</email></para>
-      </listitem>
-      <listitem>
-        <para>Jorge Pizzolatto 
-          <email>jorge.pzt@gebrproject.com</email></para>
-      </listitem>
-      <listitem>
-        <para>Júlia Koury Marques 
-          <email>julia@gebrproject.com</email></para>
-      </listitem>
-      <listitem>
-        <para>Vinícius Oliveira Querência 
-          <email>querencia@gebrproject.com</email></para>
-      </listitem>
-    </itemizedlist>
-    <para>
-      <emphasis role="bold">Consultants:</emphasis>
-    </para>
-    <itemizedlist>
-      <listitem>
-        <para>Bráulio Oliveira 
-          <email>brauliobo@gebrproject.com</email></para>
-      </listitem>
-      <listitem>
-        <para>Eduardo Filpo 
-          <email>efilpo@gmail.com</email></para>
-      </listitem>
-      <listitem>
-        <para>Fernando Roxo 
-          <email>roxo@roxo.org</email></para>
-      </listitem>
-      <listitem>
-        <para>Luis Alberto D'Afonseca 
-          <email>luis.dafonseca@gebrproject.com</email></para>
-      </listitem>
-      <listitem>
-        <para>Rodrigo Portugal 
-          <email>rosoport@gmail.com</email></para>
-      </listitem>
-    </itemizedlist>
-    <para>
-      <emphasis role="bold">Former members:</emphasis>
-    </para>
-    <itemizedlist>
-      <listitem>
-        <para>Alexandre Baaklini</para>
-      </listitem>
-      <listitem>
-        <para>Davi Clemente</para>
-      </listitem>
-      <listitem>
-        <para>Fábio Azevedo</para>
-      </listitem>
-      <listitem>
-        <para>Gabriel Sobral</para>
-      </listitem>
-      <listitem>
-        <para>Giuliano Roberto Pinheiros</para>
-      </listitem>
-      <listitem>
-        <para>Priscila Moraes</para>
-      </listitem>
-      <listitem>
-        <para>Renan Giarola</para>
-      </listitem>
-      <listitem>
-        <para>Rodrigo Morelatto</para>
-      </listitem>
-    </itemizedlist>
-    <para>Thank you for using GêBR!</para>
-  </section>
+  <!-- Time da GêBR (GêBR Team) -->
+  <xi:include href="gebr-team.xml" />
+  
 </section>

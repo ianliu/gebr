@@ -12,7 +12,7 @@
     <guilabel>Projetos e Linhas</guilabel></title>
   <para>
     A aba <guilabel>Projetos e Linhas</guilabel> é dividida em três 
-    partes: barra de ferramentas, lista de projetos/Fluxos e janela de detalhes.
+    partes: barra de ferramentas, lista de Projetos/Linhas e janela de detalhes.
   </para>
   <para>A barra de ferramentas
     dispõe de sete botões de comando, localizados logo abaixo da aba. Por meio
@@ -51,6 +51,20 @@
     <listitem>
       <para>
         <link linkend="projects_lines_export_project">Exportar um projeto ou linha</link>
+      </para>
+    </listitem>
+  </itemizedlist>
+
+    <para>O lado direito da janela oferece, ainda, duas opções: </para>
+  <itemizedlist>
+    <listitem>
+      <para>
+        <link linkend="projects_lines_edit_comments_project">Edição de comentários</link>
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        <link linkend="projects_lines_view_report_project">Visualização de relatórios</link>
       </para>
     </listitem>
   </itemizedlist>
@@ -351,7 +365,7 @@
       sufixo <emphasis role="bold">Importado</emphasis>.</para>
     <note>
       <para>Na GêBR, linhas só podem existir dentro de projetos (veja este conceito
-        na <xref linkend="general_view"/>). Portanto, para importar uma linha é
+        na <xref linkend="overview"/>). Portanto, para importar uma linha é
         necessário <emphasis role="bold">selecionar um projeto existente</emphasis>
         ou criar um novo.</para>
     </note>

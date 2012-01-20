@@ -6,7 +6,7 @@
   xmlns:xlink="http://www.w3.org/1999/xlink"
   lang="pt_BR"
   version="5.0"
-  xml:id="general_view">
+  xml:id="overview">
 
   <title>Uma visão geral</title>
   <para>
@@ -19,8 +19,8 @@
   <itemizedlist>
     <listitem>
       <para>
-        Um <emphasis role="bold">Projeto</emphasis> é um conjunto de
-        <emphasis role="bold">Linhas</emphasis>
+        Um <emphasis>Projeto</emphasis> é um conjunto de
+        <emphasis>Linhas</emphasis>
       </para>
     </listitem>
     <listitem>

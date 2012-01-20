@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<section
+  xmlns="http://docbook.org/ns/docbook"
+  lang="pt_BR"
+  version="5.0"
+  xml:id="gebr_team">
+    <title>GêBR Core Team</title>
+    <para>
+      <emphasis role="bold">Director:</emphasis>
+    </para>
+    <itemizedlist>
+      <listitem>
+        <para>Ricardo Biloti 
+          <email>biloti@gebrproject.com</email></para>
+      </listitem>
+    </itemizedlist>
+    <para>
+      <emphasis role="bold">Developer manager:</emphasis>
+    </para>
+    <itemizedlist>
+      <listitem>
+        <para>Fabrício Matheus Gonçalves 
+          <email>fmatheus@gebrproject.com</email></para>
+      </listitem>
+    </itemizedlist>
+    <para>
+      <emphasis role="bold">Developers:</emphasis>
+    </para>
+    <itemizedlist>
+      <listitem>
+        Eric Keiji 
+          <email>keiji.eric@gebrproject.com</email>
+      </listitem>
+      <listitem>
+        Ian Liu Rodrigues 
+          <email>ian.liu@gebrproject.com</email>
+      </listitem>
+      <listitem>
+        Igor Henrique Soares Nunes 
+          <email>igor.snunes@gebrproject.com</email>
+      </listitem>
+      <listitem>
+        Jorge Pizzolatto 
+          <email>jorge.pzt@gebrproject.com</email>
+      </listitem>
+      <listitem>
+        Júlia Koury Marques 
+          <email>juliakm@gebrproject.com</email>
+      </listitem>
+      <listitem>
+        Vinícius Oliveira Querência 
+          <email>querencia@gebrproject.com</email>
+      </listitem>
+    </itemizedlist>
+    <para>
+      <emphasis role="bold">Consultants:</emphasis>
+    </para>
+    <itemizedlist>
+      <listitem>
+        Bráulio Oliveira 
+          <email>brauliobo@gebrproject.com</email>
+      </listitem>
+      <listitem>
+        Eduardo Filpo 
+          <email>efilpo@gmail.com</email>
+      </listitem>
+      <listitem>
+        Fernando Roxo 
+          <email>roxo@roxo.org</email>
+      </listitem>
+      <listitem>
+        Luis Alberto D'Afonseca 
+          <email>luis.dafonseca@gebrproject.com</email>
+      </listitem>
+      <listitem>
+        Rodrigo Portugal 
+          <email>rosoport@gmail.com</email>
+      </listitem>
+    </itemizedlist>
+    <para>
+      <emphasis role="bold">Former members:</emphasis>
+    </para>
+    <itemizedlist>
+      <listitem>
+        Alexandre Baaklini
+      </listitem>
+      <listitem>
+        Davi Clemente
+      </listitem>
+      <listitem>
+        Fábio Azevedo
+      </listitem>
+      <listitem>
+        Gabriel Sobral
+      </listitem>
+      <listitem>
+        Giuliano Roberto Pinheiros
+      </listitem>
+      <listitem>
+        Priscila Moraes
+      </listitem>
+      <listitem>
+        Renan Giarola
+      </listitem>
+      <listitem>
+        Rodrigo Morelatto
+      </listitem>
+    </itemizedlist>
+    <para>Thank you for using GêBR!</para>
+  </section>
