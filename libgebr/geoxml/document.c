@@ -1153,7 +1153,7 @@ int gebr_geoxml_document_save(GebrGeoXmlDocument * document, const gchar * path)
 			return GEBR_GEOXML_RETV_PERMISSION_DENIED;
 		}
 
-#if ENABLE_TIDY
+#if 0 /* ENABLE_TIDY */
 		Bool ok;
 		TidyBuffer output;
 		TidyBuffer errbuf;
