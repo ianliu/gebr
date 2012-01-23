@@ -1,4 +1,4 @@
-gebrproject (0.15.8) lucid; urgency=low
+gebrproject (0.15.9) lucid; urgency=low
 
   * Fix internationalization bugs;
   * Fix bug when dividing flows with loops;
