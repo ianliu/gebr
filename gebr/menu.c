@@ -467,26 +467,36 @@ static gboolean populate_menu_demo(const gchar *dir, GtkMenu *menu)
 		GtkWidget *submenu = gtk_menu_new();
 		gtk_menu_item_set_submenu(GTK_MENU_ITEM(menu_item), submenu);
 		g_free(label);
+
+		GList *list = NULL;
 		gebr_directory_foreach_file_hyg(filename, path->str, dir) {
 			if (!fnmatch("*.prjz", filename, 1)) {
 				has_dir = TRUE;
-				gchar *demo_path = g_strconcat(dir, "/", dirname, "/", filename, NULL);
-				label = canonize_name(demo_path);
-				label[strlen(label) - 5] = '\0';
-				menu_item = gtk_menu_item_new_with_label(label);
-				gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menu_item);
-				g_signal_connect(menu_item, "activate", G_CALLBACK(import_demo), demo_path);
-				g_object_weak_ref(G_OBJECT(menu_item), (GWeakNotify)g_free, demo_path);
-				g_free(label);
+				list = g_list_prepend(list, g_strdup(filename));
 			}
 		}
+		list = g_list_sort(list, (GCompareFunc) g_strcmp0);
+		for (GList *i = list; i; i = i->next) {
+			gchar *demo_path = g_strconcat(path->str , "/", i->data, NULL);
+			gchar *label = canonize_name(demo_path);
+			label[strlen(label) - 5] = '\0';
+			menu_item = gtk_menu_item_new_with_label(label);
+			gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menu_item);
+			g_signal_connect(menu_item, "activate", G_CALLBACK(import_demo), demo_path);
+			g_object_weak_ref(G_OBJECT(menu_item), (GWeakNotify)g_free, demo_path);
+			g_free(label);
+		}
+
+		g_list_foreach(list, (GFunc) g_free, NULL);
+		g_list_free(list);
 		if (!has_dir) {
 			menu_item = gtk_menu_item_new_with_label(_("Empty"));
 			gtk_widget_set_sensitive(menu_item, FALSE);
 			gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menu_item);
 		}
-		g_string_free(path, TRUE);
 	}
+	g_string_free (path, TRUE);
+
 	if (!has_demo)
 		return FALSE;
 	return TRUE;
