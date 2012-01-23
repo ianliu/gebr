@@ -1,5 +1,14 @@
 gebrproject (0.15.8) lucid; urgency=low
 
+  * Fix internationalization bugs;
+  * Fix bug when dividing flows with loops;
+  * Fix some interface problems.
+  * Line's paths are created in Daemon's server, not GeBR's.
+
+ -- Ian Liu Rodrigues <ian.liu@gebrproject.com>  Mon, 23 Jan 2012 15:39:57 -0200
+
+gebrproject (0.15.8) lucid; urgency=low
+
   * Updated user guide.
 
  -- Fabricio Matheus Goncalves <fmatheus@gebrproject.com>  Wed, 18 Jan 2012 10:46:32 -0200
