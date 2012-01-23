@@ -1,3 +1,78 @@
+
+2012-01-23  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix loop parameters when dividing flows
+	* Disable tidy to prevent a bug in DeBR in which spaces were being
+	stripped
+
+2012-01-23  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Sort demos in 'Samples' menu
+
+2012-01-23  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Try to authorized x11 cookie repeatedly
+
+2012-01-23  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Update translate of GeBR
+	* Remove focus and relief from nice button to improve visible
+
+2012-01-20  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Some modifications in English documentation
+	* More modifications on GeBR-pt_BR documentation
+
+2012-01-20  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Remove X11 cookies when a client disconnects
+
+2012-01-19  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Modifications on GeBR-pt_BR documentation
+
+2012-01-19  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Run_def doesn't have return message
+	* Connect signal to update toolbar buttons when job change status
+
+2012-01-19  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add rmck_def message for removing a X11 cookie from GeBR's
+	Xauthority file
+	* Disable lock file check in xauth command
+
+2012-01-19  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Hide Info Bar of issues when lost selection on Job Control
+
+2012-01-19  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Relativise the flow before executing
+	* GebrdJob creates line paths in script
+	* Maestro sends paths to Daemon in run_def
+	* GebrCommRunner receives a path string
+	* GeBR sends line paths to Maestro
+
+2012-01-18  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Modify documentation
+
+2012-01-18  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Remove server if it was already added
+
+2012-01-18  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Update translate on gebr
+	* Implement method gebr_job_get_command_line to fix Save Job on
+	JobControl
+	* Fix freeze of gebr when try to open a invalid project/line
+	* Fix state of GebrJob when receiving job_defs
+	* Remove client from list of connections in maestro
+	* Fix lost selection on rigth side of job control when execute a job
+	(and select correct filter after that)
+
 2012-01-18  Eric Keiji <keiji.eric@gebrproject.com>
 
 	* minor modifications in documentation
