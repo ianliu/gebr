@@ -1178,7 +1178,6 @@ GList *gebr_geoxml_flow_divide_flows(GebrGeoXmlFlow *flow,
 			break;
 
 		ini = g_strdup_printf("%d", ini_int);
-		end = (distributed_n[i]-1)*step_int+ini_int;
 		div_n = g_strdup_printf("%d", distributed_n[i]);
 
 		div_flow = GEBR_GEOXML_FLOW(gebr_geoxml_document_clone(GEBR_GEOXML_DOCUMENT(flow)));
@@ -1186,7 +1185,9 @@ GList *gebr_geoxml_flow_divide_flows(GebrGeoXmlFlow *flow,
 		gebr_geoxml_program_control_set_n(div_loop, eval_step, ini, div_n);
 		flows = g_list_append(flows, div_flow);
 		gebr_geoxml_object_unref(div_loop);
-		ini_int = end+1;
+
+		end = distributed_n[i]*step_int+ini_int;
+		ini_int = end;
 	}
 
 	if (n_steps)
