@@ -213,23 +213,31 @@ run_xauth_command(gchar **argv,
 
 	GError *error = NULL;
 	gchar *err = NULL;
+	gint status;
 	gint exit_status;
+	gint tries = 0;
 	gboolean retval = FALSE;
 
-	g_spawn_sync(g_get_current_dir(), argv, envp,
-		     G_SPAWN_SEARCH_PATH, NULL, NULL,
-		     out, &err, &exit_status, &error);
+	do {
+		g_spawn_sync(g_get_current_dir(), argv, envp,
+			     G_SPAWN_SEARCH_PATH, NULL, NULL,
+			     out, &err, &status, &error);
+		exit_status = WEXITSTATUS(status);
 
-	if (error) {
-		gebrd_message(GEBR_LOG_ERROR, "Error running `xauth': %s", error->message);
-		g_error_free(error);
-	} else if (WEXITSTATUS(exit_status) != 0) {
-		gebrd_message(GEBR_LOG_ERROR, "xauth command exited with %d: %s",
-			      WEXITSTATUS(exit_status), err);
-	} else {
-		gebrd_message(GEBR_LOG_INFO, "xauth command succeeded");
-		retval = TRUE;
-	}
+		if (error) {
+			gebrd_message(GEBR_LOG_ERROR, "Error running `xauth': %s", error->message);
+			g_error_free(error);
+			exit_status = 1;
+		} else if (exit_status != 0) {
+			gebrd_message(GEBR_LOG_ERROR, "xauth command exited with %d: %s",
+				      exit_status, err);
+		} else {
+			gebrd_message(GEBR_LOG_INFO, "xauth command succeeded");
+			retval = TRUE;
+		}
+		g_usleep(200000);
+		tries++;
+	} while (tries < 300 && exit_status);
 
 	fl.l_type = F_UNLCK;
 	if (fcntl(fd, F_SETLK, &fl) == -1) {
