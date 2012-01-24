@@ -22,6 +22,10 @@
 # include <config.h>
 #endif
 
+#if HAVE_X11_XAUTH_H
+# include <X11/Xauth.h>
+#endif
+
 #include "gebrd-client.h"
 
 #include "gebrd-job.h"
@@ -237,7 +241,7 @@ run_xauth_command(gchar **argv,
 		}
 		g_usleep(500000);
 		tries++;
-	} while (tries < 5 && exit_status);
+	} while (tries < 15 && exit_status);
 
 	fl.l_type = F_UNLCK;
 	if (fcntl(fd, F_SETLK, &fl) == -1) {
@@ -252,6 +256,54 @@ run_xauth_command(gchar **argv,
 
 	return retval;
 }
+
+#if HAVE_X11_XAUTH_H
+static gboolean
+run_lib_xauth_command(const gchar *port, const gchar *cookie)
+{
+	gchar *path = g_build_filename(g_get_home_dir(), ".gebr", "Xauthority", NULL);
+
+	if (XauLockAuth(path, 15, 1, 60) != LOCK_SUCCESS)
+		return FALSE;
+
+	FILE *xauth = fopen(path, "a");
+	Xauth auth;
+	auth.family = 256;
+	auth.address = (gchar *)g_get_host_name();
+	auth.address_length = strlen(auth.address);
+	auth.number = (gchar *)port;
+	auth.number_length = strlen(auth.number);
+	auth.name = "MIT-MAGIC-COOKIE-1";
+	auth.name_length = strlen(auth.name);
+
+	gsize len = strlen(cookie);
+	gchar *tmp = g_strdup(cookie);
+	gchar *data = g_new(gchar, len / 2);
+
+	for (int i = 0; tmp[i]; i++) {
+		if (tmp[i] >= 'a')
+			tmp[i] -= 'a' + 10;
+		else if (tmp[i] >= '0')
+			tmp[i] -= '0';
+		if (i % 2 == 0)
+			tmp[i] <<= 4;
+		else
+			data[i/2] = tmp[i-1] | tmp[i];
+	}
+
+	auth.data = data;
+	auth.data_length = len / 2;
+
+	XauWriteAuth(xauth, &auth);
+
+	g_free(data);
+	g_free(tmp);
+	fclose(xauth);
+
+	XauUnlockAuth(path);
+	return TRUE;
+}
+#endif
 
 static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct client *client)
 {
@@ -344,14 +396,21 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			g_debug("Received gid %s with cookie %s", gid->str, cookie->str);
 
 			if (cookie->len && gebrd_get_server_type() != GEBR_COMM_SERVER_TYPE_MOAB) {
+#if !HAVE_X11_XAUTH_H
 				gchar *tmp = g_strdup_printf(":%d", display);
 				gchar *argv[] = {"xauth", "-i", "add", tmp, ".", cookie->str, NULL};
 				if (!run_xauth_command(argv, NULL))
 					display = 0;
 				g_free(tmp);
+#else
+				gchar *tmp = g_strdup_printf("%d", display);
+				if (!run_lib_xauth_command(tmp, cookie->str))
+					display = 0;
+				g_free(tmp);
+#endif
 			}
 
-			gchar *display_str = g_strdup_printf("%d", display + 6000);
+			gchar *display_str = g_strdup_printf("%d", display ? display + 6000 : 0);
 			gebr_comm_protocol_socket_oldmsg_send(client->socket, FALSE,
 							      gebr_comm_protocol_defs.ret_def, 2,
 							      gid->str, display_str);
