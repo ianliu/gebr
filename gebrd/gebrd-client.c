@@ -263,8 +263,17 @@ run_lib_xauth_command(const gchar *port, const gchar *cookie)
 {
 	gchar *path = g_build_filename(g_get_home_dir(), ".gebr", "Xauthority", NULL);
 
-	if (XauLockAuth(path, 15, 2, 60) != LOCK_SUCCESS)
-		return FALSE;
+	//switch (XauLockAuth(path, 15, 2, 60) != LOCK_SUCCESS)
+	//{
+	//case LOCK_ERROR:
+	//	gebrd_message(GEBR_LOG_ERROR, "Xauth ERROR: %s", strerror(errno));
+	//	return FALSE;
+	//case LOCK_TIMEOUT:
+	//	gebrd_message(GEBR_LOG_ERROR, "Xauth ERROR: Timed out");
+	//	return FALSE;
+	//case LOCK_SUCCESS:
+	//	break;
+	//}
 
 	FILE *xauth = fopen(path, "a");
 	Xauth auth;
@@ -300,7 +309,7 @@ run_lib_xauth_command(const gchar *port, const gchar *cookie)
 	g_free(tmp);
 	fclose(xauth);
 
-	XauUnlockAuth(path);
+	//XauUnlockAuth(path);
 	return TRUE;
 }
 #endif
