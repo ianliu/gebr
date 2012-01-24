@@ -294,12 +294,13 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 				GString *gid  = g_list_nth_data(arguments, 0);
 				GString *port = g_list_nth_data(arguments, 1);
 
-				g_debug("Got port %s for gid %s", port->str, gid->str);
+				gebr_log(GEBR_LOG_INFO, "Got port %s for gid %s", port->str, gid->str);
 
 				if (g_strcmp0(port->str, "0") == 0) {
 					gebrm_daemon_set_error_type(daemon, "error:xauth");
 					gebrm_daemon_set_error_msg(daemon, "");
 				}
+
 				g_signal_emit(daemon, signals[PORT_DEFINE], 0, gid->str, port->str);
 
 				gebr_comm_protocol_socket_oldmsg_split_free(arguments);
@@ -901,15 +902,16 @@ gebrm_daemon_send_error_message(GebrmDaemon *daemon,
 		goto send_error;
 
 	if (daemon->priv->server->state == SERVER_STATE_CONNECT
-	    && g_strcmp0(daemon->priv->error_type, "error:ssh") != 0)
-		goto send_error;
+	    || daemon->priv->server->state == SERVER_STATE_LOGGED)
+		if (g_strcmp0(daemon->priv->error_type, "error:ssh") != 0)
+			goto send_error;
 
 	return;
 
 send_error:
-	g_debug("Enviando erro do typo %s : %s",
-		gebrm_daemon_get_error_type(daemon),
-		gebrm_daemon_get_error_msg(daemon));
+	gebr_log(GEBR_LOG_INFO, "Enviando erro do typo %s : %s",
+		 gebrm_daemon_get_error_type(daemon),
+		 gebrm_daemon_get_error_msg(daemon));
 
 	gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
 					      gebr_comm_protocol_defs.err_def, 4,
