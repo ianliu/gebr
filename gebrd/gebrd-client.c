@@ -237,7 +237,7 @@ run_xauth_command(gchar **argv,
 		}
 		g_usleep(500000);
 		tries++;
-	} while (tries < 50 && exit_status);
+	} while (tries < 5 && exit_status);
 
 	fl.l_type = F_UNLCK;
 	if (fcntl(fd, F_SETLK, &fl) == -1) {
