@@ -433,8 +433,13 @@ on_daemon_port_define(GebrmDaemon *daemon,
 	}
 
 	if (client) {
-		GebrCommServer *server = gebrm_daemon_get_server(daemon);
-		gebrm_client_add_forward(client, server, atoi(port));
+		if (g_strcmp0(port, "0") == 0) {
+			GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(client);
+			gebrm_daemon_send_error_message(daemon, socket);
+		} else {
+			GebrCommServer *server = gebrm_daemon_get_server(daemon);
+			gebrm_client_add_forward(client, server, atoi(port));
+		}
 	}
 }
 

@@ -235,9 +235,9 @@ run_xauth_command(gchar **argv,
 			gebrd_message(GEBR_LOG_INFO, "xauth command succeeded");
 			retval = TRUE;
 		}
-		g_usleep(200000);
+		g_usleep(500000);
 		tries++;
-	} while (tries < 300 && exit_status);
+	} while (tries < 50 && exit_status);
 
 	fl.l_type = F_UNLCK;
 	if (fcntl(fd, F_SETLK, &fl) == -1) {

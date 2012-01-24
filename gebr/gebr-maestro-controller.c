@@ -1283,6 +1283,8 @@ on_daemon_error(GebrMaestroServer *maestro,
 		message = _("This server is already registered at another maestro");
 	} else if (g_strcmp0(error_type, "error:ssh") == 0) {
 		message = error_msg;
+	} else if (g_strcmp0(error_type, "error:xauth") == 0) {
+		message = _("This server cannot connect to display. Try reconnect it");
 	}
 
 	if (show_dialog) {
