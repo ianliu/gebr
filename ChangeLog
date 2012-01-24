@@ -1,3 +1,23 @@
+2012-01-24  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Remove entries from xauth queue when the client/daemon disconnects
+	* Remove locking when authorizing xauth
+	* Add a xauth queue in Maestro
+
+2012-01-24  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Translate error message of Display
+
+2012-01-24  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix X11 error message
+
+2012-01-24  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Use libXau in Daemon to add cookies when possible
+	* Add libXau in configure.ac
+	* Bump default version in centos install script
+
 
 2012-01-23  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
 
