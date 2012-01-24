@@ -879,6 +879,8 @@ gebrm_daemon_send_client_info(GebrmDaemon *daemon,
 			      const gchar *id,
 			      const gchar *cookie)
 {
+	gebr_log(GEBR_LOG_DEBUG, "Sending GID %s to DAEMON %s!!!!!",
+		 id, gebrm_daemon_get_address(daemon));
 	gebr_comm_protocol_socket_oldmsg_send(daemon->priv->server->socket, FALSE,
 					      gebr_comm_protocol_defs.gid_def, 2,
 					      id, cookie);

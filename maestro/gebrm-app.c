@@ -48,6 +48,7 @@ struct _GebrmAppPriv {
 
 	GQueue *job_def_queue;
 	GQueue *job_run_queue;
+	GQueue *xauth_queue;
 
 	// Server groups: gchar -> GList<GebrDaemon>
 	GTree *groups;
@@ -304,6 +305,7 @@ gebrm_app_finalize(GObject *object)
 	g_list_free(app->priv->daemons);
 	g_queue_free(app->priv->job_def_queue);
 	g_queue_free(app->priv->job_run_queue);
+	g_queue_free(app->priv->xauth_queue);
 	G_OBJECT_CLASS(gebrm_app_parent_class)->finalize(object);
 }
 
@@ -313,6 +315,39 @@ gebrm_app_class_init(GebrmAppClass *klass)
 	GObjectClass *object_class = G_OBJECT_CLASS(klass);
 	object_class->finalize = gebrm_app_finalize;
 	g_type_class_add_private(klass, sizeof(GebrmAppPriv));
+}
+
+typedef struct {
+	GebrmDaemon *daemon;
+	GebrmClient *client;
+} XauthQueueData;
+
+static gboolean
+process_xauth_queue(gpointer data)
+{
+	GebrmApp *app = data;
+
+	if (g_queue_is_empty(app->priv->xauth_queue))
+		return TRUE;
+
+	XauthQueueData *xauth = g_queue_pop_head(app->priv->xauth_queue);
+	gebrm_daemon_send_client_info(xauth->daemon,
+				      gebrm_client_get_id(xauth->client),
+				      gebrm_client_get_magic_cookie(xauth->client));
+	g_object_unref(xauth->daemon);
+	g_object_unref(xauth->client);
+	g_free(xauth);
+
+	return TRUE;
+}
+
+static void
+queue_client_info(GebrmApp *app, GebrmDaemon *daemon, GebrmClient *client)
+{
+	XauthQueueData *xauth = g_new(XauthQueueData, 1);
+	xauth->daemon = g_object_ref(daemon);
+	xauth->client = g_object_ref(client);
+	g_queue_push_tail(app->priv->xauth_queue, xauth);
 }
 
 static void
@@ -328,6 +363,9 @@ gebrm_app_init(GebrmApp *app)
 						g_free, NULL);
 	app->priv->job_def_queue = g_queue_new();
 	app->priv->job_run_queue = g_queue_new();
+	app->priv->xauth_queue = g_queue_new();
+
+	g_timeout_add(1000, process_xauth_queue, app);
 }
 
 void
@@ -411,8 +449,7 @@ err:
 			GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(i->data);
 			send_server_status_message(app, socket, daemon, gebrm_daemon_get_autoconnect(daemon));
 
-			gebrm_daemon_send_client_info(daemon, gebrm_client_get_id(i->data),
-						      gebrm_client_get_magic_cookie(i->data));
+			queue_client_info(app, daemon, i->data);
 		}
 	}
 }
@@ -435,6 +472,8 @@ on_daemon_port_define(GebrmDaemon *daemon,
 	if (client) {
 		if (g_strcmp0(port, "0") == 0) {
 			GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(client);
+			gebr_log(GEBR_LOG_ERROR, "Received port zero from %s for gid %s. Sending error to client.",
+				 gebrm_daemon_get_address(daemon), gid);
 			gebrm_daemon_send_error_message(daemon, socket);
 		} else {
 			GebrCommServer *server = gebrm_daemon_get_server(daemon);
@@ -968,9 +1007,6 @@ on_client_parse_messages(GebrCommProtocolSocket *socket,
 			gebrm_client_set_id(client, gebr_id->str);
 			gebrm_client_set_magic_cookie(client, cookie->str);
 
-			for (GList *i = app->priv->daemons; i; i = i->next)
-				gebrm_daemon_send_client_info(i->data, gebr_id->str, cookie->str);
-
 			guint16 client_display_port = gebrm_client_get_display_port(client);
 			gchar *port_str = g_strdup_printf("%d", client_display_port);
 			gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
@@ -978,8 +1014,11 @@ on_client_parse_messages(GebrCommProtocolSocket *socket,
 							      port_str);
 
 			for (GList *i = app->priv->daemons; i; i = i->next) {
-				send_server_status_message(app, socket, i->data, gebrm_daemon_get_autoconnect(i->data));
-				send_groups_definitions(socket, i->data);
+				if (gebrm_daemon_get_state(i->data) == SERVER_STATE_LOGGED) {
+					queue_client_info(app, i->data, client);
+					send_server_status_message(app, socket, i->data, gebrm_daemon_get_autoconnect(i->data));
+					send_groups_definitions(socket, i->data);
+				}
 			}
 
 			g_free(port_str);

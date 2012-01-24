@@ -263,7 +263,7 @@ run_lib_xauth_command(const gchar *port, const gchar *cookie)
 {
 	gchar *path = g_build_filename(g_get_home_dir(), ".gebr", "Xauthority", NULL);
 
-	if (XauLockAuth(path, 15, 1, 60) != LOCK_SUCCESS)
+	if (XauLockAuth(path, 15, 2, 60) != LOCK_SUCCESS)
 		return FALSE;
 
 	FILE *xauth = fopen(path, "a");
@@ -397,12 +397,14 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 
 			if (cookie->len && gebrd_get_server_type() != GEBR_COMM_SERVER_TYPE_MOAB) {
 #if !HAVE_X11_XAUTH_H
+				gebrd_message(GEBR_LOG_DEBUG, "Authorizing with system(xauth)");
 				gchar *tmp = g_strdup_printf(":%d", display);
 				gchar *argv[] = {"xauth", "-i", "add", tmp, ".", cookie->str, NULL};
 				if (!run_xauth_command(argv, NULL))
 					display = 0;
 				g_free(tmp);
 #else
+				gebrd_message(GEBR_LOG_DEBUG, "Authorizing with libXau");
 				gchar *tmp = g_strdup_printf("%d", display);
 				if (!run_lib_xauth_command(tmp, cookie->str))
 					display = 0;
@@ -411,6 +413,7 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			}
 
 			gchar *display_str = g_strdup_printf("%d", display ? display + 6000 : 0);
+			gebrd_message(GEBR_LOG_INFO, "Sending port %s to client %s!", display_str, gid->str);
 			gebr_comm_protocol_socket_oldmsg_send(client->socket, FALSE,
 							      gebr_comm_protocol_defs.ret_def, 2,
 							      gid->str, display_str);
