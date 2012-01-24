@@ -164,6 +164,41 @@ else
 fi
 
 dnl ============================================================================
+dnl Checking for Xau library
+dnl ============================================================================
+AC_ARG_WITH([xau],
+	    [AC_HELP_STRING([--with-xau],
+			   [use Xau library to authorize X11 displays [default=yes]])],
+	    [want_xau=${withval}],
+	    [want_xau=yes])
+ENABLE_XAU=0
+if test "x${want_xau}" = xyes; then
+	AC_SEARCH_LIBS([XauLockAuth], [Xau],
+		       [have_xau=yes],
+		       [have_xau=no])
+
+	if test "x${have_xau}" = xyes; then
+		AC_CHECK_HEADERS([X11/Xauth.h],
+				 [],
+				 [have_xau=no])
+	fi
+
+	if test "x${have_xau}" = xyes; then
+		ENABLE_XAU=1
+	else
+		echo "----------------------------------------"
+		echo " Error: libXau support is enabled but"
+		echo " there seems to be no libXau installed"
+		echo " on your system. Consider installing it"
+		echo " or disabling Xau support with"
+		echo " --without-xau flag."
+		echo "----------------------------------------"
+		(exit 1); exit 1;
+	fi
+fi
+AC_SUBST(ENABLE_XAU)
+
+dnl ============================================================================
 dnl Checking for tidy library
 dnl ============================================================================
 AC_ARG_WITH([tidy],
