@@ -67,6 +67,11 @@ typedef struct {
 	GebrmJob *job;
 } RunnerAndJob;
 
+typedef struct {
+	GebrmDaemon *daemon;
+	GebrmClient *client;
+} XauthQueueData;
+
 /*
  * Global variables to implement GebrmAppSingleton methods.
  */
@@ -289,6 +294,19 @@ gebrm_app_daemon_on_state_change(GebrmDaemon *daemon,
 				 GebrCommServerState state,
 				 GebrmApp *app)
 {
+	if (state == SERVER_STATE_DISCONNECTED) {
+		GList *head = g_queue_peek_head_link(app->priv->xauth_queue);
+		for (GList *i = head; i; i = i->next) {
+			XauthQueueData *xauth = i->data;
+			if (daemon == xauth->daemon) {
+				g_queue_delete_link(app->priv->xauth_queue, i);
+				g_object_unref(xauth->daemon);
+				g_object_unref(xauth->client);
+				g_free(xauth);
+			}
+		}
+	}
+
 	for (GList *i = app->priv->connections; i; i = i->next) {
 		GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(i->data);
 		send_server_status_message(app, socket, daemon, gebrm_daemon_get_autoconnect(daemon));
@@ -316,11 +334,6 @@ gebrm_app_class_init(GebrmAppClass *klass)
 	object_class->finalize = gebrm_app_finalize;
 	g_type_class_add_private(klass, sizeof(GebrmAppPriv));
 }
-
-typedef struct {
-	GebrmDaemon *daemon;
-	GebrmClient *client;
-} XauthQueueData;
 
 static gboolean
 process_xauth_queue(gpointer data)
@@ -1289,6 +1302,17 @@ on_client_disconnect(GebrCommProtocolSocket *socket,
 	GebrmClient *client = g_object_get_data(G_OBJECT(socket), "client");
 	app->priv->connections = g_list_remove(app->priv->connections, client);
 	gebrm_client_remove_forwards(client);
+
+	GList *head = g_queue_peek_head_link(app->priv->xauth_queue);
+	for (GList *i = head; i; i = i->next) {
+		XauthQueueData *xauth = i->data;
+		if (client == xauth->client) {
+			g_queue_delete_link(app->priv->xauth_queue, i);
+			g_object_unref(xauth->daemon);
+			g_object_unref(xauth->client);
+			g_free(xauth);
+		}
+	}
 
 	for (GList *i = app->priv->daemons; i; i = i->next)
 		gebr_comm_protocol_socket_oldmsg_send(gebrm_daemon_get_server(i->data)->socket, FALSE,
