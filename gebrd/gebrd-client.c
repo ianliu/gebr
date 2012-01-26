@@ -327,7 +327,7 @@ run_lib_xauth_command(const gchar *port, const gchar *cookie)
 	for (GList *i = list; i; i = i->next)
 		XauWriteAuth(xauth, i->data);
 
-	g_list_foreach(list, (GFunc)XauDisposeAuth, NULL);
+//	g_list_foreach(list, (GFunc)XauDisposeAuth, NULL);
 	g_list_free(list);
 	fclose(xauth);
 
