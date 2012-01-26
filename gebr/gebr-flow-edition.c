@@ -373,8 +373,13 @@ flow_edition_set_run_widgets_sensitiveness(GebrFlowEdition *fe,
 	const gchar *tooltip_execute;
 
 	if (!gebr.line) {
-		tooltip_disconn = _("Select a line of this project to execute a flow");
-		maestro_err = FALSE;
+		if (!gebr.project) {
+			tooltip_disconn = _("Select a line to execute a flow");
+			maestro_err = FALSE;
+		} else {
+			tooltip_disconn = _("Select a line of this project to execute a flow");
+			maestro_err = FALSE;
+		}
 	} else if (maestro_err)
 		tooltip_disconn = _("Maestro of this line is disconnected.\nClick here to reconnect it\nor change the maestro associated to this line");
 	else

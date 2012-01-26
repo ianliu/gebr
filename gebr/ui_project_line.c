@@ -1246,8 +1246,10 @@ static void project_line_load(void)
 	gchar *line_filename;
 
 	project_line_free();
-	if (!project_line_get_selected(&iter, DontWarnUnselection))
+	if (!project_line_get_selected(&iter, DontWarnUnselection)) {
+		flow_edition_set_run_widgets_sensitiveness(gebr.ui_flow_edition, FALSE, FALSE);
 		return;
+	}
 
 	GtkTreePath *path = gtk_tree_model_get_path(GTK_TREE_MODEL(gebr.ui_project_line->store), &iter);
 	is_line = gtk_tree_path_get_depth(path) == 2 ? TRUE : FALSE;
