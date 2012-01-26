@@ -151,11 +151,11 @@
     </section>
     <section>
       <title>Groups</title>
-      <para>The user can use just a couple of the machines associated to the maestro. Using
+      <para>The user can use just a couple of machines associated to the maestro. Using
         different subsets of machines can be managed through the creation of groups of
         machines.</para>
       <para>In the bottom part of the Servers interface, the user can create/edit daemons groups.
-        The functionality is through mouse Drag and Drop.</para>
+        The user must Drag and Drop the daemons to create a group.</para>
       <mediaobject>
         <caption>Groups interface</caption>
         <imageobject>
@@ -173,10 +173,10 @@
     <title>Variables Dictionary</title>
     <section xml:id="janela_dicionario">
       <title>The dictionary</title>
-      <para>The dictionary is a very flexible feature, that can be used in many forms and to many
-        ends.</para>
-      <para>Now the dictionary accepts expressions as input. This way more complex variables can be
-        defined. In this section we will show some examples of variables usage in a flow.</para>
+      <para>The dictionary is a very flexible feature, that can be used in many forms and for many
+        purposes.</para>
+      <para>Now the dictionary accepts expressions as input. Now, It's possible to define more complex variables.
+       In this section we will show some examples of variables usage in a flow.</para>
       <para>Follow this simple example of how to define a variable in the dictionary:</para>
       <procedure>
         <step>
@@ -231,7 +231,7 @@
             <emphasis role="bold">10</emphasis> and press enter again.</para> The last field is the 
           <emphasis>Comments</emphasis>. Fill it with some description of your newly created
           variable. Remember: The comments are optional, you can leave this field empty if you want. 
-          <para>When you finish, your window must look like with this one:</para>
+          <para>When you finish, your window must look like this one:</para>
           <figure>
             <mediaobject>
               <caption>Screenshot of the parameters window.</caption>
@@ -419,7 +419,7 @@
                   <imagedata fileref="../images/exemplo_iter_5.png" />
                 </imageobject>
               </inlinemediaobject>
-            </guiicon> by positioning the pointer over the Year icon. This way, we can verify the which
+            </guiicon> by positioning the pointer over the Year icon. This way, we can verify which
             years we are walking through.</para>
         </step>
         <step>
@@ -507,8 +507,8 @@
           </para>
           <itemizedlist>
             <listitem>
-              <para>We can reorder the dictionary variables through the drag and drop. Since a
-                variable can just use another variable above it, this features turns the declaration
+              <para>We can reorder the dictionary variables by drag and drop. Since a
+                variable can just use another variable above it, this feature turns the declaration
                 of variables more flexible and dynamic.</para>
               <figure>
                 <mediaobject>

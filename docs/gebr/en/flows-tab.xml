@@ -73,7 +73,7 @@
   <tip>
     <para>Instead of these buttons, try using the 
       <emphasis role="bold">context menu</emphasis>. To do so, 
-      <emphasis role="bold">right-click</emphasis> on a Flow you have created, notice that many
+      <emphasis role="bold">right-click</emphasis> on a Flow you have created. Notice that many
       features can be accessed through this method. For certain cases this is an 
       <emphasis role="bold">easier and simpler</emphasis> choice.</para>
   </tip>
@@ -255,9 +255,8 @@
         </inlinemediaobject>
     </guiicon> to do it.</para>
     <para>There is 
-      <emphasis role="bold">no limit</emphasis> on the number of Flows you can have inside one Line
-      or in total.</para>
-    <para>After you have created a Flow it will be 
+      <emphasis role="bold">no limit</emphasis> on the number of Flows you can have in one Line.</para>
+      <para>After you have created a Flow it will be 
       <emphasis role="bold">visible on the left side of the main window</emphasis> when the 
       <guilabel>Flows</guilabel> tab is selected. The 
       <guilabel>Details</guilabel> box, found on the right side of the main window, shows
@@ -369,7 +368,7 @@
   </section>
   <section xml:id="flows_browser_save_state_flow">
     <title>Saving a Flow's state</title>
-    <para>Working with GêBR you will encounter situations where it will be useful to use an
+    <para>Working with GêBR you will find situations where it will be useful to use an
       existing Flow as a basis to create new Flows. For example, you might want to experiment with
       Flows that are only slightly different from one another, however without having to discard or
       modify the original Flow.</para>
@@ -554,8 +553,8 @@
     <title>View Report</title>
     <para>This button appears in the 
       <guilabel>Projects and Lines</guilabel> tab and in 
-      <guilabel>Flows</guilabel> tab. This button allows the user to View the report on the Line or
-      Flow in question, with the difference that the Line's report can include the Flow's report.
+      <guilabel>Flows</guilabel> tab. This button allows the user to View the report about the Line or
+      Flow in use. The difference is that the Line's report can include the Flow's report.
       All other functions are described in 
       <xref linkend="projects_lines_view_report_project" />.</para>
   </section>

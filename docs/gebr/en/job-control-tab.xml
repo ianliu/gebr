@@ -131,7 +131,7 @@
 			</mediaobject>
 		</section>
 		<tip>As in anywhere else in GêBR, many of the toolbar functionalities can be accessed through
-			the context menu, using the mice right button.</tip>
+			the context menu, using the mouse's right button.</tip>
 	</section>
 	<section>
 		<title>Left Panel</title>
@@ -171,7 +171,7 @@
 								<imagedata fileref="../../common-images/icone_tarefa_terminada_erro.png" />
 							</imageobject>
 						</inlinemediaobject>
-					</guiicon>): stopped by the you 
+					</guiicon>): stopped 
 				</para>
 			</listitem>
 			<listitem>Queued (

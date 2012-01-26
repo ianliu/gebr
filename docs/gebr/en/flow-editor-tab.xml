@@ -85,11 +85,11 @@
     <para>You can select several programs to be copied by holding 
       <keycombo>
         <keycap>Ctrl</keycap>
-        <mousebutton>Clique</mousebutton>
+        <mousebutton>Click</mousebutton>
       </keycombo> or 
       <keycombo>
         <keycap>Shift</keycap>
-        <mousebutton>Clique</mousebutton>
+        <mousebutton>Click</mousebutton>
     </keycombo>.</para>
   </tip>
 </section>
@@ -132,11 +132,11 @@
     <para>You can select several programs to be deleted by holding 
       <keycombo>
         <keycap>Ctrl</keycap>
-        <mousebutton>Clique</mousebutton>
+        <mousebutton>Click</mousebutton>
       </keycombo> or 
       <keycombo>
         <keycap>Shift</keycap>
-        <mousebutton>Clique</mousebutton>
+        <mousebutton>Click</mousebutton>
     </keycombo>.</para>
   </tip>
   <caution>
@@ -220,11 +220,11 @@
     <para>You can select several programs whose state you wish to change by holding 
       <keycombo>
         <keycap>Ctrl</keycap>
-        <mousebutton>Clique</mousebutton>
+        <mousebutton>Click</mousebutton>
       </keycombo> or 
       <keycombo>
         <keycap>Shift</keycap>
-        <mousebutton>Clique</mousebutton>
+        <mousebutton>Click</mousebutton>
     </keycombo>.</para>
   </tip>
   <tip>
@@ -420,7 +420,7 @@
     <para>After the 
       <emphasis>Loop</emphasis> is added, you have access to a new variable, the 
       <emphasis role="bold">iter</emphasis> (see <xref linkend="dictionary_variables" />). This special variable changes its value on each
-      iteration, according to the parameters set.</para>
+      iteration (increasing or decrementing), according to the parameters set.</para>
     <mediaobject>
       <caption>Screenshot of the edition from parameters of 
         <emphasis>Loop</emphasis> program , with a simple example of parameters setting.</caption>

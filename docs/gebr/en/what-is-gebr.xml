@@ -25,7 +25,7 @@
   <section>
     <title>GêBR Project</title>
     <para>Our main objective is to help bring together the Brazilian
-      geophysics community, by developing tools to aid in the dissemination of research in the
+      geophysics community, by developing tools to aid the dissemination of research in the
       area.</para>
     <para>For more information, visit the project's official site:
       <emphasis>
@@ -34,7 +34,7 @@
   </section>
   <section>
     <title>What's new in version 0.16.0</title>
-    <para>The release of GêBR (0.16.0) suffered some changes. GêBR is more stable and present
+    <para> GêBR (0.16.0) is more stable and present
       some new functionalities:</para>
     <itemizedlist>
       <listitem>The maestro concept is born allowing to execute GêBR jobs in multiples machines.
@@ -45,8 +45,7 @@
         change the priority of execution of a job (see 
         <xref linkend="flow_editor_multicores" /> and 
         <xref linkend="flow_editor_priority_execution" />).</listitem>
-      <listitem>Renewed interface adds new functionalities and improves usability in
-        GêBR.</listitem>
+      <listitem>Renewed interface: new functionalities and usability improved </listitem>
     </itemizedlist>
   </section>
   <section>
