@@ -112,7 +112,6 @@
                             <child>
                               <object class="GtkLabel" id="label5">
                                 <property name="visible">True</property>
-                                <property name="sensitive">False</property>
                                 <property name="label" translatable="yes">&lt;i&gt;Drop a server to create a group!&lt;/i&gt;</property>
                                 <property name="use_markup">True</property>
                               </object>
