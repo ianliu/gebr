@@ -201,7 +201,9 @@ static gboolean flows_check_before_execution(void)
 		gtk_tree_model_get_iter(model, &iter, i->data); 
 		gtk_tree_model_get(model, &iter, FB_XMLPOINTER, &flow, -1);
 
+		gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE);
 		gebr_geoxml_flow_validate(flow, gebr.validator, &error);
+		gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &gebr.flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE);
 
 		if (!error)
 			continue;
