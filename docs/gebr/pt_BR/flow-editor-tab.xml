@@ -94,7 +94,7 @@
   </section>
   <section xml:id="flow_editor_edit_parameters_program">
     <title>Editar os parâmetros de um programa</title>
-    <para>Os parâmetros de um programa são as configurações iniciais do mesmo e podem ser editados.</para>
+    <para>Os parâmetros de um programa são as configurações iniciais do mesmo, definidas pelo usuário.</para>
     <para>Para editar os parâmetros de um programa:</para>
     <procedure>
       <step>

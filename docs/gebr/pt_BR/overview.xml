@@ -34,7 +34,9 @@
     Por isso, antes de montar e executar Fluxos, é necessário
     <emphasis role="bold"> criar projetos e linhas</emphasis>. Veja em <xref linkend="projects_lines_create_projects_and_lines"/> como criar um projeto e uma linha e em <xref linkend="flows_browser_create_flow"/> como criar um Fluxo.
   </para>
-  <para>GêBR utiliza o recurso disponível pelas máquinas que você tem acesso. As tarefas são coordenadas e distribuidas para todas as maquinas pelo GêBR-maestro (coordenador) e são efetivamente executadas no GêBR-daemon (servidor). Para tal, são enviadas requisicoes ao maestro atraves do GêBR-client (local). 
+  <para>GêBR utiliza o recurso disponível pelas máquinas que você tem acesso. As tarefas são coordenadas e
+    distribuidas para todas as maquinas pelo GêBR-maestro (coordenador) e são efetivamente executadas no GêBR-daemon
+   (servidor). Para tal, são enviadas requisicoes ao maestro atraves do GêBR-client (local). 
  </para>
   A interface da GêBR se divide em abas:
   <itemizedlist>

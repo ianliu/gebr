@@ -432,7 +432,7 @@
         </mediaobject>
       </figure>
     </para>
-    <para>Na GêBR está é possível executar um conjunto de Fluxos. Esta operação é chamada <emphasis role="bold">execução múltipla</emphasis> e pode ocorrer de dois modos:
+    <para>Na GêBR é possível executar um conjunto de Fluxos. Esta operação é chamada <emphasis role="bold">execução múltipla</emphasis> e pode ocorrer de dois modos:
       </para>
     <itemizedlist>
       <listitem><para>
@@ -450,14 +450,16 @@
       </para></listitem>
       <listitem><para>
         Paralelamente: os Fluxos são executados de modo simultâneo. Este é o caso quando 
-        não existe interdependência entre os Fluxos. Para executar neste modo, 
+        não existe dependência entre os Fluxos. Para executar neste modo, 
         utilize a combinação Ctrl+Shift+R.
       </para></listitem>
     </itemizedlist>
     <para>
     </para>
 
-    <important>Ao executar vários Fluxos, as configurações do primeiro será utilizada em todos os Fluxos.</important>
+    <important>Ao executar vários Fluxos, as configurações do primeiro (presente na Lista de Fluxos) será
+      utilizada em todos os Fluxos.</important>
+
   </section>
   <section xml:id="flows_browser_speed_execution">
     <title>Velocidade de execução de Fluxos</title>

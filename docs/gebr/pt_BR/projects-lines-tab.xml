@@ -344,7 +344,7 @@
       sufixo <emphasis role="bold">Importado</emphasis>.</para>
     <note>
       <para>Na GêBR, linhas só podem existir dentro de projetos (veja este conceito
-        na <xref linkend="overview"/>). Portanto, para importar uma linha é
+        na <xref linkend="projects_lines_create_projects_and_lines"/>). Portanto, para importar uma linha é
         necessário <emphasis role="bold">selecionar um projeto existente</emphasis>
         ou <emphasis role="bold">criar um novo</emphasis>.</para>
     </note>
