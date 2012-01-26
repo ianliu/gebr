@@ -295,10 +295,10 @@ build_xauth_list(FILE *xauth_file, Xauth *auth)
 {
 	GList *list = NULL;
 	gboolean subst = FALSE;
-	Xauth *i = XauReadAuth(path);
+	Xauth *i = XauReadAuth(xauth_file);
 	while (i) {
 		if (g_strcmp0(i->address, auth->address) == 0
-		    && g_strcmp0(i->number, auth->number) == 0,
+		    && g_strcmp0(i->number, auth->number) == 0
 		    && g_strcmp0(i->name, auth->name) == 0) {
 			list = g_list_prepend(list, auth);
 			XauDisposeAuth(i);
@@ -306,11 +306,12 @@ build_xauth_list(FILE *xauth_file, Xauth *auth)
 		} else {
 			list = g_list_prepend(list, i);
 		}
-		i = XauReadAuth(path);
+		i = XauReadAuth(xauth_file);
 	}
 
 	if (!subst)
 		list = g_list_prepend(list, auth);
+	return list;
 }
 
 static gboolean
@@ -326,8 +327,6 @@ run_lib_xauth_command(const gchar *port, const gchar *cookie)
 	for (GList *i = list; i; i = i->next)
 		XauWriteAuth(xauth, i->data);
 
-	g_free(data);
-	g_free(tmp);
 	g_list_foreach(list, (GFunc)XauDisposeAuth, NULL);
 	g_list_free(list);
 	fclose(xauth);
