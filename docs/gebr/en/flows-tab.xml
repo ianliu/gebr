@@ -11,7 +11,7 @@
   <title>The 
     <guilabel>Flows</guilabel> tab</title>
   <para>Just bellow the 
-    <guilabel>Flows</guilabel> tab there are nine buttons, plus two more buttons at the bottom of
+    <guilabel>Flows</guilabel> tab there are ten buttons, plus two more buttons at the bottom of
     the Details box. These buttons will allow you to:</para>
   <itemizedlist>
     <listitem>
@@ -59,6 +59,14 @@
         <link linkend="flows_browser_execute_flow">Execute a Flow</link>
       </para>
     </listitem>
+ 
+    <listitem>
+     <para>
+       <link linkend="flows_browser_speed_execution">Execution speed</link>
+      </para>
+    </listitem>
+
+
     <listitem>
       <para>
         <link linkend="flows_browser_edit_comments_flow">Edit comments</link>
@@ -131,7 +139,7 @@
       <step>
         <para>In the tab 
           <guilabel>Projects and Lines</guilabel>, check that you have selected 
-          <emphasis>My First Line</emphasis>, the Line you created before.</para>
+          a Line.</para>
       </step>
       <step>
         <para>Now click on the tab 
@@ -449,7 +457,7 @@
           (see this concept in Section 
           <xref linkend="overview" />). To import a Flow you must first 
           <emphasis role="bold">select a Line</emphasis> (or 
-          <xref linkend="flows_browser_create_flow" />, if one does not exist).</para>
+          <xref linkend="projects_lines_create_projects_and_lines" />, if one does not exist).</para>
       </step>
       <step>
         <para>Select the tab 
@@ -534,13 +542,43 @@
           </imageobject>
         </mediaobject>
     </figure></para>
-    <tip>You can select several Flows and execute them 
-      <emphasis role="bold">sequentially</emphasis> by pressing Ctrl+R.</tip>
-    <tip>You can select several Flows and execute them 
-      <emphasis role="bold">parallelly</emphasis> by pressing Ctrl+Shift+R.</tip>
-    <caution>When executing multiple flows, the configuration of the first flow (when and where
-      to execute) is going to be replicated to the other flows.</caution>
+   
+    <para>In GêBR, It's possible to execute a set of Flows. This operation is called 
+      <emphasis role="bold">multiple execution</emphasis> . You can do it by two different ways:
+      </para>
+    <itemizedlist>
+      <listitem><para>
+          Sequentially: Flows are executed in the order they are on the Flows List, on the left side of the window.
+          Each flow waits for the end of the previous job, to be executed. During this time, the awaiting flow shows an icon of "Waiting for job". If you wish to execute in a specific order, just reorder your Flows by Drag and Drop.
+        To execute on this mode, click on
+        <guiicon>
+          <inlinemediaobject>
+            <imageobject>
+              <imagedata fileref="../../common-images/botao_executar_fluxo.png" />
+            </imageobject>
+          </inlinemediaobject>
+        </guiicon> or use Ctrl+R.
+      </para></listitem>
+      <listitem><para>
+          Parallely: Flows are executed simultaneously. It happens when there is no dependency between Flows. To,
+          execute on this mode use Ctrl+Shift+R.
+      </para></listitem>
+    </itemizedlist>
+
+   
+    <important>When executig many Flows, the configurations of the first flow on the list will
+     determine the others'. </important>
   </section>
+
+   <section xml:id="flows_browser_speed_execution">
+    <title>Execution speed</title>
+    <para>The flows' execution speed  is determined by the number of processors and priority of execution.
+     It's possible to  configure these parameters,
+      as detailed in <xref linkend="flow_editor_multicores"/> and <xref linkend="flow_editor_priority_execution"/>.  
+     </para>
+   </section>
+
+  
   <section xml:id="flows_browser_edit_comments_flow">
     <title>Editing comments</title>
     <para>This button appears in the 

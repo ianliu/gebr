@@ -95,29 +95,19 @@
 </section>
 <section xml:id="flow_editor_paste_program">
   <title>Pasting programs from the clipboard</title>
-  <para>After selecting and copying (
-    <xref linkend="flows_browser_paste_flow" />) a program (or a set of programs)
-    you can paste them by clicking on 
-    <guiicon>
-      <inlinemediaobject>
-        <imageobject>
-          <imagedata fileref="../../common-images/botao_colar_fluxo.png" />
-        </imageobject>
-      </inlinemediaobject>
-    </guiicon> or by using the shortcut 
-    <keycombo>
-      <keycap>Ctrl</keycap>
-      <keycap>V</keycap>
-  </keycombo>.</para>
-  <tip>
+  <para>Pasting programs is similar to pasting Flows (
+    <xref linkend="flows_browser_paste_flow" />). But now, a program must be put inside a Flow. 
+     <tip>
     <para>A program (or set of programs) that have been copied to the clipboard can be pasted
       to 
       <emphasis role="bold">any Flow</emphasis>, and not just the Flow of origin. Simply switch
       to the 
       <guilabel>Flows</guilabel> tab, select the desired Flow, go back to the 
       <guilabel>Flow editor</guilabel> tab and paste the program(s).</para>
-  </tip>
-</section>
+   </tip>
+ 
+ 
+ </section>
 <section xml:id="flow_editor_delete_program">
   <title>Deleting programs</title>
   <para>To remove a program (or set of programs), select them and click on 
@@ -147,6 +137,7 @@
 </section>
 <section xml:id="flow_editor_edit_parameters_program">
   <title>Editing program's parameters</title>
+  <para>Program's parameters are a set of initial configurations defined by the user.</para>
   <para>To edit program's parameters:</para>
   <procedure>
     <step>
@@ -158,11 +149,11 @@
               <imagedata fileref="../../common-images/botao_editar_propriedades_projeto.png" />
             </imageobject>
           </inlinemediaobject>
-      </guiicon>, or just double-click on the program.</para>
+      </guiicon> on the toolbar, or just double-click on the program. The <guilabel>Parameter</guilabel>
+      dialog box will appear.</para>
     </step>
     <step>
-      <para>The 
-        <guilabel>Parameters</guilabel> dialog box will appear. Notice that each program's
+      <para> Edit the program's parameters. Notice that each program's
         parameter vary greatly both in size and type.</para>
       <tip>
         <para>Click on the 
@@ -310,7 +301,9 @@
           <imagedata fileref="../../common-images/botao_executar_fluxo.png" />
         </imageobject>
       </inlinemediaobject>
-  </guiicon>.</para>
+  </guiicon>. Or using the tab <guilabel>Flows</guilabel>
+  (check <xref linkend="flows_browser_execute_flow"/>).</para>
+
   <para>In the Flow Editor Tab, you can execute a Flow 
     <emphasis>after</emphasis> another Flow, creating a queue of
     execution. To execute after a specific Flow, instead of executing 

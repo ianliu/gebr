@@ -8,7 +8,7 @@
   version="5.0"
   xml:id="overview">
   
-  <title>Overview </title>
+  <title>Overview</title>
   <para>
     In GêBR, the<emphasis role="bold">Seismic Processing Flows</emphasis> are
     organized in greater unities, called <emphasis role="bold">Lines</emphasis>.
@@ -31,83 +31,87 @@
     </listitem>
   </itemizedlist>
   <para>
-    So that, before assembling and executing Flows, It's necessary
-    <emphasis role="bold"> to create projects and lines</emphasis>. See in <xref linkend="projects_lines_create_projects_and_lines"/> how to create a project and a line and in <xref linkend="flows_browser_create_flow"/> how to create a Flow.
+    So that, before creating and executing Flows, It's necessary
+    <emphasis role="bold"> to create projects and lines</emphasis>. See in 
+    <xref linkend="projects_lines_create_projects_and_lines"/> how to create a project and a line and in 
+    <xref linkend="flows_browser_create_flow"/> to see how to create a Flow.
   </para>
-  <para>GêBR utiliza o recurso disponível pelas máquinas que você tem acesso. As tarefas são coordenadas e distribuidas para todas as maquinas pelo GêBR-maestro (coordenador) e são efetivamente executadas no GêBR-daemon (servidor). Para tal, são enviadas requisicoes ao maestro atraves do GêBR-client (local). 
+  <para>GêBR uses a resource available by the machines you have access. The jobs are coordinated and distributed for
+    all machines by GêBR-maestro (coordinator). These jobs are effectively executed by GêBR-daemon (server). Requests 
+    are sent to maestro by GêBR-client (local).   
  </para>
-  A interface da GêBR se divide em abas:
+  The GêBR interface is organized in tabs:
   <itemizedlist>
     <listitem>
       <guilabel>
-        Projetos e Linhas
-      </guilabel>: hierarquização de Fluxos em Linhas e de Linhas em Projetos;
+        Projects and Lines
+      </guilabel>: hierarchy: Flows in Lines and Lines in Projects;
     </listitem>
     <listitem>
       <guilabel>
-        Fluxos
-      </guilabel>: criação e execução de Fluxos;
+        Flows
+      </guilabel>: creating and executing Flows;
     </listitem>
     <listitem>
       <guilabel>
-        Editor de Fluxo
-      </guilabel>: edição e execução de um Fluxo;
+        Flow Editor
+      </guilabel>: editing and executing a Flow;
     </listitem>
     <listitem>
       <guilabel>
-        Controle de Tarefas
-      </guilabel>: visuzalização dos resultados.
+        Job Control
+      </guilabel>: Vizualization of results.
     </listitem>
 
     </itemizedlist>
     <figure>
       <mediaobject>
-        <caption>Abas da GêBR</caption>
+        <caption>GêBR tabs</caption>
         <imageobject>
           <imagedata fileref="../images/GeBR_tabs.png"/>
         </imageobject>
       </mediaobject>
     </figure>
     <para>
-      Além disso, a GêBR apresenta recursos adicionais através da barra de menus, localizada no topo da janela. 
+      GêBR also has additional resources in menu bar, on the top of the window. 
       <itemizedlist>
         <listitem>
-          Ações
+          Actions
           <itemizedlist>
             <listitem>
               <guilabel>
-                Preferências 
-              </guilabel>: preferências do usuário;
+                Preferences 
+              </guilabel>: User preferences;
             </listitem>
             <listitem>
               <guilabel>
-                Servidores 
-              </guilabel>: Configurações de maestro, servidores e grupo de servidores; 
+                Servers 
+              </guilabel>: Maestro's configurations, servers and group of servers; 
             </listitem>
             <listitem>
               <guilabel>
-                Sair 
-              </guilabel>: encerrar a GêBR.
+                Quit 
+              </guilabel>: quit GêBR.
             </listitem>
           </itemizedlist>
         </listitem>
         <listitem>
-          Ajuda 
+          Help 
           <itemizedlist>
             <listitem>
               <guilabel>
-                Ajuda
-              </guilabel> : documentação da GêBR;
+                Help
+              </guilabel> : GêBR's documentation;
             </listitem>
             <listitem>
               <guilabel>
-                Exemplos
-              </guilabel>: exemplos de processamento sísmico;
+                Examples
+              </guilabel>: examples of seismic processing;
             </listitem>
             <listitem>
               <guilabel>
-                Sobre
-              </guilabel>: versão da GêBR
+                About
+              </guilabel>: GêBR's version
             </listitem>
           </itemizedlist>
         </listitem>
@@ -116,11 +120,12 @@
     </para>
     <figure>
       <mediaobject>
-        <caption>Barra de menus da GêBR</caption>
+        <caption>GêBR's menus bar</caption>
         <imageobject>
           <imagedata fileref="../images/GeBR_menubar.png"/>
         </imageobject>
       </mediaobject>
     </figure>
+    </section>
   
 
