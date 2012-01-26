@@ -2031,6 +2031,10 @@ on_status_update_toolbar_buttons(GebrJob *job,
 	gebr_jc_get_jobs_state(jc, rows, &can_close, &can_kill);
 
 	update_control_buttons(jc, can_close, can_kill, TRUE);
+
+	GtkTreeModel *sort = gtk_tree_view_get_model(GTK_TREE_VIEW(jc->priv->view));
+	GtkTreeModel *filter = gtk_tree_model_sort_get_model(GTK_TREE_MODEL_SORT(sort));
+	gtk_tree_model_filter_refilter(GTK_TREE_MODEL_FILTER(filter));
 }
 
 void
