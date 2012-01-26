@@ -258,32 +258,18 @@ run_xauth_command(gchar **argv,
 }
 
 #if HAVE_X11_XAUTH_H
-static gboolean
-run_lib_xauth_command(const gchar *port, const gchar *cookie)
+static Xauth *
+create_xauth_from_data(const gchar *port,
+		       const gchar *cookie)
 {
-	gchar *path = g_build_filename(g_get_home_dir(), ".gebr", "Xauthority", NULL);
-
-	//switch (XauLockAuth(path, 15, 2, 60) != LOCK_SUCCESS)
-	//{
-	//case LOCK_ERROR:
-	//	gebrd_message(GEBR_LOG_ERROR, "Xauth ERROR: %s", strerror(errno));
-	//	return FALSE;
-	//case LOCK_TIMEOUT:
-	//	gebrd_message(GEBR_LOG_ERROR, "Xauth ERROR: Timed out");
-	//	return FALSE;
-	//case LOCK_SUCCESS:
-	//	break;
-	//}
-
-	FILE *xauth = fopen(path, "a");
-	Xauth auth;
-	auth.family = 256;
-	auth.address = (gchar *)g_get_host_name();
-	auth.address_length = strlen(auth.address);
-	auth.number = (gchar *)port;
-	auth.number_length = strlen(auth.number);
-	auth.name = "MIT-MAGIC-COOKIE-1";
-	auth.name_length = strlen(auth.name);
+	Xauth *auth = g_new(Xauth, 1);
+	auth->family = 256;
+	auth->address = (gchar *)g_get_host_name();
+	auth->address_length = strlen(auth->address);
+	auth->number = (gchar *)port;
+	auth->number_length = strlen(auth->number);
+	auth->name = "MIT-MAGIC-COOKIE-1";
+	auth->name_length = strlen(auth->name);
 
 	gsize len = strlen(cookie);
 	gchar *tmp = g_strdup(cookie);
@@ -299,17 +285,53 @@ run_lib_xauth_command(const gchar *port, const gchar *cookie)
 		else
 			data[i/2] = tmp[i-1] | tmp[i];
 	}
+	auth->data = data;
+	auth->data_length = len / 2;
+	return auth;
+}
 
-	auth.data = data;
-	auth.data_length = len / 2;
+static GList *
+build_xauth_list(FILE *xauth_file, Xauth *auth)
+{
+	GList *list = NULL;
+	gboolean subst = FALSE;
+	Xauth *i = XauReadAuth(path);
+	while (i) {
+		if (g_strcmp0(i->address, auth->address) == 0
+		    && g_strcmp0(i->number, auth->number) == 0,
+		    && g_strcmp0(i->name, auth->name) == 0) {
+			list = g_list_prepend(list, auth);
+			XauDisposeAuth(i);
+			subst = TRUE;
+		} else {
+			list = g_list_prepend(list, i);
+		}
+		i = XauReadAuth(path);
+	}
 
-	XauWriteAuth(xauth, &auth);
+	if (!subst)
+		list = g_list_prepend(list, auth);
+}
+
+static gboolean
+run_lib_xauth_command(const gchar *port, const gchar *cookie)
+{
+	gchar *path = g_build_filename(g_get_home_dir(), ".gebr", "Xauthority", NULL);
+	FILE *xauth = fopen(path, "r");
+	Xauth *auth = create_xauth_from_data(port, cookie);
+	GList *list = build_xauth_list(xauth, auth);
+	fclose(xauth);
+
+	xauth = fopen(path, "w");
+	for (GList *i = list; i; i = i->next)
+		XauWriteAuth(xauth, i->data);
 
 	g_free(data);
 	g_free(tmp);
+	g_list_foreach(list, (GFunc)XauDisposeAuth, NULL);
+	g_list_free(list);
 	fclose(xauth);
 
-	//XauUnlockAuth(path);
 	return TRUE;
 }
 #endif
