@@ -1,41 +1,38 @@
 #!/bin/bash
 
-# Version 0.11 - 2011-09-22 (GeBR 0.14)
-# Upgraded gtk to 2.20.1
-# Upgraded atk to 1.30.0
-# Upgraded glib to 2.24.1
-# Fix libpng download url
-# Introduced --destdir option
-# Introduced GEBR_VERSION env variable
+# Please, maintain a ChangeLog history style here:
+#
+# 2012-01-25  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+#
+#	* Change link for libpng to a FTP link, as the sourceforge was giving
+#	'mirrorfailed'
+#       * Remove the -c option in docbook-xsl command to prevent 'mirrorfailed'
+#       problem
 # 
-# Version 0.10
-# Updated gebrproject and menus versions.
-# Added support to docbook and libtidy.
+# 2011-09-22  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
 #
-# Version 0.9
-# Downloads GeBR and menus from official repository.
-#
-# Version 0.8
-# Merged centos5 script into this one.
-#
-# Version 0.7
-# Added getopts for the script.
+#	* Upgraded gtk to 2.20.1
+#	* Upgraded atk to 1.30.0
+#	* Upgraded glib to 2.24.1
+#	* Fix libpng download url
+#	* Introduced --destdir option
+#	* Introduced GEBR_VERSION env variable
 # 
-# Version 0.6
-# Also install menus for shtools and seismicunix.
+# 2011-04-15  Fabrício Matheus Gonçalves  <fmatheus@gebrproject.com>
 #
-# Version 0.5
-# Better gebr wrapper script to workaround a X freeze.
-# Fixed libpng url.
-# Only tidy up if not debuging.
-# Bumped gebrproject version to 0.10.1.
-#
-# Version 0.4
-# Added option to compile with debug enabled.
-#
-# Version 0.3
-# Creates gebr-run.sh to setup the enviroment before run.
-# Clean up /opt/gebrproject install dir for rpm build.
+#	* Updated gebrproject and menus versions.
+#	* Added support to docbook and libtidy.
+#	* Downloads GeBR and menus from official repository.
+#	* Merged centos5 script into this one.
+#	* Added getopts for the script.
+#	* Also install menus for shtools and seismicunix.
+#	* Better gebr wrapper script to workaround a X freeze.
+#	* Fixed libpng url.
+#	* Only tidy up if not debuging.
+#	* Bumped gebrproject version to 0.10.1.
+#	* Added option to compile with debug enabled.
+#	* Creates gebr-run.sh to setup the enviroment before run.
+#	* Clean up /opt/gebrproject install dir for rpm build.
 
 print_usage()
 {
@@ -159,7 +156,8 @@ case $CENTOS_MAJOR_VERSION in
 	4) specific_deps="
 		gcc4
 		gcc4-c++
-		xorg-x11-devel" ;;
+		xorg-x11-devel"
+	   GEBR_CONFIG_FLAGS='--without-xau' ;;
 
 	5) specific_deps="
 		gcc-c++
@@ -251,7 +249,7 @@ cd $TMP_DIR
 	&& make DESTDIR=$DEST_DIR install -j$CORES && cd .. || exit 1
 
 # libpng-1.2.44.tar.gz
-	wget -c http://downloads.sourceforge.net/project/libpng/libpng12/older-releases/1.2.44/libpng-1.2.44.tar.gz \
+	wget -c ftp://ftp.simplesystems.org/pub/libpng/png/src/history/libpng-1.2.44.tar.gz \
 	&& (cd libpng-1.2.44 2> /dev/null || (tar xzf libpng-1.2.44.tar.gz \
 	&& cd libpng-1.2.44 \
 	&& ./configure --prefix=$PREFIX_DIR)) \
@@ -395,7 +393,7 @@ fi
 	&& make DESTDIR=$DEST_DIR -j$CORES install && cd .. || exit 1
 
 # docbook-xsl-1.75.2
-	wget -c http://sourceforge.net/projects/docbook/files/docbook-xsl/1.75.2/docbook-xsl-1.75.2.tar.bz2 \
+	(wget -c http://ufpr.dl.sourceforge.net/project/docbook/docbook-xsl/1.75.2/docbook-xsl-1.75.2.tar.bz2 || true) \
 	&& (cd docbook-xsl-1.75.2 2> /dev/null || tar xjf docbook-xsl-1.75.2.tar.bz2) \
 	&& cd docbook-xsl-1.75.2 \
 	&& export XML_CATALOG_FILES=$PWD/catalog.xml \
@@ -476,7 +474,7 @@ EOF
 	&& cd gebrproject-$GEBR_VERSION
 # Check for version 0.11.0 or greater
 if [ -d rpm ]; then
-	./configure --prefix=$PREFIX_DIR $DEBUG CFLAGS=-I/opt/gebrproject/include LIBS=-L/opt/gebrproject/lib \
+	./configure --prefix=$PREFIX_DIR $GEBR_CONFIG_FLAGS $DEBUG CFLAGS=-I/opt/gebrproject/include LIBS=-L/opt/gebrproject/lib \
 	&& make DESTDIR=$DEST_DIR install -j$CORES && cd .. || exit 1
 else
 	for dir in libgebr gebrd gebr debr; do
