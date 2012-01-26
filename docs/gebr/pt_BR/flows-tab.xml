@@ -9,7 +9,7 @@
   xml:id="flows_tab">
 
   <title>A aba <guilabel>Fluxos</guilabel></title>
-  <para>A aba <guilabel>Fluxos</guilabel> dispõe de nove botões de comando, localizados logo abaixo da aba, mais
+  <para>A aba <guilabel>Fluxos</guilabel> dispõe de dez botões de comando, localizados logo abaixo da aba, mais
     dois botões no campo Detalhes no canto inferior direito da tela. Por meio deles pode-se:</para>
   <itemizedlist>
     <listitem>
@@ -55,6 +55,11 @@
     <listitem>
       <para>
         <xref xrefstyle="select: title" linkend="flows_browser_execute_flow"/>
+      </para>
+    </listitem>
+    <listitem>
+     <para>
+       <link linkend="flows_browser_speed_execution">Velocidade de execução</link>
       </para>
     </listitem>
     <listitem>
@@ -125,16 +130,15 @@
           programas</emphasis>, a partir das categorias acima. Vejamos como se faz na prática:</para>
       <procedure>
         <step>
-          <para>Na aba <guilabel>Projetos e Linhas</guilabel>, certifique-se de que a linha <emphasis>Minha primeira
-              linha</emphasis>, criada anteriormente, está selecionada.</para>
+          <para>Na aba <guilabel>Projetos e Linhas</guilabel>, certifique-se de que uma linha está selecionada.</para>
         </step>
         <step>
           <para>Selecione a aba <guilabel>Fluxos</guilabel> e, em seguida, clique no
-            botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_criar_Fluxo.png"/></imageobject></inlinemediaobject></guiicon>.</para>
+            botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_criar_fluxo.png"/></imageobject></inlinemediaobject></guiicon>.</para>
         </step>
         <step>
           <para>
-            Na janela <guilabel>Propriedade para Fluxo</guilabel>, digite um
+            Na janela <guilabel>Propriedade para Fluxos</guilabel>, digite um
             <emphasis>título</emphasis> para o Fluxo (por exemplo,
             <userinput>Meu primeiro Fluxo</userinput>). Se desejar, digite também
             uma breve <emphasis>descrição</emphasis> do Fluxo, o
@@ -269,7 +273,7 @@
     <title>Copiar Fluxos</title>
     <para>Na GêBR, um Fluxo (ou um conjunto de Fluxos) pode ser copiado para a área de transferência
       por meio do
-      botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_copiar_Fluxo.png"/></imageobject></inlinemediaobject></guiicon> ou, mais prático, pelo conhecido atalho
+      botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_copiar_fluxo.png"/></imageobject></inlinemediaobject></guiicon> ou, mais prático, pelo conhecido atalho
       <keycombo><keycap>Ctrl</keycap><keycap>C</keycap></keycombo>.</para>
     <tip>
       <para>Você pode selecionar vários Fluxos para serem copiados simultaneamente usando 
@@ -281,7 +285,7 @@
     <title>Colar Fluxos</title>
     <para>Depois de ter sido selecionado e copiado (<xref linkend="flows_browser_copy_flow"/>), um Fluxo (ou um
       conjunto de Fluxos) pode ser colado por meio do
-      botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_colar_Fluxo.png"/></imageobject></inlinemediaobject></guiicon> ou, mais prático, pelo conhecido atalho
+      botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_colar_fluxo.png"/></imageobject></inlinemediaobject></guiicon> ou, mais prático, pelo conhecido atalho
       <keycombo><keycap>Ctrl</keycap><keycap>V</keycap></keycombo>.</para>
     <tip>
       <para>O Fluxo (ou conjunto de Fluxos) copiado anteriormente para a área de transferência pode ser colado
@@ -297,7 +301,7 @@
       <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_apagar_projeto.png"/></imageobject></inlinemediaobject></guiicon>.</para>
     <tip>
       <para>Você pode selecionar vários Fluxos para serem excluidos simultaneamente usando 
-        <keycombo><keycap>Ctrl</keycap><mousebutton>Clique com botão esquerdo do mouse</mousebutton></keycombo> ou 
+        <keycombo><keycap>Ctrl</keycap><mousebutton>Clique </mousebutton></keycombo> ou 
         <keycombo><keycap>Shift</keycap><mousebutton>Clique com botão esquerdo do mouse</mousebutton></keycombo>.</para>
     </tip>
   </section>
@@ -369,7 +373,7 @@
           <guilabel>Projetos e Linhas</guilabel>. Lembre-se que, na GêBR, Fluxos só podem existir dentro de linhas
           (veja este conceito na <xref linkend="overview"/>). Portanto,
           para importar um Fluxo é necessário <emphasis role="bold">selecionar uma linha existente</emphasis> (ou
-          <xref linkend="flows_browser_create_flow"/>, caso não exista nenhuma).</para>
+          <xref linkend="projects_lines_create_projects_and_lines"/>, caso não exista nenhuma).</para>
       </step>
       <step>
         <para>Selecione a aba 
@@ -413,14 +417,14 @@
   </section>
   <section xml:id="flows_browser_execute_flow">
     <title>Executando Fluxos</title>
-    <para>O botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_executar_Fluxo.png" /></imageobject></inlinemediaobject></guiicon>
+    <para>O botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_executar_fluxo.png" /></imageobject></inlinemediaobject></guiicon>
       é utilizado para executar Fluxos, e está presente tanto na aba <emphasis><guilabel>Fluxos</guilabel></emphasis> quanto na aba <emphasis><guilabel>Editor de Fluxo</guilabel></emphasis>.
       <figure>
         <mediaobject>
           <caption>
             Na aba Fluxos você possível selecionar vários Fluxos 
             para execução. 
-          .</caption>
+          </caption>
 
           <imageobject>
             <imagedata fileref="../images/GeBR_flow_browser.png" />
@@ -428,36 +432,39 @@
         </mediaobject>
       </figure>
     </para>
-      <para>A execução múltipla pode ocorrer de dois modos:
+    <para>Na GêBR está é possível executar um conjunto de Fluxos. Esta operação é chamada <emphasis role="bold">execução múltipla</emphasis> e pode ocorrer de dois modos:
       </para>
     <itemizedlist>
       <listitem><para>
-        Sequencial: os Fluxos são executados na ordem em que estão posicionados 
-        na lista de Fluxos ao lado esquerdo da janela. Se você deseja executá-los em 
-        ordem, basta reordenar os Fluxos através do mouse (arrastar e soltar). 
+        Sequencialmente: os Fluxos são executados na ordem em que estão posicionados 
+        na lista de Fluxos ao lado esquerdo da janela. Cada Fluxo aguarda o término da tarefa anterior, para que seja executado. Durante este momento, o Fluxo em espera carrega consigo um ícone de "Esperando pela tarefa ".
+       Se você deseja executá-los em uma ordem específica, basta reordenar os Fluxos através do mouse (arrastar e soltar).
         Para executar neste modo, clique em
         <guiicon>
           <inlinemediaobject>
             <imageobject>
-              <imagedata fileref="../../common-images/botao_executar_Fluxo.png" />
+              <imagedata fileref="../../common-images/botao_executar_fluxo.png" />
             </imageobject>
           </inlinemediaobject>
         </guiicon> ou utilize a combinação Ctrl+R.
       </para></listitem>
       <listitem><para>
-        Paralela: os Fluxos são executados de modo simultâneo. Este é o caso quando 
+        Paralelamente: os Fluxos são executados de modo simultâneo. Este é o caso quando 
         não existe interdependência entre os Fluxos. Para executar neste modo, 
         utilize a combinação Ctrl+Shift+R.
       </para></listitem>
     </itemizedlist>
     <para>
     </para>
-    <tip>Você pode executar vários Fluxos  
-      <emphasis role="bold">sequencialmente</emphasis> clicando Ctrl+R.</tip>
-    <tip>Você pode executar vários Fluxos 
-      <emphasis role="bold">paralelamente</emphasis> clicando Ctrl+Shift+R.</tip>
+
     <important>Ao executar vários Fluxos, as configurações do primeiro será utilizada em todos os Fluxos.</important>
   </section>
+  <section xml:id="flows_browser_speed_execution">
+    <title>Velocidade de execução de Fluxos</title>
+    <para>A velocidade de execução dos Fluxos é determinada pelo número de processadores e prioridade da execução. É possível configurar estes parâmetros,
+      como detalhado em <xref linkend="flow_editor_multicores"/> e <xref linkend="flow_editor_priority_execution"/>.  
+      </para>
+    </section>
   <section xml:id="flows_browser_edit_comments_flow">
     <title>Editar comentários da aba Fluxos</title>
     <para>Através desta opção, o usuário pode adicionar comentários à linha ou ao Fluxo criados.

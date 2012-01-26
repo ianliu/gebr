@@ -20,12 +20,7 @@
   <itemizedlist>
     <listitem>
       <para>
-        <link linkend="projects_lines_create_project">Criar um novo projeto</link>
-      </para>
-    </listitem>
-    <listitem>
-      <para>
-        <link linkend="projects_lines_create_line">Criar uma nova linha</link>
+        <link linkend="projects_lines_create_projects_and_lines">Criar projetos e linhas</link>
       </para>
     </listitem>
     <listitem>
@@ -75,7 +70,7 @@
       mais <emphasis role="bold">fácil e rápido</emphasis> do que usar os botões.</para>
     </tip>
     <section xml:id="projects_lines_create_projects_and_lines">
-      <title>Criando projetos e linhas</title>
+      <title>Criar projetos e linhas</title>
       <para>Para criar um <emphasis role="bold">novo projeto</emphasis>:</para>
       <procedure>
         <step>
@@ -92,7 +87,7 @@
         </step>
         <step>
           <para>
-            Na janela <guilabel>Propriedades do projeto</guilabel>, digite um
+            Na janela <guilabel>Propriedades do Projeto</guilabel>, digite um
             <emphasis>título</emphasis> para o projeto (por exemplo,
             <userinput>Meu primeiro projeto</userinput>).
           </para>
@@ -122,7 +117,7 @@
         principal da GêBR. Na caixa <guilabel>Detalhes</guilabel>, no lado
         direito da janela principal, são exibidas informações sobre o projeto.
         Você notará que algumas dessas informações foram inseridas por você na
-        janela <guilabel>Propriedades do projeto</guilabel>, no momento da
+        janela <guilabel>Propriedades do Projeto</guilabel>, no momento da
         criação do projeto. Outras informações, como a data da criação e a data
         da última modificação, são geradas e atualizadas automaticamente pela GêBR.
       </para>
@@ -154,7 +149,7 @@
           </para>
         </step>
         <step>
-          <para>Na janela <guilabel>Propriedades para linha</guilabel>, digite um
+          <para>Na janela <guilabel>Propriedades para Linha</guilabel>, digite um
             <emphasis>título</emphasis> para a linha (por exemplo,
             <userinput>Minha primeira linha</userinput>).</para>
         </step>
@@ -167,7 +162,7 @@
       <figure>
         <mediaobject>
           <caption>
-            Janela de Propriedades da linha; você pode definir informações
+            Janela de Propriedades para Linha; você pode definir informações
             sobre a linha como descrição, autor, e-mail, o maestro da linha
             (veja <xref linkend="projects_lines_change_the_maestro_of_a_line" />) e
             adicionar caminhos preferenciais no campo <guilabel>Caminho</guilabel>.
@@ -191,6 +186,18 @@
           </imageobject>
         </mediaobject>
       </figure>
+      <important>
+        <para>
+          <emphasis role="bold">Não há limitação</emphasis> para o número de projetos e linhas na GêBR. Você pode criar quantos quiser.
+        </para>
+      </important>
+      <tip>
+      <para>A GêBR permite <emphasis role="bold">contrair</emphasis> ou <emphasis role="bold">expandir</emphasis> o
+        projeto. No estado contraído, as <emphasis role="bold">linhas do projeto ficam ocultas</emphasis>. No estado
+        expandido, as <emphasis role="bold">linhas do projeto ficam visíveis</emphasis>. Para contrair, clique no
+        ícone <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_expandido.png"/></imageobject></inlinemediaobject></guiicon> à esquerda do nome do projeto. Para expandir, clique no
+        ícone <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_colapsado.png"/></imageobject></inlinemediaobject></guiicon>.</para>
+    </tip>
       <tip>
         <para>Acesse
           <menuchoice>
@@ -205,38 +212,8 @@
       <para>Agora que existe uma estrutura básica de projeto e linha, você já
         pode <emphasis>criar seu primeiro Fluxo</emphasis>.</para>
     </section>
-  <section xml:id="projects_lines_create_project">
-    <title>Criar um novo projeto</title>
-    <para>Para criar um novo projeto, clique no
-      botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_criar_projeto.png"/></imageobject></inlinemediaobject></guiicon> (veja mais detalhes na
-      <xref linkend="projects_lines_create_projects_and_lines"/>.</para>
-    <para><emphasis role="bold">Não há limitação</emphasis> para o número de projetos na GêBR. Você pode criar
-      quantos projetos quiser.</para>
-    <para>Depois de criados, os projetos ficam <emphasis role="bold">visíveis no lado esquerdo da janela
-        principal</emphasis> da GêBR. A caixa <guilabel>Detalhes</guilabel>, localizada no lado direito da janela
-      principal, exibe informações sobre o projeto selecionado.</para>
-  </section>
-  <section xml:id="projects_lines_create_line">
-    <title>Criar uma nova linha</title>
-    <para>Para criar uma nova linha, <emphasis role="bold">selecione um projeto existente</emphasis> e clique no
-      botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_criar_linha.png"/></imageobject></inlinemediaobject></guiicon> (veja mais detalhes
-      na <xref linkend="projects_lines_create_projects_and_lines"/>). A nova linha será criada dentro
-      do projeto selecionado.</para>
-    <para><emphasis role="bold">Não há limitação</emphasis> para o número de linhas na GêBR. Você pode criar quantas
-      linhas quiser dentro de um projeto.</para>
-    <para>Depois de criadas, as linhas ficam <emphasis role="bold">visíveis no lado esquerdo da janela
-        principal</emphasis> da GêBR, dentro dos projetos. A caixa
-      <guilabel>Detalhes</guilabel>, localizada no lado direito da janela principal, exibe informações sobre a linha
-      selecionada.</para>
-    <tip>
-      <para>A GêBR permite <emphasis role="bold">contrair</emphasis> ou <emphasis role="bold">expandir</emphasis> o
-        projeto. No estado contraído, as <emphasis role="bold">linhas do projeto ficam ocultas</emphasis>. No estado
-        expandido, as <emphasis role="bold">linhas do projeto ficam visíveis</emphasis>. Para contrair, clique no
-        ícone <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_expandido.png"/></imageobject></inlinemediaobject></guiicon> à esquerda do nome do projeto. Para expandir, clique no
-        ícone <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_colapsado.png"/></imageobject></inlinemediaobject></guiicon>.</para>
-    </tip>
-  </section>
-  <section xml:id="projects_lines_delete_project">
+  
+    <section xml:id="projects_lines_delete_project">
     <title>Apagar um projeto ou uma linha</title>
     <para>Para excluir um projeto ou uma linha, selecione o projeto ou a linha e clique no
       botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_apagar_projeto.png"/></imageobject></inlinemediaobject></guiicon>.</para>
@@ -253,7 +230,7 @@
     <title>Editar as propriedades de um projeto ou linha</title>
     <para>Para editar as propriedades de um projeto ou de uma linha, selecione o projeto ou a linha e clique no
       botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_editar_propriedades_projeto.png"/></imageobject></inlinemediaobject></guiicon>.</para>
-    <para>Na janela <guilabel>Propriedades para projeto</guilabel> ou <guilabel>Propriedades para linha</guilabel>
+    <para>Na janela <guilabel>Propriedades para Projeto</guilabel> ou <guilabel>Propriedades para Linha</guilabel>
       (dependendo do caso) você pode editar os
       campos <guilabel>Título</guilabel>, <guilabel>Descrição</guilabel>, <guilabel>Autor</guilabel> e
       <guilabel>Email</guilabel>. Para o caso de edição de propriedades de linha, pode-se editar o <guilabel>Maestro</guilabel> e adicionar caminhos
@@ -265,13 +242,15 @@
     <para>Na <xref linkend="flow_editor_edit_input_output"/> veremos que um Fluxo pode
       estar associado a alguns arquivos de dados. Veremos também que essa associação pode ser feita mais facilmente
       se adicionarmos os chamados caminhos preferenciais da linha.</para>
+    <para>Os caminhos preferenciais de linha são como atalhos para que os diretórios sejam acessados mais facilmente
+    e para que se permita o acesso remoto a eles.</para>
     <para>Os caminhos preferenciais da linha são definidos no diálogo de <guilabel>Propriedades para
-        linha</guilabel>. Para abrir este diálogo, tenha a linha selecionada e clique sobre o
+        Linha</guilabel>. Para abrir este diálogo, tenha a linha selecionada e clique sobre o
       ícone <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_editar_propriedades_projeto.png"/></imageobject></inlinemediaobject></guiicon>, na barra de ferramentas, ou utilizando o menu de contexto,
-      selecione a opção <guilabel>Propriedades</guilabel>. Na janela <guilabel>Propriedades para linha</guilabel>, no
+      selecione a opção <guilabel>Propriedades</guilabel>. Na janela <guilabel>Propriedades para Linha</guilabel>, no
       campo <guilabel>Caminhos</guilabel>, digite o caminho desejado e clique no
       botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_adicionar_caminho.png"/></imageobject></inlinemediaobject></guiicon>.</para>
-    <para>Além disso, na janela Propriedades para linha, pode-se adicionar caminhos preferenciais de linha
+    <para>Além disso, na janela Propriedades para Linha, pode-se adicionar caminhos preferenciais de linha
       escolhendo-se um diretório. Para isso, deve-se clicar no
       botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_caminho_personalizado.png"/></imageobject></inlinemediaobject></guiicon>.</para>
     <para>Quando tiver concluído a edição dos caminhos preferenciais, clique em <guibutton>OK</guibutton>.</para>
@@ -299,7 +278,7 @@
       (<keycombo><keycap>Ctrl</keycap><keycap>End</keycap></keycombo>).</para>
     <figure>
       <mediaobject>
-        <caption>Janela de Propriedades da linha; além de adicionar informações sobre a linha
+        <caption>Janela de Propriedades para Linha; além de adicionar informações sobre a linha
           como descrição, autor e email, é possível adicionar caminhos preferenciais no campo Caminhos.</caption>
         <imageobject>
           <imagedata fileref="../images/janela_path_list.png"/>
@@ -351,7 +330,7 @@
           botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_importar_projeto.png"/></imageobject></inlinemediaobject></guiicon></para>
       </step>
       <step>
-        <para>Navegue pela janela <guilabel>Escolha o projeto ou linha para abrir</guilabel> e selecione o projeto
+        <para>Navegue pela janela <guilabel>Escolha o Projeto ou Linha para Abrir</guilabel> e selecione o projeto
           ou a linha que deseja importar (apenas arquivos do tipo <filename class="extension">prjz</filename> ou
           <filename class="extension">lnez</filename> serão mostrados).</para>
       </step>
@@ -367,7 +346,7 @@
       <para>Na GêBR, linhas só podem existir dentro de projetos (veja este conceito
         na <xref linkend="overview"/>). Portanto, para importar uma linha é
         necessário <emphasis role="bold">selecionar um projeto existente</emphasis>
-        ou criar um novo.</para>
+        ou <emphasis role="bold">criar um novo</emphasis>.</para>
     </note>
   </section>
   <section xml:id="projects_lines_export_project">
@@ -384,7 +363,7 @@
           botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_exportar_projeto.png"/></imageobject></inlinemediaobject></guiicon></para>
       </step>
       <step>
-        <para>Na janela <guilabel>Escolha o nome do arquivo para salvar</guilabel>, selecione uma pasta e digite um
+        <para>Na janela <guilabel>Escolha o Nome do Arquivo para Salvar</guilabel>, selecione uma pasta e digite um
           nome para o arquivo (a GêBR determina automaticamente a
           extensão <filename class="extension">prjz</filename> para projeto
           ou <filename class="extension">lnez</filename> para linha).</para>
@@ -400,9 +379,9 @@
       linha. Para <emphasis role="bold">editar um comentário</emphasis>:</para>
     <procedure>
       <step>
-        <para>Clique no botão <guibutton>Editar comentários</guibutton>, que fica no campo logo abaixo de
-          <guilabel>Detalhes</guilabel>, na janela <guilabel>Propriedades para projeto</guilabel> ou
-          <guilabel>Propriedades para linha</guilabel>.</para>
+        <para>Clique no botão <guibutton>Editar Comentários</guibutton>, que fica no campo logo abaixo de
+          <guilabel>Detalhes</guilabel>, na janela <guilabel>Propriedades para Projeto</guilabel> ou
+          <guilabel>Propriedades para Linha</guilabel>.</para>
       </step>
       <step>
         <para>Digite um texto no editor de textos que se abre. Quando terminar, salve seu

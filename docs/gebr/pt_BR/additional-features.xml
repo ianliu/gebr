@@ -152,7 +152,7 @@
     <section>
       <title>Configurações de grupos</title>
       <para>Você pode optar por utilizar apenas um subconjunto das máquinas do maestro conectado.
-        A criação/edição de grupos é feita através da janela de <guilabel>Configurações de grupos</guilabel>
+        A criação/edição de grupos é feita através da janela de <guilabel>Configurações de Grupos</guilabel>
         e possibilita este recurso.</para>
       <para>A funcionalidade é através do Arrastar-e-soltar do mouse.</para>
       <mediaobject>
@@ -161,8 +161,7 @@
           <imagedata fileref="../images/GeBR_servers_groups_new.png" />
         </imageobject>
       </mediaobject>
-      <para>Para criar um grupo, o usuário precisa clicar sobre um servidor da 
-        <guilabel>Configurações de grupos</guilabel> e arrastar para o ícone + .
+      <para>Para criar um grupo, o usuário precisa clicar sobre um servidor que esteja vinculado ao Maestro e arrastar para o ícone + da janela Grupo/Servidores.
         Você poderá adicionar um nome para o novo grupo. Grupos com o mesmo nome
         não são aceitos.</para>
     </section>
@@ -170,7 +169,7 @@
   <section xml:id="dictionary_variables">
     <title>Dicionário de Variáveis</title>
     <para>
-      A GêBR estende o conceito de variavéis da programação computacional à manipulação de projetos, linhas e fluxos. A utilização de variáveis pode auxiliar na legibilidade e de código, portabilidade e na edição dinâmica de propriedades dentro de seu processamento.
+      A GêBR estende o conceito de variavéis da programação computacional à manipulação de projetos, linhas e fluxos. A utilização de variáveis pode auxiliar na legibilidade do código, portabilidade e na edição dinâmica de propriedades dentro de seu processamento.
 
     </para>
     <section xml:id="janela_dicionario">
@@ -215,7 +214,7 @@
           <para>Ao terminar, sua janela deve se parecer com a seguinte:</para>
           <figure>
             <mediaobject>
-              <caption>Na janela de Dicionário de Variáveis para Fluxo, é possível editar variáveis para este Fluxo, para sua Linha ou seu Projeto.</caption>
+              <caption>Na janela de Dicionário de Parâmetros para Fluxo, é possível editar variáveis para este Fluxo, para sua Linha ou seu Projeto.</caption>
               <imageobject>
                 <imagedata fileref="../images/exemplo_variaveis_3.png"/>
               </imageobject>
@@ -278,7 +277,7 @@
         <step>
           Agora basta executar. Os valores utilizados pelos seus programas com variáveis serão os 
           definidos no <guilabel>Dicionário de Variáveis</guilabel>. Assim, alterar o valor de 
-          uma variáveis do dicionário significa alterar os parâmetros dos programas que utilizam 
+          uma variável do dicionário significa alterar os parâmetros dos programas que utilizam 
           esta variável.
       </step>    </procedure>
       <tip>Para validar uma expressão ou uma variável, em qualquer campo, basta utilizar a tecla <keycap>Enter</keycap>.</tip>
@@ -307,7 +306,7 @@
             no dicionário como na janela a seguir.</para>
           <figure>
             <mediaobject>
-              <caption>A variavel <emphasis role="bold">iter</emphasis> com sua expressão resolvida.</caption>
+              <caption>A variável <emphasis role="bold">iter</emphasis> com sua expressão resolvida.</caption>
               <imageobject>
                 <imagedata fileref="../images/exemplo_iter_1.png"/>
               </imageobject>
@@ -329,9 +328,9 @@
         <step>
           <para>Após definirmos esta variável, vamos melhorar os parâmetros do programa <guimenuitem>Loop</guimenuitem>, para que a variável 
             <emphasis>iter</emphasis> tenha um comportamento melhor para o propósito do problema.
-            Logo, no parâmetro Initial value (valor inicial) iremos incluir a variável <emphasis>ano_atual</emphasis>.
+            Logo, no parâmetro Initial Value (valor inicial) iremos incluir a variável <emphasis role="bold">ano_atual</emphasis>.
             No parâmetro Step (passo de cada iteração), preencheremos com 1, pois queremos anos seguidos.
-            No parâmetro Total number of steps (número total de passos), colocaremos o valor 5, para que realize está repetição 5 vezes, desta forma,
+            No parâmetro Total Number of Steps (número total de passos), colocaremos o valor 5, para que realize esta repetição 5 vezes, desta forma,
             pegando os 5 próximos anos, a partir de 2011.</para>
           <figure>
             <mediaobject>
@@ -462,7 +461,7 @@
     <tip>
       <para>Em 
         <menuchoice><guimenu>Ações</guimenu><guimenuitem>Preferências</guimenuitem></menuchoice> (no canto inferior da janela principal), campo 
-        <guilabel>Carregar o log das execuções anteriores</guilabel>, você escolhe entre exibir o log completo,
+        <guilabel>Carregar o log das Execuções Anteriores</guilabel>, você escolhe entre exibir o log completo,
         incluindo ações de datas passadas, o log compacto, que mostra apenas as ações a partir da última
         inicialização.</para>
     </tip>

@@ -75,7 +75,7 @@
   </section>
   <section xml:id="flow_editor_paste_program">
     <title>Colar programas da área de transferência</title>
-    <para>A funcionalidade é análoga a da <xref linkend="flows_browser_paste_flow"/>.
+    <para>A funcionalidade é análoga a da <xref linkend="flows_browser_paste_flow"/>, porém os programas serão colados dentro do Fluxo selecionado.
     </para>
     <tip>
       <para>O programa (ou conjunto de programas) copiado anteriormente para a área de transferência pode ser colado
@@ -94,11 +94,13 @@
   </section>
   <section xml:id="flow_editor_edit_parameters_program">
     <title>Editar os parâmetros de um programa</title>
+    <para>Os parâmetros de um programa são as configurações iniciais do mesmo e podem ser editados.</para>
     <para>Para editar os parâmetros de um programa:</para>
     <procedure>
       <step>
-        <para>Selecione-o na janela ao lado esquerdo do <emphasis><guilabel>Editor de Fluxo</guilabel></emphasis> e clique no
-          botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_editar_propriedades_projeto.png"/></imageobject></inlinemediaobject></guiicon> da barra de ferramentas. Uma outra forma de editar os parâmetros do programa é dar um clique duplo no programa.</para>
+        <para>Selecione o programa na janela ao lado esquerdo do <emphasis><guilabel>Editor de Fluxo</guilabel></emphasis> e clique no
+          botão <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_editar_propriedades_projeto.png"/></imageobject></inlinemediaobject></guiicon> da barra de ferramentas ou dê um
+          duplo clique no programa. A janela <guilabel>Parâmetros</guilabel> se abrirá.</para>
       </step>
       <step>
         <para>Na janela <guilabel>Parâmetros</guilabel>, edite os parâmetros do programa. Note que os parâmetros
@@ -161,14 +163,17 @@
     </figure>
     <procedure>
       <step>
-        <para>Certifique-se de ter selecionado o Fluxo e, na aba Editor de Fluxo, no campo Sequência de Fluxo,
-          de que você pode editar os caminhos de entrada, saída e erro através de um clique duplo nos botões.
+        <para>Certifique-se de ter selecionado o Fluxo e de que você pode editar os caminhos de entrada, saída e erro (aba Editor de Fluxo, no campo Sequência de Fluxo),
+          através de um clique duplo nos botões
+          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_arquivo_entrada.png"/></imageobject></inlinemediaobject></guiicon>,
+          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_arquivo_saida.png"/></imageobject></inlinemediaobject></guiicon> e
+          <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_arquivo_erro.png"/></imageobject></inlinemediaobject></guiicon>.
         </para>
       </step>
       <step>
         <para>Edite os caminhos ou clique no
           ícone <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/icone_escolher_arquivo.png"/></imageobject></inlinemediaobject></guiicon> e navegue pela janela <guilabel>Escolha um
-            arquivo</guilabel>.</para>
+            Arquivo</guilabel>.</para>
       </step>
     </procedure>
     <para>Ao sair da janela 
@@ -185,14 +190,14 @@
   <section xml:id="flow_editor_execute_flow">
     <title>Executar um Fluxo</title>
     <para>Para executar o Fluxo atual, clique no botão 
-      <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_executar_fluxo.png"/></imageobject></inlinemediaobject></guiicon>. A execução de um fluxo também pode ser executada através da aba <guilabel>Fluxos</guilabel> (veja <xml linkend="flows_browser_execute_flow"/>.</para>
+      <guiicon><inlinemediaobject><imageobject><imagedata fileref="../../common-images/botao_executar_fluxo.png"/></imageobject></inlinemediaobject></guiicon>. A execução de um fluxo também pode ser executada através da aba <guilabel>Fluxos</guilabel> (veja <xref linkend="flows_browser_execute_flow"/>).</para>
 
     <para>Na aba Editor de Fluxo, você pode executar um Fluxo após outro
       Fluxo, criando uma fila de execução. Para executar após um Fluxo em
       específico, ao invés de escolher  <emphasis>Imediatamente</emphasis>,
       vá para a aba <guilabel>Editor de Fluxos</guilabel> e escolha 
       <emphasis> Após FluxoX </emphasis>.
-      Por padrão, os fluxos são executado no grupo do Maestro. Veja em <xref linkend="servers_configuration"/> como definir e editar os servidores/grupos que podem ser utilizados na execução.</para>
+      Por padrão, os fluxos são executados no grupo do Maestro. Veja em <xref linkend="servers_configuration"/> como definir e editar os servidores/grupos que podem ser utilizados na execução.</para>
     <figure>
       <mediaobject>
 	      <caption>Na segundo campo de <guilabel>Executar</guilabel>, você pode selecionar <emphasis>após
@@ -282,7 +287,7 @@
  <section xml:id="flow_editor_multiple_machines">
     <title>Execução em várias máquinas</title>
     <para>Se a GêBR estiver conectada a várias máquinas (configuração através do
-      <xref linkend="servers_configuration" />, e o Fluxo for paralelizável (veja 
+      <xref linkend="servers_configuration" />), e o Fluxo for paralelizável (veja 
       abaixo os critérios para um Fluxo ser paralelizável), então o usuário tem a
       opção de executar o Fluxo de forma distribuída.</para>
     <para>Para ser <emphasis>paralelizável</emphasis>, o Fluxo precisa satisfazer um
