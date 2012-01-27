@@ -187,13 +187,12 @@ if test "x${want_xau}" = xyes; then
 		ENABLE_XAU=1
 	else
 		echo "----------------------------------------"
-		echo " Error: libXau support is enabled but"
+		echo " Warning: libXau support is enabled but"
 		echo " there seems to be no libXau installed"
 		echo " on your system. Consider installing it"
 		echo " or disabling Xau support with"
 		echo " --without-xau flag."
 		echo "----------------------------------------"
-		(exit 1); exit 1;
 	fi
 fi
 AC_SUBST(ENABLE_XAU)
@@ -224,14 +223,11 @@ if test "x${want_tidy}" = xyes; then
 	if test "x${have_tidy}" = xyes; then
 		ENABLE_TIDY=1
 	else
-		echo "----------------------------------------"
-		echo " Error: libtidy support is enabled but"
+		echo "-----------------------------------------"
+		echo " Warning: libtidy support is enabled but"
 		echo " there seems to be no libtidy installed"
-		echo " on your system. Consider installing it"
-		echo " or disabling tidy support with"
-		echo " --without-tidy flag."
-		echo "----------------------------------------"
-		(exit 1); exit 1;
+		echo " on your system. Consider installing it."
+		echo "-----------------------------------------"
 	fi
 fi
 AC_SUBST(ENABLE_TIDY)
