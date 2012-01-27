@@ -76,7 +76,7 @@ links that developers using libgebr will need.
 #### GeBR Package
 ################################################################################
 %package -n gebr
-Requires: libgebr = %{version}, gebrd = %{version}, gebr-doc
+Requires: libgebr = %{version}, openssh-clients, gebr-maestro = %{version}
 Group: Application/Misc
 Summary: Seismic processing environment
 
@@ -106,7 +106,7 @@ The user manual for GeBR program.
 ################################################################################
 %package -n gebrd
 Group: Application/Misc
-Requires: libgebr = %{version}
+Requires: libgebr = %{version}, openssh-server
 Summary: GeBRD is server for executing flows
 
 %description -n gebrd
@@ -129,7 +129,7 @@ than collaborates with one GeBR Maestro
 ################################################################################
 %package -n gebr-maestro
 Group: Application/Misc
-Requires: libgebr = %{version}
+Requires: libgebr = %{version}, gebrd = %{version}, openssh
 Summary: GeBR Maestro coordinates the flow execution between groups of machines
 
 %description -n gebr-maestro

@@ -12,6 +12,7 @@ Packager: Fabricio Matheus Goncalves <fmatheus@gebrproject.com>
 Source: %{name}-%{version}.tar.gz
 BuildRoot: /var/tmp/gebrproject-%{version}-%{release}
 Summary: Seismic processing environment
+Requires: openssh
 %description
 GêBR is a simple graphical interface which facilitates geophysical data processing. 
 GêBR is not a package for processing, rather it is designed to integrate a large 
