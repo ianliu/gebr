@@ -1,3 +1,7 @@
+2012-01-27  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix documentation compilation
+
 2012-01-27  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
 
 	* Create links at /usr/bin in CentOS script
