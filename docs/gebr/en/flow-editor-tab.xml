@@ -97,16 +97,15 @@
   <title>Pasting programs from the clipboard</title>
   <para>Pasting programs is similar to pasting Flows (
     <xref linkend="flows_browser_paste_flow" />). But now, a program must be put inside a Flow. 
-     <tip>
+  </para>
+  <tip>
     <para>A program (or set of programs) that have been copied to the clipboard can be pasted
       to 
       <emphasis role="bold">any Flow</emphasis>, and not just the Flow of origin. Simply switch
       to the 
       <guilabel>Flows</guilabel> tab, select the desired Flow, go back to the 
       <guilabel>Flow editor</guilabel> tab and paste the program(s).</para>
-   </tip>
- 
- 
+  </tip>
  </section>
 <section xml:id="flow_editor_delete_program">
   <title>Deleting programs</title>
