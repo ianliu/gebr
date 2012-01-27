@@ -524,6 +524,10 @@ LD_LIBRARY_PATH=$GEBR_HOME/lib:$LD_LIBRARY_PATH PATH=$GEBR_HOME/lib/libgebr/bin:
 chmod +x $DEST_DIR/$PREFIX_DIR/lib/libgebr/bin/gebr-run.sh
 
 #Create links
+ln -sf $DEST_DIR/$PREFIX_DIR/share/applications/gebr.desktop /usr/share/applications/gebr.desktop
+ln -sf $DEST_DIR/$PREFIX_DIR/share/applications/debr.desktop /usr/share/applications/debr.desktop
+
 for bin in $GEBR_BINS; do
         ln -sf ../lib/libgebr/bin/gebr-run.sh $DEST_DIR/$PREFIX_DIR/bin/$bin
+        ln -sf $DEST_DIR/$PREFIX_DIR/lib/libgebr/bin/gebr-run.sh /usr/bin/$bin
 done
