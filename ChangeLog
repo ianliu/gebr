@@ -1,3 +1,60 @@
+2012-01-27  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Create links at /usr/bin in CentOS script
+	* Update RPM specs dependencies
+	* Fix debian packages dependencies
+	* Do not exit configure when there is no tidy or libXau
+
+2012-01-26  igor snunes  <igor.snunes@gebr.com>
+
+	* pt version complete
+	* english xml updated (not fully sync)
+
+2012-01-26  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Re-Filter list of jobs after status changed
+
+2012-01-26  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix invalid free on Xauth list (see if introduced memory leaks)
+
+2012-01-26  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix compilation
+
+2012-01-26  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix bug on validate program before execution (change to correct
+	validator for each flow)
+
+2012-01-26  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Search if there is an address:port in Xauthority file before
+	appending
+
+2012-01-26  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix bug on sensitiveness of execution widgets when have no selected
+	projects or lines
+
+2012-01-26  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix centos install script
+	* Gebr conflicts with lsh-server, so we put openssh as a dependency
+
+2012-01-26  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* FIx bug on DnD of server to create group on some distros
+
+2012-01-26  igor snunes  <igor.snunes@gebr.com>
+
+	* xml pt document updated
+	* english version updated, no sync
+
+2012-01-26  Julia  <juliakm@gebrproject.com>
+
+	* Changing two screenshots of the portuguese and english version
+
 2012-01-24  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
 
 	* Remove entries from xauth queue when the client/daemon disconnects
