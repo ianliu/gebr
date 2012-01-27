@@ -55,7 +55,7 @@ Description: GeBR library collection
 Package: gebrd
 Section: science
 Architecture: any
-Depends: libgebr0 (= ${binary:Version})
+Depends: libgebr0 (= ${binary:Version}), openssh-server
 Description: GeBRD is a server for executing flows
  GêBR is a simple graphical interface which facilitates geophysical data processing. 
  GêBR is not a package for processing, rather it is designed to integrate a large 
@@ -95,7 +95,7 @@ Description: GeBR Maestro coordinates the flow execution between groups of machi
 Package: gebr
 Section: science
 Architecture: any
-Depends: libgebr0 (= ${binary:Version}), ssh
+Depends: libgebr0 (= ${binary:Version}), openssh-client
 Recommends: gebr-maestro (= ${binary:Version}), gebrd (= ${binary:Version}), gebr-doc (= ${binary:Version})
 Suggests: debr, gebr-menus-su, gebr-menus-shtools
 Conflicts: lsh-server, gebrd (<< ${binary:Version}), gebr-maestro (<< ${binary:Version})
