@@ -295,6 +295,10 @@ build_xauth_list(FILE *xauth_file, Xauth *auth)
 {
 	GList *list = NULL;
 	gboolean subst = FALSE;
+
+	if (!xauth_file)
+		return NULL;
+
 	Xauth *i = XauReadAuth(xauth_file);
 	while (i) {
 		if (g_strcmp0(i->address, auth->address) == 0
