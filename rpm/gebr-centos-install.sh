@@ -2,6 +2,14 @@
 
 # Please, maintain a ChangeLog history style here:
 #
+# 2012-01-30  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+#
+#	* Add $DEST_DIR in front of system menus destination path.
+#
+# 2012-01-27  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+#
+#	* Add symbolic links for gebr and debr system menus.
+#
 # 2012-01-25  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
 #
 #	* Change link for libpng to a FTP link, as the sourceforge was giving
@@ -524,8 +532,11 @@ LD_LIBRARY_PATH=$GEBR_HOME/lib:$LD_LIBRARY_PATH PATH=$GEBR_HOME/lib/libgebr/bin:
 chmod +x $DEST_DIR/$PREFIX_DIR/lib/libgebr/bin/gebr-run.sh
 
 #Create links
-ln -sf $DEST_DIR/$PREFIX_DIR/share/applications/gebr.desktop /usr/share/applications/gebr.desktop
-ln -sf $DEST_DIR/$PREFIX_DIR/share/applications/debr.desktop /usr/share/applications/debr.desktop
+ln -sf $DEST_DIR/$PREFIX_DIR/share/applications/gebr.desktop \
+	$DEST_DIR/usr/share/applications/gebr.desktop
+
+ln -sf $DEST_DIR/$PREFIX_DIR/share/applications/debr.desktop \
+	$DEST_DIR/usr/share/applications/debr.desktop
 
 for bin in $GEBR_BINS; do
         ln -sf ../lib/libgebr/bin/gebr-run.sh $DEST_DIR/$PREFIX_DIR/bin/$bin
