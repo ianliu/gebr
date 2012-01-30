@@ -27,3 +27,12 @@ build-stamp: override_dh_auto_configure
 
 %:
 	dh $@
+
+.PHONY: override_dh_strip
+
+override_dh_strip:
+	dh_strip --package=libgebr0     --dbg-package=libgebr0-dbg
+	dh_strip --package=gebrd        --dbg-package=gebrd-dbg
+	dh_strip --package=gebr-maestro --dbg-package=gebr-maestro-dbg
+	dh_strip --package=gebr         --dbg-package=gebr-dbg
+	dh_strip --package=debr         --dbg-package=debr-dbg

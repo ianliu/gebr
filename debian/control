@@ -1,7 +1,7 @@
 Source: gebrproject
 Priority: extra
 Maintainer: Fabricio Matheus Goncalves <fmatheus@gebrproject.com>
-Build-Depends: debhelper (>= 7), gtk-doc-tools, docbook-xsl,
+Build-Depends: debhelper (>= 7.0.50), gtk-doc-tools, docbook-xsl,
  libwebkit-dev, libgdome2-dev, libtidy-dev, bc
 Standards-Version: 3.7.2
 
@@ -52,6 +52,33 @@ Description: GeBR library collection
  links that developers using libgebr will need.
  .
 
+Package: libgebr0-dbg
+Section: debug
+Priority: extra
+Architecture: any
+Depends: ${misc:Depends}, libgebr0 (= ${binary:Version})
+Description: Debug symbols for libgebr library
+ GêBR is a simple graphical interface which facilitates geophysical data processing. 
+ GêBR is not a package for processing, rather it is designed to integrate a large 
+ variety of free processing packages.
+ .
+ What can GeBR do:
+     * Handle Projects and Lines
+     * Assemble and run processing sequences
+     * Act as an interface to many freely-available seismic-processing
+       packages (such as Seismic Unix, Madagascar, etc)
+ .
+ libgebr is a collection of GeBR's libraries:
+     * libgebr_comm deals with client-server communication
+     * libgebr_geoxml is the XML engine of GeBR
+     * libgebr_gui extends GTK+ functionalities
+     * libgebr_misc is where everything else is
+ .
+ This package contains the header files, static libraries and symbolic
+ links that developers using libgebr will need.
+ .
+ This package contains debugging symbols for libgebr library.
+
 Package: gebrd
 Section: science
 Architecture: any
@@ -70,6 +97,27 @@ Description: GeBRD is a server for executing flows
  This package provides GeBR's flow execution and should be present in all machines
  than collaborates with one GeBR Maestro
  .
+
+Package: gebrd-dbg
+Section: debug
+Priority: extra
+Architecture: any
+Depends: ${misc:Depends}, gebrd (= ${binary:Version})
+Description: Debug symbols for GeBRd
+ GêBR is a simple graphical interface which facilitates geophysical data processing. 
+ GêBR is not a package for processing, rather it is designed to integrate a large 
+ variety of free processing packages.
+ .
+ What can GeBR do:
+     * Handle Projects and Lines
+     * Assemble and run processing sequences
+     * Act as an interface to many freely-available seismic-processing
+       packages (such as Seismic Unix, Madagascar, etc)
+ .
+ This package provides GeBR's flow execution and should be present in all machines
+ than collaborates with one GeBR Maestro
+ .
+ This package contains debugging symbols for gebrd binary.
 
 Package: gebr-maestro
 Section: science
@@ -91,6 +139,27 @@ Description: GeBR Maestro coordinates the flow execution between groups of machi
  This package provides GeBR's flow execution coordinator and should be present in at
  least one machine of your network.
  .
+
+Package: gebr-maestro-dbg
+Section: debug
+Priority: extra
+Architecture: any
+Depends: ${misc:Depends}, gebr-maestro (= ${binary:Version})
+Description: Debug symbols for gebr-maestro
+ GêBR is a simple graphical interface which facilitates geophysical data processing. 
+ GêBR is not a package for processing, rather it is designed to integrate a large 
+ variety of free processing packages.
+ .
+ What can GeBR do:
+     * Handle Projects and Lines
+     * Assemble and run processing sequences
+     * Act as an interface to many freely-available seismic-processing
+       packages (such as Seismic Unix, Madagascar, etc)
+ .
+ This package provides GeBR's flow execution coordinator and should be present in at
+ least one machine of your network.
+ .
+ This package contains debugging symbols for gebr-maestro binary.
 
 Package: gebr
 Section: science
@@ -122,6 +191,24 @@ Description: GeBR User Manual
  This package provides a user guide for GeBR users.
  .
 
+Package: gebr-dbg
+Section: debug
+Priority: extra
+Architecture: any
+Depends: ${misc:Depends}, gebr (= ${binary:Version})
+Description: Debug symbols for gebr binary
+ GêBR is a simple graphical interface which facilitates geophysical data processing. 
+ GêBR is not a package for processing, rather it is designed to integrate a large 
+ variety of free processing packages.
+ .
+ What can GeBR do:
+     * Handle Projects and Lines
+     * Assemble and run processing sequences
+     * Act as an interface to many freely-available seismic-processing
+       packages (such as Seismic Unix, Madagascar, etc)
+ .
+ This package contains debugging symbols for gebr binary.
+
 Package: debr
 Section: science
 Architecture: any
@@ -141,3 +228,24 @@ Description: Menu Designer for GeBR
  DeBR is the menu designer for GeBR. Each menu adds new functionalities
  to GeBR.
  .
+
+Package: debr-dbg
+Section: debug
+Priority: extra
+Architecture: any
+Depends: ${misc:Depends}, debr (= ${binary:Version})
+Description: Debug symbols for debr binary
+ GêBR is a simple graphical interface which facilitates geophysical data processing. 
+ GêBR is not a package for processing, rather it is designed to integrate a large 
+ variety of free processing packages.
+ . 
+ What can GeBR do:
+     * Handle Projects and Lines
+     * Assemble and run processing sequences
+     * Act as an interface to many freely-available seismic-processing
+       packages (such as Seismic Unix, Madagascar, etc)
+ .
+ DeBR is the menu designer for GeBR. Each menu adds new functionalities
+ to GeBR.
+ .
+ This package contains debugging symbols for debr binary.
