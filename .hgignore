@@ -17,6 +17,7 @@ syntax: glob
 *.so*
 *.stamp
 *.swp
+*/po/*pot
 *defines.h
 .intltool-merge-cache
 .libs
@@ -26,6 +27,7 @@ Makefile.in
 POTFILES
 aclocal.m4
 autom4te.cache
+build/
 config.*
 configure
 cscope.*
@@ -55,6 +57,7 @@ gebrd/tests/test-gebrd
 gebrd/tests/test-job
 gebrd/tests/test-job-queue
 gebrd/tests/test-sysinfo
+gtester/gtester
 install-sh
 json-enum-types.[ch]
 json-marshal.[ch]
@@ -70,11 +73,17 @@ libgebr/geoxml-utils/gebr-geoxml-upgrade
 libgebr/geoxml-utils/gebr-geoxml-validate
 libgebr/geoxml/data/help-template.html
 libgebr/geoxml/tests/test-category
+libgebr/geoxml/tests/test-document
+libgebr/geoxml/tests/test-flow
 libgebr/geoxml/tests/test-geoxml-leaks
 libgebr/geoxml/tests/test-line
+libgebr/geoxml/tests/test-object
+libgebr/geoxml/tests/test-parameter
 libgebr/geoxml/tests/test-parameter
 libgebr/geoxml/tests/test-parameters
 libgebr/geoxml/tests/test-program
+libgebr/geoxml/tests/test-program-parameter
+libgebr/geoxml/tests/test-project
 libgebr/geoxml/tests/test-sequence
 libgebr/geoxml/tests/test-tmpl
 libgebr/gui/marshalers.[ch]
@@ -83,6 +92,7 @@ libgebr/gui/tests/test-utils
 libgebr/json/stamp*
 libgebr/json/tests/test-serialize-{boxed,complex,full,simple}
 libgebr/tests/test-gebr-arith-expr
+libgebr/tests/test-gebr-expr
 libgebr/tests/test-gebr-string-expr
 libgebr/tests/test-gebr-tar
 libgebr/tests/test-gebr-validator
@@ -102,28 +112,21 @@ missing
 rpm/gebrproject.*.spec
 stamp-*
 tags
-
-syntax: regexp
-^build$
-^libgebr/geoxml/tests/test-document$
-
-syntax: regexp
-^libgebr/geoxml/tests/test-project$
-
-syntax: regexp
-^libgebr/geoxml/tests/test-flow$
-syntax: regexp
-^libgebr/geoxml/tests/test-object$
-syntax: regexp
-^libgebr/tests/test-gebr-expr$
-
-syntax: glob
-*/po/*pot
-syntax: regexp
-^libgebr/geoxml/tests/test-parameter$
-
-syntax: regexp
-^libgebr/geoxml/tests/test-program-parameter$
-
-syntax: regexp
-^gtester/gtester$
+debian/tmp
+debian/libgebr0
+debian/libgebr0-dbg
+debian/libgebr-dev
+debian/gebr
+debian/gebrd
+debian/debr
+debian/debr-dbg
+debian/gebr-dbg
+debian/gebrd-dbg
+debian/gebr-maestro
+debian/gebr-maestro-dbg
+debian/gebr-doc
+build-stamp
+debian/*.substvars
+debian/*.log
+debian/*.debhelper
+debian/files
