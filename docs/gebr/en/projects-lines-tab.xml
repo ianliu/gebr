@@ -551,7 +551,7 @@
       </mediaobject>
     </figure>
     <para>
-      <xref linkend="flows_browser_view_report_flow" />explains in greater detail the View Report tool
+      <xref linkend="flows_browser_view_report_flow" /> explains in greater detail the View Report tool
       for Flows, which is very similar to the Line's and Project's View Report except that in this
       one you can add the Flow's report.</para>
   </section>

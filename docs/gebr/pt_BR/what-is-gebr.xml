@@ -31,24 +31,45 @@
     </para>
   </section>
   <section>
-    <title>Novidades na versão 0.16.0</title>
-    <para>
-      A versão 0.16.0 está mais estável e apresenta novas funcionalidades:
-    </para>
+    <title>Novidades</title>
     <itemizedlist>
       <listitem>
-        Surge o conceito de maestro, permitindo que a GêBR execute trabalhos em
-        múltiplas máquinas.  (veja <xref linkend="servers_configuration" /> e
-        <xref linkend="flow_editor_multiple_machines" />).
+    <para>
+      A versão 0.16.0 está mais estável e apresenta novas funcionalidades (30 de Janeiro de 2012):
+    </para>
+        <itemizedlist>
+          <listitem>
+            Surge o conceito de maestro, permitindo que a GêBR execute trabalhos em
+            múltiplas máquinas.  (veja <xref linkend="servers_configuration" /> e
+            <xref linkend="flow_editor_multiple_machines" />).
+          </listitem>
+          <listitem>
+            Agora é possível controlar a prioridade e o número de processadores
+            usados na execução de trabalhos (veja <xref linkend="flow_editor_multicores" /> e
+            <xref linkend="flow_editor_priority_execution" />).
+          </listitem>
+          <listitem>
+            A interface renovada adiciona funcionalidades e melhora a
+            usabilidade da GêBR.
+          </listitem>
+        </itemizedlist>
       </listitem>
+
       <listitem>
-        Agora é possível controlar a prioridade e o número de processadores
-        usados na execução de trabalhos (veja <xref linkend="flow_editor_multicores" /> e
-        <xref linkend="flow_editor_priority_execution" />).
-      </listitem>
-      <listitem>
-        A interface renovada adiciona funcionalidades e melhora a
-        usabilidade da GêBR.
+    <para>
+      A versão 0.14.0 apresenta as seguintes novidades (03 de Outubro de 2011):
+    </para>
+        <itemizedlist>
+          <listitem>
+            O dicionário de variáveis e os parâmetros dos programas aceitam expressões aritméticas (veja seção <xref linkend="dictionary_variables"/>).
+          </listitem>
+          <listitem>
+            A GêBR automatiza fluxos repetitivos através de loops (veja seção <xref linkend="flow_editor_loop"/>).
+          </listitem>
+          <listitem>
+            Exemplos de projetos podem ser importados na seção Exemplos (seção <xref linkend="import_samples"/>).
+          </listitem>
+        </itemizedlist>
       </listitem>
     </itemizedlist>
   </section>
