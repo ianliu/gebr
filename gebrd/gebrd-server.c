@@ -71,6 +71,7 @@ static gboolean server_run_lock(gboolean *already_running)
 	socket_address = gebr_comm_socket_get_address(GEBR_COMM_SOCKET(listen));
 	g_string_printf(port_gstring, "%d\n", gebr_comm_socket_address_get_ip_port(&socket_address));
 
+	g_mkdir_with_parents(gebrd_dir, 0700);
 	gchar *lock = gebr_lock_file(lock_file, port_gstring->str, FALSE);
 
 	if (lock && (g_strcmp0(lock, port_gstring->str) != 0)) {
