@@ -1,3 +1,34 @@
+2012-01-31  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Merge CentOS fix
+
+2012-01-31  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Create gebrd config directory before creating lock
+	* fix segFault on gebrd
+
+2012-01-31  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix CentOS install/run script and spec
+
+2012-01-30  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add system menus in CentOS spec file
+	* Fix segfault when there was no ~/.gebr/Xauthority file
+
+2012-01-30  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Review portuguese and english gebr doc
+
+2012-01-30  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Create debug symbols packages in debian package
+	* Canonize and update hgignore
+
+2012-01-27  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Update ChangeLog and tag 0.15.10
+
 2012-01-27  Eric Keiji <keiji.eric@gebrproject.com>
 
 	* Fix documentation compilation
