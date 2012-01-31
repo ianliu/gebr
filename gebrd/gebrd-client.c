@@ -325,7 +325,9 @@ run_lib_xauth_command(const gchar *port, const gchar *cookie)
 	FILE *xauth = fopen(path, "r");
 	Xauth *auth = create_xauth_from_data(port, cookie);
 	GList *list = build_xauth_list(xauth, auth);
-	fclose(xauth);
+
+	if (xauth)
+		fclose(xauth);
 
 	xauth = fopen(path, "w");
 	for (GList *i = list; i; i = i->next)
