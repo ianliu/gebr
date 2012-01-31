@@ -2,6 +2,10 @@
 
 # Please, maintain a ChangeLog history style here:
 #
+# 2012-01-31  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+#
+#	* Remove links, as they are being created in the spec file.
+#
 # 2012-01-30  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
 #
 #	* Add $DEST_DIR in front of system menus destination path.
@@ -132,7 +136,7 @@ echo "This script was last executed on"        >> $LOGFILE
 echo "  `date \"+%A, %B %d, %Y\"`"             >> $LOGFILE
 echo
 echo "Installation summary:"                   >> $LOGFILE
-echo "  Installation directory: $PREFIX_DIR"  >> $LOGFILE
+echo "  Installation directory: $PREFIX_DIR"   >> $LOGFILE
 echo "  Debugging flags:        $DEBUG"        >> $LOGFILE
 echo "  Number of cores:        $CORES"        >> $LOGFILE
 echo "  System detected:        CentOS $CENTOS_MAJOR_VERSION" >> $LOGFILE
@@ -216,8 +220,18 @@ mkdir -p $TMP_DIR
 	cp -a ../gebrproject-$GEBR_VERSION $TMP_DIR
 cd $TMP_DIR
 
+function fetchpackage {
+  URL=$1
+  if [ $# -ge 2 ] ; then
+    DST=$2
+  else
+    DST=`basename $URL`
+  fi
+  [ -f $DST ] || wget -c $URL
+}
+
 # libtool-2.2
-	wget -c ftp.gnu.org/gnu/libtool/libtool-2.2.tar.bz2 \
+	fetchpackage ftp.gnu.org/gnu/libtool/libtool-2.2.tar.bz2 \
 	&& (cd libtool-2.2 2> /dev/null || (tar xjf libtool-2.2.tar.bz2 \
 	&& cd libtool-2.2 \
 	&& ./configure --prefix=$PREFIX_DIR $DEBUG)) \
@@ -225,7 +239,7 @@ cd $TMP_DIR
 	&& make DESTDIR=$DEST_DIR install -j$CORES && cd .. || exit 1
 
 # pkg-config-0.25
-	wget -c http://pkgconfig.freedesktop.org/releases/pkg-config-0.25.tar.gz \
+	fetchpackage http://pkgconfig.freedesktop.org/releases/pkg-config-0.25.tar.gz \
 	&& (cd pkg-config-0.25 2> /dev/null || (tar xzf pkg-config-0.25.tar.gz \
 	&& cd pkg-config-0.25 \
 	&& ./configure --prefix=$PREFIX_DIR $DEBUG)) \
@@ -233,7 +247,7 @@ cd $TMP_DIR
 	&& make DESTDIR=$DEST_DIR install -j$CORES && cd .. || exit 1
 
 # glib-2.24.1
-	wget -c http://ftp.gnome.org/pub/gnome/sources/glib/2.24/glib-2.24.1.tar.bz2 \
+	fetchpackage http://ftp.gnome.org/pub/gnome/sources/glib/2.24/glib-2.24.1.tar.bz2 \
 	&& (cd glib-2.24.1 2> /dev/null || (tar jxf glib-2.24.1.tar.bz2 \
 	&& cd glib-2.24.1 \
 	&& ./configure --prefix=$PREFIX_DIR $DEBUG)) \
@@ -241,7 +255,7 @@ cd $TMP_DIR
 	&& make DESTDIR=$DEST_DIR install -j$CORES && cd .. || exit 1
 
 # atk-1.30.0
-	wget -c http://ftp.acc.umu.se/pub/GNOME/sources/atk/1.30/atk-1.30.0.tar.bz2 \
+	fetchpackage http://ftp.acc.umu.se/pub/GNOME/sources/atk/1.30/atk-1.30.0.tar.bz2 \
 	&& (cd atk-1.30.0 2> /dev/null || (tar jxf atk-1.30.0.tar.bz2 \
 	&& cd atk-1.30.0 \
 	&& ./configure --prefix=$PREFIX_DIR $DEBUG)) \
@@ -249,7 +263,7 @@ cd $TMP_DIR
 	&& make DESTDIR=$DEST_DIR install -j$CORES && cd .. || exit 1
 
 # pixman-0.10.0
-	wget -c http://cairographics.org/releases/pixman-0.10.0.tar.gz \
+	fetchpackage http://cairographics.org/releases/pixman-0.10.0.tar.gz \
 	&& (cd pixman-0.10.0 2> /dev/null || (tar zxf pixman-0.10.0.tar.gz \
 	&& cd pixman-0.10.0 \
 	&& ./configure --prefix=$PREFIX_DIR $DEBUG)) \
@@ -257,7 +271,7 @@ cd $TMP_DIR
 	&& make DESTDIR=$DEST_DIR install -j$CORES && cd .. || exit 1
 
 # libpng-1.2.44.tar.gz
-	wget -c ftp://ftp.simplesystems.org/pub/libpng/png/src/history/libpng-1.2.44.tar.gz \
+	fetchpackage ftp://ftp.simplesystems.org/pub/libpng/png/src/history/libpng-1.2.44.tar.gz \
 	&& (cd libpng-1.2.44 2> /dev/null || (tar xzf libpng-1.2.44.tar.gz \
 	&& cd libpng-1.2.44 \
 	&& ./configure --prefix=$PREFIX_DIR)) \
@@ -265,7 +279,7 @@ cd $TMP_DIR
 	&& make DESTDIR=$DEST_DIR install -j$CORES && cd .. || exit 1
 
 # freetype-2.3.12
-	wget -c http://download.savannah.gnu.org/releases/freetype/freetype-2.3.12.tar.bz2 \
+	fetchpackage http://download.savannah.gnu.org/releases/freetype/freetype-2.3.12.tar.bz2 \
 	&& (cd freetype-2.3.12 2> /dev/null || (tar jxf freetype-2.3.12.tar.bz2 \
 	&& cd freetype-2.3.12 \
 	&& ./configure --prefix=$PREFIX_DIR $DEBUG)) \
@@ -273,7 +287,7 @@ cd $TMP_DIR
 	&& make DESTDIR=$DEST_DIR install -j$CORES && cd .. || exit 1
 
 # fontconfig-2.4.92
-	wget -c http://www.fontconfig.org/release/fontconfig-2.4.92.tar.gz \
+	fetchpackage http://www.fontconfig.org/release/fontconfig-2.4.92.tar.gz \
 	&& (cd fontconfig-2.4.92 2> /dev/null || (tar xzf fontconfig-2.4.92.tar.gz \
 	&& cd fontconfig-2.4.92 \
 	&& ./configure --prefix=$PREFIX_DIR $DEBUG)) \
@@ -281,7 +295,7 @@ cd $TMP_DIR
 	&& make DESTDIR=$DEST_DIR install -j$CORES && cd .. || exit 1
 
 # cairo-1.6.10
-	wget -c http://cairographics.org/releases/cairo-1.6.4.tar.gz \
+	fetchpackage http://cairographics.org/releases/cairo-1.6.4.tar.gz \
 	&& (cd cairo-1.6.4 2> /dev/null || (tar zxf cairo-1.6.4.tar.gz \
 	&& cd cairo-1.6.4 \
 	&& ./configure --prefix=$PREFIX_DIR $DEBUG --enable-xlib=yes)) \
@@ -289,7 +303,7 @@ cd $TMP_DIR
 	&& make DESTDIR=$DEST_DIR install -j$CORES && cd .. || exit 1
 
 # pango-1.20.5
-	wget -c http://ftp.gnome.org/pub/gnome/sources/pango/1.20/pango-1.20.5.tar.bz2 \
+	fetchpackage http://ftp.gnome.org/pub/gnome/sources/pango/1.20/pango-1.20.5.tar.bz2 \
 	&& (cd pango-1.20.5 2> /dev/null || (tar xjf pango-1.20.5.tar.bz2 \
 	&& cd pango-1.20.5 \
 	&& ./configure --prefix=$PREFIX_DIR $DEBUG)) \
@@ -297,7 +311,7 @@ cd $TMP_DIR
 	&& make DESTDIR=$DEST_DIR install -j$CORES && cd .. || exit 1
 
 # gtk-2.20.1
-	wget -c http://ftp.gnome.org/pub/gnome/sources/gtk+/2.20/gtk+-2.20.1.tar.bz2 \
+	fetchpackage http://ftp.gnome.org/pub/gnome/sources/gtk+/2.20/gtk+-2.20.1.tar.bz2 \
 	&& (cd gtk+-2.20.1 2> /dev/null || (tar jxf gtk+-2.20.1.tar.bz2 \
 	&& cd gtk+-2.20.1 \
 	&& ./configure --prefix=$PREFIX_DIR $DEBUG --without-libjasper)) \
@@ -305,7 +319,7 @@ cd $TMP_DIR
 	&& make DESTDIR=$DEST_DIR install -j$CORES && cd .. || exit 1
 
 # libxml2-2.6.32
-	wget -c ftp://xmlsoft.org/libxml2/old/libxml2-2.6.32.tar.gz \
+	fetchpackage ftp://xmlsoft.org/libxml2/old/libxml2-2.6.32.tar.gz \
 	&& (cd libxml2-2.6.32 2> /dev/null || (tar zxf libxml2-2.6.32.tar.gz \
 	&& cd libxml2-2.6.32 \
 	&& ./configure --prefix=$PREFIX_DIR $DEBUG --without-python)) \
@@ -313,7 +327,7 @@ cd $TMP_DIR
 	&& make DESTDIR=$DEST_DIR install -j$CORES && cd .. || exit 1
 
 # gdome2-0.8.1
-	wget -c http://gdome2.cs.unibo.it/tarball/gdome2-0.8.1.tar.gz \
+	fetchpackage http://gdome2.cs.unibo.it/tarball/gdome2-0.8.1.tar.gz \
 	&& (cd gdome2-0.8.1 2> /dev/null || (tar zxf gdome2-0.8.1.tar.gz \
 	&& cd gdome2-0.8.1 \
 	&& ./configure --prefix=$PREFIX_DIR $DEBUG)) \
@@ -321,7 +335,7 @@ cd $TMP_DIR
 	&& make DESTDIR=$DEST_DIR install -j$CORES && cd .. || exit 1
 
 # icu4c-4_2_1-src
-	wget -c http://download.icu-project.org/files/icu4c/4.2.1/icu4c-4_2_1-src.tgz \
+	fetchpackage http://download.icu-project.org/files/icu4c/4.2.1/icu4c-4_2_1-src.tgz \
 	&& (cd icu/source 2> /dev/null || (tar xzf icu4c-4_2_1-src.tgz \
 	&& cd icu/source \
 	&& ./configure --prefix=$PREFIX_DIR $DEBUG --disable-tests --disable-samples)) \
@@ -330,7 +344,7 @@ cd $TMP_DIR
 
 if test $CENTOS_MAJOR_VERSION -eq 4; then
 # xproto-6.6.2
-	wget -c http://xlibs.freedesktop.org/release/xproto-6.6.2.tar.bz2 \
+	fetchpackage http://xlibs.freedesktop.org/release/xproto-6.6.2.tar.bz2 \
 	&& (cd xproto-6.6.2 2> /dev/null || (tar xjf xproto-6.6.2.tar.bz2 \
 	&& cd xproto-6.6.2 \
 	&& ./configure --prefix=$PREFIX_DIR $DEBUG)) \
@@ -338,7 +352,7 @@ if test $CENTOS_MAJOR_VERSION -eq 4; then
 	&& make DESTDIR=$DEST_DIR -j$CORES install && cd .. || exit 1
 
 # libxtrans-0.1
-	wget -c http://xlibs.freedesktop.org/release/libXtrans-0.1.tar.bz2 \
+	fetchpackage http://xlibs.freedesktop.org/release/libXtrans-0.1.tar.bz2 \
 	&& (cd libXtrans-0.1 2> /dev/null || (tar xjf libXtrans-0.1.tar.bz2 \
 	&& cd libXtrans-0.1 \
 	&& ./configure --prefix=$PREFIX_DIR $DEBUG)) \
@@ -346,7 +360,7 @@ if test $CENTOS_MAJOR_VERSION -eq 4; then
 	&& make DESTDIR=$DEST_DIR -j$CORES install && cd .. || exit 1
 
 # libICE-6.3.3
-	wget -c http://xlibs.freedesktop.org/release/libICE-6.3.3.tar.bz2 \
+	fetchpackage http://xlibs.freedesktop.org/release/libICE-6.3.3.tar.bz2 \
 	&& (cd libICE-6.3.3 2> /dev/null || (tar xjf libICE-6.3.3.tar.bz2 \
 	&& cd libICE-6.3.3 \
 	&& ./configure --prefix=$PREFIX_DIR $DEBUG)) \
@@ -354,7 +368,7 @@ if test $CENTOS_MAJOR_VERSION -eq 4; then
 	&& make DESTDIR=$DEST_DIR -j$CORES install && cd .. || exit 1
 
 # libSM-6.0.3
-	wget -c http://xlibs.freedesktop.org/release/libSM-6.0.3.tar.bz2 \
+	fetchpackage http://xlibs.freedesktop.org/release/libSM-6.0.3.tar.bz2 \
 	&& (cd libSM-6.0.3 2> /dev/null || (tar xjf libSM-6.0.3.tar.bz2 \
 	&& cd libSM-6.0.3 \
 	&& ./configure --prefix=$PREFIX_DIR $DEBUG)) \
@@ -362,7 +376,7 @@ if test $CENTOS_MAJOR_VERSION -eq 4; then
 	&& make DESTDIR=$DEST_DIR -j$CORES install && cd .. || exit 1
 
 # libXt-0.1.5
-	wget -c http://xlibs.freedesktop.org/release/libXt-0.1.5.tar.bz2 \
+	fetchpackage http://xlibs.freedesktop.org/release/libXt-0.1.5.tar.bz2 \
 	&& (cd libXt-0.1.5 2> /dev/null || (tar xjf libXt-0.1.5.tar.bz2 \
 	&& cd libXt-0.1.5 \
 	&& patch Initialize.c << EOF
@@ -393,7 +407,7 @@ EOF
 fi
 
 # libxslt-1.1.26
-	wget -c ftp://xmlsoft.org/libxslt/libxslt-1.1.26.tar.gz \
+	fetchpackage ftp://xmlsoft.org/libxslt/libxslt-1.1.26.tar.gz \
 	&& (cd libxslt-1.1.26 2> /dev/null || (tar xzf libxslt-1.1.26.tar.gz \
 	&& cd libxslt-1.1.26 && touch libtoolT \
 	&& ./configure --prefix=$PREFIX_DIR $DEBUG)) \
@@ -401,14 +415,14 @@ fi
 	&& make DESTDIR=$DEST_DIR -j$CORES install && cd .. || exit 1
 
 # docbook-xsl-1.75.2
-	(wget -c http://ufpr.dl.sourceforge.net/project/docbook/docbook-xsl/1.75.2/docbook-xsl-1.75.2.tar.bz2 || true) \
+	fetchpackage http://ufpr.dl.sourceforge.net/project/docbook/docbook-xsl/1.75.2/docbook-xsl-1.75.2.tar.bz2 \
 	&& (cd docbook-xsl-1.75.2 2> /dev/null || tar xjf docbook-xsl-1.75.2.tar.bz2) \
 	&& cd docbook-xsl-1.75.2 \
 	&& export XML_CATALOG_FILES=$PWD/catalog.xml \
 	&& cd - || exit 1
 
 # tidy-20091223cvs
-	wget -c http://ftp.de.debian.org/debian/pool/main/t/tidy/tidy_20091223cvs.orig.tar.gz \
+	fetchpackage http://ftp.de.debian.org/debian/pool/main/t/tidy/tidy_20091223cvs.orig.tar.gz \
 	&& (cd tidy-20091223cvs 2> /dev/null || (tar xzf tidy_20091223cvs.orig.tar.gz \
 	&& cd tidy-20091223cvs \
 	&& ./configure --prefix=$PREFIX_DIR $DEBUG)) \
@@ -416,7 +430,7 @@ fi
 	&& make DESTDIR=$DEST_DIR -j$CORES install && cd .. || exit 1
 
 # libsoup
-	wget -c http://ftp.gnome.org/pub/GNOME/desktop/2.25/2.25.91/sources/libsoup-2.25.91.tar.bz2 \
+	fetchpackage http://ftp.gnome.org/pub/GNOME/desktop/2.25/2.25.91/sources/libsoup-2.25.91.tar.bz2 \
 	&& (cd libsoup-2.25.91 2> /dev/null || (tar xjf libsoup-2.25.91.tar.bz2 \
 	&& cd libsoup-2.25.91 \
 	&& patch configure << EOF
@@ -430,7 +444,7 @@ EOF
 	&& make DESTDIR=$DEST_DIR -j$CORES install && cd .. || exit 1
 
 # sqlite
-	([ -f sqlite-3.6.10.tar.gz ] || wget -c http://www.sqlite.org/sqlite-3.6.10.tar.gz) \
+	fetchpackage http://www.sqlite.org/sqlite-3.6.10.tar.gz \
 	&& (cd sqlite-3.6.10 2> /dev/null || (tar xzf sqlite-3.6.10.tar.gz \
 	&& cd sqlite-3.6.10 \
 	&& ./configure --prefix=$PREFIX_DIR $DEBUG --disable-tcl)) \
@@ -438,7 +452,7 @@ EOF
 	&& make DESTDIR=$DEST_DIR -j$CORES install && cd .. || exit 1
 
 # webkit-1.1.5
-	([ -f webkit-1.1.5.tar.gz ] || wget -c http://webkitgtk.org/webkit-1.1.5.tar.gz) \
+	fetchpackage http://webkitgtk.org/webkit-1.1.5.tar.gz \
 	&& (cd webkit-1.1.5 2> /dev/null || (tar xzf webkit-1.1.5.tar.gz \
 	&& cd webkit-1.1.5 \
 	&& ./configure --prefix=$PREFIX_DIR $DEBUG --disable-xslt --disable-video)) \
@@ -477,7 +491,7 @@ EOF
 
 # gebr
 	[ -d gebrproject-$GEBR_VERSION ] \
-	|| (([ -f gebrproject-$GEBR_VERSION.tar.gz ] || wget -c $GEBR_REPO/gebrproject-$GEBR_VERSION.tar.gz) \
+	|| (fetchpackage $GEBR_REPO/gebrproject-$GEBR_VERSION.tar.gz \
 	&& rm -fr gebrproject-$GEBR_VERSION && tar zxf gebrproject-$GEBR_VERSION.tar.gz) \
 	&& cd gebrproject-$GEBR_VERSION
 # Check for version 0.11.0 or greater
@@ -526,18 +540,12 @@ fi
 
 #Create wrapper
 echo '#!/bin/sh
-GEBR_HOME=$(cd -P "$(dirname "$0")"/.. && pwd -P) || exit 1
+GEBR_HOME='$PREFIX_DIR'
 GEBR_PROG=`basename $0`
-LD_LIBRARY_PATH=$GEBR_HOME/lib:$LD_LIBRARY_PATH PATH=$GEBR_HOME/lib/libgebr/bin:$PATH $GEBR_HOME/lib/libgebr/bin/$GEBR_PROG "$@"' > $DEST_DIR/$PREFIX_DIR/lib/libgebr/bin/gebr-run.sh
+LD_LIBRARY_PATH=$GEBR_HOME/lib:$LD_LIBRARY_PATH $GEBR_HOME/lib/libgebr/bin/$GEBR_PROG "$@"' > $DEST_DIR/$PREFIX_DIR/lib/libgebr/bin/gebr-run.sh
 chmod +x $DEST_DIR/$PREFIX_DIR/lib/libgebr/bin/gebr-run.sh
 
 #Create links
-ln -sf $DEST_DIR/$PREFIX_DIR/share/applications/gebr.desktop \
-	$DEST_DIR/usr/share/applications/gebr.desktop
-
-ln -sf $DEST_DIR/$PREFIX_DIR/share/applications/debr.desktop \
-	$DEST_DIR/usr/share/applications/debr.desktop
-
 for bin in $GEBR_BINS; do
         ln -sf ../lib/libgebr/bin/gebr-run.sh $DEST_DIR/$PREFIX_DIR/bin/$bin
         ln -sf $DEST_DIR/$PREFIX_DIR/lib/libgebr/bin/gebr-run.sh /usr/bin/$bin
