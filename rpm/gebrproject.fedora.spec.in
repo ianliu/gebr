@@ -76,7 +76,7 @@ links that developers using libgebr will need.
 #### GeBR Package
 ################################################################################
 %package -n gebr
-Requires: libgebr = %{version}, openssh-clients, gebr-maestro = %{version}
+Requires: libgebr = %{version}, openssh-clients, gebr-maestro = %{version}, gebr-doc
 Group: Application/Misc
 Summary: Seismic processing environment
 
