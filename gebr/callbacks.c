@@ -377,10 +377,12 @@ void on_help_contents_activate(void)
 	else
 		path = "file://" GEBR_USERDOC_DIR "/en/html/index.html";
 
-	if (!gebr_gui_show_uri (path))
+	if (!gtk_show_uri(NULL, path, GDK_CURRENT_TIME, NULL)) {
+		gtk_show_uri(NULL, "http://www.gebrproject.com", GDK_CURRENT_TIME, NULL);
 		gebr_message (GEBR_LOG_ERROR, TRUE, TRUE,
 			      _("Could not load help. "
 				"Certify it was installed correctly."));
+	}
 }
 
 void on_help_about_activate(void)
