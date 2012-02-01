@@ -1,3 +1,14 @@
+2012-02-01  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Open gebrproject website when documentation are not installed
+
+2012-02-01  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Expand 'ssh' dependency in gebr-maestro
+	* Update AUTHORS file
+	* Add gebr-doc as a dependency for gebr in fedora spec
+	* Add all xml files in gebr/en and pt_BR into EXTRA_DIST
+
 2012-01-31  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
 
 	* Merge CentOS fix

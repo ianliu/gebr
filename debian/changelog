@@ -1,3 +1,9 @@
+gebrproject (0.16.1) lucid; urgency=low
+
+  * Minor Fixes
+
+ -- Eric Keiji <keiji.eric@gebrproject.com>  Wed, 01 Feb 2012 15:26:09 -0200
+
 gebrproject (0.16.0) lucid; urgency=low
 
   * Fix Xauthority issues;
