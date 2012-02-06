@@ -70,7 +70,6 @@ static gchar *base_dirs[][2] = {
 		{"SCRATCH", "tmp"},
 		{"TABLE", "table"},
 		{"CUSTOM", "misc"},
-		{NULL, NULL}
 };
 
 void
@@ -82,13 +81,13 @@ gebr_geoxml_line_set_base_path(GebrGeoXmlLine *line, const gchar *base)
 
 	while (seq) {
 		gebr_geoxml_object_ref(seq);
-		gebr_geoxml_sequence_next(&seq);
 		aux = seq;
+		gebr_geoxml_sequence_next(&aux);
 		gebr_geoxml_sequence_remove(seq);
 		seq = aux;
 	}
 
-	for (gint i = 0; base_dirs[i]; i++) {
+	for (gint i = 0; i < G_N_ELEMENTS(base_dirs); i++) {
 		gchar *path = g_build_filename(base, base_dirs[i][1], NULL);
 		gebr_geoxml_line_append_path(line, base_dirs[i][0], path);
 		g_free(path);

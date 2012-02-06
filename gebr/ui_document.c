@@ -1618,12 +1618,17 @@ void on_response_ok(GtkButton * button, GebrPropertiesData * data)
 
 	data->accept_response = TRUE;
 	old_title = gebr_geoxml_document_get_title(data->document);
-	new_title = gtk_entry_get_text(GTK_ENTRY(data->title));
 
+	GtkWidget *title = gtk_builder_get_object(data->builder, "entry_title");
+	GtkWidget *author = gtk_builder_get_object(data->builder, "entry_title");
+	GtkWidget *description = gtk_builder_get_object(data->builder, "entry_description");
+	GtkWidget *email = gtk_builder_get_object(data->builder, "entry_email");
+
+	new_title = gtk_entry_get_text(GTK_ENTRY(title));
 	gebr_geoxml_document_set_title(data->document, strlen(new_title) == 0? "Untitled" : new_title);
-	gebr_geoxml_document_set_description(data->document, gtk_entry_get_text(GTK_ENTRY(data->description)));
-	gebr_geoxml_document_set_author(data->document, gtk_entry_get_text(GTK_ENTRY(data->author)));
-	gebr_geoxml_document_set_email(data->document, gtk_entry_get_text(GTK_ENTRY(data->email)));
+	gebr_geoxml_document_set_description(data->document, gtk_entry_get_text(description));
+	gebr_geoxml_document_set_author(data->document, gtk_entry_get_text(author));
+	gebr_geoxml_document_set_email(data->document, gtk_entry_get_text(email));
 	document_save(data->document, TRUE, TRUE);
 
 	/* Update title in apropriated store */
