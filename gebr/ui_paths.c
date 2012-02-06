@@ -210,8 +210,8 @@ void path_add(GebrGuiValueSequenceEdit * sequence_edit)
 		return;
 
 	gchar * clean_path = g_strdup_printf("%s", buf);
-	gebr_gui_value_sequence_edit_add(sequence_edit,
-					 GEBR_GEOXML_SEQUENCE(gebr_geoxml_line_append_path(gebr.line, clean_path)));
+//	gebr_gui_value_sequence_edit_add(sequence_edit,
+//					 GEBR_GEOXML_SEQUENCE(gebr_geoxml_line_append_path(gebr.line, clean_path)));
 	g_free(clean_path);
 	path_save();
 }

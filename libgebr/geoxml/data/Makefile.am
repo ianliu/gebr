@@ -1,5 +1,5 @@
-# libgebr - GêBR Library
-# Copyright (C) 2007  Bráulio Barros de Oliveira (brauliobo@gmail.com)
+# libgebr - Gï¿½BR Library
+# Copyright (C) 2007  Brï¿½ulio Barros de Oliveira (brauliobo@gmail.com)
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ libgebr_geoxmldata_DATA= \
 	flow-0.3.5.dtd line-0.3.2.dtd project-0.3.2.dtd \
 	flow-0.3.6.dtd line-0.3.3.dtd \
 	flow-0.3.7.dtd line-0.3.4.dtd project-0.3.3.dtd \
-	flow-0.3.8.dtd line-0.3.5.dtd \
+	flow-0.3.8.dtd line-0.3.5.dtd line-0.3.6.dtd \
 	help-template.html \
 	$(NULL)
 EXTRA_DIST = $(libgebr_geoxmldata_DATA)

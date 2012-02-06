@@ -515,8 +515,8 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 
 		g_signal_connect (GEBR_GUI_FILE_ENTRY (file_entry)->entry, "activate",
 				  G_CALLBACK (on_file_entry_activate), path_sequence_edit);
-		g_signal_connect (path_sequence_edit, "add-request",
-				  G_CALLBACK (path_add), NULL);
+//		g_signal_connect (path_sequence_edit, "add-request",
+//				  G_CALLBACK (path_add), NULL);
 		g_signal_connect (path_sequence_edit, "changed",
 				  G_CALLBACK (path_save), NULL);
 		g_signal_connect (path_sequence_edit, "renamed",
@@ -1701,7 +1701,9 @@ void on_response_ok(GtkButton * button, GebrPropertiesData * data)
 	switch ((type = gebr_geoxml_document_get_type(data->document))) {
 	case GEBR_GEOXML_DOCUMENT_TYPE_LINE: {
 		gint current_active_group = gtk_combo_box_get_active(GTK_COMBO_BOX(data->maestro_combo));
-//		gboolean emptyness = gebr_geoxml_line_get_paths_number(line) == 0 && gebr_geoxml_line_get_flows_number(line) == 0;
+		gebr_geoxml_line_set_base_path(data->document, "/home/jorgepzt/");
+		//TODO: Enviar mensagem para criar os Paths no Daemon
+
 		if (current_active_group != data->previous_active_group) {
 			gboolean clean = gebr_gui_message_dialog (GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
 			                                          _("Change of Maestro"),
