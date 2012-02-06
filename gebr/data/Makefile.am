@@ -25,6 +25,7 @@ gladedir = $(datadir)/gebr/glade
 glade_DATA = \
 	gebr-job-control.glade \
 	gebr-maestro-dialog.glade \
+	document-properties.glade \
 	$(NULL)
 
 gebr.desktop:gebr.desktop.in $(INTLTOOL_MERGE) $(srcdir)/../po/*.po
