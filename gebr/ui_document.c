@@ -95,6 +95,8 @@ struct dict_edit_data {
 };
 
 typedef struct {
+	GtkBuilder *builder;
+
 	GebrGeoXmlDocument * document;
 	GtkWidget * window;
 	GtkWidget * author;
@@ -163,8 +165,6 @@ static const gchar *document_get_name_from_type(GebrGeoXmlDocument * document, g
 void on_response_ok(GtkButton * button, GebrPropertiesData * data);
 
 void on_properties_destroy(GtkWindow * window, GebrPropertiesData * data);
-
-static void on_file_entry_activate (GtkEntry *entry, GebrGuiSequenceEdit *sequence_edit);
 
 static void on_groups_combo_box_changed (GtkComboBox *combo);
 
@@ -316,11 +316,18 @@ on_lock_button_toggled(GtkToggleButton *button,
 	gtk_widget_show_all(data->maestro_box);
 }
 
-void document_properties_setup_ui (GebrGeoXmlDocument * document,
-				   GebrPropertiesResponseFunc func,
-				   gboolean is_new)
+void document_properties_setup_ui(GebrGeoXmlDocument * document,
+				  GebrPropertiesResponseFunc func,
+				  gboolean is_new)
 {
-	int row = 0;
+	g_return_if_fail(document != NULL);
+
+	GtkBuilder *builder = gtk_builder_new();
+	const gchar *glade_file = GEBR_GLADE_DIR "/document-properties.glade";
+
+	if (!gtk_builder_add_from_file(builder, glade_file, NULL))
+		return;
+
 	GebrPropertiesData * data;
 	GtkWidget *window;
 	GtkWidget *vbox;
@@ -329,24 +336,11 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 	GtkWidget *cancel_button;
 	gchar *window_title;
 
-	GtkWidget *table;
-	GtkWidget *label;
-	GtkWidget *title;
-	GtkWidget *description;
-	GtkWidget *author;
-	GtkWidget *email;
-	GtkWidget *line_path_label;
-	GtkWidget *file_entry;
-	GtkWidget *path_sequence_edit;
-	GebrGeoXmlSequence *path_sequence;
-
-	if (document == NULL)
-		return;
-
 	data = g_new(GebrPropertiesData, 1);
 	data->func = func;
 	data->accept_response = FALSE;
 	data->document = document;
+	data->builder = builder;
 
 	if (gebr_geoxml_document_get_type(document) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW)
 		flow_browse_single_selection();
@@ -367,15 +361,15 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 	gtk_container_add(GTK_CONTAINER(window), vbox);
 	gtk_window_set_default_size(GTK_WINDOW(window), 400, -1);
 
-	table = gtk_table_new(5, 2, FALSE);
 	button_box = gtk_hbutton_box_new();
-
 	ok_button = gtk_button_new_from_stock(GTK_STOCK_OK);
 	cancel_button = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
 
 	g_signal_connect(window, "destroy", G_CALLBACK(on_properties_destroy), data);
 	g_signal_connect(ok_button, "clicked", G_CALLBACK(on_response_ok), data);
 	g_signal_connect_swapped(cancel_button, "clicked", G_CALLBACK(gtk_widget_destroy), window);
+
+	GtkWidget *table = GTK_WIDGET(gtk_builder_get_object(builder, "table"));
 
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(button_box), GTK_BUTTONBOX_END);
 	gtk_box_pack_start(GTK_BOX(button_box), cancel_button, TRUE, TRUE, 0);
@@ -387,52 +381,16 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 	GTK_WIDGET_SET_FLAGS(cancel_button, GTK_CAN_DEFAULT);
 	gtk_widget_grab_default(ok_button);
 
-	/* Title */
-	label = gtk_label_new(_("Title"));
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-	data->title = title = gtk_entry_new();
-	gtk_entry_set_activates_default(GTK_ENTRY(title), TRUE);
-	gtk_table_attach(GTK_TABLE(table), label, 0, 1, row, row+1, GTK_FILL, GTK_FILL, 3, 3);
-	gtk_table_attach(GTK_TABLE(table), title, 1, 2, row, row+1, GTK_EXPAND | GTK_FILL, GTK_FILL, 3, 3);
-	row++;
+	GtkEntry *title = GTK_ENTRY(gtk_builder_get_object(builder, "entry_title"));
+	gtk_entry_set_text(title, gebr_geoxml_document_get_title(document));
 
-	/* read */
-	gtk_entry_set_text(GTK_ENTRY(title), gebr_geoxml_document_get_title(document));
+	GtkEntry *description = GTK_ENTRY(gtk_builder_get_object(builder, "entry_description"));
+	gtk_entry_set_text(description, gebr_geoxml_document_get_description(document));
 
-	/* Description */
-	label = gtk_label_new(_("Description"));
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-	data->description = description = gtk_entry_new();
-	gtk_entry_set_activates_default(GTK_ENTRY(description), TRUE);
-	gtk_table_attach(GTK_TABLE(table), label, 0, 1, row, row+1, GTK_FILL, GTK_FILL, 3, 3);
-	gtk_table_attach(GTK_TABLE(table), description, 1, 2, row, row+1, GTK_FILL, GTK_FILL, 3, 3);
-	row++;
-
-	/* read */
-	gtk_entry_set_text(GTK_ENTRY(description), gebr_geoxml_document_get_description(document));
-
-	/* Author */
-	label = gtk_label_new(_("Author"));
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-	data->author = author = gtk_entry_new();
-	gtk_entry_set_activates_default(GTK_ENTRY(author), TRUE);
-	gtk_table_attach(GTK_TABLE(table), label, 0, 1, row, row+1, GTK_FILL, GTK_FILL, 3, 3);
-	gtk_table_attach(GTK_TABLE(table), author, 1, 2, row, row+1, GTK_FILL, GTK_FILL, 3, 3);
-	row++;
-
-	/* read */
+	GtkEntry *author = GTK_ENTRY(gtk_builder_get_object(builder, "entry_author"));
 	gtk_entry_set_text(GTK_ENTRY(author), gebr_geoxml_document_get_author(document));
 
-	/* User email */
-	label = gtk_label_new(_("Email"));
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-	data->email = email = gtk_entry_new();
-	gtk_entry_set_activates_default(GTK_ENTRY(email), TRUE);
-	gtk_table_attach(GTK_TABLE(table), label, 0, 1, row, row+1, GTK_FILL, GTK_FILL, 3, 3);
-	gtk_table_attach(GTK_TABLE(table), email, 1, 2, row, row+1, GTK_FILL, GTK_FILL, 3, 3);
-	row++;
-
-	/* read */
+	GtkEntry *email = GTK_ENTRY(gtk_builder_get_object(builder, "entry_email"));
 	gtk_entry_set_text(GTK_ENTRY(email), gebr_geoxml_document_get_email(document));
 
 	data->previous_active_group = 0;
@@ -488,45 +446,16 @@ void document_properties_setup_ui (GebrGeoXmlDocument * document,
 		gtk_box_pack_start(GTK_BOX(hbox), lock_button, FALSE, TRUE, 0);
 		data->maestro_box = hbox;
 
+		gint row, col;
+		g_object_get(table, "n-rows", &row, "n-columns", &col, NULL);
+		gtk_table_resize(GTK_TABLE(table), row+1, col);
+
 		label = gtk_label_new(_("Maestro"));
 		gtk_table_attach(GTK_TABLE (table), label, 0, 1, row, row+1, GTK_FILL, GTK_FILL, 3, 3);
 		gtk_table_attach(GTK_TABLE (table), hbox, 1, 2, row, row+1, GTK_FILL, GTK_FILL, 3, 3);
-		row++;
 		gtk_widget_show(label);
 		gtk_widget_show_all(hbox);
 		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-
-		/* Line Path's*/
-		line_path_label = gtk_label_new(_("Path"));
-		gtk_widget_show(line_path_label);
-		gtk_table_attach(GTK_TABLE(table), line_path_label, 0, 1, row, row+1, GTK_FILL, GTK_FILL, 3, 3);
-		gtk_misc_set_alignment(GTK_MISC(line_path_label), 0, 0.05);
-
-		file_entry = gebr_gui_file_entry_new(NULL, NULL);
-
-		gebr_gui_file_entry_set_choose_directory(GEBR_GUI_FILE_ENTRY(file_entry), TRUE);
-		gtk_widget_set_size_request(file_entry, 220, 30);
-
-		gebr_geoxml_line_get_path(gebr.line, &path_sequence, 0);
-		data->path_sequence_edit = path_sequence_edit = gebr_gui_value_sequence_edit_new(file_entry);
-		gebr_gui_value_sequence_edit_load(GEBR_GUI_VALUE_SEQUENCE_EDIT(path_sequence_edit), path_sequence,
-						  (ValueSequenceSetFunction) gebr_geoxml_value_sequence_set,
-						  (ValueSequenceGetFunction) gebr_geoxml_value_sequence_get, NULL);
-
-		g_signal_connect (GEBR_GUI_FILE_ENTRY (file_entry)->entry, "activate",
-				  G_CALLBACK (on_file_entry_activate), path_sequence_edit);
-//		g_signal_connect (path_sequence_edit, "add-request",
-//				  G_CALLBACK (path_add), NULL);
-		g_signal_connect (path_sequence_edit, "changed",
-				  G_CALLBACK (path_save), NULL);
-		g_signal_connect (path_sequence_edit, "renamed",
-				  G_CALLBACK (path_renamed), NULL);
-
-		gtk_table_attach (GTK_TABLE (table),
-				  path_sequence_edit, 1, 2, row, row+1,
-				  (GtkAttachOptions) (GTK_FILL | GTK_EXPAND),
-				  (GtkAttachOptions) (GTK_FILL | GTK_EXPAND),
-				  3, 3);
 	}
 
 	gtk_widget_show_all(window);
@@ -1701,7 +1630,7 @@ void on_response_ok(GtkButton * button, GebrPropertiesData * data)
 	switch ((type = gebr_geoxml_document_get_type(data->document))) {
 	case GEBR_GEOXML_DOCUMENT_TYPE_LINE: {
 		gint current_active_group = gtk_combo_box_get_active(GTK_COMBO_BOX(data->maestro_combo));
-		gebr_geoxml_line_set_base_path(data->document, "/home/jorgepzt/");
+		gebr_geoxml_line_set_base_path(GEBR_GEOXML_LINE(data->document), "/home/jorgepzt/");
 		//TODO: Enviar mensagem para criar os Paths no Daemon
 
 		if (current_active_group != data->previous_active_group) {
@@ -1746,11 +1675,6 @@ void on_properties_destroy(GtkWindow * window, GebrPropertiesData * data)
 	if (data->func)
 		data->func(data->accept_response);
 	g_free(data);
-}
-
-static void on_file_entry_activate (GtkEntry *entry, GebrGuiSequenceEdit *sequence_edit)
-{
-	g_signal_emit_by_name (sequence_edit, "add-request");
 }
 
 static void
