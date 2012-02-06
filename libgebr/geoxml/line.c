@@ -24,13 +24,15 @@
 #include <gdome.h>
 #include <glib/gi18n-lib.h>
 
-#include "line.h"
 #include "document.h"
 #include "document_p.h"
 #include "error.h"
-#include "xml.h"
+#include "line.h"
+#include "object.h"
+#include "sequence.h"
 #include "types.h"
 #include "value_sequence.h"
+#include "xml.h"
 
 /*
  * internal structures and funcionts
