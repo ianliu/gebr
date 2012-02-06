@@ -793,6 +793,50 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 				gebr_geoxml_object_unref(group);
 			}
 		}
+		else if (gebr_geoxml_document_get_type(((GebrGeoXmlDocument *) *document)) == GEBR_GEOXML_DOCUMENT_TYPE_LINE) {
+			__gebr_geoxml_set_attr_value(root_element, "version", "0.3.6");
+
+			GdomeElement *element;
+			GdomeElement *first_el = __gebr_geoxml_get_first_element(root_element, "path");
+			gchar *base;
+
+			if (first_el) {
+				base = __gebr_geoxml_get_element_value(first_el);
+
+				GebrGeoXmlSequence *seq, *aux;
+				seq = GEBR_GEOXML_SEQUENCE(first_el);
+				while (seq) {
+					gebr_geoxml_object_ref(seq);
+					gebr_geoxml_sequence_next(&seq);
+					aux = seq;
+					gebr_geoxml_sequence_remove(seq);
+					seq = aux;
+				}
+			} else
+				base = g_build_filename(g_get_home_dir(), "GeBR", gebr_geoxml_document_get_title(document), NULL);
+
+			__gebr_geoxml_set_attr_value(first_el, "name", "BASE");
+
+			static gchar *base_dirs[][2] = {
+					{"BASE", ""},
+					{"DATA", "data"},
+					{"EXPORT", "export"},
+					{"SCRATCH", "tmp"},
+					{"TABLE", "table"},
+					{"CUSTOM", "misc"},
+					{NULL, NULL}
+			};
+
+			for (gint i = 0; base_dirs[i]; i++) {
+				gchar *path = g_build_filename(base, base_dirs[i][1], NULL);
+				gebr_geoxml_line_append_path(GEBR_GEOXML_LINE(document), base_dirs[i][0], path);
+				g_free(path);
+			}
+
+			gebr_geoxml_object_unref(element);
+			gebr_geoxml_object_unref(first_el);
+			g_free(base);
+		}
 	}
 
 	/* 0.3.6 to 0.3.7 */ 
