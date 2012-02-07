@@ -499,11 +499,23 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 
 		GtkEntry *entry_base = GTK_ENTRY(gtk_builder_get_object(builder, "entry_base"));
 
-		gchar *base_path = g_build_filename(g_get_home_dir(), "GeBR",
-		                                    gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.project)),
-		                                    gebr_geoxml_document_get_title(document), NULL);
+		gchar ***paths = gebr_geoxml_line_get_paths(GEBR_GEOXML_LINE(document));
+		gchar *base_path = NULL;
+
+		for (gint i=0; paths[i] != NULL; i++){
+			if (g_strcmp0(paths[i][1], "BASE") == 0){
+				base_path = paths[i][0];
+				break;
+			}
+		}
+
+		if (!base_path || !*base_path)
+			base_path = g_build_filename(g_get_home_dir(), "GeBR",
+			                             gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.project)),
+			                             gebr_geoxml_document_get_title(document), NULL);
 		gtk_entry_set_text(entry_base, base_path);
 		g_free(base_path);
+//		gebr_pairstrfreev(paths);
 
 		GtkTreeStore *store_paths = gebr_ui_document_create_paths_tree();
 		GtkTreeView *view_paths = GTK_TREE_VIEW(gtk_builder_get_object(builder, "treeview_paths"));
