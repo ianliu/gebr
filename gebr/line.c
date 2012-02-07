@@ -124,16 +124,21 @@ line_setup_wizard(GebrGeoXmlLine *line)
 
 	GObject *entry_title = gtk_builder_get_object(builder, "entry_title");
 	GObject *entry_base = gtk_builder_get_object(builder, "entry_base");
+	GObject *entry_author = gtk_builder_get_object(builder, "entry_author");
+	GObject *entry_email = gtk_builder_get_object(builder, "entry_email");
 
 	gchar *path = g_build_filename(g_get_home_dir(),"GeBR",
 	                 gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.project)),
 	                 gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(line)), NULL);
-	gtk_entry_set_text (entry_base, path);
+	gtk_entry_set_text (GTK_ENTRY(entry_base), path);
 	g_free(path);
 
 	gchar *title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(line));
-	gtk_entry_set_text(entry_title, title);
+	gtk_entry_set_text(GTK_ENTRY(entry_title), title);
 	g_free(title);
+
+	gtk_entry_set_text(GTK_ENTRY(entry_author), gebr.config.username->str);
+	gtk_entry_set_text(GTK_ENTRY(entry_email), gebr.config.email->str);
 
 	g_signal_connect(entry_title, "changed", G_CALLBACK(on_entry_changed), assistant);
 	g_signal_connect(entry_base, "changed", G_CALLBACK(on_entry_changed), assistant);
