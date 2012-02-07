@@ -831,7 +831,7 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 
 			for (gint i = 0; i < G_N_ELEMENTS(base_dirs); i++) {
 				gchar *path = g_build_filename(base, base_dirs[i][1], NULL);
-				gebr_geoxml_line_append_path(GEBR_GEOXML_LINE(document), base_dirs[i][0], path);
+				gebr_geoxml_line_append_path(GEBR_GEOXML_LINE(*document), base_dirs[i][0], path);
 				g_free(path);
 			}
 
