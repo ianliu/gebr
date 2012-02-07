@@ -67,6 +67,13 @@ void document_dict_edit_setup_ui(void);
 void gebr_ui_document_set_properties_from_builder(GebrGeoXmlDocument *document,
 						  GtkBuilder *builder);
 
+/**
+ * gebr_ui_document_create_paths_tree:
+ *
+ * Returns: A #GtkTreeStore containing the line directory structure.
+ */
+GtkTreeStore *gebr_ui_document_create_paths_tree(void);
+
 G_END_DECLS
 
 #endif				//__UI_DOCUMENT_H
