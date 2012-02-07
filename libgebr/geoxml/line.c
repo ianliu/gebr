@@ -228,3 +228,31 @@ gebr_geoxml_line_set_maestro(GebrGeoXmlLine *line,
 	gdome_el_unref(root, &exception);
 	gdome_el_unref(group_el, &exception);
 }
+
+gchar ***
+gebr_geoxml_line_get_paths(GebrGeoXmlLine *line)
+{
+	gint len = 0;
+	GList *list = NULL;
+	GebrGeoXmlSequence *seq;
+	gebr_geoxml_line_get_path(line, &seq, 0);
+	for (; seq; gebr_geoxml_sequence_next(&seq)) {
+		gchar **tmp = g_new(gchar *, 2);
+		tmp[0] = __gebr_geoxml_get_element_value((GdomeElement*)seq);
+		tmp[1] = __gebr_geoxml_get_attr_value((GdomeElement*)seq, "name");
+		list = g_list_prepend(list, tmp);
+		len++;
+	}
+
+	list = g_list_reverse(list);
+	gchar ***vect = g_new(gchar **, len + 1);
+	vect[len] = NULL;
+
+	gint j = 0;
+	for (GList *i = list; i; i = i->next)
+		vect[j++] = i->data;
+
+	g_list_free(list);
+
+	return vect;
+}

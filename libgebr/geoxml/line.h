@@ -177,5 +177,13 @@ void gebr_geoxml_line_set_maestro(GebrGeoXmlLine *line,
  */
 gchar * gebr_geoxml_line_get_maestro(GebrGeoXmlLine *line);
 
+/**
+ * gebr_geoxml_line_get_paths:
+ *
+ * Returns: A vector of pairs of string of type (path, name).
+ * Free with gebr_pair_strfreev().
+ */
+gchar *** gebr_geoxml_line_get_paths(GebrGeoXmlLine *line);
+
 G_END_DECLS
 #endif				//__GEBR_GEOXML_LINE_H
