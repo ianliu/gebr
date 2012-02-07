@@ -54,6 +54,7 @@ struct gebr_comm_protocol_defs {
 	struct gebr_comm_message_def rmck_def;  // Remove cookie        Maestro -> Daemon
 
 	struct gebr_comm_message_def cfrm_def;
+	struct gebr_comm_message_def path_def;
 
 	struct gebr_comm_message_def prt_def;   // Maestro port         Maestro -> GeBR
 

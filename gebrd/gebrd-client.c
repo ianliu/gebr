@@ -608,6 +608,21 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 
 			/* frees */
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
+		} else if (message->hash == gebr_comm_protocol_defs.path_def.code_hash) {
+			GList *arguments;
+			GString *path;
+
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 1)) == NULL)
+				goto err;
+			path = g_list_nth_data(arguments, 0);
+
+			gint success = g_mkdir_with_parents(path->str, 0700);
+			if (!success)
+				g_debug("on %s, '%s' sucessfully created", __func__, path->str);
+
+			/* frees */
+			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
+
 		} else {
 			/* unknown message! */
 			goto err;

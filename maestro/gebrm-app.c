@@ -975,7 +975,25 @@ on_client_request(GebrCommProtocolSocket *socket,
 					                                      is_ac);
 				}
 			}
-		}
+
+		} else if (g_strcmp0(prefix, "/path") == 0) {
+			const gchar *server = gebr_comm_uri_get_param(uri, "server");
+			const gchar *path= gebr_comm_uri_get_param(uri, "path");
+
+			GebrmDaemon *daemon;
+			for (GList *i = app->priv->daemons; i; i = i->next) {
+				const gchar *addr = gebrm_daemon_get_address(i->data);
+				if (g_strcmp0(addr, server) == 0) {
+					daemon = i->data;
+					break;
+				}
+			}
+			g_debug("on %s, sending message to daemon '%s'", __func__,path);
+			GebrCommServer *comm_server = gebrm_daemon_get_server(daemon);
+			gebr_comm_protocol_socket_oldmsg_send(comm_server->socket, FALSE,
+							      gebr_comm_protocol_defs.path_def, 1,
+							      path);
+			}
 	gebr_comm_uri_free(uri);
 	}
 }
