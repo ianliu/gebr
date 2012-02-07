@@ -37,15 +37,92 @@
 #include "ui_project_line.h"
 #include "ui_document.h"
 
-static void on_properties_response(gboolean accept)
+static void
+on_entry_changed(GtkEntry *entry,
+		 GtkAssistant *assistant)
 {
-	if (accept)
-		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("New Line created."));
-	else {
+	GtkWidget *current_page;
+	gint page_number;
+	const gchar *text;
+
+	page_number = gtk_assistant_get_current_page(assistant);
+	current_page = gtk_assistant_get_nth_page(assistant, page_number);
+	text = gtk_entry_get_text(entry);
+
+	if (text && *text)
+		gtk_assistant_set_page_complete(assistant, current_page, TRUE);
+	else
+		gtk_assistant_set_page_complete(assistant, current_page, FALSE);
+}
+
+static void
+on_assistant_cancel(GtkWidget *widget)
+{
+	gtk_widget_destroy(widget);
+	GtkTreeIter iter;
+	if (project_line_get_selected(&iter, DontWarnUnselection))
+		line_delete(&iter, FALSE);
+}
+
+static void
+on_assistant_close(GtkWidget *widget)
+{
+	GtkAssistant *assistant = GTK_ASSISTANT(widget);
+	gint n = gtk_assistant_get_n_pages(assistant);
+	gint i = gtk_assistant_get_current_page(assistant);
+
+	if (i != n - 1) {
 		GtkTreeIter iter;
 		if (project_line_get_selected(&iter, DontWarnUnselection))
 			line_delete(&iter, FALSE);
 	}
+
+	gtk_widget_destroy(widget);
+}
+
+static void
+on_assistant_apply(GtkAssistant *assistant,
+		   GtkBuilder *builder)
+{
+	gint n = gtk_assistant_get_n_pages(assistant);
+	gint i = gtk_assistant_get_current_page(assistant);
+
+	if (i == n - 1)
+		gebr_ui_document_set_properties_from_builder(GEBR_GEOXML_DOCUMENT(gebr.line), builder);
+}
+
+static void
+line_setup_wizard(GebrGeoXmlLine *line)
+{
+	GtkBuilder *builder = gtk_builder_new();
+
+	if (!gtk_builder_add_from_file(builder, GEBR_GLADE_DIR "/document-properties.glade", NULL))
+		return;
+
+	GtkWidget *page1 = GTK_WIDGET(gtk_builder_get_object(builder, "table"));
+	GtkWidget *page2 = GTK_WIDGET(gtk_builder_get_object(builder, "widget_paths"));
+	GtkWidget *assistant = gtk_assistant_new();
+	gtk_window_set_title(GTK_WINDOW(assistant), _("Creating a new Line"));
+	g_signal_connect(assistant, "cancel", G_CALLBACK(on_assistant_cancel), NULL);
+	g_signal_connect(assistant, "close", G_CALLBACK(on_assistant_close), NULL);
+	g_signal_connect(assistant, "apply", G_CALLBACK(on_assistant_apply), builder);
+
+	gtk_assistant_append_page(GTK_ASSISTANT(assistant), page1);
+	gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), page1, TRUE);
+	gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), page1, GTK_ASSISTANT_PAGE_CONTENT);
+	gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), page1, _("Basic line information"));
+
+	gtk_assistant_append_page(GTK_ASSISTANT(assistant), page2);
+	gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), page2, TRUE);
+	gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), page2, GTK_ASSISTANT_PAGE_CONFIRM);
+	gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), page2, _("Line paths"));
+
+	GObject *entry_title = gtk_builder_get_object(builder, "entry_title");
+	GObject *entry_base = gtk_builder_get_object(builder, "entry_base");
+	g_signal_connect(entry_title, "changed", G_CALLBACK(on_entry_changed), assistant);
+	g_signal_connect(entry_base, "changed", G_CALLBACK(on_entry_changed), assistant);
+
+	gtk_widget_show(assistant);
 }
 
 void line_new(void)
@@ -53,7 +130,6 @@ void line_new(void)
 	GtkTreeIter iter;
 	GtkTreeIter parent;
 	GtkTreeModel *model;
-	gchar *project_title;
 	GebrGeoXmlLine *line;
 	GebrGeoXmlDocument *doc;
 
@@ -72,19 +148,16 @@ void line_new(void)
 	gebr_geoxml_document_set_title(GEBR_GEOXML_DOC(line), _("New Line"));
 	gebr_geoxml_document_set_author(GEBR_GEOXML_DOC(line), gebr.config.username->str);
 	gebr_geoxml_document_set_email(GEBR_GEOXML_DOC(line), gebr.config.email->str);
-	gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), &parent,
-			   PL_TITLE, &project_title, -1);
 	iter = project_append_line_iter(&parent, line);
 	gebr_geoxml_project_append_line(gebr.project, gebr_geoxml_document_get_filename(GEBR_GEOXML_DOC(line)));
 	document_save(GEBR_GEOXML_DOC(gebr.project), TRUE, FALSE);
 	document_save(GEBR_GEOXML_DOC(line), TRUE, FALSE);
 
-	gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("New Line created in project '%s'."), project_title);
-	g_free(project_title);
-
 	project_line_select_iter(&iter);
 
-	document_properties_setup_ui(GEBR_GEOXML_DOCUMENT(gebr.line), on_properties_response, TRUE);
+	line_setup_wizard(gebr.line);
+
+	//document_properties_setup_ui(GEBR_GEOXML_DOCUMENT(gebr.line), on_properties_response, TRUE);
 }
 
 gboolean line_delete(GtkTreeIter * iter, gboolean warn_user)
