@@ -171,10 +171,16 @@ void line_new(void)
 		gtk_tree_model_iter_parent (model, &parent, &iter);
 	}
 
+	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+
 	line = GEBR_GEOXML_LINE(document_new(GEBR_GEOXML_DOCUMENT_TYPE_LINE));
 	gebr_geoxml_document_set_title(GEBR_GEOXML_DOC(line), _("New Line"));
 	gebr_geoxml_document_set_author(GEBR_GEOXML_DOC(line), gebr.config.username->str);
 	gebr_geoxml_document_set_email(GEBR_GEOXML_DOC(line), gebr.config.email->str);
+
+	if (maestro)
+		gebr_geoxml_line_set_maestro(line, gebr_maestro_server_get_address(maestro));
+
 	iter = project_append_line_iter(&parent, line);
 	gebr_geoxml_project_append_line(gebr.project, gebr_geoxml_document_get_filename(GEBR_GEOXML_DOC(line)));
 	document_save(GEBR_GEOXML_DOC(gebr.project), TRUE, FALSE);
