@@ -462,10 +462,6 @@ void flow_edition_select_component_iter(GtkTreeIter * iter)
 void flow_edition_set_io(void)
 {
 	GError *err = NULL;
-	const gchar *input = gebr_geoxml_flow_io_get_input(gebr.flow);
-	const gchar *output = gebr_geoxml_flow_io_get_output(gebr.flow);
-	const gchar *error = gebr_geoxml_flow_io_get_error(gebr.flow);
-
 	gchar *title;
 	gchar *result;
 	gchar *tooltip;
@@ -475,8 +471,19 @@ void flow_edition_set_io(void)
 	gboolean sensitivity;
 
 	flow_program_check_sensitiveness();
-
 	model = gtk_tree_view_get_model(GTK_TREE_VIEW(gebr.ui_flow_edition->fseq_view));
+
+	gchar ***paths = gebr_geoxml_line_get_paths(gebr.line);
+	const gchar *tmp;
+
+	tmp = gebr_geoxml_flow_io_get_input(gebr.flow);
+	gchar *input = gebr_relativise_path(tmp, paths);
+	tmp = gebr_geoxml_flow_io_get_output(gebr.flow);
+	gchar *output = gebr_relativise_path(tmp, paths);
+	tmp = gebr_geoxml_flow_io_get_error(gebr.flow);
+	gchar *error = gebr_relativise_path(tmp, paths);
+
+	gebr_pairstrfreev(paths);
 
 	/* Set the INPUT properties.
 	 * INPUT does not have 'Append/Overwrite' so there is only 2 possible icons:
@@ -595,11 +602,15 @@ void flow_edition_set_io(void)
 			   FSEQ_ELLIPSIZE, PANGO_ELLIPSIZE_START,
 			   FSEQ_TOOLTIP, tooltip,
 			   -1);
-	g_free(title);
-	g_free(tooltip);
 
 	flow_browse_info_update();
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, FALSE);
+
+	g_free(title);
+	g_free(tooltip);
+	g_free(input);
+	g_free(output);
+	g_free(error);
 }
 
 void flow_edition_component_activated(void)
@@ -734,7 +745,8 @@ static void flow_edition_component_editing_canceled(GtkCellRenderer *renderer, g
 }
 
 
-static void flow_edition_component_edited(GtkCellRendererText *renderer, gchar *path, gchar *new_text)
+static void
+flow_edition_component_edited(GtkCellRendererText *renderer, gchar *path, gchar *new_text)
 {
 	GtkTreeIter iter;
 
