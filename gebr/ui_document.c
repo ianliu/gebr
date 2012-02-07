@@ -97,15 +97,10 @@ struct dict_edit_data {
 typedef struct {
 	GtkBuilder *builder;
 
-	GebrGeoXmlDocument * document;
-	GtkWidget * window;
-	GtkWidget * author;
-	GtkWidget * description;
-	GtkWidget * email;
-	GtkWidget * title;
+	GebrGeoXmlDocument *document;
+	GtkWidget *window;
 
 	/* line stuff */
-	GtkWidget *path_sequence_edit;
 	GtkWidget *maestro_combo;
 	GtkWidget *maestro_box;
 	gint previous_active_group;
@@ -162,7 +157,7 @@ static GtkTreeIter dict_edit_append_iter(struct dict_edit_data *data, GebrGeoXml
 
 static const gchar *document_get_name_from_type(GebrGeoXmlDocument * document, gboolean upper);
 
-void on_response_ok(GtkButton * button, GebrPropertiesData * data);
+static void on_response_ok(GtkButton * button, GebrPropertiesData * data);
 
 void on_properties_destroy(GtkWindow * window, GebrPropertiesData * data);
 
@@ -1673,36 +1668,48 @@ static const gchar *document_get_name_from_type(GebrGeoXmlDocument * document, g
 	}
 }
 
-void on_response_ok(GtkButton * button, GebrPropertiesData * data)
+void
+gebr_ui_document_set_properties_from_builder(GebrGeoXmlDocument *document,
+					     GtkBuilder *builder)
+{
+	GtkEntry *title = GTK_ENTRY(gtk_builder_get_object(builder, "entry_title"));
+	GtkEntry *author = GTK_ENTRY(gtk_builder_get_object(builder, "entry_title"));
+	GtkEntry *description = GTK_ENTRY(gtk_builder_get_object(builder, "entry_description"));
+	GtkEntry *email = GTK_ENTRY(gtk_builder_get_object(builder, "entry_email"));
+
+	const gchar *new_title = gtk_entry_get_text(GTK_ENTRY(title));
+	gebr_geoxml_document_set_title(document, strlen(new_title) == 0? "Untitled" : new_title);
+	gebr_geoxml_document_set_description(document, gtk_entry_get_text(description));
+	gebr_geoxml_document_set_author(document, gtk_entry_get_text(author));
+	gebr_geoxml_document_set_email(document, gtk_entry_get_text(email));
+
+	GebrGeoXmlDocumentType type;
+	type = gebr_geoxml_document_get_type(document);
+	if (type == GEBR_GEOXML_DOCUMENT_TYPE_LINE) {
+		GtkEntry *entry = GTK_ENTRY(gtk_builder_get_object(builder, "entry_base"));
+		const gchar *base_path = gtk_entry_get_text(entry);
+		gebr_geoxml_line_set_base_path(GEBR_GEOXML_LINE(document), base_path);
+		//TODO: Enviar mensagem para criar os Paths no Daemon
+	}
+
+	document_save(document, TRUE, TRUE);
+}
+
+static void
+on_response_ok(GtkButton * button, GebrPropertiesData * data)
 {
 	GtkTreeIter iter;
 	const gchar *old_title;
-	const gchar *new_title;
 	GebrGeoXmlDocumentType type;
 
 	data->accept_response = TRUE;
 	old_title = gebr_geoxml_document_get_title(data->document);
-
-	GtkEntry *title = GTK_ENTRY(gtk_builder_get_object(data->builder, "entry_title"));
-	GtkEntry *author = GTK_ENTRY(gtk_builder_get_object(data->builder, "entry_title"));
-	GtkEntry *description = GTK_ENTRY(gtk_builder_get_object(data->builder, "entry_description"));
-	GtkEntry *email = GTK_ENTRY(gtk_builder_get_object(data->builder, "entry_email"));
-
-	new_title = gtk_entry_get_text(GTK_ENTRY(title));
-	gebr_geoxml_document_set_title(data->document, strlen(new_title) == 0? "Untitled" : new_title);
-	gebr_geoxml_document_set_description(data->document, gtk_entry_get_text(description));
-	gebr_geoxml_document_set_author(data->document, gtk_entry_get_text(author));
-	gebr_geoxml_document_set_email(data->document, gtk_entry_get_text(email));
-	document_save(data->document, TRUE, TRUE);
+	gebr_ui_document_set_properties_from_builder(data->document, data->builder);
 
 	/* Update title in apropriated store */
 	switch ((type = gebr_geoxml_document_get_type(data->document))) {
 	case GEBR_GEOXML_DOCUMENT_TYPE_LINE: {
 		gint current_active_group = gtk_combo_box_get_active(GTK_COMBO_BOX(data->maestro_combo));
-		GtkEntry *entry = GTK_ENTRY(gtk_builder_get_object(data->builder, "entry_base"));
-		const gchar *base_path = gtk_entry_get_text(entry);
-		gebr_geoxml_line_set_base_path(GEBR_GEOXML_LINE(data->document), base_path);
-		//TODO: Enviar mensagem para criar os Paths no Daemon
 
 		if (current_active_group != data->previous_active_group) {
 			gboolean clean = gebr_gui_message_dialog (GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
@@ -1731,12 +1738,6 @@ void on_response_ok(GtkButton * button, GebrPropertiesData * data)
 	} default:
 		break;
 	}
-
-	gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Properties of %s '%s' updated."),
-		     document_get_name_from_type(data->document, FALSE), old_title);
-	if (strcmp(old_title, new_title) != 0)
-		gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Renaming %s '%s' to '%s'."),
-			     document_get_name_from_type(data->document, FALSE), old_title, new_title);
 
 	gtk_widget_destroy(data->window);
 }

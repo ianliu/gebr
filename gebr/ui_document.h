@@ -59,6 +59,14 @@ void dict_edit_check_programs_using_variables(const gchar *var_name, gboolean va
  */
 void document_dict_edit_setup_ui(void);
 
+/**
+ * gebr_ui_document_set_properties_from_builder:
+ *
+ * Sets the @document properties based on @builder interface state.
+ */
+void gebr_ui_document_set_properties_from_builder(GebrGeoXmlDocument *document,
+						  GtkBuilder *builder);
+
 G_END_DECLS
 
 #endif				//__UI_DOCUMENT_H
