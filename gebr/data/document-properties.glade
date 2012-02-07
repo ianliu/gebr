@@ -114,7 +114,7 @@
       </packing>
     </child>
   </object>
-  <object class="GtkVBox" id="vbox1">
+  <object class="GtkVBox" id="widget_paths">
     <property name="visible">True</property>
     <property name="border_width">5</property>
     <property name="spacing">5</property>
