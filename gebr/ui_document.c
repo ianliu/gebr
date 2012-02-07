@@ -1720,7 +1720,6 @@ on_response_ok(GtkButton * button, GebrPropertiesData * data)
 		project_line_get_selected(&iter, DontWarnUnselection);
 		gtk_tree_store_set(gebr.ui_project_line->store, &iter,
 				   PL_TITLE, gebr_geoxml_document_get_title(data->document), -1);
-		document_save(data->document, TRUE, TRUE);
 		project_line_info_update();
 		break;
 	} case GEBR_GEOXML_DOCUMENT_TYPE_FLOW: {

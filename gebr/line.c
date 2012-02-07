@@ -87,8 +87,14 @@ on_assistant_apply(GtkAssistant *assistant,
 	gint n = gtk_assistant_get_n_pages(assistant);
 	gint i = gtk_assistant_get_current_page(assistant);
 
-	if (i == n - 1)
+	if (i == n - 1) {
+		GtkTreeIter iter;
 		gebr_ui_document_set_properties_from_builder(GEBR_GEOXML_DOCUMENT(gebr.line), builder);
+		project_line_get_selected(&iter, DontWarnUnselection);
+		gtk_tree_store_set(gebr.ui_project_line->store, &iter,
+				   PL_TITLE, gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.line)), -1);
+		project_line_info_update();
+	}
 }
 
 static void
