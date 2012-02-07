@@ -470,8 +470,11 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 		gchar *base_path = g_build_filename("$HOME", "GeBR",
 		                                    gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.project)),
 		                                    gebr_geoxml_document_get_title(document), NULL);
-		gtk_entry_set_text(entry_base, base_path);
+		GString *path = g_string_new(base_path);
+		gebr_path_resolve_home_variable(path);
+		gtk_entry_set_text(entry_base, path->str);
 		g_free(base_path);
+		g_string_free(path, TRUE);
 
 		GtkTreeIter iter, parent;
 		GtkTreeStore *store_paths = gtk_tree_store_new(3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
@@ -1700,7 +1703,9 @@ void on_response_ok(GtkButton * button, GebrPropertiesData * data)
 	switch ((type = gebr_geoxml_document_get_type(data->document))) {
 	case GEBR_GEOXML_DOCUMENT_TYPE_LINE: {
 		gint current_active_group = gtk_combo_box_get_active(GTK_COMBO_BOX(data->maestro_combo));
-		gebr_geoxml_line_set_base_path(GEBR_GEOXML_LINE(data->document), "/home/jorgepzt/");
+		GtkEntry *entry = GTK_ENTRY(gtk_builder_get_object(data->builder, "entry_base"));
+		const gchar *base_path = gtk_entry_get_text(entry);
+		gebr_geoxml_line_set_base_path(GEBR_GEOXML_LINE(data->document), base_path);
 		//TODO: Enviar mensagem para criar os Paths no Daemon
 
 		if (current_active_group != data->previous_active_group) {
