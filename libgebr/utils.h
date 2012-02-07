@@ -236,6 +236,16 @@ gchar *gebr_utf8_strstr(const gchar *haystack,
 gint gebr_calculate_number_of_processors(gint total_nprocs,
                                          gint aggressive);
 
+/**
+ * gebr_pairstrfreev:
+ *
+ * Frees a vector of pairs of strings.
+ */
+void gebr_pairstrfreev(gchar ***strv);
+
+gchar *gebr_relativise_path(const gchar *path,
+			    gchar ***pvector);
+
 G_END_DECLS
 
 #endif				//__GEBR_UTILS_H

@@ -898,3 +898,24 @@ gebr_calculate_number_of_processors(gint total_nprocs,
 {
 	return (total_nprocs - DEFAULT_NPROCS) * (aggressive-1)/4 + DEFAULT_NPROCS;
 }
+
+void
+gebr_pairstrfreev(gchar ***strv)
+{
+	for (int i = 0; strv[i]; i++) {
+		g_free(strv[i][0]);
+		g_free(strv[i][1]);
+		g_free(strv[i]);
+	}
+	g_free(strv);
+}
+
+gchar *
+gebr_relativise_path(const gchar *path,
+		     gchar ***pvector)
+{
+	if (g_str_has_prefix(path, ":)"))
+		return g_strdup(path);
+	else
+		return g_strdup_printf(":) %s", path);
+}
