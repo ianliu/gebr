@@ -588,6 +588,23 @@ static gboolean __on_focus_out_event(GtkWidget * widget, GdkEventFocus * event,
 	return FALSE;
 }
 
+static gboolean
+__on_file_focus_out_event(GtkEntry *entry,
+			  GdkEventFocus *event,
+			  struct gebr_gui_parameter_widget *parameter_widget)
+{
+	GebrGeoXmlDocument *line;
+	gebr_validator_get_documents(parameter_widget->validator, NULL, &line, NULL);
+
+	if (line) {
+		gchar ***paths = gebr_geoxml_line_get_paths(GEBR_GEOXML_LINE(line));
+		gchar *path = gebr_relativise_path(gtk_entry_get_text(entry), paths);
+		gtk_entry_set_text(entry, path);
+		gebr_pairstrfreev(paths);
+	}
+	return FALSE;
+}
+
 static gboolean __on_focus_in_event(GtkWidget * widget, GdkEventFocus * event,
 				    struct gebr_gui_parameter_widget *parameter_widget)
 {
@@ -782,6 +799,8 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 				  G_CALLBACK (__on_focus_in_event), parameter_widget);
 		g_signal_connect (GEBR_GUI_FILE_ENTRY (file_entry)->entry, "focus-out-event",
 				  G_CALLBACK(__on_focus_out_event), parameter_widget);
+		g_signal_connect (GEBR_GUI_FILE_ENTRY (file_entry)->entry, "focus-out-event",
+				  G_CALLBACK(__on_file_focus_out_event), parameter_widget);
 		/* validation */
 		g_signal_connect (GEBR_GUI_FILE_ENTRY (file_entry)->entry, "activate",
 				  G_CALLBACK (__on_activate), parameter_widget);
