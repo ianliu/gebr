@@ -465,16 +465,12 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 		gtk_notebook_append_page(GTK_NOTEBOOK(notebook), path_box, gtk_label_new(_("Paths")));
 
 		GtkEntry *entry_base = GTK_ENTRY(gtk_builder_get_object(builder, "entry_base"));
-		GtkEntry *entry_import = GTK_ENTRY(gtk_builder_get_object(builder, "entry_import"));
 
-		gchar *base_path = g_build_filename("$HOME", "GeBR",
+		gchar *base_path = g_build_filename(g_get_home_dir(), "GeBR",
 		                                    gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.project)),
 		                                    gebr_geoxml_document_get_title(document), NULL);
-		GString *path = g_string_new(base_path);
-		gebr_path_resolve_home_variable(path);
-		gtk_entry_set_text(entry_base, path->str);
+		gtk_entry_set_text(entry_base, base_path);
 		g_free(base_path);
-		g_string_free(path, TRUE);
 
 		GtkTreeIter iter, parent;
 		GtkTreeStore *store_paths = gtk_tree_store_new(3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
