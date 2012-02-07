@@ -914,8 +914,36 @@ gchar *
 gebr_relativise_path(const gchar *path,
 		     gchar ***pvector)
 {
-	if (g_str_has_prefix(path, ":)"))
-		return g_strdup(path);
-	else
-		return g_strdup_printf(":) %s", path);
+	g_return_val_if_fail(path != NULL, NULL);
+
+	gchar **dirspath = g_strsplit(path, "/", 0);
+	gchar **dirtmp;
+	gint max_index = 0, max_size = 0;
+	gint i = 0 , j = 0;
+
+
+	while (pvector[i] != NULL) {
+		dirtmp = g_strsplit(pvector[i][0], "/" , 0);
+		j = 0;
+		while(dirspath[j] != NULL || dirtmp[j] != NULL) {
+			if (g_strcmp0(dirspath[j], dirtmp[j]) != 0) {
+				if (j > max_size) {
+					max_size = j;
+					max_index = i;
+				}
+				break;
+			}
+			j++;
+		}
+		g_strfreev(dirtmp);
+		i++;
+	}
+	g_strfreev(dirspath);
+
+	GString *rel_path = g_string_new(path);
+	rel_path = g_string_erase(rel_path, 0, (strlen(pvector[max_index][0] - 1)));
+	rel_path = g_string_prepend (rel_path, pvector[max_index][1]);
+
+	return g_string_free (rel_path, FALSE);
 }
+
