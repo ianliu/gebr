@@ -117,6 +117,11 @@ line_setup_wizard(GebrGeoXmlLine *line)
 	gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), page2, GTK_ASSISTANT_PAGE_CONFIRM);
 	gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), page2, _("Line paths"));
 
+	GtkTreeStore *store_paths = gebr_ui_document_create_paths_tree();
+	GtkTreeView *view_paths = GTK_TREE_VIEW(gtk_builder_get_object(builder, "treeview_paths"));
+	gtk_tree_view_set_model(view_paths, GTK_TREE_MODEL(store_paths));
+	gtk_tree_view_expand_all(view_paths);
+
 	GObject *entry_title = gtk_builder_get_object(builder, "entry_title");
 	GObject *entry_base = gtk_builder_get_object(builder, "entry_base");
 
