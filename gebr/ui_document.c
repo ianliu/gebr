@@ -1683,7 +1683,35 @@ gebr_ui_document_set_properties_from_builder(GebrGeoXmlDocument *document,
 		GtkEntry *entry = GTK_ENTRY(gtk_builder_get_object(builder, "entry_base"));
 		const gchar *base_path = gtk_entry_get_text(entry);
 		gebr_geoxml_line_set_base_path(GEBR_GEOXML_LINE(document), base_path);
-		//TODO: Enviar mensagem para criar os Paths no Daemon
+
+			GebrMaestroServer *maestro_server = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+			GebrCommServer *comm_server = gebr_maestro_server_get_server(maestro_server);
+
+			GtkTreeIter daemons_iter;
+			GtkTreeModel *daemons_model = gebr_maestro_server_get_model(maestro_server, FALSE, NULL);
+			const gchar *daemon_addr;
+
+			gebr_gui_gtk_tree_model_foreach(daemons_iter, daemons_model) {
+				GebrDaemonServer *daemon;
+
+				gtk_tree_model_get(daemons_model, &daemons_iter,
+						   0, &daemon, -1);
+				daemon_addr = gebr_daemon_server_get_address(daemon);
+				break;
+			}
+			if (daemon_addr){
+
+				GebrCommUri *uri = gebr_comm_uri_new();
+				gebr_comm_uri_set_prefix(uri, "/path");
+				gebr_comm_uri_add_param(uri, "server", daemon_addr);
+				gebr_comm_uri_add_param(uri, "path", base_path);
+				gchar *url = gebr_comm_uri_to_string(uri);
+				gebr_comm_uri_free(uri);
+
+				gebr_comm_protocol_socket_send_request(comm_server->socket,
+								       GEBR_COMM_HTTP_METHOD_PUT, url, NULL);
+				g_free(url);
+			}
 	}
 
 	document_save(document, TRUE, TRUE);
