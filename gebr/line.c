@@ -117,13 +117,19 @@ line_setup_wizard(GebrGeoXmlLine *line)
 	gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), page2, GTK_ASSISTANT_PAGE_CONFIRM);
 	gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), page2, _("Line paths"));
 
-	GtkTreeStore *store_paths = gebr_ui_document_create_paths_tree();
-	GtkTreeView *view_paths = GTK_TREE_VIEW(gtk_builder_get_object(builder, "treeview_paths"));
-	gtk_tree_view_set_model(view_paths, GTK_TREE_MODEL(store_paths));
-	gtk_tree_view_expand_all(view_paths);
-
 	GObject *entry_title = gtk_builder_get_object(builder, "entry_title");
 	GObject *entry_base = gtk_builder_get_object(builder, "entry_base");
+
+	gchar *path = g_build_filename(g_get_home_dir(),"GeBR",
+	                 gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.project)),
+	                 gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(line)), NULL);
+	gtk_entry_set_text (entry_base, path);
+	g_free(path);
+
+	gchar *title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(line));
+	gtk_entry_set_text(entry_title, title);
+	g_free(title);
+
 	g_signal_connect(entry_title, "changed", G_CALLBACK(on_entry_changed), assistant);
 	g_signal_connect(entry_base, "changed", G_CALLBACK(on_entry_changed), assistant);
 
