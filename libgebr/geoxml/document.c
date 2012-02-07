@@ -41,24 +41,25 @@
 # include <buffio.h>
 #endif
 
-#include "document.h"
-#include "document_p.h"
-#include "xml.h"
-#include "types.h"
-#include "error.h"
-#include "sequence.h"
-#include "flow.h"
-#include "parameter.h"
-#include "program-parameter.h"
-#include "program.h"
-#include "parameters_p.h"
-#include "parameter_p.h"
-#include "parameter_group.h"
-#include "parameter_group_p.h"
-#include "value_sequence.h"
 #include "../gebr-expr.h"
 #include "../utils.h"
+#include "document.h"
+#include "document_p.h"
+#include "error.h"
+#include "flow.h"
+#include "line.h"
 #include "object.h"
+#include "parameter.h"
+#include "parameter_group.h"
+#include "parameter_group_p.h"
+#include "parameter_p.h"
+#include "parameters_p.h"
+#include "program-parameter.h"
+#include "program.h"
+#include "sequence.h"
+#include "types.h"
+#include "value_sequence.h"
+#include "xml.h"
 
 #include "parameters.h"
 
@@ -796,7 +797,6 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 		else if (gebr_geoxml_document_get_type(((GebrGeoXmlDocument *) *document)) == GEBR_GEOXML_DOCUMENT_TYPE_LINE) {
 			__gebr_geoxml_set_attr_value(root_element, "version", "0.3.6");
 
-			GdomeElement *element;
 			GdomeElement *first_el = __gebr_geoxml_get_first_element(root_element, "path");
 			gchar *base;
 
@@ -812,8 +812,11 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 					gebr_geoxml_sequence_remove(seq);
 					seq = aux;
 				}
-			} else
-				base = g_build_filename(g_get_home_dir(), "GeBR", gebr_geoxml_document_get_title(document), NULL);
+			} else {
+				gchar *title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(*document));
+				base = g_build_filename(g_get_home_dir(), "GeBR", title, NULL);
+				g_free(title);
+			}
 
 			__gebr_geoxml_set_attr_value(first_el, "name", "BASE");
 
@@ -832,7 +835,6 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 				g_free(path);
 			}
 
-			gebr_geoxml_object_unref(element);
 			gebr_geoxml_object_unref(first_el);
 			g_free(base);
 		}
