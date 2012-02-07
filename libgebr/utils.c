@@ -916,14 +916,24 @@ gebr_relativise_path(const gchar *path,
 {
 	g_return_val_if_fail(path != NULL, NULL);
 
-	gchar **dirspath = g_strsplit(path, "/", 0);
+	if (!*path)
+		return g_strdup("");
+
+	gint i = 0;
+	while (pvector[i] != NULL) {
+		if (g_str_has_prefix(path, pvector[i][1]))
+			return g_strdup(path);
+		i++;
+	}
+
+	gchar **dirspath = g_strsplit(path, "/", -1);
 	gchar **dirtmp;
 	gint max_index = 0, max_size = 0;
-	gint i = 0 , j = 0;
+	gint j = 0;
 
-
+	i = 0;
 	while (pvector[i] != NULL) {
-		dirtmp = g_strsplit(pvector[i][0], "/" , 0);
+		dirtmp = g_strsplit(pvector[i][0], "/" , -1);
 		j = 0;
 		while(dirspath[j] != NULL || dirtmp[j] != NULL) {
 			if (g_strcmp0(dirspath[j], dirtmp[j]) != 0) {
@@ -935,15 +945,23 @@ gebr_relativise_path(const gchar *path,
 			}
 			j++;
 		}
+		if (dirspath[j] == NULL && dirtmp[j] == NULL) {
+			max_index = i;
+			g_strfreev(dirtmp);
+			break;
+		}
 		g_strfreev(dirtmp);
 		i++;
 	}
 	g_strfreev(dirspath);
 
 	GString *rel_path = g_string_new(path);
-	rel_path = g_string_erase(rel_path, 0, (strlen(pvector[max_index][0] - 1)));
+	if (g_str_has_suffix(pvector[max_index][0], "/"))
+		rel_path = g_string_erase(rel_path, 0, (strlen(pvector[max_index][0]) - 1));
+	else
+		rel_path = g_string_erase(rel_path, 0, strlen(pvector[max_index][0]));
 	rel_path = g_string_prepend (rel_path, pvector[max_index][1]);
 
-	return g_string_free (rel_path, FALSE);
+	return g_string_free(rel_path, FALSE);
 }
 

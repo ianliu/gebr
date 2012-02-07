@@ -247,7 +247,6 @@ void gebr_pairstrfreev(gchar ***strv);
  * gebr_relativise_path:
  *
  * Transforsm a path according to pvector (relative adress)
- * The path must end with a /
  */
 gchar *gebr_relativise_path(const gchar *path,
 			    gchar ***pvector);
