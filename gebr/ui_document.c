@@ -311,6 +311,44 @@ on_lock_button_toggled(GtkToggleButton *button,
 	gtk_widget_show_all(data->maestro_box);
 }
 
+GtkTreeStore *
+gebr_ui_document_create_paths_tree(void)
+{
+	GtkTreeIter iter, parent;
+	static GtkTreeStore *store_paths = NULL;
+	static gchar *data[][3] = {
+		{"IMPORT", "", "Description..."},
+		{"BASE", "", "Description..."},
+		{"DATA", "<BASE>/data", "Description..."},
+		{"SCRATCH", "<BASE>/tmp", "Description..."},
+		{"EXPORT", "<BASE>/export", "Description..."},
+		{"TABLE", "<BASE>/table", "Description..."},
+		{"CUSTOM", "<BASE>/misc", "Description..."},
+	};
+
+	if (!store_paths) {
+		store_paths = gtk_tree_store_new(3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
+		for (int i = 0; i < 2; i++) {
+			gtk_tree_store_append(store_paths, &parent, NULL);
+			gtk_tree_store_set(store_paths, &parent,
+					   0, data[i][0],
+					   1, data[i][1],
+					   2, data[i][2],
+					   -1);
+		}
+		for (int i = 2; i < G_N_ELEMENTS(data); i++) {
+			gtk_tree_store_append(store_paths, &iter, &parent);
+			gtk_tree_store_set(store_paths, &iter,
+					   0, data[i][0],
+					   1, data[i][1],
+					   2, data[i][2],
+					   -1);
+		}
+	}
+
+	return store_paths;
+}
+
 void document_properties_setup_ui(GebrGeoXmlDocument * document,
 				  GebrPropertiesResponseFunc func,
 				  gboolean is_new)
@@ -467,51 +505,7 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 		gtk_entry_set_text(entry_base, base_path);
 		g_free(base_path);
 
-		GtkTreeIter iter, parent;
-		GtkTreeStore *store_paths = gtk_tree_store_new(3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
-
-		gtk_tree_store_append(store_paths, &parent, NULL);
-		gtk_tree_store_set(store_paths, &parent,
-		                   0, "BASE",
-		                   1, "",
-		                   2, "Description....", -1);
-
-		gtk_tree_store_append(store_paths, &iter, &parent);
-		gtk_tree_store_set(store_paths, &iter,
-		                   0, "IMPORT",
-		                   1, "",
-		                   2, "Description....", -1);
-
-		gtk_tree_store_append(store_paths, &iter, &parent);
-		gtk_tree_store_set(store_paths, &iter,
-		                   0, "DATA",
-		                   1, "<BASE>/data",
-		                   2, "Description....", -1);
-
-		gtk_tree_store_append(store_paths, &iter, &parent);
-		gtk_tree_store_set(store_paths, &iter,
-		                   0, "SCRATCH",
-		                   1, "<BASE>/tmp",
-		                   2, "Description....", -1);
-
-		gtk_tree_store_append(store_paths, &iter, &parent);
-		gtk_tree_store_set(store_paths, &iter,
-		                   0, "EXPORT",
-		                   1, "<BASE>/export",
-		                   2, "Description....", -1);
-
-		gtk_tree_store_append(store_paths, &iter, &parent);
-		gtk_tree_store_set(store_paths, &iter,
-		                   0, "TABLE",
-		                   1, "<BASE>/table",
-		                   2, "Description....", -1);
-
-		gtk_tree_store_append(store_paths, &iter, &parent);
-		gtk_tree_store_set(store_paths, &iter,
-		                   0, "CUSTOM",
-		                   1, "<BASE>/misc",
-		                   2, "Description....", -1);
-
+		GtkTreeStore *store_paths = gebr_ui_document_create_paths_tree();
 		GtkTreeView *view_paths = GTK_TREE_VIEW(gtk_builder_get_object(builder, "treeview_paths"));
 		gtk_tree_view_set_model(view_paths, GTK_TREE_MODEL(store_paths));
 		gtk_tree_view_expand_all(view_paths);
