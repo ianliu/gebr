@@ -347,6 +347,7 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 
 	data->window = window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_modal(GTK_WINDOW(window), TRUE);
+	gtk_container_set_border_width(GTK_CONTAINER(window), 5);
 	gtk_window_set_transient_for(GTK_WINDOW(window), GTK_WINDOW(gebr.window));
 	gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER_ON_PARENT);
 	gtk_window_set_destroy_with_parent(GTK_WINDOW(window), TRUE);
@@ -357,7 +358,9 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 	gtk_window_set_title(GTK_WINDOW(window), window_title);
 	g_free(window_title);
 
-	vbox = gtk_vbox_new(FALSE, 0);
+	vbox = gtk_vbox_new(FALSE, 5);
+	GtkWidget *notebook = gtk_notebook_new();
+	gtk_container_add(GTK_CONTAINER(vbox), notebook);
 	gtk_container_add(GTK_CONTAINER(window), vbox);
 	gtk_window_set_default_size(GTK_WINDOW(window), 400, -1);
 
@@ -374,8 +377,9 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(button_box), GTK_BUTTONBOX_END);
 	gtk_box_pack_start(GTK_BOX(button_box), cancel_button, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(button_box), ok_button, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), table, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), button_box, FALSE, TRUE, 0);
+
+	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), table, gtk_label_new(_("Preferences")));
 
 	GTK_WIDGET_SET_FLAGS(ok_button, GTK_CAN_DEFAULT);
 	GTK_WIDGET_SET_FLAGS(cancel_button, GTK_CAN_DEFAULT);
@@ -456,6 +460,67 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 		gtk_widget_show(label);
 		gtk_widget_show_all(hbox);
 		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+
+		GtkWidget *path_box = GTK_WIDGET(gtk_builder_get_object(builder, "widget_paths"));
+		gtk_notebook_append_page(GTK_NOTEBOOK(notebook), path_box, gtk_label_new(_("Paths")));
+
+		GtkEntry *entry_base = GTK_ENTRY(gtk_builder_get_object(builder, "entry_base"));
+		GtkEntry *entry_import = GTK_ENTRY(gtk_builder_get_object(builder, "entry_import"));
+
+		gchar *base_path = g_build_filename("$HOME", "GeBR",
+		                                    gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.project)),
+		                                    gebr_geoxml_document_get_title(document), NULL);
+		gtk_entry_set_text(entry_base, base_path);
+		g_free(base_path);
+
+		GtkTreeIter iter, parent;
+		GtkTreeStore *store_paths = gtk_tree_store_new(3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
+
+		gtk_tree_store_append(store_paths, &parent, NULL);
+		gtk_tree_store_set(store_paths, &parent,
+		                   0, "BASE",
+		                   1, "",
+		                   2, "Description....", -1);
+
+		gtk_tree_store_append(store_paths, &iter, &parent);
+		gtk_tree_store_set(store_paths, &iter,
+		                   0, "IMPORT",
+		                   1, "",
+		                   2, "Description....", -1);
+
+		gtk_tree_store_append(store_paths, &iter, &parent);
+		gtk_tree_store_set(store_paths, &iter,
+		                   0, "DATA",
+		                   1, "<BASE>/data",
+		                   2, "Description....", -1);
+
+		gtk_tree_store_append(store_paths, &iter, &parent);
+		gtk_tree_store_set(store_paths, &iter,
+		                   0, "SCRATCH",
+		                   1, "<BASE>/tmp",
+		                   2, "Description....", -1);
+
+		gtk_tree_store_append(store_paths, &iter, &parent);
+		gtk_tree_store_set(store_paths, &iter,
+		                   0, "EXPORT",
+		                   1, "<BASE>/export",
+		                   2, "Description....", -1);
+
+		gtk_tree_store_append(store_paths, &iter, &parent);
+		gtk_tree_store_set(store_paths, &iter,
+		                   0, "TABLE",
+		                   1, "<BASE>/table",
+		                   2, "Description....", -1);
+
+		gtk_tree_store_append(store_paths, &iter, &parent);
+		gtk_tree_store_set(store_paths, &iter,
+		                   0, "CUSTOM",
+		                   1, "<BASE>/misc",
+		                   2, "Description....", -1);
+
+		GtkTreeView *view_paths = GTK_TREE_VIEW(gtk_builder_get_object(builder, "treeview_paths"));
+		gtk_tree_view_set_model(view_paths, GTK_TREE_MODEL(store_paths));
+		gtk_tree_view_expand_all(view_paths);
 	}
 
 	gtk_widget_show_all(window);
@@ -1619,10 +1684,10 @@ void on_response_ok(GtkButton * button, GebrPropertiesData * data)
 	data->accept_response = TRUE;
 	old_title = gebr_geoxml_document_get_title(data->document);
 
-	GtkWidget *title = gtk_builder_get_object(data->builder, "entry_title");
-	GtkWidget *author = gtk_builder_get_object(data->builder, "entry_title");
-	GtkWidget *description = gtk_builder_get_object(data->builder, "entry_description");
-	GtkWidget *email = gtk_builder_get_object(data->builder, "entry_email");
+	GtkEntry *title = GTK_ENTRY(gtk_builder_get_object(data->builder, "entry_title"));
+	GtkEntry *author = GTK_ENTRY(gtk_builder_get_object(data->builder, "entry_title"));
+	GtkEntry *description = GTK_ENTRY(gtk_builder_get_object(data->builder, "entry_description"));
+	GtkEntry *email = GTK_ENTRY(gtk_builder_get_object(data->builder, "entry_email"));
 
 	new_title = gtk_entry_get_text(GTK_ENTRY(title));
 	gebr_geoxml_document_set_title(data->document, strlen(new_title) == 0? "Untitled" : new_title);
