@@ -98,6 +98,26 @@ on_assistant_apply(GtkAssistant *assistant,
 }
 
 static void
+on_assistant_prepare(GtkAssistant *assistant,
+		     GtkWidget *page,
+		     GtkBuilder *builder)
+{
+	gint n = gtk_assistant_get_n_pages(assistant);
+	gint i = gtk_assistant_get_current_page(assistant);
+
+	if (i == n - 1) {
+		GObject *entry_base = gtk_builder_get_object(builder, "entry_base");
+		GObject *entry_title = gtk_builder_get_object(builder, "entry_title");
+		gchar *path = g_build_filename(g_get_home_dir(),"GeBR",
+					       gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.project)),
+					       gtk_entry_get_text(GTK_ENTRY(entry_title)), NULL);
+		gtk_entry_set_text (GTK_ENTRY(entry_base), path);
+		g_debug("apply entry");
+		g_free(path);
+	}
+}
+
+static void
 line_setup_wizard(GebrGeoXmlLine *line)
 {
 	GtkBuilder *builder = gtk_builder_new();
@@ -112,6 +132,7 @@ line_setup_wizard(GebrGeoXmlLine *line)
 	g_signal_connect(assistant, "cancel", G_CALLBACK(on_assistant_cancel), NULL);
 	g_signal_connect(assistant, "close", G_CALLBACK(on_assistant_close), NULL);
 	g_signal_connect(assistant, "apply", G_CALLBACK(on_assistant_apply), builder);
+	g_signal_connect(assistant, "prepare", G_CALLBACK(on_assistant_prepare), builder);
 
 	gtk_assistant_append_page(GTK_ASSISTANT(assistant), page1);
 	gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), page1, TRUE);
