@@ -40,7 +40,6 @@ struct _GebrMaestroServerPriv {
 
 	/* GVFS */
 	gboolean has_connected_daemon;
-	GMountOperation *mount_operation;
 	GFile *mount_location;
 
 	GtkListStore *groups_store;
@@ -71,7 +70,7 @@ enum {
 static void mount_enclosing_ready_cb(GFile *location, GAsyncResult *res,
 				     GebrMaestroServer *maestro);
 
-static void unmount_ready_cb(GFile *location, GAsyncResult *res);
+static void unmount_ready_cb(GMount *mount, GAsyncResult *res);
 
 static void log_message(GebrCommServer *server, GebrLogMessageType type,
 			     const gchar *message, gpointer user_data);
@@ -123,7 +122,6 @@ mount_gvfs(GebrMaestroServer *maestro,
 	g_file_mount_enclosing_volume(location, 0, op, NULL,
 				      (GAsyncReadyCallback) mount_enclosing_ready_cb,
 				      maestro);
-	maestro->priv->mount_operation = op;
 	maestro->priv->mount_location = location;
 	g_free(uri);
 }
@@ -134,15 +132,18 @@ unmount_gvfs(GebrMaestroServer *maestro)
 	if (!maestro->priv->has_connected_daemon)
 		return;
 
+	GMountOperation *op = gtk_mount_operation_new(NULL);
 	maestro->priv->has_connected_daemon = FALSE;
-	g_file_unmount_mountable_with_operation(maestro->priv->mount_location,
-						G_MOUNT_UNMOUNT_FORCE,
-						maestro->priv->mount_operation,
-						NULL, (GAsyncReadyCallback) unmount_ready_cb, NULL);
+
+	GError *err = NULL;
+	GMount *mount = g_file_find_enclosing_mount(maestro->priv->mount_location, NULL, &err);
+
+	if (!g_error_matches(err, G_IO_ERROR, G_IO_ERROR_NOT_FOUND))
+		g_mount_unmount_with_operation(mount, G_MOUNT_UNMOUNT_NONE, op,
+		                               NULL, (GAsyncReadyCallback) unmount_ready_cb, NULL);
+
 	g_object_unref(maestro->priv->mount_location);
 	maestro->priv->mount_location = NULL;
-	g_object_unref(maestro->priv->mount_operation);
-	maestro->priv->mount_operation = NULL;
 }
 
 static void
@@ -385,26 +386,22 @@ mount_enclosing_ready_cb(GFile *location,
 		maestro->priv->has_connected_daemon = FALSE;
 		g_object_unref(maestro->priv->mount_location);
 		maestro->priv->mount_location = NULL;
-		g_object_unref(maestro->priv->mount_operation);
-		maestro->priv->mount_operation = NULL;
 	}
 }
 
 static void
-unmount_ready_cb(GFile *location,
+unmount_ready_cb(GMount *mount,
 		 GAsyncResult *res)
 {
-	char *uri;
 	gboolean success;
 	GError *error = NULL;
 
-	uri = g_file_get_uri(location);
-	success = g_file_unmount_mountable_with_operation_finish(location, res, &error);
+	success = g_mount_unmount_with_operation_finish(mount, res, &error);
 
 	if (success || g_error_matches(error, G_IO_ERROR, G_IO_ERROR_ALREADY_MOUNTED))
-		g_debug("Unmounted %s!", uri);
+		g_debug("Unmounted!");
 	else
-		g_debug("Not unmounted %s :(", uri);
+		g_debug("Not unmou :(");
 }
 
 static gboolean
@@ -1238,6 +1235,7 @@ void
 gebr_maestro_server_disconnect(GebrMaestroServer *maestro)
 {
 	gebr_comm_server_disconnect(maestro->priv->server);
+	unmount_gvfs(maestro);
 }
 
 void
