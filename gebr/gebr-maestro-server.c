@@ -38,6 +38,11 @@ struct _GebrMaestroServerPriv {
 	gchar *error_type;
 	gchar *error_msg;
 
+	/* GVFS */
+	gboolean has_connected_daemon;
+	GMountOperation *mount_operation;
+	GFile *mount_location;
+
 	GtkListStore *groups_store;
 	GtkListStore *queues_model;
 };
@@ -62,6 +67,11 @@ enum {
 	PROP_0,
 	PROP_ADDRESS,
 };
+
+static void mount_enclosing_ready_cb(GFile *location, GAsyncResult *res,
+				     GebrMaestroServer *maestro);
+
+static void unmount_ready_cb(GFile *location, GAsyncResult *res);
 
 static void log_message(GebrCommServer *server, GebrLogMessageType type,
 			     const gchar *message, gpointer user_data);
@@ -98,6 +108,42 @@ static const struct gebr_comm_server_ops maestro_ops = {
 G_DEFINE_TYPE_WITH_CODE(GebrMaestroServer, gebr_maestro_server, G_TYPE_OBJECT,
 			G_IMPLEMENT_INTERFACE(GEBR_TYPE_CONNECTABLE,
 					      gebr_maestro_server_connectable_init));
+
+static void
+mount_gvfs(GebrMaestroServer *maestro,
+	   const gchar *address)
+{
+	if (maestro->priv->has_connected_daemon)
+		return;
+
+	maestro->priv->has_connected_daemon = TRUE;
+	GMountOperation *op = gtk_mount_operation_new(NULL);
+	gchar *uri = g_strdup_printf("sftp://%s/", address);
+	GFile *location = g_file_new_for_uri(uri);
+	g_file_mount_enclosing_volume(location, 0, op, NULL,
+				      (GAsyncReadyCallback) mount_enclosing_ready_cb,
+				      maestro);
+	maestro->priv->mount_operation = op;
+	maestro->priv->mount_location = location;
+	g_free(uri);
+}
+
+static void
+unmount_gvfs(GebrMaestroServer *maestro)
+{
+	if (!maestro->priv->has_connected_daemon)
+		return;
+
+	maestro->priv->has_connected_daemon = FALSE;
+	g_file_unmount_mountable_with_operation(maestro->priv->mount_location,
+						G_MOUNT_UNMOUNT_FORCE,
+						maestro->priv->mount_operation,
+						NULL, (GAsyncReadyCallback) unmount_ready_cb, NULL);
+	g_object_unref(maestro->priv->mount_location);
+	maestro->priv->mount_location = NULL;
+	g_object_unref(maestro->priv->mount_operation);
+	maestro->priv->mount_operation = NULL;
+}
 
 static void
 update_groups_store(GebrMaestroServer *maestro)
@@ -320,6 +366,61 @@ update_queues_model(GebrMaestroServer *maestro, GebrJob *job)
 	}
 }
 
+static void
+mount_enclosing_ready_cb(GFile *location,
+			 GAsyncResult *res,
+			 GebrMaestroServer *maestro)
+{
+	char *uri;
+	gboolean success;
+	GError *error = NULL;
+
+	uri = g_file_get_uri(location);
+	success = g_file_mount_enclosing_volume_finish(location, res, &error);
+
+	if (success || g_error_matches(error, G_IO_ERROR, G_IO_ERROR_ALREADY_MOUNTED)) {
+		g_debug("Mounted %s!", uri);
+	} else {
+		g_debug("Not mounted %s :(", uri);
+		maestro->priv->has_connected_daemon = FALSE;
+		g_object_unref(maestro->priv->mount_location);
+		maestro->priv->mount_location = NULL;
+		g_object_unref(maestro->priv->mount_operation);
+		maestro->priv->mount_operation = NULL;
+	}
+}
+
+static void
+unmount_ready_cb(GFile *location,
+		 GAsyncResult *res)
+{
+	char *uri;
+	gboolean success;
+	GError *error = NULL;
+
+	uri = g_file_get_uri(location);
+	success = g_file_unmount_mountable_with_operation_finish(location, res, &error);
+
+	if (success || g_error_matches(error, G_IO_ERROR, G_IO_ERROR_ALREADY_MOUNTED))
+		g_debug("Unmounted %s!", uri);
+	else
+		g_debug("Not unmounted %s :(", uri);
+}
+
+static gboolean
+have_logged_daemon(GebrMaestroServer *maestro)
+{
+	GtkTreeIter iter;
+	GtkTreeModel *m = gebr_maestro_server_get_model(maestro, FALSE, NULL);
+	gebr_gui_gtk_tree_model_foreach(iter, m) {
+		GebrDaemonServer *daemon;
+		gtk_tree_model_get(m, &iter, 0, &daemon, -1);
+		if (gebr_daemon_server_get_state(daemon) == SERVER_STATE_LOGGED)
+			return TRUE;
+	}
+	return FALSE;
+}
+
 void
 parse_messages(GebrCommServer *comm_server,
 	       gpointer user_data)
@@ -401,6 +502,11 @@ parse_messages(GebrCommServer *comm_server,
 
 			gebr_daemon_server_set_hostname(daemon, hostname->str);
 			gboolean is_ac = g_strcmp0(ac->str, "on") == 0 ? TRUE : FALSE;
+
+			if (state == SERVER_STATE_LOGGED)
+				mount_gvfs(maestro, addr->str);
+			else if (maestro->priv->has_connected_daemon && !have_logged_daemon(maestro))
+				unmount_gvfs(maestro);
 
 			g_signal_emit(maestro, signals[GROUP_CHANGED], 0);
 			g_signal_emit(maestro, signals[DAEMONS_CHANGED], 0);
@@ -767,6 +873,7 @@ gebr_maestro_server_finalize(GObject *object)
 	g_object_unref(maestro->priv->store);
 	g_hash_table_unref(maestro->priv->jobs);
 	g_hash_table_unref(maestro->priv->temp_jobs);
+	unmount_gvfs(maestro);
 
 	G_OBJECT_CLASS(gebr_maestro_server_parent_class)->finalize(object);
 }
@@ -907,6 +1014,7 @@ gebr_maestro_server_init(GebrMaestroServer *maestro)
 	maestro->priv->jobs = g_hash_table_new(g_str_hash, g_str_equal);
 	maestro->priv->temp_jobs = g_hash_table_new(g_str_hash, g_str_equal);
 	maestro->priv->queues_model = gtk_list_store_new(1, GEBR_TYPE_JOB);
+	maestro->priv->has_connected_daemon = FALSE;
 
 	gebr_maestro_server_set_error(maestro, "error:none", NULL);
 
