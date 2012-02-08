@@ -919,12 +919,17 @@ gebr_relativise_path(const gchar *path,
 	if (!*path)
 		return g_strdup("");
 
-	gint i = 0;
-	while (pvector[i] != NULL) {
+	for (int i = 0; pvector[i]; i++)
 		if (g_str_has_prefix(path, pvector[i][1]))
 			return g_strdup(path);
-		i++;
-	}
+
+	gchar *gvfs_dir = g_build_filename(g_get_home_dir(), ".gvfs" G_DIR_SEPARATOR_S, NULL);
+
+	if (g_str_has_prefix(path, gvfs_dir))
+		path = (const gchar*) strchr(path + strlen(gvfs_dir), G_DIR_SEPARATOR);
+
+	if (!path)
+		g_return_val_if_reached(NULL);
 
 	gchar **dirspath = g_strsplit(path, "/", -1);
 	gchar **dirtmp;
@@ -938,8 +943,7 @@ gebr_relativise_path(const gchar *path,
 	gint size_default = k;
 	g_strfreev(dirdefault);
 
-	i = 0;
-	while (pvector[i] != NULL) {
+	for (int i = 0; pvector[i]; i++) {
 		dirtmp = g_strsplit(pvector[i][0], "/" , -1);
 		j = 0;
 		while(dirspath[j] != NULL || dirtmp[j] != NULL) {
@@ -959,7 +963,6 @@ gebr_relativise_path(const gchar *path,
 			break;
 		}
 		g_strfreev(dirtmp);
-		i++;
 	}
 	g_strfreev(dirspath);
 
