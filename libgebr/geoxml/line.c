@@ -89,8 +89,11 @@ gebr_geoxml_line_set_base_path(GebrGeoXmlLine *line, const gchar *base)
 
 	for (gint i = 0; i < G_N_ELEMENTS(base_dirs); i++) {
 		gchar *path = g_build_filename(base, base_dirs[i][1], NULL);
-		gebr_geoxml_line_append_path(line, base_dirs[i][0], path);
+		GString *path_str = g_string_new(path);
+		gebr_path_set_to(path_str, TRUE);
+		gebr_geoxml_line_append_path(line, base_dirs[i][0], path_str->str);
 		g_free(path);
+		g_string_free(path_str, TRUE);
 	}
 }
 
@@ -238,7 +241,12 @@ gebr_geoxml_line_get_paths(GebrGeoXmlLine *line)
 	gebr_geoxml_line_get_path(line, &seq, 0);
 	for (; seq; gebr_geoxml_sequence_next(&seq)) {
 		gchar **tmp = g_new(gchar *, 2);
-		tmp[0] = __gebr_geoxml_get_element_value((GdomeElement*)seq);
+
+		gchar *path_tmp = __gebr_geoxml_get_element_value((GdomeElement*)seq);
+		GString *value_path = g_string_new(path_tmp);
+		gebr_path_set_to(value_path, FALSE);
+
+		tmp[0] = g_string_free(value_path, FALSE);
 		tmp[1] = __gebr_geoxml_get_attr_value((GdomeElement*)seq, "name");
 		list = g_list_prepend(list, tmp);
 		len++;

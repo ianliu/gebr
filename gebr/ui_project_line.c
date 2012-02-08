@@ -331,7 +331,10 @@ void project_line_info_update(void)
 			while (path) {
 				const gchar *value;
 				value = gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(path));
-				g_string_append_printf(text, "%s\n", value);
+				GString *value_path = g_string_new(value);
+				gebr_path_set_to(value_path, FALSE);
+				g_string_append_printf(text, "%s\n", value_path->str);
+				g_string_free(value_path, TRUE);
 				gebr_geoxml_sequence_next(&path);
 			}
 		}
