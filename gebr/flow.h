@@ -27,6 +27,9 @@
 
 G_BEGIN_DECLS
 
+typedef void (*GebrFlowModifyPathsFunc) (GString *path,
+					 gpointer data);
+
 /** 
  * Creates a new flow.
  */
@@ -146,6 +149,11 @@ gchar * gebr_flow_generate_header(GebrGeoXmlFlow * flow, gboolean include_date);
  * Returns: a newly allocated string, which must be freed with g_free().
  */
 gchar * gebr_flow_get_detailed_report (GebrGeoXmlFlow * flow, gboolean include_table, gboolean include_date);
+
+void gebr_flow_modify_paths(GebrGeoXmlFlow *flow,
+			    GebrFlowModifyPathsFunc func,
+			    gboolean set_programs_unconfigured,
+			    gpointer data);
 
 G_END_DECLS
 
