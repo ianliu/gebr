@@ -976,3 +976,30 @@ gebr_relativise_path(const gchar *path,
 	return g_string_free(rel_path, FALSE);
 }
 
+gchar *
+gebr_resolve_relative_path(const char *path,
+			   gchar ***pvector)
+{
+	g_return_val_if_fail(path != NULL, NULL);
+	
+	gint i = 0;
+	gchar **dirspath = g_strsplit(path, "/", -1);
+	GString *str = g_string_new(path);
+	gboolean has_rpath = FALSE;
+
+	while (pvector[i] != NULL ) {
+		if (!g_strcmp0(dirspath[0], pvector[i][1])) {
+			str = g_string_erase(str, 0, strlen(dirspath[0]));
+			str = g_string_prepend(str, pvector[i][0]);
+			has_rpath = TRUE;
+			break;
+		}
+		i++;
+	}
+	g_strfreev(dirspath);
+	
+	if (!has_rpath)
+		return g_strdup(path);
+	
+	return g_string_free(str, FALSE);
+}

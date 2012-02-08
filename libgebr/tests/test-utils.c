@@ -278,6 +278,22 @@ test_gebr_relativise_path(void)
 	g_assert_cmpstr(gebr_relativise_path("/home/foo/liu/data/1", paths), ==, "DATA/1");
 }
 
+static void
+test_gebr_resolve_relative_path(void)
+{
+	GebrGeoXmlLine *line = gebr_geoxml_line_new();
+	gebr_geoxml_line_append_path(line, "BASE", "/home/foo/liu");
+	gebr_geoxml_line_append_path(line, "DATA", "/home/foo/liu/data");
+	gebr_geoxml_line_append_path(line, "BOO", "/home/foo/liu/boo");
+
+	gchar *** paths = gebr_geoxml_line_get_paths(line);
+
+	g_assert_cmpstr(gebr_resolve_relative_path("foo/BASE", paths), ==, "foo/BASE");
+	g_assert_cmpstr(gebr_resolve_relative_path("BASE/foo", paths), ==, "/home/foo/liu/foo");
+	g_assert_cmpstr(gebr_resolve_relative_path("DATA/foo", paths), ==, "/home/foo/liu/data/foo");
+	g_assert_cmpstr(gebr_resolve_relative_path("/usr/foo", paths), ==, "/usr/foo");
+}
+
 int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
@@ -292,6 +308,7 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/utils/gebr_utf8_is_asc_alnum", test_gebr_utf8_is_asc_alnum);
 	g_test_add_func("/libgebr/utils/gebr_utf8_strstr", test_gebr_utf8_strstr);
 	g_test_add_func("/libgebr/utils/gebr_relativise_path", test_gebr_relativise_path);
+	g_test_add_func("/libgebr/utils/gebr_resolve_relative_path", test_gebr_resolve_relative_path);
 
 	gint ret = g_test_run();
 	gebr_geoxml_finalize();

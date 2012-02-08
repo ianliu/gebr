@@ -250,6 +250,14 @@ void gebr_pairstrfreev(gchar ***strv);
  */
 gchar *gebr_relativise_path(const gchar *path,
 			    gchar ***pvector);
+/**
+ * gebr_resolve_relative_path:
+ *
+ * Transfors a relative path in absolute path
+ */
+
+gchar *gebr_resolve_relative_path(const char *path,
+				gchar ***pvector);
 
 G_END_DECLS
 
