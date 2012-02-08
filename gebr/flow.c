@@ -218,6 +218,7 @@ void flow_import(void)
 						     GTK_FILE_CHOOSER_ACTION_OPEN,
 						     GTK_STOCK_OPEN, GTK_RESPONSE_YES,
 						     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
+	gtk_file_chooser_set_local_only(GTK_FILE_CHOOSER(chooser_dialog), TRUE);
 	gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(chooser_dialog), TRUE);
 	file_filter = gtk_file_filter_new();
 	gtk_file_filter_set_name(file_filter, _("Flow file types (*.flw, *.flwz)"));

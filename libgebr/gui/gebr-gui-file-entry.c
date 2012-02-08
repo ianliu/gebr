@@ -143,6 +143,7 @@ __gebr_gui_file_entry_browse_button_clicked(GtkButton * button, GtkEntryIconPosi
 						     ? GTK_FILE_CHOOSER_ACTION_SAVE :
 						     GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER, GTK_STOCK_CANCEL,
 						     GTK_RESPONSE_CANCEL, GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
+	gtk_file_chooser_set_local_only(GTK_FILE_CHOOSER(chooser_dialog), TRUE);
 	gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(chooser_dialog),
 						       file_entry->do_overwrite_confirmation);
 

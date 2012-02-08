@@ -652,6 +652,7 @@ static void open_activated(GtkEntry *entry, GtkEntryIconPosition icon_pos, GdkEv
 	GtkWidget *dialog = gtk_file_chooser_dialog_new(NULL, GTK_WINDOW(gebr.window), action,
 							stock, GTK_RESPONSE_YES,
 							GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
+	gtk_file_chooser_set_local_only(GTK_FILE_CHOOSER(dialog), TRUE);
 
 	gebr_geoxml_line_get_path(gebr.line, &line_path, 0);
 
