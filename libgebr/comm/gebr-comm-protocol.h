@@ -33,6 +33,14 @@ struct gebr_comm_message_def {
 	gint		arg_number;
 };
 
+enum {
+	GEBR_COMM_PROTOCOL_PATH_CREATE,
+	GEBR_COMM_PROTOCOL_PATH_RENAME,
+	GEBR_COMM_PROTOCOL_PATH_DELETE,
+	GEBR_COMM_PROTOCOL_N_COLUMN
+};  
+
+
 struct gebr_comm_protocol_defs {
 	GHashTable *hash_table;
 
@@ -105,6 +113,9 @@ void gebr_comm_message_free(struct gebr_comm_message *message);
 
 const gchar *gebr_comm_protocol_get_version(void);
 
+const gchar *gebr_comm_protocol_path_enum_to_str(gint option);
+
+gint gebr_comm_protocol_path_str_to_enum(const gchar *option);
 G_END_DECLS
 
 #endif /* __GEBR_COMM_PROTOCOL_H__ */

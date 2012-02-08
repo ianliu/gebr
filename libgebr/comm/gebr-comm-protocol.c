@@ -58,7 +58,7 @@ void gebr_comm_protocol_init(void)
 	gebr_comm_protocol_defs.sta_def  = gebr_comm_message_def_create("STA", FALSE,  5);
 	gebr_comm_protocol_defs.prt_def  = gebr_comm_message_def_create("PRT", FALSE,  1);
 	gebr_comm_protocol_defs.cfrm_def = gebr_comm_message_def_create("CFRM", FALSE, 1);
-	gebr_comm_protocol_defs.path_def = gebr_comm_message_def_create("PATH", FALSE, 1);
+	gebr_comm_protocol_defs.path_def = gebr_comm_message_def_create("PATH", TRUE, 3);
 
 	gebr_comm_protocol_defs.gid_def  = gebr_comm_message_def_create("GID", TRUE,  1);
 	gebr_comm_protocol_defs.rmck_def  = gebr_comm_message_def_create("RMCK", FALSE,  1);
@@ -332,4 +332,29 @@ const gchar *
 gebr_comm_protocol_get_version(void)
 {
 	return "1.1.0" NANOVERSION;
+}
+
+const gchar *
+gebr_comm_protocol_path_enum_to_str (gint option){
+	switch(option){
+	case GEBR_COMM_PROTOCOL_PATH_CREATE:
+		return ("create");
+	case GEBR_COMM_PROTOCOL_PATH_RENAME:
+		return ("rename");
+	case GEBR_COMM_PROTOCOL_PATH_DELETE:
+		return ("delete");
+	default:
+		return NULL;
+	}
+}
+
+gint gebr_comm_protocol_path_str_to_enum(const gchar *option){
+	if (!g_strcmp0(option, "create"))
+		return GEBR_COMM_PROTOCOL_PATH_CREATE;
+	else if (!g_strcmp0(option, "rename"))
+		return GEBR_COMM_PROTOCOL_PATH_RENAME;
+	else if (!g_strcmp0(option, "delete"))
+		return GEBR_COMM_PROTOCOL_PATH_DELETE;
+	else
+		return 0;
 }
