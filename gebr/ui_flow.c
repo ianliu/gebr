@@ -138,7 +138,17 @@ run_flow(GebrGeoXmlFlow *flow,
 	GebrJob *job = gebr_job_new(parent_rid);
 
 	GebrGeoXmlDocument *clone = gebr_geoxml_document_clone(GEBR_GEOXML_DOCUMENT(flow));
-	flow_set_paths_to_relative(GEBR_GEOXML_FLOW(clone), TRUE);
+
+
+	void func(GString *path, gpointer data)
+	{
+		gchar ***paths = data;
+		gchar *tmp = gebr_resolve_relative_path(path->str, paths);
+		g_string_assign(path, tmp);
+		gebr_path_set_to(path, TRUE);
+		g_free(tmp);
+	}
+	gebr_flow_modify_paths(flow, func, FALSE, NULL);
 
 	gebr_geoxml_document_merge_dicts(gebr.validator,
 	                                 clone,
