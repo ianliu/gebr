@@ -931,6 +931,13 @@ gebr_relativise_path(const gchar *path,
 	gint max_index = 0, max_size = 0;
 	gint j = 0;
 
+	// Set size default like BASE size
+	gchar **dirdefault = g_strsplit(pvector[0][0], "/" , -1);
+	gint k;
+	for (k = 0; dirdefault[k]; k++);
+	gint size_default = k;
+	g_strfreev(dirdefault);
+
 	i = 0;
 	while (pvector[i] != NULL) {
 		dirtmp = g_strsplit(pvector[i][0], "/" , -1);
@@ -946,6 +953,7 @@ gebr_relativise_path(const gchar *path,
 			j++;
 		}
 		if (dirspath[j] == NULL && dirtmp[j] == NULL) {
+			max_size = j;
 			max_index = i;
 			g_strfreev(dirtmp);
 			break;
@@ -954,6 +962,9 @@ gebr_relativise_path(const gchar *path,
 		i++;
 	}
 	g_strfreev(dirspath);
+
+	if (max_size < size_default)
+		return g_strdup(path);
 
 	GString *rel_path = g_string_new(path);
 	if (g_str_has_suffix(pvector[max_index][0], "/"))
