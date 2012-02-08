@@ -621,31 +621,37 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			GString *old_path = g_list_nth_data(arguments, 2);
 			GString *opt = g_list_nth_data(arguments, 3);
 
-			gint success = 0; 
+			gint failure = 1;
 			gint option = atoi(opt->str);
+			gint status_id = -1;
+			gboolean file_exists = FALSE;
 
 			switch (option){
 			case GEBR_COMM_PROTOCOL_PATH_CREATE:
 				if (g_file_test(new_path->str, G_FILE_TEST_IS_DIR))
-					errno = 666;
+					file_exists = TRUE;
 				else
-					success = g_mkdir_with_parents(new_path->str, 0700);
+					failure = g_mkdir_with_parents(new_path->str, 0700);
 				break;
 			case GEBR_COMM_PROTOCOL_PATH_RENAME:
-				success = g_rename(old_path->str, new_path->str);
+				failure = g_rename(old_path->str, new_path->str);
 				break;
 			case GEBR_COMM_PROTOCOL_PATH_DELETE:
-				success = g_rmdir(new_path->str);
+				failure = g_rmdir(new_path->str);
 				break;
 			default:
 				g_warn_if_reached();
 				break;
 			}
 
-			g_debug("erro numero:%d", errno);
+			if (!failure && !file_exists)
+				status_id = GEBR_COMM_PROTOCOL_STATUS_PATH_OK;
+			else if (failure && file_exists)
+				status_id = GEBR_COMM_PROTOCOL_STATUS_PATH_EXISTS;
+			else
+				status_id = GEBR_COMM_PROTOCOL_STATUS_PATH_ERROR;
 
-			if (!success)
-				g_debug("on %s, new_path:'%s', old_path:'%s' sucessfull operation", __func__, new_path->str, old_path->str);
+			g_debug("on %s, new_path:'%s', old_path:'%s', status_id: '%d'", __func__, new_path->str, old_path->str, status_id);
 
 			/* frees */
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
@@ -653,7 +659,7 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
 							      gebr_comm_protocol_defs.ret_def, 2,
 							      gebrd->hostname,
-							      g_strdup_printf("%d", errno));
+							      g_strdup_printf("%d", status_id));
 		} else {
 			/* unknown message! */
 			goto err;
