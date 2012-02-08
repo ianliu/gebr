@@ -495,6 +495,20 @@ on_daemon_port_define(GebrmDaemon *daemon,
 	}
 }
 
+static void
+on_daemon_ret_path(GebrmDaemon *daemon,
+		      const gchar *daemon_addr,
+		      const gchar *status_id,
+		      GebrmApp *app)
+{
+	for (GList *i = app->priv->connections; i; i = i->next) {
+		GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(i->data);
+		gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
+						      gebr_comm_protocol_defs.ret_def, 2,
+						      daemon_addr,
+						      status_id);
+	}
+}
 static GebrmDaemon *
 gebrm_add_server_to_list(GebrmApp *app,
 			 const gchar *address,
@@ -519,6 +533,8 @@ gebrm_add_server_to_list(GebrmApp *app,
 			 G_CALLBACK(on_daemon_init), app);
 	g_signal_connect(daemon, "port-define",
 			 G_CALLBACK(on_daemon_port_define), app);
+	g_signal_connect(daemon, "ret-path",
+			 G_CALLBACK(on_daemon_ret_path), app);
 
 	gchar **tagsv = tags ? g_strsplit(tags, ",", -1) : NULL;
 	if (tagsv) {
@@ -976,24 +992,7 @@ on_client_request(GebrCommProtocolSocket *socket,
 				}
 			}
 
-		} else if (g_strcmp0(prefix, "/path") == 0) {
-			const gchar *server = gebr_comm_uri_get_param(uri, "server");
-			const gchar *path= gebr_comm_uri_get_param(uri, "path");
-
-			GebrmDaemon *daemon;
-			for (GList *i = app->priv->daemons; i; i = i->next) {
-				const gchar *addr = gebrm_daemon_get_address(i->data);
-				if (g_strcmp0(addr, server) == 0) {
-					daemon = i->data;
-					break;
-				}
-			}
-			g_debug("on %s, sending message to daemon '%s'", __func__,path);
-			GebrCommServer *comm_server = gebrm_daemon_get_server(daemon);
-			gebr_comm_protocol_socket_oldmsg_send(comm_server->socket, FALSE,
-							      gebr_comm_protocol_defs.path_def, 1,
-							      path);
-			}
+		} 
 	gebr_comm_uri_free(uri);
 	}
 }
@@ -1055,7 +1054,36 @@ on_client_parse_messages(GebrCommProtocolSocket *socket,
 			g_free(port_str);
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
-		}
+		} else if (message->hash == gebr_comm_protocol_defs.path_def.code_hash) {
+			GList *arguments;
+
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 4)) == NULL)
+				goto err;
+
+			GString *server = g_list_nth_data(arguments, 0);
+			GString *new_path = g_list_nth_data(arguments, 1);
+			GString *old_path = g_list_nth_data(arguments, 2);
+			GString *option = g_list_nth_data(arguments, 3);
+
+
+			GebrmDaemon *daemon;
+			for (GList *i = app->priv->daemons; i; i = i->next) {
+				const gchar *addr = gebrm_daemon_get_address(i->data);
+				if (g_strcmp0(addr, server->str) == 0) {
+					daemon = i->data;
+					break;
+				}
+			}
+			const gchar *address = gebrm_daemon_get_address(daemon);
+			g_debug("on %s, sending message to daemon '%s', '%s'", __func__, new_path->str, old_path->str);
+			GebrCommServer *comm_server = gebrm_daemon_get_server(daemon);
+			gebr_comm_protocol_socket_oldmsg_send(comm_server->socket, TRUE,
+							      gebr_comm_protocol_defs.path_def, 4,
+							      address,
+							      new_path->str,
+							      old_path->str,
+							      option->str);
+			}
 
 		gebr_comm_message_free(message);
 		socket->protocol->messages = g_list_delete_link(socket->protocol->messages, link);

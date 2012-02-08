@@ -37,6 +37,7 @@
 #include <fcntl.h>
 #include <gdome.h>
 #include <glib/gi18n.h>
+#include <glib/gstdio.h>
 #include <libgebr/comm/gebr-comm-protocol.h>
 #include <libgebr/utils.h>
 #include <netdb.h>
@@ -609,20 +610,50 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			/* frees */
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		} else if (message->hash == gebr_comm_protocol_defs.path_def.code_hash) {
+			g_debug("------------------------on %s",__func__);
 			GList *arguments;
-			GString *path;
 
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 1)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 4)) == NULL)
 				goto err;
-			path = g_list_nth_data(arguments, 0);
 
-			gint success = g_mkdir_with_parents(path->str, 0700);
+			//GString *server = g_list_nth_data(arguments, 0);
+			GString *new_path = g_list_nth_data(arguments, 1);
+			GString *old_path = g_list_nth_data(arguments, 2);
+			GString *opt = g_list_nth_data(arguments, 3);
+
+			gint success = 0; 
+			gint option = atoi(opt->str);
+
+			switch (option){
+			case GEBR_COMM_PROTOCOL_PATH_CREATE:
+				if (g_file_test(new_path->str, G_FILE_TEST_IS_DIR))
+					errno = 666;
+				else
+					success = g_mkdir_with_parents(new_path->str, 0700);
+				break;
+			case GEBR_COMM_PROTOCOL_PATH_RENAME:
+				success = g_rename(old_path->str, new_path->str);
+				break;
+			case GEBR_COMM_PROTOCOL_PATH_DELETE:
+				success = g_rmdir(new_path->str);
+				break;
+			default:
+				g_warn_if_reached();
+				break;
+			}
+
+			g_debug("erro numero:%d", errno);
+
 			if (!success)
-				g_debug("on %s, '%s' sucessfully created", __func__, path->str);
+				g_debug("on %s, new_path:'%s', old_path:'%s' sucessfull operation", __func__, new_path->str, old_path->str);
 
 			/* frees */
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 
+			gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
+							      gebr_comm_protocol_defs.ret_def, 2,
+							      gebrd->hostname,
+							      g_strdup_printf("%d", errno));
 		} else {
 			/* unknown message! */
 			goto err;

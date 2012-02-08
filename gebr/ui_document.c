@@ -35,6 +35,7 @@
 #include <libgebr/gui/gebr-gui-utils.h>
 #include <libgebr/gui/gebr-gui-value-sequence-edit.h>
 #include <libgebr/gui/gebr-gui-file-entry.h>
+#include <libgebr/comm/gebr-comm-protocol.h>
 
 #include "ui_parameters.h"
 #include "ui_document.h"
@@ -1712,17 +1713,14 @@ gebr_ui_document_set_properties_from_builder(GebrGeoXmlDocument *document,
 				break;
 			}
 			if (daemon_addr){
+				g_debug("enviando mensagem do daemon '%s' ao maestro '%s'", daemon_addr, gebr_maestro_server_get_address(maestro_server));
 
-				GebrCommUri *uri = gebr_comm_uri_new();
-				gebr_comm_uri_set_prefix(uri, "/path");
-				gebr_comm_uri_add_param(uri, "server", daemon_addr);
-				gebr_comm_uri_add_param(uri, "path", base_path);
-				gchar *url = gebr_comm_uri_to_string(uri);
-				gebr_comm_uri_free(uri);
-
-				gebr_comm_protocol_socket_send_request(comm_server->socket,
-								       GEBR_COMM_HTTP_METHOD_PUT, url, NULL);
-				g_free(url);
+				gebr_comm_protocol_socket_oldmsg_send(comm_server->socket, FALSE,
+								      gebr_comm_protocol_defs.path_def, 4,
+								      daemon_addr,
+								      base_path,
+								      NULL,
+								      gebr_comm_protocol_path_enum_to_str (GEBR_COMM_PROTOCOL_PATH_CREATE));
 			}
 	}
 

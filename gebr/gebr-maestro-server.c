@@ -441,6 +441,21 @@ parse_messages(GebrCommServer *comm_server,
 				gebr_comm_server_set_logged(comm_server);
 				gebr_comm_server_forward_x11(maestro->priv->server, atoi(port->str));
 				gebr_comm_protocol_socket_oldmsg_split_free(arguments);
+			} else if (ret_hash == gebr_comm_protocol_defs.path_def.code_hash) {
+				GList *arguments;
+				GString *daemon_addr, *status_id;
+
+				if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
+					goto err;
+
+				daemon_addr = g_list_nth_data(arguments, 0);
+				status_id= g_list_nth_data(arguments, 1);
+
+				//TODO: FAZER ALGO COM O RET DO PATH_DEF
+				g_debug("on %s, daemon_addr:'%s', error:'%s'", __func__, daemon_addr->str, status_id->str);
+
+
+				gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 			}
 		} else if (message->hash == gebr_comm_protocol_defs.err_def.code_hash) {
 			GList *arguments;

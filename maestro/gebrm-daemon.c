@@ -61,6 +61,7 @@ enum {
 	TASK_DEFINE,
 	DAEMON_INIT,
 	PORT_DEFINE,
+	RET_PATH,
 	LAST_SIGNAL
 };
 
@@ -284,8 +285,7 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 
 				g_strfreev(accounts);
 				gebr_comm_protocol_socket_oldmsg_split_free(arguments);
-			}
-			else if (ret_hash == gebr_comm_protocol_defs.gid_def.code_hash) {
+			} else if (ret_hash == gebr_comm_protocol_defs.gid_def.code_hash) {
 				GList *arguments;
 
 				if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
@@ -302,6 +302,23 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 				}
 
 				g_signal_emit(daemon, signals[PORT_DEFINE], 0, gid->str, port->str);
+
+				gebr_comm_protocol_socket_oldmsg_split_free(arguments);
+			} else if (ret_hash == gebr_comm_protocol_defs.path_def.code_hash) {
+				GList *arguments;
+				GString *daemon_addr, *status_id;
+
+				if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
+					goto err;
+
+				daemon_addr = g_list_nth_data(arguments, 0);
+				status_id= g_list_nth_data(arguments, 1);
+
+				g_debug("Ret from path_def (receiving/sending), daemon_addr:'%s', status:'%s'", 
+					daemon_addr->str, status_id->str);
+
+
+				g_signal_emit(daemon, signals[RET_PATH], 0, daemon_addr->str, status_id->str);
 
 				gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 			}
@@ -549,6 +566,16 @@ gebrm_daemon_class_init(GebrmDaemonClass *klass)
 			     G_OBJECT_CLASS_TYPE (object_class),
 			     G_SIGNAL_RUN_FIRST,
 			     G_STRUCT_OFFSET(GebrmDaemonClass, port_define),
+			     NULL, NULL,
+			     gebrm_cclosure_marshal_VOID__STRING_STRING,
+			     G_TYPE_NONE,
+			     2, G_TYPE_STRING, G_TYPE_STRING);
+
+	signals[RET_PATH] =
+		g_signal_new("ret-path",
+			     G_OBJECT_CLASS_TYPE (object_class),
+			     G_SIGNAL_RUN_FIRST,
+			     G_STRUCT_OFFSET(GebrmDaemonClass, ret_path),
 			     NULL, NULL,
 			     gebrm_cclosure_marshal_VOID__STRING_STRING,
 			     G_TYPE_NONE,
