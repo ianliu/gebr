@@ -16,6 +16,7 @@
  */
 
 #include <glib.h>
+#include <glib/gstdio.h>
 #include <geoxml/geoxml.h>
 
 #include "../utils.h"
@@ -331,6 +332,27 @@ test_gebr_gtk_bookmarks_add_paths(void)
 			"/home/foo/liu BASE (GeBR)\n"
 			"/home/foo/liu/data DATA (GeBR)\n"
 			"/home/foo/liu/boo BOOO (GeBR)\n");
+	g_unlink(file);
+}
+
+static void
+test_gebr_gtk_bookmarks_remove_paths(void)
+{
+	GebrGeoXmlLine *line = gebr_geoxml_line_new();
+	gebr_geoxml_line_append_path(line, "BASE", "/home/foo/liu");
+	gebr_geoxml_line_append_path(line, "DATA", "/home/foo/liu/data");
+	gebr_geoxml_line_append_path(line, "BOOO", "/home/foo/liu/boo");
+
+	gchar *** paths = gebr_geoxml_line_get_paths(line);
+
+	gchar *contents;
+	const gchar *file = TEST_SRCDIR "/bookmarks";
+	gebr_gtk_bookmarks_add_paths(file, "", paths);
+	gebr_gtk_bookmarks_remove_paths(file, paths);
+
+	g_assert(g_file_get_contents(file, &contents, NULL, NULL));
+	g_assert_cmpstr(contents, ==, "");
+	g_unlink(file);
 }
 
 int main(int argc, char *argv[])
@@ -349,6 +371,7 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/utils/gebr_relativise_path", test_gebr_relativise_path);
 	g_test_add_func("/libgebr/utils/gebr_resolve_relative_path", test_gebr_resolve_relative_path);
 	g_test_add_func("/libgebr/utils/gebr_gtk_bookmarks_add_paths", test_gebr_gtk_bookmarks_add_paths);
+	g_test_add_func("/libgebr/utils/gebr_gtk_bookmarks_remove_paths", test_gebr_gtk_bookmarks_remove_paths);
 
 	gint ret = g_test_run();
 	gebr_geoxml_finalize();
