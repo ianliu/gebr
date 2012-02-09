@@ -1023,3 +1023,60 @@ gebr_resolve_relative_path(const char *path,
 	
 	return g_string_free(str, FALSE);
 }
+
+void
+gebr_gtk_bookmarks_add_paths(const gchar *uri_prefix,
+                             gchar ***paths)
+{
+	gchar *filename = g_build_filename(g_get_home_dir(), ".gtk-bookmarks", NULL);
+	FILE *file_bookmarks = fopen(filename, "r+");
+
+	for (gint i = 0; paths[i]; i++) {
+		gchar *name = g_strdup_printf("%s (GeBR)", paths[i][1]);
+		fprintf(file_bookmarks, "%s%s %s", uri_prefix, paths[i][0], name);
+		g_free(name);
+	}
+
+	g_free(filename);
+	fclose(file_bookmarks);
+}
+
+void
+gebr_gtk_bookmarks_remove_paths(gchar ***paths)
+{
+	gchar *content;
+	GError *err = NULL;
+	gchar *filename = g_build_filename(g_get_home_dir(), ".gtk-bookmarks", NULL);
+
+	if (!g_file_get_contents(filename, &content, NULL, &err)) {
+		g_debug("Cannot obtain content of bookmark file: %s", err->message);
+		g_error_free(err);
+		return;
+	}
+
+	gchar **lines = g_strsplit(content, "\n", -1);
+	GString *real_bookmarks = g_string_new(NULL);
+	gboolean has_path;
+
+	for (gint i = 0; lines[i]; i++) {
+		has_path = FALSE;
+		for (gint j = 0; paths[j]; j++) {
+			gchar *suffix = g_strdup_printf("%s %s (GeBR)", paths[j][0], paths[j][1]);
+			if (g_str_has_suffix(lines[i], suffix))
+				has_path = TRUE;
+			g_free(suffix);
+		}
+		if (!has_path)
+			real_bookmarks = g_string_append(real_bookmarks, lines[i]);
+	}
+
+	if (!g_file_set_contents(filename, real_bookmarks->str, -1, &err)) {
+		g_debug("Cannot set content of bookmark file: %s", err->message);
+		g_error_free(err);
+		return;
+	}
+
+	g_free(content);
+	g_free(filename);
+	g_string_free(real_bookmarks, TRUE);
+}

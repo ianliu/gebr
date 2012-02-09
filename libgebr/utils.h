@@ -259,6 +259,22 @@ gchar *gebr_relativise_path(const gchar *path,
 gchar *gebr_resolve_relative_path(const char *path,
 				gchar ***pvector);
 
+/**
+ * gebr_gtk_bookmarks_add_paths:
+ *
+ * Add bookmarks on .gtk-bookmarks file with @uri_prefix and base paths set on vector @paths,
+ * and include suffix (GeBR) on name to identify
+ */
+void gebr_gtk_bookmarks_add_paths(const gchar *uri_prefix,
+                                  gchar ***paths);
+
+/**
+ * gebr_gtk_bookmarks_remove_paths:
+ *
+ * Remove bookmarks according @paths for .gtk-bookmarks file
+ */
+void gebr_gtk_bookmarks_remove_paths(gchar ***paths);
+
 G_END_DECLS
 
 #endif				//__GEBR_UTILS_H
