@@ -313,6 +313,26 @@ test_gebr_resolve_relative_path(void)
 	g_assert_cmpstr(gebr_resolve_relative_path("/usr/foo", paths), ==, "/usr/foo");
 }
 
+static void
+test_gebr_gtk_bookmarks_add_paths(void)
+{
+	GebrGeoXmlLine *line = gebr_geoxml_line_new();
+	gebr_geoxml_line_append_path(line, "BASE", "/home/foo/liu");
+	gebr_geoxml_line_append_path(line, "DATA", "/home/foo/liu/data");
+	gebr_geoxml_line_append_path(line, "BOOO", "/home/foo/liu/boo");
+
+	gchar *** paths = gebr_geoxml_line_get_paths(line);
+
+	gchar *contents;
+	const gchar *file = TEST_SRCDIR "/bookmarks";
+	gebr_gtk_bookmarks_add_paths(file, "", paths);
+	g_assert(g_file_get_contents(file, &contents, NULL, NULL));
+	g_assert_cmpstr(contents, ==,
+			"/home/foo/liu BASE (GeBR)\n"
+			"/home/foo/liu/data DATA (GeBR)\n"
+			"/home/foo/liu/boo BOOO (GeBR)\n");
+}
+
 int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
@@ -328,6 +348,7 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/utils/gebr_utf8_strstr", test_gebr_utf8_strstr);
 	g_test_add_func("/libgebr/utils/gebr_relativise_path", test_gebr_relativise_path);
 	g_test_add_func("/libgebr/utils/gebr_resolve_relative_path", test_gebr_resolve_relative_path);
+	g_test_add_func("/libgebr/utils/gebr_gtk_bookmarks_add_paths", test_gebr_gtk_bookmarks_add_paths);
 
 	gint ret = g_test_run();
 	gebr_geoxml_finalize();

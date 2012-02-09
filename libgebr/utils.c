@@ -1031,11 +1031,12 @@ gebr_gtk_bookmarks_add_paths(const gchar *filename,
 {
 	FILE *file_bookmarks = fopen(filename, "r+");
 
-	for (gint i = 0; paths[i]; i++) {
-		gchar *name = g_strdup_printf("%s (GeBR)", paths[i][1]);
-		fprintf(file_bookmarks, "%s%s %s", uri_prefix, paths[i][0], name);
-		g_free(name);
-	}
+	if (!file_bookmarks)
+		file_bookmarks = fopen(filename, "w");
+
+	for (gint i = 0; paths[i]; i++)
+		fprintf(file_bookmarks, "%s%s %s (GeBR)\n",
+			uri_prefix, paths[i][0], paths[i][1]);
 
 	fclose(file_bookmarks);
 }
