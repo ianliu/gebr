@@ -1693,35 +1693,54 @@ gebr_ui_document_set_properties_from_builder(GebrGeoXmlDocument *document,
 	GebrGeoXmlDocumentType type;
 	type = gebr_geoxml_document_get_type(document);
 	if (type == GEBR_GEOXML_DOCUMENT_TYPE_LINE) {
-		GtkEntry *entry = GTK_ENTRY(gtk_builder_get_object(builder, "entry_base"));
-		const gchar *base_path = gtk_entry_get_text(entry);
+		GtkEntry *entry_base = GTK_ENTRY(gtk_builder_get_object(builder, "entry_base"));
+		GtkEntry *entry_import = GTK_ENTRY(gtk_builder_get_object(builder, "entry_import"));
+		const gchar *base_path = gtk_entry_get_text(entry_base);
+		const gchar *import_path = gtk_entry_get_text(entry_import);
 		gebr_geoxml_line_set_base_path(GEBR_GEOXML_LINE(document), base_path);
+		gebr_geoxml_line_set_import_path(GEBR_GEOXML_LINE(document), import_path);
 
-			GebrMaestroServer *maestro_server = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
-			GebrCommServer *comm_server = gebr_maestro_server_get_server(maestro_server);
+		gchar ***paths = gebr_geoxml_line_get_paths(GEBR_GEOXML_LINE(document));
 
-			GtkTreeIter daemons_iter;
-			GtkTreeModel *daemons_model = gebr_maestro_server_get_model(maestro_server, FALSE, NULL);
-			const gchar *daemon_addr;
+		gchar **split_path;
+		GString *buffer = g_string_new(NULL);
 
-			gebr_gui_gtk_tree_model_foreach(daemons_iter, daemons_model) {
-				GebrDaemonServer *daemon;
+		for (gint i=0; paths[i]; i++){
+			//g_debug("caminho '%d', %s", i, paths[i][0]);
+			split_path = g_strsplit(paths[i][0], ",", -1);
+			gchar *escaped = g_strjoinv(",,", split_path);
+			g_string_append_c(buffer, ',');
+			g_string_append(buffer, escaped);
+			g_free(escaped);
+		}
+		if (buffer->len)
+			g_string_erase(buffer, 0, 1);
 
-				gtk_tree_model_get(daemons_model, &daemons_iter,
-						   0, &daemon, -1);
-				daemon_addr = gebr_daemon_server_get_address(daemon);
-				break;
-			}
-			if (daemon_addr){
-				g_debug("enviando mensagem do daemon '%s' ao maestro '%s'", daemon_addr, gebr_maestro_server_get_address(maestro_server));
+		GebrMaestroServer *maestro_server = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+		GebrCommServer *comm_server = gebr_maestro_server_get_server(maestro_server);
 
-				gebr_comm_protocol_socket_oldmsg_send(comm_server->socket, FALSE,
-								      gebr_comm_protocol_defs.path_def, 4,
-								      daemon_addr,
-								      base_path,
-								      NULL,
-								      gebr_comm_protocol_path_enum_to_str (GEBR_COMM_PROTOCOL_PATH_CREATE));
-			}
+		GtkTreeIter daemons_iter;
+		GtkTreeModel *daemons_model = gebr_maestro_server_get_model(maestro_server, FALSE, NULL);
+		const gchar *daemon_addr;
+
+		gebr_gui_gtk_tree_model_foreach(daemons_iter, daemons_model) {
+			GebrDaemonServer *daemon;
+
+			gtk_tree_model_get(daemons_model, &daemons_iter,
+					   0, &daemon, -1);
+			daemon_addr = gebr_daemon_server_get_address(daemon);
+			break;
+		}
+		if (daemon_addr){
+			g_debug("enviando mensagem '%s' referente ao daemon '%s' ao maestro '%s'", buffer->str, daemon_addr, gebr_maestro_server_get_address(maestro_server));
+
+			gebr_comm_protocol_socket_oldmsg_send(comm_server->socket, FALSE,
+							      gebr_comm_protocol_defs.path_def, 4,
+							      daemon_addr,
+							      buffer->str,
+							      NULL,
+							      gebr_comm_protocol_path_enum_to_str (GEBR_COMM_PROTOCOL_PATH_CREATE));
+		}
 	}
 
 	document_save(document, TRUE, TRUE);

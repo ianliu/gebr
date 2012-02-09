@@ -97,6 +97,26 @@ gebr_geoxml_line_set_base_path(GebrGeoXmlLine *line, const gchar *base)
 	}
 }
 
+void gebr_geoxml_line_set_import_path(GebrGeoXmlLine *line, const gchar *import_path){
+	GebrGeoXmlSequence *seq;
+
+	gebr_geoxml_line_get_path(line, &seq, 0);
+
+	gchar *path_name;
+	while (seq) {
+		//GebrLinePath *line_path = gebr_geoxml_line_get_path(line, &seq, 0);
+		path_name = gebr_geoxml_line_path_get_name((GebrGeoXmlLinePath*) seq);
+		if(g_strcmp0(path_name, "IMPORT")==0)
+			break;
+		gebr_geoxml_sequence_next(&seq);
+	}
+
+	if (seq)
+		gebr_geoxml_value_sequence_set((GebrGeoXmlValueSequence*) seq, path_name);
+	else
+		gebr_geoxml_line_append_path(line, "IMPORT", import_path);
+}
+
 GebrGeoXmlLineFlow *gebr_geoxml_line_append_flow(GebrGeoXmlLine * line, const gchar * source)
 {
 	if (line == NULL)

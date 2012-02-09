@@ -95,6 +95,10 @@ GebrGeoXmlLine *gebr_geoxml_line_new();
 void gebr_geoxml_line_set_base_path(GebrGeoXmlLine *line, const gchar *base);
 
 /**
+ * Sets the import path
+ */
+void gebr_geoxml_line_set_import_path(GebrGeoXmlLine *line, const gchar *import);
+/**
  * Create a new flow and append it to list of flows references.
  *
  * If \p line or \p source is NULL returns NULL
