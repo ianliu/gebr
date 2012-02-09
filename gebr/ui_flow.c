@@ -149,7 +149,7 @@ run_flow(GebrGeoXmlFlow *flow,
 		g_free(tmp);
 	}
 	gchar ***tmp = gebr_geoxml_line_get_paths(gebr.line);
-	gebr_flow_modify_paths(flow, func, FALSE, tmp);
+	gebr_flow_modify_paths(GEBR_GEOXML_FLOW(clone), func, FALSE, tmp);
 	gebr_pairstrfreev(tmp);
 
 	gebr_geoxml_document_merge_dicts(gebr.validator,
