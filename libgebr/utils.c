@@ -1001,6 +1001,7 @@ gebr_resolve_relative_path(const char *path,
 			   gchar ***pvector)
 {
 	g_return_val_if_fail(path != NULL, NULL);
+	g_return_val_if_fail(pvector != NULL, NULL);
 	
 	gint i = 0;
 	gchar **dirspath = g_strsplit(path, "/", -1);
