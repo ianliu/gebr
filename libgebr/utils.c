@@ -910,36 +910,40 @@ gebr_pairstrfreev(gchar ***strv)
 	g_free(strv);
 }
 
-static const gchar *
-remove_gvfs_prefix(const gchar *path)
+static gchar *
+remove_gvfs_prefix(gchar *path)
 {
-	gchar *gvfs_dir1 = g_build_filename(g_get_home_dir(), ".gvfs" G_DIR_SEPARATOR_S, NULL);
-	gchar *gvfs_dir2 = g_build_filename("$HOME", ".gvfs" G_DIR_SEPARATOR_S, NULL);
+	gchar *gvfs_dir = g_build_filename(g_get_home_dir(), ".gvfs" G_DIR_SEPARATOR_S, NULL);
+	gchar *ret;
 
-	if (g_str_has_prefix(path, gvfs_dir1))
-		path = (const gchar*) strchr(path + strlen(gvfs_dir1), G_DIR_SEPARATOR);
-	else if (g_str_has_prefix(path, gvfs_dir2))
-		path = (const gchar*) strchr(path + strlen(gvfs_dir2), G_DIR_SEPARATOR);
-	g_free(gvfs_dir1);
-	g_free(gvfs_dir2);
+	if (g_str_has_prefix(path, gvfs_dir))
+		ret = strchr(path + strlen(gvfs_dir), G_DIR_SEPARATOR);
+	else
+		ret = path;
+	g_free(gvfs_dir);
 
-	return path;
+	return ret;
 }
 
 gchar *
-gebr_relativise_path(const gchar *path,
+gebr_relativise_path(const gchar *path_str,
 		     gchar ***pvector)
 {
-	g_return_val_if_fail(path != NULL, NULL);
+	g_return_val_if_fail(path_str != NULL, NULL);
 
-	if (!*path)
+	if (!*path_str)
 		return g_strdup("");
 
 	for (int i = 0; pvector[i]; i++)
-		if (g_str_has_prefix(path, pvector[i][1]))
-			return g_strdup(path);
+		if (g_str_has_prefix(path_str, pvector[i][1]))
+			return g_strdup(path_str);
 
-	path = remove_gvfs_prefix(path);
+	GString *tmp = g_string_new(path_str);
+	gebr_path_resolve_home_variable(tmp);
+	gchar *tmp2 = g_string_free(tmp, FALSE);
+	gchar *path = g_strdup(remove_gvfs_prefix(tmp2));
+	g_free(tmp2);
+
 	g_return_val_if_fail(path != NULL, NULL);
 
 	gchar **dirspath = g_strsplit(path, "/", -1);
@@ -957,7 +961,7 @@ gebr_relativise_path(const gchar *path,
 	for (int i = 0; pvector[i]; i++) {
 		dirtmp = g_strsplit(pvector[i][0], "/" , -1);
 		j = 0;
-		while(dirspath[j] != NULL || dirtmp[j] != NULL) {
+		while (dirspath[j] != NULL || dirtmp[j] != NULL) {
 			if (g_strcmp0(dirspath[j], dirtmp[j]) != 0) {
 				if (j > max_size) {
 					max_size = j;
@@ -978,9 +982,11 @@ gebr_relativise_path(const gchar *path,
 	g_strfreev(dirspath);
 
 	if (max_size < size_default)
-		return g_strdup(path);
+		return path;
 
 	GString *rel_path = g_string_new(path);
+	g_free(path);
+
 	if (g_str_has_suffix(pvector[max_index][0], "/"))
 		rel_path = g_string_erase(rel_path, 0, (strlen(pvector[max_index][0]) - 1));
 	else

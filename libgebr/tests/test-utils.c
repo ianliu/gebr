@@ -266,26 +266,35 @@ test_gebr_utf8_strstr(void)
 static void
 test_gebr_relativise_path(void)
 {
+	const gchar *home = g_get_home_dir();
+	gchar *BASE = g_build_filename(home, "fooliu", NULL);
+	gchar *DATA = g_build_filename(home, "fooliu", "data", NULL);
+	gchar *DATA1 = g_build_filename(home, "fooliu", "data1", NULL);
+
 	GebrGeoXmlLine *line = gebr_geoxml_line_new();
-	gebr_geoxml_line_append_path(line, "BASE", "/home/foo/liu");
-	gebr_geoxml_line_append_path(line, "DATA", "/home/foo/liu/data");
-	gebr_geoxml_line_append_path(line, "BOO", "/home/foo/liu/boo");
+	gebr_geoxml_line_append_path(line, "BASE", BASE);
+	gebr_geoxml_line_append_path(line, "DATA", DATA);
+	gebr_geoxml_line_append_path(line, "DATA1", DATA1);
 
 	gchar *** paths = gebr_geoxml_line_get_paths(line);
 
-#define BASE "/home/foo/liu"
-#define PRE "/home/ian/.gvfs/sftp on dell2"
+	g_assert_cmpstr(gebr_relativise_path(g_build_filename("$HOME", "fooliu", NULL), paths), ==, "BASE");
+	g_assert_cmpstr(gebr_relativise_path(g_build_filename("$HOME", "fooliu", "data", NULL), paths), ==, "DATA");
+	g_assert_cmpstr(gebr_relativise_path(g_build_filename("$HOME", "fooliu", "data", "boo", NULL), paths), ==, "DATA/boo");
 
-	g_assert_cmpstr(gebr_relativise_path(PRE BASE, paths), ==, "BASE");
-	g_assert_cmpstr(gebr_relativise_path(PRE BASE "/data", paths), ==, "DATA");
-	g_assert_cmpstr(gebr_relativise_path(PRE BASE "/data/1", paths), ==, "DATA/1");
+	g_assert_cmpstr(gebr_relativise_path(g_build_filename(BASE, NULL), paths), ==, "BASE");
+	g_assert_cmpstr(gebr_relativise_path(g_build_filename(DATA, NULL), paths), ==, "DATA");
+	g_assert_cmpstr(gebr_relativise_path(g_build_filename(DATA, "boo", NULL), paths), ==, "DATA/boo");
 
-#undef PRE
-#define PRE "$HOME/.gvfs/sftp on dell2"
+	gchar *PRE = g_build_filename(home, ".gvfs", "sftp on dell2", NULL);
+	g_assert_cmpstr(gebr_relativise_path(g_build_filename(PRE, BASE, NULL), paths), ==, "BASE");
+	g_assert_cmpstr(gebr_relativise_path(g_build_filename(PRE, BASE, "data", NULL), paths), ==, "DATA");
+	g_assert_cmpstr(gebr_relativise_path(g_build_filename(PRE, BASE, "data", "boo", NULL), paths), ==, "DATA/boo");
 
-	g_assert_cmpstr(gebr_relativise_path(PRE BASE, paths), ==, "BASE");
-	g_assert_cmpstr(gebr_relativise_path(PRE BASE "/data", paths), ==, "DATA");
-	g_assert_cmpstr(gebr_relativise_path(PRE BASE "/data/1", paths), ==, "DATA/1");
+	PRE = g_build_filename("$HOME", ".gvfs", "sftp on dell2", NULL);
+	g_assert_cmpstr(gebr_relativise_path(g_build_filename(PRE, BASE, NULL), paths), ==, "BASE");
+	g_assert_cmpstr(gebr_relativise_path(g_build_filename(PRE, BASE, "data", NULL), paths), ==, "DATA");
+	g_assert_cmpstr(gebr_relativise_path(g_build_filename(PRE, BASE, "data", "boo", NULL), paths), ==, "DATA/boo");
 }
 
 static void
