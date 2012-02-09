@@ -1025,10 +1025,10 @@ gebr_resolve_relative_path(const char *path,
 }
 
 void
-gebr_gtk_bookmarks_add_paths(const gchar *uri_prefix,
+gebr_gtk_bookmarks_add_paths(const gchar *filename,
+                             const gchar *uri_prefix,
                              gchar ***paths)
 {
-	gchar *filename = g_build_filename(g_get_home_dir(), ".gtk-bookmarks", NULL);
 	FILE *file_bookmarks = fopen(filename, "r+");
 
 	for (gint i = 0; paths[i]; i++) {
@@ -1037,16 +1037,15 @@ gebr_gtk_bookmarks_add_paths(const gchar *uri_prefix,
 		g_free(name);
 	}
 
-	g_free(filename);
 	fclose(file_bookmarks);
 }
 
 void
-gebr_gtk_bookmarks_remove_paths(gchar ***paths)
+gebr_gtk_bookmarks_remove_paths(const gchar *filename,
+				gchar ***paths)
 {
 	gchar *content;
 	GError *err = NULL;
-	gchar *filename = g_build_filename(g_get_home_dir(), ".gtk-bookmarks", NULL);
 
 	if (!g_file_get_contents(filename, &content, NULL, &err)) {
 		g_debug("Cannot obtain content of bookmark file: %s", err->message);
@@ -1077,6 +1076,5 @@ gebr_gtk_bookmarks_remove_paths(gchar ***paths)
 	}
 
 	g_free(content);
-	g_free(filename);
 	g_string_free(real_bookmarks, TRUE);
 }
