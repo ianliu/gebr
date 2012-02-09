@@ -910,6 +910,22 @@ gebr_pairstrfreev(gchar ***strv)
 	g_free(strv);
 }
 
+static const gchar *
+remove_gvfs_prefix(const gchar *path)
+{
+	gchar *gvfs_dir1 = g_build_filename(g_get_home_dir(), ".gvfs" G_DIR_SEPARATOR_S, NULL);
+	gchar *gvfs_dir2 = g_build_filename("$HOME", ".gvfs" G_DIR_SEPARATOR_S, NULL);
+
+	if (g_str_has_prefix(path, gvfs_dir1))
+		path = (const gchar*) strchr(path + strlen(gvfs_dir1), G_DIR_SEPARATOR);
+	else if (g_str_has_prefix(path, gvfs_dir2))
+		path = (const gchar*) strchr(path + strlen(gvfs_dir2), G_DIR_SEPARATOR);
+	g_free(gvfs_dir1);
+	g_free(gvfs_dir2);
+
+	return path;
+}
+
 gchar *
 gebr_relativise_path(const gchar *path,
 		     gchar ***pvector)
@@ -923,13 +939,8 @@ gebr_relativise_path(const gchar *path,
 		if (g_str_has_prefix(path, pvector[i][1]))
 			return g_strdup(path);
 
-	gchar *gvfs_dir = g_build_filename(g_get_home_dir(), ".gvfs" G_DIR_SEPARATOR_S, NULL);
-
-	if (g_str_has_prefix(path, gvfs_dir))
-		path = (const gchar*) strchr(path + strlen(gvfs_dir), G_DIR_SEPARATOR);
-
-	if (!path)
-		g_return_val_if_reached(NULL);
+	path = remove_gvfs_prefix(path);
+	g_return_val_if_fail(path != NULL, NULL);
 
 	gchar **dirspath = g_strsplit(path, "/", -1);
 	gchar **dirtmp;

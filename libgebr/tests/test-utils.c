@@ -273,11 +273,19 @@ test_gebr_relativise_path(void)
 
 	gchar *** paths = gebr_geoxml_line_get_paths(line);
 
+#define BASE "/home/foo/liu"
 #define PRE "/home/ian/.gvfs/sftp on dell2"
 
-	g_assert_cmpstr(gebr_relativise_path(PRE "/home/foo/liu", paths), ==, "BASE");
-	g_assert_cmpstr(gebr_relativise_path(PRE "/home/foo/liu/data", paths), ==, "DATA");
-	g_assert_cmpstr(gebr_relativise_path(PRE "/home/foo/liu/data/1", paths), ==, "DATA/1");
+	g_assert_cmpstr(gebr_relativise_path(PRE BASE, paths), ==, "BASE");
+	g_assert_cmpstr(gebr_relativise_path(PRE BASE "/data", paths), ==, "DATA");
+	g_assert_cmpstr(gebr_relativise_path(PRE BASE "/data/1", paths), ==, "DATA/1");
+
+#undef PRE
+#define PRE "$HOME/.gvfs/sftp on dell2"
+
+	g_assert_cmpstr(gebr_relativise_path(PRE BASE, paths), ==, "BASE");
+	g_assert_cmpstr(gebr_relativise_path(PRE BASE "/data", paths), ==, "DATA");
+	g_assert_cmpstr(gebr_relativise_path(PRE BASE "/data/1", paths), ==, "DATA/1");
 }
 
 static void
