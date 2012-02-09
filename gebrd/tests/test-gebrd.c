@@ -17,6 +17,7 @@
 #include <glib.h>
 
 #include "../gebrd.h"
+#include "../gebrd-client.h"
 
 #define MAX_AGRESSION 5
 #define MIN_AGRESSION 1
@@ -39,6 +40,28 @@ test_set_heuristic_aggression (void)
 	g_assert_cmpint(gebrd_app_set_heuristic_aggression(self, 2), ==, (self->nprocs - 1) * 1/4 + 1);
 }
 
+
+void
+test_parse_comma_separated_string (void)
+{
+	gchar *in;
+	GList *out;
+
+	in = g_strdup_printf("%s", "aa");
+	out = parse_comma_separated_string (in);
+
+	g_assert_cmpint(g_list_length(out), ==, 15);
+	g_free(in);
+
+
+	in = g_strdup_printf("%s", "aa,bb");
+	out = parse_comma_separated_string (in);
+
+	g_assert_cmpint(g_list_length(out), ==, 2);
+	g_free(in);
+}
+
+
 int main(int argc, char * argv[])
 {
 	g_type_init();
@@ -46,6 +69,8 @@ int main(int argc, char * argv[])
 
 	g_test_add_func("/gebrd/gebrd/heuristic_aggression_border", test_set_heuristic_aggression_border);
 	g_test_add_func("/gebrd/gebrd/heuristic_aggression", test_set_heuristic_aggression);
+	g_test_add_func("/gebrd/gebrd/parse_comma_separated_string", test_parse_comma_separated_string);
+
 
 	return g_test_run();
 }
