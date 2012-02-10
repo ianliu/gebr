@@ -322,13 +322,13 @@ gebr_ui_document_create_paths_tree(void)
 	GtkTreeIter iter, parent;
 	static GtkTreeStore *store_paths = NULL;
 	static gchar *data[][3] = {
-		{"IMPORT", "", "Description..."},
-		{"BASE", "", "Description..."},
-		{"DATA", "<BASE>/data", "Description..."},
-		{"SCRATCH", "<BASE>/tmp", "Description..."},
-		{"EXPORT", "<BASE>/export", "Description..."},
-		{"TABLE", "<BASE>/table", "Description..."},
-		{"CUSTOM", "<BASE>/misc", "Description..."},
+		{"IMPORT", "", N_("Shared folder that you can access files from")},
+		{"BASE", "", N_("Base directory for this line")},
+		{"DATA", "<BASE>/data", N_("Directory for saving Flow's results")},
+		{"SCRATCH", "<BASE>/tmp", N_("Directory for temporary files")},
+		{"EXPORT", "<BASE>/export", N_("Directory for exporting data (images, etc.)")},
+		{"TABLE", "<BASE>/table", N_("Directory for saving tabular data")},
+		{"CUSTOM", "<BASE>/misc", N_("Directory for miscellaneous data")},
 	};
 
 	if (!store_paths) {
@@ -338,7 +338,7 @@ gebr_ui_document_create_paths_tree(void)
 			gtk_tree_store_set(store_paths, &parent,
 					   0, data[i][0],
 					   1, data[i][1],
-					   2, data[i][2],
+					   2, _(data[i][2]),
 					   -1);
 		}
 		for (int i = 2; i < G_N_ELEMENTS(data); i++) {
@@ -346,7 +346,7 @@ gebr_ui_document_create_paths_tree(void)
 			gtk_tree_store_set(store_paths, &iter,
 					   0, data[i][0],
 					   1, data[i][1],
-					   2, data[i][2],
+					   2, _(data[i][2]),
 					   -1);
 		}
 	}
