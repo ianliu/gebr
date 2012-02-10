@@ -784,6 +784,12 @@ static void gebr_gui_parameter_widget_configure(struct gebr_gui_parameter_widget
 			gebr_gui_file_entry_new((GebrGuiFileEntryCustomize)
 						gebr_gui_parameter_widget_file_entry_customize_function,
 						parameter_widget);
+		GebrGeoXmlDocument *line;
+		gebr_validator_get_documents(parameter_widget->validator, NULL, &line, NULL);
+		if (line)
+			gebr_gui_file_entry_set_paths_from_line(GEBR_GUI_FILE_ENTRY(file_entry),
+								parameter_widget->prefix,
+								GEBR_GEOXML_LINE(line));
 		activatable_entry = GTK_ENTRY (GEBR_GUI_FILE_ENTRY (file_entry)->entry);
 		if (may_complete) {
 			completion_model = generate_completion_model(parameter_widget);
@@ -1470,11 +1476,13 @@ static void
 parameter_widget_free(GebrGuiParameterWidget *self)
 {
 	gebr_geoxml_object_unref(self->parameter);
+	g_free(self->prefix);
 	g_free(self);
 }
 
 GebrGuiParameterWidget *gebr_gui_parameter_widget_new(GebrGeoXmlParameter *parameter,
 						      GebrValidator       *validator,
+						      const gchar         *uri_prefix,
 						      gboolean             use_default_value,
 						      gpointer             data)
 {
@@ -1499,6 +1507,7 @@ GebrGuiParameterWidget *gebr_gui_parameter_widget_new(GebrGeoXmlParameter *param
 	self->user_data = NULL;
 	self->group_warning_widget = NULL;
 	self->widget = gtk_vbox_new(FALSE, 10);
+	self->prefix = g_strdup(uri_prefix);
 	g_object_weak_ref(G_OBJECT(self->widget), (GWeakNotify) parameter_widget_free, self);
 	g_signal_connect(self->widget, "mnemonic-activate",
 			 G_CALLBACK(on_mnemonic_activate), self);

@@ -47,6 +47,7 @@ struct gebr_gui_parameter_widget
 	gboolean use_default_value;
 	gpointer data;
 	gboolean readonly;
+	gchar *prefix;
 
 	GtkWidget *widget;
 	GtkWidget *value_widget;
@@ -68,6 +69,7 @@ struct gebr_gui_parameter_widget
  */
 GebrGuiParameterWidget *gebr_gui_parameter_widget_new(GebrGeoXmlParameter *parameter,
 						      GebrValidator       *validator,
+						      const gchar         *uri_prefix,
 						      gboolean             use_default_value,
 						      gpointer             data);
 

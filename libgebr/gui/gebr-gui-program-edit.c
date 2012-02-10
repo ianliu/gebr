@@ -404,11 +404,13 @@ static GtkWidget *gebr_gui_program_edit_load_parameter(GebrGuiProgramEdit  *prog
 			gebr_gui_parameter_widget =
 			    gebr_gui_parameter_widget_new(parameter,
 							  program_edit->validator,
+							  program_edit->prefix,
 							  program_edit->use_default,
 							  NULL);
 		else
 			gebr_gui_parameter_widget = gebr_gui_parameter_widget_new(parameter,
 										  program_edit->validator,
+										  program_edit->prefix,
 										  program_edit->use_default,
 										  program_edit->parameter_widget_data);
 
