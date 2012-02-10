@@ -1,9 +1,9 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <requires lib="gtk+" version="2.16"/>
-  <!-- interface-naming-policy project-wide -->
   <object class="GtkTable" id="table">
     <property name="visible">True</property>
+    <property name="can_focus">False</property>
     <property name="border_width">5</property>
     <property name="n_rows">4</property>
     <property name="n_columns">2</property>
@@ -12,6 +12,7 @@
     <child>
       <object class="GtkLabel" id="label1">
         <property name="visible">True</property>
+        <property name="can_focus">False</property>
         <property name="label" translatable="yes">Title</property>
       </object>
       <packing>
@@ -23,7 +24,7 @@
       <object class="GtkEntry" id="entry_title">
         <property name="visible">True</property>
         <property name="can_focus">True</property>
-        <property name="invisible_char">&#x2022;</property>
+        <property name="invisible_char">•</property>
         <property name="activates_default">True</property>
       </object>
       <packing>
@@ -36,7 +37,7 @@
       <object class="GtkEntry" id="entry_description">
         <property name="visible">True</property>
         <property name="can_focus">True</property>
-        <property name="invisible_char">&#x2022;</property>
+        <property name="invisible_char">•</property>
         <property name="activates_default">True</property>
       </object>
       <packing>
@@ -51,7 +52,7 @@
       <object class="GtkEntry" id="entry_author">
         <property name="visible">True</property>
         <property name="can_focus">True</property>
-        <property name="invisible_char">&#x2022;</property>
+        <property name="invisible_char">•</property>
         <property name="activates_default">True</property>
       </object>
       <packing>
@@ -65,6 +66,7 @@
     <child>
       <object class="GtkLabel" id="label2">
         <property name="visible">True</property>
+        <property name="can_focus">False</property>
         <property name="label" translatable="yes">Description</property>
       </object>
       <packing>
@@ -77,6 +79,7 @@
     <child>
       <object class="GtkLabel" id="label3">
         <property name="visible">True</property>
+        <property name="can_focus">False</property>
         <property name="label" translatable="yes">Author</property>
       </object>
       <packing>
@@ -89,6 +92,7 @@
     <child>
       <object class="GtkLabel" id="label4">
         <property name="visible">True</property>
+        <property name="can_focus">False</property>
         <property name="label" translatable="yes">E-mail</property>
       </object>
       <packing>
@@ -102,7 +106,7 @@
       <object class="GtkEntry" id="entry_email">
         <property name="visible">True</property>
         <property name="can_focus">True</property>
-        <property name="invisible_char">&#x2022;</property>
+        <property name="invisible_char">•</property>
         <property name="activates_default">True</property>
       </object>
       <packing>
@@ -116,23 +120,29 @@
   </object>
   <object class="GtkVBox" id="widget_paths">
     <property name="visible">True</property>
+    <property name="can_focus">False</property>
     <property name="border_width">5</property>
     <property name="spacing">5</property>
     <child>
       <object class="GtkLabel" id="label5">
         <property name="visible">True</property>
-        <property name="label" translatable="yes">Bla bla bla bla bla bla
-blabla bla. Informa&#xE7;&#xE3;o
-sobre caminhos de linha.</property>
+        <property name="can_focus">False</property>
+        <property name="label" translatable="yes">&lt;i&gt;Line paths are directories that will be created on your &lt;b&gt;BASE&lt;/b&gt;
+directory. They are standard paths for fetching input files
+and saving output files. The &lt;b&gt;IMPORT&lt;/b&gt; directory is used to find
+files outside your &lt;b&gt;BASE&lt;/b&gt; directory.&lt;/i&gt;</property>
+        <property name="use_markup">True</property>
       </object>
       <packing>
         <property name="expand">False</property>
+        <property name="fill">True</property>
         <property name="position">0</property>
       </packing>
     </child>
     <child>
       <object class="GtkTable" id="table1">
         <property name="visible">True</property>
+        <property name="can_focus">False</property>
         <property name="n_rows">2</property>
         <property name="n_columns">2</property>
         <property name="column_spacing">5</property>
@@ -140,6 +150,7 @@ sobre caminhos de linha.</property>
         <child>
           <object class="GtkLabel" id="label6">
             <property name="visible">True</property>
+            <property name="can_focus">False</property>
             <property name="label" translatable="yes">BASE</property>
           </object>
           <packing>
@@ -149,6 +160,7 @@ sobre caminhos de linha.</property>
         <child>
           <object class="GtkLabel" id="label7">
             <property name="visible">True</property>
+            <property name="can_focus">False</property>
             <property name="label" translatable="yes">IMPORT</property>
           </object>
           <packing>
@@ -161,7 +173,7 @@ sobre caminhos de linha.</property>
           <object class="GtkEntry" id="entry_base">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
-            <property name="invisible_char">&#x2022;</property>
+            <property name="invisible_char">•</property>
           </object>
           <packing>
             <property name="left_attach">1</property>
@@ -172,7 +184,7 @@ sobre caminhos de linha.</property>
           <object class="GtkEntry" id="entry_import">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
-            <property name="invisible_char">&#x2022;</property>
+            <property name="invisible_char">•</property>
           </object>
           <packing>
             <property name="left_attach">1</property>
@@ -184,50 +196,69 @@ sobre caminhos de linha.</property>
       </object>
       <packing>
         <property name="expand">False</property>
+        <property name="fill">True</property>
         <property name="position">1</property>
       </packing>
     </child>
     <child>
-      <object class="GtkTreeView" id="treeview_paths">
+      <object class="GtkFrame" id="frame1">
         <property name="visible">True</property>
-        <property name="can_focus">True</property>
-        <property name="headers_visible">False</property>
-        <property name="enable_tree_lines">True</property>
+        <property name="can_focus">False</property>
+        <property name="label_xalign">0</property>
+        <property name="shadow_type">none</property>
         <child>
-          <object class="GtkTreeViewColumn" id="treeviewcolumn1">
-            <property name="title">column</property>
+          <object class="GtkTreeView" id="treeview_paths">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="headers_visible">False</property>
+            <property name="enable_tree_lines">True</property>
             <child>
-              <object class="GtkCellRendererText" id="cell_name"/>
-              <attributes>
-                <attribute name="text">0</attribute>
-              </attributes>
+              <object class="GtkTreeViewColumn" id="treeviewcolumn1">
+                <property name="title">column</property>
+                <child>
+                  <object class="GtkCellRendererText" id="cell_name"/>
+                  <attributes>
+                    <attribute name="text">0</attribute>
+                  </attributes>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkTreeViewColumn" id="treeviewcolumn3">
+                <property name="title">column</property>
+                <child>
+                  <object class="GtkCellRendererText" id="cell_path"/>
+                  <attributes>
+                    <attribute name="text">1</attribute>
+                  </attributes>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkTreeViewColumn" id="treeviewcolumn2">
+                <property name="title">column</property>
+                <child>
+                  <object class="GtkCellRendererText" id="cell_description"/>
+                  <attributes>
+                    <attribute name="text">2</attribute>
+                  </attributes>
+                </child>
+              </object>
             </child>
           </object>
         </child>
-        <child>
-          <object class="GtkTreeViewColumn" id="treeviewcolumn3">
-            <property name="title">column</property>
-            <child>
-              <object class="GtkCellRendererText" id="cell_path"/>
-              <attributes>
-                <attribute name="text">1</attribute>
-              </attributes>
-            </child>
-          </object>
-        </child>
-        <child>
-          <object class="GtkTreeViewColumn" id="treeviewcolumn2">
-            <property name="title">column</property>
-            <child>
-              <object class="GtkCellRendererText" id="cell_description"/>
-              <attributes>
-                <attribute name="text">2</attribute>
-              </attributes>
-            </child>
+        <child type="label">
+          <object class="GtkLabel" id="label8">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">&lt;b&gt;Directories hierarchy&lt;/b&gt;</property>
+            <property name="use_markup">True</property>
           </object>
         </child>
       </object>
       <packing>
+        <property name="expand">True</property>
+        <property name="fill">True</property>
         <property name="position">2</property>
       </packing>
     </child>
