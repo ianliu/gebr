@@ -155,6 +155,8 @@ void gebr_maestro_server_get_error(GebrMaestroServer *maestro,
 				   const gchar **error_type,
 				   const gchar **error_msg);
 
+gchar *gebr_maestro_server_get_sftp_prefix(GebrMaestroServer *maestro);
+
 G_END_DECLS
 
 #endif /* __GEBR_MAESTRO_H__ */

@@ -1377,3 +1377,12 @@ gebr_maestro_server_get_daemon(GebrMaestroServer *server,
 {
 	return get_daemon_from_address(server, address, NULL);
 }
+
+gchar *
+gebr_maestro_server_get_sftp_prefix(GebrMaestroServer *maestro)
+{
+	if (!maestro->priv->mount_location)
+		return NULL;
+
+	return g_file_get_uri(maestro->priv->mount_location);
+}
