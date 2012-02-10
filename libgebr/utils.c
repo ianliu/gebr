@@ -902,6 +902,9 @@ gebr_calculate_number_of_processors(gint total_nprocs,
 void
 gebr_pairstrfreev(gchar ***strv)
 {
+	if (!strv)
+		return;
+
 	for (int i = 0; strv[i]; i++) {
 		g_free(strv[i][0]);
 		g_free(strv[i][1]);
