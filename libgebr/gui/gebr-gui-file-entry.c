@@ -24,6 +24,7 @@
 
 #include "gebr-gui-file-entry.h"
 #include "gebr-gui-utils.h"
+#include <libgebr/utils.h>
 
 /*
  * Prototypes
@@ -118,6 +119,8 @@ static void gebr_gui_file_entry_init(GebrGuiFileEntry * file_entry)
 
 	file_entry->choose_directory = FALSE;
 	file_entry->do_overwrite_confirmation = TRUE;
+	file_entry->prefix = NULL;
+	file_entry->line = NULL;
 }
 
 G_DEFINE_TYPE(GebrGuiFileEntry, gebr_gui_file_entry, GTK_TYPE_HBOX);
@@ -132,8 +135,10 @@ static void __gebr_gui_file_entry_entry_changed(GtkEntry * entry, GebrGuiFileEnt
 }
 
 static void
-__gebr_gui_file_entry_browse_button_clicked(GtkButton * button, GtkEntryIconPosition icon_pos, GdkEvent * event,
-						GebrGuiFileEntry * file_entry)
+__gebr_gui_file_entry_browse_button_clicked(GtkButton *button,
+					    GtkEntryIconPosition icon_pos,
+					    GdkEvent *event,
+					    GebrGuiFileEntry *file_entry)
 {
 	GtkWidget *chooser_dialog;
 
@@ -150,6 +155,13 @@ __gebr_gui_file_entry_browse_button_clicked(GtkButton * button, GtkEntryIconPosi
 	/* call customize funtion for user changes */
 	if (file_entry->customize_function != NULL)
 		file_entry->customize_function(GTK_FILE_CHOOSER(chooser_dialog), file_entry->customize_user_data);
+
+	gchar *file = g_build_filename(g_get_home_dir(), ".gtk-bookmarks", NULL);
+	gchar ***paths = gebr_geoxml_line_get_paths(file_entry->line);
+
+	if (file_entry->prefix)
+		gebr_gtk_bookmarks_add_paths(file, file_entry->prefix, paths);
+
 	switch (gtk_dialog_run(GTK_DIALOG(chooser_dialog))) {
 	case GTK_RESPONSE_OK:
 		gtk_entry_set_text(GTK_ENTRY(file_entry->entry),
@@ -160,8 +172,12 @@ __gebr_gui_file_entry_browse_button_clicked(GtkButton * button, GtkEntryIconPosi
 		break;
 	}
 
+	gebr_gtk_bookmarks_remove_paths(file, paths);
+
 	gtk_widget_destroy(GTK_WIDGET(chooser_dialog));
 	gtk_widget_grab_focus (file_entry->entry);
+	gebr_pairstrfreev(paths);
+	g_free(file);
 }
 
 static gboolean on_mnemonic_activate(GebrGuiFileEntry * file_entry)
@@ -237,4 +253,13 @@ void gebr_gui_file_entry_unset_warning(GebrGuiFileEntry * self, const gchar * to
 
 	gtk_entry_set_icon_from_stock(GTK_ENTRY(self->entry), GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_OPEN);
 	gtk_entry_set_icon_tooltip_text(GTK_ENTRY(self->entry), GTK_ENTRY_ICON_SECONDARY, tooltip);
+}
+
+void
+gebr_gui_file_entry_set_paths_from_line(GebrGuiFileEntry *self,
+					const gchar *prefix,
+					GebrGeoXmlLine *line)
+{
+	self->line = line;
+	self->prefix = g_strdup(prefix);
 }

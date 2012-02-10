@@ -19,6 +19,7 @@
 #define __GEBR_GUI_FILE_ENTRY_H
 
 #include <gtk/gtk.h>
+#include <libgebr/geoxml/geoxml.h>
 
 G_BEGIN_DECLS
 
@@ -47,7 +48,11 @@ struct _GebrGuiFileEntry {
 
 	GebrGuiFileEntryCustomize customize_function;
 	gpointer customize_user_data;
+
+	GebrGeoXmlLine *line;
+	gchar *prefix;
 };
+
 struct _GebrGuiFileEntryClass {
 	GtkHBoxClass parent;
 
@@ -87,5 +92,10 @@ void gebr_gui_file_entry_set_warning(GebrGuiFileEntry * self, const gchar * tool
 
 void gebr_gui_file_entry_unset_warning(GebrGuiFileEntry * self, const gchar * tooltip);
 
+void gebr_gui_file_entry_set_paths_from_line(GebrGuiFileEntry *self,
+					     const gchar *prefix,
+					     GebrGeoXmlLine *line);
+
 G_END_DECLS
-#endif				//__GEBR_GUI_FILE_ENTRY_H
+
+#endif /* __GEBR_GUI_FILE_ENTRY_H */
