@@ -1030,16 +1030,38 @@ gebr_gtk_bookmarks_add_paths(const gchar *filename,
                              const gchar *uri_prefix,
                              gchar ***paths)
 {
-	FILE *file_bookmarks = fopen(filename, "r+");
+	gchar *contents;
+	GString *buf;
+	GError *error = NULL;
 
-	if (!file_bookmarks)
-		file_bookmarks = fopen(filename, "w");
+	if (!g_file_get_contents(filename, &contents, NULL, &error)) {
+		if (error->code != G_FILE_ERROR_NOENT) {
+			g_error_free(error);
+			return;
+		} else {
+			contents = g_strdup("");
+		}
+		g_error_free(error);
+	}
 
-	for (gint i = 0; paths[i]; i++)
-		fprintf(file_bookmarks, "%s%s %s (GeBR)\n",
-			uri_prefix, paths[i][0], paths[i][1]);
+	buf = g_string_new(NULL);
 
-	fclose(file_bookmarks);
+	for (gint i = 0; paths[i]; i++) {
+		if (!*paths[i][0])
+			continue;
+
+		gchar *escaped = g_uri_escape_string(paths[i][0], "/", TRUE);
+		g_string_append_printf(buf, "%s%s %s (GeBR)\n",
+				       uri_prefix, escaped, paths[i][1]);
+		g_free(escaped);
+	}
+
+	g_string_append(buf, contents);
+
+	if (!g_file_set_contents(filename, buf->str, -1, NULL))
+		g_warn_if_reached();
+
+	g_free(contents);
 }
 
 void
@@ -1061,14 +1083,21 @@ gebr_gtk_bookmarks_remove_paths(const gchar *filename,
 
 	for (gint i = 0; lines[i]; i++) {
 		has_path = FALSE;
-		for (gint j = 0; paths[j]; j++) {
-			gchar *suffix = g_strdup_printf("%s %s (GeBR)", paths[j][0], paths[j][1]);
+		for (gint j = 0; paths[j] && !has_path; j++) {
+			gchar *escaped = g_uri_escape_string(paths[j][0], "/", TRUE);
+			gchar *suffix = g_strdup_printf("%s %s (GeBR)", escaped, paths[j][1]);
+
 			if (g_str_has_suffix(lines[i], suffix))
 				has_path = TRUE;
+
+			g_free(escaped);
 			g_free(suffix);
 		}
-		if (!has_path)
-			real_bookmarks = g_string_append(real_bookmarks, lines[i]);
+
+		if (!has_path && *lines[i]) {
+			g_string_append(real_bookmarks, lines[i]);
+			g_string_append_c(real_bookmarks, '\n');
+		}
 	}
 
 	if (!g_file_set_contents(filename, real_bookmarks->str, -1, &err)) {
