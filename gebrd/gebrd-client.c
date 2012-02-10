@@ -648,7 +648,7 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 
 			GList *list = parse_comma_separated_string(new_path->str);
 
-			gint option = atoi(opt->str);
+			gint option = gebr_comm_protocol_path_str_to_enum(opt->str);
 			gint status_id = -1;
 			gboolean flag_exists= FALSE;
 			gboolean flag_error = FALSE;

@@ -164,7 +164,9 @@ void on_properties_destroy(GtkWindow * window, GebrPropertiesData * data);
 
 static void on_groups_combo_box_changed (GtkComboBox *combo);
 
-static void gebr_document_send_path_message(GebrGeoXmlLine *line);
+static void gebr_document_send_path_message(GebrGeoXmlLine *line,
+                                            gint option,
+                                            const gchar *old_base);
 
 static gboolean dict_edit_reorder(GtkTreeView            *tree_view,
 				  GtkTreeIter            *iter,
@@ -1681,6 +1683,8 @@ void
 gebr_ui_document_set_properties_from_builder(GebrGeoXmlDocument *document,
 					     GtkBuilder *builder)
 {
+	gchar *old_title = gebr_geoxml_document_get_title(document);
+
 	GtkEntry *title = GTK_ENTRY(gtk_builder_get_object(builder, "entry_title"));
 	GtkEntry *author = GTK_ENTRY(gtk_builder_get_object(builder, "entry_title"));
 	GtkEntry *description = GTK_ENTRY(gtk_builder_get_object(builder, "entry_description"));
@@ -1699,10 +1703,30 @@ gebr_ui_document_set_properties_from_builder(GebrGeoXmlDocument *document,
 		GtkEntry *entry_import = GTK_ENTRY(gtk_builder_get_object(builder, "entry_import"));
 		const gchar *base_path = gtk_entry_get_text(entry_base);
 		const gchar *import_path = gtk_entry_get_text(entry_import);
-		gebr_geoxml_line_set_base_path(GEBR_GEOXML_LINE(document), base_path);
+
+		gint option = GEBR_COMM_PROTOCOL_PATH_CREATE;
+		GString *buffer = g_string_new(NULL);
+
+		gchar **splited_base = g_strsplit(base_path, "/", -1);
+		for (gint i = 0; splited_base[i]; i++) {
+			if (!*splited_base[i])
+				continue;
+
+			buffer = g_string_append_c(buffer, '/');
+			if (g_strcmp0(splited_base[i], old_title) == 0) {
+				buffer = g_string_append(buffer, new_title);
+				option = GEBR_COMM_PROTOCOL_PATH_RENAME;
+			} else {
+				buffer = g_string_append(buffer, splited_base[i]);
+			}
+		}
+
+		gebr_geoxml_line_set_base_path(GEBR_GEOXML_LINE(document), buffer->str);
 		gebr_geoxml_line_set_import_path(GEBR_GEOXML_LINE(document), import_path);
 
-		gebr_document_send_path_message(GEBR_GEOXML_LINE(document));
+		gebr_document_send_path_message(GEBR_GEOXML_LINE(document), option, base_path);
+
+		g_string_free(buffer, TRUE);
 	}
 
 	document_save(document, TRUE, TRUE);
@@ -1730,7 +1754,7 @@ on_response_ok(GtkButton * button, GebrPropertiesData * data)
 								    " be sure to correct the paths of this Line "
 								    "and its respective Flows that can be broken."));
 			if (clean) {
-				gebr_document_send_path_message(GEBR_GEOXML_LINE(data->document));
+				gebr_document_send_path_message(GEBR_GEOXML_LINE(data->document), GEBR_COMM_PROTOCOL_PATH_CREATE, NULL);
 				on_groups_combo_box_changed(GTK_COMBO_BOX(data->maestro_combo));
 			}
 		} else
@@ -1984,24 +2008,37 @@ static void on_dict_edit_change_selection(GtkTreeSelection *selection, struct di
 }
 
 static void
-gebr_document_send_path_message(GebrGeoXmlLine *line)
+gebr_document_send_path_message(GebrGeoXmlLine *line,
+                                gint option,
+                                const gchar *old_base)
 {
 	gchar ***paths = gebr_geoxml_line_get_paths(line);
 	gchar **split_path;
 	GString *buffer = g_string_new(NULL);
 
-	for (gint i=0; paths[i]; i++){
-		split_path = g_strsplit(paths[i][0], ",", -1);
-		gchar *escaped = g_strjoinv(",,", split_path);
-		g_string_append_c(buffer, ',');
-		g_string_append(buffer, escaped);
-		g_free(escaped);
+	if (option == GEBR_COMM_PROTOCOL_PATH_CREATE) {
+		for (gint i = 0; paths[i]; i++) {
+			split_path = g_strsplit(paths[i][0], ",", -1);
+			gchar *escaped = g_strjoinv(",,", split_path);
+			g_string_append_c(buffer, ',');
+			g_string_append(buffer, escaped);
+			g_free(escaped);
+		}
+		if (buffer->len)
+			g_string_erase(buffer, 0, 1);
+
+		g_strfreev(split_path);
 	}
-	if (buffer->len)
-		g_string_erase(buffer, 0, 1);
+	else if (option == GEBR_COMM_PROTOCOL_PATH_RENAME) {
+		for (gint i = 0; paths[i]; i++) {
+			if (g_strcmp0(paths[i][1], "BASE") == 0) {
+				buffer = g_string_append(buffer, paths[i][0]);
+				break;
+			}
+		}
+	}
 
 	gebr_pairstrfreev(paths);
-	g_strfreev(split_path);
 
 	GebrMaestroServer *maestro_server = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 	GebrCommServer *comm_server = gebr_maestro_server_get_server(maestro_server);
@@ -2020,14 +2057,14 @@ gebr_document_send_path_message(GebrGeoXmlLine *line)
 	}
 
 	if (daemon_addr){
-		g_debug("enviando mensagem '%s' referente ao daemon '%s' ao maestro '%s'", buffer->str, daemon_addr, gebr_maestro_server_get_address(maestro_server));
+		g_debug("enviando mensagem (NEW) '%s', (OLD) '%s' referente ao daemon '%s' ao maestro '%s'", buffer->str, old_base, daemon_addr, gebr_maestro_server_get_address(maestro_server));
 
 		gebr_comm_protocol_socket_oldmsg_send(comm_server->socket, FALSE,
 		                                      gebr_comm_protocol_defs.path_def, 4,
 		                                      daemon_addr,
 		                                      buffer->str,
-		                                      NULL,
-		                                      gebr_comm_protocol_path_enum_to_str (GEBR_COMM_PROTOCOL_PATH_CREATE));
+		                                      old_base,
+		                                      gebr_comm_protocol_path_enum_to_str (option));
 	}
 
 	g_string_free(buffer, TRUE);
