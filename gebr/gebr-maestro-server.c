@@ -57,6 +57,7 @@ enum {
 	DAEMON_ERROR,
 	MAESTRO_ERROR,
 	CONFIRM,
+	PATH_ERROR,
 	LAST_SIGNAL
 };
 
@@ -453,6 +454,10 @@ parse_messages(GebrCommServer *comm_server,
 
 				//TODO: FAZER ALGO COM O RET DO PATH_DEF
 				g_debug("on %s, daemon_addr:'%s', error:'%s'", __func__, daemon_addr->str, status_id->str);
+
+				gint ret_id = atoi(status_id->str);
+				if (ret_id == GEBR_COMM_PROTOCOL_STATUS_PATH_ERROR)
+					g_signal_emit(maestro, signals[PATH_ERROR], 0);
 
 
 				gebr_comm_protocol_socket_oldmsg_split_free(arguments);
@@ -1003,6 +1008,15 @@ gebr_maestro_server_class_init(GebrMaestroServerClass *klass)
 			             NULL, NULL,
 			             gebr_cclosure_marshal_VOID__STRING_STRING,
 			             G_TYPE_NONE, 2, G_TYPE_STRING, G_TYPE_STRING);
+
+	signals[PATH_ERROR] =
+			g_signal_new("path-error",
+			             G_OBJECT_CLASS_TYPE(object_class),
+			             G_SIGNAL_RUN_LAST,
+			             G_STRUCT_OFFSET(GebrMaestroServerClass, path_error),
+			             NULL, NULL,
+			             g_cclosure_marshal_VOID__VOID,
+			             G_TYPE_NONE, 0);
 
 	g_object_class_install_property(object_class,
 					PROP_ADDRESS,

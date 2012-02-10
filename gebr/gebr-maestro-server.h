@@ -75,6 +75,8 @@ struct _GebrMaestroServerClass {
 	void (*confirm) (GebrMaestroServer *maestro,
 			 const gchar *addr,
 			 const gchar *type);
+
+	void (*path_error) (GebrMaestroServer *maestro);
 };
 
 struct _GebrMaestroServer {
