@@ -40,6 +40,7 @@ typedef struct {
 	GtkWidget *title_label;
 	GtkWidget *hbox;
 	GtkWidget *group_warning_widget;
+	gchar *prefix;
 
 	GebrValidator *validator;
 } GebrGuiProgramEdit;
@@ -51,7 +52,8 @@ GebrGuiProgramEdit *
 gebr_gui_program_edit_setup_ui(GebrGeoXmlProgram * program,
 			       gpointer parameter_widget_data,
 			       gboolean use_default,
-			       GebrValidator *validator);
+			       GebrValidator *validator,
+			       const gchar *prefix);
 
 /**
  * \internal

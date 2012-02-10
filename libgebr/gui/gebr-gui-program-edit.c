@@ -70,7 +70,8 @@ GebrGuiProgramEdit *
 gebr_gui_program_edit_setup_ui(GebrGeoXmlProgram * program,
 			       gpointer parameter_widget_data,
 			       gboolean use_default,
-			       GebrValidator *validator)
+			       GebrValidator *validator,
+			       const gchar *prefix)
 {
 	GebrGuiProgramEdit *program_edit;
 	GtkWidget *vbox;
@@ -84,6 +85,7 @@ gebr_gui_program_edit_setup_ui(GebrGeoXmlProgram * program,
 	program_edit->use_default = use_default;
 	program_edit->widget = vbox = gtk_vbox_new(FALSE, 0);
 	program_edit->validator = validator;
+	program_edit->prefix = g_strdup(prefix);
 	gtk_widget_show(vbox);
 	program_edit->title_label = title_label = gtk_label_new(NULL);
 	gtk_widget_show(title_label);
@@ -107,6 +109,7 @@ gebr_gui_program_edit_setup_ui(GebrGeoXmlProgram * program,
 void gebr_gui_program_edit_destroy(GebrGuiProgramEdit *program_edit)
 {
 	gtk_widget_destroy(program_edit->widget);
+	g_free(program_edit->prefix);
 	g_free(program_edit);
 }
 
