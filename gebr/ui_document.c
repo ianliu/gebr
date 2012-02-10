@@ -1750,11 +1750,9 @@ static void
 on_response_ok(GtkButton * button, GebrPropertiesData * data)
 {
 	GtkTreeIter iter;
-	const gchar *old_title;
 	GebrGeoXmlDocumentType type;
 
 	data->accept_response = TRUE;
-	old_title = gebr_geoxml_document_get_title(data->document);
 	gebr_ui_document_set_properties_from_builder(data->document, data->builder);
 
 	/* Update title in apropriated store */
