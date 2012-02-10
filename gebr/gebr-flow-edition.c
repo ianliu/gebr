@@ -669,6 +669,17 @@ static void open_activated(GtkEntry *entry, GtkEntryIconPosition icon_pos, GdkEv
 	}
 
 	gtk_widget_show_all(dialog);
+
+	gchar ***paths = gebr_geoxml_line_get_paths(gebr.line);
+	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
+	gchar *filename = g_build_filename(g_get_home_dir(), ".gtk-bookmarks", NULL);
+	gchar *prefix = gebr_maestro_server_get_sftp_prefix(maestro);
+
+	if (prefix)
+		gebr_gtk_bookmarks_add_paths(filename, prefix, paths);
+
+	g_free(prefix);
+
 	if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_YES) {
 		gchar *filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
 		gtk_entry_set_text(entry, filename);
@@ -678,8 +689,14 @@ static void open_activated(GtkEntry *entry, GtkEntryIconPosition icon_pos, GdkEv
 		flow_edition_component_edited(GTK_CELL_RENDERER_TEXT(renderer), path, filename);
 		g_free(filename);
 	}
+
+	gebr_gtk_bookmarks_remove_paths(filename, paths);
+
 	gtk_widget_destroy(dialog);
 	g_free(path);
+
+	g_free(filename);
+	gebr_pairstrfreev(paths);
 }
 
 static void populate_io_popup(GtkEntry *entry, GtkMenu *menu)
