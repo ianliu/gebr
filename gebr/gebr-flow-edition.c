@@ -477,13 +477,14 @@ void flow_edition_set_io(void)
 	const gchar *tmp;
 
 	tmp = gebr_geoxml_flow_io_get_input(gebr.flow);
-	gchar *input = gebr_relativise_path(tmp, paths);
+	gchar *input_real = gebr_relativise_path(tmp, paths);
+	gchar* input = g_markup_escape_text(input_real, -1);
 	tmp = gebr_geoxml_flow_io_get_output(gebr.flow);
-	gchar *output = gebr_relativise_path(tmp, paths);
+	gchar *output_real = gebr_relativise_path(tmp, paths);
+	gchar* output = g_markup_escape_text(output_real, -1);
 	tmp = gebr_geoxml_flow_io_get_error(gebr.flow);
-	gchar *error = gebr_relativise_path(tmp, paths);
-
-	gebr_pairstrfreev(paths);
+	gchar *error_real = gebr_relativise_path(tmp, paths);
+	gchar* error = g_markup_escape_text(error_real, -1);
 
 	/* Set the INPUT properties.
 	 * INPUT does not have 'Append/Overwrite' so there is only 2 possible icons:
@@ -497,8 +498,11 @@ void flow_edition_set_io(void)
 		tooltip = NULL;
 	} else {
 		title = g_strdup(input);
-		gebr_validator_evaluate(gebr.validator, input, GEBR_GEOXML_PARAMETER_TYPE_STRING,
+		gchar *resolved_input = gebr_resolve_relative_path(input_real, paths);
+		gebr_validator_evaluate(gebr.validator, resolved_input, GEBR_GEOXML_PARAMETER_TYPE_STRING,
 		                        GEBR_GEOXML_DOCUMENT_TYPE_FLOW, &result, &err);
+		g_free(resolved_input);
+
 		if (err) {
 			tooltip = g_strdup(err->message);
 			icon = GTK_STOCK_DIALOG_WARNING;
@@ -535,8 +539,11 @@ void flow_edition_set_io(void)
 		tooltip = NULL;
 	} else {
 		title = g_strdup(output);
-		gebr_validator_evaluate(gebr.validator, output, GEBR_GEOXML_PARAMETER_TYPE_STRING,
+		gchar *resolved_output = gebr_resolve_relative_path(output_real, paths);
+		gebr_validator_evaluate(gebr.validator, resolved_output, GEBR_GEOXML_PARAMETER_TYPE_STRING,
 		                        GEBR_GEOXML_DOCUMENT_TYPE_FLOW, &result, &err);
+		g_free(resolved_output);
+
 		if (err)
 			tooltip = g_strdup(err->message);
 		else {
@@ -575,8 +582,11 @@ void flow_edition_set_io(void)
 		tooltip = NULL;
 	} else {
 		title = g_strdup(error);
-		gebr_validator_evaluate(gebr.validator, error, GEBR_GEOXML_PARAMETER_TYPE_STRING,
+		gchar *resolved_error = gebr_resolve_relative_path(error_real, paths);
+		gebr_validator_evaluate(gebr.validator, resolved_error, GEBR_GEOXML_PARAMETER_TYPE_STRING,
 		                        GEBR_GEOXML_DOCUMENT_TYPE_FLOW, &result, &err);
+		g_free(resolved_error);
+
 		if (err)
 			tooltip = g_strdup(err->message);
 		else {
@@ -611,6 +621,10 @@ void flow_edition_set_io(void)
 	g_free(input);
 	g_free(output);
 	g_free(error);
+	g_free(input_real);
+	g_free(output_real);
+	g_free(error_real);
+	gebr_pairstrfreev(paths);
 }
 
 void flow_edition_component_activated(void)
