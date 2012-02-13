@@ -508,7 +508,7 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 		gchar *base_path = NULL;
 
 		for (gint i=0; paths[i] != NULL; i++){
-			if (g_strcmp0(paths[i][1], "BASE") == 0){
+			if (g_strcmp0(paths[i][1], "<BASE>") == 0){
 				base_path = paths[i][0];
 				break;
 			}
@@ -1686,7 +1686,7 @@ gebr_ui_document_set_properties_from_builder(GebrGeoXmlDocument *document,
 	gchar *old_title = gebr_geoxml_document_get_title(document);
 
 	GtkEntry *title = GTK_ENTRY(gtk_builder_get_object(builder, "entry_title"));
-	GtkEntry *author = GTK_ENTRY(gtk_builder_get_object(builder, "entry_title"));
+	GtkEntry *author = GTK_ENTRY(gtk_builder_get_object(builder, "entry_author"));
 	GtkEntry *description = GTK_ENTRY(gtk_builder_get_object(builder, "entry_description"));
 	GtkEntry *email = GTK_ENTRY(gtk_builder_get_object(builder, "entry_email"));
 
