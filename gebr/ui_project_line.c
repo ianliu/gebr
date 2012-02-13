@@ -33,6 +33,7 @@
 #include <libgebr/gui/gebr-gui-save-dialog.h>
 
 #include "ui_project_line.h"
+#include "ui_document.h"
 #include "gebr.h"
 #include "line.h"
 #include "document.h"
@@ -195,10 +196,18 @@ struct ui_project_line *project_line_setup_ui(void)
 	gtk_table_attach(GTK_TABLE(table), ui_project_line->info.group_label, 0, 1, 2, 3, (GtkAttachOptions)GTK_FILL,
 			(GtkAttachOptions)GTK_FILL, 3, 3);
 
+	GtkWidget *hbox_maestro = gtk_hbox_new(FALSE, 5);
+
+	ui_project_line->info.group_img = gtk_image_new();
+	gtk_misc_set_alignment(GTK_MISC(ui_project_line->info.group_img), 0, 0);
+	gtk_box_pack_start(GTK_BOX(hbox_maestro), ui_project_line->info.group_img, FALSE, FALSE, 0);
+
 	ui_project_line->info.group = gtk_label_new("");
 	gtk_misc_set_alignment(GTK_MISC(ui_project_line->info.group), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), ui_project_line->info.group, 1, 2, 2, 3, (GtkAttachOptions)GTK_FILL,
-			(GtkAttachOptions)GTK_FILL, 3, 3);
+	gtk_box_pack_start(GTK_BOX(hbox_maestro), ui_project_line->info.group, TRUE, TRUE, 5);
+
+	gtk_table_attach(GTK_TABLE(table), hbox_maestro, 1, 2, 2, 3, (GtkAttachOptions)GTK_FILL,
+	                 (GtkAttachOptions)GTK_FILL, 3, 3);
 
 	/* Paths for lines */
 	ui_project_line->info.path_label = gtk_label_new("");
@@ -206,10 +215,13 @@ struct ui_project_line *project_line_setup_ui(void)
 	gtk_table_attach(GTK_TABLE(table), ui_project_line->info.path_label, 0, 1, 3, 4, (GtkAttachOptions)GTK_FILL,
 			 (GtkAttachOptions)GTK_FILL, 3, 3);
 
-	ui_project_line->info.path = gtk_label_new("");
-	gtk_misc_set_alignment(GTK_MISC(ui_project_line->info.path), 0, 0);
-	gtk_table_attach(GTK_TABLE(table), ui_project_line->info.path, 1, 2, 3, 4, (GtkAttachOptions)GTK_FILL,
-			 (GtkAttachOptions)GTK_FILL, 3, 3);
+	ui_project_line->info.view_paths = gtk_tree_view_new();
+	gtk_tree_view_set_enable_tree_lines(GTK_TREE_VIEW(ui_project_line->info.view_paths), TRUE);
+	gtk_tree_view_set_show_expanders(GTK_TREE_VIEW(ui_project_line->info.view_paths), TRUE);
+	gtk_widget_set_visible(ui_project_line->info.view_paths, TRUE);
+	gtk_widget_set_sensitive(ui_project_line->info.view_paths, FALSE);
+	gtk_widget_show(ui_project_line->info.view_paths);
+	gtk_box_pack_start(GTK_BOX(infopage), ui_project_line->info.view_paths, TRUE, TRUE, 5);
 
 	/* Help */
 	GtkWidget * hbox;
@@ -250,7 +262,7 @@ void project_line_info_update(void)
 		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.group_label), "");
 		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.group), "");
 		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path_label), "");
-		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path), "");
+//		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path), "");
 		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.numberoflines), "");
 		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.author), "");
 
@@ -289,8 +301,17 @@ void project_line_info_update(void)
 
 		gtk_label_set_markup(GTK_LABEL(gebr.ui_project_line->info.numberoflines), markup);
 		g_free(markup);
-	} else
-		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.numberoflines), "");
+	} else {
+		gint nflows;
+
+		nflows = gebr_geoxml_line_get_flows_number(gebr.line);
+		markup = nflows != 0 ? nflows == 1 ? g_markup_printf_escaped(_("This Line has 1 Flow"))
+				: g_markup_printf_escaped(_("This Line has %d Flows"), nflows)
+				  : g_markup_printf_escaped(_("This Line has no Flow"));
+
+		gtk_label_set_markup(GTK_LABEL(gebr.ui_project_line->info.numberoflines), markup);
+		g_free(markup);
+	}
 
 	/* Date labels */
 	markup = g_markup_printf_escaped("<b>%s</b>", _("Created:"));
@@ -306,47 +327,70 @@ void project_line_info_update(void)
 	gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.modified),
 			   gebr_localized_date(gebr_geoxml_document_get_date_modified(gebr.project_line)));
 
-	/* Line's server group */
 	if (!is_project) {
+		/* Line's server group */
 		markup = g_markup_printf_escaped("<b>%s</b>", _("Maestro:"));
 		gtk_label_set_markup(GTK_LABEL(gebr.ui_project_line->info.group_label), markup);
 		g_free(markup);
 
+		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, GEBR_GEOXML_LINE(gebr.line));
+		const gchar *stockid;
+
+		if (maestro) {
+			if (gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED)
+				stockid = GTK_STOCK_CONNECT;
+			else {
+				const gchar *type;
+				gebr_maestro_server_get_error(maestro, &type, NULL);
+
+				if (g_strcmp0(type, "error:none") == 0)
+					stockid = GTK_STOCK_DISCONNECT;
+				else
+					stockid = GTK_STOCK_DIALOG_WARNING;
+			}
+		} else
+			stockid = GTK_STOCK_DISCONNECT;
+
+		gtk_image_set_from_stock(GTK_IMAGE(gebr.ui_project_line->info.group_img), stockid, GTK_ICON_SIZE_BUTTON);
+
 		gchar *addr = gebr_geoxml_line_get_maestro(gebr.line);
-		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.group), g_strcmp0(addr,"127.0.0.1") == 0? "Local Maestro" : addr);
+		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.group), addr);
 		g_free(addr);
-	}
 
-	/* Line's paths */
-	if (!is_project) {
-		GebrGeoXmlSequence *path;
-
+		/* Line's paths */
 		markup = g_markup_printf_escaped("<b>%s</b>", _("Paths:"));
 		gtk_label_set_markup(GTK_LABEL(gebr.ui_project_line->info.path_label), markup);
 		g_free(markup);
 
-		text = g_string_new("");
+		GtkTreeStore *store_paths = gebr_ui_document_create_paths_tree();
+		gtk_tree_view_set_model(GTK_TREE_VIEW(gebr.ui_project_line->info.view_paths), GTK_TREE_MODEL(store_paths));
+		gtk_tree_view_expand_all(GTK_TREE_VIEW(gebr.ui_project_line->info.view_paths));
 
-		if (gebr_geoxml_line_get_path(gebr.line, &path, 0) == GEBR_GEOXML_RETV_SUCCESS){
-			while (path) {
-				const gchar *value;
-				value = gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(path));
-				GString *value_path = g_string_new(value);
-				gebr_path_set_to(value_path, FALSE);
-				g_string_append_printf(text, "%s\n", value_path->str);
-				g_string_free(value_path, TRUE);
-				gebr_geoxml_sequence_next(&path);
-			}
-		}
-		if (text->len == 0) {
-			/* There is no path, put "None" */
-			markup = g_markup_printf_escaped("<i>%s</i>", _("None"));
-			gtk_label_set_markup(GTK_LABEL(gebr.ui_project_line->info.path), markup);
-			g_free(markup);
-		} else {
-			gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path), text->str);
-		}
-		g_string_free(text, TRUE);
+//		GebrGeoXmlSequence *path;
+//
+//
+//		text = g_string_new("");
+//
+//		if (gebr_geoxml_line_get_path(gebr.line, &path, 0) == GEBR_GEOXML_RETV_SUCCESS){
+//			while (path) {
+//				const gchar *value;
+//				value = gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(path));
+//				GString *value_path = g_string_new(value);
+//				gebr_path_set_to(value_path, FALSE);
+//				g_string_append_printf(text, "%s\n", value_path->str);
+//				g_string_free(value_path, TRUE);
+//				gebr_geoxml_sequence_next(&path);
+//			}
+//		}
+//		if (text->len == 0) {
+//			/* There is no path, put "None" */
+//			markup = g_markup_printf_escaped("<i>%s</i>", _("None"));
+//			gtk_label_set_markup(GTK_LABEL(gebr.ui_project_line->info.path), markup);
+//			g_free(markup);
+//		} else {
+//			gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path), text->str);
+//		}
+//		g_string_free(text, TRUE);
 	} else {
 		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path_label), "");
 		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path), "");
