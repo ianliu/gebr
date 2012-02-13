@@ -64,12 +64,12 @@ GebrGeoXmlLine *gebr_geoxml_line_new()
 }
 
 static gchar *base_dirs[][2] = {
-		{"BASE", ""},
-		{"DATA", "data"},
-		{"EXPORT", "export"},
-		{"SCRATCH", "tmp"},
-		{"TABLE", "table"},
-		{"CUSTOM", "misc"},
+		{"<BASE>", ""},
+		{"<DATA>", "data"},
+		{"<EXPORT>", "export"},
+		{"<SCRATCH>", "tmp"},
+		{"<TABLE>", "table"},
+		{"<CUSTOM>", "misc"},
 };
 
 void
