@@ -71,7 +71,7 @@ enum {
 static void mount_enclosing_ready_cb(GFile *location, GAsyncResult *res,
 				     GebrMaestroServer *maestro);
 
-static void unmount_ready_cb(GMount *mount, GAsyncResult *res);
+static void unmount_ready_cb(GMount *mount, GAsyncResult *res, gboolean quit);
 
 static void log_message(GebrCommServer *server, GebrLogMessageType type,
 			     const gchar *message, gpointer user_data);
@@ -128,7 +128,8 @@ mount_gvfs(GebrMaestroServer *maestro,
 }
 
 static void
-unmount_gvfs(GebrMaestroServer *maestro)
+unmount_gvfs(GebrMaestroServer *maestro,
+             gboolean quit)
 {
 	if (!maestro->priv->has_connected_daemon)
 		return;
@@ -141,7 +142,7 @@ unmount_gvfs(GebrMaestroServer *maestro)
 
 	if (!g_error_matches(err, G_IO_ERROR, G_IO_ERROR_NOT_FOUND))
 		g_mount_unmount_with_operation(mount, G_MOUNT_UNMOUNT_NONE, op,
-		                               NULL, (GAsyncReadyCallback) unmount_ready_cb, NULL);
+		                               NULL, (GAsyncReadyCallback) unmount_ready_cb, quit);
 
 	g_object_unref(maestro->priv->mount_location);
 	maestro->priv->mount_location = NULL;
@@ -392,7 +393,8 @@ mount_enclosing_ready_cb(GFile *location,
 
 static void
 unmount_ready_cb(GMount *mount,
-		 GAsyncResult *res)
+		 GAsyncResult *res,
+		 gboolean quit)
 {
 	gboolean success;
 	GError *error = NULL;
@@ -402,7 +404,10 @@ unmount_ready_cb(GMount *mount,
 	if (success || g_error_matches(error, G_IO_ERROR, G_IO_ERROR_ALREADY_MOUNTED))
 		g_debug("Unmounted!");
 	else
-		g_debug("Not unmou :(");
+		g_debug("Not unmount :(");
+
+	if (quit)
+		gebr_quit(TRUE);
 }
 
 static gboolean
@@ -523,7 +528,7 @@ parse_messages(GebrCommServer *comm_server,
 			if (state == SERVER_STATE_LOGGED)
 				mount_gvfs(maestro, addr->str);
 			else if (maestro->priv->has_connected_daemon && !have_logged_daemon(maestro))
-				unmount_gvfs(maestro);
+				unmount_gvfs(maestro, FALSE);
 
 			g_signal_emit(maestro, signals[GROUP_CHANGED], 0);
 			g_signal_emit(maestro, signals[DAEMONS_CHANGED], 0);
@@ -890,7 +895,7 @@ gebr_maestro_server_finalize(GObject *object)
 	g_object_unref(maestro->priv->store);
 	g_hash_table_unref(maestro->priv->jobs);
 	g_hash_table_unref(maestro->priv->temp_jobs);
-	unmount_gvfs(maestro);
+	unmount_gvfs(maestro, FALSE);
 
 	G_OBJECT_CLASS(gebr_maestro_server_parent_class)->finalize(object);
 }
@@ -1261,10 +1266,11 @@ gebr_maestro_server_get_queues_model(GebrMaestroServer *maestro)
 }
 
 void
-gebr_maestro_server_disconnect(GebrMaestroServer *maestro)
+gebr_maestro_server_disconnect(GebrMaestroServer *maestro,
+                               gboolean quit)
 {
 	gebr_comm_server_disconnect(maestro->priv->server);
-	unmount_gvfs(maestro);
+	unmount_gvfs(maestro, quit);
 }
 
 void

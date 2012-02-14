@@ -122,7 +122,7 @@ GList *gebr_maestro_server_get_all_tags(GebrMaestroServer *maestro);
 
 GtkTreeModel *gebr_maestro_server_get_queues_model(GebrMaestroServer *maestro);
 
-void gebr_maestro_server_disconnect(GebrMaestroServer *maestro);
+void gebr_maestro_server_disconnect(GebrMaestroServer *maestro, gboolean quit);
 
 void gebr_maestro_server_connect(GebrMaestroServer *maestro);
 

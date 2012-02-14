@@ -1428,7 +1428,7 @@ gebr_maestro_controller_connect(GebrMaestroController *self,
 		    (state == SERVER_STATE_CONNECT || state == SERVER_STATE_LOGGED))
 			return;
 
-		gebr_maestro_server_disconnect(self->priv->maestro);
+		gebr_maestro_server_disconnect(self->priv->maestro, FALSE);
 		g_object_unref(self->priv->maestro);
 	}
 

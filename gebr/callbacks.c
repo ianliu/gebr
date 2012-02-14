@@ -104,7 +104,22 @@ void on_paste_activate(void)
 
 void on_quit_activate(void)
 {
-	gebr_quit(TRUE);
+	GtkTreeIter iter;
+	GebrMaestroServer *m = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+	if (m && gebr_maestro_server_get_state(m) == SERVER_STATE_LOGGED) {
+		// Disconnect client from maestro
+		gebr_maestro_server_disconnect(m, TRUE);
+
+		GtkTreeModel *model = gebr_maestro_server_get_model(m, TRUE, NULL);
+
+		gebr_gui_gtk_tree_model_foreach_hyg(iter, model, 1) {
+			GebrDaemonServer *daemon;
+			gtk_tree_model_get(model, &iter, 0, &daemon, -1);
+			g_object_unref(daemon);
+		}
+		g_object_unref(model);
+	} else
+		gebr_quit(TRUE);
 }
 
 void on_document_properties_activate(void)

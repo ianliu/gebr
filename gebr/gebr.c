@@ -142,21 +142,6 @@ gboolean gebr_quit(gboolean save_config)
 	if (save_config)
 		gebr_config_save(FALSE);
 
-	GebrMaestroServer *m = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
-	if (m) {
-		// Disconnect client from maestro
-		gebr_maestro_server_disconnect(m);
-
-		GtkTreeModel *model = gebr_maestro_server_get_model(m, TRUE, NULL);
-
-		gebr_gui_gtk_tree_model_foreach_hyg(iter, model, 1) {
-			GebrDaemonServer *daemon;
-			gtk_tree_model_get(model, &iter, 0, &daemon, -1);
-			g_object_unref(daemon);
-		}
-		g_object_unref(model);
-	}
-
 	if (gebr.flow_clipboard != NULL) {
 		g_list_foreach(gebr.flow_clipboard, (GFunc) g_free, NULL);
 		g_list_free(gebr.flow_clipboard);
