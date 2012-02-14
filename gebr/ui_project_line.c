@@ -218,8 +218,20 @@ struct ui_project_line *project_line_setup_ui(void)
 	ui_project_line->info.view_paths = gtk_tree_view_new();
 	gtk_tree_view_set_enable_tree_lines(GTK_TREE_VIEW(ui_project_line->info.view_paths), TRUE);
 	gtk_tree_view_set_show_expanders(GTK_TREE_VIEW(ui_project_line->info.view_paths), TRUE);
+	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(ui_project_line->info.view_paths), FALSE);
 	gtk_widget_set_visible(ui_project_line->info.view_paths, TRUE);
 	gtk_widget_set_sensitive(ui_project_line->info.view_paths, FALSE);
+
+	GtkCellRenderer *cell = gtk_cell_renderer_text_new();
+	gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(ui_project_line->info.view_paths),
+						    -1, "", cell, "text", 0, NULL);
+	cell = gtk_cell_renderer_text_new();
+	gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(ui_project_line->info.view_paths),
+						    -1, "", cell, "text", 1, NULL);
+	cell = gtk_cell_renderer_text_new();
+	gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(ui_project_line->info.view_paths),
+						    -1, "", cell, "text", 2, NULL);
+
 	gtk_widget_show(ui_project_line->info.view_paths);
 	gtk_box_pack_start(GTK_BOX(infopage), ui_project_line->info.view_paths, TRUE, TRUE, 5);
 
