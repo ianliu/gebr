@@ -1702,6 +1702,7 @@ gebr_ui_document_set_properties_from_builder(GebrGeoXmlDocument *document,
 	if (type == GEBR_GEOXML_DOCUMENT_TYPE_PROJECT) {
 		GtkTreeIter iter, child, parent;
 		GtkTreeModel *model = GTK_TREE_MODEL(gebr.ui_project_line->store);
+		GebrMaestroServer *maestro_server = NULL;
 
 		gboolean valid = gtk_tree_model_get_iter_first(model, &iter);
 		while (valid) {
@@ -1725,6 +1726,7 @@ gebr_ui_document_set_properties_from_builder(GebrGeoXmlDocument *document,
 
 			gchar ***paths = gebr_geoxml_line_get_paths(line);
 			gchar *base_path;
+			gchar *new_dir;
 
 			for (gint i = 0; paths[i]; i++) {
 				if (g_strcmp0(paths[i][1], "<BASE>") == 0) {
@@ -1732,7 +1734,7 @@ gebr_ui_document_set_properties_from_builder(GebrGeoXmlDocument *document,
 					break;
 				}
 			}
-			gint option = GEBR_COMM_PROTOCOL_PATH_CREATE;
+			gint option = -1;
 			GString *buffer = g_string_new(NULL);
 
 			gchar **splited_base = g_strsplit(base_path, "/", -1);
@@ -1743,15 +1745,45 @@ gebr_ui_document_set_properties_from_builder(GebrGeoXmlDocument *document,
 				buffer = g_string_append_c(buffer, '/');
 				if (g_strcmp0(splited_base[i], old_title) == 0) {
 					buffer = g_string_append(buffer, new_title);
-					option = GEBR_COMM_PROTOCOL_PATH_RENAME;
+					if (g_strcmp0(old_title, new_title) != 0)
+						option = GEBR_COMM_PROTOCOL_PATH_RENAME;
+					new_dir = g_strdup(buffer->str);
 				} else {
 					buffer = g_string_append(buffer, splited_base[i]);
 				}
 			}
+			if (option == -1)
+				continue;
 
 			gebr_geoxml_line_set_base_path(line, buffer->str);
-			gebr_document_send_path_message(line, option, base_path);
 
+			document_save(GEBR_GEOXML_DOCUMENT(line), TRUE, TRUE);
+
+			g_string_free(buffer, TRUE);
+
+			GFile *file = g_file_new_for_path(base_path);
+			GFile *parent = g_file_get_parent(file);
+			gchar *old_dir = g_file_get_path(parent);
+
+			g_object_unref(file);
+			g_object_unref(parent);
+
+			GebrMaestroServer *tmp = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, line);
+
+			if (!maestro_server || tmp != maestro_server) {
+				maestro_server = tmp;
+				GebrCommServer *comm_server = gebr_maestro_server_get_server(maestro_server);
+
+				g_debug("enviando mensagem (NEW) '%s', (OLD) '%s' ao maestro '%s'", new_dir, old_dir, gebr_maestro_server_get_address(maestro_server));
+
+				gebr_comm_protocol_socket_oldmsg_send(comm_server->socket, FALSE,
+				                                      gebr_comm_protocol_defs.path_def, 3,
+				                                      new_dir,
+				                                      old_dir,
+				                                      gebr_comm_protocol_path_enum_to_str (option));
+			}
+			g_free(old_dir);
+			g_free(new_dir);
 			valid = gtk_tree_model_iter_next(model, &child);
 		}
 	}
@@ -1761,22 +1793,25 @@ gebr_ui_document_set_properties_from_builder(GebrGeoXmlDocument *document,
 		const gchar *base_path = gtk_entry_get_text(entry_base);
 		const gchar *import_path = gtk_entry_get_text(entry_import);
 
-		gint option = GEBR_COMM_PROTOCOL_PATH_CREATE;
+		gint option = -1;
 		GString *buffer = g_string_new(NULL);
 
 		gchar **splited_base = g_strsplit(base_path, "/", -1);
 		for (gint i = 0; splited_base[i]; i++) {
-			if (!*splited_base[i] || (g_strcmp0(splited_base[i],"")==0))
+			if (!*splited_base[i] || (g_strcmp0(splited_base[i], "") == 0))
 				continue;
 
 			buffer = g_string_append_c(buffer, '/');
 			if (g_strcmp0(splited_base[i], old_title) == 0) {
 				buffer = g_string_append(buffer, new_title);
-				option = GEBR_COMM_PROTOCOL_PATH_RENAME;
+				if (g_strcmp0(old_title, new_title) != 0)
+					option = GEBR_COMM_PROTOCOL_PATH_RENAME;
 			} else {
 				buffer = g_string_append(buffer, splited_base[i]);
 			}
 		}
+		if (option == -1)
+			option = GEBR_COMM_PROTOCOL_PATH_CREATE;
 
 		gebr_geoxml_line_set_base_path(GEBR_GEOXML_LINE(document), buffer->str);
 		gebr_geoxml_line_set_import_path(GEBR_GEOXML_LINE(document), import_path);
@@ -2088,7 +2123,7 @@ gebr_document_send_path_message(GebrGeoXmlLine *line,
 	}
 	else if (option == GEBR_COMM_PROTOCOL_PATH_RENAME) {
 		for (gint i = 0; paths[i]; i++) {
-			if (g_strcmp0(paths[i][1], "BASE") == 0) {
+			if (g_strcmp0(paths[i][1], "<BASE>") == 0) {
 				buffer = g_string_append(buffer, paths[i][0]);
 				break;
 			}
