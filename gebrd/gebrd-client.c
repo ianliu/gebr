@@ -645,7 +645,7 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			GString *new_path = g_list_nth_data(arguments, 1);
 			GString *old_path = g_list_nth_data(arguments, 2);
 			GString *opt = g_list_nth_data(arguments, 3);
-			g_debug("new_path:%s, old_path:%s, opt:%s",old_path->str, new_path->str, gebr_comm_protocol_path_str_to_enum(opt->str));
+			g_debug("new_path:%s, old_path:%s, opt:%s",old_path->str, new_path->str, opt->str);
 
 			GList *list = parse_comma_separated_string(new_path->str);
 

@@ -2098,6 +2098,8 @@ gebr_document_send_path_message(GebrGeoXmlLine *line,
 	gebr_pairstrfreev(paths);
 
 	GebrMaestroServer *maestro_server = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, line);
+	if (!maestro_server)
+		return;
 	GebrCommServer *comm_server = gebr_maestro_server_get_server(maestro_server);
 
 	g_debug("enviando mensagem (NEW) '%s', (OLD) '%s' ao maestro '%s'", buffer->str, old_base, gebr_maestro_server_get_address(maestro_server));
