@@ -1057,25 +1057,19 @@ on_client_parse_messages(GebrCommProtocolSocket *socket,
 		} else if (message->hash == gebr_comm_protocol_defs.path_def.code_hash) {
 			GList *arguments;
 
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 4)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 3)) == NULL)
 				goto err;
 
-			GString *server = g_list_nth_data(arguments, 0);
-			GString *new_path = g_list_nth_data(arguments, 1);
-			GString *old_path = g_list_nth_data(arguments, 2);
-			GString *option = g_list_nth_data(arguments, 3);
+			GString *new_path = g_list_nth_data(arguments, 0);
+			GString *old_path = g_list_nth_data(arguments, 1);
+			GString *option = g_list_nth_data(arguments, 2);
 
 
-			GebrmDaemon *daemon;
-			for (GList *i = app->priv->daemons; i; i = i->next) {
-				const gchar *addr = gebrm_daemon_get_address(i->data);
-				if (g_strcmp0(addr, server->str) == 0) {
-					daemon = i->data;
-					break;
-				}
-			}
+			GebrmDaemon *daemon = app->priv->daemons->data;
 			const gchar *address = gebrm_daemon_get_address(daemon);
+
 			g_debug("on %s, sending message to daemon '%s', '%s'", __func__, new_path->str, old_path->str);
+
 			GebrCommServer *comm_server = gebrm_daemon_get_server(daemon);
 			gebr_comm_protocol_socket_oldmsg_send(comm_server->socket, TRUE,
 							      gebr_comm_protocol_defs.path_def, 4,
