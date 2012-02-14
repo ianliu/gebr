@@ -645,6 +645,7 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			GString *new_path = g_list_nth_data(arguments, 1);
 			GString *old_path = g_list_nth_data(arguments, 2);
 			GString *opt = g_list_nth_data(arguments, 3);
+			g_debug("new_path:%s, old_path:%s, opt:%s",old_path->str, new_path->str, gebr_comm_protocol_path_str_to_enum(opt->str));
 
 			GList *list = parse_comma_separated_string(new_path->str);
 
@@ -655,6 +656,8 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 
 			for (gint j=0; j < g_list_length(list); j++) {
 				GString *path = g_list_nth_data(list, j);
+				if (g_strcmp0(path->str,"")==0)
+					continue;
 
 				switch (option){
 				case GEBR_COMM_PROTOCOL_PATH_CREATE:
@@ -675,12 +678,6 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 					break;
 				}
 
-				//if (!failure && !file_exists)
-				//status_id = GEBR_COMM_PROTOCOL_STATUS_PATH_OK;
-				//else if (file_exists)
-				//status_id = GEBR_COMM_PROTOCOL_STATUS_PATH_EXISTS;
-				//else
-				//status_id = GEBR_COMM_PROTOCOL_STATUS_PATH_ERROR;
 			}
 			if (!flag_error && !flag_exists)
 				status_id = GEBR_COMM_PROTOCOL_STATUS_PATH_OK;

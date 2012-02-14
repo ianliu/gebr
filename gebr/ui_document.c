@@ -1766,7 +1766,7 @@ gebr_ui_document_set_properties_from_builder(GebrGeoXmlDocument *document,
 
 		gchar **splited_base = g_strsplit(base_path, "/", -1);
 		for (gint i = 0; splited_base[i]; i++) {
-			if (!*splited_base[i])
+			if (!*splited_base[i] || (g_strcmp0(splited_base[i],"")==0))
 				continue;
 
 			buffer = g_string_append_c(buffer, '/');

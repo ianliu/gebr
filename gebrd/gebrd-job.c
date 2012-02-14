@@ -1500,7 +1500,8 @@ static void job_assembly_cmdline(GebrdJob *job)
 	GString *mkdir = g_string_new("");
 	gchar **paths = g_strsplit(job->paths->str, ",", 0);
 	for (int i = 0; paths[i]; i++)
-		g_string_append_printf(mkdir, "mkdir -p \"%s\"\n", paths[i]);
+		if (g_strcmp0(paths[i],"")!=0)
+			g_string_append_printf(mkdir, "mkdir -p \"%s\"\n", paths[i]);
 	g_strfreev(paths);
 	g_string_prepend(job->parent.cmd_line, mkdir->str);
 	g_string_free(mkdir, TRUE);
