@@ -378,34 +378,12 @@ void project_line_info_update(void)
 		gtk_tree_view_set_model(GTK_TREE_VIEW(gebr.ui_project_line->info.view_paths), GTK_TREE_MODEL(store_paths));
 		gtk_tree_view_expand_all(GTK_TREE_VIEW(gebr.ui_project_line->info.view_paths));
 
-//		GebrGeoXmlSequence *path;
-//
-//
-//		text = g_string_new("");
-//
-//		if (gebr_geoxml_line_get_path(gebr.line, &path, 0) == GEBR_GEOXML_RETV_SUCCESS){
-//			while (path) {
-//				const gchar *value;
-//				value = gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(path));
-//				GString *value_path = g_string_new(value);
-//				gebr_path_set_to(value_path, FALSE);
-//				g_string_append_printf(text, "%s\n", value_path->str);
-//				g_string_free(value_path, TRUE);
-//				gebr_geoxml_sequence_next(&path);
-//			}
-//		}
-//		if (text->len == 0) {
-//			/* There is no path, put "None" */
-//			markup = g_markup_printf_escaped("<i>%s</i>", _("None"));
-//			gtk_label_set_markup(GTK_LABEL(gebr.ui_project_line->info.path), markup);
-//			g_free(markup);
-//		} else {
-//			gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path), text->str);
-//		}
-//		g_string_free(text, TRUE);
+		gtk_widget_show(gebr.ui_project_line->info.view_paths);
+		gtk_widget_show(gebr.ui_project_line->info.group_img);
 	} else {
+		gtk_widget_hide(gebr.ui_project_line->info.view_paths);
+		gtk_widget_hide(gebr.ui_project_line->info.group_img);
 		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path_label), "");
-		gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.path), "");
 	}
 
 

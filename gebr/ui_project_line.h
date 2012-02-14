@@ -73,7 +73,6 @@ struct ui_project_line {
 
 		GtkWidget *path_label;
 		GtkWidget *view_paths;
-		GtkWidget *path;
 
 		GtkWidget *help_view;
 		GtkWidget *help_edit;
