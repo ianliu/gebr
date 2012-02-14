@@ -503,6 +503,7 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 		gtk_notebook_append_page(GTK_NOTEBOOK(notebook), path_box, gtk_label_new(_("Paths")));
 
 		GtkEntry *entry_base = GTK_ENTRY(gtk_builder_get_object(builder, "entry_base"));
+		GtkEntry *entry_import = GTK_ENTRY(gtk_builder_get_object(builder, "entry_import"));
 
 		gchar ***paths = gebr_geoxml_line_get_paths(GEBR_GEOXML_LINE(document));
 		gchar *base_path = NULL;
@@ -521,6 +522,17 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 		gtk_entry_set_text(entry_base, base_path);
 		g_free(base_path);
 //		gebr_pairstrfreev(paths);
+
+		gchar *import_path = NULL;
+		for (gint i=0; paths[i] != NULL; i++){
+			if (g_strcmp0(paths[i][1], "<IMPORT>") == 0){
+				import_path = paths[i][0];
+				g_debug("Configuring <IMPORT> to %s", import_path);
+				break;
+			}
+		}
+		gtk_entry_set_text(entry_import, import_path);
+		g_free(import_path);
 
 		GtkTreeStore *store_paths = gebr_ui_document_create_paths_tree();
 		GtkTreeView *view_paths = GTK_TREE_VIEW(gtk_builder_get_object(builder, "treeview_paths"));

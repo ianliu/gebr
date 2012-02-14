@@ -94,6 +94,7 @@ GebrGeoXmlLine *gebr_geoxml_line_new();
  */
 void gebr_geoxml_line_set_base_path(GebrGeoXmlLine *line, const gchar *base);
 
+gchar * gebr_geoxml_line_get_import_path(GebrGeoXmlLine *line);
 /**
  * Sets the import path
  */

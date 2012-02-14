@@ -97,6 +97,21 @@ gebr_geoxml_line_set_base_path(GebrGeoXmlLine *line, const gchar *base)
 	}
 }
 
+gchar *
+gebr_geoxml_line_get_import_path(GebrGeoXmlLine *line){
+	GebrGeoXmlSequence *seq;
+
+	gebr_geoxml_line_get_path(line, &seq, 0);
+
+	gchar *path_name;
+	while (seq) {
+		path_name = gebr_geoxml_line_path_get_name((GebrGeoXmlLinePath*) seq);
+		if(g_strcmp0(path_name, "<IMPORT>")==0)
+			return g_strdup(gebr_geoxml_value_sequence_get((GebrGeoXmlValueSequence*)seq));
+		gebr_geoxml_sequence_next(&seq);
+	}
+	return "";
+}
 void gebr_geoxml_line_set_import_path(GebrGeoXmlLine *line, const gchar *import_path){
 	GebrGeoXmlSequence *seq;
 
@@ -106,7 +121,7 @@ void gebr_geoxml_line_set_import_path(GebrGeoXmlLine *line, const gchar *import_
 	while (seq) {
 		//GebrLinePath *line_path = gebr_geoxml_line_get_path(line, &seq, 0);
 		path_name = gebr_geoxml_line_path_get_name((GebrGeoXmlLinePath*) seq);
-		if(g_strcmp0(path_name, "IMPORT")==0)
+		if(g_strcmp0(path_name, "<IMPORT>")==0)
 			break;
 		gebr_geoxml_sequence_next(&seq);
 	}
@@ -114,7 +129,7 @@ void gebr_geoxml_line_set_import_path(GebrGeoXmlLine *line, const gchar *import_
 	if (seq)
 		gebr_geoxml_value_sequence_set((GebrGeoXmlValueSequence*) seq, path_name);
 	else
-		gebr_geoxml_line_append_path(line, "IMPORT", import_path);
+		gebr_geoxml_line_append_path(line, "<IMPORT>", import_path);
 }
 
 GebrGeoXmlLineFlow *gebr_geoxml_line_append_flow(GebrGeoXmlLine * line, const gchar * source)
