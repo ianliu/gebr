@@ -41,9 +41,6 @@ static gboolean	parameters_on_delete_event		(GtkDialog          *dialog,
 							 GdkEventAny        *event,
 							 GebrGuiProgramEdit *program_edit);
 
-static void	flow_io_customized_paths_from_line	(GtkFileChooser     *chooser);
-
-
 /* Public functions {{{1*/
 void
 parameters_configure_setup_ui(void)
@@ -79,11 +76,8 @@ parameters_configure_setup_ui(void)
 		prefix = gebr_maestro_server_get_sftp_prefix(maestro);
 
 	GebrGeoXmlSequence *clone = gebr_geoxml_sequence_append_clone(GEBR_GEOXML_SEQUENCE(gebr.program));
-	program_edit = gebr_gui_program_edit_setup_ui(GEBR_GEOXML_PROGRAM(clone),
-						      flow_io_customized_paths_from_line,
-						      FALSE,
-						      gebr.validator,
-						      prefix);
+	program_edit = gebr_gui_program_edit_setup_ui(GEBR_GEOXML_PROGRAM(clone), NULL,
+						      FALSE, gebr.validator, prefix);
 	g_free(prefix);
 
 	g_signal_connect(dialog, "response", G_CALLBACK(parameters_actions), program_edit);
@@ -205,33 +199,4 @@ parameters_on_delete_event(GtkDialog *dialog,
 {
 	parameters_actions(dialog, GTK_RESPONSE_CANCEL, program_edit);
 	return FALSE;
-}
-
-/*
- * Add line's paths as shortcuts in \p chooser.
- * @param chooser The #GtkFileChooser to have the shortcuts set.
- */
-void
-flow_io_customized_paths_from_line(GtkFileChooser *chooser)
-{
-	GError *error;
-	GebrGeoXmlSequence *path_sequence;
-
-	if (gebr.line == NULL)
-		return;
-
-	error = NULL;
-	gebr_geoxml_line_get_path(gebr.line, &path_sequence, 0);
-	if (path_sequence != NULL) {
-		gtk_file_chooser_set_current_folder(chooser,
-						    gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE
-										   (path_sequence)));
-
-		do {
-			gtk_file_chooser_add_shortcut_folder(chooser,
-							     gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE
-											    (path_sequence)), &error);
-			gebr_geoxml_sequence_next(&path_sequence);
-		} while (path_sequence != NULL);
-	}
 }
