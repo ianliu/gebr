@@ -249,6 +249,8 @@ on_flow_execute_parallel_activate(void)
 	if (!flows_check_before_execution())
 		return;
 
+	if (!flows_check_maestro_connected())
+		return;
 	gebr_ui_flow_run(TRUE);
 }
 
