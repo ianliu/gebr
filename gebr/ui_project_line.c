@@ -680,20 +680,37 @@ static gboolean update_progress(gpointer user_data)
 {
 	TimeoutData *data = user_data;
 	gtk_progress_bar_pulse(data->progress);
+
+	GtkTextBuffer *text_buffer;
+	GtkWidget *text_view;
+	GtkWidget *scrolled_window;
+
+	scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+	gtk_widget_set_size_request(scrolled_window, 400, 200);
+	text_buffer = gtk_text_buffer_new(NULL);
+	text_view = gtk_text_view_new_with_buffer(text_buffer);
+	gtk_text_view_set_editable(GTK_TEXT_VIEW (text_view), FALSE);
+	gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW (text_view), FALSE);
+	gtk_container_add(GTK_CONTAINER(scrolled_window), text_view);
+
 	if (data->var == 1) {
 		//gtk_progress_bar_set_fraction(data->progress, 1);
 		gtk_widget_destroy(GTK_WIDGET(data->progress));
 
 		if (data->line_paths_creation_sugest) {
+
 			GString *paths = g_string_new("");
 			for (GList *i = data->line_paths_creation_sugest; i != NULL; i = g_list_next(i))
 				g_string_append_printf(paths, "\n%s", (gchar*)i->data);
 
-			gchar *text = g_strdup_printf("%s\n\n%s%s",
+			gtk_text_buffer_insert_at_cursor (text_buffer, paths->str, paths->len);
+
+			gchar *text = g_strdup_printf("%s\n\n%s",
 			                              _("<span size='large' weight='bold'>Create directories?</span>"),
 			                              _("There are some Line's paths located on your home directory that\n"
-			                        	" do not exist. Do you want to create the following folders?"),
-			                        	paths->str);
+			                        	" do not exist. Do you want to create the following folders?"));
+
 
 			gtk_label_set_markup(data->label, text);
 			g_free(text);
@@ -702,8 +719,12 @@ static gboolean update_progress(gpointer user_data)
 			                       GTK_STOCK_YES, GTK_RESPONSE_YES,
 			                       GTK_STOCK_NO, GTK_RESPONSE_NO,
 			                       NULL);
+			gtk_box_pack_start(GTK_BOX(data->dialog->vbox), scrolled_window, TRUE, TRUE, 0);
+
+			gtk_widget_show_all(data->dialog->vbox);
 
 			g_string_free(paths, TRUE);
+
 		} else
 			gtk_widget_destroy(GTK_WIDGET(data->dialog));
 	}
