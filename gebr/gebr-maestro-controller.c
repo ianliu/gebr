@@ -26,6 +26,7 @@
 #include <glib/gi18n.h>
 #include "gebr-maestro-server.h"
 #include "gebr-marshal.h"
+#include "ui_project_line.h"
 #include <libgebr/gui/gebr-gui-utils.h>
 #include <libgebr/utils.h>
 
@@ -1407,6 +1408,7 @@ gebr_maestro_controller_maestro_state_changed_real(GebrMaestroController *mc,
 						   GebrMaestroServer *maestro)
 {
 	update_maestro_view(mc, maestro, TRUE);
+	line_info_update();
 }
 
 static void 
