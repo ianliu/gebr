@@ -702,7 +702,7 @@ static gboolean update_progress(gpointer user_data)
 
 			GString *paths = g_string_new("");
 			for (GList *i = data->line_paths_creation_sugest; i != NULL; i = g_list_next(i))
-				g_string_append_printf(paths, "\n%s", (gchar*)i->data);
+				g_string_append_printf(paths, "%s\n", (gchar*)i->data);
 
 			gtk_text_buffer_insert_at_cursor (text_buffer, paths->str, paths->len);
 
