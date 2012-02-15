@@ -929,19 +929,28 @@ remove_gvfs_prefix(gchar *path)
 }
 
 gchar *
-gebr_relativise_path(const gchar *path_str,
+gebr_relativise_path(const gchar *path_string,
 		     gchar ***pvector)
 {
-	g_return_val_if_fail(path_str != NULL, NULL);
+	gchar *path_str = NULL;
+	g_return_val_if_fail(path_string != NULL, NULL);
 
-	if (!*path_str)
+	if (!*path_string)
 		return g_strdup("");
 
 	for (int i = 0; pvector[i]; i++)
-		if (g_str_has_prefix(path_str, pvector[i][1]))
-			return g_strdup(path_str);
+		if (g_str_has_prefix(path_string, pvector[i][1])){
+			path_str = gebr_resolve_relative_path(path_string, pvector);
+			break;
+			}
 
-	GString *tmp = g_string_new(path_str);
+	GString *tmp;
+	if (!path_str)
+		tmp = g_string_new(path_string);
+	else{
+		tmp = g_string_new(path_str);
+		g_free(path_str);
+	}
 	gebr_path_resolve_home_variable(tmp);
 	gchar *tmp2 = g_string_free(tmp, FALSE);
 	gchar *path = g_strdup(remove_gvfs_prefix(tmp2));
