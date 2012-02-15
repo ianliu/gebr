@@ -200,6 +200,10 @@ line_info_update(void)
 	gtk_link_button_set_uri(GTK_LINK_BUTTON(linkbutton_email), tmp);
 	g_free(tmp);
 
+	tmp = g_strconcat(gebr_geoxml_document_get_author(GEBR_GEOXML_DOCUMENT(gebr.line)), "<", gebr_geoxml_document_get_email(GEBR_GEOXML_DOCUMENT(gebr.line)), ">", NULL);
+	gtk_button_set_label(GTK_BUTTON(linkbutton_email), tmp);
+	g_free(tmp);
+
 	/* Set description */
 	tmp = g_markup_printf_escaped("<span size='large'><i>%s</i></span>",
 				      gebr_geoxml_document_get_description(GEBR_GEOXML_DOCUMENT(gebr.line)));
@@ -300,6 +304,10 @@ project_info_update(void)
 	/* Set email/author */
 	tmp = g_strconcat("mailto:", gebr_geoxml_document_get_email(GEBR_GEOXML_DOCUMENT(gebr.project)), NULL);
 	gtk_link_button_set_uri(GTK_LINK_BUTTON(linkbutton_email), tmp);
+	g_free(tmp);
+
+	tmp = g_strconcat(gebr_geoxml_document_get_author(GEBR_GEOXML_DOCUMENT(gebr.project)), "<", gebr_geoxml_document_get_email(GEBR_GEOXML_DOCUMENT(gebr.project)), ">", NULL);
+	gtk_button_set_label(GTK_BUTTON(linkbutton_email), tmp);
 	g_free(tmp);
 
 	/* Set description */
