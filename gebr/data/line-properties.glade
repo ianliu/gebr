@@ -16,17 +16,39 @@
           </object>
           <packing>
             <property name="expand">False</property>
+            <property name="fill">False</property>
             <property name="position">0</property>
           </packing>
         </child>
         <child>
-          <object class="GtkLabel" id="label_title">
+          <object class="GtkVBox" id="vbox1">
             <property name="visible">True</property>
-            <property name="label" translatable="yes">&lt;span size='xx-large'&gt;Line "Bacia da Amaz&#xF4;nia"&lt;/span&gt;</property>
-            <property name="use_markup">True</property>
+            <property name="spacing">5</property>
+            <child>
+              <object class="GtkLabel" id="label_title">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">&lt;span size='xx-large'&gt;Line "Bacia da Amaz&#xF4;nia"&lt;/span&gt;</property>
+                <property name="use_markup">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="label_maestro">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">on Maestro &lt;b&gt;Dell3&lt;/b&gt;</property>
+                <property name="use_markup">True</property>
+              </object>
+              <packing>
+                <property name="position">1</property>
+              </packing>
+            </child>
           </object>
           <packing>
             <property name="expand">False</property>
+            <property name="padding">5</property>
             <property name="position">1</property>
           </packing>
         </child>
@@ -51,7 +73,6 @@
             <property name="receives_default">True</property>
             <property name="has_tooltip">True</property>
             <property name="relief">none</property>
-            <property name="uri">mailto:ian.liu@gebrproject.com</property>
           </object>
         </child>
       </object>
@@ -273,7 +294,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkLabel" id="label24">
+                      <object class="GtkLabel" id="label_import">
                         <property name="visible">True</property>
                         <property name="xalign">0</property>
                         <property name="label" translatable="yes">/tmp/table</property>
@@ -310,6 +331,8 @@
     <child>
       <object class="GtkTable" id="table1">
         <property name="visible">True</property>
+        <property name="n_rows">3</property>
+        <property name="n_columns">2</property>
         <property name="row_spacing">5</property>
         <child>
           <object class="GtkLabel" id="label6">
@@ -333,6 +356,7 @@
         <child>
           <object class="GtkLabel" id="label_changed">
             <property name="visible">True</property>
+            <property name="xalign">0</property>
             <property name="label" translatable="yes">Ter 20 Dez 2011 00:36:58 BRST</property>
           </object>
           <packing>
@@ -342,11 +366,37 @@
         <child>
           <object class="GtkLabel" id="label_created">
             <property name="visible">True</property>
+            <property name="xalign">0</property>
             <property name="label" translatable="yes">Ter 20 Dez 2011 00:36:58 BRST</property>
           </object>
           <packing>
             <property name="left_attach">1</property>
             <property name="top_attach">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="label1">
+            <property name="visible">True</property>
+            <property name="xalign">0</property>
+            <property name="label" translatable="yes">&lt;b&gt;N&#xFA;mero de Fluxos:&lt;/b&gt;</property>
+            <property name="use_markup">True</property>
+          </object>
+          <packing>
+            <property name="top_attach">2</property>
+            <property name="bottom_attach">3</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="label_nflows">
+            <property name="visible">True</property>
+            <property name="xalign">0</property>
+            <property name="label" translatable="yes">4</property>
+          </object>
+          <packing>
+            <property name="left_attach">1</property>
+            <property name="right_attach">2</property>
+            <property name="top_attach">2</property>
+            <property name="bottom_attach">3</property>
           </packing>
         </child>
       </object>
