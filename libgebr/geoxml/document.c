@@ -818,15 +818,15 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 				g_free(title);
 			}
 
-			__gebr_geoxml_set_attr_value(first_el, "name", "BASE");
+			__gebr_geoxml_set_attr_value(first_el, "name", "<BASE>");
 
 			static gchar *base_dirs[][2] = {
-					{"BASE", ""},
-					{"DATA", "data"},
-					{"EXPORT", "export"},
-					{"SCRATCH", "tmp"},
-					{"TABLE", "table"},
-					{"CUSTOM", "misc"},
+					{"<BASE>", ""},
+					{"<DATA>", "data"},
+					{"<EXPORT>", "export"},
+					{"<SCRATCH>", "tmp"},
+					{"<TABLE>", "table"},
+					{"<CUSTOM>", "misc"},
 			};
 
 			for (gint i = 0; i < G_N_ELEMENTS(base_dirs); i++) {
