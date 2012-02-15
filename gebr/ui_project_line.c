@@ -165,9 +165,6 @@ struct ui_project_line *project_line_setup_ui(void)
 	g_signal_connect(GTK_OBJECT(ui_project_line->info.help_edit), "clicked",
 			 G_CALLBACK(project_line_edit_help), NULL);
 	gtk_box_pack_end(GTK_BOX(infopage), hbox, FALSE, TRUE, 0);
-	g_object_set(ui_project_line->info.help_edit, "sensitive", FALSE, NULL);
-	g_object_set(ui_project_line->info.help_view, "sensitive", FALSE, NULL);
-
 	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled_window), infopage);
 
 	return ui_project_line;
