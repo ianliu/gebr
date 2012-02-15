@@ -306,6 +306,7 @@ gebrm_app_daemon_on_state_change(GebrmDaemon *daemon,
 			}
 		}
 	}
+	g_debug("On %s, daemon:%s", __func__, gebrm_daemon_get_address(daemon));
 
 	for (GList *i = app->priv->connections; i; i = i->next) {
 		GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(i->data);
@@ -1044,7 +1045,8 @@ on_client_parse_messages(GebrCommProtocolSocket *socket,
 							      port_str);
 
 			for (GList *i = app->priv->daemons; i; i = i->next) {
-				if (gebrm_daemon_get_state(i->data) == SERVER_STATE_LOGGED) {
+				GebrCommServerState state = gebrm_daemon_get_state(i->data);
+				if ( state == SERVER_STATE_LOGGED || state == SERVER_STATE_DISCONNECTED) {
 					queue_client_info(app, i->data, client);
 					send_server_status_message(app, socket, i->data, gebrm_daemon_get_autoconnect(i->data));
 					send_groups_definitions(socket, i->data);

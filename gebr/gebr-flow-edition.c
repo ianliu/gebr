@@ -677,7 +677,8 @@ static void open_activated(GtkEntry *entry, GtkEntryIconPosition icon_pos, GdkEv
 			gchar *folder = g_build_filename(prefix, paths[0][0], NULL);
 			gtk_file_chooser_set_current_folder_uri(GTK_FILE_CHOOSER(dialog), folder);
 			g_free(folder);
-			gebr_gtk_bookmarks_add_paths(filename, prefix, paths);
+			if (gebr_maestro_server_get_state(maestro) == SERVER_STATE_CONNECT)
+				gebr_gtk_bookmarks_add_paths(filename, prefix, paths);
 			g_free(prefix);
 		}
 	}

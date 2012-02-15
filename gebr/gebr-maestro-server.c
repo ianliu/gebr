@@ -506,6 +506,7 @@ parse_messages(GebrCommServer *comm_server,
 			addr = g_list_nth_data(arguments, 1);
 			ssta = g_list_nth_data(arguments, 2);
 			ac = g_list_nth_data(arguments, 3);
+			g_debug("ESTOU AQUI EM %s, daemon_addr:%s", __func__, addr->str);
 
 			GtkTreeIter iter;
 			GebrCommServerState state = gebr_comm_server_state_from_string(ssta->str);
