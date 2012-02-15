@@ -505,6 +505,12 @@ void gebr_setup_ui(void)
 	gtk_notebook_append_page(GTK_NOTEBOOK(gebr.notebook), vbox, gtk_label_new(_("Projects and Lines")));
 	gtk_widget_show_all(vbox);
 
+	/* Hide line and project properties */
+	gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(gebr.ui_project_line->info.builder_proj, "main")));
+	gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(gebr.ui_project_line->info.builder_line, "main")));
+	gtk_widget_hide(gebr.ui_project_line->info.help_edit);
+	gtk_widget_hide(gebr.ui_project_line->info.help_view);
+
 	/*
 	 * Notebook's page "Flows"
 	 */
