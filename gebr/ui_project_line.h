@@ -59,28 +59,11 @@ struct ui_project_line {
 	GtkTreeModel *servers_sort;
 
 	struct ui_project_line_info {
-		GtkWidget *title;
-		GtkWidget *description;
-
-		GtkWidget *created_label;
-		GtkWidget *created;
-		GtkWidget *modified_label;
-		GtkWidget *modified;
-
-		GtkWidget *group_label;
-		GtkWidget *group_img;
-		GtkWidget *group;
-
-		GtkWidget *path_label;
-		GtkWidget *view_paths;
-
-		GtkWidget *help_view;
+		GtkBuilder *builder_proj;
+		GtkBuilder *builder_line;
 		GtkWidget *help_edit;
-		GtkWidget *author;
-
-		GtkWidget *numberoflines;
+		GtkWidget *help_view;
 	} info;
-
 };
 
 /**
