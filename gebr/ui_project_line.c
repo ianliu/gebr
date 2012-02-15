@@ -173,6 +173,11 @@ struct ui_project_line *project_line_setup_ui(void)
 void
 line_info_update(void)
 {
+	if (!gebr.ui_project_line->info.builder_line)
+		return;
+	if (!gebr.line)
+		return;
+
 	GObject *label_title = gtk_builder_get_object(gebr.ui_project_line->info.builder_line, "label_title");
 	GObject *linkbutton_email = gtk_builder_get_object(gebr.ui_project_line->info.builder_line, "linkbutton_email");
 	GObject *label_description = gtk_builder_get_object(gebr.ui_project_line->info.builder_line, "label_description");
@@ -284,6 +289,11 @@ line_info_update(void)
 void
 project_info_update(void)
 {
+	if (!gebr.ui_project_line->info.builder_proj)
+			return;
+	if (!gebr.project)
+		return;
+
 	GObject *label_title = gtk_builder_get_object(gebr.ui_project_line->info.builder_proj, "label_title");
 	GObject *linkbutton_email = gtk_builder_get_object(gebr.ui_project_line->info.builder_proj, "linkbutton_email");
 	GObject *label_description = gtk_builder_get_object(gebr.ui_project_line->info.builder_proj, "label_description");
