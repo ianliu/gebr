@@ -1739,6 +1739,7 @@ gebr_ui_document_set_properties_from_builder(GebrGeoXmlDocument *document,
 			gchar ***paths = gebr_geoxml_line_get_paths(line);
 			gchar *base_path;
 			gchar *new_dir;
+			gboolean set_project_dir = FALSE;
 
 			for (gint i = 0; paths[i]; i++) {
 				if (g_strcmp0(paths[i][1], "<BASE>") == 0) {
@@ -1755,11 +1756,13 @@ gebr_ui_document_set_properties_from_builder(GebrGeoXmlDocument *document,
 					continue;
 
 				buffer = g_string_append_c(buffer, '/');
-				if (g_strcmp0(splited_base[i], old_title) == 0) {
+				if (g_strcmp0(splited_base[i], old_title) == 0 && set_project_dir == FALSE)
+				{
 					buffer = g_string_append(buffer, new_title);
 					if (g_strcmp0(old_title, new_title) != 0)
 						option = GEBR_COMM_PROTOCOL_PATH_RENAME;
 					new_dir = g_strdup(buffer->str);
+					set_project_dir = TRUE;
 				} else {
 					buffer = g_string_append(buffer, splited_base[i]);
 				}
@@ -1805,6 +1808,12 @@ gebr_ui_document_set_properties_from_builder(GebrGeoXmlDocument *document,
 		const gchar *base_path = gtk_entry_get_text(entry_base);
 		const gchar *import_path = gtk_entry_get_text(entry_import);
 
+		gboolean same_name = FALSE;
+		gchar *project_name = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.project));
+		if (g_strcmp0(project_name, old_title) == 0)
+			same_name = TRUE;
+
+
 		gint option = -1;
 		GString *buffer = g_string_new(NULL);
 
@@ -1815,6 +1824,11 @@ gebr_ui_document_set_properties_from_builder(GebrGeoXmlDocument *document,
 
 			buffer = g_string_append_c(buffer, '/');
 			if (g_strcmp0(splited_base[i], old_title) == 0) {
+				if (same_name) {
+					same_name = FALSE;
+					buffer = g_string_append(buffer, splited_base[i]);
+					continue;
+				}
 				buffer = g_string_append(buffer, new_title);
 				if (g_strcmp0(old_title, new_title) != 0)
 					option = GEBR_COMM_PROTOCOL_PATH_RENAME;
