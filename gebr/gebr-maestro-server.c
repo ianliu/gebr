@@ -131,11 +131,18 @@ static void
 unmount_gvfs(GebrMaestroServer *maestro,
              gboolean quit)
 {
-	if (!maestro->priv->has_connected_daemon)
-		return;
+	if (!maestro->priv->has_connected_daemon) {
+		if (quit)
+			gebr_quit(TRUE);
+		else
+			return;
+	}
 
 	GMountOperation *op = gtk_mount_operation_new(NULL);
 	maestro->priv->has_connected_daemon = FALSE;
+
+	if (!maestro->priv->mount_location)
+		return;
 
 	GError *err = NULL;
 	GMount *mount = g_file_find_enclosing_mount(maestro->priv->mount_location, NULL, &err);
