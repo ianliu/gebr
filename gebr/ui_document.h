@@ -21,6 +21,7 @@
 #include <gtk/gtk.h>
 
 #include <libgebr/geoxml/geoxml.h>
+#include "gebr-maestro-server.h"
 
 G_BEGIN_DECLS
 
@@ -76,6 +77,11 @@ GtkTreeStore *gebr_ui_document_create_paths_tree(void);
 
 void gebr_ui_document_send_paths_messages(GebrGeoXmlDocument *document,
 					  const gchar *old_title);
+
+void gebr_ui_document_send_paths_to_maestro(GebrMaestroServer *maestro,
+					    gint option,
+					    const gchar *oldmsg,
+					    const gchar *newmsg);
 
 G_END_DECLS
 

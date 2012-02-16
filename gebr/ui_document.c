@@ -1871,13 +1871,19 @@ substitute_base_with_line_name(const gchar *base,
 	return ret;
 }
 
-static void
-send_paths_to_maestro(GebrMaestroServer *maestro,
-		      gint option,
-		      const gchar *oldmsg,
-		      const gchar *newmsg)
+void
+gebr_ui_document_send_paths_to_maestro(GebrMaestroServer *maestro,
+				       gint option,
+				       const gchar *oldmsg,
+				       const gchar *newmsg)
 {
 	GebrCommServer *server = gebr_maestro_server_get_server(maestro);
+
+	if (!oldmsg)
+		oldmsg = "";
+
+	if (!newmsg)
+		newmsg = "";
 
 	if (option == GEBR_COMM_PROTOCOL_PATH_RENAME) {
 		g_debug("Rename dir %s to %s", oldmsg, newmsg);
@@ -1888,6 +1894,7 @@ send_paths_to_maestro(GebrMaestroServer *maestro,
 						      gebr_comm_protocol_path_enum_to_str(option));
 	} else {
 		gchar *paths = gebr_geoxml_get_paths_for_base(newmsg);
+		g_debug("------------------  %s", paths);
 		gebr_comm_protocol_socket_oldmsg_send(server->socket, FALSE,
 						      gebr_comm_protocol_defs.path_def, 3,
 						      paths,
@@ -2045,7 +2052,7 @@ on_response_ok(GtkButton *button,
 	g_signal_connect(maestro, "path-error", G_CALLBACK(on_maestro_path_error), data);
 	g_signal_connect(data->window, "delete-event", G_CALLBACK(gtk_true), NULL);
 
-	send_paths_to_maestro(maestro, option, oldmsg, newmsg);
+	gebr_ui_document_send_paths_to_maestro(maestro, option, oldmsg, newmsg);
 	update_buttons_visibility(data, PROPERTIES_PROGRESS);
 	data->progress_animation = g_timeout_add(200, progress_bar_animate, data);
 }
