@@ -89,6 +89,11 @@ on_assistant_apply(GtkAssistant *assistant,
 
 	if (i == n - 1) {
 		GtkTreeIter iter;
+		GtkEntry *base = GTK_ENTRY(gtk_builder_get_object(builder, "entry_base"));
+
+		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+		gebr_ui_document_send_paths_to_maestro(maestro, GEBR_COMM_PROTOCOL_PATH_CREATE,
+						       NULL, gtk_entry_get_text(base));
 		gebr_ui_document_set_properties_from_builder(GEBR_GEOXML_DOCUMENT(gebr.line), builder);
 		project_line_get_selected(&iter, DontWarnUnselection);
 		gtk_tree_store_set(gebr.ui_project_line->store, &iter,
@@ -127,6 +132,7 @@ line_setup_wizard(GebrGeoXmlLine *line)
 
 	GtkWidget *page1 = GTK_WIDGET(gtk_builder_get_object(builder, "table"));
 	GtkWidget *page2 = GTK_WIDGET(gtk_builder_get_object(builder, "widget_paths"));
+	GtkWidget *page3 = GTK_WIDGET(gtk_builder_get_object(builder, "main_progress"));
 	GtkWidget *assistant = gtk_assistant_new();
 	gtk_window_set_title(GTK_WINDOW(assistant), _("Creating a new Line"));
 	g_signal_connect(assistant, "cancel", G_CALLBACK(on_assistant_cancel), NULL);
