@@ -2,9 +2,12 @@
 [encoding: UTF-8]
 callbacks.c
 cmdline.c
+data/document-properties.glade
 data/gebr-job-control.glade
 data/gebr-maestro-dialog.glade
 data/gebr.desktop.in.in
+data/line-properties.glade
+data/project-properties.glade
 document.c
 flow.c
 gebr-daemon-server.c
