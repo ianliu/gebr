@@ -65,6 +65,7 @@
         <property name="visible">True</property>
         <property name="n_rows">3</property>
         <property name="n_columns">2</property>
+        <property name="column_spacing">10</property>
         <property name="row_spacing">5</property>
         <child>
           <object class="GtkLabel" id="label6">
@@ -73,6 +74,9 @@
             <property name="label" translatable="yes">&lt;b&gt;Alterado:&lt;/b&gt;</property>
             <property name="use_markup">True</property>
           </object>
+          <packing>
+            <property name="x_options">GTK_FILL</property>
+          </packing>
         </child>
         <child>
           <object class="GtkLabel" id="label7">
@@ -83,6 +87,7 @@
           </object>
           <packing>
             <property name="top_attach">1</property>
+            <property name="x_options">GTK_FILL</property>
           </packing>
         </child>
         <child>
@@ -116,6 +121,7 @@
           <packing>
             <property name="top_attach">2</property>
             <property name="bottom_attach">3</property>
+            <property name="x_options">GTK_FILL</property>
           </packing>
         </child>
         <child>
