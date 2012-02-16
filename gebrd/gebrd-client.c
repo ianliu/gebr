@@ -655,14 +655,14 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			gboolean flag_error = FALSE;
 
 			for (GList *j = list; j; j = j->next) {
-				GString *path = list->data;
+				GString *path = j->data;
 				if (g_strcmp0(path->str, "") == 0)
 					continue;
 
 				switch (option) {
 				case GEBR_COMM_PROTOCOL_PATH_CREATE:
 					if (g_file_test(path->str, G_FILE_TEST_IS_DIR))
-						flag_exists= TRUE;
+						flag_exists = TRUE;
 					else
 						if (g_mkdir_with_parents(path->str, 0700))
 							flag_error = TRUE;
