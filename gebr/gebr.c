@@ -135,8 +135,6 @@ gebr_init(gboolean has_config)
 
 gboolean gebr_quit(gboolean save_config)
 {
-	GtkTreeIter iter;
-
 	g_free(SESSIONID);
 
 	if (save_config)
