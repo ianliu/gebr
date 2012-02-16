@@ -152,6 +152,8 @@ GebrDaemonServer *gebr_maestro_server_get_daemon(GebrMaestroServer *server,
 
 GebrCommServerState gebr_maestro_server_get_state(GebrMaestroServer *maestro);
 
+void gebr_maestro_server_set_window(GebrMaestroServer *maestro, GtkWindow *window);
+
 void gebr_maestro_server_get_error(GebrMaestroServer *maestro,
 				   const gchar **error_type,
 				   const gchar **error_msg);

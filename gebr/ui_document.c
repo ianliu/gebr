@@ -2289,6 +2289,8 @@ gebr_document_send_path_message(GebrGeoXmlLine *line,
 
 	if (option == GEBR_COMM_PROTOCOL_PATH_CREATE) {
 		for (gint i = 0; paths[i]; i++) {
+			if (g_strcmp0(paths[i][1], "<IMPORT>") == 0)
+				continue;
 			gchar *escaped = gebr_geoxml_escape_path(paths[i][0]);
 			g_string_append_c(buffer, ',');
 			g_string_append(buffer, escaped);

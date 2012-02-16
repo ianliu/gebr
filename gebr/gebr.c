@@ -239,7 +239,7 @@ gebr_config_load(void)
 	gchar *usermenus = g_strdup_printf("%s/GeBR-Menus", g_get_home_dir());
 	gchar *datadir = g_strdup_printf("%s/.gebr/gebr/data", g_get_home_dir());
 
-	gebr.maestro_controller = gebr_maestro_controller_new();
+	gebr.maestro_controller = gebr_maestro_controller_new(NULL);
 
 	gebr.config.path = g_string_new(NULL);
 	g_string_printf(gebr.config.path, "%s/.gebr/gebr/gebr.conf", g_get_home_dir());
@@ -332,6 +332,7 @@ static void
 gebr_post_config(gboolean has_config)
 {
 	gebr_log_load();
+	g_object_set(gebr.maestro_controller, "window", gebr.window, NULL);
 	gebr_message(GEBR_LOG_START, TRUE, TRUE, _("Initiating GêBR..."));
 
 	gebr_path_resolve_home_variable(gebr.config.usermenus);
