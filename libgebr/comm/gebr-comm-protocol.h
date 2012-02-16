@@ -40,12 +40,11 @@ enum {
 	GEBR_COMM_PROTOCOL_N_COLUMN
 };  
 
-enum{
+typedef enum {
 	GEBR_COMM_PROTOCOL_STATUS_PATH_OK,
 	GEBR_COMM_PROTOCOL_STATUS_PATH_EXISTS,
 	GEBR_COMM_PROTOCOL_STATUS_PATH_ERROR,
-	GEBR_COMM_PROTOCOL_STATUS_PATH_N
-};
+} GebrCommProtocolStatusPath;
 
 struct gebr_comm_protocol_defs {
 	GHashTable *hash_table;
