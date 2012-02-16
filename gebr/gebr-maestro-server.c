@@ -71,7 +71,7 @@ enum {
 static void mount_enclosing_ready_cb(GFile *location, GAsyncResult *res,
 				     GebrMaestroServer *maestro);
 
-static void unmount_ready_cb(GMount *mount, GAsyncResult *res, gboolean quit);
+static void unmount_ready_cb(GMount *mount, GAsyncResult *res, gpointer quit);
 
 static void log_message(GebrCommServer *server, GebrLogMessageType type,
 			     const gchar *message, gpointer user_data);
@@ -149,7 +149,8 @@ unmount_gvfs(GebrMaestroServer *maestro,
 
 	if (!g_error_matches(err, G_IO_ERROR, G_IO_ERROR_NOT_FOUND))
 		g_mount_unmount_with_operation(mount, G_MOUNT_UNMOUNT_NONE, op,
-		                               NULL, (GAsyncReadyCallback) unmount_ready_cb, quit);
+		                               NULL, (GAsyncReadyCallback) unmount_ready_cb,
+					       GUINT_TO_POINTER(quit));
 
 	g_object_unref(maestro->priv->mount_location);
 	maestro->priv->mount_location = NULL;
@@ -401,10 +402,11 @@ mount_enclosing_ready_cb(GFile *location,
 static void
 unmount_ready_cb(GMount *mount,
 		 GAsyncResult *res,
-		 gboolean quit)
+		 gpointer data)
 {
 	gboolean success;
 	GError *error = NULL;
+	gboolean quit = GPOINTER_TO_UINT(data);
 
 	success = g_mount_unmount_with_operation_finish(mount, res, &error);
 
@@ -462,15 +464,12 @@ parse_messages(GebrCommServer *comm_server,
 					goto err;
 
 				daemon_addr = g_list_nth_data(arguments, 0);
-				status_id= g_list_nth_data(arguments, 1);
+				status_id = g_list_nth_data(arguments, 1);
 
-				//TODO: FAZER ALGO COM O RET DO PATH_DEF
 				g_debug("on %s, daemon_addr:'%s', error:'%s'", __func__, daemon_addr->str, status_id->str);
 
 				gint ret_id = atoi(status_id->str);
-				if (ret_id == GEBR_COMM_PROTOCOL_STATUS_PATH_ERROR)
-					g_signal_emit(maestro, signals[PATH_ERROR], 0);
-
+				g_signal_emit(maestro, signals[PATH_ERROR], 0, ret_id);
 
 				gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 			}
@@ -1028,8 +1027,8 @@ gebr_maestro_server_class_init(GebrMaestroServerClass *klass)
 			             G_SIGNAL_RUN_LAST,
 			             G_STRUCT_OFFSET(GebrMaestroServerClass, path_error),
 			             NULL, NULL,
-			             g_cclosure_marshal_VOID__VOID,
-			             G_TYPE_NONE, 0);
+			             g_cclosure_marshal_VOID__INT,
+			             G_TYPE_NONE, 1, G_TYPE_INT);
 
 	g_object_class_install_property(object_class,
 					PROP_ADDRESS,

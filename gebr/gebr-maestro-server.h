@@ -76,7 +76,8 @@ struct _GebrMaestroServerClass {
 			 const gchar *addr,
 			 const gchar *type);
 
-	void (*path_error) (GebrMaestroServer *maestro);
+	void (*path_error) (GebrMaestroServer         *maestro,
+			    GebrCommProtocolStatusPath error_id);
 };
 
 struct _GebrMaestroServer {
