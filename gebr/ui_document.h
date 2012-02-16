@@ -74,6 +74,9 @@ void gebr_ui_document_set_properties_from_builder(GebrGeoXmlDocument *document,
  */
 GtkTreeStore *gebr_ui_document_create_paths_tree(void);
 
+void gebr_ui_document_send_paths_messages(GebrGeoXmlDocument *document,
+					  const gchar *old_title);
+
 G_END_DECLS
 
 #endif				//__UI_DOCUMENT_H

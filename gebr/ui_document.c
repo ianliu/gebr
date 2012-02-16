@@ -100,8 +100,15 @@ typedef struct {
 
 	GebrGeoXmlDocument *document;
 	GtkWidget *window;
+	GtkWidget *ok_button;
+	GtkWidget *cancel_button;
+	GtkWidget *apply_button;
+	GtkWidget *back_button;
+	GtkWidget *notebook;
 
 	/* line stuff */
+	gint progress_animation;
+	gchar *old_base;
 	GtkWidget *maestro_combo;
 	GtkWidget *maestro_box;
 	gint previous_active_group;
@@ -109,6 +116,14 @@ typedef struct {
 	GebrPropertiesResponseFunc func;
 	gboolean accept_response;
 } GebrPropertiesData;
+
+enum {
+	PROPERTIES_EDIT,
+	PROPERTIES_PROGRESS,
+	PROPERTIES_OK,
+	PROPERTIES_ERROR,
+};
+
 
 //==============================================================================
 // PROTOTYPES								       =
@@ -160,6 +175,10 @@ static const gchar *document_get_name_from_type(GebrGeoXmlDocument * document, g
 
 static void on_response_ok(GtkButton * button, GebrPropertiesData * data);
 
+static void on_properties_apply(GtkButton *button, GebrPropertiesData *data);
+
+static void on_properties_back(GtkButton *button, GebrPropertiesData *data);
+
 void on_properties_destroy(GtkWindow * window, GebrPropertiesData * data);
 
 static void on_groups_combo_box_changed (GtkComboBox *combo);
@@ -179,6 +198,8 @@ static gboolean dict_edit_can_reorder(GtkTreeView            *tree_view,
 				      GtkTreeIter            *position,
 				      GtkTreeViewDropPosition drop_position,
 				      struct dict_edit_data  *data);
+
+static void update_buttons_visibility(GebrPropertiesData *data, gint state);
 
 static const GtkActionEntry dict_actions_entries[] = {
 	{"add", GTK_STOCK_ADD, NULL, NULL, N_("Add new parameter."),
@@ -374,7 +395,7 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 	GtkWidget *cancel_button;
 	gchar *window_title;
 
-	data = g_new(GebrPropertiesData, 1);
+	data = g_new0(GebrPropertiesData, 1);
 	data->func = func;
 	data->accept_response = FALSE;
 	data->document = document;
@@ -396,20 +417,29 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 	gtk_window_set_title(GTK_WINDOW(window), window_title);
 	g_free(window_title);
 
+	GObject *progress_widget = gtk_builder_get_object(builder, "main_progress");
+	gtk_widget_hide(GTK_WIDGET(progress_widget));
+
 	vbox = gtk_vbox_new(FALSE, 5);
 	GtkWidget *notebook = gtk_notebook_new();
+	data->notebook = notebook;
 	gtk_container_add(GTK_CONTAINER(vbox), notebook);
+	gtk_container_add(GTK_CONTAINER(vbox), GTK_WIDGET(progress_widget));
 	gtk_container_add(GTK_CONTAINER(window), vbox);
 	gtk_window_set_default_size(GTK_WINDOW(window), 400, -1);
 	gtk_widget_show(vbox);
 	gtk_widget_show(notebook);
 
 	button_box = gtk_hbutton_box_new();
-	ok_button = gtk_button_new_from_stock(GTK_STOCK_OK);
-	cancel_button = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
+	data->ok_button = ok_button = gtk_button_new_from_stock(GTK_STOCK_OK);
+	data->cancel_button = cancel_button = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
+	data->apply_button = gtk_button_new_from_stock(GTK_STOCK_APPLY);
+	data->back_button = gtk_button_new_from_stock(GTK_STOCK_GO_BACK);
 
 	g_signal_connect(window, "destroy", G_CALLBACK(on_properties_destroy), data);
 	g_signal_connect(ok_button, "clicked", G_CALLBACK(on_response_ok), data);
+	g_signal_connect(data->apply_button, "clicked", G_CALLBACK(on_properties_apply), data);
+	g_signal_connect(data->back_button, "clicked", G_CALLBACK(on_properties_back), data);
 	g_signal_connect_swapped(cancel_button, "clicked", G_CALLBACK(gtk_widget_destroy), window);
 
 	GtkWidget *table = GTK_WIDGET(gtk_builder_get_object(builder, "table"));
@@ -417,8 +447,12 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(button_box), GTK_BUTTONBOX_END);
 	gtk_box_pack_start(GTK_BOX(button_box), cancel_button, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(button_box), ok_button, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(button_box), data->apply_button, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(button_box), data->back_button, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), button_box, FALSE, TRUE, 0);
-	gtk_widget_show_all(button_box);
+	gtk_widget_show(button_box);
+
+	update_buttons_visibility(data, PROPERTIES_EDIT);
 
 	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), table, gtk_label_new(_("Preferences")));
 
@@ -445,6 +479,7 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 	if (gebr_geoxml_document_get_type(document) == GEBR_GEOXML_DOCUMENT_TYPE_LINE) {
 		data->maestro_combo = document_properties_create_maestro_combobox(GEBR_GEOXML_LINE(document));
 		data->previous_active_group = gtk_combo_box_get_active(GTK_COMBO_BOX(data->maestro_combo));
+		data->old_base = gebr_geoxml_line_get_path_by_name(GEBR_GEOXML_LINE(document), "<BASE>");
 
 		GtkWidget *lock_button = gtk_toggle_button_new();
 		GtkWidget *image = gtk_image_new_from_stock("object-locked", GTK_ICON_SIZE_BUTTON);
@@ -1703,8 +1738,6 @@ void
 gebr_ui_document_set_properties_from_builder(GebrGeoXmlDocument *document,
 					     GtkBuilder *builder)
 {
-	gchar *old_title = gebr_geoxml_document_get_title(document);
-
 	GtkEntry *title = GTK_ENTRY(gtk_builder_get_object(builder, "entry_title"));
 	GtkEntry *author = GTK_ENTRY(gtk_builder_get_object(builder, "entry_author"));
 	GtkEntry *description = GTK_ENTRY(gtk_builder_get_object(builder, "entry_description"));
@@ -1716,150 +1749,18 @@ gebr_ui_document_set_properties_from_builder(GebrGeoXmlDocument *document,
 	gebr_geoxml_document_set_author(document, gtk_entry_get_text(author));
 	gebr_geoxml_document_set_email(document, gtk_entry_get_text(email));
 
-	GebrGeoXmlDocumentType type;
-	type = gebr_geoxml_document_get_type(document);
-
-	if (type == GEBR_GEOXML_DOCUMENT_TYPE_PROJECT) {
-		GtkTreeIter iter, child, parent;
-		GtkTreeModel *model = GTK_TREE_MODEL(gebr.ui_project_line->store);
-		GebrMaestroServer *maestro_server = NULL;
-
-		gboolean valid = gtk_tree_model_get_iter_first(model, &iter);
-		while (valid) {
-			GebrGeoXmlDocument *proj;
-			gtk_tree_model_get(model, &iter,
-			                   PL_XMLPOINTER, &proj, -1);
-
-			if (proj == document) {
-				parent = iter;
-				break;
-			}
-
-			valid = gtk_tree_model_iter_next(model, &iter);
-		}
-
-		valid = gtk_tree_model_iter_children(model, &child, &parent);
-		while (valid) {
-			GebrGeoXmlLine *line;
-			gtk_tree_model_get(model, &child,
-			                   PL_XMLPOINTER, &line, -1);
-
-			gchar ***paths = gebr_geoxml_line_get_paths(line);
-			gchar *base_path;
-			gchar *new_dir;
-			gboolean set_project_dir = FALSE;
-
-			for (gint i = 0; paths[i]; i++) {
-				if (g_strcmp0(paths[i][1], "<BASE>") == 0) {
-					base_path = paths[i][0];
-					break;
-				}
-			}
-			gint option = -1;
-			GString *buffer = g_string_new(NULL);
-
-			gchar **splited_base = g_strsplit(base_path, "/", -1);
-			for (gint i = 0; splited_base[i]; i++) {
-				if (!*splited_base[i])
-					continue;
-
-				buffer = g_string_append_c(buffer, '/');
-				if (g_strcmp0(splited_base[i], old_title) == 0 && set_project_dir == FALSE)
-				{
-					buffer = g_string_append(buffer, new_title);
-					if (g_strcmp0(old_title, new_title) != 0)
-						option = GEBR_COMM_PROTOCOL_PATH_RENAME;
-					new_dir = g_strdup(buffer->str);
-					set_project_dir = TRUE;
-				} else {
-					buffer = g_string_append(buffer, splited_base[i]);
-				}
-			}
-			if (option == -1)
-				continue;
-
-			gebr_geoxml_line_set_base_path(line, buffer->str);
-
-			document_save(GEBR_GEOXML_DOCUMENT(line), TRUE, TRUE);
-
-			g_string_free(buffer, TRUE);
-
-			GFile *file = g_file_new_for_path(base_path);
-			GFile *parent = g_file_get_parent(file);
-			gchar *old_dir = g_file_get_path(parent);
-
-			g_object_unref(file);
-			g_object_unref(parent);
-
-			GebrMaestroServer *tmp = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, line);
-
-			if (!maestro_server || tmp != maestro_server) {
-				maestro_server = tmp;
-				GebrCommServer *comm_server = gebr_maestro_server_get_server(maestro_server);
-
-				g_debug("enviando mensagem (NEW) '%s', (OLD) '%s' ao maestro '%s'", new_dir, old_dir, gebr_maestro_server_get_address(maestro_server));
-
-				gebr_comm_protocol_socket_oldmsg_send(comm_server->socket, FALSE,
-				                                      gebr_comm_protocol_defs.path_def, 3,
-				                                      new_dir,
-				                                      old_dir,
-				                                      gebr_comm_protocol_path_enum_to_str (option));
-			}
-			g_free(old_dir);
-			g_free(new_dir);
-			valid = gtk_tree_model_iter_next(model, &child);
-		}
-	}
-	else if (type == GEBR_GEOXML_DOCUMENT_TYPE_LINE) {
-		GtkEntry *entry_base = GTK_ENTRY(gtk_builder_get_object(builder, "entry_base"));
-		GtkEntry *entry_import = GTK_ENTRY(gtk_builder_get_object(builder, "entry_import"));
-		const gchar *base_path = gtk_entry_get_text(entry_base);
-		const gchar *import_path = gtk_entry_get_text(entry_import);
-
-		gboolean same_name = FALSE;
-		gchar *project_name = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.project));
-		if (g_strcmp0(project_name, old_title) == 0)
-			same_name = TRUE;
-
-
-		gint option = -1;
-		GString *buffer = g_string_new(NULL);
-
-		gchar **splited_base = g_strsplit(base_path, "/", -1);
-		for (gint i = 0; splited_base[i]; i++) {
-			if (!*splited_base[i] || (g_strcmp0(splited_base[i], "") == 0))
-				continue;
-
-			buffer = g_string_append_c(buffer, '/');
-			if (g_strcmp0(splited_base[i], old_title) == 0) {
-				if (same_name) {
-					same_name = FALSE;
-					buffer = g_string_append(buffer, splited_base[i]);
-					continue;
-				}
-				buffer = g_string_append(buffer, new_title);
-				if (g_strcmp0(old_title, new_title) != 0)
-					option = GEBR_COMM_PROTOCOL_PATH_RENAME;
-			} else {
-				buffer = g_string_append(buffer, splited_base[i]);
-			}
-		}
-		if (option == -1)
-			option = GEBR_COMM_PROTOCOL_PATH_CREATE;
-
-		gebr_geoxml_line_set_base_path(GEBR_GEOXML_LINE(document), buffer->str);
-		gebr_geoxml_line_set_import_path(GEBR_GEOXML_LINE(document), import_path);
-
-		gebr_document_send_path_message(GEBR_GEOXML_LINE(document), option, base_path);
-
-		g_string_free(buffer, TRUE);
+	if (gebr_geoxml_document_get_type(document) == GEBR_GEOXML_DOCUMENT_TYPE_LINE) {
+		GtkEntry *base = GTK_ENTRY(gtk_builder_get_object(builder, "entry_base"));
+		GtkEntry *import = GTK_ENTRY(gtk_builder_get_object(builder, "entry_import"));
+		gebr_geoxml_line_set_base_path(GEBR_GEOXML_LINE(document), gtk_entry_get_text(base));
+		gebr_geoxml_line_set_import_path(GEBR_GEOXML_LINE(document), gtk_entry_get_text(import));
 	}
 
 	document_save(document, TRUE, TRUE);
 }
 
 static void
-on_response_ok(GtkButton * button, GebrPropertiesData * data)
+save_document_properties(GebrPropertiesData *data)
 {
 	GtkTreeIter iter;
 	GebrGeoXmlDocumentType type;
@@ -1902,6 +1803,251 @@ on_response_ok(GtkButton * button, GebrPropertiesData * data)
 	}
 
 	gtk_widget_destroy(data->window);
+}
+
+static void
+on_maestro_path_error(GebrMaestroServer *maestro,
+		      GebrCommProtocolStatusPath error_id,
+		      GebrPropertiesData *data)
+{
+	g_source_remove(data->progress_animation);
+
+	GObject *image = gtk_builder_get_object(data->builder, "image_status");
+	GObject *label = gtk_builder_get_object(data->builder, "label_status");
+
+	switch (error_id) {
+	case GEBR_COMM_PROTOCOL_STATUS_PATH_OK:
+		gtk_image_set_from_stock(GTK_IMAGE(image), GTK_STOCK_OK, GTK_ICON_SIZE_DIALOG);
+		gtk_label_set_text(GTK_LABEL(label), _("Sucess!"));
+		update_buttons_visibility(data, PROPERTIES_OK);
+		break;
+	case GEBR_COMM_PROTOCOL_STATUS_PATH_ERROR:
+		gtk_image_set_from_stock(GTK_IMAGE(image), GTK_STOCK_DIALOG_ERROR, GTK_ICON_SIZE_DIALOG);
+		gtk_label_set_text(GTK_LABEL(label), _("Could not create directory"));
+		update_buttons_visibility(data, PROPERTIES_ERROR);
+		break;
+	case GEBR_COMM_PROTOCOL_STATUS_PATH_EXISTS:
+		gtk_image_set_from_stock(GTK_IMAGE(image), GTK_STOCK_DIALOG_ERROR, GTK_ICON_SIZE_DIALOG);
+		gtk_label_set_text(GTK_LABEL(label), _("Directory already exists"));
+		update_buttons_visibility(data, PROPERTIES_ERROR);
+		break;
+	}
+
+	g_signal_handlers_disconnect_by_func(maestro, on_maestro_path_error, data);
+}
+
+static gboolean
+progress_bar_animate(gpointer user_data)
+{
+	GebrPropertiesData *data = user_data;
+	GObject *progress = gtk_builder_get_object(data->builder, "progressbar");
+	gtk_progress_bar_pulse(GTK_PROGRESS_BAR(progress));
+	return TRUE;
+}
+
+static gboolean
+check_if_title_is_subset_of_base(const gchar *title,
+				 const gchar *base)
+{
+	GFile *tmp = g_file_new_for_path(base);
+	gchar *basename = g_file_get_basename(tmp);
+	gboolean ret = g_strcmp0(basename, title) == 0;
+	g_free(basename);
+	g_object_unref(tmp);
+	return ret;
+}
+
+static gchar *
+substitute_base_with_line_name(const gchar *base,
+			       const gchar *new_title)
+{
+	GFile *tmp = g_file_new_for_path(base);
+	GFile *parent = g_file_get_parent(tmp);
+	gchar *path = g_file_get_path(parent);
+	gchar *ret = g_build_filename(path, new_title, NULL);
+	g_free(path);
+	g_object_unref(tmp);
+	g_object_unref(parent);
+	return ret;
+}
+
+static void
+send_paths_to_maestro(GebrMaestroServer *maestro,
+		      gint option,
+		      const gchar *oldmsg,
+		      const gchar *newmsg)
+{
+	GebrCommServer *server = gebr_maestro_server_get_server(maestro);
+
+	if (option == GEBR_COMM_PROTOCOL_PATH_RENAME) {
+		g_debug("Rename dir %s to %s", oldmsg, newmsg);
+		gebr_comm_protocol_socket_oldmsg_send(server->socket, FALSE,
+						      gebr_comm_protocol_defs.path_def, 3,
+						      newmsg,
+						      oldmsg,
+						      gebr_comm_protocol_path_enum_to_str(option));
+	} else {
+		gchar *paths = gebr_geoxml_get_paths_for_base(newmsg);
+		gebr_comm_protocol_socket_oldmsg_send(server->socket, FALSE,
+						      gebr_comm_protocol_defs.path_def, 3,
+						      paths,
+						      oldmsg,
+						      gebr_comm_protocol_path_enum_to_str(option));
+	}
+}
+
+static gboolean
+proc_changes_in_title_and_base(GebrPropertiesData *data,
+			       gint *option,
+			       gchar **oldmsg,
+			       gchar **newmsg)
+{
+	if (gebr_geoxml_document_get_type(data->document) != GEBR_GEOXML_DOCUMENT_TYPE_LINE)
+		return FALSE;
+
+	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller,
+										  GEBR_GEOXML_LINE(data->document));
+
+	if (!maestro)
+		return FALSE;
+
+	GtkEntry *entry_base = GTK_ENTRY(gtk_builder_get_object(data->builder, "entry_base"));
+	GtkEntry *entry_title = GTK_ENTRY(gtk_builder_get_object(data->builder, "entry_title"));
+
+	GString *_new_base = g_string_new(gtk_entry_get_text(entry_base));
+	gchar *tmp = gebr_geoxml_line_get_path_by_name(GEBR_GEOXML_LINE(data->document), "<BASE>");
+	GString *_old_base = g_string_new(tmp);
+	gebr_path_resolve_home_variable(_new_base);
+	gebr_path_resolve_home_variable(_old_base);
+	g_free(tmp);
+
+	gchar *old_base = g_string_free(_old_base, FALSE);
+	gchar *new_base = g_string_free(_new_base, FALSE);
+
+	const gchar *new_title = gtk_entry_get_text(entry_title);
+	gchar *old_title = gebr_geoxml_document_get_title(data->document);
+	gboolean title_changed = g_strcmp0(new_title, old_title) != 0;
+	gboolean base_changed = g_strcmp0(new_base, old_base) != 0;
+
+	if (!title_changed && !base_changed)
+		return FALSE;
+
+	gboolean is_subset = check_if_title_is_subset_of_base(old_title, new_base);
+
+	if (title_changed && !base_changed && !is_subset)
+		return FALSE;
+
+	if (title_changed && is_subset && !base_changed) {
+		*option = GEBR_COMM_PROTOCOL_PATH_RENAME;
+		*newmsg = substitute_base_with_line_name(new_base, new_title);
+		gtk_entry_set_text(entry_base, *newmsg);
+	} else {
+		*option = GEBR_COMM_PROTOCOL_PATH_CREATE;
+		*newmsg = g_strdup(new_base);
+	}
+
+	*oldmsg = g_strdup(old_base);
+	g_free(old_title);
+	g_free(old_base);
+	g_free(new_base);
+
+	return TRUE;
+}
+
+static void
+update_buttons_visibility(GebrPropertiesData *data, gint state)
+{
+	GObject *main_progress = gtk_builder_get_object(data->builder, "main_progress");
+	GObject *progress = gtk_builder_get_object(data->builder, "progressbar");
+	GObject *image = gtk_builder_get_object(data->builder, "image_status");
+	GObject *label = gtk_builder_get_object(data->builder, "label_status");
+
+	switch (state) {
+	case PROPERTIES_EDIT:
+		gtk_widget_show(GTK_WIDGET(data->notebook));
+		gtk_widget_hide(GTK_WIDGET(main_progress));
+		gtk_widget_set_sensitive(data->ok_button, TRUE);
+		gtk_widget_set_sensitive(data->cancel_button, TRUE);
+		gtk_widget_show(data->ok_button);
+		gtk_widget_show(data->cancel_button);
+		gtk_widget_hide(data->apply_button);
+		gtk_widget_hide(data->back_button);
+		break;
+	case PROPERTIES_PROGRESS:
+		gtk_widget_hide(GTK_WIDGET(data->notebook));
+		gtk_widget_show(GTK_WIDGET(main_progress));
+		gtk_widget_set_sensitive(data->ok_button, FALSE);
+		gtk_widget_set_sensitive(data->cancel_button, FALSE);
+		gtk_widget_show(data->ok_button);
+		gtk_widget_show(data->cancel_button);
+		gtk_widget_hide(data->apply_button);
+		gtk_widget_hide(data->back_button);
+		gtk_widget_show(GTK_WIDGET(progress));
+		gtk_widget_hide(GTK_WIDGET(image));
+		gtk_widget_hide(GTK_WIDGET(label));
+		break;
+	case PROPERTIES_OK:
+		gtk_widget_hide(GTK_WIDGET(data->notebook));
+		gtk_widget_show(GTK_WIDGET(main_progress));
+		gtk_widget_hide(data->ok_button);
+		gtk_widget_hide(data->cancel_button);
+		gtk_widget_show(data->apply_button);
+		gtk_widget_hide(data->back_button);
+		gtk_widget_hide(GTK_WIDGET(progress));
+		gtk_widget_show(GTK_WIDGET(image));
+		gtk_widget_show(GTK_WIDGET(label));
+		break;
+	case PROPERTIES_ERROR:
+		gtk_widget_hide(GTK_WIDGET(data->notebook));
+		gtk_widget_show(GTK_WIDGET(main_progress));
+		gtk_widget_hide(data->ok_button);
+		gtk_widget_hide(data->cancel_button);
+		gtk_widget_hide(data->apply_button);
+		gtk_widget_show(data->back_button);
+		gtk_widget_hide(GTK_WIDGET(progress));
+		gtk_widget_show(GTK_WIDGET(image));
+		gtk_widget_show(GTK_WIDGET(label));
+		break;
+	}
+}
+
+static void
+on_properties_back(GtkButton *button,
+		   GebrPropertiesData *data)
+{
+	update_buttons_visibility(data, PROPERTIES_EDIT);
+}
+
+static void
+on_properties_apply(GtkButton *button,
+		    GebrPropertiesData *data)
+{
+	save_document_properties(data);
+}
+
+static void
+on_response_ok(GtkButton *button,
+	       GebrPropertiesData *data)
+{
+	gint option;
+	gchar *oldmsg;
+	gchar *newmsg;
+
+	if (!proc_changes_in_title_and_base(data, &option, &oldmsg, &newmsg)) {
+		save_document_properties(data);
+		return;
+	}
+
+	GebrMaestroServer *maestro =
+		gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller,
+							     GEBR_GEOXML_LINE(data->document));
+
+	g_signal_connect(maestro, "path-error", G_CALLBACK(on_maestro_path_error), data);
+	g_signal_connect(data->window, "delete-event", G_CALLBACK(gtk_true), NULL);
+
+	send_paths_to_maestro(maestro, option, oldmsg, newmsg);
+	update_buttons_visibility(data, PROPERTIES_PROGRESS);
+	data->progress_animation = g_timeout_add(200, progress_bar_animate, data);
 }
 
 void on_properties_destroy(GtkWindow * window, GebrPropertiesData * data)
@@ -2139,21 +2285,17 @@ gebr_document_send_path_message(GebrGeoXmlLine *line,
                                 const gchar *old_base)
 {
 	gchar ***paths = gebr_geoxml_line_get_paths(line);
-	gchar **split_path;
 	GString *buffer = g_string_new(NULL);
 
 	if (option == GEBR_COMM_PROTOCOL_PATH_CREATE) {
 		for (gint i = 0; paths[i]; i++) {
-			split_path = g_strsplit(paths[i][0], ",", -1);
-			gchar *escaped = g_strjoinv(",,", split_path);
+			gchar *escaped = gebr_geoxml_escape_path(paths[i][0]);
 			g_string_append_c(buffer, ',');
 			g_string_append(buffer, escaped);
 			g_free(escaped);
 		}
 		if (buffer->len)
 			g_string_erase(buffer, 0, 1);
-
-		g_strfreev(split_path);
 	}
 	else if (option == GEBR_COMM_PROTOCOL_PATH_RENAME) {
 		for (gint i = 0; paths[i]; i++) {
