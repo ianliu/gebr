@@ -1068,14 +1068,13 @@ on_client_parse_messages(GebrCommProtocolSocket *socket,
 
 
 			GebrmDaemon *daemon = app->priv->daemons->data;
-			const gchar *address = gebrm_daemon_get_address(daemon);
 
-			g_debug("on %s, sending message to daemon '%s', '%s'", __func__, new_path->str, old_path->str);
+			g_debug("Send to daemon: option: %s, new_path: %s, old_path: %s",
+				option->str, new_path->str, old_path->str);
 
 			GebrCommServer *comm_server = gebrm_daemon_get_server(daemon);
 			gebr_comm_protocol_socket_oldmsg_send(comm_server->socket, TRUE,
-							      gebr_comm_protocol_defs.path_def, 4,
-							      address,
+							      gebr_comm_protocol_defs.path_def, 3,
 							      new_path->str,
 							      old_path->str,
 							      option->str);
