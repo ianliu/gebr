@@ -1166,39 +1166,6 @@ on_password_request(GebrMaestroServer *maestro,
 }
 
 static void
-on_maestro_path_error(GebrMaestroServer *maestro,
-                      GebrMaestroController *mc)
-{
-	const gchar *msg;
-	GString *paths_msg = g_string_new(NULL);
-	gchar ***paths = gebr_geoxml_line_get_paths(gebr.line);
-
-	for (gint i = 0; paths[i]; i++) {
-		if (!*paths[i][0])
-			continue;
-		gchar *path = g_strdup_printf("%s - %s\n", paths[i][1], paths[i][0]);
-		paths_msg = g_string_append(paths_msg, path);
-		g_free(path);
-	}
-
-	msg = N_("<span size='large' weight='bold'>Error to create below paths to line %s</span>\n\n%s\nTry to change your BASE in line properties");
-
-	GtkWidget *dialog  = gtk_message_dialog_new_with_markup(NULL, GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-	                                                        GTK_MESSAGE_INFO, GTK_BUTTONS_OK,
-	                                                        _(msg), gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.line)), paths_msg->str);
-	gdk_threads_enter();
-
-	gtk_window_set_title(GTK_WINDOW(dialog), "Error to create paths");
-	gtk_dialog_run(GTK_DIALOG(dialog));
-	gtk_widget_destroy(dialog);
-
-	gdk_threads_leave();
-
-	g_string_free(paths_msg, TRUE);
-	gebr_pairstrfreev(paths);
-}
-
-static void
 on_maestro_confirm(GebrMaestroServer *maestro,
                    const gchar *addr,
                    const gchar *type,
@@ -1457,8 +1424,6 @@ gebr_maestro_controller_connect(GebrMaestroController *self,
 			 G_CALLBACK(on_maestro_error), self);
 	g_signal_connect(maestro, "confirm",
 	                 G_CALLBACK(on_maestro_confirm), self);
-	g_signal_connect(maestro, "path-error",
-	                 G_CALLBACK(on_maestro_path_error), self);
 
 	g_signal_emit(self, signals[MAESTRO_LIST_CHANGED], 0);
 
