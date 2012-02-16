@@ -2149,7 +2149,7 @@ gebr_document_send_path_message(GebrGeoXmlLine *line,
 			split_path = g_strsplit(paths[i][0], ",", -1);
 			gchar *escaped = g_strjoinv(",,", split_path);
 			g_string_append_c(buffer, ',');
-			g_string_append(buffer, escaped);
+			buffer = g_string_append(buffer, escaped);
 			g_free(escaped);
 		}
 		if (buffer->len)
