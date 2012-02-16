@@ -401,6 +401,8 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 	gtk_container_add(GTK_CONTAINER(vbox), notebook);
 	gtk_container_add(GTK_CONTAINER(window), vbox);
 	gtk_window_set_default_size(GTK_WINDOW(window), 400, -1);
+	gtk_widget_show(vbox);
+	gtk_widget_show(notebook);
 
 	button_box = gtk_hbutton_box_new();
 	ok_button = gtk_button_new_from_stock(GTK_STOCK_OK);
@@ -416,6 +418,7 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 	gtk_box_pack_start(GTK_BOX(button_box), cancel_button, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(button_box), ok_button, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), button_box, FALSE, TRUE, 0);
+	gtk_widget_show_all(button_box);
 
 	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), table, gtk_label_new(_("Preferences")));
 
@@ -458,6 +461,7 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, GEBR_GEOXML_LINE(document));
 		const gchar *addr = gebr_geoxml_line_get_maestro(GEBR_GEOXML_LINE(document));
 		const gchar *stockid;
+		gboolean is_logged = maestro? (gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED) : FALSE;
 
 		if (!maestro && !strlen(addr)) {
 			maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
@@ -465,7 +469,7 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 		}
 
 		if (maestro) {
-			if (gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED)
+			if (is_logged)
 				stockid = GTK_STOCK_CONNECT;
 			else {
 				const gchar *type;
@@ -500,6 +504,10 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 
 		GtkWidget *path_box = GTK_WIDGET(gtk_builder_get_object(builder, "widget_paths"));
+		GtkWidget *vbox_paths = GTK_WIDGET(gtk_builder_get_object(builder, "vbox_paths"));
+		GtkWidget *warn_paths = GTK_WIDGET(gtk_builder_get_object(builder, "warn_paths"));
+		gtk_widget_set_visible(warn_paths, !is_logged);
+		gtk_widget_set_sensitive(vbox_paths, is_logged);
 		gtk_notebook_append_page(GTK_NOTEBOOK(notebook), path_box, gtk_label_new(_("Paths")));
 
 		GtkEntry *entry_base = GTK_ENTRY(gtk_builder_get_object(builder, "entry_base"));
@@ -540,7 +548,7 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 		gtk_tree_view_expand_all(view_paths);
 	}
 
-	gtk_widget_show_all(window);
+	gtk_widget_show(window);
 }
 
 static void

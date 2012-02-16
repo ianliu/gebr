@@ -170,7 +170,7 @@ struct ui_project_line *project_line_setup_ui(void)
 	return ui_project_line;
 }
 
-void
+static void
 line_info_update(void)
 {
 	if (!gebr.ui_project_line->info.builder_line)
@@ -286,7 +286,7 @@ line_info_update(void)
 	g_free(import_path);
 }
 
-void
+static void
 project_info_update(void)
 {
 	if (!gebr.ui_project_line->info.builder_proj)
@@ -368,10 +368,6 @@ void project_line_info_update(void)
 		gtk_widget_hide(GTK_WIDGET(infopage_proj));
 		gtk_widget_show(GTK_WIDGET(infopage_line));
 	}
-
-	/* Info button */
-	//	g_object_set(gebr.ui_project_line->info.help_view, "sensitive", TRUE, NULL);
-	//	g_object_set(gebr.ui_project_line->info.help_edit, "sensitive", TRUE, NULL);
 
 	navigation_bar_update();
 }

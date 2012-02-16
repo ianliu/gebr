@@ -1408,7 +1408,7 @@ gebr_maestro_controller_maestro_state_changed_real(GebrMaestroController *mc,
 						   GebrMaestroServer *maestro)
 {
 	update_maestro_view(mc, maestro, TRUE);
-	line_info_update();
+	project_line_info_update();
 }
 
 static void 
