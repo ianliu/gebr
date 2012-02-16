@@ -37,6 +37,7 @@ struct _GebrMaestroServerPriv {
 	gchar *address;
 	gchar *error_type;
 	gchar *error_msg;
+	GtkWindow *window;
 
 	/* GVFS */
 	gboolean has_connected_daemon;
@@ -95,6 +96,8 @@ static void parse_messages(GebrCommServer *comm_server, gpointer user_data);
 
 static void gebr_maestro_server_connectable_init(GebrConnectableIface *iface);
 
+void gebr_maestro_server_set_window(GebrMaestroServer *maestro, GtkWindow *window);
+
 static const struct gebr_comm_server_ops maestro_ops = {
 	.log_message      = log_message,
 	.state_changed    = state_changed,
@@ -117,7 +120,7 @@ mount_gvfs(GebrMaestroServer *maestro,
 		return;
 
 	maestro->priv->has_connected_daemon = TRUE;
-	GMountOperation *op = gtk_mount_operation_new(NULL);
+	GMountOperation *op = gtk_mount_operation_new(maestro->priv->window);
 	gchar *uri = g_strdup_printf("sftp://%s/", address);
 	GFile *location = g_file_new_for_uri(uri);
 	g_file_mount_enclosing_volume(location, 0, op, NULL,
@@ -1054,6 +1057,7 @@ gebr_maestro_server_init(GebrMaestroServer *maestro)
 	maestro->priv->temp_jobs = g_hash_table_new(g_str_hash, g_str_equal);
 	maestro->priv->queues_model = gtk_list_store_new(1, GEBR_TYPE_JOB);
 	maestro->priv->has_connected_daemon = FALSE;
+	maestro->priv->window = NULL;
 
 	gebr_maestro_server_set_error(maestro, "error:none", NULL);
 
@@ -1352,6 +1356,12 @@ gebr_maestro_server_set_autoconnect(GebrMaestroServer *maestro,
 	gebr_comm_protocol_socket_send_request(maestro->priv->server->socket,
 					       GEBR_COMM_HTTP_METHOD_PUT, url, NULL);
 	g_free(url);
+}
+
+void 
+gebr_maestro_server_set_window(GebrMaestroServer *maestro, GtkWindow *window)
+{
+	maestro->priv->window = window;
 }
 
 GtkTreeModel *

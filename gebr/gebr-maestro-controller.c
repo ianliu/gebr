@@ -37,6 +37,8 @@ struct _GebrMaestroControllerPriv {
 	GtkListStore *model;
 
 	gchar *last_tag;
+
+	GtkWindow *window;
 };
 
 enum {
@@ -56,6 +58,10 @@ enum {
 	LAST_SIGNAL
 };
 
+enum {
+	PROP_0,
+	PROP_WINDOW,
+};
 G_DEFINE_TYPE(GebrMaestroController, gebr_maestro_controller, G_TYPE_OBJECT);
 
 static guint signals[LAST_SIGNAL] = { 0, };
@@ -81,6 +87,45 @@ static void on_maestro_error(GebrMaestroServer *maestro,
 			     const gchar *error_msg,
 			     GebrMaestroController *mc);
 
+static void gebr_maestro_controller_finalize(GObject *object);
+
+static void
+gebr_maestro_controller_get(GObject    *object,
+			    guint       prop_id,
+			    GValue     *value,
+			    GParamSpec *pspec)
+{
+	GebrMaestroController *mc = GEBR_MAESTRO_CONTROLLER(object);
+
+	switch (prop_id)
+	{
+	case PROP_WINDOW:
+		g_value_set_pointer(value, mc->priv->window);
+		break;
+	default:
+		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+		break;
+	}
+}
+
+static void
+gebr_maestro_controller_set(GObject      *object,
+			    guint         prop_id,
+			    const GValue *value,
+			    GParamSpec   *pspec)
+{
+	GebrMaestroController *mc= GEBR_MAESTRO_CONTROLLER(object);
+
+	switch (prop_id)
+	{
+	case PROP_WINDOW:
+		mc->priv->window = g_value_get_pointer(value);
+		break;
+	default:
+		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+		break;
+	}
+}
 static void
 insert_new_entry(GebrMaestroController *mc)
 {
@@ -534,12 +579,16 @@ gebr_maestro_controller_init(GebrMaestroController *self)
 	                                       G_TYPE_STRING,
 	                                       G_TYPE_BOOLEAN,
 					       G_TYPE_BOOLEAN);
+
 }
 
 static void
 gebr_maestro_controller_class_init(GebrMaestroControllerClass *klass)
 {
 	GObjectClass *object_class = G_OBJECT_CLASS(klass);
+	object_class->get_property = gebr_maestro_controller_get;
+	object_class->set_property = gebr_maestro_controller_set;
+	object_class->finalize = gebr_maestro_controller_finalize;
 
 	klass->group_changed = gebr_maestro_controller_group_changed_real;
 	klass->maestro_state_changed = gebr_maestro_controller_maestro_state_changed_real;
@@ -590,13 +639,34 @@ gebr_maestro_controller_class_init(GebrMaestroControllerClass *klass)
 			             g_cclosure_marshal_VOID__VOID,
 			             G_TYPE_NONE, 0);
 
+	g_object_class_install_property(object_class,
+					PROP_WINDOW,
+					g_param_spec_string("window",
+							    "Window",
+							    "Window of SFTP",
+							    NULL,
+							    G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+
 	g_type_class_add_private(klass, sizeof(GebrMaestroControllerPriv));
 }
 
-GebrMaestroController *
-gebr_maestro_controller_new(void)
+static void
+gebr_maestro_controller_finalize(GObject *object)
 {
-	return g_object_new(GEBR_TYPE_MAESTRO_CONTROLLER, NULL);
+	GebrMaestroController *mc = GEBR_MAESTRO_CONTROLLER(object);
+
+	g_object_unref(mc->priv->maestro);
+	g_object_unref(mc->priv->builder);
+	g_free(mc->priv->last_tag);
+	g_object_unref(mc->priv->window);
+
+	G_OBJECT_CLASS(gebr_maestro_controller_parent_class)->finalize(object);
+}
+
+GebrMaestroController *
+gebr_maestro_controller_new(GtkWindow *window)
+{
+	return g_object_new(GEBR_TYPE_MAESTRO_CONTROLLER, "window", window, NULL);
 }
 
 static void
@@ -973,6 +1043,12 @@ on_dialog_response(GtkDialog *dialog,
 	self->priv->builder = NULL;
 }
 
+static void
+on_dialog_destroy(GtkWidget *dialog, GebrMaestroController *mc)
+{
+	gebr_maestro_server_set_window(mc->priv->maestro, mc->priv->window);
+}
+
 static void 
 on_ac_toggled (GtkCellRendererToggle *cell_renderer,
 	       gchar *path,
@@ -1081,7 +1157,11 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 	set_widget_drag_dest(self, GTK_WIDGET(event));
 
 	GtkDialog *dialog = GTK_DIALOG(gtk_builder_get_object(self->priv->builder, "dialog_maestro"));
+	gtk_window_set_transient_for(GTK_WINDOW(dialog), self->priv->window);
 	g_signal_connect(dialog, "response", G_CALLBACK(on_dialog_response), self);
+	g_signal_connect(dialog, "destroy", G_CALLBACK(on_dialog_destroy), self);
+
+	gebr_maestro_server_set_window(maestro, GTK_WINDOW(dialog));
 
 	return dialog;
 }
