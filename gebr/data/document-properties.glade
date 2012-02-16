@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0"?>
 <interface>
   <requires lib="gtk+" version="2.16"/>
+  <!-- interface-naming-policy project-wide -->
   <object class="GtkTable" id="table">
     <property name="visible">True</property>
-    <property name="can_focus">False</property>
     <property name="border_width">5</property>
     <property name="n_rows">4</property>
     <property name="n_columns">2</property>
@@ -12,7 +12,6 @@
     <child>
       <object class="GtkLabel" id="label1">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
         <property name="label" translatable="yes">Title</property>
       </object>
       <packing>
@@ -24,7 +23,7 @@
       <object class="GtkEntry" id="entry_title">
         <property name="visible">True</property>
         <property name="can_focus">True</property>
-        <property name="invisible_char">•</property>
+        <property name="invisible_char">&#x2022;</property>
         <property name="activates_default">True</property>
       </object>
       <packing>
@@ -37,7 +36,7 @@
       <object class="GtkEntry" id="entry_description">
         <property name="visible">True</property>
         <property name="can_focus">True</property>
-        <property name="invisible_char">•</property>
+        <property name="invisible_char">&#x2022;</property>
         <property name="activates_default">True</property>
       </object>
       <packing>
@@ -52,7 +51,7 @@
       <object class="GtkEntry" id="entry_author">
         <property name="visible">True</property>
         <property name="can_focus">True</property>
-        <property name="invisible_char">•</property>
+        <property name="invisible_char">&#x2022;</property>
         <property name="activates_default">True</property>
       </object>
       <packing>
@@ -66,7 +65,6 @@
     <child>
       <object class="GtkLabel" id="label2">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
         <property name="label" translatable="yes">Description</property>
       </object>
       <packing>
@@ -79,7 +77,6 @@
     <child>
       <object class="GtkLabel" id="label3">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
         <property name="label" translatable="yes">Author</property>
       </object>
       <packing>
@@ -90,9 +87,8 @@
       </packing>
     </child>
     <child>
-      <object class="GtkLabel" id="label4">
+      <object class="GtkLabel" id="label5">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
         <property name="label" translatable="yes">E-mail</property>
       </object>
       <packing>
@@ -106,7 +102,7 @@
       <object class="GtkEntry" id="entry_email">
         <property name="visible">True</property>
         <property name="can_focus">True</property>
-        <property name="invisible_char">•</property>
+        <property name="invisible_char">&#x2022;</property>
         <property name="activates_default">True</property>
       </object>
       <packing>
@@ -120,13 +116,11 @@
   </object>
   <object class="GtkVBox" id="widget_paths">
     <property name="visible">True</property>
-    <property name="can_focus">False</property>
     <property name="border_width">5</property>
     <property name="spacing">5</property>
     <child>
-      <object class="GtkLabel" id="label5">
+      <object class="GtkLabel" id="label4">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
         <property name="label" translatable="yes">&lt;i&gt;Line paths are directories that will be created on your &lt;b&gt;BASE&lt;/b&gt;
 directory. They are standard paths for fetching input files
 and saving output files. The &lt;b&gt;IMPORT&lt;/b&gt; directory is used to find
@@ -135,14 +129,12 @@ files outside your &lt;b&gt;BASE&lt;/b&gt; directory.&lt;/i&gt;</property>
       </object>
       <packing>
         <property name="expand">False</property>
-        <property name="fill">True</property>
         <property name="position">0</property>
       </packing>
     </child>
     <child>
       <object class="GtkTable" id="table1">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
         <property name="n_rows">2</property>
         <property name="n_columns">2</property>
         <property name="column_spacing">5</property>
@@ -150,7 +142,6 @@ files outside your &lt;b&gt;BASE&lt;/b&gt; directory.&lt;/i&gt;</property>
         <child>
           <object class="GtkLabel" id="label6">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
             <property name="label" translatable="yes">BASE</property>
           </object>
           <packing>
@@ -160,7 +151,6 @@ files outside your &lt;b&gt;BASE&lt;/b&gt; directory.&lt;/i&gt;</property>
         <child>
           <object class="GtkLabel" id="label7">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
             <property name="label" translatable="yes">IMPORT</property>
           </object>
           <packing>
@@ -173,7 +163,7 @@ files outside your &lt;b&gt;BASE&lt;/b&gt; directory.&lt;/i&gt;</property>
           <object class="GtkEntry" id="entry_base">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
-            <property name="invisible_char">•</property>
+            <property name="invisible_char">&#x2022;</property>
           </object>
           <packing>
             <property name="left_attach">1</property>
@@ -184,7 +174,7 @@ files outside your &lt;b&gt;BASE&lt;/b&gt; directory.&lt;/i&gt;</property>
           <object class="GtkEntry" id="entry_import">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
-            <property name="invisible_char">•</property>
+            <property name="invisible_char">&#x2022;</property>
           </object>
           <packing>
             <property name="left_attach">1</property>
@@ -196,21 +186,18 @@ files outside your &lt;b&gt;BASE&lt;/b&gt; directory.&lt;/i&gt;</property>
       </object>
       <packing>
         <property name="expand">False</property>
-        <property name="fill">True</property>
         <property name="position">1</property>
       </packing>
     </child>
     <child>
       <object class="GtkFrame" id="frame1">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
         <property name="label_xalign">0</property>
         <property name="shadow_type">none</property>
         <child>
           <object class="GtkTreeView" id="treeview_paths">
             <property name="visible">True</property>
             <property name="sensitive">False</property>
-            <property name="can_focus">False</property>
             <property name="headers_visible">False</property>
             <property name="enable_tree_lines">True</property>
             <child>
@@ -251,16 +238,56 @@ files outside your &lt;b&gt;BASE&lt;/b&gt; directory.&lt;/i&gt;</property>
         <child type="label">
           <object class="GtkLabel" id="label8">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
             <property name="label" translatable="yes">&lt;b&gt;Directories hierarchy&lt;/b&gt;</property>
             <property name="use_markup">True</property>
           </object>
         </child>
       </object>
       <packing>
-        <property name="expand">True</property>
-        <property name="fill">True</property>
         <property name="position">2</property>
+      </packing>
+    </child>
+  </object>
+  <object class="GtkVBox" id="main_progress">
+    <property name="visible">True</property>
+    <child>
+      <object class="GtkLabel" id="label9">
+        <property name="visible">True</property>
+        <property name="label" translatable="yes">&lt;span size='large'&gt;Creating directories...&lt;/span&gt;</property>
+        <property name="use_markup">True</property>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="padding">5</property>
+        <property name="position">0</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkProgressBar" id="progressbar">
+        <property name="visible">True</property>
+      </object>
+      <packing>
+        <property name="fill">False</property>
+        <property name="position">1</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkImage" id="image_status">
+        <property name="visible">True</property>
+        <property name="stock">gtk-ok</property>
+        <property name="icon-size">6</property>
+      </object>
+      <packing>
+        <property name="position">2</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkLabel" id="label_status">
+        <property name="visible">True</property>
+        <property name="label" translatable="yes">Success!</property>
+      </object>
+      <packing>
+        <property name="position">3</property>
       </packing>
     </child>
   </object>
