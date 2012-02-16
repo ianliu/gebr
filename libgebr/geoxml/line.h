@@ -190,5 +190,18 @@ gchar * gebr_geoxml_line_get_maestro(GebrGeoXmlLine *line);
  */
 gchar *** gebr_geoxml_line_get_paths(GebrGeoXmlLine *line);
 
+/**
+ * gebr_geoxml_line_get_path_by_name:
+ *
+ * Returns: %NULL if @line does not have a path named @name. Otherwise, returns
+ * a newly allocated string containing the path. Free with g_free().
+ */
+gchar *gebr_geoxml_line_get_path_by_name(GebrGeoXmlLine *line,
+					 const gchar *name);
+
+gchar *gebr_geoxml_escape_path(const gchar *path);
+
+gchar *gebr_geoxml_get_paths_for_base(const gchar *base);
+
 G_END_DECLS
 #endif				//__GEBR_GEOXML_LINE_H
