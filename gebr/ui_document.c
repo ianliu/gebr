@@ -107,6 +107,7 @@ typedef struct {
 	GtkWidget *notebook;
 
 	/* line stuff */
+	gint timeout;
 	gint progress_animation;
 	gchar *old_base;
 	gchar *new_base;
@@ -1851,6 +1852,7 @@ on_maestro_path_error(GebrMaestroServer *maestro,
 		      GebrPropertiesData *data)
 {
 	g_source_remove(data->progress_animation);
+	g_source_remove(data->timeout);
 
 	GObject *image = gtk_builder_get_object(data->builder, "image_status");
 	GObject *label = gtk_builder_get_object(data->builder, "label_status");
@@ -1880,6 +1882,29 @@ on_maestro_path_error(GebrMaestroServer *maestro,
 	}
 
 	g_signal_handlers_disconnect_by_func(maestro, on_maestro_path_error, data);
+}
+
+static gboolean
+time_out_error(gpointer user_data)
+{
+	GebrPropertiesData *data = user_data;
+
+	g_source_remove(data->timeout);
+
+	GObject *image = gtk_builder_get_object(data->builder, "image_status");
+	GObject *label = gtk_builder_get_object(data->builder, "label_status");
+
+	gtk_image_set_from_stock(GTK_IMAGE(image), GTK_STOCK_DIALOG_ERROR, GTK_ICON_SIZE_DIALOG);
+	gtk_label_set_text(GTK_LABEL(label), _("Timed Out!\nCould not create directory.\nTry again later."));
+	update_buttons_visibility(data, PROPERTIES_ERROR);
+
+	GebrMaestroServer *maestro =
+			gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller,
+			                                             GEBR_GEOXML_LINE(data->document));
+
+	g_signal_handlers_disconnect_by_func(maestro, on_maestro_path_error, data);
+
+	return FALSE;
 }
 
 static gboolean
@@ -2116,6 +2141,7 @@ on_response_ok(GtkButton *button,
 	gebr_ui_document_send_paths_to_maestro(maestro, option, oldmsg, newmsg);
 	update_buttons_visibility(data, PROPERTIES_PROGRESS);
 	data->progress_animation = g_timeout_add(200, progress_bar_animate, data);
+	data->timeout = g_timeout_add(5000, time_out_error, data);
 }
 
 void on_properties_destroy(GtkWindow * window, GebrPropertiesData * data)
