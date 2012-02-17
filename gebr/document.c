@@ -512,7 +512,7 @@ void document_import(GebrGeoXmlDocument * document, gboolean save)
 	switch (gebr_geoxml_document_get_type(document)) {
 	case GEBR_GEOXML_DOCUMENT_TYPE_FLOW:
 		extension = "flw";
-		flow_set_paths_to_relative(GEBR_GEOXML_FLOW(document), FALSE);
+		flow_set_paths_to_relative(GEBR_GEOXML_FLOW(document), NULL, FALSE);
 		break;
 	case GEBR_GEOXML_DOCUMENT_TYPE_LINE:
 		extension = "lne";

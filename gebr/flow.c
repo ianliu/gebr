@@ -347,7 +347,10 @@ void flow_export(void)
 			continue;
 		}
 
-		flow_set_paths_to_relative(GEBR_GEOXML_FLOW(flow), active_user);
+		gchar ***paths = gebr_geoxml_line_get_paths(gebr.line);
+		flow_set_paths_to_relative(GEBR_GEOXML_FLOW(flow), paths, active_user);
+		gebr_pairstrfreev(paths);
+
 		filepath = g_build_path ("/", tempdir->str, flow_filename, NULL);
 
 		if (!document_save_at (flow, filepath, FALSE, FALSE)) {
@@ -522,11 +525,22 @@ gebr_flow_modify_paths(GebrGeoXmlFlow *flow,
 	g_string_free(path, TRUE);
 }
 
-void flow_set_paths_to_relative(GebrGeoXmlFlow * flow, gboolean relative)
+void flow_set_paths_to_relative(GebrGeoXmlFlow * flow, gchar ***paths, gboolean relative)
 {
 	void func(GString *path, gpointer data)
 	{
+		gchar *tmp;
+
+		if (!paths)
+			tmp = g_strdup(path->str);
+		else if (relative)
+			tmp = gebr_relativise_path(path->str, paths);
+		else
+			tmp = gebr_resolve_relative_path(path->str, paths);
+
+		g_string_assign(path, tmp);
 		gebr_path_set_to(path, relative);
+		g_free(tmp);
 	}
 	gebr_flow_modify_paths(flow, func, FALSE, NULL);
 }
