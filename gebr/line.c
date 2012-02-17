@@ -203,6 +203,7 @@ line_setup_wizard(GebrGeoXmlLine *line)
 
 	GtkWidget *page1 = GTK_WIDGET(gtk_builder_get_object(builder, "table"));
 	GtkWidget *page2 = GTK_WIDGET(gtk_builder_get_object(builder, "widget_paths"));
+	GtkWidget *page3 = GTK_WIDGET(gtk_builder_get_object(builder, "main_progress"));
 	GtkWidget *assistant = gtk_assistant_new();
 	gtk_window_set_title(GTK_WINDOW(assistant), _("Creating a new Line"));
 
