@@ -681,15 +681,17 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 				break;
 			case GEBR_COMM_PROTOCOL_PATH_RENAME:
 				g_debug("Renaming %s to %s", old_path->str, new_path->str);
-				if (!g_file_test(new_path->str, G_FILE_TEST_IS_DIR) && g_rename(old_path->str, new_path->str)){
-				    status_id = GEBR_COMM_PROTOCOL_STATUS_PATH_ERROR;
-				    break;
-				}
-				else {
-				    status_id = GEBR_COMM_PROTOCOL_STATUS_PATH_OK;
-				    break;
-				}
-				status_id = GEBR_COMM_PROTOCOL_STATUS_PATH_EXISTS;
+				gboolean dir_exist = g_file_test(new_path->str, G_FILE_TEST_IS_DIR);
+				gboolean create_dir = g_rename(old_path->str, new_path->str) == 0;
+
+				if (!dir_exist && create_dir)
+					status_id = GEBR_COMM_PROTOCOL_STATUS_PATH_OK;
+				else if (dir_exist && !create_dir)
+					status_id = GEBR_COMM_PROTOCOL_STATUS_PATH_EXISTS;
+				else if (!dir_exist && !create_dir)
+					status_id = GEBR_COMM_PROTOCOL_STATUS_PATH_ERROR;
+				else
+					status_id = -1;
 				break;
 			case GEBR_COMM_PROTOCOL_PATH_DELETE:
 				for (GList *j = new_paths; j; j = j->next) {
