@@ -963,37 +963,28 @@ gebr_relativise_path(const gchar *path_string,
 	gint max_index = 0, max_size = 0;
 	gint j = 0;
 
-	// Set size default like BASE size
-	gchar **dirdefault = g_strsplit(pvector[0][0], "/" , -1);
-	gint k;
-	for (k = 0; dirdefault[k]; k++);
-	gint size_default = k;
-	g_strfreev(dirdefault);
-
 	for (int i = 0; pvector[i]; i++) {
 		dirtmp = g_strsplit(pvector[i][0], "/" , -1);
 		j = 0;
-		while (dirspath[j] != NULL || dirtmp[j] != NULL) {
-			if (g_strcmp0(dirspath[j], dirtmp[j]) != 0) {
-				if (j > max_size) {
-					max_size = j;
-					max_index = i;
-				}
+		while (dirspath[j] && dirtmp[j]) {
+			if (g_strcmp0(dirspath[j], dirtmp[j]) != 0)
 				break;
-			}
 			j++;
 		}
-		if (dirspath[j] == NULL && dirtmp[j] == NULL) {
-			max_size = j;
-			max_index = i;
-			g_strfreev(dirtmp);
-			break;
+
+		if (!dirtmp[j]) {
+			if (j > max_size) {
+				max_size = j;
+				max_index = i;
+			}
 		}
+
 		g_strfreev(dirtmp);
 	}
+
 	g_strfreev(dirspath);
 
-	if (max_size < size_default)
+	if (!max_size)
 		return path;
 
 	GString *rel_path = g_string_new(path);
