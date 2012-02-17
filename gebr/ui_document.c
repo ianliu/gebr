@@ -109,6 +109,7 @@ typedef struct {
 	/* line stuff */
 	gint progress_animation;
 	gchar *old_base;
+	gchar *new_base;
 	GtkWidget *maestro_combo;
 	GtkWidget *maestro_box;
 	gint previous_active_group;
@@ -122,6 +123,7 @@ enum {
 	PROPERTIES_PROGRESS,
 	PROPERTIES_OK,
 	PROPERTIES_ERROR,
+	PROPERTIES_WARNING,
 };
 
 
@@ -433,13 +435,13 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 	button_box = gtk_hbutton_box_new();
 	data->ok_button = ok_button = gtk_button_new_from_stock(GTK_STOCK_OK);
 	data->cancel_button = cancel_button = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
-	data->apply_button = gtk_button_new_from_stock(GTK_STOCK_APPLY);
 	data->back_button = gtk_button_new_from_stock(GTK_STOCK_GO_BACK);
+	data->apply_button = gtk_button_new_from_stock(GTK_STOCK_APPLY);
 
 	g_signal_connect(window, "destroy", G_CALLBACK(on_properties_destroy), data);
 	g_signal_connect(ok_button, "clicked", G_CALLBACK(on_response_ok), data);
-	g_signal_connect(data->apply_button, "clicked", G_CALLBACK(on_properties_apply), data);
 	g_signal_connect(data->back_button, "clicked", G_CALLBACK(on_properties_back), data);
+	g_signal_connect(data->apply_button, "clicked", G_CALLBACK(on_properties_apply), data);
 	g_signal_connect_swapped(cancel_button, "clicked", G_CALLBACK(gtk_widget_destroy), window);
 
 	GtkWidget *table = GTK_WIDGET(gtk_builder_get_object(builder, "table"));
@@ -447,8 +449,8 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(button_box), GTK_BUTTONBOX_END);
 	gtk_box_pack_start(GTK_BOX(button_box), cancel_button, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(button_box), ok_button, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(button_box), data->apply_button, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(button_box), data->back_button, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(button_box), data->apply_button, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), button_box, FALSE, TRUE, 0);
 	gtk_widget_show(button_box);
 
@@ -1816,22 +1818,28 @@ on_maestro_path_error(GebrMaestroServer *maestro,
 
 	GObject *image = gtk_builder_get_object(data->builder, "image_status");
 	GObject *label = gtk_builder_get_object(data->builder, "label_status");
+	GtkEntry *entry_base = GTK_ENTRY(gtk_builder_get_object(data->builder, "entry_base"));
 
 	switch (error_id) {
 	case GEBR_COMM_PROTOCOL_STATUS_PATH_OK:
 		gtk_image_set_from_stock(GTK_IMAGE(image), GTK_STOCK_OK, GTK_ICON_SIZE_DIALOG);
 		gtk_label_set_text(GTK_LABEL(label), _("Sucess!"));
+		gtk_entry_set_text(entry_base, data->new_base);
 		update_buttons_visibility(data, PROPERTIES_OK);
 		break;
 	case GEBR_COMM_PROTOCOL_STATUS_PATH_ERROR:
 		gtk_image_set_from_stock(GTK_IMAGE(image), GTK_STOCK_DIALOG_ERROR, GTK_ICON_SIZE_DIALOG);
-		gtk_label_set_text(GTK_LABEL(label), _("Could not create directory"));
+		gtk_label_set_text(GTK_LABEL(label), _("Could not create directory.\n"
+						       "Press the back buttom to change the BASE directory\n"
+						       "or the line title."));
 		update_buttons_visibility(data, PROPERTIES_ERROR);
 		break;
 	case GEBR_COMM_PROTOCOL_STATUS_PATH_EXISTS:
-		gtk_image_set_from_stock(GTK_IMAGE(image), GTK_STOCK_DIALOG_ERROR, GTK_ICON_SIZE_DIALOG);
-		gtk_label_set_text(GTK_LABEL(label), _("Directory already exists"));
-		update_buttons_visibility(data, PROPERTIES_ERROR);
+		gtk_image_set_from_stock(GTK_IMAGE(image), GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_DIALOG);
+		gtk_label_set_text(GTK_LABEL(label), _("The directory already exists.\n"
+						       "You can change the BASE directory by pressing the\n"
+						       "back buttom or use it anyway."));
+		update_buttons_visibility(data, PROPERTIES_WARNING);
 		break;
 	}
 
@@ -1949,7 +1957,6 @@ proc_changes_in_title_and_base(GebrPropertiesData *data,
 	if (title_changed && is_subset && !base_changed) {
 		*option = GEBR_COMM_PROTOCOL_PATH_RENAME;
 		*newmsg = substitute_base_with_line_name(new_base, new_title);
-		gtk_entry_set_text(entry_base, *newmsg);
 	} else {
 		*option = GEBR_COMM_PROTOCOL_PATH_CREATE;
 		*newmsg = g_strdup(new_base);
@@ -1996,6 +2003,7 @@ update_buttons_visibility(GebrPropertiesData *data, gint state)
 		gtk_widget_hide(GTK_WIDGET(label));
 		break;
 	case PROPERTIES_OK:
+		gtk_button_set_label(GTK_BUTTON(data->apply_button), GTK_STOCK_CLOSE);
 		gtk_widget_hide(GTK_WIDGET(data->notebook));
 		gtk_widget_show(GTK_WIDGET(main_progress));
 		gtk_widget_hide(data->ok_button);
@@ -2009,9 +2017,23 @@ update_buttons_visibility(GebrPropertiesData *data, gint state)
 	case PROPERTIES_ERROR:
 		gtk_widget_hide(GTK_WIDGET(data->notebook));
 		gtk_widget_show(GTK_WIDGET(main_progress));
+		gtk_widget_set_sensitive(data->cancel_button, TRUE);
 		gtk_widget_hide(data->ok_button);
-		gtk_widget_hide(data->cancel_button);
+		gtk_widget_show(data->cancel_button);
 		gtk_widget_hide(data->apply_button);
+		gtk_widget_show(data->back_button);
+		gtk_widget_hide(GTK_WIDGET(progress));
+		gtk_widget_show(GTK_WIDGET(image));
+		gtk_widget_show(GTK_WIDGET(label));
+		break;
+	case PROPERTIES_WARNING:
+		gtk_button_set_label(GTK_BUTTON(data->apply_button), GTK_STOCK_APPLY);
+		gtk_widget_hide(GTK_WIDGET(data->notebook));
+		gtk_widget_show(GTK_WIDGET(main_progress));
+		gtk_widget_set_sensitive(data->cancel_button, TRUE);
+		gtk_widget_hide(data->ok_button);
+		gtk_widget_show(data->cancel_button);
+		gtk_widget_show(data->apply_button);
 		gtk_widget_show(data->back_button);
 		gtk_widget_hide(GTK_WIDGET(progress));
 		gtk_widget_show(GTK_WIDGET(image));
@@ -2051,6 +2073,7 @@ on_response_ok(GtkButton *button,
 		gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller,
 							     GEBR_GEOXML_LINE(data->document));
 
+	data->new_base = g_strdup(newmsg);
 	g_signal_connect(maestro, "path-error", G_CALLBACK(on_maestro_path_error), data);
 	g_signal_connect(data->window, "delete-event", G_CALLBACK(gtk_true), NULL);
 
