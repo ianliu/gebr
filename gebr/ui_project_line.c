@@ -503,7 +503,7 @@ static gboolean _project_line_import_path(const gchar *filename, GList **line_pa
 			g_debug("PRINTING paht:'%s'", path);
 			if (gebr_path_is_at_home(path) && !g_file_test(path, G_FILE_TEST_EXISTS) &&
 			    !g_list_find_custom(*line_paths_creation_sugest, path, (GCompareFunc) g_strcmp0))
-				*line_paths_creation_sugest = g_list_prepend(*line_paths_creation_sugest, g_strdup(path));
+				*line_paths_creation_sugest = g_list_append(*line_paths_creation_sugest, g_strdup(path));
 		}
 
 		gebr_geoxml_line_get_flow(*line, &i, 0);
@@ -730,6 +730,38 @@ static gboolean update_progress(gpointer user_data)
 	return data->var != 1;
 }
 
+static void
+on_path_error(GebrMaestroServer *maestro,
+	      GebrCommProtocolStatusPath error_id)
+{
+	if (error_id == GEBR_COMM_PROTOCOL_STATUS_PATH_OK)
+		return;
+
+	GtkWidget * warning;
+	warning = gtk_message_dialog_new_with_markup (GTK_WINDOW (gebr.window),
+	                                              GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+	                                              GTK_MESSAGE_WARNING,
+	                                              GTK_BUTTONS_OK,
+	                                              "<span size='larger' weight='bold'>%s</span>",
+	                                              _("Could not create the directories"));
+
+	gchar *escaped;
+	if (error_id == GEBR_COMM_PROTOCOL_STATUS_PATH_ERROR) {
+		escaped = g_markup_printf_escaped(_("The directories could not be created. "
+				"You do not have the permissions necessary to create the directories."));
+	} else if (error_id == GEBR_COMM_PROTOCOL_STATUS_PATH_EXISTS) {
+		escaped = g_markup_printf_escaped(_("The directories already exists."));
+	}
+
+	gtk_message_dialog_format_secondary_markup (GTK_MESSAGE_DIALOG (warning), "%s", escaped);
+	g_free(escaped);
+
+	gdk_threads_enter();
+	gtk_dialog_run (GTK_DIALOG (warning));
+	gtk_widget_destroy (warning);
+	gdk_threads_leave();
+}
+
 static void on_dialog_response(GtkWidget *dialog, gint response_id, gpointer user_data)
 {
 	TimeoutData *data = user_data;
@@ -757,27 +789,8 @@ static void on_dialog_response(GtkWidget *dialog, gint response_id, gpointer use
 							      buffer->str,
 							      "",
 							      gebr_comm_protocol_path_enum_to_str (option));
-		}
 
-		//TODO: ERROR IN CREATING OF PATHS
-		if (FALSE) {
-			GtkWidget * warning;
-			warning = gtk_message_dialog_new_with_markup (GTK_WINDOW (gebr.window),
-								      GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-								      GTK_MESSAGE_WARNING,
-								      GTK_BUTTONS_OK,
-								      "<span size='larger' weight='bold'>%s %s</span>",
-								      _("Could not create the directory"),
-								      buffer->str);
-			gchar *escaped= g_markup_printf_escaped(_("The directory <i>%s</i> could not be created. "
-								  "You do not have the permissions necessary to create the directories."),
-								buffer->str);
-
-			gtk_message_dialog_format_secondary_markup (GTK_MESSAGE_DIALOG (warning), "%s", escaped);
-			g_free(escaped);
-
-			gtk_dialog_run (GTK_DIALOG (warning));
-			gtk_widget_destroy (warning);
+			g_signal_connect(maestro_server, "path-error", G_CALLBACK(on_path_error), NULL);
 		}
 		g_string_free(cmd_line, TRUE);
 	}
