@@ -38,7 +38,7 @@
 #include "ui_document.h"
 
 static void
-on_entry_changed(GtkEntry *entry,
+on_assistant_entry_changed(GtkEntry *entry,
 		 GtkAssistant *assistant)
 {
 	GtkWidget *current_page;
@@ -55,6 +55,19 @@ on_entry_changed(GtkEntry *entry,
 		gtk_assistant_set_page_complete(assistant, current_page, FALSE);
 }
 
+void
+on_properties_entry_changed(GtkEntry *entry,
+		 GtkWidget *widget)
+{
+	const gchar *text;
+
+	text = gtk_entry_get_text(entry);
+
+	if (text && *text)
+		gtk_widget_set_sensitive(widget, TRUE);
+	else
+		gtk_widget_set_sensitive(widget, FALSE);
+}
 static void
 on_assistant_cancel(GtkWidget *widget)
 {
@@ -132,7 +145,6 @@ line_setup_wizard(GebrGeoXmlLine *line)
 
 	GtkWidget *page1 = GTK_WIDGET(gtk_builder_get_object(builder, "table"));
 	GtkWidget *page2 = GTK_WIDGET(gtk_builder_get_object(builder, "widget_paths"));
-	GtkWidget *page3 = GTK_WIDGET(gtk_builder_get_object(builder, "main_progress"));
 	GtkWidget *assistant = gtk_assistant_new();
 	gtk_window_set_title(GTK_WINDOW(assistant), _("Creating a new Line"));
 	g_signal_connect(assistant, "cancel", G_CALLBACK(on_assistant_cancel), NULL);
@@ -173,8 +185,8 @@ line_setup_wizard(GebrGeoXmlLine *line)
 	gtk_entry_set_text(GTK_ENTRY(entry_author), gebr.config.username->str);
 	gtk_entry_set_text(GTK_ENTRY(entry_email), gebr.config.email->str);
 
-	g_signal_connect(entry_title, "changed", G_CALLBACK(on_entry_changed), assistant);
-	g_signal_connect(entry_base, "changed", G_CALLBACK(on_entry_changed), assistant);
+	g_signal_connect(entry_title, "changed", G_CALLBACK(on_assistant_entry_changed), assistant);
+	g_signal_connect(entry_base, "changed", G_CALLBACK(on_assistant_entry_changed), assistant);
 
 	gtk_widget_show(assistant);
 }

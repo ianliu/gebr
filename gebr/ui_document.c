@@ -548,6 +548,7 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 		GtkEntry *entry_base = GTK_ENTRY(gtk_builder_get_object(builder, "entry_base"));
 		GtkEntry *entry_import = GTK_ENTRY(gtk_builder_get_object(builder, "entry_import"));
 
+
 		gchar ***paths = gebr_geoxml_line_get_paths(GEBR_GEOXML_LINE(document));
 		gchar *base_path = NULL;
 
@@ -563,6 +564,7 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 			                             gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.project)),
 			                             gebr_geoxml_document_get_title(document), NULL);
 		gtk_entry_set_text(entry_base, base_path);
+		g_signal_connect(entry_base, "changed", G_CALLBACK(on_properties_entry_changed), data->ok_button);
 		g_free(base_path);
 //		gebr_pairstrfreev(paths);
 

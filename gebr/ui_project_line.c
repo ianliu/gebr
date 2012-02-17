@@ -500,6 +500,7 @@ static gboolean _project_line_import_path(const gchar *filename, GList **line_pa
 		gebr_geoxml_line_get_path(*line, &line_path, 0);
 		for (; line_path != NULL; gebr_geoxml_sequence_next(&line_path)) {
 			const gchar *path = gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(line_path));
+			g_debug("PRINTING paht:'%s'", path);
 			if (gebr_path_is_at_home(path) && !g_file_test(path, G_FILE_TEST_EXISTS) &&
 			    !g_list_find_custom(*line_paths_creation_sugest, path, (GCompareFunc) g_strcmp0))
 				*line_paths_creation_sugest = g_list_prepend(*line_paths_creation_sugest, g_strdup(path));
