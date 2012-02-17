@@ -77,61 +77,119 @@ on_assistant_cancel(GtkWidget *widget)
 		line_delete(&iter, FALSE);
 }
 
-static void
-on_assistant_close(GtkWidget *widget)
-{
-	GtkAssistant *assistant = GTK_ASSISTANT(widget);
-	gint n = gtk_assistant_get_n_pages(assistant);
-	gint i = gtk_assistant_get_current_page(assistant);
+typedef struct {
+	gint progress_animation;
+	GtkWidget *assistant;
+	GtkBuilder *builder;
+} WizardData;
 
-	if (i != n - 1) {
-		GtkTreeIter iter;
-		if (project_line_get_selected(&iter, DontWarnUnselection))
-			line_delete(&iter, FALSE);
+static gboolean
+progress_bar_animate(gpointer user_data)
+{
+	WizardData *data = user_data;
+	GObject *progress = gtk_builder_get_object(data->builder, "progressbar");
+	gtk_progress_bar_pulse(GTK_PROGRESS_BAR(progress));
+	return TRUE;
+}
+
+
+static void
+on_maestro_path_error(GebrMaestroServer *maestro,
+		      gint error_id,
+		      WizardData *data)
+{
+	g_source_remove(data->progress_animation);
+
+	GtkWidget *page3 = GTK_WIDGET(gtk_builder_get_object(data->builder, "main_progress"));
+	GObject *progress = gtk_builder_get_object(data->builder, "progressbar");
+	GObject *image = gtk_builder_get_object(data->builder, "image_status");
+	GObject *label = gtk_builder_get_object(data->builder, "label_status");
+
+	gtk_widget_hide(GTK_WIDGET(progress));
+	gtk_widget_show(GTK_WIDGET(image));
+	gtk_widget_show(GTK_WIDGET(label));
+
+	switch (error_id) {
+	case GEBR_COMM_PROTOCOL_STATUS_PATH_OK:
+		gtk_image_set_from_stock(GTK_IMAGE(image), GTK_STOCK_OK, GTK_ICON_SIZE_DIALOG);
+		gtk_label_set_text(GTK_LABEL(label), _("Sucess!"));
+		gtk_assistant_set_page_type(GTK_ASSISTANT(data->assistant),
+					    page3, GTK_ASSISTANT_PAGE_SUMMARY);
+		gtk_assistant_set_page_title(GTK_ASSISTANT(data->assistant),
+					     page3, _("Success!"));
+		gtk_assistant_set_page_complete(GTK_ASSISTANT(data->assistant), page3, TRUE);
+		break;
+	case GEBR_COMM_PROTOCOL_STATUS_PATH_ERROR:
+		gtk_image_set_from_stock(GTK_IMAGE(image), GTK_STOCK_DIALOG_ERROR, GTK_ICON_SIZE_DIALOG);
+		gtk_label_set_text(GTK_LABEL(label), _("Could not create directory.\n"
+						       "Press the back buttom to change the BASE directory\n"
+						       "or the line title."));
+		gtk_assistant_set_page_type(GTK_ASSISTANT(data->assistant),
+					    page3, GTK_ASSISTANT_PAGE_CONFIRM);
+		gtk_assistant_set_page_title(GTK_ASSISTANT(data->assistant),
+					     page3, _("Error!"));
+		gtk_assistant_set_page_complete(GTK_ASSISTANT(data->assistant), page3, FALSE);
+		break;
+	case GEBR_COMM_PROTOCOL_STATUS_PATH_EXISTS:
+		gtk_image_set_from_stock(GTK_IMAGE(image), GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_DIALOG);
+		gtk_label_set_text(GTK_LABEL(label), _("The directory already exists.\n"
+						       "You can change the BASE directory by pressing the\n"
+						       "back buttom or use it anyway."));
+		gtk_assistant_set_page_type(GTK_ASSISTANT(data->assistant),
+					    page3, GTK_ASSISTANT_PAGE_CONFIRM);
+		gtk_assistant_set_page_title(GTK_ASSISTANT(data->assistant),
+					     page3, _("Error!"));
+		gtk_assistant_set_page_complete(GTK_ASSISTANT(data->assistant), page3, TRUE);
+		break;
 	}
 
-	gtk_widget_destroy(widget);
+	g_signal_handlers_disconnect_by_func(maestro, on_maestro_path_error, data);
+
 }
 
 static void
-on_assistant_apply(GtkAssistant *assistant,
-		   GtkBuilder *builder)
+on_assistant_close(GtkAssistant *assistant,
+		   WizardData *data)
 {
-	gint n = gtk_assistant_get_n_pages(assistant);
-	gint i = gtk_assistant_get_current_page(assistant);
+	gint page = gtk_assistant_get_current_page(assistant) + 1;
 
-	if (i == n - 1) {
+	if (page == 3) {
 		GtkTreeIter iter;
-		GtkEntry *base = GTK_ENTRY(gtk_builder_get_object(builder, "entry_base"));
 
-		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
-		gebr_ui_document_send_paths_to_maestro(maestro, GEBR_COMM_PROTOCOL_PATH_CREATE,
-						       NULL, gtk_entry_get_text(base));
-		gebr_ui_document_set_properties_from_builder(GEBR_GEOXML_DOCUMENT(gebr.line), builder);
+		gebr_ui_document_set_properties_from_builder(GEBR_GEOXML_DOCUMENT(gebr.line), data->builder);
 		project_line_get_selected(&iter, DontWarnUnselection);
 		gtk_tree_store_set(gebr.ui_project_line->store, &iter,
 				   PL_TITLE, gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.line)), -1);
 		project_line_info_update();
+		gtk_widget_destroy(GTK_WIDGET(assistant));
 	}
 }
 
 static void
 on_assistant_prepare(GtkAssistant *assistant,
-		     GtkWidget *page,
-		     GtkBuilder *builder)
+		     GtkWidget *current_page,
+		     WizardData *data)
 {
-	gint n = gtk_assistant_get_n_pages(assistant);
-	gint i = gtk_assistant_get_current_page(assistant);
+	gint page = gtk_assistant_get_current_page(assistant) + 1;
 
-	if (i == n - 1) {
-		GObject *entry_base = gtk_builder_get_object(builder, "entry_base");
-		GObject *entry_title = gtk_builder_get_object(builder, "entry_title");
+	if (page == 2) {
+		GObject *entry_base = gtk_builder_get_object(data->builder, "entry_base");
+		GObject *entry_title = gtk_builder_get_object(data->builder, "entry_title");
 		gchar *path = g_build_filename(g_get_home_dir(),"GeBR",
 					       gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.project)),
 					       gtk_entry_get_text(GTK_ENTRY(entry_title)), NULL);
 		gtk_entry_set_text (GTK_ENTRY(entry_base), path);
 		g_debug("apply entry");
 		g_free(path);
+	}
+	else if (page == 3) {
+		data->progress_animation = g_timeout_add(200, progress_bar_animate, data);
+		GtkEntry *base = GTK_ENTRY(gtk_builder_get_object(data->builder, "entry_base"));
+		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+		g_signal_connect(maestro, "path-error", G_CALLBACK(on_maestro_path_error), data);
+		gebr_ui_document_send_paths_to_maestro(maestro, GEBR_COMM_PROTOCOL_PATH_CREATE,
+						       NULL, gtk_entry_get_text(base));
+		gtk_assistant_set_page_complete(GTK_ASSISTANT(data->assistant), current_page, FALSE);
 	}
 }
 
@@ -147,10 +205,13 @@ line_setup_wizard(GebrGeoXmlLine *line)
 	GtkWidget *page2 = GTK_WIDGET(gtk_builder_get_object(builder, "widget_paths"));
 	GtkWidget *assistant = gtk_assistant_new();
 	gtk_window_set_title(GTK_WINDOW(assistant), _("Creating a new Line"));
+
+	WizardData *data = g_new(WizardData, 1);
+	data->assistant = assistant;
+	data->builder = builder;
 	g_signal_connect(assistant, "cancel", G_CALLBACK(on_assistant_cancel), NULL);
-	g_signal_connect(assistant, "close", G_CALLBACK(on_assistant_close), NULL);
-	g_signal_connect(assistant, "apply", G_CALLBACK(on_assistant_apply), builder);
-	g_signal_connect(assistant, "prepare", G_CALLBACK(on_assistant_prepare), builder);
+	g_signal_connect(assistant, "close", G_CALLBACK(on_assistant_close), data);
+	g_signal_connect(assistant, "prepare", G_CALLBACK(on_assistant_prepare), data);
 
 	gtk_assistant_append_page(GTK_ASSISTANT(assistant), page1);
 	gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), page1, TRUE);
@@ -159,8 +220,12 @@ line_setup_wizard(GebrGeoXmlLine *line)
 
 	gtk_assistant_append_page(GTK_ASSISTANT(assistant), page2);
 	gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), page2, TRUE);
-	gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), page2, GTK_ASSISTANT_PAGE_CONFIRM);
+	gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), page2, GTK_ASSISTANT_PAGE_CONTENT);
 	gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), page2, _("Line paths"));
+
+	gtk_assistant_append_page(GTK_ASSISTANT(assistant), page3);
+	gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), page3, GTK_ASSISTANT_PAGE_PROGRESS);
+	gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), page3, _("Creating directories..."));
 
 	GtkTreeStore *store_paths = gebr_ui_document_create_paths_tree();
 	GtkTreeView *view_paths = GTK_TREE_VIEW(gtk_builder_get_object(builder, "treeview_paths"));
