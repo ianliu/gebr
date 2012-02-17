@@ -396,6 +396,7 @@ on_entry_press(GtkEntry            *entry,
 		current_folder = g_get_home_dir();
 
 	gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(file_chooser), current_folder);
+	gtk_file_chooser_set_local_only(GTK_FILE_CHOOSER(file_chooser), FALSE);
 	gint response = gtk_dialog_run(GTK_DIALOG(file_chooser));
 
 	if (response == GTK_RESPONSE_OK) {
