@@ -377,6 +377,35 @@ gebr_ui_document_create_paths_tree(void)
 	return store_paths;
 }
 
+static void
+on_entry_press(GtkEntry            *entry,
+               GtkEntryIconPosition icon_pos,
+               GdkEvent            *event,
+               gpointer             user_data)
+{
+	GebrPropertiesData *data = user_data;
+
+	GtkWidget *file_chooser = gtk_file_chooser_dialog_new("Choose IMPORT directory", GTK_WINDOW(data->window),
+	                                                      GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
+	                                                      GTK_STOCK_ADD, GTK_RESPONSE_OK,
+	                                                      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
+
+	const gchar *current_folder = gtk_entry_get_text(entry);
+	if (!*current_folder)
+		current_folder = g_get_home_dir();
+
+	gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(file_chooser), current_folder);
+	gint response = gtk_dialog_run(GTK_DIALOG(file_chooser));
+
+	if (response == GTK_RESPONSE_OK) {
+		gchar *folder = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(file_chooser));
+		gtk_entry_set_text(entry, folder);
+		g_free(folder);
+	}
+
+	gtk_widget_destroy(file_chooser);
+}
+
 void document_properties_setup_ui(GebrGeoXmlDocument * document,
 				  GebrPropertiesResponseFunc func,
 				  gboolean is_new)
@@ -556,6 +585,7 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 		GtkEntry *entry_base = GTK_ENTRY(gtk_builder_get_object(builder, "entry_base"));
 		GtkEntry *entry_import = GTK_ENTRY(gtk_builder_get_object(builder, "entry_import"));
 
+		g_signal_connect(entry_import, "icon-press", G_CALLBACK(on_entry_press), data);
 
 		gchar ***paths = gebr_geoxml_line_get_paths(GEBR_GEOXML_LINE(document));
 		gchar *base_path = NULL;

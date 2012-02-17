@@ -194,6 +194,34 @@ on_assistant_prepare(GtkAssistant *assistant,
 }
 
 static void
+on_entry_press(GtkEntry            *entry,
+               GtkEntryIconPosition icon_pos,
+               GdkEvent            *event,
+               gpointer             user_data)
+{
+	WizardData *data = user_data;
+
+	GtkWidget *file_chooser = gtk_file_chooser_dialog_new("Choose IMPORT directory", GTK_WINDOW(data->assistant),
+	                                                      GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
+	                                                      GTK_STOCK_ADD, GTK_RESPONSE_OK,
+	                                                      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
+
+	const gchar *current_folder = gtk_entry_get_text(entry);
+	if (!*current_folder)
+		current_folder = g_get_home_dir();
+
+	gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(file_chooser), current_folder);
+	gint response = gtk_dialog_run(GTK_DIALOG(file_chooser));
+
+	if (response == GTK_RESPONSE_OK) {
+		gchar *folder = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(file_chooser));
+		gtk_entry_set_text(entry, folder);
+		g_free(folder);
+	}
+	gtk_widget_destroy(file_chooser);
+}
+
+static void
 line_setup_wizard(GebrGeoXmlLine *line)
 {
 	GtkBuilder *builder = gtk_builder_new();
@@ -235,8 +263,11 @@ line_setup_wizard(GebrGeoXmlLine *line)
 
 	GObject *entry_title = gtk_builder_get_object(builder, "entry_title");
 	GObject *entry_base = gtk_builder_get_object(builder, "entry_base");
+	GObject *entry_import = gtk_builder_get_object(builder, "entry_import");
 	GObject *entry_author = gtk_builder_get_object(builder, "entry_author");
 	GObject *entry_email = gtk_builder_get_object(builder, "entry_email");
+
+	g_signal_connect(entry_import, "icon-press", G_CALLBACK(on_entry_press), data);
 
 	gchar *path = g_build_filename(g_get_home_dir(),"GeBR",
 	                 gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.project)),
