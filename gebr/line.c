@@ -201,7 +201,7 @@ line_setup_wizard(GebrGeoXmlLine *line)
 	if (!gtk_builder_add_from_file(builder, GEBR_GLADE_DIR "/document-properties.glade", NULL))
 		return;
 
-	GtkWidget *page1 = GTK_WIDGET(gtk_builder_get_object(builder, "table"));
+	GtkWidget *page1 = GTK_WIDGET(gtk_builder_get_object(builder, "main_props"));
 	GtkWidget *page2 = GTK_WIDGET(gtk_builder_get_object(builder, "widget_paths"));
 	GtkWidget *page3 = GTK_WIDGET(gtk_builder_get_object(builder, "main_progress"));
 	GtkWidget *assistant = gtk_assistant_new();

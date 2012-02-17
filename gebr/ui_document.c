@@ -444,6 +444,7 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 	g_signal_connect(data->apply_button, "clicked", G_CALLBACK(on_properties_apply), data);
 	g_signal_connect_swapped(cancel_button, "clicked", G_CALLBACK(gtk_widget_destroy), window);
 
+	GtkWidget *main_props = GTK_WIDGET(gtk_builder_get_object(builder, "main_props"));
 	GtkWidget *table = GTK_WIDGET(gtk_builder_get_object(builder, "table"));
 
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(button_box), GTK_BUTTONBOX_END);
@@ -456,7 +457,7 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 
 	update_buttons_visibility(data, PROPERTIES_EDIT);
 
-	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), table, gtk_label_new(_("Preferences")));
+	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), main_props, gtk_label_new(_("Preferences")));
 
 	GTK_WIDGET_SET_FLAGS(ok_button, GTK_CAN_DEFAULT);
 	GTK_WIDGET_SET_FLAGS(cancel_button, GTK_CAN_DEFAULT);
@@ -499,6 +500,11 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 		const gchar *addr = gebr_geoxml_line_get_maestro(GEBR_GEOXML_LINE(document));
 		const gchar *stockid;
 		gboolean is_logged = maestro? (gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED) : FALSE;
+
+		/* Set sensitivity for title */
+		GObject *warn_edit = gtk_builder_get_object(builder, "warn_edit");
+		gtk_widget_set_visible(GTK_WIDGET(warn_edit), !is_logged);
+		gtk_widget_set_sensitive(GTK_WIDGET(title), is_logged);
 
 		if (!maestro && !strlen(addr)) {
 			maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
