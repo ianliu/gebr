@@ -659,46 +659,51 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			case GEBR_COMM_PROTOCOL_PATH_CREATE:
 				for (GList *j = new_paths; j; j = j->next) {
 					GString *path = j->data;
-					if (g_file_test(path->str, G_FILE_TEST_IS_DIR))
+					if (g_file_test(path->str, G_FILE_TEST_IS_DIR)){
 						flag_exists = TRUE;
-					if (*(path->str) && !flag_exists && g_mkdir_with_parents(path->str, 0700)) {
+					}
+					else if (*(path->str) && g_mkdir_with_parents(path->str, 0700)) {
+						flag_error = TRUE;
+						break;
+					}
+					if (g_access(path->str, W_OK)==-1){
 						flag_error = TRUE;
 						break;
 					}
 				}
-				GString *path = g_list_nth_data(new_paths, 0);
 
-				if (g_access(path->str, W_OK)==-1){
-					flag_error = TRUE;
-					flag_exists = FALSE;
-					break;
-				}
+				if (flag_error)
+					status_id = GEBR_COMM_PROTOCOL_STATUS_PATH_ERROR;
+				else if (flag_exists)
+					status_id = GEBR_COMM_PROTOCOL_STATUS_PATH_EXISTS;
+				else
+					status_id = GEBR_COMM_PROTOCOL_STATUS_PATH_OK;
 				break;
 			case GEBR_COMM_PROTOCOL_PATH_RENAME:
 				g_debug("Renaming %s to %s", old_path->str, new_path->str);
-				if (g_file_test(new_path->str, G_FILE_TEST_IS_DIR))
-					flag_exists = TRUE;
-				if (!flag_exists)
-					flag_error = g_rename(old_path->str, new_path->str);
+				if (!g_file_test(new_path->str, G_FILE_TEST_IS_DIR) && g_rename(old_path->str, new_path->str)){
+				    status_id = GEBR_COMM_PROTOCOL_STATUS_PATH_ERROR;
+				    break;
+				}
+				else {
+				    status_id = GEBR_COMM_PROTOCOL_STATUS_PATH_OK;
+				    break;
+				}
+				status_id = GEBR_COMM_PROTOCOL_STATUS_PATH_EXISTS;
 				break;
 			case GEBR_COMM_PROTOCOL_PATH_DELETE:
 				for (GList *j = new_paths; j; j = j->next) {
 					GString *path = j->data;
-					flag_error = g_rmdir(path->str);
+					if (g_rmdir(path->str))
+						status_id = GEBR_COMM_PROTOCOL_STATUS_PATH_ERROR;
+					else
+						status_id = GEBR_COMM_PROTOCOL_STATUS_PATH_OK;
 				}
 				break;
 			default:
 				g_warn_if_reached();
 				break;
 			}
-
-			if (!flag_error && !flag_exists)
-				status_id = GEBR_COMM_PROTOCOL_STATUS_PATH_OK;
-			else if (flag_exists)
-				status_id = GEBR_COMM_PROTOCOL_STATUS_PATH_EXISTS;
-			else
-				status_id = GEBR_COMM_PROTOCOL_STATUS_PATH_ERROR;
-
 			g_debug("on %s, new_path:'%s', old_path:'%s', status_id: '%d'", __func__, new_path->str, old_path->str, status_id);
 
 			/* frees */
