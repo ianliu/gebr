@@ -101,47 +101,59 @@ on_maestro_path_error(GebrMaestroServer *maestro,
 	g_source_remove(data->progress_animation);
 
 	GtkWidget *page3 = GTK_WIDGET(gtk_builder_get_object(data->builder, "main_progress"));
-	GObject *progress = gtk_builder_get_object(data->builder, "progressbar");
+	GObject *container_progress = gtk_builder_get_object(data->builder, "container_progressbar");
+	GObject *container_message = gtk_builder_get_object(data->builder, "container_message");
 	GObject *image = gtk_builder_get_object(data->builder, "image_status");
 	GObject *label = gtk_builder_get_object(data->builder, "label_status");
 
-	gtk_widget_hide(GTK_WIDGET(progress));
-	gtk_widget_show(GTK_WIDGET(image));
-	gtk_widget_show(GTK_WIDGET(label));
+	gchar *summary_txt;
+	GObject *label_summary = gtk_builder_get_object(data->builder, "label_summary");
+
+	gtk_widget_hide(GTK_WIDGET(container_progress));
+	gtk_widget_show_all(GTK_WIDGET(container_message));
 
 	switch (error_id) {
 	case GEBR_COMM_PROTOCOL_STATUS_PATH_OK:
 		gtk_image_set_from_stock(GTK_IMAGE(image), GTK_STOCK_OK, GTK_ICON_SIZE_DIALOG);
-		gtk_label_set_text(GTK_LABEL(label), _("Sucess!"));
+		gtk_label_set_text(GTK_LABEL(label), _("Success!"));
 		gtk_assistant_set_page_type(GTK_ASSISTANT(data->assistant),
 					    page3, GTK_ASSISTANT_PAGE_SUMMARY);
 		gtk_assistant_set_page_title(GTK_ASSISTANT(data->assistant),
-					     page3, _("Success!"));
+					     page3, _("Done"));
 		gtk_assistant_set_page_complete(GTK_ASSISTANT(data->assistant), page3, TRUE);
+		summary_txt = g_markup_printf_escaped("<span size='large'>%s</span>",
+							     _("The directory were successfully created!"));
 		break;
 	case GEBR_COMM_PROTOCOL_STATUS_PATH_ERROR:
 		gtk_image_set_from_stock(GTK_IMAGE(image), GTK_STOCK_DIALOG_ERROR, GTK_ICON_SIZE_DIALOG);
 		gtk_label_set_text(GTK_LABEL(label), _("Could not create directory.\n"
-						       "Press the back buttom to change the BASE directory\n"
+						       "Press the back button to change the BASE directory\n"
 						       "or the line title."));
 		gtk_assistant_set_page_type(GTK_ASSISTANT(data->assistant),
 					    page3, GTK_ASSISTANT_PAGE_CONFIRM);
 		gtk_assistant_set_page_title(GTK_ASSISTANT(data->assistant),
 					     page3, _("Error!"));
 		gtk_assistant_set_page_complete(GTK_ASSISTANT(data->assistant), page3, FALSE);
+		summary_txt = g_markup_printf_escaped("<span size='large'>%s</span>",
+						      _("The directory could not be created!"));
 		break;
 	case GEBR_COMM_PROTOCOL_STATUS_PATH_EXISTS:
 		gtk_image_set_from_stock(GTK_IMAGE(image), GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_DIALOG);
 		gtk_label_set_text(GTK_LABEL(label), _("The directory already exists.\n"
 						       "You can change the BASE directory by pressing the\n"
-						       "back buttom or use it anyway."));
+						       "back button or use it anyway."));
 		gtk_assistant_set_page_type(GTK_ASSISTANT(data->assistant),
 					    page3, GTK_ASSISTANT_PAGE_CONFIRM);
 		gtk_assistant_set_page_title(GTK_ASSISTANT(data->assistant),
 					     page3, _("Error!"));
 		gtk_assistant_set_page_complete(GTK_ASSISTANT(data->assistant), page3, TRUE);
+		summary_txt = g_markup_printf_escaped("<span size='large'>%s</span>",
+						      _("The directory already exists!"));
 		break;
 	}
+
+	gtk_label_set_markup(GTK_LABEL(label_summary), summary_txt);
+	g_free(summary_txt);
 
 	g_signal_handlers_disconnect_by_func(maestro, on_maestro_path_error, data);
 
@@ -171,24 +183,33 @@ on_assistant_prepare(GtkAssistant *assistant,
 		     WizardData *data)
 {
 	gint page = gtk_assistant_get_current_page(assistant) + 1;
+	GObject *entry_base = gtk_builder_get_object(data->builder, "entry_base");
 
 	if (page == 2) {
-		GObject *entry_base = gtk_builder_get_object(data->builder, "entry_base");
 		GObject *entry_title = gtk_builder_get_object(data->builder, "entry_title");
 		gchar *path = g_build_filename(g_get_home_dir(),"GeBR",
 					       gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.project)),
 					       gtk_entry_get_text(GTK_ENTRY(entry_title)), NULL);
-		gtk_entry_set_text (GTK_ENTRY(entry_base), path);
-		g_debug("apply entry");
+		gtk_entry_set_text(GTK_ENTRY(entry_base), path);
 		g_free(path);
 	}
 	else if (page == 3) {
+		GObject *container_progress = gtk_builder_get_object(data->builder, "container_progressbar");
+		GObject *container_message = gtk_builder_get_object(data->builder, "container_message");
+		GObject *label_summary = gtk_builder_get_object(data->builder, "label_summary");
+		gchar *tmp = g_markup_printf_escaped("<span size='large'>%s</span>", _("Creating directories..."));
+		gtk_label_set_markup(GTK_LABEL(label_summary), tmp);
+		g_free(tmp);
+
+		gtk_widget_hide(GTK_WIDGET(container_message));
+		gtk_widget_show(GTK_WIDGET(container_progress));
+
+		g_debug("Initiating progress");
 		data->progress_animation = g_timeout_add(200, progress_bar_animate, data);
-		GtkEntry *base = GTK_ENTRY(gtk_builder_get_object(data->builder, "entry_base"));
 		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 		g_signal_connect(maestro, "path-error", G_CALLBACK(on_maestro_path_error), data);
 		gebr_ui_document_send_paths_to_maestro(maestro, GEBR_COMM_PROTOCOL_PATH_CREATE,
-						       NULL, gtk_entry_get_text(base));
+						       NULL, gtk_entry_get_text(GTK_ENTRY(entry_base)));
 		gtk_assistant_set_page_complete(GTK_ASSISTANT(data->assistant), current_page, FALSE);
 	}
 }

@@ -1819,29 +1819,44 @@ on_maestro_path_error(GebrMaestroServer *maestro,
 	GObject *image = gtk_builder_get_object(data->builder, "image_status");
 	GObject *label = gtk_builder_get_object(data->builder, "label_status");
 	GtkEntry *entry_base = GTK_ENTRY(gtk_builder_get_object(data->builder, "entry_base"));
+	GObject *container_progress = gtk_builder_get_object(data->builder, "container_progressbar");
+	GObject *container_message = gtk_builder_get_object(data->builder, "container_message");
+
+	gchar *summary_txt;
+	GObject *label_summary = gtk_builder_get_object(data->builder, "label_summary");
+
+	gtk_widget_hide(GTK_WIDGET(container_progress));
+	gtk_widget_show_all(GTK_WIDGET(container_message));
 
 	switch (error_id) {
 	case GEBR_COMM_PROTOCOL_STATUS_PATH_OK:
 		gtk_image_set_from_stock(GTK_IMAGE(image), GTK_STOCK_OK, GTK_ICON_SIZE_DIALOG);
 		gtk_label_set_text(GTK_LABEL(label), _("Sucess!"));
+		summary_txt = g_markup_printf_escaped("<span size='large'>%s</span>",
+						      _("The directory were successfully created!"));
 		gtk_entry_set_text(entry_base, data->new_base);
 		update_buttons_visibility(data, PROPERTIES_OK);
 		break;
 	case GEBR_COMM_PROTOCOL_STATUS_PATH_ERROR:
 		gtk_image_set_from_stock(GTK_IMAGE(image), GTK_STOCK_DIALOG_ERROR, GTK_ICON_SIZE_DIALOG);
-		gtk_label_set_text(GTK_LABEL(label), _("Could not create directory.\n"
-						       "Press the back buttom to change the BASE directory\n"
+		gtk_label_set_text(GTK_LABEL(label), _("Press the back buttom to change the BASE directory\n"
 						       "or the line title."));
+		summary_txt = g_markup_printf_escaped("<span size='large'>%s</span>",
+						      _("The directory could not be created!"));
 		update_buttons_visibility(data, PROPERTIES_ERROR);
 		break;
 	case GEBR_COMM_PROTOCOL_STATUS_PATH_EXISTS:
 		gtk_image_set_from_stock(GTK_IMAGE(image), GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_DIALOG);
-		gtk_label_set_text(GTK_LABEL(label), _("The directory already exists.\n"
-						       "You can change the BASE directory by pressing the\n"
-						       "back buttom or use it anyway."));
+		gtk_label_set_text(GTK_LABEL(label), _("You can change the BASE directory by pressing the\n"
+						       "back buttom or use this folder anyway."));
+		summary_txt = g_markup_printf_escaped("<span size='large'>%s</span>",
+						      _("The directory already exists!"));
 		update_buttons_visibility(data, PROPERTIES_WARNING);
 		break;
 	}
+
+	gtk_label_set_markup(GTK_LABEL(label_summary), summary_txt);
+	g_free(summary_txt);
 
 	g_signal_handlers_disconnect_by_func(maestro, on_maestro_path_error, data);
 }
@@ -1974,9 +1989,8 @@ static void
 update_buttons_visibility(GebrPropertiesData *data, gint state)
 {
 	GObject *main_progress = gtk_builder_get_object(data->builder, "main_progress");
-	GObject *progress = gtk_builder_get_object(data->builder, "progressbar");
-	GObject *image = gtk_builder_get_object(data->builder, "image_status");
-	GObject *label = gtk_builder_get_object(data->builder, "label_status");
+	GObject *progress = gtk_builder_get_object(data->builder, "container_progressbar");
+	GObject *message = gtk_builder_get_object(data->builder, "container_message");
 
 	switch (state) {
 	case PROPERTIES_EDIT:
@@ -1999,8 +2013,7 @@ update_buttons_visibility(GebrPropertiesData *data, gint state)
 		gtk_widget_hide(data->apply_button);
 		gtk_widget_hide(data->back_button);
 		gtk_widget_show(GTK_WIDGET(progress));
-		gtk_widget_hide(GTK_WIDGET(image));
-		gtk_widget_hide(GTK_WIDGET(label));
+		gtk_widget_hide(GTK_WIDGET(message));
 		break;
 	case PROPERTIES_OK:
 		gtk_button_set_label(GTK_BUTTON(data->apply_button), GTK_STOCK_CLOSE);
@@ -2011,8 +2024,7 @@ update_buttons_visibility(GebrPropertiesData *data, gint state)
 		gtk_widget_show(data->apply_button);
 		gtk_widget_hide(data->back_button);
 		gtk_widget_hide(GTK_WIDGET(progress));
-		gtk_widget_show(GTK_WIDGET(image));
-		gtk_widget_show(GTK_WIDGET(label));
+		gtk_widget_show(GTK_WIDGET(message));
 		break;
 	case PROPERTIES_ERROR:
 		gtk_widget_hide(GTK_WIDGET(data->notebook));
@@ -2023,8 +2035,7 @@ update_buttons_visibility(GebrPropertiesData *data, gint state)
 		gtk_widget_hide(data->apply_button);
 		gtk_widget_show(data->back_button);
 		gtk_widget_hide(GTK_WIDGET(progress));
-		gtk_widget_show(GTK_WIDGET(image));
-		gtk_widget_show(GTK_WIDGET(label));
+		gtk_widget_show(GTK_WIDGET(message));
 		break;
 	case PROPERTIES_WARNING:
 		gtk_button_set_label(GTK_BUTTON(data->apply_button), GTK_STOCK_APPLY);
@@ -2036,8 +2047,7 @@ update_buttons_visibility(GebrPropertiesData *data, gint state)
 		gtk_widget_show(data->apply_button);
 		gtk_widget_show(data->back_button);
 		gtk_widget_hide(GTK_WIDGET(progress));
-		gtk_widget_show(GTK_WIDGET(image));
-		gtk_widget_show(GTK_WIDGET(label));
+		gtk_widget_show(GTK_WIDGET(message));
 		break;
 	}
 }
@@ -2076,6 +2086,17 @@ on_response_ok(GtkButton *button,
 	data->new_base = g_strdup(newmsg);
 	g_signal_connect(maestro, "path-error", G_CALLBACK(on_maestro_path_error), data);
 	g_signal_connect(data->window, "delete-event", G_CALLBACK(gtk_true), NULL);
+
+	GObject *progress = gtk_builder_get_object(data->builder, "container_progressbar");
+	GObject *message = gtk_builder_get_object(data->builder, "container_message");
+	GObject *label_summary = gtk_builder_get_object(data->builder, "label_summary");
+	gchar *tmp = g_markup_printf_escaped("<span size='large'>%s</span>",
+					     _("Creating directories..."));
+	gtk_label_set_markup(GTK_LABEL(label_summary), tmp);
+	g_free(tmp);
+
+	gtk_widget_hide(GTK_WIDGET(message));
+	gtk_widget_show(GTK_WIDGET(progress));
 
 	gebr_ui_document_send_paths_to_maestro(maestro, option, oldmsg, newmsg);
 	update_buttons_visibility(data, PROPERTIES_PROGRESS);

@@ -292,41 +292,70 @@ files outside your &lt;b&gt;BASE&lt;/b&gt; directory.&lt;/i&gt;</property>
   <object class="GtkVBox" id="main_progress">
     <property name="visible">True</property>
     <child>
-      <object class="GtkLabel" id="label9">
+      <object class="GtkAlignment" id="container_title">
         <property name="visible">True</property>
-        <property name="label" translatable="yes">&lt;span size='large'&gt;Creating directories...&lt;/span&gt;</property>
-        <property name="use_markup">True</property>
+        <property name="yalign">1</property>
+        <property name="yscale">0</property>
+        <child>
+          <object class="GtkLabel" id="label_summary">
+            <property name="visible">True</property>
+            <property name="label" translatable="yes">&lt;span size='large'&gt;Creating directories...&lt;/span&gt;</property>
+            <property name="use_markup">True</property>
+          </object>
+        </child>
       </object>
       <packing>
-        <property name="expand">False</property>
         <property name="padding">5</property>
         <property name="position">0</property>
       </packing>
     </child>
     <child>
-      <object class="GtkProgressBar" id="progressbar">
+      <object class="GtkAlignment" id="container_progressbar">
         <property name="visible">True</property>
+        <property name="yalign">0</property>
+        <property name="yscale">0</property>
+        <child>
+          <object class="GtkProgressBar" id="progressbar">
+            <property name="visible">True</property>
+          </object>
+        </child>
       </object>
       <packing>
-        <property name="fill">False</property>
         <property name="position">1</property>
       </packing>
     </child>
     <child>
-      <object class="GtkImage" id="image_status">
-        <property name="stock">gtk-ok</property>
-        <property name="icon-size">6</property>
+      <object class="GtkAlignment" id="container_message">
+        <property name="visible">True</property>
+        <property name="yalign">0</property>
+        <property name="yscale">0</property>
+        <child>
+          <object class="GtkHBox" id="hbox1">
+            <property name="visible">True</property>
+            <child>
+              <object class="GtkImage" id="image_status">
+                <property name="xalign">1</property>
+                <property name="stock">gtk-ok</property>
+                <property name="icon-size">6</property>
+              </object>
+              <packing>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="label_status">
+                <property name="xalign">0</property>
+                <property name="label" translatable="yes">Success!</property>
+              </object>
+              <packing>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+        </child>
       </object>
       <packing>
         <property name="position">2</property>
-      </packing>
-    </child>
-    <child>
-      <object class="GtkLabel" id="label_status">
-        <property name="label" translatable="yes">Success!</property>
-      </object>
-      <packing>
-        <property name="position">3</property>
       </packing>
     </child>
   </object>
