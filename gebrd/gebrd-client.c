@@ -647,46 +647,65 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 
 			g_debug("new_path:%s, old_path:%s, opt:%s", new_path->str, old_path->str, opt->str);
 
-			GList *list = parse_comma_separated_string(new_path->str);
+			GList *new_paths= parse_comma_separated_string(new_path->str);
 
 			gint option = gebr_comm_protocol_path_str_to_enum(opt->str);
 			gint status_id = -1;
 			gboolean flag_exists = FALSE;
 			gboolean flag_error = FALSE;
 
-			for (GList *j = list; j; j = j->next) {
-				GString *path = j->data;
-				if (g_strcmp0(path->str, "") == 0)
-					continue;
 
-				switch (option) {
-				case GEBR_COMM_PROTOCOL_PATH_CREATE:
-					if (g_file_test(path->str, G_FILE_TEST_IS_DIR))
+			switch (option) {
+			case GEBR_COMM_PROTOCOL_PATH_CREATE:
+				for (GList *j = new_paths; j; j = j->next) {
+					GString *path = j->data;
+					if (g_file_test(path->str, G_FILE_TEST_IS_DIR)){
 						flag_exists = TRUE;
-					else
-						if (g_mkdir_with_parents(path->str, 0700))
-							flag_error = TRUE;
-					break;
-				case GEBR_COMM_PROTOCOL_PATH_RENAME:
-					g_debug("Renaming %s to %s", old_path->str, path->str);
-					flag_error = g_rename(old_path->str, path->str);
-					break;
-				case GEBR_COMM_PROTOCOL_PATH_DELETE:
-					flag_error = g_rmdir(path->str);
-					break;
-				default:
-					g_warn_if_reached();
-					break;
+					}
+					else if (*(path->str) && g_mkdir_with_parents(path->str, 0700)) {
+						flag_error = TRUE;
+						break;
+					}
+					if (g_access(path->str, W_OK)==-1){
+						flag_error = TRUE;
+						break;
+					}
 				}
 
-			}
-			if (!flag_error && !flag_exists)
-				status_id = GEBR_COMM_PROTOCOL_STATUS_PATH_OK;
-			else if (flag_exists)
-				status_id = GEBR_COMM_PROTOCOL_STATUS_PATH_EXISTS;
-			else
-				status_id = GEBR_COMM_PROTOCOL_STATUS_PATH_ERROR;
+				if (flag_error)
+					status_id = GEBR_COMM_PROTOCOL_STATUS_PATH_ERROR;
+				else if (flag_exists)
+					status_id = GEBR_COMM_PROTOCOL_STATUS_PATH_EXISTS;
+				else
+					status_id = GEBR_COMM_PROTOCOL_STATUS_PATH_OK;
+				break;
+			case GEBR_COMM_PROTOCOL_PATH_RENAME:
+				g_debug("Renaming %s to %s", old_path->str, new_path->str);
+				gboolean dir_exist = g_file_test(new_path->str, G_FILE_TEST_IS_DIR);
+				gboolean create_dir = g_rename(old_path->str, new_path->str) == 0;
 
+				if (!dir_exist && create_dir)
+					status_id = GEBR_COMM_PROTOCOL_STATUS_PATH_OK;
+				else if (dir_exist && !create_dir)
+					status_id = GEBR_COMM_PROTOCOL_STATUS_PATH_EXISTS;
+				else if (!dir_exist && !create_dir)
+					status_id = GEBR_COMM_PROTOCOL_STATUS_PATH_ERROR;
+				else
+					status_id = -1;
+				break;
+			case GEBR_COMM_PROTOCOL_PATH_DELETE:
+				for (GList *j = new_paths; j; j = j->next) {
+					GString *path = j->data;
+					if (g_rmdir(path->str))
+						status_id = GEBR_COMM_PROTOCOL_STATUS_PATH_ERROR;
+					else
+						status_id = GEBR_COMM_PROTOCOL_STATUS_PATH_OK;
+				}
+				break;
+			default:
+				g_warn_if_reached();
+				break;
+			}
 			g_debug("on %s, new_path:'%s', old_path:'%s', status_id: '%d'", __func__, new_path->str, old_path->str, status_id);
 
 			/* frees */
@@ -700,7 +719,6 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			/* unknown message! */
 			goto err;
 		}
-
 		gebr_comm_message_free(message);
 		client->socket->protocol->messages = g_list_delete_link(client->socket->protocol->messages, link);
 	}

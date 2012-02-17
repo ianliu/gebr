@@ -35,6 +35,9 @@ get_line_paths(GebrGeoXmlLine *line)
 
 	gebr_geoxml_line_get_path(line, &seq, 0);
 	for (; seq; gebr_geoxml_sequence_next(&seq)) {
+		gchar *name = gebr_geoxml_line_path_get_name((GebrGeoXmlLinePath*)seq);
+		if (g_strcmp0(name, "<IMPORT>") == 0)
+			continue;
 		g_string_append_c(buf, ',');
 		GebrGeoXmlValueSequence *path = GEBR_GEOXML_VALUE_SEQUENCE(seq);
 		gchar *value = gebr_geoxml_value_sequence_get(path);

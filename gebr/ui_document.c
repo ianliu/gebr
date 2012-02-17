@@ -107,6 +107,7 @@ typedef struct {
 	GtkWidget *notebook;
 
 	/* line stuff */
+	gint timeout;
 	gint progress_animation;
 	gchar *old_base;
 	gchar *new_base;
@@ -377,6 +378,35 @@ gebr_ui_document_create_paths_tree(void)
 	return store_paths;
 }
 
+static void
+on_entry_press(GtkEntry            *entry,
+               GtkEntryIconPosition icon_pos,
+               GdkEvent            *event,
+               gpointer             user_data)
+{
+	GebrPropertiesData *data = user_data;
+
+	GtkWidget *file_chooser = gtk_file_chooser_dialog_new("Choose IMPORT directory", GTK_WINDOW(data->window),
+	                                                      GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
+	                                                      GTK_STOCK_ADD, GTK_RESPONSE_OK,
+	                                                      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
+
+	const gchar *current_folder = gtk_entry_get_text(entry);
+	if (!*current_folder)
+		current_folder = g_get_home_dir();
+
+	gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(file_chooser), current_folder);
+	gint response = gtk_dialog_run(GTK_DIALOG(file_chooser));
+
+	if (response == GTK_RESPONSE_OK) {
+		gchar *folder = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(file_chooser));
+		gtk_entry_set_text(entry, folder);
+		g_free(folder);
+	}
+
+	gtk_widget_destroy(file_chooser);
+}
+
 void document_properties_setup_ui(GebrGeoXmlDocument * document,
 				  GebrPropertiesResponseFunc func,
 				  gboolean is_new)
@@ -444,6 +474,7 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 	g_signal_connect(data->apply_button, "clicked", G_CALLBACK(on_properties_apply), data);
 	g_signal_connect_swapped(cancel_button, "clicked", G_CALLBACK(gtk_widget_destroy), window);
 
+	GtkWidget *main_props = GTK_WIDGET(gtk_builder_get_object(builder, "main_props"));
 	GtkWidget *table = GTK_WIDGET(gtk_builder_get_object(builder, "table"));
 
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(button_box), GTK_BUTTONBOX_END);
@@ -456,7 +487,7 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 
 	update_buttons_visibility(data, PROPERTIES_EDIT);
 
-	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), table, gtk_label_new(_("Preferences")));
+	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), main_props, gtk_label_new(_("Preferences")));
 
 	GTK_WIDGET_SET_FLAGS(ok_button, GTK_CAN_DEFAULT);
 	GTK_WIDGET_SET_FLAGS(cancel_button, GTK_CAN_DEFAULT);
@@ -499,6 +530,11 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 		const gchar *addr = gebr_geoxml_line_get_maestro(GEBR_GEOXML_LINE(document));
 		const gchar *stockid;
 		gboolean is_logged = maestro? (gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED) : FALSE;
+
+		/* Set sensitivity for title */
+		GObject *warn_edit = gtk_builder_get_object(builder, "warn_edit");
+		gtk_widget_set_visible(GTK_WIDGET(warn_edit), !is_logged);
+		gtk_widget_set_sensitive(GTK_WIDGET(title), is_logged);
 
 		if (!maestro && !strlen(addr)) {
 			maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
@@ -550,6 +586,7 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 		GtkEntry *entry_base = GTK_ENTRY(gtk_builder_get_object(builder, "entry_base"));
 		GtkEntry *entry_import = GTK_ENTRY(gtk_builder_get_object(builder, "entry_import"));
 
+		g_signal_connect(entry_import, "icon-press", G_CALLBACK(on_entry_press), data);
 
 		gchar ***paths = gebr_geoxml_line_get_paths(GEBR_GEOXML_LINE(document));
 		gchar *base_path = NULL;
@@ -1815,6 +1852,7 @@ on_maestro_path_error(GebrMaestroServer *maestro,
 		      GebrPropertiesData *data)
 {
 	g_source_remove(data->progress_animation);
+	g_source_remove(data->timeout);
 
 	GObject *image = gtk_builder_get_object(data->builder, "image_status");
 	GObject *label = gtk_builder_get_object(data->builder, "label_status");
@@ -1859,6 +1897,29 @@ on_maestro_path_error(GebrMaestroServer *maestro,
 	g_free(summary_txt);
 
 	g_signal_handlers_disconnect_by_func(maestro, on_maestro_path_error, data);
+}
+
+static gboolean
+time_out_error(gpointer user_data)
+{
+	GebrPropertiesData *data = user_data;
+
+	g_source_remove(data->timeout);
+
+	GObject *image = gtk_builder_get_object(data->builder, "image_status");
+	GObject *label = gtk_builder_get_object(data->builder, "label_status");
+
+	gtk_image_set_from_stock(GTK_IMAGE(image), GTK_STOCK_DIALOG_ERROR, GTK_ICON_SIZE_DIALOG);
+	gtk_label_set_text(GTK_LABEL(label), _("Timed Out!\nCould not create directory.\nTry again later."));
+	update_buttons_visibility(data, PROPERTIES_ERROR);
+
+	GebrMaestroServer *maestro =
+			gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller,
+			                                             GEBR_GEOXML_LINE(data->document));
+
+	g_signal_handlers_disconnect_by_func(maestro, on_maestro_path_error, data);
+
+	return FALSE;
 }
 
 static gboolean
@@ -2101,6 +2162,7 @@ on_response_ok(GtkButton *button,
 	gebr_ui_document_send_paths_to_maestro(maestro, option, oldmsg, newmsg);
 	update_buttons_visibility(data, PROPERTIES_PROGRESS);
 	data->progress_animation = g_timeout_add(200, progress_bar_animate, data);
+	data->timeout = g_timeout_add(5000, time_out_error, data);
 }
 
 void on_properties_destroy(GtkWindow * window, GebrPropertiesData * data)

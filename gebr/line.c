@@ -79,6 +79,7 @@ on_assistant_cancel(GtkWidget *widget)
 
 typedef struct {
 	gint progress_animation;
+	gint timeout;
 	GtkWidget *assistant;
 	GtkBuilder *builder;
 } WizardData;
@@ -99,6 +100,7 @@ on_maestro_path_error(GebrMaestroServer *maestro,
 		      WizardData *data)
 {
 	g_source_remove(data->progress_animation);
+	g_source_remove(data->timeout);
 
 	GtkWidget *page3 = GTK_WIDGET(gtk_builder_get_object(data->builder, "main_progress"));
 	GObject *container_progress = gtk_builder_get_object(data->builder, "container_progressbar");
@@ -159,6 +161,38 @@ on_maestro_path_error(GebrMaestroServer *maestro,
 
 }
 
+static gboolean
+time_out_error(gpointer user_data)
+{
+	WizardData *data = user_data;
+
+	g_source_remove(data->timeout);
+
+	GObject *image = gtk_builder_get_object(data->builder, "image_status");
+	GObject *label = gtk_builder_get_object(data->builder, "label_status");
+	GtkWidget *page3 = GTK_WIDGET(gtk_builder_get_object(data->builder, "main_progress"));
+	GObject *progress = gtk_builder_get_object(data->builder, "progressbar");
+
+	gtk_widget_hide(GTK_WIDGET(progress));
+	gtk_widget_show(GTK_WIDGET(image));
+	gtk_widget_show(GTK_WIDGET(label));
+
+	gtk_image_set_from_stock(GTK_IMAGE(image), GTK_STOCK_DIALOG_ERROR, GTK_ICON_SIZE_DIALOG);
+	gtk_label_set_text(GTK_LABEL(label), _("Timed Out!\nCould not create directory.\nTry again later."));
+
+	gtk_assistant_set_page_type(GTK_ASSISTANT(data->assistant),
+	                            page3, GTK_ASSISTANT_PAGE_CONFIRM);
+	gtk_assistant_set_page_title(GTK_ASSISTANT(data->assistant),
+	                             page3, _("Error!"));
+	gtk_assistant_set_page_complete(GTK_ASSISTANT(data->assistant), page3, FALSE);
+
+	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+
+	g_signal_handlers_disconnect_by_func(maestro, on_maestro_path_error, data);
+
+	return FALSE;
+}
+
 static void
 on_assistant_close(GtkAssistant *assistant,
 		   WizardData *data)
@@ -211,7 +245,37 @@ on_assistant_prepare(GtkAssistant *assistant,
 		gebr_ui_document_send_paths_to_maestro(maestro, GEBR_COMM_PROTOCOL_PATH_CREATE,
 						       NULL, gtk_entry_get_text(GTK_ENTRY(entry_base)));
 		gtk_assistant_set_page_complete(GTK_ASSISTANT(data->assistant), current_page, FALSE);
+
+		data->timeout = g_timeout_add(5000, time_out_error, data);
 	}
+}
+
+static void
+on_entry_press(GtkEntry            *entry,
+               GtkEntryIconPosition icon_pos,
+               GdkEvent            *event,
+               gpointer             user_data)
+{
+	WizardData *data = user_data;
+
+	GtkWidget *file_chooser = gtk_file_chooser_dialog_new("Choose IMPORT directory", GTK_WINDOW(data->assistant),
+	                                                      GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
+	                                                      GTK_STOCK_ADD, GTK_RESPONSE_OK,
+	                                                      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
+
+	const gchar *current_folder = gtk_entry_get_text(entry);
+	if (!*current_folder)
+		current_folder = g_get_home_dir();
+
+	gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(file_chooser), current_folder);
+	gint response = gtk_dialog_run(GTK_DIALOG(file_chooser));
+
+	if (response == GTK_RESPONSE_OK) {
+		gchar *folder = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(file_chooser));
+		gtk_entry_set_text(entry, folder);
+		g_free(folder);
+	}
+	gtk_widget_destroy(file_chooser);
 }
 
 static void
@@ -222,7 +286,7 @@ line_setup_wizard(GebrGeoXmlLine *line)
 	if (!gtk_builder_add_from_file(builder, GEBR_GLADE_DIR "/document-properties.glade", NULL))
 		return;
 
-	GtkWidget *page1 = GTK_WIDGET(gtk_builder_get_object(builder, "table"));
+	GtkWidget *page1 = GTK_WIDGET(gtk_builder_get_object(builder, "main_props"));
 	GtkWidget *page2 = GTK_WIDGET(gtk_builder_get_object(builder, "widget_paths"));
 	GtkWidget *page3 = GTK_WIDGET(gtk_builder_get_object(builder, "main_progress"));
 	GtkWidget *assistant = gtk_assistant_new();
@@ -256,8 +320,11 @@ line_setup_wizard(GebrGeoXmlLine *line)
 
 	GObject *entry_title = gtk_builder_get_object(builder, "entry_title");
 	GObject *entry_base = gtk_builder_get_object(builder, "entry_base");
+	GObject *entry_import = gtk_builder_get_object(builder, "entry_import");
 	GObject *entry_author = gtk_builder_get_object(builder, "entry_author");
 	GObject *entry_email = gtk_builder_get_object(builder, "entry_email");
+
+	g_signal_connect(entry_import, "icon-press", G_CALLBACK(on_entry_press), data);
 
 	gchar *path = g_build_filename(g_get_home_dir(),"GeBR",
 	                 gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.project)),
