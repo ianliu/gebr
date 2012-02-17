@@ -776,12 +776,16 @@ flow_edition_component_edited(GtkCellRendererText *renderer, gchar *path, gchar 
 
 	gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter, path);
 
+	gchar ***paths = gebr_geoxml_line_get_paths(gebr.line);
+	gchar *tmp = gebr_relativise_path(new_text, paths);
+	gebr_pairstrfreev(paths);
+
 	if (gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter))
-		gebr_geoxml_flow_io_set_input(gebr.flow, new_text);
+		gebr_geoxml_flow_io_set_input(gebr.flow, tmp);
 	else if (gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter))
-		gebr_geoxml_flow_io_set_output(gebr.flow, new_text);
+		gebr_geoxml_flow_io_set_output(gebr.flow, tmp);
 	else if (gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->error_iter))
-		gebr_geoxml_flow_io_set_error(gebr.flow, new_text);
+		gebr_geoxml_flow_io_set_error(gebr.flow, tmp);
 
 	flow_edition_set_io();
 }
