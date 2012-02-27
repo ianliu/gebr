@@ -145,7 +145,7 @@ on_maestro_path_error(GebrMaestroServer *maestro,
 		gtk_assistant_set_page_type(GTK_ASSISTANT(data->assistant),
 					    page3, GTK_ASSISTANT_PAGE_CONFIRM);
 		gtk_assistant_set_page_title(GTK_ASSISTANT(data->assistant),
-					     page3, _("Error!"));
+					     page3, _("Warning!"));
 		gtk_assistant_set_page_complete(GTK_ASSISTANT(data->assistant), page3, TRUE);
 		summary_txt = g_markup_printf_escaped("<span size='large'>%s</span>",
 						      _("The directory already exists!"));
