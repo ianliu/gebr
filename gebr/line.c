@@ -124,7 +124,7 @@ on_maestro_path_error(GebrMaestroServer *maestro,
 					     page3, _("Done"));
 		gtk_assistant_set_page_complete(GTK_ASSISTANT(data->assistant), page3, TRUE);
 		summary_txt = g_markup_printf_escaped("<span size='large'>%s</span>",
-						      _("The directory were successfully created!"));
+						      _("The directories were successfully created!"));
 		break;
 	case GEBR_COMM_PROTOCOL_STATUS_PATH_ERROR:
 		gtk_image_set_from_stock(GTK_IMAGE(image), GTK_STOCK_DIALOG_ERROR, GTK_ICON_SIZE_DIALOG);
