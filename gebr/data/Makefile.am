@@ -28,6 +28,7 @@ glade_DATA = \
 	document-properties.glade \
 	project-properties.glade \
 	line-properties.glade \
+	l.png \
 	$(NULL)
 
 gebr.desktop:gebr.desktop.in $(INTLTOOL_MERGE) $(srcdir)/../po/*.po
