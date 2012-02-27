@@ -124,12 +124,11 @@ on_maestro_path_error(GebrMaestroServer *maestro,
 					     page3, _("Done"));
 		gtk_assistant_set_page_complete(GTK_ASSISTANT(data->assistant), page3, TRUE);
 		summary_txt = g_markup_printf_escaped("<span size='large'>%s</span>",
-							     _("The directory were successfully created!"));
+						      _("The directory were successfully created!"));
 		break;
 	case GEBR_COMM_PROTOCOL_STATUS_PATH_ERROR:
 		gtk_image_set_from_stock(GTK_IMAGE(image), GTK_STOCK_DIALOG_ERROR, GTK_ICON_SIZE_DIALOG);
-		gtk_label_set_text(GTK_LABEL(label), _("Could not create directory.\n"
-						       "Press the back button to change the BASE directory\n"
+		gtk_label_set_text(GTK_LABEL(label), _("Press the back buttom to change the BASE directory\n"
 						       "or the line title."));
 		gtk_assistant_set_page_type(GTK_ASSISTANT(data->assistant),
 					    page3, GTK_ASSISTANT_PAGE_CONFIRM);
@@ -141,9 +140,8 @@ on_maestro_path_error(GebrMaestroServer *maestro,
 		break;
 	case GEBR_COMM_PROTOCOL_STATUS_PATH_EXISTS:
 		gtk_image_set_from_stock(GTK_IMAGE(image), GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_DIALOG);
-		gtk_label_set_text(GTK_LABEL(label), _("The directory already exists.\n"
-						       "You can change the BASE directory by pressing the\n"
-						       "back button or use it anyway."));
+		gtk_label_set_text(GTK_LABEL(label), _("You can change the BASE directory by pressing the\n"
+						       "back buttom or use this folder anyway."));
 		gtk_assistant_set_page_type(GTK_ASSISTANT(data->assistant),
 					    page3, GTK_ASSISTANT_PAGE_CONFIRM);
 		gtk_assistant_set_page_title(GTK_ASSISTANT(data->assistant),
