@@ -49,12 +49,29 @@ on_assistant_entry_changed(GtkEntry *entry,
 	current_page = gtk_assistant_get_nth_page(assistant, page_number);
 	text = gtk_entry_get_text(entry);
 
-	if (text && *text && gebr_verify_starting_slash(text))
+	if (text && *text )
 		gtk_assistant_set_page_complete(assistant, current_page, TRUE);
 	else
 		gtk_assistant_set_page_complete(assistant, current_page, FALSE);
 }
 
+static void
+on_assistant_base_validate(GtkEntry *entry,
+		 GtkAssistant *assistant)
+{
+	GtkWidget *current_page;
+	gint page_number;
+	const gchar *text;
+
+	page_number = gtk_assistant_get_current_page(assistant);
+	current_page = gtk_assistant_get_nth_page(assistant, page_number);
+	text = gtk_entry_get_text(entry);
+
+	if (text && *text && gebr_verify_starting_slash(text))
+		gtk_assistant_set_page_complete(assistant, current_page, TRUE);
+	else
+		gtk_assistant_set_page_complete(assistant, current_page, FALSE);
+}
 
 void
 on_properties_entry_changed(GtkEntry *entry,
@@ -336,7 +353,7 @@ line_setup_wizard(GebrGeoXmlLine *line)
 
 	g_signal_connect(entry_title, "changed", G_CALLBACK(on_assistant_entry_changed), assistant);
 	g_signal_connect(entry_base, "changed", G_CALLBACK(path_validate), assistant);
-	g_signal_connect(entry_base, "changed", G_CALLBACK(on_assistant_entry_changed), assistant);
+	g_signal_connect(entry_base, "changed", G_CALLBACK(on_assistant_base_validate), assistant);
 
 	gtk_widget_show(assistant);
 }
