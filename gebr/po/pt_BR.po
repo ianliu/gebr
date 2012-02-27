@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-02-27 13:41-0300\n"
+"POT-Creation-Date: 2012-02-27 14:51-0300\n"
 "PO-Revision-Date: 2011-11-18 16:12-0200\n"
 "Last-Translator: Rodrigo Morelatto <morelatto@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
@@ -335,23 +335,23 @@ msgstr ""
 
 #. the final point already comes with gebr_geoxml_error_string
 #: ../document.c:258
-#, c-format
-msgid "Can not load the file at %s: %s"
+#, fuzzy, c-format
+msgid "Cannot load the file at %s: %s"
 msgstr "Não foi possível carregar o menu em %s:%s"
 
 #: ../document.c:273
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"Can not load menu '%s' at %s:\n"
+"Cannot load menu '%s' at %s:\n"
 "%s"
 msgstr ""
 "Não foi possível carregar o menu '%s' em %s:\n"
 "%s"
 
 #: ../document.c:276
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"Can not load the Menu at %s:\n"
+"Cannot load the Menu at %s:\n"
 "%s"
 msgstr ""
 "Não foi possível carregar o menu em %s:\n"
@@ -675,114 +675,119 @@ msgstr "Nenhum programa selecionado."
 msgid "Input file"
 msgstr "Arquivo de entrada"
 
-#: ../gebr-flow-edition.c:511
+#: ../gebr-flow-edition.c:511 ../gebr-flow-edition.c:554
+#: ../gebr-flow-edition.c:601
+msgid "Cannot resolve path!"
+msgstr ""
+
+#: ../gebr-flow-edition.c:514
 #, c-format
 msgid "Input file \"%s\""
 msgstr "Arquivo de entrada \"%s\""
 
 #. FIXME: This line does not need escaping...
-#: ../gebr-flow-edition.c:538
+#: ../gebr-flow-edition.c:542
 msgid "Output file"
 msgstr "Arquivo de saída"
 
 #. FIXME: ... but this does!
-#: ../gebr-flow-edition.c:552
+#: ../gebr-flow-edition.c:559
 #, c-format
 msgid "Append to output file \"%s\""
 msgstr "Acrescentar ao arquivo de saída \"%s\""
 
-#: ../gebr-flow-edition.c:554
+#: ../gebr-flow-edition.c:561
 #, c-format
 msgid "Overwrite output file \"%s\""
 msgstr "Sobrescrever arquivo de saída \"%s\""
 
-#: ../gebr-flow-edition.c:581
+#: ../gebr-flow-edition.c:589
 msgid "Log file"
 msgstr "Arquivo de log"
 
-#: ../gebr-flow-edition.c:594
+#: ../gebr-flow-edition.c:605
 #, c-format
 msgid "Append to log file \"%s\""
 msgstr "Acrescentar ao arquivo de log \"%s\""
 
-#: ../gebr-flow-edition.c:596
+#: ../gebr-flow-edition.c:607
 #, c-format
 msgid "Overwrite log file \"%s\""
 msgstr "Sobrescrever arquivo de log \"%s\""
 
-#: ../gebr-flow-edition.c:644
+#: ../gebr-flow-edition.c:655
 #, c-format
 msgid "Configuring program '%s'."
 msgstr "Configurando programa '%s'."
 
-#: ../gebr-flow-edition.c:720
+#: ../gebr-flow-edition.c:731
 msgid "Insert Variable"
 msgstr "Inserir Variável"
 
-#: ../gebr-flow-edition.c:981
+#: ../gebr-flow-edition.c:992
 msgid "No menu selected."
 msgstr "Nenhum menu selecionado."
 
-#: ../gebr-flow-edition.c:986
+#: ../gebr-flow-edition.c:997
 msgid "Select a menu instead of a category."
 msgstr "Selecione um menu ao invés de uma categoria."
 
-#: ../gebr-flow-edition.c:1145
+#: ../gebr-flow-edition.c:1156
 msgid "This Flow already contains a loop"
 msgstr "Fluxo já contém um Loop"
 
-#: ../gebr-flow-edition.c:1261
+#: ../gebr-flow-edition.c:1272
 msgid "Overwrite existing output file"
 msgstr "Sobrescrever arquivo de saída pré existente"
 
-#: ../gebr-flow-edition.c:1267
+#: ../gebr-flow-edition.c:1278
 msgid "Overwrite existing log file"
 msgstr "Sobrescrever arquivo de log pré existente"
 
-#: ../gebr-flow-edition.c:1358 ../gebr-flow-edition.c:1373
+#: ../gebr-flow-edition.c:1369 ../gebr-flow-edition.c:1384
 #: ../ui_project_line.c:1411 ../ui_project_line.c:1446
 msgid "Collapse all"
 msgstr "Contrair todos"
 
-#: ../gebr-flow-edition.c:1361 ../gebr-flow-edition.c:1376
+#: ../gebr-flow-edition.c:1372 ../gebr-flow-edition.c:1387
 #: ../ui_project_line.c:1415 ../ui_project_line.c:1450
 msgid "Expand all"
 msgstr "Expandir todos"
 
-#: ../gebr-flow-edition.c:1485
+#: ../gebr-flow-edition.c:1496
 msgid "Unknown error"
 msgstr "Erro desconhecido"
 
-#: ../gebr-flow-edition.c:1492
+#: ../gebr-flow-edition.c:1503
 msgid "This program has an invalid expression"
 msgstr "Programa contém expressão inválida"
 
-#: ../gebr-flow-edition.c:1495
+#: ../gebr-flow-edition.c:1506
 msgid "A required parameter is unfilled"
 msgstr "Parâmetro obrigatório não preenchido"
 
-#: ../gebr-flow-edition.c:1499
+#: ../gebr-flow-edition.c:1510
 msgid "An undefined variable is being used"
 msgstr "Uma variável não definida está sendo usada"
 
-#: ../gebr-flow-edition.c:1504
+#: ../gebr-flow-edition.c:1515
 msgid "A badly defined variable is being used"
 msgstr "Uma variável mal definida está sendo usada"
 
-#: ../gebr-flow-edition.c:1507
+#: ../gebr-flow-edition.c:1518
 msgid "This program has cleaned their paths"
 msgstr "Este programa limpou os seus caminhos"
 
-#: ../gebr-flow-edition.c:1542
+#: ../gebr-flow-edition.c:1553
 msgid "Immediately"
 msgstr "Imediatamente"
 
-#: ../gebr-flow-edition.c:1544
+#: ../gebr-flow-edition.c:1555
 #, c-format
 msgid "After %s"
 msgstr "Depois de '%s'"
 
-#: ../gebr-flow-edition.c:1772
+#: ../gebr-flow-edition.c:1783
 msgid "This program needs to be configure"
 msgstr "Este Programa precisa ser configurado"
 
@@ -1752,7 +1757,8 @@ msgid "Click to select type for a new parameter"
 msgstr "Clique para escolher o tipo de um novo parâmetro"
 
 #: ../ui_document.c:1293
-msgid "Can not use reserved keyword 'iter'."
+#, fuzzy
+msgid "Cannot use reserved keyword 'iter'."
 msgstr "A palavra-chave 'iter' não pode ser usada."
 
 #: ../ui_document.c:1298

@@ -255,7 +255,7 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 
 	if (ret == GEBR_GEOXML_RETV_FILE_NOT_FOUND || ret == GEBR_GEOXML_RETV_PERMISSION_DENIED) {
 		/* the final point already comes with gebr_geoxml_error_string */
-		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Can not load the file at %s: %s"),
+		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Cannot load the file at %s: %s"),
 			     path, gebr_geoxml_error_string((enum GEBR_GEOXML_RETV)ret));
 		if (parent != NULL && ret == GEBR_GEOXML_RETV_FILE_NOT_FOUND)
 			remove_parent_ref(parent_document, path);
@@ -270,10 +270,10 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 	if (g_str_has_suffix(path, ".mnu")) {
 		/* the final point already comes with gebr_geoxml_error_string */
 		if (title != NULL)
-			gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Can not load menu '%s' at %s:\n%s"),
+			gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Cannot load menu '%s' at %s:\n%s"),
 				     title, path, gebr_geoxml_error_string((enum GEBR_GEOXML_RETV)ret));
 		else
-			gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Can not load the Menu at %s:\n%s"),
+			gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Cannot load the Menu at %s:\n%s"),
 				     path, gebr_geoxml_error_string((enum GEBR_GEOXML_RETV)ret));
 
 		goto out;

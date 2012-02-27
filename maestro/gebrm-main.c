@@ -156,7 +156,7 @@ main(int argc, char *argv[])
 			exit(0);
 		}
 	} else if (g_access(lock, F_OK) == 0) {
-		g_critical("Can not read/write into %s", lock);
+		g_critical("Cannot read/write into %s", lock);
 		exit(1);
 	}
 

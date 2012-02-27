@@ -141,7 +141,7 @@ static void parameter_widget_set_icon(GebrGuiValidatableWidget *widget,
 				__set_type_icon(self);
 			else
 				gebr_gui_file_entry_set_warning(GEBR_GUI_FILE_ENTRY(self->value_widget),
-								_("Can not resolve path!"));
+								_("Cannot resolve path!"));
 			g_free(result);
 		}
 	} else {
