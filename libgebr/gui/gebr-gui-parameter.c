@@ -125,8 +125,28 @@ static void parameter_widget_set_icon(GebrGuiValidatableWidget *widget,
 							GTK_ENTRY_ICON_SECONDARY,
 							error->message);
 		}
-	} else
+	} else if (self->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_FILE) {
+		gchar *result;
+		GebrGeoXmlDocument *line;
+		gebr_validator_get_documents(self->validator, NULL, &line, NULL);
+		if (line) {
+			gchar ***paths = gebr_geoxml_line_get_paths(GEBR_GEOXML_LINE(line));
+			gebr_validator_evaluate(self->validator,
+						gtk_entry_get_text(entry),
+						GEBR_GEOXML_PARAMETER_TYPE_STRING,
+						GEBR_GEOXML_DOCUMENT_TYPE_FLOW,
+						&result,
+						NULL);
+			if (gebr_validate_path(result, paths))
+				__set_type_icon(self);
+			else
+				gebr_gui_file_entry_set_warning(GEBR_GUI_FILE_ENTRY(self->value_widget),
+								_("Can not resolve path!"));
+			g_free(result);
+		}
+	} else {
 		__set_type_icon(self);
+	}
 }
 
 static void parameter_widget_set_value(GebrGuiValidatableWidget *widget,
