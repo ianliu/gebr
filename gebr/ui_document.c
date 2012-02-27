@@ -567,6 +567,7 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 			                             gebr_geoxml_document_get_title(document), NULL);
 		gtk_entry_set_text(entry_base, base_path);
 		g_signal_connect(entry_base, "changed", G_CALLBACK(on_properties_entry_changed), data->ok_button);
+		g_signal_connect(entry_base, "changed", G_CALLBACK(path_validate), NULL);
 		g_free(base_path);
 //		gebr_pairstrfreev(paths);
 

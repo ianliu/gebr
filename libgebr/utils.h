@@ -284,6 +284,8 @@ void gebr_gtk_bookmarks_add_paths(const gchar *filename,
 void gebr_gtk_bookmarks_remove_paths(const gchar *filename,
                                      gchar ***paths);
 
+gboolean gebr_verify_starting_slash (const gchar *string);
+
 G_END_DECLS
 
 #endif				//__GEBR_UTILS_H

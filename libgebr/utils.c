@@ -1112,3 +1112,10 @@ gebr_gtk_bookmarks_remove_paths(const gchar *filename,
 	g_free(content);
 	g_string_free(real_bookmarks, TRUE);
 }
+
+gboolean
+gebr_verify_starting_slash (const gchar *string)
+{
+	gboolean slash = string[0]=='/' ? TRUE : FALSE;
+	return slash;
+}

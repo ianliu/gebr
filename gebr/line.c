@@ -49,11 +49,12 @@ on_assistant_entry_changed(GtkEntry *entry,
 	current_page = gtk_assistant_get_nth_page(assistant, page_number);
 	text = gtk_entry_get_text(entry);
 
-	if (text && *text)
+	if (text && *text && gebr_verify_starting_slash(text))
 		gtk_assistant_set_page_complete(assistant, current_page, TRUE);
 	else
 		gtk_assistant_set_page_complete(assistant, current_page, FALSE);
 }
+
 
 void
 on_properties_entry_changed(GtkEntry *entry,
@@ -63,7 +64,7 @@ on_properties_entry_changed(GtkEntry *entry,
 
 	text = gtk_entry_get_text(entry);
 
-	if (text && *text)
+	if (text && *text && gebr_verify_starting_slash(text))
 		gtk_widget_set_sensitive(widget, TRUE);
 	else
 		gtk_widget_set_sensitive(widget, FALSE);
@@ -334,6 +335,7 @@ line_setup_wizard(GebrGeoXmlLine *line)
 	gtk_entry_set_text(GTK_ENTRY(entry_email), gebr.config.email->str);
 
 	g_signal_connect(entry_title, "changed", G_CALLBACK(on_assistant_entry_changed), assistant);
+	g_signal_connect(entry_base, "changed", G_CALLBACK(path_validate), assistant);
 	g_signal_connect(entry_base, "changed", G_CALLBACK(on_assistant_entry_changed), assistant);
 
 	gtk_widget_show(assistant);
@@ -541,4 +543,28 @@ void line_move_flow_bottom(void)
 	document_save(GEBR_GEOXML_DOC(gebr.line), TRUE, FALSE);
 	/* GUI */
 	gtk_list_store_move_before(GTK_LIST_STORE(gebr.ui_flow_browse->store), &iter, NULL);
+}
+void
+path_validate(GtkEntry *entry)
+{
+	const gchar *text = gtk_entry_get_text(entry);
+	if (!text || !*text)
+		return;
+
+	// PUT THE VALIDATIONS HERE
+	gboolean path_ok = gebr_verify_starting_slash(text);
+
+	if (path_ok) {
+		gtk_entry_set_icon_from_stock(entry,
+					      GTK_ENTRY_ICON_SECONDARY,
+					      NULL);
+	}
+	else {
+		gtk_entry_set_icon_from_stock(entry,
+					      GTK_ENTRY_ICON_SECONDARY,
+					      GTK_STOCK_DIALOG_WARNING);
+		gtk_entry_set_icon_tooltip_text(entry,
+						GTK_ENTRY_ICON_SECONDARY,
+						_("Path must start with '/'"));
+	}
 }
