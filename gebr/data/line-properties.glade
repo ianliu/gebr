@@ -344,7 +344,7 @@
                       <object class="GtkLabel" id="label22">
                         <property name="visible">True</property>
                         <property name="xalign">0</property>
-                        <property name="label" translatable="yes">&lt;i&gt;&amp;lt;BASE&amp;gt;&lt;/i&gt;/scratch</property>
+                        <property name="label" translatable="yes">&lt;i&gt;&amp;lt;BASE&amp;gt;&lt;/i&gt;/tmp</property>
                         <property name="use_markup">True</property>
                         <property name="selectable">True</property>
                       </object>
@@ -370,7 +370,7 @@
                       <object class="GtkLabel" id="label4">
                         <property name="visible">True</property>
                         <property name="xalign">0</property>
-                        <property name="label" translatable="yes">&lt;i&gt;&amp;lt;BASE&amp;gt;&lt;/i&gt;/export</property>
+                        <property name="label" translatable="yes">&lt;i&gt;&amp;lt;BASE&amp;gt;&lt;/i&gt;/table</property>
                         <property name="use_markup">True</property>
                         <property name="selectable">True</property>
                       </object>
@@ -396,7 +396,6 @@
                       <object class="GtkLabel" id="label_import">
                         <property name="visible">True</property>
                         <property name="xalign">0</property>
-                        <property name="label" translatable="yes">/tmp/table</property>
                         <property name="selectable">True</property>
                       </object>
                       <packing>
