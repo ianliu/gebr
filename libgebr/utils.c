@@ -938,11 +938,12 @@ gebr_relativise_path(const gchar *path_string,
 	if (!*path_string)
 		return g_strdup("");
 
-	for (int i = 0; pvector[i]; i++)
-		if (g_str_has_prefix(path_string, pvector[i][1])){
+	for (int i = 0; pvector[i]; i++) {
+		if (g_str_has_prefix(path_string, pvector[i][1])) {
 			path_str = gebr_resolve_relative_path(path_string, pvector);
 			break;
-			}
+		}
+	}
 
 	GString *tmp;
 	if (!path_str)
@@ -1118,4 +1119,17 @@ gebr_verify_starting_slash (const gchar *string)
 {
 	gboolean slash = string[0]=='/' ? TRUE : FALSE;
 	return slash;
+}
+
+gboolean
+gebr_validate_path(const gchar *path,
+		   gchar ***pvector)
+{
+	for (int i = 0; pvector[i]; i++)
+		if (g_str_has_prefix(path, pvector[i][1]))
+			return TRUE;
+	if (*path != '/')
+		return FALSE;
+	else
+		return TRUE;
 }
