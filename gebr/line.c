@@ -273,7 +273,7 @@ on_entry_press(GtkEntry            *entry,
 
 	if (response == GTK_RESPONSE_OK) {
 		gchar *folder = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(file_chooser));
-		gtk_entry_set_text(entry, folder);
+		gtk_entry_set_text(entry, gebr_remove_gvfs_prefix(folder));
 		g_free(folder);
 	}
 	gtk_widget_destroy(file_chooser);
