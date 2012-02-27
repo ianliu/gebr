@@ -71,7 +71,7 @@ parameters_configure_setup_ui(void)
 	gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_OK, GTK_RESPONSE_OK);
 
 	gchar *prefix = NULL;
-	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line );
 	if (maestro)
 		prefix = gebr_maestro_server_get_sftp_prefix(maestro);
 
