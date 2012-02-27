@@ -244,6 +244,13 @@ gint gebr_calculate_number_of_processors(gint total_nprocs,
 void gebr_pairstrfreev(gchar ***strv);
 
 /**
+ * gebr_remove_gvfs_prefix:
+ *
+ * Remove .gvfs from @path
+ */
+gchar *gebr_remove_gvfs_prefix(gchar *path);
+
+/**
  * gebr_relativise_path:
  *
  * Transforsm a path according to pvector (relative adress)

@@ -913,8 +913,8 @@ gebr_pairstrfreev(gchar ***strv)
 	g_free(strv);
 }
 
-static gchar *
-remove_gvfs_prefix(gchar *path)
+gchar *
+gebr_remove_gvfs_prefix(gchar *path)
 {
 	gchar *gvfs_dir = g_build_filename(g_get_home_dir(), ".gvfs" G_DIR_SEPARATOR_S, NULL);
 	gchar *ret;
@@ -953,7 +953,7 @@ gebr_relativise_path(const gchar *path_string,
 	}
 	gebr_path_resolve_home_variable(tmp);
 	gchar *tmp2 = g_string_free(tmp, FALSE);
-	gchar *path = g_strdup(remove_gvfs_prefix(tmp2));
+	gchar *path = g_strdup(gebr_remove_gvfs_prefix(tmp2));
 	g_free(tmp2);
 
 	g_return_val_if_fail(path != NULL, NULL);
