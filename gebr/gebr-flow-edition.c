@@ -507,6 +507,9 @@ void flow_edition_set_io(void)
 			tooltip = g_strdup(err->message);
 			icon = GTK_STOCK_DIALOG_WARNING;
 			g_clear_error(&err);
+		} else if (!gebr_validate_path(result, paths)) {
+			tooltip = g_strdup(_("Cannot resolve path!"));
+			icon = GTK_STOCK_DIALOG_WARNING;
 		} else {
 			tooltip = g_strdup_printf(_("Input file \"%s\""), result);
 			icon = "gebr-stdin";
@@ -530,6 +533,7 @@ void flow_edition_set_io(void)
 	 *  - gebr-append-stdout
 	 *  - GTK_STOCK_DIALOG_WARNING
 	 */
+	icon = NULL;
 	result = NULL;
 	is_append = gebr_geoxml_flow_io_get_output_append(gebr.flow);
 	gtk_tree_model_get(model, &gebr.ui_flow_edition->output_iter, FSEQ_SENSITIVE, &sensitivity, -1);
@@ -544,9 +548,12 @@ void flow_edition_set_io(void)
 		                        GEBR_GEOXML_DOCUMENT_TYPE_FLOW, &result, &err);
 		g_free(resolved_output);
 
-		if (err)
+		if (err) {
 			tooltip = g_strdup(err->message);
-		else {
+		} else if (!gebr_validate_path(result, paths)) {
+			tooltip = g_strdup(_("Cannot resolve path!"));
+			icon = GTK_STOCK_DIALOG_WARNING;
+		} else {
 			if (is_append)
 				// FIXME: ... but this does!
 				tooltip = g_strdup_printf(_("Append to output file \"%s\""), result);
@@ -556,7 +563,7 @@ void flow_edition_set_io(void)
 		}
 	}
 
-	if (!err)
+	if (!err && !icon)
 		icon = is_append ? "gebr-append-stdout":"gebr-stdout";
 	else {
 		icon = GTK_STOCK_DIALOG_WARNING;
@@ -574,6 +581,7 @@ void flow_edition_set_io(void)
 	g_free(tooltip);
 
 	/* Set the ERROR properties. */
+	icon = NULL;
 	result = NULL;
 	is_append = gebr_geoxml_flow_io_get_error_append(gebr.flow);
 	gtk_tree_model_get(model, &gebr.ui_flow_edition->error_iter, FSEQ_SENSITIVE, &sensitivity, -1);
@@ -587,9 +595,12 @@ void flow_edition_set_io(void)
 		                        GEBR_GEOXML_DOCUMENT_TYPE_FLOW, &result, &err);
 		g_free(resolved_error);
 
-		if (err)
+		if (err) {
 			tooltip = g_strdup(err->message);
-		else {
+		} else if (!gebr_validate_path(result, paths)) {
+			tooltip = g_strdup(_("Cannot resolve path!"));
+			icon = GTK_STOCK_DIALOG_WARNING;
+		} else {
 			if (is_append)
 				tooltip = g_strdup_printf(_("Append to log file \"%s\""), result);
 			else
@@ -598,7 +609,7 @@ void flow_edition_set_io(void)
 		}
 	}
 
-	if (!err)
+	if (!err && !icon)
 		icon = is_append ? "gebr-append-stderr":"gebr-stderr";
 	else {
 		icon = GTK_STOCK_DIALOG_WARNING;
