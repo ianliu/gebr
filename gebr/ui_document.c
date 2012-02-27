@@ -340,44 +340,6 @@ on_lock_button_toggled(GtkToggleButton *button,
 	gtk_widget_show_all(data->maestro_box);
 }
 
-GtkTreeStore *
-gebr_ui_document_create_paths_tree(void)
-{
-	GtkTreeIter iter, parent;
-	static GtkTreeStore *store_paths = NULL;
-	static gchar *data[][3] = {
-		{"IMPORT", "", N_("Shared folder that you can access files from")},
-		{"BASE", "", N_("Base directory for this line")},
-		{"DATA", "<BASE>/data", N_("Directory for saving Flow's results")},
-		{"SCRATCH", "<BASE>/tmp", N_("Directory for temporary files")},
-		{"EXPORT", "<BASE>/export", N_("Directory for exporting data (images, etc.)")},
-		{"TABLE", "<BASE>/table", N_("Directory for saving tabular data")},
-		{"CUSTOM", "<BASE>/misc", N_("Directory for miscellaneous data")},
-	};
-
-	if (!store_paths) {
-		store_paths = gtk_tree_store_new(3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
-		for (int i = 0; i < 2; i++) {
-			gtk_tree_store_append(store_paths, &parent, NULL);
-			gtk_tree_store_set(store_paths, &parent,
-					   0, data[i][0],
-					   1, data[i][1],
-					   2, _(data[i][2]),
-					   -1);
-		}
-		for (int i = 2; i < G_N_ELEMENTS(data); i++) {
-			gtk_tree_store_append(store_paths, &iter, &parent);
-			gtk_tree_store_set(store_paths, &iter,
-					   0, data[i][0],
-					   1, data[i][1],
-					   2, _(data[i][2]),
-					   -1);
-		}
-	}
-
-	return store_paths;
-}
-
 static void
 on_entry_press(GtkEntry            *entry,
                GtkEntryIconPosition icon_pos,
@@ -618,11 +580,6 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 		}
 		gtk_entry_set_text(entry_import, import_path);
 		g_free(import_path);
-
-		GtkTreeStore *store_paths = gebr_ui_document_create_paths_tree();
-		GtkTreeView *view_paths = GTK_TREE_VIEW(gtk_builder_get_object(builder, "treeview_paths"));
-		gtk_tree_view_set_model(view_paths, GTK_TREE_MODEL(store_paths));
-		gtk_tree_view_expand_all(view_paths);
 	}
 
 	gtk_widget_show(window);
