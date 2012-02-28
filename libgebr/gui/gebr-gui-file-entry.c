@@ -34,7 +34,7 @@ static void __gebr_gui_file_entry_entry_changed(GtkEntry * entry, GebrGuiFileEnt
 
 static void
 __gebr_gui_file_entry_browse_button_clicked(GtkButton * button, GtkEntryIconPosition icon_pos, GdkEvent * event,
-						GebrGuiFileEntry * file_entry);
+					    GebrGuiFileEntry * file_entry);
 
 static gboolean on_mnemonic_activate(GebrGuiFileEntry * file_entry);
 
@@ -55,7 +55,7 @@ static guint object_signals[LAST_SIGNAL];
 
 static void
 gebr_gui_file_entry_set_property(GebrGuiFileEntry * file_entry, guint property_id, const GValue * value,
-				     GParamSpec * param_spec)
+				 GParamSpec * param_spec)
 {
 	switch (property_id) {
 	case CUSTOMIZE_FUNCTION:
