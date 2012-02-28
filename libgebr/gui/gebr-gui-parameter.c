@@ -1177,10 +1177,20 @@ static gboolean completion_match_func(GtkEntryCompletion *completion,
 	if (pos == -1)
 		return FALSE;
 
+	const gchar *text_pointer = text;
+	gunichar c_prev = '\0';
+	gunichar c_curr = '\0';
+
+	for (gint i = 0; i <= pos; i++) {
+		c_prev = c_curr;
+		c_curr = g_utf8_get_char(text_pointer);
+		text_pointer = g_utf8_next_char(text_pointer);
+	}
+
 	// Start of variable name
-	if (text[pos] == '[') {
+	if (c_curr == '[') {
 		// This is an escaped bracket
-		if (pos-1 >= 0 && text[pos-1] == '[')
+		if (c_prev == '[')
 			return FALSE;
 		else
 			return TRUE;
