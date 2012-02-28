@@ -370,6 +370,16 @@ on_entry_press(GtkEntry            *entry,
 	gtk_widget_destroy(file_chooser);
 }
 
+static void
+on_title_entry_changed(GtkEntry *entry,
+                       GtkWidget *widget)
+{
+	if (gtk_entry_get_text_length(entry) == 0)
+		gtk_widget_set_sensitive(widget, FALSE);
+	else
+		gtk_widget_set_sensitive(widget, TRUE);
+}
+
 void document_properties_setup_ui(GebrGeoXmlDocument * document,
 				  GebrPropertiesResponseFunc func,
 				  gboolean is_new)
@@ -457,6 +467,7 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 	gtk_widget_grab_default(ok_button);
 
 	GtkEntry *title = GTK_ENTRY(gtk_builder_get_object(builder, "entry_title"));
+	g_signal_connect(title, "changed", G_CALLBACK(on_title_entry_changed), data->ok_button);
 	gtk_entry_set_text(title, gebr_geoxml_document_get_title(document));
 
 	GtkEntry *description = GTK_ENTRY(gtk_builder_get_object(builder, "entry_description"));
