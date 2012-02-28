@@ -187,14 +187,21 @@ time_out_error(gpointer user_data)
 	GObject *image = gtk_builder_get_object(data->builder, "image_status");
 	GObject *label = gtk_builder_get_object(data->builder, "label_status");
 	GtkWidget *page3 = GTK_WIDGET(gtk_builder_get_object(data->builder, "main_progress"));
-	GObject *progress = gtk_builder_get_object(data->builder, "progressbar");
+	GObject *progress = gtk_builder_get_object(data->builder, "container_progressbar");
+	GObject *summary = gtk_builder_get_object(data->builder, "label_summary");
+	GObject *container = gtk_builder_get_object(data->builder, "container_message");
 
 	gtk_widget_hide(GTK_WIDGET(progress));
+	gtk_widget_show(GTK_WIDGET(container));
 	gtk_widget_show(GTK_WIDGET(image));
 	gtk_widget_show(GTK_WIDGET(label));
 
+	gchar *tmp = g_markup_printf_escaped("<span size='large'>%s</span>",
+	                                     _("Timed Out!"));
+	gtk_label_set_markup(GTK_LABEL(summary), tmp);
+	g_free(tmp);
 	gtk_image_set_from_stock(GTK_IMAGE(image), GTK_STOCK_DIALOG_ERROR, GTK_ICON_SIZE_DIALOG);
-	gtk_label_set_text(GTK_LABEL(label), _("Timed Out!\nCould not create directory.\nTry again later."));
+	gtk_label_set_text(GTK_LABEL(label), _("Could not create directory.\nCheck if your maestro is connected."));
 
 	gtk_assistant_set_page_type(GTK_ASSISTANT(data->assistant),
 	                            page3, GTK_ASSISTANT_PAGE_CONFIRM);
