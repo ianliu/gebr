@@ -504,10 +504,11 @@ void flow_edition_set_io(void)
 		g_free(resolved_input);
 
 		gchar *tmp;
-		gebr_validator_evaluate_interval(gebr.validator, input_real,
-						 GEBR_GEOXML_PARAMETER_TYPE_STRING,
-						 GEBR_GEOXML_DOCUMENT_TYPE_FLOW,
-						 FALSE, &tmp, NULL);
+		gboolean ok;
+		ok = gebr_validator_evaluate_interval(gebr.validator, input_real,
+						      GEBR_GEOXML_PARAMETER_TYPE_STRING,
+						      GEBR_GEOXML_DOCUMENT_TYPE_FLOW,
+						      FALSE, &tmp, NULL);
 
 		if (err) {
 			tooltip = g_strdup(err->message);
@@ -521,7 +522,9 @@ void flow_edition_set_io(void)
 			icon = "gebr-stdin";
 			g_free(result);
 		}
-		g_free(tmp);
+
+		if (ok)
+			g_free(tmp);
 	}
 
 	gtk_list_store_set(gebr.ui_flow_edition->fseq_store, &gebr.ui_flow_edition->input_iter,
@@ -555,10 +558,11 @@ void flow_edition_set_io(void)
 		g_free(resolved_output);
 
 		gchar *tmp;
-		gebr_validator_evaluate_interval(gebr.validator, output_real,
-						 GEBR_GEOXML_PARAMETER_TYPE_STRING,
-						 GEBR_GEOXML_DOCUMENT_TYPE_FLOW,
-						 FALSE, &tmp, NULL);
+		gboolean ok;
+		ok = gebr_validator_evaluate_interval(gebr.validator, output_real,
+						      GEBR_GEOXML_PARAMETER_TYPE_STRING,
+						      GEBR_GEOXML_DOCUMENT_TYPE_FLOW,
+						      FALSE, &tmp, NULL);
 
 		if (err) {
 			tooltip = g_strdup(err->message);
@@ -572,7 +576,9 @@ void flow_edition_set_io(void)
 				tooltip = g_strdup_printf(_("Overwrite output file \"%s\""), result);
 			g_free(result);
 		}
-		g_free(tmp);
+
+		if (ok)
+			g_free(tmp);
 	}
 
 	if (!err && !icon)
@@ -608,10 +614,11 @@ void flow_edition_set_io(void)
 		g_free(resolved_error);
 
 		gchar *tmp;
-		gebr_validator_evaluate_interval(gebr.validator, error_real,
-						 GEBR_GEOXML_PARAMETER_TYPE_STRING,
-						 GEBR_GEOXML_DOCUMENT_TYPE_FLOW,
-						 FALSE, &tmp, NULL);
+		gboolean ok;
+		ok = gebr_validator_evaluate_interval(gebr.validator, error_real,
+						      GEBR_GEOXML_PARAMETER_TYPE_STRING,
+						      GEBR_GEOXML_DOCUMENT_TYPE_FLOW,
+						      FALSE, &tmp, NULL);
 
 		if (err) {
 			tooltip = g_strdup(err->message);
@@ -625,7 +632,9 @@ void flow_edition_set_io(void)
 				tooltip = g_strdup_printf(_("Overwrite log file \"%s\""), result);
 			g_free(result);
 		}
-		g_free(tmp);
+
+		if (ok)
+			g_free(tmp);
 	}
 
 	if (!err && !icon)
