@@ -101,6 +101,11 @@ static void __set_type_icon(struct gebr_gui_parameter_widget *parameter_widget);
 
 static void validate_list_value_widget(GebrGuiParameterWidget *self);
 
+typedef enum {
+	COMPLETION_TYPE_VARIABLE,
+	COMPLETION_TYPE_PATH,
+} CompletionType;
+
 /* Implementation of GebrGuiValidatableWidget interface {{{1 */
 static void parameter_widget_set_icon(GebrGuiValidatableWidget *widget,
 				      GebrGeoXmlParameter *param,
@@ -1118,18 +1123,19 @@ static gboolean on_entry_completion_matched (GtkEntryCompletion *completion,
 	gchar * var;
 	gchar * word;
 	gint ini;
+	CompletionType comp_type;
 	GebrGeoXmlParameterType type = GPOINTER_TO_INT(data);
 
 	entry = gtk_entry_completion_get_entry(completion);
 	text = gtk_entry_get_text(GTK_ENTRY(entry));
 	pos = gtk_editable_get_position(GTK_EDITABLE(entry)) - 1;
 	ini = pos;
-	gtk_tree_model_get(model, iter, 0, &var, -1);
+	gtk_tree_model_get(model, iter, 0, &var, 3, &comp_type, -1);
 	word = gebr_str_word_before_pos(text, &ini);
 
 	if (!word)
 		ini = pos;
-	else if (ini - 1 >= 0 && text[ini-1] == '[')
+	else if (ini - 1 >= 0 && (text[ini-1] == '[' || text[ini-1] == '<'))
 		ini--;
 
 	if (ini <= pos)
@@ -1142,10 +1148,19 @@ static gboolean on_entry_completion_matched (GtkEntryCompletion *completion,
 		gtk_editable_set_position(GTK_EDITABLE(entry), ini + strlen(var));
 	}
 	else if (type == GEBR_GEOXML_PARAMETER_TYPE_STRING || 
-		 type == GEBR_GEOXML_PARAMETER_TYPE_FILE){
+		 type == GEBR_GEOXML_PARAMETER_TYPE_FILE) {
 		GString * value = g_string_new(NULL);
 
-		g_string_printf(value, "[%s]", var);
+		const gchar *tmp1;
+		const gchar *tmp2;
+		if (comp_type == COMPLETION_TYPE_VARIABLE) {
+			tmp1 = "[";
+			tmp2 = "]";
+		} else {
+			tmp1 = "<";
+			tmp2 = ">";
+		}
+		g_string_printf(value, "%s%s%s", tmp1, var, tmp2);
 		gtk_editable_insert_text(GTK_EDITABLE(entry), value->str, -1, &ini);
 		gtk_editable_set_position(GTK_EDITABLE(entry), ini + value->len);
 		g_string_free(value, TRUE);
@@ -1157,10 +1172,11 @@ static gboolean on_entry_completion_matched (GtkEntryCompletion *completion,
 }
 
 static gboolean completion_match_func(GtkEntryCompletion *completion,
-					     const gchar *key,
-					     GtkTreeIter *iter,
-					     gpointer user_data)
+				      const gchar *key,
+				      GtkTreeIter *iter,
+				      gpointer user_data)
 {
+	CompletionType type;
 	GtkTreeModel *model;
 	GtkWidget *entry;
 	const gchar *text;
@@ -1189,13 +1205,18 @@ static gboolean completion_match_func(GtkEntryCompletion *completion,
 		text_pointer = g_utf8_next_char(text_pointer);
 	}
 
+	model = gtk_entry_completion_get_model(completion);
+	gtk_tree_model_get(model, iter, 0, &compl, 3, &type, -1);
+
 	// Start of variable name
 	if (c_curr == '[') {
 		// This is an escaped bracket
 		if (c_prev == '[')
 			return FALSE;
 		else
-			return TRUE;
+			return type == COMPLETION_TYPE_VARIABLE;
+	} else if (c_curr == '<' && pos == 0) {
+		return type == COMPLETION_TYPE_PATH;
 	}
 
 	word = gebr_str_word_before_pos(text, &pos);
@@ -1204,8 +1225,6 @@ static gboolean completion_match_func(GtkEntryCompletion *completion,
 	if (!word)
 		return FALSE;
 
-	model = gtk_entry_completion_get_model(completion);
-	gtk_tree_model_get(model, iter, 0, &compl, -1);
 	retval = g_str_has_prefix(compl, word);
 
 	g_free(word);
@@ -1324,12 +1343,13 @@ setup_entry_completion(GtkEntry *entry,
 	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(comp), cell, "stock-id", 1);
 
 	cell = gtk_cell_renderer_text_new();
-	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(comp), cell, TRUE);
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(comp), cell, FALSE);
 	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(comp), cell, "text", 0);
 
 	cell = gtk_cell_renderer_text_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(comp), cell, TRUE);
 	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(comp), cell, "text", 2);
+	g_object_set(cell, "ellipsize", PANGO_ELLIPSIZE_START, NULL);
 	gtk_cell_renderer_set_sensitive(cell, FALSE);
 
 	gtk_entry_set_completion(entry, comp);
@@ -1619,10 +1639,11 @@ GtkTreeModel *gebr_gui_parameter_get_completion_model(GebrGeoXmlDocument *flow,
 	GtkListStore *store;
 	GebrGeoXmlProgramParameter *ppar;
 
-	store = gtk_list_store_new(3,
+	store = gtk_list_store_new(4,
 				   G_TYPE_STRING,
 				   G_TYPE_STRING,
-				   G_TYPE_STRING);
+				   G_TYPE_STRING,
+				   G_TYPE_INT);
 	compatible = get_compatible_variables(type, flow, line, proj);
 
 	for (GList *i = compatible; i; i = i->next) {
@@ -1637,7 +1658,25 @@ GtkTreeModel *gebr_gui_parameter_get_completion_model(GebrGeoXmlDocument *flow,
 		default: icon = NULL; break;
 		}
 		gtk_list_store_append(store, &iter);
-		gtk_list_store_set(store, &iter, 0, keyword, 1, icon, 2, result, -1);
+		gtk_list_store_set(store, &iter, 0, keyword, 1, icon, 2, result,
+				   3, COMPLETION_TYPE_VARIABLE, -1);
+	}
+
+	if (type == GEBR_GEOXML_PARAMETER_TYPE_FILE) {
+		gchar ***paths = gebr_geoxml_line_get_paths(GEBR_GEOXML_LINE(line));
+		icon = GTK_STOCK_DIRECTORY;
+		for (gint i = 0; paths[i]; i++) {
+			keyword = paths[i][1];
+			result = paths[i][0];
+			gtk_list_store_append(store, &iter);
+			gtk_list_store_set(store, &iter,
+					   0, keyword,
+					   1, icon,
+					   2, result,
+					   3, COMPLETION_TYPE_PATH,
+					   -1);
+		}
+		gebr_pairstrfreev(paths);
 	}
 
 	g_list_foreach(compatible, (GFunc)gebr_geoxml_object_unref, NULL);
