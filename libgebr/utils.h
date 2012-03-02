@@ -289,6 +289,7 @@ gboolean gebr_verify_starting_slash (const gchar *string);
 gboolean gebr_validate_path(const gchar *path,
 			    gchar ***paths);
 
+
 G_END_DECLS
 
 #endif				//__GEBR_UTILS_H

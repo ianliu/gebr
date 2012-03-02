@@ -20,6 +20,7 @@
 #endif
 
 #include "../libgebr-gettext.h"
+#include "../utils.h"
 
 #include <stdarg.h>
 #include <stdlib.h>
@@ -1219,4 +1220,29 @@ gboolean gebr_gui_gtk_tree_iter_equal_to(GtkTreeIter *iter1, GtkTreeIter *iter2)
 		return FALSE;
 
 	return iter1->user_data == iter2->user_data;
+}
+gboolean
+gebr_file_chooser_set_warning_widget(gchar ***paths, 
+				     gchar *file,
+				     GtkWidget *chooser_dialog)
+{
+	gchar *folder = g_strconcat("file://", paths[0][0], NULL);
+	gboolean success = gtk_file_chooser_set_current_folder_uri(GTK_FILE_CHOOSER(chooser_dialog), folder);
+	g_free(folder);
+	gebr_gtk_bookmarks_add_paths(file, "file://", paths);
+
+	GtkWidget *vbox = gtk_vbox_new(FALSE, 5);
+
+	GtkWidget *image = gtk_image_new_from_stock(GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_DIALOG);
+	gtk_box_pack_start(GTK_BOX(vbox), image, FALSE, FALSE, 5);
+
+	GtkWidget *label = gtk_label_new(_("The presented files are from your local machine and may not represent the files on the servers."));
+	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
+	gtk_label_set_line_wrap_mode(GTK_LABEL(label), PANGO_WRAP_WORD);
+	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 5);
+	gtk_widget_set_size_request(label, 130, -1);
+
+	gtk_widget_show_all(vbox);
+	gtk_file_chooser_set_preview_widget (GTK_FILE_CHOOSER(chooser_dialog), vbox);
+	return success;
 }

@@ -711,22 +711,17 @@ static void open_activated(GtkEntry *entry, GtkEntryIconPosition icon_pos, GdkEv
 	gchar *filename = g_build_filename(g_get_home_dir(), ".gtk-bookmarks", NULL);
 	if (maestro) {
 		gchar *prefix = gebr_maestro_server_get_sftp_prefix(maestro);
-
+		gboolean logged = gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED;
 		if (prefix) {
 			gchar *folder = g_build_filename(prefix, paths[0][0], NULL);
 			gtk_file_chooser_set_current_folder_uri(GTK_FILE_CHOOSER(dialog), folder);
 			g_free(folder);
-			if (gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED)
+			if (logged)
 				gebr_gtk_bookmarks_add_paths(filename, prefix, paths);
 			g_free(prefix);
 		}
-		else {
-			gchar *folder = g_strconcat("file://", paths[0][0], NULL);
-			gtk_file_chooser_set_current_folder_uri(GTK_FILE_CHOOSER(dialog), folder);
-			g_free(folder);
-			if (gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED)
-				gebr_gtk_bookmarks_add_paths(filename, "file://", paths);
-		}
+		else if (logged)
+			gebr_file_chooser_set_warning_widget(paths, filename, dialog);
 
 	}
 

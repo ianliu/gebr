@@ -512,5 +512,8 @@ gboolean gebr_gui_validate_widget(GebrGuiValidatableWidget *widget,
 				  GebrGeoXmlParameter      *param,
 				  GebrValidator            *validator);
 
+gboolean gebr_file_chooser_set_warning_widget(gchar ***paths, 
+		gchar *file,
+		GtkWidget *chooser_dialog);
 G_END_DECLS
 #endif				//__GEBR_GUI_UTILS_H

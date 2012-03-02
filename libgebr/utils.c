@@ -1133,3 +1133,4 @@ gebr_validate_path(const gchar *path,
 	else
 		return TRUE;
 }
+
