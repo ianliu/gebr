@@ -291,7 +291,8 @@ GebrCommTerminalProcess *gebr_comm_server_forward_remote_port(GebrCommServer *se
  */
 GebrCommTerminalProcess *gebr_comm_server_forward_local_port(GebrCommServer *server,
 							     guint16 remote_port,
-							     guint16 local_port);
+							     guint16 local_port,
+							     const gchar *addr);
 
 void gebr_comm_server_close_x11_forward(GebrCommServer *server);
 

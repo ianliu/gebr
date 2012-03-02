@@ -939,6 +939,7 @@ static GebrCommTerminalProcess *
 gebr_comm_server_forward_port(GebrCommServer *server,
 			      guint16 port1,
 			      guint16 port2,
+			      const gchar *addr,
 			      gboolean is_local)
 {
 	g_return_val_if_fail(server->state == SERVER_STATE_CONNECT
@@ -950,9 +951,10 @@ gebr_comm_server_forward_port(GebrCommServer *server,
 			 G_CALLBACK(gebr_comm_ssh_read), server);
 
 	GString *string = g_string_new(NULL);
-	g_string_printf(string, "ssh -x -%s %d:127.0.0.1:%d %s -N",
+	g_string_printf(string, "ssh -x -%s %d:%s:%d %s -N",
 			is_local ? "L" : "R",
 			port1,
+			addr,
 			port2,
 			server->address->str);
 
@@ -969,13 +971,14 @@ gebr_comm_server_forward_remote_port(GebrCommServer *server,
 				     guint16 remote_port,
 				     guint16 local_port)
 {
-	return gebr_comm_server_forward_port(server, remote_port, local_port, FALSE);
+	return gebr_comm_server_forward_port(server, remote_port, local_port, "127.0.0.1", FALSE);
 }
 
 GebrCommTerminalProcess *
 gebr_comm_server_forward_local_port(GebrCommServer *server,
 				    guint16 remote_port,
-				    guint16 local_port)
+				    guint16 local_port,
+				    const gchar *addr)
 {
-	return gebr_comm_server_forward_port(server, local_port, remote_port, TRUE);
+	return gebr_comm_server_forward_port(server, local_port, remote_port, addr, TRUE);
 }

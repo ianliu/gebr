@@ -42,6 +42,7 @@ struct _GebrMaestroServerPriv {
 	/* GVFS */
 	gboolean has_connected_daemon;
 	GFile *mount_location;
+	GebrCommTerminalProcess *proc;
 
 	GtkListStore *groups_store;
 	GtkListStore *queues_model;
@@ -112,20 +113,47 @@ G_DEFINE_TYPE_WITH_CODE(GebrMaestroServer, gebr_maestro_server, G_TYPE_OBJECT,
 			G_IMPLEMENT_INTERFACE(GEBR_TYPE_CONNECTABLE,
 					      gebr_maestro_server_connectable_init));
 
+typedef struct {
+	GebrMaestroServer *maestro;
+	guint16 port;
+} TunnelPool;
+
+static gboolean
+mount_operation_pool(gpointer user_data)
+{
+	TunnelPool *data = user_data;
+	if (gebr_comm_listen_socket_is_local_port_available(data->port))
+		return TRUE;
+
+	GMountOperation *op = gtk_mount_operation_new(data->maestro->priv->window);
+	g_file_mount_enclosing_volume(data->maestro->priv->mount_location, 0, op, NULL,
+				      (GAsyncReadyCallback) mount_enclosing_ready_cb,
+				      data->maestro);
+	return FALSE;
+}
+
 static void
-mount_gvfs(GebrMaestroServer *maestro,
-	   const gchar *address)
+mount_gvfs(GebrMaestroServer *maestro, const gchar *addr)
 {
 	if (maestro->priv->has_connected_daemon)
 		return;
 
+	guint16 port = 2000;
+	while (!gebr_comm_listen_socket_is_local_port_available(port))
+		port++;
+
+	GebrCommTerminalProcess *proc;
+	proc = gebr_comm_server_forward_local_port(maestro->priv->server,
+						   22, port, addr);
+	maestro->priv->proc = proc;
 	maestro->priv->has_connected_daemon = TRUE;
-	GMountOperation *op = gtk_mount_operation_new(maestro->priv->window);
-	gchar *uri = g_strdup_printf("sftp://%s/", address);
-	GFile *location = g_file_new_for_uri(uri);
-	g_file_mount_enclosing_volume(location, 0, op, NULL,
-				      (GAsyncReadyCallback) mount_enclosing_ready_cb,
-				      maestro);
+	gchar *uri = g_strdup_printf("sftp://localhost:%d", port);
+	GFile *location = g_file_new_for_commandline_arg(uri);
+
+	TunnelPool *data = g_new0(TunnelPool, 1);
+	data->maestro = maestro;
+	data->port = port;
+	g_timeout_add(200, mount_operation_pool, data);
 	maestro->priv->mount_location = location;
 	g_free(uri);
 }
@@ -140,6 +168,9 @@ unmount_gvfs(GebrMaestroServer *maestro,
 		else
 			return;
 	}
+
+	gebr_comm_terminal_process_kill(maestro->priv->proc);
+	gebr_comm_terminal_process_free(maestro->priv->proc);
 
 	GMountOperation *op = gtk_mount_operation_new(NULL);
 	maestro->priv->has_connected_daemon = FALSE;
@@ -395,7 +426,7 @@ mount_enclosing_ready_cb(GFile *location,
 	if (success || g_error_matches(error, G_IO_ERROR, G_IO_ERROR_ALREADY_MOUNTED)) {
 		g_debug("Mounted %s!", uri);
 	} else {
-		g_debug("Not mounted %s :(", uri);
+		g_debug("Not mounted %s :( (%d) %s", uri, error->code, error->message);
 		maestro->priv->has_connected_daemon = FALSE;
 		g_object_unref(maestro->priv->mount_location);
 		maestro->priv->mount_location = NULL;
