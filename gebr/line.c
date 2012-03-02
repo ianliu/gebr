@@ -359,7 +359,7 @@ line_setup_wizard(GebrGeoXmlLine *line)
 
 	gtk_assistant_append_page(GTK_ASSISTANT(assistant), page2);
 	gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), page2, TRUE);
-	gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), page2, GTK_ASSISTANT_PAGE_CONTENT);
+	gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), page2, GTK_ASSISTANT_PAGE_CONFIRM);
 	gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), page2, _("Line paths"));
 
 	gtk_assistant_append_page(GTK_ASSISTANT(assistant), page3);
