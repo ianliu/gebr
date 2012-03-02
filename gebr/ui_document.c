@@ -341,10 +341,39 @@ on_lock_button_toggled(GtkToggleButton *button,
 }
 
 static void
-on_entry_press(GtkEntry            *entry,
-               GtkEntryIconPosition icon_pos,
-               GdkEvent            *event,
-               gpointer             user_data)
+on_base_entry_press(GtkEntry            *entry,
+                      GtkEntryIconPosition icon_pos,
+                      GdkEvent            *event,
+                      gpointer             user_data)
+{
+	GebrPropertiesData *data = user_data;
+
+	GtkWidget *file_chooser = gtk_file_chooser_dialog_new("Choose BASE directory", GTK_WINDOW(data->window),
+	                                                      GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
+	                                                      GTK_STOCK_ADD, GTK_RESPONSE_OK,
+	                                                      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
+
+	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
+	gchar *prefix = gebr_maestro_server_get_sftp_prefix(maestro);
+	gtk_file_chooser_set_local_only(GTK_FILE_CHOOSER(file_chooser), FALSE);
+	gtk_file_chooser_set_current_folder_uri(GTK_FILE_CHOOSER(file_chooser), prefix);
+	gint response = gtk_dialog_run(GTK_DIALOG(file_chooser));
+
+	if (response == GTK_RESPONSE_OK) {
+		gchar *folder = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(file_chooser));
+		gtk_entry_set_text(entry, gebr_remove_gvfs_prefix(folder));
+		g_free(folder);
+	}
+
+	g_free(prefix);
+	gtk_widget_destroy(file_chooser);
+}
+
+static void
+on_import_entry_press(GtkEntry            *entry,
+                      GtkEntryIconPosition icon_pos,
+                      GdkEvent            *event,
+                      gpointer             user_data)
 {
 	GebrPropertiesData *data = user_data;
 
@@ -557,9 +586,10 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 		gtk_notebook_append_page(GTK_NOTEBOOK(notebook), path_box, gtk_label_new(_("Paths")));
 
 		GtkEntry *entry_base = GTK_ENTRY(gtk_builder_get_object(builder, "entry_base"));
-		GtkEntry *entry_import = GTK_ENTRY(gtk_builder_get_object(builder, "entry_import"));
+		g_signal_connect(entry_base, "icon-press", G_CALLBACK(on_base_entry_press), data);
 
-		g_signal_connect(entry_import, "icon-press", G_CALLBACK(on_entry_press), data);
+		GtkEntry *entry_import = GTK_ENTRY(gtk_builder_get_object(builder, "entry_import"));
+		g_signal_connect(entry_import, "icon-press", G_CALLBACK(on_import_entry_press), data);
 
 		gchar ***paths = gebr_geoxml_line_get_paths(GEBR_GEOXML_LINE(document));
 		gchar *base_path = NULL;

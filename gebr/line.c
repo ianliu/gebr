@@ -274,10 +274,39 @@ on_assistant_prepare(GtkAssistant *assistant,
 }
 
 static void
-on_entry_press(GtkEntry            *entry,
-               GtkEntryIconPosition icon_pos,
-               GdkEvent            *event,
-               gpointer             user_data)
+on_base_entry_press(GtkEntry            *entry,
+                      GtkEntryIconPosition icon_pos,
+                      GdkEvent            *event,
+                      gpointer             user_data)
+{
+	WizardData *data = user_data;
+
+	GtkWidget *file_chooser = gtk_file_chooser_dialog_new("Choose BASE directory", GTK_WINDOW(data->assistant),
+	                                                      GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
+	                                                      GTK_STOCK_ADD, GTK_RESPONSE_OK,
+	                                                      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
+
+	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
+	gchar *prefix = gebr_maestro_server_get_sftp_prefix(maestro);
+	gtk_file_chooser_set_current_folder_uri(GTK_FILE_CHOOSER(file_chooser), prefix);
+	gtk_file_chooser_set_local_only(GTK_FILE_CHOOSER(file_chooser), FALSE);
+	gint response = gtk_dialog_run(GTK_DIALOG(file_chooser));
+
+	if (response == GTK_RESPONSE_OK) {
+		gchar *folder = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(file_chooser));
+		gtk_entry_set_text(entry, gebr_remove_gvfs_prefix(folder));
+		g_free(folder);
+	}
+
+	g_free(prefix);
+	gtk_widget_destroy(file_chooser);
+}
+
+static void
+on_import_entry_press(GtkEntry            *entry,
+                      GtkEntryIconPosition icon_pos,
+                      GdkEvent            *event,
+                      gpointer             user_data)
 {
 	WizardData *data = user_data;
 
@@ -343,7 +372,8 @@ line_setup_wizard(GebrGeoXmlLine *line)
 	GObject *entry_author = gtk_builder_get_object(builder, "entry_author");
 	GObject *entry_email = gtk_builder_get_object(builder, "entry_email");
 
-	g_signal_connect(entry_import, "icon-press", G_CALLBACK(on_entry_press), data);
+	g_signal_connect(entry_base, "icon-press", G_CALLBACK(on_base_entry_press), data);
+	g_signal_connect(entry_import, "icon-press", G_CALLBACK(on_import_entry_press), data);
 
 	gchar *path = g_build_filename(g_get_home_dir(),"GeBR",
 	                               gebr_geoxml_line_create_key(gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(line))),
