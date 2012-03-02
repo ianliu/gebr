@@ -202,7 +202,7 @@ files outside your &lt;b&gt;BASE&lt;/b&gt; directory.&lt;/i&gt;</property>
                                       <object class="GtkLabel" id="label18">
                                         <property name="visible">True</property>
                                         <property name="xalign">0</property>
-                                        <property name="label" translatable="yes">&lt;i&gt;&amp;lt;SCRATCH&amp;gt;&lt;/i&gt;</property>
+                                        <property name="label" translatable="yes">&lt;i&gt;&amp;lt;TMP&amp;gt;&lt;/i&gt;</property>
                                         <property name="use_markup">True</property>
                                       </object>
                                       <packing>
@@ -295,7 +295,7 @@ files outside your &lt;b&gt;BASE&lt;/b&gt; directory.&lt;/i&gt;</property>
                                       <object class="GtkLabel" id="label19">
                                         <property name="visible">True</property>
                                         <property name="xalign">0</property>
-                                        <property name="label" translatable="yes">&lt;i&gt;&amp;lt;CUSTOM&amp;gt;&lt;/i&gt;</property>
+                                        <property name="label" translatable="yes">&lt;i&gt;&amp;lt;MISC&amp;gt;&lt;/i&gt;</property>
                                         <property name="use_markup">True</property>
                                       </object>
                                       <packing>

@@ -824,9 +824,9 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 					{"<BASE>", ""},
 					{"<DATA>", "data"},
 					{"<EXPORT>", "export"},
-					{"<SCRATCH>", "tmp"},
+					{"<TMP>", "tmp"},
 					{"<TABLE>", "table"},
-					{"<CUSTOM>", "misc"},
+					{"<MISC>", "misc"},
 			};
 
 			for (gint i = 0; i < G_N_ELEMENTS(base_dirs); i++) {

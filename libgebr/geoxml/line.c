@@ -67,9 +67,9 @@ static gchar *base_dirs[][2] = {
 		{"<BASE>", ""},
 		{"<DATA>", "data"},
 		{"<EXPORT>", "export"},
-		{"<SCRATCH>", "tmp"},
+		{"<TMP>", "tmp"},
 		{"<TABLE>", "table"},
-		{"<CUSTOM>", "misc"},
+		{"<MISC>", "misc"},
 };
 
 void
