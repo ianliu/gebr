@@ -515,7 +515,7 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 	if (gebr_geoxml_document_get_type(document) == GEBR_GEOXML_DOCUMENT_TYPE_LINE) {
 		data->maestro_combo = document_properties_create_maestro_combobox(GEBR_GEOXML_LINE(document));
 		data->previous_active_group = gtk_combo_box_get_active(GTK_COMBO_BOX(data->maestro_combo));
-		data->old_base = gebr_geoxml_line_get_path_by_name(GEBR_GEOXML_LINE(document), "<BASE>");
+		data->old_base = gebr_geoxml_line_get_path_by_name(GEBR_GEOXML_LINE(document), "BASE");
 
 		GtkWidget *lock_button = gtk_toggle_button_new();
 		GtkWidget *image = gtk_image_new_from_stock("object-locked", GTK_ICON_SIZE_BUTTON);
@@ -595,7 +595,7 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 		gchar *base_path = NULL;
 
 		for (gint i = 0; paths[i] != NULL; i++) {
-			if (g_strcmp0(paths[i][1], "<BASE>") == 0) {
+			if (g_strcmp0(paths[i][1], "BASE") == 0) {
 				base_path = paths[i][0];
 				break;
 			}
@@ -615,7 +615,7 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 
 		gchar *import_path = NULL;
 		for (gint i=0; paths[i] != NULL; i++){
-			if (g_strcmp0(paths[i][1], "<IMPORT>") == 0){
+			if (g_strcmp0(paths[i][1], "IMPORT") == 0){
 				import_path = paths[i][0];
 				g_debug("Configuring <IMPORT> to %s", import_path);
 				break;
@@ -1994,7 +1994,7 @@ proc_changes_in_title_and_base(GebrPropertiesData *data,
 	GtkEntry *entry_base = GTK_ENTRY(gtk_builder_get_object(data->builder, "entry_base"));
 
 	GString *_new_base = g_string_new(gtk_entry_get_text(entry_base));
-	gchar *tmp = gebr_geoxml_line_get_path_by_name(GEBR_GEOXML_LINE(data->document), "<BASE>");
+	gchar *tmp = gebr_geoxml_line_get_path_by_name(GEBR_GEOXML_LINE(data->document), "BASE");
 	GString *_old_base = g_string_new(tmp);
 	gebr_path_resolve_home_variable(_new_base);
 	gebr_path_resolve_home_variable(_old_base);
@@ -2377,7 +2377,7 @@ gebr_document_send_path_message(GebrGeoXmlLine *line,
 
 	if (option == GEBR_COMM_PROTOCOL_PATH_CREATE) {
 		for (gint i = 0; paths[i]; i++) {
-			if (g_strcmp0(paths[i][1], "<IMPORT>") == 0)
+			if (g_strcmp0(paths[i][1], "IMPORT") == 0)
 				continue;
 			gchar *escaped = gebr_geoxml_escape_path(paths[i][0]);
 			g_string_append_c(buffer, ',');
@@ -2389,7 +2389,7 @@ gebr_document_send_path_message(GebrGeoXmlLine *line,
 	}
 	else if (option == GEBR_COMM_PROTOCOL_PATH_RENAME) {
 		for (gint i = 0; paths[i]; i++) {
-			if (g_strcmp0(paths[i][1], "<BASE>") == 0) {
+			if (g_strcmp0(paths[i][1], "BASE") == 0) {
 				buffer = g_string_append(buffer, paths[i][0]);
 				break;
 			}

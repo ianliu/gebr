@@ -269,9 +269,9 @@ line_info_update(void)
 	for (gint i = 0; paths[i]; i++) {
 		if (base_path && import_path)
 			break;
-		else if (g_strcmp0(paths[i][1], "<BASE>") == 0)
+		else if (g_strcmp0(paths[i][1], "BASE") == 0)
 			base_path = g_strdup(paths[i][0]);
-		else if (g_strcmp0(paths[i][1], "<IMPORT>") == 0)
+		else if (g_strcmp0(paths[i][1], "IMPORT") == 0)
 			import_path = g_strdup(paths[i][0]);
 	}
 	if (!base_path || !*base_path)

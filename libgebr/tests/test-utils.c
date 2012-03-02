@@ -273,9 +273,9 @@ test_gebr_relativise_path(void)
 	gchar *DATA1 = g_build_filename(home, "fooliu", "data1", NULL);
 
 	GebrGeoXmlLine *line = gebr_geoxml_line_new();
-	gebr_geoxml_line_append_path(line, "<BASE>", BASE);
-	gebr_geoxml_line_append_path(line, "<DATA>", DATA);
-	gebr_geoxml_line_append_path(line, "<DATA1>", DATA1);
+	gebr_geoxml_line_append_path(line, "BASE", BASE);
+	gebr_geoxml_line_append_path(line, "DATA", DATA);
+	gebr_geoxml_line_append_path(line, "DATA1", DATA1);
 	gebr_geoxml_line_set_import_path(line, "/tmp/foo");
 
 	gchar *** paths = gebr_geoxml_line_get_paths(line);
@@ -311,9 +311,9 @@ test_gebr_resolve_relative_path(void)
 
 	gchar *** paths = gebr_geoxml_line_get_paths(line);
 
-	g_assert_cmpstr(gebr_resolve_relative_path("foo/BASE", paths), ==, "foo/BASE");
-	g_assert_cmpstr(gebr_resolve_relative_path("BASE/foo", paths), ==, "/home/foo/liu/foo");
-	g_assert_cmpstr(gebr_resolve_relative_path("DATA/foo", paths), ==, "/home/foo/liu/data/foo");
+	g_assert_cmpstr(gebr_resolve_relative_path("foo/<BASE>", paths), ==, "foo/<BASE>");
+	g_assert_cmpstr(gebr_resolve_relative_path("<BASE>/foo", paths), ==, "/home/foo/liu/foo");
+	g_assert_cmpstr(gebr_resolve_relative_path("<DATA>/foo", paths), ==, "/home/foo/liu/data/foo");
 	g_assert_cmpstr(gebr_resolve_relative_path("/usr/foo", paths), ==, "/usr/foo");
 }
 

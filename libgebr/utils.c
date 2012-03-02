@@ -939,10 +939,12 @@ gebr_relativise_path(const gchar *path_string,
 		return g_strdup("");
 
 	for (int i = 0; pvector[i]; i++) {
-		if (g_str_has_prefix(path_string, pvector[i][1])) {
+		gchar *tmp = g_strdup_printf("<%s>", pvector[i][1]);
+		if (g_str_has_prefix(path_string, tmp)) {
 			path_str = gebr_resolve_relative_path(path_string, pvector);
 			break;
 		}
+		g_free(tmp);
 	}
 
 	GString *tmp;
@@ -995,13 +997,16 @@ gebr_relativise_path(const gchar *path_string,
 		rel_path = g_string_erase(rel_path, 0, (strlen(pvector[max_index][0]) - 1));
 	else
 		rel_path = g_string_erase(rel_path, 0, strlen(pvector[max_index][0]));
-	rel_path = g_string_prepend (rel_path, pvector[max_index][1]);
+
+	g_string_prepend (rel_path, ">");
+	g_string_prepend (rel_path, pvector[max_index][1]);
+	g_string_prepend (rel_path, "<");
 
 	return g_string_free(rel_path, FALSE);
 }
 
 gchar *
-gebr_resolve_relative_path(const char *path,
+gebr_resolve_relative_path(const gchar *path,
 			   gchar ***pvector)
 {
 	g_return_val_if_fail(path != NULL, NULL);
@@ -1013,7 +1018,8 @@ gebr_resolve_relative_path(const char *path,
 	gboolean has_rpath = FALSE;
 
 	while (pvector[i] != NULL ) {
-		if (!g_strcmp0(dirspath[0], pvector[i][1])) {
+		gchar *tmp = g_strdup_printf("<%s>", pvector[i][1]);
+		if (!g_strcmp0(dirspath[0], tmp)) {
 			str = g_string_erase(str, 0, strlen(dirspath[0]));
 			str = g_string_prepend(str, pvector[i][0]);
 			has_rpath = TRUE;
@@ -1125,9 +1131,11 @@ gboolean
 gebr_validate_path(const gchar *path,
 		   gchar ***pvector)
 {
-	for (int i = 0; pvector[i]; i++)
-		if (g_str_has_prefix(path, pvector[i][1]))
+	for (int i = 0; pvector[i]; i++) {
+		gchar *tmp = g_strdup_printf("<%s>", pvector[i][1]);
+		if (g_str_has_prefix(path, tmp))
 			return TRUE;
+	}
 	if (*path != '/')
 		return FALSE;
 	else
