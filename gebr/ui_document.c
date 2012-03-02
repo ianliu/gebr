@@ -507,8 +507,7 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 
 		/* Set sensitivity for title */
 		GObject *warn_edit = gtk_builder_get_object(builder, "warn_edit");
-		gtk_widget_set_visible(GTK_WIDGET(warn_edit), !is_logged);
-		gtk_widget_set_sensitive(GTK_WIDGET(title), is_logged);
+		gtk_widget_set_visible(GTK_WIDGET(warn_edit), FALSE);
 
 		if (!maestro && !strlen(addr)) {
 			maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
@@ -565,18 +564,20 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 		gchar ***paths = gebr_geoxml_line_get_paths(GEBR_GEOXML_LINE(document));
 		gchar *base_path = NULL;
 
-		for (gint i=0; paths[i] != NULL; i++){
-			if (g_strcmp0(paths[i][1], "<BASE>") == 0){
+		for (gint i = 0; paths[i] != NULL; i++) {
+			if (g_strcmp0(paths[i][1], "<BASE>") == 0) {
 				base_path = paths[i][0];
 				break;
 			}
 		}
 
+		gchar *line_key = gebr_geoxml_line_create_key(gebr_geoxml_document_get_title(document));
 		if (!base_path || !*base_path)
-			base_path = g_build_filename(g_get_home_dir(), "GeBR",
-			                             gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.project)),
-			                             gebr_geoxml_document_get_title(document), NULL);
+			base_path = g_build_filename(g_get_home_dir(), "GeBR", line_key, NULL);
+		g_free(line_key);
+
 		gtk_entry_set_text(entry_base, base_path);
+
 		g_signal_connect(entry_base, "changed", G_CALLBACK(on_properties_entry_changed), data->ok_button);
 		g_signal_connect(entry_base, "changed", G_CALLBACK(path_validate), NULL);
 		g_free(base_path);
@@ -1913,32 +1914,6 @@ progress_bar_animate(gpointer user_data)
 	return TRUE;
 }
 
-static gboolean
-check_if_title_is_subset_of_base(const gchar *title,
-				 const gchar *base)
-{
-	GFile *tmp = g_file_new_for_path(base);
-	gchar *basename = g_file_get_basename(tmp);
-	gboolean ret = g_strcmp0(basename, title) == 0;
-	g_free(basename);
-	g_object_unref(tmp);
-	return ret;
-}
-
-static gchar *
-substitute_base_with_line_name(const gchar *base,
-			       const gchar *new_title)
-{
-	GFile *tmp = g_file_new_for_path(base);
-	GFile *parent = g_file_get_parent(tmp);
-	gchar *path = g_file_get_path(parent);
-	gchar *ret = g_build_filename(path, new_title, NULL);
-	g_free(path);
-	g_object_unref(tmp);
-	g_object_unref(parent);
-	return ret;
-}
-
 void
 gebr_ui_document_send_paths_to_maestro(GebrMaestroServer *maestro,
 				       gint option,
@@ -1987,7 +1962,6 @@ proc_changes_in_title_and_base(GebrPropertiesData *data,
 		return FALSE;
 
 	GtkEntry *entry_base = GTK_ENTRY(gtk_builder_get_object(data->builder, "entry_base"));
-	GtkEntry *entry_title = GTK_ENTRY(gtk_builder_get_object(data->builder, "entry_title"));
 
 	GString *_new_base = g_string_new(gtk_entry_get_text(entry_base));
 	gchar *tmp = gebr_geoxml_line_get_path_by_name(GEBR_GEOXML_LINE(data->document), "<BASE>");
@@ -1999,29 +1973,16 @@ proc_changes_in_title_and_base(GebrPropertiesData *data,
 	gchar *old_base = g_string_free(_old_base, FALSE);
 	gchar *new_base = g_string_free(_new_base, FALSE);
 
-	const gchar *new_title = gtk_entry_get_text(entry_title);
-	gchar *old_title = gebr_geoxml_document_get_title(data->document);
-	gboolean title_changed = g_strcmp0(new_title, old_title) != 0;
 	gboolean base_changed = g_strcmp0(new_base, old_base) != 0;
 
-	if (!title_changed && !base_changed)
+	if (!base_changed) {
 		return FALSE;
-
-	gboolean is_subset = check_if_title_is_subset_of_base(old_title, new_base);
-
-	if (title_changed && !base_changed && !is_subset)
-		return FALSE;
-
-	if (title_changed && is_subset && !base_changed) {
-		*option = GEBR_COMM_PROTOCOL_PATH_RENAME;
-		*newmsg = substitute_base_with_line_name(new_base, new_title);
 	} else {
 		*option = GEBR_COMM_PROTOCOL_PATH_CREATE;
 		*newmsg = g_strdup(new_base);
 	}
-
 	*oldmsg = g_strdup(old_base);
-	g_free(old_title);
+
 	g_free(old_base);
 	g_free(new_base);
 

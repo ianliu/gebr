@@ -244,10 +244,10 @@ on_assistant_prepare(GtkAssistant *assistant,
 
 	if (page == 2) {
 		GObject *entry_title = gtk_builder_get_object(data->builder, "entry_title");
-		gchar *path = g_build_filename(g_get_home_dir(),"GeBR",
-					       gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.project)),
-					       gtk_entry_get_text(GTK_ENTRY(entry_title)), NULL);
+		gchar *line_key = gebr_geoxml_line_create_key(gtk_entry_get_text(GTK_ENTRY(entry_title)));
+		gchar *path = g_build_filename(g_get_home_dir(),"GeBR", line_key, NULL);
 		gtk_entry_set_text(GTK_ENTRY(entry_base), path);
+		g_free(line_key);
 		g_free(path);
 	}
 	else if (page == 3) {
@@ -346,8 +346,8 @@ line_setup_wizard(GebrGeoXmlLine *line)
 	g_signal_connect(entry_import, "icon-press", G_CALLBACK(on_entry_press), data);
 
 	gchar *path = g_build_filename(g_get_home_dir(),"GeBR",
-	                 gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.project)),
-	                 gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(line)), NULL);
+	                               gebr_geoxml_line_create_key(gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(line))),
+	                               NULL);
 	gtk_entry_set_text (GTK_ENTRY(entry_base), path);
 	g_free(path);
 
