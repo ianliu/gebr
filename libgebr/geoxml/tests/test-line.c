@@ -162,6 +162,27 @@ void test_gebr_geoxml_line_get_group(void)
 	g_free(addr);
 }
 
+void test_gebr_geoxml_line_create_key(void)
+{
+	gchar *key;
+
+	key = gebr_geoxml_line_create_key("Nova Linha");
+	g_assert_cmpstr(key, ==, "nova_linha");
+	g_free(key);
+
+	key = gebr_geoxml_line_create_key("Nova Linha 2");
+	g_assert_cmpstr(key, ==, "nova_linha_2");
+	g_free(key);
+
+	key = gebr_geoxml_line_create_key("Linhánha");
+	g_assert_cmpstr(key, ==, "linh_nha");
+	g_free(key);
+
+	key = gebr_geoxml_line_create_key("Linha boçal");
+	g_assert_cmpstr(key, ==, "linha_bo_al");
+	g_free(key);
+}
+
 int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
@@ -176,6 +197,7 @@ int main(int argc, char *argv[])
 //	g_test_add_func("/libgebr/geoxml/line/get_paths",test_gebr_geoxml_line_get_path);
 //	g_test_add_func("/libgebr/geoxml/line/duplicate_paths",test_duplicate_paths);
 	g_test_add_func("/libgebr/geoxml/line/get_group",test_gebr_geoxml_line_get_group);
+	g_test_add_func("/libgebr/geoxml/line/create_key",test_gebr_geoxml_line_create_key);
 
 	gint ret = g_test_run();
 	gebr_geoxml_finalize();

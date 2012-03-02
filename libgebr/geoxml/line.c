@@ -347,3 +347,28 @@ gebr_geoxml_line_get_path_by_name(GebrGeoXmlLine *line,
 	}
 	return NULL;
 }
+
+gchar *
+gebr_geoxml_line_create_key(const gchar *title)
+{
+	gchar *lower = g_utf8_strdown(title, -1);
+	GString *buffer = g_string_new(NULL);
+	gchar *tmp = lower;
+	gunichar c;
+
+	for (; tmp && *tmp; tmp = g_utf8_next_char(tmp)) {
+		c = g_utf8_get_char(tmp);
+
+		if (c == ' ' || c >= 256 || !g_ascii_isalnum((char)c)) {
+			g_string_append_c(buffer, '_');
+		} else {
+			gchar str[7];
+			gint len = g_unichar_to_utf8(c, str);
+			g_string_append_len(buffer, str, len);
+		}
+	}
+	g_string_append_c(buffer, '\0');
+
+	g_free(lower);
+	return g_string_free(buffer, FALSE);
+}

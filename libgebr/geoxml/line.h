@@ -203,5 +203,13 @@ gchar *gebr_geoxml_escape_path(const gchar *path);
 
 gchar *gebr_geoxml_get_paths_for_base(const gchar *base);
 
+/**
+ * gebr_geoxml_line_create_key:
+ *
+ * Returns: A Key for title line, lower-case, change space to underscore,
+ * and remove all vowels.
+ */
+gchar *gebr_geoxml_line_create_key(const gchar *title);
+
 G_END_DECLS
 #endif				//__GEBR_GEOXML_LINE_H
