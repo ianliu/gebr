@@ -164,6 +164,11 @@ __gebr_gui_file_entry_browse_button_clicked(GtkButton *button,
 		gchar *folder = g_build_filename(file_entry->prefix, paths[0][0], NULL);
 		gtk_file_chooser_set_current_folder_uri(GTK_FILE_CHOOSER(chooser_dialog), folder);
 		g_free(folder);
+	} else {
+		gchar *folder = g_strconcat("file://", paths[0][0], NULL);
+		gtk_file_chooser_set_current_folder_uri(GTK_FILE_CHOOSER(chooser_dialog), folder);
+		g_free(folder);
+		gebr_gtk_bookmarks_add_paths(file, "file://", paths);
 	}
 
 	switch (gtk_dialog_run(GTK_DIALOG(chooser_dialog))) {
