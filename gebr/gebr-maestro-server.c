@@ -181,7 +181,10 @@ unmount_gvfs(GebrMaestroServer *maestro,
 	GError *err = NULL;
 	GMount *mount = g_file_find_enclosing_mount(maestro->priv->mount_location, NULL, &err);
 
-	if (!g_error_matches(err, G_IO_ERROR, G_IO_ERROR_NOT_FOUND))
+	if (!mount && quit)
+		gebr_quit(TRUE);
+
+	if (mount && !g_error_matches(err, G_IO_ERROR, G_IO_ERROR_NOT_FOUND))
 		g_mount_unmount_with_operation(mount, G_MOUNT_UNMOUNT_NONE, op,
 		                               NULL, (GAsyncReadyCallback) unmount_ready_cb,
 					       GUINT_TO_POINTER(quit));
