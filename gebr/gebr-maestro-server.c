@@ -172,25 +172,16 @@ unmount_gvfs(GebrMaestroServer *maestro,
 	gebr_comm_terminal_process_kill(maestro->priv->proc);
 	gebr_comm_terminal_process_free(maestro->priv->proc);
 
-	GMountOperation *op = gtk_mount_operation_new(NULL);
 	maestro->priv->has_connected_daemon = FALSE;
 
 	if (!maestro->priv->mount_location)
 		return;
 
-	GError *err = NULL;
-	GMount *mount = g_file_find_enclosing_mount(maestro->priv->mount_location, NULL, &err);
-
-	if (!mount && quit)
-		gebr_quit(TRUE);
-
-	if (mount && !g_error_matches(err, G_IO_ERROR, G_IO_ERROR_NOT_FOUND))
-		g_mount_unmount_with_operation(mount, G_MOUNT_UNMOUNT_NONE, op,
-		                               NULL, (GAsyncReadyCallback) unmount_ready_cb,
-					       GUINT_TO_POINTER(quit));
-
 	g_object_unref(maestro->priv->mount_location);
 	maestro->priv->mount_location = NULL;
+
+	if (quit)
+		gebr_quit(TRUE);
 }
 
 static void
