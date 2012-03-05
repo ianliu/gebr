@@ -1152,16 +1152,19 @@ static gboolean on_entry_completion_matched (GtkEntryCompletion *completion,
 		 type == GEBR_GEOXML_PARAMETER_TYPE_FILE) {
 		GString * value = g_string_new(NULL);
 
+		const gchar *bar;
 		const gchar *tmp1;
 		const gchar *tmp2;
 		if (comp_type == COMPLETION_TYPE_VARIABLE) {
 			tmp1 = "[";
 			tmp2 = "]";
+			bar = "";
 		} else {
 			tmp1 = "<";
 			tmp2 = ">";
+			bar = "/";
 		}
-		g_string_printf(value, "%s%s%s", tmp1, var, tmp2);
+		g_string_printf(value, "%s%s%s%s", tmp1, var, tmp2, bar);
 		gtk_editable_insert_text(GTK_EDITABLE(entry), value->str, -1, &ini);
 		gtk_editable_set_position(GTK_EDITABLE(entry), ini + value->len);
 		g_string_free(value, TRUE);
