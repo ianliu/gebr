@@ -38,6 +38,7 @@ struct _GebrMaestroServerPriv {
 	gchar *error_type;
 	gchar *error_msg;
 	GtkWindow *window;
+	gchar *home;
 
 	/* GVFS */
 	gboolean has_connected_daemon;
@@ -98,6 +99,9 @@ static void parse_messages(GebrCommServer *comm_server, gpointer user_data);
 static void gebr_maestro_server_connectable_init(GebrConnectableIface *iface);
 
 void gebr_maestro_server_set_window(GebrMaestroServer *maestro, GtkWindow *window);
+
+void gebr_maestro_server_set_home_dir(GebrMaestroServer *maestro,
+				      const gchar *home);
 
 static const struct gebr_comm_server_ops maestro_ops = {
 	.log_message      = log_message,
@@ -868,6 +872,20 @@ parse_messages(GebrCommServer *comm_server,
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}
+		else if (message->hash == gebr_comm_protocol_defs.home_def.code_hash) {
+			GList *arguments;
+
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 1)) == NULL)
+				goto err;
+
+			GString *home = g_list_nth_data(arguments, 0);
+
+			g_debug("HOME: %s", home->str);
+
+			gebr_maestro_server_set_home_dir(maestro, home->str);
+
+			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
+		}
 
 		gebr_comm_message_free(message);
 		comm_server->socket->protocol->messages = g_list_delete_link(comm_server->socket->protocol->messages, link);
@@ -1433,4 +1451,19 @@ gebr_maestro_server_get_sftp_prefix(GebrMaestroServer *maestro)
 		return NULL;
 
 	return g_file_get_uri(maestro->priv->mount_location);
+}
+
+void
+gebr_maestro_server_set_home_dir(GebrMaestroServer *maestro,
+				 const gchar *home)
+{
+	if (maestro->priv->home)
+		g_free(maestro->priv->home);
+	maestro->priv->home = g_strdup(home);
+}
+
+const gchar *
+gebr_maestro_server_get_home_dir(GebrMaestroServer *maestro)
+{
+	return maestro->priv->home;
 }
