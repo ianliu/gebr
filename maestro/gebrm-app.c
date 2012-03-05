@@ -45,6 +45,7 @@ struct _GebrmAppPriv {
 	GList *connections;
 	GList *daemons;
 	gchar *nfsid;
+	gchar *home;
 
 	GQueue *job_def_queue;
 	GQueue *job_run_queue;
@@ -133,6 +134,22 @@ gebrm_app_job_controller_add(GebrmApp *app, GebrmJob *job)
 			    job);
 }
 // }}}
+
+static void
+gebrm_app_send_home_dir(GebrmApp *app, const gchar *home)
+{
+	if (app->priv->home)
+		return;
+
+	app->priv->home = g_strdup(home);
+
+	for (GList *i = app->priv->connections; i; i = i->next) {
+		GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(i->data);
+		gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
+						      gebr_comm_protocol_defs.home_def, 1,
+						      home);
+	}
+}
 
 static void
 send_server_status_message(GebrmApp *app,
@@ -422,6 +439,7 @@ on_daemon_init(GebrmDaemon *daemon,
 {
 	const gchar *error = NULL;
 	const gchar *nfsid = gebrm_daemon_get_nfsid(daemon);
+	const gchar *home = gebrm_daemon_get_home_dir(daemon);
 	gboolean remove = FALSE;
 
 	if (g_strcmp0(error_type, "connection-refused") == 0) {
@@ -461,6 +479,7 @@ err:
 	} else {
 		for (GList *i = app->priv->connections; i; i = i->next) {
 			GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(i->data);
+			gebrm_app_send_home_dir(app, home);
 			send_server_status_message(app, socket, daemon, gebrm_daemon_get_autoconnect(daemon));
 
 			queue_client_info(app, daemon, i->data);
