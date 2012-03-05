@@ -124,176 +124,6 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkAlignment" id="alignment3">
-                        <property name="visible">True</property>
-                        <child>
-                          <object class="GtkVBox" id="box5">
-                            <property name="visible">True</property>
-                            <property name="spacing">5</property>
-                            <child>
-                              <object class="GtkHBox" id="hbox2">
-                                <property name="visible">True</property>
-                                <child>
-                                  <object class="GtkImage" id="image3">
-                                    <property name="visible">True</property>
-                                    <property name="pixbuf">l.png</property>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="position">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel" id="label15">
-                                    <property name="visible">True</property>
-                                    <property name="xalign">0</property>
-                                    <property name="label" translatable="yes">&lt;i&gt;&amp;lt;DATA&amp;gt;&lt;/i&gt;</property>
-                                    <property name="use_markup">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="position">1</property>
-                                  </packing>
-                                </child>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="position">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkHBox" id="hbox1">
-                                <property name="visible">True</property>
-                                <child>
-                                  <object class="GtkImage" id="image1">
-                                    <property name="visible">True</property>
-                                    <property name="pixbuf">l.png</property>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="position">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel" id="label18">
-                                    <property name="visible">True</property>
-                                    <property name="xalign">0</property>
-                                    <property name="label" translatable="yes">&lt;i&gt;&amp;lt;TMP&amp;gt;&lt;/i&gt;</property>
-                                    <property name="use_markup">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="position">1</property>
-                                  </packing>
-                                </child>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="position">1</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkHBox" id="hbox3">
-                                <property name="visible">True</property>
-                                <child>
-                                  <object class="GtkImage" id="image2">
-                                    <property name="visible">True</property>
-                                    <property name="pixbuf">l.png</property>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="position">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel" id="label17">
-                                    <property name="visible">True</property>
-                                    <property name="xalign">0</property>
-                                    <property name="label" translatable="yes">&lt;i&gt;&amp;lt;EXPORT&amp;gt;&lt;/i&gt;</property>
-                                    <property name="use_markup">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="position">1</property>
-                                  </packing>
-                                </child>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="position">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkHBox" id="hbox4">
-                                <property name="visible">True</property>
-                                <child>
-                                  <object class="GtkImage" id="image4">
-                                    <property name="visible">True</property>
-                                    <property name="pixbuf">l.png</property>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="position">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel" id="label16">
-                                    <property name="visible">True</property>
-                                    <property name="xalign">0</property>
-                                    <property name="label" translatable="yes">&lt;i&gt;&amp;lt;TABLE&amp;gt;&lt;/i&gt;</property>
-                                    <property name="use_markup">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="position">1</property>
-                                  </packing>
-                                </child>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="position">3</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkHBox" id="hbox5">
-                                <property name="visible">True</property>
-                                <child>
-                                  <object class="GtkImage" id="image5">
-                                    <property name="visible">True</property>
-                                    <property name="pixbuf">l.png</property>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="position">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel" id="label19">
-                                    <property name="visible">True</property>
-                                    <property name="xalign">0</property>
-                                    <property name="label" translatable="yes">&lt;i&gt;&amp;lt;MISC&amp;gt;&lt;/i&gt;</property>
-                                    <property name="use_markup">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="position">1</property>
-                                  </packing>
-                                </child>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="position">4</property>
-                              </packing>
-                            </child>
-                          </object>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="position">1</property>
-                      </packing>
-                    </child>
-                    <child>
                       <object class="GtkLabel" id="label14">
                         <property name="visible">True</property>
                         <property name="xalign">0</property>
@@ -302,7 +132,7 @@
                       </object>
                       <packing>
                         <property name="expand">False</property>
-                        <property name="position">2</property>
+                        <property name="position">1</property>
                       </packing>
                     </child>
                   </object>
@@ -328,79 +158,15 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkLabel" id="label21">
+                      <object class="GtkLabel" id="label_import">
                         <property name="visible">True</property>
                         <property name="xalign">0</property>
-                        <property name="label" translatable="yes">&lt;i&gt;&amp;lt;BASE&amp;gt;&lt;/i&gt;/data</property>
-                        <property name="use_markup">True</property>
+                        <property name="label" translatable="yes">/home/liu</property>
                         <property name="selectable">True</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
                         <property name="position">1</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkLabel" id="label22">
-                        <property name="visible">True</property>
-                        <property name="xalign">0</property>
-                        <property name="label" translatable="yes">&lt;i&gt;&amp;lt;BASE&amp;gt;&lt;/i&gt;/tmp</property>
-                        <property name="use_markup">True</property>
-                        <property name="selectable">True</property>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="position">2</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkLabel" id="label23">
-                        <property name="visible">True</property>
-                        <property name="xalign">0</property>
-                        <property name="label" translatable="yes">&lt;i&gt;&amp;lt;BASE&amp;gt;&lt;/i&gt;/export</property>
-                        <property name="use_markup">True</property>
-                        <property name="selectable">True</property>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="position">3</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkLabel" id="label4">
-                        <property name="visible">True</property>
-                        <property name="xalign">0</property>
-                        <property name="label" translatable="yes">&lt;i&gt;&amp;lt;BASE&amp;gt;&lt;/i&gt;/table</property>
-                        <property name="use_markup">True</property>
-                        <property name="selectable">True</property>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="position">4</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkLabel" id="label5">
-                        <property name="visible">True</property>
-                        <property name="xalign">0</property>
-                        <property name="label" translatable="yes">&lt;i&gt;&amp;lt;BASE&amp;gt;&lt;/i&gt;/misc</property>
-                        <property name="use_markup">True</property>
-                        <property name="selectable">True</property>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="position">5</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkLabel" id="label_import">
-                        <property name="visible">True</property>
-                        <property name="xalign">0</property>
-                        <property name="selectable">True</property>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="position">6</property>
                       </packing>
                     </child>
                   </object>
