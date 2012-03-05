@@ -39,6 +39,7 @@ struct _GebrmDaemonPriv {
 
 	gchar *nfsid;
 	gchar *id;
+	gchar *home;
 
 	gchar *last_error_type;
 	gchar *error_type;
@@ -68,6 +69,8 @@ enum {
 static guint signals[LAST_SIGNAL] = { 0, };
 
 static void gebrm_daemon_init_iface(GebrCommDaemonIface *iface);
+
+static void gebrm_daemon_set_home_dir(GebrmDaemon *daemon, const gchar *home);
 
 G_DEFINE_TYPE_WITH_CODE(GebrmDaemon, gebrm_daemon, G_TYPE_OBJECT,
 			G_IMPLEMENT_INTERFACE(GEBR_COMM_TYPE_DAEMON, gebrm_daemon_init_iface));
@@ -259,7 +262,7 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 			if (ret_hash == gebr_comm_protocol_defs.ini_def.code_hash) {
 				GList *arguments;
 
-				if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 9)) == NULL)
+				if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 10)) == NULL)
 					goto err;
 
 				GString *hostname     = g_list_nth_data(arguments, 0);
@@ -270,6 +273,7 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 				GString *ncores       = g_list_nth_data (arguments, 6);
 				GString *clock_cpu    = g_list_nth_data (arguments, 7);
 				GString *daemon_id    = g_list_nth_data (arguments, 8);
+				GString *home         = g_list_nth_data (arguments, 9);
 
 				gebr_comm_server_set_logged(server);
 
@@ -280,6 +284,7 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 				gebrm_daemon_set_clock_cpu(daemon, atof(clock_cpu->str));
 				gebrm_daemon_set_nfsid(daemon, nfsid->str);
 				gebrm_daemon_set_id(daemon, daemon_id->str);
+				gebrm_daemon_set_home_dir(daemon, home->str);
 
 				g_signal_emit(daemon, signals[DAEMON_INIT], 0, NULL, NULL);
 
@@ -961,4 +966,18 @@ gboolean
 gebrm_daemon_get_disconnecting(GebrmDaemon *daemon)
 {
 	return daemon->priv->is_disconnecting;
+}
+
+static void
+gebrm_daemon_set_home_dir(GebrmDaemon *daemon, const gchar *home)
+{
+	if (daemon->priv->home)
+		g_free(daemon->priv->home);
+	daemon->priv->home = g_strdup(home);
+}
+
+const gchar *
+gebrm_daemon_get_home_dir(GebrmDaemon *daemon)
+{
+	return daemon->priv->home;
 }

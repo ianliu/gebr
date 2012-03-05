@@ -426,7 +426,7 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			total_memory = gebrd_mem_info_get (meminfo, "MemTotal");
 			gchar *ncores = g_strdup_printf("%d", gebrd_cpu_info_n_procs(cpuinfo));
 			gebr_comm_protocol_socket_oldmsg_send(client->socket, FALSE,
-							      gebr_comm_protocol_defs.ret_def, 9,
+							      gebr_comm_protocol_defs.ret_def, 10,
 							      gebrd->hostname,
 							      server_type,
 							      accounts_list->str,
@@ -435,9 +435,10 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 							      gebrd->fs_lock->str,
 							      ncores,
 							      cpu_clock,
-							      gebrd_user_get_daemon_id(gebrd->user));
-			gebrd_cpu_info_free (cpuinfo);
-			gebrd_mem_info_free (meminfo);
+							      gebrd_user_get_daemon_id(gebrd->user),
+							      g_get_home_dir());
+			gebrd_cpu_info_free(cpuinfo);
+			gebrd_mem_info_free(meminfo);
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 			g_string_free(accounts_list, TRUE);
 			g_string_free(queue_list, TRUE);
