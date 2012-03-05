@@ -143,11 +143,12 @@ static void parameter_widget_set_icon(GebrGuiValidatableWidget *widget,
 							      GEBR_GEOXML_DOCUMENT_TYPE_FLOW,
 							      FALSE, &result, NULL);
 
-			if (gebr_validate_path(result, paths))
+			gchar *err_msg;
+			if (gebr_validate_path(result, paths, &err_msg))
 				__set_type_icon(self);
 			else
 				gebr_gui_file_entry_set_warning(GEBR_GUI_FILE_ENTRY(self->value_widget),
-								_("Cannot resolve path!"));
+								err_msg);
 			if (ok)
 				g_free(result);
 		}

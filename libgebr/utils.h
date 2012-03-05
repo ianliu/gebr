@@ -287,7 +287,8 @@ void gebr_gtk_bookmarks_remove_paths(const gchar *filename,
 gboolean gebr_verify_starting_slash (const gchar *string);
 
 gboolean gebr_validate_path(const gchar *path,
-			    gchar ***paths);
+			    gchar ***paths,
+			    gchar **err_msg);
 
 
 G_END_DECLS

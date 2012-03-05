@@ -510,12 +510,13 @@ void flow_edition_set_io(void)
 						      GEBR_GEOXML_DOCUMENT_TYPE_FLOW,
 						      FALSE, &tmp, NULL);
 
+		gchar *err_msg;
 		if (err) {
 			tooltip = g_strdup(err->message);
 			icon = GTK_STOCK_DIALOG_WARNING;
 			g_clear_error(&err);
-		} else if (!gebr_validate_path(tmp, paths)) {
-			tooltip = g_strdup(_("Cannot resolve path!"));
+		} else if (!gebr_validate_path(tmp, paths, &err_msg)) {
+			tooltip = err_msg;
 			icon = GTK_STOCK_DIALOG_WARNING;
 		} else {
 			tooltip = g_strdup_printf(_("Input file \"%s\""), result);
@@ -564,10 +565,11 @@ void flow_edition_set_io(void)
 						      GEBR_GEOXML_DOCUMENT_TYPE_FLOW,
 						      FALSE, &tmp, NULL);
 
+		gchar *err_msg;
 		if (err) {
 			tooltip = g_strdup(err->message);
-		} else if (!gebr_validate_path(tmp, paths)) {
-			tooltip = g_strdup(_("Cannot resolve path!"));
+		} else if (!gebr_validate_path(tmp, paths, &err_msg)) {
+			tooltip = err_msg;
 			icon = GTK_STOCK_DIALOG_WARNING;
 		} else {
 			if (is_append)
@@ -620,10 +622,11 @@ void flow_edition_set_io(void)
 						      GEBR_GEOXML_DOCUMENT_TYPE_FLOW,
 						      FALSE, &tmp, NULL);
 
+		gchar *err_msg;
 		if (err) {
 			tooltip = g_strdup(err->message);
-		} else if (!gebr_validate_path(result, paths)) {
-			tooltip = g_strdup(_("Cannot resolve path!"));
+		} else if (!gebr_validate_path(result, paths, &err_msg)) {
+			tooltip = err_msg;
 			icon = GTK_STOCK_DIALOG_WARNING;
 		} else {
 			if (is_append)

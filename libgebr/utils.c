@@ -1129,15 +1129,21 @@ gebr_verify_starting_slash (const gchar *string)
 
 gboolean
 gebr_validate_path(const gchar *path,
-		   gchar ***pvector)
+		   gchar ***pvector,
+		   gchar **err_msg)
 {
 	for (int i = 0; pvector[i]; i++) {
 		gchar *tmp = g_strdup_printf("<%s>", pvector[i][1]);
 		if (g_str_has_prefix(path, tmp))
 			return TRUE;
 	}
-	if (*path != '/')
+	if (*path != '/') {
+		if (*path == '<')
+			*err_msg = g_strdup(_("The specified line path does not exist"));
+		else
+			*err_msg = g_strdup(_("The path must either start with < or /"));
 		return FALSE;
+	}
 	else
 		return TRUE;
 }
