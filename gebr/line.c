@@ -611,7 +611,10 @@ path_validate(GtkEntry *entry)
 	if (path_ok) {
 		gtk_entry_set_icon_from_stock(entry,
 					      GTK_ENTRY_ICON_SECONDARY,
-					      NULL);
+					      GTK_STOCK_DIRECTORY);
+		gtk_entry_set_icon_tooltip_text(entry,
+		                                GTK_ENTRY_ICON_SECONDARY,
+		                                NULL);
 	}
 	else {
 		gtk_entry_set_icon_from_stock(entry,
