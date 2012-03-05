@@ -68,6 +68,7 @@ struct gebr_comm_protocol_defs {
 
 	struct gebr_comm_message_def cfrm_def;
 	struct gebr_comm_message_def path_def;
+	struct gebr_comm_message_def home_def;
 
 	struct gebr_comm_message_def prt_def;   // Maestro port         Maestro -> GeBR
 
