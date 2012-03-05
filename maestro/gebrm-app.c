@@ -1472,6 +1472,11 @@ on_new_connection(GebrCommListenSocket *listener,
 		g_object_set_data(G_OBJECT(socket), "client", client);
 		g_object_unref(stream);
 
+		if (app->priv->home)
+			gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
+							      gebr_comm_protocol_defs.home_def, 1,
+							      app->priv->home);
+
 		app->priv->connections = g_list_prepend(app->priv->connections, client);
 
 		for (GList *i = app->priv->daemons; i; i = i->next) {

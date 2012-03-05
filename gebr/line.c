@@ -288,8 +288,9 @@ on_base_entry_press(GtkEntry            *entry,
 
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
 	gchar *prefix = gebr_maestro_server_get_sftp_prefix(maestro);
-	gtk_file_chooser_set_current_folder_uri(GTK_FILE_CHOOSER(file_chooser), prefix);
+	gchar *home = g_build_filename(prefix, gebr_maestro_server_get_home_dir(maestro), NULL);
 	gtk_file_chooser_set_local_only(GTK_FILE_CHOOSER(file_chooser), FALSE);
+	gtk_file_chooser_set_current_folder_uri(GTK_FILE_CHOOSER(file_chooser), home);
 	gint response = gtk_dialog_run(GTK_DIALOG(file_chooser));
 
 	if (response == GTK_RESPONSE_OK) {
@@ -299,6 +300,7 @@ on_base_entry_press(GtkEntry            *entry,
 	}
 
 	g_free(prefix);
+	g_free(home);
 	gtk_widget_destroy(file_chooser);
 }
 
