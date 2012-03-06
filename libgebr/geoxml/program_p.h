@@ -19,6 +19,7 @@
 #define __GEBR_GEOXML_PROGRAM_P_H
 
 #include <gdome.h>
+#include <glib.h>
 
 #include "program.h"
 #include "program-parameter.h"
@@ -31,6 +32,11 @@ G_BEGIN_DECLS
  */
 GebrGeoXmlProgramParameter *__gebr_geoxml_program_new_parameter(GebrGeoXmlProgram * program, GdomeElement * before,
 								GebrGeoXmlParameterType parameter_type);
+
+void gebr_geoxml_program_mpi_add_tags(GebrGeoXmlProgram *self,
+				      const gchar *mpi);
+
+void gebr_geoxml_program_mpi_remove_tags(GebrGeoXmlProgram *self);
 
 G_END_DECLS
 #endif				//__GEBR_GEOXML_PROGRAM_P_H

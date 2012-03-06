@@ -28,7 +28,7 @@
 
 <!ELEMENT mpi (parameters)>
 
-<!ELEMENT program (title, binary, description, help, url, parameters, mpi)>
+<!ELEMENT program (title, binary, description, help, url, parameters, mpi?)>
 <!ATTLIST program
 	stdin	(yes | no)				#REQUIRED
 	stdout	(yes | no)				#REQUIRED

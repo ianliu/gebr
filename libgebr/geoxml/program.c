@@ -29,6 +29,7 @@
 #include "parameter.h"
 #include "parameter_group.h"
 #include "parameters.h"
+#include "parameters_p.h"
 #include "program.h"
 #include "program-parameter.h"
 #include "sequence.h"
@@ -562,4 +563,85 @@ gboolean gebr_geoxml_program_is_valid(GebrGeoXmlProgram *self,
 	gebr_geoxml_program_set_error_id(self, TRUE, 0);
 
 	return TRUE;
+}
+
+void
+gebr_geoxml_program_mpi_add_tags(GebrGeoXmlProgram *self,
+				 const gchar *mpi)
+{
+	GdomeElement *tmp = __gebr_geoxml_insert_new_element((GdomeElement*)self, "mpi", NULL);
+	GebrGeoXmlParameters *params = __gebr_geoxml_parameters_append_new(tmp);
+	GebrGeoXmlParameter *param = gebr_geoxml_parameters_append_parameter(params, GEBR_GEOXML_PARAMETER_TYPE_RANGE);
+	gebr_geoxml_parameter_set_label(param, _("Number of process to start"));
+	gebr_geoxml_program_parameter_set_number_min_max(GEBR_GEOXML_PROGRAM_PARAMETER(param), "1", "9999999");
+	gebr_geoxml_program_parameter_set_required(GEBR_GEOXML_PROGRAM_PARAMETER(param), TRUE);
+	gebr_geoxml_program_parameter_set_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(param), "np");
+	gebr_geoxml_object_unref(tmp);
+	gebr_geoxml_object_unref(params);
+	gebr_geoxml_object_unref(param);
+}
+
+void
+gebr_geoxml_program_mpi_remove_tags(GebrGeoXmlProgram *self)
+{
+	GdomeElement *tmp = __gebr_geoxml_get_first_element((GdomeElement*)self, "mpi");
+	if (tmp)
+		gebr_geoxml_object_unref(gdome_el_removeChild((GdomeElement*)self,
+							      (GdomeNode*)tmp, &exception));
+	gebr_geoxml_object_unref(tmp);
+}
+
+GebrGeoXmlParameter *
+get_mpi_parameter(GebrGeoXmlProgram *self,
+		  const gchar *keyword)
+{
+	GdomeElement *tmp = __gebr_geoxml_get_first_element((GdomeElement*)self, "mpi");
+
+	if (!tmp)
+		return NULL;
+
+	GdomeElement *params = __gebr_geoxml_get_first_element(tmp, "parameters");
+	gebr_geoxml_object_unref(tmp);
+
+	GebrGeoXmlSequence *seq = gebr_geoxml_parameters_get_first_parameter(GEBR_GEOXML_PARAMETERS(params));
+	for (; seq; gebr_geoxml_sequence_next(&seq)) {
+		GebrGeoXmlProgramParameter *prog = GEBR_GEOXML_PROGRAM_PARAMETER(seq);
+		gchar *key = gebr_geoxml_program_parameter_get_keyword(prog);
+		if (g_strcmp0(key, keyword) == 0)
+			break;
+	}
+
+	gebr_geoxml_object_unref(params);
+	return GEBR_GEOXML_PARAMETER(seq);
+}
+
+void
+gebr_geoxml_program_mpi_set_n_process(GebrGeoXmlProgram *self,
+				      gint n)
+{
+	g_return_if_fail(self != NULL);
+
+	GebrGeoXmlParameter *np = get_mpi_parameter(self, "np");
+
+	if (!np)
+		return;
+
+	gchar *tmp = g_strdup_printf("%d", n);
+	gebr_geoxml_program_parameter_set_first_value(GEBR_GEOXML_PROGRAM_PARAMETER(np), FALSE, tmp);
+	g_free(tmp);
+}
+
+gint
+gebr_geoxml_program_mpi_get_n_process(GebrGeoXmlProgram *self)
+{
+	g_return_val_if_fail(self != NULL, 0);
+
+	GebrGeoXmlParameter *np = get_mpi_parameter(self, "np");
+
+	g_return_val_if_fail(np != NULL, 0);
+
+	gchar *tmp = gebr_geoxml_program_parameter_get_first_value(GEBR_GEOXML_PROGRAM_PARAMETER(np), FALSE);
+	gint n = atoi(tmp);
+	g_free(tmp);
+	return n;
 }

@@ -328,6 +328,11 @@ gboolean gebr_geoxml_program_is_valid(GebrGeoXmlProgram *self,
 				      GebrValidator *validator,
 				      GError **err);
 
+void gebr_geoxml_program_mpi_set_n_process(GebrGeoXmlProgram *self,
+					   gint n);
+
+gint gebr_geoxml_program_mpi_get_n_process(GebrGeoXmlProgram *self);
+
 G_END_DECLS
 
 #endif /* __GEBR_GEOXML_PROGRAM_H__ */
