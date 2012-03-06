@@ -25,7 +25,7 @@ AC_PREREQ([2.59])
 # set GEBR_BINARY_AGE and GEBR_INTERFACE_AGE to 0.
 
 m4_define(gebr_major_version,   [0])
-m4_define(gebr_minor_version,  [16])
+m4_define(gebr_minor_version,  [17])
 m4_define(gebr_micro_version,   [1])
 m4_define([gebr_interface_age], [0])
 m4_define([gebr_binary_age],
