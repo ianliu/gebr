@@ -212,6 +212,11 @@ void gebr_geoxml_program_set_mpi(GebrGeoXmlProgram * program, const gchar * mpi_
 	if (program == NULL || mpi_type == NULL)
 		return;
 	__gebr_geoxml_set_attr_value((GdomeElement*)program, "mpi", mpi_type);
+
+	if (!*mpi_type)
+		gebr_geoxml_program_mpi_remove_tags(program);
+	else
+		gebr_geoxml_program_mpi_add_tags(program, mpi_type);
 }
 
 void gebr_geoxml_program_set_url(GebrGeoXmlProgram * program, const gchar * url)
