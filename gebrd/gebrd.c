@@ -356,6 +356,7 @@ void gebrd_config_load(void)
 		mpi_config->end_cmd = gebr_g_key_file_load_string_key(key_file, groups[i], "end_command", "");
 
 		gebrd->mpi_flavors = g_list_prepend(gebrd->mpi_flavors, mpi_config);
+
 	}
 
 out:

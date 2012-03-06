@@ -45,6 +45,10 @@ struct gebr_geoxml_program {
 	GdomeElement *element;
 };
 
+typedef enum{
+	GEBR_GEOXML_PROGRAM_MPI_TYPE_OPENMPI,
+	GEBR_GEOXML_PROGRAM_MPI_TYPE_MPICH2
+} GebrGeoxmlProgramMpiType;
 /*
  * library functions.
  */

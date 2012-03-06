@@ -46,6 +46,7 @@ struct _GebrmDaemonPriv {
 	gchar *error_msg;
 
 	gint uncompleted_tasks;
+	GList *mpi_flavors;
 };
 
 enum {
@@ -262,7 +263,7 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 			if (ret_hash == gebr_comm_protocol_defs.ini_def.code_hash) {
 				GList *arguments;
 
-				if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 10)) == NULL)
+				if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 11)) == NULL)
 					goto err;
 
 				GString *hostname     = g_list_nth_data(arguments, 0);
@@ -274,6 +275,7 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 				GString *clock_cpu    = g_list_nth_data (arguments, 7);
 				GString *daemon_id    = g_list_nth_data (arguments, 8);
 				GString *home         = g_list_nth_data (arguments, 9);
+				GString *mpi_flavors  = g_list_nth_data (arguments, 10);
 
 				gebr_comm_server_set_logged(server);
 
@@ -285,6 +287,8 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 				gebrm_daemon_set_nfsid(daemon, nfsid->str);
 				gebrm_daemon_set_id(daemon, daemon_id->str);
 				gebrm_daemon_set_home_dir(daemon, home->str);
+				g_debug("Definindo variavel mpi_flavors para '%s'", mpi_flavors->str);
+				gebrm_daemon_set_mpi_flavors(daemon, mpi_flavors->str);
 
 				g_signal_emit(daemon, signals[DAEMON_INIT], 0, NULL, NULL);
 
@@ -522,6 +526,7 @@ gebrm_daemon_finalize(GObject *object)
 	g_free(daemon->priv->id);
 	g_free(daemon->priv->error_msg);
 	g_free(daemon->priv->error_type);
+	g_list_free(daemon->priv->mpi_flavors);
 	g_hash_table_destroy(daemon->priv->tasks);
 	if (daemon->priv->client)
 		g_object_unref(daemon->priv->client);
@@ -536,6 +541,7 @@ gebrm_daemon_class_init(GebrmDaemonClass *klass)
 	object_class->get_property = gebrm_daemon_get_property;
 	object_class->set_property = gebrm_daemon_set_property;
 	object_class->finalize = gebrm_daemon_finalize;
+
 
 	signals[STATE_CHANGE] =
 		g_signal_new("state-change",
@@ -641,6 +647,7 @@ gebrm_daemon_init(GebrmDaemon *daemon)
 	daemon->priv->ac = g_strdup("on");
 	daemon->priv->is_initialized = FALSE;
 	daemon->priv->tasks = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
+	daemon->priv->mpi_flavors = NULL;
 }
 
 GebrmDaemon *
@@ -980,4 +987,17 @@ const gchar *
 gebrm_daemon_get_home_dir(GebrmDaemon *daemon)
 {
 	return daemon->priv->home;
+}
+
+void
+gebrm_daemon_set_mpi_flavors(GebrmDaemon *daemon, gchar *flavors)
+{
+	gchar **entries = g_strsplit(flavors, ",", -1);
+	gint i = 0;
+	while(entries[i]){
+		daemon->priv->mpi_flavors = g_list_prepend(daemon->priv->mpi_flavors, entries[i]);
+		g_debug("Definindo a variavel daemon->priv->mpi_flavors[%d] para %s", i, entries[i])  ;
+		i++;
+	}
+	g_strfreev(entries);
 }

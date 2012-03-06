@@ -416,6 +416,18 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 				server_type = "regular";
 
 			/* send return */
+			void get_mpi_flavors(GebrdMpiConfig *mpi_config, GString *mpi_flavors){
+				mpi_flavors = g_string_prepend_c(mpi_flavors, ',');
+				mpi_flavors = g_string_prepend(mpi_flavors, mpi_config->name->str);
+				g_debug("%s", mpi_config->name->str)  ;
+			}
+
+			GString *mpi_flavors = g_string_new("");
+			g_list_foreach(gebrd->mpi_flavors, (GFunc) get_mpi_flavors, mpi_flavors);
+			if (mpi_flavors->len > 0)
+				mpi_flavors = g_string_erase(mpi_flavors, mpi_flavors->len-1, 1);
+
+			g_debug("------------on daemon, Sending %s", mpi_flavors->str)  ;
 			const gchar *model_name;
 			const gchar *cpu_clock;
 			const gchar *total_memory;
@@ -426,7 +438,7 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			total_memory = gebrd_mem_info_get (meminfo, "MemTotal");
 			gchar *ncores = g_strdup_printf("%d", gebrd_cpu_info_n_procs(cpuinfo));
 			gebr_comm_protocol_socket_oldmsg_send(client->socket, FALSE,
-							      gebr_comm_protocol_defs.ret_def, 10,
+							      gebr_comm_protocol_defs.ret_def, 11,
 							      gebrd->hostname,
 							      server_type,
 							      accounts_list->str,
@@ -436,7 +448,8 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 							      ncores,
 							      cpu_clock,
 							      gebrd_user_get_daemon_id(gebrd->user),
-							      g_get_home_dir());
+							      g_get_home_dir(),
+							      mpi_flavors->str);
 			gebrd_cpu_info_free(cpuinfo);
 			gebrd_mem_info_free(meminfo);
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
