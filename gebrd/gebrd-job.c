@@ -380,7 +380,6 @@ job_new(GebrdJob **_job,
 	GString *nice,
 	GString *flow_xml,
 	GString *account,
-	GString *num_processes,
 	GString *paths)
 {
 	GebrdJob *job = GEBRD_JOB(g_object_new(GEBRD_JOB_TYPE, NULL, NULL));
@@ -405,7 +404,6 @@ job_new(GebrdJob **_job,
 	job->niceness = g_strcmp0(nice->str, "0") == 0 ? 0 : 19;
 	job->parent.status = JOB_STATUS_INITIAL;
 	g_string_assign(job->parent.moab_account, account->str);
-	g_string_assign(job->parent.n_process, num_processes->str);
 	g_string_assign(job->paths, paths->str);
 
 	*_job = job;

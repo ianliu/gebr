@@ -96,7 +96,6 @@ void job_new(GebrdJob **_job,
 	     GString *nice,
 	     GString *flow_xml,
 	     GString *account,
-	     GString *num_processes,
 	     GString *paths);
 
 /**
