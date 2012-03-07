@@ -498,9 +498,7 @@ err:
 			send_server_status_message(app, socket, daemon, gebrm_daemon_get_autoconnect(daemon));
 
 			queue_client_info(app, daemon, i->data);
-
-			if (daemon)
-				gebrm_app_send_mpi_flavors(i->data, daemon);
+			gebrm_app_send_mpi_flavors(socket, daemon);
 		}
 	}
 }
@@ -1100,8 +1098,9 @@ on_client_parse_messages(GebrCommProtocolSocket *socket,
 					queue_client_info(app, i->data, client);
 					send_server_status_message(app, socket, i->data, gebrm_daemon_get_autoconnect(i->data));
 					send_groups_definitions(socket, i->data);
-					gebrm_app_send_mpi_flavors(socket, i->data);
 				}
+				if ( state == SERVER_STATE_LOGGED) 
+					gebrm_app_send_mpi_flavors(socket, i->data);
 			}
 
 			if (app->priv->home)
