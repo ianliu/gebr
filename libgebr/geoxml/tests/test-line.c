@@ -90,19 +90,18 @@ void test_gebr_geoxml_line_set_flow_source(void)
 void test_gebr_geoxml_line_get_paths_number(void)
 {
 	GebrGeoXmlLine *line = NULL;
-	//const gchar *path;
 	glong n;
 
 	n = gebr_geoxml_line_get_paths_number(line);
-	g_assert_cmpint(n,==,-1);
+	g_assert_cmpint(n, ==, -1);
 
 	line = gebr_geoxml_line_new();
 	n = gebr_geoxml_line_get_paths_number(line);
-	g_assert_cmpint(n,==,0);
+	g_assert_cmpint(n, ==, 0);
 
-//	gebr_geoxml_line_append_path(line, "path1");
+	gebr_geoxml_line_append_path(line, "path1", "foo");
 	n = gebr_geoxml_line_get_paths_number(line);
-	g_assert_cmpint(n,==,1);
+	g_assert_cmpint(n, ==, 1);
 }
 
 void test_gebr_geoxml_line_get_path(void)
@@ -116,37 +115,20 @@ void test_gebr_geoxml_line_get_path(void)
 	line = gebr_geoxml_line_new();
 
 	x = gebr_geoxml_line_get_path(line, &sequence, 0);
-	g_assert_cmpint(x,==,-5);
+	g_assert_cmpint(x, ==, -5);
 
-//	line_path = gebr_geoxml_line_append_path(line, "path1");
+	line_path = gebr_geoxml_line_append_path(line, "path1", "foo");
 	x = gebr_geoxml_line_get_path(line, &sequence, 0);
-	g_assert_cmpint(x,==,0);
+	g_assert_cmpint(x, ==, 0);
 	path = gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(line_path));
-	g_assert_cmpstr("path1",==,path);
+	g_assert_cmpstr("path1", ==, path);
 
-//	line_path = gebr_geoxml_line_append_path(line, "path2");
+	line_path = gebr_geoxml_line_append_path(line, "path2", "bar");
 	x = gebr_geoxml_line_get_path(line, &sequence, 1);
-	g_assert_cmpint(x,==,0);
+	g_assert_cmpint(x, ==, 0);
 	path = gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(line_path));
-	g_assert_cmpstr("path2",==,path);
+	g_assert_cmpstr("path2", ==, path);
 }
-
-//void test_duplicate_paths(void)
-//{
-//	glong n;
-//	GebrGeoXmlLine *line = NULL;
-//
-//	line = gebr_geoxml_line_new();
-//	gebr_geoxml_line_append_path(line, "path1");
-//	gebr_geoxml_line_append_path(line, "path1");
-//
-//	n = gebr_geoxml_line_get_paths_number(line);
-//	g_assert_cmpint (n, ==, 1);
-//
-//	gebr_geoxml_line_append_path(line, "path-new");
-//	n = gebr_geoxml_line_get_paths_number(line);
-//	g_assert_cmpint (n, ==, 2);
-//}
 
 void test_gebr_geoxml_line_get_group(void)
 {
@@ -193,9 +175,8 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/geoxml/line/get_flow_number",test_gebr_geoxml_line_get_flows_number);
 	g_test_add_func("/libgebr/geoxml/line/get_flow",test_gebr_geoxml_line_get_flow);
 	g_test_add_func("/libgebr/geoxml/line/set_flow_source",test_gebr_geoxml_line_set_flow_source);
-//	g_test_add_func("/libgebr/geoxml/line/get_paths_number",test_gebr_geoxml_line_get_paths_number);
-//	g_test_add_func("/libgebr/geoxml/line/get_paths",test_gebr_geoxml_line_get_path);
-//	g_test_add_func("/libgebr/geoxml/line/duplicate_paths",test_duplicate_paths);
+	g_test_add_func("/libgebr/geoxml/line/get_paths_number",test_gebr_geoxml_line_get_paths_number);
+	g_test_add_func("/libgebr/geoxml/line/get_paths",test_gebr_geoxml_line_get_path);
 	g_test_add_func("/libgebr/geoxml/line/get_group",test_gebr_geoxml_line_get_group);
 	g_test_add_func("/libgebr/geoxml/line/create_key",test_gebr_geoxml_line_create_key);
 

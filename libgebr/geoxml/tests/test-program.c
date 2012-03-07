@@ -497,7 +497,7 @@ void test_gebr_geoxml_number_process_mpi(void)
 	g_assert(nprocess == 1);
 
 	gebr_geoxml_object_unref(program);
-	gebr_geoxml_document_unref(flow);
+	gebr_geoxml_document_unref(GEBR_GEOXML_DOCUMENT(flow));
 }
 
 int main(int argc, char *argv[])
