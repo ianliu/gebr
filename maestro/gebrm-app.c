@@ -156,10 +156,8 @@ gebrm_app_send_mpi_flavors(GebrCommProtocolSocket *socket, GebrmDaemon *daemon)
 	gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
 					      gebr_comm_protocol_defs.mpi_def, 2,
 					      gebrm_daemon_get_address(daemon),
-					      flavors
-					     );
+					      flavors);
 	g_debug("on maestro, function %s,  daemon %s, SENDING MPI FLAVOR: %s", __func__, gebrm_daemon_get_address(daemon), flavors)  ;
-	g_free(flavors);
 	return TRUE;
 }
 
