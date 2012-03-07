@@ -232,6 +232,9 @@ on_assistant_close(GtkAssistant *assistant,
 		project_line_info_update();
 		gtk_widget_destroy(GTK_WIDGET(assistant));
 	}
+	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
+	gchar *home = g_build_filename(gebr_maestro_server_get_home_dir(maestro), NULL);
+	gebr_geoxml_line_append_path(gebr.line, "HOME", home);
 }
 
 static void
