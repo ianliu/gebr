@@ -59,6 +59,7 @@ static void gebrd_job_init(GebrdJob * job)
 	job->job_percentage= g_string_new(NULL);
 	job->gid = g_string_new(NULL);
 	job->paths = g_string_new(NULL);
+	job->mpi_servers = NULL;
 }
 
 static void gebrd_job_class_init(GebrdJobClass * klass)
@@ -68,7 +69,7 @@ static void gebrd_job_class_init(GebrdJobClass * klass)
 static void job_assembly_cmdline(GebrdJob *job);
 static void job_process_finished(GebrCommProcess * process, gint status, GebrdJob *job);
 static void job_send_signal_on_moab(const char * signal, GebrdJob * job);
-static GebrdMpiInterface * job_get_mpi_impl(const gchar * mpi_name, gint np);
+static GebrdMpiInterface *job_get_mpi_impl(const gchar * mpi_name, gint np, GList *mpi_servers);
 static gchar *escape_quote_and_slash(const gchar *str);
 static gchar *replace_quotes(gchar *str);
 
@@ -380,7 +381,8 @@ job_new(GebrdJob **_job,
 	GString *nice,
 	GString *flow_xml,
 	GString *account,
-	GString *paths)
+	GString *paths,
+	GString *servers_mpi)
 {
 	GebrdJob *job = GEBRD_JOB(g_object_new(GEBRD_JOB_TYPE, NULL, NULL));
 	job->process = gebr_comm_process_new();
@@ -405,6 +407,13 @@ job_new(GebrdJob **_job,
 	job->parent.status = JOB_STATUS_INITIAL;
 	g_string_assign(job->parent.moab_account, account->str);
 	g_string_assign(job->paths, paths->str);
+
+	gchar **tmp = g_strsplit(servers_mpi->str, ",", -1);
+	for (gint i = 0; tmp[i]; i++) {
+		g_debug("CHAMATIVA: %s", tmp[i]);
+		job->mpi_servers = g_list_prepend(job->mpi_servers, g_strdup(tmp[i]));
+	}
+	g_strfreev(tmp);
 
 	*_job = job;
 	gebrd->user->jobs = g_list_append(gebrd->user->jobs, job);
@@ -746,7 +755,8 @@ err:	g_string_free(cmd_line, TRUE);
 
 }
 
-static GebrdMpiInterface * job_get_mpi_impl(const gchar * mpi_name, gint np)
+static GebrdMpiInterface *
+job_get_mpi_impl(const gchar * mpi_name, gint np, GList *servers)
 {
 	const GebrdMpiConfig * config = gebrd_get_mpi_config_by_name(mpi_name);
 
@@ -757,7 +767,7 @@ static GebrdMpiInterface * job_get_mpi_impl(const gchar * mpi_name, gint np)
 	gchar *tmp = g_strdup_printf("%d", np);
 
 	if (strcmp(mpi_name, "openmpi") == 0)
-		ret = gebrd_open_mpi_new(tmp, config);
+		ret = gebrd_open_mpi_new(tmp, config, servers);
 
 	return ret;
 }
@@ -1238,7 +1248,7 @@ static void job_assembly_cmdline(GebrdJob *job)
 	const gchar * mpiname;
 	mpiname = gebr_geoxml_program_get_mpi(GEBR_GEOXML_PROGRAM(program));
 	gint np = gebr_geoxml_program_mpi_get_n_process(GEBR_GEOXML_PROGRAM(program));
-	mpi = job_get_mpi_impl(mpiname, np);
+	mpi = job_get_mpi_impl(mpiname, np, job->mpi_servers);
 
 	if (strlen(mpiname) && !mpi) {
 		job_issue(job,
@@ -1364,7 +1374,7 @@ static void job_assembly_cmdline(GebrdJob *job)
 		}
 
 		np = gebr_geoxml_program_mpi_get_n_process(GEBR_GEOXML_PROGRAM(program));
-		mpi = job_get_mpi_impl(gebr_geoxml_program_get_mpi(GEBR_GEOXML_PROGRAM(program)), np);
+		mpi = job_get_mpi_impl(gebr_geoxml_program_get_mpi(GEBR_GEOXML_PROGRAM(program)), np, job->mpi_servers);
 
 		/* How to connect chained programs */
 		int chain_option = gebr_geoxml_program_get_stdin(GEBR_GEOXML_PROGRAM(program)) + (previous_stdout << 1);

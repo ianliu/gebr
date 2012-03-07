@@ -60,7 +60,6 @@ struct _GebrdJob {
 
 	/* Temporary variables to build command line */
 	gsize n_vars;
-
 	gint effprocs;
 	gint niceness;
 
@@ -72,6 +71,7 @@ struct _GebrdJob {
 	gboolean is_parallelizable;
 	GString *job_percentage;
 	GString *paths;
+	GList *mpi_servers;
 
 	GString *buf[2];
 	gint timeout[2];
@@ -96,7 +96,8 @@ void job_new(GebrdJob **_job,
 	     GString *nice,
 	     GString *flow_xml,
 	     GString *account,
-	     GString *paths);
+	     GString *paths,
+	     GString *servers_mpi);
 
 /**
  * gebrd_job_append:

@@ -151,7 +151,7 @@ gebrm_app_send_mpi_flavors(GebrCommProtocolSocket *socket, GebrmDaemon *daemon)
 {
 	if (!daemon)
 		return FALSE;
-	gchar *flavors = gebrm_daemon_get_mpi_flavors(daemon);
+	const gchar *flavors = gebrm_daemon_get_mpi_flavors(daemon);
 
 	gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
 					      gebr_comm_protocol_defs.mpi_def, 2,

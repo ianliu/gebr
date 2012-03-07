@@ -572,7 +572,7 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			g_debug("SERVERS MPI %s", servers_mpi->str);
 
 			/* try to run and send return */
-			job_new(&job, client, gid, id, frac, speed, nice, flow_xml, account, paths);
+			job_new(&job, client, gid, id, frac, speed, nice, flow_xml, account, paths, servers_mpi);
 
 #ifdef DEBUG
 			gchar *env_delay = getenv("GEBRD_RUN_DELAY_SEC");
