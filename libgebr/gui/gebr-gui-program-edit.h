@@ -43,6 +43,9 @@ typedef struct {
 	gchar *prefix;
 
 	GebrValidator *validator;
+
+	//MPI parameters
+	GebrGeoXmlParameters *mpi_params;
 } GebrGuiProgramEdit;
 
 /**

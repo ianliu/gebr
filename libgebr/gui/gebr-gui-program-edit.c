@@ -85,6 +85,14 @@ gebr_gui_program_edit_setup_ui(GebrGeoXmlProgram * program,
 	program_edit->use_default = use_default;
 	program_edit->widget = vbox = gtk_vbox_new(FALSE, 0);
 	program_edit->validator = validator;
+
+	//MPI Program
+	const gchar *mpi = gebr_geoxml_program_get_mpi(program);
+	if (*mpi)
+		program_edit->mpi_params = gebr_geoxml_program_mpi_get_parameters(program);
+	else
+		program_edit->mpi_params = NULL;
+
 	program_edit->prefix = g_strdup(prefix);
 	gtk_widget_show(vbox);
 	program_edit->title_label = title_label = gtk_label_new(NULL);
@@ -156,8 +164,18 @@ void gebr_gui_program_edit_reload(GebrGuiProgramEdit *program_edit, GebrGeoXmlPr
 	}
 
 	gtk_container_foreach(GTK_CONTAINER(program_edit->scrolled_window), (GtkCallback) gtk_widget_destroy, NULL);
+
+	GtkWidget *vbox = gtk_vbox_new(FALSE, 5);
+
+	if (program_edit->mpi_params) {
+		widget = gebr_gui_program_edit_load(program_edit, program_edit->mpi_params);
+		gtk_box_pack_start(GTK_BOX(vbox), widget, FALSE, TRUE, 0);
+	}
 	widget = gebr_gui_program_edit_load(program_edit, gebr_geoxml_program_get_parameters(program_edit->program));
-	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(program_edit->scrolled_window), widget);
+	gtk_box_pack_start(GTK_BOX(vbox), widget, TRUE, TRUE, 0);
+	gtk_widget_show_all(vbox);
+
+	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(program_edit->scrolled_window), vbox);
 }
 
 /*
