@@ -74,8 +74,6 @@ enum {
 static void mount_enclosing_ready_cb(GFile *location, GAsyncResult *res,
 				     GebrMaestroServer *maestro);
 
-static void unmount_ready_cb(GMount *mount, GAsyncResult *res, gpointer quit);
-
 static void log_message(GebrCommServer *server, GebrLogMessageType type,
 			     const gchar *message, gpointer user_data);
 
@@ -429,26 +427,6 @@ mount_enclosing_ready_cb(GFile *location,
 		g_object_unref(maestro->priv->mount_location);
 		maestro->priv->mount_location = NULL;
 	}
-}
-
-static void
-unmount_ready_cb(GMount *mount,
-		 GAsyncResult *res,
-		 gpointer data)
-{
-	gboolean success;
-	GError *error = NULL;
-	gboolean quit = GPOINTER_TO_UINT(data);
-
-	success = g_mount_unmount_with_operation_finish(mount, res, &error);
-
-	if (success || g_error_matches(error, G_IO_ERROR, G_IO_ERROR_ALREADY_MOUNTED))
-		g_debug("Unmounted!");
-	else
-		g_debug("Not unmount :(");
-
-	if (quit)
-		gebr_quit(TRUE);
 }
 
 static gboolean
