@@ -613,12 +613,12 @@ gebrm_update_tags_on_list_of_servers(GebrmApp *app,
 }
 
 static GList *
-get_comm_servers_list(GebrmApp *app, const gchar *group, const gchar *group_type)
+get_comm_servers_list(GebrmApp *app, const gchar *group, const gchar *group_type, const gchar *mpi)
 {
 	GList *servers = NULL;
 	gboolean is_single = g_strcmp0(group_type, "daemon") == 0;
 
-	if (is_single) { 
+	if (is_single) {
 		for (GList *i = app->priv->daemons; i; i = i->next) {
 			if (g_str_equal(gebrm_daemon_get_address(i->data), group)) {
 				servers = g_list_prepend(servers, i->data);
@@ -626,7 +626,7 @@ get_comm_servers_list(GebrmApp *app, const gchar *group, const gchar *group_type
 			}
 		}
 	} else {
-		if (g_strcmp0(group,"")==0) {	//All servers from maestro 
+		if (g_strcmp0(group,"") == 0) {	//All servers from maestro
 			for (GList *i = app->priv->daemons; i; i = i->next) {
 				if (gebr_comm_server_is_logged(gebrm_daemon_get_server(i->data)))
 					servers = g_list_prepend(servers, i->data);
@@ -639,6 +639,11 @@ get_comm_servers_list(GebrmApp *app, const gchar *group, const gchar *group_type
 					servers = g_list_prepend(servers, i->data);
 			}
 		}
+	}
+
+	for (GList *i = servers; i; i = i->next) {
+		if (!gebrm_daemon_accepts_mpi(i->data, mpi))
+			servers = g_list_delete_link(servers, i);
 	}
 
 	return servers;
@@ -923,7 +928,15 @@ on_client_request(GebrCommProtocolSocket *socket,
 			gebrm_job_info_free(&info);
 			gebrm_app_job_controller_add(app, job);
 
-			GList *servers = get_comm_servers_list(app, name, group_type);
+			const gchar *mpi;
+			GebrGeoXmlProgram *mpi_prog = gebr_geoxml_flow_get_first_mpi_program(*pflow);
+			if (mpi_prog)
+				mpi = gebr_geoxml_program_get_mpi(mpi_prog);
+			else
+				mpi = "";
+			gebr_geoxml_object_unref(mpi_prog);
+
+			GList *servers = get_comm_servers_list(app, name, group_type, mpi);
 			GebrCommRunner *runner = gebr_comm_runner_new(GEBR_GEOXML_DOCUMENT(*pflow),
 			                                              servers, gebrm_job_get_id(job),
 								      gid, parent_id, speed, nice,
