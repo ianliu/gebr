@@ -998,8 +998,26 @@ gebrm_daemon_set_mpi_flavors(GebrmDaemon *daemon, gchar *flavors)
 	daemon->priv->mpi_flavors = g_strdup(flavors);
 }
 
-gchar*
+const gchar *
 gebrm_daemon_get_mpi_flavors(GebrmDaemon *daemon)
 {
 	return daemon->priv->mpi_flavors;
+}
+
+gboolean
+gebrm_daemon_accepts_mpi(GebrmDaemon *daemon,
+                         const gchar *flavor)
+{
+	gboolean retval = FALSE;
+	gchar **flavors = g_strsplit(daemon->priv->mpi_flavors, ",", -1);
+
+	for (gint i = 0; flavors; i++) {
+		if (g_strcmp0(flavors[i], flavor) == 0) {
+			retval = TRUE;
+			break;
+		}
+	}
+	g_strfreev(flavors);
+
+	return retval;
 }

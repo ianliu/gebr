@@ -200,7 +200,11 @@ const gchar *gebrm_daemon_get_home_dir(GebrmDaemon *daemon);
 
 void gebrm_daemon_set_mpi_flavors(GebrmDaemon *daemon, gchar *flavors);
 
-gchar *gebrm_daemon_get_mpi_flavors(GebrmDaemon *daemon);
+const gchar *gebrm_daemon_get_mpi_flavors(GebrmDaemon *daemon);
+
+gboolean gebrm_daemon_accepts_mpi(GebrmDaemon *daemon,
+                                  const gchar *flavor);
+
 G_END_DECLS
 
 #endif /* __GEBRM_DAEMON_H__ */
