@@ -32,6 +32,7 @@ struct _GebrDaemonServerPriv {
 	GebrCommServerState state;
 	GList *tags;
 	gchar *maestro_addr;
+	GList *mpi_flavors;
 };
 
 enum {
@@ -119,6 +120,7 @@ gebr_daemon_server_finalize(GObject *object)
 	g_list_foreach(daemon->priv->tags, (GFunc)g_free, NULL);
 	g_list_free(daemon->priv->tags);
 	g_free(daemon->priv->maestro_addr);
+	g_list_free(daemon->priv->mpi_flavors);
 
 	G_OBJECT_CLASS(gebr_daemon_server_parent_class)->finalize(object);
 }
@@ -176,6 +178,7 @@ gebr_daemon_server_init(GebrDaemonServer *daemon)
 	daemon->priv->tags = NULL;
 	daemon->priv->maestro_addr = NULL;
 	daemon->priv->ac = TRUE;
+	daemon->priv->mpi_flavors = NULL;
 }
 
 GebrDaemonServer *
@@ -313,4 +316,24 @@ const gchar *
 gebr_daemon_server_get_hostname(GebrDaemonServer *daemon)
 {
 	return daemon->priv->hostname;
+}
+gboolean
+gebr_daemon_server_set_mpi_flavors(GebrDaemonServer *daemon, gchar *flavors)
+{
+	g_debug(" on %s", __func__ )  ;
+	gchar **entries = g_strsplit(flavors, ",", -1);
+	gint i = 0;
+	if (!daemon)
+		return FALSE;
+	while(entries[i]){
+		daemon->priv->mpi_flavors = g_list_prepend(daemon->priv->mpi_flavors, entries[i]);
+		g_debug("Definindo no GebrDaemon daemon->priv->mpi_flavors[%d] para %s", i, entries[i])  ;
+		i++;
+	}
+	g_strfreev(entries);
+	return TRUE;
+}
+GList *
+gebr_daemon_server_get_mpi_flavors(GebrDaemonServer *daemon){
+	return daemon->priv->mpi_flavors;
 }

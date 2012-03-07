@@ -27,6 +27,10 @@
 
 G_BEGIN_DECLS
 
+typedef enum{
+	GEBR_GEOXML_PROGRAM_MPI_TYPE_OPENMPI,
+	GEBR_GEOXML_PROGRAM_MPI_TYPE_MPICH2
+} GebrGeoxmlProgramMpiType;
 /**
  * \struct GebrGeoXmlProgram program.h geoxml/program.h
  * \brief
@@ -334,6 +338,10 @@ void gebr_geoxml_program_mpi_set_n_process(GebrGeoXmlProgram *self,
 gint gebr_geoxml_program_mpi_get_n_process(GebrGeoXmlProgram *self);
 
 GebrGeoXmlParameters *gebr_geoxml_program_mpi_get_parameters(GebrGeoXmlProgram *self);
+
+GebrGeoxmlProgramMpiType gebr_geoxml_program_mpi_type_str_to_enum(const gchar *mpi_flavor);
+
+const char* gebr_geoxml_program_mpi_type_enum_to_str(GebrGeoxmlProgramMpiType *flavor);
 
 G_END_DECLS
 

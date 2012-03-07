@@ -25,6 +25,7 @@
 #include "gebrm-task.h"
 
 #include <libgebr/comm/gebr-comm.h>
+#include "libgebr/geoxml/program.h"
 
 struct _GebrmDaemonPriv {
 	gboolean is_initialized;
@@ -46,7 +47,7 @@ struct _GebrmDaemonPriv {
 	gchar *error_msg;
 
 	gint uncompleted_tasks;
-	GList *mpi_flavors;
+	gchar *mpi_flavors;
 };
 
 enum {
@@ -526,7 +527,7 @@ gebrm_daemon_finalize(GObject *object)
 	g_free(daemon->priv->id);
 	g_free(daemon->priv->error_msg);
 	g_free(daemon->priv->error_type);
-	g_list_free(daemon->priv->mpi_flavors);
+	g_free(daemon->priv->mpi_flavors);
 	g_hash_table_destroy(daemon->priv->tasks);
 	if (daemon->priv->client)
 		g_object_unref(daemon->priv->client);
@@ -992,12 +993,13 @@ gebrm_daemon_get_home_dir(GebrmDaemon *daemon)
 void
 gebrm_daemon_set_mpi_flavors(GebrmDaemon *daemon, gchar *flavors)
 {
-	gchar **entries = g_strsplit(flavors, ",", -1);
-	gint i = 0;
-	while(entries[i]){
-		daemon->priv->mpi_flavors = g_list_prepend(daemon->priv->mpi_flavors, entries[i]);
-		g_debug("Definindo a variavel daemon->priv->mpi_flavors[%d] para %s", i, entries[i])  ;
-		i++;
-	}
-	g_strfreev(entries);
+	if (daemon->priv->mpi_flavors)
+		g_free(daemon->priv->mpi_flavors);
+	daemon->priv->mpi_flavors = g_strdup(flavors);
+}
+
+gchar*
+gebrm_daemon_get_mpi_flavors(GebrmDaemon *daemon)
+{
+	return daemon->priv->mpi_flavors;
 }

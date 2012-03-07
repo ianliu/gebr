@@ -48,10 +48,6 @@ struct gebr_geoxml_program {
 	GdomeElement *element;
 };
 
-typedef enum{
-	GEBR_GEOXML_PROGRAM_MPI_TYPE_OPENMPI,
-	GEBR_GEOXML_PROGRAM_MPI_TYPE_MPICH2
-} GebrGeoxmlProgramMpiType;
 /*
  * library functions.
  */
@@ -690,4 +686,26 @@ gebr_geoxml_program_mpi_get_n_process(GebrGeoXmlProgram *self)
 	gint n = atoi(tmp);
 	g_free(tmp);
 	return n;
+}
+
+GebrGeoxmlProgramMpiType
+gebr_geoxml_program_mpi_type_str_to_enum(const gchar *mpi_flavor)
+{
+	if (g_strcmp0(mpi_flavor, "openmpi"))
+	    return GEBR_GEOXML_PROGRAM_MPI_TYPE_OPENMPI;
+	else if (g_strcmp0(mpi_flavor, "mpich2"))
+		return GEBR_GEOXML_PROGRAM_MPI_TYPE_MPICH2;
+	else
+		return -1;
+}
+
+const char*
+gebr_geoxml_program_mpi_type_enum_to_str(GebrGeoxmlProgramMpiType *flavor)
+{
+	if (flavor == GEBR_GEOXML_PROGRAM_MPI_TYPE_OPENMPI)
+		return "openmpi";
+	else if (flavor == GEBR_GEOXML_PROGRAM_MPI_TYPE_MPICH2)
+		return "mpich2";
+	else
+		return "" ;
 }

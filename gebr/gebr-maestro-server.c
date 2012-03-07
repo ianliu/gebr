@@ -864,6 +864,23 @@ parse_messages(GebrCommServer *comm_server,
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}
+		else if (message->hash == gebr_comm_protocol_defs.mpi_def.code_hash) {
+			GList *arguments;
+
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
+				goto err;
+
+			GString *daemon_addr = g_list_nth_data(arguments, 0);
+			GString *mpi_flavors = g_list_nth_data(arguments, 1);
+
+
+			g_debug("RECEIVING daemon: %s, MPI: %s", daemon_addr->str, mpi_flavors->str);
+
+			GebrDaemonServer *daemon = gebr_maestro_server_get_daemon(maestro, daemon_addr->str);
+			gebr_daemon_server_set_mpi_flavors(daemon, mpi_flavors->str);
+
+			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
+		}
 
 		gebr_comm_message_free(message);
 		comm_server->socket->protocol->messages = g_list_delete_link(comm_server->socket->protocol->messages, link);

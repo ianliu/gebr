@@ -34,6 +34,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include <libgebr/comm/gebr-comm.h>
+#include <libgebr/comm/gebr-comm-protocol-socket.h>
 #include <libgebr/utils.h>
 #include <libgebr/date.h>
 #include <libgebr/gebr-version.h>
@@ -136,19 +137,30 @@ gebrm_app_job_controller_add(GebrmApp *app, GebrmJob *job)
 // }}}
 
 static void
-gebrm_app_send_home_dir(GebrmApp *app, const gchar *home)
+gebrm_app_send_home_dir(GebrmApp *app, GebrCommProtocolSocket *socket, const gchar *home)
 {
-	if (app->priv->home)
-		return;
-
 	app->priv->home = g_strdup(home);
+	gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
+					      gebr_comm_protocol_defs.home_def, 1,
+					      home);
+}
 
-	for (GList *i = app->priv->connections; i; i = i->next) {
-		GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(i->data);
-		gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
-						      gebr_comm_protocol_defs.home_def, 1,
-						      home);
-	}
+
+static gboolean
+gebrm_app_send_mpi_flavors(GebrCommProtocolSocket *socket, GebrmDaemon *daemon)
+{
+	if (!daemon)
+		return FALSE;
+	gchar *flavors = gebrm_daemon_get_mpi_flavors(daemon);
+
+	gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
+					      gebr_comm_protocol_defs.mpi_def, 2,
+					      gebrm_daemon_get_address(daemon),
+					      flavors
+					     );
+	g_debug("on maestro, function %s,  daemon %s, SENDING MPI FLAVOR: %s", __func__, gebrm_daemon_get_address(daemon), flavors)  ;
+	g_free(flavors);
+	return TRUE;
 }
 
 static void
@@ -441,6 +453,7 @@ on_daemon_init(GebrmDaemon *daemon,
 	const gchar *nfsid = gebrm_daemon_get_nfsid(daemon);
 	const gchar *home = gebrm_daemon_get_home_dir(daemon);
 	gboolean remove = FALSE;
+	gboolean home_defined = FALSE;
 
 	if (g_strcmp0(error_type, "connection-refused") == 0) {
 		if (has_duplicated_daemons(app, error_msg)) {
@@ -477,12 +490,19 @@ err:
 		if (remove)
 			remove_daemon(app, gebrm_daemon_get_address(daemon));
 	} else {
+		if (app->priv->home)
+			home_defined = TRUE;
+
 		for (GList *i = app->priv->connections; i; i = i->next) {
 			GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(i->data);
-			gebrm_app_send_home_dir(app, home);
+			if (!home_defined)
+				gebrm_app_send_home_dir(app, socket, home);
 			send_server_status_message(app, socket, daemon, gebrm_daemon_get_autoconnect(daemon));
 
 			queue_client_info(app, daemon, i->data);
+
+			if (daemon)
+				gebrm_app_send_mpi_flavors(i->data, daemon);
 		}
 	}
 }
@@ -1069,8 +1089,14 @@ on_client_parse_messages(GebrCommProtocolSocket *socket,
 					queue_client_info(app, i->data, client);
 					send_server_status_message(app, socket, i->data, gebrm_daemon_get_autoconnect(i->data));
 					send_groups_definitions(socket, i->data);
+					gebrm_app_send_mpi_flavors(socket, i->data);
 				}
 			}
+
+			if (app->priv->home)
+				gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
+								      gebr_comm_protocol_defs.home_def, 1,
+								      app->priv->home);
 
 			g_free(port_str);
 
@@ -1471,11 +1497,6 @@ on_new_connection(GebrCommListenSocket *listener,
 		GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(client);
 		g_object_set_data(G_OBJECT(socket), "client", client);
 		g_object_unref(stream);
-
-		if (app->priv->home)
-			gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
-							      gebr_comm_protocol_defs.home_def, 1,
-							      app->priv->home);
 
 		app->priv->connections = g_list_prepend(app->priv->connections, client);
 
