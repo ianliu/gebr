@@ -17,6 +17,9 @@
 
 #include "../libgebr-gettext.h"
 
+#include "program.h"
+#include "program_p.h"
+
 #include <glib.h>
 #include <stdlib.h>
 #include <string.h>
@@ -31,8 +34,6 @@
 #include "parameter_group_p.h"
 #include "parameters.h"
 #include "parameters_p.h"
-#include "program.h"
-#include "program_p.h"
 #include "program-parameter.h"
 #include "sequence.h"
 #include "types.h"
