@@ -477,16 +477,17 @@ void test_gebr_geoxml_program_control_get_n(void)
 	g_free(ini);
 	g_free(iter);
 }
+
 void test_gebr_geoxml_number_process_mpi(void)
 {
 	GebrGeoXmlFlow *flow = gebr_geoxml_flow_new();
 	GebrGeoXmlProgram *program = gebr_geoxml_flow_append_program(flow);
 	gebr_geoxml_program_set_mpi(program, "openmpi");
-	
+
 	gebr_geoxml_program_mpi_set_n_process(program, 100);
 	gint nprocess = gebr_geoxml_program_mpi_get_n_process(program);
 	g_assert(nprocess == 100);
-	
+
 	gebr_geoxml_program_mpi_set_n_process(program, 10);
 	nprocess = gebr_geoxml_program_mpi_get_n_process(program);
 	g_assert(nprocess == 10);
@@ -495,8 +496,10 @@ void test_gebr_geoxml_number_process_mpi(void)
 	nprocess = gebr_geoxml_program_mpi_get_n_process(program);
 	g_assert(nprocess == 1);
 
-}	
-	
+	gebr_geoxml_object_unref(program);
+	gebr_geoxml_document_unref(flow);
+}
+
 int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
@@ -523,6 +526,7 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/geoxml/program/get_and_set_error_id", test_gebr_geoxml_program_get_and_set_error_id);
 	g_test_add_func("/libgebr/geoxml/program/control_get_number_of_iterations", test_gebr_geoxml_program_control_get_n);
 	g_test_add_func("/libgebr/geoxml/program/mpi_number_process", test_gebr_geoxml_number_process_mpi);
+
 	gint ret = g_test_run();
 	gebr_geoxml_finalize();
 	return ret;
