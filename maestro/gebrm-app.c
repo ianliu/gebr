@@ -639,9 +639,11 @@ get_comm_servers_list(GebrmApp *app, const gchar *group, const gchar *group_type
 		}
 	}
 
-	for (GList *i = servers; i; i = i->next) {
-		if (!gebrm_daemon_accepts_mpi(i->data, mpi))
-			servers = g_list_delete_link(servers, i);
+	if (*mpi) {
+		for (GList *i = servers; i; i = i->next) {
+			if (!gebrm_daemon_accepts_mpi(i->data, mpi))
+				servers = g_list_delete_link(servers, i);
+		}
 	}
 
 	return servers;
