@@ -566,11 +566,13 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			GString *paths = g_list_nth_data(arguments, 6);
 
 			/* Moab & MPI settings */
-			GString *account = g_list_nth_data(arguments, 6);
-			GString *num_processes = g_list_nth_data(arguments, 7);
+			GString *account = g_list_nth_data(arguments, 7);
+			GString *servers_mpi = g_list_nth_data(arguments, 8);
+
+			g_debug("SERVERS MPI %s", servers_mpi->str);
 
 			/* try to run and send return */
-			job_new(&job, client, gid, id, frac, speed, nice, flow_xml, account, num_processes, paths);
+			job_new(&job, client, gid, id, frac, speed, nice, flow_xml, account, paths);
 
 #ifdef DEBUG
 			gchar *env_delay = getenv("GEBRD_RUN_DELAY_SEC");

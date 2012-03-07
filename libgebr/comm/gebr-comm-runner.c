@@ -328,7 +328,7 @@ divide_and_run_flows(GebrCommRunner *self)
 
 						      /* Moab and MPI settings */
 						      self->priv->account ? self->priv->account : "",
-						      self->priv->num_processes ? self->priv->num_processes : "");
+						      "");
 
 		g_free(frac_str);
 		g_free(flow_xml);
@@ -423,6 +423,50 @@ gebr_comm_runner_run_async(GebrCommRunner *self)
 	self->priv->requests = 0;
 	self->priv->responses = 0;
 	gboolean has_connected = FALSE;
+
+	gboolean mpi = gebr_geoxml_flow_get_first_mpi_program(GEBR_GEOXML_FLOW(self->priv->flow)) != NULL;
+	if (mpi) {
+		GebrGeoXmlDocument *clone = gebr_geoxml_document_clone(self->priv->flow);
+		gchar *flow_xml = strip_flow(self->priv->validator, GEBR_GEOXML_FLOW(clone));
+
+		GString *servers = g_string_new(NULL);
+		for (GList *i = self->priv->servers; i; i = i->next) {
+			ServerScore *sc = i->data;
+			GebrCommServer *server = gebr_comm_daemon_get_server(sc->server);
+			g_string_append_c(servers, ',');
+			g_string_append(servers, server->address->str);
+		}
+		if (servers)
+			g_string_erase(servers, 0, 1);
+
+		ServerScore *first_sc = self->priv->servers->data;
+		GebrCommServer *first_server = gebr_comm_daemon_get_server(first_sc->server);
+
+		// Set CommRunner parameters
+		self->priv->ncores = "1";
+		self->priv->servers_list = g_strdup_printf("%s,1", first_server->address->str);
+		self->priv->total = 1;
+
+		gebr_comm_protocol_socket_oldmsg_send(first_server->socket, FALSE,
+		                                      gebr_comm_protocol_defs.run_def, 9,
+		                                      self->priv->gid,
+		                                      self->priv->id,
+		                                      "1",
+		                                      self->priv->speed,
+		                                      self->priv->nice,
+		                                      flow_xml,
+		                                      self->priv->paths,
+
+		                                      /* Moab and MPI settings */
+		                                      self->priv->account ? self->priv->account : "",
+                                		      servers->str);
+
+		if (self->priv->ran_func)
+			self->priv->ran_func(self, self->priv->user_data);
+
+		g_string_free(servers, TRUE);
+		return TRUE;
+	}
 
 	GList *i = self->priv->servers;
 	while (i) {
