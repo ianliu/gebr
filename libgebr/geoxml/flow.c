@@ -1047,6 +1047,12 @@ gebr_geoxml_flow_is_parallelizable(GebrGeoXmlFlow *flow,
 	}
 	gebr_geoxml_object_unref(prog);
 
+	GebrGeoXmlProgram *mpi_prog = gebr_geoxml_flow_get_first_mpi_program(flow);
+	if (mpi_prog) {
+		gebr_geoxml_object_unref(mpi_prog);
+		return FALSE;
+	}
+
 	const gchar *output = gebr_geoxml_flow_io_get_output(flow);
 
 	if (!strlen(output))
