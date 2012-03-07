@@ -465,6 +465,8 @@ gebr_comm_runner_run_async(GebrCommRunner *self)
 			self->priv->ran_func(self, self->priv->user_data);
 
 		g_string_free(servers, TRUE);
+		g_free(flow_xml);
+
 		return TRUE;
 	}
 
