@@ -418,6 +418,15 @@ gebr_comm_runner_set_ran_func(GebrCommRunner *self,
 }
 
 gboolean
+call_ran_func(GebrCommRunner *self)
+{
+	if (self->priv->ran_func)
+		self->priv->ran_func(self, self->priv->user_data);
+
+	return FALSE;
+}
+
+gboolean
 gebr_comm_runner_run_async(GebrCommRunner *self)
 {
 	self->priv->requests = 0;
@@ -461,8 +470,7 @@ gebr_comm_runner_run_async(GebrCommRunner *self)
 		                                      self->priv->account ? self->priv->account : "",
                                 		      servers->str);
 
-		if (self->priv->ran_func)
-			self->priv->ran_func(self, self->priv->user_data);
+		g_idle_add((GSourceFunc)call_ran_func, self);
 
 		g_string_free(servers, TRUE);
 		g_free(flow_xml);
