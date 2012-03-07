@@ -28,9 +28,11 @@
 #include "object.h"
 #include "parameter.h"
 #include "parameter_group.h"
+#include "parameter_group_p.h"
 #include "parameters.h"
 #include "parameters_p.h"
 #include "program.h"
+#include "program_p.h"
 #include "program-parameter.h"
 #include "sequence.h"
 #include "types.h"
@@ -580,14 +582,26 @@ gebr_geoxml_program_mpi_add_tags(GebrGeoXmlProgram *self,
 {
 	GdomeElement *tmp = __gebr_geoxml_insert_new_element((GdomeElement*)self, "mpi", NULL);
 	GebrGeoXmlParameters *params = __gebr_geoxml_parameters_append_new(tmp);
-	GebrGeoXmlParameter *param = gebr_geoxml_parameters_append_parameter(params, GEBR_GEOXML_PARAMETER_TYPE_RANGE);
+
+	//Add Group MPI Parameters
+	GebrGeoXmlParameter *group = gebr_geoxml_parameters_append_parameter(params, GEBR_GEOXML_PARAMETER_TYPE_GROUP);
+	gebr_geoxml_parameter_set_label(group, _("MPI Parameters"));
+	gebr_geoxml_parameter_group_set_expand(GEBR_GEOXML_PARAMETER_GROUP(group), TRUE);
+	GebrGeoXmlParameters *template = gebr_geoxml_parameter_group_get_template(GEBR_GEOXML_PARAMETER_GROUP(group));
+
+	// Add parameter NP on instance
+	GebrGeoXmlParameter *param = gebr_geoxml_parameters_append_parameter(template, GEBR_GEOXML_PARAMETER_TYPE_RANGE);
 	gebr_geoxml_parameter_set_label(param, _("Number of process to start"));
 	gebr_geoxml_program_parameter_set_number_min_max(GEBR_GEOXML_PROGRAM_PARAMETER(param), "1", "9999999");
 	gebr_geoxml_program_parameter_set_required(GEBR_GEOXML_PROGRAM_PARAMETER(param), TRUE);
 	gebr_geoxml_program_parameter_set_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(param), "np");
+	gebr_geoxml_program_parameter_set_first_value(GEBR_GEOXML_PROGRAM_PARAMETER(param), TRUE, "1");
+
 	gebr_geoxml_object_unref(tmp);
 	gebr_geoxml_object_unref(params);
 	gebr_geoxml_object_unref(param);
+	gebr_geoxml_object_unref(group);
+	gebr_geoxml_object_unref(template);
 }
 
 void
@@ -598,6 +612,20 @@ gebr_geoxml_program_mpi_remove_tags(GebrGeoXmlProgram *self)
 		gebr_geoxml_object_unref(gdome_el_removeChild((GdomeElement*)self,
 							      (GdomeNode*)tmp, &exception));
 	gebr_geoxml_object_unref(tmp);
+}
+
+GebrGeoXmlParameters *
+gebr_geoxml_program_mpi_get_parameters(GebrGeoXmlProgram *self)
+{
+	GdomeElement *tmp = __gebr_geoxml_get_first_element((GdomeElement*)self, "mpi");
+
+	if (!tmp)
+		return NULL;
+
+	GdomeElement *params = __gebr_geoxml_get_first_element(tmp, "parameters");
+	gebr_geoxml_object_unref(tmp);
+
+	return GEBR_GEOXML_PARAMETERS(params);
 }
 
 GebrGeoXmlParameter *

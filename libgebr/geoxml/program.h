@@ -333,6 +333,8 @@ void gebr_geoxml_program_mpi_set_n_process(GebrGeoXmlProgram *self,
 
 gint gebr_geoxml_program_mpi_get_n_process(GebrGeoXmlProgram *self);
 
+GebrGeoXmlParameters *gebr_geoxml_program_mpi_get_parameters(GebrGeoXmlProgram *self);
+
 G_END_DECLS
 
 #endif /* __GEBR_GEOXML_PROGRAM_H__ */
