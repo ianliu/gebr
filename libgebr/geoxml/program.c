@@ -632,23 +632,31 @@ GebrGeoXmlParameter *
 get_mpi_parameter(GebrGeoXmlProgram *self,
 		  const gchar *keyword)
 {
-	GdomeElement *tmp = __gebr_geoxml_get_first_element((GdomeElement*)self, "mpi");
-
-	if (!tmp)
+	GebrGeoXmlParameters *params = gebr_geoxml_program_mpi_get_parameters(self);
+	if (!params)
 		return NULL;
 
-	GdomeElement *params = __gebr_geoxml_get_first_element(tmp, "parameters");
-	gebr_geoxml_object_unref(tmp);
+	GebrGeoXmlSequence *seq;
+	GebrGeoXmlSequence *instance;
+	GebrGeoXmlSequence *group = gebr_geoxml_parameters_get_first_parameter(params);
+	gebr_geoxml_parameter_group_get_instance(GEBR_GEOXML_PARAMETER_GROUP(group), &instance, 0);
 
-	GebrGeoXmlSequence *seq = gebr_geoxml_parameters_get_first_parameter(GEBR_GEOXML_PARAMETERS(params));
+	seq = gebr_geoxml_parameters_get_first_parameter(GEBR_GEOXML_PARAMETERS(instance));
 	for (; seq; gebr_geoxml_sequence_next(&seq)) {
-		GebrGeoXmlProgramParameter *prog = GEBR_GEOXML_PROGRAM_PARAMETER(seq);
+		GebrGeoXmlParameter *param = gebr_geoxml_parameter_get_referencee(GEBR_GEOXML_PARAMETER(seq));
+		GebrGeoXmlProgramParameter *prog = GEBR_GEOXML_PROGRAM_PARAMETER(param);
 		gchar *key = gebr_geoxml_program_parameter_get_keyword(prog);
+
+		gebr_geoxml_object_unref(param);
+
 		if (g_strcmp0(key, keyword) == 0)
 			break;
 	}
 
 	gebr_geoxml_object_unref(params);
+	gebr_geoxml_object_unref(instance);
+	gebr_geoxml_object_unref(group);
+
 	return GEBR_GEOXML_PARAMETER(seq);
 }
 
