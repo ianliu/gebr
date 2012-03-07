@@ -68,7 +68,7 @@ static void gebrd_job_class_init(GebrdJobClass * klass)
 static void job_assembly_cmdline(GebrdJob *job);
 static void job_process_finished(GebrCommProcess * process, gint status, GebrdJob *job);
 static void job_send_signal_on_moab(const char * signal, GebrdJob * job);
-static GebrdMpiInterface * job_get_mpi_impl(const gchar * mpi_name, GString * n_process);
+static GebrdMpiInterface * job_get_mpi_impl(const gchar * mpi_name, gint np);
 static gchar *escape_quote_and_slash(const gchar *str);
 static gchar *replace_quotes(gchar *str);
 
@@ -748,16 +748,20 @@ err:	g_string_free(cmd_line, TRUE);
 
 }
 
-static GebrdMpiInterface * job_get_mpi_impl(const gchar * mpi_name, GString * n_process)
+static GebrdMpiInterface * job_get_mpi_impl(const gchar * mpi_name, gint np)
 {
 	const GebrdMpiConfig * config = gebrd_get_mpi_config_by_name(mpi_name);
+
 	if (config == NULL)
 		return NULL;
 
-	if (strcmp(mpi_name, "openmpi") == 0)
-		return gebrd_open_mpi_new(n_process->str, config);
+	GebrdMpiInterface *ret = NULL;
+	gchar *tmp = g_strdup_printf("%d", np);
 
-	return NULL;
+	if (strcmp(mpi_name, "openmpi") == 0)
+		ret = gebrd_open_mpi_new(tmp, config);
+
+	return ret;
 }
 
 static gboolean job_parse_parameters(GebrdJob *job,
@@ -1235,7 +1239,9 @@ static void job_assembly_cmdline(GebrdJob *job)
 	/* Configure MPI */
 	const gchar * mpiname;
 	mpiname = gebr_geoxml_program_get_mpi(GEBR_GEOXML_PROGRAM(program));
-	mpi = job_get_mpi_impl(mpiname, job->parent.n_process);
+	gint np = gebr_geoxml_program_mpi_get_n_process(GEBR_GEOXML_PROGRAM(program));
+	mpi = job_get_mpi_impl(mpiname, np);
+
 	if (strlen(mpiname) && !mpi) {
 		job_issue(job,
 			  _("Requested MPI (%s) is not supported by this server.\n"), mpiname);
@@ -1359,8 +1365,8 @@ static void job_assembly_cmdline(GebrdJob *job)
 			continue;
 		}
 
-		mpi = job_get_mpi_impl(gebr_geoxml_program_get_mpi(GEBR_GEOXML_PROGRAM(program)),
-				       job->parent.n_process);
+		np = gebr_geoxml_program_mpi_get_n_process(GEBR_GEOXML_PROGRAM(program));
+		mpi = job_get_mpi_impl(gebr_geoxml_program_get_mpi(GEBR_GEOXML_PROGRAM(program)), np);
 
 		/* How to connect chained programs */
 		int chain_option = gebr_geoxml_program_get_stdin(GEBR_GEOXML_PROGRAM(program)) + (previous_stdout << 1);
