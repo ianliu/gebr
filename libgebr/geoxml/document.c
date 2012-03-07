@@ -932,6 +932,13 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 		}
 	}
 
+	/* 0.3.8 to 0.3.9 */
+	if (strcmp(version, "0.3.9") < 0) {
+		if (gebr_geoxml_document_get_type(GEBR_GEOXML_DOCUMENT(*document)) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW) {
+			__gebr_geoxml_set_attr_value(root_element, "version", "0.3.9");
+		}
+	}
+
 	/* CHECKS (may impact performance) */
 	if (gebr_geoxml_document_get_type(((GebrGeoXmlDocument *) *document)) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW) {
 		GSList *elements = __gebr_geoxml_get_elements_by_tag(root_element, "flag");
