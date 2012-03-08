@@ -319,12 +319,11 @@ on_import_entry_press(GtkEntry            *entry,
 	                                                      GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
 	                                                      GTK_STOCK_ADD, GTK_RESPONSE_OK,
 	                                                      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
+	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
+	gchar *prefix = gebr_maestro_server_get_sftp_prefix(maestro);
+	gchar *home = g_build_filename(prefix, gebr_maestro_server_get_home_dir(maestro), NULL);
 
-	const gchar *current_folder = gtk_entry_get_text(entry);
-	if (!*current_folder)
-		current_folder = g_get_home_dir();
-
-	gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(file_chooser), current_folder);
+	gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(file_chooser), home);
 	gtk_file_chooser_set_local_only(GTK_FILE_CHOOSER(file_chooser), FALSE);
 	gint response = gtk_dialog_run(GTK_DIALOG(file_chooser));
 
@@ -333,6 +332,8 @@ on_import_entry_press(GtkEntry            *entry,
 		gtk_entry_set_text(entry, gebr_remove_gvfs_prefix(folder));
 		g_free(folder);
 	}
+	g_free(prefix);
+	g_free(home);
 	gtk_widget_destroy(file_chooser);
 }
 
