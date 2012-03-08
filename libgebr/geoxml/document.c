@@ -814,19 +814,20 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 				}
 			} else {
 				gchar *title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(*document));
-				base = g_build_filename(g_get_home_dir(), "GeBR", title, NULL);
+				gchar *line_key = gebr_geoxml_line_create_key(title);
+				base = g_build_filename(g_get_home_dir(), "GeBR", line_key, NULL);
 				g_free(title);
+				g_free(line_key);
 			}
 
-			__gebr_geoxml_set_attr_value(first_el, "name", "<BASE>");
+			__gebr_geoxml_set_attr_value(first_el, "name", "BASE");
 
 			static gchar *base_dirs[][2] = {
-					{"<BASE>", ""},
-					{"<DATA>", "data"},
-					{"<EXPORT>", "export"},
-					{"<TMP>", "tmp"},
-					{"<TABLE>", "table"},
-					{"<MISC>", "misc"},
+					{"DATA", "data"},
+					{"EXPORT", "export"},
+					{"TMP", "tmp"},
+					{"TABLE", "table"},
+					{"MISC", "misc"},
 			};
 
 			for (gint i = 0; i < G_N_ELEMENTS(base_dirs); i++) {
