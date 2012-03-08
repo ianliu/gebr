@@ -655,6 +655,7 @@ void flow_program_remove(void)
 
 	}
 	flow_program_check_sensitiveness();
+	flow_edition_set_io();
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
 
 	if (valid)
