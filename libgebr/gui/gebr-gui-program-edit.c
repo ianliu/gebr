@@ -173,7 +173,7 @@ void gebr_gui_program_edit_reload(GebrGuiProgramEdit *program_edit, GebrGeoXmlPr
 	}
 	widget = gebr_gui_program_edit_load(program_edit, gebr_geoxml_program_get_parameters(program_edit->program));
 	gtk_box_pack_start(GTK_BOX(vbox), widget, TRUE, TRUE, 0);
-	gtk_widget_show_all(vbox);
+	gtk_widget_show(vbox);
 
 	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(program_edit->scrolled_window), vbox);
 }
