@@ -134,6 +134,20 @@ gebrm_daemon_set_nfsid(GebrmDaemon *daemon,
 }
 
 static void
+gebrm_daemon_set_memory(GebrmDaemon *daemon,
+                        const gchar *mem)
+{
+	daemon->priv->server->memory = g_strdup(mem);
+}
+
+static void
+gebrm_daemon_set_model_name(GebrmDaemon *daemon,
+                            const gchar *model_name)
+{
+	daemon->priv->server->model_name = g_strdup(model_name);
+}
+
+static void
 gebrm_daemon_set_clock_cpu(GebrmDaemon *daemon,
 			   gdouble clock)
 {
@@ -269,8 +283,8 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 
 				GString *hostname     = g_list_nth_data(arguments, 0);
 				gchar  **accounts     = g_strsplit(((GString *)g_list_nth_data(arguments, 2))->str, ",", 0);
-				//GString *model_name   = g_list_nth_data (arguments, 3);
-				//GString *total_memory = g_list_nth_data (arguments, 4);
+				GString *model_name   = g_list_nth_data (arguments, 3);
+				GString *total_memory = g_list_nth_data (arguments, 4);
 				GString *nfsid        = g_list_nth_data (arguments, 5);
 				GString *ncores       = g_list_nth_data (arguments, 6);
 				GString *clock_cpu    = g_list_nth_data (arguments, 7);
@@ -283,6 +297,8 @@ gebrm_server_op_parse_messages(GebrCommServer *server,
 				daemon->priv->is_initialized = TRUE;
 
 				server->socket->protocol->hostname = g_string_assign(server->socket->protocol->hostname, hostname->str);
+				gebrm_daemon_set_model_name(daemon, model_name->str);
+				gebrm_daemon_set_memory(daemon, total_memory->str);
 				gebrm_daemon_set_ncores(daemon, atoi(ncores->str));
 				gebrm_daemon_set_clock_cpu(daemon, atof(clock_cpu->str));
 				gebrm_daemon_set_nfsid(daemon, nfsid->str);

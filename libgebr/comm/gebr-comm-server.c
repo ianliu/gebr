@@ -232,6 +232,8 @@ gebr_comm_server_free(GebrCommServer *server)
 	gebr_comm_server_free_for_reuse(server);
 	g_string_free(server->address, TRUE);
 	g_free(server->password);
+	g_free(server->memory);
+	g_free(server->model_name);
 	g_object_unref(server->socket);
 	g_object_unref(server);
 }

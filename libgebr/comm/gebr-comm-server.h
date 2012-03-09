@@ -94,6 +94,8 @@ struct _GebrCommServer {
 
 	gint ncores;
 	gdouble clock_cpu;
+	gchar *memory;
+	gchar *model_name;
 
 	GebrCommServerState state;
 
