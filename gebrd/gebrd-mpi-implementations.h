@@ -34,6 +34,10 @@ GebrdMpiInterface *gebrd_open_mpi_new(const gchar *n_process,
 				      const GebrdMpiConfig *config,
 				      GList *servers);
 
+GebrdMpiInterface *gebrd_mpich2_new(const gchar *n_process,
+				    const GebrdMpiConfig *config,
+				    GList *servers);
+
 G_END_DECLS
 
 #endif /* __MPI_IMPLEMENTATIONS_H__ */

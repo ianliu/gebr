@@ -2,6 +2,12 @@
 
 #include "gebrd-mpi-implementations.h"
 
+typedef struct {
+	GebrdMpiInterface parent;
+	const GebrdMpiConfig * config;
+	GList *servers;
+} GebrdMpich2;
+
 /*
  * OpenMPI definition
  */
@@ -81,4 +87,47 @@ static gchar * gebrd_open_mpi_finalize(GebrdMpiInterface * mpi)
 
 static void gebrd_open_mpi_free(GebrdMpiInterface * mpi)
 {
+}
+
+static gchar *
+gebrd_mpich2_initialize(GebrdMpiInterface * mpi)
+{
+	return NULL;
+}
+
+static gchar *
+gebrd_mpich2_build_command(GebrdMpiInterface *mpi,
+			   const gchar *command)
+{
+	return NULL;
+}
+
+static gchar *
+gebrd_mpich2_finalize(GebrdMpiInterface *mpi)
+{
+	return NULL;
+}
+
+static void
+gebrd_mpich2_free(GebrdMpiInterface *mpi)
+{
+}
+
+GebrdMpiInterface *
+gebrd_mpich2_new(const gchar *n_process,
+		 const GebrdMpiConfig *config,
+		 GList *servers)
+{
+	GebrdMpich2 *self = g_new0(GebrdMpich2, 1);
+	GebrdMpiInterface *mpi = (GebrdMpiInterface*)self;
+
+	mpi->initialize = gebrd_mpich2_initialize;
+	mpi->build_command = gebrd_mpich2_build_command;
+	mpi->finalize = gebrd_mpich2_finalize;
+	mpi->free = gebrd_mpich2_free;
+
+	self->servers = g_list_copy(servers);
+	self->config = config;
+
+	return mpi;
 }
