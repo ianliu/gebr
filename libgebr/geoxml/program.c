@@ -577,7 +577,15 @@ void
 gebr_geoxml_program_mpi_add_tags(GebrGeoXmlProgram *self,
 				 const gchar *mpi)
 {
-	GdomeElement *tmp = __gebr_geoxml_insert_new_element((GdomeElement*)self, "mpi", NULL);
+	GdomeElement *tmp;
+	tmp = __gebr_geoxml_get_first_element((GdomeElement*)self, "mpi");
+
+	if (tmp) {
+		gebr_geoxml_object_unref(tmp);
+		return;
+	}
+
+	tmp = __gebr_geoxml_insert_new_element((GdomeElement*)self, "mpi", NULL);
 	GebrGeoXmlParameters *params = __gebr_geoxml_parameters_append_new(tmp);
 
 	//Add Group MPI Parameters
