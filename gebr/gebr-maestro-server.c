@@ -57,6 +57,7 @@ enum {
 	DAEMONS_CHANGED,
 	STATE_CHANGE,
 	AC_CHANGE,
+	MPI_CHANGED,
 	DAEMON_ERROR,
 	MAESTRO_ERROR,
 	CONFIRM,
@@ -522,7 +523,7 @@ parse_messages(GebrCommServer *comm_server,
 			addr = g_list_nth_data(arguments, 1);
 			ssta = g_list_nth_data(arguments, 2);
 			ac = g_list_nth_data(arguments, 3);
-			g_debug("ESTOU AQUI EM %s, daemon_addr:%s", __func__, addr->str);
+			g_debug("Daemon state change (%s) %s", addr->str, ssta->str);
 
 			GtkTreeIter iter;
 			GebrCommServerState state = gebr_comm_server_state_from_string(ssta->str);
@@ -812,6 +813,26 @@ parse_messages(GebrCommServer *comm_server,
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}
+		else if (message->hash == gebr_comm_protocol_defs.mpi_def.code_hash) {
+			GList *arguments;
+
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
+				goto err;
+
+			GString *daemon_addr = g_list_nth_data(arguments, 0);
+			GString *mpi_flavors = g_list_nth_data(arguments, 1);
+
+
+			g_debug("RECEIVING daemon: %s, MPI: %s", daemon_addr->str, mpi_flavors->str);
+
+			GebrDaemonServer *daemon = gebr_maestro_server_get_daemon(maestro, daemon_addr->str);
+			if (!daemon)
+				goto err;
+			
+			g_signal_emit(maestro, signals[MPI_CHANGED], 0, daemon, mpi_flavors->str);
+
+			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
+		}
 		else if (message->hash == gebr_comm_protocol_defs.srm_def.code_hash) {
 			GList *arguments;
 
@@ -861,23 +882,6 @@ parse_messages(GebrCommServer *comm_server,
 			g_debug("HOME: %s", home->str);
 
 			gebr_maestro_server_set_home_dir(maestro, home->str);
-
-			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
-		}
-		else if (message->hash == gebr_comm_protocol_defs.mpi_def.code_hash) {
-			GList *arguments;
-
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
-				goto err;
-
-			GString *daemon_addr = g_list_nth_data(arguments, 0);
-			GString *mpi_flavors = g_list_nth_data(arguments, 1);
-
-
-			g_debug("RECEIVING daemon: %s, MPI: %s", daemon_addr->str, mpi_flavors->str);
-
-			GebrDaemonServer *daemon = gebr_maestro_server_get_daemon(maestro, daemon_addr->str);
-			gebr_daemon_server_set_mpi_flavors(daemon, mpi_flavors->str);
 
 			gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 		}
@@ -1034,6 +1038,15 @@ gebr_maestro_server_class_init(GebrMaestroServerClass *klass)
 			             NULL, NULL,
 			             gebr_cclosure_marshal_VOID__INT_OBJECT,
 			             G_TYPE_NONE, 2, G_TYPE_INT, GEBR_TYPE_DAEMON_SERVER);
+
+	signals[MPI_CHANGED] =
+			g_signal_new("mpi-changed",
+			             G_OBJECT_CLASS_TYPE(object_class),
+			             G_SIGNAL_RUN_LAST,
+			             G_STRUCT_OFFSET(GebrMaestroServerClass, mpi_changed),
+			             NULL, NULL,
+			             gebr_cclosure_marshal_VOID__OBJECT_STRING,
+			             G_TYPE_NONE, 2, GEBR_TYPE_DAEMON_SERVER, G_TYPE_STRING);
 
 	signals[DAEMON_ERROR] =
 			g_signal_new("daemon-error",

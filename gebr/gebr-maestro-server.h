@@ -62,6 +62,10 @@ struct _GebrMaestroServerClass {
 	void    (*ac_change) (GebrMaestroServer *maestro,
 			      gboolean	         is_ac);
 
+	void    (*mpi_changed) (GebrMaestroServer *maestro,
+				GebrDaemonServer *daemon,
+				const gchar *mpi_flavors);
+
 	void    (*daemon_error) (GebrMaestroServer *maestro,
 				 const gchar       *addr,
 				 const gchar       *error_type,

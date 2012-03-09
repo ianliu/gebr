@@ -114,9 +114,9 @@ void gebr_daemon_server_set_hostname(GebrDaemonServer *daemon, const gchar *host
 
 const gchar *gebr_daemon_server_get_hostname(GebrDaemonServer *daemon);
 
-gboolean gebr_daemon_server_set_mpi_flavors(GebrDaemonServer *daemon, gchar *flavors);
+gboolean gebr_daemon_server_set_mpi_flavors(GebrDaemonServer *daemon, const gchar *flavors);
 
-GList *gebr_daemon_server_get_mpi_flavors(GebrDaemonServer *daemon);
+const gchar *gebr_daemon_server_get_mpi_flavors(GebrDaemonServer *daemon);
 
 G_END_DECLS
 

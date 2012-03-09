@@ -61,6 +61,10 @@ struct _GebrMaestroControllerClass {
 				       GebrMaestroServer     *maestro);
 
 	void (*daemons_changed) (GebrMaestroController *self);
+
+	void (*mpi_changed) (GebrMaestroController *self,
+			GebrDaemonServer *daemon,
+			const gchar *mpi_flavors);
 };
 
 enum {
