@@ -341,7 +341,7 @@ GebrGeoXmlParameters *gebr_geoxml_program_mpi_get_parameters(GebrGeoXmlProgram *
 
 GebrGeoxmlProgramMpiType gebr_geoxml_program_mpi_type_str_to_enum(const gchar *mpi_flavor);
 
-const char* gebr_geoxml_program_mpi_type_enum_to_str(GebrGeoxmlProgramMpiType *flavor);
+const char* gebr_geoxml_program_mpi_type_enum_to_str(GebrGeoxmlProgramMpiType flavor);
 
 G_END_DECLS
 

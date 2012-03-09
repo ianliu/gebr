@@ -708,7 +708,7 @@ gebr_geoxml_program_mpi_type_str_to_enum(const gchar *mpi_flavor)
 }
 
 const char*
-gebr_geoxml_program_mpi_type_enum_to_str(GebrGeoxmlProgramMpiType *flavor)
+gebr_geoxml_program_mpi_type_enum_to_str(GebrGeoxmlProgramMpiType flavor)
 {
 	if (flavor == GEBR_GEOXML_PROGRAM_MPI_TYPE_OPENMPI)
 		return "openmpi";
