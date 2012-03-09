@@ -34,10 +34,10 @@
 #define RESPONSE_REFRESH	101
 
 static const gchar * mpi_combo_to_xml [] = {
-	"", "openmpi", NULL
+	"", "openmpi", "mpich2", NULL
 };
 static const gchar * mpi_xml_to_combo [] = {
-	N_("None"), N_("OpenMPI"), NULL
+	N_("None"), N_("OpenMPI"), N_("MPICH2"), NULL
 };
 static const gint mpi_xml_to_index(GebrGeoXmlProgram * program)
 {
