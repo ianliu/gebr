@@ -946,11 +946,10 @@ daemon_server_mpi_func(GtkTreeViewColumn *tree_column,
                       GtkTreeIter *iter,
                       gpointer data)
 {
-	gboolean mpi, editable;
+	gboolean editable;
 	GebrDaemonServer *daemon;
 
 	gtk_tree_model_get(model, iter,
-	                   MAESTRO_CONTROLLER_MPI, &mpi,
 	                   MAESTRO_CONTROLLER_EDITABLE, &editable,
 			   MAESTRO_CONTROLLER_DAEMON, &daemon,
 	                   -1);
@@ -962,7 +961,7 @@ daemon_server_mpi_func(GtkTreeViewColumn *tree_column,
 	const gchar *mpi_flavors = gebr_daemon_server_get_mpi_flavors(daemon);
 
 	if (mpi_flavors && *mpi_flavors)
-		g_object_set(cell, "stock-id", GTK_STOCK_ADD, NULL);
+		g_object_set(cell, "stock-id", "mpi-icon", NULL);
 	else
 		g_object_set(cell, "stock-id", NULL, NULL);
 
@@ -1033,7 +1032,6 @@ static gboolean
 server_tooltip_callback(GtkTreeView * tree_view, GtkTooltip * tooltip,
                         GtkTreeIter * iter, GtkTreeViewColumn * column, GebrMaestroController *self)
 {
-	g_debug("on %s, %s",__func__, gtk_tree_view_column_get_title(column)); 
 	if (gtk_tree_view_get_column(tree_view, 0) == column) {
 		gboolean autoconnect;
 
@@ -1047,18 +1045,25 @@ server_tooltip_callback(GtkTreeView * tree_view, GtkTooltip * tooltip,
 		return TRUE;
 	}
 	else if (gtk_tree_view_get_column(tree_view, 1) == column) {
+		GebrDaemonServer *daemon;
 		gchar *mpi_flavors;
-		gtk_tree_model_get(GTK_TREE_MODEL(self->priv->model), iter, MAESTRO_CONTROLLER_MPI, &mpi_flavors, -1);
 
-		if (!mpi_flavors || !*mpi_flavors)
+		gtk_tree_model_get(GTK_TREE_MODEL(self->priv->model), iter,
+		                   MAESTRO_CONTROLLER_DAEMON, &daemon,
+		                   -1);
+
+		if (!daemon)
 			return FALSE;
 
-		gchar **flavors = g_strsplit(mpi_flavors, ",", -1);
-	
+		const gchar *tmp_flavors = gebr_daemon_server_get_mpi_flavors(daemon);
+
+		if (!tmp_flavors || !*tmp_flavors)
+			return FALSE;
+
+		mpi_flavors = g_strdup(tmp_flavors);
+
 		gtk_tooltip_set_text(tooltip, mpi_flavors);
-		g_debug("on %s, %s",__func__,  mpi_flavors); 
 		
-		g_strfreev(flavors);
 		g_free(mpi_flavors);
 
 		return TRUE;
@@ -1168,6 +1173,7 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 	gebr_gui_gtk_tree_view_set_tooltip_callback(GTK_TREE_VIEW(view),
 	                                            (GebrGuiGtkTreeViewTooltipCallback) server_tooltip_callback, self);
 
+	// AC Column
 	GtkTreeViewColumn *ac_col = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_title(ac_col, _("AC"));
 
@@ -1178,19 +1184,21 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 	g_signal_connect(renderer, "toggled", G_CALLBACK (on_ac_toggled), self);
 
 	gtk_tree_view_append_column(GTK_TREE_VIEW(view), ac_col);
+	// End of AC Column
 
 	// MPI column
 	GtkTreeViewColumn *mpi_col = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_title(mpi_col, "MPI");
 
 	renderer = gtk_cell_renderer_pixbuf_new();
-	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(mpi_col), renderer, FALSE);
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(mpi_col), renderer, TRUE);
 	gtk_tree_view_column_set_cell_data_func(mpi_col, renderer, daemon_server_mpi_func,
 	                                        NULL, NULL);
 
 	gtk_tree_view_append_column(GTK_TREE_VIEW(view), mpi_col);
 	// End of MPI column
 
+	// Server Column
 	GtkTreeViewColumn *col;
 	col = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_title(col, _("Address"));
@@ -1210,6 +1218,7 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 	g_signal_connect(renderer, "edited", G_CALLBACK(on_servers_edited), self);
 
 	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
+	// End of Server Column
 
 	gebr_maestro_controller_group_changed_real(self, maestro);
 
@@ -1510,11 +1519,10 @@ on_mpi_change(GebrMaestroServer *maestro,
 			break;
 		}
 	}
-	if (has_daemon) {
-		gtk_list_store_set(GTK_LIST_STORE(model), &iter, MAESTRO_CONTROLLER_MPI, mpi_flavor, -1);
+	if (has_daemon)
 		gebr_daemon_server_set_mpi_flavors(daemon, mpi_flavor);
-	}
 }
+
 static void
 update_maestro_view(GebrMaestroController *mc,
                     GebrMaestroServer *maestro,

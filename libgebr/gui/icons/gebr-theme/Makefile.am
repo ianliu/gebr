@@ -98,6 +98,7 @@ libgebr_gui_icons16x16stock_DATA =		\
 	16x16/stock/list-add.png	\
 	16x16/stock/list-remove.png	\
 	16x16/stock/media-playback-start.png	\
+	16x16/stock/mpi-icon.png	\
 	16x16/stock/object-locked.png   \
 	16x16/stock/object-unlocked.png   \
 	16x16/stock/process-stop.png	\
@@ -187,6 +188,7 @@ libgebr_gui_icons22x22stock_DATA =		\
 	22x22/stock/list-add.png	\
 	22x22/stock/list-remove.png	\
 	22x22/stock/media-playback-start.png	\
+	22x22/stock/mpi-icon.png	\
 	22x22/stock/object-locked.png   \
 	22x22/stock/object-unlocked.png   \
 	22x22/stock/process-stop.png	\
@@ -276,6 +278,7 @@ libgebr_gui_icons48x48stock_DATA =		\
 	48x48/stock/list-add.png	\
 	48x48/stock/list-remove.png	\
 	48x48/stock/media-playback-start.png	\
+	48x48/stock/mpi-icon.png	\
 	48x48/stock/object-locked.png   \
 	48x48/stock/object-unlocked.png   \
 	48x48/stock/process-stop.png	\
