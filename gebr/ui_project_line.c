@@ -485,6 +485,10 @@ static gboolean _project_line_import_path(const gchar *filename, GList **line_pa
 		gdk_threads_leave();
 
 		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+		gchar *home = g_build_filename(gebr_maestro_server_get_home_dir(maestro), NULL);
+		gebr_geoxml_line_append_path(*line, "HOME", home);
+		g_free(home);
+
 		if (maestro) {
 			const gchar *addr = gebr_maestro_server_get_address(maestro);
 			gebr_geoxml_line_set_maestro(*line, addr);
