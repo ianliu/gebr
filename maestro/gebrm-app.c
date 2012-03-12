@@ -640,9 +640,16 @@ get_comm_servers_list(GebrmApp *app, const gchar *group, const gchar *group_type
 	}
 
 	if (*mpi) {
-		for (GList *i = servers; i; i = i->next) {
-			if (!gebrm_daemon_accepts_mpi(i->data, mpi))
+		//for (GList *i = servers; i; i = i->next) {
+		GList *i = servers;
+		while (i) {
+			if (!gebrm_daemon_accepts_mpi(i->data, mpi)) {
+				GList *aux = i->next;
 				servers = g_list_delete_link(servers, i);
+				i = aux;
+				continue;
+			}
+			i = i->next;
 		}
 	}
 
