@@ -416,10 +416,10 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 				server_type = "regular";
 
 			/* send return */
-			void get_mpi_flavors(GebrdMpiConfig *mpi_config, GString *mpi_flavors){
+			void get_mpi_flavors(GebrdMpiConfig *mpi_config, GString *mpi_flavors) {
 				mpi_flavors = g_string_prepend_c(mpi_flavors, ',');
 				mpi_flavors = g_string_prepend(mpi_flavors, mpi_config->name->str);
-				g_debug("%s", mpi_config->name->str)  ;
+				g_debug("%s", mpi_config->name->str);
 			}
 
 			GString *mpi_flavors = g_string_new("");
