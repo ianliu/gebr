@@ -558,7 +558,7 @@ parse_messages(GebrCommServer *comm_server,
 			GList *arguments;
 
 			/* organize message data */
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 18)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 19)) == NULL)
 				goto err;
 
 			GString *id          = g_list_nth_data(arguments, 0);
@@ -579,6 +579,7 @@ parse_messages(GebrCommServer *comm_server,
 			GString *status      = g_list_nth_data(arguments, 15);
 			GString *start_date  = g_list_nth_data(arguments, 16);
 			GString *finish_date = g_list_nth_data(arguments, 17);
+			GString *run_type    = g_list_nth_data(arguments, 18);
 
 			GebrJob *job = g_hash_table_lookup(maestro->priv->jobs, id->str);
 			gboolean prev_exist = FALSE;
@@ -596,7 +597,7 @@ parse_messages(GebrCommServer *comm_server,
 			gboolean init = (job == NULL);
 
 			if (!job)
-				job = gebr_job_new_with_id(id->str, parent_id->str);
+				job = gebr_job_new_with_id(id->str, parent_id->str, run_type->str);
 
 			/* These properties are computed after Maestro sent the
 			 * tasks to its Daemons, so they can not be set before

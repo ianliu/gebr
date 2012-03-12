@@ -137,8 +137,14 @@ run_flow(GebrGeoXmlFlow *flow,
 	gebr_geoxml_flow_set_date_last_run(flow, g_strdup(submit_date));
 	document_save(GEBR_GEOXML_DOCUMENT(flow), FALSE, FALSE);
 
+	const gchar *run_type;
+	if (gebr_geoxml_flow_get_first_mpi_program(flow) == NULL)
+		run_type = "normal";
+	else
+		run_type = "mpi";
+
 	gchar *xml;
-	GebrJob *job = gebr_job_new(parent_rid);
+	GebrJob *job = gebr_job_new(parent_rid, run_type);
 
 	GebrGeoXmlDocument *clone = gebr_geoxml_document_clone(GEBR_GEOXML_DOCUMENT(flow));
 

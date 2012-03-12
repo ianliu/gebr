@@ -453,8 +453,8 @@ gebr_comm_runner_run_async(GebrCommRunner *self)
 
 		// Set CommRunner parameters
 		self->priv->ncores = "1";
-		self->priv->servers_list = g_strdup_printf("%s,1", first_server->address->str);
 		self->priv->total = 1;
+		self->priv->servers_list = g_strdup(servers->str);
 
 		gebr_comm_protocol_socket_oldmsg_send(first_server->socket, FALSE,
 		                                      gebr_comm_protocol_defs.run_def, 9,

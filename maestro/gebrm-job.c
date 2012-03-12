@@ -33,6 +33,7 @@ struct _GebrmJobPriv {
 	GList *tasks;
 	gchar *servers;
 	gchar *nprocs;
+	gchar *run_type;
 	gint total;
 	GebrCommJobStatus status;
 	gboolean has_issued;
@@ -85,6 +86,7 @@ gebrm_job_finalize(GObject *object)
 	g_free(job->priv->info.speed);
 	g_free(job->priv->servers);
 	g_free(job->priv->nprocs);
+	g_free(job->priv->run_type);
 	g_list_foreach(job->priv->tasks, (GFunc)g_object_unref, NULL);
 	g_list_free(job->priv->tasks);
 
@@ -101,6 +103,7 @@ gebrm_job_init(GebrmJob *job)
 	job->priv->has_issued = FALSE;
 	job->priv->nprocs = g_strdup("");
 	job->priv->servers = g_strdup("");
+	job->priv->run_type = g_strdup("");
 }
 
 static void
@@ -713,6 +716,23 @@ void
 gebrm_job_set_total_tasks(GebrmJob *job, gint total)
 {
 	job->priv->total = total;
+}
+
+void
+gebrm_job_set_run_type(GebrmJob *job,
+                       const gchar *type)
+{
+	g_debug("+++++++ SET RUN TYPE: %s", type);
+	if (job->priv->run_type)
+		g_free(job->priv->run_type);
+	job->priv->run_type = g_strdup(type);
+}
+
+const gchar *
+gebrm_job_get_run_type(GebrmJob *job)
+{
+	g_debug("+++++++ RETURN RUN TYPE: %s", job->priv->run_type);
+	return job->priv->run_type;
 }
 
 const gchar *

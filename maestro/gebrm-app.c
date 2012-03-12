@@ -677,7 +677,7 @@ send_job_def_to_clients(GebrmApp *app, GebrmJob *job)
 		GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(i->data);
 		g_debug("-----------------------%s",gebrm_job_get_nprocs(job));
 		gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
-						      gebr_comm_protocol_defs.job_def, 18,
+						      gebr_comm_protocol_defs.job_def, 19,
 						      gebrm_job_get_id(job),
 						      gebrm_job_get_temp_id(job),
 						      gebrm_job_get_nprocs(job),
@@ -695,7 +695,8 @@ send_job_def_to_clients(GebrmApp *app, GebrmJob *job)
 						      gebrm_job_get_exec_speed(job),
 						      gebr_comm_job_get_string_from_status(gebrm_job_get_status(job)),
 						      start_date? start_date : "",
-						      finish_date? finish_date : "");
+						      finish_date? finish_date : "",
+						      gebrm_job_get_run_type(job));
 	}
 }
 
@@ -930,10 +931,14 @@ on_client_request(GebrCommProtocolSocket *socket,
 
 			const gchar *mpi;
 			GebrGeoXmlProgram *mpi_prog = gebr_geoxml_flow_get_first_mpi_program(*pflow);
-			if (mpi_prog)
+			if (mpi_prog) {
 				mpi = gebr_geoxml_program_get_mpi(mpi_prog);
-			else
+				gebrm_job_set_run_type(job, "mpi");
+			}
+			else {
 				mpi = "";
+				gebrm_job_set_run_type(job, "normal");
+			}
 			gebr_geoxml_object_unref(mpi_prog);
 
 			GList *servers = get_comm_servers_list(app, name, group_type, mpi);
@@ -1437,10 +1442,10 @@ send_messages_of_jobs(gpointer key,
 
 	/* Job def message */
 	gebr_comm_protocol_socket_oldmsg_send(protocol, FALSE,
-	                                      gebr_comm_protocol_defs.job_def, 18,
+	                                      gebr_comm_protocol_defs.job_def, 19,
 	                                      id,
 					      gebrm_job_get_temp_id(job),
-	                                      gebrm_job_get_nprocs(job),
+					      gebrm_job_get_nprocs(job),
 	                                      gebrm_job_get_servers_list(job),
 	                                      gebrm_job_get_hostname(job),
 	                                      gebrm_job_get_title(job),
@@ -1455,7 +1460,8 @@ send_messages_of_jobs(gpointer key,
 	                                      gebrm_job_get_exec_speed(job),
 	                                      gebr_comm_job_get_string_from_status(gebrm_job_get_status(job)),
 	                                      start_date? start_date : "",
-	                                      finish_date? finish_date : "");
+	                                      finish_date? finish_date : "",
+	                                      gebrm_job_get_run_type(job));
 
 	GList *tasks = gebrm_job_get_list_of_tasks(job);
 	

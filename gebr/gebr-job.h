@@ -77,10 +77,12 @@ typedef struct {
 
 GType gebr_job_get_type() G_GNUC_CONST;
 
-GebrJob *gebr_job_new(const gchar *queue);
+GebrJob *gebr_job_new(const gchar *queue,
+                      const gchar *run_type);
 
 GebrJob *gebr_job_new_with_id(const gchar *rid,
-			      const gchar *queue);
+			      const gchar *queue,
+			      const gchar *run_type);
 
 void gebr_job_set_servers(GebrJob *job,
 			  const gchar *servers);
@@ -201,6 +203,8 @@ void gebr_job_append_output(GebrJob *job, gint frac, const gchar *output);
 void gebr_job_set_maestro_address(GebrJob *job, const gchar *address);
 
 const gchar *gebr_job_get_maestro_address(GebrJob *job);
+
+const gchar *gebr_job_get_run_type(GebrJob *job);
 
 void gebr_job_remove(GebrJob *job);
 

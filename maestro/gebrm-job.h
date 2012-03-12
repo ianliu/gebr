@@ -215,6 +215,11 @@ const gchar *gebrm_job_get_servers_list(GebrmJob *job);
 
 void gebrm_job_set_total_tasks(GebrmJob *job, gint total);
 
+void gebrm_job_set_run_type(GebrmJob *job,
+                            const gchar *type);
+
+const gchar *gebrm_job_get_run_type(GebrmJob *job);
+
 const gchar * gebrm_job_get_temp_id(GebrmJob *job);
 
 const gchar *gebrm_job_get_server_group(GebrmJob *job);

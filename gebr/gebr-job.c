@@ -32,6 +32,7 @@ typedef struct {
 struct _GebrJobPriv {
 	gchar *runid;
 	GebrCommJobStatus status;
+	gchar *run_type;
 
 	gint exec_speed;
 	gchar *title;
@@ -80,6 +81,7 @@ static void
 gebr_job_finalize(GObject *object)
 {
 	GebrJob *job = GEBR_JOB(object);
+	g_free(job->priv->run_type);
 	g_free(job->priv->title);
 	g_free(job->priv->hostname);
 	g_free(job->priv->runid);
@@ -213,23 +215,26 @@ gebr_job_can_kill(GebrJob *job)
 
 /* Public methods {{{1 */
 GebrJob *
-gebr_job_new(const gchar *queue)
+gebr_job_new(const gchar *queue,
+             const gchar *run_type)
 {
 	static gint id = 0;
 
 	gchar *rid = g_strdup_printf("%d:%s", id++, gebr_get_session_id());
-	GebrJob *job = gebr_job_new_with_id(rid, queue);
+	GebrJob *job = gebr_job_new_with_id(rid, queue, run_type);
 	return job;
 }
 
 GebrJob *
 gebr_job_new_with_id(const gchar *rid,
-		     const gchar *queue)
+		     const gchar *queue,
+		     const gchar *run_type)
 {
 	GebrJob *job = g_object_new(GEBR_TYPE_JOB, NULL);
 
 	job->priv->queue = g_strdup(queue);
 	job->priv->runid = g_strdup(rid);
+	job->priv->run_type = g_strdup(run_type);
 	job->priv->n_servers = 0;
 
 	return job;
@@ -239,6 +244,9 @@ void
 gebr_job_set_servers(GebrJob *job,
 		     const gchar *servers)
 {
+	const gchar *run_type = gebr_job_get_run_type(job);
+	gboolean is_normal = g_strcmp0(run_type, "normal") == 0;
+
 	gchar **split = g_strsplit(servers, ",", 0);
 
 	if (!split)
@@ -246,14 +254,18 @@ gebr_job_set_servers(GebrJob *job,
 
 	while (split[job->priv->n_servers])
 		job->priv->n_servers++;
-	job->priv->n_servers /= 2;
+
+	if (is_normal)
+		job->priv->n_servers /= 2;
 
 	job->priv->tasks = g_new0(GebrJobTask, job->priv->n_servers);
 
+	gint j = 0;
 	for (int i = 0; i < job->priv->n_servers; i++) {
+		j = is_normal? i*2 : i;
 
-		job->priv->tasks[i].server = split[i*2];
-		job->priv->tasks[i].percentage = g_strtod(split[i*2 + 1], NULL);
+		job->priv->tasks[i].server = split[j];
+		job->priv->tasks[i].percentage = is_normal? g_strtod(split[j + 1], NULL) : 0;
 		job->priv->tasks[i].cmd_line = NULL;
 		job->priv->tasks[i].frac = i+1;
 		job->priv->tasks[i].output = g_string_new("");
@@ -712,4 +724,10 @@ const gchar *
 gebr_job_get_maestro_address(GebrJob *job)
 {
 	return job->priv->maestro_address;
+}
+
+const gchar *
+gebr_job_get_run_type(GebrJob *job)
+{
+	return job->priv->run_type;
 }
