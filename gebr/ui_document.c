@@ -1830,6 +1830,11 @@ save_document_properties(GebrPropertiesData *data)
 			if (clean) {
 				gebr_document_send_path_message(GEBR_GEOXML_LINE(data->document), GEBR_COMM_PROTOCOL_PATH_CREATE, NULL);
 				on_groups_combo_box_changed(GTK_COMBO_BOX(data->maestro_combo));
+
+				GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
+				gchar *home = g_build_filename(gebr_maestro_server_get_home_dir(maestro), NULL);
+				gebr_geoxml_line_append_path(gebr.line, "HOME", home);
+				g_free(home);
 			}
 		} else
 			on_groups_combo_box_changed(GTK_COMBO_BOX(data->maestro_combo));
