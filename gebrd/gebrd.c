@@ -344,11 +344,19 @@ void gebrd_config_load(void)
 	for (int i = 0; groups[i]; i++) {
 		if (!g_str_has_prefix(groups[i], "mpi-"))
 			continue;
+
+		GString *bin = gebr_g_key_file_load_string_key(key_file, groups[i], "mpirun", "mpirun");
+
+		if (!g_find_program_in_path(bin->str)) {
+			g_string_free(bin, TRUE);
+			continue;
+		}
+
 		GebrdMpiConfig * mpi_config;
 		mpi_config = g_new(GebrdMpiConfig, 1);
 
 		mpi_config->name = g_string_new(groups[i] + 4);
-		mpi_config->mpirun = gebr_g_key_file_load_string_key(key_file, groups[i], "mpirun", "mpirun");
+		mpi_config->mpirun = bin;
 		mpi_config->libpath = gebr_g_key_file_load_string_key(key_file, groups[i], "libpath", "");
 		mpi_config->host = gebr_g_key_file_load_string_key(key_file, groups[i], "host", "");
 		mpi_config->init_cmd = gebr_g_key_file_load_string_key(key_file, groups[i], "init_command", "");
