@@ -1027,7 +1027,7 @@ gebrm_daemon_accepts_mpi(GebrmDaemon *daemon,
 	gboolean retval = FALSE;
 	gchar **flavors = g_strsplit(daemon->priv->mpi_flavors, ",", -1);
 
-	for (gint i = 0; flavors; i++) {
+	for (gint i = 0; flavors[i]; i++) {
 		if (g_strcmp0(flavors[i], flavor) == 0) {
 			retval = TRUE;
 			break;
