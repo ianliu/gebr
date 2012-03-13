@@ -168,9 +168,10 @@ static void
 send_server_status_message(GebrmApp *app,
 			   GebrCommProtocolSocket *socket,
 			   GebrmDaemon *daemon,
-			   const gchar *ac)
+			   const gchar *ac,
+			   GebrCommServerState st)
 {
-	const gchar *state = gebr_comm_server_state_to_string(gebrm_daemon_get_state(daemon));
+	const gchar *state = gebr_comm_server_state_to_string(st);
 	gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
 					      gebr_comm_protocol_defs.ssta_def, 4,
 					      gebrm_daemon_get_hostname(daemon),
@@ -340,7 +341,7 @@ gebrm_app_daemon_on_state_change(GebrmDaemon *daemon,
 
 	for (GList *i = app->priv->connections; i; i = i->next) {
 		GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(i->data);
-		send_server_status_message(app, socket, daemon, gebrm_daemon_get_autoconnect(daemon));
+		send_server_status_message(app, socket, daemon, gebrm_daemon_get_autoconnect(daemon), state);
 	}
 }
 
@@ -498,7 +499,8 @@ err:
 			GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(i->data);
 			if (!home_defined)
 				gebrm_app_send_home_dir(app, socket, home);
-			send_server_status_message(app, socket, daemon, gebrm_daemon_get_autoconnect(daemon));
+			send_server_status_message(app, socket, daemon, gebrm_daemon_get_autoconnect(daemon),
+			                           gebrm_daemon_get_state(daemon));
 
 			queue_client_info(app, daemon, i->data);
 			gebrm_app_send_mpi_flavors(socket, daemon);
@@ -1131,11 +1133,13 @@ on_client_parse_messages(GebrCommProtocolSocket *socket,
 
 			for (GList *i = app->priv->daemons; i; i = i->next) {
 				GebrCommServerState state = gebrm_daemon_get_state(i->data);
-				if ( state == SERVER_STATE_LOGGED || state == SERVER_STATE_DISCONNECTED) {
-					queue_client_info(app, i->data, client);
-					send_server_status_message(app, socket, i->data, gebrm_daemon_get_autoconnect(i->data));
-					send_groups_definitions(socket, i->data);
-				}
+				if ( state != SERVER_STATE_LOGGED)
+					state = SERVER_STATE_DISCONNECTED;
+
+				queue_client_info(app, i->data, client);
+				send_server_status_message(app, socket, i->data, gebrm_daemon_get_autoconnect(i->data), state);
+				send_groups_definitions(socket, i->data);
+
 				if ( state == SERVER_STATE_LOGGED) 
 					gebrm_app_send_mpi_flavors(socket, i->data);
 			}
