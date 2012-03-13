@@ -210,3 +210,4 @@ gebr_comm_job_get_status_from_string(const gchar *status)
 	else
 		return JOB_STATUS_INITIAL;
 }
+

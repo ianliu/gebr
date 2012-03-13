@@ -26,6 +26,7 @@
 #include "gebrm-client.h"
 
 #include <glib/gprintf.h>
+#include <glib/gi18n.h>
 #include <gio/gio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -117,6 +118,8 @@ static gboolean gebrm_remove_server_from_list(GebrmApp *app, const gchar *addres
 gboolean gebrm_config_load_servers(GebrmApp *app, const gchar *path);
 
 static void send_job_def_to_clients(GebrmApp *app, GebrmJob *job);
+
+static void send_messages_of_jobs(const gchar *id, GebrmJob *job, GebrCommProtocolSocket *protocol);
 
 G_DEFINE_TYPE(GebrmApp, gebrm_app, G_TYPE_OBJECT);
 
@@ -735,6 +738,152 @@ on_execution_response(GebrCommRunner *runner,
 }
 
 static void
+gebrm_app_handle_run(GebrmApp *app, GebrCommHttpMsg *request, GebrmClient *client, GebrCommUri *uri)
+{
+	const gchar *gid         = gebr_comm_uri_get_param(uri, "gid");
+	const gchar *parent_id   = gebr_comm_uri_get_param(uri, "parent_id");
+	const gchar *temp_parent = gebr_comm_uri_get_param(uri, "temp_parent");
+	const gchar *speed       = gebr_comm_uri_get_param(uri, "speed");
+	const gchar *nice        = gebr_comm_uri_get_param(uri, "nice");
+	const gchar *name        = gebr_comm_uri_get_param(uri, "name");
+	const gchar *server_host = gebr_comm_uri_get_param(uri, "server-hostname");
+	const gchar *group_type  = gebr_comm_uri_get_param(uri, "group_type");
+	const gchar *host        = gebr_comm_uri_get_param(uri, "host");
+	const gchar *temp_id     = gebr_comm_uri_get_param(uri, "temp_id");
+	const gchar *paths       = gebr_comm_uri_get_param(uri, "paths");
+
+	if (temp_parent) {
+		parent_id = gebrm_client_get_job_id_from_temp(client,
+							      temp_parent);
+		g_debug("Got parent_id %s from temp id %s", parent_id, temp_parent);
+	}
+
+	GebrCommJsonContent *json = gebr_comm_json_content_new(request->content->str);
+	GString *value = gebr_comm_json_content_to_gstring(json);
+
+	GebrGeoXmlProject **pproj = g_new(GebrGeoXmlProject*, 1);
+	GebrGeoXmlLine **pline = g_new(GebrGeoXmlLine*, 1);
+	GebrGeoXmlFlow **pflow = g_new(GebrGeoXmlFlow*, 1);
+
+	gebr_geoxml_document_load_buffer((GebrGeoXmlDocument **)pflow, value->str);
+	*pproj = gebr_geoxml_project_new();
+	*pline = gebr_geoxml_line_new();
+
+	gebr_geoxml_document_split_dict(*((GebrGeoXmlDocument **)pflow),
+					*((GebrGeoXmlDocument **)pline),
+					*((GebrGeoXmlDocument **)pproj),
+					NULL);
+
+	GebrValidator *validator = gebr_validator_new((GebrGeoXmlDocument **)pflow,
+						      (GebrGeoXmlDocument **)pline,
+						      (GebrGeoXmlDocument **)pproj);
+
+	gchar *title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(*pflow));
+
+	GebrmJobInfo info = { 0, };
+	info.title = g_strdup(title);
+	info.temp_id = g_strdup(temp_id);
+	info.hostname = g_strdup(host);
+	info.parent_id = g_strdup(parent_id);
+	info.servers = g_strdup("");
+	info.nice = g_strdup(nice);
+	info.input = gebr_geoxml_flow_io_get_input(*pflow);
+	info.output = gebr_geoxml_flow_io_get_output(*pflow);
+	info.error = gebr_geoxml_flow_io_get_error(*pflow);
+	if (server_host)
+		info.group = g_strdup(server_host);
+	else
+		info.group = g_strdup(name);
+	info.group_type = g_strdup(group_type);
+	info.speed = g_strdup(speed);
+	info.submit_date = g_strdup(gebr_iso_date());
+
+	GebrmJob *job = gebrm_job_new();
+	gebrm_client_add_temp_id(client, temp_id, gebrm_job_get_id(job));
+	g_debug("Associating temp_id %s with id %s", temp_id, gebrm_job_get_id(job));
+
+	g_signal_connect(job, "status-change",
+			 G_CALLBACK(gebrm_app_job_controller_on_status_change), app);
+	g_signal_connect(job, "issued",
+			 G_CALLBACK(gebrm_app_job_controller_on_issued), app);
+	g_signal_connect(job, "cmd-line-received",
+			 G_CALLBACK(gebrm_app_job_controller_on_cmd_line_received), app);
+	g_signal_connect(job, "output",
+			 G_CALLBACK(gebrm_app_job_controller_on_output), app);
+
+	gebrm_job_init_details(job, &info);
+	gebrm_app_job_controller_add(app, job);
+
+	const gchar *mpi;
+	GebrGeoXmlProgram *mpi_prog = gebr_geoxml_flow_get_first_mpi_program(*pflow);
+	if (mpi_prog) {
+		mpi = gebr_geoxml_program_get_mpi(mpi_prog);
+		gebrm_job_set_run_type(job, "mpi");
+	}
+	else {
+		mpi = "";
+		gebrm_job_set_run_type(job, "normal");
+	}
+	gebr_geoxml_object_unref(mpi_prog);
+
+	GList *servers = get_comm_servers_list(app, name, group_type, mpi);
+	if (!servers) {
+		gebrm_job_set_status(job, JOB_STATUS_FAILED);
+		const gchar *mpi_issue_message = _("The group of servers does not support MPI execution.");
+
+		for (GList *i = app->priv->connections; i; i = i->next) {
+			GebrCommProtocolSocket *socket_client = gebrm_client_get_protocol_socket(i->data);
+			send_messages_of_jobs(gebrm_job_get_id(job), job, socket_client);
+			gebr_comm_protocol_socket_oldmsg_send(socket_client, FALSE,
+							      gebr_comm_protocol_defs.iss_def, 2,
+							      gebrm_job_get_id(job),
+							      mpi_issue_message);
+		}
+	} else {
+		GebrCommRunner *runner = gebr_comm_runner_new(GEBR_GEOXML_DOCUMENT(*pflow),
+							      servers, gebrm_job_get_id(job),
+							      gid, parent_id, speed, nice,
+							      name, paths, validator);
+
+		AppAndJob *aap = g_new(AppAndJob, 1);
+		aap->app = app;
+		aap->job = job;
+		gebr_comm_runner_set_ran_func(runner, on_execution_response, aap);
+
+		g_debug("Queue: '%s'", parent_id);
+
+		if (parent_id[0] == '\0') {
+			g_debug("Running immediately");
+			g_queue_push_head(app->priv->job_def_queue, job);
+			if (g_queue_is_empty(app->priv->job_run_queue)
+			    && !gebr_comm_runner_run_async(runner))
+				gebrm_job_kill_immediately(job);
+			g_queue_push_tail(app->priv->job_run_queue, runner);
+		} else {
+			GebrmJob *parent = gebrm_app_job_controller_find(app, parent_id);
+			GList *parent_on_queue = g_queue_find(app->priv->job_def_queue, parent);
+			if (parent_on_queue)
+				g_queue_insert_after(app->priv->job_def_queue, parent_on_queue, job);
+
+			GList *l = g_object_get_data(G_OBJECT(parent), "children");
+
+			RunnerAndJob *raj = g_new(RunnerAndJob, 1);
+			raj->runner = runner;
+			raj->job = job;
+			l = g_list_prepend(l, raj);
+			g_object_set_data(G_OBJECT(parent), "children", l);
+
+			if (g_queue_is_empty(app->priv->job_def_queue))
+				send_job_def_to_clients(app, job);
+		}
+	}
+
+	gebrm_job_info_free(&info);
+	g_list_free(servers);
+	g_free(title);
+}
+
+static void
 on_client_request(GebrCommProtocolSocket *socket,
 		  GebrCommHttpMsg *request,
 		  GebrmApp *app)
@@ -859,135 +1008,9 @@ on_client_request(GebrCommProtocolSocket *socket,
 			}
 		}
 		else if (g_strcmp0(prefix, "/run") == 0) {
-			GebrCommJsonContent *json;
 
-			const gchar *gid         = gebr_comm_uri_get_param(uri, "gid");
-			const gchar *parent_id   = gebr_comm_uri_get_param(uri, "parent_id");
-			const gchar *temp_parent = gebr_comm_uri_get_param(uri, "temp_parent");
-			const gchar *speed       = gebr_comm_uri_get_param(uri, "speed");
-			const gchar *nice        = gebr_comm_uri_get_param(uri, "nice");
-			const gchar *name        = gebr_comm_uri_get_param(uri, "name");
-			const gchar *server_host = gebr_comm_uri_get_param(uri, "server-hostname");
-			const gchar *group_type  = gebr_comm_uri_get_param(uri, "group_type");
-			const gchar *host        = gebr_comm_uri_get_param(uri, "host");
-			const gchar *temp_id     = gebr_comm_uri_get_param(uri, "temp_id");
-			const gchar *paths       = gebr_comm_uri_get_param(uri, "paths");
+			gebrm_app_handle_run(app, request, client, uri);
 
-			if (temp_parent) {
-				parent_id = gebrm_client_get_job_id_from_temp(client,
-									      temp_parent);
-				g_debug("Got parent_id %s from temp id %s", parent_id, temp_parent);
-			}
-
-			json = gebr_comm_json_content_new(request->content->str);
-			GString *value = gebr_comm_json_content_to_gstring(json);
-
-			GebrGeoXmlProject **pproj = g_new(GebrGeoXmlProject*, 1);
-			GebrGeoXmlLine **pline = g_new(GebrGeoXmlLine*, 1);
-			GebrGeoXmlFlow **pflow = g_new(GebrGeoXmlFlow*, 1);
-
-			gebr_geoxml_document_load_buffer((GebrGeoXmlDocument **)pflow, value->str);
-			*pproj = gebr_geoxml_project_new();
-			*pline = gebr_geoxml_line_new();
-
-			gebr_geoxml_document_split_dict(*((GebrGeoXmlDocument **)pflow),
-			                                *((GebrGeoXmlDocument **)pline),
-			                                *((GebrGeoXmlDocument **)pproj),
-			                                NULL);
-
-			GebrValidator *validator = gebr_validator_new((GebrGeoXmlDocument **)pflow,
-								      (GebrGeoXmlDocument **)pline,
-								      (GebrGeoXmlDocument **)pproj);
-
-			gchar *title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(*pflow));
-
-			GebrmJobInfo info = { 0, };
-			info.title = g_strdup(title);
-			info.temp_id = g_strdup(temp_id);
-			info.hostname = g_strdup(host);
-			info.parent_id = g_strdup(parent_id);
-			info.servers = g_strdup("");
-			info.nice = g_strdup(nice);
-			info.input = gebr_geoxml_flow_io_get_input(*pflow);
-			info.output = gebr_geoxml_flow_io_get_output(*pflow);
-			info.error = gebr_geoxml_flow_io_get_error(*pflow);
-			if (server_host)
-				info.group = g_strdup(server_host);
-			else
-				info.group = g_strdup(name);
-			info.group_type = g_strdup(group_type);
-			info.speed = g_strdup(speed);
-			info.submit_date = g_strdup(gebr_iso_date());
-
-			GebrmJob *job = gebrm_job_new();
-			gebrm_client_add_temp_id(client, temp_id, gebrm_job_get_id(job));
-			g_debug("Associating temp_id %s with id %s", temp_id, gebrm_job_get_id(job));
-
-			g_signal_connect(job, "status-change",
-					 G_CALLBACK(gebrm_app_job_controller_on_status_change), app);
-			g_signal_connect(job, "issued",
-					 G_CALLBACK(gebrm_app_job_controller_on_issued), app);
-			g_signal_connect(job, "cmd-line-received",
-					 G_CALLBACK(gebrm_app_job_controller_on_cmd_line_received), app);
-			g_signal_connect(job, "output",
-					 G_CALLBACK(gebrm_app_job_controller_on_output), app);
-
-			gebrm_job_init_details(job, &info);
-			gebrm_job_info_free(&info);
-			gebrm_app_job_controller_add(app, job);
-
-			const gchar *mpi;
-			GebrGeoXmlProgram *mpi_prog = gebr_geoxml_flow_get_first_mpi_program(*pflow);
-			if (mpi_prog) {
-				mpi = gebr_geoxml_program_get_mpi(mpi_prog);
-				gebrm_job_set_run_type(job, "mpi");
-			}
-			else {
-				mpi = "";
-				gebrm_job_set_run_type(job, "normal");
-			}
-			gebr_geoxml_object_unref(mpi_prog);
-
-			GList *servers = get_comm_servers_list(app, name, group_type, mpi);
-			GebrCommRunner *runner = gebr_comm_runner_new(GEBR_GEOXML_DOCUMENT(*pflow),
-			                                              servers, gebrm_job_get_id(job),
-								      gid, parent_id, speed, nice,
-								      name, paths, validator);
-			g_list_free(servers);
-
-			AppAndJob *aap = g_new(AppAndJob, 1);
-			aap->app = app;
-			aap->job = job;
-			gebr_comm_runner_set_ran_func(runner, on_execution_response, aap);
-
-			g_debug("Queue: '%s'", parent_id);
-
-			if (parent_id[0] == '\0') {
-				g_debug("Running immediately");
-				g_queue_push_head(app->priv->job_def_queue, job);
-				if (g_queue_is_empty(app->priv->job_run_queue)
-				    && !gebr_comm_runner_run_async(runner))
-					gebrm_job_kill_immediately(job);
-				g_queue_push_tail(app->priv->job_run_queue, runner);
-			} else {
-				GebrmJob *parent = gebrm_app_job_controller_find(app, parent_id);
-				GList *parent_on_queue = g_queue_find(app->priv->job_def_queue, parent);
-				if (parent_on_queue)
-					g_queue_insert_after(app->priv->job_def_queue, parent_on_queue, job);
-
-				GList *l = g_object_get_data(G_OBJECT(parent), "children");
-
-				RunnerAndJob *raj = g_new(RunnerAndJob, 1);
-				raj->runner = runner;
-				raj->job = job;
-				l = g_list_prepend(l, raj);
-				g_object_set_data(G_OBJECT(parent), "children", l);
-
-				if (g_queue_is_empty(app->priv->job_def_queue))
-					send_job_def_to_clients(app, job);
-			}
-
-			g_free(title);
 		} else if (g_strcmp0(prefix, "/server-tags") == 0) {
 			const gchar *server = gebr_comm_uri_get_param(uri, "server");
 			const gchar *tags   = gebr_comm_uri_get_param(uri, "tags");
@@ -1432,13 +1455,10 @@ on_client_disconnect(GebrCommProtocolSocket *socket,
 }
 
 static void
-send_messages_of_jobs(gpointer key,
-                      gpointer value,
-                      gpointer data)
+send_messages_of_jobs(const gchar *id,
+                      GebrmJob *job,
+                      GebrCommProtocolSocket *protocol)
 {
-	GebrCommProtocolSocket *protocol = data;
-	const gchar *id = key;
-	GebrmJob *job = value;
 
 	gchar *infile, *outfile, *logfile;
 

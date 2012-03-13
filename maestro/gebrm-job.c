@@ -769,3 +769,9 @@ gebrm_job_info_free(GebrmJobInfo *info)
 	g_free(info->group_type);
 	g_free(info->speed);
 }
+void
+gebrm_job_set_status(GebrmJob *job, GebrCommJobStatus status)
+{
+	job->priv->status = status;
+
+}

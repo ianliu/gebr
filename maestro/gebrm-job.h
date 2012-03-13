@@ -228,6 +228,7 @@ const gchar *gebrm_job_get_server_group_type(GebrmJob *job);
 
 void gebrm_job_unqueue(GebrmJob *job);
 
+void gebrm_job_set_status(GebrmJob *job, GebrCommJobStatus status);
 G_END_DECLS
 
 #endif /* __GEBRM_JOB_H__ */
