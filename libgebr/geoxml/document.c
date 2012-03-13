@@ -56,6 +56,7 @@
 #include "parameters_p.h"
 #include "program-parameter.h"
 #include "program.h"
+#include "program_p.h"
 #include "sequence.h"
 #include "types.h"
 #include "value_sequence.h"
@@ -937,6 +938,46 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 	if (strcmp(version, "0.3.9") < 0) {
 		if (gebr_geoxml_document_get_type(GEBR_GEOXML_DOCUMENT(*document)) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW) {
 			__gebr_geoxml_set_attr_value(root_element, "version", "0.3.9");
+
+			GdomeElement *element;
+			element = __gebr_geoxml_get_first_element(root_element, "program");
+			gchar *value = __gebr_geoxml_get_attr_value(element, "mpi");
+
+			if (value && *value) {
+				GdomeElement *tmp;
+				tmp = __gebr_geoxml_insert_new_element(element, "mpi", NULL);
+				GebrGeoXmlParameters *params = __gebr_geoxml_parameters_append_new(tmp);
+
+				//Add Group MPI Parameters
+				GebrGeoXmlParameter *group = gebr_geoxml_parameters_append_parameter(params, GEBR_GEOXML_PARAMETER_TYPE_GROUP);
+				gebr_geoxml_parameter_set_label(group, _("MPI Parameters"));
+				gebr_geoxml_parameter_group_set_expand(GEBR_GEOXML_PARAMETER_GROUP(group), TRUE);
+				GebrGeoXmlParameters *template = gebr_geoxml_parameter_group_get_template(GEBR_GEOXML_PARAMETER_GROUP(group));
+
+				// Add parameter NP on instance
+				GebrGeoXmlParameter *param = gebr_geoxml_parameters_append_parameter(template, GEBR_GEOXML_PARAMETER_TYPE_RANGE);
+				gebr_geoxml_parameter_set_label(param, _("Number of process to start"));
+				gebr_geoxml_program_parameter_set_number_min_max(GEBR_GEOXML_PROGRAM_PARAMETER(param), "1", "9999999");
+				gebr_geoxml_program_parameter_set_required(GEBR_GEOXML_PROGRAM_PARAMETER(param), TRUE);
+				gebr_geoxml_program_parameter_set_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(param), "np");
+				gebr_geoxml_program_parameter_set_first_value(GEBR_GEOXML_PROGRAM_PARAMETER(param), TRUE, "1");
+
+				gebr_geoxml_object_unref(tmp);
+				gebr_geoxml_object_unref(params);
+				gebr_geoxml_object_unref(param);
+				gebr_geoxml_object_unref(group);
+				gebr_geoxml_object_unref(template);
+			} else {
+				GdomeElement *tmp = __gebr_geoxml_get_first_element(element, "mpi");
+
+				if (tmp)
+					gebr_geoxml_object_unref(gdome_el_removeChild(element, (GdomeNode*)tmp, &exception));
+
+				gebr_geoxml_object_unref(tmp);
+			}
+
+			g_free(value);
+			gebr_geoxml_object_unref(element);
 		}
 	}
 
