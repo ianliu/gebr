@@ -20,11 +20,23 @@
 
 #include "gebrd-mpi-implementations.h"
 
+#include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
+
 typedef struct {
 	GebrdMpiInterface parent;
 	const GebrdMpiConfig * config;
 	GList *servers;
+	gchar *tmp_file;
 } GebrdMpich2;
+
+typedef struct {
+	GebrdMpiInterface parent;
+	const GebrdMpiConfig * config;
+	gchar *servers;
+} GebrdOpenMpi;
+
 
 /*
  * OpenMPI definition
@@ -100,9 +112,34 @@ static void gebrd_open_mpi_free(GebrdMpiInterface * mpi)
 {
 }
 
+/* MPICH 2 */
+
 static gchar *
 gebrd_mpich2_initialize(GebrdMpiInterface * mpi)
 {
+	GebrdMpich2 *self = (GebrdMpich2*) mpi;
+	char *tmp = g_build_filename(g_get_home_dir(), ".gebr", "gebrd",
+				      g_get_host_name(), "mpd.hostsXXXXXX",
+				      NULL);
+	int fd = mkstemp(tmp);
+	int n = 0;
+
+	self->tmp_file = tmp;
+
+	if (fd == -1)
+		g_return_val_if_reached(NULL);
+
+	GString *hosts = g_string_new(NULL);
+
+	for (GList *i = self->servers; i; i = i->next) {
+		g_string_append(hosts, i->data);
+		g_string_append_c(hosts, '\n');
+		n++;
+	}
+
+	write(fd, hosts->str, hosts->len);
+	close(fd);
+
 	return NULL;
 }
 
@@ -110,13 +147,27 @@ static gchar *
 gebrd_mpich2_build_command(GebrdMpiInterface *mpi,
 			   const gchar *command)
 {
-	return NULL;
+	gchar *ld;
+	GebrdMpich2 *self = (GebrdMpich2*)mpi;
+
+	if (self->config->libpath->len)
+		ld = g_strdup_printf("LD_LIBRARY_PATH=%s:$LD_LIBRARY_PATH",
+				     self->config->libpath->str);
+	else
+		ld = g_strdup("");
+
+	return g_strdup_printf("%s %s -f %s -n %s %s",
+			       ld,
+			       self->config->mpirun->str,
+			       self->tmp_file,
+			       mpi->n_processes,
+			       command);
 }
 
 static gchar *
 gebrd_mpich2_finalize(GebrdMpiInterface *mpi)
 {
-	return NULL;
+	return g_strdup_printf("rm %s", ((GebrdMpich2*)mpi)->tmp_file);
 }
 
 static void
@@ -139,6 +190,7 @@ gebrd_mpich2_new(const gchar *n_process,
 
 	self->servers = g_list_copy(servers);
 	self->config = config;
+	gebrd_mpi_interface_set_n_processes(mpi, n_process);
 
 	return mpi;
 }

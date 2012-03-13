@@ -15,7 +15,27 @@ gchar * gebrd_mpi_interface_initialize(GebrdMpiInterface * self)
 
 gchar * gebrd_mpi_interface_build_comand(GebrdMpiInterface * self, const gchar * command)
 {
-	return self->build_command(self, command);
+	gchar *init, *fina;
+	GString *buf = g_string_new(NULL);
+
+	init = self->initialize(self);
+	fina = self->finalize(self);
+
+	if (init) {
+		g_string_append(buf, init);
+		g_string_append(buf, "; ");
+		g_free(init);
+	}
+
+	g_string_append(buf, self->build_command(self, command));
+
+	if (fina) {
+		g_string_append(buf, "; ");
+		g_string_append(buf, fina);
+		g_free(fina);
+	}
+
+	return g_string_free(buf, FALSE);
 }
 
 gchar * gebrd_mpi_interface_finalize(GebrdMpiInterface * self)

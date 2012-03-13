@@ -768,6 +768,10 @@ job_get_mpi_impl(const gchar * mpi_name, gint np, GList *servers)
 
 	if (strcmp(mpi_name, "openmpi") == 0)
 		ret = gebrd_open_mpi_new(tmp, config, servers);
+	else if (strcmp(mpi_name, "mpich2") == 0)
+		ret = gebrd_mpich2_new(tmp, config, servers);
+	else
+		g_warn_if_reached();
 
 	return ret;
 }
