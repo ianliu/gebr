@@ -1171,11 +1171,12 @@ gebr_job_control_include_cmd_line(GebrJobControl *jc,
 	jc->priv->cmd_views = NULL;
 
 	gint total;
+	const gchar *run_type = gebr_job_get_run_type(job);
 	GebrJobTask *job_tasks = gebr_job_get_tasks(job, &total);
 	if (!job_tasks)
 		return;
 
-	if (total > 1) {
+	if (total > 1 && g_strcmp0(run_type, "mpi") != 0) {
 		GtkWidget *vbox = gtk_vbox_new(FALSE, 8);
 
 		for (int i = 0; i < total; i++) {
