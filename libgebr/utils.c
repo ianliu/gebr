@@ -1132,6 +1132,9 @@ gebr_validate_path(const gchar *path,
 		   gchar ***pvector,
 		   gchar **err_msg)
 {
+	if (!*path)
+		return TRUE;
+
 	for (int i = 0; pvector[i]; i++) {
 		gchar *tmp = g_strdup_printf("<%s>", pvector[i][1]);
 		if (g_str_has_prefix(path, tmp))
