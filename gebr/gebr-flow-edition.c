@@ -625,7 +625,7 @@ void flow_edition_set_io(void)
 		gchar *err_msg;
 		if (err) {
 			tooltip = g_strdup(err->message);
-		} else if (!gebr_validate_path(result, paths, &err_msg)) {
+		} else if (!gebr_validate_path(tmp, paths, &err_msg)) {
 			tooltip = err_msg;
 			icon = GTK_STOCK_DIALOG_WARNING;
 		} else {
