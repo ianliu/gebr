@@ -1848,6 +1848,7 @@ save_document_properties(GebrPropertiesData *data)
 		break;
 	}
 
+	document_save(data->document, TRUE, FALSE);
 	gtk_widget_destroy(data->window);
 }
 
