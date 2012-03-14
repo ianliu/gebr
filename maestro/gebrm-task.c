@@ -241,6 +241,7 @@ gebrm_task_emit_status_changed_signal(GebrmTask *task,
 				      const gchar *parameter)
 {
 	GebrCommJobStatus old_status;
+	const gchar *param = parameter;
 
 	old_status = task->priv->status;
 	task->priv->status = new_status;
@@ -248,17 +249,19 @@ gebrm_task_emit_status_changed_signal(GebrmTask *task,
 	switch (new_status)
 	{
 	case JOB_STATUS_RUNNING:
-		g_string_assign(task->priv->start_date, parameter);
+		param = gebr_iso_date();
+		g_string_assign(task->priv->start_date, param);
 		break;
 	case JOB_STATUS_FINISHED:
 	case JOB_STATUS_CANCELED:
-		g_string_assign(task->priv->finish_date, parameter);
+		param = gebr_iso_date();
+		g_string_assign(task->priv->finish_date, param);
 		break;
 	default:
 		break;
 	}
 
-	g_signal_emit(task, signals[STATUS_CHANGE], 0, old_status, new_status, parameter);
+	g_signal_emit(task, signals[STATUS_CHANGE], 0, old_status, new_status, param);
 }
 
 const gchar *
