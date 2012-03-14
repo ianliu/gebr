@@ -616,7 +616,7 @@ gebrm_update_tags_on_list_of_servers(GebrmApp *app,
 }
 
 static GList *
-get_comm_servers_list(GebrmApp *app, const gchar *group, const gchar *group_type, const gchar *mpi)
+get_comm_servers_list(GebrmApp *app, const gchar *group, const gchar *group_type, GList *mpi_flavors)
 {
 	GList *servers = NULL;
 	gboolean is_single = g_strcmp0(group_type, "daemon") == 0;
@@ -644,11 +644,18 @@ get_comm_servers_list(GebrmApp *app, const gchar *group, const gchar *group_type
 		}
 	}
 
-	if (*mpi) {
-		//for (GList *i = servers; i; i = i->next) {
+	if (mpi_flavors) {
+		gboolean has_flavors;
 		GList *i = servers;
 		while (i) {
-			if (!gebrm_daemon_accepts_mpi(i->data, mpi)) {
+			has_flavors = TRUE;
+			for (GList *k = mpi_flavors; k; k = k->next) {
+				if (!gebrm_daemon_accepts_mpi(i->data, k->data)) {
+					has_flavors = FALSE;
+					break;
+				}
+			}
+			if (!has_flavors) {
 				GList *aux = i->next;
 				servers = g_list_delete_link(servers, i);
 				i = aux;
@@ -816,19 +823,18 @@ gebrm_app_handle_run(GebrmApp *app, GebrCommHttpMsg *request, GebrmClient *clien
 	gebrm_job_init_details(job, &info);
 	gebrm_app_job_controller_add(app, job);
 
-	const gchar *mpi;
-	GebrGeoXmlProgram *mpi_prog = gebr_geoxml_flow_get_first_mpi_program(*pflow);
-	if (mpi_prog) {
-		mpi = gebr_geoxml_program_get_mpi(mpi_prog);
-		gebrm_job_set_run_type(job, "mpi");
-	}
-	else {
-		mpi = "";
-		gebrm_job_set_run_type(job, "normal");
-	}
-	gebr_geoxml_object_unref(mpi_prog);
+	GList *mpi_flavors = gebr_geoxml_flow_get_mpi_flavors(*pflow);
 
-	GList *servers = get_comm_servers_list(app, name, group_type, mpi);
+	if (mpi_flavors)
+		gebrm_job_set_run_type(job, "mpi");
+	else
+		gebrm_job_set_run_type(job, "normal");
+
+	GList *servers = get_comm_servers_list(app, name, group_type, mpi_flavors);
+
+	g_list_foreach(mpi_flavors, (GFunc)g_free, NULL);
+	g_list_free(mpi_flavors);
+
 	if (!servers) {
 		gebrm_job_set_status(job, JOB_STATUS_FAILED);
 		const gchar *mpi_issue_message = _("The group of servers does not support MPI execution.");
