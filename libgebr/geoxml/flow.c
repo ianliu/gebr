@@ -1229,3 +1229,34 @@ gebr_geoxml_flow_get_mpi_flavors(GebrGeoXmlFlow *flow)
 
 	return list;
 }
+
+gchar *
+gebr_geoxml_flow_io_get_input_real(GebrGeoXmlFlow *flow)
+{
+	GebrGeoXmlSequence *seq;
+
+	gebr_geoxml_flow_get_program(flow, &seq, 0);
+	for (; seq; gebr_geoxml_sequence_next(&seq)) {
+		GebrGeoXmlProgram *prog = GEBR_GEOXML_PROGRAM(seq);
+		GebrGeoXmlProgramStatus status = gebr_geoxml_program_get_status(prog);
+		if (status == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED && gebr_geoxml_program_get_stdin(prog))
+			return gebr_geoxml_flow_io_get_input(flow);
+	}
+	return g_strdup("");
+}
+
+gchar *
+gebr_geoxml_flow_io_get_output_real(GebrGeoXmlFlow *flow)
+{
+	GebrGeoXmlSequence *seq;
+
+	glong num_progs = gebr_geoxml_flow_get_programs_number(flow);
+	gebr_geoxml_flow_get_program(flow, &seq, num_progs-1);
+	for (; seq; gebr_geoxml_sequence_previous(&seq)) {
+		GebrGeoXmlProgram *prog = GEBR_GEOXML_PROGRAM(seq);
+		GebrGeoXmlProgramStatus status = gebr_geoxml_program_get_status(prog);
+		if (status == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED && gebr_geoxml_program_get_stdout(prog))
+			return gebr_geoxml_flow_io_get_output(flow);
+	}
+	return g_strdup("");
+}

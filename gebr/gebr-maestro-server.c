@@ -701,6 +701,7 @@ parse_messages(GebrCommServer *comm_server,
 			GString *status = g_list_nth_data(arguments, 1);
 			GString *parameter = g_list_nth_data(arguments, 2);
 
+			g_debug("******************************on %s, id:%s, status:%s, parameter:%s",__func__, id->str, status->str, parameter->str  ); 
 			GebrJob *job = g_hash_table_lookup(maestro->priv->jobs, id->str);
 			gebr_job_set_status(job, gebr_comm_job_get_status_from_string(status->str), parameter->str);
 

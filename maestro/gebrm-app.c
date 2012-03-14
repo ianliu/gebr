@@ -796,8 +796,8 @@ gebrm_app_handle_run(GebrmApp *app, GebrCommHttpMsg *request, GebrmClient *clien
 	info.parent_id = g_strdup(parent_id);
 	info.servers = g_strdup("");
 	info.nice = g_strdup(nice);
-	info.input = gebr_geoxml_flow_io_get_input(*pflow);
-	info.output = gebr_geoxml_flow_io_get_output(*pflow);
+	info.input = gebr_geoxml_flow_io_get_input_real(*pflow);
+	info.output = gebr_geoxml_flow_io_get_output_real(*pflow);
 	info.error = gebr_geoxml_flow_io_get_error(*pflow);
 	if (server_host)
 		info.group = g_strdup(server_host);

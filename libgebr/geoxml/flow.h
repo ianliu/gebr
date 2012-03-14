@@ -534,6 +534,9 @@ gdouble *gebr_geoxml_flow_calulate_weights(gint n_servers,
 
 GList *gebr_geoxml_flow_get_mpi_flavors(GebrGeoXmlFlow *flow);
 
+gchar * gebr_geoxml_flow_io_get_input_real(GebrGeoXmlFlow *flow);
+
+gchar * gebr_geoxml_flow_io_get_output_real(GebrGeoXmlFlow *flow);
 G_END_DECLS
 
 #endif				//__GEBR_GEOXML_FLOW_H
