@@ -1196,7 +1196,7 @@ static void job_assembly_cmdline(GebrdJob *job)
 	gboolean previous_stdout;
 	guint issue_number = 0;
 	GebrGeoXmlSequence *program;
-	GebrdMpiInterface *mpi;
+	GebrdMpiInterface *mpi = NULL;
 	gulong nprog;
 	gboolean has_control = FALSE;
 	gchar *n;
@@ -1390,6 +1390,8 @@ static void job_assembly_cmdline(GebrdJob *job)
 			g_string_assign(mpi_cmd, "");
 			job_parse_parameters(job, mpi_params, GEBR_GEOXML_PROGRAM(program), expr_buf, mpi_cmd);
 			mpi = job_get_mpi_impl(gebr_geoxml_program_get_mpi(GEBR_GEOXML_PROGRAM(program)), mpi_cmd->str, job->mpi_servers);
+		} else {
+			mpi = NULL;
 		}
 
 		/* How to connect chained programs */
