@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libgebr 0.9.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-02-27 13:39-0300\n"
+"POT-Creation-Date: 2012-03-14 15:09-0300\n"
 "PO-Revision-Date: 2011-11-18 16:09-0200\n"
 "Last-Translator: Fabrício Matheus Gonçalves <fmatheus@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
@@ -22,23 +22,23 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #. initiate the marathon to communicate to server
-#: ../comm/gebr-comm-server.c:257
+#: ../comm/gebr-comm-server.c:259
 #, c-format
 msgid "%p: Launching server at '%s'."
 msgstr "%p: Iniciando servidor em '%s'."
 
-#: ../comm/gebr-comm-server.c:302
+#: ../comm/gebr-comm-server.c:304
 #, c-format
 msgid "Stopping server at '%s'."
 msgstr "Parando servidor em '%s'."
 
 #. log
-#: ../comm/gebr-comm-server.c:372
+#: ../comm/gebr-comm-server.c:374
 #, c-format
 msgid "Redirecting '%s' graphical output."
 msgstr "Redirecionando saída gráfica de '%s'."
 
-#: ../comm/gebr-comm-server.c:453
+#: ../comm/gebr-comm-server.c:455
 #, c-format
 msgid ""
 "Server '%s' needs SSH login.\n"
@@ -49,7 +49,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../comm/gebr-comm-server.c:456
+#: ../comm/gebr-comm-server.c:458
 #, c-format
 msgid ""
 "Wrong password for server '%s', please try again.\n"
@@ -60,48 +60,48 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../comm/gebr-comm-server.c:468
+#: ../comm/gebr-comm-server.c:470
 msgid "Please, enter password"
 msgstr "Por favor, digite sua senha"
 
-#: ../comm/gebr-comm-server.c:475
+#: ../comm/gebr-comm-server.c:477
 msgid "SSH login:"
 msgstr "Login SSH:"
 
-#: ../comm/gebr-comm-server.c:481
+#: ../comm/gebr-comm-server.c:483
 msgid "No password provided."
 msgstr "Nenhuma senha informada."
 
-#: ../comm/gebr-comm-server.c:500
+#: ../comm/gebr-comm-server.c:502
 msgid "Please, answer the question"
 msgstr "Por favor, responda a pergunta"
 
-#: ../comm/gebr-comm-server.c:509
+#: ../comm/gebr-comm-server.c:511
 msgid "SSH host key question:"
 msgstr "Chave do servidor:"
 
-#: ../comm/gebr-comm-server.c:512
+#: ../comm/gebr-comm-server.c:514
 msgid "SSH host key rejected."
 msgstr "A chave SSH do servidor foi rejeitada."
 
 #. last \n
-#: ../comm/gebr-comm-server.c:522
+#: ../comm/gebr-comm-server.c:524
 #, c-format
 msgid "SSH error: %s"
 msgstr "Erro SSH: %s"
 
-#: ../comm/gebr-comm-server.c:523
+#: ../comm/gebr-comm-server.c:525
 #, c-format
 msgid "Received SSH error for server '%s': %s"
 msgstr "O servidor SSH em '%s' reportou o seguinte erro: %s"
 
 #. last \n
-#: ../comm/gebr-comm-server.c:529
+#: ../comm/gebr-comm-server.c:531
 #, c-format
 msgid "Received SSH message for server '%s': %s"
 msgstr "Mensagem SSH recebida do servidor '%s': %s"
 
-#: ../comm/gebr-comm-server.c:540
+#: ../comm/gebr-comm-server.c:542
 #, c-format
 msgid ""
 "SSH reported the following error: \n"
@@ -110,21 +110,21 @@ msgstr ""
 "SSH reportou o seguinte erro:\n"
 "%s"
 
-#: ../comm/gebr-comm-server.c:541
+#: ../comm/gebr-comm-server.c:543
 #, c-format
 msgid "SSH reported the following error for server '%s': %s"
 msgstr "SSH reportou o seguinte erro para o servidor '%s': %s"
 
-#: ../comm/gebr-comm-server.c:598 ../comm/gebr-comm-server.c:621
+#: ../comm/gebr-comm-server.c:600 ../comm/gebr-comm-server.c:623
 msgid "Could not run server."
 msgstr "Não foi possível executar o servidor."
 
-#: ../comm/gebr-comm-server.c:599 ../comm/gebr-comm-server.c:622
+#: ../comm/gebr-comm-server.c:601 ../comm/gebr-comm-server.c:624
 #, c-format
 msgid "Could not run server '%s'."
 msgstr "Não foi possível executar o servidor '%s'."
 
-#: ../comm/gebr-comm-server.c:785
+#: ../comm/gebr-comm-server.c:787
 #, c-format
 msgid "Server '%s' disconnected"
 msgstr "Servidor '%s' desconectado"
@@ -353,6 +353,14 @@ msgstr "%s INVÁLIDO: %s"
 #, c-format
 msgid "%s valid!\n"
 msgstr "%s válido!\n"
+
+#: ../geoxml/document.c:953 ../geoxml/program.c:593
+msgid "MPI Parameters"
+msgstr "Parâmetros do MPI"
+
+#: ../geoxml/document.c:959 ../geoxml/program.c:599
+msgid "Number of process to start"
+msgstr "Número de processos a começar"
 
 #: ../geoxml/error.c:30
 msgid "Success."
@@ -888,29 +896,29 @@ msgstr ""
 "Você não tem a permissão necessária para salvar o arquivo %s. Verifique se "
 "você escolheu a localização corretamente."
 
-#: ../gui/gebr-gui-parameter.c:227
+#: ../gui/gebr-gui-parameter.c:255
 msgid "All"
 msgstr "Todos"
 
-#: ../gui/gebr-gui-parameter.c:885
+#: ../gui/gebr-gui-parameter.c:913
 msgid "Edit list"
 msgstr "Editar lista"
 
-#: ../gui/gebr-gui-parameter.c:1030
+#: ../gui/gebr-gui-parameter.c:1058
 msgid "Insert Variable"
 msgstr "Inserir variável"
 
-#: ../gui/gebr-gui-parameter.c:1648
+#: ../gui/gebr-gui-parameter.c:1723
 #, c-format
 msgid "This group has %d error"
 msgstr "Este grupo tem %d erro"
 
-#: ../gui/gebr-gui-parameter.c:1650
+#: ../gui/gebr-gui-parameter.c:1725
 #, c-format
 msgid "This group has %d errors"
 msgstr "Este grupo tem %d erros"
 
-#: ../gui/gebr-gui-program-edit.c:151
+#: ../gui/gebr-gui-program-edit.c:159
 msgid "Link"
 msgstr "Link"
 
@@ -936,9 +944,17 @@ msgstr ""
 msgid "<empty value>"
 msgstr "<valor vazio>"
 
-#: ../gui/gebr-gui-utils.c:1207
+#: ../gui/gebr-gui-utils.c:1208
 msgid "No such file or directory:"
 msgstr "Arquivo ou diretório não encontrado:"
+
+#: ../gui/gebr-gui-utils.c:1239
+msgid ""
+"The presented files are from your local machine and may not represent the "
+"files on the servers."
+msgstr ""
+"Os arquivos apresentados aqui são de sua máquina local e podem não "
+"representar os arquivos nos servidores."
 
 #: ../utils.c:763
 msgid "A moment"
@@ -1072,6 +1088,14 @@ msgstr "1 milissegundo"
 #, c-format
 msgid "%ld miliseconds"
 msgstr "%ld milessegundos"
+
+#: ../utils.c:1145
+msgid "The specified line path does not exist"
+msgstr "O caminho de linha específico não existe"
+
+#: ../utils.c:1147
+msgid "The path must either start with < or /"
+msgstr "O caminho deve começar com < ou /"
 
 #: ../validate.c:39
 msgid "File names must be a valid path."
