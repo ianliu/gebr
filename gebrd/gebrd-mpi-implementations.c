@@ -28,7 +28,7 @@ typedef struct {
 	GebrdMpiInterface parent;
 	const GebrdMpiConfig * config;
 	GList *servers;
-	gchar *tmp_file;
+	const gchar *tmp_file;
 } GebrdMpich2;
 
 typedef struct {
@@ -118,29 +118,26 @@ static gchar *
 gebrd_mpich2_initialize(GebrdMpiInterface * mpi)
 {
 	GebrdMpich2 *self = (GebrdMpich2*) mpi;
-	char *tmp = g_build_filename(g_get_home_dir(), ".gebr", "gebrd",
+
+	gchar *tmp = g_build_filename(g_get_home_dir(), ".gebr", "gebrd",
 				      g_get_host_name(), "mpd.hostsXXXXXX",
 				      NULL);
-	int fd = mkstemp(tmp);
-	int n = 0;
 
-	self->tmp_file = tmp;
-
-	if (fd == -1)
-		g_return_val_if_reached(NULL);
-
+	gint n = 0;
 	GString *hosts = g_string_new(NULL);
-
 	for (GList *i = self->servers; i; i = i->next) {
 		g_string_append(hosts, i->data);
 		g_string_append_c(hosts, '\n');
 		n++;
 	}
 
-	write(fd, hosts->str, hosts->len);
-	close(fd);
+	self->tmp_file = "$_gebr_tmp";
+	gchar *ret_cmd = g_strdup_printf("_gebr_tmp=`mktemp %s` && echo '%s' >> %s", tmp, hosts->str, self->tmp_file);
 
-	return NULL;
+	g_string_free(hosts, TRUE);
+	g_free(tmp);
+
+	return ret_cmd;
 }
 
 static gchar *
