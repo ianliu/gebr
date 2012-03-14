@@ -1208,3 +1208,24 @@ GList *gebr_geoxml_flow_divide_flows(GebrGeoXmlFlow *flow,
 
 	return flows;
 }
+
+GList *
+gebr_geoxml_flow_get_mpi_flavors(GebrGeoXmlFlow *flow)
+{
+	GList *list = NULL;
+	GebrGeoXmlSequence *seq;
+
+	gebr_geoxml_flow_get_program(flow, &seq, 0);
+	for (; seq; gebr_geoxml_sequence_next(&seq)) {
+		GebrGeoXmlProgram *prog = GEBR_GEOXML_PROGRAM(seq);
+		const gchar *mpi = gebr_geoxml_program_get_mpi(prog);
+
+		if (!*mpi)
+			continue;
+
+		if (!g_list_find_custom(list, mpi, (GCompareFunc)g_strcmp0))
+			list = g_list_prepend(list, g_strdup(mpi));
+	}
+
+	return list;
+}
