@@ -84,6 +84,10 @@ void gebr_geoxml_program_foreach_parameter(GebrGeoXmlProgram * program, GebrGeoX
 	GebrGeoXmlParameters *params = gebr_geoxml_program_get_parameters(program);
 	gebr_geoxml_parameters_foreach(params, callback, user_data);
 	gebr_geoxml_object_unref(params);
+
+	params = gebr_geoxml_program_mpi_get_parameters(program);
+	gebr_geoxml_parameters_foreach(params, callback, user_data);
+	gebr_geoxml_object_unref(params);
 }
 
 GebrGeoXmlFlow *gebr_geoxml_program_flow(GebrGeoXmlProgram * program)
