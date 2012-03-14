@@ -26,6 +26,11 @@
 
 G_BEGIN_DECLS
 
+typedef struct {
+	gchar *flavor;
+	gchar *n_processes;
+} MpiKeywords;
+
 /**
  * \internal
  * Used by gebr_geoxml_program_new_parameter and gebr_geoxml_program_parameter_set_type
@@ -37,6 +42,8 @@ void gebr_geoxml_program_mpi_add_tags(GebrGeoXmlProgram *self,
 				      const gchar *mpi);
 
 void gebr_geoxml_program_mpi_remove_tags(GebrGeoXmlProgram *self);
+
+MpiKeywords *get_mpi_keywords_for_flavor(const gchar *flavor);
 
 G_END_DECLS
 #endif				//__GEBR_GEOXML_PROGRAM_P_H

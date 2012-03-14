@@ -48,7 +48,7 @@ static gchar * gebrd_open_mpi_finalize(GebrdMpiInterface * mpi);
 static void gebrd_open_mpi_free(GebrdMpiInterface * mpi);
 
 GebrdMpiInterface *
-gebrd_open_mpi_new(const gchar *n_process,
+gebrd_open_mpi_new(const gchar *params,
 		   const GebrdMpiConfig *config,
 		   GList *servers)
 {
@@ -76,7 +76,7 @@ gebrd_open_mpi_new(const gchar *n_process,
 
 	self->servers = g_string_free(buf, FALSE);
 
-	gebrd_mpi_interface_set_n_processes(mpi, n_process);
+	gebrd_mpi_interface_set_params(mpi, params);
 
 	return mpi;
 }
@@ -94,11 +94,11 @@ static gchar * gebrd_open_mpi_build_command(GebrdMpiInterface * mpi, const gchar
 	self = (GebrdOpenMpi*)mpi;
 
 	cmd = g_string_new(NULL);
-	g_string_printf(cmd, "LD_LIBRARY_PATH=%s:$LD_LIBRARY_PATH %s --host %s -np %s %s",
+	g_string_printf(cmd, "LD_LIBRARY_PATH=%s:$LD_LIBRARY_PATH %s --host %s %s %s",
 			self->config->libpath->str,
 			self->config->mpirun->str,
 			self->servers,
-			mpi->n_processes,
+			mpi->params,
 			command);
 	return g_string_free(cmd, FALSE);
 }
@@ -153,11 +153,11 @@ gebrd_mpich2_build_command(GebrdMpiInterface *mpi,
 	else
 		ld = g_strdup("");
 
-	return g_strdup_printf("%s %s -f %s -n %s %s",
+	return g_strdup_printf("%s %s -f %s %s %s",
 			       ld,
 			       self->config->mpirun->str,
 			       self->tmp_file,
-			       mpi->n_processes,
+			       mpi->params,
 			       command);
 }
 
@@ -173,7 +173,7 @@ gebrd_mpich2_free(GebrdMpiInterface *mpi)
 }
 
 GebrdMpiInterface *
-gebrd_mpich2_new(const gchar *n_process,
+gebrd_mpich2_new(const gchar *params,
 		 const GebrdMpiConfig *config,
 		 GList *servers)
 {
@@ -187,7 +187,7 @@ gebrd_mpich2_new(const gchar *n_process,
 
 	self->servers = g_list_copy(servers);
 	self->config = config;
-	gebrd_mpi_interface_set_n_processes(mpi, n_process);
+	gebrd_mpi_interface_set_params(mpi, params);
 
 	return mpi;
 }

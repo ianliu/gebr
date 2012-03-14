@@ -335,7 +335,7 @@ gboolean gebr_geoxml_program_is_valid(GebrGeoXmlProgram *self,
 void gebr_geoxml_program_mpi_set_n_process(GebrGeoXmlProgram *self,
 					   gint n);
 
-gint gebr_geoxml_program_mpi_get_n_process(GebrGeoXmlProgram *self);
+gchar *gebr_geoxml_program_mpi_get_n_process(GebrGeoXmlProgram *self);
 
 GebrGeoXmlParameters *gebr_geoxml_program_mpi_get_parameters(GebrGeoXmlProgram *self);
 

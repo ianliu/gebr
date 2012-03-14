@@ -573,6 +573,26 @@ gboolean gebr_geoxml_program_is_valid(GebrGeoXmlProgram *self,
 	return TRUE;
 }
 
+static MpiKeywords mpi_keywords[] = {
+		{"openmpi", "-np "},
+		{"mpich2", "-n "},
+};
+
+MpiKeywords *
+get_mpi_keywords_for_flavor(const gchar *flavor)
+{
+	MpiKeywords *ret = NULL;
+	gint n = G_N_ELEMENTS(mpi_keywords);
+
+	for (int i = 0; i < n; i++) {
+		ret = mpi_keywords + i;
+		if (g_strcmp0(ret->flavor, flavor) == 0)
+			return ret;
+	}
+
+	return NULL;
+}
+
 void
 gebr_geoxml_program_mpi_add_tags(GebrGeoXmlProgram *self,
 				 const gchar *mpi)
@@ -595,12 +615,13 @@ gebr_geoxml_program_mpi_add_tags(GebrGeoXmlProgram *self,
 	GebrGeoXmlParameters *template = gebr_geoxml_parameter_group_get_template(GEBR_GEOXML_PARAMETER_GROUP(group));
 
 	// Add parameter NP on instance
-	GebrGeoXmlParameter *param = gebr_geoxml_parameters_append_parameter(template, GEBR_GEOXML_PARAMETER_TYPE_RANGE);
+	GebrGeoXmlParameter *param = gebr_geoxml_parameters_append_parameter(template, GEBR_GEOXML_PARAMETER_TYPE_INT);
 	gebr_geoxml_parameter_set_label(param, _("Number of process to start"));
 	gebr_geoxml_program_parameter_set_number_min_max(GEBR_GEOXML_PROGRAM_PARAMETER(param), "1", "9999999");
 	gebr_geoxml_program_parameter_set_required(GEBR_GEOXML_PROGRAM_PARAMETER(param), TRUE);
-	gebr_geoxml_program_parameter_set_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(param), "np");
-	gebr_geoxml_program_parameter_set_first_value(GEBR_GEOXML_PROGRAM_PARAMETER(param), TRUE, "1");
+
+	MpiKeywords *keys = get_mpi_keywords_for_flavor(mpi);
+	gebr_geoxml_program_parameter_set_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(param), keys->n_processes);
 
 	gebr_geoxml_object_unref(tmp);
 	gebr_geoxml_object_unref(params);
@@ -681,7 +702,7 @@ gebr_geoxml_program_mpi_set_n_process(GebrGeoXmlProgram *self,
 	g_free(tmp);
 }
 
-gint
+gchar *
 gebr_geoxml_program_mpi_get_n_process(GebrGeoXmlProgram *self)
 {
 	g_return_val_if_fail(self != NULL, 0);
@@ -690,10 +711,7 @@ gebr_geoxml_program_mpi_get_n_process(GebrGeoXmlProgram *self)
 
 	g_return_val_if_fail(np != NULL, 0);
 
-	gchar *tmp = gebr_geoxml_program_parameter_get_first_value(GEBR_GEOXML_PROGRAM_PARAMETER(np), FALSE);
-	gint n = atoi(tmp);
-	g_free(tmp);
-	return n;
+	return gebr_geoxml_program_parameter_get_first_value(GEBR_GEOXML_PROGRAM_PARAMETER(np), FALSE);
 }
 
 GebrGeoxmlProgramMpiType

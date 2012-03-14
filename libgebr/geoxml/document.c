@@ -955,12 +955,13 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 				GebrGeoXmlParameters *template = gebr_geoxml_parameter_group_get_template(GEBR_GEOXML_PARAMETER_GROUP(group));
 
 				// Add parameter NP on instance
-				GebrGeoXmlParameter *param = gebr_geoxml_parameters_append_parameter(template, GEBR_GEOXML_PARAMETER_TYPE_RANGE);
+				GebrGeoXmlParameter *param = gebr_geoxml_parameters_append_parameter(template, GEBR_GEOXML_PARAMETER_TYPE_INT);
 				gebr_geoxml_parameter_set_label(param, _("Number of process to start"));
 				gebr_geoxml_program_parameter_set_number_min_max(GEBR_GEOXML_PROGRAM_PARAMETER(param), "1", "9999999");
 				gebr_geoxml_program_parameter_set_required(GEBR_GEOXML_PROGRAM_PARAMETER(param), TRUE);
-				gebr_geoxml_program_parameter_set_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(param), "np");
-				gebr_geoxml_program_parameter_set_first_value(GEBR_GEOXML_PROGRAM_PARAMETER(param), TRUE, "1");
+
+				MpiKeywords *keys = get_mpi_keywords_for_flavor(value);
+				gebr_geoxml_program_parameter_set_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(param), keys->n_processes);
 
 				gebr_geoxml_object_unref(tmp);
 				gebr_geoxml_object_unref(params);

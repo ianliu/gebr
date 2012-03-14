@@ -36,7 +36,7 @@ void gebrd_mpi_config_free(GebrdMpiConfig * self);
 typedef struct _GebrdMpiInterface GebrdMpiInterface;
 
 struct _GebrdMpiInterface {
-	gchar * n_processes;
+	gchar * params;
 
 	/* Virtual methods */
 	gchar * (*initialize) (GebrdMpiInterface * self);
@@ -69,7 +69,7 @@ gchar * gebrd_mpi_interface_finalize(GebrdMpiInterface * self);
 
 /**
  */
-void gebrd_mpi_interface_set_n_processes(GebrdMpiInterface * self, const gchar * n);
+void gebrd_mpi_interface_set_params(GebrdMpiInterface * self, const gchar * n);
 
 /**
  */
