@@ -115,7 +115,7 @@
                       <object class="GtkLabel" id="label13">
                         <property name="visible">True</property>
                         <property name="xalign">0</property>
-                        <property name="label" translatable="yes">&lt;i&gt;&amp;lt;BASE&amp;gt;&lt;/i&gt;</property>
+                        <property name="label" translatable="yes">&lt;i&gt;&amp;lt;HOME&amp;gt;&lt;/i&gt;</property>
                         <property name="use_markup">True</property>
                       </object>
                       <packing>
@@ -124,7 +124,19 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkLabel" id="label14">
+                      <object class="GtkLabel" id="label4">
+                        <property name="visible">True</property>
+                        <property name="xalign">0</property>
+                        <property name="label" translatable="yes">&lt;i&gt;&amp;lt;BASE&amp;gt;&lt;/i&gt;</property>
+                        <property name="use_markup">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="label3">
                         <property name="visible">True</property>
                         <property name="xalign">0</property>
                         <property name="label" translatable="yes">&lt;i&gt;&amp;lt;IMPORT&amp;gt;&lt;/i&gt;</property>
@@ -132,7 +144,7 @@
                       </object>
                       <packing>
                         <property name="expand">False</property>
-                        <property name="position">1</property>
+                        <property name="position">2</property>
                       </packing>
                     </child>
                   </object>
@@ -146,6 +158,18 @@
                     <property name="visible">True</property>
                     <property name="spacing">5</property>
                     <child>
+                      <object class="GtkLabel" id="label_home">
+                        <property name="visible">True</property>
+                        <property name="xalign">0</property>
+                        <property name="label" translatable="yes">/home</property>
+                        <property name="selectable">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
                       <object class="GtkLabel" id="label_base">
                         <property name="visible">True</property>
                         <property name="xalign">0</property>
@@ -154,7 +178,7 @@
                       </object>
                       <packing>
                         <property name="expand">False</property>
-                        <property name="position">0</property>
+                        <property name="position">1</property>
                       </packing>
                     </child>
                     <child>
@@ -166,7 +190,7 @@
                       </object>
                       <packing>
                         <property name="expand">False</property>
-                        <property name="position">1</property>
+                        <property name="position">2</property>
                       </packing>
                     </child>
                   </object>

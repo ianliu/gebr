@@ -189,6 +189,8 @@ line_info_update(void)
 
 	GObject *image_maestro = gtk_builder_get_object(gebr.ui_project_line->info.builder_line, "image_maestro");
 	GObject *label_maestro = gtk_builder_get_object(gebr.ui_project_line->info.builder_line, "label_maestro");
+
+	GObject *label_home = gtk_builder_get_object(gebr.ui_project_line->info.builder_line, "label_home");
 	GObject *label_base = gtk_builder_get_object(gebr.ui_project_line->info.builder_line, "label_base");
 	GObject *label_import = gtk_builder_get_object(gebr.ui_project_line->info.builder_line, "label_import");
 
@@ -243,6 +245,7 @@ line_info_update(void)
 
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, GEBR_GEOXML_LINE(gebr.line));
 	const gchar *stockid;
+	gchar *home_path;
 
 	if (maestro) {
 		if (gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED)
@@ -256,9 +259,11 @@ line_info_update(void)
 			else
 				stockid = GTK_STOCK_DIALOG_WARNING;
 		}
-	} else
+		home_path = g_strdup(gebr_maestro_server_get_home_dir(maestro));
+	} else {
 		stockid = GTK_STOCK_DISCONNECT;
-
+		home_path = g_strdup("");
+	}
 	gtk_image_set_from_stock(GTK_IMAGE(image_maestro), stockid, GTK_ICON_SIZE_DIALOG);
 
 	/* Line's paths information */
@@ -278,13 +283,17 @@ line_info_update(void)
 		base_path = g_strdup(_("None"));
 	if (!import_path || !*import_path)
 		import_path = g_strdup(_("None"));
+	if (!home_path || !*home_path)
+		home_path = g_strdup(_("None"));
 
+	gtk_label_set_text(GTK_LABEL(label_home), home_path);
 	gtk_label_set_text(GTK_LABEL(label_base), base_path);
 	gtk_label_set_text(GTK_LABEL(label_import), import_path);
 
 	gebr_pairstrfreev(paths);
 	g_free(base_path);
 	g_free(import_path);
+	g_free(home_path);
 }
 
 static void
