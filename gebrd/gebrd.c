@@ -296,6 +296,49 @@ GebrCommServerType gebrd_get_server_type(void)
 	return server_type;
 }
 
+static gboolean
+check_and_add_mpi_flavor(const gchar *name,
+			 const gchar *bin,
+			 const gchar *libpath,
+			 const gchar *init_cmd,
+			 const gchar *end_cmd)
+{
+	if (!g_find_program_in_path(bin))
+		return FALSE;
+
+	GebrdMpiConfig *mpi_config;
+	mpi_config = g_new(GebrdMpiConfig, 1);
+
+	mpi_config->name = g_string_new(name);
+	mpi_config->mpirun = g_string_new(bin);
+	mpi_config->libpath = g_string_new(libpath);
+	mpi_config->init_cmd = g_string_new(init_cmd);
+	mpi_config->end_cmd = g_string_new(end_cmd);
+
+	gebrd->mpi_flavors = g_list_prepend(gebrd->mpi_flavors, mpi_config);
+
+	return TRUE;
+}
+
+static void
+mpi_fallback(void)
+{
+	static gchar *default_flavors[][2] = {
+		{"openmpi", "mpirun.openmpi"},
+		{"mpich2", "mpiexec.hydra"},
+	};
+
+	for (int i = 0; i < G_N_ELEMENTS(default_flavors); i++) {
+		if (!gebrd_get_mpi_config_by_name(default_flavors[i][0])) {
+			check_and_add_mpi_flavor(default_flavors[i][0],
+						 default_flavors[i][1],
+						 NULL,
+						 NULL,
+						 NULL);
+		}
+	}
+}
+
 void gebrd_config_load(void)
 {
 	gchar ** groups;
@@ -345,28 +388,24 @@ void gebrd_config_load(void)
 		if (!g_str_has_prefix(groups[i], "mpi-"))
 			continue;
 
+		GString *name = g_string_new(groups[i] + 4);
 		GString *bin = gebr_g_key_file_load_string_key(key_file, groups[i], "mpirun", "mpirun");
+		GString *libpath = gebr_g_key_file_load_string_key(key_file, groups[i], "libpath", "");
+		GString *init_cmd = gebr_g_key_file_load_string_key(key_file, groups[i], "init_command", "");
+		GString *end_cmd = gebr_g_key_file_load_string_key(key_file, groups[i], "end_command", "");
 
-		if (!g_find_program_in_path(bin->str)) {
-			g_string_free(bin, TRUE);
-			continue;
-		}
+		check_and_add_mpi_flavor(name->str, bin->str, libpath->str, init_cmd->str, end_cmd->str);
 
-		GebrdMpiConfig * mpi_config;
-		mpi_config = g_new(GebrdMpiConfig, 1);
-
-		mpi_config->name = g_string_new(groups[i] + 4);
-		mpi_config->mpirun = bin;
-		mpi_config->libpath = gebr_g_key_file_load_string_key(key_file, groups[i], "libpath", "");
-		mpi_config->host = gebr_g_key_file_load_string_key(key_file, groups[i], "host", "");
-		mpi_config->init_cmd = gebr_g_key_file_load_string_key(key_file, groups[i], "init_command", "");
-		mpi_config->end_cmd = gebr_g_key_file_load_string_key(key_file, groups[i], "end_command", "");
-
-		gebrd->mpi_flavors = g_list_prepend(gebrd->mpi_flavors, mpi_config);
-
+		g_string_free(bin, TRUE);
+		g_string_free(name, TRUE);
+		g_string_free(libpath, TRUE);
+		g_string_free(init_cmd, TRUE);
+		g_string_free(end_cmd, TRUE);
 	}
 
 out:
+	mpi_fallback();
+
 	g_free(config_path);
 	g_key_file_free(key_file);
 }
