@@ -601,8 +601,8 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 		}
 
 		gchar *line_key = gebr_geoxml_line_create_key(gebr_geoxml_document_get_title(document));
-		if (!base_path || !*base_path)
-			base_path = g_build_filename(g_get_home_dir(), "GeBR", line_key, NULL);
+		if (maestro && (!base_path || !*base_path))
+			base_path = g_build_filename(gebr_maestro_server_get_home_dir(maestro), "GeBR", line_key, NULL);
 		g_free(line_key);
 
 		gtk_entry_set_text(entry_base, base_path);
@@ -610,7 +610,6 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 		g_signal_connect(entry_base, "changed", G_CALLBACK(on_properties_entry_changed), data->ok_button);
 		g_signal_connect(entry_base, "changed", G_CALLBACK(path_validate), NULL);
 		g_free(base_path);
-//		gebr_pairstrfreev(paths);
 
 		gchar *import_path = NULL;
 		for (gint i=0; paths[i] != NULL; i++){
