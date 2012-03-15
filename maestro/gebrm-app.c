@@ -1169,18 +1169,27 @@ on_client_parse_messages(GebrCommProtocolSocket *socket,
 			GString *option = g_list_nth_data(arguments, 2);
 
 
-			GebrmDaemon *daemon = app->priv->daemons->data;
+			GebrmDaemon *daemon = NULL;
+			for (GList *i = app->priv->daemons; i; i = i->next) {
+				GebrmDaemon *d = i->data;
+				if (gebrm_daemon_get_state(d) == SERVER_STATE_LOGGED) {
+					daemon = d;
+					break;
+				}
+			}
 
 			g_debug("Send to daemon: option: %s, new_path: %s, old_path: %s",
-				option->str, new_path->str, old_path->str);
+			        option->str, new_path->str, old_path->str);
 
-			GebrCommServer *comm_server = gebrm_daemon_get_server(daemon);
-			gebr_comm_protocol_socket_oldmsg_send(comm_server->socket, TRUE,
-							      gebr_comm_protocol_defs.path_def, 3,
-							      new_path->str,
-							      old_path->str,
-							      option->str);
+			if (daemon) {
+				GebrCommServer *comm_server = gebrm_daemon_get_server(daemon);
+				gebr_comm_protocol_socket_oldmsg_send(comm_server->socket, TRUE,
+				                                      gebr_comm_protocol_defs.path_def, 3,
+				                                      new_path->str,
+				                                      old_path->str,
+				                                      option->str);
 			}
+		}
 
 		gebr_comm_message_free(message);
 		socket->protocol->messages = g_list_delete_link(socket->protocol->messages, link);
