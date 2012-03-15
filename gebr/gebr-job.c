@@ -244,9 +244,6 @@ void
 gebr_job_set_servers(GebrJob *job,
 		     const gchar *servers)
 {
-	const gchar *run_type = gebr_job_get_run_type(job);
-	gboolean is_normal = g_strcmp0(run_type, "normal") == 0;
-
 	gchar **split = g_strsplit(servers, ",", 0);
 
 	if (!split)
@@ -255,17 +252,13 @@ gebr_job_set_servers(GebrJob *job,
 	while (split[job->priv->n_servers])
 		job->priv->n_servers++;
 
-	if (is_normal)
-		job->priv->n_servers /= 2;
+	job->priv->n_servers /= 2;
 
 	job->priv->tasks = g_new0(GebrJobTask, job->priv->n_servers);
 
-	gint j = 0;
 	for (int i = 0; i < job->priv->n_servers; i++) {
-		j = is_normal? i*2 : i;
-
-		job->priv->tasks[i].server = split[j];
-		job->priv->tasks[i].percentage = is_normal? g_strtod(split[j + 1], NULL) : 0;
+		job->priv->tasks[i].server = split[i*2];
+		job->priv->tasks[i].percentage = g_strtod(split[i*2 + 1], NULL);
 		job->priv->tasks[i].cmd_line = NULL;
 		job->priv->tasks[i].frac = i+1;
 		job->priv->tasks[i].output = g_string_new("");

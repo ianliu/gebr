@@ -581,9 +581,6 @@ parse_messages(GebrCommServer *comm_server,
 			GString *finish_date = g_list_nth_data(arguments, 17);
 			GString *run_type    = g_list_nth_data(arguments, 18);
 
-
-			g_debug(" id         : '%s',  temp_id    : '%s',  nprocs     : '%s',  server_list: '%s',  hostname   : '%s',  title      : '%s',  parent_id  : '%s',  nice       : '%s',  input      : '%s',  output     : '%s',  error      : '%s',  submit_date: '%s',  group      : '%s',  group_type : '%s',  speed      : '%s',  status     : '%s',  start_date : '%s',  finish_date: '%s',  run_type   : '%s'\n  ", id->str ,temp_id->str ,nprocs->str ,server_list->str ,hostname->str ,title->str ,parent_id->str ,nice->str ,input->str ,output->str ,error->str ,submit_date->str ,group->str ,group_type->str ,speed->str ,status->str ,start_date->str ,finish_date->str ,run_type->str);
-
 			GebrJob *job = g_hash_table_lookup(maestro->priv->jobs, id->str);
 			gboolean prev_exist = FALSE;
 

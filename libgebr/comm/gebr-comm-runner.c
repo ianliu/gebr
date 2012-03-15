@@ -439,14 +439,27 @@ gebr_comm_runner_run_async(GebrCommRunner *self)
 		gchar *flow_xml = strip_flow(self->priv->validator, GEBR_GEOXML_FLOW(clone));
 
 		GString *servers = g_string_new(NULL);
+		GString *servers_weigths = g_string_new(NULL);
+
+		gfloat n = g_list_length(self->priv->servers);
+
+		if (!n)
+			g_warn_if_reached();
+
 		for (GList *i = self->priv->servers; i; i = i->next) {
 			ServerScore *sc = i->data;
 			GebrCommServer *server = gebr_comm_daemon_get_server(sc->server);
 			g_string_append_c(servers, ',');
 			g_string_append(servers, server->address->str);
+
+			g_string_append_c(servers_weigths, ',');
+			g_string_append(servers_weigths, server->address->str);
+			g_string_append_printf(servers_weigths, ",%lf", 1/n);
 		}
 		if (servers)
 			g_string_erase(servers, 0, 1);
+		if (servers_weigths)
+			g_string_erase(servers_weigths, 0, 1);
 
 		ServerScore *first_sc = self->priv->servers->data;
 		GebrCommServer *first_server = gebr_comm_daemon_get_server(first_sc->server);
@@ -454,7 +467,6 @@ gebr_comm_runner_run_async(GebrCommRunner *self)
 		// Set CommRunner parameters
 		self->priv->ncores = "1";
 		self->priv->total = 1;
-		self->priv->servers_list = g_strdup(servers->str);
 
 		gebr_comm_protocol_socket_oldmsg_send(first_server->socket, FALSE,
 		                                      gebr_comm_protocol_defs.run_def, 9,
@@ -470,9 +482,15 @@ gebr_comm_runner_run_async(GebrCommRunner *self)
 		                                      self->priv->account ? self->priv->account : "",
                                 		      servers->str);
 
-		g_idle_add((GSourceFunc)call_ran_func, self);
+
+		self->priv->servers_list = g_strdup(servers_weigths->str);
+		g_debug("--------------------on %s, %s",__func__, self->priv->servers_list); 
+
 
 		g_string_free(servers, TRUE);
+		g_string_free(servers_weigths, TRUE);
+		g_idle_add((GSourceFunc)call_ran_func, self);
+
 		g_free(flow_xml);
 
 		return TRUE;
