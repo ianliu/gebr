@@ -88,14 +88,19 @@ static gchar * gebrd_open_mpi_initialize(GebrdMpiInterface * mpi)
 
 static gchar * gebrd_open_mpi_build_command(GebrdMpiInterface * mpi, const gchar * command)
 {
-	GebrdOpenMpi * self;
+	gchar *ld;
 	GString * cmd;
+	GebrdOpenMpi *self = (GebrdOpenMpi*)mpi;
 
-	self = (GebrdOpenMpi*)mpi;
+	if (self->config->libpath->len)
+		ld = g_strdup_printf("LD_LIBRARY_PATH=%s:$LD_LIBRARY_PATH",
+				     self->config->libpath->str);
+	else
+		ld = g_strdup("");
 
 	cmd = g_string_new(NULL);
 	g_string_printf(cmd, "LD_LIBRARY_PATH=%s:$LD_LIBRARY_PATH %s --host %s %s %s",
-			self->config->libpath->str,
+			ld,
 			self->config->mpirun->str,
 			self->servers,
 			mpi->params,
