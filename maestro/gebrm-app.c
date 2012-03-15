@@ -1579,6 +1579,9 @@ on_new_connection(GebrCommListenSocket *listener,
 			}
 		}
 
+		if (app->priv->home)
+			gebrm_app_send_home_dir(app, socket, app->priv->home);
+
 		g_signal_connect(socket, "disconnected",
 				 G_CALLBACK(on_client_disconnect), app);
 		g_signal_connect(socket, "process-request",
