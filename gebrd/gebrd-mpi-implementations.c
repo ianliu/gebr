@@ -137,7 +137,7 @@ gebrd_mpich2_initialize(GebrdMpiInterface * mpi)
 	}
 
 	self->tmp_file = "$_gebr_tmp";
-	gchar *ret_cmd = g_strdup_printf("_gebr_tmp=`mktemp %s` && echo '%s' >> %s", tmp, hosts->str, self->tmp_file);
+	gchar *ret_cmd = g_strdup_printf("( _gebr_tmp=`mktemp %s` && echo '%s' >> %s", tmp, hosts->str, self->tmp_file);
 
 	g_string_free(hosts, TRUE);
 	g_free(tmp);
@@ -169,7 +169,7 @@ gebrd_mpich2_build_command(GebrdMpiInterface *mpi,
 static gchar *
 gebrd_mpich2_finalize(GebrdMpiInterface *mpi)
 {
-	return g_strdup_printf("rm %s", ((GebrdMpich2*)mpi)->tmp_file);
+	return g_strdup_printf("rm %s )", ((GebrdMpich2*)mpi)->tmp_file);
 }
 
 static void
