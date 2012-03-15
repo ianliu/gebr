@@ -1520,16 +1520,26 @@ on_flow_sequence_query_tooltip(GtkTreeView * treeview,
 		goto set_tooltip;
 	}
 
-	gtk_tree_model_get(model, &iter, FSEQ_GEBR_GEOXML_POINTER, &program, -1);
+	gboolean never_opened;
+	gtk_tree_model_get(model, &iter,
+	                   FSEQ_GEBR_GEOXML_POINTER, &program,
+	                   FSEQ_NEVER_OPENED, &never_opened,
+	                   FSEQ_TOOLTIP, &tooltip_text,
+	                   -1);
 
 	if (!program || gebr_geoxml_program_get_status(program) != GEBR_GEOXML_PROGRAM_STATUS_UNCONFIGURED)
 		return FALSE;
 
 	GebrIExprError errorid;
-	if (!gebr_geoxml_program_get_error_id(program, &errorid))
+	if (!gebr_geoxml_program_get_error_id(program, &errorid) && !never_opened)
 		return FALSE;
 
-	gchar *error_message = _("Unknown error");
+	gchar *error_message;
+	if (tooltip_text && *tooltip_text)
+		error_message = tooltip_text;
+	else
+		error_message = _("Unknown error");
+
 	switch (errorid) {
 	case GEBR_IEXPR_ERROR_SYNTAX:
 	case GEBR_IEXPR_ERROR_TOOBIG:
@@ -1559,6 +1569,7 @@ on_flow_sequence_query_tooltip(GtkTreeView * treeview,
 	}
 
 	gtk_tooltip_set_text(tooltip, error_message);
+	g_free(tooltip_text);
 
 set_tooltip:
 	path = gtk_tree_model_get_path(model, &iter);
