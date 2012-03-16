@@ -46,6 +46,7 @@ enum {
 
 struct _GebrGuiSequenceEditPriv {
 	guint keypress_handler;
+	gboolean is_editing;
 };
 
 static guint object_signals[LAST_SIGNAL] = { 0 };
@@ -540,6 +541,20 @@ static void gebr_gui_sequence_edit_rename_real(GebrGuiSequenceEdit *self, GtkTre
 	g_signal_emit(self, object_signals[CHANGED], 0);
 }
 
+void on_editing_started(GtkCellRenderer *renderer,
+                        GtkCellEditable *editable,
+                        gchar           *path,
+                        GebrGuiSequenceEdit *self)
+{
+	self->priv->is_editing = TRUE;
+}
+
+void on_editing_canceled(GebrGuiSequenceEdit *self)
+{
+	self->priv->is_editing = FALSE;
+}
+
+
 static GtkWidget *gebr_gui_sequence_edit_create_tree_view_real(GebrGuiSequenceEdit *self)
 {
 	GtkWidget *tree_view;
@@ -552,6 +567,9 @@ static GtkWidget *gebr_gui_sequence_edit_create_tree_view_real(GebrGuiSequenceEd
 	self->renderer = renderer = gtk_cell_renderer_text_new();
 	g_object_set(renderer, "editable", self->may_rename, NULL);
 	g_signal_connect(renderer, "edited", G_CALLBACK(on_edited), self);
+	g_signal_connect_swapped(renderer, "edited", G_CALLBACK(on_editing_canceled), self);
+	g_signal_connect_swapped(renderer, "editing-canceled", G_CALLBACK(on_editing_canceled), self);
+	g_signal_connect(renderer, "editing-started", G_CALLBACK(on_editing_started), self);
 	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
 	gtk_tree_view_column_add_attribute(col, renderer, "text", 0);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tree_view), col);
@@ -594,7 +612,10 @@ static gboolean on_tree_view_key_release (GtkWidget *widget,
 
 	switch (event->keyval) {
 	case GDK_Delete:
-		gebr_gui_sequence_edit_remove (self, &selected);
+		if (!self->priv->is_editing)
+			gebr_gui_sequence_edit_remove (self, &selected);
+		else
+			return FALSE;
 		break;
 	case GDK_Up:
 		if (!(event->state & GDK_CONTROL_MASK) || !has_prev)
