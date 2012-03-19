@@ -205,7 +205,7 @@ line_info_update(void)
 	gtk_link_button_set_uri(GTK_LINK_BUTTON(linkbutton_email), tmp);
 	g_free(tmp);
 
-	tmp = g_strconcat(gebr_geoxml_document_get_author(GEBR_GEOXML_DOCUMENT(gebr.line)), "<", gebr_geoxml_document_get_email(GEBR_GEOXML_DOCUMENT(gebr.line)), ">", NULL);
+	tmp = g_strconcat(gebr_geoxml_document_get_author(GEBR_GEOXML_DOCUMENT(gebr.line)), " <", gebr_geoxml_document_get_email(GEBR_GEOXML_DOCUMENT(gebr.line)), ">", NULL);
 	gtk_button_set_label(GTK_BUTTON(linkbutton_email), tmp);
 	g_free(tmp);
 
