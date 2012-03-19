@@ -1579,8 +1579,10 @@ on_new_connection(GebrCommListenSocket *listener,
 			}
 		}
 
-		if (app->priv->home)
-			gebrm_app_send_home_dir(app, socket, app->priv->home);
+		if (!app->priv->home) {
+			const gchar *home = gebrm_daemon_get_home_dir(app->priv->daemons->data);
+			gebrm_app_send_home_dir(app, socket, home);
+		}
 
 		g_signal_connect(socket, "disconnected",
 				 G_CALLBACK(on_client_disconnect), app);
