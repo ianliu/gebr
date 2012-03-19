@@ -27,6 +27,7 @@
 #include "gebr-gui-value-sequence-edit.h"
 #include "gebr-gui-program-edit.h"
 #include "gebr-gui-validatable-widget.h"
+#include <libgebr/gebr-maestro-info.h>
 
 G_BEGIN_DECLS
 
@@ -47,7 +48,7 @@ struct gebr_gui_parameter_widget
 	gboolean use_default_value;
 	gpointer data;
 	gboolean readonly;
-	gchar *prefix;
+	GebrMaestroInfo *info;
 
 	GtkWidget *widget;
 	GtkWidget *value_widget;
@@ -69,7 +70,7 @@ struct gebr_gui_parameter_widget
  */
 GebrGuiParameterWidget *gebr_gui_parameter_widget_new(GebrGeoXmlParameter *parameter,
 						      GebrValidator       *validator,
-						      const gchar         *uri_prefix,
+						      GebrMaestroInfo	  *info,
 						      gboolean             use_default_value,
 						      gpointer             data);
 

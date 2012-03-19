@@ -52,6 +52,7 @@ libgebr_la_SOURCES = 		\
 	gebr-arith-expr.c	\
 	gebr-expr.c		\
 	gebr-iexpr.c		\
+	gebr-maestro-info.c	\
 	gebr-tar.c		\
 	gebr-validator.c	\
 	gebr-version.c		\
@@ -68,6 +69,7 @@ libgebrinclude_HEADERS =	\
 	gebr-arith-expr.h	\
 	gebr-expr.h		\
 	gebr-iexpr.h		\
+	gebr-maestro-info.h	\
 	gebr-tar.h		\
 	gebr-validator.h	\
 	gebr-version.h		\

@@ -70,15 +70,16 @@ parameters_configure_setup_ui(void)
 	gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL);
 	gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_OK, GTK_RESPONSE_OK);
 
-	gchar *prefix = NULL;
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line );
+	GebrMaestroInfo *info;
 	if (maestro)
-		prefix = gebr_maestro_server_get_sftp_prefix(maestro);
-
+		info = gebr_maestro_server_get_info(maestro);
+	else
+		info = NULL;
 	GebrGeoXmlSequence *clone = gebr_geoxml_sequence_append_clone(GEBR_GEOXML_SEQUENCE(gebr.program));
 	program_edit = gebr_gui_program_edit_setup_ui(GEBR_GEOXML_PROGRAM(clone), NULL,
-						      FALSE, gebr.validator, prefix);
-	g_free(prefix);
+						      FALSE, gebr.validator, info);
+	g_free(info);
 
 	g_signal_connect(dialog, "response", G_CALLBACK(parameters_actions), program_edit);
 	g_signal_connect(dialog, "delete-event", G_CALLBACK(parameters_on_delete_event), program_edit);

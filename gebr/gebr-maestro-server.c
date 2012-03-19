@@ -24,9 +24,15 @@
 #include "gebr-marshal.h"
 #include <glib/gi18n.h>
 #include <libgebr/gui/gui.h>
+#include <libgebr/gebr-maestro-info.h>
 #include <stdlib.h>
 
 #include "gebr.h" // for gebr_get_session_id()
+
+struct MaestroInfoIface {
+	GebrMaestroInfo iface;
+	GebrMaestroServer *maestro;
+};
 
 struct _GebrMaestroServerPriv {
 	GebrCommServer *server;
@@ -47,6 +53,7 @@ struct _GebrMaestroServerPriv {
 
 	GtkListStore *groups_store;
 	GtkListStore *queues_model;
+	struct MaestroInfoIface maestro_info_iface;
 };
 
 enum {
@@ -101,6 +108,10 @@ void gebr_maestro_server_set_window(GebrMaestroServer *maestro, GtkWindow *windo
 
 void gebr_maestro_server_set_home_dir(GebrMaestroServer *maestro,
 				      const gchar *home);
+
+static gchar *gebr_maestro_server_get_home_mount_point(GebrMaestroInfo *iface);
+
+static gchar *gebr_maestro_server_get_home_uri(GebrMaestroInfo *iface);
 
 static const struct gebr_comm_server_ops maestro_ops = {
 	.log_message      = log_message,
@@ -1113,6 +1124,10 @@ gebr_maestro_server_init(GebrMaestroServer *maestro)
 	maestro->priv->has_connected_daemon = FALSE;
 	maestro->priv->window = NULL;
 
+	maestro->priv->maestro_info_iface.maestro = maestro;
+	maestro->priv->maestro_info_iface.iface.get_home_uri = gebr_maestro_server_get_home_uri;
+	maestro->priv->maestro_info_iface.iface.get_home_mount_point = gebr_maestro_server_get_home_mount_point;
+
 	gebr_maestro_server_set_error(maestro, "error:none", NULL);
 
 	// Insert queue 'Immediately'
@@ -1491,4 +1506,24 @@ gebr_maestro_server_get_sftp_root(GebrMaestroServer *maestro)
 	g_object_unref(mount);
 	g_object_unref(root);
 	return ret;
+}
+
+static gchar *
+gebr_maestro_server_get_home_mount_point(GebrMaestroInfo *iface)
+{
+	struct MaestroInfoIface *self = (struct MaestroInfoIface*) iface;
+	return gebr_maestro_server_get_sftp_root(self->maestro);
+}
+
+static gchar *
+gebr_maestro_server_get_home_uri(GebrMaestroInfo *iface)
+{
+	struct MaestroInfoIface *self = (struct MaestroInfoIface*) iface;
+	return gebr_maestro_server_get_sftp_prefix(self->maestro);
+}
+
+GebrMaestroInfo *
+gebr_maestro_server_get_info(GebrMaestroServer *maestro)
+{
+	return (GebrMaestroInfo *) &maestro->priv->maestro_info_iface;
 }

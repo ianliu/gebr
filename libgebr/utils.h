@@ -244,19 +244,22 @@ gint gebr_calculate_number_of_processors(gint total_nprocs,
 void gebr_pairstrfreev(gchar ***strv);
 
 /**
- * gebr_remove_gvfs_prefix:
+ * gebr_remove_path_prefix:
  *
- * Remove .gvfs from @path
+ * Remove @prefix from @path
  */
-gchar *gebr_remove_gvfs_prefix(gchar *path);
+gchar *gebr_remove_path_prefix(const gchar *prefix, const gchar *path);
 
 /**
  * gebr_relativise_path:
  *
- * Transforsm a path according to pvector (relative adress)
+ * Substitute @path with the longest prefix in @pvector.
+ * @pvector is a vector of pair of strings, the first entry is an
+ * alias and the second is an absolute path.
  */
-gchar *gebr_relativise_path(const gchar *path,
-			    gchar ***pvector);
+gchar *gebr_relativise_path(const gchar *path_string,
+                            const gchar *mount_point,
+                            gchar ***pvector);
 /**
  * gebr_resolve_relative_path:
  *

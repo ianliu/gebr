@@ -25,6 +25,7 @@
 
 #include "gebr-daemon-server.h"
 #include "gebr-job.h"
+#include <libgebr/gebr-maestro-info.h>
 
 G_BEGIN_DECLS
 
@@ -167,6 +168,8 @@ gchar *gebr_maestro_server_get_sftp_prefix(GebrMaestroServer *maestro);
 const gchar *gebr_maestro_server_get_home_dir(GebrMaestroServer *maestro);
 
 gchar *gebr_maestro_server_get_sftp_root(GebrMaestroServer *maestro);
+
+GebrMaestroInfo *gebr_maestro_server_get_info(GebrMaestroServer *maestro);
 
 G_END_DECLS
 

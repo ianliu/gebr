@@ -348,7 +348,7 @@ void flow_export(void)
 		}
 
 		gchar ***paths = gebr_geoxml_line_get_paths(gebr.line);
-		flow_set_paths_to_relative(GEBR_GEOXML_FLOW(flow), paths, active_user);
+		flow_set_paths_to_relative(GEBR_GEOXML_FLOW(flow), gebr.line, paths, active_user);
 		gebr_pairstrfreev(paths);
 
 		filepath = g_build_path ("/", tempdir->str, flow_filename, NULL);
@@ -525,8 +525,9 @@ gebr_flow_modify_paths(GebrGeoXmlFlow *flow,
 	g_string_free(path, TRUE);
 }
 
-void flow_set_paths_to_relative(GebrGeoXmlFlow * flow, gchar ***paths, gboolean relative)
+void flow_set_paths_to_relative(GebrGeoXmlFlow * flow, GebrGeoXmlLine *line, gchar ***paths, gboolean relative)
 {
+	gchar *mount_point;
 	void func(GString *path, gpointer data)
 	{
 		gchar *tmp;
@@ -534,7 +535,7 @@ void flow_set_paths_to_relative(GebrGeoXmlFlow * flow, gchar ***paths, gboolean 
 		if (!paths)
 			tmp = g_strdup(path->str);
 		else if (relative)
-			tmp = gebr_relativise_path(path->str, paths);
+			tmp = gebr_relativise_path(path->str, mount_point, paths);
 		else
 			tmp = gebr_resolve_relative_path(path->str, paths);
 
@@ -542,6 +543,12 @@ void flow_set_paths_to_relative(GebrGeoXmlFlow * flow, gchar ***paths, gboolean 
 		gebr_path_set_to(path, relative);
 		g_free(tmp);
 	}
+
+	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, line);
+	if (maestro)
+		mount_point = gebr_maestro_info_get_home_mount_point(gebr_maestro_server_get_info(maestro));
+	else
+		mount_point = NULL;
 	gebr_flow_modify_paths(flow, func, FALSE, NULL);
 }
 

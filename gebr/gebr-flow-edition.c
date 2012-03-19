@@ -476,14 +476,21 @@ void flow_edition_set_io(void)
 	gchar ***paths = gebr_geoxml_line_get_paths(gebr.line);
 	const gchar *tmp;
 
+	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
+	gchar *mount_point;
+	if (maestro)
+		mount_point = gebr_maestro_info_get_home_mount_point(gebr_maestro_server_get_info(maestro));
+	else
+		mount_point = NULL;
+
 	tmp = gebr_geoxml_flow_io_get_input(gebr.flow);
-	gchar *input_real = gebr_relativise_path(tmp, paths);
+	gchar *input_real = gebr_relativise_path(tmp, mount_point, paths);
 	gchar* input = g_markup_escape_text(input_real, -1);
 	tmp = gebr_geoxml_flow_io_get_output(gebr.flow);
-	gchar *output_real = gebr_relativise_path(tmp, paths);
+	gchar *output_real = gebr_relativise_path(tmp, mount_point, paths);
 	gchar* output = g_markup_escape_text(output_real, -1);
 	tmp = gebr_geoxml_flow_io_get_error(gebr.flow);
-	gchar *error_real = gebr_relativise_path(tmp, paths);
+	gchar *error_real = gebr_relativise_path(tmp, mount_point, paths);
 	gchar* error = g_markup_escape_text(error_real, -1);
 
 	/* Set the INPUT properties.
@@ -821,8 +828,15 @@ flow_edition_component_edited(GtkCellRendererText *renderer, gchar *path, gchar 
 
 	gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(gebr.ui_flow_edition->fseq_store), &iter, path);
 
+	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
+	gchar *mount_point;
+
+	if (maestro)
+		mount_point = gebr_maestro_info_get_home_mount_point(gebr_maestro_server_get_info(maestro));
+	else
+		mount_point = NULL;
 	gchar ***paths = gebr_geoxml_line_get_paths(gebr.line);
-	gchar *tmp = gebr_relativise_path(new_text, paths);
+	gchar *tmp = gebr_relativise_path(new_text, mount_point, paths);
 	gebr_pairstrfreev(paths);
 
 	if (gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter))

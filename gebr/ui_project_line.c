@@ -1020,7 +1020,7 @@ void project_line_export(void)
 				continue;
 
 			gchar ***paths = gebr_geoxml_line_get_paths(GEBR_GEOXML_LINE(_line));
-			flow_set_paths_to_relative(flow, paths, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(check_box_user)));
+			flow_set_paths_to_relative(flow, line, paths, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(check_box_user)));
 			gebr_pairstrfreev(paths);
 			filename = g_build_path ("/", tmpdir->str, flow_filename, NULL);
 			document_save_at(GEBR_GEOXML_DOCUMENT(flow), filename, FALSE, FALSE);

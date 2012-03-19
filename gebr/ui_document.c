@@ -354,6 +354,7 @@ on_base_entry_press(GtkEntry            *entry,
 	                                                      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
 	gchar *prefix = gebr_maestro_server_get_sftp_prefix(maestro);
+	gchar *mount_point = gebr_maestro_info_get_home_mount_point(gebr_maestro_server_get_info(maestro));
 	gchar *home = g_build_filename(prefix, gebr_maestro_server_get_home_dir(maestro), NULL);
 	gtk_file_chooser_set_local_only(GTK_FILE_CHOOSER(file_chooser), FALSE);
 	gtk_file_chooser_set_current_folder_uri(GTK_FILE_CHOOSER(file_chooser), home);
@@ -361,7 +362,7 @@ on_base_entry_press(GtkEntry            *entry,
 
 	if (response == GTK_RESPONSE_OK) {
 		gchar *folder = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(file_chooser));
-		gtk_entry_set_text(entry, gebr_remove_gvfs_prefix(folder));
+		gtk_entry_set_text(entry, gebr_remove_path_prefix(mount_point, folder));
 		g_free(folder);
 	}
 	g_free(prefix);
@@ -383,6 +384,7 @@ on_import_entry_press(GtkEntry            *entry,
 	                                                      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
 	gchar *prefix = gebr_maestro_server_get_sftp_prefix(maestro);
+	gchar *mount_point = gebr_maestro_info_get_home_mount_point(gebr_maestro_server_get_info(maestro));
 	gchar *home = g_build_filename(prefix, gebr_maestro_server_get_home_dir(maestro), NULL);
 	gtk_file_chooser_set_local_only(GTK_FILE_CHOOSER(file_chooser), FALSE);
 	gtk_file_chooser_set_current_folder_uri(GTK_FILE_CHOOSER(file_chooser), home);
@@ -390,7 +392,7 @@ on_import_entry_press(GtkEntry            *entry,
 
 	if (response == GTK_RESPONSE_OK) {
 		gchar *folder = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(file_chooser));
-		gtk_entry_set_text(entry, gebr_remove_gvfs_prefix(folder));
+		gtk_entry_set_text(entry, gebr_remove_path_prefix(mount_point, folder));
 		g_free(folder);
 	}
 	g_free(prefix);
