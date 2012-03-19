@@ -102,6 +102,8 @@ void gebr_maestro_server_set_window(GebrMaestroServer *maestro, GtkWindow *windo
 void gebr_maestro_server_set_home_dir(GebrMaestroServer *maestro,
 				      const gchar *home);
 
+static gchar *gebr_maestro_server_get_user(GebrMaestroServer *maestro);
+
 static const struct gebr_comm_server_ops maestro_ops = {
 	.log_message      = log_message,
 	.state_changed    = state_changed,
@@ -1491,4 +1493,18 @@ gebr_maestro_server_get_sftp_root(GebrMaestroServer *maestro)
 	g_object_unref(mount);
 	g_object_unref(root);
 	return ret;
+}
+
+static gchar *
+gebr_maestro_server_get_user(GebrMaestroServer *maestro)
+{
+	const gchar *addr = gebr_maestro_server_get_address(maestro);
+
+	gchar *find_str = g_strrstr(addr, "@");
+	if (find_str) {
+		gint n = find_str - addr;
+		gchar *user = g_strndup(addr, n);
+		return user;
+	}
+	return g_strdup("");
 }
