@@ -111,6 +111,8 @@ void gebr_maestro_server_set_home_dir(GebrMaestroServer *maestro,
 
 static gchar *gebr_maestro_server_get_home_mount_point(GebrMaestroInfo *iface);
 
+static gchar *gebr_maestro_server_get_user(GebrMaestroServer *maestro);
+
 static gchar *gebr_maestro_server_get_home_uri(GebrMaestroInfo *iface);
 
 static const struct gebr_comm_server_ops maestro_ops = {
@@ -161,7 +163,14 @@ mount_gvfs(GebrMaestroServer *maestro, const gchar *addr)
 						   22, port, addr);
 	maestro->priv->proc = proc;
 	maestro->priv->has_connected_daemon = TRUE;
-	gchar *uri = g_strdup_printf("sftp://localhost:%d", port);
+	gchar *uri;
+	gchar *user = gebr_maestro_server_get_user(maestro);
+	if (!*user)
+		 uri = g_strdup_printf("sftp://localhost:%d", port);
+	else
+		uri = g_strdup_printf("sftp://%s@localhost:%d", user, port);
+	g_free(user);
+
 	GFile *location = g_file_new_for_commandline_arg(uri);
 
 	TunnelPool *data = g_new0(TunnelPool, 1);
@@ -1506,6 +1515,20 @@ gebr_maestro_server_get_sftp_root(GebrMaestroServer *maestro)
 	g_object_unref(mount);
 	g_object_unref(root);
 	return ret;
+}
+
+static gchar *
+gebr_maestro_server_get_user(GebrMaestroServer *maestro)
+{
+	const gchar *addr = gebr_maestro_server_get_address(maestro);
+
+	gchar *find_str = g_strrstr(addr, "@");
+	if (find_str) {
+		gint n = find_str - addr;
+		gchar *user = g_strndup(addr, n);
+		return user;
+	}
+	return g_strdup("");
 }
 
 static gchar *
