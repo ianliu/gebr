@@ -152,7 +152,14 @@ mount_gvfs(GebrMaestroServer *maestro, const gchar *addr)
 						   22, port, addr);
 	maestro->priv->proc = proc;
 	maestro->priv->has_connected_daemon = TRUE;
-	gchar *uri = g_strdup_printf("sftp://localhost:%d", port);
+	gchar *uri;
+	gchar *user = gebr_maestro_server_get_user(maestro);
+	if (!*user)
+		 uri = g_strdup_printf("sftp://localhost:%d", port);
+	else
+		uri = g_strdup_printf("sftp://%s@localhost:%d", user, port);
+	g_free(user);
+
 	GFile *location = g_file_new_for_commandline_arg(uri);
 
 	TunnelPool *data = g_new0(TunnelPool, 1);
