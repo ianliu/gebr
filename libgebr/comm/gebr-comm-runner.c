@@ -365,11 +365,27 @@ mpi_run_flow(GebrCommRunner *self)
 	GString *servers_weigths = g_string_new(NULL);
 
 	gfloat n = g_list_length(self->priv->servers);
+	gint m = (gint) n;
 
 	if (!n)
 		g_warn_if_reached();
 
-	for (GList *i = self->priv->servers; i; i = i->next) {
+	GebrGeoXmlProgram *mpi_prog = gebr_geoxml_flow_get_first_mpi_program(GEBR_GEOXML_FLOW(clone));
+	gchar *nprocs = gebr_geoxml_program_mpi_get_n_process(mpi_prog);
+	gint np = atoi(nprocs);
+
+	gint equal_steps = np/m;
+	gint remaining = np%m;
+	gfloat weights[m];
+
+	for (gint j = 0; j < m; j++)
+		weights[j] = equal_steps/(gfloat)np;
+	if (equal_steps > 0)
+		for (gint j = 0; j < remaining; j++)
+			weights[j]+=1/(gfloat)np;
+		
+	gint j = 0;
+	for (GList *i = self->priv->servers; i; i = i->next, j++) {
 		ServerScore *sc = i->data;
 		GebrCommServer *server = gebr_comm_daemon_get_server(sc->server);
 		g_string_append_c(servers, ',');
@@ -377,7 +393,8 @@ mpi_run_flow(GebrCommRunner *self)
 
 		g_string_append_c(servers_weigths, ',');
 		g_string_append(servers_weigths, server->address->str);
-		g_string_append_printf(servers_weigths, ",%lf", 1/n);
+		g_string_append_printf(servers_weigths, ",%lf", weights[j]);
+		g_debug("on %s, '%s', '%f'",__func__, server->address->str, weights[j]);
 	}
 	if (servers)
 		g_string_erase(servers, 0, 1);

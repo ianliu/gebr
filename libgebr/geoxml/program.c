@@ -696,7 +696,9 @@ gebr_geoxml_program_mpi_set_n_process(GebrGeoXmlProgram *self,
 {
 	g_return_if_fail(self != NULL);
 
-	GebrGeoXmlParameter *np = get_mpi_parameter(self, "np");
+	const gchar *flavor = gebr_geoxml_program_get_mpi(self);
+	MpiKeywords *mpi_key = get_mpi_keywords_for_flavor(flavor);
+	GebrGeoXmlParameter *np = get_mpi_parameter(self, mpi_key->n_processes);
 
 	if (!np)
 		return;
@@ -711,7 +713,10 @@ gebr_geoxml_program_mpi_get_n_process(GebrGeoXmlProgram *self)
 {
 	g_return_val_if_fail(self != NULL, 0);
 
-	GebrGeoXmlParameter *np = get_mpi_parameter(self, "np");
+	const gchar *flavor = gebr_geoxml_program_get_mpi(self);
+	MpiKeywords *mpi_key = get_mpi_keywords_for_flavor(flavor);
+
+	GebrGeoXmlParameter *np = get_mpi_parameter(self, mpi_key->n_processes);
 
 	g_return_val_if_fail(np != NULL, 0);
 
