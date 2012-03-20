@@ -155,6 +155,11 @@ void gebr_flow_modify_paths(GebrGeoXmlFlow *flow,
 			    gboolean set_programs_unconfigured,
 			    gpointer data);
 
+/**
+ *
+ */
+void gebr_flow_set_toolbar_sensitive(void);
+
 G_END_DECLS
 
 #endif				//__FLOW_H

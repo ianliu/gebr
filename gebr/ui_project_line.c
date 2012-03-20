@@ -1352,7 +1352,12 @@ static void project_line_load(void)
 				   PL_XMLPOINTER, &gebr.line, -1);
 		gebr.project_line = GEBR_GEOXML_DOC(gebr.line);
 
-		line_load_flows();
+		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
+		if (maestro && gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED) {
+			line_load_flows();
+			if (gebr_geoxml_line_get_flows_number(gebr.line) < 1)
+				flow_browse_reload_selected();
+		}
 	} else {
 		gebr.project_line = GEBR_GEOXML_DOC(gebr.project);
 		gebr.line = NULL;
