@@ -1507,7 +1507,9 @@ gebr_maestro_server_get_home_dir(GebrMaestroServer *maestro)
 gchar *
 gebr_maestro_server_get_sftp_root(GebrMaestroServer *maestro)
 {
-	GMount *mount = g_file_find_enclosing_mount(maestro->priv->mount_location, NULL, NULL);
+	GMount *mount = NULL;
+	if (maestro->priv->mount_location)
+		mount = g_file_find_enclosing_mount(maestro->priv->mount_location, NULL, NULL);
 	if (!mount)
 		return NULL;
 	GFile *root = g_mount_get_root(mount);
