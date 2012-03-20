@@ -50,6 +50,14 @@ enum {
 
 G_DEFINE_TYPE(GebrdJob, gebrd_job, GEBR_COMM_JOB_TYPE)
 
+static void
+string_list_free(gpointer key, gpointer value)
+{
+	GList *list = value;
+	g_list_foreach(list, (GFunc)g_free, NULL);
+	g_list_free(list);
+}
+
 static void gebrd_job_init(GebrdJob * job)
 {
 	job->exec_speed = g_string_new(NULL);
@@ -59,7 +67,7 @@ static void gebrd_job_init(GebrdJob * job)
 	job->job_percentage= g_string_new(NULL);
 	job->gid = g_string_new(NULL);
 	job->paths = g_string_new(NULL);
-	job->mpi_servers = NULL;
+	job->mpi_servers = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
 }
 
 static void gebrd_job_class_init(GebrdJobClass * klass)
@@ -69,7 +77,7 @@ static void gebrd_job_class_init(GebrdJobClass * klass)
 static void job_assembly_cmdline(GebrdJob *job);
 static void job_process_finished(GebrCommProcess * process, gint status, GebrdJob *job);
 static void job_send_signal_on_moab(const char * signal, GebrdJob * job);
-static GebrdMpiInterface *job_get_mpi_impl(const gchar * mpi_name, const gchar *np, GList *mpi_servers);
+static GebrdMpiInterface *job_get_mpi_impl(const gchar * mpi_name, const gchar *np, GHashTable *mpi_servers);
 static gchar *escape_quote_and_slash(const gchar *str);
 static gchar *replace_quotes(gchar *str);
 
@@ -408,10 +416,16 @@ job_new(GebrdJob **_job,
 	g_string_assign(job->parent.moab_account, account->str);
 	g_string_assign(job->paths, paths->str);
 
-	gchar **tmp = g_strsplit(servers_mpi->str, ",", -1);
+	gchar **tmp = g_strsplit(servers_mpi->str, ";", -1);
 	for (gint i = 0; tmp[i]; i++) {
-		g_debug("CHAMATIVA: %s", tmp[i]);
-		job->mpi_servers = g_list_prepend(job->mpi_servers, g_strdup(tmp[i]));
+		gchar **tmp2 = g_strsplit(tmp[i], ",", -1);
+		for (gint j = 1; tmp2[j]; j++) {
+			GList *value = g_hash_table_lookup(job->mpi_servers, tmp2[j]);
+			value = g_list_prepend(value, g_strdup(tmp2[0]));
+			g_debug("VALUE TO INSERT ON HASH IN %s IS %s", tmp2[j], tmp2[0]);
+			g_hash_table_insert(job->mpi_servers, g_strdup(tmp2[j]), value);
+		}
+		g_strfreev(tmp2);
 	}
 	g_strfreev(tmp);
 
@@ -474,6 +488,7 @@ void job_free(GebrdJob *job)
 	g_string_free(job->frac, TRUE);
 	g_string_free(job->server_list, TRUE);
 	g_string_free(job->server_group_name, TRUE);
+	g_hash_table_foreach(job->mpi_servers, (GHFunc)string_list_free, NULL);
 	g_object_unref(job);
 }
 
@@ -756,9 +771,10 @@ err:	g_string_free(cmd_line, TRUE);
 }
 
 static GebrdMpiInterface *
-job_get_mpi_impl(const gchar * mpi_name, const gchar *params, GList *servers)
+job_get_mpi_impl(const gchar * mpi_name, const gchar *params, GHashTable *mpi_servers)
 {
 	const GebrdMpiConfig * config = gebrd_get_mpi_config_by_name(mpi_name);
+	GList *servers = g_hash_table_lookup(mpi_servers, mpi_name);
 
 	if (config == NULL)
 		return NULL;

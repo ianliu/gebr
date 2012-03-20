@@ -71,7 +71,8 @@ struct _GebrdJob {
 	gboolean is_parallelizable;
 	GString *job_percentage;
 	GString *paths;
-	GList *mpi_servers;
+
+	GHashTable *mpi_servers;
 
 	GString *buf[2];
 	gint timeout[2];

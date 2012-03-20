@@ -48,6 +48,8 @@ struct _GebrCommDaemonIface {
 	void  (*add_task) (GebrCommDaemon *daemon);
 
 	gboolean  (*can_execute) (GebrCommDaemon *daemon);
+
+	const gchar * (*get_flavors) (GebrCommDaemon *daemon);
 };
 
 GType gebr_comm_daemon_get_type(void) G_GNUC_CONST;

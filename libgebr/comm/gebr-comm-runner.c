@@ -39,6 +39,7 @@ struct _GebrCommRunnerPriv {
 	gchar *id;
 	GebrGeoXmlDocument *flow;
 	GList *servers;
+	GList *run_servers;
 	GebrValidator *validator;
 
 	gint requests;
@@ -51,7 +52,6 @@ struct _GebrCommRunnerPriv {
 	gchar *speed;
 	gchar *nice;
 	gchar *group;
-	gchar *servers_str;
 	gchar *servers_list;
 	gchar *paths;
 
@@ -129,7 +129,8 @@ strip_flow(GebrValidator *validator,
 /* Public methods {{{1 */
 GebrCommRunner *
 gebr_comm_runner_new(GebrGeoXmlDocument *flow,
-		     GList *servers,
+                     GList *submit_servers,
+                     GList *run_servers,
                      const gchar *id,
 		     const gchar *gid,
 		     const gchar *parent_rid,
@@ -150,9 +151,10 @@ gebr_comm_runner_new(GebrGeoXmlDocument *flow,
 	self->priv->group = g_strdup(group);
 	self->priv->paths = g_strdup(paths);
 	self->priv->validator = validator;
+	self->priv->run_servers = run_servers;
 
 	self->priv->servers = NULL;
-	for (GList *i = servers; i; i = i->next) {
+	for (GList *i = submit_servers; i; i = i->next) {
 		ServerScore *sc = g_new0(ServerScore, 1);
 		sc->server = i->data;
 		sc->score  = 0;
@@ -384,20 +386,28 @@ mpi_run_flow(GebrCommRunner *self)
 		for (gint j = 0; j < remaining; j++)
 			weights[j]+=1/(gfloat)np;
 		
+	for (GList *i = self->priv->run_servers; i; i = i->next) {
+		GebrCommDaemon *daemon = i->data;
+		GebrCommServer *server = gebr_comm_daemon_get_server(daemon);
+		g_string_append_c(servers, ';');
+		g_string_append(servers, server->address->str);
+		g_string_append_c(servers, ',');
+		g_string_append(servers, gebr_comm_daemon_get_flavors(daemon));
+	}
+	if (servers)
+		g_string_erase(servers, 0, 1);
+
 	gint j = 0;
 	for (GList *i = self->priv->servers; i; i = i->next, j++) {
 		ServerScore *sc = i->data;
 		GebrCommServer *server = gebr_comm_daemon_get_server(sc->server);
-		g_string_append_c(servers, ',');
-		g_string_append(servers, server->address->str);
 
 		g_string_append_c(servers_weigths, ',');
 		g_string_append(servers_weigths, server->address->str);
 		g_string_append_printf(servers_weigths, ",%lf", weights[j]);
 		g_debug("on %s, '%s', '%f'",__func__, server->address->str, weights[j]);
 	}
-	if (servers)
-		g_string_erase(servers, 0, 1);
+
 	if (servers_weigths)
 		g_string_erase(servers_weigths, 0, 1);
 
@@ -420,7 +430,7 @@ mpi_run_flow(GebrCommRunner *self)
 
 	                                      /* Moab and MPI settings */
 	                                      self->priv->account ? self->priv->account : "",
-	                                		      servers->str);
+	                                      servers->str);
 
 
 	self->priv->servers_list = g_strdup(servers_weigths->str);
@@ -491,7 +501,9 @@ on_response_received(GebrCommHttpMsg *request,
 		}
 
 		self->priv->servers = g_list_sort(self->priv->servers, (GCompareFunc)comp_func);
-		gboolean mpi = gebr_geoxml_flow_get_first_mpi_program(GEBR_GEOXML_FLOW(self->priv->flow)) != NULL;
+		GebrGeoXmlProgram *mpi_prog = gebr_geoxml_flow_get_first_mpi_program(GEBR_GEOXML_FLOW(self->priv->flow));
+		gboolean mpi = mpi_prog != NULL;
+		gebr_geoxml_object_unref(mpi_prog);
 
 		if (mpi)
 			mpi_run_flow(self);

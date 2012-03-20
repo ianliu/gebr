@@ -112,6 +112,13 @@ gebrm_daemon_iface_can_execute(GebrCommDaemon *idaemon)
 	return TRUE;
 }
 
+const gchar *
+gebrm_daemon_iface_get_flavors(GebrCommDaemon *idaemon)
+{
+	GebrmDaemon *daemon = GEBRM_DAEMON(idaemon);
+	return daemon->priv->mpi_flavors;
+}
+
 static void
 gebrm_daemon_init_iface(GebrCommDaemonIface *iface)
 {
@@ -120,6 +127,7 @@ gebrm_daemon_init_iface(GebrCommDaemonIface *iface)
 	iface->get_hostname = gebrm_daemon_iface_get_hostname;
 	iface->add_task = gebrm_daemon_iface_add_task;
 	iface->can_execute = gebrm_daemon_iface_can_execute;
+	iface->get_flavors = gebrm_daemon_iface_get_flavors;
 }
 
 static void

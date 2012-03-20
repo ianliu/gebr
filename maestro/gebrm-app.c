@@ -616,6 +616,52 @@ gebrm_update_tags_on_list_of_servers(GebrmApp *app,
 }
 
 static GList *
+get_comm_servers_min_subset(GList *servers,
+                            GList *mpi_flavors)
+{
+	if (!mpi_flavors)
+		return g_list_copy(servers);
+
+	GList *min = NULL;
+	gboolean has_flavors;
+	GList *i = servers;
+	for (GList *i = servers; i; i = i->next) {
+		has_flavors = TRUE;
+		for (GList *k = mpi_flavors; k; k = k->next) {
+			if (!gebrm_daemon_accepts_mpi(i->data, k->data)) {
+				has_flavors = FALSE;
+				break;
+			}
+		}
+		if (has_flavors)
+			min = g_list_prepend(min, i->data);
+	}
+
+	return min;
+}
+
+static GList *
+get_comm_servers_max_subset(GList *servers,
+                            GList *mpi_flavors)
+{
+	if (!mpi_flavors)
+		return g_list_copy(servers);
+
+	GList *max = NULL;
+	GList *i = servers;
+	for (GList *i = servers; i; i = i->next) {
+		for (GList *k = mpi_flavors; k; k = k->next) {
+			if (gebrm_daemon_accepts_mpi(i->data, k->data)) {
+				max = g_list_prepend(max, i->data);
+				break;
+			}
+		}
+	}
+
+	return max;
+}
+
+static GList *
 get_comm_servers_list(GebrmApp *app, const gchar *group, const gchar *group_type, GList *mpi_flavors)
 {
 	GList *servers = NULL;
@@ -641,27 +687,6 @@ get_comm_servers_list(GebrmApp *app, const gchar *group, const gchar *group_type
 				if (gebr_comm_server_is_logged(gebrm_daemon_get_server(i->data)))
 					servers = g_list_prepend(servers, i->data);
 			}
-		}
-	}
-
-	if (mpi_flavors) {
-		gboolean has_flavors;
-		GList *i = servers;
-		while (i) {
-			has_flavors = TRUE;
-			for (GList *k = mpi_flavors; k; k = k->next) {
-				if (!gebrm_daemon_accepts_mpi(i->data, k->data)) {
-					has_flavors = FALSE;
-					break;
-				}
-			}
-			if (!has_flavors) {
-				GList *aux = i->next;
-				servers = g_list_delete_link(servers, i);
-				i = aux;
-				continue;
-			}
-			i = i->next;
 		}
 	}
 
@@ -832,7 +857,10 @@ gebrm_app_handle_run(GebrmApp *app, GebrCommHttpMsg *request, GebrmClient *clien
 
 	GList *servers = get_comm_servers_list(app, name, group_type, mpi_flavors);
 
-	if (!servers) {
+	GList *min_subset_servers = get_comm_servers_min_subset(servers, mpi_flavors);
+	GList *max_subset_servers = get_comm_servers_max_subset(servers, mpi_flavors);
+
+	if (!min_subset_servers) {
 		gebrm_job_set_status(job, JOB_STATUS_FAILED);
 
 		g_debug("BUILDING THE MPI LIST...");
@@ -860,7 +888,8 @@ gebrm_app_handle_run(GebrmApp *app, GebrCommHttpMsg *request, GebrmClient *clien
 		}
 	} else {
 		GebrCommRunner *runner = gebr_comm_runner_new(GEBR_GEOXML_DOCUMENT(*pflow),
-							      servers, gebrm_job_get_id(job),
+		                                              min_subset_servers, max_subset_servers,
+		                                              gebrm_job_get_id(job),
 							      gid, parent_id, speed, nice,
 							      name, paths, validator);
 

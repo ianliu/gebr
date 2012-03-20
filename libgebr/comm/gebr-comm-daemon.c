@@ -62,3 +62,9 @@ gebr_comm_daemon_can_execute(GebrCommDaemon *daemon)
 {
 	return GEBR_COMM_DAEMON_GET_IFACE(daemon)->can_execute(daemon);
 }
+
+const gchar *
+gebr_comm_daemon_get_flavors(GebrCommDaemon *daemon)
+{
+	return GEBR_COMM_DAEMON_GET_IFACE(daemon)->get_flavors(daemon);
+}

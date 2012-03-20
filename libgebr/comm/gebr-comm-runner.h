@@ -37,7 +37,8 @@ struct _GebrCommRunner {
  * Returns: A newly created #GebrCommRunner.
  */
 GebrCommRunner *gebr_comm_runner_new(GebrGeoXmlDocument *flow,
-				     GList *servers,
+				     GList *submit_servers,
+				     GList *run_servers,
 				     const gchar *id,
 				     const gchar *gid,
 				     const gchar *parent_rid,
