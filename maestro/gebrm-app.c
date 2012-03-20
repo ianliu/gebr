@@ -832,12 +832,23 @@ gebrm_app_handle_run(GebrmApp *app, GebrCommHttpMsg *request, GebrmClient *clien
 
 	GList *servers = get_comm_servers_list(app, name, group_type, mpi_flavors);
 
-	g_list_foreach(mpi_flavors, (GFunc)g_free, NULL);
-	g_list_free(mpi_flavors);
-
 	if (!servers) {
 		gebrm_job_set_status(job, JOB_STATUS_FAILED);
-		const gchar *mpi_issue_message = _("The group of servers does not support MPI execution.");
+
+		g_debug("BUILDING THE MPI LIST...");
+		GString *tmp = g_string_new(NULL);
+		for (GList *i = mpi_flavors; i; i = i->next) {
+			g_string_append(tmp, ", ");
+			g_string_append(tmp, i->data);
+		}
+		g_debug("GOT %s", tmp->str);
+
+		if (tmp->len)
+			g_string_erase(tmp, 0, 2);
+
+		gchar *mpi_issue_message = g_strdup_printf(_("The group of servers does not support MPI execution: %s"),
+							   tmp->str);
+		g_string_free(tmp, TRUE);
 
 		for (GList *i = app->priv->connections; i; i = i->next) {
 			GebrCommProtocolSocket *socket_client = gebrm_client_get_protocol_socket(i->data);
@@ -886,6 +897,8 @@ gebrm_app_handle_run(GebrmApp *app, GebrCommHttpMsg *request, GebrmClient *clien
 		}
 	}
 
+	g_list_foreach(mpi_flavors, (GFunc)g_free, NULL);
+	g_list_free(mpi_flavors);
 	gebrm_job_info_free(&info);
 	g_list_free(servers);
 	g_free(title);
