@@ -485,16 +485,16 @@ void test_gebr_geoxml_number_process_mpi(void)
 	gebr_geoxml_program_set_mpi(program, "openmpi");
 
 	gebr_geoxml_program_mpi_set_n_process(program, 100);
-	gint nprocess = gebr_geoxml_program_mpi_get_n_process(program);
-	g_assert(nprocess == 100);
+	gchar *nprocess = gebr_geoxml_program_mpi_get_n_process(program);
+	g_assert_cmpstr(nprocess, ==, "100");
 
 	gebr_geoxml_program_mpi_set_n_process(program, 10);
 	nprocess = gebr_geoxml_program_mpi_get_n_process(program);
-	g_assert(nprocess == 10);
+	g_assert_cmpstr(nprocess, ==, "10");
 
 	gebr_geoxml_program_mpi_set_n_process(program, 1);
 	nprocess = gebr_geoxml_program_mpi_get_n_process(program);
-	g_assert(nprocess == 1);
+	g_assert_cmpstr(nprocess, ==, "1");
 
 	gebr_geoxml_object_unref(program);
 	gebr_geoxml_document_unref(GEBR_GEOXML_DOCUMENT(flow));
