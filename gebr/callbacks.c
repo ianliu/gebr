@@ -41,6 +41,8 @@
 #include "gebr-job-control.h"
 #include "ui_help.h"
 
+static gboolean line_check_maestro_connected(void);
+
 void on_new_activate(void)
 {
 	switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook))) {
@@ -67,6 +69,8 @@ void on_new_line_activate(void)
 {
 	switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook))) {
 	case NOTEBOOK_PAGE_PROJECT_LINE:
+		if (!line_check_maestro_connected())
+			return;
 		line_new();
 		break;
 	default:
@@ -160,6 +164,32 @@ void on_flow_export_activate(void)
 void on_flow_delete_activate(void)
 {
 	flow_delete(TRUE);
+}
+
+static gboolean
+line_check_maestro_connected(void)
+{
+	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+
+	if (maestro && gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED)
+		return TRUE;
+
+	GtkWidget *dialog = gtk_message_dialog_new_with_markup(NULL,
+	                                                       GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+	                                                       GTK_MESSAGE_WARNING,
+	                                                       GTK_BUTTONS_OK,
+	                                                       _("<span size='large'><b>The maestro registered is disconnected.</b></span>\n\n"
+	                                                         "Try connect in another maestro."));
+
+	gchar *win_title = g_strdup_printf(_("Maestro disconnected"));
+	gtk_window_set_title(GTK_WINDOW(dialog), win_title);
+
+	gtk_dialog_run(GTK_DIALOG(dialog));
+	gtk_widget_destroy(dialog);
+
+	on_configure_servers_activate();
+
+	return FALSE;
 }
 
 static gboolean
