@@ -1230,6 +1230,8 @@ gebr_flow_set_toolbar_sensitive(void)
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_paste"), sensitive);
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_view"), sensitive);
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow, "flow_edit"), sensitive);
+	gtk_widget_set_sensitive(gebr.ui_flow_browse->speed_button, sensitive);
+	gtk_widget_set_sensitive(gebr.ui_flow_browse->revisions_button, sensitive);
 
 	// Set sensitive for page Flow Editor
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_help"), sensitive);
@@ -1241,4 +1243,5 @@ gebr_flow_set_toolbar_sensitive(void)
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_top"), sensitive);
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_bottom"), sensitive);
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_execute"), sensitive);
+	gtk_widget_set_sensitive(gebr.ui_flow_edition->speed_button, sensitive);
 }

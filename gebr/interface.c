@@ -297,7 +297,8 @@ on_show_scale(GtkWidget * scale)
 static void
 insert_speed_controler(GtkToolbar *toolbar,
 		       GtkWidget **toggle_high,
-		       GtkWidget **toggle_low)
+		       GtkWidget **toggle_low,
+		       GtkWidget **speed)
 {
 	if (!gebr.flow_exec_adjustment) {
 		gebr.flow_exec_adjustment = GTK_ADJUSTMENT(gtk_adjustment_new(1, 1, 6, 1, 1, 1));
@@ -349,6 +350,7 @@ insert_speed_controler(GtkToolbar *toolbar,
 
 	*toggle_high = high;
 	*toggle_low = low;
+	*speed = speed_button;
 
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
@@ -556,9 +558,11 @@ void gebr_setup_ui(void)
 					 (gtk_action_group_get_action(gebr.action_group_flow, "flow_execute"))), -1);
 
 	gebr.ui_flow_browse = flow_browse_setup_ui(menu);
+	gebr.ui_flow_browse->revisions_button = GTK_WIDGET(tool_item);
 	insert_speed_controler(GTK_TOOLBAR(toolbar),
 			       &gebr.ui_flow_browse->nice_button_high,
-			       &gebr.ui_flow_browse->nice_button_low);
+			       &gebr.ui_flow_browse->nice_button_low,
+			       &gebr.ui_flow_browse->speed_button);
 
 	vbox = gtk_vbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
@@ -607,7 +611,8 @@ void gebr_setup_ui(void)
 	gebr.ui_flow_edition = flow_edition_setup_ui();
 	insert_speed_controler(GTK_TOOLBAR(toolbar),
 			       &gebr.ui_flow_edition->nice_button_high,
-			       &gebr.ui_flow_edition->nice_button_low);
+			       &gebr.ui_flow_edition->nice_button_low,
+			       &gebr.ui_flow_edition->speed_button);
 
 	vbox = gtk_vbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);

@@ -48,6 +48,7 @@ typedef struct {
 	GtkListStore *store;
 	GtkWidget *view;
 
+	GtkWidget *revisions_button;
 	GtkWidget *revisions_menu;
 
 	struct ui_flow_browse_info {
@@ -78,6 +79,7 @@ typedef struct {
 
 	GtkWidget *nice_button_high;
 	GtkWidget *nice_button_low;
+	GtkWidget *speed_button;
 } GebrUiFlowBrowse;
 
 /**
