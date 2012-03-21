@@ -111,9 +111,6 @@ typedef struct {
 	gint progress_animation;
 	gchar *old_base;
 	gchar *new_base;
-	GtkWidget *maestro_combo;
-	GtkWidget *maestro_box;
-	gint previous_active_group;
 
 	GebrPropertiesResponseFunc func;
 	gboolean accept_response;
@@ -184,12 +181,6 @@ static void on_properties_back(GtkButton *button, GebrPropertiesData *data);
 
 void on_properties_destroy(GtkWindow * window, GebrPropertiesData * data);
 
-static void on_groups_combo_box_changed (GtkComboBox *combo);
-
-static void gebr_document_send_path_message(GebrGeoXmlLine *line,
-                                            gint option,
-                                            const gchar *old_base);
-
 static gboolean dict_edit_reorder(GtkTreeView            *tree_view,
 				  GtkTreeIter            *iter,
 				  GtkTreeIter            *position,
@@ -231,113 +222,6 @@ GebrGeoXmlDocument *document_get_current(void)
 		flow_browse_get_selected(NULL, TRUE);
 		return GEBR_GEOXML_DOCUMENT(gebr.flow);
 	}
-}
-
-static GtkWidget *
-document_properties_create_maestro_combobox(GebrGeoXmlLine *line)
-{
-	GtkTreeIter iter;
-	GtkListStore *store = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
-	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
-
-	GtkWidget *combo = gtk_combo_box_new_with_model(GTK_TREE_MODEL(store));
-
-	GtkCellRenderer *renderer = gtk_cell_renderer_pixbuf_new();
-	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(combo), renderer, FALSE);
-	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(combo), renderer, "stock-id", 0);
-
-	renderer = gtk_cell_renderer_text_new();
-	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(combo), renderer, TRUE);
-	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(combo), renderer, "text", 1);
-
-	if (maestro) {
-		const gchar *stockid;
-		if (gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED) {
-			stockid = GTK_STOCK_CONNECT;
-			gebr_maestro_server_get_server(maestro);
-			gtk_list_store_append(store, &iter);
-			gtk_list_store_set(store, &iter,
-			                   0, stockid,
-			                   1, gebr_maestro_server_get_address(maestro),
-			                   -1);
-			gtk_combo_box_set_active_iter(GTK_COMBO_BOX(combo), &iter);
-		}
-	}
-
-	if (!gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, line)) {
-		gchar *maddr = gebr_geoxml_line_get_maestro(line);
-
-		if (maddr && *maddr) {
-			gtk_list_store_append(store, &iter);
-			gtk_list_store_set(store, &iter,
-					   0, GTK_STOCK_DISCONNECT,
-					   1, maddr,
-					   -1);
-			g_free(maddr);
-			gtk_combo_box_set_active_iter(GTK_COMBO_BOX(combo), &iter);
-		}
-	}
-
-	return combo;
-}
-
-static void
-on_maestro_box_clear(GtkWidget *widget,
-                     gpointer data)
-{
-	if (!GTK_IS_TOGGLE_BUTTON(widget))
-		gtk_widget_destroy(widget);
-}
-
-static void
-on_lock_button_toggled(GtkToggleButton *button,
-                       GebrPropertiesData *data)
-{
-	gboolean active = gtk_toggle_button_get_active(button);
-	GtkWidget *image = gtk_bin_get_child(GTK_BIN(button));
-
-	gtk_container_foreach(GTK_CONTAINER(data->maestro_box), (GtkCallback)on_maestro_box_clear, NULL);
-
-	gtk_image_set_from_stock(GTK_IMAGE(image), active ? "object-unlocked" : "object-locked", GTK_ICON_SIZE_BUTTON);
-
-	if (active) {
-		data->maestro_combo = document_properties_create_maestro_combobox(GEBR_GEOXML_LINE(data->document));
-		gtk_box_pack_start(GTK_BOX(data->maestro_box), data->maestro_combo, TRUE, TRUE, 0);
-	} else {
-		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, GEBR_GEOXML_LINE(data->document));
-		const gchar *addr = gebr_geoxml_line_get_maestro(GEBR_GEOXML_LINE(data->document));
-		const gchar *stockid;
-
-		if (!maestro && !strlen(addr)) {
-			maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
-			addr = gebr_maestro_server_get_address(maestro);
-		}
-
-		if (maestro) {
-			if (gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED)
-				stockid = GTK_STOCK_CONNECT;
-			else {
-				const gchar *type;
-				gebr_maestro_server_get_error(maestro, &type, NULL);
-
-				if (g_strcmp0(type, "error:none") == 0)
-					stockid = GTK_STOCK_DISCONNECT;
-				else
-					stockid = GTK_STOCK_DIALOG_WARNING;
-			}
-		} else
-			stockid = GTK_STOCK_DISCONNECT;
-
-		GtkWidget *image = gtk_image_new_from_stock(stockid, GTK_ICON_SIZE_BUTTON);
-		GtkWidget *label = gtk_label_new(addr);
-		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-
-		gtk_box_pack_start(GTK_BOX(data->maestro_box), image, FALSE, FALSE, 0);
-		gtk_box_pack_start(GTK_BOX(data->maestro_box), label, TRUE, TRUE, 0);
-	}
-
-	gtk_box_reorder_child(GTK_BOX(data->maestro_box), GTK_WIDGET(button), -1);
-	gtk_widget_show_all(data->maestro_box);
 }
 
 static void
@@ -509,75 +393,21 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 	GtkEntry *email = GTK_ENTRY(gtk_builder_get_object(builder, "entry_email"));
 	gtk_entry_set_text(GTK_ENTRY(email), gebr_geoxml_document_get_email(document));
 
-	data->previous_active_group = 0;
-	data->maestro_combo = NULL;
-	data->maestro_box = NULL;
-
 	if (gebr_geoxml_document_get_type(document) == GEBR_GEOXML_DOCUMENT_TYPE_LINE) {
-		data->maestro_combo = document_properties_create_maestro_combobox(GEBR_GEOXML_LINE(document));
-		data->previous_active_group = gtk_combo_box_get_active(GTK_COMBO_BOX(data->maestro_combo));
 		data->old_base = gebr_geoxml_line_get_path_by_name(GEBR_GEOXML_LINE(document), "BASE");
-
-		GtkWidget *lock_button = gtk_toggle_button_new();
-		GtkWidget *image = gtk_image_new_from_stock("object-locked", GTK_ICON_SIZE_BUTTON);
-		gtk_container_add(GTK_CONTAINER(lock_button), image);
-		g_signal_connect(lock_button, "toggled",
-				 G_CALLBACK(on_lock_button_toggled), data);
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(lock_button), FALSE);
-		gtk_widget_set_tooltip_text(image, _("Click to Lock/Unlock the Maestro of this Line.\n"
-						    "If you change the Maestro of this Line, some paths of"
-						    " this Line and its respective Flows can be broken."));
 
 		GtkWidget *hbox = gtk_hbox_new(FALSE, 5);
 
 		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, GEBR_GEOXML_LINE(document));
-		const gchar *addr = gebr_geoxml_line_get_maestro(GEBR_GEOXML_LINE(document));
-		const gchar *stockid;
 		gboolean is_logged = maestro? (gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED) : FALSE;
 
 		/* Set sensitivity for title */
 		GObject *warn_edit = gtk_builder_get_object(builder, "warn_edit");
 		gtk_widget_set_visible(GTK_WIDGET(warn_edit), FALSE);
 
-		if (!maestro && !strlen(addr)) {
-			maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
-			addr = gebr_maestro_server_get_address(maestro);
-		}
-
-		if (maestro) {
-			if (is_logged)
-				stockid = GTK_STOCK_CONNECT;
-			else {
-				const gchar *type;
-				gebr_maestro_server_get_error(maestro, &type, NULL);
-				if (g_strcmp0(type, "error:none") == 0)
-					stockid = GTK_STOCK_DISCONNECT;
-				else
-					stockid = GTK_STOCK_DIALOG_WARNING;
-			}
-		} else
-			stockid = GTK_STOCK_DISCONNECT;
-
-		GtkWidget *maestro_img = gtk_image_new_from_stock(stockid, GTK_ICON_SIZE_BUTTON);
-		GtkWidget *label = gtk_label_new(addr);
-		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-
-		gtk_box_pack_start(GTK_BOX(hbox), maestro_img, FALSE, FALSE, 0);
-		gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
-
-		gtk_box_pack_start(GTK_BOX(hbox), lock_button, FALSE, TRUE, 0);
-		data->maestro_box = hbox;
-
 		gint row, col;
 		g_object_get(table, "n-rows", &row, "n-columns", &col, NULL);
 		gtk_table_resize(GTK_TABLE(table), row+1, col);
-
-		label = gtk_label_new(_("Maestro"));
-		gtk_table_attach(GTK_TABLE (table), label, 0, 1, row, row+1, GTK_FILL, GTK_FILL, 3, 3);
-		gtk_table_attach(GTK_TABLE (table), hbox, 1, 2, row, row+1, GTK_FILL, GTK_FILL, 3, 3);
-		gtk_widget_show(label);
-		gtk_widget_show_all(hbox);
-		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 
 		GtkWidget *path_box = GTK_WIDGET(gtk_builder_get_object(builder, "widget_paths"));
 		GtkWidget *vbox_paths = GTK_WIDGET(gtk_builder_get_object(builder, "vbox_paths"));
@@ -1812,28 +1642,8 @@ save_document_properties(GebrPropertiesData *data)
 
 	/* Update title in apropriated store */
 	switch ((type = gebr_geoxml_document_get_type(data->document))) {
-	case GEBR_GEOXML_DOCUMENT_TYPE_LINE: {
-		gint current_active_group = gtk_combo_box_get_active(GTK_COMBO_BOX(data->maestro_combo));
-
-		if (current_active_group != data->previous_active_group) {
-			gboolean clean = gebr_gui_message_dialog (GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
-			                                          _("Change of Maestro"),
-								  _("Are you sure you want to change the maestro of this Line?"
-								    "\n\nIf you choose to change the maestro of this Line,"
-								    " be sure to correct the paths of this Line "
-								    "and its respective Flows that can be broken."));
-			if (clean) {
-				gebr_document_send_path_message(GEBR_GEOXML_LINE(data->document), GEBR_COMM_PROTOCOL_PATH_CREATE, NULL);
-				on_groups_combo_box_changed(GTK_COMBO_BOX(data->maestro_combo));
-
-				GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
-				gchar *home = g_build_filename(gebr_maestro_server_get_home_dir(maestro), NULL);
-				gebr_geoxml_line_append_path(gebr.line, "HOME", home);
-				g_free(home);
-			}
-		} else
-			on_groups_combo_box_changed(GTK_COMBO_BOX(data->maestro_combo));
-	} case GEBR_GEOXML_DOCUMENT_TYPE_PROJECT: {
+	case GEBR_GEOXML_DOCUMENT_TYPE_LINE:
+	case GEBR_GEOXML_DOCUMENT_TYPE_PROJECT: {
 		project_line_get_selected(&iter, DontWarnUnselection);
 		gtk_tree_store_set(gebr.ui_project_line->store, &iter,
 				   PL_TITLE, gebr_geoxml_document_get_title(data->document), -1);
@@ -2151,29 +1961,6 @@ void on_properties_destroy(GtkWindow * window, GebrPropertiesData * data)
 	g_free(data);
 }
 
-static void
-on_groups_combo_box_changed(GtkComboBox *combo)
-{
-	gchar *addr;
-	GebrMaestroServer *maestro;
-	GtkTreeIter iter;
-	GtkTreeModel *model;
-
-	if (!gebr.line)
-		return;
-
-	if (!gtk_combo_box_get_active_iter (combo, &iter))
-		return;
-
-	model = gtk_combo_box_get_model(combo);
-
-	gtk_tree_model_get(model, &iter, 1, &addr, -1);
-
-	gebr_geoxml_line_set_maestro(gebr.line, addr);
-	maestro = gebr_maestro_controller_get_maestro_for_address(gebr.maestro_controller, addr);
-	gebr_flow_edition_update_server(gebr.ui_flow_edition, maestro);
-}
-
 static gboolean dict_edit_reorder(GtkTreeView            *tree_view,
 				  GtkTreeIter            *iter,
 				  GtkTreeIter            *position,
@@ -2371,51 +2158,4 @@ static gboolean dict_edit_can_reorder(GtkTreeView            *tree_view,
 static void on_dict_edit_change_selection(GtkTreeSelection *selection, struct dict_edit_data *data)
 {
 	gebr_dict_update_wizard(data);
-}
-
-static void
-gebr_document_send_path_message(GebrGeoXmlLine *line,
-                                gint option,
-                                const gchar *old_base)
-{
-	gchar ***paths = gebr_geoxml_line_get_paths(line);
-	GString *buffer = g_string_new(NULL);
-
-	if (option == GEBR_COMM_PROTOCOL_PATH_CREATE) {
-		for (gint i = 0; paths[i]; i++) {
-			if (g_strcmp0(paths[i][1], "IMPORT") == 0)
-				continue;
-			gchar *escaped = gebr_geoxml_escape_path(paths[i][0]);
-			g_string_append_c(buffer, ',');
-			g_string_append(buffer, escaped);
-			g_free(escaped);
-		}
-		if (buffer->len)
-			g_string_erase(buffer, 0, 1);
-	}
-	else if (option == GEBR_COMM_PROTOCOL_PATH_RENAME) {
-		for (gint i = 0; paths[i]; i++) {
-			if (g_strcmp0(paths[i][1], "BASE") == 0) {
-				buffer = g_string_append(buffer, paths[i][0]);
-				break;
-			}
-		}
-	}
-
-	gebr_pairstrfreev(paths);
-
-	GebrMaestroServer *maestro_server = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, line);
-	if (!maestro_server)
-		return;
-	GebrCommServer *comm_server = gebr_maestro_server_get_server(maestro_server);
-
-	g_debug("enviando mensagem (NEW) '%s', (OLD) '%s' ao maestro '%s'", buffer->str, old_base, gebr_maestro_server_get_address(maestro_server));
-
-	gebr_comm_protocol_socket_oldmsg_send(comm_server->socket, FALSE,
-	                                      gebr_comm_protocol_defs.path_def, 3,
-	                                      buffer->str,
-	                                      old_base,
-	                                      gebr_comm_protocol_path_enum_to_str (option));
-
-	g_string_free(buffer, TRUE);
 }

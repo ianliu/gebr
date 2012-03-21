@@ -64,6 +64,13 @@ struct ui_project_line {
 	struct ui_project_line_info {
 		GtkBuilder *builder_proj;
 		GtkBuilder *builder_line;
+
+		GtkWidget *maestro_box;
+		GtkWidget *maestro_combo;
+		GtkWidget *maestro_label;
+		GtkWidget *lock_button;
+		gint previous_maestro;
+
 		GtkWidget *help_edit;
 		GtkWidget *help_view;
 	} info;

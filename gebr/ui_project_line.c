@@ -86,6 +86,18 @@ static void on_maestro_state_change(GebrMaestroController *mc,
 static void update_control_sensitive (GtkTreeSelection *selection,
                                       GebrUiProjectLine *upl);
 
+static void project_line_create_maestro_widget(GebrUiProjectLine *upl);
+
+static void change_maestro_edit_mode(GebrUiProjectLine *upl,
+                                     gboolean edit_mode,
+                                     gboolean save_change);
+
+static void on_lock_button_toggled(GtkToggleButton *button,
+                                   GebrUiProjectLine *upl);
+
+static void on_maestro_button_clicked(GtkButton *button,
+                                      GebrUiProjectLine *upl);
+
 struct ui_project_line *project_line_setup_ui(void)
 {
 	struct ui_project_line *ui_project_line;
@@ -162,6 +174,11 @@ struct ui_project_line *project_line_setup_ui(void)
 	GObject *infopage_proj = gtk_builder_get_object(ui_project_line->info.builder_proj, "main");
 	GObject *infopage_line = gtk_builder_get_object(ui_project_line->info.builder_line, "main");
 
+	GtkButton *maestro_button = GTK_BUTTON(gtk_builder_get_object(ui_project_line->info.builder_line, "maestro_button"));
+	g_signal_connect(maestro_button, "clicked", G_CALLBACK(on_maestro_button_clicked), ui_project_line);
+
+	project_line_create_maestro_widget(ui_project_line);
+
 	gtk_box_pack_start(GTK_BOX(infopage), GTK_WIDGET(infopage_proj), FALSE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(infopage), GTK_WIDGET(infopage_line), FALSE, TRUE, 0);
 
@@ -182,6 +199,276 @@ struct ui_project_line *project_line_setup_ui(void)
 }
 
 static void
+on_maestro_button_clicked(GtkButton *button,
+                          GebrUiProjectLine *upl)
+{
+	if (!gebr.line)
+		return;
+
+	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
+	if (!maestro) {
+		gchar *addr = gebr_geoxml_line_get_maestro(gebr.line);
+		gebr_maestro_controller_connect(gebr.maestro_controller, addr);
+		g_free(addr);
+	}
+}
+
+static void
+on_maestro_box_clear(GtkWidget *widget,
+                     gpointer data)
+{
+	if (!GTK_IS_TOGGLE_BUTTON(widget))
+		gtk_widget_destroy(widget);
+}
+
+static GtkWidget *
+document_properties_create_maestro_combobox(GebrGeoXmlLine *line)
+{
+	GtkTreeIter iter;
+	GtkListStore *store = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
+	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+
+	GtkWidget *combo = gtk_combo_box_new_with_model(GTK_TREE_MODEL(store));
+
+	GtkCellRenderer *renderer = gtk_cell_renderer_pixbuf_new();
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(combo), renderer, FALSE);
+	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(combo), renderer, "stock-id", 0);
+
+	renderer = gtk_cell_renderer_text_new();
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(combo), renderer, TRUE);
+	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(combo), renderer, "text", 1);
+
+	if (maestro) {
+		const gchar *stockid;
+		if (gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED) {
+			stockid = GTK_STOCK_CONNECT;
+			gebr_maestro_server_get_server(maestro);
+			gtk_list_store_append(store, &iter);
+			gtk_list_store_set(store, &iter,
+			                   0, stockid,
+			                   1, gebr_maestro_server_get_address(maestro),
+			                   -1);
+			gtk_combo_box_set_active_iter(GTK_COMBO_BOX(combo), &iter);
+		}
+	}
+
+	if (!gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, line)) {
+		gchar *maddr = gebr_geoxml_line_get_maestro(line);
+
+		if (maddr && *maddr) {
+			gtk_list_store_append(store, &iter);
+			gtk_list_store_set(store, &iter,
+					   0, GTK_STOCK_DISCONNECT,
+					   1, maddr,
+					   -1);
+			g_free(maddr);
+			gtk_combo_box_set_active_iter(GTK_COMBO_BOX(combo), &iter);
+		}
+	}
+
+	return combo;
+}
+
+static void
+ensure_non_maestro_change_mode(GebrUiProjectLine *upl)
+{
+	GtkToggleButton *button = GTK_TOGGLE_BUTTON(upl->info.lock_button);
+	if (gtk_toggle_button_get_active(button)) {
+		g_signal_handlers_block_by_func(button, on_lock_button_toggled, upl);
+		gtk_toggle_button_set_active(button, FALSE);
+		g_signal_handlers_unblock_by_func(button, on_lock_button_toggled, upl);
+		change_maestro_edit_mode(upl, FALSE, FALSE);
+	}
+}
+
+static void
+on_groups_combo_box_changed(GtkComboBox *combo)
+{
+	gchar *addr;
+	GebrMaestroServer *maestro;
+	GtkTreeIter iter;
+	GtkTreeModel *model;
+
+	if (!gebr.line)
+		return;
+
+	if (!gtk_combo_box_get_active_iter (combo, &iter))
+		return;
+
+	model = gtk_combo_box_get_model(combo);
+
+	gtk_tree_model_get(model, &iter, 1, &addr, -1);
+
+	gebr_geoxml_line_set_maestro(gebr.line, addr);
+	maestro = gebr_maestro_controller_get_maestro_for_address(gebr.maestro_controller, addr);
+	gebr_flow_edition_update_server(gebr.ui_flow_edition, maestro);
+}
+
+static void
+gebr_document_send_path_message(GebrGeoXmlLine *line,
+                                gint option,
+                                const gchar *old_base)
+{
+	gchar ***paths = gebr_geoxml_line_get_paths(line);
+	GString *buffer = g_string_new(NULL);
+
+	if (option == GEBR_COMM_PROTOCOL_PATH_CREATE) {
+		for (gint i = 0; paths[i]; i++) {
+			if (g_strcmp0(paths[i][1], "IMPORT") == 0)
+				continue;
+			gchar *escaped = gebr_geoxml_escape_path(paths[i][0]);
+			g_string_append_c(buffer, ',');
+			g_string_append(buffer, escaped);
+			g_free(escaped);
+		}
+		if (buffer->len)
+			g_string_erase(buffer, 0, 1);
+	}
+	else if (option == GEBR_COMM_PROTOCOL_PATH_RENAME) {
+		for (gint i = 0; paths[i]; i++) {
+			if (g_strcmp0(paths[i][1], "BASE") == 0) {
+				buffer = g_string_append(buffer, paths[i][0]);
+				break;
+			}
+		}
+	}
+
+	gebr_pairstrfreev(paths);
+
+	GebrMaestroServer *maestro_server = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, line);
+	if (!maestro_server)
+		return;
+	GebrCommServer *comm_server = gebr_maestro_server_get_server(maestro_server);
+
+	g_debug("enviando mensagem (NEW) '%s', (OLD) '%s' ao maestro '%s'", buffer->str, old_base, gebr_maestro_server_get_address(maestro_server));
+
+	gebr_comm_protocol_socket_oldmsg_send(comm_server->socket, FALSE,
+	                                      gebr_comm_protocol_defs.path_def, 3,
+	                                      buffer->str,
+	                                      old_base,
+	                                      gebr_comm_protocol_path_enum_to_str (option));
+
+	g_string_free(buffer, TRUE);
+}
+
+static void
+save_maestro_on_combo_box_changed(GebrUiProjectLine *upl)
+{
+	gint current_active_maestro = gtk_combo_box_get_active(GTK_COMBO_BOX(upl->info.maestro_combo));
+
+	if (current_active_maestro != upl->info.previous_maestro) {
+		gboolean confirm = gebr_gui_message_dialog(GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
+		                                           _("Change of Maestro"),
+		                                           _("Are you sure you want to change the maestro of this Line?"
+		                                             "\n\nIf you choose to change the maestro of this Line,"
+		                                             " be sure to correct the paths of this Line "
+		                                             "and its respective Flows that can be broken."));
+		if (confirm) {
+			gebr_document_send_path_message(gebr.line, GEBR_COMM_PROTOCOL_PATH_CREATE, NULL);
+			on_groups_combo_box_changed(GTK_COMBO_BOX(upl->info.maestro_combo));
+
+			GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
+			gchar *home = g_build_filename(gebr_maestro_server_get_home_dir(maestro), NULL);
+			gebr_geoxml_line_append_path(gebr.line, "HOME", home);
+			g_free(home);
+
+			document_save(GEBR_GEOXML_DOCUMENT(gebr.line), TRUE, FALSE);
+
+			GtkTreeIter iter;
+			GtkTreeModel *model;
+			GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(upl->view));
+			GList *paths = gtk_tree_selection_get_selected_rows(selection, &model);
+			gtk_tree_model_get_iter(model, &iter, paths->data);
+			gtk_tree_store_set(upl->store, &iter, PL_SENSITIVE, TRUE, -1);
+		}
+	} else
+		on_groups_combo_box_changed(GTK_COMBO_BOX(upl->info.maestro_combo));
+}
+
+static void
+on_lock_button_toggled(GtkToggleButton *button,
+                       GebrUiProjectLine *upl)
+{
+	gboolean active = gtk_toggle_button_get_active(button);
+	change_maestro_edit_mode(upl, active, TRUE);
+}
+
+static void
+change_maestro_edit_mode(GebrUiProjectLine *upl,
+                         gboolean edit_mode,
+                         gboolean save_change)
+{
+	GtkWidget *image = gtk_bin_get_child(GTK_BIN(upl->info.lock_button));
+
+	gtk_image_set_from_stock(GTK_IMAGE(image), edit_mode ? "object-unlocked" : "object-locked", GTK_ICON_SIZE_BUTTON);
+
+	if (edit_mode) {
+		gtk_container_foreach(GTK_CONTAINER(upl->info.maestro_box), (GtkCallback)on_maestro_box_clear, NULL);
+
+		upl->info.maestro_label = NULL;
+		upl->info.maestro_combo = document_properties_create_maestro_combobox(gebr.line);
+		upl->info.previous_maestro = gtk_combo_box_get_active(GTK_COMBO_BOX(upl->info.maestro_combo));
+		gtk_box_pack_start(GTK_BOX(upl->info.maestro_box), upl->info.maestro_combo, TRUE, TRUE, 0);
+	} else {
+		if (save_change)
+			save_maestro_on_combo_box_changed(upl);
+
+		gtk_container_foreach(GTK_CONTAINER(upl->info.maestro_box), (GtkCallback)on_maestro_box_clear, NULL);
+
+		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
+		const gchar *addr = gebr_geoxml_line_get_maestro(gebr.line);
+
+		if (!maestro && !strlen(addr)) {
+			maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+			addr = gebr_maestro_server_get_address(maestro);
+		}
+
+		GtkWidget *label = gtk_label_new(addr);
+		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+		gtk_box_pack_start(GTK_BOX(upl->info.maestro_box), label, TRUE, TRUE, 0);
+		upl->info.maestro_label = label;
+		upl->info.maestro_combo = NULL;
+
+		if (save_change)
+			project_line_info_update();
+	}
+
+	gtk_box_reorder_child(GTK_BOX(upl->info.maestro_box), upl->info.lock_button, -1);
+	gtk_widget_show_all(upl->info.maestro_box);
+}
+
+static void
+project_line_create_maestro_widget(GebrUiProjectLine *upl)
+{
+	GObject *box = gtk_builder_get_object(upl->info.builder_line, "maestro_box");
+
+	GtkWidget *maestro_box = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(box), maestro_box, FALSE, FALSE, 5);
+
+	upl->info.maestro_box = GTK_WIDGET(maestro_box);
+
+	GtkWidget *label = gtk_label_new("");
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+	upl->info.maestro_label = label;
+	gtk_box_pack_start(GTK_BOX(maestro_box), label, FALSE, TRUE, 5);
+
+	GtkWidget *lock_button = gtk_toggle_button_new();
+	GtkWidget *image = gtk_image_new_from_stock("object-locked", GTK_ICON_SIZE_BUTTON);
+	gtk_container_add(GTK_CONTAINER(lock_button), image);
+	g_signal_connect(lock_button, "toggled",
+	                 G_CALLBACK(on_lock_button_toggled), upl);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(lock_button), FALSE);
+	gtk_widget_set_tooltip_text(image, _("Click to Lock/Unlock the Maestro of this Line.\n"
+			"If you change the Maestro of this Line, some paths of"
+			" this Line and its respective Flows can be broken."));
+	gtk_box_pack_start(GTK_BOX(maestro_box), lock_button, FALSE, TRUE, 5);
+
+	upl->info.lock_button = lock_button;
+
+	gtk_widget_show_all(GTK_WIDGET(maestro_box));
+}
+
+static void
 line_info_update(void)
 {
 	if (!gebr.ui_project_line->info.builder_line)
@@ -198,7 +485,6 @@ line_info_update(void)
 	gchar *tmp;
 
 	GObject *image_maestro = gtk_builder_get_object(gebr.ui_project_line->info.builder_line, "image_maestro");
-	GObject *label_maestro = gtk_builder_get_object(gebr.ui_project_line->info.builder_line, "label_maestro");
 
 	GObject *label_home = gtk_builder_get_object(gebr.ui_project_line->info.builder_line, "label_home");
 	GObject *label_base = gtk_builder_get_object(gebr.ui_project_line->info.builder_line, "label_base");
@@ -245,15 +531,16 @@ line_info_update(void)
 
 
 	/* Line's Maestro information */
-	gchar *addr = gebr_geoxml_line_get_maestro(gebr.line);
-	gchar *markup = g_markup_printf_escaped(_("on Maestro <b>%s</b>"), addr);
 
-	gtk_label_set_markup(GTK_LABEL(label_maestro), markup);
-
-	g_free(addr);
-	g_free(markup);
-
+	const gchar *addr;
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, GEBR_GEOXML_LINE(gebr.line));
+	if (maestro)
+		addr = gebr_maestro_server_get_address(maestro);
+	else
+		addr = gebr_geoxml_line_get_maestro(gebr.line);
+
+	gtk_label_set_text(GTK_LABEL(gebr.ui_project_line->info.maestro_label), addr);
+
 	const gchar *stockid;
 	gchar *home_path;
 
@@ -1324,6 +1611,8 @@ on_maestro_state_change(GebrMaestroController *mc,
                         GebrMaestroServer *maestro,
                         GebrUiProjectLine *upl)
 {
+	ensure_non_maestro_change_mode(upl);
+
 	GebrGeoXmlLine *line;
 	GtkTreeIter parent, iter;
 	GtkTreeModel *model = GTK_TREE_MODEL(upl->store);
@@ -1413,6 +1702,7 @@ static void project_line_load(void)
 			if (gebr_geoxml_line_get_flows_number(gebr.line) < 1)
 				flow_browse_reload_selected();
 		}
+		ensure_non_maestro_change_mode(gebr.ui_project_line);
 	} else {
 		gebr.project_line = GEBR_GEOXML_DOC(gebr.project);
 		gebr.line = NULL;

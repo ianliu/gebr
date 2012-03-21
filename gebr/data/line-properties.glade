@@ -9,10 +9,18 @@
         <property name="visible">True</property>
         <property name="spacing">5</property>
         <child>
-          <object class="GtkImage" id="image_maestro">
+          <object class="GtkButton" id="maestro_button">
             <property name="visible">True</property>
-            <property name="stock">gtk-disconnect</property>
-            <property name="icon-size">6</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="relief">none</property>
+            <child>
+              <object class="GtkImage" id="image_maestro">
+                <property name="visible">True</property>
+                <property name="stock">gtk-disconnect</property>
+                <property name="icon-size">6</property>
+              </object>
+            </child>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -36,10 +44,23 @@
               </packing>
             </child>
             <child>
-              <object class="GtkLabel" id="label_maestro">
+              <object class="GtkHBox" id="maestro_box">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">on Maestro &lt;b&gt;Dell3&lt;/b&gt;</property>
-                <property name="use_markup">True</property>
+                <child>
+                  <object class="GtkLabel" id="label_maestro">
+                    <property name="visible">True</property>
+                    <property name="xalign">1</property>
+                    <property name="label" translatable="yes">on Maestro</property>
+                    <property name="use_markup">True</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
               </object>
               <packing>
                 <property name="position">1</property>
