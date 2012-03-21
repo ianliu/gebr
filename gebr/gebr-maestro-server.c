@@ -578,7 +578,7 @@ parse_messages(GebrCommServer *comm_server,
 			GList *arguments;
 
 			/* organize message data */
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 19)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 20)) == NULL)
 				goto err;
 
 			GString *id          = g_list_nth_data(arguments, 0);
@@ -600,6 +600,9 @@ parse_messages(GebrCommServer *comm_server,
 			GString *start_date  = g_list_nth_data(arguments, 16);
 			GString *finish_date = g_list_nth_data(arguments, 17);
 			GString *run_type    = g_list_nth_data(arguments, 18);
+			GString *mpi_owner   = g_list_nth_data(arguments, 19);
+
+			g_debug("mpi_owner:%s", mpi_owner->str);
 
 			GebrJob *job = g_hash_table_lookup(maestro->priv->jobs, id->str);
 			gboolean prev_exist = FALSE;
@@ -628,6 +631,8 @@ parse_messages(GebrCommServer *comm_server,
 			gebr_job_set_nprocs(job, nprocs->str);
 			gebr_job_set_static_status(job, gebr_comm_job_get_status_from_string(status->str));
 			gebr_job_set_io(job, input->str, output->str, error->str);
+			gebr_job_set_mpi_owner(job, mpi_owner);
+			g_debug("still_mpi_owner:%s", gebr_job_get_mpi_owner(job));
 
 			if (g_strcmp0(gebr_job_get_queue(job), parent_id->str) != 0) {
 				gebr_job_set_queue(job, parent_id->str);
@@ -647,6 +652,7 @@ parse_messages(GebrCommServer *comm_server,
 				gebr_job_set_server_group_type(job, group_type->str);
 				gebr_job_set_exec_speed(job, atof(speed->str));
 				gebr_job_set_static_status(job, gebr_comm_job_get_status_from_string(status->str));
+
 				if (start_date->len > 0)
 					gebr_job_set_start_date(job, start_date->str);
 				if (finish_date->len > 0)

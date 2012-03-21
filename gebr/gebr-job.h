@@ -208,6 +208,10 @@ const gchar *gebr_job_get_run_type(GebrJob *job);
 
 void gebr_job_remove(GebrJob *job);
 
+void gebr_job_set_mpi_owner(GebrJob *job, GString *mpi_owner);
+
+gchar *gebr_job_get_mpi_owner(GebrJob *job);
+
 G_END_DECLS
 
 #endif /* __GEBR_JOB_H__ */

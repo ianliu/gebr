@@ -719,7 +719,7 @@ send_job_def_to_clients(GebrmApp *app, GebrmJob *job)
 		GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(i->data);
 		g_debug("-----------------------%s",gebrm_job_get_nprocs(job));
 		gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
-						      gebr_comm_protocol_defs.job_def, 19,
+						      gebr_comm_protocol_defs.job_def, 20,
 						      gebrm_job_get_id(job),
 						      gebrm_job_get_temp_id(job),
 						      gebrm_job_get_nprocs(job),
@@ -738,7 +738,8 @@ send_job_def_to_clients(GebrmApp *app, GebrmJob *job)
 						      gebr_comm_job_get_string_from_status(gebrm_job_get_status(job)),
 						      start_date? start_date : "",
 						      finish_date? finish_date : "",
-						      gebrm_job_get_run_type(job));
+						      gebrm_job_get_run_type(job),
+						      gebrm_job_get_mpi_owner(job));
 	}
 }
 
@@ -748,6 +749,7 @@ on_execution_response(GebrCommRunner *runner,
 {
 	AppAndJob *aap = data;
 
+	gebrm_job_set_mpi_owner(aap->job, gebr_comm_runner_get_mpi_owner(runner));
 	gebrm_job_set_total_tasks(aap->job, gebr_comm_runner_get_total(runner));
 	gebrm_job_set_servers_list(aap->job, gebr_comm_runner_get_servers_list(runner));
 	g_debug("on %s, ncores:%s", __func__, gebr_comm_runner_get_ncores(runner));
@@ -1528,7 +1530,7 @@ send_messages_of_jobs(const gchar *id,
 
 	/* Job def message */
 	gebr_comm_protocol_socket_oldmsg_send(protocol, FALSE,
-	                                      gebr_comm_protocol_defs.job_def, 19,
+	                                      gebr_comm_protocol_defs.job_def, 20,
 	                                      id,
 					      gebrm_job_get_temp_id(job),
 					      gebrm_job_get_nprocs(job),
@@ -1547,7 +1549,8 @@ send_messages_of_jobs(const gchar *id,
 	                                      gebr_comm_job_get_string_from_status(gebrm_job_get_status(job)),
 	                                      start_date? start_date : "",
 	                                      finish_date? finish_date : "",
-	                                      gebrm_job_get_run_type(job));
+	                                      gebrm_job_get_run_type(job),
+	                                      gebrm_job_get_mpi_owner(job));
 
 	GList *tasks = gebrm_job_get_list_of_tasks(job);
 	

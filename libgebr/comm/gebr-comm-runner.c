@@ -54,6 +54,7 @@ struct _GebrCommRunnerPriv {
 	gchar *group;
 	gchar *servers_list;
 	gchar *paths;
+	gchar *mpi_owner;
 
 	void (*ran_func) (GebrCommRunner *runner,
 			  gpointer data);
@@ -174,6 +175,7 @@ gebr_comm_runner_free(GebrCommRunner *self)
 	g_free(self->priv->nice);
 	g_free(self->priv->group);
 	g_free(self->priv->paths);
+	g_free(self->priv->mpi_owner);
 }
 
 /*
@@ -268,6 +270,8 @@ divide_and_run_flows(GebrCommRunner *self)
 	gdouble sum = 0;
 	gint n = 0;
 	gint ncores = 0;
+
+	self->priv->mpi_owner = g_strdup("");
 
 	for (GList *i = self->priv->servers; i; i = i->next) {
 		ServerScore *sc = i->data;
@@ -467,6 +471,7 @@ mpi_run_flow(GebrCommRunner *self)
 	// Set CommRunner parameters
 	self->priv->ncores = "1";
 	self->priv->total = 1;
+	self->priv->mpi_owner = g_strdup(first_server->address->str);
 
 	gebr_comm_protocol_socket_oldmsg_send(first_server->socket, FALSE,
 	                                      gebr_comm_protocol_defs.run_def, 9,
@@ -647,4 +652,10 @@ const gchar *
 gebr_comm_runner_get_id(GebrCommRunner *self)
 {
 	return self->priv->id;
+}
+
+gchar *
+gebr_comm_runner_get_mpi_owner(GebrCommRunner *self)
+{
+	return self->priv->mpi_owner;
 }

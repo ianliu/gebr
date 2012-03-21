@@ -34,6 +34,7 @@ struct _GebrmJobPriv {
 	gchar *servers;
 	gchar *nprocs;
 	gchar *run_type;
+	gchar *mpi_owner;
 	gint total;
 	GebrCommJobStatus status;
 	gboolean has_issued;
@@ -87,6 +88,7 @@ gebrm_job_finalize(GObject *object)
 	g_free(job->priv->servers);
 	g_free(job->priv->nprocs);
 	g_free(job->priv->run_type);
+	g_free(job->priv->mpi_owner);
 	g_list_foreach(job->priv->tasks, (GFunc)g_object_unref, NULL);
 	g_list_free(job->priv->tasks);
 
@@ -104,6 +106,7 @@ gebrm_job_init(GebrmJob *job)
 	job->priv->nprocs = g_strdup("");
 	job->priv->servers = g_strdup("");
 	job->priv->run_type = g_strdup("");
+	job->priv->mpi_owner = g_strdup("");
 }
 
 static void
@@ -768,10 +771,23 @@ gebrm_job_info_free(GebrmJobInfo *info)
 	g_free(info->group);
 	g_free(info->group_type);
 	g_free(info->speed);
+
 }
 void
 gebrm_job_set_status(GebrmJob *job, GebrCommJobStatus status)
 {
 	job->priv->status = status;
 
+}
+
+const gchar *
+gebrm_job_get_mpi_owner(GebrmJob *job)
+{
+	return job->priv->mpi_owner;
+}
+
+void
+gebrm_job_set_mpi_owner(GebrmJob *job, gchar *mpi_owner)
+{
+	job->priv->mpi_owner = strdup(mpi_owner);
 }

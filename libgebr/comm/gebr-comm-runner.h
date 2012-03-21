@@ -80,6 +80,8 @@ gint gebr_comm_runner_get_total(GebrCommRunner *self);
 
 const gchar *gebr_comm_runner_get_id(GebrCommRunner *self);
 
+gchar *gebr_comm_runner_get_mpi_owner(GebrCommRunner *self);
+
 G_END_DECLS
 
 #endif /*  __GEBR_COMM_RUNNER_H__ */
