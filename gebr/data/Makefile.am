@@ -29,6 +29,7 @@ glade_DATA = \
 	mpi-parameters-help.glade \
 	project-properties.glade \
 	line-properties.glade \
+	l.png \
 	$(NULL)
 
 gebr.desktop:gebr.desktop.in $(INTLTOOL_MERGE) $(srcdir)/../po/*.po
