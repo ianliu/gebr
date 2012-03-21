@@ -181,6 +181,19 @@ void gebr_gui_program_edit_reload(GebrGuiProgramEdit *program_edit, GebrGeoXmlPr
  * Private functions.
  */
 
+static void
+on_mpi_parameters_help_clicked()
+{
+	GtkBuilder *builder = gtk_builder_new();
+
+	if (!gtk_builder_add_from_file(builder, GEBR_GLADE_DIR "/mpi-parameters-help.glade", NULL))
+		return;
+
+	GObject *dialog = gtk_builder_get_object(builder, "main");
+	gtk_dialog_run(GTK_DIALOG(dialog));
+	gtk_widget_destroy(GTK_WIDGET(dialog));
+}
+
 /**
  * \internal
  */
@@ -219,6 +232,18 @@ gebr_gui_program_edit_load(GebrGuiProgramEdit *program_edit, GebrGeoXmlParameter
 			gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, TRUE, 0);
 			g_signal_connect(button, "clicked", G_CALLBACK(on_delete_clicked), parameter_group);
 			g_object_set_data(G_OBJECT(frame), "delete", button);
+		}
+
+		if (program_edit->mpi_params) {
+			button = gtk_button_new();
+			style = gtk_rc_style_new();
+			style->xthickness = style->ythickness = 0;
+			gtk_widget_modify_style(button, style);
+			g_object_unref(style);
+			g_object_set(button, "relief", GTK_RELIEF_NONE, NULL);
+			gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(GTK_STOCK_HELP, GTK_ICON_SIZE_MENU));
+			gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, TRUE, 0);
+			g_signal_connect(button, "clicked", G_CALLBACK(on_mpi_parameters_help_clicked), NULL);
 		}
 
 		button = gtk_button_new();

@@ -7,6 +7,7 @@ data/gebr-job-control.glade
 data/gebr-maestro-dialog.glade
 data/gebr.desktop.in.in
 data/line-properties.glade
+data/mpi-parameters-help.glade
 data/project-properties.glade
 document.c
 flow.c

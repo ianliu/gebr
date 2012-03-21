@@ -26,9 +26,9 @@ glade_DATA = \
 	gebr-job-control.glade \
 	gebr-maestro-dialog.glade \
 	document-properties.glade \
+	mpi-parameters-help.glade \
 	project-properties.glade \
 	line-properties.glade \
-	l.png \
 	$(NULL)
 
 gebr.desktop:gebr.desktop.in $(INTLTOOL_MERGE) $(srcdir)/../po/*.po
