@@ -307,6 +307,11 @@ insert_speed_controler(GtkToolbar *toolbar,
 	GtkWidget *scale = gtk_hscale_new(gebr.flow_exec_adjustment);
 	gtk_scale_set_draw_value(GTK_SCALE(scale), FALSE);
 	gtk_scale_set_digits(GTK_SCALE(scale), 1);
+
+	gtk_scale_add_mark(GTK_SCALE(scale), 0, GTK_POS_LEFT, "<span size='x-small'>1 Core</span>");
+	gtk_scale_add_mark(GTK_SCALE(scale), 2.5, GTK_POS_LEFT, "<span size='x-small'>50%</span>");
+	gtk_scale_add_mark(GTK_SCALE(scale), 5, GTK_POS_LEFT, "<span size='x-small'>100%</span>");
+
 	g_object_set(scale, "has-tooltip",TRUE, NULL);
 
 	g_signal_connect(scale, "change-value", G_CALLBACK(change_value), NULL);
