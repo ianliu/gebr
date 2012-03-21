@@ -681,6 +681,9 @@ gebr_flow_browse_hide(GebrUiFlowBrowse *self)
 void
 gebr_flow_browse_show(GebrUiFlowBrowse *self)
 {
+	if (gebr.line)
+		gebr_flow_set_toolbar_sensitive();
+
 	if (gebr.config.niceness == 0)
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(self->nice_button_high), TRUE);
 	else

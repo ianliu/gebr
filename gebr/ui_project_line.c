@@ -98,6 +98,18 @@ static void on_lock_button_toggled(GtkToggleButton *button,
 static void on_maestro_button_clicked(GtkButton *button,
                                       GebrUiProjectLine *upl);
 
+void
+gebr_project_line_hide(GebrUiProjectLine *self)
+{
+	return;
+}
+
+void
+gebr_project_line_show(GebrUiProjectLine *self)
+{
+	project_line_load();
+}
+
 struct ui_project_line *project_line_setup_ui(void)
 {
 	struct ui_project_line *ui_project_line;
@@ -1611,6 +1623,9 @@ on_maestro_state_change(GebrMaestroController *mc,
                         GebrMaestroServer *maestro,
                         GebrUiProjectLine *upl)
 {
+	if (gebr.last_notebook == NOTEBOOK_PAGE_PROJECT_LINE)
+		gebr_project_line_show(upl);
+
 	ensure_non_maestro_change_mode(upl);
 
 	GebrGeoXmlLine *line;

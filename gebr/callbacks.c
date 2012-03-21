@@ -508,6 +508,9 @@ void on_notebook_switch_page (GtkNotebook     *notebook,
 	case NOTEBOOK_PAGE_FLOW_EDITION:
 		gebr_flow_edition_hide(gebr.ui_flow_edition);
 		break;
+	case NOTEBOOK_PAGE_PROJECT_LINE:
+		gebr_project_line_hide(gebr.ui_project_line);
+		break;
 	default:
 		break;
 	}
@@ -522,6 +525,9 @@ void on_notebook_switch_page (GtkNotebook     *notebook,
 		break;
 	case NOTEBOOK_PAGE_FLOW_EDITION:
 		gebr_flow_edition_show(gebr.ui_flow_edition);
+		break;
+	case NOTEBOOK_PAGE_PROJECT_LINE:
+		gebr_project_line_show(gebr.ui_project_line);
 		break;
 	default:
 		break;

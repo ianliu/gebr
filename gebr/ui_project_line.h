@@ -76,6 +76,10 @@ struct ui_project_line {
 	} info;
 };
 
+void gebr_project_line_hide(GebrUiProjectLine *self);
+
+void gebr_project_line_show(GebrUiProjectLine *self);
+
 /**
  * Assembly the project/lines widget.
  *

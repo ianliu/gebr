@@ -1998,6 +1998,9 @@ out:
 void
 gebr_flow_edition_show(GebrFlowEdition *fe)
 {
+	if (gebr.line)
+		gebr_flow_set_toolbar_sensitive();
+
 	if (gebr.config.niceness == 0)
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(fe->nice_button_high), TRUE);
 	else
