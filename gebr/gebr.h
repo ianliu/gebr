@@ -119,7 +119,7 @@ struct gebr {
 		gboolean job_log_auto_scroll;
 		gboolean native_editor;
 
-		gint flow_exec_speed;
+		gdouble flow_exec_speed;
 		gint niceness;
 
 		// Selections state

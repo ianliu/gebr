@@ -180,7 +180,7 @@ adjustment_value_changed(GtkAdjustment *adj)
 {
 	gdouble value = gtk_adjustment_get_value(adj);
 
-	gebr.config.flow_exec_speed = (int)round(value);
+	gebr.config.flow_exec_speed = value;
 }
 
 static void
@@ -191,26 +191,18 @@ value_changed(GtkRange *range, gpointer user_data)
 
 	gdouble value = gtk_range_get_value(range);
 
-	switch ((int) value)
-	{
-	case 1:
+	if (value <= 1)
 		gtk_image_set_from_stock(speed_button_image, "gebr-speed-verylow", GTK_ICON_SIZE_LARGE_TOOLBAR);
-		break;
-	case 2:
+	else if (value <= 2)
 		gtk_image_set_from_stock(speed_button_image, "gebr-speed-low", GTK_ICON_SIZE_LARGE_TOOLBAR);
-		break;
-	case 3:
+	else if (value <= 3)
 		gtk_image_set_from_stock(speed_button_image, "gebr-speed-medium", GTK_ICON_SIZE_LARGE_TOOLBAR);
-		break;
-	case 4:
+	else if (value <= 4)
 		gtk_image_set_from_stock(speed_button_image, "gebr-speed-high", GTK_ICON_SIZE_LARGE_TOOLBAR);
-		break;
-	case 5:
+	else if (value <= 5)
 		gtk_image_set_from_stock(speed_button_image, "gebr-speed-veryhigh", GTK_ICON_SIZE_LARGE_TOOLBAR);
-		break;
-	default:
+	else
 		g_warn_if_reached();
-	}
 }
 
 static gboolean
@@ -222,7 +214,7 @@ change_value(GtkRange *range, GtkScrollType scroll, gdouble value)
 	min = gtk_adjustment_get_lower(adj);
 	max = gtk_adjustment_get_upper(adj);
 
-	gint speed = (int) CLAMP(round(value), min, max - 1);
+	gdouble speed = CLAMP (value, min, max);
 
 	gtk_adjustment_set_value(adj, speed);
 
@@ -238,7 +230,7 @@ speed_controller_query_tooltip(GtkWidget  *widget,
 			       gpointer    user_data)
 {
 	GtkRange *scale = GTK_RANGE(widget);
-	gint value = (gint) gtk_range_get_value(scale);
+	gdouble value = gtk_range_get_value(scale);
 	const gchar *text_tooltip;
 	text_tooltip = set_text_for_performance(value);
 	gtk_tooltip_set_text (tooltip, text_tooltip);
@@ -253,7 +245,7 @@ speed_button_tooltip (GtkWidget  *widget,
                       GtkTooltip *tooltip,
                       gpointer    user_data)
 {
-	gint value = gebr.config.flow_exec_speed;
+	gdouble value = gebr.config.flow_exec_speed;
 
 	const gchar *speed;
 	speed = set_text_for_performance(value);
@@ -301,7 +293,7 @@ insert_speed_controler(GtkToolbar *toolbar,
 		       GtkWidget **speed)
 {
 	if (!gebr.flow_exec_adjustment) {
-		gebr.flow_exec_adjustment = GTK_ADJUSTMENT(gtk_adjustment_new(1, 1, 6, 1, 1, 1));
+		gebr.flow_exec_adjustment = GTK_ADJUSTMENT(gtk_adjustment_new(0, 0, 5, 0.1, 1, 0.1));
 		g_signal_connect(gebr.flow_exec_adjustment, "value-changed", G_CALLBACK(adjustment_value_changed), NULL);
 	}
 
@@ -314,7 +306,7 @@ insert_speed_controler(GtkToolbar *toolbar,
 	GtkWidget *hbox = gtk_hbox_new(FALSE, 5);
 	GtkWidget *scale = gtk_hscale_new(gebr.flow_exec_adjustment);
 	gtk_scale_set_draw_value(GTK_SCALE(scale), FALSE);
-	gtk_scale_set_digits(GTK_SCALE(scale), 0);
+	gtk_scale_set_digits(GTK_SCALE(scale), 1);
 	g_object_set(scale, "has-tooltip",TRUE, NULL);
 
 	g_signal_connect(scale, "change-value", G_CALLBACK(change_value), NULL);

@@ -269,7 +269,7 @@ gebr_config_load(void)
 	gebr.config.detailed_line_include_report = gebr_g_key_file_load_boolean_key (gebr.config.key_file, "general", "detailed_line_include_report", FALSE);
 	gebr.config.detailed_line_include_flow_report = gebr_g_key_file_load_boolean_key (gebr.config.key_file, "general", "detailed_line_include_flow_report", FALSE);
 	gebr.config.detailed_line_parameter_table = gebr_g_key_file_load_int_key (gebr.config.key_file, "general", "detailed_line_parameter_table", 0);
-	gebr.config.flow_exec_speed = gebr_g_key_file_load_int_key(gebr.config.key_file, "general", "flow_exec_speed", 1);
+	gebr.config.flow_exec_speed = g_key_file_get_double(gebr.config.key_file, "general", "flow_exec_speed", NULL);
 	gebr.config.niceness = gebr_g_key_file_load_int_key(gebr.config.key_file, "general", "niceness", 1);
 	gebr.config.detailed_flow_css = gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "detailed_flow_css", "");
 	gebr.config.detailed_line_css = gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "detailed_line_css", "");
@@ -417,7 +417,7 @@ void gebr_config_save(gboolean verbose)
 	g_key_file_set_boolean (gebr.config.key_file, "general", "detailed_line_include_report", gebr.config.detailed_line_include_report);
 	g_key_file_set_boolean (gebr.config.key_file, "general", "detailed_line_include_flow_report", gebr.config.detailed_line_include_flow_report);
 	g_key_file_set_integer (gebr.config.key_file, "general", "detailed_line_parameter_table", gebr.config.detailed_line_parameter_table);
-	g_key_file_set_integer (gebr.config.key_file, "general", "flow_exec_speed", gebr.config.flow_exec_speed);
+	g_key_file_set_double (gebr.config.key_file, "general", "flow_exec_speed", gebr.config.flow_exec_speed);
 	g_key_file_set_integer(gebr.config.key_file, "general", "niceness", gebr.config.niceness);
 
 	g_key_file_set_integer(gebr.config.key_file, "state", "notebook", gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook)));
@@ -663,20 +663,18 @@ gebr_get_session_id(void)
 const gchar *
 set_text_for_performance (gint value)
 {
-	switch (value) {
-	case 1:
+	if (value <= 1)
 		return  _("Very low performance");
-	case 2:
+	else if (value <= 2)
 		return  _("Low performance");
-	case 3:
+	else if (value <= 3)
 		return  _("Medium performance");
-	case 4:
+	else if (value <= 4)
 		return  _("High performance");
-	case 5:
+	else if (value <= 5)
 		return  _("Very high performance");
-	default:
-		g_return_val_if_reached(FALSE);
-		return  "";
-	}
+
+	g_warn_if_reached();
+	return  "";
 }
 

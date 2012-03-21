@@ -117,8 +117,8 @@ run_flow(GebrGeoXmlFlow *flow,
 		return NULL;
 
 	const gchar *parent_rid = gebr_flow_edition_get_selected_queue(gebr.ui_flow_edition);
-	gint speed = gebr_interface_get_execution_speed();
-	gchar *speed_str = g_strdup_printf("%d", speed);
+	gdouble speed = gebr_interface_get_execution_speed();
+	gchar *speed_str = g_strdup_printf("%lf", speed);
 	gchar *nice = g_strdup_printf("%d", gebr_interface_get_niceness());
 	const gchar *hostname = g_get_host_name();
 

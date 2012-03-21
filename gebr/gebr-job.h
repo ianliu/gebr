@@ -172,7 +172,7 @@ gchar *gebr_job_get_elapsed_time(GebrJob *job);
 
 gint gebr_job_get_exec_speed(GebrJob *job);
 
-void gebr_job_set_exec_speed(GebrJob *job, gint exec_speed);
+void gebr_job_set_exec_speed(GebrJob *job, gdouble exec_speed);
 
 gint gebr_job_get_total(GebrJob *job);
 

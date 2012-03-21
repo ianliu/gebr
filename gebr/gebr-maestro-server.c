@@ -645,7 +645,7 @@ parse_messages(GebrCommServer *comm_server,
 				gebr_job_set_nice(job, nice->str);
 				gebr_job_set_server_group(job, group->str);
 				gebr_job_set_server_group_type(job, group_type->str);
-				gebr_job_set_exec_speed(job, atoi(speed->str));
+				gebr_job_set_exec_speed(job, atof(speed->str));
 				gebr_job_set_static_status(job, gebr_comm_job_get_status_from_string(status->str));
 				if (start_date->len > 0)
 					gebr_job_set_start_date(job, start_date->str);
