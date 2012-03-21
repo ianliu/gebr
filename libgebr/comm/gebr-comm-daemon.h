@@ -64,4 +64,6 @@ void gebr_comm_daemon_add_task(GebrCommDaemon *daemon);
 
 gboolean gebr_comm_daemon_can_execute(GebrCommDaemon *daemon);
 
+const gchar *gebr_comm_daemon_get_flavors(GebrCommDaemon *daemon);
+
 #endif /* __GEBR_COMM_DAEMON_H__ */

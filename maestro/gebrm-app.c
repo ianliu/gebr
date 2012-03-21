@@ -624,7 +624,6 @@ get_comm_servers_min_subset(GList *servers,
 
 	GList *min = NULL;
 	gboolean has_flavors;
-	GList *i = servers;
 	for (GList *i = servers; i; i = i->next) {
 		has_flavors = TRUE;
 		for (GList *k = mpi_flavors; k; k = k->next) {
@@ -648,7 +647,6 @@ get_comm_servers_max_subset(GList *servers,
 		return g_list_copy(servers);
 
 	GList *max = NULL;
-	GList *i = servers;
 	for (GList *i = servers; i; i = i->next) {
 		for (GList *k = mpi_flavors; k; k = k->next) {
 			if (gebrm_daemon_accepts_mpi(i->data, k->data)) {

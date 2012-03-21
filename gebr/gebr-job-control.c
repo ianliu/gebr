@@ -708,8 +708,8 @@ on_pie_tooltip(GebrGuiPie *pie,
 		server = gebr_job_get_maestro_address(job);
 	else
 		server = jc->priv->servers_info.servers[i];
-
-	gchar *t = g_strdup_printf(_("%s\n%d%% of total"), server, (int)round((jc->priv->servers_info.percentages[i])*100));
+	gfloat value = round((jc->priv->servers_info.percentages[i])*1000)/10;
+	gchar *t = g_strdup_printf(_("%s\n%.1lf%% of total"), server, value );
 	gtk_tooltip_set_text(tooltip, t);
 	g_free(t);
 
