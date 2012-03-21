@@ -396,8 +396,6 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 	if (gebr_geoxml_document_get_type(document) == GEBR_GEOXML_DOCUMENT_TYPE_LINE) {
 		data->old_base = gebr_geoxml_line_get_path_by_name(GEBR_GEOXML_LINE(document), "BASE");
 
-		GtkWidget *hbox = gtk_hbox_new(FALSE, 5);
-
 		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, GEBR_GEOXML_LINE(document));
 		gboolean is_logged = maestro? (gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED) : FALSE;
 
