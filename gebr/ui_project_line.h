@@ -46,8 +46,11 @@ enum {
 	PL_FILENAME,
 	/* Reference to project/line document pointer. Non-NULL if selected. */
 	PL_XMLPOINTER,
+	PL_SENSITIVE,
 	PL_N_COLUMN
 };
+
+typedef struct ui_project_line GebrUiProjectLine;
 
 struct ui_project_line {
 	GtkWidget *widget;

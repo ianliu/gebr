@@ -103,7 +103,8 @@ GtkTreeIter project_append_iter(GebrGeoXmlProject * project)
 	gtk_tree_store_set(gebr.ui_project_line->store, &iter,
 			   PL_TITLE, gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(project)),
 			   PL_FILENAME, gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(project)),
-			   PL_XMLPOINTER, project, -1);
+			   PL_XMLPOINTER, project,
+			   PL_SENSITIVE, TRUE, -1);
 
 	return iter;
 }
@@ -112,11 +113,20 @@ GtkTreeIter project_append_line_iter(GtkTreeIter * project_iter, GebrGeoXmlLine 
 {
 	GtkTreeIter iter;
 
+	gboolean sensitive;
+	GebrMaestroServer *m = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, line);
+	if (m && gebr_maestro_server_get_state(m) == SERVER_STATE_LOGGED)
+		sensitive = TRUE;
+	else
+		sensitive = FALSE;
+
 	gtk_tree_store_append(gebr.ui_project_line->store, &iter, project_iter);
 	gtk_tree_store_set(gebr.ui_project_line->store, &iter,
 			   PL_TITLE, gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(line)),
 			   PL_FILENAME, gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(line)),
-			   PL_XMLPOINTER, line, -1);
+			   PL_XMLPOINTER, line,
+			   PL_SENSITIVE, sensitive,
+			   -1);
 
 	return iter;
 }

@@ -79,6 +79,10 @@ static gboolean line_can_reorder (GtkTreeView *tree_view,
 				  GtkTreeIter *target_iter,
 				  GtkTreeViewDropPosition drop_position);
 
+static void on_maestro_state_change(GebrMaestroController *mc,
+                                    GebrMaestroServer *maestro,
+                                    GebrUiProjectLine *upl);
+
 struct ui_project_line *project_line_setup_ui(void)
 {
 	struct ui_project_line *ui_project_line;
@@ -110,7 +114,8 @@ struct ui_project_line *project_line_setup_ui(void)
 	ui_project_line->store = gtk_tree_store_new(PL_N_COLUMN,
 						    G_TYPE_STRING,
 						    G_TYPE_STRING,
-						    G_TYPE_POINTER);
+						    G_TYPE_POINTER,
+						    G_TYPE_BOOLEAN);
 	ui_project_line->view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ui_project_line->store));
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (ui_project_line->view));
 	gtk_tree_selection_set_mode (selection, GTK_SELECTION_MULTIPLE);
@@ -130,11 +135,13 @@ struct ui_project_line *project_line_setup_ui(void)
 
 	gtk_tree_view_append_column(GTK_TREE_VIEW(ui_project_line->view), col);
 	gtk_tree_view_column_add_attribute(col, renderer, "text", PL_TITLE);
+	gtk_tree_view_column_add_attribute(col, renderer, "sensitive", PL_SENSITIVE);
 	gebr_gui_gtk_tree_view_fancy_search(GTK_TREE_VIEW(ui_project_line->view), PL_TITLE);
 	g_signal_connect(gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_project_line->view)), "changed",
 			 G_CALLBACK(project_line_load), NULL);
 	g_signal_connect(gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_project_line->view)), "changed",
 			 G_CALLBACK(pl_change_selection_update_validator), NULL);
+	g_signal_connect(gebr.maestro_controller, "maestro-state-changed", G_CALLBACK(on_maestro_state_change), ui_project_line);
 
 	/* Right side */
 	scrolled_window = gtk_scrolled_window_new(NULL, NULL);
@@ -1309,6 +1316,32 @@ void project_line_free(void)
 	project_line_info_update();
 }
 
+static void
+on_maestro_state_change(GebrMaestroController *mc,
+                        GebrMaestroServer *maestro,
+                        GebrUiProjectLine *upl)
+{
+	GebrGeoXmlLine *line;
+	GtkTreeIter parent, iter;
+	GtkTreeModel *model = GTK_TREE_MODEL(upl->store);
+
+	gebr_gui_gtk_tree_model_foreach(parent, model) {
+		gboolean valid = gtk_tree_model_iter_children(model, &iter, &parent);
+		while (valid) {
+			gtk_tree_model_get(model, &iter, PL_XMLPOINTER, &line, -1);
+
+			gboolean sensitive;
+			GebrMaestroServer *m = gebr_maestro_controller_get_maestro_for_line(mc, line);
+			if (m && gebr_maestro_server_get_state(m) == SERVER_STATE_LOGGED)
+				sensitive = TRUE;
+			else
+				sensitive = FALSE;
+
+			gtk_tree_store_set(upl->store, &iter, PL_SENSITIVE, sensitive, -1);
+			valid = gtk_tree_model_iter_next(model, &iter);
+		}
+	}
+}
 
 /*
  * Load the selected project or line from file.
