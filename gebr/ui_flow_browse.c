@@ -111,10 +111,20 @@ GebrUiFlowBrowse *flow_browse_setup_ui(GtkWidget * revisions_menu)
 	/*
 	 * Right side: flow info
 	 */
+	GtkWidget *info_box = gtk_vbox_new(FALSE, 0);
 	scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+	ui_flow_browse->info_window = scrolled_window;
+	gtk_box_pack_start(GTK_BOX(info_box), scrolled_window, TRUE, TRUE, 0);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
 				       GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-	gtk_paned_pack2(GTK_PANED(hpanel), scrolled_window, TRUE, FALSE);
+
+	ui_flow_browse->warn_window = gtk_label_new(_("You cannot edit this Line's flows because this line is disconnected.\n"
+							   "Try changing its maestro or connecting it."));
+	gtk_widget_set_sensitive(ui_flow_browse->warn_window, FALSE);
+	gtk_box_pack_start(GTK_BOX(info_box), ui_flow_browse->warn_window, TRUE, TRUE, 0);
+
+	gtk_paned_pack2(GTK_PANED(hpanel), info_box, TRUE, FALSE);
+
 	frame = gtk_frame_new(_("Details"));
 	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled_window), frame);
 	infopage = gtk_vbox_new(FALSE, 0);

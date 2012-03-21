@@ -48,6 +48,9 @@ typedef struct {
 	GtkListStore *store;
 	GtkWidget *view;
 
+	GtkWidget *info_window;
+	GtkWidget *warn_window;
+
 	GtkWidget *revisions_button;
 	GtkWidget *revisions_menu;
 

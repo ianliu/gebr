@@ -1233,6 +1233,14 @@ gebr_flow_set_toolbar_sensitive(void)
 	gtk_widget_set_sensitive(gebr.ui_flow_browse->speed_button, sensitive);
 	gtk_widget_set_sensitive(gebr.ui_flow_browse->revisions_button, sensitive);
 
+	if (sensitive) {
+		gtk_widget_show(gebr.ui_flow_browse->info_window);
+		gtk_widget_hide(gebr.ui_flow_browse->warn_window);
+	} else {
+		gtk_widget_show(gebr.ui_flow_browse->warn_window);
+		gtk_widget_hide(gebr.ui_flow_browse->info_window);
+	}
+
 	// Set sensitive for page Flow Editor
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_help"), sensitive);
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_flow_edition, "flow_edition_delete"), sensitive);
