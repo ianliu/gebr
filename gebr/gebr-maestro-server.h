@@ -171,7 +171,10 @@ gchar *gebr_maestro_server_get_sftp_root(GebrMaestroServer *maestro);
 
 GebrMaestroInfo *gebr_maestro_server_get_info(GebrMaestroServer *maestro);
 
-gint gebr_maestro_server_get_n_procs_for_group(GebrMaestroServer *maestro);
+gint gebr_maestro_server_get_ncores_for_group(GebrMaestroServer *maestro,
+                                              const gchar *mpi_flavor,
+                                              const gchar *group,
+                                              GebrMaestroServerGroupType type);
 
 G_END_DECLS
 

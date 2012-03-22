@@ -109,6 +109,27 @@ has_connected_server(GebrMaestroServer *maestro,
 	return result;
 }
 
+static void
+update_mpi_nprocess(GebrGeoXmlFlow *flow,
+                    GebrMaestroServer *maestro,
+                    gdouble speed,
+                    const gchar *group_name,
+                    GebrMaestroServerGroupType group_type)
+{
+	GebrGeoXmlSequence *seq;
+
+	gebr_geoxml_flow_get_program(flow, &seq, 0);
+	for (; seq; gebr_geoxml_sequence_next(&seq)) {
+		GebrGeoXmlProgram *prog = GEBR_GEOXML_PROGRAM(seq);
+		const gchar *mpi = gebr_geoxml_program_get_mpi(prog);
+		if (!*mpi)
+			continue;
+		gint ncores = gebr_maestro_server_get_ncores_for_group(maestro, mpi, group_name, group_type);
+		gint nprocs = gebr_calculate_number_of_processors(ncores, speed);
+		gebr_geoxml_program_mpi_set_n_process(prog, nprocs);
+	}
+}
+
 static const gchar *
 run_flow(GebrGeoXmlFlow *flow,
 	 const gchar *after)
@@ -121,6 +142,9 @@ run_flow(GebrGeoXmlFlow *flow,
 	gchar *speed_str = g_strdup_printf("%lf", speed);
 	gchar *nice = g_strdup_printf("%d", gebr_interface_get_niceness());
 	const gchar *hostname = g_get_host_name();
+
+	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
+	GebrCommServer *server = gebr_maestro_server_get_server(maestro);
 
 	GebrMaestroServerGroupType type;
 	gchar *name, *host = NULL;
@@ -148,6 +172,7 @@ run_flow(GebrGeoXmlFlow *flow,
 
 	GebrGeoXmlDocument *clone = gebr_geoxml_document_clone(GEBR_GEOXML_DOCUMENT(flow));
 
+	update_mpi_nprocess(GEBR_GEOXML_FLOW(clone), maestro, speed, name, type);
 
 	void func(GString *path, gpointer data)
 	{
@@ -170,9 +195,6 @@ run_flow(GebrGeoXmlFlow *flow,
 	gebr_geoxml_document_to_string(clone, &xml);
 	GebrCommJsonContent *content = gebr_comm_json_content_new_from_string(xml);
 	gebr_geoxml_document_unref(clone);
-
-	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
-	GebrCommServer *server = gebr_maestro_server_get_server(maestro);
 
 	if (!has_connected_server(maestro, type, name)) {
 		gchar *msg;
