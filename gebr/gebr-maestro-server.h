@@ -171,6 +171,8 @@ gchar *gebr_maestro_server_get_sftp_root(GebrMaestroServer *maestro);
 
 GebrMaestroInfo *gebr_maestro_server_get_info(GebrMaestroServer *maestro);
 
+gint gebr_maestro_server_get_n_procs_for_group(GebrMaestroServer *maestro);
+
 G_END_DECLS
 
 #endif /* __GEBR_MAESTRO_H__ */

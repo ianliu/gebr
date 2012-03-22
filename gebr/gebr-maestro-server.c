@@ -1571,3 +1571,32 @@ gebr_maestro_server_get_info(GebrMaestroServer *maestro)
 {
 	return (GebrMaestroInfo *) &maestro->priv->maestro_info_iface;
 }
+
+gint
+gebr_maestro_server_get_ncores_for_group(GebrMaestroServer *maestro,
+					 const gchar *mpi_flavor,
+					 const gchar *group,
+					 GebrMaestroServerGroupType type)
+{
+	GebrDaemonServer *daemon;
+
+	if (type == MAESTRO_SERVER_TYPE_DAEMON) {
+		daemon = get_daemon_from_address(maestro, group, NULL);
+		if (gebr_daemon_server_accepts_mpi(daemon, mpi_flavor))
+			return gebr_daemon_server_get_ncores(daemon);
+		else
+			return 0;
+	}
+
+	gint sum = 0;
+	GtkTreeIter iter;
+	GtkTreeModel *m = gebr_maestro_server_get_model(maestro, FALSE, group);
+
+	gebr_gui_gtk_tree_model_foreach(iter, m) {
+		gtk_tree_model_get(m, &iter, 0, &daemon, -1);
+		if (gebr_daemon_server_accepts_mpi(daemon, mpi_flavor))
+			sum += gebr_daemon_server_get_ncores(daemon);
+	}
+
+	return sum;
+}
