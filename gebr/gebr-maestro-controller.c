@@ -115,7 +115,7 @@ gebr_maestro_controller_set(GObject      *object,
 			    const GValue *value,
 			    GParamSpec   *pspec)
 {
-	GebrMaestroController *mc= GEBR_MAESTRO_CONTROLLER(object);
+	GebrMaestroController *mc = GEBR_MAESTRO_CONTROLLER(object);
 
 	switch (prop_id)
 	{
@@ -643,11 +643,10 @@ gebr_maestro_controller_class_init(GebrMaestroControllerClass *klass)
 
 	g_object_class_install_property(object_class,
 					PROP_WINDOW,
-					g_param_spec_string("window",
-							    "Window",
-							    "Window of SFTP",
-							    NULL,
-							    G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+					g_param_spec_pointer("window",
+							     "Window",
+							     "Window of SFTP",
+							     G_PARAM_READWRITE));
 
 	g_type_class_add_private(klass, sizeof(GebrMaestroControllerPriv));
 }
