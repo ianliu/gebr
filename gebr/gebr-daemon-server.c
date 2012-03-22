@@ -22,6 +22,7 @@
 
 #include <glib/gi18n.h>
 #include <libgebr/comm/gebr-comm.h>
+#include <libgebr/utils.h>
 
 struct _GebrDaemonServerPriv {
 	GebrConnectable *connectable;
@@ -401,4 +402,15 @@ const gchar *
 gebr_daemon_server_get_memory(GebrDaemonServer *daemon)
 {
 	return daemon->priv->memory;
+}
+
+gboolean
+gebr_daemon_server_accepts_mpi(GebrDaemonServer *daemon,
+			       const gchar *mpi_flavor)
+{
+	gchar **tmp = g_strsplit(daemon->priv->mpi_flavors, ",", -1);
+	gint i = gebr_strv_indexof((const gchar **)tmp, mpi_flavor);
+	g_strfreev(tmp);
+
+	return i != -1;
 }

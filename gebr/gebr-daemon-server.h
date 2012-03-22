@@ -134,6 +134,9 @@ void gebr_daemon_server_set_memory(GebrDaemonServer *daemon, const gchar *memory
 
 const gchar *gebr_daemon_server_get_memory(GebrDaemonServer *daemon);
 
+gboolean gebr_daemon_server_accepts_mpi(GebrDaemonServer *daemon,
+					const gchar *mpi_flavor);
+
 G_END_DECLS
 
 #endif /* __GEBR_SERVER_H__ */
