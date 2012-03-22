@@ -172,14 +172,25 @@ send_server_status_message(GebrmApp *app,
 			   GebrCommServerState st)
 {
 	const gchar *state = gebr_comm_server_state_to_string(st);
+
+	gchar *ncores = g_strdup_printf("%d", gebrm_daemon_get_ncores(daemon));
+	gchar *clock = g_strdup_printf("%lf", gebrm_daemon_get_clock(daemon));
+
 	gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
-					      gebr_comm_protocol_defs.ssta_def, 4,
+					      gebr_comm_protocol_defs.ssta_def, 8,
 					      gebrm_daemon_get_hostname(daemon),
 					      gebrm_daemon_get_address(daemon),
 					      state,
-					      ac);
+					      ac,
+					      ncores,
+					      clock,
+					      gebrm_daemon_get_model_name(daemon),
+					      gebrm_daemon_get_memory(daemon));
 
 	gebrm_daemon_send_error_message(daemon, socket);
+
+	g_free(ncores);
+	g_free(clock);
 }
 
 static void

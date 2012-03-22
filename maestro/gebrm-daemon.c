@@ -827,6 +827,18 @@ gebrm_daemon_get_nfsid(GebrmDaemon *daemon)
 	return daemon->priv->nfsid;
 }
 
+const gchar *
+gebrm_daemon_get_memory(GebrmDaemon *daemon)
+{
+	return daemon->priv->server->memory;
+}
+
+const gchar *
+gebrm_daemon_get_model_name(GebrmDaemon *daemon)
+{
+	return daemon->priv->server->model_name;
+}
+
 gint
 gebrm_daemon_get_ncores(GebrmDaemon *daemon)
 {

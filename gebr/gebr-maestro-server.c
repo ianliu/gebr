@@ -532,18 +532,26 @@ parse_messages(GebrCommServer *comm_server,
 		}
 		else if (message->hash == gebr_comm_protocol_defs.ssta_def.code_hash) {
 			GList *arguments;
-			GString *addr, *ssta, *ac, *hostname;
+			GString *addr, *ssta, *ac, *hostname, *ncores, *cpu_clock, *cpu_model, *memory;
 			const gchar *maestro_addr = gebr_maestro_server_get_address(maestro);
 
 			/* organize message data */
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 4)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 8)) == NULL)
 				goto err;
 
-			hostname = g_list_nth_data(arguments, 0);
-			addr = g_list_nth_data(arguments, 1);
-			ssta = g_list_nth_data(arguments, 2);
-			ac = g_list_nth_data(arguments, 3);
+			hostname =  g_list_nth_data(arguments, 0);
+			addr =      g_list_nth_data(arguments, 1);
+			ssta =      g_list_nth_data(arguments, 2);
+			ac =        g_list_nth_data(arguments, 3);
+			ncores =    g_list_nth_data(arguments, 4);
+			cpu_clock = g_list_nth_data(arguments, 5);
+			cpu_model = g_list_nth_data(arguments, 6);
+			memory =    g_list_nth_data(arguments, 7);
+
 			g_debug("Daemon state change (%s) %s", addr->str, ssta->str);
+
+			g_debug("Daemon %s Infos: NCORES: %s | CLOCK: %s | MODEL: %s | MEMORY: %s",
+			        addr->str, ncores->str, cpu_clock->str, cpu_model->str, memory->str);
 
 			GtkTreeIter iter;
 			GebrCommServerState state = gebr_comm_server_state_from_string(ssta->str);
@@ -562,6 +570,11 @@ parse_messages(GebrCommServer *comm_server,
 
 			gebr_daemon_server_set_hostname(daemon, hostname->str);
 			gboolean is_ac = g_strcmp0(ac->str, "on") == 0 ? TRUE : FALSE;
+
+			gebr_daemon_server_set_ncores(daemon, atoi(ncores->str));
+			gebr_daemon_server_set_cpu_clock(daemon, cpu_clock->str);
+			gebr_daemon_server_set_cpu_model(daemon, cpu_model->str);
+			gebr_daemon_server_set_memory(daemon, memory->str);
 
 			if (state == SERVER_STATE_LOGGED)
 				mount_gvfs(maestro, addr->str);

@@ -135,6 +135,10 @@ const gchar *gebrm_daemon_get_autoconnect(GebrmDaemon *daemon);
 
 const gchar *gebrm_daemon_get_nfsid(GebrmDaemon *daemon);
 
+const gchar *gebrm_daemon_get_memory(GebrmDaemon *daemon);
+
+const gchar *gebrm_daemon_get_model_name(GebrmDaemon *daemon);
+
 gint gebrm_daemon_get_ncores(GebrmDaemon *daemon);
 
 gdouble gebrm_daemon_get_clock(GebrmDaemon *daemon);

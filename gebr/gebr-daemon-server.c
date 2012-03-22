@@ -33,6 +33,10 @@ struct _GebrDaemonServerPriv {
 	GList *tags;
 	gchar *maestro_addr;
 	gchar *mpi_flavors;
+	gint ncores;
+	gchar *clock;
+	gchar *model;
+	gchar *memory;
 };
 
 enum {
@@ -121,6 +125,9 @@ gebr_daemon_server_finalize(GObject *object)
 	g_list_free(daemon->priv->tags);
 	g_free(daemon->priv->maestro_addr);
 	g_free(daemon->priv->mpi_flavors);
+	g_free(daemon->priv->memory);
+	g_free(daemon->priv->model);
+	g_free(daemon->priv->clock);
 
 	G_OBJECT_CLASS(gebr_daemon_server_parent_class)->finalize(object);
 }
@@ -336,4 +343,62 @@ const gchar *
 gebr_daemon_server_get_mpi_flavors(GebrDaemonServer *daemon)
 {
 	return daemon->priv->mpi_flavors;
+}
+
+void
+gebr_daemon_server_set_ncores(GebrDaemonServer *daemon,
+                              gint ncores)
+{
+	daemon->priv->ncores = ncores;
+}
+
+gint
+gebr_daemon_server_get_ncores(GebrDaemonServer *daemon)
+{
+	return daemon->priv->ncores;
+}
+
+void
+gebr_daemon_server_set_cpu_clock(GebrDaemonServer *daemon,
+                                 const gchar *clock)
+{
+	if (daemon->priv->clock)
+		g_free(daemon->priv->clock);
+	daemon->priv->clock = g_strdup(clock);
+}
+
+const gchar *
+gebr_daemon_server_get_cpu_clock(GebrDaemonServer *daemon)
+{
+	return daemon->priv->clock;
+}
+
+void
+gebr_daemon_server_set_cpu_model(GebrDaemonServer *daemon,
+                                 const gchar *model)
+{
+	if (daemon->priv->model)
+		g_free(daemon->priv->model);
+	daemon->priv->model = g_strdup(model);
+}
+
+const gchar *
+gebr_daemon_server_get_cpu_model(GebrDaemonServer *daemon)
+{
+	return daemon->priv->model;
+}
+
+void
+gebr_daemon_server_set_memory(GebrDaemonServer *daemon,
+                              const gchar *memory)
+{
+	if (daemon->priv->memory)
+		g_free(daemon->priv->memory);
+	daemon->priv->memory = g_strdup(memory);
+}
+
+const gchar *
+gebr_daemon_server_get_memory(GebrDaemonServer *daemon)
+{
+	return daemon->priv->memory;
 }

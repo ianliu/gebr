@@ -118,6 +118,22 @@ gboolean gebr_daemon_server_set_mpi_flavors(GebrDaemonServer *daemon, const gcha
 
 const gchar *gebr_daemon_server_get_mpi_flavors(GebrDaemonServer *daemon);
 
+void gebr_daemon_server_set_ncores(GebrDaemonServer *daemon, gint ncores);
+
+gint gebr_daemon_server_get_ncores(GebrDaemonServer *daemon);
+
+void gebr_daemon_server_set_cpu_clock(GebrDaemonServer *daemon, const gchar *clock);
+
+const gchar *gebr_daemon_server_get_cpu_clock(GebrDaemonServer *daemon);
+
+void gebr_daemon_server_set_cpu_model(GebrDaemonServer *daemon, const gchar *model);
+
+const gchar *gebr_daemon_server_get_cpu_model(GebrDaemonServer *daemon);
+
+void gebr_daemon_server_set_memory(GebrDaemonServer *daemon, const gchar *memory);
+
+const gchar *gebr_daemon_server_get_memory(GebrDaemonServer *daemon);
+
 G_END_DECLS
 
 #endif /* __GEBR_SERVER_H__ */
