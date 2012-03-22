@@ -1640,3 +1640,10 @@ gebr_maestro_controller_get_maestro_for_line(GebrMaestroController *mc,
 	g_free(address);
 	return maestro;
 }
+
+void
+gebr_maestro_controller_set_window(GebrMaestroController *mc,
+				   GtkWindow *window)
+{
+	g_object_set(mc, "window", window, NULL);
+}

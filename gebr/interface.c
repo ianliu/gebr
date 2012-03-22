@@ -390,6 +390,7 @@ void gebr_setup_ui(void)
 	gtk_window_set_title(GTK_WINDOW(gebr.window), "GêBR");
 	gtk_widget_set_size_request(gebr.window, 700, 400);
 	gtk_widget_show(gebr.window);
+	gebr_maestro_controller_set_window(gebr.maestro_controller, GTK_WINDOW(gebr.window));
 
 	gebr.action_group_general = gtk_action_group_new("General");
 	gtk_action_group_set_translation_domain(gebr.action_group_general, GETTEXT_PACKAGE);

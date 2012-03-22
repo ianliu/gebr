@@ -96,6 +96,9 @@ GebrMaestroServer *gebr_maestro_controller_get_maestro_for_address(GebrMaestroCo
 GebrMaestroServer *gebr_maestro_controller_get_maestro_for_line(GebrMaestroController *mc,
 								GebrGeoXmlLine *line);
 
+void gebr_maestro_controller_set_window(GebrMaestroController *mc,
+					GtkWindow *window);
+
 G_END_DECLS
 
 #endif /* __GEBR_MAESTRO_CONTROLLER_H__ */
