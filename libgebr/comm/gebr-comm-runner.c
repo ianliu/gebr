@@ -61,7 +61,6 @@ struct _GebrCommRunnerPriv {
 	gpointer user_data;
 
 	gchar *account; // MOAB
-	gchar *num_processes; // MPI
 };
 
 /* Private methods {{{1 */
