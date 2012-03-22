@@ -583,7 +583,7 @@ gebr_job_get_server_group(GebrJob *job)
 	return job->priv->server_group ? job->priv->server_group : "";
 }
 
-gint
+gdouble
 gebr_job_get_exec_speed(GebrJob *job)
 {
 	return job->priv->exec_speed;

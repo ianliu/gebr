@@ -38,6 +38,10 @@
 #include "callbacks.h"
 #include "menu.h"
 
+#define SLIDER_MAX 7.0
+#define SLIDER_100 5.0
+#define VALUE_MAX 20.0
+
 /**
  * @file interface.c Assembly the main components of the interface.
  */
@@ -175,12 +179,29 @@ static const GtkActionEntry status_action_entries[] = {
 
 static void assembly_menus(GtkMenuBar * menu_bar);
 
+static gdouble
+calculate_speed_from_slider_value(gdouble x)
+{
+	if (x > SLIDER_100)
+		return (VALUE_MAX - SLIDER_100) / (SLIDER_MAX - SLIDER_100) * (x - SLIDER_100) + SLIDER_100;
+	else
+		return x;
+}
+
+gdouble
+gebr_interface_calculate_slider_from_speed(gdouble speed)
+{
+	if (speed > SLIDER_100)
+		return (SLIDER_MAX - SLIDER_100) * (speed - SLIDER_100) / (VALUE_MAX - SLIDER_100) + SLIDER_100;
+	else
+		return speed;
+}
+
 static void
 adjustment_value_changed(GtkAdjustment *adj)
 {
 	gdouble value = gtk_adjustment_get_value(adj);
-
-	gebr.config.flow_exec_speed = value;
+	gebr.config.flow_exec_speed = calculate_speed_from_slider_value(value);
 }
 
 static void
@@ -188,21 +209,10 @@ value_changed(GtkRange *range, gpointer user_data)
 {
 	GtkWidget *speed_button = user_data;
 	GtkImage *speed_button_image = GTK_IMAGE(gtk_bin_get_child(GTK_BIN(speed_button)));
-
 	gdouble value = gtk_range_get_value(range);
-
-	if (value <= 1)
-		gtk_image_set_from_stock(speed_button_image, "gebr-speed-verylow", GTK_ICON_SIZE_LARGE_TOOLBAR);
-	else if (value <= 2)
-		gtk_image_set_from_stock(speed_button_image, "gebr-speed-low", GTK_ICON_SIZE_LARGE_TOOLBAR);
-	else if (value <= 3)
-		gtk_image_set_from_stock(speed_button_image, "gebr-speed-medium", GTK_ICON_SIZE_LARGE_TOOLBAR);
-	else if (value <= 4)
-		gtk_image_set_from_stock(speed_button_image, "gebr-speed-high", GTK_ICON_SIZE_LARGE_TOOLBAR);
-	else if (value <= 5)
-		gtk_image_set_from_stock(speed_button_image, "gebr-speed-veryhigh", GTK_ICON_SIZE_LARGE_TOOLBAR);
-	else
-		g_warn_if_reached();
+	const gchar *icon = gebr_interface_get_speed_icon(value);
+	if (icon)
+		gtk_image_set_from_stock(speed_button_image, icon, GTK_ICON_SIZE_LARGE_TOOLBAR);
 }
 
 static gboolean
@@ -221,6 +231,25 @@ change_value(GtkRange *range, GtkScrollType scroll, gdouble value)
 	return TRUE;
 }
 
+const gchar *
+gebr_interface_set_text_for_performance(gdouble value)
+{
+	if (value <= 1)
+		return  _("Very low performance");
+	else if (value <= 2)
+		return  _("Low performance");
+	else if (value <= 3)
+		return  _("Medium performance");
+	else if (value <= 4)
+		return  _("High performance");
+	else if (value <= SLIDER_100)
+		return  _("Very high performance");
+	else if (value <= SLIDER_MAX)
+		return  _("Very high performance (4x)");
+	else
+		g_return_val_if_reached(NULL);
+}
+
 static gboolean
 speed_controller_query_tooltip(GtkWidget  *widget,
 			       gint        x,
@@ -232,7 +261,7 @@ speed_controller_query_tooltip(GtkWidget  *widget,
 	GtkRange *scale = GTK_RANGE(widget);
 	gdouble value = gtk_range_get_value(scale);
 	const gchar *text_tooltip;
-	text_tooltip = set_text_for_performance(value);
+	text_tooltip = gebr_interface_set_text_for_performance(value);
 	gtk_tooltip_set_text (tooltip, text_tooltip);
 	return TRUE;
 }
@@ -248,7 +277,7 @@ speed_button_tooltip (GtkWidget  *widget,
 	gdouble value = gebr.config.flow_exec_speed;
 
 	const gchar *speed;
-	speed = set_text_for_performance(value);
+	speed = gebr_interface_set_text_for_performance(value);
 	const gchar * text_tooltip = g_strdup_printf(_("Execution speed: %s"), speed);
 	gtk_tooltip_set_text (tooltip, text_tooltip);
 
@@ -279,7 +308,8 @@ priority_button_toggled(GtkToggleButton *b1,
 static void 
 on_show_scale(GtkWidget * scale)
 {
-	gtk_range_set_value(GTK_RANGE(scale), gebr.config.flow_exec_speed);
+	gtk_range_set_value(GTK_RANGE(scale),
+			    gebr_interface_calculate_slider_from_speed(gebr.config.flow_exec_speed));
 }
 
 /*
@@ -293,7 +323,7 @@ insert_speed_controler(GtkToolbar *toolbar,
 		       GtkWidget **speed)
 {
 	if (!gebr.flow_exec_adjustment) {
-		gebr.flow_exec_adjustment = GTK_ADJUSTMENT(gtk_adjustment_new(0, 0, 5, 0.1, 1, 0.1));
+		gebr.flow_exec_adjustment = GTK_ADJUSTMENT(gtk_adjustment_new(1, 1, SLIDER_MAX, 0.1, 1, 0.1));
 		g_signal_connect(gebr.flow_exec_adjustment, "value-changed", G_CALLBACK(adjustment_value_changed), NULL);
 	}
 
@@ -309,8 +339,9 @@ insert_speed_controler(GtkToolbar *toolbar,
 	gtk_scale_set_digits(GTK_SCALE(scale), 1);
 
 	gtk_scale_add_mark(GTK_SCALE(scale), 0, GTK_POS_LEFT, "<span size='x-small'>1 Core</span>");
-	gtk_scale_add_mark(GTK_SCALE(scale), 2.5, GTK_POS_LEFT, "<span size='x-small'>50%</span>");
-	gtk_scale_add_mark(GTK_SCALE(scale), 5, GTK_POS_LEFT, "<span size='x-small'>100%</span>");
+	gtk_scale_add_mark(GTK_SCALE(scale), SLIDER_100 / 2, GTK_POS_LEFT, "<span size='x-small'>50%</span>");
+	gtk_scale_add_mark(GTK_SCALE(scale), SLIDER_100, GTK_POS_LEFT, "<span size='x-small'>100%</span>");
+	gtk_scale_add_mark(GTK_SCALE(scale), SLIDER_MAX, GTK_POS_LEFT, "<span size='x-small'>400%</span>");
 
 	g_object_set(scale, "has-tooltip",TRUE, NULL);
 
@@ -728,4 +759,23 @@ void
 gebr_interface_change_tab(enum NOTEBOOK_PAGE page)
 {
 	gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), page);
+}
+
+const gchar *
+gebr_interface_get_speed_icon(gdouble value)
+{
+	if (value <= 1)
+		return "gebr-speed-verylow";
+	else if (value <= 2)
+		return "gebr-speed-low";
+	else if (value <= 3)
+		return "gebr-speed-medium";
+	else if (value <= 4)
+		return "gebr-speed-high";
+	else if (value <= SLIDER_100)
+		return "gebr-speed-veryhigh";
+	else if (value <= SLIDER_MAX)
+		return "gebr-speed-veryhigh";
+	else
+		g_return_val_if_reached(NULL);
 }

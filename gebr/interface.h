@@ -61,5 +61,17 @@ gint gebr_interface_get_niceness(void);
 
 void gebr_interface_change_tab(enum NOTEBOOK_PAGE page);
 
+gdouble gebr_interface_calculate_slider_from_speed(gdouble speed);
+
+/**
+ * set_text_for_performance:
+ * @value
+ * Sets the text according to @value
+ */
+const gchar *gebr_interface_set_text_for_performance(gdouble value);
+
+const gchar *gebr_interface_get_speed_icon(gdouble value);
+
 G_END_DECLS
+
 #endif				//__INTERFACE_H

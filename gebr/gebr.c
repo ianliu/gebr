@@ -123,7 +123,8 @@ gebr_init(gboolean has_config)
 
 	gebr_post_config(has_config);
 
-	gtk_adjustment_set_value(gebr.flow_exec_adjustment, gebr.config.flow_exec_speed);
+	gtk_adjustment_set_value(gebr.flow_exec_adjustment,
+				 gebr_interface_calculate_slider_from_speed(gebr.config.flow_exec_speed));
 	gtk_adjustment_value_changed(gebr.flow_exec_adjustment);
 
 	/* check for a menu list change */
@@ -658,23 +659,5 @@ const gchar *
 gebr_get_session_id(void)
 {
 	return SESSIONID;
-}
-
-const gchar *
-set_text_for_performance (gint value)
-{
-	if (value <= 1)
-		return  _("Very low performance");
-	else if (value <= 2)
-		return  _("Low performance");
-	else if (value <= 3)
-		return  _("Medium performance");
-	else if (value <= 4)
-		return  _("High performance");
-	else if (value <= 5)
-		return  _("Very high performance");
-
-	g_warn_if_reached();
-	return  "";
 }
 

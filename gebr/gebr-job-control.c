@@ -1307,26 +1307,9 @@ gebr_job_control_load_details(GebrJobControl *jc,
 
 	gtk_label_set_markup (job_group, msg);
 
-	switch (gebr_job_get_exec_speed(job))
-	{
-	case 1:
-		gtk_image_set_from_stock(info_button_image, "gebr-speed-verylow", GTK_ICON_SIZE_LARGE_TOOLBAR);
-		break;
-	case 2:
-		gtk_image_set_from_stock(info_button_image, "gebr-speed-low", GTK_ICON_SIZE_LARGE_TOOLBAR);
-		break;
-	case 3:
-		gtk_image_set_from_stock(info_button_image, "gebr-speed-medium", GTK_ICON_SIZE_LARGE_TOOLBAR);
-		break;
-	case 4:
-		gtk_image_set_from_stock(info_button_image, "gebr-speed-high", GTK_ICON_SIZE_LARGE_TOOLBAR);
-		break;
-	case 5:
-		gtk_image_set_from_stock(info_button_image, "gebr-speed-veryhigh", GTK_ICON_SIZE_LARGE_TOOLBAR);
-		break;
-	default:
-		g_warn_if_reached();
-	}
+	const gchar *icon = gebr_interface_get_speed_icon(gebr_job_get_exec_speed(job));
+	if (icon)
+		gtk_image_set_from_stock(info_button_image, icon, GTK_ICON_SIZE_LARGE_TOOLBAR);
 
 	job_control_fill_servers_info(jc);
 	gebr_jc_update_status_and_time(jc, job, status);
@@ -2345,8 +2328,8 @@ detail_button_query_tooltip(GtkWidget  *widget,
 			       GebrJobControl *jc)
 {
 	GebrJob *job = get_selected_job(jc);
-	gint value = gebr_job_get_exec_speed(job);
-	const gchar *text_tooltip = set_text_for_performance(value);
+	gdouble value = gebr_job_get_exec_speed(job);
+	const gchar *text_tooltip = gebr_interface_set_text_for_performance(value);
 	gtk_tooltip_set_text (tooltip, text_tooltip);
 	return TRUE;
 }
