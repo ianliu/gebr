@@ -81,7 +81,7 @@ enum {
 };
 GType gebr_maestro_controller_get_type(void) G_GNUC_CONST;
 
-GebrMaestroController *gebr_maestro_controller_new(GtkWindow *window);
+GebrMaestroController *gebr_maestro_controller_new();
 
 GtkDialog *gebr_maestro_controller_create_dialog(GebrMaestroController *self);
 

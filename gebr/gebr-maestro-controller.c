@@ -665,9 +665,9 @@ gebr_maestro_controller_finalize(GObject *object)
 }
 
 GebrMaestroController *
-gebr_maestro_controller_new(GtkWindow *window)
+gebr_maestro_controller_new()
 {
-	return g_object_new(GEBR_TYPE_MAESTRO_CONTROLLER, "window", window, NULL);
+	return g_object_new(GEBR_TYPE_MAESTRO_CONTROLLER, NULL);
 }
 
 static void
