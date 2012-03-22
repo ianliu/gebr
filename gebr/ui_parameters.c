@@ -76,7 +76,16 @@ parameters_configure_setup_ui(void)
 		info = gebr_maestro_server_get_info(maestro);
 	else
 		info = NULL;
+
 	GebrGeoXmlSequence *clone = gebr_geoxml_sequence_append_clone(GEBR_GEOXML_SEQUENCE(gebr.program));
+
+	gchar *name;
+	GebrMaestroServerGroupType type;
+	gdouble speed = gebr_interface_get_execution_speed();
+	gebr_flow_edition_get_current_group(gebr.ui_flow_edition, &type, &name);
+
+	gebr_ui_flow_update_prog_mpi_nprocess(GEBR_GEOXML_PROGRAM(clone), maestro, speed, name, type);
+
 	program_edit = gebr_gui_program_edit_setup_ui(GEBR_GEOXML_PROGRAM(clone), NULL,
 						      FALSE, gebr.validator, info);
 

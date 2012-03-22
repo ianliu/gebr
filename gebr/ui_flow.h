@@ -19,6 +19,9 @@
 #define __GEBR_UI_FLOW_H__
 
 #include <glib.h>
+#include <libgebr/geoxml/geoxml.h>
+
+#include "gebr-maestro-server.h"
 
 G_BEGIN_DECLS
 
@@ -28,6 +31,12 @@ G_BEGIN_DECLS
  * This method runs the selected flows according to the interface setup.
  */
 void gebr_ui_flow_run(gboolean is_parallel);
+
+void gebr_ui_flow_update_prog_mpi_nprocess(GebrGeoXmlProgram *prog,
+                                           GebrMaestroServer *maestro,
+                                           gdouble speed,
+                                           const gchar *group_name,
+                                           GebrMaestroServerGroupType group_type);
 
 G_END_DECLS
 

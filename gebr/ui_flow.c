@@ -110,24 +110,36 @@ has_connected_server(GebrMaestroServer *maestro,
 }
 
 static void
-update_mpi_nprocess(GebrGeoXmlFlow *flow,
-                    GebrMaestroServer *maestro,
-                    gdouble speed,
-                    const gchar *group_name,
-                    GebrMaestroServerGroupType group_type)
+gebr_ui_flow_update_mpi_nprocess(GebrGeoXmlFlow *flow,
+                                 GebrMaestroServer *maestro,
+                                 gdouble speed,
+                                 const gchar *group_name,
+                                 GebrMaestroServerGroupType group_type)
 {
 	GebrGeoXmlSequence *seq;
 
 	gebr_geoxml_flow_get_program(flow, &seq, 0);
 	for (; seq; gebr_geoxml_sequence_next(&seq)) {
 		GebrGeoXmlProgram *prog = GEBR_GEOXML_PROGRAM(seq);
-		const gchar *mpi = gebr_geoxml_program_get_mpi(prog);
-		if (!*mpi)
-			continue;
-		gint ncores = gebr_maestro_server_get_ncores_for_group(maestro, mpi, group_name, group_type);
-		gint nprocs = gebr_calculate_number_of_processors(ncores, speed);
-		gebr_geoxml_program_mpi_set_n_process(prog, nprocs);
+		gebr_ui_flow_update_prog_mpi_nprocess(prog, maestro, speed, group_name, group_type);
 	}
+}
+
+void
+gebr_ui_flow_update_prog_mpi_nprocess(GebrGeoXmlProgram *prog,
+                                      GebrMaestroServer *maestro,
+                                      gdouble speed,
+                                      const gchar *group_name,
+                                      GebrMaestroServerGroupType group_type)
+{
+	const gchar *mpi = gebr_geoxml_program_get_mpi(prog);
+
+	if (!*mpi)
+		return;
+
+	gint ncores = gebr_maestro_server_get_ncores_for_group(maestro, mpi, group_name, group_type);
+	gint nprocs = gebr_calculate_number_of_processors(ncores, speed);
+	gebr_geoxml_program_mpi_set_n_process(prog, nprocs);
 }
 
 static const gchar *
@@ -172,7 +184,7 @@ run_flow(GebrGeoXmlFlow *flow,
 
 	GebrGeoXmlDocument *clone = gebr_geoxml_document_clone(GEBR_GEOXML_DOCUMENT(flow));
 
-	update_mpi_nprocess(GEBR_GEOXML_FLOW(clone), maestro, speed, name, type);
+	gebr_ui_flow_update_mpi_nprocess(GEBR_GEOXML_FLOW(clone), maestro, speed, name, type);
 
 	void func(GString *path, gpointer data)
 	{
