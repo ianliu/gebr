@@ -1651,14 +1651,26 @@ on_maestro_state_change(GebrMaestroController *mc,
 }
 
 static void
-update_control_sensitive (GtkTreeSelection *selection,
-                          GebrUiProjectLine *upl)
+update_control_sensitive(GtkTreeSelection *selection,
+			 GebrUiProjectLine *upl)
 {
-	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
-
 	gboolean sensitive = TRUE;
-	if (!maestro || gebr_maestro_server_get_state(maestro) != SERVER_STATE_LOGGED)
-		sensitive = FALSE;
+	GtkTreeModel *model;
+	GList *rows = gtk_tree_selection_get_selected_rows(selection, &model);
+
+	if (!rows)
+		return;
+
+	gint depth = gtk_tree_path_get_depth(rows->data);
+
+	if (depth == 2) {
+		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
+		if (!maestro || gebr_maestro_server_get_state(maestro) != SERVER_STATE_LOGGED)
+			sensitive = FALSE;
+	}
+
+	g_list_foreach(rows, (GFunc)gtk_tree_path_free, NULL);
+	g_list_free(rows);
 
 	// Set sensitive for tab Projects and Lines
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_delete"), sensitive);
