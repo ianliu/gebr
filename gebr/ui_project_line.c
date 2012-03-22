@@ -1660,12 +1660,19 @@ update_control_sensitive(GebrUiProjectLine *upl)
 	if (!rows)
 		return;
 
-	gint depth = gtk_tree_path_get_depth(rows->data);
-
-	if (depth == 2) {
-		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
-		if (!maestro || gebr_maestro_server_get_state(maestro) != SERVER_STATE_LOGGED)
-			sensitive = FALSE;
+	for (GList *i = rows; i; i = i->next) {
+		gint depth = gtk_tree_path_get_depth(i->data);
+		if (depth == 2) {
+			GtkTreeIter iter;
+			GebrGeoXmlLine *line;
+			gtk_tree_model_get_iter(model, &iter, i->data);
+			gtk_tree_model_get(model, &iter, PL_XMLPOINTER, &line, -1);
+			GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, line);
+			if (!maestro || gebr_maestro_server_get_state(maestro) != SERVER_STATE_LOGGED) {
+				sensitive = FALSE;
+				break;
+			}
+		}
 	}
 
 	g_list_foreach(rows, (GFunc)gtk_tree_path_free, NULL);
