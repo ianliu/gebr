@@ -447,7 +447,7 @@ GebrValidator *gebrd_get_validator(GebrdApp *self)
 
 gint
 gebrd_app_set_heuristic_aggression(GebrdApp *self,
-				   gint aggressive)
+				   gdouble aggressive)
 {
 	return gebr_calculate_number_of_processors(self->nprocs, aggressive);
 }

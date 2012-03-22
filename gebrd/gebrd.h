@@ -158,7 +158,7 @@ GebrValidator *gebrd_get_validator(GebrdApp *self);
  *
  * Returns: The number of procs and nice after set heuristic.
  */
-gint gebrd_app_set_heuristic_aggression(GebrdApp *self, gint aggressive);
+gint gebrd_app_set_heuristic_aggression(GebrdApp *self, gdouble aggressive);
 
 G_END_DECLS
 #endif				//__GEBRD_H

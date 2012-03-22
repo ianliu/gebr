@@ -894,9 +894,9 @@ gebr_utf8_strstr(const gchar *str,
 
 gint
 gebr_calculate_number_of_processors(gint total_nprocs,
-                                    gint aggressive)
+                                    gdouble aggressive)
 {
-	return (total_nprocs - DEFAULT_NPROCS) * (aggressive-1)/4 + DEFAULT_NPROCS;
+	return (gint)round((total_nprocs - DEFAULT_NPROCS) * (aggressive-1)/4 + DEFAULT_NPROCS);
 }
 
 void

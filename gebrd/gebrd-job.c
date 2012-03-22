@@ -446,7 +446,7 @@ job_new(GebrdJob **_job,
 		gebr_validator_update(gebrd_get_validator(gebrd));
 	}
 
-	gint n = gebrd_app_set_heuristic_aggression(gebrd, atoi(speed->str));
+	gint n = gebrd_app_set_heuristic_aggression(gebrd, atof(speed->str));
 
 	if (gebr_geoxml_flow_is_parallelizable(job->flow, gebrd->validator))
 		job->effprocs = n;

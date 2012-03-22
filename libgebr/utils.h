@@ -234,7 +234,7 @@ gchar *gebr_utf8_strstr(const gchar *haystack,
  * Calculate real number of processors will be used
  */
 gint gebr_calculate_number_of_processors(gint total_nprocs,
-                                         gint aggressive);
+                                         gdouble aggressive);
 
 /**
  * gebr_pairstrfreev:
