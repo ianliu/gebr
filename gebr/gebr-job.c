@@ -50,7 +50,7 @@ struct _GebrJobPriv {
 	gchar *nice;
 	gchar *nprocs;
 	gchar *maestro_address;
-	GString *mpi_owner;
+	gchar *mpi_owner;
 
 	gboolean is_fake;
 
@@ -726,12 +726,16 @@ gebr_job_get_run_type(GebrJob *job)
 	return job->priv->run_type;
 }
 
-void gebr_job_set_mpi_owner(GebrJob *job, GString *mpi_owner)
+void
+gebr_job_set_mpi_owner(GebrJob *job, const gchar *mpi_owner)
 {
-	job->priv->mpi_owner = mpi_owner;
+	if (job->priv->mpi_owner)
+		g_free(job->priv->mpi_owner);
+	job->priv->mpi_owner = g_strdup(mpi_owner);
 }
 
-gchar *gebr_job_get_mpi_owner(GebrJob *job)
+const gchar *
+gebr_job_get_mpi_owner(GebrJob *job)
 {
-	return job->priv->mpi_owner->str;
+	return job->priv->mpi_owner;
 }

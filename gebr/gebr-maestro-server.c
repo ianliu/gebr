@@ -631,7 +631,7 @@ parse_messages(GebrCommServer *comm_server,
 			gebr_job_set_nprocs(job, nprocs->str);
 			gebr_job_set_static_status(job, gebr_comm_job_get_status_from_string(status->str));
 			gebr_job_set_io(job, input->str, output->str, error->str);
-			gebr_job_set_mpi_owner(job, mpi_owner);
+			gebr_job_set_mpi_owner(job, mpi_owner->str);
 			g_debug("still_mpi_owner:%s", gebr_job_get_mpi_owner(job));
 
 			if (g_strcmp0(gebr_job_get_queue(job), parent_id->str) != 0) {
