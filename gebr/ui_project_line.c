@@ -83,8 +83,7 @@ static void on_maestro_state_change(GebrMaestroController *mc,
                                     GebrMaestroServer *maestro,
                                     GebrUiProjectLine *upl);
 
-static void update_control_sensitive (GtkTreeSelection *selection,
-                                      GebrUiProjectLine *upl);
+static void update_control_sensitive(GebrUiProjectLine *upl);
 
 static void project_line_create_maestro_widget(GebrUiProjectLine *upl);
 
@@ -166,8 +165,8 @@ struct ui_project_line *project_line_setup_ui(void)
 	gebr_gui_gtk_tree_view_fancy_search(GTK_TREE_VIEW(ui_project_line->view), PL_TITLE);
 	g_signal_connect(selection, "changed", G_CALLBACK(project_line_load), NULL);
 	g_signal_connect(selection, "changed", G_CALLBACK(pl_change_selection_update_validator), NULL);
-	g_signal_connect(selection, "changed", G_CALLBACK(update_control_sensitive), ui_project_line);
-	g_signal_connect(gebr.maestro_controller, "maestro-state-changed", G_CALLBACK(update_control_sensitive), ui_project_line);
+	g_signal_connect_swapped(selection, "changed", G_CALLBACK(update_control_sensitive), ui_project_line);
+	g_signal_connect_swapped(gebr.maestro_controller, "maestro-state-changed", G_CALLBACK(update_control_sensitive), ui_project_line);
 	g_signal_connect(gebr.maestro_controller, "maestro-state-changed", G_CALLBACK(on_maestro_state_change), ui_project_line);
 
 	/* Right side */
@@ -1651,11 +1650,11 @@ on_maestro_state_change(GebrMaestroController *mc,
 }
 
 static void
-update_control_sensitive(GtkTreeSelection *selection,
-			 GebrUiProjectLine *upl)
+update_control_sensitive(GebrUiProjectLine *upl)
 {
 	gboolean sensitive = TRUE;
 	GtkTreeModel *model;
+	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(upl->view));
 	GList *rows = gtk_tree_selection_get_selected_rows(selection, &model);
 
 	if (!rows)
