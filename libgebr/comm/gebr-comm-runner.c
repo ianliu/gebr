@@ -230,7 +230,7 @@ predict_current_load(GList *points, gdouble delay)
  * Compute the score of a server
  */
 static gdouble
-calculate_server_score(const gchar *load, gint ncores, gdouble cpu_clock, gint scale, gint nsteps, gint *eff_ncores)
+calculate_server_score(const gchar *load, gint ncores, gdouble cpu_clock, gdouble scale, gint nsteps, gint *eff_ncores)
 {
 	GList *points = NULL;
 	gdouble delay = 1.0;
@@ -529,7 +529,7 @@ on_response_received(GebrCommHttpMsg *request,
 	sc->score = calculate_server_score(value->str,
 					   server->ncores,
 					   server->clock_cpu,
-					   atoi(self->priv->speed),
+					   atof(self->priv->speed),
 					   n, &sc->eff_ncores);
 
 	gdouble factor_correction = 0.9;

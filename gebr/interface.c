@@ -274,7 +274,7 @@ speed_button_tooltip (GtkWidget  *widget,
                       GtkTooltip *tooltip,
                       gpointer    user_data)
 {
-	gdouble value = gebr.config.flow_exec_speed;
+	gdouble value = gebr_interface_calculate_slider_from_speed(gebr.config.flow_exec_speed);
 
 	const gchar *speed;
 	speed = gebr_interface_set_text_for_performance(value);

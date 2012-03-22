@@ -2329,7 +2329,8 @@ detail_button_query_tooltip(GtkWidget  *widget,
 {
 	GebrJob *job = get_selected_job(jc);
 	gdouble value = gebr_job_get_exec_speed(job);
-	const gchar *text_tooltip = gebr_interface_set_text_for_performance(value);
+	gdouble tmp = gebr_interface_calculate_slider_from_speed(value);
+	const gchar *text_tooltip = gebr_interface_set_text_for_performance(tmp);
 	gtk_tooltip_set_text (tooltip, text_tooltip);
 	return TRUE;
 }

@@ -896,7 +896,7 @@ gint
 gebr_calculate_number_of_processors(gint total_nprocs,
                                     gdouble aggressive)
 {
-	return (gint)round((total_nprocs - DEFAULT_NPROCS) * (aggressive-1)/4 + DEFAULT_NPROCS);
+	return MAX((gint)round(total_nprocs * aggressive/5), 1);
 }
 
 void
