@@ -1146,3 +1146,11 @@ gebr_validate_path(const gchar *path,
 		return TRUE;
 }
 
+gint
+gebr_strv_indexof(const gchar **strv, const gchar *value)
+{
+	for (int i = 0; strv[i]; i++)
+		if (g_strcmp0(strv[i], value) == 0)
+			return i;
+	return -1;
+}

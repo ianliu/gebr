@@ -293,6 +293,7 @@ gboolean gebr_validate_path(const gchar *path,
 			    gchar ***paths,
 			    gchar **err_msg);
 
+gint gebr_strv_indexof(const gchar **strv, const gchar *value);
 
 G_END_DECLS
 
