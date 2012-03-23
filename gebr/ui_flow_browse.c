@@ -44,6 +44,7 @@ static GtkMenu *flow_browse_popup_menu(GtkWidget * widget, GebrUiFlowBrowse *ui_
 static void flow_browse_on_revision_revert_activate(GtkMenuItem * menu_item, GebrGeoXmlRevision * revision);
 static void flow_browse_on_revision_delete_activate(GtkWidget * menu_item, GebrGeoXmlRevision * revision);
 static void flow_browse_on_flow_move(void);
+static void update_speed_slider_sensitiveness(GebrUiFlowBrowse *ufb);
 
 GebrUiFlowBrowse *flow_browse_setup_ui(GtkWidget * revisions_menu)
 {
@@ -100,8 +101,9 @@ GebrUiFlowBrowse *flow_browse_setup_ui(GtkWidget * revisions_menu)
 								 flow_browse_on_flow_move, NULL);
 	g_signal_connect(ui_flow_browse->view, "row-activated", G_CALLBACK(flow_browse_on_row_activated),
 			 ui_flow_browse);
-	g_signal_connect(gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_flow_browse->view)), "changed",
-			 G_CALLBACK(flow_browse_load), NULL);
+	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(ui_flow_browse->view));
+	g_signal_connect(selection, "changed", G_CALLBACK(flow_browse_load), NULL);
+	g_signal_connect_swapped(selection, "changed", G_CALLBACK(update_speed_slider_sensitiveness), ui_flow_browse);
 
 	renderer = gtk_cell_renderer_text_new();
 	col = gtk_tree_view_column_new_with_attributes("", renderer, NULL);
@@ -496,6 +498,42 @@ static void flow_browse_load(void)
 	g_free(title);
 }
 
+static void
+update_speed_slider_sensitiveness(GebrUiFlowBrowse *ufb)
+{
+	gboolean sensitive = FALSE;
+	GtkTreeModel *model;
+	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(ufb->view));
+	GList *rows = gtk_tree_selection_get_selected_rows(selection, &model);
+
+	for (GList *i = rows; i; i = i->next) {
+		GtkTreeIter iter;
+		GebrGeoXmlFlow *flow;
+		gtk_tree_model_get_iter(model, &iter, i->data);
+		gtk_tree_model_get(model, &iter, FB_XMLPOINTER, &flow, -1);
+		gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE);
+		gboolean parallel = gebr_geoxml_flow_is_parallelizable(flow, gebr.validator);
+		gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &gebr.flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE);
+		GebrGeoXmlProgram *prog = gebr_geoxml_flow_get_first_mpi_program(flow);
+		gboolean has_mpi = prog != NULL;
+		gebr_geoxml_object_unref(prog);
+
+		if (parallel || has_mpi) {
+			sensitive = TRUE;
+			break;
+		}
+
+	}
+
+	g_list_foreach(rows, (GFunc)gtk_tree_path_free, NULL);
+	g_list_free(rows);
+
+	gtk_widget_set_sensitive(ufb->speed_slider, sensitive);
+	gebr_interface_update_speed_sensitiveness(ufb->speed_button,
+						  ufb->speed_slider,
+						  sensitive);
+}
+
 /**
  */
 void flow_browse_show_help(void)
@@ -683,6 +721,8 @@ gebr_flow_browse_show(GebrUiFlowBrowse *self)
 {
 	if (gebr.line)
 		gebr_flow_set_toolbar_sensitive();
+
+	update_speed_slider_sensitiveness(self);
 
 	if (gebr.config.niceness == 0)
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(self->nice_button_high), TRUE);

@@ -320,7 +320,8 @@ static void
 insert_speed_controler(GtkToolbar *toolbar,
 		       GtkWidget **toggle_high,
 		       GtkWidget **toggle_low,
-		       GtkWidget **speed)
+		       GtkWidget **speed,
+		       GtkWidget **speed_slider)
 {
 	if (!gebr.flow_exec_adjustment) {
 		gebr.flow_exec_adjustment = GTK_ADJUSTMENT(gtk_adjustment_new(1, 1, SLIDER_MAX, 0.1, 1, 0.1));
@@ -356,16 +357,12 @@ insert_speed_controler(GtkToolbar *toolbar,
 
 	hbox = gtk_hbox_new(FALSE, 5);
 
-	GtkRcStyle *style = gtk_rc_style_new();
-	//style->xthickness = style->ythickness = 0;
 	GtkWidget *high = gtk_toggle_button_new_with_label(_("High priority"));
 	GtkWidget *low = gtk_toggle_button_new_with_label(_("Low priority"));
 	gtk_widget_set_can_focus(high, FALSE);
 	gtk_widget_set_can_focus(low, FALSE);
 	gtk_button_set_relief(GTK_BUTTON(high), GTK_RELIEF_NONE);
 	gtk_button_set_relief(GTK_BUTTON(low), GTK_RELIEF_NONE);
-	gtk_widget_modify_style(high, style);
-	gtk_widget_modify_style(low, style);
 	gtk_widget_set_tooltip_text(high, _("Share available resources"));
 	gtk_widget_set_tooltip_text(low, _("Wait for free resources"));
 	g_object_set_data(G_OBJECT(high), "nice", GINT_TO_POINTER(0));
@@ -374,11 +371,11 @@ insert_speed_controler(GtkToolbar *toolbar,
 	g_signal_connect(low, "toggled", G_CALLBACK(priority_button_toggled), high);
 	gtk_box_pack_end(GTK_BOX(hbox), high, FALSE, FALSE, 0);
 	gtk_box_pack_end(GTK_BOX(hbox), low, FALSE, FALSE, 0);
-	g_object_unref(style);
 
 	*toggle_high = high;
 	*toggle_low = low;
 	*speed = speed_button;
+	*speed_slider = scale;
 
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
@@ -591,7 +588,8 @@ void gebr_setup_ui(void)
 	insert_speed_controler(GTK_TOOLBAR(toolbar),
 			       &gebr.ui_flow_browse->nice_button_high,
 			       &gebr.ui_flow_browse->nice_button_low,
-			       &gebr.ui_flow_browse->speed_button);
+			       &gebr.ui_flow_browse->speed_button,
+			       &gebr.ui_flow_browse->speed_slider);
 
 	vbox = gtk_vbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
@@ -641,7 +639,8 @@ void gebr_setup_ui(void)
 	insert_speed_controler(GTK_TOOLBAR(toolbar),
 			       &gebr.ui_flow_edition->nice_button_high,
 			       &gebr.ui_flow_edition->nice_button_low,
-			       &gebr.ui_flow_edition->speed_button);
+			       &gebr.ui_flow_edition->speed_button,
+			       &gebr.ui_flow_edition->speed_slider);
 
 	vbox = gtk_vbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
@@ -778,4 +777,25 @@ gebr_interface_get_speed_icon(gdouble value)
 		return "gebr-speed-veryhigh";
 	else
 		g_return_val_if_reached(NULL);
+}
+
+void
+gebr_interface_update_speed_sensitiveness(GtkWidget *button,
+					  GtkWidget *slider,
+					  gboolean sensitive)
+{
+	GtkWidget *child = gtk_bin_get_child(GTK_BIN(button));
+
+	g_return_if_fail(GTK_IS_IMAGE(child) == TRUE);
+
+	if (!sensitive) {
+		gtk_image_set_from_stock(GTK_IMAGE(child), gebr_interface_get_speed_icon(1),
+					 GTK_ICON_SIZE_LARGE_TOOLBAR);
+		gtk_widget_hide(slider);
+	} else {
+		gdouble speed = gebr_interface_calculate_slider_from_speed(gebr.config.flow_exec_speed);
+		gtk_image_set_from_stock(GTK_IMAGE(child), gebr_interface_get_speed_icon(speed),
+					 GTK_ICON_SIZE_LARGE_TOOLBAR);
+		gtk_widget_show(slider);
+	}
 }

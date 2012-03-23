@@ -81,6 +81,7 @@ struct _GebrFlowEdition {
 	GtkWidget *menu_view;
 	GtkTreeStore *menu_store;
 
+	GtkWidget *speed_slider;
 	GtkWidget *nice_button_high;
 	GtkWidget *nice_button_low;
 	GtkWidget *speed_button;
