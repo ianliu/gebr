@@ -205,8 +205,10 @@ gebr_gui_program_edit_load(GebrGuiProgramEdit *program_edit, GebrGeoXmlParameter
 	GebrGeoXmlSequence *parameter;
 	GebrGeoXmlParameterGroup *parameter_group;
 	GSList *radio_group;
+	gboolean is_mpi = gebr_geoxml_parameters_is_mpi(parameters);
 
 	frame = gtk_frame_new(NULL);
+	gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_NONE);
 	vbox = gtk_vbox_new(FALSE, 0);
 
 	gtk_widget_show(frame);
@@ -216,6 +218,8 @@ gebr_gui_program_edit_load(GebrGuiProgramEdit *program_edit, GebrGeoXmlParameter
 		GtkWidget *hbox;
 		GtkWidget *button;
 		GtkRcStyle *style;
+
+		gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_ETCHED_OUT);
 
 		hbox = gtk_hbox_new(FALSE, 0);
 
@@ -284,6 +288,11 @@ gebr_gui_program_edit_load(GebrGuiProgramEdit *program_edit, GebrGeoXmlParameter
 		GtkWidget * widget;
 
 		widget = gebr_gui_program_edit_load_parameter(program_edit, GEBR_GEOXML_PARAMETER(parameter), &radio_group);
+		if (is_mpi) {
+			GebrGeoXmlParameterType type = gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(parameter));
+			if (type != GEBR_GEOXML_PARAMETER_TYPE_GROUP)
+				gtk_widget_set_sensitive(widget, FALSE);
+		}
 		if (first_parameter) {
 			/* used in on_group_expander_mnemonic_activate */
 			g_object_set_data(G_OBJECT(frame), "first-parameter", parameter);
