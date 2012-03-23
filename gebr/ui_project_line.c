@@ -1957,6 +1957,13 @@ line_can_reorder(GtkTreeView *tree_view, GtkTreeIter *source_iter, GtkTreeIter *
 	source_is_line = gtk_tree_model_iter_parent(GTK_TREE_MODEL(gebr.ui_project_line->store), &source_iter_parent, source_iter);
 	target_is_line = gtk_tree_model_iter_parent(GTK_TREE_MODEL(gebr.ui_project_line->store), &target_iter_parent, target_iter);
 
+	if (source_is_line) {
+		gboolean sensitive;
+		gtk_tree_model_get(GTK_TREE_MODEL(gebr.ui_project_line->store), source_iter, PL_SENSITIVE, &sensitive, -1);
+		if (!sensitive)
+			return FALSE;
+	}
+
 	if (source_is_line && target_is_line) /* Source and target are lines. */
 		return TRUE;
 
