@@ -166,5 +166,11 @@ gboolean gebr_geoxml_parameters_is_var_used (GebrGeoXmlParameters *self,
 
 void gebr_geoxml_parameters_reset_to_default(GebrGeoXmlParameters * parameters);
 
+/**
+ *
+ */
+gboolean gebr_geoxml_parameters_is_mpi(GebrGeoXmlParameters *parameters);
+
+
 G_END_DECLS
 #endif				//__GEBR_GEOXML_PARAMETERS_H

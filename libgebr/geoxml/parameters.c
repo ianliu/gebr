@@ -422,3 +422,23 @@ gebr_geoxml_parameters_reset_to_default(GebrGeoXmlParameters *parameters)
 		}
 	}
 }
+
+gboolean
+gebr_geoxml_parameters_is_mpi(GebrGeoXmlParameters *parameters)
+{
+	GdomeNode *parent = gdome_el_parentNode((GdomeElement*)parameters, &exception);
+	while (parent) {
+		GdomeDOMString *tag = gdome_n_nodeName(parent, &exception);
+		if (g_strcmp0(tag->str, "mpi") == 0) {
+			gdome_n_unref(parent, &exception);
+			gdome_str_unref(tag);
+			return TRUE;
+		}
+		gdome_str_unref(tag);
+		GdomeNode *tmp;
+		tmp = gdome_n_parentNode(parent, &exception);
+		gdome_n_unref(parent, &exception);
+		parent = tmp;
+	}
+	return FALSE;
+}
