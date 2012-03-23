@@ -22,6 +22,7 @@
 #include <config.h>
 #include <gebr.h>
 
+#include <stdlib.h>
 #include <gdk/gdkkeysyms.h>
 #include <glib/gi18n.h>
 #include "gebr-maestro-server.h"
@@ -965,6 +966,67 @@ daemon_server_mpi_func(GtkTreeViewColumn *tree_column,
 		g_object_set(cell, "stock-id", NULL, NULL);
 
 }
+
+static void
+daemon_server_cpu_clock_func(GtkTreeViewColumn *tree_column,
+                             GtkCellRenderer *cell,
+                             GtkTreeModel *model,
+                             GtkTreeIter *iter,
+                             gpointer data)
+{
+	gboolean editable;
+	GebrDaemonServer *daemon;
+
+	gtk_tree_model_get(model, iter,
+	                   MAESTRO_CONTROLLER_EDITABLE, &editable,
+	                   MAESTRO_CONTROLLER_DAEMON, &daemon,
+	                   -1);
+
+	if (editable) {
+		g_object_set(cell, "text", NULL, NULL);
+		return;
+	}
+
+	gchar *cpu_clock;
+	gdouble clock = atof(gebr_daemon_server_get_cpu_clock(daemon))/1000;
+
+	cpu_clock = g_strdup_printf("%.1lf GHz", clock);
+
+	g_object_set(cell, "text", cpu_clock, NULL);
+
+	g_free(cpu_clock);
+}
+
+static void
+daemon_server_memory_func(GtkTreeViewColumn *tree_column,
+                          GtkCellRenderer *cell,
+                          GtkTreeModel *model,
+                          GtkTreeIter *iter,
+                          gpointer data)
+{
+	gboolean editable;
+	GebrDaemonServer *daemon;
+
+	gtk_tree_model_get(model, iter,
+	                   MAESTRO_CONTROLLER_EDITABLE, &editable,
+	                   MAESTRO_CONTROLLER_DAEMON, &daemon,
+	                   -1);
+
+	if (editable) {
+		g_object_set(cell, "text", NULL, NULL);
+		return;
+	}
+
+	gchar *memory;
+	gdouble mem = g_strtod(gebr_daemon_server_get_memory(daemon), NULL)/1000/1000;
+
+	memory = g_strdup_printf("%.1lf GB", mem);
+
+	g_object_set(cell, "text", memory, NULL);
+
+	g_free(memory);
+}
+
 /**
  * server_list_add:
  * @ui_server_list: Pointer to user interface server list
@@ -1201,6 +1263,7 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 	GtkTreeViewColumn *col;
 	col = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_title(col, _("Address"));
+	gtk_tree_view_column_set_min_width(col, 100);
 
 	renderer = gtk_cell_renderer_pixbuf_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(col), renderer, FALSE);
@@ -1218,6 +1281,30 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 
 	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
 	// End of Server Column
+
+	// CPU Clock column
+	GtkTreeViewColumn *cpu_clock = gtk_tree_view_column_new();
+	gtk_tree_view_column_set_title(cpu_clock, "CPU Clock");
+
+	renderer = gtk_cell_renderer_text_new();
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(cpu_clock), renderer, TRUE);
+	gtk_tree_view_column_set_cell_data_func(cpu_clock, renderer, daemon_server_cpu_clock_func,
+	                                        NULL, NULL);
+
+	gtk_tree_view_append_column(GTK_TREE_VIEW(view), cpu_clock);
+	// End of CPU Clock column
+
+	// Memory column
+	GtkTreeViewColumn *memory_col = gtk_tree_view_column_new();
+	gtk_tree_view_column_set_title(memory_col, "Memory");
+
+	renderer = gtk_cell_renderer_text_new();
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(memory_col), renderer, TRUE);
+	gtk_tree_view_column_set_cell_data_func(memory_col, renderer, daemon_server_memory_func,
+	                                        NULL, NULL);
+
+	gtk_tree_view_append_column(GTK_TREE_VIEW(view), memory_col);
+	// End of Memory column
 
 	gebr_maestro_controller_group_changed_real(self, maestro);
 
