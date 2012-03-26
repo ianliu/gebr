@@ -29,6 +29,7 @@ glade_DATA = \
 	mpi-parameters-help.glade \
 	project-properties.glade \
 	line-properties.glade \
+	connect-maestro-dialog.glade \
 	l.png \
 	$(NULL)
 

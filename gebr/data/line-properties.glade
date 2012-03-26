@@ -43,25 +43,13 @@
               </packing>
             </child>
             <child>
-              <object class="GtkHBox" id="maestro_box">
+              <object class="GtkLabel" id="label_maestro">
                 <property name="visible">True</property>
-                <child>
-                  <object class="GtkLabel" id="label_maestro">
-                    <property name="visible">True</property>
-                    <property name="xalign">1</property>
-                    <property name="label" translatable="yes">on Maestro</property>
-                    <property name="use_markup">True</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <placeholder/>
-                </child>
+                <property name="label" translatable="yes">on Maestro &lt;b&gt;dell2&lt;/b&gt;</property>
+                <property name="use_markup">True</property>
               </object>
               <packing>
+                <property name="expand">False</property>
                 <property name="position">1</property>
               </packing>
             </child>
