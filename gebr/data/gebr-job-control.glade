@@ -62,49 +62,6 @@
       <object class="GtkVBox" id="vbox1">
         <property name="visible">True</property>
         <child>
-          <object class="GtkInfoBar" id="issues_info_bar">
-            <child internal-child="content_area">
-              <object class="GtkHBox" id="issues_info_bar_hbox">
-        		<property name="homogeneous">False</property>
-                <child>
-                  <object class="GtkImage" id="issues_info_bar_image">
-                    <property name="visible">True</property>
-                    <property name="xalign">0.0</property>
-                  </object>
-                  <packing>
-            		<property name="position">0</property>
-	    			<property name="expand">False</property>
-          		  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel" id="issues_info_bar_label">
-                    <property name="visible">True</property>
-                    <property name="xalign">0.0</property>
-                  </object>
-                  <packing>
-            		<property name="position">1</property>
-	    			<property name="expand">True</property>
-          		  </packing>
-                </child>
-              </object>
-            </child>
-            <child internal-child="action_area">
-              <object class="GtkVButtonBox" id="issues_info_bar_hbutton_box">
-                <child>
-                  <object class="GtkButton" id="issues_info_bar_dismiss">
-                    <property name="visible">True</property>
-                    <property name="label" translatable="yes">Dismiss</property>
-                  </object>
-                </child>
-              </object>
-            </child>
-          </object>
-          <packing>
-            <property name="position">0</property>
-	    <property name="expand">False</property>
-          </packing>
-        </child>
-        <child>
           <object class="GtkVBox" id="job_info_widget">
             <property name="spacing">10</property>
             <child>
@@ -493,7 +450,7 @@
         <child>
           <object class="GtkLabel" id="label6">
             <property name="visible">True</property>
-            <property name="label" translatable="yes">&lt;b&gt;Servers&lt;/b&gt;</property>
+            <property name="label" translatable="yes">&lt;b&gt;Process distribution among machines&lt;/b&gt;</property>
             <property name="use_markup">True</property>
           </object>
           <packing>
@@ -547,8 +504,8 @@
   </object>
   <object class="GtkVBox" id="tl-filter">
     <property name="visible">True</property>
+    <property name="border_width">5</property>
     <property name="spacing">4</property>
-    <property name="border-width">5</property>
     <child>
       <object class="GtkTable" id="table1">
         <property name="visible">True</property>
