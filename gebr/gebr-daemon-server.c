@@ -409,6 +409,8 @@ gebr_daemon_server_accepts_mpi(GebrDaemonServer *daemon,
 			       const gchar *mpi_flavor)
 {
 	gchar **tmp = g_strsplit(daemon->priv->mpi_flavors, ",", -1);
+	if (!tmp)
+		return FALSE;
 	gint i = gebr_strv_indexof((const gchar **)tmp, mpi_flavor);
 	g_strfreev(tmp);
 
