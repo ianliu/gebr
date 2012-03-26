@@ -330,9 +330,9 @@ gebr_geoxml_get_paths_for_base(const gchar *base)
 	return g_string_free(buf, FALSE);
 }
 
-gchar *
-gebr_geoxml_line_get_path_by_name(GebrGeoXmlLine *line,
-				  const gchar *name)
+GebrGeoXmlSequence *
+gebr_geoxml_line_get_path_sequence_by_name(GebrGeoXmlLine *line,
+					   const gchar *name)
 {
 	GebrGeoXmlSequence *seq;
 	gebr_geoxml_line_get_path(line, &seq, 0);
@@ -341,11 +341,40 @@ gebr_geoxml_line_get_path_by_name(GebrGeoXmlLine *line,
 		gchar *tmp = gebr_geoxml_line_path_get_name(path);
 		if (g_strcmp0(tmp, name) == 0) {
 			g_free(tmp);
-			return gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(seq));
+			return seq;
 		}
 		g_free(tmp);
 	}
 	return NULL;
+}
+
+void
+gebr_geoxml_line_set_path_by_name(GebrGeoXmlLine *line,
+				  const gchar *name,
+				  const gchar *new_value)
+{
+	GebrGeoXmlSequence *seq = gebr_geoxml_line_get_path_sequence_by_name(line, name);
+
+	if (!seq) {
+		gebr_geoxml_line_append_path(line, name, new_value);
+	} else {
+		gebr_geoxml_value_sequence_set(GEBR_GEOXML_VALUE_SEQUENCE(seq), new_value);
+		gebr_geoxml_object_unref(seq);
+	}
+}
+
+gchar *
+gebr_geoxml_line_get_path_by_name(GebrGeoXmlLine *line,
+				  const gchar *name)
+{
+	GebrGeoXmlSequence *seq = gebr_geoxml_line_get_path_sequence_by_name(line, name);
+
+	if (!seq)
+		return NULL;
+
+	gchar *value = gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(seq));
+	gebr_geoxml_object_unref(seq);
+	return value;
 }
 
 gchar *

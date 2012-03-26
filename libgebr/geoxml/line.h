@@ -199,6 +199,15 @@ gchar *** gebr_geoxml_line_get_paths(GebrGeoXmlLine *line);
 gchar *gebr_geoxml_line_get_path_by_name(GebrGeoXmlLine *line,
 					 const gchar *name);
 
+/**
+ * gebr_geoxml_line_set_path_by_name:
+ *
+ * Sets a path by name. If the path already exists, it is overwritten.
+ */
+void gebr_geoxml_line_set_path_by_name(GebrGeoXmlLine *line,
+				       const gchar *name,
+				       const gchar *new_value);
+
 gchar *gebr_geoxml_escape_path(const gchar *path);
 
 gchar *gebr_geoxml_get_paths_for_base(const gchar *base);
