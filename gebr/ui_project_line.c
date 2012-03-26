@@ -380,7 +380,7 @@ save_maestro_on_combo_box_changed(GebrUiProjectLine *upl)
 
 			GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
 			gchar *home = g_build_filename(gebr_maestro_server_get_home_dir(maestro), NULL);
-			gebr_geoxml_line_append_path(gebr.line, "HOME", home);
+			gebr_geoxml_line_set_path_by_name(gebr.line, "HOME", home);
 			g_free(home);
 
 			document_save(GEBR_GEOXML_DOCUMENT(gebr.line), TRUE, FALSE);

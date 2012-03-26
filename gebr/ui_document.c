@@ -438,7 +438,6 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 		gtk_entry_set_text(entry_base, base_path);
 
 		g_signal_connect(entry_base, "changed", G_CALLBACK(on_properties_entry_changed), data->ok_button);
-		g_signal_connect(entry_base, "changed", G_CALLBACK(path_validate), NULL);
 		g_free(base_path);
 
 		gchar *import_path = NULL;
@@ -1766,11 +1765,23 @@ gebr_ui_document_send_paths_to_maestro(GebrMaestroServer *maestro,
 {
 	GebrCommServer *server = gebr_maestro_server_get_server(maestro);
 
+	gchar ***paths = g_new(gchar**, 2);
+	paths[0] = g_new(gchar *, 2);
+	paths[0][0] = g_strdup(gebr_maestro_server_get_home_dir(maestro));
+	paths[0][1] = g_strdup("HOME");
+	paths[1] = NULL;
+
 	if (!oldmsg)
 		oldmsg = "";
+	else
+		oldmsg = gebr_resolve_relative_path(oldmsg, paths);
 
 	if (!newmsg)
 		newmsg = "";
+	else
+		newmsg = gebr_resolve_relative_path(newmsg, paths);
+
+	gebr_pairstrfreev(paths);
 
 	if (option == GEBR_COMM_PROTOCOL_PATH_RENAME) {
 		g_debug("Rename dir %s to %s", oldmsg, newmsg);

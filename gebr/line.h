@@ -66,10 +66,7 @@ void line_move_flow_top(void);
  */
 void line_move_flow_bottom(void);
 
-void
-on_properties_entry_changed(GtkEntry *entry, GtkWidget *ok_button);
+void on_properties_entry_changed(GtkEntry *entry, GtkWidget *ok_button);
 
-void
-path_validate(GtkEntry *entry);
 G_END_DECLS
 #endif				//__LINE_H

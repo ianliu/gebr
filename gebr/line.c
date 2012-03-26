@@ -67,7 +67,7 @@ on_assistant_base_validate(GtkEntry *entry,
 	current_page = gtk_assistant_get_nth_page(assistant, page_number);
 	text = gtk_entry_get_text(entry);
 
-	if (text && *text && gebr_verify_starting_slash(text))
+	if (text && *text)
 		gtk_assistant_set_page_complete(assistant, current_page, TRUE);
 	else
 		gtk_assistant_set_page_complete(assistant, current_page, FALSE);
@@ -249,9 +249,8 @@ on_assistant_prepare(GtkAssistant *assistant,
 	if (page == 2) {
 		GObject *entry_title = gtk_builder_get_object(data->builder, "entry_title");
 		gchar *line_key = gebr_geoxml_line_create_key(gtk_entry_get_text(GTK_ENTRY(entry_title)));
+		gchar *path = g_build_filename("<HOME>", "GeBR", line_key, NULL);
 
-		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
-		gchar *path = g_build_filename(gebr_maestro_server_get_home_dir(maestro),"GeBR", line_key, NULL);
 		gtk_entry_set_text(GTK_ENTRY(entry_base), path);
 
 		g_free(line_key);
@@ -282,9 +281,9 @@ on_assistant_prepare(GtkAssistant *assistant,
 
 static void
 on_base_entry_press(GtkEntry            *entry,
-                      GtkEntryIconPosition icon_pos,
-                      GdkEvent            *event,
-                      gpointer             user_data)
+		    GtkEntryIconPosition icon_pos,
+		    GdkEvent            *event,
+		    gpointer             user_data)
 {
 	WizardData *data = user_data;
 
@@ -401,7 +400,6 @@ line_setup_wizard(GebrGeoXmlLine *line)
 	gtk_entry_set_text(GTK_ENTRY(entry_email), gebr.config.email->str);
 
 	g_signal_connect(entry_title, "changed", G_CALLBACK(on_assistant_entry_changed), assistant);
-	g_signal_connect(entry_base, "changed", G_CALLBACK(path_validate), assistant);
 	g_signal_connect(entry_base, "changed", G_CALLBACK(on_assistant_base_validate), assistant);
 
 	gtk_widget_show(assistant);
@@ -609,31 +607,4 @@ void line_move_flow_bottom(void)
 	document_save(GEBR_GEOXML_DOC(gebr.line), TRUE, FALSE);
 	/* GUI */
 	gtk_list_store_move_before(GTK_LIST_STORE(gebr.ui_flow_browse->store), &iter, NULL);
-}
-void
-path_validate(GtkEntry *entry)
-{
-	const gchar *text = gtk_entry_get_text(entry);
-	if (!text || !*text)
-		return;
-
-	// PUT THE VALIDATIONS HERE
-	gboolean path_ok = gebr_verify_starting_slash(text);
-
-	if (path_ok) {
-		gtk_entry_set_icon_from_stock(entry,
-					      GTK_ENTRY_ICON_SECONDARY,
-					      GTK_STOCK_DIRECTORY);
-		gtk_entry_set_icon_tooltip_text(entry,
-		                                GTK_ENTRY_ICON_SECONDARY,
-		                                NULL);
-	}
-	else {
-		gtk_entry_set_icon_from_stock(entry,
-					      GTK_ENTRY_ICON_SECONDARY,
-					      GTK_STOCK_DIALOG_WARNING);
-		gtk_entry_set_icon_tooltip_text(entry,
-						GTK_ENTRY_ICON_SECONDARY,
-						_("Path must start with '/'"));
-	}
 }
