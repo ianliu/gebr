@@ -431,11 +431,17 @@ daemon_has_mpi_flavor(GebrCommDaemon *daemon, const gchar *flavor)
 }
 
 static void
-mpi_program_contrib(GebrGeoXmlProgram *prog, GList *servers, GebrValidator *validator, gint contrib[])
+mpi_program_contrib(GebrGeoXmlProgram *prog, GList *servers, const gchar *executor, GebrValidator *validator, gint contrib[])
 {
 	const gchar *mpi_flavor = gebr_geoxml_program_get_mpi(prog);
 	if (!mpi_flavor || !*mpi_flavor) {
-		contrib[0]++;
+		//Refatorar em função
+		gint j = 0;
+		for (GList *i = servers; i; i = i->next) {
+			GebrCommDaemon *daemon = i->data;
+			if (g_strcmp0(gebr_comm_daemon_get_hostname(daemon), executor) == 0)
+				contrib[j++]++;
+		}
 		return;
 	}
 
@@ -444,18 +450,16 @@ mpi_program_contrib(GebrGeoXmlProgram *prog, GList *servers, GebrValidator *vali
 		if (daemon_has_mpi_flavor(i->data, mpi_flavor))
 			total++;
 
-	gint j = 0;
-	for (GList *i = servers; i; i = i->next) {
+	gint np = mpi_program_get_np(prog, validator);
+	gint j = 0, acc = 0;
+	for (GList *i = servers; i; i = i->next, j++) {
 		GebrCommDaemon *daemon = i->data;
 		if (daemon_has_mpi_flavor(daemon, mpi_flavor)) {
-			gint np = mpi_program_get_np(prog, validator);
-
 			contrib[j] += np / total;
 
-			if (j < np % total)
+			if (acc < np % total)
 				contrib[j]++;
 		}
-		j++;
 	}
 }
 
@@ -478,9 +482,21 @@ mpi_run_flow(GebrCommRunner *self)
 	GebrGeoXmlSequence *seq;
 
 	gebr_geoxml_flow_get_program(GEBR_GEOXML_FLOW(clone), &seq, 0);
+
+	//Refatorar em função, depois
+	GList *executor = g_list_first(self->priv->servers);
+	ServerScore *executor_sc = executor->data;
+	GebrCommDaemon *executor_dae = executor_sc->server;
+	const gchar *executor_str = gebr_comm_daemon_get_hostname(executor_dae);
+
 	for (; seq; gebr_geoxml_sequence_next(&seq)) {
 		GebrGeoXmlProgram *prog = GEBR_GEOXML_PROGRAM(seq);
-		mpi_program_contrib(prog, self->priv->run_servers, self->priv->validator, contrib);
+		if (gebr_geoxml_program_get_control(prog) != GEBR_GEOXML_PROGRAM_CONTROL_FOR) {
+			mpi_program_contrib(prog, self->priv->run_servers, executor_str, self->priv->validator, contrib);
+			for (gint i = 0; i < n_servers; i++)
+				g_debug("contrib[%d]=%d", i, contrib[i]);
+			g_debug("#########################################################");
+		}
 	}
 
 	gint total = 0;
