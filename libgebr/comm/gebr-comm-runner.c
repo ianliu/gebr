@@ -329,6 +329,8 @@ calculate_servers_scores_and_num_procs(GebrCommRunner *self)
 			g_free(data);
 			values = g_list_delete_link(values, i);
 			i = aux;
+			if (!i)
+				break;
 		}
 	}
 
