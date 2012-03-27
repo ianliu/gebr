@@ -324,7 +324,7 @@ insert_speed_controler(GtkToolbar *toolbar,
 		       GtkWidget **speed_slider)
 {
 	if (!gebr.flow_exec_adjustment) {
-		gebr.flow_exec_adjustment = GTK_ADJUSTMENT(gtk_adjustment_new(1, 1, SLIDER_MAX, 0.1, 1, 0.1));
+		gebr.flow_exec_adjustment = GTK_ADJUSTMENT(gtk_adjustment_new(0, 0, SLIDER_MAX, 0.1, 1, 0.1));
 		g_signal_connect(gebr.flow_exec_adjustment, "value-changed", G_CALLBACK(adjustment_value_changed), NULL);
 	}
 
@@ -340,7 +340,7 @@ insert_speed_controler(GtkToolbar *toolbar,
 	gtk_scale_set_digits(GTK_SCALE(scale), 1);
 
 	gtk_scale_add_mark(GTK_SCALE(scale), 0, GTK_POS_LEFT, "<span size='x-small'>1 Core</span>");
-	gtk_scale_add_mark(GTK_SCALE(scale), SLIDER_100 / 2, GTK_POS_LEFT, "<span size='x-small'>50%</span>");
+	gtk_scale_add_mark(GTK_SCALE(scale), SLIDER_100 / 2.0, GTK_POS_LEFT, "<span size='x-small'>50%</span>");
 	gtk_scale_add_mark(GTK_SCALE(scale), SLIDER_100, GTK_POS_LEFT, "<span size='x-small'>100%</span>");
 	gtk_scale_add_mark(GTK_SCALE(scale), SLIDER_MAX, GTK_POS_LEFT, "<span size='x-small'>400%</span>");
 
