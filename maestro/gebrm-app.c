@@ -1543,7 +1543,7 @@ send_messages_of_jobs(const gchar *id,
 
 	/* Job def message */
 	gebr_comm_protocol_socket_oldmsg_send(protocol, FALSE,
-	                                      gebr_comm_protocol_defs.job_def, 20,
+	                                      gebr_comm_protocol_defs.job_def, 21,
 	                                      id,
 					      gebrm_job_get_temp_id(job),
 					      gebrm_job_get_nprocs(job),
@@ -1563,7 +1563,8 @@ send_messages_of_jobs(const gchar *id,
 	                                      start_date? start_date : "",
 	                                      finish_date? finish_date : "",
 	                                      gebrm_job_get_run_type(job),
-	                                      gebrm_job_get_mpi_owner(job));
+	                                      gebrm_job_get_mpi_owner(job),
+	                                      gebrm_job_get_mpi_flavor(job));
 
 	GList *tasks = gebrm_job_get_list_of_tasks(job);
 	
