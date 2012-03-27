@@ -205,7 +205,6 @@ gebr_gui_program_edit_load(GebrGuiProgramEdit *program_edit, GebrGeoXmlParameter
 	GebrGeoXmlSequence *parameter;
 	GebrGeoXmlParameterGroup *parameter_group;
 	GSList *radio_group;
-	gboolean is_mpi = gebr_geoxml_parameters_is_mpi(parameters);
 
 	frame = gtk_frame_new(NULL);
 	gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_NONE);
@@ -288,11 +287,7 @@ gebr_gui_program_edit_load(GebrGuiProgramEdit *program_edit, GebrGeoXmlParameter
 		GtkWidget * widget;
 
 		widget = gebr_gui_program_edit_load_parameter(program_edit, GEBR_GEOXML_PARAMETER(parameter), &radio_group);
-		if (is_mpi) {
-			GebrGeoXmlParameterType type = gebr_geoxml_parameter_get_type(GEBR_GEOXML_PARAMETER(parameter));
-			if (type != GEBR_GEOXML_PARAMETER_TYPE_GROUP)
-				gtk_widget_set_sensitive(widget, FALSE);
-		}
+
 		if (first_parameter) {
 			/* used in on_group_expander_mnemonic_activate */
 			g_object_set_data(G_OBJECT(frame), "first-parameter", parameter);
@@ -467,6 +462,12 @@ static GtkWidget *gebr_gui_program_edit_load_parameter(GebrGuiProgramEdit  *prog
 
 		gebr_gui_parameter_widget->group_warning_widget = program_edit->group_warning_widget;
 		gtk_widget_show(gebr_gui_parameter_widget->widget);
+
+		GebrGeoXmlParameters *params = gebr_geoxml_parameter_get_parameters(gebr_gui_parameter_widget->parameter);
+		gboolean is_mpi = gebr_geoxml_parameters_is_mpi(params);
+		if (is_mpi)
+			gtk_widget_set_sensitive(gebr_gui_parameter_widget->value_widget, FALSE);
+		gebr_geoxml_object_unref(params);
 
 		/* exclusive? */
 		selected = gebr_geoxml_parameters_get_selection(gebr_geoxml_parameter_get_parameters(parameter));
