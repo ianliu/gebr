@@ -234,6 +234,10 @@ const gchar *gebrm_job_get_mpi_owner(GebrmJob *job);
 
 void gebrm_job_set_mpi_owner(GebrmJob *job, gchar *mpi_owner);
 
+const gchar *gebrm_job_get_mpi_flavor(GebrmJob *job);
+
+void gebrm_job_set_mpi_flavor(GebrmJob *job, const gchar *mpi_flavor);
+
 G_END_DECLS
 
 #endif /* __GEBRM_JOB_H__ */

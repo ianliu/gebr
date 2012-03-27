@@ -82,6 +82,8 @@ const gchar *gebr_comm_runner_get_id(GebrCommRunner *self);
 
 gchar *gebr_comm_runner_get_mpi_owner(GebrCommRunner *self);
 
+gchar *gebr_comm_runner_get_mpi_flavor(GebrCommRunner *self);
+
 G_END_DECLS
 
 #endif /*  __GEBR_COMM_RUNNER_H__ */

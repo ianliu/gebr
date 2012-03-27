@@ -591,7 +591,7 @@ parse_messages(GebrCommServer *comm_server,
 			GList *arguments;
 
 			/* organize message data */
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 20)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 21)) == NULL)
 				goto err;
 
 			GString *id          = g_list_nth_data(arguments, 0);
@@ -614,8 +614,10 @@ parse_messages(GebrCommServer *comm_server,
 			GString *finish_date = g_list_nth_data(arguments, 17);
 			GString *run_type    = g_list_nth_data(arguments, 18);
 			GString *mpi_owner   = g_list_nth_data(arguments, 19);
+			GString *mpi_flavor   = g_list_nth_data(arguments, 20);
 
-			g_debug("mpi_owner:%s", mpi_owner->str);
+			g_debug("mpi_flavor: %s", mpi_flavor->str);
+			g_debug("mpi_owner: %s", mpi_owner->str);
 
 			GebrJob *job = g_hash_table_lookup(maestro->priv->jobs, id->str);
 			gboolean prev_exist = FALSE;

@@ -730,7 +730,7 @@ send_job_def_to_clients(GebrmApp *app, GebrmJob *job)
 		GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(i->data);
 		g_debug("-----------------------%s",gebrm_job_get_nprocs(job));
 		gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
-						      gebr_comm_protocol_defs.job_def, 20,
+						      gebr_comm_protocol_defs.job_def, 21,
 						      gebrm_job_get_id(job),
 						      gebrm_job_get_temp_id(job),
 						      gebrm_job_get_nprocs(job),
@@ -750,7 +750,8 @@ send_job_def_to_clients(GebrmApp *app, GebrmJob *job)
 						      start_date? start_date : "",
 						      finish_date? finish_date : "",
 						      gebrm_job_get_run_type(job),
-						      gebrm_job_get_mpi_owner(job));
+						      gebrm_job_get_mpi_owner(job),
+						      gebrm_job_get_mpi_flavor(job));
 	}
 }
 
@@ -761,6 +762,7 @@ on_execution_response(GebrCommRunner *runner,
 	AppAndJob *aap = data;
 
 	gebrm_job_set_mpi_owner(aap->job, gebr_comm_runner_get_mpi_owner(runner));
+	gebrm_job_set_mpi_flavor(aap->job, gebr_comm_runner_get_mpi_flavor(runner));
 	gebrm_job_set_total_tasks(aap->job, gebr_comm_runner_get_total(runner));
 	gebrm_job_set_servers_list(aap->job, gebr_comm_runner_get_servers_list(runner));
 	g_debug("on %s, ncores:%s", __func__, gebr_comm_runner_get_ncores(runner));
