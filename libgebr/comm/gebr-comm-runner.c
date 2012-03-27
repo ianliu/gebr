@@ -460,8 +460,10 @@ mpi_program_contrib(GebrGeoXmlProgram *prog, GList *servers, const gchar *execut
 		if (daemon_has_mpi_flavor(daemon, mpi_flavor)) {
 			contrib[j] += np / total;
 
-			if (acc < np % total)
+			if (acc < np % total) {
 				contrib[j]++;
+				acc++;
+			}
 		}
 	}
 }
