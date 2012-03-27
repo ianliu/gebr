@@ -616,9 +616,6 @@ parse_messages(GebrCommServer *comm_server,
 			GString *mpi_owner   = g_list_nth_data(arguments, 19);
 			GString *mpi_flavor   = g_list_nth_data(arguments, 20);
 
-			g_debug("mpi_flavor: %s", mpi_flavor->str);
-			g_debug("mpi_owner: %s", mpi_owner->str);
-
 			GebrJob *job = g_hash_table_lookup(maestro->priv->jobs, id->str);
 			gboolean prev_exist = FALSE;
 
@@ -647,6 +644,7 @@ parse_messages(GebrCommServer *comm_server,
 			gebr_job_set_static_status(job, gebr_comm_job_get_status_from_string(status->str));
 			gebr_job_set_io(job, input->str, output->str, error->str);
 			gebr_job_set_mpi_owner(job, mpi_owner->str);
+			gebr_job_set_mpi_flavor(job, mpi_flavor->str);
 			g_debug("still_mpi_owner:%s", gebr_job_get_mpi_owner(job));
 
 			if (g_strcmp0(gebr_job_get_queue(job), parent_id->str) != 0) {

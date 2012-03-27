@@ -51,6 +51,7 @@ struct _GebrJobPriv {
 	gchar *nprocs;
 	gchar *maestro_address;
 	gchar *mpi_owner;
+	gchar *mpi_flavor;
 
 	gboolean is_fake;
 
@@ -90,6 +91,8 @@ gebr_job_finalize(GObject *object)
 	g_free(job->priv->input_file);
 	g_free(job->priv->output_file);
 	g_free(job->priv->log_file);
+	g_free(job->priv->mpi_owner);
+	g_free(job->priv->mpi_flavor);
 
 	G_OBJECT_CLASS(gebr_job_parent_class)->finalize(object);
 }
@@ -237,6 +240,7 @@ gebr_job_new_with_id(const gchar *rid,
 	job->priv->runid = g_strdup(rid);
 	job->priv->run_type = g_strdup(run_type);
 	job->priv->n_servers = 0;
+	job->priv->mpi_flavor = g_strdup("");
 
 	return job;
 }
@@ -739,3 +743,18 @@ gebr_job_get_mpi_owner(GebrJob *job)
 {
 	return job->priv->mpi_owner;
 }
+
+void
+gebr_job_set_mpi_flavor(GebrJob *job, const gchar *mpi_flavor)
+{
+	if (job->priv->mpi_flavor)
+		g_free(job->priv->mpi_flavor);
+	job->priv->mpi_flavor = g_strdup(mpi_flavor);
+}
+
+const gchar *
+gebr_job_get_mpi_flavor(GebrJob *job)
+{
+	return job->priv->mpi_flavor;
+}
+

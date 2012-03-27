@@ -770,11 +770,10 @@ job_control_fill_servers_info(GebrJobControl *jc)
 		g_string_append(resources, markup);
 
 		const gchar *mpi_owner_tst = gebr_job_get_mpi_owner(job);
+		const gchar *mpi_flavor = gebr_job_get_mpi_flavor(job);
 		if (mpi_owner_tst && *mpi_owner_tst) {
-			gchar *mpi_message = g_markup_printf_escaped(_("The MPI Job was called by <b>%s</b>\n"), mpi_owner_tst);
-
+			gchar *mpi_message = g_markup_printf_escaped(_("The MPI jobs were of type(s) <b>%s</b> and \n were called by <b>%s</b>\n"), mpi_flavor, mpi_owner_tst);
 			g_string_append(resources, mpi_message);
-
 			g_free(mpi_message);
 		}
 
