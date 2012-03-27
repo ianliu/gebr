@@ -60,11 +60,10 @@ string_list_free(gpointer key, gpointer value)
 
 static void gebrd_job_init(GebrdJob * job)
 {
-	job->exec_speed = g_string_new(NULL);
 	job->frac = g_string_new(NULL);
 	job->server_list = g_string_new(NULL);
 	job->server_group_name = g_string_new(NULL);
-	job->job_percentage= g_string_new(NULL);
+	job->job_percentage = g_string_new(NULL);
 	job->gid = g_string_new(NULL);
 	job->paths = g_string_new(NULL);
 	job->mpi_servers = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
@@ -385,7 +384,7 @@ job_new(GebrdJob **_job,
 	GString *gid,
 	GString *id,
 	GString *frac,
-	GString *speed,
+	GString *numproc,
 	GString *nice,
 	GString *flow_xml,
 	GString *account,
@@ -410,7 +409,6 @@ job_new(GebrdJob **_job,
 	job->parent.server_location = client->server_location;
 	g_string_assign(job->parent.run_id, id->str);
 	g_string_assign(job->frac, frac->str);
-	g_string_assign(job->exec_speed, speed->str);
 	job->niceness = g_strcmp0(nice->str, "0") == 0 ? 0 : 19;
 	job->parent.status = JOB_STATUS_INITIAL;
 	g_string_assign(job->parent.moab_account, account->str);
@@ -446,12 +444,7 @@ job_new(GebrdJob **_job,
 		gebr_validator_update(gebrd_get_validator(gebrd));
 	}
 
-	gint n = gebrd_app_set_heuristic_aggression(gebrd, atof(speed->str));
-
-	if (gebr_geoxml_flow_is_parallelizable(job->flow, gebrd->validator))
-		job->effprocs = n;
-	else
-		job->effprocs = 1;
+	job->numproc = atoi(numproc->str);
 
 	/* just to send the client the command line, we could do this after by changing the protocol */
 	job_assembly_cmdline(job);
@@ -1500,7 +1493,7 @@ static void job_assembly_cmdline(GebrdJob *job)
 		assemble_bc_cmd_line (expr_buf);
 
 		if (job->is_parallelizable) {
-			nprocs = job->effprocs;
+			nprocs = job->numproc;
 			nice = job->niceness;
 			prefix = g_strdup_printf("PROC=%d\n"
 						 "NICE=%d\n"

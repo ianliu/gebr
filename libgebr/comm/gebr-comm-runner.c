@@ -41,6 +41,7 @@ struct _GebrCommRunnerPriv {
 	GList *run_servers;
 	GebrValidator *validator;
 	gdouble *weights;
+	gint *numprocs;
 
 	gint requests;
 	gint responses;
@@ -175,6 +176,8 @@ gebr_comm_runner_free(GebrCommRunner *self)
 	g_free(self->priv->paths);
 	g_free(self->priv->mpi_owner);
 	g_free(self->priv->mpi_flavor);
+	g_free(self->priv->weights);
+	g_free(self->priv->numprocs);
 }
 
 /*
@@ -276,57 +279,108 @@ calculate_server_score(GebrCommDaemon *daemon, const gchar *load, gint ncores, g
 	return score;
 }
 
-static void
-sort_servers_with_cores(GebrCommRunner *self)
+typedef struct {
+	GebrCommDaemon *daemon;
+	gdouble weight; /* The sum of all its cores scores */
+	gint np; /* Number of cores to use at @daemon */
+} DaemonExecInfo;
+
+static GList * /* DaemonExecInfo */
+calculate_servers_scores_and_num_procs(GebrCommRunner *self)
 {
-	gdouble sum = 0;
-	gint n = g_list_length(self->priv->servers);
-
-	GHashTable *map = g_hash_table_new(NULL, NULL);
-	double *weights = g_new0(double, n);
-
-	gint k = 0;
-	for (GList *i = self->priv->servers; i; i = i->next, k++)
-		g_hash_table_insert(map, i->data, &weights[k]);
-
+	gint n_cores = g_list_length(self->priv->cores_scores);
 	gdouble speed = atof(self->priv->speed);
-	gint total_procs = gebr_calculate_number_of_processors(g_list_length(self->priv->cores_scores), speed);
+	gint total_procs = gebr_calculate_number_of_processors(n_cores, speed);
+
+	GHashTable *map = g_hash_table_new(g_str_hash, g_str_equal);
+	for (GList *i = self->priv->servers; i; i = i->next) {
+		DaemonExecInfo *data = g_new0(DaemonExecInfo, 1);
+		data->daemon = i->data;
+		g_hash_table_insert(map, g_strdup(gebr_comm_daemon_get_hostname(i->data)), data);
+	}
 
 	GList *j = self->priv->cores_scores;
-	for (k = 0; j && k < total_procs; j = j->next, k++) {
+	for (gint k = 0; j && k < total_procs; j = j->next, k++) {
 		ServerScore *sc = j->data;
-		gdouble *w = g_hash_table_lookup(map, sc->server);
-		*w += sc->score;
+		DaemonExecInfo *data = g_hash_table_lookup(map, gebr_comm_daemon_get_hostname(sc->server));
+		data->weight += sc->score;
+		data->np++;
 	}
 
-	self->priv->ncores = g_strdup_printf("%d", total_procs);
+	if (j) {
+		if (j->prev) {
+			j->prev->next = NULL;
+			j->prev = NULL;
+		} else {
+			 self->priv->cores_scores = NULL;
+		}
+		g_list_foreach(j, (GFunc)g_free, NULL);
+		g_list_free(j);
+	}
 
-	for (k = 0; k < n; k++)
-		sum += weights[k];
 
-	for (k = 0; k < n; k++)
-		weights[k] /= sum;
+	GList *values = g_hash_table_get_values(map);
+
+	for (GList *i = values; i; i = i->next) {
+		DaemonExecInfo *data = i->data;
+		if (data->np == 0) {
+			g_free(data);
+			values = g_list_delete_link(values, i);
+		}
+	}
+
+	g_hash_table_destroy(map);
+
+	return values;
+}
+
+static GList *
+normalize_and_sort_servers(GList *values)
+{
+	gdouble sum = 0;
+
+	for (GList *i = values; i; i = i->next) {
+		DaemonExecInfo *data = i->data;
+		sum += data->weight;
+	}
+
+	for (GList *i = values; i; i = i->next) {
+		DaemonExecInfo *data = i->data;
+		data->weight /= sum;
+	}
 
 	gint comp_func(gconstpointer a, gconstpointer b) {
-		gdouble *aa, *bb;
-		const GebrCommDaemon *d1 = a, *d2 = b;
-		aa = g_hash_table_lookup(map, d1);
-		bb = g_hash_table_lookup(map, d2);
-
-		if (*aa > *bb)
-			return -1;
-
-		if (*aa == *bb)
-			return 0;
-
-		gdouble aux = *aa;
-		*aa = *bb;
-		*bb = aux;
-		return 1;
+		const DaemonExecInfo *d1 = a, *d2 = b;
+		return d2->weight - d1->weight;
 	}
 
-	self->priv->servers = g_list_sort(self->priv->servers, comp_func);
+	return g_list_sort(values, comp_func);
+}
+
+static void
+set_servers_execution_info(GebrCommRunner *self)
+{
+	GList *values = calculate_servers_scores_and_num_procs(self);
+	values = normalize_and_sort_servers(values);
+
+	gint n = g_list_length(values);
+	double *weights = g_new0(double, n);
+	gint *numprocs = g_new0(gint, n);
+
+	g_list_free(self->priv->servers);
+	self->priv->servers = NULL;
+
+	gint k = 0;
+	for (GList *i = values; i; i = i->next, k++) {
+		DaemonExecInfo *data = i->data;
+		self->priv->servers = g_list_prepend(self->priv->servers, data->daemon);
+		weights[k] = data->weight;
+		numprocs[k] = data->np;
+	}
+
+	self->priv->servers = g_list_reverse(self->priv->servers);
 	self->priv->weights = weights;
+	self->priv->numprocs = numprocs;
 }
 
 static void
@@ -347,21 +401,21 @@ divide_and_run_flows(GebrCommRunner *self)
 	                                             n, &n_steps);
 
 	if (parallel)
-		self->priv->ncores = g_strdup_printf("%d", MIN(n_steps, atoi(self->priv->ncores)));
+		self->priv->ncores = g_strdup_printf("%d", MIN(n_steps, g_list_length(self->priv->cores_scores)));
 	else
 		self->priv->ncores = g_strdup("1");
 
-	gint frac = 1;
-	GList *i = flows;
 
 	GString *server_list = g_string_new("");
 
+	gint k;
+	GList *i = flows;
 	GList *j = self->priv->servers;
-	for (int k = 0; i; k++) {
+	for (k = 0; i; k++, i = i->next, j = j->next) {
 		GebrGeoXmlFlow *flow = i->data;
 		GebrCommDaemon *daemon = j->data;
 		GebrCommServer *server = gebr_comm_daemon_get_server(daemon);
-		gchar *frac_str = g_strdup_printf("%d", frac);
+		gchar *frac_str = g_strdup_printf("%d", k+1);
 		gchar *flow_xml = strip_flow(self->priv->validator, flow);
 		const gchar *hostname = gebr_comm_daemon_get_hostname(daemon);
 
@@ -369,13 +423,14 @@ divide_and_run_flows(GebrCommRunner *self)
 
 		g_string_append_printf(server_list, "%s,%lf,",
 				       hostname, self->priv->weights[k]);
+		gchar *numproc = g_strdup_printf("%d", self->priv->numprocs[k]);
 
 		gebr_comm_protocol_socket_oldmsg_send(server->socket, FALSE,
 						      gebr_comm_protocol_defs.run_def, 9,
 						      self->priv->gid,
 						      self->priv->id,
 						      frac_str,
-						      self->priv->speed,
+						      numproc,
 						      self->priv->nice,
 						      flow_xml,
 						      self->priv->paths,
@@ -386,13 +441,10 @@ divide_and_run_flows(GebrCommRunner *self)
 
 		g_free(frac_str);
 		g_free(flow_xml);
-
-		frac++;
-		i = i->next;
-		j = j->next;
+		g_free(numproc);
 	}
 
-	self->priv->total = frac - 1;
+	self->priv->total = k;
 	g_string_erase(server_list, server_list->len-1, 1);
 	self->priv->servers_list = g_string_free(server_list, FALSE);
 
@@ -625,7 +677,7 @@ on_response_received(GebrCommHttpMsg *request,
 		}
 
 		self->priv->cores_scores = g_list_sort(self->priv->cores_scores, (GCompareFunc)comp_func);
-		sort_servers_with_cores(self);
+		set_servers_execution_info(self);
 
 		GebrGeoXmlProgram *mpi_prog = gebr_geoxml_flow_get_first_mpi_program(GEBR_GEOXML_FLOW(self->priv->flow));
 		gboolean mpi = mpi_prog != NULL;

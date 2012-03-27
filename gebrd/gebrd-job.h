@@ -60,11 +60,10 @@ struct _GebrdJob {
 
 	/* Temporary variables to build command line */
 	gsize n_vars;
-	gint effprocs;
+	gint numproc;
 	gint niceness;
 
 	GString *gid;
-	GString *exec_speed;
 	GString *frac;
 	GString *server_list;
 	GString *server_group_name;

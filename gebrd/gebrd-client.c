@@ -560,7 +560,7 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			GString *gid = g_list_nth_data(arguments, 0);
 			GString *id = g_list_nth_data(arguments, 1);
 			GString *frac = g_list_nth_data(arguments, 2);
-			GString *speed = g_list_nth_data(arguments, 3);
+			GString *numproc = g_list_nth_data(arguments, 3);
 			GString *nice = g_list_nth_data(arguments, 4);
 			GString *flow_xml = g_list_nth_data(arguments, 5);
 			GString *paths = g_list_nth_data(arguments, 6);
@@ -572,7 +572,7 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			g_debug("SERVERS MPI %s", servers_mpi->str);
 
 			/* try to run and send return */
-			job_new(&job, client, gid, id, frac, speed, nice, flow_xml, account, paths, servers_mpi);
+			job_new(&job, client, gid, id, frac, numproc, nice, flow_xml, account, paths, servers_mpi);
 
 #ifdef DEBUG
 			gchar *env_delay = getenv("GEBRD_RUN_DELAY_SEC");
