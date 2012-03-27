@@ -341,6 +341,8 @@ save_maestro_changed(GebrUiProjectLine *upl)
 		gtk_tree_model_get_iter(model, &iter, paths->data);
 		gtk_tree_store_set(upl->store, &iter, PL_SENSITIVE, TRUE, -1);
 	}
+
+	line_info_update();
 }
 
 
