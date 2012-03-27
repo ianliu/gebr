@@ -170,7 +170,8 @@ main(int argc, char *argv[])
 
 	if (sigaction(SIGTERM, &sa, NULL)
 	    || sigaction(SIGINT, &sa, NULL)
-	    || sigaction(SIGQUIT, &sa, NULL))
+	    || sigaction(SIGQUIT, &sa, NULL)
+	    || sigaction(SIGSEGV, &sa, NULL))
 		perror("sigaction");
 
 	gebr_geoxml_init();
