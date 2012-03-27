@@ -322,10 +322,13 @@ calculate_servers_scores_and_num_procs(GebrCommRunner *self)
 	GList *values = g_hash_table_get_values(map);
 
 	for (GList *i = values; i; i = i->next) {
+		GList *aux = NULL;
 		DaemonExecInfo *data = i->data;
 		if (data->np == 0) {
+			aux = i->prev;
 			g_free(data);
 			values = g_list_delete_link(values, i);
+			i = aux;
 		}
 	}
 
