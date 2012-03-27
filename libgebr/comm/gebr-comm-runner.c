@@ -487,9 +487,7 @@ mpi_run_flow(GebrCommRunner *self)
 	gebr_geoxml_flow_get_program(GEBR_GEOXML_FLOW(clone), &seq, 0);
 
 	//Refatorar em função, depois
-	GList *executor = g_list_first(self->priv->servers);
-	ServerScore *executor_sc = executor->data;
-	GebrCommDaemon *executor_dae = executor_sc->server;
+	GebrCommDaemon *executor_dae = self->priv->servers->data;
 	const gchar *executor_str = gebr_comm_daemon_get_hostname(executor_dae);
 	GString *mpi_flavors = g_string_new("");
 
