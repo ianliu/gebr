@@ -55,7 +55,7 @@ enum {
 
 void gebr_setup_ui(void);
 
-gint gebr_interface_get_execution_speed(void);
+gdouble gebr_interface_get_execution_speed(void);
 
 gint gebr_interface_get_niceness(void);
 

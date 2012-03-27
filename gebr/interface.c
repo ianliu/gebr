@@ -339,8 +339,9 @@ insert_speed_controler(GtkToolbar *toolbar,
 	gtk_scale_set_draw_value(GTK_SCALE(scale), FALSE);
 	gtk_scale_set_digits(GTK_SCALE(scale), 1);
 
+	gdouble med = SLIDER_100 / 2.0;
 	gtk_scale_add_mark(GTK_SCALE(scale), 0, GTK_POS_LEFT, "<span size='x-small'>1 Core</span>");
-	gtk_scale_add_mark(GTK_SCALE(scale), SLIDER_100 / 2.0, GTK_POS_LEFT, "<span size='x-small'>50%</span>");
+	gtk_scale_add_mark(GTK_SCALE(scale), med, GTK_POS_LEFT, "<span size='x-small'>50%</span>");
 	gtk_scale_add_mark(GTK_SCALE(scale), SLIDER_100, GTK_POS_LEFT, "<span size='x-small'>100%</span>");
 	gtk_scale_add_mark(GTK_SCALE(scale), SLIDER_MAX, GTK_POS_LEFT, "<span size='x-small'>400%</span>");
 
@@ -742,7 +743,7 @@ static void assembly_menus(GtkMenuBar * menu_bar)
 	demos_list_create(GTK_MENU(submenu));
 }
 
-gint
+gdouble
 gebr_interface_get_execution_speed(void)
 {
 	return gebr.config.flow_exec_speed;
