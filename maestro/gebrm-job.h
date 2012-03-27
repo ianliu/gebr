@@ -232,7 +232,7 @@ void gebrm_job_set_status(GebrmJob *job, GebrCommJobStatus status);
 
 const gchar *gebrm_job_get_mpi_owner(GebrmJob *job);
 
-void gebrm_job_set_mpi_owner(GebrmJob *job, gchar *mpi_owner);
+void gebrm_job_set_mpi_owner(GebrmJob *job, const gchar *mpi_owner);
 
 const gchar *gebrm_job_get_mpi_flavor(GebrmJob *job);
 

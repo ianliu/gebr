@@ -671,7 +671,7 @@ get_comm_servers_max_subset(GList *servers,
 }
 
 static GList *
-get_comm_servers_list(GebrmApp *app, const gchar *group, const gchar *group_type, GList *mpi_flavors)
+get_comm_servers_list(GebrmApp *app, const gchar *group, const gchar *group_type)
 {
 	GList *servers = NULL;
 	gboolean is_single = g_strcmp0(group_type, "daemon") == 0;
@@ -765,7 +765,6 @@ on_execution_response(GebrCommRunner *runner,
 	gebrm_job_set_mpi_flavor(aap->job, gebr_comm_runner_get_mpi_flavor(runner));
 	gebrm_job_set_total_tasks(aap->job, gebr_comm_runner_get_total(runner));
 	gebrm_job_set_servers_list(aap->job, gebr_comm_runner_get_servers_list(runner));
-	g_debug("on %s, ncores:%s", __func__, gebr_comm_runner_get_ncores(runner));
 	gebrm_job_set_nprocs(aap->job, gebr_comm_runner_get_ncores(runner));
 
 	g_queue_pop_head(aap->app->priv->job_def_queue);
@@ -868,7 +867,7 @@ gebrm_app_handle_run(GebrmApp *app, GebrCommHttpMsg *request, GebrmClient *clien
 	else
 		gebrm_job_set_run_type(job, "normal");
 
-	GList *servers = get_comm_servers_list(app, name, group_type, mpi_flavors);
+	GList *servers = get_comm_servers_list(app, name, group_type);
 
 	GList *min_subset_servers = get_comm_servers_min_subset(servers, mpi_flavors);
 	GList *max_subset_servers = get_comm_servers_max_subset(servers, mpi_flavors);

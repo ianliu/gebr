@@ -728,7 +728,6 @@ void
 gebrm_job_set_run_type(GebrmJob *job,
                        const gchar *type)
 {
-	g_debug("+++++++ SET RUN TYPE: %s", type);
 	if (job->priv->run_type)
 		g_free(job->priv->run_type);
 	job->priv->run_type = g_strdup(type);
@@ -737,7 +736,6 @@ gebrm_job_set_run_type(GebrmJob *job,
 const gchar *
 gebrm_job_get_run_type(GebrmJob *job)
 {
-	g_debug("+++++++ RETURN RUN TYPE: %s", job->priv->run_type);
 	return job->priv->run_type;
 }
 
@@ -780,7 +778,6 @@ void
 gebrm_job_set_status(GebrmJob *job, GebrCommJobStatus status)
 {
 	job->priv->status = status;
-
 }
 
 const gchar *
@@ -790,9 +787,10 @@ gebrm_job_get_mpi_owner(GebrmJob *job)
 }
 
 void
-gebrm_job_set_mpi_owner(GebrmJob *job, gchar *mpi_owner)
+gebrm_job_set_mpi_owner(GebrmJob *job, const gchar *mpi_owner)
 {
-	job->priv->mpi_owner = strdup(mpi_owner);
+	g_free(job->priv->mpi_owner);
+	job->priv->mpi_owner = g_strdup(mpi_owner);
 }
 
 const gchar *

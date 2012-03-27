@@ -155,6 +155,7 @@ gebr_comm_runner_new(GebrGeoXmlDocument *flow,
 	self->priv->validator = validator;
 	self->priv->run_servers = g_list_copy(run_servers);
 	self->priv->cores_scores = NULL;
+	self->priv->mpi_owner = g_strdup("");
 	self->priv->mpi_flavor = g_strdup("");
 
 	self->priv->servers = g_list_copy(submit_servers);
@@ -353,7 +354,6 @@ divide_and_run_flows(GebrCommRunner *self)
 	gint frac = 1;
 	GList *i = flows;
 
-	self->priv->mpi_owner = g_strdup("");
 	GString *server_list = g_string_new("");
 
 	GList *j = self->priv->servers;
@@ -495,7 +495,7 @@ mpi_run_flow(GebrCommRunner *self)
 		GebrGeoXmlProgram *prog = GEBR_GEOXML_PROGRAM(seq);
 		if (gebr_geoxml_program_get_control(prog) != GEBR_GEOXML_PROGRAM_CONTROL_FOR) {
 			mpi_program_contrib(prog, self->priv->run_servers, executor_str, self->priv->validator, contrib);
-			mpi_program_contrib(prog, self->priv->run_servers, "dell1", self->priv->validator, contrib);
+
 			const gchar *mpi_flavor_sub = gebr_geoxml_program_get_mpi(prog);
 			if (*mpi_flavor_sub && !g_strrstr(mpi_flavors->str, mpi_flavor_sub))
 				g_string_printf(mpi_flavors, "%s,%s", mpi_flavors->str, mpi_flavor_sub);
@@ -541,9 +541,8 @@ mpi_run_flow(GebrCommRunner *self)
 	// Set CommRunner parameters
 	self->priv->ncores = "1";
 	self->priv->total = 1;
-	self->priv->mpi_owner = g_string_free(first_server->address, FALSE);
+	self->priv->mpi_owner = g_strdup(first_server->address->str);
 	self->priv->mpi_flavor = g_string_free(mpi_flavors, FALSE);
-	g_debug("on %s, self->priv->mpi_flavors:'%s'", __func__, self->priv->mpi_flavor);
 
 	gebr_comm_protocol_socket_oldmsg_send(first_server->socket, FALSE,
 	                                      gebr_comm_protocol_defs.run_def, 9,
@@ -725,13 +724,13 @@ gebr_comm_runner_get_id(GebrCommRunner *self)
 	return self->priv->id;
 }
 
-gchar *
+const gchar *
 gebr_comm_runner_get_mpi_owner(GebrCommRunner *self)
 {
 	return self->priv->mpi_owner;
 }
 
-gchar *
+const gchar *
 gebr_comm_runner_get_mpi_flavor(GebrCommRunner *self)
 {
 	return self->priv->mpi_flavor;
