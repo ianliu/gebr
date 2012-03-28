@@ -765,7 +765,7 @@ job_control_fill_servers_info(GebrJobControl *jc)
 				groups = g_strdup_printf(_("%s"), gebr_maestro_server_get_display_address(maestro));
 
 		markup = g_markup_printf_escaped(_("Job submitted by <b>%s</b> to Maestro <b>%s</b>.\n"
-						   "Executed %s simultaneous tasks on %s <b>%s</b>,\n"
+						   "Executed <b>%s</b> simultaneous processes on %s <b>%s</b>,\n"
 						   "%s"
 						   "distributed on <b>%d</b> servers.\n"),
 						  gebr_job_get_hostname(job), gebr_job_get_maestro_address(job),
