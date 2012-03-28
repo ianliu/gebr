@@ -885,15 +885,20 @@ gebrm_app_handle_run(GebrmApp *app, GebrCommHttpMsg *request, GebrmClient *clien
 
 		gchar *mpi_missing_group;
 
-		if (*info.group) 
-			mpi_missing_group = g_strdup_printf("group %s", info.group);
-		 else
-			mpi_missing_group = g_strdup_printf("Maestro %s", info.hostname);
+		if (!*info.group)
+			mpi_missing_group = g_strdup_printf("Maestro <b>%s</b>", info.hostname);
+		else if (g_strcmp0(group_type,"daemon"))
+			mpi_missing_group = g_strdup_printf("group <b>%s</b>", info.group);
+		else
+			mpi_missing_group = g_strdup_printf("<b>%s</b>", info.group);
+
+
+
 
 		if (tmp->len)
 			g_string_erase(tmp, 0, 4);
 
-		gchar *mpi_issue_message = g_strdup_printf(_("There is no server that supports %s in <b>%s</b>"),
+		gchar *mpi_issue_message = g_strdup_printf(_("There is no server that supports %s in %s"),
 							   tmp->str, mpi_missing_group);
 		g_free(mpi_missing_group);
 		g_string_free(tmp, TRUE);
