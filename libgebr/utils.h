@@ -251,6 +251,17 @@ void gebr_pairstrfreev(gchar ***strv);
 gchar *gebr_remove_path_prefix(const gchar *prefix, const gchar *path);
 
 /**
+ * gebr_relativise_home_path:
+ *
+ * Substitute @home with the prefix HOME
+ * @pvector is a vector of pair of strings, the first entry is an
+ * alias and the second is an absolute path.
+ */
+gchar *gebr_relativise_home_path(const gchar *path_string,
+                                 const gchar *mount_point,
+                                 const gchar *home);
+
+/**
  * gebr_relativise_path:
  *
  * Substitute @path with the longest prefix in @pvector.

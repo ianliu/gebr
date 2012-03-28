@@ -923,6 +923,23 @@ gebr_remove_path_prefix(const gchar *prefix, const gchar *path)
 }
 
 gchar *
+gebr_relativise_home_path(const gchar *path_string,
+                          const gchar *mount_point,
+                          const gchar *home)
+{
+	gchar ***pvector = g_new0(gchar**, 2);
+	pvector[0] = g_new0(gchar*, 2);
+	pvector[0][0] = g_strdup(home);
+	pvector[0][1] = g_strdup("HOME");
+
+	gchar *folder = gebr_relativise_path(path_string, mount_point, pvector);
+
+	gebr_pairstrfreev(pvector);
+
+	return folder;
+}
+
+gchar *
 gebr_relativise_path(const gchar *path_string,
                      const gchar *mount_point,
 		     gchar ***pvector)
