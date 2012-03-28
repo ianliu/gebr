@@ -537,6 +537,9 @@ call_ran_func(GebrCommRunner *self)
 static int
 mpi_program_get_np(GebrGeoXmlProgram *prog, GebrValidator *validator) 
 {
+	const gchar *mpi_flavor = gebr_geoxml_program_get_mpi(prog);
+	if (!mpi_flavor || !*mpi_flavor)
+		return 0;
 	gchar *nprocs;
 	gchar *procs = gebr_geoxml_program_mpi_get_n_process(GEBR_GEOXML_PROGRAM(prog));
 
@@ -618,10 +621,14 @@ mpi_run_flow(GebrCommRunner *self)
 	const gchar *executor_str = gebr_comm_daemon_get_hostname(executor_dae);
 	GString *mpi_flavors = g_string_new("");
 
+	gint max_np = 0;
 	for (; seq; gebr_geoxml_sequence_next(&seq)) {
 		GebrGeoXmlProgram *prog = GEBR_GEOXML_PROGRAM(seq);
 		if (gebr_geoxml_program_get_control(prog) != GEBR_GEOXML_PROGRAM_CONTROL_FOR) {
 			mpi_program_contrib(prog, self->priv->run_servers, executor_str, self->priv->validator, contrib);
+			gint np = mpi_program_get_np(prog, self->priv->validator);
+			if (np > max_np)
+				max_np = np;
 
 			const gchar *mpi_flavor_sub = gebr_geoxml_program_get_mpi(prog);
 			if (*mpi_flavor_sub && !g_strrstr(mpi_flavors->str, mpi_flavor_sub))
@@ -632,6 +639,7 @@ mpi_run_flow(GebrCommRunner *self)
 			g_debug("#########################################################");
 		}
 	}
+	self->priv->ncores = g_strdup_printf("%d", max_np);
 	if (mpi_flavors->len > 0)
 		g_string_erase(mpi_flavors, 0, 1);
 
@@ -666,7 +674,6 @@ mpi_run_flow(GebrCommRunner *self)
 	GebrCommServer *first_server = gebr_comm_daemon_get_server(daemon);
 
 	// Set CommRunner parameters
-	self->priv->ncores = "1";
 	self->priv->total = 1;
 	self->priv->mpi_owner = g_strdup(first_server->address->str);
 	self->priv->mpi_flavor = g_string_free(mpi_flavors, FALSE);
@@ -675,8 +682,8 @@ mpi_run_flow(GebrCommRunner *self)
 	                                      gebr_comm_protocol_defs.run_def, 9,
 	                                      self->priv->gid,
 	                                      self->priv->id,
-	                                      "1",
-	                                      self->priv->speed,
+	                                      "1", /* Task ID */
+	                                      "1", /* Number of processes */
 	                                      self->priv->nice,
 	                                      flow_xml,
 	                                      self->priv->paths,
