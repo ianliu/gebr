@@ -55,9 +55,29 @@ on_assistant_entry_changed(GtkEntry *entry,
 		gtk_assistant_set_page_complete(assistant, current_page, FALSE);
 }
 
+gboolean
+on_assistant_base_focus_out(GtkWidget *widget,
+                            GdkEvent  *event,
+                            GtkAssistant *assistant)
+{
+	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+	const gchar *home = gebr_maestro_server_get_home_dir(maestro);
+	gchar *mount_point = gebr_maestro_info_get_home_mount_point(gebr_maestro_server_get_info(maestro));
+
+	const gchar *text = gtk_entry_get_text(GTK_ENTRY(widget));
+
+	gchar *relative = gebr_relativise_home_path(text, mount_point, home);
+
+	gtk_entry_set_text(GTK_ENTRY(widget), relative);
+
+	g_free(mount_point);
+	g_free(relative);
+	return FALSE;
+}
+
 static void
 on_assistant_base_validate(GtkEntry *entry,
-		 GtkAssistant *assistant)
+                           GtkAssistant *assistant)
 {
 	GtkWidget *current_page;
 	gint page_number;
@@ -86,6 +106,7 @@ on_properties_entry_changed(GtkEntry *entry,
 	else
 		gtk_widget_set_sensitive(widget, FALSE);
 }
+
 static void
 on_assistant_cancel(GtkWidget *widget)
 {
@@ -301,9 +322,13 @@ on_base_entry_press(GtkEntry            *entry,
 	gint response = gtk_dialog_run(GTK_DIALOG(file_chooser));
 
 	if (response == GTK_RESPONSE_OK) {
-		gchar *folder = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(file_chooser));
+		gchar *tmp = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(file_chooser));
+		gchar *folder = gebr_relativise_home_path(tmp, mount_point, gebr_maestro_server_get_home_dir(maestro));
+
 		gtk_entry_set_text(entry, gebr_remove_path_prefix(mount_point, folder));
+
 		g_free(folder);
+		g_free(tmp);
 	}
 
 	g_free(prefix);
@@ -401,6 +426,7 @@ line_setup_wizard(GebrGeoXmlLine *line)
 
 	g_signal_connect(entry_title, "changed", G_CALLBACK(on_assistant_entry_changed), assistant);
 	g_signal_connect(entry_base, "changed", G_CALLBACK(on_assistant_base_validate), assistant);
+	g_signal_connect(entry_base, "focus-out-event", G_CALLBACK(on_assistant_base_focus_out), assistant);
 
 	gtk_widget_show(assistant);
 }
