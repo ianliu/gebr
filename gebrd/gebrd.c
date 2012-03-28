@@ -324,8 +324,8 @@ static void
 mpi_fallback(void)
 {
 	static gchar *default_flavors[][2] = {
-		{"openmpi", "mpirun.openmpi"},
-		{"mpich2", "mpiexec.hydra"},
+		{"openmpi", "/usr/bin/mpirun.openmpi"},
+		{"mpich2", "/usr/bin/mpiexec.hydra"},
 	};
 
 	for (int i = 0; i < G_N_ELEMENTS(default_flavors); i++) {
