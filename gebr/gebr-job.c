@@ -700,6 +700,7 @@ gebr_job_set_issues(GebrJob *job, const gchar *issues)
 		g_free(job->priv->issues);
 	job->priv->issues = g_strdup(issues);
 	g_signal_emit(job, signals[ISSUED], 0, issues);
+	g_debug("EMITINDO SINAL ISSUED '%s'", job->priv->issues);
 }
 
 void

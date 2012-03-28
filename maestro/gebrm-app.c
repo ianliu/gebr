@@ -878,16 +878,17 @@ gebrm_app_handle_run(GebrmApp *app, GebrCommHttpMsg *request, GebrmClient *clien
 		g_debug("BUILDING THE MPI LIST...");
 		GString *tmp = g_string_new(NULL);
 		for (GList *i = mpi_flavors; i; i = i->next) {
-			g_string_append(tmp, ", ");
+			g_string_append(tmp, "and ");
 			g_string_append(tmp, i->data);
 		}
 		g_debug("GOT %s", tmp->str);
 
+		gchar *mpi_missing_group = *info.group ? info.group : "Maestro";
 		if (tmp->len)
-			g_string_erase(tmp, 0, 2);
+			g_string_erase(tmp, 0, 4);
 
-		gchar *mpi_issue_message = g_strdup_printf(_("The group of servers does not support MPI execution: %s"),
-							   tmp->str);
+		gchar *mpi_issue_message = g_markup_printf_escaped(_("There is no server that supports <b>%s</b> in <b>%s</b>"),
+							   tmp->str, mpi_missing_group);
 		g_string_free(tmp, TRUE);
 
 		for (GList *i = app->priv->connections; i; i = i->next) {
@@ -897,6 +898,7 @@ gebrm_app_handle_run(GebrmApp *app, GebrCommHttpMsg *request, GebrmClient *clien
 							      gebr_comm_protocol_defs.iss_def, 2,
 							      gebrm_job_get_id(job),
 							      mpi_issue_message);
+			g_free(mpi_issue_message);
 		}
 	} else {
 		GebrCommRunner *runner = gebr_comm_runner_new(GEBR_GEOXML_DOCUMENT(*pflow),

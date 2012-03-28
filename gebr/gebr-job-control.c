@@ -571,6 +571,7 @@ fill_issues_properties(GebrJobControl *jc,
                        const gchar *issues,
                        GebrJob *job)
 {
+	g_debug("on %s", __func__);
 	const gchar *stock_id;
 	GtkInfoBar *info = GTK_INFO_BAR(gtk_builder_get_object(jc->priv->builder, "issues_info_bar"));
 	GtkLabel *label = GTK_LABEL(gtk_builder_get_object(jc->priv->builder, "issues_info_bar_label"));
@@ -587,7 +588,7 @@ fill_issues_properties(GebrJobControl *jc,
 	else
 		gtk_info_bar_set_message_type(info, GTK_MESSAGE_WARNING);
 
-	gtk_label_set_text(label, issues);
+	gtk_label_set_markup(label, issues);
 	gtk_label_set_line_wrap(label, TRUE);
 	gtk_label_set_line_wrap_mode(label, PANGO_WRAP_WORD);
 	gtk_image_set_from_stock(image, stock_id, GTK_ICON_SIZE_DIALOG);
@@ -658,6 +659,7 @@ on_job_issued(GebrJob *job,
 	      const gchar *issues,
 	      GebrJobControl *jc)
 {
+	g_debug("on %s", __func__);
 	fill_issues_properties(jc, issues, job);
 }
 
@@ -903,6 +905,7 @@ job_control_on_cursor_changed(GtkTreeSelection *selection,
 		jc->priv->last_selection.sig_cmd_line =
 				g_signal_connect(job, "cmd-line-received", G_CALLBACK(on_job_cmd_line), jc);
 
+		g_debug("8888888888888888888888888 connecting signal ISSUED");
 		gebr_job_control_load_details(jc, job);
 	}
 
