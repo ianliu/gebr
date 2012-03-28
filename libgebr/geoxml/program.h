@@ -292,6 +292,16 @@ void gebr_geoxml_program_control_set_n(GebrGeoXmlProgram *prog,
                                        const gchar *n);
 
 /**
+ * gebr_geoxml_program_control_get_eval_n:
+ * @prog: A Loop program.
+ * @validator: The validator
+ *
+ * Returns: The evaluated n of @prog
+ */
+gint gebr_geoxml_program_control_get_eval_n(GebrGeoXmlProgram *prog,
+                                            GebrValidator *validator);
+
+/**
  * gebr_geoxml_program_is_var_used:
  */
 gboolean gebr_geoxml_program_is_var_used (GebrGeoXmlProgram *self,

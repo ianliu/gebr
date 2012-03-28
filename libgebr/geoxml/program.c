@@ -484,6 +484,26 @@ void gebr_geoxml_program_control_set_n(GebrGeoXmlProgram *prog,
 	}
 }
 
+gint
+gebr_geoxml_program_control_get_eval_n(GebrGeoXmlProgram *prog,
+                                       GebrValidator *validator)
+{
+	gchar *eval_n, *n;
+	gint total_n;
+
+	n = gebr_geoxml_program_control_get_n(prog, NULL, NULL);
+
+	if (!gebr_validator_evaluate(validator, n, GEBR_GEOXML_PARAMETER_TYPE_INT, GEBR_GEOXML_DOCUMENT_TYPE_LINE, &eval_n, NULL))
+		g_return_val_if_reached(0);
+
+	total_n = atoi(eval_n);
+
+	g_free(n);
+	g_free(eval_n);
+
+	return total_n;
+}
+
 gboolean gebr_geoxml_program_is_var_used (GebrGeoXmlProgram *self,
 					  const gchar *var_name)
 {
