@@ -650,21 +650,19 @@ static void test_gebr_geoxml_flow_is_parallelizable (void)
 void test_gebr_geoxml_flow_divide_flows (Fixture *fixture, gconstpointer data)
 {
 	GList *flows = NULL;
-	gdouble *weigths = g_new(double, 4);
+	gint *weigths = g_new(gint, 4);
 	gchar *ini, *step;
 
 	fixture_change_iter_value(fixture, "1", "1", "101", NULL);
 	gebr_geoxml_flow_io_set_output(GEBR_GEOXML_FLOW(fixture->flow), "");
 
 	// total de 101 passos
-	weigths[0] = 0.4; // 40 passos
-	weigths[1] = 0.3; // 30 passos
-	weigths[2] = 0.2; // 20 passos
-	weigths[3] = 0.1; // 10 passos
+	weigths[0] = 40;
+	weigths[1] = 30;
+	weigths[2] = 20;
+	weigths[3] = 11;
 
-	//falta 1 passo que irá para posição 0
-
-	flows = gebr_geoxml_flow_divide_flows(GEBR_GEOXML_FLOW(fixture->flow), fixture->validator, weigths, 4, NULL);
+	flows = gebr_geoxml_flow_divide_flows(GEBR_GEOXML_FLOW(fixture->flow), fixture->validator, weigths, 4);
 
 	GebrGeoXmlProgram *control1 = gebr_geoxml_flow_get_control_program(flows->data);
 	GebrGeoXmlProgram *control2 = gebr_geoxml_flow_get_control_program(flows->next->data);

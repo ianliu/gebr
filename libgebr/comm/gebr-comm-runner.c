@@ -42,6 +42,7 @@ struct _GebrCommRunnerPriv {
 	GebrValidator *validator;
 	gdouble *weights;
 	gint *numprocs;
+	gint *distributed_n;
 
 	gint requests;
 	gint responses;
@@ -283,14 +284,61 @@ typedef struct {
 	GebrCommDaemon *daemon;
 	gdouble weight; /* The sum of all its cores scores */
 	gint np; /* Number of cores to use at @daemon */
+	gint nsteps; /* Number of steps this @daemon will execute */
 } DaemonExecInfo;
+
+static gint *
+distribute_tasks_to_cores(GebrCommRunner *self,
+                          gint total_procs,
+                          gint nsteps)
+{
+	GList *j;
+	gdouble sum = 0;
+	gint n_cores = g_list_length(self->priv->cores_scores);
+	gint n = MIN(total_procs, n_cores);
+
+	gdouble *weights = g_new0(gdouble, n);
+
+	j = self->priv->cores_scores;
+	for (gint i = 0; i < total_procs; i++, j = j->next) {
+		if (!j)
+			j = self->priv->cores_scores;
+		ServerScore *sc = j->data;
+		sum += sc->score;
+	}
+
+	j = self->priv->cores_scores;
+	for (gint i = 0; i < total_procs; i++, j = j->next) {
+		if (!j)
+			j = self->priv->cores_scores;
+		ServerScore *sc = j->data;
+		weights[i % n] = sc->score/sum;
+	}
+
+	gint *distributed_n = gebr_geoxml_flow_calculate_proportional_n(nsteps, weights, n);
+
+	g_free(weights);
+
+	return distributed_n;
+}
 
 static GList * /* DaemonExecInfo */
 calculate_servers_scores_and_num_procs(GebrCommRunner *self)
 {
 	gint n_cores = g_list_length(self->priv->cores_scores);
 	gdouble speed = atof(self->priv->speed);
-	gint total_procs = gebr_calculate_number_of_processors(n_cores, speed);
+	GList *j;
+
+	GebrGeoXmlProgram *loop = gebr_geoxml_flow_get_control_program(GEBR_GEOXML_FLOW(self->priv->flow));
+	gint nsteps;
+	if (loop && gebr_geoxml_flow_is_parallelizable(GEBR_GEOXML_FLOW(self->priv->flow), self->priv->validator))
+		nsteps = gebr_geoxml_program_control_get_eval_n(loop, self->priv->validator);
+	else
+		nsteps = 1;
+
+	gint total_procs = MIN(gebr_calculate_number_of_processors(n_cores, speed), nsteps);
+
+	gint *distributed_n = distribute_tasks_to_cores(self, total_procs, nsteps);
 
 	GHashTable *map = g_hash_table_new(g_str_hash, g_str_equal);
 	for (GList *i = self->priv->servers; i; i = i->next) {
@@ -299,12 +347,14 @@ calculate_servers_scores_and_num_procs(GebrCommRunner *self)
 		g_hash_table_insert(map, g_strdup(gebr_comm_daemon_get_hostname(i->data)), data);
 	}
 
-	GList *j = self->priv->cores_scores;
-	for (gint k = 0; j && k < total_procs; j = j->next, k++) {
+	gint k;
+	j = self->priv->cores_scores;
+	for (k = 0; j && k < total_procs; j = j->next, k++) {
 		ServerScore *sc = j->data;
 		DaemonExecInfo *data = g_hash_table_lookup(map, gebr_comm_daemon_get_hostname(sc->server));
-		data->weight += sc->score;
 		data->np++;
+		data->weight += (gdouble)distributed_n[k]/nsteps;
+		data->nsteps += distributed_n[k];
 	}
 
 	if (j) {
@@ -321,16 +371,29 @@ calculate_servers_scores_and_num_procs(GebrCommRunner *self)
 
 	GList *values = g_hash_table_get_values(map);
 
-	for (GList *i = values; i; i = i->next) {
+	gint n_servers = g_list_length(values);
+	gint tmp = total_procs - k;
+	gint base = tmp/n_servers;
+	gint rest = tmp - base * n_servers;
+
+	GList *i = values;
+	while (i) {
 		GList *aux = NULL;
 		DaemonExecInfo *data = i->data;
+
+		data->np += base;
+		if (rest > 0) {
+			data->np++;
+			rest--;
+		}
+
 		if (data->np == 0) {
-			aux = i->prev;
+			aux = i->next;
 			g_free(data);
 			values = g_list_delete_link(values, i);
 			i = aux;
-			if (!i)
-				break;
+		} else {
+			i = i->next;
 		}
 	}
 
@@ -371,6 +434,7 @@ set_servers_execution_info(GebrCommRunner *self)
 	gint n = g_list_length(values);
 	double *weights = g_new0(double, n);
 	gint *numprocs = g_new0(gint, n);
+	gint *distributed_n = g_new0(gint, n);
 
 	g_list_free(self->priv->servers);
 	self->priv->servers = NULL;
@@ -381,11 +445,13 @@ set_servers_execution_info(GebrCommRunner *self)
 		self->priv->servers = g_list_prepend(self->priv->servers, data->daemon);
 		weights[k] = data->weight;
 		numprocs[k] = data->np;
+		distributed_n[k] = data->nsteps;
 	}
 
 	self->priv->servers = g_list_reverse(self->priv->servers);
 	self->priv->weights = weights;
 	self->priv->numprocs = numprocs;
+	self->priv->distributed_n =distributed_n;
 }
 
 static void
@@ -398,15 +464,17 @@ divide_and_run_flows(GebrCommRunner *self)
 	                                        self->priv->validator))
 		parallel = FALSE;
 
-	gint n_steps;
-
 	GList *flows = gebr_geoxml_flow_divide_flows(GEBR_GEOXML_FLOW(self->priv->flow),
 	                                             self->priv->validator,
-	                                             self->priv->weights,
-	                                             n, &n_steps);
+	                                             self->priv->distributed_n,
+	                                             n);
+
+	gint max_cores = 0;
+	for (gint k = 0; k < n; k++)
+		max_cores += self->priv->numprocs[k];
 
 	if (parallel)
-		self->priv->ncores = g_strdup_printf("%d", MIN(n_steps, g_list_length(self->priv->cores_scores)));
+		self->priv->ncores = g_strdup_printf("%d", max_cores);
 	else
 		self->priv->ncores = g_strdup("1");
 

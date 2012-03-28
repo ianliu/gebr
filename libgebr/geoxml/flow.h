@@ -509,16 +509,27 @@ gebr_geoxml_flow_is_parallelizable(GebrGeoXmlFlow *flow,
  * gebr_geoxml_flow_divide_flows:
  * @flow: A #GebrGeoXmlFlow to be divided on @n_weights flows
  * @validator: The #GebrValidator that will be used to check if @flow is parallelizable
- * @weights: The #gdouble vector of proportional weights to each flow
- * @gint: The number of flows to return
+ * @distributed_n: The #gint vector of distributed nsteps of loop
+ * @distributed_n_len: The number of flows to return
  *
  * Returns: A #GList of flows
  */
 GList *gebr_geoxml_flow_divide_flows(GebrGeoXmlFlow *flow,
                                      GebrValidator *validator,
-                                     gdouble *weights,
-                                     gint n_weights,
-                                     gint *n_steps);
+                                     gint *distributed_n,
+                                     gint distributed_n_len);
+
+/**
+ * gebr_geoxml_flow_calculate_proportional_n:
+ * @total_n:
+ * @weights:
+ * @n_weights:
+ *
+ * Returns:
+ */
+gint *gebr_geoxml_flow_calculate_proportional_n(gint total_n,
+                                                gdouble *weights,
+                                                gint n_weights);
 
 /**
  * gebr_geoxml_flow_calculate_weights:

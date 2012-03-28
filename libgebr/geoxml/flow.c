@@ -1082,7 +1082,7 @@ gebr_geoxml_flow_is_parallelizable(GebrGeoXmlFlow *flow,
 	return FALSE;
 }
 
-static gint *
+gint *
 gebr_geoxml_flow_calculate_proportional_n(gint total_n,
                                           gdouble *weights,
                                           gint n_weights)
@@ -1142,9 +1142,8 @@ gdouble *gebr_geoxml_flow_calulate_weights(gint n_servers,
 
 GList *gebr_geoxml_flow_divide_flows(GebrGeoXmlFlow *flow,
                                      GebrValidator *validator,
-                                     gdouble *weights,
-                                     gint n_weights,
-                                     gint *n_steps)
+                                     gint *distributed_n,
+                                     gint distributed_n_len)
 {
 	if (!gebr_geoxml_flow_is_parallelizable(flow, validator)) {
 		GList *l = NULL;
@@ -1154,27 +1153,21 @@ GList *gebr_geoxml_flow_divide_flows(GebrGeoXmlFlow *flow,
 	GList *flows = NULL;
 	GebrGeoXmlProgram *loop;
 	gchar *n, *step, *ini;
-	gchar *eval_n, *eval_step, *eval_ini;
-	gint total_n;
-	gint *distributed_n;
+	gchar *eval_step, *eval_ini;
 	gint end, step_int, ini_int;
 
 	loop = gebr_geoxml_flow_get_control_program(flow);
 	n = gebr_geoxml_program_control_get_n(loop, &step, &ini);
 	gebr_geoxml_object_unref(loop);
+	g_free(n);
 
-	gebr_validator_evaluate(validator, n, GEBR_GEOXML_PARAMETER_TYPE_INT, GEBR_GEOXML_DOCUMENT_TYPE_LINE, &eval_n, NULL);
 	gebr_validator_evaluate(validator, step, GEBR_GEOXML_PARAMETER_TYPE_INT, GEBR_GEOXML_DOCUMENT_TYPE_LINE, &eval_step, NULL);
 	gebr_validator_evaluate(validator, ini, GEBR_GEOXML_PARAMETER_TYPE_INT, GEBR_GEOXML_DOCUMENT_TYPE_LINE, &eval_ini, NULL);
-
-
-	total_n = (gint) g_strtod(eval_n, NULL);
-	distributed_n = gebr_geoxml_flow_calculate_proportional_n(total_n, weights, n_weights);
 
 	step_int = (gint) g_strtod(eval_step, NULL);
 	ini_int = (gint) g_strtod(eval_ini, NULL);
 
-	for (gint i = 0; i < n_weights; i++)
+	for (gint i = 0; i < distributed_n_len; i++)
 	{
 		GebrGeoXmlFlow *div_flow;
 		GebrGeoXmlProgram *div_loop;
@@ -1196,15 +1189,10 @@ GList *gebr_geoxml_flow_divide_flows(GebrGeoXmlFlow *flow,
 		ini_int = end;
 	}
 
-	if (n_steps)
-		*n_steps = total_n;
-
-	g_free(eval_n);
 	g_free(ini);
 	g_free(step);
 	g_free(eval_ini);
 	g_free(eval_step);
-	g_free(distributed_n);
 
 	return flows;
 }
