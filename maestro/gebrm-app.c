@@ -879,7 +879,7 @@ gebrm_app_handle_run(GebrmApp *app, GebrCommHttpMsg *request, GebrmClient *clien
 		GString *tmp = g_string_new(NULL);
 		for (GList *i = mpi_flavors; i; i = i->next) {
 			g_string_append(tmp, "and ");
-			g_string_append(tmp, i->data);
+			g_string_append_printf(tmp, "<b>%s</b> ", (gchar *)i->data);
 		}
 		g_debug("GOT %s", tmp->str);
 
@@ -893,7 +893,7 @@ gebrm_app_handle_run(GebrmApp *app, GebrCommHttpMsg *request, GebrmClient *clien
 		if (tmp->len)
 			g_string_erase(tmp, 0, 4);
 
-		gchar *mpi_issue_message = g_markup_printf_escaped(_("There is no server that supports <b>%s</b> in <b>%s</b>"),
+		gchar *mpi_issue_message = g_strdup_printf(_("There is no server that supports %s in <b>%s</b>"),
 							   tmp->str, mpi_missing_group);
 		g_free(mpi_missing_group);
 		g_string_free(tmp, TRUE);
