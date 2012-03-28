@@ -1306,7 +1306,8 @@ gebr_job_control_load_details(GebrJobControl *jc,
 
 	gtk_label_set_markup (job_group, msg);
 
-	const gchar *icon = gebr_interface_get_speed_icon(gebr_job_get_exec_speed(job));
+	gdouble speed = gebr_job_get_exec_speed(job);
+	const gchar *icon = gebr_interface_get_speed_icon(gebr_interface_calculate_slider_from_speed(speed));
 	if (icon)
 		gtk_image_set_from_stock(info_button_image, icon, GTK_ICON_SIZE_LARGE_TOOLBAR);
 
