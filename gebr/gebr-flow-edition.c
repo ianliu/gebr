@@ -682,7 +682,6 @@ void flow_edition_set_io(void)
 			   -1);
 
 	flow_browse_info_update();
-	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, FALSE);
 
 	g_free(title);
 	g_free(tooltip);
