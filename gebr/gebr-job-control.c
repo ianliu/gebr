@@ -764,11 +764,14 @@ job_control_fill_servers_info(GebrJobControl *jc)
 			if (g_strcmp0(groups, "") == 0)
 				groups = g_strdup_printf(_("%s"), gebr_maestro_server_get_display_address(maestro));
 
-		markup = g_markup_printf_escaped (_("Job submitted by <b>%s</b> to Maestro <b>%s</b>,\nto be executed on %s <b>%s</b>.\n"
-						  "Executed using %s<b>%s</b> processor(s)\ndistributed on <b>%d</b> servers.\n"),
+		markup = g_markup_printf_escaped(_("Job submitted by <b>%s</b> to Maestro <b>%s</b>.\n"
+						   "Executed %s simultaneous tasks on %s <b>%s</b>,\n"
+						   "%s"
+						   "distributed on <b>%d</b> servers.\n"),
 						  gebr_job_get_hostname(job), gebr_job_get_maestro_address(job),
-						  type == MAESTRO_SERVER_TYPE_DAEMON? "server" : "group", groups,
-						  g_strcmp0(niceness, "0")? _("idle time of ") : "", nprocs, n_servers);
+						  nprocs, type == MAESTRO_SERVER_TYPE_DAEMON? "server" : "group", groups,
+						  g_strcmp0(niceness, "0")? _("using the machines idle time, ") : "",
+						  n_servers);
 		g_string_append(resources, markup);
 
 		const gchar *mpi_owner_tst = gebr_job_get_mpi_owner(job);
