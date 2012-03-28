@@ -540,6 +540,7 @@ mpi_program_get_np(GebrGeoXmlProgram *prog, GebrValidator *validator)
 	const gchar *mpi_flavor = gebr_geoxml_program_get_mpi(prog);
 	if (!mpi_flavor || !*mpi_flavor)
 		return 0;
+
 	gchar *nprocs;
 	gchar *procs = gebr_geoxml_program_mpi_get_n_process(GEBR_GEOXML_PROGRAM(prog));
 
@@ -571,7 +572,8 @@ mpi_program_contrib(GebrGeoXmlProgram *prog, GList *servers, const gchar *execut
 		for (GList *i = servers; i; i = i->next) {
 			GebrCommDaemon *daemon = i->data;
 			if (g_strcmp0(gebr_comm_daemon_get_hostname(daemon), executor) == 0)
-				contrib[j++]++;
+				contrib[j]++;
+			j++;
 		}
 		return;
 	}
@@ -583,6 +585,7 @@ mpi_program_contrib(GebrGeoXmlProgram *prog, GList *servers, const gchar *execut
 
 	gint np = mpi_program_get_np(prog, validator);
 	gint j = 0, acc = 0;
+
 	for (GList *i = servers; i; i = i->next, j++) {
 		GebrCommDaemon *daemon = i->data;
 		if (daemon_has_mpi_flavor(daemon, mpi_flavor)) {
@@ -596,6 +599,81 @@ mpi_program_contrib(GebrGeoXmlProgram *prog, GList *servers, const gchar *execut
 	}
 }
 
+static const gchar*
+get_mpi_flavors_for_flow(GebrCommRunner *self)
+{
+	GString *mpi_flavors = g_string_new("");
+	GebrGeoXmlSequence *seq;
+
+	gebr_geoxml_flow_get_program(GEBR_GEOXML_FLOW(self->priv->flow), &seq, 0);
+	for (; seq; gebr_geoxml_sequence_next(&seq)) {
+		GebrGeoXmlProgram *prog = GEBR_GEOXML_PROGRAM(seq);
+		const gchar *mpi = gebr_geoxml_program_get_mpi(prog);
+
+		if (!mpi || !*mpi)
+			continue;
+
+		if (!g_strrstr(mpi_flavors->str, mpi))
+			g_string_printf(mpi_flavors, "%s,%s", mpi_flavors->str, mpi);
+	}
+
+	if (mpi_flavors->len > 0)
+		g_string_erase(mpi_flavors, 0, 1);
+
+	return g_string_free(mpi_flavors, FALSE);
+}
+
+static void
+set_max_np_for_mpi(GebrCommRunner *self)
+{
+	GebrGeoXmlSequence *seq;
+
+	gint max_np = 0;
+	gebr_geoxml_flow_get_program(GEBR_GEOXML_FLOW(self->priv->flow), &seq, 0);
+	for (; seq; gebr_geoxml_sequence_next(&seq)) {
+		GebrGeoXmlProgram *prog = GEBR_GEOXML_PROGRAM(seq);
+		gint np = mpi_program_get_np(prog, self->priv->validator);
+		if (np > max_np)
+			max_np = np;
+	}
+	self->priv->ncores = g_strdup_printf("%d", max_np);
+}
+
+static gdouble *
+calculate_weights_for_mpi(GebrCommRunner *self)
+{
+	gfloat n_servers = g_list_length(self->priv->run_servers);
+
+	if (!n_servers)
+		g_warn_if_reached();
+
+	gdouble *weights = g_new0(gdouble, n_servers);
+	gint *contrib = g_new0(gint, n_servers);
+
+	GebrCommDaemon *executor_dae = self->priv->servers->data;
+	const gchar *executor_str = gebr_comm_daemon_get_hostname(executor_dae);
+	
+	GebrGeoXmlSequence *seq;
+
+	gebr_geoxml_flow_get_program(GEBR_GEOXML_FLOW(self->priv->flow), &seq, 0);
+	for (; seq; gebr_geoxml_sequence_next(&seq)) {
+		GebrGeoXmlProgram *prog = GEBR_GEOXML_PROGRAM(seq);
+		if (gebr_geoxml_program_get_control(prog) != GEBR_GEOXML_PROGRAM_CONTROL_FOR)
+			mpi_program_contrib(prog, self->priv->run_servers, executor_str, self->priv->validator, contrib);
+	}
+
+	gint total = 0;
+	for (gint i = 0; i < n_servers; i++)
+		total += contrib[i];
+
+	for (gint i = 0; i < n_servers; i++)
+		weights[i] = (float) contrib[i] / total;
+
+	g_free(contrib);
+
+	return weights;
+}
+
 static void
 mpi_run_flow(GebrCommRunner *self)
 {
@@ -605,50 +683,9 @@ mpi_run_flow(GebrCommRunner *self)
 	GString *servers = g_string_new(NULL);
 	GString *servers_weigths = g_string_new(NULL);
 
-	gfloat n_servers = g_list_length(self->priv->run_servers);
 
-	if (!n_servers)
-		g_warn_if_reached();
+	gdouble *weights = calculate_weights_for_mpi(self);
 
-	gint *contrib = g_new0(gint, n_servers);
-	gdouble *weights = g_new0(gdouble, n_servers);
-	GebrGeoXmlSequence *seq;
-
-	gebr_geoxml_flow_get_program(GEBR_GEOXML_FLOW(clone), &seq, 0);
-
-	//Refatorar em função, depois
-	GebrCommDaemon *executor_dae = self->priv->servers->data;
-	const gchar *executor_str = gebr_comm_daemon_get_hostname(executor_dae);
-	GString *mpi_flavors = g_string_new("");
-
-	gint max_np = 0;
-	for (; seq; gebr_geoxml_sequence_next(&seq)) {
-		GebrGeoXmlProgram *prog = GEBR_GEOXML_PROGRAM(seq);
-		if (gebr_geoxml_program_get_control(prog) != GEBR_GEOXML_PROGRAM_CONTROL_FOR) {
-			mpi_program_contrib(prog, self->priv->run_servers, executor_str, self->priv->validator, contrib);
-			gint np = mpi_program_get_np(prog, self->priv->validator);
-			if (np > max_np)
-				max_np = np;
-
-			const gchar *mpi_flavor_sub = gebr_geoxml_program_get_mpi(prog);
-			if (*mpi_flavor_sub && !g_strrstr(mpi_flavors->str, mpi_flavor_sub))
-				g_string_printf(mpi_flavors, "%s,%s", mpi_flavors->str, mpi_flavor_sub);
-			
-			for (gint i = 0; i < n_servers; i++)
-				g_debug("contrib[%d]=%d", i, contrib[i]);
-			g_debug("#########################################################");
-		}
-	}
-	self->priv->ncores = g_strdup_printf("%d", max_np);
-	if (mpi_flavors->len > 0)
-		g_string_erase(mpi_flavors, 0, 1);
-
-	gint total = 0;
-	for (gint i = 0; i < n_servers; i++)
-		total += contrib[i];
-
-	for (gint i = 0; i < n_servers; i++)
-		weights[i] = (float) contrib[i] / total;
 
 	gint j = 0;
 	for (GList *i = self->priv->run_servers; i; i = i->next) {
@@ -674,9 +711,11 @@ mpi_run_flow(GebrCommRunner *self)
 	GebrCommServer *first_server = gebr_comm_daemon_get_server(daemon);
 
 	// Set CommRunner parameters
+	set_max_np_for_mpi(self);
 	self->priv->total = 1;
 	self->priv->mpi_owner = g_strdup(first_server->address->str);
-	self->priv->mpi_flavor = g_string_free(mpi_flavors, FALSE);
+	self->priv->mpi_flavor = g_strdup(get_mpi_flavors_for_flow(self));
+ 
 
 	gebr_comm_protocol_socket_oldmsg_send(first_server->socket, FALSE,
 	                                      gebr_comm_protocol_defs.run_def, 9,

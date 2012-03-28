@@ -883,12 +883,19 @@ gebrm_app_handle_run(GebrmApp *app, GebrCommHttpMsg *request, GebrmClient *clien
 		}
 		g_debug("GOT %s", tmp->str);
 
-		gchar *mpi_missing_group = *info.group ? info.group : "Maestro";
+		gchar *mpi_missing_group;
+
+		if (*info.group) 
+			mpi_missing_group = g_strdup_printf("group %s", info.group);
+		 else
+			mpi_missing_group = g_strdup_printf("Maestro %s", info.hostname);
+
 		if (tmp->len)
 			g_string_erase(tmp, 0, 4);
 
 		gchar *mpi_issue_message = g_markup_printf_escaped(_("There is no server that supports <b>%s</b> in <b>%s</b>"),
 							   tmp->str, mpi_missing_group);
+		g_free(mpi_missing_group);
 		g_string_free(tmp, TRUE);
 
 		for (GList *i = app->priv->connections; i; i = i->next) {
