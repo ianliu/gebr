@@ -238,14 +238,12 @@ gebr_interface_set_text_for_performance(gdouble value)
 		return  _("Very low performance");
 	else if (value <= 2)
 		return  _("Low performance");
-	else if (value <= 3)
+	else if ((value <= 3) || (value <= 4))
 		return  _("Medium performance");
-	else if (value <= 4)
-		return  _("High performance");
 	else if (value <= SLIDER_100)
-		return  _("Very high performance");
+		return  _("High performance");
 	else if (value <= SLIDER_MAX)
-		return  _("Very high performance (4x)");
+		return  _("Very high performance");
 	else
 		g_return_val_if_reached(NULL);
 }
@@ -768,12 +766,10 @@ gebr_interface_get_speed_icon(gdouble value)
 		return "gebr-speed-verylow";
 	else if (value <= 2)
 		return "gebr-speed-low";
-	else if (value <= 3)
+	else if ((value <= 3) || (value <= 4))
 		return "gebr-speed-medium";
-	else if (value <= 4)
-		return "gebr-speed-high";
 	else if (value <= SLIDER_100)
-		return "gebr-speed-veryhigh";
+		return "gebr-speed-high";
 	else if (value <= SLIDER_MAX)
 		return "gebr-speed-veryhigh";
 	else
