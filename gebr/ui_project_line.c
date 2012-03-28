@@ -203,6 +203,27 @@ struct ui_project_line *project_line_setup_ui(void)
 }
 
 static void
+on_connect_line_maestro(GtkWidget *widget,
+			GtkWidget *dialog)
+{
+	gchar *connect_addr = gebr_geoxml_line_get_maestro(gebr.line);
+	gebr_maestro_controller_connect(gebr.maestro_controller, connect_addr);
+	gtk_dialog_response(GTK_DIALOG(dialog), 0);
+}
+
+static void
+on_change_line_maestro(GtkWidget *widget,
+		       GtkWidget *dialog)
+{
+	const gchar *change_addr;
+	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+	change_addr = gebr_maestro_server_get_address(maestro);
+	gebr_geoxml_line_set_maestro(gebr.line, change_addr);
+	save_maestro_changed(gebr.ui_project_line);
+	gtk_dialog_response(GTK_DIALOG(dialog), 0);
+}
+
+static void
 on_maestro_button_clicked(GtkButton *button,
                           GebrUiProjectLine *upl)
 {
@@ -223,6 +244,9 @@ on_maestro_button_clicked(GtkButton *button,
 	GObject *change_button = gtk_builder_get_object(builder, "change_maestro");
 	GObject *connect_label = gtk_builder_get_object(builder, "label_connect_maestro");
 	GObject *change_label = gtk_builder_get_object(builder, "label_change_maestro");
+
+	g_signal_connect(connect_button, "clicked", G_CALLBACK(on_connect_line_maestro), dialog);
+	g_signal_connect(change_button, "clicked", G_CALLBACK(on_change_line_maestro), dialog);
 
 	/* Change maestro */
 	const gchar *change_addr;
@@ -249,21 +273,10 @@ on_maestro_button_clicked(GtkButton *button,
 	}
 
 	gtk_widget_show(GTK_WIDGET(dialog));
-	gint response = gtk_dialog_run(GTK_DIALOG(dialog));
+	gtk_dialog_run(GTK_DIALOG(dialog));
 
-	if (response != GTK_RESPONSE_OK)
-		goto out;
-
-	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(connect_button))) {
-		gebr_maestro_controller_connect(gebr.maestro_controller, connect_addr);
-	} else {
-		gebr_geoxml_line_set_maestro(gebr.line, change_addr);
-		save_maestro_changed(upl);
-	}
-out:
 	gtk_widget_destroy(GTK_WIDGET(dialog));
 	g_object_unref(builder);
-
 	g_free(connect_text);
 	g_free(connect_addr);
 	g_free(change_text);
