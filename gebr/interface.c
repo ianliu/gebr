@@ -38,7 +38,7 @@
 #include "callbacks.h"
 #include "menu.h"
 
-#define SLIDER_MAX 7.0
+#define SLIDER_MAX 8.0
 #define SLIDER_100 5.0
 #define VALUE_MAX 20.0
 
@@ -235,15 +235,19 @@ const gchar *
 gebr_interface_set_text_for_performance(gdouble value)
 {
 	if (value <= 1)
-		return  _("Very low performance");
+		return  _("Very low performance (to 25%)");
 	else if (value <= 2)
-		return  _("Low performance");
+		return  _("Low performance (25% to 50%)");
 	else if ((value <= 3) || (value <= 4))
-		return  _("Medium performance");
+		return  _("Medium performance (50% to 75%)");
 	else if (value <= SLIDER_100)
-		return  _("High performance");
+		return  _("High performance (75% to 100%)");
+	else if (value <= SLIDER_100+1)
+		return  _("Very high performance (100% to 200%)");
+	else if (value <= SLIDER_MAX-1)
+			return  _("Very high performance (200% to 300%)");
 	else if (value <= SLIDER_MAX)
-		return  _("Very high performance");
+		return  _("Very high performance (up to 300%)");
 	else
 		g_return_val_if_reached(NULL);
 }
@@ -341,6 +345,8 @@ insert_speed_controler(GtkToolbar *toolbar,
 	gtk_scale_add_mark(GTK_SCALE(scale), 0, GTK_POS_LEFT, "<span size='x-small'>1 Core</span>");
 	gtk_scale_add_mark(GTK_SCALE(scale), med, GTK_POS_LEFT, "<span size='x-small'>50%</span>");
 	gtk_scale_add_mark(GTK_SCALE(scale), SLIDER_100, GTK_POS_LEFT, "<span size='x-small'>100%</span>");
+	gtk_scale_add_mark(GTK_SCALE(scale), (SLIDER_100+1), GTK_POS_LEFT, "");
+	gtk_scale_add_mark(GTK_SCALE(scale), (SLIDER_MAX-1), GTK_POS_LEFT, "");
 	gtk_scale_add_mark(GTK_SCALE(scale), SLIDER_MAX, GTK_POS_LEFT, "<span size='x-small'>400%</span>");
 
 	g_object_set(scale, "has-tooltip",TRUE, NULL);
