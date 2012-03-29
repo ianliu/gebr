@@ -95,13 +95,13 @@ on_assistant_base_validate(GtkEntry *entry,
 
 void
 on_properties_entry_changed(GtkEntry *entry,
-		 GtkWidget *widget)
+			    GtkWidget *widget)
 {
 	const gchar *text;
 
 	text = gtk_entry_get_text(entry);
 
-	if (text && *text && gebr_verify_starting_slash(text))
+	if (text && *text)
 		gtk_widget_set_sensitive(widget, TRUE);
 	else
 		gtk_widget_set_sensitive(widget, FALSE);
