@@ -121,6 +121,7 @@ static void send_job_def_to_clients(GebrmApp *app, GebrmJob *job);
 
 static void send_messages_of_jobs(const gchar *id, GebrmJob *job, GebrCommProtocolSocket *protocol);
 
+
 G_DEFINE_TYPE(GebrmApp, gebrm_app, G_TYPE_OBJECT);
 
 // Refactor this method to GebrmJobController {{{
@@ -881,26 +882,19 @@ gebrm_app_handle_run(GebrmApp *app, GebrCommHttpMsg *request, GebrmClient *clien
 			g_string_append(tmp, "and ");
 			g_string_append_printf(tmp, "<b>%s</b> ", (gchar *)i->data);
 		}
-		g_debug("GOT %s", tmp->str);
-
-		gchar *mpi_missing_group;
-
-		if (!*info.group)
-			mpi_missing_group = g_strdup_printf("Maestro <b>%s</b>", info.hostname);
-		else if (g_strcmp0(group_type,"daemon"))
-			mpi_missing_group = g_strdup_printf("group <b>%s</b>", info.group);
-		else
-			mpi_missing_group = g_strdup_printf("<b>%s</b>", info.group);
-
-
-
-
 		if (tmp->len)
 			g_string_erase(tmp, 0, 4);
+		g_debug("GOT %s", tmp->str);
 
-		gchar *mpi_issue_message = g_strdup_printf(_("There is no server that supports %s in %s"),
-							   tmp->str, mpi_missing_group);
-		g_free(mpi_missing_group);
+		gchar *mpi_issue_message;
+
+		if (!*info.group)
+			mpi_issue_message = g_strdup_printf("There is no server that supports <b>%s</b> in Maestro <b>%s</b>", tmp->str, info.hostname);
+		else if (g_strcmp0(group_type,"daemon"))
+			mpi_issue_message = g_strdup_printf("There is no server that supports <b>%s</b> in group <b>%s</b>", tmp->str, info.group);
+		else
+			mpi_issue_message = g_strdup_printf("The server <b>%s</b> does not support <b>%s</b>", info.group, tmp->str);
+
 		g_string_free(tmp, TRUE);
 
 		for (GList *i = app->priv->connections; i; i = i->next) {
