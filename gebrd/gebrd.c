@@ -389,7 +389,7 @@ void gebrd_config_load(void)
 			continue;
 
 		GString *name = g_string_new(groups[i] + 4);
-		GString *bin = gebr_g_key_file_load_string_key(key_file, groups[i], "mpirun", "mpirun");
+		GString *bin = gebr_g_key_file_load_string_key(key_file, groups[i], "bin", "");
 		GString *libpath = gebr_g_key_file_load_string_key(key_file, groups[i], "libpath", "");
 		GString *init_cmd = gebr_g_key_file_load_string_key(key_file, groups[i], "init_command", "");
 		GString *end_cmd = gebr_g_key_file_load_string_key(key_file, groups[i], "end_command", "");
