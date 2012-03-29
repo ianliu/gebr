@@ -696,16 +696,6 @@ static gboolean _project_line_import_path(const gchar *filename, GList **line_pa
 		}
 		gdk_threads_leave();
 
-		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
-		gchar *home = g_build_filename(gebr_maestro_server_get_home_dir(maestro), NULL);
-		gebr_geoxml_line_append_path(*line, "HOME", home);
-		g_free(home);
-
-		if (maestro) {
-			const gchar *addr = gebr_maestro_server_get_address(maestro);
-			gebr_geoxml_line_set_maestro(*line, addr);
-		}
-
 		gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) line, GEBR_GEOXML_DOCUMENT_TYPE_LINE, FALSE);
 
 		gdk_threads_enter();
@@ -720,6 +710,39 @@ static gboolean _project_line_import_path(const gchar *filename, GList **line_pa
 			if (gebr_path_is_at_home(path) && !g_file_test(path, G_FILE_TEST_EXISTS) &&
 			    !g_list_find_custom(*line_paths_creation_sugest, path, (GCompareFunc) g_strcmp0))
 				*line_paths_creation_sugest = g_list_append(*line_paths_creation_sugest, g_strdup(path));
+		}
+
+		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+
+		if (maestro) {
+			const gchar *addr = gebr_maestro_server_get_address(maestro);
+			gebr_geoxml_line_set_maestro(*line, addr);
+
+			const gchar *home = gebr_maestro_server_get_home_dir(maestro);
+			gchar *mount_point = gebr_maestro_server_get_sftp_root(maestro);
+
+			gchar *base = gebr_geoxml_line_get_path_by_name(*line, "BASE");
+			if (!base || !*base) {
+				gchar *title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(*line));
+				gchar *line_key = gebr_geoxml_line_create_key(title);
+
+				if (base)
+					g_free(base);
+
+				base = g_build_filename(home, "GeBR", line_key, NULL);
+
+				g_free(title);
+				g_free(line_key);
+			}
+
+			gchar *rel_base = gebr_relativise_home_path(base, mount_point, home);
+			gebr_geoxml_line_set_base_path(*line, rel_base);
+
+			gebr_geoxml_line_set_path_by_name(*line, "HOME", home);
+
+			g_free(mount_point);
+			g_free(rel_base);
+			g_free(base);
 		}
 
 		gebr_geoxml_line_get_flow(*line, &i, 0);
