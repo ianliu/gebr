@@ -1248,3 +1248,18 @@ gebr_geoxml_flow_io_get_output_real(GebrGeoXmlFlow *flow)
 	}
 	return g_strdup("");
 }
+
+gboolean
+gebr_geoxml_flow_is_single_core(GebrGeoXmlFlow *flow,
+                                GebrValidator *validator)
+{
+	if (gebr_geoxml_flow_is_parallelizable(flow, validator))
+		return FALSE;
+
+	GebrGeoXmlProgram *prog = gebr_geoxml_flow_get_first_mpi_program(flow);
+	if (!prog)
+		return TRUE;
+
+	gebr_geoxml_object_unref(prog);
+	return FALSE;
+}

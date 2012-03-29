@@ -548,6 +548,10 @@ GList *gebr_geoxml_flow_get_mpi_flavors(GebrGeoXmlFlow *flow);
 gchar * gebr_geoxml_flow_io_get_input_real(GebrGeoXmlFlow *flow);
 
 gchar * gebr_geoxml_flow_io_get_output_real(GebrGeoXmlFlow *flow);
+
+gboolean gebr_geoxml_flow_is_single_core(GebrGeoXmlFlow *flow,
+                                         GebrValidator *validator);
+
 G_END_DECLS
 
 #endif				//__GEBR_GEOXML_FLOW_H
