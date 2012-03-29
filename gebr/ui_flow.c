@@ -31,7 +31,6 @@ get_line_paths(GebrGeoXmlLine *line)
 {
 	GebrGeoXmlSequence *seq;
 	GString *buf = g_string_new(NULL);
-	GString *p = g_string_new(NULL);
 
 	gebr_geoxml_line_get_path(line, &seq, 0);
 	for (; seq; gebr_geoxml_sequence_next(&seq)) {
@@ -41,13 +40,17 @@ get_line_paths(GebrGeoXmlLine *line)
 		g_string_append_c(buf, ',');
 		GebrGeoXmlValueSequence *path = GEBR_GEOXML_VALUE_SEQUENCE(seq);
 		gchar *value = gebr_geoxml_value_sequence_get(path);
-		g_string_assign(p, value);
-		gebr_path_use_home_variable(p);
-		g_string_append(buf, p->str);
-		g_free(value);
-	}
 
-	g_string_free(p, TRUE);
+		gchar *rel_value;
+		gchar ***pvector = gebr_geoxml_line_get_paths(line);
+
+		rel_value = gebr_resolve_relative_path(value, pvector);
+
+		g_free(value);
+		gebr_pairstrfreev(pvector);
+
+		g_string_append(buf, rel_value);
+	}
 
 	if (buf->len)
 		g_string_erase(buf, 0, 1);
