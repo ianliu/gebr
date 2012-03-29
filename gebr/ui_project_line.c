@@ -377,6 +377,8 @@ line_info_update(void)
 	GObject *label_nflows = gtk_builder_get_object(gebr.ui_project_line->info.builder_line, "label_nflows");
 	gchar *tmp;
 
+	GObject *image_maestro_connect = gtk_builder_get_object(gebr.ui_project_line->info.builder_line, "maestro_connect_img");
+	GObject *maestro_button = gtk_builder_get_object(gebr.ui_project_line->info.builder_line, "maestro_button");
 	GObject *image_maestro = gtk_builder_get_object(gebr.ui_project_line->info.builder_line, "image_maestro");
 	GObject *maestro_label = gtk_builder_get_object(gebr.ui_project_line->info.builder_line, "label_maestro");
 
@@ -441,9 +443,11 @@ line_info_update(void)
 	gchar *home_path;
 
 	if (maestro) {
-		if (gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED)
+		if (gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED) {
+			gtk_widget_show(GTK_WIDGET(image_maestro_connect));
+			gtk_widget_hide(GTK_WIDGET(maestro_button));
 			stockid = GTK_STOCK_CONNECT;
-		else {
+		} else {
 			const gchar *type;
 			gebr_maestro_server_get_error(maestro, &type, NULL);
 
@@ -451,13 +455,19 @@ line_info_update(void)
 				stockid = GTK_STOCK_DISCONNECT;
 			else
 				stockid = GTK_STOCK_DIALOG_WARNING;
+
+			gtk_widget_show(GTK_WIDGET(maestro_button));
+			gtk_widget_hide(GTK_WIDGET(image_maestro_connect));
+			gtk_image_set_from_stock(GTK_IMAGE(image_maestro), stockid, GTK_ICON_SIZE_DIALOG);
 		}
 		home_path = g_strdup(gebr_maestro_server_get_home_dir(maestro));
 	} else {
 		stockid = GTK_STOCK_DISCONNECT;
 		home_path = g_strdup("");
+		gtk_widget_show(GTK_WIDGET(maestro_button));
+		gtk_widget_hide(GTK_WIDGET(image_maestro_connect));
+		gtk_image_set_from_stock(GTK_IMAGE(image_maestro), stockid, GTK_ICON_SIZE_DIALOG);
 	}
-	gtk_image_set_from_stock(GTK_IMAGE(image_maestro), stockid, GTK_ICON_SIZE_DIALOG);
 
 	/* Line's paths information */
 	gchar ***paths = gebr_geoxml_line_get_paths(gebr.line);
