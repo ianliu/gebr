@@ -80,6 +80,11 @@ gebr_geoxml_line_set_base_path(GebrGeoXmlLine *line, const gchar *base)
 	gebr_geoxml_line_get_path(line, &seq, 0);
 
 	while (seq) {
+		gchar *name = gebr_geoxml_line_path_get_name((GebrGeoXmlLinePath*)seq);
+		if (g_strcmp0(name, "HOME") == 0) {
+			gebr_geoxml_sequence_next(&seq);
+			continue;
+		}
 		gebr_geoxml_object_ref(seq);
 		aux = seq;
 		gebr_geoxml_sequence_next(&aux);
