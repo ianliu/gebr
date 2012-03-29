@@ -939,38 +939,11 @@ gebr_relativise_home_path(const gchar *path_string,
 	return folder;
 }
 
-gchar *
-gebr_relativise_path(const gchar *path_string,
-                     const gchar *mount_point,
-		     gchar ***pvector)
+static gchar *
+gebr_relativise_path_recursive(const gchar *path,
+                               const gchar *mount_point,
+                               gchar ***pvector)
 {
-	gchar *path_str = NULL;
-	g_return_val_if_fail(path_string != NULL, NULL);
-
-	if (!*path_string)
-		return g_strdup("");
-
-	for (int i = 0; pvector[i]; i++) {
-		gchar *tmp = g_strdup_printf("<%s>", pvector[i][1]);
-		if (g_str_has_prefix(path_string, tmp)) {
-			path_str = gebr_resolve_relative_path(path_string, pvector);
-			break;
-		}
-		g_free(tmp);
-	}
-
-	GString *tmp;
-	if (!path_str)
-		tmp = g_string_new(path_string);
-	else{
-		tmp = g_string_new(path_str);
-		g_free(path_str);
-	}
-	gebr_path_resolve_home_variable(tmp);
-	gchar *tmp2 = g_string_free(tmp, FALSE);
-	gchar *path = g_strdup(gebr_remove_path_prefix(mount_point, tmp2));
-	g_free(tmp2);
-
 	g_return_val_if_fail(path != NULL, NULL);
 
 	gchar **dirspath = g_strsplit(path, "/", -1);
@@ -1000,10 +973,9 @@ gebr_relativise_path(const gchar *path_string,
 	g_strfreev(dirspath);
 
 	if (!max_size)
-		return path;
+		return g_strdup(path);
 
 	GString *rel_path = g_string_new(path);
-	g_free(path);
 
 	if (g_str_has_suffix(pvector[max_index][0], "/"))
 		rel_path = g_string_erase(rel_path, 0, (strlen(pvector[max_index][0]) - 1));
@@ -1014,12 +986,38 @@ gebr_relativise_path(const gchar *path_string,
 	g_string_prepend (rel_path, pvector[max_index][1]);
 	g_string_prepend (rel_path, "<");
 
-	return g_string_free(rel_path, FALSE);
+	gchar *new_path = gebr_relativise_path_recursive(rel_path->str, mount_point, pvector);
+
+	g_string_free(rel_path, TRUE);
+
+	return new_path;
+}
+
+gchar *
+gebr_relativise_path(const gchar *path_string,
+                     const gchar *mount_point,
+		     gchar ***pvector)
+{
+	gchar *path_str;
+
+	g_return_val_if_fail(path_string != NULL, NULL);
+
+	if (!*path_string)
+		return g_strdup("");
+
+	path_str = gebr_resolve_relative_path(path_string, pvector);
+	gchar *path = gebr_remove_path_prefix(mount_point, path_str);
+
+	gchar *rel_path = gebr_relativise_path_recursive(path, mount_point, pvector);
+
+	g_free(path);
+
+	return rel_path;
 }
 
 gchar *
 gebr_resolve_relative_path(const gchar *path,
-			   gchar ***pvector)
+                            gchar ***pvector)
 {
 	g_return_val_if_fail(path != NULL, NULL);
 	g_return_val_if_fail(pvector != NULL, NULL);
@@ -1044,7 +1042,11 @@ gebr_resolve_relative_path(const gchar *path,
 	if (!has_rpath)
 		return g_strdup(path);
 	
-	return g_string_free(str, FALSE);
+	gchar *new_path = gebr_resolve_relative_path(str->str, pvector);
+
+	g_string_free(str, TRUE);
+
+	return new_path;
 }
 
 void
