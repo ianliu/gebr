@@ -153,9 +153,16 @@ run_flow(GebrGeoXmlFlow *flow,
 		return NULL;
 
 	const gchar *parent_rid = gebr_flow_edition_get_selected_queue(gebr.ui_flow_edition);
-	gdouble speed = gebr_interface_get_execution_speed();
+
+	gdouble speed;
+	if (!gebr_geoxml_flow_is_single_core(flow, gebr.validator))
+		speed = gebr_interface_get_execution_speed();
+	else
+		speed = 0.0;
+
 	gchar *speed_str = g_strdup_printf("%lf", speed);
 	gchar *nice = g_strdup_printf("%d", gebr_interface_get_niceness());
+
 	const gchar *hostname = g_get_host_name();
 
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
