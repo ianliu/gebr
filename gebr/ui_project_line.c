@@ -254,7 +254,7 @@ on_maestro_button_clicked(GtkButton *button,
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 	if (maestro) {
 		change_addr = gebr_maestro_server_get_address(maestro);
-		change_text = g_markup_printf_escaped("Change this line's maestro to <b>%s</b>", change_addr);
+		change_text = g_markup_printf_escaped("Move this line's maestro to <b>%s</b>", change_addr);
 		gtk_label_set_markup(GTK_LABEL(change_label), change_text);
 	} else {
 		gtk_widget_set_sensitive(GTK_WIDGET(change_button), FALSE);
