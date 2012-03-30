@@ -120,7 +120,7 @@ GebrUiFlowBrowse *flow_browse_setup_ui(GtkWidget * revisions_menu)
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
 				       GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 
-	ui_flow_browse->warn_window = gtk_label_new(_("You cannot edit this Line's flows because this line is disconnected.\n"
+	ui_flow_browse->warn_window = gtk_label_new(_("This Line is disconnected, therefore, you cannot edit the flows of this line.\n"
 							   "Try changing its maestro or connecting it."));
 	gtk_widget_set_sensitive(ui_flow_browse->warn_window, FALSE);
 	gtk_box_pack_start(GTK_BOX(info_box), ui_flow_browse->warn_window, TRUE, TRUE, 0);
