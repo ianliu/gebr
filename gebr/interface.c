@@ -234,20 +234,36 @@ change_value(GtkRange *range, GtkScrollType scroll, gdouble value)
 const gchar *
 gebr_interface_set_text_for_performance(gdouble value)
 {
-	if (value <= 1)
-		return  _("Very low performance (to 25%)");
-	else if (value <= 2)
-		return  _("Low performance (25% to 50%)");
-	else if ((value <= 3) || (value <= 4))
-		return  _("Medium performance (50% to 75%)");
-	else if (value <= SLIDER_100)
-		return  _("High performance (75% to 100%)");
-	else if (value <= SLIDER_100+1)
-		return  _("Very high performance (100% to 200%)");
-	else if (value <= SLIDER_MAX-1)
-			return  _("Very high performance (200% to 300%)");
-	else if (value <= SLIDER_MAX)
-		return  _("Very high performance (up to 300%)");
+	if (value == 0)
+		return  _("No scatter (1 Core)");
+	else if (value < (SLIDER_100/4))
+		return  _("Very low scatter (to 25%)");
+	else if (value == (SLIDER_100/4))
+		return  _("Very low scatter (25%)");
+	else if (value < (SLIDER_100/2))
+		return  _("Low scatter (25% to 50%)");
+	else if (value == (SLIDER_100/2))
+		return  _("Low scatter (50%)");
+	else if (value < (3*SLIDER_100/4))
+		return  _("Medium scatter (50% to 75%)");
+	else if (value == (3*SLIDER_100/4))
+		return  _("Medium scatter (75%)");
+	else if (value < SLIDER_100)
+		return  _("High scatter (75% to 100%)");
+	else if (value == SLIDER_100)
+		return  _("High scatter (100%)");
+	else if (value < SLIDER_100+1)
+		return  _("Very high scatter (100% to 200%)");
+	else if (value == SLIDER_100+1)
+		return  _("Very high scatter (200%)");
+	else if (value < SLIDER_MAX-1)
+		return  _("Very high scatter (200% to 300%)");
+	else if (value == SLIDER_MAX-1)
+		return  _("Very high scatter (300%)");
+	else if (value < SLIDER_MAX)
+		return  _("Very high scatter (up to 300%)");
+	else if (value >= SLIDER_MAX)
+		return  _("Very high scatter (400%)");
 	else
 		g_return_val_if_reached(NULL);
 }
@@ -280,7 +296,7 @@ speed_button_tooltip (GtkWidget  *widget,
 
 	const gchar *speed;
 	speed = gebr_interface_set_text_for_performance(value);
-	const gchar * text_tooltip = g_strdup_printf(_("Execution speed: %s"), speed);
+	const gchar * text_tooltip = g_strdup_printf(_("Execution dispersion: %s"), speed);
 	gtk_tooltip_set_text (tooltip, text_tooltip);
 
 	return TRUE;
@@ -343,7 +359,9 @@ insert_speed_controler(GtkToolbar *toolbar,
 
 	gdouble med = SLIDER_100 / 2.0;
 	gtk_scale_add_mark(GTK_SCALE(scale), 0, GTK_POS_LEFT, "<span size='x-small'>1 Core</span>");
+	gtk_scale_add_mark(GTK_SCALE(scale), (med/2), GTK_POS_LEFT, "");
 	gtk_scale_add_mark(GTK_SCALE(scale), med, GTK_POS_LEFT, "<span size='x-small'>50%</span>");
+	gtk_scale_add_mark(GTK_SCALE(scale), ((med+SLIDER_100)/2), GTK_POS_LEFT, "");
 	gtk_scale_add_mark(GTK_SCALE(scale), SLIDER_100, GTK_POS_LEFT, "<span size='x-small'>100%</span>");
 	gtk_scale_add_mark(GTK_SCALE(scale), (SLIDER_100+1), GTK_POS_LEFT, "");
 	gtk_scale_add_mark(GTK_SCALE(scale), (SLIDER_MAX-1), GTK_POS_LEFT, "");
