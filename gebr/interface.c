@@ -234,6 +234,15 @@ change_value(GtkRange *range, GtkScrollType scroll, gdouble value)
 const gchar *
 gebr_interface_set_text_for_performance(gdouble value)
 {
+	if (value <= 0.1)
+	    return _(g_strdup_printf("1 core"));
+	else if (value < (SLIDER_100))
+	    return _(g_strdup_printf("%.0lf%% of total number of cores", value*20));
+	else if (value <= 400)
+	    return _(g_strdup_printf("%.0lf%% of total number of cores", value*100 - 400));
+	else
+		g_return_val_if_reached(NULL);
+	/*
 	if (value == 0)
 		return  _("No scatter (1 Core)");
 	else if (value < (SLIDER_100/4))
@@ -264,8 +273,7 @@ gebr_interface_set_text_for_performance(gdouble value)
 		return  _("Very high scatter (up to 300% of Cores)");
 	else if (value >= SLIDER_MAX)
 		return  _("Very high scatter (400% of Cores)");
-	else
-		g_return_val_if_reached(NULL);
+		*/
 }
 
 static gboolean
