@@ -178,8 +178,8 @@ line_check_maestro_connected(void)
 	                                                       GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
 	                                                       GTK_MESSAGE_WARNING,
 	                                                       GTK_BUTTONS_OK,
-	                                                       _("<span size='large'><b>The maestro registered is disconnected.</b></span>\n\n"
-	                                                         "Try connect in another maestro."));
+	                                                       _("<span size='large'><b>There is no connected maestro.</b></span>\n\n"
+	                                                         "You need one to create a line."));
 
 	gchar *win_title = g_strdup_printf(_("Maestro disconnected"));
 	gtk_window_set_title(GTK_WINDOW(dialog), win_title);
