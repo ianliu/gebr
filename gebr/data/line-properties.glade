@@ -320,4 +320,11 @@
       </packing>
     </child>
   </object>
+  <object class="GtkSizeGroup" id="sizegroup1">
+    <property name="mode">both</property>
+    <widgets>
+      <widget name="maestro_connect_img"/>
+      <widget name="maestro_button"/>
+    </widgets>
+  </object>
 </interface>
