@@ -26,6 +26,17 @@
 
 #include "libgebr.h"
 
+#ifndef DEBUG
+static void
+suppress_log(const gchar *log_domain,
+	     GLogLevelFlags log_level,
+	     const gchar *message,
+	     gpointer user_data)
+{
+	return;
+}
+#endif
+
 void gebr_libinit(const gchar * gettext_package)
 {
 	g_return_if_fail (gettext_package != NULL);
@@ -40,4 +51,8 @@ void gebr_libinit(const gchar * gettext_package)
 	bindtextdomain (gettext_package, PACKAGE_LOCALE_DIR);
 	bind_textdomain_codeset (gettext_package, "UTF-8");
 	textdomain (gettext_package);
+
+#ifndef DEBUG
+	g_log_set_handler(NULL, G_LOG_LEVEL_DEBUG, suppress_log, NULL);
+#endif
 }
