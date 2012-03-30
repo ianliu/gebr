@@ -90,7 +90,7 @@ static void update_control_sensitive(GebrUiProjectLine *upl);
 static void on_maestro_button_clicked(GtkButton *button,
                                       GebrUiProjectLine *upl);
 
-static void save_maestro_changed(GebrUiProjectLine *upl);
+void save_maestro_changed(GebrUiProjectLine *upl, const gchar *change_addr);
 
 void
 gebr_project_line_hide(GebrUiProjectLine *self)
@@ -218,8 +218,7 @@ on_change_line_maestro(GtkWidget *widget,
 	const gchar *change_addr;
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 	change_addr = gebr_maestro_server_get_address(maestro);
-	gebr_geoxml_line_set_maestro(gebr.line, change_addr);
-	save_maestro_changed(gebr.ui_project_line);
+	save_maestro_changed(gebr.ui_project_line, change_addr);
 	gtk_dialog_response(GTK_DIALOG(dialog), 0);
 }
 
@@ -329,8 +328,8 @@ gebr_document_send_path_message(GebrGeoXmlLine *line,
 	g_string_free(buffer, TRUE);
 }
 
-static void
-save_maestro_changed(GebrUiProjectLine *upl)
+void
+save_maestro_changed(GebrUiProjectLine *upl, const gchar *change_addr)
 {
 	gboolean confirm = gebr_gui_message_dialog(GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
 						   _("Change of Maestro"),
@@ -339,6 +338,7 @@ save_maestro_changed(GebrUiProjectLine *upl)
 						     " be sure to correct the paths of this Line "
 						     "and its respective Flows that can be broken."));
 	if (confirm) {
+		gebr_geoxml_line_set_maestro(gebr.line, change_addr);
 		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
 		gchar *home = g_build_filename(gebr_maestro_server_get_home_dir(maestro), NULL);
 		gebr_geoxml_line_set_path_by_name(gebr.line, "HOME", home);
@@ -354,7 +354,6 @@ save_maestro_changed(GebrUiProjectLine *upl)
 		gtk_tree_model_get_iter(model, &iter, paths->data);
 		gtk_tree_store_set(upl->store, &iter, PL_SENSITIVE, TRUE, -1);
 	}
-
 	line_info_update();
 }
 
