@@ -642,7 +642,6 @@ gebr_geoxml_program_mpi_add_tags(GebrGeoXmlProgram *self,
 	GebrGeoXmlParameter *param = gebr_geoxml_parameters_append_parameter(template, GEBR_GEOXML_PARAMETER_TYPE_INT);
 	gebr_geoxml_parameter_set_label(param, _("Number of process to start"));
 	gebr_geoxml_program_parameter_set_number_min_max(GEBR_GEOXML_PROGRAM_PARAMETER(param), "1", "9999999");
-	gebr_geoxml_program_parameter_set_required(GEBR_GEOXML_PROGRAM_PARAMETER(param), TRUE);
 
 	MpiKeywords *keys = get_mpi_keywords_for_flavor(mpi);
 	gebr_geoxml_program_parameter_set_keyword(GEBR_GEOXML_PROGRAM_PARAMETER(param), keys->n_processes);
