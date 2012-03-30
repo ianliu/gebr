@@ -879,21 +879,21 @@ gebrm_app_handle_run(GebrmApp *app, GebrCommHttpMsg *request, GebrmClient *clien
 		g_debug("BUILDING THE MPI LIST...");
 		GString *tmp = g_string_new(NULL);
 		for (GList *i = mpi_flavors; i; i = i->next) {
-			g_string_append(tmp, "and ");
-			g_string_append_printf(tmp, "<b>%s</b> ", (gchar *)i->data);
+			g_string_append(tmp, " and ");
+			g_string_append_printf(tmp, "<b>%s</b>", (gchar *)i->data);
 		}
 		if (tmp->len)
-			g_string_erase(tmp, 0, 4);
+			g_string_erase(tmp, 0, 5);
 		g_debug("GOT %s", tmp->str);
 
 		gchar *mpi_issue_message;
 
 		if (!*info.group)
-			mpi_issue_message = g_strdup_printf("There is no server that supports <b>%s</b> in Maestro <b>%s</b>", tmp->str, info.hostname);
+			mpi_issue_message = g_strdup_printf("There is no server that supports %s in Maestro <b>%s</b>", tmp->str, info.hostname);
 		else if (g_strcmp0(group_type,"daemon"))
-			mpi_issue_message = g_strdup_printf("There is no server that supports <b>%s</b> in group <b>%s</b>", tmp->str, info.group);
+			mpi_issue_message = g_strdup_printf("There is no server that supports %s in group <b>%s</b>", tmp->str, info.group);
 		else
-			mpi_issue_message = g_strdup_printf("The server <b>%s</b> does not support <b>%s</b>", info.group, tmp->str);
+			mpi_issue_message = g_strdup_printf("The server <b>%s</b> does not support %s", info.group, tmp->str);
 
 		g_string_free(tmp, TRUE);
 
