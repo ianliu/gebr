@@ -1696,7 +1696,10 @@ gebrm_app_run(GebrmApp *app, int fd)
 
 	/* success, send port */
 	gchar *port_str = g_strdup_printf("%u\n", port);
-	write(fd, port_str, strlen(port_str));
+
+	if (write(fd, port_str, strlen(port_str)) == -1)
+		exit(-1);
+
 	g_free(port_str);
 
 	const gchar *path = gebrm_app_get_servers_file();
