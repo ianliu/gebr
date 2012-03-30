@@ -383,7 +383,7 @@ gulong gebr_comm_process_stdout_bytes_available(GebrCommProcess * process)
 	gulong available = 0;
 
 	if (ioctl(g_io_channel_unix_get_fd(process->stdout_io_channel), FIONREAD, (char *)&nbytes) >= 0)
-		available = (gulong) * ((int *)&nbytes);
+		available = (gulong) nbytes;
 
 	return available;
 }
@@ -399,7 +399,7 @@ gulong gebr_comm_process_stderr_bytes_available(GebrCommProcess * process)
 	gulong available = 0;
 
 	if (ioctl(g_io_channel_unix_get_fd(process->stderr_io_channel), FIONREAD, (char *)&nbytes) >= 0)
-		available = (gulong) * ((int *)&nbytes);
+		available = (gulong) nbytes;
 
 	return available;
 }

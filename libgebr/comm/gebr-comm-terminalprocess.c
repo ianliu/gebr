@@ -293,7 +293,7 @@ gulong gebr_comm_terminal_process_bytes_available(GebrCommTerminalProcess * term
 	gulong available = 0;
 
 	if (ioctl(g_io_channel_unix_get_fd(terminal_process->ptm_io_channel), FIONREAD, (char *)&nbytes) >= 0)
-		available = (gulong) * ((int *)&nbytes);
+		available = (gulong) nbytes;
 
 	return available;
 }

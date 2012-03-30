@@ -348,7 +348,7 @@ gulong gebr_comm_socket_bytes_available(GebrCommSocket * socket)
 	gulong available = 0;
 
 	if (ioctl(_gebr_comm_socket_get_fd(socket), FIONREAD, (char *)&nbytes) >= 0)
-		available = (gulong) * ((int *)&nbytes);
+		available = (gulong) nbytes;
 
 	return available;
 }
