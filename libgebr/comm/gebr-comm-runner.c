@@ -614,7 +614,7 @@ get_mpi_flavors_for_flow(GebrCommRunner *self)
 			continue;
 
 		if (!g_strrstr(mpi_flavors->str, mpi))
-			g_string_printf(mpi_flavors, "%s,%s", mpi_flavors->str, mpi);
+			g_string_append_printf(mpi_flavors, ",%s", mpi);
 	}
 
 	if (mpi_flavors->len > 0)
