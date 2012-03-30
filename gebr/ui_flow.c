@@ -201,7 +201,6 @@ run_flow(GebrGeoXmlFlow *flow,
 		gchar ***paths = data;
 		gchar *tmp = gebr_resolve_relative_path(path->str, paths);
 		g_string_assign(path, tmp);
-		gebr_path_set_to(path, TRUE);
 		g_free(tmp);
 	}
 	gchar ***tmp = gebr_geoxml_line_get_paths(gebr.line);
