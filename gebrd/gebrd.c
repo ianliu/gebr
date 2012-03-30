@@ -198,8 +198,12 @@ void gebrd_init(void)
 			close(1);
 			close(2);
 			int i = open("/dev/null", O_RDWR);	/* open stdin */
-			dup(i);	/* stdout */
-			dup(i);	/* stderr */
+			if (dup(i) == -1)	/* stdout */
+				exit(1);
+
+			if (dup(i) == -1)	/* stderr */
+				exit(1);
+
 			signal(SIGCHLD, SIG_IGN);
 			setpgrp();
 
@@ -212,7 +216,8 @@ void gebrd_init(void)
 		} else {
 			/* wait for server_init sign that it finished */
 			gchar buffer[100];
-			read(gebrd->finished_starting_pipe[0], buffer, 10);
+			if (read(gebrd->finished_starting_pipe[0], buffer, 10) == -1)
+				exit(1);
 			fprintf(stdout, "%s", buffer);
 		}
 	}
