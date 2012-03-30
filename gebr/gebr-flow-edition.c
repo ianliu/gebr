@@ -1674,7 +1674,7 @@ on_server_disconnected_set_row_insensitive(GtkCellLayout   *cell_layout,
 			   MAESTRO_SERVER_NAME, &name,
 			   -1);
 
-	GebrDaemonServer *daemon;
+	GebrDaemonServer *daemon = NULL;
 	GebrMaestroServer *maestro;
 	gboolean is_connected = TRUE;
 

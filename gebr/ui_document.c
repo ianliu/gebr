@@ -1729,6 +1729,10 @@ on_maestro_path_error(GebrMaestroServer *maestro,
 						      _("The directory already exists!"));
 		update_buttons_visibility(data, PROPERTIES_WARNING);
 		break;
+	default:
+		g_warn_if_reached();
+		summary_txt = g_strdup("");
+		break;
 	}
 
 	gtk_label_set_markup(GTK_LABEL(label_summary), summary_txt);

@@ -948,7 +948,7 @@ on_toggled_more_details(GtkToggleButton *button,
 static const gchar *
 job_control_get_icon_for_job(GebrJob *job)
 {
-	const gchar *stock_id;
+	const gchar *stock_id = NULL;
 
 	switch (gebr_job_get_status(job))
 	{
@@ -970,6 +970,9 @@ job_control_get_icon_for_job(GebrJob *job)
 		break;
 	case JOB_STATUS_ISSUED:
 	case JOB_STATUS_REQUEUED:
+		break;
+	default:
+		g_warn_if_reached();
 		break;
 	}
 	return stock_id;

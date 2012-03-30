@@ -147,7 +147,7 @@ on_maestro_path_error(GebrMaestroServer *maestro,
 	GObject *image = gtk_builder_get_object(data->builder, "image_status");
 	GObject *label = gtk_builder_get_object(data->builder, "label_status");
 
-	gchar *summary_txt;
+	gchar *summary_txt = NULL;
 	GObject *label_summary = gtk_builder_get_object(data->builder, "label_summary");
 
 	gtk_widget_hide(GTK_WIDGET(container_progress));
@@ -189,6 +189,9 @@ on_maestro_path_error(GebrMaestroServer *maestro,
 		summary_txt = g_markup_printf_escaped("<span size='large'>%s</span>",
 						      _("The directory already exists!"));
 		break;
+	default:
+		g_warn_if_reached();
+		summary_txt = g_strdup("");
 	}
 
 	gtk_label_set_markup(GTK_LABEL(label_summary), summary_txt);

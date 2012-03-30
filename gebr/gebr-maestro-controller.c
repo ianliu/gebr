@@ -890,7 +890,7 @@ daemon_server_status_func(GtkTreeViewColumn *tree_column,
 		return;
 
 	GebrCommServerState state = gebr_daemon_server_get_state(daemon);
-	const gchar *stock_id;
+	const gchar *stock_id = NULL;
 
 	const gchar *error = gebr_daemon_server_get_error(daemon);
 
@@ -906,6 +906,9 @@ daemon_server_status_func(GtkTreeViewColumn *tree_column,
 			break;
 		case SERVER_STATE_LOGGED:
 			stock_id = GTK_STOCK_CONNECT;
+			break;
+		default:
+			g_warn_if_reached();
 			break;
 		}
 	}
@@ -1406,7 +1409,7 @@ on_maestro_confirm(GebrMaestroServer *maestro,
                    const gchar *type,
                    GebrMaestroController *mc)
 {
-	const gchar *msg;
+	const gchar *msg = NULL;
 
 	if (g_strcmp0(type, "remove-immediately") == 0) {
 		gebr_connectable_disconnect(GEBR_CONNECTABLE(mc->priv->maestro),
@@ -1499,7 +1502,7 @@ on_daemon_error(GebrMaestroServer *maestro,
 {
 	GtkTreeIter iter;
 	GtkTreeModel *model = GTK_TREE_MODEL(mc->priv->model);
-	const gchar *message;
+	const gchar *message = NULL;
 	gchar *second = NULL;
 	gboolean show_dialog = FALSE;
 

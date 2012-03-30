@@ -607,7 +607,7 @@ gebrm_update_tags_on_list_of_servers(GebrmApp *app,
 				     const gchar *address,
 				     const gchar *tags)
 {
-	GebrmDaemon *daemon;
+	GebrmDaemon *daemon = NULL;
 	gboolean exist = FALSE;
 
 	for (GList *i = app->priv->daemons; i; i = i->next) {
@@ -1128,7 +1128,7 @@ on_client_request(GebrCommProtocolSocket *socket,
 			const gchar *server = gebr_comm_uri_get_param(uri, "server");
 			const gchar *is_ac  = gebr_comm_uri_get_param(uri, "ac");
 
-			GebrmDaemon *daemon;
+			GebrmDaemon *daemon = NULL;
 			for (GList *i = app->priv->daemons; i; i = i->next) {
 				const gchar *addr = gebrm_daemon_get_address(i->data);
 				if (g_strcmp0(addr, server) == 0) {

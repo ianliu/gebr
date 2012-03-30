@@ -218,13 +218,16 @@ run_flow(GebrGeoXmlFlow *flow,
 	gebr_geoxml_document_unref(clone);
 
 	if (!has_connected_server(maestro, type, name)) {
-		gchar *msg;
-		switch (type) { case MAESTRO_SERVER_TYPE_GROUP:
+		gchar *msg = NULL;
+		switch (type) {
+		case MAESTRO_SERVER_TYPE_GROUP:
 			msg = g_strdup_printf(_("There are no connected servers on group %s."), name);
 			break;
 		case MAESTRO_SERVER_TYPE_DAEMON:
 			msg = g_strdup_printf(_("The selected server (%s) is not connected."), name);
 			break;
+		default:
+			msg = g_strdup("");
 		}
 
 		GtkWidget *dialog  = gtk_message_dialog_new_with_markup(GTK_WINDOW(gebr.window),

@@ -258,6 +258,7 @@ on_maestro_button_clicked(GtkButton *button,
 	} else {
 		gtk_widget_set_sensitive(GTK_WIDGET(change_button), FALSE);
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(change_button), FALSE);
+		change_text = g_strdup("");
 	}
 
 	/* Connect maestro */
@@ -269,6 +270,7 @@ on_maestro_button_clicked(GtkButton *button,
 	} else {
 		gtk_widget_set_sensitive(GTK_WIDGET(connect_button), FALSE);
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(connect_button), FALSE);
+		connect_text = g_strdup("");
 	}
 
 	gtk_widget_show(GTK_WIDGET(dialog));
@@ -989,6 +991,9 @@ on_path_error(GebrMaestroServer *maestro,
 				"You do not have the permissions necessary to create the directories."));
 	} else if (error_id == GEBR_COMM_PROTOCOL_STATUS_PATH_EXISTS) {
 		escaped = g_markup_printf_escaped(_("The directories already exists."));
+	} else {
+		g_warn_if_reached();
+		escaped = g_strdup("");
 	}
 
 	gtk_message_dialog_format_secondary_markup (GTK_MESSAGE_DIALOG (warning), "%s", escaped);

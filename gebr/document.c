@@ -784,8 +784,8 @@ gchar * gebr_document_get_css_header_field (const gchar * filename, const gchar 
 {
 	GString *search;
 	gchar *contents;
-	gchar *word;
 	gchar *escaped;
+	gchar *word = NULL;
 
 	if (!g_file_get_contents(filename, &contents, NULL, NULL))
 		g_return_val_if_reached(NULL);
