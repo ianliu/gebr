@@ -786,7 +786,9 @@ gebr_interface_change_tab(enum NOTEBOOK_PAGE page)
 const gchar *
 gebr_interface_get_speed_icon(gdouble value)
 {
-	if (value <= 1)
+	if (value == 0)
+		return "gebr-speed-one-core";
+	else if (value <= 1)
 		return "gebr-speed-verylow";
 	else if (value <= 2)
 		return "gebr-speed-low";
