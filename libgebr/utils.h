@@ -255,6 +255,13 @@ void gebr_pairstrfreev(gchar ***strv);
 gchar *gebr_remove_path_prefix(const gchar *prefix, const gchar *path);
 
 /**
+ * gebr_relativise_old_home_path:
+ *
+ * Change $HOME of @path_string to <HOME>
+ */
+gchar *gebr_relativise_old_home_path(const gchar *path_string);
+
+/**
  * gebr_relativise_home_path:
  *
  * Substitute @home with the prefix HOME

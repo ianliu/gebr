@@ -943,6 +943,18 @@ gebr_remove_path_prefix(const gchar *prefix, const gchar *path)
 }
 
 gchar *
+gebr_relativise_old_home_path(const gchar *path_string)
+{
+	GString *path = g_string_new(path_string);
+	gebr_path_use_home_variable(path);
+
+	if (g_str_has_prefix(path->str, "$HOME"))
+		gebr_g_string_replace_first_ref(path, "$HOME", "<HOME>");
+
+	return g_string_free(path, FALSE);
+}
+
+gchar *
 gebr_relativise_home_path(const gchar *path_string,
                           const gchar *mount_point,
                           const gchar *home)
