@@ -21,6 +21,7 @@
 #endif
 
 #include <regex.h>
+#include <glib.h>
 #include <glib/gstdio.h>
 #include <webkit/webkit.h>
 #include <libgebr/utils.h>

@@ -18,6 +18,7 @@
 #include <string.h>
 #include <glib.h>
 #include <glib/gstdio.h>
+#include <gtk/gtk.h>
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>
@@ -521,30 +522,6 @@ void on_help_contents_activate(void)
 void on_help_about_activate(void)
 {
 	gtk_widget_show(debr.about.dialog);
-}
-
-gboolean on_parameter_tool_item_new_press(GtkWidget * tool_button)
-{
-	gint x, y;
-	gint xb, yb, hb;
-	GtkWidget * menu;
-
-	menu = parameter_create_menu_with_types(FALSE);
-	gdk_window_get_origin(tool_button->window, &x, &y);
-	xb = tool_button->allocation.x;
-	yb = tool_button->allocation.y;
-	hb = tool_button->allocation.height;
-
-	void popup_position(GtkMenu * menu, gint * xp, gint * yp, gboolean * push_in, gpointer user_data) {
-		*xp = x + xb;
-		*yp = y + yb + hb;
-		*push_in = TRUE;
-	}
-
-	gtk_widget_show_all(menu);
-	gtk_menu_popup(GTK_MENU(menu), NULL, NULL, popup_position, NULL, 0, gtk_get_current_event_time());
-
-	return FALSE;
 }
 
 void on_drop_down_menu_requested(GtkWidget * button, gpointer data)

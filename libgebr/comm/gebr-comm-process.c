@@ -27,6 +27,7 @@
 #include <signal.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <gio/gio.h>
 
 #include "gebr-comm-process.h"
 
