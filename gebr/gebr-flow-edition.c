@@ -352,8 +352,8 @@ update_speed_slider_sensitiveness(GebrFlowEdition *fe)
 	gboolean sensitive;
 	GebrGeoXmlProgram *prog = gebr_geoxml_flow_get_first_mpi_program(gebr.flow);
 
-	if (gebr_geoxml_flow_is_parallelizable(gebr.flow, gebr.validator)
-	    || prog != NULL)
+	if ((gebr_geoxml_flow_is_parallelizable(gebr.flow, gebr.validator))
+	 || (gebr_geoxml_program_get_status(prog) == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED))
 		sensitive = TRUE;
 	else
 		sensitive = FALSE;
@@ -976,6 +976,7 @@ gboolean flow_edition_component_key_pressed(GtkWidget *view, GdkEventKey *key)
 	}
 
 	flow_program_check_sensitiveness();
+	flow_edition_revalidate_programs();
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
 
 	g_list_foreach (paths, (GFunc) gtk_tree_path_free, NULL);
@@ -1017,6 +1018,7 @@ void flow_edition_change_iter_status(GebrGeoXmlProgramStatus status, GtkTreeIter
 			flow_edition_revalidate_programs();
 		goto out;
 	}
+
 	if (never_opened) {
 		gtk_list_store_set(gebr.ui_flow_edition->fseq_store, iter, FSEQ_NEVER_OPENED,
 		                   FALSE, -1);
@@ -1061,6 +1063,7 @@ void flow_edition_status_changed(guint status)
 	}
 
 	flow_program_check_sensitiveness();
+	flow_edition_revalidate_programs();
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
 }
 

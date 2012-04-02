@@ -515,7 +515,7 @@ update_speed_slider_sensitiveness(GebrUiFlowBrowse *ufb)
 		gboolean parallel = gebr_geoxml_flow_is_parallelizable(flow, gebr.validator);
 		gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &gebr.flow, GEBR_GEOXML_DOCUMENT_TYPE_FLOW, FALSE);
 		GebrGeoXmlProgram *prog = gebr_geoxml_flow_get_first_mpi_program(flow);
-		gboolean has_mpi = prog != NULL;
+		gboolean has_mpi = (gebr_geoxml_program_get_status(prog) == GEBR_GEOXML_PROGRAM_STATUS_CONFIGURED);
 		gebr_geoxml_object_unref(prog);
 
 		if (parallel || has_mpi) {
