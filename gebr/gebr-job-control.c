@@ -908,7 +908,6 @@ job_control_on_cursor_changed(GtkTreeSelection *selection,
 		jc->priv->last_selection.sig_cmd_line =
 				g_signal_connect(job, "cmd-line-received", G_CALLBACK(on_job_cmd_line), jc);
 
-		g_debug("8888888888888888888888888 connecting signal ISSUED");
 		gebr_job_control_load_details(jc, job);
 	}
 
@@ -1027,8 +1026,13 @@ time_column_data_func(GtkTreeViewColumn *tree_column,
 	if (!start_time_str)
 		return;
 	g_time_val_from_iso8601(start_time_str, &start_time);
-	g_get_current_time(&curr_time);
 
+	const gchar *maddr = gebr_job_get_maestro_address(job);
+	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_address(gebr.maestro_controller, maddr);
+
+	g_get_current_time(&curr_time);
+	gint clocks_diff = gebr_maestro_server_get_clocks_diff(maestro);
+	curr_time.tv_sec -= clocks_diff;
 
 	gchar *str_aux = gebr_calculate_relative_time(&start_time, &curr_time);
 	relative_time_msg = g_strconcat( str_aux, _(" ago"), NULL );

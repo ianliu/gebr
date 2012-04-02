@@ -1168,14 +1168,16 @@ on_client_parse_messages(GebrCommProtocolSocket *socket,
 		if (message->hash == gebr_comm_protocol_defs.ini_def.code_hash) {
 			GList *arguments;
 
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 3)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 4)) == NULL)
 				goto err;
 
 			GString *version = g_list_nth_data(arguments, 0);
 			GString *cookie  = g_list_nth_data(arguments, 1);
 			GString *gebr_id = g_list_nth_data(arguments, 2);
+			GString *gebr_time_iso = g_list_nth_data(arguments, 3);
 
 			g_debug("Maestro received a X11 cookie: %s", cookie->str);
+			g_debug("Maestro received GeBR time: %s", gebr_time_iso->str);
 
 			if (g_strcmp0(version->str, gebr_version()) != 0) {
 				g_debug("Gebr's version mismatch! Got: %s Expected: %s",
@@ -1190,14 +1192,20 @@ on_client_parse_messages(GebrCommProtocolSocket *socket,
 				goto err;
 			}
 
+			gint diff_secs = gebr_compute_diff_clock_to_me(gebr_time_iso->str);
+
 			gebrm_client_set_id(client, gebr_id->str);
 			gebrm_client_set_magic_cookie(client, cookie->str);
+
+			gchar *clocks_diff = g_strdup_printf("%d", diff_secs);
 
 			guint16 client_display_port = gebrm_client_get_display_port(client);
 			gchar *port_str = g_strdup_printf("%d", client_display_port);
 			gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
-							      gebr_comm_protocol_defs.ret_def, 1,
-							      port_str);
+							      gebr_comm_protocol_defs.ret_def, 2,
+							      port_str,
+							      clocks_diff);
+			g_free(clocks_diff);
 
 			for (GList *i = app->priv->daemons; i; i = i->next) {
 				GebrCommServerState state = gebrm_daemon_get_state(i->data);

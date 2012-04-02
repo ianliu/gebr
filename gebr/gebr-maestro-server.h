@@ -169,6 +169,10 @@ const gchar *gebr_maestro_server_get_home_dir(GebrMaestroServer *maestro);
 
 gchar *gebr_maestro_server_get_sftp_root(GebrMaestroServer *maestro);
 
+void gebr_maestro_server_set_clocks_diff(GebrMaestroServer *maestro, gint secs);
+
+gint gebr_maestro_server_get_clocks_diff(GebrMaestroServer *maestro);
+
 GebrMaestroInfo *gebr_maestro_server_get_info(GebrMaestroServer *maestro);
 
 gint gebr_maestro_server_get_ncores_for_group(GebrMaestroServer *maestro,

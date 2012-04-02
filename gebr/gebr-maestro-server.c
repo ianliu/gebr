@@ -45,6 +45,7 @@ struct _GebrMaestroServerPriv {
 	gchar *error_msg;
 	GtkWindow *window;
 	gchar *home;
+	gint clocks_diff;
 
 	/* GVFS */
 	gboolean has_connected_daemon;
@@ -480,10 +481,16 @@ parse_messages(GebrCommServer *comm_server,
 			if (ret_hash == gebr_comm_protocol_defs.ini_def.code_hash) {
 				GList *arguments;
 
-				if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 1)) == NULL)
+				if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
 					goto err;
 
-				GString *port = arguments->data;
+				GString *port = g_list_nth_data(arguments, 0);
+				GString *clocks_diff = g_list_nth_data(arguments, 1);
+
+				g_debug("===============On '%s', line '%d', clocks_diff:'%s' ", __FILE__, __LINE__, clocks_diff->str);
+
+				gebr_maestro_server_set_clocks_diff(maestro, atoi(clocks_diff->str));
+
 				gebr_comm_server_set_logged(comm_server);
 				gebr_comm_server_forward_x11(maestro->priv->server, atoi(port->str));
 				gebr_comm_protocol_socket_oldmsg_split_free(arguments);
@@ -1151,6 +1158,7 @@ gebr_maestro_server_init(GebrMaestroServer *maestro)
 	maestro->priv->queues_model = gtk_list_store_new(1, GEBR_TYPE_JOB);
 	maestro->priv->has_connected_daemon = FALSE;
 	maestro->priv->window = NULL;
+	maestro->priv->clocks_diff = 0;
 
 	maestro->priv->maestro_info_iface.maestro = maestro;
 	maestro->priv->maestro_info_iface.iface.get_home_uri = gebr_maestro_server_get_home_uri;
@@ -1557,6 +1565,18 @@ gebr_maestro_server_get_home_mount_point(GebrMaestroInfo *iface)
 {
 	struct MaestroInfoIface *self = (struct MaestroInfoIface*) iface;
 	return gebr_maestro_server_get_sftp_root(self->maestro);
+}
+
+void 
+gebr_maestro_server_set_clocks_diff(GebrMaestroServer *maestro, gint secs)
+{
+	maestro->priv->clocks_diff = secs;
+}
+
+gint
+gebr_maestro_server_get_clocks_diff(GebrMaestroServer *maestro)
+{
+	return maestro->priv->clocks_diff;
 }
 
 static gchar *

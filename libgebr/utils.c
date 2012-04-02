@@ -837,6 +837,26 @@ gebr_calculate_detailed_relative_time(GTimeVal *time1, GTimeVal *time2)
 		return g_strdup_printf(_("%ld miliseconds"), ms);
 }
 
+gchar *
+gebr_compute_diff_iso_times(const gchar *iso_time1, const gchar *iso_time2)
+{
+	GTimeVal time1, time2, diff_times;
+	g_time_val_from_iso8601(iso_time1, &time1);
+	g_time_val_from_iso8601(iso_time2, &time2);
+	diff_times.tv_sec = time2.tv_sec - time1.tv_sec;
+	diff_times.tv_usec = time2.tv_sec - time1.tv_sec;
+	return g_time_val_to_iso8601(&diff_times);
+}
+
+gint
+gebr_compute_diff_clock_to_me(const gchar *iso_time1)
+{
+	GTimeVal curr_time, time1;
+	g_get_current_time(&curr_time);
+	g_time_val_from_iso8601(iso_time1, &time1);
+	return time1.tv_sec - curr_time.tv_sec;
+}
+
 gboolean
 gebr_utf8_is_asc_alnum(const gchar *str)
 {

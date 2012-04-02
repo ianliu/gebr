@@ -756,6 +756,7 @@ gebr_comm_server_socket_connected(GebrCommProtocolSocket * socket,
 	gchar *display_number = NULL;
 	const gchar *hostname = g_get_host_name();
 
+
 	display = getenv("DISPLAY");
 	if (!display)
 		display = "";
@@ -766,17 +767,24 @@ gebr_comm_server_socket_connected(GebrCommProtocolSocket * socket,
 
 	if (server->priv->is_maestro) {
 		gchar *mcookie_str = get_xauth_cookie(display_number);
+		GTimeVal gebr_time;
+		g_get_current_time(&gebr_time);
+		gchar *gebr_time_iso = g_time_val_to_iso8601(&gebr_time);
 		gebr_comm_protocol_socket_oldmsg_send(server->socket, FALSE,
-						      gebr_comm_protocol_defs.ini_def, 3,
-						      gebr_version(), mcookie_str,
-						      server->priv->gebr_id);
+						      gebr_comm_protocol_defs.ini_def, 4,
+						      gebr_version(),
+						      mcookie_str,
+						      server->priv->gebr_id,
+						      gebr_time_iso);
 		g_free(mcookie_str);
+		g_free(gebr_time_iso);
 	} else {
 		gebr_comm_protocol_socket_oldmsg_send(server->socket, FALSE,
 						      gebr_comm_protocol_defs.ini_def, 2,
 						      gebr_comm_protocol_get_version(),
 						      hostname);
 	}
+
 }
 
 static void
