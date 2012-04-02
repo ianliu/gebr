@@ -702,16 +702,6 @@ static gboolean _project_line_import_path(const gchar *filename, GList **line_pa
 		gdk_threads_enter();
 		document_import(GEBR_GEOXML_DOCUMENT(*line), TRUE);
 		gdk_threads_leave();
-		/* check for paths that could be created; */
-		GebrGeoXmlSequence *line_path;
-		gebr_geoxml_line_get_path(*line, &line_path, 0);
-		for (; line_path != NULL; gebr_geoxml_sequence_next(&line_path)) {
-			const gchar *path = gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(line_path));
-			g_debug("PRINTING paht:'%s'", path);
-			if (gebr_path_is_at_home(path) && !g_file_test(path, G_FILE_TEST_EXISTS) &&
-			    !g_list_find_custom(*line_paths_creation_sugest, path, (GCompareFunc) g_strcmp0))
-				*line_paths_creation_sugest = g_list_append(*line_paths_creation_sugest, g_strdup(path));
-		}
 
 		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 
@@ -721,6 +711,8 @@ static gboolean _project_line_import_path(const gchar *filename, GList **line_pa
 
 			const gchar *home = gebr_maestro_server_get_home_dir(maestro);
 			gchar *mount_point = gebr_maestro_server_get_sftp_root(maestro);
+
+			gebr_geoxml_line_set_path_by_name(*line, "HOME", home);
 
 			gchar *base = gebr_geoxml_line_get_path_by_name(*line, "BASE");
 			if (!base || !*base) {
@@ -734,19 +726,39 @@ static gboolean _project_line_import_path(const gchar *filename, GList **line_pa
 
 				g_free(title);
 				g_free(line_key);
+
+				gebr_geoxml_line_set_base_path(*line, base);
 			}
 
-			gchar *rel_base = gebr_relativise_home_path(base, mount_point, home);
-			gebr_geoxml_line_set_base_path(*line, rel_base);
+			/* check for paths that could be created; */
+			gchar ***pvector = gebr_geoxml_line_get_paths(*line);
+			GebrGeoXmlSequence *line_path;
+			gebr_geoxml_line_get_path(*line, &line_path, 0);
+			for (; line_path != NULL; gebr_geoxml_sequence_next(&line_path)) {
+				gchar *path = gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(line_path));
+				if (!g_strcmp0(path, home))
+					continue;
+				gchar *rel_path = gebr_resolve_relative_path(path, pvector);
+				if (!g_list_find_custom(*line_paths_creation_sugest, rel_path, (GCompareFunc) g_strcmp0))
+					*line_paths_creation_sugest = g_list_append(*line_paths_creation_sugest, g_strdup(rel_path));
 
-			gebr_geoxml_line_set_path_by_name(*line, "HOME", home);
+				g_free(path);
+				g_free(rel_path);
+			}
+			gebr_pairstrfreev(pvector);
 
 			g_free(mount_point);
-			g_free(rel_base);
 			g_free(base);
 		}
 
 		gebr_geoxml_line_get_flow(*line, &i, 0);
+
+		/* To import a flow, you need his parent line access
+		 * to relativise their paths.
+		 */
+		GebrGeoXmlLine *backup_line = gebr.line;
+		gebr.line = *line;
+
 		for (; i; gebr_geoxml_sequence_next(&i)) {
 			GebrGeoXmlFlow *flow;
 
@@ -773,6 +785,9 @@ static gboolean _project_line_import_path(const gchar *filename, GList **line_pa
 			gdk_threads_leave();
 		}
 		gdk_threads_enter();
+
+		gebr.line = backup_line;
+
 		document_save(GEBR_GEOXML_DOCUMENT(*line), FALSE, FALSE);
 		gdk_threads_leave();
 

@@ -532,15 +532,15 @@ void flow_set_paths_to_relative(GebrGeoXmlFlow * flow, GebrGeoXmlLine *line, gch
 	{
 		gchar *tmp;
 
-		if (!paths)
+		if (!paths || path->len == 0) {
 			tmp = g_strdup(path->str);
-		else if (relative)
-			tmp = gebr_relativise_path(path->str, mount_point, paths);
-		else
-			tmp = gebr_resolve_relative_path(path->str, paths);
+		} else {
+			gchar *tmp2 = gebr_relativise_old_home_path(path->str);
+			tmp = gebr_relativise_path(tmp2, mount_point, paths);
+			g_free(tmp2);
+		}
 
 		g_string_assign(path, tmp);
-		gebr_path_set_to(path, relative);
 		g_free(tmp);
 	}
 

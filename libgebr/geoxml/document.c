@@ -802,7 +802,10 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 			gchar *base;
 
 			if (first_el) {
-				base = __gebr_geoxml_get_element_value(first_el);
+				gchar *tmp;
+				tmp = __gebr_geoxml_get_element_value(first_el);
+				base = gebr_relativise_old_home_path(tmp);
+				g_free(tmp);
 
 				GebrGeoXmlSequence *seq, *aux;
 				seq = GEBR_GEOXML_SEQUENCE(first_el);
@@ -816,12 +819,13 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 			} else {
 				gchar *title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(*document));
 				gchar *line_key = gebr_geoxml_line_create_key(title);
-				base = g_build_filename(g_get_home_dir(), "GeBR", line_key, NULL);
+				base = g_build_filename("<HOME>", "GeBR", line_key, NULL);
 				g_free(title);
 				g_free(line_key);
 			}
 
 			__gebr_geoxml_set_attr_value(first_el, "name", "BASE");
+			gebr_geoxml_line_set_path_by_name((GebrGeoXmlLine *) *document, "BASE", base);
 
 			static gchar *base_dirs[][2] = {
 					{"DATA", "data"},
