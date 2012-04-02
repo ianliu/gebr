@@ -820,7 +820,7 @@ gebr_interface_update_speed_sensitiveness(GtkWidget *button,
 	g_return_if_fail(GTK_IS_IMAGE(child) == TRUE);
 
 	if (!sensitive) {
-		gtk_image_set_from_stock(GTK_IMAGE(child), gebr_interface_get_speed_icon(1),
+		gtk_image_set_from_stock(GTK_IMAGE(child), gebr_interface_get_speed_icon(0),
 					 GTK_ICON_SIZE_LARGE_TOOLBAR);
 		gtk_widget_hide(slider);
 	} else {
