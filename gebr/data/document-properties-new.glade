@@ -204,6 +204,7 @@
       <packing>
         <property name="expand">False</property>
         <property name="fill">False</property>
+        <property name="padding">5</property>
         <property name="position">0</property>
       </packing>
     </child>
@@ -216,6 +217,7 @@ lblalba</property>
         <property name="use_markup">True</property>
       </object>
       <packing>
+        <property name="expand">False</property>
         <property name="padding">10</property>
         <property name="position">1</property>
       </packing>
@@ -232,6 +234,7 @@ lblalba</property>
       <packing>
         <property name="expand">False</property>
         <property name="fill">False</property>
+        <property name="padding">5</property>
         <property name="position">0</property>
       </packing>
     </child>
@@ -243,6 +246,7 @@ blablablablabal</property>
         <property name="use_markup">True</property>
       </object>
       <packing>
+        <property name="expand">False</property>
         <property name="padding">10</property>
         <property name="position">1</property>
       </packing>
@@ -278,6 +282,7 @@ and saving output files.&lt;/i&gt;</property>
           </object>
           <packing>
             <property name="x_options">GTK_FILL</property>
+            <property name="x_padding">5</property>
           </packing>
         </child>
         <child>
@@ -725,6 +730,7 @@ files outside your &lt;b&gt;BASE&lt;/b&gt; directory.&lt;/i&gt;</property>
           </object>
           <packing>
             <property name="x_options">GTK_FILL</property>
+            <property name="x_padding">5</property>
           </packing>
         </child>
         <child>
@@ -751,12 +757,11 @@ files outside your &lt;b&gt;BASE&lt;/b&gt; directory.&lt;/i&gt;</property>
   </object>
   <object class="GtkVBox" id="vbox_hierarchy">
     <property name="visible">True</property>
-    <property name="spacing">15</property>
+    <property name="spacing">10</property>
     <child>
-      <object class="GtkLabel" id="label_hierarchy">
+      <object class="GtkLabel" id="label_hierarchy_1">
         <property name="visible">True</property>
-        <property name="label" translatable="yes">&lt;i&gt;These directories will be created on maestro &lt;b&gt;XXX&lt;/b&gt;,
-with &lt;b&gt;BASE&lt;/b&gt; (/home/bla/).&lt;/i&gt;</property>
+        <property name="label" translatable="yes">&lt;i&gt;These directories will be created on maestro &lt;b&gt;XXX&lt;/b&gt;.&lt;/i&gt;</property>
         <property name="use_markup">True</property>
       </object>
       <packing>
@@ -766,9 +771,20 @@ with &lt;b&gt;BASE&lt;/b&gt; (/home/bla/).&lt;/i&gt;</property>
       </packing>
     </child>
     <child>
+      <object class="GtkLabel" id="label_hierarchy_2">
+        <property name="visible">True</property>
+        <property name="label" translatable="yes">&lt;b&gt;&amp;lt;BASE&amp;gt;&lt;/b&gt;: /home/Xxx/GeBR/bla</property>
+        <property name="use_markup">True</property>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="position">1</property>
+      </packing>
+    </child>
+    <child>
       <object class="GtkAlignment" id="alignment2">
         <property name="visible">True</property>
-        <property name="top_padding">5</property>
+        <property name="top_padding">6</property>
         <property name="left_padding">12</property>
         <property name="right_padding">12</property>
         <child>
@@ -961,18 +977,6 @@ with &lt;b&gt;BASE&lt;/b&gt; (/home/bla/).&lt;/i&gt;</property>
                     <property name="position">1</property>
                   </packing>
                 </child>
-                <child>
-                  <object class="GtkLabel" id="label4">
-                    <property name="visible">True</property>
-                    <property name="xalign">0</property>
-                    <property name="label" translatable="yes">&lt;i&gt;&amp;lt;IMPORT&amp;gt;&lt;/i&gt;</property>
-                    <property name="use_markup">True</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="position">2</property>
-                  </packing>
-                </child>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -1057,18 +1061,6 @@ with &lt;b&gt;BASE&lt;/b&gt; (/home/bla/).&lt;/i&gt;</property>
                   <packing>
                     <property name="expand">False</property>
                     <property name="position">5</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel" id="label46">
-                    <property name="visible">True</property>
-                    <property name="xalign">0</property>
-                    <property name="use_markup">True</property>
-                    <property name="selectable">True</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="position">6</property>
                   </packing>
                 </child>
               </object>
@@ -1158,19 +1150,6 @@ with &lt;b&gt;BASE&lt;/b&gt; (/home/bla/).&lt;/i&gt;</property>
                     <property name="position">5</property>
                   </packing>
                 </child>
-                <child>
-                  <object class="GtkLabel" id="label47">
-                    <property name="visible">True</property>
-                    <property name="xalign">0</property>
-                    <property name="label" translatable="yes">Shared folder that you can access files from</property>
-                    <property name="use_markup">True</property>
-                    <property name="selectable">True</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="position">6</property>
-                  </packing>
-                </child>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -1182,11 +1161,11 @@ with &lt;b&gt;BASE&lt;/b&gt; (/home/bla/).&lt;/i&gt;</property>
       </object>
       <packing>
         <property name="padding">5</property>
-        <property name="position">1</property>
+        <property name="position">2</property>
       </packing>
     </child>
   </object>
-  <object class="GtkVBox" id="vbox1">
+  <object class="GtkVBox" id="vbox_review">
     <property name="visible">True</property>
     <property name="spacing">10</property>
     <child>
@@ -1213,7 +1192,8 @@ with &lt;b&gt;BASE&lt;/b&gt; (/home/bla/).&lt;/i&gt;</property>
           <object class="GtkLabel" id="label48">
             <property name="visible">True</property>
             <property name="xalign">0</property>
-            <property name="label" translatable="yes">Title:</property>
+            <property name="label" translatable="yes">&lt;b&gt;Title:&lt;/b&gt;</property>
+            <property name="use_markup">True</property>
           </object>
           <packing>
             <property name="x_options"></property>
@@ -1224,7 +1204,8 @@ with &lt;b&gt;BASE&lt;/b&gt; (/home/bla/).&lt;/i&gt;</property>
           <object class="GtkLabel" id="label49">
             <property name="visible">True</property>
             <property name="yalign">0.51999998092651367</property>
-            <property name="label" translatable="yes">Description:</property>
+            <property name="label" translatable="yes">&lt;b&gt;Description:&lt;/b&gt;</property>
+            <property name="use_markup">True</property>
           </object>
           <packing>
             <property name="top_attach">1</property>
@@ -1236,7 +1217,8 @@ with &lt;b&gt;BASE&lt;/b&gt; (/home/bla/).&lt;/i&gt;</property>
         <child>
           <object class="GtkLabel" id="label50">
             <property name="visible">True</property>
-            <property name="label" translatable="yes">Author:</property>
+            <property name="label" translatable="yes">&lt;b&gt;Author:&lt;/b&gt;</property>
+            <property name="use_markup">True</property>
           </object>
           <packing>
             <property name="top_attach">2</property>
@@ -1248,7 +1230,8 @@ with &lt;b&gt;BASE&lt;/b&gt; (/home/bla/).&lt;/i&gt;</property>
         <child>
           <object class="GtkLabel" id="label51">
             <property name="visible">True</property>
-            <property name="label" translatable="yes">E-mail:</property>
+            <property name="label" translatable="yes">&lt;b&gt;E-mail:&lt;/b&gt;</property>
+            <property name="use_markup">True</property>
           </object>
           <packing>
             <property name="top_attach">3</property>
@@ -1260,7 +1243,8 @@ with &lt;b&gt;BASE&lt;/b&gt; (/home/bla/).&lt;/i&gt;</property>
         <child>
           <object class="GtkLabel" id="label54">
             <property name="visible">True</property>
-            <property name="label" translatable="yes">Maestro:</property>
+            <property name="label" translatable="yes">&lt;b&gt;Maestro:&lt;/b&gt;</property>
+            <property name="use_markup">True</property>
           </object>
           <packing>
             <property name="top_attach">4</property>
@@ -1272,7 +1256,8 @@ with &lt;b&gt;BASE&lt;/b&gt; (/home/bla/).&lt;/i&gt;</property>
         <child>
           <object class="GtkLabel" id="label52">
             <property name="visible">True</property>
-            <property name="label" translatable="yes">BASE:</property>
+            <property name="label" translatable="yes">&lt;b&gt;BASE:&lt;/b&gt;</property>
+            <property name="use_markup">True</property>
           </object>
           <packing>
             <property name="top_attach">5</property>
@@ -1284,7 +1269,8 @@ with &lt;b&gt;BASE&lt;/b&gt; (/home/bla/).&lt;/i&gt;</property>
         <child>
           <object class="GtkLabel" id="label53">
             <property name="visible">True</property>
-            <property name="label" translatable="yes">IMPORT:</property>
+            <property name="label" translatable="yes">&lt;b&gt;IMPORT:&lt;/b&gt;</property>
+            <property name="use_markup">True</property>
           </object>
           <packing>
             <property name="top_attach">6</property>
@@ -1296,6 +1282,7 @@ with &lt;b&gt;BASE&lt;/b&gt; (/home/bla/).&lt;/i&gt;</property>
         <child>
           <object class="GtkLabel" id="label_rev_title">
             <property name="visible">True</property>
+            <property name="xalign">0</property>
             <property name="label" translatable="yes">label</property>
             <property name="wrap">True</property>
             <property name="wrap_mode">word-char</property>
@@ -1303,13 +1290,13 @@ with &lt;b&gt;BASE&lt;/b&gt; (/home/bla/).&lt;/i&gt;</property>
           <packing>
             <property name="left_attach">1</property>
             <property name="right_attach">2</property>
-            <property name="x_options"></property>
             <property name="y_options"></property>
           </packing>
         </child>
         <child>
           <object class="GtkLabel" id="label_rev_description">
             <property name="visible">True</property>
+            <property name="xalign">0</property>
             <property name="label" translatable="yes">label</property>
             <property name="wrap">True</property>
             <property name="wrap_mode">word-char</property>
@@ -1319,13 +1306,13 @@ with &lt;b&gt;BASE&lt;/b&gt; (/home/bla/).&lt;/i&gt;</property>
             <property name="right_attach">2</property>
             <property name="top_attach">1</property>
             <property name="bottom_attach">2</property>
-            <property name="x_options"></property>
             <property name="y_options"></property>
           </packing>
         </child>
         <child>
           <object class="GtkLabel" id="label_rev_author">
             <property name="visible">True</property>
+            <property name="xalign">0</property>
             <property name="label" translatable="yes">label</property>
             <property name="wrap">True</property>
             <property name="wrap_mode">word-char</property>
@@ -1335,13 +1322,13 @@ with &lt;b&gt;BASE&lt;/b&gt; (/home/bla/).&lt;/i&gt;</property>
             <property name="right_attach">2</property>
             <property name="top_attach">2</property>
             <property name="bottom_attach">3</property>
-            <property name="x_options"></property>
             <property name="y_options"></property>
           </packing>
         </child>
         <child>
           <object class="GtkLabel" id="label_rev_email">
             <property name="visible">True</property>
+            <property name="xalign">0</property>
             <property name="label" translatable="yes">label</property>
             <property name="wrap">True</property>
             <property name="wrap_mode">word-char</property>
@@ -1351,13 +1338,13 @@ with &lt;b&gt;BASE&lt;/b&gt; (/home/bla/).&lt;/i&gt;</property>
             <property name="right_attach">2</property>
             <property name="top_attach">3</property>
             <property name="bottom_attach">4</property>
-            <property name="x_options"></property>
             <property name="y_options"></property>
           </packing>
         </child>
         <child>
           <object class="GtkLabel" id="label_rev_maestro">
             <property name="visible">True</property>
+            <property name="xalign">0</property>
             <property name="label" translatable="yes">label</property>
             <property name="wrap">True</property>
             <property name="wrap_mode">word-char</property>
@@ -1367,13 +1354,13 @@ with &lt;b&gt;BASE&lt;/b&gt; (/home/bla/).&lt;/i&gt;</property>
             <property name="right_attach">2</property>
             <property name="top_attach">4</property>
             <property name="bottom_attach">5</property>
-            <property name="x_options"></property>
             <property name="y_options"></property>
           </packing>
         </child>
         <child>
           <object class="GtkLabel" id="label_rev_base">
             <property name="visible">True</property>
+            <property name="xalign">0</property>
             <property name="label" translatable="yes">label</property>
             <property name="wrap">True</property>
             <property name="wrap_mode">word-char</property>
@@ -1383,13 +1370,13 @@ with &lt;b&gt;BASE&lt;/b&gt; (/home/bla/).&lt;/i&gt;</property>
             <property name="right_attach">2</property>
             <property name="top_attach">5</property>
             <property name="bottom_attach">6</property>
-            <property name="x_options"></property>
             <property name="y_options"></property>
           </packing>
         </child>
         <child>
           <object class="GtkLabel" id="label_rev_import">
             <property name="visible">True</property>
+            <property name="xalign">0</property>
             <property name="label" translatable="yes">label</property>
             <property name="wrap">True</property>
             <property name="wrap_mode">word-char</property>
@@ -1399,7 +1386,6 @@ with &lt;b&gt;BASE&lt;/b&gt; (/home/bla/).&lt;/i&gt;</property>
             <property name="right_attach">2</property>
             <property name="top_attach">6</property>
             <property name="bottom_attach">7</property>
-            <property name="x_options"></property>
             <property name="y_options"></property>
           </packing>
         </child>
@@ -1494,6 +1480,7 @@ with &lt;b&gt;BASE&lt;/b&gt; (/home/bla/).&lt;/i&gt;</property>
         </child>
       </object>
       <packing>
+        <property name="expand">False</property>
         <property name="position">1</property>
       </packing>
     </child>
