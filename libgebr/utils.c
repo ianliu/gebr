@@ -936,6 +936,8 @@ gebr_pairstrfreev(gchar ***strv)
 gchar *
 gebr_remove_path_prefix(const gchar *prefix, const gchar *path)
 {
+	if (!prefix)
+		return g_strdup(path);
 	if (g_str_has_prefix(path, prefix))
 		return g_strdup(path + strlen(prefix));
 	else
