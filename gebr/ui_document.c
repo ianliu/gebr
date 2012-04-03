@@ -210,25 +210,6 @@ static void gebr_dict_update_wizard(struct dict_edit_data *data);
 // PUBLIC FUNCTIONS							       =
 //==============================================================================
 
-static gboolean
-on_properties_entry_focus_out(GtkWidget *widget,
-                              GdkEvent  *event)
-{
-	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
-	const gchar *home = gebr_maestro_server_get_home_dir(maestro);
-	gchar *mount_point = gebr_maestro_info_get_home_mount_point(gebr_maestro_server_get_info(maestro));
-
-	const gchar *text = gtk_entry_get_text(GTK_ENTRY(widget));
-
-	gchar *relative = gebr_relativise_home_path(text, mount_point, home);
-
-	gtk_entry_set_text(GTK_ENTRY(widget), relative);
-
-	g_free(mount_point);
-	g_free(relative);
-	return FALSE;
-}
-
 GebrGeoXmlDocument *document_get_current(void)
 {
 	switch (gtk_notebook_get_current_page(GTK_NOTEBOOK(gebr.notebook))) {
@@ -241,70 +222,6 @@ GebrGeoXmlDocument *document_get_current(void)
 		flow_browse_get_selected(NULL, TRUE);
 		return GEBR_GEOXML_DOCUMENT(gebr.flow);
 	}
-}
-
-static void
-on_base_entry_press(GtkEntry            *entry,
-                      GtkEntryIconPosition icon_pos,
-                      GdkEvent            *event,
-                      gpointer             user_data)
-{
-	GebrPropertiesData *data = user_data;
-
-	GtkWidget *file_chooser = gtk_file_chooser_dialog_new("Choose BASE directory", GTK_WINDOW(data->window),
-	                                                      GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
-	                                                      GTK_STOCK_ADD, GTK_RESPONSE_OK,
-	                                                      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
-	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
-	gchar *prefix = gebr_maestro_server_get_sftp_prefix(maestro);
-	gchar *mount_point = gebr_maestro_info_get_home_mount_point(gebr_maestro_server_get_info(maestro));
-	gchar *home = g_build_filename(prefix, gebr_maestro_server_get_home_dir(maestro), NULL);
-	gtk_file_chooser_set_local_only(GTK_FILE_CHOOSER(file_chooser), FALSE);
-	gtk_file_chooser_set_current_folder_uri(GTK_FILE_CHOOSER(file_chooser), home);
-	gint response = gtk_dialog_run(GTK_DIALOG(file_chooser));
-
-	if (response == GTK_RESPONSE_OK) {
-		gchar *tmp = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(file_chooser));
-		gchar *folder = gebr_relativise_home_path(tmp, mount_point, gebr_maestro_server_get_home_dir(maestro));
-
-		gtk_entry_set_text(entry, gebr_remove_path_prefix(mount_point, folder));
-
-		g_free(folder);
-		g_free(tmp);
-	}
-	g_free(prefix);
-	g_free(home);
-	gtk_widget_destroy(file_chooser);
-}
-
-static void
-on_import_entry_press(GtkEntry            *entry,
-                      GtkEntryIconPosition icon_pos,
-                      GdkEvent            *event,
-                      gpointer             user_data)
-{
-	GebrPropertiesData *data = user_data;
-
-	GtkWidget *file_chooser = gtk_file_chooser_dialog_new("Choose IMPORT directory", GTK_WINDOW(data->window),
-	                                                      GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
-	                                                      GTK_STOCK_ADD, GTK_RESPONSE_OK,
-	                                                      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
-	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
-	gchar *prefix = gebr_maestro_server_get_sftp_prefix(maestro);
-	gchar *mount_point = gebr_maestro_info_get_home_mount_point(gebr_maestro_server_get_info(maestro));
-	gchar *home = g_build_filename(prefix, gebr_maestro_server_get_home_dir(maestro), NULL);
-	gtk_file_chooser_set_local_only(GTK_FILE_CHOOSER(file_chooser), FALSE);
-	gtk_file_chooser_set_current_folder_uri(GTK_FILE_CHOOSER(file_chooser), home);
-	gint response = gtk_dialog_run(GTK_DIALOG(file_chooser));
-
-	if (response == GTK_RESPONSE_OK) {
-		gchar *folder = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(file_chooser));
-		gtk_entry_set_text(entry, gebr_remove_path_prefix(mount_point, folder));
-		g_free(folder);
-	}
-	g_free(prefix);
-	g_free(home);
-	gtk_widget_destroy(file_chooser);
 }
 
 static void
@@ -438,10 +355,10 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 		gtk_notebook_append_page(GTK_NOTEBOOK(notebook), path_box, gtk_label_new(_("Paths")));
 
 		GtkEntry *entry_base = GTK_ENTRY(gtk_builder_get_object(builder, "entry_base"));
-		g_signal_connect(entry_base, "icon-press", G_CALLBACK(on_base_entry_press), data);
-
 		GtkEntry *entry_import = GTK_ENTRY(gtk_builder_get_object(builder, "entry_import"));
-		g_signal_connect(entry_import, "icon-press", G_CALLBACK(on_import_entry_press), data);
+
+		g_signal_connect(entry_base, "icon-press", G_CALLBACK(on_line_callback_base_entry_press), data->window);
+		g_signal_connect(entry_import, "icon-press", G_CALLBACK(on_line_callback_import_entry_press), data->window);
 
 		gchar ***paths = gebr_geoxml_line_get_paths(GEBR_GEOXML_LINE(document));
 		gchar *base_path = NULL;
@@ -461,7 +378,7 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 		gtk_entry_set_text(entry_base, base_path);
 
 		g_signal_connect(entry_base, "changed", G_CALLBACK(on_properties_entry_changed), data->ok_button);
-		g_signal_connect(entry_base, "focus-out-event", G_CALLBACK(on_properties_entry_focus_out), NULL);
+		g_signal_connect(entry_base, "focus-out-event", G_CALLBACK(on_line_callback_base_focus_out), NULL);
 		g_free(base_path);
 
 		gchar *import_path = NULL;

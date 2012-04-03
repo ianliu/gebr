@@ -30,6 +30,34 @@
 G_BEGIN_DECLS
 
 /**
+ * on_line_callback_base_entry_press:
+ *
+ * Callback used on Assistant and properties for Line.
+ */
+void on_line_callback_base_entry_press(GtkEntry            *entry,
+                                       GtkEntryIconPosition icon_pos,
+                                       GdkEvent            *event,
+                                       gpointer             user_data);
+
+/**
+ * on_line_callback_import_entry_press:
+ *
+ * Callback used on Assistant and properties for Line.
+ */
+void on_line_callback_import_entry_press(GtkEntry            *entry,
+                                         GtkEntryIconPosition icon_pos,
+                                         GdkEvent            *event,
+                                         gpointer             user_data);
+
+/**
+ * on_line_callback_base_focus_out:
+ *
+ * Callback used on Assistant and properties for Line.
+ */
+gboolean on_line_callback_base_focus_out(GtkWidget *widget,
+                                         GdkEvent  *event);
+
+/**
  * Create a new line.
  * If \p silent is TRUE then no message and dialogs are displayed to user.
  */
@@ -66,6 +94,9 @@ void line_move_flow_top(void);
  */
 void line_move_flow_bottom(void);
 
+/**
+ *
+ */
 void on_properties_entry_changed(GtkEntry *entry, GtkWidget *ok_button);
 
 G_END_DECLS
