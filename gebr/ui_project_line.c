@@ -973,9 +973,9 @@ static gboolean update_progress(gpointer user_data)
 			                       GTK_STOCK_YES, GTK_RESPONSE_YES,
 			                       GTK_STOCK_NO, GTK_RESPONSE_NO,
 			                       NULL);
-			gtk_box_pack_start(GTK_BOX(data->dialog->vbox), scrolled_window, TRUE, TRUE, 0);
+			gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(data->dialog)), scrolled_window, TRUE, TRUE, 0);
 
-			gtk_widget_show_all(data->dialog->vbox);
+			gtk_widget_show_all(gtk_dialog_get_content_area(data->dialog));
 
 			g_string_free(paths, TRUE);
 
@@ -1088,7 +1088,7 @@ void project_line_import_path(const gchar *path)
 	label = gtk_label_new(_("<span size='large' weight='bold'>Importing documents, please wait...</span>"));
 	gtk_label_set_use_markup(GTK_LABEL(label), TRUE);
 	progress = gtk_progress_bar_new();
-	box = GTK_BOX(GTK_DIALOG(dialog)->vbox);
+	box = GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog)));
 	gtk_progress_bar_set_pulse_step(GTK_PROGRESS_BAR(progress), 0.1);
 	gtk_box_set_spacing(box, 10);
 	gtk_box_pack_start(box, label, TRUE, TRUE, 0);
@@ -1453,7 +1453,7 @@ void project_line_delete(void)
 		gtk_label_set_markup (GTK_LABEL (title), markup);
 		g_free (markup);
 		gtk_container_add(GTK_CONTAINER(scrolled_window), text_view);
-		gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), table, TRUE, TRUE, 0);
+		gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), table, TRUE, TRUE, 0);
 		gtk_table_attach(GTK_TABLE(table), image, 0, 1, row, row + 1, (GtkAttachOptions)GTK_FILL,
 				 (GtkAttachOptions)GTK_FILL, 3, 3);
 		gtk_table_attach(GTK_TABLE(table), title, 1, 2, row, row + 1, (GtkAttachOptions)GTK_FILL,
@@ -1466,7 +1466,7 @@ void project_line_delete(void)
 				 (GtkAttachOptions)GTK_EXPAND
 				 , 3, 3), row++;
 
-		gtk_widget_show_all(GTK_DIALOG(dialog)->vbox);
+		gtk_widget_show_all(gtk_dialog_get_content_area(GTK_DIALOG(dialog)));
 		ret = gtk_dialog_run(GTK_DIALOG(dialog));
 		can_delete = (ret == GTK_RESPONSE_YES) ? TRUE : FALSE;
 
@@ -1490,7 +1490,7 @@ void project_line_delete(void)
 		gtk_label_set_markup (GTK_LABEL (title), markup);
 		g_free (markup);
 
-		gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), table, TRUE, TRUE, 0);
+		gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), table, TRUE, TRUE, 0);
 		gtk_table_attach(GTK_TABLE(table), image, 0, 1, row, row + 1, (GtkAttachOptions)GTK_FILL,
 				 (GtkAttachOptions)GTK_FILL, 3, 3);
 		gtk_table_attach(GTK_TABLE(table), title, 1, 2, row, row + 1, (GtkAttachOptions)GTK_FILL,
@@ -1501,7 +1501,7 @@ void project_line_delete(void)
 
 		gtk_table_attach(GTK_TABLE(table), text_view, 1, 2, row, row + 1, (GtkAttachOptions)GTK_FILL,
 				 (GtkAttachOptions)GTK_FILL, 3, 3), row++;
-		gtk_widget_show_all(GTK_DIALOG(dialog)->vbox);
+		gtk_widget_show_all(gtk_dialog_get_content_area(GTK_DIALOG(dialog)));
 		ret = gtk_dialog_run(GTK_DIALOG(dialog));
 		can_delete = (ret == GTK_RESPONSE_YES) ? TRUE : FALSE;
 
