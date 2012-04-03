@@ -1147,8 +1147,6 @@ void project_line_export(void)
 	gchar *tmp;
 
 	GtkWidget *chooser_dialog;
-	GtkWidget *check_box_user;
-	const gchar *check_box_label_user;
 	GtkFileFilter *file_filter;
 
 	GList *rows;
@@ -1212,20 +1210,15 @@ void project_line_export(void)
 		gtk_file_filter_set_name(file_filter, _("Project (*.prjz)"));
 		gtk_file_filter_add_pattern(file_filter, "*.prjz");
 		extension = ".prjz";
-		check_box_label_user = _("Make this Project user-independent");
 	} else {
 		gtk_file_filter_set_name(file_filter, _("Line (*.lnez)"));
 		gtk_file_filter_add_pattern(file_filter, "*.lnez");
 		extension = ".lnez";
-		check_box_label_user = _("Make this Line user-independent");
 	}
 
 	GtkWidget *box;
 	box = gtk_vbox_new(FALSE, 5);
 	/* run file chooser */
-	check_box_user = gtk_check_button_new_with_label(check_box_label_user);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_box_user), TRUE);
-	gtk_box_pack_start(GTK_BOX(box), check_box_user, TRUE, TRUE, 0);
 
 	chooser_dialog = gebr_gui_save_dialog_new(_("Choose filename to save"), GTK_WINDOW(gebr.window));
 	gebr_gui_save_dialog_set_default_extension(GEBR_GUI_SAVE_DIALOG(chooser_dialog), extension);
@@ -1247,7 +1240,7 @@ void project_line_export(void)
 
 		line = GEBR_GEOXML_LINE (gebr_geoxml_document_clone (_line));
 
-		line_set_paths_to_relative(line, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(check_box_user)));
+		line_set_paths_to_relative(line, TRUE);
 		filename = g_build_path ("/", tmpdir->str,
 					 gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(line)),
 					 NULL);
@@ -1265,7 +1258,7 @@ void project_line_export(void)
 				continue;
 
 			gchar ***paths = gebr_geoxml_line_get_paths(GEBR_GEOXML_LINE(_line));
-			flow_set_paths_to_relative(flow, line, paths, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(check_box_user)));
+			flow_set_paths_to_relative(flow, line, paths, TRUE);
 			gebr_pairstrfreev(paths);
 			filename = g_build_path ("/", tmpdir->str, flow_filename, NULL);
 			document_save_at(GEBR_GEOXML_DOCUMENT(flow), filename, FALSE, FALSE);

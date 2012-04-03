@@ -262,9 +262,7 @@ void flow_export(void)
 	GtkFileFilter *file_filter;
 	GtkTreeModel *model;
 	GtkTreeSelection *selection;
-	GtkWidget *check_box_user;
 	GtkWidget *chooser_dialog;
-	gboolean active_user;
 	gboolean have_flow = FALSE;
 	gboolean error = FALSE;
 	gchar *filename;
@@ -306,8 +304,6 @@ void flow_export(void)
 	GtkWidget *box;
 	box = gtk_vbox_new(FALSE, 5);
 
-	check_box_user = gtk_check_button_new_with_label(_("Make this Flow user-independent"));
-	gtk_box_pack_start(GTK_BOX(box), check_box_user, TRUE, TRUE, 0);
 	chooser_dialog = gebr_gui_save_dialog_new(title->str, GTK_WINDOW(gebr.window));
 	gebr_gui_save_dialog_set_default_extension(GEBR_GUI_SAVE_DIALOG(chooser_dialog), ".flwz");
 
@@ -317,14 +313,12 @@ void flow_export(void)
 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(chooser_dialog), file_filter);
 	gtk_file_chooser_set_extra_widget(GTK_FILE_CHOOSER(chooser_dialog), box);
 	gtk_widget_show_all(box);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_box_user), TRUE);
 
 	tmp = gebr_gui_save_dialog_run(GEBR_GUI_SAVE_DIALOG(chooser_dialog));
 	if (!tmp)
 		goto out;
 
 	filename = g_path_get_basename (tmp);
-	active_user = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (check_box_user));
 	tempdir = gebr_temp_directory_create ();
 	tar = gebr_tar_create (tmp);
 
@@ -348,7 +342,7 @@ void flow_export(void)
 		}
 
 		gchar ***paths = gebr_geoxml_line_get_paths(gebr.line);
-		flow_set_paths_to_relative(GEBR_GEOXML_FLOW(flow), gebr.line, paths, active_user);
+		flow_set_paths_to_relative(GEBR_GEOXML_FLOW(flow), gebr.line, paths, TRUE);
 		gebr_pairstrfreev(paths);
 
 		filepath = g_build_path ("/", tempdir->str, flow_filename, NULL);
