@@ -257,6 +257,8 @@ calculate_server_score(GebrCommDaemon *daemon, const gchar *load, gint ncores, g
 	gdouble base = floor(current_load/ncores);
 	gdouble rest = current_load - base;
 
+	gdouble factor_correction = 0.9;
+	gint n_jobs = 0;
 	for (gint i = 0; i < ncores; i++) {
 		ServerScore *sc = g_new(ServerScore, 1);
 		sc->score = base;
@@ -268,7 +270,15 @@ calculate_server_score(GebrCommDaemon *daemon, const gchar *load, gint ncores, g
 			rest = 0;
 		}
 		sc->server = daemon;
-		sc->score = cpu_clock/(sc->score + 1);
+
+		if (running_jobs > 0) {
+			n_jobs = 1;
+			running_jobs--;
+		} else {
+			n_jobs = 0;
+		}
+
+		sc->score = (cpu_clock/(sc->score + 1)) * pow(factor_correction, n_jobs);
 
 		score = g_list_prepend(score, sc);
 
@@ -770,7 +780,6 @@ on_response_received(GebrCommHttpMsg *request,
 	} else
 		n = 1;
 
-//	gdouble factor_correction = 0.9;
 	gint running_jobs = gebr_comm_daemon_get_n_running_jobs(GEBR_COMM_DAEMON(daemon));
 
 	self->priv->cores_scores = g_list_concat(self->priv->cores_scores,
@@ -779,9 +788,6 @@ on_response_received(GebrCommHttpMsg *request,
 	                                                                server->ncores,
 	                                                                server->clock_cpu,
 	                                                                running_jobs));
-
-//	*eff_ncores = MAX(1, MIN(nsteps, gebr_calculate_number_of_processors(ncores, scale)));
-//	g_debug("on '%s', eff_ncores: '%d'", __func__, *eff_ncores);
 
 	self->priv->responses++;
 	if (self->priv->responses == self->priv->requests) {
