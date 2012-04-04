@@ -263,44 +263,17 @@ resolve_home_variable_to_base(const gchar *base,
 	return used_base;
 }
 
-typedef struct {
-	GtkLabel *label;
-	GtkEntry *entry;
-	gchar *key;
-	gchar *value;
-} LabelKeyReview;
-
-void
-gebr_line_properties_get_infos_entry(GtkBuilder *builder,
-                                     LabelKeyReview *keys,
-                                     gint n)
+static void
+get_builder_objects(GtkBuilder *builder, const gchar *prefix, GHashTable *hash, const gchar **keys)
 {
-	keys[0].entry = GTK_ENTRY(gtk_builder_get_object(builder, "entry_title"));
-	keys[1].entry = GTK_ENTRY(gtk_builder_get_object(builder, "entry_description"));
-	keys[2].entry = GTK_ENTRY(gtk_builder_get_object(builder, "entry_author"));
-	keys[3].entry = GTK_ENTRY(gtk_builder_get_object(builder, "entry_email"));
-	keys[4].entry = GTK_ENTRY(gtk_builder_get_object(builder, "entry_base"));
-	keys[5].entry = GTK_ENTRY(gtk_builder_get_object(builder, "entry_import"));
 
-	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
-	const gchar *maestro_addr = gebr_maestro_server_get_address(maestro);
-	const gchar *home = gebr_maestro_server_get_home_dir(maestro);
-
-	for (gint i = 0; i < n; i++) {
-		if (!g_strcmp0(keys[i].key, "base"))
-			keys[i].value = resolve_home_variable_to_base(gtk_entry_get_text(keys[i].entry), home);
-		else if (!g_strcmp0(keys[i].key, "maestro"))
-			keys[i].value = g_strdup(maestro_addr);
-		else {
-			const gchar *entry_text = gtk_entry_get_text(keys[i].entry);
-			if (!*entry_text)
-				keys[i].value = g_markup_printf_escaped(_("<i>Not defined</i>"));
-			else
-				keys[i].value = g_strdup(entry_text);
-		}
+	gchar *aux;
+	for (gint i = 0; keys[i]; i++) {
+		aux = g_strdup_printf("%s%s", prefix, keys[i]);
+		g_hash_table_insert(hash, (gpointer) keys[i], gtk_builder_get_object(builder, aux));
+		g_free(aux);
 	}
 }
-
 static void
 on_assistant_prepare(GtkAssistant *assistant,
 		     GtkWidget *current_page,
@@ -308,6 +281,10 @@ on_assistant_prepare(GtkAssistant *assistant,
 {
 	gint page = gtk_assistant_get_current_page(assistant) + 1;
 	GObject *entry_base = gtk_builder_get_object(data->builder, "entry_base");
+
+	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+	const gchar *maestro_addr = gebr_maestro_server_get_address(maestro);
+	const gchar *home = gebr_maestro_server_get_home_dir(maestro);
 
 	if (page == 4) {
 		GObject *entry_title = gtk_builder_get_object(data->builder, "entry_title");
@@ -321,9 +298,6 @@ on_assistant_prepare(GtkAssistant *assistant,
 	}
 	else if (page == 6) {
 		const gchar *base = gtk_entry_get_text(GTK_ENTRY(entry_base));
-		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
-		const gchar *maestro_addr = gebr_maestro_server_get_address(maestro);
-		const gchar *home = gebr_maestro_server_get_home_dir(maestro);
 
 		GObject *label;
 		gchar *text_maestro = g_markup_printf_escaped(_("<i>These directories will be created on maestro <b>%s</b>.</i>"), maestro_addr);
@@ -341,33 +315,42 @@ on_assistant_prepare(GtkAssistant *assistant,
 		g_free(used_base);
 	}
 	else if (page == 7) {
-		LabelKeyReview *keys = g_new0(LabelKeyReview, 7);
+		GHashTable *labels = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, NULL);
+		GHashTable *entries = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, NULL) ;
 
-		keys[0].label = GTK_LABEL(gtk_builder_get_object(data->builder, "label_rev_title"));
-		keys[0].key = g_strdup("title");
-		keys[1].label = GTK_LABEL(gtk_builder_get_object(data->builder, "label_rev_description"));
-		keys[1].key = g_strdup("description");
-		keys[2].label = GTK_LABEL(gtk_builder_get_object(data->builder, "label_rev_author"));
-		keys[2].key = g_strdup("author");
-		keys[3].label = GTK_LABEL(gtk_builder_get_object(data->builder, "label_rev_email"));
-		keys[3].key = g_strdup("email");
-		keys[4].label = GTK_LABEL(gtk_builder_get_object(data->builder, "label_rev_base"));
-		keys[4].key = g_strdup("base");
-		keys[5].label = GTK_LABEL(gtk_builder_get_object(data->builder, "label_rev_import"));
-		keys[5].key = g_strdup("import");
-		keys[6].label = GTK_LABEL(gtk_builder_get_object(data->builder, "label_rev_maestro"));
-		keys[6].key = g_strdup("maestro");
+		const gchar *keys[] = {
+			"title",
+			"description",
+			"author",
+			"email",
+			"base",
+			"import",
+			"maestro",
+			NULL};
 
-		gebr_line_properties_get_infos_entry(data->builder, keys, 7);
+		get_builder_objects(data->builder, "label_rev_", labels, keys);
+		get_builder_objects(data->builder, "entry_", entries, keys);
 
-		for (gint i = 0; i < 7; i++)
-			gtk_label_set_markup(keys[i].label, keys[i].value);
+		for (gint i = 0; keys[i]; i++) {
+			gchar *value;
+			if (!g_strcmp0(keys[i], "maestro"))
+				value = g_strdup(maestro_addr);
+			else if (!g_strcmp0(keys[i], "base")) {
+				const gchar *aux = gtk_entry_get_text(GTK_ENTRY(g_hash_table_lookup(entries, keys[i])));
+				value = resolve_home_variable_to_base(aux, home);
+			} else {
+				const gchar *aux = gtk_entry_get_text(GTK_ENTRY(g_hash_table_lookup(entries, keys[i])));
+				if (!*aux)
+					value = g_strdup("<i>Not Defined</i>");
+				else
+					value = g_strdup(aux);
+			}
 
-		for (gint i = 0; i < 7; i++) {
-			g_free(keys[i].key);
-			g_free(keys[i].value);
-		}
-		g_free(keys);
+			gtk_label_set_markup(GTK_LABEL(g_hash_table_lookup(labels, keys[i])), value);
+			g_free(value);
+			}
+		g_hash_table_unref(labels);
+		g_hash_table_unref(entries);
 	}
 	else if (page == 8) {
 		GObject *container_progress = gtk_builder_get_object(data->builder, "container_progressbar");
