@@ -212,6 +212,15 @@ on_connect_line_maestro(GtkWidget *widget,
 }
 
 static void
+on_change_line_maestro_disconnected(GtkWidget *widget,
+                                    GtkWidget *dialog)
+{
+	on_configure_servers_activate();
+	gtk_widget_destroy(dialog);
+	on_maestro_button_clicked(NULL, NULL);
+}
+
+static void
 on_change_line_maestro(GtkWidget *widget,
 		       GtkWidget *dialog)
 {
@@ -244,21 +253,24 @@ on_maestro_button_clicked(GtkButton *button,
 	GObject *connect_label = gtk_builder_get_object(builder, "label_connect_maestro");
 	GObject *change_label = gtk_builder_get_object(builder, "label_change_maestro");
 
+	GObject *image_change_button = gtk_builder_get_object(builder, "image_change_maestro");
+
 	g_signal_connect(connect_button, "clicked", G_CALLBACK(on_connect_line_maestro), dialog);
-	g_signal_connect(change_button, "clicked", G_CALLBACK(on_change_line_maestro), dialog);
 
 	/* Change maestro */
 	const gchar *change_addr;
 	gchar *change_text;
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
-	if (maestro) {
+	if (maestro && gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED) {
 		change_addr = gebr_maestro_server_get_address(maestro);
-		change_text = g_markup_printf_escaped("Move this line's maestro to <b>%s</b>", change_addr);
+		change_text = g_markup_printf_escaped("Move this line to maestro <b>%s</b>", change_addr);
 		gtk_label_set_markup(GTK_LABEL(change_label), change_text);
+		g_signal_connect(change_button, "clicked", G_CALLBACK(on_change_line_maestro), dialog);
 	} else {
-		gtk_widget_set_sensitive(GTK_WIDGET(change_button), FALSE);
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(change_button), FALSE);
-		change_text = g_strdup("");
+		gtk_image_set_from_stock(GTK_IMAGE(image_change_button), "gtk-disconnect", GTK_ICON_SIZE_DND);
+		change_text = g_markup_printf_escaped("Click here to connect on another maestro");
+		gtk_label_set_markup(GTK_LABEL(change_label), change_text);
+		g_signal_connect(change_button, "clicked", G_CALLBACK(on_change_line_maestro_disconnected), dialog);
 	}
 
 	/* Connect maestro */
