@@ -337,32 +337,22 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 		data->old_base = gebr_geoxml_line_get_path_by_name(GEBR_GEOXML_LINE(document), "BASE");
 
 		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, GEBR_GEOXML_LINE(document));
-		gboolean is_logged = maestro? (gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED) : FALSE;
-
-		/* Set sensitivity for title */
-		GObject *warn_edit = gtk_builder_get_object(builder, "warn_edit");
-		gtk_widget_set_visible(GTK_WIDGET(warn_edit), FALSE);
 
 		gint row, col;
 		g_object_get(table, "n-rows", &row, "n-columns", &col, NULL);
 		gtk_table_resize(GTK_TABLE(table), row+1, col);
 
-		GtkWidget *path_box = GTK_WIDGET(gtk_builder_get_object(builder, "widget_paths"));
-		GtkWidget *vbox_paths = GTK_WIDGET(gtk_builder_get_object(builder, "vbox_paths"));
-		GtkWidget *warn_paths = GTK_WIDGET(gtk_builder_get_object(builder, "warn_paths"));
-		gtk_widget_set_visible(warn_paths, !is_logged);
-		gtk_widget_set_sensitive(vbox_paths, is_logged);
-		gtk_notebook_append_page(GTK_NOTEBOOK(notebook), path_box, gtk_label_new(_("Paths")));
+		/* Base Path Tab */
+		GtkWidget *base_box = GTK_WIDGET(gtk_builder_get_object(builder, "vbox_base"));
+		GtkWidget *hierarchy_box = GTK_WIDGET(gtk_builder_get_object(builder, "hierarchy_base"));
+		gtk_notebook_append_page(GTK_NOTEBOOK(notebook), base_box, gtk_label_new(_("BASE Path")));
+		gtk_widget_set_visible(hierarchy_box, TRUE);
 
 		GtkEntry *entry_base = GTK_ENTRY(gtk_builder_get_object(builder, "entry_base"));
-		GtkEntry *entry_import = GTK_ENTRY(gtk_builder_get_object(builder, "entry_import"));
-
 		g_signal_connect(entry_base, "icon-press", G_CALLBACK(on_line_callback_base_entry_press), data->window);
-		g_signal_connect(entry_import, "icon-press", G_CALLBACK(on_line_callback_import_entry_press), data->window);
 
 		gchar ***paths = gebr_geoxml_line_get_paths(GEBR_GEOXML_LINE(document));
 		gchar *base_path = NULL;
-
 		for (gint i = 0; paths[i] != NULL; i++) {
 			if (g_strcmp0(paths[i][1], "BASE") == 0) {
 				base_path = paths[i][0];
@@ -380,6 +370,13 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 		g_signal_connect(entry_base, "changed", G_CALLBACK(on_properties_entry_changed), data->ok_button);
 		g_signal_connect(entry_base, "focus-out-event", G_CALLBACK(on_line_callback_base_focus_out), NULL);
 		g_free(base_path);
+
+		/* Import Path Tab */
+		GtkWidget *import_box = GTK_WIDGET(gtk_builder_get_object(builder, "vbox_import"));
+		gtk_notebook_append_page(GTK_NOTEBOOK(notebook), import_box, gtk_label_new(_("IMPORT Path")));
+
+		GtkEntry *entry_import = GTK_ENTRY(gtk_builder_get_object(builder, "entry_import"));
+		g_signal_connect(entry_import, "icon-press", G_CALLBACK(on_line_callback_import_entry_press), data->window);
 
 		gchar *import_path = NULL;
 		for (gint i=0; paths[i] != NULL; i++){
