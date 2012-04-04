@@ -353,10 +353,9 @@ save_maestro_changed(GebrUiProjectLine *upl, const gchar *change_addr)
 						     "and its respective Flows that can be broken."));
 	if (confirm) {
 		gebr_geoxml_line_set_maestro(gebr.line, change_addr);
-		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
-		gchar *home = g_build_filename(gebr_maestro_server_get_home_dir(maestro), NULL);
+		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_address(gebr.maestro_controller, change_addr);
+		const gchar *home = gebr_maestro_server_get_home_dir(maestro);
 		gebr_geoxml_line_set_path_by_name(gebr.line, "HOME", home);
-		g_free(home);
 		gebr_document_send_path_message(gebr.line, GEBR_COMM_PROTOCOL_PATH_CREATE, NULL);
 
 		document_save(GEBR_GEOXML_DOCUMENT(gebr.line), TRUE, FALSE);
