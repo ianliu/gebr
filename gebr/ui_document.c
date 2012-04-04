@@ -241,7 +241,7 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 	g_return_if_fail(document != NULL);
 
 	GtkBuilder *builder = gtk_builder_new();
-	const gchar *glade_file = GEBR_GLADE_DIR "/document-properties.glade";
+	const gchar *glade_file = GEBR_GLADE_DIR "/document-properties-new.glade";
 
 	if (!gtk_builder_add_from_file(builder, glade_file, NULL))
 		return;

@@ -270,7 +270,7 @@ get_builder_objects(GtkBuilder *builder, const gchar *prefix, GHashTable *hash, 
 	gchar *aux;
 	for (gint i = 0; keys[i]; i++) {
 		aux = g_strdup_printf("%s%s", prefix, keys[i]);
-		g_hash_table_insert(hash, (gpointer) keys[i], gtk_builder_get_object(builder, aux));
+		g_hash_table_insert(hash, (gpointer) g_strdup(keys[i]), gtk_builder_get_object(builder, aux));
 		g_free(aux);
 	}
 }
@@ -315,8 +315,8 @@ on_assistant_prepare(GtkAssistant *assistant,
 		g_free(used_base);
 	}
 	else if (page == 7) {
-		GHashTable *labels = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, NULL);
-		GHashTable *entries = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, NULL) ;
+		GHashTable *labels = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
+		GHashTable *entries = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL) ;
 
 		const gchar *keys[] = {
 			"title",
@@ -349,8 +349,8 @@ on_assistant_prepare(GtkAssistant *assistant,
 			gtk_label_set_markup(GTK_LABEL(g_hash_table_lookup(labels, keys[i])), value);
 			g_free(value);
 			}
-		g_hash_table_unref(labels);
-		g_hash_table_unref(entries);
+		g_hash_table_destroy(labels);
+		g_hash_table_destroy(entries);
 	}
 	else if (page == 8) {
 		GObject *container_progress = gtk_builder_get_object(data->builder, "container_progressbar");
