@@ -604,15 +604,44 @@ free:
 	g_free(result);
 }
 
+static void
+gebr_gui_parameter_set_min_max(GtkEntry *entry, struct gebr_gui_parameter_widget *parameter_widget)
+{
+	const gchar *min, *max;
+	const gchar *number = gtk_entry_get_text(entry);
+	gebr_geoxml_program_parameter_get_number_min_max(parameter_widget->program_parameter, &min, &max);
+
+	const gchar *value = NULL;
+	if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_INT)
+		value = gebr_validate_int(number, min, max);
+
+	else if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT)
+		value = gebr_validate_float(number, min, max);
+
+	if (value && *value) {
+		gtk_entry_set_text(entry, value);
+		gtk_entry_set_icon_tooltip_text(entry, GTK_ENTRY_ICON_SECONDARY, value);
+	}
+}
+
 static void __on_activate(GtkEntry * entry, struct gebr_gui_parameter_widget *parameter_widget)
 {
 	gebr_gui_parameter_widget_validate(parameter_widget);
+
+	if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_INT ||
+			parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT)
+		gebr_gui_parameter_set_min_max(entry, parameter_widget);
 }
 
 static gboolean __on_focus_out_event(GtkWidget * widget, GdkEventFocus * event,
 				     struct gebr_gui_parameter_widget *parameter_widget)
 {
 	gebr_gui_parameter_widget_validate(parameter_widget);
+
+	if (parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_INT ||
+			parameter_widget->parameter_type == GEBR_GEOXML_PARAMETER_TYPE_FLOAT)
+		gebr_gui_parameter_set_min_max(GTK_ENTRY(widget), parameter_widget);
+
 	return FALSE;
 }
 
