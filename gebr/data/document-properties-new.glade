@@ -211,13 +211,13 @@
     <child>
       <object class="GtkLabel" id="info_label">
         <property name="visible">True</property>
-        <property name="label" translatable="yes">Line on G&#xEA;BR is a blablablabla
-blablalbalba
-lblalba</property>
+        <property name="label" translatable="yes">A &lt;b&gt;Line&lt;/b&gt; is a way of assembling and organizing Flows and it is associated to the Maestro machine in which its flows are going to to be executed.</property>
         <property name="use_markup">True</property>
+        <property name="wrap">True</property>
       </object>
       <packing>
         <property name="expand">False</property>
+        <property name="fill">False</property>
         <property name="padding">10</property>
         <property name="position">1</property>
       </packing>
@@ -241,9 +241,10 @@ lblalba</property>
     <child>
       <object class="GtkLabel" id="paths_label">
         <property name="visible">True</property>
-        <property name="label" translatable="yes">Paths are bla blab
-blablablablabal</property>
+        <property name="label" translatable="yes">&lt;b&gt;Line Paths&lt;/b&gt; are a hierarchy of directories to ease the handling of places to be used by the Flows processing. They are standard paths for fetching input files
+and saving output files.</property>
         <property name="use_markup">True</property>
+        <property name="wrap">True</property>
       </object>
       <packing>
         <property name="expand">False</property>
@@ -258,9 +259,8 @@ blablablablabal</property>
     <child>
       <object class="GtkLabel" id="label_base">
         <property name="visible">True</property>
-        <property name="label" translatable="yes">&lt;i&gt;Line paths are directories that will be created on your &lt;b&gt;BASE&lt;/b&gt;
-directory. They are standard paths for fetching input files
-and saving output files.&lt;/i&gt;</property>
+        <property name="xalign">0.47999998927116394</property>
+        <property name="label" translatable="yes">&lt;i&gt;&lt;b&gt;BASE&lt;/b&gt; is a root directory where all files of your Line is stored&lt;/i&gt;</property>
         <property name="use_markup">True</property>
       </object>
       <packing>
@@ -707,9 +707,9 @@ and saving output files.&lt;/i&gt;</property>
     <child>
       <object class="GtkLabel" id="label_import">
         <property name="visible">True</property>
-        <property name="label" translatable="yes">&lt;i&gt;The &lt;b&gt;IMPORT&lt;/b&gt; directory is used to find
-files outside your &lt;b&gt;BASE&lt;/b&gt; directory.&lt;/i&gt;</property>
+        <property name="label" translatable="yes">&lt;i&gt;The &lt;b&gt;IMPORT&lt;/b&gt; directory is used to find files outside your &lt;b&gt;BASE&lt;/b&gt; directory.&lt;/i&gt;</property>
         <property name="use_markup">True</property>
+        <property name="wrap">True</property>
       </object>
       <packing>
         <property name="expand">False</property>
