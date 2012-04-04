@@ -1585,6 +1585,16 @@ on_maestro_state_change(GebrMaestroController *mc,
 
 			gtk_tree_store_set(upl->store, &iter, PL_SENSITIVE, sensitive, -1);
 			valid = gtk_tree_model_iter_next(model, &iter);
+
+			GebrMaestroServer *mg = gebr_maestro_controller_get_maestro(mc);
+			if(mg && gebr_maestro_server_get_state(mg) == SERVER_STATE_LOGGED)
+				sensitive = TRUE;
+			else
+				sensitive = FALSE;
+
+			gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_import"), sensitive);
+			gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_general, "help_demos_su"), sensitive);
+
 		}
 	}
 }
@@ -1625,7 +1635,6 @@ update_control_sensitive(GebrUiProjectLine *upl)
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_export"), sensitive);
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_view"), sensitive);
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_edit"), sensitive);
-	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_import"), sensitive);
 }
 
 /*
