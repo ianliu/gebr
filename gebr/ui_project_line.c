@@ -1613,6 +1613,7 @@ update_control_sensitive(GebrUiProjectLine *upl)
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_export"), sensitive);
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_view"), sensitive);
 	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_edit"), sensitive);
+	gtk_action_set_sensitive(gtk_action_group_get_action(gebr.action_group_project_line, "project_line_import"), sensitive);
 }
 
 /*
