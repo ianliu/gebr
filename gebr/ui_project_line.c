@@ -454,6 +454,7 @@ line_info_update(void)
 
 	const gchar *stockid;
 	gchar *home_path;
+	gchar *tooltip;
 
 	if (maestro) {
 		if (gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED) {
@@ -462,24 +463,32 @@ line_info_update(void)
 			stockid = GTK_STOCK_CONNECT;
 		} else {
 			const gchar *type;
-			gebr_maestro_server_get_error(maestro, &type, NULL);
+			const gchar *msg;
+			gebr_maestro_server_get_error(maestro, &type, &msg);
 
-			if (g_strcmp0(type, "error:none") == 0)
+			if (g_strcmp0(type, "error:none") == 0) {
 				stockid = GTK_STOCK_DISCONNECT;
-			else
+				tooltip = g_strdup(_("Click here to connect or change maestro for this line"));
+			} else {
 				stockid = GTK_STOCK_DIALOG_WARNING;
-
+				tooltip = gebr_maestro_server_translate_error(type, msg);
+			}
 			gtk_widget_show(GTK_WIDGET(maestro_button));
 			gtk_widget_hide(GTK_WIDGET(image_maestro_connect));
 			gtk_image_set_from_stock(GTK_IMAGE(image_maestro), stockid, GTK_ICON_SIZE_DIALOG);
+			gtk_widget_set_tooltip_text(GTK_WIDGET(maestro_button), tooltip);
+			g_free(tooltip);
 		}
 		home_path = g_strdup(gebr_maestro_server_get_home_dir(maestro));
 	} else {
 		stockid = GTK_STOCK_DISCONNECT;
+		tooltip = g_strdup(_("Click here to connect or change maestro for this line"));
 		home_path = g_strdup("");
 		gtk_widget_show(GTK_WIDGET(maestro_button));
 		gtk_widget_hide(GTK_WIDGET(image_maestro_connect));
 		gtk_image_set_from_stock(GTK_IMAGE(image_maestro), stockid, GTK_ICON_SIZE_DIALOG);
+		gtk_widget_set_tooltip_text(GTK_WIDGET(maestro_button), tooltip);
+		g_free(tooltip);
 	}
 
 	/* Line's paths information */

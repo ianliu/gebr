@@ -185,6 +185,9 @@ void gebr_flow_edition_get_server_hostname(GebrFlowEdition *fe,
 void gebr_flow_edition_select_group_for_flow(GebrFlowEdition *fe,
 					     GebrGeoXmlFlow *flow);
 
+gchar *gebr_maestro_server_translate_error(const gchar *error_type,
+                                           const gchar *error_msg);
+
 G_END_DECLS
 
 #endif /* __GEBR_FLOW_EDITION_H__ */
