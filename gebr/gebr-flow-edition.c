@@ -193,7 +193,7 @@ flow_edition_setup_ui(void)
 	 */
 	left_vbox = gtk_vbox_new(FALSE, 5);
 	gtk_paned_pack1(GTK_PANED(hpanel), left_vbox, FALSE, FALSE);
-	gtk_widget_set_size_request(left_vbox, 150, -1);
+	gtk_widget_set_size_request(left_vbox, 300, -1);
 
 	/*
 	 * Creates the QUEUE combobox
