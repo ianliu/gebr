@@ -491,14 +491,18 @@ const gchar *gebr_validate_float(const gchar * text_value, const gchar * min, co
 	gchar *last;
 	gdouble value;
 	GString *value_str;
+	size_t len = 0;
 
-	if (strlen(text_value) == 0)
+	if ((len = strlen(text_value)) == 0)
 		return "";
 
 	/* initialization */
 	value_str = g_string_new(NULL);
-
 	value = g_ascii_strtod(text_value, &last);
+
+	if (last - text_value != len)
+		return "";
+
 	g_string_assign(value_str, text_value);
 	g_string_truncate(value_str, strlen(text_value) - strlen(last));
 	strncpy(number, value_str->str, 30);
