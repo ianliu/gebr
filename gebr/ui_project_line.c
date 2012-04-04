@@ -1573,8 +1573,13 @@ on_maestro_state_change(GebrMaestroController *mc,
                         GebrMaestroServer *maestro,
                         GebrUiProjectLine *upl)
 {
-	if (gebr.last_notebook == NOTEBOOK_PAGE_PROJECT_LINE)
+	const gchar *home;
+
+	if (gebr.last_notebook == NOTEBOOK_PAGE_PROJECT_LINE) {
 		gebr_project_line_show(upl);
+		if (gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED)
+			home = gebr_maestro_server_get_home_dir(maestro);
+	}
 
 	GebrGeoXmlLine *line;
 	GtkTreeIter parent, iter;
@@ -1591,6 +1596,12 @@ on_maestro_state_change(GebrMaestroController *mc,
 				sensitive = TRUE;
 			else
 				sensitive = FALSE;
+
+			gchar *hline = gebr_geoxml_line_get_path_by_name(line, "HOME");
+			if (sensitive && !hline)
+				gebr_geoxml_line_set_path_by_name(gebr.line, "HOME", home);
+			else
+				g_free(hline);
 
 			gtk_tree_store_set(upl->store, &iter, PL_SENSITIVE, sensitive, -1);
 			valid = gtk_tree_model_iter_next(model, &iter);
