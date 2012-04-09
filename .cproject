@@ -39,6 +39,7 @@
 								</option>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.1476815777" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="HAVE_CONFIG_H"/>
+									<listOptionValue builtIn="false" value="TEST_SRCDIR=&quot;.&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.2073293366" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
