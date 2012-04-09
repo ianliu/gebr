@@ -1555,7 +1555,6 @@ send_messages_of_jobs(const gchar *id,
 
 	const gchar *start_date = gebrm_job_get_start_date(job);
 	const gchar *finish_date = gebrm_job_get_finish_date(job);
-
 	/* Job def message */
 	gebr_comm_protocol_socket_oldmsg_send(protocol, FALSE,
 	                                      gebr_comm_protocol_defs.job_def, 21,

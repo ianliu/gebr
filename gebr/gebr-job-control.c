@@ -740,12 +740,13 @@ job_control_fill_servers_info(GebrJobControl *jc)
 	const gchar *niceness;
 	gint n_servers, i;
 	gchar **servers;
+	gint total_procs;
 
 	if (!job)
 		return;
 
 	servers = gebr_job_get_servers(job, &n_servers);
-
+	total_procs = gebr_job_get_total_procs(job);
 	gebr_job_get_resources(job, &nprocs, &niceness);
 
 	const gchar *maddr = gebr_job_get_maestro_address(job);
@@ -765,11 +766,11 @@ job_control_fill_servers_info(GebrJobControl *jc)
 				groups = g_strdup_printf(_("%s"), gebr_maestro_server_get_display_address(maestro));
 
 		markup = g_markup_printf_escaped(_("Job submitted by <b>%s</b> to Maestro <b>%s</b>.\n"
-						   "Executed <b>%s</b> simultaneous processes on %s <b>%s</b>,\n"
+						   "Executed on total <b>%d</b> processes on %s <b>%s</b>,\n"
 						   "%s"
 						   "distributed on <b>%d</b> servers.\n"),
 						  gebr_job_get_hostname(job), gebr_job_get_maestro_address(job),
-						  nprocs, type == MAESTRO_SERVER_TYPE_DAEMON? "server" : "group", groups,
+						  total_procs, type == MAESTRO_SERVER_TYPE_DAEMON? "server" : "group", groups,
 						  g_strcmp0(niceness, "0")? _("using the machines idle time, ") : "",
 						  n_servers);
 		g_string_append(resources, markup);

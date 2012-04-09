@@ -40,7 +40,7 @@ struct _GebrCommRunnerPriv {
 	GList *servers;
 	GList *run_servers;
 	GebrValidator *validator;
-	gdouble *weights;
+	gint *weights;
 	gint *numprocs;
 	gint *distributed_n;
 
@@ -459,9 +459,9 @@ set_servers_execution_info(GebrCommRunner *self)
 	}
 
 	self->priv->servers = g_list_reverse(self->priv->servers);
-	self->priv->weights = weights;
+	self->priv->weights = distributed_n;
 	self->priv->numprocs = numprocs;
-	self->priv->distributed_n =distributed_n;
+	self->priv->distributed_n = distributed_n;
 }
 
 static void
@@ -504,7 +504,7 @@ divide_and_run_flows(GebrCommRunner *self)
 
 		gebr_comm_daemon_add_task(daemon);
 
-		g_string_append_printf(server_list, "%s,%lf,",
+		g_string_append_printf(server_list, "%s,%d,",
 				       hostname, self->priv->weights[k]);
 		gchar *numproc = g_strdup_printf("%d", self->priv->numprocs[k]);
 
@@ -573,7 +573,7 @@ daemon_has_mpi_flavor(GebrCommDaemon *daemon, const gchar *flavor)
 }
 
 static void
-mpi_program_contrib(GebrGeoXmlProgram *prog, GList *servers, const gchar *executor, GebrValidator *validator, gint contrib[])
+mpi_program_contrib(GebrGeoXmlProgram *prog, GList *servers, const gchar *executor, GebrValidator *validator, gint contrib[], gboolean *not_parallelizable_added)
 {
 	const gchar *mpi_flavor = gebr_geoxml_program_get_mpi(prog);
 	if (!mpi_flavor || !*mpi_flavor) {
@@ -582,7 +582,10 @@ mpi_program_contrib(GebrGeoXmlProgram *prog, GList *servers, const gchar *execut
 		for (GList *i = servers; i; i = i->next) {
 			GebrCommDaemon *daemon = i->data;
 			if (g_strcmp0(gebr_comm_daemon_get_hostname(daemon), executor) == 0)
+			if (!(*not_parallelizable_added)) {
 				contrib[j]++;
+				(*not_parallelizable_added) = TRUE;
+			}
 			j++;
 		}
 		return;
@@ -653,7 +656,6 @@ static gdouble *
 calculate_weights_for_mpi(GebrCommRunner *self)
 {
 	gfloat n_servers = g_list_length(self->priv->run_servers);
-
 	if (!n_servers)
 		g_warn_if_reached();
 
@@ -665,22 +667,32 @@ calculate_weights_for_mpi(GebrCommRunner *self)
 	
 	GebrGeoXmlSequence *seq;
 
+	gchar *n_loop;
+	gint number_loop = 1;
+	gboolean not_parallelizable_added = FALSE;
+
 	gebr_geoxml_flow_get_program(GEBR_GEOXML_FLOW(self->priv->flow), &seq, 0);
 	for (; seq; gebr_geoxml_sequence_next(&seq)) {
 		GebrGeoXmlProgram *prog = GEBR_GEOXML_PROGRAM(seq);
 		if (gebr_geoxml_program_get_control(prog) != GEBR_GEOXML_PROGRAM_CONTROL_FOR)
-			mpi_program_contrib(prog, self->priv->run_servers, executor_str, self->priv->validator, contrib);
+			mpi_program_contrib(prog, self->priv->run_servers, executor_str, self->priv->validator, contrib, &not_parallelizable_added);
+		else {
+			n_loop = gebr_geoxml_program_control_get_n(GEBR_GEOXML_PROGRAM(prog), NULL, NULL);
+			number_loop = atoi(n_loop);
+			g_free(n_loop);
+		}
 	}
 
 	gint total = 0;
 	for (gint i = 0; i < n_servers; i++)
 		total += contrib[i];
 
+	total = (float) total / number_loop;
+
 	for (gint i = 0; i < n_servers; i++)
-		weights[i] = (float) contrib[i] / total;
+		weights[i] = (float) contrib[i] * number_loop;
 
 	g_free(contrib);
-
 	return weights;
 }
 

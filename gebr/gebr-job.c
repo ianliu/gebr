@@ -52,6 +52,7 @@ struct _GebrJobPriv {
 	gchar *maestro_address;
 	gchar *mpi_owner;
 	gchar *mpi_flavor;
+	const gchar *server_list;
 
 	gboolean is_fake;
 
@@ -241,6 +242,7 @@ gebr_job_new_with_id(const gchar *rid,
 	job->priv->run_type = g_strdup(run_type);
 	job->priv->n_servers = 0;
 	job->priv->mpi_flavor = g_strdup("");
+	job->priv->server_list = NULL;
 
 	return job;
 }
@@ -268,6 +270,14 @@ gebr_job_set_servers(GebrJob *job,
 		job->priv->tasks[i].frac = i+1;
 		job->priv->tasks[i].output = g_string_new("");
 	}
+}
+
+void
+gebr_job_set_server_list (GebrJob *job,
+		     const gchar *servers)
+{
+	if(!job->priv->server_list && servers)
+		job->priv->server_list = g_strdup(servers);
 }
 
 void
@@ -342,6 +352,21 @@ gebr_job_get_servers(GebrJob *job, gint *n)
 		servers[i] = g_strdup(tasks[i].server);
 	servers[*n] = NULL;
 	return servers;
+}
+
+gint
+gebr_job_get_total_procs (GebrJob *job)
+{
+	if (!job->priv->server_list)
+		return 0;
+	gchar **tokens = g_strsplit(job->priv->server_list,",",-1);
+	gint total_procs = 0;
+	for (gint i = 0; tokens[i]; i++) {
+		if (i % 2 == 1)
+			total_procs = total_procs + atoi(tokens[i]);
+	}
+	g_strfreev(tokens);
+	return total_procs;
 }
 
 GebrJobTask *

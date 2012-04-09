@@ -166,6 +166,8 @@ void gebr_job_set_server_group(GebrJob *job, const gchar *server_group);
 
 void gebr_job_set_server_group_type(GebrJob *job, const gchar *group_type);
 
+gint gebr_job_get_total_procs (GebrJob *job);
+
 gchar *gebr_job_get_running_time(GebrJob *job, const gchar *start_date);
 
 gchar *gebr_job_get_elapsed_time(GebrJob *job);
@@ -215,6 +217,8 @@ const gchar *gebr_job_get_mpi_owner(GebrJob *job);
 void gebr_job_set_mpi_flavor(GebrJob *job, const gchar *mpi_flavor);
 
 const gchar *gebr_job_get_mpi_flavor(GebrJob *job);
+
+void gebr_job_set_server_list (GebrJob *job, const gchar *servers);
 G_END_DECLS
 
 #endif /* __GEBR_JOB_H__ */
