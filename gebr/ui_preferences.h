@@ -25,6 +25,7 @@ G_BEGIN_DECLS
 
 struct ui_preferences {
 	GtkWidget *dialog;
+	GtkBuilder *builder;
 
 	gboolean first_run;
 
@@ -36,7 +37,7 @@ struct ui_preferences {
 	GtkWidget *log_load;
 	GtkWidget *built_in_radio_button;
 	GtkWidget *user_radio_button;
-	GtkWidget *maestro_entry;
+	GtkComboBox *maestro_combo;
 };
 
 struct ui_preferences *preferences_setup_ui(gboolean first_run);

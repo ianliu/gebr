@@ -31,6 +31,7 @@ glade_DATA = \
 	project-properties.glade \
 	line-properties.glade \
 	connect-maestro-dialog.glade \
+	gebr-connections-settings.glade \
 	l.png \
 	$(NULL)
 
