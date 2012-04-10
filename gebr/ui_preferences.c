@@ -87,7 +87,6 @@ on_response_ok(GtkButton *button,
 	g_free(tmp);
 
 	gtk_widget_destroy(up->dialog);
-	g_free(up);
 }
 
 static void
@@ -306,20 +305,28 @@ set_maestro_chooser_page(GtkBuilder *builder,
 	GtkTreeIter iter;
 	GtkListStore *model = gtk_list_store_new(MAESTRO_DEFAULT_N_COLUMN, G_TYPE_STRING, G_TYPE_STRING);
 
+	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 
+	if (maestro) {
+		gtk_list_store_append(model, &iter);
+		gtk_list_store_set(model, &iter,
+				   MAESTRO_DEFAULT_ADDR, gebr_maestro_server_get_address(maestro),
+				   MAESTRO__DEFAULT_DESCRIPTION, _("Current Maestro"),
+				   -1);
+	}
 	if (!maestros_default) {
 		gtk_list_store_append(model, &iter);
 		gtk_list_store_set(model, &iter,
 		                   MAESTRO_DEFAULT_ADDR, gebr.config.maestro_address->str,
-		                   MAESTRO__DEFAULT_DESCRIPTION, _("Default maestro from local machine"),
+		                   MAESTRO__DEFAULT_DESCRIPTION, _("Default Maestro from File"),
 		                   -1);
 	}
 	else {
-		if (g_strcmp0(gebr.config.maestro_address->str, "")) {
+		if (!maestro && g_strcmp0(gebr.config.maestro_address->str, "")) {
 			gtk_list_store_append(model, &iter);
 			gtk_list_store_set(model, &iter,
 			                   MAESTRO_DEFAULT_ADDR, gebr.config.maestro_address->str,
-			                   MAESTRO__DEFAULT_DESCRIPTION, "Current maestro",
+			                   MAESTRO__DEFAULT_DESCRIPTION, _("Current maestro"),
 			                   -1);
 		}
 
