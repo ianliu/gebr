@@ -818,8 +818,14 @@ job_control_fill_servers_info(GebrJobControl *jc)
 	gint len;
 	gdouble *percs = gebr_job_get_percentages(job, &len);
 	jc->priv->servers_info.percentages = percs;
+	double acc = 0;
 	for (i = 0; i < len; i++)
-		values[i] = (guint)(percs[i] * 1000);
+		acc += percs[i];
+
+	for (i = 0; i < len; i++) {
+		values[i] = (guint)((percs[i]/acc)*1000);
+		jc->priv->servers_info.percentages[i] /= acc;
+	}
 
 	gebr_gui_pie_set_data(GEBR_GUI_PIE(piechart), values, n_servers);
 	g_free(values);
