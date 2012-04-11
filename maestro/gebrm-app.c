@@ -1507,11 +1507,11 @@ gebrm_config_load_servers(GebrmApp *app, const gchar *path)
 		g_strfreev(groups);
 	}
 
-	if (!succ) {
-		GebrmDaemon *daemon = gebrm_add_server_to_list(app, g_get_host_name(), NULL, "");
-		gebrm_daemon_connect(daemon, NULL, NULL);
-		gebrm_config_save_server(daemon);
-	}
+//	if (!succ) {
+//		GebrmDaemon *daemon = gebrm_add_server_to_list(app, g_get_host_name(), NULL, "");
+//		gebrm_daemon_connect(daemon, NULL, NULL);
+//		gebrm_config_save_server(daemon);
+//	}
 
 	return TRUE;
 }
@@ -1650,7 +1650,7 @@ on_new_connection(GebrCommListenSocket *listener,
 			}
 		}
 
-		if (!app->priv->home) {
+		if (!app->priv->home && app->priv->daemons) {
 			const gchar *home = gebrm_daemon_get_home_dir(app->priv->daemons->data);
 			gebrm_app_send_home_dir(app, socket, home);
 		}
