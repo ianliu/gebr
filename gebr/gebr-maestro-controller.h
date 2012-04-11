@@ -99,6 +99,23 @@ GebrMaestroServer *gebr_maestro_controller_get_maestro_for_line(GebrMaestroContr
 void gebr_maestro_controller_set_window(GebrMaestroController *mc,
 					GtkWindow *window);
 
+void gebr_maestro_controller_server_list_add(GebrMaestroController *mc,
+                                             const gchar * address);
+
+void gebr_maestro_controller_daemon_server_address_func(GtkTreeViewColumn *tree_column,
+                                                        GtkCellRenderer *cell,
+                                                        GtkTreeModel *model,
+                                                        GtkTreeIter *iter,
+                                                        gpointer data);
+
+void gebr_maestro_controller_daemon_server_status_func(GtkTreeViewColumn *tree_column,
+                                                       GtkCellRenderer *cell,
+                                                       GtkTreeModel *model,
+                                                       GtkTreeIter *iter,
+                                                       gpointer data);
+
+GtkTreeModel *gebr_maestro_controller_get_servers_model(GebrMaestroController *mc);
+
 G_END_DECLS
 
 #endif /* __GEBR_MAESTRO_CONTROLLER_H__ */
