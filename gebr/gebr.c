@@ -55,8 +55,6 @@ static void gebr_post_config(gboolean has_config);
 
 static gchar *gebr_generate_session_id(void);
 
-#define SERVERS_PATH ".gebr/gebr/servers.conf"
-
 static gchar *SESSIONID = NULL;
 
 /**
