@@ -17,6 +17,7 @@
 
 #include <glib.h>
 #include <glib/gstdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <geoxml/geoxml.h>
 
@@ -63,24 +64,38 @@ void test_gebr_tar_extract (void)
 	gebr_tar_free (tar);
 
 	g_assert (g_file_test (test.dirname, G_FILE_TEST_IS_DIR) == FALSE);
+	g_free(test.dirname);
 }
 
 void test_gebr_tar_compact (void)
 {
 	GebrTar *tar;
 	gchar *fname;
-	const gchar *path = "/tmp/tar-create-test.tar.gz";
-
-	tar = gebr_tar_create (path);
+	const gchar *path = "/tmp/tar-create-test.tgx";
 
 	fname = g_path_get_basename(__FILE__);
+
+	if (g_test_trap_fork (0, G_TEST_TRAP_SILENCE_STDOUT | G_TEST_TRAP_SILENCE_STDERR)) {
+		tar = gebr_tar_create ("/fail.tgz");
+		gebr_tar_append (tar, fname);
+		g_assert (gebr_tar_compact (tar, TEST_SRCDIR) == FALSE);
+		gebr_tar_free (tar);
+		exit(0);
+	}
+	g_test_trap_assert_failed();
+
+	tar = gebr_tar_create (path);
 	gebr_tar_append (tar, fname);
 
 	g_assert (gebr_tar_compact (tar, TEST_SRCDIR) == TRUE);
 	g_assert (g_file_test (path, G_FILE_TEST_EXISTS) == TRUE);
-	g_unlink (path);
-
 	gebr_tar_free (tar);
+
+	tar = gebr_tar_new_from_file (path);
+	g_assert (gebr_tar_extract (tar) == TRUE);
+	gebr_tar_free (tar);
+
+	g_unlink (path);
 	g_free(fname);
 }
 

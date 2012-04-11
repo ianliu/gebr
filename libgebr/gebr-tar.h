@@ -71,6 +71,8 @@ gboolean gebr_tar_compact (GebrTar *self, const gchar *root_dir);
  */
 GebrTar *gebr_tar_new_from_file (const gchar *path);
 
+const gchar *gebr_tar_get_dir (GebrTar *self);
+
 /**
  * gebr_tar_extract:
  * @self: a #GebrTar object created with gebr_tar_new_from_file()

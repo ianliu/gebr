@@ -40,10 +40,18 @@ void gebr_tar_append (GebrTar *self, const gchar *path)
 	self->files = g_list_append (self->files, g_strdup (path));
 }
 
+const gchar * gebr_tar_get_dir (GebrTar *self)
+{
+	return self->extract_dir;
+}
+
 gboolean gebr_tar_compact (GebrTar *self, const gchar *root_dir)
 {
 	gchar *command;
+	gchar *stderr;
 	GString *files;
+	GError *error = NULL;
+	int exit;
 
 	files = g_string_new ("");
 	for (GList *i = self->files; i; i = i->next) {
@@ -51,15 +59,18 @@ gboolean gebr_tar_compact (GebrTar *self, const gchar *root_dir)
 		g_string_append_printf (files, "\"%s\" ", file);
 	}
 
-	command = g_strdup_printf ("tar czf \"%s\" -C \"%s\" %s",
-				   self->tar_path, root_dir, files->str);
+	command = g_strdup_printf ("/bin/sh -c 'tar cC \"%s\" %s | xz > \"%s\"'",
+				   root_dir, files->len ? files->str : ".", self->tar_path);
 	g_string_free (files, TRUE);
-	if (!g_spawn_command_line_sync (command, NULL, NULL, NULL, NULL)) {
-		g_free (command);
+	g_spawn_command_line_sync(command, NULL, &stderr, &exit, &error);
+	g_free (command);
+
+	if (exit || error) {
+		g_warning("Error creating compressed archive: %s", error? error->message : stderr);
+		g_free (stderr);
 		return FALSE;
 	}
 
-	g_free (command);
 	return TRUE;
 }
 
@@ -71,11 +82,19 @@ GebrTar *gebr_tar_new_from_file (const gchar *path)
 	return self;
 }
 
+gboolean gebr_tar_is_gzip (GebrTar *self)
+{
+	g_return_val_if_fail (self->tar_path != NULL, FALSE);
+	int last_char = strlen(self->tar_path);
+	return self->tar_path[last_char-1] == 'z';
+}
+
 gboolean gebr_tar_extract (GebrTar *self)
 {
 	GString *tmp;
 	gchar *command;
 	gchar *output;
+	gchar *stderr;
 	gchar **files;
 
 	g_return_val_if_fail (self->tar_path != NULL, FALSE);
@@ -86,12 +105,15 @@ gboolean gebr_tar_extract (GebrTar *self)
 	tmp = gebr_temp_directory_create ();
 	self->extract_dir = g_string_free (tmp, FALSE);
 
-	command = g_strdup_printf ("tar zxfv \"%s\" -C \"%s\"",
+	command = g_strdup_printf ("/bin/sh -c '%s \"%s\" | tar xvC \"%s\"'",
+	                           gebr_tar_is_gzip(self) ? "zcat" : "xz -dc",
 				   self->tar_path,
 				   self->extract_dir);
+	GError *error = NULL;
+	int exit = 0;
 
 	if (!g_spawn_command_line_sync (command, &output,
-					NULL, NULL, NULL)) {
+					&stderr, &exit, &error)) {
 		g_free (command);
 		return FALSE;
 	}
@@ -104,6 +126,7 @@ gboolean gebr_tar_extract (GebrTar *self)
 	g_free (files);
 	g_free (command);
 	g_free (output);
+	g_free (stderr);
 	return TRUE;
 }
 
