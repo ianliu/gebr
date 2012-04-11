@@ -25,6 +25,12 @@
 
 G_BEGIN_DECLS
 
+typedef enum {
+	NONE,
+	SSH_KEY,
+	ENC_PASS
+} StorageType;
+
 /**
  * gebr_g_string_replace:
  * @string: The string to with the text.
@@ -316,6 +322,20 @@ gboolean gebr_validate_path(const gchar *path,
 			    gchar **err_msg);
 
 gint gebr_strv_indexof(const gchar **strv, const gchar *value);
+
+/**
+ * gebr_comm_server_generate_key:
+ */
+gboolean gebr_generate_key(const gchar *host);
+
+/**
+ * gebr_add_ssh_key:
+ */
+gboolean gebr_add_ssh_key(const gchar *host);
+
+const gchar *gebr_storage_type_enum_to_str(StorageType type);
+
+StorageType gebr_storage_type_str_to_enum(const gchar *type);
 
 G_END_DECLS
 

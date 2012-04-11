@@ -88,7 +88,7 @@ struct server *server_new(const gchar * address)
 	struct server *server;
 
 	server = g_new(struct server, 1);
-	server->comm = gebr_comm_server_new(address, &ops);
+	server->comm = gebr_comm_server_new(address, &ops, NONE);
 	server->comm->user_data = server;
 
 	g_signal_connect(server->comm->socket, "disconnected", G_CALLBACK(server_disconnected), server);

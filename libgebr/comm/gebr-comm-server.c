@@ -189,11 +189,13 @@ gebr_comm_server_get_last_error(GebrCommServer *server)
 GebrCommServer *
 gebr_comm_server_new(const gchar * _address,
 		     const gchar *gebr_id,
-		     const struct gebr_comm_server_ops *ops)
+		     const struct gebr_comm_server_ops *ops,
+		     StorageType type)
 {
 	GebrCommServer *server;
 	server = g_object_new(GEBR_COMM_TYPE_SERVER, NULL);
 
+	server->storage_type = type;
 	server->priv->gebr_id = g_strdup(gebr_id);
 	server->socket = gebr_comm_protocol_socket_new();
 	server->address = g_string_new(_address);
@@ -770,12 +772,16 @@ gebr_comm_server_socket_connected(GebrCommProtocolSocket * socket,
 		GTimeVal gebr_time;
 		g_get_current_time(&gebr_time);
 		gchar *gebr_time_iso = g_time_val_to_iso8601(&gebr_time);
+
+		const gchar *str_storage_type = gebr_storage_type_enum_to_str(server->storage_type);
+
 		gebr_comm_protocol_socket_oldmsg_send(server->socket, FALSE,
-						      gebr_comm_protocol_defs.ini_def, 4,
+						      gebr_comm_protocol_defs.ini_def, 5,
 						      gebr_version(),
 						      mcookie_str,
 						      server->priv->gebr_id,
-						      gebr_time_iso);
+						      gebr_time_iso,
+						      str_storage_type);
 		g_free(mcookie_str);
 		g_free(gebr_time_iso);
 	} else {
@@ -991,4 +997,43 @@ gebr_comm_server_forward_local_port(GebrCommServer *server,
 				    const gchar *addr)
 {
 	return gebr_comm_server_forward_port(server, local_port, remote_port, addr, TRUE);
+}
+
+gboolean
+gebr_comm_server_append_key(GebrCommServer *server,
+                            const gchar *home)
+{
+	gchar *filename = g_strdup_printf("gebr.key.%s.pub", server->address->str);
+	gchar *path = g_build_filename(home, ".gebr", filename, NULL);
+
+	g_debug("PATH KEY IS %s", path);
+
+	if (!g_file_test(path, G_FILE_TEST_EXISTS)) {
+		g_free(filename);
+		g_free(path);
+		return FALSE;
+	}
+
+	g_debug("EXECUTE COMMAND");
+
+	GebrCommTerminalProcess *process;
+	server->process.use = COMM_SERVER_PROCESS_TERMINAL;
+	server->process.data.terminal = process = gebr_comm_terminal_process_new();
+
+	g_signal_connect(process, "ready-read", G_CALLBACK(gebr_comm_ssh_read), server);
+	g_signal_connect(process, "finished", G_CALLBACK(gebr_comm_ssh_finished), server);
+
+	GString *cmd_line = g_string_new(NULL);
+	g_string_printf(cmd_line, "ssh '%1$s' -o StrictHostKeyChecking=no "
+	                "\"umask 077; test -d %3$s/.ssh || mkdir %3$s/.ssh ; cat %2$s >> %3$s/.ssh/authorized_keys\"",
+	                server->address->str, path, home);
+
+	g_debug("COMMAND LINE FOR AUTHORIZED KEYS: %s", cmd_line->str);
+	gebr_comm_terminal_process_start(process, cmd_line);
+
+	g_string_free(cmd_line, TRUE);
+	g_free(filename);
+	g_free(path);
+
+	return TRUE;
 }

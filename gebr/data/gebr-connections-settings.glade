@@ -443,4 +443,56 @@
       </packing>
     </child>
   </object>
+  <object class="GtkVBox" id="main_keys">
+    <property name="visible">True</property>
+    <property name="border_width">20</property>
+    <property name="spacing">15</property>
+    <child>
+      <object class="GtkLabel" id="keys_title">
+        <property name="visible">True</property>
+        <property name="label" translatable="yes">&lt;span size='large'&gt;Generating Keys...&lt;/span&gt;</property>
+        <property name="use_markup">True</property>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">False</property>
+        <property name="position">0</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkAlignment" id="keys_container">
+        <property name="visible">True</property>
+        <property name="yalign">0</property>
+        <property name="yscale">0</property>
+        <child>
+          <object class="GtkHBox" id="hbox2">
+            <child>
+              <object class="GtkImage" id="keys_img">
+                <property name="visible">True</property>
+                <property name="xalign">1</property>
+                <property name="stock">gtk-ok</property>
+                <property name="icon-size">6</property>
+              </object>
+              <packing>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="keys_label">
+                <property name="visible">True</property>
+                <property name="xalign">0</property>
+                <property name="label" translatable="yes">Created!</property>
+              </object>
+              <packing>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+        </child>
+      </object>
+      <packing>
+        <property name="position">1</property>
+      </packing>
+    </child>
+  </object>
 </interface>

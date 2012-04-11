@@ -49,6 +49,11 @@ struct _GebrmAppPriv {
 	gchar *nfsid;
 	gchar *home;
 
+	// SSH Variables
+	StorageType storage_type;
+	gboolean generate_key;
+	gboolean send_key;
+
 	GQueue *job_def_queue;
 	GQueue *job_run_queue;
 	GQueue *xauth_queue;
@@ -970,6 +975,14 @@ on_client_request(GebrCommProtocolSocket *socket,
 
 			GebrmDaemon *d = gebrm_add_server_to_list(app, addr, pass, NULL);
 
+			g_debug("DAEMON ADDR: %s", addr);
+
+			if (app->priv->storage_type == SSH_KEY &&
+			    app->priv->generate_key &&
+			    !app->priv->send_key) {
+				g_debug("APPEND KEY!");
+				gebr_comm_server_append_key(gebrm_daemon_get_server(d), app->priv->home? app->priv->home : g_get_home_dir());
+			}
 			gebrm_daemon_connect(d, pass, socket);
 			gebrm_config_save_server(d);
 		}
@@ -1168,16 +1181,18 @@ on_client_parse_messages(GebrCommProtocolSocket *socket,
 		if (message->hash == gebr_comm_protocol_defs.ini_def.code_hash) {
 			GList *arguments;
 
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 4)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 5)) == NULL)
 				goto err;
 
 			GString *version = g_list_nth_data(arguments, 0);
 			GString *cookie  = g_list_nth_data(arguments, 1);
 			GString *gebr_id = g_list_nth_data(arguments, 2);
 			GString *gebr_time_iso = g_list_nth_data(arguments, 3);
+			GString *storage_type = g_list_nth_data(arguments, 4);
 
 			g_debug("Maestro received a X11 cookie: %s", cookie->str);
 			g_debug("Maestro received GeBR time: %s", gebr_time_iso->str);
+			g_debug("Maestro received GeBR Storage Type: %s", storage_type->str);
 
 			if (g_strcmp0(version->str, gebr_version()) != 0) {
 				g_debug("Gebr's version mismatch! Got: %s Expected: %s",
@@ -1190,6 +1205,15 @@ on_client_parse_messages(GebrCommProtocolSocket *socket,
 								      "error:protocol",
 								      gebr_version());
 				goto err;
+			}
+
+			gboolean generate_key = FALSE;
+			StorageType type = gebr_storage_type_str_to_enum(storage_type->str);
+			app->priv->storage_type = type;
+
+			if (type == SSH_KEY) {
+				app->priv->generate_key = generate_key = gebr_generate_key(g_get_host_name());
+				gebr_add_ssh_key(g_get_host_name());
 			}
 
 			gint diff_secs = gebr_compute_diff_clock_to_me(gebr_time_iso->str);
@@ -1207,11 +1231,16 @@ on_client_parse_messages(GebrCommProtocolSocket *socket,
 							      clocks_diff);
 			g_free(clocks_diff);
 
+			gboolean send_key = FALSE;
 			for (GList *i = app->priv->daemons; i; i = i->next) {
 				GebrCommServerState state = gebrm_daemon_get_state(i->data);
-				if ( state != SERVER_STATE_LOGGED)
+				if (state != SERVER_STATE_LOGGED)
 					state = SERVER_STATE_DISCONNECTED;
 
+				if (generate_key && !send_key) {
+					app->priv->send_key = send_key = gebr_comm_server_append_key(gebrm_daemon_get_server(i->data), g_get_home_dir());
+					gebr_add_ssh_key(g_get_host_name());
+				}
 				queue_client_info(app, i->data, client);
 				send_server_status_message(app, socket, i->data, gebrm_daemon_get_autoconnect(i->data), state);
 				send_groups_definitions(socket, i->data);

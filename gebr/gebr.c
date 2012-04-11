@@ -356,7 +356,8 @@ gebr_post_config(gboolean has_config)
 		preferences_setup_ui(TRUE);
 	else {
 		gebr_maestro_controller_connect(gebr.maestro_controller,
-						gebr.config.maestro_address->str);
+						gebr.config.maestro_address->str,
+						NONE);
 		project_list_populate();
 		restore_project_line_flow_selection();
 		gebr_config_save(FALSE);

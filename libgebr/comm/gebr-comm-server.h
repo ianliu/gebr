@@ -26,6 +26,7 @@
 #include <gebr-validator.h>
 #include <libgebr/log.h>
 #include <libgebr/geoxml/geoxml.h>
+#include <libgebr/utils.h>
 
 #include "gebr-comm-protocol-socket.h"
 #include "gebr-comm-terminalprocess.h"
@@ -86,6 +87,7 @@ struct _GebrCommServer {
 	gboolean ac;
 
 	/* ssh stuff */
+	StorageType storage_type;
 	gchar *password;
 	gboolean tried_existant_pass;
 	gint16 tunnel_port;
@@ -174,7 +176,8 @@ GType gebr_comm_server_get_type(void) G_GNUC_CONST;
 
 GebrCommServer *gebr_comm_server_new(const gchar *_address,
 				     const gchar *gebr_id,
-				     const struct gebr_comm_server_ops *ops);
+				     const struct gebr_comm_server_ops *ops,
+				     StorageType type);
 
 const gchar *gebr_comm_server_get_last_error(GebrCommServer *server);
 
@@ -295,6 +298,12 @@ GebrCommTerminalProcess *gebr_comm_server_forward_local_port(GebrCommServer *ser
 							     guint16 remote_port,
 							     guint16 local_port,
 							     const gchar *addr);
+
+/**
+ * gebr_comm_server_append_key:
+ */
+gboolean gebr_comm_server_append_key(GebrCommServer *server,
+                                     const gchar *home);
 
 void gebr_comm_server_close_x11_forward(GebrCommServer *server);
 

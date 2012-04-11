@@ -78,7 +78,7 @@ on_response_ok(GtkButton *button,
 	gtk_combo_box_get_active_iter(up->maestro_combo, &iter);
 	gtk_tree_model_get(maestro_model, &iter, MAESTRO_DEFAULT_ADDR, &addr, -1);
 
-	gebr_maestro_controller_connect(gebr.maestro_controller, addr);
+	gebr_maestro_controller_connect(gebr.maestro_controller, addr, NONE);
 
 	g_free(addr);
 
@@ -147,7 +147,7 @@ on_maestro_state_changed(GebrMaestroController *self,
 		gtk_image_set_from_stock(GTK_IMAGE(status_img), GTK_STOCK_OK, GTK_ICON_SIZE_DIALOG);
 		gtk_label_set_text(GTK_LABEL(status_label), _("Success!"));
 		gtk_assistant_set_page_type(GTK_ASSISTANT(up->dialog),
-		                            main_status, GTK_ASSISTANT_PAGE_INTRO);
+		                            main_status, GTK_ASSISTANT_PAGE_CONFIRM);
 		gtk_assistant_set_page_title(GTK_ASSISTANT(up->dialog),
 		                             main_status, _("Done"));
 		gtk_assistant_set_page_complete(GTK_ASSISTANT(up->dialog), main_status, TRUE);
@@ -211,16 +211,16 @@ on_assistant_prepare(GtkAssistant *assistant,
 	                   MAESTRO__DEFAULT_DESCRIPTION, &desc,
 	                   -1);
 
-	if (page == 4) {
-		GObject *status_progress = gtk_builder_get_object(up->builder, "status_progress");
-		GObject *status_container = gtk_builder_get_object(up->builder, "status_container");
-
-		gtk_widget_hide(GTK_WIDGET(status_container));
-		gtk_widget_show(GTK_WIDGET(status_progress));
+	if (page == 6) {
+		GtkWidget *sshkey_button = GTK_WIDGET(gtk_builder_get_object(up->builder, "sshkey_button"));
+		StorageType type;
 
 		g_signal_connect(gebr.maestro_controller, "maestro-state-changed", G_CALLBACK(on_maestro_state_changed), up);
 
-		gebr_maestro_controller_connect(gebr.maestro_controller, addr);
+		if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(sshkey_button)))
+			type = SSH_KEY;
+
+		gebr_maestro_controller_connect(gebr.maestro_controller, addr, type);
 	}
 	else if (page == 7) {
 		GtkLabel *maestro_label = GTK_LABEL(gtk_builder_get_object(up->builder, "review_maestro_label"));
@@ -461,6 +461,7 @@ preferences_setup_ui(gboolean first_run)
 	GtkWidget *page_pwdoption = GTK_WIDGET(gtk_builder_get_object(builder, "pwd_options"));
 	GtkWidget *page_review = GTK_WIDGET(gtk_builder_get_object(builder, "review"));
 	GtkWidget *main_status = GTK_WIDGET(gtk_builder_get_object(builder, "main_status"));
+//	GtkWidget *main_keys = GTK_WIDGET(gtk_builder_get_object(builder, "main_keys"));
 
 	/* Create Wizard if the first_run of GeBR */
 	if (first_run) {
@@ -489,9 +490,6 @@ preferences_setup_ui(gboolean first_run)
 		gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), page_mchooser, GTK_ASSISTANT_PAGE_CONTENT);
 		gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), page_mchooser, _("Choose your Maestro"));
 
-		gtk_assistant_append_page(GTK_ASSISTANT(assistant), main_status);
-		gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), main_status, GTK_ASSISTANT_PAGE_PROGRESS);
-		gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), main_status, _("Connecting on Maestro..."));
 
 		gtk_assistant_append_page(GTK_ASSISTANT(assistant), page_pwdinfo);
 		gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), page_pwdinfo, TRUE);
@@ -500,8 +498,16 @@ preferences_setup_ui(gboolean first_run)
 
 		gtk_assistant_append_page(GTK_ASSISTANT(assistant), page_pwdoption);
 		gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), page_pwdoption, TRUE);
-		gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), page_pwdoption, GTK_ASSISTANT_PAGE_CONFIRM);
+		gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), page_pwdoption, GTK_ASSISTANT_PAGE_CONTENT);
 		gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), page_pwdoption, _("Choose storage option"));
+
+		gtk_assistant_append_page(GTK_ASSISTANT(assistant), main_status);
+		gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), main_status, GTK_ASSISTANT_PAGE_PROGRESS);
+		gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), main_status, _("Connecting on Maestro..."));
+
+//		gtk_assistant_append_page(GTK_ASSISTANT(assistant), main_keys);
+//		gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), main_keys, GTK_ASSISTANT_PAGE_PROGRESS);
+//		gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), main_keys, _("Generating Keys..."));
 
 		gtk_assistant_append_page(GTK_ASSISTANT(assistant), page_review);
 		gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), page_review, FALSE);

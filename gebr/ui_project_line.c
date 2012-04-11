@@ -207,7 +207,7 @@ on_connect_line_maestro(GtkWidget *widget,
 			GtkWidget *dialog)
 {
 	gchar *connect_addr = gebr_geoxml_line_get_maestro(gebr.line);
-	gebr_maestro_controller_connect(gebr.maestro_controller, connect_addr);
+	gebr_maestro_controller_connect(gebr.maestro_controller, connect_addr, NONE);
 	gtk_dialog_response(GTK_DIALOG(dialog), 0);
 }
 

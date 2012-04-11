@@ -1392,11 +1392,12 @@ gebr_maestro_server_disconnect(GebrMaestroServer *maestro,
 }
 
 void
-gebr_maestro_server_connect(GebrMaestroServer *maestro)
+gebr_maestro_server_connect(GebrMaestroServer *maestro,
+                            StorageType type)
 {
 	maestro->priv->server = gebr_comm_server_new(maestro->priv->address,
 						     gebr_get_session_id(),
-						     &maestro_ops);
+						     &maestro_ops, type);
 	maestro->priv->server->user_data = maestro;
 	gebr_comm_server_connect(maestro->priv->server, TRUE);
 }

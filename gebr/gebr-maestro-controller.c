@@ -1334,7 +1334,7 @@ connect_to_maestro(GtkEntry *entry,
 		address = g_get_host_name();
 	else
 		address = entry_text;
-	gebr_maestro_controller_connect(self, address);
+	gebr_maestro_controller_connect(self, address, NONE);
 }
 
 static void
@@ -1648,7 +1648,8 @@ on_state_change(GebrMaestroServer *maestro,
 
 void
 gebr_maestro_controller_connect(GebrMaestroController *self,
-				const gchar *address)
+				const gchar *address,
+				StorageType type)
 {
 	GebrMaestroServer *maestro;
 
@@ -1690,7 +1691,7 @@ gebr_maestro_controller_connect(GebrMaestroController *self,
 
 	g_signal_emit(self, signals[MAESTRO_LIST_CHANGED], 0);
 
-	gebr_maestro_server_connect(self->priv->maestro);
+	gebr_maestro_server_connect(self->priv->maestro, type);
 	gebr_config_save(FALSE);
 }
 
