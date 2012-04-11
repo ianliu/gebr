@@ -172,7 +172,7 @@
       <object class="GtkTable" id="table1">
         <property name="visible">True</property>
         <property name="border_width">5</property>
-        <property name="n_rows">3</property>
+        <property name="n_rows">2</property>
         <property name="n_columns">2</property>
         <property name="column_spacing">20</property>
         <property name="row_spacing">5</property>
@@ -204,20 +204,6 @@
           </packing>
         </child>
         <child>
-          <object class="GtkLabel" id="label4">
-            <property name="visible">True</property>
-            <property name="xalign">0</property>
-            <property name="label" translatable="yes">&lt;b&gt;Password storage&lt;/b&gt;</property>
-            <property name="use_markup">True</property>
-          </object>
-          <packing>
-            <property name="top_attach">2</property>
-            <property name="bottom_attach">3</property>
-            <property name="x_options">GTK_FILL</property>
-            <property name="y_options"></property>
-          </packing>
-        </child>
-        <child>
           <object class="GtkLabel" id="review_maestro_label">
             <property name="visible">True</property>
             <property name="xalign">0</property>
@@ -226,21 +212,6 @@
           <packing>
             <property name="left_attach">1</property>
             <property name="right_attach">2</property>
-            <property name="x_options">GTK_FILL</property>
-            <property name="y_options">GTK_FILL</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkLabel" id="review_pwd_label">
-            <property name="visible">True</property>
-            <property name="xalign">0</property>
-            <property name="label" translatable="yes">SSH keys</property>
-          </object>
-          <packing>
-            <property name="left_attach">1</property>
-            <property name="right_attach">2</property>
-            <property name="top_attach">2</property>
-            <property name="bottom_attach">3</property>
             <property name="x_options">GTK_FILL</property>
             <property name="y_options">GTK_FILL</property>
           </packing>
@@ -270,7 +241,7 @@
   <object class="GtkTable" id="main_preferences">
     <property name="visible">True</property>
     <property name="border_width">5</property>
-    <property name="n_rows">4</property>
+    <property name="n_rows">3</property>
     <property name="n_columns">2</property>
     <property name="column_spacing">5</property>
     <property name="row_spacing">8</property>
@@ -355,41 +326,6 @@
         <property name="y_options">GTK_FILL</property>
       </packing>
     </child>
-    <child>
-      <object class="GtkLabel" id="label10">
-        <property name="visible">True</property>
-        <property name="xalign">0</property>
-        <property name="label" translatable="yes">HTML editor</property>
-      </object>
-      <packing>
-        <property name="top_attach">3</property>
-        <property name="bottom_attach">4</property>
-        <property name="x_options">GTK_FILL</property>
-        <property name="y_options"></property>
-        <property name="x_padding">5</property>
-      </packing>
-    </child>
-    <child>
-      <object class="GtkHBox" id="html_box">
-        <property name="visible">True</property>
-        <child>
-          <placeholder/>
-        </child>
-        <child>
-          <placeholder/>
-        </child>
-        <child>
-          <placeholder/>
-        </child>
-      </object>
-      <packing>
-        <property name="left_attach">1</property>
-        <property name="right_attach">2</property>
-        <property name="top_attach">3</property>
-        <property name="bottom_attach">4</property>
-        <property name="y_options">GTK_FILL</property>
-      </packing>
-    </child>
   </object>
   <object class="GtkVBox" id="main_status">
     <property name="visible">True</property>
@@ -443,4 +379,110 @@
       </packing>
     </child>
   </object>
+  <object class="GtkHBox" id="servers_info">
+    <property name="visible">True</property>
+    <property name="border_width">5</property>
+    <child>
+      <object class="GtkImage" id="image3">
+        <property name="visible">True</property>
+        <property name="stock">gtk-info</property>
+        <property name="icon-size">6</property>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">False</property>
+        <property name="padding">5</property>
+        <property name="position">0</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkLabel" id="server_info_label">
+        <property name="visible">True</property>
+        <property name="xalign">0.56000000238418579</property>
+        <property name="label" translatable="yes">Info for servers... bla bla bla</property>
+        <property name="use_markup">True</property>
+        <property name="wrap">True</property>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">False</property>
+        <property name="padding">10</property>
+        <property name="position">1</property>
+      </packing>
+    </child>
+  </object>
+  <object class="GtkVBox" id="main_servers">
+    <property name="visible">True</property>
+    <property name="border_width">5</property>
+    <child>
+      <object class="GtkLabel" id="label4">
+        <property name="visible">True</property>
+        <property name="label" translatable="yes">Insert &lt;b&gt;Servers&lt;/b&gt; on your Maestro</property>
+        <property name="use_markup">True</property>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">False</property>
+        <property name="padding">10</property>
+        <property name="position">0</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkHBox" id="hbox2">
+        <property name="visible">True</property>
+        <child>
+          <object class="GtkEntry" id="server_entry">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="invisible_char">&#x25CF;</property>
+          </object>
+          <packing>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="server_add">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="relief">none</property>
+            <child>
+              <object class="GtkImage" id="image4">
+                <property name="visible">True</property>
+                <property name="stock">gtk-add</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">False</property>
+        <property name="position">1</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkScrolledWindow" id="scrolledwindow1">
+        <property name="visible">True</property>
+        <property name="can_focus">True</property>
+        <property name="hscrollbar_policy">automatic</property>
+        <property name="vscrollbar_policy">automatic</property>
+        <child>
+          <object class="GtkTreeView" id="servers_view">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+          </object>
+        </child>
+      </object>
+      <packing>
+        <property name="position">2</property>
+      </packing>
+    </child>
+  </object>
+  <object class="GtkListStore" id="liststore1"/>
 </interface>
