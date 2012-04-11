@@ -1080,7 +1080,7 @@ on_servers_edited(GtkCellRendererText *cell,
 	GtkTreeView *view = GTK_TREE_VIEW(gtk_builder_get_object(mc->priv->builder, "treeview_servers"));
 
 	gtk_tree_model_get_iter_first(GTK_TREE_MODEL(mc->priv->model), &iter);
-	gebr_gui_gtk_tree_view_select_iter(view, &iter);
+	gebr_gui_gtk_tree_view_scroll_to_iter_cell(view, &iter);
 }
 
 static void 
