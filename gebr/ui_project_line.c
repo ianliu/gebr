@@ -28,6 +28,7 @@
 #include <glib/gi18n.h>
 #include <libgebr/date.h>
 #include <libgebr/utils.h>
+#include <libgebr/gebr-tar.h>
 #include <libgebr/geoxml/document.h>
 #include <libgebr/gui/gebr-gui-utils.h>
 #include <libgebr/gui/gebr-gui-save-dialog.h>
@@ -663,40 +664,24 @@ static gboolean _project_line_import_path(const gchar *filename, GList **line_pa
 {
 	gboolean is_project;
 
-	GString *tmp_dir;
-	gint exit_status;
-	gchar *output;
-
 	GebrGeoXmlDocument *document;
 	GtkTreeIter iter;
-	gchar **files;
-	int i;
 
-	GError *error;
-	GString *command;
-	GString *command_line;
-	// Hash table with the list of canonized 
-	// dict keywords
-
-	command = g_string_new(NULL);
-	command_line = g_string_new(NULL);
-	error = NULL;
-
-	if (g_str_has_suffix(filename, ".prjz"))
+	if (g_str_has_suffix(filename, ".prjz") || g_str_has_suffix(filename, ".prjx"))
 		is_project = TRUE;
-	else if (g_str_has_suffix(filename, ".lnez")) {
+	else if (g_str_has_suffix(filename, ".lnez") || g_str_has_suffix(filename, ".lnex")) {
 		is_project = FALSE;
 		gdk_threads_enter();
 		if (!project_line_get_selected(NULL, ProjectLineSelection)) {
 			gdk_threads_leave();
-			goto out2;
+			goto err;
 		}
 		gdk_threads_leave();
 	} else {
 		gdk_threads_enter();
 		gebr_message(GEBR_LOG_ERROR, FALSE, TRUE, _("Unrecognized file type."));
 		gdk_threads_leave();
-		goto out2;
+		return FALSE;
 	}
 
 	/**
@@ -821,32 +806,17 @@ static gboolean _project_line_import_path(const gchar *filename, GList **line_pa
 	gtk_notebook_set_current_page(GTK_NOTEBOOK(gebr.notebook), NOTEBOOK_PAGE_PROJECT_LINE);
 	gdk_threads_leave();
 
-	tmp_dir = gebr_temp_directory_create();
-	gchar *quoted_dir;
-	gchar *quoted_fil;
-	gchar *quoted_com;
-	quoted_dir = g_shell_quote(tmp_dir->str);
-	quoted_fil = g_shell_quote(filename);
-	g_string_printf(command_line, "cd %s; tar xzfv %s", quoted_dir, quoted_fil);
-	quoted_com = g_shell_quote(command_line->str);
-	g_string_printf(command, "bash -c %s", quoted_com);
-	g_free(quoted_dir);
-	g_free(quoted_fil);
-	g_free(quoted_com);
-	if (!g_spawn_command_line_sync(command->str, &output, NULL, &exit_status, &error))
-		goto err;
-	if (exit_status)
-		goto err;
-	files = g_strsplit(output, "\n", 0);
-	for (i = 0; files[i] != NULL; ++i) {
-		if (is_project && g_str_has_suffix(files[i], ".prj")) {
+	GebrTar *tar;
+	tar = gebr_tar_new_from_file (filename);
+	void document_import_single (const gchar *path) {
+		if (is_project && g_str_has_suffix(path, ".prj")) {
 			GebrGeoXmlProject *project;
 			GebrGeoXmlSequence *project_line;
 
 			gdk_threads_enter();
-			if (document_load_at((GebrGeoXmlDocument**)(&project), files[i], tmp_dir->str)) {
+			if (document_load_path((GebrGeoXmlDocument**)(&project), path)) {
 				gdk_threads_leave();
-				continue;
+				return;
 			}
 			gdk_threads_leave();
 
@@ -862,7 +832,7 @@ static gboolean _project_line_import_path(const gchar *filename, GList **line_pa
 				GebrGeoXmlLine *line;
 
 				int ret = line_import(&iter, &line, gebr_geoxml_project_get_line_source
-				                      (GEBR_GEOXML_PROJECT_LINE(project_line)), tmp_dir->str);
+				                      (GEBR_GEOXML_PROJECT_LINE(project_line)), gebr_tar_get_dir(tar));
 				if (ret)
 					continue;
 
@@ -877,13 +847,15 @@ static gboolean _project_line_import_path(const gchar *filename, GList **line_pa
 			}
 			gebr_validator_set_document(gebr.validator, (GebrGeoXmlDocument**) &gebr.project, GEBR_GEOXML_DOCUMENT_TYPE_PROJECT, FALSE);
 			document = GEBR_GEOXML_DOCUMENT(project);
-		} else if (!is_project && g_str_has_suffix(files[i], ".lne")) {
+		} else if (!is_project && g_str_has_suffix(path, ".lne")) {
 			GebrGeoXmlLine *line;
 			GtkTreeIter parent;
 
-			line_import(&parent, &line, files[i], tmp_dir->str);
+			gchar *filename = g_path_get_basename(path);
+			line_import(&parent, &line, filename, gebr_tar_get_dir(tar));
+			g_free(filename);
 			if (line == NULL)
-				continue;
+				return;
 			gebr_geoxml_project_append_line(gebr.project,
 			                                gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(line)));
 			gdk_threads_enter();
@@ -914,25 +886,28 @@ static gboolean _project_line_import_path(const gchar *filename, GList **line_pa
 			g_string_free(new_title, TRUE);
 		}
 	}
+	if (!gebr_tar_extract (tar)) {
+		gdk_threads_enter();
+		gebr_message (GEBR_LOG_ERROR, TRUE, TRUE,
+			      _("Could not import Flow from the file %s"), filename);
+		gdk_threads_leave();
+		gebr_tar_free (tar);
+		goto err;
+	} else
+		gebr_tar_foreach (tar, (GebrTarFunc) document_import_single, NULL);
 
-	gebr_temp_directory_destroy(tmp_dir);
+	gebr_tar_free (tar);
+
 	gdk_threads_enter();
 	gebr_message(GEBR_LOG_INFO, FALSE, TRUE, _("Import successful."));
 	gdk_threads_leave();
-	g_strfreev(files);
-	goto out;
+	return TRUE;
 
 err:
 	gdk_threads_enter();
 	gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Failed to import."));
 	gdk_threads_leave();
 	return FALSE;
-out:
-	g_free(output);
-out2:
-	g_string_free(command, TRUE);
-
-	return TRUE;
 }
 
 void project_line_select_iter(GtkTreeIter * iter)
@@ -1144,9 +1119,11 @@ void project_line_import(void)
 	// FIXME: Use the global variable for adding shortcuts
 	gtk_file_chooser_add_shortcut_folder(GTK_FILE_CHOOSER(chooser_dialog), "/usr/share/gebr/demos/", NULL);
 	file_filter = gtk_file_filter_new();
-	gtk_file_filter_set_name(file_filter, _("Project or Line (*.prjz *.lnez)"));
+	gtk_file_filter_set_name(file_filter, _("Project (prjz, prjx) or Line (lnez, lnex)"));
 	gtk_file_filter_add_pattern(file_filter, "*.prjz");
 	gtk_file_filter_add_pattern(file_filter, "*.lnez");
+	gtk_file_filter_add_pattern(file_filter, "*.prjx");
+	gtk_file_filter_add_pattern(file_filter, "*.lnex");
 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(chooser_dialog), file_filter);
 
 	/* show file chooser */
@@ -1162,6 +1139,7 @@ void project_line_import(void)
 
 void project_line_export(void)
 {
+	GebrTar *tar;
 	GString *tmpdir;
 	const gchar *extension;
 	gchar *tmp;
@@ -1227,13 +1205,15 @@ void project_line_export(void)
 	
 	file_filter = gtk_file_filter_new();
 	if (projects) {
-		gtk_file_filter_set_name(file_filter, _("Project (*.prjz)"));
+		gtk_file_filter_set_name(file_filter, _("Project (prjz, prjx)"));
 		gtk_file_filter_add_pattern(file_filter, "*.prjz");
-		extension = ".prjz";
+		gtk_file_filter_add_pattern(file_filter, "*.prjx");
+		extension = ".prjx";
 	} else {
-		gtk_file_filter_set_name(file_filter, _("Line (*.lnez)"));
+		gtk_file_filter_set_name(file_filter, _("Line (lnez, lnex)"));
 		gtk_file_filter_add_pattern(file_filter, "*.lnez");
-		extension = ".lnez";
+		gtk_file_filter_add_pattern(file_filter, "*.lnex");
+		extension = ".lnex";
 	}
 
 	GtkWidget *box;
@@ -1265,7 +1245,7 @@ void project_line_export(void)
 					 gebr_geoxml_document_get_filename(GEBR_GEOXML_DOCUMENT(line)),
 					 NULL);
 
-		document_save_at(GEBR_GEOXML_DOCUMENT(line), filename, FALSE, FALSE);
+		document_save_at(GEBR_GEOXML_DOCUMENT(line), filename, FALSE, FALSE, FALSE);
 		g_free (filename);
 
 		gebr_geoxml_line_get_flow(line, &j, 0);
@@ -1281,7 +1261,7 @@ void project_line_export(void)
 			flow_set_paths_to_relative(flow, line, paths, TRUE);
 			gebr_pairstrfreev(paths);
 			filename = g_build_path ("/", tmpdir->str, flow_filename, NULL);
-			document_save_at(GEBR_GEOXML_DOCUMENT(flow), filename, FALSE, FALSE);
+			document_save_at(GEBR_GEOXML_DOCUMENT(flow), filename, FALSE, FALSE, FALSE);
 			g_free (filename);
 
 			gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
@@ -1321,7 +1301,7 @@ void project_line_export(void)
 					 tmpdir->str,
 					 gebr_geoxml_document_get_filename (prj),
 					 NULL);
-		document_save_at (prj, filename, FALSE, FALSE);
+		document_save_at (prj, filename, FALSE, FALSE, FALSE);
 		g_free (filename);
 
 		gebr_geoxml_project_get_line (GEBR_GEOXML_PROJECT (prj), &seq, 0);
@@ -1339,20 +1319,17 @@ void project_line_export(void)
 		}
 	}
 
-	gchar *current_dir = g_get_current_dir();
-	g_chdir(tmpdir->str);
-	gchar *quoted = g_shell_quote(tmp);
-	if (gebr_system("tar czf %s *", quoted))
-		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Could not export."));
-	else
+	tar = gebr_tar_create (tmp);
+
+	if (gebr_tar_compact (tar, tmpdir->str))
 		gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Export succesful."));
-	g_free(quoted);
-	g_chdir(current_dir);
-	g_free(current_dir);
+	else
+		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Could not export."));
 	g_list_free(lines);
 	g_list_free(projects);
 
 	g_free(tmp);
+	gebr_tar_free (tar);
 	gebr_temp_directory_destroy(tmpdir);
 }
 
