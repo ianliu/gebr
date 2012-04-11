@@ -115,7 +115,7 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document,
  * Save \p document at \p path.  * Only set \p set_modified_date to TRUE if this save is a reflect of a explicit user action.
  * Returns TRUE on document save success or FALSE otherwise
  */
-gboolean document_save_at(GebrGeoXmlDocument * document, const gchar * path, gboolean set_modified_date, gboolean cache);
+gboolean document_save_at(GebrGeoXmlDocument * document, const gchar * path, gboolean set_modified_date, gboolean cache, gboolean compress);
 /**
  * Save \p document using its filename field at data directory.
  * @see document_save_at

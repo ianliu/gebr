@@ -1232,7 +1232,7 @@ int gebr_geoxml_document_validate(const gchar * filename)
 	return ret;
 }
 
-int gebr_geoxml_document_save(GebrGeoXmlDocument * document, const gchar * path)
+int gebr_geoxml_document_save(GebrGeoXmlDocument * document, const gchar * path, gboolean compress)
 {
 	gzFile zfp;
 	char *xml;
@@ -1244,7 +1244,7 @@ int gebr_geoxml_document_save(GebrGeoXmlDocument * document, const gchar * path)
 
 	gebr_geoxml_document_to_string(document, &xml);
 
-	if ((gebr_geoxml_document_get_type(document) == GEBR_GEOXML_DOCUMENT_TYPE_FLOW) && g_str_has_suffix(path, ".mnu")) {
+	if (!compress) {
 		fp = fopen(path, "w");
 		if (fp == NULL) {
 			g_free(xml);

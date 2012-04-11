@@ -157,7 +157,7 @@ int gebr_geoxml_document_validate(const gchar * filename);
  *
  * If \p document is NULL nothing is done.
  */
-int gebr_geoxml_document_save(GebrGeoXmlDocument * document, const gchar * path);
+int gebr_geoxml_document_save(GebrGeoXmlDocument * document, const gchar * path, gboolean compress);
 
 /**
  * Save \p document to \p xml_string. Memory needed for \p xml_string

@@ -347,7 +347,7 @@ int document_load_path_with_parent(GebrGeoXmlDocument **document, const gchar * 
 
 	gtk_dialog_add_button(GTK_DIALOG(dialog), _("Ignore"), 0);
 	GtkWidget * export = gtk_dialog_add_button(GTK_DIALOG(dialog), _("Export"), 1);
-	gtk_button_box_set_child_secondary(GTK_BUTTON_BOX(GTK_DIALOG(dialog)->action_area), export, TRUE);
+	gtk_button_box_set_child_secondary(GTK_BUTTON_BOX(gtk_dialog_get_action_area(GTK_DIALOG(dialog))), export, TRUE);
 	gtk_dialog_add_button(GTK_DIALOG(dialog), _("Delete"), 2);
 
 	gtk_widget_show_all(dialog);
@@ -465,14 +465,14 @@ out:	g_string_free(string, TRUE);
 	return ret;
 }
 
-gboolean document_save_at(GebrGeoXmlDocument * document, const gchar * path, gboolean set_modified_date, gboolean cache)
+gboolean document_save_at(GebrGeoXmlDocument * document, const gchar * path, gboolean set_modified_date, gboolean cache, gboolean compress)
 {
 	gboolean ret = FALSE;
 
 	if (set_modified_date)
 		gebr_geoxml_document_set_date_modified(document, gebr_iso_date());
 
-	ret = (gebr_geoxml_document_save(document, path) == GEBR_GEOXML_RETV_SUCCESS);
+	ret = (gebr_geoxml_document_save(document, path, compress) == GEBR_GEOXML_RETV_SUCCESS);
 	if (!ret)
 		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Failed to save the document '%s' at '%s'."),
 			     gebr_geoxml_document_get_title(document), path);
@@ -488,7 +488,7 @@ gboolean document_save(GebrGeoXmlDocument * document, gboolean set_modified_date
 	gboolean ret = FALSE;
 
 	path = document_get_path(gebr_geoxml_document_get_filename(document));
-	ret = document_save_at(document, path->str, set_modified_date, cache);
+	ret = document_save_at(document, path->str, set_modified_date, cache, TRUE);
 	g_string_free(path, TRUE);
 	return ret;
 }
@@ -531,7 +531,7 @@ void document_import(GebrGeoXmlDocument * document, gboolean save)
 
 	if (save) {
 		GString *path = document_get_path(new_filename->str);
-		document_save_at(document, path->str, FALSE, TRUE);
+		document_save_at(document, path->str, FALSE, TRUE, TRUE);
 		g_string_free(path, TRUE);
 	}
 
