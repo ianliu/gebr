@@ -190,7 +190,7 @@ static gboolean flow_import_single (const gchar *path)
 	gebr_message(GEBR_LOG_INFO, TRUE, TRUE, _("Flow '%s' imported into Line '%s' from the file '%s'."),
 		     title, gebr_geoxml_document_get_title (GEBR_GEOXML_DOC (gebr.line)), path);
 
-	document_import (flow, TRUE);
+	document_import (flow, FALSE);
 	line_flow = gebr_geoxml_line_append_flow (gebr.line, gebr_geoxml_document_get_filename (flow));
 	document_save(GEBR_GEOXML_DOC(gebr.line), FALSE, FALSE);
 	iter = line_append_flow_iter(GEBR_GEOXML_FLOW (flow), line_flow);
@@ -202,6 +202,7 @@ static gboolean flow_import_single (const gchar *path)
 	gtk_list_store_set(gebr.ui_flow_browse->store, &iter, FB_TITLE, new_title, -1);
 	gebr_geoxml_document_set_title(flow, new_title);
 	document_save(flow, FALSE, FALSE);
+	gebr_geoxml_document_free(flow);
 	g_free(new_title);
 
 	return TRUE;
@@ -224,9 +225,10 @@ void flow_import(void)
 	gtk_file_chooser_set_local_only(GTK_FILE_CHOOSER(chooser_dialog), FALSE);
 	gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(chooser_dialog), TRUE);
 	file_filter = gtk_file_filter_new();
-	gtk_file_filter_set_name(file_filter, _("Flow file types (*.flw, *.flwz)"));
+	gtk_file_filter_set_name(file_filter, _("Flow file types (*.flw, *.flwz, *.flwx)"));
 	gtk_file_filter_add_pattern(file_filter, "*.flw");
 	gtk_file_filter_add_pattern(file_filter, "*.flwz");
+	gtk_file_filter_add_pattern(file_filter, "*.flwx");
 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(chooser_dialog), file_filter);
 
 	gtk_widget_show(chooser_dialog);
@@ -234,7 +236,7 @@ void flow_import(void)
 		goto out;
 
 	path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser_dialog));
-	if (g_str_has_suffix (path, ".flwz")) {
+	if (g_str_has_suffix(path, ".flwz") || g_str_has_suffix(path, ".flwx")) {
 		GebrTar *tar;
 		tar = gebr_tar_new_from_file (path);
 		if (!gebr_tar_extract (tar))
@@ -265,7 +267,6 @@ void flow_export(void)
 	GtkWidget *chooser_dialog;
 	gboolean have_flow = FALSE;
 	gboolean error = FALSE;
-	gchar *filename;
 	gchar *flow_filename;
 	gchar *tmp;
 	gint len;
@@ -290,7 +291,6 @@ void flow_export(void)
 		gtk_tree_model_get_iter (model, &iter, path);
 		gtk_tree_model_get (model, &iter, FB_FILENAME, &flow_filename, -1);
 
-		//if (gebr_geoxml_document_load((GebrGeoXmlDocument**)&flow, flow_filename, TRUE, NULL) != GEBR_GEOXML_RETV_SUCCESS)
 		if (document_load (&flow, flow_filename, FALSE))
 			goto out;
 
@@ -298,18 +298,18 @@ void flow_export(void)
 				 gebr_geoxml_document_get_title (flow));
 
 		document_free (flow);
-		//gebr_geoxml_document_free(GEBR_GEOXML_DOCUMENT(flow));
 	}
 
 	GtkWidget *box;
 	box = gtk_vbox_new(FALSE, 5);
 
 	chooser_dialog = gebr_gui_save_dialog_new(title->str, GTK_WINDOW(gebr.window));
-	gebr_gui_save_dialog_set_default_extension(GEBR_GUI_SAVE_DIALOG(chooser_dialog), ".flwz");
+	gebr_gui_save_dialog_set_default_extension(GEBR_GUI_SAVE_DIALOG(chooser_dialog), ".flwx");
 
 	file_filter = gtk_file_filter_new();
-	gtk_file_filter_set_name(file_filter, _("Flow file types (*.flwz)"));
+	gtk_file_filter_set_name(file_filter, _("Flow file types (*.flwz, *.flwx)"));
 	gtk_file_filter_add_pattern(file_filter, "*.flwz");
+	gtk_file_filter_add_pattern(file_filter, "*.flwx");
 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(chooser_dialog), file_filter);
 	gtk_file_chooser_set_extra_widget(GTK_FILE_CHOOSER(chooser_dialog), box);
 	gtk_widget_show_all(box);
@@ -318,7 +318,6 @@ void flow_export(void)
 	if (!tmp)
 		goto out;
 
-	filename = g_path_get_basename (tmp);
 	tempdir = gebr_temp_directory_create ();
 	tar = gebr_tar_create (tmp);
 
@@ -347,18 +346,14 @@ void flow_export(void)
 
 		filepath = g_build_path ("/", tempdir->str, flow_filename, NULL);
 
-		if (!document_save_at (flow, filepath, FALSE, FALSE)) {
-			gebr_message (GEBR_LOG_ERROR, FALSE, TRUE,
-				      _("Could not save Flow %s at %s"),
-				      flow_filename, tempdir->str);
+		if (document_save_at (flow, filepath, FALSE, FALSE, FALSE)) {
+			gebr_tar_append (tar, flow_filename);
+			have_flow = TRUE;
+		} else {
 			error = TRUE;
-			g_free (filepath);
-			continue;
 		}
 
-		gebr_tar_append (tar, flow_filename);
 		document_free (flow);
-		have_flow = TRUE;
 		g_free (filepath);
 	}
 
@@ -377,11 +372,11 @@ void flow_export(void)
 	gebr_temp_directory_destroy (tempdir);
 
 	g_free(tmp);
-	g_free(filename);
 	gebr_tar_free (tar);
 
 out:
-	g_free(flow_filename);
+	if (!len > 1)
+		g_free(flow_filename);
 	g_string_free(title, TRUE);
 }
 
@@ -582,7 +577,7 @@ gboolean flow_revision_save(void)
 
 	align = gtk_alignment_new(0, 0, 1, 1);
 	gtk_alignment_set_padding(GTK_ALIGNMENT(align), 10, 10, 10, 10);
-	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), align, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), align, TRUE, TRUE, 0);
 
 	vbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(align), vbox);
