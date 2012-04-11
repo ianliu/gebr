@@ -308,9 +308,10 @@ void on_menu_create_from_flow_activate(void)
 					     GTK_STOCK_OPEN, GTK_RESPONSE_YES,
 					     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
 	file_filter = gtk_file_filter_new();
-	gtk_file_filter_set_name(file_filter, _("Flow files (*.flw, *.flwz)"));
+	gtk_file_filter_set_name(file_filter, _("Flow files (*.flw, *.flwz, *.flwx)"));
 	gtk_file_filter_add_pattern(file_filter, "*.flw");
 	gtk_file_filter_add_pattern(file_filter, "*.flwz");
+	gtk_file_filter_add_pattern(file_filter, "*.flwx");
 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), file_filter);
 	gtk_widget_show(dialog);
 	if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_YES)
@@ -321,7 +322,7 @@ void on_menu_create_from_flow_activate(void)
 
 	gchar *path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
 
-	if (g_str_has_suffix (path, ".flwz")) {
+	if (g_str_has_suffix (path, ".flwz") || g_str_has_suffix (path, ".flwx")) {
 		GebrTar *tar;
 		tar = gebr_tar_new_from_file (path);
 		if (!gebr_tar_extract (tar))

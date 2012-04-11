@@ -68,7 +68,7 @@ int main(int argc, char **argv)
 			fprintf(stderr, _("Could not load file %s.\n"), files[i]);
 			continue;
 		}
-		ret = gebr_geoxml_document_save(document, files[i]);
+		ret = gebr_geoxml_document_save(document, files[i], FALSE);
 		if (ret < 0) {
 			fprintf(stderr, _("Could not save file %s.\n"), files[i]);
 			gebr_geoxml_document_free(document);

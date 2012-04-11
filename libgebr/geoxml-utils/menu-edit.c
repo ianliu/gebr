@@ -189,7 +189,7 @@ int main(int argc, char **argv)
 		}
 
  out:		gebr_geoxml_document_set_date_modified(doc, gebr_iso_date());
-		if (gebr_geoxml_document_save(doc, menu[imenu]) != GEBR_GEOXML_RETV_SUCCESS)
+		if (gebr_geoxml_document_save(doc, menu[imenu], FALSE) != GEBR_GEOXML_RETV_SUCCESS)
 			fprintf(stderr, "Unable to save %s\n", menu[imenu]);
 		gebr_geoxml_document_free(doc);
 	}

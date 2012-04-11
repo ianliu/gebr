@@ -470,7 +470,7 @@ static gboolean populate_menu_demo(const gchar *dir, GtkMenu *menu)
 
 		GList *list = NULL;
 		gebr_directory_foreach_file_hyg(filename, path->str, dir) {
-			if (!fnmatch("*.prjz", filename, 1)) {
+			if (!fnmatch("*.prj?", filename, 1)) {
 				has_dir = TRUE;
 				list = g_list_prepend(list, g_strdup(filename));
 			}

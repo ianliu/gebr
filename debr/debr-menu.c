@@ -499,7 +499,7 @@ MenuMessage menu_save(GtkTreeIter * iter)
 	}
 
 	filename = g_path_get_basename(path);
-	if (gebr_geoxml_document_save(GEBR_GEOXML_DOC(menu), path) != GEBR_GEOXML_RETV_SUCCESS) {
+	if (gebr_geoxml_document_save(GEBR_GEOXML_DOC(menu), path, FALSE) != GEBR_GEOXML_RETV_SUCCESS) {
 		gebr_gui_message_dialog(GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
 					_("Could not save the menu"),
 					_("You do not have necessary permissions to save "
@@ -513,7 +513,7 @@ MenuMessage menu_save(GtkTreeIter * iter)
 
 		gebr_geoxml_document_set_filename (GEBR_GEOXML_DOC (menu), filename);
 		gebr_geoxml_document_set_date_modified(GEBR_GEOXML_DOC(menu), gebr_iso_date());
-		gebr_geoxml_document_save(GEBR_GEOXML_DOC(menu), path);
+		gebr_geoxml_document_save(GEBR_GEOXML_DOC(menu), path, FALSE);
 	}
 
 	tmp = g_strdup_printf("%ld",
