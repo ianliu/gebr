@@ -161,28 +161,30 @@ __gebr_gui_file_entry_browse_button_clicked(GtkButton *button,
 	const gchar *entr = gtk_entry_get_text(GTK_ENTRY(file_entry->entry));
  
 	if (file_entry->prefix) {
-		gchar *folder = NULL;
-		gboolean err_entry = FALSE;
-		gboolean err_dir = FALSE;
-		if (!entr || !*entr ) 
-			err_entry = TRUE;
-		else {
-			gchar *entry_text = g_path_get_dirname(entr);
-			gchar *aux = gebr_resolve_relative_path(entry_text, paths);
-			folder = g_build_filename(file_entry->prefix, aux, NULL);
-			g_free(aux);
-			g_free(entry_text);
-			err_dir = !gtk_file_chooser_set_current_folder_uri(GTK_FILE_CHOOSER(chooser_dialog), folder);
-		}
+		gebr_file_chooser_set_current_directory (entr, file_entry->prefix, paths, chooser_dialog);
 
-		if (err_entry || err_dir){
-			g_free(folder);
-			folder = g_build_filename(file_entry->prefix, paths[0][0], NULL);
-			gtk_file_chooser_set_current_folder_uri(GTK_FILE_CHOOSER(chooser_dialog), folder);
-		}
-
-		gebr_gtk_bookmarks_add_paths(file, file_entry->prefix, paths);
-		g_free(folder);
+//		gchar *folder = NULL;
+//		gboolean err_entry = FALSE;
+//		gboolean err_dir = FALSE;
+//		if (!entr || !*entr )
+//			err_entry = TRUE;
+//		else {
+//			gchar *entry_text = g_path_get_dirname(entr);
+//			gchar *aux = gebr_resolve_relative_path(entry_text, paths);
+//			folder = g_build_filename(file_entry->prefix, aux, NULL);
+//			g_free(aux);
+//			g_free(entry_text);
+//			err_dir = !gtk_file_chooser_set_current_folder_uri(GTK_FILE_CHOOSER(chooser_dialog), folder);
+//		}
+//
+//		if (err_entry || err_dir){
+//			g_free(folder);
+//			folder = g_build_filename(file_entry->prefix, paths[0][0], NULL);
+//			gtk_file_chooser_set_current_folder_uri(GTK_FILE_CHOOSER(chooser_dialog), folder);
+//		}
+//
+//		gebr_gtk_bookmarks_add_paths(file, file_entry->prefix, paths);
+//		g_free(folder);
 	}
 	else 
 		gebr_file_chooser_set_warning_widget(paths, file, chooser_dialog);

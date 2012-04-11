@@ -741,29 +741,30 @@ static void open_activated(GtkEntry *entry, GtkEntryIconPosition icon_pos, GdkEv
 		gchar *prefix = gebr_maestro_server_get_sftp_prefix(maestro);
 		gboolean logged = gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED;
 		const gchar *entr = gtk_entry_get_text(entry);
-		gboolean err_dir = FALSE;
-		gboolean err_entry = FALSE;
+//		gboolean err_dir = FALSE;
+//		gboolean err_entry = FALSE;
 		if (prefix) {
-			gchar *folder = NULL;
-			if (!entr || !*entr ) 
-				err_entry = TRUE;
-			else {
-				gchar *entry_text = g_path_get_dirname(entr);
-				gchar *aux = gebr_resolve_relative_path(entry_text, paths);
-				folder = g_build_filename(prefix, aux, NULL);
-				
-				err_dir = !gtk_file_chooser_set_current_folder_uri(GTK_FILE_CHOOSER(dialog), folder);
-
-				g_free(folder);
-				g_free(aux);
-				g_free(entry_text);
-			}
-
-			if (err_entry || err_dir){
-				folder = g_build_filename(prefix, paths[0][0], NULL); //use BASE
-				gtk_file_chooser_set_current_folder_uri(GTK_FILE_CHOOSER(dialog), folder);
-				g_free(folder);
-			}
+			gebr_file_chooser_set_current_directory (entr, prefix, paths, dialog);
+//			gchar *folder = NULL;
+//			if (!entr || !*entr )
+//				err_entry = TRUE;
+//			else {
+//				gchar *entry_text = g_path_get_dirname(entr);
+//				gchar *aux = gebr_resolve_relative_path(entry_text, paths);
+//				folder = g_build_filename(prefix, aux, NULL);
+//
+//				err_dir = !gtk_file_chooser_set_current_folder_uri(GTK_FILE_CHOOSER(dialog), folder);
+//
+//				g_free(folder);
+//				g_free(aux);
+//				g_free(entry_text);
+//			}
+//
+//			if (err_entry || err_dir){
+//				folder = g_build_filename(prefix, paths[0][0], NULL); //use BASE
+//				gtk_file_chooser_set_current_folder_uri(GTK_FILE_CHOOSER(dialog), folder);
+//				g_free(folder);
+//			}
 
 			if (logged)
 				gebr_gtk_bookmarks_add_paths(filename, prefix, paths);

@@ -1246,3 +1246,31 @@ gebr_file_chooser_set_warning_widget(gchar ***paths,
 	gtk_file_chooser_set_preview_widget (GTK_FILE_CHOOSER(chooser_dialog), vbox);
 	return success;
 }
+
+void
+gebr_file_chooser_set_current_directory (const gchar *entr, const gchar *prefix, gchar ***paths, GtkWidget *dialog)
+{
+	gchar *folder = NULL;
+	gboolean err_entry = FALSE;
+	gboolean err_dir = FALSE;
+
+	if (!entr || !*entr )
+		err_entry = TRUE;
+	else {
+		gchar *entry_text = g_path_get_dirname(entr);
+		gchar *aux = gebr_resolve_relative_path(entry_text, paths);
+		folder = g_build_filename(prefix, aux, NULL);
+
+		err_dir = !gtk_file_chooser_set_current_folder_uri(GTK_FILE_CHOOSER(dialog), folder);
+
+		g_free(folder);
+		g_free(aux);
+		g_free(entry_text);
+	}
+
+	if (err_entry || err_dir){
+		folder = g_build_filename(prefix, paths[0][0], NULL); //use BASE
+		gtk_file_chooser_set_current_folder_uri(GTK_FILE_CHOOSER(dialog), folder);
+		g_free(folder);
+	}
+}
