@@ -1619,3 +1619,25 @@ gebr_maestro_server_get_ncores_for_group(GebrMaestroServer *maestro,
 
 	return sum;
 }
+
+gboolean
+gebr_maestro_server_has_connected_servers(GebrMaestroServer *maestro)
+{
+	gboolean valid;
+	GtkTreeIter iter;
+	GebrDaemonServer *daemon;
+	GtkTreeModel *model = GTK_TREE_MODEL(maestro->priv->store);
+
+	 valid = gtk_tree_model_get_iter_first(model, &iter);
+	 while (valid) {
+		 gtk_tree_model_get(model, &iter, 0, &daemon, -1);
+
+		 const gchar *addr = gebr_daemon_server_get_address(daemon);
+		 if (daemon && *addr && gebr_daemon_server_get_state(daemon) == SERVER_STATE_LOGGED)
+			 return TRUE;
+
+		 valid = gtk_tree_model_iter_next(model, &iter);
+	 }
+
+	 return FALSE;
+}
