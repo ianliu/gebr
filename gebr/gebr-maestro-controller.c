@@ -871,10 +871,13 @@ gebr_maestro_controller_daemon_server_address_func(GtkTreeViewColumn *tree_colum
 	                   MAESTRO_CONTROLLER_ADDR, &addr,
 	                   -1);
 
-	if (!daemon && !insert_new)
-		g_object_set(cell, "text", "Insert servers on Maestro", NULL);
-	else
+	if (!daemon && !insert_new) {
+		g_object_set(cell, "text", "List of daemons", NULL);
+		g_object_set(cell, "sensitive", FALSE, NULL);
+	} else {
 		g_object_set(cell, "text", addr, NULL);
+		g_object_set(cell, "sensitive", TRUE, NULL);
+	}
 }
 
 void
@@ -1702,7 +1705,7 @@ gebr_maestro_controller_connect(GebrMaestroController *self,
 	g_signal_emit(self, signals[MAESTRO_LIST_CHANGED], 0);
 
 	gebr_maestro_server_connect(self->priv->maestro);
-	gebr_config_save(FALSE);
+//	gebr_config_save(FALSE);
 }
 
 GebrMaestroServer *

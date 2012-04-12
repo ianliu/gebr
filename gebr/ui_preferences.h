@@ -40,7 +40,8 @@ struct ui_preferences {
 	GtkComboBox *maestro_combo;
 };
 
-struct ui_preferences *preferences_setup_ui(gboolean first_run);
+struct ui_preferences *preferences_setup_ui(gboolean first_run,
+                                            gboolean wizard_run);
 
 G_END_DECLS
 #endif				//__UI_PREFERENCES_H

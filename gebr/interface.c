@@ -59,6 +59,8 @@
 static const GtkActionEntry actions_entries[] = {
 	{"actions_preferences", GTK_STOCK_PREFERENCES, NULL,
 		NULL, NULL, G_CALLBACK(on_configure_preferences_activate)},
+	{"actions_connections", NULL, N_("_Connections"),
+		NULL, NULL, G_CALLBACK(on_configure_wizard_activate)},
 	{"actions_servers", GTK_STOCK_NETWORK, N_("_Servers"),
 		NULL, NULL, G_CALLBACK(on_configure_servers_activate)},
 	{"actions_quit", GTK_STOCK_QUIT, NULL,
@@ -746,6 +748,9 @@ static void assembly_menus(GtkMenuBar * menu_bar)
 	gtk_container_add(GTK_CONTAINER(menu),
 			  gtk_action_create_menu_item(gtk_action_group_get_action
 						      (gebr.action_group_general, "actions_preferences")));
+	gtk_container_add(GTK_CONTAINER(menu),
+	                  gtk_action_create_menu_item(gtk_action_group_get_action
+	                                              (gebr.action_group_general, "actions_connections")));
 	gtk_container_add(GTK_CONTAINER(menu),
 			  gtk_action_create_menu_item(gtk_action_group_get_action
 						      (gebr.action_group_general, "actions_servers")));

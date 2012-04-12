@@ -403,7 +403,12 @@ void on_job_control_stop(void)
 
 void on_configure_preferences_activate(void)
 {
-	preferences_setup_ui(FALSE);
+	preferences_setup_ui(FALSE, FALSE);
+}
+
+void on_configure_wizard_activate(void)
+{
+	preferences_setup_ui(FALSE, TRUE);
 }
 
 void on_configure_servers_activate(void)

@@ -154,6 +154,8 @@ void on_job_control_queue_close(void);
 
 void on_configure_preferences_activate(void);
 
+void on_configure_wizard_activate(void);
+
 /**
  * on_configure_servers_activate:
  *
