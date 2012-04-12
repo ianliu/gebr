@@ -335,9 +335,9 @@
     <child>
       <object class="GtkLabel" id="server_info_label">
         <property name="visible">True</property>
-        <property name="label" translatable="yes">Maestro machine can have many servers under its control. For each server, you are going to be asked for a password. The password you must provide is the same that you would use to log in to that machine.
+        <property name="label" translatable="yes">Your Maestro can have many servers under its control. For each server, you are going to be asked for a password. The password you must provide is the same that you would use to log in to that machine.
 
- Additionally, you are going to be prompted for a password of the remove browsing of your files. This way, you can naviagate on your remote files in your servers.
+ Additionally, you are going to be prompted for a password of the remove browsing of your files. This way, you can navigate on your remote files in your servers.
 
 *G&#xEA;BR offers a way to avoid these passwords, by creating SSH keys. For more information, access the G&#xEA;BR tool Help-&gt;Help.</property>
         <property name="use_markup">True</property>
@@ -358,9 +358,11 @@
     <child>
       <object class="GtkLabel" id="main_servers_label">
         <property name="visible">True</property>
-        <property name="label" translatable="yes">Now you need to add &lt;b&gt;Servers&lt;/b&gt; to be handled by your Maestro X. Now you can be asked for the Server password.
+        <property name="label" translatable="yes">You need to add &lt;b&gt;Servers&lt;/b&gt; to be handled by your Maestro X.
 
-Put the name (hostname or address) of the Server in the blank space and click on Add.</property>
+Put the name (hostname or address) of the Server in the blank space and click on Add.
+
+*You can be asked for the Server password.</property>
         <property name="use_markup">True</property>
         <property name="wrap">True</property>
         <property name="wrap_mode">word-char</property>
