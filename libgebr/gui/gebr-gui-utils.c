@@ -1269,8 +1269,10 @@ gebr_file_chooser_set_current_directory (const gchar *entr, const gchar *prefix,
 	}
 
 	if (err_entry || err_dir){
-		folder = g_build_filename(prefix, paths[0][0], NULL); //use BASE
+		gchar *aux = gebr_resolve_relative_path(paths[0][0], paths);
+		folder = g_build_filename(prefix, aux, NULL); //use BASE
 		gtk_file_chooser_set_current_folder_uri(GTK_FILE_CHOOSER(dialog), folder);
+		g_free(aux);
 		g_free(folder);
 	}
 }
