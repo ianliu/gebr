@@ -524,7 +524,7 @@ on_line_callback_base_entry_press(GtkEntry            *entry,
 	gtk_file_chooser_set_current_folder_uri(GTK_FILE_CHOOSER(file_chooser), entr);
 	gchar ***paths = gebr_geoxml_line_get_paths(gebr.line);
 	gebr_file_chooser_set_current_directory (entr, prefix, paths, file_chooser);
-	g_debug("entr:'%s',prefix:'%s',paths[0][0]:'%s',paths[1][0]:'%s',paths[2][0]:'%s',paths[7][0]:'%s'", entr, prefix,paths[0][0],paths[1][0],paths[2][0],paths[7][0]);
+	//g_debug("entr:'%s',prefix:'%s',paths[0][0]:'%s',paths[1][0]:'%s',paths[2][0]:'%s',paths[7][0]:'%s'", entr, prefix,paths[0][0],paths[1][0],paths[2][0],paths[7][0]);
 	gtk_dialog_run(GTK_DIALOG(file_chooser));
 
 	gtk_widget_destroy(file_chooser);

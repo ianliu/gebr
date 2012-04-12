@@ -487,8 +487,6 @@ parse_messages(GebrCommServer *comm_server,
 				GString *port = g_list_nth_data(arguments, 0);
 				GString *clocks_diff = g_list_nth_data(arguments, 1);
 
-				g_debug("===============On '%s', line '%d', clocks_diff:'%s' ", __FILE__, __LINE__, clocks_diff->str);
-
 				gebr_maestro_server_set_clocks_diff(maestro, atoi(clocks_diff->str));
 
 				gebr_comm_server_set_logged(comm_server);

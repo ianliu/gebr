@@ -316,9 +316,9 @@ on_assistant_prepare(GtkAssistant *assistant,
 			GtkWidget *main_servers_label = GTK_WIDGET(gtk_builder_get_object(up->builder, "main_servers_label"));
 			GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 
-			gchar *main_servers_text = g_markup_printf_escaped("Now you need to add <b>Servers</b> to be handled by your Maestro <b>%s</b>. "
-									   "Now you can be asked for the Server password.\n\n"
-									   "Put the name (hostname or address) of the Server in the blank space and click on Add.",
+			gchar *main_servers_text = g_markup_printf_escaped(_("Now you need to add <b>Servers</b> to be handled by your Maestro <b>%s</b>.\n\n"
+									   "Put the name (hostname or address) of the Server in the blank space and click on Add.\n"
+									   "<i>*You can be asked for the Server password.</i>"),
 									   gebr_maestro_server_get_address(maestro));
 
 			gtk_label_set_markup(GTK_LABEL(main_servers_label), main_servers_text);

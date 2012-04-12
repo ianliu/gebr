@@ -52,7 +52,9 @@
     <child>
       <object class="GtkLabel" id="pwd_info_label">
         <property name="visible">True</property>
-        <property name="label" translatable="yes">G&#xEA;BR needs a &lt;b&gt;connection&lt;/b&gt; to a maestro to send jobs and receive outputs. For security matters, this connection is made through the system built-in SSH protocol. The &lt;b&gt;password&lt;/b&gt; that is possibly going to be prompted is the same of your account  in the machine of your maestro</property>
+        <property name="label" translatable="yes">G&#xEA;BR needs a &lt;b&gt;connection&lt;/b&gt; to a maestro to send jobs and receive outputs. For security matters, this connection is made through the system built-in SSH protocol. 
+
+The &lt;b&gt;password&lt;/b&gt; that is possibly going to be prompted is the same of your account  in the machine of your maestro</property>
         <property name="use_markup">True</property>
         <property name="wrap">True</property>
       </object>
