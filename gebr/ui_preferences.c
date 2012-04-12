@@ -195,7 +195,7 @@ on_maestro_state_changed(GebrMaestroController *self,
 
 static void
 on_add_server_clicked(GtkButton *button,
-                      struct ui_preferences *up)
+		      struct ui_preferences *up)
 {
 	GObject *server_entry = gtk_builder_get_object(up->builder, "server_entry");
 	GtkWidget *main_servers = GTK_WIDGET(gtk_builder_get_object(up->builder, "main_servers"));
@@ -278,10 +278,20 @@ on_assistant_prepare(GtkAssistant *assistant,
 			GObject *server_add = gtk_builder_get_object(up->builder, "server_add");
 			GObject *server_entry = gtk_builder_get_object(up->builder, "server_entry");
 
+			GtkWidget *main_servers_label = GTK_WIDGET(gtk_builder_get_object(up->builder, "main_servers_label"));
+			GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+
+			gchar *main_servers_text = g_markup_printf_escaped("Now you need to add <b>Servers</b> to be handled by your Maestro <b>%s</b>. "
+									   "Now you can be asked for the Server password.\n\n"
+									   "Put the name (hostname or address) of the Server in the blank space and click on Add.",
+									   gebr_maestro_server_get_address(maestro));
+
+			gtk_label_set_markup(GTK_LABEL(main_servers_label), main_servers_text);
+			g_free(main_servers_text);
+
 			GtkTreeModel *model = gebr_maestro_controller_get_servers_model(gebr.maestro_controller);
 			gtk_tree_view_set_model(view, model);
 
-			GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 			gtk_entry_set_text(GTK_ENTRY(server_entry), gebr_maestro_server_get_address(maestro));
 
 			g_signal_connect(GTK_BUTTON(server_add), "clicked", G_CALLBACK(on_add_server_clicked), up);
