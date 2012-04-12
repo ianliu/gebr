@@ -500,7 +500,7 @@ set_maestro_chooser_page(GtkBuilder *builder,
 		}
 
 		gchar **options = g_strsplit(maestros_default, ";", -1);
-		for (gint i = 0; options[i]; i++) {
+		for (gint i = 0; options[i] && *options[i]; i++) {
 			gchar **m = g_strsplit(options[i], ",", -1);
 
 			gtk_list_store_append(model, &iter);
