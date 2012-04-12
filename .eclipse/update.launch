@@ -3,7 +3,7 @@
 <stringAttribute key="org.eclipse.cdt.launch.launchGroup.0.action" value="NONE"/>
 <stringAttribute key="org.eclipse.cdt.launch.launchGroup.0.enabled" value="true"/>
 <stringAttribute key="org.eclipse.cdt.launch.launchGroup.0.mode" value="run"/>
-<stringAttribute key="org.eclipse.cdt.launch.launchGroup.0.name" value="killall"/>
+<stringAttribute key="org.eclipse.cdt.launch.launchGroup.0.name" value="cleanup"/>
 <stringAttribute key="org.eclipse.cdt.launch.launchGroup.1.action" value="WAIT_FOR_TERMINATION"/>
 <stringAttribute key="org.eclipse.cdt.launch.launchGroup.1.enabled" value="true"/>
 <stringAttribute key="org.eclipse.cdt.launch.launchGroup.1.mode" value="run"/>
