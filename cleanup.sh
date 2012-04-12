@@ -8,6 +8,7 @@ echo Killing $1...
 for lock in $HOME/.gebr/$1/*/lock; do
     host=`basename ${lock%lock}`;
     echo -en "$host\t"
+    ssh $host killall mpich-hello
     ssh $host fuser -sk $signal '$(cat '$lock')/tcp'
     if [ $? -eq 1 ]; then
 	echo -e "CRASH"; rm -rf $lock
