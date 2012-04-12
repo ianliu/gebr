@@ -273,6 +273,7 @@ test_gebr_relativise_path(void)
 	gchar *DATA1 = g_build_filename(home, "fooliu", "data1", NULL);
 
 	GebrGeoXmlLine *line = gebr_geoxml_line_new();
+	gebr_geoxml_line_append_path(line, "HOME", home);
 	gebr_geoxml_line_append_path(line, "BASE", BASE);
 	gebr_geoxml_line_append_path(line, "DATA", DATA);
 	gebr_geoxml_line_append_path(line, "DATA1", DATA1);
@@ -280,9 +281,9 @@ test_gebr_relativise_path(void)
 
 	gchar *** paths = gebr_geoxml_line_get_paths(line);
 
-	g_assert_cmpstr(gebr_relativise_path(g_build_filename("$HOME", "fooliu", NULL), "", paths), ==, "<BASE>");
-	g_assert_cmpstr(gebr_relativise_path(g_build_filename("$HOME", "fooliu", "data", NULL), "", paths), ==, "<DATA>");
-	g_assert_cmpstr(gebr_relativise_path(g_build_filename("$HOME", "fooliu", "data", "boo", NULL), "", paths), ==, "<DATA>/boo");
+	g_assert_cmpstr(gebr_relativise_path(g_build_filename("<HOME>", "fooliu", NULL), "", paths), ==, "<BASE>");
+	g_assert_cmpstr(gebr_relativise_path(g_build_filename("<HOME>", "fooliu", "data", NULL), "", paths), ==, "<DATA>");
+	g_assert_cmpstr(gebr_relativise_path(g_build_filename("<HOME>", "fooliu", "data", "boo", NULL), "", paths), ==, "<DATA>/boo");
 
 	g_assert_cmpstr(gebr_relativise_path(g_build_filename("/", "tmp", "foo", NULL), "", paths), ==, "<IMPORT>");
 
@@ -295,7 +296,7 @@ test_gebr_relativise_path(void)
 	g_assert_cmpstr(gebr_relativise_path(g_build_filename(PRE, BASE, "data", NULL), PRE, paths), ==, "<DATA>");
 	g_assert_cmpstr(gebr_relativise_path(g_build_filename(PRE, BASE, "data", "boo", NULL), PRE, paths), ==, "<DATA>/boo");
 
-	gchar *PRE2 = g_build_filename("$HOME", ".gvfs", "sftp on dell2", NULL);
+	gchar *PRE2 = g_build_filename("<HOME>", ".gvfs", "sftp on dell2", NULL);
 	g_assert_cmpstr(gebr_relativise_path(g_build_filename(PRE2, BASE, NULL), PRE, paths), ==, "<BASE>");
 	g_assert_cmpstr(gebr_relativise_path(g_build_filename(PRE2, BASE, "data", NULL), PRE, paths), ==, "<DATA>");
 	g_assert_cmpstr(gebr_relativise_path(g_build_filename(PRE2, BASE, "data", "boo", NULL), PRE, paths), ==, "<DATA>/boo");
