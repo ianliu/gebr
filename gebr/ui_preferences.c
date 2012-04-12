@@ -178,6 +178,18 @@ set_status_for_maestro(GebrMaestroController *self,
 }
 
 static void
+on_daemons_changed(GebrMaestroServer *maestro,
+                   struct ui_preferences *up)
+{
+	if (gebr_maestro_server_has_connected_servers(maestro)) {
+		g_signal_handlers_disconnect_by_func(maestro, on_daemons_changed, up);
+
+		GtkWidget *main_servers = GTK_WIDGET(gtk_builder_get_object(up->builder, "main_servers"));
+		gtk_assistant_set_page_complete(GTK_ASSISTANT(up->dialog), main_servers, TRUE);
+	}
+}
+
+static void
 on_maestro_state_changed(GebrMaestroController *self,
                          GebrMaestroServer     *maestro,
                          struct ui_preferences *up)
@@ -195,17 +207,16 @@ on_add_server_clicked(GtkButton *button,
 		      struct ui_preferences *up)
 {
 	GObject *server_entry = gtk_builder_get_object(up->builder, "server_entry");
-	GtkWidget *main_servers = GTK_WIDGET(gtk_builder_get_object(up->builder, "main_servers"));
 
 	const gchar *addr = gtk_entry_get_text(GTK_ENTRY(server_entry));
 	if (!*addr)
 		return;
 
+	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+	g_signal_connect(maestro, "daemons-changed", G_CALLBACK(on_daemons_changed), up);
 	gebr_maestro_controller_server_list_add(gebr.maestro_controller, addr);
 
 	gtk_entry_set_text(GTK_ENTRY(server_entry), "");
-
-	gtk_assistant_set_page_complete(GTK_ASSISTANT(up->dialog), main_servers, TRUE);
 }
 
 static void
