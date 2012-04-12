@@ -70,7 +70,6 @@ on_response_ok(GtkButton *button,
 	g_free(tmp);
 
 	gtk_widget_destroy(up->dialog);
-	g_free(up);
 }
 
 static void
