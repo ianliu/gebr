@@ -83,10 +83,9 @@ static void
 on_assistant_cancel(GtkWidget *widget,
 		    struct ui_preferences *up)
 {
-	if (up->first_run) {
-		gtk_widget_destroy(widget);
-		gebr_quit(FALSE);
-	} else
+	if (up->first_run)
+		gtk_assistant_set_current_page(GTK_ASSISTANT(widget), 8);
+	else
 		gtk_widget_destroy(widget);
 }
 
@@ -98,6 +97,11 @@ on_assistant_close(GtkAssistant *assistant,
 
 	if (page == 8)
 		on_response_ok(NULL, up);
+	else if (page == 9) {
+		gtk_widget_destroy(up->dialog);
+		gebr_quit(FALSE);
+	}
+
 }
 
 static void
@@ -567,6 +571,7 @@ preferences_setup_ui(gboolean first_run,
 	GtkWidget *main_status = GTK_WIDGET(gtk_builder_get_object(builder, "main_status"));
 	GtkWidget *servers_info = GTK_WIDGET(gtk_builder_get_object(builder, "servers_info"));
 	GtkWidget *main_servers = GTK_WIDGET(gtk_builder_get_object(builder, "main_servers"));
+	GtkWidget *main_cancel = GTK_WIDGET(gtk_builder_get_object(builder, "main_cancel"));
 
 	/* Create Wizard if the first_run of GeBR */
 	if (first_run || wizard_run) {
@@ -619,6 +624,11 @@ preferences_setup_ui(gboolean first_run,
 		gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), page_review, FALSE);
 		gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), page_review, GTK_ASSISTANT_PAGE_CONFIRM);
 		gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), page_review, _("Review"));
+
+		gtk_assistant_append_page(GTK_ASSISTANT(assistant), main_cancel);
+		gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), main_cancel, FALSE);
+		gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), main_cancel, GTK_ASSISTANT_PAGE_SUMMARY);
+		gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), main_cancel, _("Warning"));
 
 		ui_preferences->dialog = assistant;
 

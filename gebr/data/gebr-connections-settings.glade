@@ -487,4 +487,34 @@ Put the name (hostname or address) of the Server in the blank space and click on
       </packing>
     </child>
   </object>
+  <object class="GtkHBox" id="main_cancel">
+    <property name="visible">True</property>
+    <property name="border_width">5</property>
+    <child>
+      <object class="GtkImage" id="image5">
+        <property name="visible">True</property>
+        <property name="stock">gtk-dialog-warning</property>
+        <property name="icon-size">6</property>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">False</property>
+        <property name="padding">5</property>
+        <property name="position">0</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkLabel" id="pwd_info_label1">
+        <property name="visible">True</property>
+        <property name="label" translatable="yes">Cancel message....</property>
+        <property name="use_markup">True</property>
+        <property name="wrap">True</property>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="padding">10</property>
+        <property name="position">1</property>
+      </packing>
+    </child>
+  </object>
 </interface>
