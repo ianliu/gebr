@@ -113,14 +113,9 @@ set_status_for_maestro(GebrMaestroController *self,
                        GebrCommServerState state)
 {
 	GtkWidget *main_status = GTK_WIDGET(gtk_builder_get_object(up->builder, "main_status"));
-	GObject *status_progress = gtk_builder_get_object(up->builder, "status_progress");
-	GObject *status_container = gtk_builder_get_object(up->builder, "status_container");
 	GObject *status_img = gtk_builder_get_object(up->builder, "status_img");
 	GObject *status_label = gtk_builder_get_object(up->builder, "status_label");
 	GObject *status_title = gtk_builder_get_object(up->builder, "status_title");
-
-	gtk_widget_hide(GTK_WIDGET(status_progress));
-	gtk_widget_show_all(GTK_WIDGET(status_container));
 
 	gchar *summary_txt;
 
@@ -301,15 +296,9 @@ on_assistant_prepare(GtkAssistant *assistant,
 	                   -1);
 
 	if (page == 5) {
-		GObject *status_progress = gtk_builder_get_object(up->builder, "status_progress");
-		GObject *status_container = gtk_builder_get_object(up->builder, "status_container");
-
-		gtk_widget_hide(GTK_WIDGET(status_container));
-		gtk_widget_show(GTK_WIDGET(status_progress));
+		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 
 		g_signal_connect(gebr.maestro_controller, "maestro-state-changed", G_CALLBACK(on_maestro_state_changed), up);
-
-		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 
 		if (!maestro || gebr_maestro_server_get_state(maestro) != SERVER_STATE_LOGGED)
 			gebr_maestro_controller_connect(gebr.maestro_controller, addr);
@@ -375,18 +364,6 @@ on_assistant_prepare(GtkAssistant *assistant,
 		gtk_label_set_text(servers_label, servers->str);
 
 		g_string_free(servers, TRUE);
-
-		GtkLabel *pwd_label = GTK_LABEL(gtk_builder_get_object(up->builder, "review_pwd_label"));
-		GtkWidget *sshkey_button = GTK_WIDGET(gtk_builder_get_object(up->builder, "sshkey_button"));
-		GtkWidget *storepass_button = GTK_WIDGET(gtk_builder_get_object(up->builder, "storepass_button"));
-		GtkWidget *none_button = GTK_WIDGET(gtk_builder_get_object(up->builder, "none_button"));
-
-		if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(sshkey_button)))
-			gtk_label_set_text(pwd_label,gtk_button_get_label(GTK_BUTTON(sshkey_button)));
-		else if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(storepass_button)))
-			gtk_label_set_text(pwd_label,gtk_button_get_label(GTK_BUTTON(storepass_button)));
-		else
-			gtk_label_set_text(pwd_label,gtk_button_get_label(GTK_BUTTON(none_button)));
 	}
 
 	g_free(addr);
@@ -564,6 +541,7 @@ preferences_setup_ui(gboolean first_run,
 		gtk_window_set_position(GTK_WINDOW(assistant), GTK_WIN_POS_CENTER_ON_PARENT);
 		gtk_window_set_title(GTK_WINDOW(assistant), _("Configuring GêBR"));
 
+		g_signal_connect(assistant, "destroy", G_CALLBACK(on_preferences_destroy), ui_preferences);
 		g_signal_connect(assistant, "cancel", G_CALLBACK(on_assistant_cancel), ui_preferences);
 		g_signal_connect(assistant, "close", G_CALLBACK(on_assistant_close), ui_preferences);
 		g_signal_connect(assistant, "prepare", G_CALLBACK(on_assistant_prepare), ui_preferences);
