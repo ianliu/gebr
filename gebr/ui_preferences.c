@@ -196,7 +196,7 @@ static void
 on_daemons_changed(GebrMaestroServer *maestro,
                    struct ui_preferences *up)
 {
-	if (gebr_maestro_server_has_connected_servers(maestro)) {
+	if (gebr_maestro_server_has_servers(maestro, TRUE)) {
 		g_signal_handlers_disconnect_by_func(maestro, on_daemons_changed, up);
 
 		GtkWidget *main_servers = GTK_WIDGET(gtk_builder_get_object(up->builder, "main_servers"));

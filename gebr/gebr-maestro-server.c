@@ -1621,7 +1621,8 @@ gebr_maestro_server_get_ncores_for_group(GebrMaestroServer *maestro,
 }
 
 gboolean
-gebr_maestro_server_has_connected_servers(GebrMaestroServer *maestro)
+gebr_maestro_server_has_servers(GebrMaestroServer *maestro,
+                                gboolean connected_servers)
 {
 	gboolean valid;
 	GtkTreeIter iter;
@@ -1632,9 +1633,14 @@ gebr_maestro_server_has_connected_servers(GebrMaestroServer *maestro)
 	 while (valid) {
 		 gtk_tree_model_get(model, &iter, 0, &daemon, -1);
 
-		 const gchar *addr = gebr_daemon_server_get_address(daemon);
-		 if (daemon && *addr && gebr_daemon_server_get_state(daemon) == SERVER_STATE_LOGGED)
-			 return TRUE;
+		 if (daemon) {
+			 const gchar *addr = gebr_daemon_server_get_address(daemon);
+			 if (connected_servers && *addr) {
+				 if (gebr_daemon_server_get_state(daemon) == SERVER_STATE_LOGGED)
+					 return TRUE;
+			 } else if (*addr)
+				 return TRUE;
+		 }
 
 		 valid = gtk_tree_model_iter_next(model, &iter);
 	 }

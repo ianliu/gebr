@@ -1647,6 +1647,9 @@ update_maestro_view(GebrMaestroController *mc,
 	}
 
 	gtk_tree_view_set_model(view, GTK_TREE_MODEL(mc->priv->model));
+
+	if (state == SERVER_STATE_LOGGED && !gebr_maestro_server_has_servers(maestro, FALSE))
+		gebr_maestro_controller_server_list_add(mc, gebr_maestro_server_get_address(maestro));
 }
 
 static void

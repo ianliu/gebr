@@ -180,7 +180,8 @@ gint gebr_maestro_server_get_ncores_for_group(GebrMaestroServer *maestro,
                                               const gchar *group,
                                               GebrMaestroServerGroupType type);
 
-gboolean gebr_maestro_server_has_connected_servers(GebrMaestroServer *maestro);
+gboolean gebr_maestro_server_has_servers(GebrMaestroServer *maestro,
+                                         gboolean connected_servers);
 
 G_END_DECLS
 
