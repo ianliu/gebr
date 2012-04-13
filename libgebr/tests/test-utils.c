@@ -369,6 +369,18 @@ test_gebr_gtk_bookmarks_remove_paths(void)
 	g_unlink(file);
 }
 
+void
+test_gebr_calculate_number_of_processors(void)
+{
+	gint nprocs[] 	 = {1, 2, 9, 9};
+	gint agression[] = {1, 3, 3, 5};
+	g_assert_cmpint(gebr_calculate_number_of_processors(nprocs[0], agression[0]), ==, 1);
+	g_assert_cmpint(gebr_calculate_number_of_processors(nprocs[1], agression[1]), ==, 1);
+	g_assert_cmpint(gebr_calculate_number_of_processors(nprocs[2], agression[2]), ==, 5);
+	g_assert_cmpint(gebr_calculate_number_of_processors(nprocs[3], agression[3]), ==, 9);
+}
+
+
 int main(int argc, char *argv[])
 {
 	g_test_init(&argc, &argv, NULL);
@@ -386,6 +398,7 @@ int main(int argc, char *argv[])
 	g_test_add_func("/libgebr/utils/gebr_resolve_relative_path", test_gebr_resolve_relative_path);
 	g_test_add_func("/libgebr/utils/gebr_gtk_bookmarks_add_paths", test_gebr_gtk_bookmarks_add_paths);
 	g_test_add_func("/libgebr/utils/gebr_gtk_bookmarks_remove_paths", test_gebr_gtk_bookmarks_remove_paths);
+	g_test_add_func("/libgebr/utils/test_gebr_calculate_number_of_processors", test_gebr_calculate_number_of_processors);
 
 	gint ret = g_test_run();
 	gebr_geoxml_finalize();
