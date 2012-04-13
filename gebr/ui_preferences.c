@@ -392,7 +392,7 @@ on_assistant_prepare(GtkAssistant *assistant,
 		while (active) {
 			GebrDaemonServer *daemon;
 			gtk_tree_model_get(model_servers, &iter, 0, &daemon, -1);
-			g_string_append(servers, " ,");
+			g_string_append(servers, ", ");
 			g_string_append(servers, gebr_daemon_server_get_address(daemon));
 			active = gtk_tree_model_iter_next(model_servers, &iter);
 		}
