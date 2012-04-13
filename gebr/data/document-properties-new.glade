@@ -1171,7 +1171,7 @@ and saving output files.</property>
     <child>
       <object class="GtkLabel" id="label45">
         <property name="visible">True</property>
-        <property name="label" translatable="yes">&lt;i&gt;Review these informations for your line.&lt;/i&gt;</property>
+        <property name="label" translatable="yes">&lt;i&gt;Review these informations of your line.&lt;/i&gt;</property>
         <property name="use_markup">True</property>
       </object>
       <packing>
