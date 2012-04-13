@@ -266,6 +266,7 @@ The &lt;b&gt;password&lt;/b&gt; that is possibly going to be prompted is the sam
                 <property name="icon-size">6</property>
               </object>
               <packing>
+                <property name="padding">5</property>
                 <property name="position">0</property>
               </packing>
             </child>
@@ -274,8 +275,11 @@ The &lt;b&gt;password&lt;/b&gt; that is possibly going to be prompted is the sam
                 <property name="visible">True</property>
                 <property name="xalign">0</property>
                 <property name="label" translatable="yes">Connected!</property>
+                <property name="wrap">True</property>
+                <property name="wrap_mode">word-char</property>
               </object>
               <packing>
+                <property name="padding">5</property>
                 <property name="position">1</property>
               </packing>
             </child>
@@ -308,7 +312,9 @@ The &lt;b&gt;password&lt;/b&gt; that is possibly going to be prompted is the sam
         <property name="visible">True</property>
         <property name="label" translatable="yes">Your Maestro can have many servers under its control. For each server, you are going to be asked for a password. The password you must provide is the same that you would use to log in to that machine.
 
- Additionally, you are going to be prompted for a password of the remote browsing of your files. This way, you can navigate on your remote files in your servers.</property>
+ Additionally, you are going to be prompted for a password of the remove browsing of your files. This way, you can navigate on your remote files in your servers.
+
+&lt;i&gt;*G&#xEA;BR offers a way to avoid these passwords, by creating SSH keys. For more information, access&lt;/i&gt;</property>
         <property name="use_markup">True</property>
         <property name="wrap">True</property>
       </object>
@@ -331,8 +337,7 @@ The &lt;b&gt;password&lt;/b&gt; that is possibly going to be prompted is the sam
 
 Put the name (hostname or address) of the Server in the blank space and click on Add.
 
-*You can be asked for the Server password.
-**You can edit your server list later through Actions-&gt;Servers.</property>
+*&lt;i&gt;You can be asked for the Server password.&lt;/i&gt;</property>
         <property name="use_markup">True</property>
         <property name="wrap">True</property>
         <property name="wrap_mode">word-char</property>

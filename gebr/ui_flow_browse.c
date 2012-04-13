@@ -120,8 +120,14 @@ GebrUiFlowBrowse *flow_browse_setup_ui(GtkWidget * revisions_menu)
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
 				       GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 
-	ui_flow_browse->warn_window = gtk_label_new(_("This Line is disconnected, therefore, you cannot edit the flows of this line.\n"
-							   "Try changing its maestro or connecting it."));
+
+	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+
+	if (maestro && gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED)
+		ui_flow_browse->warn_window = gtk_label_new(_("This Maestro of this Line is disconnected. You cannot edit the flows of this line.\n"
+							      "Try changing its maestro or connecting it."));
+	else
+		ui_flow_browse->warn_window = gtk_label_new(_("No Line is selected\n"));
 	gtk_widget_set_sensitive(ui_flow_browse->warn_window, FALSE);
 	gtk_box_pack_start(GTK_BOX(info_box), ui_flow_browse->warn_window, TRUE, TRUE, 0);
 
