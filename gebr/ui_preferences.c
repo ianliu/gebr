@@ -27,6 +27,7 @@
 
 #include <glib/gi18n.h>
 #include <libgebr/gui/gebr-gui-utils.h>
+#include <locale.h>
 
 #include "ui_preferences.h"
 #include "gebr.h"
@@ -51,7 +52,7 @@ enum {
 
 static void
 on_response_ok(GtkButton *button,
-               struct ui_preferences *up)
+	       struct ui_preferences *up)
 {
 	gchar *tmp;
 
@@ -74,14 +75,13 @@ on_response_ok(GtkButton *button,
 
 static void
 on_assistant_cancel(GtkWidget *widget,
-                    struct ui_preferences *up)
+		    struct ui_preferences *up)
 {
 	if (up->first_run) {
 		gtk_widget_destroy(widget);
 		gebr_quit(FALSE);
-	} else {
+	} else
 		gtk_widget_destroy(widget);
-	}
 }
 
 static void
@@ -114,9 +114,14 @@ set_status_for_maestro(GebrMaestroController *self,
                        GebrCommServerState state)
 {
 	GtkWidget *main_status = GTK_WIDGET(gtk_builder_get_object(up->builder, "main_status"));
+	GObject *status_progress = gtk_builder_get_object(up->builder, "status_progress");
+	GObject *status_container = gtk_builder_get_object(up->builder, "status_container");
 	GObject *status_img = gtk_builder_get_object(up->builder, "status_img");
 	GObject *status_label = gtk_builder_get_object(up->builder, "status_label");
 	GObject *status_title = gtk_builder_get_object(up->builder, "status_title");
+
+	gtk_widget_hide(GTK_WIDGET(status_progress));
+	gtk_widget_show_all(GTK_WIDGET(status_container));
 
 	gchar *summary_txt;
 
@@ -277,6 +282,27 @@ create_view_for_servers(struct ui_preferences *up)
 
 	return GTK_TREE_VIEW(view);
 }
+static void
+on_maestro_info_button_clicked (GtkButton *button, gpointer pointer)
+{
+	gchar *loc;
+	const gchar *path;
+
+	loc = setlocale(LC_MESSAGES, NULL);
+	if (g_str_has_prefix (loc, "pt"))
+		path = "file://" GEBR_USERDOC_DIR "/pt_BR/html/index.html";
+	else
+		path = "file://" GEBR_USERDOC_DIR "/en/html/index.html";
+
+		g_debug("On '%s', line '%d', loc:'%s', path:'%s' ", __FILE__, __LINE__, loc, path);
+	if (!gtk_show_uri(NULL, path, GDK_CURRENT_TIME, NULL)) {
+		gtk_show_uri(NULL, "http://www.gebrproject.com", GDK_CURRENT_TIME, NULL);
+		gebr_message (GEBR_LOG_ERROR, TRUE, TRUE,
+			      _("Could not load help. "
+				"Certify it was installed correctly."));
+	}
+
+}
 
 static void
 on_assistant_prepare(GtkAssistant *assistant,
@@ -288,6 +314,8 @@ on_assistant_prepare(GtkAssistant *assistant,
 	gchar *addr, *desc;
 	GtkTreeIter iter;
 	GtkTreeModel *model;
+	GtkWidget *maestro_info_button = GTK_WIDGET(gtk_builder_get_object(up->builder, "maestro_info_button"));
+
 	gtk_combo_box_get_active_iter(up->maestro_combo, &iter);
 	model = gtk_combo_box_get_model(up->maestro_combo);
 
@@ -296,10 +324,18 @@ on_assistant_prepare(GtkAssistant *assistant,
 	                   MAESTRO__DEFAULT_DESCRIPTION, &desc,
 	                   -1);
 
-	if (page == 5) {
-		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+	if (page == 1) {
+		g_signal_connect(GTK_BUTTON(maestro_info_button), "clicked", G_CALLBACK(on_maestro_info_button_clicked), NULL);
+	} else if (page == 5) {
+		GObject *status_progress = gtk_builder_get_object(up->builder, "status_progress");
+		GObject *status_container = gtk_builder_get_object(up->builder, "status_container");
+
+		gtk_widget_hide(GTK_WIDGET(status_container));
+		gtk_widget_show(GTK_WIDGET(status_progress));
 
 		g_signal_connect(gebr.maestro_controller, "maestro-state-changed", G_CALLBACK(on_maestro_state_changed), up);
+
+		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 
 		if (!maestro || gebr_maestro_server_get_state(maestro) != SERVER_STATE_LOGGED)
 			gebr_maestro_controller_connect(gebr.maestro_controller, addr);
@@ -365,6 +401,18 @@ on_assistant_prepare(GtkAssistant *assistant,
 		gtk_label_set_text(servers_label, servers->str);
 
 		g_string_free(servers, TRUE);
+
+		GtkLabel *pwd_label = GTK_LABEL(gtk_builder_get_object(up->builder, "review_pwd_label"));
+		GtkWidget *sshkey_button = GTK_WIDGET(gtk_builder_get_object(up->builder, "sshkey_button"));
+		GtkWidget *storepass_button = GTK_WIDGET(gtk_builder_get_object(up->builder, "storepass_button"));
+		GtkWidget *none_button = GTK_WIDGET(gtk_builder_get_object(up->builder, "none_button"));
+
+		if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(sshkey_button)))
+			gtk_label_set_text(pwd_label,gtk_button_get_label(GTK_BUTTON(sshkey_button)));
+		else if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(storepass_button)))
+			gtk_label_set_text(pwd_label,gtk_button_get_label(GTK_BUTTON(storepass_button)));
+		else
+			gtk_label_set_text(pwd_label,gtk_button_get_label(GTK_BUTTON(none_button)));
 	}
 
 	g_free(addr);

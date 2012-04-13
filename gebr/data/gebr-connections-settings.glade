@@ -2,37 +2,6 @@
 <interface>
   <requires lib="gtk+" version="2.16"/>
   <!-- interface-naming-policy project-wide -->
-  <object class="GtkHBox" id="maestro_info">
-    <property name="visible">True</property>
-    <property name="border_width">5</property>
-    <child>
-      <object class="GtkImage" id="image1">
-        <property name="visible">True</property>
-        <property name="stock">gtk-info</property>
-        <property name="icon-size">6</property>
-      </object>
-      <packing>
-        <property name="expand">False</property>
-        <property name="fill">False</property>
-        <property name="padding">5</property>
-        <property name="position">0</property>
-      </packing>
-    </child>
-    <child>
-      <object class="GtkLabel" id="maestro_info_label">
-        <property name="visible">True</property>
-        <property name="label" translatable="yes">&lt;b&gt;Maestro&lt;/b&gt; is the responsible for receiving client requests and for managing the available resources to perform it in the best way</property>
-        <property name="use_markup">True</property>
-        <property name="wrap">True</property>
-      </object>
-      <packing>
-        <property name="expand">False</property>
-        <property name="fill">False</property>
-        <property name="padding">10</property>
-        <property name="position">1</property>
-      </packing>
-    </child>
-  </object>
   <object class="GtkHBox" id="pwd_info">
     <property name="visible">True</property>
     <property name="border_width">5</property>
@@ -341,7 +310,7 @@ The &lt;b&gt;password&lt;/b&gt; that is possibly going to be prompted is the sam
 
  Additionally, you are going to be prompted for a password of the remove browsing of your files. This way, you can navigate on your remote files in your servers.
 
-*G&#xEA;BR offers a way to avoid these passwords, by creating SSH keys. For more information, access the G&#xEA;BR tool Help-&gt;Help.</property>
+&lt;i&gt;*G&#xEA;BR offers a way to avoid these passwords, by creating SSH keys. For more information, access&lt;/i&gt;</property>
         <property name="use_markup">True</property>
         <property name="wrap">True</property>
       </object>
@@ -430,6 +399,91 @@ Put the name (hostname or address) of the Server in the blank space and click on
       </object>
       <packing>
         <property name="position">2</property>
+      </packing>
+    </child>
+  </object>
+  <object class="GtkVBox" id="maestro_info">
+    <property name="visible">True</property>
+    <child>
+      <object class="GtkHBox" id="hbox15">
+        <property name="visible">True</property>
+        <property name="border_width">5</property>
+        <child>
+          <object class="GtkImage" id="image1">
+            <property name="visible">True</property>
+            <property name="stock">gtk-info</property>
+            <property name="icon-size">6</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="padding">5</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="maestro_info_label">
+            <property name="visible">True</property>
+            <property name="label" translatable="yes">&lt;b&gt;Maestro&lt;/b&gt; is the responsible for receiving client requests and for managing the available resources to perform it in the best way</property>
+            <property name="use_markup">True</property>
+            <property name="wrap">True</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="padding">10</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+      </object>
+      <packing>
+        <property name="fill">False</property>
+        <property name="position">0</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkHBox" id="hbox3">
+        <property name="visible">True</property>
+        <property name="border_width">5</property>
+        <child>
+          <object class="GtkLabel" id="label5">
+            <property name="visible">True</property>
+            <property name="xalign">1</property>
+            <property name="label" translatable="yes">More information can be found</property>
+            <property name="use_markup">True</property>
+          </object>
+          <packing>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="maestro_info_button">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="relief">none</property>
+            <property name="xalign">0</property>
+            <child>
+              <object class="GtkLabel" id="label4">
+                <property name="visible">True</property>
+                <property name="xalign">0</property>
+                <property name="label" translatable="yes">&lt;i&gt;here&lt;/i&gt;</property>
+                <property name="use_markup">True</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">False</property>
+        <property name="padding">5</property>
+        <property name="position">1</property>
       </packing>
     </child>
   </object>
