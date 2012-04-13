@@ -334,7 +334,7 @@ on_assistant_prepare(GtkAssistant *assistant,
 
 		g_signal_connect(gebr.maestro_controller, "maestro-state-changed", G_CALLBACK(on_maestro_state_changed), up);
 
-		if (!maestro || gebr_maestro_server_get_state(maestro) != SERVER_STATE_LOGGED)
+		if (!maestro || gebr_maestro_server_get_state(maestro) != SERVER_STATE_LOGGED || g_strcmp0(addr, gebr_maestro_server_get_address(maestro)))
 			gebr_maestro_controller_connect(gebr.maestro_controller, addr);
 		else
 			set_status_for_maestro(gebr.maestro_controller, maestro, up, gebr_maestro_server_get_state(maestro));
