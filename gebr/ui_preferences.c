@@ -76,11 +76,12 @@ static void
 on_assistant_cancel(GtkWidget *widget,
                     struct ui_preferences *up)
 {
-	gtk_widget_destroy(widget);
-	g_free(up);
-
-	if (up->first_run)
+	if (up->first_run) {
+		gtk_widget_destroy(widget);
 		gebr_quit(FALSE);
+	} else {
+		gtk_widget_destroy(widget);
+	}
 }
 
 static void
