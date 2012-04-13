@@ -181,7 +181,7 @@ line_check_maestro_connected(void)
 	                                                       _("<span size='large'><b>There is no connected maestro.</b></span>\n\n"
 	                                                         "You need one to create a line."));
 
-	gchar *win_title = g_strdup_printf(_("Maestro disconnected"));
+	gchar *win_title = g_strdup(_("Maestro disconnected"));
 	gtk_window_set_title(GTK_WINDOW(dialog), win_title);
 
 	gtk_dialog_run(GTK_DIALOG(dialog));
@@ -209,7 +209,7 @@ flows_check_maestro_connected(void)
 	                                                       _("<span size='large'><b>The maestro of this line is disconnected.</b></span>\n\n"
 	                                                	 "Connect to maestro <b>%s</b> to execute this line."), maestro_line);
 
-	gchar *win_title = g_strdup_printf(_("Maestro disconnected"));
+	gchar *win_title = g_strdup(_("Maestro disconnected"));
 	gtk_window_set_title(GTK_WINDOW(dialog), win_title);
 
 	gtk_dialog_run(GTK_DIALOG(dialog));
