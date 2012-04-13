@@ -41,6 +41,12 @@ enum {
 /*
  * Prototypes
  */
+
+static void set_status_for_maestro(GebrMaestroController *self,
+                                   GebrMaestroServer     *maestro,
+                                   struct ui_preferences *up,
+                                   GebrCommServerState state);
+
 /**
  * \internal
  * Disable HTML editor entry on radio false state
@@ -108,6 +114,19 @@ on_assistant_apply(GtkAssistant *assistant,
 }
 
 static void
+on_maestro_state_changed(GebrMaestroController *self,
+                         GebrMaestroServer     *maestro,
+                         struct ui_preferences *up)
+{
+	GebrCommServerState state = gebr_maestro_server_get_state(maestro);
+
+	if (state != SERVER_STATE_LOGGED && state != SERVER_STATE_DISCONNECTED)
+		return;
+
+	set_status_for_maestro(self, maestro, up, state);
+}
+
+static void
 set_status_for_maestro(GebrMaestroController *self,
                        GebrMaestroServer     *maestro,
                        struct ui_preferences *up,
@@ -128,6 +147,7 @@ set_status_for_maestro(GebrMaestroController *self,
 	const gchar *address = gebr_maestro_server_get_address(maestro);
 
 	if (state == SERVER_STATE_LOGGED) {
+		g_signal_handlers_disconnect_by_func(gebr.maestro_controller, on_maestro_state_changed, up);
 		gtk_image_set_from_stock(GTK_IMAGE(status_img), GTK_STOCK_OK, GTK_ICON_SIZE_DIALOG);
 		gtk_label_set_text(GTK_LABEL(status_label), _("Success!"));
 		gtk_assistant_set_page_type(GTK_ASSISTANT(up->dialog),
@@ -187,19 +207,6 @@ on_daemons_changed(GebrMaestroServer *maestro,
 		GtkWidget *main_servers = GTK_WIDGET(gtk_builder_get_object(up->builder, "main_servers"));
 		gtk_assistant_set_page_complete(GTK_ASSISTANT(up->dialog), main_servers, TRUE);
 	}
-}
-
-static void
-on_maestro_state_changed(GebrMaestroController *self,
-                         GebrMaestroServer     *maestro,
-                         struct ui_preferences *up)
-{
-	GebrCommServerState state = gebr_maestro_server_get_state(maestro);
-
-	if (state != SERVER_STATE_LOGGED && state != SERVER_STATE_DISCONNECTED)
-		return;
-
-	set_status_for_maestro(self, maestro, up, state);
 }
 
 static void
