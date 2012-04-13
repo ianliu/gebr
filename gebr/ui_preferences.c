@@ -355,7 +355,8 @@ on_assistant_prepare(GtkAssistant *assistant,
 
 			gchar *main_servers_text = g_markup_printf_escaped(_("Now you need to add <b>Servers</b> to be handled by your Maestro <b>%s</b>.\n\n"
 									   "Put the name (hostname or address) of the Server in the blank space and click on Add.\n"
-									   "<i>*You can be asked for the Server password.</i>"),
+									   "<i>*You can be asked for the Server password.</i>\n"
+									   "<i>**You can edit your server list later through Actions->Servers.</i>"),
 									   gebr_maestro_server_get_address(maestro));
 
 			gtk_label_set_markup(GTK_LABEL(main_servers_label), main_servers_text);
