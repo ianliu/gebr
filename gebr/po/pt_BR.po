@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-04-13 14:37-0300\n"
+"POT-Creation-Date: 2012-04-13 15:44-0300\n"
 "PO-Revision-Date: 2012-04-13 14:10-0300\n"
 "Last-Translator: Rodrigo Morelatto <morelatto@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
@@ -47,11 +47,11 @@ msgstr ""
 msgid "Broken Flow"
 msgstr "Fluxo quebrado"
 
-#: ../callbacks.c:269
+#: ../callbacks.c:269 ../ui_preferences.c:632
 msgid "Warning"
 msgstr "Aviso"
 
-#: ../callbacks.c:435 ../ui_preferences.c:303
+#: ../callbacks.c:435 ../ui_preferences.c:307
 msgid "Could not load help. Certify it was installed correctly."
 msgstr ""
 "Não foi possível carregar a ajuda. Certifique-se que ela foi instalada "
@@ -211,7 +211,7 @@ msgid "Shared folder that you can access files from"
 msgstr "Pasta compartilhada da qual você pode acessar os arquivos."
 
 #: ../data/document-properties.glade.h:33 ../line.c:139
-#: ../ui_preferences.c:147 ../data/document-properties-new.glade.h:40
+#: ../ui_preferences.c:151 ../data/document-properties-new.glade.h:40
 msgid "Success!"
 msgstr "Sucesso!"
 
@@ -275,7 +275,7 @@ msgstr "Saída"
 
 #: ../data/gebr-job-control.glade.h:14
 #: ../data/document-properties-new.glade.h:42
-#: ../data/gebr-connections-settings.glade.h:27
+#: ../data/gebr-connections-settings.glade.h:28
 msgid "label"
 msgstr "rótulo"
 
@@ -1567,7 +1567,7 @@ msgstr "_Ações"
 msgid "_Help"
 msgstr "A_juda"
 
-#: ../line.c:143 ../ui_preferences.c:151
+#: ../line.c:143 ../ui_preferences.c:155
 msgid "Done"
 msgstr "Terminado"
 
@@ -1599,7 +1599,7 @@ msgstr ""
 "Você pode mudar o diretório BASE pressionando o\n"
 "botão voltar ou usar esta pasta assim mesmo."
 
-#: ../line.c:167 ../ui_preferences.c:183
+#: ../line.c:167 ../ui_preferences.c:187
 msgid "Warning!"
 msgstr "Aviso!"
 
@@ -1794,7 +1794,7 @@ msgstr "Remover parâmetros atuais."
 msgid "%s '%s' properties"
 msgstr "%s '%s' propriedades"
 
-#: ../ui_document.c:317 ../ui_preferences.c:587 ../ui_preferences.c:668
+#: ../ui_document.c:317 ../ui_preferences.c:593 ../ui_preferences.c:679
 msgid "Preferences"
 msgstr "Preferências"
 
@@ -2103,103 +2103,105 @@ msgid ""
 msgstr ""
 "O caminho <i>%s</i> já existe na lista como %s, a operação será cancelada."
 
-#: ../ui_preferences.c:154
+#: ../ui_preferences.c:158
 #, c-format
 msgid "<span size='large'>Maestro <b>%s</b> successfully connected!</span>"
 msgstr "<span size='large'>Maestro <b>%s</b> conectado com sucesso!</span>"
 
-#: ../ui_preferences.c:167
+#: ../ui_preferences.c:171
 #, c-format
 msgid "Connecting to <b>%s</b> ..."
 msgstr "Conectando ao <b>%s</b> ..."
 
-#: ../ui_preferences.c:176
+#: ../ui_preferences.c:180
 #, c-format
 msgid "The connection reported the following error: <i>%s</i>"
 msgstr "A conexão reportou o seguinte erro: <i>%s</i>"
 
-#: ../ui_preferences.c:186
+#: ../ui_preferences.c:190
 #, c-format
 msgid "<span size='large'>Could not connect to Maestro <b>%s</b>!</span>"
 msgstr "<span size='large'>Não conseguiu conectar ao Maestro <b>%s</b>!</span>"
 
-#: ../ui_preferences.c:352
+#: ../ui_preferences.c:356
 #, c-format
 msgid ""
 "Now you need to add <b>Servers</b> to be handled by your Maestro <b>%s</b>.\n"
 "\n"
 "Put the name (hostname or address) of the Server in the blank space and "
 "click on Add.\n"
-"<i>*You can be asked for the Server password.</i>"
+"<i>*You can be asked for the Server password.</i>\n"
+"<i>**You can edit your server list later through Actions->Servers.</i>"
 msgstr ""
 "Agora você precisa adicionar <b>Servidores</b> para serem controlados pelo "
 "seu Maestro <b>%s</b>.\n"
 "\n"
 "Coloque o nome (hostname ou endereço) do Servidor no espaço em branco e "
 "clique em Adicionar.\n"
-"<i>*A senha do servidor pode ser requisitada.</i>"
+"<i>*A senha do servidor pode ser requisitada.</i><i>**Você pode editar sua "
+"lista de servidores posteriormente através de Ações->Servidores.</i>"
 
-#: ../ui_preferences.c:424
+#: ../ui_preferences.c:429
 msgid "You should know your name"
 msgstr "Você deveria saber seu nome"
 
-#: ../ui_preferences.c:437
+#: ../ui_preferences.c:442
 msgid "Your email address"
 msgstr "Seu endereço de e-mail"
 
-#: ../ui_preferences.c:449
+#: ../ui_preferences.c:454
 msgid "User's menu directory"
 msgstr "Diretório de menus do usuário"
 
-#: ../ui_preferences.c:451
+#: ../ui_preferences.c:456
 msgid "Path to look for user's private menus"
 msgstr "Caminho para procurar menus particulares do usuário"
 
-#: ../ui_preferences.c:504
+#: ../ui_preferences.c:509
 msgid "Current Maestro"
 msgstr "Maestro Atual"
 
-#: ../ui_preferences.c:511
+#: ../ui_preferences.c:516
 msgid "Default Maestro from File"
 msgstr "Maestro padrão do Arquivo"
 
-#: ../ui_preferences.c:519
+#: ../ui_preferences.c:524
 msgid "Current maestro"
 msgstr "Maestro atual"
 
-#: ../ui_preferences.c:576
+#: ../ui_preferences.c:582
 msgid "Configuring GêBR"
 msgstr "Configurando GêBR"
 
-#: ../ui_preferences.c:592
+#: ../ui_preferences.c:598
 msgid "Maestro Information"
 msgstr "Informação do Maestro"
 
-#: ../ui_preferences.c:597
+#: ../ui_preferences.c:603
 msgid "Choose your Maestro"
 msgstr "Escolha seu Maestro"
 
-#: ../ui_preferences.c:602
+#: ../ui_preferences.c:608
 msgid "Connections informations"
 msgstr "Informações de Conexões"
 
-#: ../ui_preferences.c:606
+#: ../ui_preferences.c:612
 msgid "Connecting on Maestro..."
 msgstr "Conectando no Maestro..."
 
-#: ../ui_preferences.c:611
+#: ../ui_preferences.c:617
 msgid "Servers Information"
 msgstr "Informações de servidores"
 
-#: ../ui_preferences.c:616
+#: ../ui_preferences.c:622
 msgid "Insert Servers on Maestro"
 msgstr "Insira Servidores no Maestro"
 
-#: ../ui_preferences.c:621
+#: ../ui_preferences.c:627
 msgid "Review"
 msgstr "Revisão"
 
-#: ../ui_preferences.c:638
+#: ../ui_preferences.c:649
 #, c-format
 msgid "Preferences of GêBR"
 msgstr "Preferências da GêBR "
@@ -2545,32 +2547,47 @@ msgstr "Diretório de menus do usuário"
 
 #: ../data/gebr-connections-settings.glade.h:16
 msgid ""
+"You have to move ahead and complete this assistant, because G&#xEA;BR needs "
+"a connection to a maestro (to send jobs and receive outputs) and connections "
+"with servers (to execute jobs).\n"
+"Now the G&#xEA;BR will be closed because you canceled the assistant before "
+"to complete it. You can try again at any moment, just run G&#xEA;BR and "
+"complete the assistant."
+msgstr ""
+"Você deve avançar e completar este assistente, porque G&#xEA;BR precisa de "
+"conexão com um maestro (paraenviar tarefas e receber saídas) e conexões com "
+"servidores (para executar tarefas).\n"
+"Agora a G&#xEA;BR fechará porque você cancelou o assistente antes de "
+"completá-lo. Pode-se tentar de novo a qualquer momento, apenas execute a "
+"G&#xEA;BR e complete o assistente."
+
+#: ../data/gebr-connections-settings.glade.h:18
+msgid ""
 "You need to add <b>Servers</b> to be handled by your Maestro X.\n"
 "\n"
 "Put the name (hostname or address) of the Server in the blank space and "
 "click on Add.\n"
 "\n"
-"*You can be asked for the Server password."
+"*You can be asked for the Server password.\n"
+"**You can edit your server list later through Actions->Servers."
 msgstr ""
 "Agora você precisa adicionar <b>Servidores</b> para serem controlados pelo "
 "seu Maestro X.\n"
 "\n"
 "Coloque o nome (hostname ou endereço) do Servidor no espaço em branco e "
 "clique em Adicionar.\n"
-"*A senha do servidor pode ser requisitada."
+"*A senha do servidor pode ser requisitada.**Você pode editar sua lista de "
+"servidores posteriormente através de Ações->Servidores."
 
-#: ../data/gebr-connections-settings.glade.h:21
+#: ../data/gebr-connections-settings.glade.h:24
 msgid ""
 "Your Maestro can have many servers under its control. For each server, you "
 "are going to be asked for a password. The password you must provide is the "
 "same that you would use to log in to that machine.\n"
 "\n"
-" Additionally, you are going to be prompted for a password of the remove "
+" Additionally, you are going to be prompted for a password of the remote "
 "browsing of your files. This way, you can navigate on your remote files in "
-"your servers.\n"
-"\n"
-"<i>*G&#xEA;BR offers a way to avoid these passwords, by creating SSH keys. "
-"For more information, access</i>"
+"your servers."
 msgstr ""
 "Seu Maestro pode ter muitos servidores sob seu controle. Para cada servidor, "
 "você requisitado por uma senha.A senha que você deve fornecer é a mesma que "
@@ -2578,11 +2595,9 @@ msgstr ""
 "\n"
 "Além disso, uma senha será solicitada para navegação remota de seus "
 "arquivos. Desta forma, pode-se navegar em seus arquivos remotos nos "
-"servidores.\n"
-"\n"
-"<i>*G&#xEA;BR oferece um meio de evitar essas senhas , criando chaves SSH. "
+"servidores."
 
-#: ../data/gebr-connections-settings.glade.h:26
+#: ../data/gebr-connections-settings.glade.h:27
 msgid "dellX"
 msgstr "dellX"
 
