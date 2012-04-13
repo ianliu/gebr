@@ -1062,7 +1062,6 @@ gebr_maestro_controller_server_list_add(GebrMaestroController *mc,
 	gchar *url = gebr_comm_uri_to_string(uri);
 	gebr_comm_uri_free(uri);
 
-	g_debug("************* on %s, sending message '%s'", __func__, url);
 	GebrCommServer *server = gebr_maestro_server_get_server(mc->priv->maestro);
 	gebr_comm_protocol_socket_send_request(server->socket,
 					       GEBR_COMM_HTTP_METHOD_PUT, url, NULL);
