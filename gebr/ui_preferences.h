@@ -27,7 +27,11 @@ struct ui_preferences {
 	GtkWidget *dialog;
 	GtkBuilder *builder;
 
+	gboolean cancel_assistant;
 	gboolean first_run;
+
+	gint prev_page;
+	GtkWidget *back_button;
 
 	GtkWidget *username;
 	GtkWidget *email;

@@ -55,6 +55,12 @@ static void set_status_for_maestro(GebrMaestroController *self,
 
 static WizardStatus get_wizard_status();
 
+static void on_preferences_destroy(GtkWidget *window,
+                                   struct ui_preferences *up);
+
+static void on_assistant_destroy(GtkWidget *window,
+                                 struct ui_preferences *up);
+
 /**
  * \internal
  * Disable HTML editor entry on radio false state
@@ -83,49 +89,51 @@ on_response_ok(GtkButton *button,
 	gebr_config_save(FALSE);
 
 	g_free(tmp);
+	gtk_widget_destroy(up->dialog);
 }
 
 static void
 on_assistant_cancel(GtkAssistant *assistant,
 		    struct ui_preferences *up)
 {
-	gint curr_page = gtk_assistant_get_current_page(GTK_ASSISTANT(assistant));
+	gint curr_page = gtk_assistant_get_current_page(assistant);
+	if (curr_page > 0)
+		up->prev_page = curr_page;
+
 	if (up->first_run) {
-		if (curr_page == 7) {
-			gtk_widget_destroy(GTK_WIDGET(assistant));
-			g_free(up);
-			if (get_wizard_status() != WIZARD_STATUS_COMPLETE)
-				gebr_quit(FALSE);
-			else
-				on_response_ok(NULL, up);
-		} else
-			gtk_assistant_set_current_page(GTK_ASSISTANT(assistant), 7);
-	} else
+		up->cancel_assistant = TRUE;
+		gtk_assistant_set_current_page(GTK_ASSISTANT(assistant), 7);
+	} else {
+		up->cancel_assistant = FALSE;
 		gtk_widget_destroy(GTK_WIDGET(assistant));
+	}
 }
 
 static void
 on_assistant_close(GtkAssistant *assistant,
                    struct ui_preferences *up)
 {
-	on_assistant_cancel(assistant, up);
+	if (gtk_assistant_get_current_page(GTK_ASSISTANT(assistant)) == 7) {
+		on_assistant_destroy(GTK_WIDGET(assistant), up);
+		gebr_quit(FALSE);
+	}
+}
+
+static void
+on_assistant_back_button(GtkButton *button,
+                         struct ui_preferences *up)
+{
+	gtk_assistant_set_current_page(GTK_ASSISTANT(up->dialog), up->prev_page);
 }
 
 static void
 on_assistant_apply(GtkAssistant *assistant,
 		   struct ui_preferences *up)
 {
-	gint page = gtk_assistant_get_current_page(assistant);
-	WizardStatus wizard_status = get_wizard_status();
-	if (page == 7) {
-		if (wizard_status == WIZARD_STATUS_COMPLETE)
-			on_response_ok(NULL, up);
-		else {
-			gtk_widget_destroy(up->dialog);
-			g_free(up);
-			gebr_quit(FALSE);
-		}
-	}
+	g_signal_handlers_disconnect_by_func(up->back_button, on_assistant_back_button, up);
+	gtk_assistant_remove_action_widget(assistant, up->back_button);
+	gtk_widget_destroy(up->back_button);
+	on_response_ok(NULL, up);
 }
 
 static void
@@ -319,14 +327,11 @@ on_maestro_info_button_clicked (GtkButton *button, gpointer pointer)
 }
 
 static WizardStatus
-get_wizard_status()
+get_wizard_status(void)
 {
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 	if (maestro && gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED) {
-		GtkTreeIter it;
-		GtkTreeModel *store = gebr_maestro_server_get_model(maestro, FALSE, NULL);
-		if (gtk_tree_model_get_iter_first(store, &it))
-		//if (gebr_maestro_server_has_connected_daemon(maestro)) //It should work
+		if (gebr_maestro_server_has_servers(maestro, TRUE))
 			return WIZARD_STATUS_COMPLETE;
 		else
 			return WIZARD_STATUS_WITHOUT_DAEMON;
@@ -354,6 +359,8 @@ on_assistant_prepare(GtkAssistant *assistant,
 	                   MAESTRO_DEFAULT_ADDR, &addr,
 	                   MAESTRO__DEFAULT_DESCRIPTION, &desc,
 	                   -1);
+
+	gtk_widget_hide(up->back_button);
 
 	if (page == 1)
 		g_signal_connect(GTK_BUTTON(maestro_info_button), "clicked", G_CALLBACK(on_maestro_info_button_clicked), NULL);
@@ -393,20 +400,31 @@ on_assistant_prepare(GtkAssistant *assistant,
 			GtkTreeModel *store = gebr_maestro_server_get_model(maestro, FALSE, NULL);
 			if (up->first_run && !gtk_tree_model_get_iter_first(store, &it))
 				gtk_entry_set_text(GTK_ENTRY(server_entry), gebr_maestro_server_get_address(maestro));
-			else
-				gtk_assistant_set_page_complete(GTK_ASSISTANT(up->dialog), main_servers, TRUE);
+
+			WizardStatus wizard_status = get_wizard_status();
+			if (wizard_status == WIZARD_STATUS_COMPLETE)
+				gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), main_servers, TRUE);
 
 			g_signal_connect(GTK_BUTTON(server_add), "clicked", G_CALLBACK(on_add_server_clicked), up);
 			g_signal_connect(GTK_ENTRY(server_entry), "activate", G_CALLBACK(on_entry_server_activate), up);
 		}
 	} else if (page == 8) {
+		if (!up->cancel_assistant) {
+			gtk_assistant_set_current_page(assistant, --up->prev_page);
+			return;
+		}
+
+		up->cancel_assistant = FALSE;
 		GtkWidget *page_review = GTK_WIDGET(gtk_builder_get_object(up->builder, "review"));
 		GtkLabel *maestro_label = GTK_LABEL(gtk_builder_get_object(up->builder, "review_maestro_label"));
 		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_address(gebr.maestro_controller, addr);
+
 		gchar *maestro_text = g_markup_printf_escaped("%s (<i>%s</i>)", addr, desc);
 		if (maestro && gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED)
 			gtk_label_set_markup(maestro_label, maestro_text);
 		g_free(maestro_text);
+
+		gtk_widget_show(up->back_button);
 
 		GtkLabel *review_first_label = GTK_LABEL(gtk_builder_get_object(up->builder, "review_first_label"));
 		GtkLabel *review_orientations_label = GTK_LABEL(gtk_builder_get_object(up->builder, "review_orientation"));
@@ -434,7 +452,6 @@ on_assistant_prepare(GtkAssistant *assistant,
 			GtkLabel *servers_label = GTK_LABEL(gtk_builder_get_object(up->builder, "servers_maestro"));
 			gtk_label_set_text(servers_label, servers->str);
 			gtk_label_set_markup(review_orientations_label, _("Changes can be made by going to Actions->servers."));
-			gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), page_review, TRUE);
 			gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), page_review, _("Review"));
 			g_string_free(servers, TRUE);
 		} else {
@@ -442,10 +459,8 @@ on_assistant_prepare(GtkAssistant *assistant,
 			gtk_label_set_markup(review_orientations_label, _("Click on <tt>Back</tt> to connect to it or on <tt>Cancel</tt> to close GêBR."));
 
 			if (wizard_status == WIZARD_STATUS_WITHOUT_MAESTRO) {
-				gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), page_review, FALSE);
 				gtk_label_set_markup(review_first_label, _("<b><span size='large'>You need at least a connected Maestro!</span></b>"));
 			} else {
-				gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), page_review, FALSE);
 				gchar *daemon_msg = g_strdup_printf(_("<b><span size='large'>You need at least a server connected to %s!</span></b>"),
 								    gebr_maestro_server_get_address(maestro));
 				gtk_label_set_markup(review_first_label, daemon_msg);
@@ -458,13 +473,22 @@ on_assistant_prepare(GtkAssistant *assistant,
 	g_free(desc);
 }
 
-void
+static void
 on_preferences_destroy(GtkWidget *window,
                        struct ui_preferences *up)
 {
+	gtk_widget_destroy(up->dialog);
+	g_free(up);
+}
+
+static void
+on_assistant_destroy(GtkWidget *window,
+                     struct ui_preferences *up)
+{
+	g_signal_handlers_disconnect_by_func(gebr_maestro_controller_get_maestro(gebr.maestro_controller), on_daemons_changed, up);
 	g_signal_handlers_disconnect_by_func(gebr.maestro_controller, on_maestro_state_changed, up);
-	gtk_widget_destroy(window);
-	//g_free(up);
+	gtk_widget_destroy(up->dialog);
+	g_free(up);
 }
 
 static void
@@ -606,6 +630,7 @@ preferences_setup_ui(gboolean first_run,
 
 	ui_preferences = g_new(struct ui_preferences, 1);
 	ui_preferences->first_run = first_run;
+	ui_preferences->cancel_assistant = FALSE;
 
 	/* Load pages from Glade */
 	GtkBuilder *builder = gtk_builder_new();
@@ -630,7 +655,7 @@ preferences_setup_ui(gboolean first_run,
 		gtk_window_set_title(GTK_WINDOW(assistant), _("Configuring GêBR"));
 		gtk_window_set_transient_for(GTK_WINDOW(assistant), gebr_maestro_controller_get_window(gebr.maestro_controller));
 
-		g_signal_connect(assistant, "destroy", G_CALLBACK(on_preferences_destroy), ui_preferences);
+		g_signal_connect(assistant, "destroy", G_CALLBACK(on_assistant_destroy), ui_preferences);
 		g_signal_connect(assistant, "cancel", G_CALLBACK(on_assistant_cancel), ui_preferences);
 		g_signal_connect(assistant, "close", G_CALLBACK(on_assistant_close), ui_preferences);
 		g_signal_connect(assistant, "prepare", G_CALLBACK(on_assistant_prepare), ui_preferences);
@@ -667,14 +692,18 @@ preferences_setup_ui(gboolean first_run,
 
 		gtk_assistant_append_page(GTK_ASSISTANT(assistant), main_servers);
 		gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), main_servers, FALSE);
-		gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), main_servers, GTK_ASSISTANT_PAGE_CONTENT);
+		gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), main_servers, GTK_ASSISTANT_PAGE_CONFIRM);
 		gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), main_servers, _("Insert Servers on Maestro"));
 
 		gtk_assistant_append_page(GTK_ASSISTANT(assistant), page_review);
-		gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), page_review, FALSE);
-		gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), page_review, GTK_ASSISTANT_PAGE_CONFIRM);
-		gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), page_review, _("Summary"));
+		gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), page_review, TRUE);
+		gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), page_review, GTK_ASSISTANT_PAGE_SUMMARY);
+		gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), page_review, _("Warning"));
 
+		ui_preferences->prev_page = 0;
+		ui_preferences->back_button = gtk_button_new_with_mnemonic("_Back");
+		gtk_assistant_add_action_widget(GTK_ASSISTANT(assistant), ui_preferences->back_button);
+		g_signal_connect(ui_preferences->back_button, "clicked", G_CALLBACK(on_assistant_back_button), ui_preferences);
 
 		ui_preferences->dialog = assistant;
 
