@@ -156,7 +156,6 @@ set_status_for_maestro(GebrMaestroController *self,
 	const gchar *address = gebr_maestro_server_get_address(maestro);
 
 	if (state == SERVER_STATE_LOGGED) {
-		g_signal_handlers_disconnect_by_func(gebr.maestro_controller, on_maestro_state_changed, up);
 		gtk_image_set_from_stock(GTK_IMAGE(status_img), GTK_STOCK_OK, GTK_ICON_SIZE_DIALOG);
 		gtk_label_set_text(GTK_LABEL(status_label), _("Success!"));
 		gtk_assistant_set_page_type(GTK_ASSISTANT(up->dialog),
@@ -463,6 +462,7 @@ void
 on_preferences_destroy(GtkWidget *window,
                        struct ui_preferences *up)
 {
+	g_signal_handlers_disconnect_by_func(gebr.maestro_controller, on_maestro_state_changed, up);
 	gtk_widget_destroy(window);
 	//g_free(up);
 }
