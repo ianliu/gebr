@@ -323,14 +323,17 @@ static WizardStatus
 get_wizard_status()
 {
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
-	if (maestro && gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED)
-		if (gebr_maestro_server_has_connected_daemon(maestro))
+	if (maestro && gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED) {
+		GtkTreeIter it;
+		GtkTreeModel *store = gebr_maestro_server_get_model(maestro, FALSE, NULL);
+		if (gtk_tree_model_get_iter_first(store, &it))
+		//if (gebr_maestro_server_has_connected_daemon(maestro)) //It should work
 			return WIZARD_STATUS_COMPLETE;
 		else
 			return WIZARD_STATUS_WITHOUT_DAEMON;
-	else
+	} else
 		return WIZARD_STATUS_WITHOUT_MAESTRO;
-		
+
 }
 
 static void
