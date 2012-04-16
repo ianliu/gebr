@@ -523,7 +523,14 @@ on_line_callback_base_entry_press(GtkEntry            *entry,
 	const gchar *entr = gtk_entry_get_text(entry);
 	gtk_file_chooser_set_current_folder_uri(GTK_FILE_CHOOSER(file_chooser), entr);
 	gchar ***paths = gebr_geoxml_line_get_paths(gebr.line);
+	if (!paths || !paths[0] ) {
+		paths = g_new0(gchar**, 2);
+		paths[0] = g_new0(gchar*, 2);
+		paths[0][0] = g_strdup(gebr_maestro_server_get_home_dir(maestro));
+		paths[0][1] = g_strdup("HOME");
+	}
 	gebr_file_chooser_set_current_directory (entr, prefix, paths, file_chooser);
+	gebr_pairstrfreev(paths);
 	//g_debug("entr:'%s',prefix:'%s',paths[0][0]:'%s',paths[1][0]:'%s',paths[2][0]:'%s',paths[7][0]:'%s'", entr, prefix,paths[0][0],paths[1][0],paths[2][0],paths[7][0]);
 	gtk_dialog_run(GTK_DIALOG(file_chooser));
 
