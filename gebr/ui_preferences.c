@@ -295,9 +295,9 @@ on_maestro_info_button_clicked (GtkButton *button, gpointer pointer)
 
 	loc = setlocale(LC_MESSAGES, NULL);
 	if (g_str_has_prefix (loc, "pt"))
-		path = "file://" GEBR_USERDOC_DIR "/pt_BR/html/index.html";
+		path = "file://" GEBR_USERDOC_DIR "/pt_BR/html/index.html#servers_configuration";
 	else
-		path = "file://" GEBR_USERDOC_DIR "/en/html/index.html";
+		path = "file://" GEBR_USERDOC_DIR "/en/html/index.html#servers_configuration";
 
 		g_debug("On '%s', line '%d', loc:'%s', path:'%s' ", __FILE__, __LINE__, loc, path);
 	if (!gtk_show_uri(NULL, path, GDK_CURRENT_TIME, NULL)) {
@@ -594,7 +594,7 @@ preferences_setup_ui(gboolean first_run,
 		gtk_assistant_append_page(GTK_ASSISTANT(assistant), page_minfo);
 		gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), page_minfo, TRUE);
 		gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), page_minfo, GTK_ASSISTANT_PAGE_CONTENT);
-		gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), page_minfo, _("Maestro Information"));
+		gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), page_minfo, _("Maestro"));
 
 		gtk_assistant_append_page(GTK_ASSISTANT(assistant), page_mchooser);
 		gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), page_mchooser, TRUE);
@@ -623,7 +623,7 @@ preferences_setup_ui(gboolean first_run,
 		gtk_assistant_append_page(GTK_ASSISTANT(assistant), page_review);
 		gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), page_review, FALSE);
 		gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), page_review, GTK_ASSISTANT_PAGE_CONFIRM);
-		gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), page_review, _("Review"));
+		gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), page_review, _("Summary"));
 
 		gtk_assistant_append_page(GTK_ASSISTANT(assistant), main_cancel);
 		gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), main_cancel, FALSE);
