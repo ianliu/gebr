@@ -742,6 +742,7 @@ static void open_activated(GtkEntry *entry, GtkEntryIconPosition icon_pos, GdkEv
 		gboolean logged = gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED;
 		const gchar *entr = gtk_entry_get_text(entry);
 		if (prefix) {
+
 			gebr_file_chooser_set_current_directory (entr, prefix, paths, dialog);
 
 			if (logged)

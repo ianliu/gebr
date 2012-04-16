@@ -873,7 +873,7 @@ gebr_maestro_controller_daemon_server_address_func(GtkTreeViewColumn *tree_colum
 	                   -1);
 
 	if (!daemon && !insert_new) {
-		g_object_set(cell, "text", "List of daemons", NULL);
+		g_object_set(cell, "text", "List of servers", NULL);
 		g_object_set(cell, "sensitive", FALSE, NULL);
 	} else {
 		g_object_set(cell, "text", addr, NULL);
