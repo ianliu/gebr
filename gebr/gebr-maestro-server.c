@@ -1647,3 +1647,8 @@ gebr_maestro_server_has_servers(GebrMaestroServer *maestro,
 
 	 return FALSE;
 }
+gboolean
+gebr_maestro_server_has_connected_daemon(GebrMaestroServer *maestro)
+{
+	return maestro->priv->has_connected_daemon;
+}

@@ -582,6 +582,7 @@ gebr_maestro_controller_init(GebrMaestroController *self)
 	                                       G_TYPE_BOOLEAN,
 					       G_TYPE_BOOLEAN,
 	                                       G_TYPE_STRING);
+	self->priv->maestro = NULL;
 
 }
 
@@ -1725,6 +1726,8 @@ GebrMaestroServer *
 gebr_maestro_controller_get_maestro_for_address(GebrMaestroController *mc,
 						const gchar *address)
 {
+	if (!mc->priv->maestro)
+		return NULL;
 	const gchar *addr = gebr_maestro_server_get_address(mc->priv->maestro);
 
 	if (g_strcmp0(addr, address) == 0)
@@ -1754,6 +1757,11 @@ gebr_maestro_controller_set_window(GebrMaestroController *mc,
 	g_object_set(mc, "window", window, NULL);
 }
 
+GtkWindow *
+gebr_maestro_controller_get_window(GebrMaestroController *mc)
+{
+	return mc->priv->window;
+}
 GtkTreeModel *
 gebr_maestro_controller_get_servers_model(GebrMaestroController *mc)
 {
