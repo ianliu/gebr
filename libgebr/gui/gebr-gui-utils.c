@@ -1257,15 +1257,13 @@ gebr_file_chooser_set_current_directory (const gchar *entr, const gchar *prefix,
 	if (!entr || !*entr )
 		err_entry = TRUE;
 	else {
-		gchar *entry_text = g_path_get_dirname(entr);
-		gchar *aux = gebr_resolve_relative_path(entry_text, paths);
-		folder = g_build_filename(prefix, aux, NULL);
+		gchar *aux = gebr_resolve_relative_path(entr, paths);
+		gchar *folder = g_build_filename(prefix, aux, NULL);
 
 		err_dir = !gtk_file_chooser_set_current_folder_uri(GTK_FILE_CHOOSER(dialog), folder);
 
-		g_free(folder);
 		g_free(aux);
-		g_free(entry_text);
+		g_free(folder);
 	}
 
 	if (err_entry || err_dir){
