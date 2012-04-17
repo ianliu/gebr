@@ -1112,9 +1112,11 @@ gebr_gtk_bookmarks_add_paths(const gchar *filename,
 		if (!*paths[i][0])
 			continue;
 
-		gchar *escaped = g_uri_escape_string(paths[i][0], "/", TRUE);
+		gchar *resolved = gebr_resolve_relative_path(paths[i][0], paths);
+		gchar *escaped = g_uri_escape_string(resolved, "/", TRUE);
 		g_string_append_printf(buf, "%s%s %s (GeBR)\n",
-				       uri_prefix, escaped, paths[i][1]);
+		                       uri_prefix, escaped, paths[i][1]);
+		g_free(resolved);
 		g_free(escaped);
 	}
 
@@ -1146,12 +1148,14 @@ gebr_gtk_bookmarks_remove_paths(const gchar *filename,
 	for (gint i = 0; lines[i]; i++) {
 		has_path = FALSE;
 		for (gint j = 0; paths[j] && !has_path; j++) {
-			gchar *escaped = g_uri_escape_string(paths[j][0], "/", TRUE);
+			gchar *resolved = gebr_resolve_relative_path(paths[j][0], paths);
+			gchar *escaped = g_uri_escape_string(resolved, "/", TRUE);
 			gchar *suffix = g_strdup_printf("%s %s (GeBR)", escaped, paths[j][1]);
 
 			if (g_str_has_suffix(lines[i], suffix))
 				has_path = TRUE;
 
+			g_free(resolved);
 			g_free(escaped);
 			g_free(suffix);
 		}
