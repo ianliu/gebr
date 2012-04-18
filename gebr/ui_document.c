@@ -1709,11 +1709,7 @@ gebr_ui_document_send_paths_to_maestro(GebrMaestroServer *maestro,
 {
 	GebrCommServer *server = gebr_maestro_server_get_server(maestro);
 
-	gchar ***paths = g_new(gchar**, 2);
-	paths[0] = g_new(gchar *, 2);
-	paths[0][0] = g_strdup(gebr_maestro_server_get_home_dir(maestro));
-	paths[0][1] = g_strdup("HOME");
-	paths[1] = NULL;
+	gchar ***paths = gebr_generate_paths_with_home(gebr_maestro_server_get_home_dir(maestro));
 
 	if (!oldmsg)
 		oldmsg = "";
