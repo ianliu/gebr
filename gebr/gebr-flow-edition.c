@@ -736,51 +736,23 @@ static void open_activated(GtkEntry *entry, GtkEntryIconPosition icon_pos, GdkEv
 
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
 	gchar ***paths = gebr_geoxml_line_get_paths(gebr.line);
-	gchar *filename = g_build_filename(g_get_home_dir(), ".gtk-bookmarks", NULL);
-	if (maestro) {
-		gchar *prefix = gebr_maestro_server_get_sftp_prefix(maestro);
-		gboolean logged = gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED;
-		const gchar *entr = gtk_entry_get_text(entry);
-		gchar *err_filechooser = NULL;
-		if (prefix) {
-			if (!paths || !paths[0] ) {
-				gchar ***aux_paths = g_new0(gchar**, 1);
-				aux_paths[0] = g_new0(gchar*, 2);
-				aux_paths[0][0] = g_strdup(gebr_maestro_server_get_home_dir(maestro));
-				aux_paths[0][1] = g_strdup("HOME");
-				gebr_file_chooser_set_current_directory (entr, prefix, aux_paths, dialog, &err_filechooser);
-				gebr_pairstrfreev(aux_paths);
-			}
-			else
-				gebr_file_chooser_set_current_directory (entr, prefix, paths, dialog, &err_filechooser);
+	gchar *prefix = gebr_maestro_server_get_sftp_prefix(maestro);
 
-			if (logged)
-				gebr_gtk_bookmarks_add_paths(filename, prefix, paths);
-			g_free(prefix);
-		}
-		else if (!logged)
-			gebr_file_chooser_set_warning_widget(paths, filename, dialog);
-		g_free(err_filechooser);
+	gchar *new_text;
+	gint response = gebr_file_chooser_set_remote_navigation(dialog, entry,
+	                                                        prefix, paths, TRUE,
+	                                                        &new_text);
 
-	}
-
-	gtk_widget_show_all(dialog);
-
-	if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_YES) {
-		gchar *filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
-		gtk_entry_set_text(entry, filename);
+	if (response == GTK_RESPONSE_YES) {
+		gtk_entry_set_text(entry, new_text);
 		
 		GtkCellRenderer *renderer = g_object_get_data(G_OBJECT(entry), "renderer");
 		gtk_cell_renderer_stop_editing(renderer, FALSE);
-		flow_edition_component_edited(GTK_CELL_RENDERER_TEXT(renderer), path, filename);
-		g_free(filename);
+		flow_edition_component_edited(GTK_CELL_RENDERER_TEXT(renderer), path, new_text);
 	}
 
-	gebr_gtk_bookmarks_remove_paths(filename, paths);
-
-	gtk_widget_destroy(dialog);
+	g_free(new_text);
 	g_free(path);
-	g_free(filename);
 	gebr_pairstrfreev(paths);
 }
 
