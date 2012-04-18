@@ -76,37 +76,16 @@
     <property name="visible">True</property>
     <property name="spacing">5</property>
     <child>
-      <object class="GtkHBox" id="line_info1">
+      <object class="GtkLabel" id="info_label">
         <property name="visible">True</property>
-        <child>
-          <object class="GtkImage" id="image13">
-            <property name="visible">True</property>
-            <property name="stock">gtk-info</property>
-            <property name="icon-size">6</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">False</property>
-            <property name="padding">5</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkLabel" id="info_label">
-            <property name="visible">True</property>
-            <property name="label" translatable="yes">A &lt;b&gt;Line&lt;/b&gt; is a way of organize Flows and it is associated to the Maestro machine in which its flows are going to to be executed.</property>
-            <property name="use_markup">True</property>
-            <property name="wrap">True</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">False</property>
-            <property name="padding">10</property>
-            <property name="position">1</property>
-          </packing>
-        </child>
+        <property name="label" translatable="yes">A &lt;b&gt;Line&lt;/b&gt; is a way of organize Flows and it is associated to the Maestro machine in which its flows are going to be executed.</property>
+        <property name="use_markup">True</property>
+        <property name="wrap">True</property>
       </object>
       <packing>
+        <property name="expand">False</property>
+        <property name="fill">False</property>
+        <property name="padding">10</property>
         <property name="position">0</property>
       </packing>
     </child>
@@ -316,8 +295,10 @@ and saving output files.</property>
         <child>
           <object class="GtkAlignment" id="alignment1">
             <property name="visible">True</property>
-            <property name="top_padding">5</property>
-            <property name="left_padding">12</property>
+            <property name="top_padding">15</property>
+            <property name="bottom_padding">15</property>
+            <property name="left_padding">15</property>
+            <property name="right_padding">15</property>
             <child>
               <object class="GtkHBox" id="box3">
                 <property name="visible">True</property>

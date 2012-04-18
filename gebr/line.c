@@ -333,8 +333,8 @@ on_assistant_prepare(GtkAssistant *assistant,
 		GObject *info_label= gtk_builder_get_object(data->builder, "info_label");
 		gchar *info_label_text= g_markup_printf_escaped(_("A <b>Line</b> is a way of organize Flows"
 								  " and it is associated to the Maestro machine in which its flows" 
-								  " are going to to be executed.\n\nThe Maestro of this Line" 
-								  " is <b>%s</b>.\n"), maestro_addr);
+								  " are going to be executed.\n\nThe Maestro of this Line"
+								  " is <b>%s</b>."), maestro_addr);
 		gtk_label_set_markup(GTK_LABEL(info_label), info_label_text);
 		g_free(info_label_text);
 
