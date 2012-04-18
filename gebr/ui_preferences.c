@@ -53,7 +53,7 @@ typedef enum {
 	WIZARD_STATUS_WITHOUT_DAEMON
 } WizardStatus;
 
-#define DEFAULT_TEXT _("Type server hostname or address, and click Add")
+#define DEFAULT_SERVERS_ENTRY_TEXT _("Type server hostname or address, and click Add")
 
 /*
  * Prototypes
@@ -172,6 +172,7 @@ set_status_for_maestro(GebrMaestroController *self,
 	GObject *status_img = gtk_builder_get_object(up->builder, "status_img");
 	GObject *status_label = gtk_builder_get_object(up->builder, "status_label");
 	GObject *error_label = gtk_builder_get_object(up->builder, "error_label");
+	GObject *error_title = gtk_builder_get_object(up->builder, "error_title");
 	GObject *status_title = gtk_builder_get_object(up->builder, "status_title");
 
 	gchar *summary_txt;
@@ -179,6 +180,9 @@ set_status_for_maestro(GebrMaestroController *self,
 	const gchar *address = gebr_maestro_server_get_address(maestro);
 
 	if (state == SERVER_STATE_LOGGED) {
+		gtk_widget_show(main_status);
+		gtk_widget_hide(connections_info);
+
 		gtk_image_set_from_stock(GTK_IMAGE(status_img), GTK_STOCK_OK, GTK_ICON_SIZE_DIALOG);
 		gtk_label_set_text(GTK_LABEL(status_label), _("Success!"));
 		gtk_assistant_set_page_type(GTK_ASSISTANT(up->dialog),
@@ -198,6 +202,9 @@ set_status_for_maestro(GebrMaestroController *self,
 		gebr_maestro_server_get_error(maestro, &type, &msg);
 
 		if (!g_strcmp0(type, "error:none")) {
+			gtk_widget_show(main_status);
+			gtk_widget_hide(connections_info);
+
 			gtk_image_set_from_stock(GTK_IMAGE(status_img), GTK_STOCK_DISCONNECT, GTK_ICON_SIZE_DIALOG);
 
 			gtk_label_set_markup(GTK_LABEL(status_label), "Connecting...");
@@ -214,8 +221,11 @@ set_status_for_maestro(GebrMaestroController *self,
 			gtk_widget_show(connections_info);
 			gtk_widget_show(error_box);
 
-			gchar *txt = g_markup_printf_escaped(_("Could not connect to Maestro <b>%s</b>!\n"
-							       "The connection reported the following error:\n\n<i>%s</i>"), address, msg);
+			gchar *title = g_markup_printf_escaped(_("Could not connect to Maestro <b>%s</b>!"), address);
+			gtk_label_set_markup(GTK_LABEL(error_title), title);
+			g_free(title);
+
+			gchar *txt = g_markup_printf_escaped(_("The connection reported the following error:\n<i>%s</i>"), msg);
 			gtk_label_set_markup(GTK_LABEL(error_label), txt);
 			g_free(txt);
 
@@ -258,14 +268,14 @@ on_add_server_clicked(GtkButton *button,
 	if (!*addr)
 		return;
 
-	if (!g_strcmp0(addr, DEFAULT_TEXT))
+	if (!g_strcmp0(addr, DEFAULT_SERVERS_ENTRY_TEXT))
 		return;
 
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 	g_signal_connect(maestro, "daemons-changed", G_CALLBACK(on_daemons_changed), up);
 	gebr_maestro_controller_server_list_add(gebr.maestro_controller, addr);
 
-	gtk_entry_set_text(GTK_ENTRY(server_entry), DEFAULT_TEXT);
+	gtk_entry_set_text(GTK_ENTRY(server_entry), DEFAULT_SERVERS_ENTRY_TEXT);
 }
 
 static void
@@ -283,7 +293,7 @@ on_entry_server_focus_out(GtkWidget *widget,
 	const gchar *text = gtk_entry_get_text(GTK_ENTRY(widget));
 
 	if (!g_strcmp0(text, ""))
-		gtk_entry_set_text(GTK_ENTRY(widget), DEFAULT_TEXT);
+		gtk_entry_set_text(GTK_ENTRY(widget), DEFAULT_SERVERS_ENTRY_TEXT);
 
 	return TRUE;
 }
@@ -295,7 +305,7 @@ on_entry_server_focus_in(GtkWidget *widget,
 {
 	const gchar *text = gtk_entry_get_text(GTK_ENTRY(widget));
 
-	if (!g_strcmp0(text, DEFAULT_TEXT))
+	if (!g_strcmp0(text, DEFAULT_SERVERS_ENTRY_TEXT))
 		gtk_entry_set_text(GTK_ENTRY(widget), "");
 
 	return TRUE;
@@ -572,7 +582,7 @@ on_assistant_prepare(GtkAssistant *assistant,
 			g_signal_connect(server_entry, "focus-in-event", G_CALLBACK(on_entry_server_focus_in), up);
 			g_signal_connect(server_entry, "focus-out-event", G_CALLBACK(on_entry_server_focus_out), up);
 
-			gtk_widget_set_tooltip_text(GTK_WIDGET(server_entry), DEFAULT_TEXT);
+			gtk_widget_set_tooltip_text(GTK_WIDGET(server_entry), DEFAULT_SERVERS_ENTRY_TEXT);
 		}
 	}
 }
