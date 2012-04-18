@@ -30,7 +30,7 @@
             <child>
               <object class="GtkLabel" id="pwd_info_label">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">G&#xEA;BR needs a &lt;b&gt;connection&lt;/b&gt; to a maestro to send jobs and receive outputs. For security reasons an encrypted connection is made using SSH protocol. 
+                <property name="label" translatable="yes">G&#xEA;BR needs a &lt;b&gt;connection&lt;/b&gt; to a Maestro to send jobs and receive outputs. For security reasons an encrypted connection is made using SSH protocol. 
 
 Your login password may be asked to stablish the connection.</property>
                 <property name="use_markup">True</property>
@@ -283,7 +283,7 @@ Your login password may be asked to stablish the connection.</property>
     <child>
       <object class="GtkLabel" id="server_info_label">
         <property name="visible">True</property>
-        <property name="label" translatable="yes">Your Maestro can have many servers under its control. For each server, you are going to be asked for a password.
+        <property name="label" translatable="yes">A Maestro controls many servers under its control. For each server, you are going to be asked for your password.
 
  Additionally, your login credentials may be asked once more for the remote browsing of your files.</property>
         <property name="use_markup">True</property>
@@ -304,11 +304,8 @@ Your login password may be asked to stablish the connection.</property>
     <child>
       <object class="GtkLabel" id="main_servers_label">
         <property name="visible">True</property>
-        <property name="label" translatable="yes">You need to add &lt;b&gt;Servers&lt;/b&gt; to be handled by your Maestro X.
-
-Put the name (hostname or address) of the Server in the blank space and click on Add.
-
-*&lt;i&gt;You can be asked for the Server password.&lt;/i&gt;</property>
+        <property name="label">You need to add &lt;b&gt;Servers&lt;/b&gt; to be handled by your Maestro.
+</property>
         <property name="use_markup">True</property>
         <property name="wrap">True</property>
         <property name="wrap_mode">word-char</property>
@@ -338,11 +335,11 @@ Put the name (hostname or address) of the Server in the blank space and click on
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
-            <property name="relief">none</property>
             <child>
-              <object class="GtkImage" id="image4">
+              <object class="GtkLabel" id="label1">
                 <property name="visible">True</property>
-                <property name="stock">gtk-add</property>
+                <property name="xpad">1</property>
+                <property name="label" translatable="yes">Add</property>
               </object>
             </child>
           </object>
