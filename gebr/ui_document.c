@@ -345,6 +345,15 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 		/* Base Path Tab */
 		GtkWidget *base_box = GTK_WIDGET(gtk_builder_get_object(builder, "vbox_base"));
 		GtkWidget *hierarchy_box = GTK_WIDGET(gtk_builder_get_object(builder, "hierarchy_base"));
+		GObject *label;
+
+		const gchar *maestro_addr = gebr_maestro_server_get_address(maestro);
+		gchar *text_maestro = g_markup_printf_escaped(_("<i>You will browse on files and folders of servers of maestro <b>%s</b>.\n"
+				"This directories structure can be not the same on your local machine.</i>"), maestro_addr);
+		label = gtk_builder_get_object(data->builder, "label6");
+		gtk_label_set_markup(GTK_LABEL(label), text_maestro);
+		g_free(text_maestro);
+
 		gtk_notebook_append_page(GTK_NOTEBOOK(notebook), base_box, gtk_label_new(_("BASE Path")));
 		gtk_widget_set_visible(hierarchy_box, TRUE);
 
