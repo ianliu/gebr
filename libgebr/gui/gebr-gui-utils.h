@@ -513,11 +513,21 @@ gboolean gebr_gui_validate_widget(GebrGuiValidatableWidget *widget,
 				  GebrValidator            *validator);
 
 gboolean gebr_file_chooser_set_warning_widget(gchar ***paths, 
-		gchar *file,
-		GtkWidget *chooser_dialog);
+                                              gchar *file,
+                                              GtkWidget *chooser_dialog);
 
-void gebr_file_chooser_set_current_directory (const gchar *entr, const gchar *prefix, gchar ***paths, GtkWidget *dialog, gchar **error);
+void gebr_file_chooser_set_current_directory (const gchar *entr,
+                                              const gchar *prefix,
+                                              gchar ***paths,
+                                              GtkWidget *dialog,
+                                              gchar **error);
 
+gint gebr_file_chooser_set_remote_navigation(GtkWidget *dialog,
+                                             GtkEntry *entry,
+                                             gchar *sftp_prefix,
+                                             gchar ***paths,
+                                             gboolean insert_bookmarks,
+                                             gchar **new_text);
 
 G_END_DECLS
 #endif				//__GEBR_GUI_UTILS_H
