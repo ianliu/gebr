@@ -316,7 +316,8 @@ on_assistant_prepare(GtkAssistant *assistant,
 		gchar *line_key = gebr_geoxml_line_create_key(gtk_entry_get_text(GTK_ENTRY(entry_title)));
 		gchar *path = g_build_filename("<HOME>", "GeBR", line_key, NULL);
 
-		gtk_entry_set_text(GTK_ENTRY(entry_base), path);
+		if (!gtk_entry_get_text(GTK_ENTRY(entry_base)))
+			gtk_entry_set_text(GTK_ENTRY(entry_base), path);
 
 		g_free(line_key);
 		g_free(path);
