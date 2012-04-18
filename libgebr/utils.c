@@ -1087,6 +1087,19 @@ gebr_resolve_relative_path(const gchar *path,
 	return new_path;
 }
 
+gchar ***
+gebr_generate_paths_with_home(const gchar *home)
+{
+	gchar ***paths = g_new0(gchar**, 2);
+
+	paths[0] = g_new0(gchar*, 2);
+	paths[0][0] = g_strdup(home);
+	paths[0][1] = g_strdup("HOME");
+	paths[1] = NULL;
+
+	return paths;
+}
+
 void
 gebr_gtk_bookmarks_add_paths(const gchar *filename,
                              const gchar *uri_prefix,

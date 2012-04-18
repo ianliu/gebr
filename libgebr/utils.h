@@ -291,6 +291,8 @@ gchar *gebr_relativise_path(const gchar *path_string,
 gchar *gebr_resolve_relative_path(const char *path,
 				gchar ***pvector);
 
+gchar ***gebr_generate_paths_with_home(const gchar *home);
+
 /**
  * gebr_gtk_bookmarks_add_paths:
  *
