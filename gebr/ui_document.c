@@ -365,11 +365,13 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 			base_path = g_build_filename(gebr_maestro_server_get_home_dir(maestro), "GeBR", line_key, NULL);
 		g_free(line_key);
 
-		gtk_entry_set_text(entry_base, base_path);
+		gchar *base_path2 = gebr_relativise_home_path(base_path, gebr_maestro_server_get_sftp_root(maestro), gebr_maestro_server_get_home_dir(maestro));
+		gtk_entry_set_text(entry_base, base_path2);
+		g_free(base_path);
+		g_free(base_path2);
 
 		g_signal_connect(entry_base, "changed", G_CALLBACK(on_properties_entry_changed), data->ok_button);
 		g_signal_connect(entry_base, "focus-out-event", G_CALLBACK(on_line_callback_base_focus_out), NULL);
-		g_free(base_path);
 
 		/* Import Path Tab */
 		GtkWidget *import_box = GTK_WIDGET(gtk_builder_get_object(builder, "vbox_import"));

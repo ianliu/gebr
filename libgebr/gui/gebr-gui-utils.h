@@ -516,7 +516,7 @@ gboolean gebr_file_chooser_set_warning_widget(gchar ***paths,
 		gchar *file,
 		GtkWidget *chooser_dialog);
 
-void gebr_file_chooser_set_current_directory (const gchar *entr,const gchar *prefix, gchar ***paths, GtkWidget *dialog);
+void gebr_file_chooser_set_current_directory (const gchar *entr, const gchar *prefix, gchar ***paths, GtkWidget *dialog, gchar **error);
 
 
 G_END_DECLS

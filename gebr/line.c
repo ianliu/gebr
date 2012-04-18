@@ -67,10 +67,19 @@ on_assistant_base_validate(GtkEntry *entry,
 	current_page = gtk_assistant_get_nth_page(assistant, page_number);
 	text = gtk_entry_get_text(entry);
 
+	gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_OPEN);
 	if (text && *text)
-		gtk_assistant_set_page_complete(assistant, current_page, TRUE);
-	else
+		if (text[0] == '/' || g_strrstr(text, "<HOME>") || g_strrstr(text, "$HOME"))
+			gtk_assistant_set_page_complete(assistant, current_page, TRUE);
+		else {
+			gtk_assistant_set_page_complete(assistant, current_page, FALSE);
+			gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIALOG_WARNING);
+			gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, _("You need to use a complete path."));
+		}
+	else {
 		gtk_assistant_set_page_complete(assistant, current_page, FALSE);
+		gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, _("Choose a BASE path."));
+	}
 }
 
 void
@@ -247,20 +256,27 @@ static gchar *
 resolve_home_variable_to_base(const gchar *base,
                               const gchar *home)
 {
-	if (!g_str_has_prefix(base, "<HOME>"))
-		return g_strdup(base);
-
 	gchar *used_base;
-	GString *buf = g_string_new(home);
-	gchar **tmp = g_strsplit(base, "<HOME>", -1);
+	if (g_str_has_prefix(base, "<HOME>")) {
+		GString *buf = g_string_new(home);
+		gchar **tmp = g_strsplit(base, "<HOME>", -1);
 
-	g_string_append(buf, tmp[1]);
+		g_string_append(buf, tmp[1]);
 
-	used_base = g_string_free(buf, FALSE);
+		used_base = g_string_free(buf, FALSE);
 
-	g_strfreev(tmp);
+		g_strfreev(tmp);
+		return used_base;
+	} else if (g_str_has_prefix(base, "$HOME")) {
+		GString *buf = g_string_new(home);
+		gchar **tmp = g_strsplit(base, "$HOME", -1);
 
-	return used_base;
+		g_string_append(buf, tmp[1]);
+		used_base = g_string_free(buf, FALSE);
+		g_strfreev(tmp);
+		return used_base;
+	} else
+		return g_strdup(base);
 }
 
 static void
@@ -498,6 +514,7 @@ on_line_callback_base_focus_out(GtkWidget *widget,
 
 	gtk_entry_set_text(GTK_ENTRY(widget), relative);
 
+
 	g_free(mount_point);
 	g_free(relative);
 	return FALSE;
@@ -522,7 +539,7 @@ on_line_callback_base_entry_press(GtkEntry            *entry,
 	gtk_file_chooser_set_local_only(GTK_FILE_CHOOSER(file_chooser), FALSE);
 
 	const gchar *entr = gtk_entry_get_text(entry);
-	gtk_file_chooser_set_current_folder_uri(GTK_FILE_CHOOSER(file_chooser), entr);
+	//gtk_file_chooser_set_current_folder_uri(GTK_FILE_CHOOSER(file_chooser), entr);
 	gchar ***paths = gebr_geoxml_line_get_paths(gebr.line);
 	if (!paths || !paths[0] ) {
 		paths = g_new0(gchar**, 2);
@@ -530,7 +547,9 @@ on_line_callback_base_entry_press(GtkEntry            *entry,
 		paths[0][0] = g_strdup(gebr_maestro_server_get_home_dir(maestro));
 		paths[0][1] = g_strdup("HOME");
 	}
-	gebr_file_chooser_set_current_directory (entr, prefix, paths, file_chooser);
+	gchar *err_filechooser = NULL;
+	gebr_file_chooser_set_current_directory (entr, prefix, paths, file_chooser, &err_filechooser);
+	g_free(err_filechooser);
 	gebr_pairstrfreev(paths);
 
 	gint response = gtk_dialog_run(GTK_DIALOG(file_chooser));
@@ -546,7 +565,6 @@ on_line_callback_base_entry_press(GtkEntry            *entry,
 		g_free(tmp);
 	}
 	g_free(prefix);
-	//g_debug("entr:'%s',prefix:'%s',paths[0][0]:'%s',paths[1][0]:'%s',paths[2][0]:'%s',paths[7][0]:'%s'", entr, prefix,paths[0][0],paths[1][0],paths[2][0],paths[7][0]);
 	gtk_widget_destroy(file_chooser);
 }
 

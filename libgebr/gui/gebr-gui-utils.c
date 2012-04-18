@@ -1248,16 +1248,29 @@ gebr_file_chooser_set_warning_widget(gchar ***paths,
 }
 
 void
-gebr_file_chooser_set_current_directory (const gchar *entr, const gchar *prefix, gchar ***paths, GtkWidget *dialog)
+gebr_file_chooser_set_current_directory (const gchar *entr, const gchar *prefix, gchar ***paths, GtkWidget *dialog, gchar **error)
 {
 	gchar *folder = NULL;
 	gboolean err_entry = FALSE;
 	gboolean err_dir = FALSE;
 
-	if (!entr || !*entr )
+	if (!entr || !*entr ) {
 		err_entry = TRUE;
-	else {
+		error = NULL;
+	} else {
+		gchar *err_msg = NULL;
 		gchar *aux = gebr_resolve_relative_path(entr, paths);
+		if (!gebr_validate_path(aux, paths, &err_msg)) {
+			for (gint i = 0; paths && paths[i]; i++) {
+				if (g_strcmp0(paths[i][1], "HOME") == 0){
+				    g_free(aux);
+				    aux = g_strdup(paths[i][0]);
+				    break;
+				}
+			}
+		}
+		*error = err_msg;
+		g_debug("On '%s', line '%d', aux:'%s', '%s' ", __FILE__, __LINE__,  aux, err_msg);
 		gchar *folder = g_build_filename(prefix, aux, NULL);
 
 		err_dir = !gtk_file_chooser_set_current_folder_uri(GTK_FILE_CHOOSER(dialog), folder);

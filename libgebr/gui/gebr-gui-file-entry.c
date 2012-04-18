@@ -159,10 +159,10 @@ __gebr_gui_file_entry_browse_button_clicked(GtkButton *button,
 	gchar *file = g_build_filename(g_get_home_dir(), ".gtk-bookmarks", NULL);
 	gchar ***paths = gebr_geoxml_line_get_paths(file_entry->line);
 	const gchar *entr = gtk_entry_get_text(GTK_ENTRY(file_entry->entry));
+	gchar *err_filechooser = NULL;
  
-	if (file_entry->prefix) {
-		gebr_file_chooser_set_current_directory (entr, file_entry->prefix, paths, chooser_dialog);
-	}
+	if (file_entry->prefix)
+		gebr_file_chooser_set_current_directory (entr, file_entry->prefix, paths, chooser_dialog, &err_filechooser);
 	else 
 		gebr_file_chooser_set_warning_widget(paths, file, chooser_dialog);
 
@@ -175,6 +175,7 @@ __gebr_gui_file_entry_browse_button_clicked(GtkButton *button,
 	default:
 		break;
 	}
+	g_free(err_filechooser);
 
 	gebr_gtk_bookmarks_remove_paths(file, paths);
 

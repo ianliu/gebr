@@ -293,7 +293,7 @@ gebr_geoxml_line_get_paths(GebrGeoXmlLine *line)
 	}
 
 	list = g_list_reverse(list);
-	gchar ***vect = g_new(gchar **, len + 1);
+	gchar ***vect = g_new0(gchar **, len + 1);
 	vect[len] = NULL;
 
 	gint j = 0;

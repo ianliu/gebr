@@ -741,9 +741,18 @@ static void open_activated(GtkEntry *entry, GtkEntryIconPosition icon_pos, GdkEv
 		gchar *prefix = gebr_maestro_server_get_sftp_prefix(maestro);
 		gboolean logged = gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED;
 		const gchar *entr = gtk_entry_get_text(entry);
+		gchar *err_filechooser = NULL;
 		if (prefix) {
-
-			gebr_file_chooser_set_current_directory (entr, prefix, paths, dialog);
+			if (!paths || !paths[0] ) {
+				gchar ***aux_paths = g_new0(gchar**, 1);
+				aux_paths[0] = g_new0(gchar*, 2);
+				aux_paths[0][0] = g_strdup(gebr_maestro_server_get_home_dir(maestro));
+				aux_paths[0][1] = g_strdup("HOME");
+				gebr_file_chooser_set_current_directory (entr, prefix, aux_paths, dialog, &err_filechooser);
+				gebr_pairstrfreev(aux_paths);
+			}
+			else
+				gebr_file_chooser_set_current_directory (entr, prefix, paths, dialog, &err_filechooser);
 
 			if (logged)
 				gebr_gtk_bookmarks_add_paths(filename, prefix, paths);
@@ -751,6 +760,7 @@ static void open_activated(GtkEntry *entry, GtkEntryIconPosition icon_pos, GdkEv
 		}
 		else if (!logged)
 			gebr_file_chooser_set_warning_widget(paths, filename, dialog);
+		g_free(err_filechooser);
 
 	}
 
