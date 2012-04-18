@@ -255,9 +255,25 @@ and saving output files.</property>
     <child>
       <object class="GtkTable" id="table1">
         <property name="visible">True</property>
+        <property name="n_rows">2</property>
         <property name="n_columns">2</property>
         <property name="column_spacing">5</property>
         <property name="row_spacing">5</property>
+        <child>
+          <object class="GtkLabel" id="label6">
+            <property name="visible">True</property>
+            <property name="label" translatable="yes">You will browse on files and folders of servers of maestro XXX.
+This directories structure can be not the same on your local machine.</property>
+          </object>
+          <packing>
+            <property name="left_attach">1</property>
+            <property name="right_attach">2</property>
+            <property name="top_attach">1</property>
+            <property name="bottom_attach">2</property>
+            <property name="x_options">GTK_FILL</property>
+            <property name="x_padding">5</property>
+          </packing>
+        </child>
         <child>
           <object class="GtkEntry" id="entry_base">
             <property name="visible">True</property>
@@ -274,13 +290,10 @@ and saving output files.</property>
           </packing>
         </child>
         <child>
-          <object class="GtkLabel" id="label6">
-            <property name="visible">True</property>
-          </object>
-          <packing>
-            <property name="x_options">GTK_FILL</property>
-            <property name="x_padding">5</property>
-          </packing>
+          <placeholder/>
+        </child>
+        <child>
+          <placeholder/>
         </child>
       </object>
       <packing>
@@ -742,7 +755,9 @@ and saving output files.</property>
     <child>
       <object class="GtkLabel" id="label_hierarchy_1">
         <property name="visible">True</property>
-        <property name="label" translatable="yes">&lt;i&gt;These directories will be created on maestro &lt;b&gt;XXX&lt;/b&gt;.&lt;/i&gt;</property>
+        <property name="label" translatable="yes">&lt;i&gt;G&#xEA;BR will create some directories to organize the files 
+created during the data processing.
+These directories will be created on servers of maestro &lt;b&gt;XXX&lt;/b&gt;.&lt;/i&gt;</property>
         <property name="use_markup">True</property>
       </object>
       <packing>
@@ -1274,11 +1289,11 @@ and saving output files.</property>
     <property name="n_rows">7</property>
     <property name="n_columns">3</property>
     <property name="column_spacing">20</property>
-    <property name="row_spacing">10</property>
     <child>
       <object class="GtkLabel" id="label48">
         <property name="visible">True</property>
         <property name="xalign">0</property>
+        <property name="xpad">20</property>
         <property name="label" translatable="yes">&lt;b&gt;Title:&lt;/b&gt;</property>
         <property name="use_markup">True</property>
       </object>
@@ -1291,6 +1306,7 @@ and saving output files.</property>
     <child>
       <object class="GtkLabel" id="label49">
         <property name="visible">True</property>
+        <property name="xpad">20</property>
         <property name="label" translatable="yes">&lt;b&gt;Description:&lt;/b&gt;</property>
         <property name="use_markup">True</property>
       </object>
@@ -1306,6 +1322,7 @@ and saving output files.</property>
       <object class="GtkLabel" id="label50">
         <property name="visible">True</property>
         <property name="xalign">0</property>
+        <property name="xpad">20</property>
         <property name="label" translatable="yes">&lt;b&gt;Author:&lt;/b&gt;</property>
         <property name="use_markup">True</property>
       </object>
@@ -1321,6 +1338,7 @@ and saving output files.</property>
       <object class="GtkLabel" id="label51">
         <property name="visible">True</property>
         <property name="xalign">0</property>
+        <property name="xpad">20</property>
         <property name="label" translatable="yes">&lt;b&gt;E-mail:&lt;/b&gt;</property>
         <property name="use_markup">True</property>
       </object>
@@ -1336,6 +1354,7 @@ and saving output files.</property>
       <object class="GtkLabel" id="label54">
         <property name="visible">True</property>
         <property name="xalign">0</property>
+        <property name="xpad">20</property>
         <property name="label" translatable="yes">&lt;b&gt;Maestro:&lt;/b&gt;</property>
         <property name="use_markup">True</property>
       </object>
@@ -1351,6 +1370,7 @@ and saving output files.</property>
       <object class="GtkLabel" id="label52">
         <property name="visible">True</property>
         <property name="xalign">0</property>
+        <property name="xpad">20</property>
         <property name="label" translatable="yes">&lt;b&gt;BASE:&lt;/b&gt;</property>
         <property name="use_markup">True</property>
       </object>
@@ -1366,6 +1386,7 @@ and saving output files.</property>
       <object class="GtkLabel" id="label53">
         <property name="visible">True</property>
         <property name="xalign">0</property>
+        <property name="xpad">20</property>
         <property name="label" translatable="yes">&lt;b&gt;IMPORT:&lt;/b&gt;</property>
         <property name="use_markup">True</property>
       </object>

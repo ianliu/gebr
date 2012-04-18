@@ -269,7 +269,7 @@ on_maestro_button_clicked(GtkButton *button,
 		g_signal_connect(change_button, "clicked", G_CALLBACK(on_change_line_maestro), dialog);
 	} else {
 		gtk_image_set_from_stock(GTK_IMAGE(image_change_button), "gtk-disconnect", GTK_ICON_SIZE_DND);
-		change_text = g_markup_printf_escaped("Click here to connect on another maestro");
+		change_text = g_markup_printf_escaped("Connect to another maestro");
 		gtk_label_set_markup(GTK_LABEL(change_label), change_text);
 		g_signal_connect(change_button, "clicked", G_CALLBACK(on_change_line_maestro_disconnected), dialog);
 	}

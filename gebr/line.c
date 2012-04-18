@@ -342,11 +342,18 @@ on_assistant_prepare(GtkAssistant *assistant,
 		GObject *entry_title = gtk_builder_get_object(data->builder, "entry_title");
 		gchar *line_key = gebr_geoxml_line_create_key(gtk_entry_get_text(GTK_ENTRY(entry_title)));
 		gchar *path = g_build_filename("<HOME>", "GeBR", line_key, NULL);
+		GObject *label;
 
 		const gchar *entr_text = gtk_entry_get_text(GTK_ENTRY(entry_base));
 		if (!entr_text || !entr_text[0])
 			gtk_entry_set_text(GTK_ENTRY(entry_base), path);
 
+		gchar *text_maestro = g_markup_printf_escaped(_("<i>You will browse on files and folders of servers of maestro <b>%s</b>.\n"
+								"This directories structure can be not the same on your local machine.</i>"), maestro_addr);
+		label = gtk_builder_get_object(data->builder, "label6");
+		gtk_label_set_markup(GTK_LABEL(label), text_maestro);
+
+		g_free(text_maestro);
 		g_free(line_key);
 		g_free(path);
 	}
@@ -354,7 +361,9 @@ on_assistant_prepare(GtkAssistant *assistant,
 		const gchar *base = gtk_entry_get_text(GTK_ENTRY(entry_base));
 
 		GObject *label;
-		gchar *text_maestro = g_markup_printf_escaped(_("<i>These directories will be created on maestro <b>%s</b>.</i>"), maestro_addr);
+		gchar *text_maestro = g_markup_printf_escaped(_("<i>GêBR will create some directories to organize the files\n"
+								"created during the data processing.\n"
+								"These directories will be created on servers of maestro <b>%s</b>.</i>"), maestro_addr);
 		label = gtk_builder_get_object(data->builder, "label_hierarchy_1");
 		gtk_label_set_markup(GTK_LABEL(label), text_maestro);
 
