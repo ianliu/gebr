@@ -373,6 +373,18 @@ Your login password may be asked to stablish the connection.</property>
         <property name="position">2</property>
       </packing>
     </child>
+    <child>
+      <object class="GtkLabel" id="servers_label">
+        <property name="visible">True</property>
+        <property name="sensitive">False</property>
+        <property name="label" translatable="yes">Add at least one server on your maestro to use G&#xEA;BR</property>
+        <property name="use_markup">True</property>
+      </object>
+      <packing>
+        <property name="padding">5</property>
+        <property name="position">3</property>
+      </packing>
+    </child>
   </object>
   <object class="GtkVBox" id="maestro_info">
     <property name="visible">True</property>

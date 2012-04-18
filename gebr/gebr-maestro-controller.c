@@ -873,8 +873,10 @@ gebr_maestro_controller_daemon_server_address_func(GtkTreeViewColumn *tree_colum
 	                   -1);
 
 	if (!daemon && !insert_new) {
-		g_object_set(cell, "text", "List of servers", NULL);
+		gchar *text = g_strdup_printf("Servers of Maestro %s", gebr_maestro_server_get_address(gebr.maestro_controller->priv->maestro));
+		g_object_set(cell, "text", text, NULL);
 		g_object_set(cell, "sensitive", FALSE, NULL);
+		g_free(text);
 	} else {
 		g_object_set(cell, "text", addr, NULL);
 		g_object_set(cell, "sensitive", TRUE, NULL);

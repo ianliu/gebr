@@ -53,6 +53,8 @@ typedef enum {
 	WIZARD_STATUS_WITHOUT_DAEMON
 } WizardStatus;
 
+#define DEFAULT_TEXT _("Type server hostname or address, and click Add")
+
 /*
  * Prototypes
  */
@@ -230,11 +232,19 @@ static void
 on_daemons_changed(GebrMaestroServer *maestro,
                    struct ui_preferences *up)
 {
-	if (gebr_maestro_server_has_servers(maestro, TRUE)) {
+	static gboolean has_servers = FALSE;
+
+	if (gebr_maestro_server_has_servers(maestro, TRUE) && !has_servers) {
+		has_servers = TRUE;
 		g_signal_handlers_disconnect_by_func(maestro, on_daemons_changed, up);
 
 		GtkWidget *main_servers = GTK_WIDGET(gtk_builder_get_object(up->builder, "main_servers"));
+		GtkWidget *servers_label = GTK_WIDGET(gtk_builder_get_object(up->builder, "servers_label"));
+		GtkWidget *servers_view = GTK_WIDGET(gtk_builder_get_object(up->builder, "servers_view"));
+
 		gtk_assistant_set_page_complete(GTK_ASSISTANT(up->dialog), main_servers, TRUE);
+		gtk_widget_hide(servers_label);
+		gtk_widget_show(servers_view);
 	}
 }
 
@@ -248,11 +258,14 @@ on_add_server_clicked(GtkButton *button,
 	if (!*addr)
 		return;
 
+	if (!g_strcmp0(addr, DEFAULT_TEXT))
+		return;
+
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 	g_signal_connect(maestro, "daemons-changed", G_CALLBACK(on_daemons_changed), up);
 	gebr_maestro_controller_server_list_add(gebr.maestro_controller, addr);
 
-	gtk_entry_set_text(GTK_ENTRY(server_entry), "");
+	gtk_entry_set_text(GTK_ENTRY(server_entry), DEFAULT_TEXT);
 }
 
 static void
@@ -260,6 +273,32 @@ on_entry_server_activate(GtkEntry *entry,
                          struct ui_preferences *up)
 {
 	on_add_server_clicked(NULL, up);
+}
+
+static gboolean
+on_entry_server_focus_out(GtkWidget *widget,
+                         GdkEventFocus *event,
+                         struct ui_preferences *up)
+{
+	const gchar *text = gtk_entry_get_text(GTK_ENTRY(widget));
+
+	if (!g_strcmp0(text, ""))
+		gtk_entry_set_text(GTK_ENTRY(widget), DEFAULT_TEXT);
+
+	return TRUE;
+}
+
+static gboolean
+on_entry_server_focus_in(GtkWidget *widget,
+                         GdkEventFocus *event,
+                         struct ui_preferences *up)
+{
+	const gchar *text = gtk_entry_get_text(GTK_ENTRY(widget));
+
+	if (!g_strcmp0(text, DEFAULT_TEXT))
+		gtk_entry_set_text(GTK_ENTRY(widget), "");
+
+	return TRUE;
 }
 
 static gboolean
@@ -500,13 +539,11 @@ on_assistant_prepare(GtkAssistant *assistant,
 			GObject *server_add = gtk_builder_get_object(up->builder, "server_add");
 			GObject *server_entry = gtk_builder_get_object(up->builder, "server_entry");
 
+			GtkWidget *servers_label = GTK_WIDGET(gtk_builder_get_object(up->builder, "servers_label"));
 			GtkWidget *main_servers_label = GTK_WIDGET(gtk_builder_get_object(up->builder, "main_servers_label"));
 			GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 
-			gchar *main_servers_text = g_markup_printf_escaped(_("Now you need to add <b>Servers</b> to be handled by your Maestro <b>%s</b>.\n\n"
-									   "Put the name (hostname or address) of the Server in the blank space and click on Add.\n"
-									   "<i>*You can be asked for the Server password.</i>\n"
-									   "<i>**You can edit your server list later through Actions->Servers.</i>"),
+			gchar *main_servers_text = g_markup_printf_escaped(_("Now you need to add <b>Servers</b> to be handled by your Maestro <b>%s</b>.\n\n"),
 									   gebr_maestro_server_get_address(maestro));
 
 			gtk_label_set_markup(GTK_LABEL(main_servers_label), main_servers_text);
@@ -518,15 +555,24 @@ on_assistant_prepare(GtkAssistant *assistant,
 
 			GtkTreeIter it;
 			GtkTreeModel *store = gebr_maestro_server_get_model(maestro, FALSE, NULL);
-			if (up->first_run && !gtk_tree_model_get_iter_first(store, &it))
+			if (up->first_run && !gtk_tree_model_get_iter_first(store, &it)) {
+				gtk_widget_hide(GTK_WIDGET(view));
+				gtk_widget_show(servers_label);
 				gtk_entry_set_text(GTK_ENTRY(server_entry), gebr_maestro_server_get_address(maestro));
+			}
 
 			WizardStatus wizard_status = get_wizard_status();
-			if (wizard_status == WIZARD_STATUS_COMPLETE)
+			if (wizard_status == WIZARD_STATUS_COMPLETE) {
 				gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), main_servers, TRUE);
+				gtk_widget_hide(servers_label);
+			}
 
 			g_signal_connect(GTK_BUTTON(server_add), "clicked", G_CALLBACK(on_add_server_clicked), up);
 			g_signal_connect(GTK_ENTRY(server_entry), "activate", G_CALLBACK(on_entry_server_activate), up);
+			g_signal_connect(server_entry, "focus-in-event", G_CALLBACK(on_entry_server_focus_in), up);
+			g_signal_connect(server_entry, "focus-out-event", G_CALLBACK(on_entry_server_focus_out), up);
+
+			gtk_widget_set_tooltip_text(GTK_WIDGET(server_entry), DEFAULT_TEXT);
 		}
 	}
 }
