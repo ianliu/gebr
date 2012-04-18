@@ -1270,7 +1270,6 @@ gebr_file_chooser_set_current_directory (const gchar *entr, const gchar *prefix,
 			}
 		}
 		*error = err_msg;
-		g_debug("On '%s', line '%d', aux:'%s', '%s' ", __FILE__, __LINE__,  aux, err_msg);
 		gchar *folder = g_build_filename(prefix, aux, NULL);
 
 		err_dir = !gtk_file_chooser_set_current_folder_uri(GTK_FILE_CHOOSER(dialog), folder);

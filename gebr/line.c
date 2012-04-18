@@ -74,11 +74,38 @@ on_assistant_base_validate(GtkEntry *entry,
 		else {
 			gtk_assistant_set_page_complete(assistant, current_page, FALSE);
 			gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIALOG_WARNING);
-			gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, _("You need to use a complete path."));
+			gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, _("You need to use an absolute path."));
 		}
 	else {
 		gtk_assistant_set_page_complete(assistant, current_page, FALSE);
 		gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, _("Choose a BASE path."));
+	}
+}
+
+static void
+on_assistant_import_validate(GtkEntry *entry,
+                           GtkAssistant *assistant)
+{
+	GtkWidget *current_page;
+	gint page_number;
+	const gchar *text;
+
+	page_number = gtk_assistant_get_current_page(assistant);
+	current_page = gtk_assistant_get_nth_page(assistant, page_number);
+	text = gtk_entry_get_text(entry);
+
+	gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_OPEN);
+	if (text && *text)
+		if (text[0] == '/' || g_strrstr(text, "<HOME>") || g_strrstr(text, "$HOME"))
+			gtk_assistant_set_page_complete(assistant, current_page, TRUE);
+		else {
+			gtk_assistant_set_page_complete(assistant, current_page, FALSE);
+			gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIALOG_WARNING);
+			gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, _("You need to use an absolute path."));
+		}
+	else {
+		gtk_assistant_set_page_complete(assistant, current_page, FALSE);
+		gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, _("Choose an IMPORT path."));
 	}
 }
 
@@ -316,7 +343,8 @@ on_assistant_prepare(GtkAssistant *assistant,
 		gchar *line_key = gebr_geoxml_line_create_key(gtk_entry_get_text(GTK_ENTRY(entry_title)));
 		gchar *path = g_build_filename("<HOME>", "GeBR", line_key, NULL);
 
-		if (!gtk_entry_get_text(GTK_ENTRY(entry_base)))
+		const gchar *entr_text = gtk_entry_get_text(GTK_ENTRY(entry_base));
+		if (!entr_text || !entr_text[0])
 			gtk_entry_set_text(GTK_ENTRY(entry_base), path);
 
 		g_free(line_key);
@@ -486,12 +514,12 @@ line_setup_wizard(GebrGeoXmlLine *line)
 	g_signal_connect(entry_base, "icon-press", G_CALLBACK(on_line_callback_base_entry_press), data->assistant);
 	g_signal_connect(entry_import, "icon-press", G_CALLBACK(on_line_callback_import_entry_press), data->assistant);
 
-	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
-	gchar *path = g_build_filename(gebr_maestro_server_get_home_dir(maestro),"GeBR",
-	                               gebr_geoxml_line_create_key(gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(line))),
-	                               NULL);
-	gtk_entry_set_text (GTK_ENTRY(entry_base), path);
-	g_free(path);
+	//GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+	//gchar *path = g_build_filename(gebr_maestro_server_get_home_dir(maestro),"GeBR",
+	//                               gebr_geoxml_line_create_key(gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(line))),
+	//                               NULL);
+	//gtk_entry_set_text (GTK_ENTRY(entry_base), path);
+	//g_free(path);
 
 	gchar *title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(line));
 	gtk_entry_set_text(GTK_ENTRY(entry_title), title);
@@ -503,6 +531,7 @@ line_setup_wizard(GebrGeoXmlLine *line)
 	g_signal_connect(entry_title, "changed", G_CALLBACK(on_assistant_entry_changed), assistant);
 	g_signal_connect(entry_base, "changed", G_CALLBACK(on_assistant_base_validate), assistant);
 	g_signal_connect(entry_base, "focus-out-event", G_CALLBACK(on_line_callback_base_focus_out), NULL);
+	g_signal_connect(entry_import, "changed", G_CALLBACK(on_assistant_import_validate), assistant);
 
 	gtk_widget_show(assistant);
 }
@@ -514,18 +543,26 @@ on_line_callback_base_focus_out(GtkWidget *widget,
                                 GdkEvent  *event)
 {
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
-	const gchar *home = gebr_maestro_server_get_home_dir(maestro);
+	const gchar *simple_home = gebr_maestro_server_get_home_dir(maestro);
 	gchar *mount_point = gebr_maestro_info_get_home_mount_point(gebr_maestro_server_get_info(maestro));
 
 	const gchar *text = gtk_entry_get_text(GTK_ENTRY(widget));
 
-	gchar *relative = gebr_relativise_home_path(text, mount_point, home);
+	gchar *relative = gebr_relativise_home_path(text, mount_point, simple_home);
 
 	gtk_entry_set_text(GTK_ENTRY(widget), relative);
 
 	g_free(mount_point);
 	g_free(relative);
 	return FALSE;
+}
+
+static void
+generate_pseudo_paths_vector(gchar ****paths, const gchar *home) {
+	*paths = g_new0(gchar**, 1);
+	(*paths)[0] = g_new0(gchar*, 2);
+	(*paths)[0][0] = g_strdup(home);
+	(*paths)[0][1] = g_strdup("HOME");
 }
 
 void
@@ -542,19 +579,15 @@ on_line_callback_base_entry_press(GtkEntry            *entry,
 	                                                      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
 
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
+	const char *simple_home = gebr_maestro_server_get_home_dir(maestro);
 	gchar *prefix = gebr_maestro_server_get_sftp_prefix(maestro);
 	gchar *mount_point = gebr_maestro_info_get_home_mount_point(gebr_maestro_server_get_info(maestro));
 	gtk_file_chooser_set_local_only(GTK_FILE_CHOOSER(file_chooser), FALSE);
 
 	const gchar *entr = gtk_entry_get_text(entry);
-
 	gchar ***paths = gebr_geoxml_line_get_paths(gebr.line);
-	if (!paths || !paths[0] ) {
-		paths = g_new0(gchar**, 2);
-		paths[0] = g_new0(gchar*, 2);
-		paths[0][0] = g_strdup(gebr_maestro_server_get_home_dir(maestro));
-		paths[0][1] = g_strdup("HOME");
-	}
+	if (!paths || !paths[0] )
+		generate_pseudo_paths_vector(&paths, simple_home);
 	gchar *err_filechooser = NULL;
 	gebr_file_chooser_set_current_directory (entr, prefix, paths, file_chooser, &err_filechooser);
 	g_free(err_filechooser);
@@ -589,11 +622,22 @@ on_line_callback_import_entry_press(GtkEntry            *entry,
 	                                                      GTK_STOCK_ADD, GTK_RESPONSE_OK,
 	                                                      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
+	const char *simple_home = gebr_maestro_server_get_home_dir(maestro);
 	gchar *prefix = gebr_maestro_server_get_sftp_prefix(maestro);
 	gchar *mount_point = gebr_maestro_info_get_home_mount_point(gebr_maestro_server_get_info(maestro));
 	gchar *home = g_build_filename(prefix, gebr_maestro_server_get_home_dir(maestro), NULL);
 	gtk_file_chooser_set_local_only(GTK_FILE_CHOOSER(file_chooser), FALSE);
-	gtk_file_chooser_set_current_folder_uri(GTK_FILE_CHOOSER(file_chooser), home);
+
+	const gchar *entr = gtk_entry_get_text(entry);
+	gchar ***paths = gebr_geoxml_line_get_paths(gebr.line);
+	if (!paths || !paths[0])
+		generate_pseudo_paths_vector(&paths, simple_home);
+	gchar *err_filechooser = NULL;
+	gebr_file_chooser_set_current_directory (entr, prefix, paths, file_chooser, &err_filechooser);
+	g_free(err_filechooser);
+	gebr_pairstrfreev(paths);
+
+	//gtk_file_chooser_set_current_folder_uri(GTK_FILE_CHOOSER(file_chooser), home);
 	gint response = gtk_dialog_run(GTK_DIALOG(file_chooser));
 
 	if (response == GTK_RESPONSE_OK) {
