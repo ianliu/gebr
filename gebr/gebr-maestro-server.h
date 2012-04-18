@@ -183,6 +183,8 @@ gint gebr_maestro_server_get_ncores_for_group(GebrMaestroServer *maestro,
 gboolean gebr_maestro_server_has_servers(GebrMaestroServer *maestro,
                                          gboolean connected_servers);
 
+gboolean gebr_maestro_server_has_connected_daemon(GebrMaestroServer *maestro);
+
 G_END_DECLS
 
 #endif /* __GEBR_MAESTRO_H__ */

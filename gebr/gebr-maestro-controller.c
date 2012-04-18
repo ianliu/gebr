@@ -582,6 +582,7 @@ gebr_maestro_controller_init(GebrMaestroController *self)
 	                                       G_TYPE_BOOLEAN,
 					       G_TYPE_BOOLEAN,
 	                                       G_TYPE_STRING);
+	self->priv->maestro = NULL;
 
 }
 
@@ -816,9 +817,9 @@ server_popup_menu(GtkWidget * widget,
 	return GTK_MENU (menu);
 }
 
-static void
-update_daemon_model(GebrMaestroServer *maestro,
-                    GebrMaestroController *mc)
+void
+gebr_maestro_controller_update_daemon_model(GebrMaestroServer *maestro,
+                                            GebrMaestroController *mc)
 {
 	GtkTreeIter iter;
 	GtkTreeIter new_iter;
@@ -849,7 +850,7 @@ static void
 on_daemons_changed(GebrMaestroServer *maestro,
                    GebrMaestroController *mc)
 {
-	update_daemon_model(maestro, mc);
+	gebr_maestro_controller_update_daemon_model(maestro, mc);
 
 	g_signal_emit(mc, signals[DAEMONS_CHANGED], 0);
 }
@@ -1643,7 +1644,7 @@ update_maestro_view(GebrMaestroController *mc,
 		if (emit_daemon_changed)
 			on_daemons_changed(maestro, mc);
 		else
-			update_daemon_model(maestro, mc);
+			gebr_maestro_controller_update_daemon_model(maestro, mc);
 	}
 
 	gtk_tree_view_set_model(view, GTK_TREE_MODEL(mc->priv->model));
@@ -1725,6 +1726,8 @@ GebrMaestroServer *
 gebr_maestro_controller_get_maestro_for_address(GebrMaestroController *mc,
 						const gchar *address)
 {
+	if (!mc->priv->maestro)
+		return NULL;
 	const gchar *addr = gebr_maestro_server_get_address(mc->priv->maestro);
 
 	if (g_strcmp0(addr, address) == 0)
@@ -1754,6 +1757,11 @@ gebr_maestro_controller_set_window(GebrMaestroController *mc,
 	g_object_set(mc, "window", window, NULL);
 }
 
+GtkWindow *
+gebr_maestro_controller_get_window(GebrMaestroController *mc)
+{
+	return mc->priv->window;
+}
 GtkTreeModel *
 gebr_maestro_controller_get_servers_model(GebrMaestroController *mc)
 {

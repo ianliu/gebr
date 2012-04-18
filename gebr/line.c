@@ -402,6 +402,13 @@ on_assistant_prepare(GtkAssistant *assistant,
 }
 
 static void
+on_assistant_destroy(GtkWindow *window,
+                     WizardData *data)
+{
+	g_free(data);
+}
+
+static void
 line_setup_wizard(GebrGeoXmlLine *line)
 {
 	GtkBuilder *builder = gtk_builder_new();
@@ -426,6 +433,7 @@ line_setup_wizard(GebrGeoXmlLine *line)
 	WizardData *data = g_new(WizardData, 1);
 	data->assistant = assistant;
 	data->builder = builder;
+	g_signal_connect(assistant, "destroy", G_CALLBACK(on_assistant_destroy), data);
 	g_signal_connect(assistant, "cancel", G_CALLBACK(on_assistant_cancel), NULL);
 	g_signal_connect(assistant, "close", G_CALLBACK(on_assistant_close), data);
 	g_signal_connect(assistant, "prepare", G_CALLBACK(on_assistant_prepare), data);
@@ -515,7 +523,6 @@ on_line_callback_base_focus_out(GtkWidget *widget,
 
 	gtk_entry_set_text(GTK_ENTRY(widget), relative);
 
-
 	g_free(mount_point);
 	g_free(relative);
 	return FALSE;
@@ -540,7 +547,7 @@ on_line_callback_base_entry_press(GtkEntry            *entry,
 	gtk_file_chooser_set_local_only(GTK_FILE_CHOOSER(file_chooser), FALSE);
 
 	const gchar *entr = gtk_entry_get_text(entry);
-	//gtk_file_chooser_set_current_folder_uri(GTK_FILE_CHOOSER(file_chooser), entr);
+
 	gchar ***paths = gebr_geoxml_line_get_paths(gebr.line);
 	if (!paths || !paths[0] ) {
 		paths = g_new0(gchar**, 2);

@@ -114,7 +114,12 @@ void gebr_maestro_controller_daemon_server_status_func(GtkTreeViewColumn *tree_c
                                                        GtkTreeIter *iter,
                                                        gpointer data);
 
+GtkWindow * gebr_maestro_controller_get_window(GebrMaestroController *mc);
+
 GtkTreeModel *gebr_maestro_controller_get_servers_model(GebrMaestroController *mc);
+
+void gebr_maestro_controller_update_daemon_model(GebrMaestroServer *maestro,
+                                                 GebrMaestroController *mc);
 
 G_END_DECLS
 
