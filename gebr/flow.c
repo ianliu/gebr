@@ -230,6 +230,7 @@ void flow_import(void)
 	gtk_file_filter_add_pattern(file_filter, "*.flwz");
 	gtk_file_filter_add_pattern(file_filter, "*.flwx");
 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(chooser_dialog), file_filter);
+	gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(chooser_dialog), g_get_home_dir());
 
 	gtk_widget_show(chooser_dialog);
 	if (gtk_dialog_run(GTK_DIALOG(chooser_dialog)) != GTK_RESPONSE_YES)
@@ -312,6 +313,7 @@ void flow_export(void)
 	gtk_file_filter_add_pattern(file_filter, "*.flwx");
 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(chooser_dialog), file_filter);
 	gtk_file_chooser_set_extra_widget(GTK_FILE_CHOOSER(chooser_dialog), box);
+	gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(chooser_dialog), g_get_home_dir());
 	gtk_widget_show_all(box);
 
 	tmp = gebr_gui_save_dialog_run(GEBR_GUI_SAVE_DIALOG(chooser_dialog));
