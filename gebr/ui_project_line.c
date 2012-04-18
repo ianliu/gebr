@@ -1116,6 +1116,7 @@ void project_line_import(void)
 	gtk_file_chooser_set_local_only(GTK_FILE_CHOOSER(chooser_dialog), FALSE);
 	gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(chooser_dialog), TRUE);
 
+	gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(chooser_dialog), g_get_home_dir());
 	// FIXME: Use the global variable for adding shortcuts
 	gtk_file_chooser_add_shortcut_folder(GTK_FILE_CHOOSER(chooser_dialog), "/usr/share/gebr/demos/", NULL);
 	file_filter = gtk_file_filter_new();
@@ -1224,6 +1225,7 @@ void project_line_export(void)
 	gebr_gui_save_dialog_set_default_extension(GEBR_GUI_SAVE_DIALOG(chooser_dialog), extension);
 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(chooser_dialog), file_filter);
 	gtk_file_chooser_set_extra_widget(GTK_FILE_CHOOSER(chooser_dialog), box);
+	gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(chooser_dialog), g_get_home_dir());
 	gtk_widget_show_all(box);
 
 	/* show file chooser */
