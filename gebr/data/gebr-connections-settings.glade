@@ -30,10 +30,9 @@
             <child>
               <object class="GtkLabel" id="pwd_info_label">
                 <property name="visible">True</property>
-                <property name="xalign">0.4699999988079071</property>
                 <property name="label" translatable="yes">G&#xEA;BR needs a &lt;b&gt;connection&lt;/b&gt; to a maestro to send jobs and receive outputs. For security reasons an encrypted connection is made using SSH protocol. 
 
-The &lt;b&gt;password&lt;/b&gt; that is possibly going to be prompted is the same of your account  in the machine of your maestro</property>
+Your login password may be asked to stablish the connection.</property>
                 <property name="use_markup">True</property>
                 <property name="wrap">True</property>
               </object>
@@ -284,10 +283,9 @@ The &lt;b&gt;password&lt;/b&gt; that is possibly going to be prompted is the sam
     <child>
       <object class="GtkLabel" id="server_info_label">
         <property name="visible">True</property>
-        <property name="yalign">0.49000000953674316</property>
-        <property name="label" translatable="yes">Your Maestro can have many servers under its control. For each server, you are going to be asked for a password. The password you must provide is the same that you would use to log in to that machine.
+        <property name="label" translatable="yes">Your Maestro can have many servers under its control. For each server, you are going to be asked for a password.
 
- Additionally, you are going to be prompted for a password of the remote browsing of your files. This way, you can navigate on your remote files in your servers.</property>
+ Additionally, your login credentials may be asked once more for the remote browsing of your files.</property>
         <property name="use_markup">True</property>
         <property name="wrap">True</property>
       </object>
@@ -401,7 +399,7 @@ Put the name (hostname or address) of the Server in the blank space and click on
         <child>
           <object class="GtkLabel" id="maestro_info_label">
             <property name="visible">True</property>
-            <property name="label" translatable="yes">&lt;b&gt;Maestro&lt;/b&gt; is the responsible for receiving client requests and for managing the available resources to perform it in the best way.</property>
+            <property name="label" translatable="yes">&lt;b&gt;Maestro&lt;/b&gt; is the responsible for receiving G&#xEA;BR requests and for managing the available resources to perform it in the best way.</property>
             <property name="use_markup">True</property>
             <property name="wrap">True</property>
           </object>

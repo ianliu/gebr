@@ -213,7 +213,7 @@ set_status_for_maestro(GebrMaestroController *self,
 			gtk_widget_show(error_box);
 
 			gchar *txt = g_markup_printf_escaped(_("Could not connect to Maestro <b>%s</b>!\n"
-							       "The connection reported the following error:\n<i>%s</i>"), address, msg);
+							       "The connection reported the following error:\n\n<i>%s</i>"), address, msg);
 			gtk_label_set_markup(GTK_LABEL(error_label), txt);
 			g_free(txt);
 
@@ -612,19 +612,6 @@ on_combo_set_text(GtkCellLayout   *cell_layout,
 	g_free(description);
 }
 
-//static void
-//on_maestro_combo_changed(GtkComboBox *combo,
-//                         struct ui_preferences *up)
-//{
-//	gchar *addr;
-//	GtkTreeIter iter;
-//	GtkTreeModel *model;
-//
-//	gtk_combo_box_get_active_iter(combo, &iter);
-//	model = gtk_combo_box_get_model(combo);
-//	gtk_tree_model_get(model, &iter, MAESTRO_DEFAULT_ADDR, &addr, -1);
-//}
-
 static void
 set_maestro_chooser_page(GtkBuilder *builder,
                          struct ui_preferences *up)
@@ -647,7 +634,7 @@ set_maestro_chooser_page(GtkBuilder *builder,
 		gtk_list_store_append(model, &iter);
 		gtk_list_store_set(model, &iter,
 				   MAESTRO_DEFAULT_ADDR, gebr_maestro_server_get_address(maestro),
-				   MAESTRO__DEFAULT_DESCRIPTION, _("Current Maestro"),
+				   MAESTRO__DEFAULT_DESCRIPTION, _("Suggested Maestro"),
 				   -1);
 	}
 	if (!maestros_default) {
@@ -662,7 +649,7 @@ set_maestro_chooser_page(GtkBuilder *builder,
 			gtk_list_store_append(model, &iter);
 			gtk_list_store_set(model, &iter,
 			                   MAESTRO_DEFAULT_ADDR, gebr.config.maestro_address->str,
-			                   MAESTRO__DEFAULT_DESCRIPTION, _("Current maestro"),
+			                   MAESTRO__DEFAULT_DESCRIPTION, _("Suggested maestro"),
 			                   -1);
 		}
 
@@ -765,7 +752,7 @@ preferences_setup_ui(gboolean first_run,
 		gtk_assistant_append_page(GTK_ASSISTANT(assistant), main_servers);
 		gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), main_servers, FALSE);
 		gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), main_servers, GTK_ASSISTANT_PAGE_CONFIRM);
-		gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), main_servers, _("Insert Servers on Maestro"));
+		gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), main_servers, _("Servers"));
 
 		ui_preferences->prev_page = 1;
 		ui_preferences->back_button = gtk_button_new_with_mnemonic("_Back");

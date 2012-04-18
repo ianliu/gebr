@@ -502,8 +502,6 @@ parse_messages(GebrCommServer *comm_server,
 				daemon_addr = g_list_nth_data(arguments, 0);
 				status_id = g_list_nth_data(arguments, 1);
 
-				g_debug("on %s, daemon_addr:'%s', error:'%s'", __func__, daemon_addr->str, status_id->str);
-
 				gint ret_id = atoi(status_id->str);
 				g_signal_emit(maestro, signals[PATH_ERROR], 0, ret_id);
 
@@ -743,7 +741,6 @@ parse_messages(GebrCommServer *comm_server,
 			GString *status = g_list_nth_data(arguments, 1);
 			GString *parameter = g_list_nth_data(arguments, 2);
 
-			g_debug("******************************on %s, id:%s, status:%s, parameter:%s",__func__, id->str, status->str, parameter->str  ); 
 			GebrJob *job = g_hash_table_lookup(maestro->priv->jobs, id->str);
 			gebr_job_set_status(job, gebr_comm_job_get_status_from_string(status->str), parameter->str);
 
