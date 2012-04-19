@@ -1252,21 +1252,21 @@ gebr_file_chooser_set_warning_widget(gchar ***paths,
 }
 
 void
-gebr_file_chooser_set_current_directory (const gchar *entr, const gchar *prefix, gchar ***paths, GtkWidget *dialog, gchar **error)
+gebr_file_chooser_set_current_directory (const gchar *entry_text, const gchar *prefix, gchar ***paths, GtkWidget *dialog, gchar **error)
 {
 	gchar *folder = NULL;
 	gboolean err_entry = FALSE;
 	gboolean err_dir = FALSE;
 
-	if (!entr || !*entr ) {
+	if (!entry_text || !*entry_text ) {
 		err_entry = TRUE;
 		error = NULL;
 	} else {
 		gchar *err_msg = NULL;
-		gchar *aux = gebr_resolve_relative_path(entr, paths);
+		gchar *aux = gebr_resolve_relative_path(entry_text, paths);
 		if (!gebr_validate_path(aux, paths, &err_msg)) {
 			for (gint i = 0; paths && paths[i]; i++) {
-				if (g_strcmp0(paths[i][1], "HOME") == 0){
+				if (g_strcmp0(paths[i][1], "HOME") == 0) {
 				    g_free(aux);
 				    aux = g_strdup(paths[i][0]);
 				    break;
@@ -1282,11 +1282,30 @@ gebr_file_chooser_set_current_directory (const gchar *entr, const gchar *prefix,
 		g_free(folder);
 	}
 
-	if (err_entry || err_dir){
-		gchar *aux = gebr_resolve_relative_path(paths[0][0], paths);
-		folder = g_build_filename(prefix, aux, NULL); //use BASE
+	if (err_entry || err_dir) {
+		gchar *base_dir = NULL, *home_dir = NULL;
+		for (gint i = 0; paths && paths[i]; i++) {
+			if (g_strcmp0(paths[i][1], "HOME") == 0)
+				home_dir = g_strdup(paths[i][0]);
+
+			if (g_strcmp0(paths[i][1], "BASE") == 0) {
+				base_dir = g_strdup(paths[i][0]);
+				break;
+			}
+		}
+
+		gchar *curr_dir;
+		if (base_dir)
+			curr_dir = gebr_resolve_relative_path(base_dir, paths);
+		else
+			curr_dir = gebr_resolve_relative_path(home_dir, paths);
+
+		folder = g_build_filename(prefix, curr_dir, NULL);
 		gtk_file_chooser_set_current_folder_uri(GTK_FILE_CHOOSER(dialog), folder);
-		g_free(aux);
+
+		g_free(curr_dir);
+		g_free(home_dir);
+		g_free(base_dir);
 		g_free(folder);
 	}
 }
