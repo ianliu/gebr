@@ -26,7 +26,6 @@ glade_DATA = \
 	gebr-job-control.glade \
 	gebr-maestro-dialog.glade \
 	document-properties.glade \
-	document-properties-new.glade \
 	mpi-parameters-help.glade \
 	project-properties.glade \
 	line-properties.glade \
