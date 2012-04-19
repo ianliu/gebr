@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-04-19 11:20-0300\n"
+"POT-Creation-Date: 2012-04-19 12:34-0300\n"
 "PO-Revision-Date: 2012-04-13 16:47-0300\n"
 "Last-Translator: Rodrigo Morelatto <morelatto@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
@@ -467,15 +467,15 @@ msgstr ""
 msgid "document"
 msgstr "documento"
 
-#: ../document.c:289 ../ui_document.c:1545 ../ui_help.c:176 ../ui_help.c:239
+#: ../document.c:289 ../ui_document.c:1547 ../ui_help.c:176 ../ui_help.c:239
 msgid "project"
 msgstr "projeto"
 
-#: ../document.c:292 ../ui_document.c:1547 ../ui_help.c:173 ../ui_help.c:243
+#: ../document.c:292 ../ui_document.c:1549 ../ui_help.c:173 ../ui_help.c:243
 msgid "line"
 msgstr "linha"
 
-#: ../document.c:295 ../ui_document.c:1549 ../ui_help.c:170 ../ui_help.c:247
+#: ../document.c:295 ../ui_document.c:1551 ../ui_help.c:170 ../ui_help.c:247
 msgid "flow"
 msgstr "fluxo"
 
@@ -650,7 +650,7 @@ msgstr "Parâmetros para o Programa \"%s\""
 msgid "Parameter"
 msgstr "Parâmetro"
 
-#: ../flow.c:919 ../flow.c:1010 ../ui_document.c:605
+#: ../flow.c:919 ../flow.c:1010 ../ui_document.c:607
 msgid "Value"
 msgstr "Valor"
 
@@ -658,7 +658,7 @@ msgstr "Valor"
 msgid "Variables"
 msgstr "Variáveis"
 
-#: ../flow.c:1010 ../ui_document.c:582
+#: ../flow.c:1010 ../ui_document.c:584
 msgid "Keyword"
 msgstr "Palavra-chave"
 
@@ -666,21 +666,21 @@ msgstr "Palavra-chave"
 msgid "Result"
 msgstr "Resultado"
 
-#: ../flow.c:1010 ../ui_document.c:643
+#: ../flow.c:1010 ../ui_document.c:645
 msgid "Comment"
 msgstr "Comentário"
 
-#: ../flow.c:1013 ../ui_document.c:1549
+#: ../flow.c:1013 ../ui_document.c:1551
 msgid "Flow"
 msgstr "Fluxo"
 
 #. Set title
-#: ../flow.c:1014 ../ui_document.c:1547 ../ui_project_line.c:403
+#: ../flow.c:1014 ../ui_document.c:1549 ../ui_project_line.c:403
 msgid "Line"
 msgstr "Linha"
 
 #. Set title
-#: ../flow.c:1014 ../ui_document.c:1545 ../ui_project_line.c:541
+#: ../flow.c:1014 ../ui_document.c:1547 ../ui_project_line.c:541
 msgid "Project"
 msgstr "Projeto"
 
@@ -1361,7 +1361,7 @@ msgstr "Exemplos"
 msgid "New Project"
 msgstr "Novo Projeto"
 
-#: ../interface.c:81 ../interface.c:82 ../line.c:644
+#: ../interface.c:81 ../interface.c:82 ../line.c:645
 msgid "New Line"
 msgstr "Nova Linha"
 
@@ -1613,11 +1613,11 @@ msgstr ""
 "Pressione o botão voltar para mudar o diretório BASE\n"
 " ou o título desta linha."
 
-#: ../line.c:193 ../line.c:252
+#: ../line.c:193 ../line.c:253
 msgid "Error!"
 msgstr "Erro!"
 
-#: ../line.c:196 ../ui_document.c:1646
+#: ../line.c:196 ../ui_document.c:1648
 msgid "The directory could not be created!"
 msgstr "O diretório não pode ser criado!"
 
@@ -1634,15 +1634,15 @@ msgstr ""
 msgid "Warning!"
 msgstr "Aviso!"
 
-#: ../line.c:208 ../ui_document.c:1654
+#: ../line.c:208 ../ui_document.c:1656
 msgid "The directory already exists!"
 msgstr "O diretório já existe!"
 
-#: ../line.c:243 ../ui_document.c:1688
+#: ../line.c:244 ../ui_document.c:1690
 msgid "Timed Out!"
 msgstr "Limite de tempo excedido!"
 
-#: ../line.c:247
+#: ../line.c:248
 msgid ""
 "Could not create directory.\n"
 "Check if your maestro is connected."
@@ -1650,7 +1650,7 @@ msgstr ""
 "Não foi possível criar o diretório.\n"
 "Verifique se seu maestro está conectado."
 
-#: ../line.c:336
+#: ../line.c:337
 #, fuzzy, c-format
 msgid ""
 "A <b>Line</b> is a way of organize Flows and it is associated to the Maestro "
@@ -1663,7 +1663,7 @@ msgstr ""
 "\n"
 "O Maestro desta Linha é <b>%s</b>"
 
-#: ../line.c:353 ../ui_document.c:351
+#: ../line.c:354 ../ui_document.c:353
 #, c-format
 msgid ""
 "<i>You will browse on files and folders of servers of maestro <b>%s</b>.\n"
@@ -1672,7 +1672,7 @@ msgstr ""
 "<i>You will browse on files and folders of servers of maestro <b>%s</b>.\n"
 "This directories structure can be not the same on your local machine.</i>"
 
-#: ../line.c:366
+#: ../line.c:367
 #, c-format
 msgid ""
 "<i>GêBR will create some directories to organize the files\n"
@@ -1680,60 +1680,60 @@ msgid ""
 "These directories will be created on servers of maestro <b>%s</b>.</i>"
 msgstr ""
 
-#: ../line.c:374
+#: ../line.c:375
 #, c-format
 msgid "<i>&lt;BASE&gt;: <b>%s</b></i>"
 msgstr "<i>&lt;BASE&gt;: <b>%s</b></i>"
 
-#: ../line.c:424 ../line.c:511 ../ui_document.c:1902
+#: ../line.c:425 ../line.c:512 ../ui_document.c:1904
 msgid "Creating directories..."
 msgstr "Criando diretórios..."
 
-#: ../line.c:469
+#: ../line.c:470
 msgid "Creating a new Line"
 msgstr "Criando uma nova Linha"
 
-#: ../line.c:482
+#: ../line.c:483
 msgid "Basic line information"
 msgstr "Informação básica da Linha"
 
-#: ../line.c:487
+#: ../line.c:488
 msgid "Line Paths"
 msgstr "Caminhos de linha:"
 
-#: ../line.c:492 ../ui_document.c:357
+#: ../line.c:493 ../ui_document.c:359
 msgid "BASE Path"
 msgstr "Caminho BASE"
 
-#: ../line.c:497 ../ui_document.c:387
+#: ../line.c:498 ../ui_document.c:389
 msgid "IMPORT Path"
 msgstr "Caminho IMPORT"
 
-#: ../line.c:502
+#: ../line.c:503
 msgid "Hierarchy Structure"
 msgstr "Estrutura de Hierarquia"
 
-#: ../line.c:507
+#: ../line.c:508
 msgid "Line Review"
 msgstr "Revisão da Linha"
 
 #. log action
-#: ../line.c:685
+#: ../line.c:686
 #, c-format
 msgid "Deleting child Flow '%s'."
 msgstr "Apagando o Fluxo filho '%s'."
 
-#: ../line.c:699
+#: ../line.c:700
 #, c-format
 msgid "Deleting Line '%s'."
 msgstr "Apagando a Linha '%s'."
 
-#: ../line.c:701
+#: ../line.c:702
 #, c-format
 msgid "Deleting Line '%s' from project '%s'."
 msgstr "Apagando a Linha '%s' do projeto '%s'."
 
-#: ../line.c:790
+#: ../line.c:791
 msgid "Flows loaded."
 msgstr "Fluxos carregados."
 
@@ -1836,56 +1836,56 @@ msgstr "Remover parâmetros atuais."
 msgid "%s '%s' properties"
 msgstr "%s '%s' propriedades"
 
-#: ../ui_document.c:317 ../ui_preferences.c:784 ../ui_preferences.c:869
+#: ../ui_document.c:319 ../ui_preferences.c:784 ../ui_preferences.c:869
 msgid "Preferences"
 msgstr "Preferências"
 
-#: ../ui_document.c:531
+#: ../ui_document.c:533
 #, c-format
 msgid "Variables dictionary for %s \"%s\""
 msgstr "Dicionário de variáveis para %s \"%s\""
 
-#: ../ui_document.c:620 ../ui_document.c:1067
+#: ../ui_document.c:622 ../ui_document.c:1069
 msgid "Number"
 msgstr "Número"
 
-#: ../ui_document.c:622 ../ui_document.c:1065
+#: ../ui_document.c:624 ../ui_document.c:1067
 msgid "String"
 msgstr "Texto"
 
-#: ../ui_document.c:814
+#: ../ui_document.c:816
 msgid "Click 'New' to create a variable."
 msgstr "Clique em 'Nova' para criar uma variável."
 
-#: ../ui_document.c:824
+#: ../ui_document.c:826
 msgid "Please enter an unique variable name."
 msgstr "Por favor, digite um nome de variável único."
 
-#: ../ui_document.c:832
+#: ../ui_document.c:834
 msgid "Please enter a number or expression."
 msgstr "Por favor, digite um número ou expressão."
 
-#: ../ui_document.c:836
+#: ../ui_document.c:838
 msgid "Please enter a text."
 msgstr "Por favor, insira um texto."
 
-#: ../ui_document.c:844
+#: ../ui_document.c:846
 msgid "Please enter a comment."
 msgstr "Por favor, digite um comentário."
 
-#: ../ui_document.c:1047
+#: ../ui_document.c:1049
 msgid "Click to select type for a new parameter"
 msgstr "Clique para escolher o tipo de um novo parâmetro"
 
-#: ../ui_document.c:1111
+#: ../ui_document.c:1113
 msgid "Cannot use reserved keyword 'iter'."
 msgstr "A palavra-chave 'iter' não pode ser usada."
 
-#: ../ui_document.c:1116
+#: ../ui_document.c:1118
 msgid "This keyword is reserved."
 msgstr "Esta palavra-chave é reservada."
 
-#: ../ui_document.c:1121
+#: ../ui_document.c:1123
 msgid ""
 "Valid keywords are lower case characters from 'a' to 'z', numbers or "
 "underscore."
@@ -1893,33 +1893,33 @@ msgstr ""
 "Palavras-chaves válidas são compostas por letras minúsculas, números e "
 "sublinhado '_'."
 
-#: ../ui_document.c:1430
+#: ../ui_document.c:1432
 msgid ""
 "There is a parameter which already uses this keyword. Please choose another."
 msgstr ""
 "Outro parâmetro já utiliza esta palavra-chave. Por favor escolha outra."
 
-#: ../ui_document.c:1470
+#: ../ui_document.c:1472
 msgid "<i>New</i>"
 msgstr "<i>Nova</i>"
 
-#: ../ui_document.c:1551
+#: ../ui_document.c:1553
 msgid "Unknown"
 msgstr "Desconhecido"
 
-#: ../ui_document.c:1551
+#: ../ui_document.c:1553
 msgid "unknown"
 msgstr "desconhecido"
 
-#: ../ui_document.c:1635
+#: ../ui_document.c:1637
 msgid "Sucess!"
 msgstr "Sucesso!"
 
-#: ../ui_document.c:1637
+#: ../ui_document.c:1639
 msgid "The directory were successfully created!"
 msgstr "Os diretórios foram criados com sucesso!"
 
-#: ../ui_document.c:1643
+#: ../ui_document.c:1645
 msgid ""
 "Press the back buttom to change the BASE directory\n"
 "or the line title."
@@ -1927,7 +1927,7 @@ msgstr ""
 "Pressione o botão voltar para mudar o diretório BASE\n"
 " ou o título desta linha."
 
-#: ../ui_document.c:1651
+#: ../ui_document.c:1653
 msgid ""
 "You can change the BASE directory by pressing the\n"
 "back buttom or use this folder anyway."
@@ -1935,7 +1935,7 @@ msgstr ""
 "Você pode mudar o diretório BASE pressionando o\n"
 "botão voltar ou usar esta pasta assim mesmo."
 
-#: ../ui_document.c:1692
+#: ../ui_document.c:1694
 msgid ""
 "Could not create directory.\n"
 "Try reconnecting your maestro."
