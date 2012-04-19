@@ -250,6 +250,7 @@ gebr_config_load(void)
 		if (!g_key_file_load_from_file(gebr.config.key_file, gebr.config.path->str, G_KEY_FILE_NONE, NULL))
 			gebr_config_load_from_gengetopt();
 
+	gebr.config.version   = gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "version", "None");
 	gebr.config.maestro_address  = gebr_g_key_file_load_string_key(gebr.config.key_file, "maestro", "address", g_get_host_name());
 	gebr.config.username  = gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "name", g_get_real_name());
 	gebr.config.email     = gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "email", g_get_user_name());
@@ -353,11 +354,16 @@ gebr_post_config(gboolean has_config)
 	if (!has_config)
 		preferences_setup_ui(TRUE, TRUE, TRUE);
 	else {
-		gebr_maestro_controller_connect(gebr.maestro_controller,
-						gebr.config.maestro_address->str);
 		project_list_populate();
 		restore_project_line_flow_selection();
-		gebr_config_save(FALSE);
+
+		if (gebr_has_maestro_config() && g_strcmp0(gebr.config.version->str, "None")) {
+			gebr_maestro_controller_connect(gebr.maestro_controller,
+			                                gebr.config.maestro_address->str);
+			gebr_config_save(FALSE);
+		} else {
+			preferences_setup_ui(TRUE, TRUE, FALSE);
+		}
 	}
 
 }
@@ -388,6 +394,7 @@ void gebr_config_save(gboolean verbose)
 	g_key_file_set_string(gebr.config.key_file, "general", "email", gebr.config.email->str);
 	g_key_file_set_string(gebr.config.key_file, "general", "editor", gebr.config.editor->str);
 	g_key_file_set_boolean(gebr.config.key_file, "general", "native_editor", gebr.config.native_editor);
+	g_key_file_set_string(gebr.config.key_file, "general", "version", GEBR_VERSION);
 
 	GString *home_variable;
 	home_variable = g_string_new(NULL);
@@ -659,3 +666,17 @@ gebr_get_session_id(void)
 	return SESSIONID;
 }
 
+gboolean
+gebr_has_maestro_config(void)
+{
+	gboolean has_config;
+	GString *path = g_string_new(NULL);
+
+	g_string_printf(path, "%s/.gebr/gebrm/%s/servers.conf", g_get_home_dir(), gebr.config.maestro_address->str);
+
+	has_config = g_access(path->str, F_OK | R_OK) == 0 ? TRUE : FALSE;
+
+	g_string_free(path, TRUE);
+
+	return has_config;
+}

@@ -104,6 +104,7 @@ struct gebr {
 	struct gebr_config {
 		GKeyFile *key_file;
 		GString *path;
+		GString *version;
 
 		GString *maestro_address;
 		GString *username;
@@ -193,6 +194,8 @@ void gebr_message(GebrLogMessageType type, gboolean in_statusbar, gboolean in_lo
 void gebr_remove_help_edit_window(GebrGeoXmlDocument * document);
 
 const gchar *gebr_get_session_id(void);
+
+gboolean gebr_has_maestro_config(void);
 
 G_END_DECLS
 
