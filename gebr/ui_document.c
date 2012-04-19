@@ -301,8 +301,10 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 	g_signal_connect(data->apply_button, "clicked", G_CALLBACK(on_properties_apply), data);
 	g_signal_connect_swapped(cancel_button, "clicked", G_CALLBACK(gtk_widget_destroy), window);
 
-	GtkWidget *main_props = GTK_WIDGET(gtk_builder_get_object(builder, "main_props1"));
+	GtkWidget *main_props = GTK_WIDGET(gtk_builder_get_object(builder, "main_props"));
 	GtkWidget *table = GTK_WIDGET(gtk_builder_get_object(builder, "table"));
+	GtkWidget *info_label = GTK_WIDGET(gtk_builder_get_object(builder, "info_label"));
+	gtk_widget_hide(info_label);
 
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(button_box), GTK_BUTTONBOX_END);
 	gtk_box_pack_start(GTK_BOX(button_box), cancel_button, TRUE, TRUE, 0);
