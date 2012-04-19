@@ -452,7 +452,7 @@ line_setup_wizard(GebrGeoXmlLine *line)
 {
 	GtkBuilder *builder = gtk_builder_new();
 
-	if (!gtk_builder_add_from_file(builder, GEBR_GLADE_DIR "/document-properties-new.glade", NULL))
+	if (!gtk_builder_add_from_file(builder, GEBR_GLADE_DIR "/document-properties.glade", NULL))
 		return;
 
 	GtkWidget *page1 = GTK_WIDGET(gtk_builder_get_object(builder, "main_props"));
