@@ -244,7 +244,9 @@ static void
 on_daemons_changed(GebrMaestroServer *maestro,
                    struct ui_preferences *up)
 {
-	if (gebr_maestro_server_has_servers(maestro, TRUE) && !maestro_has_servers) {
+	gboolean has_connected_servers = gebr_maestro_server_has_servers(maestro, FALSE);
+
+	if (!maestro_has_servers) {
 		maestro_has_servers = TRUE;
 		g_signal_handlers_disconnect_by_func(maestro, on_daemons_changed, up);
 
@@ -252,9 +254,12 @@ on_daemons_changed(GebrMaestroServer *maestro,
 		GtkWidget *servers_label = GTK_WIDGET(gtk_builder_get_object(up->builder, "servers_label"));
 		GtkWidget *servers_view = GTK_WIDGET(gtk_builder_get_object(up->builder, "servers_view"));
 
-		gtk_assistant_set_page_complete(GTK_ASSISTANT(up->dialog), main_servers, TRUE);
 		gtk_widget_hide(servers_label);
 		gtk_widget_show(servers_view);
+
+		if (has_connected_servers)
+			gtk_assistant_set_page_complete(GTK_ASSISTANT(up->dialog), main_servers, TRUE);
+
 	}
 }
 
