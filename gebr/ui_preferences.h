@@ -29,6 +29,7 @@ struct ui_preferences {
 
 	gboolean cancel_assistant;
 	gboolean first_run;
+	gboolean insert_preferences;
 
 	gint prev_page;
 	GtkWidget *back_button;
@@ -46,7 +47,8 @@ struct ui_preferences {
 };
 
 struct ui_preferences *preferences_setup_ui(gboolean first_run,
-                                            gboolean wizard_run);
+                                            gboolean wizard_run,
+                                            gboolean insert_preferences);
 
 G_END_DECLS
 #endif				//__UI_PREFERENCES_H

@@ -351,7 +351,7 @@ gebr_post_config(gboolean has_config)
 
 	menu_list_populate();
 	if (!has_config)
-		preferences_setup_ui(TRUE, TRUE);
+		preferences_setup_ui(TRUE, TRUE, TRUE);
 	else {
 		gebr_maestro_controller_connect(gebr.maestro_controller,
 						gebr.config.maestro_address->str);

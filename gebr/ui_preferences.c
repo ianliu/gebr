@@ -59,6 +59,8 @@ typedef enum {
  * Prototypes
  */
 
+static gboolean maestro_has_servers = FALSE;
+
 static void set_status_for_maestro(GebrMaestroController *self,
                                    GebrMaestroServer     *maestro,
                                    struct ui_preferences *up,
@@ -242,10 +244,8 @@ static void
 on_daemons_changed(GebrMaestroServer *maestro,
                    struct ui_preferences *up)
 {
-	static gboolean has_servers = FALSE;
-
-	if (gebr_maestro_server_has_servers(maestro, TRUE) && !has_servers) {
-		has_servers = TRUE;
+	if (gebr_maestro_server_has_servers(maestro, TRUE) && !maestro_has_servers) {
+		maestro_has_servers = TRUE;
 		g_signal_handlers_disconnect_by_func(maestro, on_daemons_changed, up);
 
 		GtkWidget *main_servers = GTK_WIDGET(gtk_builder_get_object(up->builder, "main_servers"));
@@ -409,7 +409,6 @@ static void
 on_connect_maestro_clicked(GtkButton *button,
                            struct ui_preferences *up)
 {
-
 	GtkWidget *main_maestro = GTK_WIDGET(gtk_builder_get_object(up->builder, "maestro_chooser"));
 	GtkWidget *connections_info = GTK_WIDGET(gtk_builder_get_object(up->builder, "main_connection"));
 	GtkWidget *main_status = GTK_WIDGET(gtk_builder_get_object(up->builder, "main_status"));
@@ -428,10 +427,12 @@ on_connect_maestro_clicked(GtkButton *button,
 
 	g_signal_connect(gebr.maestro_controller, "maestro-state-changed", G_CALLBACK(on_maestro_state_changed), up);
 
-	if (!maestro || gebr_maestro_server_get_state(maestro) != SERVER_STATE_LOGGED || g_strcmp0(up->maestro_addr, gebr_maestro_server_get_address(maestro)))
+	if (!maestro || gebr_maestro_server_get_state(maestro) != SERVER_STATE_LOGGED || g_strcmp0(up->maestro_addr, gebr_maestro_server_get_address(maestro))) {
+		maestro_has_servers = FALSE;
 		gebr_maestro_controller_connect(gebr.maestro_controller, up->maestro_addr);
-	else
+	} else {
 		set_status_for_maestro(gebr.maestro_controller, maestro, up, gebr_maestro_server_get_state(maestro));
+	}
 }
 
 static void
@@ -484,8 +485,6 @@ on_assistant_prepare(GtkAssistant *assistant,
 			gboolean active = gtk_tree_model_get_iter_first(model_servers, &iter);
 			gtk_label_set_markup(review_first_label, _("<b><span size='large'>Here is the summary of you Connections Settings.</span></b>"));
 
-			GtkWidget *warning_img = GTK_WIDGET(gtk_builder_get_object(up->builder, "review_dialog_img"));
-			gtk_widget_hide(warning_img);
 			GString *servers = g_string_new("");
 
 			while (active) {
@@ -500,13 +499,11 @@ on_assistant_prepare(GtkAssistant *assistant,
 
 			GtkLabel *servers_label = GTK_LABEL(gtk_builder_get_object(up->builder, "servers_maestro"));
 			gtk_label_set_text(servers_label, servers->str);
-			gtk_label_set_markup(review_orientations_label, _("Changes can be made by going to Actions->servers."));
-			gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), page_review, _("Review"));
 			g_string_free(servers, TRUE);
-		} else {
-			gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), page_review, _("Warning"));
-			gtk_label_set_markup(review_orientations_label, _("Click on <tt>Back</tt> to connect to it or on <tt>Cancel</tt> to close GêBR."));
 
+			gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), page_review, _("Warning"));
+			gtk_label_set_markup(review_orientations_label, _("Click on <tt>Back</tt> to use that settings or on <tt>Cancel</tt> to close GêBR."));
+		} else {
 			if (wizard_status == WIZARD_STATUS_WITHOUT_MAESTRO) {
 				gtk_label_set_markup(review_first_label, _("<b><span size='large'>You need at least a connected Maestro!</span></b>"));
 			} else {
@@ -515,6 +512,8 @@ on_assistant_prepare(GtkAssistant *assistant,
 				gtk_label_set_markup(review_first_label, daemon_msg);
 				g_free(daemon_msg);
 			}
+			gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), page_review, _("Warning"));
+			gtk_label_set_markup(review_orientations_label, _("Click on <tt>Back</tt> to connect to it or on <tt>Cancel</tt> to close GêBR."));
 		}
 	}
 	else if (page == MAESTRO_INFO_PAGE) {
@@ -567,7 +566,7 @@ on_assistant_prepare(GtkAssistant *assistant,
 
 			GtkTreeIter it;
 			GtkTreeModel *store = gebr_maestro_server_get_model(maestro, FALSE, NULL);
-			if (up->first_run && !gtk_tree_model_get_iter_first(store, &it)) {
+			if (!gtk_tree_model_get_iter_first(store, &it)) {
 				gtk_widget_hide(GTK_WIDGET(view));
 				gtk_widget_show(servers_label);
 				gtk_entry_set_text(GTK_ENTRY(server_entry), gebr_maestro_server_get_address(maestro));
@@ -737,7 +736,8 @@ set_maestro_chooser_page(GtkBuilder *builder,
  */
 struct ui_preferences *
 preferences_setup_ui(gboolean first_run,
-                     gboolean wizard_run)
+                     gboolean wizard_run,
+                     gboolean insert_preferences)
 {
 	struct ui_preferences *ui_preferences;
 
@@ -771,7 +771,8 @@ preferences_setup_ui(gboolean first_run,
 		g_signal_connect(assistant, "cancel", G_CALLBACK(on_assistant_cancel), ui_preferences);
 		g_signal_connect(assistant, "close", G_CALLBACK(on_assistant_close), ui_preferences);
 		g_signal_connect(assistant, "prepare", G_CALLBACK(on_assistant_prepare), ui_preferences);
-		g_signal_connect(assistant, "apply", G_CALLBACK(on_assistant_apply), ui_preferences);
+		if (insert_preferences)
+			g_signal_connect(assistant, "apply", G_CALLBACK(on_assistant_apply), ui_preferences);
 
 		// CANCEL_PAGE
 		gtk_assistant_append_page(GTK_ASSISTANT(assistant), page_review);
@@ -788,7 +789,10 @@ preferences_setup_ui(gboolean first_run,
 		// MAESTRO_INFO_PAGE
 		gtk_assistant_append_page(GTK_ASSISTANT(assistant), page_minfo);
 		gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), page_minfo, TRUE);
-		gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), page_minfo, GTK_ASSISTANT_PAGE_CONTENT);
+		if (insert_preferences)
+			gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), page_minfo, GTK_ASSISTANT_PAGE_CONTENT);
+		else
+			gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), page_minfo, GTK_ASSISTANT_PAGE_INTRO);
 		gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), page_minfo, _("Maestro"));
 
 		// MAESTRO_PAGE
@@ -809,7 +813,7 @@ preferences_setup_ui(gboolean first_run,
 		gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), main_servers, GTK_ASSISTANT_PAGE_CONFIRM);
 		gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), main_servers, _("Servers"));
 
-		ui_preferences->prev_page = 1;
+		ui_preferences->prev_page = PREFERENCES_PAGE;
 		ui_preferences->back_button = gtk_button_new_with_mnemonic("_Back");
 		gtk_assistant_add_action_widget(GTK_ASSISTANT(assistant), ui_preferences->back_button);
 		g_signal_connect(ui_preferences->back_button, "clicked", G_CALLBACK(on_assistant_back_button), ui_preferences);
@@ -825,8 +829,12 @@ preferences_setup_ui(gboolean first_run,
 		/* finally... */
 		gtk_widget_show_all(ui_preferences->dialog);
 
-		/* Goto second page, because first used for error */
-		gtk_assistant_set_current_page(GTK_ASSISTANT(assistant), PREFERENCES_PAGE);
+		if (!insert_preferences)
+			/* Goto Maestro Info page, because first used for error */
+			gtk_assistant_set_current_page(GTK_ASSISTANT(assistant), MAESTRO_INFO_PAGE);
+		else
+			/* Goto Preferences Page, because first used for error */
+			gtk_assistant_set_current_page(GTK_ASSISTANT(assistant), PREFERENCES_PAGE);
 	}
 
 	/* Create dialog with tabs if the other run of GeBR */
