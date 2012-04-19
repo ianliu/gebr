@@ -1299,7 +1299,7 @@ gebr_file_chooser_set_remote_navigation(GtkWidget *dialog,
                                         gboolean insert_bookmarks,
                                         gchar **new_text)
 {
-	g_return_val_if_fail(*new_text != NULL, GTK_RESPONSE_CANCEL);
+	g_return_val_if_fail(new_text != NULL, GTK_RESPONSE_CANCEL);
 
 	gint response;
 	gchar *filename = g_build_filename(g_get_home_dir(), ".gtk-bookmarks", NULL);;
