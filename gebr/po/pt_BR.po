@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-04-19 15:07-0300\n"
+"POT-Creation-Date: 2012-04-19 15:15-0300\n"
 "PO-Revision-Date: 2012-04-13 16:47-0300\n"
 "Last-Translator: Rodrigo Morelatto <morelatto@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
@@ -45,11 +45,12 @@ msgstr ""
 msgid "Broken Flow"
 msgstr "Fluxo quebrado"
 
-#: ../callbacks.c:268 ../ui_preferences.c:505 ../ui_preferences.c:778
+#: ../callbacks.c:268 ../ui_preferences.c:504 ../ui_preferences.c:515
+#: ../ui_preferences.c:781
 msgid "Warning"
 msgstr "Aviso"
 
-#: ../callbacks.c:434 ../ui_preferences.c:387
+#: ../callbacks.c:434 ../ui_preferences.c:389
 msgid "Could not load help. Certify it was installed correctly."
 msgstr ""
 "Não foi possível carregar a ajuda. Certifique-se que ela foi instalada "
@@ -216,7 +217,7 @@ msgstr ""
 "Estes diretórios serão utilizados nos servidores pelo maestro <b>XXX</b>."
 
 #: ../data/document-properties.glade.h:39 ../line.c:177
-#: ../ui_preferences.c:187
+#: ../ui_preferences.c:189
 msgid "Success!"
 msgstr "Sucesso!"
 
@@ -233,8 +234,8 @@ msgid ""
 "The <b>IMPORT</b> directory is used to find files outside your <b>BASE</b> "
 "directory."
 msgstr ""
-"O  diretório <b>IMPORT</b> é usado para achar arquivos fora de seu "
-"diretório <b>BASE</b>."
+"O  diretório <b>IMPORT</b> é usado para achar arquivos fora de seu diretório "
+"<b>BASE</b>."
 
 #: ../data/document-properties.glade.h:43 ../gebr-flow-edition.c:333
 msgid "Title"
@@ -1356,8 +1357,8 @@ msgid "_Connections"
 msgstr "_Conexões"
 
 #: ../interface.c:64
-msgid "_Servers"
-msgstr "_Servidores"
+msgid "_Servers / Maestro"
+msgstr "_Servidores / Maestro"
 
 #: ../interface.c:72
 msgid "Samples"
@@ -1605,7 +1606,7 @@ msgstr "É necessário utilizar o caminho completo."
 msgid "Choose a BASE path."
 msgstr "Escolha o caminho BASE"
 
-#: ../line.c:181 ../ui_preferences.c:191
+#: ../line.c:181 ../ui_preferences.c:193
 msgid "Done"
 msgstr "Terminado"
 
@@ -1637,7 +1638,7 @@ msgstr ""
 "Você pode mudar o diretório BASE pressionando o\n"
 "botão voltar ou usar esta pasta assim mesmo."
 
-#: ../line.c:205 ../ui_preferences.c:235
+#: ../line.c:205 ../ui_preferences.c:237
 msgid "Warning!"
 msgstr "Aviso!"
 
@@ -1853,7 +1854,7 @@ msgstr "Remover parâmetros atuais."
 msgid "%s '%s' properties"
 msgstr "%s '%s' propriedades"
 
-#: ../ui_document.c:319 ../ui_preferences.c:784 ../ui_preferences.c:869
+#: ../ui_document.c:319 ../ui_preferences.c:787 ../ui_preferences.c:879
 msgid "Preferences"
 msgstr "Preferências"
 
@@ -2186,22 +2187,22 @@ msgstr ""
 msgid "Type server hostname or address, and click Add"
 msgstr "Digite o hostname ou endereço IP e clique em Adicionar"
 
-#: ../ui_preferences.c:194
+#: ../ui_preferences.c:196
 #, c-format
 msgid "<span size='large'>Successfully connected to Maestro <b>%s</b>!</span>"
 msgstr "<span size='large'>Conexão bem sucedida ao Maestro <b>%s</b>!</span>"
 
-#: ../ui_preferences.c:214
+#: ../ui_preferences.c:216
 #, c-format
 msgid "<span size='large'>Connecting to Maestro <b>%s</b>!</span>"
 msgstr "<span size='large'>Conectando ao Maestro <b>%s</b>!</span>"
 
-#: ../ui_preferences.c:224
+#: ../ui_preferences.c:226
 #, c-format
 msgid "Could not connect to Maestro <b>%s</b>!"
 msgstr "Não foi possível conectar-se ao Maestro <b>%s</b>!"
 
-#: ../ui_preferences.c:228
+#: ../ui_preferences.c:230
 #, c-format
 msgid ""
 "The connection reported the following error:\n"
@@ -2210,11 +2211,11 @@ msgstr ""
 "A conexão reportou o seguinte erro:\n"
 "<i>%s</i>"
 
-#: ../ui_preferences.c:419
+#: ../ui_preferences.c:420
 msgid "Connecting on Maestro..."
 msgstr "Conectando no Maestro..."
 
-#: ../ui_preferences.c:483
+#: ../ui_preferences.c:486
 msgid ""
 "<b><span size='large'>Here is the summary of you Connections Settings.</"
 "span></b>"
@@ -2222,26 +2223,19 @@ msgstr ""
 "<b><span size='large'>Este é o resumo das suas alterações de Conexões.</"
 "span></b>"
 
-#: ../ui_preferences.c:501
-msgid "Changes can be made by going to Actions->servers."
-msgstr "Mudanças podem ser feitas através do menu Ações-&gt;Servidor"
-
-#: ../ui_preferences.c:502
-msgid "Review"
-msgstr "Revisão"
-
-#: ../ui_preferences.c:506
+#: ../ui_preferences.c:505
 msgid ""
-"Click on <tt>Back</tt> to connect to it or on <tt>Cancel</tt> to close GêBR."
+"Click on <tt>Back</tt> to use that settings or on <tt>Cancel</tt> to close "
+"GêBR."
 msgstr ""
-"Clique em <tt>Sair</tt> para sair ou em <tt>Cancel</tt> para fechar a GêBR."
+"Clique em <tt>Sair</tt> para sair ou em <tt>Cancel</tt> para fechar aGêBR."
 
-#: ../ui_preferences.c:509
+#: ../ui_preferences.c:508
 msgid "<b><span size='large'>You need at least a connected Maestro!</span></b>"
 msgstr ""
 "<b><span size='large'>Você precisa ter um maestro conectado!</span></b>"
 
-#: ../ui_preferences.c:511
+#: ../ui_preferences.c:510
 #, c-format
 msgid ""
 "<b><span size='large'>You need at least a server connected to %s!</span></b>"
@@ -2249,11 +2243,17 @@ msgstr ""
 "<b><span size='large'>Você precisa de ao menos um servidor conectado ao %s!</"
 "span></b>"
 
-#: ../ui_preferences.c:543 ../ui_preferences.c:796
+#: ../ui_preferences.c:516
+msgid ""
+"Click on <tt>Back</tt> to connect to it or on <tt>Cancel</tt> to close GêBR."
+msgstr ""
+"Clique em <tt>Sair</tt> para sair ou em <tt>Cancel</tt> para fechar a GêBR."
+
+#: ../ui_preferences.c:544 ../ui_preferences.c:802
 msgid "Choose your Maestro"
 msgstr "Escolha seu Maestro"
 
-#: ../ui_preferences.c:556
+#: ../ui_preferences.c:557
 #, c-format
 msgid ""
 "Now you need to add <b>Servers</b> to be handled by your Maestro <b>%s</b>.\n"
@@ -2263,51 +2263,51 @@ msgstr ""
 "s</b>.\n"
 "\n"
 
-#: ../ui_preferences.c:615
+#: ../ui_preferences.c:616
 msgid "You should know your name"
 msgstr "Você deveria saber seu nome"
 
-#: ../ui_preferences.c:628
+#: ../ui_preferences.c:629
 msgid "Your email address"
 msgstr "Seu endereço de e-mail"
 
-#: ../ui_preferences.c:640
+#: ../ui_preferences.c:641
 msgid "User's menu directory"
 msgstr "Diretório de menus do usuário"
 
-#: ../ui_preferences.c:642
+#: ../ui_preferences.c:643
 msgid "Path to look for user's private menus"
 msgstr "Caminho para procurar menus particulares do usuário"
 
-#: ../ui_preferences.c:693
+#: ../ui_preferences.c:694
 msgid "Current maestro"
 msgstr "Maestro atual"
 
-#: ../ui_preferences.c:715
+#: ../ui_preferences.c:716
 msgid "Suggested maestro"
 msgstr "Maestro sugerido"
 
-#: ../ui_preferences.c:722
+#: ../ui_preferences.c:723
 msgid "Default Maestro from File"
 msgstr "Maestro padrão do Arquivo"
 
-#: ../ui_preferences.c:765
+#: ../ui_preferences.c:767
 msgid "Configuring GêBR"
 msgstr "Configurando GêBR"
 
-#: ../ui_preferences.c:790
+#: ../ui_preferences.c:796
 msgid "Maestro"
 msgstr "Maestro"
 
-#: ../ui_preferences.c:802
+#: ../ui_preferences.c:808
 msgid "Servers Information"
 msgstr "Informações de servidores"
 
-#: ../ui_preferences.c:808
+#: ../ui_preferences.c:814
 msgid "Servers"
 msgstr "Servidores"
 
-#: ../ui_preferences.c:839
+#: ../ui_preferences.c:849
 #, c-format
 msgid "Preferences of GêBR"
 msgstr "Preferências da GêBR "
@@ -2315,6 +2315,21 @@ msgstr "Preferências da GêBR "
 #: ../ui_project_line.c:156
 msgid "Index"
 msgstr "Índice"
+
+#: ../ui_project_line.c:267
+#, c-format
+msgid "Move this line to maestro <b>%s</b>"
+msgstr "Mover esta linha ao Maestro <b>%s</b>!"
+
+#: ../ui_project_line.c:272
+#, c-format
+msgid "Connect to another maestro"
+msgstr "Conectaar ao Maestro..."
+
+#: ../ui_project_line.c:281
+#, c-format
+msgid "Connect to maestro <b>%s</b>"
+msgstr "Conecte-se ao Maestro <b>%s</b>"
 
 #: ../ui_project_line.c:350
 msgid "Change of Maestro"
@@ -2629,6 +2644,15 @@ msgstr "Conecte-se ao Maestro <b>XXX</b>"
 msgid "What do you want to do?"
 msgstr "O que deseja fazer?"
 
+#~ msgid "_Servers"
+#~ msgstr "_Servidores"
+
+#~ msgid "Changes can be made by going to Actions->servers."
+#~ msgstr "Mudanças podem ser feitas através do menu Ações-&gt;Servidor"
+
+#~ msgid "Review"
+#~ msgstr "Revisão"
+
 #~ msgid "<b>&lt;BASE&gt;</b>: /home/Xxx/GeBR/bla"
 #~ msgstr "<b>&lt;BASE&gt;</b>: /home/Xxx/GeBR/bla"
 
@@ -2710,9 +2734,6 @@ msgstr "O que deseja fazer?"
 
 #~ msgid "Connections informations"
 #~ msgstr "Informações de Conexões"
-
-#~ msgid "Insert Servers on Maestro"
-#~ msgstr "Insira Servidores no Maestro"
 
 #~ msgid "<i>Review these informations of your line.</i>"
 #~ msgstr "<i>Rever essas informações de sua linha.</i>"

@@ -264,12 +264,12 @@ on_maestro_button_clicked(GtkButton *button,
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 	if (maestro && gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED) {
 		change_addr = gebr_maestro_server_get_address(maestro);
-		change_text = g_markup_printf_escaped("Move this line to maestro <b>%s</b>", change_addr);
+		change_text = g_markup_printf_escaped(_("Move this line to maestro <b>%s</b>"), change_addr);
 		gtk_label_set_markup(GTK_LABEL(change_label), change_text);
 		g_signal_connect(change_button, "clicked", G_CALLBACK(on_change_line_maestro), dialog);
 	} else {
 		gtk_image_set_from_stock(GTK_IMAGE(image_change_button), "gtk-disconnect", GTK_ICON_SIZE_DND);
-		change_text = g_markup_printf_escaped("Connect to another maestro");
+		change_text = g_markup_printf_escaped(_("Connect to another maestro"));
 		gtk_label_set_markup(GTK_LABEL(change_label), change_text);
 		g_signal_connect(change_button, "clicked", G_CALLBACK(on_change_line_maestro_disconnected), dialog);
 	}
@@ -278,7 +278,7 @@ on_maestro_button_clicked(GtkButton *button,
 	gchar *connect_text;
 	gchar *connect_addr = gebr_geoxml_line_get_maestro(gebr.line);
 	if (g_strcmp0(connect_addr, "") != 0) {
-		connect_text = g_markup_printf_escaped("Connect to maestro <b>%s</b>", connect_addr);
+		connect_text = g_markup_printf_escaped(_("Connect to maestro <b>%s</b>"), connect_addr);
 		gtk_label_set_markup(GTK_LABEL(connect_label), connect_text);
 	} else {
 		gtk_widget_set_sensitive(GTK_WIDGET(connect_button), FALSE);
