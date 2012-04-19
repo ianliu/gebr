@@ -68,15 +68,16 @@ on_assistant_base_validate(GtkEntry *entry,
 	text = gtk_entry_get_text(entry);
 
 	gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_OPEN);
-	if (text && *text)
-		if (text[0] == '/' || g_strrstr(text, "<HOME>") || g_strrstr(text, "$HOME"))
+	if (text && *text) {
+		if (text[0] == '/' || g_strrstr(text, "<HOME>") || g_strrstr(text, "$HOME")) {
 			gtk_assistant_set_page_complete(assistant, current_page, TRUE);
-		else {
+			gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, NULL);
+		} else {
 			gtk_assistant_set_page_complete(assistant, current_page, FALSE);
 			gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIALOG_WARNING);
 			gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, _("You need to use an absolute path."));
 		}
-	else {
+	} else {
 		gtk_assistant_set_page_complete(assistant, current_page, FALSE);
 		gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, _("Choose a BASE path."));
 	}
@@ -95,17 +96,18 @@ on_assistant_import_validate(GtkEntry *entry,
 	text = gtk_entry_get_text(entry);
 
 	gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_OPEN);
-	if (text && *text)
-		if (text[0] == '/' || g_strrstr(text, "<HOME>") || g_strrstr(text, "$HOME"))
+	if (text && *text) {
+		if (text[0] == '/' || g_strrstr(text, "<HOME>") || g_strrstr(text, "$HOME")) {
 			gtk_assistant_set_page_complete(assistant, current_page, TRUE);
-		else {
+			gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, NULL);
+		} else {
 			gtk_assistant_set_page_complete(assistant, current_page, FALSE);
 			gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIALOG_WARNING);
 			gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, _("You need to use an absolute path."));
 		}
-	else {
-		gtk_assistant_set_page_complete(assistant, current_page, FALSE);
-		gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, _("Choose an IMPORT path."));
+	} else {
+		gtk_assistant_set_page_complete(assistant, current_page, TRUE);
+		gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, NULL);
 	}
 }
 

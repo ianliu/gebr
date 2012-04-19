@@ -83,6 +83,7 @@ dnl ============================================================================
 dnl Common compilation cflags
 dnl ============================================================================
 COMMON_CFLAGS='-Wall -Werror -std=gnu99 -fshow-column'
+dnl COMMON_CFLAGS='-Wall -std=gnu99 -fshow-column'
 AC_SUBST(COMMON_CFLAGS)
 
 dnl ============================================================================
