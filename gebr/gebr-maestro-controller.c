@@ -1331,7 +1331,7 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 	set_widget_drag_dest(self, GTK_WIDGET(event));
 
 	GtkDialog *dialog = GTK_DIALOG(gtk_builder_get_object(self->priv->builder, "dialog_maestro"));
-	gtk_window_set_transient_for(GTK_WINDOW(dialog), self->priv->window);
+
 	g_signal_connect(dialog, "response", G_CALLBACK(on_dialog_response), self);
 	g_signal_connect(dialog, "destroy", G_CALLBACK(on_dialog_destroy), self);
 
