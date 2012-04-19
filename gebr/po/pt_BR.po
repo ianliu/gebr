@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-04-19 12:34-0300\n"
+"POT-Creation-Date: 2012-04-19 15:07-0300\n"
 "PO-Revision-Date: 2012-04-13 16:47-0300\n"
 "Last-Translator: Rodrigo Morelatto <morelatto@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
@@ -22,7 +22,9 @@ msgstr ""
 msgid ""
 "\n"
 "A connected maestro is required to accomplish this task.\n"
-msgstr "É necessário um maestro conectado para realizar esta operação\n"
+msgstr ""
+"\n"
+"É necessário um maestro conectado para realizar esta operação\n"
 
 #: ../callbacks.c:183 ../callbacks.c:211
 msgid "Maestro disconnected"
@@ -54,16 +56,19 @@ msgstr ""
 "corretamente."
 
 #: ../data/document-properties.glade.h:1
-msgid "<b>&lt;BASE&gt;</b>: /home/Xxx/GeBR/bla"
-msgstr "<b>&lt;BASE&gt;</b>: /home/Xxx/GeBR/bla"
-
-#: ../data/document-properties.glade.h:2
 msgid "<b>Author:</b>"
 msgstr "<b>Autor:</b>"
 
-#: ../data/document-properties.glade.h:3
+#: ../data/document-properties.glade.h:2
 msgid "<b>BASE:</b>"
 msgstr "<b>BASE:</b>"
+
+#: ../data/document-properties.glade.h:3
+msgid ""
+"<b>BASE</b> is a root directory where all files of your Line are stored."
+msgstr ""
+"<b>BASE</b> é um diretório raiz onde todos os arquivos de sua Linha são "
+"guardados"
 
 #: ../data/document-properties.glade.h:4
 msgid "<b>Description:</b>"
@@ -71,7 +76,7 @@ msgstr "<b>Descrição:</b>"
 
 #: ../data/document-properties.glade.h:5
 msgid "<b>Directories hierarchy</b>"
-msgstr "<b> Hierarquia de Diretórios </b>"
+msgstr "<b>Hierarquia de Diretórios </b>"
 
 #: ../data/document-properties.glade.h:6
 msgid "<b>E-mail:</b>"
@@ -82,7 +87,6 @@ msgid "<b>IMPORT:</b>"
 msgstr "<b>IMPORT:</b>"
 
 #: ../data/document-properties.glade.h:8
-#, fuzzy
 msgid ""
 "<b>Line Paths</b> are an hierarchy of directories to ease the handling of "
 "places to be used by the Flows processing. They are standard paths for "
@@ -91,8 +95,7 @@ msgid ""
 msgstr ""
 "<b>Caminhos de Linha</b> compõem uma hierarquia de diretórios para facilitar "
 "o manuseio de lugares para serem usados pelos processamentos dos Fluxos. "
-"Eles são caminhos padrões para buscar arquivos de entradae salvar arquivos "
-"de saída. "
+"Eles são caminhos padrões para buscar e salvar arquivos."
 
 #: ../data/document-properties.glade.h:10
 msgid "<b>Maestro:</b>"
@@ -147,37 +150,10 @@ msgid "<i>&lt;TMP&gt;</i>"
 msgstr "<i>&lt;TMP&gt;</i>"
 
 #: ../data/document-properties.glade.h:23
-#, fuzzy
-msgid ""
-"<i><b>BASE</b> is a root directory where all files of your Line are stored</"
-"i>."
-msgstr ""
-"<i><b>BASE</b> é um diretório raiz onde todos os arquivos de sua Linha são "
-"guardados</i>"
-
-#: ../data/document-properties.glade.h:24
-msgid ""
-"<i>G&#xEA;BR will create some directories to organize the files \n"
-"created during the data processing.\n"
-"These directories will be created on servers of maestro <b>XXX</b>.</i>"
-msgstr ""
-"<i>G&#xEA;BR criará arquivos para organizar seus arquivos\n"
-"utilizados durante o processamento de dados.\n"
-"Estes diretórios serão utilizados nos servidores pelo maestro <b>XXX</b>.</i>"
-
-#: ../data/document-properties.glade.h:27
-msgid ""
-"<i>The <b>IMPORT</b> directory is used to find files outside your <b>BASE</"
-"b> directory.</i>"
-msgstr ""
-"<i>O  diretório <b>IMPORT</b> é usado para achar arquivos fora de seu "
-"diretório <b>BASE</b>.</i>"
-
-#: ../data/document-properties.glade.h:28
 msgid "<span size='large'>Creating directories...</span>"
 msgstr "<span size='large'>Criando diretórios...</span>"
 
-#: ../data/document-properties.glade.h:29
+#: ../data/document-properties.glade.h:24
 msgid ""
 "A <b>Line</b> is a way of organize Flows and it is associated to the Maestro "
 "machine in which its flows are going to be executed."
@@ -185,62 +161,95 @@ msgstr ""
 "Uma <b>Linha</b> é um meio de montar e organizar Fluxos e é associada ao "
 "Maestro na qual seus fluxos serão executados."
 
-#: ../data/document-properties.glade.h:30
+#: ../data/document-properties.glade.h:25
 msgid "Author"
 msgstr "Autor"
 
-#: ../data/document-properties.glade.h:31 ../gebr-flow-edition.c:340
+#: ../data/document-properties.glade.h:26
+msgid "Custom data."
+msgstr "Dados diversos."
+
+#: ../data/document-properties.glade.h:27 ../gebr-flow-edition.c:340
 msgid "Description"
 msgstr "Descrição"
 
-#: ../data/document-properties.glade.h:32
+#: ../data/document-properties.glade.h:28
 msgid "E-mail"
 msgstr "E-mail"
 
-#: ../data/document-properties.glade.h:33
-#, fuzzy
+#: ../data/document-properties.glade.h:29
+msgid "Exported data (images, etc.)."
+msgstr "Dados exporados (imagens, etc.)"
+
+#: ../data/document-properties.glade.h:30
+msgid "Flow's results."
+msgstr "Dados dos fluxo."
+
+#: ../data/document-properties.glade.h:31
 msgid "For exporting data (images, etc.)."
-msgstr "Diretório para exportar dados (imagens, etc.)"
+msgstr "Para exportar dados (imagens, etc.)"
+
+#: ../data/document-properties.glade.h:32
+msgid "For miscellaneous data."
+msgstr "Dados diversos."
+
+#: ../data/document-properties.glade.h:33
+msgid "For saving Flow's results."
+msgstr "Resultados."
 
 #: ../data/document-properties.glade.h:34
-#, fuzzy
-msgid "For miscellaneous data."
-msgstr "Diretório para dados diversos."
+msgid "For saving tabular data."
+msgstr "Dados tabulares."
 
 #: ../data/document-properties.glade.h:35
-#, fuzzy
-msgid "For saving Flow's results."
-msgstr "Diretório para salvar os resultados dos Fluxos."
+msgid "For temporary files."
+msgstr "Arquivos temporários."
 
 #: ../data/document-properties.glade.h:36
-#, fuzzy
-msgid "For saving tabular data."
-msgstr "Diretório para salvar tabelas de dados."
+msgid ""
+"G&#xEA;BR will create some directories to organize the files \n"
+"created during the data processing.\n"
+"These directories will be created on servers of maestro <b>XXX</b>."
+msgstr ""
+"G&#xEA;BR criará arquivos para organizar seus arquivos\n"
+"utilizados durante o processamento de dados.\n"
+"Estes diretórios serão utilizados nos servidores pelo maestro <b>XXX</b>."
 
-#: ../data/document-properties.glade.h:37
-#, fuzzy
-msgid "For temporary files."
-msgstr "Diretório para arquivos temporários."
-
-#: ../data/document-properties.glade.h:38 ../line.c:177
+#: ../data/document-properties.glade.h:39 ../line.c:177
 #: ../ui_preferences.c:187
 msgid "Success!"
 msgstr "Sucesso!"
 
-#: ../data/document-properties.glade.h:39 ../gebr-flow-edition.c:333
+#: ../data/document-properties.glade.h:40
+msgid "Tabular data."
+msgstr "Tabelas."
+
+#: ../data/document-properties.glade.h:41
+msgid "Temporary files."
+msgstr "Arquivos temporários."
+
+#: ../data/document-properties.glade.h:42
+msgid ""
+"The <b>IMPORT</b> directory is used to find files outside your <b>BASE</b> "
+"directory."
+msgstr ""
+"O  diretório <b>IMPORT</b> é usado para achar arquivos fora de seu "
+"diretório <b>BASE</b>."
+
+#: ../data/document-properties.glade.h:43 ../gebr-flow-edition.c:333
 msgid "Title"
 msgstr "Título"
 
-#: ../data/document-properties.glade.h:40
+#: ../data/document-properties.glade.h:44
 msgid ""
 "You will browse on files and folders of servers of maestro XXX.\n"
 "This directories structure can be not the same on your local machine."
 msgstr ""
 "Você navegará nos diretórios dos servidores do seu maestro.\n"
 "Esta estrutura de diretórios pode não representar os mesmos arquivos que os "
-"de sua máquina local."
+"de sua máquina"
 
-#: ../data/document-properties.glade.h:42 ../data/gebr-job-control.glade.h:14
+#: ../data/document-properties.glade.h:46 ../data/gebr-job-control.glade.h:14
 msgid "label"
 msgstr "rótulo"
 
@@ -343,7 +352,7 @@ msgstr "<b>Criado:</b>"
 
 #: ../data/line-properties.glade.h:6
 msgid "<b>Line Paths:</b>"
-msgstr "<b>Caminhos da linha:</b>"
+msgstr "<b>Caminhos da linha</b>"
 
 #: ../data/line-properties.glade.h:7
 msgid "<b>Modified:</b>"
@@ -1228,13 +1237,13 @@ msgid "Trying to connect on %s"
 msgstr "Tentando conectar-se a %s"
 
 #: ../gebr-maestro-controller.c:1404
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "<b>%s</b> is asking for your login password.\n"
 "Enter it below."
 msgstr ""
 "Servidor <b>%s</b> está requisitando senha de login.\n"
-"Escreva-a abaixo."
+"Insira-a abaixo."
 
 #: ../gebr-maestro-controller.c:1444
 #, c-format
@@ -1605,12 +1614,11 @@ msgid "The directories were successfully created!"
 msgstr "Os diretórios foram criados com sucesso!"
 
 #: ../line.c:188
-#, fuzzy
 msgid ""
 "Press the back button to change the BASE directory\n"
 "or the line title."
 msgstr ""
-"Pressione o botão voltar para mudar o diretório BASE\n"
+"Pressione o botão Voltar para mudar o diretório BASE\n"
 " ou o título desta linha."
 
 #: ../line.c:193 ../line.c:253
@@ -1622,7 +1630,6 @@ msgid "The directory could not be created!"
 msgstr "O diretório não pode ser criado!"
 
 #: ../line.c:200
-#, fuzzy
 msgid ""
 "You can change the BASE directory by pressing the\n"
 "back button or use this folder anyway."
@@ -1651,7 +1658,7 @@ msgstr ""
 "Verifique se seu maestro está conectado."
 
 #: ../line.c:337
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "A <b>Line</b> is a way of organize Flows and it is associated to the Maestro "
 "machine in which its flows are going to be executed.\n"
@@ -1669,21 +1676,31 @@ msgid ""
 "<i>You will browse on files and folders of servers of maestro <b>%s</b>.\n"
 "This directories structure can be not the same on your local machine.</i>"
 msgstr ""
-"<i>You will browse on files and folders of servers of maestro <b>%s</b>.\n"
-"This directories structure can be not the same on your local machine.</i>"
+"<i>Você navegará nos diretórios dos servidores do Maestro <b>%s</b>, o qual "
+"pode não representar os mesmos arquivos que os de sua máquina local.</i>"
 
 #: ../line.c:367
 #, c-format
 msgid ""
 "<i>GêBR will create some directories to organize the files\n"
 "created during the data processing.\n"
+"\n"
 "These directories will be created on servers of maestro <b>%s</b>.</i>"
 msgstr ""
+"<i>GêBR criará alguns diretórios para organizar os arquivos\n"
+"criados durante o processamento de dados.\n"
+"\n"
+"Estes diretórios serão criados nos servidores conectados a este maestro <b>%"
+"s</b>.</i>"
 
 #: ../line.c:375
 #, c-format
 msgid "<i>&lt;BASE&gt;: <b>%s</b></i>"
 msgstr "<i>&lt;BASE&gt;: <b>%s</b></i>"
+
+#: ../line.c:410
+msgid "<i>Not Defined</i>"
+msgstr "<i>Não definido</i>"
 
 #: ../line.c:425 ../line.c:512 ../ui_document.c:1904
 msgid "Creating directories..."
@@ -1699,7 +1716,7 @@ msgstr "Informação básica da Linha"
 
 #: ../line.c:488
 msgid "Line Paths"
-msgstr "Caminhos de linha:"
+msgstr "Caminhos de linha"
 
 #: ../line.c:493 ../ui_document.c:359
 msgid "BASE Path"
@@ -1711,7 +1728,7 @@ msgstr "Caminho IMPORT"
 
 #: ../line.c:503
 msgid "Hierarchy Structure"
-msgstr "Estrutura de Hierarquia"
+msgstr "Hierarquia de diretórios"
 
 #: ../line.c:508
 msgid "Line Review"
@@ -1954,20 +1971,18 @@ msgid "The selected server (%s) is not connected."
 msgstr "O servidor selecionado (%s) não está conectado."
 
 #: ../ui_flow_browse.c:127
-#, fuzzy
 msgid ""
 "This Maestro of this Line is disconnected. You cannot edit the flows of this "
 "line.\n"
 "Try changing its maestro or connecting it."
 msgstr ""
-"Esta linha está desconectada, portanto, você não pode editar os fluxosdesta "
+"Esta linha está desconectada, portanto, você não pode editar os fluxos desta "
 "linha.\n"
-"Tente mudar o maestro ou conectar a ele."
+"Tente alterar seu Maestro ou conectar-se a ele."
 
 #: ../ui_flow_browse.c:130
-#, fuzzy
 msgid "No Line is selected\n"
-msgstr "Nenhum menu selecionado."
+msgstr "Nenhuma Linha selecionada.\n"
 
 #. Date labels
 #: ../ui_flow_browse.c:297
@@ -2169,47 +2184,47 @@ msgstr ""
 
 #: ../ui_preferences.c:56
 msgid "Type server hostname or address, and click Add"
-msgstr ""
+msgstr "Digite o hostname ou endereço IP e clique em Adicionar"
 
 #: ../ui_preferences.c:194
-#, fuzzy, c-format
+#, c-format
 msgid "<span size='large'>Successfully connected to Maestro <b>%s</b>!</span>"
-msgstr "<span size='large'>Não conseguiu conectar ao Maestro <b>%s</b>!</span>"
+msgstr "<span size='large'>Conexão bem sucedida ao Maestro <b>%s</b>!</span>"
 
 #: ../ui_preferences.c:214
-#, fuzzy, c-format
+#, c-format
 msgid "<span size='large'>Connecting to Maestro <b>%s</b>!</span>"
-msgstr "<span size='large'>Não conseguiu conectar ao Maestro <b>%s</b>!</span>"
+msgstr "<span size='large'>Conectando ao Maestro <b>%s</b>!</span>"
 
 #: ../ui_preferences.c:224
-#, fuzzy, c-format
+#, c-format
 msgid "Could not connect to Maestro <b>%s</b>!"
-msgstr "<span size='large'>Não conseguiu conectar ao Maestro <b>%s</b>!</span>"
+msgstr "Não foi possível conectar-se ao Maestro <b>%s</b>!"
 
 #: ../ui_preferences.c:228
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The connection reported the following error:\n"
 "<i>%s</i>"
-msgstr "A conexão reportou o seguinte erro: <i>%s</i>"
+msgstr ""
+"A conexão reportou o seguinte erro:\n"
+"<i>%s</i>"
 
 #: ../ui_preferences.c:419
 msgid "Connecting on Maestro..."
 msgstr "Conectando no Maestro..."
 
 #: ../ui_preferences.c:483
-#, fuzzy
 msgid ""
 "<b><span size='large'>Here is the summary of you Connections Settings.</"
 "span></b>"
-msgstr "<b><span size=\"large\">O que deseja fazer?</span></b>"
+msgstr ""
+"<b><span size='large'>Este é o resumo das suas alterações de Conexões.</"
+"span></b>"
 
 #: ../ui_preferences.c:501
-#, fuzzy
 msgid "Changes can be made by going to Actions->servers."
-msgstr ""
-"Aqui está o sumário das suas Configurações de Conexões. Mudanças podem ser "
-"feitas através de Ações-&gt;Servidor"
+msgstr "Mudanças podem ser feitas através do menu Ações-&gt;Servidor"
 
 #: ../ui_preferences.c:502
 msgid "Review"
@@ -2219,17 +2234,20 @@ msgstr "Revisão"
 msgid ""
 "Click on <tt>Back</tt> to connect to it or on <tt>Cancel</tt> to close GêBR."
 msgstr ""
+"Clique em <tt>Sair</tt> para sair ou em <tt>Cancel</tt> para fechar a GêBR."
 
 #: ../ui_preferences.c:509
-#, fuzzy
 msgid "<b><span size='large'>You need at least a connected Maestro!</span></b>"
-msgstr "<span size='large'>Não conseguiu conectar ao Maestro <b>%s</b>!</span>"
+msgstr ""
+"<b><span size='large'>Você precisa ter um maestro conectado!</span></b>"
 
 #: ../ui_preferences.c:511
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "<b><span size='large'>You need at least a server connected to %s!</span></b>"
-msgstr "<span size='large'>Não conseguiu conectar ao Maestro <b>%s</b>!</span>"
+msgstr ""
+"<b><span size='large'>Você precisa de ao menos um servidor conectado ao %s!</"
+"span></b>"
 
 #: ../ui_preferences.c:543 ../ui_preferences.c:796
 msgid "Choose your Maestro"
@@ -2241,6 +2259,9 @@ msgid ""
 "Now you need to add <b>Servers</b> to be handled by your Maestro <b>%s</b>.\n"
 "\n"
 msgstr ""
+"Você precisa adicionar <b>Servidores</b> para serem geridos pelo Maestro <b>%"
+"s</b>.\n"
+"\n"
 
 #: ../ui_preferences.c:615
 msgid "You should know your name"
@@ -2263,9 +2284,8 @@ msgid "Current maestro"
 msgstr "Maestro atual"
 
 #: ../ui_preferences.c:715
-#, fuzzy
 msgid "Suggested maestro"
-msgstr "Maestro atual"
+msgstr "Maestro sugerido"
 
 #: ../ui_preferences.c:722
 msgid "Default Maestro from File"
@@ -2276,18 +2296,16 @@ msgid "Configuring GêBR"
 msgstr "Configurando GêBR"
 
 #: ../ui_preferences.c:790
-#, fuzzy
 msgid "Maestro"
-msgstr "Maestro %s"
+msgstr "Maestro"
 
 #: ../ui_preferences.c:802
 msgid "Servers Information"
 msgstr "Informações de servidores"
 
 #: ../ui_preferences.c:808
-#, fuzzy
 msgid "Servers"
-msgstr "_Servidores"
+msgstr "Servidores"
 
 #: ../ui_preferences.c:839
 #, c-format
@@ -2326,6 +2344,11 @@ msgstr "Esta Linha tem um Fluxo."
 #, c-format
 msgid "This Line has %d Flows"
 msgstr "Esta Linha tem %d Fluxos."
+
+#: ../ui_project_line.c:451
+#, c-format
+msgid "On maestro <b>%s</b>"
+msgstr "No Maestro <b>%s</b>"
 
 #: ../ui_project_line.c:471 ../ui_project_line.c:485
 msgid "Click here to connect or change maestro for this line"
@@ -2490,12 +2513,11 @@ msgid "Line paths:"
 msgstr "Caminhos da linha:"
 
 #: ../data/gebr-connections-settings.glade.h:2
-#, fuzzy
 msgid ""
 "<b>Maestro</b> is the responsible for receiving G&#xEA;BR requests and for "
 "managing the available resources to perform it in the best way."
 msgstr ""
-"<b>Maestro</b> é o responsável por receber requisições de clientes e para "
+"<b>Maestro</b> é o responsável por receber requisições da G&#xEA;BR para "
 "gerenciar os recursos disponíveis para realizá-los da melhor maneira"
 
 #: ../data/gebr-connections-settings.glade.h:3
@@ -2504,10 +2526,9 @@ msgstr "<b>Servidores</b>"
 
 #: ../data/gebr-connections-settings.glade.h:4
 msgid "<i>Not connected </i>"
-msgstr ""
+msgstr "<i>Desconectado</i>"
 
 #: ../data/gebr-connections-settings.glade.h:5
-#, fuzzy
 msgid "<i>here.</i>"
 msgstr "<i>aqui</i>"
 
@@ -2516,7 +2537,6 @@ msgid "<span size='large'>Connecting to Maestro...</span>"
 msgstr "<span size='large'>Conectando ao Maestro...</span>"
 
 #: ../data/gebr-connections-settings.glade.h:7
-#, fuzzy
 msgid ""
 "A Maestro controls many servers under its control. For each server, you are "
 "going to be asked for your password.\n"
@@ -2533,23 +2553,20 @@ msgstr ""
 "servidores."
 
 #: ../data/gebr-connections-settings.glade.h:10
-#, fuzzy
 msgid "Add"
-msgstr "Endereço"
+msgstr "Adicionar"
 
 #: ../data/gebr-connections-settings.glade.h:11
 msgid "Add at least one server on your maestro to use G&#xEA;BR"
-msgstr ""
+msgstr "Adicione ao menos um servidor ao Maestro para utilizar a G&#xEA;BR"
 
 #: ../data/gebr-connections-settings.glade.h:12
-#, fuzzy
 msgid "Changes can be made by going to Actions-&gt;Server"
 msgstr ""
-"Aqui está o sumário das suas Configurações de Conexões. Mudanças podem ser "
-"feitas através de Ações-&gt;Servidor"
+"Mudanças posteriores podem ser realizadas através do menu  Ações-&gt;"
+"Servidores"
 
 #: ../data/gebr-connections-settings.glade.h:13
-#, fuzzy
 msgid "Connect"
 msgstr "Conectar"
 
@@ -2562,7 +2579,6 @@ msgid "Email"
 msgstr "Email"
 
 #: ../data/gebr-connections-settings.glade.h:16
-#, fuzzy
 msgid ""
 "G&#xEA;BR needs a <b>connection</b> to a Maestro to send jobs and receive "
 "outputs. For security reasons an encrypted connection is made using SSH "
@@ -2578,11 +2594,8 @@ msgstr ""
 "máquina de seua maestro."
 
 #: ../data/gebr-connections-settings.glade.h:19
-#, fuzzy
 msgid "Here is the summary of you Connections Settings."
-msgstr ""
-"Aqui está o sumário das suas Configurações de Conexões. Mudanças podem ser "
-"feitas através de Ações-&gt;Servidor"
+msgstr "Este é o sumário de suas Configurações de Conexão"
 
 #: ../data/gebr-connections-settings.glade.h:20
 msgid "More information can be found"
@@ -2598,7 +2611,7 @@ msgstr "Diretório de menus do usuário"
 
 #: ../data/gebr-connections-settings.glade.h:23
 msgid "expander"
-msgstr ""
+msgstr "expansor"
 
 #: ../data/connect-maestro-dialog.glade.h:1
 msgid "<b><span size=\"large\">What do you want to do?</span></b>"
@@ -2615,6 +2628,9 @@ msgstr "Conecte-se ao Maestro <b>XXX</b>"
 #: ../data/connect-maestro-dialog.glade.h:4
 msgid "What do you want to do?"
 msgstr "O que deseja fazer?"
+
+#~ msgid "<b>&lt;BASE&gt;</b>: /home/Xxx/GeBR/bla"
+#~ msgstr "<b>&lt;BASE&gt;</b>: /home/Xxx/GeBR/bla"
 
 #~ msgid ""
 #~ "<span size='large'><b>There is no connected maestro.</b></span>\n"

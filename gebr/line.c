@@ -365,7 +365,7 @@ on_assistant_prepare(GtkAssistant *assistant,
 
 		GObject *label;
 		gchar *text_maestro = g_markup_printf_escaped(_("<i>GêBR will create some directories to organize the files\n"
-								"created during the data processing.\n"
+								"created during the data processing.\n\n"
 								"These directories will be created on servers of maestro <b>%s</b>.</i>"), maestro_addr);
 		label = gtk_builder_get_object(data->builder, "label_hierarchy_1");
 		gtk_label_set_markup(GTK_LABEL(label), text_maestro);
@@ -407,7 +407,7 @@ on_assistant_prepare(GtkAssistant *assistant,
 			} else {
 				const gchar *aux = gtk_entry_get_text(GTK_ENTRY(g_hash_table_lookup(entries, keys[i])));
 				if (!*aux)
-					value = g_strdup("<i>Not Defined</i>");
+					value = g_strdup(_("<i>Not Defined</i>"));
 				else
 					value = g_strdup(aux);
 			}

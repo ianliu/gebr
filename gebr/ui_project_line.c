@@ -448,7 +448,7 @@ line_info_update(void)
 	else
 		addr = gebr_geoxml_line_get_maestro(gebr.line);
 
-	gchar *text = g_markup_printf_escaped("On maestro <b>%s</b>", addr);
+	gchar *text = g_markup_printf_escaped(_("On maestro <b>%s</b>"), addr);
 	gtk_label_set_markup(GTK_LABEL(maestro_label), text);
 	g_free(text);
 
