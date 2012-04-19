@@ -225,6 +225,7 @@ time_out_error(gpointer user_data)
 {
 	WizardData *data = user_data;
 
+	g_source_remove(data->progress_animation);
 	g_source_remove(data->timeout);
 
 	GObject *image = gtk_builder_get_object(data->builder, "image_status");
