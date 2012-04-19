@@ -282,7 +282,9 @@ static void
 on_entry_server_activate(GtkEntry *entry,
                          struct ui_preferences *up)
 {
+	GObject *server_add = gtk_builder_get_object(up->builder, "server_add");
 	on_add_server_clicked(NULL, up);
+	gtk_widget_grab_focus(GTK_WIDGET(server_add));
 }
 
 static gboolean
