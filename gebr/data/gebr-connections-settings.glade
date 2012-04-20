@@ -274,9 +274,10 @@ Your login password may be asked to stablish the connection.</property>
     <child>
       <object class="GtkLabel" id="server_info_label">
         <property name="visible">True</property>
-        <property name="label" translatable="yes">A Maestro may control many servers. For each server, you are going to be asked for your login credentials.
+        <property name="label" translatable="yes">Servers are in charge of running processing flows, under maestro&#x2019;s coordination. For each server, you are going to be asked for your login credentials.
+You may be asked once more for your login credentials to be able to browse the remote file system.
 
- Additionally, you may be asked once more for the remote browsing of your files.</property>
+&lt;i&gt;A maestro without servers is like a general without soldiers.&lt;/i&gt;</property>
         <property name="use_markup">True</property>
         <property name="wrap">True</property>
       </object>
