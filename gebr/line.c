@@ -334,7 +334,7 @@ on_assistant_prepare(GtkAssistant *assistant,
 
 	if (page == 1) {
 		GObject *info_label= gtk_builder_get_object(data->builder, "info_label");
-		gchar *info_label_text= g_markup_printf_escaped(_("A <b>Line</b> is a way of to organize Flows"
+		gchar *info_label_text= g_markup_printf_escaped(_("A <b>Line</b> is a way to organize Flows"
 								  " and it is associated to the Maestro in which its flows"
 								  " are going to be executed.\n\nThe Maestro of this Line"
 								  " is <b>%s</b>."), maestro_addr);

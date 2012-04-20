@@ -78,7 +78,7 @@
     <child>
       <object class="GtkLabel" id="info_label">
         <property name="visible">True</property>
-        <property name="label" translatable="yes">A &lt;b&gt;Line&lt;/b&gt; is a way of to organize Flows and it is associated to the Maestro in which its flows are going to be executed.</property>
+        <property name="label" translatable="yes">A &lt;b&gt;Line&lt;/b&gt; is a way to organize Flows and it is associated to the Maestro in which its flows are going to be executed.</property>
         <property name="use_markup">True</property>
         <property name="wrap">True</property>
       </object>
@@ -225,8 +225,7 @@
     <child>
       <object class="GtkLabel" id="paths_label">
         <property name="visible">True</property>
-        <property name="label" translatable="yes">&lt;b&gt;Line Paths&lt;/b&gt; are an hierarchy of directories to ease the handling of places to be used by the Flows processing. They are standard paths for fetching input files
-and saving output files.</property>
+        <property name="label" translatable="yes">&lt;b&gt;Line paths&lt;/b&gt; are a standard hierarchy of directories for fetching input files and saving output files.</property>
         <property name="use_markup">True</property>
         <property name="wrap">True</property>
       </object>
