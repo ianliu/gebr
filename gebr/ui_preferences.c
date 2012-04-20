@@ -112,8 +112,17 @@ on_assistant_cancel(GtkAssistant *assistant,
 	up->prev_page = curr_page;
 
 	if (up->first_run) {
-		up->cancel_assistant = TRUE;
-		gtk_assistant_set_current_page(GTK_ASSISTANT(assistant), CANCEL_PAGE);
+		if (curr_page == CANCEL_PAGE) {
+			if (get_wizard_status(up) == WIZARD_STATUS_COMPLETE)
+				gtk_widget_destroy(GTK_WIDGET(assistant));
+			else {
+				on_assistant_destroy(GTK_WIDGET(assistant), up);
+				gebr_quit(FALSE);
+			}
+		} else{
+			up->cancel_assistant = TRUE;
+			gtk_assistant_set_current_page(GTK_ASSISTANT(assistant), CANCEL_PAGE);
+		}
 	} else {
 		up->cancel_assistant = FALSE;
 		gtk_widget_destroy(GTK_WIDGET(assistant));
