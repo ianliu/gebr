@@ -48,9 +48,10 @@ enum {
 };
 
 typedef enum {
-	WIZARD_STATUS_COMPLETE,
+	WIZARD_STATUS_WITHOUT_PREFERENCES,
 	WIZARD_STATUS_WITHOUT_MAESTRO,
-	WIZARD_STATUS_WITHOUT_DAEMON
+	WIZARD_STATUS_WITHOUT_DAEMON,
+	WIZARD_STATUS_COMPLETE
 } WizardStatus;
 
 #define DEFAULT_SERVERS_ENTRY_TEXT _("Type server hostname or address, and click Add")
@@ -66,7 +67,7 @@ static void set_status_for_maestro(GebrMaestroController *self,
                                    struct ui_preferences *up,
                                    GebrCommServerState state);
 
-static WizardStatus get_wizard_status();
+static WizardStatus get_wizard_status(struct ui_preferences *up);
 
 static void on_preferences_destroy(GtkWidget *window,
                                    struct ui_preferences *up);
@@ -125,11 +126,16 @@ on_assistant_close(GtkAssistant *assistant,
 {
 	gint page = gtk_assistant_get_current_page(GTK_ASSISTANT(assistant));
 	if (page == CANCEL_PAGE) {
-		on_assistant_destroy(GTK_WIDGET(assistant), up);
-		gebr_quit(FALSE);
+		if (get_wizard_status(up) == WIZARD_STATUS_COMPLETE) {
+			save_preferences_configuration(up);
+			gtk_widget_destroy(up->dialog);
+		} else {
+			on_assistant_destroy(GTK_WIDGET(assistant), up);
+			gebr_quit(FALSE);
+		}
 	}
 	else if (page == SERVERS_PAGE) {
-		gtk_widget_destroy(up->dialog);
+		gtk_assistant_set_current_page(assistant, CANCEL_PAGE);
 	}
 }
 
@@ -397,7 +403,7 @@ on_maestro_info_button_clicked (GtkButton *button, gpointer pointer)
 }
 
 static WizardStatus
-get_wizard_status(void)
+get_wizard_status(struct ui_preferences *up)
 {
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 	if (maestro && gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED) {
@@ -405,8 +411,13 @@ get_wizard_status(void)
 			return WIZARD_STATUS_COMPLETE;
 		else
 			return WIZARD_STATUS_WITHOUT_DAEMON;
-	} else
-		return WIZARD_STATUS_WITHOUT_MAESTRO;
+	} else {
+		const gchar *email = gtk_entry_get_text(GTK_ENTRY(up->email));
+		if (gebr_validate_check_is_email(email) || !*email)
+			return WIZARD_STATUS_WITHOUT_MAESTRO;
+		else
+			return WIZARD_STATUS_WITHOUT_PREFERENCES;
+	}
 
 }
 
@@ -484,7 +495,7 @@ on_assistant_prepare(GtkAssistant *assistant,
 		}
 
 		up->cancel_assistant = FALSE;
-		GtkWidget *page_review = GTK_WIDGET(gtk_builder_get_object(up->builder, "review"));
+		//GtkWidget *page_review = GTK_WIDGET(gtk_builder_get_object(up->builder, "review"));
 		GtkLabel *maestro_label = GTK_LABEL(gtk_builder_get_object(up->builder, "review_maestro_label"));
 		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 
@@ -499,14 +510,20 @@ on_assistant_prepare(GtkAssistant *assistant,
 
 		gtk_widget_show(up->back_button);
 
-		GtkLabel *review_first_label = GTK_LABEL(gtk_builder_get_object(up->builder, "review_first_label"));
 		GtkLabel *review_orientations_label = GTK_LABEL(gtk_builder_get_object(up->builder, "review_orientation"));
+		GtkImage *review_img = GTK_IMAGE(gtk_builder_get_object(up->builder, "review_img"));
 
-		WizardStatus wizard_status = get_wizard_status();
+		GtkLabel *review_pref_label = GTK_LABEL(gtk_builder_get_object(up->builder, "review_pref_label"));
+		GtkLabel *review_maestro_label = GTK_LABEL(gtk_builder_get_object(up->builder, "review_maestro_label"));
+		GtkLabel *review_servers_label = GTK_LABEL(gtk_builder_get_object(up->builder, "review_servers_label"));
+		GtkImage *review_pref_img = GTK_IMAGE(gtk_builder_get_object(up->builder, "review_pref_img"));
+		GtkImage *review_maestro_img = GTK_IMAGE(gtk_builder_get_object(up->builder, "review_maestro_img"));
+		GtkImage *review_servers_img = GTK_IMAGE(gtk_builder_get_object(up->builder, "review_servers_img"));
+
+		WizardStatus wizard_status = get_wizard_status(up);
 		if (wizard_status == WIZARD_STATUS_COMPLETE) {
 			GtkTreeModel *model_servers = gebr_maestro_server_get_model(maestro, FALSE, NULL);
 			gboolean active = gtk_tree_model_get_iter_first(model_servers, &iter);
-			gtk_label_set_markup(review_first_label, _("<b><span size='large'>Here is the summary of you Connections Settings.</span></b>"));
 
 			GString *servers = g_string_new("");
 
@@ -520,23 +537,35 @@ on_assistant_prepare(GtkAssistant *assistant,
 			if (servers->len)
 				g_string_erase(servers, 0, 2);
 
-			GtkLabel *servers_label = GTK_LABEL(gtk_builder_get_object(up->builder, "servers_maestro"));
-			gtk_label_set_text(servers_label, servers->str);
+			gtk_label_set_text(review_servers_label, servers->str);
+			gtk_label_set_text(review_maestro_label, up->maestro_addr);
 			g_string_free(servers, TRUE);
 
-			gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), page_review, _("Warning"));
-			gtk_label_set_markup(review_orientations_label, _("Click on <tt>Back</tt> to use that settings or on <tt>Cancel</tt> to close GêBR."));
+			gtk_label_set_markup(review_orientations_label, _("GêBR is ready."));
+			gtk_label_set_markup(review_pref_label, "<i>Done.</i>");
+			gtk_image_set_from_stock(GTK_IMAGE(review_pref_img), GTK_STOCK_YES, GTK_ICON_SIZE_MENU);
+			gtk_image_set_from_stock(GTK_IMAGE(review_maestro_img), GTK_STOCK_YES, GTK_ICON_SIZE_MENU);
+			gtk_image_set_from_stock(GTK_IMAGE(review_servers_img), GTK_STOCK_YES, GTK_ICON_SIZE_MENU);
+			gtk_image_set_from_stock(GTK_IMAGE(review_img), GTK_STOCK_YES, GTK_ICON_SIZE_DIALOG);
 		} else {
+			gtk_label_set_markup(review_orientations_label, _("GêBR is unable to proceed without this configuration."));
+			gtk_image_set_from_stock(GTK_IMAGE(review_img), GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_DIALOG);
 			if (wizard_status == WIZARD_STATUS_WITHOUT_MAESTRO) {
-				gtk_label_set_markup(review_first_label, _("<b><span size='large'>You need at least a connected Maestro!</span></b>"));
-			} else {
-				gchar *daemon_msg = g_strdup_printf(_("<b><span size='large'>You need at least a server connected to %s!</span></b>"),
-				                                    gebr_maestro_server_get_address(maestro));
-				gtk_label_set_markup(review_first_label, daemon_msg);
-				g_free(daemon_msg);
+				gtk_label_set_markup(review_pref_label, "<i>Done.</i>");
+				gtk_image_set_from_stock(GTK_IMAGE(review_pref_img), GTK_STOCK_YES, GTK_ICON_SIZE_MENU);
+				gtk_image_set_from_stock(GTK_IMAGE(review_maestro_img), GTK_STOCK_STOP, GTK_ICON_SIZE_MENU);
+				gtk_label_set_markup(review_maestro_label, "<i>Not connected</i>");
+			} else if (wizard_status == WIZARD_STATUS_WITHOUT_DAEMON){
+				gtk_label_set_markup(review_pref_label, "<i>Done.</i>");
+				gtk_image_set_from_stock(GTK_IMAGE(review_pref_img), GTK_STOCK_YES, GTK_ICON_SIZE_MENU);
+				gtk_label_set_markup(review_maestro_label, up->maestro_addr);
+				gtk_image_set_from_stock(GTK_IMAGE(review_maestro_img), GTK_STOCK_YES, GTK_ICON_SIZE_MENU);
+				gtk_label_set_markup(review_servers_label, "<i>None</i>");
+				gtk_image_set_from_stock(GTK_IMAGE(review_servers_img), GTK_STOCK_STOP, GTK_ICON_SIZE_MENU);
+			} else if (wizard_status == WIZARD_STATUS_WITHOUT_PREFERENCES){
+				gtk_label_set_markup(review_pref_label, "<i>Not configured</i>");
+				gtk_image_set_from_stock(GTK_IMAGE(review_pref_img), GTK_STOCK_STOP, GTK_ICON_SIZE_MENU);
 			}
-			gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), page_review, _("Warning"));
-			gtk_label_set_markup(review_orientations_label, _("Click on <tt>Back</tt> to connect to it or on <tt>Cancel</tt> to close GêBR."));
 		}
 	}
 	else if (page == PREFERENCES_PAGE) {
@@ -600,7 +629,7 @@ on_assistant_prepare(GtkAssistant *assistant,
 				gtk_entry_set_text(GTK_ENTRY(server_entry), gebr_maestro_server_get_address(maestro));
 			}
 
-			WizardStatus wizard_status = get_wizard_status();
+			WizardStatus wizard_status = get_wizard_status(up);
 			if (wizard_status == WIZARD_STATUS_COMPLETE) {
 				gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), main_servers, TRUE);
 				gtk_widget_hide(servers_label);
@@ -806,7 +835,7 @@ preferences_setup_ui(gboolean first_run,
 		gtk_assistant_append_page(GTK_ASSISTANT(assistant), page_review);
 		gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), page_review, TRUE);
 		gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), page_review, GTK_ASSISTANT_PAGE_SUMMARY);
-		gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), page_review, _("Warning"));
+		gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), page_review, _("Status"));
 
 		// PREFERENCES_PAGE
 		gtk_assistant_append_page(GTK_ASSISTANT(assistant), page_preferences);
