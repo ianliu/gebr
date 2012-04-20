@@ -78,7 +78,7 @@
     <child>
       <object class="GtkLabel" id="info_label">
         <property name="visible">True</property>
-        <property name="label" translatable="yes">A &lt;b&gt;Line&lt;/b&gt; is a way of organize Flows and it is associated to the Maestro machine in which its flows are going to be executed.</property>
+        <property name="label" translatable="yes">A &lt;b&gt;Line&lt;/b&gt; is a way of to organize Flows and it is associated to the Maestro in which its flows are going to be executed.</property>
         <property name="use_markup">True</property>
         <property name="wrap">True</property>
       </object>
@@ -243,7 +243,7 @@ and saving output files.</property>
     <child>
       <object class="GtkLabel" id="label_base">
         <property name="visible">True</property>
-        <property name="label" translatable="yes">&lt;b&gt;BASE&lt;/b&gt; is a root directory where all files of your Line are stored.</property>
+        <property name="label" translatable="yes">&lt;b&gt;BASE&lt;/b&gt; is the root directory where all files linked in this line live.</property>
         <property name="use_markup">True</property>
         <property name="wrap">True</property>
       </object>
@@ -275,8 +275,7 @@ and saving output files.</property>
         <child>
           <object class="GtkLabel" id="label6">
             <property name="visible">True</property>
-            <property name="label" translatable="yes">You will browse on files and folders of servers of maestro XXX.
-This directories structure can be not the same on your local machine.</property>
+            <property name="label" translatable="yes">Note that browsing will take place at Maestro X&#x2019;s servers, instead of this machine.</property>
             <property name="wrap">True</property>
           </object>
           <packing>
@@ -1069,6 +1068,7 @@ These directories will be created on servers of maestro &lt;b&gt;XXX&lt;/b&gt;.<
                   <object class="GtkLabel" id="label39">
                     <property name="visible">True</property>
                     <property name="xalign">0</property>
+                    <property name="label" translatable="yes">Paths to store...</property>
                     <property name="selectable">True</property>
                   </object>
                   <packing>
@@ -1080,7 +1080,7 @@ These directories will be created on servers of maestro &lt;b&gt;XXX&lt;/b&gt;.<
                   <object class="GtkLabel" id="label40">
                     <property name="visible">True</property>
                     <property name="xalign">0</property>
-                    <property name="label" translatable="yes">Flow's results.</property>
+                    <property name="label" translatable="yes">flow's results</property>
                     <property name="use_markup">True</property>
                     <property name="selectable">True</property>
                   </object>
@@ -1093,7 +1093,7 @@ These directories will be created on servers of maestro &lt;b&gt;XXX&lt;/b&gt;.<
                   <object class="GtkLabel" id="label41">
                     <property name="visible">True</property>
                     <property name="xalign">0</property>
-                    <property name="label" translatable="yes">Temporary files.</property>
+                    <property name="label" translatable="yes">temporary files</property>
                     <property name="use_markup">True</property>
                     <property name="selectable">True</property>
                   </object>
@@ -1106,7 +1106,7 @@ These directories will be created on servers of maestro &lt;b&gt;XXX&lt;/b&gt;.<
                   <object class="GtkLabel" id="label42">
                     <property name="visible">True</property>
                     <property name="xalign">0</property>
-                    <property name="label" translatable="yes">Exported data (images, etc.).</property>
+                    <property name="label" translatable="yes">exported data (images, etc.)</property>
                     <property name="use_markup">True</property>
                     <property name="selectable">True</property>
                   </object>
@@ -1119,7 +1119,7 @@ These directories will be created on servers of maestro &lt;b&gt;XXX&lt;/b&gt;.<
                   <object class="GtkLabel" id="label43">
                     <property name="visible">True</property>
                     <property name="xalign">0</property>
-                    <property name="label" translatable="yes">Tabular data.</property>
+                    <property name="label" translatable="yes">tables</property>
                     <property name="use_markup">True</property>
                     <property name="selectable">True</property>
                   </object>
@@ -1132,7 +1132,7 @@ These directories will be created on servers of maestro &lt;b&gt;XXX&lt;/b&gt;.<
                   <object class="GtkLabel" id="label44">
                     <property name="visible">True</property>
                     <property name="xalign">0</property>
-                    <property name="label" translatable="yes">Custom data.</property>
+                    <property name="label" translatable="yes">everything else</property>
                     <property name="use_markup">True</property>
                     <property name="selectable">True</property>
                   </object>

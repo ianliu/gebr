@@ -334,8 +334,8 @@ on_assistant_prepare(GtkAssistant *assistant,
 
 	if (page == 1) {
 		GObject *info_label= gtk_builder_get_object(data->builder, "info_label");
-		gchar *info_label_text= g_markup_printf_escaped(_("A <b>Line</b> is a way of organize Flows"
-								  " and it is associated to the Maestro machine in which its flows" 
+		gchar *info_label_text= g_markup_printf_escaped(_("A <b>Line</b> is a way of to organize Flows"
+								  " and it is associated to the Maestro in which its flows"
 								  " are going to be executed.\n\nThe Maestro of this Line"
 								  " is <b>%s</b>."), maestro_addr);
 		gtk_label_set_markup(GTK_LABEL(info_label), info_label_text);
@@ -351,8 +351,8 @@ on_assistant_prepare(GtkAssistant *assistant,
 		if (!entr_text || !entr_text[0])
 			gtk_entry_set_text(GTK_ENTRY(entry_base), path);
 
-		gchar *text_maestro = g_markup_printf_escaped(_("<i>You will browse on files and folders of servers of maestro <b>%s</b>.\n"
-								"This directories structure can be not the same on your local machine.</i>"), maestro_addr);
+		gchar *text_maestro = g_markup_printf_escaped(_("<i>Note that browsing will take place at Maestro <b>%s</b>’s servers,\n"
+								"instead of this machine.\n</i>"), maestro_addr);
 		label = gtk_builder_get_object(data->builder, "label6");
 		gtk_label_set_markup(GTK_LABEL(label), text_maestro);
 
