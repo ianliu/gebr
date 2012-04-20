@@ -74,6 +74,7 @@ Your login password may be asked to stablish the connection.</property>
             <child>
               <object class="GtkComboBoxEntry" id="maestro_combo">
                 <property name="visible">True</property>
+                <property name="tooltip_text" translatable="yes">Type Maestro hostname or address, and click Connect.</property>
               </object>
               <packing>
                 <property name="position">0</property>
@@ -274,7 +275,7 @@ Your login password may be asked to stablish the connection.</property>
     <child>
       <object class="GtkLabel" id="server_info_label">
         <property name="visible">True</property>
-        <property name="label" translatable="yes">Servers are in charge of running processing flows, under maestro&#x2019;s coordination. For each server, you are going to be asked for your login credentials.
+        <property name="label" translatable="yes">&lt;b&gt;Servers&lt;/b&gt; are in charge of running processing flows, under maestro&#x2019;s coordination. For each server, you are going to be asked for your login credentials.
 You may be asked once more for your login credentials to be able to browse the remote file system.
 
 &lt;i&gt;A maestro without servers is like a general without soldiers.&lt;/i&gt;</property>
@@ -296,15 +297,15 @@ You may be asked once more for your login credentials to be able to browse the r
     <child>
       <object class="GtkLabel" id="main_servers_label">
         <property name="visible">True</property>
-        <property name="label">You need to add &lt;b&gt;Servers&lt;/b&gt; to be handled by your Maestro.
-</property>
+        <property name="label">Now you need to add &lt;b&gt;Servers&lt;/b&gt; to be handled by your Maestro &lt;b&gt;XXX&lt;/b&gt;.
+
+For each server, you are going to be asked for your login credentials.</property>
         <property name="use_markup">True</property>
         <property name="wrap">True</property>
-        <property name="wrap_mode">word-char</property>
+        <property name="width_chars">50</property>
       </object>
       <packing>
         <property name="expand">False</property>
-        <property name="fill">False</property>
         <property name="padding">10</property>
         <property name="position">0</property>
       </packing>
@@ -370,7 +371,7 @@ You may be asked once more for your login credentials to be able to browse the r
       <object class="GtkLabel" id="servers_label">
         <property name="visible">True</property>
         <property name="sensitive">False</property>
-        <property name="label" translatable="yes">Add at least one server on your maestro to use G&#xEA;BR</property>
+        <property name="label" translatable="yes">Add at least one server on your maestro to use G&#xEA;BR.</property>
         <property name="use_markup">True</property>
       </object>
       <packing>

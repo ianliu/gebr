@@ -559,7 +559,8 @@ on_assistant_prepare(GtkAssistant *assistant,
 			GtkWidget *main_servers_label = GTK_WIDGET(gtk_builder_get_object(up->builder, "main_servers_label"));
 			GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 
-			gchar *main_servers_text = g_markup_printf_escaped(_("Now you need to add <b>Servers</b> to be handled by your Maestro <b>%s</b>.\n\n"),
+			gchar *main_servers_text = g_markup_printf_escaped(_("Now you need to add <b>Servers</b> to be handled by your Maestro <b>%s</b>.\n\n"
+									     "For each server, you are going to be asked for your login credentials."),
 									   gebr_maestro_server_get_address(maestro));
 
 			gtk_label_set_markup(GTK_LABEL(main_servers_label), main_servers_text);
