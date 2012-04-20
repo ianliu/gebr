@@ -448,6 +448,24 @@ on_connect_maestro_activate(GtkEntry *entry,
 }
 
 static void
+on_changed_validate_email(GtkWidget     *widget,
+                          struct ui_preferences *up)
+{
+	GtkWidget *page_preferences = GTK_WIDGET(gtk_builder_get_object(up->builder, "main_preferences"));
+	const gchar *email = gtk_entry_get_text(GTK_ENTRY(up->email));
+
+	if (gebr_validate_check_is_email(email) || !*email) {
+		gtk_entry_set_icon_from_stock(GTK_ENTRY(up->email), GTK_ENTRY_ICON_SECONDARY, NULL);
+		gtk_entry_set_icon_tooltip_text(GTK_ENTRY(up->email), GTK_ENTRY_ICON_SECONDARY, NULL);
+		gtk_assistant_set_page_complete(GTK_ASSISTANT(up->dialog), page_preferences, TRUE);
+	} else {
+		gtk_entry_set_icon_from_stock(GTK_ENTRY(up->email), GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIALOG_WARNING);
+		gtk_entry_set_icon_tooltip_text(GTK_ENTRY(up->email), GTK_ENTRY_ICON_SECONDARY, "Invalid email");
+		gtk_assistant_set_page_complete(GTK_ASSISTANT(up->dialog), page_preferences, FALSE);
+	}
+}
+
+static void
 on_assistant_prepare(GtkAssistant *assistant,
 		     GtkWidget *current_page,
 		     struct ui_preferences *up)
@@ -520,6 +538,10 @@ on_assistant_prepare(GtkAssistant *assistant,
 			gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), page_review, _("Warning"));
 			gtk_label_set_markup(review_orientations_label, _("Click on <tt>Back</tt> to connect to it or on <tt>Cancel</tt> to close GêBR."));
 		}
+	}
+	else if (page == PREFERENCES_PAGE) {
+		on_changed_validate_email(up->email, up);
+		g_signal_connect(up->email, "changed", G_CALLBACK(on_changed_validate_email), up);
 	}
 	else if (page == MAESTRO_INFO_PAGE) {
 		g_signal_connect(GTK_BUTTON(maestro_info_button), "clicked", G_CALLBACK(on_maestro_info_button_clicked), NULL);
@@ -788,7 +810,6 @@ preferences_setup_ui(gboolean first_run,
 
 		// PREFERENCES_PAGE
 		gtk_assistant_append_page(GTK_ASSISTANT(assistant), page_preferences);
-		gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), page_preferences, TRUE);
 		gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), page_preferences, GTK_ASSISTANT_PAGE_INTRO);
 		gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), page_preferences, _("Preferences"));
 
