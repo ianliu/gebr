@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-04-19 15:15-0300\n"
+"POT-Creation-Date: 2012-04-19 16:27-0300\n"
 "PO-Revision-Date: 2012-04-13 16:47-0300\n"
 "Last-Translator: Rodrigo Morelatto <morelatto@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
@@ -159,7 +159,7 @@ msgid ""
 "A <b>Line</b> is a way of organize Flows and it is associated to the Maestro "
 "machine in which its flows are going to be executed."
 msgstr ""
-"Uma <b>Linha</b> é um meio de montar e organizar Fluxos e é associada ao "
+"Uma <b>Linha</b> é um meio de montar e organizar Fluxos e está associada ao "
 "Maestro na qual seus fluxos serão executados."
 
 #: ../data/document-properties.glade.h:25
@@ -685,7 +685,7 @@ msgid "Flow"
 msgstr "Fluxo"
 
 #. Set title
-#: ../flow.c:1014 ../ui_document.c:1549 ../ui_project_line.c:403
+#: ../flow.c:1014 ../line.c:483 ../ui_document.c:1549 ../ui_project_line.c:403
 msgid "Line"
 msgstr "Linha"
 
@@ -1711,10 +1711,6 @@ msgstr "Criando diretórios..."
 msgid "Creating a new Line"
 msgstr "Criando uma nova Linha"
 
-#: ../line.c:483
-msgid "Basic line information"
-msgstr "Informação básica da Linha"
-
 #: ../line.c:488
 msgid "Line Paths"
 msgstr "Caminhos de linha"
@@ -1728,12 +1724,12 @@ msgid "IMPORT Path"
 msgstr "Caminho IMPORT"
 
 #: ../line.c:503
-msgid "Hierarchy Structure"
-msgstr "Hierarquia de diretórios"
+msgid "Directories Hierarchy"
+msgstr "Hierarquia de Diretórios"
 
 #: ../line.c:508
-msgid "Line Review"
-msgstr "Revisão da Linha"
+msgid "Summary"
+msgstr "Sumário"
 
 #. log action
 #: ../line.c:686
@@ -2249,9 +2245,9 @@ msgid ""
 msgstr ""
 "Clique em <tt>Sair</tt> para sair ou em <tt>Cancel</tt> para fechar a GêBR."
 
-#: ../ui_preferences.c:544 ../ui_preferences.c:802
-msgid "Choose your Maestro"
-msgstr "Escolha seu Maestro"
+#: ../ui_preferences.c:544 ../ui_preferences.c:796 ../ui_preferences.c:802
+msgid "Maestro"
+msgstr "Maestro"
 
 #: ../ui_preferences.c:557
 #, c-format
@@ -2259,8 +2255,7 @@ msgid ""
 "Now you need to add <b>Servers</b> to be handled by your Maestro <b>%s</b>.\n"
 "\n"
 msgstr ""
-"Você precisa adicionar <b>Servidores</b> para serem geridos pelo Maestro <b>%"
-"s</b>.\n"
+"Você precisa adicionar <b>Servidores</b> ao seu Maestro <b>%s</b>.\n"
 "\n"
 
 #: ../ui_preferences.c:616
@@ -2295,15 +2290,7 @@ msgstr "Maestro padrão do Arquivo"
 msgid "Configuring GêBR"
 msgstr "Configurando GêBR"
 
-#: ../ui_preferences.c:796
-msgid "Maestro"
-msgstr "Maestro"
-
-#: ../ui_preferences.c:808
-msgid "Servers Information"
-msgstr "Informações de servidores"
-
-#: ../ui_preferences.c:814
+#: ../ui_preferences.c:808 ../ui_preferences.c:814
 msgid "Servers"
 msgstr "Servidores"
 
@@ -2553,19 +2540,17 @@ msgstr "<span size='large'>Conectando ao Maestro...</span>"
 
 #: ../data/gebr-connections-settings.glade.h:7
 msgid ""
-"A Maestro controls many servers under its control. For each server, you are "
-"going to be asked for your password.\n"
+"A Maestro may control many servers. For each server, you are going to be "
+"asked for your login credentials.\n"
 "\n"
-" Additionally, your login credentials may be asked once more for the remote "
-"browsing of your files."
+" Additionally, you may be asked once more for the remote browsing of your "
+"files."
 msgstr ""
-"Seu Maestro pode ter muitos servidores sob controle. Para cada servidor, "
-"você será requisitado por uma senha. A senha que deve fornecer é a mesma que "
-"usaria para logar naquela máquina.\n"
+"Um Maestro pode controlar muitos servidores. Para cada servidor, você será "
+"requisitado seus dados credenciais daquele servidor.\n"
 "\n"
-"Além disso, uma senha será solicitada para navegação remota de seus "
-"arquivos. Desta forma, pode-se navegar em seus arquivos remotos nos "
-"servidores."
+"Além disso, uma senha poderá ser solicitada para navegação remota de seus "
+"arquivos."
 
 #: ../data/gebr-connections-settings.glade.h:10
 msgid "Add"
@@ -2643,6 +2628,21 @@ msgstr "Conecte-se ao Maestro <b>XXX</b>"
 #: ../data/connect-maestro-dialog.glade.h:4
 msgid "What do you want to do?"
 msgstr "O que deseja fazer?"
+
+#~ msgid "Basic line information"
+#~ msgstr "Informação básica da Linha"
+
+#~ msgid "Hierarchy Structure"
+#~ msgstr "Hierarquia de diretórios"
+
+#~ msgid "Line Review"
+#~ msgstr "Sumário"
+
+#~ msgid "Choose your Maestro"
+#~ msgstr "Escolha seu Maestro"
+
+#~ msgid "Servers Information"
+#~ msgstr "Informações de servidores"
 
 #~ msgid "_Servers"
 #~ msgstr "_Servidores"

@@ -546,7 +546,7 @@ on_assistant_prepare(GtkAssistant *assistant,
 			gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), main_maestro, FALSE);
 
 		gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), main_maestro, GTK_ASSISTANT_PAGE_CONTENT);
-		gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), main_maestro, _("Choose your Maestro"));
+		gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), main_maestro, _("Maestro"));
 	}
 	else if (page == SERVERS_PAGE) {
 		GtkTreeView *view = create_view_for_servers(up);
@@ -804,13 +804,13 @@ preferences_setup_ui(gboolean first_run,
 		gtk_assistant_append_page(GTK_ASSISTANT(assistant), main_maestro);
 		gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), main_maestro, FALSE);
 		gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), main_maestro, GTK_ASSISTANT_PAGE_CONTENT);
-		gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), main_maestro, _("Choose your Maestro"));
+		gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), main_maestro, _("Maestro"));
 
 		// SERVERS_INFO_PAGE
 		gtk_assistant_append_page(GTK_ASSISTANT(assistant), servers_info);
 		gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), servers_info, TRUE);
 		gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), servers_info, GTK_ASSISTANT_PAGE_CONTENT);
-		gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), servers_info, _("Servers Information"));
+		gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), servers_info, _("Servers"));
 
 		// SERVERS_PAGE
 		gtk_assistant_append_page(GTK_ASSISTANT(assistant), main_servers);

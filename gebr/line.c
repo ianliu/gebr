@@ -480,7 +480,7 @@ line_setup_wizard(GebrGeoXmlLine *line)
 	gtk_assistant_append_page(GTK_ASSISTANT(assistant), page1);
 	gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), page1, TRUE);
 	gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), page1, GTK_ASSISTANT_PAGE_CONTENT);
-	gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), page1, _("Basic line information"));
+	gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), page1, _("Line"));
 
 	gtk_assistant_append_page(GTK_ASSISTANT(assistant), page2);
 	gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), page2, TRUE);
@@ -500,12 +500,12 @@ line_setup_wizard(GebrGeoXmlLine *line)
 	gtk_assistant_append_page(GTK_ASSISTANT(assistant), page5);
 	gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), page5, TRUE);
 	gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), page5, GTK_ASSISTANT_PAGE_CONTENT);
-	gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), page5, _("Hierarchy Structure"));
+	gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), page5, _("Directories Hierarchy"));
 
 	gtk_assistant_append_page(GTK_ASSISTANT(assistant), page6);
 	gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), page6, TRUE);
 	gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), page6, GTK_ASSISTANT_PAGE_CONFIRM);
-	gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), page6, _("Line Review"));
+	gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), page6, _("Summary"));
 
 	gtk_assistant_append_page(GTK_ASSISTANT(assistant), page7);
 	gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), page7, GTK_ASSISTANT_PAGE_PROGRESS);
