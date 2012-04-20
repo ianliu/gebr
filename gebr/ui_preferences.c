@@ -121,12 +121,21 @@ on_assistant_cancel(GtkAssistant *assistant,
 }
 
 static void
+on_assistant_back_button(GtkButton *button,
+                         struct ui_preferences *up)
+{
+	gtk_assistant_set_current_page(GTK_ASSISTANT(up->dialog), up->prev_page);
+}
+
+static void
 on_assistant_close(GtkAssistant *assistant,
                    struct ui_preferences *up)
 {
 	gint page = gtk_assistant_get_current_page(GTK_ASSISTANT(assistant));
 	if (page == CANCEL_PAGE) {
 		if (get_wizard_status(up) == WIZARD_STATUS_COMPLETE) {
+			g_signal_handlers_disconnect_by_func(up->back_button, on_assistant_back_button, up);
+			gtk_assistant_remove_action_widget(assistant, up->back_button);
 			save_preferences_configuration(up);
 			gtk_widget_destroy(up->dialog);
 		} else {
@@ -135,24 +144,10 @@ on_assistant_close(GtkAssistant *assistant,
 		}
 	}
 	else if (page == SERVERS_PAGE) {
+		up->prev_page = SERVERS_PAGE;
+		up->cancel_assistant = TRUE;
 		gtk_assistant_set_current_page(assistant, CANCEL_PAGE);
 	}
-}
-
-static void
-on_assistant_back_button(GtkButton *button,
-                         struct ui_preferences *up)
-{
-	gtk_assistant_set_current_page(GTK_ASSISTANT(up->dialog), up->prev_page);
-}
-
-static void
-on_assistant_apply(GtkAssistant *assistant,
-		   struct ui_preferences *up)
-{
-	g_signal_handlers_disconnect_by_func(up->back_button, on_assistant_back_button, up);
-	gtk_assistant_remove_action_widget(assistant, up->back_button);
-	save_preferences_configuration(up);
 }
 
 static void
@@ -538,7 +533,7 @@ on_assistant_prepare(GtkAssistant *assistant,
 				g_string_erase(servers, 0, 2);
 
 			gtk_label_set_text(review_servers_label, servers->str);
-			gtk_label_set_text(review_maestro_label, up->maestro_addr);
+			gtk_label_set_text(review_maestro_label, gebr_maestro_server_get_address(maestro));
 			g_string_free(servers, TRUE);
 
 			gtk_label_set_markup(review_orientations_label, _("GêBR is ready."));
@@ -558,7 +553,7 @@ on_assistant_prepare(GtkAssistant *assistant,
 			} else if (wizard_status == WIZARD_STATUS_WITHOUT_DAEMON){
 				gtk_label_set_markup(review_pref_label, "<i>Done.</i>");
 				gtk_image_set_from_stock(GTK_IMAGE(review_pref_img), GTK_STOCK_YES, GTK_ICON_SIZE_MENU);
-				gtk_label_set_markup(review_maestro_label, up->maestro_addr);
+				gtk_label_set_markup(review_maestro_label, gebr_maestro_server_get_address(maestro));
 				gtk_image_set_from_stock(GTK_IMAGE(review_maestro_img), GTK_STOCK_YES, GTK_ICON_SIZE_MENU);
 				gtk_label_set_markup(review_servers_label, "<i>None</i>");
 				gtk_image_set_from_stock(GTK_IMAGE(review_servers_img), GTK_STOCK_STOP, GTK_ICON_SIZE_MENU);
@@ -828,8 +823,6 @@ preferences_setup_ui(gboolean first_run,
 		g_signal_connect(assistant, "cancel", G_CALLBACK(on_assistant_cancel), ui_preferences);
 		g_signal_connect(assistant, "close", G_CALLBACK(on_assistant_close), ui_preferences);
 		g_signal_connect(assistant, "prepare", G_CALLBACK(on_assistant_prepare), ui_preferences);
-		if (insert_preferences)
-			g_signal_connect(assistant, "apply", G_CALLBACK(on_assistant_apply), ui_preferences);
 
 		// CANCEL_PAGE
 		gtk_assistant_append_page(GTK_ASSISTANT(assistant), page_review);
@@ -940,6 +933,7 @@ preferences_setup_ui(gboolean first_run,
 		set_preferences_page(builder, ui_preferences);
 
 		/* finally... */
+		gtk_window_set_modal(GTK_WINDOW(ui_preferences->dialog), TRUE);
 		gtk_widget_show_all(ui_preferences->dialog);
 	}
 
