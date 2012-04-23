@@ -104,6 +104,10 @@ struct gebr {
 	struct gebr_config {
 		GKeyFile *key_file;
 		GString *path;
+
+		GKeyFile *key_file_maestro;
+		GString *path_maestro;
+
 		GString *version;
 
 		GString *maestro_address;
@@ -169,6 +173,11 @@ gboolean gebr_config_load(void);
  * Populates the various data models, such as menus index and projects & lines.
  */
 void gebr_config_apply(void);
+
+/**
+ * Save GeBR's Maestro config to ~/.gebr/.maestros.conf file.
+ */
+void gebr_config_maestro_save(void);
 
 /**
  * Save GeBR config to ~/.gebr/.gebr.conf file.

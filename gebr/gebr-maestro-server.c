@@ -304,6 +304,7 @@ state_changed(GebrCommServer *comm_server,
 			gebr_maestro_server_set_error(maestro, "error:ssh", err);
 	} else if (state == SERVER_STATE_LOGGED) {
 		gebr_maestro_server_set_error(maestro, "error:none", NULL);
+		gebr_config_maestro_save();
 	}
 
 	const gchar *error_type = maestro->priv->error_type;

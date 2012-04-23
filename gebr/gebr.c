@@ -160,6 +160,8 @@ gboolean gebr_quit(gboolean save_config)
 	/* free config stuff */
 	g_key_file_free(gebr.config.key_file);
 	g_string_free(gebr.config.path, TRUE);
+	g_key_file_free(gebr.config.key_file_maestro);
+	g_string_free(gebr.config.path_maestro, TRUE);
 	g_string_free(gebr.config.username, TRUE);
 	g_string_free(gebr.config.email, TRUE);
 	g_string_free(gebr.config.editor, TRUE);
@@ -224,6 +226,27 @@ gboolean gebr_quit(gboolean save_config)
 	return FALSE;
 }
 
+gboolean
+gebr_load_maestro_config(void)
+{
+	gboolean has_config;
+
+	gebr.config.path_maestro = g_string_new(NULL);
+	g_string_printf(gebr.config.path_maestro, "%s/.gebr/gebr/maestros.conf", g_get_home_dir());
+	has_config = g_access(gebr.config.path_maestro->str, F_OK | R_OK) == 0 ? TRUE : FALSE;
+	gebr.config.key_file_maestro = g_key_file_new();
+
+	if (has_config)
+		/* For the sake of backwards compatibility, load deprecated gengetopt file format ... */
+		if (!g_key_file_load_from_file(gebr.config.key_file_maestro, gebr.config.path_maestro->str, G_KEY_FILE_NONE, NULL))
+			return FALSE;
+
+	gebr.maestro_controller = gebr_maestro_controller_new();
+	gebr.config.maestro_address  = gebr_g_key_file_load_string_key(gebr.config.key_file_maestro, "maestro", "address", g_get_host_name());
+
+	return TRUE;
+}
+
 /**
  * gebr_config_load:
  *
@@ -238,8 +261,6 @@ gebr_config_load(void)
 	gchar *usermenus = g_strdup_printf("%s/GeBR-Menus", g_get_home_dir());
 	gchar *datadir = g_strdup_printf("%s/.gebr/gebr/data", g_get_home_dir());
 
-	gebr.maestro_controller = gebr_maestro_controller_new();
-
 	gebr.config.path = g_string_new(NULL);
 	g_string_printf(gebr.config.path, "%s/.gebr/gebr/gebr.conf", g_get_home_dir());
 	has_config = g_access(gebr.config.path->str, F_OK | R_OK) == 0 ? TRUE : FALSE;
@@ -250,8 +271,9 @@ gebr_config_load(void)
 		if (!g_key_file_load_from_file(gebr.config.key_file, gebr.config.path->str, G_KEY_FILE_NONE, NULL))
 			gebr_config_load_from_gengetopt();
 
+	gebr_load_maestro_config();
+
 	gebr.config.version   = gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "version", "None");
-	gebr.config.maestro_address  = gebr_g_key_file_load_string_key(gebr.config.key_file, "maestro", "address", g_get_host_name());
 	gebr.config.username  = gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "name", g_get_real_name());
 	gebr.config.email     = gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "email", g_get_user_name());
 	gebr.config.usermenus = gebr_g_key_file_load_string_key(gebr.config.key_file, "general", "usermenus", usermenus);
@@ -374,6 +396,37 @@ void gebr_config_apply(void)
 	menu_list_populate();
 }
 
+void
+gebr_config_maestro_save(void)
+{
+	gsize length;
+	gchar *string;
+	FILE *configfp;
+
+	g_key_file_free(gebr.config.key_file_maestro);
+	gebr.config.key_file_maestro = g_key_file_new();
+
+	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+	if (maestro && gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED) {
+		const gchar *maestro_addr = gebr_maestro_server_get_address(maestro);
+		g_key_file_set_string(gebr.config.key_file_maestro, "maestro", "address", maestro_addr);
+	} else
+		return;
+
+	string = g_key_file_to_data(gebr.config.key_file_maestro, &length, NULL);
+	configfp = fopen(gebr.config.path_maestro->str, "w");
+	if (configfp == NULL) {
+		gebr_message(GEBR_LOG_ERROR, TRUE, TRUE, _("Could not save configuration."));
+		goto out;
+	}
+	fwrite(string, sizeof(gchar), length, configfp);
+	fclose(configfp);
+
+out:
+	g_free(string);
+	return;
+}
+
 void gebr_config_save(gboolean verbose)
 {
 	GtkTreeIter iter;
@@ -382,14 +435,12 @@ void gebr_config_save(gboolean verbose)
 	gchar *string;
 	FILE *configfp;
 	
-	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
-	const gchar *maestro_addr = gebr_maestro_server_get_address(maestro);
+	gebr_config_maestro_save();
 
 	/* reset key_file, cause we do not sync servers automatically */
 	g_key_file_free(gebr.config.key_file);
 	gebr.config.key_file = g_key_file_new();
 
-	g_key_file_set_string(gebr.config.key_file, "maestro", "address", maestro_addr);
 	g_key_file_set_string(gebr.config.key_file, "general", "name", gebr.config.username->str);
 	g_key_file_set_string(gebr.config.key_file, "general", "email", gebr.config.email->str);
 	g_key_file_set_string(gebr.config.key_file, "general", "editor", gebr.config.editor->str);
@@ -672,7 +723,7 @@ gebr_has_maestro_config(void)
 	gboolean has_config;
 	GString *path = g_string_new(NULL);
 
-	g_string_printf(path, "%s/.gebr/gebrm/%s/servers.conf", g_get_home_dir(), gebr.config.maestro_address->str);
+	g_string_printf(path, "%s/.gebr/gebr/maestros.conf", g_get_home_dir());
 
 	has_config = g_access(path->str, F_OK | R_OK) == 0 ? TRUE : FALSE;
 

@@ -160,6 +160,7 @@ on_maestro_state_changed(GebrMaestroController *self,
 
 	if (state != SERVER_STATE_LOGGED && state != SERVER_STATE_DISCONNECTED)
 		return;
+
 	set_status_for_maestro(self, maestro, up, state);
 }
 
@@ -196,6 +197,8 @@ set_status_for_maestro(GebrMaestroController *self,
 
 		gtk_label_set_markup(GTK_LABEL(status_title), summary_txt);
 		g_free(summary_txt);
+
+		gebr_config_maestro_save();
 	}
 	else {
 		const gchar *type, *msg;
