@@ -547,6 +547,15 @@ void on_editing_started(GtkCellRenderer *renderer,
                         GebrGuiSequenceEdit *self)
 {
 	self->priv->is_editing = TRUE;
+
+	GtkTreeIter iter;
+	if (gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(self->list_store), &iter, path)) {
+		gchar *old_text;
+		gtk_tree_model_get(GTK_TREE_MODEL(self->list_store), &iter, 0, &old_text, -1);
+		if(!g_strcmp0(old_text,"\u2205"))
+			gtk_entry_set_text(GTK_ENTRY(editable), "");
+	}
+
 }
 
 void on_editing_canceled(GebrGuiSequenceEdit *self)
@@ -701,8 +710,7 @@ GtkTreeIter gebr_gui_sequence_edit_add (GebrGuiSequenceEdit *self,
 
 	gtk_list_store_append(self->list_store, &iter);
 	gtk_list_store_set(self->list_store, &iter,
-			   0, (show_empty_value_text && !strlen(text)) ? _("<empty value>") : text,
-			   -1);
+			   0, (!strlen(text)) ? _("\u2205") : text, -1);
 
 	return iter;
 }
