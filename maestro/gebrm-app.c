@@ -1507,12 +1507,6 @@ gebrm_config_load_servers(GebrmApp *app, const gchar *path)
 		g_strfreev(groups);
 	}
 
-//	if (!succ) {
-//		GebrmDaemon *daemon = gebrm_add_server_to_list(app, g_get_host_name(), NULL, "");
-//		gebrm_daemon_connect(daemon, NULL, NULL);
-//		gebrm_config_save_server(daemon);
-//	}
-
 	return TRUE;
 }
 

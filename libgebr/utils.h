@@ -319,6 +319,16 @@ gboolean gebr_validate_path(const gchar *path,
 
 gint gebr_strv_indexof(const gchar **strv, const gchar *value);
 
+/**
+ * gebr_comm_server_generate_key:
+ */
+gboolean gebr_generate_key(const gchar *host);
+
+/**
+ * gebr_add_ssh_key:
+ */
+gboolean gebr_add_ssh_key(const gchar *host);
+
 G_END_DECLS
 
 #endif				//__GEBR_UTILS_H

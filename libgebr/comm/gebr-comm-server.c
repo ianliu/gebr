@@ -992,3 +992,42 @@ gebr_comm_server_forward_local_port(GebrCommServer *server,
 {
 	return gebr_comm_server_forward_port(server, local_port, remote_port, addr, TRUE);
 }
+
+gboolean
+gebr_comm_server_append_key(GebrCommServer *server,
+                            const gchar *home)
+{
+	gchar *filename = g_strdup_printf("gebr.key.%s.pub", server->address->str);
+	gchar *path = g_build_filename(home, ".gebr", filename, NULL);
+
+	g_debug("PATH KEY IS %s", path);
+
+	if (!g_file_test(path, G_FILE_TEST_EXISTS)) {
+		g_free(filename);
+		g_free(path);
+		return FALSE;
+	}
+
+	g_debug("EXECUTE COMMAND");
+
+	GebrCommTerminalProcess *process;
+	server->process.use = COMM_SERVER_PROCESS_TERMINAL;
+	server->process.data.terminal = process = gebr_comm_terminal_process_new();
+
+	g_signal_connect(process, "ready-read", G_CALLBACK(gebr_comm_ssh_read), server);
+	g_signal_connect(process, "finished", G_CALLBACK(gebr_comm_ssh_finished), server);
+
+	GString *cmd_line = g_string_new(NULL);
+	g_string_printf(cmd_line, "ssh '%1$s' -o StrictHostKeyChecking=no "
+	                "\"umask 077; test -d %3$s/.ssh || mkdir %3$s/.ssh ; cat %2$s >> %3$s/.ssh/authorized_keys\"",
+	                server->address->str, path, home);
+
+	g_debug("COMMAND LINE FOR AUTHORIZED KEYS: %s", cmd_line->str);
+	gebr_comm_terminal_process_start(process, cmd_line);
+
+	g_string_free(cmd_line, TRUE);
+	g_free(filename);
+	g_free(path);
+
+	return TRUE;
+}

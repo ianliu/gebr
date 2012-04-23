@@ -1228,3 +1228,85 @@ gebr_strv_indexof(const gchar **strv, const gchar *value)
 			return i;
 	return -1;
 }
+
+gboolean
+gebr_generate_key(const gchar *host)
+{
+	gchar *filename = g_strdup_printf("gebr.key.%s", host);
+	gchar *path = g_build_filename(g_get_home_dir(), ".gebr", filename, NULL);
+
+	g_debug("PATH IS %s", path);
+
+	if (g_file_test(path, G_FILE_TEST_EXISTS)) {
+		g_free(path);
+		g_free(filename);
+		return FALSE;
+	}
+
+	gchar *std_out;
+	gchar *std_error;
+	gint exit_status;
+	GError *error = NULL;
+	GString *cmd_line = g_string_new(NULL);
+
+	g_string_printf(cmd_line, "ssh-keygen -b '2048' -t 'rsa' -N '' -f '%s'", path);
+
+	g_debug("COMMAND LINE: %s", cmd_line->str);
+
+	if (!g_spawn_command_line_sync(cmd_line->str, &std_out, &std_error, &exit_status, &error)) {
+		g_debug("Erros %s | %s", std_error, std_out);
+		g_debug("GError: %s", error->message);
+		return FALSE;
+	}
+
+	g_debug("CREATED");
+
+	g_string_free(cmd_line, TRUE);
+	g_free(filename);
+	g_free(path);
+	g_free(std_error);
+	g_free(std_out);
+
+	return TRUE;
+}
+
+gboolean
+gebr_add_ssh_key(const gchar *host)
+{
+	gchar *filename = g_strdup_printf("gebr.key.%s", host);
+	gchar *path = g_build_filename(g_get_home_dir(), ".gebr", filename, NULL);
+
+	g_debug("PATH IS %s", path);
+
+	if (!g_file_test(path, G_FILE_TEST_EXISTS)) {
+		g_free(path);
+		g_free(filename);
+		return FALSE;
+	}
+
+	gchar *std_out;
+	gchar *std_error;
+	gint exit_status;
+	GError *error = NULL;
+	GString *cmd_line = g_string_new(NULL);
+
+	g_string_printf(cmd_line, "ssh-add %s", path);
+
+	g_debug("COMMAND LINE: %s", cmd_line->str);
+
+	if (!g_spawn_command_line_sync(cmd_line->str, &std_out, &std_error, &exit_status, &error)) {
+		g_debug("Erros %s | %s", std_error, std_out);
+		g_debug("GError: %s", error->message);
+		return FALSE;
+	}
+
+	g_debug("ADDED");
+
+	g_string_free(cmd_line, TRUE);
+	g_free(filename);
+	g_free(path);
+	g_free(std_error);
+	g_free(std_out);
+
+	return TRUE;
+}
