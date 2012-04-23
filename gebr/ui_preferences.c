@@ -719,6 +719,10 @@ set_servers_page(GtkBuilder *builder,
 	gtk_widget_show_all(server_entry);
 
 	up->server_entry = server_entry;
+
+	gchar *text = g_markup_printf_escaped(_("Type here <b>[user@]hostname</b> of the server"));
+	gtk_widget_set_tooltip_markup(server_entry, text);
+	g_free(text);
 }
 
 static void
