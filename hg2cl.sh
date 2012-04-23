@@ -18,6 +18,8 @@ s/  pris.*>$/  Priscila Moraes de Souza <pris.moraess\@gebrproject.com>/i;
 s/  giuliano.*>$/  Giuliano Roberto Pinheiro <giuliano\@gebrproject.com>/i;
 s/  (keiji|eric).*>$/  Eric Keiji <keiji.eric\@gebrproject.com>/i;
 s/  (querencia|vinicius).*>$/  Vinícius Oliveira Querência <querencia\@gebrproject.com>/i;
+s/  julia.*>$/  Júlia Koury Marques <juliakm\@gebrproject.com>/i;
+s/  igor.*>$/  Igor Nunes <igorsnunes\@gebrproject.com>/i;
 s/  (fabioaz|fabiosazevedo).*>$/  Fabio de Souza Azevedo  <fabioaz\@gebrproject.com>/' \
 | perl -ne '(/^2/ && print "\n$_\n") || /^$/ || print' | tail -n +2
 echo | paste -s -d\\n - ChangeLog

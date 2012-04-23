@@ -1,3 +1,143 @@
+2012-04-13  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add glade to POTILES.in
+
+2012-03-30  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix gcc warnings in GeBRd
+
+2012-03-29  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix view of mpi flavors on servers
+
+2012-03-28  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Using absolute path to execute MPI
+
+2012-03-27  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Rewritten cores scores code
+
+2012-03-22  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix type of aggressive of run on Daemon
+
+2012-03-20  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Sending subset maximum of servers to daemon to execute MPI program
+
+2012-03-15  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add parenthesis around Mpich2 command line
+	* Do not add LD_LIBRARY_PATH if no path was given
+	* Searches for default MPI binaries if no conf file was provided
+
+2012-03-14  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix invalid pointer when dealing with mpi in Daemon
+
+2012-03-14  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix MPI parameters to set correctly keywords and allow dict
+	variables on that parameters
+	* Fix remove tmp_file when use loop in MPICH2
+
+2012-03-13  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add support for MPICH2 in Daemon
+	* Add copyright notice to file
+
+2012-03-12  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Verify if the MPI binary exist before adding to supported mpi list
+	* Remove 'binpath' attribute from gebrd.conf file
+	* Fix coding spacing
+
+2012-03-09  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add stub methods for MPICH2
+
+2012-03-07  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add basic support for MPI programs
+
+2012-03-07  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Insert treatment to run flow with MPI on comm_runner and daemon
+	* Remove num_processes from Gebrd struct
+
+2012-03-07  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Daemon now fetches the number of cores from the XML
+
+2012-03-06  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Create communication daemon=>maestro about mpi_flavour
+
+2012-03-05  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Daemon sends the home directory to Maestro
+
+2012-02-28  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add scaping to the creation of directories in gebrd
+
+2012-02-17  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Adding unitary test to mkdir, renamedir and deletedir function.
+
+2012-02-17  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix errors messages when rename directories on daemon
+
+2012-02-17  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Refactor function of error handling in directories creation in
+	daemon
+	* Fix error handling in creation of paths
+
+2012-02-16  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix a bug when iterating in a list
+	* Remove address argument for path_def message
+
+2012-02-15  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix incorrect creation of names with spaces
+
+2012-02-14  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix segFault on empty maestro_server
+	* Fix creation of empty name of folder in gebrd
+
+2012-02-10  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Rename directory and paths when change name of the line
+
+2012-02-09  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Adding new unitary test
+
+2012-02-09  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Create all directories inside BASE
+
+2012-02-09  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Fix the escaping bug in command line creation
+
+2012-02-08  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Adding error messages at creating a new directory
+
+2012-02-08  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Create communication with return client=>maestro=>daemon
+
+2012-02-07  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Create new message path_def to create BASE directory
+
 2012-01-16  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
 
 	* Update changelog and bump version to 0.15.6.

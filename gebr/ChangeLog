@@ -1,3 +1,1148 @@
+2012-04-23  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Update translate of GeBR
+	* Improvement on Maestro info page
+	* Set tooltip on servers entry
+	* Add maestros.conf file and methods to load/save that
+
+2012-04-23  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix behaviou of maestro chooser page of wizard of connecitons
+	settings
+
+2012-04-23  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Set preferences dialog like connections wizard
+	* Change entry of servers page to enhancementEntry and include on
+	ui_preferences structure
+
+2012-04-23  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Apply border relief to the Details button of JobControl tab
+
+2012-04-23  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add context menu on servers view in Connections wizard
+	* Public method gebr_maestro_controller_server_popup_menu and using
+	tree_view from argument
+
+2012-04-23  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Remove speeder ruler when flow is not parallellizable
+
+2012-04-20  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix signal connected to the X button of the gebr-connections-wizard
+
+2012-04-20  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Insert connection status progress on Maestro page
+	* Go to Status page when click apply in servers page
+
+2012-04-20  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix last page of gebr-connections-wizard
+
+2012-04-20  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Insert email validate on preferences page of Connections wizard
+
+2012-04-20  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Changing title of Servers window to Maestro / Servers.
+	* Improving connections's wizard.
+	* Improving line's wizard.
+	* Improving connections's wizard.
+	* Improving line's wizard.
+
+2012-04-19  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Translate (half of) gebr-connections-settings wizard
+
+2012-04-19  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix window transient of SFTP Password dialog
+	* Add method gebr_has_maestro_config and version of GeBR on gebr.conf
+	to open Connections wizard on upgrade of old GeBR
+	* Fix update of servers view on Connections wizard
+
+2012-04-19  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix translations on change of Maestro of the line
+	* Fix translations issues on line wizard
+
+2012-04-19  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Include new parameter on preferences_setup_ui to open wizard without
+	preferences and improve cancel widget
+	* Fix bug when add Server with entry_activate (Connections wizard)
+
+2012-04-19  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix wrong compilation (remove wrong references in Makefile and
+	Makefile.in in gebr/data/
+
+2012-04-19  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Remove unused glade file document-properties-new.glade
+	* Use correctly widget on glade in Document Properties
+	* Fix segfault when click cancel on time out dialog (Creating
+	directories)
+
+2012-04-19  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Remove many unwanted 'property translate=yes' of labels of glades
+	* Remove document-properties-new.glade
+	* Fix IMPORT entry behaviour in gebr-connections wizard
+
+2012-04-18  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Improvements on error message in Maestro's page (Connections wizard)
+	* Improvements on Servers page in connections wizard
+
+2012-04-18  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Adding message at BASE tab in line properties window
+	* Improving line's wizard.
+
+2012-04-18  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change order of default maestros in connections wizard
+	* Use method gebr_file_chooser_set_remote_navigation on callbacks of
+	File Chooser in line's preferences, I/O and program parameters
+	(refactoring)
+	* Use method gebr_generate_paths_with_home on
+	gebr_ui_document_send_paths_to_maestro (remove duplicate code)
+
+2012-04-18  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Improving line's wizard and message when maestro is not connected.
+
+2012-04-18  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Minor fix in glade file of connections settings wizard
+	* Minor fixes in line creation wizard
+
+2012-04-18  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Improving line's wizard.
+
+2012-04-18  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix filechooser default place of Import and Export buttons of FLOWS
+	to open on local home
+	* Fix filechooser default place of Import and Export buttons to open
+	on local home
+
+2012-04-18  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Merge with "Fix behaviour of the the filechooser in the IMPORT
+	entry"
+	* Merge with branch gebr-connections-settings
+
+2012-04-18  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix behaviour of the the filechooser in the IMPORT entry
+	* Fix consistency of BASE path in the line wizard
+	* Fix wrong paths used by filechooser on line wizard, line properties,
+	IO and on program parameters
+
+2012-04-17  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change several treatments and pages on Connections Wizard
+	* Publicate method update_daemons_model to fix Servers model bug in
+	Maestro's Wizard
+
+2012-04-17  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix memory leak on line's Wizard
+
+2012-04-16  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Implement new cancel page with Back Button (Misterious Seg. Fault
+	when Apply wizard)
+	* Merge changes of tip on branch
+
+2012-04-16  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Fixing behaviour of BASE entry
+	* Improving messages of gebr-connections-settings wizard
+
+2012-04-16  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix segFault on filechooser (not having <HOME> path)
+	* Commit Merge of fix of segFault on disconnected callback of gebr-
+	connections-settings wizard
+
+2012-04-16  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Disconnect callback of maestro_state_changed when destroy Maestro
+	wizard
+
+2012-04-16  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix minor error over wizard completion status
+	* Improvements over gebr-connections-settings wizard prior to internal
+	release
+
+2012-04-13  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Internationalization correcting bugs
+
+2012-04-13  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix message of Review page on gebr-connections-settings wizard
+	* Fix wrong message of disconnected line on flow-browser
+
+2012-04-13  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Intertionalization completed
+
+2012-04-13  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Changing some messages at gebr-connections-settings wizard
+
+2012-04-13  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Second part of Intertionalization
+
+2012-04-13  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Insert new page to warning user after cancel wizard (just on
+	first_run)
+	* Include server with same addr of maestro when maestro doesn't have
+	servers (Need Review Dual Connections)
+
+2012-04-13  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix segFault on connection of maestro on gebr-connections-settings
+	wizard
+	* Fix my wrong previous merge
+
+2012-04-13  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Disconnect signal for maestro_state_changed after connected on
+	wizard
+
+2012-04-13  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add glade to POTILES.in
+	* Put Help link on connection-settings wizard
+
+2012-04-13  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Last massage of line creation corrected
+
+2012-04-13  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Improvement in messages of servers password request window
+	* Fix last commit in method on_assistant_cancel
+	* Remove unused widgets from glade (criticals on Connection's Wizard)
+
+2012-04-12  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix segfault when click OK in Preferences Dialog
+
+2012-04-12  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Internationalization completed
+
+2012-04-12  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fixed use of uninitialized home variable.
+
+2012-04-12  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Connect 'daemons-changed' signal to hability apply only when has
+	unless one server connected on Wizard
+	* Add method gebr_maestro_server_has_connected_servers
+
+2012-04-12  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix behaviour of initial folder of filechooser
+	* Fix segFault on the Line Creation wizard
+	* Make treatment on empty entries in environment variable
+	GEBR_DEFAULT_MAESTRO
+	* Minor fixes in connections-preferences wizard
+
+2012-04-12  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Insert wizard on Actions, and fix some problems in assistant
+
+2012-04-12  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add more detailed messages in connections-settings wizard
+
+2012-04-11  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Xz compression related things
+	* Use gebr-tar at project and line export to enjoy xz compression,
+	saving up to 90% space
+	* Flow export with xz and fixed segfalt when cancel flow export.
+	* Added compress option to document_save_at
+
+2012-04-11  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change maestro's wizard to set servers after connecting on maestro
+	(use API of MaestroController)
+	* Remove unused define
+	* Include servers info and page to add servers on Glade's Maestro
+	wizard
+
+2012-04-11  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Opening entry text folder on filechooser
+
+2012-04-11  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix filechooser behaviour when there is already a text in the entry
+
+2012-04-11  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Keeping "New" visible when a servers is added at servers window
+
+2012-04-10  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Insert progress window when connecting on maestro in Preferences
+	wizard
+
+2012-04-10  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix Pie tooltip
+
+2012-04-10  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix segfault on response_ok and add current maestro in preferences
+	wizard
+
+2012-04-09  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Changing calculating mode on execution datails.
+
+2012-04-09  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Create pages for Preferences of Maestro Configuration on Glade and
+	insert on Wizard/Preferenres
+
+2012-04-09  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add first version of Connections Wizard
+
+2012-04-04  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix wrong change of maestro of line
+	* Change line-creation wizard
+
+2012-04-04  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Set HOME to line in maestro state change when line not have one
+
+2012-04-04  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Standardizing left side of flow editor tab
+
+2012-04-04  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Insert tooltip on maestro button in line information when has error
+
+2012-04-04  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Making demos import insensitive when maestro is disconnected.
+
+2012-04-04  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix invalid option of change line to a disconnected maestro
+
+2012-04-04  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Making project/line import insensitive when maestro is disconnected.
+
+2012-04-04  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Include other tabs on Line's properties (like wizard)
+
+2012-04-04  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix handling of g_hash_table
+	* Refactor wizard of line creation
+
+2012-04-03  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Create new pages for assistant when creating a new line
+	* Create new widgets for line properties on glade
+	* Refactoring duplicate methods to callbacks for wizard and properties
+	of line
+
+2012-04-03  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Remove check-boxes of eExporting flow/line/project with /home/eric
+
+2012-04-03  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Since gtk 2.14 dialog->vbox should be accessed through
+	gtk_dialog_get_content_area
+
+2012-04-02  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Use correctly BASE and HOME on import line/flow and on upgrade of
+	DTD
+
+2012-04-02  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Fixing behavior of slider when a mpi flow is disable or enable
+
+2012-04-02  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Use maestro clock in relative time (left panel of JobControl tab)
+
+2012-04-02  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Adding one core icon at no parallelizable flow
+
+2012-03-30  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix several gcc warnings
+
+2012-03-30  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Improve message on slider tooltip
+
+2012-03-30  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Fixing behavior of Maestro connected icon at Projects and lines tab
+	* Adding one core icon at slider
+
+2012-03-30  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Remove relativise home to /home/jorgepzt when executing flow
+
+2012-03-30  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Adding "of cores" at slider tooltip
+	* Changing tooltip of slider and adding 25% and 75% tics
+	* Changing line disconnected message at flow tab
+	* Using word "move" instead of "change" at line disconnected window.
+
+2012-03-30  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Set size group on button_maestro and image_maestri on line's
+	properties
+	* Improve warning message when create line with disconnected maestro
+	* Include bold on flavors in Job Control
+
+2012-03-29  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Set BASE path relative to HOME when importing a line
+	* Change button to connect on maestro in line's properties to image
+	when maestro is connected
+	* Set speed to 0 on single_core flows
+	* Call method resolve_relative_path when run flow
+
+2012-03-29  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Remove BASE path validation
+
+2012-03-28  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Relativise home variables on focus-out and File Chooser in Line's
+	properties
+
+2012-03-28  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebr:prject-line: Improve maestro connection dialog
+	* gebr:job-control: Improve message for MPI jobs in server resources
+	popup
+	* gebr:job-control: Change 'tasks' to 'processes' in server resources
+
+2012-03-28  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Adjusting tooltip of slider bar
+
+2012-03-28  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Improve text in resources window
+
+2012-03-28  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Remove document_save for flow when set I/O on interface
+
+2012-03-28  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Adjusting tooltip of slider bar
+
+2012-03-28  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Change message of issue when there is no server that supports MPI
+
+2012-03-28  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix disappearing speed icon from JobControl when slider > 100%
+	* Fix lost of InfoBar on JobControl
+
+2012-03-27  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix update of line's propertie when change maestro for it
+	* Do not show dialog to change/connect maestro only when line already
+	have one
+	* Fix method to return float on execution speed
+
+2012-03-27  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add mpi flavor to job control
+
+2012-03-27  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix speed slider range
+
+2012-03-27  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add mpi_flavors to job_def
+
+2012-03-26  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Changing label "Servers" at JobControl
+
+2012-03-26  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add protection in gebr_daemon_server_accepts_mpi
+
+2012-03-26  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Merge BASE with HOME variable as prefix
+	* Base path uses HOME prefix
+
+2012-03-26  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Move change of maestro from properties to dialog
+
+2012-03-23  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Disable speed slider when the flow is not parallelizable
+
+2012-03-23  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Open filechooser in the folder obtained by the entry
+
+2012-03-23  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Include CPU Clock and Memory on servers dialog
+	* Disable drag and drop for disconnected lines
+
+2012-03-22  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Set parameter nprocess of MPI to slider value when opening a program
+	* Set parameter nprocess of MPI to slider value when running a flow
+
+2012-03-22  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add method gebr_maestro_server_get_n_procs_for_group
+	* Add method gebr_daemon_server_accepts_mpi
+
+2012-03-22  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Sending informations of ncores, clock, cpu_model and memory of a
+	Daemon to Gebr, and create getter/setter for that
+
+2012-03-22  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Update execution speed algorithm
+	* Speed slider grows quicker after 100% mark
+	* Project/line's control sensitiveness for multiple selection
+	* Fix update_control_sensitive prototype for its signals
+	* Remove window parameter from GebrMaestroController constructor
+	* Add method gebr_maestro_controller_set_window and call it
+	* Fix property type of GebrMaestroController:window
+	* Enable controls when selecting a project
+	* Fix corrupted memory access in gebr_job_(get|set)_mpi_owner
+
+2012-03-21  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Show which daemon call the mpi flow
+
+2012-03-21  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Set marks on speed slide
+	* Speed scales are now continuous
+
+2012-03-21  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add relief in maestro button in line RHS
+
+2012-03-21  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Refactor mpi function to compute load division
+
+2012-03-21  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix update of toolbar sensitive of FlowBrowse and FlowEditor, and
+	load flows on startup of gebr if have live selected
+
+2012-03-21  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add help dialog in MPI programs
+	* Remove unused variable
+
+2012-03-21  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Move widget to change maestro from Line's Properties to Line's
+	Details
+
+2012-03-21  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Making buttons insensitive when the maestro of line is disconnected
+
+2012-03-21  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Set sensitive for lines when maestro change state
+	* Create widget on FlowBrowse to warn maestro disconnected
+
+2012-03-21  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Move down the author and email in Project info
+
+2012-03-21  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Insert speed button and revision button on global structure of
+	FLowBrowse and FlowEdition to set sensitive when maestro
+	disconnected
+
+2012-03-20  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Compute tasks division of mpi flows in gebr-comm-runner
+
+2012-03-20  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change sensitive of toolbar on Flow and Flow Editor when maestro for
+	the selected line is disconnected
+	* Create method to check if maestro is connected on line's create
+
+2012-03-20  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix a crash when editing a program
+
+2012-03-19  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Merge mount point fix
+	* Using gebr_maestro_server_get_sftp_root() instead of ".gvfs"
+	hardcoded
+
+2012-03-19  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Mount gvfs with user when necessary
+	* Create method to get username from maestro address
+
+2012-03-19  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Set home of maestro when load lines
+
+2012-03-19  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add method to fetch the sftp directory
+
+2012-03-19  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Minor fix to the author/email in ProjectsLines tab
+
+2012-03-15  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Emit signal when receive HOME to update line's properties
+
+2012-03-15  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix pie graph in MPI execution
+
+2012-03-15  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Insert HOME variable on line's propertie
+	* Fix base paths on wizard and properties of line to use correctly
+	Home
+
+2012-03-15  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix empty tooltip when insert new program on view
+
+2012-03-14  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Erase IO files in JobControl details when programs are nonactivated
+
+2012-03-14  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Undo creation of <HOME> directory
+	* Adding new translated messages.
+
+2012-03-13  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix validation of LogFile
+	* Fix segFault on execution of MPI flow in servers that do not support
+	MPI
+
+2012-03-13  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix apresentation of command line of MPI jobs
+
+2012-03-13  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Save document when change properties for line/project/flow
+
+2012-03-12  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Fixing commit " 4619b8feff49 - Import's filechooser opens on user's
+	home"
+
+2012-03-12  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Insert run_type on Job to differ representation of servers on
+	JobControl
+
+2012-03-12  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Adding <HOME> path when the maestro of this line is changed
+	* Adding <HOME> path when the line is imported
+
+2012-03-09  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add images for MPI Flavors on Servers configuration and fix method
+	to show tooltip fot that
+
+2012-03-09  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add MPI UI
+
+2012-03-08  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Import's filechooser opens on user's home
+
+2012-03-08  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix representation of i/o files when remove program
+	* Fix bug in output file when reorder programs
+
+2012-03-07  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Adding <HOME> path when the line is created
+
+2012-03-07  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Message of mpi_def from maestro to gebr
+
+2012-03-07  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Start line filechooser at users home dir in line properties tab
+
+2012-03-07  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Remove unused method
+
+2012-03-05  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Start line filechooser at users home dir
+	* GeBR gets the home dir; get with gebr_maestro_server_get_home_dir
+
+2012-03-05  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Remove subdirectories of BASE from line's properties
+
+2012-03-05  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Change error messages of validation of paths
+
+2012-03-05  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix lost of icon on base entry in method validate path
+
+2012-03-02  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add completion for line paths in GeBR
+
+2012-03-02  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Improvement on method unmount_gvfs
+	* Remove angle brackets from paths keywords, and include that on
+	method relativise_path
+	* Improve consistency of line paths and their labels
+
+2012-03-02  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Change type of last page of the wizard of Line Creation
+	* Fix wrong behaviour of gebr when gebr could not mount
+
+2012-03-02  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Include FileChooser on entry base of line's properties
+
+2012-03-02  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add warning widget when sftp fails
+
+2012-03-02  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add address parameter to gebr_comm_server_forward_local_port
+
+2012-03-02  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Remove line's title of BASE, and treatment to rename directory
+
+2012-03-02  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add local bookmarks when sftp connection fails
+
+2012-02-29  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix segfault when validating path variables
+
+2012-02-28  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change timeout error message in line's properties/wizard
+
+2012-02-28  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Set sensitivity of OK button on line's properties when change title
+
+2012-02-28  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix validation of path values when using dictionary variables
+
+2012-02-27  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix wrong path on line properties
+
+2012-02-27  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix previous validation of <BASE>
+
+2012-02-27  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Using Cannot instead Can not
+
+2012-02-27  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix display paths on line properties in glade
+
+2012-02-27  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Improve validation of IO files in Flow Edition
+
+2012-02-27  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Adding new translated messages.
+
+2012-02-27  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Create simple <BASE> validation
+
+2012-02-27  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Remove creation of treeview paths on line properties
+	* Include tree of paths on glade file for document's properties
+	* Include image for line's properties path on makefile
+	* Improvement on glade line's properties
+
+2012-02-27  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix bookmark on non-connected maestro of the line
+
+2012-02-27  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix title at line's wizard summary page
+
+2012-02-27  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Escape gvfs prefix on import entry
+
+2012-02-27  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix phrase at line's wizard summary page
+	* Remove duplicate labels in line wizard
+
+2012-02-17  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebr: relativise paths when exporting
+
+2012-02-17  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Create treatment to errors on import lines
+
+2012-02-17  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* gebr: flow-editor: relativise io paths before setting in xml
+
+2012-02-17  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Include SFTP on file chooser in IMPORT entry
+
+2012-02-17  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Merge line properties interface improvement
+	* line: properties: improve error interface
+
+2012-02-17  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Ignore import path when run a flow
+	* Insert timeout on creation of directories
+	* Insert file chooser on IMPORT entry
+	* Include warn message on document properties when maestro of the line
+	are disconnected
+
+2012-02-17  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* line: properties: allow user to accept 'directory already exist'
+	error
+	* Fix a merge bug
+	* Show summary page when creating a line
+
+2012-02-17  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Set to insensitive the OK button in Line Properties
+
+2012-02-16  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix line creation with Wizard
+	* Change visibility of method send_paths_to_maestro to public
+	* Merge new line properties dialog
+	* Line creation waits for directories creation responses
+	* Maestro controller no longer shows error dialog on path_error
+	* Change MaestroServer::path_error signal prototype
+	* Remove unused variable
+
+2012-02-16  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix erroneous local creation of folders in import of documents
+	* Fix creation of duplicated folders on imported documents
+
+2012-02-16  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* New feature translated
+
+2012-02-16  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Undo creation of <IMPORT> directory
+	* Fix modal property of SFTP dialog
+
+2012-02-16  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Disable line paths edition when its maestro is disconnected
+
+2012-02-16  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix insertion of bookmarks
+
+2012-02-16  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add a window for monitoring progress of directory creation
+	* Align date labels to the left
+
+2012-02-15  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Hide glade interface when open GeBR for the first time
+
+2012-02-15  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Adding new line at the end of each line instead of at the begin
+
+2012-02-15  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Scrolled window added at create directories window
+
+2012-02-15  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Update run widgets sensitiveness and line_infos when paste flows on
+	line
+	* Update line properties when change state of maestro and
+	create/deleto flow of the line
+	* Protect methods line_update and project_update properties
+	* Fix wrong sensitive on help buttons of line/project properties
+	* Fix bugs on rename projects and lines with same title
+	* Fix bug when quit gebr need to press button twice
+	* Set author and email on line and project properties
+
+2012-02-15  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Using glade on interface for properties of project and line
+	* Create glade for project-properties and change some widgets on glade
+	file for line-properties, and include both on makefile
+
+2012-02-15  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Maestro sends message of even disconnected daemons
+
+2012-02-15  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Convert line-properties.glade to Glade 2 standard
+	* Add line-properties.glade
+
+2012-02-14  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Unmount gvfs when quit gebr
+
+2012-02-14  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Set import_entry on properties of line
+	* Fix segFault on parallel running
+
+2012-02-14  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Rename project directory when change name for project, and set new
+	base for lines
+
+2012-02-14  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Set current folder in file choosers
+	* Remove old shortcut folders in file choosers
+
+2012-02-14  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix segFault on empty maestro_server
+
+2012-02-14  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Remove old code and show/hide line specific widgets in details panel
+	* Add columns to the tree view on the right hand side of a Line
+
+2012-02-14  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix creation of empty name of folder in gebrd
+
+2012-02-14  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Send message to rename paths when change project's name
+
+2012-02-13  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix wrong tag of new glade on document-properties.glade
+
+2012-02-13  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Initial refactoring rigth side of line properties
+	* Fix author getter on glade, and include brackets on BASE
+	* Escape markups of I/O's entrys and improve tooltips for that
+
+2012-02-10  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Remove line paths sensitivity
+	* Create description for line paths
+	* Improve text explaining the BASE and IMPORT directories in line
+	properties
+
+2012-02-10  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Rename directory and paths when change name of the line
+
+2012-02-10  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add 'prefix' parameter to gebr_gui_program_edit_setup_ui
+	* Remove unused variable
+
+2012-02-10  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Create method to send path_def to maestro on ui_document, and call
+	that when change maestro of the line
+
+2012-02-10  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add bookmarks when opening IO filechooser
+	* Add gebr_maestro_server_get_sftp_prefix method
+
+2012-02-10  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Create dialog when return error on create paths
+
+2012-02-09  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Create all directories inside BASE
+
+2012-02-09  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix typo when resolving paths before running
+	* Fix resolution of paths before running a flow
+
+2012-02-08  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Resolve paths before executing a flow
+	* Rename flow_set_paths_to to gebr_flow_modify_paths and make it
+	public
+	* Fix flag value when enabling remote files in FileChoosers
+
+2012-02-08  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* BUG:Wizard new line, corrected
+
+2012-02-08  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Create communication with return client=>maestro=>daemon
+
+2012-02-08  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Unmount sftp when disconnects maestro, and fix method to unmount
+
+2012-02-08  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Set GeBR's file choosers to show remote folders
+	* Mount daemon sftp when connecting
+
+2012-02-08  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Save paths to XML using $HOME variable, and resolve that when get
+	paths from XML
+
+2012-02-07  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Remember last path of line used
+
+2012-02-07  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Send path_def (client=>maestro) when creating line
+
+2012-02-07  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Relativise input, output and error in GeBR
+
+2012-02-07  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Adding email and author to default at line's wizzard
+
+2012-02-07  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Set the line's maestro when creating it
+	* Update interface after creating a new line
+	* Fix last commit: improper merge
+
+2012-02-07  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Fixing NULL value at line creating wizzard
+
+2012-02-07  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add paths tree in line's wizard
+	* Extract method gebr_ui_document_create_paths_tree
+	* Show wizard when creating a line
+	* Extract method from on_response_ok function
+	* Use g_get_home_dir instead of gebr_path_resolve_home_variable
+
+2012-02-07  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Get base path from entry on response ok
+	* Include notebook on document properties dialog, and add path tab for
+	line
+
+2012-02-07  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Change toplevel widget name in document-properties.glade
+
+2012-02-06  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Use builder to get values on ok response, and fix logical error on
+	set base paths
+
+2012-02-06  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Use the new glade interface to build document properties
+	* Add document properties glade file
+
+2012-02-06  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Create method to add new attribute on tag path of line's DTD, and
+	modify method to set paths on line
+
 2012-01-17  Vinícius Oliveira Querência <querencia@gebrproject.com>
 
 	* fixing a translated word

@@ -1,3 +1,20 @@
+2012-04-11  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Xz compression related things
+
+2012-04-02  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Added some includes and droped unsuported and unused function
+
+2012-03-09  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add MPICH2 to DeBR
+
+2012-02-10  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add 'prefix' parameter to parameter widgets
+	* Add 'prefix' parameter to gebr_gui_program_edit_setup_ui
+
 
 2011-10-31  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
 

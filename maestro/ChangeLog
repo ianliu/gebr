@@ -1,3 +1,176 @@
+2012-04-11  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Remove auto-connect of own daemon-maestro when maestro does not have
+	a config file, and fix seg fault
+
+2012-04-09  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Changing calculating mode on execution datails.
+
+2012-04-02  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Use maestro clock in relative time (left panel of JobControl tab)
+
+2012-03-30  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix several gcc warnings
+	* Exit Maestro if it could not write its port
+
+2012-03-30  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Minor fix on flavors error message when run MPI job
+
+2012-03-29  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix message of absence of MPI flavor
+
+2012-03-28  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Changind message when the flow is executed in group, machine or
+	maestro
+	* Fixing space and bold at warning of flavors of mpi
+
+2012-03-28  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix inverted division in Pie of JobControl
+	* Change message of issue when there is no server that supports MPI
+
+2012-03-27  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix SegFault on gebr-comm-runner
+
+2012-03-27  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix job_def message in maestro
+	* Remove maestro lock file when maestro kaput
+
+2012-03-27  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add mpi_flavors to job_def
+
+2012-03-22  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Sending informations of ncores, clock, cpu_model and memory of a
+	Daemon to Gebr, and create getter/setter for that
+
+2012-03-21  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Show which daemon call the mpi flow
+
+2012-03-21  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Refactor mpi function to compute load division
+
+2012-03-20  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Sending subset maximum of servers to daemon to execute MPI program
+
+2012-03-20  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Report the MPI flavours on error
+
+2012-03-19  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix sending home dir when client connects on maestro
+
+2012-03-15  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Send home_path when client connects on maestro
+	* Send path_def only if daemon from list are logged
+
+2012-03-14  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Erase IO files in JobControl details when programs are nonactivated
+
+2012-03-14  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix method to filter the servers list according to the flow's mpi
+	flavors
+
+2012-03-14  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Use maestro clock when computing job dates
+
+2012-03-13  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix servers status message to set all servers to disconnect if not
+	logged (fix send group definitions)
+
+2012-03-13  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix segFault on execution of MPI flow in servers that do not support
+	MPI
+
+2012-03-12  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix execution of MPI on maestro
+
+2012-03-12  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Insert run_type on Job to differ representation of servers on
+	JobControl
+	* Fix stop condition of loop in method daemon_accepts_mpi
+
+2012-03-09  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Create methods to set model_name and total_memory of each Server
+
+2012-03-07  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add basic support for MPI programs
+
+2012-03-07  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix method to get servers on maestro to considering mpi parameter
+
+2012-03-07  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix segFault of mpi_def
+
+2012-03-07  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Verify mpi when run flow on maestro
+	* Create method gebrm_daemon_accepts_mpi
+
+2012-03-07  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix previous commit
+	* Message of mpi_def from maestro to gebr
+
+2012-03-06  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Create communication daemon=>maestro about mpi_flavour
+
+2012-03-05  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Start line filechooser at users home dir
+	* Maestro keeps the first home directory it recieves
+	* Daemon sends the home directory to Maestro
+
+2012-02-27  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Using Cannot instead Can not
+
+2012-02-16  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Remove address argument for path_def message
+
+2012-02-15  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Maestro sends message of even disconnected daemons
+
+2012-02-14  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Send message to rename paths when change project's name
+
+2012-02-08  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Create communication with return client=>maestro=>daemon
+
+2012-02-07  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Create new message path_def to create BASE directory
+
 2012-01-18  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
 
 	* Add a new state to GebrmDaemon to kill a job if there are no

@@ -1,3 +1,12 @@
+gebrproject (0.17.4) lucid; urgency=low
+
+  * GeBR configuration assistent (#1128);
+  * Line creation assistent (#1129);
+  * Remote file system browsing;
+  * Standard Line's paths to store Flow's data.
+
+ -- Fabrício Matheus Gonçalves <fmatheus@dell4>  Mon, 23 Apr 2012 15:54:08 -0300
+
 gebrproject (0.16.1) lucid; urgency=low
 
   * Minor Fixes

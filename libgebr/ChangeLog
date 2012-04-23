@@ -1,3 +1,566 @@
+2012-04-23  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Adding empty value "\u2205" when create menu list
+
+2012-04-23  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* The make distcheck shall pass.
+
+2012-04-19  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix method gebr_file_chooser_set_current_directory to open in
+	correct directory
+	* Fix return if failt condition on method
+	gebr_file_chooser_set_remote_navigation
+
+2012-04-18  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Use method gebr_file_chooser_set_remote_navigation on callbacks of
+	File Chooser in line's preferences, I/O and program parameters
+	(refactoring)
+	* Add method gebr_file_chooser_set_remote_navigation
+
+2012-04-18  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add method gebr_generate_paths_with_home on libgebr/utils
+
+2012-04-18  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix behaviour of the the filechooser in the IMPORT entry
+	* Fix wrong paths used by filechooser on line wizard, line properties,
+	IO and on program parameters
+
+2012-04-17  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix wrong behaviour of filechooser when the user do not put a slash
+	('/') in the end of the entry
+
+2012-04-17  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix add/remove paths in bookmarks
+
+2012-04-13  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add glade to POTILES.in
+
+2012-04-12  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Replace $HOME by <HOME> in relativise path test.
+
+2012-04-12  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix behaviour of initial folder of filechooser
+
+2012-04-11  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Xz compression related things
+	* Added xz compression support to gebr-tar
+	* Added compress option to document_save_at
+
+2012-04-11  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Opening entry text folder on filechooser
+
+2012-04-09  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Changing calculating mode on execution datails.
+
+2012-04-04  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Set min or max on parameters with values out of that boundaries
+	* Fix method validate_float to considering expressions
+
+2012-04-04  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Using running jobs on server in calculate server score
+
+2012-04-03  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Make treatment to NULL mount_point
+
+2012-04-02  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Added some includes and droped unsuported and unused function
+
+2012-04-02  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Use correctly BASE and HOME on import line/flow and on upgrade of
+	DTD
+	* Add method gebr_relativise_old_home_path
+
+2012-04-02  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Fixing behavior of slider when a mpi flow is disable or enable
+
+2012-04-02  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Use maestro clock in relative time (left panel of JobControl tab)
+
+2012-03-30  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Suppress g_debug's when in non-debug mode
+	* Fix casting of ioctl variables
+
+2012-03-30  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Adding one core icon at slider
+	* Changing white pointer at speedometer
+
+2012-03-30  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Remove required from MPI parameter (np)
+	* Fix mpi_flavors for a job on comm_runner
+
+2012-03-29  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Do not remove path HOME to line when set base path
+	* Add method gebr_geoxml_flow_is_single_core
+	* Change methods resolve_relative_path and relativise_path to works
+	recursive
+
+2012-03-28  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* +Add method gebr_relativise_home_path
+
+2012-03-28  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix inverted division in Pie of JobControl
+
+2012-03-28  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix number of processes set on MPI jobs
+	* Fix task distribution for parallel flows
+	* Add method gebr_geoxml_program_control_get_eval_n
+
+2012-03-27  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Set sensitive FALSE only on value_widget of MPI parameter np
+	* Fix break condition when remove unused servers from list
+	* Remove server with np = 0 from list
+
+2012-03-27  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Rewritten cores scores code
+
+2012-03-27  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Minor fix in pie values calculation
+	* Fix SegFault on gebr-comm-runner
+
+2012-03-27  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix a crash in Maestro when running MPI flows
+
+2012-03-27  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add mpi_flavors to job_def
+
+2012-03-26  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix pie values in maestro
+
+2012-03-26  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add gebr_geoxml_line_set_path_by_name method
+
+2012-03-26  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change slider semantic for parallel flows
+
+2012-03-23  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Open filechooser in the folder obtained by the entry
+
+2012-03-23  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Set sensitivity for parameters MPI when open program
+	* Create method GebrGeoXmlParameters:is_mpi
+
+2012-03-22  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add gebr_strv_indexof method
+	* Remove unused variable in GebrCommRunner
+	* Update execution speed algorithm
+
+2012-03-22  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix type of aggressive of run on Daemon
+
+2012-03-21  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Show which daemon call the mpi flow
+
+2012-03-21  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Refactor mpi function to compute load division
+
+2012-03-21  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add help dialog in MPI programs
+
+2012-03-20  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Compute tasks division of mpi flows in gebr-comm-runner
+
+2012-03-20  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Sending subset maximum of servers to daemon to execute MPI program
+
+2012-03-20  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix return type in unit tests
+
+2012-03-20  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Apply round-robin to division of tasks in maestro
+
+2012-03-19  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Use score heuristic to run MPI flows
+
+2012-03-19  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Using gebr_maestro_server_get_sftp_root() instead of ".gvfs"
+	hardcoded
+
+2012-03-16  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Solving deletion problem when create menu
+
+2012-03-15  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix pie graph in MPI execution
+
+2012-03-14  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Erase IO files in JobControl details when programs are nonactivated
+
+2012-03-14  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add method for fetching all mpi flavors for a Flow
+	* Fix validation of programs in GeBR to validade MPI tags
+
+2012-03-14  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix MPI parameters to set correctly keywords and allow dict
+	variables on that parameters
+
+2012-03-14  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Adding new translated messages.
+
+2012-03-13  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Create MPI tag if program has mpi on upgrade of DTD
+
+2012-03-13  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix file validation when path is empty
+
+2012-03-13  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix segFault on execution of MPI flow in servers that do not support
+	MPI
+
+2012-03-12  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Insert run_type on Job to differ representation of servers on
+	JobControl
+
+2012-03-09  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix bug on program parameters with lists, do not show all widgets
+
+2012-03-09  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Create methods to set model_name and total_memory of each Server
+	* Add images for MPI Flavors on Servers configuration and fix method
+	to show tooltip fot that
+
+2012-03-09  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix compilation warning
+	* Do not add mpi tag if it already exists
+
+2012-03-08  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix line's DTD upgrade to use correctly paths
+
+2012-03-07  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Create method to call ran_func on run_async for flow mpi
+
+2012-03-07  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Insert free of flow_xml on run_async for mpi
+	* Insert treatment to run flow with MPI on comm_runner and daemon
+
+2012-03-07  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Message of mpi_def from maestro to gebr
+
+2012-03-07  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Create special treatment for MPI on method
+	GebrGeoXmlFlow.is_parallelizable
+
+2012-03-07  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix geoxml unit tests
+	* Move includes to the correct place
+	* Update DTD version number
+
+2012-03-07  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix method get_mpi_parameter
+	* Insert MPI parameters automatically on MPI programs
+	* Insert group for MPI parameters on program and create method to get
+	mpi parameters
+
+2012-03-07  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* geoxml:tests:program: remove trailing spaces
+
+2012-03-06  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* unity tests added for mpi-geoxml set and get
+
+2012-03-06  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Create communication daemon=>maestro about mpi_flavour
+
+2012-03-06  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add MPI tags when setting a MPI flavour
+
+2012-03-06  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add getter/setter for number of processes in a MPI program
+	* Add mpi tag to Flow's DTD
+
+2012-03-05  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add home_def message
+	* Include a trailling slash when completing line paths
+
+2012-03-05  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Change error messages of validation of paths
+
+2012-03-02  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add completion for line paths in GeBR
+
+2012-03-02  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Remove angle brackets from paths keywords, and include that on
+	method relativise_path
+	* Improve consistency of line paths and their labels
+
+2012-03-02  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add warning widget when sftp fails
+
+2012-03-02  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add address parameter to gebr_comm_server_forward_local_port
+
+2012-03-02  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Implement method to create key for base from line's title (and unit
+	test)
+
+2012-03-02  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add local bookmarks when sftp connection fails
+
+2012-03-02  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add gebr_comm_server_forward_local_port
+
+2012-02-29  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix segfault when validating path variables
+
+2012-02-28  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix activation of utf8 autocomplete of dictionary variables
+
+2012-02-28  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix validation of path values when using dictionary variables
+
+2012-02-27  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Using Cannot instead Can not
+	* Adding new translated messages.
+
+2012-02-27  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Improve widget validation for file parameters
+	* Add method to validate a path based on a line's paths
+
+2012-02-27  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Create simple <BASE> validation
+
+2012-02-27  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Amended method remove_gvfs_prefix for public
+
+2012-02-17  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* libgebr: fix algorithm in gebr_relativise_path
+
+2012-02-17  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Update unit test for method gebr_relativise_path
+
+2012-02-16  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Remove unused enum value GEBR_COMM_PROTOCOL_STATUS_PATH_N
+	* Add methods in GebrGeoXmlLine
+
+2012-02-16  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* New feature translated
+
+2012-02-15  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix wrong path relativisation in libgebr
+	* Change gebr_relativise_path to accept tags in the middle of the
+	input
+
+2012-02-15  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Merge test-utils
+
+2012-02-14  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Set import_entry on properties of line
+
+2012-02-14  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Set current folder in file choosers
+
+2012-02-13  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Include brackets on base paths tree model
+
+2012-02-10  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add 'prefix' parameter to parameter widgets
+	* Add 'prefix' parameter to gebr_gui_program_edit_setup_ui
+	* Add gebr_gui_file_entry_set_paths_from_line method
+	* Protect gebr_pairstrfreev if parameter is NULL
+	* Unit tests for gebr_gtk_bookmarks_remove_paths
+
+2012-02-09  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Create protection to list of paths NULL on method to resolve
+	relative path (Fix seg. fault when run jobs in queues)
+
+2012-02-09  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add unit tests for gebr_gtk_bookmarks_remove_paths
+
+2012-02-09  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Create all directories inside BASE
+
+2012-02-09  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add unit tests for test_gebr_gtk_bookmarks_add_paths and fix some
+	bugs on it
+
+2012-02-09  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Modify method to add/remove bookmarks to receive filename
+	* Create methods to add and remove bookmarks from .gtk-bookmarks file,
+	using list of paths
+
+2012-02-09  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add more test cases for gebr_relativise_path and fix them
+	* gebr_relativise_path removes /home/ian/.gvfs prefix in addition to
+	/home/foo/.gvfs
+
+2012-02-08  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Adding error messages at creating a new directory
+
+2012-02-08  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Remove gvfs prefix before relativising paths
+	* Fix flag value when enabling remote files in FileChoosers
+
+2012-02-08  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Change protocol of ret_def
+
+2012-02-08  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* New function and test of resolving path
+
+2012-02-08  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Set GeBR's file choosers to show remote folders
+
+2012-02-08  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix bugs on method to relativize paths
+	* Save paths to XML using $HOME variable, and resolve that when get
+	paths from XML
+
+2012-02-07  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix method to relativise paths
+
+2012-02-07  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Include unit test for gebr_relativise_path
+
+2012-02-07  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Relativise program parameters on focus out
+
+2012-02-07  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Implemented method to relativise path
+
+2012-02-07  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Create new message path_def to create BASE directory
+
+2012-02-07  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Add gebr_geoxml_line_get_paths method
+	* Add gebr_pairstrfreev and dummy gebr_relativise_path methods
+
+2012-02-07  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix segFault on upgrade of lines (0.3.5=>0.3.6) on
+	libgebr/geoxml/document.c
+
+2012-02-07  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Fix line upgrade to 0.3.6
+
+2012-02-06  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Use builder to get values on ok response, and fix logical error on
+	set base paths
+
+2012-02-06  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
+
+	* Include required files in geoxml/line.c
+
+2012-02-06  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Upgrade DTD of line to 0.3.6
+	* Create method to add new attribute on tag path of line's DTD, and
+	modify method to set paths on line
+
 2012-01-18  Ian Liu Rodrigues  <ian.liu@gebrproject.com>
 
 	* Remove a server from GebrCommRunner's list if it is not able to
