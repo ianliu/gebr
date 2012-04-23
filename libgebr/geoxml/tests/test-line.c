@@ -17,6 +17,10 @@
 
 #include <glib.h>
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include "line.h"
 #include "value_sequence.h"
 #include "document.h"
@@ -111,23 +115,25 @@ void test_gebr_geoxml_line_get_path(void)
 	GebrGeoXmlSequence *sequence = NULL;
 	int x;
 	const gchar *path;
+	const gchar *foo = "foo";
+	const gchar *bar = "bar";
 
 	line = gebr_geoxml_line_new();
 
 	x = gebr_geoxml_line_get_path(line, &sequence, 0);
 	g_assert_cmpint(x, ==, -5);
 
-	line_path = gebr_geoxml_line_append_path(line, "path1", "foo");
+	line_path = gebr_geoxml_line_append_path(line, "path1", foo);
 	x = gebr_geoxml_line_get_path(line, &sequence, 0);
 	g_assert_cmpint(x, ==, 0);
 	path = gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(line_path));
-	g_assert_cmpstr("path1", ==, path);
+	g_assert_cmpstr(foo, ==, path);
 
-	line_path = gebr_geoxml_line_append_path(line, "path2", "bar");
+	line_path = gebr_geoxml_line_append_path(line, "path2", bar);
 	x = gebr_geoxml_line_get_path(line, &sequence, 1);
 	g_assert_cmpint(x, ==, 0);
 	path = gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(line_path));
-	g_assert_cmpstr("path2", ==, path);
+	g_assert_cmpstr(bar, ==, path);
 }
 
 void test_gebr_geoxml_line_get_group(void)
@@ -170,7 +176,7 @@ int main(int argc, char *argv[])
 	g_test_init(&argc, &argv, NULL);
 	gebr_geoxml_init();
 
-	gebr_geoxml_document_set_dtd_dir(DTD_DIR);
+	gebr_geoxml_document_set_dtd_dir(GEBR_GEOXML_DTD_DIR);
 
 	g_test_add_func("/libgebr/geoxml/line/get_flow_number",test_gebr_geoxml_line_get_flows_number);
 	g_test_add_func("/libgebr/geoxml/line/get_flow",test_gebr_geoxml_line_get_flow);

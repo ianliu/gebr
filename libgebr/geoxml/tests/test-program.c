@@ -20,6 +20,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include <gebr-iexpr.h>
 
 #include "../object.h"
@@ -340,21 +344,23 @@ void test_gebr_geoxml_program_get_and_set_mpi(void)
 	GebrGeoXmlFlow *flow = gebr_geoxml_flow_new();
 	GebrGeoXmlProgram *program = gebr_geoxml_flow_append_program(flow);
 	const gchar *program_mpi;
+	const gchar *openmpi = "openmpi";
+	const gchar *mpich2 = "mpich2";
 
 	// Should do nothing, and not crash
-	gebr_geoxml_program_set_mpi(NULL," Program MPI goes here");
+	gebr_geoxml_program_set_mpi(NULL, openmpi);
 	gebr_geoxml_program_set_mpi(program, NULL);
 
 	program_mpi = gebr_geoxml_program_get_mpi(NULL);
 	g_assert(program_mpi == NULL);
 
-	gebr_geoxml_program_set_mpi(program, "Program MPI goes here");
+	gebr_geoxml_program_set_mpi(program, openmpi);
 	program_mpi = gebr_geoxml_program_get_mpi(program);
-	g_assert_cmpstr(program_mpi, ==, "Program MPI goes here");
+	g_assert_cmpstr(program_mpi, ==, openmpi);
 
-	gebr_geoxml_program_set_mpi(program, "Change on MPI goes here");
+	gebr_geoxml_program_set_mpi(program, mpich2);
 	program_mpi = gebr_geoxml_program_get_mpi(program);
-	g_assert_cmpstr(program_mpi, ==, "Change on MPI goes here");
+	g_assert_cmpstr(program_mpi, ==, mpich2);
 }
 
 void test_gebr_geoxml_program_get_and_set_url(void)
@@ -505,7 +511,7 @@ int main(int argc, char *argv[])
 	g_test_init(&argc, &argv, NULL);
 	gebr_geoxml_init();
 
-	gebr_geoxml_document_set_dtd_dir(DTD_DIR);
+	gebr_geoxml_document_set_dtd_dir(GEBR_GEOXML_DTD_DIR);
 
 	g_test_add_func("/libgebr/geoxml/program/foreach_parameter", test_gebr_geoxml_program_foreach_parameter);
 	g_test_add_func("/libgebr/geoxml/program/is_var_used", test_gebr_geoxml_program_is_var_used);

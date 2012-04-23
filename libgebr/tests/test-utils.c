@@ -331,7 +331,7 @@ test_gebr_gtk_bookmarks_add_paths(void)
 	gchar *** paths = gebr_geoxml_line_get_paths(line);
 
 	gchar *contents;
-	const gchar *file = TEST_SRCDIR "/bookmarks";
+	const gchar *file = "/tmp/bookmarks";
 	g_unlink(file);
 
 	gebr_gtk_bookmarks_add_paths(file, "", paths);
@@ -357,7 +357,7 @@ test_gebr_gtk_bookmarks_remove_paths(void)
 	gchar *** paths = gebr_geoxml_line_get_paths(line);
 
 	gchar *contents;
-	const gchar *file = TEST_SRCDIR "/bookmarks";
+	const gchar *file = "/tmp/bookmarks";
 	g_unlink(file);
 
 	gebr_gtk_bookmarks_add_paths(file, "", paths);

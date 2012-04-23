@@ -30,7 +30,7 @@ INST_DEP =
 UINST_DEP =
 endif
 
-html-ok: *.xml
+html-ok: $(srcdir)/*.xml
 	xsltproc --xinclude -o $(builddir)/html/index.html \
 		$(srcdir)/../gebr-guide.xsl \
 		$(srcdir)/gebr.xml && touch html-ok
@@ -68,7 +68,7 @@ install-data-local: $(INST_DEP)
 
 uninstall-hook: $(UINST_DEP)
 
-EXTRA_DIST = *.xml
+EXTRA_DIST = $(srcdir)/*.xml
 CLEANFILES = html-ok html/index.html
 
 .PHONY: html
