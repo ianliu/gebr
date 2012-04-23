@@ -537,6 +537,7 @@ update_speed_slider_sensitiveness(GebrUiFlowBrowse *ufb)
 	gtk_widget_set_sensitive(ufb->speed_slider, sensitive);
 	gebr_interface_update_speed_sensitiveness(ufb->speed_button,
 						  ufb->speed_slider,
+						  ufb->ruler,
 						  sensitive);
 }
 

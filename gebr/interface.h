@@ -74,6 +74,7 @@ const gchar *gebr_interface_get_speed_icon(gdouble value);
 
 void gebr_interface_update_speed_sensitiveness(GtkWidget *button,
 					       GtkWidget *slider,
+					       GtkWidget *ruler,
 					       gboolean sensitive);
 
 G_END_DECLS

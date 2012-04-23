@@ -358,12 +358,11 @@ update_speed_slider_sensitiveness(GebrFlowEdition *fe)
 	else
 		sensitive = FALSE;
 	
-	g_debug("Sensitive? %s", sensitive ? "T":"F");
-
 	gebr_geoxml_object_unref(prog);
 
 	gebr_interface_update_speed_sensitiveness(fe->speed_button,
 						  fe->speed_slider,
+						  fe->ruler,
 						  sensitive);
 }
 
