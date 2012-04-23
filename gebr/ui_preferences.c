@@ -60,8 +60,6 @@ typedef enum {
  * Prototypes
  */
 
-static gboolean maestro_has_servers = FALSE;
-
 static void set_status_for_maestro(GebrMaestroController *self,
                                    GebrMaestroServer     *maestro,
                                    struct ui_preferences *up,
@@ -242,22 +240,26 @@ static void
 on_daemons_changed(GebrMaestroServer *maestro,
                    struct ui_preferences *up)
 {
-	gboolean has_connected_servers = gebr_maestro_server_has_servers(maestro, FALSE);
+	gboolean has_connected_servers = gebr_maestro_server_has_servers(maestro, TRUE);
+	gboolean maestro_has_servers = gebr_maestro_server_has_servers(maestro, FALSE);
 
-	if (!maestro_has_servers) {
-		maestro_has_servers = TRUE;
-		g_signal_handlers_disconnect_by_func(maestro, on_daemons_changed, up);
+	GtkWidget *main_servers = GTK_WIDGET(gtk_builder_get_object(up->builder, "main_servers"));
+	GtkWidget *servers_label = GTK_WIDGET(gtk_builder_get_object(up->builder, "servers_label"));
+	GtkWidget *servers_view = GTK_WIDGET(gtk_builder_get_object(up->builder, "servers_view"));
 
-		GtkWidget *main_servers = GTK_WIDGET(gtk_builder_get_object(up->builder, "main_servers"));
-		GtkWidget *servers_label = GTK_WIDGET(gtk_builder_get_object(up->builder, "servers_label"));
-		GtkWidget *servers_view = GTK_WIDGET(gtk_builder_get_object(up->builder, "servers_view"));
-
+	if (maestro_has_servers) {
 		gtk_widget_hide(servers_label);
 		gtk_widget_show(servers_view);
 
 		if (has_connected_servers)
 			gtk_assistant_set_page_complete(GTK_ASSISTANT(up->dialog), main_servers, TRUE);
+		else
+			gtk_assistant_set_page_complete(GTK_ASSISTANT(up->dialog), main_servers, FALSE);
 
+	} else {
+		gtk_widget_show(servers_label);
+		gtk_widget_hide(servers_view);
+		gtk_assistant_set_page_complete(GTK_ASSISTANT(up->dialog), main_servers, FALSE);
 	}
 }
 
@@ -274,8 +276,6 @@ on_add_server_clicked(GtkButton *button,
 	if (!g_strcmp0(addr, DEFAULT_SERVERS_ENTRY_TEXT))
 		return;
 
-	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
-	g_signal_connect(maestro, "daemons-changed", G_CALLBACK(on_daemons_changed), up);
 	gebr_maestro_controller_server_list_add(gebr.maestro_controller, addr);
 
 	gtk_entry_set_text(GTK_ENTRY(server_entry), DEFAULT_SERVERS_ENTRY_TEXT);
@@ -349,7 +349,8 @@ create_view_for_servers(struct ui_preferences *up)
 		return GTK_TREE_VIEW(view);
 
 	gebr_gui_gtk_tree_view_set_tooltip_callback(GTK_TREE_VIEW(view),
-	                                            (GebrGuiGtkTreeViewTooltipCallback) server_tooltip_callback, gebr.maestro_controller);
+	                                            (GebrGuiGtkTreeViewTooltipCallback) server_tooltip_callback,
+	                                            gebr.maestro_controller);
 
 	// Server Column
 	GtkCellRenderer *renderer ;
@@ -430,12 +431,10 @@ on_connect_maestro_clicked(GtkButton *button,
 
 	g_signal_connect(gebr.maestro_controller, "maestro-state-changed", G_CALLBACK(on_maestro_state_changed), up);
 
-	if (!maestro || gebr_maestro_server_get_state(maestro) != SERVER_STATE_LOGGED || g_strcmp0(up->maestro_addr, gebr_maestro_server_get_address(maestro))) {
-		maestro_has_servers = FALSE;
+	if (!maestro || gebr_maestro_server_get_state(maestro) != SERVER_STATE_LOGGED || g_strcmp0(up->maestro_addr, gebr_maestro_server_get_address(maestro)))
 		gebr_maestro_controller_connect(gebr.maestro_controller, up->maestro_addr);
-	} else {
+	else
 		set_status_for_maestro(gebr.maestro_controller, maestro, up, gebr_maestro_server_get_state(maestro));
-	}
 }
 
 static void
@@ -606,6 +605,8 @@ on_assistant_prepare(GtkAssistant *assistant,
 			GtkWidget *main_servers_label = GTK_WIDGET(gtk_builder_get_object(up->builder, "main_servers_label"));
 			GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 
+			g_signal_connect(maestro, "daemons-changed", G_CALLBACK(on_daemons_changed), up);
+
 			gchar *main_servers_text = g_markup_printf_escaped(_("Now you need to add <b>Servers</b> to be handled by your Maestro <b>%s</b>.\n\n"
 									     "For each server, you are going to be asked for your login credentials."),
 									   gebr_maestro_server_get_address(maestro));
@@ -616,6 +617,10 @@ on_assistant_prepare(GtkAssistant *assistant,
 			gebr_maestro_controller_update_daemon_model(maestro, gebr.maestro_controller);
 			GtkTreeModel *model = gebr_maestro_controller_get_servers_model(gebr.maestro_controller);
 			gtk_tree_view_set_model(view, model);
+
+			gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(view),
+			                                          (GebrGuiGtkPopupCallback) gebr_maestro_controller_server_popup_menu,
+			                                          gebr.maestro_controller);
 
 			GtkTreeIter it;
 			GtkTreeModel *store = gebr_maestro_server_get_model(maestro, FALSE, NULL);
