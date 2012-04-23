@@ -45,6 +45,9 @@ struct ui_preferences {
 	GtkWidget *server_entry;
 	GtkEntry *maestro_entry;
 	gchar *maestro_addr;
+
+	GtkListStore *maestro_chooser;
+	GtkCellRenderer *renderer_chooser;
 };
 
 struct ui_preferences *preferences_setup_ui(gboolean first_run,
