@@ -34,6 +34,7 @@
 struct _GebrMaestroControllerPriv {
 	GebrMaestroServer *maestro;
 	GtkBuilder *builder;
+	GtkWidget *servers_view;
 
 	GtkListStore *model;
 
@@ -680,7 +681,7 @@ on_server_connect(GtkMenuItem *menuitem,
 	GebrDaemonServer *daemon;
 	GtkTreeModel *model;
 
-	GtkTreeView *view = GTK_TREE_VIEW(gtk_builder_get_object(mc->priv->builder, "treeview_servers"));
+	GtkTreeView *view = GTK_TREE_VIEW(mc->priv->servers_view);
 	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(view));
 	GList *rows = gtk_tree_selection_get_selected_rows(selection, &model);
 
@@ -712,7 +713,7 @@ on_server_disconnect(GtkMenuItem *menuitem,
 	GebrDaemonServer *daemon;
 	GtkTreeModel *model;
 
-	GtkTreeView *view = GTK_TREE_VIEW(gtk_builder_get_object(mc->priv->builder, "treeview_servers"));
+	GtkTreeView *view = GTK_TREE_VIEW(mc->priv->servers_view);
 	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(view));
 	GList *rows = gtk_tree_selection_get_selected_rows(selection, &model);
 
@@ -745,7 +746,7 @@ on_server_remove(GtkMenuItem *menuitem,
 	GebrDaemonServer *daemon;
 	GtkTreeModel *model;
 
-	GtkTreeView *view = GTK_TREE_VIEW(gtk_builder_get_object(mc->priv->builder, "treeview_servers"));
+	GtkTreeView *view = GTK_TREE_VIEW(mc->priv->servers_view);
 	GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(view));
 	GList *rows = gtk_tree_selection_get_selected_rows(selection, &model);
 
@@ -771,9 +772,9 @@ on_server_remove(GtkMenuItem *menuitem,
 	on_server_group_changed(mc->priv->maestro, mc);
 }
 
-static GtkMenu *
-server_popup_menu(GtkWidget * widget,
-                  GebrMaestroController *mc)
+GtkMenu *
+gebr_maestro_controller_server_popup_menu(GtkWidget * widget,
+                                          GebrMaestroController *mc)
 {
 	GList *rows;
 	GtkWidget *menu;
@@ -798,6 +799,7 @@ server_popup_menu(GtkWidget * widget,
 
 	GtkWidget *item;
 
+	mc->priv->servers_view = widget;
 	item = gtk_menu_item_new_with_mnemonic(_("_Connect"));
 	gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
 	g_signal_connect(item, "activate", G_CALLBACK(on_server_connect), mc);
@@ -1249,7 +1251,7 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 	gtk_drag_source_set_icon_stock(GTK_WIDGET(view), GTK_STOCK_NETWORK);
 
 	gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(view),
-	                                          (GebrGuiGtkPopupCallback) server_popup_menu, self);
+	                                          (GebrGuiGtkPopupCallback) gebr_maestro_controller_server_popup_menu, self);
 	gebr_gui_gtk_tree_view_set_tooltip_callback(GTK_TREE_VIEW(view),
 	                                            (GebrGuiGtkTreeViewTooltipCallback) server_tooltip_callback, self);
 
