@@ -277,17 +277,10 @@ For each server, you are going to be asked for your login credentials.</property
       </packing>
     </child>
     <child>
-      <object class="GtkHBox" id="hbox2">
+      <object class="GtkHBox" id="add_server_box">
         <property name="visible">True</property>
         <child>
-          <object class="GtkEntry" id="server_entry">
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="invisible_char">&#x25CF;</property>
-          </object>
-          <packing>
-            <property name="position">0</property>
-          </packing>
+          <placeholder/>
         </child>
         <child>
           <object class="GtkButton" id="server_add">
@@ -306,6 +299,7 @@ For each server, you are going to be asked for your login credentials.</property
             <property name="expand">False</property>
             <property name="fill">False</property>
             <property name="padding">5</property>
+            <property name="pack_type">end</property>
             <property name="position">1</property>
           </packing>
         </child>

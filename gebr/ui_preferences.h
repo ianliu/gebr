@@ -42,6 +42,7 @@ struct ui_preferences {
 	GtkWidget *log_load;
 	GtkWidget *built_in_radio_button;
 	GtkWidget *user_radio_button;
+	GtkWidget *server_entry;
 	GtkEntry *maestro_entry;
 	gchar *maestro_addr;
 };

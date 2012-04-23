@@ -28,6 +28,7 @@
 #include <glib/gi18n.h>
 #include <libgebr/gui/gebr-gui-utils.h>
 #include <locale.h>
+#include <libgebr/gui/gebr-gui-enhanced-entry.h>
 
 #include "ui_preferences.h"
 #include "gebr.h"
@@ -267,9 +268,7 @@ static void
 on_add_server_clicked(GtkButton *button,
 		      struct ui_preferences *up)
 {
-	GObject *server_entry = gtk_builder_get_object(up->builder, "server_entry");
-
-	const gchar *addr = gtk_entry_get_text(GTK_ENTRY(server_entry));
+	const gchar *addr = gebr_gui_enhanced_entry_get_text(GEBR_GUI_ENHANCED_ENTRY(up->server_entry));
 	if (!*addr)
 		return;
 
@@ -278,7 +277,7 @@ on_add_server_clicked(GtkButton *button,
 
 	gebr_maestro_controller_server_list_add(gebr.maestro_controller, addr);
 
-	gtk_entry_set_text(GTK_ENTRY(server_entry), DEFAULT_SERVERS_ENTRY_TEXT);
+	gtk_entry_set_text(GTK_ENTRY(up->server_entry), "");
 }
 
 static void
@@ -288,32 +287,6 @@ on_entry_server_activate(GtkEntry *entry,
 	GObject *server_add = gtk_builder_get_object(up->builder, "server_add");
 	on_add_server_clicked(NULL, up);
 	gtk_widget_grab_focus(GTK_WIDGET(server_add));
-}
-
-static gboolean
-on_entry_server_focus_out(GtkWidget *widget,
-                         GdkEventFocus *event,
-                         struct ui_preferences *up)
-{
-	const gchar *text = gtk_entry_get_text(GTK_ENTRY(widget));
-
-	if (!g_strcmp0(text, ""))
-		gtk_entry_set_text(GTK_ENTRY(widget), DEFAULT_SERVERS_ENTRY_TEXT);
-
-	return TRUE;
-}
-
-static gboolean
-on_entry_server_focus_in(GtkWidget *widget,
-                         GdkEventFocus *event,
-                         struct ui_preferences *up)
-{
-	const gchar *text = gtk_entry_get_text(GTK_ENTRY(widget));
-
-	if (!g_strcmp0(text, DEFAULT_SERVERS_ENTRY_TEXT))
-		gtk_entry_set_text(GTK_ENTRY(widget), "");
-
-	return TRUE;
 }
 
 static gboolean
@@ -599,7 +572,6 @@ on_assistant_prepare(GtkAssistant *assistant,
 		if (view) {
 			GtkWidget *main_servers = GTK_WIDGET(gtk_builder_get_object(up->builder, "main_servers"));
 			GObject *server_add = gtk_builder_get_object(up->builder, "server_add");
-			GObject *server_entry = gtk_builder_get_object(up->builder, "server_entry");
 
 			GtkWidget *servers_label = GTK_WIDGET(gtk_builder_get_object(up->builder, "servers_label"));
 			GtkWidget *main_servers_label = GTK_WIDGET(gtk_builder_get_object(up->builder, "main_servers_label"));
@@ -627,7 +599,7 @@ on_assistant_prepare(GtkAssistant *assistant,
 			if (!gtk_tree_model_get_iter_first(store, &it)) {
 				gtk_widget_hide(GTK_WIDGET(view));
 				gtk_widget_show(servers_label);
-				gtk_entry_set_text(GTK_ENTRY(server_entry), gebr_maestro_server_get_address(maestro));
+				gtk_entry_set_text(GTK_ENTRY(up->server_entry), gebr_maestro_server_get_address(maestro));
 			}
 
 			WizardStatus wizard_status = get_wizard_status(up);
@@ -637,11 +609,7 @@ on_assistant_prepare(GtkAssistant *assistant,
 			}
 
 			g_signal_connect(GTK_BUTTON(server_add), "clicked", G_CALLBACK(on_add_server_clicked), up);
-			g_signal_connect(GTK_ENTRY(server_entry), "activate", G_CALLBACK(on_entry_server_activate), up);
-			g_signal_connect(server_entry, "focus-in-event", G_CALLBACK(on_entry_server_focus_in), up);
-			g_signal_connect(server_entry, "focus-out-event", G_CALLBACK(on_entry_server_focus_out), up);
-
-			gtk_widget_set_tooltip_text(GTK_WIDGET(server_entry), DEFAULT_SERVERS_ENTRY_TEXT);
+			g_signal_connect(GTK_ENTRY(up->server_entry), "activate", G_CALLBACK(on_entry_server_activate), up);
 		}
 	}
 }
@@ -725,6 +693,19 @@ on_combo_set_text(GtkCellLayout   *cell_layout,
 
 	g_free(text);
 	g_free(description);
+}
+
+static void
+set_servers_page(GtkBuilder *builder,
+                 struct ui_preferences *up)
+{
+	GObject *server_box = gtk_builder_get_object(up->builder, "add_server_box");
+
+	GtkWidget *server_entry = gebr_gui_enhanced_entry_new_with_empty_text(DEFAULT_SERVERS_ENTRY_TEXT);
+	gtk_box_pack_start(GTK_BOX(server_box), server_entry, TRUE, TRUE, 0);
+	gtk_widget_show_all(server_entry);
+
+	up->server_entry = server_entry;
 }
 
 static void
@@ -880,6 +861,8 @@ preferences_setup_ui(gboolean first_run,
 
 		/* Set Maestro Chooser Page */
 		set_maestro_chooser_page(builder, ui_preferences);
+
+		set_servers_page(builder, ui_preferences);
 
 		/* finally... */
 		gtk_widget_show_all(ui_preferences->dialog);
