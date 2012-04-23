@@ -96,14 +96,6 @@ save_preferences_configuration(struct ui_preferences *up)
 }
 
 static void
-on_response_ok(GtkButton *button,
-	       struct ui_preferences *up)
-{
-	save_preferences_configuration(up);
-	gtk_widget_destroy(up->dialog);
-}
-
-static void
 on_assistant_cancel(GtkAssistant *assistant,
 		    struct ui_preferences *up)
 {
@@ -615,6 +607,20 @@ on_assistant_prepare(GtkAssistant *assistant,
 }
 
 static void
+on_assistant_preferences_apply(GtkAssistant *assistant,
+                               struct ui_preferences *up)
+{
+	save_preferences_configuration(up);
+}
+
+static void
+on_assistant_preferences_close(GtkAssistant *assistant,
+                               struct ui_preferences *up)
+{
+	gtk_widget_destroy(GTK_WIDGET(assistant));
+}
+
+static void
 on_preferences_destroy(GtkWidget *window,
                        struct ui_preferences *up)
 {
@@ -799,15 +805,17 @@ preferences_setup_ui(gboolean first_run,
 	GtkWidget *servers_info = GTK_WIDGET(gtk_builder_get_object(builder, "servers_info"));
 	GtkWidget *main_servers = GTK_WIDGET(gtk_builder_get_object(builder, "main_servers"));
 
+	GtkWidget *assistant = gtk_assistant_new();
+	gtk_window_set_position(GTK_WINDOW(assistant), GTK_WIN_POS_CENTER_ON_PARENT);
+	gtk_window_set_transient_for(GTK_WINDOW(assistant), gebr_maestro_controller_get_window(gebr.maestro_controller));
+
+	g_signal_connect(assistant, "cancel", G_CALLBACK(on_assistant_cancel), ui_preferences);
+
 	/* Create Wizard if the first_run of GeBR */
 	if (first_run || wizard_run) {
-		GtkWidget *assistant = gtk_assistant_new();
-		gtk_window_set_position(GTK_WINDOW(assistant), GTK_WIN_POS_CENTER_ON_PARENT);
 		gtk_window_set_title(GTK_WINDOW(assistant), _("Configuring GêBR"));
-		gtk_window_set_transient_for(GTK_WINDOW(assistant), gebr_maestro_controller_get_window(gebr.maestro_controller));
 
 		g_signal_connect(assistant, "destroy", G_CALLBACK(on_assistant_destroy), ui_preferences);
-		g_signal_connect(assistant, "cancel", G_CALLBACK(on_assistant_cancel), ui_preferences);
 		g_signal_connect(assistant, "close", G_CALLBACK(on_assistant_close), ui_preferences);
 		g_signal_connect(assistant, "prepare", G_CALLBACK(on_assistant_prepare), ui_preferences);
 
@@ -862,6 +870,7 @@ preferences_setup_ui(gboolean first_run,
 		/* Set Maestro Chooser Page */
 		set_maestro_chooser_page(builder, ui_preferences);
 
+		/* Set Servers Page */
 		set_servers_page(builder, ui_preferences);
 
 		/* finally... */
@@ -877,54 +886,30 @@ preferences_setup_ui(gboolean first_run,
 
 	/* Create dialog with tabs if the other run of GeBR */
 	else {
-		GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-		gtk_window_set_modal(GTK_WINDOW(window), TRUE);
-		gtk_container_set_border_width(GTK_CONTAINER(window), 5);
-		gtk_window_set_transient_for(GTK_WINDOW(window), GTK_WINDOW(gebr.window));
-		gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER_ON_PARENT);
-		gtk_window_set_destroy_with_parent(GTK_WINDOW(window), TRUE);
+		gtk_window_set_title(GTK_WINDOW(assistant), _("Preferences"));
 
-		gchar *window_title = g_strdup_printf(_("Preferences of GêBR"));
-		gtk_window_set_title(GTK_WINDOW(window), window_title);
-		g_free(window_title);
+		g_signal_connect(assistant, "destroy", G_CALLBACK(on_preferences_destroy), ui_preferences);
+		g_signal_connect(assistant, "apply", G_CALLBACK(on_assistant_preferences_apply), ui_preferences);
+		g_signal_connect(assistant, "close", G_CALLBACK(on_assistant_preferences_close), ui_preferences);
 
-		GtkWidget *vbox;
-		vbox = gtk_vbox_new(FALSE, 5);
-		GtkWidget *notebook = gtk_notebook_new();
-		gtk_container_add(GTK_CONTAINER(vbox), notebook);
-		gtk_container_add(GTK_CONTAINER(window), vbox);
-		gtk_window_set_default_size(GTK_WINDOW(window), 400, -1);
-		gtk_widget_show(vbox);
-		gtk_widget_show(notebook);
+		// PREFERENCES_PAGE
+		gtk_assistant_append_page(GTK_ASSISTANT(assistant), page_preferences);
+		gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), page_preferences, GTK_ASSISTANT_PAGE_CONFIRM);
+		gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), page_preferences, _("Preferences"));
 
-		GtkWidget *button_box;
-		GtkWidget *ok_button;
-		GtkWidget *cancel_button;
-		button_box = gtk_hbutton_box_new();
-		ok_button = gtk_button_new_from_stock(GTK_STOCK_OK);
-		cancel_button = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
-
-		gtk_button_box_set_layout(GTK_BUTTON_BOX(button_box), GTK_BUTTONBOX_END);
-		gtk_box_pack_start(GTK_BOX(button_box), cancel_button, TRUE, TRUE, 0);
-		gtk_box_pack_start(GTK_BOX(button_box), ok_button, TRUE, TRUE, 0);
-		gtk_box_pack_start(GTK_BOX(vbox), button_box, FALSE, TRUE, 0);
-		gtk_widget_show(button_box);
-
-		g_signal_connect(window, "destroy", G_CALLBACK(on_preferences_destroy), ui_preferences);
-		g_signal_connect(ok_button, "clicked", G_CALLBACK(on_response_ok), ui_preferences);
-		g_signal_connect_swapped(cancel_button, "clicked", G_CALLBACK(gtk_widget_destroy), window);
-
-		gtk_notebook_append_page(GTK_NOTEBOOK(notebook), page_preferences, gtk_label_new(_("Preferences")));
-
-		ui_preferences->dialog = window;
+		ui_preferences->dialog = assistant;
 
 		/* Set Preferences Page */
 		set_preferences_page(builder, ui_preferences);
 
+		on_changed_validate_email(ui_preferences->email, ui_preferences);
+		g_signal_connect(ui_preferences->email, "changed", G_CALLBACK(on_changed_validate_email), ui_preferences);
+
 		/* finally... */
-		gtk_window_set_modal(GTK_WINDOW(ui_preferences->dialog), TRUE);
 		gtk_widget_show_all(ui_preferences->dialog);
 	}
+
+	gtk_window_set_modal(GTK_WINDOW(ui_preferences->dialog), TRUE);
 
 	return ui_preferences;
 }
