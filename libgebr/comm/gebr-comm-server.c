@@ -265,10 +265,23 @@ void gebr_comm_server_connect(GebrCommServer *server,
 	g_signal_connect(process, "ready-read", G_CALLBACK(gebr_comm_ssh_run_server_read), server);
 	g_signal_connect(process, "finished", G_CALLBACK(gebr_comm_ssh_run_server_finished), server);
 
+	gchar *tmp = g_strdup_printf("%s.tmp", server->address->str);
+	gchar *filename = g_build_filename(g_get_home_dir(), ".gebr", tmp, NULL);
+
 	GString *cmd_line = g_string_new(NULL);
-	g_string_printf(cmd_line, "ssh -x %s \"bash -l -c '%s >&3' 3>&1 >/dev/null 2>&1\"",
-			server->address->str, binary);
+	g_string_printf(cmd_line, "ssh -v -x %s \"bash -l -c '%s >&3' 3>&1 >/dev/null 2>&1\" 2> %s",
+			server->address->str, binary, filename);
+	gchar *cmd = g_shell_quote(cmd_line->str);
+
+	g_string_set_size(cmd_line, 0);
+	g_string_printf(cmd_line, "bash -c %s", cmd);
+
+	g_debug("CMD LINE: %s", cmd_line->str);
 	gebr_comm_terminal_process_start(process, cmd_line);
+
+	g_free(tmp);
+	g_free(filename);
+	g_free(cmd);
 	g_string_free(cmd_line, TRUE);
 }
 
@@ -429,6 +442,7 @@ gebr_comm_ssh_parse_output(GebrCommTerminalProcess *process,
 {
 	if (output->len <= 2)
 		return TRUE;
+
 	if (output->str[output->len - 2] == ':') {
 		GString *string;
 		GString *password;
@@ -1030,4 +1044,17 @@ gebr_comm_server_append_key(GebrCommServer *server,
 	g_free(path);
 
 	return TRUE;
+}
+
+void
+gebr_comm_server_set_use_public_key(GebrCommServer *server,
+                                    gboolean use_key)
+{
+	server->use_public_key = use_key;
+}
+
+gboolean
+gebr_comm_server_get_use_pubblic_key(GebrCommServer *server)
+{
+	return server->use_public_key;
 }

@@ -87,6 +87,7 @@ struct _GebrCommServer {
 	gboolean ac;
 
 	/* ssh stuff */
+	gboolean use_public_key;
 	gchar *password;
 	gboolean tried_existant_pass;
 	gint16 tunnel_port;
@@ -302,6 +303,16 @@ GebrCommTerminalProcess *gebr_comm_server_forward_local_port(GebrCommServer *ser
  */
 gboolean gebr_comm_server_append_key(GebrCommServer *server,
                                      const gchar *home);
+
+/**
+ * gebr_comm_server_set_use_public_key:
+ */
+void gebr_comm_server_set_use_public_key(GebrCommServer *server, gboolean use_key);
+
+/**
+ * gebr_comm_server_get_use_pubblic_key:
+ */
+gboolean gebr_comm_server_get_use_pubblic_key(GebrCommServer *server);
 
 void gebr_comm_server_close_x11_forward(GebrCommServer *server);
 
