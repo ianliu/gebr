@@ -198,6 +198,7 @@ gebr_comm_server_new(const gchar * _address,
 	server->socket = gebr_comm_protocol_socket_new();
 	server->address = g_string_new(_address);
 	server->port = 0;
+	server->use_public_key = FALSE;
 	server->password = NULL;
 	server->x11_forward_process = NULL;
 	server->x11_forward_unix = NULL;
@@ -265,7 +266,7 @@ void gebr_comm_server_connect(GebrCommServer *server,
 	g_signal_connect(process, "ready-read", G_CALLBACK(gebr_comm_ssh_run_server_read), server);
 	g_signal_connect(process, "finished", G_CALLBACK(gebr_comm_ssh_run_server_finished), server);
 
-	gchar *tmp = g_strdup_printf("%s.tmp", server->address->str);
+	gchar *tmp = g_strdup_printf("%s-%s.tmp", server->address->str, maestro? "maestro" : "server");
 	gchar *filename = g_build_filename(g_get_home_dir(), ".gebr", tmp, NULL);
 
 	GString *cmd_line = g_string_new(NULL);
@@ -276,7 +277,6 @@ void gebr_comm_server_connect(GebrCommServer *server,
 	g_string_set_size(cmd_line, 0);
 	g_string_printf(cmd_line, "bash -c %s", cmd);
 
-	g_debug("CMD LINE: %s", cmd_line->str);
 	gebr_comm_terminal_process_start(process, cmd_line);
 
 	g_free(tmp);
@@ -1057,4 +1057,10 @@ gboolean
 gebr_comm_server_get_use_pubblic_key(GebrCommServer *server)
 {
 	return server->use_public_key;
+}
+
+gboolean
+gebr_comm_server_is_maestro(GebrCommServer *server)
+{
+	return server->priv->is_maestro;
 }
