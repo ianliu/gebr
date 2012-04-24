@@ -305,6 +305,11 @@ state_changed(GebrCommServer *comm_server,
 	} else if (state == SERVER_STATE_LOGGED) {
 		gebr_maestro_server_set_error(maestro, "error:none", NULL);
 		gebr_config_maestro_save();
+
+		gboolean use_key = gebr_comm_server_get_use_pubblic_key(comm_server);
+		if (use_key) {
+			g_debug("GERA CHAVE!!");
+		}
 	}
 
 	const gchar *error_type = maestro->priv->error_type;
@@ -326,16 +331,22 @@ ssh_login(GebrCommServer *server,
 	  const gchar *message,
 	  gpointer user_data)
 {
-	gchar *password;
+	PasswordKeys *pk;
 	GebrMaestroServer *maestro = user_data;
 
 	g_signal_emit(maestro, signals[PASSWORD_REQUEST], 0,
-		      gebr_maestro_server_get_display_address(maestro), &password);
+		      gebr_maestro_server_get_display_address(maestro),
+		      gebr_check_if_server_accepts_key(server->address->str,
+		                                       gebr_comm_server_is_maestro(server)), &pk);
 
-	if (!password)
+	if (!pk)
 		return NULL;
 
-	return g_string_new(password);
+	gebr_comm_server_set_use_public_key(server, pk->use_public_key);
+	gebr_remove_temporary_file(server->address->str,
+	                           gebr_comm_server_is_maestro(server));
+
+	return g_string_new(pk->password);
 }
 
 gboolean
@@ -819,18 +830,24 @@ parse_messages(GebrCommServer *comm_server,
 		else if (message->hash == gebr_comm_protocol_defs.pss_def.code_hash) {
 			GList *arguments;
 
-			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 1)) == NULL)
+			if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
 				goto err;
 
-			GString *addr = arguments->data;
-			gchar *password;
-			g_signal_emit(maestro, signals[PASSWORD_REQUEST], 0, addr->str, &password);
+			GString *addr = g_list_nth_data(arguments, 0);
+			GString *acpkey = g_list_nth_data(arguments, 1);
 
-			if (password) {
+			PasswordKeys *pk;
+
+			gboolean accepts_key = g_strcmp0(acpkey->str, "yes") == 0;
+
+			g_signal_emit(maestro, signals[PASSWORD_REQUEST], 0, addr->str, accepts_key, &pk);
+
+			if (pk) {
 				GebrCommUri *uri = gebr_comm_uri_new();
 				gebr_comm_uri_set_prefix(uri, "/server");
 				gebr_comm_uri_add_param(uri, "address", addr->str);
-				gebr_comm_uri_add_param(uri, "pass", password);
+				gebr_comm_uri_add_param(uri, "pass", pk->password);
+				gebr_comm_uri_add_param(uri, "haskey", pk->use_public_key? "yes" : "no");
 				gchar *url = gebr_comm_uri_to_string(uri);
 				gebr_comm_uri_free(uri);
 
@@ -1056,8 +1073,8 @@ gebr_maestro_server_class_init(GebrMaestroServerClass *klass)
 			     G_SIGNAL_RUN_LAST,
 			     G_STRUCT_OFFSET(GebrMaestroServerClass, password_request),
 			     NULL, NULL,
-			     gebr_cclosure_marshal_STRING__STRING,
-			     G_TYPE_STRING, 1, G_TYPE_STRING);
+			     gebr_cclosure_marshal_POINTER__STRING_BOOL,
+			     G_TYPE_POINTER, 2, G_TYPE_STRING, G_TYPE_BOOLEAN);
 
 	signals[DAEMONS_CHANGED] =
 			g_signal_new("daemons-changed",

@@ -40,6 +40,11 @@ typedef struct _GebrMaestroServer GebrMaestroServer;
 typedef struct _GebrMaestroServerPriv GebrMaestroServerPriv;
 typedef struct _GebrMaestroServerClass GebrMaestroServerClass;
 
+typedef struct _passwordKeys {
+	gchar *password;
+	gboolean use_public_key;
+} PasswordKeys;
+
 struct _GebrMaestroServerClass {
 	GObjectClass parent_class;
 
@@ -53,8 +58,9 @@ struct _GebrMaestroServerClass {
 				      const gchar       *title,
 				      const gchar       *question);
 
-	gchar * (*password_request) (GebrMaestroServer *maestro,
-				     const gchar       *address);
+	PasswordKeys * (*password_request) (GebrMaestroServer *maestro,
+					    const gchar       *address,
+					    gboolean	      accepts_key);
 
 	void (*daemons_changed) (GebrMaestroServer *maestro);
 

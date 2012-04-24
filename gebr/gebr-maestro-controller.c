@@ -1389,9 +1389,10 @@ on_question_request(GebrMaestroServer *maestro,
 }
 
 
-static const gchar *
+static PasswordKeys *
 on_password_request(GebrMaestroServer *maestro,
-		    const gchar *address)
+		    const gchar *address,
+		    gboolean acceps_key)
 {
 	gdk_threads_enter();
 	GtkWidget *dialog = gtk_dialog_new_with_buttons(_("Enter password"),
@@ -1414,10 +1415,10 @@ on_password_request(GebrMaestroServer *maestro,
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), entry, FALSE, TRUE, 5);
 	gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
 
-	GebrCommServer *server = gebr_maestro_server_get_server(maestro);
 	GtkWidget *checkbox = gtk_check_button_new_with_label(_("Use keys to avoid passwords."));
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), checkbox, TRUE, TRUE, 5);
-	if (gebr_check_if_server_accepts_key(server->address->str)) {
+
+	if (acceps_key) {
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(checkbox), TRUE);
 		gtk_widget_set_sensitive(checkbox, TRUE);
 	} else {
@@ -1438,15 +1439,18 @@ on_password_request(GebrMaestroServer *maestro,
 		use_key = FALSE;
 	}
 
-	gebr_comm_server_set_use_public_key(server, use_key);
+	PasswordKeys *pk = g_new(PasswordKeys, 1);
+	pk->password = g_strdup(password);
+	pk->use_public_key = use_key;
 
 	gtk_widget_destroy(dialog);
 	gdk_threads_leave();
 
 	g_free(message);
 	g_free(title);
+	g_free(password);
 
-	return password;
+	return pk;
 }
 
 static void

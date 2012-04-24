@@ -967,8 +967,18 @@ on_client_request(GebrCommProtocolSocket *socket,
 		if (g_strcmp0(prefix, "/server") == 0) {
 			const gchar *addr = gebr_comm_uri_get_param(uri, "address");
 			const gchar *pass = gebr_comm_uri_get_param(uri, "pass");
+			const gchar *has_key = gebr_comm_uri_get_param(uri, "haskey");
+
+			gboolean use_key;
+			if (!g_strcmp0(has_key, "yes"))
+				use_key = TRUE;
+			else
+				use_key = FALSE;
 
 			GebrmDaemon *d = gebrm_add_server_to_list(app, addr, pass, NULL);
+
+			GebrCommServer *server = gebrm_daemon_get_server(d);
+			gebr_comm_server_set_use_public_key(server, use_key);
 
 			gebrm_daemon_connect(d, pass, socket);
 			gebrm_config_save_server(d);

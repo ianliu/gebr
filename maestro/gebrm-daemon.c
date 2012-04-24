@@ -198,6 +198,11 @@ gebrm_server_op_state_changed(GebrCommServer *server,
 	else if (server->state == SERVER_STATE_CONNECT) {
 		gebrm_daemon_set_error_type(daemon, NULL);
 		gebrm_daemon_set_error_msg(daemon, NULL);
+
+		gboolean use_key = gebr_comm_server_get_use_pubblic_key(server);
+		if (use_key) {
+			g_debug("MAESTRO GERA CHAVE!!");
+		}
 	}
 
 	g_signal_emit(daemon, signals[STATE_CHANGE], 0, server->state);
@@ -211,10 +216,18 @@ gebrm_server_op_ssh_login(GebrCommServer *server,
 {
 	GebrmDaemon *daemon = user_data;
 
-	if (daemon->priv->client)
+	gboolean accepts_key = gebr_check_if_server_accepts_key(server->address->str,
+	                                                        gebr_comm_server_is_maestro(server));
+
+	if (daemon->priv->client) {
+		// before send message to GêBR, remove temporary file
+		gebr_remove_temporary_file(server->address->str, gebr_comm_server_is_maestro(server));
+
 		gebr_comm_protocol_socket_oldmsg_send(daemon->priv->client, FALSE,
-						      gebr_comm_protocol_defs.pss_def, 1,
-						      server->address->str);
+						      gebr_comm_protocol_defs.pss_def, 2,
+						      server->address->str,
+						      accepts_key? "yes" : "no");
+	}
 	return NULL;
 }
 
@@ -495,10 +508,18 @@ on_password_request(GebrCommServer *server,
 		    const gchar *question,
 		    GebrmDaemon *daemon)
 {
-	if (daemon->priv->client)
+	gboolean accepts_key = gebr_check_if_server_accepts_key(server->address->str,
+	                                                        gebr_comm_server_is_maestro(server));
+
+	if (daemon->priv->client) {
+		// before send message to GêBR, remove temporary file
+		gebr_remove_temporary_file(server->address->str, gebr_comm_server_is_maestro(server));
+
 		gebr_comm_protocol_socket_oldmsg_send(daemon->priv->client, FALSE,
-						      gebr_comm_protocol_defs.pss_def, 1,
-						      server->address->str);
+						      gebr_comm_protocol_defs.pss_def, 2,
+						      server->address->str,
+						      accepts_key? "yes" : "no");
+	}
 }
 
 static void
