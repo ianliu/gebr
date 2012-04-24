@@ -1310,3 +1310,47 @@ gebr_add_ssh_key(const gchar *host)
 
 	return TRUE;
 }
+
+gboolean
+gebr_check_if_server_accepts_key(const gchar *hostname)
+{
+	gboolean accepts_key = FALSE;
+
+	gchar *filename = g_strdup_printf("%s.tmp", hostname);
+	gchar *path = g_build_filename(g_get_home_dir(),".gebr", filename, NULL);
+
+	if (!g_file_test(path, G_FILE_TEST_EXISTS)) {
+		g_free(path);
+		g_free(filename);
+		return FALSE;
+	}
+
+	gchar *content;
+	if (!g_file_get_contents(path, &content, NULL, NULL)) {
+		g_free(path);
+		g_free(filename);
+		g_free(content);
+		return FALSE;
+	}
+
+	GString *output = g_string_new(content);
+	gchar *point = g_strrstr(output->str, "Authentications that can continue:");
+	if (point) {
+		gchar *last_point = g_strstr_len(point, strlen(point), "\n");
+		if (last_point) {
+			gchar *key_point = g_strstr_len(point, (last_point - point), "publickey");
+			if (key_point)
+				accepts_key = TRUE;
+		}
+	}
+
+	// Remove temporary file
+	g_unlink(path);
+
+	g_string_free(output, TRUE);
+	g_free(content);
+	g_free(filename);
+	g_free(path);
+
+	return accepts_key;
+}

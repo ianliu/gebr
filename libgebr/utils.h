@@ -329,6 +329,11 @@ gboolean gebr_generate_key(const gchar *host);
  */
 gboolean gebr_add_ssh_key(const gchar *host);
 
+/**
+ * gebr_check_if_server_accepts_key:
+ */
+gboolean gebr_check_if_server_accepts_key(const gchar *hostname);
+
 G_END_DECLS
 
 #endif				//__GEBR_UTILS_H
