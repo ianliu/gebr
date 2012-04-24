@@ -332,7 +332,14 @@ gboolean gebr_add_ssh_key(const gchar *host);
 /**
  * gebr_check_if_server_accepts_key:
  */
-gboolean gebr_check_if_server_accepts_key(const gchar *hostname);
+gboolean gebr_check_if_server_accepts_key(const gchar *hostname,
+                                          gboolean is_maestro);
+
+/**
+ * gebr_remove_temporary_file:
+ */
+void gebr_remove_temporary_file(const gchar *hostname,
+                                gboolean is_maestro);
 
 G_END_DECLS
 

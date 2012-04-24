@@ -1312,11 +1312,12 @@ gebr_add_ssh_key(const gchar *host)
 }
 
 gboolean
-gebr_check_if_server_accepts_key(const gchar *hostname)
+gebr_check_if_server_accepts_key(const gchar *hostname,
+                                 gboolean is_maestro)
 {
 	gboolean accepts_key = FALSE;
 
-	gchar *filename = g_strdup_printf("%s.tmp", hostname);
+	gchar *filename = g_strdup_printf("%s-%s.tmp", hostname, is_maestro? "maestro" : "server");
 	gchar *path = g_build_filename(g_get_home_dir(),".gebr", filename, NULL);
 
 	if (!g_file_test(path, G_FILE_TEST_EXISTS)) {
@@ -1344,13 +1345,26 @@ gebr_check_if_server_accepts_key(const gchar *hostname)
 		}
 	}
 
-	// Remove temporary file
-	g_unlink(path);
-
 	g_string_free(output, TRUE);
 	g_free(content);
 	g_free(filename);
 	g_free(path);
 
 	return accepts_key;
+}
+
+void
+gebr_remove_temporary_file(const gchar *hostname,
+                           gboolean is_maestro)
+{
+	gchar *filename = g_strdup_printf("%s-%s.tmp", hostname, is_maestro? "maestro" : "server");
+	gchar *path = g_build_filename(g_get_home_dir(),".gebr", filename, NULL);
+
+	if (!g_file_test(path, G_FILE_TEST_EXISTS)) {
+		g_free(path);
+		g_free(filename);
+		return;
+	}
+
+	g_unlink(path);
 }
