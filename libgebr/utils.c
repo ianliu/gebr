@@ -1230,17 +1230,15 @@ gebr_strv_indexof(const gchar **strv, const gchar *value)
 }
 
 gboolean
-gebr_generate_key(const gchar *host)
+gebr_generate_key()
 {
-	gchar *filename = g_strdup_printf("gebr.key.%s", host);
-	gchar *path = g_build_filename(g_get_home_dir(), ".gebr", filename, NULL);
+	gchar *path = g_build_filename(g_get_home_dir(), ".gebr", "gebr.key", NULL);
 
 	g_debug("PATH IS %s", path);
 
 	if (g_file_test(path, G_FILE_TEST_EXISTS)) {
 		g_free(path);
-		g_free(filename);
-		return FALSE;
+		return TRUE;
 	}
 
 	gchar *std_out;
@@ -1251,18 +1249,15 @@ gebr_generate_key(const gchar *host)
 
 	g_string_printf(cmd_line, "ssh-keygen -b '2048' -t 'rsa' -N '' -f '%s'", path);
 
-	g_debug("COMMAND LINE: %s", cmd_line->str);
-
 	if (!g_spawn_command_line_sync(cmd_line->str, &std_out, &std_error, &exit_status, &error)) {
 		g_debug("Erros %s | %s", std_error, std_out);
 		g_debug("GError: %s", error->message);
 		return FALSE;
 	}
 
-	g_debug("CREATED");
+	g_debug("Key 'gebr.key' created!");
 
 	g_string_free(cmd_line, TRUE);
-	g_free(filename);
 	g_free(path);
 	g_free(std_error);
 	g_free(std_out);
@@ -1271,16 +1266,14 @@ gebr_generate_key(const gchar *host)
 }
 
 gboolean
-gebr_add_ssh_key(const gchar *host)
+gebr_add_remove_ssh_key(gboolean remove)
 {
-	gchar *filename = g_strdup_printf("gebr.key.%s", host);
-	gchar *path = g_build_filename(g_get_home_dir(), ".gebr", filename, NULL);
+	gchar *path = g_build_filename(g_get_home_dir(), ".gebr", "gebr.key", NULL);
 
 	g_debug("PATH IS %s", path);
 
 	if (!g_file_test(path, G_FILE_TEST_EXISTS)) {
 		g_free(path);
-		g_free(filename);
 		return FALSE;
 	}
 
@@ -1290,9 +1283,13 @@ gebr_add_ssh_key(const gchar *host)
 	GError *error = NULL;
 	GString *cmd_line = g_string_new(NULL);
 
-	g_string_printf(cmd_line, "ssh-add %s", path);
+	const gchar *option;
+	if (remove)
+		option = "-d ";
+	else
+		option = "";
 
-	g_debug("COMMAND LINE: %s", cmd_line->str);
+	g_string_printf(cmd_line, "ssh-add %s%s", option, path);
 
 	if (!g_spawn_command_line_sync(cmd_line->str, &std_out, &std_error, &exit_status, &error)) {
 		g_debug("Erros %s | %s", std_error, std_out);
@@ -1300,10 +1297,12 @@ gebr_add_ssh_key(const gchar *host)
 		return FALSE;
 	}
 
-	g_debug("ADDED");
+	if (remove)
+		g_debug("Remove key 'gebr.key'");
+	else
+		g_debug("Add key 'gebr.key'");
 
 	g_string_free(cmd_line, TRUE);
-	g_free(filename);
 	g_free(path);
 	g_free(std_error);
 	g_free(std_out);

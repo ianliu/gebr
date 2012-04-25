@@ -322,12 +322,12 @@ gint gebr_strv_indexof(const gchar **strv, const gchar *value);
 /**
  * gebr_comm_server_generate_key:
  */
-gboolean gebr_generate_key(const gchar *host);
+gboolean gebr_generate_key();
 
 /**
  * gebr_add_ssh_key:
  */
-gboolean gebr_add_ssh_key(const gchar *host);
+gboolean gebr_add_remove_ssh_key(gboolean remove);
 
 /**
  * gebr_check_if_server_accepts_key:
