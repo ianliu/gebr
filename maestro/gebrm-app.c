@@ -360,6 +360,9 @@ gebrm_app_daemon_on_state_change(GebrmDaemon *daemon,
 static void
 gebrm_app_finalize(GObject *object)
 {
+	// Remove gebr.key
+	gebr_add_remove_ssh_key(TRUE);
+
 	GebrmApp *app = GEBRM_APP(object);
 	g_hash_table_unref(app->priv->jobs);
 	g_list_foreach(app->priv->connections, (GFunc)g_object_unref, NULL);
@@ -518,10 +521,6 @@ err:
 			queue_client_info(app, daemon, i->data);
 			gebrm_app_send_mpi_flavors(socket, daemon);
 		}
-
-		GebrCommServer *server = gebrm_daemon_get_server(daemon);
-		if (state == SERVER_STATE_LOGGED && gebr_comm_server_get_use_public_key(server))
-			gebr_comm_server_append_key(server, home);
 	}
 }
 
@@ -1656,7 +1655,6 @@ on_new_connection(GebrCommListenSocket *listener,
 				default:
 					break;
 				}
-				gebr_add_ssh_key(gebrm_daemon_get_address(i->data));
 			}
 		}
 
@@ -1718,6 +1716,9 @@ gebrm_app_run(GebrmApp *app, int fd)
 		exit(-1);
 
 	g_free(port_str);
+
+	// Add gebr.key
+	gebr_add_remove_ssh_key(FALSE);
 
 	const gchar *path = gebrm_app_get_servers_file();
 	gebrm_config_load_servers(app, path);
