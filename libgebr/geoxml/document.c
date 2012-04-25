@@ -807,15 +807,17 @@ __gebr_geoxml_document_validate_doc(GdomeDocument ** document,
 				base = gebr_relativise_old_home_path(tmp);
 				g_free(tmp);
 
-				GebrGeoXmlSequence *seq, *aux;
+				GebrGeoXmlSequence *seq;
 				seq = GEBR_GEOXML_SEQUENCE(first_el);
+				gebr_geoxml_object_ref(seq);
+				gebr_geoxml_sequence_next(&seq);
 				while (seq) {
-					gebr_geoxml_object_ref(seq);
+					GebrGeoXmlSequence *aux = seq;
+					gebr_geoxml_object_ref(aux);
 					gebr_geoxml_sequence_next(&seq);
-					aux = seq;
-					gebr_geoxml_sequence_remove(seq);
-					seq = aux;
+					gebr_geoxml_sequence_remove(aux);
 				}
+
 			} else {
 				gchar *title = gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(*document));
 				gchar *line_key = gebr_geoxml_line_create_key(title);
