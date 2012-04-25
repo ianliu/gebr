@@ -139,6 +139,9 @@ gboolean gebr_quit(gboolean save_config)
 	if (save_config)
 		gebr_config_save(FALSE);
 
+	// Remove gebr.key
+	gebr_add_remove_ssh_key(TRUE);
+
 	if (gebr.flow_clipboard != NULL) {
 		g_list_foreach(gebr.flow_clipboard, (GFunc) g_free, NULL);
 		g_list_free(gebr.flow_clipboard);
@@ -376,6 +379,9 @@ gebr_post_config(gboolean has_config)
 	if (!has_config)
 		preferences_setup_ui(TRUE, TRUE, TRUE);
 	else {
+		// Add gebr.key
+		gebr_add_remove_ssh_key(FALSE);
+
 		project_list_populate();
 		restore_project_line_flow_selection();
 
@@ -387,7 +393,6 @@ gebr_post_config(gboolean has_config)
 			preferences_setup_ui(TRUE, TRUE, FALSE);
 		}
 	}
-
 }
 
 void gebr_config_apply(void)
@@ -730,4 +735,12 @@ gebr_has_maestro_config(void)
 	g_string_free(path, TRUE);
 
 	return has_config;
+}
+
+void
+gebr_remove_key_and_quit(int sig)
+{
+	// Remove gebr.key
+	gebr_add_remove_ssh_key(TRUE);
+	exit(0);
 }
