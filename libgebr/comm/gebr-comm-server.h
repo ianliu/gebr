@@ -301,8 +301,7 @@ GebrCommTerminalProcess *gebr_comm_server_forward_local_port(GebrCommServer *ser
 /**
  * gebr_comm_server_append_key:
  */
-gboolean gebr_comm_server_append_key(GebrCommServer *server,
-                                     const gchar *home);
+gboolean gebr_comm_server_append_key(GebrCommServer *server);
 
 /**
  * gebr_comm_server_set_use_public_key:

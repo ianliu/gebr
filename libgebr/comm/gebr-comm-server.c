@@ -1008,21 +1008,16 @@ gebr_comm_server_forward_local_port(GebrCommServer *server,
 }
 
 gboolean
-gebr_comm_server_append_key(GebrCommServer *server,
-                            const gchar *home)
+gebr_comm_server_append_key(GebrCommServer *server)
 {
-	gchar *filename = g_strdup_printf("gebr.key.%s.pub", server->address->str);
-	gchar *path = g_build_filename(g_get_home_dir(), ".gebr", filename, NULL);
+	gchar *path = g_build_filename(g_get_home_dir(), ".gebr", "gebr.key.pub", NULL);
 
-	g_debug("PATH KEY IS %s", path);
+	g_debug("Append gebr.key on PATH %s", path);
 
 	if (!g_file_test(path, G_FILE_TEST_EXISTS)) {
-		g_free(filename);
 		g_free(path);
 		return FALSE;
 	}
-
-	g_debug("EXECUTE COMMAND");
 
 	GebrCommTerminalProcess *process;
 	server->process.use = COMM_SERVER_PROCESS_TERMINAL;
@@ -1032,15 +1027,13 @@ gebr_comm_server_append_key(GebrCommServer *server,
 	g_signal_connect(process, "finished", G_CALLBACK(gebr_comm_ssh_finished), server);
 
 	GString *cmd_line = g_string_new(NULL);
-	g_string_printf(cmd_line, "ssh '%1$s' -o StrictHostKeyChecking=no "
-	                "\"umask 077; test -d %3$s/.ssh || mkdir %3$s/.ssh ; cat %2$s >> %3$s/.ssh/authorized_keys\"",
-	                server->address->str, path, home);
+	g_string_printf(cmd_line, "ssh '%s' -o StrictHostKeyChecking=no "
+	                "\"umask 077; test -d $HOME/.ssh || mkdir $HOME/.ssh ; cat %s >> $HOME/.ssh/authorized_keys\"",
+	                server->address->str, path);
 
-	g_debug("COMMAND LINE FOR AUTHORIZED KEYS: %s", cmd_line->str);
 	gebr_comm_terminal_process_start(process, cmd_line);
 
 	g_string_free(cmd_line, TRUE);
-	g_free(filename);
 	g_free(path);
 
 	return TRUE;
