@@ -307,12 +307,13 @@ state_changed(GebrCommServer *comm_server,
 		gebr_config_maestro_save();
 
 		gboolean use_key = gebr_comm_server_get_use_public_key(comm_server);
-		if (use_key)
-			gebr_generate_key(comm_server->address->str);
-		else
-			gebr_remove_temporary_file(comm_server->address->str, TRUE);
+		if (use_key) {
+			if (gebr_generate_key())
+				gebr_comm_server_append_key(comm_server);
+		}
 
-		gebr_add_ssh_key(comm_server->address->str);
+		gebr_remove_temporary_file(comm_server->address->str, TRUE);
+		gebr_add_remove_ssh_key(FALSE);
 	}
 
 	const gchar *error_type = maestro->priv->error_type;
@@ -346,8 +347,6 @@ ssh_login(GebrCommServer *server,
 		return NULL;
 
 	gebr_comm_server_set_use_public_key(server, pk->use_public_key);
-	gebr_remove_temporary_file(server->address->str,
-	                           gebr_comm_server_is_maestro(server));
 
 	return g_string_new(pk->password);
 }
@@ -1029,16 +1028,6 @@ static void
 gebr_maestro_server_state_change_real(GebrMaestroServer *maestro)
 {
 	update_groups_store(maestro);
-
-	GebrCommServerState state = gebr_maestro_server_get_state(maestro);
-	GebrCommServer *server = gebr_maestro_server_get_server(maestro);
-
-	if (state == SERVER_STATE_LOGGED && gebr_comm_server_get_use_public_key(server)) {
-		gboolean has_home = maestro->priv->home && strlen(maestro->priv->home) > 0;
-		if (has_home)
-			gebr_comm_server_append_key(gebr_maestro_server_get_server(maestro),
-			                            maestro->priv->home);
-	}
 }
 
 static void
