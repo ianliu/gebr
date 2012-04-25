@@ -1276,7 +1276,10 @@ gebr_file_chooser_set_current_directory (const gchar *entry_text, const gchar *p
 		*error = err_msg;
 		gchar *folder = g_build_filename(prefix, aux, NULL);
 
-		err_dir = !gtk_file_chooser_set_current_folder_uri(GTK_FILE_CHOOSER(dialog), folder);
+		gboolean could_set_folder = gtk_file_chooser_set_uri(GTK_FILE_CHOOSER(dialog), folder);
+
+		if (!could_set_folder)
+			g_warn_if_reached();
 
 		g_free(aux);
 		g_free(folder);
@@ -1302,6 +1305,7 @@ gebr_file_chooser_set_current_directory (const gchar *entry_text, const gchar *p
 
 		folder = g_build_filename(prefix, curr_dir, NULL);
 		gtk_file_chooser_set_current_folder_uri(GTK_FILE_CHOOSER(dialog), folder);
+
 
 		g_free(curr_dir);
 		g_free(home_dir);
