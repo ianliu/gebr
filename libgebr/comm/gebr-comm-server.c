@@ -1012,7 +1012,7 @@ gebr_comm_server_append_key(GebrCommServer *server,
                             const gchar *home)
 {
 	gchar *filename = g_strdup_printf("gebr.key.%s.pub", server->address->str);
-	gchar *path = g_build_filename(home, ".gebr", filename, NULL);
+	gchar *path = g_build_filename(g_get_home_dir(), ".gebr", filename, NULL);
 
 	g_debug("PATH KEY IS %s", path);
 
@@ -1054,7 +1054,7 @@ gebr_comm_server_set_use_public_key(GebrCommServer *server,
 }
 
 gboolean
-gebr_comm_server_get_use_pubblic_key(GebrCommServer *server)
+gebr_comm_server_get_use_public_key(GebrCommServer *server)
 {
 	return server->use_public_key;
 }

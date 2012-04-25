@@ -199,10 +199,13 @@ gebrm_server_op_state_changed(GebrCommServer *server,
 		gebrm_daemon_set_error_type(daemon, NULL);
 		gebrm_daemon_set_error_msg(daemon, NULL);
 
-		gboolean use_key = gebr_comm_server_get_use_pubblic_key(server);
-		if (use_key) {
-			g_debug("MAESTRO GERA CHAVE!!");
-		}
+		gboolean use_key = gebr_comm_server_get_use_public_key(server);
+		if (use_key)
+			gebr_generate_key(server->address->str);
+		else
+			gebr_remove_temporary_file(server->address->str, FALSE);
+
+		gebr_add_ssh_key(server->address->str);
 	}
 
 	g_signal_emit(daemon, signals[STATE_CHANGE], 0, server->state);

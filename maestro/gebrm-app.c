@@ -504,6 +504,8 @@ err:
 		if (remove)
 			remove_daemon(app, gebrm_daemon_get_address(daemon));
 	} else {
+		GebrCommServerState state = gebrm_daemon_get_state(daemon);
+
 		if (app->priv->home)
 			home_defined = TRUE;
 
@@ -511,12 +513,15 @@ err:
 			GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(i->data);
 			if (!home_defined)
 				gebrm_app_send_home_dir(app, socket, home);
-			send_server_status_message(app, socket, daemon, gebrm_daemon_get_autoconnect(daemon),
-			                           gebrm_daemon_get_state(daemon));
+			send_server_status_message(app, socket, daemon, gebrm_daemon_get_autoconnect(daemon), state);
 
 			queue_client_info(app, daemon, i->data);
 			gebrm_app_send_mpi_flavors(socket, daemon);
 		}
+
+		GebrCommServer *server = gebrm_daemon_get_server(daemon);
+		if (state == SERVER_STATE_LOGGED && gebr_comm_server_get_use_public_key(server))
+			gebr_comm_server_append_key(server, home);
 	}
 }
 
@@ -1651,6 +1656,7 @@ on_new_connection(GebrCommListenSocket *listener,
 				default:
 					break;
 				}
+				gebr_add_ssh_key(gebrm_daemon_get_address(i->data));
 			}
 		}
 

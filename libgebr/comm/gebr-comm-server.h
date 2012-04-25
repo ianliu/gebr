@@ -312,7 +312,7 @@ void gebr_comm_server_set_use_public_key(GebrCommServer *server, gboolean use_ke
 /**
  * gebr_comm_server_get_use_pubblic_key:
  */
-gboolean gebr_comm_server_get_use_pubblic_key(GebrCommServer *server);
+gboolean gebr_comm_server_get_use_public_key(GebrCommServer *server);
 
 /**
  * gebr_comm_server_is_maestro:
