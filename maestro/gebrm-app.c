@@ -1032,7 +1032,19 @@ on_client_request(GebrCommProtocolSocket *socket,
 				}
 			}
 		}
-
+		else if (g_strcmp0(prefix, "/stop") == 0) {
+			const gchar *addr = gebr_comm_uri_get_param(uri, "address");
+			for (GList *i = app->priv->daemons; i; i = i->next) {
+				GebrmDaemon *d = i->data;
+				if (!g_strcmp0(gebrm_daemon_get_address(d), addr)) {
+					GebrCommServer *server = gebrm_daemon_get_server(d);
+					gebr_comm_server_kill(server);
+					gebrm_daemon_set_error_type(d, "error:stop");
+					gebrm_daemon_set_error_msg(d, NULL);
+					send_server_status_message(app, socket, d, gebrm_daemon_get_autoconnect(d), SERVER_STATE_DISCONNECTED);
+				}
+			}
+		}
 		else if (g_strcmp0(prefix, "/remove") == 0) {
 			const gchar *addr = gebr_comm_uri_get_param(uri, "address");
 			remove_daemon(app, addr);

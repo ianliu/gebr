@@ -340,13 +340,20 @@ void gebr_comm_server_kill(GebrCommServer *server)
 	g_signal_connect(process, "ready-read", G_CALLBACK(gebr_comm_ssh_read), server);
 	g_signal_connect(process, "finished", G_CALLBACK(gebr_comm_ssh_finished), server);
 
+	const gchar *bin;
+	if (gebr_comm_server_is_maestro(server))
+		bin = "gebrm";
+	else
+		bin = "gebrd";
+
 	gchar *ssh_cmd = get_ssh_command_with_key();
 	GString *cmd_line = g_string_new(NULL);
 	if (gebr_comm_server_is_local(server) == FALSE)
-		g_string_printf(cmd_line, "%s -x %s 'killall gebrd'", ssh_cmd, server->address->str);
-	else
-		g_string_printf(cmd_line, "killall gebrd");
+		g_string_printf(cmd_line, "%s -x %s 'fuser -sk -15 $(cat $HOME/.gebr/%s/%s/lock)/tcp'",
+		                ssh_cmd, server->address->str, bin, server->address->str);
+
 	gebr_comm_terminal_process_start(process, cmd_line);
+
 	g_string_free(cmd_line, TRUE);
 	g_free(ssh_cmd);
 }

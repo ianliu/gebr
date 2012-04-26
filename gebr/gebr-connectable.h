@@ -47,6 +47,9 @@ struct _GebrConnectableIface {
 
 	void (*remove) (GebrConnectable *connectable,
 			    const gchar     *address);
+
+	void (*stop) (GebrConnectable *connectable,
+			const gchar     *address);
 };
 
 GType gebr_connectable_get_type      (void) G_GNUC_CONST;
@@ -76,6 +79,14 @@ void  gebr_connectable_disconnect    (GebrConnectable *connectable,
  */
 void  gebr_connectable_remove (GebrConnectable *connectable,
 				      const gchar     *address);
+
+/**
+ * gebr_connectable_stop:
+ *
+ * Asks @connectable to stop from @address.
+ */
+void gebr_connectable_stop(GebrConnectable *connectable,
+                           const gchar     *address);
 
 G_END_DECLS
 

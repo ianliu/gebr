@@ -996,6 +996,10 @@ gebrm_daemon_send_error_message(GebrmDaemon *daemon,
 	    && g_strcmp0(daemon->priv->error_type, "error:ssh") == 0)
 		goto send_error;
 
+	if (daemon->priv->server->state == SERVER_STATE_DISCONNECTED
+	    && g_strcmp0(daemon->priv->error_type, "error:stop") == 0)
+		goto send_error;
+
 	if (daemon->priv->server->state == SERVER_STATE_CONNECT
 	    || daemon->priv->server->state == SERVER_STATE_LOGGED)
 		if (g_strcmp0(daemon->priv->error_type, "error:ssh") != 0)

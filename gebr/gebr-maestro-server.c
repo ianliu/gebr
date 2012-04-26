@@ -1242,7 +1242,7 @@ gebr_maestro_server_connectable_disconnect(GebrConnectable *connectable,
 
 static void
 gebr_maestro_server_remove(GebrConnectable *connectable,
-			       const gchar *address)
+                           const gchar *address)
 {
 	GebrCommUri *uri = gebr_comm_uri_new();
 	gebr_comm_uri_set_prefix(uri, "/remove");
@@ -1256,12 +1256,31 @@ gebr_maestro_server_remove(GebrConnectable *connectable,
 					       url, NULL);
 	g_free(url);
 }
+
+static void
+gebr_maestro_server_stop(GebrConnectable *connectable,
+                         const gchar *address)
+{
+	GebrCommUri *uri = gebr_comm_uri_new();
+	gebr_comm_uri_set_prefix(uri, "/stop");
+	gebr_comm_uri_add_param(uri, "address", address);
+	gchar *url = gebr_comm_uri_to_string(uri);
+	gebr_comm_uri_free(uri);
+
+	GebrMaestroServer *maestro = GEBR_MAESTRO_SERVER(connectable);
+	gebr_comm_protocol_socket_send_request(maestro->priv->server->socket,
+	                                       GEBR_COMM_HTTP_METHOD_PUT,
+	                                       url, NULL);
+	g_free(url);
+}
+
 static void
 gebr_maestro_server_connectable_init(GebrConnectableIface *iface)
 {
 	iface->connect = gebr_maestro_server_connectable_connect;
 	iface->disconnect = gebr_maestro_server_connectable_disconnect;
 	iface->remove = gebr_maestro_server_remove;
+	iface->stop = gebr_maestro_server_stop;
 }
 /* }}} */
 
