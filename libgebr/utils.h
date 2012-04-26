@@ -341,6 +341,11 @@ gboolean gebr_check_if_server_accepts_key(const gchar *hostname,
 void gebr_remove_temporary_file(const gchar *hostname,
                                 gboolean is_maestro);
 
+/**
+ * gebr_remove_temporary_file:
+ */
+const gchar *gebr_get_address_without_user(const gchar *address);
+
 G_END_DECLS
 
 #endif				//__GEBR_UTILS_H

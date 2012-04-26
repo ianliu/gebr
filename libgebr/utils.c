@@ -1367,3 +1367,16 @@ gebr_remove_temporary_file(const gchar *hostname,
 
 	g_unlink(path);
 }
+
+const gchar *
+gebr_get_address_without_user(const gchar *address)
+{
+	g_return_val_if_fail(address != NULL, address);
+
+	gchar *find_str = g_strrstr(address, "@");
+
+	if (find_str)
+		return ++find_str;
+
+	return address;
+}
