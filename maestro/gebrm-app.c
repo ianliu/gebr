@@ -360,9 +360,6 @@ gebrm_app_daemon_on_state_change(GebrmDaemon *daemon,
 static void
 gebrm_app_finalize(GObject *object)
 {
-	// Remove gebr.key
-	gebr_add_remove_ssh_key(TRUE);
-
 	GebrmApp *app = GEBRM_APP(object);
 	g_hash_table_unref(app->priv->jobs);
 	g_list_foreach(app->priv->connections, (GFunc)g_object_unref, NULL);
@@ -1716,9 +1713,6 @@ gebrm_app_run(GebrmApp *app, int fd)
 		exit(-1);
 
 	g_free(port_str);
-
-	// Add gebr.key
-	gebr_add_remove_ssh_key(FALSE);
 
 	const gchar *path = gebrm_app_get_servers_file();
 	gebrm_config_load_servers(app, path);

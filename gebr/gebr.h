@@ -206,8 +206,6 @@ const gchar *gebr_get_session_id(void);
 
 gboolean gebr_has_maestro_config(void);
 
-void gebr_remove_key_and_quit(int sig);
-
 G_END_DECLS
 
 #endif				//__GEBR_H

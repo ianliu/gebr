@@ -53,17 +53,6 @@ int main(int argc, char **argv, char **env)
 	g_thread_init(NULL);
 	gdk_threads_init();
 
-	struct sigaction sa;
-	sa.sa_handler = gebr_remove_key_and_quit;
-	sigemptyset(&sa.sa_mask);
-	sa.sa_flags = 0;
-
-	if (sigaction(SIGTERM, &sa, NULL)
-			|| sigaction(SIGINT, &sa, NULL)
-			|| sigaction(SIGQUIT, &sa, NULL)
-			|| sigaction(SIGSEGV, &sa, NULL))
-		perror("sigaction");
-
 	gebr_libinit(GETTEXT_PACKAGE);
 	gebr_geoxml_init();
 

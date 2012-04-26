@@ -142,6 +142,7 @@ mount_operation_pool(gpointer user_data)
 	if (gebr_comm_listen_socket_is_local_port_available(data->port))
 		return TRUE;
 
+	gebr_add_remove_ssh_key(FALSE);
 	GMountOperation *op = gtk_mount_operation_new(data->maestro->priv->window);
 	g_file_mount_enclosing_volume(data->maestro->priv->mount_location, 0, op, NULL,
 				      (GAsyncReadyCallback) mount_enclosing_ready_cb,
@@ -309,10 +310,8 @@ state_changed(GebrCommServer *comm_server,
 
 		gboolean use_key = gebr_comm_server_get_use_public_key(comm_server);
 		if (use_key) {
-			if (gebr_generate_key()) {
+			if (gebr_generate_key())
 				gebr_comm_server_append_key(comm_server);
-				gebr_add_remove_ssh_key(FALSE);
-			}
 		}
 		gebr_remove_temporary_file(comm_server->address->str, TRUE);
 	}
@@ -464,6 +463,7 @@ mount_enclosing_ready_cb(GFile *location,
 		g_object_unref(maestro->priv->mount_location);
 		maestro->priv->mount_location = NULL;
 	}
+	gebr_add_remove_ssh_key(TRUE);
 }
 
 static gboolean

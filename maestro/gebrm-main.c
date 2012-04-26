@@ -111,9 +111,6 @@ fork_and_exit_main(void)
 static void
 gebrm_remove_lock_and_quit(int sig)
 {
-	// Remove gebr.key
-	gebr_add_remove_ssh_key(TRUE);
-
 	g_unlink(gebrm_app_get_lock_file());
 	exit(0);
 }
