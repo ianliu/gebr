@@ -404,11 +404,12 @@ on_stop_maestro_clicked(GtkButton *button,
 
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_address(gebr.maestro_controller, up->maestro_addr);
 
+	g_signal_connect(gebr.maestro_controller, "maestro-state-changed", G_CALLBACK(on_maestro_state_changed), up);
+
 	if (maestro) {
 		gtk_assistant_set_page_type(GTK_ASSISTANT(up->dialog), main_maestro, GTK_ASSISTANT_PAGE_PROGRESS);
 		gebr_maestro_controller_stop(gebr.maestro_controller, up->maestro_addr);
 		gebr_maestro_server_set_error(maestro, "error:stop", NULL);
-		set_status_for_maestro(gebr.maestro_controller, maestro, up, SERVER_STATE_DISCONNECTED);
 	}
 }
 
