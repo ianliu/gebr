@@ -1070,7 +1070,7 @@ gebr_comm_server_append_key(GebrCommServer *server)
 	gchar *ssh_cmd = get_ssh_command_with_key();
 	GString *cmd_line = g_string_new(NULL);
 	g_string_printf(cmd_line, "%s '%s' -o StrictHostKeyChecking=no "
-	                "\"umask 077; test -d $HOME/.ssh || mkdir $HOME/.ssh ; cat %s >> $HOME/.ssh/authorized_keys\"",
+	                "'umask 077; test -d $HOME/.ssh || mkdir $HOME/.ssh ; cat %s >> $HOME/.ssh/authorized_keys'",
 	                ssh_cmd, server->address->str, path);
 
 	gebr_comm_terminal_process_start(process, cmd_line);
