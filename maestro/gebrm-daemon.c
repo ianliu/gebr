@@ -194,6 +194,7 @@ gebrm_server_op_state_changed(GebrCommServer *server,
 		}
 		daemon->priv->is_initialized = FALSE;
 		daemon->priv->uncompleted_tasks = 0;
+		gebr_remove_temporary_file(server->address->str, FALSE);
 	}
 	else if (server->state == SERVER_STATE_CONNECT) {
 		gebrm_daemon_set_error_type(daemon, NULL);

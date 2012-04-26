@@ -302,6 +302,7 @@ state_changed(GebrCommServer *comm_server,
 		const gchar *err = gebr_comm_server_get_last_error(maestro->priv->server);
 		if (err && *err)
 			gebr_maestro_server_set_error(maestro, "error:ssh", err);
+		gebr_remove_temporary_file(comm_server->address->str, TRUE);
 	} else if (state == SERVER_STATE_LOGGED) {
 		gebr_maestro_server_set_error(maestro, "error:none", NULL);
 		gebr_config_maestro_save();
