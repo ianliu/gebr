@@ -261,7 +261,7 @@ log_message(GebrCommServer *server,
 {
 }
 
-static void
+void
 gebr_maestro_server_set_error(GebrMaestroServer *maestro,
 			      const gchar *error_type,
 			      const gchar *error_msg)
