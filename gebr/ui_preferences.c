@@ -187,8 +187,6 @@ set_status_for_maestro(GebrMaestroController *self,
 	if (state == SERVER_STATE_LOGGED) {
 		gtk_image_set_from_stock(GTK_IMAGE(status_img), GTK_STOCK_OK, GTK_ICON_SIZE_DIALOG);
 		gtk_label_set_text(GTK_LABEL(status_label), _("Success!"));
-		gtk_assistant_set_page_title(GTK_ASSISTANT(up->dialog),
-		                             main_maestro, _("Done"));
 		gtk_assistant_set_page_type(GTK_ASSISTANT(up->dialog), main_maestro, GTK_ASSISTANT_PAGE_CONTENT);
 		gtk_assistant_set_page_complete(GTK_ASSISTANT(up->dialog), main_maestro, TRUE);
 
@@ -216,6 +214,18 @@ set_status_for_maestro(GebrMaestroController *self,
 
 			gtk_label_set_markup(GTK_LABEL(status_title), summary_txt);
 			g_free(summary_txt);
+		} else if (!g_strcmp0(type, "error:stop")) {
+			gchar *title = g_markup_printf_escaped(_("<span size='large'>Maestro <b>%s</b> disconnected!</span>!"), address);
+			gtk_label_set_markup(GTK_LABEL(status_title), title);
+			g_free(title);
+
+			gtk_image_set_from_stock(GTK_IMAGE(status_img), GTK_STOCK_DISCONNECT, GTK_ICON_SIZE_DIALOG);
+			gchar *txt = g_markup_printf_escaped(_("Stopped!"));
+			gtk_label_set_markup(GTK_LABEL(status_label), txt);
+			g_free(txt);
+
+			gtk_assistant_set_page_type(GTK_ASSISTANT(up->dialog), main_maestro, GTK_ASSISTANT_PAGE_CONTENT);
+			gtk_assistant_set_page_complete(GTK_ASSISTANT(up->dialog), main_maestro, FALSE);
 		} else {
 			gchar *title = g_markup_printf_escaped(_("<span size='large'>Could not connect to Maestro <b>%s</b></span>!"), address);
 			gtk_label_set_markup(GTK_LABEL(status_title), title);
@@ -226,8 +236,6 @@ set_status_for_maestro(GebrMaestroController *self,
 			gtk_label_set_markup(GTK_LABEL(status_label), txt);
 			g_free(txt);
 
-			gtk_assistant_set_page_title(GTK_ASSISTANT(up->dialog),
-			                             main_maestro, _("Warning!"));
 			gtk_assistant_set_page_type(GTK_ASSISTANT(up->dialog), main_maestro, GTK_ASSISTANT_PAGE_CONTENT);
 			gtk_assistant_set_page_complete(GTK_ASSISTANT(up->dialog), main_maestro, FALSE);
 		}
@@ -385,13 +393,32 @@ get_wizard_status(struct ui_preferences *up)
 }
 
 static void
+on_stop_maestro_clicked(GtkButton *button,
+                        struct ui_preferences *up)
+{
+	GtkWidget *main_maestro = GTK_WIDGET(gtk_builder_get_object(up->builder, "maestro_chooser"));
+
+	if (up->maestro_addr)
+		g_free(up->maestro_addr);
+	up->maestro_addr = g_strdup(gtk_entry_get_text(up->maestro_entry));
+
+	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_address(gebr.maestro_controller, up->maestro_addr);
+
+	if (maestro) {
+		gtk_assistant_set_page_type(GTK_ASSISTANT(up->dialog), main_maestro, GTK_ASSISTANT_PAGE_PROGRESS);
+		gebr_maestro_controller_stop(gebr.maestro_controller, up->maestro_addr);
+		gebr_maestro_server_set_error(maestro, "error:stop", NULL);
+		set_status_for_maestro(gebr.maestro_controller, maestro, up, SERVER_STATE_DISCONNECTED);
+	}
+}
+
+static void
 on_connect_maestro_clicked(GtkButton *button,
                            struct ui_preferences *up)
 {
 	GtkWidget *main_maestro = GTK_WIDGET(gtk_builder_get_object(up->builder, "maestro_chooser"));
 
 	gtk_assistant_set_page_type(GTK_ASSISTANT(up->dialog), main_maestro, GTK_ASSISTANT_PAGE_PROGRESS);
-	gtk_assistant_set_page_title(GTK_ASSISTANT(up->dialog), main_maestro, _("Connecting on Maestro..."));
 
 	if (up->maestro_addr)
 		g_free(up->maestro_addr);
@@ -541,6 +568,9 @@ on_assistant_prepare(GtkAssistant *assistant,
 
 		g_signal_connect(connect_button, "clicked", G_CALLBACK(on_connect_maestro_clicked), up);
 		g_signal_connect(up->maestro_entry, "activate", G_CALLBACK(on_connect_maestro_activate), up);
+
+		GtkWidget *stop_button = GTK_WIDGET(gtk_builder_get_object(up->builder, "stop_button"));
+		g_signal_connect(stop_button, "clicked", G_CALLBACK(on_stop_maestro_clicked), up);
 
 		gtk_widget_show(connections_info);
 
