@@ -348,9 +348,13 @@ void gebr_comm_server_kill(GebrCommServer *server)
 
 	gchar *ssh_cmd = get_ssh_command_with_key();
 	GString *cmd_line = g_string_new(NULL);
+
+	//Tirar user@ do maestro
+	const gchar *curr_dir = gebr_get_address_without_user(server->address->str);
+
 	if (gebr_comm_server_is_local(server) == FALSE)
 		g_string_printf(cmd_line, "%s -x %s 'fuser -sk -15 $(cat $HOME/.gebr/%s/%s/lock)/tcp'",
-		                ssh_cmd, server->address->str, bin, server->address->str);
+		                ssh_cmd, server->address->str, bin, curr_dir);
 
 	gebr_comm_terminal_process_start(process, cmd_line);
 
