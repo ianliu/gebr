@@ -1134,6 +1134,16 @@ on_servers_edited(GtkCellRendererText *cell,
 	gebr_gui_gtk_tree_view_scroll_to_iter_cell(view, &iter);
 }
 
+static void
+on_stop_to_maestro_clicked(GtkButton *button,
+                           GebrMaestroController *self)
+{
+	GtkComboBoxEntry *combo = GTK_COMBO_BOX_ENTRY(gtk_builder_get_object(self->priv->builder, "combo_maestro"));
+	GtkEntry *entry = GTK_ENTRY(gtk_bin_get_child(GTK_BIN(combo)));
+
+	gebr_maestro_controller_stop(self, gtk_entry_get_text(entry));
+}
+
 static void 
 on_connect_to_maestro_clicked(GtkButton *button,
 			      GebrMaestroController *self)
@@ -1271,6 +1281,9 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 
 	GtkButton *connect_button = GTK_BUTTON(gtk_builder_get_object(self->priv->builder, "btn_connect"));
 	g_signal_connect(connect_button, "clicked", G_CALLBACK(on_connect_to_maestro_clicked), self);
+
+	GtkButton *stop_button = GTK_BUTTON(gtk_builder_get_object(self->priv->builder, "btn_stop"));
+	g_signal_connect(stop_button, "clicked", G_CALLBACK(on_stop_to_maestro_clicked), self);
 
 	/*
 	 * Servers treeview
@@ -1550,6 +1563,9 @@ on_maestro_error(GebrMaestroServer *maestro,
 			gtk_entry_set_icon_from_stock(entry,
 			                              GTK_ENTRY_ICON_SECONDARY,
 			                              GTK_STOCK_DISCONNECT);
+			gtk_entry_set_icon_tooltip_text(entry,
+			                                GTK_ENTRY_ICON_SECONDARY,
+			                                _("Disconnected"));
 		} else {
 			gtk_entry_set_icon_from_stock(entry,
 						      GTK_ENTRY_ICON_SECONDARY,
@@ -1730,6 +1746,22 @@ on_state_change(GebrMaestroServer *maestro,
 		GebrMaestroController *self)
 {
 	g_signal_emit(self, signals[MAESTRO_STATE_CHANGED], 0, maestro);
+}
+
+void
+gebr_maestro_controller_stop(GebrMaestroController *self,
+                             const gchar *address)
+{
+	GebrMaestroServer *maestro = self->priv->maestro;
+	const gchar *maestro_addr = gebr_maestro_server_get_address(maestro);
+
+	if (g_strcmp0(maestro_addr, address) != 0)
+		return;
+
+	GebrCommServer *server = gebr_maestro_server_get_server(maestro);
+	gebr_comm_server_kill(server);
+
+	on_maestro_error(maestro, maestro_addr, NULL, NULL, self);
 }
 
 void

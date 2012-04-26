@@ -90,6 +90,9 @@ GebrMaestroServer * gebr_maestro_controller_get_maestro(GebrMaestroController *s
 void gebr_maestro_controller_connect(GebrMaestroController *self,
 				     const gchar *address);
 
+void gebr_maestro_controller_stop(GebrMaestroController *self,
+                                  const gchar *address);
+
 GebrMaestroServer *gebr_maestro_controller_get_maestro_for_address(GebrMaestroController *mc,
 								   const gchar *address);
 
