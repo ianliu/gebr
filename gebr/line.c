@@ -351,8 +351,8 @@ on_assistant_prepare(GtkAssistant *assistant,
 		if (!entr_text || !entr_text[0])
 			gtk_entry_set_text(GTK_ENTRY(entry_base), path);
 
-		gchar *text_maestro = g_markup_printf_escaped(_("<i>Note that browsing will take place at Maestro <b>%s</b>’s servers,\n"
-								"instead of this machine.\n</i>"), maestro_addr);
+		gchar *text_maestro = g_markup_printf_escaped(_("Note that browsing will take place at Maestro <b>%s</b>’s servers,\n"
+								"instead of this machine.\n"), maestro_addr);
 		label = gtk_builder_get_object(data->builder, "label6");
 		gtk_label_set_markup(GTK_LABEL(label), text_maestro);
 
@@ -364,9 +364,9 @@ on_assistant_prepare(GtkAssistant *assistant,
 		const gchar *base = gtk_entry_get_text(GTK_ENTRY(entry_base));
 
 		GObject *label;
-		gchar *text_maestro = g_markup_printf_escaped(_("<i>GêBR will create some directories to organize the files\n"
+		gchar *text_maestro = g_markup_printf_escaped(_("GêBR will create some directories to organize the files\n"
 								"created during the data processing.\n\n"
-								"These directories will be created on servers of maestro <b>%s</b>.</i>"), maestro_addr);
+								"These directories will be created on servers of maestro <b>%s</b>."), maestro_addr);
 		label = gtk_builder_get_object(data->builder, "label_hierarchy_1");
 		gtk_label_set_markup(GTK_LABEL(label), text_maestro);
 

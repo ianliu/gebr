@@ -578,7 +578,7 @@ on_assistant_prepare(GtkAssistant *assistant,
 
 			g_signal_connect(maestro, "daemons-changed", G_CALLBACK(on_daemons_changed), up);
 
-			gchar *main_servers_text = g_markup_printf_escaped(_("Now you need to add <b>Servers</b> to be handled by your Maestro <b>%s</b>.\n\n"
+			gchar *main_servers_text = g_markup_printf_escaped(_("Now you need to add Servers to be handled by your Maestro <b>%s</b>.\n\n"
 									     "For each server, you are going to be asked for your login credentials."),
 									   gebr_maestro_server_get_address(maestro));
 
@@ -879,6 +879,21 @@ preferences_setup_ui(gboolean first_run,
 
 		ui_preferences->dialog = assistant;
 
+		GtkWidget *maestro_info_label = GTK_WIDGET(gtk_builder_get_object(ui_preferences->builder, "maestro_info_label"));
+		gtk_label_set_markup(GTK_LABEL(maestro_info_label), _("<b>Maestro</b> is the responsible for receiving GêBR "
+								      "requests and for managing the available resources to perform it in the best way."));
+
+		GtkWidget *server_info_second_label = GTK_WIDGET(gtk_builder_get_object(ui_preferences->builder, "server_info_second_label"));
+		gtk_label_set_markup(GTK_LABEL(server_info_second_label), _( "<b>Servers</b> are in charge of running processing flows, "
+								       "under maestro’s coordination. "
+								       "For each server, you are going to be asked for your login credentials.\n"
+								       "You may be asked once more for your login credentials to be "
+								       "able to browse the remote file system."));
+		GtkWidget *pwd_info_label = GTK_WIDGET(gtk_builder_get_object(ui_preferences->builder, "pwd_info_label"));
+		gtk_label_set_markup(GTK_LABEL(pwd_info_label), _("GêBR needs a <b>connection</b> to a Maestro to send jobs "
+									    "and receive outputs. For security reasons an encrypted connection "
+									    "is made using SSH protocol.\n\n"
+									    "Your login password may be asked to stablish the connection."));
 		/* Set Preferences Page */
 		set_preferences_page(builder, ui_preferences);
 

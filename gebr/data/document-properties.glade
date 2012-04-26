@@ -100,6 +100,7 @@
         <child>
           <object class="GtkLabel" id="label1">
             <property name="visible">True</property>
+            <property name="xalign">0</property>
             <property name="label" translatable="yes">Title</property>
           </object>
           <packing>
@@ -153,6 +154,7 @@
         <child>
           <object class="GtkLabel" id="label2">
             <property name="visible">True</property>
+            <property name="xalign">0</property>
             <property name="label" translatable="yes">Description</property>
           </object>
           <packing>
@@ -165,6 +167,7 @@
         <child>
           <object class="GtkLabel" id="label3">
             <property name="visible">True</property>
+            <property name="xalign">0</property>
             <property name="label" translatable="yes">Author</property>
           </object>
           <packing>
@@ -177,6 +180,7 @@
         <child>
           <object class="GtkLabel" id="label5">
             <property name="visible">True</property>
+            <property name="xalign">0</property>
             <property name="label" translatable="yes">E-mail</property>
           </object>
           <packing>
@@ -1164,7 +1168,7 @@ These directories will be created on servers of maestro &lt;b&gt;XXX&lt;/b&gt;.<
       <object class="GtkLabel" id="label48">
         <property name="visible">True</property>
         <property name="xalign">0</property>
-        <property name="xpad">20</property>
+        <property name="xpad">15</property>
         <property name="label" translatable="yes">&lt;b&gt;Title:&lt;/b&gt;</property>
         <property name="use_markup">True</property>
       </object>
@@ -1177,7 +1181,8 @@ These directories will be created on servers of maestro &lt;b&gt;XXX&lt;/b&gt;.<
     <child>
       <object class="GtkLabel" id="label49">
         <property name="visible">True</property>
-        <property name="xpad">20</property>
+        <property name="xalign">0</property>
+        <property name="xpad">15</property>
         <property name="label" translatable="yes">&lt;b&gt;Description:&lt;/b&gt;</property>
         <property name="use_markup">True</property>
       </object>
@@ -1193,7 +1198,7 @@ These directories will be created on servers of maestro &lt;b&gt;XXX&lt;/b&gt;.<
       <object class="GtkLabel" id="label50">
         <property name="visible">True</property>
         <property name="xalign">0</property>
-        <property name="xpad">20</property>
+        <property name="xpad">15</property>
         <property name="label" translatable="yes">&lt;b&gt;Author:&lt;/b&gt;</property>
         <property name="use_markup">True</property>
       </object>
@@ -1209,7 +1214,7 @@ These directories will be created on servers of maestro &lt;b&gt;XXX&lt;/b&gt;.<
       <object class="GtkLabel" id="label51">
         <property name="visible">True</property>
         <property name="xalign">0</property>
-        <property name="xpad">20</property>
+        <property name="xpad">15</property>
         <property name="label" translatable="yes">&lt;b&gt;E-mail:&lt;/b&gt;</property>
         <property name="use_markup">True</property>
       </object>
@@ -1225,7 +1230,7 @@ These directories will be created on servers of maestro &lt;b&gt;XXX&lt;/b&gt;.<
       <object class="GtkLabel" id="label54">
         <property name="visible">True</property>
         <property name="xalign">0</property>
-        <property name="xpad">20</property>
+        <property name="xpad">15</property>
         <property name="label" translatable="yes">&lt;b&gt;Maestro:&lt;/b&gt;</property>
         <property name="use_markup">True</property>
       </object>
@@ -1241,7 +1246,7 @@ These directories will be created on servers of maestro &lt;b&gt;XXX&lt;/b&gt;.<
       <object class="GtkLabel" id="label52">
         <property name="visible">True</property>
         <property name="xalign">0</property>
-        <property name="xpad">20</property>
+        <property name="xpad">15</property>
         <property name="label" translatable="yes">&lt;b&gt;BASE:&lt;/b&gt;</property>
         <property name="use_markup">True</property>
       </object>
@@ -1257,7 +1262,7 @@ These directories will be created on servers of maestro &lt;b&gt;XXX&lt;/b&gt;.<
       <object class="GtkLabel" id="label53">
         <property name="visible">True</property>
         <property name="xalign">0</property>
-        <property name="xpad">20</property>
+        <property name="xpad">15</property>
         <property name="label" translatable="yes">&lt;b&gt;IMPORT:&lt;/b&gt;</property>
         <property name="use_markup">True</property>
       </object>
