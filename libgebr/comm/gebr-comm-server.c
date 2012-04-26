@@ -159,6 +159,21 @@ gebr_comm_server_class_init(GebrCommServerClass *klass)
 	g_type_class_add_private(klass, sizeof(GebrCommServerPriv));
 }
 
+static gchar *
+get_ssh_command_with_key(void)
+{
+	gchar *path = g_build_filename(g_get_home_dir(), ".gebr", "gebr.key", NULL);
+
+	if (!g_file_test(path, G_FILE_TEST_EXISTS)) {
+		g_free(path);
+		return g_strdup("ssh");
+	}
+	gchar *ssh_cmd = g_strdup_printf("ssh -i %s", path);
+
+	g_free(path);
+
+	return ssh_cmd;
+}
 
 gchar *
 gebr_comm_server_get_user(const gchar *address)
@@ -269,9 +284,11 @@ void gebr_comm_server_connect(GebrCommServer *server,
 	gchar *tmp = g_strdup_printf("%s-%s.tmp", server->address->str, maestro? "maestro" : "server");
 	gchar *filename = g_build_filename(g_get_home_dir(), ".gebr", tmp, NULL);
 
+	gchar *ssh_cmd = get_ssh_command_with_key();
+
 	GString *cmd_line = g_string_new(NULL);
-	g_string_printf(cmd_line, "ssh -v -x %s \"bash -l -c '%s >&3' 3>&1 >/dev/null 2>&1\" 2> %s",
-			server->address->str, binary, filename);
+	g_string_printf(cmd_line, "%s -v -x %s \"bash -l -c '%s >&3' 3>&1 >/dev/null 2>&1\" 2> %s",
+	                ssh_cmd, server->address->str, binary, filename);
 	gchar *cmd = g_shell_quote(cmd_line->str);
 
 	g_string_set_size(cmd_line, 0);
@@ -282,6 +299,7 @@ void gebr_comm_server_connect(GebrCommServer *server,
 	g_free(tmp);
 	g_free(filename);
 	g_free(cmd);
+	g_free(ssh_cmd);
 	g_string_free(cmd_line, TRUE);
 }
 
@@ -322,13 +340,15 @@ void gebr_comm_server_kill(GebrCommServer *server)
 	g_signal_connect(process, "ready-read", G_CALLBACK(gebr_comm_ssh_read), server);
 	g_signal_connect(process, "finished", G_CALLBACK(gebr_comm_ssh_finished), server);
 
+	gchar *ssh_cmd = get_ssh_command_with_key();
 	GString *cmd_line = g_string_new(NULL);
 	if (gebr_comm_server_is_local(server) == FALSE)
-		g_string_printf(cmd_line, "ssh -x %s 'killall gebrd'", server->address->str);
+		g_string_printf(cmd_line, "%s -x %s 'killall gebrd'", ssh_cmd, server->address->str);
 	else
 		g_string_printf(cmd_line, "killall gebrd");
 	gebr_comm_terminal_process_start(process, cmd_line);
 	g_string_free(cmd_line, TRUE);
+	g_free(ssh_cmd);
 }
 
 gboolean gebr_comm_server_forward_x11(GebrCommServer *server, guint16 port)
@@ -379,7 +399,10 @@ gboolean gebr_comm_server_forward_x11(GebrCommServer *server, guint16 port)
 	server->tried_existant_pass = FALSE;
 	server->x11_forward_process = gebr_comm_terminal_process_new();
 	g_signal_connect(server->x11_forward_process, "ready-read", G_CALLBACK(gebr_comm_ssh_read), server);
-	g_string_printf(string, "ssh -x -R %d:%s:%d %s -N", port, display_host->str, redirect_display_port, server->address->str);
+
+	gchar *ssh_cmd = get_ssh_command_with_key();
+	g_string_printf(string, "%s -x -R %d:%s:%d %s -N", ssh_cmd, port, display_host->str, redirect_display_port, server->address->str);
+
 	g_debug("X11 Forwarding %s", string->str);
 	gebr_comm_terminal_process_start(server->x11_forward_process, string);
 
@@ -389,6 +412,7 @@ gboolean gebr_comm_server_forward_x11(GebrCommServer *server, guint16 port)
 
 	/* frees */
  out:	g_string_free(string, TRUE);
+	g_free(ssh_cmd);
 
 	return ret;
 }
@@ -652,11 +676,14 @@ gebr_comm_ssh_run_server_finished(GebrCommTerminalProcess * process, GebrCommSer
 	server->tunnel_port = tunnel_port;
 	++tunnel_port;
 
+	gchar *ssh_cmd = get_ssh_command_with_key();
 	GString *cmd_line = g_string_new(NULL);
-	g_string_printf(cmd_line, "ssh -x -L %d:127.0.0.1:%d %s 'sleep 300'",
-			server->tunnel_port, server->port, server->address->str);
+	g_string_printf(cmd_line, "%s -x -L %d:127.0.0.1:%d %s 'sleep 300'",
+			ssh_cmd, server->tunnel_port, server->port, server->address->str);
+
 	gebr_comm_terminal_process_start(process, cmd_line);
 	g_string_free(cmd_line, TRUE);
+	g_free(ssh_cmd);
 	
 	server->tunnel_pooling_source = g_timeout_add(200, (GSourceFunc)gebr_comm_ssh_open_tunnel_pool, server);
 }
@@ -974,9 +1001,11 @@ gebr_comm_server_forward_port(GebrCommServer *server,
 	g_signal_connect(proc, "ready-read",
 			 G_CALLBACK(gebr_comm_ssh_read), server);
 
+	gchar *ssh_cmd = get_ssh_command_with_key();
 	GString *string = g_string_new(NULL);
-	g_string_printf(string, "ssh -x -%s %d:%s:%d %s -N",
-			is_local ? "L" : "R",
+	g_string_printf(string, "%s -x -%s %d:%s:%d %s -N",
+			ssh_cmd,
+	                is_local ? "L" : "R",
 			port1,
 			addr,
 			port2,
@@ -986,6 +1015,7 @@ gebr_comm_server_forward_port(GebrCommServer *server,
 
 	gebr_comm_terminal_process_start(proc, string);
 	g_string_free(string, TRUE);
+	g_free(ssh_cmd);
 
 	return proc;
 }
@@ -1026,15 +1056,17 @@ gebr_comm_server_append_key(GebrCommServer *server)
 	g_signal_connect(process, "ready-read", G_CALLBACK(gebr_comm_ssh_read), server);
 	g_signal_connect(process, "finished", G_CALLBACK(gebr_comm_ssh_finished), server);
 
+	gchar *ssh_cmd = get_ssh_command_with_key();
 	GString *cmd_line = g_string_new(NULL);
-	g_string_printf(cmd_line, "ssh '%s' -o StrictHostKeyChecking=no "
+	g_string_printf(cmd_line, "%s '%s' -o StrictHostKeyChecking=no "
 	                "\"umask 077; test -d $HOME/.ssh || mkdir $HOME/.ssh ; cat %s >> $HOME/.ssh/authorized_keys\"",
-	                server->address->str, path);
+	                ssh_cmd, server->address->str, path);
 
 	gebr_comm_terminal_process_start(process, cmd_line);
 
 	g_string_free(cmd_line, TRUE);
 	g_free(path);
+	g_free(ssh_cmd);
 
 	return TRUE;
 }
