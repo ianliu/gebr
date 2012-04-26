@@ -1734,22 +1734,13 @@ gebr_ui_document_send_paths_to_maestro(GebrMaestroServer *maestro,
 
 	gebr_pairstrfreev(paths);
 
-	if (option == GEBR_COMM_PROTOCOL_PATH_RENAME) {
-		g_debug("Rename dir %s to %s", oldmsg, newmsg);
-		gebr_comm_protocol_socket_oldmsg_send(server->socket, FALSE,
-						      gebr_comm_protocol_defs.path_def, 3,
-						      newmsg,
-						      oldmsg,
-						      gebr_comm_protocol_path_enum_to_str(option));
-	} else {
-		gchar *paths = gebr_geoxml_get_paths_for_base(newmsg);
-		g_debug("------------------  %s", paths);
-		gebr_comm_protocol_socket_oldmsg_send(server->socket, FALSE,
-						      gebr_comm_protocol_defs.path_def, 3,
-						      paths,
-						      oldmsg,
-						      gebr_comm_protocol_path_enum_to_str(option));
-	}
+	gchar *base_paths = gebr_geoxml_get_paths_for_base(newmsg);
+
+	gebr_comm_protocol_socket_oldmsg_send(server->socket, FALSE,
+	                                      gebr_comm_protocol_defs.path_def, 3,
+	                                      base_paths,
+	                                      oldmsg,
+	                                      gebr_comm_protocol_path_enum_to_str(option));
 }
 
 static gboolean

@@ -304,26 +304,18 @@ gebr_document_send_path_message(GebrGeoXmlLine *line,
 	gchar ***paths = gebr_geoxml_line_get_paths(line);
 	GString *buffer = g_string_new(NULL);
 
-	if (option == GEBR_COMM_PROTOCOL_PATH_CREATE) {
-		for (gint i = 0; paths[i]; i++) {
-			if (g_strcmp0(paths[i][1], "IMPORT") == 0)
-				continue;
-			gchar *escaped = gebr_geoxml_escape_path(paths[i][0]);
-			g_string_append_c(buffer, ',');
-			g_string_append(buffer, escaped);
-			g_free(escaped);
-		}
-		if (buffer->len)
-			g_string_erase(buffer, 0, 1);
+	for (gint i = 0; paths[i]; i++) {
+		if (g_strcmp0(paths[i][1], "IMPORT") == 0)
+			continue;
+		gchar *resolved = gebr_resolve_relative_path(paths[i][0], paths);
+		gchar *escaped = gebr_geoxml_escape_path(resolved);
+		g_string_append_c(buffer, ',');
+		g_string_append(buffer, escaped);
+		g_free(escaped);
+		g_free(resolved);
 	}
-	else if (option == GEBR_COMM_PROTOCOL_PATH_RENAME) {
-		for (gint i = 0; paths[i]; i++) {
-			if (g_strcmp0(paths[i][1], "BASE") == 0) {
-				buffer = g_string_append(buffer, paths[i][0]);
-				break;
-			}
-		}
-	}
+	if (buffer->len)
+		g_string_erase(buffer, 0, 1);
 
 	gebr_pairstrfreev(paths);
 
@@ -331,8 +323,6 @@ gebr_document_send_path_message(GebrGeoXmlLine *line,
 	if (!maestro_server)
 		return;
 	GebrCommServer *comm_server = gebr_maestro_server_get_server(maestro_server);
-
-	g_debug("enviando mensagem (NEW) '%s', (OLD) '%s' ao maestro '%s'", buffer->str, old_base, gebr_maestro_server_get_address(maestro_server));
 
 	gebr_comm_protocol_socket_oldmsg_send(comm_server->socket, FALSE,
 	                                      gebr_comm_protocol_defs.path_def, 3,
@@ -1022,17 +1012,15 @@ static void on_dialog_response(GtkWidget *dialog, gint response_id, gpointer use
 	if (response_id == GTK_RESPONSE_YES) {
 		GString *cmd_line = g_string_new(NULL);
 		for (GList *i = data->line_paths_creation_sugest; i != NULL; i = g_list_next(i)) {
-			gchar **split_path = g_strsplit(i->data, ",", -1);
-			gchar *escaped = g_strjoinv(",,", split_path);
+			gchar *escaped = gebr_geoxml_escape_path(i->data);
 			g_string_append_c(buffer, ',');
 			buffer = g_string_append(buffer, escaped);
-			g_strfreev(split_path);
+			g_free(escaped);
 		}
-
 		if (buffer->len)
 			g_string_erase(buffer, 0, 1);
-		GebrMaestroServer *maestro_server = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 
+		GebrMaestroServer *maestro_server = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 		if (maestro_server) {
 			GebrCommServer *comm_server = gebr_maestro_server_get_server(maestro_server);
 
