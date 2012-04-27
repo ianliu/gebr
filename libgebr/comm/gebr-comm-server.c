@@ -1056,6 +1056,7 @@ gebr_comm_server_append_key(GebrCommServer *server,
                             void * finished_callback)
 {
 	gchar *path = g_build_filename(g_get_home_dir(), ".gebr", "gebr.key.pub", NULL);
+	gchar *public_key;
 
 	g_debug("Append gebr.key on PATH %s", path);
 
@@ -1063,6 +1064,9 @@ gebr_comm_server_append_key(GebrCommServer *server,
 		g_free(path);
 		return FALSE;
 	}
+
+	// FIXME: please handle GError of the g_file_get_contents
+	g_file_get_contents(path, &public_key, NULL, NULL);
 
 	GebrCommTerminalProcess *process;
 	server->process.use = COMM_SERVER_PROCESS_TERMINAL;
@@ -1076,14 +1080,15 @@ gebr_comm_server_append_key(GebrCommServer *server,
 	gchar *ssh_cmd = get_ssh_command_with_key();
 	GString *cmd_line = g_string_new(NULL);
 	g_string_printf(cmd_line, "%s '%s' -o StrictHostKeyChecking=no "
-	                "'umask 077; test -d $HOME/.ssh || mkdir $HOME/.ssh ; cat %s >> $HOME/.ssh/authorized_keys'",
-	                ssh_cmd, server->address->str, path);
+	                "'umask 077; test -d $HOME/.ssh || mkdir $HOME/.ssh ; echo \"%s\" >> $HOME/.ssh/authorized_keys'",
+	                ssh_cmd, server->address->str, public_key);
 
 	gebr_comm_terminal_process_start(process, cmd_line);
 
 	g_string_free(cmd_line, TRUE);
 	g_free(path);
 	g_free(ssh_cmd);
+	g_free(public_key);
 
 	return TRUE;
 }
