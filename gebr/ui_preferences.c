@@ -160,6 +160,8 @@ on_maestro_state_changed(GebrMaestroController *self,
 {
 	GebrCommServerState state = gebr_maestro_server_get_state(maestro);
 
+	gebr_maestro_server_set_wizard_setup(maestro, TRUE);
+
 	if (state != SERVER_STATE_LOGGED && state != SERVER_STATE_DISCONNECTED)
 		return;
 
@@ -688,8 +690,11 @@ static void
 on_assistant_destroy(GtkWidget *window,
                      struct ui_preferences *up)
 {
-	g_signal_handlers_disconnect_by_func(gebr_maestro_controller_get_maestro(gebr.maestro_controller), on_daemons_changed, up);
+	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+	gebr_maestro_server_set_wizard_setup(maestro, FALSE);
+	g_signal_handlers_disconnect_by_func(maestro, on_daemons_changed, up);
 	g_signal_handlers_disconnect_by_func(gebr.maestro_controller, on_maestro_state_changed, up);
+
 	g_free(up);
 }
 

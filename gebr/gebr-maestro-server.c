@@ -46,6 +46,7 @@ struct _GebrMaestroServerPriv {
 	GtkWindow *window;
 	gchar *home;
 	gint clocks_diff;
+	gboolean wizard_setup;
 
 	/* GVFS */
 	gboolean has_connected_daemon;
@@ -302,9 +303,9 @@ state_changed(GebrCommServer *comm_server,
 		gboolean use_key = gebr_comm_server_get_use_public_key(comm_server);
 		if (use_key) {
 			if (gebr_generate_key())
-				gebr_comm_server_append_key(comm_server);
-		} else {
-			gebr_comm_server_maestro_connect_on_daemons(comm_server);
+				gebr_comm_server_append_key(comm_server, gebr_maestro_server_append_key_finished);
+		} else if (!maestro->priv->wizard_setup){
+			gebr_maestro_server_connect_on_daemons(maestro);
 		}
 		gebr_remove_temporary_file(comm_server->address->str, TRUE);
 	}
@@ -1173,6 +1174,7 @@ gebr_maestro_server_init(GebrMaestroServer *maestro)
 	maestro->priv->has_connected_daemon = FALSE;
 	maestro->priv->window = NULL;
 	maestro->priv->clocks_diff = 0;
+	maestro->priv->wizard_setup = FALSE;
 
 	maestro->priv->maestro_info_iface.maestro = maestro;
 	maestro->priv->maestro_info_iface.iface.get_home_uri = gebr_maestro_server_get_home_uri;
@@ -1671,4 +1673,39 @@ gboolean
 gebr_maestro_server_has_connected_daemon(GebrMaestroServer *maestro)
 {
 	return maestro->priv->has_connected_daemon;
+}
+
+void
+gebr_maestro_server_set_wizard_setup(GebrMaestroServer *maestro,
+                                     gboolean is_wizard_setup)
+{
+	maestro->priv->wizard_setup = is_wizard_setup;
+}
+
+void
+gebr_maestro_server_connect_on_daemons(GebrMaestroServer *maestro)
+{
+	g_debug("SEND CONNECT DAEMONS MESSAGE");
+	GebrCommServer *server = gebr_maestro_server_get_server(maestro);
+
+	GebrCommUri *uri = gebr_comm_uri_new();
+	gebr_comm_uri_set_prefix(uri, "/connect-daemons");
+	gebr_comm_uri_add_param(uri, "address", gebr_get_address_without_user(server->address->str));
+	gchar *url = gebr_comm_uri_to_string(uri);
+	gebr_comm_uri_free(uri);
+
+	gebr_comm_protocol_socket_send_request(server->socket,
+	                                       GEBR_COMM_HTTP_METHOD_PUT, url, NULL);
+	g_free(url);
+}
+
+void
+gebr_maestro_server_append_key_finished()
+{
+	g_debug("FINISHED APPEND GEBR KEY COMMAND");
+	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+	if (maestro->priv->wizard_setup)
+		return;
+
+	gebr_maestro_server_connect_on_daemons(maestro);
 }

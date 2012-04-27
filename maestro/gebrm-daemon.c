@@ -203,7 +203,7 @@ gebrm_server_op_state_changed(GebrCommServer *server,
 		gboolean use_key = gebr_comm_server_get_use_public_key(server);
 		if (use_key) {
 			if (gebr_generate_key())
-				gebr_comm_server_append_key(server);
+				gebr_comm_server_append_key(server, NULL);
 		}
 		gebr_remove_temporary_file(server->address->str, FALSE);
 	}

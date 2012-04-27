@@ -195,6 +195,13 @@ gboolean gebr_maestro_server_has_servers(GebrMaestroServer *maestro,
 
 gboolean gebr_maestro_server_has_connected_daemon(GebrMaestroServer *maestro);
 
+void gebr_maestro_server_set_wizard_setup(GebrMaestroServer *maestro,
+                                          gboolean is_wizard_setup);
+
+void gebr_maestro_server_connect_on_daemons(GebrMaestroServer *maestro);
+
+void gebr_maestro_server_append_key_finished(void);
+
 G_END_DECLS
 
 #endif /* __GEBR_MAESTRO_H__ */
