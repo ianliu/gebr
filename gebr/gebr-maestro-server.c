@@ -1711,13 +1711,16 @@ gebr_maestro_server_connect_on_daemons(GebrMaestroServer *maestro)
 
 	GebrCommUri *uri = gebr_comm_uri_new();
 	gebr_comm_uri_set_prefix(uri, "/connect-daemons");
-	gebr_comm_uri_add_param(uri, "address", gebr_get_address_without_user(server->address->str));
+	gchar *addr_without_user = gebr_get_address_without_user(server->address->str);
+
+	gebr_comm_uri_add_param(uri, "address", addr_without_user);
 	gchar *url = gebr_comm_uri_to_string(uri);
 	gebr_comm_uri_free(uri);
 
 	gebr_comm_protocol_socket_send_request(server->socket,
 	                                       GEBR_COMM_HTTP_METHOD_PUT, url, NULL);
 	g_free(url);
+	g_free(addr_without_user);
 }
 
 void

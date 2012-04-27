@@ -1097,6 +1097,7 @@ gebr_maestro_controller_server_list_add(GebrMaestroController *mc,
 	gebr_comm_uri_set_prefix(uri, "/server");
 	gebr_comm_uri_add_param(uri, "address", address);
 	gebr_comm_uri_add_param(uri, "pass", "");
+
 	gchar *url = gebr_comm_uri_to_string(uri);
 	gebr_comm_uri_free(uri);
 
@@ -1121,10 +1122,13 @@ on_servers_edited(GtkCellRendererText *cell,
                   gchar *new_text,
                   GebrMaestroController *mc)
 {
-	if (!new_text || !*new_text)
+
+
+	gchar *address = gebr_get_address_without_user(new_text);
+	if (!address)
 		return;
 
-	gebr_maestro_controller_server_list_add(mc, new_text);
+	gebr_maestro_controller_server_list_add(mc, address);
 	insert_new_entry(mc);
 
 	GtkTreeIter iter;
@@ -1132,6 +1136,8 @@ on_servers_edited(GtkCellRendererText *cell,
 
 	gtk_tree_model_get_iter_first(GTK_TREE_MODEL(mc->priv->model), &iter);
 	gebr_gui_gtk_tree_view_scroll_to_iter_cell(view, &iter);
+
+	g_free(address);
 }
 
 static void

@@ -286,13 +286,18 @@ on_add_server_clicked(GtkButton *button,
 
 	gebr_maestro_controller_server_list_add(gebr.maestro_controller, addr);
 
-	gtk_entry_set_text(GTK_ENTRY(up->server_entry), "");
+	gebr_gui_enhanced_entry_set_text(GEBR_GUI_ENHANCED_ENTRY(up->server_entry), "");
 }
 
 static void
 on_entry_server_activate(GtkEntry *entry,
                          struct ui_preferences *up)
 {
+	const gchar *entry_text = gtk_entry_get_text(entry);
+	gboolean error = !verify_address_without_username(entry_text);
+	if (error)
+		return;
+
 	GObject *server_add = gtk_builder_get_object(up->builder, "server_add");
 	on_add_server_clicked(NULL, up);
 	gtk_widget_grab_focus(GTK_WIDGET(server_add));
@@ -466,17 +471,6 @@ on_changed_validate_email(GtkWidget     *widget,
 
 	validate_entry(GTK_ENTRY(up->email), error, _("Invalid email"));
 	gtk_assistant_set_page_complete(GTK_ASSISTANT(up->dialog), page_preferences, !error);
-}
-
-static gboolean
-has_user_in_address(const gchar *address)
-{
-	gchar **split = g_strsplit(address, "@", -1);
-	if (split[1])
-		return TRUE;
-	else
-		return FALSE;
-	g_strfreev(split);
 }
 
 static void
@@ -790,14 +784,19 @@ on_server_entry_changed(GtkWidget *entry,
 	const gchar *entry_text = gtk_entry_get_text(GTK_ENTRY(entry));
 	GtkWidget *server_add = GTK_WIDGET(gtk_builder_get_object(up->builder, "server_add"));
 
-	gboolean error = has_user_in_address(entry_text);
+	gboolean error = !verify_address_without_username(entry_text);
+
+	gtk_widget_set_sensitive(server_add, !error);
+	if (!g_strcmp0(entry_text, DEFAULT_SERVERS_ENTRY_TEXT))
+		return;
+
 	if (*entry_text) {
-		validate_entry(GTK_ENTRY(up->server_entry), error, _("Impossible to use <i>user@host</i>"));
+		validate_entry(GTK_ENTRY(up->server_entry), error, _("Type the <b><i>hostname</i></b> of the server"));
 	} else {
 		gtk_entry_set_icon_from_stock(GTK_ENTRY(up->server_entry), GTK_ENTRY_ICON_SECONDARY, NULL);
 		gtk_entry_set_icon_tooltip_text(GTK_ENTRY(up->server_entry), GTK_ENTRY_ICON_SECONDARY, NULL);
+		gtk_widget_set_tooltip_markup(up->server_entry, NULL);
 	}
-	gtk_widget_set_sensitive(server_add, !error);
 }
 
 static void
@@ -813,10 +812,6 @@ set_servers_page(GtkBuilder *builder,
 	up->server_entry = server_entry;
 
 	g_signal_connect(GTK_ENTRY(server_entry), "changed", G_CALLBACK(on_server_entry_changed), up);
-
-	gchar *text = g_markup_printf_escaped(_("Type here <b>[user@]hostname</b> of the server"));
-	gtk_widget_set_tooltip_markup(server_entry, text);
-	g_free(text);
 }
 
 static void

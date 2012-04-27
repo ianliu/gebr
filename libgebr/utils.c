@@ -1368,15 +1368,41 @@ gebr_remove_temporary_file(const gchar *hostname,
 	g_unlink(path);
 }
 
-const gchar *
+gchar *
 gebr_get_address_without_user(const gchar *address)
 {
-	g_return_val_if_fail(address != NULL, address);
+	if (!address || !*address || address[0] == '@') {
+		return NULL;
+	}
 
-	gchar *find_str = g_strrstr(address, "@");
+	gchar **at_split = g_strsplit(address, "@", -1);
+	gchar **space_split;
+	gchar *addr_without_user;
 
-	if (find_str)
-		return ++find_str;
+	if (at_split[1]) {	//There's @
+		space_split = g_strsplit(at_split[1], " ", -1);
+		addr_without_user = g_strdup(space_split[0]);
+	} else {		//There's no @
+		space_split = g_strsplit(at_split[0], " ", -1);
+		addr_without_user = g_strdup(space_split[0]);
+	}
 
-	return address;
+	g_strfreev(space_split);
+	g_strfreev(at_split);
+	
+	return addr_without_user;
+}
+
+gboolean
+verify_address_without_username(const gchar *address)
+{
+	gchar *new_addr = gebr_get_address_without_user (address);
+	gboolean ret;
+	if (g_strcmp0(address, new_addr) != 0) {
+		ret = FALSE;
+	} else {
+		ret = TRUE;
+	}
+	g_free(new_addr);
+	return ret;
 }

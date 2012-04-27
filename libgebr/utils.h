@@ -342,10 +342,20 @@ void gebr_remove_temporary_file(const gchar *hostname,
                                 gboolean is_maestro);
 
 /**
- * gebr_remove_temporary_file:
+ * gebr_get_address_without_user:
+ *
+ * Get substring after the first @ and before the first space
+ * In case there's no @, get the substring before the first space
+ *
  */
-const gchar *gebr_get_address_without_user(const gchar *address);
+gchar *gebr_get_address_without_user(const gchar *address);
 
+/*
+ *verify_address_without_username
+ *
+ *Verify if the given address has a @ or a space
+ */
+gboolean verify_address_without_username(const gchar *address);
 G_END_DECLS
 
 #endif				//__GEBR_UTILS_H
