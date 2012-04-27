@@ -984,7 +984,24 @@ on_client_request(GebrCommProtocolSocket *socket,
 			gebrm_daemon_connect(d, pass, socket);
 			gebrm_config_save_server(d);
 		}
-		if (g_strcmp0(prefix, "/ssh-answer") == 0) {
+		else if (g_strcmp0(prefix, "/connect-daemons") == 0) {
+			gboolean has_daemons = FALSE;
+			for(GList *i = app->priv->daemons; i; i = i->next) {
+				has_daemons = TRUE;
+				GebrmDaemon *d = i->data;
+				if (g_strcmp0(gebrm_daemon_get_autoconnect(d), "on") == 0)
+					gebrm_daemon_connect(d, NULL, socket);
+			}
+			if (!has_daemons) {
+				const gchar *addr = gebr_comm_uri_get_param(uri, "address");
+
+				GebrmDaemon *d = gebrm_add_server_to_list(app, addr, "", NULL);
+
+				gebrm_daemon_connect(d, NULL, socket);
+				gebrm_config_save_server(d);
+			}
+		}
+		else if (g_strcmp0(prefix, "/ssh-answer") == 0) {
 			GebrmDaemon *daemon = NULL;
 			const gchar *addr = gebr_comm_uri_get_param(uri, "address");
 			const gchar *resp = gebr_comm_uri_get_param(uri, "response");
@@ -1522,8 +1539,6 @@ gebrm_config_load_servers(GebrmApp *app, const gchar *path)
 				const gchar *ac = g_key_file_get_string(servers, groups[i], "autoconnect", NULL);
 				GebrmDaemon *daemon = gebrm_add_server_to_list(app, groups[i], NULL, tags);
 				gebrm_daemon_set_autoconnect(daemon, ac);
-				if (g_strcmp0(ac, "on") == 0)
-					gebrm_daemon_connect(daemon, NULL, NULL);
 			}
 		}
 		g_key_file_free (servers);
@@ -1651,21 +1666,6 @@ on_new_connection(GebrCommListenSocket *listener,
 		g_object_unref(stream);
 
 		app->priv->connections = g_list_prepend(app->priv->connections, client);
-
-		for (GList *i = app->priv->daemons; i; i = i->next) {
-			if (g_strcmp0(gebrm_daemon_get_autoconnect(i->data), "on") == 0) {
-				switch (gebrm_daemon_get_state(i->data)) {
-				case SERVER_STATE_DISCONNECTED:
-					gebrm_daemon_connect(i->data, NULL, socket);
-					break;
-				case SERVER_STATE_RUN:
-					gebrm_daemon_continue_stuck_connection(i->data, socket);
-					break;
-				default:
-					break;
-				}
-			}
-		}
 
 		if (!app->priv->home && app->priv->daemons) {
 			const gchar *home = gebrm_daemon_get_home_dir(app->priv->daemons->data);

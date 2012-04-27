@@ -297,16 +297,20 @@ state_changed(GebrCommServer *comm_server,
 		if (err && *err)
 			gebr_maestro_server_set_error(maestro, "error:ssh", err);
 		gebr_remove_temporary_file(comm_server->address->str, TRUE);
-	} else if (state == SERVER_STATE_LOGGED) {
-		gebr_maestro_server_set_error(maestro, "error:none", NULL);
-		gebr_config_maestro_save();
-
+	}
+	else if (state == SERVER_STATE_CONNECT) {
 		gboolean use_key = gebr_comm_server_get_use_public_key(comm_server);
 		if (use_key) {
 			if (gebr_generate_key())
 				gebr_comm_server_append_key(comm_server);
+		} else {
+			gebr_comm_server_maestro_connect_on_daemons(comm_server);
 		}
 		gebr_remove_temporary_file(comm_server->address->str, TRUE);
+	}
+	else if (state == SERVER_STATE_LOGGED) {
+		gebr_maestro_server_set_error(maestro, "error:none", NULL);
+		gebr_config_maestro_save();
 	}
 
 	const gchar *error_type = maestro->priv->error_type;

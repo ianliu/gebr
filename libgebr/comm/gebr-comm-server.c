@@ -35,6 +35,7 @@
 #include "gebr-comm-server.h"
 #include "gebr-comm-listensocket.h"
 #include "gebr-comm-protocol.h"
+#include "gebr-comm-uri.h"
 
 /*
  * Declarations
@@ -620,6 +621,17 @@ out:	g_string_free(output, TRUE);
 /**
  * \internal
  */
+static void gebr_comm_append_key_finished(GebrCommTerminalProcess * process, GebrCommServer *server)
+{
+	g_debug("FINISHED APPEND GEBR KEY COMMAND");
+
+	gebr_comm_server_log_message(server, GEBR_LOG_DEBUG, "gebr_comm_ssh_finished");
+	server->process.use = COMM_SERVER_PROCESS_NONE;
+	gebr_comm_terminal_process_free(process);
+
+	gebr_comm_server_maestro_connect_on_daemons(server);
+}
+
 static void gebr_comm_ssh_finished(GebrCommTerminalProcess * process, GebrCommServer *server)
 {
 	gebr_comm_server_log_message(server, GEBR_LOG_DEBUG, "gebr_comm_ssh_finished");
@@ -1065,7 +1077,7 @@ gebr_comm_server_append_key(GebrCommServer *server)
 	server->process.data.terminal = process = gebr_comm_terminal_process_new();
 
 	g_signal_connect(process, "ready-read", G_CALLBACK(gebr_comm_ssh_read), server);
-	g_signal_connect(process, "finished", G_CALLBACK(gebr_comm_ssh_finished), server);
+	g_signal_connect(process, "finished", G_CALLBACK(gebr_comm_append_key_finished), server);
 
 	gchar *ssh_cmd = get_ssh_command_with_key();
 	GString *cmd_line = g_string_new(NULL);
@@ -1099,4 +1111,19 @@ gboolean
 gebr_comm_server_is_maestro(GebrCommServer *server)
 {
 	return server->priv->is_maestro;
+}
+
+void
+gebr_comm_server_maestro_connect_on_daemons(GebrCommServer *server)
+{
+	g_debug("SEND CONNECT DAEMONS MESSAGE");
+	GebrCommUri *uri = gebr_comm_uri_new();
+	gebr_comm_uri_set_prefix(uri, "/connect-daemons");
+	gebr_comm_uri_add_param(uri, "address", server->address->str);
+	gchar *url = gebr_comm_uri_to_string(uri);
+	gebr_comm_uri_free(uri);
+
+	gebr_comm_protocol_socket_send_request(server->socket,
+	                                       GEBR_COMM_HTTP_METHOD_PUT, url, NULL);
+	g_free(url);
 }

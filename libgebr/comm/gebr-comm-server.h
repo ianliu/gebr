@@ -320,6 +320,8 @@ gboolean gebr_comm_server_is_maestro(GebrCommServer *server);
 
 void gebr_comm_server_close_x11_forward(GebrCommServer *server);
 
+void gebr_comm_server_maestro_connect_on_daemons(GebrCommServer *server);
+
 G_END_DECLS
 
 #endif /* __GEBR_COMM_SERVER_H__ */
