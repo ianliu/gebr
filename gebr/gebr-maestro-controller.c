@@ -1461,16 +1461,14 @@ on_password_request(GebrMaestroServer *maestro,
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), entry, FALSE, TRUE, 5);
 	gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
 
-	GtkWidget *checkbox = gtk_check_button_new_with_label(_("Use keys to avoid passwords."));
+	GtkWidget *checkbox = gtk_check_button_new_with_label(_("Use encryption key to automatically authenticate the next session."));
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), checkbox, TRUE, TRUE, 5);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(checkbox), FALSE);
 
-	if (acceps_key) {
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(checkbox), TRUE);
+	if (acceps_key)
 		gtk_widget_set_sensitive(checkbox, TRUE);
-	} else {
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(checkbox), FALSE);
+	else
 		gtk_widget_set_sensitive(checkbox, FALSE);
-	}
 
 	gtk_widget_show_all(dialog);
 	gboolean confirmed = gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_OK;
@@ -1728,9 +1726,6 @@ update_maestro_view(GebrMaestroController *mc,
 	}
 
 	gtk_tree_view_set_model(view, GTK_TREE_MODEL(mc->priv->model));
-
-	if (state == SERVER_STATE_LOGGED && !gebr_maestro_server_has_servers(maestro, FALSE))
-		gebr_maestro_controller_server_list_add(mc, gebr_maestro_server_get_address(maestro));
 }
 
 static void
