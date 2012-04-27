@@ -989,7 +989,7 @@ on_client_request(GebrCommProtocolSocket *socket,
 			for(GList *i = app->priv->daemons; i; i = i->next) {
 				has_daemons = TRUE;
 				GebrmDaemon *d = i->data;
-				if (g_strcmp0(gebrm_daemon_get_autoconnect(d), "on") == 0)
+				if (gebrm_daemon_get_state(d) != SERVER_STATE_LOGGED && g_strcmp0(gebrm_daemon_get_autoconnect(d), "on") == 0)
 					gebrm_daemon_connect(d, NULL, socket);
 			}
 			if (!has_daemons) {
