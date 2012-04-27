@@ -1756,6 +1756,7 @@ gebr_maestro_controller_stop(GebrMaestroController *self,
 	GebrCommServer *server = gebr_maestro_server_get_server(maestro);
 	gebr_comm_server_kill(server);
 
+	gebr_maestro_server_set_error(maestro, "error:stop", NULL);
 	on_maestro_error(maestro, maestro_addr, "error:stop", NULL, self);
 }
 
