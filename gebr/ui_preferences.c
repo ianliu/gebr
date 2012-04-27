@@ -76,6 +76,8 @@ static void on_assistant_destroy(GtkWidget *window,
 
 static void create_maestro_chooser_model(GtkListStore *model,
 					 GebrMaestroServer *maestro);
+static void validate_entry(GtkEntry *entry, gboolean error, const gchar *err_text);
+
 static void
 save_preferences_configuration(struct ui_preferences *up)
 {
@@ -449,15 +451,27 @@ on_changed_validate_email(GtkWidget     *widget,
 	GtkWidget *page_preferences = GTK_WIDGET(gtk_builder_get_object(up->builder, "main_preferences"));
 	const gchar *email = gtk_entry_get_text(GTK_ENTRY(up->email));
 
-	if (gebr_validate_check_is_email(email) || !*email) {
-		gtk_entry_set_icon_from_stock(GTK_ENTRY(up->email), GTK_ENTRY_ICON_SECONDARY, NULL);
-		gtk_entry_set_icon_tooltip_text(GTK_ENTRY(up->email), GTK_ENTRY_ICON_SECONDARY, NULL);
-		gtk_assistant_set_page_complete(GTK_ASSISTANT(up->dialog), page_preferences, TRUE);
+	gboolean error = FALSE;
+
+	if (!*email) {
+		error = TRUE;
 	} else {
-		gtk_entry_set_icon_from_stock(GTK_ENTRY(up->email), GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIALOG_WARNING);
-		gtk_entry_set_icon_tooltip_text(GTK_ENTRY(up->email), GTK_ENTRY_ICON_SECONDARY, "Invalid email");
-		gtk_assistant_set_page_complete(GTK_ASSISTANT(up->dialog), page_preferences, FALSE);
+		error = !gebr_validate_check_is_email(email);
 	}
+
+	validate_entry(GTK_ENTRY(up->email), error, _("Invalid email"));
+	gtk_assistant_set_page_complete(GTK_ASSISTANT(up->dialog), page_preferences, !error);
+}
+
+static gboolean
+has_user_in_address(const gchar *address)
+{
+	gchar **split = g_strsplit(address, "@", -1);
+	if (split[1])
+		return TRUE;
+	else
+		return FALSE;
+	g_strfreev(split);
 }
 
 static void
@@ -629,7 +643,12 @@ on_assistant_prepare(GtkAssistant *assistant,
 			if (!gtk_tree_model_get_iter_first(store, &it)) {
 				gtk_widget_hide(GTK_WIDGET(view));
 				gtk_widget_show(servers_label);
-				gtk_entry_set_text(GTK_ENTRY(up->server_entry), gebr_maestro_server_get_address(maestro));
+				gchar **split = g_strsplit(gebr_maestro_server_get_address(maestro), "@", -1);
+				if (split[1])
+					gtk_entry_set_text(GTK_ENTRY(up->server_entry), split[1]);
+				else
+					gtk_entry_set_text(GTK_ENTRY(up->server_entry), split[0]);
+				g_strfreev(split);
 			}
 
 			WizardStatus wizard_status = get_wizard_status(up);
@@ -740,6 +759,37 @@ on_combo_set_text(GtkCellLayout   *cell_layout,
 }
 
 static void
+validate_entry(GtkEntry *entry,
+	       gboolean error,
+	       const gchar *err_text)
+{
+	if (!error) {
+		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, NULL);
+		gtk_entry_set_icon_tooltip_text(entry, GTK_ENTRY_ICON_SECONDARY, NULL);
+	} else {
+		gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_DIALOG_WARNING);
+		gtk_entry_set_icon_tooltip_markup(entry, GTK_ENTRY_ICON_SECONDARY, err_text);
+	}
+}
+
+static void
+on_server_entry_changed(GtkWidget *entry,
+		struct ui_preferences *up)
+{
+	const gchar *entry_text = gtk_entry_get_text(GTK_ENTRY(entry));
+	GtkWidget *server_add = GTK_WIDGET(gtk_builder_get_object(up->builder, "server_add"));
+
+	gboolean error = has_user_in_address(entry_text);
+	if (*entry_text) {
+		validate_entry(GTK_ENTRY(up->server_entry), error, _("Impossible to use <i>user@host</i>"));
+	} else {
+		gtk_entry_set_icon_from_stock(GTK_ENTRY(up->server_entry), GTK_ENTRY_ICON_SECONDARY, NULL);
+		gtk_entry_set_icon_tooltip_text(GTK_ENTRY(up->server_entry), GTK_ENTRY_ICON_SECONDARY, NULL);
+	}
+	gtk_widget_set_sensitive(server_add, !error);
+}
+
+static void
 set_servers_page(GtkBuilder *builder,
                  struct ui_preferences *up)
 {
@@ -750,6 +800,8 @@ set_servers_page(GtkBuilder *builder,
 	gtk_widget_show_all(server_entry);
 
 	up->server_entry = server_entry;
+
+	g_signal_connect(GTK_ENTRY(server_entry), "changed", G_CALLBACK(on_server_entry_changed), up);
 
 	gchar *text = g_markup_printf_escaped(_("Type here <b>[user@]hostname</b> of the server"));
 	gtk_widget_set_tooltip_markup(server_entry, text);
