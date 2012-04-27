@@ -654,6 +654,9 @@ on_assistant_prepare(GtkAssistant *assistant,
 				else
 					gtk_entry_set_text(GTK_ENTRY(up->server_entry), split[0]);
 				g_strfreev(split);
+			} else {
+				gtk_widget_show(GTK_WIDGET(view));
+				gtk_widget_hide(servers_label);
 			}
 
 			WizardStatus wizard_status = get_wizard_status(up);
