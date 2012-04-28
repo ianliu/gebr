@@ -691,9 +691,11 @@ on_assistant_destroy(GtkWidget *window,
                      struct ui_preferences *up)
 {
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
-	gebr_maestro_server_set_wizard_setup(maestro, FALSE);
-	g_signal_handlers_disconnect_by_func(maestro, on_daemons_changed, up);
-	g_signal_handlers_disconnect_by_func(gebr.maestro_controller, on_maestro_state_changed, up);
+	if (maestro) {
+		gebr_maestro_server_set_wizard_setup(maestro, FALSE);
+		g_signal_handlers_disconnect_by_func(maestro, on_daemons_changed, up);
+		g_signal_handlers_disconnect_by_func(gebr.maestro_controller, on_maestro_state_changed, up);
+	}
 
 	g_free(up);
 }
