@@ -1394,7 +1394,7 @@ gebr_get_address_without_user(const gchar *address)
 }
 
 gboolean
-verify_address_without_username(const gchar *address)
+gebr_verify_address_without_username(const gchar *address)
 {
 	gchar *new_addr = gebr_get_address_without_user (address);
 	gboolean ret;

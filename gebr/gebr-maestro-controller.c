@@ -1122,6 +1122,21 @@ on_servers_edited(GtkCellRendererText *cell,
                   gchar *new_text,
                   GebrMaestroController *mc)
 {
+	gboolean is_valid = gebr_verify_address_without_username(new_text);
+
+	if (!is_valid && *new_text) {
+
+		//FIXME: Do we need to use threads_enter here???
+
+		//I don t know why markup does not work here
+		gebr_gui_message_dialog(GTK_MESSAGE_WARNING, GTK_BUTTONS_OK,
+					_("Invalid input"),
+					_("GêBR does not "
+					  "support the format user@machine.\n\n"
+					  "The entry %s will be automatically removed"), new_text);
+
+		return;
+	}
 
 
 	gchar *address = gebr_get_address_without_user(new_text);

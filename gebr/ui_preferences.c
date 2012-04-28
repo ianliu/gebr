@@ -294,7 +294,7 @@ on_entry_server_activate(GtkEntry *entry,
                          struct ui_preferences *up)
 {
 	const gchar *entry_text = gtk_entry_get_text(entry);
-	gboolean error = !verify_address_without_username(entry_text);
+	gboolean error = !gebr_verify_address_without_username(entry_text);
 	if (error)
 		return;
 
@@ -373,7 +373,6 @@ on_maestro_info_button_clicked (GtkButton *button, gpointer pointer)
 	else
 		path = "file://" GEBR_USERDOC_DIR "/en/html/index.html#servers_configuration";
 
-		g_debug("On '%s', line '%d', loc:'%s', path:'%s' ", __FILE__, __LINE__, loc, path);
 	if (!gtk_show_uri(NULL, path, GDK_CURRENT_TIME, NULL)) {
 		gtk_show_uri(NULL, "http://www.gebrproject.com", GDK_CURRENT_TIME, NULL);
 		gebr_message (GEBR_LOG_ERROR, TRUE, TRUE,
@@ -786,7 +785,7 @@ on_server_entry_changed(GtkWidget *entry,
 	const gchar *entry_text = gtk_entry_get_text(GTK_ENTRY(entry));
 	GtkWidget *server_add = GTK_WIDGET(gtk_builder_get_object(up->builder, "server_add"));
 
-	gboolean error = !verify_address_without_username(entry_text);
+	gboolean error = !gebr_verify_address_without_username(entry_text);
 
 	gtk_widget_set_sensitive(server_add, !error);
 	if (!g_strcmp0(entry_text, DEFAULT_SERVERS_ENTRY_TEXT))

@@ -355,7 +355,7 @@ gchar *gebr_get_address_without_user(const gchar *address);
  *
  *Verify if the given address has a @ or a space
  */
-gboolean verify_address_without_username(const gchar *address);
+gboolean gebr_verify_address_without_username(const gchar *address);
 G_END_DECLS
 
 #endif				//__GEBR_UTILS_H
