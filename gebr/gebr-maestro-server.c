@@ -144,10 +144,25 @@ mount_operation_pool(gpointer user_data)
 		return TRUE;
 
 	gebr_add_remove_ssh_key(FALSE);
-	GMountOperation *op = gtk_mount_operation_new(data->maestro->priv->window);
+
+	GtkWindow *window;
+	GList *windows = gtk_window_list_toplevels();
+	for (GList *i = windows; i; i = i->next) {
+		GtkWindow *win = i->data;
+		if (gtk_window_is_active(win)) {
+			window = win;
+			g_object_ref(window);
+		}
+	}
+
+	GMountOperation *op = gtk_mount_operation_new(window);
 	g_file_mount_enclosing_volume(data->maestro->priv->mount_location, 0, op, NULL,
 				      (GAsyncReadyCallback) mount_enclosing_ready_cb,
 				      data->maestro);
+
+	g_object_unref(window);
+	g_list_free(windows);
+
 	return FALSE;
 }
 
@@ -853,7 +868,8 @@ parse_messages(GebrCommServer *comm_server,
 				GebrCommUri *uri = gebr_comm_uri_new();
 				gebr_comm_uri_set_prefix(uri, "/server");
 				gebr_comm_uri_add_param(uri, "address", addr->str);
-				gebr_comm_uri_add_param(uri, "pass", pk->password);
+				if (pk->password)
+					gebr_comm_uri_add_param(uri, "pass", pk->password);
 				gebr_comm_uri_add_param(uri, "haskey", pk->use_public_key? "yes" : "no");
 				gchar *url = gebr_comm_uri_to_string(uri);
 				gebr_comm_uri_free(uri);

@@ -981,7 +981,10 @@ on_client_request(GebrCommProtocolSocket *socket,
 			GebrCommServer *server = gebrm_daemon_get_server(d);
 			gebr_comm_server_set_use_public_key(server, use_key);
 
-			gebrm_daemon_connect(d, pass, socket);
+			if (pass)
+				gebrm_daemon_connect(d, pass, socket);
+			else
+				gebrm_daemon_disconnect(d);
 			gebrm_config_save_server(d);
 		}
 		else if (g_strcmp0(prefix, "/connect-daemons") == 0) {
