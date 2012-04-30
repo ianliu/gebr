@@ -467,8 +467,8 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 
 			GString *gid = g_list_nth_data(arguments, 0);
 			GString *cookie = g_list_nth_data(arguments, 1);
-			guint16 display = gebrd_get_x11_redirect_display();
-			g_hash_table_insert(gebrd->display_ports, g_strdup(gid->str), GINT_TO_POINTER(display));
+			guint display = gebrd_get_x11_redirect_display();
+			g_hash_table_insert(gebrd->display_ports, g_strdup(gid->str), GUINT_TO_POINTER(display));
 
 			g_debug("Received gid %s with cookie %s", gid->str, cookie->str);
 

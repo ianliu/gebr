@@ -776,7 +776,6 @@ on_response_received(GebrCommHttpMsg *request,
 	GebrCommDaemon *daemon = g_object_get_data(G_OBJECT(request), "current-server");
 	GebrCommServer *server = gebr_comm_daemon_get_server(daemon);
 
-	gint n;
 	GebrGeoXmlProgram *loop = gebr_geoxml_flow_get_control_program(GEBR_GEOXML_FLOW(self->priv->flow));
 
 	if (loop) {
@@ -785,12 +784,10 @@ on_response_received(GebrCommHttpMsg *request,
 		gebr_validator_evaluate(self->priv->validator, str_n,
 					GEBR_GEOXML_PARAMETER_TYPE_FLOAT,
 					GEBR_GEOXML_DOCUMENT_TYPE_LINE, &eval_n, NULL);
-		n = atoi(eval_n);
 		g_free(str_n);
 		g_free(eval_n);
 		gebr_geoxml_object_unref(loop);
-	} else
-		n = 1;
+	}
 
 	gint running_jobs = gebr_comm_daemon_get_n_running_jobs(GEBR_COMM_DAEMON(daemon));
 

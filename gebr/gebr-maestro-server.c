@@ -348,7 +348,7 @@ ssh_login(GebrCommServer *server,
 		      gebr_check_if_server_accepts_key(server->address->str,
 		                                       gebr_comm_server_is_maestro(server)), &pk);
 
-	if (!pk)
+	if (!pk || !pk->password)
 		return NULL;
 
 	gebr_comm_server_set_use_public_key(server, pk->use_public_key);
@@ -514,12 +514,11 @@ parse_messages(GebrCommServer *comm_server,
 				gebr_comm_protocol_socket_oldmsg_split_free(arguments);
 			} else if (ret_hash == gebr_comm_protocol_defs.path_def.code_hash) {
 				GList *arguments;
-				GString *daemon_addr, *status_id;
+				GString *status_id;
 
 				if ((arguments = gebr_comm_protocol_socket_oldmsg_split(message->argument, 2)) == NULL)
 					goto err;
 
-				daemon_addr = g_list_nth_data(arguments, 0);
 				status_id = g_list_nth_data(arguments, 1);
 
 				gint ret_id = atoi(status_id->str);
