@@ -27,6 +27,7 @@
 #include <glib/gi18n.h>
 #include "gebr-maestro-server.h"
 #include "gebr-marshal.h"
+#include <locale.h>
 #include "ui_project_line.h"
 #include <libgebr/gui/gebr-gui-utils.h>
 #include <libgebr/utils.h>
@@ -1455,6 +1456,25 @@ on_question_request(GebrMaestroServer *maestro,
 	return response == GTK_RESPONSE_YES;
 }
 
+static void
+on_ssh_info_button_clicked (GtkButton *button, gpointer pointer)
+{
+	gchar *loc;
+	const gchar *path;
+
+	loc = setlocale(LC_MESSAGES, NULL);
+	if (g_str_has_prefix (loc, "pt"))
+		path = "file://" GEBR_USERDOC_DIR "/pt_BR/html/index.html";
+	else
+		path = "file://" GEBR_USERDOC_DIR "/en/html/index.html#ssh_authentication";
+
+	if (!gtk_show_uri(NULL, path, GDK_CURRENT_TIME, NULL)) {
+		gtk_show_uri(NULL, "http://www.gebrproject.com", GDK_CURRENT_TIME, NULL);
+		gebr_message (GEBR_LOG_ERROR, TRUE, TRUE,
+			      _("Could not load help. "
+				"Certify it was installed correctly."));
+	}
+}
 
 static PasswordKeys *
 on_password_request(GebrMaestroServer *maestro,
@@ -1483,7 +1503,18 @@ on_password_request(GebrMaestroServer *maestro,
 	gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
 
 	GtkWidget *checkbox = gtk_check_button_new_with_label(_("Use encryption key to automatically authenticate the next session."));
-	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), checkbox, TRUE, TRUE, 5);
+	GtkWidget *down_vbox = gtk_vbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(down_vbox), checkbox, TRUE, TRUE, 5);
+
+	GtkWidget *ssh_info_button = gtk_button_new_with_label("More info");
+	GtkWidget *hbox_info = gtk_hbox_new(FALSE, 5);
+	gtk_button_set_alignment(GTK_BUTTON(ssh_info_button), 1.0, 0.5);
+	gtk_button_set_relief(GTK_BUTTON(ssh_info_button), GTK_RELIEF_HALF);
+	g_signal_connect(ssh_info_button, "clicked", G_CALLBACK(on_ssh_info_button_clicked), NULL);
+	gtk_box_pack_end(GTK_BOX(hbox_info), ssh_info_button, FALSE, FALSE, 1);
+	gtk_box_pack_end(GTK_BOX(down_vbox), hbox_info, FALSE, FALSE, 1);
+
+	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), down_vbox, TRUE, TRUE, 5);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(checkbox), FALSE);
 
 	if (acceps_key)
