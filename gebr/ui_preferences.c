@@ -798,7 +798,7 @@ on_server_entry_changed(GtkWidget *entry,
 		return;
 
 	if (*entry_text) {
-		validate_entry(GTK_ENTRY(up->server_entry), error, _("Type the <b><i>hostname</i></b> of the server"));
+		validate_entry(GTK_ENTRY(up->server_entry), error, _("GêBR neither support the format <i>user@machine</i> nor blank spaces"));
 	} else {
 		gtk_entry_set_icon_from_stock(GTK_ENTRY(up->server_entry), GTK_ENTRY_ICON_SECONDARY, NULL);
 		gtk_entry_set_icon_tooltip_text(GTK_ENTRY(up->server_entry), GTK_ENTRY_ICON_SECONDARY, NULL);
@@ -982,9 +982,9 @@ preferences_setup_ui(gboolean first_run,
 		GtkWidget *server_info_second_label = GTK_WIDGET(gtk_builder_get_object(ui_preferences->builder, "server_info_second_label"));
 		gtk_label_set_markup(GTK_LABEL(server_info_second_label), _( "<b>Servers</b> are in charge of running processing flows, "
 								       "under maestro’s coordination. "
-								       "For each server, you are going to be asked for your login credentials.\n"
-								       "You may be asked once more for your login credentials to be "
-								       "able to browse the remote file system."));
+								       "For each server, you are going to be asked for your login credentials.\n\n"
+								       "You may be asked once more for your login credentials to "
+								       "to browse the remote file system."));
 		GtkWidget *pwd_info_label = GTK_WIDGET(gtk_builder_get_object(ui_preferences->builder, "pwd_info_label"));
 		gtk_label_set_markup(GTK_LABEL(pwd_info_label), _("GêBR needs a <b>connection</b> to a Maestro to send jobs "
 									    "and receive outputs. For security reasons an encrypted connection "

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-05-02 10:12-0300\n"
+"POT-Creation-Date: 2012-05-02 11:35-0300\n"
 "PO-Revision-Date: 2012-04-13 16:47-0300\n"
 "Last-Translator: Rodrigo Morelatto <morelatto@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
@@ -210,8 +210,8 @@ msgstr ""
 "ocorrer em sua máquina."
 
 #: ../data/document-properties.glade.h:36
-msgid "Paths to store..."
-msgstr "Caminhos para armazenar..."
+msgid "Paths to store:"
+msgstr "Caminhos para armazenar:"
 
 #: ../data/document-properties.glade.h:37 ../line.c:177
 #: ../ui_preferences.c:193
@@ -1207,6 +1207,11 @@ msgstr "Remover"
 msgid "Stop Server"
 msgstr "Parar"
 
+#: ../gebr-maestro-controller.c:912
+#, c-format
+msgid "Servers of Maestro %s"
+msgstr "Servidores do Maestro %s"
+
 #: ../gebr-maestro-controller.c:1134
 msgid "Invalid input"
 msgstr "Entrada inválida"
@@ -1882,8 +1887,8 @@ msgstr "Remover parâmetros atuais."
 msgid "%s '%s' properties"
 msgstr "%s '%s' propriedades"
 
-#: ../ui_document.c:319 ../ui_preferences.c:936 ../ui_preferences.c:1009
-#: ../ui_preferences.c:1018
+#: ../ui_document.c:319 ../ui_preferences.c:942 ../ui_preferences.c:1015
+#: ../ui_preferences.c:1024
 msgid "Preferences"
 msgstr "Preferências"
 
@@ -2260,23 +2265,23 @@ msgstr ""
 "A conexão reportou o seguinte erro:\n"
 "<i>%s</i>"
 
-#: ../ui_preferences.c:471
+#: ../ui_preferences.c:477
 msgid "Invalid email"
 msgstr "Caminho inválido"
 
-#: ../ui_preferences.c:540
+#: ../ui_preferences.c:546
 msgid "GêBR is ready."
 msgstr "GêBR está pronta."
 
-#: ../ui_preferences.c:547
+#: ../ui_preferences.c:553
 msgid "GêBR is unable to proceed without this configuration."
 msgstr "GêBR não consegue avançar sem esta configuração"
 
-#: ../ui_preferences.c:610 ../ui_preferences.c:945 ../ui_preferences.c:951
+#: ../ui_preferences.c:616 ../ui_preferences.c:951 ../ui_preferences.c:957
 msgid "Maestro"
 msgstr "Maestro"
 
-#: ../ui_preferences.c:624
+#: ../ui_preferences.c:630
 #, c-format
 msgid ""
 "Now you need to add Servers to be handled by your Maestro <b>%s</b>.\n"
@@ -2287,47 +2292,48 @@ msgstr ""
 "\n"
 "Para cada servidor, você será perguntado sobre seus dados de login."
 
-#: ../ui_preferences.c:711
+#: ../ui_preferences.c:717
 msgid "You should know your name"
 msgstr "Você deveria saber seu nome"
 
-#: ../ui_preferences.c:724
+#: ../ui_preferences.c:730
 msgid "Your email address"
 msgstr "Seu endereço de e-mail"
 
-#: ../ui_preferences.c:736
+#: ../ui_preferences.c:742
 msgid "User's menu directory"
 msgstr "Diretório de menus do usuário"
 
-#: ../ui_preferences.c:738
+#: ../ui_preferences.c:744
 msgid "Path to look for user's private menus"
 msgstr "Caminho para procurar menus particulares do usuário"
 
-#: ../ui_preferences.c:795
-msgid "Type the <b><i>hostname</i></b> of the server"
-msgstr "Digite o <b>hostname</b> do servidor"
+#: ../ui_preferences.c:801
+msgid "GêBR neither support the format <i>user@machine</i> nor blank spaces"
+msgstr ""
+"GêBR não suporta o formato <i>usuário@máquina</i> nem espaços em branco."
 
-#: ../ui_preferences.c:847
+#: ../ui_preferences.c:853
 msgid "Suggested maestro"
 msgstr "Maestro sugerido"
 
-#: ../ui_preferences.c:854
+#: ../ui_preferences.c:860
 msgid "Default Maestro from File"
 msgstr "Maestro padrão do Arquivo"
 
-#: ../ui_preferences.c:921
+#: ../ui_preferences.c:927
 msgid "Configuring GêBR"
 msgstr "Configurando GêBR"
 
-#: ../ui_preferences.c:931
+#: ../ui_preferences.c:937
 msgid "Status"
 msgstr "Estado"
 
-#: ../ui_preferences.c:957 ../ui_preferences.c:963
+#: ../ui_preferences.c:963 ../ui_preferences.c:969
 msgid "Servers"
 msgstr "Servidores"
 
-#: ../ui_preferences.c:973
+#: ../ui_preferences.c:979
 msgid ""
 "<b>Maestro</b> is the responsible for receiving GêBR requests and for "
 "managing the available resources to perform it in the best way."
@@ -2335,21 +2341,23 @@ msgstr ""
 "<b>Maestro</b> é o responsável por receber requisições da G&#xEA;BR para "
 "gerenciar os recursos disponíveis e realizá-los da melhor maneira"
 
-#: ../ui_preferences.c:977
+#: ../ui_preferences.c:983
 msgid ""
 "<b>Servers</b> are in charge of running processing flows, under maestro’s "
 "coordination. For each server, you are going to be asked for your login "
 "credentials.\n"
-"You may be asked once more for your login credentials to be able to browse "
-"the remote file system."
+"\n"
+"You may be asked once more for your login credentials to to browse the "
+"remote file system."
 msgstr ""
 "<b>Servidores</b> são responsáveis pela gestão dos fluxos de processamento,"
 "sob coordenação do maestro. Para cada servidor, você vai ser perguntado por "
 "seus dados de login.\n"
+"\n"
 "Você pode ser solicitado mais uma vez por estes dados para ser capaz de "
 "navegar no sistema de arquivos remoto."
 
-#: ../ui_preferences.c:983
+#: ../ui_preferences.c:989
 msgid ""
 "GêBR needs a <b>connection</b> to a Maestro to send jobs and receive "
 "outputs. For security reasons an encrypted connection is made using SSH "
@@ -2705,6 +2713,9 @@ msgstr "Conecte-se ao Maestro <b>XXX</b>"
 #: ../data/connect-maestro-dialog.glade.h:4
 msgid "What do you want to do?"
 msgstr "O que deseja fazer?"
+
+#~ msgid "Type the <b><i>hostname</i></b> of the server"
+#~ msgstr "Digite o <b>hostname</b> do servidor"
 
 #~ msgid "Impossible to use <i>user@host</i>"
 #~ msgstr "Impossível utilizar entradas na forma <i>usuario@maquina</i>"
