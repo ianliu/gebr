@@ -412,6 +412,9 @@ on_stop_maestro_clicked(GtkButton *button,
 
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_address(gebr.maestro_controller, up->maestro_addr);
 
+	if (!maestro)
+		return;
+
 	const gchar *error_type;
 	gebr_maestro_server_get_error(maestro, &error_type, NULL);
 
