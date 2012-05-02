@@ -1464,7 +1464,7 @@ on_ssh_info_button_clicked (GtkButton *button, gpointer pointer)
 
 	loc = setlocale(LC_MESSAGES, NULL);
 	if (g_str_has_prefix (loc, "pt"))
-		path = "file://" GEBR_USERDOC_DIR "/pt_BR/html/index.html";
+		path = "file://" GEBR_USERDOC_DIR "/pt_BR/html/index.html#ssh_authentication";
 	else
 		path = "file://" GEBR_USERDOC_DIR "/en/html/index.html#ssh_authentication";
 
@@ -1506,7 +1506,7 @@ on_password_request(GebrMaestroServer *maestro,
 	GtkWidget *down_vbox = gtk_vbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(down_vbox), checkbox, TRUE, TRUE, 5);
 
-	GtkWidget *ssh_info_button = gtk_button_new_with_label("More info");
+	GtkWidget *ssh_info_button = gtk_button_new_with_label(_("More info"));
 	GtkWidget *hbox_info = gtk_hbox_new(FALSE, 5);
 	gtk_button_set_alignment(GTK_BUTTON(ssh_info_button), 1.0, 0.5);
 	gtk_button_set_relief(GTK_BUTTON(ssh_info_button), GTK_RELIEF_HALF);

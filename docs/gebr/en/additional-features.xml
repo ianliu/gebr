@@ -192,15 +192,15 @@
 		</para>
 
 		<para>
-		The SSH public key authentication is based on public-key cryptography, where encrypton and decrypton use public/private key pair for authentication purposes. The server knows the public key and only the user knows the associated private key.
+		The SSH public key authentication is based on public-key cryptography, where encrypton and decrypton use public/private key pair for authentication purposes. The Maestro knows the public key and only the Client knows the associated private key.
 		</para>
 
 		<para>
-		If you choose GêBR to user public-key authentication by checking <guimenuitem>"Use encryption key to automatically authenticate the next session"</guimenuitem>, then GêBR will create (if not existent) a private/public keys pair and will keep the private key and will copy the public key to the maestro. Once this operation is successfully done, your authentication on your maestro will be automatically done through public-key authentication. In practical terms it means you will not need to write your password anymore to connect to that Maestro through GêBR. Analogous behaviour occurs in the connection between GêBR-Maestro and GêBR-Server.
+		If you choose GêBR to user public-key authentication by checking <guimenuitem>"Use encryption key to automatically authenticate the next session"</guimenuitem>, then GêBR will create (if not existent) a private/public keys pair and will keep the private key and will copy the public key to the maestro. Once this operation is successfully done, your authentication on your maestro will be automatically done through public-key . In practical terms it means you will not need to write your password anymore to connect to that Maestro through GêBR. Analogous behaviour occurs in the connection between GêBR-Maestro and GêBR-Server.
 		</para>
 
       <mediaobject>
-        <caption>GêBR public-key authentication. Suppose a client wants to stablish a connection. The client is requested for a login credential where he provides the key associated to the Maestro. The Maestro try to match the client key and one of his own public keys. In positive case, the client is allowed to communicate to that Maestro. Otherwise, ihe is requested for a password.</caption>
+        <caption>GêBR public-key authentication. Suppose a client wants to stablish a connection. The client is requested for a login credential where he provides the key associated to the Maestro. The Maestro try to match the client key and one of his own public keys. In positive case, the client is allowed to communicate to that Maestro. Otherwise, he is requested for a password.</caption>
         <imageobject>
                   <imagedata fileref="../../common-images/public_key_authentication_diagram.png" />
         </imageobject>

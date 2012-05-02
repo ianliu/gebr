@@ -166,6 +166,46 @@
         não são aceitos.</para>
     </section>
   </section>
+  <section xml:id="ssh_authentication">
+    <title>Autenticação por SSH</title>
+
+		<para>
+			A infra-estrutura GêBR compreende comunicação entre máquinas:
+		</para>
+
+		<itemizedlist>
+			<listitem>
+				entre a GêBR-Cliente e o GêBR-Maestro
+			</listitem>
+
+			<listitem>
+				e entre a GêBR-maestro e o GêBR-servers. </listitem>
+		</itemizedlist>
+
+		<para>
+			Todas conexões são feitas utilizando o protocolo de Shell Seguro (SSH). O programa SSH tem como propósito estabelecer uma comunicação segura numa rede.
+		</para>
+
+		<para>
+			A autenticação por chave pública é baseada na criptografia por chave pública, onde encriptação e decriptação utilizam pares de chaves publica/privada para autenticação. O Maestro conhece a chave pública e o Cliente conhece a chave privada associada.
+		</para>
+
+		<para>
+			Se você optar por <guimenuitem>"Utilizar chaves criptográficas para autenticar a próxima sessão."</guimenuitem>, a GêBR vai criar (se ainda não existente) um par de chaves público/privada e vai guardar a chave privada e vai copiar a chave pública ao maestro. Se esta operação for concluída com sucesso, a autenticação no Maestro sera feita pelo modo de chave pública. Em termos práticos, isto significa que você não necessitará inserir sua senha para conectar-se a GêBR-Maestro. Um mesmo comportamento se você optar utilizar o sistema de chave pública ao tentar acessar o GêBR-servidor.
+		</para>
+
+      <mediaobject>
+        <caption>Diagrama da autenticação da GêBR por chave pública. Suponha que um cliente queira estabelecer uma conexão. Então o cliente é solicitado por uma chave (sua chave privada). O maestro tenta fazer verificação o casamento da chave fornecida pelo cliente com alguma das chaves públicas que ele (Maestro) possui. Em caso de sucesso, o cliente é permitido a comunicar-se com o Maestro. Caso contrário, ele deve informar sua senha.</caption>
+        <imageobject>
+                  <imagedata fileref="../../common-images/public_key_authentication_diagram.png" />
+        </imageobject>
+      </mediaobject>
+
+		<para>
+			Alternativamente, você mesmo pode criar a par de chaves privada/pública (consulte <link xlink:href="https://help.ubuntu.com/community/SSH/OpenSSH/Keys">aqui</link> para mais informações).
+		</para>
+
+	</section>
   <section xml:id="dictionary_variables">
     <title>Dicionário de Variáveis</title>
     <para>
