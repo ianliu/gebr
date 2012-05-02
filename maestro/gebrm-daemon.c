@@ -37,6 +37,7 @@ struct _GebrmDaemonPriv {
 	GebrCommServer *server;
 	GebrCommProtocolSocket *client;
 	gchar *ac;
+	gboolean waiting_reconnection;
 
 	gchar *nfsid;
 	gchar *id;
@@ -757,6 +758,18 @@ gebrm_daemon_get_tags(GebrmDaemon *daemon)
 		g_string_erase(buf, buf->len - 1, 1);
 
 	return g_string_free(buf, FALSE);
+}
+
+gboolean
+gebrm_daemon_get_waiting_reconnection(GebrmDaemon *daemon)
+{
+	return daemon->priv->waiting_reconnection;
+}
+
+gboolean
+gebrm_daemon_set_waiting_reconnection(GebrmDaemon *daemon, gboolean is_waiting_reconnection)
+{
+	daemon->priv->waiting_reconnection = is_waiting_reconnection;
 }
 
 gboolean
