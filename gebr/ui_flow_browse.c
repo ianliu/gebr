@@ -398,7 +398,6 @@ gboolean flow_browse_get_selected(GtkTreeIter * iter, gboolean warn_unselected)
 			gebr_message(GEBR_LOG_ERROR, TRUE, FALSE, _("No Flow selected"));
 		return FALSE;
 	}
-
 	return TRUE;
 }
 
@@ -530,6 +529,8 @@ update_speed_slider_sensitiveness(GebrUiFlowBrowse *ufb)
 		}
 
 	}
+	if (gebr.line)
+		gebr_flow_set_toolbar_sensitive();
 
 	g_list_foreach(rows, (GFunc)gtk_tree_path_free, NULL);
 	g_list_free(rows);

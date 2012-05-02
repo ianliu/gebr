@@ -1222,6 +1222,7 @@ static void flow_edition_menu_add(void)
 		gebr_validator_insert(gebr.validator, dict_iter, NULL, NULL);
 	}
 	document_save(GEBR_GEOXML_DOCUMENT(gebr.flow), TRUE, TRUE);
+	gebr_flow_set_toolbar_sensitive();
 
 	/* and to the GUI */
 	gebr_geoxml_flow_get_program(gebr.flow, &menu_programs, menu_programs_index);
