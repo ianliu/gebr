@@ -691,6 +691,7 @@ gebrm_daemon_init(GebrmDaemon *daemon)
 	daemon->priv->is_initialized = FALSE;
 	daemon->priv->tasks = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
 	daemon->priv->mpi_flavors = NULL;
+	daemon->priv->waiting_reconnection = FALSE;
 }
 
 GebrmDaemon *
@@ -766,8 +767,9 @@ gebrm_daemon_get_waiting_reconnection(GebrmDaemon *daemon)
 	return daemon->priv->waiting_reconnection;
 }
 
-gboolean
-gebrm_daemon_set_waiting_reconnection(GebrmDaemon *daemon, gboolean is_waiting_reconnection)
+void
+gebrm_daemon_set_waiting_reconnection(GebrmDaemon *daemon,
+                                      gboolean is_waiting_reconnection)
 {
 	daemon->priv->waiting_reconnection = is_waiting_reconnection;
 }
