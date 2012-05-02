@@ -412,7 +412,10 @@ on_stop_maestro_clicked(GtkButton *button,
 
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_address(gebr.maestro_controller, up->maestro_addr);
 
-	if (gebr_maestro_server_get_state(maestro) == SERVER_STATE_DISCONNECTED)
+	const gchar *error_type;
+	gebr_maestro_server_get_error(maestro, &error_type, NULL);
+
+	if (gebr_maestro_server_get_state(maestro) == SERVER_STATE_DISCONNECTED && g_strcmp0(error_type, "error:protocol"))
 		return;
 
 	g_signal_connect(gebr.maestro_controller, "maestro-state-changed", G_CALLBACK(on_maestro_state_changed), up);
