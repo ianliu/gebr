@@ -390,8 +390,7 @@ line_info_update(void)
 	GObject *label_import = gtk_builder_get_object(gebr.ui_project_line->info.builder_line, "label_import");
 
 	/* Set title */
-	tmp = g_markup_printf_escaped("<span size='xx-large'>%s %s</span>", _("Line"),
-				      gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.line)));
+	tmp = g_markup_printf_escaped("<span size='xx-large'>%s</span>", gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.line)));
 	gtk_label_set_markup(GTK_LABEL(label_title), tmp);
 	g_free(tmp);
 
@@ -420,11 +419,11 @@ line_info_update(void)
 	/* Set number of flows */
 	gint nflows = gebr_geoxml_line_get_flows_number(gebr.line);
 	if (nflows == 0)
-		tmp = g_markup_escape_text(_("This Line has no Flows"), -1);
+		tmp = g_markup_escape_text(_("This Line has no Flows."), -1);
 	else if (nflows == 1)
-		tmp = g_markup_escape_text(_("This Line has one Flow"), -1);
+		tmp = g_markup_escape_text(_("This Line has one Flow."), -1);
 	else
-		tmp = g_markup_printf_escaped(_("This Line has %d Flows"), nflows);
+		tmp = g_markup_printf_escaped(_("This Line has %d Flows."), nflows);
 	gtk_label_set_markup(GTK_LABEL(label_nflows), tmp);
 	g_free(tmp);
 
@@ -528,8 +527,7 @@ project_info_update(void)
 	gchar *tmp;
 
 	/* Set title */
-	tmp = g_markup_printf_escaped("<span size='xx-large'>%s %s</span>", _("Project"),
-				      gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.project)));
+	tmp = g_markup_printf_escaped("<span size='xx-large'>%s</span>", gebr_geoxml_document_get_title(GEBR_GEOXML_DOCUMENT(gebr.project)));
 	gtk_label_set_markup(GTK_LABEL(label_title), tmp);
 	g_free(tmp);
 
@@ -558,11 +556,11 @@ project_info_update(void)
 	/* Set number of lines */
 	gint nlines = gebr_geoxml_project_get_lines_number(gebr.project);
 	if (nlines == 0)
-		tmp = g_markup_escape_text(_("This Project has no Line"), -1);
+		tmp = g_markup_escape_text(_("This Project has no Line."), -1);
 	else if (nlines == 1)
-		tmp = g_markup_escape_text(_("This Project has one Line"), -1);
+		tmp = g_markup_escape_text(_("This Project has one Line."), -1);
 	else
-		tmp = g_markup_printf_escaped(_("This Project has %d Lines"), nlines);
+		tmp = g_markup_printf_escaped(_("This Project has %d Lines."), nlines);
 	gtk_label_set_markup(GTK_LABEL(label_nlines), tmp);
 	g_free(tmp);
 }

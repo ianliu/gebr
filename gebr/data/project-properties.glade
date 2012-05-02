@@ -11,7 +11,7 @@
         <child>
           <object class="GtkLabel" id="label_title">
             <property name="visible">True</property>
-            <property name="label" translatable="yes">&lt;span size='xx-large'&gt;Project "Bacia da Amaz&#xF4;nia"&lt;/span&gt;</property>
+            <property name="label" translatable="yes">&lt;span size='xx-large'&gt;"Bacia da Amaz&#xF4;nia"&lt;/span&gt;</property>
             <property name="use_markup">True</property>
           </object>
           <packing>
@@ -41,7 +41,7 @@
     <child>
       <object class="GtkTable" id="table1">
         <property name="visible">True</property>
-        <property name="n_rows">3</property>
+        <property name="n_rows">2</property>
         <property name="n_columns">2</property>
         <property name="column_spacing">10</property>
         <property name="row_spacing">5</property>
@@ -89,37 +89,22 @@
             <property name="top_attach">1</property>
           </packing>
         </child>
-        <child>
-          <object class="GtkLabel" id="label1">
-            <property name="visible">True</property>
-            <property name="xalign">0</property>
-            <property name="label" translatable="yes">&lt;b&gt;N&#xFA;mero de Linhas:&lt;/b&gt;</property>
-            <property name="use_markup">True</property>
-          </object>
-          <packing>
-            <property name="top_attach">2</property>
-            <property name="bottom_attach">3</property>
-            <property name="x_options">GTK_FILL</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkLabel" id="label_nlines">
-            <property name="visible">True</property>
-            <property name="xalign">0</property>
-            <property name="label" translatable="yes">10</property>
-          </object>
-          <packing>
-            <property name="left_attach">1</property>
-            <property name="right_attach">2</property>
-            <property name="top_attach">2</property>
-            <property name="bottom_attach">3</property>
-          </packing>
-        </child>
       </object>
       <packing>
         <property name="expand">False</property>
         <property name="padding">10</property>
         <property name="position">2</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkLabel" id="label_nlines">
+        <property name="visible">True</property>
+        <property name="xalign">0</property>
+        <property name="xpad">10</property>
+        <property name="label" translatable="yes">10</property>
+      </object>
+      <packing>
+        <property name="position">3</property>
       </packing>
     </child>
     <child>
@@ -141,7 +126,7 @@
       </object>
       <packing>
         <property name="expand">False</property>
-        <property name="position">3</property>
+        <property name="position">4</property>
       </packing>
     </child>
   </object>
