@@ -307,17 +307,22 @@ build_xauth_list(FILE *xauth_file, Xauth *auth)
 		if (g_strcmp0(i->address, auth->address) == 0
 		    && g_strcmp0(i->number, auth->number) == 0
 		    && g_strcmp0(i->name, auth->name) == 0) {
+			gebrd_message(GEBR_LOG_DEBUG, "XAUTH FILE MY REPLACE: %s, %s, %s, %s", auth->address, auth->number, auth->name, auth->data);
 			list = g_list_prepend(list, auth);
 			XauDisposeAuth(i);
 			subst = TRUE;
 		} else {
 			list = g_list_prepend(list, i);
+			gebrd_message(GEBR_LOG_DEBUG, "XAUTH FILE PREVIOUS: %s, %s, %s, %s", i->address, i->number, i->name, i->data);
 		}
 		i = XauReadAuth(xauth_file);
 	}
 
-	if (!subst)
+	if (!subst) {
 		list = g_list_prepend(list, auth);
+		gebrd_message(GEBR_LOG_DEBUG, "XAUTH FILE MY ADD: %s, %s, %s, %s", auth->address, auth->number, auth->name, auth->data);
+	}
+
 	return list;
 }
 
@@ -335,9 +340,12 @@ run_lib_xauth_command(const gchar *port, const gchar *cookie)
 	gebrd_message(GEBR_LOG_DEBUG, "RUN LIB XAUTH COMMAND (libXau) WITH PORT: %s AND COOKIE: %s", port, cookie);
 
 	xauth = fopen(path, "w");
-	for (GList *i = list; i; i = i->next)
+	for (GList *i = list; i; i = i->next) {
 		if (!XauWriteAuth(xauth, i->data))
 			gebrd_message(GEBR_LOG_ERROR, "Xauth command failed, using libXau.");
+		else
+			gebrd_message(GEBR_LOG_DEBUG, "Xauth command success.");
+	}
 
 //	g_list_foreach(list, (GFunc)XauDisposeAuth, NULL);
 	g_list_free(list);
