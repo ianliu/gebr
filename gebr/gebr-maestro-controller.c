@@ -1132,8 +1132,7 @@ on_servers_edited(GtkCellRendererText *cell,
 		//I don t know why markup does not work here
 		gebr_gui_message_dialog(GTK_MESSAGE_WARNING, GTK_BUTTONS_OK,
 					_("Invalid input"),
-					_("GêBR does not "
-					  "support the format user@machine.\n\n"
+					_("GêBR supports the formats hostname or ip address.\n\n"
 					  "The entry %s will be automatically removed"), new_text);
 
 		return;

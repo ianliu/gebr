@@ -55,7 +55,7 @@ typedef enum {
 	WIZARD_STATUS_COMPLETE
 } WizardStatus;
 
-#define DEFAULT_SERVERS_ENTRY_TEXT _("Type server hostname or address, and click Add")
+#define DEFAULT_SERVERS_ENTRY_TEXT _("serversample")
 
 /*
  * Prototypes
@@ -798,7 +798,7 @@ on_server_entry_changed(GtkWidget *entry,
 		return;
 
 	if (*entry_text) {
-		validate_entry(GTK_ENTRY(up->server_entry), error, _("GêBR neither support the format <i>user@machine</i> nor blank spaces"));
+		validate_entry(GTK_ENTRY(up->server_entry), error, _("GêBR supports the formats hostname or ip address."));
 	} else {
 		gtk_entry_set_icon_from_stock(GTK_ENTRY(up->server_entry), GTK_ENTRY_ICON_SECONDARY, NULL);
 		gtk_entry_set_icon_tooltip_text(GTK_ENTRY(up->server_entry), GTK_ENTRY_ICON_SECONDARY, NULL);
