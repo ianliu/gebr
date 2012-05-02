@@ -223,6 +223,8 @@ run_xauth_command(gchar **argv,
 	gint tries = 0;
 	gboolean retval = FALSE;
 
+	gebrd_message(GEBR_LOG_DEBUG, "RUN XAUTH COMMAND WITH ARGS: %s, %s, %s", argv[0], argv[1], argv[2]);
+
 	do {
 		g_spawn_sync(g_get_current_dir(), argv, envp,
 			     G_SPAWN_SEARCH_PATH, NULL, NULL,
@@ -330,9 +332,12 @@ run_lib_xauth_command(const gchar *port, const gchar *cookie)
 	if (xauth)
 		fclose(xauth);
 
+	gebrd_message(GEBR_LOG_DEBUG, "RUN LIB XAUTH COMMAND (libXau) WITH PORT: %s AND COOKIE: %s", port, cookie);
+
 	xauth = fopen(path, "w");
 	for (GList *i = list; i; i = i->next)
-		XauWriteAuth(xauth, i->data);
+		if (!XauWriteAuth(xauth, i->data))
+			gebrd_message(GEBR_LOG_ERROR, "Xauth command failed, using libXau.");
 
 //	g_list_foreach(list, (GFunc)XauDisposeAuth, NULL);
 	g_list_free(list);
