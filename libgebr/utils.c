@@ -1255,7 +1255,12 @@ gebr_generate_key()
 		return FALSE;
 	}
 
-	g_debug("Key 'gebr.key' created!");
+	if (error) {
+		g_debug("COMMAND OF GENERATE KEY HAS ERROR: %s", error->message);
+		g_error_free(error);
+	}
+
+	g_debug("Key 'gebr.key' created! - With exit_status: %d", exit_status);
 
 	g_string_free(cmd_line, TRUE);
 	g_free(path);
@@ -1294,13 +1299,19 @@ gebr_add_remove_ssh_key(gboolean remove)
 	if (!g_spawn_command_line_sync(cmd_line->str, &std_out, &std_error, &exit_status, &error)) {
 		g_debug("Erros %s | %s", std_error, std_out);
 		g_debug("GError: %s", error->message);
+		g_error_free(error);
 		return FALSE;
 	}
 
+	if (error) {
+		g_debug("COMMAND OF ADD/REMOVE KEY HAS ERROR: %s", error->message);
+		g_error_free(error);
+	}
+
 	if (remove)
-		g_debug("Remove key 'gebr.key'");
+		g_debug("Remove key 'gebr.key' - With exit_status: %d", exit_status);
 	else
-		g_debug("Add key 'gebr.key'");
+		g_debug("Add key 'gebr.key'- With exit_status: %d", exit_status);
 
 	g_string_free(cmd_line, TRUE);
 	g_free(path);
