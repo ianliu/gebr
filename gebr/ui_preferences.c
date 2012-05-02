@@ -189,7 +189,7 @@ set_status_for_maestro(GebrMaestroController *self,
 	const gchar *address = gebr_maestro_server_get_address(maestro);
 
 	if (state == SERVER_STATE_LOGGED) {
-		gtk_image_set_from_stock(GTK_IMAGE(status_img), GTK_STOCK_OK, GTK_ICON_SIZE_DIALOG);
+		gtk_image_set_from_stock(GTK_IMAGE(status_img), GTK_STOCK_YES, GTK_ICON_SIZE_DIALOG);
 		gtk_label_set_text(GTK_LABEL(status_label), _("Success!"));
 		gtk_assistant_set_page_type(GTK_ASSISTANT(up->dialog), main_maestro, GTK_ASSISTANT_PAGE_CONTENT);
 		gtk_assistant_set_page_complete(GTK_ASSISTANT(up->dialog), main_maestro, TRUE);
@@ -526,14 +526,21 @@ on_assistant_prepare(GtkAssistant *assistant,
 		if (wizard_status == WIZARD_STATUS_COMPLETE) {
 			GtkTreeModel *model_servers = gebr_maestro_server_get_model(maestro, FALSE, NULL);
 			gboolean active = gtk_tree_model_get_iter_first(model_servers, &iter);
-
+			gint counter = 0;
 			GString *servers = g_string_new("");
 
 			while (active) {
 				GebrDaemonServer *daemon;
 				gtk_tree_model_get(model_servers, &iter, 0, &daemon, -1);
-				g_string_append(servers, ",\n");
-				g_string_append(servers, gebr_daemon_server_get_address(daemon));
+				g_string_append(servers, ", ");
+				if (counter >= 2) {
+					g_string_append(servers, "...");
+					break;
+				}
+				else {
+					g_string_append(servers, gebr_daemon_server_get_address(daemon));
+					counter++;
+				}
 				active = gtk_tree_model_iter_next(model_servers, &iter);
 			}
 			if (servers->len)
