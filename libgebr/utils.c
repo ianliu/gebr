@@ -1417,3 +1417,16 @@ gebr_verify_address_without_username(const gchar *address)
 	g_free(new_addr);
 	return ret;
 }
+
+gboolean
+gebr_kill_by_port(gint port)
+{
+	gchar *cmd_line;
+	gboolean ret = FALSE;
+	cmd_line = g_strdup_printf("fuser -sk -15 %d/tcp", port);
+
+	if (g_spawn_command_line_sync(cmd_line, NULL, NULL, NULL, NULL))
+		ret = TRUE;
+	g_free(cmd_line);
+	return ret;
+}

@@ -141,50 +141,50 @@ main(int argc, char *argv[])
 
 	const gchar *lock = gebrm_app_get_lock_file();
 	const gchar *version_file  = gebrm_app_get_version_file();
+	gchar *lock_contents;
+	GError *lock_error = NULL;
 
-	if (g_access(lock, R_OK | W_OK) == 0 &&
-	    g_access(version_file, R_OK | W_OK) == 0) {
-		gchar *lock_contents, *version_contents;
-		GError *lock_error = NULL;
+	if (g_access(lock, R_OK | W_OK) == 0) { //check lock_file
 		GError *version_error = NULL;
 
 		g_file_get_contents(lock, &lock_contents, NULL, &lock_error);
-		g_file_get_contents(version_file, &version_contents, NULL, &version_error);
-
-		if (lock_error || version_error) {
+		if (lock_error) {
 			if (lock_error)
 				g_critical("Error reading lock/version: %s", lock_error->message);
-			if (version_error)
-				g_critical("Error reading lock/version: %s", version_error->message);
 			g_free(lock_contents);
-			g_free(version_contents);
 			exit(1);
 		}
+		g_free(lock_error);
 
 		gint port = atoi(lock_contents);
-		gchar *curr_version = g_strdup_printf("%s (%s)\n", GEBR_VERSION NANOVERSION, gebr_version());
 
-		if (!gebr_comm_listen_socket_is_local_port_available(port)) {
-			if (g_strcmp0(curr_version, version_contents) == 0) { //It is running in the same version
-				g_print("%s\n", lock_contents);
-				exit(0);
-			} else { //It is running in a different version
-				gchar *cmd_line;
-				cmd_line = g_strdup_printf("fuser -sk -15 %d/tcp", port);
-
-				if (!g_spawn_command_line_sync(cmd_line, NULL, NULL, NULL, NULL))
-					g_critical("Error when killing the maestro");
-				g_free(cmd_line);
+		if (g_access(version_file, R_OK | W_OK) == 0) { //It has the version file
+			gchar *version_contents;
+			g_file_get_contents(version_file, &version_contents, NULL, &version_error);
+			if (version_error) {
+				if (version_error)
+					g_critical("Error reading lock/version: %s", version_error->message);
+				g_free(version_contents);
+				exit(1);
 			}
-		}
+			g_free(version_error);
 
+			gchar *curr_version = g_strdup_printf("%s (%s)\n", GEBR_VERSION NANOVERSION, gebr_version());
+
+			if (!gebr_comm_listen_socket_is_local_port_available(port)) {
+				if (g_strcmp0(curr_version, version_contents) == 0) { //It is running in the same version
+					g_print("%s\n", lock_contents);
+					exit(0);
+				} else {		//It is running in a different version
+					gebr_kill_by_port(port);
+				}
+			}
+			g_free(curr_version);
+			g_free(version_contents);
+		} else {		//It does not have version file
+			gebr_kill_by_port(port);
+		}
 		g_free(lock_contents);
-		g_free(curr_version);
-		g_free(version_contents);
-	} else if (g_access(lock, R_OK | W_OK) == 0 &&
-		   g_access(version_file, F_OK) != 0) { //It is running but does not have version_file
-		//Chamar funcao MATA_MAESTRO sem dar exit
-		//
 	} else if (g_access(lock, F_OK) == 0) {
 		g_critical("Cannot read/write into %s", lock);
 		exit(1);
