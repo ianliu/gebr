@@ -145,15 +145,19 @@ mount_operation_pool(gpointer user_data)
 
 	gebr_add_remove_ssh_key(FALSE);
 
-	GtkWindow *window;
+	GtkWindow *window = NULL;
 	GList *windows = gtk_window_list_toplevels();
 	for (GList *i = windows; i; i = i->next) {
 		GtkWindow *win = i->data;
 		if (gtk_window_is_active(win)) {
 			window = win;
 			g_object_ref(window);
+			break;
 		}
 	}
+
+	if (!window)
+		window = GTK_WINDOW(gebr.window);
 
 	GMountOperation *op = gtk_mount_operation_new(window);
 	g_file_mount_enclosing_volume(data->maestro->priv->mount_location, 0, op, NULL,
