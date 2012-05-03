@@ -238,8 +238,11 @@ void server_free(void)
 	g_unlink(gebrd->run_filename->str);
 
 	gchar *gebrd_lock = g_build_filename(g_get_home_dir(), ".gebr", "gebrd", g_get_host_name(), "lock", NULL);
+	gchar *xauth_file = g_build_filename(g_get_home_dir(), ".gebr", "gebrd", g_get_host_name(), "Xauthority", NULL);
 	g_unlink(gebrd_lock);
+	g_unlink(xauth_file);
 	g_free(gebrd_lock);
+	g_free(xauth_file);
 }
 
 void server_quit(void)

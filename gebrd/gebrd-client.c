@@ -191,26 +191,9 @@ static gboolean
 run_xauth_command(gchar **argv,
 		  gchar **out)
 {
-	int fd;
-	struct flock fl = {F_WRLCK, SEEK_SET, 0, 0, 0};
-	gchar *xauth = g_build_filename(g_get_home_dir(), ".gebr", "Xauthority", NULL);
-	gchar *xauthority = g_strconcat("XAUTHORITY=", xauth, NULL);
+	gchar *xauth_file = g_build_filename(g_get_home_dir(), ".gebr", "gebrd", gebrd->hostname, "Xauthority", NULL);
+	gchar *xauthority = g_strconcat("XAUTHORITY=", xauth_file, NULL);
 	gchar *envp[] = {xauthority, NULL};
-
-	fl.l_pid = getpid();
-
-	if ((fd = open(xauth, O_RDWR | O_APPEND | O_CREAT, 0600)) == -1) {
-		perror("open");
-		return FALSE;
-	}
-
-	if (fcntl(fd, F_SETLKW, &fl) == -1) {
-		perror("fcntl");
-		close(fd);
-		return FALSE;
-	}
-
-	gebrd_message(GEBR_LOG_DEBUG, "got lock");
 
 	GError *error = NULL;
 	gchar *err = NULL;
@@ -242,15 +225,8 @@ run_xauth_command(gchar **argv,
 		tries++;
 	} while (tries < 15 && exit_status);
 
-	fl.l_type = F_UNLCK;
-	if (fcntl(fd, F_SETLK, &fl) == -1) {
-		perror("fcntl");
-		exit(1);
-	}
-
-	gebrd_message(GEBR_LOG_DEBUG, "release lock");
-
-	close(fd);
+	g_free(xauth_file);
+	g_free(xauthority);
 	g_free(err);
 
 	return retval;
@@ -389,7 +365,7 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			if (cookie->len && gebrd_get_server_type() != GEBR_COMM_SERVER_TYPE_MOAB) {
 				gebrd_message(GEBR_LOG_DEBUG, "Authorizing with system(xauth)");
 				gchar *tmp = g_strdup_printf(":%d", display);
-				gchar *argv[] = {"xauth", "-i", "add", tmp, ".", cookie->str, NULL};
+				gchar *argv[] = {"xauth", "add", tmp, ".", cookie->str, NULL};
 				if (!run_xauth_command(argv, NULL))
 					display = 0;
 				g_free(tmp);

@@ -564,7 +564,7 @@ void job_run_flow(GebrdJob *job)
 	g_debug("Looking for display port for gid %s: %d", job->gid->str, display_port);
 	if (display_port != 0) {
 		GString *to_quote;
-		const gchar *xauth_file = "$HOME/.gebr/Xauthority";
+		gchar *xauth_file = g_build_filename(g_get_home_dir(), ".gebr", "gebrd", gebrd->hostname, "Xauthority", NULL);
 
 		to_quote = g_string_new(NULL);
 		if (job->parent.server_location == GEBR_COMM_SERVER_LOCATION_LOCAL) {
@@ -586,6 +586,7 @@ void job_run_flow(GebrdJob *job)
 		}
 
 		g_string_free(to_quote, TRUE);
+		g_free(xauth_file);
 	} else {
 		gchar * quoted = g_shell_quote(localized_cmd_line);
 		g_string_printf(cmd_line, "bash -l -c %s", quoted);
