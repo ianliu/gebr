@@ -22,10 +22,6 @@
 # include <config.h>
 #endif
 
-#if HAVE_X11_XAUTH_H
-# include <X11/Xauth.h>
-#endif
-
 #include "gebrd-client.h"
 
 #include "gebrd-job.h"
@@ -260,101 +256,6 @@ run_xauth_command(gchar **argv,
 	return retval;
 }
 
-#if HAVE_X11_XAUTH_H
-static Xauth *
-create_xauth_from_data(const gchar *port,
-		       const gchar *cookie)
-{
-	Xauth *auth = g_new(Xauth, 1);
-	auth->family = 256;
-	auth->address = (gchar *)g_get_host_name();
-	auth->address_length = strlen(auth->address);
-	auth->number = (gchar *)port;
-	auth->number_length = strlen(auth->number);
-	auth->name = "MIT-MAGIC-COOKIE-1";
-	auth->name_length = strlen(auth->name);
-
-	gsize len = strlen(cookie);
-	gchar *tmp = g_strdup(cookie);
-	gchar *data = g_new(gchar, len / 2);
-
-	for (int i = 0; tmp[i]; i++) {
-		if (tmp[i] >= 'a')
-			tmp[i] -= 'a' + 10;
-		else if (tmp[i] >= '0')
-			tmp[i] -= '0';
-		if (i % 2 == 0)
-			tmp[i] <<= 4;
-		else
-			data[i/2] = tmp[i-1] | tmp[i];
-	}
-	auth->data = data;
-	auth->data_length = len / 2;
-	return auth;
-}
-
-static GList *
-build_xauth_list(FILE *xauth_file, Xauth *auth)
-{
-	GList *list = NULL;
-	gboolean subst = FALSE;
-
-	if (!xauth_file)
-		return NULL;
-
-	Xauth *i = XauReadAuth(xauth_file);
-	while (i) {
-		if (g_strcmp0(i->address, auth->address) == 0
-		    && g_strcmp0(i->number, auth->number) == 0
-		    && g_strcmp0(i->name, auth->name) == 0) {
-			gebrd_message(GEBR_LOG_DEBUG, "XAUTH FILE MY REPLACE: %s, %s, %s, %s", auth->address, auth->number, auth->name, auth->data);
-			list = g_list_prepend(list, auth);
-			XauDisposeAuth(i);
-			subst = TRUE;
-		} else {
-			list = g_list_prepend(list, i);
-			gebrd_message(GEBR_LOG_DEBUG, "XAUTH FILE PREVIOUS: %s, %s, %s, %s", i->address, i->number, i->name, i->data);
-		}
-		i = XauReadAuth(xauth_file);
-	}
-
-	if (!subst) {
-		list = g_list_prepend(list, auth);
-		gebrd_message(GEBR_LOG_DEBUG, "XAUTH FILE MY ADD: %s, %s, %s, %s", auth->address, auth->number, auth->name, auth->data);
-	}
-
-	return list;
-}
-
-static gboolean
-run_lib_xauth_command(const gchar *port, const gchar *cookie)
-{
-	gchar *path = g_build_filename(g_get_home_dir(), ".gebr", "Xauthority", NULL);
-	FILE *xauth = fopen(path, "r");
-	Xauth *auth = create_xauth_from_data(port, cookie);
-	GList *list = build_xauth_list(xauth, auth);
-
-	if (xauth)
-		fclose(xauth);
-
-	gebrd_message(GEBR_LOG_DEBUG, "RUN LIB XAUTH COMMAND (libXau) WITH PORT: %s AND COOKIE: %s", port, cookie);
-
-	xauth = fopen(path, "w");
-	for (GList *i = list; i; i = i->next) {
-		if (!XauWriteAuth(xauth, i->data))
-			gebrd_message(GEBR_LOG_ERROR, "Xauth command failed, using libXau.");
-		else
-			gebrd_message(GEBR_LOG_DEBUG, "Xauth command success.");
-	}
-
-//	g_list_foreach(list, (GFunc)XauDisposeAuth, NULL);
-	g_list_free(list);
-	fclose(xauth);
-
-	return TRUE;
-}
-#endif
-
 GList *
 parse_comma_separated_string(gchar *str)
 {
@@ -486,20 +387,12 @@ static void client_old_parse_messages(GebrCommProtocolSocket * socket, struct cl
 			g_debug("Received gid %s with cookie %s", gid->str, cookie->str);
 
 			if (cookie->len && gebrd_get_server_type() != GEBR_COMM_SERVER_TYPE_MOAB) {
-#if !HAVE_X11_XAUTH_H
 				gebrd_message(GEBR_LOG_DEBUG, "Authorizing with system(xauth)");
 				gchar *tmp = g_strdup_printf(":%d", display);
 				gchar *argv[] = {"xauth", "-i", "add", tmp, ".", cookie->str, NULL};
 				if (!run_xauth_command(argv, NULL))
 					display = 0;
 				g_free(tmp);
-#else
-				gebrd_message(GEBR_LOG_DEBUG, "Authorizing with libXau");
-				gchar *tmp = g_strdup_printf("%d", display);
-				if (!run_lib_xauth_command(tmp, cookie->str))
-					display = 0;
-				g_free(tmp);
-#endif
 			}
 
 			gchar *display_str = g_strdup_printf("%d", display ? display + 6000 : 0);
