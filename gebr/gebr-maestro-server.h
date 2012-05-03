@@ -45,6 +45,12 @@ typedef struct _passwordKeys {
 	gboolean use_public_key;
 } PasswordKeys;
 
+typedef enum {
+	STATUS_MOUNT_OK,
+	STATUS_MOUNT_NOK,
+	STATUS_MOUNT_PROGRESS,
+} GebrMountStatus;
+
 struct _GebrMaestroServerClass {
 	GObjectClass parent_class;
 
@@ -89,6 +95,9 @@ struct _GebrMaestroServerClass {
 
 	void (*path_error) (GebrMaestroServer         *maestro,
 			    GebrCommProtocolStatusPath error_id);
+
+	void (*gvfs_mount) (GebrMaestroServer         *maestro,
+			    GebrMountStatus	       status);
 };
 
 struct _GebrMaestroServer {
@@ -201,6 +210,9 @@ void gebr_maestro_server_set_wizard_setup(GebrMaestroServer *maestro,
 void gebr_maestro_server_connect_on_daemons(GebrMaestroServer *maestro);
 
 void gebr_maestro_server_append_key_finished(void);
+
+void gebr_maestro_server_mount_gvfs(GebrMaestroServer *maestro,
+                                    const gchar *addr);
 
 G_END_DECLS
 

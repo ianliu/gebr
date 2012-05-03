@@ -71,6 +71,7 @@ enum {
 	MAESTRO_ERROR,
 	CONFIRM,
 	PATH_ERROR,
+	GVFS_MOUNT,
 	LAST_SIGNAL
 };
 
@@ -164,14 +165,16 @@ mount_operation_pool(gpointer user_data)
 				      (GAsyncReadyCallback) mount_enclosing_ready_cb,
 				      data->maestro);
 
+	g_signal_emit(data->maestro, signals[GVFS_MOUNT], 0, STATUS_MOUNT_PROGRESS);
+
 	g_object_unref(window);
 	g_list_free(windows);
 
 	return FALSE;
 }
 
-static void
-mount_gvfs(GebrMaestroServer *maestro, const gchar *addr)
+void
+gebr_maestro_server_mount_gvfs(GebrMaestroServer *maestro, const gchar *addr)
 {
 	if (maestro->priv->has_connected_daemon)
 		return;
@@ -481,11 +484,13 @@ mount_enclosing_ready_cb(GFile *location,
 
 	if (success || g_error_matches(error, G_IO_ERROR, G_IO_ERROR_ALREADY_MOUNTED)) {
 		g_debug("Mounted %s!", uri);
+		g_signal_emit(maestro, signals[GVFS_MOUNT], 0, STATUS_MOUNT_OK);
 	} else {
 		g_debug("Not mounted %s :( (%d) %s", uri, error->code, error->message);
 		maestro->priv->has_connected_daemon = FALSE;
 		g_object_unref(maestro->priv->mount_location);
 		maestro->priv->mount_location = NULL;
+		g_signal_emit(maestro, signals[GVFS_MOUNT], 0, STATUS_MOUNT_NOK);
 	}
 	gebr_add_remove_ssh_key(TRUE);
 }
@@ -617,8 +622,8 @@ parse_messages(GebrCommServer *comm_server,
 			gebr_daemon_server_set_cpu_model(daemon, cpu_model->str);
 			gebr_daemon_server_set_memory(daemon, memory->str);
 
-			if (state == SERVER_STATE_LOGGED)
-				mount_gvfs(maestro, addr->str);
+			if (state == SERVER_STATE_LOGGED && !maestro->priv->wizard_setup)
+				gebr_maestro_server_mount_gvfs(maestro, addr->str);
 			else if (maestro->priv->has_connected_daemon && !have_logged_daemon(maestro))
 				unmount_gvfs(maestro, FALSE);
 
@@ -1171,6 +1176,15 @@ gebr_maestro_server_class_init(GebrMaestroServerClass *klass)
 			             G_OBJECT_CLASS_TYPE(object_class),
 			             G_SIGNAL_RUN_LAST,
 			             G_STRUCT_OFFSET(GebrMaestroServerClass, path_error),
+			             NULL, NULL,
+			             g_cclosure_marshal_VOID__INT,
+			             G_TYPE_NONE, 1, G_TYPE_INT);
+
+	signals[GVFS_MOUNT] =
+			g_signal_new("gvfs-mount",
+			             G_OBJECT_CLASS_TYPE(object_class),
+			             G_SIGNAL_RUN_LAST,
+			             G_STRUCT_OFFSET(GebrMaestroServerClass, gvfs_mount),
 			             NULL, NULL,
 			             g_cclosure_marshal_VOID__INT,
 			             G_TYPE_NONE, 1, G_TYPE_INT);
