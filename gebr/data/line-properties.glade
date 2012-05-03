@@ -41,7 +41,6 @@
         <child>
           <object class="GtkVBox" id="vbox1">
             <property name="visible">True</property>
-            <property name="spacing">5</property>
             <child>
               <object class="GtkLabel" id="label_title">
                 <property name="visible">True</property>
@@ -52,6 +51,7 @@
               </object>
               <packing>
                 <property name="expand">False</property>
+                <property name="padding">2</property>
                 <property name="position">0</property>
               </packing>
             </child>
@@ -65,8 +65,22 @@
               </object>
               <packing>
                 <property name="expand">False</property>
-                <property name="padding">10</property>
+                <property name="padding">3</property>
                 <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="label_maestro">
+                <property name="visible">True</property>
+                <property name="xalign">0</property>
+                <property name="xpad">10</property>
+                <property name="label" translatable="yes">on Maestro &lt;b&gt;dell2&lt;/b&gt;</property>
+                <property name="use_markup">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="padding">3</property>
+                <property name="position">2</property>
               </packing>
             </child>
           </object>
@@ -81,20 +95,6 @@
         <property name="expand">False</property>
         <property name="padding">5</property>
         <property name="position">0</property>
-      </packing>
-    </child>
-    <child>
-      <object class="GtkLabel" id="label_maestro">
-        <property name="visible">True</property>
-        <property name="xalign">0</property>
-        <property name="xpad">10</property>
-        <property name="ypad">10</property>
-        <property name="label" translatable="yes">on Maestro &lt;b&gt;dell2&lt;/b&gt;</property>
-        <property name="use_markup">True</property>
-      </object>
-      <packing>
-        <property name="expand">False</property>
-        <property name="position">1</property>
       </packing>
     </child>
     <child>
@@ -217,7 +217,8 @@
       </object>
       <packing>
         <property name="expand">False</property>
-        <property name="position">2</property>
+        <property name="padding">15</property>
+        <property name="position">1</property>
       </packing>
     </child>
     <child>
@@ -231,6 +232,7 @@
           <object class="GtkLabel" id="label6">
             <property name="visible">True</property>
             <property name="xalign">0</property>
+            <property name="xpad">5</property>
             <property name="label" translatable="yes">&lt;b&gt;Modified:&lt;/b&gt;</property>
             <property name="use_markup">True</property>
           </object>
@@ -242,6 +244,7 @@
           <object class="GtkLabel" id="label7">
             <property name="visible">True</property>
             <property name="xalign">0</property>
+            <property name="xpad">5</property>
             <property name="label" translatable="yes">&lt;b&gt;Created:&lt;/b&gt;</property>
             <property name="use_markup">True</property>
           </object>
@@ -275,18 +278,18 @@
       <packing>
         <property name="expand">False</property>
         <property name="padding">10</property>
-        <property name="position">3</property>
+        <property name="position">2</property>
       </packing>
     </child>
     <child>
       <object class="GtkLabel" id="label_nflows">
         <property name="visible">True</property>
         <property name="xalign">0</property>
-        <property name="xpad">10</property>
+        <property name="xpad">5</property>
         <property name="label" translatable="yes">4</property>
       </object>
       <packing>
-        <property name="position">4</property>
+        <property name="position">3</property>
       </packing>
     </child>
     <child>
@@ -301,22 +304,21 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
-            <property name="has_tooltip">True</property>
             <property name="relief">none</property>
           </object>
         </child>
       </object>
       <packing>
-        <property name="expand">False</property>
-        <property name="position">5</property>
+        <property name="pack_type">end</property>
+        <property name="position">4</property>
       </packing>
     </child>
   </object>
   <object class="GtkSizeGroup" id="sizegroup1">
     <property name="mode">both</property>
     <widgets>
-      <widget name="maestro_connect_img"/>
       <widget name="maestro_button"/>
+      <widget name="maestro_connect_img"/>
     </widgets>
   </object>
 </interface>
