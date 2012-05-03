@@ -66,6 +66,7 @@ enum {
 	DAEMON_INIT,
 	PORT_DEFINE,
 	RET_PATH,
+	APPEND_KEY,
 	LAST_SIGNAL
 };
 
@@ -204,7 +205,7 @@ gebrm_server_op_state_changed(GebrCommServer *server,
 		gboolean use_key = gebr_comm_server_get_use_public_key(server);
 		if (use_key) {
 			if (gebr_generate_key())
-				gebr_comm_server_append_key(server, NULL);
+				gebr_comm_server_append_key(server, gebm_daemon_append_key_finished, daemon);
 		}
 		gebr_remove_temporary_file(server->address->str, FALSE);
 	}
@@ -634,6 +635,15 @@ gebrm_daemon_class_init(GebrmDaemonClass *klass)
 			     gebrm_cclosure_marshal_VOID__STRING_STRING,
 			     G_TYPE_NONE,
 			     2, G_TYPE_STRING, G_TYPE_STRING);
+
+	signals[APPEND_KEY] =
+		g_signal_new("append-key",
+			     G_OBJECT_CLASS_TYPE (object_class),
+			     G_SIGNAL_RUN_FIRST,
+			     G_STRUCT_OFFSET(GebrmDaemonClass, append_key),
+			     NULL, NULL,
+			     g_cclosure_marshal_VOID__VOID,
+			     G_TYPE_NONE, 0);
 
 	g_object_class_install_property(object_class,
 					PROP_ADDRESS,
@@ -1092,4 +1102,12 @@ gebrm_daemon_accepts_mpi(GebrmDaemon *daemon,
 	g_strfreev(flavors);
 
 	return retval;
+}
+
+void
+gebm_daemon_append_key_finished(GebrCommTerminalProcess *proc,
+                                gpointer user_data)
+{
+	GebrmDaemon *daemon = user_data;
+	g_signal_emit(daemon, signals[APPEND_KEY], 0);
 }

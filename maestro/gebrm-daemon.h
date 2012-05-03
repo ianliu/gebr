@@ -63,6 +63,8 @@ struct _GebrmDaemonClass {
 	void (*ret_path) (GebrmDaemon *daemon,
 			     const gchar *daemon_addr,
 			     const gchar *error);
+
+	void (*append_key) (GebrmDaemon *daemon);
 };
 
 GType gebrm_daemon_get_type(void) G_GNUC_CONST;
@@ -213,6 +215,9 @@ const gchar *gebrm_daemon_get_mpi_flavors(GebrmDaemon *daemon);
 
 gboolean gebrm_daemon_accepts_mpi(GebrmDaemon *daemon,
                                   const gchar *flavor);
+
+void gebm_daemon_append_key_finished(GebrCommTerminalProcess *proc,
+                                     gpointer user_data);
 
 G_END_DECLS
 

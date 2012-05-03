@@ -329,7 +329,7 @@ state_changed(GebrCommServer *comm_server,
 		gboolean use_key = gebr_comm_server_get_use_public_key(comm_server);
 		if (use_key) {
 			if (gebr_generate_key())
-				gebr_comm_server_append_key(comm_server, gebr_maestro_server_append_key_finished);
+				gebr_comm_server_append_key(comm_server, gebr_maestro_server_append_key_finished, NULL);
 		} else if (!maestro->priv->wizard_setup){
 			gebr_maestro_server_connect_on_daemons(maestro);
 		}
