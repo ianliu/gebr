@@ -754,7 +754,7 @@ on_assistant_prepare(GtkAssistant *assistant,
 			}
 
 			WizardStatus wizard_status = get_wizard_status(up);
-			if (wizard_status == WIZARD_STATUS_COMPLETE) {
+			if (wizard_status == WIZARD_STATUS_COMPLETE || wizard_status == WIZARD_STATUS_WITHOUT_GVFS) {
 				gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), main_servers, TRUE);
 				gtk_widget_hide(servers_label);
 			}
