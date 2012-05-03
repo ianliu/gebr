@@ -610,6 +610,7 @@ without soldiers."&lt;/i&gt;</property>
         <child>
           <object class="GtkImage" id="image3">
             <property name="visible">True</property>
+            <property name="yalign">0.31999999284744263</property>
             <property name="stock">gtk-info</property>
             <property name="icon-size">6</property>
           </object>
@@ -624,6 +625,7 @@ without soldiers."&lt;/i&gt;</property>
           <object class="GtkLabel" id="server_info_second_label">
             <property name="visible">True</property>
             <property name="yalign">0</property>
+            <property name="ypad">68</property>
             <property name="label" translatable="yes">&lt;b&gt;Servers&lt;/b&gt; are in charge of running processing flows, under maestro&#x2019;s coordination. For each server, you are going to be asked for your login credentials.
 
 You may be asked once more for your login credentials to be able to browse the remote file system.
