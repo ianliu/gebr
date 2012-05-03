@@ -32,6 +32,7 @@
 
 #include "ui_preferences.h"
 #include "gebr.h"
+#include "gebr-version.h"
 
 enum {
 	MAESTRO_DEFAULT_ADDR,
@@ -41,7 +42,7 @@ enum {
 
 enum {
 	CANCEL_PAGE,
-	PREFERENCES_PAGE,
+	INITIAL_PAGE,
 	MAESTRO_INFO_PAGE,
 	MAESTRO_PAGE,
 	SERVERS_INFO_PAGE,
@@ -492,7 +493,7 @@ on_assistant_prepare(GtkAssistant *assistant,
 
 	if (page == CANCEL_PAGE) {
 		if (!up->cancel_assistant) {
-			gtk_assistant_set_current_page(assistant, (up->prev_page > PREFERENCES_PAGE) ? --up->prev_page : PREFERENCES_PAGE);
+			gtk_assistant_set_current_page(assistant, (up->prev_page > INITIAL_PAGE) ? --up->prev_page : INITIAL_PAGE);
 			return;
 		}
 
@@ -577,9 +578,11 @@ on_assistant_prepare(GtkAssistant *assistant,
 			}
 		}
 	}
-	else if (page == PREFERENCES_PAGE) {
-		on_changed_validate_email(up->email, up);
-		g_signal_connect(up->email, "changed", G_CALLBACK(on_changed_validate_email), up);
+	else if (page == INITIAL_PAGE) {
+		if (up->insert_preferences) {
+			on_changed_validate_email(up->email, up);
+			g_signal_connect(up->email, "changed", G_CALLBACK(on_changed_validate_email), up);
+		}
 	}
 	else if (page == MAESTRO_INFO_PAGE) {
 		g_signal_connect(GTK_BUTTON(maestro_info_button), "clicked", G_CALLBACK(on_maestro_info_button_clicked), NULL);
@@ -908,6 +911,7 @@ preferences_setup_ui(gboolean first_run,
 	ui_preferences->first_run = first_run;
 	ui_preferences->cancel_assistant = FALSE;
 	ui_preferences->maestro_addr = NULL;
+	ui_preferences->insert_preferences = insert_preferences;
 
 	/* Load pages from Glade */
 	GtkBuilder *builder = gtk_builder_new();
@@ -916,6 +920,7 @@ preferences_setup_ui(gboolean first_run,
 
 	ui_preferences->builder = builder;
 
+	GtkWidget *page_intro  = GTK_WIDGET(gtk_builder_get_object(builder, "intro"));
 	GtkWidget *page_preferences = GTK_WIDGET(gtk_builder_get_object(builder, "main_preferences"));
 	GtkWidget *page_minfo = GTK_WIDGET(gtk_builder_get_object(builder, "maestro_info"));
 	GtkWidget *main_maestro = GTK_WIDGET(gtk_builder_get_object(builder, "maestro_chooser"));
@@ -943,18 +948,28 @@ preferences_setup_ui(gboolean first_run,
 		gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), page_review, GTK_ASSISTANT_PAGE_SUMMARY);
 		gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), page_review, _("Status"));
 
-		// PREFERENCES_PAGE
-		gtk_assistant_append_page(GTK_ASSISTANT(assistant), page_preferences);
-		gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), page_preferences, GTK_ASSISTANT_PAGE_INTRO);
-		gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), page_preferences, _("Preferences"));
+		if (insert_preferences) {
+			// PREFERENCES_PAGE
+			gtk_assistant_append_page(GTK_ASSISTANT(assistant), page_preferences);
+			gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), page_preferences, GTK_ASSISTANT_PAGE_INTRO);
+			gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), page_preferences, _("Preferences"));
+
+		} else {
+			// INTRO PAGE
+			gtk_assistant_append_page(GTK_ASSISTANT(assistant), page_intro);
+			gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), page_intro, TRUE);
+			gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), page_intro, GTK_ASSISTANT_PAGE_INTRO);
+			gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), page_intro, _("Welcome"));
+			GtkWidget *intro_label_version  = GTK_WIDGET(gtk_builder_get_object(builder, "intro_label_version"));
+			gchar *intro_label_version_text = g_strdup_printf(_("It's the first time you use GêBR version %s."), gebr_version());
+			gtk_label_set_markup(GTK_LABEL(intro_label_version), intro_label_version_text);
+			g_free(intro_label_version_text);
+		}
 
 		// MAESTRO_INFO_PAGE
 		gtk_assistant_append_page(GTK_ASSISTANT(assistant), page_minfo);
 		gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), page_minfo, TRUE);
-		if (insert_preferences)
-			gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), page_minfo, GTK_ASSISTANT_PAGE_CONTENT);
-		else
-			gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), page_minfo, GTK_ASSISTANT_PAGE_INTRO);
+		gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), page_minfo, GTK_ASSISTANT_PAGE_CONTENT);
 		gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), page_minfo, _("Maestro"));
 
 		// MAESTRO_PAGE
@@ -975,7 +990,7 @@ preferences_setup_ui(gboolean first_run,
 		gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), main_servers, GTK_ASSISTANT_PAGE_CONFIRM);
 		gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), main_servers, _("Servers"));
 
-		ui_preferences->prev_page = PREFERENCES_PAGE;
+		ui_preferences->prev_page = INITIAL_PAGE;
 		ui_preferences->back_button = gtk_button_new_with_mnemonic("_Back");
 		gtk_assistant_add_action_widget(GTK_ASSISTANT(assistant), ui_preferences->back_button);
 		g_signal_connect(ui_preferences->back_button, "clicked", G_CALLBACK(on_assistant_back_button), ui_preferences);
@@ -992,6 +1007,7 @@ preferences_setup_ui(gboolean first_run,
 								       "For each server, you are going to be asked for your login credentials.\n\n"
 								       "You may be asked once more for your login credentials to "
 								       "to browse the remote file system."));
+
 		GtkWidget *pwd_info_label = GTK_WIDGET(gtk_builder_get_object(ui_preferences->builder, "pwd_info_label"));
 		gtk_label_set_markup(GTK_LABEL(pwd_info_label), _("GêBR needs a <b>connection</b> to a Maestro to send jobs "
 									    "and receive outputs. For security reasons an encrypted connection "
@@ -1009,15 +1025,13 @@ preferences_setup_ui(gboolean first_run,
 		/* finally... */
 		gtk_widget_show_all(ui_preferences->dialog);
 
-		if (!insert_preferences)
-			/* Goto Maestro Info page, because first used for error */
+		if (!first_run && wizard_run && !insert_preferences) {
 			gtk_assistant_set_current_page(GTK_ASSISTANT(assistant), MAESTRO_INFO_PAGE);
-		else
-			/* Goto Preferences Page, because first used for error */
-			gtk_assistant_set_current_page(GTK_ASSISTANT(assistant), PREFERENCES_PAGE);
+			gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), main_servers, GTK_ASSISTANT_PAGE_INTRO);
+		} else {
+			gtk_assistant_set_current_page(GTK_ASSISTANT(assistant), INITIAL_PAGE);
+		}
 	}
-
-	/* Create dialog with tabs if the other run of GeBR */
 	else {
 		gtk_window_set_title(GTK_WINDOW(assistant), _("Preferences"));
 
