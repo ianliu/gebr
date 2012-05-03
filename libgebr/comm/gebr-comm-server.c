@@ -295,6 +295,8 @@ void gebr_comm_server_connect(GebrCommServer *server,
 	g_string_set_size(cmd_line, 0);
 	g_string_printf(cmd_line, "bash -c %s", cmd);
 
+	g_debug("<>------- EXECUTE COMMAND LINE == %s", cmd_line->str);
+
 	gebr_comm_terminal_process_start(process, cmd_line);
 
 	g_free(tmp);
@@ -1054,7 +1056,8 @@ gebr_comm_server_forward_local_port(GebrCommServer *server,
 
 gboolean
 gebr_comm_server_append_key(GebrCommServer *server,
-                            void * finished_callback)
+                            void * finished_callback,
+                            gpointer user_data)
 {
 	gchar *path = g_build_filename(g_get_home_dir(), ".gebr", "gebr.key.pub", NULL);
 	gchar *public_key;
@@ -1075,7 +1078,7 @@ gebr_comm_server_append_key(GebrCommServer *server,
 
 	g_signal_connect(process, "ready-read", G_CALLBACK(gebr_comm_ssh_read), server);
 	if (finished_callback)
-		g_signal_connect(process, "finished", G_CALLBACK(finished_callback), server);
+		g_signal_connect(process, "finished", G_CALLBACK(finished_callback), user_data);
 	g_signal_connect(process, "finished", G_CALLBACK(gebr_comm_ssh_finished), server);
 
 	gchar *ssh_cmd = get_ssh_command_with_key();
