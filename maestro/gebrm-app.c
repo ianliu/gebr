@@ -774,7 +774,6 @@ send_job_def_to_clients(GebrmApp *app, GebrmJob *job)
 
 	for (GList *i = app->priv->connections; i; i = i->next) {
 		GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(i->data);
-		g_debug("-----------------------%s",gebrm_job_get_nprocs(job));
 		gebr_comm_protocol_socket_oldmsg_send(socket, FALSE,
 						      gebr_comm_protocol_defs.job_def, 21,
 						      gebrm_job_get_id(job),
@@ -1749,7 +1748,8 @@ gebrm_app_new(void)
 gboolean
 gebrm_app_run(GebrmApp *app, int fd)
 {
-	GError *error = NULL;
+	GError *error_lock = NULL;
+	GError *error_version = NULL;
 
 	GebrCommSocketAddress address = gebr_comm_socket_address_ipv4_local(0);
 	app->priv->listener = gebr_comm_listen_socket_new();
@@ -1768,10 +1768,20 @@ gebrm_app_run(GebrmApp *app, int fd)
 	gchar *portstr = g_strdup_printf("%d", port);
 
 	g_file_set_contents(gebrm_app_get_lock_file(),
-			    portstr, -1, &error);
+			    portstr, -1, &error_lock);
 
-	if (error) {
-		g_critical("Could not create lock: %s", error->message);
+	gchar *version_str = g_strdup_printf("%s (%s)\n", GEBR_VERSION NANOVERSION, gebr_version());
+	g_file_set_contents(gebrm_app_get_version_file(),
+			    version_str, -1, &error_version);
+	g_free(version_str);
+
+	if (error_lock) {
+		g_critical("Could not create lock: %s", error_lock->message);
+		return FALSE;
+	}
+
+	if (error_version) {
+		g_critical("Could not create version file: %s", error_version->message);
 		return FALSE;
 	}
 
@@ -1808,6 +1818,20 @@ gebrm_app_get_lock_file(void)
 	if (!lock) {
 		gchar *dirname = get_gebrm_dir_name();
 		lock = g_build_filename(dirname, "lock", NULL);
+		g_free(dirname);
+	}
+
+	return lock;
+}
+
+const gchar *
+gebrm_app_get_version_file(void)
+{
+	static gchar *lock = NULL;
+
+	if (!lock) {
+		gchar *dirname = get_gebrm_dir_name();
+		lock = g_build_filename(dirname, "version", NULL);
 		g_free(dirname);
 	}
 

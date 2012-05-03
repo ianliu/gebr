@@ -117,6 +117,8 @@ gboolean gebrm_app_run(GebrmApp *app, int fd);
 
 const gchar *gebrm_app_get_lock_file(void);
 
+const gchar * gebrm_app_get_version_file(void);
+
 const gchar *gebrm_app_get_servers_file(void);
 
 /* }}} GebrmApp methods */
