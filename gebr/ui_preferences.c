@@ -139,7 +139,8 @@ on_assistant_close(GtkAssistant *assistant,
 {
 	gint page = gtk_assistant_get_current_page(GTK_ASSISTANT(assistant));
 	if (page == CANCEL_PAGE) {
-		if (get_wizard_status(up) == WIZARD_STATUS_COMPLETE) {
+		gboolean wizard_status = get_wizard_status(up);
+		if (wizard_status == WIZARD_STATUS_COMPLETE || wizard_status == WIZARD_STATUS_WITHOUT_GVFS) {
 			g_signal_handlers_disconnect_by_func(up->back_button, on_assistant_back_button, up);
 			gtk_assistant_remove_action_widget(assistant, up->back_button);
 			save_preferences_configuration(up);
