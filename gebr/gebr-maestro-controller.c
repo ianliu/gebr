@@ -1491,7 +1491,7 @@ on_password_request(GebrMaestroServer *maestro,
 	gchar *title = g_strdup_printf(_("Trying to connect on %s"), address);
 	gtk_window_set_title(GTK_WINDOW(dialog), title);
 
-	gchar *message = g_markup_printf_escaped(_("<b>%s</b> is asking for your login password.\nEnter it below."), address);
+	gchar *message = g_markup_printf_escaped(_("<b>%s</b> is asking for your login password."), address);
 	GtkWidget *label = gtk_label_new(NULL);
 	gtk_label_set_markup(GTK_LABEL(label), message);
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), label, FALSE, TRUE, 5);
