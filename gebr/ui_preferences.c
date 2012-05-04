@@ -58,7 +58,7 @@ typedef enum {
 	WIZARD_STATUS_COMPLETE
 } WizardStatus;
 
-#define DEFAULT_SERVERS_ENTRY_TEXT _("serversample")
+#define DEFAULT_SERVERS_ENTRY_TEXT _("Type hostname[.domain]")
 
 /*
  * Prototypes
@@ -708,8 +708,7 @@ on_assistant_prepare(GtkAssistant *assistant,
 
 			g_signal_connect(maestro, "daemons-changed", G_CALLBACK(on_daemons_changed), up);
 
-			gchar *main_servers_text = g_markup_printf_escaped(_("Now you need to add Servers to be handled by your Maestro <b>%s</b>.\n\n"
-									     "For each server, you are going to be asked for your login credentials."),
+			gchar *main_servers_text = g_markup_printf_escaped(_("Maestro <b>%s</b> needs to connect <b>servers</b> to run processing flows.\n"),
 									   gebr_maestro_server_get_address(maestro));
 
 			gtk_label_set_markup(GTK_LABEL(main_servers_label), main_servers_text);
@@ -1045,7 +1044,7 @@ preferences_setup_ui(gboolean first_run,
 			gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), page_intro, GTK_ASSISTANT_PAGE_INTRO);
 			gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), page_intro, _("Welcome"));
 			GtkWidget *intro_label_version  = GTK_WIDGET(gtk_builder_get_object(builder, "intro_label_version"));
-			gchar *intro_label_version_text = g_strdup_printf(_("It's the first time you use GêBR version %s."), gebr_version());
+			gchar *intro_label_version_text = g_strdup_printf(_("It's the first time you use GêBR"));
 			gtk_label_set_markup(GTK_LABEL(intro_label_version), intro_label_version_text);
 			g_free(intro_label_version_text);
 		}
