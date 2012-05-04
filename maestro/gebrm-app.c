@@ -1815,6 +1815,9 @@ gebrm_app_run(GebrmApp *app, int fd)
 
 	g_free(port_str);
 
+	//Generate gebr.key
+	gebr_generate_key();
+
 	const gchar *path = gebrm_app_get_servers_file();
 	gebrm_config_load_servers(app, path);
 

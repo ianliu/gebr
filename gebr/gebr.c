@@ -353,6 +353,9 @@ restore_project_line_flow_selection(void)
 static void
 gebr_post_config(gboolean has_config)
 {
+	// Generate gebr.key
+	gebr_generate_key();
+
 	gebr_log_load();
 	g_object_set(gebr.maestro_controller, "window", gebr.window, NULL);
 	gebr_message(GEBR_LOG_START, TRUE, TRUE, _("Initiating GêBR..."));
