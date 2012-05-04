@@ -1726,7 +1726,7 @@ gebr_maestro_server_get_user(GebrMaestroServer *maestro)
 		gchar *user = g_strndup(addr, n);
 		return user;
 	}
-	return g_strdup("");
+	return g_strdup(g_get_user_name());
 }
 
 void
