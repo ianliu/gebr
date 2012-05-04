@@ -244,7 +244,7 @@ Your login password may be asked to stablish the connection.</property>
     <child>
       <object class="GtkLabel" id="main_servers_label">
         <property name="visible">True</property>
-        <property name="label">Maestro &lt;b&gt;XXX&lt;/b&gt; needs to connect &lt;b&gt;servers&lt;/b&gt; to run processing flows.</property>
+        <property name="label">Maestro &lt;b&gt;XXX&lt;/b&gt; needs connected &lt;b&gt;servers&lt;/b&gt; to run processing flows.</property>
         <property name="use_markup">True</property>
         <property name="wrap">True</property>
         <property name="width_chars">50</property>
@@ -256,53 +256,14 @@ Your login password may be asked to stablish the connection.</property>
       </packing>
     </child>
     <child>
-      <object class="GtkVBox" id="vbox2">
+      <object class="GtkLabel" id="label13">
         <property name="visible">True</property>
-        <child>
-          <object class="GtkLabel" id="label12">
-            <property name="visible">True</property>
-            <property name="label" translatable="yes">In case you already have registered servers, you can choose either to</property>
-            <property name="wrap">True</property>
-          </object>
-          <packing>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkButton" id="server_all">
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <property name="yalign">0</property>
-            <child>
-              <object class="GtkLabel" id="label11">
-                <property name="visible">True</property>
-                <property name="xalign">0</property>
-                <property name="yalign">0</property>
-                <property name="label" translatable="yes">Connect All</property>
-              </object>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">False</property>
-            <property name="position">1</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkLabel" id="label13">
-            <property name="visible">True</property>
-            <property name="label" translatable="yes">of them or to add a new one.
-
-To establish each connection, your login credentials may be asked.</property>
-            <property name="wrap">True</property>
-          </object>
-          <packing>
-            <property name="position">3</property>
-          </packing>
-        </child>
+        <property name="label" translatable="yes">To establish each connection, your login credentials may be asked.</property>
+        <property name="wrap">True</property>
       </object>
       <packing>
+        <property name="expand">False</property>
+        <property name="fill">False</property>
         <property name="position">1</property>
       </packing>
     </child>
@@ -354,6 +315,43 @@ To establish each connection, your login credentials may be asked.</property>
         </child>
       </object>
       <packing>
+        <property name="position">3</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkHBox" id="hbox8">
+        <property name="visible">True</property>
+        <property name="border_width">2</property>
+        <child>
+          <object class="GtkLabel" id="label16">
+            <property name="visible">True</property>
+          </object>
+          <packing>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="server_all">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <child>
+              <object class="GtkLabel" id="label11">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">Connect All</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">False</property>
         <property name="position">4</property>
       </packing>
     </child>
@@ -361,7 +359,7 @@ To establish each connection, your login credentials may be asked.</property>
       <object class="GtkLabel" id="servers_label">
         <property name="visible">True</property>
         <property name="sensitive">False</property>
-        <property name="label" translatable="yes">You need servers. At least one need to be connected.</property>
+        <property name="label" translatable="yes">At least one server needs to be connected.</property>
         <property name="use_markup">True</property>
       </object>
       <packing>
@@ -766,7 +764,7 @@ without soldiers."&lt;/i&gt;</property>
                 <property name="xalign">0</property>
                 <property name="yalign">0</property>
                 <property name="ypad">10</property>
-                <property name="label">Welcome to G&#xEA;BR</property>
+                <property name="label">It's the first time you use G&#xEA;BR.</property>
                 <property name="use_markup">True</property>
                 <property name="wrap">True</property>
               </object>

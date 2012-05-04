@@ -260,10 +260,12 @@ on_daemons_changed(GebrMaestroServer *maestro,
 	GtkWidget *main_servers = GTK_WIDGET(gtk_builder_get_object(up->builder, "main_servers"));
 	GtkWidget *servers_label = GTK_WIDGET(gtk_builder_get_object(up->builder, "servers_label"));
 	GtkWidget *servers_view = GTK_WIDGET(gtk_builder_get_object(up->builder, "servers_view"));
+	GtkWidget *connect_all = GTK_WIDGET(gtk_builder_get_object(up->builder, "hbox8"));
 
 	if (maestro_has_servers) {
 		gtk_widget_hide(servers_label);
 		gtk_widget_show(servers_view);
+		gtk_widget_show(connect_all);
 
 		if (has_connected_servers)
 			gtk_assistant_set_page_complete(GTK_ASSISTANT(up->dialog), main_servers, TRUE);
@@ -273,6 +275,7 @@ on_daemons_changed(GebrMaestroServer *maestro,
 	} else {
 		gtk_widget_show(servers_label);
 		gtk_widget_hide(servers_view);
+		gtk_widget_hide(connect_all);
 		gtk_assistant_set_page_complete(GTK_ASSISTANT(up->dialog), main_servers, FALSE);
 	}
 }
@@ -704,11 +707,12 @@ on_assistant_prepare(GtkAssistant *assistant,
 
 			GtkWidget *servers_label = GTK_WIDGET(gtk_builder_get_object(up->builder, "servers_label"));
 			GtkWidget *main_servers_label = GTK_WIDGET(gtk_builder_get_object(up->builder, "main_servers_label"));
+			GtkWidget *connect_all = GTK_WIDGET(gtk_builder_get_object(up->builder, "hbox8"));
 			GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
 
 			g_signal_connect(maestro, "daemons-changed", G_CALLBACK(on_daemons_changed), up);
 
-			gchar *main_servers_text = g_markup_printf_escaped(_("Maestro <b>%s</b> needs to connect <b>servers</b> to run processing flows.\n"),
+			gchar *main_servers_text = g_markup_printf_escaped(_("Maestro <b>%s</b> needs connected <b>servers</b> to run processing flows.\n"),
 									   gebr_maestro_server_get_address(maestro));
 
 			gtk_label_set_markup(GTK_LABEL(main_servers_label), main_servers_text);
@@ -727,6 +731,7 @@ on_assistant_prepare(GtkAssistant *assistant,
 			if (!gtk_tree_model_get_iter_first(store, &it)) {
 				gtk_widget_hide(GTK_WIDGET(view));
 				gtk_widget_show(servers_label);
+				gtk_widget_hide(connect_all);
 				gchar **split = g_strsplit(gebr_maestro_server_get_address(maestro), "@", -1);
 				if (split[1])
 					gtk_entry_set_text(GTK_ENTRY(up->server_entry), split[1]);
@@ -736,6 +741,7 @@ on_assistant_prepare(GtkAssistant *assistant,
 			} else {
 				gtk_widget_show(GTK_WIDGET(view));
 				gtk_widget_hide(servers_label);
+				gtk_widget_show(connect_all);
 			}
 
 			WizardStatus wizard_status = get_wizard_status(up);
@@ -1044,7 +1050,7 @@ preferences_setup_ui(gboolean first_run,
 			gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), page_intro, GTK_ASSISTANT_PAGE_INTRO);
 			gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), page_intro, _("Welcome"));
 			GtkWidget *intro_label_version  = GTK_WIDGET(gtk_builder_get_object(builder, "intro_label_version"));
-			gchar *intro_label_version_text = g_strdup_printf(_("It's the first time you use GêBR"));
+			gchar *intro_label_version_text = g_strdup_printf(_("It's the first time you use GêBR %s."), gebr_version());
 			gtk_label_set_markup(GTK_LABEL(intro_label_version), intro_label_version_text);
 			g_free(intro_label_version_text);
 		}
