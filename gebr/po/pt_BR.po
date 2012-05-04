@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-05-04 18:45-0300\n"
+"POT-Creation-Date: 2012-05-04 19:25-0300\n"
 "PO-Revision-Date: 2012-04-13 16:47-0300\n"
 "Last-Translator: Rodrigo Morelatto <morelatto@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
@@ -566,7 +566,7 @@ msgstr "Apagando  Fluxo '%s' da Linha '%s'."
 msgid "Flow '%s' imported into Line '%s' from the file '%s'."
 msgstr "Fluxo '%s' importado para a linha '%s' a partir do arquivo '%s'."
 
-#: ../flow.c:201 ../ui_project_line.c:869
+#: ../flow.c:201 ../ui_project_line.c:876
 #, c-format
 msgid "%s (Imported)"
 msgstr "%s (Importado)"
@@ -579,7 +579,7 @@ msgstr "Escolha um Fluxo para importar"
 msgid "Flow file types (*.flw, *.flwz, *.flwx)"
 msgstr "Tipos de Arquivos de Fluxo (*.flw, *flwz)"
 
-#: ../flow.c:245 ../flow.c:251 ../ui_project_line.c:880
+#: ../flow.c:245 ../flow.c:251 ../ui_project_line.c:887
 #, c-format
 msgid "Could not import Flow from the file %s"
 msgstr "Não foi possível importar o Fluxo do arquivo %s"
@@ -704,7 +704,7 @@ msgstr "Log de erro"
 
 #. Comment for translators:
 #. "By" as in "By John McClane"
-#: ../flow.c:1138 ../ui_project_line.c:1954
+#: ../flow.c:1138 ../ui_project_line.c:1961
 msgid "By"
 msgstr "Por"
 
@@ -832,12 +832,12 @@ msgid "Overwrite existing log file"
 msgstr "Sobrescrever arquivo de log pré existente"
 
 #: ../gebr-flow-edition.c:1424 ../gebr-flow-edition.c:1439
-#: ../ui_project_line.c:1735 ../ui_project_line.c:1770
+#: ../ui_project_line.c:1742 ../ui_project_line.c:1777
 msgid "Collapse all"
 msgstr "Contrair todos"
 
 #: ../gebr-flow-edition.c:1427 ../gebr-flow-edition.c:1442
-#: ../ui_project_line.c:1739 ../ui_project_line.c:1774
+#: ../ui_project_line.c:1746 ../ui_project_line.c:1781
 msgid "Expand all"
 msgstr "Expandir todos"
 
@@ -988,8 +988,8 @@ msgid "<b>Input file</b>: %s"
 msgstr "<b>Arquivo de entrada</b>: %s"
 
 #: ../gebr-job-control.c:1283 ../gebr-job-control.c:1294
-#: ../gebr-job-control.c:1305 ../ui_help.c:446 ../ui_project_line.c:497
-#: ../ui_project_line.c:499 ../ui_project_line.c:501
+#: ../gebr-job-control.c:1305 ../ui_help.c:446 ../ui_project_line.c:504
+#: ../ui_project_line.c:506 ../ui_project_line.c:508
 msgid "None"
 msgstr "Nenhum"
 
@@ -1037,7 +1037,7 @@ msgid "Jobs filtered by:"
 msgstr "Tarefas filtradas por:"
 
 #. run file chooser
-#: ../gebr-job-control.c:2110 ../ui_project_line.c:1210
+#: ../gebr-job-control.c:2110 ../ui_project_line.c:1217
 msgid "Choose filename to save"
 msgstr "Escolha o nome do arquivo para salvar"
 
@@ -2412,7 +2412,7 @@ msgstr "Índice"
 #: ../ui_project_line.c:267
 #, c-format
 msgid "Move this line to maestro <b>%s</b>"
-msgstr "Mover esta linha ao Maestro <b>%s</b>!"
+msgstr "Mover esta linha ao Maestro <b>%s</b>."
 
 #: ../ui_project_line.c:272
 #, c-format
@@ -2424,86 +2424,88 @@ msgstr "Conectar ao Maestro..."
 msgid "Connect to maestro <b>%s</b>"
 msgstr "Conecte-se ao Maestro <b>%s</b>"
 
-#: ../ui_project_line.c:340
-msgid "Change of Maestro"
-msgstr "Mudança de Maestro"
+#: ../ui_project_line.c:347
+msgid "Moving this line to current Maestro."
+msgstr "Mover esta linha ao Maestro atual."
 
-#: ../ui_project_line.c:341
+#: ../ui_project_line.c:348
+#, c-format
 msgid ""
-"Are you sure you want to change the maestro of this Line?\n"
+"Are you sure you want to move this Line to Maestro %s?\n"
 "\n"
-"If you choose to change the maestro of this Line, be sure to correct the "
+"If you choose to move this Line to current Maestro, be sure to correct the "
 "paths of this Line and its respective Flows that can be broken."
 msgstr ""
-"Tem certeza de que deseja alterar o maestro desta linha?\n"
+"Tem certeza de que deseja mover esta linha ao Maestro %s?\n"
 "\n"
-"Se você optar por mudar o maestro desta linha, certifique-se de corrigir os "
-"caminhos desta linha e seus respectivos fluxos que podem ser quebrados."
+"Se você optar por mover esta linha ao Maestro atual, certifique-se de "
+"corrigir os caminhos desta linha e seus respectivos fluxos que podem ser "
+"quebrados."
 
-#: ../ui_project_line.c:422
+#: ../ui_project_line.c:429
 msgid "This Line has no Flows."
 msgstr "Esta Linha não tem Fluxos."
 
-#: ../ui_project_line.c:424
+#: ../ui_project_line.c:431
 msgid "This Line has one Flow."
 msgstr "Esta Linha tem um Fluxo."
 
-#: ../ui_project_line.c:426
+#: ../ui_project_line.c:433
 #, c-format
 msgid "This Line has %d Flows."
 msgstr "Esta Linha tem %d Fluxos."
 
-#: ../ui_project_line.c:440
+#: ../ui_project_line.c:447
 #, c-format
 msgid "On maestro <b>%s</b>"
 msgstr "No Maestro <b>%s</b>"
 
-#: ../ui_project_line.c:460 ../ui_project_line.c:474
+#: ../ui_project_line.c:467 ../ui_project_line.c:481
 msgid "Click here to connect or change maestro for this line"
 msgstr "Clique aqui para conectar ou mudar o maestro para esta linha"
 
-#: ../ui_project_line.c:559
+#: ../ui_project_line.c:566
 msgid "This Project has no Line."
 msgstr "Este Projeto não tem Linhas"
 
-#: ../ui_project_line.c:561
+#: ../ui_project_line.c:568
 msgid "This Project has one Line."
 msgstr "Este Projeto tem uma Linha."
 
-#: ../ui_project_line.c:563
+#: ../ui_project_line.c:570
 #, c-format
 msgid "This Project has %d Lines."
 msgstr "Este Projeto tem %d Linhas"
 
-#: ../ui_project_line.c:606
+#: ../ui_project_line.c:613
 msgid "Please select a Line."
 msgstr "Por favor, selecione uma Linha."
 
-#: ../ui_project_line.c:607
+#: ../ui_project_line.c:614
 msgid "Please select a Project."
 msgstr "Por favor, selecione um Projeto."
 
-#: ../ui_project_line.c:623
+#: ../ui_project_line.c:630
 msgid "Please select a Project or a Line."
 msgstr "Por favor, selecione um Projeto ou Linha."
 
-#: ../ui_project_line.c:670
+#: ../ui_project_line.c:677
 msgid "Unrecognized file type."
 msgstr "Tipo de arquivo desconhecido."
 
-#: ../ui_project_line.c:890
+#: ../ui_project_line.c:897
 msgid "Import successful."
 msgstr "Importação bem-sucedida."
 
-#: ../ui_project_line.c:896
+#: ../ui_project_line.c:903
 msgid "Failed to import."
 msgstr "Falha ao importar."
 
-#: ../ui_project_line.c:947
+#: ../ui_project_line.c:954
 msgid "<span size='large' weight='bold'>Create directories?</span>"
 msgstr "<span size='large' weight='bold'>Criar diretórios?</span>"
 
-#: ../ui_project_line.c:948
+#: ../ui_project_line.c:955
 msgid ""
 "There are some Line's paths located on your home directory that\n"
 " do not exist. Do you want to create the following folders?"
@@ -2511,11 +2513,11 @@ msgstr ""
 "Existem caminhos preferenciais a serem criados no seu diretório pessoal.\n"
 "Gostaria de criar as seguintes pastas?"
 
-#: ../ui_project_line.c:984
+#: ../ui_project_line.c:991
 msgid "Could not create the directories"
 msgstr "Não foi possível criar o diretório."
 
-#: ../ui_project_line.c:988
+#: ../ui_project_line.c:995
 #, c-format
 msgid ""
 "The directories could not be created. You do not have the permissions "
@@ -2524,66 +2526,66 @@ msgstr ""
 "Os diretórios não puderam ser criados. Você não tem as permissões "
 "necessárias para criar os diretórios."
 
-#: ../ui_project_line.c:991
+#: ../ui_project_line.c:998
 #, c-format
 msgid "The directories already exists."
 msgstr "Os diretórios já existem."
 
-#: ../ui_project_line.c:1069
+#: ../ui_project_line.c:1076
 msgid ""
 "<span size='large' weight='bold'>Importing documents, please wait...</span>"
 msgstr ""
 "<span size='large' weight='bold'>Importando documentos, aguarde por favor..."
 "</span>"
 
-#: ../ui_project_line.c:1097
+#: ../ui_project_line.c:1104
 msgid "Choose a Project or Line to open"
 msgstr "Escolha o Projeto ou Linha para abrir"
 
-#: ../ui_project_line.c:1109
+#: ../ui_project_line.c:1116
 msgid "Project (prjz, prjx) or Line (lnez, lnex)"
 msgstr "Projeto (prjz, prjx) ou Linha (lnez, lnex)"
 
-#: ../ui_project_line.c:1148
+#: ../ui_project_line.c:1155
 msgid "Please select a Project or Line."
 msgstr "Por favor, selecione um Projeto ou Linha."
 
-#: ../ui_project_line.c:1195
+#: ../ui_project_line.c:1202
 msgid "Project (prjz, prjx)"
 msgstr "Projeto (prjz, prjx)"
 
-#: ../ui_project_line.c:1200
+#: ../ui_project_line.c:1207
 msgid "Line (lnez, lnex)"
 msgstr "Linha (lnez, lnex)"
 
-#: ../ui_project_line.c:1313
+#: ../ui_project_line.c:1320
 msgid "Export succesful."
 msgstr "Exportação bem-sucedida."
 
-#: ../ui_project_line.c:1315
+#: ../ui_project_line.c:1322
 msgid "Could not export."
 msgstr "Impossível exportar."
 
-#: ../ui_project_line.c:1384
+#: ../ui_project_line.c:1391
 #, c-format
 msgid "Project '%s'.\n"
 msgstr "Projeto '%s'.\n"
 
-#: ../ui_project_line.c:1387
+#: ../ui_project_line.c:1394
 msgid "empty"
 msgstr "vazio"
 
-#: ../ui_project_line.c:1392
+#: ../ui_project_line.c:1399
 #, c-format
 msgid "including %ld Flow(s)"
 msgstr "incluindo %ld Fluxo(s)"
 
-#: ../ui_project_line.c:1401
+#: ../ui_project_line.c:1408
 #, c-format
 msgid "Line '%s' (%s).\n"
 msgstr "Linha '%s' (%s).\n"
 
-#: ../ui_project_line.c:1415
+#: ../ui_project_line.c:1422
 msgid ""
 "The following documents are about to be deleted.\n"
 "This operation can't be undone! Are you sure?\n"
@@ -2591,11 +2593,11 @@ msgstr ""
 "Os seguintes documentos serão apagados.\n"
 "Essa operação não pode ser desfeita! Confirma mesmo assim?\n"
 
-#: ../ui_project_line.c:1417 ../ui_project_line.c:1424
+#: ../ui_project_line.c:1424 ../ui_project_line.c:1431
 msgid "Confirm multiple deletion"
 msgstr "Confirme remoção multipla"
 
-#: ../ui_project_line.c:1457
+#: ../ui_project_line.c:1464
 msgid ""
 "The following document is about to be deleted.\n"
 "This operation can't be undone! Are you sure?\n"
@@ -2603,20 +2605,20 @@ msgstr ""
 "O segunte documento será apagado.\n"
 "Essa operação não pode ser desfeita! Confirma mesmo assim?\n"
 
-#: ../ui_project_line.c:1459 ../ui_project_line.c:1461
+#: ../ui_project_line.c:1466 ../ui_project_line.c:1468
 msgid "Confirm deletion"
 msgstr "Confirme remoção"
 
-#: ../ui_project_line.c:1956
+#: ../ui_project_line.c:1963
 msgid "at"
 msgstr "em"
 
-#: ../ui_project_line.c:1965
+#: ../ui_project_line.c:1972
 msgid "Line composed by the Flow(s):"
 msgstr "Linha composta pelo(s) Fluxo(s):"
 
 #. Comment for translators: HTML header for detailed report
-#: ../ui_project_line.c:2000
+#: ../ui_project_line.c:2007
 msgid "Line paths:"
 msgstr "Caminhos da linha:"
 
