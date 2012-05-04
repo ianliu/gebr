@@ -574,18 +574,7 @@ on_assistant_prepare(GtkAssistant *assistant,
 		}
 
 		up->cancel_assistant = FALSE;
-		//GtkWidget *page_review = GTK_WIDGET(gtk_builder_get_object(up->builder, "review"));
-		GtkLabel *maestro_label = GTK_LABEL(gtk_builder_get_object(up->builder, "review_maestro_label"));
 		GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
-
-		if (maestro && gebr_maestro_server_get_state(maestro) == SERVER_STATE_LOGGED
-		    && !g_strcmp0(up->maestro_addr, gebr_maestro_server_get_address(maestro))) {
-			gchar *maestro_text = g_markup_printf_escaped("%s", up->maestro_addr);
-			gtk_label_set_markup(maestro_label, maestro_text);
-			g_free(maestro_text);
-		} else {
-			gtk_label_set_markup(maestro_label, "<i>Not connected</i>");
-		}
 
 		gtk_widget_show(up->back_button);
 
@@ -606,28 +595,25 @@ on_assistant_prepare(GtkAssistant *assistant,
 			GtkTreeModel *model_servers = gebr_maestro_server_get_model(maestro, FALSE, NULL);
 			gboolean active = gtk_tree_model_get_iter_first(model_servers, &iter);
 			gint counter = 0;
-			GString *servers = g_string_new("");
 
 			while (active) {
 				GebrDaemonServer *daemon;
 				gtk_tree_model_get(model_servers, &iter, 0, &daemon, -1);
-				g_string_append(servers, ", ");
-				if (counter >= 2) {
-					g_string_append(servers, "...");
-					break;
-				}
-				else {
-					g_string_append(servers, gebr_daemon_server_get_address(daemon));
+				if (gebr_daemon_server_get_state(daemon) == SERVER_STATE_LOGGED)
 					counter++;
-				}
 				active = gtk_tree_model_iter_next(model_servers, &iter);
 			}
-			if (servers->len)
-				g_string_erase(servers, 0, 2);
 
-			gtk_label_set_text(review_servers_label, servers->str);
-			gtk_label_set_text(review_maestro_label, gebr_maestro_server_get_address(maestro));
-			g_string_free(servers, TRUE);
+			if (counter > 0) {
+				gchar *num_servers;
+				num_servers = g_markup_printf_escaped("<i><b>%d</b> connected.</i>", counter);
+				gtk_label_set_markup(review_servers_label, num_servers);
+				g_free(num_servers);
+			} else {
+				gtk_label_set_markup(review_servers_label, "<i>None connected.</i>");
+			}
+
+			gtk_label_set_markup(review_maestro_label, "<i>Connected.</i>");
 
 			gtk_label_set_markup(review_orientations_label, _("GêBR is ready."));
 			gtk_label_set_markup(review_pref_label, "<i>Done.</i>");
@@ -636,10 +622,10 @@ on_assistant_prepare(GtkAssistant *assistant,
 			gtk_image_set_from_stock(GTK_IMAGE(review_servers_img), GTK_STOCK_YES, GTK_ICON_SIZE_MENU);
 			gtk_image_set_from_stock(GTK_IMAGE(review_img), GTK_STOCK_YES, GTK_ICON_SIZE_DIALOG);
 			if (wizard_status == WIZARD_STATUS_WITHOUT_GVFS) {
-				gtk_label_set_markup(review_gvfs_label, "<i>Not connected.</i>");
+				gtk_label_set_markup(review_gvfs_label, "<i>Disabled.</i>");
 				gtk_image_set_from_stock(GTK_IMAGE(review_gvfs_img), GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_MENU);
 			} else {
-				gtk_label_set_markup(review_gvfs_label, "<i>Connected.</i>");
+				gtk_label_set_markup(review_gvfs_label, "<i>Enabled.</i>");
 				gtk_image_set_from_stock(GTK_IMAGE(review_gvfs_img), GTK_STOCK_YES, GTK_ICON_SIZE_MENU);
 			}
 		} else {
@@ -653,9 +639,9 @@ on_assistant_prepare(GtkAssistant *assistant,
 			} else if (wizard_status == WIZARD_STATUS_WITHOUT_DAEMON){
 				gtk_label_set_markup(review_pref_label, "<i>Done.</i>");
 				gtk_image_set_from_stock(GTK_IMAGE(review_pref_img), GTK_STOCK_YES, GTK_ICON_SIZE_MENU);
-				gtk_label_set_markup(review_maestro_label, gebr_maestro_server_get_address(maestro));
+				gtk_label_set_markup(review_maestro_label, "<i>Connected.</i>");
 				gtk_image_set_from_stock(GTK_IMAGE(review_maestro_img), GTK_STOCK_YES, GTK_ICON_SIZE_MENU);
-				gtk_label_set_markup(review_servers_label, "<i>None</i>");
+				gtk_label_set_markup(review_servers_label, "<i>None connected.</i>");
 				gtk_image_set_from_stock(GTK_IMAGE(review_servers_img), GTK_STOCK_STOP, GTK_ICON_SIZE_MENU);
 			} else if (wizard_status == WIZARD_STATUS_WITHOUT_PREFERENCES){
 				gtk_label_set_markup(review_pref_label, "<i>Not configured</i>");
