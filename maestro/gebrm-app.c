@@ -49,6 +49,8 @@ struct _GebrmAppPriv {
 	gchar *nfsid;
 	gchar *home;
 
+	gboolean connect_all;
+
 	GQueue *job_def_queue;
 	GQueue *job_run_queue;
 	GQueue *xauth_queue;
@@ -333,6 +335,44 @@ gebrm_app_job_controller_on_status_change(GebrmJob *job,
 }
 
 static void
+verify_connect_all(GebrmApp *app)
+{
+	for (GList *i = app->priv->daemons; i; i = i->next) {
+		GebrmDaemon *daemon = i->data;
+		if (gebrm_daemon_get_state(daemon) != SERVER_STATE_LOGGED &&
+		    !gebrm_daemon_get_canceled(daemon))
+			return;
+	}
+	app->priv->connect_all = FALSE;
+	return;
+}
+
+static void
+gebrm_app_continue_connections_of_daemons(GebrmApp *app,
+                                          gboolean from_append_key)
+{
+	for(GList *i = app->priv->daemons; i; i = i->next) {
+		GebrmDaemon *d = i->data;
+
+		if (!from_append_key) {
+			GebrCommServer *server = gebrm_daemon_get_server(d);
+			if (gebr_comm_server_get_use_public_key(server))
+				return;
+		}
+
+		if (gebrm_daemon_get_state(d) != SERVER_STATE_LOGGED && !g_strcmp0(gebrm_daemon_get_autoconnect(d), "on")
+		    && !gebrm_daemon_get_canceled(d)) {
+			for (GList *j = app->priv->connections; j; j = j->next) {
+				GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(j->data);
+				gebrm_daemon_connect(d, NULL, socket);
+			}
+			if (!from_append_key)
+				return;
+		}
+	}
+}
+
+static void
 gebrm_app_daemon_on_state_change(GebrmDaemon *daemon,
 				 GebrCommServerState state,
 				 GebrmApp *app)
@@ -348,26 +388,18 @@ gebrm_app_daemon_on_state_change(GebrmDaemon *daemon,
 				g_free(xauth);
 			}
 		}
+		if (gebrm_daemon_get_canceled(daemon)) {
+			if (app->priv->connect_all) {
+				gebrm_app_continue_connections_of_daemons(app, FALSE);
+				verify_connect_all(app);
+			}
+		}
 	}
 	else if (state == SERVER_STATE_LOGGED) {
-		for(GList *i = app->priv->daemons; i; i = i->next) {
-			GebrmDaemon *d = i->data;
-
-			GebrCommServer *server = gebrm_daemon_get_server(d);
-			if (gebr_comm_server_get_use_public_key(server))
-				break;
-
-			if (!gebrm_daemon_get_waiting_reconnection(d))
-				continue;
-
-			if (gebrm_daemon_get_state(d) != SERVER_STATE_LOGGED && !g_strcmp0(gebrm_daemon_get_autoconnect(d), "on")) {
-				for (GList *j = app->priv->connections; j; j = j->next) {
-					GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(j->data);
-					gebrm_daemon_connect(d, NULL, socket);
-				}
-				gebrm_daemon_set_waiting_reconnection(d, FALSE);
-				break;
-			}
+		gebrm_daemon_set_canceled(daemon, FALSE);
+		if (app->priv->connect_all) {
+			gebrm_app_continue_connections_of_daemons(app, FALSE);
+			verify_connect_all(app);
 		}
 	}
 	g_debug("On %s, daemon:%s", __func__, gebrm_daemon_get_address(daemon));
@@ -442,6 +474,8 @@ gebrm_app_init(GebrmApp *app)
 	app->priv->job_def_queue = g_queue_new();
 	app->priv->job_run_queue = g_queue_new();
 	app->priv->xauth_queue = g_queue_new();
+
+	app->priv->connect_all = FALSE;
 
 	g_timeout_add(1000, process_xauth_queue, app);
 }
@@ -589,20 +623,8 @@ static void
 on_daemon_append_key(GebrmDaemon *daemon,
                      GebrmApp *app)
 {
-	for(GList *i = app->priv->daemons; i; i = i->next) {
-		GebrmDaemon *d = i->data;
-
-		if (!gebrm_daemon_get_waiting_reconnection(d))
-			continue;
-
-		if (gebrm_daemon_get_state(d) != SERVER_STATE_LOGGED && !g_strcmp0(gebrm_daemon_get_autoconnect(d), "on")) {
-			for (GList *j = app->priv->connections; j; j = j->next) {
-				GebrCommProtocolSocket *socket = gebrm_client_get_protocol_socket(j->data);
-				gebrm_daemon_connect(d, NULL, socket);
-			}
-			gebrm_daemon_set_waiting_reconnection(d, FALSE);
-		}
-	}
+	if (app->priv->connect_all)
+		gebrm_app_continue_connections_of_daemons(app, TRUE);
 }
 
 static GebrmDaemon *
@@ -1024,27 +1046,28 @@ on_client_request(GebrCommProtocolSocket *socket,
 			GebrCommServer *server = gebrm_daemon_get_server(d);
 			gebr_comm_server_set_use_public_key(server, use_key);
 
-			if (pass)
+			if (pass) {
 				gebrm_daemon_connect(d, pass, socket);
-			else
+			} else {
+				gebrm_daemon_set_canceled(d, TRUE);
 				gebrm_daemon_disconnect(d);
+			}
 			gebrm_config_save_server(d);
 		}
 		else if (g_strcmp0(prefix, "/connect-daemons") == 0) {
 			gboolean has_daemons = FALSE;
+			gboolean connect_daemon = FALSE;
+			app->priv->connect_all = TRUE;
 			for (GList *i = app->priv->daemons; i; i = i->next) {
 				has_daemons = TRUE;
-				GebrmDaemon *first_daemon = i->data;
-				gboolean waiting_reconnection = gebrm_daemon_get_waiting_reconnection(first_daemon);
+				GebrmDaemon *daemon = i->data;
 
-				if (!waiting_reconnection)
-					continue;
+				gebrm_daemon_set_canceled(daemon, FALSE);
 
-				if (gebrm_daemon_get_state(first_daemon) != SERVER_STATE_LOGGED &&
-				    g_strcmp0(gebrm_daemon_get_autoconnect(first_daemon), "on") == 0) {
-					gebrm_daemon_connect(first_daemon, NULL, socket);
-					gebrm_daemon_set_waiting_reconnection(first_daemon, FALSE);
-					break;
+				if (!connect_daemon && gebrm_daemon_get_state(daemon) != SERVER_STATE_LOGGED &&
+				    g_strcmp0(gebrm_daemon_get_autoconnect(daemon), "on") == 0) {
+					gebrm_daemon_connect(daemon, NULL, socket);
+					connect_daemon = TRUE;
 				}
 			}
 			if (!has_daemons) {
@@ -1594,7 +1617,6 @@ gebrm_config_load_servers(GebrmApp *app, const gchar *path)
 				const gchar *ac = g_key_file_get_string(servers, groups[i], "autoconnect", NULL);
 				GebrmDaemon *daemon = gebrm_add_server_to_list(app, groups[i], NULL, tags);
 				gebrm_daemon_set_autoconnect(daemon, ac);
-				gebrm_daemon_set_waiting_reconnection(daemon, TRUE);
 			}
 		}
 		g_key_file_free (servers);

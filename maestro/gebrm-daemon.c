@@ -30,6 +30,7 @@
 struct _GebrmDaemonPriv {
 	gboolean is_initialized;
 	gboolean is_disconnecting;
+	gboolean is_canceled;
 
 	GHashTable *tasks;
 
@@ -37,7 +38,6 @@ struct _GebrmDaemonPriv {
 	GebrCommServer *server;
 	GebrCommProtocolSocket *client;
 	gchar *ac;
-	gboolean waiting_reconnection;
 
 	gchar *nfsid;
 	gchar *id;
@@ -701,7 +701,6 @@ gebrm_daemon_init(GebrmDaemon *daemon)
 	daemon->priv->is_initialized = FALSE;
 	daemon->priv->tasks = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
 	daemon->priv->mpi_flavors = NULL;
-	daemon->priv->waiting_reconnection = FALSE;
 }
 
 GebrmDaemon *
@@ -769,19 +768,6 @@ gebrm_daemon_get_tags(GebrmDaemon *daemon)
 		g_string_erase(buf, buf->len - 1, 1);
 
 	return g_string_free(buf, FALSE);
-}
-
-gboolean
-gebrm_daemon_get_waiting_reconnection(GebrmDaemon *daemon)
-{
-	return daemon->priv->waiting_reconnection;
-}
-
-void
-gebrm_daemon_set_waiting_reconnection(GebrmDaemon *daemon,
-                                      gboolean is_waiting_reconnection)
-{
-	daemon->priv->waiting_reconnection = is_waiting_reconnection;
 }
 
 gboolean
@@ -1110,4 +1096,17 @@ gebm_daemon_append_key_finished(GebrCommTerminalProcess *proc,
 {
 	GebrmDaemon *daemon = user_data;
 	g_signal_emit(daemon, signals[APPEND_KEY], 0);
+}
+
+void
+gebrm_daemon_set_canceled(GebrmDaemon *daemon,
+                          gboolean is_canceled)
+{
+	daemon->priv->is_canceled = is_canceled;
+}
+
+gboolean
+gebrm_daemon_get_canceled(GebrmDaemon *daemon)
+{
+	return daemon->priv->is_canceled;
 }

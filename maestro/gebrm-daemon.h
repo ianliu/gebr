@@ -104,11 +104,6 @@ gboolean gebrm_daemon_has_tag(GebrmDaemon *daemon,
  */
 gchar *gebrm_daemon_get_tags(GebrmDaemon *daemon);
 
-gboolean gebrm_daemon_get_waiting_reconnection(GebrmDaemon *daemon);
-
-void gebrm_daemon_set_waiting_reconnection(GebrmDaemon *daemon,
-                                               gboolean is_waiting_reconnection);
-
 gboolean gebrm_daemon_has_group(GebrmDaemon *daemon,
                                 const gchar *group);
 
@@ -218,6 +213,11 @@ gboolean gebrm_daemon_accepts_mpi(GebrmDaemon *daemon,
 
 void gebm_daemon_append_key_finished(GebrCommTerminalProcess *proc,
                                      gpointer user_data);
+
+void gebrm_daemon_set_canceled(GebrmDaemon *daemon,
+                               gboolean is_canceled);
+
+gboolean gebrm_daemon_get_canceled(GebrmDaemon *daemon);
 
 G_END_DECLS
 
