@@ -513,24 +513,30 @@ set_status_for_mount(GebrMaestroServer *maestro,
                      GebrMountStatus status,
                      struct ui_preferences *up)
 {
+	static gboolean first_time = TRUE;
+
 	GtkWidget *mount_gvfs = GTK_WIDGET(gtk_builder_get_object(up->builder, "mount_gvfs"));
 	GObject *status_img = gtk_builder_get_object(up->builder, "mount_img");
 	GObject *status_label = gtk_builder_get_object(up->builder, "mount_label");
 	GtkWidget *button = GTK_WIDGET(gtk_builder_get_object(up->builder, "mount_button"));
 
 	if (status == STATUS_MOUNT_OK) {
+		first_time = FALSE;
 		gtk_image_set_from_stock(GTK_IMAGE(status_img), GTK_STOCK_YES, GTK_ICON_SIZE_DIALOG);
 		gtk_label_set_text(GTK_LABEL(status_label), _("Success!"));
 		gtk_assistant_set_page_type(GTK_ASSISTANT(up->dialog), mount_gvfs, GTK_ASSISTANT_PAGE_CONFIRM);
 		gtk_widget_set_sensitive(button, FALSE);
+		gtk_assistant_set_page_complete(GTK_ASSISTANT(up->dialog), mount_gvfs, !first_time);
 	}
 	else if (status == STATUS_MOUNT_NOK) {
 		gtk_image_set_from_stock(GTK_IMAGE(status_img), GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_DIALOG);
 		gtk_label_set_text(GTK_LABEL(status_label), _("Not connected on remote browse!"));
 		gtk_assistant_set_page_type(GTK_ASSISTANT(up->dialog), mount_gvfs, GTK_ASSISTANT_PAGE_CONFIRM);
 		gtk_widget_set_sensitive(button, TRUE);
+		gtk_assistant_set_page_complete(GTK_ASSISTANT(up->dialog), mount_gvfs, !first_time);
 	}
 	else if (status == STATUS_MOUNT_PROGRESS) {
+		first_time = FALSE;
 		gtk_image_set_from_stock(GTK_IMAGE(status_img), GTK_STOCK_DISCONNECT, GTK_ICON_SIZE_DIALOG);
 		gtk_label_set_text(GTK_LABEL(status_label), _("Connecting..."));
 		gtk_assistant_set_page_type(GTK_ASSISTANT(up->dialog), mount_gvfs, GTK_ASSISTANT_PAGE_PROGRESS);
@@ -1101,7 +1107,7 @@ preferences_setup_ui(gboolean first_run,
 
 		// GVFS_PAGE
 		gtk_assistant_append_page(GTK_ASSISTANT(assistant), mount_gvfs);
-		gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), mount_gvfs, TRUE);
+		gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), mount_gvfs, FALSE);
 		gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), mount_gvfs, GTK_ASSISTANT_PAGE_CONFIRM);
 		gtk_assistant_set_page_title(GTK_ASSISTANT(assistant), mount_gvfs, _("Remote Browse"));
 
