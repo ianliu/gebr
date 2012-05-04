@@ -213,7 +213,7 @@ set_status_for_maestro(GebrMaestroController *self,
 		if (!g_strcmp0(type, "error:none")) {
 			gtk_image_set_from_stock(GTK_IMAGE(status_img), GTK_STOCK_DISCONNECT, GTK_ICON_SIZE_DIALOG);
 
-			gtk_label_set_markup(GTK_LABEL(status_label), "Connecting...");
+			gtk_label_set_markup(GTK_LABEL(status_label), _("Connecting..."));
 
 			gtk_assistant_set_page_complete(GTK_ASSISTANT(up->dialog), main_maestro, FALSE);
 
@@ -634,45 +634,45 @@ on_assistant_prepare(GtkAssistant *assistant,
 
 			if (counter > 0) {
 				gchar *num_servers;
-				num_servers = g_markup_printf_escaped("<i><b>%d</b> connected.</i>", counter);
+				num_servers = g_markup_printf_escaped(_("<i><b>%d</b> connected.</i>"), counter);
 				gtk_label_set_markup(review_servers_label, num_servers);
 				g_free(num_servers);
 			} else {
-				gtk_label_set_markup(review_servers_label, "<i>None connected.</i>");
+				gtk_label_set_markup(review_servers_label, _("<i>None connected.</i>"));
 			}
 
-			gtk_label_set_markup(review_maestro_label, "<i>Connected.</i>");
+			gtk_label_set_markup(review_maestro_label, _("<i>Connected.</i>"));
 
 			gtk_label_set_markup(review_orientations_label, _("GêBR is ready."));
-			gtk_label_set_markup(review_pref_label, "<i>Done.</i>");
+			gtk_label_set_markup(review_pref_label, _("<i>Done.</i>"));
 			gtk_image_set_from_stock(GTK_IMAGE(review_pref_img), GTK_STOCK_YES, GTK_ICON_SIZE_MENU);
 			gtk_image_set_from_stock(GTK_IMAGE(review_maestro_img), GTK_STOCK_YES, GTK_ICON_SIZE_MENU);
 			gtk_image_set_from_stock(GTK_IMAGE(review_servers_img), GTK_STOCK_YES, GTK_ICON_SIZE_MENU);
 			gtk_image_set_from_stock(GTK_IMAGE(review_img), GTK_STOCK_YES, GTK_ICON_SIZE_DIALOG);
 			if (wizard_status == WIZARD_STATUS_WITHOUT_GVFS) {
-				gtk_label_set_markup(review_gvfs_label, "<i>Disabled.</i>");
+				gtk_label_set_markup(review_gvfs_label, _("<i>Disabled.</i>"));
 				gtk_image_set_from_stock(GTK_IMAGE(review_gvfs_img), GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_MENU);
 			} else {
-				gtk_label_set_markup(review_gvfs_label, "<i>Enabled.</i>");
+				gtk_label_set_markup(review_gvfs_label, _("<i>Enabled.</i>"));
 				gtk_image_set_from_stock(GTK_IMAGE(review_gvfs_img), GTK_STOCK_YES, GTK_ICON_SIZE_MENU);
 			}
 		} else {
 			gtk_label_set_markup(review_orientations_label, _("GêBR is unable to proceed without this configuration."));
 			gtk_image_set_from_stock(GTK_IMAGE(review_img), GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_DIALOG);
 			if (wizard_status == WIZARD_STATUS_WITHOUT_MAESTRO) {
-				gtk_label_set_markup(review_pref_label, "<i>Done.</i>");
+				gtk_label_set_markup(review_pref_label, _("<i>Done.</i>"));
 				gtk_image_set_from_stock(GTK_IMAGE(review_pref_img), GTK_STOCK_YES, GTK_ICON_SIZE_MENU);
 				gtk_image_set_from_stock(GTK_IMAGE(review_maestro_img), GTK_STOCK_STOP, GTK_ICON_SIZE_MENU);
-				gtk_label_set_markup(review_maestro_label, "<i>Not connected</i>");
+				gtk_label_set_markup(review_maestro_label, _("<i>Not connected.</i>"));
 			} else if (wizard_status == WIZARD_STATUS_WITHOUT_DAEMON){
-				gtk_label_set_markup(review_pref_label, "<i>Done.</i>");
+				gtk_label_set_markup(review_pref_label, _("<i>Done.</i>"));
 				gtk_image_set_from_stock(GTK_IMAGE(review_pref_img), GTK_STOCK_YES, GTK_ICON_SIZE_MENU);
-				gtk_label_set_markup(review_maestro_label, "<i>Connected.</i>");
+				gtk_label_set_markup(review_maestro_label, _("<i>Connected.</i>"));
 				gtk_image_set_from_stock(GTK_IMAGE(review_maestro_img), GTK_STOCK_YES, GTK_ICON_SIZE_MENU);
-				gtk_label_set_markup(review_servers_label, "<i>None connected.</i>");
+				gtk_label_set_markup(review_servers_label, _("<i>None connected.</i>"));
 				gtk_image_set_from_stock(GTK_IMAGE(review_servers_img), GTK_STOCK_STOP, GTK_ICON_SIZE_MENU);
 			} else if (wizard_status == WIZARD_STATUS_WITHOUT_PREFERENCES){
-				gtk_label_set_markup(review_pref_label, "<i>Not configured</i>");
+				gtk_label_set_markup(review_pref_label, _("<i>Not configured</i>"));
 				gtk_image_set_from_stock(GTK_IMAGE(review_pref_img), GTK_STOCK_STOP, GTK_ICON_SIZE_MENU);
 			}
 		}

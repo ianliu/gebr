@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gebr 0.9.18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-05-04 17:50-0300\n"
+"POT-Creation-Date: 2012-05-04 18:45-0300\n"
 "PO-Revision-Date: 2012-04-13 16:47-0300\n"
 "Last-Translator: Rodrigo Morelatto <morelatto@gebrproject.com>\n"
 "Language-Team: Ricardo Biloti <biloti@gebrproject.com>\n"
@@ -2218,6 +2218,10 @@ msgstr "Digite servidor[.dominio]"
 msgid "<span size='large'>Successfully connected to Maestro <b>%s</b>!</span>"
 msgstr "<span size='large'>Conexão bem sucedida ao Maestro <b>%s</b>!</span>"
 
+#: ../ui_preferences.c:216 ../ui_preferences.c:541
+msgid "Connecting..."
+msgstr "Conectando..."
+
 #: ../ui_preferences.c:220
 #, c-format
 msgid "<span size='large'>Connecting to Maestro <b>%s</b>!</span>"
@@ -2256,17 +2260,46 @@ msgstr "Caminho inválido"
 msgid "Remote browse is disabled!"
 msgstr "Navegação remota está desabilitada!"
 
-#: ../ui_preferences.c:541
-msgid "Connecting..."
-msgstr "Conectando..."
+#: ../ui_preferences.c:637
+#, c-format
+msgid "<i><b>%d</b> connected.</i>"
+msgstr "<i><b>%d</b> conectado.</i>"
+
+#: ../ui_preferences.c:641 ../ui_preferences.c:672
+msgid "<i>None connected.</i>"
+msgstr "<i>Nenhum conectado.</i>"
+
+#: ../ui_preferences.c:644 ../ui_preferences.c:670
+msgid "<i>Connected.</i>"
+msgstr "<i>Conectado.</i>"
 
 #: ../ui_preferences.c:646
 msgid "GêBR is ready."
 msgstr "GêBR está pronta."
 
+#: ../ui_preferences.c:647 ../ui_preferences.c:663 ../ui_preferences.c:668
+msgid "<i>Done.</i>"
+msgstr "<i>Concluído.</i>"
+
+#: ../ui_preferences.c:653
+msgid "<i>Disabled.</i>"
+msgstr "<i>Desabilitado.</i>"
+
+#: ../ui_preferences.c:656
+msgid "<i>Enabled.</i>"
+msgstr "<i>Habilitado.</i>"
+
 #: ../ui_preferences.c:660
 msgid "GêBR is unable to proceed without this configuration."
 msgstr "GêBR não consegue avançar sem esta configuração"
+
+#: ../ui_preferences.c:666
+msgid "<i>Not connected.</i>"
+msgstr "<i>Desconectado.</i>"
+
+#: ../ui_preferences.c:675
+msgid "<i>Not configured</i>"
+msgstr "<i>Não configurado</i>"
 
 #: ../ui_preferences.c:725 ../ui_preferences.c:1088 ../ui_preferences.c:1094
 msgid "Maestro"
