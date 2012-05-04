@@ -281,6 +281,25 @@ on_daemons_changed(GebrMaestroServer *maestro,
 }
 
 static void
+on_connect_all_server_clicked(GtkButton *button,
+                              struct ui_preferences *up)
+{
+	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
+	GtkTreeIter iter;
+	GtkTreeModel *model = gebr_maestro_server_get_model(maestro, FALSE, NULL);
+	gboolean valid = gtk_tree_model_get_iter_first (model, &iter);
+
+	while (valid) {
+		GebrDaemonServer *daemon;
+		gtk_tree_model_get(model, &iter, 0, &daemon, -1);
+		if (gebr_daemon_server_get_state(daemon) != SERVER_STATE_LOGGED)
+			gebr_daemon_server_connect(daemon);
+		valid = gtk_tree_model_iter_next(model, &iter);
+	}
+
+}
+
+static void
 on_add_server_clicked(GtkButton *button,
 		      struct ui_preferences *up)
 {
@@ -704,6 +723,7 @@ on_assistant_prepare(GtkAssistant *assistant,
 		if (view) {
 			GtkWidget *main_servers = GTK_WIDGET(gtk_builder_get_object(up->builder, "main_servers"));
 			GObject *server_add = gtk_builder_get_object(up->builder, "server_add");
+			GObject *server_all = gtk_builder_get_object(up->builder, "server_all");
 
 			GtkWidget *servers_label = GTK_WIDGET(gtk_builder_get_object(up->builder, "servers_label"));
 			GtkWidget *main_servers_label = GTK_WIDGET(gtk_builder_get_object(up->builder, "main_servers_label"));
@@ -749,7 +769,7 @@ on_assistant_prepare(GtkAssistant *assistant,
 				gtk_assistant_set_page_complete(GTK_ASSISTANT(assistant), main_servers, TRUE);
 				gtk_widget_hide(servers_label);
 			}
-
+			g_signal_connect(GTK_BUTTON(server_all), "clicked", G_CALLBACK(on_connect_all_server_clicked), up);
 			g_signal_connect(GTK_BUTTON(server_add), "clicked", G_CALLBACK(on_add_server_clicked), up);
 			g_signal_connect(GTK_ENTRY(up->server_entry), "activate", G_CALLBACK(on_entry_server_activate), up);
 		}
