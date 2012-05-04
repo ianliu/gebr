@@ -430,6 +430,7 @@ get_wizard_status(struct ui_preferences *up)
 
 }
 
+#if 0
 static void
 on_stop_maestro_clicked(GtkButton *button,
                         struct ui_preferences *up)
@@ -459,6 +460,7 @@ on_stop_maestro_clicked(GtkButton *button,
 		gebr_maestro_server_set_error(maestro, "error:stop", NULL);
 	}
 }
+#endif
 
 static void
 on_connect_maestro_clicked(GtkButton *button,
@@ -697,8 +699,8 @@ on_assistant_prepare(GtkAssistant *assistant,
 		g_signal_connect(connect_button, "clicked", G_CALLBACK(on_connect_maestro_clicked), up);
 		g_signal_connect(up->maestro_entry, "activate", G_CALLBACK(on_connect_maestro_activate), up);
 
-		GtkWidget *stop_button = GTK_WIDGET(gtk_builder_get_object(up->builder, "stop_button"));
-		g_signal_connect(stop_button, "clicked", G_CALLBACK(on_stop_maestro_clicked), up);
+		//GtkWidget *stop_button = GTK_WIDGET(gtk_builder_get_object(up->builder, "stop_button"));
+		//g_signal_connect(stop_button, "clicked", G_CALLBACK(on_stop_maestro_clicked), up);
 
 		gtk_widget_show(connections_info);
 

@@ -1155,6 +1155,7 @@ on_servers_edited(GtkCellRendererText *cell,
 	g_free(address);
 }
 
+#if 0
 static void
 on_stop_to_maestro_clicked(GtkButton *button,
                            GebrMaestroController *self)
@@ -1164,6 +1165,7 @@ on_stop_to_maestro_clicked(GtkButton *button,
 
 	gebr_maestro_controller_stop(self, gtk_entry_get_text(entry));
 }
+#endif
 
 static void 
 on_connect_to_maestro_clicked(GtkButton *button,
@@ -1303,8 +1305,8 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 	GtkButton *connect_button = GTK_BUTTON(gtk_builder_get_object(self->priv->builder, "btn_connect"));
 	g_signal_connect(connect_button, "clicked", G_CALLBACK(on_connect_to_maestro_clicked), self);
 
-	GtkButton *stop_button = GTK_BUTTON(gtk_builder_get_object(self->priv->builder, "btn_stop"));
-	g_signal_connect(stop_button, "clicked", G_CALLBACK(on_stop_to_maestro_clicked), self);
+	//GtkButton *stop_button = GTK_BUTTON(gtk_builder_get_object(self->priv->builder, "btn_stop"));
+	//g_signal_connect(stop_button, "clicked", G_CALLBACK(on_stop_to_maestro_clicked), self);
 
 	/*
 	 * Servers treeview
