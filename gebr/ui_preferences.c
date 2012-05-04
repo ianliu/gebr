@@ -530,7 +530,7 @@ set_status_for_mount(GebrMaestroServer *maestro,
 	}
 	else if (status == STATUS_MOUNT_NOK) {
 		gtk_image_set_from_stock(GTK_IMAGE(status_img), GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_DIALOG);
-		gtk_label_set_text(GTK_LABEL(status_label), _("Not connected on remote browse!"));
+		gtk_label_set_text(GTK_LABEL(status_label), _("Remote browse is disabled!"));
 		gtk_assistant_set_page_type(GTK_ASSISTANT(up->dialog), mount_gvfs, GTK_ASSISTANT_PAGE_CONFIRM);
 		gtk_widget_set_sensitive(button, TRUE);
 		gtk_assistant_set_page_complete(GTK_ASSISTANT(up->dialog), mount_gvfs, !first_time);

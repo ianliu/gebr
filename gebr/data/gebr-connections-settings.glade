@@ -41,6 +41,7 @@ Your login password may be asked to stablish the connection.</property>
                 <property name="label">gtk-connect</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
+                <property name="has_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="use_stock">True</property>
               </object>
@@ -277,6 +278,7 @@ Your login password may be asked to stablish the connection.</property>
           <object class="GtkButton" id="server_add">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
+            <property name="has_focus">True</property>
             <property name="receives_default">True</property>
             <child>
               <object class="GtkLabel" id="label1">
@@ -425,7 +427,7 @@ Your login password may be asked to stablish the connection.</property>
         <child>
           <object class="GtkButton" id="maestro_info_button">
             <property name="visible">True</property>
-            <property name="can_focus">True</property>
+            <property name="can_focus">False</property>
             <property name="receives_default">True</property>
             <property name="relief">none</property>
             <property name="xalign">0</property>
@@ -815,7 +817,7 @@ without soldiers."&lt;/i&gt;</property>
             <property name="visible">True</property>
             <property name="label" translatable="yes">&lt;b&gt;Explain remote browse&lt;/b&gt;
 
-You may be asked for your login credentials to be able to browse the remote file system.</property>
+Your login credentials may be asked to be able to browse the remote file system.</property>
             <property name="use_markup">True</property>
             <property name="wrap">True</property>
           </object>
@@ -830,7 +832,7 @@ You may be asked for your login credentials to be able to browse the remote file
             <property name="visible">True</property>
             <child>
               <object class="GtkButton" id="mount_button">
-                <property name="label" translatable="yes">Connect remote browse</property>
+                <property name="label" translatable="yes">Enable remote browse</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
