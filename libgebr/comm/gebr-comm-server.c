@@ -413,6 +413,7 @@ gboolean gebr_comm_server_forward_x11(GebrCommServer *server, guint16 port)
 
 	gchar *ssh_cmd = get_ssh_command_with_key();
 	g_string_printf(string, "%s -x -R %d:%s:%d %s -N", ssh_cmd, port, display_host->str, redirect_display_port, server->address->str);
+	g_free(ssh_cmd);
 
 	g_debug("X11 Forwarding %s", string->str);
 	gebr_comm_terminal_process_start(server->x11_forward_process, string);
@@ -423,7 +424,6 @@ gboolean gebr_comm_server_forward_x11(GebrCommServer *server, guint16 port)
 
 	/* frees */
  out:	g_string_free(string, TRUE);
-	g_free(ssh_cmd);
 
 	return ret;
 }

@@ -336,10 +336,8 @@ gebr_document_send_path_message(GebrGeoXmlLine *line,
 void
 save_maestro_changed(GebrUiProjectLine *upl, const gchar *change_addr)
 {
-	const gchar *addr;
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro(gebr.maestro_controller);
-	if (maestro)
-		addr = gebr_maestro_server_get_address(maestro);
+	const gchar *addr = maestro ? gebr_maestro_server_get_address(maestro) : "";
 
 	gboolean confirm = gebr_gui_message_dialog(GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
 						   _("Moving this line to current Maestro."),
