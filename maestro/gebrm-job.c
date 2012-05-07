@@ -515,13 +515,19 @@ gebrm_job_kill_immediately(GebrmJob *job)
 }
 
 void
+gebrm_job_kill_tasks(GebrmJob *job)
+{
+	for (GList *i = job->priv->tasks; i; i = i->next)
+		gebrm_task_kill(i->data);
+}
+
+void
 gebrm_job_kill(GebrmJob *job)
 {
 	if (!gebrm_job_can_kill(job))
 		return;
 
-	for (GList *i = job->priv->tasks; i; i = i->next)
-		gebrm_task_kill(i->data);
+	gebrm_job_kill_tasks(job);
 }
 
 void

@@ -301,6 +301,9 @@ gebrm_app_job_controller_on_status_change(GebrmJob *job,
 					  const gchar *parameter,
 					  GebrmApp *app)
 {
+	if (new_status == JOB_STATUS_FAILED)
+		gebrm_job_kill_tasks(job);
+
 	if (new_status == JOB_STATUS_FINISHED
 	    || new_status == JOB_STATUS_FAILED
 	    || new_status == JOB_STATUS_CANCELED) {
