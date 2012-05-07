@@ -1374,7 +1374,7 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 
 	// CPU Clock column
 	GtkTreeViewColumn *cpu_clock = gtk_tree_view_column_new();
-	gtk_tree_view_column_set_title(cpu_clock, "CPU Clock");
+	gtk_tree_view_column_set_title(cpu_clock, _("CPU Clock"));
 
 	renderer = gtk_cell_renderer_text_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(cpu_clock), renderer, TRUE);
@@ -1386,7 +1386,7 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 
 	// Memory column
 	GtkTreeViewColumn *memory_col = gtk_tree_view_column_new();
-	gtk_tree_view_column_set_title(memory_col, "Memory");
+	gtk_tree_view_column_set_title(memory_col, _("Memory"));
 
 	renderer = gtk_cell_renderer_text_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(memory_col), renderer, TRUE);
@@ -1402,7 +1402,7 @@ gebr_maestro_controller_create_dialog(GebrMaestroController *self)
 	set_widget_drag_dest(self, GTK_WIDGET(event));
 
 	GtkDialog *dialog = GTK_DIALOG(gtk_builder_get_object(self->priv->builder, "dialog_maestro"));
-
+	gtk_window_set_title(GTK_WINDOW(dialog), _("GêBR - Maestro / Servers"));
 	g_signal_connect(dialog, "response", G_CALLBACK(on_dialog_response), self);
 	g_signal_connect(dialog, "destroy", G_CALLBACK(on_dialog_destroy), self);
 

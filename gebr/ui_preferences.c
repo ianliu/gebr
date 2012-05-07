@@ -1124,13 +1124,6 @@ preferences_setup_ui(gboolean first_run,
 		gtk_label_set_markup(GTK_LABEL(maestro_info_label), _("<b>Maestro</b> is the responsible for receiving GêBR "
 								      "requests and for managing the available resources to perform it in the best way."));
 
-		GtkWidget *server_info_second_label = GTK_WIDGET(gtk_builder_get_object(ui_preferences->builder, "server_info_second_label"));
-		gtk_label_set_markup(GTK_LABEL(server_info_second_label), _( "<b>Servers</b> are in charge of running processing flows, "
-								       "under maestro’s coordination. "
-								       "For each server, you are going to be asked for your login credentials.\n\n"
-								       "You may be asked once more for your login credentials to "
-								       "to browse the remote file system."));
-
 		GtkWidget *pwd_info_label = GTK_WIDGET(gtk_builder_get_object(ui_preferences->builder, "pwd_info_label"));
 		gtk_label_set_markup(GTK_LABEL(pwd_info_label), _("GêBR needs a <b>connection</b> to a Maestro to send jobs "
 									    "and receive outputs. For security reasons an encrypted connection "
