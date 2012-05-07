@@ -121,6 +121,8 @@ const gchar * gebrm_app_get_version_file(void);
 
 const gchar *gebrm_app_get_servers_file(void);
 
+const gchar *gebrm_app_get_admin_servers_file(void);
+
 /* }}} GebrmApp methods */
 
 G_END_DECLS

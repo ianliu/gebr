@@ -1405,6 +1405,20 @@ load_servers_keyfile(void)
 	return keyfile;
 }
 
+static GKeyFile *
+load_admin_servers_keyfile(void)
+{
+	const gchar *path = gebrm_app_get_admin_servers_file();
+	GKeyFile *keyfile = g_key_file_new();
+
+	if (!g_key_file_load_from_file(keyfile, path, G_KEY_FILE_NONE, NULL)) {
+		g_key_file_free(keyfile);
+		return NULL;
+	}
+
+	return keyfile;
+}
+
 static gboolean 
 save_servers_keyfile(GKeyFile *keyfile)
 {
@@ -1601,6 +1615,26 @@ gebrm_config_delete_server(const gchar *serv)
 	g_key_file_free(servers);
 }
 
+static gboolean
+load_servers_from_key_file(GebrmApp *app,
+                           GKeyFile *servers)
+{
+	gchar **groups = g_key_file_get_groups(servers, NULL);
+	if (!groups)
+		return FALSE;
+	else {
+		for (int i = 0; groups[i]; i++) {
+			const gchar *tags = g_key_file_get_string(servers, groups[i], "tags", NULL);
+			const gchar *ac = g_key_file_get_string(servers, groups[i], "autoconnect", NULL);
+			GebrmDaemon *daemon = gebrm_add_server_to_list(app, groups[i], NULL, tags);
+			gebrm_daemon_set_autoconnect(daemon, ac);
+		}
+	}
+	g_strfreev(groups);
+
+	return TRUE;
+}
+
 gboolean
 gebrm_config_load_servers(GebrmApp *app, const gchar *path)
 {
@@ -1608,19 +1642,15 @@ gebrm_config_load_servers(GebrmApp *app, const gchar *path)
 	gboolean succ = servers != NULL;
 
 	if (succ) {
-		gchar **groups = g_key_file_get_groups(servers, NULL);
-		if (!groups)
-			succ = FALSE;
-		else {
-			for (int i = 0; groups[i]; i++) {
-				const gchar *tags = g_key_file_get_string(servers, groups[i], "tags", NULL);
-				const gchar *ac = g_key_file_get_string(servers, groups[i], "autoconnect", NULL);
-				GebrmDaemon *daemon = gebrm_add_server_to_list(app, groups[i], NULL, tags);
-				gebrm_daemon_set_autoconnect(daemon, ac);
-			}
-		}
+		load_servers_from_key_file(app, servers);
 		g_key_file_free (servers);
-		g_strfreev(groups);
+	} else {
+		GKeyFile *adm_servers = load_admin_servers_keyfile();
+
+		if (adm_servers) {
+			load_servers_from_key_file(app, adm_servers);
+			g_key_file_free (adm_servers);
+		}
 	}
 
 	return TRUE;
@@ -1818,6 +1848,7 @@ gebrm_app_run(GebrmApp *app, int fd)
 	//Generate gebr.key
 	gebr_generate_key();
 
+	// Add server from user file
 	const gchar *path = gebrm_app_get_servers_file();
 	gebrm_config_load_servers(app, path);
 
@@ -1873,6 +1904,17 @@ gebrm_app_get_servers_file(void)
 		path = g_build_filename(dirname, "servers.conf", NULL);
 		g_free(dirname);
 	}
+
+	return path;
+}
+
+const gchar *
+gebrm_app_get_admin_servers_file(void)
+{
+	static gchar *path = NULL;
+
+	if (!path)
+		path = g_build_filename("etc", "gebr", "servers.conf", NULL);
 
 	return path;
 }
