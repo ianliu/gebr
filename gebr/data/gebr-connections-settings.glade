@@ -231,7 +231,7 @@ Your login password may be asked to stablish the connection.</property>
     <child>
       <object class="GtkLabel" id="main_servers_label">
         <property name="visible">True</property>
-        <property name="label">Maestro &lt;b&gt;XXX&lt;/b&gt; needs connected &lt;b&gt;servers&lt;/b&gt; to run processing flows.</property>
+        <property name="label">Maestro &lt;b&gt;XXX&lt;/b&gt; needs at least one connected &lt;b&gt;servers&lt;/b&gt; to run processing flows.</property>
         <property name="use_markup">True</property>
         <property name="wrap">True</property>
         <property name="width_chars">50</property>
@@ -378,7 +378,9 @@ Your login password may be asked to stablish the connection.</property>
         <child>
           <object class="GtkLabel" id="maestro_info_label">
             <property name="visible">True</property>
-            <property name="label" translatable="yes">&lt;b&gt;Maestro&lt;/b&gt; is the responsible for receiving G&#xEA;BR requests and for managing the available resources to perform it in the best way.</property>
+            <property name="label" translatable="yes">&lt;b&gt;Maestro&lt;/b&gt; is in between then G&#xEA; BR and the working servers. It receives all requests for flow execution and dispatches them to a group of servers.
+
+Without interference, Maestro collects information about the state of each working server and ranks them according to their capabilities and available resources at time. Therefore, Maestro can take smart decisions about which servers are best suited to run each processing flow.</property>
             <property name="use_markup">True</property>
             <property name="wrap">True</property>
           </object>
@@ -707,7 +709,7 @@ without soldiers."&lt;/i&gt;</property>
             <property name="visible">True</property>
             <property name="yalign">0</property>
             <property name="ypad">68</property>
-            <property name="label" translatable="yes">&lt;b&gt;Servers&lt;/b&gt; are in charge of running processing flows, under maestro&#x2019;s coordination. For each server, you are going to be asked for your login credentials.</property>
+            <property name="label" translatable="yes">&lt;b&gt;Servers&lt;/b&gt; are the machines where the processing flows are actually executed. They put their computational power at disposal of the Maestro, which coordinate them to cooperate to conclude processing jobs faster.</property>
             <property name="use_markup">True</property>
             <property name="wrap">True</property>
           </object>
@@ -752,7 +754,7 @@ without soldiers."&lt;/i&gt;</property>
                 <property name="xalign">0</property>
                 <property name="yalign">0</property>
                 <property name="ypad">10</property>
-                <property name="label">It's the first time you use G&#xEA;BR.</property>
+                <property name="label">It's the first time you use this version of G&#xEA;BR.</property>
                 <property name="use_markup">True</property>
                 <property name="wrap">True</property>
               </object>
@@ -768,7 +770,12 @@ without soldiers."&lt;/i&gt;</property>
                 <property name="visible">True</property>
                 <property name="xalign">0</property>
                 <property name="ypad">10</property>
-                <property name="label" translatable="yes">G&#xEA;BR brings new features that requires further configurations. This assistant will guide you through this process.</property>
+                <property name="label" translatable="yes">In this version, G&#xEA;BR introduces new features that will speed up your processing flows, like automatic selection of the fastest server available and split of processing job among servers.
+
+These is possible due to a new player, called Maestro.
+
+To take advantage of those features, some set up must be done. This assistant will guide you through this process.
+</property>
                 <property name="use_markup">True</property>
                 <property name="wrap">True</property>
               </object>
