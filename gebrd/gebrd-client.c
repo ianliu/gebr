@@ -205,7 +205,7 @@ run_xauth_command(gchar **argv,
 	gebrd_message(GEBR_LOG_DEBUG, "RUN XAUTH COMMAND WITH ARGS: %s, %s, %s", argv[0], argv[1], argv[2]);
 
 	do {
-		g_spawn_sync(g_get_current_dir(), argv, envp,
+		g_spawn_sync(NULL, argv, envp,
 			     G_SPAWN_SEARCH_PATH, NULL, NULL,
 			     out, &err, &status, &error);
 		exit_status = WEXITSTATUS(status);
