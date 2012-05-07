@@ -1,3 +1,7 @@
+2012-05-07  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.17.5: authorized_key tranparent setup.
+
 2012-05-07  Eric Keiji <keiji.eric@gebrproject.com>
 
 	* Remove usage of current_dir in a call of a system command (avoid

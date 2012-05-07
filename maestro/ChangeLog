@@ -1,3 +1,15 @@
+2012-05-07  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix failed jobs still running
+
+2012-05-07  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.17.5: authorized_key tranparent setup.
+
+2012-05-07  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add servers from admin conf when user doesn't have your own file
+
 2012-05-04  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
 
 	* Generate gebr.key on startup of GeBR and Maestro

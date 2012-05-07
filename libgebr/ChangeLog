@@ -1,3 +1,21 @@
+2012-05-07  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fixed compilation warning issues.
+
+2012-05-07  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Use gtk_file_chooser_get_uri on method
+	gebr_file_chooser_set_remote_navigation to avoid some selection
+	files problem
+
+2012-05-07  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Improving connection assistant messages.
+
+2012-05-07  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.17.5: authorized_key tranparent setup.
+
 2012-05-04  Vinícius Oliveira Querência <querencia@gebrproject.com>
 
 	* Adding new translated messages.

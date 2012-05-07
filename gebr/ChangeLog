@@ -1,3 +1,30 @@
+2012-05-07  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fixed compilation warning issues.
+
+2012-05-07  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Adding new translated messages.
+	* Improving connection assistant messages.
+
+2012-05-07  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix bug when open connections wizard allow back to Welcome page
+	* Update of HOME path on line when maestro state changed
+
+2012-05-07  Ricardo Biloti  <Ricardo Biloti>
+
+	* Some rephrase of sentences in the wizard
+
+2012-05-07  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Change method gebr_maestro_server_get_home_dir to return local
+	home_dir when maestro doesn't have one
+
+2012-05-07  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.17.5: authorized_key tranparent setup.
+
 2012-05-07  Vinícius Oliveira Querência <querencia@gebrproject.com>
 
 	* Fixing behaviour of IMPORT label at line's wizard.
