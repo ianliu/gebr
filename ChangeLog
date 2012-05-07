@@ -1,3 +1,312 @@
+2012-05-07  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Fixing behaviour of IMPORT label at line's wizard.
+
+2012-05-07  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Remove usage of current_dir in a call of a system command (avoid
+	weird behaviour when there is a chdir in bash_profile)
+
+2012-05-04  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Remove Stop buttons of maestro and their treatments
+
+2012-05-04  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Improving window of moving line's maestro.
+	* Adding new translated messages.
+	* Adding new translated messages.
+	* Improving review page of maestro's wizard.
+
+2012-05-04  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Generate gebr.key on startup of GeBR and Maestro
+
+2012-05-04  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Adding Connect All button on servers page of maestro's wizard.
+
+2012-05-04  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Allow user to continue on connections wizard if try mount gvfs
+	unless one time
+	* Insert option -n on echo when append gebr.key in authorized_keys
+
+2012-05-04  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Improving intro and servers page of maestro's wizard.
+	* Improving intro and servers page of maestro's wizard.
+
+2012-05-04  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Improvement on review page of connections wizard
+	* Fix sequential connections when connect-daemons message are received
+	from GeBR
+	* Remove 'Enter it below' from password dialog
+
+2012-05-04  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Use default username when maestro doesn't have one setted
+
+2012-05-03  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fixed lock issues spliting servers Xauthority files.
+	* Stop using libXau because of X authentication issues.
+
+2012-05-03  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Refactor checking of already running maestro to a function to kill
+	processess by port
+
+2012-05-03  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix sensitive of button to go Foward on Servers Page
+	* Fix close of GeBR when doesn't have GVFS configured
+
+2012-05-03  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add signal for gvfs mount, and add new page of GVFS on connections
+	wizard
+
+2012-05-03  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Make treatment to kill the running GêBR-maestro of previous
+	versions (if existent) prior to connect to it
+
+2012-05-03  Igor Nunes <igorsnunes@gebrproject.com>
+
+	* Seg fault in ui_document, using prog when its null
+
+2012-05-03  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Create signal and treatments to connect on list of daemons
+	sequentially after other logged or after append_key
+	* Add parameter user_data on method append_key to send that to
+	finish_callback
+
+2012-05-03  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add Welcome page to gebr-connections-settings wizard
+
+2012-05-03  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix segfault when set current window on mount operation
+
+2012-05-03  Júlia Koury Marques <juliakm@gebrproject.com>
+
+	* improving the maestro wizard (servers information)
+	* translating messages to english for pt_BR version
+	* improve projects and lines interfaces (right side)
+
+2012-05-02  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Updating sensitiveness of execute and slider buttons.
+
+2012-05-02  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix compilation error on methods to set/get waiting_reconnection in
+	maestro
+	* Add error treatment on add/remove and generate gebr.key
+
+2012-05-02  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Improving review page of maestro's wizard.
+	* Improving review page of maestro's wizard.
+
+2012-05-02  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Create getter and setter of waiting_reconnection in structure
+	GebrmDaemon
+
+2012-05-02  Vinícius Oliveira Querência <querencia@gebrproject.com>
+
+	* Adding description below the line and project title.
+	* Improving messages of server's entry
+	* Changing review page of maestro wizard and line properties
+	* Changing review page of maestro wizard and line properties
+
+2012-05-02  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add debugs messages on command of LibXau in daemon
+
+2012-05-02  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Minor modifications to the texts on the gebr-connections-settings
+	wizard and on the line wizard
+	* Remove the troublesome verification of error of in
+	gebr/ui_prefences.c
+	* Add sentinel to null maestro in ui_preferences in gebr-connections-
+	settings
+
+2012-05-02  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add debugs when GeBR get cookie
+	* Add some debug messages on Xauth commands, and treat error on LibXau
+	execute
+
+2012-05-02  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add ssh documentation in portuguese version
+
+2012-05-02  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Allow stop maestro when maestro has protocol error on connections
+	wizard
+
+2012-05-01  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Add SSH documentation in xml and in wiki
+
+2012-04-30  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix cancel action on server's password and get correct top-level
+	window when mount GVFS
+
+2012-04-30  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix some compilation errors, and make correct treatment for cancel
+	on Password request
+
+2012-04-28  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Make dialog-based-treatment to avoid entries user@machine in
+	Maestro/Servers interface
+	* Fix segFault when we try to cancel the connections wizard before to
+	connect to a maestro
+
+2012-04-27  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fixed race-condition removing servers on gebr startup.
+	* Fixed remote stopping of Maestro when hostname is not the same as
+	the full qualified name.
+	* Fixed public_key transfer between hosts not sharing the same file
+	system and permissions.
+
+2012-04-27  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Make treatment to avoid user@machine in Maestro/Servers interface
+
+2012-04-27  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix view of servers when maestro has disconnected servers
+	* Fix info on maestro page to show correctly if maestro disconnected
+	* Back treatment of SFTP user on maestro
+	* Do not self-include maestro when there's no servers in connections
+	wizard
+
+2012-04-27  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Some minor translations (gebr/po/pt_BR.utf8)
+	* Add validation of user (avoid user@hostname) in connections wizard
+
+2012-04-27  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Cleanup.sh handles authorized_keys.cleanup if it exists.
+
+2012-04-27  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Connect on all daemons of maestro after append gebr.key on
+	authorized_keys or maestro change to state CONNECT. And fix auto-
+	insertion of maestro with daemon when it is empty
+	* Improvements on password dialog and stop add server when maestro has
+	empty treeview
+
+2012-04-26  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix ssh command when append key on authorized_key
+
+2012-04-26  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Ignore user on address of maestro when stop that
+	* Add method gebr_get_address_without_user
+	* Fix bug of stop maestro on connections wizard
+	* Remove treatment for user on sftp command line
+	* Add option to stop maestro on Connections wizard, and improvements
+	of maestro chooser window
+	* Change method gebr_maestro_server_set_error to public
+
+2012-04-26  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix lost of GtkInfo on JobControl's glade
+
+2012-04-26  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add option stop on maestro
+
+2012-04-26  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix translations of connections-settings wizard
+
+2012-04-26  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add option stop server on GeBR and create message to do that on
+	maestro
+	* Clean method to send path_def and fix that method when change
+	maestro for line
+	* Add method get_ssh_command_with_key to use gebr.key on all
+	connections of gebr/maestro
+	* Remove calls for method to add_remove_keys on gebr and maestro
+
+2012-04-26  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Remove temporary files when maestro/daemon disconnected
+	* Fix aditional add key only when generates it
+
+2012-04-25  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Remove multiple paths of imported lines from version 0.16.1
+
+2012-04-25  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Generate, append and add key on maestro when user asked for that on
+	password
+	* Add key when starts maestro_app, and remove when finalize that or
+	receive signal to force it
+	* Generate, append and add key when user asked for that on password
+
+2012-04-25  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Use cleanup.sh ALL to move your ~/.gebr to ~/.gebr-timestamp.
+
+2012-04-25  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add key when open gebr, and remove key when quit or receive signals
+	to force quit (or segfault)
+	* Fix method gebr_comm_server_append_key
+	* Fix methods to generate and to add/remove key
+
+2012-04-25  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Fix starting folder of filechooser in IO
+
+2012-04-24  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Generate, add and append key on gebr and maestro (verify duplicate
+	appends on authorized keys, and add keys when starts maestro)
+	* Change PASSWORD_REQUEST signal on gebr to return pass and use_key,
+	and change pss_def message to send use_key option
+	* Improvement on filename for tempfile and add method
+	gebr_remove_temporary_file
+	* Improvement filename for temp file and add method
+	gebr_comm_server_is_maestro
+
+2012-04-24  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add checkbox when server ask password and set that information on
+	server
+	* Change ssh to connect on servers to use output information, and add
+	setters/getters for use_public_key
+	* Add method gebr_check_if_server_accepts_key
+
+2012-04-23  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Merge backend for generate and add SSH keys
+
+2012-04-23  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Added tag 0.17.4 for changeset de5b3e2c9ac0
+	* Bump version to 0.17.4: the release of the wizards.
+
 2012-04-23  Vinícius Oliveira Querência <querencia@gebrproject.com>
 
 	* Adding empty value "\u2205" when create menu list

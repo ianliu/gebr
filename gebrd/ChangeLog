@@ -1,3 +1,28 @@
+2012-05-07  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Remove usage of current_dir in a call of a system command (avoid
+	weird behaviour when there is a chdir in bash_profile)
+
+2012-05-03  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fixed lock issues spliting servers Xauthority files.
+	* Stop using libXau because of X authentication issues.
+
+2012-05-02  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add debugs messages on command of LibXau in daemon
+	* Add some debug messages on Xauth commands, and treat error on LibXau
+	execute
+
+2012-04-30  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix some compilation errors, and make correct treatment for cancel
+	on Password request
+
+2012-04-23  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Bump version to 0.17.4: the release of the wizards.
+
 2012-04-13  Eric Keiji <keiji.eric@gebrproject.com>
 
 	* Add glade to POTILES.in

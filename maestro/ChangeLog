@@ -1,3 +1,81 @@
+2012-05-04  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Generate gebr.key on startup of GeBR and Maestro
+	* Fix sequential connections when connect-daemons message are received
+	from GeBR
+
+2012-05-03  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Refactor checking of already running maestro to a function to kill
+	processess by port
+	* Make treatment to kill the running GêBR-maestro of previous
+	versions (if existent) prior to connect to it
+
+2012-05-03  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Create signal and treatments to connect on list of daemons
+	sequentially after other logged or after append_key
+
+2012-05-02  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix compilation error on methods to set/get waiting_reconnection in
+	maestro
+
+2012-05-02  Eric Keiji <keiji.eric@gebrproject.com>
+
+	* Create getter and setter of waiting_reconnection in structure
+	GebrmDaemon
+
+2012-04-30  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Fix cancel action on server's password and get correct top-level
+	window when mount GVFS
+
+2012-04-27  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Fixed race-condition removing servers on gebr startup.
+
+2012-04-27  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Do not self-include maestro when there's no servers in connections
+	wizard
+	* Connect on all daemons of maestro after append gebr.key on
+	authorized_keys or maestro change to state CONNECT. And fix auto-
+	insertion of maestro with daemon when it is empty
+
+2012-04-26  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Add option stop server on GeBR and create message to do that on
+	maestro
+	* Remove calls for method to add_remove_keys on gebr and maestro
+
+2012-04-26  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Remove temporary files when maestro/daemon disconnected
+	* Fix aditional add key only when generates it
+
+2012-04-25  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Generate, append and add key on maestro when user asked for that on
+	password
+	* Add key when starts maestro_app, and remove when finalize that or
+	receive signal to force it
+
+2012-04-24  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Generate, add and append key on gebr and maestro (verify duplicate
+	appends on authorized keys, and add keys when starts maestro)
+	* Change PASSWORD_REQUEST signal on gebr to return pass and use_key,
+	and change pss_def message to send use_key option
+
+2012-04-23  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Merge backend for generate and add SSH keys
+
+2012-04-23  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Bump version to 0.17.4: the release of the wizards.
+
 2012-04-11  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
 
 	* Remove auto-connect of own daemon-maestro when maestro does not have

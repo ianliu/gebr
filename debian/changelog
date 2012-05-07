@@ -1,3 +1,9 @@
+gebrproject (0.17.5) lucid; urgency=low
+
+  * Cryptographic key generation to connect maestro and servers without typing a password.
+
+ -- Fabrício Matheus Gonçalves <fmatheus@gebrproject.com>  Mon, 07 May 2012 14:42:00 -0300
+
 gebrproject (0.17.4) lucid; urgency=low
 
   * GeBR configuration assistent (#1128);
@@ -5,7 +11,7 @@ gebrproject (0.17.4) lucid; urgency=low
   * Remote file system browsing;
   * Standard Line's paths to store Flow's data.
 
- -- Fabrício Matheus Gonçalves <fmatheus@dell4>  Mon, 23 Apr 2012 15:54:08 -0300
+ -- Fabrício Matheus Gonçalves <fmatheus@gebrproject.com>  Mon, 23 Apr 2012 15:54:08 -0300
 
 gebrproject (0.16.1) lucid; urgency=low
 
