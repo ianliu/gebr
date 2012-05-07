@@ -404,7 +404,15 @@ on_assistant_prepare(GtkAssistant *assistant,
 			else if (!g_strcmp0(keys[i], "base")) {
 				const gchar *aux = gtk_entry_get_text(GTK_ENTRY(g_hash_table_lookup(entries, keys[i])));
 				value = resolve_home_variable_to_base(aux, home);
-			} else {
+			}
+			else if(!g_strcmp0(keys[i], "import")) {
+				const gchar *aux = gtk_entry_get_text(GTK_ENTRY(g_hash_table_lookup(entries, keys[i])));
+				if (!*aux)
+					value = g_strdup(_("<i>Not Defined</i>"));
+				else
+					value = resolve_home_variable_to_base(aux, home);
+			}
+			else {
 				const gchar *aux = gtk_entry_get_text(GTK_ENTRY(g_hash_table_lookup(entries, keys[i])));
 				if (!*aux)
 					value = g_strdup(_("<i>Not Defined</i>"));
