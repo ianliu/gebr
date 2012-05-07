@@ -270,10 +270,11 @@ void document_properties_setup_ui(GebrGeoXmlDocument * document,
 	gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER_ON_PARENT);
 	gtk_window_set_destroy_with_parent(GTK_WINDOW(window), TRUE);
 
-	window_title = g_strdup_printf(_("%s '%s' properties"),
+	window_title = g_strdup_printf(_("%s '%s' - Properties"),
 				       document_get_name_from_type(document, TRUE),
 				       gebr_geoxml_document_get_title(document));
-	gtk_window_set_title(GTK_WINDOW(window), window_title);
+
+	gtk_window_set_title(GTK_WINDOW(window), _(window_title));
 	g_free(window_title);
 
 	GObject *progress_widget = gtk_builder_get_object(builder, "main_progress");
