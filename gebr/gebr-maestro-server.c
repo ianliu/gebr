@@ -1602,7 +1602,10 @@ gebr_maestro_server_set_home_dir(GebrMaestroServer *maestro,
 const gchar *
 gebr_maestro_server_get_home_dir(GebrMaestroServer *maestro)
 {
-	return maestro->priv->home;
+	if (maestro->priv->home && strlen(maestro->priv->home))
+		return maestro->priv->home;
+
+	return g_strdup(g_get_home_dir());
 }
 
 gchar *
