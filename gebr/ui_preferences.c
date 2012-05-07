@@ -1129,6 +1129,13 @@ preferences_setup_ui(gboolean first_run,
 									    "and receive outputs. For security reasons an encrypted connection "
 									    "is made using SSH protocol.\n\n"
 									    "Your login password may be asked to stablish the connection."));
+
+		GtkWidget *mount_info_label = GTK_WIDGET(gtk_builder_get_object(ui_preferences->builder, "mount_info_label"));
+		gtk_label_set_markup(GTK_LABEL(mount_info_label), _("Remote browsing allows a user on a client computer to access "
+									"files over a network in a manner similar to how local storage "
+									"is accessed. GêBR uses the remote browsing to organize the files "
+									"created during the data processing.\n\n"
+									"Your login credentials may be asked to be able to browse the remote file system."));
 		/* Set Preferences Page */
 		set_preferences_page(builder, ui_preferences);
 
