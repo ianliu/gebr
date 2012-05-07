@@ -1150,7 +1150,7 @@ preferences_setup_ui(gboolean first_run,
 
 		if (!first_run && wizard_run && !insert_preferences) {
 			gtk_assistant_set_current_page(GTK_ASSISTANT(assistant), MAESTRO_INFO_PAGE);
-			gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), main_servers, GTK_ASSISTANT_PAGE_INTRO);
+			gtk_assistant_set_page_type(GTK_ASSISTANT(assistant), page_minfo, GTK_ASSISTANT_PAGE_INTRO);
 		} else {
 			gtk_assistant_set_current_page(GTK_ASSISTANT(assistant), INITIAL_PAGE);
 		}
