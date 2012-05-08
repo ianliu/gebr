@@ -1520,7 +1520,10 @@ const gchar *gebr_geoxml_document_get_filename(GebrGeoXmlDocument * document)
 {
 	g_return_val_if_fail(document != NULL, NULL);
 
-	return _gebr_geoxml_document_get_data(document)->filename->str;
+	GString *filename = _gebr_geoxml_document_get_data(document)->filename;
+	g_return_val_if_fail(filename != NULL, "");
+
+	return filename->str;
 }
 
 gchar *gebr_geoxml_document_get_title(GebrGeoXmlDocument * document)
