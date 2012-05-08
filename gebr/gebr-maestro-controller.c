@@ -551,6 +551,17 @@ gebr_maestro_controller_group_changed_real(GebrMaestroController *self,
 
 		gebr_gui_gtk_tree_view_set_popup_callback(GTK_TREE_VIEW(view),
 		                                          (GebrGuiGtkPopupCallback) server_group_popup_menu, self);
+
+		GtkTreeIter end;
+		GtkTreePath *path = NULL;
+		gboolean valid = gtk_tree_model_get_iter_first(new_model, &end);
+		while (valid) {
+			valid = gtk_tree_model_iter_next(new_model, &end);
+			if (valid)
+				path = gtk_tree_model_get_path(new_model, &end);
+		}
+		gtk_tree_view_scroll_to_cell(GTK_TREE_VIEW(view), path, col, FALSE, 0.5, 0.5);
+		gtk_tree_path_free(path);
 	}
 
 	for (int i = 0; i < n-1; i++) {
