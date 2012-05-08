@@ -1342,16 +1342,19 @@ gebr_file_chooser_set_remote_navigation(GtkWidget *dialog,
 	response = gtk_dialog_run(GTK_DIALOG(dialog));
 
 	gchar *uri = gtk_file_chooser_get_uri(GTK_FILE_CHOOSER(dialog));
-	gint tam = strlen(sftp_prefix);
-
-	*new_text = g_strdup(uri + tam - 1);
+	if (uri) {
+		gint tam = strlen(sftp_prefix);
+		*new_text = g_strdup(uri + tam - 1);
+		g_free(uri);
+	} else {
+		*new_text = g_strdup("");
+	}
 
 	gebr_gtk_bookmarks_remove_paths(filename, paths);
 
 	gtk_widget_destroy(dialog);
 	g_free(err_filechooser);
 	g_free(filename);
-	g_free(uri);
 
 	return response;
 }
