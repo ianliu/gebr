@@ -251,6 +251,9 @@ void
 gebr_job_set_servers(GebrJob *job,
 		     const gchar *servers)
 {
+	if (job->priv->tasks)
+		return;
+
 	gchar **split = g_strsplit(servers, ",", 0);
 
 	if (!split)
