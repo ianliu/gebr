@@ -2001,8 +2001,10 @@ gchar * gebr_line_generate_header(GebrGeoXmlDocument * document)
 
 		gebr_geoxml_line_get_path(GEBR_GEOXML_LINE(document), &line_path, 0);
 		for (; line_path != NULL; gebr_geoxml_sequence_next(&line_path)) {
-			g_string_append_printf(dump, "   <li>%s</li>\n",
-					       gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(line_path)));
+                        if (strlen(gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(line_path)))){
+                                g_string_append_printf(dump, "   <li>%s</li>\n",
+                                                       gebr_geoxml_value_sequence_get(GEBR_GEOXML_VALUE_SEQUENCE(line_path)));
+                        }
 		}
 		g_string_append(dump, "</ul>\n");
 	}
