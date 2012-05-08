@@ -1343,9 +1343,13 @@ gebr_file_chooser_set_remote_navigation(GtkWidget *dialog,
 
 	gchar *uri = gtk_file_chooser_get_uri(GTK_FILE_CHOOSER(dialog));
 	if (uri) {
-		gint tam = strlen(sftp_prefix);
-		*new_text = g_strdup(uri + tam - 1);
-		g_free(uri);
+		if (sftp_prefix) {
+			gint tam = strlen(sftp_prefix);
+			*new_text = g_strdup(uri + tam - 1);
+			g_free(uri);
+		} else {
+			*new_text = g_strdup(uri);
+		}
 	} else {
 		*new_text = g_strdup("");
 	}
