@@ -1126,7 +1126,7 @@ gebr_gtk_bookmarks_add_paths(const gchar *filename,
 			continue;
 
 		gchar *resolved = gebr_resolve_relative_path(paths[i][0], paths);
-		gchar *escaped = g_uri_escape_string(resolved, "/", TRUE);
+		gchar *escaped = g_uri_escape_string(resolved+1, "/", TRUE);
 		g_string_append_printf(buf, "%s%s %s (GeBR)\n",
 		                       uri_prefix, escaped, paths[i][1]);
 		g_free(resolved);

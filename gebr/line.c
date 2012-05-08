@@ -277,9 +277,11 @@ on_assistant_close(GtkAssistant *assistant,
 		gtk_widget_destroy(GTK_WIDGET(assistant));
 	}
 	GebrMaestroServer *maestro = gebr_maestro_controller_get_maestro_for_line(gebr.maestro_controller, gebr.line);
-	gchar *home = g_build_filename(gebr_maestro_server_get_home_dir(maestro), NULL);
-	gebr_geoxml_line_append_path(gebr.line, "HOME", home);
-	g_free(home);
+	if (maestro) {
+		gchar *home = g_build_filename(gebr_maestro_server_get_home_dir(maestro), NULL);
+		gebr_geoxml_line_append_path(gebr.line, "HOME", home);
+		g_free(home);
+	}
 }
 
 static gchar *
@@ -473,10 +475,12 @@ line_setup_wizard(GebrGeoXmlLine *line)
 	GtkWidget *page7 = GTK_WIDGET(gtk_builder_get_object(builder, "main_progress"));
 	GtkWidget *assistant = gtk_assistant_new();
 
+	gtk_window_set_modal(GTK_WINDOW(assistant), TRUE);
 	gtk_window_set_transient_for(GTK_WINDOW(assistant), GTK_WINDOW(gebr.window));
 	gtk_window_set_position(GTK_WINDOW(assistant), GTK_WIN_POS_CENTER_ON_PARENT);
 	gtk_window_set_title(GTK_WINDOW(assistant), _("Creating a new Line"));
 
+	g_debug("On '%s', line '%d', teste:'%s' ", __FILE__, __LINE__, "TeSTANDO");
 	WizardData *data = g_new(WizardData, 1);
 	data->assistant = assistant;
 	data->builder = builder;
