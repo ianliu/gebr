@@ -1126,9 +1126,14 @@ gebr_gtk_bookmarks_add_paths(const gchar *filename,
 			continue;
 
 		gchar *resolved = gebr_resolve_relative_path(paths[i][0], paths);
-		gchar *escaped = g_uri_escape_string(resolved+1, "/", TRUE);
+		gchar *escaped;
+		if (uri_prefix && strstr(uri_prefix, "sftp"))
+			escaped = g_uri_escape_string(resolved + 1, "/", TRUE);
+		else
+			escaped = g_uri_escape_string(resolved, "/", TRUE);
+
 		g_string_append_printf(buf, "%s%s %s (GeBR)\n",
-		                       uri_prefix, escaped, paths[i][1]);
+		                       uri_prefix? uri_prefix : "", escaped, paths[i][1]);
 		g_free(resolved);
 		g_free(escaped);
 	}
