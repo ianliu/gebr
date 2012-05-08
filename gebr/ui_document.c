@@ -1902,7 +1902,11 @@ on_response_ok(GtkButton *button,
 	gtk_widget_hide(GTK_WIDGET(message));
 	gtk_widget_show(GTK_WIDGET(progress));
 
+	// Set new base for line
+	gebr_geoxml_line_set_base_path(GEBR_GEOXML_LINE(data->document), newmsg);
+	// Send new base to create on maestro
 	gebr_ui_document_send_paths_to_maestro(maestro, option, oldmsg, newmsg);
+
 	update_buttons_visibility(data, PROPERTIES_PROGRESS);
 	data->progress_animation = g_timeout_add(200, progress_bar_animate, data);
 	data->timeout = g_timeout_add(5000, time_out_error, data);
