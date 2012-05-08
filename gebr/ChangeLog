@@ -1,3 +1,32 @@
+2012-05-08  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Return if job already have tasks on method gebr_job_set_servers (Fix
+	lost command line of first flow when run in parallel)
+
+2012-05-08  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Insert auto-scroll on groups view in Maestro/Servers dialog
+	* Improvement title of I/O's file chooser dialog
+	* Remove invalid call of method gebr_geoxml_document_free on
+	import_flow_single
+
+2012-05-08  Ricardo Biloti  <Ricardo Biloti>
+
+	* Text enhancements in the new line wizard.
+
+2012-05-08  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* If base are changed on line's properties, set the new base on this
+	line
+
+2012-05-08  Ricardo Biloti  <Ricardo Biloti>
+
+	* Revision to texts of the wizard.
+
+2012-05-08  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.17.6: last minute segfault fix.
+
 2012-05-07  Vinícius Oliveira Querência <querencia@gebrproject.com>
 
 	* Adding translated title of project/line properties.

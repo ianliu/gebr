@@ -1,5 +1,25 @@
 2012-05-08  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
 
+	* Fix method gebr_gtk_bookmarks_add_paths to avoid aditional bar only
+	when prefix are sftp (and treats prefix equal null)
+
+2012-05-08  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
+	* Include treatment to local files on file chooser
+	* Fix compilation error included on last commit
+	* Improvement treatments in method
+	gebr_file_chooser_set_remote_navigation
+	* Improvement method gebr_geoxml_document_get_filename to return empty
+	string if filename are not setted on document
+	* Fix seg. fault when sftp not mounted and try to set new_text for
+	filename
+
+2012-05-08  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>
+
+	* Release 0.17.6: last minute segfault fix.
+
+2012-05-08  Jorge Pizzolatto <jorge.pzt@gebrproject.com>
+
 	* Fix segfault when cancel dialog of File Chooser
 
 2012-05-07  Fabrício Matheus Gonçalvez  <fmatheus@gebrproject.com>

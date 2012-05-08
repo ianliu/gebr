@@ -1,3 +1,10 @@
+gebrproject (0.17.7) lucid; urgency=low
+
+  * More File Chooser fixes.
+  * Fix segfault after flow import.
+
+ -- Fabrício Matheus Gonçalves <fmatheus@samos>  Tue, 08 May 2012 19:01:31 -0300
+
 gebrproject (0.17.6) lucid; urgency=low
 
   * Fix segfault when cancel dialog of File Chooser
