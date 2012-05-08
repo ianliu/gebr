@@ -229,7 +229,11 @@
     <child>
       <object class="GtkLabel" id="paths_label">
         <property name="visible">True</property>
-        <property name="label" translatable="yes">&lt;b&gt;Line paths&lt;/b&gt; are a standard hierarchy of directories for fetching input files and saving output files.</property>
+        <property name="label" translatable="yes">To better manage all files read or created during the processing of a data, G&#xEA;BR defines a directory structure to store them.
+
+This structure is defined by a top directory, known as BASE, and few other nested standard directories.
+
+Although it is not mandatory to adhere to this structure, it is highly recommended to do so.</property>
         <property name="use_markup">True</property>
         <property name="wrap">True</property>
       </object>
@@ -246,7 +250,7 @@
     <child>
       <object class="GtkLabel" id="label_base">
         <property name="visible">True</property>
-        <property name="label" translatable="yes">&lt;b&gt;BASE&lt;/b&gt; is the root directory where all files linked in this line live.</property>
+        <property name="label" translatable="yes">&lt;i&gt;BASE&lt;/i&gt; is the top directory where most files referred in this line should be.</property>
         <property name="use_markup">True</property>
         <property name="wrap">True</property>
       </object>
@@ -278,7 +282,10 @@
         <child>
           <object class="GtkLabel" id="label6">
             <property name="visible">True</property>
-            <property name="label" translatable="yes">Note that browsing will take place at Maestro X&#x2019;s servers, instead of this machine.</property>
+            <property name="label" translatable="yes">&lt;small&gt;Remember that the processing takes place at the working servers. So, the structure which is being defined here will be created there.
+
+To be able to browse files in these directory, the &lt;i&gt;remote browse&lt;/i&gt; feature must be enable in the Maestro.&lt;/small&gt;</property>
+            <property name="use_markup">True</property>
             <property name="wrap">True</property>
           </object>
           <packing>

@@ -336,10 +336,14 @@ on_assistant_prepare(GtkAssistant *assistant,
 
 	if (page == 1) {
 		GObject *info_label= gtk_builder_get_object(data->builder, "info_label");
-		gchar *info_label_text= g_markup_printf_escaped(_("A <b>Line</b> is a way to organize Flows"
-								  " and it is associated to the Maestro in which its flows"
-								  " are going to be executed.\n\nThe Maestro of this Line"
-								  " is <b>%s</b>."), maestro_addr);
+		gchar *info_label_text= g_markup_printf_escaped(_("The <i>Line</i> structure in GêBR gathers many "
+                                                                  "processing flows.\n\nThis name comes from "
+                                                                  "the notion that the processing of a data "
+                                                                  "set, acquired over a seismic line, is performed "
+                                                                  "in several steps by the processing flows.\n\n"
+                                                                  "This Line will be attached to the current Maestro "
+                                                                  "(%s), which will be in charge of running its "
+                                                                  "processing flows."), maestro_addr);
 		gtk_label_set_markup(GTK_LABEL(info_label), info_label_text);
 		g_free(info_label_text);
 
@@ -353,8 +357,13 @@ on_assistant_prepare(GtkAssistant *assistant,
 		if (!entr_text || !entr_text[0])
 			gtk_entry_set_text(GTK_ENTRY(entry_base), path);
 
-		gchar *text_maestro = g_markup_printf_escaped(_("Note that browsing will take place at Maestro <b>%s</b>’s servers,\n"
-								"instead of this machine.\n"), maestro_addr);
+		gchar *text_maestro = g_markup_printf_escaped(_("<small>Remember that the processing takes "
+                                                                "place at the working servers. So, the "
+                                                                "structure which is being defined here will "
+                                                                "be created there.\n\nTo be able to browse "
+                                                                "files in these directory, the <i>remote "
+                                                                "browse</i> feature must be enable in the "
+                                                                "Maestro %s.</small>"), maestro_addr);
 		label = gtk_builder_get_object(data->builder, "label6");
 		gtk_label_set_markup(GTK_LABEL(label), text_maestro);
 
@@ -368,7 +377,7 @@ on_assistant_prepare(GtkAssistant *assistant,
 		GObject *label;
 		gchar *text_maestro = g_markup_printf_escaped(_("GêBR will create some directories to organize the files\n"
 								"created during the data processing.\n\n"
-								"These directories will be created on servers of maestro <b>%s</b>."), maestro_addr);
+								"These directories will be created on servers of Maestro <b>%s</b>."), maestro_addr);
 		label = gtk_builder_get_object(data->builder, "label_hierarchy_1");
 		gtk_label_set_markup(GTK_LABEL(label), text_maestro);
 
@@ -410,14 +419,14 @@ on_assistant_prepare(GtkAssistant *assistant,
 			else if(!g_strcmp0(keys[i], "import")) {
 				const gchar *aux = gtk_entry_get_text(GTK_ENTRY(g_hash_table_lookup(entries, keys[i])));
 				if (!*aux)
-					value = g_strdup(_("<i>Not Defined</i>"));
+					value = g_strdup(_("<i>not defined</i>"));
 				else
 					value = resolve_home_variable_to_base(aux, home);
 			}
 			else {
 				const gchar *aux = gtk_entry_get_text(GTK_ENTRY(g_hash_table_lookup(entries, keys[i])));
 				if (!*aux)
-					value = g_strdup(_("<i>Not Defined</i>"));
+					value = g_strdup(_("<i>not defined</i>"));
 				else
 					value = g_strdup(aux);
 			}
