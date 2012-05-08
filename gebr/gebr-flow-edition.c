@@ -720,15 +720,23 @@ static void open_activated(GtkEntry *entry, GtkEntryIconPosition icon_pos, GdkEv
 
 	GtkFileChooserAction action;
 	gchar *stock;
+	gchar *title = NULL;
 	if (gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->input_iter)) {
 		action = GTK_FILE_CHOOSER_ACTION_OPEN;
 		stock = GTK_STOCK_OPEN;
+		title = g_strdup(_("Choose an input file"));
 	} else {
 		action = GTK_FILE_CHOOSER_ACTION_SAVE;
 		stock = GTK_STOCK_SAVE;
+		if (gebr_gui_gtk_tree_iter_equal_to(&iter, &gebr.ui_flow_edition->output_iter))
+			title = g_strdup(_("Choose an output file"));
+		else
+			title = g_strdup(_("Choose a log file"));
 	}
+	if (!title)
+		title = g_strdup(_("Choose file"));
 
-	GtkWidget *dialog = gtk_file_chooser_dialog_new(NULL, GTK_WINDOW(gebr.window), action,
+	GtkWidget *dialog = gtk_file_chooser_dialog_new(title, GTK_WINDOW(gebr.window), action,
 							stock, GTK_RESPONSE_YES,
 							GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
 	gtk_file_chooser_set_local_only(GTK_FILE_CHOOSER(dialog), FALSE);
@@ -752,6 +760,7 @@ static void open_activated(GtkEntry *entry, GtkEntryIconPosition icon_pos, GdkEv
 
 	g_free(new_text);
 	g_free(path);
+	g_free(title);
 	gebr_pairstrfreev(paths);
 }
 
